@@ -51,6 +51,8 @@ static void radioBoxEventHandler (
 
 activeRadioButtonClass *rbto = (activeRadioButtonClass *) client;
 
+  *continueToDispatch = True;
+
   if ( !rbto->active ) return;
 
   if ( e->type == EnterNotify ) {
