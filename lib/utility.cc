@@ -410,7 +410,8 @@ int writeStringToFile (
   char *str )
 {
 
-int stat;
+int stat, i, j;
+char tmp[255+1];
 
   if ( strcmp( str, "" ) == 0 ) {
 
@@ -425,16 +426,80 @@ int stat;
 
       strcpy( buf, "<<<blank>>>" );
       strncat( buf, str, 300 );
-      stat = fprintf( f, "%s\n", buf );
+      for ( i=0, j=0; i<(int)strlen(buf); i++ ) {
+        if ( buf[i] == 10 ) {
+	  tmp[j] = 0;
+          stat = fprintf( f, "%s\\n", tmp );
+          if ( stat == -1 ) return 0;
+          j = 0;
+	}
+        else if ( buf[i] == '\\' ) {
+	  tmp[j] = 0;
+          stat = fprintf( f, "%s\\\\", tmp );
+          if ( stat == -1 ) return 0;
+          j = 0;
+	}
+        else {
+          tmp[j] = buf[i];
+          j++;
+          if ( j == 255 ) {
+            tmp[j] = 0;
+            stat = fprintf( f, "%s", tmp );
+            if ( stat == -1 ) return 0;
+            j = 0;
+	  }
+	}
+      }
+      if ( j ) {
+        tmp[j] = 0;
+        stat = fprintf( f, "%s\n", tmp );
+        if ( stat == -1 ) return 0;
+        j = 0;
+      }
+      else {
+        stat = fprintf( f, "\n" );
+        if ( stat == -1 ) return 0;
+      }
 
     }
 
   }
-
   else {
 
-    stat = fprintf( f, "%s\n", str );
-    if ( stat == -1 ) return 0;
+    for ( i=0, j=0; i<(int)strlen(str); i++ ) {
+      if ( str[i] == 10 ) {
+        tmp[j] = 0;
+        stat = fprintf( f, "%s\\n", tmp );
+        if ( stat == -1 ) return 0;
+        j = 0;
+      }
+      else if ( str[i] == '\\' ) {
+        tmp[j] = 0;
+        stat = fprintf( f, "%s\\\\", tmp );
+        if ( stat == -1 ) return 0;
+        j = 0;
+      }
+      else {
+        tmp[j] = str[i];
+        j++;
+        if ( j == 255 ) {
+          tmp[j] = 0;
+          stat = fprintf( f, "%s", tmp );
+          if ( stat == -1 ) return 0;
+          j = 0;
+	}
+      }
+    }
+    if ( j ) {
+      tmp[j] = 0;
+      stat = fprintf( f, "%s\n", tmp );
+      if ( stat == -1 ) return 0;
+      j = 0;
+    }
+    else {
+      stat = fprintf( f, "\n" );
+      if ( stat == -1 ) return 0;
+    }
 
   }
 
@@ -498,22 +563,22 @@ void readStringFromFile (
 {
 
 char *ptr;
-int l, max;
-char buf[1023+1];
+int i, j, l, max, first, escape;
+char buf[10000+1];
 
   if ( maxChars < 1 ) return;
 
-  if ( maxChars > 1023 )
-    max = 1023;
+  if ( maxChars > 10000 )
+    max = 10000;
   else
-    max = maxChars;
+    max = maxChars-1;
 
-  ptr = fgets( buf, 1023, f );
+  ptr = fgets( buf, 10000, f );
   if ( !ptr ) {
     strcpy( str, "" );
     return;
   }
-  buf[1023] = 0;
+  buf[10000] = 0;
 
   l = strlen(buf);
 
@@ -523,20 +588,60 @@ char buf[1023+1];
   if ( strcmp( buf, "<<<empty>>>" ) == 0 ) {
 
     strcpy( str, "" );
+    return;
 
   }
   else if ( strncmp( buf, "<<<blank>>>", 11 ) == 0 ) {
 
-    strncpy( str, &buf[11], l-11 );
-    str[max-1] = 0;
+    first = 11;
 
   }
   else {
 
-    strncpy( str, buf, max );
-    str[max-1] = 0;
+    first = 0;
 
   }
+
+  escape = 0;
+  for ( i=first, j=0; i<l; i++ ) {
+
+    if ( escape ) {
+
+      if ( buf[i] == '\\' ) {
+        str[j] = buf[i];
+        if ( j < max ) j++;
+      }
+      else if ( buf[i] == 'n' ) {
+        str[j] = 10;
+        if ( j < max ) j++;
+      }
+      else {
+        str[j] = buf[i];
+        if ( j < max ) j++;
+      }
+
+      escape = 0;
+
+    }
+    else {
+
+      if ( buf[i] == '\\' ) {
+        escape = 1;
+      }
+      else if ( buf[i] == 1 ) {
+        str[j] = 10;
+        if ( j < max ) j++;
+      }
+      else {
+        str[j] = buf[i];
+        if ( j < max ) j++;
+      }
+
+    }
+
+  }
+
+  str[j] = 0;
 
 }
 #endif
@@ -1165,7 +1270,7 @@ int i, start, l, strL;
 
   while ( i < strL ) {
 
-    if ( str[i] == 1 ) {
+    if ( ( str[i] == 1 ) || ( str[i] == 10 ) ) {
 
       if ( l ) {
         XDrawString( d, w, gc, x, y, &str[start], l );
@@ -1192,6 +1297,248 @@ int i, start, l, strL;
 
 }
 
+void getStringBoxSize (
+  char *str,
+  int len,
+  XFontStruct **fs,
+  int alignment,
+  int *width,
+  int *height )
+{
+
+int i, start, l, strL, stringWidth, maxWidth, maxHeight, charHeight;
+
+  maxWidth = 2;
+  maxHeight = 0;
+
+  i = start = l = 0;
+  strL = strlen( str );
+
+  while ( i < strL ) {
+
+    if ( ( str[i] == 1 ) || ( str[i] == 10 ) ) {
+
+      if ( l ) {
+
+        if ( fs ) {
+          stringWidth = XTextWidth( *fs, &str[start], l );
+          charHeight = (*fs)->ascent + (*fs)->descent;
+	}
+	else {
+	  stringWidth = 10;
+          charHeight = 2;
+	}
+
+        if ( stringWidth > maxWidth ) maxWidth = stringWidth;
+
+        l = 0;
+
+      }
+
+      start = i+1;
+      maxHeight += charHeight;
+
+    }
+    else {
+
+      l++;
+
+    }
+
+    i++;
+
+  }
+
+  if ( l ) {
+
+    if ( fs ) {
+      stringWidth = XTextWidth( *fs, &str[start], l );
+      charHeight = (*fs)->ascent + (*fs)->descent;
+    }
+    else {
+      stringWidth = 10;
+      charHeight = 2;
+    }
+
+    if ( stringWidth > maxWidth ) maxWidth = stringWidth;
+
+    maxHeight += charHeight;
+
+  }
+
+  *width = maxWidth;
+  *height = maxHeight;
+
+}
+
+void XDrawStringsAligned (
+  Display *d,
+  Window w,
+  GC gc,
+  int x,
+  int y,
+  int fieldWidth,
+  char *str,
+  int len,
+  XFontStruct **fs,
+  int alignment )
+{
+
+int charHeight, i, start, l, strL, stringWidth, stringX;
+
+  i = start = l = 0;
+  strL = strlen( str );
+
+  while ( i < strL ) {
+
+    if ( ( str[i] == 1 ) || ( str[i] == 10 ) ) {
+
+      if ( l ) {
+
+        if ( fs ) {
+          stringWidth = XTextWidth( *fs, &str[start], l );
+          charHeight = (*fs)->ascent + (*fs)->descent;
+	}
+	else {
+	  stringWidth = 10;
+          charHeight = 2;
+	}
+
+        if ( alignment == XmALIGNMENT_BEGINNING )
+          stringX = x;
+        else if ( alignment == XmALIGNMENT_CENTER )
+          stringX = x + fieldWidth/2 - stringWidth/2;
+        else if ( alignment == XmALIGNMENT_END )
+          stringX = x + fieldWidth - stringWidth;
+
+        XDrawString( d, w, gc, stringX, y, &str[start], l );
+
+        l = 0;
+
+      }
+
+      start = i+1;
+      y += charHeight;
+
+    }
+    else {
+
+      l++;
+
+    }
+
+    i++;
+
+  }
+
+  if ( l ) {
+
+    if ( fs ) {
+      stringWidth = XTextWidth( *fs, &str[start], l );
+      charHeight = (*fs)->ascent + (*fs)->descent;
+    }
+    else {
+      stringWidth = 10;
+      charHeight = 2;
+    }
+
+    if ( alignment == XmALIGNMENT_BEGINNING )
+      stringX = x;
+    else if ( alignment == XmALIGNMENT_CENTER )
+      stringX = x + fieldWidth/2 - stringWidth/2;
+    else if ( alignment == XmALIGNMENT_END )
+      stringX = x + fieldWidth - stringWidth;
+
+    XDrawString( d, w, gc, stringX, y, &str[start], l );
+
+  }
+
+}
+
+void XDrawImageStringsAligned (
+  Display *d,
+  Window w,
+  GC gc,
+  int x,
+  int y,
+  int fieldWidth,
+  char *str,
+  int len,
+  XFontStruct **fs,
+  int alignment )
+{
+
+int charHeight, i, start, l, strL, stringWidth, stringX;
+
+  i = start = l = 0;
+  strL = strlen( str );
+
+  while ( i < strL ) {
+
+    if ( ( str[i] == 1 ) || ( str[i] == 10 ) ) {
+
+      if ( l ) {
+
+        if ( fs ) {
+          stringWidth = XTextWidth( *fs, &str[start], l );
+          charHeight = (*fs)->ascent + (*fs)->descent;
+	}
+	else {
+	  stringWidth = 10;
+          charHeight = 2;
+	}
+
+        if ( alignment == XmALIGNMENT_BEGINNING )
+          stringX = x;
+        else if ( alignment == XmALIGNMENT_CENTER )
+          stringX = x + fieldWidth/2 - stringWidth/2;
+        else if ( alignment == XmALIGNMENT_END )
+          stringX = x + fieldWidth - stringWidth;
+
+        XDrawImageString( d, w, gc, stringX, y, &str[start], l );
+
+        l = 0;
+
+      }
+
+      start = i+1;
+      y += charHeight;
+
+    }
+    else {
+
+      l++;
+
+    }
+
+    i++;
+
+  }
+
+  if ( l ) {
+
+    if ( fs ) {
+      stringWidth = XTextWidth( *fs, &str[start], l );
+      charHeight = (*fs)->ascent + (*fs)->descent;
+    }
+    else {
+      stringWidth = 10;
+      charHeight = 2;
+    }
+
+    if ( alignment == XmALIGNMENT_BEGINNING )
+      stringX = x;
+    else if ( alignment == XmALIGNMENT_CENTER )
+      stringX = x + fieldWidth/2 - stringWidth/2;
+    else if ( alignment == XmALIGNMENT_END )
+      stringX = x + fieldWidth - stringWidth;
+
+    XDrawImageString( d, w, gc, stringX, y, &str[start], l );
+
+  }
+
+}
+
 void XDrawImageStrings (
   Display *d,
   Window w,
@@ -1210,7 +1557,7 @@ int i, start, l, strL;
 
   while ( i < strL ) {
 
-    if ( str[i] == 1 ) {
+    if ( ( str[i] == 1 ) || ( str[i] == 10 ) ) {
 
       if ( l ) {
         XDrawImageString( d, w, gc, x, y, &str[start], l );

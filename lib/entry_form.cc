@@ -1445,6 +1445,25 @@ XmTextVerifyCallbackStruct *xmv;
 
 }
 
+void TextBoxToString (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+class textEntry *teo;
+char *buf;
+int i;
+
+  teo = (class textEntry *) client;
+
+  buf = XmTextGetString( w );
+  strncpy( teo->charDest, buf, teo->maxLen );
+  XtFree( buf );
+
+
+}
+
 void TextFieldToString (
   Widget w,
   XtPointer client,
@@ -2404,6 +2423,182 @@ XmString str;
   }
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextFieldToString,
+   cur );
+
+  itemTail->flink = cur;
+  itemTail = cur;
+  itemTail->flink = NULL;
+
+  return 1;
+
+}
+
+int entryFormClass::addTextBox (
+  char *label,
+  int width,
+  int height,
+  char *dest,
+  int stringSize )
+{
+
+textEntry *cur;
+XmString str;
+int n;
+Arg args[20];
+Widget scrolledTextWidget = NULL;
+
+  cur = new textEntry;
+
+  // text widget
+
+  if ( curTopParent  == topForm ) {
+
+  if ( firstItem ) {
+
+    firstItem = 0;
+
+    n = 0;
+    XtSetArg( args[n], XmNrows, height ); n++;
+    XtSetArg( args[n], XmNcolumns, width ); n++;
+    XtSetArg( args[n], XmNeditable, True ); n++;
+    XtSetArg( args[n], XmNeditMode, XmMULTI_LINE_EDIT ); n++;
+    XtSetArg( args[n], XmNcursorPositionVisible, True ); n++;
+    XtSetArg( args[n], XmNfontList, NULL ); n++;
+    XtSetArg( args[n], XmNmaxLength, stringSize ); n++;
+    XtSetArg( args[n], XmNtopAttachment, XmATTACH_FORM ); n++;
+    XtSetArg( args[n], XmNrightAttachment, XmATTACH_FORM ); n++;
+    XtSetArg( args[n], XmNvalue, dest ); n++;
+    XtSetArg( args[n], XmNwordWrap, False ); n++;
+
+    scrolledTextWidget = cur->activeW =
+     XmCreateScrolledText( topForm, "", args, n );
+
+    curW = cur->activeW;
+    curRW = cur->activeW;
+
+  }
+  else {
+
+    n = 0;
+    XtSetArg( args[n], XmNrows, height ); n++;
+    XtSetArg( args[n], XmNcolumns, width ); n++;
+    XtSetArg( args[n], XmNeditable, True ); n++;
+    XtSetArg( args[n], XmNeditMode, XmMULTI_LINE_EDIT ); n++;
+    XtSetArg( args[n], XmNcursorPositionVisible, True ); n++;
+    XtSetArg( args[n], XmNfontList, NULL ); n++;
+    XtSetArg( args[n], XmNmaxLength, stringSize ); n++;
+    XtSetArg( args[n], XmNtopAttachment, XmATTACH_WIDGET ); n++;
+    XtSetArg( args[n], XmNtopWidget, curW ); n++;
+    XtSetArg( args[n], XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET ); n++;
+    XtSetArg( args[n], XmNrightWidget, curRW ); n++;
+    XtSetArg( args[n], XmNvalue, dest ); n++;
+    XtSetArg( args[n], XmNwordWrap, False ); n++;
+
+    scrolledTextWidget = cur->activeW =
+     XmCreateScrolledText( topForm, "", args, n );
+
+    curW = cur->activeW;
+    curRW = cur->activeW;
+
+  }
+
+  cur->charDest = dest;
+  cur->maxLen = stringSize;
+
+  if ( entryTag )
+    str = XmStringCreate( label, entryTag );
+  else
+    str = XmStringCreateLocalized( label );
+
+  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+   topForm,
+   XmNlabelString, str,
+   XmNmarginTop, 7,
+   XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+   XmNtopWidget, curW,
+   XmNrightAttachment, XmATTACH_WIDGET,
+   XmNrightWidget, curW,
+   XmNfontList, entryFontList,
+   NULL );
+
+  XmStringFree( str );
+
+  }
+  else {
+
+  if ( firstSubFormChild ) {
+
+    firstSubFormChild = 0;
+
+    if ( entryTag )
+      str = XmStringCreate( label, entryTag );
+    else
+      str = XmStringCreateLocalized( label );
+
+    cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+     curTopParent,
+     XmNlabelString, str,
+     XmNmarginTop, 7,
+     XmNtopAttachment, XmATTACH_FORM,
+     XmNleftAttachment, XmATTACH_FORM,
+     XmNfontList, entryFontList,
+     NULL );
+
+    XmStringFree( str );
+
+    n = 0;
+    XtSetArg( args[n], XmNrows, height ); n++;
+    XtSetArg( args[n], XmNcolumns, width ); n++;
+    XtSetArg( args[n], XmNeditable, True ); n++;
+    XtSetArg( args[n], XmNeditMode, XmMULTI_LINE_EDIT ); n++;
+    XtSetArg( args[n], XmNcursorPositionVisible, True ); n++;
+    XtSetArg( args[n], XmNfontList, NULL ); n++;
+    XtSetArg( args[n], XmNmaxLength, stringSize ); n++;
+    XtSetArg( args[n], XmNtopAttachment, XmATTACH_WIDGET ); n++;
+    XtSetArg( args[n], XmNtopWidget, cur->labelW ); n++;
+    XtSetArg( args[n], XmNleftAttachment, XmATTACH_OPPOSITE_WIDGET ); n++;
+    XtSetArg( args[n], XmNleftWidget, cur->labelW ); n++;
+    XtSetArg( args[n], XmNmarginTop, 7 ); n++;
+    XtSetArg( args[n], XmNvalue, dest ); n++;
+    XtSetArg( args[n], XmNwordWrap, False ); n++;
+
+    cur->activeW = XmCreateScrolledText( curTopParent, "", args, n );
+
+    prevW = cur->activeW;
+
+  }
+  else {
+
+    n = 0;
+    XtSetArg( args[n], XmNrows, height ); n++;
+    XtSetArg( args[n], XmNcolumns, width ); n++;
+    XtSetArg( args[n], XmNeditable, True ); n++;
+    XtSetArg( args[n], XmNeditMode, XmMULTI_LINE_EDIT ); n++;
+    XtSetArg( args[n], XmNcursorPositionVisible, True ); n++;
+    XtSetArg( args[n], XmNfontList, NULL ); n++;
+    XtSetArg( args[n], XmNmaxLength, stringSize ); n++;
+    XtSetArg( args[n], XmNtopAttachment, XmATTACH_WIDGET ); n++;
+    XtSetArg( args[n], XmNtopWidget, prevW ); n++;
+    XtSetArg( args[n], XmNleftAttachment, XmATTACH_OPPOSITE_WIDGET ); n++;
+    XtSetArg( args[n], XmNleftWidget, prevW ); n++;
+    XtSetArg( args[n], XmNmarginTop, 7 ); n++;
+    XtSetArg( args[n], XmNvalue, dest ); n++;
+    XtSetArg( args[n], XmNwordWrap, False ); n++;
+
+    cur->activeW = XmCreateScrolledText( curTopParent, "", args, n );
+
+    prevW = cur->activeW;
+
+  }
+
+  cur->charDest = dest;
+  cur->maxLen = stringSize;
+
+  }
+
+  if ( scrolledTextWidget ) XtManageChild( scrolledTextWidget );
+
+  XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextBoxToString,
    cur );
 
   itemTail->flink = cur;

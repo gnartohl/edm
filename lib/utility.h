@@ -192,6 +192,26 @@ char *getNextDataString (
   int max,
   FILE *f );
 
+void getStringBoxSize (
+  char *str,
+  int len,
+  XFontStruct **fs,
+  int alignment,
+  int *width,
+  int *height );
+
+void XDrawStringsAligned (
+  Display *d,
+  Window w,
+  GC gc,
+  int x,
+  int y,
+  int fieldWidth,
+  char *str,
+  int len,
+  XFontStruct **fs,
+  int alignment );
+
 void XDrawStrings (
   Display *d,
   Window w,
@@ -201,6 +221,18 @@ void XDrawStrings (
   int h,
   char *str,
   int len );
+
+void XDrawImageStringsAligned (
+  Display *d,
+  Window w,
+  GC gc,
+  int x,
+  int y,
+  int fieldWidth,
+  char *str,
+  int len,
+  XFontStruct **fs,
+  int alignment );
 
 void XDrawImageStrings (
   Display *d,
