@@ -104,6 +104,8 @@ public:
     void remove_conn_state_callback(Callback func, void *userarg);
 
     // Type information for this ProcessVariable
+    // For EPICS, we could just use DBF_INT, DBF_DOUBLE etc.
+    // but this is meant to descibe PV types of other systems as well.
     typedef struct
     {
         // Character of this PV
@@ -112,12 +114,11 @@ public:
         // text               : max length, 0 for variable length
         // special            : no clue
         size_t size;
-        // Human-readable description. Examples:
+        // Human-readable description. Currently supported:
+        // "integer:32"
         // "real:64"  for double
-        // "integer:<size>"
-        // "enumerated:<size>"
-        // "text:<size>"
-        // for special: "xyz_timestamp"
+        // "enumerated:16"
+        // "text:0"
         const char *description;
     } Type;
 
@@ -125,10 +126,15 @@ public:
    
     // -- Don't call ANY of the following when is_valid() returns false!!
 
-    // Whenever possible, ProcessVariable internally holds the "native" value.
-    // For arrays, it might request int or double arrays, whatever's
-    // closer to the native type.
-    // But you can ask for any type -> conversions on client side
+    // Whenever possible, ProcessVariable internally holds the "native" value
+    // of the control system. So no matter if the raw value was an int
+    // or double or enumrated, you can ask for int, double or a string.
+    // 
+    // It the value is really enumerated, you can ask for the enumeration
+    // strings. Otherwise the enumeration strings are undefined.
+    // For arrays, you have to respect the native type.
+    // Example: call get_int_array() only if get_type() reports integer.
+    
     // -- These numeric values may be UNDEFINED for
     //    get_type().type == text or special
     virtual int         get_int() const;

@@ -121,21 +121,22 @@ protected:
 };
 
 // Implementations for specific types
-# if 0
 class PVValueInt : public PVValue
 {
 public:
+    PVValueInt(EPICS_ProcessVariable *epv);
+    ~PVValueInt();
     const ProcessVariable::Type &get_type() const;
     short       get_DBR() const;
+    int         get_int() const;
     double      get_double() const;
+    size_t      get_string(char *strbuf, size_t buflen) const;
     const int  *get_int_array() const;
-    const double *get_double_array() const;
     void read_ctrlinfo(const void *buf);
     void read_value(const void *buf);
 private:
-    double *value;
+    int *value;
 };
-#endif
 
 class PVValueDouble : public PVValue
 {

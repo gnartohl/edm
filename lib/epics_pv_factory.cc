@@ -146,8 +146,8 @@ void EPICS_ProcessVariable::ca_connect_callback(
                 case DBF_CHAR:
                 case DBF_INT:
                 case DBF_LONG:
-                    //me->value = new PVValueInt(me);
-                    //break;
+                    me->value = new PVValueInt(me);
+                    break;
                 case DBF_DOUBLE:
                 default: // fallback: request as double
                     me->value = new PVValueDouble(me);
@@ -366,14 +366,87 @@ size_t PVValue::get_enum_count() const
 const char *PVValue::get_enum(size_t i) const
 {   return "<not enumerated>"; }
 
+// ---------------------- PVValueInt ---------------------------
+
+static ProcessVariable::Type integer_type =
+{ ProcessVariable::Type::integer, 32, "integer:32" };
+
+PVValueInt::PVValueInt(EPICS_ProcessVariable *epv)
+        : PVValue(epv)
+{
+    value = new int[epv->get_dimension()];
+}
+
+PVValueInt::~PVValueInt()
+{
+    delete [] value;
+}
+
+const ProcessVariable::Type &PVValueInt::get_type() const
+{   return integer_type; }
+
+short PVValueInt::get_DBR() const
+{   return DBF_LONG; }
+
+int PVValueInt::get_int() const
+{   return value[0]; }
+
+double PVValueInt::get_double() const
+{   return (double)value[0]; }
+
+size_t PVValueInt::get_string(char *strbuf, size_t len) const
+{
+    // TODO: Handle arrays?
+    int printed;
+    if (units[0])
+        printed = snprintf(strbuf, len, "%d %s", value[0], units);
+    else
+        printed = snprintf(strbuf, len, "%d", value[0]);
+    // snprintf stops printing at len. But some versions return
+    // full string length even if that would have been > len
+    if (printed > (int)len)
+        return len;
+    if (printed < 0)
+        return 0;
+    return (size_t) printed;
+}
+
+const int * PVValueInt::get_int_array() const
+{   return value; }
+
+void PVValueInt::read_ctrlinfo(const void *buf)
+{
+    const  dbr_ctrl_int *val = (const dbr_ctrl_int *)buf;
+    status = val->status;
+    severity = val->severity;
+    precision = 0;
+    strncpy(units, val->units, MAX_UNITS_SIZE);
+    units[MAX_UNITS_SIZE] = '\0';
+    upper_disp_limit = val->upper_disp_limit;
+    lower_disp_limit = val->lower_disp_limit;
+    upper_alarm_limit = val->upper_alarm_limit; 
+    upper_warning_limit = val->upper_warning_limit;
+    lower_warning_limit = val->lower_warning_limit;
+    lower_alarm_limit = val->lower_alarm_limit;
+    upper_ctrl_limit = val->upper_ctrl_limit;
+    lower_ctrl_limit = val->lower_ctrl_limit;
+    *value = val->value;
+}
+
+void PVValueInt::read_value(const void *buf)
+{
+    const dbr_time_long *val = (const dbr_time_long *)buf;
+    time = val->stamp.secPastEpoch + epochSecPast1970;
+    nano = val->stamp.nsec;
+    status = val->status;
+    severity = val->severity;
+    memcpy(value, &val->value, sizeof(int) * epv->get_dimension());
+}
+
 // ---------------------- PVValueDouble ---------------------------
 
 static ProcessVariable::Type double_type =
-{
-    ProcessVariable::Type::real,
-    64,
-    "real:64"
-};
+{ ProcessVariable::Type::real, 64, "real:64" };
 
 PVValueDouble::PVValueDouble(EPICS_ProcessVariable *epv)
         : PVValue(epv)
@@ -424,17 +497,13 @@ void PVValueDouble::read_value(const void *buf)
     nano = val->stamp.nsec;
     status = val->status;
     severity = val->severity;
-    memcpy(value, &val->value, epv->get_dimension());
+    memcpy(value, &val->value, sizeof(double) * epv->get_dimension());
 }
 
 // ---------------------- PVValueEnum -----------------------------
 
 static ProcessVariable::Type enum_type =
-{
-    ProcessVariable::Type::enumerated,
-    16,
-    "enumerated:16"
-};
+{ ProcessVariable::Type::enumerated, 16, "enumerated:16" };
    
 PVValueEnum::PVValueEnum(EPICS_ProcessVariable *epv)
         : PVValue(epv)
@@ -497,11 +566,7 @@ PVValueString::PVValueString(EPICS_ProcessVariable *epv)
 }
 
 static ProcessVariable::Type string_type =
-{
-    ProcessVariable::Type::text,
-    0,
-    "text:0"
-};
+{ ProcessVariable::Type::text, 0, "text:0" };
    
 const ProcessVariable::Type &PVValueString::get_type() const
 {   return string_type; }
