@@ -2557,7 +2557,7 @@ err_return:
 
   iconTestCount = 0;
 
-  XtMapWidget( appTop );
+  if ( !iconified ) XtMapWidget( appTop );
 
   return 1;
 
