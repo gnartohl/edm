@@ -18,6 +18,7 @@
 
 #define __act_grf_cc
 
+#include "epicsVersion.h"
 #include "act_grf.h"
 #include "act_win.h"
 #include "app_pkg.h"
@@ -3410,6 +3411,11 @@ time_t timet;
        pv->get_num_references() );
       actWin->appCtx->postMessage( msg );
       timet = pv->get_time_t(); // - 631152000;
+#if EPICS_VERSION > 3
+      timet += 7305*86400;
+#elif EPICS_REVISION > 13
+      timet += 7305*86400;
+#endif
       localtime_r( &timet, &theTime );
       fs = (double) pv->get_nano() / 1.0e9;
       //snprintf( msg, 79, "  Time stamp = %-d/%-d/%-d %-d:%-d:%.6f",

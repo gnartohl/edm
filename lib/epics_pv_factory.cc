@@ -10,11 +10,20 @@
 #include<alarm.h>
 #include<cvtFast.h>
 #include"epics_pv_factory.h"
+#include "epicsVersion.h"
 
 //#define DEBUG_EPICS
 
-/* 1/1/90 20 yr (5 leap) of seconds */
-static const unsigned epochSecPast1970 = 7305*86400;
+#if EPICS_VERSION == 3
+  #if EPICS_REVISION < 14
+  /* 1/1/90 20 yr (5 leap) of seconds */
+  static const unsigned epochSecPast1970 = 7305*86400;
+  #else
+  static const unsigned epochSecPast1970 = 0;
+  #endif
+#else
+  static const unsigned epochSecPast1970 = 0;
+#endif
 
 // --------------------- EPICS_PV_Factory -------------------------------
 
