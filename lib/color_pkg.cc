@@ -158,36 +158,14 @@ int red, green, blue;
 
     cio->change = 1;
 
-#if 0
-    curw = cio->getActiveWidget();
-
-    if ( curw ) {
-      n = 0;
-      XtSetArg( arg[n], XmNbackground, (XtArgVal) bg ); n++;
-      index = cio->pixIndex( bg );
-      fg = cio->labelPix( index );
-      XtSetArg( arg[n], XmNforeground, (XtArgVal) fg ); n++;
-      XtSetValues( curw, arg, n );
+    if ( cio->menuPosition(i) ) {
+      XmListSelectPos( cio->colorList.listWidget(), cio->menuPosition(i),
+       FALSE );
+      XmListSetBottomPos( cio->colorList.listWidget(), cio->menuPosition(i) );
     }
-
-    curw = cio->getNameWidget();
-
-    if ( curw ) {
-
-      str = XmStringCreateLocalized( cio->colorName(i) );
-
-      n = 0;
-      XtSetArg( arg[n], XmNlabelString, (XtArgVal) str ); n++;
-      // XtSetArg( arg[n], XmNwidth, (XtArgVal) 100 ); n++;
-      XtSetValues( curw, arg, n );
-
-      XmStringFree( str );
-
+    else {
+      XmListDeselectAllItems( cio->colorList.listWidget() );
     }
-#endif
-
-    XmListSelectPos( cio->colorList.listWidget(), i+1, FALSE );
-    XmListSetBottomPos( cio->colorList.listWidget(), i+1 );
 
     dest = cio->getCurDestination();
     if ( dest ) {
@@ -707,6 +685,9 @@ Arg arg[20];
 XmString str1, str2;
 colorCachePtr cur1, cur2, cur[2], curSpecial;
 unsigned long bgColor;
+int tmpSize;
+int *tmp;
+
 
   for ( i=0; i<NUM_SPECIAL_COLORS; i++ ) {
     special[i] = 0;
@@ -760,6 +741,32 @@ unsigned long bgColor;
       else if ( strcmp( tk, "max" ) == 0 ) {
 
         state = GET_MAX;
+
+      }
+      else if ( strcmp( tk, "menumap" ) == 0 ) {
+
+        stat = getToken( tk );
+        if ( stat == FAIL ) {
+          parseError( "Sytax error" );
+          parseStatus = stat;
+          goto term;
+        }
+        if ( strcmp( tk, "" ) == 0 ) {
+          parseError( "Unexpected end of file" );
+          parseStatus = FAIL;
+          goto term;
+        }
+        if ( strcmp( tk, "{" ) != 0 ) {
+          parseError( "Expected {" );
+          parseStatus = FAIL;
+          goto term;
+        }
+
+        maxMenuItems = 0;
+        menuMapSize = 128;
+        menuIndexMap = new int[menuMapSize];
+
+        state = GET_MENU_MAP;
 
       }
       else if ( strcmp( tk, "alarm" ) == 0 ) {
@@ -1083,6 +1090,51 @@ unsigned long bgColor;
         max_colors++;
 
         state = GET_FIRST_TOKEN;
+
+      }
+
+      break;
+
+    case GET_MENU_MAP:
+
+      stat = getToken( tk );
+      if ( stat == FAIL ) {
+        parseError( "Sytax error" );
+        parseStatus = stat;
+        goto term;
+      }
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( "Unexpected end of file" );
+        parseStatus = FAIL;
+        state = -1;
+      }
+
+      if ( strcmp( tk, "}" ) == 0 ) {
+
+        state = GET_FIRST_TOKEN;
+ 
+      }
+      else {
+
+        stat = avl_get_match( this->colorCacheByNameH, (void *) tk,
+         (void **) &cur1 );
+        if ( !( stat & 1 ) ) {
+          parseError( "Menu color name not found" );
+          parseStatus = FAIL;
+          goto term;
+        }
+
+        if ( ( maxMenuItems + 1 ) >= menuMapSize ) {
+          tmpSize = menuMapSize + 128;
+          tmp = new int[tmpSize];
+          for ( i=0; i<menuMapSize; i++ ) {
+            tmp[i] = menuIndexMap[i];
+          }
+          delete menuIndexMap;
+          menuIndexMap = tmp;
+        }
+
+        menuIndexMap[maxMenuItems++] = cur1->index;
 
       }
 
@@ -1631,6 +1683,9 @@ unsigned long plane_masks[1], bgColor;
   curIndex = 0;
   curX = 5;
   curY = 5;
+
+  maxMenuItems = 0;
+  menuIndexMap = NULL;
 
   f = fopen( fileName, "r" );
   if ( !f ) {
@@ -2697,4 +2752,40 @@ int colorInfoClass::majorVersion ( void ) {
   return major;
 
 }
+
+int colorInfoClass::menuIndex (
+  int index )
+{
 
+  if ( !menuIndexMap ) return index;
+
+  if ( index < 0 ) return 0;
+  if ( index >= maxMenuItems ) return maxMenuItems-1;
+
+  return menuIndexMap[index];
+
+}
+
+int colorInfoClass::menuPosition (
+  int index )
+{
+
+int i;
+
+  if ( !menuIndexMap ) return index;
+
+  if ( index < 0 ) return 0;
+
+  for ( i=0; i<maxMenuItems; i++ ) {
+    if ( index == menuIndexMap[i] ) return i+1;
+  }
+
+  return 0;
+
+}
+
+int colorInfoClass::menuSize ( void ) {
+
+  return maxMenuItems;
+
+}

@@ -51,7 +51,7 @@ static void clc_select (
   XtPointer call )
 {
 
-int i;
+int i, mIndex;
 XmListCallbackStruct *cbs = (XmListCallbackStruct *) call;
 colorListClass *clo = (colorListClass *) client;
 int *dest;
@@ -60,58 +60,21 @@ int *dest;
 
     if ( (void *) cbs->item == clo->items[i] ) {
 
-      clo->ci->setCurIndex( i );
+      mIndex = clo->ci->menuIndex( i );
 
-      if ( clo->ci->curCb ) clo->ci->curCb->setIndex( i );
+      clo->ci->setCurIndex( mIndex );
 
-#if 0
-
-      bg = clo->ci->pix( i );
-
-      curw = clo->ci->getActiveWidget();
-
-      if ( curw ) {
-        n = 0;
-        XtSetArg( arg[n], XmNbackground, (XtArgVal) bg ); n++;
-        index = clo->ci->pixIndex( bg );
-        fg = clo->ci->labelPix( index );
-        XtSetArg( arg[n], XmNforeground, (XtArgVal) fg ); n++;
-        XtSetValues( curw, arg, n );
-      }
-
-      curw = clo->ci->getNameWidget();
-
-      if ( curw ) {
-
-        str = XmStringCreateLocalized( clo->ci->colorName(i) );
-
-        n = 0;
-        XtSetArg( arg[n], XmNlabelString, (XtArgVal) str ); n++;
-        XtSetValues( curw, arg, n );
-
-        XmStringFree( str );
-
-      }
-
-#endif
+      if ( clo->ci->curCb ) clo->ci->curCb->setIndex( mIndex );
 
       dest = clo->ci->getCurDestination();
       if ( dest ) {
-        *dest = i;
+        *dest = mIndex;
       }
 
       break;
 
     }
   }
-
-#if 0
-  XmStringGetLtoR( cbs->item, XmFONTLIST_DEFAULT_TAG, &item );
-
-  strncpy( buf, item, 63 );
-
-  XtFree( item );
-#endif
 
   return;
 
@@ -348,21 +311,23 @@ Widget w;
 void colorListClass::filterList ( void )
 {
 
-int l;
+int i, l;
 colorCachePtr colorNode;
 char *colorName;
 
-  colorName = ci->firstColor( colorNode );
+  for ( i=0; i<ci->menuSize(); i++ ) {
 
-  while ( colorName ) {
+    colorName = ci->colorName( ci->menuIndex( i ) );
 
-    l = strlen(colorName);
+    if ( colorName ) {
 
-    if ( l && match( filterString, colorName ) ) {
-      addItem( colorName );
+      l = strlen(colorName);
+
+      if ( l && match( filterString, colorName ) ) {
+        addItem( colorName );
+      }
+
     }
-
-    colorName = ci->nextColor( colorNode );
 
   }
 

@@ -131,8 +131,15 @@ int curIndex;
 
   ci->setCurCb( cb );
 
-  XmListSelectPos( ci->colorList.listWidget(), curIndex+1, FALSE );
-  XmListSetBottomPos( ci->colorList.listWidget(), curIndex+1 );
+  if ( ci->menuPosition(curIndex) ) {
+    XmListSelectPos( ci->colorList.listWidget(),
+     ci->menuPosition(curIndex), FALSE );
+    XmListSetBottomPos( ci->colorList.listWidget(),
+     ci->menuPosition(curIndex) );
+  }
+  else {
+    XmListDeselectAllItems( ci->colorList.listWidget() );
+  }
 
   ci->openColorWindow();
 
@@ -165,8 +172,15 @@ int curIndex;
 
   ci->setCurCb( cb );
 
-  XmListSelectPos( ci->colorList.listWidget(), curIndex+1, FALSE );
-  XmListSetBottomPos( ci->colorList.listWidget(), curIndex+1 );
+  if ( ci->menuPosition(curIndex) ) {
+    XmListSelectPos( ci->colorList.listWidget(),
+     ci->menuPosition(curIndex), FALSE );
+    XmListSetBottomPos( ci->colorList.listWidget(),
+     ci->menuPosition(curIndex) );
+  }
+  else {
+    XmListDeselectAllItems( ci->colorList.listWidget() );
+  }
 
   ci->colorList.popup();
 

@@ -165,6 +165,7 @@ static const int GET_RULE_CONNECTOR = 6;
 static const int GET_RULE_INDEX = 7;
 static const int GET_COLOR = 8;
 static const int GET_ALARM_PARAMS = 9;
+static const int GET_MENU_MAP = 10;
 
 int readFile, tokenState, parseIndex, parseLine, tokenFirst, tokenLast,
  tokenNext, gotToken, colorIndex;
@@ -172,6 +173,9 @@ char parseBuf[MAX_LINE_SIZE+1], parseToken[MAX_LINE_SIZE+1];
 FILE *parseFile;
 
 int maxColor, numPaletteCols;
+
+int maxMenuItems, menuMapSize;
+int *menuIndexMap; // dynamic array
 
 public:
 
@@ -307,6 +311,14 @@ char *colorInfoClass::nextColor (
   colorCachePtr node );
 
 int colorInfoClass::majorVersion ( void );
+
+int colorInfoClass::menuIndex (
+  int index );
+
+int colorInfoClass::menuPosition (
+  int index );
+
+int colorInfoClass::menuSize ( void );
 
 };
 
