@@ -646,6 +646,7 @@ int xx0, yy0, xx1, yy1;
 
 }
 
+#if 0
 int activeGraphicClass::smartDrawAll ( void ) {
 
 activeGraphicListPtr cur;
@@ -709,6 +710,88 @@ XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
   while ( cur != actWin->head ) {
 
     if ( cur->node->intersects( x0-5, y0-5, x1+5, y1+5 ) ) {
+      cur->node->bufInvalidate();
+      cur->node->drawActive( x0, y0, x1, y1 );
+    }
+
+    cur = cur->flink;
+
+  }
+
+  actWin->executeGc.removeNormXClipRectangle();
+  actWin->executeGc.removeXorXClipRectangle();
+  actWin->executeGc.removeEraseXClipRectangle();
+
+  //  actWin->appCtx->proc->unlock();
+
+  return 1;
+
+}
+#endif
+
+int activeGraphicClass::smartDrawAll ( void ) {
+
+activeGraphicListPtr cur;
+int normClipStat, xorClipStat, eraseClipStat, x0, x1, y0, y1;
+XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
+
+//  actWin->appCtx->proc->lock();
+
+  x0 = this->getX0();
+  y0 = this->getY0();
+  x1 = this->getX1();
+  y1 = this->getY1();
+
+  this->bufInvalidate();
+  this->erase();
+
+  normClipStat = actWin->drawGc.addNormXClipRectangle( xR );
+  xorClipStat = actWin->drawGc.addXorXClipRectangle( xR );
+  eraseClipStat = actWin->drawGc.addEraseXClipRectangle( xR );
+
+  cur = actWin->head->flink;
+  while ( cur != actWin->head ) {
+    if ( cur->node->intersects( x0, y0, x1, y1 ) ) {
+      cur->node->bufInvalidate();
+      cur->node->draw( x0, y0, x1, y1 );
+    }
+    cur = cur->flink;
+  }
+
+  if ( normClipStat & 1 ) actWin->drawGc.removeNormXClipRectangle();
+  if ( xorClipStat & 1 ) actWin->drawGc.removeXorXClipRectangle();
+  if ( eraseClipStat & 1 ) actWin->drawGc.removeEraseXClipRectangle();
+
+  //  actWin->appCtx->proc->unlock();
+
+  return 1;
+
+}
+
+int activeGraphicClass::smartDrawAllActive ( void ) {
+
+activeGraphicListPtr cur;
+int x0, x1, y0, y1;
+XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
+
+//  actWin->appCtx->proc->lock();
+
+  x0 = this->getX0();
+  y0 = this->getY0();
+  x1 = this->getX1();
+  y1 = this->getY1();
+
+  this->bufInvalidate();
+  this->eraseActive();
+
+  actWin->executeGc.addNormXClipRectangle( xR );
+  actWin->executeGc.addXorXClipRectangle( xR );
+  actWin->executeGc.addEraseXClipRectangle( xR );
+
+  cur = actWin->head->flink;
+  while ( cur != actWin->head ) {
+
+    if ( cur->node->intersects( x0, y0, x1, y1 ) ) {
       cur->node->bufInvalidate();
       cur->node->drawActive( x0, y0, x1, y1 );
     }
