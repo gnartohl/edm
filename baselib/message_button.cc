@@ -1435,9 +1435,11 @@ void activeMessageButtonClass::pointerIn (
   if ( !ca_write_access( destPvId ) ) {
     actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
   }
+  else {
+    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_DEFAULT );
+  }
 
   activeGraphicClass::pointerIn( _x, _y, buttonState );
-
 
 }
 

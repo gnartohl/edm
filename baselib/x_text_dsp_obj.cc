@@ -3022,6 +3022,11 @@ void activeXTextDspClass::pointerIn (
     actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
 
   }
+  else {
+
+    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_DEFAULT );
+
+  }
 
   if ( !isWidget ) {
     activeGraphicClass::pointerIn( _x, _y, buttonState );

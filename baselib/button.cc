@@ -1771,6 +1771,9 @@ void activeButtonClass::pointerIn (
   if ( !ca_write_access( controlPvId ) ) {
     actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
   }
+  else {
+    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_DEFAULT );
+  }
 
   activeGraphicClass::pointerIn( _x, _y, buttonState );
 

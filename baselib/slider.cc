@@ -2035,6 +2035,10 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
       slo->actWin->cursor.set( XtWindow(slo->actWin->executeWidget),
        CURSOR_K_NO );
     }
+    else {
+      slo->actWin->cursor.set( XtWindow(slo->actWin->executeWidget),
+       CURSOR_K_DEFAULT );
+    }
   }
 
   if ( e->type == LeaveNotify ) {
