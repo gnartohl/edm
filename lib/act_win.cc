@@ -17397,6 +17397,9 @@ commentLinesPtr commentCur, commentNext;
     restoreTimer = 0;
   }
 
+  // flush undo list
+  undoObj.flush();
+
   // init some items
 
   autosaveTimer = 0;
