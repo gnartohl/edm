@@ -2233,7 +2233,7 @@ activeWindowListPtr cur;
 
 void appContextClass::getFilePaths ( void ) {
 
-int i, l, curLen, stat;
+int i, l, allocL, curLen, stat;
 char *envPtr, *gotIt, *buf, save[127+1], path[127+1], *tk;
 
   // EDMFILES
@@ -2241,10 +2241,10 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], *tk;
   if ( envPtr ) {
 
     l = strlen( envPtr ) + 1;
-    l = l / 4096;
-    l = l * 4096 + 4096;
-    curLen = l;
-    buf = new char[l];
+    allocL = l / 4096;
+    allocL = allocL * 4096 + 4096;
+    curLen = allocL;
+    buf = new char[allocL];
 
     strncpy( buf, envPtr, l );
     buf[l] = 0;
@@ -2277,12 +2277,12 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], *tk;
   if ( envPtr ) {
 
     l = strlen( envPtr ) + 1;
-    l = l / 4096;
-    l = l * 4096 + 4096;
-    if ( l > curLen ) {
-      curLen = l;
+    allocL = l / 4096;
+    allocL = allocL * 4096 + 4096;
+    if ( allocL > curLen ) {
+      curLen = allocL;
       delete buf;
-      buf = new char[l];
+      buf = new char[allocL];
     }
 
     // count number of search paths
