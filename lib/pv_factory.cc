@@ -48,21 +48,25 @@ class ProcessVariable *PV_Factory::create(const char *PV_name)
 
 class ProcessVariable *pv;
 
-    if (strncmp(PV_name, "EPICS\\", 6)==0)
-        pv = epics_pv_factory->create(PV_name+6);
-    else if (strncmp(PV_name, "CALC\\", 5)==0)
-        pv = calc_pv_factory->create(PV_name+5);
-    if (strchr(PV_name, '\\'))
-    {
-        fprintf(stderr, "Unknown PV Factory for PV '%s'\n", PV_name);
-        return 0;
-    }
-    
-    pv = epics_pv_factory->create(PV_name);
-
+  if (strncmp(PV_name, "EPICS\\", 6)==0) {
+    pv = epics_pv_factory->create(PV_name+6);
     pv->clearDoInitialCallback();
-
     return pv;
+  }
+  else if (strncmp(PV_name, "CALC\\", 5)==0) {
+    pv = calc_pv_factory->create(PV_name+5);
+    pv->clearDoInitialCallback();
+    return pv;
+  }
+  else if (strchr(PV_name, '\\')) {
+    fprintf(stderr, "Unknown PV Factory for PV '%s'\n", PV_name);
+    return 0;
+  }
+    
+  pv = epics_pv_factory->create(PV_name);
+  pv->clearDoInitialCallback();
+
+  return pv;
 
 }
 
@@ -72,21 +76,26 @@ class ProcessVariable *PV_Factory::createWithInitialCallbacks (
 
 class ProcessVariable *pv;
 
-    if (strncmp(PV_name, "EPICS\\", 6)==0)
-        pv = epics_pv_factory->create(PV_name+6);
-    else if (strncmp(PV_name, "CALC\\", 5)==0)
-        pv = calc_pv_factory->create(PV_name+5);
-    if (strchr(PV_name, '\\'))
-    {
-        fprintf(stderr, "Unknown PV Factory for PV '%s'\n", PV_name);
-        return 0;
-    }
-    
-    pv = epics_pv_factory->create(PV_name);
-
+  if (strncmp(PV_name, "EPICS\\", 6)==0) {
+    pv = epics_pv_factory->create(PV_name+6);
     pv->setDoInitialCallback();
-
     return pv;
+  }
+  else if (strncmp(PV_name, "CALC\\", 5)==0) {
+    pv = calc_pv_factory->create(PV_name+5);
+    pv->setDoInitialCallback();
+    return pv;
+  }
+  else if (strchr(PV_name, '\\')) {
+    fprintf(stderr, "Unknown PV Factory for PV '%s'\n", PV_name);
+    return 0;
+  }
+    
+  pv = epics_pv_factory->create(PV_name);
+  pv->setDoInitialCallback();
+
+  return pv;
+
 }
 
 // These two should be static, but then "friend" doesn't work,
