@@ -1,21 +1,30 @@
-3 0 1
-206
-425
+3 1 0
+210
+445
 368
 323
 helvetica-medium-r-12.0
 0
 helvetica-medium-r-12.0
 0
-14
-4
-14
-14
-14
-5
-1
-11
-8
+rgb
+0,0,0
+rgb
+46810,47850,46810
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+44730,44730,44730
+rgb
+61374,61374,61374
+rgb
+22885,22885,22885
+rgb
+34327,34327,34327
 Help - Multiple inclusive select
 0
 0
@@ -27,9 +36,9 @@ Help - Multiple inclusive select
 0
 helvetica-bold-r-14.0
 0
-EOD
+<<<E~O~D>>>
 activeDynSymbolClass
-1 3 0
+1 4 0
 69
 159
 239
@@ -50,34 +59,41 @@ $(help)helpSelMultiSym
 1
 14
 5
-EOD
+0
+<<<E~O~D>>>
 activeExitButtonClass
-2 0 0
+2 1 0
 6
 290
 59
 24
-14
-5
-1
-11
+rgb
+0,0,0
+rgb
+44730,44730,44730
+rgb
+61374,61374,61374
+rgb
+22885,22885,22885
 1
 0
 helvetica-medium-r-12.0
 Close
 0
 0
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 54
 8
 237
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -89,17 +105,19 @@ helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 54
 22
 222
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -111,17 +129,19 @@ helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 51
 47
 237
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -133,17 +153,19 @@ helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 53
 61
 233
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -155,17 +177,19 @@ helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 52
 75
 239
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -177,17 +201,19 @@ helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 52
 100
 254
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -199,17 +225,19 @@ helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 52
 116
 279
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -221,4 +249,4 @@ helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>

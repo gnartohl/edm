@@ -1,21 +1,30 @@
-3 0 1
-108
-181
+3 1 0
+112
+201
 362
 178
 helvetica-medium-r-12.0
 0
 helvetica-medium-r-12.0
 0
-14
-3
-14
-14
-14
-5
-1
-11
-8
+rgb
+0,0,0
+rgb
+50971,52011,50971
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+44730,44730,44730
+rgb
+61374,61374,61374
+rgb
+22885,22885,22885
+rgb
+34327,34327,34327
 Help - Editing Lines
 0
 0
@@ -27,17 +36,19 @@ Help - Editing Lines
 0
 helvetica-bold-r-14.0
 0
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 20
 14
 208
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -49,17 +60,19 @@ helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 20
 34
 11
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -71,17 +84,19 @@ helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 20
 115
 328
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -93,34 +108,40 @@ helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeExitButtonClass
-2 0 0
+2 1 0
 6
 147
 59
 24
-14
-5
-1
-11
+rgb
+0,0,0
+rgb
+44730,44730,44730
+rgb
+61374,61374,61374
+rgb
+22885,22885,22885
 1
 0
 helvetica-medium-r-14.0
 Close
 0
 0
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 80
 34
 108
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -132,17 +153,19 @@ helvetica-medium-i-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 193
 34
 134
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -154,17 +177,19 @@ helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 170
 54
 11
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -176,17 +201,19 @@ helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 40
 74
 39
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -198,17 +225,19 @@ helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 80
 74
 106
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -220,17 +249,19 @@ helvetica-medium-i-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 191
 74
 122
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -242,17 +273,19 @@ helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 40
 34
 39
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -264,17 +297,19 @@ helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 41
 93
 65
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -286,4 +321,4 @@ helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>

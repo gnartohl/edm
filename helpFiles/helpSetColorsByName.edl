@@ -1,21 +1,30 @@
-3 0 1
-163
-134
+3 1 0
+167
+154
 918
 748
 helvetica-medium-r-18.0
 0
 helvetica-medium-r-12.0
 0
-79
-3
-79
-79
-27
-4
-1
-10
-2
+rgb
+0,0,0
+rgb
+50971,52011,50971
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+0,0,48891
+rgb
+46810,47850,46810
+rgb
+61374,61374,61374
+rgb
+27046,27046,27046
+rgb
+55132,56172,55132
 Help - Set colors by name
 0
 0
@@ -27,7 +36,7 @@ Help - Set colors by name
 0
 helvetica-bold-r-14.0
 0
-EOD
+<<<E~O~D>>>
 cfcf6c8a_dbeb_11d2_8a97_00104b8742df
 1 2 0
 18
@@ -38,7 +47,7 @@ $(help)helpSetColors-Props
 0
 0
 0
-EOD
+<<<E~O~D>>>
 cfcf6c8a_dbeb_11d2_8a97_00104b8742df
 1 2 0
 583
@@ -49,17 +58,19 @@ $(help)helpSetColorsByName-Menu
 0
 0
 0
-EOD
+<<<E~O~D>>>
 activeRectangleClass
-2 0 0
+2 1 0
 0
 0
 918
 35
-2
+rgb
+55132,56172,55132
 0
 1
-2
+rgb
+55132,56172,55132
 0
 <<<empty>>>
 <<<empty>>>
@@ -69,17 +80,19 @@ activeRectangleClass
 1
 0
 0
-EOD
+<<<E~O~D>>>
 activeCircleClass
-2 0 0
+2 1 0
 828
 391
 65
 65
-26
+rgb
+0,0,57213
 0
 1
-31
+rgb
+0,58253,57213
 0
 <<<empty>>>
 <<<empty>>>
@@ -88,9 +101,9 @@ activeCircleClass
 <<<empty>>>
 2
 0
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 750
 403
 60
@@ -104,10 +117,12 @@ activeLineClass
 790 433
 750 433
 750 413
-79
+rgb
+0,0,0
 0
 1
-14
+rgb
+0,0,0
 0
 1
 0
@@ -116,17 +131,19 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 825
 358
 71
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -138,17 +155,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 290
 5
 338
 27
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -160,34 +179,40 @@ helvetica-bold-r-24.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeExitButtonClass
-2 0 0
+2 1 0
 7
 715
 59
 24
-14
-5
-1
-11
+rgb
+0,0,0
+rgb
+44730,44730,44730
+rgb
+61374,61374,61374
+rgb
+22885,22885,22885
 1
 0
 helvetica-medium-r-12.0
 Close
 0
 0
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 360
 320
 169
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -199,17 +224,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 360
 350
 173
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -221,17 +248,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 360
 410
 159
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -243,17 +272,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 360
 440
 173
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -265,17 +296,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 360
 380
 73
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -287,17 +320,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 360
 290
 196
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -309,17 +344,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 360
 470
 48
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -331,17 +368,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 411
 470
 22
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -353,9 +392,9 @@ helvetica-bold-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 160
 298
 196
@@ -363,10 +402,12 @@ activeLineClass
 2
 356 298
 160 298
-79
+rgb
+0,0,0
 0
 0
-4
+rgb
+46810,47850,46810
 0
 2
 0
@@ -375,9 +416,9 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 177
 298
 35
@@ -385,10 +426,12 @@ activeLineClass
 2
 212 298
 177 329
-79
+rgb
+0,0,0
 0
 0
-4
+rgb
+46810,47850,46810
 0
 2
 0
@@ -397,9 +440,9 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 209
 327
 146
@@ -408,10 +451,12 @@ activeLineClass
 355 327
 330 327
 209 358
-79
+rgb
+0,0,0
 0
 0
-4
+rgb
+46810,47850,46810
 0
 2
 0
@@ -420,9 +465,9 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 539
 345
 52
@@ -431,10 +476,12 @@ activeLineClass
 539 359
 556 359
 591 345
-79
+rgb
+0,0,0
 0
 0
-4
+rgb
+46810,47850,46810
 0
 2
 0
@@ -443,9 +490,9 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 538
 409
 54
@@ -454,10 +501,12 @@ activeLineClass
 538 448
 559 448
 592 409
-79
+rgb
+0,0,0
 0
 0
-4
+rgb
+46810,47850,46810
 0
 2
 0
@@ -466,9 +515,9 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 155
 388
 202
@@ -477,10 +526,12 @@ activeLineClass
 357 388
 326 415
 155 415
-79
+rgb
+0,0,0
 0
 0
-4
+rgb
+46810,47850,46810
 0
 2
 0
@@ -489,9 +540,9 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 193
 417
 164
@@ -500,10 +551,12 @@ activeLineClass
 357 417
 327 438
 193 438
-79
+rgb
+0,0,0
 0
 0
-4
+rgb
+46810,47850,46810
 0
 2
 0
@@ -512,4 +565,4 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>

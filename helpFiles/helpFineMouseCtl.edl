@@ -1,21 +1,30 @@
-3 0 1
-191
-336
+3 1 0
+195
+356
 345
 366
 helvetica-medium-r-12.0
 0
 helvetica-medium-r-12.0
 0
-14
-4
-14
-14
-14
-5
-1
-11
-8
+rgb
+0,0,0
+rgb
+46810,47850,46810
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+44730,44730,44730
+rgb
+61374,61374,61374
+rgb
+22885,22885,22885
+rgb
+34327,34327,34327
 Help - Fine Mouse Control
 0
 0
@@ -27,17 +36,19 @@ Help - Fine Mouse Control
 0
 helvetica-bold-r-14.0
 0
-EOD
+<<<E~O~D>>>
 activeRectangleClass
-2 0 0
+2 1 0
 47
 97
 15
 15
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -47,17 +58,19 @@ activeRectangleClass
 1
 0
 0
-EOD
+<<<E~O~D>>>
 activeRectangleClass
-2 0 0
+2 1 0
 137
 97
 15
 15
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -67,17 +80,19 @@ activeRectangleClass
 1
 0
 0
-EOD
+<<<E~O~D>>>
 activeRectangleClass
-2 0 0
+2 1 0
 227
 97
 15
 15
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -87,17 +102,19 @@ activeRectangleClass
 1
 0
 0
-EOD
+<<<E~O~D>>>
 activeRectangleClass
-2 0 0
+2 1 0
 47
 217
 15
 15
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -107,17 +124,19 @@ activeRectangleClass
 1
 0
 0
-EOD
+<<<E~O~D>>>
 activeRectangleClass
-2 0 0
+2 1 0
 137
 217
 15
 15
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -127,17 +146,19 @@ activeRectangleClass
 1
 0
 0
-EOD
+<<<E~O~D>>>
 activeRectangleClass
-2 0 0
+2 1 0
 227
 217
 15
 15
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -147,17 +168,19 @@ activeRectangleClass
 1
 0
 0
-EOD
+<<<E~O~D>>>
 activeRectangleClass
-2 0 0
+2 1 0
 47
 157
 15
 15
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -167,17 +190,19 @@ activeRectangleClass
 1
 0
 0
-EOD
+<<<E~O~D>>>
 activeRectangleClass
-2 0 0
+2 1 0
 227
 157
 15
 15
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -187,17 +212,19 @@ activeRectangleClass
 1
 0
 0
-EOD
+<<<E~O~D>>>
 activeRectangleClass
-2 0 0
+2 1 0
 54
 104
 181
 121
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -207,9 +234,9 @@ activeRectangleClass
 1
 0
 0
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 144
 228
 91
@@ -218,10 +245,12 @@ activeLineClass
 235 228
 173 288
 144 228
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -230,17 +259,19 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 57
 298
 273
 13
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -252,17 +283,19 @@ courier-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 57
 314
 280
 13
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -274,17 +307,19 @@ courier-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 57
 330
 245
 13
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -296,17 +331,19 @@ courier-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 57
 347
 175
 13
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -318,17 +355,19 @@ courier-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 18
 11
 287
 13
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -340,17 +379,19 @@ courier-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 18
 27
 280
 13
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -362,17 +403,19 @@ courier-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 18
 43
 231
 13
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -384,17 +427,19 @@ courier-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 18
 60
 175
 13
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -406,9 +451,9 @@ courier-medium-r-12.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 73
 77
 37
@@ -416,10 +461,12 @@ activeLineClass
 2
 73 77
 110 150
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -428,4 +475,4 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>

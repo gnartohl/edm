@@ -1,21 +1,30 @@
-3 0 1
-391
-410
+3 1 0
+395
+430
 285
 252
 helvetica-medium-r-12.0
 0
 helvetica-medium-r-12.0
 0
-14
-4
-14
-14
-14
-5
-1
-11
-8
+rgb
+0,0,0
+rgb
+46810,47850,46810
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+44730,44730,44730
+rgb
+61374,61374,61374
+rgb
+22885,22885,22885
+rgb
+34327,34327,34327
 Help - Single inclusive select
 0
 0
@@ -27,9 +36,9 @@ Help - Single inclusive select
 0
 helvetica-bold-r-14.0
 0
-EOD
+<<<E~O~D>>>
 activeDynSymbolClass
-1 3 0
+1 4 0
 28
 118
 226
@@ -50,17 +59,20 @@ $(help)helpSelSingInclSym
 1
 14
 5
-EOD
+0
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 16
 20
 216
 16
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -72,17 +84,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 16
 41
 254
 16
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -94,34 +108,40 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeExitButtonClass
-2 0 0
+2 1 0
 4
 222
 59
 24
-14
-5
-1
-11
+rgb
+0,0,0
+rgb
+44730,44730,44730
+rgb
+61374,61374,61374
+rgb
+22885,22885,22885
 1
 0
 helvetica-medium-r-12.0
 Close
 0
 0
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 16
 62
 226
 16
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -133,17 +153,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 16
 83
 132
 16
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -155,4 +177,4 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>

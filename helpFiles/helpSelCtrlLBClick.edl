@@ -1,21 +1,30 @@
-3 0 1
-242
-388
+3 1 0
+246
+408
 291
 228
 helvetica-medium-r-12.0
 0
 helvetica-medium-r-12.0
 0
-14
-4
-14
-14
-14
-5
-1
-11
-8
+rgb
+0,0,0
+rgb
+46810,47850,46810
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+44730,44730,44730
+rgb
+61374,61374,61374
+rgb
+22885,22885,22885
+rgb
+34327,34327,34327
 Help - Cycle selection
 0
 0
@@ -27,9 +36,9 @@ Help - Cycle selection
 0
 helvetica-bold-r-14.0
 0
-EOD
+<<<E~O~D>>>
 activeDynSymbolClass
-1 3 0
+1 4 0
 64
 89
 164
@@ -42,7 +51,7 @@ $(help)helpSelCycleSym
 0
 1
 0.5
-0
+12
 1
 <<<empty>>>
 1
@@ -50,17 +59,20 @@ $(help)helpSelCycleSym
 1
 14
 5
-EOD
+0
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 35
 36
 224
 16
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -72,17 +84,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 35
 55
 197
 16
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -94,34 +108,40 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeExitButtonClass
-2 0 0
+2 1 0
 4
 197
 59
 24
-14
-5
-1
-11
+rgb
+0,0,0
+rgb
+44730,44730,44730
+rgb
+61374,61374,61374
+rgb
+22885,22885,22885
 1
 0
 helvetica-medium-r-12.0
 Close
 0
 0
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 35
 17
 186
 16
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -133,4 +153,4 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>

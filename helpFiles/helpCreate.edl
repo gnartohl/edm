@@ -1,21 +1,30 @@
-3 0 1
-314
-111
+3 1 0
+318
+131
 841
 786
 helvetica-medium-r-18.0
 0
 helvetica-medium-r-12.0
 0
-79
-3
-79
-79
-27
-4
-1
-10
-2
+rgb
+0,0,0
+rgb
+50971,52011,50971
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+0,0,48891
+rgb
+46810,47850,46810
+rgb
+61374,61374,61374
+rgb
+27046,27046,27046
+rgb
+55132,56172,55132
 Help - Create
 0
 0
@@ -27,7 +36,7 @@ Help - Create
 0
 helvetica-bold-r-14.0
 0
-EOD
+<<<E~O~D>>>
 cfcf6c8a_dbeb_11d2_8a97_00104b8742df
 1 2 0
 87
@@ -38,7 +47,7 @@ $(help)helpCreate-Types
 0
 0
 0
-EOD
+<<<E~O~D>>>
 cfcf6c8a_dbeb_11d2_8a97_00104b8742df
 1 2 0
 156
@@ -49,17 +58,19 @@ $(help)helpCreate-Items
 0
 0
 0
-EOD
+<<<E~O~D>>>
 activeRectangleClass
-2 0 0
+2 1 0
 0
 0
 842
 35
-2
+rgb
+55132,56172,55132
 0
 1
-2
+rgb
+55132,56172,55132
 0
 <<<empty>>>
 <<<empty>>>
@@ -69,17 +80,19 @@ activeRectangleClass
 1
 0
 0
-EOD
+<<<E~O~D>>>
 activeRectangleClass
-2 0 0
+2 1 0
 19
 165
 65
 65
-79
+rgb
+0,0,0
 0
 0
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -89,17 +102,19 @@ activeRectangleClass
 1
 0
 0
-EOD
+<<<E~O~D>>>
 activeCircleClass
-2 0 0
+2 1 0
 757
 419
 65
 65
-79
+rgb
+0,0,0
 0
 0
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -108,9 +123,9 @@ activeCircleClass
 <<<empty>>>
 1
 0
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 280
 340
 60
@@ -124,10 +139,12 @@ activeLineClass
 320 370
 280 370
 280 350
-79
+rgb
+0,0,0
 0
 1
-14
+rgb
+0,0,0
 0
 1
 0
@@ -136,9 +153,9 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 679
 431
 60
@@ -152,10 +169,12 @@ activeLineClass
 719 461
 679 461
 679 441
-79
+rgb
+0,0,0
 0
 1
-14
+rgb
+0,0,0
 0
 1
 0
@@ -164,17 +183,19 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 10
 98
 115
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -186,17 +207,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 10
 128
 300
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -208,17 +231,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 100
 180
 127
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -230,17 +255,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 699
 625
 48
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -252,17 +279,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 386
 129
 132
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -274,17 +303,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 754
 386
 71
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -296,17 +327,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 750
 625
 22
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -318,17 +351,19 @@ helvetica-bold-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 286
 5
 268
 27
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -340,9 +375,9 @@ helvetica-bold-r-24.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 31
 236
 50
@@ -358,10 +393,12 @@ activeLineClass
 31 236
 51 236
 51 256
-79
+rgb
+0,0,0
 0
 1
-14
+rgb
+0,0,0
 0
 1
 0
@@ -370,34 +407,40 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeExitButtonClass
-2 0 0
+2 1 0
 6
 756
 59
 24
-14
-5
-1
-11
+rgb
+0,0,0
+rgb
+44730,44730,44730
+rgb
+61374,61374,61374
+rgb
+22885,22885,22885
 1
 0
 helvetica-medium-r-12.0
 Close
 0
 0
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 221
 208
 110
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -409,9 +452,9 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 99
 303
 50
@@ -427,10 +470,12 @@ activeLineClass
 99 303
 119 303
 119 323
-79
+rgb
+0,0,0
 0
 1
-14
+rgb
+0,0,0
 0
 1
 0
@@ -439,17 +484,21 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 relatedDisplayClass
-2 3 0
+2 5 0
 523
 125
 101
 24
-14
-5
-1
-11
+rgb
+0,0,0
+rgb
+44730,44730,44730
+rgb
+61374,61374,61374
+rgb
+22885,22885,22885
 $(help)helpSetColors
 <<<empty>>>
 helvetica-medium-r-12.0
@@ -471,74 +520,12 @@ helvetica-medium-r-12.0
 0
 1
 0
-<<<empty>>>
-Editing
-0
-1
-0
-0
-<<<empty>>>
-0
-1
-<<<empty>>>
-<<<empty>>>
-0
-0
-0
-0
-<<<empty>>>
-0
-1
-<<<empty>>>
-<<<empty>>>
-0
-0
-0
-0
-<<<empty>>>
-0
-1
-<<<empty>>>
-<<<empty>>>
-0
-0
-0
-0
-<<<empty>>>
-0
-1
-<<<empty>>>
-<<<empty>>>
-0
-0
-0
-0
-<<<empty>>>
-0
-1
-<<<empty>>>
-<<<empty>>>
-0
-0
-0
-0
-<<<empty>>>
-0
-1
-<<<empty>>>
-<<<empty>>>
-0
-0
-0
-0
-<<<empty>>>
-0
 1
 e.g. set colors
 1
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 121
 199
 22
@@ -546,10 +533,12 @@ activeLineClass
 2
 143 199
 121 235
-79
+rgb
+0,0,0
 0
 0
-4
+rgb
+46810,47850,46810
 0
 2
 0
@@ -558,9 +547,9 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 253
 227
 27
@@ -568,10 +557,12 @@ activeLineClass
 2
 280 227
 253 290
-79
+rgb
+0,0,0
 0
 0
-4
+rgb
+46810,47850,46810
 0
 2
 0
@@ -580,9 +571,9 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeLineClass
-2 0 0
+2 1 0
 523
 642
 208
@@ -590,10 +581,12 @@ activeLineClass
 2
 523 712
 731 642
-79
+rgb
+0,0,0
 0
 0
-4
+rgb
+46810,47850,46810
 0
 2
 0
@@ -602,7 +595,7 @@ activeLineClass
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 cfcf6c8a_dbeb_11d2_8a97_00104b8742df
 1 2 0
 360
@@ -613,4 +606,4 @@ $(help)helpCreate-Props
 0
 0
 0
-EOD
+<<<E~O~D>>>

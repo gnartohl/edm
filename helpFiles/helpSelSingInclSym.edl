@@ -1,21 +1,30 @@
-3 0 1
-17
-109
+3 1 0
+21
+129
 1204
 661
 helvetica-medium-r-12.0
 0
 helvetica-medium-r-12.0
 0
-14
-4
-14
-14
-14
-5
-1
-11
-8
+rgb
+0,0,0
+rgb
+46810,47850,46810
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+44730,44730,44730
+rgb
+61374,61374,61374
+rgb
+22885,22885,22885
+rgb
+34327,34327,34327
 <<<empty>>>
 0
 0
@@ -27,7 +36,7 @@ helvetica-medium-r-12.0
 0
 helvetica-bold-r-14.0
 0
-EOD
+<<<E~O~D>>>
 activeGroupClass
 26
 12
@@ -35,15 +44,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 26
 12
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -55,15 +66,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 124
 57
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -75,15 +88,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 190
 37
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -95,15 +110,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 85
 32
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -115,7 +132,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 41
 60
 0
@@ -123,10 +140,12 @@ activeLineClass
 2
 41 60
 41 65
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -137,7 +156,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 41
 69
 0
@@ -145,10 +164,12 @@ activeLineClass
 2
 41 69
 41 74
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -159,7 +180,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 43
 67
 5
@@ -167,10 +188,12 @@ activeLineClass
 2
 43 67
 48 67
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -181,7 +204,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 34
 67
 5
@@ -189,10 +212,12 @@ activeLineClass
 2
 34 67
 39 67
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -203,17 +228,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 41
 67
 0
 0
 1
 41 67
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -224,7 +251,7 @@ activeLineClass
 <<<empty>>>
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 260
 5
@@ -232,15 +259,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 260
 5
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -252,15 +281,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 358
 50
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -272,15 +303,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 424
 30
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -292,15 +325,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 319
 25
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -312,7 +347,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 275
 53
 0
@@ -320,10 +355,12 @@ activeLineClass
 2
 275 53
 275 58
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -334,7 +371,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 275
 62
 0
@@ -342,10 +379,12 @@ activeLineClass
 2
 275 62
 275 67
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -356,7 +395,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 277
 60
 5
@@ -364,10 +403,12 @@ activeLineClass
 2
 277 60
 282 60
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -378,7 +419,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 268
 60
 5
@@ -386,10 +427,12 @@ activeLineClass
 2
 268 60
 273 60
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -400,17 +443,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 275
 60
 0
 0
 1
 275 60
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -421,7 +466,7 @@ activeLineClass
 <<<empty>>>
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 492
 8
@@ -429,15 +474,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 492
 8
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -449,15 +496,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 590
 53
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -469,15 +518,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 656
 33
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -489,15 +540,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 551
 28
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -509,7 +562,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 534
 44
 0
@@ -517,10 +570,12 @@ activeLineClass
 2
 534 44
 534 49
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -531,7 +586,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 534
 53
 0
@@ -539,10 +594,12 @@ activeLineClass
 2
 534 53
 534 58
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -553,7 +610,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 536
 51
 5
@@ -561,10 +618,12 @@ activeLineClass
 2
 536 51
 541 51
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -575,7 +634,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 527
 51
 5
@@ -583,10 +642,12 @@ activeLineClass
 2
 527 51
 532 51
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -597,17 +658,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 534
 51
 0
 0
 1
 534 51
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -618,7 +681,7 @@ activeLineClass
 <<<empty>>>
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 728
 8
@@ -626,15 +689,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 728
 8
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -646,15 +711,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 826
 53
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -666,15 +733,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 892
 33
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -686,15 +755,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 787
 28
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -706,7 +777,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 803
 36
 0
@@ -714,10 +785,12 @@ activeLineClass
 2
 803 36
 803 41
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -728,7 +801,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 803
 45
 0
@@ -736,10 +809,12 @@ activeLineClass
 2
 803 45
 803 50
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -750,7 +825,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 805
 43
 5
@@ -758,10 +833,12 @@ activeLineClass
 2
 805 43
 810 43
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -772,7 +849,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 796
 43
 5
@@ -780,10 +857,12 @@ activeLineClass
 2
 796 43
 801 43
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -794,17 +873,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 803
 43
 0
 0
 1
 803 43
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -815,7 +896,7 @@ activeLineClass
 <<<empty>>>
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 963
 12
@@ -823,15 +904,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 963
 12
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -843,15 +926,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1061
 57
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -863,15 +948,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1127
 37
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -883,15 +970,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1022
 32
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -903,15 +992,17 @@ activeRectangleClass
 0
 EOD
 activeXTextClass
-2 0 0
+2 1 0
 996
 52
 36
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -925,7 +1016,7 @@ helvetica-medium-r-12.0
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1038
 40
 0
@@ -933,10 +1024,12 @@ activeLineClass
 2
 1038 40
 1038 45
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -947,7 +1040,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1038
 49
 0
@@ -955,10 +1048,12 @@ activeLineClass
 2
 1038 49
 1038 54
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -969,7 +1064,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1040
 47
 5
@@ -977,10 +1072,12 @@ activeLineClass
 2
 1040 47
 1045 47
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -991,7 +1088,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1031
 47
 5
@@ -999,10 +1096,12 @@ activeLineClass
 2
 1031 47
 1036 47
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1013,17 +1112,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1038
 47
 0
 0
 1
 1038 47
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1034,7 +1135,7 @@ activeLineClass
 <<<empty>>>
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 14
 125
@@ -1042,15 +1143,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 14
 125
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1062,15 +1165,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 112
 170
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1082,15 +1187,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 178
 150
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1102,15 +1209,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 73
 145
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1122,15 +1231,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 70
 142
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1142,15 +1253,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 98
 142
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1162,15 +1275,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 126
 142
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1182,15 +1297,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 70
 184
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1202,15 +1319,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 98
 184
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1222,15 +1341,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 126
 184
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1242,15 +1363,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 126
 163
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1262,15 +1385,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 70
 163
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1282,7 +1407,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 89
 153
 0
@@ -1290,10 +1415,12 @@ activeLineClass
 2
 89 153
 89 158
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1304,7 +1431,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 89
 162
 0
@@ -1312,10 +1439,12 @@ activeLineClass
 2
 89 162
 89 167
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1326,7 +1455,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 91
 160
 5
@@ -1334,10 +1463,12 @@ activeLineClass
 2
 91 160
 96 160
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1348,7 +1479,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 82
 160
 5
@@ -1356,10 +1487,12 @@ activeLineClass
 2
 82 160
 87 160
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1370,17 +1503,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 89
 160
 0
 0
 1
 89 160
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1391,7 +1526,7 @@ activeLineClass
 <<<empty>>>
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 258
 123
@@ -1399,15 +1534,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 258
 123
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1419,15 +1556,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 356
 168
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1439,15 +1578,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 422
 148
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1459,15 +1600,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 317
 143
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1479,7 +1622,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 360
 166
 0
@@ -1487,10 +1630,12 @@ activeLineClass
 2
 360 166
 360 171
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1501,7 +1646,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 360
 175
 0
@@ -1509,10 +1654,12 @@ activeLineClass
 2
 360 175
 360 180
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1523,7 +1670,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 362
 173
 5
@@ -1531,10 +1678,12 @@ activeLineClass
 2
 362 173
 367 173
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1545,7 +1694,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 353
 173
 5
@@ -1553,10 +1702,12 @@ activeLineClass
 2
 353 173
 358 173
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1567,17 +1718,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 360
 173
 0
 0
 1
 360 173
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1588,15 +1741,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 314
 140
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1608,15 +1763,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 342
 140
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1628,15 +1785,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 370
 140
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1648,15 +1807,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 314
 182
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1668,15 +1829,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 342
 182
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1688,15 +1851,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 370
 182
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1708,15 +1873,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 370
 161
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1728,15 +1895,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 314
 161
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1748,7 +1917,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 493
 124
@@ -1756,15 +1925,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 493
 124
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1776,15 +1947,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 591
 169
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1796,15 +1969,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 657
 149
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1816,15 +1991,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 552
 144
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1836,7 +2013,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 628
 181
 0
@@ -1844,10 +2021,12 @@ activeLineClass
 2
 628 181
 628 186
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1858,7 +2037,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 628
 190
 0
@@ -1866,10 +2045,12 @@ activeLineClass
 2
 628 190
 628 195
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1880,7 +2061,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 630
 188
 5
@@ -1888,10 +2069,12 @@ activeLineClass
 2
 630 188
 635 188
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1902,7 +2085,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 621
 188
 5
@@ -1910,10 +2093,12 @@ activeLineClass
 2
 621 188
 626 188
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1924,17 +2109,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 628
 188
 0
 0
 1
 628 188
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -1945,15 +2132,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 549
 141
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1965,15 +2154,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 577
 141
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -1985,15 +2176,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 605
 141
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2005,15 +2198,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 549
 183
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2025,15 +2220,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 577
 183
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2045,15 +2242,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 605
 183
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2065,15 +2264,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 605
 162
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2085,15 +2286,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 549
 162
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2105,7 +2308,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 734
 125
@@ -2113,15 +2316,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 734
 125
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2133,15 +2338,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 832
 170
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2153,15 +2360,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 898
 150
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2173,15 +2382,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 793
 145
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2193,15 +2404,17 @@ activeRectangleClass
 0
 EOD
 activeXTextClass
-2 0 0
+2 1 0
 876
 196
 36
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2215,7 +2428,7 @@ helvetica-medium-r-12.0
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 869
 182
 0
@@ -2223,10 +2436,12 @@ activeLineClass
 2
 869 182
 869 187
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -2237,7 +2452,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 869
 191
 0
@@ -2245,10 +2460,12 @@ activeLineClass
 2
 869 191
 869 196
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -2259,7 +2476,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 871
 189
 5
@@ -2267,10 +2484,12 @@ activeLineClass
 2
 871 189
 876 189
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -2281,7 +2500,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 862
 189
 5
@@ -2289,10 +2508,12 @@ activeLineClass
 2
 862 189
 867 189
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -2303,17 +2524,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 869
 189
 0
 0
 1
 869 189
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -2324,15 +2547,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 790
 142
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2344,15 +2569,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 818
 142
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2364,15 +2591,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 846
 142
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2384,15 +2613,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 790
 184
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2404,15 +2635,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 818
 184
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2424,15 +2657,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 846
 184
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2444,15 +2679,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 846
 163
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2464,15 +2701,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 790
 163
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2484,7 +2723,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 968
 125
@@ -2492,15 +2731,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 968
 125
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2512,15 +2753,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1066
 171
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2532,15 +2775,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1132
 151
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2552,15 +2797,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1063
 168
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2572,15 +2819,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1091
 168
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2592,15 +2841,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1119
 168
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2612,15 +2863,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1063
 210
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2632,15 +2885,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1091
 210
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2652,15 +2907,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1119
 210
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2672,15 +2929,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1119
 189
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2692,15 +2951,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1063
 189
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2712,7 +2973,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1103
 183
 0
@@ -2720,10 +2981,12 @@ activeLineClass
 2
 1103 183
 1103 188
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -2734,7 +2997,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1103
 192
 0
@@ -2742,10 +3005,12 @@ activeLineClass
 2
 1103 192
 1103 197
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -2756,7 +3021,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1105
 190
 5
@@ -2764,10 +3029,12 @@ activeLineClass
 2
 1105 190
 1110 190
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -2778,7 +3045,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1096
 190
 5
@@ -2786,10 +3053,12 @@ activeLineClass
 2
 1096 190
 1101 190
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -2800,17 +3069,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1103
 190
 0
 0
 1
 1103 190
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -2821,15 +3092,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1024
 164
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2841,15 +3114,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1080
 164
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2861,15 +3136,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1080
 185
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2881,15 +3158,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1052
 185
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2901,15 +3180,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1024
 185
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2921,15 +3202,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1080
 143
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2941,15 +3224,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1052
 143
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2961,15 +3246,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1024
 143
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -2981,15 +3268,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1027
 146
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3001,7 +3290,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 14
 235
@@ -3009,15 +3298,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 14
 235
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3029,15 +3320,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 112
 281
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3049,15 +3342,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 178
 261
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3069,7 +3364,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 174
 286
 0
@@ -3077,10 +3372,12 @@ activeLineClass
 2
 174 286
 174 291
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -3091,7 +3388,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 174
 295
 0
@@ -3099,10 +3396,12 @@ activeLineClass
 2
 174 295
 174 300
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -3113,7 +3412,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 176
 293
 5
@@ -3121,10 +3420,12 @@ activeLineClass
 2
 176 293
 181 293
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -3135,7 +3436,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 167
 293
 5
@@ -3143,10 +3444,12 @@ activeLineClass
 2
 167 293
 172 293
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -3157,17 +3460,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 174
 293
 0
 0
 1
 174 293
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -3178,15 +3483,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 109
 278
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3198,15 +3505,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 137
 278
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3218,15 +3527,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 165
 278
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3238,15 +3549,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 109
 320
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3258,15 +3571,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 137
 320
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3278,15 +3593,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 165
 320
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3298,15 +3615,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 165
 299
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3318,15 +3637,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 109
 299
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3338,15 +3659,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 70
 274
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3358,15 +3681,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 126
 274
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3378,15 +3703,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 126
 295
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3398,15 +3725,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 98
 295
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3418,15 +3747,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 70
 295
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3438,15 +3769,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 126
 253
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3458,15 +3791,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 98
 253
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3478,15 +3813,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 70
 253
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3498,15 +3835,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 73
 256
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3518,7 +3857,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 249
 238
@@ -3526,15 +3865,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 249
 238
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3546,15 +3887,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 347
 284
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3566,15 +3909,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 413
 264
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3586,7 +3931,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 429
 280
 0
@@ -3594,10 +3939,12 @@ activeLineClass
 2
 429 280
 429 285
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -3608,7 +3955,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 429
 289
 0
@@ -3616,10 +3963,12 @@ activeLineClass
 2
 429 289
 429 294
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -3630,7 +3979,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 431
 287
 5
@@ -3638,10 +3987,12 @@ activeLineClass
 2
 431 287
 436 287
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -3652,7 +4003,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 422
 287
 5
@@ -3660,10 +4011,12 @@ activeLineClass
 2
 422 287
 427 287
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -3674,17 +4027,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 429
 287
 0
 0
 1
 429 287
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -3695,15 +4050,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 344
 281
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3715,15 +4072,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 372
 281
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3735,15 +4094,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 400
 281
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3755,15 +4116,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 344
 323
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3775,15 +4138,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 372
 323
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3795,15 +4160,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 400
 323
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3815,15 +4182,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 400
 302
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3835,15 +4204,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 344
 302
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3855,15 +4226,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 305
 277
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3875,15 +4248,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 361
 277
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3895,15 +4270,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 361
 298
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3915,15 +4292,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 333
 298
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3935,15 +4314,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 305
 298
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3955,15 +4336,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 361
 256
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3975,15 +4358,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 333
 256
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -3995,15 +4380,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 305
 256
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4015,15 +4402,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 308
 259
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4035,7 +4424,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 484
 240
@@ -4043,15 +4432,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 484
 240
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4063,15 +4454,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 582
 286
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4083,15 +4476,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 648
 266
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4103,15 +4498,17 @@ activeRectangleClass
 0
 EOD
 activeXTextClass
-2 0 0
+2 1 0
 673
 271
 36
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4125,7 +4522,7 @@ helvetica-medium-r-12.0
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 664
 282
 0
@@ -4133,10 +4530,12 @@ activeLineClass
 2
 664 282
 664 287
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -4147,7 +4546,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 664
 291
 0
@@ -4155,10 +4554,12 @@ activeLineClass
 2
 664 291
 664 296
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -4169,7 +4570,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 666
 289
 5
@@ -4177,10 +4578,12 @@ activeLineClass
 2
 666 289
 671 289
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -4191,7 +4594,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 657
 289
 5
@@ -4199,10 +4602,12 @@ activeLineClass
 2
 657 289
 662 289
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -4213,17 +4618,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 664
 289
 0
 0
 1
 664 289
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -4234,15 +4641,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 579
 283
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4254,15 +4663,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 607
 283
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4274,15 +4685,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 635
 283
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4294,15 +4707,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 579
 325
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4314,15 +4729,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 607
 325
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4334,15 +4751,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 635
 325
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4354,15 +4773,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 635
 304
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4374,15 +4795,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 579
 304
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4394,15 +4817,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 540
 279
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4414,15 +4839,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 596
 279
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4434,15 +4861,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 596
 300
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4454,15 +4883,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 568
 300
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4474,15 +4905,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 540
 300
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4494,15 +4927,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 596
 258
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4514,15 +4949,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 568
 258
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4534,15 +4971,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 540
 258
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4554,15 +4993,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 543
 261
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4574,7 +5015,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 721
 239
@@ -4582,15 +5023,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 721
 239
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4602,15 +5045,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 885
 264
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4622,15 +5067,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 882
 261
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4642,15 +5089,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 910
 261
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4662,15 +5111,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 938
 261
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4682,15 +5133,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 882
 303
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4702,15 +5155,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 910
 303
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4722,15 +5177,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 938
 303
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4742,15 +5199,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 938
 282
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4762,15 +5221,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 882
 282
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4782,7 +5243,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 901
 280
 0
@@ -4790,10 +5251,12 @@ activeLineClass
 2
 901 280
 901 285
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -4804,7 +5267,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 901
 289
 0
@@ -4812,10 +5275,12 @@ activeLineClass
 2
 901 289
 901 294
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -4826,7 +5291,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 903
 287
 5
@@ -4834,10 +5299,12 @@ activeLineClass
 2
 903 287
 908 287
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -4848,7 +5315,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 894
 287
 5
@@ -4856,10 +5323,12 @@ activeLineClass
 2
 894 287
 899 287
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -4870,17 +5339,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 901
 287
 0
 0
 1
 901 287
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -4891,15 +5362,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 780
 259
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4911,15 +5384,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 777
 256
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4931,15 +5406,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 805
 256
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4951,15 +5428,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 833
 256
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4971,15 +5450,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 777
 298
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -4991,15 +5472,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 805
 298
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5011,15 +5494,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 833
 298
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5031,15 +5516,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 833
 277
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5051,15 +5538,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 777
 277
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5071,15 +5560,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 816
 302
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5091,15 +5582,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 872
 302
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5111,15 +5604,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 872
 323
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5131,15 +5626,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 844
 323
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5151,15 +5648,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 816
 323
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5171,15 +5670,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 872
 281
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5191,15 +5692,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 844
 281
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5211,15 +5714,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 816
 281
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5231,15 +5736,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 819
 284
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5251,7 +5758,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 962
 238
@@ -5259,15 +5766,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 962
 238
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5279,7 +5788,7 @@ activeRectangleClass
 1
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1168
 268
 0
@@ -5287,10 +5796,12 @@ activeLineClass
 2
 1168 268
 1168 273
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -5301,7 +5812,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1168
 277
 0
@@ -5309,10 +5820,12 @@ activeLineClass
 2
 1168 277
 1168 282
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -5323,7 +5836,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1170
 275
 5
@@ -5331,10 +5844,12 @@ activeLineClass
 2
 1170 275
 1175 275
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -5345,7 +5860,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1161
 275
 5
@@ -5353,10 +5868,12 @@ activeLineClass
 2
 1161 275
 1166 275
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -5367,17 +5884,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1168
 275
 0
 0
 1
 1168 275
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -5388,15 +5907,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1126
 263
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5408,15 +5929,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1123
 260
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5428,15 +5951,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1151
 260
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5448,15 +5973,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1179
 260
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5468,15 +5995,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1123
 302
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5488,15 +6017,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1151
 302
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5508,15 +6039,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1179
 302
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5528,15 +6061,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1179
 281
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5548,15 +6083,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1123
 281
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5568,15 +6105,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1021
 258
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5588,15 +6127,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1018
 255
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5608,15 +6149,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1046
 255
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5628,15 +6171,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1074
 255
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5648,15 +6193,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1018
 297
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5668,15 +6215,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1046
 297
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5688,15 +6237,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1074
 297
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5708,15 +6259,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1074
 276
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5728,15 +6281,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1018
 276
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5748,15 +6303,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1057
 301
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5768,15 +6325,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1113
 301
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5788,15 +6347,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1113
 322
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5808,15 +6369,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1085
 322
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5828,15 +6391,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1057
 322
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5848,15 +6413,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1113
 280
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5868,15 +6435,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1085
 280
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5888,15 +6457,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1057
 280
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5908,15 +6479,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1060
 283
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5928,7 +6501,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 16
 343
@@ -5936,15 +6509,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 16
 343
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -5956,7 +6531,7 @@ activeRectangleClass
 1
 EOD
 activeLineClass
-2 0 0
+2 1 0
 222
 373
 0
@@ -5964,10 +6539,12 @@ activeLineClass
 2
 222 373
 222 378
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -5978,7 +6555,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 222
 382
 0
@@ -5986,10 +6563,12 @@ activeLineClass
 2
 222 382
 222 387
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -6000,7 +6579,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 224
 380
 5
@@ -6008,10 +6587,12 @@ activeLineClass
 2
 224 380
 229 380
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -6022,7 +6603,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 215
 380
 5
@@ -6030,10 +6611,12 @@ activeLineClass
 2
 215 380
 220 380
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -6044,17 +6627,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 222
 380
 0
 0
 1
 222 380
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -6065,15 +6650,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 180
 368
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6085,15 +6672,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 177
 365
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6105,15 +6694,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 205
 365
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6125,15 +6716,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 233
 365
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6145,15 +6738,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 177
 407
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6165,15 +6760,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 205
 407
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6185,15 +6782,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 233
 407
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6205,15 +6804,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 233
 386
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6225,15 +6826,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 177
 386
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6245,15 +6848,17 @@ activeRectangleClass
 0
 EOD
 activeXTextClass
-2 0 0
+2 1 0
 189
 389
 36
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6267,15 +6872,17 @@ helvetica-medium-r-12.0
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 75
 363
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6287,15 +6894,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 72
 360
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6307,15 +6916,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 100
 360
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6327,15 +6938,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 128
 360
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6347,15 +6960,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 72
 402
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6367,15 +6982,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 100
 402
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6387,15 +7004,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 128
 402
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6407,15 +7026,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 128
 381
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6427,15 +7048,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 72
 381
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6447,15 +7070,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 111
 406
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6467,15 +7092,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 167
 406
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6487,15 +7114,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 167
 427
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6507,15 +7136,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 139
 427
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6527,15 +7158,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 111
 427
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6547,15 +7180,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 167
 385
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6567,15 +7202,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 139
 385
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6587,15 +7224,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 111
 385
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6607,15 +7246,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 114
 388
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6627,7 +7268,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 248
 343
@@ -6635,15 +7276,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 248
 343
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6655,7 +7298,7 @@ activeRectangleClass
 1
 EOD
 activeLineClass
-2 0 0
+2 1 0
 454
 373
 0
@@ -6663,10 +7306,12 @@ activeLineClass
 2
 454 373
 454 378
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -6677,7 +7322,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 454
 382
 0
@@ -6685,10 +7330,12 @@ activeLineClass
 2
 454 382
 454 387
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -6699,7 +7346,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 456
 380
 5
@@ -6707,10 +7354,12 @@ activeLineClass
 2
 456 380
 461 380
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -6721,7 +7370,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 447
 380
 5
@@ -6729,10 +7378,12 @@ activeLineClass
 2
 447 380
 452 380
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -6743,17 +7394,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 454
 380
 0
 0
 1
 454 380
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -6764,15 +7417,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 412
 368
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6784,15 +7439,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 307
 363
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6804,15 +7461,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 304
 360
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6824,35 +7483,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 332
 360
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-EOD
-activeRectangleClass
-2 0 0
-360
-360
-7
-7
-14
-0
-0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6864,15 +7505,39 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
+360
+360
+7
+7
+rgb
+0,0,0
+0
+0
+rgb
+44730,44730,44730
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+1
+0
+0
+EOD
+activeRectangleClass
+2 1 0
 304
 402
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6884,15 +7549,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 332
 402
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6904,15 +7571,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 360
 402
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6924,15 +7593,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 360
 381
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6944,15 +7615,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 304
 381
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6964,15 +7637,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 343
 406
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -6984,15 +7659,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 399
 406
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7004,15 +7681,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 399
 427
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7024,15 +7703,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 371
 427
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7044,15 +7725,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 343
 427
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7064,15 +7747,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 399
 385
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7084,15 +7769,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 371
 385
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7104,15 +7791,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 343
 385
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7124,15 +7813,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 346
 388
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7144,7 +7835,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 483
 343
@@ -7152,15 +7843,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 483
 343
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7172,7 +7865,7 @@ activeRectangleClass
 1
 EOD
 activeLineClass
-2 0 0
+2 1 0
 660
 384
 0
@@ -7180,10 +7873,12 @@ activeLineClass
 2
 660 384
 660 389
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -7194,7 +7889,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 660
 393
 0
@@ -7202,10 +7897,12 @@ activeLineClass
 2
 660 393
 660 398
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -7216,7 +7913,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 662
 391
 5
@@ -7224,10 +7921,12 @@ activeLineClass
 2
 662 391
 667 391
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -7238,7 +7937,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 653
 391
 5
@@ -7246,10 +7945,12 @@ activeLineClass
 2
 653 391
 658 391
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -7260,17 +7961,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 660
 391
 0
 0
 1
 660 391
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -7281,15 +7984,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 647
 368
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7301,15 +8006,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 542
 363
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7321,15 +8028,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 539
 360
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7341,15 +8050,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 567
 360
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7361,15 +8072,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 595
 360
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7381,15 +8094,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 539
 402
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7401,15 +8116,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 567
 402
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7421,15 +8138,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 595
 402
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7441,15 +8160,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 595
 381
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7461,15 +8182,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 539
 381
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7481,15 +8204,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 578
 406
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7501,15 +8226,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 634
 406
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7521,15 +8248,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 634
 427
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7541,15 +8270,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 606
 427
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7561,15 +8292,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 578
 427
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7581,15 +8314,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 634
 385
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7601,15 +8336,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 606
 385
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7621,15 +8358,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 578
 385
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7641,15 +8380,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 581
 388
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7661,7 +8402,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 725
 342
@@ -7669,15 +8410,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 725
 342
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7689,7 +8432,7 @@ activeRectangleClass
 1
 EOD
 activeLineClass
-2 0 0
+2 1 0
 861
 393
 0
@@ -7697,10 +8440,12 @@ activeLineClass
 2
 861 393
 861 398
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -7711,7 +8456,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 861
 402
 0
@@ -7719,10 +8464,12 @@ activeLineClass
 2
 861 402
 861 407
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -7733,7 +8480,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 863
 400
 5
@@ -7741,10 +8488,12 @@ activeLineClass
 2
 863 400
 868 400
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -7755,7 +8504,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 854
 400
 5
@@ -7763,10 +8512,12 @@ activeLineClass
 2
 854 400
 859 400
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -7777,17 +8528,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 861
 400
 0
 0
 1
 861 400
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -7798,15 +8551,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 889
 367
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7818,15 +8573,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 784
 362
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7838,15 +8595,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 781
 359
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7858,15 +8617,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 809
 359
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7878,15 +8639,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 837
 359
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7898,15 +8661,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 781
 401
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7918,15 +8683,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 809
 401
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7938,15 +8705,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 837
 401
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7958,15 +8727,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 837
 380
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7978,15 +8749,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 781
 380
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -7998,15 +8771,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 820
 405
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8018,15 +8793,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 876
 405
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8038,15 +8815,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 876
 426
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8058,15 +8837,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 848
 426
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8078,15 +8859,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 820
 426
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8098,15 +8881,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 876
 384
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8118,15 +8903,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 848
 384
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8138,15 +8925,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 820
 384
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8158,15 +8947,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 823
 387
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8178,7 +8969,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 966
 342
@@ -8186,15 +8977,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 966
 342
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8206,7 +8999,7 @@ activeRectangleClass
 1
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1102
 393
 0
@@ -8214,10 +9007,12 @@ activeLineClass
 2
 1102 393
 1102 398
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -8228,7 +9023,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1102
 402
 0
@@ -8236,10 +9031,12 @@ activeLineClass
 2
 1102 402
 1102 407
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -8250,7 +9047,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1104
 400
 5
@@ -8258,10 +9055,12 @@ activeLineClass
 2
 1104 400
 1109 400
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -8272,7 +9071,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1095
 400
 5
@@ -8280,10 +9079,12 @@ activeLineClass
 2
 1095 400
 1100 400
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -8294,17 +9095,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1102
 400
 0
 0
 1
 1102 400
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -8315,15 +9118,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1130
 367
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8335,15 +9140,17 @@ activeRectangleClass
 0
 EOD
 activeXTextClass
-2 0 0
+2 1 0
 1075
 411
 36
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8357,15 +9164,17 @@ helvetica-medium-r-12.0
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1025
 362
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8377,15 +9186,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1022
 359
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8397,15 +9208,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1050
 359
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8417,15 +9230,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1078
 359
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8437,15 +9252,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1022
 401
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8457,15 +9274,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1050
 401
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8477,15 +9296,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1078
 401
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8497,15 +9318,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1078
 380
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8517,15 +9340,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1022
 380
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8537,15 +9362,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1061
 405
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8557,15 +9384,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1117
 405
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8577,15 +9406,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1117
 426
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8597,15 +9428,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1089
 426
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8617,15 +9450,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1061
 426
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8637,15 +9472,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1117
 384
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8657,15 +9494,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1089
 384
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8677,15 +9516,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1061
 384
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8697,15 +9538,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1064
 387
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8717,7 +9560,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 14
 446
@@ -8725,15 +9568,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 14
 446
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8745,15 +9590,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 112
 491
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8765,7 +9612,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 150
 497
 0
@@ -8773,10 +9620,12 @@ activeLineClass
 2
 150 497
 150 502
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -8787,7 +9636,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 150
 506
 0
@@ -8795,10 +9644,12 @@ activeLineClass
 2
 150 506
 150 511
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -8809,7 +9660,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 152
 504
 5
@@ -8817,10 +9668,12 @@ activeLineClass
 2
 152 504
 157 504
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -8831,7 +9684,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 143
 504
 5
@@ -8839,10 +9692,12 @@ activeLineClass
 2
 143 504
 148 504
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -8853,17 +9708,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 150
 504
 0
 0
 1
 150 504
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -8874,15 +9731,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 178
 471
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8894,15 +9753,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 73
 466
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8914,15 +9775,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 70
 463
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8934,15 +9797,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 98
 463
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8954,15 +9819,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 126
 463
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8974,15 +9841,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 70
 505
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -8994,15 +9863,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 98
 505
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9014,15 +9885,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 126
 505
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9034,15 +9907,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 126
 484
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9054,15 +9929,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 70
 484
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9074,7 +9951,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 244
 445
@@ -9082,15 +9959,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 244
 445
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9102,15 +9981,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 342
 490
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9122,7 +10003,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 358
 490
 0
@@ -9130,10 +10011,12 @@ activeLineClass
 2
 358 490
 358 495
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -9144,7 +10027,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 358
 499
 0
@@ -9152,10 +10035,12 @@ activeLineClass
 2
 358 499
 358 504
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -9166,7 +10051,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 360
 497
 5
@@ -9174,10 +10059,12 @@ activeLineClass
 2
 360 497
 365 497
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -9188,7 +10075,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 351
 497
 5
@@ -9196,10 +10083,12 @@ activeLineClass
 2
 351 497
 356 497
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -9210,17 +10099,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 358
 497
 0
 0
 1
 358 497
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -9231,15 +10122,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 408
 470
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9251,15 +10144,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 303
 465
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9271,15 +10166,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 300
 462
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9291,15 +10188,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 328
 462
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9311,15 +10210,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 356
 462
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9331,15 +10232,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 300
 504
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9351,15 +10254,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 328
 504
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9371,15 +10276,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 356
 504
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9391,15 +10298,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 356
 483
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9411,15 +10320,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 300
 483
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9431,7 +10342,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 488
 446
@@ -9439,15 +10350,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 488
 446
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9459,15 +10372,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 586
 491
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9479,7 +10394,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 564
 489
 0
@@ -9487,10 +10402,12 @@ activeLineClass
 2
 564 489
 564 494
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -9501,7 +10418,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 564
 498
 0
@@ -9509,10 +10426,12 @@ activeLineClass
 2
 564 498
 564 503
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -9523,7 +10442,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 566
 496
 5
@@ -9531,10 +10450,12 @@ activeLineClass
 2
 566 496
 571 496
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -9545,7 +10466,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 557
 496
 5
@@ -9553,10 +10474,12 @@ activeLineClass
 2
 557 496
 562 496
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -9567,17 +10490,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 564
 496
 0
 0
 1
 564 496
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -9588,15 +10513,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 652
 471
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9608,15 +10535,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 547
 466
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9628,15 +10557,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 544
 463
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9648,15 +10579,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 572
 463
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9668,15 +10601,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 600
 463
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9688,15 +10623,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 544
 505
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9708,15 +10645,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 572
 505
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9728,15 +10667,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 600
 505
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9748,15 +10689,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 600
 484
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9768,15 +10711,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 544
 484
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9788,7 +10733,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 730
 443
@@ -9796,15 +10741,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 730
 443
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9816,15 +10763,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 828
 488
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9836,7 +10785,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 806
 486
 0
@@ -9844,10 +10793,12 @@ activeLineClass
 2
 806 486
 806 491
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -9858,7 +10809,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 806
 495
 0
@@ -9866,10 +10817,12 @@ activeLineClass
 2
 806 495
 806 500
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -9880,7 +10833,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 808
 493
 5
@@ -9888,10 +10841,12 @@ activeLineClass
 2
 808 493
 813 493
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -9902,7 +10857,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 799
 493
 5
@@ -9910,10 +10865,12 @@ activeLineClass
 2
 799 493
 804 493
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -9924,17 +10881,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 806
 493
 0
 0
 1
 806 493
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -9945,15 +10904,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 894
 468
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9965,15 +10926,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 789
 463
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -9985,15 +10948,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 786
 460
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10005,15 +10970,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 814
 460
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10025,15 +10992,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 842
 460
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10045,15 +11014,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 786
 502
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10065,15 +11036,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 814
 502
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10085,15 +11058,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 842
 502
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10105,15 +11080,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 842
 481
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10125,15 +11102,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 786
 481
 7
 7
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10145,15 +11124,17 @@ activeRectangleClass
 0
 EOD
 activeXTextClass
-2 0 0
+2 1 0
 798
 470
 36
 14
-14
+rgb
+0,0,0
 0
 1
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10167,7 +11148,7 @@ helvetica-medium-r-12.0
 <<<empty>>>
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 972
 443
@@ -10175,15 +11156,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 972
 443
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10195,15 +11178,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1070
 488
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10215,7 +11200,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1048
 486
 0
@@ -10223,10 +11208,12 @@ activeLineClass
 2
 1048 486
 1048 491
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -10237,7 +11224,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1048
 495
 0
@@ -10245,10 +11232,12 @@ activeLineClass
 2
 1048 495
 1048 500
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -10259,7 +11248,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1050
 493
 5
@@ -10267,10 +11256,12 @@ activeLineClass
 2
 1050 493
 1055 493
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -10281,7 +11272,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1041
 493
 5
@@ -10289,10 +11280,12 @@ activeLineClass
 2
 1041 493
 1046 493
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -10303,17 +11296,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 1048
 493
 0
 0
 1
 1048 493
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -10324,15 +11319,17 @@ activeLineClass
 <<<empty>>>
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1136
 468
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10344,15 +11341,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 1031
 463
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10364,7 +11363,7 @@ activeRectangleClass
 0
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 13
 549
@@ -10372,15 +11371,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 13
 549
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10392,15 +11393,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 111
 594
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10412,15 +11415,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 177
 574
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10432,15 +11437,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 72
 569
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10452,7 +11459,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 55
 585
 0
@@ -10460,10 +11467,12 @@ activeLineClass
 2
 55 585
 55 590
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -10474,7 +11483,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 55
 594
 0
@@ -10482,10 +11491,12 @@ activeLineClass
 2
 55 594
 55 599
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -10496,7 +11507,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 57
 592
 5
@@ -10504,10 +11515,12 @@ activeLineClass
 2
 57 592
 62 592
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -10518,7 +11531,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 48
 592
 5
@@ -10526,10 +11539,12 @@ activeLineClass
 2
 48 592
 53 592
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -10540,17 +11555,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 55
 592
 0
 0
 1
 55 592
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -10561,7 +11578,7 @@ activeLineClass
 <<<empty>>>
 EOD
 }
-EOD
+<<<E~O~D>>>
 activeGroupClass
 254
 546
@@ -10569,15 +11586,17 @@ activeGroupClass
 93
 {
 activeRectangleClass
-2 0 0
+2 1 0
 254
 546
 226
 93
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10589,15 +11608,17 @@ activeRectangleClass
 1
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 352
 591
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10609,15 +11630,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 418
 571
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10629,15 +11652,17 @@ activeRectangleClass
 0
 EOD
 activeRectangleClass
-2 0 0
+2 1 0
 313
 566
 57
 42
-20
+rgb
+65535,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 <<<empty>>>
 <<<empty>>>
@@ -10649,7 +11674,7 @@ activeRectangleClass
 0
 EOD
 activeLineClass
-2 0 0
+2 1 0
 269
 594
 0
@@ -10657,10 +11682,12 @@ activeLineClass
 2
 269 594
 269 599
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -10671,7 +11698,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 269
 603
 0
@@ -10679,10 +11706,12 @@ activeLineClass
 2
 269 603
 269 608
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -10693,7 +11722,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 271
 601
 5
@@ -10701,10 +11730,12 @@ activeLineClass
 2
 271 601
 276 601
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -10715,7 +11746,7 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 262
 601
 5
@@ -10723,10 +11754,12 @@ activeLineClass
 2
 262 601
 267 601
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -10737,17 +11770,19 @@ activeLineClass
 <<<empty>>>
 EOD
 activeLineClass
-2 0 0
+2 1 0
 269
 601
 0
 0
 1
 269 601
-14
+rgb
+0,0,0
 0
 0
-5
+rgb
+44730,44730,44730
 0
 1
 0
@@ -10758,4 +11793,4 @@ activeLineClass
 <<<empty>>>
 EOD
 }
-EOD
+<<<E~O~D>>>
