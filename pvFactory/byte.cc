@@ -717,7 +717,7 @@ int edmByteClass::drawActiveBits()
      actWin->executeGc.setLineStyle( lineStyle );
      if (theDir == LITTLEENDIAN)
      {
-        for (i = 0, mask = 1 << shft; i <= nobt; i++, mask <<= 1)
+        for (i = 0, mask = 1 << shft; i < nobt; i++, mask <<= 1)
         {
            if ((lastval ^ value) & mask)
               innerDrawBits(value, i, mask);
@@ -725,7 +725,7 @@ int edmByteClass::drawActiveBits()
      }
      else  // BIGENDIAN
      {
-        for (i = 0, mask= 1 << (shft + nobt -1); i <= nobt; i++, mask >>= 1)
+        for (i = 0, mask= 1 << (shft + nobt -1); i < nobt; i++, mask >>= 1)
         {
            if ((lastval ^ value) & mask)
               innerDrawBits(value, i, mask);
