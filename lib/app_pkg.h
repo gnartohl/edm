@@ -206,6 +206,11 @@ friend void checkpointPid_cb (
   XtPointer client,
   XtPointer call );
 
+friend void viewFontMapping_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 friend void view_pvList_cb (
   Widget w,
   XtPointer client,
@@ -316,8 +321,11 @@ Widget renderImagesB;
 
 Widget checkpointPidB;
 
+Widget viewFontMappingB;
+
 ulBindingClass userLibObject;
 int exitFlag;
+int objDelFlag;
 int watchdog;
 processClass *proc;
 int iconTestCount;
@@ -360,6 +368,8 @@ appContextClass (
 
 ~appContextClass (
   void );
+
+void closeDownAppCtx ( void );
 
 void getFilePaths ( void );
 

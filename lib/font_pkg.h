@@ -220,8 +220,6 @@ int resolveOneFont (
   char *fontSpec,
   fontNameListPtr ptr );
 
-int show ( void );
-
 int getFontName (
   char *fontTag,
   double rotation,
@@ -247,6 +245,20 @@ int appendSizeMenu(
   char *family,
   int size,
   float fsize );
+
+int fontInfoClass::getFirstFontMapping (
+  char *tag,
+  int tagMax,
+  char *spec,
+  int specMax
+);
+
+int fontInfoClass::getNextFontMapping (
+  char *tag,
+  int tagMax,
+  char *spec,
+  int specMax
+);
 
 };
 

@@ -176,6 +176,7 @@ int i, ii;
     strcpy( optionStringValue[i], "" );
     numActions[i] = 0;
     label[i] = NULL;
+    menu[i] = NULL;
     for ( ii=0; ii<MAX_ACTIONS; ii++ ) {
       action[i][ii] = NULL;
       actionOperator[i][ii] = 0;

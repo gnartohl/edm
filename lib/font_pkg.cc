@@ -591,26 +591,8 @@ char spec[127+1], name[127+1], foundary[63+1], family[63+1], weight[63+1],
   else if ( strcmp( weight, boldString ) == 0 ) {
     strcpy( weight, "bold" );
   }
-  else if ( strcmp( weight, "" ) == 0 ) {
+  else {
     strcpy( weight, "medium" );
-  }
-  else if ( strcmp( weight, "regular" ) == 0 ) {
-    strcpy( weight, "medium" );
-  }
-  else if ( strcmp( weight, "light" ) == 0 ) {
-    strcpy( weight, "medium" );
-  }
-  else if ( strcmp( weight, "book" ) == 0 ) {
-    strcpy( weight, "medium" );
-  }
-  else if ( strcmp( weight, "demibold" ) == 0 ) {
-    strcpy( weight, "bold" );
-  }
-  else if ( strcmp( weight, "demi bold" ) == 0 ) {
-    strcpy( weight, "bold" );
-  }
-  else if ( strcmp( weight, "black" ) == 0 ) {
-    strcpy( weight, "bold" );
   }
 
   if ( strcmp( slant, regularString ) == 0 ) {
@@ -619,34 +601,9 @@ char spec[127+1], name[127+1], foundary[63+1], family[63+1], weight[63+1],
   else if ( strcmp( slant, italicString ) == 0 ) {
     strcpy( slant, "i" );
   }
-  else if ( strcmp( slant, "" ) == 0 ) {
+  else {
     strcpy( slant, "r" );
   }
-  else if ( strcmp( slant, "o" ) == 0 ) {
-    strcpy( slant, "i" );
-  }
-
-#if 0
-  tk = strtok( spec, "-" );
-
-  tk = strtok( NULL, "-" );
-  strncpy( family, tk, 63 );
-
-  tk = strtok( NULL, "-" );
-  strncpy( weight, tk, 31 );
-
-  tk = strtok( NULL, "-" );
-  if ( strcmp( tk, "r" ) == 0 )
-    strncpy( slant, "r", 31 );
-  else
-    strncpy( slant, "i", 31 );
-
-  tk = strtok( NULL, "-" );
-  tk = strtok( NULL, "-" );
-
-  tk = strtok( NULL, "-" );
-  strncpy( size, tk, 31 );
-#endif
 
   if ( strcmp( size, "0" ) == 0 )
     isScalable = 1;
@@ -2155,38 +2112,52 @@ XmFontListEntry entry;
 
 }
 
-int fontInfoClass::show ( void ) {
+int fontInfoClass::getFirstFontMapping (
+  char *tag,
+  int tagMax,
+  char *spec,
+  int specMax
+) {
 
 int stat;
 fontNameListPtr cur;
-char c1[2], c2[2];
 
   stat = avl_get_first( this->fontNameListH, (void **) &cur );
-  if ( !( stat & 1 ) ) {
-    printf( fontInfoClass_str1 );
-    return FONTINFO_FAIL;
+  if ( !( stat & 1 ) || !cur ) {
+    return 0;
   }
 
-  while ( cur ) {
+  strncpy( tag, cur->name, tagMax );
+  tag[tagMax] = 0;
 
-    if ( cur->isScalable )
-      strcpy( c1, "Y" );
-    else
-      strcpy( c1, "N" );
+  strncpy( spec, cur->fullName, specMax );
+  spec[specMax] = 0;
 
-    if ( cur->fontLoaded )
-      strcpy( c2, "Y" );
-    else
-      strcpy( c2, "N" );
+  return 1;
 
-    stat = avl_get_next( this->fontNameListH, (void **) &cur );
-    if ( !( stat & 1 ) ) {
-      printf( fontInfoClass_str2 );
-      return FONTINFO_FAIL;
-    }
+}
+
+int fontInfoClass::getNextFontMapping (
+  char *tag,
+  int tagMax,
+  char *spec,
+  int specMax
+) {
 
+int stat;
+fontNameListPtr cur;
+
+  stat = avl_get_next( this->fontNameListH, (void **) &cur );
+  if ( !( stat & 1 ) || !cur ) {
+    return 0;
   }
 
-  return FONTINFO_SUCCESS;
+  strncpy( tag, cur->name, tagMax );
+  tag[tagMax] = 0;
+
+  strncpy( spec, cur->fullName, specMax );
+  spec[specMax] = 0;
+
+  return 1;
 
 }

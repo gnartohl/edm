@@ -1792,6 +1792,28 @@ SYS_PROC_ID_TYPE procId;
 
 }
 
+void viewFontMapping_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+appContextClass *apco = (appContextClass *) client;
+char tag[63+1], spec[255+1], buf[419+1];
+int found;
+
+  found = apco->fi.getFirstFontMapping( tag, 63, spec, 255 );
+  while ( found ) {
+
+    snprintf( buf, 419, "%s = %s", tag, spec );
+    apco->postMessage( buf );
+
+    found = apco->fi.getNextFontMapping( tag, 63, spec, 255 );
+
+  }
+
+}
+
 void help_cb (
   Widget w,
   XtPointer client,
@@ -1899,6 +1921,7 @@ appContextClass::appContextClass (
   executeCount = 0;
   isActive = 0;
   exitFlag = 0;
+  objDelFlag = 0;
   shutdownFlag = 0;
   reloadFlag = 0;
   saveContextOnExit = 0;
@@ -1967,30 +1990,12 @@ appContextClass::~appContextClass (
   void )
 {
 
-int i, numOpenWindows, count, moreToDelete;
-activeWindowListPtr cur, next;
+int i;
 activeGraphicListPtr curCut, nextCut;
 macroListPtr curMacro, nextMacro;
 fileListPtr curFile, nextFile;
 callbackBlockPtr curCbBlock, nextCbBlock;
 actionsPtr curAct, nextAct;
-
-  if ( saveContextOnExit ) {
-    //fprintf( shutdownFilePtr, "appCtx {\n" );
-    //fprintf( shutdownFilePtr, "  primaryServer=%-d\n", primaryServer );
-    fprintf( shutdownFilePtr, "%-d\n", primaryServer | ( oneInstance << 8 ) );
-    //if ( blank(displayName) ) {
-      //fprintf( shutdownFilePtr, "  display=<NULL>\n" );
-    //}
-    //else {
-    //  fprintf( shutdownFilePtr, "  display=%s\n", displayName );
-    //}
-    writeStringToFile( shutdownFilePtr, displayName );
-    //fprintf( shutdownFilePtr, "  noEdit=%-d\n", noEdit );
-    fprintf( shutdownFilePtr, "%-d\n", noEdit );
-  }
-
-  ci.closeColorWindow();
 
   // empty cut list
   curCut = cutHead1->flink;
@@ -2003,29 +2008,15 @@ actionsPtr curAct, nextAct;
   delete cutHead1;
 
   // walk macroList and delete
-  if ( saveContextOnExit ) {
-    //fprintf( shutdownFilePtr, "  macros {\n" );
-    //fprintf( shutdownFilePtr, "    num=%-d\n", numMacros );
-    fprintf( shutdownFilePtr, "%-d\n", numMacros );
-  }
   curMacro = macroHead->flink;
   while ( curMacro != macroHead ) {
     nextMacro = curMacro->flink;
-    if ( saveContextOnExit ) {
-      //fprintf( shutdownFilePtr, "    %s=%s\n", curMacro->macro,
-      // curMacro->expansion );
-      fprintf( shutdownFilePtr, "%s=%s\n", curMacro->macro,
-       curMacro->expansion );
-    }
     if ( curMacro->macro ) delete curMacro->macro;
     if ( curMacro->expansion ) delete curMacro->expansion;
     delete curMacro;
     curMacro = nextMacro;
   }
   delete macroHead;
-  //if ( saveContextOnExit ) {
-  //  fprintf( shutdownFilePtr, "  }\n" );
-  //}
 
   // walk fileList and delete
   curFile = fileHead->flink;
@@ -2037,67 +2028,7 @@ actionsPtr curAct, nextAct;
   }
   delete fileHead;
 
-  if ( saveContextOnExit ) {
-    // get number of open windows
-    numOpenWindows = 0;
-    cur = head->flink;
-    while ( cur != head ) {
-      numOpenWindows++;
-      cur = cur->flink;
-    }
-    fprintf( shutdownFilePtr, "%-d\n", numOpenWindows );
-  }
-
-  count = 100000;
-  moreToDelete = 0;
-  do {
-
-    // walk activeWindowList and delete
-    cur = head->flink;
-    while ( cur != head ) {
-
-      next = cur->flink;
-
-      if ( cur->node.mode == AWC_EXECUTE ) {
-        cur->node.returnToEdit( 0 );
-      }
-
-      if ( cur->node.numChildren ) {
-
-        moreToDelete = 1;
-
-      }
-      else {
-
-        if ( !cur->node.parent && saveContextOnExit ) {
-          //fprintf( shutdownFilePtr, "  actWin {\n" );
-          cur->node.checkPoint( primaryServer, shutdownFilePtr );
-          //fprintf( shutdownFilePtr, "  }\n" );
-        }
-
-        if ( cur->node.parent ) {
-          if ( cur->node.parent->numChildren ) {
-            (cur->node.parent->numChildren)--;
-          }
-        }
-
-        cur->blink->flink = cur->flink; // maintain list structure!
-        cur->flink->blink = cur->blink;
-
-        delete cur;
-
-      }
-
-      cur = next;
-
-    }
-
-    processAllEvents( app, display );
-
-    count--;
-
-  } while ( moreToDelete && count );
-
+  // delete active window list head
   delete head;
 
   // delete widgets
@@ -2120,13 +2051,7 @@ actionsPtr curAct, nextAct;
 
   msgBox.destroy();
 
-  XtUnmapWidget( appTop );
-
   XtDestroyWidget( mainWin );
-
-  processAllEvents( app, display );
-
-  XtDestroyWidget( appTop );
 
   processAllEvents( app, display );
 
@@ -2161,13 +2086,97 @@ actionsPtr curAct, nextAct;
   thread_unlock( actionsLock );
   thread_destroy_lock_handle( actionsLock );
 
-  //if ( saveContextOnExit ) {
-  //  fprintf( shutdownFilePtr, "}\n" );
-  //}
+}
+
+void appContextClass::closeDownAppCtx ( void ) {
 
-  // these are done in main.cc
-      //XtCloseDisplay( display );
-      //XtDestroyApplicationContext( app );
+int numOpenWindows, count, moreToDelete;
+activeWindowListPtr cur, next;
+macroListPtr curMacro, nextMacro;
+
+  if ( saveContextOnExit ) {
+    fprintf( shutdownFilePtr, "%-d\n", primaryServer | ( oneInstance << 8 ) );
+    writeStringToFile( shutdownFilePtr, displayName );
+    fprintf( shutdownFilePtr, "%-d\n", noEdit );
+  }
+
+  ci.closeColorWindow();
+
+  if ( saveContextOnExit ) {
+    fprintf( shutdownFilePtr, "%-d\n", numMacros );
+  }
+  curMacro = macroHead->flink;
+  while ( curMacro != macroHead ) {
+    nextMacro = curMacro->flink;
+    if ( saveContextOnExit ) {
+      fprintf( shutdownFilePtr, "%s=%s\n", curMacro->macro,
+       curMacro->expansion );
+    }
+    curMacro = nextMacro;
+  }
+
+  if ( saveContextOnExit ) {
+    // get number of open windows
+    numOpenWindows = 0;
+    cur = head->flink;
+    while ( cur != head ) {
+      numOpenWindows++;
+      cur = cur->flink;
+    }
+    fprintf( shutdownFilePtr, "%-d\n", numOpenWindows );
+  }
+
+  count = 100000;
+  moreToDelete = 0;
+  do {
+
+    // walk activeWindowList - close and delete
+    cur = head->flink;
+    while ( cur != head ) {
+
+      next = cur->flink;
+
+      if ( cur->node.mode == AWC_EXECUTE ) {
+        cur->node.returnToEdit( 0 );
+      }
+
+      if ( cur->node.numChildren ) {
+
+        moreToDelete = 1;
+
+      }
+      else {
+
+        if ( !cur->node.parent && saveContextOnExit ) {
+          cur->node.checkPoint( primaryServer, shutdownFilePtr );
+        }
+
+        if ( cur->node.parent ) {
+          if ( cur->node.parent->numChildren ) {
+            (cur->node.parent->numChildren)--;
+          }
+        }
+
+        cur->blink->flink = cur->flink; // maintain list structure!
+        cur->flink->blink = cur->blink;
+
+        delete cur;
+
+      }
+
+      cur = next;
+
+    }
+
+    processAllEvents( app, display );
+
+    count--;
+
+  } while ( moreToDelete && count );
+
+  XtUnmapWidget( appTop );
+
+  processAllEvents( app, display );
 
 }
 
@@ -3298,6 +3307,15 @@ int i;
   XtAddCallback( checkpointPidB, XmNactivateCallback, checkpointPid_cb,
    (XtPointer) this );
 
+  str = XmStringCreateLocalized( appContextClass_str141 );
+  viewFontMappingB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   viewPullDown,
+   XmNlabelString, str,
+   NULL );
+  XmStringFree( str );
+  XtAddCallback( viewFontMappingB, XmNactivateCallback, viewFontMapping_cb,
+   (XtPointer) this );
+
 
   pathPullDown = XmCreatePulldownMenu( menuBar, "", NULL, 0 );
 
@@ -4314,7 +4332,7 @@ err_return:
 
   largestH = XDisplayHeight( display, DefaultScreen(display) );
 
-  msgBox.create( appTop, 0, 0, 5000, NULL, NULL );
+  msgBox.create( appTop, 0, 0, 50000, NULL, NULL );
 
   pvList.create( appTop, 20 );
 
