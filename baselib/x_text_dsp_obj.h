@@ -27,6 +27,7 @@
 #include "act_grf.h"
 #include "entry_form.h"
 #include "keypad.h"
+#include "calpad.h"
 
 #include "cadef.h"
 
@@ -52,6 +53,16 @@ static char *dragName[] = {
   activeXTextDspClass_str1,
   activeXTextDspClass_str2
 };
+
+static void xtdoCancelCp (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void xtdoSetCpValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 static void xtdoRestoreValue (
   Widget w,
@@ -188,6 +199,16 @@ static void xtdoSetValueChanged (
 class activeXTextDspClass : public activeGraphicClass {
 
 private:
+
+friend void xtdoCancelCp (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void xtdoSetCpValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 friend void xtdoRestoreValue (
   Widget w,
@@ -385,6 +406,7 @@ keypadClass kp;
 int kpInt;
 double kpDouble;
 int useKp, bufUseKp;
+calpadClass cp;
 
 public:
 

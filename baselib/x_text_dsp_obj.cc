@@ -39,6 +39,45 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
 }
 
+static void xtdoCancelCp (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
+
+  axtdo->editDialogIsActive = 0;
+
+}
+
+static void xtdoSetCpValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
+int stat;
+
+  axtdo->cp.getDate( axtdo->entryValue, 127 );
+
+  axtdo->editDialogIsActive = 0;
+  strncpy( axtdo->curValue, axtdo->entryValue, 39 );
+
+  if ( axtdo->pvExists ) {
+#ifdef __epics__
+    stat = ca_put( DBR_STRING, axtdo->pvId, &axtdo->curValue );
+#endif
+  }
+
+  axtdo->actWin->appCtx->proc->lock();
+  axtdo->needUpdate = 1;
+  axtdo->actWin->addDefExeNode( axtdo->aglPtr );
+  axtdo->actWin->appCtx->proc->unlock();
+
+}
+
 static void xtdoCancelKp (
   Widget w,
   XtPointer client,
@@ -2579,6 +2618,10 @@ int stat;
     kp.popdown();
   }
 
+  if ( cp.isPoppedUp() ) {
+    cp.popdown();
+  }
+
   if ( textEntry.formIsPoppedUp() ) {
     textEntry.popdown();
     editDialogIsActive = 0;
@@ -2705,6 +2748,15 @@ int i;
        (void *) this,
        (XtCallbackProc) xtdoSetKpIntValue,
        (XtCallbackProc) xtdoCancelKp );
+      editDialogIsActive = 1;
+      return;
+    }
+    else if ( pvType == DBR_STRING ) {
+      cp.create( actWin->top, teX, teY, entryValue, 127,
+       (void *) this,
+       (XtCallbackProc) xtdoSetCpValue,
+       (XtCallbackProc) xtdoCancelCp );
+      cp.setDate( curValue );
       editDialogIsActive = 1;
       return;
     }
