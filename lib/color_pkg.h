@@ -78,7 +78,7 @@ typedef struct ruleTag {
 
 typedef struct colorCacheTag {
     AVL_FIELDS(colorCacheTag)
-        unsigned int rgb[3]; // [0]=r, [1]=g, [2]=b
+    unsigned int rgb[3]; // [0]=r, [1]=g, [2]=b
     unsigned int pixel;
     unsigned int blinkRgb[3]; // [0]=r, [1]=g, [2]=b
     unsigned int blinkPixel;
@@ -270,6 +270,7 @@ private:
     unsigned long *blinkingColorCells;
     XColor *blinkingXColor, *offBlinkingXColor;
     char **colorNames; // dynamic array of pointers to char
+    colorCachePtr *colorNodes; // dynamic array
 
     int special[NUM_SPECIAL_COLORS];
     int specialIndex[NUM_SPECIAL_COLORS];
@@ -300,12 +301,18 @@ private:
     static const int GET_NUM_COLUMNS = 2;
     static const int GET_MAX = 3;
     static const int GET_RULE = 4;
-    static const int GET_RULE_CONDITION = 5;
-    static const int GET_RULE_CONNECTOR = 6;
-    static const int GET_RULE_INDEX = 7;
-    static const int GET_COLOR = 8;
-    static const int GET_ALARM_PARAMS = 9;
-    static const int GET_MENU_MAP = 10;
+    static const int GET_FIRST_OP_OR_ARG = 5;
+    static const int GET_FIRST_ARG = 6;
+    static const int GET_NEXT_OP_OR_ARG = 7;
+    static const int GET_NEXT_ARG = 8;
+    static const int GET_RULE_CONDITION = 9;
+    static const int GET_CONNECTOR_OR_COLON = 10;
+    static const int GET_COLON = 11;
+    static const int GET_RESULT_NAME = 12;
+    static const int GET_COLOR = 13;
+    static const int GET_ALARM_PARAMS = 14;
+    static const int GET_MENU_MAP = 15;
+    static const int INSERT_COLOR = 16;
 
     int readFile, tokenState, parseIndex, parseLine, tokenFirst, tokenLast,
         tokenNext, gotToken, colorIndex;

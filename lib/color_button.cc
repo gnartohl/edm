@@ -430,10 +430,23 @@ XmString str;
   bg = ci->pix(i);
   fg = ci->labelPix(i);
 
+  if ( ci->isRule(i) ) {
+    str = XmStringCreateLocalized( "*" );
+  }
+  else {
+    str = XmStringCreateLocalized( " " );
+  }
+
   n = 0;
   XtSetArg( arg[n], XmNbackground, (XtArgVal) bg ); n++;
   XtSetArg( arg[n], XmNforeground, (XtArgVal) fg ); n++;
+  XtSetArg( arg[n], XmNlabelString, (XtArgVal) str ); n++;
+  XtSetArg( arg[n], XmNwidth, (XtArgVal) 25 ); n++;
+  XtSetArg( arg[n], XmNheight, (XtArgVal) 25 ); n++;
+  XtSetArg( arg[n], XmNrecomputeSize, (XtArgVal) 0 ); n++;
   XtSetValues( pb, arg, n );
+
+  XmStringFree( str );
 
   if ( namePb ) {
     str = XmStringCreateLocalized( ci->colorName(i) );

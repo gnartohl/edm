@@ -153,6 +153,12 @@ int red, green, blue;
           XFillRectangle( cio->display, XtWindow(cio->form), cio->gc.normGC(),
            x, y, 20, 20 );
 
+          if ( cio->isRule( i ) ) {
+            cio->gc.setFG( cio->labelPix(i) );
+            XFillArc( cio->display, XtWindow(cio->form),
+             cio->gc.normGC(), x+7, y+7, 6, 6, 0, 23040 );
+	  }
+
           if ( i == cio->curIndex ) {
             cio->gc.setFG(
              BlackPixel( cio->display, DefaultScreen(cio->display) ) );
@@ -798,6 +804,78 @@ char *ptr;
 
 }
 
+static int thisAnd (
+  double variable,
+  double conditionArg ) {
+
+  return ( variable && conditionArg );
+
+}
+
+static int thisOr (
+  double variable,
+  double conditionArg ) {
+
+  return ( variable || conditionArg );
+
+}
+
+static int equal (
+  double variable,
+  double conditionArg ) {
+
+  return ( variable == conditionArg );
+
+}
+
+static int alwaysTrue (
+  double variable,
+  double conditionArg ) {
+
+  return 1;
+
+}
+
+static int notEqual (
+  double variable,
+  double conditionArg ) {
+
+  return ( variable != conditionArg );
+
+}
+
+static int lessThan (
+  double variable,
+  double conditionArg ) {
+
+  return ( variable < conditionArg );
+
+}
+
+static int lessThanOrEqual (
+  double variable,
+  double conditionArg ) {
+
+  return ( variable <= conditionArg );
+
+}
+
+static int greaterThan (
+  double variable,
+  double conditionArg ) {
+
+  return ( variable > conditionArg );
+
+}
+
+static int greaterThanOrEqual (
+  double variable,
+  double conditionArg ) {
+
+  return ( variable >= conditionArg );
+
+}
+
 int colorInfoClass::ver3InitFromFile (
   FILE *f,
   XtAppContext app,
@@ -807,16 +885,17 @@ int colorInfoClass::ver3InitFromFile (
 {
 
 char tk[MAX_LINE_SIZE+1], *endptr;
-int i, n, stat, nrows, ncols, remainder, dup,
- parseStatus, state, colorMult, val, index, maxSpecial;
+int i, ii, n, stat, nrows, ncols, remainder, dup,
+ parseStatus, state, colorMult, val, index, maxSpecial, firstCond;
 XColor color;
 Arg arg[20];
 XmString str1, str2;
 colorCachePtr cur1, cur2, cur[2], curSpecial;
+ruleConditionPtr ruleCond;
 unsigned long bgColor;
 int tmpSize;
 int *tmp;
-
+char msg[127+1];
 
   for ( i=0; i<NUM_SPECIAL_COLORS; i++ ) {
     special[i] = 0;
@@ -844,6 +923,8 @@ int *tmp;
   // first, build a list of colors and rules
 
   while ( state != -1 ) {
+
+    //printf( "[%-d]\n", state );
 
     switch ( state ) {
 
@@ -935,7 +1016,7 @@ int *tmp;
 
         parseError( colorInfoClass_str12 );
         parseStatus = FAIL;
-        state = -1;
+        goto term;
 
       }
 
@@ -952,12 +1033,12 @@ int *tmp;
       if ( strcmp( tk, "" ) == 0 ) {
         parseError( colorInfoClass_str10 );
         parseStatus = FAIL;
-        state = -1;
+        goto term;
       }
       else if ( strcmp( tk, "=" ) != 0 ) {
         parseError( colorInfoClass_str13 );
         parseStatus = FAIL;
-        state = -1;
+        goto term;
       }
 
       stat = getToken( tk );
@@ -973,7 +1054,7 @@ int *tmp;
       else {
         parseError( colorInfoClass_str14 );
         parseStatus = FAIL;
-        state = -1;
+        goto term;
       }
 
       break;
@@ -989,12 +1070,12 @@ int *tmp;
       if ( strcmp( tk, "" ) == 0 ) {
         parseError( colorInfoClass_str10 );
         parseStatus = FAIL;
-        state = -1;
+        goto term;
       }
       else if ( strcmp( tk, "=" ) != 0 ) {
         parseError( colorInfoClass_str13 );
         parseStatus = FAIL;
-        state = -1;
+        goto term;
       }
 
       stat = getToken( tk );
@@ -1011,14 +1092,24 @@ int *tmp;
       else {
         parseError( colorInfoClass_str15 );
         parseStatus = FAIL;
-        state = -1;
+        goto term;
       }
 
       break;
 
     case GET_RULE:
 
-      stat = getToken( tk );
+      for( n=0; n<2; n++ ) {
+        cur[n] = new colorCacheType;
+        cur[n]->rule = new ruleType;
+        cur[n]->pixel = 0;
+        cur[n]->blinkPixel = 0;
+        cur[n]->rule->ruleHead = new ruleConditionType; // sentinel
+        cur[n]->rule->ruleTail = cur[n]->rule->ruleHead;
+        cur[n]->rule->ruleTail->flink = NULL;
+      }
+
+      stat = getToken( tk ); // color name
       if ( stat == FAIL ) {
         parseError( colorInfoClass_str9 );
         parseStatus = stat;
@@ -1027,10 +1118,309 @@ int *tmp;
       if ( strcmp( tk, "" ) == 0 ) {
         parseError( colorInfoClass_str10 );
         parseStatus = FAIL;
-        state = -1;
+        goto term;
       }
-      else if ( strcmp( tk, "}" ) == 0 ) {
-        state = GET_FIRST_TOKEN;
+
+      for( n=0; n<2; n++ ) {
+        cur[n]->name = new char[strlen(tk)+1];
+        strcpy( cur[n]->name, tk );
+        cur[n]->index = colorIndex; // this is simply an incrementing
+	                           // sequence number
+      }
+
+      stat = getToken( tk ); // {
+      if ( stat == FAIL ) {
+        parseError( colorInfoClass_str9 );
+        parseStatus = stat;
+        goto term;
+      }
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( colorInfoClass_str10 );
+        parseStatus = FAIL;
+        goto term;
+      }
+      else if ( strcmp( tk, "{" ) != 0 ) {
+        parseError( colorInfoClass_str11 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      //printf( "rule is [%s]\n", cur[0]->name );
+
+      state = GET_RULE_CONDITION;
+
+      break;
+
+    case GET_RULE_CONDITION:
+
+      //printf( "new condition\n" );
+      ruleCond = new ruleConditionType;
+      state = GET_FIRST_OP_OR_ARG;
+      break;
+
+    case GET_FIRST_OP_OR_ARG:
+
+      stat = getToken( tk ); // operator or number or "default"
+      if ( stat == FAIL ) {
+        parseError( colorInfoClass_str9 );
+        parseStatus = stat;
+        goto term;
+      }
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( colorInfoClass_str10 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      if ( strcmp( tk, "}" ) == 0 ) {
+        //printf( "rule complete\n" );
+        delete ruleCond;
+        state = INSERT_COLOR;
+        break;
+      }
+
+      if ( strcmp( tk, "default" ) == 0 ) {
+
+        ruleCond->ruleFunc1 = alwaysTrue;
+        ruleCond->value1 = 0;
+        ruleCond->connectingFunc = NULL;
+        state = GET_COLON;
+
+      }
+      else if ( isLegalFloat( tk ) ) { // implied operator is =
+
+        ruleCond->ruleFunc1 = equal;
+        ruleCond->value1 = atof( tk );
+        state = GET_CONNECTOR_OR_COLON;
+
+      }
+      else { // got an explicit operator
+
+        if ( strcmp( tk, "=" ) == 0 ) {
+          ruleCond->ruleFunc1 = equal;
+	}
+	else if ( strcmp( tk, "!=" ) == 0 ) {
+          ruleCond->ruleFunc1 = notEqual;
+	}
+	else if ( strcmp( tk, ">" ) == 0 ) {
+          ruleCond->ruleFunc1 = greaterThan;
+	}
+	else if ( strcmp( tk, ">=" ) == 0 ) {
+          ruleCond->ruleFunc1 = greaterThanOrEqual;
+	}
+	else if ( strcmp( tk, "<" ) == 0 ) {
+          ruleCond->ruleFunc1 = lessThan;
+	}
+	else if ( strcmp( tk, "<=" ) == 0 ) {
+          ruleCond->ruleFunc1 = lessThanOrEqual;
+	}
+	else {
+          parseError( colorInfoClass_str23 );
+          parseStatus = FAIL;
+          goto term;
+        }
+
+        state = GET_FIRST_ARG;
+
+      }
+
+      break;
+
+    case GET_FIRST_ARG:
+
+      stat = getToken( tk ); // number
+      if ( stat == FAIL ) {
+        parseError( colorInfoClass_str9 );
+        parseStatus = stat;
+        goto term;
+      }
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( colorInfoClass_str10 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      if ( isLegalFloat( tk ) ) {
+        ruleCond->value1 = atof( tk );
+        state = GET_CONNECTOR_OR_COLON;
+      }
+      else {
+        parseError( colorInfoClass_str25 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      break;
+
+    case GET_CONNECTOR_OR_COLON:
+
+      stat = getToken( tk ); // &&, ||, or :
+      if ( stat == FAIL ) {
+        parseError( colorInfoClass_str9 );
+        parseStatus = stat;
+        goto term;
+      }
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( colorInfoClass_str10 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      if ( strcmp( tk, "&&" ) == 0 ) {
+        ruleCond->connectingFunc = thisAnd;
+        state = GET_NEXT_OP_OR_ARG;
+      }
+      else if ( strcmp( tk, "||" ) == 0 ) {
+        ruleCond->connectingFunc = thisOr;
+        state = GET_NEXT_OP_OR_ARG;
+      }
+      else if ( strcmp( tk, ":" ) == 0 ) {
+        ruleCond->connectingFunc = NULL;
+        state = GET_RESULT_NAME;
+      }
+      else {
+        parseError( colorInfoClass_str24 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      break;
+
+    case GET_NEXT_OP_OR_ARG:
+
+      stat = getToken( tk ); // operator or number
+      if ( stat == FAIL ) {
+        parseError( colorInfoClass_str9 );
+        parseStatus = stat;
+        goto term;
+      }
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( colorInfoClass_str10 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      if ( isLegalFloat( tk ) ) { // implied operator is =
+
+        ruleCond->ruleFunc2 = equal;
+        ruleCond->value2 = atof( tk );
+        state = GET_COLON;
+
+      }
+      else { // got an explicit operator
+
+        if ( strcmp( tk, "=" ) == 0 ) {
+          ruleCond->ruleFunc2 = equal;
+	}
+	else if ( strcmp( tk, "!=" ) == 0 ) {
+          ruleCond->ruleFunc2 = notEqual;
+	}
+	else if ( strcmp( tk, ">" ) == 0 ) {
+          ruleCond->ruleFunc2 = greaterThan;
+	}
+	else if ( strcmp( tk, ">=" ) == 0 ) {
+          ruleCond->ruleFunc2 = greaterThanOrEqual;
+	}
+	else if ( strcmp( tk, "<" ) == 0 ) {
+          ruleCond->ruleFunc2 = lessThan;
+	}
+	else if ( strcmp( tk, "<=" ) == 0 ) {
+          ruleCond->ruleFunc2 = lessThanOrEqual;
+	}
+	else {
+          parseError( colorInfoClass_str23 );
+          parseStatus = FAIL;
+          goto term;
+        }
+
+        state = GET_NEXT_ARG;
+
+      }
+
+      break;
+
+    case GET_NEXT_ARG:
+
+      stat = getToken( tk ); // number
+      if ( stat == FAIL ) {
+        parseError( colorInfoClass_str9 );
+        parseStatus = stat;
+        goto term;
+      }
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( colorInfoClass_str10 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      if ( isLegalFloat( tk ) ) {
+        ruleCond->value2 = atof( tk );
+        state = GET_COLON;
+      }
+      else {
+        parseError( colorInfoClass_str25 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      break;
+
+    case GET_COLON:
+
+      stat = getToken( tk ); // :
+      if ( stat == FAIL ) {
+        parseError( colorInfoClass_str9 );
+        parseStatus = stat;
+        goto term;
+      }
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( colorInfoClass_str10 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      if ( strcmp( tk, ":" ) == 0 ) {
+        state = GET_RESULT_NAME;
+      }
+      else {
+        parseError( colorInfoClass_str19 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      break;
+
+    case GET_RESULT_NAME:
+
+      stat = getToken( tk ); // color name to use when this condition is true
+      if ( stat == FAIL ) {
+        parseError( colorInfoClass_str9 );
+        parseStatus = stat;
+        goto term;
+      }
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( colorInfoClass_str10 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      if ( strcmp( tk, "}" ) == 0 ) {
+        parseError( colorInfoClass_str26 );
+        parseStatus = FAIL;
+        goto term;
+      }
+      else {
+        ruleCond->resultName = new char[strlen(tk)+1];
+        strcpy( ruleCond->resultName, tk );
+        ruleCond->result = 0; // we will map above name to an index
+                              // later and store the index here
+        // link into condition list
+        for( n=0; n<2; n++ ) {
+          cur[n]->rule->ruleTail->flink = ruleCond;
+          cur[n]->rule->ruleTail = ruleCond;
+          cur[n]->rule->ruleTail->flink = NULL;
+	}
+        state = GET_RULE_CONDITION;
       }
 
       break;
@@ -1053,14 +1443,14 @@ int *tmp;
       if ( strcmp( tk, "" ) == 0 ) {
         parseError( colorInfoClass_str10 );
         parseStatus = FAIL;
-        state = -1;
-        break;
+        goto term;
       }
 
       for( n=0; n<2; n++ ) {
         cur[n]->name = new char[strlen(tk)+1];
         strcpy( cur[n]->name, tk );
-        cur[n]->index = colorIndex;
+        cur[n]->index = colorIndex; // this is simply an incrementing
+	                            // sequence number
       }
 
       stat = getToken( tk ); // {
@@ -1072,14 +1462,12 @@ int *tmp;
       if ( strcmp( tk, "" ) == 0 ) {
         parseError( colorInfoClass_str10 );
         parseStatus = FAIL;
-        state = -1;
-        break;
+        goto term;
       }
       else if ( strcmp( tk, "{" ) != 0 ) {
         parseError( colorInfoClass_str11 );
         parseStatus = FAIL;
-        state = -1;
-        break;
+        goto term;
       }
 
       // get r, g, b
@@ -1094,19 +1482,18 @@ int *tmp;
         if ( strcmp( tk, "" ) == 0 ) {
           parseError( colorInfoClass_str10 );
           parseStatus = FAIL;
-          state = -1;
-          break;
+          goto term;
         }
         for( n=0; n<2; n++ ) {
           val = strtol( tk, &endptr, 0 );
           if ( strcmp( endptr, "" ) != 0 ) {
             parseError( colorInfoClass_str16 );
             parseStatus = FAIL;
-            state = -1;
-            break;
+            goto term;
           }
           cur[n]->rgb[i] = val * colorMult; 
-          cur[n]->blinkRgb[i] = cur[n]->rgb[i];
+          cur[n]->blinkRgb[i] = cur[n]->rgb[i]; // init blink to the same;
+	                                        // may be changed below
 	}
 
       }
@@ -1122,8 +1509,7 @@ int *tmp;
       if ( strcmp( tk, "" ) == 0 ) {
         parseError( colorInfoClass_str10 );
         parseStatus = FAIL;
-        state = -1;
-        break;
+        goto term;
       }
       else if ( strcmp( tk, "}" ) != 0 ) {
 
@@ -1133,8 +1519,7 @@ int *tmp;
           if ( strcmp( endptr, "" ) != 0 ) {
             parseError( colorInfoClass_str16 );
             parseStatus = FAIL;
-            state = -1;
-            break;
+            goto term;
           }
           cur[n]->blinkRgb[0] = val * colorMult;
         }
@@ -1151,16 +1536,14 @@ int *tmp;
           if ( strcmp( tk, "" ) == 0 ) {
             parseError( colorInfoClass_str10 );
             parseStatus = FAIL;
-            state = -1;
-            break;
+            goto term;
           }
           for( n=0; n<2; n++ ) {
             val = strtol( tk, &endptr, 0 );
             if ( strcmp( endptr, "" ) != 0 ) {
               parseError( colorInfoClass_str16 );
               parseStatus = FAIL;
-              state = -1;
-              break;
+              goto term;
             }
             cur[n]->blinkRgb[i] = val * colorMult;
 	  }
@@ -1176,50 +1559,56 @@ int *tmp;
         if ( strcmp( tk, "" ) == 0 ) {
           parseError( colorInfoClass_str10 );
           parseStatus = FAIL;
-          state = -1;
-          break;
+          goto term;
         }
         else if ( strcmp( tk, "}" ) != 0 ) {
           parseError( colorInfoClass_str17 );
           parseStatus = FAIL;
-          state = -1;
-          break;
+          goto term;
         }
 
       }
 
-      if ( parseStatus == SUCCESS ) {
+      state = INSERT_COLOR;
 
-        stat = avl_insert_node( this->colorCacheByNameH, (void *) cur[0],
-         &dup );
-        if ( !( stat & 1 ) ) {
-          delete cur[0];
-          fclose( f );
-          return stat;
-        }
+      break;
 
-        if ( dup ) {
-          printf( colorInfoClass_str7, cur[0]->name );
-          delete cur[0];
-	}
+    case INSERT_COLOR:
 
-        stat = avl_insert_node( this->colorCacheByIndexH, (void *) cur[1],
-         &dup );
-        if ( !( stat & 1 ) ) {
-          delete cur[1];
-          fclose( f );
-          return stat;
-        }
-
-        if ( dup ) delete cur[1];
-
-        colorIndex++;
-
-        max_colors++;
-
-        state = GET_FIRST_TOKEN;
-
+      stat = avl_insert_node( this->colorCacheByNameH, (void *) cur[0],
+       &dup );
+      if ( !( stat & 1 ) ) {
+        delete cur[0];
+        fclose( f );
+        return stat;
       }
+
+      if ( dup ) {
+        sprintf( msg, colorInfoClass_str7, cur[0]->name );
+        parseError( msg );
+        delete cur[0];
+      }
+
+      stat = avl_insert_node( this->colorCacheByIndexH, (void *) cur[1],
+       &dup );
+      if ( !( stat & 1 ) ) {
+        delete cur[1];
+        fclose( f );
+        return stat;
+      }
+
+      if ( dup ) {
+        parseError( colorInfoClass_str27 );
+        delete cur[1];
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      colorIndex++;
+
+      max_colors++;
+
+      state = GET_FIRST_TOKEN;
 
       break;
 
@@ -1234,7 +1623,7 @@ int *tmp;
       if ( strcmp( tk, "" ) == 0 ) {
         parseError( colorInfoClass_str10 );
         parseStatus = FAIL;
-        state = -1;
+        goto term;
       }
 
       if ( strcmp( tk, "}" ) == 0 ) {
@@ -1284,7 +1673,7 @@ int *tmp;
       if ( strcmp( tk, "" ) == 0 ) {
         parseError( colorInfoClass_str10 );
         parseStatus = FAIL;
-        state = -1;
+        goto term;
       }
 
       if ( strcmp( tk, "disconnected" ) == 0 ) {
@@ -1580,7 +1969,7 @@ term:
 
   fclose( f );
 
-  if ( parseStatus == FAIL ) {
+  if ( parseStatus != SUCCESS ) {
     return 0;
   }
 
@@ -1593,6 +1982,7 @@ term:
   colors = new unsigned int[max_colors];
   blinkingColors = new unsigned int[max_colors];
   colorNames = new (char *)[max_colors];
+  colorNodes = new colorCachePtr[max_colors];
 
   stat = avl_get_first( this->colorCacheByIndexH, (void **) &cur1 );
   if ( !( stat & 1 ) ) {
@@ -1603,24 +1993,12 @@ term:
 
   while ( cur1 ) {
 
-    colorNames[i] = cur1->name; // populate color name array
+    colorNodes[i] = cur1;
 
-    color.red = cur1->rgb[0];
-    color.green = cur1->rgb[1];
-    color.blue = cur1->rgb[2];
+    // Allocate X color for static rules only
+    if ( !cur1->rule ) { // not a dynamic color rule
 
-    stat = XAllocColor( display, cmap, &color );
-    if ( stat ) {
-      colors[i] = color.pixel;
-    }
-    else {
-      colors[i] = BlackPixel( display, screen );
-    }
-    cur1->pixel = colors[i];
-
-    if ( ( cur1->rgb[0] != cur1->blinkRgb[0] ) ||
-         ( cur1->rgb[1] != cur1->blinkRgb[1] ) ||
-         ( cur1->rgb[2] != cur1->blinkRgb[2] ) ) {
+      colorNames[i] = cur1->name; // populate color name array
 
       color.red = cur1->rgb[0];
       color.green = cur1->rgb[1];
@@ -1628,28 +2006,51 @@ term:
 
       stat = XAllocColor( display, cmap, &color );
       if ( stat ) {
-        blinkingColors[i] = color.pixel;
+        colors[i] = color.pixel;
       }
       else {
-        blinkingColors[i] = BlackPixel( display, screen );
+        colors[i] = BlackPixel( display, screen );
       }
-      cur1->blinkPixel = blinkingColors[i];
+      cur1->pixel = colors[i];
+
+      if ( ( cur1->rgb[0] != cur1->blinkRgb[0] ) ||
+           ( cur1->rgb[1] != cur1->blinkRgb[1] ) ||
+           ( cur1->rgb[2] != cur1->blinkRgb[2] ) ) {
+
+        color.red = cur1->rgb[0];
+        color.green = cur1->rgb[1];
+        color.blue = cur1->rgb[2];
+
+        stat = XAllocColor( display, cmap, &color );
+        if ( stat ) {
+          blinkingColors[i] = color.pixel;
+        }
+        else {
+          blinkingColors[i] = BlackPixel( display, screen );
+        }
+        cur1->blinkPixel = blinkingColors[i];
+
+      }
+      else {
+        blinkingColors[i] = colors[i];
+        cur1->blinkPixel = colors[i];
+      }
+
+      // --------------------------------------------------------------
+      // update tree sorted by name
+      stat = avl_get_match( this->colorCacheByNameH, (void *) cur1->name,
+       (void **) &cur2 );
+      if ( cur2 ) {
+        cur2->pixel = cur1->pixel;
+        cur2->blinkPixel = cur1->blinkPixel;
+        for ( ii=0; ii<3; ii++ ) {
+          cur2->rgb[ii] = cur1->rgb[ii];
+          cur2->blinkRgb[ii] = cur1->blinkRgb[ii];
+        }
+      }
+      // --------------------------------------------------------------
 
     }
-    else {
-      blinkingColors[i] = colors[i];
-      cur1->blinkPixel = colors[i];
-    }
-
-    // --------------------------------------------------------------
-    // update tree sorted by name
-    stat = avl_get_match( this->colorCacheByNameH, (void *) cur1->name,
-     (void **) &cur2 );
-    if ( cur2 ) {
-      cur2->pixel = cur1->pixel;
-      cur2->blinkPixel = cur1->blinkPixel;
-    }
-    // --------------------------------------------------------------
 
     stat = avl_get_next( this->colorCacheByIndexH, (void **) &cur1 );
     if ( !( stat & 1 ) ) {
@@ -1657,6 +2058,77 @@ term:
     }
 
     if ( i < max_colors-1 ) i++;
+
+  }
+
+  //printf( "fixup dynamic rules\n" );
+
+  // map dynamic color rule result name into result index
+  for ( i=0; i<max_colors; i++ ) {
+
+    //printf( "i = %-d\n", i );
+
+    if ( colorNodes[i]->rule ) { // dynamic color rules only
+
+      //printf( "rule is %s, index=%-d\n", colorNodes[i]->name,
+      // colorNodes[i]->index );
+
+      colorNames[i] = colorNodes[i]->name; // populate color name array
+
+      firstCond = 1;
+      ruleCond = colorNodes[i]->rule->ruleHead->flink;
+      while ( ruleCond ) {
+
+        stat = avl_get_match( this->colorCacheByNameH,
+         (void *) ruleCond->resultName, (void **) &cur1 );
+        if ( cur1 ) {
+          if ( isRule( cur1->index ) ) { // rules may not reference other rules
+            printf( colorInfoClass_str29, colorNodes[i]->name );
+            return 0;
+          }
+          ruleCond->result = cur1->index;
+          //printf( "result name %s --> %-d\n", ruleCond->resultName,
+          // ruleCond->result );
+        }
+        else {
+          printf( colorInfoClass_str28, colorNodes[i]->name );
+          return 0;
+        }
+
+        if ( firstCond ) { // use first rule condition as static color for rule
+
+          colors[i] = cur1->pixel;
+
+          firstCond = 0;
+          colorNodes[i]->pixel = cur1->pixel;
+          colorNodes[i]->blinkPixel = cur1->blinkPixel;
+          for ( ii=0; ii<3; ii++ ) {
+            colorNodes[i]->rgb[ii] = cur1->rgb[ii];
+            colorNodes[i]->blinkRgb[ii] = cur1->blinkRgb[ii];
+          }
+
+          // --------------------------------------------------------------
+          // update tree sorted by name
+          stat = avl_get_match( this->colorCacheByNameH,
+           (void *) colorNodes[i]->name,
+           (void **) &cur2 );
+          if ( cur2 ) {
+            cur2->pixel = colorNodes[i]->pixel;
+            cur2->blinkPixel = colorNodes[i]->blinkPixel;
+            for ( ii=0; ii<3; ii++ ) {
+              cur2->rgb[ii] = colorNodes[i]->rgb[ii];
+              cur2->blinkRgb[ii] = colorNodes[i]->blinkRgb[ii];
+            }
+          }
+          // --------------------------------------------------------------
+
+  	}
+
+        ruleCond = ruleCond->flink;
+
+      }
+
+    }
 
   }
 
@@ -2858,7 +3330,7 @@ int colorInfoClass::isRule (
   if ( index < 0 )
     return 0;
 
-  return 0;
+  return ( colorNodes[index]->rule != NULL );
 
 }
 

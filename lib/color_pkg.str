@@ -7,7 +7,7 @@
 #define colorInfoClass_str4 (char *) "Close"
 #define colorInfoClass_str5 (char *) "Show"
 #define colorInfoClass_str6 (char *) "Error at line %-d - %s\n"
-#define colorInfoClass_str7 (char *) "Warning - duplicate color name: [%s]\n"
+#define colorInfoClass_str7 (char *) "Warning - duplicate color name: [%s]"
 #define colorInfoClass_str8 (char *) "index=%-d,  r=%-d, g=%-d, b=%-d\n"
 #define colorInfoClass_str9 (char *) "Sytax error"
 #define colorInfoClass_str10 (char *) "Unexpected end of file"
@@ -23,6 +23,13 @@
 #define colorInfoClass_str20 (char *) "Alarm color name not found"
 #define colorInfoClass_str21 (char *) "All alarm colors have not been specified"
 #define colorInfoClass_str22 (char *) "Alarm specification syntax error"
+#define colorInfoClass_str23 (char *) "Expected default,=,!=,<,<=,>,or >="
+#define colorInfoClass_str24 (char *) "Expected && or ||"
+#define colorInfoClass_str25 (char *) "Expected numeric value"
+#define colorInfoClass_str26 (char *) "Expected color name"
+#define colorInfoClass_str27 (char *) "Duplicate color index"
+#define colorInfoClass_str28 (char *) "Color name referenced in rule not found, offending rule: %s\n"
+#define colorInfoClass_str29 (char *) "Rules may only reference static color names, offending rule: %s\n"
 
 #endif
 
