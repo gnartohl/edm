@@ -396,8 +396,6 @@ libRecPtr head, tail, cur;
   strncpy( fileName, prefix, 255 );
   strncat( fileName, "edmPvObjects", 255 );
 
-  _edmDebug();
-
   f = fopen( fileName, "r" );
   if ( f ) {
 
@@ -413,13 +411,11 @@ libRecPtr head, tail, cur;
       tk = strtok( line, "\n" );
       numComponents = atol( tk );
       if ( numComponents <= 0 ) {
-	printf( "3\n" );
         printf( appContextClass_str2, fileName );
         return;
       }
     }
     else {
-      printf( "4\n" );
       printf( appContextClass_str2, fileName );
       fileEmpty = 1;
       fclose( f );
@@ -1414,7 +1410,8 @@ fileListPtr curFile, nextFile;
     delete cur;
     cur = next;
   }
-  processAllEventsWithSync( app, display );
+#  processAllEventsWithSync( app, display );
+  processAllEvents( app, display );
   delete head;
 
   // delete widgets
@@ -1441,11 +1438,13 @@ fileListPtr curFile, nextFile;
 
   XtDestroyWidget( mainWin );
 
-  processAllEventsWithSync( app, display );
+#  processAllEventsWithSync( app, display );
+  processAllEvents( app, display );
 
   XtDestroyWidget( appTop );
 
-  processAllEventsWithSync( app, display );
+#  processAllEventsWithSync( app, display );
+  processAllEvents( app, display );
 
 }
 
@@ -2659,7 +2658,8 @@ char msg[127+1];
       cur = cur->flink;
     }
 
-    processAllEventsWithSync( app, display );
+#    processAllEventsWithSync( app, display );
+    processAllEvents( app, display );
 
     nodeCount = iconNodeCount = actionCount = iconActionCount = 0;
     cur = head->flink;
@@ -2692,7 +2692,8 @@ char msg[127+1];
       cur = cur->flink;
     }
 
-    processAllEventsWithSync( app, display );
+#    processAllEventsWithSync( app, display );
+    processAllEvents( app, display );
 
     /* if all windows have been activated then iconify main window */
     if ( ( iconNodeCount == iconActionCount ) && ( iconNodeCount != 0 ) ) {
@@ -2725,11 +2726,18 @@ char msg[127+1];
        NULL );
     }
 
+#ifdef __epics__
+    stat = ca_pend_io( 3.0 );
+#endif
     processAllEvents( app, display );
 
     cur = cur->flink;
 
   }
+
+#ifdef __epics__
+  stat = ca_pend_io( 3.0 );
+#endif
 
   processAllEvents( app, display );
 

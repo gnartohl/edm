@@ -332,7 +332,6 @@ activeBarClass *baro = (activeBarClass *) ast_args.usr;
   if ( baro->active ) {
 
     baro->curReadV = *( (double *) ast_args.dbr );
-
     baro->needDrawCheck = 1;
     baro->actWin->addDefExeNode( baro->aglPtr );
 

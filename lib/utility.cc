@@ -42,7 +42,9 @@ void genericProcessAllEvents (
 {
 
 XEvent Xev;
-int result, isXEvent;
+int result, isXEvent, count;
+
+  count = 30;
 
   if ( sync ) {
     XFlush( d );
@@ -66,7 +68,8 @@ int result, isXEvent;
         XtAppProcessEvent( app, result );
       }
     }
-  } while ( result );
+    count--;
+  } while ( result && count );
 
 }
 

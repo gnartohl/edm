@@ -649,9 +649,11 @@ float hours, seconds;
 
   if ( server ) stat = thread_create_proc( serverH, serverThread );
 
+#if 0
 #ifdef __epics__
   stat = thread_create_handle( &caPendH, NULL );
   stat = thread_create_proc( caPendH, caPendThread );
+#endif
 #endif
 
   args = new argsType;
