@@ -15483,6 +15483,7 @@ int result;
 void activeWindowClass::lineEditBegin ( void )
 {
 
+  setChanged();
   cursor.set( XtWindow(drawWidget), CURSOR_K_TINYCROSSHAIR );
   cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );
   state = AWC_EDITING_POINTS;
