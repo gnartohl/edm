@@ -1,21 +1,30 @@
-3 0 1
-269
-151
+3 1 0
+273
+171
 483
 521
 helvetica-medium-r-18.0
 0
 helvetica-medium-r-12.0
 0
-79
-3
-79
-79
-27
-4
-1
-10
-2
+rgb
+0,0,0
+rgb
+50971,52011,50971
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+0,0,48891
+rgb
+46810,47850,46810
+rgb
+61374,61374,61374
+rgb
+27046,27046,27046
+rgb
+55132,56172,55132
 Rectangle
 0
 0
@@ -27,17 +36,19 @@ Rectangle
 0
 helvetica-bold-r-14.0
 0
-EOD
+<<<E~O~D>>>
 activeRectangleClass
-2 0 0
+2 1 0
 41
 83
 134
 73
-79
+rgb
+0,0,0
 0
 0
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -47,17 +58,19 @@ activeRectangleClass
 1
 0
 0
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 41
 16
 110
 27
-79
+rgb
+0,0,0
 0
 0
-1
+rgb
+61374,61374,61374
 0
 <<<empty>>>
 <<<empty>>>
@@ -69,17 +82,19 @@ helvetica-medium-r-24.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeRectangleClass
-2 0 0
+2 1 0
 41
 187
 134
 73
-79
+rgb
+0,0,0
 0
 0
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -89,17 +104,19 @@ activeRectangleClass
 2
 1
 0
-EOD
+<<<E~O~D>>>
 activeRectangleClass
-2 0 0
+2 1 0
 41
 292
 134
 73
-27
+rgb
+0,0,48891
 0
 1
-32
+rgb
+0,49931,48891
 0
 <<<empty>>>
 <<<empty>>>
@@ -109,17 +126,19 @@ activeRectangleClass
 5
 0
 0
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 189
 96
 100
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -131,17 +150,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 41
 408
 380
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -153,17 +174,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 41
 426
 324
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -175,17 +198,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 41
 457
 400
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -197,17 +222,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 41
 477
 165
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -219,17 +246,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 189
 198
 103
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -241,17 +270,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 189
 215
 70
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -263,17 +294,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 189
 113
 70
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -285,17 +318,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 189
 131
 40
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -307,17 +342,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 189
 233
 40
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -329,17 +366,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 189
 305
 100
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -351,17 +390,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 189
 322
 70
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -373,17 +414,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 189
 340
 18
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -395,4 +438,4 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>

@@ -1,21 +1,30 @@
-3 0 1
-824
-165
+3 1 0
+775
+185
 500
 477
 helvetica-medium-r-18.0
 0
 helvetica-medium-r-12.0
 0
-79
-3
-79
-79
-27
-4
-1
-10
-2
+rgb
+0,0,0
+rgb
+50971,52011,50971
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+0,0,48891
+rgb
+46810,47850,46810
+rgb
+61374,61374,61374
+rgb
+27046,27046,27046
+rgb
+55132,56172,55132
 GIF Image
 0
 0
@@ -27,7 +36,7 @@ GIF Image
 0
 helvetica-bold-r-14.0
 0
-EOD
+<<<E~O~D>>>
 cfcf6c8a_dbeb_11d2_8a97_00104b8742df
 1 2 0
 7
@@ -38,17 +47,19 @@ $(help)helpEdmGif.gif
 0
 0
 0
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 29
 32
 115
 27
-79
+rgb
+0,0,0
 0
 0
-1
+rgb
+61374,61374,61374
 0
 <<<empty>>>
 <<<empty>>>
@@ -60,17 +71,19 @@ helvetica-medium-r-24.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 32
 277
 399
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -82,17 +95,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 32
 293
 233
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -104,17 +119,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 32
 321
 410
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -126,17 +143,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 32
 337
 450
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -148,17 +167,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 32
 365
 373
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -170,17 +191,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 32
 381
 125
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -192,17 +215,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 32
 426
 421
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -214,17 +239,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 32
 410
 426
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -236,17 +263,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 32
 443
 125
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -258,17 +287,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 32
 229
 345
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -280,17 +311,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 32
 246
 167
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -302,17 +335,19 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
-2 0 0
+2 1 0
 32
 200
 248
 16
-79
+rgb
+0,0,0
 0
 1
-4
+rgb
+46810,47850,46810
 0
 <<<empty>>>
 <<<empty>>>
@@ -324,4 +359,4 @@ helvetica-medium-r-14.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>

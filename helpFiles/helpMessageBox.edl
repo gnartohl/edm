@@ -1,21 +1,30 @@
-3 0 1
-727
-126
+3 1 0
+731
+146
 500
 575
 helvetica-medium-r-18.0
 0
 helvetica-medium-r-12.0
 0
-79
-3
-79
-79
-27
-4
-1
-10
-2
+rgb
+0,0,0
+rgb
+50971,52011,50971
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+0,0,48891
+rgb
+46810,47850,46810
+rgb
+61374,61374,61374
+rgb
+27046,27046,27046
+rgb
+55132,56172,55132
 Message Box
 0
 0
@@ -27,7 +36,7 @@ Message Box
 0
 helvetica-bold-r-14.0
 0
-EOD
+<<<E~O~D>>>
 cfcf6c8a_dbeb_11d2_8a97_00104b8742df
 1 2 0
 -4
@@ -38,4 +47,4 @@ $(help)helpMessageBoxGif
 0
 0
 0
-EOD
+<<<E~O~D>>>
