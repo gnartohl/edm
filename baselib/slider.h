@@ -283,7 +283,7 @@ int updateControlTimerValue;
 int updateControlTimerActive;
 int controlAdjusted;
 
-float oneControlV;
+double oneControlV;
 
 XtIntervalId incrementTimer;
 int incrementTimerActive;
@@ -301,12 +301,12 @@ Widget frameWidget, sliderWidget;
 double bufControlV, bufIncrement;
 int valueFormX, valueFormY, valueFormW, valueFormH, valueFormMaxH;
 
-float minFv, maxFv, factor, controlV, readV, savedV, newSavedV, oldControlV;
+double minFv, maxFv, factor, controlV, readV, savedV, newSavedV, oldControlV;
 int xRef;
 
-float curControlV, curReadV;
+double curControlV, curReadV;
 
-float increment;
+double increment;
 int controlState, compute_initial_increment, autoSetSavedV;
 
 int fgColorMode, bufFgColorMode;

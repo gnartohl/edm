@@ -76,7 +76,7 @@ static void slc_updateControl (
 
 activeSliderClass *slo = (activeSliderClass *) client;
 int stat, xOfs;
-float fv;
+double fv;
 
   if ( slo->updateControlTimerActive ) {
     slo->updateControlTimer = XtAppAddTimeOut(
@@ -149,7 +149,7 @@ static void slc_decrement (
 {
 
 activeSliderClass *slo = (activeSliderClass *) client;
-float fvalue;
+double fvalue;
 int stat, xOfs;
 
   if ( slo->incrementTimerActive ) {
@@ -194,7 +194,7 @@ int stat, xOfs;
 
   if ( slo->controlExists ) {
 #ifdef __epics__
-  stat = ca_put( DBR_FLOAT, slo->controlPvId, &fvalue );
+  stat = ca_put( DBR_DOUBLE, slo->controlPvId, &fvalue );
   if ( stat != ECA_NORMAL ) printf( activeSliderClass_str1 );
 #endif
   }
@@ -219,7 +219,7 @@ static void slc_increment  (
 {
 
 activeSliderClass *slo = (activeSliderClass *) client;
-float fvalue;
+double fvalue;
 int stat, xOfs;
 
   if ( slo->incrementTimerActive ) {
@@ -264,7 +264,7 @@ int stat, xOfs;
 
   if ( slo->controlExists ) {
 #ifdef __epics__
-  stat = ca_put( DBR_FLOAT, slo->controlPvId, &fvalue );
+  stat = ca_put( DBR_DOUBLE, slo->controlPvId, &fvalue );
   if ( stat != ECA_NORMAL ) printf( activeSliderClass_str2 );
 #endif
   }
@@ -290,10 +290,10 @@ static void slc_value_apply (
 {
 
 int stat;
-float fvalue;
+double fvalue;
 activeSliderClass *slo = (activeSliderClass *) client;
 
-  fvalue = (float) slo->bufControlV;
+  fvalue = (double) slo->bufControlV;
 
   if ( slo->positive ) {
     if ( fvalue < slo->minFv ) fvalue = slo->minFv;
@@ -317,7 +317,7 @@ activeSliderClass *slo = (activeSliderClass *) client;
 
   if ( slo->controlExists ) {
 #ifdef __epics__
-    stat = ca_put( DBR_FLOAT, slo->controlPvId, &fvalue );
+    stat = ca_put( DBR_DOUBLE, slo->controlPvId, &fvalue );
     if ( stat != ECA_NORMAL ) printf( activeSliderClass_str3 );
     //slo->needCtlRefresh = 1;
     slo->actWin->appCtx->proc->lock();
@@ -686,7 +686,7 @@ static void sl_readInfoUpdate (
 {
 
 activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
-struct dbr_gr_float readRec = *( (dbr_gr_float *) ast_args.dbr );
+struct dbr_gr_double readRec = *( (dbr_gr_double *) ast_args.dbr );
 int prec;
 
   if ( slo->limitsFromDb || slo->efPrecision.isNull() )
@@ -710,7 +710,7 @@ static void sl_infoUpdate (
 {
 
 activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
-struct dbr_gr_float controlRec = *( (dbr_gr_float *) ast_args.dbr );
+struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
 
   if ( slo->limitsFromDb || slo->efScaleMin.isNull() ) {
     slo->scaleMin = controlRec.lower_disp_limit;
@@ -746,7 +746,7 @@ static void sl_controlUpdate (
 
 activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
 
-  slo->oneControlV = *( (float *) ast_args.dbr ); // an xtimer updates image
+  slo->oneControlV = *( (double *) ast_args.dbr ); // an xtimer updates image
   slo->curControlV = slo->oneControlV;
 
 }
@@ -757,7 +757,7 @@ static void sl_readUpdate (
 
 activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
 
-  slo->curReadV = *( (float *) ast_args.dbr );
+  slo->curReadV = *( (double *) ast_args.dbr );
 
   slo->needReadRefresh = 1;
   slo->actWin->appCtx->proc->lock();
@@ -772,7 +772,7 @@ static void sl_savedValueUpdate (
 
 activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
 
-  slo->newSavedV = *( (float *) ast_args.dbr );
+  slo->newSavedV = *( (double *) ast_args.dbr );
 
   slo->needSavedRefresh = 1;
   slo->actWin->appCtx->proc->lock();
@@ -1001,7 +1001,7 @@ int index, stat;
   index = readColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
-  fprintf( f, "%g\n", increment );
+  fprintf( f, "%-g\n", increment );
 
   if ( controlPvName.getRaw() )
     writeStringToFile( f, controlPvName.getRaw() );
@@ -1069,6 +1069,7 @@ int r, g, b, xOfs, stat, index;
 int major, minor, release;
 unsigned int pixel;
 char oneName[39+1];
+float val;
 
   actWin = _actWin;
 
@@ -1153,7 +1154,8 @@ char oneName[39+1];
 
   }
 
-  fscanf( f, "%g\n", &increment ); actWin->incLine();
+  fscanf( f, "%g\n", &val ); actWin->incLine();
+  increment = (double) val;
 
   readStringFromFile( oneName, 39, f ); actWin->incLine();
   controlPvName.setRaw( oneName );
@@ -2020,7 +2022,7 @@ XMotionEvent *me;
 XButtonEvent *be;
 activeSliderClass *slo;
 int stat, deltaX, xOfs, newX;
-float fvalue;
+double fvalue;
 char title[32], *ptr;
 int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 
@@ -2067,7 +2069,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         slo->savedV = slo->controlV;
 
         if ( slo->savedValuePvConnected ) {
-          stat = ca_put( DBR_FLOAT, slo->savedValuePvId, &slo->savedV );
+          stat = ca_put( DBR_DOUBLE, slo->savedValuePvId, &slo->savedV );
 	}
 	else {
           xOfs = ( slo->w - 4 - slo->controlW ) / 2;
@@ -2109,7 +2111,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 
         if ( slo->controlExists ) {
 #ifdef __epics__
-          stat = ca_put( DBR_FLOAT, slo->controlPvId, &fvalue );
+          stat = ca_put( DBR_DOUBLE, slo->controlPvId, &fvalue );
           if ( stat != ECA_NORMAL ) printf( activeSliderClass_str56 );
 #endif
         }
@@ -2309,7 +2311,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 //          slo->xRef = me->x;
 //          newX = slo->controlX + deltaX;
         newX = me->x;
-        fvalue = slo->factor * (float) ( newX - xOfs ) + slo->minFv;
+        fvalue = slo->factor * (double) ( newX - xOfs ) + slo->minFv;
 
         if ( slo->positive ) {
           if ( fvalue < slo->minFv ) fvalue = slo->minFv;
@@ -2339,7 +2341,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 // for EPICS support
         if ( slo->controlExists ) {
 #ifdef __epics__
-          stat = ca_put( DBR_FLOAT, slo->controlPvId, &fvalue );
+          stat = ca_put( DBR_DOUBLE, slo->controlPvId, &fvalue );
           if ( stat != ECA_NORMAL ) printf( activeSliderClass_str59 );
 #endif
         }
@@ -2375,7 +2377,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         slo->eraseActivePointers();
 
         slo->xRef = me->x;
-        fvalue = slo->controlV + (float) deltaX * slo->increment;
+        fvalue = slo->controlV + (double) deltaX * slo->increment;
 
         if ( slo->positive ) {
           if ( fvalue < slo->minFv ) fvalue = slo->minFv;
@@ -2407,7 +2409,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 // for EPICS support
         if ( slo->controlExists ) {
 #ifdef __epics__
-        stat = ca_put( DBR_FLOAT, slo->controlPvId, &fvalue );
+        stat = ca_put( DBR_DOUBLE, slo->controlPvId, &fvalue );
         if ( stat != ECA_NORMAL ) printf( activeSliderClass_str60 );
 #endif
         }
@@ -3021,7 +3023,7 @@ void activeSliderClass::executeDeferred ( void ) {
 
 int stat, xOfs, ncc, nci, ncr, nrc, nri, nrr, nsc, nsr, nclc, ncli, nrlc,
  nrli, ne, nd;
-float rv, cv, fv;
+double rv, cv, fv;
 
   if ( actWin->isIconified ) return;
 
@@ -3055,7 +3057,7 @@ float rv, cv, fv;
 
     controlPvConnected = 1;
 
-    stat = ca_get_callback( DBR_GR_FLOAT, controlPvId,
+    stat = ca_get_callback( DBR_GR_DOUBLE, controlPvId,
      sl_infoUpdate, (void *) this );
     if ( stat != ECA_NORMAL )
       printf( activeSliderClass_str78 );
@@ -3104,7 +3106,7 @@ float rv, cv, fv;
 
     if ( controlExists && !controlEventId ) {
 #ifdef __epics__
-      stat = ca_add_masked_array_event( DBR_FLOAT, 1, controlPvId,
+      stat = ca_add_masked_array_event( DBR_DOUBLE, 1, controlPvId,
        sl_controlUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
        &controlEventId, DBE_VALUE );
       if ( stat != ECA_NORMAL )
@@ -3180,7 +3182,7 @@ float rv, cv, fv;
 
     readPvConnected = 1;
 
-    stat = ca_get_callback( DBR_GR_FLOAT, readPvId,
+    stat = ca_get_callback( DBR_GR_DOUBLE, readPvId,
      sl_readInfoUpdate, (void *) this );
     if ( stat != ECA_NORMAL )
       printf( activeSliderClass_str80 );
@@ -3197,7 +3199,7 @@ float rv, cv, fv;
 
     if ( !readEventId ) {
 
-      stat = ca_add_masked_array_event( DBR_FLOAT, 1, readPvId,
+      stat = ca_add_masked_array_event( DBR_DOUBLE, 1, readPvId,
        sl_readUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
        &readEventId, DBE_VALUE );
       if ( stat != ECA_NORMAL )
@@ -3213,7 +3215,7 @@ float rv, cv, fv;
 
     if ( !savedEventId ) {
 
-      stat = ca_add_masked_array_event( DBR_FLOAT, 1, savedValuePvId,
+      stat = ca_add_masked_array_event( DBR_DOUBLE, 1, savedValuePvId,
        sl_savedValueUpdate, (void *) this, (float) 0.0, (float) 0.0,
        (float) 0.0, &savedEventId, DBE_VALUE );
       if ( stat != ECA_NORMAL )
