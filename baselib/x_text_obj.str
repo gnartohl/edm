@@ -19,7 +19,7 @@
 #define activeXTextClass_str16 "Bg Color"
 #define activeXTextClass_str17 "Alarm Sensitive"
 #define activeXTextClass_str18 "Color PV"
-#define activeXTextClass_str19 "Visability PV"
+#define activeXTextClass_str19 "Visibility PV"
 #define activeXTextClass_str20 "Not Visible if|Visible if"
 #define activeXTextClass_str21 ">="
 #define activeXTextClass_str22 "and <"
