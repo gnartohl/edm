@@ -38,7 +38,7 @@ static void manageComponents (
 typedef int (*REGFUNC)( char **, char **, char ** );
 REGFUNC func;
 
-int stat, index, comment, fileExists;
+int stat, index, comment, fileExists, fileEmpty;
 char *classNamePtr, *typeNamePtr, *textPtr, *error;
 void *dllHandle;
 char fileName[255+1], prefix[255+1], line[255+1], buf[255+1];
@@ -70,6 +70,7 @@ libRecPtr head, tail, cur;
     printf( appContextClass_str1, fileName );
 
     fileExists = 1;
+    fileEmpty = 0;
 
     // read in existing components
 
@@ -78,85 +79,97 @@ libRecPtr head, tail, cur;
       tk = strtok( line, "\n" );
       numComponents = atol( tk );
       if ( numComponents <= 0 ) {
+	printf( "3\n" );
         printf( appContextClass_str2, fileName );
         return;
       }
     }
     else {
+      printf( "4\n" );
       printf( appContextClass_str2, fileName );
-      return;
+      fileEmpty = 1;
+      fclose( f );
     }
 
-    index = 0;
-    do {
+    if ( !fileEmpty ) {
 
-      more = fgets( line, 255, f );
-      if ( more ) {
+      index = 0;
+      do {
 
-        cur = new libRecType;
-        tail->flink = cur;
-        tail = cur;
-        tail->flink = NULL;
+        more = fgets( line, 255, f );
+        if ( more ) {
 
-        strncpy( buf, line, 255 );
+          cur = new libRecType;
+          tail->flink = cur;
+          tail = cur;
+          tail->flink = NULL;
 
-        comment = 0;
-        tk = strtok( buf, " \t\n" );
+          strncpy( buf, line, 255 );
 
-        if ( !tk ) {
-          comment = 1;
+          comment = 0;
+          tk = strtok( buf, " \t\n" );
+
+          if ( !tk ) {
+            comment = 1;
+          }
+          else if ( tk[0] == '#' ) {
+            comment = 1;
+          }
+
+          if ( !comment ) { /* not an empty line or comment */
+
+            tk = strtok( line, " \t\n" );
+            if ( !tk ) {
+              printf( appContextClass_str3 );
+              return;
+            }
+            cur->className = new char[strlen(tk)+1];
+            strcpy( cur->className, tk );
+
+            tk = strtok( NULL, " \t\n" );
+            if ( !tk ) {
+              printf( appContextClass_str3 );
+              return;
+            }
+            cur->fileName = new char[strlen(tk)+1];
+            strcpy( cur->fileName, tk );
+
+            tk = strtok( NULL, " \t\n" );
+            if ( !tk ) {
+              printf( appContextClass_str3 );
+              return;
+            }
+            cur->typeName = new char[strlen(tk)+1];
+            strcpy( cur->typeName, tk );
+
+            tk = strtok( NULL, "\n" );
+            if ( !tk ) {
+              printf( appContextClass_str3 );
+              return;
+            }
+            cur->text = new char[strlen(tk)+1];
+            strcpy( cur->text, tk );
+
+            index++;
+
+          }
+
         }
-        else if ( tk[0] == '#' ) {
-          comment = 1;
-        }
 
-        if ( !comment ) { /* not an empty line or comment */
+      } while ( more );
 
-          tk = strtok( line, " \t\n" );
-          if ( !tk ) {
-            printf( appContextClass_str3 );
-            return;
-          }
-          cur->className = new char[strlen(tk)+1];
-          strcpy( cur->className, tk );
+      fclose( f );
 
-          tk = strtok( NULL, " \t\n" );
-          if ( !tk ) {
-            printf( appContextClass_str3 );
-            return;
-          }
-          cur->fileName = new char[strlen(tk)+1];
-          strcpy( cur->fileName, tk );
-
-          tk = strtok( NULL, " \t\n" );
-          if ( !tk ) {
-            printf( appContextClass_str3 );
-            return;
-          }
-          cur->typeName = new char[strlen(tk)+1];
-          strcpy( cur->typeName, tk );
-
-          tk = strtok( NULL, "\n" );
-          if ( !tk ) {
-            printf( appContextClass_str3 );
-            return;
-          }
-          cur->text = new char[strlen(tk)+1];
-          strcpy( cur->text, tk );
-
-          index++;
-
-        }
-
+      if ( index != numComponents ) {
+        printf( appContextClass_str4, fileName );
+        return;
       }
 
-    } while ( more );
+    }
+    else {
 
-    fclose( f );
+      fileExists = 0; // file was empty so behave as if file does not exist
 
-    if ( index != numComponents ) {
-      printf( appContextClass_str4, fileName );
-      return;
     }
 
   }
