@@ -1685,7 +1685,7 @@ unsigned int pixel;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
     bufFgColor = actWin->ci->pixIndex( pixel );
-    fgColor.setColor( bufFgColor, actWin->ci );
+    fgColor.setColorIndex( bufFgColor, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     if ( ( major < 2 ) && ( minor < 2 ) ) {
