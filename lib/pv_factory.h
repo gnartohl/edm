@@ -85,6 +85,22 @@ extern PV_Factory *the_PV_Factory;
 #define	UDF_ALARM		17
 #endif
 
+class ProcessVariable;
+typedef void (*PVCallback)(ProcessVariable *pv, void *userarg);
+
+typedef struct
+{
+    PVCallback func;
+    void    *userarg;
+    DLNode   node; // for Hashtable
+} PVCallbackInfo;
+
+size_t hash(const PVCallbackInfo *item, size_t N);
+bool equals(const PVCallbackInfo *lhs, const PVCallbackInfo *rhs);
+
+typedef Hashtable<PVCallbackInfo,offsetof(PVCallbackInfo,node),43>
+            PVCallbackInfoHash;
+
 class ProcessVariable
 {
 public:
@@ -98,13 +114,12 @@ public:
     virtual bool is_valid() const = 0;
 
     // Called on change in value, see above for details
-    typedef void (*Callback)(ProcessVariable *pv, void *userarg);
-    void add_value_callback(Callback func, void *userarg);
-    void remove_value_callback(Callback func, void *userarg);
+    void add_value_callback(PVCallback func, void *userarg);
+    void remove_value_callback(PVCallback func, void *userarg);
 
     // Called on change in "is_valid" status, see above
-    void add_conn_state_callback(Callback func, void *userarg);
-    void remove_conn_state_callback(Callback func, void *userarg);
+    void add_conn_state_callback(PVCallback func, void *userarg);
+    void remove_conn_state_callback(PVCallback func, void *userarg);
 
     // Type information for this ProcessVariable
     // For EPICS, we could just use DBF_INT, DBF_DOUBLE etc.
@@ -194,9 +209,6 @@ public:
     virtual bool put(const char *value) = 0;
     virtual bool put(int value);
 
-    void clearDoInitialCallback();
-    void setDoInitialCallback();
-    
 protected:
     // hidden, use PV_Factory::create()/ProcessVariable::release()
     ProcessVariable(const char *_name);
@@ -204,32 +216,11 @@ protected:
     ProcessVariable &operator = (const ProcessVariable &rhs); // not impl.
     virtual ~ProcessVariable();
 
-    class CallbackInfo
-    {
-    public:
-        CallbackInfo(Callback _func, void *_userarg)
-        {  func = _func; userarg = _userarg; }
-        void call(ProcessVariable *pv)
-        {
-            if (func)
-                func(pv, userarg);
-        }
-        Callback func;
-        void    *userarg;
-        DLNode   node; // for Hashtable
-    };
-    friend size_t hash(const CallbackInfo *item, size_t N);
-    friend bool equals(const CallbackInfo *lhs, const CallbackInfo *rhs);
-    enum { HashTableSize=43 };
-    typedef Hashtable<CallbackInfo,offsetof(CallbackInfo,node),HashTableSize>
-            CallbackInfoHash;
-    CallbackInfoHash value_callbacks;
-    CallbackInfoHash conn_state_callbacks;
+    PVCallbackInfoHash value_callbacks;
+    PVCallbackInfoHash conn_state_callbacks;
     void do_value_callbacks();
     void do_conn_state_callbacks();
 
-    bool doInitialCallback;
-        
 private:
     char *name;            // PV name
     int refcount;          // reference count, deleted on <=0

@@ -2,6 +2,7 @@ TOP = ../../../..
 include $(TOP)/config/CONFIG_EXTENSIONS
 STATIC_BUILD=NO
 SHARED_LIBRARIES=YES
+HOST_OPT=NO
 
 USR_CXXFLAGS_Linux += -Wall -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
 USR_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl

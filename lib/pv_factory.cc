@@ -52,17 +52,14 @@ class ProcessVariable *pv;
 
   if (strncmp(PV_name, "EPICS\\", 6)==0) {
     pv = epics_pv_factory->create(PV_name+6);
-    pv->setDoInitialCallback();
     return pv;
   }
   else if (strncmp(PV_name, "CALC\\", 5)==0) {
     pv = calc_pv_factory->create(PV_name+5);
-    pv->setDoInitialCallback();
     return pv;
   }
   else if (strncmp(PV_name, "LOC\\", 4)==0) {
     pv = loc_pv_factory->create(PV_name+4);
-    pv->setDoInitialCallback();
     return pv;
   }
   else if (strchr(PV_name, '\\')) {
@@ -71,7 +68,6 @@ class ProcessVariable *pv;
   }
     
   pv = epics_pv_factory->create(PV_name);
-  pv->setDoInitialCallback();
 
   return pv;
 
@@ -85,17 +81,14 @@ class ProcessVariable *pv;
 
   if (strncmp(PV_name, "EPICS\\", 6)==0) {
     pv = epics_pv_factory->create(PV_name+6);
-    pv->setDoInitialCallback();
     return pv;
   }
   else if (strncmp(PV_name, "CALC\\", 5)==0) {
     pv = calc_pv_factory->create(PV_name+5);
-    pv->setDoInitialCallback();
     return pv;
   }
   else if (strncmp(PV_name, "LOC\\", 4)==0) {
     pv = loc_pv_factory->create(PV_name+4);
-    pv->setDoInitialCallback();
     return pv;
   }
   else if (strchr(PV_name, '\\')) {
@@ -104,7 +97,6 @@ class ProcessVariable *pv;
   }
     
   pv = epics_pv_factory->create(PV_name);
-  pv->setDoInitialCallback();
 
   return pv;
 
@@ -113,18 +105,20 @@ class ProcessVariable *pv;
 // These two should be static, but then "friend" doesn't work,
 // so the CallBackInfo would have to be public which is
 // not what I want, either...
-size_t hash(const ProcessVariable::CallbackInfo *item, size_t N)
+size_t hash(const PVCallbackInfo *item, size_t N)
 {   return ((size_t)item->func*41 + (size_t)item->userarg*43)%N; }
 
-bool equals(const ProcessVariable::CallbackInfo *lhs,
-            const ProcessVariable::CallbackInfo *rhs)
-{   return lhs->func == rhs->func && lhs->userarg == rhs->userarg; }
+bool equals(const PVCallbackInfo *lhs,
+            const PVCallbackInfo *rhs)
+{
+    return lhs->func == rhs->func &&
+        lhs->userarg == rhs->userarg;
+}
 
 ProcessVariable::ProcessVariable(const char *_name)
 {
     name = strdup(_name);
     refcount = 1;
-    doInitialCallback = false;
 }
 
 ProcessVariable::~ProcessVariable()
@@ -154,53 +148,77 @@ const char *ProcessVariable::get_enum(size_t i) const
 const char *ProcessVariable::get_units() const
 {   return ""; }
 
-void ProcessVariable::add_conn_state_callback(Callback func, void *userarg)
-{   // TODO: search for existing one?
-    conn_state_callbacks.insert(new CallbackInfo(func, userarg));
-    if ( doInitialCallback && is_valid() ) {
-      (*func)(this,userarg);
-    }
+void ProcessVariable::add_conn_state_callback(PVCallback func, void *userarg)
+{
+    PVCallbackInfo *info = new PVCallbackInfo;
+    info->func = func;
+    info->userarg = userarg;
+    // TODO: search for existing one?
+    conn_state_callbacks.insert(info);
+    // Perform initial callback in case we already have a value
+    // (otherwise user would have to wait until the next change)
+    if (is_valid())
+        (*func)(this, userarg);
 }
 
-void ProcessVariable::remove_conn_state_callback(Callback func, void *userarg)
+void ProcessVariable::remove_conn_state_callback(PVCallback func, void *userarg)
 {
-    CallbackInfo info(func, userarg);
-    CallbackInfoHash::iterator entry = conn_state_callbacks.find(&info);
+    PVCallbackInfo info;
+    info.func = func;
+    info.userarg = userarg;
+    PVCallbackInfoHash::iterator entry = conn_state_callbacks.find(&info);
     if (entry != conn_state_callbacks.end())
         conn_state_callbacks.erase(entry);
 }
 
-void ProcessVariable::add_value_callback(Callback func, void *userarg)
+void ProcessVariable::add_value_callback(PVCallback func, void *userarg)
 {
+    PVCallbackInfo *info = new PVCallbackInfo;
+    info->func = func;
+    info->userarg = userarg;
     // TODO: search for existing one?
-    value_callbacks.insert(new CallbackInfo(func, userarg));
-    if ( doInitialCallback && is_valid() ) {
-      (*func)(this,userarg);
-    }
+    value_callbacks.insert(info);
+
+    // Perform initial callback in case we already have a value
+    // (otherwise user would have to wait until the next change)
+    if (is_valid())
+        (*func)(this, userarg);
 }
 
-void ProcessVariable::remove_value_callback(Callback func, void *userarg)
+void ProcessVariable::remove_value_callback(PVCallback func, void *userarg)
 {
-    CallbackInfo info(func, userarg);
-    CallbackInfoHash::iterator entry = value_callbacks.find(&info);
+    PVCallbackInfo info;
+    info.func = func;
+    info.userarg = userarg;
+    PVCallbackInfoHash::iterator entry = value_callbacks.find(&info);
     if (entry != value_callbacks.end())
         value_callbacks.erase(entry);
 }
 
 void ProcessVariable::do_conn_state_callbacks()
 {
-    for (CallbackInfoHash::iterator entry = conn_state_callbacks.begin();
+    PVCallbackInfo *info;
+    for (PVCallbackInfoHash::iterator entry = conn_state_callbacks.begin();
          entry != conn_state_callbacks.end();
          ++entry)
-        (*entry)->call(this);
+    {
+        info = *entry;
+        if (info->func)
+            (*info->func) (this, info->userarg);
+    }
 }
 
 void ProcessVariable::do_value_callbacks()
 {
-    for (CallbackInfoHash::iterator entry = value_callbacks.begin();
+    PVCallbackInfo *info;
+    for (PVCallbackInfoHash::iterator entry = value_callbacks.begin();
          entry != value_callbacks.end();
          ++entry)
-        (*entry)->call(this);
+    {
+        info = *entry;
+        if (info->func)
+            (*info->func) (this, info->userarg);
+    }
 }
 
 bool ProcessVariable::have_write_access() const
@@ -211,14 +229,3 @@ bool ProcessVariable::have_write_access() const
 bool ProcessVariable::put(int value)
 {   return put(double(value)); }
 
-void ProcessVariable::setDoInitialCallback() {
-
-  doInitialCallback = true;
-
-}
-
-void ProcessVariable::clearDoInitialCallback() {
-
-  doInitialCallback = false;
-
-}

@@ -65,7 +65,8 @@ public:
     double get_lower_ctrl_limit() const;
     bool put(double value);
     bool put(const char *value);
-    
+    bool put(int value);
+
 protected:
     friend class CALC_PV_Factory;
     // hidden, use CALC_PV_Factory::create()/ProcessVariable::release()

@@ -24,6 +24,13 @@
 //
 //    typedef std::list<X*>              SList;
 //    typedef DLList<X,offsetof(X,node)> XList;
+//
+// ALMOST:
+// Turns out that GCC 3.1 does not like the use of "offsetof"
+// with classes: "invalid offsetof from non-POD type ...,
+//                use pointer to member instead"
+// So it's now best to use DLList only with structs
+// or 'simple' classes (no virtuals, no base classes?)
 
 #ifndef __DL_LIST_H__
 #define __DL_LIST_H__

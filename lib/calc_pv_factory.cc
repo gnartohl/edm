@@ -357,7 +357,6 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
             }
         }
     }
-    setDoInitialCallback();
 }
 
 CALC_ProcessVariable::~CALC_ProcessVariable()
@@ -520,6 +519,9 @@ bool CALC_ProcessVariable::put(double value)
 {   return false; }
 
 bool CALC_ProcessVariable::put(const char *value)
+{   return false; }
+
+bool CALC_ProcessVariable::put(int value)
 {   return false; }
 
 

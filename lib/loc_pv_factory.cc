@@ -231,7 +231,6 @@ LOC_ProcessVariable::LOC_ProcessVariable(const char *_name)
     have_ctrlinfo = true;
     strcpy( buf, "" );
     bufLen = strlen(buf);
-    setDoInitialCallback();
     //printf("LOC_ProcessVariable %s created\n", get_name());
 }
 
