@@ -1661,6 +1661,9 @@ int index, stat;
   else
     writeStringToFile( f, "" );
 
+  // version 2.5
+  fprintf( f, "%-d\n", objType );
+
   return 1;
 
 }
@@ -1898,6 +1901,15 @@ unsigned int pixel;
     isFile = 0;
 
   }
+
+  if ( ( ( major == 2 ) && ( minor > 4 ) ) || ( major > 2 ) ) {
+    fscanf( f, "%d\n", &objType );
+  }
+  else {
+    objType = -1;
+  }
+
+  printf( "x_text_dsp_obj - objType = %-d\n", objType );
 
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );

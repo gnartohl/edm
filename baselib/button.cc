@@ -568,6 +568,9 @@ int index;
   fprintf( f, "%-d\n", activateCallbackFlag );
   fprintf( f, "%-d\n", deactivateCallbackFlag );
 
+  // version 2.1
+  fprintf( f, "%-d\n", objType );
+
   return 1;
 
 }
@@ -733,6 +736,15 @@ char oneName[39+1];
     deactivateCallbackFlag = 0;
     anyCallbackFlag = 0;
   }
+
+  if ( ( ( major == 2 ) && ( minor > 0 ) ) || ( major > 2 ) ) {
+    fscanf( f, "%d\n", &objType );
+  }
+  else {
+    objType = -1;
+  }
+
+  printf( "button - objType = %-d\n", objType );
 
   this->initSelectBox();
 
