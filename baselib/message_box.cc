@@ -455,6 +455,10 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   fscanf( f, "%d %d %d\n", &major, &minor, &release );
 
+  if ( major > MESSAGEBOXC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
   fscanf( f, "%d\n", &x );
   fscanf( f, "%d\n", &y );
   fscanf( f, "%d\n", &w );

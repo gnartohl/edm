@@ -501,6 +501,11 @@ char oneName[PV_Factory::MAX_PV_NAME+1];
 
   fscanf( f, "%d %d %d\n", &major, &minor, &release ); actWin->incLine();
 
+  if ( major > ACC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
   fscanf( f, "%d\n", &x ); actWin->incLine();
   fscanf( f, "%d\n", &y ); actWin->incLine();
   fscanf( f, "%d\n", &w ); actWin->incLine();

@@ -209,6 +209,12 @@ int edmTextupdateClass::createFromFile(FILE *f, char *filename,
     actWin = _actWin;
     // Version, bounding box
     fscanf(f, "%d %d %d\n", &major, &minor, &release); actWin->incLine();
+
+    if ( major > TEXT_MAJOR ) {
+      postIncompatable();
+      return 0;
+    }
+
     fscanf(f, "%d\n", &x); actWin->incLine();
     fscanf(f, "%d\n", &y); actWin->incLine();
     fscanf(f, "%d\n", &w); actWin->incLine();
@@ -1174,3 +1180,58 @@ void edmTextentryClass::text_noedit_callback(Widget w,
     pv_value_callback(me->pv, me);
 }
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+void *create_TextupdateClassPtr ( void ) {
+
+edmTextupdateClass *ptr;
+
+  ptr = new edmTextupdateClass;
+  return (void *) ptr;
+
+}
+
+void *clone_TextupdateClassPtr (
+  void *_srcPtr )
+{
+
+edmTextupdateClass *ptr, *srcPtr;
+
+  srcPtr = (edmTextupdateClass *) _srcPtr;
+
+  ptr = new edmTextupdateClass( srcPtr );
+
+  return (void *) ptr;
+
+}
+
+
+void *create_TextentryClassPtr ( void ) {
+
+edmTextentryClass *ptr;
+
+  ptr = new edmTextentryClass;
+  return (void *) ptr;
+
+}
+
+void *clone_TextentryClassPtr (
+  void *_srcPtr )
+{
+
+edmTextentryClass *ptr, *srcPtr;
+
+  srcPtr = (edmTextentryClass *) _srcPtr;
+
+  ptr = new edmTextentryClass( srcPtr );
+
+  return (void *) ptr;
+
+}
+
+#ifdef __cplusplus
+}
+#endif

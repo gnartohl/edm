@@ -146,6 +146,12 @@ int edmStripClass::createFromFile(FILE *f, char *filename,
     actWin = _actWin;
     // Version, bounding box
     fscanf(f, "%d %d %d\n", &major, &minor, &release); actWin->incLine();
+
+    if ( major > STRIP_MAJOR ) {
+      postIncompatable();
+      return 0;
+    }
+
     fscanf(f, "%d\n", &x); actWin->incLine();
     fscanf(f, "%d\n", &y); actWin->incLine();
     fscanf(f, "%d\n", &w); actWin->incLine();
