@@ -397,7 +397,7 @@ void checkParams (
 
 char buf[1023+1], mac[1023+1], exp[1023+1];
 int state = SWITCHES;
-int stat, nm, n = 1;
+int stat, nm=0, n = 1;
 char *envPtr, *tk;
 Display *testDisplay;
 
