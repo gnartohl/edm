@@ -11,5 +11,6 @@ install : buildInstall
 buildInstall : ;
 	-rm ../*.h
 	@$(MAKE) -f ../makefile.$(HOST_ARCH)
+	mkdir -p ../../../../lib/$(HOST_ARCH)
 	cp lib114135a4-6f6c-11d3-95bc-00104b8742df.a ../../../../lib/$(HOST_ARCH)
 	cp lib114135a4-6f6c-11d3-95bc-00104b8742df.so ../../../../lib/$(HOST_ARCH)
