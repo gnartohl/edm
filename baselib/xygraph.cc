@@ -179,7 +179,7 @@ objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
 xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 int i =  ptr->index;
 
-  printf( "yValueUpdate, i=%-d, size=%-d\n", i, xyo->yPvSize[i] );
+  //printf( "yValueUpdate, i=%-d, size=%-d\n", i, xyo->yPvSize[i] );
 
   xyo->actWin->appCtx->proc->lock();
   memcpy( xyo->yPvData[i], arg.dbr, xyo->yPvSize[i] );
@@ -254,6 +254,8 @@ int i;
 
   axygo->bgColor = axygo->eBuf->bufBgColor;
 
+  axygo->gridColor = axygo->eBuf->bufGridColor;
+
   axygo->plotStyle = axygo->eBuf->bufPlotStyle;
 
   axygo->plotMode = axygo->eBuf->bufPlotMode;
@@ -263,6 +265,13 @@ int i;
   axygo->numTraces = 0;
   for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
     axygo->plotColor[i] = axygo->eBuf->bufPlotColor[i];
+    axygo->lineThk[i] = axygo->eBuf->bufLineThk[i]+1;
+    if ( axygo->eBuf->bufLineStyle[i] == 0 ) {
+      axygo->lineStyle[i] = LineSolid;
+    }
+    else {
+      axygo->lineStyle[i] = LineOnOffDash;
+    }
     if ( ( !blank( axygo->eBuf->bufXPvName[i] ) ) ||
          ( !blank( axygo->eBuf->bufYPvName[i] ) ) ) {
       (axygo->numTraces)++;
@@ -298,6 +307,33 @@ int i;
   strncpy( axygo->fontTag, axygo->fm.currentFontTag(), 63 );
   axygo->actWin->fi->loadFontTag( axygo->fontTag );
   axygo->actWin->drawGc.setFontTag( axygo->fontTag, axygo->actWin->fi );
+
+  axygo->xNumLabelIntervals = axygo->eBuf->bufXNumLabelIntervals;
+  axygo->xLabelGrid = axygo->eBuf->bufXLabelGrid;
+  axygo->xNumMajorPerLabel = axygo->eBuf->bufXNumMajorPerLabel;
+  axygo->xMajorGrid = axygo->eBuf->bufXMajorGrid;
+  axygo->xNumMinorPerMajor = axygo->eBuf->bufXNumMinorPerMajor;
+  axygo->xMinorGrid = axygo->eBuf->bufXMinorGrid;
+  axygo->xAnnotationFormat = axygo->eBuf->bufXAnnotationFormat;
+  axygo->xAnnotationPrecision = axygo->eBuf->bufXAnnotationPrecision;
+
+  axygo->y1NumLabelIntervals = axygo->eBuf->bufY1NumLabelIntervals;
+  axygo->y1LabelGrid = axygo->eBuf->bufY1LabelGrid;
+  axygo->y1NumMajorPerLabel = axygo->eBuf->bufY1NumMajorPerLabel;
+  axygo->y1MajorGrid = axygo->eBuf->bufY1MajorGrid;
+  axygo->y1NumMinorPerMajor = axygo->eBuf->bufY1NumMinorPerMajor;
+  axygo->y1MinorGrid = axygo->eBuf->bufY1MinorGrid;
+  axygo->y1AnnotationFormat = axygo->eBuf->bufY1AnnotationFormat;
+  axygo->y1AnnotationPrecision = axygo->eBuf->bufY1AnnotationPrecision;
+
+  axygo->y2NumLabelIntervals = axygo->eBuf->bufY2NumLabelIntervals;
+  axygo->y2LabelGrid = axygo->eBuf->bufY2LabelGrid;
+  axygo->y2NumMajorPerLabel = axygo->eBuf->bufY2NumMajorPerLabel;
+  axygo->y2MajorGrid = axygo->eBuf->bufY2MajorGrid;
+  axygo->y2NumMinorPerMajor = axygo->eBuf->bufY2NumMinorPerMajor;
+  axygo->y2MinorGrid = axygo->eBuf->bufY2MinorGrid;
+  axygo->y2AnnotationFormat = axygo->eBuf->bufY2AnnotationFormat;
+  axygo->y2AnnotationPrecision = axygo->eBuf->bufY2AnnotationPrecision;
 
 }
 
@@ -407,6 +443,33 @@ int i;
 
   connection.setMaxPvs( XYGC_K_MAX_TRACES + 2 );
 
+  xNumLabelIntervals.setNull(1);
+  xLabelGrid = 0;
+  xNumMajorPerLabel.setNull(1);
+  xMajorGrid = 0;
+  xNumMinorPerMajor.setNull(1);
+  xMinorGrid = 0;
+  xAnnotationPrecision.setNull(1);
+  xAnnotationFormat = 0;
+
+  y1NumLabelIntervals.setNull(1);
+  y1LabelGrid = 0;
+  y1NumMajorPerLabel.setNull(1);
+  y1MajorGrid = 0;
+  y1NumMinorPerMajor.setNull(1);
+  y1MinorGrid = 0;
+  y1AnnotationPrecision.setNull(1);
+  y1AnnotationFormat = 0;
+
+  y2NumLabelIntervals.setNull(1);
+  y2LabelGrid = 0;
+  y2NumMajorPerLabel.setNull(1);
+  y2MajorGrid = 0;
+  y2NumMinorPerMajor.setNull(1);
+  y2MinorGrid = 0;
+  y2AnnotationPrecision.setNull(1);
+  y2AnnotationFormat = 0;
+
   eBuf = NULL;
 
 }
@@ -429,6 +492,7 @@ int i;
 
   fgCb = source->fgCb;
   bgCb = source->bgCb;
+  gridCb = source->gridCb;
 
   plotStyle = source->plotStyle;
   plotMode = source->plotMode;
@@ -440,6 +504,8 @@ int i;
     xPv[i] = NULL;
     yPv[i] = NULL;
     plotColor[i] = source->plotColor[i];
+    lineThk[i] = source->lineThk[i];
+    lineStyle[i] = source->lineStyle[i];
     xPvExpStr[i].copy( source->xPvExpStr[i] );
     yPvExpStr[i].copy( source->yPvExpStr[i] );
   }
@@ -561,10 +627,13 @@ char traceColor[15+1];
 
   fgColor = actWin->defaultTextFgColor;
   bgColor = actWin->defaultBgColor;
+  gridColor = actWin->defaultTextFgColor;
 
   for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
     sprintf( traceColor, "trace%-d", i );
     plotColor[i] = actWin->ci->colorIndexByAlias( traceColor );
+    lineThk[i] = 1;
+    lineStyle[i] = LineSolid;
   }
 
   strcpy( fontTag, actWin->defaultCtlFontTag );
@@ -674,6 +743,42 @@ int i, stat = 1;
 
   writeStringToFile( f, fontTag );
 
+  xNumLabelIntervals.write( f );
+  fprintf( f, "%-d\n", xLabelGrid );
+  xNumMajorPerLabel.write( f );
+  fprintf( f, "%-d\n", xMajorGrid );
+  xNumMinorPerMajor.write( f );
+  fprintf( f, "%-d\n", xMinorGrid );
+  fprintf( f, "%-d\n", xAnnotationFormat );
+  xAnnotationPrecision.write( f );
+
+  y1NumLabelIntervals.write( f );
+  fprintf( f, "%-d\n", y1LabelGrid );
+  y1NumMajorPerLabel.write( f );
+  fprintf( f, "%-d\n", y1MajorGrid );
+  y1NumMinorPerMajor.write( f );
+  fprintf( f, "%-d\n", y1MinorGrid );
+  fprintf( f, "%-d\n", y1AnnotationFormat );
+  y1AnnotationPrecision.write( f );
+
+  y2NumLabelIntervals.write( f );
+  fprintf( f, "%-d\n", y2LabelGrid );
+  y2NumMajorPerLabel.write( f );
+  fprintf( f, "%-d\n", y2MajorGrid );
+  y2NumMinorPerMajor.write( f );
+  fprintf( f, "%-d\n", y2MinorGrid );
+  fprintf( f, "%-d\n", y2AnnotationFormat );
+  y2AnnotationPrecision.write( f );
+
+  // ver 1.2.0
+
+  fprintf( f, "%-d\n", gridColor );
+
+  for ( i=0; i<numTraces; i++ ) {
+    fprintf( f, "%-d\n", lineThk[i] );
+    fprintf( f, "%-d\n", lineStyle[i] );
+  }
+
   return stat;
 
 }
@@ -764,6 +869,48 @@ char str[127+1], traceColor[15+1], onePv[activeGraphicClass::MAX_PV_NAME+1];
 
   readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
+  if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 0 ) ) ) {
+
+    xNumLabelIntervals.read( f ); actWin->incLine();
+    fscanf( f, "%d\n", &xLabelGrid ); actWin->incLine();
+    xNumMajorPerLabel.read( f ); actWin->incLine();
+    fscanf( f, "%d\n", &xMajorGrid ); actWin->incLine();
+    xNumMinorPerMajor.read( f ); actWin->incLine();
+    fscanf( f, "%d\n", &xMinorGrid ); actWin->incLine();
+    fscanf( f, "%d\n", &xAnnotationFormat ); actWin->incLine();
+    xAnnotationPrecision.read( f ); actWin->incLine();
+
+    y1NumLabelIntervals.read( f ); actWin->incLine();
+    fscanf( f, "%d\n", &y1LabelGrid ); actWin->incLine();
+    y1NumMajorPerLabel.read( f ); actWin->incLine();
+    fscanf( f, "%d\n", &y1MajorGrid ); actWin->incLine();
+    y1NumMinorPerMajor.read( f ); actWin->incLine();
+    fscanf( f, "%d\n", &y1MinorGrid ); actWin->incLine();
+    fscanf( f, "%d\n", &y1AnnotationFormat ); actWin->incLine();
+    y1AnnotationPrecision.read( f ); actWin->incLine();
+
+    y2NumLabelIntervals.read( f ); actWin->incLine();
+    fscanf( f, "%d\n", &y2LabelGrid ); actWin->incLine();
+    y2NumMajorPerLabel.read( f ); actWin->incLine();
+    fscanf( f, "%d\n", &y2MajorGrid ); actWin->incLine();
+    y2NumMinorPerMajor.read( f ); actWin->incLine();
+    fscanf( f, "%d\n", &y2MinorGrid ); actWin->incLine();
+    fscanf( f, "%d\n", &y2AnnotationFormat ); actWin->incLine();
+    y2AnnotationPrecision.read( f ); actWin->incLine();
+
+  }
+
+  if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 1 ) ) ) {
+
+    fscanf( f, "%d\n", &gridColor ); actWin->incLine();
+
+    for ( i=0; i<numTraces; i++ ) {
+      fscanf( f, "%d\n", &lineThk[i] );
+      fscanf( f, "%d\n", &lineStyle[i] );
+    }
+
+  }
+
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
@@ -840,11 +987,39 @@ int i;
   strncpy( eBuf->bufYLabel, yLabel.getRaw(), 127 );
   eBuf->bufFgColor = fgColor;
   eBuf->bufBgColor = bgColor;
+  eBuf->bufGridColor = gridColor;
   strncpy( eBuf->bufTrigPvName, trigPvExpStr.getRaw(),
    activeGraphicClass::MAX_PV_NAME );
   strncpy( eBuf->bufErasePvName, erasePvExpStr.getRaw(),
    activeGraphicClass::MAX_PV_NAME );
   eBuf->bufEraseMode = eraseMode;
+
+  eBuf->bufXNumLabelIntervals = xNumLabelIntervals;
+  eBuf->bufXLabelGrid = xLabelGrid;
+  eBuf->bufXNumMajorPerLabel = xNumMajorPerLabel;
+  eBuf->bufXMajorGrid = xMajorGrid;
+  eBuf->bufXNumMinorPerMajor = xNumMinorPerMajor;
+  eBuf->bufXMinorGrid = xMinorGrid;
+  eBuf->bufXAnnotationFormat = xAnnotationFormat;
+  eBuf->bufXAnnotationPrecision = xAnnotationPrecision;
+
+  eBuf->bufY1NumLabelIntervals = y1NumLabelIntervals;
+  eBuf->bufY1LabelGrid = y1LabelGrid;
+  eBuf->bufY1NumMajorPerLabel = y1NumMajorPerLabel;
+  eBuf->bufY1MajorGrid = y1MajorGrid;
+  eBuf->bufY1NumMinorPerMajor = y1NumMinorPerMajor;
+  eBuf->bufY1MinorGrid = y1MinorGrid;
+  eBuf->bufY1AnnotationFormat = y1AnnotationFormat;
+  eBuf->bufY1AnnotationPrecision = y1AnnotationPrecision;
+
+  eBuf->bufY2NumLabelIntervals = y2NumLabelIntervals;
+  eBuf->bufY2LabelGrid = y2LabelGrid;
+  eBuf->bufY2NumMajorPerLabel = y2NumMajorPerLabel;
+  eBuf->bufY2MajorGrid = y2MajorGrid;
+  eBuf->bufY2NumMinorPerMajor = y2NumMinorPerMajor;
+  eBuf->bufY2MinorGrid = y2MinorGrid;
+  eBuf->bufY2AnnotationFormat = y2AnnotationFormat;
+  eBuf->bufY2AnnotationPrecision = y2AnnotationPrecision;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -861,6 +1036,7 @@ int i;
   ef.addTextField( "Y Label", 30, eBuf->bufYLabel, 127 );
   ef.addColorButton( "Foreground", actWin->ci, &fgCb, &eBuf->bufFgColor );
   ef.addColorButton( "Background", actWin->ci, &bgCb, &eBuf->bufBgColor );
+  ef.addColorButton( "Grid", actWin->ci, &gridCb, &eBuf->bufGridColor );
   ef.addOption( "Plot Style", "point|line", &eBuf->bufPlotStyle );
   ef.addOption( "Plot Mode", "plot n pts & stop|plot last n pts", &eBuf->bufPlotMode );
   ef.addTextField( "Count", 30, &eBuf->bufCount );
@@ -871,7 +1047,7 @@ int i;
      &actWin->appCtx->entryFormX,
      &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
      &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
-     title, NULL, NULL, NULL );
+     "Trace Properties", NULL, NULL, NULL );
 
     for ( i=0; i<numTraces; i++ ) {
       strncpy( eBuf->bufXPvName[i], xPvExpStr[i].getRaw(),
@@ -879,20 +1055,33 @@ int i;
       strncpy( eBuf->bufYPvName[i], yPvExpStr[i].getRaw(),
        activeGraphicClass::MAX_PV_NAME );
       eBuf->bufPlotColor[i] = plotColor[i];
+      eBuf->bufLineThk[i] = lineThk[i]-1;
+      if ( lineStyle[i] == LineSolid ) {
+        eBuf->bufLineStyle[i] = 0;
+      }
+      else {
+        eBuf->bufLineStyle[i] = 1;
+      }
     }
     for ( i=numTraces; i<XYGC_K_MAX_TRACES; i++ ) {
       strcpy( eBuf->bufXPvName[i], "" );
       strcpy( eBuf->bufYPvName[i], "" );
       eBuf->bufPlotColor[i] = plotColor[i];
+      eBuf->bufLineThk[i] = 0;
+      eBuf->bufLineStyle[i] = 0;
     }
 
     i = 0;
     efTrace->beginSubForm();
     efTrace->addTextField( "X ", 30, eBuf->bufXPvName[i],
      activeGraphicClass::MAX_PV_NAME );
-    efTrace->addLabel( "Y " );
+    efTrace->addLabel( " Y " );
     efTrace->addTextField( "", 30, eBuf->bufYPvName[i],
      activeGraphicClass::MAX_PV_NAME );
+    efTrace->addLabel( "Thk" );
+    efTrace->addOption( "", "1|2|3|4|5|6|7|8|9", &eBuf->bufLineThk[i] );
+    efTrace->addLabel( "Style " );
+    efTrace->addOption( "", "Solid|Dash", &eBuf->bufLineStyle[i] );
     efTrace->addLabel( " " );
     efTrace->addColorButton( "", actWin->ci, &plotCb[i],
      &eBuf->bufPlotColor[i] );
@@ -903,9 +1092,13 @@ int i;
       efTrace->beginLeftSubForm();
       efTrace->addTextField( "X ", 30, eBuf->bufXPvName[i],
        activeGraphicClass::MAX_PV_NAME );
-      efTrace->addLabel( "Y " );
+      efTrace->addLabel( " Y " );
       efTrace->addTextField( "", 30, eBuf->bufYPvName[i],
        activeGraphicClass::MAX_PV_NAME );
+      efTrace->addLabel( "Thk" );
+      efTrace->addOption( "", "1|2|3|4|5|6|7|8|9", &eBuf->bufLineThk[i] );
+      efTrace->addLabel( "Style " );
+      efTrace->addOption( "", "Solid|Dash", &eBuf->bufLineStyle[i] );
       efTrace->addLabel( " " );
       efTrace->addColorButton( "", actWin->ci, &plotCb[i],
        &eBuf->bufPlotColor[i] );
@@ -937,18 +1130,18 @@ int i;
      &actWin->appCtx->entryFormX,
      &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
      &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
-     title, NULL, NULL, NULL );
+     "Axis Properties", NULL, NULL, NULL );
 
     efAxis->beginSubForm();
-    efAxis->addLabel( " X Axis " );
+    efAxis->addLabel( "X   " );
     efAxis->addLabel( " Style" );
-    efAxis->addOption( "", "linear|log10|time", &eBuf->bufXAxisStyle );
+    efAxis->addOption( "", "disable|linear|log10|time", &eBuf->bufXAxisStyle );
     efAxis->addLabel( " Range" );
     efAxis->addOption( "", "from channel|user-specified|auto-scale",
      &eBuf->bufXAxisSource );
-    efAxis->addLabel( " Minimum" );
+    efAxis->addLabel( " Minimum " );
     efAxis->addTextField( "", 10, &eBuf->bufXMin );
-    efAxis->addLabel( " Maximum" );
+    efAxis->addLabel( " Maximum " );
     efAxis->addTextField( "", 10, &eBuf->bufXMax );
     efAxis->addLabel( " Time Format" );
     efAxis->addOption( "",
@@ -957,31 +1150,95 @@ int i;
     efAxis->endSubForm();
 
     efAxis->beginLeftSubForm();
-    efAxis->addLabel( "Y1 Axis " );
+    efAxis->addLabel( "    " );
+    efAxis->addLabel( " Label Tick Intervals " );
+    efAxis->addTextField( "", 3, &eBuf->bufXNumLabelIntervals );
+    efAxis->addLabel( " Grid" );
+    efAxis->addToggle( "", &eBuf->bufXLabelGrid );
+    efAxis->addLabel( " Majors/Label " );
+    efAxis->addTextField( "", 3, &eBuf->bufXNumMajorPerLabel );
+    efAxis->addLabel( " Grid" );
+    efAxis->addToggle( "", &eBuf->bufXMajorGrid );
+    efAxis->addLabel( " Minors/Major " );
+    efAxis->addTextField( "", 3, &eBuf->bufXNumMinorPerMajor );
+    efAxis->addLabel( " Grid" );
+    efAxis->addToggle( "", &eBuf->bufXMinorGrid );
+    efAxis->addLabel( " Format" );
+    efAxis->addOption( "", "f|g", &eBuf->bufXAnnotationFormat );
+    efAxis->addLabel( " Precision " );
+    efAxis->addTextField( "", 3, &eBuf->bufXAnnotationPrecision );
+    efAxis->endSubForm();
+   
+    efAxis->addSeparator();
+
+    efAxis->beginLeftSubForm();
+    efAxis->addLabel( "Y1  " );
     efAxis->addLabel( " Style" );
-    efAxis->addOption( "", "linear|log10", &eBuf->bufY1AxisStyle );
+    efAxis->addOption( "", "disable|linear|log10", &eBuf->bufY1AxisStyle );
     efAxis->addLabel( " Range" );
     efAxis->addOption( "", "from channel|user-specified|auto-scale",
      &eBuf->bufY1AxisSource );
-    efAxis->addLabel( " Minimum" );
+    efAxis->addLabel( " Minimum " );
     efAxis->addTextField( "", 10, &eBuf->bufY1Min );
-    efAxis->addLabel( " Maximum" );
+    efAxis->addLabel( " Maximum " );
     efAxis->addTextField( "", 10, &eBuf->bufY1Max );
     efAxis->endSubForm();
 
     efAxis->beginLeftSubForm();
-    efAxis->addLabel( "Y2 Axis " );
+    efAxis->addLabel( "    " );
+    efAxis->addLabel( " Label Tick Intervals " );
+    efAxis->addTextField( "", 3, &eBuf->bufY1NumLabelIntervals );
+    efAxis->addLabel( " Grid" );
+    efAxis->addToggle( "", &eBuf->bufY1LabelGrid );
+    efAxis->addLabel( " Majors/Label " );
+    efAxis->addTextField( "", 3, &eBuf->bufY1NumMajorPerLabel );
+    efAxis->addLabel( " Grid" );
+    efAxis->addToggle( "", &eBuf->bufY1MajorGrid );
+    efAxis->addLabel( " Minors/Major " );
+    efAxis->addTextField( "", 3, &eBuf->bufY1NumMinorPerMajor );
+    efAxis->addLabel( " Grid" );
+    efAxis->addToggle( "", &eBuf->bufY1MinorGrid );
+    efAxis->addLabel( " Format" );
+    efAxis->addOption( "", "f|g", &eBuf->bufY1AnnotationFormat );
+    efAxis->addLabel( " Precision " );
+    efAxis->addTextField( "", 3, &eBuf->bufY1AnnotationPrecision );
+    efAxis->endSubForm();
+   
+    efAxis->addSeparator();
+
+    efAxis->beginLeftSubForm();
+    efAxis->addLabel( "Y2  " );
     efAxis->addLabel( " Style" );
-    efAxis->addOption( "", "linear|log10", &eBuf->bufY2AxisStyle );
+    efAxis->addOption( "", "disable|linear|log10", &eBuf->bufY2AxisStyle );
     efAxis->addLabel( " Range" );
     efAxis->addOption( "", "from channel|user-specified|auto-scale",
      &eBuf->bufY2AxisSource );
-    efAxis->addLabel( " Minimum" );
+    efAxis->addLabel( " Minimum " );
     efAxis->addTextField( "", 10, &eBuf->bufY2Min );
-    efAxis->addLabel( " Maximum" );
+    efAxis->addLabel( " Maximum " );
     efAxis->addTextField( "", 10, &eBuf->bufY2Max );
     efAxis->endSubForm();
 
+    efAxis->beginLeftSubForm();
+    efAxis->addLabel( "    " );
+    efAxis->addLabel( " Label Tick Intervals " );
+    efAxis->addTextField( "", 3, &eBuf->bufY2NumLabelIntervals );
+    efAxis->addLabel( " Grid" );
+    efAxis->addToggle( "", &eBuf->bufY2LabelGrid );
+    efAxis->addLabel( " Majors/Label " );
+    efAxis->addTextField( "", 3, &eBuf->bufY2NumMajorPerLabel );
+    efAxis->addLabel( " Grid" );
+    efAxis->addToggle( "", &eBuf->bufY2MajorGrid );
+    efAxis->addLabel( " Minors/Major " );
+    efAxis->addTextField( "", 3, &eBuf->bufY2NumMinorPerMajor );
+    efAxis->addLabel( " Grid" );
+    efAxis->addToggle( "", &eBuf->bufY2MinorGrid );
+    efAxis->addLabel( " Format" );
+    efAxis->addOption( "", "f|g", &eBuf->bufY2AnnotationFormat );
+    efAxis->addLabel( " Precision " );
+    efAxis->addTextField( "", 3, &eBuf->bufY2AnnotationPrecision );
+    efAxis->endSubForm();
+   
     efAxis->finished( axygc_edit_ok_axis, this );
 
   ef.addTextField( "Trigger Channel", 30, eBuf->bufTrigPvName,
@@ -1017,6 +1274,82 @@ int xyGraphClass::edit ( void ) {
 
 }
 
+int xyGraphClass::fullRefresh ( void ) {
+
+int i, ii;
+XRectangle xR = { x, y, w, h };
+int clipStat;
+double xmax, xFactor, xOffset, y1Factor, y1Offset;
+
+  if ( !activeMode || !init ) return 1;
+
+  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.eraseGC(), x, y, w, h );
+
+  XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.eraseGC(), x, y, w, h );
+
+  y1Factor = (double) ( h - 1 ) / ( y1Max.value() - y1Min.value() );
+  y1Offset = y1Factor * y1Min.value() * -1.0;
+
+  actWin->executeGc.saveFg();
+
+  actWin->executeGc.setFG( actWin->ci->pix(fgColor) );
+  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+   //actWin->executeGc.normGC(), x, y, w, h );
+   actWin->executeGc.xorGC(), x, y, w, h );
+
+  //clipStat = actWin->executeGc.addNormXClipRectangle( xR );
+  clipStat = actWin->executeGc.addXorXClipRectangle( xR );
+
+  xmax = (double) yPvCount[0] - 1;
+  for ( i=1; i<numTraces; i++ ) {
+    if ( xmax < (double) yPvCount[i] - 1 ) {
+      xmax = (double) yPvCount[i] - 1;
+    }
+  }
+
+  for ( i=0; i<numTraces; i++ ) {
+
+    xFactor = ( (double) ( w - 1 ) ) / xmax;
+    xOffset = 0.0;
+
+    actWin->executeGc.setFG( actWin->ci->pix(plotColor[i]) );
+
+    for ( ii=0; ii<yPvCount[i]; ii++ ) {
+      plotBuf[i][ii].y = (short) ( y + h - 1 ) -
+       (short) rint( ( (double *) yPvData[i] )[ii] * y1Factor + y1Offset );
+      plotBuf[i][ii].x = (short) x +
+       (short) rint( (double) ii * xFactor + xOffset );
+    }
+
+    actWin->executeGc.setLineWidth( lineThk[i] );
+    actWin->executeGc.setLineStyle( lineStyle[i] );
+    if ( ii ) {
+      XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+       //actWin->executeGc.normGC(), plotBuf[i], ii, CoordModeOrigin );
+       actWin->executeGc.xorGC(), plotBuf[i], ii, CoordModeOrigin );
+    }
+
+  }
+
+  //if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
+  if ( clipStat & 1 ) actWin->executeGc.removeXorXClipRectangle();
+
+  actWin->executeGc.setLineWidth(1);
+  actWin->executeGc.setLineStyle( LineSolid );
+  actWin->executeGc.restoreFg();
+
+  bufInvalid = 0;
+  for ( i=0; i<numTraces; i++ ) {
+    traceIsDrawn[i] = 1;
+    yArrayNeedUpdate[i] = 0;
+  }
+
+  return 1;
+
+}
+
 int xyGraphClass::erase ( void ) {
 
   if ( activeMode || deleteRequest ) return 1;
@@ -1033,11 +1366,61 @@ int xyGraphClass::erase ( void ) {
 
 int xyGraphClass::eraseActive ( void ) {
 
-  XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
-   actWin->drawGc.eraseGC(), x, y, w, h );
+int i;
+XRectangle xR = { x, y, w, h };
+int clipStat;
 
-  XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
-   actWin->drawGc.eraseGC(), x, y, w, h );
+  if ( !activeMode || !init ) return 1;
+
+#if 0
+  XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.eraseGC(), x+1, y+1, w-2, h-2 );
+  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.eraseGC(), x+1, y+1, w-2, h-2 );
+  return 1;
+#endif
+
+  if ( bufInvalid ) {
+    return 1;
+  }
+
+  actWin->executeGc.saveFg();
+
+  //clipStat = actWin->executeGc.addEraseXClipRectangle( xR );
+  clipStat = actWin->executeGc.addXorXClipRectangle( xR );
+
+  for ( i=0; i<numTraces; i++ ) {
+
+    if ( traceIsDrawn[i] ) {
+
+      actWin->executeGc.setLineWidth( lineThk[i] );
+      actWin->executeGc.setLineStyle( lineStyle[i] );
+
+      //yArrayNeedUpdate[i] = 1;
+      if ( yArrayNeedUpdate[i] ) {
+
+        actWin->executeGc.setFG( actWin->ci->pix(plotColor[i]) );
+
+        traceIsDrawn[i] = 0;
+
+        XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+         //actWin->executeGc.eraseGC(), plotBuf[i], yPvCount[i],
+         //CoordModeOrigin );
+	 actWin->executeGc.xorGC(), plotBuf[i], yPvCount[i],
+	  CoordModeOrigin );
+
+      }
+
+    }
+
+  }
+
+  //if ( clipStat & 1 ) actWin->executeGc.removeEraseXClipRectangle();
+  if ( clipStat & 1 ) actWin->executeGc.removeXorXClipRectangle();
+
+  actWin->executeGc.setLineWidth(1);
+  actWin->executeGc.setLineStyle( LineSolid );
+  actWin->executeGc.restoreFg();
 
   return 1;
 
@@ -1063,16 +1446,75 @@ int xyGraphClass::draw ( void ) {
 
 int xyGraphClass::drawActive ( void ) {
 
+int i, ii;
+XRectangle xR = { x, y, w, h };
+int clipStat;
+double xmax, xFactor, xOffset, y1Factor, y1Offset;
+
   if ( !activeMode || !init ) return 1;
+
+  xmax = (double) yPvCount[0] - 1;
+  for ( i=1; i<numTraces; i++ ) {
+    if ( xmax < (double) yPvCount[i] - 1 ) {
+      xmax = (double) yPvCount[i] - 1;
+    }
+  }
+
+  y1Factor = (double) ( h - 1 ) / ( y1Max.value() - y1Min.value() );
+  y1Offset = y1Factor * y1Min.value() * -1.0;
 
   actWin->executeGc.saveFg();
 
-  actWin->executeGc.setFG( actWin->ci->pix(fgColor) );
-  //actWin->executeGc.setBG( actWin->ci->pix(bgColor) );
+  if ( bufInvalid ) {
+    actWin->appCtx->proc->lock();
+    needRefresh = 1;
+    actWin->addDefExeNode( aglPtr );
+    actWin->appCtx->proc->unlock();
+    return 1;
+  }
 
-  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-   actWin->executeGc.normGC(), x, y, w, h );
+  //clipStat = actWin->executeGc.addNormXClipRectangle( xR );
+  clipStat = actWin->executeGc.addXorXClipRectangle( xR );
 
+  for ( i=0; i<numTraces; i++ ) {
+
+    actWin->executeGc.setLineWidth( lineThk[i] );
+    actWin->executeGc.setLineStyle( lineStyle[i] );
+
+    xFactor = ( (double) ( w - 1 ) ) / xmax;
+    xOffset = 0.0;
+
+    //yArrayNeedUpdate[i] = 1;
+    if ( yArrayNeedUpdate[i] ) {
+
+      actWin->executeGc.setFG( actWin->ci->pix(plotColor[i]) );
+
+      traceIsDrawn[i] = 1;
+
+      yArrayNeedUpdate[i] = 0;
+
+      for ( ii=0; ii<yPvCount[i]; ii++ ) {
+        plotBuf[i][ii].y = (short) ( y + h - 1 ) -
+         (short) rint( ( (double *) yPvData[i] )[ii] * y1Factor + y1Offset );
+        plotBuf[i][ii].x = (short) x +
+         (short) rint( (double) ii * xFactor + xOffset );
+      }
+
+      if ( ii ) {
+        XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+         //actWin->executeGc.normGC(), plotBuf[i], ii, CoordModeOrigin );
+	 actWin->executeGc.xorGC(), plotBuf[i], ii, CoordModeOrigin );
+      }
+
+    }
+
+  }
+
+  //if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
+  if ( clipStat & 1 ) actWin->executeGc.removeXorXClipRectangle();
+
+  actWin->executeGc.setLineWidth(1);
+  actWin->executeGc.setLineStyle( LineSolid );
   actWin->executeGc.restoreFg();
 
   return 1;
@@ -1206,7 +1648,7 @@ int i, stat;
       connection.init();
       init = 0;
       bufInvalid = 1;
-      activeMode = 0;
+      activeMode = 1; 
       needConnect = needInit = needRefresh = needErase = needDraw = 
        needUpdate = 0;
 
@@ -1221,6 +1663,8 @@ int i, stat;
         yPv[i] = NULL;
         xEv[i] = NULL;
         yEv[i] = NULL;
+        plotBuf[i] = NULL;
+        traceIsDrawn[i] = 0;
       }
 
       printf( "numTraces = %-d\n", numTraces );
@@ -1268,6 +1712,8 @@ int i, stat;
 
   case 1:
 
+    activeMode = 0;
+
     for ( i=0; i<numTraces; i++ ) {
 
       if ( xEv[i] ) {
@@ -1288,6 +1734,11 @@ int i, stat;
       if ( yPvData[i] ) {
         delete (double *) yPvData[i];
         yPvData[i] = NULL;
+      }
+
+      if ( plotBuf[i] ) {
+        delete plotBuf[i];
+        plotBuf[i] = NULL;
       }
 
     }
@@ -1350,8 +1801,6 @@ int i, ii, stat, nc, ni, nu, nr, ne, nd;
 
   if ( actWin->isIconified ) return;
 
-  printf( "executeDeferred\n" );
-
   actWin->appCtx->proc->lock();
   nc = needConnect; needConnect = 0;
   ni = needInit; needInit = 0;
@@ -1401,6 +1850,7 @@ int i, ii, stat, nc, ni, nu, nr, ne, nd;
         if ( !yPvData[i] ) {
           printf( "count = %-d\n", yPvCount[i] );
           yPvData[i] = (void *) new double[yPvCount[i]];
+          plotBuf[i] = (XPoint *) new XPoint[yPvCount[i]];
           for ( ii=0; ii<yPvCount[i]; ii++ ) {
             ( (double *) yPvData[i])[ii] = 0.0;
 	  }
@@ -1416,12 +1866,17 @@ int i, ii, stat, nc, ni, nu, nr, ne, nd;
 
     }
 
+    init = 1;
+
   }
 
   if ( nu ) {
 
-    printf( "need update\n" );
+    //printf( "need update\n" );
 
+    eraseActive();
+
+#if 0
     for ( i=0; i<numTraces; i++ ) {
 
       if ( yArrayNeedUpdate[i] ) {
@@ -1430,6 +1885,8 @@ int i, ii, stat, nc, ni, nu, nr, ne, nd;
 
         printf( "\n\nupdate y %-d\n", i );
 
+	printf( "y min = %-g, y max = %-g\n", y1Min.value(), y1Max.value() );
+
         for ( ii=0; ii<yPvCount[i]; ii++ ) {
           printf( "%d: %-g\n", ii, ( (double *) yPvData[i])[ii] );
 	}
@@ -1437,7 +1894,14 @@ int i, ii, stat, nc, ni, nu, nr, ne, nd;
       }
 
     }
+#endif
 
+    drawActive();
+
+  }
+
+  if ( nr ) {
+    fullRefresh();
   }
 
 }

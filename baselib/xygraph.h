@@ -58,7 +58,7 @@
 #define XYGC_K_FORMAT_EXPONENTIAL 3
 
 #define XYGC_MAJOR_VERSION 1
-#define XYGC_MINOR_VERSION 0
+#define XYGC_MINOR_VERSION 2
 #define XYGC_RELEASE 0
 
 #ifdef __xygraph_cc
@@ -137,6 +137,8 @@ typedef struct editBufTag {
   int bufPlotColor[XYGC_K_MAX_TRACES];
   char bufXPvName[XYGC_K_MAX_TRACES][activeGraphicClass::MAX_PV_NAME+1];
   char bufYPvName[XYGC_K_MAX_TRACES][activeGraphicClass::MAX_PV_NAME+1];
+  int bufLineThk[XYGC_K_MAX_TRACES];
+  int bufLineStyle[XYGC_K_MAX_TRACES];
   char bufTrigPvName[activeGraphicClass::MAX_PV_NAME+1];
   char bufErasePvName[activeGraphicClass::MAX_PV_NAME+1];
   int bufCount;
@@ -145,18 +147,49 @@ typedef struct editBufTag {
   int bufXAxisTimeFormat;
   efDouble bufXMin;
   efDouble bufXMax;
+
+  efInt bufXNumLabelIntervals;
+  int bufXLabelGrid;
+  efInt bufXNumMajorPerLabel;
+  int bufXMajorGrid;
+  efInt bufXNumMinorPerMajor;
+  int bufXMinorGrid;
+  efInt bufXAnnotationPrecision;
+  int bufXAnnotationFormat;
+
   int bufY1AxisStyle;
   int bufY1AxisSource;
   int bufY1AxisTimeFormat;
   efDouble bufY1Min;
   efDouble bufY1Max;
+
+  efInt bufY1NumLabelIntervals;
+  int bufY1LabelGrid;
+  efInt bufY1NumMajorPerLabel;
+  int bufY1MajorGrid;
+  efInt bufY1NumMinorPerMajor;
+  int bufY1MinorGrid;
+  efInt bufY1AnnotationPrecision;
+  int bufY1AnnotationFormat;
+
   int bufY2AxisStyle;
   int bufY2AxisSource;
   int bufY2AxisTimeFormat;
   efDouble bufY2Min;
   efDouble bufY2Max;
+
+  efInt bufY2NumLabelIntervals;
+  int bufY2LabelGrid;
+  efInt bufY2NumMajorPerLabel;
+  int bufY2MajorGrid;
+  efInt bufY2NumMinorPerMajor;
+  int bufY2MinorGrid;
+  efInt bufY2AnnotationPrecision;
+  int bufY2AnnotationFormat;
+
   int bufFgColor;
   int bufBgColor;
+  int bufGridColor;
   int bufFormatType;
   int bufBorder;
   int bufXFormatType;
@@ -240,6 +273,9 @@ chid xPv[XYGC_K_MAX_TRACES], yPv[XYGC_K_MAX_TRACES];
 evid xEv[XYGC_K_MAX_TRACES], yEv[XYGC_K_MAX_TRACES];
 
 int plotColor[XYGC_K_MAX_TRACES];
+int lineThk[XYGC_K_MAX_TRACES];
+int lineStyle[XYGC_K_MAX_TRACES];
+
 expStringClass xPvExpStr[XYGC_K_MAX_TRACES], yPvExpStr[XYGC_K_MAX_TRACES];
 
 //const ProcessVariable::Type xPvType[XYGC_K_MAX_TRACES];
@@ -252,6 +288,10 @@ double xPvMin[XYGC_K_MAX_TRACES], xPvMax[XYGC_K_MAX_TRACES];
 double yPvMin[XYGC_K_MAX_TRACES], yPvMax[XYGC_K_MAX_TRACES];
 int xPvCount[XYGC_K_MAX_TRACES], yPvCount[XYGC_K_MAX_TRACES];
 int xPvSize[XYGC_K_MAX_TRACES], yPvSize[XYGC_K_MAX_TRACES];
+
+XPoint *plotBuf[XYGC_K_MAX_TRACES];
+
+int traceIsDrawn[XYGC_K_MAX_TRACES];
 
 double dbXMin[XYGC_K_MAX_TRACES], dbXMax[XYGC_K_MAX_TRACES];
 int dbXPrec[XYGC_K_MAX_TRACES],
@@ -276,10 +316,11 @@ int y2AxisStyle, y2AxisSource, y2AxisTimeFormat;
 efDouble y2Min, y2Max;
 
 colorButtonClass plotCb[XYGC_K_MAX_TRACES];
-colorButtonClass fgCb, bgCb;
+colorButtonClass fgCb, bgCb, gridCb;
 
 unsigned int fgColor;
 unsigned int bgColor;
+unsigned int gridColor;
 
 int xFormatType;
 efInt xPrecision;
@@ -302,8 +343,32 @@ int opComplete, active, activeMode, init, bufInvalid;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
-int xLabelTicks, xMajorTicks, xMinorTicks;
-int yLabelTicks, yMajorTicks, yMinorTicks;
+efInt xNumLabelIntervals;
+int xLabelGrid;
+efInt xNumMajorPerLabel;
+int xMajorGrid;
+efInt xNumMinorPerMajor;
+int xMinorGrid;
+efInt xAnnotationPrecision;
+int xAnnotationFormat;
+
+efInt y1NumLabelIntervals;
+int y1LabelGrid;
+efInt y1NumMajorPerLabel;
+int y1MajorGrid;
+efInt y1NumMinorPerMajor;
+int y1MinorGrid;
+efInt y1AnnotationPrecision;
+int y1AnnotationFormat;
+
+efInt y2NumLabelIntervals;
+int y2LabelGrid;
+efInt y2NumMajorPerLabel;
+int y2MajorGrid;
+efInt y2NumMinorPerMajor;
+int y2MinorGrid;
+efInt y2AnnotationPrecision;
+int y2AnnotationFormat;
 
 int xPvExists[XYGC_K_MAX_TRACES], yPvExists[XYGC_K_MAX_TRACES],
  trigPvExists, erasePvExists;
@@ -369,6 +434,8 @@ int xyGraphClass::genericEdit ( void );
 int xyGraphClass::edit ( void );
 
 int xyGraphClass::editCreate ( void );
+
+int xyGraphClass::fullRefresh ( void );
 
 int xyGraphClass::draw ( void );
 
