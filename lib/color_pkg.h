@@ -59,6 +59,7 @@
 #define COLORINFO_K_NOALARM 4
 
 typedef int (*ruleFuncType)( double v1, double v2 );
+typedef int (*connectingFuncType)( int v1, int v2 );
 
 typedef struct ruleConditionTag {
     struct ruleConditionTag *flink;
@@ -66,7 +67,7 @@ typedef struct ruleConditionTag {
     ruleFuncType ruleFunc1;
     double value2;
     ruleFuncType ruleFunc2;
-    ruleFuncType connectingFunc;
+    connectingFuncType connectingFunc;
     int result;
     char *resultName;
 } ruleConditionType, *ruleConditionPtr;
@@ -193,6 +194,10 @@ public:
     int colorInfoClass::menuPosition (int index);
 
     int colorInfoClass::menuSize ();
+
+    int colorInfoClass::evalRule (
+      int index,
+      double value );
 
     // The following functions are for use in color_button.cc and
     // entry_form.cc; they are not intended for general use.

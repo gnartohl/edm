@@ -805,16 +805,16 @@ char *ptr;
 }
 
 static int thisAnd (
-  double variable,
-  double conditionArg ) {
+  int variable,
+  int conditionArg ) {
 
   return ( variable && conditionArg );
 
 }
 
 static int thisOr (
-  double variable,
-  double conditionArg ) {
+  int variable,
+  int conditionArg ) {
 
   return ( variable || conditionArg );
 
@@ -2077,6 +2077,12 @@ term:
 
       firstCond = 1;
       ruleCond = colorNodes[i]->rule->ruleHead->flink;
+
+      if ( !ruleCond ) {
+        printf( colorInfoClass_str30, colorNodes[i]->name );
+        return 0;
+      }
+
       while ( ruleCond ) {
 
         stat = avl_get_match( this->colorCacheByNameH,
@@ -2131,6 +2137,39 @@ term:
     }
 
   }
+
+#if 0
+  {
+
+    double v;
+
+    printf( "eval rules\n\n\n" );
+
+    i = 0;
+
+    v = 0;
+    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+
+    v = 1;
+    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+
+    v = .5;
+    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+
+    v = 1000;
+    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+
+    v = 5.5;
+    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+
+    v = 99.1;
+    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+
+    v = -1;
+    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+
+  }
+#endif
 
 #if 0
 
@@ -3415,5 +3454,42 @@ int colorInfoClass::menuSize ( void ) {
     return maxMenuItems;
   else
     return max_colors+num_blinking_colors;
+
+}
+
+int colorInfoClass::evalRule (
+  int index,
+  double value )
+{
+
+ruleConditionPtr ruleCond;
+int opResult, opResult1, opResult2;
+
+  if ( !isRule(index) ) {
+    return index;
+  }
+
+  ruleCond = colorNodes[index]->rule->ruleHead->flink;
+  while ( ruleCond ) {
+
+    opResult1 = ruleCond->ruleFunc1( value, ruleCond->value1 );
+
+    if ( ruleCond->connectingFunc ) {
+      opResult2 = ruleCond->ruleFunc2( value, ruleCond->value2 );
+      opResult = ruleCond->connectingFunc( opResult1, opResult2 );
+    }
+    else {
+      opResult = opResult1;
+    }
+
+    if ( opResult ) {
+      return ruleCond->result;
+    }
+
+    ruleCond = ruleCond->flink;
+
+  }
+
+  return index;
 
 }
