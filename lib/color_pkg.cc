@@ -5804,10 +5804,12 @@ unsigned int colorInfoClass::getPixelByIndexWithBlink (
 {
 
   if ( index >= max_colors+num_blinking_colors )
-    return BlackPixel( display, screen );
+    //return BlackPixel( display, screen );
+    return getSpecialColor( COLORINFO_K_INVALID );
 
   if ( index < 0 )
-    return WhitePixel( display, screen );
+    //return WhitePixel( display, screen );
+    return getSpecialColor( COLORINFO_K_INVALID );
 
   if ( blink ) {
     return blinkingColors[index];
@@ -5823,10 +5825,12 @@ unsigned int colorInfoClass::getPixelByIndex (
 {
 
   if ( index >= max_colors+num_blinking_colors )
-    return BlackPixel( display, screen );
+    //return BlackPixel( display, screen );
+    return getSpecialColor( COLORINFO_K_INVALID );
 
   if ( index < 0 )
-    return WhitePixel( display, screen );
+    //return WhitePixel( display, screen );
+    return getSpecialColor( COLORINFO_K_INVALID );
 
   return colors[index];
 
