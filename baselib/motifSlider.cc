@@ -43,7 +43,7 @@ double fvalue;
 
   XmScaleGetValue( w, &v );
 
-  if ( mslo->prevScaleV == -1 ) return;
+  if ( mslo->prevScaleV == -1 ) mslo->prevScaleV = v;
 
   if ( v > mslo->prevScaleV ) {
 
@@ -388,7 +388,9 @@ double fv;
     return;
   }
 
-  if ( mslo->oldControlV == mslo->oneControlV ) return;
+  if ( mslo->prevScaleV != -1 ) {
+    if ( mslo->oldControlV == mslo->oneControlV ) return;
+  }
 
   mslo->oldControlV = mslo->oneControlV;
 
