@@ -4087,6 +4087,10 @@ restart:
    compare_key_by_name, copy_nodes, &(this->colorCacheByNameH) );
   if ( !( stat & 1 ) ) this->colorCacheByNameH = (AVL_HANDLE) NULL;
 
+  stat = avl_init_tree( compare_nodes_by_pos,
+   compare_key_by_pos, copy_nodes, &(this->colorCacheByPosH) );
+  if ( !( stat & 1 ) ) this->colorCacheByPosH = (AVL_HANDLE) NULL;
+
   fclose( f );
 
   f = fopen( fileName, "r" );
@@ -4192,6 +4196,7 @@ firstTry:
     cur->rgb[2] = (unsigned int) blue;
     cur->pixel = colors[i];
     cur->index = index;
+    cur->position = index;
 
     cur->name = NULL;
     cur->rule = NULL;
@@ -4214,6 +4219,7 @@ firstTry:
     cur->rgb[2] = (unsigned int) blue;
     cur->pixel = colors[i];
     cur->index = index;
+    cur->position = index;
 
     cur->name = NULL;
     cur->rule = NULL;
@@ -4236,11 +4242,35 @@ firstTry:
     cur->rgb[2] = (unsigned int) blue;
     cur->pixel = colors[i];
     cur->index = index;
+    cur->position = index;
 
     cur->name = NULL;
     cur->rule = NULL;
 
     stat = avl_insert_node( this->colorCacheByIndexH, (void *) cur,
+     &dup );
+    if ( !( stat & 1 ) ) {
+      delete cur;
+      fclose( f );
+      return stat;
+    }
+
+    if ( dup ) delete cur;
+
+    cur = new colorCacheType;
+    if ( !cur ) return 0;
+
+    cur->rgb[0] = (unsigned int) red;
+    cur->rgb[1] = (unsigned int) green;
+    cur->rgb[2] = (unsigned int) blue;
+    cur->pixel = colors[i];
+    cur->index = index;
+    cur->position = index;
+
+    cur->name = NULL;
+    cur->rule = NULL;
+
+    stat = avl_insert_node( this->colorCacheByPosH, (void *) cur,
      &dup );
     if ( !( stat & 1 ) ) {
       delete cur;
@@ -4331,6 +4361,7 @@ firstTry:
         cur->rgb[2] = (unsigned int) blue;
         cur->pixel = colors[numColors];
         cur->index = index;
+        cur->position = index;
 
         cur->name = NULL;
         cur->rule = NULL;
@@ -4353,6 +4384,7 @@ firstTry:
         cur->rgb[2] = (unsigned int) blue;
         cur->pixel = colors[numColors];
         cur->index = index;
+        cur->position = index;
 
         cur->name = NULL;
         cur->rule = NULL;
@@ -4375,11 +4407,35 @@ firstTry:
         cur->rgb[2] = (unsigned int) blue;
         cur->pixel = colors[numColors];
         cur->index = index;
+        cur->position = index;
 
         cur->name = NULL;
         cur->rule = NULL;
 
         stat = avl_insert_node( this->colorCacheByIndexH, (void *) cur,
+         &dup );
+        if ( !( stat & 1 ) ) {
+          delete cur;
+          fclose( f );
+          return stat;
+        }
+
+        if ( dup ) delete cur;
+
+        cur = new colorCacheType;
+        if ( !cur ) return 0;
+
+        cur->rgb[0] = (unsigned int) red;
+        cur->rgb[1] = (unsigned int) green;
+        cur->rgb[2] = (unsigned int) blue;
+        cur->pixel = colors[numColors];
+        cur->index = index;
+        cur->position = index;
+
+        cur->name = NULL;
+        cur->rule = NULL;
+
+        stat = avl_insert_node( this->colorCacheByPosH, (void *) cur,
          &dup );
         if ( !( stat & 1 ) ) {
           delete cur;
