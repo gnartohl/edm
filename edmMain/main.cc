@@ -1165,6 +1165,12 @@ FILE *f = NULL;
 int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
  char checkPointMacros[1023+1];
 
+char *envPtr;
+int doXSync = 0;
+
+  envPtr = getenv( "EDMXSYNC" );
+  if ( envPtr ) doXSync = 1;
+
   g_numClients = 1;
 
   checkParams( argc, argv, &local, &server, &appendDisplay, displayName,
@@ -1554,6 +1560,7 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
   stat = thread_init_timer( delayH, 0.1 );
   exitProg = 0;
   shutdown = 0;
+
   while ( !exitProg ) {
 
 #ifdef DIAGNOSTIC_ALLOC
@@ -1580,6 +1587,13 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
     numAppsRemaining = 0;
     cur = appArgsHead->flink;
     while ( cur != appArgsHead ) {
+
+      if ( doXSync ) {
+        if ( cur->appArgs->appCtxPtr->syncOnce ) {
+          cur->appArgs->appCtxPtr->syncOnce = 0;
+          cur->appArgs->appCtxPtr->xSynchronize( 1 );
+        }
+      }
 
       next = cur->flink; // cur might get deleted
 
