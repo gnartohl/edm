@@ -212,6 +212,7 @@ typedef struct bufTag {
   int bufOfsX;
   int bufOfsY;
   int bufButton3Popup;
+  int bufIcon;
 } bufType, *bufPtr;
 
 colorButtonClass fgCb, bgCb, topShadowCb, botShadowCb;
@@ -221,7 +222,7 @@ int numDsps, dspIndex;
 bufPtr buf;
 
 activeWindowClass *aw;
-int useFocus, needClose, button3Popup, needConnect, needUpdate, needRefresh;
+int useFocus, needClose, needConnect, needUpdate, needRefresh;
 int needToDrawUnconnected, needToEraseUnconnected;
 int unconnectedTimer;
 
@@ -278,6 +279,10 @@ entryFormClass *ef1;
 int posX, posY;
 
 int ofsX, ofsY;
+
+int button3Popup;
+
+int icon;
 
 public:
 

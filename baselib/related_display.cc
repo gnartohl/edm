@@ -301,6 +301,8 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
     rdo->button3Popup = 0;
   }
 
+  rdo->icon = rdo->buf->bufIcon;
+
   rdo->x = rdo->buf->bufX;
   rdo->sboxX = rdo->buf->bufX;
 
@@ -405,6 +407,7 @@ int i;
   noEdit = 0;
   useFocus = 0;
   button3Popup = 0;
+  icon = 0;
 
   for ( i=0; i<maxDsps; i++ ) {
     closeAction[i] = 0;
@@ -504,6 +507,7 @@ activeGraphicClass *rdo = (activeGraphicClass *) this;
   noEdit = source->noEdit;
   useFocus = source->useFocus;
   button3Popup = source->button3Popup;
+  icon = source->icon;
 
   for ( i=0; i<maxDsps; i++ ) {
     closeAction[i] = source->closeAction[i];
@@ -645,6 +649,7 @@ static int setPosEnum[3] = {
   tag.loadW( "propagateMacros", propagateMacros, numDsps, &one );
   tag.loadW( "closeDisplay", closeAction, numDsps, &zero );
   tag.loadW( "colorPv", &colorPvExpString, emptyStr );
+  tag.loadBoolW( "icon", &icon, &zero );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -859,6 +864,7 @@ static int setPosEnum[3] = {
   tag.loadR( "propagateMacros", maxDsps, propagateMacros, &n2, &one );
   tag.loadR( "closeDisplay", maxDsps, closeAction, &n2, &zero );
   tag.loadR( "colorPv", &colorPvExpString, emptyStr );
+  tag.loadR( "icon", &icon, &zero );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.loadR( "endObjectProperties" );
@@ -1233,6 +1239,8 @@ char onePvName[PV_Factory::MAX_PV_NAME+1];
   if ( useFocus ) {
     button3Popup = 0;
   }
+
+  icon = 0;
 
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
@@ -1616,6 +1624,8 @@ char title[32], *ptr;
 
   buf->bufButton3Popup = button3Popup;
 
+  buf->bufIcon = icon;
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -1689,6 +1699,7 @@ char title[32], *ptr;
   ef.addToggle( relatedDisplayClass_str19, &buf->bufInvisible );
   ef.addToggle( relatedDisplayClass_str29, &buf->bufNoEdit );
   ef.addToggle( relatedDisplayClass_str34, &buf->bufButton3Popup );
+  ef.addToggle( relatedDisplayClass_str47, &buf->bufIcon );
 
   ef.addTextField( "Color PV", 35, buf->bufColorPvName,
    PV_Factory::MAX_PV_NAME );
@@ -1834,7 +1845,7 @@ int blink = 0;
 
       ptr = buttonLabel.getRaw();
 
-      if ( strncmp( ptr, "-", 1 ) == 0 ) {
+      if ( !icon ) {
 
 	// no icon
 
@@ -1845,7 +1856,7 @@ int blink = 0;
         actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
         drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
-         XmALIGNMENT_CENTER, &ptr[1] );
+         XmALIGNMENT_CENTER, ptr );
 
       }
       else {
@@ -1859,7 +1870,7 @@ int blink = 0;
          (int) ( 1.2*fontAscent+0.5 );
         tY = y + (int) ( h/2+0.5 ) - (int) ( fontHeight/2+0.5 );
 
-        cx = tX - (int) ( 1.2*fontAscent+0.5 );
+        cx = tX - (int) ( 1.5*fontAscent+0.5 );
         cy = tY + (int) ( fontHeight*0.1+0.5 );
         ofs = (int) ( fontHeight*0.2+0.5 );
         size = (int) ( fontHeight-2.0*ofs+0.5 );
@@ -2031,7 +2042,7 @@ int blink = 0;
 
     if ( !blank( string ) ) {
 
-      if ( strncmp( string, "-", 1 ) == 0 ) {
+      if ( !icon ) {
 
 	// no icon
 
@@ -2042,7 +2053,7 @@ int blink = 0;
         actWin->executeGc.setFontTag( fontTag, actWin->fi );
 
         drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
-         XmALIGNMENT_CENTER, &string[1] );
+         XmALIGNMENT_CENTER, string );
 
       }
       else {
@@ -2056,7 +2067,7 @@ int blink = 0;
          (int) ( 1.2*fontAscent+0.5 );
         tY = y + (int) ( h/2+0.5 ) - (int) ( fontHeight/2+0.5 );
 
-        cx = tX - (int) ( 1.2*fontAscent+0.5 );
+        cx = tX - (int) ( 1.5*fontAscent+0.5 );
         cy = tY + (int) ( fontHeight*0.1+0.5 );
         ofs = (int) ( fontHeight*0.2+0.5 );
         size = (int) ( fontHeight-2.0*ofs+0.5 );
