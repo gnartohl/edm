@@ -603,6 +603,8 @@ char *objName ( void ) {
 
 }
 
+ int minStringSize( void );
+
 int createInteractive (
   activeWindowClass *aw_obj,
   int x,

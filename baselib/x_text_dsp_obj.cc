@@ -1613,10 +1613,10 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
   axtdo->eraseSelectBoxCorners();
   axtdo->erase();
 
-  strncpy( axtdo->value, axtdo->eBuf->bufPvName, 39 );
-  axtdo->value[39] = 0;
-  strncpy( axtdo->curValue, axtdo->eBuf->bufPvName, 39 );
-  axtdo->curValue[39] = 0;
+  strncpy( axtdo->value, axtdo->eBuf->bufPvName, axtdo->minStringSize() );
+  axtdo->value[axtdo->minStringSize()] = 0;
+  strncpy( axtdo->curValue, axtdo->eBuf->bufPvName, axtdo->minStringSize() );
+  axtdo->curValue[axtdo->minStringSize()] = 0;
 
   strncpy( axtdo->pvName, axtdo->eBuf->bufPvName, PV_Factory::MAX_PV_NAME );
   axtdo->pvName[PV_Factory::MAX_PV_NAME] = 0;
@@ -1995,6 +1995,21 @@ activeXTextDspClass::~activeXTextDspClass ( void ) {
   }
 
   updateBlink( 0 );
+
+}
+
+int activeXTextDspClass::minStringSize( void ) {
+
+  // In edit mode, pv name string is copied to pv value string. The
+  // max length of these strings are declared with different constants
+  // so this function returns the minimum of the two.
+
+  if ( PV_Factory::MAX_PV_NAME < XTDC_K_MAX ) {
+    return PV_Factory::MAX_PV_NAME;
+  }
+  else {
+    return XTDC_K_MAX;
+  }
 
 }
 
@@ -2490,8 +2505,8 @@ static int objTypeEnum[4] = {
 
   strncpy( pvName, pvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   pvName[PV_Factory::MAX_PV_NAME] = 0;
-  strncpy( value, pvName, 39 );
-  value[39] = 0;
+  strncpy( value, pvName, minStringSize() );
+  value[minStringSize()] = 0;
 
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
@@ -2651,8 +2666,8 @@ int tmpFgColor, tmpSvalColor;
   else
     fgColor.setAlarmInsensitive();
 
-  strncpy( value, pvName, 39 );
-  value[39] = 0;
+  strncpy( value, pvName, minStringSize() );
+  value[minStringSize()] = 0;
 
   if ( ( major > 1 ) || ( minor > 5 ) ) {
 
@@ -3060,8 +3075,8 @@ int tmpFgColor;
 
   fgColor.setAlarmInsensitive();
 
-  strncpy( value, pvName, 39 );
-  value[39] = 0;
+  strncpy( value, pvName, minStringSize() );
+  value[minStringSize()] = 0;
 
   pvExpStr.setRaw( pvName );
 
@@ -5085,10 +5100,10 @@ int changed = 0;
 
         changed = 1;
 
-        strncpy( value, ctlPvs[0], 39 );
-        value[39] = 0;
-        strncpy( curValue, ctlPvs[0], 39 );
-        curValue[39] = 0;
+        strncpy( value, ctlPvs[0], minStringSize() );
+        value[minStringSize()] = 0;
+        strncpy( curValue, ctlPvs[0], minStringSize() );
+        curValue[minStringSize()] = 0;
 
         strncpy( pvName, ctlPvs[0], PV_Factory::MAX_PV_NAME );
         pvName[PV_Factory::MAX_PV_NAME] = 0;
@@ -5107,10 +5122,10 @@ int changed = 0;
 
         changed = 1;
 
-        strncpy( value, readbackPvs[0], 39 );
-        value[39] = 0;
-        strncpy( curValue, readbackPvs[0], 39 );
-        curValue[39] = 0;
+        strncpy( value, readbackPvs[0], minStringSize() );
+        value[minStringSize()] = 0;
+        strncpy( curValue, readbackPvs[0], minStringSize() );
+        curValue[minStringSize()] = 0;
 
         strncpy( pvName, readbackPvs[0], PV_Factory::MAX_PV_NAME );
         pvName[PV_Factory::MAX_PV_NAME] = 0;

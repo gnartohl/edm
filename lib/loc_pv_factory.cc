@@ -356,6 +356,10 @@ double LOC_ProcessVariable::get_double() const
 
 double d = atof( buf );
 
+  if ( strcmp( buf, "RAND()" ) == 0 ) {
+    d = drand48();
+  }
+
   //printf( "[%s] double value is %-.15g\n", get_name(), d );
   return d;
 
