@@ -23,6 +23,11 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <math.h>
+#include <sys/types.h>
+#include <wait.h>
+#include <signal.h>
+#include <unistd.h>
+#include <errno.h>
 
 #include <X11/Xlib.h>
 #include <Xm/Xm.h>
@@ -31,6 +36,14 @@
 #include "gc_pkg.h"
 
 int debugMode ( void );
+
+void setServerSocketFd (
+  int fd
+);
+
+int executeCmd (
+  const char *cmdString
+);
 
 char *expandEnvVars (
   char *inStr,

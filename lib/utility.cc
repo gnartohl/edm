@@ -19,7 +19,8 @@
 // utility functions
 
 #include "utility.h"
-#include <errno.h>
+
+static int g_serverSocketFd = -1;
 
 int debugMode ( void ) {
 
@@ -35,6 +36,76 @@ char *envPtr;
   else {
     return 0;
   }
+
+}
+
+void setServerSocketFd (
+  int fd
+) {
+
+  g_serverSocketFd = fd;
+
+}
+
+// From Stevens' book
+int executeCmd (
+  const char *cmdString
+) {
+
+pid_t pid;
+int status;
+struct sigaction ignore, saveintr, savequit;
+sigset_t chldmask, savemask;
+
+  if ( !cmdString ) return 1;
+
+  ignore.sa_handler = SIG_IGN;
+  sigemptyset( &ignore.sa_mask );
+  ignore.sa_flags = 0;
+  if ( sigaction( SIGINT, &ignore, &saveintr ) < 0 ) return -1;
+  if ( sigaction( SIGQUIT, &ignore, &savequit ) < 0 ) return -1;
+
+  sigemptyset( &chldmask );
+  sigaddset( &chldmask, SIGCHLD );
+  if ( sigprocmask( SIG_BLOCK, &chldmask, &savemask ) < 0 ) return -1;
+
+  if ( ( pid = fork() ) < 0 ) {
+
+    status = -1;
+
+  }
+  else if ( pid == 0 ) {    // child
+
+    // restore previous signal actions & reset signal mask
+    sigaction( SIGINT, &saveintr, NULL );
+    sigaction( SIGQUIT, &savequit, NULL );
+    sigprocmask( SIG_SETMASK, &savemask, NULL );
+
+    if ( g_serverSocketFd != -1 ) {
+      close( g_serverSocketFd );
+    }
+
+    execl( "/bin/sh", "sh", "-c", cmdString, (char *) NULL );
+    _exit(127);
+
+  }
+  else {    // parent
+
+    while ( waitpid( pid, &status, 0 ) < 0 ) {
+      if ( errno != EINTR ) {
+	status = -1;
+	break;
+      }
+    }
+
+  }
+
+  // restore previous signal actions & reset signal mask
+  if ( sigaction( SIGINT, &saveintr, NULL ) < 0 ) return -1;
+  if ( sigaction( SIGQUIT, &savequit, NULL ) < 0 ) return -1;
+  if ( sigprocmask( SIG_SETMASK, &savemask, NULL ) < 0 ) return -1;
+
+  return status;
 
 }
 
