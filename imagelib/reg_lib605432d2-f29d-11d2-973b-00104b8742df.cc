@@ -36,6 +36,14 @@ static libRecType libRec[] = {
 extern "C" {
 #endif
 
+char *author ( void ) {
+
+static char *a = "John Sinclair (sinclair@mail.phy.ornl.gov)";
+
+  return a;
+
+}
+
 int firstRegRecord (
   char **className,
   char **typeName,
