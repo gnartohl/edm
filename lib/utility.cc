@@ -2272,7 +2272,7 @@ void drawXLinearScale (
 int count, ii, iii, x0, y0, x1, y1;
 int label_tick_height, major_tick_height, minor_tick_height, first;
 double xFactor, xOffset, labelVal, majorInc, majorVal,
- minorInc, minorVal, lastInc, labelInc;
+ minorInc, minorVal, lastInc, labelInc, z;
 int fontAscent, fontDescent, fontHeight,
  stringWidth;
 char buf[31+1];
@@ -2358,7 +2358,13 @@ unsigned int white, black;
     if ( annotateScale ) {
       gc->setFontTag( fontTag, fi );
       y1 = y0 + (int) ( 1.2 * label_tick_height );
-      formatString( labelVal, buf, 31 );
+      z = fabs( labelVal - 0.0 ) / labelInc;
+      if ( z < 1e-5 ) {
+        formatString( 0.0, buf, 31 );
+      }
+      else {
+        formatString( labelVal, buf, 31 );
+      }
       if ( minConstrained ) {
         if ( first ) {
           gc->setFG( black );
@@ -2496,7 +2502,13 @@ unsigned int white, black;
   if ( annotateScale ) {
     gc->setFontTag( fontTag, fi );
     y1 = y0 + (int) ( 1.2 * label_tick_height );
-    formatString( labelVal, buf, 31 );
+    z = fabs( labelVal - 0.0 ) / labelInc;
+    if ( z < 1e-5 ) {
+      formatString( 0.0, buf, 31 );
+    }
+    else {
+      formatString( labelVal, buf, 31 );
+    }
     if ( maxConstrained ) {
       gc->setFG( black );
       gc->setBG( white );
@@ -2825,7 +2837,7 @@ void getXLimitCoords (
 
 int x0, y0, x1, y1, count;
 int label_tick_height;
-double xFactor, xOffset, labelVal, lastInc, labelInc;
+double xFactor, xOffset, labelVal, lastInc, labelInc, z;
 int fontAscent, fontDescent, fontHeight, stringWidth;
 char buf[31+1];
 
@@ -2851,7 +2863,13 @@ char buf[31+1];
   count = 0;
   while ( labelVal < ( adj_max + lastInc ) ) {
 
-    formatString( labelVal, buf, 31 );
+    z = fabs( labelVal - 0.0 ) / labelInc;
+    if ( z < 1e-5 ) {
+      formatString( 0.0, buf, 31 );
+    }
+    else {
+      formatString( labelVal, buf, 31 );
+    }
 
     stringWidth = XTextWidth( fs, buf, strlen(buf) );
 
@@ -2982,7 +3000,7 @@ void drawYLinearScale (
 int count, ii, iii, x0, y0, x1, y1;
 int label_tick_height, major_tick_height, minor_tick_height, first;
 double yFactor, yOffset, labelVal, majorInc, majorVal,
- minorInc, minorVal, lastInc, labelInc;
+ minorInc, minorVal, lastInc, labelInc, z;
 int fontAscent, fontDescent, fontHeight,
  stringWidth;
 char buf[31+1];
@@ -3069,7 +3087,13 @@ unsigned int white, black;
       gc->setFontTag( fontTag, fi );
       x0 = x - (int) ( 1.2 * label_tick_height );
       y1 = y0 - (int) ( fontHeight * 0.5 );
-      formatString( labelVal, buf, 31 );
+      z = fabs( labelVal - 0.0 ) / labelInc;
+      if ( z < 1e-5 ) {
+        formatString( 0.0, buf, 31 );
+      }
+      else {
+        formatString( labelVal, buf, 31 );
+      }
       if ( minConstrained ) {
         if ( first ) {
           gc->setFG( black );
@@ -3207,7 +3231,13 @@ unsigned int white, black;
     gc->setFontTag( fontTag, fi );
     x0 = x - (int) ( 1.2 * label_tick_height );
     y1 = y0 - (int) ( fontHeight * 0.5 );
-    formatString( labelVal, buf, 31 );
+    z = fabs( labelVal - 0.0 ) / labelInc;
+    if ( z < 1e-5 ) {
+      formatString( 0.0, buf, 31 );
+    }
+    else {
+      formatString( labelVal, buf, 31 );
+    }
     if ( maxConstrained ) {
       gc->setFG( black );
       gc->setBG( white );
@@ -3585,7 +3615,7 @@ void getYLimitCoords (
 
 int x0, y0, x1, y1, count;
 int label_tick_height;
-double yFactor, yOffset, labelVal, lastInc, labelInc;
+double yFactor, yOffset, labelVal, lastInc, labelInc, z;
 int fontAscent, fontDescent, fontHeight, stringWidth;
 char buf[31+1];
 
@@ -3613,7 +3643,13 @@ char buf[31+1];
   count = 0;
   while ( labelVal < ( adj_max + lastInc ) ) {
 
-    formatString( labelVal, buf, 31 );
+    z = fabs( labelVal - 0.0 ) / labelInc;
+    if ( z < 1e-5 ) {
+      formatString( 0.0, buf, 31 );
+    }
+    else {
+      formatString( labelVal, buf, 31 );
+    }
 
     stringWidth = XTextWidth( fs, buf, strlen(buf) );
 
