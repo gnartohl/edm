@@ -70,7 +70,7 @@ friend void intKeypadPress (
   XtPointer client,
   XtPointer call );
 
-static const int MAXCHARS = 14;
+static const int MAXCHARS_TOP = 14;
 static const int ISNULL = 0;
 static const int ZERO = 1;
 static const int NODECPOINT = 2;
@@ -78,17 +78,22 @@ static const int DECPOINT = 3;
 static const int INT = 100;
 static const int DOUBLE = 101;
 
+int MAXCHARS;
+
 int x, y, count, positive, state, poppedUp;
 char *entryTag, *actionTag;
 Display *display;
 Widget shell, rowcol, kprowcol, topForm, mainForm, bottomForm, text,
  pb0, pb1, pb2, pb3, pb4, pb5, pb6, pb7, pb8, pb9,
- pbPoint, pbSign, pbOK, pbApply, pbCancel, pbBksp;
+ pbPoint, pbSign, pbOK, pbApply, pbCancel, pbBksp,
+ pba, pbb, pbc, pbd, pbe, pbf;
 keypadWidgetListPtr wlHead, wlTail;
-char buf[MAXCHARS+1];
+char buf[MAXCHARS_TOP+1];
 
 int *intDest;
 double *doubleDest;
+
+int hex;
 
 void *userPtr;
 void (*okFunc)(Widget,XtPointer,XtPointer);
@@ -136,6 +141,34 @@ int create (
   XtCallbackProc _cancelFunc );
 
 int create (
+  Widget top,
+  //Colormap cmap,
+  int _x,
+  int _y,
+  char *label,
+  //fontInfoClass *fi,
+  //const char *entryFontTag,
+  //const char *actionFontTag,
+  double *destination,
+  void *_userPtr,
+  XtCallbackProc _okFunc,
+  XtCallbackProc _cancelFunc );
+
+int createHex (
+  Widget top,
+  //Colormap cmap,
+  int _x,
+  int _y,
+  char *label,
+  //fontInfoClass *fi,
+  //const char *entryFontTag,
+  //const char *actionFontTag,
+  int *destination,
+  void *_userPtr,
+  XtCallbackProc _okFunc,
+  XtCallbackProc _cancelFunc );
+
+int createHex (
   Widget top,
   //Colormap cmap,
   int _x,

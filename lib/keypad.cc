@@ -10,6 +10,7 @@ static void keypadPress (
 {
 
 keypadClass *kp = (keypadClass *) client;
+int tmp;
 
   if ( w == kp->pbCancel ) {
 
@@ -53,22 +54,43 @@ keypadClass *kp = (keypadClass *) client;
 
     case keypadClass::INT:
 
-      if ( kp->positive ) {
-        *(kp->intDest) = atol( &kp->buf[1] );
+      if ( kp->hex ) {
+
+        *(kp->intDest) = strtol( &kp->buf[1], NULL, 16 );
+
       }
       else {
-        *(kp->intDest) = atol( kp->buf );
+
+        if ( kp->positive ) {
+          *(kp->intDest) = atol( &kp->buf[1] );
+        }
+        else {
+          *(kp->intDest) = atol( kp->buf );
+        }
+
       }
+
       break;
 
     case keypadClass::DOUBLE:
 
-      if ( kp->positive ) {
-        *(kp->doubleDest) = atof( &kp->buf[1] );
+      if ( kp->hex ) {
+
+        tmp = strtol( &kp->buf[1], NULL, 16 );
+        *(kp->doubleDest) = (double) tmp;
+
       }
       else {
-        *(kp->doubleDest) = atof( kp->buf );
+
+        if ( kp->positive ) {
+          *(kp->doubleDest) = atof( &kp->buf[1] );
+        }
+        else {
+          *(kp->doubleDest) = atof( kp->buf );
+        }
+
       }
+
       break;
 
     }
@@ -130,6 +152,36 @@ keypadClass *kp = (keypadClass *) client;
       }
       else if ( w == kp->pb9 ) {
         strcpy( kp->buf, "-9" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pba ) {
+        strcpy( kp->buf, "-A" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pbb ) {
+        strcpy( kp->buf, "-B" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pbc ) {
+        strcpy( kp->buf, "-C" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pbd ) {
+        strcpy( kp->buf, "-D" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pbe ) {
+        strcpy( kp->buf, "-E" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pbf ) {
+        strcpy( kp->buf, "-F" );
         kp->state = keypadClass::NODECPOINT;
         kp->count++;
       }
@@ -195,6 +247,36 @@ keypadClass *kp = (keypadClass *) client;
         kp->state = keypadClass::NODECPOINT;
         kp->count++;
       }
+      else if ( w == kp->pba ) {
+        strcpy( kp->buf, "-A" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pbb ) {
+        strcpy( kp->buf, "-B" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pbc ) {
+        strcpy( kp->buf, "-C" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pbd ) {
+        strcpy( kp->buf, "-D" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pbe ) {
+        strcpy( kp->buf, "-E" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pbf ) {
+        strcpy( kp->buf, "-F" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
       else if ( w == kp->pbPoint ) {
         strcpy( kp->buf, "-." );
         kp->state = keypadClass::DECPOINT;
@@ -214,58 +296,88 @@ keypadClass *kp = (keypadClass *) client;
     case keypadClass::NODECPOINT:
 
       if ( w == kp->pb0 ) {
-        Strncat( &kp->buf[1], "0", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "0", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb1 ) {
-        Strncat( &kp->buf[1], "1", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "1", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb2 ) {
-        Strncat( &kp->buf[1], "2", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "2", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb3 ) {
-        Strncat( &kp->buf[1], "3", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "3", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb4 ) {
-        Strncat( &kp->buf[1], "4", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "4", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb5 ) {
-        Strncat( &kp->buf[1], "5", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "5", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb6 ) {
-        Strncat( &kp->buf[1], "6", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "6", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb7 ) {
-        Strncat( &kp->buf[1], "7", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "7", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb8 ) {
-        Strncat( &kp->buf[1], "8", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "8", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb9 ) {
-        Strncat( &kp->buf[1], "9", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "9", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->count++;
+      }
+      else if ( w == kp->pba ) {
+        Strncat( &kp->buf[1], "A", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->count++;
+      }
+      else if ( w == kp->pbb ) {
+        Strncat( &kp->buf[1], "B", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->count++;
+      }
+      else if ( w == kp->pbc ) {
+        Strncat( &kp->buf[1], "C", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->count++;
+      }
+      else if ( w == kp->pbd ) {
+        Strncat( &kp->buf[1], "D", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->count++;
+      }
+      else if ( w == kp->pbe ) {
+        Strncat( &kp->buf[1], "E", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->count++;
+      }
+      else if ( w == kp->pbf ) {
+        Strncat( &kp->buf[1], "F", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pbPoint ) {
-        Strncat( &kp->buf[1], ".", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], ".", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
         kp->state = keypadClass::DECPOINT;
       }
@@ -295,53 +407,83 @@ keypadClass *kp = (keypadClass *) client;
     case keypadClass::DECPOINT:
 
       if ( w == kp->pb0 ) {
-        Strncat( &kp->buf[1], "0", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "0", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb1 ) {
-        Strncat( &kp->buf[1], "1", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "1", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb2 ) {
-        Strncat( &kp->buf[1], "2", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "2", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb3 ) {
-        Strncat( &kp->buf[1], "3", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "3", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb4 ) {
-        Strncat( &kp->buf[1], "4", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "4", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb5 ) {
-        Strncat( &kp->buf[1], "5", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "5", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb6 ) {
-        Strncat( &kp->buf[1], "6", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "6", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb7 ) {
-        Strncat( &kp->buf[1], "7", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "7", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb8 ) {
-        Strncat( &kp->buf[1], "8", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "8", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb9 ) {
-        Strncat( &kp->buf[1], "9", keypadClass::MAXCHARS-1 );
-        kp->buf[keypadClass::MAXCHARS] = 0;
+        Strncat( &kp->buf[1], "9", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->count++;
+      }
+      else if ( w == kp->pba ) {
+        Strncat( &kp->buf[1], "A", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->count++;
+      }
+      else if ( w == kp->pbb ) {
+        Strncat( &kp->buf[1], "B", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->count++;
+      }
+      else if ( w == kp->pbc ) {
+        Strncat( &kp->buf[1], "C", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->count++;
+      }
+      else if ( w == kp->pbd ) {
+        Strncat( &kp->buf[1], "D", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->count++;
+      }
+      else if ( w == kp->pbe ) {
+        Strncat( &kp->buf[1], "E", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->count++;
+      }
+      else if ( w == kp->pbf ) {
+        Strncat( &kp->buf[1], "F", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pbSign ) {
@@ -411,6 +553,8 @@ keypadClass::keypadClass () {
   actionTag = NULL;
   shell = NULL;
   poppedUp = 0;
+  hex = 0;
+  MAXCHARS = 14;
 
 }
 
@@ -431,10 +575,6 @@ void keypadClass::popup ( void ) {
 }
 
 void keypadClass::popdown ( void ) {
-
-  if ( debugMode() ) {
-    printf( "debug - 5\n" );
-  }
 
   XtPopdown( shell );
   poppedUp = 0;
@@ -532,8 +672,8 @@ int keypadClass::create (
   bottomForm = XtVaCreateWidget( "", xmFormWidgetClass, rowcol, NULL );
 
   text = XtVaCreateManagedWidget( "", xmTextFieldWidgetClass, topForm,
-   XmNcolumns, (short) keypadClass::MAXCHARS,
-   XmNmaxLength, (short) keypadClass::MAXCHARS,
+   XmNcolumns, (short) MAXCHARS,
+   XmNmaxLength, (short) MAXCHARS,
    XmNleftAttachment, XmATTACH_FORM,
    XmNrightAttachment, XmATTACH_FORM,
    XmNeditable, 0,
@@ -543,238 +683,500 @@ int keypadClass::create (
   positive = 1;
   count = 0;
 
-#if 0
-  state = ZERO;
-  strcpy( this->buf, "-0" );
-  XmTextFieldSetString( text, "0" );
-#endif
   state = ISNULL;
   strcpy( this->buf, "-" );
   XmTextFieldSetString( text, "" );
 
-// ---------------------------------------
+  if ( hex ) {
 
-  if ( entryTag )
-    str = XmStringCreate( "7", entryTag );
-  else
-    str = XmStringCreateLocalized( "7" );
-
-  pb7 = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
-   kprowcol,
-   XmNlabelString, str,
-   NULL );
-
-  XmStringFree( str );
-
-  XtAddCallback( pb7, XmNactivateCallback, (XtCallbackProc) func, this );
+    MAXCHARS = 9;
 
 // ---------------------------------------
 
-  if ( entryTag )
-    str = XmStringCreate( "8", entryTag );
-  else
-    str = XmStringCreateLocalized( "8" );
+    if ( entryTag )
+      str = XmStringCreate( " C", entryTag );
+    else
+      str = XmStringCreateLocalized( " C" );
 
-  pb8 = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
-   kprowcol,
-   XmNlabelString, str,
-   NULL );
+    pbc = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
 
-  XmStringFree( str );
+    XmStringFree( str );
 
-  XtAddCallback( pb8, XmNactivateCallback, (XtCallbackProc) func, this );
-
-// ---------------------------------------
-
-  if ( entryTag )
-    str = XmStringCreate( "9", entryTag );
-  else
-    str = XmStringCreateLocalized( "9" );
-
-  pb9 = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
-   kprowcol,
-   XmNlabelString, str,
-   NULL );
-
-  XmStringFree( str );
-
-  XtAddCallback( pb9, XmNactivateCallback, (XtCallbackProc) func, this );
+    XtAddCallback( pbc, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
 
+    if ( entryTag )
+      str = XmStringCreate( " D", entryTag );
+    else
+      str = XmStringCreateLocalized( " D" );
 
+    pbd = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
 
+    XmStringFree( str );
 
-// ---------------------------------------
-
-  if ( entryTag )
-    str = XmStringCreate( "4", entryTag );
-  else
-    str = XmStringCreateLocalized( "4" );
-
-  pb4 = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
-   kprowcol,
-   XmNlabelString, str,
-   NULL );
-
-  XmStringFree( str );
-
-  XtAddCallback( pb4, XmNactivateCallback, (XtCallbackProc) func, this );
+    XtAddCallback( pbd, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
 
-  if ( entryTag )
-    str = XmStringCreate( "5", entryTag );
-  else
-    str = XmStringCreateLocalized( "5" );
+    if ( entryTag )
+      str = XmStringCreate( " E", entryTag );
+    else
+      str = XmStringCreateLocalized( " E" );
 
-  pb5 = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
-   kprowcol,
-   XmNlabelString, str,
-   NULL );
+    pbe = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
 
-  XmStringFree( str );
+    XmStringFree( str );
 
-  XtAddCallback( pb5, XmNactivateCallback, (XtCallbackProc) func, this );
-
-// ---------------------------------------
-
-  if ( entryTag )
-    str = XmStringCreate( "6", entryTag );
-  else
-    str = XmStringCreateLocalized( "6" );
-
-  pb6 = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
-   kprowcol,
-   XmNlabelString, str,
-   NULL );
-
-  XmStringFree( str );
-
-  XtAddCallback( pb6, XmNactivateCallback, (XtCallbackProc) func, this );
+    XtAddCallback( pbe, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
 
+    if ( entryTag )
+      str = XmStringCreate( " F ", entryTag );
+    else
+      str = XmStringCreateLocalized( " F " );
 
+    pbf = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
 
+    XmStringFree( str );
 
-// ---------------------------------------
-
-  if ( entryTag )
-    str = XmStringCreate( "1", entryTag );
-  else
-    str = XmStringCreateLocalized( "1" );
-
-  pb1 = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
-   kprowcol,
-   XmNlabelString, str,
-   NULL );
-
-  XmStringFree( str );
-
-  XtAddCallback( pb1, XmNactivateCallback, (XtCallbackProc) func, this );
+    XtAddCallback( pbf, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
 
-  if ( entryTag )
-    str = XmStringCreate( "2", entryTag );
-  else
-    str = XmStringCreateLocalized( "2" );
+    if ( entryTag )
+      str = XmStringCreate( " 8", entryTag );
+    else
+      str = XmStringCreateLocalized( " 8" );
 
-  pb2 = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
-   kprowcol,
-   XmNlabelString, str,
-   NULL );
+    pb8 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
 
-  XmStringFree( str );
+    XmStringFree( str );
 
-  XtAddCallback( pb2, XmNactivateCallback, (XtCallbackProc) func, this );
-
-// ---------------------------------------
-
-  if ( entryTag )
-    str = XmStringCreate( "3", entryTag );
-  else
-    str = XmStringCreateLocalized( "3" );
-
-  pb3 = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
-   kprowcol,
-   XmNlabelString, str,
-   NULL );
-
-  XmStringFree( str );
-
-  XtAddCallback( pb3, XmNactivateCallback, (XtCallbackProc) func, this );
+    XtAddCallback( pb8, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
 
+    if ( entryTag )
+      str = XmStringCreate( " 9", entryTag );
+    else
+      str = XmStringCreateLocalized( " 9" );
 
+    pb9 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
 
+    XmStringFree( str );
 
-// ---------------------------------------
-
-  if ( entryTag )
-    str = XmStringCreate( "0", entryTag );
-  else
-    str = XmStringCreateLocalized( "0" );
-
-  pb0 = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
-   kprowcol,
-   XmNlabelString, str,
-   NULL );
-
-  XmStringFree( str );
-
-  XtAddCallback( pb0, XmNactivateCallback, (XtCallbackProc) func, this );
+    XtAddCallback( pb9, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
 
-  if ( entryTag )
-    str = XmStringCreate( ".", entryTag );
-  else
-    str = XmStringCreateLocalized( "." );
+    if ( entryTag )
+      str = XmStringCreate( " A", entryTag );
+    else
+      str = XmStringCreateLocalized( " A" );
 
-  pbPoint = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
-   kprowcol,
-   XmNlabelString, str,
-   NULL );
+    pba = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
 
-  XmStringFree( str );
+    XmStringFree( str );
 
-  XtAddCallback( pbPoint, XmNactivateCallback, (XtCallbackProc) func, this );
-
-// ---------------------------------------
-
-  if ( entryTag )
-    str = XmStringCreate( "+/-", entryTag );
-  else
-    str = XmStringCreateLocalized( "+/-" );
-
-  pbSign = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
-   kprowcol,
-   XmNlabelString, str,
-   NULL );
-
-  XmStringFree( str );
-
-  XtAddCallback( pbSign, XmNactivateCallback, (XtCallbackProc) func, this );
+    XtAddCallback( pba, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
 
+    if ( entryTag )
+      str = XmStringCreate( " B", entryTag );
+    else
+      str = XmStringCreateLocalized( " B" );
 
+    pbb = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
 
+    XmStringFree( str );
+
+    XtAddCallback( pbb, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 4", entryTag );
+    else
+      str = XmStringCreateLocalized( " 4" );
+
+    pb4 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb4, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 5", entryTag );
+    else
+      str = XmStringCreateLocalized( " 5" );
+
+    pb5 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb5, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 6", entryTag );
+    else
+      str = XmStringCreateLocalized( " 6" );
+
+    pb6 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb6, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 7", entryTag );
+    else
+      str = XmStringCreateLocalized( " 7" );
+
+    pb7 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb7, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 0", entryTag );
+    else
+      str = XmStringCreateLocalized( " 0" );
+
+    pb0 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb0, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 1", entryTag );
+    else
+      str = XmStringCreateLocalized( " 1" );
+
+    pb1 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb1, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 2", entryTag );
+    else
+      str = XmStringCreateLocalized( " 2" );
+
+    pb2 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb2, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 3", entryTag );
+    else
+      str = XmStringCreateLocalized( " 3" );
+
+    pb3 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb3, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+  }
+  else {
+
+    MAXCHARS = 14;
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 7", entryTag );
+    else
+      str = XmStringCreateLocalized( " 7" );
+
+    pb7 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb7, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 8", entryTag );
+    else
+      str = XmStringCreateLocalized( " 8" );
+
+    pb8 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb8, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 9", entryTag );
+    else
+      str = XmStringCreateLocalized( " 9" );
+
+    pb9 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb9, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 4", entryTag );
+    else
+      str = XmStringCreateLocalized( " 4" );
+
+    pb4 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb4, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 5", entryTag );
+    else
+      str = XmStringCreateLocalized( " 5" );
+
+    pb5 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb5, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 6", entryTag );
+    else
+      str = XmStringCreateLocalized( " 6" );
+
+    pb6 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb6, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 1", entryTag );
+    else
+      str = XmStringCreateLocalized( " 1" );
+
+    pb1 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb1, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 2", entryTag );
+    else
+      str = XmStringCreateLocalized( " 2" );
+
+    pb2 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb2, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 3", entryTag );
+    else
+      str = XmStringCreateLocalized( " 3" );
+
+    pb3 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb3, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " 0", entryTag );
+    else
+      str = XmStringCreateLocalized( " 0" );
+
+    pb0 = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pb0, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( " .", entryTag );
+    else
+      str = XmStringCreateLocalized( " ." );
+
+    pbPoint = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pbPoint, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( "+/-", entryTag );
+    else
+      str = XmStringCreateLocalized( "+/-" );
+
+    pbSign = XtVaCreateManagedWidget(
+     "", xmPushButtonWidgetClass,
+     kprowcol,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pbSign, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+  } // end if ( hex ...
 
 // ---------------------------------------
 
@@ -864,6 +1266,8 @@ int keypadClass::create (
 
 int stat;
 
+  hex = 0;
+
   stat = create ( top, _x, _y, label, keypadClass::INT,
    (void *) destination, _userPtr, _okFunc, _cancelFunc );
   return stat;
@@ -884,6 +1288,54 @@ int keypadClass::create (
   XtCallbackProc _cancelFunc ) {
 
 int stat;
+
+  hex = 0;
+
+  stat = create ( top, _x, _y, label, keypadClass::DOUBLE,
+   (void *) destination, _userPtr, _okFunc, _cancelFunc );
+  return stat;
+
+}
+
+int keypadClass::createHex (
+  Widget top,
+  int _x,
+  int _y,
+  char *label,
+  //fontInfoClass *fi,
+  //const char *entryFontTag,
+  //const char *actionFontTag,
+  int *destination,
+  void *_userPtr,
+  XtCallbackProc _okFunc,
+  XtCallbackProc _cancelFunc ) {
+
+int stat;
+
+  hex = 1;
+
+  stat = create ( top, _x, _y, label, keypadClass::INT,
+   (void *) destination, _userPtr, _okFunc, _cancelFunc );
+  return stat;
+
+}
+
+int keypadClass::createHex (
+  Widget top,
+  int _x,
+  int _y,
+  char *label,
+  //fontInfoClass *fi,
+  //const char *entryFontTag,
+  //const char *actionFontTag,
+  double *destination,
+  void *_userPtr,
+  XtCallbackProc _okFunc,
+  XtCallbackProc _cancelFunc ) {
+
+int stat;
+
+  hex = 1;
 
   stat = create ( top, _x, _y, label, keypadClass::DOUBLE,
    (void *) destination, _userPtr, _okFunc, _cancelFunc );
