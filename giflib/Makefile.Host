@@ -7,15 +7,15 @@ IMAGELIB=/usr/local
 
 USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
 
-USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl gif
+USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl ungif
 
 USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
 
-USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt gif
+USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt ungif
 
 USR_LDFLAGS += -L$(INSTALL_LIB) -L$(IMAGELIB)
 
-LIBRARY = 605432d2-f29d-11d2-973b-00104b8742df
+LIBRARY = cf322683-513e-4570-a44b-7cdd7cae0de5
 
 PROD_LIBS += ca Com
 
