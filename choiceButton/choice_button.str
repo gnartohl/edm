@@ -38,5 +38,6 @@
 #define activeChoiceButtonClass_str35 (char *) "Orientation"
 #define activeChoiceButtonClass_str36 (char *) "Vertical|Horizontal"
 #define activeChoiceButtonClass_str37 (char *) "Selected Color"
+#define activeChoiceButtonClass_str38 (char *) " - illegal pv type"
 
 #endif

@@ -217,7 +217,7 @@ struct dbr_gr_enum enumRec;
 
   if ( !acbo->controlExists ) {
 
-  acbo->numStates = enumRec.no_str;
+    acbo->numStates = enumRec.no_str;
 
     for ( i=0; i<acbo->numStates; i++ ) {
 
@@ -1054,7 +1054,13 @@ char *buttonLabel[3] = { "0", "1", "2" };
 
     buttonH = h;
     if ( buttonH < 3 ) buttonH = 3;
-    buttonW = ( w - (buttonNumStates-1) * margin ) / buttonNumStates;
+    if ( buttonNumStates > 0 ) {
+      buttonW = ( w - (buttonNumStates-1) * margin ) / buttonNumStates;
+    }
+    else {
+      buttonW = 5;
+    }
+
     if ( buttonW < 3 ) buttonW = 3;
 
     // background
@@ -1172,7 +1178,13 @@ char *buttonLabel[3] = { "0", "1", "2" };
   }
   else if ( orientation == ACBC_K_ORIENTATION_VERT ) {
 
-    buttonH = ( h - (buttonNumStates-1) * margin ) / buttonNumStates;
+    if ( buttonNumStates > 0 ) {
+      buttonH = ( h - (buttonNumStates-1) * margin ) / buttonNumStates;
+    }
+    else {
+      buttonH = 5;
+    }
+
     if ( buttonH < 3 ) buttonH = 3;
     buttonW = w;
     if ( buttonW < 3 ) buttonW = 3;
@@ -1381,7 +1393,12 @@ int inconsistent;
 
     buttonH = h;
     if ( buttonH < 3 ) buttonH = 3;
-    buttonW = ( w - (buttonNumStates-1) * margin ) / buttonNumStates;
+    if ( buttonNumStates > 0 ) {
+      buttonW = ( w - (buttonNumStates-1) * margin ) / buttonNumStates;
+    }
+    else {
+      buttonW = 5;
+    }
     if ( buttonW < 3 ) buttonW = 3;
 
    buttonX = x;
@@ -1511,7 +1528,13 @@ int inconsistent;
   }
   else if ( orientation == ACBC_K_ORIENTATION_VERT ) {
 
-    buttonH = ( h - (buttonNumStates-1) * margin ) / buttonNumStates;
+    if ( buttonNumStates > 0 ) {
+      buttonH = ( h - (buttonNumStates-1) * margin ) / buttonNumStates;
+    }
+    else {
+      buttonH = 5;
+    }
+
     if ( buttonH < 3 ) buttonH = 3;
     buttonW = w;
     if ( buttonW < 3 ) buttonW = 3;
@@ -1996,7 +2019,12 @@ int stat, i, state, buttonX, buttonY, buttonH, buttonW, margin = 2;
 
       buttonH = h;
       if ( buttonH < 3 ) buttonH = 3;
-      buttonW = ( w - (numStates-1) * margin ) / numStates;
+      if ( numStates > 0 ) {
+        buttonW = ( w - (numStates-1) * margin ) / numStates;
+      }
+      else {
+        buttonW = 5;
+      }
       if ( buttonW < 3 ) buttonW = 3;
 
       buttonX = x;
@@ -2017,10 +2045,15 @@ int stat, i, state, buttonX, buttonY, buttonH, buttonW, margin = 2;
     }
     else if ( orientation == ACBC_K_ORIENTATION_VERT ) {
 
-    buttonH = ( h - (numStates-1) * margin ) / numStates;
-    if ( buttonH < 3 ) buttonH = 3;
-    buttonW = w;
-    if ( buttonW < 3 ) buttonW = 3;
+      if ( numStates > 0 ) {
+        buttonH = ( h - (numStates-1) * margin ) / numStates;
+      }
+      else {
+        buttonH = 5;
+      }
+      if ( buttonH < 3 ) buttonH = 3;
+      buttonW = w;
+      if ( buttonW < 3 ) buttonW = 3;
 
       buttonX = x;
       buttonY = y;
@@ -2099,6 +2132,7 @@ void activeChoiceButtonClass::executeDeferred ( void ) {
 short v, rV;
 int nc, nrc, ni, nri, nr, nd, nvc, nvi, nvu, ncolc, ncoli, ncolu;
 int stat, index, invisColor;
+char msg[79+1];
 
   if ( actWin->isIconified ) return;
 
@@ -2131,6 +2165,17 @@ int stat, index, invisColor;
 #ifdef __epics__
 
   if ( nc ) {
+
+    if ( ca_field_type(controlPvId) != DBR_ENUM ) {
+      strncpy( msg, actWin->obj.getNameFromClass( "activeChoiceButtonClass" ),
+       79 );
+      Strncat( msg, activeChoiceButtonClass_str38, 79 );
+      actWin->appCtx->postMessage( msg );
+      init = 0;
+      needToDrawUnconnected = 1;
+      drawActive();
+      return;
+    }
 
     stat = ca_get_callback( DBR_GR_ENUM, controlPvId,
      acb_infoUpdate, (void *) this );
