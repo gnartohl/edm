@@ -722,6 +722,14 @@ virtual void btnUp (
   int buttonNumber,
   int *action );
 
+virtual void activeGraphicClass::btnUp (
+  XButtonEvent *be,
+  int _x,
+  int _y,
+  int buttonState,
+  int buttonNumber,
+  int *action );
+
 virtual void btnDown (
   int x,
   int y,

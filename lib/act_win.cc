@@ -9039,7 +9039,7 @@ activeGraphicClass *ptr;
         if ( curBtn->pressed == 1 ) {
           foundAction = 1;
           curBtn->pressed = 0;
-          curBtn->node->btnUp( awo->btnDownX, awo->btnDownY, be->state,
+          curBtn->node->btnUp( be, awo->btnDownX, awo->btnDownY, be->state,
            be->button, &action );
           if ( action == 1 ) { /* close window */
             awo->returnToEdit( 1 );

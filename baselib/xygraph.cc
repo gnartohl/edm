@@ -5855,18 +5855,22 @@ int pmX, pmY;
 }
 
 void xyGraphClass::btnUp (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,
-  int buttonNumber )
+  int buttonNumber,
+  int *action )
 {
+
 int pmX, pmY;
 double dx0, dy0, dx1, dy1;
 int yi = 0;
-XButtonEvent be;
 
-  pmX = _x - this->x;
-  pmY = _y - this->y;
+  *action = 0;
+
+  pmX = be->x - this->x;
+  pmY = be->y - this->y;
 
   if ( doingBoxRescale ) {
 
@@ -5943,12 +5947,12 @@ XButtonEvent be;
       !( buttonState & ShiftMask ) &&
       !( buttonState & ControlMask ) ) {
 
-    memset( (void *) &be, 0, sizeof(XButtonEvent) );
+    //memset( (void *) &be, 0, sizeof(XButtonEvent) );
     popupMenuX = _x;
     popupMenuY = _y;
-    be.x_root = actWin->xPos()+_x;
-    be.y_root = actWin->yPos()+_y;
-    XmMenuPosition( popUpMenu, &be );
+    //be.x_root = actWin->xPos()+_x;
+    //be.y_root = actWin->yPos()+_y;
+    XmMenuPosition( popUpMenu, be );
     XtManageChild( popUpMenu );
     return;
 

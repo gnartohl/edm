@@ -2226,6 +2226,19 @@ void activeGraphicClass::btnUp (
 
 }
 
+void activeGraphicClass::btnUp (
+  XButtonEvent *be,
+  int _x,
+  int _y,
+  int buttonState,
+  int buttonNumber,
+  int *action )
+{
+
+  btnUp( _x, _y, buttonState, buttonNumber, action );
+
+}
+
 void activeGraphicClass::btnDown (
   int x,
   int y,

@@ -955,10 +955,12 @@ void btnDrag (
   int buttonNumber );
 
 void btnUp (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
-  int buttonNumber );
+  int buttonNumber,
+  int *action );
 
 void btnDown (
   int x,
