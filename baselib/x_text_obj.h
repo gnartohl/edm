@@ -161,7 +161,7 @@ char fontTag[63+1], bufFontTag[63+1];
 int useDisplayBg, bufUseDisplayBg, alignment;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight, stringLength, stringWidth,
- stringY, stringX;
+ stringY, stringX, stringBoxWidth, stringBoxHeight;
 int autoSize, bufAutoSize;
 
 int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh,

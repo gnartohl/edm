@@ -132,17 +132,6 @@ activeXTextClass *axto = (activeXTextClass *) client;
   axto->h = axto->bufH;
   axto->sboxH = axto->bufH;
 
-  axto->updateDimensions();
-
-  if ( axto->autoSize && axto->fs ) {
-    getStringBoxSize( axto->value.getRaw(), axto->stringLength,
-    &(axto->fs), axto->alignment, &(axto->w), &(axto->h) );
-    axto->sboxW = axto->w;
-    axto->sboxH = axto->h;
-  }
-
-  axto->stringY = axto->y + axto->fontAscent + axto->h/2 - axto->fontHeight/2;
-
   axto->alignment = axto->fm.currentFontAlignment();
 
   if ( axto->alignment == XmALIGNMENT_BEGINNING )
@@ -151,6 +140,16 @@ activeXTextClass *axto = (activeXTextClass *) client;
     axto->stringX = axto->x + axto->w/2 - axto->stringWidth/2;
   else if ( axto->alignment == XmALIGNMENT_END )
     axto->stringX = axto->x + axto->w - axto->stringWidth;
+
+  axto->updateDimensions();
+
+  if ( axto->autoSize && axto->fs ) {
+    axto->sboxW = axto->w = axto->stringBoxWidth;
+    axto->sboxH = axto->h = axto->stringBoxHeight;
+  }
+
+  axto->stringY = axto->y + axto->fontAscent + axto->h/2 -
+   axto->stringBoxHeight/2;
 
 }
 
@@ -410,6 +409,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   stringWidth = source->stringWidth;
   stringY = source->stringY;
   stringX = source->stringX;
+  stringBoxWidth = source->stringBoxWidth;
+  stringBoxHeight = source->stringBoxHeight;
   bufValue = NULL;
 
   connection.setMaxPvs( 2 );
@@ -474,9 +475,9 @@ int stat = 1;
     fontHeight = 0;
   }
 
-  updateDimensions();
-
   alignment = actWin->defaultAlignment;
+
+  updateDimensions();
 
   this->draw();
 
@@ -763,7 +764,9 @@ int stat = 1;
     updateFont( " ", fontTag, &fs, &fontAscent, &fontDescent,
      &fontHeight, &stringWidth );
 
-  stringY = y + fontAscent + h/2 - fontHeight/2;
+  updateDimensions();
+
+  stringY = y + fontAscent + h/2 - stringBoxHeight/2;
 
   if ( alignment == XmALIGNMENT_BEGINNING )
     stringX = x;
@@ -1002,6 +1005,8 @@ char *tk, *gotData, *context,
     updateFont( " ", fontTag, &fs, &fontAscent, &fontDescent,
      &fontHeight, &stringWidth );
 
+  updateDimensions();
+
   y = y + fontDescent;
 
   this->initSelectBox(); // call after getting x,y,w,h
@@ -1013,7 +1018,7 @@ char *tk, *gotData, *context,
   else if ( alignment == XmALIGNMENT_END )
     stringX = x + w - stringWidth;
 
-  stringY = y + fontAscent + h/2 - fontHeight/2;
+  stringY = y + fontAscent + h/2 - stringBoxHeight/2;
 
   return stat;
 
@@ -1361,7 +1366,9 @@ int activeXTextClass::activate (
       updateFont( value.getExpanded(), fontTag, &fs, &fontAscent, &fontDescent,
        &fontHeight, &stringWidth );
 
-      stringY = y + fontAscent + h/2 - fontHeight/2;
+      updateDimensions();
+
+      stringY = y + fontAscent + h/2 - stringBoxHeight/2;
 
       if ( alignment == XmALIGNMENT_BEGINNING )
         stringX = x;
@@ -1472,7 +1479,9 @@ int activeXTextClass::deactivate (
     updateFont( " ", fontTag, &fs, &fontAscent, &fontDescent,
      &fontHeight, &stringWidth );
 
-  stringY = y + fontAscent + h/2 - fontHeight/2;
+  updateDimensions();
+
+  stringY = y + fontAscent + h/2 - stringBoxHeight/2;
 
   if ( alignment == XmALIGNMENT_BEGINNING )
     stringX = x;
@@ -1616,7 +1625,10 @@ XRectangle xR = { x, y, w, h };
 void activeXTextClass::updateDimensions ( void )
 {
 
-  stringY = y + fontAscent + h/2 - fontHeight/2;
+  getStringBoxSize( value.getRaw(), stringLength, &fs, alignment,
+   &stringBoxWidth, &stringBoxHeight );
+
+  stringY = y + fontAscent + h/2 - stringBoxHeight/2;
 
   if ( alignment == XmALIGNMENT_BEGINNING )
     stringX = x;
@@ -1823,14 +1835,12 @@ pvValType pvV;
     updateFont( value.getRaw(), fontTag, &fs, &fontAscent, &fontDescent,
      &fontHeight, &stringWidth );
 
-    if ( autoSize && fs ) {
-      getStringBoxSize( value.getRaw(), stringLength,
-      &fs, alignment, &w, &h );
-      sboxW = w;
-      sboxH = h;
-    }
-
     updateDimensions();
+
+    if ( autoSize && fs ) {
+      sboxW = w = stringBoxWidth;
+      sboxH = h = stringBoxHeight;
+    }
 
     stat = smartDrawAllActive();
 
