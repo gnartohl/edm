@@ -1723,7 +1723,9 @@ int stat;
 
   if ( !active ) return;
 
-  if ( !ca_write_access( controlPvId ) ) return;
+  if ( controlExists ) {
+    if ( !ca_write_access( controlPvId ) ) return;
+  }
 
   if ( buttonNumber != 1 ) return;
 
@@ -1783,13 +1785,16 @@ int activeButtonClass::getButtonActionRequest (
 
   *drag = 0;
 
-  *up = 1;
-  *down = 1;
-
-  if ( controlExists )
+  if ( controlExists ) {
     *focus = 1;
-  else
+    *up = 1;
+    *down = 1;
+  }
+  else {
     *focus = 0;
+    *up = 0;
+    *down = 0;
+  }
 
   return 1;
 
