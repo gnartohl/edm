@@ -763,6 +763,8 @@ libRecPtr head, tail, cur, prev, next;
     alreadyExists = 0;
     while ( !stat ) {
 
+      doAdd = 1;
+
       cur = head->flink;
       while ( cur ) {
         if ( strcmp( classNamePtr, cur->className ) == 0 ) {
@@ -3536,6 +3538,8 @@ char prefix[127+1], fname[127+1], msg[127+1];
 fileListPtr curFile;
 expStringClass expStr;
 Atom wm_delete_window;
+XTextProperty xtext;
+char title[31+1], *pTitle;
 
   name = argv[0];
 
@@ -3701,6 +3705,14 @@ err_return:
   XtRealizeWidget( appTop );
 
   display = XtDisplay( appTop );
+
+  strcpy( title, "edm " );
+  strncat( title, VERSION, 31 );
+  pTitle = title;
+  XStringListToTextProperty( &pTitle, 1, &xtext );
+  XSetWMName( display, XtWindow(appTop), &xtext );
+  XSetWMIconName( display, XtWindow(appTop), &xtext );
+  XFree( xtext.value );
 
   processAllEvents( app, display );
 
