@@ -4703,6 +4703,14 @@ unsigned int mask;
   }
   else if ( e->type == KeyPress ) {
 
+    if ( awo->state == AWC_START_DEFINE_REGION ) goto done;
+    if ( awo->state == AWC_DEFINE_REGION ) goto done;
+    if ( awo->state == AWC_EDITING ) goto done;
+    if ( awo->state == AWC_START_DEFINE_SELECT_REGION ) goto done;
+    if ( awo->state == AWC_DEFINE_SELECT_REGION ) goto done;
+    if ( awo->state == AWC_EDITING_POINTS ) goto done;
+    if ( awo->state == AWC_MOVING_POINT ) goto done;
+    if ( awo->state == AWC_CHOOSING_LINE_OP ) goto done;
     if ( awo->state == AWC_WAITING ) goto done;
 
     ke = (XKeyEvent *) e;
