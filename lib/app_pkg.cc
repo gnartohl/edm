@@ -976,11 +976,22 @@ appContextClass *apco = (appContextClass *) ast_args.usr;
 char *fName, str[41], name[127+1];
 int stat;
 activeWindowListPtr cur;
+SYS_PROC_ID_TYPE procId;
 
   fName = (char *) ast_args.dbr;
 
   if ( strcmp( fName, "" ) == 0 ) {
-    strcpy( str, "" );
+    return;
+  }
+
+  if ( apco->shutdownFlag ) {
+    return;
+  }
+
+  if ( strcmp( fName, "* SHUTDOWN *" ) == 0 ) {
+    apco->shutdownFlag = 1;
+    sys_get_proc_id( &procId );
+    sprintf( str, "%-d", (int) procId.id );
     stat = ca_put( DBR_STRING, apco->ctlPvId, &str );
     return;
   }
@@ -1056,8 +1067,20 @@ activeWindowListPtr cur;
   fName = (char *) apco->ctlPvId->getValue( args );
 
   if ( strcmp( fName, "" ) == 0 ) {
-    strcpy( str, "" );
-    stat = apco->ctlPvId->put( apco->ctlPvId->pvrString(), str );
+    //    apco->proc->unlock();
+    return;
+  }
+
+  if ( apco->shutdownFlag ) {
+    //    apco->proc->unlock();
+    return;
+  }
+
+  if ( strcmp( fName, "* SHUTDOWN *" ) == 0 ) {
+    apco->shutdownFlag = 1;
+    sys_get_proc_id( &procId );
+    sprintf( str, "%-d", (int) procId.id );
+    stat = ca_put( DBR_STRING, apco->ctlPvId, &str );
     //    apco->proc->unlock();
     return;
   }

@@ -2,7 +2,7 @@
 #define __environment_str 1
 
 
-// global_str86 is last
+// global_str88 is last
 
 
 #define environment_str1 (char *) "EDMDATAFILES"
@@ -93,14 +93,14 @@
 #define global_str55 (char *) " (-h displays help)\n"
 #define global_str56 (char *) "-display|"
 
-#define global_str57 (char *) "    -server  Communicate with or become a\n"
-#define global_str58 (char *) "             display file server which can\n"
-#define global_str59 (char *) "             manage multiple displays\n\n"
+#define global_str57 (char *) "  -server  Communicate with or become a\n"
+#define global_str58 (char *) "           display file server which can\n"
+#define global_str59 (char *) "           manage multiple displays\n\n"
 
-#define global_str74 (char *) "    -port #  Use specified TCP/IP port number (default=19000)\n\n"
+#define global_str74 (char *) "  -port #  Use specified TCP/IP port number (default=19000)\n\n"
 
-#define global_str60 (char *) "    -local   Do not communicate with the display\n"
-#define global_str61 (char *) "             file server (default)\n\n"
+#define global_str60 (char *) "  -local   Do not communicate with the display\n"
+#define global_str61 (char *) "           file server (default)\n\n"
 
 #define global_str62 (char *) "PV Class"
 
@@ -115,4 +115,8 @@
 #define global_str70 (char *) "    -showpv    Show all components in specified library\n"
 #define global_str71 (char *) "\n"
 #define global_str72 (char *) "               e.g. edm -addpv /usr/lib/someEdmPvComponents.so\n\n"
+
+#define global_str87 (char *) "           Writing \"* SHUTDOWN *\" to the pv invokes a remote\n"
+#define global_str88 (char *) "           shutdown; edm writes its pid back into the same pv\n\n"
+
 #endif
