@@ -109,6 +109,7 @@
 #define AWC_POPUP_ROTATE_CCW 145
 #define AWC_POPUP_FLIP_H 146
 #define AWC_POPUP_FLIP_V 147
+#define AWC_POPUP_HELP 148
 
 #define AWC_NONE_SELECTED 1
 #define AWC_ONE_SELECTED 2
@@ -1173,6 +1174,9 @@ void activeWindowClass::closeDeferred (
 
 int activeWindowClass::checkPoint (
   FILE *fptr );
+
+void activeWindowClass::openExecuteSysFile (
+  char *fName );
 
 };
 

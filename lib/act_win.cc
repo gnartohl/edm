@@ -2858,6 +2858,11 @@ Atom wm_delete_window;
 
       break;
 
+    case AWC_POPUP_HELP:
+
+      awo->openExecuteSysFile( "helpMain" );
+      break;
+
   }
 
 }
@@ -8750,6 +8755,7 @@ char *envPtr, *gotIt, buf[127+1], save[127+1], *tk;
   msgDialogPoppedUp = 0;
 
 }
+
 int activeWindowClass::pushVersion ( void ) {
 
   if ( versionStackPtr > 9 ) return 0; // overflow
@@ -9991,6 +9997,29 @@ Atom wm_delete_window;
   XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
    (XtPointer) &curBlockListNode->block );
 
+
+  str = XmStringCreateLocalized( activeWindowClass_str184 );
+
+  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   b2NoneSelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_HELP;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
 //===================================================================
 
   n = 0;
@@ -10421,6 +10450,27 @@ Atom wm_delete_window;
    (XtPointer) &curBlockListNode->block );
 
 
+  str = XmStringCreateLocalized( activeWindowClass_str184 );
+
+  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   b2OneSelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_HELP;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
+   (XtPointer) &curBlockListNode->block );
 
 //===================================================================
  
@@ -11227,6 +11277,28 @@ Atom wm_delete_window;
   XtAddCallback( pb, XmNactivateCallback, b2ReleaseManySelect_cb,
    (XtPointer) &curBlockListNode->block );
 
+
+  str = XmStringCreateLocalized( activeWindowClass_str184 );
+
+  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   b2ManySelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_HELP;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
+   (XtPointer) &curBlockListNode->block );
 
 //===================================================================
 
@@ -15443,5 +15515,85 @@ int i;
   }
 
   return 1;
+
+}
+
+void activeWindowClass::openExecuteSysFile (
+  char *fName )
+{
+
+activeWindowListPtr cur;
+char buf[255+1], *envPtr;
+int i, numMacros;
+char *sysValues[5], *ptr;
+
+char *sysMacros[] = {
+  "help"
+};
+
+  if ( !*fName ) {
+    return;
+  }
+
+  // is help file already open?
+  cur = appCtx->head->flink;
+  while ( cur != appCtx->head ) {
+    if ( strcmp( fName, cur->node.name ) == 0 ) {
+      // deiconify
+      XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+      // raise
+      XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+      return; // display is already open; don't open another instance
+    }
+    cur = cur->flink;
+  }
+
+  envPtr = getenv( "EDMHELPFILES" );
+  if ( envPtr ) {
+
+    strncpy( buf, envPtr, 255 );
+
+    if ( buf[strlen(buf)-1] != '/' ) {
+      strncat( buf, "/", 255 );
+    }
+
+  }
+  else {
+
+    strcpy( buf, "/etc/" );
+
+  }
+
+  // build system macros
+
+  numMacros = 0;
+
+  ptr = new char[strlen(buf)+1];
+  strcpy( ptr, buf );
+  sysValues[0] = ptr;
+
+  numMacros++;
+
+  // ============
+
+  strncat( buf, fName, 255 );
+  strncat( buf, ".edl", 255 );
+
+  cur = new activeWindowListType;
+  appCtx->addActiveWindow( cur );
+
+  cur->node.create( appCtx, NULL, 0, 0, 0, 0, numMacros,
+   sysMacros, sysValues );
+
+  for ( i=0; i<numMacros; i++ ) {
+    delete sysValues[i];
+  }
+
+  cur->node.realize();
+  cur->node.setGraphicEnvironment( &appCtx->ci, &appCtx->fi );
+
+  cur->node.storeFileName( buf );
+
+  appCtx->openActivateActiveWindow( &cur->node );
 
 }
