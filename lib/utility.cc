@@ -403,6 +403,19 @@ int stat;
     if ( stat == -1 ) return 0;
 
   }
+  else if ( blank(str) ) {
+
+    {
+      char buf[300+1];
+
+      strcpy( buf, "<<<blank>>>" );
+      strncat( buf, str, 300 );
+      stat = fprintf( f, "%s\n", buf );
+
+    }
+
+  }
+
   else {
 
     stat = fprintf( f, "%s\n", str );
@@ -421,7 +434,7 @@ void readStringFromFile (
 {
 
 char *ptr;
-int l;
+int i, ii, l;
 
   ptr = fgets( str, maxChars, f );
   if ( !ptr ) {
@@ -437,6 +450,22 @@ int l;
   if ( strcmp( str, "<<<empty>>>" ) == 0 ) {
 
     strcpy( str, "" );
+
+  }
+  else if ( strncmp( str, "<<<blank>>>", 11 ) == 0 ) {
+
+    {
+      char buf[300+1];
+
+      strncpy( buf, str, 300 );
+      for ( i=0, ii=11; ii<strlen(str); i++, ii++ ) {
+        str[i] = buf[ii];
+      }
+
+      if ( i > maxChars ) i = maxChars;
+      str[i] = 0;
+
+    }
 
   }
 
