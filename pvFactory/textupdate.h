@@ -14,7 +14,7 @@
 
 #include "act_grf.h"
 #include "entry_form.h"
-#include "pv_factory.h"
+#include "color_helper.h"
 
 #define TEXTUPDATE_CLASSNAME "TextupdateClass"
 #define TEXTENTRY_CLASSNAME  "TextentryClass"
@@ -104,10 +104,8 @@ protected:
     DisplayMode displayMode;
     int precision;
 
-    int textColor;
-    int alarm_sensitive;
+    ColorHelper textColor, fillColor;
     efInt line_width;
-    int fillColor;
     int is_filled;
     fontMenuClass fm;
     char fontTag[63+1], bufFontTag[63+1];
@@ -123,28 +121,25 @@ protected:
     char bufColorPvName[PV_Factory::MAX_PV_NAME+1];
     int buf_displayMode;
     int buf_precision;
-    int bufTextColor;
     int buf_alarm_sensitive;
+    int bufTextColor, bufFillColor;
+    
     efInt buf_line_width;
     colorButtonClass textCb;
-    int bufFillColor;
     colorButtonClass fillCb;
     int bufIsFilled;
 
     // Get text & color value.
     // len has to be initialized with the text buffer size.
     // Returns 1 if PV is valid
-    bool get_current_values(char *text, size_t &len,
-                            double &color_value, short &severity);
+    bool get_current_values(char *text, size_t &len);
 
     void redraw_text(Display *dis,
                      Drawable drw,
                      gcClass &gcc,
                      GC gc,
                      const char *text,
-                     size_t len,
-                     double value,
-                     short severity);
+                     size_t len);
     void remove_text(Display *dis,
                      Drawable drw,
                      gcClass &gcc,

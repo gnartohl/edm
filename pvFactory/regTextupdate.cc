@@ -61,31 +61,6 @@ int edmRegTextupdateClass::createFromFile(FILE *f, char *name,
 // Edit Mode
 // --------------------------------------------------------
 
-// Idea of next two and helper methods:
-// createInteractive -> editCreate -> genericEdit (delete on cancel)
-// edit -> genericEdit (ignore changes on cancel)
-int edmRegTextupdateClass::createInteractive(activeWindowClass *aw_obj,
-                                             int _x, int _y, int _w, int _h)
-{   // required
-    actWin = (activeWindowClass *) aw_obj;
-    x = _x; y = _y; w = _w; h = _h;
-    // Honor display scheme
-    displayMode = dm_default;
-    precision = 0;
-    textColor = actWin->defaultFg1Color;
-    line_width.setNull(1);
-    fillColor = actWin->defaultBgColor;
-    strcpy(fontTag, actWin->defaultCtlFontTag);
-    alignment = actWin->defaultCtlAlignment;
-    fs = actWin->fi->getXFontStruct(fontTag);
-    updateFont(fontTag, &fs, &fontAscent, &fontDescent, &fontHeight);
-
-    // initialize and draw some kind of default image for the user
-    draw();
-    editCreate();
-    return 1;
-}
-
 int edmRegTextupdateClass::edit()
 {   // Popup property dialog, cancel -> no delete
     genericEdit();
@@ -181,12 +156,10 @@ int edmRegTextupdateClass::drawActive()
         return 1;
     actWin->executeGc.saveFg();
 
-    double color_value;
     char text[80];
     size_t len = 80;
-    short severity;
     
-    if (get_current_values(text, len, color_value, severity) &&
+    if (get_current_values(text, len) &&
         re_valid)
     {
         regmatch_t pmatch[2];
@@ -216,7 +189,7 @@ int edmRegTextupdateClass::drawActive()
                 XtWindow(actWin->executeWidget),
                 actWin->executeGc,
                 actWin->executeGc.normGC(),
-                text, len, color_value, severity);
+                text, len);
    
     actWin->executeGc.restoreFg();
     return 1;
