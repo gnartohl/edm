@@ -1701,7 +1701,7 @@ int activePipClass::createPipWidgets ( void ) {
         XmNborderColor, bgColor.pixelColor(),
         XmNhighlightColor, bgColor.pixelColor(),
         XmNforeground, bgColor.pixelColor(),
-        XmNbackground, fgColor.pixelColor(),
+        XmNbackground, bgColor.pixelColor(),
         XmNtroughColor, bgColor.pixelColor(),
         NULL );
     }
@@ -1713,7 +1713,7 @@ int activePipClass::createPipWidgets ( void ) {
         XmNborderColor, bgColor.pixelColor(),
         XmNhighlightColor, bgColor.pixelColor(),
         XmNforeground, bgColor.pixelColor(),
-        XmNbackground, fgColor.pixelColor(),
+        XmNbackground, bgColor.pixelColor(),
         XmNtroughColor, bgColor.pixelColor(),
         NULL );
     }

@@ -11079,6 +11079,19 @@ char tmp[10];
 
       top = parent;
 
+      if ( isEmbedded ) {
+
+        XtVaGetValues( parent,
+        XmNbackground, &embBg,
+        NULL );
+
+      }
+      else {
+
+        embBg = bPix;
+
+      }
+
     }
 
     {
@@ -11107,6 +11120,7 @@ char tmp[10];
        XmNwidth, w,
        XmNheight, h,
        XmNmappedWhenManaged, False,
+       XmNbackground, embBg,
        NULL );
 
     }
@@ -14140,6 +14154,7 @@ activeGraphicListPtr cur, next;
 char *gotOne, name[63+1];
 int stat, l;
 char msg[79+1];
+Widget clipWidget, hsbWidget, vsbWidget;
 
   loadFailure = 1;
 
@@ -14243,6 +14258,60 @@ char msg[79+1];
 
   fileClose( f );
 
+  if ( scroll ) {
+
+    XtVaSetValues( scroll,
+     XmNtopShadowColor, ci->pix(defaultTopShadowColor),
+     XmNbottomShadowColor, ci->pix(defaultBotShadowColor),
+     XmNborderColor, ci->pix(bgColor),
+     XmNhighlightColor, ci->pix(bgColor),
+     XmNforeground, ci->pix(bgColor),
+     XmNbackground, ci->pix(bgColor),
+     NULL );
+
+    XtVaGetValues( scroll,
+     XmNclipWindow, &clipWidget,
+     XmNhorizontalScrollBar, &hsbWidget,
+     XmNverticalScrollBar, &vsbWidget,
+     NULL );
+
+    if ( clipWidget ) {
+      XtVaSetValues( clipWidget,
+        XmNtopShadowColor, ci->pix(defaultTopShadowColor),
+        XmNbottomShadowColor, ci->pix(defaultBotShadowColor),
+        XmNborderColor, ci->pix(bgColor),
+        XmNhighlightColor, ci->pix(bgColor),
+        XmNforeground, ci->pix(bgColor),
+        XmNbackground, ci->pix(bgColor),
+       NULL );
+    }
+
+    if ( hsbWidget ) {
+      XtVaSetValues( hsbWidget,
+        XmNtopShadowColor, ci->pix(defaultTopShadowColor),
+        XmNbottomShadowColor, ci->pix(defaultBotShadowColor),
+        XmNborderColor, ci->pix(bgColor),
+        XmNhighlightColor, ci->pix(bgColor),
+        XmNforeground, ci->pix(bgColor),
+        XmNbackground, ci->pix(bgColor),
+        XmNtroughColor, ci->pix(bgColor),
+        NULL );
+    }
+
+    if ( vsbWidget ) {
+      XtVaSetValues( vsbWidget,
+        XmNtopShadowColor, ci->pix(defaultTopShadowColor),
+        XmNbottomShadowColor, ci->pix(defaultBotShadowColor),
+        XmNborderColor, ci->pix(bgColor),
+        XmNhighlightColor, ci->pix(bgColor),
+        XmNforeground, ci->pix(bgColor),
+        XmNbackground, ci->pix(bgColor),
+        XmNtroughColor, ci->pix(bgColor),
+        NULL );
+    }
+
+  }
+
   showName = 0;
 
   setTitle();
@@ -14279,6 +14348,7 @@ activeGraphicListPtr cur, next;
 char *gotOne, name[63+1], tagName[255+1], objName[63+1], val[4095+1];
 int stat, l;
 char msg[79+1];
+Widget clipWidget, hsbWidget, vsbWidget;
 
 int isCompound;
 tagClass tag;
@@ -14486,6 +14556,60 @@ tagClass tag;
   }
 
   fileClose( f );
+
+  if ( scroll ) {
+
+    XtVaSetValues( scroll,
+     XmNtopShadowColor, ci->pix(defaultTopShadowColor),
+     XmNbottomShadowColor, ci->pix(defaultBotShadowColor),
+     XmNborderColor, ci->pix(bgColor),
+     XmNhighlightColor, ci->pix(bgColor),
+     XmNforeground, ci->pix(bgColor),
+     XmNbackground, ci->pix(bgColor),
+     NULL );
+
+    XtVaGetValues( scroll,
+     XmNclipWindow, &clipWidget,
+     XmNhorizontalScrollBar, &hsbWidget,
+     XmNverticalScrollBar, &vsbWidget,
+     NULL );
+
+    if ( clipWidget ) {
+      XtVaSetValues( clipWidget,
+        XmNtopShadowColor, ci->pix(defaultTopShadowColor),
+        XmNbottomShadowColor, ci->pix(defaultBotShadowColor),
+        XmNborderColor, ci->pix(bgColor),
+        XmNhighlightColor, ci->pix(bgColor),
+        XmNforeground, ci->pix(bgColor),
+        XmNbackground, ci->pix(bgColor),
+       NULL );
+    }
+
+    if ( hsbWidget ) {
+      XtVaSetValues( hsbWidget,
+        XmNtopShadowColor, ci->pix(defaultTopShadowColor),
+        XmNbottomShadowColor, ci->pix(defaultBotShadowColor),
+        XmNborderColor, ci->pix(bgColor),
+        XmNhighlightColor, ci->pix(bgColor),
+        XmNforeground, ci->pix(bgColor),
+        XmNbackground, ci->pix(bgColor),
+        XmNtroughColor, ci->pix(bgColor),
+        NULL );
+    }
+
+    if ( vsbWidget ) {
+      XtVaSetValues( vsbWidget,
+        XmNtopShadowColor, ci->pix(defaultTopShadowColor),
+        XmNbottomShadowColor, ci->pix(defaultBotShadowColor),
+        XmNborderColor, ci->pix(bgColor),
+        XmNhighlightColor, ci->pix(bgColor),
+        XmNforeground, ci->pix(bgColor),
+        XmNbackground, ci->pix(bgColor),
+        XmNtroughColor, ci->pix(bgColor),
+        NULL );
+    }
+
+  }
 
   showName = 0;
 
@@ -16122,8 +16246,6 @@ static int alignEnum[3] = {
 #ifdef ADD_SCROLLED_WIN
   if ( isEmbedded ) {
 
-    if ( appCtx->useScrollBars ) {
-
       n = 0;
       XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
       XtSetValues( drawWidget, args, n );
@@ -16131,8 +16253,6 @@ static int alignEnum[3] = {
       n = 0;
       XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
       XtSetValues( drawWidget, args, n );
-
-    }
 
   }
 #else
@@ -16336,8 +16456,6 @@ unsigned int pixel;
 #ifdef ADD_SCROLLED_WIN
   if ( isEmbedded ) {
 
-    if ( appCtx->useScrollBars ) {
-
       n = 0;
       XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
       XtSetValues( drawWidget, args, n );
@@ -16345,8 +16463,6 @@ unsigned int pixel;
       n = 0;
       XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
       XtSetValues( drawWidget, args, n );
-
-    }
 
   }
 #else
