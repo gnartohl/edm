@@ -12097,14 +12097,14 @@ int stat;
   }
 
   this->saveWin( f );
-  fprintf( f, "E\002O\002D\n" );
+  fprintf( f, "<<<E~O~D>>>\n" );
 
   cur = head->flink;
   while ( cur != head ) {
     if ( !cur->node->deleteRequest ) {
       fprintf( f, "%s\n", cur->node->objName() );
       cur->node->save( f );
-      fprintf( f, "E\002O\002D\n" );
+      fprintf( f, "<<<E~O~D>>>\n" );
     }
     cur = cur->flink;
   }
@@ -15386,6 +15386,10 @@ char *ptr;
       return 1; // success
     }
 
+    if ( strcmp( buf, "<<<E~O~D>>>\n" ) == 0 ) {
+      return 1; // success
+    }
+
   }
 
   // execution cannot get here
@@ -15415,6 +15419,10 @@ char *ptr;
     }
 
     if ( strcmp( buf, "E\002O\002D\n" ) == 0 ) {
+      return 1; // success
+    }
+
+    if ( strcmp( buf, "<<<E~O~D>>>\n" ) == 0 ) {
       return 1; // success
     }
 
