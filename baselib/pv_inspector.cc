@@ -2260,8 +2260,6 @@ void pvInspectorClass::btnUp (
   int *action )
 {
 
-int drawWinX, drawWinY;
-
   *action = 0;
 
   if ( !enabled ) return;
@@ -2269,11 +2267,6 @@ int drawWinX, drawWinY;
   if ( numDsps < 2 ) return;
 
   if ( buttonNumber != 1 ) return;
-
-  actWin->getDrawWinPos( &drawWinX, &drawWinY );
-
-  _x += (int) drawWinX;
-  _y += (int) drawWinY;
 
   posX = x + _x - be->x;
   posY = y + _y - be->y;
@@ -2292,8 +2285,6 @@ void pvInspectorClass::btnDown (
   int *action )
 {
 
-int drawWinX, drawWinY;
-
   *action = 0;
 
   if ( !enabled ) return;
@@ -2301,11 +2292,6 @@ int drawWinX, drawWinY;
   if ( buttonNumber != 1 ) return;
 
   if ( numDsps < 1 ) return;
-
-  actWin->getDrawWinPos( &drawWinX, &drawWinY );
-
-  _x += (int) drawWinX;
-  _y += (int) drawWinY;
 
  if ( numDsps == 1 ) {
     posX = x + _x - be->x;

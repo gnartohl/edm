@@ -965,7 +965,10 @@ tagClass tag;
 
   }
 
-  if ( strcmp( dynSymbolFileName, "" ) == 0 ) return 0;
+  if ( strcmp( dynSymbolFileName, "" ) == 0 ) {
+    numStates = 0;
+    return 0;
+  }
 
   actWin->substituteSpecial( 127, dynSymbolFileName, name );
 
@@ -1348,7 +1351,10 @@ expStringClass expStr;
 
   }
 
-  if ( strcmp( dynSymbolFileName, "" ) == 0 ) return 0;
+  if ( strcmp( dynSymbolFileName, "" ) == 0 ) {
+    numStates = 0;
+    return 0;
+  }
 
   actWin->substituteSpecial( 127, dynSymbolFileName, name );
 

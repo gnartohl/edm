@@ -18617,22 +18617,62 @@ int activeWindowClass::isExecuteMode ( void ) {
 
 int activeWindowClass::xPos ( void ) {
 
+int embeddedParentX, actualEmbeddedX, actualX, actualY;
+
   if ( isEmbedded && parent ) {
-    return parent->xPos() + embeddedX;
+
+    short drawWinX, drawWinY;
+    XtVaGetValues( top,
+     XmNx, &drawWinX,
+     XmNy, &drawWinY,
+     NULL );
+    embeddedParentX = (int) drawWinX;
+
+    XtVaGetValues( drawWidget,
+     XmNx, &drawWinX,
+     XmNy, &drawWinY,
+     NULL );
+    actualEmbeddedX = (int) drawWinX;
+
+    return parent->xPos() + embeddedParentX + actualEmbeddedX;
+
   }
   else {
-    return x;
+
+    getDrawWinPos( &actualX, &actualY );
+    return x + actualX;
+
   }
 
 }
 
 int activeWindowClass::yPos ( void ) {
 
+int embeddedParentY, actualEmbeddedY, actualX, actualY;
+
   if ( isEmbedded && parent ) {
-    return parent->yPos() + embeddedY;
+
+    short drawWinX, drawWinY;
+    XtVaGetValues( top,
+     XmNx, &drawWinX,
+     XmNy, &drawWinY,
+     NULL );
+    embeddedParentY = (int) drawWinY;
+
+    XtVaGetValues( drawWidget,
+     XmNx, &drawWinX,
+     XmNy, &drawWinY,
+     NULL );
+    actualEmbeddedY = (int) drawWinY;
+
+    return parent->yPos() + embeddedParentY + actualEmbeddedY;
+
   }
   else {
-    return y;
+
+    getDrawWinPos( &actualX, &actualY );
+    return y + actualY;
+
   }
 
 }
