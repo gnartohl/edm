@@ -2725,13 +2725,13 @@ char msg[127+1];
        NULL );
     }
 
-    processAllEventsWithSync( app, display );
+    processAllEvents( app, display );
 
     cur = cur->flink;
 
   }
 
-  processAllEventsWithSync( app, display );
+  processAllEvents( app, display );
 
 }
 
