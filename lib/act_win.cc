@@ -18010,6 +18010,7 @@ activeGraphicListPtr cur;
 
 }
 
+
 void activeWindowClass::storeFileName (
   char *inName )
 {
@@ -18019,7 +18020,32 @@ void activeWindowClass::storeFileName (
   getFilePrefix( prefix, inName, 127 );
   getFilePostfix( postfix, inName, 127 );
 
+  strncpy( fileNameForSym, inName, 255 );
+  getFileName( displayNameForSym, inName, 127 );
+  getFilePrefix( prefixForSym, inName, 127 );
+  getFilePostfix( postfixForSym, inName, 127 );
+
 }
+
+// The following function is necessary because of rules associated with
+// opening related displays. For related displays, info like prefix is
+// implicit and thus omitted so related display may be specified without
+// a path (causing edm to seach through the paths given in EDMDATAFILES).
+
+// When the special internal symbol specified by <FILEPREFIX> is translated
+// however we want a value and thus no value is take to mean ./
+
+void activeWindowClass::storeFileNameForSymbols (
+  char *inName )
+{
+
+  strncpy( fileNameForSym, inName, 255 );
+  getFileName( displayNameForSym, inName, 127 );
+  getFilePrefix( prefixForSym, inName, 127 );
+  getFilePostfix( postfixForSym, inName, 127 );
+
+}
+
 
 FILE *activeWindowClass::openAny (
   char *name,
@@ -18038,7 +18064,8 @@ int i;
       //f = fopen( buf, mode );
       f = fileOpen( buf, mode );
       if ( f ) {
-        storeFileName( buf ); // update fileName
+        strncpy( fileName, buf, 255 ); // update fileName
+        storeFileNameForSymbols( buf ); // update int sym file name components
         return f;
       }
     }
@@ -18092,7 +18119,8 @@ int i;
       //f = fopen( buf, mode );
       f = fileOpen( buf, mode );
       if ( f ) {
-        storeFileName( buf ); // update fileName
+        strncpy( fileName, buf, 255 ); // update fileName
+        storeFileNameForSymbols( buf ); // update int sym file name components
         return f;
       }
     }
@@ -18411,25 +18439,25 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar;
 	}
         else if ( strcmp( param, "<FILESPEC>" ) == 0 ) {
           bufOut[iOut] = 0;
-          Strncat( bufOut, fileName, max );
+          Strncat( bufOut, fileNameForSym, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
 	}
         else if ( strcmp( param, "<FILEPREFIX>" ) == 0 ) {
           bufOut[iOut] = 0;
-          Strncat( bufOut, prefix, max );
+          Strncat( bufOut, prefixForSym, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
 	}
         else if ( strcmp( param, "<FILENAME>" ) == 0 ) {
           bufOut[iOut] = 0;
-          Strncat( bufOut, displayName, max );
+          Strncat( bufOut, displayNameForSym, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
 	}
         else if ( strcmp( param, "<FILEPOSTFIX>" ) == 0 ) {
           bufOut[iOut] = 0;
-          Strncat( bufOut, postfix, max );
+          Strncat( bufOut, postfixForSym, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
 	}
