@@ -16,7 +16,7 @@ all : 1 2 3 4 5
 	echo " "
 	echo "***************************************************"
 	echo "*                                                 *"
-	echo "*           ERRORS MAY BE IGNORED                 *"
+	echo "*   ERRORS IN THE FOLLOWING BLOCK MAY BE IGNORED  *"
 	echo "*                                                 *"
 	echo "***************************************************"
 	echo " "
@@ -33,6 +33,10 @@ all : 1 2 3 4 5
 
 5 : ;
 	echo " "
+	echo "***************************************************"
+	echo "*                                                 *"
+	echo "*                    END OF BLOCK                 *"
+	echo "*                                                 *"
 	echo "***************************************************"
 	echo " "
 

@@ -1,4 +1,8 @@
 .phony : buildInstall
+.phony : install
+
+install : buildInstall
+	echo "util libs installed"
 
 buildInstall : ;
 	@$(MAKE) -f ../makefile.$(HOST_ARCH)
