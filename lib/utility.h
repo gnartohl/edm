@@ -34,8 +34,14 @@
 
 #include "font_pkg.h"
 #include "gc_pkg.h"
+#include "expString.h"
+#include "remFileOpen.h"
 
 int debugMode ( void );
+
+char *getEnvironmentVar (
+  char *name
+);
 
 void setServerSocketFd (
   int fd

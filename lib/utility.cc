@@ -39,6 +39,58 @@ char *envPtr;
 
 }
 
+char *getEnvironmentVar (
+  char *name
+) {
+
+FILE *f;
+char *tk, *context, buf[32000+1];
+static char *var = NULL;
+
+  strncpy( buf, getenv(name), 255 );
+  buf[255] = 0;
+
+  //printf( "name = [%s]\n", buf );
+
+  context = NULL;
+  tk = strtok_r( buf, " \t\n", &context );
+
+  if ( !tk ) return NULL;
+  if ( tk[0] != '@' ) return getenv( name );
+
+  // else name translates to file from which values are read
+  strncpy( buf, getenv(name), 255 );
+  buf[255] = 0;
+
+  context = NULL;
+  tk = strtok_r( buf, "@ \t\n", &context );
+
+  if ( !tk ) return NULL;
+
+  //printf( "read env var values from file: [%s]\n", tk );
+
+  f = fileOpen( tk, "r" );
+
+  tk = fgets( buf, 32000, f );
+  buf[32000] = 0;
+  if ( !tk ) {
+    fclose( f );
+    return NULL;
+  }
+
+  context = NULL;
+  tk = strtok_r( buf, "\n", &context );
+  if ( !tk ) return NULL;
+
+  if ( var ) delete var;
+
+  var = new char[strlen(tk)+1];
+  strcpy( var, tk );
+
+  return var;
+
+}
+
 void setServerSocketFd (
   int fd
 ) {

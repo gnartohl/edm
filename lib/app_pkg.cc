@@ -2368,7 +2368,7 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
 
   // EDMDATAFILES
 
-  envPtr = getenv( environment_str1 );
+  envPtr = getEnvironmentVar( environment_str1 );
   if ( envPtr ) {
 
     l = strlen( envPtr ) + 1;
