@@ -85,6 +85,7 @@ LIBSRCS += edmPrint.cc
 LIBSRCS += tag_pkg.cc
 LIBSRCS += remFileOpen.cc
 LIBSRCS += tableObj.cc
+LIBSRCS += scrolledWAcceleratorSupport.c
 
 include $(TOP)/config/RULES.Host
 
