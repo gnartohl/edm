@@ -265,6 +265,7 @@ pvConnectionClass connection;
 expStringClass graphTitle, xLabel, yLabel;
 
 int numTraces;
+int plotAreaX, plotAreaY, plotAreaW, plotAreaH;
 
 objPlusIndexType argRec[XYGC_K_MAX_TRACES];
 

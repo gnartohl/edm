@@ -37,7 +37,7 @@ xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
       xyo->connection.setPvConnected( (void *) ptr->index );
       if ( xyo->connection.pvsConnected() ) {
 
-        printf( "all connected\n" );
+        //printf( "all connected\n" );
         xyo->actWin->appCtx->proc->lock();
         xyo->needConnect = 1;
         xyo->actWin->addDefExeNode( xyo->aglPtr );
@@ -121,7 +121,7 @@ xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 
       if ( xyo->connection.pvsConnected() ) {
 
-        printf( "all connected\n" );
+        //printf( "all connected\n" );
         xyo->actWin->appCtx->proc->lock();
         xyo->needConnect = 1;
         xyo->actWin->addDefExeNode( xyo->aglPtr );
@@ -157,7 +157,7 @@ xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 struct dbr_gr_double grRec = *( (dbr_gr_double *) arg.dbr );
 int i =  ptr->index;
 
-  printf( "yInfoUpdate\n" );
+  //printf( "yInfoUpdate\n" );
 
   xyo->dbYMin[i] = grRec.lower_disp_limit;
   xyo->dbYMax[i] = grRec.upper_disp_limit;
@@ -334,6 +334,8 @@ int i;
   axygo->y2MinorGrid = axygo->eBuf->bufY2MinorGrid;
   axygo->y2AnnotationFormat = axygo->eBuf->bufY2AnnotationFormat;
   axygo->y2AnnotationPrecision = axygo->eBuf->bufY2AnnotationPrecision;
+
+  axygo->updateDimensions();
 
 }
 
@@ -638,17 +640,6 @@ char traceColor[15+1];
 
   strcpy( fontTag, actWin->defaultCtlFontTag );
   actWin->fi->loadFontTag( fontTag );
-  fs = actWin->fi->getXFontStruct( fontTag );
-  if ( fs ) {
-    fontAscent = fs->ascent;
-    fontDescent = fs->descent;
-    fontHeight = fontAscent + fontDescent;
-  }
-  else {
-    fontAscent = 0;
-    fontDescent = 0;
-    fontHeight = 0;
-  }
 
   updateDimensions();
 
@@ -913,18 +904,6 @@ char str[127+1], traceColor[15+1], onePv[activeGraphicClass::MAX_PV_NAME+1];
 
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
-
-  fs = actWin->fi->getXFontStruct( fontTag );
-  if ( fs ) {
-    fontAscent = fs->ascent;
-    fontDescent = fs->descent;
-    fontHeight = fontAscent + fontDescent;
-  }
-  else {
-    fontAscent = 0;
-    fontDescent = 0;
-    fontHeight = 0;
-  }
 
   updateDimensions();
 
@@ -1276,28 +1255,186 @@ int xyGraphClass::edit ( void ) {
 
 int xyGraphClass::fullRefresh ( void ) {
 
-int i, ii;
-XRectangle xR = { x, y, w, h };
+int i, ii, iii;
+XRectangle xR = { plotAreaX, plotAreaY, plotAreaW, plotAreaH };
 int clipStat;
-double xmax, xFactor, xOffset, y1Factor, y1Offset;
+double labelInc, labelVal, majorInc, majorVal, minorInc, minorVal,
+ dValue, xmax, xFactor, xOffset, y1Factor, y1Offset;
+short xVal, yVal;
 
   if ( !activeMode || !init ) return 1;
-
-  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-   actWin->executeGc.eraseGC(), x, y, w, h );
-
-  XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
-   actWin->executeGc.eraseGC(), x, y, w, h );
-
-  y1Factor = (double) ( h - 1 ) / ( y1Max.value() - y1Min.value() );
-  y1Offset = y1Factor * y1Min.value() * -1.0;
 
   actWin->executeGc.saveFg();
 
   actWin->executeGc.setFG( actWin->ci->pix(fgColor) );
+
+  // erase all
   XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-   //actWin->executeGc.normGC(), x, y, w, h );
-   actWin->executeGc.xorGC(), x, y, w, h );
+   actWin->executeGc.eraseGC(), plotAreaX, plotAreaY,
+   plotAreaW, plotAreaH  );
+
+  XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.eraseGC(), plotAreaX, plotAreaY,
+   plotAreaW, plotAreaH  );
+
+  // border
+  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x, y, w, h );
+
+  actWin->executeGc.setFG( actWin->ci->pix(gridColor) );
+  actWin->executeGc.setLineWidth(1);
+  actWin->executeGc.setLineStyle( LineSolid );
+
+  // x grid
+  if ( xLabelGrid && ( xNumLabelIntervals.value() > 0 ) ) {
+
+    xFactor = (double) ( plotAreaW ) / ( xMax.value() - xMin.value() );
+    xOffset = xFactor * xMin.value() * -1.0;
+    labelInc = ( xMax.value() - xMin.value() ) / xNumLabelIntervals.value();
+    labelVal = xMin.value();
+
+    for ( i=0; i<xNumLabelIntervals.value(); i++ ) {
+
+      if ( i > 0 ) {
+
+        xVal = (short) plotAreaX +
+         (short) rint( labelVal * xFactor + xOffset );
+
+        XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.xorGC(), xVal, (short) plotAreaY, xVal,
+         (short) ( plotAreaY + plotAreaH ) );
+
+      }
+
+      if ( xMajorGrid && ( xNumMajorPerLabel.value() > 0 ) ) {
+
+        majorInc = labelInc / xNumMajorPerLabel.value();
+        majorVal = labelVal;
+        for ( ii=0; ii<xNumMajorPerLabel.value(); ii++ ) {
+
+          if ( ii > 0 ) {
+
+            xVal = (short) plotAreaX +
+             (short) rint( majorVal * xFactor + xOffset );
+
+            XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+             actWin->executeGc.xorGC(), xVal, (short) plotAreaY, xVal,
+             (short) ( plotAreaY + plotAreaH ) );
+
+	  }
+
+          if ( xMinorGrid && ( xNumMinorPerMajor.value() > 0 ) ) {
+
+            minorInc = majorInc / xNumMinorPerMajor.value();
+            minorVal = majorVal + minorInc;
+
+            actWin->executeGc.setLineStyle( LineOnOffDash );
+
+            for ( iii=1; iii<xNumMinorPerMajor.value(); iii++ ) {
+
+              xVal = (short) plotAreaX +
+               (short) rint( minorVal * xFactor + xOffset );
+
+              XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+               actWin->executeGc.xorGC(), xVal, (short) plotAreaY, xVal,
+               (short) ( plotAreaY + plotAreaH ) );
+
+              minorVal += minorInc;
+
+	    }
+
+            actWin->executeGc.setLineStyle( LineSolid );
+
+	  }
+
+          majorVal += majorInc;
+
+	}
+
+      }
+
+      labelVal += labelInc;
+
+    }
+
+  }
+
+  // y1 grid
+  if ( y1LabelGrid && ( y1NumLabelIntervals.value() > 0 ) ) {
+
+    y1Factor = (double) ( plotAreaH ) / ( y1Max.value() - y1Min.value() );
+    y1Offset = y1Factor * y1Min.value() * -1.0;
+    labelInc = ( y1Max.value() - y1Min.value() ) / y1NumLabelIntervals.value();
+    labelVal = y1Min.value();
+
+    for ( i=0; i<y1NumLabelIntervals.value(); i++ ) {
+
+      if ( i > 0 ) {
+
+        yVal = (short) ( plotAreaY + plotAreaH ) -
+         (short) rint( labelVal * y1Factor + y1Offset );
+
+        XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.xorGC(), (short) plotAreaX, yVal,
+         (short) ( plotAreaX + plotAreaW ), yVal );
+
+      }
+
+      if ( y1MajorGrid && ( y1NumMajorPerLabel.value() > 0 ) ) {
+
+        majorInc = labelInc / y1NumMajorPerLabel.value();
+        majorVal = labelVal;
+        for ( ii=0; ii<y1NumMajorPerLabel.value(); ii++ ) {
+
+          if ( ii > 0 ) {
+
+            yVal = (short) ( plotAreaY + plotAreaH ) -
+             (short) rint( majorVal * y1Factor + y1Offset );
+
+            XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+             actWin->executeGc.xorGC(), (short) plotAreaX, yVal,
+             (short) ( plotAreaX + plotAreaW ), yVal );
+
+	  }
+
+          if ( y1MinorGrid && ( y1NumMinorPerMajor.value() > 0 ) ) {
+
+            minorInc = majorInc / y1NumMinorPerMajor.value();
+            minorVal = majorVal + minorInc;
+
+            actWin->executeGc.setLineStyle( LineOnOffDash );
+
+            for ( iii=1; iii<y1NumMinorPerMajor.value(); iii++ ) {
+
+              yVal = (short) ( plotAreaY + plotAreaH ) -
+               (short) rint( minorVal * y1Factor + y1Offset );
+
+              XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+               actWin->executeGc.xorGC(), (short) plotAreaX, yVal,
+               (short) ( plotAreaX + plotAreaW ), yVal );
+
+              minorVal += minorInc;
+
+	    }
+
+            actWin->executeGc.setLineStyle( LineSolid );
+
+	  }
+
+          majorVal += majorInc;
+
+	}
+
+      }
+
+      labelVal += labelInc;
+
+    }
+
+  }
+
+  y1Factor = (double) ( plotAreaH ) / ( y1Max.value() - y1Min.value() );
+  y1Offset = y1Factor * y1Min.value() * -1.0;
 
   //clipStat = actWin->executeGc.addNormXClipRectangle( xR );
   clipStat = actWin->executeGc.addXorXClipRectangle( xR );
@@ -1311,15 +1448,40 @@ double xmax, xFactor, xOffset, y1Factor, y1Offset;
 
   for ( i=0; i<numTraces; i++ ) {
 
-    xFactor = ( (double) ( w - 1 ) ) / xmax;
+    xFactor = ( (double) ( plotAreaW ) ) / xmax;
     xOffset = 0.0;
 
     actWin->executeGc.setFG( actWin->ci->pix(plotColor[i]) );
 
     for ( ii=0; ii<yPvCount[i]; ii++ ) {
-      plotBuf[i][ii].y = (short) ( y + h - 1 ) -
-       (short) rint( ( (double *) yPvData[i] )[ii] * y1Factor + y1Offset );
-      plotBuf[i][ii].x = (short) x +
+
+      switch ( yPvType[i] ) {
+      case DBR_FLOAT:
+        dValue = (double) ( (float *) yPvData[i] )[ii];
+        break;
+      case DBR_DOUBLE: 
+        dValue = ( (double *) yPvData[i] )[ii];
+        break;
+      case DBR_SHORT:
+        dValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+        break;
+      case DBR_CHAR:
+        dValue = (double) ( (unsigned char *) yPvData[i] )[ii];
+        break;
+      case DBR_LONG:
+        dValue = (double) ( (int *) yPvData[i] )[ii];
+        break;
+      case DBR_ENUM:
+        dValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+        break;
+      default:
+        dValue = ( (double *) yPvData[i] )[ii];
+        break;
+      }
+
+      plotBuf[i][ii].y = (short) ( plotAreaY + plotAreaH ) -
+       (short) rint( dValue * y1Factor + y1Offset );
+      plotBuf[i][ii].x = (short) plotAreaX +
        (short) rint( (double) ii * xFactor + xOffset );
     }
 
@@ -1367,16 +1529,18 @@ int xyGraphClass::erase ( void ) {
 int xyGraphClass::eraseActive ( void ) {
 
 int i;
-XRectangle xR = { x, y, w, h };
+XRectangle xR = { plotAreaX, plotAreaY, plotAreaW, plotAreaH };
 int clipStat;
 
   if ( !activeMode || !init ) return 1;
 
 #if 0
   XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
-   actWin->executeGc.eraseGC(), x+1, y+1, w-2, h-2 );
+   actWin->executeGc.eraseGC(), plotAreaX, plotAreaY,
+   plotAreaW, plotAreaH  );
   XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-   actWin->executeGc.eraseGC(), x+1, y+1, w-2, h-2 );
+   actWin->executeGc.eraseGC(), plotAreaX, plotAreaY,
+   plotAreaW, plotAreaH  );
   return 1;
 #endif
 
@@ -1447,9 +1611,9 @@ int xyGraphClass::draw ( void ) {
 int xyGraphClass::drawActive ( void ) {
 
 int i, ii;
-XRectangle xR = { x, y, w, h };
+XRectangle xR = { plotAreaX, plotAreaY, plotAreaW, plotAreaH };
 int clipStat;
-double xmax, xFactor, xOffset, y1Factor, y1Offset;
+double dValue, xmax, xFactor, xOffset, y1Factor, y1Offset;
 
   if ( !activeMode || !init ) return 1;
 
@@ -1460,7 +1624,7 @@ double xmax, xFactor, xOffset, y1Factor, y1Offset;
     }
   }
 
-  y1Factor = (double) ( h - 1 ) / ( y1Max.value() - y1Min.value() );
+  y1Factor = (double) ( plotAreaH ) / ( y1Max.value() - y1Min.value() );
   y1Offset = y1Factor * y1Min.value() * -1.0;
 
   actWin->executeGc.saveFg();
@@ -1481,7 +1645,7 @@ double xmax, xFactor, xOffset, y1Factor, y1Offset;
     actWin->executeGc.setLineWidth( lineThk[i] );
     actWin->executeGc.setLineStyle( lineStyle[i] );
 
-    xFactor = ( (double) ( w - 1 ) ) / xmax;
+    xFactor = ( (double) ( plotAreaW ) ) / xmax;
     xOffset = 0.0;
 
     //yArrayNeedUpdate[i] = 1;
@@ -1494,9 +1658,34 @@ double xmax, xFactor, xOffset, y1Factor, y1Offset;
       yArrayNeedUpdate[i] = 0;
 
       for ( ii=0; ii<yPvCount[i]; ii++ ) {
-        plotBuf[i][ii].y = (short) ( y + h - 1 ) -
-         (short) rint( ( (double *) yPvData[i] )[ii] * y1Factor + y1Offset );
-        plotBuf[i][ii].x = (short) x +
+
+        switch ( yPvType[i] ) {
+        case DBR_FLOAT:
+          dValue = (double) ( (float *) yPvData[i] )[ii];
+          break;
+        case DBR_DOUBLE: 
+          dValue = ( (double *) yPvData[i] )[ii];
+          break;
+        case DBR_SHORT:
+          dValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+          break;
+        case DBR_CHAR:
+          dValue = (double) ( (unsigned char *) yPvData[i] )[ii];
+          break;
+        case DBR_LONG:
+          dValue = (double) ( (int *) yPvData[i] )[ii];
+          break;
+        case DBR_ENUM:
+          dValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+          break;
+        default:
+          dValue = ( (double *) yPvData[i] )[ii];
+          break;
+        }
+
+        plotBuf[i][ii].y = (short) ( plotAreaY + plotAreaH ) -
+         (short) rint( dValue * y1Factor + y1Offset );
+        plotBuf[i][ii].x = (short) plotAreaX +
          (short) rint( (double) ii * xFactor + xOffset );
       }
 
@@ -1630,8 +1819,6 @@ int xyGraphClass::activate (
 
 int i, stat;
 
-  printf( "activate\n" );
-
   switch ( pass ) {
 
   case 1:
@@ -1667,7 +1854,7 @@ int i, stat;
         traceIsDrawn[i] = 0;
       }
 
-      printf( "numTraces = %-d\n", numTraces );
+      //printf( "numTraces = %-d\n", numTraces );
 
       for ( i=0; i<numTraces; i++ ) {
 
@@ -1752,6 +1939,23 @@ int i, stat;
 void xyGraphClass::updateDimensions ( void )
 {
 
+  fs = actWin->fi->getXFontStruct( fontTag );
+  if ( fs ) {
+    fontAscent = fs->ascent;
+    fontDescent = fs->descent;
+    fontHeight = fontAscent + fontDescent;
+  }
+  else {
+    fontAscent = 0;
+    fontDescent = 0;
+    fontHeight = 0;
+  }
+
+  plotAreaX = x + 1;
+  plotAreaY = y + 1;
+  plotAreaW = w - 2;
+  plotAreaH = h - 2;
+
 }
 
 void xyGraphClass::btnDrag (
@@ -1797,7 +2001,7 @@ int xyGraphClass::getButtonActionRequest (
 
 void xyGraphClass::executeDeferred ( void ) {
 
-int i, ii, stat, nc, ni, nu, nr, ne, nd;
+int i, stat, nc, ni, nu, nr, ne, nd, eleSize;
 
   if ( actWin->isIconified ) return;
 
@@ -1813,13 +2017,38 @@ int i, ii, stat, nc, ni, nu, nr, ne, nd;
 
   if ( nc ) {
 
-    printf( "need connect\n" );
+    //printf( "need connect\n" );
 
     for ( i=0; i<numTraces; i++ ) {
 
       yPvType[i] = ca_field_type( yPv[i] );
       yPvCount[i] = ca_element_count( yPv[i] );
-      yPvSize[i] = ca_element_count( yPv[i] ) * sizeof(double);
+
+      switch ( yPvType[i] ) {
+      case DBR_FLOAT:
+        eleSize = 4;
+        break;
+      case DBR_DOUBLE: 
+        eleSize = 8;
+        break;
+      case DBR_SHORT:
+        eleSize = 2;
+        break;
+      case DBR_CHAR:
+        eleSize = 1;
+        break;
+      case DBR_LONG:
+        eleSize = 4;
+        break;
+      case DBR_ENUM:
+        eleSize = 2;
+        break;
+      default:
+        eleSize = 8;
+        break;
+      }
+
+      yPvSize[i] = ca_element_count( yPv[i] ) * eleSize;
 
       argRec[i].objPtr = (void *) this;
       argRec[i].index = i;
@@ -1836,7 +2065,7 @@ int i, ii, stat, nc, ni, nu, nr, ne, nd;
 
   if ( ni ) {
 
-    printf( "need init\n" );
+    //printf( "need init\n" );
 
     for ( i=0; i<numTraces; i++ ) {
 
@@ -1848,15 +2077,12 @@ int i, ii, stat, nc, ni, nu, nr, ne, nd;
         argRec[i].index = i;
 
         if ( !yPvData[i] ) {
-          printf( "count = %-d\n", yPvCount[i] );
-          yPvData[i] = (void *) new double[yPvCount[i]];
+          //printf( "count = %-d\n", yPvCount[i] );
+          yPvData[i] = (void *) new char[yPvSize[i]*yPvCount[i]];
           plotBuf[i] = (XPoint *) new XPoint[yPvCount[i]];
-          for ( ii=0; ii<yPvCount[i]; ii++ ) {
-            ( (double *) yPvData[i])[ii] = 0.0;
-	  }
         }
 
-        stat = ca_add_array_event( DBR_DOUBLE, yPvCount[i], yPv[i],
+        stat = ca_add_array_event( ca_field_type(yPv[i]), yPvCount[i], yPv[i],
          yValueUpdate, (void *) argRec, 0.0, 0.0, 0.0, &yEv[i] );
         if ( stat != ECA_NORMAL ) {
           printf( "error from ca_add_array_event\n" );
@@ -1888,7 +2114,7 @@ int i, ii, stat, nc, ni, nu, nr, ne, nd;
 	printf( "y min = %-g, y max = %-g\n", y1Min.value(), y1Max.value() );
 
         for ( ii=0; ii<yPvCount[i]; ii++ ) {
-          printf( "%d: %-g\n", ii, ( (double *) yPvData[i])[ii] );
+          //printf( "%d: %-g\n", ii, ( (double *) yPvData[i])[ii] );
 	}
 
       }
