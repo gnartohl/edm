@@ -762,14 +762,14 @@ char *fName, str[41], name[127+1];
 int stat;
 activeWindowListPtr cur;
 
-  apco->proc->lock();
+//apco->proc->lock();
 
   fName = (char *) apco->ctlPvId->getValue( args );
 
   if ( strcmp( fName, "" ) == 0 ) {
     strcpy( str, "" );
     stat = apco->ctlPvId->put( apco->ctlPvId->pvrString(), str );
-    apco->proc->unlock();
+    //    apco->proc->unlock();
     return;
   }
 
@@ -784,7 +784,7 @@ activeWindowListPtr cur;
       XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
       strcpy( str, "" );
       stat = apco->ctlPvId->put( apco->ctlPvId->pvrString(), str );
-      apco->proc->unlock();
+      //      apco->proc->unlock();
       return;  // display is already open; don't open another instance
     }
     cur = cur->flink;
@@ -821,7 +821,7 @@ activeWindowListPtr cur;
   strcpy( str, "" );
   stat = apco->ctlPvId->put( apco->ctlPvId->pvrString(), str );
 
-  apco->proc->unlock();
+  //  apco->proc->unlock();
 
 }
 
@@ -2318,7 +2318,11 @@ err_return:
     return 0; // error
   }
 
+
 #ifdef __epics__
+
+// must fix this to not do ca_pend_io - disable for now
+#if 0
 
   if ( strcmp( ctlPV, "" ) != 0 ) {
 
@@ -2359,6 +2363,8 @@ err_return:
     }
 
   }
+
+#endif
 
 #else
 
@@ -2719,9 +2725,6 @@ char msg[127+1];
        NULL );
     }
 
-#ifdef __epics__
-    stat = ca_pend_io( 3.0 );
-#endif
     processAllEventsWithSync( app, display );
 
     cur = cur->flink;

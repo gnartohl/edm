@@ -233,6 +233,37 @@ SYS_TIME_TYPE timeout;
 }
 
 #ifdef __linux__
+void *caPendThread (
+  THREAD_HANDLE h )
+{
+#endif
+
+#ifdef __solaris__
+void *caPendThread (
+  THREAD_HANDLE h )
+{
+#endif
+
+#ifdef __osf__
+void caPendThread (
+  THREAD_HANDLE h )
+{
+#endif
+
+int stat;
+
+  do {
+
+#ifdef __epics__
+    stat = ca_pend_io( 5.0 );
+    stat = ca_pend_event( 0.05 );
+#endif
+
+  } while ( 1 );
+
+}
+
+#ifdef __linux__
 void *serverThread (
   THREAD_HANDLE h )
 {
@@ -316,7 +347,7 @@ char msg[255+1];
 
     }
 
-    stat = thread_lock_global();
+    stat = thread_lock_master( h );
 
     q_stat_r = REMQHI( (void *) &mainFreeQueue, (void **) &node, 0 );
     if ( q_stat_r & 1 ) {
@@ -331,7 +362,7 @@ char msg[255+1];
       printf( main_str18 );
     }
 
-    stat = thread_unlock_global();
+    stat = thread_unlock_master( h );
 
     stat = ipnsv_disconnect( port );
     stat = ipnsv_delete_port( &port );
@@ -547,7 +578,7 @@ extern int main (
 {
 
 int i, stat, numAppsRemaining, exitProg, q_stat_r, q_stat_i, local, server;
-THREAD_HANDLE delayH, serverH;
+THREAD_HANDLE delayH, serverH, caPendH;
 argsPtr args;
 appListPtr cur, next, appArgsHead, newOne;
 processClass proc;
@@ -611,11 +642,17 @@ float hours, seconds;
   obj = new objBindingClass;
   pvObj = new pvBindingClass;
 
+
   stat = thread_create_handle( &serverH, NULL );
 
   stat = thread_create_handle( &delayH, NULL );
 
   if ( server ) stat = thread_create_proc( serverH, serverThread );
+
+#ifdef __epics__
+  stat = thread_create_handle( &caPendH, NULL );
+  stat = thread_create_proc( caPendH, caPendThread );
+#endif
 
   args = new argsType;
 
@@ -677,8 +714,6 @@ float hours, seconds;
 
       next = cur->flink;
 
-      stat = thread_lock_global();
-
       cur->appArgs->appCtxPtr->applicationLoop();
       if ( cur->appArgs->appCtxPtr->exitFlag ) {
         cur->blink->flink = cur->flink;
@@ -702,6 +737,8 @@ float hours, seconds;
       if ( server ) {
 
         do {
+
+          stat = thread_lock_master( serverH );
 
           q_stat_r = REMQHI( (void *) &mainActiveQueue, (void **) &node, 0 );
 
@@ -752,11 +789,11 @@ parse_error:
             printf( main_str41 );
           }
 
+          stat = thread_unlock_master( serverH );
+
         } while ( q_stat_r & 1 );
 
       }
-
-      stat = thread_unlock_global();
 
     }
 

@@ -453,7 +453,7 @@ int activeGraphicClass::drawAllActive ( void ) {
 
 activeGraphicListPtr cur;
 
-  actWin->appCtx->proc->lock();
+//  actWin->appCtx->proc->lock();
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
@@ -462,7 +462,7 @@ activeGraphicListPtr cur;
     cur = cur->flink;
   }
 
-  actWin->appCtx->proc->unlock();
+  //  actWin->appCtx->proc->unlock();
 
   return 1;
 
@@ -582,7 +582,7 @@ activeGraphicListPtr cur;
 int x0, x1, y0, y1;
 XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
 
-  actWin->appCtx->proc->lock();
+//  actWin->appCtx->proc->lock();
 
   x0 = this->getX0()-5;
   y0 = this->getY0()-5;
@@ -605,7 +605,7 @@ XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
 
   actWin->drawGc.removeNormXClipRectangle();
 
-  actWin->appCtx->proc->unlock();
+  //  actWin->appCtx->proc->unlock();
 
   return 1;
 
@@ -617,7 +617,7 @@ activeGraphicListPtr cur;
 int x0, x1, y0, y1;
 XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
 
-  actWin->appCtx->proc->lock();
+//  actWin->appCtx->proc->lock();
 
   x0 = this->getX0()-5;
   y0 = this->getY0()-5;
@@ -640,7 +640,7 @@ XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
 
   actWin->executeGc.removeNormXClipRectangle();
 
-  actWin->appCtx->proc->unlock();
+  //  actWin->appCtx->proc->unlock();
 
   return 1;
 
@@ -851,7 +851,7 @@ XRectangle xR = { _x, _y, _w, _h };
   x1 = _x + _w;
   y1 = _y + _h;
 
-  actWin->appCtx->proc->lock();
+  //  actWin->appCtx->proc->lock();
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
@@ -864,7 +864,7 @@ XRectangle xR = { _x, _y, _w, _h };
     cur = cur->flink;
   }
 
-  actWin->appCtx->proc->unlock();
+  //  actWin->appCtx->proc->unlock();
 
   return 1;
 
@@ -874,7 +874,7 @@ int activeGraphicClass::refreshActive ( void ) {
 
 activeGraphicListPtr cur;
 
-  actWin->appCtx->proc->lock();
+//  actWin->appCtx->proc->lock();
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
@@ -883,7 +883,7 @@ activeGraphicListPtr cur;
     cur = cur->flink;
   }
 
-  actWin->appCtx->proc->unlock();
+  //  actWin->appCtx->proc->unlock();
 
   return 1;
 

@@ -996,7 +996,6 @@ const char *mtvp_argv[] = {
 
     if ( !opComplete ) {
       opComplete = 1;
-      XSync( actWin->display(), False );
     }
 
     break;
@@ -1027,8 +1026,6 @@ int stat;
     inputDisabled = 1;
     XtRemoveInput( msgInputId );
 
-    XSync( actWin->display(), False );
-
     g2a_send_void( &Player, COM_QUIT, 0 );
     g2a_cleanup(&Player);
 
@@ -1048,8 +1045,6 @@ int stat;
 //        } while ( result );
 
 //        if ( playerHasQuit ) break;
-
-//        ca_pend_event( 0.1 );
 
 //      }
 

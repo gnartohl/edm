@@ -9,8 +9,9 @@ EDML4=libcfcaa62e-8199-11d3-a77f-00104b8742df.so
 .phony : 3
 .phony : 4
 .phony : 5
+.phony : 6
 
-all : 1 2 3 4 5
+all : 1 2 3 4 5 6
 
 1 : ;
 	echo " "
@@ -32,6 +33,9 @@ all : 1 2 3 4 5
 	mv ../../../../bin/$(HOST_ARCH)/$(EDML4) ../../../../lib/$(HOST_ARCH)
 
 5 : ;
+	mv ../../pvFactory/O.Linux/*.so ../../../../lib/$(HOST_ARCH)
+
+6 : ;
 	echo " "
 	echo "***************************************************"
 	echo "*                                                 *"
