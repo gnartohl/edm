@@ -138,10 +138,17 @@ XmString str;
 
   display = XtDisplay( top );
 
-  shell = XtVaCreatePopupShell( "Color Names", topLevelShellWidgetClass,
-   top,
-   XmNmappedWhenManaged, False,
+  shell = XtVaAppCreateShell( colorListClass_str7, colorListClass_str7,
+   topLevelShellWidgetClass,
+   XtDisplay(top),
+   XtNmappedWhenManaged, False,
    NULL );
+
+  //shell = XtVaCreatePopupShell( colorListClass_str7,
+  // topLevelShellWidgetClass,
+  // top,
+  // XmNmappedWhenManaged, False,
+  // NULL );
 
   pane = XtVaCreateWidget( "", xmPanedWindowWidgetClass, shell,
    XmNsashWidth, 1,
@@ -238,7 +245,8 @@ void colorListClass::addComplete ( void ) {
 int colorListClass::popup ( void ) {
 
   if ( !windowIsOpen ) {
-    XtPopup( shell, XtGrabNone );
+    XtMapWidget( shell );
+    //XtPopup( shell, XtGrabNone );
     windowIsOpen = 1;
   }
   else {
@@ -251,7 +259,8 @@ int colorListClass::popup ( void ) {
 
 int colorListClass::popdown ( void ) {
 
-  XtPopdown( shell );
+  //XtPopdown( shell );
+  XtUnmapWidget( shell );
   windowIsOpen = 0;
 
   return 1;

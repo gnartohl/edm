@@ -307,10 +307,10 @@ int edmStripClass::genericEdit() // create Property Dialog
               &actWin->appCtx->largestH,
               title, NULL, NULL, NULL);
     // add dialog box entry fields
-    ef.addTextField("X", 25, &bufX);
-    ef.addTextField("Y", 25, &bufY);
-    ef.addTextField("Width", 25, &bufW);
-    ef.addTextField("Height", 25, &bufH);
+    ef.addTextField("X", 30, &bufX);
+    ef.addTextField("Y", 30, &bufY);
+    ef.addTextField("Width", 30, &bufW);
+    ef.addTextField("Height", 30, &bufH);
     for (i=0; i<num_pvs; ++i)
     {
         ef.beginSubForm();
@@ -321,8 +321,8 @@ int edmStripClass::genericEdit() // create Property Dialog
         ef.addToggle("", &buf_use_pv_time[i]);
         ef.endSubForm();
     }
-    ef.addTextField("Period [s]", 25, &buf_seconds);
-    ef.addTextField("Line Width", 25, &buf_line_width);
+    ef.addTextField("Period [s]", 30, &buf_seconds);
+    ef.addTextField("Line Width", 30, &buf_line_width);
     ef.addColorButton("Background", actWin->ci,
                       &bgCb, &buf_bgColor);
     ef.addColorButton("Text", actWin->ci,

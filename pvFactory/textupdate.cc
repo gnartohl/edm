@@ -252,14 +252,14 @@ int edmTextupdateClass::genericEdit() // create Property Dialog
               title, NULL, NULL, NULL);
 
     // add dialog box entry fields
-    ef.addTextField("X", 25, &bufX);
-    ef.addTextField("Y", 25, &bufY);
-    ef.addTextField("Width", 25, &bufW);
-    ef.addTextField("Height", 25, &bufH);
-    ef.addTextField("PV", 27, bufPvName, 39);
+    ef.addTextField("X", 30, &bufX);
+    ef.addTextField("Y", 30, &bufY);
+    ef.addTextField("Width", 30, &bufW);
+    ef.addTextField("Height", 30, &bufH);
+    ef.addTextField("PV", 30, bufPvName, 39);
     ef.addOption("Mode", "default|decimal|hex", &buf_displayMode);
-    ef.addTextField("Precision", 25, &buf_precision);
-    ef.addTextField("Line Width", 25, &buf_line_width);
+    ef.addTextField("Precision", 30, &buf_precision);
+    ef.addTextField("Line Width", 30, &buf_line_width);
     ef.addColorButton("Fg Color", actWin->ci, &lineCb, &bufLineColor);
     ef.addToggle("Filled?", &bufIsFilled);
     ef.addColorButton("Bg Color", actWin->ci, &fillCb, &bufFillColor);
