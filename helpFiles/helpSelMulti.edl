@@ -1,6 +1,6 @@
 3 0 1
-202
-401
+206
+425
 368
 323
 helvetica-medium-r-12.0
@@ -34,7 +34,7 @@ activeDynSymbolClass
 159
 239
 118
-helpSelMultiSym
+$(help)helpSelMultiSym
 <<<empty>>>
 <<<empty>>>
 0
@@ -42,7 +42,7 @@ helpSelMultiSym
 0
 1
 0.5
-31
+37
 1
 <<<empty>>>
 1

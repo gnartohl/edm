@@ -1,6 +1,6 @@
 3 0 1
-238
-364
+242
+388
 291
 228
 helvetica-medium-r-12.0
@@ -34,7 +34,7 @@ activeDynSymbolClass
 89
 164
 93
-helpSelCycleSym
+$(help)helpSelCycleSym
 <<<empty>>>
 <<<empty>>>
 0
@@ -42,7 +42,7 @@ helpSelCycleSym
 0
 1
 0.5
-12
+0
 1
 <<<empty>>>
 1
