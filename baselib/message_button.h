@@ -250,6 +250,8 @@ int fontAscent, fontDescent, fontHeight;
 chid sourcePressPvId, sourceReleasePvId, destPvId;
 evid sourcePressEventId, sourceReleaseEventId;
 
+int destIsAckS;
+
 expStringClass destPvExpString;
 char bufDestPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass sourcePressPvExpString;

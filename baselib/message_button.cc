@@ -1771,7 +1771,8 @@ int activeMessageButtonClass::activate (
   void *ptr )
 {
 
-int stat, opStat, i;
+int stat, opStat, i, l;
+char tmpPvName[activeGraphicClass::MAX_PV_NAME+1];
 
   switch ( pass ) {
 
@@ -1852,17 +1853,35 @@ int stat, opStat, i;
 
 #ifdef __epics__
 
+      destIsAckS = 0;
+
       if ( destExists ) {
-        stat = ca_search_and_connect( destPvExpString.getExpanded(), &destPvId,
+
+        strncpy( tmpPvName, destPvExpString.getExpanded(),
+         activeGraphicClass::MAX_PV_NAME );
+
+        l = strlen(tmpPvName);
+        if ( l > 5 ) {
+          i = l - 5;
+          if ( strcmp( &tmpPvName[i], ".ACKS" ) == 0 ) {
+            destIsAckS = 1;
+            tmpPvName[i] = 0;
+	  }
+	}
+
+        stat = ca_search_and_connect( tmpPvName, &destPvId,
          msgbt_monitor_dest_connect_state, this );
         if ( stat != ECA_NORMAL ) {
           printf( activeMessageButtonClass_str25 );
           opStat = 0;
         }
+
       }
       else {
+
         init = 1;
         smartDrawAllActive();
+
       }
 
       if ( visExists ) {
@@ -1982,49 +2001,59 @@ int stat;
 
 #ifdef __epics__
 
-  switch ( destType ) {
+  if ( destIsAckS ) {
 
-  case DBR_DOUBLE:
-    destV.d = atof( sourceReleasePvExpString.getExpanded() );
-    stat = ca_put( DBR_DOUBLE, destPvId, &destV.d );
-    break;
-
-  case DBR_LONG:
-    destV.l = atol( sourceReleasePvExpString.getExpanded() );
-    stat = ca_put( DBR_LONG, destPvId, &destV.l );
-    break;
-
-  case DBR_SHORT:
     destV.s = (short) atol( sourceReleasePvExpString.getExpanded() );
-    stat = ca_put( DBR_SHORT, destPvId, &destV.s );
-    break;
+    stat = ca_put( DBR_PUT_ACKS, destPvId, &destV.s );
 
-  case DBR_CHAR:
-    destV.str[0] = (char) atol( sourceReleasePvExpString.getExpanded() );
-    stat = ca_put( DBR_CHAR, destPvId, &destV.str[0] );
-    break;
+  }
+  else {
 
-  case DBR_STRING:
-    strncpy( destV.str, sourceReleasePvExpString.getExpanded(), 39 );
-    stat = ca_put( DBR_STRING, destPvId, &destV.str );
-    break;
+    switch ( destType ) {
 
-  case DBR_ENUM:
-    if ( useEnumNumeric ) {
+    case DBR_DOUBLE:
+      destV.d = atof( sourceReleasePvExpString.getExpanded() );
+      stat = ca_put( DBR_DOUBLE, destPvId, &destV.d );
+      break;
+
+    case DBR_LONG:
+      destV.l = atol( sourceReleasePvExpString.getExpanded() );
+      stat = ca_put( DBR_LONG, destPvId, &destV.l );
+      break;
+
+    case DBR_SHORT:
       destV.s = (short) atol( sourceReleasePvExpString.getExpanded() );
-      stat = ca_put( DBR_ENUM, destPvId, &destV.s );
-    }
-    else {
-      stat = getEnumNumeric( sourceReleasePvExpString.getExpanded(),
-       &destV.s );
-      if ( !( stat & 1 ) ) {
-        actWin->appCtx->postMessage( activeMessageButtonClass_str40 );
-      }
-      else {
+      stat = ca_put( DBR_SHORT, destPvId, &destV.s );
+      break;
+
+    case DBR_CHAR:
+      destV.str[0] = (char) atol( sourceReleasePvExpString.getExpanded() );
+      stat = ca_put( DBR_CHAR, destPvId, &destV.str[0] );
+      break;
+
+    case DBR_STRING:
+      strncpy( destV.str, sourceReleasePvExpString.getExpanded(), 39 );
+      stat = ca_put( DBR_STRING, destPvId, &destV.str );
+      break;
+
+    case DBR_ENUM:
+      if ( useEnumNumeric ) {
+        destV.s = (short) atol( sourceReleasePvExpString.getExpanded() );
         stat = ca_put( DBR_ENUM, destPvId, &destV.s );
       }
+      else {
+        stat = getEnumNumeric( sourceReleasePvExpString.getExpanded(),
+         &destV.s );
+        if ( !( stat & 1 ) ) {
+          actWin->appCtx->postMessage( activeMessageButtonClass_str40 );
+        }
+        else {
+          stat = ca_put( DBR_ENUM, destPvId, &destV.s );
+        }
+      }
+      break;
+
     }
-    break;
 
   }
 
@@ -2086,49 +2115,59 @@ char labelValue[39+1];
 
 #ifdef __epics__
 
-  switch ( destType ) {
+  if ( destIsAckS ) {
 
-  case DBR_FLOAT:
-  case DBR_DOUBLE:
-    destV.d = atof( labelValue );
-    stat = ca_put( DBR_DOUBLE, destPvId, &destV.d );
-    break;
-
-  case DBR_LONG:
-    destV.l = atol( labelValue );
-    stat = ca_put( DBR_LONG, destPvId, &destV.l );
-    break;
-
-  case DBR_SHORT:
     destV.s = (short) atol( labelValue );
-    stat = ca_put( DBR_SHORT, destPvId, &destV.s );
-    break;
+    stat = ca_put( DBR_PUT_ACKS, destPvId, &destV.s );
 
-  case DBR_CHAR:
-    destV.str[0] = (char) atol( labelValue );
-    stat = ca_put( DBR_CHAR, destPvId, &destV.str[0] );
-    break;
+  }
+  else {
 
-  case DBR_STRING:
-    strncpy( destV.str, labelValue, 39 );
-    stat = ca_put( DBR_STRING, destPvId, destV.str );
-    break;
+    switch ( destType ) {
 
-  case DBR_ENUM:
-    if ( useEnumNumeric ) {
+    case DBR_FLOAT:
+    case DBR_DOUBLE:
+      destV.d = atof( labelValue );
+      stat = ca_put( DBR_DOUBLE, destPvId, &destV.d );
+      break;
+
+    case DBR_LONG:
+      destV.l = atol( labelValue );
+      stat = ca_put( DBR_LONG, destPvId, &destV.l );
+      break;
+
+    case DBR_SHORT:
       destV.s = (short) atol( labelValue );
-      stat = ca_put( DBR_ENUM, destPvId, &destV.s );
-    }
-    else {
-      stat = getEnumNumeric( labelValue, &destV.s );
-      if ( !( stat & 1 ) ) {
-        actWin->appCtx->postMessage( activeMessageButtonClass_str39 );
-      }
-      else {
+      stat = ca_put( DBR_SHORT, destPvId, &destV.s );
+      break;
+
+    case DBR_CHAR:
+      destV.str[0] = (char) atol( labelValue );
+      stat = ca_put( DBR_CHAR, destPvId, &destV.str[0] );
+      break;
+
+    case DBR_STRING:
+      strncpy( destV.str, labelValue, 39 );
+      stat = ca_put( DBR_STRING, destPvId, destV.str );
+      break;
+
+    case DBR_ENUM:
+      if ( useEnumNumeric ) {
+        destV.s = (short) atol( labelValue );
         stat = ca_put( DBR_ENUM, destPvId, &destV.s );
       }
+      else {
+        stat = getEnumNumeric( labelValue, &destV.s );
+        if ( !( stat & 1 ) ) {
+          actWin->appCtx->postMessage( activeMessageButtonClass_str39 );
+        }
+        else {
+          stat = ca_put( DBR_ENUM, destPvId, &destV.s );
+        }
+      }
+      break;
+
     }
-    break;
 
   }
 
