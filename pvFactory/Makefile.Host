@@ -22,6 +22,10 @@ G++_STRICT=$(G++) -pedantic -Wtraditional
 endif
 
 #CFLAGS=-g -Wall -O0 -DMOTIF 
+
+# Add Debugging
+CFLAGS+= -g -O0
+
 CFLAGS+=-D__linux__=1 -D__epics__=1
 CXXFLAGS=$(CFLAGS)
 

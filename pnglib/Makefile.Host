@@ -5,6 +5,9 @@ SHARED_LIBRARIES=YES
 
 IMAGELIB=/usr/local
 
+
+# Add Debugging
+USR_CXXFLAGS_Linux += -g -O0
 USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
 
 USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl png
@@ -13,6 +16,8 @@ USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
 
 USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt png
 
+# Add Debugging
+USR_LDFLAGS += -g
 USR_LDFLAGS += -L$(INSTALL_LIB) -L$(IMAGELIB)
 
 LIBRARY = 57d79238-2924-420b-ba67-dfbecdf03fcd

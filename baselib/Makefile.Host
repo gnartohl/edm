@@ -5,13 +5,21 @@ include $(TOP)/config/CONFIG_EXTENSIONS
 STATIC_BUILD=NO
 SHARED_LIBRARIES=YES
 
-  USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
-  USR_LIBS_Linux = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl
+USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+# Add Debugging
+USR_CXXFLAGS_Linux += -g -O0
+
+  
+USR_LIBS_Linux = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl
 
   USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
   USR_LIBS_solaris = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt
 
 USR_LDFLAGS += -L$(INSTALL_LIB) -L$(INSTALL_BIN)
+
+# Add debugging
+USR_LDFLAGS += -g
+
 
 LIBRARY = EdmBase
 
