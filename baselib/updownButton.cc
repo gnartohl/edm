@@ -24,6 +24,23 @@
 
 #include "thread.h"
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
+
+  if ( !udbto->init ) {
+    udbto->needToDrawUnconnected = 1;
+    udbto->needDraw = 1;
+    udbto->actWin->addDefExeNode( udbto->aglPtr );
+  }
+
+  udbto->unconnectedTimer = 0;
+
+}
+
 static void udbtoCancelKp (
   Widget w,
   XtPointer client,
@@ -587,6 +604,17 @@ activeGraphicClass *udbto = (activeGraphicClass *) this;
   efScaleMax = source->efScaleMax;
 
   updateDimensions();
+
+}
+
+activeUpdownButtonClass::~activeUpdownButtonClass ( void ) {
+
+  if ( name ) delete name;
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
 
 }
 
@@ -1314,14 +1342,16 @@ char string[63+1];
 XRectangle xR = { x, y, w, h };
 
   if ( !init ) {
-    actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( bgColor.getDisconnected() );
-    actWin->executeGc.setLineWidth( 1 );
-    actWin->executeGc.setLineStyle( LineSolid );
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x, y, w, h );
-    actWin->executeGc.restoreFg();
-    needToEraseUnconnected = 1;
+    if ( needToDrawUnconnected ) {
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( bgColor.getDisconnected() );
+      actWin->executeGc.setLineWidth( 1 );
+      actWin->executeGc.setLineStyle( LineSolid );
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
+      actWin->executeGc.restoreFg();
+      needToEraseUnconnected = 1;
+    }
   }
   else if ( needToEraseUnconnected ) {
     actWin->executeGc.setLineWidth( 1 );
@@ -1497,6 +1527,8 @@ XmString str;
     needConnectInit = needSaveConnectInit = needCtlInfoInit = 
      needRefresh = needErase = needDraw = 0;
     needToEraseUnconnected = 0;
+    needToDrawUnconnected = 0;
+    unconnectedTimer = 0;
     init = 0;
     aglPtr = ptr;
     opComplete = 0;
@@ -1553,6 +1585,9 @@ XmString str;
   case 2:
 
     if ( !opComplete ) {
+
+      unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+       2000, unconnectedTimeout, this );
 
       if ( !widgetsCreated ) {
 

@@ -33,6 +33,10 @@
 
 #include "updownButton.str"
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void udbtoCancelKp (
   Widget w,
   XtPointer client,
@@ -105,6 +109,10 @@ static void udbtc_monitor_save_connect_state (
 class activeUpdownButtonClass : public activeGraphicClass {
 
 private:
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void udbtoCancelKp (
   Widget w,
@@ -218,7 +226,8 @@ XtIntervalId incrementTimer;
 double controlV, curControlV, curSaveV, coarse, fine;
 
 int needConnectInit, needSaveConnectInit, needCtlInfoInit, needRefresh,
- needErase, needDraw, needToEraseUnconnected;
+ needErase, needDraw, needToDrawUnconnected, needToEraseUnconnected;
+int unconnectedTimer;
 
 int widgetsCreated;
 Widget popUpMenu, pullDownMenu, pbCoarse, pbFine, pbRate, pbValue,
@@ -246,11 +255,7 @@ activeUpdownButtonClass::activeUpdownButtonClass ( void );
 activeUpdownButtonClass::activeUpdownButtonClass
  ( const activeUpdownButtonClass *source );
 
-activeUpdownButtonClass::~activeUpdownButtonClass ( void ) {
-
-  if ( name ) delete name;
-
-}
+activeUpdownButtonClass::~activeUpdownButtonClass ( void );
 
 char *activeUpdownButtonClass::objName ( void ) {
 
