@@ -4538,25 +4538,35 @@ char *macTk, *macBuf, macTmp[255+1];
   tk = strtok_r( NULL, "|", &buf1 );
   while ( tk ) {
 
-    //printf( "tk = [%s], state = %-d\n", tk, state );
+    //printf( "state = %-d\n", state );
+    //if ( tk ) {
+    //  printf( "tk = [%s]\n", tk );
+    //}
+    //else {
+    //  printf( "tk is null\n" );
+    //}
 
     if ( state == GETTING_INITIAL ) {
 
       if ( strcmp( tk, global_str91 ) == 0 ) {
 
+        state = GETTING_FILES;
         tk = strtok_r( NULL, "|", &buf1 );
+	if ( !tk ) return;
 
       }
       else if ( strcmp( tk, global_str19 ) == 0 ) {
 
         state = GETTING_1ST_MACRO;
         tk = strtok_r( NULL, "|", &buf1 );
+	if ( !tk ) return;
 
       }
       else {
 
         state = GETTING_FILES;
         tk = strtok_r( NULL, "|", &buf1 );
+	if ( !tk ) return;
 
       }
 
@@ -4638,6 +4648,7 @@ char *macTk, *macBuf, macTmp[255+1];
       }
 
       tk = strtok_r( NULL, "|", &buf1 );
+      if ( !tk ) return;
 
     }
 
@@ -4663,6 +4674,7 @@ char *macTk, *macBuf, macTmp[255+1];
         locNumMacros = 0;
         state = GETTING_FILES;
         tk = strtok_r( NULL, "|", &buf1 );
+        if ( !tk ) return;
       }
 
     }
@@ -4688,6 +4700,7 @@ char *macTk, *macBuf, macTmp[255+1];
       else {
         state = GETTING_FILES;
         tk = strtok_r( NULL, "|", &buf1 );
+        if ( !tk ) return;
       }
       
     }
