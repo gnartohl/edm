@@ -1,6 +1,9 @@
 ###### INSTALLATION NOTES #########
 
+### EDM Version 1-7-0b ############################
+
 #### Installing on Solaris 8 *********************
+
 1. Additional software packages required:
    1a. You need "zlib"   (we use version 1.1.3)
        -- http://www.gzip.org/zlib/
@@ -12,9 +15,9 @@
    1c. You need "giflib" (we use version 4.1.0)
      -- http://prtr-13.ucsc.edu/~badger/software/libungif/giflib.shtml
            note: you may have trouble getting giflib because of licensing issues
-           so a src distribution will be placed on the SNS FTP site
-           for your convenience.  I think we should use libpng from
-           now on.
+           so a src distribution will be placed on the SNS FTP site 
+           (ftp://snsftp.sns.ornl.gov/UPLOAD/controls/edm) for your convenience.  
+           I think we should use libpng from now on.
 
 2.  Configuration for compiling
    -- To build edm as an EPICS Extensions unzip/untar the distribution in
@@ -36,8 +39,13 @@
 
 3. Run Time Configuration/Setup
    a. Define the following environment variables:
+      The $EPICS_EXTENSIONS/src/edm/setup directory contains an example color table, font table
+      and calc.list file. This directory also contains a setup.sh for Bourne shell users.
+      The setup.sh files sets up required environment variables and creates an initial 
+      edmObjects and edmPvObjects file.
+
       EDMPVOBJECTS   "This is the location of a file that describes the path to EPICS
-                 PV shared libraries"
+                      PV shared libraries"
       EDMOBJECTS     "This is the location of a file that describes the path to the
                       various EDM shared libraries"
       EDMHELPFILES   " Location of EDM "HELP system"
@@ -55,6 +63,7 @@
       -- EDMDATAFILES=$IOCTOP/<system1>/opi/edl:$IOCTOP/<system2>/opi/edl
 
       Also, we will make available the $EPICS_EXTENSIONS/ext_pref/edm as an example.
+      This will be tarred up as ext_pref-edm.tar on our ftp site: (ftp://snsftp.sns.ornl.gov/UPLOAD/controls/edm)
       Some of the configuration steps may be discussed in the edm documentation located 
       in the following: $EPICS_EXTENSIONS/src/edm/doc
   b. Make sure you define LD_LIBRARY_PATH to include $EPICS_EXTESIONS/lib/$HOST_ARCH
@@ -109,6 +118,7 @@
       -- EDMDATAFILES=$IOCTOP/<system1>/opi/edl:$IOCTOP/<system2>/opi/edl
 
       Also, we will make available the $EPICS_EXTENSIONS/ext_pref/edm as an example.
+      This will be tarred up as ext_pref-edm.tar on our ftp site: (ftp://snsftp.sns.ornl.gov/UPLOAD/controls/edm)
       Some of the configuration steps may be discussed in the edm documentation located 
       in the following: $EPICS_EXTENSIONS/src/edm/doc
   b. Make sure you define LD_LIBRARY_PATH to include $EPICS_EXTESIONS/lib/$HOST_ARCH
