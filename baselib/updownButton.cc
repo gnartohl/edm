@@ -1474,6 +1474,8 @@ XmString str;
     widgetsCreated = 0;
     keyPadOpen = 0;
     isSaved = 0;
+    incrementTimer = 0;
+    incrementTimerActive = 0;
 
 #ifdef __epics__
     destEventId = saveEventId = 0;
