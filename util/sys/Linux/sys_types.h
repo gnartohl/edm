@@ -2,6 +2,10 @@
 #define __sys_types_h 1
 
 #include <sys/types.h>
+
+/* Added time.h to support RH 7.1 */
+#include <time.h>
+
 #include "unix.msh"
 #include "sys.msh"
 
