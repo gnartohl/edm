@@ -48,11 +48,23 @@ static void xtdoRestoreValue (
 {
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
+Arg args[10];
+int n, l;
+char *buf;
 
   axtdo->actWin->appCtx->proc->lock();
   axtdo->needRefresh = 1;
   axtdo->actWin->addDefExeNode( axtdo->aglPtr );
   axtdo->actWin->appCtx->proc->unlock();
+
+  n = 0;
+  XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
+  XtSetValues( axtdo->tf_widget, args, n );
+
+  buf = XmTextGetString( axtdo->tf_widget );
+  l = strlen(buf);
+  XtFree( buf );
+  XmTextSetInsertionPosition( axtdo->tf_widget, l );
 
   axtdo->grabUpdate = 0;
 
@@ -216,7 +228,7 @@ int n;
   XtSetValues( axtdo->tf_widget, args, n );
 
   XmTextSetSelection( axtdo->tf_widget, 0, l,
-   XtLastTimestampProcessed( axtdo->actWin->display() ) );
+  XtLastTimestampProcessed( axtdo->actWin->display() ) );
 
   XmTextSetInsertionPosition( axtdo->tf_widget, l );
 
@@ -267,16 +279,23 @@ static void xtdoTextFieldToStringLF (
 {
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
-int stat, l;
+int stat;
 char string[39+1];
 char *buf;
 Arg args[10];
 int n;
 
+  n = 0;
+  XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
+  XtSetValues( axtdo->tf_widget, args, n );
+
+  XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
+
+  axtdo->grabUpdate = 0;
+
   if ( !axtdo->widget_value_changed ) return;
  
   buf = XmTextGetString( axtdo->tf_widget );
-  l = strlen(buf);
   strncpy( axtdo->entryValue, buf, 39 );
   axtdo->entryValue[39] = 0;
   XtFree( buf );
@@ -296,14 +315,6 @@ int n;
     axtdo->actWin->addDefExeNode( axtdo->aglPtr );
     axtdo->actWin->appCtx->proc->unlock();
   }
-
-  n = 0;
-  XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
-  XtSetValues( axtdo->tf_widget, args, n );
-
-  XmTextSetInsertionPosition( axtdo->tf_widget, l );
-
-  axtdo->grabUpdate = 0;
 
 }
 
@@ -355,15 +366,22 @@ static void xtdoTextFieldToIntLF (
 {
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
-int ivalue, stat, l;
+int ivalue, stat;
 char *buf;
 Arg args[10];
 int n;
 
+  n = 0;
+  XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
+  XtSetValues( axtdo->tf_widget, args, n );
+
+  XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
+
+  axtdo->grabUpdate = 0;
+
   if ( !axtdo->widget_value_changed ) return;
 
   buf = XmTextGetString( axtdo->tf_widget );
-  l = strlen(buf);
   strncpy( axtdo->entryValue, buf, 39 );
   axtdo->entryValue[39] = 0;
   XtFree( buf );
@@ -387,14 +405,6 @@ int n;
     }
 
   }
-
-  n = 0;
-  XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
-  XtSetValues( axtdo->tf_widget, args, n );
-
-  XmTextSetInsertionPosition( axtdo->tf_widget, l );
-
-  axtdo->grabUpdate = 0;
 
 }
 
@@ -447,16 +457,23 @@ static void xtdoTextFieldToDoubleLF (
 {
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
-int stat, l;
+int stat;
 double dvalue;
 char *buf;
 Arg args[10];
 int n;
 
+  n = 0;
+  XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
+  XtSetValues( axtdo->tf_widget, args, n );
+
+  XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
+
+  axtdo->grabUpdate = 0;
+
   if ( !axtdo->widget_value_changed ) return;
 
   buf = XmTextGetString( axtdo->tf_widget );
-  l = strlen(buf);
   strncpy( axtdo->entryValue, buf, 39 );
   axtdo->entryValue[39] = 0;
   XtFree( buf );
@@ -480,14 +497,6 @@ int n;
     }
 
   }
-
-  n = 0;
-  XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
-  XtSetValues( axtdo->tf_widget, args, n );
-
-  XmTextSetInsertionPosition( axtdo->tf_widget, l );
-
-  axtdo->grabUpdate = 0;
 
 }
 
@@ -3179,7 +3188,7 @@ Arg args[10];
 unsigned int bg;
 XmFontList textFontList = NULL;
 
-#if 0
+#if 1
 XtTranslations parsedTrans;
 
 static char dragTrans[] =
@@ -3569,7 +3578,7 @@ static XtActionsRec dragActions[] = {
 
       if ( !tf_widget ) {
 
-#if 0
+#if 1
       parsedTrans = XtParseTranslationTable( dragTrans );
       XtAppAddActions( actWin->appCtx->appContext(), dragActions,
        XtNumber(dragActions) );
@@ -3582,13 +3591,14 @@ static XtActionsRec dragActions[] = {
        XmNforeground, fgColor.getColor(),
        XmNbackground, bg,
        XmNhighlightThickness, 0,
-       XmNcolumns, (short) numCols,
+       XmNwidth, w,
+       //XmNcolumns, (short) numCols,
        XmNvalue, entryValue,
        XmNmaxLength, (short) 39,
        XmNpendingDelete, True,
        XmNmarginHeight, 0,
        XmNfontList, textFontList,
-       // XmNtranslations, parsedTrans,
+       XmNtranslations, parsedTrans,
        XmNuserData, this,
        NULL );
 
@@ -3813,7 +3823,7 @@ char *activeXTextDspClass::nextDragName ( void ) {
 char *activeXTextDspClass::dragValue (
   int i ) {
 
-  if ( !i ) {
+  if ( i == 0 ) {
     return pvExpStr.getExpanded();
   }
   else {
