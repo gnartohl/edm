@@ -22,16 +22,20 @@
 #include <Xm/TextF.h>
 #include <Xm/Text.h>
 #include <math.h>
+#include <time.h>
 
 #include "ulBindings.h"
 #include "act_grf.h"
 #include "entry_form.h"
 #include "utility.h"
 #include "keypad.h"
+#include "calpad.h"
 #include "msg_dialog.h"
 
 #include "app_pkg.h"
 #include "act_win.h"
+
+#include "osiTime.h"
 
 #include "pv_factory.h"
 #include "epics_pv_factory.h"
@@ -79,7 +83,9 @@
 #define XYGC_K_AXIS_STYLE_LOG10 1
 #define XYGC_K_AXIS_STYLE_TIME 2
 #define XYGC_K_AXIS_STYLE_TIME_LOG10 3
-#define XYGC_K_AXIS_STYLE_STRIPCHART 4
+
+#define XYGC_K_AXIS_TIME_FMT_SEC 0
+#define XYGC_K_AXIS_TIME_FMT_MMDDYY_HHMMSS 1
 
 #define XYGC_K_PVNAME 20
 #define XYGC_K_LIT 21
@@ -93,7 +99,7 @@
 #define XYGC_K_PLOT_SORTED_X_MODE 1
 
 #define XYGC_MAJOR_VERSION 1
-#define XYGC_MINOR_VERSION 2
+#define XYGC_MINOR_VERSION 3
 #define XYGC_RELEASE 0
 
 #ifdef __xygraph_cc
@@ -127,20 +133,64 @@ static void setKpY1MinDoubleValue (
   XtPointer client,
   XtPointer call );
 
+static void setKpY2MinDoubleValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void setKpYMinDoubleValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call,
+  int yIndex );
+
 static void setKpY1MaxDoubleValue (
   Widget w,
   XtPointer client,
   XtPointer call );
+
+static void setKpY2MaxDoubleValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void setKpYMaxDoubleValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call,
+  int yIndex );
 
 static void cancelKpY1Min (
   Widget w,
   XtPointer client,
   XtPointer call );
 
+static void cancelKpY2Min (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void cancelKpYMin (
+  Widget w,
+  XtPointer client,
+  XtPointer call,
+  int yIndex );
+
 static void cancelKpY1Max (
   Widget w,
   XtPointer client,
   XtPointer call );
+
+static void cancelKpY2Max (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void cancelKpYMax (
+  Widget w,
+  XtPointer client,
+  XtPointer call,
+  int yIndex );
 
 static void xMonitorConnection (
   struct connection_handler_args arg );
@@ -208,6 +258,10 @@ static void axygc_edit_cancel_delete (
 
 class xyGraphClass : public activeGraphicClass {
 
+public:
+
+static const int NUM_Y_AXES = 2;
+
 private:
 
 typedef struct editBufTag {
@@ -252,20 +306,20 @@ typedef struct editBufTag {
   efInt bufXAnnotationPrecision;
   int bufXAnnotationFormat;
 
-  int bufY1Axis;
-  int bufY1AxisStyle;
-  int bufY1AxisSource;
-  efDouble bufY1Min;
-  efDouble bufY1Max;
+  int bufY1Axis[NUM_Y_AXES];
+  int bufY1AxisStyle[NUM_Y_AXES];
+  int bufY1AxisSource[NUM_Y_AXES];
+  efDouble bufY1Min[NUM_Y_AXES];
+  efDouble bufY1Max[NUM_Y_AXES];
 
-  efInt bufY1NumLabelIntervals;
-  int bufY1LabelGrid;
-  efInt bufY1NumMajorPerLabel;
-  int bufY1MajorGrid;
-  efInt bufY1NumMinorPerMajor;
-  int bufY1MinorGrid;
-  efInt bufY1AnnotationPrecision;
-  int bufY1AnnotationFormat;
+  efInt bufY1NumLabelIntervals[NUM_Y_AXES];
+  int bufY1LabelGrid[NUM_Y_AXES];
+  efInt bufY1NumMajorPerLabel[NUM_Y_AXES];
+  int bufY1MajorGrid[NUM_Y_AXES];
+  efInt bufY1NumMinorPerMajor[NUM_Y_AXES];
+  int bufY1MinorGrid[NUM_Y_AXES];
+  efInt bufY1AnnotationPrecision[NUM_Y_AXES];
+  int bufY1AnnotationFormat[NUM_Y_AXES];
 
   int bufY2Axis;
   int bufY2AxisStyle;
@@ -289,14 +343,12 @@ typedef struct editBufTag {
   int bufBorder;
   int bufXFormatType;
   efInt bufXPrecision;
-  int bufY1FormatType;
-  efInt bufY1Precision;
+  int bufY1FormatType[NUM_Y_AXES];
+  efInt bufY1Precision[NUM_Y_AXES];
   int bufY2FormatType;
   efInt bufY2Precision;
 
   int bufUpdateTimerValue;
-
-  efDouble bufScrollMagnitude;
 
 } editBufType, *editBufPtr;
 
@@ -334,20 +386,64 @@ friend void setKpY1MinDoubleValue (
   XtPointer client,
   XtPointer call );
 
+friend void setKpY2MinDoubleValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void setKpYMinDoubleValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call,
+  int yIndex );
+
 friend void setKpY1MaxDoubleValue (
   Widget w,
   XtPointer client,
   XtPointer call );
+
+friend void setKpY2MaxDoubleValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void setKpYMaxDoubleValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call,
+  int yIndex );
 
 friend void cancelKpY1Min (
   Widget w,
   XtPointer client,
   XtPointer call );
 
+friend void cancelKpY2Min (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void cancelKpYMin (
+  Widget w,
+  XtPointer client,
+  XtPointer call,
+  int yIndex );
+
 friend void cancelKpY1Max (
   Widget w,
   XtPointer client,
   XtPointer call );
+
+friend void cancelKpY2Max (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void cancelKpYMax (
+  Widget w,
+  XtPointer client,
+  XtPointer call,
+  int yIndex );
 
 friend void xMonitorConnection (
   struct connection_handler_args arg );
@@ -428,11 +524,11 @@ int kpCancelMinX, kpCancelMaxX;
 int xMinX0, xMinX1, xMinY0, xMinY1;
 int xMaxX0, xMaxX1, xMaxY0, xMaxY1;
 
-double kpY1Min, kpY1Max;
-efDouble kpY1MinEfDouble, kpY1MaxEfDouble;
-int kpCancelMinY1, kpCancelMaxY1;
-int y1MinX0, y1MinX1, y1MinY0, y1MinY1;
-int y1MaxX0, y1MaxX1, y1MaxY0, y1MaxY1;
+double kpY1Min[NUM_Y_AXES], kpY1Max[NUM_Y_AXES];
+efDouble kpY1MinEfDouble[NUM_Y_AXES], kpY1MaxEfDouble[NUM_Y_AXES];
+int kpCancelMinY1[NUM_Y_AXES], kpCancelMaxY1[NUM_Y_AXES];
+int y1MinX0[NUM_Y_AXES], y1MinX1[NUM_Y_AXES], y1MinY0[NUM_Y_AXES], y1MinY1[NUM_Y_AXES];
+int y1MaxX0[NUM_Y_AXES], y1MaxX1[NUM_Y_AXES], y1MaxY0[NUM_Y_AXES], y1MaxY1[NUM_Y_AXES];
 
 expStringClass graphTitle, xLabel, yLabel;
 
@@ -515,21 +611,20 @@ int firstTimeSample, curSec, curNsec, drawGridFlag;
 
 int xAxis, xAxisStyle, xAxisSource, xAxisTimeFormat;
 efDouble xMin, xMax;
-double stripChartXMax;
 
-int y1Axis, y1AxisStyle, y1AxisSource;
-efDouble y1Min, y1Max;
+int y1Axis[NUM_Y_AXES], y1AxisStyle[NUM_Y_AXES], y1AxisSource[NUM_Y_AXES];
+efDouble y1Min[NUM_Y_AXES], y1Max[NUM_Y_AXES];
 
 int y2Axis, y2AxisStyle, y2AxisSource;
 efDouble y2Min, y2Max;
 
-double curXMin, curXMax, curY1Min, curY1Max, curY2Min, curY2Max;
-int curXPrec, curY1Prec, curY2Prec;
-
-efDouble scrollMagnitude;
+double curXMin, curXMax, curY1Min[NUM_Y_AXES], curY1Max[NUM_Y_AXES],
+ curY2Min, curY2Max;
+int curXPrec, curY1Prec[NUM_Y_AXES], curY2Prec;
 
 int curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor;
-int curY1NumLabelTicks, curY1MajorsPerLabel, curY1MinorsPerMajor;
+int curY1NumLabelTicks[NUM_Y_AXES], curY1MajorsPerLabel[NUM_Y_AXES],
+ curY1MinorsPerMajor[NUM_Y_AXES];
 int curY2NumLabelTicks, curY2MajorsPerLabel, curY2MinorsPerMajor;
 
 colorButtonClass plotCb[XYGC_K_MAX_TRACES];
@@ -543,9 +638,9 @@ int xFormatType;
 efInt xPrecision;
 char xFormat[15+1];
 
-int y1FormatType;
-efInt y1Precision;
-char y1Format[15+1];
+int y1FormatType[NUM_Y_AXES];
+efInt y1Precision[NUM_Y_AXES];
+char y1Format[NUM_Y_AXES][15+1];
 
 int y2FormatType;
 efInt y2Precision;
@@ -569,14 +664,14 @@ int xMinorGrid;
 efInt xAnnotationPrecision;
 int xAnnotationFormat;
 
-efInt y1NumLabelIntervals;
-int y1LabelGrid;
-efInt y1NumMajorPerLabel;
-int y1MajorGrid;
-efInt y1NumMinorPerMajor;
-int y1MinorGrid;
-efInt y1AnnotationPrecision;
-int y1AnnotationFormat;
+efInt y1NumLabelIntervals[NUM_Y_AXES];
+int y1LabelGrid[NUM_Y_AXES];
+efInt y1NumMajorPerLabel[NUM_Y_AXES];
+int y1MajorGrid[NUM_Y_AXES];
+efInt y1NumMinorPerMajor[NUM_Y_AXES];
+int y1MinorGrid[NUM_Y_AXES];
+efInt y1AnnotationPrecision[NUM_Y_AXES];
+int y1AnnotationFormat[NUM_Y_AXES];
 
 efInt y2NumLabelIntervals;
 int y2LabelGrid;
@@ -591,14 +686,15 @@ int xPvExists[XYGC_K_MAX_TRACES], yPvExists[XYGC_K_MAX_TRACES],
  trigPvExists, resetPvExists;
 
 double xFactor[XYGC_K_MAX_TRACES], xOffset[XYGC_K_MAX_TRACES];
-double y1Factor[XYGC_K_MAX_TRACES], y1Offset[XYGC_K_MAX_TRACES];
+double y1Factor[NUM_Y_AXES][XYGC_K_MAX_TRACES],
+ y1Offset[NUM_Y_AXES][XYGC_K_MAX_TRACES];
 double y2Factor[XYGC_K_MAX_TRACES], y2Offset[XYGC_K_MAX_TRACES];
 
 Widget plotWidget;
 
 int needConnect, needInit, needRefresh, needUpdate, needErase, needDraw,
  needResetConnect, needReset, needTrigConnect, needTrig, needXRescale,
- needY1Rescale, needY2Rescale, needBufferScroll, needVectorUpdate,
+ needY1Rescale[NUM_Y_AXES], needY2Rescale, needBufferScroll, needVectorUpdate,
  needRealUpdate, needBoxRescale;
 
 int numBufferScrolls;
@@ -606,7 +702,7 @@ int numBufferScrolls;
 int updateTimerActive, updateTimerValue;
 XtIntervalId updateTimer;
 
-double xRescaleValue, y1RescaleValue, y2RescaleValue;
+double xRescaleValue, y1RescaleValue[NUM_Y_AXES], y2RescaleValue;
 
 int needThisbufScroll[XYGC_K_MAX_TRACES];
 
@@ -615,195 +711,201 @@ entryFormClass *efTrace, *efAxis;
 editBufPtr eBuf;
 
 msgDialogClass msgDialog;
-int msgDialogPopedUp;
-
+int msgDialogPopedUp; 
 int firstBoxRescale, doingBoxRescale;
-double savedXMin, savedXMax, savedYMin, savedYMax;
-double boxXMin, boxXMax, boxYMin, boxYMax;
-int savedXMinNullState, savedXMaxNullState, savedYMinNullState,
- savedYMaxNullState;
-int rescaleBoxX0, rescaleBoxY0, rescaleBoxX1, rescaleBoxY1,
+double savedXMin, savedXMax, savedYMin[NUM_Y_AXES], savedYMax[NUM_Y_AXES];
+double boxXMin, boxXMax, boxYMin[NUM_Y_AXES], boxYMax[NUM_Y_AXES];
+int savedXMinNullState, savedXMaxNullState,
+ savedYMinNullState[NUM_Y_AXES], savedYMaxNullState[NUM_Y_AXES];
+int rescaleBoxX0, rescaleBoxY0,
+ rescaleBoxX1, rescaleBoxY1,
  oldRescaleBoxW, oldRescaleBoxH;
 
 int xSigned[XYGC_K_MAX_TRACES], ySigned[XYGC_K_MAX_TRACES];
 
+int lowestYScaleIndex[NUM_Y_AXES], numYTraces[NUM_Y_AXES];
+
+time_t timeOffset;
+
 public:
 
-xyGraphClass::xyGraphClass ( void );
+xyGraphClass ( void );
 
-xyGraphClass::xyGraphClass
+xyGraphClass
  ( const xyGraphClass *source );
 
-xyGraphClass::~xyGraphClass ( void );
+~xyGraphClass ( void );
 
-void xyGraphClass::getMinMax (
+void getMinMax (
   double *min,
   double *max
 );
 
-static void xyGraphClass::plotPvConnectStateCallback (
+static void plotPvConnectStateCallback (
   ProcessVariable *pv,
   void *userarg );
 
-static void xyGraphClass::plotUpdate (
+static void plotUpdate (
   ProcessVariable *pv,
   void *userarg );
 
-char *xyGraphClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int xyGraphClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int xyGraphClass::createFromFile (
+int createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin );
 
-int xyGraphClass::importFromXchFile (
+int importFromXchFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin );
 
-int xyGraphClass::save (
+int save (
   FILE *f );
 
-int xyGraphClass::genericEdit ( void );
+int genericEdit ( void );
 
-int xyGraphClass::edit ( void );
+int edit ( void );
 
-int xyGraphClass::editCreate ( void );
+int editCreate ( void );
 
-void xyGraphClass::regenBuffer ( void );
+void regenBuffer ( void );
 
-void xyGraphClass::genChronoVector (
+void genChronoVector (
   int trace,
   int *rescale
 );
 
-void xyGraphClass::genXyVector (
+void genXyVector (
   int trace,
   int *rescale
 );
 
-int xyGraphClass::fullRefresh ( void );
+int fullRefresh ( void );
 
-int xyGraphClass::draw ( void );
+int draw ( void );
 
-int xyGraphClass::erase ( void );
+int erase ( void );
 
-void xyGraphClass::drawCircles (
+void drawCircles (
   int index,
   XPoint *xp,
   int n
 );
 
-void xyGraphClass::drawSquares (
+void drawSquares (
   int index,
   XPoint *xp,
   int n
 );
 
-void xyGraphClass::drawDiamonds (
+void drawDiamonds (
   int index,
   XPoint *xp,
   int n
 );
 
-int xyGraphClass::drawActiveOne (
+int drawActiveOne (
   int i // trace
 );
 
-int xyGraphClass::drawActive ( void );
+int drawActive ( void );
 
-int xyGraphClass::altDrawActiveOne (
+int altDrawActiveOne (
   int i // trace
 );
 
-int xyGraphClass::eraseActive ( void );
+int eraseActive ( void );
 
-void xyGraphClass::bufInvalidate ( void );
+void bufInvalidate ( void );
 
-int xyGraphClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int xyGraphClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int xyGraphClass::containsMacros ( void );
+int containsMacros ( void );
 
-int xyGraphClass::activate (
+int activate (
   int pass,
   void *ptr );
 
-int xyGraphClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void xyGraphClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-void xyGraphClass::btnDrag (
+void btnDrag (
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
-void xyGraphClass::btnUp (
+void btnUp (
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
-void xyGraphClass::btnDown (
+void btnDown (
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
-int xyGraphClass::getButtonActionRequest (
+int getButtonActionRequest (
   int *up,
   int *down,
   int *drag );
 
-void xyGraphClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-void xyGraphClass::initPlotInfo (
+void initPlotInfo (
   int trace
 );
 
-void xyGraphClass::addPoint (
+void addPoint (
   double x,
   short x,
   short y,
   int trace
 );
 
-int xyGraphClass::fillPlotArray (
+int fillPlotArray (
   int trace
 );
 
-void xyGraphClass::drawBorder ( void );
+void drawBorder ( void );
 
-void xyGraphClass::drawXScale ( void );
+void drawXScale ( void );
 
-void xyGraphClass::drawY1Scale ( void );
+void drawY1Scale ( void );
 
-void xyGraphClass::drawGrid ( void );
+void drawY2Scale ( void );
 
-void xyGraphClass::drawTitle ( void );
+void drawGrid ( void );
 
-void xyGraphClass::drawXlabel ( void );
+void drawTitle ( void );
 
-void xyGraphClass::drawYlabel ( void );
+void drawXlabel ( void );
+
+void drawYlabel ( void );
 
 };
 
