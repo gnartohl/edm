@@ -1624,6 +1624,8 @@ int i;
     displayFileName[i].expand1st( numMacros, macros, expansions );
   }
 
+  buttonLabel.expand1st( numMacros, macros, expansions );
+
   return 1;
 
 }
@@ -1646,6 +1648,8 @@ int i;
     label[i].expand2nd( numMacros, macros, expansions );
     displayFileName[i].expand2nd( numMacros, macros, expansions );
   }
+
+  buttonLabel.expand2nd( numMacros, macros, expansions );
 
   return 1;
 
