@@ -788,7 +788,7 @@ int actualNumMacros;
 char **macros;
 char **expansions;
 
-char fileName[255+1];
+char fileName[255+1], fileNameAndRev[287+1];
 char prefix[127+1], displayName[127+1], postfix[127+1];
 expStringClass expStrTitle;
 

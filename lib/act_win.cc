@@ -9489,6 +9489,8 @@ activeWindowClass::activeWindowClass ( void ) {
 
   loadFailure = 0;
 
+  strcpy( fileNameAndRev, "" );
+
   mode = AWC_EDIT;
 
 }
@@ -9817,7 +9819,7 @@ char *none = activeWindowClass_str83;
       cptr = none;
     }
     else {
-      cptr = fileName;
+      cptr = fileNameAndRev;
     }
 
   }
@@ -9828,7 +9830,7 @@ char *none = activeWindowClass_str83;
         cptr = none;
       }
       else {
-        cptr = fileName;
+        cptr = fileNameAndRev;
       }
     }
     else if ( strcmp( expStrTitle.getExpanded(), "" ) == 0 ) {
@@ -9836,7 +9838,7 @@ char *none = activeWindowClass_str83;
         cptr = none;
       }
       else {
-        cptr = fileName;
+        cptr = fileNameAndRev;
       }
     }
     else {
@@ -14695,9 +14697,11 @@ void activeWindowClass::readCommentsAndVersion (
   FILE *f
 ) {
 
-char oneLine[255+1], buf[255+1], *tk;
+char oneLine[255+1], buf[255+1], *tk, *context;
 commentLinesPtr commentCur;
-int numComments = 0, moreComments = 1;
+int numComments = 0, moreComments = 1, checkForRev = 1;
+
+  strcpy( fileNameAndRev, fileName );
 
   do {
 
@@ -14705,9 +14709,37 @@ int numComments = 0, moreComments = 1;
 
     strcpy( buf, oneLine );
 
-    tk = strtok( buf, " \t\n" );
+    context = NULL;
+    tk = strtok_r( buf, " \t\n", &context );
 
     if ( !tk || ( tk[0] == '#' ) ) {
+
+      // check for cvs/rcs revision info
+      if ( tk && ( tk[0] == '#' ) && checkForRev ) {
+
+        strcpy( buf, oneLine );
+
+        context = NULL;
+        tk = strtok_r( buf, " \t\n#", &context );
+
+	if ( tk ) {
+
+          if ( strcmp( tk, "$Revision:" ) == 0 ) {
+
+            checkForRev = 0; // use first rev found, don't check any more
+
+            tk = strtok_r( NULL, " \t\n#", &context );
+	    if ( tk ) {
+              Strncat( fileNameAndRev, " (", 287 );
+              Strncat( fileNameAndRev, tk, 287 );
+              Strncat( fileNameAndRev, ")", 287 );
+	    }
+
+          }
+
+	}
+
+      }
 
       numComments++;
       commentCur = new commentLinesType;
