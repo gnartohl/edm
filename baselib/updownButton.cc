@@ -2040,7 +2040,6 @@ int nc, nsc, nci, nd, ne, nr, stat;
   if ( ne ) {
 
     eraseActive();
-    smartDrawAllActive();
 
   }
 

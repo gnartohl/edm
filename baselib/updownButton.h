@@ -218,7 +218,7 @@ XtIntervalId incrementTimer;
 double controlV, curControlV, curSaveV, coarse, fine;
 
 int needConnectInit, needSaveConnectInit, needCtlInfoInit, needRefresh,
- needErase, needDraw;
+ needErase, needDraw, needToEraseUnconnected;
 
 int widgetsCreated;
 Widget popUpMenu, pullDownMenu, pbCoarse, pbFine, pbRate, pbValue,

@@ -1622,7 +1622,6 @@ int nc, nd, ne;
   if ( ne ) {
 
     eraseActive();
-    smartDrawAllActive();
 
   }
 

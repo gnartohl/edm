@@ -2065,7 +2065,6 @@ char msg[79+1];
   if ( ne ) {
 
     eraseActive();
-    smartDrawAllActive();
 
   }
 
