@@ -791,7 +791,9 @@ virtual int activeGraphicClass::selectDragValue (
   int x,
   int y );
 
-virtual int activeGraphicClass::startDrag ( void );
+virtual int activeGraphicClass::startDrag (
+  int x,
+  int y );
 
 // for motif widgets
 virtual int activeGraphicClass::startDrag (

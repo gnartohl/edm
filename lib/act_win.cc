@@ -8258,7 +8258,7 @@ activeGraphicListPtr cur;
 
           // only the highest object may participate
           if ( cur->node->dragValue( cur->node->getCurrentDragIndex() ) ) {
-            cur->node->startDrag();
+            cur->node->startDrag( be->x, be->y );
             foundAction = 1;
 	  }
           break; // out of while loop
