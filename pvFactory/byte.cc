@@ -908,12 +908,10 @@ void edmByteClass::executeDeferred()
 
     if (is_executing)
     {
+       lastval = value;
+       value = ((valuePvId->get_int() >> shft) & dmask);
        if (!actWin->isIconified)
-       {
-           lastval = value;
-           value = ((valuePvId->get_int() >> shft) & dmask);
            drawActive();
-       }
 
        actWin->appCtx->proc->lock();
        actWin->remDefExeNode(aglPtr);
