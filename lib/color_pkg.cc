@@ -2534,6 +2534,7 @@ int diff, bestPixel, bestR, bestG, bestB, min;
 
     min = abs( r - cur->rgb[0] ) + abs( g - cur->rgb[1] ) +
           abs( b - cur->rgb[2] );
+    bestPixel = cur->pixel;
     bestR = cur->rgb[0];
     bestG = cur->rgb[1];
     bestB = cur->rgb[2];
