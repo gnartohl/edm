@@ -2377,6 +2377,8 @@ static int objTypeEnum[4] = {
   deactivateCallbackFlag = 0;
   anyCallbackFlag = 0;
 
+  precision = efPrecision.value();
+
   fgColor.setNullIndex( index, actWin->ci );
 
   if ( colorMode == XTDC_K_COLORMODE_ALARM )
