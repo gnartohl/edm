@@ -1034,7 +1034,7 @@ virtual void changeDisplayParams (
 
 #define ACTGRF_CTLPVS_MASK		1
 #define ACTGRF_READBACKPVS_MASK		2
-#define ACTGRF_NULLPVS_MASK		3
+#define ACTGRF_NULLPVS_MASK		4
 #define ACTGRF_VISPVS_MASK		8
 #define ACTGRF_ALARMPVS_MASK		0x10
 
