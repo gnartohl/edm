@@ -21,15 +21,15 @@ endif
 
 USR_LDFLAGS += -shared -L../../../../lib/$(HOST_ARCH) -L../../../../bin/$(HOST_ARCH)
 
-PROD = libEpics.so
+LIBRARY = Epics
 
 PROD_LIBS += ca Com
 
 USR_INCLUDES = -I../ -I../../lib
 
-SRCS += reg_pvs.cc
-SRCS += epicsPv.cc
-SRCS += pv.cc
+LIBSRCS += reg_pvs.cc
+LIBSRCS += epicsPv.cc
+LIBSRCS += pv.cc
 
 include $(TOP)/config/RULES.Host
 
