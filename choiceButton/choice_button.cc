@@ -1040,7 +1040,7 @@ int activeChoiceButtonClass::draw ( void ) {
 int tX, tY;
 XRectangle xR = { x, y, w, h };
 int blink = 0;
-int i, buttonX, buttonY, buttonH, buttonW, margin = 2;
+int i, buttonX, buttonY, buttonH, buttonW, margin = 3;
 int buttonNumStates = 3;
 int buttonSelected = buttonNumStates-1;
 
@@ -1076,19 +1076,25 @@ char *buttonLabel[3] = { "0", "1", "2" };
 
       if ( buttonSelected == i ) {
 
+        actWin->drawGc.setFG( selColor.pixelIndex(), &blink );
+
+        XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+         actWin->drawGc.normGC(), buttonX, buttonY,
+         buttonW, buttonH );
+
         actWin->drawGc.setFG( actWin->ci->pix(botShadowColor) );
 
         XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
          actWin->drawGc.normGC(), buttonX, buttonY, buttonX+buttonW, buttonY );
 
         XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
-         actWin->drawGc.normGC(), buttonX+buttonW, buttonY, buttonX+buttonW,
+         actWin->drawGc.normGC(), buttonX, buttonY, buttonX,
           buttonY+buttonH );
 
         actWin->drawGc.setFG( actWin->ci->pix(topShadowColor) );
 
         XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
-         actWin->drawGc.normGC(), buttonX, buttonY, buttonX,
+         actWin->drawGc.normGC(), buttonX+buttonW, buttonY, buttonX+buttonW,
          buttonY+buttonH );
 
         XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
@@ -1104,13 +1110,21 @@ char *buttonLabel[3] = { "0", "1", "2" };
          actWin->drawGc.normGC(), buttonX, buttonY, buttonX+buttonW, buttonY );
 
         XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
-         actWin->drawGc.normGC(), buttonX+buttonW, buttonY, buttonX+buttonW,
+         actWin->drawGc.normGC(), buttonX+1, buttonY+1, buttonX+buttonW-1,
+         buttonY+1 );
+
+        XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+         actWin->drawGc.normGC(), buttonX, buttonY, buttonX,
           buttonY+buttonH );
+
+        XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+         actWin->drawGc.normGC(), buttonX+1, buttonY+1,
+         buttonX+1, buttonY+buttonH-1 );
 
         actWin->drawGc.setFG( actWin->ci->pix(botShadowColor) );
 
         XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
-         actWin->drawGc.normGC(), buttonX, buttonY, buttonX,
+         actWin->drawGc.normGC(), buttonX+buttonW, buttonY, buttonX+buttonW,
          buttonY+buttonH );
 
         XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
@@ -1182,19 +1196,25 @@ char *buttonLabel[3] = { "0", "1", "2" };
 
       if ( buttonSelected == i ) {
 
+        actWin->drawGc.setFG( selColor.pixelIndex(), &blink );
+
+        XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+         actWin->drawGc.normGC(), buttonX, buttonY,
+         buttonW, buttonH );
+
         actWin->drawGc.setFG( actWin->ci->pix(botShadowColor) );
 
         XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
          actWin->drawGc.normGC(), buttonX, buttonY, buttonX+buttonW, buttonY );
 
         XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
-         actWin->drawGc.normGC(), buttonX+buttonW, buttonY, buttonX+buttonW,
+         actWin->drawGc.normGC(), buttonX, buttonY, buttonX,
           buttonY+buttonH );
 
         actWin->drawGc.setFG( actWin->ci->pix(topShadowColor) );
 
         XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
-         actWin->drawGc.normGC(), buttonX, buttonY, buttonX,
+         actWin->drawGc.normGC(), buttonX+buttonW, buttonY, buttonX+buttonW,
          buttonY+buttonH );
 
         XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
@@ -1210,13 +1230,21 @@ char *buttonLabel[3] = { "0", "1", "2" };
          actWin->drawGc.normGC(), buttonX, buttonY, buttonX+buttonW, buttonY );
 
         XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
-         actWin->drawGc.normGC(), buttonX+buttonW, buttonY, buttonX+buttonW,
+         actWin->drawGc.normGC(), buttonX+1, buttonY+1, buttonX+buttonW-1,
+         buttonY+1 );
+
+        XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+         actWin->drawGc.normGC(), buttonX, buttonY, buttonX,
           buttonY+buttonH );
+
+        XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+         actWin->drawGc.normGC(), buttonX+1, buttonY+1,
+         buttonX+1, buttonY+buttonH-1 );
 
         actWin->drawGc.setFG( actWin->ci->pix(botShadowColor) );
 
         XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
-         actWin->drawGc.normGC(), buttonX, buttonY, buttonX,
+         actWin->drawGc.normGC(), buttonX+buttonW, buttonY, buttonX+buttonW,
          buttonY+buttonH );
 
         XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
@@ -1276,7 +1304,7 @@ int activeChoiceButtonClass::drawActive ( void ) {
 int tX, tY;
 XRectangle xR = { x, y, w, h };
 int blink = 0;
-int i, buttonX, buttonY, buttonH, buttonW, margin = 2;
+int i, buttonX, buttonY, buttonH, buttonW, margin = 3;
 int buttonNumStates;
 int buttonSelected;
 int inconsistent;
@@ -1343,6 +1371,12 @@ int inconsistent;
 
   }
 
+  // background
+  actWin->executeGc.setFG( bgColor.pixelIndex(), &blink );
+
+  XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x, y, w, h );
+
   if ( orientation == ACBC_K_ORIENTATION_HORZ ) {
 
     buttonH = h;
@@ -1381,13 +1415,13 @@ int inconsistent;
          actWin->executeGc.normGC(), buttonX, buttonY, buttonX+buttonW, buttonY );
 
         XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-         actWin->executeGc.normGC(), buttonX+buttonW, buttonY, buttonX+buttonW,
+         actWin->executeGc.normGC(), buttonX, buttonY, buttonX,
           buttonY+buttonH );
 
         actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
 
         XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-         actWin->executeGc.normGC(), buttonX, buttonY, buttonX,
+         actWin->executeGc.normGC(), buttonX+buttonW, buttonY, buttonX+buttonW,
          buttonY+buttonH );
 
         XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
@@ -1405,16 +1439,25 @@ int inconsistent;
         actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
 
         XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-         actWin->executeGc.normGC(), buttonX, buttonY, buttonX+buttonW, buttonY );
+         actWin->executeGc.normGC(), buttonX, buttonY, buttonX+buttonW,
+         buttonY );
 
         XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-         actWin->executeGc.normGC(), buttonX+buttonW, buttonY, buttonX+buttonW,
+         actWin->executeGc.normGC(), buttonX+1, buttonY+1, buttonX+buttonW-1,
+         buttonY+1 );
+
+        XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), buttonX, buttonY, buttonX,
           buttonY+buttonH );
+
+        XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), buttonX+1, buttonY+1,
+         buttonX+1, buttonY+buttonH-1 );
 
         actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 
         XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-         actWin->executeGc.normGC(), buttonX, buttonY, buttonX,
+         actWin->executeGc.normGC(), buttonX+buttonW, buttonY, buttonX+buttonW,
          buttonY+buttonH );
 
         XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
@@ -1501,16 +1544,17 @@ int inconsistent;
         actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 
         XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-         actWin->executeGc.normGC(), buttonX, buttonY, buttonX+buttonW, buttonY );
+         actWin->executeGc.normGC(), buttonX, buttonY, buttonX+buttonW,
+         buttonY );
 
         XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-         actWin->executeGc.normGC(), buttonX+buttonW, buttonY, buttonX+buttonW,
+         actWin->executeGc.normGC(), buttonX, buttonY, buttonX,
           buttonY+buttonH );
 
         actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
 
         XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-         actWin->executeGc.normGC(), buttonX, buttonY, buttonX,
+         actWin->executeGc.normGC(), buttonX+buttonW, buttonY, buttonX+buttonW,
          buttonY+buttonH );
 
         XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
@@ -1528,16 +1572,25 @@ int inconsistent;
         actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
 
         XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-         actWin->executeGc.normGC(), buttonX, buttonY, buttonX+buttonW, buttonY );
+         actWin->executeGc.normGC(), buttonX, buttonY, buttonX+buttonW,
+         buttonY );
 
         XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-         actWin->executeGc.normGC(), buttonX+buttonW, buttonY, buttonX+buttonW,
+         actWin->executeGc.normGC(), buttonX+1, buttonY+1, buttonX+buttonW-1,
+         buttonY+1 );
+
+        XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), buttonX, buttonY, buttonX,
           buttonY+buttonH );
+
+        XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), buttonX+1, buttonY+1,
+         buttonX+1, buttonY+buttonH-1 );
 
         actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 
         XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-         actWin->executeGc.normGC(), buttonX, buttonY, buttonX,
+         actWin->executeGc.normGC(), buttonX+buttonW, buttonY, buttonX+buttonW,
          buttonY+buttonH );
 
         XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
