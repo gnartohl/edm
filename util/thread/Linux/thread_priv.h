@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <string.h>
 #include <fcntl.h>
 #include <pthread.h>
 #include <sys/time.h>
@@ -49,6 +50,7 @@ typedef struct thread_id_tag {
   double timer_tick;
   int wantJoin;
   void *application_data;
+  int process_active;
 } THREAD_ID_TYPE;
 typedef THREAD_ID_TYPE *THREAD_ID_PTR;
 

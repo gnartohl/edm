@@ -35,6 +35,10 @@ int thread_destroy_handle (
   THREAD_HANDLE handle
 );
 
+int thread_destroy_lock_handle (
+  THREAD_LOCK_HANDLE handle
+);
+
 void *thread_get_app_data (
   THREAD_HANDLE handle
 );

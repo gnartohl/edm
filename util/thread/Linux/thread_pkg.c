@@ -199,6 +199,8 @@ int ret_stat, stat;
     goto err_return;
   }
 
+  priv_handle->process_active = 0;
+
   if ( g_init ) {
     g_init = 0;
     stat = do_init();
@@ -246,27 +248,32 @@ int ret_stat, stat;
     goto err_return;
   }
 
+  ret_stat = THR_SUCCESS;
+
   stat = pthread_mutex_destroy( &priv_handle->mutex );
   if ( stat ) {
     ret_stat = UNIX_ERROR;
-    goto err_return;
+    //goto err_return;
   }
 
   stat = pthread_cond_destroy( &priv_handle->cv );
   if ( stat ) {
     ret_stat = UNIX_ERROR;
-    goto err_return;
+    //goto err_return;
   }
 
-  stat = pthread_detach( priv_handle->os_thread_id );
-  if ( stat ) {
-    ret_stat = UNIX_ERROR;
-    goto err_return;
+  if ( priv_handle->process_active ) {
+    stat = pthread_detach( priv_handle->os_thread_id );
+    //if ( stat ) {
+    //  ret_stat = UNIX_ERROR;
+    //  goto err_return;
+    //}
   }
 
   free( priv_handle );
+  priv_handle = NULL;
 
-  return THR_SUCCESS;
+  return ret_stat;
 
 err_return:
   return ret_stat;
@@ -285,15 +292,18 @@ int stat, ret_stat;
   priv_thr_lock = (THREAD_LOCK_PTR) handle;
   if ( !priv_thr_lock ) return THR_BADPARAM;
 
+  ret_stat = THR_SUCCESS;
+
   stat = pthread_mutex_destroy( &priv_thr_lock->mutex );
   if ( stat ) {
     ret_stat = UNIX_ERROR;
-    goto err_return;
+    //goto err_return;
   }
 
   free( priv_thr_lock );
+  priv_thr_lock = NULL;
 
-  return THR_SUCCESS;
+  return ret_stat;
 
 err_return:
   return ret_stat;
@@ -320,6 +330,8 @@ int ret_stat, stat;
     ret_stat = UNIX_ERROR;
     goto err_return;
   }
+
+  priv_handle->process_active = 0;
 
   return THR_SUCCESS;
 
@@ -420,6 +432,8 @@ int ret_stat, stat;
     goto err_return;
   }
 
+  priv_handle->process_active = 1;
+
   return THR_SUCCESS;
 
 err_return:
@@ -488,6 +502,8 @@ void *child_stat;
   stat = pthread_join( priv_handle->os_thread_id, (void *) &child_stat );
   if ( stat ) return UNIX_ERROR;
 
+  priv_handle->process_active = 0;
+
   return THR_SUCCESS;
 
 }
@@ -517,6 +533,8 @@ void *child_stat;
 
     stat = pthread_join( priv_handle->os_thread_id, (void *) &child_stat );
     if ( stat ) return UNIX_ERROR;
+
+    priv_handle->process_active = 0;
 
   }
   else {
@@ -861,6 +879,7 @@ int stat;
   stat = pthread_cond_destroy( &priv_handle->cv );
 
   free( priv_handle );
+  priv_handle = NULL;
 
   pthread_exit( retval ); // this never returns
 

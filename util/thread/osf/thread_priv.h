@@ -30,6 +30,7 @@ typedef struct thread_id_tag {
   cma_t_thread os_thread_id;
   float timer_tick;
   void *application_data;
+  int process_active;
 } THREAD_ID_TYPE;
 typedef THREAD_ID_TYPE *THREAD_ID_PTR;
 
