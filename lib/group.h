@@ -365,6 +365,7 @@ int undoFlip (
   int h );
 
 int startDrag (
+  XButtonEvent *be,
   int x,
   int y
 );

@@ -8823,7 +8823,7 @@ activeGraphicClass *ptr;
 
           // only the highest object (with a non-blank pv) may participate
           if ( cur->node->atLeastOneDragPv( be->x, be->y ) ) {
-            action = cur->node->startDrag( be->x, be->y );
+            action = cur->node->startDrag( be, be->x, be->y );
             if ( action ) {
               foundAction = 1;
               break; // out of while loop

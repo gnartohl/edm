@@ -2473,6 +2473,7 @@ int stat;
 }
 
 int activeGroupClass::startDrag (
+  XButtonEvent *be,
   int x,
   int y )
 {
@@ -2490,7 +2491,7 @@ int stat = 0;
          ( y < cur->node->getY1() ) ) {
 
       if ( cur->node->atLeastOneDragPv( x, y ) ) {
-        stat = cur->node->startDrag( x, y );
+        stat = cur->node->startDrag( be, x, y );
         if ( stat ) break;
       }
 

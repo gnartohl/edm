@@ -3081,13 +3081,13 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
 
 
 int activeGraphicClass::startDrag (
+  XButtonEvent *be,
   int x,
   int y ) {
 
 Atom expList[1];
 int n;
 Arg args[10];
-XMotionEvent dragEvent;
 
   Widget icon = mkDragIcon(actWin->executeWidget, this);
   if ( !icon ) return 0;
@@ -3101,14 +3101,7 @@ XMotionEvent dragEvent;
   XtSetArg( args[n], XmNsourcePixmapIcon, icon ); n++;
   XtSetArg( args[n], XmNclientData, this ); n++;
     
-  memset( (char *) &dragEvent, 0, sizeof(dragEvent) );
-  dragEvent.x = (short) x;
-  dragEvent.y = (short) y;
-  dragEvent.x_root = (short) actWin->x + x;
-  dragEvent.y_root = (short) actWin->y + y;
-  dragEvent.type = MotionNotify;
-
-  dc = XmDragStart( actWin->executeWidget, (XEvent *) &dragEvent,
+  dc = XmDragStart( actWin->executeWidget, (XEvent *) be,
    args, n );
   XtAddCallback( dc, XmNdragDropFinishCallback, dragFin, this );
 

@@ -889,6 +889,7 @@ virtual int selectDragValue (
   int y );
 
 virtual int startDrag (
+  XButtonEvent *be,
   int x,
   int y );
 
