@@ -85,7 +85,7 @@ edmStripClass::~edmStripClass()
     {
         if (pv[i])
         {
-            pv[i]->remove_status_callback(pv_status_callback, this);
+            pv[i]->remove_conn_state_callback(pv_conn_state_callback, this);
             pv[i]->remove_value_callback(pv_value_callback, this);
             pv[i]->release();
             pv[i] = 0;
@@ -108,7 +108,6 @@ const char *edmStripClass::PVName(size_t i, bool expanded)
 // --------------------------------------------------------
 int edmStripClass::save(FILE *f)
 {
-    int index;
     // Version, bounding box
     fprintf(f, "%-d %-d %-d\n",
             STRIP_MAJOR, STRIP_MINOR, STRIP_RELEASE);
@@ -116,36 +115,34 @@ int edmStripClass::save(FILE *f)
     fprintf(f, "%-d\n", y);
     fprintf(f, "%-d\n", w);
     fprintf(f, "%-d\n", h);
+
     // PV Names & color
     fprintf(f, "%-d\n", num_pvs);
     for (size_t i=0; i<num_pvs; ++i)
     {
         writeStringToFile(f, (char *)PVName(i));
-        index = pv_color[i].pixelIndex();
-        fprintf(f, "%-d\n", index);
-        index = use_pv_time[i] ? 1 : 0;
-        fprintf(f, "%-d\n", index);
+        writeStringToFile(f, actWin->ci->colorName(pv_color[i]));
+        fprintf(f, "%-d\n", (int)(use_pv_time[i] ? 1 : 0));
     }
     fprintf(f, "%.1f\n", seconds);
     line_width.write(f);
-    index = bgColor;
-    fprintf(f, "%-d\n", index);
-    index = textColor;
-    fprintf(f, "%-d\n", index);
-    index = fgColor;
-    fprintf(f, "%-d\n", index);
+
+    writeStringToFile(f, actWin->ci->colorName(bgColor));
+    writeStringToFile(f, actWin->ci->colorName(textColor));
+    writeStringToFile(f, actWin->ci->colorName(fgColor));
+    
     writeStringToFile(f, font_tag);
     fprintf(f, "%-d\n", alignment);
     
     return 1;
 }
 
-int edmStripClass::createFromFile(FILE *f, char *name,
+int edmStripClass::createFromFile(FILE *f, char *filename,
                                   activeWindowClass *_actWin)
 {
     int major, minor, release;
     int index;
-    char oneName[39+1];
+    char name[100];
 
     actWin = _actWin;
     // Version, bounding box
@@ -166,12 +163,18 @@ int edmStripClass::createFromFile(FILE *f, char *name,
     }
     for (size_t i=0; i<num_pvs; ++i)
     {
-        readStringFromFile(oneName, 39, f); actWin->incLine();
-        pv_name[i].setRaw(oneName);
+        readStringFromFile(name, 39, f); actWin->incLine();
+        pv_name[i].setRaw(name);
 
-        fscanf(f, "%d\n", &index ); actWin->incLine();
-        pv_color[i].setColorIndex(index, actWin->ci);
-
+        if (major < 3)
+        {
+            fscanf(f, "%d\n", &pv_color[i]); actWin->incLine();
+        }
+        else
+        {
+            readStringFromFile(name, 99, f); actWin->incLine();
+            pv_color[i] = actWin->ci->colorIndexByName(name);
+        }
         fscanf(f, "%d\n", &index ); actWin->incLine();
         use_pv_time[i] = index != 0;
     }
@@ -179,10 +182,17 @@ int edmStripClass::createFromFile(FILE *f, char *name,
 
     line_width.read(f); actWin->incLine();
 
-    fscanf(f, "%d\n", &index ); actWin->incLine();
-    bgColor = index;
-    if (major >= 2)
+    if (major < 2)
     {
+        fscanf(f, "%d\n", &index ); actWin->incLine();
+        bgColor = index;
+        textColor = actWin->defaultTextFgColor;
+        fgColor   = actWin->defaultFg1Color;
+    }
+    else if (major < 3)
+    {
+        fscanf(f, "%d\n", &index ); actWin->incLine();
+        bgColor = index;
         fscanf(f, "%d\n", &index ); actWin->incLine();
         textColor = index;
         fscanf(f, "%d\n", &index ); actWin->incLine();
@@ -190,8 +200,12 @@ int edmStripClass::createFromFile(FILE *f, char *name,
     }
     else
     {
-        textColor = actWin->defaultTextFgColor;
-        fgColor   = actWin->defaultFg1Color;
+        readStringFromFile(name, 99, f); actWin->incLine();
+        bgColor = actWin->ci->colorIndexByName(name);
+        readStringFromFile(name, 99, f); actWin->incLine();
+        textColor = actWin->ci->colorIndexByName(name);
+        readStringFromFile(name, 99, f); actWin->incLine();
+        fgColor = actWin->ci->colorIndexByName(name);
     }
     
     readStringFromFile(font_tag, 63, f); actWin->incLine();
@@ -226,9 +240,6 @@ static int default_RGB[][3] =
 int edmStripClass::createInteractive(activeWindowClass *aw_obj,
                                      int _x, int _y, int _w, int _h)
 {   // required
-
-  int index;
-
     actWin = (activeWindowClass *) aw_obj;
     x = _x; y = _y; w = _w; h = _h;
 
@@ -239,8 +250,7 @@ int edmStripClass::createInteractive(activeWindowClass *aw_obj,
                                            default_RGB[i][1],
                                            default_RGB[i][2],
                                            &pixel);
-        index = actWin->ci->pixIndex( pixel );
-        pv_color[i].setColorIndex(index, actWin->ci);
+        pv_color[i] = actWin->ci->pixIndex(pixel);
     }
     bgColor = actWin->defaultBgColor;
     textColor = actWin->defaultTextFgColor;
@@ -291,7 +301,7 @@ int edmStripClass::genericEdit() // create Property Dialog
     for (i=0; i<num_pvs; ++i)
     {
         strncpy(buf_pv_name[i], PVName(i), 39);
-        buf_pv_color[i] = pv_color[i].pixelIndex();
+        buf_pv_color[i] = pv_color[i];
         buf_use_pv_time[i] = use_pv_time[i] ? 1 : 0;
     }
     buf_seconds = seconds;
@@ -357,7 +367,7 @@ int edmStripClass::draw()  // render the edit-mode image
     int ty = y;
     for (size_t i=0; i<num_pvs; ++i)
     {
-        gcc.setFG(pv_color[i].pixelColor());
+        gcc.setFG(actWin->ci->pix(pv_color[i]));
         const char *text = PVName(i);
         size_t len = strlen(text);
         ty += fontAscent + 2*fontDescent;
@@ -421,7 +431,7 @@ void edmStripClass::edit_update(Widget w, XtPointer client,XtPointer call)
     for (size_t i=0; i<num_pvs; ++i)
     {
         me->pv_name[i].setRaw(me->buf_pv_name[i]);
-        me->pv_color[i].setColorIndex(me->buf_pv_color[i], me->actWin->ci);
+        me->pv_color[i] = me->buf_pv_color[i];
         me->use_pv_time[i] = me->buf_use_pv_time[i] != 0;
     }
     me->seconds = me->buf_seconds;
@@ -612,13 +622,13 @@ int edmStripClass::activate(int pass, void *ptr)
             }
             XtMapWidget(plot_widget);
             color = SciPlotStoreAllocatedColor(plot_widget,
-             actWin->ci->pix(bgColor));
+                                               actWin->ci->pix(bgColor));
             SciPlotSetBackgroundColor(plot_widget, color);
             color = SciPlotStoreAllocatedColor(plot_widget,
-             actWin->ci->pix(textColor));
+                                               actWin->ci->pix(textColor));
             SciPlotSetTextColor(plot_widget, color);
             color = SciPlotStoreAllocatedColor(plot_widget,
-             actWin->ci->pix(fgColor));
+                                               actWin->ci->pix(fgColor));
             SciPlotSetForegroundColor(plot_widget, color);
 
             xlist = (double *)calloc(strip_data->getBucketCount()*3,
@@ -643,7 +653,7 @@ int edmStripClass::activate(int pass, void *ptr)
                                                 xlist, ylist[i],
                                                 (char *)PVName(i, true));
                     color = SciPlotStoreAllocatedColor(
-                        plot_widget, pv_color[i].pixelColor());
+                        plot_widget, actWin->ci->pix(pv_color[i]));
                     SciPlotListSetStyle(plot_widget, list_id[i],
                                         color, XtMARKER_NONE,
                                         color, XtLINE_SOLID);
@@ -696,7 +706,7 @@ int edmStripClass::activate(int pass, void *ptr)
                     pv[i] = the_PV_Factory->create(PVName(i, true));
                     if (pv[i])
                     {
-                        pv[i]->add_status_callback(pv_status_callback, this);
+                        pv[i]->add_conn_state_callback(pv_conn_state_callback, this);
                         pv[i]->add_value_callback(pv_value_callback, this);
                     }
                 }
@@ -723,7 +733,7 @@ int edmStripClass::deactivate(int pass)
             {
                 if (pv[i])
                 {
-                    pv[i]->remove_status_callback(pv_status_callback, this);
+                    pv[i]->remove_conn_state_callback(pv_conn_state_callback, this);
                     pv[i]->remove_value_callback(pv_value_callback, this);
                     pv[i]->release();
                     pv[i] = 0;
@@ -832,7 +842,7 @@ int edmStripClass::drawActive()
     for (channel=0; channel<num_pvs; ++channel)
     {
         l_ymid = -1;
-        XSetForeground(dis, gc, pv_color[channel].pixelColor());
+        XSetForeground(dis, gc, pv_color[channel]);
         for (i=0; i<strip_data->getBucketCount(); ++i)
         {
             b = strip_data->getBucket(channel, i);
@@ -873,7 +883,7 @@ int edmStripClass::eraseActive()
     return 1;
 }
 
-void edmStripClass::pv_status_callback(ProcessVariable *cb_pv, void *userarg)
+void edmStripClass::pv_conn_state_callback(ProcessVariable *cb_pv, void *userarg)
 {
     if (! cb_pv)
         return;

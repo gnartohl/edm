@@ -160,7 +160,7 @@ void EPICS_ProcessVariable::ca_connect_callback(
     else
     {
         me->is_connected = false;
-        me->do_status_callbacks();
+        me->do_conn_state_callbacks();
     }
 }
 
@@ -185,7 +185,7 @@ void EPICS_ProcessVariable::ca_ctrlinfo_callback(
             fprintf(stderr, "CA add event error('%s'): %s\n",
                     me->get_name(), ca_message(stat));
     }
-    me->do_status_callbacks();
+    me->do_conn_state_callbacks();
     me->do_value_callbacks();
 }
 

@@ -44,7 +44,7 @@ void edmTextupdateClass::clone(const edmTextupdateClass *rhs,
     pv_exp_str.setRaw(rhs->pv_exp_str.rawString);
     displayMode = rhs->displayMode;
     precision = rhs->precision;
-    lineColor.setColorIndex(rhs->lineColor.pixelIndex(), actWin->ci);
+    textColor.setColorIndex(rhs->textColor.pixelIndex(), actWin->ci);
     line_width = rhs->line_width;
     fillColor.setColorIndex(rhs->fillColor.pixelIndex(), actWin->ci);
     is_filled = rhs->is_filled;
@@ -61,7 +61,7 @@ edmTextupdateClass::~edmTextupdateClass()
 {
     if (pv)
     {
-        pv->remove_status_callback(pv_status_callback, this);
+        pv->remove_conn_state_callback(pv_conn_state_callback, this);
         pv->remove_value_callback(pv_value_callback, this);
         pv->release();
         pv = 0;
@@ -89,7 +89,6 @@ const char *edmTextupdateClass::getExpandedPVName()
 // --------------------------------------------------------
 int edmTextupdateClass::save(FILE *f)
 {
-    int index;
     // Version, bounding box
     fprintf(f, "%-d %-d %-d\n",
             TEXT_MAJOR, TEXT_MINOR, TEXT_RELEASE);
@@ -102,26 +101,25 @@ int edmTextupdateClass::save(FILE *f)
     // Mode, precision
     fprintf(f, "%-d\n", (int) displayMode);
     fprintf(f, "%-d\n", (int) precision);
-    // linecolor index
-    index = lineColor.pixelIndex();
-    fprintf(f, "%-d\n", index);
-    // fillcolor index & mode
-    index = fillColor.pixelIndex();
-    fprintf(f, "%-d\n", index);
+    // textcolor, fillcolor
+    writeStringToFile(f, actWin->ci->colorName(textColor.pixelIndex()));
+    writeStringToFile(f, actWin->ci->colorName(fillColor.pixelIndex()));
+    // fill mode, fonts
     fprintf(f, "%-d\n", is_filled);
     writeStringToFile(f, fontTag);
     fprintf(f, "%-d\n", alignment);
     line_width.write(f);
-    
+
+   
     return 1;
 }
 
-int edmTextupdateClass::createFromFile(FILE *f, char *name,
+int edmTextupdateClass::createFromFile(FILE *f, char *filename,
                                        activeWindowClass *_actWin)
 {
     int major, minor, release;
     int index;
-    char oneName[39+1];
+    char name[100];
 
     actWin = _actWin;
     // Version, bounding box
@@ -132,8 +130,8 @@ int edmTextupdateClass::createFromFile(FILE *f, char *name,
     fscanf(f, "%d\n", &h); actWin->incLine();
     this->initSelectBox(); // call after getting x,y,w,h
     // PV Name
-    readStringFromFile(oneName, 39, f); actWin->incLine();
-    pv_exp_str.setRaw(oneName);
+    readStringFromFile(name, 39, f); actWin->incLine();
+    pv_exp_str.setRaw(name);
     // Added in 1.1.0: displayMode & precision
     if (major == 1  && minor == 0)
     {
@@ -150,12 +148,26 @@ int edmTextupdateClass::createFromFile(FILE *f, char *name,
         fscanf(f, "%d\n", &index ); actWin->incLine();
         precision = index;
     }
-    // linecolor index
-    fscanf(f, "%d\n", &index ); actWin->incLine();
-    lineColor.setColorIndex(index, actWin->ci);
-    // fillcolor index & mode
-    fscanf(f, "%d\n", &index ); actWin->incLine();
-    fillColor.setColorIndex(index, actWin->ci);
+    // colors
+    // Changed for 2.0.0: Use names
+    if (major < 2)
+    {
+        fscanf(f, "%d\n", &index ); actWin->incLine();
+        textColor.setColorIndex(index, actWin->ci);
+        // fillcolor index & mode
+        fscanf(f, "%d\n", &index ); actWin->incLine();
+        fillColor.setColorIndex(index, actWin->ci);
+    }
+    else
+    {
+        readStringFromFile(name, 99, f); actWin->incLine();
+        textColor.setColorIndex(actWin->ci->colorIndexByName(name),
+                                actWin->ci);
+        readStringFromFile(name, 99, f); actWin->incLine();
+        fillColor.setColorIndex(actWin->ci->colorIndexByName(name),
+                                actWin->ci);
+    }
+
     fscanf(f, "%d\n", &is_filled); actWin->incLine();
     readStringFromFile(fontTag, 63, f); actWin->incLine();
     fscanf( f, "%d\n", &alignment ); actWin->incLine();
@@ -168,7 +180,9 @@ int edmTextupdateClass::createFromFile(FILE *f, char *name,
         line_width.read(f); actWin->incLine();
     }
     else
+    {
         line_width.setNull(1);
+    }
     
     return 1;
 }
@@ -188,7 +202,7 @@ int edmTextupdateClass::createInteractive(activeWindowClass *aw_obj,
     // Honor display scheme
     displayMode = dm_default;
     precision = 0;
-    lineColor.setColorIndex(actWin->defaultFg1Color, actWin->ci);
+    textColor.setColorIndex(actWin->defaultFg1Color, actWin->ci);
     line_width.setNull(1);
     fillColor.setColorIndex(actWin->defaultBgColor, actWin->ci);
     strcpy(fontTag, actWin->defaultCtlFontTag);
@@ -240,7 +254,7 @@ int edmTextupdateClass::genericEdit() // create Property Dialog
     buf_displayMode = (int)displayMode;
     buf_precision   = precision;
     buf_line_width  = line_width;
-    bufLineColor    = lineColor.pixelIndex();
+    bufTextColor    = textColor.pixelIndex();
     bufFillColor    = fillColor.pixelIndex();
     bufIsFilled     = is_filled;
 
@@ -260,7 +274,7 @@ int edmTextupdateClass::genericEdit() // create Property Dialog
     ef.addOption("Mode", "default|decimal|hex", &buf_displayMode);
     ef.addTextField("Precision", 30, &buf_precision);
     ef.addTextField("Line Width", 30, &buf_line_width);
-    ef.addColorButton("Fg Color", actWin->ci, &lineCb, &bufLineColor);
+    ef.addColorButton("Fg Color", actWin->ci, &textCb, &bufTextColor);
     ef.addToggle("Filled?", &bufIsFilled);
     ef.addColorButton("Bg Color", actWin->ci, &fillCb, &bufFillColor);
     ef.addFontMenu("Font", actWin->fi, &fm, fontTag );
@@ -282,7 +296,7 @@ void edmTextupdateClass::redraw_text(Display *dis,
         gcc.setFG(fillColor.pixelColor());
         XFillRectangle(dis, drw, gc, x, y, w, h);
     }
-    gcc.setFG(lineColor.pixelColor());
+    gcc.setFG(textColor.pixelColor());
     // Border
     if (!line_width.isNull())
     {
@@ -406,7 +420,7 @@ void edmTextupdateClass::edit_update(Widget w, XtPointer client,XtPointer call)
     me->displayMode = (DisplayMode) me->buf_displayMode;
     me->precision   = me->buf_precision;
     me->line_width  = me->buf_line_width;
-    me->lineColor.setColorIndex(me->bufLineColor, me->actWin->ci);
+    me->textColor.setColorIndex(me->bufTextColor, me->actWin->ci);
     me->fillColor.setColorIndex(me->bufFillColor, me->actWin->ci);
     me->is_filled   = me->bufIsFilled;
 
@@ -477,7 +491,7 @@ void edmTextupdateClass::changeDisplayParams(unsigned int flag,
                                              int botShadowColor)
 {
     if (flag & ACTGRF_FG1COLOR_MASK)
-        lineColor.setColorIndex(fg1Color, actWin->ci);
+        textColor.setColorIndex(fg1Color, actWin->ci);
     if (flag & ACTGRF_BGCOLOR_MASK)
         fillColor.setColorIndex(bgColor, actWin->ci);
     if (flag & ACTGRF_FONTTAG_MASK)
@@ -536,7 +550,7 @@ int edmTextupdateClass::activate(int pass, void *ptr)
             is_pvname_valid = strcmp(getExpandedPVName(), "") != 0;
             if (is_pvname_valid)
             {
-                lineColor.setConnectSensitive();
+                textColor.setConnectSensitive();
                 fillColor.setConnectSensitive();
             }
             break;
@@ -548,7 +562,7 @@ int edmTextupdateClass::activate(int pass, void *ptr)
                 pv = the_PV_Factory->create(getExpandedPVName());
                 if (pv)
                 {
-                    pv->add_status_callback(pv_status_callback, this);
+                    pv->add_conn_state_callback(pv_conn_state_callback, this);
                     pv->add_value_callback(pv_value_callback, this);
                 }
             }
@@ -567,7 +581,7 @@ int edmTextupdateClass::deactivate(int pass)
         case 1: // disconnect
             if (pv)
             {
-                pv->remove_status_callback(pv_status_callback, this);
+                pv->remove_conn_state_callback(pv_conn_state_callback, this);
                 pv->remove_value_callback(pv_value_callback, this);
                 pv->release();
                 pv = 0;
@@ -638,16 +652,16 @@ int edmTextupdateClass::eraseActive()
     return 1;
 }
 
-void edmTextupdateClass::pv_status_callback(ProcessVariable *pv, void *userarg)
+void edmTextupdateClass::pv_conn_state_callback(ProcessVariable *pv, void *userarg)
 {
     edmTextupdateClass *me = (edmTextupdateClass *)userarg;
     me->actWin->appCtx->proc->lock();
     if (me->is_executing)
     {
         if (pv && pv->is_valid())
-            me->lineColor.setConnected();
+            me->textColor.setConnected();
         else
-            me->lineColor.setDisconnected();
+            me->textColor.setDisconnected();
         me->bufInvalidate();
         me->actWin->addDefExeNode(me->aglPtr);
     }
@@ -708,7 +722,7 @@ int edmTextentryClass::activate(int pass, void *ptr)
             is_pvname_valid = strcmp(getExpandedPVName(), "") != 0;
             if (is_pvname_valid)
             {
-                lineColor.setConnectSensitive();
+                textColor.setConnectSensitive();
                 fillColor.setConnectSensitive();
             }
 
@@ -722,7 +736,7 @@ int edmTextentryClass::activate(int pass, void *ptr)
                                              XtNheight,(XtArgVal)h,
                                              XtNwidth, (XtArgVal)w,
                                              XmNforeground, (XtArgVal)
-                                                 lineColor.pixelColor(),
+                                                 textColor.pixelColor(),
                                              XmNbackground, (XtArgVal)
                                                  fillColor.pixelColor(),
                                              XmNfontList, (XtArgVal)fonts,
@@ -754,7 +768,7 @@ int edmTextentryClass::activate(int pass, void *ptr)
                 pv = the_PV_Factory->create(getExpandedPVName());
                 if (pv)
                 {
-                    pv->add_status_callback(pv_status_callback, this);
+                    pv->add_conn_state_callback(pv_conn_state_callback, this);
                     pv->add_value_callback(pv_value_callback, this);
                 }
             }
@@ -773,7 +787,7 @@ int edmTextentryClass::deactivate(int pass)
         case 1: // disconnect
             if (pv)
             {
-                pv->remove_status_callback(pv_status_callback, this);
+                pv->remove_conn_state_callback(pv_conn_state_callback, this);
                 pv->remove_value_callback(pv_value_callback, this);
                 pv->release();
                 pv = 0;
@@ -891,7 +905,7 @@ void edmTextentryClass::text_verify_callback(Widget w,
             case XtCallbackHasNone:
                 XtAddCallback(w, XmNlosingFocusCallback,
                               (XtCallbackProc)text_unfocus_callback, me);
-                me->editing = true; 
+                me->editing = true;
                 break;
             case XtCallbackHasSome:
                 break;

@@ -2,6 +2,10 @@
 // EDM strip Widget
 //
 // kasemir@lanl.gov
+//
+// Changes:
+// 3.0.0  Use color name, fall back to index
+// 2.0.0  Add text & line color properties
 
 #ifndef __STRIP_H__
 #define __STRIP_H__
@@ -14,10 +18,9 @@
 #include "strip_data.h"
 
 #define STRIP_CLASSNAME "StripClass"
-#define STRIP_MAJOR 2
+#define STRIP_MAJOR 3
 #define STRIP_MINOR 0
-#define STRIP_RELEASE 1
-
+#define STRIP_RELEASE 0
 
 class edmStripClass : public activeGraphicClass
 {
@@ -87,7 +90,7 @@ private:
     // Properties
     enum { num_pvs=6 }; // fixed for now
     expStringClass pv_name[num_pvs];
-    pvColorClass pv_color[num_pvs];
+    int pv_color[num_pvs];
     bool use_pv_time[num_pvs];
     double seconds;
     efInt line_width;
@@ -136,7 +139,7 @@ private:
     static void edit_cancel_delete(Widget w, XtPointer client,
                                    XtPointer call);
     // CA callbacks
-    static void pv_status_callback(ProcessVariable *pv, void *userarg);
+    static void pv_conn_state_callback(ProcessVariable *pv, void *userarg);
     static void pv_value_callback(ProcessVariable *pv, void *userarg);
 
     // X callbacks

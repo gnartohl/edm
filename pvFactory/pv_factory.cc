@@ -100,18 +100,17 @@ const char *ProcessVariable::get_enum(size_t i) const
 const char *ProcessVariable::get_units() const
 {   return ""; }
 
-void ProcessVariable::add_status_callback(Callback func, void *userarg)
-{
-    // TODO: search for existing one?
-    status_callbacks.insert(new CallbackInfo(func, userarg));
+void ProcessVariable::add_conn_state_callback(Callback func, void *userarg)
+{   // TODO: search for existing one?
+    conn_state_callbacks.insert(new CallbackInfo(func, userarg));
 }
 
-void ProcessVariable::remove_status_callback(Callback func, void *userarg)
+void ProcessVariable::remove_conn_state_callback(Callback func, void *userarg)
 {
     CallbackInfo info(func, userarg);
-    CallbackInfoHash::iterator entry = status_callbacks.find(&info);
-    if (entry != status_callbacks.end())
-        status_callbacks.erase(entry);
+    CallbackInfoHash::iterator entry = conn_state_callbacks.find(&info);
+    if (entry != conn_state_callbacks.end())
+        conn_state_callbacks.erase(entry);
 }
 
 void ProcessVariable::add_value_callback(Callback func, void *userarg)
@@ -124,14 +123,14 @@ void ProcessVariable::remove_value_callback(Callback func, void *userarg)
 {
     CallbackInfo info(func, userarg);
     CallbackInfoHash::iterator entry = value_callbacks.find(&info);
-    if (entry != status_callbacks.end())
+    if (entry != value_callbacks.end())
         value_callbacks.erase(entry);
 }
 
-void ProcessVariable::do_status_callbacks()
+void ProcessVariable::do_conn_state_callbacks()
 {
-    for (CallbackInfoHash::iterator entry = status_callbacks.begin();
-         entry != status_callbacks.end();
+    for (CallbackInfoHash::iterator entry = conn_state_callbacks.begin();
+         entry != conn_state_callbacks.end();
          ++entry)
         (*entry)->call(this);
 }

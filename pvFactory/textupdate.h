@@ -2,6 +2,10 @@
 // EDM textupdate Widget
 //
 // kasemir@lanl.gov
+//
+// Changes:
+// 2.0.0  Use color name, fall back to index
+// 1.1.0: Added displayMode & precision
 
 #ifndef __TEXTUPDATE_H__
 #define __TEXTUPDATE_H__
@@ -11,9 +15,9 @@
 #include "pv_factory.h"
 
 #define TEXTUPDATE_CLASSNAME "TextupdateClass"
-#define TEXTENTRY_CLASSNAME "TextentryClass"
-#define TEXT_MAJOR 1
-#define TEXT_MINOR 1
+#define TEXTENTRY_CLASSNAME  "TextentryClass"
+#define TEXT_MAJOR 2
+#define TEXT_MINOR 0
 #define TEXT_RELEASE 0
 
 class edmTextupdateClass : public activeGraphicClass
@@ -94,7 +98,7 @@ protected:
     DisplayMode displayMode;
     int precision;
     
-    pvColorClass lineColor;
+    pvColorClass textColor;
     efInt line_width;
     pvColorClass fillColor;
     int is_filled;
@@ -111,9 +115,9 @@ protected:
     char bufPvName[39+1];
     int buf_displayMode;
     int buf_precision;
-    int bufLineColor;
+    int bufTextColor;
     efInt buf_line_width;
-    colorButtonClass lineCb;
+    colorButtonClass textCb;
     int bufFillColor;
     colorButtonClass fillCb;
     int bufIsFilled;
@@ -137,7 +141,7 @@ protected:
     static void edit_cancel_delete(Widget w, XtPointer client,
                                    XtPointer call);
     // CA callbacks
-    static void pv_status_callback(ProcessVariable *pv, void *userarg);
+    static void pv_conn_state_callback(ProcessVariable *pv, void *userarg);
     static void pv_value_callback(ProcessVariable *pv, void *userarg);
 };
 

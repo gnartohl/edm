@@ -39,7 +39,7 @@ Simple text entry widget.
 (in SciPlot.* lin_interpol.h strip*)
 Strip-chart based on SciPlot.
 
-Experiemental "CA Time" option:
+Experimental "CA Time" option:
 When checked, the time stamp from the IOC is used.
 If the IOC's time is out of sync with the host,
 you see nothing!

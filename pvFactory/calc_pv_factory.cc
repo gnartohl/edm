@@ -343,7 +343,7 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
             arg_pv[i] = the_PV_Factory->create(arg_name[i]);
             if (arg_pv[i])
             {
-                arg_pv[i]->add_status_callback(status_callback, this);
+                arg_pv[i]->add_conn_state_callback(status_callback, this);
                 arg_pv[i]->add_value_callback(value_callback, this);
             }
             else
@@ -370,7 +370,7 @@ CALC_ProcessVariable::~CALC_ProcessVariable()
         if (arg_pv[i])
         {
             arg_pv[i]->remove_value_callback(value_callback, this);
-            arg_pv[i]->remove_status_callback(status_callback, this);
+            arg_pv[i]->remove_conn_state_callback(status_callback, this);
             arg_pv[i]->release();
             arg_pv[i] = 0;
         }
@@ -386,7 +386,7 @@ void CALC_ProcessVariable::status_callback(ProcessVariable *pv, void *userarg)
            (const char *)(me->is_valid() ? "valid" : "invalid"));
 #endif
     me->recalc();
-    me->do_status_callbacks();
+    me->do_conn_state_callbacks();
 }
 
 void CALC_ProcessVariable::value_callback(ProcessVariable *pv, void *userarg)

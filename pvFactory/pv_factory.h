@@ -19,14 +19,14 @@
 // The actual PV_Factory that creates the ProcessVariable
 // might be EPICS_PV_Factory or CALC_PV_Factory or ...
 //
-// See epics_pv_factory for an example implementation
-// that uses EPICS ChannelAccess process variables.
+// See epics_pv_factory, calc_pv_factory, ...
+// for example implementations.
 class PV_Factory
 {
 public:
     PV_Factory();
     virtual ~PV_Factory();
-    // Result is referenced once, release when no longer needed.
+    // Result is referenced once, call release() when no longer needed.
     virtual class ProcessVariable *create(const char *PV_name);
 };
 
@@ -37,12 +37,31 @@ extern PV_Factory *the_PV_Factory;
 
 // ProcessVariable:
 // Created via PV_Factory, reference-counted.
+//
 // Will handle
 // * connection to ChannelAccess (or other control system),
 // * initial request for value information (DBR_CTRL_<native type> for EPICS),
 // * subscription to native-typed(!) value of the channel.
 // User can query the current state, value, control/display info
 // and add/remove callbacks if interested.
+//
+// Two types of callback are supported:
+// 1) "value"
+//    Indicates a change in value, status/severity or time stamp.
+//    This is expected to happen quite often,
+//    widgets will require some redraw to reflect the new value.
+// 2) "conn_state"
+//    Indicates a change in "connection" or "state".
+//    Check is_valid():
+//    false - PV got disconnected.
+//            Widget might display PV name to show what got disconnected
+//    true  - PV has new configuration
+//            (units, display/warning/alarm limits, precision, ...)
+//            This event is issued with the initial connection
+//            as well as with each re-connection.
+//            Some systems might allow online configuration changes.
+//            In any case the widget might need a full redraw
+//            to reflect new axes limits etc.
 
 // status and severity for now match the EPICS model
 // as defined in base/include/alarm.h:
@@ -63,14 +82,22 @@ public:
     // Implies 1) connected 2) have received valid control info
     virtual bool is_valid() const = 0;
 
-    // Called on change in "is_valid" status
+    // Called on change in value, see above for details
     typedef void (*Callback)(ProcessVariable *pv, void *userarg);
-    void add_status_callback(Callback func, void *userarg);
-    void remove_status_callback(Callback func, void *userarg);
-    
-    // Called on change in value
     void add_value_callback(Callback func, void *userarg);
     void remove_value_callback(Callback func, void *userarg);
+
+    // Called on change in "is_valid" status, see above
+    void add_conn_state_callback(Callback func, void *userarg);
+    void remove_conn_state_callback(Callback func, void *userarg);
+
+#ifdef DEPRECATED
+    // Deprecated: name easily confused with status property
+    void add_status_callback(Callback func, void *userarg)
+    {   add_conn_state_callback(func, userarg);}
+    void remove_status_callback(Callback func, void *userarg);
+    {   remove_conn_state_callback(func, userarg); }
+#endif    
 
     // Type information for this ProcessVariable
     typedef struct
@@ -158,10 +185,16 @@ protected:
     enum { HashTableSize=43 };
     typedef Hashtable<CallbackInfo,offsetof(CallbackInfo,node),HashTableSize>
             CallbackInfoHash;
-    CallbackInfoHash status_callbacks;
     CallbackInfoHash value_callbacks;
-    void do_status_callbacks();
+    CallbackInfoHash conn_state_callbacks;
     void do_value_callbacks();
+    void do_conn_state_callbacks();
+#ifdef DEPRECATED
+    void do_status_callbacks() 
+    {   do_conn_state_callbacks(); }
+#endif
+    
+        
 private:
     char *name;            // PV name
     int refcount;          // reference count, deleted on <=0
