@@ -2847,13 +2847,13 @@ err_return:
 
   XSetWindowColormap( display, XtWindow(pvList.top()), ci.getColorMap() );
 
-  postNote( "Loading fonts..." );
+  postNote( appContextClass_str117 );
 
   processAllEvents( app, display );
 
   strncpy( fname, prefix, 127 );
   strncat( fname, "fonts.list", 127 );
-  opStat = fi.initFromFile( display, fname );
+  opStat = fi.initFromFile( app, display, fname );
 
   closeNote();
 

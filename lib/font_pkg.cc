@@ -461,6 +461,7 @@ sizeListPtr curSize;
 }
 
 int fontInfoClass::initFromFile (
+  XtAppContext app,
   Display *d,
   char *fileName )
 {
@@ -510,6 +511,8 @@ XFontStruct *fs;
   defFontTag[strlen(defFontTag)-1] = 0; // discard \n
 
   do {
+
+    processAllEvents( app, display );
 
     ptr = fgets ( line, 127, f );
     if ( ptr ) { // ignore blank lines

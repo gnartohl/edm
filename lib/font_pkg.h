@@ -40,6 +40,10 @@
 #define FONTINFO_NO_FONT 106
 #define FONTINFO_NO_MEM 108
 
+void processAllEvents (
+  XtAppContext app,
+  Display *d );
+
 typedef struct fontNameListTag {
   AVL_FIELDS(fontNameListTag)
   XFontStruct *fontStruct;
@@ -99,6 +103,7 @@ int fontInfoClass::addFont (
   char *name );
 
 int fontInfoClass::initFromFile (
+  XtAppContext app,
   Display *d,
   char *fileName );
 

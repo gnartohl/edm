@@ -67,5 +67,6 @@
 #define appContextClass_str114 "Help"
 #define appContextClass_str115 "On-line"
 #define appContextClass_str116 "About"
+#define appContextClass_str117 "Loading fonts..."
 
 #endif
