@@ -1496,7 +1496,7 @@ int activeMeterClass::drawActive ( void ) {
  int  farEndX, farEndY, nearEndX, nearEndY;
  char fmt[31+1];
 
-XPoint xpoints[3];
+XPoint xpoints[6];
 
   if ( !activeInitFlag ) {
     if ( needToDrawUnconnected ) {

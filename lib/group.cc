@@ -608,24 +608,28 @@ char *emptyStr = "";
   cur = head->flink;
   while( cur != head ) {
 
-    if ( strcmp( cur->node->getCreateParam(), "" ) == 0 ) {
-      strncpy( fullName, cur->node->objName(), 255 );
-      description = actWin->obj.getNameFromClass( fullName );
-      fprintf( f, "# (%s)\n", description );
-      fprintf( f, "object %s\n", cur->node->objName() );
-    }
-    else {
-      strncpy( fullName, cur->node->objName(), 255 );
-      Strncat( fullName, ":", 255 );
-      Strncat( fullName, cur->node->getCreateParam(), 255 );
-      description = actWin->obj.getNameFromClass( fullName );
-      fprintf( f, "# (%s)\n", description );
-      fprintf( f, "object %s:%s\n", cur->node->objName(),
-       cur->node->getCreateParam() );
-    }
+    if ( !cur->node->deleteRequest ) {
 
-    stat = cur->node->save( f );
-    if ( !( stat & 1 ) ) retStat = stat;
+      if ( strcmp( cur->node->getCreateParam(), "" ) == 0 ) {
+        strncpy( fullName, cur->node->objName(), 255 );
+        description = actWin->obj.getNameFromClass( fullName );
+        fprintf( f, "# (%s)\n", description );
+        fprintf( f, "object %s\n", cur->node->objName() );
+      }
+      else {
+        strncpy( fullName, cur->node->objName(), 255 );
+        Strncat( fullName, ":", 255 );
+        Strncat( fullName, cur->node->getCreateParam(), 255 );
+        description = actWin->obj.getNameFromClass( fullName );
+        fprintf( f, "# (%s)\n", description );
+        fprintf( f, "object %s:%s\n", cur->node->objName(),
+         cur->node->getCreateParam() );
+      }
+
+      stat = cur->node->save( f );
+      if ( !( stat & 1 ) ) retStat = stat;
+
+    }
 
     cur = cur->flink;
 
@@ -855,11 +859,8 @@ char *emptyStr = "";
 
   }
 
-  if ( head->flink == head ) { // we're done with tagName so use it as a
-                               // message buffer to indicate empty group
-    snprintf( tagName, 255, activeGroupClass_str3, x, y );
-    actWin->appCtx->postMessage( tagName );
-
+  if ( head->flink == head ) { // group is empty, delete it
+    this->deleteRequest = 1;
   }
 
   return stat;

@@ -2482,16 +2482,48 @@ void appContextClass::expandFileName (
   int maxSize )
 {
 
-char *gotOne;
+unsigned int i;
+int state, noPrefix;
 
   if ( index >= numPaths ) {
     strcpy( expandedName, "" );
     return;
   }
 
-  gotOne = strstr( inName, "/" );
+  // ^/ means use current directory, don't use search path
 
-  if ( gotOne ) {
+  noPrefix = 0;
+  state = 1;
+  for ( i=0; ( i<strlen(inName) ) && state; i++ ) {
+
+    switch ( state ) {
+
+    case 1: // looking for / or ^
+      if ( inName[i] == '/' ) {
+        noPrefix = 1;
+	state = 0; // exit
+      }
+      else if ( inName[i] == '^' ) {
+	state = 2;
+      }
+      else if ( inName[i] != ' ' ) {
+        state = 0; // exit
+      }
+      break;
+
+    case 2: // looking for / part of ^/
+      if ( inName[i] == '/' ) {
+        noPrefix = 1;
+        inName[i-1] = '.';
+      }
+      state = 0; // exit
+      break;
+
+    }
+
+  }
+
+  if ( noPrefix ) {
     strncpy( expandedName, inName, maxSize );
   }
   else {
@@ -2518,16 +2550,48 @@ void appContextClass::expandFileName (
   int maxSize )
 {
 
-char *gotOne;
+unsigned int i;
+int state, noPrefix;
 
   if ( index >= numPaths ) {
     strcpy( expandedName, "" );
     return;
   }
 
-  gotOne = strstr( inName, "/" );
+  // ^/ means use current directory, don't use search path
 
-  if ( gotOne ) {
+  noPrefix = 0;
+  state = 1;
+  for ( i=0; ( i<strlen(inName) ) && state; i++ ) {
+
+    switch ( state ) {
+
+    case 1: // looking for / or ^
+      if ( inName[i] == '/' ) {
+        noPrefix = 1;
+	state = 0; // exit
+      }
+      else if ( inName[i] == '^' ) {
+	state = 2;
+      }
+      else if ( inName[i] != ' ' ) {
+        state = 0; // exit
+      }
+      break;
+
+    case 2: // looking for / part of ^/
+      if ( inName[i] == '/' ) {
+        noPrefix = 1;
+        inName[i-1] = '.';
+      }
+      state = 0; // exit
+      break;
+
+    }
+
+  }
+
+  if ( noPrefix ) {
     strncpy( expandedName, inName, maxSize );
   }
   else {
