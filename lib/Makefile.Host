@@ -67,6 +67,7 @@ LIBSRCS += undo.cc
 LIBSRCS += rules.cc
 LIBSRCS += color_list.cc
 LIBSRCS += msg_dialog.cc
+LIBSRCS += loc_pv_factory.cc
 LIBSRCS += calc_pv_factory.cc
 LIBSRCS += epics_pv_factory.cc
 LIBSRCS += pv_factory.cc
