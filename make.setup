@@ -5,7 +5,7 @@
 ifeq ($(HOSTNAME), bogart)
 	FOR_WHAT=RH7_SNS_LANL
 endif
-ifeq ($(HOSTNAME), xyz)
+ifeq ($(HOSTNAME), ics-srv01)
 	FOR_WHAT=RH7_SNS_ORNL
 endif
 ifeq ($(HOSTNAME), orib36)
@@ -27,6 +27,20 @@ ifeq ($(FOR_WHAT), RH7_SNS_LANL)
 	CXXFLAGS=$(CFLAGS)
 	SL_LINK=gcc -shared -Wl
 	SL_FLAGS=-L$(EPICS)/lib/$(HOST_ARCH) -lm -lCom -lca 
+
+endif
+
+ifeq ($(FOR_WHAT), RH7_SNS_ORNL)
+	EPICS=/sns/ADE/test/epics/supTop/base/R3.13.3
+	CC=gcc
+	CXX=g++
+	CFLAGS=-g -Wall -O0 -DMOTIF -fPIC
+	CFLAGS+=-DSINGLE_THREADED=1 -DCONFIG_linuxglibc -D_REENTRANT
+	CFLAGS+=-D__solaris__=1 -D__epics__=1
+	CXXFLAGS=$(CFLAGS)
+	SL_LINK=gcc -shared -Wl
+	SL_FLAGS=-L$(EPICS)/lib/$(HOST_ARCH) -lm -lCom -lca  
+
 endif
 
 ifeq ($(FOR_WHAT), RH7_HRIBF_ORNL)
