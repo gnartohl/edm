@@ -16,13 +16,34 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+void printErrMsg (
+  const char *fileName,
+  int lineNum,
+  const char *msg );
+
 #define __gif_cc 1
+
+#include <signal.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <setjmp.h>
 
 #include "gif.h"
 #include "app_pkg.h"
 #include "act_win.h"
 
 #include "thread.h"
+
+static jmp_buf g_jump_h;
+
+void signal_handler (
+  int sig
+) {
+
+  //printf( "Got signal: sig = %-d\n", sig );
+  longjmp( g_jump_h, 1 );
+
+}
 
 static int littleEndian ( void ) {
 
@@ -369,6 +390,26 @@ int colorsAllocated = 0;
 int fileOpened = 0;
 struct stat statBuf;
 expStringClass expStr;
+struct sigaction sa, oldsa, dummysa;
+
+  // Make sure gif is accessable
+  status = setjmp( g_jump_h );
+  if ( !status ) {
+
+    sa.sa_handler = signal_handler;
+    sigemptyset( &sa.sa_mask );
+    sa.sa_flags = 0;
+
+    status = sigaction( SIGILL, &sa, &oldsa );
+    status = sigaction( SIGSEGV, &sa, &dummysa );
+
+  }
+  else {
+
+    printErrMsg( __FILE__, __LINE__, "got signal" );
+    goto sig_error_return;
+
+  }
 
   this->actWin->substituteSpecial( 127, gifFileName, name );
 
@@ -431,6 +472,10 @@ expStringClass expStr;
 
   status = DGifSlurp( gif );
   if ( !status ) {
+    goto error_return;
+  }
+
+  if ( !gif->SColorMap ) {
     goto error_return;
   }
 
@@ -835,14 +880,21 @@ expStringClass expStr;
 
   noFile = 0;
 
+  // restore default sig handler
+  status = sigaction( SIGILL, &oldsa, NULL );
+  status = sigaction( SIGSEGV, &oldsa, NULL );
+
   return 1;
 
 error_return:
 
-  // ????????????????????????????????
-  printf( "gif error return\n" );
-
   if ( fileOpened ) status = DGifCloseFile( gif );
+
+sig_error_return:
+
+  // restore default sig handler
+  status = sigaction( SIGILL, &oldsa, NULL );
+  status = sigaction( SIGSEGV, &oldsa, NULL );
 
   if ( pixelsAllocated ) {
 
@@ -870,7 +922,7 @@ error_return:
     imageData = NULL;
   }
 
-  // noFile = 1;
+  noFile = 1;
   return 0;
 
 }
