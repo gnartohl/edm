@@ -1271,7 +1271,7 @@ char title[32], *ptr;
   ef.addTextField( relatedDisplayClass_str6, 30, &buf->bufW );
   ef.addTextField( relatedDisplayClass_str7, 30, &buf->bufH );
 
-  ef.addTextField( "Label", 30, buf->bufLabel[0], 127 );
+  ef.addTextField( "Menu Label", 30, buf->bufLabel[0], 127 );
   ef.addTextField( "File", 30, buf->bufDisplayFileName[0], 127 );
   ef.addTextField( "Macros", 30, buf->bufSymbols[0], 255 );
   ef.addOption( "Mode", "Append|Replace", &buf->bufReplaceSymbols[0] );
