@@ -3520,7 +3520,7 @@ efDouble dummy;
   }
 
   if ( ( ( major == 1 ) && ( minor > 4 ) ) || ( major > 1 ) ) {
-    fscanf( d, "%d\n", &plotAreaBorder );
+    fscanf( f, "%d\n", &plotAreaBorder );
   }
 
   for ( i=numTraces; i<XYGC_K_MAX_TRACES; i++ ) {
