@@ -56,6 +56,7 @@ LIBSRCS += related_display.cc
 LIBSRCS += message_box.cc
 LIBSRCS += slider.cc
 LIBSRCS += shell_cmd.cc
+LIBSRCS += updownButton.cc
 LIBSRCS += reg_libEdmBase.cc
 
 LIBSRCS += expRect.cc
