@@ -18,11 +18,139 @@
 
 #define __dynSymbol_cc 1
 
+class undoDynSymbolOpClass;
+
 #include "dynSymbol.h"
 #include "app_pkg.h"
 #include "act_win.h"
 
 #include "thread.h"
+
+class undoDynSymbolOpClass : public undoOpClass {
+
+public:
+
+activeDynSymbolClass *dso;
+
+undoDynSymbolOpClass::undoDynSymbolOpClass ()
+{
+
+  printf( "undoDynSymbolOpClass::undoDynSymbolOpClass\n" );
+  dso = NULL;
+
+}
+
+undoDynSymbolOpClass::undoDynSymbolOpClass (
+  activeDynSymbolClass *_dso
+) {
+
+int i;
+activeGraphicListPtr head, cur, next, sourceHead, curSource;
+
+  // printf( "undoDynSymbolOpClass::undoDynSymbolOpClass\n" );
+
+  // copy display list and editable attributes from current symbol
+  dso = new activeDynSymbolClass;
+
+  // copy base class info
+  dso->x = _dso->x;
+  dso->y = _dso->y;
+  dso->w = _dso->w;
+  dso->h = _dso->h;
+  dso->sboxX = _dso->sboxX;
+  dso->sboxY = _dso->sboxY;
+  dso->sboxW = _dso->sboxW;
+  dso->sboxH = _dso->sboxH;
+  dso->orientation = _dso->orientation;
+  dso->nextToEdit = _dso->nextToEdit;
+  dso->nextSelectedToEdit = NULL;
+  dso->inGroup = _dso->inGroup;
+
+  // steal current dyn symbol obj list - we don't want a copy,
+  // we want the current information without changing the
+  // value of pointers. These pointers are referenced in the
+  // dyn symbol's undo object used to undo its children.
+  for ( i=0; i<DYNSYMBOL_K_NUM_STATES; i++ ) {
+
+    head = new activeGraphicListType;
+    head->flink = head;
+    head->blink = head;
+
+    sourceHead = (activeGraphicListPtr) _dso->voidHead[i];
+    curSource = sourceHead->flink;
+    while ( curSource != sourceHead ) {
+
+      next = curSource->flink;
+
+      cur = curSource;
+
+      cur->blink = head->blink;
+      head->blink->flink = cur;
+      head->blink = cur;
+      cur->flink = head;
+
+      curSource = next;
+
+    }
+
+    dso->voidHead[i] = (void *) head;
+
+  }
+
+  // make current dyn symbol obj list empty (because we stold all
+  // the information above); when the edit operation proceeds and
+  // the display list is destroyed and recreated from the current
+  // contents of the dyn symbol file, we don't want the current image
+  // list destroyed.
+  for ( i=0; i<DYNSYMBOL_K_NUM_STATES; i++ ) {
+    sourceHead = (activeGraphicListPtr) _dso->voidHead[i];
+    sourceHead->flink = sourceHead;
+    sourceHead->blink = sourceHead;
+  }
+
+  dso->index = 0;
+  dso->initialIndex = _dso->initialIndex;
+  dso->controlV = _dso->controlV;
+  dso->controlVal = _dso->controlVal;
+  dso->iValue = _dso->iValue;
+  dso->gateUpPvExpStr.setRaw( _dso->gateUpPvExpStr.rawString );
+  dso->gateDownPvExpStr.setRaw( _dso->gateDownPvExpStr.rawString );
+  dso->useGate = _dso->useGate;
+  dso->continuous = _dso->continuous;
+  dso->rate = _dso->rate;
+  dso->gateUpValue = _dso->gateUpValue;
+  dso->gateDownValue = _dso->gateDownValue;
+
+  strncpy( dso->dynSymbolFileName, _dso->dynSymbolFileName, 127 );
+
+  dso->numStates = _dso->numStates;
+  for ( i=0; i<_dso->numStates; i++ ) {
+    dso->stateMinValue[i] = _dso->stateMinValue[i];
+    dso->stateMaxValue[i] = _dso->stateMaxValue[i];
+  }
+
+  dso->showOOBState = _dso->showOOBState;
+  dso->useOriginalSize = _dso->useOriginalSize;
+  dso->useOriginalColors = _dso->useOriginalColors;
+  dso->fgCb = _dso->fgCb;
+  dso->bgCb = _dso->bgCb;
+  dso->fgColor = _dso->fgColor;
+  dso->bgColor = _dso->bgColor;
+  dso->colorPvExpStr.setRaw( _dso->colorPvExpStr.rawString );
+
+}
+
+undoDynSymbolOpClass::~undoDynSymbolOpClass ()
+{
+
+  if ( dso ) {
+    delete dso;
+    dso = NULL;
+  }
+
+}
+
+};
 
 static void dsc_updateControl (
   XtPointer client,
@@ -41,7 +169,14 @@ activeDynSymbolClass *dso = (activeDynSymbolClass *) client;
 
       if ( dso->up ) { // use only the gate-up pv
         (dso->curCount)++;
-        if ( dso->curCount > dso->numStates-1 ) dso->curCount = 1;
+        if ( dso->curCount > dso->numStates-1 ) {
+          if ( dso->showOOBState ) {
+            dso->curCount = 0;
+	  }
+	  else {
+            dso->curCount = 1;
+	  }
+	}
       }
       else {
         dso->timerActive = 0;
@@ -52,7 +187,14 @@ activeDynSymbolClass *dso = (activeDynSymbolClass *) client;
 
       dso->timerActive = 1;
       (dso->curCount)++;
-      if ( dso->curCount > dso->numStates-1 ) dso->curCount = 1;
+      if ( dso->curCount > dso->numStates-1 ) {
+        if ( dso->showOOBState ) {
+          dso->curCount = 0;
+        }
+        else {
+          dso->curCount = 1;
+        }
+      }
 
     }
 
@@ -72,15 +214,23 @@ activeDynSymbolClass *dso = (activeDynSymbolClass *) client;
     }
 
     if ( dso->up ) {
-      if ( dso->curCount > dso->numStates-1 ) {
+      if ( dso->curCount >= dso->numStates-1 ) {
         dso->curCount = dso->numStates-1;
         dso->timerActive = 0;
       }
     }
     else if ( dso->down ) {
-      if ( dso->curCount < 1 ) {
-        dso->curCount = 1;
-        dso->timerActive = 0;
+      if ( dso->showOOBState ) {
+        if ( dso->curCount <= 0 ) {
+          dso->curCount = 0;
+          dso->timerActive = 0;
+        }
+      }
+      else {
+        if ( dso->curCount <= 1 ) {
+          dso->curCount = 1;
+          dso->timerActive = 0;
+        }
       }
     }
 
@@ -258,6 +408,13 @@ int stat, resizeStat, saveW, saveH;
   dso->eraseSelectBoxCorners();
   dso->erase();
 
+// =============================================
+
+// New requirement for edit undo
+  dso->confirmEdit();
+
+// =============================================
+
   strncpy( dso->id, dso->bufId, 31 );
 
   dso->x = dso->bufX;
@@ -274,6 +431,9 @@ int stat, resizeStat, saveW, saveH;
 
   dso->useOriginalColors = dso->bufUseOriginalColors;
 
+  dso->fgColor = dso->bufFgColor;
+  dso->bgColor = dso->bufBgColor;
+
   dso->gateUpPvExpStr.setRaw( dso->bufGateUpPvName );
   dso->gateDownPvExpStr.setRaw( dso->bufGateDownPvName );
   dso->colorPvExpStr.setRaw( dso->bufColorPvName );
@@ -283,6 +443,7 @@ int stat, resizeStat, saveW, saveH;
   dso->continuous = dso->bufContinuous;
   dso->rate = dso->bufRate;
   dso->initialIndex = dso->bufInitialIndex;
+  dso->showOOBState = dso->bufShowOOBState;
 
   if ( dso->rate < 0.05 ) dso->rate = 0.05;
 
@@ -401,6 +562,7 @@ int i;
   rate = 1.0;
   useOriginalSize = 0;
   useOriginalColors = 1;
+  showOOBState = 0;
 
   for ( i=0; i<DYNSYMBOL_K_NUM_STATES; i++ ) {
     stateMinValue[i] = i;
@@ -565,12 +727,13 @@ int i;
     stateMaxValue[i] = i+1;
   }
 
+  showOOBState = source->showOOBState;
   useOriginalSize = source->useOriginalSize;
   useOriginalColors = source->useOriginalColors;
   fgCb = source->fgCb;
   bgCb = source->bgCb;
-  bufFgColor = source->bufFgColor;
-  bufBgColor = source->bufBgColor;
+  fgColor = source->fgColor;
+  bgColor = source->bgColor;
   colorPvExpStr.setRaw( source->colorPvExpStr.rawString );
 
 }
@@ -593,8 +756,8 @@ int activeDynSymbolClass::createInteractive (
 
   activeMode = 0;
   index = 0;
-  bufFgColor = actWin->defaultTextFgColor;
-  bufBgColor = actWin->defaultBgColor;
+  fgColor = actWin->defaultTextFgColor;
+  bgColor = actWin->defaultBgColor;
 
   this->editCreate();
 
@@ -664,6 +827,10 @@ char title[32], *ptr;
 
   bufUseOriginalColors = useOriginalColors;
 
+  bufFgColor = fgColor;
+  bufBgColor = bgColor;
+
+  bufShowOOBState = showOOBState;
 
 //    ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
 //     &actWin->appCtx->entryFormX,
@@ -700,6 +867,8 @@ char title[32], *ptr;
   ef.addTextField( activeDynSymbolClass_str21, 27, &bufRate );
 
   ef.addTextField( activeDynSymbolClass_str22, 27, &bufInitialIndex );
+
+  ef.addToggle( activeDynSymbolClass_str38, &bufShowOOBState );
 
   ef.addToggle( activeDynSymbolClass_str11, &bufUseOriginalSize );
 
@@ -983,8 +1152,11 @@ int activeDynSymbolClass::save (
 
   // version 1.3.0
   fprintf( f, "%-d\n", useOriginalColors );
-  fprintf( f, "%-d\n", bufFgColor );
-  fprintf( f, "%-d\n", bufBgColor );
+  fprintf( f, "%-d\n", fgColor );
+  fprintf( f, "%-d\n", bgColor );
+
+  // version 1.4.0
+  fprintf( f, "%-d\n", showOOBState );
 
   return 1;
 
@@ -1059,13 +1231,20 @@ char string[activeGraphicClass::MAX_PV_NAME+1];
 
   if ( ( major > 1 ) || ( minor > 2 ) ) {
     fscanf( f, "%d\n", &useOriginalColors ); actWin->incLine();
-    fscanf( f, "%d\n", &bufFgColor ); actWin->incLine();
-    fscanf( f, "%d\n", &bufBgColor ); actWin->incLine();
+    fscanf( f, "%d\n", &fgColor ); actWin->incLine();
+    fscanf( f, "%d\n", &bgColor ); actWin->incLine();
   }
   else {
     useOriginalColors = 1;
-    bufFgColor = actWin->defaultTextFgColor;
-    bufBgColor = actWin->defaultBgColor;
+    fgColor = actWin->defaultTextFgColor;
+    bgColor = actWin->defaultBgColor;
+  }
+
+  if ( ( major > 1 ) || ( minor > 3 ) ) {
+    fscanf( f, "%d\n", &showOOBState ); actWin->incLine();
+  }
+  else {
+    showOOBState = 0;
   }
 
   saveW = w;
@@ -1154,8 +1333,23 @@ int activeDynSymbolClass::draw ( void ) {
 
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
+int i;
 
   if ( activeMode || deleteRequest ) return 1;
+
+  for ( i=0; i<numStates; i++ ) {
+    head = (activeGraphicListPtr) voidHead[i];
+    cur = head->flink;
+    while ( cur != head ) {
+      if ( !useOriginalColors ) {
+        cur->node->changeDisplayParams(
+         ACTGRF_TEXTFGCOLOR_MASK | ACTGRF_FG1COLOR_MASK | ACTGRF_BGCOLOR_MASK,
+	 "", 0, "", 0, "", 0, fgColor, fgColor, 0, 0, bgColor,
+         0, 0 );
+      }
+      cur = cur->flink;
+    }
+  }
 
   actWin->drawGc.saveFg();
   actWin->drawGc.setFG( BlackPixel( actWin->d, DefaultScreen(actWin->d) ) );
@@ -1263,7 +1457,7 @@ activeGraphicListPtr cur;
       if ( !useOriginalColors ) {
         cur->node->changeDisplayParams(
          ACTGRF_TEXTFGCOLOR_MASK | ACTGRF_FG1COLOR_MASK | ACTGRF_BGCOLOR_MASK,
-	 "", 0, "", 0, "", 0, bufFgColor, bufFgColor, 0, 0, bufBgColor,
+	 "", 0, "", 0, "", 0, fgColor, fgColor, 0, 0, bgColor,
          0, 0 );
       }
       cur->node->activate( pass, (void *) cur );
@@ -1315,6 +1509,19 @@ activeGraphicListPtr cur;
 
         gateDownExists = 1;
 
+      }
+
+      if ( gateUpExists ) {
+        if ( !gateDownExists ) {
+          gateDownPvExpStr.setRaw( gateUpPvExpStr.getRaw() );
+          gateDownExists = 1;
+        }
+      }
+      else {
+        if ( gateDownExists ) {
+          gateUpPvExpStr.setRaw( gateDownPvExpStr.getRaw() );
+          gateUpExists = 1;
+        }
       }
 
     }
@@ -1375,7 +1582,12 @@ activeGraphicListPtr cur;
         init = 1;
         active = 1;
         if ( initialIndex > numStates-1 ) initialIndex = numStates-1;
-        if ( initialIndex < 1 ) initialIndex = 1;
+        if ( showOOBState ) {
+          if ( initialIndex < 0 ) initialIndex = 0;
+	}
+	else {
+          if ( initialIndex < 1 ) initialIndex = 1;
+	}
         controlV = initialIndex;
         index = initialIndex;
         curCount = initialIndex;
@@ -1392,9 +1604,16 @@ activeGraphicListPtr cur;
           up = 1;
           init = 1;
           active = 1;
-          curCount = 1;
-          controlV = curCount;
-          index = 1;
+          if ( showOOBState ) {
+            curCount = 0;
+            controlV = curCount;
+            index = 0;
+	  }
+	  else {
+            curCount = 1;
+            controlV = curCount;
+            index = 1;
+	  }
         }
 
       }
@@ -2318,7 +2537,12 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd, ncolori, ncr;
   if ( ngd ) {
 
     if ( !init ) {
-      curCount = 1;
+      if ( showOOBState ) {
+        curCount = 0;
+      }
+      else {
+        curCount = 1;
+      }
       controlV = curCount;
       index = curCount;
       init = 1;
@@ -2577,7 +2801,7 @@ int activeDynSymbolClass::rotate (
   char direction ) // '+'=clockwise, '-'=counter clockwise
 {
 
-  printf( "activeDynSymbolClass::rotate - not implemented\n" );
+  actWin->appCtx->postMessage( activeDynSymbolClass_str39 );
 
   return 1;
 
@@ -2589,35 +2813,620 @@ int activeDynSymbolClass::flip (
   char direction )
 {
 
-  printf( "activeDynSymbolClass::flip - not implemented\n" );
+  actWin->appCtx->postMessage( activeDynSymbolClass_str40 );
+
+  return 1;
+
+}
+
+void activeDynSymbolClass::flushUndo ( void ) {
+
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+int i;
+
+  undoObj.flush();
+
+  for ( i=0; i<numStates; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while( cur != head ) {
+
+      cur->node->flushUndo();
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+}
+
+int activeDynSymbolClass::addUndoCreateNode (
+  undoClass *_undoObj )
+{
+
+int stat;
+
+ return 1;
+
+  stat = _undoObj->addCreateNode( this, NULL );
+  if ( !( stat & 1 ) ) return stat;
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::addUndoMoveNode (
+  undoClass *_undoObj )
+{
+
+int stat;
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+int i;
+
+  stat = _undoObj->addMoveNode( this, NULL, x, y );
+  if ( !( stat & 1 ) ) return stat;
+
+  undoObj.startNewUndoList( "" );
+
+  for ( i=0; i<numStates; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while( cur != head ) {
+
+      stat = cur->node->addUndoMoveNode( &(this->undoObj) );
+      if ( !( stat & 1 ) ) return stat;
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::addUndoResizeNode (
+  undoClass *_undoObj )
+{
+
+int stat;
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+int i;
+
+  stat = _undoObj->addResizeNode( this, NULL, x, y, w, h );
+  if ( !( stat & 1 ) ) return stat;
+
+  undoObj.startNewUndoList( "" );
+
+  for ( i=0; i<numStates; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while( cur != head ) {
+
+      stat = cur->node->addUndoResizeNode( &(this->undoObj) );
+      if ( !( stat & 1 ) ) return stat;
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::addUndoCopyNode (
+  undoClass *_undoObj )
+{
+
+int stat;
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+int i;
+
+ return 1;
+
+  stat = _undoObj->addCopyNode( this, NULL );
+  if ( !( stat & 1 ) ) return stat;
+
+  undoObj.startNewUndoList( "" );
+
+  for ( i=0; i<numStates; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while( cur != head ) {
+
+      stat = cur->node->addUndoCopyNode( &(this->undoObj) );
+      if ( !( stat & 1 ) ) return stat;
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::addUndoCutNode (
+  undoClass *_undoObj )
+{
+
+int stat;
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+int i;
+
+ return 1;
+
+  stat = _undoObj->addCutNode( this, NULL );
+  if ( !( stat & 1 ) ) return stat;
+
+  undoObj.startNewUndoList( "" );
+
+  for ( i=0; i<numStates; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while( cur != head ) {
+
+      stat = cur->node->addUndoCutNode( &(this->undoObj) );
+      if ( !( stat & 1 ) ) return stat;
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::addUndoPasteNode (
+  undoClass *_undoObj )
+{
+
+int stat;
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+int i;
+
+ return 1;
+
+  stat = _undoObj->addPasteNode( this, NULL );
+  if ( !( stat & 1 ) ) return stat;
+
+  undoObj.startNewUndoList( "" );
+
+  for ( i=0; i<numStates; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while( cur != head ) {
+
+      stat = cur->node->addUndoPasteNode( &(this->undoObj) );
+      if ( !( stat & 1 ) ) return stat;
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::addUndoReorderNode (
+  undoClass *_undoObj )
+{
+
+int stat;
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+int i;
+
+ return 1;
+
+  stat = _undoObj->addReorderNode( this, NULL );
+  if ( !( stat & 1 ) ) return stat;
+
+  undoObj.startNewUndoList( "" );
+
+  for ( i=0; i<numStates; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while( cur != head ) {
+
+      stat = cur->node->addUndoReorderNode( &(this->undoObj) );
+      if ( !( stat & 1 ) ) return stat;
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::addUndoEditNode (
+  undoClass *_undoObj )
+{
+
+int stat;
+undoDynSymbolOpClass *undoDynSymbolOpPtr;
+
+  undoDynSymbolOpPtr = new undoDynSymbolOpClass( this );
+
+  stat = _undoObj->addEditNode( this, undoDynSymbolOpPtr );
+  if ( !( stat & 1 ) ) return stat;
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::addUndoGroupNode (
+  undoClass *_undoObj )
+{
+
+int stat;
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+int i;
+
+ return 1;
+
+  stat = _undoObj->addGroupNode( this, NULL );
+  if ( !( stat & 1 ) ) return stat;
+
+  undoObj.startNewUndoList( "" );
+
+  for ( i=0; i<numStates; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while( cur != head ) {
+
+      stat = cur->node->addUndoGroupNode( &(this->undoObj) );
+      if ( !( stat & 1 ) ) return stat;
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::addUndoRotateNode (
+  undoClass *_undoObj )
+{
+
+int stat;
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+int i;
+
+  stat = _undoObj->addRotateNode( this, NULL, x, y, w, h );
+  if ( !( stat & 1 ) ) return stat;
+ 
+  return 1;
+
+  undoObj.startNewUndoList( "" );
+
+  for ( i=0; i<numStates; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while( cur != head ) {
+
+      stat = cur->node->addUndoRotateNode( &(this->undoObj) );
+      if ( !( stat & 1 ) ) return stat;
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::addUndoFlipNode (
+  undoClass *_undoObj )
+{
+
+int stat;
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+int i;
+
+  stat = _undoObj->addFlipNode( this, NULL, x, y, w, h );
+  if ( !( stat & 1 ) ) return stat;
+
+  return 1;
+
+  undoObj.startNewUndoList( "" );
+
+  for ( i=0; i<numStates; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while( cur != head ) {
+
+      stat = cur->node->addUndoFlipNode( &(this->undoObj) );
+      if ( !( stat & 1 ) ) return stat;
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::undoCreate (
+  undoOpClass *opPtr
+) {
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::undoMove (
+  undoOpClass *opPtr,
+  int x,
+  int y )
+{
+
+int stat;
+
+  moveAbs( x, y );
+  moveSelectBoxAbs( x, y );
+
+  stat = undoObj.performSubUndo();
+  if ( !( stat & 1 ) ) XBell( actWin->d, 50 );
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::undoResize (
+  undoOpClass *opPtr,
+  int x,
+  int y,
+  int w,
+  int h )
+{
+
+int stat;
+
+  resizeAbsFromUndo( x, y, w, h );
+  resizeSelectBoxAbsFromUndo( x, y, w, h );
+
+  stat = undoObj.performSubUndo();
+  if ( !( stat & 1 ) ) XBell( actWin->d, 50 );
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::undoCopy (
+  undoOpClass *opPtr
+) {
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::undoCut (
+  undoOpClass *opPtr
+) {
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::undoPaste (
+  undoOpClass *opPtr
+) {
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::undoReorder (
+  undoOpClass *opPtr
+) {
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::undoEdit (
+  undoOpClass *opPtr
+) {
+
+undoDynSymbolOpClass *ptr = (undoDynSymbolOpClass *) opPtr;
+activeGraphicListPtr head, cur, next, curSource, sourceHead;
+int i;
+
+// ============================================================
+
+  // delete current image list, saved image list from opPtr (from undo object)
+  // will be restored to symbol object
+
+  for ( i=0; i<DYNSYMBOL_K_NUM_STATES; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while ( cur != head ) {
+      next = cur->flink;
+      delete cur->node;
+      delete cur;
+      cur = next;
+    }
+    head->flink = NULL;
+    head->blink = NULL;
+    delete head;
+
+  }
+
+// ============================================================
+
+  // copy base class info
+  x = ptr->dso->x;
+  y = ptr->dso->y;
+  w = ptr->dso->w;
+  h = ptr->dso->h;
+  sboxX = ptr->dso->sboxX;
+  sboxY = ptr->dso->sboxY;
+  sboxW = ptr->dso->sboxW;
+  sboxH = ptr->dso->sboxH;
+  orientation = ptr->dso->orientation;
+  nextToEdit = ptr->dso->nextToEdit;
+  nextSelectedToEdit = NULL;
+  inGroup = ptr->dso->inGroup;
+
+// ============================================================
+
+  // restore saved symbol image list
+  for ( i=0; i<DYNSYMBOL_K_NUM_STATES; i++ ) {
+
+    head = new activeGraphicListType;
+    head->flink = head;
+    head->blink = head;
+
+    sourceHead = (activeGraphicListPtr) ptr->dso->voidHead[i];
+    curSource = sourceHead->flink;
+    while ( curSource != sourceHead ) {
+
+      next = curSource->flink;
+
+      cur = curSource;
+
+      cur->blink = head->blink;
+      head->blink->flink = cur;
+      head->blink = cur;
+      cur->flink = head;
+
+      curSource = next;
+
+    }
+
+    voidHead[i] = (void *) head;
+
+  }
+
+  // make saved symbol image list empty (when saved
+  // object is deleted, we don't want image list to
+  // be deleted (which has been restored to current symbol object)
+  for ( i=0; i<DYNSYMBOL_K_NUM_STATES; i++ ) {
+    sourceHead = (activeGraphicListPtr) ptr->dso->voidHead[i];
+    sourceHead->flink = sourceHead;
+    sourceHead->blink = sourceHead;
+  }
+
+// ============================================================
+
+  // restore remaining attributes
+
+  index = 0;
+  initialIndex = ptr->dso->initialIndex;
+  controlV = ptr->dso->controlV;
+  controlVal = ptr->dso->controlVal;
+  iValue = ptr->dso->iValue;
+  gateUpPvExpStr.setRaw( ptr->dso->gateUpPvExpStr.rawString );
+  gateDownPvExpStr.setRaw( ptr->dso->gateDownPvExpStr.rawString );
+  useGate = ptr->dso->useGate;
+  continuous = ptr->dso->continuous;
+  rate = ptr->dso->rate;
+  gateUpValue = ptr->dso->gateUpValue;
+  gateDownValue = ptr->dso->gateDownValue;
+
+  strncpy( dynSymbolFileName, ptr->dso->dynSymbolFileName, 127 );
+
+  numStates = ptr->dso->numStates;
+  for ( i=0; i<ptr->dso->numStates; i++ ) {
+    stateMinValue[i] = ptr->dso->stateMinValue[i];
+    stateMaxValue[i] = ptr->dso->stateMaxValue[i];
+  }
+
+  showOOBState = ptr->dso->showOOBState;
+  useOriginalSize = ptr->dso->useOriginalSize;
+  useOriginalColors = ptr->dso->useOriginalColors;
+  fgCb = ptr->dso->fgCb;
+  bgCb = ptr->dso->bgCb;
+  fgColor = ptr->dso->fgColor;
+  bgColor = ptr->dso->bgColor;
+  colorPvExpStr.setRaw( ptr->dso->colorPvExpStr.rawString );
+
+  return 1;
+
+}
+
+int activeDynSymbolClass::undoGroup (
+  undoOpClass *opPtr
+) {
 
   return 1;
 
 }
 
 int activeDynSymbolClass::undoRotate (
-  void *opPtr,
+  undoOpClass *opPtr,
   int x,
   int y,
   int w,
   int h )
 {
 
-  printf( "activeDynSymbolClass::undoRotate - not implemented\n" );
+  //printf( "activeDynSymbolClass::undoRotate - not implemented\n" );
 
   return 1;
 
 }
 
 int activeDynSymbolClass::undoFlip (
-  void *opPtr,
+  undoOpClass *opPtr,
   int x,
   int y,
   int w,
   int h )
 {
 
-  printf( "activeDynSymbolClass::undoFlip - not implemented\n" );
+  //printf( "activeDynSymbolClass::undoFlip - not implemented\n" );
 
   return 1;
 

@@ -38,5 +38,8 @@
 #define activeDynSymbolClass_str35 (char *) "Preserve Original Colors"
 #define activeDynSymbolClass_str36 (char *) "Fg/Line Color"
 #define activeDynSymbolClass_str37 (char *) "Bg/Fill Color"
+#define activeDynSymbolClass_str38 (char *) "Show OOB State"
+#define activeDynSymbolClass_str39 (char *) "Dynamic symbol rotate not implemented"
+#define activeDynSymbolClass_str40 (char *) "Dynamic symbol flip not implemented"
 
 #endif

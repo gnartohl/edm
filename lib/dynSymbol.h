@@ -20,6 +20,7 @@
 #define __dynSymbol_h 1
 
 #include "act_grf.h"
+#include "undo.h"
 #include "entry_form.h"
 
 // the following defines btnActionListType & btnActionListPtr
@@ -30,7 +31,7 @@
 #endif
 
 #define DSC_MAJOR_VERSION 1
-#define DSC_MINOR_VERSION 3
+#define DSC_MINOR_VERSION 4
 #define DSC_RELEASE 0
 
 #define DYNSYMBOL_K_NUM_STATES 64
@@ -105,6 +106,8 @@ class activeDynSymbolClass : public activeGraphicClass {
 
 private:
 
+friend class undoDynSymbolOpClass;
+
 dsObjPlusIndexType argRec;
 
 void *voidHead[DYNSYMBOL_K_NUM_STATES]; // cast to activeGraphicListPtr
@@ -165,7 +168,7 @@ double bufRate;
 int bufGateDownValue, bufGateUpValue;
 int initialIndex, bufInitialIndex;
 
-int bufFgColor, bufBgColor;
+int fgColor, bgColor, bufFgColor, bufBgColor;
 colorButtonClass fgCb, bgCb;
 
 entryListBase *pvNamesObj;
@@ -175,7 +178,11 @@ int needGateUp, needGateUpConnect;
 int needGateDown, needGateDownConnect;
 int needColorInit, needColorRefresh;
 
+int showOOBState, bufShowOOBState;
+
 public:
+
+undoClass undoObj;
 
 friend void dsc_updateControl (
   XtPointer client,
@@ -398,15 +405,72 @@ int activeDynSymbolClass::flip (
   int yOrigin,
   char direction );
 
+void activeDynSymbolClass::flushUndo ( void );
+
+int activeDynSymbolClass::addUndoCreateNode ( undoClass *_undoObj );
+
+int activeDynSymbolClass::addUndoMoveNode ( undoClass *_undoObj );
+
+int activeDynSymbolClass::addUndoResizeNode ( undoClass *_undoObj );
+
+int activeDynSymbolClass::addUndoCopyNode ( undoClass *_undoObj );
+
+int activeDynSymbolClass::addUndoCutNode ( undoClass *_undoObj );
+
+int activeDynSymbolClass::addUndoPasteNode ( undoClass *_undoObj );
+
+int activeDynSymbolClass::addUndoReorderNode ( undoClass *_undoObj );
+
+int activeDynSymbolClass::addUndoEditNode ( undoClass *_undoObj );
+
+int activeDynSymbolClass::addUndoGroupNode ( undoClass *_undoObj );
+
+int activeDynSymbolClass::addUndoRotateNode ( undoClass *_undoObj );
+
+int activeDynSymbolClass::addUndoFlipNode ( undoClass *_undoObj );
+
+int activeDynSymbolClass::undoCreate (
+  undoOpClass *opPtr );
+
+int activeDynSymbolClass::undoMove (
+  undoOpClass *opPtr,
+  int x,
+  int y );
+
+int activeDynSymbolClass::undoResize (
+  undoOpClass *opPtr,
+  int x,
+  int y,
+  int w,
+  int h );
+
+int activeDynSymbolClass::undoCopy (
+  undoOpClass *opPtr );
+
+int activeDynSymbolClass::undoCut (
+  undoOpClass *opPtr );
+
+int activeDynSymbolClass::undoPaste (
+  undoOpClass *opPtr );
+
+int activeDynSymbolClass::undoReorder (
+  undoOpClass *opPtr );
+
+int activeDynSymbolClass::undoEdit (
+  undoOpClass *opPtr );
+
+int activeDynSymbolClass::undoGroup (
+  undoOpClass *opPtr );
+
 int activeDynSymbolClass::undoRotate (
-  void *opPtr,
+  undoOpClass *opPtr,
   int x,
   int y,
   int w,
   int h );
 
 int activeDynSymbolClass::undoFlip (
-  void *opPtr,
+  undoOpClass *opPtr,
   int x,
   int y,
   int w,
