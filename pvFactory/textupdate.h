@@ -100,7 +100,7 @@ protected:
     expStringClass pv_name;  // PV names as macro-expandable string
     expStringClass color_pv_name;
 
-    typedef enum { dm_default, dm_decimal, dm_hex } DisplayMode;
+    typedef enum { dm_default, dm_decimal, dm_hex, dm_eng } DisplayMode;
     DisplayMode displayMode;
     int precision;
 

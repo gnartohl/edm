@@ -9,6 +9,73 @@
 #include "epics_pv_factory.h"
 #include "cvtFast.h"
 
+// Stolen from dm2k updateMonitors.c, Mark Andersion, Frederick Vong:
+// Display number in enineering notaion (power of ten is n*3)
+static void localCvtDoubleToExpNotationString(double value,
+                                              char *textField,
+                                              unsigned short precision)
+{
+    double absVal, newVal;
+    bool minus;
+    int exp, k, l;
+    char TF[PV_Factory::MAX_PV_NAME+1];
+    
+    absVal = fabs(value);
+    minus = value < 0.0;
+    newVal = absVal;
+    if (absVal < 1.)
+    {
+        exp = 0;
+        if (absVal != 0.)
+        {		/* really ought to test against some epsilon */
+            do
+            {
+                newVal *= 1000.0;
+                exp += 3;
+            }
+            while (newVal < 1.);
+        }
+        cvtDoubleToString(newVal, TF ,precision);
+        k = 0; l = 0;
+        if (minus)
+            textField[k++] = '-';
+        while (TF[l] != '\0')
+            textField[k++] = TF[l++];
+        textField[k++] = 'e';
+        if (exp == 0)
+        {
+            textField[k++] = '+';	/* want e+00 for consistency with norms */
+        } else {
+            textField[k++] = '-';
+        }
+        textField[k++] = '0' + exp/10;
+        textField[k++] = '0' + exp%10;
+        textField[k++] = '\0';
+        
+    }
+    else
+    {
+        /* absVal >= 1. */
+        exp = 0;
+        while (newVal >= 1000.)
+        {
+            newVal *= 0.001; /* since multiplying is usually faster than dividing */
+            exp += 3;
+        }
+        cvtDoubleToString(newVal,TF,precision);
+        k = 0; l = 0;
+        if (minus)
+            textField[k++] = '-';
+        while (TF[l] != '\0')
+            textField[k++] = TF[l++];
+        textField[k++] = 'e';
+        textField[k++] = '+';
+        textField[k++] = '0' + exp/10;
+        textField[k++] = '0' + exp%10;
+        textField[k++] = '\0';
+    }
+}
+
 inline const char *getRawName(expStringClass &es)
 {
     char *s = es.getRaw();
@@ -153,7 +220,7 @@ int edmTextupdateClass::createFromFile(FILE *f, char *filename,
     else
     {
         fscanf(f, "%d\n", &index ); actWin->incLine();
-        if (index >=0 && index <= dm_hex)
+        if (index >=0 && index <= dm_eng)
             displayMode = (DisplayMode)index;
         else
             displayMode = dm_default;
@@ -297,7 +364,7 @@ int edmTextupdateClass::genericEdit() // create Property Dialog
     ef.addTextField("Width", 30, &bufW);
     ef.addTextField("Height", 30, &bufH);
     ef.addTextField("PV", 30, bufPvName, PV_Factory::MAX_PV_NAME);
-    ef.addOption("Mode", "default|decimal|hex", &buf_displayMode);
+    ef.addOption("Mode", "default|decimal|hex|engineer", &buf_displayMode);
     ef.addTextField("Precision", 30, &buf_precision);
     ef.addTextField("Line Width", 30, &buf_line_width);
     ef.addColorButton("Fg Color", actWin->ci, &textCb, &bufTextColor);
@@ -601,7 +668,10 @@ int edmTextupdateClass::activate(int pass, void *ptr)
             break;
         case 2: // connect to pv
             if (pv)
+            {
                 printf("textupdate::activate: pv already set!\n");
+                return 1;
+            }
             if (is_pv_valid)
             {
                 pv = the_PV_Factory->create(getExpandedName(pv_name));
@@ -619,7 +689,6 @@ int edmTextupdateClass::activate(int pass, void *ptr)
                     color_pv->add_conn_state_callback(pv_conn_state_callback,
                                                       this);
                     color_pv->add_value_callback(pv_value_callback, this);
-                    printf("Created color PV %s\n", color_pv->get_name());
                 }
             }
             if (!pv)
@@ -670,6 +739,15 @@ bool edmTextupdateClass::get_current_values(char *text, size_t &len)
             textColor.updateColorValue(pv);
         switch (displayMode)
         {
+            case dm_eng:
+                if (pv->get_type().type < ProcessVariable::Type::enumerated)
+                {
+                    localCvtDoubleToExpNotationString(
+                        pv->get_double(), text,
+                        (unsigned short) precision);
+                    len = strlen(text);
+                    break;
+                }
             case dm_hex:
                 if (pv->get_type().type < ProcessVariable::Type::enumerated)
                 {
@@ -685,12 +763,11 @@ bool edmTextupdateClass::get_current_values(char *text, size_t &len)
                     len = strlen(text);
                     break;
                 }
-            default:
+            default: // and fall-through for non-numeric types:
                 len = pv->get_string(text, 80);
         }
         return true;
     }
-
     text[0] = '<';
     strcpy(text+1, getExpandedName(pv_name));
     strcat(text, ">");
