@@ -1852,7 +1852,7 @@ unsigned int pixel;
 
   }
 
-  if ( ( ( major == 2 ) && ( minor > 2 ) ) || ( major > 3 ) ) {
+  if ( ( ( major == 2 ) && ( minor > 3 ) ) || ( major > 2 ) ) {
 
     fscanf( f, "%d\n", &isDate );
     fscanf( f, "%d\n", &isFile );
