@@ -104,7 +104,8 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
   rdo->h = rdo->bufH;
   rdo->sboxH = rdo->bufH;
 
-  strncpy( rdo->displayFileName, rdo->bufDisplayFileName, 127 );
+  rdo->displayFileName.setRaw( rdo->bufDisplayFileName );
+  //strncpy( rdo->displayFileName, rdo->bufDisplayFileName, 127 );
 
   rdo->label.setRaw( rdo->bufLabel );
   //strncpy( rdo->label, rdo->bufLabel, 127 );
@@ -185,7 +186,7 @@ relatedDisplayClass::relatedDisplayClass ( void ) {
   strcpy( name, "relatedDisplayClass" );
 
   activeMode = 0;
-  strcpy( displayFileName, "" );
+  // strcpy( displayFileName, "" );
   // strcpy( label, "" );
   // strcpy( symbols, "" );
   invisible = 0;
@@ -278,7 +279,8 @@ activeGraphicClass *rdo = (activeGraphicClass *) this;
 
   propagateMacros = source->propagateMacros;
 
-  strncpy( displayFileName, source->displayFileName, 127 );
+  displayFileName.copy( source->displayFileName );
+  //strncpy( displayFileName, source->displayFileName, 127 );
 
   label.copy( source->label );
   // strncpy( label, source->label, 127 );
@@ -359,10 +361,15 @@ int i, index;
   index = botShadowColor;
   fprintf( f, "%-d\n", index );
 
-  if ( displayFileName )
-    writeStringToFile( f, displayFileName );
+  if ( displayFileName.getRaw() )
+    writeStringToFile( f, displayFileName.getRaw() );
   else
     writeStringToFile( f, "" );
+
+  //if ( displayFileName )
+  //  writeStringToFile( f, displayFileName );
+  //else
+  //  writeStringToFile( f, "" );
 
   if ( label.getRaw() )
     writeStringToFile( f, label.getRaw() );
@@ -503,7 +510,8 @@ char onePvName[127+1];
   }
 
   readStringFromFile( oneName, 127, f ); actWin->incLine();
-  strncpy( displayFileName, oneName, 127 );
+  displayFileName.setRaw( oneName );
+  //strncpy( displayFileName, oneName, 127 );
 
   readStringFromFile( oneName, 127, f ); actWin->incLine();
   label.setRaw( oneName );
@@ -816,7 +824,8 @@ char *tk, *gotData, *context, buf[255+1];
           return 0;
         }
 
-        strncpy( displayFileName, tk, 127 );
+        displayFileName.setRaw( tk );
+        // strncpy( displayFileName, tk, 127 );
 
       }
 
@@ -886,10 +895,15 @@ char title[32], *ptr;
 
   bufBgColor = bgColor.pixelIndex();
 
-  if ( displayFileName )
-    strncpy( bufDisplayFileName, displayFileName, 127 );
+  if ( displayFileName.getRaw() )
+    strncpy( bufDisplayFileName, displayFileName.getRaw(), 127 );
   else
     strncpy( bufDisplayFileName, "", 127 );
+
+  //if ( displayFileName )
+  //  strncpy( bufDisplayFileName, displayFileName, 127 );
+  //else
+  //  strncpy( bufDisplayFileName, "", 127 );
 
   if ( label.getRaw() )
     strncpy( bufLabel, label.getRaw(), 127 );
@@ -1375,6 +1389,7 @@ int i;
   symbolsExpStr.expand1st( numMacros, macros, expansions );
 
   label.expand1st( numMacros, macros, expansions );
+  displayFileName.expand1st( numMacros, macros, expansions );
 
   return 1;
 
@@ -1396,6 +1411,7 @@ int i;
   symbolsExpStr.expand2nd( numMacros, macros, expansions );
 
   label.expand2nd( numMacros, macros, expansions );
+  displayFileName.expand2nd( numMacros, macros, expansions );
 
   return 1;
 
@@ -1413,6 +1429,7 @@ int i;
   if ( symbolsExpStr.containsPrimaryMacros() ) return 1;
 
   if ( label.containsPrimaryMacros() ) return 1;
+  if ( displayFileName.containsPrimaryMacros() ) return 1;
 
   return 0;
 
@@ -1641,7 +1658,7 @@ int numNewMacros, max, numFound;
 
   }
 
-  stat = getFileName( name, displayFileName, 127 );
+  stat = getFileName( name, displayFileName.getExpanded(), 127 );
 
   // calc crc
 
@@ -1698,7 +1715,7 @@ int numNewMacros, max, numFound;
   cur->node.realize();
   cur->node.setGraphicEnvironment( &actWin->appCtx->ci, &actWin->appCtx->fi );
 
-  cur->node.storeFileName( displayFileName );
+  cur->node.storeFileName( displayFileName.getExpanded() );
 
   if ( setPostion ) {
     if ( cascade ) {
@@ -1780,7 +1797,7 @@ int relatedDisplayClass::getButtonActionRequest (
   *down = 1;
   *up = 1;
 
-  if ( !blank( displayFileName ) )
+  if ( !blank( displayFileName.getExpanded() ) )
     *focus = 1;
   else
     *focus = 0;

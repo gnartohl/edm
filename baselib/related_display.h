@@ -128,7 +128,8 @@ XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
 char bufDisplayFileName[127+1];
-char displayFileName[127+1];
+expStringClass displayFileName;
+//char displayFileName[127+1];
 
 expStringClass symbolsExpStr;
 char bufSymbols[255+1];
