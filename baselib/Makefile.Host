@@ -44,6 +44,7 @@ LIBSRCS += rectangle_obj.cc
 LIBSRCS += circle_obj.cc
 LIBSRCS += arc_obj.cc
 LIBSRCS += x_text_obj.cc
+LIBSRCS += x_regtext_obj.cc
 LIBSRCS += meter.cc
 LIBSRCS += bar.cc
 LIBSRCS += x_text_dsp_obj.cc
