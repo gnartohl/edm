@@ -228,11 +228,11 @@ char tmpStr[255+1];
     incArray[0] = 0;
     for ( i=1,j=start; i<6; i++,j-- ) {
       sprintf( tmpStr, "10^%-d|", j );
-      strncat( strVal, tmpStr, 255 );
+      Strncat( strVal, tmpStr, 255 );
       incArray[i] = pow( 10, (double) j );
     }
     sprintf( tmpStr, "10^%-d", end );
-    strncat( strVal, tmpStr, 255 );
+    Strncat( strVal, tmpStr, 255 );
     incArray[6] = pow( 10, (double) j );
 
 }
@@ -261,7 +261,7 @@ char strVal[255+1];
     else
       strncpy( title, activeMotifSliderClass_str54, 31 );
 
-    strncat( title, activeMotifSliderClass_str55, 31 );
+    Strncat( title, activeMotifSliderClass_str55, 31 );
 
     mslo->bufIncrement = mslo->increment;
     mslo->bufControlV = mslo->controlV;
@@ -1138,7 +1138,7 @@ char title[32], *ptr;
   else
     strncpy( title, activeMotifSliderClass_str10, 31 );
 
-  strncat( title, activeMotifSliderClass_str11, 31 );
+  Strncat( title, activeMotifSliderClass_str11, 31 );
 
   bufX = x;
   bufY = y;
@@ -1684,7 +1684,7 @@ char title[32], *ptr, strVal[255+1];
   else
     strncpy( title, activeMotifSliderClass_str54, 31 );
 
-  strncat( title, activeMotifSliderClass_str55, 31 );
+  Strncat( title, activeMotifSliderClass_str55, 31 );
 
   if ( e->type == Expose ) {
 

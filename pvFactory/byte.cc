@@ -249,7 +249,7 @@ int edmByteClass::genericEdit() // create Property Dialog
     if (ptr)
     {
         strncpy(title, ptr, 80);
-        strncat(title, " Properties", 80);
+        Strncat(title, " Properties", 80);
     }
     else
         strncpy(title, "Unknown object Properties", 80);
@@ -935,4 +935,34 @@ char *edmByteClass::nextDragName()
 char *edmByteClass::dragValue(int i)
 {   return (char *)getExpandedPVName(); }
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+
+void *create_ByteClassPtr ( void ) {
+
+edmByteClass *ptr;
+
+  ptr = new edmByteClass;
+  return (void *) ptr;
+
+}
+
+void *clone_ByteClassPtr (
+  void *_srcPtr )
+{
+
+edmByteClass *ptr, *srcPtr;
+
+  srcPtr = (edmByteClass *) _srcPtr;
+
+  ptr = new edmByteClass( srcPtr );
+
+  return (void *) ptr;
+
+}
+
+#ifdef __cplusplus
+}
+#endif

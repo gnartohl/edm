@@ -2295,7 +2295,7 @@ int noedit;
   strcpy( title, "activeXTextDspClass" );
   if ( strcmp( this->getCreateParam(), "noedit" ) == 0 ) {
     noedit = 1;
-    strncat( title, ":noedit", 31 );
+    Strncat( title, ":noedit", 31 );
   }
   else {
     noedit = 0;
@@ -2311,7 +2311,7 @@ int noedit;
     title[31] = 0;
   }
 
-  strncat( title, activeXTextDspClass_str5, 31 );
+  Strncat( title, activeXTextDspClass_str5, 31 );
   title[31] = 0;
 
   strncpy( bufId, id, 31 );
@@ -2971,7 +2971,7 @@ char callbackName[63+1];
         if ( changeCallbackFlag ) {
           strncpy( callbackName, id, 63 );
 	  callbackName[63] = 0;
-          strncat( callbackName, activeXTextDspClass_str36, 63 );
+          Strncat( callbackName, activeXTextDspClass_str36, 63 );
           callbackName[63] = 0;
           changeCallback =
            actWin->appCtx->userLibObject.getFunc( callbackName );
@@ -2980,7 +2980,7 @@ char callbackName[63+1];
         if ( activateCallbackFlag ) {
           strncpy( callbackName, id, 63 );
 	  callbackName[63] = 0;
-          strncat( callbackName, activeXTextDspClass_str37, 63 );
+          Strncat( callbackName, activeXTextDspClass_str37, 63 );
           callbackName[63] = 0;
           activateCallback =
            actWin->appCtx->userLibObject.getFunc( callbackName );
@@ -2989,7 +2989,7 @@ char callbackName[63+1];
         if ( deactivateCallbackFlag ) {
           strncpy( callbackName, id, 63 );
 	  callbackName[63] = 0;
-          strncat( callbackName, activeXTextDspClass_str38, 63 );
+          Strncat( callbackName, activeXTextDspClass_str38, 63 );
           callbackName[63] = 0;
           deactivateCallback =
            actWin->appCtx->userLibObject.getFunc( callbackName );
@@ -3243,10 +3243,10 @@ int i;
   else {
     strcpy( selectString, "" );
     for ( i=0; i<numStates; i++ ) {
-      strncat( selectString, stateString[i], 127 );
+      Strncat( selectString, stateString[i], 127 );
       selectString[127] = 0;
       if ( i != numStates-1 ) {
-        strncat( selectString, "|", 127 );
+        Strncat( selectString, "|", 127 );
         selectString[127] = 0;
       }
     }

@@ -810,7 +810,7 @@ char title[32], *ptr;
   else
     strncpy( title, menuMuxClass_str2, 31+1 );
 
-  strncat( title, menuMuxClass_str3, 31+1 );
+  Strncat( title, menuMuxClass_str3, 31+1 );
 
   bufX = x;
   bufY = y;

@@ -740,7 +740,7 @@ char title[32], *ptr;
   else
     strncpy( title, "Unknown object", 31+1 );
 
-  strncat( title, " Properties", 31+1 );
+  Strncat( title, " Properties", 31+1 );
 
   bufX = x;
   bufY = y;

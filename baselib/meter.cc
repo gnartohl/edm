@@ -796,7 +796,7 @@ char title[32], *ptr;
   else
     strncpy( title, activeMeterClass_str2, 31 );
 
-  strncat( title, activeMeterClass_str3, 31 );
+  Strncat( title, activeMeterClass_str3, 31 );
 
   bufX = x;
   bufY = y;

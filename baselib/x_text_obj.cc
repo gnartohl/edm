@@ -501,7 +501,7 @@ char title[32], *ptr;
   else
     strncpy( title, activeXTextClass_str4, 31 );
 
-  strncat( title, activeXTextClass_str5, 31 );
+  Strncat( title, activeXTextClass_str5, 31 );
 
   strncpy( bufId, id, 31 );
 

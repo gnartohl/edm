@@ -1350,7 +1350,7 @@ char title[32], *ptr;
   else
     strncpy( title, activeUpdownButtonClass_str2, 31 );
 
-  strncat( title, activeUpdownButtonClass_str3, 31 );
+  Strncat( title, activeUpdownButtonClass_str3, 31 );
 
   bufX = x;
   bufY = y;
@@ -1793,7 +1793,7 @@ int blink = 0;
       strncpy( string, "", 39 );
 
     if ( isSaved ) {
-      strncat( string, " *", 63 );
+      Strncat( string, " *", 63 );
     }
 
     actWin->executeGc.addNormXClipRectangle( xR );

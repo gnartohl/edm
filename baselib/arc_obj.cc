@@ -469,7 +469,7 @@ char title[32], *ptr;
   else
     strncpy( title, activeArcClass_str4, 31 );
 
-  strncat( title, activeArcClass_str5, 31 );
+  Strncat( title, activeArcClass_str5, 31 );
 
   bufX = x;
   bufY = y;

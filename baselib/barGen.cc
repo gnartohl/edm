@@ -944,11 +944,11 @@ char title[32], *ptr;
 
   ptr = actWin->obj.getNameFromClass( "activeBarClass" );
   if ( ptr )
-    strncat( title, ptr, 31 );
+    Strncat( title, ptr, 31 );
   else
-    strncat( title, "Unknown object", 31 );
+    Strncat( title, "Unknown object", 31 );
 
-  strncat( title, " Properties", 31 );
+  Strncat( title, " Properties", 31 );
 
   bufX = x;
   bufY = y;

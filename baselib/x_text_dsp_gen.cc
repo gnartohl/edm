@@ -1613,7 +1613,7 @@ char title[32], *ptr;
   else
     strncpy( title, "Unknown object", 31 );
 
-  strncat( title, " Properties", 31 );
+  Strncat( title, " Properties", 31 );
 
   strncpy( bufId, id, 31 );
 
@@ -2091,21 +2091,21 @@ char callbackName[63+1];
 
         if ( changeCallbackFlag ) {
           strncpy( callbackName, id, 63 );
-          strncat( callbackName, "Change", 63 );
+          Strncat( callbackName, "Change", 63 );
           changeCallback =
            actWin->appCtx->userLibObject.getFunc( callbackName );
 	}
 
         if ( activateCallbackFlag ) {
           strncpy( callbackName, id, 63 );
-          strncat( callbackName, "Activate", 63 );
+          Strncat( callbackName, "Activate", 63 );
           activateCallback =
            actWin->appCtx->userLibObject.getFunc( callbackName );
 	}
 
         if ( deactivateCallbackFlag ) {
           strncpy( callbackName, id, 63 );
-          strncat( callbackName, "Deactivate", 63 );
+          Strncat( callbackName, "Deactivate", 63 );
           deactivateCallback =
            actWin->appCtx->userLibObject.getFunc( callbackName );
 	}
@@ -2257,9 +2257,9 @@ int maxStringSize = pvId->maxStringSize();
   else {
     strcpy( selectString, "" );
     for ( i=0; i<numStates; i++ ) {
-      strncat( selectString, stateString[i], enumStringSize );
+      Strncat( selectString, stateString[i], enumStringSize );
       selectString[enumStringSize] = '\0';
-      if ( i != numStates-1 ) strncat( selectString, "|", enumStringSize );
+      if ( i != numStates-1 ) Strncat( selectString, "|", enumStringSize );
     }
     actWin->appCtx->proc->lock();
     textEntry.addOption( "New Value", selectString, &entryState );

@@ -392,7 +392,7 @@ char title[32], *ptr;
   else
     strncpy( title, activeExitButtonClass_str2, 31 );
 
-  strncat( title, activeExitButtonClass_str3, 31 );
+  Strncat( title, activeExitButtonClass_str3, 31 );
 
   bufX = x;
   bufY = y;

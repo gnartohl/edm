@@ -1109,7 +1109,7 @@ char title[32], *ptr, *envPtr, saveLock;
   else
     strncpy( title, shellCmdClass_str2, 31 );
 
-  strncat( title, shellCmdClass_str3, 31 );
+  Strncat( title, shellCmdClass_str3, 31 );
 
   buf->bufX = x;
   buf->bufY = y;

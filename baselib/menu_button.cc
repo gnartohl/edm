@@ -995,7 +995,7 @@ char title[32], *ptr;
   else
     strncpy( title, activeMenuButtonClass_str2, 31 );
 
-  strncat( title, activeMenuButtonClass_str3, 31 );
+  Strncat( title, activeMenuButtonClass_str3, 31 );
 
   bufX = x;
   bufY = y;

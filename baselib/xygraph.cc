@@ -3650,7 +3650,7 @@ int i, yi;
   else
     strncpy( title, "Unknown object", 31 );
 
-  strncat( title, " Properties", 31 );
+  Strncat( title, " Properties", 31 );
 
   if ( !eBuf ) {
     eBuf = new editBufType;

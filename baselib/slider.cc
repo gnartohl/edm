@@ -1432,7 +1432,7 @@ char title[32], *ptr;
   else
     strncpy( title, activeSliderClass_str10, 31 );
 
-  strncat( title, activeSliderClass_str11, 31 );
+  Strncat( title, activeSliderClass_str11, 31 );
 
   strncpy( bufId, id, 31 );
 
@@ -2229,7 +2229,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
   else
     strncpy( title, activeSliderClass_str54, 31 );
 
-  strncat( title, activeSliderClass_str55, 31 );
+  Strncat( title, activeSliderClass_str55, 31 );
 
   if ( e->type == Expose ) {
 
@@ -2999,21 +2999,21 @@ char callbackName[63+1];
 
         if ( changeCallbackFlag ) {
           strncpy( callbackName, id, 63 );
-          strncat( callbackName, activeSliderClass_str64, 63 );
+          Strncat( callbackName, activeSliderClass_str64, 63 );
           changeCallback =
            actWin->appCtx->userLibObject.getFunc( callbackName );
 	}
 
         if ( activateCallbackFlag ) {
           strncpy( callbackName, id, 63 );
-          strncat( callbackName, activeSliderClass_str65, 63 );
+          Strncat( callbackName, activeSliderClass_str65, 63 );
           activateCallback =
            actWin->appCtx->userLibObject.getFunc( callbackName );
 	}
 
         if ( deactivateCallbackFlag ) {
           strncpy( callbackName, id, 63 );
-          strncat( callbackName, activeSliderClass_str66, 63 );
+          Strncat( callbackName, activeSliderClass_str66, 63 );
           deactivateCallback =
            actWin->appCtx->userLibObject.getFunc( callbackName );
 	}

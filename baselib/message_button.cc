@@ -1238,7 +1238,7 @@ char title[32], *ptr, *envPtr, saveLock;
   else
     strncpy( title, activeMessageButtonClass_str2, 31 );
 
-  strncat( title, activeMessageButtonClass_str3, 31 );
+  Strncat( title, activeMessageButtonClass_str3, 31 );
 
   bufX = x;
   bufY = y;

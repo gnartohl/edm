@@ -637,7 +637,7 @@ char title[32], *ptr;
   else
     strncpy( title, activeRadioButtonClass_str2, 31 );
 
-  strncat( title, activeRadioButtonClass_str3, 31 );
+  Strncat( title, activeRadioButtonClass_str3, 31 );
 
   bufX = x;
   bufY = y;

@@ -400,7 +400,7 @@ char title[32], *ptr;
   else
     strncpy( title, activeCircleClass_str4, 31 );
 
-  strncat( title, activeCircleClass_str5, 31 );
+  Strncat( title, activeCircleClass_str5, 31 );
 
   bufX = x;
   bufY = y;

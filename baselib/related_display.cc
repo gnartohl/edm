@@ -1165,7 +1165,7 @@ char title[32], *ptr;
   else
     strncpy( title, relatedDisplayClass_str17, 31 );
 
-  strncat( title, relatedDisplayClass_str3, 31 );
+  Strncat( title, relatedDisplayClass_str3, 31 );
 
   buf->bufX = x;
   buf->bufY = y;

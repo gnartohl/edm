@@ -1074,7 +1074,7 @@ char title[32], *ptr;
   else
     strncpy( title, "Unknown object", 31 );
 
-  strncat( title, " Properties", 31 );
+  Strncat( title, " Properties", 31 );
 
   strncpy( bufId, id, 31 );
 
@@ -1599,28 +1599,28 @@ char callbackName[63+1];
 
         if ( downCallbackFlag ) {
           strncpy( callbackName, id, 63 );
-          strncat( callbackName, "Down", 63 );
+          Strncat( callbackName, "Down", 63 );
           downCallback =
            actWin->appCtx->userLibObject.getFunc( callbackName );
 	}
 
         if ( upCallbackFlag ) {
           strncpy( callbackName, id, 63 );
-          strncat( callbackName, "Up", 63 );
+          Strncat( callbackName, "Up", 63 );
           upCallback =
            actWin->appCtx->userLibObject.getFunc( callbackName );
 	}
 
         if ( activateCallbackFlag ) {
           strncpy( callbackName, id, 63 );
-          strncat( callbackName, "Activate", 63 );
+          Strncat( callbackName, "Activate", 63 );
           activateCallback =
            actWin->appCtx->userLibObject.getFunc( callbackName );
 	}
 
         if ( deactivateCallbackFlag ) {
           strncpy( callbackName, id, 63 );
-          strncat( callbackName, "Deactivate", 63 );
+          Strncat( callbackName, "Deactivate", 63 );
           deactivateCallback =
            actWin->appCtx->userLibObject.getFunc( callbackName );
 	}
@@ -1947,7 +1947,7 @@ char msg[79+1];
     if ( controlPvId->getType() != genericEnumType ) {
       strncpy( msg, actWin->obj.getNameFromClass( "activeButtonClass" ),
        79 );
-      strncat( msg, " - illegal pv type", 79 );
+      Strncat( msg, " - illegal pv type", 79 );
       actWin->appCtx->postMessage( msg );
       controlPvConnected = 0;
       active = 0;
@@ -2013,7 +2013,7 @@ char msg[79+1];
     if ( readPvId->getType() != genericEnumType ) {
       strncpy( msg, actWin->obj.getNameFromClass( "activeButtonClass" ),
        79 );
-      strncat( msg, " - illegal pv type", 79 );
+      Strncat( msg, " - illegal pv type", 79 );
       actWin->appCtx->postMessage( msg );
       readPvConnected = 0;
       active = 0;

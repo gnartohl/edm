@@ -302,7 +302,7 @@ int stat;
   if ( logFileExists ) {
 
     strncpy( newName, logFileName, 255 );
-    strncat( newName, "_2", 255 );
+    Strncat( newName, "_2", 255 );
 
     //printf( "unlink %s\n", newName );
     stat = unlink( newName );
@@ -575,7 +575,7 @@ char title[32], *ptr;
   else
     strncpy( title, activeMessageBoxClass_str4, 31 );
 
-  strncat( title, activeMessageBoxClass_str5, 31 );
+  Strncat( title, activeMessageBoxClass_str5, 31 );
 
   bufX = x;
   bufY = y;

@@ -587,7 +587,7 @@ char title[32], *ptr;
   else
     strncpy( title, activeLineClass_str4, 31 );
 
-  strncat( title, activeLineClass_str5, 31 );
+  Strncat( title, activeLineClass_str5, 31 );
 
   bufX = x;
   bufY = y;
