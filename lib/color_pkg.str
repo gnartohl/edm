@@ -6,6 +6,8 @@
 #define colorInfoClass_str3 "File"
 #define colorInfoClass_str4 "Close"
 #define colorInfoClass_str5 "Show"
+#define colorInfoClass_str6 "Error at line %-d - %s\n"
+#define colorInfoClass_str7 "Warning - duplicate color name: [%s]\n"
 
 #endif
 

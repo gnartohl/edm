@@ -32,6 +32,7 @@ colorInfoClass *ci;
 
   ci = (colorInfoClass *) client;
   ci->setActiveWidget( NULL );
+  ci->setNameWidget( NULL );
   ci->setCurDestination( NULL );
 
 }
@@ -40,6 +41,7 @@ colorButtonClass::colorButtonClass ( void ) {
 
   form = NULL;
   pb = NULL;
+  namePb = NULL;
   tf = NULL;
   colorPvName = NULL;
 
@@ -51,6 +53,7 @@ colorButtonClass::colorButtonClass (
 
   form = source.form;
   pb = source.pb;
+  namePb = source.namePb;
   tf = source.tf;
   destPtr = source.destPtr;
   ci = source.ci;
@@ -70,6 +73,7 @@ colorButtonClass colorButtonClass::operator = (
 
   form = source.form;
   pb = source.pb;
+  namePb = source.namePb;
   tf = source.tf;
   destPtr = source.destPtr;
   ci = source.ci;
@@ -117,6 +121,8 @@ int curIndex;
   stat = ci->setCurIndex( curIndex );
 
   stat = ci->setActiveWidget( w );
+
+  ci->setNameWidget( cb->nameWidget() );
 
   ci->setCurDestination( cb->destination() );
 
@@ -205,6 +211,78 @@ Widget colorButtonClass::createWithText(
 
 }
 
+Widget colorButtonClass::createWithRule(
+  Widget parent,
+  int *dest,
+  colorInfoClass *ptr,
+  char *pvName,
+  Arg fArgs[],
+  int fNum_args,
+  Arg bArgs[],
+  int bNum_args,
+  Arg nbArgs[],
+  int nbNum_args,
+  Arg tArgs[],
+  int tNum_args )
+{
+
+  if ( !colorPvName ) colorPvName = new char[128];
+
+  if ( pvName ) {
+    strncpy( colorPvName, pvName, 127 );
+    colorPvName[127] = 0;
+  }
+  else {
+    strcpy( colorPvName, "" );
+  }
+
+  ci = ptr;
+
+  form = XtCreateManagedWidget( "", xmFormWidgetClass, parent,
+    fArgs, fNum_args );
+
+  pb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, form,
+    bArgs, bNum_args );
+
+  XtSetArg( nbArgs[nbNum_args], XmNtopAttachment,
+   (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); nbNum_args++;
+  XtSetArg( nbArgs[nbNum_args], XmNtopWidget, (XtArgVal) pb ); nbNum_args++;
+  XtSetArg( nbArgs[tNum_args], XmNleftOffset, (XtArgVal) 10 ); nbNum_args++;
+  XtSetArg( nbArgs[nbNum_args], XmNleftAttachment,
+   (XtArgVal) XmATTACH_WIDGET ); nbNum_args++;
+  XtSetArg( nbArgs[nbNum_args], XmNleftWidget,
+   (XtArgVal) pb ); nbNum_args++;
+
+  namePb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, form,
+    nbArgs, nbNum_args );
+
+  if ( pvName ) {
+
+    // XtSetArg( tArgs[tNum_args], XmNleftOffset, (XtArgVal) 5 ); tNum_args++;
+    XtSetArg( tArgs[tNum_args], XmNtopAttachment,
+     (XtArgVal) XmATTACH_WIDGET ); tNum_args++;
+    XtSetArg( tArgs[tNum_args], XmNtopWidget, (XtArgVal) pb ); tNum_args++;
+    XtSetArg( tArgs[tNum_args], XmNleftAttachment,
+     (XtArgVal) XmATTACH_FORM ); tNum_args++;
+    XtSetArg( tArgs[tNum_args], XmNvalue, colorPvName ); tNum_args++;
+    XtSetArg( tArgs[tNum_args], XmNmaxLength, (short) PvSize() ); tNum_args++;
+
+    tf = XtCreateManagedWidget( "", xmTextWidgetClass, form,
+      tArgs, tNum_args );
+
+  }
+
+  destPtr = dest;
+
+  curIndex = *dest;
+
+  XtAddCallback( pb, XmNactivateCallback, setActive_cb, (XtPointer) this );
+  XtAddCallback( pb, XmNdestroyCallback, destroy_cb, (XtPointer) this->ci );
+
+  return form;
+
+}
+
 Widget colorButtonClass::widget ( void ) {
 
   return pb;
@@ -214,6 +292,12 @@ Widget colorButtonClass::widget ( void ) {
 Widget colorButtonClass::formWidget ( void ) {
 
   return form;
+
+}
+
+Widget colorButtonClass::nameWidget ( void ) {
+
+  return namePb;
 
 }
 

@@ -47,7 +47,7 @@ class colorButtonClass {
 
 private:
 
-Widget form, pb, tf;
+Widget form, pb, namePb, tf;
 int *destPtr;
 colorInfoClass *ci;
 char *colorPvName;
@@ -84,9 +84,25 @@ Widget colorButtonClass::createWithText (
   Arg tArgs[],
   int tNum_args );
 
+Widget colorButtonClass::createWithRule (
+  Widget parent,
+  int *dest,
+  colorInfoClass *ptr,
+  char *pvName,
+  Arg fArgs[],
+  int fNum_args,
+  Arg bArgs[],
+  int bNum_args,
+  Arg nbArgs[],
+  int nbNum_args,
+  Arg tArgs[],
+  int tNum_args );
+
 Widget colorButtonClass::widget ( void );
 
 Widget colorButtonClass::formWidget ( void );
+
+Widget colorButtonClass::nameWidget ( void );
 
 Widget colorButtonClass::textWidget ( void );
 

@@ -61,12 +61,13 @@ XExposeEvent *expe;
 XButtonEvent *be;
 Widget curw;
 colorInfoClass *cio;
-int x, y, i, r, c, ncols, nrows, remainder;
+int x, y, i, r, c, ncols, nrows, remainder, index;
 Arg arg[10];
 int n;
-unsigned int fg;
+unsigned int fg, bg;
 int *dest;
 int red, green, blue;
+XmString str;
 
   cio = (colorInfoClass *) client;
 
@@ -154,7 +155,7 @@ int red, green, blue;
 
     cio->setCurIndex( i );
 
-    fg = cio->colors[i];
+    bg = cio->colors[i];
 
     cio->change = 1;
 
@@ -162,8 +163,26 @@ int red, green, blue;
 
     if ( curw ) {
       n = 0;
-      XtSetArg( arg[n], XmNbackground, (XtArgVal) fg ); n++;
+      XtSetArg( arg[n], XmNbackground, (XtArgVal) bg ); n++;
+      index = cio->pixIndex( bg );
+      fg = cio->labelPix( index );
+      XtSetArg( arg[n], XmNforeground, (XtArgVal) fg ); n++;
       XtSetValues( curw, arg, n );
+    }
+
+    curw = cio->getNameWidget();
+
+    if ( curw ) {
+
+      str = XmStringCreateLocalized( cio->colorName(i) );
+
+      n = 0;
+      XtSetArg( arg[n], XmNlabelString, (XtArgVal) str ); n++;
+      // XtSetArg( arg[n], XmNwidth, (XtArgVal) 100 ); n++;
+      XtSetValues( curw, arg, n );
+
+      XmStringFree( str );
+
     }
 
     dest = cio->getCurDestination();
@@ -172,7 +191,7 @@ int red, green, blue;
     }
 
     if ( showRGB ) {
-      cio->getRGB( fg, &red, &green, &blue );
+      cio->getRGB( bg, &red, &green, &blue );
       printf( "index=%-d,  r=%-d, g=%-d, b=%-d\n", i, red, green, blue );
     }
 
@@ -392,6 +411,7 @@ int stat;
 
   fg = 0;
   activeWidget = NULL;
+  nameWidget = NULL;
   curDestination = NULL;
   colorWindowIsOpen = 0;
 
@@ -472,7 +492,7 @@ void colorInfoClass::parseError (
 char *msg )
 {
 
-  printf( "Error at line %-d - %s\n", parseLine, msg );
+  printf( colorInfoClass_str6, parseLine, msg );
 
 }
 
@@ -1038,7 +1058,10 @@ unsigned long bgColor;
           return stat;
         }
 
-        if ( dup ) delete cur[0];
+        if ( dup ) {
+          printf( colorInfoClass_str7, cur[0]->name );
+          delete cur[0];
+	}
 
         stat = avl_insert_node( this->colorCacheByIndexH, (void *) cur[1],
          &dup );
@@ -1379,6 +1402,7 @@ term:
 
   colors = new unsigned int[max_colors];
   blinkingColors = new unsigned int[max_colors];
+  colorNames = new (char *)[max_colors];
 
   stat = avl_get_first( this->colorCacheByIndexH, (void **) &cur1 );
   if ( !( stat & 1 ) ) {
@@ -1388,6 +1412,8 @@ term:
   i = 0;
 
   while ( cur1 ) {
+
+    colorNames[i] = cur1->name; // populate color name array
 
     color.red = cur1->rgb[0];
     color.green = cur1->rgb[1];
@@ -1576,7 +1602,7 @@ int colorInfoClass::initFromFile (
   char *fileName )
 {
 
-char line[127+1], *ptr, *tk;
+char line[127+1], *ptr, *tk, *junk;
 int i, index, iOn, iOff, n, stat, nrows, ncols, remainder, dup, nSpecial;
 FILE *f;
 XColor color;
@@ -1667,11 +1693,17 @@ firstTry:
   blinkingColorCells = new unsigned long[num_blinking_colors];
   blinkingXColor = new XColor[num_blinking_colors];
   offBlinkingXColor = new XColor[num_blinking_colors];
+  colorNames = new (char *)[max_colors+num_blinking_colors+1];
+
+  junk =  new char[strlen("n/a")+1]; // memory leak here
+  strcpy( junk, "n/a" );
 
   numColors = 0;
 
   index = 0;
   for ( i=0; i<(max_colors); i++ ) {
+
+    colorNames[i] = junk;
 
     ptr = fgets ( line, 127, f );
     if ( ptr ) {
@@ -1807,6 +1839,10 @@ firstTry:
    blinkingColorCells, num_blinking_colors );
 
   if ( stat ) { // success
+
+    for ( i=0; i<num_blinking_colors; i++ ) {
+      colorNames[max_colors+i] = junk;
+    }
 
     // blinking colors
     iOn = 0;
@@ -2158,6 +2194,20 @@ Widget colorInfoClass::getActiveWidget( void ) {
 
 }
 
+int colorInfoClass::setNameWidget( Widget w ) {
+
+  nameWidget = w;
+
+  return 1;
+
+}
+
+Widget colorInfoClass::getNameWidget( void ) {
+
+  return nameWidget;
+
+}
+
 int colorInfoClass::getRGB(
   unsigned int pixel,
   int *r,
@@ -2480,7 +2530,8 @@ unsigned int colorInfoClass::getPixelByIndex (
   if ( index >= max_colors+num_blinking_colors )
     return BlackPixel( display, screen );
 
-  if ( index < 0 ) return WhitePixel( display, screen );
+  if ( index < 0 )
+    return WhitePixel( display, screen );
 
   return colors[index];
 
@@ -2493,9 +2544,53 @@ unsigned int colorInfoClass::pix ( // same as getPixelByIndex
   if ( index >= max_colors+num_blinking_colors )
     return BlackPixel( display, screen );
 
-  if ( index < 0 ) return WhitePixel( display, screen );
+  if ( index < 0 )
+    return WhitePixel( display, screen );
 
   return colors[index];
+
+}
+
+unsigned int colorInfoClass::labelPix ( // return reasonable fg for given bg
+  int index )
+{
+
+int stat;
+colorCachePtr cur;
+int sum;
+
+  stat = avl_get_match( this->colorCacheByIndexH, (void *) &index,
+   (void **) &cur );
+  if ( !(stat & 1) ) return BlackPixel( display, screen );
+
+  if ( cur ) {
+
+    sum = cur->rgb[0] + cur->rgb[1] * 3 + cur->rgb[2];
+
+    // printf( "sum = %-d\n", sum );
+
+    if ( sum < 180000 )
+      return WhitePixel( display, screen );
+    else
+      return BlackPixel( display, screen );
+
+  }
+
+  return BlackPixel( display, screen );
+
+}
+
+char *colorInfoClass::colorName (
+  int index )
+{
+
+  if ( index >= max_colors+num_blinking_colors )
+    return colorNames[max_colors-1];
+
+  if ( index < 0 )
+    return colorNames[0];
+
+  return colorNames[index];
 
 }
 
@@ -2522,6 +2617,20 @@ colorCachePtr cur;
       }
 
   }
+
+  return 0;
+
+}
+
+int colorInfoClass::isRule (
+  int index )
+{
+
+  if ( index >= max_colors+num_blinking_colors )
+    return 0;
+
+  if ( index < 0 )
+    return 0;
 
   return 0;
 

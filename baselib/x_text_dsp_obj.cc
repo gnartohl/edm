@@ -2054,29 +2054,37 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeXTextDspClass_str6, 27, bufId, 31 );
-  ef.addTextField( activeXTextDspClass_str7, 27, &bufX );
-  ef.addTextField( activeXTextDspClass_str8, 27, &bufY );
-  ef.addTextField( activeXTextDspClass_str9, 27, &bufW );
-  ef.addTextField( activeXTextDspClass_str10, 27, &bufH );
-  ef.addToggle( activeXTextDspClass_str11, &bufAutoHeight );
-  ef.addFontMenu( activeXTextDspClass_str12, actWin->fi, &fm, fontTag );
-  fm.setFontAlignment( alignment );
+  ef.addTextField( activeXTextDspClass_str6, 31, bufId, 31 );
+  ef.addTextField( activeXTextDspClass_str7, 31, &bufX );
+  ef.addTextField( activeXTextDspClass_str8, 31, &bufY );
+  ef.addTextField( activeXTextDspClass_str9, 31, &bufW );
+  ef.addTextField( activeXTextDspClass_str10, 31, &bufH );
+  ef.addTextField( activeXTextDspClass_str22, 31, bufPvName, 39 );
   ef.addOption( activeXTextDspClass_str13, activeXTextDspClass_str14, &bufColorMode );
-  ef.addColorButtonWithText( activeXTextDspClass_str15, actWin->ci,
-    &fgCb, &bufFgColor, 22, fgPvExpStr.getRaw() );
+
+  if ( fgPvExpStr.getRaw() ) {
+    ef.addColorButtonWithRule( activeXTextDspClass_str15, actWin->ci,
+      &fgCb, &bufFgColor, 31, fgPvExpStr.getRaw() );
+  }
+  else {
+    ef.addColorButtonWithRule( activeXTextDspClass_str15, actWin->ci,
+      &fgCb, &bufFgColor, 31, "" );
+  }
+
   ef.addColorButton( activeXTextDspClass_str16, actWin->ci, &bgCb, &bufBgColor );
   ef.addToggle( activeXTextDspClass_str17, &bufUseDisplayBg );
-  ef.addOption( activeXTextDspClass_str18,
-   activeXTextDspClass_str19, &bufFormatType );
-  ef.addToggle( activeXTextDspClass_str20, &bufLimitsFromDb );
-  ef.addTextField( activeXTextDspClass_str21, 27, &bufEfPrecision );
-  ef.addTextField( activeXTextDspClass_str22, 27, bufPvName, 39 );
+  ef.addColorButton( activeXTextDspClass_str26, actWin->ci, &svalCb, &bufSvalColor );
+  ef.addTextField( activeXTextDspClass_str25, 31, bufSvalPvName, 39 );
   ef.addOption( activeXTextDspClass_str23,
    activeXTextDspClass_str24,
    &bufNullDetectMode );
-  ef.addTextField( activeXTextDspClass_str25, 27, bufSvalPvName, 39 );
-  ef.addColorButton( activeXTextDspClass_str26, actWin->ci, &svalCb, &bufSvalColor );
+  ef.addFontMenu( activeXTextDspClass_str12, actWin->fi, &fm, fontTag );
+  fm.setFontAlignment( alignment );
+  ef.addOption( activeXTextDspClass_str18,
+   activeXTextDspClass_str19, &bufFormatType );
+  ef.addToggle( activeXTextDspClass_str20, &bufLimitsFromDb );
+  ef.addTextField( activeXTextDspClass_str21, 31, &bufEfPrecision );
+  ef.addToggle( activeXTextDspClass_str11, &bufAutoHeight );
   ef.addToggle( activeXTextDspClass_str27, &bufEditable );
   ef.addToggle( activeXTextDspClass_str67, &bufUseKp );
   ef.addToggle( activeXTextDspClass_str28, &bufSmartRefresh );
@@ -2937,7 +2945,7 @@ static XtActionsRec dragActions[] = {
         sprintf( format, "%%.%-de", precision );
         break;
       default:
-        sprintf( format, "%%.%-dg", precision );
+        sprintf( format, "%%.%-df", precision );
         break;
       } // end switch( formatType )
   
@@ -2986,7 +2994,7 @@ static XtActionsRec dragActions[] = {
         sprintf( format, "%%.%-de", precision );
         break;
       default:
-        sprintf( format, "%%.%-dg", precision );
+        sprintf( format, "%%.%-df", precision );
         break;
       } // end switch( formatType )
 

@@ -123,6 +123,7 @@ unsigned int fg;
 unsigned int *colors, *blinkingColors;
 unsigned long *blinkingColorCells;
 XColor *blinkingXColor, *offBlinkingXColor;
+char **colorNames; // dynamic array of pointers to char
 
 int special[NUM_SPECIAL_COLORS];
 int specialIndex[NUM_SPECIAL_COLORS];
@@ -134,7 +135,7 @@ XtAppContext appCtx;
 XtIntervalId incrementTimer;
 int incrementTimerValue;
 
-Widget activeWidget;
+Widget activeWidget, nameWidget;
 int *curDestination;
 
 gcClass gc;
@@ -213,6 +214,10 @@ int colorInfoClass::setActiveWidget( Widget w );
 
 Widget colorInfoClass::getActiveWidget( void );
 
+int colorInfoClass::setNameWidget( Widget w );
+
+Widget colorInfoClass::getNameWidget( void );
+
 Widget colorInfoClass::createColorButton(
   Widget parent,
   Arg args[],
@@ -261,6 +266,9 @@ unsigned int colorInfoClass::getPixelByIndex (
 unsigned int colorInfoClass::pix ( // same as getPixelByIndex
   int index );
 
+unsigned int colorInfoClass::labelPix ( // return reasonable fg for given bg
+  int index );
+
 int colorInfoClass::pixIndex (
   unsigned int pixel );
 
@@ -272,6 +280,12 @@ void colorInfoClass::parseError (
 
 int colorInfoClass::getToken (
  char toke[255+1] );
+
+char *colorInfoClass::colorName (
+  int index );
+
+int colorInfoClass::isRule (
+  int index );
 
 };
 

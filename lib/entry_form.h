@@ -532,6 +532,14 @@ int entryFormClass::addColorButtonWithText (
   int numCols,
   char *pvName );
 
+int entryFormClass::addColorButtonWithRule (
+  char *label,
+  colorInfoClass *ci,
+  colorButtonClass *cb,
+  int *dest,
+  int numCols,
+  char *pvName );
+
 int entryFormClass::addEmbeddedEf (
   char *label,
   entryFormClass *ef );

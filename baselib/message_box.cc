@@ -846,7 +846,7 @@ struct stat fileStat;
          flushTimerValue*1000, messageboxc_flush_log_file, (void *) this );
       }
 
-      XSync( actWin->display(), False );
+      // XSync( actWin->display(), False );
 
     }
 
