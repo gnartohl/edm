@@ -146,6 +146,7 @@ char tmp[PV_Factory::MAX_PV_NAME+1], *tk, *ctx;
   numEnumStates = 0;
   dataType = 's';
   strcpy( buf, "" );
+  bufLen = 0;
 
   if ( !string ) return 0;
   if ( strlen(string) < 3 ) return 0;
@@ -166,6 +167,7 @@ char tmp[PV_Factory::MAX_PV_NAME+1], *tk, *ctx;
     i++;
     strncpy( buf, &string[i], MAX_BUF_CHARS );
     buf[MAX_BUF_CHARS] = 0;
+    bufLen = strlen( buf );
     break;
 
   case 'e':
@@ -182,9 +184,11 @@ char tmp[PV_Factory::MAX_PV_NAME+1], *tk, *ctx;
     if ( tk ) {
       strncpy( buf, tk, MAX_BUF_CHARS );
       buf[MAX_BUF_CHARS] = 0;
+      bufLen = strlen( buf );
     }
     else {
       strcpy( buf, "0" );
+      bufLen = strlen( buf );
       numEnumStates = 2;
       enums[0] = new char[2];
       strcpy( enums[0], "0" );
@@ -216,6 +220,7 @@ char tmp[PV_Factory::MAX_PV_NAME+1], *tk, *ctx;
     dataType = 's';
     strncpy( buf, &string[i], MAX_BUF_CHARS );
     buf[MAX_BUF_CHARS] = 0;
+    bufLen = strlen( buf );
     break;
 
   }
@@ -243,7 +248,7 @@ LOC_ProcessVariable::LOC_ProcessVariable(const char *_name)
     is_connected = true;
     have_ctrlinfo = true;
     strcpy( buf, "" );
-    bufLen = strlen(buf);
+    bufLen = 0;
     //printf("LOC_ProcessVariable %s created\n", get_name());
 }
 
