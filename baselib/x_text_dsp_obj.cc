@@ -2826,7 +2826,7 @@ int blink = 0;
 
     if ( tf_widget ) {
 
-      if ( !grabUpdate ) {
+      if ( !grabUpdate || updatePvOnDrop ) {
 
         if ( bufInvalid ) {
           bufInvalid = 0;
