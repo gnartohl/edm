@@ -1593,6 +1593,8 @@ int i;
     }
   }
 
+  updateBlink( 0 );
+
 }
 
 int activeXTextDspClass::createInteractive (

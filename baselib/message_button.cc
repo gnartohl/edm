@@ -524,6 +524,8 @@ activeMessageButtonClass::~activeMessageButtonClass ( void ) {
     unconnectedTimer = 0;
   }
 
+  updateBlink( 0 );
+
 }
 
 int activeMessageButtonClass::createInteractive (

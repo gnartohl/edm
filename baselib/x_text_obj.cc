@@ -412,6 +412,8 @@ activeXTextClass::~activeXTextClass ( void ) {
     unconnectedTimer = 0;
   }
 
+  updateBlink( 0 );
+
 }
 
 int activeXTextClass::createInteractive (

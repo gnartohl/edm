@@ -362,6 +362,9 @@ activeCircleClass::~activeCircleClass ( void ) {
     XtRemoveTimeOut( unconnectedTimer );
     unconnectedTimer = 0;
   }
+
+  updateBlink( 0 );
+
 }
 
 int activeCircleClass::createInteractive (
