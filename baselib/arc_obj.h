@@ -285,6 +285,36 @@ void activeArcClass::changePvNames (
   int numAlarmPvs,
   char *alarmPvs[] );
 
+int activeArcClass::rotate (
+  int xOrigin,
+  int yOrigin,
+  char direction ); // '+'=clockwise, '-'=counter clockwise
+
+int activeArcClass::flip (
+  int xOrigin,
+  int yOrigin,
+  char direction ); // 'H' or 'V'
+
+int activeArcClass::addUndoRotateNode ( 
+  undoClass *undoObj );
+
+int activeArcClass::addUndoFlipNode (
+  undoClass *undoObj );
+
+int activeArcClass::undoRotate (
+  undoOpClass *_opPtr,
+  int _x,
+  int _y,
+  int _w,
+  int _h );
+
+int activeArcClass::undoFlip (
+  undoOpClass *_opPtr,
+  int x,
+  int y,
+  int w,
+  int h );
+
 };
 
 #ifdef __cplusplus

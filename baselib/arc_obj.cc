@@ -27,6 +27,34 @@
 // This is the EPICS specific line right now:
 static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
+class undoArcOpClass : public undoOpClass {
+
+public:
+
+double angle;
+
+undoArcOpClass::undoArcOpClass ()
+{
+
+  printf( "undoArcOpClass::undoArcOpClass\n" );
+
+}
+
+undoArcOpClass::undoArcOpClass (
+  double _angle
+) {
+
+  angle = _angle;
+
+}
+
+undoArcOpClass::~undoArcOpClass ()
+{
+
+}
+
+};
+
 static void aac_edit_update (
   Widget w,
   XtPointer client,
@@ -1434,6 +1462,163 @@ void activeArcClass::changePvNames (
       alarmPvExpStr.setRaw( alarmPvs[0] );
     }
   }
+
+}
+
+int activeArcClass::rotate (
+  int xOrigin,
+  int yOrigin,
+  char direction ) // '+'=clockwise, '-'=counter clockwise
+{
+
+int stat;
+double angle;
+
+  if ( efStartAngle.isNull() ) {
+    angle = 0;
+  }
+  else {
+    angle = efStartAngle.value();
+    if ( angle >= 360 ) angle -= 360;
+    if ( angle <= 0 ) angle += 360;
+  }
+
+  if ( direction == '-' ) {
+    angle += 90;
+    if ( angle >= 360 ) angle -= 360;
+  }
+  else if ( direction == '+' ) {
+    angle -= 90;
+    if ( angle <= 0 ) angle += 360;
+  }
+
+  efStartAngle.setValue( angle );
+  startAngle = (int) ( efStartAngle.value() * 64.0 +0.5 );
+
+  stat = activeGraphicClass::rotate( xOrigin, yOrigin, direction );
+  return stat;
+
+}
+
+int activeArcClass::flip (
+  int xOrigin,
+  int yOrigin,
+  char direction ) // 'H' or 'V'
+{
+
+int stat;
+double angle, totAngle, diff;
+
+  if ( efStartAngle.isNull() ) {
+    angle = 0;
+  }
+  else {
+    angle = efStartAngle.value();
+    if ( angle >= 360 ) angle -= 360;
+    if ( angle <= 0 ) angle += 360;
+  }
+
+  if ( efTotalAngle.isNull() ) {
+    totAngle = 0;
+  }
+  else {
+    totAngle = efTotalAngle.value();
+  }
+
+  if ( direction == 'H' ) {
+    if ( angle <= 180 ) {
+      diff = 90 - angle;
+      angle = 90 + diff;
+    }
+    else {
+      diff = 270 - angle;
+      angle = 270 + diff;
+    }
+    if ( angle >= 360 ) angle -= 360;
+    if ( angle <= 0 ) angle += 360;
+  }
+  else if ( direction == 'V' ) {
+    if ( angle <= 90 ) {
+      angle = 360 - angle;
+    }
+    else if ( angle <= 270 ) {
+      diff = 180 - angle;
+      angle = 180 + diff;
+    }
+    else {
+      angle = 360 - angle;
+    }
+  }
+
+  angle = angle - totAngle;
+
+  efStartAngle.setValue( angle );
+  startAngle = (int) ( efStartAngle.value() * 64.0 +0.5 );
+
+  stat = activeGraphicClass::rotate( xOrigin, yOrigin, direction );
+  return stat;
+
+}
+
+int activeArcClass::addUndoRotateNode ( 
+  undoClass *undoObj
+) {
+
+int stat;
+undoArcOpClass *ptr;
+
+  ptr = new undoArcOpClass( efStartAngle.value() );
+  stat = undoObj->addRotateNode( this, ptr, x, y, w, h );
+  return stat;
+
+}
+
+int activeArcClass::addUndoFlipNode (
+  undoClass *undoObj
+) {
+
+int stat;
+
+  stat = addUndoRotateNode( undoObj );
+  return stat;
+
+}
+
+int activeArcClass::undoRotate (
+  undoOpClass *_opPtr,
+  int _x,
+  int _y,
+  int _w,
+  int _h )
+{
+
+int stat;
+undoArcOpClass *opPtr = (undoArcOpClass *) _opPtr;
+
+  efStartAngle.setValue( opPtr->angle );
+  startAngle = (int) ( efStartAngle.value() * 64.0 +0.5 );
+
+  stat = activeGraphicClass::undoRotate( _opPtr, _x, _y, _w,_h );
+  return stat;
+
+}
+
+int activeArcClass::undoFlip (
+  undoOpClass *_opPtr,
+  int _x,
+  int _y,
+  int _w,
+  int _h )
+{
+
+int stat;
+undoArcOpClass *opPtr = (undoArcOpClass *) _opPtr;
+
+  efStartAngle.setValue( opPtr->angle );
+  startAngle = (int) ( efStartAngle.value() * 64.0 +0.5 );
+
+  stat = activeGraphicClass::undoFlip( _opPtr, _x, _y, _w,_h );
+  return stat;
 
 }
 
