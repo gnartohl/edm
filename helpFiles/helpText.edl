@@ -1,7 +1,7 @@
 3 1 0
-176
-28
-1058
+39
+39
+1074
 940
 helvetica-medium-r-18.0
 0
@@ -1767,7 +1767,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 542
-650
+720
 474
 16
 index
@@ -1791,7 +1791,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 542
-666
+736
 477
 16
 index
@@ -1815,7 +1815,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 542
-682
+752
 362
 16
 index
@@ -1903,6 +1903,126 @@ index
 <<<empty>>>
 <<<empty>>>
 the new value will be written to the attached PV.
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+542
+650
+514
+16
+index
+14
+0
+1
+index
+4
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+If Convert Date To File Name is checked, then the returned string will be suitable
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+542
+667
+139
+16
+index
+14
+0
+1
+index
+4
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+for use as a file name.
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+564
+690
+377
+16
+index
+14
+0
+1
+index
+4
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+(e.g. jan-05-2003 11:30:10 becomes jan05_2003_113010)
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+542
+778
+436
+16
+index
+14
+0
+1
+index
+4
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+The full path, the filename and extension, or just the file name may be
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+542
+795
+408
+16
+index
+14
+0
+1
+index
+4
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+returned depending on the option selected in the "Return" menu.
 helvetica-medium-r-14.0
 0
 1
