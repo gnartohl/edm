@@ -268,7 +268,7 @@ char title[32], *ptr;
   else
     strncpy( title, activeGifClass_str2, 31 );
 
-  strncat( title, activeGifClass_str3, 31 );
+  Strncat( title, activeGifClass_str3, 31 );
 
   bufX = x;
   bufY = y;

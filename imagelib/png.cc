@@ -631,7 +631,7 @@ char title[32], *ptr;
   else
     strncpy( title, activePngClass_str2, 31 );
 
-  strncat( title, activePngClass_str3, 31 );
+  Strncat( title, activePngClass_str3, 31 );
 
   bufX = x;
   bufY = y;

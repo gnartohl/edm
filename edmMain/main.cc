@@ -135,16 +135,16 @@ SYS_PROC_ID_TYPE procId;
   if ( envPtr ) {
     strncpy( checkPointFileName, envPtr, 255 );
     if ( envPtr[strlen(envPtr)] != '/' ) {
-      strncat( checkPointFileName, "/", 255 );
+      Strncat( checkPointFileName, "/", 255 );
     }
   }
   else {
     strncpy( checkPointFileName, "/tmp/", 255 );
   }
-  strncat( checkPointFileName, "edmCheckPointFile_", 255 );
+  Strncat( checkPointFileName, "edmCheckPointFile_", 255 );
   sys_get_proc_id( &procId );
   sprintf( procIdName, "%-d", (int) procId.id );
-  strncat( checkPointFileName, procIdName, 255 );
+  Strncat( checkPointFileName, procIdName, 255 );
   //printf( "[%s]\n", checkPointFileName );
 
 }
@@ -160,15 +160,15 @@ char procIdName[31+1], *envPtr;
   if ( envPtr ) {
     strncpy( checkPointFileName, envPtr, 255 );
     if ( envPtr[strlen(envPtr)] != '/' ) {
-      strncat( checkPointFileName, "/", 255 );
+      Strncat( checkPointFileName, "/", 255 );
     }
   }
   else {
     strncpy( checkPointFileName, "/tmp/", 255 );
   }
-  strncat( checkPointFileName, "edmCheckPointFile_", 255 );
+  Strncat( checkPointFileName, "edmCheckPointFile_", 255 );
   sprintf( procIdName, "%-d", procId );
-  strncat( checkPointFileName, procIdName, 255 );
+  Strncat( checkPointFileName, procIdName, 255 );
   //printf( "[%s]\n", checkPointFileName );
 
 }
@@ -215,10 +215,10 @@ int i;
     if ( !cptr ) return 2; // fail
     tk = strtok( text, "\n \t" );
     if ( i > 0 ) {
-      strncat( checkPointMacros, ",", 1023 );
+      Strncat( checkPointMacros, ",", 1023 );
       checkPointMacros[1023] = 0;
     }
-    strncat( checkPointMacros, tk, 1023 );
+    Strncat( checkPointMacros, tk, 1023 );
     checkPointMacros[1023] = 0;
   }
 
@@ -296,10 +296,10 @@ int i;
     if ( !cptr ) return 2; // fail
     tk = strtok( text, "\n \t" );
     if ( i > 0 ) {
-      strncat( checkPointMacros, ",", 1023 );
+      Strncat( checkPointMacros, ",", 1023 );
       checkPointMacros[1023] = 0;
     }
-    strncat( checkPointMacros, tk, 1023 );
+    Strncat( checkPointMacros, tk, 1023 );
     checkPointMacros[1023] = 0;
   }
 
@@ -524,7 +524,7 @@ nextHost:
     strncpy( &msg[pos], displayName, max );
     pos = strlen(msg);
     max = 255 - pos;
-    strncat( &msg[pos], "|", max );
+    Strncat( &msg[pos], "|", max );
     pos = strlen(msg);
     max = 255 - pos;
   }
@@ -533,7 +533,7 @@ nextHost:
     strncpy( &msg[pos], argv[i], max );
     pos = strlen(msg);
     max = 255 - pos;
-    strncat( &msg[pos], "|", max );
+    Strncat( &msg[pos], "|", max );
     pos = strlen(msg);
     max = 255 - pos;
   }
@@ -952,7 +952,7 @@ Display *testDisplay;
         exit(0);
       }
 
-      strncat( displayName, ":0.0", 31 );
+      Strncat( displayName, ":0.0", 31 );
 
     }
 
