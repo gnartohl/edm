@@ -1,0 +1,365 @@
+4 0 0
+beginScreenProperties
+major 4
+minor 0
+release 0
+x 45
+y 20
+w 824
+h 575
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 51400 51400 51400
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 49344
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 19
+w 107
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 60652 60652 60652
+value {
+  "XY Graph"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 148
+y 23
+w 231
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Execute Mode Operations"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 71
+w 103
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Show Value"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 104
+w 284
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Shift-press the left mouse button to display"
+  "Numeric values corresponding to the mouse"
+  "pointer location."
+}
+autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 303
+y 149
+w 502
+h 245
+file "$(help)helpXyGraph9.png"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 424
+w 273
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Other mouse operations include those that"
+  "work for most widgets"
+}
+autoSize
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 392
+y 21
+w 93
+h 26
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+font "helvetica-bold-r-14.0"
+noEdit
+buttonLabel "Prev Page"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpXyGraphExeModeOps2"
+}
+closeAction {
+  0 1
+}
+closeDisplay {
+  0 1
+}
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 373
+y 242
+w 21
+h 29
+
+beginGroup
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 373
+y 242
+w 19
+h 23
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+numPoints 4
+xPoints {
+  0 373
+  1 378
+  2 392
+  3 373
+}
+yPoints {
+  0 242
+  1 265
+  2 255
+  3 242
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 382
+y 258
+w 12
+h 13
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+numPoints 4
+xPoints {
+  0 382
+  1 388
+  2 394
+  3 386
+}
+yPoints {
+  0 261
+  1 271
+  2 267
+  3 258
+}
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 125
+y 144
+w 243
+h 103
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+arrows "to"
+numPoints 2
+xPoints {
+  0 125
+  1 368
+}
+yPoints {
+  0 144
+  1 247
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 130
+y 143
+w 165
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+arrows "to"
+numPoints 2
+xPoints {
+  0 130
+  1 295
+}
+yPoints {
+  0 143
+  1 158
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 233
+w 279
+h 128
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "The x coordinate is displayed first followed"
+  "by each y coordinate. In this example, both"
+  "y axes are enabled and the following values"
+  "are displayed"
+  ""
+  "  x  = 5.353"
+  "  y  = 6.012"
+  "  y2 = 60.12"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 37
+y 475
+w 90
+h 80
+font "helvetica-bold-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "shift-middle -"
+  ""
+  "middle -"
+  ""
+  "ctrl-middle -"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 132
+y 475
+w 278
+h 80
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "display menu of drag source PVs"
+  ""
+  "drag current PV (selected from aboe menu)"
+  ""
+  "show PV info"
+}
+autoSize
+endObjectProperties
+

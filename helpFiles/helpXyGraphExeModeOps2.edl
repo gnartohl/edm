@@ -1,0 +1,418 @@
+4 0 0
+beginScreenProperties
+major 4
+minor 0
+release 0
+x 45
+y 20
+w 1068
+h 984
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 51400 51400 51400
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 49344
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 19
+w 107
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 60652 60652 60652
+value {
+  "XY Graph"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 148
+y 23
+w 231
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Execute Mode Operations"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 71
+w 171
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Rescale operations"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 104
+w 392
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "A rescale operation may be performed by left-button-dragging"
+  "a box on the graph window"
+}
+autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 303
+y 149
+w 500
+h 243
+file "$(help)helpXyGraph5.png"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 149
+w 196
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "For example, dragging this box"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 222
+y 162
+w 265
+h 63
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+arrows "to"
+numPoints 2
+xPoints {
+  0 222
+  1 487
+}
+yPoints {
+  0 162
+  1 225
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 424
+w 274
+h 80
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "results in the following rescale operaton"
+  "being performed. Notice that both curves"
+  "are rescaled and all axes end points are"
+  "displayed in reverse color mode indicating"
+  "that they have been manually constrainted."
+}
+autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 303
+y 414
+w 502
+h 244
+file "$(help)helpXyGraph6.png"
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 145
+y 510
+w 147
+h 43
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+arrows "to"
+numPoints 3
+xPoints {
+  0 145
+  1 145
+  2 292
+}
+yPoints {
+  0 510
+  1 553
+  2 553
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 504
+y 20
+w 93
+h 27
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+font "helvetica-bold-r-14.0"
+noEdit
+buttonLabel "Next Page"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpXyGraphExeModeOps3"
+}
+closeAction {
+  0 1
+}
+closeDisplay {
+  0 1
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 394
+y 20
+w 93
+h 27
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+font "helvetica-bold-r-14.0"
+noEdit
+buttonLabel "Prev Page"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpXyGraphExeModeOps"
+}
+closeAction {
+  0 1
+}
+closeDisplay {
+  0 1
+}
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 303
+y 680
+w 502
+h 244
+file "$(help)helpXyGraph6.png"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 693
+w 235
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Clicking the right button on the graph"
+  "window brings up the following menu."
+}
+autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 592
+y 732
+w 144
+h 67
+file "$(help)helpXyGraph7.png"
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 266
+y 710
+w 319
+h 53
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+arrows "to"
+numPoints 2
+xPoints {
+  0 266
+  1 585
+}
+yPoints {
+  0 710
+  1 763
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 741
+w 263
+h 128
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "\"Perform auto-scale\" auto scales all axes"
+  "configured in auto-scale mode."
+  ""
+  "\"Restore original scale\" restores all"
+  "axis limits to their configured values."
+  ""
+  "\"Adjust scale params\" brings up a dialog"
+  "box into which axis limits may be entered."
+}
+autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 866
+y 598
+w 174
+h 300
+file "$(help)helpXyGraph8.png"
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 722
+y 747
+w 132
+h 40
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+arrows "to"
+numPoints 2
+xPoints {
+  0 722
+  1 854
+}
+yPoints {
+  0 787
+  1 747
+}
+endObjectProperties
+

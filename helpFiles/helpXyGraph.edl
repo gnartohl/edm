@@ -1,0 +1,739 @@
+4 0 0
+beginScreenProperties
+major 4
+minor 0
+release 0
+x 25
+y 20
+w 820
+h 928
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 51400 51400 51400
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 49344
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+orthoLineDraw
+endScreenProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 20
+y 122
+w 400
+h 789
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+numPoints 6
+xPoints {
+  0 419
+  1 419
+  2 20
+  3 20
+  4 420
+  5 420
+}
+yPoints {
+  0 726
+  1 911
+  2 911
+  3 122
+  4 122
+  5 440
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 19
+w 107
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 60652 60652 60652
+value {
+  "XY Graph"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 59
+w 375
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "The XY Graph Widget generates x-y or chronological"
+  "plots of up to 14 PV pairs per graph. Array and scalar PVs"
+  "both supported and may coexist on the same graph."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 36
+y 128
+w 152
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Graph Properties"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 36
+y 157
+w 68
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Plot Mode:"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 59
+y 182
+w 345
+h 112
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Applies only to scalar PVs."
+  ""
+  "Plot n points and stop - \"Count\" points are processed;"
+  "subsequent PV values are ignored"
+  ""
+  "Plot last n points - the plot is continually updated"
+  "so as to display the last \"Count\" points"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 36
+y 316
+w 41
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Count:"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 59
+y 338
+w 273
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Parameter to \"Plot Mode\" described above"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 36
+y 376
+w 89
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Update Delay:"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 59
+y 400
+w 278
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Delay in milliseconds between plot updates."
+  "Higher values may increase CPU utilization"
+  "efficiency."
+}
+autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 281
+y 468
+w 500
+h 250
+file "$(help)helpXyGraph1.png"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 37
+y 503
+w 43
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Border"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 37
+y 473
+w 107
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Plot Area Border"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 92
+y 511
+w 188
+h 41
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+arrows "to"
+numPoints 3
+xPoints {
+  0 92
+  1 179
+  2 280
+}
+yPoints {
+  0 511
+  1 511
+  2 552
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 150
+y 448
+w 652
+h 159
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+arrows "to"
+numPoints 5
+xPoints {
+  0 150
+  1 215
+  2 275
+  3 802
+  4 751
+}
+yPoints {
+  0 482
+  1 482
+  2 448
+  3 448
+  4 607
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 686
+y 450
+w 114
+h 38
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+arrows "to"
+numPoints 2
+xPoints {
+  0 800
+  1 686
+}
+yPoints {
+  0 450
+  1 488
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 37
+y 557
+w 113
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Foreground Color"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 37
+y 580
+w 115
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Background Color"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 37
+y 604
+w 65
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Grid Color"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 108
+y 610
+w 301
+h 54
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+arrows "to"
+numPoints 3
+xPoints {
+  0 108
+  1 211
+  2 409
+}
+yPoints {
+  0 610
+  1 610
+  2 664
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 156
+y 566
+w 135
+h 18
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+arrows "to"
+numPoints 3
+xPoints {
+  0 156
+  1 230
+  2 291
+}
+yPoints {
+  0 566
+  1 566
+  2 584
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 159
+y 587
+w 184
+h 41
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+arrows "to"
+numPoints 3
+xPoints {
+  0 159
+  1 207
+  2 343
+}
+yPoints {
+  0 587
+  1 587
+  2 628
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 37
+y 661
+w 73
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Trigger PV:"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 59
+y 684
+w 202
+h 64
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Affects X/Y Trace set to update"
+  "on \"Trigger\". This specifies the"
+  "PV that triggers an X/Y sample"
+  "on change."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 37
+y 765
+w 64
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Reset PV:"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 59
+y 787
+w 230
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Works with \"Reset Mode\". On reset,"
+  "clear plot history and restarted."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 37
+y 830
+w 81
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Reset Mode:"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 59
+y 852
+w 303
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "\"if not zero\" - reset on non-zero Reset PV value"
+  "\"if zero\" - reset on zero Reset PV value"
+}
+autoSize
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 503
+y 67
+w 250
+h 37
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+font "helvetica-bold-r-18.0"
+noEdit
+buttonLabel "Axis Properties"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpXyGraphAxisProps"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 503
+y 133
+w 250
+h 37
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+font "helvetica-bold-r-18.0"
+noEdit
+buttonLabel "Trace Properties"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpXyGraphTraceProps"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 503
+y 200
+w 250
+h 37
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+font "helvetica-bold-r-18.0"
+noEdit
+buttonLabel "Colors"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpXyGraphColors"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 503
+y 275
+w 250
+h 37
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+font "helvetica-bold-r-18.0"
+noEdit
+buttonLabel "Execute Mode Operations"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpXyGraphExeModeOps"
+}
+endObjectProperties
+

@@ -1,0 +1,342 @@
+4 0 0
+beginScreenProperties
+major 4
+minor 0
+release 0
+x 44
+y 20
+w 824
+h 867
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 51400 51400 51400
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 49344
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 19
+w 107
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 60652 60652 60652
+value {
+  "XY Graph"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 148
+y 23
+w 231
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Execute Mode Operations"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 77
+w 171
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Rescale operations"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 104
+w 486
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "An axis endpoint may be manually constrained by clicking on the min or max"
+  "label"
+}
+autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 303
+y 149
+w 501
+h 243
+file "$(help)helpXyGraph2.png"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 149
+w 167
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "For example, clicking here"
+  "brings up this keypad."
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 195
+y 156
+w 128
+h 14
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+arrows "to"
+numPoints 2
+xPoints {
+  0 195
+  1 323
+}
+yPoints {
+  0 156
+  1 170
+}
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 174
+y 257
+w 108
+h 183
+file "$(help)helpXyGraph3.png"
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 135
+y 188
+w 37
+h 57
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+arrows "to"
+numPoints 2
+xPoints {
+  0 135
+  1 172
+}
+yPoints {
+  0 188
+  1 245
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 460
+w 187
+h 64
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Change the upper y limit from"
+  "10 to 20 rescales the red line"
+  "(which is associated with the"
+  "Y1 axis)."
+}
+autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 303
+y 493
+w 501
+h 243
+file "$(help)helpXyGraph4.png"
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 220
+y 511
+w 69
+h 37
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+arrows "to"
+numPoints 2
+xPoints {
+  0 220
+  1 289
+}
+yPoints {
+  0 511
+  1 548
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 546
+w 255
+h 128
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Notice that the upper y limit"
+  "(now 20) is displayed in a"
+  "reverse color mode. This indicates"
+  "that the upper scale limit has"
+  "been constrained. It will not"
+  "participate in auto-scale operation"
+  "(if the axis properties are so configured)"
+  "while in this mode."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 697
+w 257
+h 128
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "To unconstrain the axis end point, click"
+  "on it again and, in the keypad widow,"
+  "press the \"Cancel\" button. You may also"
+  "press the \"OK\" button before entering a"
+  "value to accomplish the same action."
+  "When a limit is unconstrained, its value"
+  "is reset to the original configured"
+  "setting."
+}
+autoSize
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 389
+y 20
+w 93
+h 26
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+font "helvetica-bold-r-14.0"
+noEdit
+buttonLabel "Next Page"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpXyGraphExeModeOps2"
+}
+closeAction {
+  0 1
+}
+closeDisplay {
+  0 1
+}
+endObjectProperties
+
