@@ -19,6 +19,10 @@ ifeq ($(HOSTNAME), ridgeman.sns.ornl.gov)
 	FOR_WHAT=RH7_SNS_ORNL
 endif
 
+ifeq ($(HOSTNAME), ics-dev2-local)
+	FOR_WHAT=RH7_SNS_SvT
+endif
+
 ifeq ($(HOSTNAME), fork.csg.lbl.gov)
 	FOR_WHAT=RH7_SNS_LBNL
 endif
@@ -86,6 +90,18 @@ endif
 
 ifeq ($(FOR_WHAT), RH7_SNS_LBNL)
 	EPICS=/prod/epics/supTop/base/R3.13.3
+	CC=gcc
+	CXX=g++
+	CFLAGS=-g -Wall -O0 -DMOTIF 
+	CFLAGS+=-DSINGLE_THREADED=1 -DCONFIG_linuxglibc -D_REENTRANT
+	CFLAGS+=-D__linux__=1 -D__epics__=1
+	CXXFLAGS=$(CFLAGS)
+	SL_LINK=gcc -shared -Wl
+	SL_FLAGS=-L$(EPICS)/lib/$(HOST_ARCH) -lm -lCom -lca 
+endif
+
+ifeq ($(FOR_WHAT), RH7_SNS_SvT)
+	EPICS=/ade/epics/supTop/base/R3.13.3
 	CC=gcc
 	CXX=g++
 	CFLAGS=-g -Wall -O0 -DMOTIF 
