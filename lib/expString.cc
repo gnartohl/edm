@@ -180,16 +180,27 @@ int expStringClass::setRaw (
 
 char *subStr;
 
-  if ( expandedString1Size ) {
-    strcpy( expandedString1, "" );
-    expandedString1Len = 0;
-    numPossibleSymbols2 = 0;
+  if ( expandedStringSize ) {
+    delete expandedString;
+    expandedString = NULL;
   }
+  expandedStringSize = 0;
+  expandedStringLen = 0;
+
+  if ( expandedString1Size ) {
+    delete expandedString1;
+    expandedString1 = NULL;
+  }
+  expandedString1Size = 0;
+  expandedString1Len = 0;
+  numPossibleSymbols2 = 0;
 
   if ( expandedString2Size ) {
-    strcpy( expandedString2, "" );
-    expandedString2Len = 0;
+    delete expandedString2;
+    expandedString2 = NULL;
   }
+  expandedString2Size = 0;
+  expandedString2Len = 0;
 
   if ( !str ) {
 
@@ -412,7 +423,7 @@ int state, foundOne, i, ii, nOut, nIn, nMacro, outStrLen;
 
   while ( state != STATE_DONE ) {
 
-//     printf( "state = %-d, char = %c\n", state, inString[nIn] );
+    // printf( "state = %-d, char = %c\n", state, inString[nIn] );
 
     switch ( state ) {
 
@@ -559,6 +570,9 @@ int state, foundOne, i, ii, nOut, nIn, nMacro, outStrLen;
     nIn++;
 
   }
+
+  //printf( "nOut = %-d\n", nOut );
+  //printf( "buf = [%s]\n", buf );
 
   if ( nOut ) {
 
