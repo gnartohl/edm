@@ -574,7 +574,16 @@ int yScaleWidth (
   char *fontTag,
   XFontStruct *fs,
   double adj_min,
-  double adj_max
+  double adj_max,
+  int num_label_ticks
+);
+
+int yLog10ScaleWidth (
+  char *fontTag,
+  XFontStruct *fs,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks
 );
 
 int yScaleMargin (

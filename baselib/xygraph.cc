@@ -5135,13 +5135,13 @@ int screen_num, depth;
       }
 
       curXNumLabelTicks = xNumLabelIntervals.value();
-      if ( curXNumLabelTicks < 2 ) curXNumLabelTicks = 2;
+      if ( curXNumLabelTicks < 1 ) curXNumLabelTicks = 1;
       curXMajorsPerLabel = xNumMajorPerLabel.value();
       curXMinorsPerMajor = xNumMinorPerMajor.value();
 
       for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
         curY1NumLabelTicks[yi] = y1NumLabelIntervals[yi].value();
-        if ( curY1NumLabelTicks[yi] < 2 ) curY1NumLabelTicks[yi] = 2;
+        if ( curY1NumLabelTicks[yi] < 1 ) curY1NumLabelTicks[yi] = 1;
         curY1MajorsPerLabel[yi] = y1NumMajorPerLabel[yi].value();
         curY1MinorsPerMajor[yi] = y1NumMinorPerMajor[yi].value();
       }
@@ -5414,11 +5414,12 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, yi;
   yi = 0;
   if ( y1Axis[yi] ) {
     if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-      ly1 = yScaleWidth( fontTag, fs, curY1Min[yi],
-       curY1Max[yi] ) + 4;
+      ly1 = yLog10ScaleWidth( fontTag, fs, curY1Min[yi],
+       curY1Max[yi], curY1NumLabelTicks[yi] ) + 4;
     }
     else {
-      ly1 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi] ) + 4;
+      ly1 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi],
+       curY1NumLabelTicks[yi] ) + 4;
     }
   }
 
@@ -5426,11 +5427,12 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, yi;
   yi = 1;
   if ( y1Axis[yi] ) {
     if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-      ly2 = yScaleWidth( fontTag, fs, curY1Min[yi],
-       curY1Max[yi] ) + 2;
+      ly2 = yLog10ScaleWidth( fontTag, fs, curY1Min[yi],
+       curY1Max[yi], curY1NumLabelTicks[yi] ) + 2;
     }
     else {
-      ly2 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi] ) + 2;
+      ly2 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi],
+       curY1NumLabelTicks[yi] ) + 2;
     }
   }
 
@@ -5443,6 +5445,10 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, yi;
     }
     else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
       lx = xScaleMargin( fontTag, fs, curXMin, curXMax ) + 1;
+    }
+    else if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME ) &&
+              ( xAxisTimeFormat == XYGC_K_AXIS_TIME_FMT_MMDDYY_HHMMSS ) ) {
+      hx += fontHeight;
     }
     else {
       lx = xScaleMargin( fontTag, fs, curXMin, curXMax ) + 1;
@@ -7082,13 +7088,13 @@ int yi, yScaleIndex;
     }
     
     curXNumLabelTicks = xNumLabelIntervals.value();
-    if ( curXNumLabelTicks < 2 ) curXNumLabelTicks = 2;
+    if ( curXNumLabelTicks < 1 ) curXNumLabelTicks = 1;
     curXMajorsPerLabel = xNumMajorPerLabel.value();
     curXMinorsPerMajor = xNumMinorPerMajor.value();
 
     for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
       curY1NumLabelTicks[yi] = y1NumLabelIntervals[yi].value();
-      if ( curY1NumLabelTicks[yi] < 2 ) curY1NumLabelTicks[yi] = 2;
+      if ( curY1NumLabelTicks[yi] < 1 ) curY1NumLabelTicks[yi] = 1;
       curY1MajorsPerLabel[yi] = y1NumMajorPerLabel[yi].value();
       curY1MinorsPerMajor[yi] = y1NumMinorPerMajor[yi].value();
     }
@@ -7159,13 +7165,13 @@ int yi, yScaleIndex;
     }
     
     curXNumLabelTicks = xNumLabelIntervals.value();
-    if ( curXNumLabelTicks < 2 ) curXNumLabelTicks = 2;
+    if ( curXNumLabelTicks < 1 ) curXNumLabelTicks = 1;
     curXMajorsPerLabel = xNumMajorPerLabel.value();
     curXMinorsPerMajor = xNumMinorPerMajor.value();
 
     for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
       curY1NumLabelTicks[yi] = y1NumLabelIntervals[yi].value();
-      if ( curY1NumLabelTicks[yi] < 2 ) curY1NumLabelTicks[yi] = 2;
+      if ( curY1NumLabelTicks[yi] < 1 ) curY1NumLabelTicks[yi] = 1;
       curY1MajorsPerLabel[yi] = y1NumMajorPerLabel[yi].value();
       curY1MinorsPerMajor[yi] = y1NumMinorPerMajor[yi].value();
     }

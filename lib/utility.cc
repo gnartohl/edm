@@ -4579,12 +4579,14 @@ int yScaleWidth (
   char *fontTag,
   XFontStruct *fs,
   double adj_min,
-  double adj_max
+  double adj_max,
+  int num_label_ticks
 ) {
 
 int fontAscent, fontDescent, fontHeight,
- stringWidth, stat, label_tick_length, scaleWidth, l;
+ stringWidth, label_tick_length, scaleWidth, l;
 char buf[31+1];
+double labelInc, lastInc, labelVal, z;
 
   updateFontInfo( " ", fontTag, &fs,
    &fontAscent, &fontDescent, &fontHeight,
@@ -4592,12 +4594,76 @@ char buf[31+1];
 
   label_tick_length = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
 
-  stat = formatString( adj_min, buf, 31 );
-  scaleWidth = XTextWidth( fs, buf, strlen(buf) );
+  labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  printf( "num_label_ticks = %-d\n", num_label_ticks );
+  printf( "labelInc = %-g\n", labelInc );
 
-  stat = formatString( adj_max, buf, 31 );
-  l = XTextWidth( fs, buf, strlen(buf) );
-  if ( l > scaleWidth ) scaleWidth = l;
+  lastInc = labelInc * 0.5;
+  labelVal = adj_min;
+  scaleWidth = 0;
+  while ( labelVal < ( adj_max + lastInc ) ) {
+
+    z = fabs( labelVal - 0.0 ) / labelInc;
+    if ( z < 1e-5 ) {
+      formatString( 0.0, buf, 31 );
+    }
+    else {
+      formatString( labelVal, buf, 31 );
+    }
+    l = XTextWidth( fs, buf, strlen(buf) );
+    if ( l > scaleWidth ) scaleWidth = l;
+
+    labelVal += labelInc;
+
+  }
+
+  scaleWidth += label_tick_length + 6;
+
+  return scaleWidth;
+
+}
+
+int yLog10ScaleWidth (
+  char *fontTag,
+  XFontStruct *fs,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks
+) {
+
+int fontAscent, fontDescent, fontHeight,
+ stringWidth, label_tick_length, scaleWidth, l;
+char buf[31+1];
+double labelInc, lastInc, labelVal, z, log10Val;
+
+  updateFontInfo( " ", fontTag, &fs,
+   &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+
+  label_tick_length = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
+
+  labelInc = ( adj_max - adj_min ) / num_label_ticks;
+
+  lastInc = labelInc * 0.5;
+  labelVal = adj_min;
+  scaleWidth = 0;
+  while ( labelVal < ( adj_max + lastInc ) ) {
+
+    log10Val = pow(10,labelVal);
+
+    z = fabs( log10Val - 0.0 ) / labelInc;
+    if ( z < 1e-5 ) {
+      formatString( 0.0, buf, 31 );
+    }
+    else {
+      formatString( log10Val, buf, 31 );
+    }
+    l = XTextWidth( fs, buf, strlen(buf) );
+    if ( l > scaleWidth ) scaleWidth = l;
+
+    labelVal += labelInc;
+
+  }
 
   scaleWidth += label_tick_length + 6;
 
