@@ -179,10 +179,11 @@ int stat;
 //char name[255+1], oldName[255+1];
 //char str[31+1];
 
-struct sigaction sa, oldsa, dummysa;
+//struct sigaction sa, oldsa, dummysa;
 
   awo->autosaveTimer = 0;
 
+#if 0
   stat = setjmp( g_jump_h );
   if ( !stat ) {
 
@@ -200,6 +201,7 @@ struct sigaction sa, oldsa, dummysa;
     return;
 
   }
+#endif
 
   //stat = sys_get_datetime_string( 31, str );
   //printf( "[%s] %s - autosave\n", str, awo->fileName );
