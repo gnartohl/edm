@@ -822,9 +822,19 @@ int stale; // true if file has been modified since window was opened (or saved)
 
 activeGraphicClass *highlightedObject;
 
+int numChildren;
+activeWindowClass *parent;
+
+int isEmbedded, embeddedX, embeddedY, embeddedW, embeddedH;
+Widget *widgetToDeallocate;
+
+int loadFailure;
+
 activeWindowClass ( void );
 
 ~activeWindowClass ( void );
+
+int activeWindowClass::okToDeactivate ( void );
 
 char *idName( void );
 
@@ -939,6 +949,19 @@ int createNoEdit (
   char **macros,
   char **expansions );
 
+int createEmbedded (
+  appContextClass *ctx,
+  Widget *parent,
+  int OneX,
+  int OneY,
+  int OneW,
+  int OneH,
+  int _embeddedX,
+  int _embeddedY,
+  int _numMacros,
+  char **_macros,
+  char **_expansions );
+
 int genericCreate (
   appContextClass *ctx,
   Widget parent,
@@ -949,6 +972,8 @@ int genericCreate (
   int windowDecorations,
   int _noEdit,
   int closeAllowed,
+  int _isEmbedded,
+  Widget *_widgetToDeallocate,
   int _numMacros,
   char **_macros,
   char **_expansions );
@@ -1244,6 +1269,16 @@ void openExecuteSysFile (
   char *fName );
 
 void reloadSelf ( void );
+
+int isExecuteMode ( void );
+
+int xPos ( void );
+
+int yPos ( void );
+
+int sameAncestorName (
+  char *name
+);
 
 char endSignature[15+1];
 

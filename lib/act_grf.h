@@ -864,6 +864,14 @@ virtual int isMultiPointObject ( void ) {
   return 0;
 }
 
+virtual int isWindowContainer ( void ) {
+  return 0;
+}
+
+virtual int activateComplete ( void ) {
+  return 1;
+}
+
 virtual activeGraphicClass *getTail ( void );
 
 virtual void setEditProperties ( void );

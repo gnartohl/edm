@@ -1320,7 +1320,14 @@ activeWindowListPtr cur, next;
       cur->blink->flink = cur->flink;
       cur->flink->blink = cur->blink;
       apco->removeAllDeferredExecutionQueueNode( &cur->node );
-      delete cur;
+      if ( cur->node.numChildren == 0 ) {
+        if ( cur->node.parent ) {
+          if ( cur->node.parent->numChildren ) {
+            (cur->node.parent->numChildren)--;
+          }
+        }
+        delete cur;
+      }
     }
     cur = next;
   }
@@ -1918,7 +1925,7 @@ appContextClass::~appContextClass (
   void )
 {
 
-int i, numOpenWindows;
+int i, numOpenWindows, count, moreToDelete;
 activeWindowListPtr cur, next;
 activeGraphicListPtr curCut, nextCut;
 macroListPtr curMacro, nextMacro;
@@ -1998,24 +2005,56 @@ callbackBlockPtr curCbBlock, nextCbBlock;
     fprintf( shutdownFilePtr, "%-d\n", numOpenWindows );
   }
 
-  // walk activeWindowList and delete
-  cur = head->flink;
-  while ( cur != head ) {
-    next = cur->flink;
-    if ( cur->node.mode == AWC_EXECUTE ) {
-      cur->node.returnToEdit( 0 );
+  count = 100000;
+  moreToDelete = 0;
+  do {
+
+    // walk activeWindowList and delete
+    cur = head->flink;
+    while ( cur != head ) {
+
+      next = cur->flink;
+
+      if ( cur->node.mode == AWC_EXECUTE ) {
+        cur->node.returnToEdit( 0 );
+      }
+
+      if ( cur->node.numChildren ) {
+
+        moreToDelete = 1;
+
+      }
+      else {
+
+        if ( !cur->node.parent && saveContextOnExit ) {
+          //fprintf( shutdownFilePtr, "  actWin {\n" );
+          cur->node.checkPoint( primaryServer, shutdownFilePtr );
+          //fprintf( shutdownFilePtr, "  }\n" );
+        }
+
+        if ( cur->node.parent ) {
+          if ( cur->node.parent->numChildren ) {
+            (cur->node.parent->numChildren)--;
+          }
+        }
+
+        cur->blink->flink = cur->flink; // maintain list structure!
+        cur->flink->blink = cur->blink;
+
+        delete cur;
+
+      }
+
+      cur = next;
+
     }
-    if ( saveContextOnExit ) {
-      //fprintf( shutdownFilePtr, "  actWin {\n" );
-      cur->node.checkPoint( primaryServer, shutdownFilePtr );
-      //fprintf( shutdownFilePtr, "  }\n" );
-    }
-    cur->blink->flink = cur->flink; // maintain list structure!
-    cur->flink->blink = cur->blink;
-    delete cur;
-    cur = next;
-  }
-  processAllEvents( app, display );
+
+    processAllEvents( app, display );
+
+    count--;
+
+  } while ( moreToDelete && count );
+
   delete head;
 
   // delete widgets
@@ -4442,13 +4481,26 @@ char msg[127+1];
       next = cur->flink;
       nodeCount++;
       if ( cur->requestDelete ) {
-        actionCount++;
-        iconActionCount++;
-        cur->blink->flink = cur->flink;
-        cur->flink->blink = cur->blink;
-        removeAllDeferredExecutionQueueNode( &cur->node );
-        delete cur;
-        if ( requestFlag > 0 ) requestFlag--;
+
+        if ( cur->node.numChildren == 0 ) {
+
+          actionCount++;
+          iconActionCount++;
+          cur->blink->flink = cur->flink;
+          cur->flink->blink = cur->blink;
+          removeAllDeferredExecutionQueueNode( &cur->node );
+
+          if ( cur->node.parent ) {
+            if ( cur->node.parent->numChildren ) {
+              (cur->node.parent->numChildren)--;
+	    }
+          }
+
+          delete cur;
+          if ( requestFlag > 0 ) requestFlag--;
+
+	}
+
       }
       cur = next;
     }
@@ -5024,6 +5076,25 @@ char *newValues[100+1];
   }
 
   processAllEventsWithSync( app, display );
+
+  return 1;
+
+}
+
+int appContextClass::okToExit ( void ) {
+
+activeWindowListPtr cur;
+
+  cur = head->flink;
+  while ( cur != head ) {
+
+    if ( !cur->node.okToDeactivate() ) {
+      return 0;
+    }
+
+    cur = cur->flink;
+
+  }
 
   return 1;
 

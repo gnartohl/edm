@@ -5049,8 +5049,6 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
 
       break;
 
-//???????????????????????????????????
-
 
     case AWC_POPUP_CHANGE_DSP_PARAMS:
 
@@ -9479,6 +9477,32 @@ activeWindowClass::activeWindowClass ( void ) {
   stale = 0;
   modTime = 0;
 
+  numChildren = 0;
+  parent = NULL;
+  isEmbedded = 0;
+  widgetToDeallocate = NULL;
+
+  loadFailure = 0;
+
+  mode = AWC_EDIT;
+
+}
+
+int activeWindowClass::okToDeactivate ( void ) {
+
+activeGraphicListPtr cur, next;
+
+  if ( mode != AWC_EXECUTE ) return 1;
+
+  cur = head->flink;
+  while ( cur != head ) {
+    next = cur->flink;
+    if ( !cur->node->activateComplete() ) return 0;
+    cur = next;
+  }
+
+  return 1;
+
 }
 
 void activeWindowClass::getModTime (
@@ -9734,6 +9758,13 @@ commentLinesPtr commentCur, commentNext;
   if ( objNameDialogCreated ) objNameDialog.destroy();
 
   if ( top ) XtDestroyWidget( top );
+
+  // need to deallocate widget address used for top if this was an
+  // embedded window
+  if ( widgetToDeallocate ) {
+    delete widgetToDeallocate;
+    widgetToDeallocate = NULL;
+  }
 
 }
 
@@ -10015,6 +10046,8 @@ int activeWindowClass::createAutoPopup (
    0,
    ctx->noEdit,
    0,
+   0,
+   NULL,
    _numMacros,
    _macros,
    _expansions );
@@ -10042,6 +10075,8 @@ int activeWindowClass::create (
    1,
    ctx->noEdit,
    1,
+   0,
+   NULL,
    _numMacros,
    _macros,
    _expansions );
@@ -10069,9 +10104,51 @@ int activeWindowClass::createNoEdit (
    1,
    1,
    1,
+   0,
+   NULL,
    _numMacros,
    _macros,
    _expansions );
+
+}
+
+int activeWindowClass::createEmbedded (
+  appContextClass *ctx,
+  Widget *parent,
+  int OneX,
+  int OneY,
+  int OneW,
+  int OneH,
+  int _embeddedX,
+  int _embeddedY,
+  int _numMacros,
+  char **_macros,
+  char **_expansions ) {
+
+int stat;
+
+  stat = genericCreate(
+   ctx,
+   *parent,
+   OneX,
+   OneY,
+   OneW,
+   OneH,
+   1,      // yes: windowDecorations
+   1,      // yes: no edit
+   0,      //  no: close allowed
+   1,      // yes: embedded
+   parent, // need to deallocate parent
+   _numMacros,
+   _macros,
+   _expansions );
+
+  embeddedX = _embeddedX;
+  embeddedY = _embeddedY;
+  embeddedW = w;
+  embeddedH = h;
+
+  return stat;
 
 }
 
@@ -10085,6 +10162,8 @@ int activeWindowClass::genericCreate (
   int windowDecorations,
   int _noEdit,
   int _closeAllowed,
+  int _isEmbedded,
+  Widget *_widgetToDeallocate,
   int _numMacros,
   char **_macros,
   char **_expansions ) {
@@ -10106,6 +10185,8 @@ char tmp[10];
 
   noEdit = _noEdit;
   closeAllowed = _closeAllowed;
+  isEmbedded = _isEmbedded;
+  widgetToDeallocate = _widgetToDeallocate;
 
   this->numMacros = _numMacros;
 
@@ -10239,19 +10320,23 @@ char tmp[10];
 
   executeWidget = drawWidget;
 
-  // This handles close on the window manager.
+  if ( !parent ) {
 
-  wm_delete_window = XmInternAtom( XtDisplay(top), "WM_DELETE_WINDOW",
-   False );
+    // This handles close on the window manager.
 
-  XmAddWMProtocolCallback( top, wm_delete_window, awc_WMExit_cb,
-    (XtPointer) this );
+    wm_delete_window = XmInternAtom( XtDisplay(top), "WM_DELETE_WINDOW",
+     False );
 
-  XtVaSetValues( top, XmNdeleteResponse, XmDO_NOTHING, NULL );
+    XmAddWMProtocolCallback( top, wm_delete_window, awc_WMExit_cb,
+     (XtPointer) this );
 
-  XtAddEventHandler( top,
-    StructureNotifyMask, False,
-   topWinEventHandler, (XtPointer) this );
+    XtVaSetValues( top, XmNdeleteResponse, XmDO_NOTHING, NULL );
+
+    XtAddEventHandler( top,
+     StructureNotifyMask, False,
+     topWinEventHandler, (XtPointer) this );
+
+  }
 
   XtAddEventHandler( drawWidget,
    KeyPressMask|ButtonPressMask|ButtonReleaseMask|Button1MotionMask|
@@ -12390,7 +12475,7 @@ Arg args[3];
      (XtPointer) &curBlockListNode->block );
 
   }
-  else {
+  else if ( !isEmbedded ) {
 
     str = XmStringCreateLocalized( activeWindowClass_str149 );
 
@@ -12416,27 +12501,31 @@ Arg args[3];
 
   }
 
-  str = XmStringCreateLocalized( activeWindowClass_str150 );
+  if ( !isEmbedded ) {
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
-   b2ExecutePopup,
-   XmNlabelString, str,
-   NULL );
+    str = XmStringCreateLocalized( activeWindowClass_str150 );
 
-  XmStringFree( str );
+    pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+     b2ExecutePopup,
+     XmNlabelString, str,
+     NULL );
 
-  curBlockListNode = new popupBlockListType;
-  curBlockListNode->block.w = pb;
-  curBlockListNode->block.ptr = (void *) AWC_POPUP_TOGGLE_TITLE;
-  curBlockListNode->block.awo = this;
+    XmStringFree( str );
 
-  curBlockListNode->blink = popupBlockHead->blink;
-  popupBlockHead->blink->flink = curBlockListNode;
-  popupBlockHead->blink = curBlockListNode;
-  curBlockListNode->flink = popupBlockHead;
+    curBlockListNode = new popupBlockListType;
+    curBlockListNode->block.w = pb;
+    curBlockListNode->block.ptr = (void *) AWC_POPUP_TOGGLE_TITLE;
+    curBlockListNode->block.awo = this;
 
-  XtAddCallback( pb, XmNactivateCallback, b2ReleaseExecute_cb,
-   (XtPointer) &curBlockListNode->block );
+    curBlockListNode->blink = popupBlockHead->blink;
+    popupBlockHead->blink->flink = curBlockListNode;
+    popupBlockHead->blink = curBlockListNode;
+    curBlockListNode->flink = popupBlockHead;
+
+    XtAddCallback( pb, XmNactivateCallback, b2ReleaseExecute_cb,
+     (XtPointer) &curBlockListNode->block );
+
+  }
 
 
   str = XmStringCreateLocalized( activeWindowClass_str151 );
@@ -12462,31 +12551,35 @@ Arg args[3];
    (XtPointer) &curBlockListNode->block );
 
 
-  str = XmStringCreateLocalized( activeWindowClass_str192 );
+  if ( !isEmbedded ) {
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
-   b2ExecutePopup,
-   XmNlabelString, str,
-   NULL );
+    str = XmStringCreateLocalized( activeWindowClass_str192 );
 
-  XmStringFree( str );
+    pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+     b2ExecutePopup,
+     XmNlabelString, str,
+     NULL );
 
-  if ( !appCtx->epc.printStatusOK() ) {
-    XtVaSetValues( pb, XmNsensitive, 0, NULL );
+    XmStringFree( str );
+
+    if ( !appCtx->epc.printStatusOK() ) {
+      XtVaSetValues( pb, XmNsensitive, 0, NULL );
+    }
+
+    curBlockListNode = new popupBlockListType;
+    curBlockListNode->block.w = pb;
+    curBlockListNode->block.ptr = (void *) AWC_POPUP_PRINT;
+    curBlockListNode->block.awo = this;
+
+    curBlockListNode->blink = popupBlockHead->blink;
+    popupBlockHead->blink->flink = curBlockListNode;
+    popupBlockHead->blink = curBlockListNode;
+    curBlockListNode->flink = popupBlockHead;
+
+    XtAddCallback( pb, XmNactivateCallback, b2ReleaseExecute_cb,
+     (XtPointer) &curBlockListNode->block );
+
   }
-
-  curBlockListNode = new popupBlockListType;
-  curBlockListNode->block.w = pb;
-  curBlockListNode->block.ptr = (void *) AWC_POPUP_PRINT;
-  curBlockListNode->block.awo = this;
-
-  curBlockListNode->blink = popupBlockHead->blink;
-  popupBlockHead->blink->flink = curBlockListNode;
-  popupBlockHead->blink = curBlockListNode;
-  curBlockListNode->flink = popupBlockHead;
-
-  XtAddCallback( pb, XmNactivateCallback, b2ReleaseExecute_cb,
-   (XtPointer) &curBlockListNode->block );
 
 
   str = XmStringCreateLocalized( activeWindowClass_str152 );
@@ -12920,6 +13013,8 @@ int stat, l, goodXY, n, maxX, maxY;
 char msg[79+1];
 Arg args[5];
 
+  loadFailure = 1;
+
   initLine();
 
   // empty main list
@@ -13053,6 +13148,8 @@ Arg args[5];
 
   exit_after_save = 0;
 
+  loadFailure = 0;
+
   return 1;
 
 }
@@ -13068,6 +13165,8 @@ char *gotOne, name[63+1];
 int stat, l, goodXY, n, maxX, maxY;
 char msg[79+1];
 Arg args[5];
+
+  loadFailure = 1;
 
   initLine();
 
@@ -13202,6 +13301,8 @@ Arg args[5];
 
   exit_after_save = 0;
 
+  loadFailure = 0;
+
   return 1;
 
 }
@@ -13213,6 +13314,8 @@ activeGraphicListPtr cur, next;
 char *gotOne, name[63+1];
 int stat, l;
 char msg[79+1];
+
+  loadFailure = 1;
 
   initLine();
 
@@ -13316,6 +13419,8 @@ char msg[79+1];
 
   exit_after_save = 0;
 
+  loadFailure = 0;
+
   return 1;
 
 }
@@ -13329,6 +13434,8 @@ activeGraphicListPtr cur, next;
 char *gotOne, name[63+1];
 int stat, l;
 char msg[79+1];
+
+  loadFailure = 1;
 
   initLine();
 
@@ -13432,6 +13539,8 @@ char msg[79+1];
 
   exit_after_save = 0;
 
+  loadFailure = 0;
+
   return 1;
 
 }
@@ -13443,6 +13552,8 @@ activeGraphicListPtr cur, next;
 char *gotOne, name[63+1];
 int stat, l;
 char msg[79+1];
+
+  loadFailure = 1;
 
   // empty main list
   cur = head->flink;
@@ -13545,6 +13656,8 @@ char msg[79+1];
   setTitle();
 
   exit_after_save = 0;
+
+  loadFailure = 0;
 
   return 1;
 
@@ -14123,6 +14236,11 @@ int rootX, rootY, winX, winY, pass, cnt, numSubObjects;
 unsigned int mask;
 char callbackName[63+1];
 
+  if ( !okToDeactivate() ) {
+    appCtx->postMessage( activeWindowClass_str193 );
+    return 0;
+  }
+
   mode = AWC_EDIT;
 
   highlightedObject = NULL;
@@ -14659,6 +14777,11 @@ unsigned int pixel;
   fscanf( f, "%d\n", &w ); incLine();
   fscanf( f, "%d\n", &h ); incLine();
 
+  if ( isEmbedded ) {
+    w = embeddedW;
+    h = embeddedH;
+  }
+
   if ( !intersects( x, y, x+w, y+h, 0, 0,
    XDisplayWidth( d, DefaultScreen(d) ),
    XDisplayHeight( d, DefaultScreen(d) ) ) ) {
@@ -15016,6 +15139,11 @@ unsigned int pixel;
 
   fscanf( f, "%d\n", &w ); incLine();
   fscanf( f, "%d\n", &h ); incLine();
+
+  if ( isEmbedded ) {
+    w = embeddedW;
+    h = embeddedH;
+  }
 
   if ( !intersects( x, y, x+w, y+h, 0, 0,
    XDisplayWidth( d, DefaultScreen(d) ),
@@ -17110,4 +17238,49 @@ commentLinesPtr commentCur, commentNext;
 
 }
 
+int activeWindowClass::isExecuteMode ( void ) {
 
+  return ( mode == AWC_EXECUTE );
+
+}
+
+int activeWindowClass::xPos ( void ) {
+
+  if ( isEmbedded && parent ) {
+    return parent->xPos() + embeddedX;
+  }
+  else {
+    return x;
+  }
+
+}
+
+int activeWindowClass::yPos ( void ) {
+
+  if ( isEmbedded && parent ) {
+    return parent->yPos() + embeddedY;
+  }
+  else {
+    return y;
+  }
+
+}
+
+int activeWindowClass::sameAncestorName (
+  char *name
+) {
+
+activeWindowClass *aw;
+
+  aw = this;
+  while ( aw ) {
+
+    if ( strcmp( name, aw->displayName ) == 0 ) return 1;
+
+    aw = aw->parent;
+
+  }
+
+  return 0;
+
+}

@@ -564,6 +564,8 @@ int openCheckPointScreen (
   char *checkPointMacros
 );
 
+int appContextClass::okToExit ( void );
+
 };
 
 #endif

@@ -189,5 +189,6 @@
 #define activeWindowClass_str190 (char *) "2-D"
 #define activeWindowClass_str191 (char *) "Incompatable file version"
 #define activeWindowClass_str192 (char *) "Print..."
+#define activeWindowClass_str193 (char *) "Close/Deactivate command ignored - window is not ready"
 
 #endif
