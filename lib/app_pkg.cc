@@ -3709,6 +3709,17 @@ char msg[127+1];
         if ( cur->requestActivate == 3 ) {
           cur->requestActivate = 0;
           cur->node.execute();
+
+#ifdef __epics__
+          stat = ca_pend_io( 3.0 );
+#endif
+          cur->node.processObjects();
+
+#ifdef __epics__
+          stat = ca_pend_io( 3.0 );
+#endif
+          processAllEvents( app, display );
+
           actionCount++;
           iconActionCount++;
           if ( requestFlag > 0 ) requestFlag--;

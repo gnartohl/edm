@@ -207,6 +207,13 @@ unsigned int pvColorClass::getColor( void ) const
 
 }
 
+unsigned int pvColorClass::getDisconnected( void ) const
+{
+
+  return disconnectedPixel;
+
+}
+
 int pvColorClass::getIndex( void ) const
 {
 

@@ -1213,148 +1213,223 @@ int get_scale_params (
   double *adj_min,
   double *adj_max,
   double *label_tick,
-  double *major_tick,
-  double *minor_tick,
+  int *majors_per_label,
+  int *minors_per_major,
   char *format
 ) {
 
-double dmin, dmax, dadj_min, dadj_max, diff, mag, norm, inc;
+double dmin, dmax, diff, mag, norm;
 
-int imag, inorm;
+int imag, inorm, imin, imax, inc1, inc2, inc5, imin1, imax1,
+ imin2, imax2, imin5, imax5, best, bestInc, bestMin, bestMax, idiff, idiv,
+ choice, ok;
 
   dmin = min;
   dmax = max;
 
-  diff = fabs( dmax - dmin );
+  if ( dmax <= dmin ) dmax = dmin + 1.0;
+
+  diff = dmax - dmin;
 
   /* printf( "dmin = %-g, dmax = %-g, diff =  %-g\n", dmin, dmax, diff ); */
 
-  if ( diff == 0.0 ) return 0;
-
-  if ( dmin > dmax ) return 0;
-
   mag = log10( diff );
-  if ( mag >= 0.0 )
-    imag = (int) mag;
-  else {
-    imag = (int) mag - 1;
-  }
+  imag = (int ) floor( mag ) - 1;
 
   norm = diff * pow(10.0,-1.0*imag);
   inorm = (int) ceil( norm );
 
-  /* printf( "mag = %-g, imag = %-d\n", mag, imag ); */
-  /* printf( "norm = %-d\n", inorm ); */
+  //printf( "mag = %-g, imag = %-d\n", mag, imag );
+  //printf( "norm = %-d\n", inorm );
 
-  /* adjust min & max */
 
-  inorm = (int) floor( dmin * pow(10.0,-1.0*imag) );
-  dadj_min = (double) inorm * pow(10.0,imag);
+  /* normalize min & max */
+  imin = (int) floor( dmin * pow(10.0,-1.0*imag) );
+  imax = (int) ceil( dmax * pow(10.0,-1.0*imag) );
 
-  inorm = (int) ceil( dmax * pow(10.0,-1.0*imag) );
-  dadj_max = (double) inorm * pow(10.0,imag);
+  ok = 0;
 
-  diff = fabs( dadj_max - dadj_min );
+  inc1 = imax - imin;
+  imin1 = imin;
+  imax1 = imax;
+  if ( inc1 < 8 ) ok = 1;
 
-  if ( diff == 0.0 ) return 0;
+  //printf( "1st adj min 1 = %-d, 1st adj max 1 = %-d\n", imin1, imax1 );
 
-  if ( dadj_min > dadj_max ) return 0;
-
-  mag = log10( diff );
-  if ( mag >= 0.0 )
-    imag = (int) mag;
+  if ( imin < 0 ) {
+    if ( imin % 2 )
+      imin2 = imin - 2 - ( imin % 2 );
+    else
+      imin2 = imin;
+  }
   else {
-    imag = (int) mag - 1;
+    imin2 = imin - ( imin % 2 );
   }
 
-  norm = diff * pow(10.0,-1.0*imag);
-  inorm = (int) ceil( norm );
+  if ( imax < 0 ) {
+    imax2 = imax - 2 - ( imax % 2 );
+  }
+  else {
+    if ( imax % 2 )
+      imax2 = imax + 2 - ( imax % 2 );
+    else
+      imax2 = imax;
+  }
 
-  /* printf( "mag = %-g, imag = %-d\n", mag, imag ); */
-  /* printf( "norm = %-d\n", inorm ); */
+  inc2 = ( imax2 - imin2 ) / 2;
+  if ( inc2 < 8 ) ok = 1;
 
-  switch ( inorm ) {
+  //printf( "1st adj min 2 = %-d, 1st adj max 2 = %-d\n", imin2, imax2 );
 
-    case 1:
-      inc = 0.2 * pow( 10.0, imag );
-      *label_tick = (float) inc;
-      *major_tick = (float) 0.5 * inc;
-      *minor_tick = (float) 0.1 * inc;
-      break;
+  if ( imin < 0 ) {
+    if ( imin % 5 )
+      imin5 = imin - 5 - ( imin % 5 );
+    else
+      imin5 = imin;
+  }
+  else {
+    imin5 = imin - ( imin % 5 );
+  }
 
-    case 2:
-      inc = 0.5 * pow( 10.0, imag );
-      *label_tick = (float) inc;
-      *major_tick = (float) 0.2 * inc;
-      *minor_tick = (float) 0.2 * inc;
-      break;
+  if ( imax < 0 ) {
+    imax5 = imax - 5 - ( imax % 5 );
+  }
+  else {
+    if ( imax % 5 )
+      imax5 = imax + 5 - ( imax % 5 );
+    else
+      imax5 = imax;
+  }
 
-    case 3:
-      inc = 0.5 * pow( 10.0, imag );
-      *label_tick = (float) inc;
-      *major_tick = (float) 0.2 * inc;
-      *minor_tick = (float) 0.2 * inc;
-      break;
+  inc5 = ( imax5 - imin5 ) / 5;
+  if ( inc5 < 8 ) ok = 1;
 
-    case 4:
-      inc = 1.0 * pow( 10.0, imag );
-      *label_tick = (float) inc;
-      *major_tick = (float) inc;
-      *minor_tick = (float) 0.1 * inc;
-      break;
+  //printf( "1st adj min 5 = %-d, 1st adj max 5 = %-d\n", imin5, imax5 );
 
-    case 5:
-      inc = 1.0 * pow( 10.0, imag );
-      *label_tick = (float) inc;
-      *major_tick = (float) inc;
-      *minor_tick = (float) 0.1 * inc;
-      break;
+  //printf( "1 inc1 = %-d\n", inc1 );
+  //printf( "1 inc2 = %-d\n", inc2 );
+  //printf( "1 inc5 = %-d\n", inc5 );
 
-    case 6:
-      inc = 1.0 * pow( 10.0, imag );
-      *label_tick = (float) inc;
-      *major_tick = (float) inc;
-      *minor_tick = (float) 0.1 * inc;
-      break;
+  if ( ! ok ) {
 
-    case 7:
-      dadj_max = dadj_min + ( inorm + 1 ) * pow( 10.0, imag );
-      inc = 2.0 * pow( 10.0, imag );
-      *label_tick = (float) inc;
-      *major_tick = (float) 0.5 * inc;
-      *minor_tick = (float) 0.1 * inc;
-      break;
+    imag++;
 
-    case 8:
-      inc = 2.0 * pow( 10.0, imag );
-      *label_tick = (float) inc;
-      *major_tick = (float) 0.5 * inc;
-      *minor_tick = (float) 0.1 * inc;
-      break;
+    /* normalize min & max */
+    imin = (int) floor( dmin * pow(10.0,-1.0*imag) );
+    imax = (int) ceil( dmax * pow(10.0,-1.0*imag) );
 
-    case 9:
-      dadj_max = dadj_min + ( inorm + 1 ) * pow( 10.0, imag );
-      inc = 2.0 * pow( 10.0, imag );
-      *label_tick = (float) inc;
-      *major_tick = (float) 0.5 * inc;
-      *minor_tick = (float) 0.1 * inc;
-      break;
+    inc1 = imax - imin;
+    imin1 = imin;
+    imax1 = imax;
+    if ( inc1 < 8 ) ok = 1;
 
-    case 10:
-      inc = 2.0 * pow( 10.0, imag );
-      *label_tick = (float) inc;
-      *major_tick = (float) 0.5 * inc;
-      *minor_tick = (float) 0.1 * inc;
-      break;
+    //printf( "1st adj min 1 = %-d, 1st adj max 1 = %-d\n", imin1, imax1 );
+
+    if ( imin < 0 ) {
+      if ( imin % 2 )
+        imin2 = imin - 2 - ( imin % 2 );
+      else
+        imin2 = imin;
+    }
+    else {
+      imin2 = imin - ( imin % 2 );
+    }
+
+    if ( imax < 0 ) {
+      imax2 = imax - 2 - ( imax % 2 );
+    }
+    else {
+      if ( imax % 2 )
+        imax2 = imax + 2 - ( imax % 2 );
+      else
+        imax2 = imax;
+    }
+
+    inc2 = ( imax2 - imin2 ) / 2;
+    if ( inc2 < 8 ) ok = 1;
+
+    //printf( "1st adj min 2 = %-d, 1st adj max 2 = %-d\n", imin2, imax2 );
+
+    if ( imin < 0 ) {
+      if ( imin % 5 )
+        imin5 = imin - 5 - ( imin % 5 );
+      else
+        imin5 = imin;
+    }
+    else {
+      imin5 = imin - ( imin % 5 );
+    }
+
+    if ( imax < 0 ) {
+      imax5 = imax - 5 - ( imax % 5 );
+    }
+    else {
+      if ( imax % 5 )
+        imax5 = imax + 5 - ( imax % 5 );
+      else
+        imax5 = imax;
+    }
+
+    inc5 = ( imax5 - imin5 ) / 5;
+    if ( inc5 < 8 ) ok = 1;
+
+    //printf( "1st adj min 5 = %-d, 1st adj max 5 = %-d\n", imin5, imax5 );
+
+    //printf( "2 inc1 = %-d\n", inc1 );
+    //printf( "2 inc2 = %-d\n", inc2 );
+    //printf( "2 inc5 = %-d\n", inc5 );
 
   }
 
-  /* printf( "final: adj min = %-g, adj max = %-g, inc = %-g\n", dadj_min,
-   dadj_max, inc ); */
+  // find best
 
-  *adj_min = (float) dadj_min;
-  *adj_max = (float) dadj_max;
+  best = abs( inc1 - 6 );
+  bestInc = inc1;
+  bestMin = imin1;
+  bestMax = imax1;
+  idiv = inc1;
+  choice = 1;
+
+  if ( abs( inc2 - 6 ) < best ) {
+    best = abs( inc2 - 6 );
+    bestInc = inc2;
+    bestMin = imin2;
+    bestMax = imax2;
+    idiv = inc2;
+    choice = 2;
+  }
+
+  if ( abs( inc5 - 6 ) < best ) {
+    best = abs( inc5 - 6 );
+    bestInc = inc5;
+    bestMin = imin5;
+    bestMax = imax5;
+    idiv = inc5;
+    choice = 5;
+  }
+
+  idiff = ( bestMax - bestMin );
+  *adj_min = (double) bestMin * pow(10.0,imag);
+  *adj_max = (double) bestMax * pow(10.0,imag);
+
+  *label_tick = ( *adj_max - *adj_min ) / (double) idiv;
+
+  if ( choice == 1 ) {
+    *majors_per_label = 5;
+    *minors_per_major = 2;
+  }
+  else if ( choice == 2 ) {
+    *majors_per_label = 2;
+    *minors_per_major = 2;
+  }
+  else { // 5
+    *majors_per_label = 5;
+    *minors_per_major = 2;
+  }
+
   strcpy( format, "-g" );
+
+  if ( !ok ) return 0;
 
   return 1;
 

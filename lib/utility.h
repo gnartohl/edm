@@ -195,8 +195,8 @@ int get_scale_params (
   double *adj_min,
   double *adj_max,
   double *label_tick,
-  double *major_tick,
-  double *minor_tick,
+  int *majors_per_label,
+  int *minor_per_major,
   char *format
 );
 

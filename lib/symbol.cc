@@ -1210,6 +1210,22 @@ int activeSymbolClass::drawActive ( void ) {
 
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
+pvColorClass tmpColor;
+
+  if ( !init ) {
+    tmpColor.setColorIndex( 0, actWin->ci );
+    actWin->executeGc.saveFg();
+    actWin->executeGc.setFG( tmpColor.getDisconnected() );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+    actWin->executeGc.restoreFg();
+    needToEraseUnconnected = 1;
+  }
+  else if ( needToEraseUnconnected ) {
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.eraseGC(), x, y, w, h );
+    needToEraseUnconnected = 0;
+  }
 
   if ( !init || !activeMode || ( numStates < 1 ) ) return 1;
 
@@ -1298,6 +1314,7 @@ activeGraphicListPtr cur;
 
     needErase = needDraw = needRefresh = needConnectInit =
      needColorInit = needColorRefresh = 0;
+    needToEraseUnconnected = 0;
     for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) needConnect[i] = 0;
     aglPtr = ptr;
     iValue = 0; /* this get set via OR/AND operations */

@@ -169,7 +169,7 @@ int binaryTruthTable, bufBinaryTruthTable;
 entryListBase *pvNamesObj;
 
 int needErase, needDraw, needConnectInit, needConnect[SYMBOL_K_MAX_PVS],
- needRefresh, needColorInit, needColorRefresh;
+ needRefresh, needColorInit, needColorRefresh, needToEraseUnconnected;
 
 undoClass undoObj;
 

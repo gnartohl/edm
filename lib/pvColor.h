@@ -83,6 +83,8 @@ void pvColorClass::setDisconnected ( void );
 
 unsigned int pvColorClass::getColor( void ) const;
 
+unsigned int pvColorClass::getDisconnected( void ) const;
+
 int pvColorClass::getIndex ( void ) const;
 
 unsigned int pvColorClass::pixelColor( void ) const;
