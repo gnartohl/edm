@@ -13340,6 +13340,7 @@ char *gotOne, oneFileName[255+1], fullName[255+1], *description;
 activeGraphicListPtr cur;
 char msg[79+1];
 int stat;
+tagClass tag;
 
   if ( resetChangeFlag ) { // this is a save initiated by the user
     if ( restoreTimer ) { // title hold the string "Auto Save"
@@ -13405,6 +13406,10 @@ int stat;
         description = obj.getNameFromClass( fullName );
         fprintf( f, "# (%s)\n", description );
         fprintf( f, "object %s\n", cur->node->objName() );
+        if ( tag.genDoc() ) {
+          printf( "# (%s)\n", description );
+          printf( "object %s\n", cur->node->objName() );
+	}
       }
       else {
         strncpy( fullName, cur->node->objName(), 255 );
@@ -13417,9 +13422,12 @@ int stat;
         fprintf( f, "# (%s)\n", description );
         fprintf( f, "object %s:%s\n", cur->node->objName(),
          cur->node->getCreateParam() );
-
+        if ( tag.genDoc() ) {
+          printf( "# (%s)\n", description );
+          printf( "object %s:%s\n", cur->node->objName(),
+           cur->node->getCreateParam() );
+	}
         Strncat( fullName, cur->node->getCreateParam(), 255 );
-
       }
       cur->node->save( f );
     }

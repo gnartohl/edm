@@ -1,12 +1,36 @@
 #include "tag_pkg.h"
 
 static int g_fileLineNumber = 1;
+static int g_genDocFlag = 0;
 
 tagClass::tagClass ( void ) {
+
+char *envPtr;
 
   numTags = 0;
   ci = NULL;
   first = last = len = 0;
+
+  envPtr = getenv( "EDMGENDOC" );
+  if ( envPtr ) {
+    g_genDocFlag = 1;
+  }
+  else {
+    g_genDocFlag = 0;
+  }
+
+}
+
+int tagClass::genDoc ( void ) {
+
+  return g_genDocFlag;
+
+}
+
+void tagClass::setGenDoc (
+  int flag ) {
+
+  g_genDocFlag = flag;
 
 }
 
@@ -3242,6 +3266,10 @@ efInt *efI;
 
       fprintf( f, "%s\n", tagName[index] );
 
+      if ( tagClass::genDoc() ) {
+	printf( "%s\n", tagName[index] );
+      }
+
       break;
 
     case tagClass::COLOR: // color
@@ -3257,6 +3285,11 @@ efInt *efI;
 
       colorIndex = *( (int *) tagDestination[index] );
       ci->writeColorIndex( f, tagName[index], colorIndex );
+
+      if ( tagClass::genDoc() ) {
+	printf( "%s (index <int> | rgb <int> <int> <int>)\n",
+         tagName[index] );
+      }
 
       break;
 
@@ -3274,6 +3307,11 @@ efInt *efI;
       color = (pvColorClass *) tagDestination[index];
       colorIndex = color->pixelIndex();
       ci->writeColorIndex( f, tagName[index], colorIndex );
+
+      if ( tagClass::genDoc() ) {
+	printf( "%s (index <int> | rgb <int> <int> <int>)\n",
+         tagName[index] );
+      }
 
       break;
 
@@ -3303,6 +3341,15 @@ efInt *efI;
 
       }
 
+      if ( tagClass::genDoc() ) {
+	printf( "%s {\n", tagName[index] );
+	printf( "  <int element> (index <int> | rgb <int> <int> <int>)\n" );
+	printf( "  <int element> (index <int> | rgb <int> <int> <int>)\n" );
+	printf( "                .\n" );
+	printf( "                .\n" );
+	printf( "}\n" );
+      }
+
       break;
 
     case tagClass::PV_COLOR_ARRAY: // pvColorClass color
@@ -3330,6 +3377,15 @@ efInt *efI;
 
         fprintf( f, "}\n" );
 
+      }
+
+      if ( tagClass::genDoc() ) {
+	printf( "%s {\n", tagName[index] );
+	printf( "  <int element> (index <int> | rgb <int> <int> <int>)\n" );
+	printf( "  <int element> (index <int> | rgb <int> <int> <int>)\n" );
+	printf( "                .\n" );
+	printf( "                .\n" );
+	printf( "}\n" );
       }
 
       break;
@@ -3363,6 +3419,16 @@ efInt *efI;
 
       }
 
+      if ( tagClass::genDoc() ) {
+        if ( tagDefault[index] ) {
+          printf( "[%s <int>]   /* default = %-d */\n",
+           tagName[index], *( (int *) tagDefault[index] ) );
+	}
+	else {
+          printf( "%s <int>\n", tagName[index] );
+	}
+      }
+
       break;
 
     case tagClass::BOOLEAN:
@@ -3394,6 +3460,17 @@ efInt *efI;
 
         fprintf( f, "%-s\n", tagName[index] );
 
+      }
+
+      if ( tagClass::genDoc() ) {
+        if ( tagDefault[index] ) {
+          printf( "[%s [(0|1)]]   /* present with no value = 1, absent = 0 */\n",
+           tagName[index] );
+	}
+	else {
+          printf( "[%s [(0|1)]]   /* present with no value = 1, absent = 0 */\n",
+           tagName[index] );
+	}
       }
 
       break;
@@ -3443,6 +3520,26 @@ efInt *efI;
         printf( tagClass_str23, tagName[index] );
         return 0;
 
+      }
+
+      if ( tagClass::genDoc() ) {
+        if ( tagDefault[index] ) {
+          printf( "[%s (", tagName[index] );
+          printf( "\"%s\"", enumStrArray[index][0] );
+          for ( i=1; i<enumNumChoices[index]; i++ ) {
+            printf( "|\"%s\"", enumStrArray[index][i] );
+          }
+          printf( ")]   /* default = \"%s\" */\n",
+           enumStrArray[index][*( (int *) tagDefault[index] )] );
+	}
+	else {
+          printf( "%s (", tagName[index] );
+          printf( "\"%s\"", enumStrArray[index][0] );
+          for ( i=1; i<enumNumChoices[index]; i++ ) {
+            printf( "|\"%s\"", enumStrArray[index][i] );
+          }
+          printf( ")\n" );
+	}
       }
 
       break;
@@ -3522,6 +3619,61 @@ efInt *efI;
 
       }
 
+      if ( tagClass::genDoc() ) {
+
+        if ( tagDefault[index] ) {
+
+          printf( "[%s {\n", tagName[index] );
+
+          printf( "  [<int element> (" );
+          printf( "\"%s\"", enumStrArray[index][0] );
+          for ( i=1; i<enumNumChoices[index]; i++ ) {
+            printf( "|\"%s\"", enumStrArray[index][i] );
+          }
+          printf( ")]   /* default = \"%s\" */\n",
+           enumStrArray[index][*( (int *) tagDefault[index] )] );
+
+          printf( "  [<int element> (" );
+          printf( "\"%s\"", enumStrArray[index][0] );
+          for ( i=1; i<enumNumChoices[index]; i++ ) {
+            printf( "|\"%s\"", enumStrArray[index][i] );
+          }
+          printf( ")]   /* default = \"%s\" */\n",
+           enumStrArray[index][*( (int *) tagDefault[index] )] );
+
+	  printf( "                .\n" );
+	  printf( "                .\n" );
+
+	  printf( "}]\n" );
+
+	}
+	else {
+
+          printf( "%s {\n", tagName[index] );
+
+          printf( "  <int element> (" );
+          printf( "\"%s\"", enumStrArray[index][0] );
+          for ( i=1; i<enumNumChoices[index]; i++ ) {
+            printf( "|\"%s\"", enumStrArray[index][i] );
+          }
+          printf( ")\n" );
+
+          printf( "  <int element> (" );
+          printf( "\"%s\"", enumStrArray[index][0] );
+          for ( i=1; i<enumNumChoices[index]; i++ ) {
+            printf( "|\"%s\"", enumStrArray[index][i] );
+          }
+          printf( ")\n" );
+
+	  printf( "                .\n" );
+	  printf( "                .\n" );
+
+	  printf( "}\n" );
+
+	}
+
+      }
+
       break;
 
     case tagClass::REAL:
@@ -3554,6 +3706,16 @@ efInt *efI;
 
       }
 
+      if ( tagClass::genDoc() ) {
+        if ( tagDefault[index] ) {
+          printf( "[%s <real>]   /* default = %-g */\n",
+           tagName[index], *( (double *) tagDefault[index] ) );
+	}
+	else {
+          printf( "%s <real>\n", tagName[index] );
+	}
+      }
+
       break;
 
     case tagClass::EF_DOUBLE:
@@ -3573,6 +3735,11 @@ efInt *efI;
         printf( tagClass_str23, tagName[index] );
         return 0;
 
+      }
+
+      if ( tagClass::genDoc() ) {
+        printf( "[%s <real>]   /* default = 0.0 */\n",
+         tagName[index] );
       }
 
       break;
@@ -3615,6 +3782,15 @@ efInt *efI;
 
       }
 
+      if ( tagClass::genDoc() ) {
+	printf( "[%s {\n", tagName[index] );
+        printf( "[<int element> <real>]   /* default = 0.0 */\n" );
+        printf( "[<int element> <real>]   /* default = 0.0 */\n" );
+	printf( "                .\n" );
+	printf( "                .\n" );
+	printf( "}]\n" );
+      }
+
       break;
 
     case tagClass::EF_INT:
@@ -3634,6 +3810,11 @@ efInt *efI;
         printf( tagClass_str23, tagName[index] );
         return 0;
 
+      }
+
+      if ( tagClass::genDoc() ) {
+        printf( "[%s <int>]   /* default = 0 */\n",
+         tagName[index] );
       }
 
       break;
@@ -3676,6 +3857,15 @@ efInt *efI;
 
       }
 
+      if ( tagClass::genDoc() ) {
+	printf( "[%s {\n", tagName[index] );
+        printf( "[<int element> <int>]   /* default = 0 */\n" );
+        printf( "[<int element> <int>]   /* default = 0 */\n" );
+	printf( "                .\n" );
+	printf( "                .\n" );
+	printf( "}]\n" );
+      }
+
       break;
 
     case tagClass::COMPLEX_STRING: // string that may contain new lines and
@@ -3715,6 +3905,25 @@ efInt *efI;
 
       }
 
+      if ( tagClass::genDoc() ) {
+	if ( sDef ) {
+          printf( "[%s {\n", tagName[index] );
+          printf( "  <string> /* line 1 of n */\n" );
+          printf( "  <string> /* line 2 of n */\n" );
+          printf( "      .\n" );
+          printf( "      .\n" );
+          printf( "}]   /* default = \"%s\" */\n", sDef );
+	}
+	else {
+          printf( "%s {\n", tagName[index] );
+          printf( "  <string> /* line 1 of n */\n" );
+          printf( "  <string> /* line 2 of n */\n" );
+          printf( "      .\n" );
+          printf( "      .\n" );
+          printf( "}\n" );
+	}
+      }
+
       break;
 
     case tagClass::STRING: // string
@@ -3747,6 +3956,16 @@ efInt *efI;
         printf( tagClass_str23, tagName[index] );
         return 0;
 
+      }
+
+      if ( tagClass::genDoc() ) {
+	if ( sDef ) {
+	  printf( "[%s <string>] /* default = \"%s\" */\n",
+           tagName[index], sDef );
+	}
+	else {
+	  printf( "%s <string>\n", tagName[index] );
+	}
       }
 
       break;
@@ -3818,6 +4037,33 @@ efInt *efI;
 
       }
 
+      if ( tagClass::genDoc() ) {
+
+        if ( tagDefault[index] ) {
+
+          printf( "[%s {\n", tagName[index] );
+          printf( "  [<int element> <string>]   /* default = \"%s\" */\n",
+           (char *) tagDefault[index] );
+          printf( "  [<int element> <string>]   /* default = \"%s\" */\n",
+           (char *) tagDefault[index] );
+          printf( "      .\n" );
+          printf( "      .\n" );
+          printf( "}]\n" );
+
+	}
+	else {
+
+          printf( "%s {\n", tagName[index] );
+          printf( "  <int element> <string>\n" );
+          printf( "  <int element> <string>\n" );
+          printf( "      .\n" );
+          printf( "      .\n" );
+          printf( "}\n" );
+
+	}
+
+      }
+
       break;
 
     case tagClass::EXP_STRING: // expStringClass
@@ -3834,7 +4080,7 @@ efInt *efI;
             fprintf( f, "%s ", tagName[index] );
             writeString( f, expStr->getRaw() );
 
-	  }
+          }
 
 	}
 	else {
@@ -3850,6 +4096,16 @@ efInt *efI;
         printf( tagClass_str23, tagName[index] );
         return 0;
 
+      }
+
+      if ( tagClass::genDoc() ) {
+	if ( sDef ) {
+	  printf( "[%s <expandable string>] /* default = \"%s\" */\n",
+           tagName[index], sDef );
+	}
+	else {
+	  printf( "%s <expandable string>\n", tagName[index] );
+	}
       }
 
       break;
@@ -3890,6 +4146,25 @@ efInt *efI;
         printf( tagClass_str23, tagName[index] );
         return 0;
 
+      }
+
+      if ( tagClass::genDoc() ) {
+	if ( sDef ) {
+          printf( "[%s {\n", tagName[index] );
+          printf( "  <expandable string> /* line 1 of n */\n" );
+          printf( "  <expandable string> /* line 2 of n */\n" );
+          printf( "      .\n" );
+          printf( "      .\n" );
+          printf( "}]   /* default = \"%s\" */\n", sDef );
+	}
+	else {
+          printf( "%s {\n", tagName[index] );
+          printf( "  <expandable string> /* line 1 of n */\n" );
+          printf( "  <expandable string> /* line 2 of n */\n" );
+          printf( "      .\n" );
+          printf( "      .\n" );
+          printf( "}\n" );
+	}
       }
 
       break;
@@ -3968,6 +4243,33 @@ efInt *efI;
 
       }
 
+      if ( tagClass::genDoc() ) {
+
+        if ( tagDefault[index] ) {
+
+          printf( "[%s {\n", tagName[index] );
+          printf( "  [<int element> <expandable string>]   /* default = \"%s\" */\n",
+           (char *) tagDefault[index] );
+          printf( "  [<int element> <expandable string>]   /* default = \"%s\" */\n",
+           (char *) tagDefault[index] );
+          printf( "      .\n" );
+          printf( "      .\n" );
+          printf( "}]\n" );
+
+	}
+	else {
+
+          printf( "%s {\n", tagName[index] );
+          printf( "  <int element> <expandable string>\n" );
+          printf( "  <int element> <expandable string>\n" );
+          printf( "      .\n" );
+          printf( "      .\n" );
+          printf( "}\n" );
+
+	}
+
+      }
+
       break;
 
     case tagClass::INTEGER_ARRAY:
@@ -4023,6 +4325,29 @@ efInt *efI;
 
         printf( tagClass_str23, tagName[index] );
         return 0;
+
+      }
+
+      if ( tagClass::genDoc() ) {
+
+        if ( tagDefault[index] ) {
+	  printf( "[%s {\n", tagName[index] );
+          printf( "  [<int element> <int>]   /* default = %-d */\n",
+           *( (int *) tagDefault[index] ) );
+          printf( "  [<int element> <int>]   /* default = %-d */\n",
+           *( (int *) tagDefault[index] ) );
+          printf( "      .\n" );
+          printf( "      .\n" );
+	  printf( "}]\n" );
+	}
+	else {
+	  printf( "%s {\n", tagName[index] );
+          printf( "  <int element> <int>\n" );
+          printf( "  <int element> <int>\n" );
+          printf( "      .\n" );
+          printf( "      .\n" );
+	  printf( "}\n" );
+	}
 
       }
 
@@ -4084,6 +4409,29 @@ efInt *efI;
 
       }
 
+      if ( tagClass::genDoc() ) {
+
+        if ( tagDefault[index] ) {
+	  printf( "[%s {\n", tagName[index] );
+          printf( "  [<int element> <unsigned int>]   /* default = %-d */\n",
+           *( (int *) tagDefault[index] ) );
+          printf( "  [<int element> <unsigned int>]   /* default = %-d */\n",
+           *( (int *) tagDefault[index] ) );
+          printf( "      .\n" );
+          printf( "      .\n" );
+	  printf( "}]\n" );
+	}
+	else {
+	  printf( "%s {\n", tagName[index] );
+          printf( "  <int element> <unsigned int>\n" );
+          printf( "  <int element> <unsigned int>\n" );
+          printf( "      .\n" );
+          printf( "      .\n" );
+	  printf( "}\n" );
+	}
+
+      }
+
       break;
 
     case tagClass::HEX_INTEGER_ARRAY:
@@ -4139,6 +4487,29 @@ efInt *efI;
 
         printf( tagClass_str23, tagName[index] );
         return 0;
+
+      }
+
+      if ( tagClass::genDoc() ) {
+
+        if ( tagDefault[index] ) {
+	  printf( "[%s {\n", tagName[index] );
+          printf( "  [<int element> <hex int>]   /* default = %-d */\n",
+           *( (int *) tagDefault[index] ) );
+          printf( "  [<int element> <hex int>]   /* default = %-d */\n",
+           *( (int *) tagDefault[index] ) );
+          printf( "      .\n" );
+          printf( "      .\n" );
+	  printf( "}]\n" );
+	}
+	else {
+	  printf( "%s {\n", tagName[index] );
+          printf( "  <int element> <hex int>\n" );
+          printf( "  <int element> <hex int>\n" );
+          printf( "      .\n" );
+          printf( "      .\n" );
+	  printf( "}\n" );
+	}
 
       }
 
@@ -4200,6 +4571,29 @@ efInt *efI;
 
       }
 
+      if ( tagClass::genDoc() ) {
+
+        if ( tagDefault[index] ) {
+	  printf( "[%s {\n", tagName[index] );
+          printf( "  [<int element> <real>]   /* default = %-d */\n",
+           *( (int *) tagDefault[index] ) );
+          printf( "  [<int element> <real>]   /* default = %-d */\n",
+           *( (int *) tagDefault[index] ) );
+          printf( "      .\n" );
+          printf( "      .\n" );
+	  printf( "}]\n" );
+	}
+	else {
+	  printf( "%s {\n", tagName[index] );
+          printf( "  <int element> <real>\n" );
+          printf( "  <int element> <real>\n" );
+          printf( "      .\n" );
+          printf( "      .\n" );
+	  printf( "}\n" );
+	}
+
+      }
+
       break;
 
     }
@@ -4215,4 +4609,3 @@ char *tagClass::errMsg ( void ) {
   return msg;
 
 }
-

@@ -21,6 +21,11 @@ public:
 
 tagClass ( void );
 
+int genDoc ( void );
+
+void setGenDoc (
+  int flag );
+
 void initLine ( void );
 
 void incLine ( void );
@@ -76,7 +81,7 @@ int loadR ( // enumerated, translate string into integer destination
   int *oneDefault
 );
 
-int tagClass::loadR ( // enumerated array, translate integer source
+int loadR ( // enumerated array, translate integer source
   char *tag,          // into string value
   int numValues,
   char **strValues,
@@ -86,7 +91,7 @@ int tagClass::loadR ( // enumerated array, translate integer source
   int *numElements
 );
 
-int tagClass::loadR ( // enumerated array, translate integer source
+int loadR ( // enumerated array, translate integer source
   char *tag,          // into string value
   int numValues,
   char **strValues,
@@ -171,7 +176,7 @@ int loadR (
   char *oneDefault
 );
 
- int tagClass::loadR ( // fixed length string array
+ int loadR ( // fixed length string array
   char *tag,
   int maxLen,
   int strSize,
@@ -179,7 +184,7 @@ int loadR (
   int *numElements
 );
 
- int tagClass::loadR ( // fixed length string array
+ int loadR ( // fixed length string array
   char *tag,
   int maxLen,
   int strSize,
@@ -343,7 +348,7 @@ int loadW ( // enumerated, translate integer source into string value
   int *oneDefault
 );
 
-int tagClass::loadW ( // enumerated array, translate integer source
+int loadW ( // enumerated array, translate integer source
   char *tag,          // into string value
   int numValues,
   char **strValues,
@@ -352,7 +357,7 @@ int tagClass::loadW ( // enumerated array, translate integer source
   int numElements
 );
 
-int tagClass::loadW ( // enumerated array, translate integer source
+int loadW ( // enumerated array, translate integer source
   char *tag,          // into string value
   int numValues,
   char **strValues,
@@ -432,14 +437,14 @@ int loadW (
   char *oneDefault
 );
 
-int tagClass::loadW (
+int loadW (
   char *tag,
   int strSize,
   char *source,
   int numElements
 );
 
-int tagClass::loadW (
+int loadW (
   char *tag,
   int strSize,
   char *source,
@@ -564,12 +569,12 @@ char *getValue (
   int *valueIsCompound
 );
 
-void tagClass::writeMultiLineString (
+void writeMultiLineString (
   FILE *f,
   char *s
 );
 
-void tagClass::writeString (
+void writeString (
   FILE *f,
   char *s
 );
@@ -630,7 +635,6 @@ static const int STRING_ARRAY = 31;
 
 static const int TAG_E_SUCCESS = 1;
 static const int TAG_E_NOTAGS = 100;
-
 
 char buf[MAXBUF+1];
 char msg[79+1];
