@@ -13,7 +13,7 @@
 #define EBC_K_COLORMODE_ALARM 1
 
 #define EBC_MAJOR_VERSION 2
-#define EBC_MINOR_VERSION 0
+#define EBC_MINOR_VERSION 1
 #define EBC_RELEASE 0
 
 #ifdef __edmBox_cc
@@ -134,7 +134,7 @@ XFontStruct *fs;
 
 char label[63+1], bufLabel[63+1];
 
-char bufPvName[39+1];
+char bufPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass pvExpStr;
 
 int fontAscent, fontDescent, fontHeight, stringLength, stringWidth,
@@ -154,115 +154,115 @@ int needConnectInit, needInfoInit, needUpdate, needDraw, needErase;
 
 public:
 
-edmBoxClass::edmBoxClass ( void );
+edmBoxClass ( void );
 
 // copy constructor
-edmBoxClass::edmBoxClass (
+edmBoxClass (
   const edmBoxClass *source );
 
-edmBoxClass::~edmBoxClass ( void );
+~edmBoxClass ( void );
 
-char *edmBoxClass::objName ( void );
+char *objName ( void );
 
-int edmBoxClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int edmBoxClass::save (
+int save (
   FILE *f );
 
-int edmBoxClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int edmBoxClass::genericEdit ( void );
+int genericEdit ( void );
 
-int edmBoxClass::edit ( void );
+int edit ( void );
 
-int edmBoxClass::editCreate ( void );
+int editCreate ( void );
 
-int edmBoxClass::draw ( void );
+int draw ( void );
 
-int edmBoxClass::erase ( void );
+int erase ( void );
 
-void edmBoxClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-int edmBoxClass::checkResizeSelectBox (
+int checkResizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int edmBoxClass::checkResizeSelectBoxAbs (
+int checkResizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int edmBoxClass::drawActive ( void );
+int drawActive ( void );
 
-int edmBoxClass::eraseActive ( void );
+int eraseActive ( void );
 
-void edmBoxClass::bufInvalidate ( void );
+void bufInvalidate ( void );
 
-int edmBoxClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int edmBoxClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int edmBoxClass::containsMacros ( void );
+int containsMacros ( void );
 
-int edmBoxClass::activate (
+int activate (
   int pass,
   void *ptr );
 
-int edmBoxClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void edmBoxClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-void edmBoxClass::btnUp (
+void btnUp (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-void edmBoxClass::btnDown (
+void btnDown (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-void edmBoxClass::btnDrag (
+void btnDrag (
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
-int edmBoxClass::getButtonActionRequest (
+int getButtonActionRequest (
   int *up,
   int *down,
   int *drag,
   int *focus );
 
-char *edmBoxClass::firstDragName ( void );
+char *firstDragName ( void );
 
-char *edmBoxClass::nextDragName ( void );
+char *nextDragName ( void );
 
-char *edmBoxClass::dragValue (
+char *dragValue (
   int i );
 
-void edmBoxClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -278,7 +278,7 @@ void edmBoxClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void edmBoxClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],
