@@ -103,9 +103,9 @@ protected:
     DisplayMode displayMode;
     int precision;
     
-    pvColorClass textColor;
+    int textColor;
     efInt line_width;
-    pvColorClass fillColor;
+    int fillColor;
     int is_filled;
     fontMenuClass fm;
     char fontTag[63+1], bufFontTag[63+1];
@@ -132,7 +132,8 @@ protected:
                      gcClass &gcc,
                      GC gc,
                      const char *text,
-                     size_t len);
+                     size_t len,
+                     double value);
     void remove_text(Display *dis,
                      Drawable drw,
                      gcClass &gcc,
