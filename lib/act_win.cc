@@ -6344,18 +6344,18 @@ unsigned int mask;
 
 //========== Shift B2 Press ===================================
 
-          if ( awo->state == AWC_EDITING_POINTS ) {
-
-            stat = awo->currentPointObject->removeLastPoint();
-
-          }
-
 //========== Shift B2 Press ===================================
 
         }
         else if ( be->state & ControlMask ) {
 
 //========== Ctrl B2 Press ===================================
+
+          if ( awo->state == AWC_EDITING_POINTS ) {
+
+            stat = awo->currentPointObject->removeLastPoint();
+
+          }
 
 //========== Ctrl B2 Press ===================================
 
