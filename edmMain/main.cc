@@ -765,8 +765,8 @@ extern int main (
   char **argv )
 {
 
-int i, stat, numAppsRemaining, exitProg, q_stat_r, q_stat_i, local, server,
- portNum;
+int i, stat, numAppsRemaining, exitProg, shutdown, q_stat_r, q_stat_i,
+ local, server, portNum;
 THREAD_HANDLE delayH, serverH, caPendH;
 argsPtr args;
 appListPtr cur, next, appArgsHead, newOne;
@@ -778,6 +778,10 @@ MAIN_NODE_PTR node;
 char **argArray, displayName[127+1];
 int appendDisplay;
 float hours, seconds;
+
+char checkPointFileName[255+1], procIdName[31+1], *envPtr;
+FILE *f;
+pid_t procId;
 
   numClients = 1;
 
@@ -869,7 +873,12 @@ float hours, seconds;
   args->appCtxPtr = new appContextClass;
   args->appCtxPtr->proc = &proc;
 
-  stat = args->appCtxPtr->startApplication( args->argc, args->argv );
+  if ( server ) {
+    stat = args->appCtxPtr->startApplication( args->argc, args->argv, 2 );
+  }
+  else {
+    stat = args->appCtxPtr->startApplication( args->argc, args->argv, 1 );
+  }
   if ( !( stat & 1 ) ) exit( 0 );
 
   proc.timeCount = 0;
@@ -878,6 +887,7 @@ float hours, seconds;
   stat = sys_get_time( &proc.tim0 );
   stat = thread_init_timer( delayH, 0.1 );
   exitProg = 0;
+  shutdown = 0;
   while ( !exitProg ) {
 
 #ifdef DIAGNOSTIC_ALLOC
@@ -908,6 +918,29 @@ float hours, seconds;
       next = cur->flink;
 
       cur->appArgs->appCtxPtr->applicationLoop();
+
+      if ( cur->appArgs->appCtxPtr->shutdownFlag ) {
+        if ( !shutdown ) {
+          envPtr = getenv( "EDMTMPFILES" );
+          if ( envPtr ) {
+            strncpy( checkPointFileName, envPtr, 255 );
+            if ( envPtr[strlen(envPtr)] != '/' ) {
+              strncat( checkPointFileName, "/", 255 );
+            }
+          }
+          else {
+            strncpy( checkPointFileName, "/tmp/", 255 );
+          }
+          strncat( checkPointFileName, "edmCheckPointFile_", 255 );
+          procId = getppid();
+          sprintf( procIdName, "%-d", procId );
+          strncat( checkPointFileName, procIdName, 255 );
+          //printf( "[%s]\n", checkPointFileName );
+          f = fopen( checkPointFileName, "w" );
+	}
+        shutdown = 1;
+      }
+
       if ( cur->appArgs->appCtxPtr->exitFlag ) {
         cur->blink->flink = cur->flink;
         cur->flink->blink = cur->blink;
@@ -924,6 +957,10 @@ float hours, seconds;
         numClients--;
         stat = thread_unlock_master( serverH );
 
+      }
+      else if ( shutdown ) {
+        cur->appArgs->appCtxPtr->performShutdown( f );
+        numAppsRemaining++;
       }
       else {
         numAppsRemaining++;
@@ -972,7 +1009,7 @@ float hours, seconds;
             args->appCtxPtr = new appContextClass;
             args->appCtxPtr->proc = &proc;
 
-            args->appCtxPtr->startApplication( args->argc, args->argv );
+            args->appCtxPtr->startApplication( args->argc, args->argv, 0 );
 
             numClients++;
 
@@ -1021,4 +1058,11 @@ parse_error:
     stat = ipnsv_delete_port( &con_port );
   }
 
+  if ( shutdown ) {
+    fclose( f );
+  }
+
 }
+
+
+
