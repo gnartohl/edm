@@ -1152,10 +1152,10 @@ int blink = 0;
 
       actWin->executeGc.setFG( bgColor.getColor() );
 
-      XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
 
-      XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+      XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
 
       actWin->executeGc.setFG( fgColor.getIndex(), &blink );
@@ -1202,10 +1202,10 @@ XRectangle xR = { x, y, w, h };
   }
   else {
 
-    XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
 
-    XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+    XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
 
     XDrawImageStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
@@ -1260,10 +1260,10 @@ XRectangle xR = { x, y, w, h };
       actWin->executeGc.setFG( bgColor.getColor() );
       actWin->executeGc.setBG( bgColor.getColor() );
 
-      XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
 
-      XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+      XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
 
       XDrawImageStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
@@ -1470,6 +1470,12 @@ int activeXTextClass::deactivate (
   if ( pass == 1 ) {
 
   activeMode = 0;
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
+
   updateBlink( 0 );
 
   if ( value.getRaw() )

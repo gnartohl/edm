@@ -24,6 +24,25 @@
 
 #include "thread.h"
 
+static void doBlink (
+  void *ptr
+) {
+
+menuMuxClass *mmo = (menuMuxClass *) ptr;
+
+  if ( !mmo->activeMode ) {
+    if ( mmo->isSelected() ) mmo->drawSelectBoxCorners(); // erase via xor
+    mmo->smartDrawAll();
+    if ( mmo->isSelected() ) mmo->drawSelectBoxCorners();
+  }
+  else {
+    mmo->bufInvalidate();
+    mmo->needDraw = 1;
+    mmo->actWin->addDefExeNode( mmo->aglPtr );
+  }
+
+}
+
 static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id )
@@ -381,6 +400,8 @@ int i, ii;
   fontList = NULL;
   unconnectedTimer = 0;
 
+  setBlinkFunction( (void *) doBlink );
+
 }
 
 // copy constructor
@@ -446,6 +467,8 @@ activeGraphicClass *mmuxo = (activeGraphicClass *) this;
   activeMode = 0;
   unconnectedTimer = 0;
 
+  setBlinkFunction( (void *) doBlink );
+
 }
 
 menuMuxClass::~menuMuxClass ( void ) {
@@ -477,6 +500,8 @@ int i;
   }
 
   if ( fontList ) XmFontListFree( fontList );
+
+  updateBlink( 0 );
 
 }
 
@@ -530,23 +555,19 @@ int index, i, ii;
 
   index = fgColor.pixelIndex();
   actWin->ci->writeColorIndex( f, index );
-  //fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", fgColorMode );
 
   index = bgColor.pixelIndex();
   actWin->ci->writeColorIndex( f, index );
-  //fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", bgColorMode );
 
   index = topShadowColor;
   actWin->ci->writeColorIndex( f, index );
-  //fprintf( f, "%-d\n", index );
 
   index = botShadowColor;
   actWin->ci->writeColorIndex( f, index );
-  //fprintf( f, "%-d\n", index );
 
   if ( controlPvExpStr.getRaw() )
     writeStringToFile( f, controlPvExpStr.getRaw() );
@@ -918,38 +939,116 @@ int menuMuxClass::erase ( void ) {
 
 int menuMuxClass::eraseActive ( void ) {
 
+  if ( !activeMode ) return 1;
+
+  XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.eraseGC(), x, y, w, h );
+
+  XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.eraseGC(), x, y, w, h );
+
   return 1;
 
 }
 
 int menuMuxClass::draw ( void ) {
 
-int tX, tY;
-XRectangle xR = { x, y, w, h };
-
-  actWin->drawGc.saveFg();
+int tX, tY, bumpX, bumpY;
+XRectangle xR = { x+3, y, w-23, h };
+int blink = 0;
 
   if ( deleteRequest || activeMode ) return 1;
 
-  actWin->drawGc.setFG( bgColor.pixelColor() );
+  actWin->drawGc.saveFg();
+
+  actWin->drawGc.setFG( bgColor.pixelIndex(), &blink );
+
+  actWin->drawGc.setLineStyle( LineSolid );
+  actWin->drawGc.setLineWidth( 1 );
+
   XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x, y, w, h );
 
-  actWin->drawGc.setFG( fgColor.pixelColor() );
   XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x, y, w, h );
+
+  actWin->drawGc.setFG( actWin->ci->pix(botShadowColor) );
+
+  XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), x, y, x+w, y );
+
+  XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), x, y, x, y+h );
+
+   actWin->drawGc.setFG( actWin->ci->pix(topShadowColor) );
+
+   XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+    actWin->drawGc.normGC(), x, y+h, x+w, y+h );
+
+   XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+    actWin->drawGc.normGC(), x+w, y, x+w, y+h );
+
+  actWin->drawGc.setFG( actWin->ci->pix(topShadowColor) );
+
+  XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), x+1, y+1, x+w-1, y+1 );
+
+  XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), x+2, y+2, x+w-2, y+2 );
+
+  XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), x+1, y+1, x+1, y+h-1 );
+
+  XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), x+2, y+2, x+2, y+h-2 );
+
+  actWin->drawGc.setFG( actWin->ci->pix(botShadowColor) );
+
+  XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), x+1, y+h-1, x+w-1, y+h-1 );
+
+  XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), x+2, y+h-2, x+w-2, y+h-2 );
+
+  XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), x+w-1, y+1, x+w-1, y+h-1 );
+
+  XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), x+w-2, y+2, x+w-2, y+h-2 );
+
+  // draw bump
+
+  bumpX = x+w-10-10;
+  bumpY = y+h/2-5;
+
+  actWin->drawGc.setFG( actWin->ci->pix(topShadowColor) );
+
+  XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), bumpX, bumpY+10, bumpX, bumpY );
+
+  XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), bumpX, bumpY, bumpX+10, bumpY );
+
+  actWin->drawGc.setFG( actWin->ci->pix(botShadowColor) );
+
+  XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), bumpX+10, bumpY, bumpX+10, bumpY+10 );
+
+  XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), bumpX+10, bumpY+10, bumpX, bumpY+10 );
 
   if ( fs ) {
 
     actWin->drawGc.addNormXClipRectangle( xR );
 
+    actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
     actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
-    tX = x + w/2;
+    tX = x + w/2 - 10;
     tY = y + h/2 - fontAscent/2;
 
     drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
-	      XmALIGNMENT_CENTER, menuMuxClass_str22 );
+     XmALIGNMENT_CENTER, "Mux" );
 
     actWin->drawGc.removeNormXClipRectangle();
 
@@ -957,27 +1056,31 @@ XRectangle xR = { x, y, w, h };
 
   actWin->drawGc.restoreFg();
 
+  updateBlink( blink );
+
   return 1;
 
 }
 
 int menuMuxClass::drawActive ( void ) {
 
-Arg args[10];
-int n;
-// Widget w;
+int tX, tY, bumpX, bumpY;
+XRectangle xR = { x+3, y, w-23, h };
+int blink = 0;
+char string[MMUX_MAX_STRING_SIZE+1];
 
   if ( !controlPvConnected ) {
     if ( controlExists ) {
       if ( needToDrawUnconnected ) {
         actWin->executeGc.saveFg();
-        actWin->executeGc.setFG( fgColor.getDisconnected() );
+        actWin->executeGc.setFG( bgColor.getDisconnectedIndex(), &blink );
         actWin->executeGc.setLineWidth( 1 );
         actWin->executeGc.setLineStyle( LineSolid );
         XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
          actWin->executeGc.normGC(), x, y, w, h );
         actWin->executeGc.restoreFg();
         needToEraseUnconnected = 1;
+        updateBlink( blink );
       }
     }
     else if ( needToEraseUnconnected ) {
@@ -986,22 +1089,120 @@ int n;
       XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.eraseGC(), x, y, w, h );
       needToEraseUnconnected = 0;
+      eraseActive();
+      smartDrawAllActive();
     }
   }
 
   if ( !activeMode || !widgetsCreated ) return 1;
 
-  // set colors
+  actWin->executeGc.saveFg();
+  actWin->executeGc.setLineWidth( 1 );
+  actWin->executeGc.setLineStyle( LineSolid );
+  actWin->executeGc.setFG( bgColor.getIndex(), &blink );
 
-//   w = XmOptionButtonGadget( optionMenu );
-//   n = 0;
-//   XtSetArg( args[n], XmNbackground, bgColor.getColor() ); n++;
-//   XtSetArg( args[n], XmNforeground, fgColor.getColor() ); n++;
-//   XtSetValues( w, args, n );
+  XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x, y, w, h );
 
-  n = 0;
-  XtSetArg( args[n], XmNforeground, fgColor.getColor() ); n++;
-  XtSetValues( optionMenu, args, n );
+  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x, y, w, h );
+
+  actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
+
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x, y, x+w, y );
+
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x, y, x, y+h );
+
+  actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
+
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x, y+h, x+w, y+h );
+
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+w, y, x+w, y+h );
+
+  // top
+  actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
+
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+1, y+1, x+w-1, y+1 );
+
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+2, y+2, x+w-2, y+2 );
+
+  // left
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+1, y+1, x+1, y+h-1 );
+
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+2, y+2, x+2, y+h-2 );
+
+  // bottom
+  actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
+
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+1, y+h-1, x+w-1, y+h-1 );
+
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+2, y+h-2, x+w-2, y+h-2 );
+
+  // right
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+w-1, y+1, x+w-1, y+h-1 );
+
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+w-2, y+2, x+w-2, y+h-2 );
+
+  // draw bump
+
+  bumpX = x+w-10-10;
+  bumpY = y+h/2-5;
+
+  actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
+
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), bumpX, bumpY+10, bumpX, bumpY );
+
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), bumpX, bumpY, bumpX+10, bumpY );
+
+  actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
+
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), bumpX+10, bumpY, bumpX+10, bumpY+10 );
+
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), bumpX+10, bumpY+10, bumpX, bumpY+10 );
+
+  if ( fs ) {
+
+    actWin->executeGc.addNormXClipRectangle( xR );
+
+    actWin->executeGc.setFG( fgColor.getIndex(), &blink );
+    actWin->executeGc.setFontTag( fontTag, actWin->fi );
+
+    tX = x + w/2 - 10;
+    tY = y + h/2 - fontAscent/2;
+
+    if ( ( controlV >= 0 ) && ( controlV < numStates ) ) {
+      strncpy( string, tag[controlV], MMUX_MAX_STRING_SIZE );
+    }
+    else {
+      strcpy( string, "?" );
+    }
+
+    drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
+     XmALIGNMENT_CENTER, string );
+
+    actWin->executeGc.removeNormXClipRectangle();
+
+  }
+
+  actWin->executeGc.restoreFg();
+
+  updateBlink( blink );
 
   return 1;
 
@@ -1108,36 +1309,38 @@ int stat, opStat;
 
   case 1:
 
-    aglPtr = ptr;
-    needConnectInit = needDisconnect = needInfoInit = needUpdate =
-     needDraw = 0;
-    needToEraseUnconnected = 0;
-    needToDrawUnconnected = 0;
-    unconnectedTimer = 0;
-    widgetsCreated = 0;
     opComplete = 0;
-    firstEvent = 1;
-    controlV = 0;
-
-#ifdef __epics__
-    alarmEventId = controlEventId = 0;
-#endif
-
-    controlPvConnected = active = 0;
-    activeMode = 1;
-
-    optionMenu = (Widget) NULL;
-
-    if ( strcmp( controlPvExpStr.getRaw(), "" ) != 0 )
-      controlExists = 1;
-    else
-      controlExists = 0;
 
     break;
 
   case 2:
 
     if ( !opComplete ) {
+
+      aglPtr = ptr;
+      needConnectInit = needDisconnect = needInfoInit = needUpdate =
+       needDraw = 0;
+      needToEraseUnconnected = 0;
+      needToDrawUnconnected = 0;
+      unconnectedTimer = 0;
+      widgetsCreated = 0;
+      firstEvent = 1;
+      controlV = 0;
+      buttonPressed = 0;
+
+#ifdef __epics__
+      alarmEventId = controlEventId = 0;
+#endif
+
+      controlPvConnected = active = 0;
+      activeMode = 1;
+
+      popUpMenu = (Widget) NULL;
+
+      if ( strcmp( controlPvExpStr.getRaw(), "" ) != 0 )
+        controlExists = 1;
+      else
+        controlExists = 0;
 
       if ( !unconnectedTimer ) {
         unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
@@ -1200,12 +1403,19 @@ int menuMuxClass::deactivate (
   int pass
 ) {
 
-int stat;
+int i, stat;
 
   active = 0;
   activeMode = 0;
 
   if ( pass == 1 ) {
+
+    if ( unconnectedTimer ) {
+      XtRemoveTimeOut( unconnectedTimer );
+      unconnectedTimer = 0;
+    }
+
+    updateBlink( 0 );
 
 #ifdef __epics__
 
@@ -1221,15 +1431,11 @@ int stat;
   else if ( pass == 2 ) {
 
     if ( widgetsCreated ) {
-      if ( optionMenu ) {
-        XtUnmapWidget( optionMenu );
-        XtDestroyWidget( optionMenu );
-        optionMenu = NULL;
+      for ( i=0; i<numStates; i++ ) {
+        XtDestroyWidget( pb[i] );
       }
-      if ( pulldownMenu ) {
-        XtDestroyWidget( pulldownMenu );
-        pulldownMenu = NULL;
-      }
+      XtDestroyWidget( pullDownMenu );
+      XtDestroyWidget( popUpMenu );
       widgetsCreated = 0;
     }
 
@@ -1255,15 +1461,90 @@ void menuMuxClass::updateDimensions ( void )
 
 }
 
-static void dummy (
-   Widget w,
-   XEvent *e,
-   String *params,
-   Cardinal numParams )
+void menuMuxClass::btnUp (
+  int _x,
+  int _y,
+  int buttonState,
+  int buttonNumber,
+  int *action )
 {
+
+XButtonEvent be;
+
+  *action = 0;
+
+  if ( !buttonPressed ) return;
+
+  buttonPressed = 0;
+
+  if ( buttonNumber == 1 ) {
+
+    memset( (void *) &be, 0, sizeof(XButtonEvent) );
+    be.x_root = actWin->x+_x;
+    be.y_root = actWin->y+_y;
+    XmMenuPosition( popUpMenu, &be );
+    XtManageChild( popUpMenu );
+
+  }
 
 }
 
+void menuMuxClass::btnDown (
+  int _x,
+  int _y,
+  int buttonState,
+  int buttonNumber,
+  int *action )
+{
+
+  *action = 0;
+
+  if ( controlExists ) {
+    if ( !ca_write_access( controlPvId ) ) return;
+  }
+
+  if ( buttonNumber == 1 ) {
+    buttonPressed = 1;
+  }
+
+}
+
+void menuMuxClass::pointerIn (
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+  if ( controlExists ) {
+    if ( !ca_write_access( controlPvId ) ) {
+      actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
+    }
+    else {
+      actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_DEFAULT );
+    }
+  }
+
+  activeGraphicClass::pointerIn( _x, _y, buttonState );
+
+}
+
+int menuMuxClass::getButtonActionRequest (
+  int *up,
+  int *down,
+  int *drag,
+  int *focus )
+{
+
+  *drag = 0;
+  *focus = 1;
+  *down = 1;
+  *up = 1;
+
+  return 1;
+
+}
+
+#if 0
 static void drag (
    Widget w,
    XEvent *e,
@@ -1296,6 +1577,7 @@ XButtonEvent *be = (XButtonEvent *) e;
   stat = mmo->selectDragValue( mmo->x + be->x, mmo->y + be->y );
 
 }
+#endif
 
 void menuMuxClass::executeDeferred ( void ) {
 
@@ -1304,19 +1586,6 @@ int stat, i, nc, ndis, ni, nu, nd;
 XmString str;
 Arg args[15];
 int n;
-XtTranslations parsedTrans;
-
-static char dragTrans[] =
-  "#override\n\
-   ~Shift<Btn2Down>: startDrag()\n\
-   Shift<Btn2Down>: dummy()\n\
-   Shift<Btn2Up>: selectDrag()";
-
-static XtActionsRec dragActions[] = {
-  { "startDrag", (XtActionProc) drag },
-  { "dummy", (XtActionProc) dummy },
-  { "selectDrag", (XtActionProc) selectDrag }
-};
 
 //----------------------------------------------------------------------------
 
@@ -1355,16 +1624,15 @@ static XtActionsRec dragActions[] = {
     active = 0;
 
     if ( widgetsCreated ) {
-      if ( optionMenu ) {
-        XtUnmapWidget( optionMenu );
-        XtDestroyWidget( optionMenu );
-        optionMenu = NULL;
+
+      for ( i=0; i<numStates; i++ ) {
+        XtDestroyWidget( pb[i] );
       }
-      if ( pulldownMenu ) {
-        XtDestroyWidget( pulldownMenu );
-        pulldownMenu = NULL;
-      }
+      XtDestroyWidget( pullDownMenu );
+      XtDestroyWidget( popUpMenu );
+
       widgetsCreated = 0;
+
     }
 
   }
@@ -1376,20 +1644,22 @@ static XtActionsRec dragActions[] = {
     controlV = v;
 
     if ( widgetsCreated ) {
-      if ( optionMenu ) {
-        XtUnmapWidget( optionMenu );
-        XtDestroyWidget( optionMenu );
-        optionMenu = NULL;
+
+      for ( i=0; i<numStates; i++ ) {
+        XtDestroyWidget( pb[i] );
       }
-      if ( pulldownMenu ) {
-        XtDestroyWidget( pulldownMenu );
-        pulldownMenu = NULL;
-      }
+      XtDestroyWidget( pullDownMenu );
+      XtDestroyWidget( popUpMenu );
+
       widgetsCreated = 0;
+
     }
 
-    pulldownMenu = XmCreatePulldownMenu( actWin->executeWidgetId(),
-     "", NULL, 0 );
+    n = 0;
+    XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+    popUpMenu = XmCreatePopupMenu( actWin->topWidgetId(), "", args, n );
+
+    pullDownMenu = XmCreatePulldownMenu( popUpMenu, "", NULL, 0 );
 
     numStates = numItems;
 
@@ -1401,17 +1671,11 @@ static XtActionsRec dragActions[] = {
       str = XmStringCreate( stateString[i], fontTag );
 
       pb[i] = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
-       pulldownMenu,
+       popUpMenu,
        XmNlabelString, str,
-       XmNfontList, fontList,
        NULL );
 
       XmStringFree( str );
-
-      n = 0;
-      XtSetArg( args[n], XmNwidth, w-42 ); n++;
-      XtSetArg( args[n], XmNheight, h-14 ); n++;
-      XtSetValues( pb[i], args, n );
 
       if ( controlExists ) {
         XtAddCallback( pb[i], XmNactivateCallback, mmux_putValue,
@@ -1423,42 +1687,6 @@ static XtActionsRec dragActions[] = {
       }
 
     }
-
-    if ( controlV < numStates ) {
-      curHistoryWidget = pb[controlV];
-    }
-    else {
-      curHistoryWidget = pb[0];
-    }
-
-    parsedTrans = XtParseTranslationTable( dragTrans );
-    XtAppAddActions( actWin->appCtx->appContext(), dragActions,
-     XtNumber(dragActions) );
-
-    n = 0;
-    XtSetArg( args[n], XmNsubMenuId, (XtArgVal) pulldownMenu ); n++;
-    XtSetArg( args[n], XmNmenuHistory, (XtArgVal) curHistoryWidget );
-     n++;
-    XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
-    XtSetArg( args[n], XmNy, (XtArgVal) y ); n++;
-    XtSetArg( args[n], XmNbackground,
-     (XtArgVal) actWin->executeGc.getBaseBG() ); n++;
-    XtSetArg( args[n], XmNhighlightColor,
-     (XtArgVal) actWin->executeGc.getBaseBG() ); n++;
-    XtSetArg( args[n], XmNhighlightPixmap, (XtArgVal) None ); n++;
-    XtSetArg( args[n], XmNtopShadowColor,
-     (XtArgVal) actWin->ci->pix(topShadowColor) );
-     n++;
-    XtSetArg( args[n], XmNbottomShadowColor,
-     (XtArgVal) actWin->ci->pix(botShadowColor) );
-     n++;
-    XtSetArg( args[n], XmNtranslations, parsedTrans ); n++;
-    XtSetArg( args[n], XmNuserData, this ); n++;
-
-    optionMenu = XmCreateOptionMenu( actWin->executeWidgetId(), "",
-     args, n );
-
-    XtManageChild( optionMenu );
 
     widgetsCreated = 1;
 
@@ -1498,15 +1726,6 @@ static XtActionsRec dragActions[] = {
   if ( nu ) {
 
     controlV = v;
-
-    if ( ( controlV >= 0 ) && ( controlV < numStates ) ) {
-      curHistoryWidget = pb[controlV];
-      n = 0;
-      XtSetArg( args[n], XmNmenuHistory, (XtArgVal) curHistoryWidget );
-      n++;
-      XtSetValues( optionMenu, args, n );
-    }
-
     stat = drawActive();
 
     if ( !firstEvent ) {

@@ -1956,6 +1956,11 @@ int activeLineClass::deactivate (
 
     activeMode = 0;
 
+    if ( unconnectedTimer ) {
+      XtRemoveTimeOut( unconnectedTimer );
+      unconnectedTimer = 0;
+    }
+
     updateBlink( 0 );
 
     if ( alarmPvId ) {

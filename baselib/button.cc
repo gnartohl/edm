@@ -2113,6 +2113,11 @@ int stat;
 
   if ( pass == 1 ) {
 
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
+
   updateBlink( 0 );
 
   if ( deactivateCallback ) {

@@ -1979,17 +1979,22 @@ int activeMotifSliderClass::deactivate (
 
   activeMode = 0;
 
-  if ( ef.formIsPoppedUp() ) {
-    ef.popdown();
-  }
-
-  if ( kp.isPoppedUp() ) {
-    kp.popdown();
-  }
-
   switch ( pass ) {
 
   case 1:
+
+    if ( ef.formIsPoppedUp() ) {
+      ef.popdown();
+    }
+
+    if ( kp.isPoppedUp() ) {
+      kp.popdown();
+    }
+
+    if ( unconnectedTimer ) {
+      XtRemoveTimeOut( unconnectedTimer );
+      unconnectedTimer = 0;
+    }
 
     updateControlTimerActive = 0;
     if ( updateControlTimer ) {

@@ -2061,6 +2061,11 @@ int stat;
 
   if ( pass == 1 ) {
 
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
+
 #ifdef __epics__
 
   if ( readExists ) {

@@ -3028,6 +3028,12 @@ int stat;
   if ( pass == 1 ) {
 
   activeMode = 0;
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
+
   updateBlink( 0 );
 
   if ( kp.isPoppedUp() ) {

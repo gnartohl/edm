@@ -1681,6 +1681,11 @@ int stat, i;
 
   case 1:
 
+    if ( unconnectedTimer ) {
+      XtRemoveTimeOut( unconnectedTimer );
+      unconnectedTimer = 0;
+    }
+
     updateBlink( 0 );
 
 #ifdef __epics__

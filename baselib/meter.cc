@@ -1941,6 +1941,11 @@ int stat;
   active = 0;
   activeMode = 0;
 
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
+
 #ifdef __epics__
 
   if ( readExists ) {

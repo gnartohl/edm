@@ -857,35 +857,35 @@ int stat, opStat;
 
   case 1:
 
-    aglPtr = ptr;
-    needConnectInit = needInfoInit = needRefresh = needDraw = 0;
-    needToEraseUnconnected = 0;
-    needToDrawUnconnected = 0;
-    unconnectedTimer = 0;
     opComplete = 0;
-
-    controlExists = 0;
-
-    pvCheckExists = 0;
-    connection.init();
-
-#ifdef __epics__
-    alarmEventId = controlEventId = 0;
-#endif
-
-    active = 0;
-    activeMode = 1;
-    numStates = 0;
-    curValue = 0;
-
-    bulBrd = (Widget) NULL;
-    radioBox = (Widget) NULL;
 
     break;
 
   case 2:
 
     if ( !opComplete ) {
+
+      aglPtr = ptr;
+      needConnectInit = needInfoInit = needRefresh = needDraw = 0;
+      needToEraseUnconnected = 0;
+      needToDrawUnconnected = 0;
+      unconnectedTimer = 0;
+
+#ifdef __epics__
+      alarmEventId = controlEventId = 0;
+#endif
+
+      active = 0;
+      activeMode = 1;
+      numStates = 0;
+      curValue = 0;
+
+      bulBrd = (Widget) NULL;
+      radioBox = (Widget) NULL;
+
+      controlExists = 0;
+      pvCheckExists = 0;
+      connection.init();
 
       if ( !unconnectedTimer ) {
         unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
@@ -955,6 +955,11 @@ int stat, i;
   switch ( pass ) {
 
   case 1:
+
+    if ( unconnectedTimer ) {
+      XtRemoveTimeOut( unconnectedTimer );
+      unconnectedTimer = 0;
+    }
 
 #ifdef __epics__
 
@@ -1062,7 +1067,6 @@ XmString str;
 Arg args[20];
 int n;
 XtTranslations parsedTrans;
-char tmp[MAX_ENUM_STRING_SIZE+10];
 
 static char dragTrans[] =
   "#override\n\

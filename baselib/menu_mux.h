@@ -43,18 +43,24 @@
 #include "menu_mux.str"
 
 static char *dragName[] = {
-  menuMuxClass_str1,
+  menuMuxClass_str1
 };
+
+static void doBlink (
+  void *ptr
+);
 
 static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id );
 
+#if 0
 static void selectDrag (
    Widget w,
    XEvent *e,
    String *params,
    Cardinal numParams );
+#endif
 
 static void mmux_putValueNoPv (
   Widget w,
@@ -114,15 +120,21 @@ class menuMuxClass : public activeGraphicClass {
 
 private:
 
+friend void doBlink (
+  void *ptr
+);
+
 friend void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id );
 
+#if 0
 friend void selectDrag (
    Widget w,
    XEvent *e,
    String *params,
    Cardinal numParams );
+#endif
 
 friend void mmux_putValueNoPv (
   Widget w,
@@ -225,12 +237,18 @@ expStringClass initialStateExpStr;
 
 int controlExists, widgetsCreated, controlPvConnected, active, activeMode;
 
+#if 0
 Widget optionMenu, pulldownMenu, curHistoryWidget,
  pb[MMUX_MAX_STATES];
+#endif
+
+Widget popUpMenu, pullDownMenu, pb[MAX_ENUM_STATES];
 
 int needConnectInit, needDisconnect, needInfoInit, needUpdate, needDraw,
  needToDrawUnconnected, needToEraseUnconnected;
 int unconnectedTimer;
+
+int buttonPressed;
 
 public:
 
@@ -291,6 +309,31 @@ int activate ( int pass, void *ptr );
 int deactivate ( int pass );
 
 void updateDimensions ( void );
+
+void menuMuxClass::btnUp (
+  int _x,
+  int _y,
+  int buttonState,
+  int buttonNumber,
+  int *action );
+
+void menuMuxClass::btnDown (
+  int _x,
+  int _y,
+  int buttonState,
+  int buttonNumber,
+  int *action );
+
+void menuMuxClass::pointerIn (
+  int _x,
+  int _y,
+  int buttonState );
+
+int menuMuxClass::getButtonActionRequest (
+  int *up,
+  int *down,
+  int *drag,
+  int *focus );
 
 int isMux ( void ) { return 1; }
 

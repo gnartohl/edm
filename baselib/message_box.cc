@@ -736,9 +736,11 @@ Arg args[10];
 
   if ( !activeMode || !init ) return 1;
 
-  n = 0;
-  XtSetArg( args[n], XmNforeground, fgColor.getColor() ); n++;
-  XtSetValues( scrolledText.textWidget(), args, n );
+  if ( scrolledText.textWidget() ) {
+    n = 0;
+    XtSetArg( args[n], XmNforeground, fgColor.getColor() ); n++;
+    XtSetValues( scrolledText.textWidget(), args, n );
+  }
 
   return 1;
 
@@ -865,9 +867,9 @@ struct stat fileStat;
 
       frameWidget = NULL;
 
-      status = createMsgBoxWidgets();
-
       opStat = 1;
+
+      createMessageBoxWidgets();
 
 #ifdef __epics__
 
@@ -931,36 +933,31 @@ int stat;
 
   if ( pass == 1 ) {
 
-  active = 0;
-  activeMode = 0;
+    active = 0;
+    activeMode = 0;
 
-  if ( logFileExists ) {
-    XtRemoveTimeOut( flushTimer );
-  }
+    scrolledText.destroyEmbedded();
+    if ( frameWidget ) XtDestroyWidget( frameWidget );
+    frameWidget = NULL;
+
+    if ( logFileExists ) {
+      XtRemoveTimeOut( flushTimer );
+    }
 
 #ifdef __epics__
 
-  if ( readExists ) {
-    stat = ca_clear_channel( readPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeMessageBoxClass_str23 );
-  }
+    if ( readExists ) {
+      stat = ca_clear_channel( readPvId );
+      if ( stat != ECA_NORMAL )
+        printf( activeMessageBoxClass_str23 );
+    }
 
 #endif
 
-  if ( logFileOpen ) {
-    fclose( logFile );
-    logFileOpen = 0;
-  }
-
-  }
-  else if ( pass == 2 ) {
-
-  if ( frameWidget ) {
-    scrolledText.destroyEmbedded();
-    XtDestroyWidget( frameWidget );
-    frameWidget = NULL;
-  }
+    if ( logFileOpen ) {
+      fclose( logFile );
+      logFileOpen = 0;
+    }
 
   }
 
@@ -1006,7 +1003,7 @@ int stat;
 
 }
 
-int activeMessageBoxClass::createMsgBoxWidgets ( void ) {
+int activeMessageBoxClass::createMessageBoxWidgets ( void ) {
 
 int n, textHeight;
 Arg args[10];
@@ -1019,8 +1016,8 @@ Widget widget;
    XmNmarginWidth, 0,
    XmNmarginHeight, 0,
    XmNshadowType, XmSHADOW_ETCHED_OUT,
-//    XmNmappedWhenManaged, False,
-   XmNmappedWhenManaged, True,
+   XmNmappedWhenManaged, False,
+   //XmNmappedWhenManaged, True,
    NULL );
 
   if ( !frameWidget ) {
@@ -1087,7 +1084,7 @@ Widget widget;
   XtSetArg( args[n], XmNbackground, bg2Color.pixelColor() ); n++;
   XtSetValues( scrolledText.clearPbWidget(), args, n );
 
-//   XtMapWidget( frameWidget );
+  XtMapWidget( frameWidget );
 
   return 1;
 
