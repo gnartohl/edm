@@ -79,6 +79,9 @@ int stat, xOfs;
 double fv;
 
   if ( slo->updateControlTimerActive ) {
+    if ( slo->updateControlTimerValue < 100 ) {
+      slo->updateControlTimerValue = 100;
+    }
     slo->updateControlTimer = XtAppAddTimeOut(
      slo->actWin->appCtx->appContext(),
      slo->updateControlTimerValue, slc_updateControl, client );
@@ -154,6 +157,7 @@ int stat, xOfs;
 
   if ( slo->incrementTimerActive ) {
     if ( slo->incrementTimerValue > 50 ) slo->incrementTimerValue -= 5;
+    if ( slo->incrementTimerValue < 45 ) slo->incrementTimerValue = 45;
     slo->incrementTimer = XtAppAddTimeOut( slo->actWin->appCtx->appContext(),
      slo->incrementTimerValue, slc_decrement, client );
   }
@@ -229,6 +233,7 @@ int stat, xOfs;
 
   if ( slo->incrementTimerActive ) {
     if ( slo->incrementTimerValue > 50 ) slo->incrementTimerValue -= 5;
+    if ( slo->incrementTimerValue < 45 ) slo->incrementTimerValue = 45;
     slo->incrementTimer = XtAppAddTimeOut( slo->actWin->appCtx->appContext(),
      slo->incrementTimerValue, slc_increment, client );
   }
