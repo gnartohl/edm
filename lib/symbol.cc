@@ -2359,6 +2359,7 @@ int num;
       controlPvId[i] = NULL;
       initialCtrlConnection[i] = 1;
     }
+    colorPvId = NULL;
 
     notControlPvConnected = (int) pow(2,numPvs) - 1;
 

@@ -1336,85 +1336,85 @@ int fileOpened = 0;
 
   avlTreeCreated = 1;
 
-    cur = awo->head->blink;
-    while ( cur != awo->head ) {
+  cur = awo->head->blink;
+  while ( cur != awo->head ) {
 
-      cur->node->getPvs( 10000, pvs, &n );
-      for ( i=0; i<n; i++ ) {
-        if ( pvs[i] ) {
-          curNameNode = (nameListPtr) calloc( sizeof(nameListType), 1 );
-          if ( !curNameNode ) {
-            snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
-            awo->appCtx->postMessage( msg );
-            goto done;
-	  }
-          curNameNode->name = (char *) pvs[i]->get_name();
-          stat = avl_insert_node( pvNameTree, (void *) curNameNode, &dup );
-          if ( !( stat & 1 ) ) {
-            snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
-            awo->appCtx->postMessage( msg );
-            goto done;
-	  }
-          if ( dup ) {
-            free( curNameNode );
-          }
-	}
+    cur->node->getPvs( 10000, pvs, &n );
+    for ( i=0; i<n; i++ ) {
+      if ( pvs[i] ) {
+        curNameNode = (nameListPtr) calloc( sizeof(nameListType), 1 );
+        if ( !curNameNode ) {
+          snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+          awo->appCtx->postMessage( msg );
+          goto done;
+        }
+        curNameNode->name = (char *) pvs[i]->get_name();
+        stat = avl_insert_node( pvNameTree, (void *) curNameNode, &dup );
+        if ( !( stat & 1 ) ) {
+          snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+          awo->appCtx->postMessage( msg );
+          goto done;
+        }
+        if ( dup ) {
+          free( curNameNode );
+        }
       }
-
-      cur = cur->blink;
-
     }
 
-    // printf( "awc_pvlistFileSelectOk_cb, file name = [%s]\n", tmp );
+    cur = cur->blink;
 
-    ptr = strstr( tmp, "." );
+  }
 
-    if ( !ptr ) {
-      Strncat( tmp, ".pvlist", 255 );
-    }
+  // printf( "awc_pvlistFileSelectOk_cb, file name = [%s]\n", tmp );
 
-    f = fopen( tmp, "w" );
-    if ( !f ) {
-      strncpy( msg, activeWindowClass_str199, 255 );
-      Strncat( msg, tmp, 255 );
-      awo->appCtx->postMessage( msg );
-      goto done;
-    }
+  ptr = strstr( tmp, "." );
 
-    fileOpened = 1;
+  if ( !ptr ) {
+    Strncat( tmp, ".pvlist", 255 );
+  }
 
-    nPvs = 0;
-    stat = avl_get_first( pvNameTree, (void **) &curNameNode );
+  f = fopen( tmp, "w" );
+  if ( !f ) {
+    strncpy( msg, activeWindowClass_str199, 255 );
+    Strncat( msg, tmp, 255 );
+    awo->appCtx->postMessage( msg );
+    goto done;
+  }
+
+  fileOpened = 1;
+
+  nPvs = 0;
+  stat = avl_get_first( pvNameTree, (void **) &curNameNode );
+  if ( !( stat & 1 ) ) {
+    snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+    awo->appCtx->postMessage( msg );
+    goto done;
+  }
+  while ( curNameNode ) {
+
+    fprintf( f, "%s\n", curNameNode->name );
+    nPvs++;
+
+    stat = avl_get_next( pvNameTree, (void **) &curNameNode );
     if ( !( stat & 1 ) ) {
       snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
       awo->appCtx->postMessage( msg );
       goto done;
     }
-    while ( curNameNode ) {
 
-      fprintf( f, "%s\n", curNameNode->name );
-      nPvs++;
+  }
 
-      stat = avl_get_next( pvNameTree, (void **) &curNameNode );
-      if ( !( stat & 1 ) ) {
-        snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
-        awo->appCtx->postMessage( msg );
-        goto done;
-      }
+  fileOpened = 0;
 
-    }
+  stat = fclose(f);
+  if ( stat < 0 ) {
+    strncpy( msg, activeWindowClass_str200, 255 );
+    Strncat( msg, tmp, 255 );
+    awo->appCtx->postMessage( msg );
+    goto done;
+  }
 
-    fileOpened = 0;
-
-    stat = fclose(f);
-    if ( stat < 0 ) {
-      strncpy( msg, activeWindowClass_str200, 255 );
-      Strncat( msg, tmp, 255 );
-      awo->appCtx->postMessage( msg );
-      goto done;
-    }
-
-    //printf( "Num PVs = %-d\n", nPvs );
+  //printf( "Num PVs = %-d\n", nPvs );
 
 done:
 

@@ -3409,7 +3409,7 @@ time_t timet;
       snprintf( msg, 79, "  Num references = %-d\n",
        pv->get_num_references() );
       actWin->appCtx->postMessage( msg );
-      timet = pv->get_time_t() - 631152000;
+      timet = pv->get_time_t(); // - 631152000;
       localtime_r( &timet, &theTime );
       fs = (double) pv->get_nano() / 1.0e9;
       //snprintf( msg, 79, "  Time stamp = %-d/%-d/%-d %-d:%-d:%.6f",
