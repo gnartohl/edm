@@ -263,8 +263,7 @@ char strVal[255+1];
     mslo->ef.addTextField( activeMotifSliderClass_str58, 20,
      &mslo->bufIncrement );
 
-    calcIncRange( mslo->efScaleMin.value(), mslo->efScaleMax.value(),
-     strVal, mslo->incArray );
+    calcIncRange( mslo->minFv, mslo->maxFv, strVal, mslo->incArray );
     mslo->incIndex = 0;
     mslo->ef.addOption( activeMotifSliderClass_str58, strVal,
      &mslo->incIndex );
