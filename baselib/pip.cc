@@ -1536,9 +1536,6 @@ int i;
 
 int activePipClass::createPipWidgets ( void ) {
 
-int n;
-Arg args[2];
-
   frameWidget = new Widget;
   *frameWidget = NULL;
 
@@ -1567,9 +1564,11 @@ Arg args[2];
     return 0;
   }
 
-  n = 0;
-  XtSetArg( args[n], XmNclipWindow, &clipWidget ); n++;
-  XtGetValues( *frameWidget, args, n );
+  XtVaGetValues( *frameWidget,
+   XmNclipWindow, &clipWidget,
+   XmNhorizontalScrollBar, &hsbWidget,
+   XmNverticalScrollBar, &vsbWidget,
+   NULL );
 
   if ( clipWidget ) {
     XtVaSetValues( clipWidget,
@@ -1580,6 +1579,30 @@ Arg args[2];
       XmNforeground, bgColor.pixelColor(),
       XmNbackground, bgColor.pixelColor(),
      NULL );
+  }
+
+  if ( hsbWidget ) {
+    XtVaSetValues( hsbWidget,
+      XmNtopShadowColor, topShadowColor.pixelColor(),
+      XmNbottomShadowColor, botShadowColor.pixelColor(),
+      XmNborderColor, bgColor.pixelColor(),
+      XmNhighlightColor, bgColor.pixelColor(),
+      XmNforeground, bgColor.pixelColor(),
+      XmNbackground, fgColor.pixelColor(),
+      XmNtroughColor, bgColor.pixelColor(),
+      NULL );
+  }
+
+  if ( vsbWidget ) {
+    XtVaSetValues( vsbWidget,
+      XmNtopShadowColor, topShadowColor.pixelColor(),
+      XmNbottomShadowColor, botShadowColor.pixelColor(),
+      XmNborderColor, bgColor.pixelColor(),
+      XmNhighlightColor, bgColor.pixelColor(),
+      XmNforeground, bgColor.pixelColor(),
+      XmNbackground, fgColor.pixelColor(),
+      XmNtroughColor, bgColor.pixelColor(),
+      NULL );
   }
 
   return 1;

@@ -191,7 +191,8 @@ int center;
 int setSize;
 int sizeOfs;
 
-Widget *frameWidget, clipWidget, popUpMenu, pullDownMenu, pb[maxDsps];
+Widget *frameWidget, clipWidget, hsbWidget, vsbWidget, popUpMenu,
+ pullDownMenu, pb[maxDsps];
 
 int propagateMacros[maxDsps];
 expStringClass displayFileName[maxDsps];

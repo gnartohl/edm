@@ -10549,6 +10549,19 @@ char tmp[10];
 
     top = parent;
 
+    if ( isEmbedded ) {
+
+      XtVaGetValues( parent,
+      XmNbackground, &embBg,
+      NULL );
+
+    }
+    else {
+
+      embBg = bPix;
+
+    }
+
     drawWidget = XtVaCreateWidget( "", xmDrawingAreaWidgetClass,
      top,
      XmNx, x,
@@ -10557,6 +10570,7 @@ char tmp[10];
      XmNheight, h,
      XmNmappedWhenManaged, False,
      XmNresizePolicy, XmRESIZE_GROW,
+     XmNbackground, embBg,
      NULL );
 
   }
@@ -12990,6 +13004,11 @@ int activeWindowClass::setGraphicEnvironment (
   drawGc.setFG( ci->pix(fgColor) );
   drawGc.setBG( ci->pix(bgColor) );
   drawGc.setBaseBG( ci->pix(bgColor) );
+
+  if ( isEmbedded ) {
+    drawGc.setBG( embBg );
+    drawGc.setBaseBG( embBg );
+  }
 
   executeGc.create( executeWidget );
   executeGc.setCI( ci );

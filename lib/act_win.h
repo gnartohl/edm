@@ -838,7 +838,7 @@ int numChildren;
 activeWindowClass *parent;
 
 int isEmbedded, embeddedX, embeddedY, embeddedW, embeddedH, embSizeOfs,
- embSetSize, embCenter;
+ embSetSize, embCenter, embBg;
 Widget *widgetToDeallocate;
 
 int btnDownX, btnDownY;
