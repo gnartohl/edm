@@ -2972,19 +2972,19 @@ Atom wm_delete_window;
       awo->ef.addOption( activeWindowClass_str31, activeWindowClass_str32,
        &awo->bufOrthogonal );
       awo->ef.addColorButton( activeWindowClass_str33, awo->ci, &awo->defaultTextFgCb,
-       &awo->defaultTextFgColor );
+       &awo->bufDefaultTextFgColor );
       awo->ef.addColorButton( activeWindowClass_str34, awo->ci, &awo->defaultFg1Cb,
-       &awo->defaultFg1Color );
+       &awo->bufDefaultFg1Color );
       awo->ef.addColorButton( activeWindowClass_str35, awo->ci, &awo->defaultFg2Cb,
-       &awo->defaultFg2Color );
+       &awo->bufDefaultFg2Color );
       awo->ef.addColorButton( activeWindowClass_str36, awo->ci, &awo->defaultBgCb,
-       &awo->defaultBgColor );
+       &awo->bufDefaultBgColor );
       awo->ef.addColorButton( activeWindowClass_str37, awo->ci,
-       &awo->defaultOffsetCb, &awo->defaultOffsetColor );
+       &awo->defaultOffsetCb, &awo->bufDefaultOffsetColor );
       awo->ef.addColorButton( activeWindowClass_str38, awo->ci,
-       &awo->defaultTopShadowCb, &awo->defaultTopShadowColor );
+       &awo->defaultTopShadowCb, &awo->bufDefaultTopShadowColor );
       awo->ef.addColorButton( activeWindowClass_str39, awo->ci,
-       &awo->defaultBotShadowCb, &awo->defaultBotShadowColor );
+       &awo->defaultBotShadowCb, &awo->bufDefaultBotShadowColor );
       awo->ef.addFontMenu( activeWindowClass_str183, awo->fi, &awo->defaultFm,
        awo->defaultFontTag );
       awo->defaultFm.setFontAlignment( awo->defaultAlignment );
