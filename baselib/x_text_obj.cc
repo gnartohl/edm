@@ -24,123 +24,8 @@
 
 #include "thread.h"
 
-#ifdef __epics__
-
-static void axtoMonitorAlarmPvConnectState (
-  struct connection_handler_args arg )
-{
-
-activeXTextClass *axto = (activeXTextClass *) ca_puser(arg.chid);
-
-  if ( arg.op == CA_OP_CONN_UP ) {
-
-    axto->needAlarmConnectInit = 1;
-
-  }
-  else { // lost connection
-
-    axto->alarmPvConnected = 0;
-    axto->active = 0;
-    axto->fgColor.setDisconnected();
-    axto->bgColor.setDisconnected();
-    axto->bufInvalidate();
-    axto->needDraw = 1;
-
-  }
-
-  axto->actWin->appCtx->proc->lock();
-  axto->actWin->addDefExeNode( axto->aglPtr );
-  axto->actWin->appCtx->proc->unlock();
-
-}
-
-static void xTextAlarmUpdate (
-  struct event_handler_args ast_args )
-{
-
-class activeXTextClass *axto;
-struct dbr_sts_float statusRec;
-
-  axto = (activeXTextClass *) ast_args.usr;
-
-  statusRec = *( (struct dbr_sts_float *) ast_args.dbr );
-  axto->fgColor.setStatus( statusRec.status, statusRec.severity );
-  axto->bgColor.setStatus( statusRec.status, statusRec.severity );
-
-  if ( axto->active ) {
-    axto->bufInvalidate();
-    axto->needRefresh = 1;
-    axto->actWin->appCtx->proc->lock();
-    axto->actWin->addDefExeNode( axto->aglPtr );
-    axto->actWin->appCtx->proc->unlock();
-  }
-
-}
-
-static void axtoMonitorVisPvConnectState (
-  struct connection_handler_args arg )
-{
-
-activeXTextClass *axto = (activeXTextClass *) ca_puser(arg.chid);
-
-  if ( arg.op == CA_OP_CONN_UP ) {
-
-    axto->needVisConnectInit = 1;
-
-  }
-  else { // lost connection
-
-    axto->visPvConnected = 0;
-    axto->active = 0;
-    axto->fgColor.setDisconnected();
-    axto->bgColor.setDisconnected();
-    axto->bufInvalidate();
-    axto->needDraw = 1;
-
-  }
-
-  axto->actWin->appCtx->proc->lock();
-  axto->actWin->addDefExeNode( axto->aglPtr );
-  axto->actWin->appCtx->proc->unlock();
-
-}
-
-static void xTextVisUpdate (
-  struct event_handler_args ast_args )
-{
-
-pvValType pvV;
-class activeXTextClass *axto = (activeXTextClass *) ast_args.usr;
-
-  pvV.d = *( (double *) ast_args.dbr );
-  if ( ( pvV.d >= axto->minVis.d ) && ( pvV.d < axto->maxVis.d ) )
-    axto->visibility = 1 ^ axto->visInverted;
-  else
-    axto->visibility = 0 ^ axto->visInverted;
-
-  if ( axto->active ) {
-
-    if ( axto->visibility ) {
-
-      axto->needRefresh = 1;
-
-    }
-    else {
-
-      axto->needErase = 1;
-      axto->needRefresh = 1;
-
-    }
-
-    axto->actWin->appCtx->proc->lock();
-    axto->actWin->addDefExeNode( axto->aglPtr );
-    axto->actWin->appCtx->proc->unlock();
-
-  }
-
-}
-
-#endif
+// This is the EPICS specific line right now:
+static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
 static void axtc_edit_update (
   Widget w,
@@ -291,6 +176,116 @@ activeXTextClass *axto = (activeXTextClass *) client;
 
 }
 
+void activeXTextClass::alarmPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeXTextClass *axto = (activeXTextClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+  }
+  else { // lost connection
+
+    axto->connection.setPvDisconnected( (void *) axto->alarmPvConnection );
+    axto->fgColor.setDisconnected();
+    axto->bgColor.setDisconnected();
+
+    axto->actWin->appCtx->proc->lock();
+    axto->needRefresh = 1;
+    axto->actWin->addDefExeNode( axto->aglPtr );
+    axto->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
+void activeXTextClass::alarmPvValueCallback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeXTextClass *axto = (activeXTextClass *) userarg;
+
+  if ( !axto->connection.pvsConnected() ) {
+
+    axto->connection.setPvConnected( (void *) alarmPvConnection );
+
+    if ( axto->connection.pvsConnected() ) {
+      axto->actWin->appCtx->proc->lock();
+      axto->needConnectInit = 1;
+      axto->actWin->addDefExeNode( axto->aglPtr );
+      axto->actWin->appCtx->proc->unlock();
+    }
+
+  }
+  else {
+
+    axto->actWin->appCtx->proc->lock();
+    axto->needAlarmUpdate = 1;
+    axto->actWin->addDefExeNode( axto->aglPtr );
+    axto->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
+void activeXTextClass::visPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeXTextClass *axto = (activeXTextClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+  }
+  else { // lost connection
+
+    axto->connection.setPvDisconnected( (void *) axto->visPvConnection );
+    axto->fgColor.setDisconnected();
+    axto->bgColor.setDisconnected();
+
+    axto->actWin->appCtx->proc->lock();
+    axto->needRefresh = 1;
+    axto->actWin->addDefExeNode( axto->aglPtr );
+    axto->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
+void activeXTextClass::visPvValueCallback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeXTextClass *axto = (activeXTextClass *) userarg;
+
+  if ( !axto->connection.pvsConnected() ) {
+
+    axto->connection.setPvConnected( (void *) visPvConnection );
+
+    if ( axto->connection.pvsConnected() ) {
+      axto->actWin->appCtx->proc->lock();
+      axto->needConnectInit = 1;
+      axto->actWin->addDefExeNode( axto->aglPtr );
+      axto->actWin->appCtx->proc->unlock();
+    }
+
+  }
+  else {
+
+    axto->actWin->appCtx->proc->lock();
+    axto->needVisUpdate = 1;
+    axto->actWin->addDefExeNode( axto->aglPtr );
+    axto->actWin->appCtx->proc->unlock();
+
+    }
+
+}
+
 activeXTextClass::activeXTextClass ( void ) {
 
   name = new char[strlen("activeXTextClass")+1];
@@ -299,15 +294,14 @@ activeXTextClass::activeXTextClass ( void ) {
   visibility = 0;
   prevVisibility = -1;
   visInverted = 0;
-  visPvConnected = alarmPvConnected = 0;
   visPvExists = alarmPvExists = 0;
-  active = 0;
   activeMode = 0;
   fgColorMode = AXTC_K_COLORMODE_STATIC;
   bgColorMode = AXTC_K_COLORMODE_STATIC;
   strcpy( minVisString, "" );
   strcpy( maxVisString, "" );
   strcpy( id, "" );
+  connection.setMaxPvs( 2 );
 
 }
 
@@ -335,9 +329,7 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   visibility = 0;
   prevVisibility = -1;
-  visPvConnected = alarmPvConnected = 0;
   visPvExists = alarmPvExists = 0;
-  active = 0;
   activeMode = 0;
 
   strncpy( minVisString, source->minVisString, 39 );
@@ -365,6 +357,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   stringWidth = source->stringWidth;
   stringY = source->stringY;
   stringX = source->stringX;
+
+  connection.setMaxPvs( 2 );
 
 }
 
@@ -982,39 +976,43 @@ int clipStat;
 
   prevVisibility = visibility;
 
-  actWin->executeGc.saveFg();
+  if ( fgVisibility ) {
 
-  actWin->executeGc.setFG( fgColor.getColor() );
+    actWin->executeGc.saveFg();
 
-  clipStat = actWin->executeGc.addNormXClipRectangle( xR );
+    actWin->executeGc.setFG( fgColor.getColor() );
 
-  if ( strcmp( fontTag, "" ) != 0 ) {
-    actWin->executeGc.setFontTag( fontTag, actWin->fi );
+    clipStat = actWin->executeGc.addNormXClipRectangle( xR );
+
+    if ( strcmp( fontTag, "" ) != 0 ) {
+      actWin->executeGc.setFontTag( fontTag, actWin->fi );
+    }
+
+    if ( useDisplayBg ) {
+
+      XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), stringX, stringY, fontHeight,
+       value.getExpanded(), stringLength );
+
+    }
+    else {
+
+      actWin->executeGc.saveBg();
+      actWin->executeGc.setBG( bgColor.getColor() );
+
+      XDrawImageStrings( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), stringX, stringY, fontHeight,
+       value.getExpanded(), stringLength );
+
+      actWin->executeGc.restoreBg();
+
+    }
+
+    if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
+
+    actWin->executeGc.restoreFg();
+
   }
-
-  if ( useDisplayBg ) {
-
-    XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), stringX, stringY, fontHeight,
-     value.getExpanded(), stringLength );
-
-  }
-  else {
-
-    actWin->executeGc.saveBg();
-    actWin->executeGc.setBG( bgColor.getColor() );
-
-    XDrawImageStrings( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), stringX, stringY, fontHeight,
-     value.getExpanded(), stringLength );
-
-    actWin->executeGc.restoreBg();
-
-  }
-
-  if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
-
-  actWin->executeGc.restoreFg();
 
   return 1;
 
@@ -1086,12 +1084,16 @@ XRectangle xR = { x, y, w, h };
     actWin->executeGc.saveFg();
     actWin->executeGc.saveBg();
 
-    actWin->executeGc.setFG( bgColor.getColor() );
-    actWin->executeGc.setBG( bgColor.getColor() );
+    if ( visibility && bgVisibility ) {
 
-    XDrawImageStrings( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), stringX, stringY, fontHeight,
-     value.getExpanded(), stringLength );
+      actWin->executeGc.setFG( bgColor.getColor() );
+      actWin->executeGc.setBG( bgColor.getColor() );
+
+      XDrawImageStrings( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), stringX, stringY, fontHeight,
+       value.getExpanded(), stringLength );
+
+    }
 
     actWin->executeGc.restoreFg();
     actWin->executeGc.restoreBg();
@@ -1151,69 +1153,11 @@ int activeXTextClass::activate (
   void *ptr )
 {
 
-int stat;
-
   switch ( pass ) {
 
   case 1: // initialize
 
-    needVisConnectInit = 0;
-    needAlarmConnectInit = 0;
-    needErase = needDraw = needRefresh = needPropertyUpdate = 0;
-    aglPtr = ptr;
     opComplete = 0;
-
-#ifdef __epics__
-    alarmEventId = visEventId = 0;
-#endif
-
-    alarmPvConnected = visPvConnected = 0;
-    active = 0;
-    activeMode = 1;
-    prevVisibility = -1;
-
-    stringLength = strlen( value.getExpanded() );
-
-    updateFont( value.getExpanded(), fontTag, &fs, &fontAscent, &fontDescent,
-     &fontHeight, &stringWidth );
-
-    stringY = y + fontAscent;
-
-    if ( alignment == XmALIGNMENT_BEGINNING )
-      stringX = x;
-    else if ( alignment == XmALIGNMENT_CENTER )
-      stringX = x + w/2 - stringWidth/2;
-    else if ( alignment == XmALIGNMENT_END )
-      stringX = x + w - stringWidth;
-
-    init = 1;
-    active = 1;
-
-    if ( !alarmPvExpStr.getExpanded() ||
-         ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
-      alarmPvExists = 0;
-    }
-    else {
-      alarmPvExists = 1;
-      fgColor.setConnectSensitive();
-      bgColor.setConnectSensitive();
-      init = 0;
-      active = 0;
-    }
-
-    if ( !visPvExpStr.getExpanded() ||
-         ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
-      visPvExists = 0;
-      visibility = 1;
-    }
-    else {
-      visPvExists = 1;
-      visibility = 0;
-      fgColor.setConnectSensitive();
-      bgColor.setConnectSensitive();
-      init = 0;
-      active = 0;
-    }
 
     break;
 
@@ -1221,30 +1165,91 @@ int stat;
 
     if ( !opComplete ) {
 
-#ifdef __epics__
+      connection.init();
+
+      curFgColorIndex = -1;
+      curBgColorIndex = -1;
+      curStatus = -1;
+      curSeverity = -1;
+      prevVisibility = -1;
+      visibility = 0;
+      prevFgVisibility = -1;
+      fgVisibility = 0;
+      prevBgVisibility = -1;
+      bgVisibility = 0;
+
+      needConnectInit = needAlarmUpdate = needVisUpdate = needRefresh =
+        needPropertyUpdate = 0;
+
+      stringLength = strlen( value.getExpanded() );
+
+      updateFont( value.getExpanded(), fontTag, &fs, &fontAscent, &fontDescent,
+       &fontHeight, &stringWidth );
+
+      stringY = y + fontAscent;
+
+      if ( alignment == XmALIGNMENT_BEGINNING )
+        stringX = x;
+      else if ( alignment == XmALIGNMENT_CENTER )
+        stringX = x + w/2 - stringWidth/2;
+      else if ( alignment == XmALIGNMENT_END )
+        stringX = x + w - stringWidth;
+
+      aglPtr = ptr;
+
+      alarmPvId = visPvId = 0;
+
+      activeMode = 1;
+      pvType = -1;
+
+      init = 1; // this stays true if there are no pvs
+
+      if ( !alarmPvExpStr.getExpanded() ||
+           ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+        alarmPvExists = 0;
+        fgVisibility = bgVisibility = 1;
+      }
+      else {
+        connection.addPv();
+        alarmPvExists = 1;
+        fgColor.setConnectSensitive();
+        bgColor.setConnectSensitive();
+        init = 0;
+      }
+
+      if ( !visPvExpStr.getExpanded() ||
+           ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+        visPvExists = 0;
+        visibility = 1;
+      }
+      else {
+        connection.addPv();
+        visPvExists = 1;
+        visibility = 0;
+        fgVisibility = bgVisibility = 1;
+        fgColor.setConnectSensitive();
+        bgColor.setConnectSensitive();
+        init = 0;
+      }
 
       if ( alarmPvExists ) {
-        stat = ca_search_and_connect( alarmPvExpStr.getExpanded(), &alarmPvId,
-         axtoMonitorAlarmPvConnectState, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeXTextClass_str25 );
-          return 0;
-        }
+        alarmPvId = pv_factory->create( alarmPvExpStr.getExpanded() );
+        if ( alarmPvId ) {
+          alarmPvId->add_conn_state_callback( alarmPvConnectStateCallback,
+           this );
+          alarmPvId->add_value_callback( alarmPvValueCallback, this );
+	}
       }
 
       if ( visPvExists ) {
-        stat = ca_search_and_connect( visPvExpStr.getExpanded(), &visPvId,
-         axtoMonitorVisPvConnectState, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeXTextClass_str26 );
-          return 0;
-        }
+        visPvId = pv_factory->create( visPvExpStr.getExpanded() );
+        if ( visPvId ) {
+          visPvId->add_conn_state_callback( visPvConnectStateCallback, this );
+          visPvId->add_value_callback( visPvValueCallback, this );
+	}
       }
 
       opComplete = 1;
-      this->bufInvalidate();
-
-#endif
 
     }
 
@@ -1266,8 +1271,6 @@ int stat;
 int activeXTextClass::deactivate (
   int pass )
 {
-
-int stat;
 
   if ( pass == 1 ) {
 
@@ -1294,21 +1297,20 @@ int stat;
   else if ( alignment == XmALIGNMENT_END )
     stringX = x + w - stringWidth;
 
-#ifdef __epics__
+    if ( alarmPvId ) {
+      alarmPvId->remove_conn_state_callback( alarmPvConnectStateCallback,
+       this );
+      alarmPvId->remove_value_callback( alarmPvValueCallback, this );
+      alarmPvId->release();
+      alarmPvId = 0;
+    }
 
-  if ( alarmPvExists ) {
-    stat = ca_clear_channel( alarmPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeXTextClass_str29 );
-  }
-
-  if ( visPvExists ) {
-    stat = ca_clear_channel( visPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeXTextClass_str30 );
-  }
-
-#endif
+    if ( visPvId ) {
+      visPvId->remove_conn_state_callback( visPvConnectStateCallback, this );
+      visPvId->remove_value_callback( visPvValueCallback, this );
+      visPvId->release();
+      visPvId = 0;
+    }
 
   }
 
@@ -1434,123 +1436,163 @@ void activeXTextClass::updateDimensions ( void )
 
 void activeXTextClass::executeDeferred ( void ) {
 
-int stat, nvc, nac, ne, nd, nr, npu;
+int stat, nc, nau, nvu, nr, npu, index, change;
+pvValType pvV;
 
   if ( actWin->isIconified ) return;
 
   actWin->appCtx->proc->lock();
-  nvc = needVisConnectInit; needVisConnectInit = 0;
-  nac = needAlarmConnectInit; needAlarmConnectInit = 0;
-  ne = needErase; needErase = 0;
-  nd = needDraw; needDraw = 0;
+  nc = needConnectInit; needConnectInit = 0;
+  nau = needAlarmUpdate; needAlarmUpdate = 0;
+  nvu = needVisUpdate; needVisUpdate = 0;
   nr = needRefresh; needRefresh = 0;
   npu = needPropertyUpdate; needPropertyUpdate = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
-#ifdef __epics__
+  if ( nc ) {
 
-  if ( nvc ) {
+    minVis.d = (double) atof( minVisString );
+    maxVis.d = (double) atof( maxVisString );
 
-    if ( ( ca_field_type(visPvId) == DBR_ENUM ) ||
-         ( ca_field_type(visPvId) == DBR_INT ) ||
-         ( ca_field_type(visPvId) == DBR_LONG ) ||
-         ( ca_field_type(visPvId) == DBR_FLOAT ) ||
-         ( ca_field_type(visPvId) == DBR_DOUBLE ) ) {
+    fgColor.setConnected();
+    bgColor.setConnected();
 
-      visPvConnected = 1;
+    if ( alarmPvExists ) {
 
-      pvType = ca_field_type( visPvId );
+      curStatus = alarmPvId->get_status();
+      curSeverity = alarmPvId->get_severity();
 
-      minVis.d = (double) atof( minVisString );
-      maxVis.d = (double) atof( maxVisString );
+      fgColor.setStatus( curStatus, curSeverity );
+      bgColor.setStatus( curStatus, curSeverity );
 
-      if ( ( visPvConnected || !visPvExists ) &&
-           ( alarmPvConnected || !alarmPvExists ) ) {
+      curFgColorIndex = actWin->ci->evalRule( fgColor.pixelIndex(),
+       alarmPvId->get_double() );
+      fgColor.changeIndex( curFgColorIndex, actWin->ci );
 
-        active = 1;
-        fgColor.setConnected();
-        bgColor.setConnected();
-        bufInvalidate();
+      curBgColorIndex = actWin->ci->evalRule( bgColor.pixelIndex(),
+       alarmPvId->get_double() );
+      bgColor.changeIndex( curBgColorIndex, actWin->ci );
 
-        if ( init ) {
-          eraseUnconditional();
-	}
+      if ( !visPvExists ) {
 
-        init = 1;
-
-        actWin->requestActiveRefresh();
-
-      }
-
-      if ( !visEventId ) {
-        stat = ca_add_masked_array_event( DBR_DOUBLE, 1, visPvId,
-         xTextVisUpdate, (void *) this, (float) 0.0, (float) 0.0,
-         (float) 0.0, &visEventId, DBE_VALUE );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeXTextClass_str31 );
+        if ( actWin->ci->isInvisible( curFgColorIndex ) ) {
+          prevFgVisibility = fgVisibility = 0;
         }
+        else {
+          prevFgVisibility = fgVisibility = 1;
+        }
+
+        if ( actWin->ci->isInvisible( curBgColorIndex ) ) {
+          prevBgVisibility = bgVisibility = 0;
+        }
+        else {
+          prevBgVisibility = bgVisibility = 1;
+        }
+
       }
 
     }
-    else { // force a draw in the non-active state
 
-      active = 0;
-      fgColor.setDisconnected();
-      bgColor.setDisconnected();
-      bufInvalidate();
-      drawActive();
+    if ( visPvExists ) {
+
+      pvV.d = visPvId->get_double();
+      if ( ( pvV.d >= minVis.d ) && ( pvV.d < maxVis.d ) )
+        visibility = 1 ^ visInverted;
+      else
+        visibility = 0 ^ visInverted;
+
+      prevVisibility = visibility;
 
     }
+
+    init = 1;
+
+    eraseUnconditional();
+    stat = smartDrawAllActive();
 
   }
 
-  if ( nac ) {
+  if ( nau ) {
 
-    alarmPvConnected = 1;
+    change = 0;
 
-    if ( ( visPvConnected || !visPvExists ) &&
-         ( alarmPvConnected || !alarmPvExists ) ) {
+    if ( curStatus != alarmPvId->get_status() ) {
+      curStatus = alarmPvId->get_status();
+      change = 1;
+    }
 
-      active = 1;
-      fgColor.setConnected();
-      bgColor.setConnected();
-      bufInvalidate();
+    if ( curSeverity != alarmPvId->get_severity() ) {
+      curSeverity = alarmPvId->get_severity();
+      change = 1;
+    }
 
-      if ( init ) {
+    index = actWin->ci->evalRule( fgColor.pixelIndex(),
+     alarmPvId->get_double() );
+
+    if ( curFgColorIndex != index ) {
+      curFgColorIndex = index;
+      change = 1;
+    }
+
+    index = actWin->ci->evalRule( bgColor.pixelIndex(),
+     alarmPvId->get_double() );
+
+    if ( curBgColorIndex != index ) {
+      curBgColorIndex = index;
+      change = 1;
+    }
+
+    if ( change ) {
+
+      if ( !visPvExists ) {
+
+        if ( actWin->ci->isInvisible( curFgColorIndex ) ) {
+          fgVisibility = 0;
+        }
+        else {
+          fgVisibility = 1;
+        }
+
+        if ( actWin->ci->isInvisible( curBgColorIndex ) ) {
+          bgVisibility = 0;
+        }
+        else {
+          bgVisibility = 1;
+        }
+
+      }
+
+      fgColor.changeIndex( curFgColorIndex, actWin->ci );
+      bgColor.changeIndex( curBgColorIndex, actWin->ci );
+      if ( ( prevFgVisibility != fgVisibility ) ||
+	   ( prevBgVisibility != bgVisibility ) ) {
+        prevFgVisibility = fgVisibility;
+        prevBgVisibility = bgVisibility;
         eraseUnconditional();
       }
+      smartDrawAllActive();
 
-      init = 1;
-
-      actWin->requestActiveRefresh();
-
-    }
-
-    if ( !alarmEventId ) {
-      stat = ca_add_masked_array_event( DBR_STS_FLOAT, 1, alarmPvId,
-       xTextAlarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &alarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL ) {
-        printf( activeXTextClass_str32 );
-      }
     }
 
   }
 
-#endif
+  if ( nvu ) {
 
-  if ( ne ) {
-    eraseActive();
-  }
+    pvV.d = visPvId->get_double();
+    if ( ( pvV.d >= minVis.d ) && ( pvV.d < maxVis.d ) )
+      visibility = 1 ^ visInverted;
+    else
+      visibility = 0 ^ visInverted;
 
-  if ( nd ) {
-//      drawActive();
-    stat = smartDrawAllActive();
+    if ( prevVisibility != visibility ) {
+      if ( !visibility ) eraseUnconditional();
+      stat = smartDrawAllActive();
+    }
+
   }
 
   if ( nr ) {
-//      actWin->requestActiveRefresh();
     stat = smartDrawAllActive();
   }
 

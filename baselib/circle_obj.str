@@ -2,7 +2,7 @@
 #define __circle_obj_str 1
 
 #define activeCircleClass_str1 "Disabled"
-#define activeCircleClass_str2 "Alarm PV"
+#define activeCircleClass_str2 "Color PV"
 #define activeCircleClass_str3 "Visibility PV"
 #define activeCircleClass_str4 "Unknown object"
 #define activeCircleClass_str5 " Properties"
@@ -19,7 +19,7 @@
 #define activeCircleClass_str16 "Fill"
 #define activeCircleClass_str17 "Fill Color"
 #define activeCircleClass_str18 "Alarm Sensitive"
-#define activeCircleClass_str19 "Alarm PV"
+#define activeCircleClass_str19 "Color PV"
 #define activeCircleClass_str20 "Visability PV"
 #define activeCircleClass_str21 "Not Visible if|Visible if"
 #define activeCircleClass_str22 ">="

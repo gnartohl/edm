@@ -2,7 +2,7 @@
 #define __line_obj_str 1
 
 #define activeLineClass_str1 "Disabled"
-#define activeLineClass_str2 "Alarm PV"
+#define activeLineClass_str2 "Color PV"
 #define activeLineClass_str3 "Visibility PV"
 #define activeLineClass_str4 "Unknown object"
 #define activeLineClass_str5 " Properties"
@@ -19,7 +19,7 @@
 #define activeLineClass_str16 "Fill"
 #define activeLineClass_str17 "Fill Color"
 #define activeLineClass_str18 "Alarm Sensitive"
-#define activeLineClass_str19 "Alarm PV"
+#define activeLineClass_str19 "Color PV"
 #define activeLineClass_str20 "Visability PV"
 #define activeLineClass_str22 "Not Visible if|Visible if"
 #define activeLineClass_str23 ">="

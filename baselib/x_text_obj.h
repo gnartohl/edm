@@ -21,8 +21,9 @@
 
 #include "act_grf.h"
 #include "entry_form.h"
-
-#include "cadef.h"
+#include "pv_factory.h"
+#include "epics_pv_factory.h"
+#include "cvtFast.h"
 
 #define AXTC_K_COLORMODE_STATIC 0
 #define AXTC_K_COLORMODE_ALARM 1
@@ -66,18 +67,6 @@ static void axtc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-static void axtoMonitorAlarmPvConnectState (
-  struct connection_handler_args arg );
-
-static void xTextAlarmUpdate (
-  struct event_handler_args ast_args );
-
-static void axtoMonitorVisPvConnectState (
-  struct connection_handler_args arg );
-
-static void xTextVisUpdate (
-  struct event_handler_args ast_args );
-
 #endif
 
 class activeXTextClass : public activeGraphicClass {
@@ -109,18 +98,6 @@ friend void axtc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-friend void axtoMonitorAlarmPvConnectState (
-  struct connection_handler_args arg );
-
-friend void xTextAlarmUpdate (
-  struct event_handler_args ast_args );
-
-friend void axtoMonitorVisPvConnectState (
-  struct connection_handler_args arg );
-
-friend void xTextVisUpdate (
-  struct event_handler_args ast_args );
-
 int bufX, bufY, bufW, bufH;
 
 pvColorClass fgColor;
@@ -143,11 +120,11 @@ char minVisString[39+1], bufMinVisString[39+1];
 char maxVisString[39+1], bufMaxVisString[39+1];
 
 int prevVisibility, visibility, visInverted, bufVisInverted;
+int fgVisibility, prevFgVisibility;
+int bgVisibility, prevBgVisibility;
 
-chid alarmPvId;
-evid alarmEventId;
-chid visPvId;
-evid visEventId;
+ProcessVariable *alarmPvId;
+ProcessVariable *visPvId;
 
 expStringClass alarmPvExpStr;
 char bufAlarmPvName[39+1];
@@ -155,8 +132,8 @@ char bufAlarmPvName[39+1];
 expStringClass visPvExpStr;
 char bufVisPvName[39+1];
 
-int alarmPvExists, alarmPvConnected, visPvExists, visPvConnected;
-int active, activeMode, init, opComplete;
+int alarmPvExists, visPvExists;
+int activeMode, init, opComplete;
 
 expStringClass value;
 char bufValue[255+1];
@@ -169,11 +146,35 @@ int fontAscent, fontDescent, fontHeight, stringLength, stringWidth,
  stringY, stringX;
 int autoSize, bufAutoSize;
 
-int needVisConnectInit;
-int needAlarmConnectInit;
-int needDraw, needErase, needRefresh, needPropertyUpdate;
+int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh,
+ needPropertyUpdate;
+
+int curFgColorIndex, curBgColorIndex, curStatus, curSeverity;
+static const int alarmPvConnection = 1;
+static const int visPvConnection = 2;
+pvConnectionClass connection;
 
 public:
+
+static void activeXTextClass::alarmPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
+
+static void activeXTextClass::alarmPvValueCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
+
+static void activeXTextClass::visPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
+
+static void activeXTextClass::visPvValueCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
 
 activeXTextClass::activeXTextClass ( void );
 

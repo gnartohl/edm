@@ -19,120 +19,9 @@
 #define __rectangle_obj_cc 1
 
 #include "rectangle_obj.h"
-#include "app_pkg.h"
-#include "act_win.h"
 
-#include "thread.h"
-
-#ifdef __epics__
-
-void aroMonitorAlarmPvConnectState (
-  struct connection_handler_args arg )
-{
-
-activeRectangleClass *aro = (activeRectangleClass *) ca_puser(arg.chid);
-
-  if ( arg.op == CA_OP_CONN_UP ) {
-
-    aro->needAlarmConnectInit = 1;
-
-  }
-  else { // lost connection
-
-    aro->alarmPvConnected = 0;
-    aro->active = 0;
-    aro->lineColor.setDisconnected();
-    aro->fillColor.setDisconnected();
-    aro->bufInvalidate();
-    aro->needDraw = 1;
-
-  }
-
-  aro->actWin->addDefExeNode( aro->aglPtr );
-
-}
-
-void rectangleAlarmUpdate (
-  struct event_handler_args ast_args )
-{
-
-class activeRectangleClass *aro;
-struct dbr_sts_float statusRec;
-
-  aro = (activeRectangleClass *) ast_args.usr;
-
-  statusRec = *( (struct dbr_sts_float *) ast_args.dbr );
-  aro->lineColor.setStatus( statusRec.status, statusRec.severity );
-  aro->fillColor.setStatus( statusRec.status, statusRec.severity );
-
-  if ( aro->active ) {
-    aro->bufInvalidate();
-    aro->needRefresh = 1;
-    aro->actWin->addDefExeNode( aro->aglPtr );
-  }
-
-}
-
-void aroMonitorVisPvConnectState (
-  struct connection_handler_args arg )
-{
-
-activeRectangleClass *aro = (activeRectangleClass *) ca_puser(arg.chid);
-
-  if ( arg.op == CA_OP_CONN_UP ) {
-
-    aro->needVisConnectInit = 1;
-
-  }
-  else { // lost connection
-
-    aro->visPvConnected = 0;
-    aro->active = 0;
-    aro->lineColor.setDisconnected();
-    aro->fillColor.setDisconnected();
-    aro->bufInvalidate();
-    aro->needDraw = 1;
-
-  }
-
-  aro->actWin->addDefExeNode( aro->aglPtr );
-
-}
-
-void rectangleVisUpdate (
-  struct event_handler_args ast_args )
-{
-
-pvValType pvV;
-class activeRectangleClass *aro = (activeRectangleClass *) ast_args.usr;
-
-  pvV.d = *( (double *) ast_args.dbr );
-  if ( ( pvV.d >= aro->minVis.d ) && ( pvV.d < aro->maxVis.d ) )
-    aro->visibility = 1 ^ aro->visInverted;
-  else
-    aro->visibility = 0 ^ aro->visInverted;
-
-  if ( aro->active ) {
-
-    if ( aro->visibility ) {
-
-      aro->needRefresh = 1;
-
-    }
-    else {
-
-      aro->needErase = 1;
-      aro->needRefresh = 1;
-
-    }
-
-    aro->actWin->addDefExeNode( aro->aglPtr );
-
-  }
-
-}
-
-#endif
+// This is the EPICS specific line right now:
+static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
 void arc_edit_update (
   Widget w,
@@ -254,17 +143,123 @@ activeRectangleClass *aro = (activeRectangleClass *) client;
 
 }
 
+void activeRectangleClass::alarmPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeRectangleClass *aro = (activeRectangleClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+  }
+  else { // lost connection
+
+    aro->connection.setPvDisconnected( (void *) aro->alarmPvConnection );
+    aro->lineColor.setDisconnected();
+    aro->fillColor.setDisconnected();
+
+    aro->actWin->appCtx->proc->lock();
+    aro->needRefresh = 1;
+    aro->actWin->addDefExeNode( aro->aglPtr );
+    aro->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
+void activeRectangleClass::alarmPvValueCallback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeRectangleClass *aro = (activeRectangleClass *) userarg;
+
+  if ( !aro->connection.pvsConnected() ) {
+
+    aro->connection.setPvConnected( (void *) alarmPvConnection );
+
+    if ( aro->connection.pvsConnected() ) {
+      aro->actWin->appCtx->proc->lock();
+      aro->needConnectInit = 1;
+      aro->actWin->addDefExeNode( aro->aglPtr );
+      aro->actWin->appCtx->proc->unlock();
+    }
+
+  }
+  else {
+
+    aro->actWin->appCtx->proc->lock();
+    aro->needAlarmUpdate = 1;
+    aro->actWin->addDefExeNode( aro->aglPtr );
+    aro->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
+void activeRectangleClass::visPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeRectangleClass *aro = (activeRectangleClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+  }
+  else { // lost connection
+
+    aro->connection.setPvDisconnected( (void *) aro->visPvConnection );
+    aro->lineColor.setDisconnected();
+    aro->fillColor.setDisconnected();
+
+    aro->actWin->appCtx->proc->lock();
+    aro->needRefresh = 1;
+    aro->actWin->addDefExeNode( aro->aglPtr );
+    aro->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
+void activeRectangleClass::visPvValueCallback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeRectangleClass *aro = (activeRectangleClass *) userarg;
+
+  if ( !aro->connection.pvsConnected() ) {
+
+    aro->connection.setPvConnected( (void *) visPvConnection );
+
+    if ( aro->connection.pvsConnected() ) {
+      aro->actWin->appCtx->proc->lock();
+      aro->needConnectInit = 1;
+      aro->actWin->addDefExeNode( aro->aglPtr );
+      aro->actWin->appCtx->proc->unlock();
+    }
+
+  }
+  else {
+
+    aro->actWin->appCtx->proc->lock();
+    aro->needVisUpdate = 1;
+    aro->actWin->addDefExeNode( aro->aglPtr );
+    aro->actWin->appCtx->proc->unlock();
+
+    }
+
+}
+
 activeRectangleClass::activeRectangleClass ( void ) {
 
   name = new char[strlen("activeRectangleClass")+1];
   strcpy( name, "activeRectangleClass" );
   invisible = 0;
-  visibility = 0;
-  prevVisibility = -1;
   visInverted = 0;
-  visPvConnected = alarmPvConnected = 0;
   visPvExists = alarmPvExists = 0;
-  active = 0;
   activeMode = 0;
   fill = 0;
   lineColorMode = ARC_K_COLORMODE_STATIC;
@@ -273,6 +268,7 @@ activeRectangleClass::activeRectangleClass ( void ) {
   lineStyle = LineSolid;
   strcpy( minVisString, "" );
   strcpy( maxVisString, "" );
+  connection.setMaxPvs( 2 );
 
 }
 
@@ -300,11 +296,7 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   alarmPvExpStr.setRaw( source->alarmPvExpStr.rawString );
   visPvExpStr.setRaw( source->visPvExpStr.rawString );
 
-  visibility = 0;
-  prevVisibility = -1;
-  visPvConnected = alarmPvConnected = 0;
   visPvExists = alarmPvExists = 0;
-  active = 0;
   activeMode = 0;
 
   strncpy( minVisString, source->minVisString, 39 );
@@ -312,6 +304,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   lineWidth = source->lineWidth;
   lineStyle = source->lineStyle;
+
+  connection.setMaxPvs( 2 );
 
 }
 
@@ -398,12 +392,16 @@ char title[32], *ptr;
   ef.addTextField( activeRectangleClass_str7, 30, &bufY );
   ef.addTextField( activeRectangleClass_str8, 30, &bufW );
   ef.addTextField( activeRectangleClass_str9, 30, &bufH );
-  ef.addOption( activeRectangleClass_str10, activeRectangleClass_str11, &bufLineWidth );
-  ef.addOption( activeRectangleClass_str12, activeRectangleClass_str13, &bufLineStyle );
-  ef.addColorButton( activeRectangleClass_str14, actWin->ci, &lineCb, &bufLineColor );
+  ef.addOption( activeRectangleClass_str10, activeRectangleClass_str11,
+   &bufLineWidth );
+  ef.addOption( activeRectangleClass_str12, activeRectangleClass_str13,
+   &bufLineStyle );
+  ef.addColorButton( activeRectangleClass_str14, actWin->ci, &lineCb,
+   &bufLineColor );
   ef.addToggle( activeRectangleClass_str15, &bufLineColorMode );
   ef.addToggle( activeRectangleClass_str16, &bufFill );
-  ef.addColorButton( activeRectangleClass_str17, actWin->ci, &fillCb, &bufFillColor );
+  ef.addColorButton( activeRectangleClass_str17, actWin->ci, &fillCb,
+   &bufFillColor );
   ef.addToggle( activeRectangleClass_str18, &bufFillColorMode );
   ef.addToggle( activeRectangleClass_str19, &bufInvisible );
   ef.addTextField( activeRectangleClass_str20, 30, bufAlarmPvName, 39 );
@@ -816,18 +814,22 @@ int activeRectangleClass::drawActive ( void ) {
 
   actWin->executeGc.saveFg();
 
-  if ( fill ) {
+  if ( fill && fillVisibility ) {
     actWin->executeGc.setFG( fillColor.getColor() );
     XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
   }
 
-  actWin->executeGc.setFG( lineColor.getColor() );
-  actWin->executeGc.setLineWidth( lineWidth );
-  actWin->executeGc.setLineStyle( lineStyle );
+  if ( lineVisibility ) {
 
-  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-   actWin->executeGc.normGC(), x, y, w, h );
+    actWin->executeGc.setFG( lineColor.getColor() );
+    actWin->executeGc.setLineWidth( lineWidth );
+    actWin->executeGc.setLineStyle( lineStyle );
+
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+
+  }
 
   actWin->executeGc.setLineWidth( 1 );
   actWin->executeGc.setLineStyle( LineSolid );
@@ -930,55 +932,11 @@ int activeRectangleClass::activate (
   void *ptr )
 {
 
-int stat;
-
   switch ( pass ) {
 
   case 1: // initialize
 
-    needVisConnectInit = 0;
-    needAlarmConnectInit = 0;
-    needErase = needDraw = needRefresh = 0;
-    aglPtr = ptr;
     opComplete = 0;
-
-#ifdef __epics__
-    alarmEventId = visEventId = 0;
-#endif
-
-    alarmPvConnected = visPvConnected = 0;
-    activeMode = 1;
-    pvType = -1;
-    prevVisibility = -1;
-
-    init = 1;
-    active = 1;
-
-    if ( !alarmPvExpStr.getExpanded() ||
-         ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
-      alarmPvExists = 0;
-    }
-    else {
-      alarmPvExists = 1;
-      lineColor.setConnectSensitive();
-      fillColor.setConnectSensitive();
-      init = 0;
-      active = 0;
-    }
-
-    if ( !visPvExpStr.getExpanded() ||
-         ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
-      visPvExists = 0;
-      visibility = 1;
-    }
-    else {
-      visPvExists = 1;
-      visibility = 0;
-      lineColor.setConnectSensitive();
-      fillColor.setConnectSensitive();
-      init = 0;
-      active = 0;
-    }
 
     break;
 
@@ -986,30 +944,75 @@ int stat;
 
     if ( !opComplete ) {
 
-#ifdef __epics__
+      connection.init();
+
+      curLineColorIndex = -1;
+      curFillColorIndex = -1;
+      curStatus = -1;
+      curSeverity = -1;
+      prevVisibility = -1;
+      visibility = 0;
+      prevLineVisibility = -1;
+      lineVisibility = 0;
+      prevFillVisibility = -1;
+      fillVisibility = 0;
+
+      needConnectInit = needAlarmUpdate = needVisUpdate = needRefresh = 0;
+      aglPtr = ptr;
+
+      alarmPvId = visPvId = 0;
+
+      activeMode = 1;
+      pvType = -1;
+
+      init = 1; // this stays true if there are no pvs
+
+      if ( !alarmPvExpStr.getExpanded() ||
+           ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+        alarmPvExists = 0;
+        lineVisibility = fillVisibility = 1;
+      }
+      else {
+        connection.addPv();
+        alarmPvExists = 1;
+        lineColor.setConnectSensitive();
+        fillColor.setConnectSensitive();
+        init = 0;
+      }
+
+      if ( !visPvExpStr.getExpanded() ||
+           ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+        visPvExists = 0;
+        visibility = 1;
+      }
+      else {
+        connection.addPv();
+        visPvExists = 1;
+        visibility = 0;
+        lineVisibility = fillVisibility = 1;
+        lineColor.setConnectSensitive();
+        fillColor.setConnectSensitive();
+        init = 0;
+      }
 
       if ( alarmPvExists ) {
-        stat = ca_search_and_connect( alarmPvExpStr.getExpanded(), &alarmPvId,
-         aroMonitorAlarmPvConnectState, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeRectangleClass_str39 );
-          return 0;
-        }
+        alarmPvId = pv_factory->create( alarmPvExpStr.getExpanded() );
+        if ( alarmPvId ) {
+          alarmPvId->add_conn_state_callback( alarmPvConnectStateCallback,
+           this );
+          alarmPvId->add_value_callback( alarmPvValueCallback, this );
+	}
       }
 
       if ( visPvExists ) {
-        stat = ca_search_and_connect( visPvExpStr.getExpanded(), &visPvId,
-         aroMonitorVisPvConnectState, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeRectangleClass_str40 );
-          return 0;
-        }
+        visPvId = pv_factory->create( visPvExpStr.getExpanded() );
+        if ( visPvId ) {
+          visPvId->add_conn_state_callback( visPvConnectStateCallback, this );
+          visPvId->add_value_callback( visPvValueCallback, this );
+	}
       }
 
       opComplete = 1;
-      this->bufInvalidate();
-
-#endif
 
     }
 
@@ -1032,27 +1035,24 @@ int activeRectangleClass::deactivate (
   int pass )
 {
 
-int stat;
-
   if ( pass == 1 ) {
 
-  activeMode = 0;
+    activeMode = 0;
 
-#ifdef __epics__
+    if ( alarmPvId ) {
+      alarmPvId->remove_conn_state_callback( alarmPvConnectStateCallback,
+       this );
+      alarmPvId->remove_value_callback( alarmPvValueCallback, this );
+      alarmPvId->release();
+      alarmPvId = 0;
+    }
 
-  if ( alarmPvExists ) {
-    stat = ca_clear_channel( alarmPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeRectangleClass_str43 );
-  }
-
-  if ( visPvExists ) {
-    stat = ca_clear_channel( visPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeRectangleClass_str44 );
-  }
-
-#endif
+    if ( visPvId ) {
+      visPvId->remove_conn_state_callback( visPvConnectStateCallback, this );
+      visPvId->remove_value_callback( visPvValueCallback, this );
+      visPvId->release();
+      visPvId = 0;
+    }
 
   }
 
@@ -1113,122 +1113,162 @@ int activeRectangleClass::erase ( void ) {
 
 void activeRectangleClass::executeDeferred ( void ) {
 
-int stat, nvc, nac, ne, nd, nr;
+int stat, nc, nau, nvu, nr, index, change;
+pvValType pvV;
 
   if ( actWin->isIconified ) return;
 
   actWin->appCtx->proc->lock();
-  nvc = needVisConnectInit; needVisConnectInit = 0;
-  nac = needAlarmConnectInit; needAlarmConnectInit = 0;
-  ne = needErase; needErase = 0;
-  nd = needDraw; needDraw = 0;
+  nc = needConnectInit; needConnectInit = 0;
+  nau = needAlarmUpdate; needAlarmUpdate = 0;
+  nvu = needVisUpdate; needVisUpdate = 0;
   nr = needRefresh; needRefresh = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
-#ifdef __epics__
+  if ( nc ) {
 
-  if ( nvc ) {
+    minVis.d = (double) atof( minVisString );
+    maxVis.d = (double) atof( maxVisString );
 
-    if ( ( ca_field_type(visPvId) == DBR_ENUM ) ||
-         ( ca_field_type(visPvId) == DBR_INT ) ||
-         ( ca_field_type(visPvId) == DBR_LONG ) ||
-         ( ca_field_type(visPvId) == DBR_FLOAT ) ||
-         ( ca_field_type(visPvId) == DBR_DOUBLE ) ) {
+    lineColor.setConnected();
+    fillColor.setConnected();
 
-      visPvConnected = 1;
+    if ( alarmPvExists ) {
 
-      pvType = ca_field_type( visPvId );
+      curStatus = alarmPvId->get_status();
+      curSeverity = alarmPvId->get_severity();
 
-      minVis.d = (double) atof( minVisString );
-      maxVis.d = (double) atof( maxVisString );
+      lineColor.setStatus( curStatus, curSeverity );
+      fillColor.setStatus( curStatus, curSeverity );
 
-      if ( ( visPvConnected || !visPvExists ) &&
-           ( alarmPvConnected || !alarmPvExists ) ) {
+      curLineColorIndex = actWin->ci->evalRule( lineColor.pixelIndex(),
+       alarmPvId->get_double() );
+      lineColor.changeIndex( curLineColorIndex, actWin->ci );
 
-        active = 1;
-        lineColor.setConnected();
-        fillColor.setConnected();
-        bufInvalidate();
+      curFillColorIndex = actWin->ci->evalRule( fillColor.pixelIndex(),
+       alarmPvId->get_double() );
+      fillColor.changeIndex( curFillColorIndex, actWin->ci );
 
-        if ( init ) {
-          eraseUnconditional();
-	}
+      if ( !visPvExists ) {
 
-        init = 1;
-
-        actWin->requestActiveRefresh();
-
-      }
-
-      if ( !visEventId ) {
-        stat = ca_add_masked_array_event( DBR_DOUBLE, 1, visPvId,
-         rectangleVisUpdate, (void *) this, (float) 0.0, (float) 0.0,
-         (float) 0.0, &visEventId, DBE_VALUE );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeRectangleClass_str45 );
+        if ( actWin->ci->isInvisible( curLineColorIndex ) ) {
+          prevLineVisibility = lineVisibility = 0;
         }
+        else {
+          prevLineVisibility = lineVisibility = 1;
+        }
+
+        if ( actWin->ci->isInvisible( curFillColorIndex ) ) {
+          prevFillVisibility = fillVisibility = 0;
+        }
+        else {
+          prevFillVisibility = fillVisibility = 1;
+        }
+
       }
 
     }
-    else { // force a draw in the non-active state
 
-      active = 0;
-      lineColor.setDisconnected();
-      fillColor.setDisconnected();
-      bufInvalidate();
-      drawActive();
+    if ( visPvExists ) {
 
-    }
+      pvV.d = visPvId->get_double();
+      if ( ( pvV.d >= minVis.d ) && ( pvV.d < maxVis.d ) )
+        visibility = 1 ^ visInverted;
+      else
+        visibility = 0 ^ visInverted;
 
-  }
-
-  if ( nac ) {
-
-    alarmPvConnected = 1;
-
-    if ( ( visPvConnected || !visPvExists ) &&
-         ( alarmPvConnected || !alarmPvExists ) ) {
-
-      active = 1;
-      lineColor.setConnected();
-      fillColor.setConnected();
-      bufInvalidate();
-
-      if ( init ) {
-        eraseUnconditional();
-      }
-
-      init = 1;
-
-      actWin->requestActiveRefresh();
+      prevVisibility = visibility;
 
     }
 
-    if ( !alarmEventId ) {
-      stat = ca_add_masked_array_event( DBR_STS_FLOAT, 1, alarmPvId,
-       rectangleAlarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &alarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL ) {
-        printf( activeRectangleClass_str46 );
-      }
-    }
+    init = 1;
 
-  }
-
-#endif
-
-  if ( ne ) {
-    eraseActive();
-  }
-
-  if ( nd ) {
-//      drawActive();
+    eraseUnconditional();
     stat = smartDrawAllActive();
+
+  }
+
+  if ( nau ) {
+
+    change = 0;
+
+    if ( curStatus != alarmPvId->get_status() ) {
+      curStatus = alarmPvId->get_status();
+      change = 1;
+    }
+
+    if ( curSeverity != alarmPvId->get_severity() ) {
+      curSeverity = alarmPvId->get_severity();
+      change = 1;
+    }
+
+    index = actWin->ci->evalRule( lineColor.pixelIndex(),
+    alarmPvId->get_double() );
+
+    if ( curLineColorIndex != index ) {
+      curLineColorIndex = index;
+      change = 1;
+    }
+
+    index = actWin->ci->evalRule( fillColor.pixelIndex(),
+    alarmPvId->get_double() );
+
+    if ( curFillColorIndex != index ) {
+      curFillColorIndex = index;
+      change = 1;
+    }
+
+    if ( change ) {
+
+      if ( !visPvExists ) {
+
+        if ( actWin->ci->isInvisible( curLineColorIndex ) ) {
+          lineVisibility = 0;
+        }
+        else {
+          lineVisibility = 1;
+        }
+
+        if ( actWin->ci->isInvisible( curFillColorIndex ) ) {
+          fillVisibility = 0;
+        }
+        else {
+          fillVisibility = 1;
+        }
+
+      }
+
+      lineColor.changeIndex( curLineColorIndex, actWin->ci );
+      fillColor.changeIndex( curFillColorIndex, actWin->ci );
+      if ( ( prevLineVisibility != lineVisibility ) ||
+	   ( prevFillVisibility != fillVisibility ) ) {
+	prevLineVisibility = lineVisibility;
+	prevFillVisibility = fillVisibility;
+        eraseActive();
+      }
+      smartDrawAllActive();
+
+    }
+
+  }
+
+  if ( nvu ) {
+
+    pvV.d = visPvId->get_double();
+    if ( ( pvV.d >= minVis.d ) && ( pvV.d < maxVis.d ) )
+      visibility = 1 ^ visInverted;
+    else
+      visibility = 0 ^ visInverted;
+
+    if ( prevVisibility != visibility ) {
+      if ( !visibility ) eraseActive();
+      stat = smartDrawAllActive();
+    }
+
   }
 
   if ( nr ) {
-//      actWin->requestActiveRefresh();
     stat = smartDrawAllActive();
   }
 

@@ -22,7 +22,9 @@
 #include "act_grf.h"
 #include "entry_form.h"
 
-#include "cadef.h"
+#include "pv_factory.h"
+#include "epics_pv_factory.h"
+#include "cvtFast.h"
 
 #define AAC_K_COLORMODE_STATIC 0
 #define AAC_K_COLORMODE_ALARM 1
@@ -66,18 +68,6 @@ static void aac_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-static void aaoMonitorAlarmPvConnectState (
-  struct connection_handler_args arg );
-
-static void arcAlarmUpdate (
-  struct event_handler_args ast_args );
-
-static void aaoMonitorVisPvConnectState (
-  struct connection_handler_args arg );
-
-static void arcVisUpdate (
-  struct event_handler_args ast_args );
-
 #endif
 
 class activeArcClass : public activeGraphicClass {
@@ -109,18 +99,6 @@ friend void aac_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-friend void aaoMonitorAlarmPvConnectState (
-  struct connection_handler_args arg );
-
-friend void arcAlarmUpdate (
-  struct event_handler_args ast_args );
-
-friend void aaoMonitorVisPvConnectState (
-  struct connection_handler_args arg );
-
-friend void arcVisUpdate (
-  struct event_handler_args ast_args );
-
 int bufX, bufY, bufW, bufH;
 
 pvColorClass lineColor;
@@ -146,11 +124,11 @@ char minVisString[39+1], bufMinVisString[39+1];
 char maxVisString[39+1], bufMaxVisString[39+1];
 
 int prevVisibility, visibility, visInverted, bufVisInverted;
+int lineVisibility, prevLineVisibility;
+int fillVisibility, prevFillVisibility;
 
-chid alarmPvId;
-evid alarmEventId;
-chid visPvId;
-evid visEventId;
+ProcessVariable *alarmPvId;
+ProcessVariable *visPvId;
 
 expStringClass alarmPvExpStr;
 char bufAlarmPvName[39+1];
@@ -158,15 +136,18 @@ char bufAlarmPvName[39+1];
 expStringClass visPvExpStr;
 char bufVisPvName[39+1];
 
-int alarmPvExists, alarmPvConnected, visPvExists, visPvConnected;
-int active, activeMode, init, opComplete;
+int alarmPvExists, visPvExists;
+int activeMode, init, opComplete;
 
 int lineWidth, bufLineWidth;
 int lineStyle, bufLineStyle;
 
-int needVisConnectInit;
-int needAlarmConnectInit;
-int needDraw, needErase, needRefresh;
+int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh;
+
+int curLineColorIndex, curFillColorIndex, curStatus, curSeverity;
+static const int alarmPvConnection = 1;
+static const int visPvConnection = 2;
+pvConnectionClass connection;
 
 int startAngle, totalAngle;
 efDouble efStartAngle, efTotalAngle;
@@ -175,6 +156,26 @@ efDouble bufEfStartAngle, bufEfTotalAngle;
 int fillMode, bufFillMode;
 
 public:
+
+static void activeArcClass::alarmPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
+
+static void activeArcClass::alarmPvValueCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
+
+static void activeArcClass::visPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
+
+static void activeArcClass::visPvValueCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
 
 activeArcClass::activeArcClass ( void );
 

@@ -2,7 +2,7 @@
 #define __arc_obj_str 1
 
 #define activeArcClass_str1 "Disabled"
-#define activeArcClass_str2 "Alarm PV"
+#define activeArcClass_str2 "Color PV"
 #define activeArcClass_str3 "Visibility PV"
 #define activeArcClass_str4 "Unknown object"
 #define activeArcClass_str5 " Properties"
@@ -23,7 +23,7 @@
 #define activeArcClass_str20 "Chord|Pie"
 #define activeArcClass_str21 "Fill Color"
 #define activeArcClass_str22 "Alarm Sensitive"
-#define activeArcClass_str23 "Alarm PV"
+#define activeArcClass_str23 "Color PV"
 #define activeArcClass_str24 "Visability PV"
 #define activeArcClass_str25 "Not Visible if|Visible if"
 #define activeArcClass_str26 ">="

@@ -21,8 +21,9 @@
 
 #include "act_grf.h"
 #include "entry_form.h"
-
-#include "cadef.h"
+#include "pv_factory.h"
+#include "epics_pv_factory.h"
+#include "cvtFast.h"
 
 #define ALC_K_COLORMODE_STATIC 0
 #define ALC_K_COLORMODE_ALARM 1
@@ -71,18 +72,6 @@ static void alc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-static void aloMonitorAlarmPvConnectState (
-  struct connection_handler_args arg );
-
-static void lineAlarmUpdate (
-  struct event_handler_args ast_args );
-
-static void aloMonitorVisPvConnectState (
-  struct connection_handler_args arg );
-
-static void lineVisUpdate (
-  struct event_handler_args ast_args );
-
 #endif
 
 class activeLineClass : public activeGraphicClass {
@@ -124,18 +113,6 @@ friend void alc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-friend void aloMonitorAlarmPvConnectState (
-  struct connection_handler_args arg );
-
-friend void lineAlarmUpdate (
-  struct event_handler_args ast_args );
-
-friend void aloMonitorVisPvConnectState (
-  struct connection_handler_args arg );
-
-friend void lineVisUpdate (
-  struct event_handler_args ast_args );
-
 int wasSelected;
 
 int bufX, bufY, bufW, bufH;
@@ -174,11 +151,11 @@ char minVisString[39+1], bufMinVisString[39+1];
 char maxVisString[39+1], bufMaxVisString[39+1];
 
 int prevVisibility, visibility, visInverted, bufVisInverted;
+int lineVisibility, prevLineVisibility;
+int fillVisibility, prevFillVisibility;
 
-chid alarmPvId;
-evid alarmEventId;
-chid visPvId;
-evid visEventId;
+ProcessVariable *alarmPvId;
+ProcessVariable *visPvId;
 
 expStringClass alarmPvExpStr;
 char bufAlarmPvName[39+1];
@@ -186,14 +163,37 @@ char bufAlarmPvName[39+1];
 expStringClass visPvExpStr;
 char bufVisPvName[39+1];
 
-int alarmPvExists, alarmPvConnected, visPvExists, visPvConnected;
-int active, activeMode, init, opComplete;
+int alarmPvExists, visPvExists;
+int activeMode, init, opComplete;
 
-int needVisConnectInit;
-int needAlarmConnectInit;
-int needDraw, needErase, needRefresh;
+int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh;
+
+int curLineColorIndex, curFillColorIndex, curStatus, curSeverity;
+static const int alarmPvConnection = 1;
+static const int visPvConnection = 2;
+pvConnectionClass connection;
 
 public:
+
+static void activeLineClass::alarmPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
+
+static void activeLineClass::alarmPvValueCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
+
+static void activeLineClass::visPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
+
+static void activeLineClass::visPvValueCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
 
 activeLineClass::activeLineClass ( void );
 

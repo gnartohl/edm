@@ -21,8 +21,12 @@
 
 #include "act_grf.h"
 #include "entry_form.h"
+#include "app_pkg.h"
+#include "act_win.h"
 
-#include "cadef.h"
+#include "pv_factory.h"
+#include "epics_pv_factory.h"
+#include "cvtFast.h"
 
 #define ARC_K_COLORMODE_STATIC 0
 #define ARC_K_COLORMODE_ALARM 1
@@ -66,18 +70,6 @@ static void arc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-static void aroMonitorAlarmPvConnectState (
-  struct connection_handler_args arg );
-
-static void rectangleAlarmUpdate (
-  struct event_handler_args ast_args );
-
-static void aroMonitorVisPvConnectState (
-  struct connection_handler_args arg );
-
-static void rectangleVisUpdate (
-  struct event_handler_args ast_args );
-
 class activeRectangleClass : public activeGraphicClass {
 
 #endif
@@ -109,18 +101,6 @@ friend void arc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-friend void aroMonitorAlarmPvConnectState (
-  struct connection_handler_args arg );
-
-friend void rectangleAlarmUpdate (
-  struct event_handler_args ast_args );
-
-friend void aroMonitorVisPvConnectState (
-  struct connection_handler_args arg );
-
-friend void rectangleVisUpdate (
-  struct event_handler_args ast_args );
-
 int bufX, bufY, bufW, bufH;
 
 pvColorClass lineColor;
@@ -145,12 +125,12 @@ pvValType pvValue, minVis, maxVis;
 char minVisString[39+1], bufMinVisString[39+1];
 char maxVisString[39+1], bufMaxVisString[39+1];
 
-int prevVisibility, visibility, visInverted, bufVisInverted;
+int visibility, prevVisibility, visInverted, bufVisInverted;
+int lineVisibility, prevLineVisibility;
+int fillVisibility, prevFillVisibility;
 
-chid alarmPvId;
-evid alarmEventId;
-chid visPvId;
-evid visEventId;
+ProcessVariable *alarmPvId;
+ProcessVariable *visPvId;
 
 expStringClass alarmPvExpStr;
 char bufAlarmPvName[39+1];
@@ -158,18 +138,42 @@ char bufAlarmPvName[39+1];
 expStringClass visPvExpStr;
 char bufVisPvName[39+1];
 
-int alarmPvExists, alarmPvConnected, visPvExists, visPvConnected;
-int active, activeMode, init, opComplete;
+int alarmPvExists, visPvExists;
+int activeMode, init, opComplete;
 
 int invisible, bufInvisible;
 int lineWidth, bufLineWidth;
 int lineStyle, bufLineStyle;
 
-int needVisConnectInit;
-int needAlarmConnectInit;
-int needDraw, needErase, needRefresh;
+int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh;
+
+int curLineColorIndex, curFillColorIndex, curStatus, curSeverity;
+
+static const int alarmPvConnection = 1;
+static const int visPvConnection = 2;
+pvConnectionClass connection;
 
 public:
+
+static void activeRectangleClass::alarmPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
+
+static void activeRectangleClass::alarmPvValueCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
+
+static void activeRectangleClass::visPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
+
+static void activeRectangleClass::visPvValueCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
 
 activeRectangleClass::activeRectangleClass ( void );
 

@@ -24,123 +24,8 @@
 
 #include "thread.h"
 
-#ifdef __epics__
-
-static void acoMonitorAlarmPvConnectState (
-  struct connection_handler_args arg )
-{
-
-activeCircleClass *aco = (activeCircleClass *) ca_puser(arg.chid);
-
-  if ( arg.op == CA_OP_CONN_UP ) {
-
-    aco->needAlarmConnectInit = 1;
-
-  }
-  else { // lost connection
-
-    aco->alarmPvConnected = 0;
-    aco->active = 0;
-    aco->lineColor.setDisconnected();
-    aco->fillColor.setDisconnected();
-    aco->bufInvalidate();
-    aco->needDraw = 1;
-
-  }
-
-  aco->actWin->appCtx->proc->lock();
-  aco->actWin->addDefExeNode( aco->aglPtr );
-  aco->actWin->appCtx->proc->unlock();
-
-}
-
-static void circleAlarmUpdate (
-  struct event_handler_args ast_args )
-{
-
-class activeCircleClass *aco;
-struct dbr_sts_float statusRec;
-
-  aco = (activeCircleClass *) ast_args.usr;
-
-  statusRec = *( (struct dbr_sts_float *) ast_args.dbr );
-  aco->lineColor.setStatus( statusRec.status, statusRec.severity );
-  aco->fillColor.setStatus( statusRec.status, statusRec.severity );
-
-  if ( aco->active ) {
-    aco->bufInvalidate();
-    aco->needRefresh = 1;
-    aco->actWin->appCtx->proc->lock();
-    aco->actWin->addDefExeNode( aco->aglPtr );
-    aco->actWin->appCtx->proc->unlock();
-  }
-
-}
-
-static void acoMonitorVisPvConnectState (
-  struct connection_handler_args arg )
-{
-
-activeCircleClass *aco = (activeCircleClass *) ca_puser(arg.chid);
-
-  if ( arg.op == CA_OP_CONN_UP ) {
-
-    aco->needVisConnectInit = 1;
-
-  }
-  else { // lost connection
-
-    aco->visPvConnected = 0;
-    aco->active = 0;
-    aco->lineColor.setDisconnected();
-    aco->fillColor.setDisconnected();
-    aco->bufInvalidate();
-    aco->needDraw = 1;
-
-  }
-
-  aco->actWin->appCtx->proc->lock();
-  aco->actWin->addDefExeNode( aco->aglPtr );
-  aco->actWin->appCtx->proc->unlock();
-
-}
-
-static void circleVisUpdate (
-  struct event_handler_args ast_args )
-{
-
-pvValType pvV;
-class activeCircleClass *aco = (activeCircleClass *) ast_args.usr;
-
-  pvV.d = *( (double *) ast_args.dbr );
-  if ( ( pvV.d >= aco->minVis.d ) && ( pvV.d < aco->maxVis.d ) )
-    aco->visibility = 1 ^ aco->visInverted;
-  else
-    aco->visibility = 0 ^ aco->visInverted;
-
-  if ( aco->active ) {
-
-    if ( aco->visibility ) {
-
-      aco->needRefresh = 1;
-
-    }
-    else {
-
-      aco->needErase = 1;
-      aco->needRefresh = 1;
-
-    }
-
-    aco->actWin->appCtx->proc->lock();
-    aco->actWin->addDefExeNode( aco->aglPtr );
-    aco->actWin->appCtx->proc->unlock();
-
-  }
-
-}
-
-#endif
+// This is the EPICS specific line right now:
+static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
 static void acc_edit_update (
   Widget w,
@@ -260,6 +145,116 @@ activeCircleClass *aco = (activeCircleClass *) client;
 
 }
 
+void activeCircleClass::alarmPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeCircleClass *aco = (activeCircleClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+  }
+  else { // lost connection
+
+    aco->connection.setPvDisconnected( (void *) aco->alarmPvConnection );
+    aco->lineColor.setDisconnected();
+    aco->fillColor.setDisconnected();
+
+    aco->actWin->appCtx->proc->lock();
+    aco->needRefresh = 1;
+    aco->actWin->addDefExeNode( aco->aglPtr );
+    aco->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
+void activeCircleClass::alarmPvValueCallback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeCircleClass *aco = (activeCircleClass *) userarg;
+
+  if ( !aco->connection.pvsConnected() ) {
+
+    aco->connection.setPvConnected( (void *) alarmPvConnection );
+
+    if ( aco->connection.pvsConnected() ) {
+      aco->actWin->appCtx->proc->lock();
+      aco->needConnectInit = 1;
+      aco->actWin->addDefExeNode( aco->aglPtr );
+      aco->actWin->appCtx->proc->unlock();
+    }
+
+  }
+  else {
+
+    aco->actWin->appCtx->proc->lock();
+    aco->needAlarmUpdate = 1;
+    aco->actWin->addDefExeNode( aco->aglPtr );
+    aco->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
+void activeCircleClass::visPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeCircleClass *aco = (activeCircleClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+  }
+  else { // lost connection
+
+    aco->connection.setPvDisconnected( (void *) aco->visPvConnection );
+    aco->lineColor.setDisconnected();
+    aco->fillColor.setDisconnected();
+
+    aco->actWin->appCtx->proc->lock();
+    aco->needRefresh = 1;
+    aco->actWin->addDefExeNode( aco->aglPtr );
+    aco->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
+void activeCircleClass::visPvValueCallback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeCircleClass *aco = (activeCircleClass *) userarg;
+
+  if ( !aco->connection.pvsConnected() ) {
+
+    aco->connection.setPvConnected( (void *) visPvConnection );
+
+    if ( aco->connection.pvsConnected() ) {
+      aco->actWin->appCtx->proc->lock();
+      aco->needConnectInit = 1;
+      aco->actWin->addDefExeNode( aco->aglPtr );
+      aco->actWin->appCtx->proc->unlock();
+    }
+
+  }
+  else {
+
+    aco->actWin->appCtx->proc->lock();
+    aco->needVisUpdate = 1;
+    aco->actWin->addDefExeNode( aco->aglPtr );
+    aco->actWin->appCtx->proc->unlock();
+
+    }
+
+}
+
 activeCircleClass::activeCircleClass ( void ) {
 
   name = new char[strlen("activeCircleClass")+1];
@@ -267,9 +262,7 @@ activeCircleClass::activeCircleClass ( void ) {
   visibility = 0;
   prevVisibility = -1;
   visInverted = 0;
-  visPvConnected = alarmPvConnected = 0;
   visPvExists = alarmPvExists = 0;
-  active = 0;
   activeMode = 0;
   fill = 0;
   lineColorMode = ACC_K_COLORMODE_STATIC;
@@ -278,6 +271,7 @@ activeCircleClass::activeCircleClass ( void ) {
   lineStyle = LineSolid;
   strcpy( minVisString, "" );
   strcpy( maxVisString, "" );
+  connection.setMaxPvs( 2 );
 
 }
 
@@ -306,9 +300,7 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   visibility = 0;
   prevVisibility = -1;
-  visPvConnected = alarmPvConnected = 0;
   visPvExists = alarmPvExists = 0;
-  active = 0;
   activeMode = 0;
 
   strncpy( minVisString, source->minVisString, 39 );
@@ -316,6 +308,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   lineWidth = source->lineWidth;
   lineStyle = source->lineStyle;
+
+  connection.setMaxPvs( 2 );
 
 }
 
@@ -817,15 +811,17 @@ int activeCircleClass::drawActive ( void )
   actWin->executeGc.setLineWidth( lineWidth );
   actWin->executeGc.saveFg();
 
-  if ( fill ) {
+  if ( fill && fillVisibility ) {
     actWin->executeGc.setFG( fillColor.getColor() );
     XFillArc( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h, 0, 23040 );
   }
 
-  actWin->executeGc.setFG( lineColor.getColor() );
-  XDrawArc( actWin->d, XtWindow(actWin->executeWidget),
-   actWin->executeGc.normGC(), x, y, w, h, 0, 23040 );
+  if ( lineVisibility ) {
+    actWin->executeGc.setFG( lineColor.getColor() );
+    XDrawArc( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), x, y, w, h, 0, 23040 );
+  }
 
   actWin->executeGc.setLineStyle( LineSolid );
   actWin->executeGc.setLineWidth( 1 );
@@ -936,55 +932,11 @@ int activeCircleClass::activate (
   void *ptr )
 {
 
-int stat;
-
   switch ( pass ) {
 
   case 1: // initialize
 
-    needVisConnectInit = 0;
-    needAlarmConnectInit = 0;
-    needErase = needDraw = needRefresh = 0;
-    aglPtr = ptr;
     opComplete = 0;
-
-#ifdef __epics__
-    alarmEventId = visEventId = 0;
-#endif
-
-    alarmPvConnected = visPvConnected = 0;
-    active = 0;
-    activeMode = 1;
-    prevVisibility = -1;
-
-    init = 1;
-    active = 1;
-
-    if ( !alarmPvExpStr.getExpanded() ||
-         ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
-      alarmPvExists = 0;
-    }
-    else {
-      alarmPvExists = 1;
-      lineColor.setConnectSensitive();
-      fillColor.setConnectSensitive();
-      init = 0;
-      active = 0;
-    }
-
-    if ( !visPvExpStr.getExpanded() ||
-         ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
-      visPvExists = 0;
-      visibility = 1;
-    }
-    else {
-      visPvExists = 1;
-      visibility = 0;
-      lineColor.setConnectSensitive();
-      fillColor.setConnectSensitive();
-      init = 0;
-      active = 0;
-    }
 
     break;
 
@@ -992,30 +944,75 @@ int stat;
 
     if ( !opComplete ) {
 
-#ifdef __epics__
+      connection.init();
+
+      curLineColorIndex = -1;
+      curFillColorIndex = -1;
+      curStatus = -1;
+      curSeverity = -1;
+      prevVisibility = -1;
+      visibility = 0;
+      prevLineVisibility = -1;
+      lineVisibility = 0;
+      prevFillVisibility = -1;
+      fillVisibility = 0;
+
+      needConnectInit = needAlarmUpdate = needVisUpdate = needRefresh = 0;
+      aglPtr = ptr;
+
+      alarmPvId = visPvId = 0;
+
+      activeMode = 1;
+      pvType = -1;
+
+      init = 1; // this stays true if there are no pvs
+
+      if ( !alarmPvExpStr.getExpanded() ||
+           ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+        alarmPvExists = 0;
+        lineVisibility = fillVisibility = 1;
+      }
+      else {
+        connection.addPv();
+        alarmPvExists = 1;
+        lineColor.setConnectSensitive();
+        fillColor.setConnectSensitive();
+        init = 0;
+      }
+
+      if ( !visPvExpStr.getExpanded() ||
+           ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+        visPvExists = 0;
+        visibility = 1;
+      }
+      else {
+        connection.addPv();
+        visPvExists = 1;
+        visibility = 0;
+        lineVisibility = fillVisibility = 1;
+        lineColor.setConnectSensitive();
+        fillColor.setConnectSensitive();
+        init = 0;
+      }
 
       if ( alarmPvExists ) {
-        stat = ca_search_and_connect( alarmPvExpStr.getExpanded(), &alarmPvId,
-         acoMonitorAlarmPvConnectState, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeCircleClass_str24 );
-          return 0;
-        }
+        alarmPvId = pv_factory->create( alarmPvExpStr.getExpanded() );
+        if ( alarmPvId ) {
+          alarmPvId->add_conn_state_callback( alarmPvConnectStateCallback,
+           this );
+          alarmPvId->add_value_callback( alarmPvValueCallback, this );
+	}
       }
 
       if ( visPvExists ) {
-        stat = ca_search_and_connect( visPvExpStr.getExpanded(), &visPvId,
-         acoMonitorVisPvConnectState, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeCircleClass_str25 );
-          return 0;
-        }
+        visPvId = pv_factory->create( visPvExpStr.getExpanded() );
+        if ( visPvId ) {
+          visPvId->add_conn_state_callback( visPvConnectStateCallback, this );
+          visPvId->add_value_callback( visPvValueCallback, this );
+	}
       }
 
       opComplete = 1;
-      this->bufInvalidate();
-
-#endif
 
     }
 
@@ -1038,27 +1035,24 @@ int activeCircleClass::deactivate (
   int pass
 ) {
 
-int stat;
-
-  activeMode = 0;
-
   if ( pass == 1 ) {
 
-#ifdef __epics__
+    activeMode = 0;
 
-  if ( alarmPvExists ) {
-    stat = ca_clear_channel( alarmPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeCircleClass_str28 );
-  }
+    if ( alarmPvId ) {
+      alarmPvId->remove_conn_state_callback( alarmPvConnectStateCallback,
+       this );
+      alarmPvId->remove_value_callback( alarmPvValueCallback, this );
+      alarmPvId->release();
+      alarmPvId = 0;
+    }
 
-  if ( visPvExists ) {
-    stat = ca_clear_channel( visPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeCircleClass_str29 );
-  }
-
-#endif
+    if ( visPvId ) {
+      visPvId->remove_conn_state_callback( visPvConnectStateCallback, this );
+      visPvId->remove_value_callback( visPvValueCallback, this );
+      visPvId->release();
+      visPvId = 0;
+    }
 
   }
 
@@ -1118,122 +1112,162 @@ int activeCircleClass::erase ( void ) {
 
 void activeCircleClass::executeDeferred ( void ) {
 
-int stat, nvc, nac, ne, nd, nr;
+int stat, nc, nau, nvu, nr, index, change;
+pvValType pvV;
 
   if ( actWin->isIconified ) return;
 
   actWin->appCtx->proc->lock();
-  nvc = needVisConnectInit; needVisConnectInit = 0;
-  nac = needAlarmConnectInit; needAlarmConnectInit = 0;
-  ne = needErase; needErase = 0;
-  nd = needDraw; needDraw = 0;
+  nc = needConnectInit; needConnectInit = 0;
+  nau = needAlarmUpdate; needAlarmUpdate = 0;
+  nvu = needVisUpdate; needVisUpdate = 0;
   nr = needRefresh; needRefresh = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
-#ifdef __epics__
+  if ( nc ) {
 
-  if ( nvc ) {
+    minVis.d = (double) atof( minVisString );
+    maxVis.d = (double) atof( maxVisString );
 
-    if ( ( ca_field_type(visPvId) == DBR_ENUM ) ||
-         ( ca_field_type(visPvId) == DBR_INT ) ||
-         ( ca_field_type(visPvId) == DBR_LONG ) ||
-         ( ca_field_type(visPvId) == DBR_FLOAT ) ||
-         ( ca_field_type(visPvId) == DBR_DOUBLE ) ) {
+    lineColor.setConnected();
+    fillColor.setConnected();
 
-      visPvConnected = 1;
+    if ( alarmPvExists ) {
 
-      pvType = ca_field_type( visPvId );
+      curStatus = alarmPvId->get_status();
+      curSeverity = alarmPvId->get_severity();
 
-      minVis.d = (double) atof( minVisString );
-      maxVis.d = (double) atof( maxVisString );
+      lineColor.setStatus( curStatus, curSeverity );
+      fillColor.setStatus( curStatus, curSeverity );
 
-      if ( ( visPvConnected || !visPvExists ) &&
-           ( alarmPvConnected || !alarmPvExists ) ) {
+      curLineColorIndex = actWin->ci->evalRule( lineColor.pixelIndex(),
+       alarmPvId->get_double() );
+      lineColor.changeIndex( curLineColorIndex, actWin->ci );
 
-        active = 1;
-        lineColor.setConnected();
-        fillColor.setConnected();
-        bufInvalidate();
+      curFillColorIndex = actWin->ci->evalRule( fillColor.pixelIndex(),
+       alarmPvId->get_double() );
+      fillColor.changeIndex( curFillColorIndex, actWin->ci );
 
-        if ( init ) {
-          eraseUnconditional();
-	}
+      if ( !visPvExists ) {
 
-        init = 1;
-
-        actWin->requestActiveRefresh();
-
-      }
-
-      if ( !visEventId ) {
-        stat = ca_add_masked_array_event( DBR_DOUBLE, 1, visPvId,
-         circleVisUpdate, (void *) this, (float) 0.0, (float) 0.0,
-         (float) 0.0, &visEventId, DBE_VALUE );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeCircleClass_str30 );
+        if ( actWin->ci->isInvisible( curLineColorIndex ) ) {
+          prevLineVisibility = lineVisibility = 0;
         }
+        else {
+          prevLineVisibility = lineVisibility = 1;
+        }
+
+        if ( actWin->ci->isInvisible( curFillColorIndex ) ) {
+          prevFillVisibility = fillVisibility = 0;
+        }
+        else {
+          prevFillVisibility = fillVisibility = 1;
+        }
+
       }
 
     }
-    else { // force a draw in the non-active state
 
-      active = 0;
-      lineColor.setDisconnected();
-      fillColor.setDisconnected();
-      bufInvalidate();
-      drawActive();
+    if ( visPvExists ) {
 
-    }
+      pvV.d = visPvId->get_double();
+      if ( ( pvV.d >= minVis.d ) && ( pvV.d < maxVis.d ) )
+        visibility = 1 ^ visInverted;
+      else
+        visibility = 0 ^ visInverted;
 
-  }
-
-  if ( nac ) {
-
-    alarmPvConnected = 1;
-
-    if ( ( visPvConnected || !visPvExists ) &&
-         ( alarmPvConnected || !alarmPvExists ) ) {
-
-      active = 1;
-      lineColor.setConnected();
-      fillColor.setConnected();
-      bufInvalidate();
-
-      if ( init ) {
-        eraseUnconditional();
-      }
-
-      init = 1;
-
-      actWin->requestActiveRefresh();
+      prevVisibility = visibility;
 
     }
 
-    if ( !alarmEventId ) {
-      stat = ca_add_masked_array_event( DBR_STS_FLOAT, 1, alarmPvId,
-       circleAlarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &alarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL ) {
-        printf( activeCircleClass_str31 );
-      }
-    }
+    init = 1;
 
-  }
-
-#endif
-
-  if ( ne ) {
-    eraseActive();
-  }
-
-  if ( nd ) {
-//      drawActive();
+    eraseUnconditional();
     stat = smartDrawAllActive();
+
+  }
+
+  if ( nau ) {
+
+    change = 0;
+
+    if ( curStatus != alarmPvId->get_status() ) {
+      curStatus = alarmPvId->get_status();
+      change = 1;
+    }
+
+    if ( curSeverity != alarmPvId->get_severity() ) {
+      curSeverity = alarmPvId->get_severity();
+      change = 1;
+    }
+
+    index = actWin->ci->evalRule( lineColor.pixelIndex(),
+    alarmPvId->get_double() );
+
+    if ( curLineColorIndex != index ) {
+      curLineColorIndex = index;
+      change = 1;
+    }
+
+    index = actWin->ci->evalRule( fillColor.pixelIndex(),
+    alarmPvId->get_double() );
+
+    if ( curFillColorIndex != index ) {
+      curFillColorIndex = index;
+      change = 1;
+    }
+
+    if ( change ) {
+
+      if ( !visPvExists ) {
+
+        if ( actWin->ci->isInvisible( curLineColorIndex ) ) {
+          lineVisibility = 0;
+        }
+        else {
+          lineVisibility = 1;
+        }
+
+        if ( actWin->ci->isInvisible( curFillColorIndex ) ) {
+          fillVisibility = 0;
+        }
+        else {
+          fillVisibility = 1;
+        }
+
+      }
+
+      lineColor.changeIndex( curLineColorIndex, actWin->ci );
+      fillColor.changeIndex( curFillColorIndex, actWin->ci );
+      if ( ( prevLineVisibility != lineVisibility ) ||
+	   ( prevFillVisibility != fillVisibility ) ) {
+	prevLineVisibility = lineVisibility;
+	prevFillVisibility = fillVisibility;
+        eraseActive();
+      }
+      smartDrawAllActive();
+
+    }
+
+  }
+
+  if ( nvu ) {
+
+    pvV.d = visPvId->get_double();
+    if ( ( pvV.d >= minVis.d ) && ( pvV.d < maxVis.d ) )
+      visibility = 1 ^ visInverted;
+    else
+      visibility = 0 ^ visInverted;
+
+    if ( prevVisibility != visibility ) {
+      if ( !visibility ) eraseActive();
+      stat = smartDrawAllActive();
+    }
+
   }
 
   if ( nr ) {
-//      actWin->requestActiveRefresh();
     stat = smartDrawAllActive();
   }
 
