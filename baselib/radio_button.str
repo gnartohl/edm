@@ -1,0 +1,33 @@
+#ifndef __radio_button_str
+#define __radio_button_str 1
+
+#define activeRadioButtonClass_str1 "Control PV"
+#define activeRadioButtonClass_str2 "Unknown object"
+#define activeRadioButtonClass_str3 " Properties"
+#define activeRadioButtonClass_str4 "X"
+#define activeRadioButtonClass_str5 "Y"
+#define activeRadioButtonClass_str6 "Width"
+#define activeRadioButtonClass_str7 "Height"
+#define activeRadioButtonClass_str8 "FG Color"
+#define activeRadioButtonClass_str9 "FG Color Mode"
+#define activeRadioButtonClass_str10 "Alarm Sensitive"
+#define activeRadioButtonClass_str11 "BG Color"
+#define activeRadioButtonClass_str12 "BG Color Mode"
+#define activeRadioButtonClass_str13 "Static|Alarm"
+#define activeRadioButtonClass_str14 "Top Shadow"
+#define activeRadioButtonClass_str15 "Bottom Shadow"
+#define activeRadioButtonClass_str16 "Font"
+#define activeRadioButtonClass_str17 "Control PV"
+#define activeRadioButtonClass_str18 "Readback PV"
+#define activeRadioButtonClass_str19 "Radio"
+#define activeRadioButtonClass_str20 "error from ca_search for [%s]\n"
+#define activeRadioButtonClass_str21 "error from ca_search for [%s]\n"
+#define activeRadioButtonClass_str22 "ca_clear_channel failure\n"
+#define activeRadioButtonClass_str23 "ca_clear_channel failure\n"
+#define activeRadioButtonClass_str24 "ca_add_masked_array_event failed\n"
+#define activeRadioButtonClass_str25 "ca_add_masked_array_event failed\n"
+#define activeRadioButtonClass_str26 "ca_add_masked_array_event failed\n"
+#define activeRadioButtonClass_str27 "ca_add_masked_array_event failed\n"
+#define activeRadioButtonClass_str28 "Button"
+
+#endif
