@@ -142,6 +142,13 @@ int gcClass::setArcModeChord ( void );
 
 int gcClass::setArcModePieSlice ( void );
 
+int gcClass::setGraphicsExposures (
+  int state );
+
+int gcClass::setFGforGivenBG (
+  unsigned int fgColor,
+  unsigned int bgColor );
+
 };
 
 #endif

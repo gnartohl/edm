@@ -607,3 +607,41 @@ XGCValues values;
   return GC_SUCCESS;
 
 }
+
+int gcClass::setGraphicsExposures (
+  int state )
+{
+
+XGCValues values;
+
+  values.graphics_exposures = state;
+
+  XChangeGC( display, norm, GCGraphicsExposures, &values );
+  XChangeGC( display, x_or, GCGraphicsExposures, &values );
+  XChangeGC( display, erase, GCGraphicsExposures, &values );
+  XChangeGC( display, invert, GCGraphicsExposures, &values );
+
+  return GC_SUCCESS;
+
+}
+
+int gcClass::setFGforGivenBG (
+  unsigned int _fgColor,
+  unsigned int _bgColor )
+{
+
+unsigned int newColor;
+
+  fg = _fgColor;
+
+  XSetForeground( display, norm, _fgColor );
+
+  newColor = _fgColor ^ _bgColor;
+  XSetForeground( display, x_or, newColor );
+
+  newColor = _fgColor;
+  XSetBackground( display, invert, newColor );
+
+  return GC_SUCCESS;  
+
+}
