@@ -1,12 +1,8 @@
 .phony : buildInstall
+.phony : install
 
-EDMLIB1=lib605432d2-f29d-11d2-973b-00104b8742df.so
-EDMLIB2=libEdmBase.so
-EDMLIB3=libEpics.so
-EDMLIB4=libcfcaa62e-8199-11d3-a77f-00104b8742df.so
+install : buildInstall
+	echo "edm libs moved"
 
 buildInstall : ;
-	mv ../../../../bin/$(HOST_ARCH)/$(EDMLIB1) ../../../../lib/$(HOST_ARCH)
-	mv ../../../../bin/$(HOST_ARCH)/$(EDMLIB2) ../../../../lib/$(HOST_ARCH)
-	mv ../../../../bin/$(HOST_ARCH)/$(EDMLIB3) ../../../../lib/$(HOST_ARCH)
-	mv ../../../../bin/$(HOST_ARCH)/$(EDMLIB4) ../../../../lib/$(HOST_ARCH)
+	@$(MAKE) -s -k -f ../makefile.move
