@@ -9489,6 +9489,7 @@ activeWindowClass::activeWindowClass ( void ) {
 
   loadFailure = 0;
 
+  haveComments = 0;
   strcpy( fileNameAndRev, "" );
 
   mode = AWC_EDIT;
@@ -14574,9 +14575,27 @@ int activeWindowClass::saveWin (
 int stat, index;
 commentLinesPtr commentCur;
 
-#if 0
-int r, g, b;
-#endif
+char *commentFile;
+FILE *cf;
+char str[255+1], *strPtr;
+
+  if ( !haveComments ) {
+    commentFile = getenv( "EDMCOMMENTS" );
+    if ( commentFile ) {
+      cf = fopen( commentFile, "r" );
+      if ( cf ) {
+        fprintf( f, "# <<<edm-generated-comments>>>\n" );
+        fprintf( f, "#\n" );
+        do {
+          strPtr = fgets( str, 255, cf );
+          str[255] = 0;
+          if ( strPtr ) fprintf( f, "%s", str );
+          if ( !strstr( str, "\n" ) ) fprintf( f, "\n" );
+        } while ( strPtr );
+        fclose( cf );
+      }
+    }
+  }
 
   commentCur = commentHead->flink;
   while ( commentCur ) {
@@ -14693,14 +14712,17 @@ int r, g, b;
 
 }
 
-void activeWindowClass::readCommentsAndVersion (
-  FILE *f
+void activeWindowClass::readCommentsAndVersionGeneric (
+  FILE *f,
+  int isSymbolFile
 ) {
 
-char oneLine[255+1], buf[255+1], *tk, *context;
+char oneLine[255+1], buf[255+1], buf2[255+1], *tk, *context, *context2;
 commentLinesPtr commentCur;
-int numComments = 0, moreComments = 1, checkForRev = 1;
+int numComments = 0, moreComments = 1, checkForRev = 1,
+ checkForEdmComments = 1;
 
+  haveComments = 0;
   strcpy( fileNameAndRev, fileName );
 
   do {
@@ -14714,41 +14736,73 @@ int numComments = 0, moreComments = 1, checkForRev = 1;
 
     if ( !tk || ( tk[0] == '#' ) ) {
 
-      // check for cvs/rcs revision info
-      if ( tk && ( tk[0] == '#' ) && checkForRev ) {
+      if ( !isSymbolFile ) {
 
-        strcpy( buf, oneLine );
+        // check for cvs/rcs revision info
+        if ( tk && ( tk[0] == '#' ) ) {
 
-        context = NULL;
-        tk = strtok_r( buf, " \t\n#", &context );
+          if ( checkForEdmComments ) {
 
-	if ( tk ) {
+            strcpy( buf2, oneLine );
 
-          if ( strcmp( tk, "$Revision:" ) == 0 ) {
+            context2 = NULL;
+            tk = strtok_r( buf2, " \t\n#", &context2 );
 
-            checkForRev = 0; // use first rev found, don't check any more
+            if ( tk ) {
 
-            tk = strtok_r( NULL, " \t\n#", &context );
-	    if ( tk ) {
-              Strncat( fileNameAndRev, " (", 287 );
-              Strncat( fileNameAndRev, tk, 287 );
-              Strncat( fileNameAndRev, ")", 287 );
+              if ( strcmp( tk, "<<<edm-generated-comments>>>" ) == 0 ) {
+
+                checkForEdmComments = 0;
+                haveComments = 1;
+
+	      }
+
 	    }
 
-          }
+	  }
 
-	}
+          if ( checkForRev ) {
+
+            strcpy( buf2, oneLine );
+
+            context2 = NULL;
+            tk = strtok_r( buf2, " \t\n#", &context2 );
+
+            if ( tk ) {
+
+              if ( strcmp( tk, "$Revision:" ) == 0 ) {
+
+                checkForRev = 0; // use first rev found, don't check any more
+
+                tk = strtok_r( NULL, " \t\n#", &context2 );
+                if ( tk ) {
+                  Strncat( fileNameAndRev, " (", 287 );
+                  Strncat( fileNameAndRev, tk, 287 );
+                  Strncat( fileNameAndRev, ")", 287 );
+	        }
+
+              }
+
+	    }
+
+	  }
+
+        }
 
       }
 
-      numComments++;
-      commentCur = new commentLinesType;
-      commentCur->line = new char[strlen(oneLine)+4];
-      strcpy( commentCur->line, oneLine );
-      strcat( commentCur->line, "\n" );
-      commentTail->flink = commentCur;
-      commentTail = commentCur;
-      commentTail->flink = NULL;
+      if ( !isSymbolFile ) {
+
+        numComments++;
+        commentCur = new commentLinesType;
+        commentCur->line = new char[strlen(oneLine)+4];
+        strcpy( commentCur->line, oneLine );
+        strcat( commentCur->line, "\n" );
+        commentTail->flink = commentCur;
+        commentTail = commentCur;
+        commentTail->flink = NULL;
+
+      }
 
     }
     else {
@@ -14757,12 +14811,34 @@ int numComments = 0, moreComments = 1, checkForRev = 1;
 
   } while ( moreComments );
 
-  if ( !numComments ) {
-    commentTail = commentHead;
-    commentTail->flink = NULL;
+  if ( !isSymbolFile ) {
+    if ( !numComments ) {
+      commentTail = commentHead;
+      commentTail->flink = NULL;
+    }
   }
 
   sscanf( oneLine, "%d %d %d\n", &major, &minor, &release );
+
+}
+
+void activeWindowClass::readCommentsAndVersion (
+  FILE *f
+) {
+
+int isSymbolFile = 0;
+
+  readCommentsAndVersionGeneric( f, isSymbolFile );
+
+}
+
+void activeWindowClass::readSymbolCommentsAndVersion (
+  FILE *f
+) {
+
+int isSymbolFile = 1;
+
+  readCommentsAndVersionGeneric( f, isSymbolFile );
 
 }
 
@@ -15724,8 +15800,7 @@ char s[127+1];
 
   pushVersion();
 
-  // discardCommentsAndVersion( f, _major, _minor, _release );
-  readCommentsAndVersion( f );
+  readSymbolCommentsAndVersion( f );
 
   if ( major > AWC_MAJOR_VERSION ) {
     appCtx->postMessage( activeWindowClass_str191 );

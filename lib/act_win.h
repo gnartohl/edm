@@ -788,6 +788,7 @@ int actualNumMacros;
 char **macros;
 char **expansions;
 
+int haveComments;
 char fileName[255+1], fileNameAndRev[287+1];
 char prefix[127+1], displayName[127+1], postfix[127+1];
 expStringClass expStrTitle;
@@ -1118,7 +1119,14 @@ int pushVersion ( void );
 
 int popVersion ( void );
 
+void readCommentsAndVersionGeneric (
+  FILE *f,
+  int isSymbolFile );
+
 void readCommentsAndVersion (
+  FILE *f );
+
+void readSymbolCommentsAndVersion (
   FILE *f );
 
 void discardCommentsAndVersion (
