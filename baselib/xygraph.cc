@@ -3896,7 +3896,7 @@ void xyGraphClass::drawCircles (
   int n
 ) {
 
-struct XArc arc[100];
+XArc arc[100];
 int numFullDraws, remainder, i, ii, j, symHW, symHH;
 
   symHH = symHalfHeight + lineThk[index];
@@ -3940,7 +3940,7 @@ void xyGraphClass::drawSquares (
   int n
 ) {
 
-struct XRectangle rec[100];
+XRectangle rec[100];
 int numFullDraws, remainder, i, ii, j, symHW, symHH;
 
   symHH = symHalfHeight + lineThk[index];
@@ -3980,7 +3980,7 @@ void xyGraphClass::drawDiamonds (
   int n
 ) {
 
-struct XSegment seg[400];
+XSegment seg[400];
 int numFullDraws, remainder, i, ii, j, jj, symHW, symHH;
 
   symHH = (int) ( 1.4 * ( (double) symHalfHeight + (double) lineThk[index] ) );
