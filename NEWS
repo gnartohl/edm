@@ -1,0 +1,24 @@
+Version 1-10-0
+--------------
+
+Changes since 1-9-6:
+
+  o The file format is now based on a tag/value scheme; it's not
+    yet XML but it is a definite improvement. Reading of old format
+    files is still supported but write operations will employ the new
+    format which will not be forward compatible with older versions
+    of edm. You should therefore archive existing edl files before
+    upgrading to the new version.
+
+  o The embedded widget now supports scrolling and macros.
+
+  o Edit-mode drag-and-drop has been implemented using
+    a ctrl-middle-button mouse operation. Raw PV names
+    (i.e. names with untranslated macro references) may
+    be obtained from widgets in this manner.
+
+  o Medm-like group visibility has been added and there are
+    two associated edit-mode operations: "copy group visibility info"
+    and "paste group visibility info". These may be used with
+    an ungroup-edit-group sequence to copy and restore the group
+    visibility information.
