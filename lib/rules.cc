@@ -84,14 +84,16 @@ int result, n, i = rep->i;
   //for ( n=0; n<rc->numIds; n++ ) {
     //printf( "val[%-d] = %-g\n", n, rc->val[n] );
   //}
-  result = (*rc->func)( (void *) rc, rc->numIds, (void *) rc->val );
-  //printf( "result = %-d\n", result );
-  //printf( "ruleId = %-d\n", rc->ruleId );
-  if ( rc->first || ( result != rc->prevValue ) ) {
-    rc->first = 0;
-    rc->prevValue = result;
-    if ( rc->userFunc ) {
-      (*rc->userFunc)( rc->userPtr, rc->ruleId, result );
+  if ( rc->func ) {
+    result = (*rc->func)( (void *) rc, rc->numIds, (void *) rc->val );
+    //printf( "result = %-d\n", result );
+    //printf( "ruleId = %-d\n", rc->ruleId );
+    if ( rc->first || ( result != rc->prevValue ) ) {
+      rc->first = 0;
+      rc->prevValue = result;
+      if ( rc->userFunc ) {
+        (*rc->userFunc)( rc->userPtr, rc->ruleId, result );
+      }
     }
   }
 
