@@ -96,10 +96,11 @@ typedef struct appListTag {
   argsPtr appArgs;
 } appListType, *appListPtr;
 
-static MAIN_QUE_TYPE mainFreeQueue, mainActiveQueue;
-static MAIN_NODE_TYPE mainNodes[MAIN_QUEUE_SIZE];
-static IPRPC_PORT con_port;
-static int numClients = 0;
+static MAIN_QUE_TYPE g_mainFreeQueue, g_mainActiveQueue;
+static MAIN_NODE_TYPE g_mainNodes[MAIN_QUEUE_SIZE];
+static IPRPC_PORT g_conPort;
+static int g_numClients = 0;
+static int g_pidNum = 0;
 
 //#include "alloc.h"
 #ifdef DIAGNOSTIC_ALLOC
@@ -120,6 +121,189 @@ char msg[80];
   }
 
   return 0;
+
+}
+
+static void getCheckPointFileNamefromPID (
+  char *checkPointFileName
+) {
+
+char procIdName[31+1], *envPtr;
+SYS_PROC_ID_TYPE procId;
+
+  envPtr = getenv( "EDMTMPFILES" );
+  if ( envPtr ) {
+    strncpy( checkPointFileName, envPtr, 255 );
+    if ( envPtr[strlen(envPtr)] != '/' ) {
+      strncat( checkPointFileName, "/", 255 );
+    }
+  }
+  else {
+    strncpy( checkPointFileName, "/tmp/", 255 );
+  }
+  strncat( checkPointFileName, "edmCheckPointFile_", 255 );
+  sys_get_proc_id( &procId );
+  sprintf( procIdName, "%-d", (int) procId.id );
+  strncat( checkPointFileName, procIdName, 255 );
+  //printf( "[%s]\n", checkPointFileName );
+
+}
+
+static void getCheckPointFileName (
+  char *checkPointFileName,
+  int procId
+) {
+
+char procIdName[31+1], *envPtr;
+
+  envPtr = getenv( "EDMTMPFILES" );
+  if ( envPtr ) {
+    strncpy( checkPointFileName, envPtr, 255 );
+    if ( envPtr[strlen(envPtr)] != '/' ) {
+      strncat( checkPointFileName, "/", 255 );
+    }
+  }
+  else {
+    strncpy( checkPointFileName, "/tmp/", 255 );
+  }
+  strncat( checkPointFileName, "edmCheckPointFile_", 255 );
+  sprintf( procIdName, "%-d", procId );
+  strncat( checkPointFileName, procIdName, 255 );
+  //printf( "[%s]\n", checkPointFileName );
+
+}
+
+static int getMainCheckPointParams (
+  FILE *f,
+  int *server,
+  char *displayName,
+  int *noEdit,
+  int *numCheckPointMacros,
+  char *checkPointMacros
+) {
+
+char *cptr, *tk;
+char text[1023+1];
+int i;
+
+  *server = 0;
+  strcpy( displayName, "" );
+  *numCheckPointMacros = 0;
+  strcpy( checkPointMacros, "" );
+
+  cptr = fgets( text, 1023, f );
+  text[1024] = 0;
+  if ( !cptr ) return 2; // fail
+  if ( strcmp( text, "<<<EOD>>>\n" ) == 0 ) return 3; // no more data
+  *server = atol( text );
+
+  readStringFromFile( displayName, 127, f );
+
+  cptr = fgets( text, 1023, f );
+  text[1024] = 0;
+  if ( !cptr ) return 2; // fail
+  *noEdit = atol( text );
+
+  cptr = fgets( text, 1023, f );
+  text[1024] = 0;
+  if ( !cptr ) return 2; // fail
+  *numCheckPointMacros = atol( text );
+
+  for ( i=0; i<*numCheckPointMacros; i++ ) {
+    cptr = fgets( text, 1023, f );
+    text[1024] = 0;
+    if ( !cptr ) return 2; // fail
+    tk = strtok( text, "\n \t" );
+    if ( i > 0 ) {
+      strncat( checkPointMacros, ",", 1023 );
+      checkPointMacros[1023] = 0;
+    }
+    strncat( checkPointMacros, tk, 1023 );
+    checkPointMacros[1023] = 0;
+  }
+
+  return 1;
+
+}
+
+static int getNumCheckPointScreens (
+  FILE *f
+) {
+
+char text[32], *cptr;
+int n;
+
+  cptr = fgets( text, 31, f );
+  if ( !cptr ) return 0; // fail
+  text[31] = 0;
+  n = atol( text );
+  return n;
+
+}
+
+static int getScreenCheckPointParams (
+  FILE *f,
+  char *screenName,
+  int *x,
+  int *y,
+  int *icon,
+  int *noEdit,
+  int *numCheckPointMacros,
+  char *checkPointMacros
+) {
+
+char *cptr, *tk;
+char text[1023+1];
+int i;
+
+  strcpy( screenName, "" );
+  *x = 0;
+  *y = 0;
+  *icon = 0;
+  *numCheckPointMacros = 0;
+  strcpy( checkPointMacros, "" );
+
+  readStringFromFile( screenName, 255, f );
+
+  cptr = fgets( text, 1023, f );
+  text[1024] = 0;
+  if ( !cptr ) return 2; // fail
+  *x = atol( text );
+
+  cptr = fgets( text, 1023, f );
+  text[1024] = 0;
+  if ( !cptr ) return 2; // fail
+  *y = atol( text );
+
+  cptr = fgets( text, 1023, f );
+  text[1024] = 0;
+  if ( !cptr ) return 2; // fail
+  *icon = atol( text );
+
+  cptr = fgets( text, 1023, f );
+  text[1024] = 0;
+  if ( !cptr ) return 2; // fail
+  *noEdit = atol( text );
+
+  cptr = fgets( text, 1023, f );
+  text[1024] = 0;
+  if ( !cptr ) return 2; // fail
+  *numCheckPointMacros = atol( text );
+
+  for ( i=0; i<*numCheckPointMacros; i++ ) {
+    cptr = fgets( text, 1023, f );
+    text[1024] = 0;
+    if ( !cptr ) return 2; // fail
+    tk = strtok( text, "\n \t" );
+    if ( i > 0 ) {
+      strncat( checkPointMacros, ",", 1023 );
+      checkPointMacros[1023] = 0;
+    }
+    strncat( checkPointMacros, tk, 1023 );
+    checkPointMacros[1023] = 0;
+  }
+
+  return 1;
 
 }
 
@@ -260,7 +444,7 @@ double merit, min, num;
       // timeout
       stat = ipncl_disconnect( port );
       stat = ipncl_delete_port( &port );
-      stat = ipncl_disconnect( con_port );
+      stat = ipncl_disconnect( g_conPort );
       goto nextHost;
 
     }
@@ -443,7 +627,7 @@ int *portNumPtr = (int *) thread_get_app_data( h );
 
   sprintf( portNumStr, "%-d", *portNumPtr );
 
-  stat = ipnsv_create_named_port( portNumStr, 1, 255, "edm", &con_port );
+  stat = ipnsv_create_named_port( portNumStr, 1, 255, "edm", &g_conPort );
   if ( !( stat & 1 ) ) {
     printf( main_str8 );
     goto err_return;
@@ -458,7 +642,7 @@ int *portNumPtr = (int *) thread_get_app_data( h );
       goto err_return;
     }
 
-    stat = ipnsv_accept_connection( con_port, port, " " );
+    stat = ipnsv_accept_connection( g_conPort, port, " " );
     if ( !( stat & 1 ) ) {
       printf( main_str11 );
       goto err_return;
@@ -477,7 +661,7 @@ int *portNumPtr = (int *) thread_get_app_data( h );
       // timeout
       stat = ipnsv_disconnect( port );
       stat = ipnsv_delete_port( &port );
-      stat = ipnsv_disconnect( con_port );
+      stat = ipnsv_disconnect( g_conPort );
       continue;
 
     }
@@ -500,7 +684,7 @@ int *portNumPtr = (int *) thread_get_app_data( h );
     case QUERY_LOAD:
 
       stat = thread_lock_master( h );
-      num = numClients;
+      num = g_numClients;
       stat = thread_unlock_master( h );
 
       *( (int *) msg ) = htonl( num );
@@ -517,11 +701,11 @@ int *portNumPtr = (int *) thread_get_app_data( h );
 
       stat = thread_lock_master( h );
 
-      q_stat_r = REMQHI( (void *) &mainFreeQueue, (void **) &node, 0 );
+      q_stat_r = REMQHI( (void *) &g_mainFreeQueue, (void **) &node, 0 );
       if ( q_stat_r & 1 ) {
         n++;
         strncpy( node->msg, &msg[1], 254 );
-        q_stat_i = INSQTI( (void *) node, (void *) &mainActiveQueue, 0 );
+        q_stat_i = INSQTI( (void *) node, (void *) &g_mainActiveQueue, 0 );
         if ( !( q_stat_i & 1 ) ) {
           printf( main_str17 );
         }
@@ -538,7 +722,7 @@ int *portNumPtr = (int *) thread_get_app_data( h );
 
     stat = ipnsv_disconnect( port );
     stat = ipnsv_delete_port( &port );
-    stat = ipnsv_disconnect( con_port );
+    stat = ipnsv_disconnect( g_conPort );
 
     if ( cmd == CONNECT ) {
       thread_delay( delayH, 0.5 );
@@ -567,7 +751,8 @@ void checkParams (
   int *server,
   int *appendDisplay,
   char *displayName,
-  int *portNum )
+  int *portNum,
+  int *restart )
 {
 
 char buf[1023+1], mac[1023+1], exp[1023+1];
@@ -581,6 +766,7 @@ Display *testDisplay;
   *server = 0;
   *appendDisplay = 1;
   *portNum = 19000;
+  *restart = 0;
 
   // check first for component management commands
   if ( argc > 1 ) {
@@ -609,6 +795,14 @@ Display *testDisplay;
           *server = 1;
           *local = 0;
         }
+        else if ( strcmp( argv[n], global_str86 ) == 0 ) {
+          n++;
+          if ( n >= argc ) { // missing pid num
+            return;
+          }
+          *restart = 1;
+          g_pidNum = atol( argv[n] );
+	}
         else if ( strcmp( argv[n], global_str11 ) == 0 ) {
           *local = 1;
           return;
@@ -765,8 +959,8 @@ extern int main (
   char **argv )
 {
 
-int i, stat, numAppsRemaining, exitProg, shutdown, q_stat_r, q_stat_i,
- local, server, portNum;
+int i, j, stat, numAppsRemaining, exitProg, shutdown, q_stat_r, q_stat_i,
+ local, server, portNum, restart, n, x, y, icon, sessionNoEdit, screenNoEdit;
 THREAD_HANDLE delayH, serverH, caPendH;
 argsPtr args;
 appListPtr cur, next, appArgsHead, newOne;
@@ -779,17 +973,59 @@ char **argArray, displayName[127+1];
 int appendDisplay;
 float hours, seconds;
 
-char checkPointFileName[255+1], procIdName[31+1], *envPtr;
-FILE *f;
-pid_t procId;
+char checkPointFileName[255+1], screenName[255+1];
 
 Display *oneDisplay;
 XtAppContext oneAppCtx;
 
-  numClients = 1;
+FILE *f = NULL;
+int primaryServerFlag, numCheckPointMacros;
+ char checkPointMacros[1023+1];
+
+  g_numClients = 1;
 
   checkParams( argc, argv, &local, &server, &appendDisplay, displayName,
-   &portNum );
+   &portNum, &restart );
+
+
+  // if doing a restart, read in check point file
+  if ( restart ) {
+
+    //printf( "restart\n" );
+
+    getCheckPointFileName( checkPointFileName, g_pidNum );
+    f = fopen( checkPointFileName, "r" );
+    if ( f ) {
+
+      stat = getMainCheckPointParams( f, &primaryServerFlag, displayName,
+       &sessionNoEdit, &numCheckPointMacros, checkPointMacros );
+      if ( !( stat & 1 ) ) { // couldn't read file
+        restart = 0;
+      }
+
+      if ( primaryServerFlag == 2 ) {
+        server = 1;
+        appendDisplay = 1;
+      }
+      else {
+        server = 0;
+      }
+
+      //printf( "primaryServerFlag = %-d\n", primaryServerFlag );
+      //printf( "server = %-d\n", server );
+      //printf( "displayName = [%s]\n", displayName );
+      //printf( "sessionNoEdit = %-d\n", sessionNoEdit );
+      //printf( "numCheckPointMacros = %-d\n", numCheckPointMacros );
+      //printf( "checkPointMacros = [%s]\n", checkPointMacros );
+
+    }
+    else {
+
+      restart = 0;
+
+    }
+
+  }
 
   if ( server ) {
 
@@ -799,25 +1035,25 @@ XtAppContext oneAppCtx;
 
   if ( server ) {
 
-    stat = sys_iniq( &mainFreeQueue );
+    stat = sys_iniq( &g_mainFreeQueue );
     if ( !( stat & 1 ) ) {
       printf( main_str37 );
       exit(0);
     }
-    stat = sys_iniq( &mainActiveQueue );
+    stat = sys_iniq( &g_mainActiveQueue );
     if ( !( stat & 1 ) ) {
       printf( main_str38 );
       exit(0);
     }
 
-    mainFreeQueue.flink = NULL;
-    mainFreeQueue.blink = NULL;
-    mainActiveQueue.flink = NULL;
-    mainActiveQueue.blink = NULL;
+    g_mainFreeQueue.flink = NULL;
+    g_mainFreeQueue.blink = NULL;
+    g_mainActiveQueue.flink = NULL;
+    g_mainActiveQueue.blink = NULL;
 
     for ( i=0; i<MAIN_QUEUE_SIZE; i++ ) {
 
-      stat = INSQTI( (void *) &mainNodes[i], (void *) &mainFreeQueue,
+      stat = INSQTI( (void *) &g_mainNodes[i], (void *) &g_mainFreeQueue,
        0 );
       if ( !( stat & 1 ) ) {
         printf( main_str39 );
@@ -856,13 +1092,78 @@ XtAppContext oneAppCtx;
 
   args = new argsType;
 
-  argArray = new char*[argc];
-  for ( i=0; i<argc; i++ ) {
+  if ( restart ) { // append display name and macros to args
+
+    //printf( "adjust args for restart\n" );
+
+    //printf( "argc = %-d\n", argc );
+
+    n = 0;
+    if ( !blank(displayName) ) n += 2;
+    if ( numCheckPointMacros ) n += 2;
+    if ( sessionNoEdit ) n++;
+
+    argArray = new char*[argc+n];
+
+    i = 0;
+
     argArray[i] = new char[strlen(argv[i])+1];
     strcpy( argArray[i], argv[i] );
+    i++;
+
+    if ( sessionNoEdit ) {
+
+      argArray[i] = new char[strlen("-noedit")+1];
+      strcpy( argArray[i], "-noedit" );
+      i++;
+
+    }
+
+    if ( !blank(displayName) ) {
+
+      argArray[i] = new char[strlen("-display")+1];
+      strcpy( argArray[i], "-display" );
+      i++;
+
+      argArray[i] = new char[strlen(displayName)+1];
+      strcpy( argArray[i], displayName );
+      i++;
+
+    }
+
+    if ( numCheckPointMacros ) {
+
+      argArray[i] = new char[strlen("-m")+1];
+      strcpy( argArray[i], "-m" );
+      i++;
+
+      argArray[i] = new char[strlen(checkPointMacros)+1];
+      strcpy( argArray[i], checkPointMacros );
+      i++;
+
+    }
+
+    for ( j=1; j<argc; j++ ) {
+      argArray[i] = new char[strlen(argv[j])+1];
+      strcpy( argArray[i], argv[j] );
+      i++;
+    }
+
+    args->argc = argc + n;
+
+  }
+  else {
+
+    argArray = new char*[argc];
+    for ( i=0; i<argc; i++ ) {
+      argArray[i] = new char[strlen(argv[i])+1];
+      strcpy( argArray[i], argv[i] );
+    }
+
+    args->argc = argc;
+
   }
 
-  args->argc = argc;
   args->argv = argArray;
 
   cur = new appListType;
@@ -876,6 +1177,11 @@ XtAppContext oneAppCtx;
   args->appCtxPtr = new appContextClass;
   args->appCtxPtr->proc = &proc;
 
+  //printf( "argc = %-d\n", args->argc );
+  //for ( i=0; i<args->argc; i++ ) {
+  //  printf( "argv[%-d] = [%s]\n", i, args->argv[i] );
+  //}
+
   if ( server ) {
     stat = args->appCtxPtr->startApplication( args->argc, args->argv, 2 );
   }
@@ -883,6 +1189,138 @@ XtAppContext oneAppCtx;
     stat = args->appCtxPtr->startApplication( args->argc, args->argv, 1 );
   }
   if ( !( stat & 1 ) ) exit( 0 );
+
+
+  if ( restart ) { // open all displays
+
+    n = getNumCheckPointScreens( f );
+
+    //printf( "%-d screen(s)\n", n );
+
+    for ( i=0; i<n; i++ ) {
+
+      stat = getScreenCheckPointParams( f, screenName, &x, &y, &icon,
+       &screenNoEdit, &numCheckPointMacros, checkPointMacros );
+
+      if ( stat & 1 ) {
+        stat = args->appCtxPtr->openCheckPointScreen( screenName, x, y, icon,
+         screenNoEdit, numCheckPointMacros, checkPointMacros );
+      }
+
+    }
+
+  }
+
+  if ( restart ) {
+
+    // now, get all client display checkpoint info
+    do {
+
+      stat = getMainCheckPointParams( f, &primaryServerFlag, displayName,
+       &sessionNoEdit, &numCheckPointMacros, checkPointMacros );
+      if ( !( stat & 1 ) ) { // couldn't read file
+        break;
+      }
+
+      if ( stat != 3 ) { // end of data
+
+        n = 0;
+        if ( !blank(displayName) ) n += 2;
+        if ( numCheckPointMacros ) n += 2;
+        if ( sessionNoEdit ) n++;
+
+        argArray = new char*[argc+n];
+
+        i = 0;
+
+        argArray[i] = new char[strlen(argv[i])+1];
+        strcpy( argArray[i], argv[i] );
+        i++;
+
+        if ( sessionNoEdit ) {
+
+          argArray[i] = new char[strlen("-noedit")+1];
+          strcpy( argArray[i], "-noedit" );
+          i++;
+
+        }
+
+        if ( !blank(displayName) ) {
+
+          argArray[i] = new char[strlen("-display")+1];
+          strcpy( argArray[i], "-display" );
+          i++;
+
+          argArray[i] = new char[strlen(displayName)+1];
+          strcpy( argArray[i], displayName );
+          i++;
+
+        }
+
+        if ( numCheckPointMacros ) {
+
+          argArray[i] = new char[strlen("-m")+1];
+          strcpy( argArray[i], "-m" );
+          i++;
+
+          argArray[i] = new char[strlen(checkPointMacros)+1];
+          strcpy( argArray[i], checkPointMacros );
+          i++;
+
+        }
+
+        for ( j=1; j<argc; j++ ) {
+          argArray[i] = new char[strlen(argv[j])+1];
+          strcpy( argArray[i], argv[j] );
+          i++;
+        }
+
+        args = new argsType;
+
+        args->argc = argc + n;
+        args->argv = argArray;
+
+        newOne = new appListType;
+        newOne->appArgs = args;
+
+        newOne->blink = appArgsHead->blink;
+        appArgsHead->blink->flink = newOne;
+        newOne->flink = appArgsHead;
+        appArgsHead->blink = newOne;
+
+        args->appCtxPtr = new appContextClass;
+        args->appCtxPtr->proc = &proc;
+
+        args->appCtxPtr->startApplication( args->argc, args->argv, 0 );
+
+        g_numClients++;
+
+        n = getNumCheckPointScreens( f );
+
+        //printf( "%-d screen(s)\n", n );
+
+        for ( i=0; i<n; i++ ) {
+
+          stat = getScreenCheckPointParams( f, screenName, &x, &y, &icon,
+           &screenNoEdit, &numCheckPointMacros, checkPointMacros );
+
+          if ( stat & 1 ) {
+            stat = args->appCtxPtr->openCheckPointScreen( screenName, x, y,
+             icon, screenNoEdit, numCheckPointMacros, checkPointMacros );
+          }
+
+        }
+
+      }
+
+    } while ( stat != 3 );
+
+  }
+
+  if ( f ) {
+    fclose( f );
+    unlink( checkPointFileName ); // delete checkpoint file
+  }
 
   proc.timeCount = 0;
   proc.cycleTimeFactor = 1.0;
@@ -924,21 +1362,7 @@ XtAppContext oneAppCtx;
 
       if ( cur->appArgs->appCtxPtr->shutdownFlag ) {
         if ( !shutdown ) {
-          envPtr = getenv( "EDMTMPFILES" );
-          if ( envPtr ) {
-            strncpy( checkPointFileName, envPtr, 255 );
-            if ( envPtr[strlen(envPtr)] != '/' ) {
-              strncat( checkPointFileName, "/", 255 );
-            }
-          }
-          else {
-            strncpy( checkPointFileName, "/tmp/", 255 );
-          }
-          strncat( checkPointFileName, "edmCheckPointFile_", 255 );
-          procId = getppid();
-          sprintf( procIdName, "%-d", procId );
-          strncat( checkPointFileName, procIdName, 255 );
-          //printf( "[%s]\n", checkPointFileName );
+          getCheckPointFileNamefromPID( checkPointFileName );
           f = fopen( checkPointFileName, "w" );
 	}
         shutdown = 1;
@@ -960,7 +1384,7 @@ XtAppContext oneAppCtx;
         delete cur;
 
         stat = thread_lock_master( serverH );
-        numClients--;
+        g_numClients--;
         stat = thread_unlock_master( serverH );
 
       }
@@ -980,7 +1404,7 @@ XtAppContext oneAppCtx;
 
           stat = thread_lock_master( serverH );
 
-          q_stat_r = REMQHI( (void *) &mainActiveQueue, (void **) &node, 0 );
+          q_stat_r = REMQHI( (void *) &g_mainActiveQueue, (void **) &node, 0 );
 
           if ( q_stat_r & 1 ) {
 
@@ -1017,11 +1441,11 @@ XtAppContext oneAppCtx;
 
             args->appCtxPtr->startApplication( args->argc, args->argv, 0 );
 
-            numClients++;
+            g_numClients++;
 
 parse_error:
 
-            q_stat_i = INSQTI( (void *) node, (void *) &mainFreeQueue, 0 );
+            q_stat_i = INSQTI( (void *) node, (void *) &g_mainFreeQueue, 0 );
             if ( !( q_stat_i & 1 ) ) {
               printf( main_str40 );
             }
@@ -1061,14 +1485,14 @@ parse_error:
   }
 
   if ( server ) {
-    stat = ipnsv_delete_port( &con_port );
+    stat = ipnsv_delete_port( &g_conPort );
   }
 
   if ( shutdown ) {
+    fprintf( f, "<<<EOD>>>\n" );
     fclose( f );
   }
 
 }
-
 
 
