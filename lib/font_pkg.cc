@@ -41,6 +41,22 @@ char *envPtr;
 
 }
 
+static void fixFontSize (
+  char *spec
+) {
+
+  // On non-english speaking systems, the format of floating points
+  // rendered by "sprintf" may use a ',' for the decimal separator,
+  // instead of a '.'. If so, change each ',' to '.'.
+
+int i;
+
+  for ( i=0; i<(int) strlen(spec); i++ ) {
+     if ( spec[i] == ',' ) spec[i] = '.';
+  }
+
+}
+
 static int compare_nodes (
   void *node1,
   void *node2
@@ -568,6 +584,7 @@ char *tk, spec[127+1], name[127+1], family[63+1], weight[31+1],
   ptr->fsize = fsize;
 
   sprintf( size, "%-.1f", fsize );
+  fixFontSize( size );
 
   strncpy( name, family, 127 );
   Strncat( name, "-", 127 );
@@ -699,6 +716,7 @@ char spec[127+1], name[127+1], foundary[63+1], family[63+1], weight[63+1],
   ptr->fsize = fsize;
 
   sprintf( size, "%-.1f", fsize );
+  fixFontSize( size );
 
   strncpy( name, userFontFamilyName, 127 );
   Strncat( name, "-", 127 );
@@ -783,6 +801,7 @@ char *tk, spec[127+1], name[127+1], family[63+1], weight[31+1],
   ptr->fsize = fsize;
 
   sprintf( size, "%-.1f", fsize );
+  fixFontSize( size );
 
   strncpy( name, family, 127 );
   Strncat( name, "-", 127 );
@@ -1949,6 +1968,7 @@ char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
 
   term = fabs(c) * pixels;
   sprintf( tmp, "%s%-.1f", sign, term );
+  fixFontSize( tmp );
   Strncat( matrix, tmp, 63 );
 
   if ( s < 0.0 ) {
@@ -1960,6 +1980,7 @@ char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
 
   term = fabs(s) * pixels;
   sprintf( tmp, "%s%-.1f", sign, term );
+  fixFontSize( tmp );
   Strncat( matrix, tmp, 63 );
 
   if ( s < 0.0 ) {
@@ -1971,6 +1992,7 @@ char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
 
   term = fabs(s) * pixels;
   sprintf( tmp, "%s%-.1f", sign, term );
+  fixFontSize( tmp );
   Strncat( matrix, tmp, 63 );
 
   if ( c < 0.0 ) {
@@ -1982,6 +2004,7 @@ char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
 
   term = fabs(c) * pixels;
   sprintf( tmp, "%s%-.1f", sign, term );
+  fixFontSize( tmp );
   Strncat( matrix, tmp, 63 );
 
   Strncat( matrix, "]", 63 );
