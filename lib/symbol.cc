@@ -399,6 +399,7 @@ int i;
   btnMotionActionHead->blink = btnMotionActionHead;
 
   useOriginalColors = 1;
+  unconnectedTimer = 0;
 
 }
 
@@ -559,6 +560,8 @@ int i;
   bufFgColor = source->bufFgColor;
   bufBgColor = source->bufBgColor;
   colorPvExpStr.setRaw( source->colorPvExpStr.rawString );
+
+  unconnectedTimer = 0;
 
 }
 
