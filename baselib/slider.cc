@@ -106,8 +106,10 @@ double fv;
     return;
   }
 
-  if ( slo->oldControlV == slo->oneControlV ) return;
+  //if ( slo->oldControlV == slo->oneControlV ) return;
+  if ( !slo->doTimerUpdate ) return;
 
+  slo->doTimerUpdate = 0;
   slo->oldControlV = slo->oneControlV;
 
   slo->eraseActiveControlText();
@@ -694,6 +696,10 @@ int st, sev;
 
   slo->oneControlV = pv->get_double(); // xtimer updates widget indicator
   slo->curControlV = slo->oneControlV;
+
+  if ( slo->oneControlV != slo->oldControlV ) {
+    slo->doTimerUpdate = 1;
+  }
 
 }
 
@@ -3135,6 +3141,7 @@ char callbackName[63+1];
       incrementTimerActive = 0;
       controlPvId = controlLabelPvId = readPvId = readLabelPvId =
        savedValuePvId = NULL;
+      doTimerUpdate = 1;
 
       controlState = SLC_STATE_IDLE;
 

@@ -23,6 +23,7 @@
 #include "color_button.h"
 #include "utility.h"
 #include "thread.h"
+#include "remFileOpen.h"
 
 static int showRGB = 0;
 
@@ -4683,7 +4684,8 @@ unsigned long plane_masks[1], bgColor;
   maxMenuItems = 0;
   menuIndexMap = NULL;
 
-  f = fopen( fileName, "r" );
+  //f = fopen( fileName, "r" );
+  f = fileOpen( fileName, "r" );
   if ( !f ) {
     return COLORINFO_NO_FILE;
   }
@@ -4744,7 +4746,8 @@ restart:
 
   fclose( f );
 
-  f = fopen( fileName, "r" );
+  //f = fopen( fileName, "r" );
+  f = fileOpen( fileName, "r" );
   if ( !f ) {
     return COLORINFO_NO_FILE;
   }

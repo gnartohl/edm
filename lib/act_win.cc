@@ -29,6 +29,8 @@
 
 #include "thread.h"
 #include "crc.h"
+
+#include "remFileOpen.h"
 
 void _edmDebug ( void ) {
 
@@ -230,7 +232,7 @@ activeWindowClass *awo = (activeWindowClass *) client;
   strncpy( oldName, awo->autosaveName, 255 );
   oldName[255] = 0;
 
-  envPtr = getenv( "EDMTMPFILES" );
+  envPtr = getenv( environment_str8 );
   if ( envPtr ) {
     strncpy( awo->autosaveName, envPtr, 255 );
     if ( envPtr[strlen(envPtr)] != '/' ) {
@@ -16292,7 +16294,8 @@ int activeWindowClass::fileExists (
 FILE *f;
 int result;
 
-  f = fopen( fname, "r" );
+//f = fopen( fname, "r" );
+  f = fileOpen( fname, "r" );
   if ( f ) {
     result = 1;
     fclose( f );
@@ -16332,7 +16335,8 @@ int result;
     Strncat( oneFileName, ".edl", 255 );
   }
 
-  f = fopen( oneFileName, "r" );
+  //f = fopen( oneFileName, "r" );
+  f = fileOpen( oneFileName, "r" );
   if ( f ) {
     result = 1;
     fclose( f );
@@ -16801,7 +16805,8 @@ int i;
     appCtx->expandFileName( i, buf, name, ".edl", 255 );
 
     if ( strcmp( buf, "" ) != 0 ) {
-      f = fopen( buf, mode );
+      //f = fopen( buf, mode );
+      f = fileOpen( buf, mode );
       if ( f ) {
         strncpy( fileName, buf, 255 ); // update fileName
         return f;
@@ -16828,7 +16833,8 @@ int i;
     appCtx->expandFileName( i, buf, name, ".edl", 255 );
 
     if ( strcmp( buf, "" ) != 0 ) {
-      f = fopen( buf, mode );
+      //f = fopen( buf, mode );
+      f = fileOpen( buf, mode );
       if ( f ) {
         return f;
       }
@@ -16853,7 +16859,8 @@ int i;
 
     appCtx->expandFileName( i, buf, name, ".xch", 255 );
     if ( strcmp( buf, "" ) != 0 ) {
-      f = fopen( buf, mode );
+      //f = fopen( buf, mode );
+      f = fileOpen( buf, mode );
       if ( f ) {
         strncpy( fileName, buf, 255 ); // update fileName
         return f;
@@ -16881,7 +16888,8 @@ int i;
     appCtx->expandFileName( i, fullName, name, max );
 
     if ( strcmp( fullName, "" ) != 0 ) {
-      f = fopen( fullName, mode );
+      //f = fopen( fullName, mode );
+      f = fileOpen( fullName, mode );
       if ( f ) {
         return f;
       }
@@ -16910,7 +16918,7 @@ void activeWindowClass::executeFromDeferredQueue( void )
     strncpy( oldName, autosaveName, 255 );
     oldName[255] = 0;
 
-    envPtr = getenv( "EDMTMPFILES" );
+    envPtr = getenv( environment_str8 );
     if ( envPtr ) {
       strncpy( autosaveName, envPtr, 255 );
       if ( envPtr[strlen(envPtr)] != '/' ) {

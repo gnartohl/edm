@@ -175,7 +175,7 @@ static void getCheckPointFileNamefromPID (
 char procIdName[31+1], *envPtr;
 SYS_PROC_ID_TYPE procId;
 
-  envPtr = getenv( "EDMTMPFILES" );
+  envPtr = getenv( environment_str8 );
   if ( envPtr ) {
     strncpy( checkPointFileName, envPtr, 255 );
     if ( envPtr[strlen(envPtr)] != '/' ) {
@@ -200,7 +200,7 @@ static void getCheckPointFileName (
 
 char *envPtr;
 
-  envPtr = getenv( "EDMTMPFILES" );
+  envPtr = getenv( environment_str8 );
   if ( envPtr ) {
     strncpy( checkPointFileName, envPtr, 255 );
     if ( envPtr[strlen(envPtr)] != '/' ) {
@@ -1066,6 +1066,8 @@ Display *testDisplay;
         else if ( strcmp( argv[n], global_str76 ) == 0 ) {
 	}
         else if ( strcmp( argv[n], global_str79 ) == 0 ) {
+	}
+        else if ( strcmp( argv[n], global_str96 ) == 0 ) {
 	}
         else {
           *local = 1;

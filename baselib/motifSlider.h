@@ -360,6 +360,8 @@ int oldStat, oldSev; // for alarms
 
 int isMapped, buttonPressed, needUnmap;
 
+int doTimerUpdate;
+
 public:
 
 activeMotifSliderClass ( void );

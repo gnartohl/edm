@@ -20,6 +20,7 @@
 //
 
 #include "font_pkg.h"
+#include "remFileOpen.h"
 
 #include "thread.h"
 
@@ -1568,7 +1569,8 @@ XFontStruct *fs;
   strncpy( defSiteFontTag, "helvetica-medium-r-10.0", 127 );
   strncpy( defFontTag, "helvetica-medium-r-14.0", 127 );
 
-  f = fopen( fileName, "r" );
+  //f = fopen( fileName, "r" );
+  f = fileOpen( fileName, "r" );
   if ( !f ) {
     return FONTINFO_NO_FILE;
   }

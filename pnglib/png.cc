@@ -24,6 +24,8 @@
 
 #include "thread.h"
 
+#include "remFileOpen.h"
+
 static int littleEndian ( void ) {
 
 char c[2];
@@ -753,7 +755,8 @@ expStringClass expStr;
   do {
     this->actWin->appCtx->expandFileName( i, name, expStr.getExpanded(),
      ".png", 127 );
-    fp = fopen( name, "rb" );
+    //fp = fopen( name, "rb" );
+    fp = fileOpen( name, "rb" );
     i++;
   } while ( ( i < actWin->appCtx->numPaths ) && !fp );
   if ( !fp ) {

@@ -2,7 +2,7 @@
 #define __environment_str 1
 
 
-// global_str94 is last
+// global_str97 is last
 
 
 #define environment_str1 (char *) "EDMDATAFILES"
@@ -12,6 +12,8 @@
 #define environment_str5 (char *) "EDMHELPFILES"
 #define environment_str6 (char *) "EDMUSERLIB"
 #define environment_str7 (char *) "EDMPRINTDEF"
+#define environment_str8 (char *) "EDMTMPFILES"
+#define environment_str9 (char *) "EDMHTTPDOCROOT"
 
 #define global_str1 (char *) "Symbol"
 #define global_str2 (char *) "Monitors"
@@ -48,6 +50,7 @@
 #define global_str89 (char *) "-one"
 #define global_str91 (char *) "-convert"
 #define global_str93 (char *) "-open"
+#define global_str96 (char *) "-eolc"
 
 // help text (some content must agree with command line options)
 #define global_str24 (char *) "EXECUTION\n"
@@ -91,7 +94,9 @@
 #define global_str82 (char *) "\t\t\te.g. node1:2,node2:1.5,node3\n"
 #define global_str83 (char *) "\t\t\t(node1 is preffered 2/1.5, 2/1 over nodes 2 & 3)\n"
 
-#define global_str84 (char *) "EDMTMPFILES\t\tLocation of autosave files (default: /tmp)\n"
+#define global_str84 (char *) "EDMTMPFILES\t\tLocation of autosave and other temp files (default: /tmp)\n"
+
+#define global_str95 (char *) "EDMHTTPDOCROOT\t\tURL list for http access; | is the list element separator\n"
 
 #define global_str54 (char *) "EDMUSERLIB\t\tLocation of user shared library file\n"
 
@@ -110,6 +115,8 @@
 #define global_str90 (char *) "  -one     Allow only one edm instance\n\n"
 
 #define global_str94 (char *) "  -open    Request edm server to open files\n\n"
+
+#define global_str97 (char *) "  -eolc    Exit when last screen is closed\n\n"
 
 #define global_str62 (char *) "PV Class"
 

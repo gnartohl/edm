@@ -1293,6 +1293,8 @@ char oneFileName[127+1];
   apco->head->blink = cur;
   cur->flink = apco->head;
 
+  apco->atLeastOneOpen = 1;
+
 }
 
 void refreshUserLib_cb (
@@ -1840,6 +1842,8 @@ appContextClass::appContextClass (
   iconified = 0;
   usingControlPV = 0;
   renderImagesFlag = 1;
+  exitOnLastClose = 0;
+  atLeastOneOpen = 0;
 
   entryFormX = 0;
   entryFormY = 0;
@@ -2152,10 +2156,13 @@ activeWindowListPtr cur;
 void appContextClass::getFilePaths ( void ) {
 
 int i, l, allocL, curLen, stat;
-char *envPtr, *gotIt, *buf, save[127+1], path[127+1], *tk;
+char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
+ *useHttp;
 
   curLen = -1;
   buf = NULL;
+
+  useHttp = getenv( "EDMHTTPDOCROOT" );
 
   // EDMFILES
   envPtr = getenv( environment_str2 );
@@ -2238,11 +2245,13 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], *tk;
       }
 
       stat = chdir( path );
-      if ( stat ) {
-        perror( appContextClass_str119 );
-        printf( appContextClass_str120, path );
+      if ( stat && !useHttp ) {
+        snprintf( msg, 127, appContextClass_str119, path );
+        perror( msg );
+        //perror( appContextClass_str119 );
+        //printf( appContextClass_str120, path );
       }
-      getcwd( path, 127 );
+      //getcwd( path, 127 );
 
       chdir( save );
 
@@ -2278,11 +2287,13 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], *tk;
       }
 
       stat = chdir( path );
-      if ( stat ) {
-        perror( appContextClass_str119 );
-        printf( appContextClass_str120, path );
+      if ( stat && !useHttp ) {
+        snprintf( msg, 127, appContextClass_str119, path );
+        perror( msg );
+        //perror( appContextClass_str119 );
+        //printf( appContextClass_str120, path );
       }
-      getcwd( path, 127 );
+      //getcwd( path, 127 );
 
       chdir( save );
 
@@ -3644,6 +3655,8 @@ static void displayParamInfo ( void ) {
 
   printf( global_str94 );
 
+  printf( global_str97 );
+
   printf( global_str38 );
 
   printf( global_str39 );
@@ -3689,6 +3702,8 @@ static void displayParamInfo ( void ) {
   printf( "\n" );
   printf( global_str84 );
   printf( "\n" );
+  printf( global_str95 );
+  printf( "\n" );
   printf( global_str54 );
   printf( "\n" );
 
@@ -3714,6 +3729,7 @@ fileListPtr curFile;
   strcpy( colormode, "" );
   local = 0;
   privColorMap = 0;
+  exitOnLastClose = 0;
 
   // check first for component management commands
   if ( argc > 1 ) {
@@ -3881,6 +3897,9 @@ fileListPtr curFile;
         else if ( strcmp( argv[n], global_str79 ) == 0 ) { // private colormap
           privColorMap = 1;
         }
+	else if ( strcmp( argv[n], global_str96 ) == 0 ) { //exit on last close
+	  exitOnLastClose = 1;
+	}
 
         else {
           return -2;
@@ -4109,7 +4128,9 @@ err_return:
    exit_cb, (XtPointer) this );
   XtVaSetValues( appTop, XmNdeleteResponse, XmDO_NOTHING, NULL );
 
-  largestH = XDisplayHeight( display, DefaultScreen(display) );
+  displayH = XDisplayHeight( display, DefaultScreen(display) );
+  displayW = XDisplayWidth( display, DefaultScreen(display) );
+  largestH = displayH;
 
   msgBox.create( appTop, 0, 0, 50000, NULL, NULL );
 
@@ -4831,6 +4852,11 @@ char msg[127+1];
 
       cur = cur->flink;
 
+    }
+
+    if ( nodeCount ) atLeastOneOpen = 1;
+    if ( exitOnLastClose && atLeastOneOpen ) {
+      if ( nodeCount == 0 ) exitFlag = 1;
     }
 
     processAllEvents( app, display );
