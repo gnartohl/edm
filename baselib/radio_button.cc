@@ -854,6 +854,7 @@ int stat, opStat;
     numStates = 0;
     curValue = 0;
 
+    bulBrd = (Widget) NULL;
     radioBox = (Widget) NULL;
 
     break;
@@ -946,8 +947,10 @@ int stat, i;
   case 2:
 
     if ( widgetsCreated ) {
-      if ( radioBox ) {
-        XtUnmapWidget( radioBox );
+      if ( bulBrd ) {
+        XtUnmapWidget( bulBrd );
+        XtDestroyWidget( bulBrd );
+        bulBrd = NULL;
         XtDestroyWidget( radioBox );
         radioBox = NULL;
       }
@@ -1035,6 +1038,7 @@ XmString str;
 Arg args[15];
 int n;
 XtTranslations parsedTrans;
+char tmp[MAX_ENUM_STRING_SIZE+10];
 
 static char dragTrans[] =
   "#override\n\
@@ -1077,21 +1081,33 @@ static XtActionsRec dragActions[] = {
   if ( ni ) {
 
     if ( widgetsCreated ) {
-      if ( radioBox ) {
-        XtUnmapWidget( radioBox );
+      if ( bulBrd ) {
+        XtUnmapWidget( bulBrd );
+        XtDestroyWidget( bulBrd );
+        bulBrd = NULL;
         XtDestroyWidget( radioBox );
         radioBox = NULL;
       }
       widgetsCreated = 0;
     }
 
+    bulBrd = XtVaCreateWidget( "", xmBulletinBoardWidgetClass,
+    actWin->executeWidgetId(),
+     XmNx, x,
+     XmNy, y,
+     XmNwidth, w,
+     XmNheight, h,
+     XmNbackground, (XtArgVal) bgColor.getColor(),
+     XmNforeground, (XtArgVal) fgColor.getColor(),
+     NULL );
+
     parsedTrans = XtParseTranslationTable( dragTrans );
     XtAppAddActions( actWin->appCtx->appContext(), dragActions,
      XtNumber(dragActions) );
 
     n = 0;
-    XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
-    XtSetArg( args[n], XmNy, (XtArgVal) y ); n++;
+    XtSetArg( args[n], XmNx, (XtArgVal) 0 ); n++;
+    XtSetArg( args[n], XmNy, (XtArgVal) 0 ); n++;
     XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
     XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
     XtSetArg( args[n], XmNbackground, (XtArgVal) bgColor.getColor() ); n++;
@@ -1101,8 +1117,7 @@ static XtActionsRec dragActions[] = {
     XtSetArg( args[n], XmNtraversalOn, False ); n++;
     XtSetArg( args[n], XmNuserData, this ); n++;
 
-
-    radioBox = XmCreateRadioBox( actWin->executeWidgetId(),
+    radioBox = XmCreateRadioBox( bulBrd,
      "", args, n );
     
     for ( i=0; i<numStates; i++ ) {
@@ -1176,6 +1191,7 @@ int ii;
 }
 
     XtManageChild( radioBox );
+    XtManageChild( bulBrd );
 
     widgetsCreated = 1;
 

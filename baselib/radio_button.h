@@ -206,7 +206,7 @@ expStringClass controlPvExpStr;
 
 int controlExists, widgetsCreated, active, activeMode;
 
-Widget radioBox, pb[MAX_ENUM_STATES];
+Widget bulBrd, radioBox, pb[MAX_ENUM_STATES];
 
 int needConnectInit, needInfoInit, needDraw, needRefresh,
  needToDrawUnconnected, needToEraseUnconnected;
