@@ -131,11 +131,15 @@ Arg args[5];
 int n;
 XmString str;
 
-  if ( debugMode() ) {
-    printf( "debug - 6\n" );
-  }
+  if ( winOpen ) {
 
-  XtPopdown( shell );
+    if ( debugMode() ) {
+      printf( "debug - 6\n" );
+    }
+
+    XtPopdown( shell );
+
+  }
 
   str = XmStringCreateLocalized( text );
   n = 0;
