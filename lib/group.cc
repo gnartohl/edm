@@ -3409,6 +3409,30 @@ int stat;
 
 }
 
+void activeGroupClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n )
+{
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+int curN, curMax = max;
+
+  *n = 0;
+  cur = head->blink;
+  while ( cur != head ) {
+
+    cur->node->getPvs( curMax, &pvs[*n], &curN );
+    (*n) += curN;
+    curMax -= curN;
+
+    cur = cur->blink;
+
+  }
+
+}
+
 int activeGroupClass::showPvInfo (
   XButtonEvent *be,
   int x,

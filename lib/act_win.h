@@ -120,6 +120,7 @@
 #define AWC_POPUP_COPY_GROUP_INFO 153
 #define AWC_POPUP_PASTE_GROUP_INFO 154
 #define AWC_POPUP_SAVE_TO_PATH 155
+#define AWC_POPUP_DUMP_PVLIST 156
 
 #define AWC_NONE_SELECTED 1
 #define AWC_ONE_SELECTED 2
@@ -237,6 +238,21 @@ static void awc_loadSchemeSelectCancel_cb (
   XtPointer call );
 
 static void awc_loadSchemeSelectKill_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void awc_pvlistFileSelectOk_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void awc_pvlistFileSelectCancel_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void awc_pvlistFileSelectKill_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -430,7 +446,7 @@ char autosaveName[255+1];
 
 int doClose;
 
-widgetAndPointerType wpFileSelect, wpSchemeSelect;
+widgetAndPointerType wpFileSelect, wpSchemeSelect, pvlistFileSelect;
 
 friend class activeGraphicClass;
 friend class activeGroupClass;
@@ -495,6 +511,21 @@ friend void awc_loadSchemeSelectOk_cb (
   XtPointer call );
 
 friend void awc_loadSchemeSelectCancel_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void awc_pvlistFileSelectOk_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void awc_pvlistFileSelectCancel_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void awc_pvlistFaveFileSelectOk_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -632,7 +663,8 @@ int showName;
 
 cursorClass cursor;
 
-Widget drawWidget, executeWidget, fileSelectBox, schemeSelectBox;
+Widget drawWidget, executeWidget, fileSelectBox, schemeSelectBox,
+ pvlistFileSelectBox;
 Display *d;
 int bufX, bufY, bufW, bufH;
 

@@ -1243,6 +1243,261 @@ widgetAndPointerPtr wp = (widgetAndPointerPtr) client;
   awc_saveSchemeSelectCancel_cb( wp->w, wp->client, NULL );
 
 }
+
+typedef struct nameListTag {
+  AVL_FIELDS(nameListTag)
+  char *name;
+} nameListType, *nameListPtr;
+
+static int compare_nodes (
+  void *node1,
+  void *node2
+) {
+
+nameListPtr p1, p2;
+
+  p1 = (nameListPtr) node1;
+  p2 = (nameListPtr) node2;
+
+  return ( strcmp( p1->name, p2->name ) );
+
+}
+
+static int compare_key (
+  void *key,
+  void *node
+) {
+
+nameListPtr p;
+char *one;
+
+  p = (nameListPtr) node;
+  one = (char *) key;
+
+  return ( strcmp( one, p->name ) );
+
+}
+
+static int copy_node (
+  void *node1,
+  void *node2
+) {
+
+nameListPtr p1, p2;
+
+  p1 = (nameListPtr) node1;
+  p2 = (nameListPtr) node2;
+
+  *p1 = *p2;
+
+  return 1;
+
+}
+
+static void awc_pvlistFileSelectOk_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+char *fName, *ptr, tmp[255+1], msg[255+1];
+activeWindowClass *awo = (activeWindowClass *) client;
+XmFileSelectionBoxCallbackStruct *cbs =
+ (XmFileSelectionBoxCallbackStruct *) call;
+activeGraphicListPtr cur;
+int i, n, nPvs, stat, dup;
+ProcessVariable *pvs[10000];
+AVL_HANDLE pvNameTree;
+nameListPtr curNameNode;
+FILE *f;
+int avlTreeCreated = 0;
+int fileOpened = 0;
+
+  if ( !XmStringGetLtoR( cbs->value, XmFONTLIST_DEFAULT_TAG, &fName ) ) {
+    goto done;
+  }
+
+  if ( !*fName ) {
+    XtFree( fName );
+    goto done;
+  }
+
+  strncpy( tmp, fName, 255 );
+
+  XtFree( fName );
+
+  stat = avl_init_tree( compare_nodes, compare_key, copy_node,
+   &pvNameTree );
+  if ( !( stat & 1 ) ) {
+    snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+    awo->appCtx->postMessage( msg );
+    goto done;
+  }
+
+  avlTreeCreated = 1;
+
+    cur = awo->head->blink;
+    while ( cur != awo->head ) {
+
+      cur->node->getPvs( 10000, pvs, &n );
+      for ( i=0; i<n; i++ ) {
+        if ( pvs[i] ) {
+          curNameNode = (nameListPtr) calloc( sizeof(nameListType), 1 );
+          if ( !curNameNode ) {
+            snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+            awo->appCtx->postMessage( msg );
+            goto done;
+	  }
+          curNameNode->name = (char *) pvs[i]->get_name();
+          stat = avl_insert_node( pvNameTree, (void *) curNameNode, &dup );
+          if ( !( stat & 1 ) ) {
+            snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+            awo->appCtx->postMessage( msg );
+            goto done;
+	  }
+          if ( dup ) {
+            free( curNameNode );
+          }
+	}
+      }
+
+      cur = cur->blink;
+
+    }
+
+    // printf( "awc_pvlistFileSelectOk_cb, file name = [%s]\n", tmp );
+
+    ptr = strstr( tmp, "." );
+
+    if ( !ptr ) {
+      Strncat( tmp, ".pvlist", 255 );
+    }
+
+    f = fopen( tmp, "w" );
+    if ( !f ) {
+      strncpy( msg, activeWindowClass_str199, 255 );
+      Strncat( msg, tmp, 255 );
+      awo->appCtx->postMessage( msg );
+      goto done;
+    }
+
+    fileOpened = 1;
+
+    nPvs = 0;
+    stat = avl_get_first( pvNameTree, (void **) &curNameNode );
+    if ( !( stat & 1 ) ) {
+      snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+      awo->appCtx->postMessage( msg );
+      goto done;
+    }
+    while ( curNameNode ) {
+
+      fprintf( f, "%s\n", curNameNode->name );
+      nPvs++;
+
+      stat = avl_get_next( pvNameTree, (void **) &curNameNode );
+      if ( !( stat & 1 ) ) {
+        snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+        awo->appCtx->postMessage( msg );
+        goto done;
+      }
+
+    }
+
+    fileOpened = 0;
+
+    stat = fclose(f);
+    if ( stat < 0 ) {
+      strncpy( msg, activeWindowClass_str200, 255 );
+      Strncat( msg, tmp, 255 );
+      awo->appCtx->postMessage( msg );
+      goto done;
+    }
+
+    //printf( "Num PVs = %-d\n", nPvs );
+
+done:
+
+  XtRemoveCallback( w, XmNcancelCallback,
+   awc_fileSelectCancel_cb, (void *) awo );
+  XtRemoveCallback( w, XmNokCallback,
+   awc_fileSelectOk_cb, (void *) awo );
+
+  awo->operationComplete();
+
+  XtUnmanageChild( w ); // it's ok to unmanage a child again
+  XtDestroyWidget( w );
+
+  if ( avlTreeCreated ) {
+
+    // delete tree
+    curNameNode = NULL;
+    stat = avl_get_first( pvNameTree, (void **) &curNameNode );
+    if ( !( stat & 1 ) ) {
+      snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+      awo->appCtx->postMessage( msg );
+      return;
+    }
+    while ( curNameNode ) {
+
+      stat = avl_delete_node( pvNameTree, (void **) &curNameNode );
+      if ( !( stat & 1 ) ) {
+        snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+        awo->appCtx->postMessage( msg );
+        return;
+      }
+
+      free( curNameNode );
+      curNameNode = NULL;
+
+      stat = avl_get_first( pvNameTree, (void **) &curNameNode );
+      if ( !( stat & 1 ) ) {
+        snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+        awo->appCtx->postMessage( msg );
+        return;
+      }
+
+    }
+
+  }
+
+}
+
+static void awc_pvlistFileSelectCancel_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeWindowClass *awo = (activeWindowClass *) client;
+
+  // printf( "awc_pvlistFileSelectCancel_cb\n" );
+
+  XtRemoveCallback( w, XmNcancelCallback,
+   awc_fileSelectCancel_cb, (void *) awo );
+  XtRemoveCallback( w, XmNokCallback,
+   awc_fileSelectOk_cb, (void *) awo );
+
+  awo->operationComplete();
+
+  XtUnmanageChild( w );
+  XtDestroyWidget( w );
+
+}
+
+static void awc_pvlistFileSelectKill_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+widgetAndPointerPtr wp = (widgetAndPointerPtr) client;
+
+  // printf( "awc_pvlistFileSelectKill_cb\n" );
+
+  awc_fileSelectCancel_cb( wp->w, wp->client, NULL );
+
+}
 
 static void awc_WMExit_cb (
   Widget w,
@@ -1320,7 +1575,7 @@ long item;
   }
 
 }
-
+
 static void b2ReleaseExecute_cb (
    Widget w,
   XtPointer client,
@@ -1334,6 +1589,7 @@ int n, stat;
 Arg args[10];
 XmString xmStr1, xmStr2;
 Atom wm_delete_window;
+char *envPtr, text[255+1];
 
   block = (popupBlockPtr) client;
   item = (long) block->ptr;
@@ -1356,6 +1612,65 @@ Atom wm_delete_window;
        awo->topWidgetId(),
        awo->appCtx->ci.getColorMap(),
        awo->b2PressXRoot, awo->b2PressYRoot );
+
+      break;
+
+    case AWC_POPUP_DUMP_PVLIST:
+
+      awo->savedState = awo->state;
+      awo->state = AWC_WAITING;
+
+      envPtr = getenv( environment_str8 );
+      if ( envPtr ) {
+        strncpy( text, envPtr, 255 );
+        if ( envPtr[strlen(envPtr)] != '/' ) {
+          Strncat( text, "/", 255 );
+        }
+      }
+      else {
+        strncpy( text, "/tmp/", 255 );
+      }
+
+      xmStr1 = XmStringCreateLocalized( text );
+
+      xmStr2 = XmStringCreateLocalized( "*.pvlist" );
+
+      n = 0;
+      XtSetArg( args[n], XmNdirectory, xmStr1 ); n++;
+      XtSetArg( args[n], XmNpattern, xmStr2 ); n++;
+
+      awo->pvlistFileSelectBox =
+       XmCreateFileSelectionDialog( awo->top, "", args, n );
+
+      XmStringFree( xmStr1 );
+      XmStringFree( xmStr2 );
+
+      XtAddCallback( awo->pvlistFileSelectBox, XmNcancelCallback,
+       awc_pvlistFileSelectCancel_cb, (void *) awo );
+      XtAddCallback( awo->pvlistFileSelectBox, XmNokCallback,
+       awc_pvlistFileSelectOk_cb, (void *) awo );
+
+      // -----------------------------------------------------
+
+      awo->pvlistFileSelect.w = awo->pvlistFileSelectBox;
+      awo->pvlistFileSelect.client = (void *) awo;
+
+      wm_delete_window = XmInternAtom( XtDisplay(awo->top),
+       "WM_DELETE_WINDOW", False );
+
+      XmAddWMProtocolCallback( XtParent(awo->pvlistFileSelectBox),
+       wm_delete_window, awc_pvlistFileSelectKill_cb, &awo->pvlistFileSelect );
+
+      XtVaSetValues( XtParent(awo->pvlistFileSelectBox), XmNdeleteResponse,
+       XmDO_NOTHING, NULL );
+
+      // -----------------------------------------------------
+
+      XtManageChild( awo->pvlistFileSelectBox );
+
+      XSetWindowColormap( awo->d,
+       XtWindow(XtParent(awo->pvlistFileSelectBox)),
+       awo->appCtx->ci.getColorMap() );
 
       break;
 
@@ -12964,6 +13279,29 @@ Arg args[3];
      (XtPointer) &curBlockListNode->block );
 
   }
+
+
+  str = XmStringCreateLocalized( activeWindowClass_str201 );
+
+  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   b2ExecutePopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_DUMP_PVLIST;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseExecute_cb,
+   (XtPointer) &curBlockListNode->block );
 
 
   str = XmStringCreateLocalized( activeWindowClass_str152 );

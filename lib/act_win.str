@@ -194,5 +194,9 @@
 #define activeWindowClass_str195 (char *) "Paste Group Vis Info"
 #define activeWindowClass_str196 (char *) "Save To Current Path"
 #define activeWindowClass_str197 (char *) "Save file to "
+#define activeWindowClass_str198 (char *) "Internal error at line %-d in file %s\n"
+#define activeWindowClass_str199 (char *) "File open failure: "
+#define activeWindowClass_str200 (char *) "File close failure: "
+#define activeWindowClass_str201 (char *) "Dump PV List"
 
 #endif

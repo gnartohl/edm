@@ -3353,7 +3353,6 @@ void activeGraphicClass::getPvs (
   ProcessVariable *pvs[],
   int *n ) {
 
-  printf( "activeGraphicClass::getPvs\n" );
   *n = 0;
 
 }

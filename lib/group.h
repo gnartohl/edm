@@ -477,6 +477,11 @@ int undoFlip (
   int w,
   int h );
 
+void getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
+
 int showPvInfo (
   XButtonEvent *be,
   int x,
