@@ -557,6 +557,11 @@ int entryFormClass::addEmbeddedEf (
   char *label,
   entryFormClass **ef );
 
+int entryFormClass::addEmbeddedEf (
+  char *label,
+  char *buttonLabel,
+  entryFormClass **ef );
+
 int entryFormClass::addFontMenu (
   char *label,
   fontInfoClass *fi,

@@ -1229,6 +1229,16 @@ int entryFormClass::addEmbeddedEf (
   entryFormClass **ef )
 {
 
+  return addEmbeddedEf( label, NULL, ef );
+
+}
+
+int entryFormClass::addEmbeddedEf (
+  char *label,
+  char *buttonLabel,
+  entryFormClass **ef )
+{
+
 XmString str;
 
 embeddedEfEntry *cur;
@@ -1237,6 +1247,13 @@ embeddedEfEntry *cur;
 
   // cur->ef = ef;
   *ef = &cur->ef;
+
+  if ( buttonLabel ) {
+    str = XmStringCreateLocalized( buttonLabel );
+  }
+  else {
+    str = XmStringCreateLocalized( "" );
+  }
 
   if ( firstItem ) {
 
@@ -1247,6 +1264,7 @@ embeddedEfEntry *cur;
      XmNnavigationType, XmTAB_GROUP,
      XmNwidth, 25,
      XmNheight, 25,
+     XmNlabelString, str,
      XmNtopAttachment, XmATTACH_FORM,
      XmNrightAttachment, XmATTACH_FORM,
      NULL );
@@ -1262,6 +1280,7 @@ embeddedEfEntry *cur;
      XmNnavigationType, XmTAB_GROUP,
      XmNwidth, 25,
      XmNheight, 25,
+     XmNlabelString, str,
      XmNtopAttachment, XmATTACH_WIDGET,
      XmNtopWidget, curW,
      XmNleftAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -1271,6 +1290,8 @@ embeddedEfEntry *cur;
     curW = cur->activeW;
 
   }
+
+  XmStringFree( str );
 
   XtAddCallback( cur->activeW, XmNactivateCallback, embeddedEfPopup_cb,
    cur );
