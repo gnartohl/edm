@@ -240,7 +240,7 @@ int edmTextupdateClass::createFromFile(FILE *f, char *filename,
         actWin->incLine(); actWin->incLine();
         textColor.setIndex(index);
     }
-    else if (major < 2 || major <= 5)
+    else if (major < 2 || major == 5)
     {
         fscanf(f, "%d\n", &index ); actWin->incLine();
         textColor.setIndex(index);
@@ -262,7 +262,7 @@ int edmTextupdateClass::createFromFile(FILE *f, char *filename,
         actWin->incLine(); actWin->incLine();
         fillColor.setIndex(index);
     }
-    else if (major < 2 || major <= 5)
+    else if (major < 2 || major == 5)
     {
         fscanf(f, "%d\n", &index ); actWin->incLine();
         fillColor.setIndex(index);
