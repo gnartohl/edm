@@ -635,8 +635,8 @@ int menuMuxClass::createFromFile (
 
 int i, ii, n, stat, major, minor, release;
 char tmpS[MMUX_MAX_ENTRIES][15+1], tmpV[MMUX_MAX_ENTRIES][15+1];
-char tmpBufS[MMUX_MAX_STATES][MMUX_MAX_STATES][MMUX_MAX_STRING_SIZE+1];
-char tmpBufV[MMUX_MAX_STATES][MMUX_MAX_STATES][MMUX_MAX_STRING_SIZE+1];
+char tmpBufS[MMUX_MAX_ENTRIES][MMUX_MAX_STATES][MMUX_MAX_STRING_SIZE+1];
+char tmpBufV[MMUX_MAX_ENTRIES][MMUX_MAX_STATES][MMUX_MAX_STRING_SIZE+1];
 
 tagClass itemTag;
 
@@ -680,7 +680,6 @@ char *emptyStr = "";
     snprintf( tmpV[i], 15, "value%-d", i );
     itemTag.loadR( tmpV[i], MMUX_MAX_STATES, MMUX_MAX_STRING_SIZE+1,
      tmpBufV[i][0], &n, emptyStr );
-
   }
   itemTag.loadR( "endObjectProperties" );
 
