@@ -5231,6 +5231,57 @@ int i, result;
 
 }
 
+char *xyGraphClass::firstDragName ( void ) {
+
+  dragIndex = 0;
+  return dragName[dragIndex];
+
+}
+
+char *xyGraphClass::nextDragName ( void ) {
+
+  if ( dragIndex < (int) ( sizeof(dragName) / sizeof(char *) ) - 1 ) {
+    dragIndex++;
+    return dragName[dragIndex];
+  }
+  else {
+    return NULL;
+  }
+
+}
+
+char *xyGraphClass::dragValue (
+  int i
+) {
+
+int ii;
+
+  if ( ( i >= 0 ) && ( i < XYGC_K_MAX_TRACES ) ) {
+
+    return yPvExpStr[i].getExpanded();
+
+  }
+  else if ( ( i >= XYGC_K_MAX_TRACES ) && ( i < ( XYGC_K_MAX_TRACES * 2 ) ) ) {
+
+    ii = i - XYGC_K_MAX_TRACES;
+    return xPvExpStr[ii].getExpanded();
+
+  }
+  else if ( i == ( XYGC_K_MAX_TRACES * 2 ) ) {
+
+    return trigPvExpStr.getExpanded();
+
+  }
+  else if ( i == ( XYGC_K_MAX_TRACES * 2 + 1 ) ) {
+
+    return resetPvExpStr.getExpanded();
+
+  }
+
+  return NULL;
+
+}
+
 int xyGraphClass::activate (
   int pass,
   void *ptr )

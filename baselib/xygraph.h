@@ -107,6 +107,33 @@
 
 #ifdef __xygraph_cc
 
+#include "xygraph.str"
+
+static char *dragName[] = {
+  xyGraphClass_str1,
+  xyGraphClass_str2,
+  xyGraphClass_str3,
+  xyGraphClass_str4,
+  xyGraphClass_str5,
+  xyGraphClass_str6,
+  xyGraphClass_str7,
+  xyGraphClass_str8,
+  xyGraphClass_str9,
+  xyGraphClass_str10,
+  xyGraphClass_str11,
+  xyGraphClass_str12,
+  xyGraphClass_str13,
+  xyGraphClass_str14,
+  xyGraphClass_str15,
+  xyGraphClass_str16,
+  xyGraphClass_str17,
+  xyGraphClass_str18,
+  xyGraphClass_str19,
+  xyGraphClass_str20,
+  xyGraphClass_str21,
+  xyGraphClass_str22
+};
+
 static void updateTimerAction (
   XtPointer client,
   XtIntervalId *id );
@@ -907,6 +934,13 @@ int expand2nd (
   char *expansions[] );
 
 int containsMacros ( void );
+
+char *firstDragName ( void );
+
+char *nextDragName ( void );
+
+char *dragValue (
+  int i );
 
 int activate (
   int pass,
