@@ -1594,7 +1594,7 @@ int stat, opStat;
 XtTranslations parsedTrans;
 WidgetList children;
 Cardinal numChildren;
-unsigned char or, pd;
+unsigned char orien, pd;
 
 static char dragTrans[] =
   "#override None<Btn2Down>: startDrag()\n\
@@ -1681,11 +1681,11 @@ static XtActionsRec dragActions[] = {
        XtNumber(dragActions) );
 
       if ( orientation == MSLC_K_HORIZONTAL ) {
-        or = XmHORIZONTAL;
+        orien = XmHORIZONTAL;
         pd = XmMAX_ON_RIGHT;
       }
       else {
-        or = XmVERTICAL;
+        orien = XmVERTICAL;
         pd = XmMAX_ON_TOP;
       }
 
@@ -1698,7 +1698,7 @@ static XtActionsRec dragActions[] = {
        XmNheight, scaleH,
        XmNscaleWidth, scaleW,
        XmNscaleHeight, scaleH,
-       XmNorientation, or,
+       XmNorientation, orien,
        XmNprocessingDirection, pd,
        XmNscaleMultiple, 1,
        XmNminimum, 0,
