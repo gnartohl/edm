@@ -99,7 +99,7 @@ protected:
     void clone(const edmByteClass *rhs, const char *classname);
     int drawActiveFull();
     int drawActiveBits();
-    inline void innerDrawFull(int value, int i, int mask, int current, 
+    inline void innerDrawFull(int value, int i, int mask, 
                                      int &previous, int &lastseg);
     inline void innerDrawBits(int value, int i, int mask);
 

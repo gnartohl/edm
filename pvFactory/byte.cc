@@ -277,8 +277,8 @@ int edmByteClass::genericEdit() // create Property Dialog
 int edmByteClass::makeOutline()
 //
 // The outline of the byte widget is the segment list for an XDrawSegments 
-// call.  It is also used to get coordinates for the XFillRectangle calls for 
-// coloring the bits. 
+// call.  It is also used to get coordinates for the XFillRectangle calls 
+// for coloring the bits. 
 //
 {
    float bitLen;
@@ -618,22 +618,19 @@ int edmByteClass::deactivate(int pass)
 }
 
 inline void edmByteClass::innerDrawFull(int value, int i, int mask, 
-                                  int current, int &previous, int &lastseg)
+                                  int &previous, int &lastseg)
 {
+  int current;
+
   if (i < nobt)
      current = (value & mask)?1:0;
-  if (current != previous || i == nobt)
+  else
+     current = previous?0:1; 	// save checking for nobt in next line.
+
+  if (current != previous)
   {
-     if (previous)
-     {
-        // set to on-color
-        actWin->executeGc.setFG( onPixel );
-     }
-     else
-     {
-        // set to off-color
-        actWin->executeGc.setFG( offPixel );
-     }
+     actWin->executeGc.setFG( previous?onPixel:offPixel );
+
      if (w > h)
         XFillRectangle(actWin->d, XtWindow(actWin->executeWidget),
                     actWin->executeGc.normGC(), 
@@ -666,16 +663,8 @@ int edmByteClass::drawActive()
 
 inline void edmByteClass::innerDrawBits(int value, int i, int mask)
 {
-    if (value & mask)
-    {
-       // set to on-color
-       actWin->executeGc.setFG( onPixel );
-    }
-    else
-    {
-       // set to off-color
-       actWin->executeGc.setFG( offPixel );
-    }
+    actWin->executeGc.setFG( (value & mask)?onPixel:offPixel );
+
     if (w > h)
     {
        XFillRectangle(actWin->d, XtWindow(actWin->executeWidget),
@@ -770,7 +759,6 @@ int edmByteClass::drawActiveFull()
   {
      lastval = value;
      value = valuePvId->get_int();
-     int current = 0;
      int previous = 0;
      int lastseg = 0;
      int i = 0;
@@ -782,7 +770,7 @@ int edmByteClass::drawActiveFull()
         mask <<= 1;
         for (i = 1; i <= nobt; i++, mask <<= 1)
         {
-           innerDrawFull(value, i, mask, current, previous, lastseg);
+           innerDrawFull(value, i, mask, previous, lastseg);
         }
      }
      else  // BIGENDIAN
@@ -792,7 +780,7 @@ int edmByteClass::drawActiveFull()
         mask >>= 1;
         for (i = 1; i <= nobt; i++, mask >>= 1)
         {
-           innerDrawFull(value, i, mask, current, previous, lastseg);
+           innerDrawFull(value, i, mask, previous, lastseg);
         }
      }
   }
