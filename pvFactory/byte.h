@@ -139,7 +139,7 @@ protected:
 
     XSegment *theOutline;
 
-    char bufPvName[39+1];
+    char bufPvName[PV_Factory::MAX_PV_NAME+1];
     int bufOnColor;
     int bufOffColor;
 
