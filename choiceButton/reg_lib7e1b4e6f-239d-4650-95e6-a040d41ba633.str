@@ -1,0 +1,6 @@
+#ifndef __reg_lib7e1b4e6f_239d_4650_95e6_a040d41ba633_str
+#define __reg_lib7e1b4e6f_239d_4650_95e6_a040d41ba633_str 1
+
+#define reg_str1 (char *) "Choice Button"
+
+#endif
