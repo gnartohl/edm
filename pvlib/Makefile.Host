@@ -26,6 +26,7 @@ PROD_LIBS += ca Com
 
 USR_INCLUDES = -I../ -I../../lib
 
+SRCS += reg_pvs.cc
 SRCS += epicsPv.cc
 SRCS += pv.cc
 
