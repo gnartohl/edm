@@ -67,7 +67,7 @@ public:
     bool put(const char *value);
     
 protected:
-    friend CALC_PV_Factory;
+    friend class CALC_PV_Factory;
     // hidden, use CALC_PV_Factory::create()/ProcessVariable::release()
     CALC_ProcessVariable(const char *name,
                          HashedExpression *expression,
