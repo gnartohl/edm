@@ -1283,8 +1283,8 @@ short xVal, yVal;
    actWin->executeGc.normGC(), x, y, w, h );
 
   actWin->executeGc.setFG( actWin->ci->pix(gridColor) );
-  actWin->executeGc.setLineWidth(1);
   actWin->executeGc.setLineStyle( LineSolid );
+  actWin->executeGc.setLineWidth(1);
 
   // x grid
   if ( xLabelGrid && ( xNumLabelIntervals.value() > 0 ) ) {
@@ -1527,26 +1527,31 @@ short xVal, yVal;
 
   actWin->executeGc.saveFg();
 
-  actWin->executeGc.setFG( actWin->ci->pix(fgColor) );
+  actWin->executeGc.setFG( actWin->ci->pix(bgColor) );
   actWin->executeGc.setLineWidth(1);
   actWin->executeGc.setLineStyle( LineSolid );
 
   // erase all
   XDrawRectangle( actWin->d, pixmap,
-   actWin->executeGc.eraseGC(), 0, 0,
+   actWin->executeGc.normGC(), 0, 0,
    w, h );
 
   XFillRectangle( actWin->d, pixmap,
-   actWin->executeGc.eraseGC(), 0, 0,
+   actWin->executeGc.normGC(), 0, 0,
    w, h );
+
+  actWin->executeGc.setFGforGivenBG( actWin->ci->pix(fgColor),
+   actWin->ci->pix(bgColor) );
 
   // border
   XDrawRectangle( actWin->d, pixmap,
    actWin->executeGc.normGC(), 0, 0, w, h );
 
-  actWin->executeGc.setFG( actWin->ci->pix(gridColor) );
+  actWin->executeGc.setFGforGivenBG( actWin->ci->pix(gridColor),
+   actWin->ci->pix(bgColor) );
 
   // x grid
+  actWin->executeGc.setLineWidth(2);
   if ( xLabelGrid && ( xNumLabelIntervals.value() > 0 ) ) {
 
     xFactor = (double) ( plotAreaW ) / ( xMax.value() - xMin.value() );
@@ -1618,6 +1623,7 @@ short xVal, yVal;
   }
 
   // y1 grid
+  actWin->executeGc.setLineWidth(1);
   if ( y1LabelGrid && ( y1NumLabelIntervals.value() > 0 ) ) {
 
     y1Factor = (double) ( plotAreaH ) / ( y1Max.value() - y1Min.value() );
@@ -1709,7 +1715,8 @@ short xVal, yVal;
     xFactor = ( (double) ( plotAreaW ) ) / xmax;
     xOffset = 1;
 
-    actWin->executeGc.setFG( actWin->ci->pix(plotColor[i]) );
+    actWin->executeGc.setFGforGivenBG( actWin->ci->pix(plotColor[i]),
+   actWin->ci->pix(bgColor) );
 
     for ( ii=0; ii<yPvCount[i]; ii++ ) {
 
@@ -1826,7 +1833,8 @@ int clipStat;
       //yArrayNeedUpdate[i] = 1;
       if ( yArrayNeedUpdate[i] ) {
 
-        actWin->executeGc.setFG( actWin->ci->pix(plotColor[i]) );
+        actWin->executeGc.setFGforGivenBG( actWin->ci->pix(plotColor[i]),
+         actWin->ci->pix(bgColor) );
 
         traceIsDrawn[i] = 0;
 
@@ -1879,7 +1887,8 @@ int clipStat;
 
       if ( yArrayNeedUpdate[i] ) {
 
-        actWin->executeGc.setFG( actWin->ci->pix(plotColor[i]) );
+        actWin->executeGc.setFGforGivenBG( actWin->ci->pix(plotColor[i]),
+         actWin->ci->pix(bgColor) );
 
         traceIsDrawn[i] = 0;
 
@@ -1965,7 +1974,8 @@ double dValue, xmax, xFactor, xOffset, y1Factor, y1Offset;
     //yArrayNeedUpdate[i] = 1;
     if ( yArrayNeedUpdate[i] ) {
 
-      actWin->executeGc.setFG( actWin->ci->pix(plotColor[i]) );
+      actWin->executeGc.setFGforGivenBG( actWin->ci->pix(plotColor[i]),
+       actWin->ci->pix(bgColor) );
 
       traceIsDrawn[i] = 1;
 
@@ -2066,7 +2076,8 @@ double dValue, xmax, xFactor, xOffset, y1Factor, y1Offset;
 
     if ( yArrayNeedUpdate[i] ) {
 
-      actWin->executeGc.setFG( actWin->ci->pix(plotColor[i]) );
+      actWin->executeGc.setFGforGivenBG( actWin->ci->pix(plotColor[i]),
+       actWin->ci->pix(bgColor) );
 
       traceIsDrawn[i] = 1;
 
