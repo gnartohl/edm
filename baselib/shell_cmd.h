@@ -23,7 +23,7 @@
 #include "entry_form.h"
 
 #define SHCMDC_MAJOR_VERSION 2
-#define SHCMDC_MINOR_VERSION 1
+#define SHCMDC_MINOR_VERSION 2
 #define SHCMDC_RELEASE 0
 
 #ifdef __shell_cmd_cc
@@ -48,6 +48,26 @@ static void shellCmdThread (
 static void shcmdc_executeCmd (
   XtPointer client,
   XtIntervalId *id );
+
+static void shcmdc_pw_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void shcmdc_pw_update (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void shcmdc_pw_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void shcmdc_pw_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 static void shcmdc_edit_ok (
   Widget w,
@@ -99,6 +119,26 @@ friend void shcmdc_executeCmd (
   XtPointer client,
   XtIntervalId *id );
 
+friend void shcmdc_pw_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void shcmdc_pw_update (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void shcmdc_pw_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void shcmdc_pw_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 friend void shcmdc_edit_ok (
   Widget w,
   XtPointer client,
@@ -147,6 +187,13 @@ char bufLabel[127+1];
 expStringClass label;
 //char label[127+1];
 
+char pw[31+1];
+char bufPw1[31+1];
+char bufPw2[31+1];
+int usePassword;
+
+int lock, bufLock;
+
 int activeMode;
 
 double threadSecondsToDelay, bufThreadSecondsToDelay;
@@ -155,6 +202,10 @@ XtIntervalId timer;
 int timerActive, timerValue;
 int multipleInstancesAllowed, bufMultipleInstancesAllowed;
 THREAD_HANDLE thread;
+
+int valueFormX, valueFormY, valueFormW, valueFormH, valueFormMaxH;
+
+int needExecute, needWarning;
 
 public:
 
@@ -232,6 +283,8 @@ void shellCmdClass::btnUp (
   int buttonNumber,
   int *action );
 
+void shellCmdClass::executeCmd ( void );
+
 void shellCmdClass::btnDown (
   int x,
   int y,
@@ -260,6 +313,9 @@ void shellCmdClass::changeDisplayParams (
   int bgColor,
   int topShadowColor,
   int botShadowColor );
+
+void shellCmdClass::executeDeferred ( void );
+
 
 };
 

@@ -79,6 +79,58 @@ threadParamBlockPtr threadParamBlock =
 
 }
 
+static void shcmdc_pw_update (
+  Widget w,
+  XtPointer client,
+  XtPointer call ) {
+
+shellCmdClass *shcmdo = (shellCmdClass *) client;
+
+}
+
+static void shcmdc_pw_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call ) {
+
+shellCmdClass *shcmdo = (shellCmdClass *) client;
+
+  shcmdc_pw_update( w, client, call );
+  shcmdo->ef.popdown();
+
+  if ( strcmp( shcmdo->bufPw1, shcmdo->pw ) == 0 ) {
+    shcmdo->needExecute = 1;
+    shcmdo->actWin->addDefExeNode( shcmdo->aglPtr );
+  }
+  else {
+    shcmdo->needWarning = 1;
+    shcmdo->actWin->addDefExeNode( shcmdo->aglPtr );
+  }
+
+}
+
+static void shcmdc_pw_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call ) {
+
+shellCmdClass *shcmdo = (shellCmdClass *) client;
+
+  shcmdc_pw_update( w, client, call );
+
+}
+
+static void shcmdc_pw_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call ) {
+
+shellCmdClass *shcmdo = (shellCmdClass *) client;
+
+  shcmdo->ef.popdown();
+
+}
+
 static void shcmdc_executeCmd (
   XtPointer client,
   XtIntervalId *id )
@@ -193,6 +245,38 @@ shellCmdClass *shcmdo = (shellCmdClass *) client;
 
   shcmdo->threadSecondsToDelay = shcmdo->bufThreadSecondsToDelay;
 
+  if ( blank(shcmdo->bufPw1) || blank(shcmdo->bufPw2) ) {
+    if ( blank(shcmdo->pw) ) {
+      shcmdo->usePassword = 0;
+    }
+    else {
+      shcmdo->usePassword = 1;
+    }
+  }
+  else if ( strcmp( shcmdo->bufPw1, shcmdo->bufPw2 ) != 0 ) {
+    shcmdo->actWin->appCtx->postMessage( "Password not changed" );
+    if ( blank(shcmdo->pw) ) {
+      shcmdo->usePassword = 0;
+    }
+    else if ( strcmp( shcmdo->pw, "*" ) == 0 ) {
+      shcmdo->usePassword = 0;
+    }
+    else {
+      shcmdo->usePassword = 1;
+    }
+  }
+  else {
+    strcpy( shcmdo->pw, shcmdo->bufPw2 );
+    if ( strcmp( shcmdo->pw, "*" ) == 0 ) {
+      shcmdo->usePassword = 0;
+    }
+    else {
+      shcmdo->usePassword = 1;
+    }
+  }
+
+  shcmdo->lock = shcmdo->bufLock;
+
   shcmdo->updateDimensions();
 
 }
@@ -267,6 +351,9 @@ shellCmdClass::shellCmdClass ( void ) {
   autoExecInterval = 0;
   timerActive = 0;
   fontList = NULL;
+  strcpy( pw, "" );
+  usePassword = 0;
+  lock = 0;
 
 }
 
@@ -320,6 +407,10 @@ activeGraphicClass *shcmdo = (activeGraphicClass *) this;
   multipleInstancesAllowed = source->multipleInstancesAllowed;
 
   threadSecondsToDelay = source->threadSecondsToDelay;
+
+  strcpy( pw, source->pw );
+  usePassword = source->usePassword;
+  lock = source->lock;
 
   timerActive = 0;
 
@@ -416,6 +507,10 @@ float val;
 
   // ver 2.1.0
   fprintf( f, "%g\n", threadSecondsToDelay );
+
+  // ver 2.2.0
+  writeStringToFile( f, pw );
+  fprintf( f, "%-d\n", lock );
 
   return 1;
 
@@ -514,6 +609,22 @@ float val;
   }
   else {
     threadSecondsToDelay = 0;
+  }
+
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 1 ) ) ) {
+    readStringFromFile( pw, 31+1, f ); actWin->incLine();
+    if ( blank(pw) ) {
+      usePassword = 0;
+    }
+    else {
+      usePassword = 1;
+    }
+    fscanf( f, "%d\n", &lock );
+  }
+  else {
+    strcpy( pw, "" );
+    usePassword = 0;
+    lock = 0;
   }
 
   actWin->fi->loadFontTag( fontTag );
@@ -836,6 +947,11 @@ char title[32], *ptr;
 
   bufThreadSecondsToDelay = threadSecondsToDelay;
 
+  strcpy( bufPw1, "" );
+  strcpy( bufPw2, "" );
+
+  bufLock = lock;
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -847,8 +963,18 @@ char title[32], *ptr;
   ef.addTextField( shellCmdClass_str6, 30, &bufW );
   ef.addTextField( shellCmdClass_str7, 30, &bufH );
 
-  ef.addTextField( shellCmdClass_str14, 30, bufShellCommand, 127 );
+  if ( !lock ) {
+    ef.addTextField( shellCmdClass_str14, 30, bufShellCommand, 127 );
+  }
+
   ef.addTextField( shellCmdClass_str13, 30, bufLabel, 127 );
+
+  if ( !lock ) {
+    ef.addPasswordField( "Password", 30, bufPw1, 31 );
+    ef.addPasswordField( "Confirm", 30, bufPw2, 31 );
+    ef.addToggle( "Lock (forever)", &bufLock );
+  }
+
   ef.addToggle( shellCmdClass_str15, &bufInvisible );
   ef.addToggle( shellCmdClass_str16, &bufCloseAction );
   ef.addToggle( shellCmdClass_str17, &bufMultipleInstancesAllowed );
@@ -882,7 +1008,9 @@ int shellCmdClass::editCreate ( void ) {
 
 int shellCmdClass::edit ( void ) {
 
-  this->genericEdit();
+int stat;
+
+  stat = this->genericEdit();
   ef.finished( shcmdc_edit_ok, shcmdc_edit_apply, shcmdc_edit_cancel, this );
   actWin->currentEf = &ef;
   ef.popup();
@@ -1118,6 +1246,7 @@ int shellCmdClass::activate (
     thread = NULL;
     activeMode = 1;
     aglPtr = ptr;
+    needExecute = needWarning = 0;
 
     if ( autoExecInterval > 0.5 ) {
       timerValue = (int) ( autoExecInterval * 1000.0 );
@@ -1149,6 +1278,9 @@ int shellCmdClass::deactivate (
 int stat;
 
   if ( pass == 1 ) {
+
+    if ( ef.formIsPoppedUp() ) ef.popdown();
+
     activeMode = 0;
     if ( timerActive ) {
       XtRemoveTimeOut( timer );
@@ -1161,6 +1293,7 @@ int stat;
         thread = NULL;
       }
     }
+
   }
 
   return 1;
@@ -1234,13 +1367,7 @@ void shellCmdClass::btnUp (
 
 }
 
-void shellCmdClass::btnDown (
-  int x,
-  int y,
-  int buttonState,
-  int buttonNumber,
-  int *action )
-{
+void shellCmdClass::executeCmd ( void ) {
 
 int stat;
 threadParamBlockPtr threadParamBlock;
@@ -1248,7 +1375,7 @@ threadParamBlockPtr threadParamBlock;
   actWin->substituteSpecial( 127, shellCommand.getExpanded(),
    bufShellCommand );
 
-  //printf( "shellCmdClass::btnDown, shellCommand = [%s]\n",
+  //printf( "shellCmdClass::executeCmd, shellCommand = [%s]\n",
   // bufShellCommand );
 
   if ( multipleInstancesAllowed ) {
@@ -1299,6 +1426,55 @@ threadParamBlockPtr threadParamBlock;
     }
 
   }
+
+}
+
+void shellCmdClass::btnDown (
+  int x,
+  int y,
+  int buttonState,
+  int buttonNumber,
+  int *action )
+{
+
+  if ( usePassword ) {
+
+    if ( !ef.formIsPoppedUp() ) {
+
+      valueFormX = actWin->x + x;
+      valueFormY = actWin->y + y;
+      valueFormW = 0;
+      valueFormH = 0;
+      valueFormMaxH = 600;
+
+      ef.create( actWin->top,
+       actWin->appCtx->ci.getColorMap(),
+       &valueFormX, &valueFormY,
+       &valueFormW, &valueFormH, &valueFormMaxH,
+       "", NULL, NULL, NULL );
+
+      strcpy( bufPw1, "" );
+
+      ef.addPasswordField( "Password", 30, bufPw1, 31 );
+
+      ef.finished( shcmdc_pw_ok, shcmdc_pw_apply, shcmdc_pw_cancel, this );
+
+      ef.popup();
+
+      *action = 0;
+      return;
+
+    }
+    else {
+
+      *action = 0;
+      return;
+
+    }
+
+  }
+
+  executeCmd();
 
   *action = closeAction;
 
@@ -1359,6 +1535,33 @@ void shellCmdClass::changeDisplayParams (
     actWin->fi->loadFontTag( fontTag );
     fs = actWin->fi->getXFontStruct( fontTag );
     updateDimensions();
+  }
+
+}
+
+void shellCmdClass::executeDeferred ( void ) {
+
+  int ne, nw;
+
+  actWin->appCtx->proc->lock();
+  ne = needExecute; needExecute = 0;
+  nw = needWarning; needWarning = 0;
+  actWin->remDefExeNode( aglPtr );
+  actWin->appCtx->proc->unlock();
+
+  if ( !activeMode ) return;
+
+  if ( ne ) {
+
+    executeCmd();
+    if ( closeAction ) actWin->closeDeferred( 2 );
+
+  }
+
+  if ( nw ) {
+
+    actWin->appCtx->postMessage( "Incorrect Password" );
+
   }
 
 }
