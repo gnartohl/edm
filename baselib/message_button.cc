@@ -1589,6 +1589,11 @@ void activeMessageButtonClass::btnUp (
   int *action )
 {
 
+  if ( usePassword ) {
+    *action = 0;
+    return;
+  }
+
   performBtnUpAction();
 
   *action = releaseAction;
@@ -1876,14 +1881,21 @@ int nc, nd, ne, npda, npua, nw;
 
     performBtnDownAction();
 
-    if ( !toggle ) {
-      actWin->appCtx->proc->lock();
-      needPerformUpAction = 1;
-      actWin->addDefExeNode( aglPtr );
-      actWin->appCtx->proc->unlock();
-    }
+    if ( pressAction ) {
 
-    if ( pressAction ) actWin->closeDeferred( 2 );
+      actWin->closeDeferred( 2 );
+
+    }
+    else {
+
+      if ( !toggle ) {
+        actWin->appCtx->proc->lock();
+        needPerformUpAction = 1;
+        actWin->addDefExeNode( aglPtr );
+        actWin->appCtx->proc->unlock();
+      }
+
+    }
 
   }
 
