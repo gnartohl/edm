@@ -143,8 +143,6 @@ double fvalue;
     }
   }
 
-  mslo->controlAdjusted = 1;
-
 }
 
 static void msloIndicatorDragCB (
@@ -202,8 +200,6 @@ double fvalue;
       if ( !stat ) printf( activeMotifSliderClass_str59 );
     }
   }
-
-  mslo->controlAdjusted = 1;
 
 }
 
@@ -390,22 +386,20 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
 int stat;
 double fv;
 
-  if ( mslo->updateControlTimerActive ) {
-    mslo->updateControlTimer = appAddTimeOut(
-     mslo->actWin->appCtx->appContext(),
-     mslo->updateControlTimerValue, mslc_updateControl, client );
-  }
-  else {
-    mslo->updateControlTimer = 0;
-    return;
-  }
+  mslo->updateControlTimerActive = 0;
+  mslo->updateControlTimer = 0;
+
+  //if ( mslo->updateControlTimerActive ) {
+  //  mslo->updateControlTimer = appAddTimeOut(
+  //   mslo->actWin->appCtx->appContext(),
+  //   mslo->updateControlTimerValue, mslc_updateControl, client );
+  //}
+  //else {
+  //  mslo->updateControlTimer = 0;
+  //  return;
+  //}
 
   if ( !mslo->active || !mslo->init ) return;
-
-  if ( mslo->controlAdjusted ) {
-    mslo->controlAdjusted = 0;
-    return;
-  }
 
   if ( mslo->prevScaleV != -1 ) {
     //if ( mslo->oldControlV == mslo->oneControlV ) return;
@@ -503,8 +497,6 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
       mslo->actWin->appCtx->proc->unlock();
     }
   }
-
-  mslo->controlAdjusted = 1;
 
   mslo->needErase = 1;
   mslo->needDraw = 1;
@@ -802,6 +794,14 @@ int st, sev;
 
   if ( mslo->oneControlV != mslo->oldControlV ) {
     mslo->doTimerUpdate = 1;
+    if ( !mslo->updateControlTimerActive ) {
+      mslo->updateControlTimerActive = 1;
+      mslo->updateControlTimerValue = 100;
+      mslo->updateControlTimer = appAddTimeOut(
+       mslo->actWin->appCtx->appContext(), mslo->updateControlTimerValue,
+       mslc_updateControl, (void *) mslo );
+    }
+
   }
 
   // xtimer updates image
@@ -2013,8 +2013,6 @@ double mult, fvalue;
         }
       }
 
-      mslo->controlAdjusted = 1;
-
       break;
 #endif
 
@@ -2065,8 +2063,6 @@ double mult, fvalue;
           if ( !stat ) printf( activeMotifSliderClass_str59 );
         }
       }
-
-      mslo->controlAdjusted = 1;
 
       break;
 #endif
@@ -2177,8 +2173,6 @@ double mult, fvalue;
           if ( !stat ) printf( activeMotifSliderClass_str59 );
         }
       }
-
-      mslo->controlAdjusted = 1;
 
     }
 
@@ -2370,8 +2364,6 @@ double fvalue, mult;
         }
       }
 
-      mslo->controlAdjusted = 1;
-
       break;
 #endif
 
@@ -2422,8 +2414,6 @@ double fvalue, mult;
           if ( !stat ) printf( activeMotifSliderClass_str59 );
         }
       }
-
-      mslo->controlAdjusted = 1;
 
       break;
 #endif
@@ -2513,7 +2503,6 @@ int opStat;
       oldControlV = 0;
       updateControlTimerActive = 0;
       updateControlTimer = 0;
-      controlAdjusted = 0;
       incrementTimerActive = 0;
       doTimerUpdate = 1;
 
@@ -2588,10 +2577,10 @@ int opStat;
 
       if ( opStat & 1 ) {
 
-        updateControlTimerActive = 1;
-        updateControlTimerValue = 100;
-        updateControlTimer = appAddTimeOut( actWin->appCtx->appContext(),
-         updateControlTimerValue, mslc_updateControl, (void *) this );
+        //updateControlTimerActive = 1;
+        //updateControlTimerValue = 100;
+        //updateControlTimer = appAddTimeOut( actWin->appCtx->appContext(),
+        // updateControlTimerValue, mslc_updateControl, (void *) this );
 
         opComplete = 1;
 
@@ -2653,10 +2642,12 @@ int activeMotifSliderClass::deactivate (
       unconnectedTimer = 0;
     }
 
-    updateControlTimerActive = 0;
-    if ( updateControlTimer ) {
-      XtRemoveTimeOut( updateControlTimer );
-      updateControlTimer = 0;
+    if ( updateControlTimerActive ) {
+      updateControlTimerActive = 0;
+      if ( updateControlTimer ) {
+        XtRemoveTimeOut( updateControlTimer );
+        updateControlTimer = 0;
+      }
     }
 
     if ( frameWidget ) {

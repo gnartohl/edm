@@ -89,21 +89,24 @@ activeSliderClass *slo = (activeSliderClass *) client;
 int stat, xOfs;
 double fv;
 
-  if ( slo->updateControlTimerActive ) {
-    if ( slo->updateControlTimerValue < 100 ) {
-      slo->updateControlTimerValue = 100;
-    }
-    slo->updateControlTimer = appAddTimeOut(
-     slo->actWin->appCtx->appContext(),
-     slo->updateControlTimerValue, slc_updateControl, client );
-  }
-  else {
-    return;
-  }
+  slo->updateControlTimerActive = 0;
+  slo->updateControlTimer = 0;
+
+  //if ( slo->updateControlTimerActive ) {
+  //  if ( slo->updateControlTimerValue < 100 ) {
+  //    slo->updateControlTimerValue = 100;
+  //  }
+  //  slo->updateControlTimer = appAddTimeOut(
+  //   slo->actWin->appCtx->appContext(),
+  //   slo->updateControlTimerValue, slc_updateControl, client );
+  //}
+  //else {
+  //  return;
+  //}
 
   if ( slo->controlAdjusted ) {
     slo->controlAdjusted = 0;
-    return;
+    //return;
   }
 
   //if ( slo->oldControlV == slo->oneControlV ) return;
@@ -370,12 +373,12 @@ activeSliderClass *slo = (activeSliderClass *) client;
 
   slc_value_apply ( w, client, call );
 
+  slo->ef.popdown();
+
   if ( slo->eBuf ) {
     delete slo->eBuf;
     slo->eBuf = NULL;
   }
-
-  slo->ef.popdown();
 
 }
 
@@ -387,12 +390,12 @@ static void slc_value_cancel (
 
 activeSliderClass *slo = (activeSliderClass *) client;
 
+  slo->ef.popdown();
+
   if ( slo->eBuf ) {
     delete slo->eBuf;
     slo->eBuf = NULL;
   }
-
-  slo->ef.popdown();
 
 }
 
@@ -534,13 +537,13 @@ activeSliderClass *slo = (activeSliderClass *) client;
 
   slc_edit_update ( w, client, call );
 
+  slo->ef.popdown();
+  slo->operationComplete();
+
   if ( slo->eBuf ) {
     delete slo->eBuf;
     slo->eBuf = NULL;
   }
-
-  slo->ef.popdown();
-  slo->operationComplete();
 
 }
 
@@ -552,13 +555,13 @@ static void slc_edit_cancel (
 
 activeSliderClass *slo = (activeSliderClass *) client;
 
+  slo->ef.popdown();
+  slo->operationCancel();
+
   if ( slo->eBuf ) {
     delete slo->eBuf;
     slo->eBuf = NULL;
   }
-
-  slo->ef.popdown();
-  slo->operationCancel();
 
 }
 
@@ -570,13 +573,14 @@ static void slc_edit_cancel_delete (
 
 activeSliderClass *slo = (activeSliderClass *) client;
 
+  slo->ef.popdown();
+  slo->operationCancel();
+
   if ( slo->eBuf ) {
     delete slo->eBuf;
     slo->eBuf = NULL;
   }
 
-  slo->ef.popdown();
-  slo->operationCancel();
   slo->erase();
   slo->deleteRequest = 1;
   slo->drawAll();
@@ -727,6 +731,13 @@ int st, sev;
 
   if ( slo->oneControlV != slo->oldControlV ) {
     slo->doTimerUpdate = 1;
+    if ( !slo->updateControlTimerActive ) {
+      slo->updateControlTimerActive = 1;
+      slo->updateControlTimerValue = 100;
+      slo->updateControlTimer = appAddTimeOut(
+       slo->actWin->appCtx->appContext(), slo->updateControlTimerValue,
+       slc_updateControl, (void *) slo );
+    }
   }
 
 }
@@ -3180,6 +3191,7 @@ char callbackName[63+1];
       oldCtrlStat = oldCtrlSev = oldReadStat = oldReadSev = -1;
       oldControlV = 0;
       updateControlTimerActive = 0;
+      updateControlTimer = 0;
       controlAdjusted = 0;
       incrementTimerActive = 0;
       controlPvId = controlLabelPvId = readPvId = readLabelPvId =
@@ -3364,10 +3376,10 @@ char callbackName[63+1];
 
       if ( opStat & 1 ) {
 
-        updateControlTimerActive = 1;
-        updateControlTimerValue = 100;
-        updateControlTimer = appAddTimeOut( actWin->appCtx->appContext(),
-         updateControlTimerValue, slc_updateControl, (void *) this );
+        //updateControlTimerActive = 1;
+        //updateControlTimerValue = 100;
+        //updateControlTimer = appAddTimeOut( actWin->appCtx->appContext(),
+        // updateControlTimerValue, slc_updateControl, (void *) this );
 
         opComplete = 1;
 
@@ -3425,8 +3437,13 @@ int activeSliderClass::deactivate (
 
   case 1:
 
-    updateControlTimerActive = 0;
-    XtRemoveTimeOut( updateControlTimer );
+    if ( updateControlTimerActive ) {
+      updateControlTimerActive = 0;
+      if ( updateControlTimer ) {
+        XtRemoveTimeOut( updateControlTimer );
+        updateControlTimer = 0;
+      }
+    }
 
     XtRemoveEventHandler( sliderWidget,
      ButtonPressMask|ButtonReleaseMask|PointerMotionMask|ExposureMask|

@@ -277,7 +277,6 @@ friend void mslc_edit_cancel_delete (
 XtIntervalId updateControlTimer;
 int updateControlTimerValue;
 int updateControlTimerActive;
-int controlAdjusted;
 
 double oneControlV, savedV;
 
