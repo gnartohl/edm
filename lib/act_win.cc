@@ -9825,6 +9825,27 @@ Boolean nothingDone = False;
 
         // still highlighted
 
+	// But let another, overlapping, higher object steal focus
+
+        ptr = NULL;
+        curBtn = awo->btnFocusActionHead->blink;
+        while ( ( curBtn != awo->btnFocusActionHead ) &&
+                ( ptr == NULL ) ) {
+
+          ptr = curBtn->node->enclosingObject( me->x, me->y );
+          if ( ptr ) {
+            awo->highlightedObject->pointerOut( me, winX, winY, me->state );
+            awo->highlightedObject = NULL;
+            numOut++;
+            foundAction = 1;
+            awo->cursor.set( XtWindow(awo->executeWidget), CURSOR_K_DEFAULT );
+	    break;
+          }
+
+          curBtn = curBtn->blink;
+
+        }
+
       }
       else {
 
