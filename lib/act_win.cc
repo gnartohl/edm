@@ -13161,7 +13161,7 @@ activeGraphicListPtr node = (activeGraphicListPtr) ptr;
 
 int activeWindowClass::execute ( void ) {
 
-int pass, opStat, stat, nTries, btnUp, btnDown, btnDrag, btnFocus;
+int pass, opStat, stat, nTries, btnUp, btnDown, btnDrag, btnFocus, cnt;
 activeGraphicListPtr cur, cur1;
 btnActionListPtr curBtn;
 int numMuxMacros;
@@ -13262,6 +13262,7 @@ char callbackName[63+1];
 
       opStat = 1;
 
+      cnt = 0;
       cur = head->flink;
       while ( cur != head ) {
 
@@ -13272,13 +13273,21 @@ char callbackName[63+1];
 
         cur = cur->flink;
 
+#if 1
+        cnt++;
+        if ( !( cnt % 50 ) ) {
+          ca_pend_io( 1.0 );
+          processAllEvents( appCtx->appContext(), d );
+	}
+#endif
+
       }
 
+#if 0
       if ( !( opStat & 1 ) ) {
-
         processAllEvents( appCtx->appContext(), d );
-
       }
+#endif
 
       nTries--;
 
@@ -13363,7 +13372,7 @@ char callbackName[63+1];
 
 int activeWindowClass::reexecute ( void ) { // for multiplexor
 
-int pass, opStat, stat, nTries;
+int pass, opStat, stat, nTries, cnt;
 activeGraphicListPtr cur, cur1;
 
 int numMuxMacros;
@@ -13430,6 +13439,7 @@ char **muxMacro, **muxExpansion;
 
       opStat = 1;
 
+      cnt = 0;
       cur = head->flink;
       while ( cur != head ) {
 
@@ -13440,13 +13450,21 @@ char **muxMacro, **muxExpansion;
 
         cur = cur->flink;
 
+#if 1
+        cnt++;
+        if ( !( cnt % 50 ) ) {
+          ca_pend_io( 1.0 );
+          processAllEvents( appCtx->appContext(), d );
+	}
+#endif
+
       }
 
+#if 0
       if ( !( opStat & 1 ) ) {
-
         processAllEvents( appCtx->appContext(), d );
-
       }
+#endif
 
       nTries--;
 
@@ -13471,7 +13489,7 @@ activeGraphicListPtr cur;
 btnActionListPtr curBtn, nextBtn;
 
 Window root, child;
-int rootX, rootY, winX, winY, pass;
+int rootX, rootY, winX, winY, pass, cnt;
 unsigned int mask;
 char callbackName[63+1];
 
@@ -13525,6 +13543,7 @@ char callbackName[63+1];
   btnFocusActionHead->flink = btnFocusActionHead;
   btnFocusActionHead->blink = btnFocusActionHead;
 
+  cnt = 0;
   cur = head->flink;
   while ( cur != head ) {
 
@@ -13534,6 +13553,14 @@ char callbackName[63+1];
     cur->node->deselect();
 
     cur = cur->flink;
+
+#if 1
+    cnt++;
+    if ( !( cnt % 50 ) ) {
+      ca_pend_io( 1.0 );
+      processAllEvents( appCtx->appContext(), d );
+    }
+#endif
 
   }
 
