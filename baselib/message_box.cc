@@ -863,6 +863,10 @@ struct stat fileStat;
         fgColor.setConnectSensitive();
       }
 
+      frameWidget = NULL;
+
+      status = createMsgBoxWidgets();
+
       opStat = 1;
 
 #ifdef __epics__
@@ -1002,13 +1006,11 @@ int stat;
 
 }
 
-int activeMessageBoxClass::createWidgets ( void ) {
+int activeMessageBoxClass::createMsgBoxWidgets ( void ) {
 
 int n, textHeight;
 Arg args[10];
 Widget widget;
-
-  frameWidget = NULL;
 
   frameWidget = XtVaCreateManagedWidget( "", xmFrameWidgetClass,
    actWin->executeWidgetId(),

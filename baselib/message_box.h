@@ -235,7 +235,7 @@ int expand2nd (
 
 int containsMacros ( void );
 
-int createWidgets ( void );
+int createMsgBoxWidgets ( void );
 
 int checkResizeSelectBox (
   int _x,
