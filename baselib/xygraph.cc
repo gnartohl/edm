@@ -5820,7 +5820,7 @@ int yi, yScaleIndex;
         }
         else {
 
-          if ( yArrayNeedUpdate[i] || xArrayNeedUpdate ) {
+          if ( yArrayNeedUpdate[i] || xArrayNeedUpdate[i] ) {
 
             switch ( plotUpdateMode[i] ) {
 
