@@ -81,7 +81,7 @@ int drawActive ( void );
 
 int eraseActive ( void );
 
-int isInside (
+activeGraphicClass *enclosingObject (
   int x0,
   int y0 );
 

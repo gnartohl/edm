@@ -8735,6 +8735,7 @@ unsigned int mask;
 btnActionListPtr curBtn;
 int action, foundAction, numOut, numIn, buttonNum;
 activeGraphicListPtr cur;
+activeGraphicClass *ptr;
 
   awo = (activeWindowClass *) client;
 
@@ -9113,10 +9114,51 @@ activeGraphicListPtr cur;
 
     numIn = numOut = 0;
 
+    if ( awo->highlightedObject ) {
+
+      if ( awo->highlightedObject ==
+           awo->highlightedObject->enclosingObject( me->x, me->y ) ) {
+
+        // still highlighted
+
+      }
+      else {
+
+        awo->highlightedObject->pointerOut( me->x, me->y, me->state );
+        awo->highlightedObject = NULL;
+        numOut++;
+        foundAction = 1;
+
+      }
+
+    }
+
+    if ( !(awo->highlightedObject) ) {
+
+      curBtn = awo->btnFocusActionHead->flink;
+      while ( curBtn != awo->btnFocusActionHead ) {
+
+        ptr = curBtn->node->enclosingObject( me->x, me->y );
+        if ( ptr ) {
+          ptr->pointerIn( me->x, me->y, me->state );
+          awo->highlightedObject = ptr;
+          numIn++;
+          foundAction = 1;
+	  break;
+        }
+
+        curBtn = curBtn->flink;
+
+      }
+
+    }
+
+#if 0
     curBtn = awo->btnFocusActionHead->flink;
     while ( curBtn != awo->btnFocusActionHead ) {
 
-      if ( curBtn->node->isInside( me->x, me->y ) ) {
+      awo->highlightedObject = curBtn->node->enclosingObject( me->x, me->y );
+      if ( awo->highlightedObject ) {
 
         if ( curBtn->in != 1 ) {
           curBtn->in = 1;
@@ -9140,6 +9182,7 @@ activeGraphicListPtr cur;
       curBtn = curBtn->flink;
 
     }
+#endif
 
     if ( numIn ) {
       awo->showActive = 1;
@@ -13690,6 +13733,8 @@ int numMuxMacros;
 char **muxMacro, **muxExpansion;
 char callbackName[63+1];
 
+  highlightedObject = NULL;
+
   if ( activateCallbackFlag ) {
     strncpy( callbackName, id, 63 );
     strncat( callbackName, "Activate", 63 );
@@ -13899,6 +13944,8 @@ char **muxMacro, **muxExpansion;
 
   if ( mode == AWC_EXECUTE ) return 1;
 
+  highlightedObject = NULL;
+
   isIconified = False;
 
   expandTitle( 1, actualNumMacros, macros, expansions );
@@ -13926,9 +13973,9 @@ char **muxMacro, **muxExpansion;
 
       stat = cur->node->getMacros( &numMuxMacros, &muxMacro, &muxExpansion );
 
-      expandTitle( 2, numMuxMacros, muxMacro, muxExpansion );
-
       if ( numMuxMacros > 0 ) {
+
+        expandTitle( 2, numMuxMacros, muxMacro, muxExpansion );
 
         cur1 = head->flink;
         while ( cur1 != head ) {
@@ -14006,6 +14053,8 @@ unsigned int mask;
 char callbackName[63+1];
 
   mode = AWC_EDIT;
+
+  highlightedObject = NULL;
 
   cursor.set( XtWindow(drawWidget), CURSOR_K_CROSSHAIR );
   cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );

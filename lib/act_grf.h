@@ -629,7 +629,7 @@ virtual int drawActive (
 
 virtual int drawAllActive ( void );
 
-virtual int isInside (
+virtual activeGraphicClass *enclosingObject (
   int x0,
   int y0 );
 

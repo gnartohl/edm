@@ -577,25 +577,26 @@ activeGraphicListPtr cur;
 
 }
 
-int activeGroupClass::isInside (
+activeGraphicClass *activeGroupClass::enclosingObject (
   int _x,
   int _y )
 {
 
 btnActionListPtr curBtn;
+activeGraphicClass *obj;
 
   curBtn = btnDownActionHead->flink;
   while ( curBtn != btnDownActionHead ) {
 
-    if ( curBtn->node->isInside( _x, _y ) ) {
-      return 1;
+    if ( ( obj = curBtn->node->enclosingObject( _x, _y ) ) != NULL ) {
+      return obj;
     }
 
     curBtn = curBtn->flink;
 
   }
 
-  return 0;
+  return NULL;
 
 }
 

@@ -537,7 +537,7 @@ activeGraphicListPtr cur;
 
 }
 
-int activeGraphicClass::isInside (
+activeGraphicClass *activeGraphicClass::enclosingObject (
   int x0,
   int y0 )
 {
@@ -554,12 +554,12 @@ int xx0, yy0, xx1, yy1;
        ( y0 > yy0 ) &&
        ( y0 < yy1 ) ) {
 
-    return 1;
+    return this;
 
   }
   else {
 
-    return 0;
+    return NULL;
 
   }
 
@@ -1135,10 +1135,16 @@ XRectangle xR = { _x, _y, _w, _h };
   x1 = _x + _w;
   y1 = _y + _h;
 
-  //  actWin->appCtx->proc->lock();
+  normClipStat = actWin->executeGc.addNormXClipRectangle( xR );
+  xorClipStat = actWin->executeGc.addXorXClipRectangle( xR );
+  eraseClipStat = actWin->executeGc.addEraseXClipRectangle( xR );
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
+
+    cur->node->drawActiveIfIntersects( x0, y0, x1, y1 );
+
+#if 0
     if ( cur->node->intersects( x0, y0, x1, y1 ) ) {
       normClipStat = actWin->executeGc.addNormXClipRectangle( xR );
       xorClipStat = actWin->executeGc.addXorXClipRectangle( xR );
@@ -1149,10 +1155,14 @@ XRectangle xR = { _x, _y, _w, _h };
       if ( xorClipStat & 1 ) actWin->executeGc.removeXorXClipRectangle();
       if ( eraseClipStat & 1 ) actWin->executeGc.removeEraseXClipRectangle();
     }
+#endif
+
     cur = cur->flink;
   }
 
-  //  actWin->appCtx->proc->unlock();
+  if ( normClipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
+  if ( xorClipStat & 1 ) actWin->executeGc.removeXorXClipRectangle();
+  if ( eraseClipStat & 1 ) actWin->executeGc.removeEraseXClipRectangle();
 
   return 1;
 
