@@ -1477,6 +1477,8 @@ int numNewMacros, max, numFound;
     if ( buttonNumber != -1 ) return;
   }
 
+  *action = closeAction;
+
   // do special substitutions
   actWin->substituteSpecial( 255, symbolsExpStr.getExpanded(),
    symbolsWithSubs );
@@ -1660,6 +1662,8 @@ int numNewMacros, max, numFound;
 
   stat = getFileName( name, displayFileName.getExpanded(), 127 );
 
+  printf( "filename = [%s]\n", name );
+
   // calc crc
 
   crc = 0;
@@ -1688,8 +1692,6 @@ int numNewMacros, max, numFound;
       cur = cur->flink;
     }
   }
-
-  *action = closeAction;
 
   cur = new activeWindowListType;
   actWin->appCtx->addActiveWindow( cur );
