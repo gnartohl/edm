@@ -66,12 +66,12 @@ Another Example:
 On startup, EDM attemps to load configuration files in the following
 order:
 <ol>
-<li> If $EDMCALC is defined as a ':'-deparated list of files,
+<li> If $EDMCALC is defined as a ':'-separated list of files,
      those files are loaded. Example:
      <code>
      export EDMCALC="$HOME/mycalc:/usr/share/common/calc.list"
      </code>
-<li> Otherwise, a file "calc.list" in the current directory used. If
+<li> Otherwise, a file "calc.list" in the current directory is used. If
 it does not exist, $EDMFILES/calc.list is used.
 <li> If all fails, you cannot use any CALC PV.
 </ol>
