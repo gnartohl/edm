@@ -50,7 +50,7 @@ export EDMFILES=$EDMBASE/setup
 export EDMOBJECTS=$EDMBASE/setup
 export EDMPVOBJECTS=$EDMBASE/setup
 
-for libdir in baselib imagelib lib pvlib util
+for libdir in baselib imagelib lib pvlib util choiceButton
 do
     LD_LIBRARY_PATH=$EDMBASE/$libdir/O.$ODIR:$LD_LIBRARY_PATH
 done
@@ -75,6 +75,7 @@ then
 else
     $EDM -add $EDMBASE/baselib/O.$ODIR/libEdmBase.so
     $EDM -add $EDMBASE/imagelib/O.$ODIR/lib605432d2-f29d-11d2-973b-00104b8742df.so
+    $EDM -add $EDMBASE/choiceButton/O.$ODIR/lib7e1b4e6f-239d-4650-95e6-a040d41ba633.so
     $EDM -add $EDMBASE/pvFactory/O.$ODIR/libPV.so
 fi
 
