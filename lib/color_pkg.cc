@@ -38,6 +38,8 @@ unsigned int mask;
 
   if ( !cio->showNameTimerActive ) return;
 
+  cio->showNameTimerActive = 0;
+
   XQueryPointer( cio->display, XtWindow(cio->shell), &root, &child,
    &rootX, &rootY, &winX, &winY, &mask );
 
@@ -250,6 +252,7 @@ int red, green, blue;
       cio->showNameTimerActive = 1;
       cio->showNameTimer = XtAppAddTimeOut( cio->appCtx, 500, showColorName,
        &cio->showNameBlock );
+
       //cio->msgDialog.popup( cio->colorName(i), me->x_root, me->y_root+25 );
       cio->curPaletteRow = r;
       cio->curPaletteCol = c;
