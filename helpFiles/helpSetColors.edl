@@ -1,0 +1,632 @@
+3 0 1
+130
+215
+918
+708
+helvetica-medium-r-18.0
+0
+helvetica-medium-r-12.0
+0
+79
+3
+79
+79
+27
+4
+1
+10
+2
+Help - Set colors
+0
+0
+10
+0
+<<<empty>>>
+<<<empty>>>
+0
+0
+helvetica-bold-r-14.0
+0
+EOD
+cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+1 2 0
+19
+65
+304
+592
+$(help)helpSetColors-Props
+0
+0
+0
+EOD
+cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+1 2 0
+582
+111
+144
+498
+$(help)helpSetColors-Colors
+0
+0
+0
+EOD
+activeRectangleClass
+2 0 0
+0
+0
+918
+35
+2
+0
+1
+2
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+1
+0
+0
+EOD
+activeCircleClass
+2 0 0
+826
+325
+65
+65
+25
+0
+1
+31
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+2
+0
+EOD
+activeLineClass
+2 0 0
+748
+337
+60
+40
+8
+748 347
+788 347
+788 337
+808 357
+788 377
+788 367
+748 367
+748 347
+79
+0
+1
+14
+0
+1
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+EOD
+activeXTextClass
+2 0 0
+823
+292
+71
+16
+79
+0
+1
+4
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Final result
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+EOD
+activeXTextClass
+2 0 0
+345
+5
+228
+27
+79
+0
+1
+4
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Set Colors Example
+helvetica-bold-r-24.0
+0
+1
+<<<empty>>>
+EOD
+activeExitButtonClass
+2 0 0
+8
+676
+59
+24
+14
+5
+1
+11
+1
+0
+helvetica-medium-r-12.0
+Close
+0
+0
+EOD
+activeXTextClass
+2 0 0
+355
+282
+174
+16
+79
+0
+1
+4
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+2) Click on line color button
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+EOD
+activeXTextClass
+2 0 0
+355
+311
+181
+16
+79
+0
+1
+4
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+3) Choose color from palette
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+EOD
+activeXTextClass
+2 0 0
+355
+369
+164
+16
+79
+0
+1
+4
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+5) Click on fill color button
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+EOD
+activeXTextClass
+2 0 0
+355
+398
+181
+16
+79
+0
+1
+4
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+6) Choose color from palette
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+EOD
+activeXTextClass
+2 0 0
+355
+340
+73
+16
+79
+0
+1
+4
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+4) Select fill
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+EOD
+activeXTextClass
+2 0 0
+355
+253
+196
+16
+79
+0
+1
+4
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+1) Choose line thickness, style
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+EOD
+activeXTextClass
+2 0 0
+355
+427
+48
+16
+79
+0
+1
+4
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+7) Click
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+EOD
+activeXTextClass
+2 0 0
+405
+427
+22
+16
+79
+0
+1
+4
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+OK
+helvetica-bold-r-14.0
+0
+1
+<<<empty>>>
+EOD
+relatedDisplayClass
+2 3 0
+382
+508
+139
+28
+14
+5
+1
+11
+$(help)helpSetColorsByName
+<<<empty>>>
+helvetica-medium-r-12.0
+0
+0
+1
+4
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+0
+0
+<<<empty>>>
+0
+1
+0
+<<<empty>>>
+Editing
+0
+1
+0
+0
+<<<empty>>>
+0
+1
+<<<empty>>>
+<<<empty>>>
+0
+0
+0
+0
+<<<empty>>>
+0
+1
+<<<empty>>>
+<<<empty>>>
+0
+0
+0
+0
+<<<empty>>>
+0
+1
+<<<empty>>>
+<<<empty>>>
+0
+0
+0
+0
+<<<empty>>>
+0
+1
+<<<empty>>>
+<<<empty>>>
+0
+0
+0
+0
+<<<empty>>>
+0
+1
+<<<empty>>>
+<<<empty>>>
+0
+0
+0
+0
+<<<empty>>>
+0
+1
+<<<empty>>>
+<<<empty>>>
+0
+0
+0
+0
+<<<empty>>>
+0
+1
+Set Colors by Name
+1
+EOD
+activeXTextClass
+2 0 0
+355
+481
+56
+16
+79
+0
+1
+4
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+See also
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+EOD
+activeLineClass
+2 0 0
+164
+260
+185
+1
+2
+164 261
+349 260
+79
+0
+0
+4
+0
+2
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+EOD
+activeLineClass
+2 0 0
+179
+260
+16
+27
+2
+179 287
+195 260
+79
+0
+0
+4
+0
+2
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+EOD
+activeLineClass
+2 0 0
+122
+290
+226
+35
+3
+348 290
+269 324
+122 325
+79
+0
+0
+4
+0
+2
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+EOD
+activeLineClass
+2 0 0
+540
+311
+60
+8
+2
+540 319
+600 311
+79
+0
+0
+4
+0
+2
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+EOD
+activeLineClass
+2 0 0
+540
+337
+87
+69
+2
+540 406
+627 337
+79
+0
+0
+4
+0
+2
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+EOD
+activeLineClass
+2 0 0
+155
+347
+194
+29
+3
+349 347
+282 375
+155 376
+79
+0
+0
+4
+0
+2
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+EOD
+activeLineClass
+2 0 0
+121
+377
+229
+23
+3
+350 377
+291 400
+121 400
+79
+0
+0
+4
+0
+2
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+EOD
