@@ -671,6 +671,13 @@ activeWindowListPtr cur;
     activeMode = 0;
 
     if ( aw ) {
+      if ( aw->loadFailure ) {
+        aw = NULL;
+        frameWidget = NULL;
+      }
+    }
+
+    if ( aw ) {
 
       okToClose = 0;
       // make sure the window was successfully opened
