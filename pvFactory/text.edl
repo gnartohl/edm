@@ -1,6 +1,6 @@
 3 0 1
-669
-165
+226
+43
 546
 452
 helvetica-medium-r-18.0
@@ -114,7 +114,7 @@ TextupdateClass
 402
 126
 28
-CALC\random
+CALC\random(jane)
 0
 0
 0
@@ -280,7 +280,7 @@ TextupdateClass
 402
 126
 28
-CALC\sum(fred,jane)
+CALC\sum(fred,EPICS\jane)
 0
 0
 0
