@@ -200,8 +200,7 @@ pointPtr cur;
   alo->actWin->drawGc.saveFg();
   alo->actWin->drawGc.setFG( alo->lineColor.pixelColor() );
 
-  oneW = 3;
-  oneH = 3;
+  oneW = oneH = alo->ctlBoxLen();
 
   cur = alo->head->flink;
   while ( cur != alo->head ) {
@@ -718,8 +717,7 @@ pointPtr cur;
 
     this->actWin->drawGc.saveFg();
     this->actWin->drawGc.setFG( this->lineColor.pixelColor() );
-    oneW = 3;
-    oneH = 3;
+    oneW = oneH = ctlBoxLen();
 
     for ( i=0; i<this->numPoints; i++ ) {
 
@@ -825,8 +823,7 @@ int oneX, oneY, oneW, oneH;
   oneX = cur->x;
   oneY = cur->y;
 
-  oneW = 3;
-  oneH = 3;
+  oneW = oneH = ctlBoxLen();
 
   actWin->drawGc.setLineStyle( LineSolid );
   actWin->drawGc.setLineWidth( 1 );
@@ -878,8 +875,7 @@ int oneX, oneY, oneW, oneH;
   oneX = selectedOne->x;
   oneY = selectedOne->y;
 
-  oneW = 3;
-  oneH = 3;
+  oneW = oneH = ctlBoxLen();
 
   actWin->drawGc.setLineStyle( LineSolid );
   actWin->drawGc.setLineWidth( 1 );
@@ -944,8 +940,7 @@ int oneW, oneH;
   cur->x = oneX;
   cur->y = oneY;
 
-  oneW = 3;
-  oneH = 3;
+  oneW = oneH = ctlBoxLen();
 
   actWin->drawGc.saveFg();
   actWin->drawGc.setFG( lineColor.pixelColor() );
@@ -990,8 +985,7 @@ int oneX, oneY, oneW, oneH;
 
   oneX = cur->x;
   oneY = cur->y;
-  oneW = 3;
-  oneH = 3;
+  oneW = oneH = ctlBoxLen();
 
   actWin->drawGc.setLineStyle( LineSolid );
   actWin->drawGc.setLineWidth( 1 );
@@ -1079,17 +1073,21 @@ pointPtr activeLineClass::selectPoint (
 {
 
 pointPtr cur;
-int d;
+int d, lw, threshold;
 
-//   printf( "In activeLineClass::selectPoint\n" );
-//   printf( "x = %-d, y = %-d\n", x, y );
+  if ( lineWidth > 0 ) {
+    lw = lineWidth;
+  }
+  else {
+    lw = 1;
+  }
+  threshold = (lw+2) * (lw+2) + 2;
 
   cur = head->flink;
   while ( cur != head ) {
 
     d = ( cur->x - x ) * ( cur->x - x ) + ( cur->y - y ) * ( cur->y - y );
-//     printf( "d = %-d\n", d );
-    if ( d <= 9 ) return cur;
+    if ( 2*d <= threshold ) return cur;
 
     cur = cur->flink;
 
@@ -1116,8 +1114,7 @@ int oneX, oneY, oneW, oneH;
   oneX = curPoint->x;
   oneY = curPoint->y;
 
-  oneW = 3;
-  oneH = 3;
+  oneW = oneH = ctlBoxLen();
 
   actWin->drawGc.setLineStyle( LineSolid );
   actWin->drawGc.setLineWidth( 1 );
@@ -1219,8 +1216,7 @@ int activeLineClass::lineEditDone ( void )
 pointPtr cur, next;
 int n, oneX, oneY, oneW, oneH, minX, minY, maxX, maxY;
 
-  oneW = 3;
-  oneH = 3;
+  oneW = oneH = ctlBoxLen();
 
 //   printf( "In activeLineClass::lineEditComplete\n" );
 
@@ -3219,6 +3215,17 @@ double halfLen = 5.0;
 
   points[7].x = (short) rint(x0);
   points[7].y = (short) rint(y0);
+
+}
+
+int activeLineClass::ctlBoxLen ( void ) {
+
+  if ( lineWidth > 0 ) {
+    return lineWidth + 2;
+  }
+  else {
+    return 3;
+  }
 
 }
 

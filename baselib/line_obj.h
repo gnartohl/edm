@@ -423,6 +423,8 @@ void getArrowCoords (
   XPoint *points
 );
 
+int ctlBoxLen ( void );
+
 };
 
 #ifdef __cplusplus
