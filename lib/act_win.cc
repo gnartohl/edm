@@ -5394,9 +5394,13 @@ int check_origin;
 
     if ( check_origin ) {
 
+      if ( ( awo->w > 0 ) && ( awo->h > 0 ) ) {
+
+#if 0
       if ( ( ce->x != 0 ) && ( ce->y != 0 ) &&
            ( awo->w > 0 ) && ( awo->h > 0 ) &&
            ( awo->x != 0 ) && ( awo->y != 0 ) ) {
+#endif
 
         if ( ( awo->x != ce->x ) ||
              ( awo->y != ce->y ) ) {
