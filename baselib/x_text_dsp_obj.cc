@@ -2579,6 +2579,11 @@ int stat;
     kp.popdown();
   }
 
+  if ( textEntry.formIsPoppedUp() ) {
+    textEntry.popdown();
+    editDialogIsActive = 0;
+  }
+
   if ( deactivateCallback ) {
     (*deactivateCallback)( this );
   }
