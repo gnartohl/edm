@@ -52,7 +52,7 @@ expRectClass *aro = (expRectClass *) ptr;
   aro->bufInvalidate();
   if ( value != -1 ) {
     //printf( "set special color\n" );
-    aro->bgRuleColor = aro->actWin->ci->getPixelByIndex( value );
+    aro->bgRuleColor = value;
     aro->useBgRule = 1;
   }
   else {
@@ -190,7 +190,7 @@ expRectClass *aro = (expRectClass *) client;
     aro->lineColor.setAlarmSensitive();
   else
     aro->lineColor.setAlarmInsensitive();
-  aro->lineColor.setColor( aro->bufLineColor, aro->actWin->ci );
+  aro->lineColor.setColorIndex( aro->bufLineColor, aro->actWin->ci );
 
   aro->fill = aro->bufFill;
 
@@ -199,7 +199,7 @@ expRectClass *aro = (expRectClass *) client;
     aro->fillColor.setAlarmSensitive();
   else
     aro->fillColor.setAlarmInsensitive();
-  aro->fillColor.setColor( aro->bufFillColor, aro->actWin->ci );
+  aro->fillColor.setColorIndex( aro->bufFillColor, aro->actWin->ci );
 
   aro->lineWidth = aro->bufLineWidth;
 
@@ -380,8 +380,8 @@ int expRectClass::createInteractive (
   w = _w;
   h = _h;
 
-  lineColor.setColor( actWin->defaultTextFgColor, actWin->ci );
-  fillColor.setColor( actWin->defaultBgColor, actWin->ci );
+  lineColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
+  fillColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
 
   this->draw();
 
@@ -408,10 +408,10 @@ char title[32], *ptr;
   bufW = w;
   bufH = h;
 
-  bufLineColor = lineColor.pixelColor();
+  bufLineColor = lineColor.pixelIndex();
   bufLineColorMode = lineColorMode;
 
-  bufFillColor = fillColor.pixelColor();
+  bufFillColor = fillColor.pixelIndex();
   bufFillColorMode = fillColorMode;
 
   bufFill = fill;
@@ -513,8 +513,7 @@ char oneName[39+1];
   if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    lineColor.setColor( pixel, actWin->ci );
+    lineColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
 
@@ -526,8 +525,7 @@ char oneName[39+1];
     fscanf( f, "%d\n", &fill ); actWin->incLine();
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    fillColor.setColor( pixel, actWin->ci );
+    fillColor.setColorIndex( index, actWin->ci );
 
   }
   else {
@@ -539,7 +537,8 @@ char oneName[39+1];
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    lineColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    lineColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
 
@@ -557,7 +556,8 @@ char oneName[39+1];
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    fillColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    fillColor.setColorIndex( index, actWin->ci );
 
   }
 
@@ -606,7 +606,7 @@ int expRectClass::importFromXchFile (
   activeWindowClass *_actWin )
 {
 
-int fgR, fgG, fgB, bgR, bgG, bgB, more;
+int fgR, fgG, fgB, bgR, bgG, bgB, more, index;
 unsigned int pixel;
 char *tk, *gotData, *context, buf[255+1];
 
@@ -620,8 +620,8 @@ char *tk, *gotData, *context, buf[255+1];
 
   this->actWin = _actWin;
 
-  lineColor.setColor( actWin->defaultFg1Color, actWin->ci );
-  fillColor.setColor( actWin->defaultBgColor, actWin->ci );
+  lineColor.setColorIndex( actWin->defaultFg1Color, actWin->ci );
+  fillColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
 
   // continue until tag is <eod>
 
@@ -798,11 +798,13 @@ char *tk, *gotData, *context, buf[255+1];
   this->initSelectBox(); // call after getting x,y,w,h
 
   actWin->ci->setRGB( fgR, fgG, fgB, &pixel );
-  lineColor.setColor( pixel, actWin->ci );
+  index = actWin->ci->pixIndex( pixel );
+  lineColor.setColorIndex( index, actWin->ci );
   lineColor.setAlarmInsensitive();
 
   actWin->ci->setRGB( bgR, bgG, bgB, &pixel );
-  fillColor.setColor( pixel, actWin->ci );
+  index = actWin->ci->pixIndex( pixel );
+  fillColor.setColorIndex( index, actWin->ci );
   fillColor.setAlarmSensitive();
 
   return 1;
@@ -822,14 +824,14 @@ int index;
   fprintf( f, "%-d\n", w );
   fprintf( f, "%-d\n", h );
 
-  actWin->ci->getIndex( lineColor.pixelColor(), &index );
+  index = lineColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", lineColorMode );
 
   fprintf( f, "%-d\n", fill );
 
-  actWin->ci->getIndex( fillColor.pixelColor(), &index );
+  index = fillColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", fillColorMode );
@@ -1300,12 +1302,12 @@ int stat, nvc, nac, ne, nd, nr, ncu;
 
   if ( ncu ) {
     if ( useBgRule ) {
-      fillColor.setRuleColor( bgRuleColor, actWin->ci );
+      fillColor.setRuleIndex( bgRuleColor, actWin->ci );
       fillColor.setRuleMode();
     }
     else {
       fillColor.setNotRuleMode();
-      fillColor.setColor( fillColor.pixelColor(), actWin->ci );
+      fillColor.setColorIndex( fillColor.pixelIndex(), actWin->ci );
     }
     stat = smartDrawAllActive();
   }
@@ -1360,20 +1362,20 @@ void expRectClass::changeDisplayParams (
   int _ctlAlignment,
   char *_btnFontTag,
   int _btnAlignment,
-  unsigned int _textFgColor,
-  unsigned int _fg1Color,
-  unsigned int _fg2Color,
-  unsigned int _offsetColor,
-  unsigned int _bgColor,
-  unsigned int _topShadowColor,
-  unsigned int _botShadowColor )
+  int _textFgColor,
+  int _fg1Color,
+  int _fg2Color,
+  int _offsetColor,
+  int _bgColor,
+  int _topShadowColor,
+  int _botShadowColor )
 {
 
   if ( _flag & ACTGRF_FG1COLOR_MASK )
-    lineColor.setColor( _fg1Color, actWin->ci );
+    lineColor.setColorIndex( _fg1Color, actWin->ci );
 
   if ( _flag & ACTGRF_BGCOLOR_MASK )
-    fillColor.setColor( _bgColor, actWin->ci );
+    fillColor.setColorIndex( _bgColor, actWin->ci );
 
 }
 
