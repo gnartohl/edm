@@ -56,11 +56,33 @@
 #define COLORINFO_K_MAJOR 3
 #define COLORINFO_K_NOALARM 4
 
+typedef int (*ruleFuncType)( double v1, double v2 );
+
+typedef struct ruleConditionTag {
+  struct ruleConditionTag *flink;
+  double value1;
+  ruleFuncType ruleFunc1;
+  double value2;
+  ruleFuncType ruleFunc2;
+  ruleFuncType connectingFunc;
+  int result;
+  char *resultName;
+} ruleConditionType, *ruleConditionPtr;
+
+typedef struct ruleTag {
+  ruleConditionPtr ruleHead;
+  ruleConditionPtr ruleTail;
+} ruleType, *rulePtr;
+
 typedef struct colorCacheTag {
   AVL_FIELDS(colorCacheTag)
   unsigned int rgb[3]; // [0]=r, [1]=g, [2]=b
   unsigned int pixel;
+  unsigned int blinkRgb[3]; // [0]=r, [1]=g, [2]=b
+  unsigned int blinkPixel;
   int index;
+  char *name;
+  rulePtr rule;
 } colorCacheType, *colorCachePtr;
 
 class colorInfoClass {
@@ -84,6 +106,7 @@ int max_colors, num_blinking_colors, num_color_cols, usingPrivateColorMap;
 AVL_HANDLE colorCacheByColorH;
 AVL_HANDLE colorCacheByPixelH;
 AVL_HANDLE colorCacheByIndexH;
+AVL_HANDLE colorCacheByNameH;
 
 Display *display;
 int screen;
@@ -97,11 +120,12 @@ unsigned int fg;
 /*  XColor *blinkingXColor[NUM_BLINKING_COLORS], */
 /*   *offBlinkingXColor[NUM_BLINKING_COLORS]; */
 
-unsigned int *colors;
+unsigned int *colors, *blinkingColors;
 unsigned long *blinkingColorCells;
 XColor *blinkingXColor, *offBlinkingXColor;
 
 int special[NUM_SPECIAL_COLORS];
+int specialIndex[NUM_SPECIAL_COLORS];
 int numColors, blink;
 
 int curIndex, curX, curY;
@@ -111,13 +135,41 @@ XtIntervalId incrementTimer;
 int incrementTimerValue;
 
 Widget activeWidget;
-unsigned int *curDestination;
+int *curDestination;
 
 gcClass gc;
 
 Widget shell, rc, mbar, mb1, mb2, form, rc1, rc2, fgpb, bgpb;
 
+// color file processing
+static const int MAX_LINE_SIZE = 255;
+
+static const int GET_1ST_NONWS_CHAR = 1;
+static const int GET_TIL_END_OF_TOKEN = 2;
+static const int GET_TIL_END_OF_QUOTE = 3;
+static const int GET_TIL_END_OF_SPECIAL = 4;
+
+static const int GET_FIRST_TOKEN = 1;
+static const int GET_NUM_COLUMNS = 2;
+static const int GET_MAX = 3;
+static const int GET_RULE = 4;
+static const int GET_RULE_CONDITION = 5;
+static const int GET_RULE_CONNECTOR = 6;
+static const int GET_RULE_INDEX = 7;
+static const int GET_COLOR = 8;
+static const int GET_ALARM_PARAMS = 9;
+
+int readFile, tokenState, parseIndex, parseLine, tokenFirst, tokenLast,
+ tokenNext, gotToken, colorIndex;
+char parseBuf[MAX_LINE_SIZE+1], parseToken[MAX_LINE_SIZE+1];
+FILE *parseFile;
+
+int maxColor, numPaletteCols;
+
 public:
+
+static const int SUCCESS = 1;
+static const int FAIL = 0;
 
 int change;
 
@@ -134,6 +186,13 @@ int i;
   return i;
 }
 
+int colorInfoClass::ver3InitFromFile (
+  FILE *f,
+  XtAppContext app,
+  Display *d,
+  Widget top,
+  char *fileName );
+
 int colorInfoClass::initFromFile (
   XtAppContext app,
   Display *d,
@@ -146,9 +205,9 @@ int colorInfoClass::closeColorWindow( void );
 
 unsigned int colorInfoClass::getFg( void );
 
-void colorInfoClass::setCurDestination( unsigned int *ptr );
+void colorInfoClass::setCurDestination( int *ptr );
 
-unsigned int *colorInfoClass::getCurDestination( void );
+int *colorInfoClass::getCurDestination( void );
 
 int colorInfoClass::setActiveWidget( Widget w );
 
@@ -182,16 +241,37 @@ int colorInfoClass::setIndex (
 int colorInfoClass::getSpecialColor (
   int index );
 
+int colorInfoClass::getSpecialIndex (
+  int index );
+
 Colormap colorInfoClass::getColorMap ( void );
 
 int colorInfoClass::setCurIndexByPixel (
   unsigned int pixel );
+
+int colorInfoClass::setCurIndex (
+  int index );
 
 int colorInfoClass::canDiscardPixel (
   unsigned int pixel );
 
 unsigned int colorInfoClass::getPixelByIndex (
   int index );
+
+unsigned int colorInfoClass::pix ( // same as getPixelByIndex
+  int index );
+
+int colorInfoClass::pixIndex (
+  unsigned int pixel );
+
+void colorInfoClass::initParseEngine (
+  FILE *f );
+
+void colorInfoClass::parseError (
+ char *msg );
+
+int colorInfoClass::getToken (
+ char toke[255+1] );
 
 };
 

@@ -162,14 +162,14 @@ activeXTextClass *axto = (activeXTextClass *) client;
     axto->fgColor.setAlarmSensitive();
   else
     axto->fgColor.setAlarmInsensitive();
-  axto->fgColor.setColor( axto->bufFgColor, axto->actWin->ci );
+  axto->fgColor.setColorIndex( axto->bufFgColor, axto->actWin->ci );
 
   axto->bgColorMode = axto->bufBgColorMode;
   if ( axto->bgColorMode == AXTC_K_COLORMODE_ALARM )
     axto->bgColor.setAlarmSensitive();
   else
     axto->bgColor.setAlarmInsensitive();
-  axto->bgColor.setColor( axto->bufBgColor, axto->actWin->ci );
+  axto->bgColor.setColorIndex( axto->bufBgColor, axto->actWin->ci );
 
   axto->alarmPvExpStr.setRaw( axto->bufAlarmPvName );
 
@@ -385,8 +385,8 @@ int stat = 1;
   w = _w;
   h = _h;
 
-  fgColor.setColor( actWin->defaultTextFgColor, actWin->ci );
-  bgColor.setColor( actWin->defaultBgColor, actWin->ci );
+  fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
+  bgColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
 
   useDisplayBg = 1;
   autoSize = 1;
@@ -438,10 +438,10 @@ char title[32], *ptr;
   bufW = w;
   bufH = h;
 
-  bufFgColor = fgColor.pixelColor();
+  bufFgColor = fgColor.pixelIndex();
   bufFgColorMode = fgColorMode;
 
-  bufBgColor = bgColor.pixelColor();
+  bufBgColor = bgColor.pixelIndex();
   bufBgColorMode = bgColorMode;
 
   if ( alarmPvExpStr.getRaw() )
@@ -551,8 +551,7 @@ int stat = 1;
   if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    fgColor.setColor( pixel, actWin->ci );
+    fgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &fgColorMode ); actWin->incLine();
 
@@ -564,8 +563,7 @@ int stat = 1;
     fscanf( f, "%d\n", &useDisplayBg ); actWin->incLine();
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    bgColor.setColor( pixel, actWin->ci );
+    bgColor.setColorIndex( index, actWin->ci );
 
   }
   else {
@@ -577,7 +575,8 @@ int stat = 1;
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    fgColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    fgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &fgColorMode ); actWin->incLine();
 
@@ -595,7 +594,8 @@ int stat = 1;
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    bgColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    bgColor.setColorIndex( index, actWin->ci );
 
   }
 
@@ -680,7 +680,7 @@ int activeXTextClass::importFromXchFile (
   activeWindowClass *_actWin )
 {
 
-int r, g, b, more;
+int r, g, b, more, index;
 unsigned int pixel;
 int stat = 1;
 char *tk, *gotData, *context, oneValue[255+1], buf[255+1];
@@ -691,8 +691,8 @@ char *tk, *gotData, *context, oneValue[255+1], buf[255+1];
 
   this->actWin = _actWin;
 
-  fgColor.setColor( actWin->defaultTextFgColor, actWin->ci );
-  bgColor.setColor( actWin->defaultBgColor, actWin->ci );
+  fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
+  bgColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
 
   useDisplayBg = 1;
   autoSize = 1;
@@ -852,7 +852,8 @@ char *tk, *gotData, *context, oneValue[255+1], buf[255+1];
   } while ( more );
 
   actWin->ci->setRGB( r, g, b, &pixel );
-  fgColor.setColor( pixel, actWin->ci );
+  index = actWin->ci->pixIndex( pixel );
+  fgColor.setColorIndex( index, actWin->ci );
 
   fgColorMode = 0; // alarm insensitive
   fgColor.setAlarmInsensitive();
@@ -928,14 +929,14 @@ int index;
   fprintf( f, "%-d\n", w );
   fprintf( f, "%-d\n", h );
 
-  actWin->ci->getIndex( fgColor.pixelColor(), &index );
+  index = fgColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", fgColorMode );
 
   fprintf( f, "%-d\n", useDisplayBg );
 
-  actWin->ci->getIndex( bgColor.pixelColor(), &index );
+  index = bgColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", bgColorMode );
@@ -1648,20 +1649,20 @@ void activeXTextClass::changeDisplayParams (
   int _ctlAlignment,
   char *_btnFontTag,
   int _btnAlignment,
-  unsigned int _textFgColor,
-  unsigned int _fg1Color,
-  unsigned int _fg2Color,
-  unsigned int _offsetColor,
-  unsigned int _bgColor,
-  unsigned int _topShadowColor,
-  unsigned int _botShadowColor )
+  int _textFgColor,
+  int _fg1Color,
+  int _fg2Color,
+  int _offsetColor,
+  int _bgColor,
+  int _topShadowColor,
+  int _botShadowColor )
 {
 
   if ( _flag & ACTGRF_TEXTFGCOLOR_MASK )
-    fgColor.setColor( _textFgColor, actWin->ci );
+    fgColor.setColorIndex( _textFgColor, actWin->ci );
 
   if ( _flag & ACTGRF_BGCOLOR_MASK )
-    bgColor.setColor( _bgColor, actWin->ci );
+    bgColor.setColorIndex( _bgColor, actWin->ci );
 
   if ( _flag & ACTGRF_ALIGNMENT_MASK )
     alignment = _alignment;

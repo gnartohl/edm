@@ -124,7 +124,7 @@ friend void arcVisUpdate (
 int bufX, bufY, bufW, bufH;
 
 pvColorClass lineColor;
-unsigned int bufLineColor;
+int bufLineColor;
 colorButtonClass lineCb;
 
 int lineColorMode;
@@ -134,7 +134,7 @@ int fill;
 int bufFill;
 
 pvColorClass fillColor;
-unsigned int bufFillColor;
+int bufFillColor;
 colorButtonClass fillCb;
 
 int fillColorMode;
@@ -263,13 +263,13 @@ void activeArcClass::changeDisplayParams (
   int ctlAlignment,
   char *btnFontTag,
   int btnAlignment,
-  unsigned int textFgColor,
-  unsigned int fg1Color,
-  unsigned int fg2Color,
-  unsigned int offsetColor,
-  unsigned int bgColor,
-  unsigned int topShadowColor,
-  unsigned int botShadowColor );
+  int textFgColor,
+  int fg1Color,
+  int fg2Color,
+  int offsetColor,
+  int bgColor,
+  int topShadowColor,
+  int botShadowColor );
 
 void activeArcClass::changePvNames (
   int flag,

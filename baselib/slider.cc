@@ -381,11 +381,11 @@ activeSliderClass *slo = (activeSliderClass *) client;
   slo->eraseSelectBoxCorners();
   slo->erase();
 
-  slo->fgColor.setColor( slo->bufFgColor, slo->actWin->ci );
-  slo->bgColor.setColor( slo->bufBgColor, slo->actWin->ci );
-  slo->shadeColor.setColor( slo->bufShadeColor, slo->actWin->ci );
-  slo->controlColor.setColor( slo->bufControlColor, slo->actWin->ci );
-  slo->readColor.setColor( slo->bufReadColor, slo->actWin->ci );
+  slo->fgColor.setColorIndex( slo->bufFgColor, slo->actWin->ci );
+  slo->bgColor.setColorIndex( slo->bufBgColor, slo->actWin->ci );
+  slo->shadeColor.setColorIndex( slo->bufShadeColor, slo->actWin->ci );
+  slo->controlColor.setColorIndex( slo->bufControlColor, slo->actWin->ci );
+  slo->readColor.setColorIndex( slo->bufReadColor, slo->actWin->ci );
 
   slo->fgColorMode = slo->bufFgColorMode;
   if ( slo->fgColorMode == SLC_K_COLORMODE_ALARM )
@@ -937,11 +937,11 @@ int xOfs;
   arcStart = 90*64 - 30*64;
   arcStop = 60*64;
 
-  fgColor.setColor( actWin->defaultTextFgColor, actWin->ci );
-  bgColor.setColor( actWin->defaultBgColor, actWin->ci );
-  controlColor.setColor( actWin->defaultFg1Color, actWin->ci );
-  readColor.setColor( actWin->defaultFg2Color, actWin->ci );
-  shadeColor.setColor( actWin->defaultOffsetColor, actWin->ci );
+  fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
+  bgColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
+  controlColor.setColorIndex( actWin->defaultFg1Color, actWin->ci );
+  readColor.setColorIndex( actWin->defaultFg2Color, actWin->ci );
+  shadeColor.setColorIndex( actWin->defaultOffsetColor, actWin->ci );
 
   fgColorMode = 0;
   controlColorMode = 0;
@@ -990,15 +990,15 @@ int index, stat;
   fprintf( f, "%-d\n", w );
   fprintf( f, "%-d\n", h );
 
-  actWin->ci->getIndex( fgColor.pixelColor(), &index );
+  index = fgColor.pixelIndex();
   fprintf( f, "%-d\n", index );
-  actWin->ci->getIndex( bgColor.pixelColor(), &index );
+  index = bgColor.pixelIndex();
   fprintf( f, "%-d\n", index );
-  actWin->ci->getIndex( shadeColor.pixelColor(), &index );
+  index = shadeColor.pixelIndex();
   fprintf( f, "%-d\n", index );
-  actWin->ci->getIndex( controlColor.pixelColor(), &index );
+  index = controlColor.pixelIndex();
   fprintf( f, "%-d\n", index );
-  actWin->ci->getIndex( readColor.pixelColor(), &index );
+  index = readColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%g\n", increment );
@@ -1084,24 +1084,19 @@ char oneName[39+1];
   if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    fgColor.setColor( pixel, actWin->ci );
+    fgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    bgColor.setColor( pixel, actWin->ci );
+    bgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    shadeColor.setColor( pixel, actWin->ci );
+    shadeColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    controlColor.setColor( pixel, actWin->ci );
+    controlColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    readColor.setColor( pixel, actWin->ci );
+    readColor.setColorIndex( index, actWin->ci );
 
   }
   else {
@@ -1113,7 +1108,8 @@ char oneName[39+1];
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    fgColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    fgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -1122,7 +1118,8 @@ char oneName[39+1];
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    bgColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    bgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -1131,7 +1128,8 @@ char oneName[39+1];
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    shadeColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    shadeColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -1140,7 +1138,8 @@ char oneName[39+1];
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    controlColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    controlColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -1149,7 +1148,8 @@ char oneName[39+1];
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    readColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    readColor.setColorIndex( index, actWin->ci );
 
   }
 
@@ -1284,11 +1284,11 @@ char title[32], *ptr;
   bufY = y;
   bufW = w;
   bufH = h;
-  bufFgColor = fgColor.pixelColor();
-  bufBgColor = bgColor.pixelColor();
-  bufShadeColor = shadeColor.pixelColor();
-  bufControlColor = controlColor.pixelColor();
-  bufReadColor = readColor.pixelColor();
+  bufFgColor = fgColor.pixelIndex();
+  bufBgColor = bgColor.pixelIndex();
+  bufShadeColor = shadeColor.pixelIndex();
+  bufControlColor = controlColor.pixelIndex();
+  bufReadColor = readColor.pixelIndex();
   bufFgColorMode = fgColorMode;
   bufControlColorMode = controlColorMode;
   bufReadColorMode = readColorMode;
@@ -1473,6 +1473,7 @@ int arcX, arcY, xOfs, lineX;
   readX = xOfs;
 
   actWin->drawGc.setFG( controlColor.pixelColor() );
+  actWin->drawGc.setArcModePieSlice();
 
   arcY = y + controlY;
   arcX = x + xOfs - controlH;
@@ -1553,6 +1554,7 @@ int adjW = w - 4;
   actWin->executeGc.saveFg();
 
   actWin->executeGc.setFG( shadeColor.getColor() );
+  actWin->executeGc.setArcModePieSlice();
 
   xOfs = ( adjW - controlW ) / 2;
 
@@ -1595,6 +1597,8 @@ int adjW = w - 4;
   actWin->executeGc.saveFg();
 
   actWin->executeGc.setFG( controlColor.getColor() );
+
+  actWin->executeGc.setArcModePieSlice();
 
   xOfs = ( adjW - controlW ) / 2;
 
@@ -1819,6 +1823,8 @@ int adjW = w - 4;
    actWin->executeGc.normGC(), 0, 0, w, h );
 
   actWin->executeGc.setFG( shadeColor.getColor() );
+
+  actWin->executeGc.setArcModePieSlice();
 
   xOfs = ( adjW - controlAreaW ) / 2;
   XFillRectangle( actWin->d, XtWindow(sliderWidget),
@@ -3420,29 +3426,29 @@ void activeSliderClass::changeDisplayParams (
   int _ctlAlignment,
   char *_btnFontTag,
   int _btnAlignment,
-  unsigned int _textFgColor,
-  unsigned int _fg1Color,
-  unsigned int _fg2Color,
-  unsigned int _offsetColor,
-  unsigned int _bgColor,
-  unsigned int _topShadowColor,
-  unsigned int _botShadowColor )
+  int _textFgColor,
+  int _fg1Color,
+  int _fg2Color,
+  int _offsetColor,
+  int _bgColor,
+  int _topShadowColor,
+  int _botShadowColor )
 {
 
   if ( _flag & ACTGRF_TEXTFGCOLOR_MASK )
-    fgColor.setColor( _textFgColor, actWin->ci );
+    fgColor.setColorIndex( _textFgColor, actWin->ci );
 
   if ( _flag & ACTGRF_BGCOLOR_MASK )
-    bgColor.setColor( _bgColor, actWin->ci );
+    bgColor.setColorIndex( _bgColor, actWin->ci );
 
   if ( _flag & ACTGRF_FG1COLOR_MASK )
-    controlColor.setColor( _fg1Color, actWin->ci );
+    controlColor.setColorIndex( _fg1Color, actWin->ci );
 
   if ( _flag & ACTGRF_FG2COLOR_MASK )
-    readColor.setColor( _fg2Color, actWin->ci );
+    readColor.setColorIndex( _fg2Color, actWin->ci );
 
   if ( _flag & ACTGRF_OFFSETCOLOR_MASK )
-    shadeColor.setColor( _offsetColor, actWin->ci );
+    shadeColor.setColorIndex( _offsetColor, actWin->ci );
 
   if ( _flag & ACTGRF_CTLFONTTAG_MASK ) {
 

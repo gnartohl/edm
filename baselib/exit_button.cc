@@ -239,16 +239,16 @@ int index;
   fprintf( f, "%-d\n", w );
   fprintf( f, "%-d\n", h );
 
-  actWin->ci->getIndex( fgColor, &index );
+  index = fgColor;
   fprintf( f, "%-d\n", index );
 
-  actWin->ci->getIndex( bgColor, &index );
+  index = bgColor;
   fprintf( f, "%-d\n", index );
 
-  actWin->ci->getIndex( topShadowColor, &index );
+  index = topShadowColor;
   fprintf( f, "%-d\n", index );
 
-  actWin->ci->getIndex( botShadowColor, &index );
+  index = botShadowColor;
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", _3D );
@@ -275,6 +275,7 @@ int activeExitButtonClass::createFromFile (
 
 int r, g, b, index;
 int major, minor, release;
+unsigned int pixel;
 
   this->actWin = _actWin;
 
@@ -288,31 +289,35 @@ int major, minor, release;
   if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &fgColor );
+    fgColor = index;
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &bgColor );
+    bgColor = index;
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &topShadowColor );
+    topShadowColor = index;
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &botShadowColor );
+    botShadowColor = index;
 
   }
   else {
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
-    actWin->ci->setRGB( r, g, b, &fgColor );
+    actWin->ci->setRGB( r, g, b, &pixel );
+    fgColor = actWin->ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
-    actWin->ci->setRGB( r, g, b, &bgColor );
+    actWin->ci->setRGB( r, g, b, &pixel );
+    bgColor = actWin->ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
-    actWin->ci->setRGB( r, g, b, &topShadowColor );
+    actWin->ci->setRGB( r, g, b, &pixel );
+    topShadowColor = actWin->ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
-    actWin->ci->setRGB( r, g, b, &botShadowColor );
+    actWin->ci->setRGB( r, g, b, &pixel );
+    botShadowColor = actWin->ci->pixIndex( pixel );
 
   }
 
@@ -463,7 +468,7 @@ XRectangle xR = { x, y, w, h };
 
   actWin->drawGc.saveFg();
 
-  actWin->drawGc.setFG( bgColor );
+  actWin->drawGc.setFG( actWin->ci->pix(bgColor) );
 
   XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x, y, w, h );
@@ -473,7 +478,7 @@ XRectangle xR = { x, y, w, h };
 
   if ( _3D ) {
 
-  actWin->drawGc.setFG( botShadowColor );
+  actWin->drawGc.setFG( actWin->ci->pix(botShadowColor) );
 
   XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x, y, x+w, y );
@@ -481,7 +486,7 @@ XRectangle xR = { x, y, w, h };
   XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x, y, x, y+h );
 
-   actWin->drawGc.setFG( topShadowColor );
+   actWin->drawGc.setFG( actWin->ci->pix(topShadowColor) );
 
    XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
     actWin->drawGc.normGC(), x, y+h, x+w, y+h );
@@ -489,7 +494,7 @@ XRectangle xR = { x, y, w, h };
    XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
     actWin->drawGc.normGC(), x+w, y, x+w, y+h );
 
-  actWin->drawGc.setFG( topShadowColor );
+  actWin->drawGc.setFG( actWin->ci->pix(topShadowColor) );
 
   XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x+1, y+1, x+w-1, y+1 );
@@ -503,7 +508,7 @@ XRectangle xR = { x, y, w, h };
   XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x+2, y+2, x+2, y+h-2 );
 
-  actWin->drawGc.setFG( botShadowColor );
+  actWin->drawGc.setFG( actWin->ci->pix(botShadowColor) );
 
   XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x+1, y+h-1, x+w-1, y+h-1 );
@@ -523,7 +528,7 @@ XRectangle xR = { x, y, w, h };
 
     actWin->drawGc.addNormXClipRectangle( xR );
 
-    actWin->drawGc.setFG( fgColor );
+    actWin->drawGc.setFG( actWin->ci->pix(fgColor) );
     actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
     tX = x + w/2;
@@ -663,13 +668,13 @@ void activeExitButtonClass::changeDisplayParams (
   int _ctlAlignment,
   char *_btnFontTag,
   int _btnAlignment,
-  unsigned int _textFgColor,
-  unsigned int _fg1Color,
-  unsigned int _fg2Color,
-  unsigned int _offsetColor,
-  unsigned int _bgColor,
-  unsigned int _topShadowColor,
-  unsigned int _botShadowColor )
+  int _textFgColor,
+  int _fg1Color,
+  int _fg2Color,
+  int _offsetColor,
+  int _bgColor,
+  int _topShadowColor,
+  int _botShadowColor )
 {
 
   if ( _flag & ACTGRF_TEXTFGCOLOR_MASK )

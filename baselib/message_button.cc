@@ -37,11 +37,11 @@ activeMessageButtonClass *msgbto = (activeMessageButtonClass *) client;
   msgbto->eraseSelectBoxCorners();
   msgbto->erase();
 
-  msgbto->fgColor.setColor( msgbto->bufFgColor, msgbto->actWin->ci );
+  msgbto->fgColor.setColorIndex( msgbto->bufFgColor, msgbto->actWin->ci );
 
-  msgbto->onColor.setColor( msgbto->bufOnColor, msgbto->actWin->ci );
+  msgbto->onColor.setColorIndex( msgbto->bufOnColor, msgbto->actWin->ci );
 
-  msgbto->offColor.setColor( msgbto->bufOffColor, msgbto->actWin->ci );
+  msgbto->offColor.setColorIndex( msgbto->bufOffColor, msgbto->actWin->ci );
 
   msgbto->topShadowColor = msgbto->bufTopShadowColor;
   msgbto->botShadowColor = msgbto->bufBotShadowColor;
@@ -254,14 +254,11 @@ int activeMessageButtonClass::createInteractive (
   w = _w;
   h = _h;
 
-  fgColor.setColor( actWin->defaultTextFgColor, actWin->ci );
-  onColor.setColor( actWin->defaultBgColor, actWin->ci );
-  offColor.setColor( actWin->defaultBgColor, actWin->ci );
+  fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
+  onColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
+  offColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
   topShadowColor = actWin->defaultTopShadowColor;
   botShadowColor = actWin->defaultBotShadowColor;
-
-//    strcpy( sourcePressPvName, "" );
-//    strcpy( sourceReleasePvName, "" );
 
   strcpy( fontTag, actWin->defaultBtnFontTag );
 
@@ -301,19 +298,19 @@ int index;
   fprintf( f, "%-d\n", w );
   fprintf( f, "%-d\n", h );
 
-  actWin->ci->getIndex( fgColor.pixelColor(), &index );
+  index = fgColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
-  actWin->ci->getIndex( onColor.pixelColor(), &index );
+  index = onColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
-  actWin->ci->getIndex( offColor.pixelColor(), &index );
+  index = offColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
-  actWin->ci->getIndex( topShadowColor, &index );
+  index = topShadowColor;
   fprintf( f, "%-d\n", index );
 
-  actWin->ci->getIndex( botShadowColor, &index );
+  index = botShadowColor;
   fprintf( f, "%-d\n", index );
 
   if ( destPvExpString.getRaw() )
@@ -379,22 +376,19 @@ char oneName[39+1];
   if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    fgColor.setColor( pixel, actWin->ci );
+    fgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    onColor.setColor( pixel, actWin->ci );
+    onColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    offColor.setColor( pixel, actWin->ci );
+    offColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &topShadowColor );
+    topShadowColor = index;
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &botShadowColor );
+    botShadowColor = index;
 
   }
   else {
@@ -406,7 +400,8 @@ char oneName[39+1];
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    fgColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    fgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     if ( ( major < 2 ) && ( minor < 2 ) ) {
@@ -415,7 +410,8 @@ char oneName[39+1];
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    onColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    onColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     if ( ( major < 2 ) && ( minor < 2 ) ) {
@@ -424,7 +420,8 @@ char oneName[39+1];
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    offColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    offColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     if ( ( major < 2 ) && ( minor < 2 ) ) {
@@ -432,7 +429,8 @@ char oneName[39+1];
       g *= 256;
       b *= 256;
     }
-    actWin->ci->setRGB( r, g, b, &topShadowColor );
+    actWin->ci->setRGB( r, g, b, &pixel );
+    topShadowColor = actWin->ci->pix(pixel);
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     if ( ( major < 2 ) && ( minor < 2 ) ) {
@@ -440,7 +438,8 @@ char oneName[39+1];
       g *= 256;
       b *= 256;
     }
-    actWin->ci->setRGB( r, g, b, &botShadowColor );
+    actWin->ci->setRGB( r, g, b, &pixel );
+    botShadowColor = actWin->ci->pix(pixel);
 
   }
 
@@ -488,7 +487,7 @@ int activeMessageButtonClass::importFromXchFile (
   char *name,
   activeWindowClass *_actWin ){
 
-int fgR, fgG, fgB, bgR, bgG, bgB, more;
+int fgR, fgG, fgB, bgR, bgG, bgB, more, index;
 unsigned int pixel;
 char *tk, *gotData, *context, buf[255+1];
 
@@ -502,9 +501,9 @@ char *tk, *gotData, *context, buf[255+1];
 
   this->actWin = _actWin;
 
-  fgColor.setColor( actWin->defaultTextFgColor, actWin->ci );
-  onColor.setColor( actWin->defaultBgColor, actWin->ci );
-  offColor.setColor( actWin->defaultBgColor, actWin->ci );
+  fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
+  onColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
+  offColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
   topShadowColor = actWin->defaultTopShadowColor;
   botShadowColor = actWin->defaultBotShadowColor;
   strcpy( fontTag, actWin->defaultBtnFontTag );
@@ -741,11 +740,13 @@ char *tk, *gotData, *context, buf[255+1];
   this->initSelectBox(); // call after getting x,y,w,h
 
   actWin->ci->setRGB( fgR, fgG, fgB, &pixel );
-  fgColor.setColor( pixel, actWin->ci );
+  index = actWin->ci->pixIndex( pixel );
+  fgColor.setColorIndex( index, actWin->ci );
 
   actWin->ci->setRGB( bgR, bgG, bgB, &pixel );
-  onColor.setColor( pixel, actWin->ci );
-  offColor.setColor( pixel, actWin->ci );
+  index = actWin->ci->pixIndex( pixel );
+  onColor.setColorIndex( index, actWin->ci );
+  offColor.setColorIndex( index, actWin->ci );
 
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
@@ -774,11 +775,11 @@ char title[32], *ptr;
   bufW = w;
   bufH = h;
 
-  bufFgColor = fgColor.pixelColor();
+  bufFgColor = fgColor.pixelIndex();
 
-  bufOnColor = onColor.pixelColor();
+  bufOnColor = onColor.pixelIndex();
 
-  bufOffColor = offColor.pixelColor();
+  bufOffColor = offColor.pixelIndex();
 
   bufTopShadowColor = topShadowColor;
   bufBotShadowColor = botShadowColor;
@@ -910,7 +911,7 @@ XRectangle xR = { x, y, w, h };
 
   if ( !_3D ) {
 
-    actWin->drawGc.setFG( botShadowColor );
+    actWin->drawGc.setFG( actWin->ci->pix(botShadowColor) );
 
   }
 
@@ -919,7 +920,7 @@ XRectangle xR = { x, y, w, h };
 
   if ( _3D ) {
 
-  actWin->drawGc.setFG( botShadowColor );
+  actWin->drawGc.setFG( actWin->ci->pix(botShadowColor) );
 
   XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x, y, x+w, y );
@@ -927,7 +928,7 @@ XRectangle xR = { x, y, w, h };
   XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x, y, x, y+h );
 
-   actWin->drawGc.setFG( topShadowColor );
+   actWin->drawGc.setFG( actWin->ci->pix(topShadowColor) );
 
    XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
     actWin->drawGc.normGC(), x, y+h, x+w, y+h );
@@ -935,7 +936,7 @@ XRectangle xR = { x, y, w, h };
    XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
     actWin->drawGc.normGC(), x+w, y, x+w, y+h );
 
-  actWin->drawGc.setFG( topShadowColor );
+  actWin->drawGc.setFG( actWin->ci->pix(topShadowColor) );
 
   XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x+1, y+1, x+w-1, y+1 );
@@ -949,7 +950,7 @@ XRectangle xR = { x, y, w, h };
   XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x+2, y+2, x+2, y+h-2 );
 
-  actWin->drawGc.setFG( botShadowColor );
+  actWin->drawGc.setFG( actWin->ci->pix(botShadowColor) );
 
   XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x+1, y+h-1, x+w-1, y+h-1 );
@@ -1008,7 +1009,7 @@ XRectangle xR = { x, y, w, h };
 
   if ( !_3D ) {
 
-    actWin->executeGc.setFG( botShadowColor );
+    actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 
   }
 
@@ -1021,7 +1022,7 @@ XRectangle xR = { x, y, w, h };
 
     if ( _3D ) {
 
-    actWin->executeGc.setFG( botShadowColor );
+    actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 
     XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, x+w, y );
@@ -1029,7 +1030,7 @@ XRectangle xR = { x, y, w, h };
     XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, x, y+h );
 
-    actWin->executeGc.setFG( topShadowColor );
+    actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
 
     XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y+h, x+w, y+h );
@@ -1038,7 +1039,7 @@ XRectangle xR = { x, y, w, h };
      actWin->executeGc.normGC(), x+w, y, x+w, y+h );
 
     // top
-    actWin->executeGc.setFG( topShadowColor );
+    actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
 
     XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x+1, y+1, x+w-1, y+1 );
@@ -1054,7 +1055,7 @@ XRectangle xR = { x, y, w, h };
      actWin->executeGc.normGC(), x+2, y+2, x+2, y+h-2 );
 
     // bottom
-    actWin->executeGc.setFG( botShadowColor );
+    actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 
     XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x+1, y+h-1, x+w-1, y+h-1 );
@@ -1078,7 +1079,7 @@ XRectangle xR = { x, y, w, h };
 
     if ( _3D ) {
 
-    actWin->executeGc.setFG( botShadowColor );
+    actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 
     XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, x+w, y );
@@ -1088,18 +1089,18 @@ XRectangle xR = { x, y, w, h };
 
     // top
 
-    actWin->executeGc.setFG( topShadowColor );
+    actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
 
     // bottom
 
-    actWin->executeGc.setFG( topShadowColor );
+    actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
 
     XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y+h, x+w, y+h );
 
     //right
 
-    actWin->executeGc.setFG( topShadowColor );
+    actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
 
     XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x+w, y, x+w, y+h );
@@ -1528,23 +1529,23 @@ void activeMessageButtonClass::changeDisplayParams (
   int _ctlAlignment,
   char *_btnFontTag,
   int _btnAlignment,
-  unsigned int _textFgColor,
-  unsigned int _fg1Color,
-  unsigned int _fg2Color,
-  unsigned int _offsetColor,
-  unsigned int _bgColor,
-  unsigned int _topShadowColor,
-  unsigned int _botShadowColor )
+  int _textFgColor,
+  int _fg1Color,
+  int _fg2Color,
+  int _offsetColor,
+  int _bgColor,
+  int _topShadowColor,
+  int _botShadowColor )
 {
 
   if ( _flag & ACTGRF_TEXTFGCOLOR_MASK )
-    fgColor.setColor( _textFgColor, actWin->ci );
+    fgColor.setColorIndex( _textFgColor, actWin->ci );
 
   if ( _flag & ACTGRF_BGCOLOR_MASK )
-    onColor.setColor( _bgColor, actWin->ci );
+    onColor.setColorIndex( _bgColor, actWin->ci );
 
   if ( _flag & ACTGRF_BGCOLOR_MASK )
-    offColor.setColor( _bgColor, actWin->ci );
+    offColor.setColorIndex( _bgColor, actWin->ci );
 
   if ( _flag & ACTGRF_TOPSHADOWCOLOR_MASK )
     topShadowColor = _topShadowColor;

@@ -2411,7 +2411,7 @@ int entryFormClass::addColorButton (
   char *label,
   colorInfoClass *ci,
   colorButtonClass *cb,
-  unsigned int *dest )
+  int *dest )
 {
 
 XmString str;
@@ -2432,7 +2432,7 @@ colorButtonEntry *cur;
     XtSetArg( args[n], XmNnavigationType, XmTAB_GROUP ); n++;
     XtSetArg( args[n], XmNwidth, (XtArgVal) 25 ); n++;
     XtSetArg( args[n], XmNheight, (XtArgVal) 25 ); n++;
-    XtSetArg( args[n], XmNbackground, (XtArgVal) *dest ); n++;
+    XtSetArg( args[n], XmNbackground, (XtArgVal) ci->pix(*dest) ); n++;
     XtSetArg( args[n], XmNtopAttachment, (XtArgVal) XmATTACH_FORM ); n++;
     XtSetArg( args[n], XmNrightAttachment, (XtArgVal) XmATTACH_FORM ); n++;
 
@@ -2448,7 +2448,7 @@ colorButtonEntry *cur;
     XtSetArg( args[n], XmNnavigationType, XmTAB_GROUP ); n++;
     XtSetArg( args[n], XmNwidth, (XtArgVal) 25 ); n++;
     XtSetArg( args[n], XmNheight, (XtArgVal) 25 ); n++;
-    XtSetArg( args[n], XmNbackground, (XtArgVal) *dest ); n++;
+    XtSetArg( args[n], XmNbackground, (XtArgVal) ci->pix(*dest) ); n++;
     XtSetArg( args[n], XmNtopAttachment, (XtArgVal) XmATTACH_WIDGET ); n++;
     XtSetArg( args[n], XmNtopWidget, (XtArgVal) curW ); n++;
     XtSetArg( args[n], XmNleftAttachment,
@@ -2513,7 +2513,7 @@ colorButtonEntry *cur;
     XtSetArg( args[n], XmNnavigationType, XmTAB_GROUP ); n++;
     XtSetArg( args[n], XmNwidth, (XtArgVal) 25 ); n++;
     XtSetArg( args[n], XmNheight, (XtArgVal) 25 ); n++;
-    XtSetArg( args[n], XmNbackground, (XtArgVal) *dest ); n++;
+    XtSetArg( args[n], XmNbackground, (XtArgVal) ci->pix(*dest) ); n++;
     XtSetArg( args[n], XmNmarginTop, (XtArgVal) 7 ); n++;
     XtSetArg( args[n], XmNtopAttachment,
      (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
@@ -2533,7 +2533,7 @@ colorButtonEntry *cur;
     XtSetArg( args[n], XmNnavigationType, XmTAB_GROUP ); n++;
     XtSetArg( args[n], XmNwidth, (XtArgVal) 25 ); n++;
     XtSetArg( args[n], XmNheight, (XtArgVal) 25 ); n++;
-    XtSetArg( args[n], XmNbackground, (XtArgVal) *dest ); n++;
+    XtSetArg( args[n], XmNbackground, (XtArgVal) ci->pix(*dest) ); n++;
     XtSetArg( args[n], XmNmarginTop, (XtArgVal) 7 ); n++;
     XtSetArg( args[n], XmNtopAttachment,
      (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
@@ -2568,7 +2568,7 @@ int entryFormClass::addColorButtonWithText (
   char *label,
   colorInfoClass *ci,
   colorButtonClass *cb,
-  unsigned int *dest,
+  int *dest,
   int numCols,
   char *pvName )
 {
@@ -2594,7 +2594,7 @@ textEntry *te;
     XtSetArg( bArgs[bN], XmNnavigationType, XmTAB_GROUP ); bN++;
     XtSetArg( bArgs[bN], XmNwidth, (XtArgVal) 25 ); bN++;
     XtSetArg( bArgs[bN], XmNheight, (XtArgVal) 25 ); bN++;
-    XtSetArg( bArgs[bN], XmNbackground, (XtArgVal) *dest ); bN++;
+    XtSetArg( bArgs[bN], XmNbackground, (XtArgVal) ci->pix(*dest) ); bN++;
     XtSetArg( bArgs[bN], XmNtopAttachment, (XtArgVal) XmATTACH_FORM ); bN++;
     XtSetArg( bArgs[bN], XmNleftAttachment, (XtArgVal) XmATTACH_FORM ); bN++;
 
@@ -2635,7 +2635,7 @@ textEntry *te;
     XtSetArg( bArgs[bN], XmNnavigationType, XmTAB_GROUP ); bN++;
     XtSetArg( bArgs[bN], XmNwidth, (XtArgVal) 25 ); bN++;
     XtSetArg( bArgs[bN], XmNheight, (XtArgVal) 25 ); bN++;
-    XtSetArg( bArgs[bN], XmNbackground, (XtArgVal) *dest ); bN++;
+    XtSetArg( bArgs[bN], XmNbackground, (XtArgVal) ci->pix(*dest) ); bN++;
     XtSetArg( bArgs[bN], XmNtopAttachment, (XtArgVal) XmATTACH_FORM ); bN++;
     XtSetArg( bArgs[bN], XmNleftAttachment, (XtArgVal) XmATTACH_FORM ); bN++;
 

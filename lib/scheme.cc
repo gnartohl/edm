@@ -52,8 +52,9 @@ int displaySchemeClass::loadDefault (
 char *envPtr;
 char fileName[127+1], buf[127+1], *tk;
 FILE *f;
-int r, g, b, index;
+int r, g, b;
 int major, minor, release;
+unsigned int pixel;
 
   envPtr = getenv( environment_str5 );
   if ( envPtr ) {
@@ -89,32 +90,23 @@ int major, minor, release;
 
   if ( major > 1 ) {
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &fg );
+    fscanf( f, "%d\n", &fg );
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &bg );
+    fscanf( f, "%d\n", &bg );
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &defaultTextFg );
+    fscanf( f, "%d\n", &defaultTextFg );
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &defaultFg1 );
+    fscanf( f, "%d\n", &defaultFg1 );
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &defaultFg2 );
+    fscanf( f, "%d\n", &defaultFg2 );
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &defaultBg );
+    fscanf( f, "%d\n", &defaultBg );
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &topShadow );
+    fscanf( f, "%d\n", &topShadow );
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &botShadow );
+    fscanf( f, "%d\n", &botShadow );
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &offset );
+    fscanf( f, "%d\n", &offset );
 
   }
   else {
@@ -125,7 +117,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &fg );
+    ci->setRGB( r, g, b, &pixel );
+    fg = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -133,7 +126,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &bg );
+    ci->setRGB( r, g, b, &pixel );
+    bg = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -141,7 +135,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultTextFg );
+    ci->setRGB( r, g, b, &pixel );
+    defaultTextFg = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -149,7 +144,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultFg1 );
+    ci->setRGB( r, g, b, &pixel );
+    defaultFg1 = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -157,7 +153,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultFg2 );
+    ci->setRGB( r, g, b, &pixel );
+    defaultFg2 = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -165,7 +162,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultBg );
+    ci->setRGB( r, g, b, &pixel );
+    defaultBg = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -173,7 +171,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &topShadow );
+    ci->setRGB( r, g, b, &pixel );
+    topShadow = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -181,7 +180,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &botShadow );
+    ci->setRGB( r, g, b, &pixel );
+    botShadow = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -189,7 +189,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &offset );
+    ci->setRGB( r, g, b, &pixel );
+    offset = ci->pixIndex( pixel );
 
   }
 
@@ -223,8 +224,9 @@ int displaySchemeClass::load (
 {
 
 FILE *f;
-int r, g, b, index;
+int r, g, b;
 int major, minor, release;
+unsigned int pixel;
 
   f = fopen( fileName, "r" );
   if ( !f ) return 0;
@@ -241,32 +243,23 @@ int major, minor, release;
 
   if ( major > 1 ) {
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &fg );
+    fscanf( f, "%d\n", &fg );
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &bg );
+    fscanf( f, "%d\n", &bg );
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &defaultTextFg );
+    fscanf( f, "%d\n", &defaultTextFg );
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &defaultFg1 );
+    fscanf( f, "%d\n", &defaultFg1 );
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &defaultFg2 );
+    fscanf( f, "%d\n", &defaultFg2 );
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &defaultBg );
+    fscanf( f, "%d\n", &defaultBg );
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &topShadow );
+    fscanf( f, "%d\n", &topShadow );
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &botShadow );
+    fscanf( f, "%d\n", &botShadow );
 
-    fscanf( f, "%d\n", &index );
-    ci->setIndex( index, &offset );
+    fscanf( f, "%d\n", &offset );
 
   }
   else {
@@ -277,7 +270,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &fg );
+    ci->setRGB( r, g, b, &pixel );
+    fg = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -285,7 +279,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &bg );
+    ci->setRGB( r, g, b, &pixel );
+    bg = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -293,7 +288,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultTextFg );
+    ci->setRGB( r, g, b, &pixel );
+    defaultTextFg = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -301,7 +297,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultFg1 );
+    ci->setRGB( r, g, b, &pixel );
+    defaultFg1 = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -309,7 +306,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultFg2 );
+    ci->setRGB( r, g, b, &pixel );
+    defaultFg2 = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -317,7 +315,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultBg );
+    ci->setRGB( r, g, b, &pixel );
+    defaultBg = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -325,7 +324,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &topShadow );
+    ci->setRGB( r, g, b, &pixel );
+    topShadow = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -333,7 +333,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &botShadow );
+    ci->setRGB( r, g, b, &pixel );
+    botShadow = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -341,7 +342,8 @@ int major, minor, release;
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &offset );
+    ci->setRGB( r, g, b, &pixel );
+    offset = ci->pixIndex( pixel );
 
   }
 
@@ -391,31 +393,31 @@ int index;
 
   fprintf( f, "%-d\n", defCtlAlignment );
 
-  ci->getIndex( fg, &index );
+  index = fg;
   fprintf( f, "%-d\n", index );
 
-  ci->getIndex( bg, &index );
+  index = bg;
   fprintf( f, "%-d\n", index );
 
-  ci->getIndex( defaultTextFg, &index );
+  index = defaultTextFg;
   fprintf( f, "%-d\n", index );
 
-  ci->getIndex( defaultFg1, &index );
+  index = defaultFg1;
   fprintf( f, "%-d\n", index );
 
-  ci->getIndex( defaultFg2, &index );
+  index = defaultFg2;
   fprintf( f, "%-d\n", index );
 
-  ci->getIndex( defaultBg, &index );
+  index = defaultBg;
   fprintf( f, "%-d\n", index );
 
-  ci->getIndex( topShadow, &index );
+  index = topShadow;
   fprintf( f, "%-d\n", index );
 
-  ci->getIndex( botShadow, &index );
+  index = botShadow;
   fprintf( f, "%-d\n", index );
 
-  ci->getIndex( offset, &index );
+  index = offset;
   fprintf( f, "%-d\n", index );
 
   writeStringToFile( f, defPvType );

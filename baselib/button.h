@@ -158,11 +158,11 @@ int needReadConnectInit, needReadInfoInit, needReadRefresh;
 int needErase, needDraw;
 
 int fgColorMode, bufFgColorMode;
-unsigned int bufFgColor, bufOnColor, bufOffColor;
+int bufFgColor, bufOnColor, bufOffColor;
 pvColorClass fgColor, inconsistentColor, onColor, offColor;
-unsigned int topShadowColor, bufTopShadowColor;
-unsigned int botShadowColor, bufBotShadowColor;
-unsigned int bufInconsistentColor;
+int topShadowColor, bufTopShadowColor;
+int botShadowColor, bufBotShadowColor;
+int bufInconsistentColor;
 colorButtonClass fgCb, onCb, offCb, topShadowCb, botShadowCb, inconsistentCb;
 char onLabel[MAX_ENUM_STRING_SIZE+1], bufOnLabel[MAX_ENUM_STRING_SIZE+1];
 char offLabel[MAX_ENUM_STRING_SIZE+1], bufOffLabel[MAX_ENUM_STRING_SIZE+1];
@@ -305,13 +305,13 @@ void activeButtonClass::changeDisplayParams (
   int ctlAlignment,
   char *btnFontTag,
   int btnAlignment,
-  unsigned int textFgColor,
-  unsigned int fg1Color,
-  unsigned int fg2Color,
-  unsigned int offsetColor,
-  unsigned int bgColor,
-  unsigned int topShadowColor,
-  unsigned int botShadowColor );
+  int textFgColor,
+  int fg1Color,
+  int fg2Color,
+  int offsetColor,
+  int bgColor,
+  int topShadowColor,
+  int botShadowColor );
 
 void activeButtonClass::changePvNames (
   int flag,

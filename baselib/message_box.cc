@@ -67,19 +67,19 @@ activeMessageBoxClass *messageboxo = (activeMessageBoxClass *) client;
   messageboxo->eraseSelectBoxCorners();
   messageboxo->erase();
 
-  messageboxo->fgColor.setColor(
+  messageboxo->fgColor.setColorIndex(
    messageboxo->bufFgColor, messageboxo->actWin->ci );
 
-  messageboxo->bgColor.setColor(
+  messageboxo->bgColor.setColorIndex(
    messageboxo->bufBgColor, messageboxo->actWin->ci );
 
-  messageboxo->bg2Color.setColor(
+  messageboxo->bg2Color.setColorIndex(
    messageboxo->bufBg2Color, messageboxo->actWin->ci );
 
-  messageboxo->topShadowColor.setColor(
+  messageboxo->topShadowColor.setColorIndex(
    messageboxo->bufTopShadowColor, messageboxo->actWin->ci );
 
-  messageboxo->botShadowColor.setColor(
+  messageboxo->botShadowColor.setColorIndex(
    messageboxo->bufBotShadowColor, messageboxo->actWin->ci );
 
   messageboxo->readPvExpStr.setRaw( messageboxo->bufReadPvName );
@@ -361,11 +361,11 @@ int activeMessageBoxClass::createInteractive (
   x = _x;
   y = _y;
 
-  fgColor.setColor( actWin->defaultTextFgColor, actWin->ci );
-  bg2Color.setColor( actWin->defaultBgColor, actWin->ci );
-  bgColor.setColor( actWin->defaultOffsetColor, actWin->ci );
-  topShadowColor.setColor( actWin->defaultTopShadowColor, actWin->ci );
-  botShadowColor.setColor( actWin->defaultBotShadowColor, actWin->ci );
+  fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
+  bg2Color.setColorIndex( actWin->defaultBgColor, actWin->ci );
+  bgColor.setColorIndex( actWin->defaultOffsetColor, actWin->ci );
+  topShadowColor.setColorIndex( actWin->defaultTopShadowColor, actWin->ci );
+  botShadowColor.setColorIndex( actWin->defaultBotShadowColor, actWin->ci );
 
   strcpy( fontTag, actWin->defaultFontTag );
   actWin->fi->loadFontTag( fontTag );
@@ -393,19 +393,19 @@ int index;
   fprintf( f, "%-d\n", w );
   fprintf( f, "%-d\n", h );
 
-  actWin->ci->getIndex( fgColor.pixelColor(), &index );
+  index = fgColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
-  actWin->ci->getIndex( bgColor.pixelColor(), &index );
+  index = bgColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
-  actWin->ci->getIndex( bg2Color.pixelColor(), &index );
+  index = bg2Color.pixelIndex();
   fprintf( f, "%-d\n", index );
 
-  actWin->ci->getIndex( topShadowColor.pixelColor(), &index );
+  index = topShadowColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
-  actWin->ci->getIndex( botShadowColor.pixelColor(), &index );
+  index = botShadowColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   if ( readPvExpStr.getRaw() )
@@ -452,47 +452,47 @@ char oneName[39+1];
   if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index );
-    actWin->ci->setIndex( index, &pixel );
-    fgColor.setColor( pixel, actWin->ci );
+    fgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &index );
-    actWin->ci->setIndex( index, &pixel );
-    bgColor.setColor( pixel, actWin->ci );
+    bgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &index );
-    actWin->ci->setIndex( index, &pixel );
-    bg2Color.setColor( pixel, actWin->ci );
+    bg2Color.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &index );
-    actWin->ci->setIndex( index, &pixel );
-    topShadowColor.setColor( pixel, actWin->ci );
+    topShadowColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &index );
-    actWin->ci->setIndex( index, &pixel );
-    botShadowColor.setColor( pixel, actWin->ci );
+    botShadowColor.setColorIndex( index, actWin->ci );
 
   }
   else {
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     actWin->ci->setRGB( r, g, b, &pixel );
-    fgColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    fgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     actWin->ci->setRGB( r, g, b, &pixel );
-    bgColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    bgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     actWin->ci->setRGB( r, g, b, &pixel );
-    bg2Color.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    bg2Color.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     actWin->ci->setRGB( r, g, b, &pixel );
-    topShadowColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    topShadowColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b );
     actWin->ci->setRGB( r, g, b, &pixel );
-    botShadowColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    botShadowColor.setColorIndex( index, actWin->ci );
 
   }
 
@@ -535,11 +535,11 @@ char title[32], *ptr;
   bufW = w;
   bufH = h;
 
-  bufFgColor = fgColor.pixelColor();
-  bufBgColor = bgColor.pixelColor();
-  bufBg2Color = bg2Color.pixelColor();
-  bufTopShadowColor = topShadowColor.pixelColor();
-  bufBotShadowColor = botShadowColor.pixelColor();
+  bufFgColor = fgColor.pixelIndex();
+  bufBgColor = bgColor.pixelIndex();
+  bufBg2Color = bg2Color.pixelIndex();
+  bufTopShadowColor = topShadowColor.pixelIndex();
+  bufBotShadowColor = botShadowColor.pixelIndex();
 
   strncpy( bufFontTag, fontTag, 63 );
 
@@ -1176,29 +1176,29 @@ void activeMessageBoxClass::changeDisplayParams (
   int _ctlAlignment,
   char *_btnFontTag,
   int _btnAlignment,
-  unsigned int _textFgColor,
-  unsigned int _fg1Color,
-  unsigned int _fg2Color,
-  unsigned int _offsetColor,
-  unsigned int _bgColor,
-  unsigned int _topShadowColor,
-  unsigned int _botShadowColor )
+  int _textFgColor,
+  int _fg1Color,
+  int _fg2Color,
+  int _offsetColor,
+  int _bgColor,
+  int _topShadowColor,
+  int _botShadowColor )
 {
 
   if ( _flag & ACTGRF_TEXTFGCOLOR_MASK )
-    fgColor.setColor( actWin->defaultTextFgColor, actWin->ci );
+    fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
 
   if ( _flag & ACTGRF_BGCOLOR_MASK )
-    bg2Color.setColor( actWin->defaultBgColor, actWin->ci );
+    bg2Color.setColorIndex( actWin->defaultBgColor, actWin->ci );
 
   if ( _flag & ACTGRF_OFFSETCOLOR_MASK )
-    bgColor.setColor( actWin->defaultOffsetColor, actWin->ci );
+    bgColor.setColorIndex( actWin->defaultOffsetColor, actWin->ci );
 
   if ( _flag & ACTGRF_TOPSHADOWCOLOR_MASK )
-    topShadowColor.setColor( actWin->defaultTopShadowColor, actWin->ci );
+    topShadowColor.setColorIndex( actWin->defaultTopShadowColor, actWin->ci );
 
   if ( _flag & ACTGRF_BOTSHADOWCOLOR_MASK )
-    botShadowColor.setColor( actWin->defaultBotShadowColor, actWin->ci );
+    botShadowColor.setColorIndex( actWin->defaultBotShadowColor, actWin->ci );
 
   if ( _flag & ACTGRF_FONTTAG_MASK ) {
     strcpy( fontTag, _fontTag );

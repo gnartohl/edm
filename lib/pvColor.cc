@@ -21,6 +21,17 @@
 pvColorClass::pvColorClass( void )
 {
 
+  effectiveIndex = 0;
+  index = 0;
+  staticIndex = 0;
+  disconnectedIndex = 0;
+  noalarmIndex = 0;
+  invalidIndex = 0;
+  minorIndex = 0;
+  majorIndex = 0;
+  saveValIndex = 0;
+  ruleIndex = 0;
+
   alarmSensitive = 0;
   connectSensitive = 0;
   pixel = 0;
@@ -42,6 +53,16 @@ pvColorClass::pvColorClass( void )
 
 void pvColorClass::copy( const pvColorClass &source )
 {
+
+  index = source.index;
+  staticIndex = source.staticIndex;
+  effectiveIndex = source.effectiveIndex;
+  disconnectedIndex = source.disconnectedIndex;
+  noalarmIndex = source.noalarmIndex;
+  invalidIndex = source.invalidIndex;
+  minorIndex = source.minorIndex;
+  majorIndex = source.majorIndex;
+  saveValIndex = source.saveValIndex;
 
   pixel = source.pixel;
   staticPixel = source.staticPixel;
@@ -73,6 +94,7 @@ void pvColorClass::setStatus (
 
   if ( !connected && connectSensitive ) {
 
+    effectiveIndex = disconnectedIndex;
     effectivePixel = disconnectedPixel;
     alarmed = 1;
 
@@ -82,22 +104,27 @@ void pvColorClass::setStatus (
     switch ( severity ) {
 
     case INVALID_ALARM:
+      effectiveIndex = invalidIndex;
       effectivePixel = invalidPixel;
       alarmed = 1;
       break;
 
     case MINOR_ALARM:
+      effectiveIndex = minorIndex;
       effectivePixel = minorPixel;
       alarmed = 1;
       break;
 
     case MAJOR_ALARM:
+      effectiveIndex = majorIndex;
       effectivePixel = majorPixel;
       alarmed = 1;
       break;
 
     default:
+
       alarmed = 0;
+
       if ( noalarmPixel == -1 ) {
 	if ( null ) {
           effectivePixel = saveValPixel;
@@ -114,6 +141,24 @@ void pvColorClass::setStatus (
           effectivePixel = noalarmPixel;
 	}
       }
+
+      if ( noalarmIndex == -1 ) {
+	if ( null ) {
+          effectiveIndex = saveValIndex;
+	}
+	else {
+          effectiveIndex = index;
+	}
+      }
+      else {
+	if ( null ) {
+          effectiveIndex = saveValIndex;
+	}
+	else {
+          effectiveIndex = noalarmIndex;
+	}
+      }
+
       break;
 
     }
@@ -122,11 +167,19 @@ void pvColorClass::setStatus (
   else {
 
     alarmed = 0;
+
     if ( null ) {
       effectivePixel = saveValPixel;
     }
     else {
       effectivePixel = pixel;
+    }
+
+    if ( null ) {
+      effectiveIndex = saveValIndex;
+    }
+    else {
+      effectiveIndex = index;
     }
 
   }
@@ -140,6 +193,13 @@ unsigned int pvColorClass::pixelColor( void ) const
 
 }
 
+int pvColorClass::pixelIndex( void ) const
+{
+
+  return staticIndex;
+
+}
+
 unsigned int pvColorClass::getColor( void ) const
 {
 
@@ -147,11 +207,30 @@ unsigned int pvColorClass::getColor( void ) const
 
 }
 
+int pvColorClass::getIndex( void ) const
+{
+
+  return effectiveIndex;
+
+}
+
 void pvColorClass::setNullColor (
   unsigned int color )
 {
 
+  printf( "pvColorClass::setNullColor\n" );
+
   saveValPixel = color;
+
+}
+
+void pvColorClass::setNullIndex (
+  int color,
+  colorInfoClass *ci )
+{
+
+  saveValIndex = color;
+  saveValPixel = ci->pix(color);
 
 }
 
@@ -162,13 +241,22 @@ unsigned int pvColorClass::nullColor ( void )
 
 }
 
+int pvColorClass::nullIndex  ( void )
+{
+
+  return saveValIndex;
+
+}
+
 void pvColorClass::changeColor (
   unsigned int color,
   colorInfoClass *ci )
 {
 
+  printf( "changeColor\n" );
+
   pixel = color;
-  saveValPixel = color;
+  //saveValPixel = color;
   invalidPixel = (int) ci->getSpecialColor( COLORINFO_K_INVALID );
   minorPixel = (int) ci->getSpecialColor( COLORINFO_K_MINOR );
   majorPixel = (int) ci->getSpecialColor( COLORINFO_K_MAJOR );
@@ -228,13 +316,162 @@ void pvColorClass::changeColor (
 
 }
 
+void pvColorClass::_changeColor (
+  unsigned int color,
+  colorInfoClass *ci )
+{
+
+  pixel = color;
+  //saveValPixel = color;
+  invalidPixel = (int) ci->getSpecialColor( COLORINFO_K_INVALID );
+  minorPixel = (int) ci->getSpecialColor( COLORINFO_K_MINOR );
+  majorPixel = (int) ci->getSpecialColor( COLORINFO_K_MAJOR );
+  disconnectedPixel = (int) ci->getSpecialColor( COLORINFO_K_DISCONNECTED );
+  noalarmPixel = (int) ci->getSpecialColor( COLORINFO_K_NOALARM );
+
+  if ( !connected && connectSensitive ) {
+
+    effectivePixel = disconnectedPixel;
+
+  }
+  else {
+
+   if ( !alarmSensitive ) {
+
+     if ( ruleMode ) {
+       effectivePixel = rulePixel;
+     }
+     else {
+       effectivePixel = pixel;
+     }
+
+    }
+    else {
+
+      switch ( severity ) {
+
+      case INVALID_ALARM:
+        effectivePixel = invalidPixel;
+        break;
+
+      case MINOR_ALARM:
+        effectivePixel = minorPixel;
+        break;
+
+      case MAJOR_ALARM:
+        effectivePixel = majorPixel;
+        break;
+
+      default:
+        if ( noalarmPixel == -1 )
+          if ( ruleMode ) {
+            effectivePixel = rulePixel;
+          }
+          else {
+            effectivePixel = pixel;
+          }
+        else
+          effectivePixel = noalarmPixel;
+        break;
+
+      }
+
+    }
+
+  }
+
+}
+
+void pvColorClass::changeIndex (
+  int color,
+  colorInfoClass *ci )
+{
+
+  _changeColor( ci->pix(color), ci );
+
+  index = color;
+  //saveValIndex = color;
+  invalidIndex = (int) ci->getSpecialIndex( COLORINFO_K_INVALID );
+  minorIndex = (int) ci->getSpecialIndex( COLORINFO_K_MINOR );
+  majorIndex = (int) ci->getSpecialIndex( COLORINFO_K_MAJOR );
+  disconnectedIndex = (int) ci->getSpecialIndex( COLORINFO_K_DISCONNECTED );
+  noalarmIndex = (int) ci->getSpecialIndex( COLORINFO_K_NOALARM );
+
+  if ( !connected && connectSensitive ) {
+
+    effectiveIndex = disconnectedIndex;
+
+  }
+  else {
+
+   if ( !alarmSensitive ) {
+
+     if ( ruleMode ) {
+       effectiveIndex = ruleIndex;
+     }
+     else {
+       effectiveIndex = index;
+     }
+
+    }
+    else {
+
+      switch ( severity ) {
+
+      case INVALID_ALARM:
+        effectiveIndex = invalidIndex;
+        break;
+
+      case MINOR_ALARM:
+        effectiveIndex = minorIndex;
+        break;
+
+      case MAJOR_ALARM:
+        effectiveIndex = majorIndex;
+        break;
+
+      default:
+        if ( noalarmIndex == -1 )
+          if ( ruleMode ) {
+            effectiveIndex = ruleIndex;
+          }
+          else {
+            effectiveIndex = index;
+          }
+        else
+          effectiveIndex = noalarmIndex;
+        break;
+
+      }
+
+    }
+
+  }
+
+}
+
+void pvColorClass::setColorIndex (
+  int color,
+  colorInfoClass *ci )
+{
+
+  staticIndex = color;
+  changeIndex( color, ci );
+
+  staticPixel = ci->pix(color);
+  _changeColor( staticPixel, ci );
+
+}
+
 void pvColorClass::setColor (
   unsigned int color,
   colorInfoClass *ci )
 {
 
+  printf( "pvColorClass::setColor\n" );
+
   staticPixel = color;
-  changeColor( color, ci );
+  _changeColor( color, ci );
 
 }
 
@@ -249,6 +486,7 @@ void pvColorClass::setDisconnected ( void ) {
 
   connected = 0;
   effectivePixel = disconnectedPixel;
+  effectiveIndex = disconnectedIndex;
 
 }
 
@@ -282,6 +520,7 @@ void pvColorClass::setNull ( void )
   null = 1;
 
   if ( !alarmed ) {
+    effectiveIndex = saveValIndex;
     effectivePixel = saveValPixel;
   }
 
@@ -293,6 +532,7 @@ void pvColorClass::setNotNull ( void )
   null = 0;
 
   if ( !alarmed ) {
+    effectiveIndex = index;
     effectivePixel = pixel;
   }
 
@@ -317,7 +557,22 @@ void pvColorClass::setRuleColor (
   colorInfoClass *ci )
 {
 
+  printf( "pvColorClass::setRuleColor\n" );
+
   rulePixel = color;
-  changeColor( color, ci );
+  _changeColor( color, ci );
+
+}
+
+void pvColorClass::setRuleIndex (
+  int color,
+  colorInfoClass *ci )
+{
+
+  ruleIndex = color;
+  changeIndex( color, ci );
+
+  rulePixel = ci->pix(color);
+  _changeColor( rulePixel, ci );
 
 }

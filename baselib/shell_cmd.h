@@ -126,9 +126,9 @@ friend void shcmdc_edit_cancel_delete (
 
 int bufX, bufY, bufW, bufH;
 
-unsigned int topShadowColor, bufTopShadowColor;
-unsigned int botShadowColor, bufBotShadowColor;
-unsigned int bufFgColor, bufBgColor;
+int topShadowColor, bufTopShadowColor;
+int botShadowColor, bufBotShadowColor;
+int bufFgColor, bufBgColor;
 pvColorClass fgColor, bgColor;
 colorButtonClass fgCb, bgCb, topShadowCb, botShadowCb;
 int invisible, bufInvisible;
@@ -252,13 +252,13 @@ void shellCmdClass::changeDisplayParams (
   int ctlAlignment,
   char *btnFontTag,
   int btnAlignment,
-  unsigned int textFgColor,
-  unsigned int fg1Color,
-  unsigned int fg2Color,
-  unsigned int offsetColor,
-  unsigned int bgColor,
-  unsigned int topShadowColor,
-  unsigned int botShadowColor );
+  int textFgColor,
+  int fg1Color,
+  int fg2Color,
+  int offsetColor,
+  int bgColor,
+  int topShadowColor,
+  int botShadowColor );
 
 };
 

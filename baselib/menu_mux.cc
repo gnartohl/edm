@@ -223,14 +223,14 @@ int i, ii;
     mmuxo->fgColor.setAlarmSensitive();
   else
     mmuxo->fgColor.setAlarmInsensitive();
-  mmuxo->fgColor.setColor( mmuxo->bufFgColor, mmuxo->actWin->ci );
+  mmuxo->fgColor.setColorIndex( mmuxo->bufFgColor, mmuxo->actWin->ci );
 
   mmuxo->bgColorMode = mmuxo->bufBgColorMode;
   if ( mmuxo->bgColorMode == MMUXC_K_COLORMODE_ALARM )
     mmuxo->bgColor.setAlarmSensitive();
   else
     mmuxo->bgColor.setAlarmInsensitive();
-  mmuxo->bgColor.setColor( mmuxo->bufBgColor, mmuxo->actWin->ci );
+  mmuxo->bgColor.setColorIndex( mmuxo->bufBgColor, mmuxo->actWin->ci );
 
   mmuxo->x = mmuxo->bufX;
   mmuxo->sboxX = mmuxo->bufX;
@@ -477,8 +477,8 @@ int menuMuxClass::createInteractive (
   topShadowColor = actWin->defaultTopShadowColor;
   botShadowColor = actWin->defaultBotShadowColor;
 
-  fgColor.setColor( actWin->defaultTextFgColor, actWin->ci );
-  bgColor.setColor( actWin->defaultBgColor, actWin->ci );
+  fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
+  bgColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
 
   this->draw();
 
@@ -502,20 +502,20 @@ int index, i, ii;
   fprintf( f, "%-d\n", w );
   fprintf( f, "%-d\n", h );
 
-  actWin->ci->getIndex( fgColor.pixelColor(), &index );
+  index = fgColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", fgColorMode );
 
-  actWin->ci->getIndex( bgColor.pixelColor(), &index );
+  index = bgColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", bgColorMode );
 
-  actWin->ci->getIndex( topShadowColor, &index );
+  index = topShadowColor;
   fprintf( f, "%-d\n", index );
 
-  actWin->ci->getIndex( botShadowColor, &index );
+  index = botShadowColor;
   fprintf( f, "%-d\n", index );
 
   if ( controlPvExpStr.getRaw() )
@@ -573,8 +573,7 @@ char oneName[39+1];
   if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    fgColor.setColor( pixel, actWin->ci );
+    fgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &fgColorMode ); actWin->incLine();
 
@@ -584,8 +583,7 @@ char oneName[39+1];
       fgColor.setAlarmInsensitive();
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    bgColor.setColor( pixel, actWin->ci );
+    bgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &bgColorMode ); actWin->incLine();
 
@@ -595,10 +593,10 @@ char oneName[39+1];
       bgColor.setAlarmInsensitive();
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &topShadowColor );
+    topShadowColor = index;
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &botShadowColor );
+    botShadowColor = index;
 
   }
   else {
@@ -610,7 +608,8 @@ char oneName[39+1];
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    fgColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    fgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &fgColorMode ); actWin->incLine();
 
@@ -626,7 +625,8 @@ char oneName[39+1];
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    bgColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    bgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &bgColorMode ); actWin->incLine();
 
@@ -641,7 +641,8 @@ char oneName[39+1];
       g *= 256;
       b *= 256;
     }
-    actWin->ci->setRGB( r, g, b, &topShadowColor );
+    actWin->ci->setRGB( r, g, b, &pixel );
+    topShadowColor = actWin->ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     if ( ( major < 2 ) && ( minor < 1 ) ) {
@@ -649,7 +650,8 @@ char oneName[39+1];
       g *= 256;
       b *= 256;
     }
-    actWin->ci->setRGB( r, g, b, &botShadowColor );
+    actWin->ci->setRGB( r, g, b, &pixel );
+    botShadowColor = actWin->ci->pixIndex( pixel );
 
   }
 
@@ -730,10 +732,10 @@ char title[32], *ptr;
   bufTopShadowColor = topShadowColor;
   bufBotShadowColor = botShadowColor;
 
-  bufFgColor = fgColor.pixelColor();
+  bufFgColor = fgColor.pixelIndex();
   bufFgColorMode = fgColorMode;
 
-  bufBgColor = bgColor.pixelColor();
+  bufBgColor = bgColor.pixelIndex();
   bufBgColorMode = bgColorMode;
 
   if ( controlPvExpStr.getRaw() )
@@ -1345,9 +1347,11 @@ static XtActionsRec dragActions[] = {
     XtSetArg( args[n], XmNhighlightColor,
      (XtArgVal) actWin->executeGc.getBaseBG() ); n++;
     XtSetArg( args[n], XmNhighlightPixmap, (XtArgVal) None ); n++;
-    XtSetArg( args[n], XmNtopShadowColor, (XtArgVal) topShadowColor );
+    XtSetArg( args[n], XmNtopShadowColor,
+     (XtArgVal) actWin->ci->pix(topShadowColor) );
      n++;
-    XtSetArg( args[n], XmNbottomShadowColor, (XtArgVal) botShadowColor );
+    XtSetArg( args[n], XmNbottomShadowColor,
+     (XtArgVal) actWin->ci->pix(botShadowColor) );
      n++;
     XtSetArg( args[n], XmNtranslations, parsedTrans ); n++;
     XtSetArg( args[n], XmNuserData, this ); n++;
@@ -1454,20 +1458,20 @@ void menuMuxClass::changeDisplayParams (
   int _ctlAlignment,
   char *_btnFontTag,
   int _btnAlignment,
-  unsigned int _textFgColor,
-  unsigned int _fg1Color,
-  unsigned int _fg2Color,
-  unsigned int _offsetColor,
-  unsigned int _bgColor,
-  unsigned int _topShadowColor,
-  unsigned int _botShadowColor )
+  int _textFgColor,
+  int _fg1Color,
+  int _fg2Color,
+  int _offsetColor,
+  int _bgColor,
+  int _topShadowColor,
+  int _botShadowColor )
 {
 
   if ( _flag & ACTGRF_TEXTFGCOLOR_MASK )
-    fgColor.setColor( _textFgColor, actWin->ci );
+    fgColor.setColorIndex( _textFgColor, actWin->ci );
 
   if ( _flag & ACTGRF_BGCOLOR_MASK )
-    bgColor.setColor( _bgColor, actWin->ci );
+    bgColor.setColorIndex( _bgColor, actWin->ci );
 
   if ( _flag & ACTGRF_TOPSHADOWCOLOR_MASK )
     topShadowColor = _topShadowColor;

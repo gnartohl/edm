@@ -138,10 +138,10 @@ int bufX, bufY, bufW, bufH;
 
 int sourcePressType, sourceReleaseType, destType;
 
-unsigned int bufFgColor, bufOnColor, bufOffColor;
+int bufFgColor, bufOnColor, bufOffColor;
 pvColorClass fgColor, onColor, offColor;
-unsigned int topShadowColor, bufTopShadowColor;
-unsigned int botShadowColor, bufBotShadowColor;
+int topShadowColor, bufTopShadowColor;
+int botShadowColor, bufBotShadowColor;
 colorButtonClass fgCb, onCb, offCb, topShadowCb, botShadowCb;
 char onLabel[MAX_ENUM_STRING_SIZE+1], bufOnLabel[MAX_ENUM_STRING_SIZE+1];
 char offLabel[MAX_ENUM_STRING_SIZE+1], bufOffLabel[MAX_ENUM_STRING_SIZE+1];
@@ -281,13 +281,13 @@ void activeMessageButtonClass::changeDisplayParams (
   int ctlAlignment,
   char *btnFontTag,
   int btnAlignment,
-  unsigned int textFgColor,
-  unsigned int fg1Color,
-  unsigned int fg2Color,
-  unsigned int offsetColor,
-  unsigned int bgColor,
-  unsigned int topShadowColor,
-  unsigned int botShadowColor );
+  int textFgColor,
+  int fg1Color,
+  int fg2Color,
+  int offsetColor,
+  int bgColor,
+  int topShadowColor,
+  int botShadowColor );
 
 void activeMessageButtonClass::changePvNames (
   int flag,

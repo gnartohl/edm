@@ -162,14 +162,14 @@ activeArcClass *aao = (activeArcClass *) client;
     aao->lineColor.setAlarmSensitive();
   else
     aao->lineColor.setAlarmInsensitive();
-  aao->lineColor.setColor( aao->bufLineColor, aao->actWin->ci );
+  aao->lineColor.setColorIndex( aao->bufLineColor, aao->actWin->ci );
 
   aao->fillColorMode = aao->bufFillColorMode;
   if ( aao->fillColorMode == AAC_K_COLORMODE_ALARM )
     aao->fillColor.setAlarmSensitive();
   else
     aao->fillColor.setAlarmInsensitive();
-  aao->fillColor.setColor( aao->bufFillColor, aao->actWin->ci );
+  aao->fillColor.setColorIndex( aao->bufFillColor, aao->actWin->ci );
 
   aao->lineWidth = aao->bufLineWidth;
 
@@ -300,7 +300,7 @@ activeArcClass::activeArcClass ( void ) {
   startAngle = 0;
   efTotalAngle.setNull(1);
   totalAngle = 180 * 64;
-  fillMode = 0; // ???
+  fillMode = 0;
 
 }
 
@@ -375,8 +375,8 @@ int activeArcClass::createInteractive (
   w = _w;
   h = _h;
 
-  lineColor.setColor( actWin->defaultTextFgColor, actWin->ci );
-  fillColor.setColor( actWin->defaultBgColor, actWin->ci );
+  lineColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
+  fillColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
 
   this->draw();
 
@@ -403,10 +403,10 @@ char title[32], *ptr;
   bufW = w;
   bufH = h;
 
-  bufLineColor = lineColor.pixelColor();
+  bufLineColor = lineColor.pixelIndex();
   bufLineColorMode = lineColorMode;
 
-  bufFillColor = fillColor.pixelColor();
+  bufFillColor = fillColor.pixelIndex();
   bufFillColorMode = fillColorMode;
 
   bufFill = fill;
@@ -512,8 +512,7 @@ char oneName[39+1];
   if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    lineColor.setColor( pixel, actWin->ci );
+    lineColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
 
@@ -525,15 +524,15 @@ char oneName[39+1];
     fscanf( f, "%d\n", &fill ); actWin->incLine();
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    fillColor.setColor( pixel, actWin->ci );
+    fillColor.setColorIndex( index, actWin->ci );
 
   }
   else {
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     actWin->ci->setRGB( r, g, b, &pixel );
-    lineColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    lineColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
 
@@ -546,7 +545,8 @@ char oneName[39+1];
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     actWin->ci->setRGB( r, g, b, &pixel );
-    fillColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    fillColor.setColorIndex( index, actWin->ci );
 
   }
 
@@ -598,7 +598,7 @@ int activeArcClass::importFromXchFile (
   char *name,
   activeWindowClass *_actWin ) {
 
-int fgR, fgG, fgB, bgR, bgG, bgB, more;
+int fgR, fgG, fgB, bgR, bgG, bgB, more, index;
 unsigned int pixel;
 char *tk, *gotData, *context, buf[255+1];
 
@@ -612,8 +612,8 @@ char *tk, *gotData, *context, buf[255+1];
 
   this->actWin = _actWin;
 
-  lineColor.setColor( actWin->defaultFg1Color, actWin->ci );
-  fillColor.setColor( actWin->defaultBgColor, actWin->ci );
+  lineColor.setColorIndex( actWin->defaultFg1Color, actWin->ci );
+  fillColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
 
   // continue until tag is <eod>
 
@@ -790,11 +790,13 @@ char *tk, *gotData, *context, buf[255+1];
   this->initSelectBox(); // call after getting x,y,w,h
 
   actWin->ci->setRGB( fgR, fgG, fgB, &pixel );
-  lineColor.setColor( pixel, actWin->ci );
+  index = actWin->ci->pixIndex( pixel );
+  lineColor.setColorIndex( index, actWin->ci );
   lineColor.setAlarmInsensitive();
 
   actWin->ci->setRGB( bgR, bgG, bgB, &pixel );
-  fillColor.setColor( pixel, actWin->ci );
+  index = actWin->ci->pixIndex( pixel );
+  fillColor.setColorIndex( index, actWin->ci );
   fillColor.setAlarmSensitive();
 
   return 1;
@@ -814,14 +816,14 @@ int index;
   fprintf( f, "%-d\n", w );
   fprintf( f, "%-d\n", h );
 
-  actWin->ci->getIndex( lineColor.pixelColor(), &index );
+  index = lineColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", lineColorMode );
 
   fprintf( f, "%-d\n", fill );
 
-  actWin->ci->getIndex( fillColor.pixelColor(), &index );
+  index = fillColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", fillColorMode );
@@ -1355,20 +1357,20 @@ void activeArcClass::changeDisplayParams (
   int _ctlAlignment,
   char *_btnFontTag,
   int _btnAlignment,
-  unsigned int _textFgColor,
-  unsigned int _fg1Color,
-  unsigned int _fg2Color,
-  unsigned int _offsetColor,
-  unsigned int _bgColor,
-  unsigned int _topShadowColor,
-  unsigned int _botShadowColor )
+  int _textFgColor,
+  int _fg1Color,
+  int _fg2Color,
+  int _offsetColor,
+  int _bgColor,
+  int _topShadowColor,
+  int _botShadowColor )
 {
 
   if ( _flag & ACTGRF_FG1COLOR_MASK )
-    lineColor.setColor( _fg1Color, actWin->ci );
+    lineColor.setColorIndex( _fg1Color, actWin->ci );
 
   if ( _flag & ACTGRF_BGCOLOR_MASK )
-    fillColor.setColor( _bgColor, actWin->ci );
+    fillColor.setColorIndex( _bgColor, actWin->ci );
 
 }
 

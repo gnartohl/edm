@@ -180,9 +180,9 @@ int useDisplayBg;
 int bufMeterColorMode, bufFgColorMode, bufScaleColorMode;
 int bufMajorIntervals, bufMinorIntervals;
 int majorIntervals, minorIntervals;
-unsigned int bufMeterColor, bufFgColor, bufBgColor;
-unsigned int bufLabelColor, bufScaleColor;
-unsigned int bufTsColor,bufBsColor;
+int bufMeterColor, bufFgColor, bufBgColor;
+int bufLabelColor, bufScaleColor;
+int bufTsColor,bufBsColor;
 char bufLabel[39+1];
 char bufLiteralLabel[39+1],literalLabel[39+1];
 int bufLabelType;
@@ -319,13 +319,13 @@ void activeMeterClass::changeDisplayParams (
   int ctlAlignment,
   char *btnFontTag,
   int btnAlignment,
-  unsigned int textFgColor,
-  unsigned int fg1Color,
-  unsigned int fg2Color,
-  unsigned int offsetColor,
-  unsigned int bgColor,
-  unsigned int topShadowColor,
-  unsigned int botShadowColor );
+  int textFgColor,
+  int fg1Color,
+  int fg2Color,
+  int offsetColor,
+  int bgColor,
+  int topShadowColor,
+  int botShadowColor );
 
 void activeMeterClass::changePvNames (
   int flag,

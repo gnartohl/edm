@@ -724,7 +724,6 @@ static void XtextDspFgUpdate (
 ) {
 
 class activeXTextDspClass *axtdo;
-unsigned int color;
 int index;
 
   axtdo = (activeXTextDspClass *) ast_args.usr;
@@ -734,8 +733,7 @@ int index;
   if ( axtdo->activeMode ) {
 
     index = *( (int *) ast_args.dbr );
-    color = axtdo->actWin->ci->getPixelByIndex( index );
-    axtdo->fgColor.changeColor( color, axtdo->actWin->ci );
+    axtdo->fgColor.changeIndex( index, axtdo->actWin->ci );
     axtdo->bufInvalidate();
     axtdo->needRefresh = 1;
     axtdo->actWin->addDefExeNode( axtdo->aglPtr );
@@ -1142,8 +1140,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
   else
     axtdo->fgColor.setAlarmInsensitive();
 
-  axtdo->fgColor.setColor( axtdo->bufFgColor, axtdo->actWin->ci );
-  axtdo->fgColor.setNullColor ( axtdo->bufSvalColor );
+  axtdo->fgColor.setColorIndex( axtdo->bufFgColor, axtdo->actWin->ci );
+  axtdo->fgColor.setNullIndex ( axtdo->bufSvalColor, axtdo->actWin->ci );
   axtdo->bgColor = axtdo->bufBgColor;
 
   axtdo->nullDetectMode = axtdo->bufNullDetectMode;
@@ -1402,8 +1400,8 @@ int activeXTextDspClass::createInteractive (
   strcpy( value, "" );
   strcpy( pvName, "" );
 
-  fgColor.setColor( actWin->defaultTextFgColor, actWin->ci );
-  fgColor.setNullColor( actWin->defaultFg2Color );
+  fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
+  fgColor.setNullIndex( actWin->defaultFg2Color, actWin->ci );
   bgColor = actWin->defaultBgColor;
 
   useDisplayBg = 1;
@@ -1465,9 +1463,9 @@ int index, stat;
   writeStringToFile( f, fontTag );
   fprintf( f, "%-d\n", useDisplayBg );
   fprintf( f, "%-d\n", alignment );
-  actWin->ci->getIndex( fgColor.pixelColor(), &index );
+  index = fgColor.pixelIndex();
   fprintf( f, "%-d\n", index );
-  actWin->ci->getIndex( bgColor, &index );
+  index = bgColor;
   fprintf( f, "%-d\n", index );
   fprintf( f, "%-d\n", formatType );
   fprintf( f, "%-d\n", colorMode );
@@ -1492,7 +1490,7 @@ int index, stat;
     writeStringToFile( f, "" );
 
   // version 1.7.0
-  actWin->ci->getIndex( fgColor.nullColor(), &index );
+  index = fgColor.nullIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", nullDetectMode );
@@ -1529,6 +1527,7 @@ int r, g, b, index;
 int major, minor, release;
 int stat = 1;
 char oneName[39+1];
+unsigned int pixel;
 
   this->actWin = _actWin;
 
@@ -1549,11 +1548,11 @@ char oneName[39+1];
   if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &bufFgColor );
-    fgColor.setColor( bufFgColor, actWin->ci );
+    bufFgColor = index;
+    fgColor.setColorIndex( bufFgColor, actWin->ci );
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &bgColor );
+    bgColor = index;
 
   }
   else {
@@ -1564,7 +1563,8 @@ char oneName[39+1];
       g *= 256;
       b *= 256;
     }
-    actWin->ci->setRGB( r, g, b, &bufFgColor );
+    actWin->ci->setRGB( r, g, b, &pixel );
+    bufFgColor = actWin->ci->pixIndex( pixel );
     fgColor.setColor( bufFgColor, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
@@ -1573,7 +1573,8 @@ char oneName[39+1];
       g *= 256;
       b *= 256;
     }
-    actWin->ci->setRGB( r, g, b, &bgColor );
+    actWin->ci->setRGB( r, g, b, &pixel );
+    bgColor = actWin->ci->pixIndex( pixel );
 
   }
 
@@ -1643,15 +1644,16 @@ char oneName[39+1];
     if ( major > 1 ) {
 
       fscanf( f, "%d\n", &index ); actWin->incLine();
-      actWin->ci->setIndex( index, &bufSvalColor );
-      fgColor.setNullColor( bufSvalColor );
+      bufSvalColor = index;
+      fgColor.setNullIndex( bufSvalColor, actWin->ci );
 
     }
     else {
 
       fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
-      actWin->ci->setRGB( r, g, b, &bufSvalColor );
-      fgColor.setNullColor( bufSvalColor );
+      actWin->ci->setRGB( r, g, b, &pixel );
+      bufSvalColor = actWin->ci->pixIndex( pixel );
+      fgColor.setNullIndex( bufSvalColor, actWin->ci );
 
     }
 
@@ -1762,6 +1764,7 @@ int activeXTextDspClass::importFromXchFile (
 int r, g, b, more;
 int stat = 1;
 char *tk, *gotData, *context, buf[255+1];
+unsigned int pixel;
 
   r = 0xffff;
   g = 0xffff;
@@ -1772,7 +1775,7 @@ char *tk, *gotData, *context, buf[255+1];
   strcpy( value, "" );
   strcpy( pvName, "" );
 
-  fgColor.setColor( actWin->defaultTextFgColor, actWin->ci );
+  fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
   bgColor = actWin->defaultBgColor;
 
   useDisplayBg = 1;
@@ -1942,8 +1945,9 @@ char *tk, *gotData, *context, buf[255+1];
 
   } while ( more );
 
-  actWin->ci->setRGB( r, g, b, &bufFgColor );
-  fgColor.setColor( bufFgColor, actWin->ci );
+  actWin->ci->setRGB( r, g, b, &pixel );
+  bufFgColor = actWin->ci->pixIndex( pixel );
+  fgColor.setColorIndex( bufFgColor, actWin->ci );
 
   limitsFromDb = 1;
   changeValOnLoseFocus = 0;
@@ -2009,7 +2013,7 @@ char title[32], *ptr;
   bufY = y;
   bufW = w;
   bufH = h;
-  bufFgColor = fgColor.pixelColor();
+  bufFgColor = fgColor.pixelIndex();
   bufBgColor = bgColor;
   strncpy( bufFontTag, fontTag, 63 );
   bufFontTag[63] = 0;
@@ -2029,7 +2033,7 @@ char title[32], *ptr;
     strncpy( bufSvalPvName, "", 39 );
     bufSvalPvName[39] = 0;
   }
-  bufSvalColor = fgColor.nullColor();
+  bufSvalColor = fgColor.nullIndex();
   bufNullDetectMode = nullDetectMode;
 
   bufEditable = editable;
@@ -2173,8 +2177,8 @@ int len;
     actWin->executeGc.saveFg();
     actWin->executeGc.saveBg();
 
-    actWin->executeGc.setFG( bgColor );
-    actWin->executeGc.setBG( bgColor );
+    actWin->executeGc.setFG( actWin->ci->pix(bgColor) );
+    actWin->executeGc.setBG( actWin->ci->pix(bgColor) );
 
     XDrawImageString( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), stringX, stringY,
@@ -2200,7 +2204,7 @@ int clipStat;
   actWin->drawGc.saveBg();
 
   actWin->drawGc.setFG( fgColor.pixelColor() );
-  actWin->drawGc.setBG( bgColor );
+  actWin->drawGc.setBG( actWin->ci->pix(bgColor) );
 
   clipStat = actWin->drawGc.addNormXClipRectangle( xR );
 
@@ -2275,7 +2279,7 @@ int n;
 
   actWin->executeGc.setFG( fgColor.getColor() );
 
-  actWin->executeGc.setBG( bgColor );
+  actWin->executeGc.setBG( actWin->ci->pix(bgColor) );
 
   if ( strcmp( fontTag, "" ) != 0 ) {
     actWin->executeGc.setFontTag( fontTag, actWin->fi );
@@ -3166,7 +3170,7 @@ static XtActionsRec dragActions[] = {
       if ( useDisplayBg )
         bg = actWin->executeGc.getBaseBG();
       else
-        bg = bgColor;
+        bg = actWin->ci->pix(bgColor);
 
       if ( !tf_widget ) {
 
@@ -3427,20 +3431,20 @@ void activeXTextDspClass::changeDisplayParams (
   int _ctlAlignment,
   char *_btnFontTag,
   int _btnAlignment,
-  unsigned int _textFgColor,
-  unsigned int _fg1Color,
-  unsigned int _fg2Color,
-  unsigned int _offsetColor,
-  unsigned int _bgColor,
-  unsigned int _topShadowColor,
-  unsigned int _botShadowColor )
+  int _textFgColor,
+  int _fg1Color,
+  int _fg2Color,
+  int _offsetColor,
+  int _bgColor,
+  int _topShadowColor,
+  int _botShadowColor )
 {
 
   if ( _flag & ACTGRF_TEXTFGCOLOR_MASK )
-    fgColor.setColor( _textFgColor, actWin->ci );
+    fgColor.setColorIndex( _textFgColor, actWin->ci );
 
   if ( _flag & ACTGRF_FG2COLOR_MASK )
-    fgColor.setNullColor( _fg2Color );
+    fgColor.setNullIndex( _fg2Color, actWin->ci );
 
   if ( _flag & ACTGRF_BGCOLOR_MASK )
     bgColor = _bgColor;

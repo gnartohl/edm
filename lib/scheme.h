@@ -40,7 +40,7 @@ private:
 
 int schemeLoaded;
 
-unsigned int fg, bg, defaultTextFg, defaultFg1, defaultFg2, defaultBg,
+int fg, bg, defaultTextFg, defaultFg1, defaultFg2, defaultBg,
  topShadow, botShadow, offset;
 
 int defAlignment, defCtlAlignment, defBtnAlignment;
@@ -65,47 +65,47 @@ int displaySchemeClass::save (
   colorInfoClass *ci,
   char *fileName );
 
-unsigned int displaySchemeClass::getFg ( void )
+int displaySchemeClass::getFg ( void )
 {
   return fg;
 }
 
-unsigned int displaySchemeClass::getBg ( void )
+int displaySchemeClass::getBg ( void )
 {
   return bg;
 }
 
-unsigned int displaySchemeClass::getDefTextFg ( void )
+int displaySchemeClass::getDefTextFg ( void )
 {
   return defaultTextFg;
 }
 
-unsigned int displaySchemeClass::getDefFg1 ( void )
+int displaySchemeClass::getDefFg1 ( void )
 {
   return defaultFg1;
 }
 
-unsigned int displaySchemeClass::getDefFg2 ( void )
+int displaySchemeClass::getDefFg2 ( void )
 {
   return defaultFg2;
 }
 
-unsigned int displaySchemeClass::getDefBg ( void )
+int displaySchemeClass::getDefBg ( void )
 {
   return defaultBg;
 }
 
-unsigned int displaySchemeClass::getOffset ( void )
+int displaySchemeClass::getOffset ( void )
 {
   return offset;
 }
 
-unsigned int displaySchemeClass::getTopShadow ( void )
+int displaySchemeClass::getTopShadow ( void )
 {
   return topShadow;
 }
 
-unsigned int displaySchemeClass::getBotShadow ( void )
+int displaySchemeClass::getBotShadow ( void )
 {
   return botShadow;
 }
@@ -145,47 +145,47 @@ char *displaySchemeClass::getPvType ( void )
   return defPvType;
 }
 
-void displaySchemeClass::setFg ( unsigned int color )
+void displaySchemeClass::setFg ( int color )
 {
   fg = color;
 }
 
-void displaySchemeClass::setBg ( unsigned int color )
+void displaySchemeClass::setBg ( int color )
 {
   bg = color;
 }
 
-void displaySchemeClass::setDefTextFg ( unsigned int color )
+void displaySchemeClass::setDefTextFg ( int color )
 {
   defaultTextFg = color;
 }
 
-void displaySchemeClass::setDefFg1 ( unsigned int color )
+void displaySchemeClass::setDefFg1 ( int color )
 {
   defaultFg1 = color;
 }
 
-void displaySchemeClass::setDefFg2 ( unsigned int color )
+void displaySchemeClass::setDefFg2 ( int color )
 {
   defaultFg2 = color;
 }
 
-void displaySchemeClass::setDefBg ( unsigned int color )
+void displaySchemeClass::setDefBg ( int color )
 {
   defaultBg = color;
 }
 
-void displaySchemeClass::setOffset ( unsigned int color )
+void displaySchemeClass::setOffset ( int color )
 {
   offset = color;
 }
 
-void displaySchemeClass::setTopShadow ( unsigned int color )
+void displaySchemeClass::setTopShadow ( int color )
 {
   topShadow = color;
 }
 
-void displaySchemeClass::setBotShadow ( unsigned int color )
+void displaySchemeClass::setBotShadow ( int color )
 {
   botShadow = color;
 }

@@ -90,7 +90,7 @@ int opComplete;
 
 int bufX, bufY, bufW, bufH;
 
-unsigned int fgColor, bufFgColor, bgColor, bufBgColor,
+int fgColor, bufFgColor, bgColor, bufBgColor,
  topShadowColor, bufTopShadowColor, botShadowColor, bufBotShadowColor;
 colorButtonClass fgCb, bgCb, topShadowCb, botShadowCb;
 int _3D, buf3D, invisible, bufInvisible, activeMode, iconify, bufIconify,
@@ -187,13 +187,13 @@ void activeExitButtonClass::changeDisplayParams (
   int ctlAlignment,
   char *btnFontTag,
   int btnAlignment,
-  unsigned int textFgColor,
-  unsigned int fg1Color,
-  unsigned int fg2Color,
-  unsigned int offsetColor,
-  unsigned int bgColor,
-  unsigned int topShadowColor,
-  unsigned int botShadowColor );
+  int textFgColor,
+  int fg1Color,
+  int fg2Color,
+  int offsetColor,
+  int bgColor,
+  int topShadowColor,
+  int botShadowColor );
 
 };
 

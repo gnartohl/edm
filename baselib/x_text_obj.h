@@ -124,14 +124,14 @@ friend void xTextVisUpdate (
 int bufX, bufY, bufW, bufH;
 
 pvColorClass fgColor;
-unsigned int bufFgColor;
+int bufFgColor;
 colorButtonClass fgCb;
 
 int fgColorMode;
 int bufFgColorMode;
 
 pvColorClass bgColor;
-unsigned int bufBgColor;
+int bufBgColor;
 colorButtonClass bgCb;
 
 int bgColorMode;
@@ -270,13 +270,13 @@ void activeXTextClass::changeDisplayParams (
   int ctlAlignment,
   char *btnFontTag,
   int btnAlignment,
-  unsigned int textFgColor,
-  unsigned int fg1Color,
-  unsigned int fg2Color,
-  unsigned int offsetColor,
-  unsigned int bgColor,
-  unsigned int topShadowColor,
-  unsigned int botShadowColor );
+  int textFgColor,
+  int fg1Color,
+  int fg2Color,
+  int offsetColor,
+  int bgColor,
+  int topShadowColor,
+  int botShadowColor );
 
 void activeXTextClass::changePvNames (
   int flag,

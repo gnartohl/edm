@@ -208,7 +208,7 @@ int precision;
 efInt efPrecision;
 
 int bufBarColorMode, bufFgColorMode;
-unsigned int bufBarColor, bufFgColor, bufBgColor;
+int bufBarColor, bufFgColor, bufBgColor;
 char bufLabel[39+1];
 int bufLabelType;
 int bufBorder;
@@ -360,13 +360,13 @@ void activeBarClass::changeDisplayParams (
   int ctlAlignment,
   char *btnFontTag,
   int btnAlignment,
-  unsigned int textFgColor,
-  unsigned int fg1Color,
-  unsigned int fg2Color,
-  unsigned int offsetColor,
-  unsigned int bgColor,
-  unsigned int topShadowColor,
-  unsigned int botShadowColor );
+  int textFgColor,
+  int fg1Color,
+  int fg2Color,
+  int offsetColor,
+  int bgColor,
+  int topShadowColor,
+  int botShadowColor );
 
 void activeBarClass::changePvNames (
   int flag,

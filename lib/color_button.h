@@ -48,9 +48,10 @@ class colorButtonClass {
 private:
 
 Widget form, pb, tf;
-unsigned int *destPtr;
+int *destPtr;
 colorInfoClass *ci;
 char *colorPvName;
+int curIndex;
 
 public:
 
@@ -66,14 +67,14 @@ colorButtonClass::~colorButtonClass ( void );
 
 Widget colorButtonClass::create (
   Widget parent,
-  unsigned int *dest,
+  int *dest,
   colorInfoClass *ptr,
   Arg args[],
   int num_args );
 
 Widget colorButtonClass::createWithText (
   Widget parent,
-  unsigned int *dest,
+  int *dest,
   colorInfoClass *ptr,
   char *pvName,
   Arg fArgs[],
@@ -91,12 +92,17 @@ Widget colorButtonClass::textWidget ( void );
 
 colorInfoClass *colorButtonClass::colorInfo( void );
 
-unsigned int *colorButtonClass::destination( void );
+int *colorButtonClass::destination( void );
 
 unsigned int colorButtonClass::getPixel ( void );
 
 int colorButtonClass::setPixel (
   unsigned int p );
+
+int colorButtonClass::getIndex ( void );
+
+int colorButtonClass::setIndex (
+  int i );
 
 void colorButtonClass::setPv (
   char *name );

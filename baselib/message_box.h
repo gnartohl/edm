@@ -160,7 +160,7 @@ int readPvConnected, firstReadUpdate, init, active, activeMode;
 pvColorClass fgColor, bgColor, bg2Color, topShadowColor, botShadowColor;
 colorButtonClass fgCb, bgCb, bg2Cb, topCb, botCb;
 int size, bufSize;
-unsigned int bufFgColor, bufBgColor, bufBg2Color, bufTopShadowColor,
+int bufFgColor, bufBgColor, bufBg2Color, bufTopShadowColor,
  bufBotShadowColor;
 char bufFontTag[63+1];
 
@@ -259,13 +259,13 @@ void activeMessageBoxClass::changeDisplayParams (
   int ctlAlignment,
   char *btnFontTag,
   int btnAlignment,
-  unsigned int textFgColor,
-  unsigned int fg1Color,
-  unsigned int fg2Color,
-  unsigned int offsetColor,
-  unsigned int bgColor,
-  unsigned int topShadowColor,
-  unsigned int botShadowColor );
+  int textFgColor,
+  int fg1Color,
+  int fg2Color,
+  int offsetColor,
+  int bgColor,
+  int topShadowColor,
+  int botShadowColor );
 
 void activeMessageBoxClass::changePvNames (
   int flag,

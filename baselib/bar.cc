@@ -44,16 +44,16 @@ int l;
     baro->fgColor.setAlarmSensitive();
   else
     baro->fgColor.setAlarmInsensitive();
-  baro->fgColor.setColor( baro->bufFgColor, baro->actWin->ci );
+  baro->fgColor.setColorIndex( baro->bufFgColor, baro->actWin->ci );
 
   baro->barColorMode = baro->bufBarColorMode;
   if ( baro->barColorMode == BARC_K_COLORMODE_ALARM )
     baro->barColor.setAlarmSensitive();
   else
     baro->barColor.setAlarmInsensitive();
-  baro->barColor.setColor( baro->bufBarColor, baro->actWin->ci );
+  baro->barColor.setColorIndex( baro->bufBarColor, baro->actWin->ci );
 
-  baro->bgColor.setColor( baro->bufBgColor, baro->actWin->ci );
+  baro->bgColor.setColorIndex( baro->bufBgColor, baro->actWin->ci );
 
   baro->controlPvExpStr.setRaw( baro->bufControlPvName );
   baro->readPvExpStr.setRaw( baro->bufReadPvName );
@@ -104,7 +104,7 @@ int l;
   baro->efBarOriginX = baro->bufEfBarOriginX;
 
   if ( baro->efPrecision.isNull() )
-    baro->precision = 2;
+    baro->precision = 0;
   else
     baro->precision = baro->efPrecision.value();
 
@@ -420,8 +420,8 @@ activeBarClass::activeBarClass ( void ) {
   efReadMax.setNull(1);
   efPrecision.setNull(1);
   efBarOriginX.setNull(1);
-  strcpy( scaleFormat, "g" );
-  precision = 3;
+  strcpy( scaleFormat, "f" );
+  precision = 0;
 
 }
 
@@ -526,13 +526,15 @@ int activeBarClass::createInteractive (
     if ( h < minVertH ) h = minVertH;
   }
 
-  barColor.setColor( actWin->defaultFg1Color, actWin->ci );
-  fgColor.setColor( actWin->defaultTextFgColor, actWin->ci );
-  bgColor.setColor( actWin->defaultBgColor, actWin->ci );
+  barColor.setColorIndex( actWin->defaultFg1Color, actWin->ci );
+  fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
+  bgColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
 
   strcpy( fontTag, actWin->defaultCtlFontTag );
   actWin->fi->loadFontTag( fontTag );
   fs = actWin->fi->getXFontStruct( fontTag );
+
+  efPrecision.setValue( 0 );
 
   updateDimensions();
 
@@ -558,17 +560,17 @@ int stat, index;
   fprintf( f, "%-d\n", w );
   fprintf( f, "%-d\n", h );
 
-  actWin->ci->getIndex( barColor.pixelColor(), &index );
+  index = barColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", barColorMode );
 
-  actWin->ci->getIndex( fgColor.pixelColor(), &index );
+  index = fgColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", fgColorMode );
 
-  actWin->ci->getIndex( bgColor.pixelColor(), &index );
+  index = bgColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   if ( controlPvExpStr.getRaw() )
@@ -648,8 +650,7 @@ float fBarOriginX;
   if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    barColor.setColor( pixel, actWin->ci );
+    barColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &barColorMode ); actWin->incLine();
 
@@ -659,8 +660,7 @@ float fBarOriginX;
       barColor.setAlarmInsensitive();
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    fgColor.setColor( pixel, actWin->ci );
+    fgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &fgColorMode ); actWin->incLine();
 
@@ -670,8 +670,7 @@ float fBarOriginX;
       fgColor.setAlarmInsensitive();
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    bgColor.setColor( pixel, actWin->ci );
+    bgColor.setColorIndex( index, actWin->ci );
 
   }
   else {
@@ -683,7 +682,8 @@ float fBarOriginX;
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    barColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    barColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &barColorMode ); actWin->incLine();
 
@@ -699,7 +699,8 @@ float fBarOriginX;
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    fgColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    fgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &fgColorMode ); actWin->incLine();
 
@@ -715,7 +716,8 @@ float fBarOriginX;
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    bgColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    bgColor.setColorIndex( index, actWin->ci );
 
   }
 
@@ -788,7 +790,7 @@ float fBarOriginX;
     strncpy( scaleFormat, oneName, 1 );
 
     if ( limitsFromDb || efPrecision.isNull() )
-      precision = 2;
+      precision = 0;
     else
       precision = efPrecision.value();
 
@@ -805,8 +807,8 @@ float fBarOriginX;
   }
   else {
 
-    efPrecision.setValue( 2 );
-    precision = 2;
+    efPrecision.setValue( 0 );
+    precision = 0;
     readMin = 0;
     readMax = 10;
 
@@ -866,13 +868,13 @@ char title[32], *ptr;
   bufW = w;
   bufH = h;
 
-  bufBarColor = barColor.pixelColor();
+  bufBarColor = barColor.pixelIndex();
   bufBarColorMode = barColorMode;
 
-  bufFgColor = fgColor.pixelColor();
+  bufFgColor = fgColor.pixelIndex();
   bufFgColorMode = fgColorMode;
 
-  bufBgColor = bgColor.pixelColor();
+  bufBgColor = bgColor.pixelIndex();
 
   strncpy( bufFontTag, fontTag, 63 );
 
@@ -3025,23 +3027,23 @@ void activeBarClass::changeDisplayParams (
   int _ctlAlignment,
   char *_btnFontTag,
   int _btnAlignment,
-  unsigned int _textFgColor,
-  unsigned int _fg1Color,
-  unsigned int _fg2Color,
-  unsigned int _offsetColor,
-  unsigned int _bgColor,
-  unsigned int _topShadowColor,
-  unsigned int _botShadowColor )
+  int _textFgColor,
+  int _fg1Color,
+  int _fg2Color,
+  int _offsetColor,
+  int _bgColor,
+  int _topShadowColor,
+  int _botShadowColor )
 {
 
   if ( _flag & ACTGRF_FG1COLOR_MASK )
-    barColor.setColor( _fg1Color, actWin->ci );
+    barColor.setColorIndex( _fg1Color, actWin->ci );
 
   if ( _flag & ACTGRF_TEXTFGCOLOR_MASK )
-    fgColor.setColor( _textFgColor, actWin->ci );
+    fgColor.setColorIndex( _textFgColor, actWin->ci );
 
   if ( _flag & ACTGRF_BGCOLOR_MASK )
-    bgColor.setColor( _bgColor, actWin->ci );
+    bgColor.setColorIndex( _bgColor, actWin->ci );
 
   if ( _flag & ACTGRF_CTLFONTTAG_MASK ) {
     strcpy( fontTag, _ctlFontTag );

@@ -393,9 +393,10 @@ Arg args[3];
   awo->defaultCtlAlignment = awo->defaultCtlFm.currentFontAlignment();
   awo->defaultBtnAlignment = awo->defaultBtnFm.currentFontAlignment();
 
-  awo->drawGc.setBaseBG( awo->bgColor );
+  awo->drawGc.setBaseBG( awo->ci->pix(awo->bgColor) );
 
-  awo->cursor.setColor( awo->fgColor, awo->bgColor );
+  awo->cursor.setColor( awo->ci->pix(awo->fgColor),
+   awo->ci->pix(awo->bgColor) );
 
   strncpy( awo->id, awo->bufId, 31 );
 
@@ -1075,7 +1076,8 @@ int item;
       awo->state = AWC_EDITING;
       awo->currentEf = NULL;
       awo->cursor.set( XtWindow(awo->drawWidget), CURSOR_K_WAIT );
-      awo->cursor.setColor( awo->fgColor, awo->bgColor );
+      awo->cursor.setColor( awo->ci->pix(awo->fgColor),
+       awo->ci->pix(awo->bgColor) );
       awo->currentPointObject->setEditProperties();
       awo->currentPointObject->doEdit();
       break;
@@ -2277,7 +2279,8 @@ Atom wm_delete_window;
           awo->updateMasterSelection();
 
           awo->cursor.set( XtWindow(awo->drawWidget), CURSOR_K_WAIT );
-          awo->cursor.setColor( awo->fgColor, awo->bgColor );
+          awo->cursor.setColor( awo->ci->pix(awo->fgColor),
+           awo->ci->pix(awo->bgColor) );
 
           awo->savedState = awo->state;
           awo->state = AWC_EDITING;
@@ -5583,7 +5586,8 @@ unsigned int mask;
                 if ( editNode ) {
                   awo->updateEditSelectionPointers();
                   awo->cursor.set( XtWindow(awo->drawWidget), CURSOR_K_WAIT );
-                  awo->cursor.setColor( awo->fgColor, awo->bgColor );
+                  awo->cursor.setColor( awo->ci->pix(awo->fgColor),
+                   awo->ci->pix(awo->bgColor) );
                   editNode->node->doEdit();
                 }
 
@@ -6046,7 +6050,7 @@ unsigned int mask;
                 // erase region definition box
 
                 awo->drawGc.saveFg();
-                awo->drawGc.setFG( awo->fgColor );
+                awo->drawGc.setFG( awo->ci->pix(awo->fgColor) );
                 XDrawRectangle( awo->d, XtWindow(awo->drawWidget),
                  awo->drawGc.xorGC(), x0, y0, awo->width,
                  awo->height );
@@ -6329,7 +6333,8 @@ unsigned int mask;
                     awo->currentEf = NULL;
                     awo->cursor.set( XtWindow(awo->drawWidget),
                      CURSOR_K_WAIT );
-                    awo->cursor.setColor( awo->fgColor, awo->bgColor );
+                    awo->cursor.setColor( awo->ci->pix(awo->fgColor),
+                     awo->ci->pix(awo->bgColor) );
                     cur->node->doEdit();
                     operationPerformed = 1;
                     break; // out of while loop
@@ -6446,7 +6451,8 @@ unsigned int mask;
                   awo->currentEf = NULL;
                   awo->cursor.set( XtWindow(awo->drawWidget),
                    CURSOR_K_WAIT );
-                  awo->cursor.setColor( awo->fgColor, awo->bgColor );
+                  awo->cursor.setColor( awo->ci->pix(awo->fgColor),
+                   awo->ci->pix(awo->bgColor) );
                   // next line is for multiline objects
                   awo->selectedHead->selFlink->node->setEditProperties();
                   awo->selectedHead->selFlink->node->doEdit();
@@ -6648,7 +6654,7 @@ unsigned int mask;
 
                 // erase region definition box
                 awo->drawGc.saveFg();
-                awo->drawGc.setFG( awo->fgColor );
+                awo->drawGc.setFG( awo->ci->pix(awo->fgColor) );
                 XDrawRectangle( awo->d, XtWindow(awo->drawWidget),
                  awo->drawGc.xorGC(), x0, y0, awo->width,
                  awo->height );
@@ -6950,7 +6956,7 @@ unsigned int mask;
               awo->state = AWC_DEFINE_REGION;
 
               awo->drawGc.saveFg();
-              awo->drawGc.setFG( awo->fgColor );
+              awo->drawGc.setFG( awo->ci->pix(awo->fgColor) );
               XDrawRectangle( awo->d, XtWindow(awo->drawWidget),
                awo->drawGc.xorGC(), x0, y0, width, height );
               awo->drawGc.restoreFg();
@@ -6986,7 +6992,7 @@ unsigned int mask;
             if ( ( width > 0 ) && ( height > 0 ) ) {
 
               awo->drawGc.saveFg();
-              awo->drawGc.setFG( awo->fgColor );
+              awo->drawGc.setFG( awo->ci->pix(awo->fgColor) );
               XDrawRectangle( awo->d, XtWindow(awo->drawWidget),
                awo->drawGc.xorGC(), x0, y0, width, height );
               awo->drawGc.restoreFg();
@@ -7015,7 +7021,7 @@ unsigned int mask;
             if ( ( width > 0 ) && ( height > 0 ) ) {
 
               awo->drawGc.saveFg();
-              awo->drawGc.setFG( awo->fgColor );
+              awo->drawGc.setFG( awo->ci->pix(awo->fgColor) );
               XDrawRectangle( awo->d, XtWindow(awo->drawWidget),
                awo->drawGc.xorGC(), x0, y0, width, height );
               awo->drawGc.restoreFg();
@@ -7755,7 +7761,7 @@ unsigned int mask;
 
               awo->state = AWC_DEFINE_SELECT_REGION;
               awo->drawGc.saveFg();
-              awo->drawGc.setFG( awo->fgColor );
+              awo->drawGc.setFG( awo->ci->pix(awo->fgColor) );
               XDrawRectangle( awo->d, XtWindow(awo->drawWidget),
                awo->drawGc.xorGC(), x0, y0, width, height );
               awo->drawGc.restoreFg();
@@ -7791,7 +7797,7 @@ unsigned int mask;
             if ( ( width > 0 ) && ( height > 0 ) ) {
 
               awo->drawGc.saveFg();
-              awo->drawGc.setFG( awo->fgColor );
+              awo->drawGc.setFG( awo->ci->pix(awo->fgColor) );
               XDrawRectangle( awo->d, XtWindow(awo->drawWidget),
                awo->drawGc.xorGC(), x0, y0, width, height );
               awo->drawGc.restoreFg();
@@ -7820,7 +7826,7 @@ unsigned int mask;
             if ( ( width > 0 ) && ( height > 0 ) ) {
 
               awo->drawGc.saveFg();
-              awo->drawGc.setFG( awo->fgColor );
+              awo->drawGc.setFG( awo->ci->pix(awo->fgColor) );
               XDrawRectangle( awo->d, XtWindow(awo->drawWidget),
                awo->drawGc.xorGC(), x0, y0, width, height );
               awo->drawGc.restoreFg();
@@ -8407,6 +8413,8 @@ activeWindowClass::activeWindowClass ( void ) {
 
 int stat;
 char *envPtr, *gotIt, buf[127+1], save[127+1], *tk;
+
+  strcpy( defaultPvType, "" );
 
   dragItemIndex = 0;
   major = 0;
@@ -9145,7 +9153,7 @@ Widget pb;
 objNameListPtr curObjNameNode;
 char *oneObjName, *menuName;
 popupBlockListPtr curBlockListNode;
-int i, l, n;
+int i, l, n, wPix, bPix;
 Arg args[3];
 unsigned int crc = 0;
 Atom wm_delete_window;
@@ -9224,16 +9232,19 @@ Atom wm_delete_window;
   ruler = 0;
   strcpy( rulerUnits, activeWindowClass_str85 );
 
-  bgColor = WhitePixel( d, DefaultScreen(d) );
-  defaultBgColor = WhitePixel( d, DefaultScreen(d) );
+  wPix = appCtx->ci.pixIndex( WhitePixel( d, DefaultScreen(d) ) );
+  bPix = appCtx->ci.pixIndex( BlackPixel( d, DefaultScreen(d) ) );
 
-  fgColor = BlackPixel( d, DefaultScreen(d) ); // for grid
-  defaultTextFgColor = BlackPixel( d, DefaultScreen(d) ); // for grid
-  defaultFg1Color = BlackPixel( d, DefaultScreen(d) ); // for grid
-  defaultFg2Color = WhitePixel( d, DefaultScreen(d) ); // for grid
-  defaultTopShadowColor = WhitePixel( d, DefaultScreen(d) );
-  defaultBotShadowColor = BlackPixel( d, DefaultScreen(d) );
-  defaultOffsetColor = BlackPixel( d, DefaultScreen(d) );
+  bgColor = wPix;
+  defaultBgColor = wPix;
+
+  fgColor = bPix; // for grid
+  defaultTextFgColor = bPix; // for grid
+  defaultFg1Color = bPix; // for grid
+  defaultFg2Color = wPix; // for grid
+  defaultTopShadowColor = wPix;
+  defaultBotShadowColor = bPix;
+  defaultOffsetColor = bPix;
 
   strcpy( defaultFontTag, "" );
   defaultAlignment = XmALIGNMENT_BEGINNING;
@@ -11328,19 +11339,19 @@ int activeWindowClass::setGraphicEnvironment (
 
   drawGc.create( drawWidget );
 
-  fgColor = BlackPixel( d, DefaultScreen(d) );
-  bgColor = WhitePixel( d, DefaultScreen(d) );
+  fgColor = ci->pixIndex( BlackPixel( d, DefaultScreen(d) ) );
+  bgColor = ci->pixIndex( WhitePixel( d, DefaultScreen(d) ) );
 
-  drawGc.setFG( fgColor );
-  drawGc.setBG( bgColor );
-  drawGc.setBaseBG( bgColor );
+  drawGc.setFG( ci->pix(fgColor) );
+  drawGc.setBG( ci->pix(bgColor) );
+  drawGc.setBaseBG( ci->pix(bgColor) );
 
   executeGc.create( executeWidget );
   executeGc.setBaseBG( drawGc.getBaseBG() );
 
   cursor.create( d, XtWindow(top), ci->getColorMap() );
   cursor.set( XtWindow(drawWidget), CURSOR_K_CROSSHAIR );
-  cursor.setColor( fgColor, bgColor );
+  cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );
 
   return 1;
 
@@ -11475,11 +11486,11 @@ int stat;
 
   defaultOffsetColor = scheme.getOffset();
 
-  drawGc.setFG( fgColor );
-  drawGc.setBG( bgColor );
-  drawGc.setBaseBG( bgColor );
-  executeGc.setBaseBG( bgColor );
-  cursor.setColor( fgColor, bgColor );
+  drawGc.setFG( ci->pix(fgColor) );
+  drawGc.setBG( ci->pix(bgColor) );
+  drawGc.setBaseBG( ci->pix(bgColor) );
+  executeGc.setBaseBG( ci->pix(bgColor) );
+  cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );
 
   setChanged();
 
@@ -12576,7 +12587,7 @@ char callbackName[63+1];
   appCtx->proc->unlock();
 
   cursor.set( XtWindow(executeWidget), CURSOR_K_DEFAULT );
-  cursor.setColor( fgColor, bgColor );
+  cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );
 
   XtRemoveEventHandler( drawWidget,
    KeyPressMask|ButtonPressMask|ButtonReleaseMask|Button1MotionMask|
@@ -12855,7 +12866,7 @@ char callbackName[63+1];
   mode = AWC_EDIT;
 
   cursor.set( XtWindow(drawWidget), CURSOR_K_CROSSHAIR );
-  cursor.setColor( fgColor, bgColor );
+  cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );
 
   XtRemoveEventHandler( executeWidget,
    ButtonPressMask|ButtonReleaseMask|Button1MotionMask|
@@ -13142,23 +13153,23 @@ int r, g, b;
 
   // major version >= 3
 
-  ci->getIndex( fgColor, &index );
+  index = fgColor;
   fprintf( f, "%-d\n", index );
-  ci->getIndex( bgColor, &index );
+  index = bgColor;
   fprintf( f, "%-d\n", index );
-  ci->getIndex( defaultTextFgColor, &index );
+  index = defaultTextFgColor;
   fprintf( f, "%-d\n", index );
-  ci->getIndex( defaultFg1Color, &index );
+  index = defaultFg1Color;
   fprintf( f, "%-d\n", index );
-  ci->getIndex( defaultFg2Color, &index );
+  index = defaultFg2Color;
   fprintf( f, "%-d\n", index );
-  ci->getIndex( defaultBgColor, &index );
+  index = defaultBgColor;
   fprintf( f, "%-d\n", index );
-  ci->getIndex( defaultTopShadowColor, &index );
+  index = defaultTopShadowColor;
   fprintf( f, "%-d\n", index );
-  ci->getIndex( defaultBotShadowColor, &index );
+  index = defaultBotShadowColor;
   fprintf( f, "%-d\n", index );
-  ci->getIndex( defaultOffsetColor, &index );
+  index = defaultOffsetColor;
   fprintf( f, "%-d\n", index );
 
 #endif
@@ -13271,6 +13282,7 @@ int activeWindowClass::loadWin (
 int stat;
 int r, g, b, n, index;
 Arg args[5];
+unsigned int pixel;
 
   readCommentsAndVersion( f );
 
@@ -13337,33 +13349,33 @@ Arg args[5];
   if ( major >= 3 ) {
 
     fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &fgColor );
+    fgColor = index;
 
     fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &bgColor );
+    bgColor = index;
 
-    drawGc.setBaseBG( bgColor );
-
-    fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &defaultTextFgColor );
+    drawGc.setBaseBG( ci->pix(bgColor) );
 
     fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &defaultFg1Color );
+    defaultTextFgColor = index;
 
     fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &defaultFg2Color );
+    defaultFg1Color = index;
 
     fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &defaultBgColor );
+    defaultFg2Color = index;
 
     fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &defaultTopShadowColor );
+    defaultBgColor = index;
 
     fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &defaultBotShadowColor );
+    defaultTopShadowColor = index;
 
     fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &defaultOffsetColor );
+    defaultBotShadowColor = index;
+
+    fscanf( f, "%d\n", &index ); incLine();
+    defaultOffsetColor = index;
 
   }
   else {
@@ -13374,7 +13386,8 @@ Arg args[5];
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &fgColor );
+    ci->setRGB( r, g, b, &pixel );
+    stat = ci->getIndex( pixel, &fgColor );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -13382,9 +13395,10 @@ Arg args[5];
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &bgColor );
+    ci->setRGB( r, g, b, &pixel );
+    stat = ci->getIndex( pixel, &bgColor );
 
-    drawGc.setBaseBG( bgColor );
+    drawGc.setBaseBG( ci->pix(bgColor) );
 
     if ( ( major > 1 ) || ( minor > 2 ) ) {
       fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
@@ -13393,11 +13407,13 @@ Arg args[5];
         g *= 256;
         b *= 256;
       }
-      ci->setRGB( r, g, b, &defaultTextFgColor );
+      ci->setRGB( r, g, b, &pixel );
     }
     else {
-      ci->setRGB( r, g, b, &defaultTextFgColor );
+      ci->setRGB( r, g, b, &pixel );
     }
+
+    stat = ci->getIndex( pixel, &defaultTextFgColor );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -13405,7 +13421,8 @@ Arg args[5];
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultFg1Color );
+    ci->setRGB( r, g, b, &pixel );
+    stat = ci->getIndex( pixel, &defaultFg1Color );
 
     if ( ( major > 1 ) || ( minor > 2 ) ) {
       fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
@@ -13414,11 +13431,13 @@ Arg args[5];
         g *= 256;
         b *= 256;
       }
-      ci->setRGB( r, g, b, &defaultFg2Color );
+      ci->setRGB( r, g, b, &pixel );
     }
     else {
-      ci->setRGB( r, g, b, &defaultFg2Color );
+      ci->setRGB( r, g, b, &pixel );
     }
+
+    stat = ci->getIndex( pixel, &defaultFg2Color );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -13426,7 +13445,8 @@ Arg args[5];
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultBgColor );
+    ci->setRGB( r, g, b, &pixel );
+    stat = ci->getIndex( pixel, &defaultBgColor );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -13434,7 +13454,8 @@ Arg args[5];
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultTopShadowColor );
+    ci->setRGB( r, g, b, &pixel );
+    stat = ci->getIndex( pixel, &defaultTopShadowColor );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -13442,7 +13463,8 @@ Arg args[5];
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultBotShadowColor );
+    ci->setRGB( r, g, b, &pixel );
+    stat = ci->getIndex( pixel, &defaultBotShadowColor );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -13450,7 +13472,8 @@ Arg args[5];
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultOffsetColor );
+    ci->setRGB( r, g, b, &pixel );
+    stat = ci->getIndex( pixel, &defaultOffsetColor );
 
   }
 
@@ -13556,6 +13579,7 @@ int activeWindowClass::loadWin (
 int stat;
 int r, g, b, n, discard, index;
 Arg args[5];
+unsigned int pixel;
 
   readCommentsAndVersion( f );
 
@@ -13626,33 +13650,33 @@ Arg args[5];
   if ( major >= 3 ) {
 
     fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &fgColor );
+    fgColor = index;
 
     fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &bgColor );
+    bgColor = index;
 
-    drawGc.setBaseBG( bgColor );
-
-    fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &defaultTextFgColor );
+    drawGc.setBaseBG( ci->pix(bgColor) );
 
     fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &defaultFg1Color );
+    defaultTextFgColor = index;
 
     fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &defaultFg2Color );
+    defaultFg1Color = index;
 
     fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &defaultBgColor );
+    defaultFg2Color = index;
 
     fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &defaultTopShadowColor );
+    defaultBgColor = index;
 
     fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &defaultBotShadowColor );
+    defaultTopShadowColor = index;
 
     fscanf( f, "%d\n", &index ); incLine();
-    ci->setIndex( index, &defaultOffsetColor );
+    defaultBotShadowColor = index;
+
+    fscanf( f, "%d\n", &index ); incLine();
+    defaultOffsetColor = index;
 
   }
   else {
@@ -13663,7 +13687,8 @@ Arg args[5];
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &fgColor );
+    ci->setRGB( r, g, b, &pixel );
+    stat = ci->getIndex( pixel, &fgColor );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -13671,9 +13696,10 @@ Arg args[5];
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &bgColor );
+    ci->setRGB( r, g, b, &pixel );
+    stat = ci->getIndex( pixel, &bgColor );
 
-    drawGc.setBaseBG( bgColor );
+    drawGc.setBaseBG( ci->pix(bgColor) );
 
     if ( ( major > 1 ) || ( minor > 2 ) ) {
       fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
@@ -13682,10 +13708,12 @@ Arg args[5];
         g *= 256;
         b *= 256;
       }
-      ci->setRGB( r, g, b, &defaultTextFgColor );
+      ci->setRGB( r, g, b, &pixel );
+      stat = ci->getIndex( pixel, &defaultTextFgColor );
     }
     else {
-      ci->setRGB( r, g, b, &defaultTextFgColor );
+      ci->setRGB( r, g, b, &pixel );
+      stat = ci->getIndex( pixel, &defaultTextFgColor );
     }
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
@@ -13694,7 +13722,8 @@ Arg args[5];
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultFg1Color );
+    ci->setRGB( r, g, b, &pixel );
+    stat = ci->getIndex( pixel, &defaultFg1Color );
 
     if ( ( major > 1 ) || ( minor > 2 ) ) {
       fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
@@ -13703,10 +13732,12 @@ Arg args[5];
         g *= 256;
         b *= 256;
       }
-      ci->setRGB( r, g, b, &defaultFg2Color );
+      ci->setRGB( r, g, b, &pixel );
+      stat = ci->getIndex( pixel, &defaultFg2Color );
     }
     else {
-      ci->setRGB( r, g, b, &defaultFg2Color );
+      ci->setRGB( r, g, b, &pixel );
+      stat = ci->getIndex( pixel, &defaultFg2Color );
     }
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
@@ -13715,7 +13746,8 @@ Arg args[5];
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultBgColor );
+    ci->setRGB( r, g, b, &pixel );
+    stat = ci->getIndex( pixel, &defaultBgColor );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -13723,7 +13755,8 @@ Arg args[5];
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultTopShadowColor );
+    ci->setRGB( r, g, b, &pixel );
+    stat = ci->getIndex( pixel, &defaultTopShadowColor );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -13731,7 +13764,8 @@ Arg args[5];
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultBotShadowColor );
+    ci->setRGB( r, g, b, &pixel );
+    stat = ci->getIndex( pixel, &defaultBotShadowColor );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -13739,7 +13773,8 @@ Arg args[5];
       g *= 256;
       b *= 256;
     }
-    ci->setRGB( r, g, b, &defaultOffsetColor );
+    ci->setRGB( r, g, b, &pixel );
+    stat = ci->getIndex( pixel, &defaultOffsetColor );
 
   }
 
@@ -13840,7 +13875,8 @@ int activeWindowClass::importWin (
 int r, g, b, n;
 Arg args[5];
 char buf[255+1], *gotData;
-int more;
+int more, stat;
+unsigned int pixel;
 
 char *tk, *context;
 
@@ -13992,7 +14028,8 @@ char *tk, *context;
 
   } while ( more );
 
-  ci->setRGB( r, g, b, &bgColor );
+  ci->setRGB( r, g, b, &pixel );
+  stat = ci->getIndex( pixel, &bgColor );
 
   n = 0;
   XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
@@ -14010,7 +14047,7 @@ char *tk, *context;
   XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
   XtSetValues( top, args, n );
 
-  drawGc.setBaseBG( bgColor );
+  drawGc.setBaseBG( ci->pix(bgColor) );
 
   strcpy( gridShowStr, activeWindowClass_str5 );
 
@@ -14151,7 +14188,7 @@ void activeWindowClass::displayGrid ( void ) {
 int x, y;
 
   drawGc.saveFg();
-  drawGc.setFG( fgColor );
+  drawGc.setFG( ci->pix(fgColor) );
 
   for ( y=0; y<=h; y+=gridSpacing ) {
     for ( x=0; x<=w; x+=gridSpacing ) {
@@ -14179,7 +14216,7 @@ int x, y, x0, x1, y0, y1;
   y1 = _y + _h;
 
   drawGc.saveFg();
-  drawGc.setFG( fgColor );
+  drawGc.setFG( ci->pix(fgColor) );
 
   for ( y=0; y<=h; y+=gridSpacing ) {
     for ( x=0; x<=w; x+=gridSpacing ) {
@@ -14256,7 +14293,7 @@ void activeWindowClass::lineEditBegin ( void )
 {
 
   cursor.set( XtWindow(drawWidget), CURSOR_K_TINYCROSSHAIR );
-  cursor.setColor( fgColor, bgColor );
+  cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );
   state = AWC_EDITING_POINTS;
 
 }
@@ -14265,7 +14302,7 @@ void activeWindowClass::operationComplete ( void )
 {
 
   cursor.set( XtWindow(drawWidget), CURSOR_K_CROSSHAIR );
-  cursor.setColor( fgColor, bgColor );
+  cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );
   state = savedState;
 
 }
@@ -14328,11 +14365,11 @@ int stat;
 
   defaultOffsetColor = displayScheme->getOffset();
 
-  drawGc.setFG( fgColor );
-  drawGc.setBG( bgColor );
-  drawGc.setBaseBG( bgColor );
-  executeGc.setBaseBG( bgColor );
-  cursor.setColor( fgColor, bgColor );
+  drawGc.setFG( ci->pix(fgColor) );
+  drawGc.setBG( ci->pix(bgColor) );
+  drawGc.setBaseBG( ci->pix(bgColor) );
+  executeGc.setBaseBG( ci->pix(bgColor) );
+  cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );
 
   updateAllSelectedDisplayInfo();
 

@@ -16,8 +16,9 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+#include <math.h>
 #include "color_pkg.h"
-
+#include "utility.h"
 #include "thread.h"
 
 static int showRGB = 0;
@@ -60,10 +61,11 @@ XExposeEvent *expe;
 XButtonEvent *be;
 Widget curw;
 colorInfoClass *cio;
-int x, y, i, r, c, ncols, nrows, remainder, index;
+int x, y, i, r, c, ncols, nrows, remainder;
 Arg arg[10];
 int n;
-unsigned int fg, *dest;
+unsigned int fg;
+int *dest;
 int red, green, blue;
 
   cio = (colorInfoClass *) client;
@@ -150,7 +152,7 @@ int red, green, blue;
     i = r * ncols + c;
     if ( i > cio->numColors-1 ) i = cio->numColors-1;
 
-    cio->setCurIndexByPixel( cio->colors[i] );
+    cio->setCurIndex( i );
 
     fg = cio->colors[i];
 
@@ -166,19 +168,47 @@ int red, green, blue;
 
     dest = cio->getCurDestination();
     if ( dest ) {
-      *dest = fg;
+      *dest = i;
     }
 
     if ( showRGB ) {
       cio->getRGB( fg, &red, &green, &blue );
-      cio->getIndex( fg, &index );
-      printf( "index=%-d,  r=%-d, g=%-d, b=%-d\n", index, red, green, blue );
+      printf( "index=%-d,  r=%-d, g=%-d, b=%-d\n", i, red, green, blue );
     }
 
   }
 
 }
 
+static int compare_nodes_by_name (
+  void *node1,
+  void *node2
+) {
+
+colorCachePtr p1, p2;
+
+  p1 = (colorCachePtr) node1;
+  p2 = (colorCachePtr) node2;
+
+  return strcmp( p1->name, p2->name );
+
+}
+
+static int compare_key_by_name (
+  void *key,
+  void *node
+) {
+
+colorCachePtr p;
+char *oneIndex;
+
+  p = (colorCachePtr) node;
+  oneIndex = (char *) key;
+
+  return strcmp( oneIndex, p->name );
+
+}
+
 static int compare_nodes_by_index (
   void *node1,
   void *node2
@@ -308,11 +338,43 @@ static int copy_nodes (
 ) {
 
 colorCachePtr p1, p2;
+ruleConditionPtr cur1, cur2;
 
   p1 = (colorCachePtr) node1;
   p2 = (colorCachePtr) node2;
 
   *p1 = *p2;
+
+  // give p1 a copy of the name
+  if ( p2->name ) {
+    p1->name = new char[ strlen(p2->name) + 1 ];
+    strcpy( p1->name, p2->name );
+  }
+
+  // give p1 a copy of the rule list
+  if ( p2->rule ) {
+
+    p1->rule->ruleHead = new ruleConditionType;
+    p1->rule->ruleTail = p1->rule->ruleHead;
+    p1->rule->ruleTail->flink = NULL;
+
+    cur2 = p1->rule->ruleHead->flink;
+    while ( cur2 ) {
+
+      cur1 = new ruleConditionType;
+      *cur1 = *cur2;
+      cur1->resultName = new char[strlen(cur2->resultName) + 1];
+      strcpy(cur1->resultName,  cur2->resultName );
+
+      p1->rule->ruleTail->flink = cur1;
+      p1->rule->ruleTail = cur1;
+      p1->rule->ruleTail->flink = NULL;
+
+      cur2 = cur2->flink;
+
+    }
+
+  }
 
   return 1;
 
@@ -344,6 +406,10 @@ int stat;
   stat = avl_init_tree( compare_nodes_by_index,
    compare_key_by_index, copy_nodes, &(this->colorCacheByIndexH) );
   if ( !( stat & 1 ) ) this->colorCacheByIndexH = (AVL_HANDLE) NULL;
+
+  stat = avl_init_tree( compare_nodes_by_name,
+   compare_key_by_name, copy_nodes, &(this->colorCacheByNameH) );
+  if ( !( stat & 1 ) ) this->colorCacheByNameH = (AVL_HANDLE) NULL;
 
 }
 
@@ -391,6 +457,1156 @@ Widget p, curP;
 
 }
 
+void colorInfoClass::initParseEngine (
+  FILE *f )
+{
+
+  readFile = 1;
+  tokenState = GET_1ST_NONWS_CHAR;
+  parseIndex = -1;
+  parseLine = 0;
+  parseFile = f;
+  colorIndex = 0;
+
+}
+
+void colorInfoClass::parseError (
+char *msg )
+{
+
+  printf( "Error at line %-d - %s\n", parseLine, msg );
+
+}
+
+int colorInfoClass::getToken (
+  char token[MAX_LINE_SIZE+1]
+) {
+
+int gotToken, l;
+char *ptr;
+
+  gotToken = 0;
+  do {
+
+    if ( readFile ) {
+      tokenState = GET_1ST_NONWS_CHAR;
+      ptr = fgets( parseBuf, MAX_LINE_SIZE, parseFile );
+      parseBuf[MAX_LINE_SIZE] = 0;
+      if ( !ptr ) {
+        strcpy( token, "" );
+        return SUCCESS;
+      }
+      parseLine++;
+      readFile = 0;
+      parseIndex = -1;
+    }
+
+    parseIndex++;
+
+    switch ( tokenState ) {
+
+    case GET_1ST_NONWS_CHAR:
+
+      if ( parseBuf[parseIndex] == 0 ) {
+	readFile = 1;
+        continue;
+      }
+
+      if ( isspace(parseBuf[parseIndex]) || 
+           ( parseBuf[parseIndex] == ',' ) ) continue;
+
+      tokenFirst = parseIndex;
+
+      if ( parseBuf[parseIndex] == '"' ) {
+        tokenFirst = parseIndex + 1;
+        tokenState = GET_TIL_END_OF_QUOTE;
+      }
+      else if ( ( parseBuf[parseIndex] == '<' ) ||
+                ( parseBuf[parseIndex] == '>' ) ||
+                ( parseBuf[parseIndex] == '=' ) ||
+                ( parseBuf[parseIndex] == '|' ) ||
+                ( parseBuf[parseIndex] == '&' ) ||
+                ( parseBuf[parseIndex] == '!' ) ) {
+        tokenState = GET_TIL_END_OF_SPECIAL;
+      }
+      else if ( parseBuf[parseIndex] == '#' ) {
+        readFile = 1;
+        tokenState = GET_1ST_NONWS_CHAR;
+      }
+      else {
+        tokenState = GET_TIL_END_OF_TOKEN;
+      }
+
+      break;
+
+    case GET_TIL_END_OF_TOKEN:
+
+      if ( parseBuf[parseIndex] == 0 ) {
+	readFile = 1;
+      }
+      else if ( parseBuf[parseIndex] == '"' ) {
+        tokenLast = parseIndex - 1;
+        tokenNext = parseIndex + 1;
+        gotToken = 1;
+        tokenState = GET_TIL_END_OF_QUOTE;
+      }
+      else if ( ( parseBuf[parseIndex] == '<' ) ||
+                ( parseBuf[parseIndex] == '>' ) ||
+                ( parseBuf[parseIndex] == '=' ) ||
+                ( parseBuf[parseIndex] == '|' ) ||
+                ( parseBuf[parseIndex] == '&' ) ||
+                ( parseBuf[parseIndex] == '!' ) ) {
+        tokenLast = parseIndex - 1;
+        tokenNext = parseIndex;
+        gotToken = 1;
+        tokenState = GET_TIL_END_OF_SPECIAL;
+      }
+      else if ( parseBuf[parseIndex] == '#' ) {
+        tokenLast = parseIndex - 1;
+        tokenNext = parseIndex;
+        gotToken = 1;
+        readFile = 1;
+        tokenState = GET_1ST_NONWS_CHAR;
+      }
+      else if ( isspace(parseBuf[parseIndex]) || 
+	   ( parseBuf[parseIndex] == ',' ) ) {
+        tokenLast = parseIndex - 1;
+        tokenNext = parseIndex;
+        gotToken = 1;
+        tokenState = GET_1ST_NONWS_CHAR;
+      }
+
+      if ( gotToken ) {
+
+        l = tokenLast - tokenFirst + 1;
+        strncpy( parseToken, &parseBuf[tokenFirst], l );
+        parseToken[l] = 0;
+        tokenFirst = tokenNext;
+
+      }
+
+      break;
+
+    case GET_TIL_END_OF_QUOTE:
+
+      if ( parseBuf[parseIndex] == 0 ) {
+	return FAIL;
+      }
+      else if ( parseBuf[parseIndex] == '"' ) {
+        tokenLast = parseIndex - 1;
+        tokenNext = parseIndex + 1;
+        gotToken = 1;
+        tokenState = GET_1ST_NONWS_CHAR;
+      }
+
+      if ( gotToken ) {
+
+        l = tokenLast - tokenFirst + 1;
+        strncpy( parseToken, &parseBuf[tokenFirst], l );
+        parseToken[l] = 0;
+        tokenFirst = tokenNext;
+
+      }
+
+      break;
+
+    case GET_TIL_END_OF_SPECIAL:
+
+      if ( parseBuf[parseIndex] == 0 ) {
+	readFile = 1;
+      }
+      else if ( parseBuf[parseIndex] == '"' ) {
+        tokenLast = parseIndex - 1;
+        tokenNext = parseIndex + 1;
+        gotToken = 1;
+        tokenState = GET_TIL_END_OF_QUOTE;
+      }
+      else if ( parseBuf[parseIndex] == '#' ) {
+        tokenLast = parseIndex - 1;
+        tokenNext = parseIndex;
+        gotToken = 1;
+        readFile = 1;
+        tokenState = GET_1ST_NONWS_CHAR;
+      }
+      else if ( isspace(parseBuf[parseIndex]) || 
+	   ( parseBuf[parseIndex] == ',' ) ) {
+        tokenLast = parseIndex - 1;
+        tokenNext = parseIndex;
+        gotToken = 1;
+        tokenState = GET_1ST_NONWS_CHAR;
+      }
+      else if ( ( parseBuf[parseIndex] != '<' ) &&
+                ( parseBuf[parseIndex] != '>' ) &&
+                ( parseBuf[parseIndex] != '=' ) &&
+                ( parseBuf[parseIndex] != '|' ) &&
+                ( parseBuf[parseIndex] != '&' ) &&
+                ( parseBuf[parseIndex] != '!' ) ) {
+        tokenLast = parseIndex - 1;
+        tokenNext = parseIndex;
+        gotToken = 1;
+        tokenState = GET_TIL_END_OF_TOKEN;
+      }
+
+      if ( gotToken ) {
+
+        l = tokenLast - tokenFirst + 1;
+        strncpy( parseToken, &parseBuf[tokenFirst], l );
+        parseToken[l] = 0;
+        tokenFirst = tokenNext;
+
+      }
+
+      break;
+
+    }    
+
+  } while ( !gotToken );
+
+  strncpy( token, parseToken, MAX_LINE_SIZE );
+  token[MAX_LINE_SIZE] = 0;
+  return SUCCESS;
+
+}
+
+int colorInfoClass::ver3InitFromFile (
+  FILE *f,
+  XtAppContext app,
+  Display *d,
+  Widget top,
+  char *fileName )
+{
+
+char tk[MAX_LINE_SIZE+1], *endptr;
+int i, n, stat, nrows, ncols, remainder, dup,
+ parseStatus, state, colorMult, val, index, maxSpecial;
+XColor color;
+Arg arg[20];
+XmString str1, str2;
+colorCachePtr cur1, cur2, cur[2], curSpecial;
+unsigned long bgColor;
+
+  printf( "ver3InitFromFile\n" );
+
+  for ( i=0; i<NUM_SPECIAL_COLORS; i++ ) {
+    special[i] = 0;
+    specialIndex[i] = 0;
+  }
+
+  appCtx = app;
+  display = d;
+  screen = DefaultScreen( d );
+  depth = DefaultDepth( d, screen );
+  visual = DefaultVisual( d, screen );
+  cmap = DefaultColormap( d, screen );
+
+  num_color_cols = 10;
+  maxColor = 0x10000;
+  colorMult = 1;
+  state = GET_FIRST_TOKEN;
+  parseStatus = SUCCESS;
+  initParseEngine( f );
+
+  // temporary ??????????????
+  num_blinking_colors = 0;
+
+  max_colors = 0;
+  numColors = 0;
+  // first, build a list of colors and rules
+
+  while ( state != -1 ) {
+
+    switch ( state ) {
+
+    case GET_FIRST_TOKEN:
+
+      stat = getToken( tk );
+      if ( stat == FAIL ) {
+        parseError( "Sytax error" );
+        parseStatus = stat;
+	goto term;
+      }
+      //printf( "\n" );
+      //printf( "%s ", tk );
+
+      if ( strcmp( tk, "" ) == 0 ) {
+
+        state = -1; // all done
+
+      }
+      else if ( strcmp( tk, "columns" ) == 0 ) {
+
+        state = GET_NUM_COLUMNS;
+
+      }
+      else if ( strcmp( tk, "max" ) == 0 ) {
+
+        state = GET_MAX;
+
+      }
+      else if ( strcmp( tk, "alarm" ) == 0 ) {
+
+        stat = getToken( tk );
+        if ( stat == FAIL ) {
+          parseError( "Sytax error" );
+          parseStatus = stat;
+          goto term;
+        }
+        if ( strcmp( tk, "" ) == 0 ) {
+          parseError( "Unexpected end of file" );
+          parseStatus = FAIL;
+          goto term;
+        }
+        if ( strcmp( tk, "{" ) != 0 ) {
+          parseError( "Expected {" );
+          parseStatus = FAIL;
+          goto term;
+        }
+
+        maxSpecial = -1;
+
+        state = GET_ALARM_PARAMS;
+
+      }
+      else if ( strcmp( tk, "static" ) == 0 ) {
+
+        state = GET_COLOR;
+
+      }
+      else if ( strcmp( tk, "rule" ) == 0 ) {
+
+        state = GET_RULE;
+
+      }
+      else if ( strcmp( tk, "" ) != 0 ) {
+
+        parseError( "Expecting max, columns, alarm, rule, or static" );
+        parseStatus = FAIL;
+        state = -1;
+
+      }
+
+      break;
+
+    case GET_NUM_COLUMNS:
+
+      stat = getToken( tk );
+      if ( stat == FAIL ) {
+        parseError( "Sytax error" );
+        parseStatus = stat;
+	goto term;
+      }
+      //printf( "%s ", tk );
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( "Unexpected end of file" );
+        parseStatus = FAIL;
+        state = -1;
+      }
+      else if ( strcmp( tk, "=" ) != 0 ) {
+        parseError( "Expecting =" );
+        parseStatus = FAIL;
+        state = -1;
+      }
+
+      stat = getToken( tk );
+      if ( stat == FAIL ) {
+        parseError( "Sytax error" );
+        parseStatus = stat;
+	goto term;
+      }
+      //printf( "%s ", tk );
+      num_color_cols = strtol( tk, &endptr, 0 );
+      if ( strcmp( endptr, "" ) == 0 ) {
+        state = GET_FIRST_TOKEN;
+      }
+      else {
+        parseError( "Expecting number of columns" );
+        parseStatus = FAIL;
+        state = -1;
+      }
+
+      break;
+
+    case GET_MAX:
+
+      stat = getToken( tk );
+      if ( stat == FAIL ) {
+        parseError( "Sytax error" );
+        parseStatus = stat;
+	goto term;
+      }
+      //printf( "%s ", tk );
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( "Unexpected end of file" );
+        parseStatus = FAIL;
+        state = -1;
+      }
+      else if ( strcmp( tk, "=" ) != 0 ) {
+        parseError( "Expecting =" );
+        parseStatus = FAIL;
+        state = -1;
+      }
+
+      stat = getToken( tk );
+      if ( stat == FAIL ) {
+        parseError( "Sytax error" );
+        parseStatus = stat;
+	goto term;
+      }
+      //printf( "%s ", tk );
+      maxColor = strtol( tk, &endptr, 0 );
+      if ( strcmp( endptr, "" ) == 0 ) {
+        colorMult = (int) rint( 0x10000 / maxColor );
+        state = GET_FIRST_TOKEN;
+      }
+      else {
+        parseError( "Expecting max RGB value" );
+        parseStatus = FAIL;
+        state = -1;
+      }
+
+      break;
+
+    case GET_RULE:
+
+      stat = getToken( tk );
+      if ( stat == FAIL ) {
+        parseError( "Sytax error" );
+        parseStatus = stat;
+        goto term;
+      }
+      //printf( "%s ", tk );
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( "Unexpected end of file" );
+        parseStatus = FAIL;
+        state = -1;
+      }
+      else if ( strcmp( tk, "}" ) == 0 ) {
+        state = GET_FIRST_TOKEN;
+      }
+
+      break;
+
+    case GET_COLOR:
+
+      for( n=0; n<3; n++ ) {
+        cur[n] = new colorCacheType;
+        cur[n]->rule = NULL;
+        cur[n]->pixel = 0;
+        cur[n]->blinkPixel = 0;
+      }
+
+      stat = getToken( tk ); // color name
+      if ( stat == FAIL ) {
+        parseError( "Sytax error" );
+        parseStatus = stat;
+        goto term;
+      }
+      //printf( "%s ", tk );
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( "Unexpected end of file" );
+        parseStatus = FAIL;
+        state = -1;
+        break;
+      }
+
+      for( n=0; n<3; n++ ) {
+        cur[n]->name = new char[strlen(tk)+1];
+        strcpy( cur[n]->name, tk );
+        cur[n]->index = colorIndex;
+      }
+
+      stat = getToken( tk ); // {
+      if ( stat == FAIL ) {
+        parseError( "Sytax error" );
+        parseStatus = stat;
+        goto term;
+      }
+      //printf( "%s ", tk );
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( "Unexpected end of file" );
+        parseStatus = FAIL;
+        state = -1;
+        break;
+      }
+      else if ( strcmp( tk, "{" ) != 0 ) {
+        parseError( "Expected {" );
+        parseStatus = FAIL;
+        state = -1;
+        break;
+      }
+
+      // get r, g, b
+      for ( i=0; i<3; i++ ) {
+
+        stat = getToken( tk );
+        if ( stat == FAIL ) {
+          parseError( "Sytax error" );
+          parseStatus = stat;
+          goto term;
+        }
+        //printf( "%s ", tk );
+        if ( strcmp( tk, "" ) == 0 ) {
+          parseError( "Unexpected end of file" );
+          parseStatus = FAIL;
+          state = -1;
+          break;
+        }
+        for( n=0; n<3; n++ ) {
+          val = strtol( tk, &endptr, 0 );
+          if ( strcmp( endptr, "" ) != 0 ) {
+            parseError( "Expected integer" );
+            parseStatus = FAIL;
+            state = -1;
+            break;
+          }
+          cur[n]->rgb[i] = val * colorMult; 
+          cur[n]->blinkRgb[i] = cur[n]->rgb[i];
+	}
+
+      }
+
+      // now we can have } or 3 more r, g, b values
+
+      stat = getToken( tk ); // try }
+      if ( stat == FAIL ) {
+        parseError( "Sytax error" );
+        parseStatus = stat;
+        goto term;
+      }
+      //printf( "%s ", tk );
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( "Unexpected end of file" );
+        parseStatus = FAIL;
+        state = -1;
+        break;
+      }
+      else if ( strcmp( tk, "}" ) != 0 ) {
+
+        // cur token must be an rgb value
+        for( n=0; n<3; n++ ) {
+          val = strtol( tk, &endptr, 0 );
+          if ( strcmp( endptr, "" ) != 0 ) {
+            parseError( "Expected integer" );
+            parseStatus = FAIL;
+            state = -1;
+            break;
+          }
+          cur[n]->blinkRgb[0] = val * colorMult;
+        }
+
+	// now get g, b, }
+        for ( i=1; i<3; i++ ) {
+
+          stat = getToken( tk ); // R
+          if ( stat == FAIL ) {
+            parseError( "Sytax error" );
+            parseStatus = stat;
+            goto term;
+          }
+          //printf( "%s ", tk );
+          if ( strcmp( tk, "" ) == 0 ) {
+            parseError( "Unexpected end of file" );
+            parseStatus = FAIL;
+            state = -1;
+            break;
+          }
+          for( n=0; n<3; n++ ) {
+            val = strtol( tk, &endptr, 0 );
+            if ( strcmp( endptr, "" ) != 0 ) {
+              parseError( "Expected integer" );
+              parseStatus = FAIL;
+              state = -1;
+              break;
+            }
+            cur[n]->blinkRgb[i] = val * colorMult;
+	  }
+
+        }
+
+        stat = getToken( tk ); // get }
+        if ( stat == FAIL ) {
+          parseError( "Sytax error" );
+          parseStatus = stat;
+          goto term;
+        }
+        //printf( "%s ", tk );
+        if ( strcmp( tk, "" ) == 0 ) {
+          parseError( "Unexpected end of file" );
+          parseStatus = FAIL;
+          state = -1;
+          break;
+        }
+        else if ( strcmp( tk, "}" ) != 0 ) {
+          parseError( "Expected }" );
+          parseStatus = FAIL;
+          state = -1;
+          break;
+        }
+
+      }
+
+      if ( parseStatus == SUCCESS ) {
+
+        stat = avl_insert_node( this->colorCacheByNameH, (void *) cur[0],
+         &dup );
+        if ( !( stat & 1 ) ) {
+          delete cur[0];
+          fclose( f );
+          return stat;
+        }
+
+        if ( dup ) delete cur[0];
+
+        stat = avl_insert_node( this->colorCacheByIndexH, (void *) cur[1],
+         &dup );
+        if ( !( stat & 1 ) ) {
+          delete cur[1];
+          fclose( f );
+          return stat;
+        }
+
+        if ( dup ) delete cur[1];
+
+        colorIndex++;
+
+        max_colors++;
+
+#if 0
+        if ( ( cur[0]->rgb[0] != cur[0]->blinkRgb[0] ) ||
+             ( cur[0]->rgb[1] != cur[0]->blinkRgb[1] ) ||
+             ( cur[0]->rgb[2] != cur[0]->blinkRgb[2] ) ) {
+
+          max_colors++;
+
+	}
+#endif
+
+        //printf( "got 1 color, r=%-d, g=%-d, b=%-d\n", cur[0]->rgb[0],
+	//        cur[0]->rgb[1], cur[0]->rgb[2] );
+
+        state = GET_FIRST_TOKEN;
+
+      }
+
+      break;
+
+    case GET_ALARM_PARAMS:
+
+      stat = getToken( tk );
+      if ( stat == FAIL ) {
+        parseError( "Sytax error" );
+        parseStatus = stat;
+        goto term;
+      }
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( "Unexpected end of file" );
+        parseStatus = FAIL;
+        state = -1;
+      }
+
+      if ( strcmp( tk, "disconnected" ) == 0 ) {
+
+        index = COLORINFO_K_DISCONNECTED;
+
+        if ( index > maxSpecial ) maxSpecial = index;
+
+        stat = getToken( tk );
+        if ( stat == FAIL ) {
+          parseError( "Sytax error" );
+          parseStatus = stat;
+          goto term;
+        }
+        if ( strcmp( tk, "" ) == 0 ) {
+          parseError( "Unexpected end of file" );
+          parseStatus = FAIL;
+          goto term;
+        }
+        if ( strcmp( tk, ":" ) != 0 ) {
+          parseError( "Expected :" );
+          parseStatus = FAIL;
+          goto term;
+        }
+
+        // get color name
+        stat = getToken( tk );
+        if ( stat == FAIL ) {
+          parseError( "Sytax error" );
+          parseStatus = stat;
+          goto term;
+        }
+        if ( strcmp( tk, "" ) == 0 ) {
+          parseError( "Unexpected end of file" );
+          parseStatus = FAIL;
+          goto term;
+        }
+
+        stat = avl_get_match( this->colorCacheByNameH, (void *) tk,
+         (void **) &curSpecial );
+        if ( !( stat & 1 ) ) {
+          parseError( "Alarm color name not found" );
+          parseStatus = FAIL;
+          goto term;
+        }
+        if ( !curSpecial ) {
+          parseError( "Alarm color name not found" );
+          parseStatus = FAIL;
+          goto term;
+        }
+        specialIndex[index] = curSpecial->index;
+
+      }
+      else if ( strcmp( tk, "invalid" ) == 0 ) {
+
+        index = COLORINFO_K_INVALID;
+
+        if ( index > maxSpecial ) maxSpecial = index;
+
+        stat = getToken( tk );
+        if ( stat == FAIL ) {
+          parseError( "Sytax error" );
+          parseStatus = stat;
+          goto term;
+        }
+        if ( strcmp( tk, "" ) == 0 ) {
+          parseError( "Unexpected end of file" );
+          parseStatus = FAIL;
+          goto term;
+        }
+        if ( strcmp( tk, ":" ) != 0 ) {
+          parseError( "Expected :" );
+          parseStatus = FAIL;
+          goto term;
+        }
+
+        // get color name
+        stat = getToken( tk );
+        if ( stat == FAIL ) {
+          parseError( "Sytax error" );
+          parseStatus = stat;
+          goto term;
+        }
+        if ( strcmp( tk, "" ) == 0 ) {
+          parseError( "Unexpected end of file" );
+          parseStatus = FAIL;
+          goto term;
+        }
+
+        stat = avl_get_match( this->colorCacheByNameH, (void *) tk,
+         (void **) &curSpecial );
+        if ( !( stat & 1 ) ) {
+          parseError( "Alarm color name not found" );
+          parseStatus = FAIL;
+          goto term;
+        }
+        if ( !curSpecial ) {
+          parseError( "Alarm color name not found" );
+          parseStatus = FAIL;
+          goto term;
+        }
+        specialIndex[index] = curSpecial->index;
+
+      }
+      else if ( strcmp( tk, "minor" ) == 0 ) {
+
+        index = COLORINFO_K_MINOR;
+
+        if ( index > maxSpecial ) maxSpecial = index;
+
+        stat = getToken( tk );
+        if ( stat == FAIL ) {
+          parseError( "Sytax error" );
+          parseStatus = stat;
+          goto term;
+        }
+        if ( strcmp( tk, "" ) == 0 ) {
+          parseError( "Unexpected end of file" );
+          parseStatus = FAIL;
+          goto term;
+        }
+        if ( strcmp( tk, ":" ) != 0 ) {
+          parseError( "Expected :" );
+          parseStatus = FAIL;
+          goto term;
+        }
+
+        // get color name
+        stat = getToken( tk );
+        if ( stat == FAIL ) {
+          parseError( "Sytax error" );
+          parseStatus = stat;
+          goto term;
+        }
+        if ( strcmp( tk, "" ) == 0 ) {
+          parseError( "Unexpected end of file" );
+          parseStatus = FAIL;
+          goto term;
+        }
+
+        stat = avl_get_match( this->colorCacheByNameH, (void *) tk,
+         (void **) &curSpecial );
+        if ( !( stat & 1 ) ) {
+          parseError( "Alarm color name not found" );
+          parseStatus = FAIL;
+          goto term;
+        }
+        if ( !curSpecial ) {
+          parseError( "Alarm color name not found" );
+          parseStatus = FAIL;
+          goto term;
+        }
+        specialIndex[index] = curSpecial->index;
+
+      }
+      else if ( strcmp( tk, "major" ) == 0 ) {
+
+        index = COLORINFO_K_MAJOR;
+
+        if ( index > maxSpecial ) maxSpecial = index;
+
+        stat = getToken( tk );
+        if ( stat == FAIL ) {
+          parseError( "Sytax error" );
+          parseStatus = stat;
+          goto term;
+        }
+        if ( strcmp( tk, "" ) == 0 ) {
+          parseError( "Unexpected end of file" );
+          parseStatus = FAIL;
+          goto term;
+        }
+        if ( strcmp( tk, ":" ) != 0 ) {
+          parseError( "Expected :" );
+          parseStatus = FAIL;
+          goto term;
+        }
+
+        // get color name
+        stat = getToken( tk );
+        if ( stat == FAIL ) {
+          parseError( "Sytax error" );
+          parseStatus = stat;
+          goto term;
+        }
+        if ( strcmp( tk, "" ) == 0 ) {
+          parseError( "Unexpected end of file" );
+          parseStatus = FAIL;
+          goto term;
+        }
+
+        stat = avl_get_match( this->colorCacheByNameH, (void *) tk,
+         (void **) &curSpecial );
+        if ( !( stat & 1 ) ) {
+          parseError( "Alarm color name not found" );
+          parseStatus = FAIL;
+          goto term;
+        }
+        if ( !curSpecial ) {
+          parseError( "Alarm color name not found" );
+          parseStatus = FAIL;
+          goto term;
+        }
+        specialIndex[index] = curSpecial->index;
+
+      }
+      else if ( strcmp( tk, "noalarm" ) == 0 ) {
+
+        index = COLORINFO_K_NOALARM;
+
+        if ( index > maxSpecial ) maxSpecial = index;
+
+        stat = getToken( tk );
+        if ( stat == FAIL ) {
+          parseError( "Sytax error" );
+          parseStatus = stat;
+          goto term;
+        }
+        if ( strcmp( tk, "" ) == 0 ) {
+          parseError( "Unexpected end of file" );
+          parseStatus = FAIL;
+          goto term;
+        }
+        if ( strcmp( tk, ":" ) != 0 ) {
+          parseError( "Expected :" );
+          parseStatus = FAIL;
+          goto term;
+        }
+
+        // get color name
+        stat = getToken( tk );
+        if ( stat == FAIL ) {
+          parseError( "Sytax error" );
+          parseStatus = stat;
+          goto term;
+        }
+        if ( strcmp( tk, "" ) == 0 ) {
+          parseError( "Unexpected end of file" );
+          parseStatus = FAIL;
+          goto term;
+        }
+
+        if ( strcmp( tk, "*" ) == 0 ) {
+
+          specialIndex[index] = -1;
+          
+	}
+	else {
+
+          stat = avl_get_match( this->colorCacheByNameH, (void *) tk,
+           (void **) &curSpecial );
+          if ( !( stat & 1 ) ) {
+            parseError( "Alarm color name not found" );
+            parseStatus = FAIL;
+            goto term;
+          }
+          if ( !curSpecial ) {
+            parseError( "Alarm color name not found" );
+            parseStatus = FAIL;
+            goto term;
+          }
+          specialIndex[index] = curSpecial->index;
+
+	}
+
+      }
+      else if ( strcmp( tk, "}" ) == 0 ) {
+
+        if ( maxSpecial < 4 ) {
+          parseError( "All alarm colors have not been specified" );
+          parseStatus = FAIL;
+          goto term;
+        }
+ 
+        state = GET_FIRST_TOKEN;
+ 
+      }
+      else {
+
+        parseError( "Alarm specification syntax error" );
+        parseStatus = FAIL;
+        goto term;
+
+      }
+
+      break;
+
+    }
+
+  }
+
+term:
+
+  //printf( "\n", tk );
+
+  fclose( f );
+
+  printf( "max_colors = %-d\n", max_colors );
+
+  if ( parseStatus == FAIL ) {
+    return 0;
+  }
+
+  change = 1;
+  blink = 0;
+  curIndex = 0;
+  curX = 5;
+  curY = 5;
+
+  colors = new unsigned int[max_colors];
+  blinkingColors = new unsigned int[max_colors];
+
+  stat = avl_get_first( this->colorCacheByIndexH, (void **) &cur1 );
+  if ( !( stat & 1 ) ) {
+    printf( "error 1\n" );
+    return 0;
+  }
+
+  i = 0;
+
+  while ( cur1 ) {
+
+    color.red = cur1->rgb[0];
+    color.green = cur1->rgb[1];
+    color.blue = cur1->rgb[2];
+
+    stat = XAllocColor( display, cmap, &color );
+    if ( stat ) {
+      colors[i] = color.pixel;
+    }
+    else {
+      colors[i] = BlackPixel( display, screen );
+    }
+    cur1->pixel = colors[i];
+
+    if ( ( cur1->rgb[0] != cur1->blinkRgb[0] ) ||
+         ( cur1->rgb[1] != cur1->blinkRgb[1] ) ||
+         ( cur1->rgb[2] != cur1->blinkRgb[2] ) ) {
+
+      color.red = cur1->rgb[0];
+      color.green = cur1->rgb[1];
+      color.blue = cur1->rgb[2];
+
+      stat = XAllocColor( display, cmap, &color );
+      if ( stat ) {
+        blinkingColors[i] = color.pixel;
+      }
+      else {
+	printf( "XAllocColor failed\n" );
+        blinkingColors[i] = BlackPixel( display, screen );
+      }
+      cur1->blinkPixel = blinkingColors[i];
+
+    }
+    else {
+      blinkingColors[i] = colors[i];
+      cur1->blinkPixel = colors[i];
+    }
+
+    // --------------------------------------------------------------
+    // update tree sorted by name
+    stat = avl_get_match( this->colorCacheByNameH, (void *) cur1->name,
+     (void **) &cur2 );
+    if ( cur2 ) {
+      cur2->pixel = cur1->pixel;
+      cur2->blinkPixel = cur1->blinkPixel;
+    }
+    // --------------------------------------------------------------
+
+    stat = avl_get_next( this->colorCacheByIndexH, (void **) &cur1 );
+    if ( !( stat & 1 ) ) {
+      printf( "error 1\n" );
+      return 0;
+    }
+
+    if ( i < max_colors-1 ) i++;
+
+  }
+
+#if 1
+
+  stat = avl_get_first( this->colorCacheByIndexH, (void **) &cur1 );
+  if ( !( stat & 1 ) ) {
+    printf( "error 1\n" );
+    return 0;
+  }
+
+  while ( cur1 ) {
+
+    printf( "name: %s, index: %-d, r: %-d, g: %-d, b: %-d, p: %-d, bp: %-d\n",
+     cur1->name, cur1->index, cur1->rgb[0], cur1->rgb[1], cur1->rgb[2],
+     cur1->pixel, cur1->blinkPixel );
+
+    stat = avl_get_next( this->colorCacheByIndexH, (void **) &cur1 );
+    if ( !( stat & 1 ) ) {
+      printf( "error 1\n" );
+      return 0;
+    }
+
+  }
+
+  printf( "\n" );
+
+  stat = avl_get_first( this->colorCacheByNameH, (void **) &cur1 );
+  if ( !( stat & 1 ) ) {
+    printf( "error 1\n" );
+    return 0;
+  }
+
+  while ( cur1 ) {
+
+    printf( "name: %s, index: %-d, r: %-d, g: %-d, b: %-d, p: %-d, bp: %-d\n",
+     cur1->name, cur1->index, cur1->rgb[0], cur1->rgb[1], cur1->rgb[2],
+     cur1->pixel, cur1->blinkPixel );
+
+    stat = avl_get_next( this->colorCacheByNameH, (void **) &cur1 );
+    if ( !( stat & 1 ) ) {
+      printf( "error 1\n" );
+      return 0;
+    }
+
+  }
+
+#endif
+
+  // create window
+
+  shell = XtVaAppCreateShell( colorInfoClass_str2, colorInfoClass_str2,
+   topLevelShellWidgetClass,
+   XtDisplay(top),
+   XtNmappedWhenManaged, False,
+   NULL );
+
+  rc = XtVaCreateWidget( "", xmRowColumnWidgetClass, shell,
+   XmNorientation, XmVERTICAL,
+   XmNnumColumns, 1,
+   NULL );
+
+  str1 = XmStringCreateLocalized( colorInfoClass_str3 );
+  mbar = XmVaCreateSimpleMenuBar( rc, "",
+   XmVaCASCADEBUTTON, str1, 'f',
+   NULL );
+  XmStringFree( str1 );
+
+  str1 = XmStringCreateLocalized( colorInfoClass_str4 );
+  str2 = XmStringCreateLocalized( colorInfoClass_str5 );
+  mb1 = XmVaCreateSimplePulldownMenu( mbar, "", 0, file_cb,
+   XmVaPUSHBUTTON, str1, 'x', NULL, NULL,
+   XmVaPUSHBUTTON, str2, 's', NULL, NULL,
+   NULL );
+  XmStringFree( str1 );
+  XmStringFree( str2 );
+
+  ncols = num_color_cols;
+  nrows = (max_colors) / ncols;
+  remainder = (max_colors) % ncols;
+  if ( remainder ) nrows++;
+
+  form = XtVaCreateManagedWidget( "", xmDrawingAreaWidgetClass, rc,
+   XmNwidth, ncols*20 + ncols*5 + 5,
+   XmNheight, nrows*20 + nrows*5 + 5,
+   NULL );
+
+  XtAddEventHandler( form,
+   ButtonPressMask|ExposureMask, False,
+   colorFormEventHandler, (XtPointer) this );
+
+  Atom wm_delete_window = XmInternAtom( XtDisplay(shell), "WM_DELETE_WINDOW",
+   False );
+
+  XmAddWMProtocolCallback( shell, wm_delete_window, file_cb,
+    (int) 0 );
+
+  XtVaSetValues( shell, XmNdeleteResponse, XmDO_NOTHING, NULL );
+
+  XtManageChild( mbar );
+  XtManageChild( rc );
+  XtRealizeWidget( shell );
+  XSetWindowColormap( display, XtWindow(shell), cmap );
+
+  gc.create( shell );
+
+  n = 0;
+  XtSetArg( arg[n], XmNbackground, &bgColor ); n++;
+  XtGetValues( form, arg, n );
+
+  gc.setBG( bgColor );
+  gc.setBaseBG( bgColor );
+
+  numColors = max_colors;
+
+  // populate special array
+  for ( i=0; i<NUM_SPECIAL_COLORS-2; i++ ) {
+    if ( specialIndex[i] != -1 ) {
+      special[i] = colors[ specialIndex[i] ];
+    }
+    else {
+      special[i] = -1;
+    }
+  }
+
+  return 1;
+
+}
+
 int colorInfoClass::initFromFile (
   XtAppContext app,
   Display *d,
@@ -409,7 +1625,7 @@ int rgb[3], red, green, blue;
 unsigned long plane_masks[1], bgColor;
 int major, minor, release;
 
-  if ( !this->colorCacheByColorH ) return 0;
+  if ( !this->colorCacheByIndexH ) return 0;
 
   appCtx = app;
   display = d;
@@ -417,6 +1633,25 @@ int major, minor, release;
   depth = DefaultDepth( d, screen );
   visual = DefaultVisual( d, screen );
   cmap = DefaultColormap( d, screen );
+
+  change = 1;
+  blink = 0;
+  curIndex = 0;
+  curX = 5;
+  curY = 5;
+
+  f = fopen( fileName, "r" );
+  if ( !f ) {
+    return COLORINFO_NO_FILE;
+  }
+
+  fscanf( f, "%d %d %d\n", &major, &minor, &release );
+
+  if ( major == 3 ) {
+    stat = ver3InitFromFile( f, app, d, top, fileName );
+    if ( stat == 0 ) exit(0);
+    return stat;
+  }
 
   goto firstTry;
 
@@ -441,15 +1676,11 @@ restart:
    compare_key_by_index, copy_nodes, &(this->colorCacheByIndexH) );
   if ( !( stat & 1 ) ) this->colorCacheByIndexH = (AVL_HANDLE) NULL;
 
+  stat = avl_init_tree( compare_nodes_by_name,
+   compare_key_by_name, copy_nodes, &(this->colorCacheByNameH) );
+  if ( !( stat & 1 ) ) this->colorCacheByNameH = (AVL_HANDLE) NULL;
+
   fclose( f );
-
-firstTry:
-
-  change = 1;
-  blink = 0;
-  curIndex = 0;
-  curX = 5;
-  curY = 5;
 
   f = fopen( fileName, "r" );
   if ( !f ) {
@@ -457,6 +1688,8 @@ firstTry:
   }
 
   fscanf( f, "%d %d %d\n", &major, &minor, &release );
+
+firstTry:
 
   if ( major < 2 ) {
     max_colors = 88;
@@ -547,6 +1780,9 @@ firstTry:
     cur->pixel = colors[i];
     cur->index = index;
 
+    cur->name = NULL;
+    cur->rule = NULL;
+
     stat = avl_insert_node( this->colorCacheByColorH, (void *) cur,
      &dup );
     if ( !( stat & 1 ) ) {
@@ -566,6 +1802,9 @@ firstTry:
     cur->pixel = colors[i];
     cur->index = index;
 
+    cur->name = NULL;
+    cur->rule = NULL;
+
     stat = avl_insert_node( this->colorCacheByPixelH, (void *) cur,
      &dup );
     if ( !( stat & 1 ) ) {
@@ -584,6 +1823,9 @@ firstTry:
     cur->rgb[2] = (unsigned int) blue;
     cur->pixel = colors[i];
     cur->index = index;
+
+    cur->name = NULL;
+    cur->rule = NULL;
 
     stat = avl_insert_node( this->colorCacheByIndexH, (void *) cur,
      &dup );
@@ -673,6 +1915,9 @@ firstTry:
         cur->pixel = colors[numColors];
         cur->index = index;
 
+        cur->name = NULL;
+        cur->rule = NULL;
+
         stat = avl_insert_node( this->colorCacheByColorH, (void *) cur,
          &dup );
         if ( !( stat & 1 ) ) {
@@ -692,6 +1937,9 @@ firstTry:
         cur->pixel = colors[numColors];
         cur->index = index;
 
+        cur->name = NULL;
+        cur->rule = NULL;
+
         stat = avl_insert_node( this->colorCacheByPixelH, (void *) cur,
          &dup );
         if ( !( stat & 1 ) ) {
@@ -710,6 +1958,9 @@ firstTry:
         cur->rgb[2] = (unsigned int) blue;
         cur->pixel = colors[numColors];
         cur->index = index;
+
+        cur->name = NULL;
+        cur->rule = NULL;
 
         stat = avl_insert_node( this->colorCacheByIndexH, (void *) cur,
          &dup );
@@ -919,13 +2170,13 @@ unsigned int colorInfoClass::getFg( void ) {
 
 }
 
-void colorInfoClass::setCurDestination( unsigned int *ptr ) {
+void colorInfoClass::setCurDestination( int *ptr ) {
 
   curDestination = ptr;
 
 }
 
-unsigned int *colorInfoClass::getCurDestination( void ) {
+int *colorInfoClass::getCurDestination( void ) {
 
   return curDestination;
 
@@ -988,6 +2239,9 @@ colorCachePtr cur;
   cur->pixel = (unsigned int) pixel;
   cur->index = -1;
 
+  cur->name = NULL;
+  cur->rule = NULL;
+
   stat = avl_insert_node( this->colorCacheByPixelH, (void *) cur,
    &dup );
   if ( !( stat & 1 ) ) {
@@ -1005,6 +2259,9 @@ colorCachePtr cur;
   cur->rgb[2] = (unsigned int) *b;
   cur->pixel = (unsigned int) pixel;
   cur->index = -1;
+
+  cur->name = NULL;
+  cur->rule = NULL;
 
   stat = avl_insert_node( this->colorCacheByColorH, (void *) cur,
    &dup );
@@ -1113,7 +2370,9 @@ int colorInfoClass::setIndex (
 {
 
 int stat;
-colorCachePtr cur;;
+colorCachePtr cur;
+
+  printf( "colorInfoClass::setIndex\n" );
 
   stat = avl_get_match( this->colorCacheByIndexH, (void *) &index,
    (void **) &cur );
@@ -1138,6 +2397,19 @@ int colorInfoClass::getSpecialColor (
 
 }
 
+
+int colorInfoClass::getSpecialIndex (
+  int index ) {
+
+  if ( index < 0 ) return -1;
+  if ( index >= NUM_SPECIAL_COLORS ) return -1;
+
+  return specialIndex[index];
+
+  return 0;
+
+}
+
 Colormap colorInfoClass::getColorMap ( void ) {
 
   return cmap;
@@ -1147,18 +2419,39 @@ Colormap colorInfoClass::getColorMap ( void ) {
 int colorInfoClass::setCurIndexByPixel (
   unsigned int pixel ) {
 
-int x, y, i, r, c, ncols, nrows, remainder;
+int i, curI, stat;
 
   for ( i=0; i<max_colors+num_blinking_colors; i++ ) {
 
     if ( colors[i] == pixel ) {
 
-      curIndex = i;
+      curI = i;
       break;
 
     }
 
   }
+
+  stat = setCurIndex( curI );
+
+  return stat;
+
+}
+
+int colorInfoClass::setCurIndex (
+  int index ) {
+
+int x, y, i, r, c, ncols, nrows, remainder;
+
+  if ( index > numColors-1 ) {
+    curIndex = numColors-1;
+  }
+  else if ( index < 0 ) {
+    curIndex = 0;
+  }
+  else {curIndex = index;
+  }
+    
 
   XDrawRectangle( display, XtWindow(form), gc.eraseGC(), curX-2, curY-2,
    23, 23 );
@@ -1242,5 +2535,46 @@ unsigned int colorInfoClass::getPixelByIndex (
   if ( index < 0 ) return WhitePixel( display, screen );
 
   return colors[index];
+
+}
+
+unsigned int colorInfoClass::pix ( // same as getPixelByIndex
+  int index )
+{
+
+  if ( index >= max_colors+num_blinking_colors )
+    return BlackPixel( display, screen );
+
+  if ( index < 0 ) return WhitePixel( display, screen );
+
+  return colors[index];
+
+}
+
+
+int colorInfoClass::pixIndex(
+  unsigned int pixel )
+{
+
+int stat;
+colorCachePtr cur;
+
+  stat = avl_get_first( this->colorCacheByIndexH, (void **) &cur );
+  if ( !( stat & 1 ) ) {
+    return 0;
+  }
+
+  while ( cur ) {
+
+    if ( cur->pixel == pixel ) return cur->index;
+
+      stat = avl_get_next( this->colorCacheByIndexH, (void **) &cur );
+      if ( !( stat & 1 ) ) {
+        return 0;
+      }
+
+  }
+
+  return 0;
 
 }

@@ -43,21 +43,21 @@ activeMeterClass *metero = (activeMeterClass *) client;
     metero->fgColor.setAlarmSensitive();
   else
     metero->fgColor.setAlarmInsensitive();
-  metero->fgColor.setColor( metero->bufFgColor, metero->actWin->ci );
+  metero->fgColor.setColorIndex( metero->bufFgColor, metero->actWin->ci );
 
   metero->meterColorMode = metero->bufMeterColorMode;
   if ( metero->meterColorMode == METERC_K_COLORMODE_ALARM )
     metero->meterColor.setAlarmSensitive();
   else
     metero->meterColor.setAlarmInsensitive();
-  metero->meterColor.setColor( metero->bufMeterColor, metero->actWin->ci );
+  metero->meterColor.setColorIndex( metero->bufMeterColor, metero->actWin->ci );
 
   metero->scaleColorMode = metero->bufScaleColorMode;
   if ( metero->scaleColorMode == METERC_K_COLORMODE_ALARM )
     metero->scaleColor.setAlarmSensitive();
   else
     metero->scaleColor.setAlarmInsensitive();
-  metero->scaleColor.setColor( metero->bufScaleColor, metero->actWin->ci );
+  metero->scaleColor.setColorIndex( metero->bufScaleColor, metero->actWin->ci );
 
   metero->shadowMode = metero->bufShadowMode;
 
@@ -74,13 +74,13 @@ activeMeterClass *metero = (activeMeterClass *) client;
   metero->majorIntervals = metero->bufMajorIntervals;
   metero->minorIntervals = metero->bufMinorIntervals;
 
-  metero->bgColor.setColor( metero->bufBgColor, metero->actWin->ci );
+  metero->bgColor.setColorIndex( metero->bufBgColor, metero->actWin->ci );
 
-  metero->tsColor.setColor( metero->bufTsColor, metero->actWin->ci );
-  metero->bsColor.setColor( metero->bufBsColor, metero->actWin->ci );
+  metero->tsColor.setColorIndex( metero->bufTsColor, metero->actWin->ci );
+  metero->bsColor.setColorIndex( metero->bufBsColor, metero->actWin->ci );
 
-  metero->scaleColor.setColor( metero->bufScaleColor, metero->actWin->ci );
-  metero->labelColor.setColor( metero->bufLabelColor, metero->actWin->ci );
+  metero->scaleColor.setColorIndex( metero->bufScaleColor, metero->actWin->ci );
+  metero->labelColor.setColorIndex( metero->bufLabelColor, metero->actWin->ci );
 
   metero->controlPvExpStr.setRaw( metero->bufControlPvName );
   metero->readPvExpStr.setRaw( metero->bufReadPvName );
@@ -289,8 +289,8 @@ activeMeterClass::activeMeterClass ( void ) {
   scaleMax = 10;
   majorIntervals = 10;
   minorIntervals = 5;
-  strcpy( scaleFormat, "g" );
-  scalePrecision = 3;
+  strcpy( scaleFormat, "f" );
+  scalePrecision = 0;
   needleType = 1;
   shadowMode = 1;
 
@@ -393,14 +393,14 @@ int activeMeterClass::createInteractive (
   if ( w < minW ) w = minW;
   if ( h < minH ) h = minH;
 
-  meterColor.setColor( actWin->defaultBgColor, actWin->ci );
-  fgColor.setColor( actWin->defaultTextFgColor, actWin->ci );
-  bgColor.setColor( actWin->defaultOffsetColor, actWin->ci );
-  scaleColor.setColor( actWin->defaultTextFgColor, actWin->ci);
-  labelColor.setColor( actWin->defaultTextFgColor, actWin->ci );
+  meterColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
+  fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
+  bgColor.setColorIndex( actWin->defaultOffsetColor, actWin->ci );
+  scaleColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci);
+  labelColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
 
-  tsColor.setColor( actWin->defaultTopShadowColor, actWin->ci );
-  bsColor.setColor( actWin->defaultBotShadowColor, actWin->ci );
+  tsColor.setColorIndex( actWin->defaultTopShadowColor, actWin->ci );
+  bsColor.setColorIndex( actWin->defaultBotShadowColor, actWin->ci );
 
   strcpy( scaleFontTag, actWin->defaultCtlFontTag );
   actWin->fi->loadFontTag( scaleFontTag );
@@ -434,31 +434,31 @@ int index;
   fprintf( f, "%-d\n", w );
   fprintf( f, "%-d\n", h );
 
-  actWin->ci->getIndex( meterColor.pixelColor(), &index );
+  index = meterColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", meterColorMode );
 
-  actWin->ci->getIndex( scaleColor.pixelColor(), &index );
+  index = scaleColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", scaleColorMode );
 
-  actWin->ci->getIndex( labelColor.pixelColor(), &index );
+  index = labelColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
-  actWin->ci->getIndex( fgColor.pixelColor(), &index );
+  index = fgColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", fgColorMode );
 
-  actWin->ci->getIndex( bgColor.pixelColor(), &index );
+  index = bgColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
-  actWin->ci->getIndex( tsColor.pixelColor(), &index );
+  index = tsColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
-  actWin->ci->getIndex( bsColor.pixelColor(), &index );
+  index = bsColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   if ( controlPvExpStr.getRaw() )
@@ -525,8 +525,7 @@ char oneName[39+1];
   if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    meterColor.setColor( pixel, actWin->ci );
+    meterColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &meterColorMode ); actWin->incLine();
     if ( meterColorMode == METERC_K_COLORMODE_ALARM )
@@ -535,8 +534,7 @@ char oneName[39+1];
       meterColor.setAlarmInsensitive();
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    scaleColor.setColor( pixel, actWin->ci );
+    scaleColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &scaleColorMode ); actWin->incLine();
     if ( scaleColorMode == METERC_K_COLORMODE_ALARM )
@@ -545,12 +543,10 @@ char oneName[39+1];
       scaleColor.setAlarmInsensitive();
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    labelColor.setColor( pixel, actWin->ci );
+    labelColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    fgColor.setColor( pixel, actWin->ci );
+    fgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &fgColorMode ); actWin->incLine();
 
@@ -560,23 +556,21 @@ char oneName[39+1];
       fgColor.setAlarmInsensitive();
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    bgColor.setColor( pixel, actWin->ci );
+    bgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    tsColor.setColor( pixel, actWin->ci );
+    tsColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    bsColor.setColor( pixel, actWin->ci );
+    bsColor.setColorIndex( index, actWin->ci );
 
   }
   else {
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     actWin->ci->setRGB( r, g, b, &pixel );
-    meterColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    meterColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &meterColorMode ); actWin->incLine();
     if ( meterColorMode == METERC_K_COLORMODE_ALARM )
@@ -586,7 +580,8 @@ char oneName[39+1];
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     actWin->ci->setRGB( r, g, b, &pixel );
-    scaleColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    scaleColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &scaleColorMode ); actWin->incLine();
     if ( scaleColorMode == METERC_K_COLORMODE_ALARM )
@@ -596,11 +591,13 @@ char oneName[39+1];
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     actWin->ci->setRGB( r, g, b, &pixel );
-    labelColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    labelColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     actWin->ci->setRGB( r, g, b, &pixel );
-    fgColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    fgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &fgColorMode ); actWin->incLine();
 
@@ -611,15 +608,18 @@ char oneName[39+1];
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     actWin->ci->setRGB( r, g, b, &pixel );
-    bgColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    bgColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     actWin->ci->setRGB( r, g, b, &pixel );
-    tsColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    tsColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     actWin->ci->setRGB( r, g, b, &pixel );
-    bsColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    bsColor.setColorIndex( index, actWin->ci );
 
   }
 
@@ -702,24 +702,24 @@ char title[32], *ptr;
   bufW = w;
   bufH = h;
 
-  bufMeterColor = meterColor.pixelColor();
+  bufMeterColor = meterColor.pixelIndex();
   bufMeterColorMode = meterColorMode;
   bufScaleColorMode = scaleColorMode;
 
   bufMajorIntervals = majorIntervals;
   bufMinorIntervals = minorIntervals;
 
-  bufFgColor = fgColor.pixelColor();
+  bufFgColor = fgColor.pixelIndex();
   bufFgColorMode = fgColorMode;
   
   bufShadowMode = shadowMode;
-  bufTsColor = tsColor.pixelColor();
-  bufBsColor = bsColor.pixelColor();
+  bufTsColor = tsColor.pixelIndex();
+  bufBsColor = bsColor.pixelIndex();
 
-  bufScaleColor = scaleColor.pixelColor();
-  bufLabelColor = labelColor.pixelColor();
+  bufScaleColor = scaleColor.pixelIndex();
+  bufLabelColor = labelColor.pixelIndex();
 
-  bufBgColor = bgColor.pixelColor();
+  bufBgColor = bgColor.pixelIndex();
 
   strncpy( bufScaleFontTag, scaleFontTag, 63 );
   strncpy( bufLabelFontTag, labelFontTag, 63 );
@@ -2101,35 +2101,35 @@ void activeMeterClass::changeDisplayParams (
   int _ctlAlignment,
   char *_btnFontTag,
   int _btnAlignment,
-  unsigned int _textFgColor,
-  unsigned int _fg1Color,
-  unsigned int _fg2Color,
-  unsigned int _offsetColor,
-  unsigned int _bgColor,
-  unsigned int _topShadowColor,
-  unsigned int _botShadowColor )
+  int _textFgColor,
+  int _fg1Color,
+  int _fg2Color,
+  int _offsetColor,
+  int _bgColor,
+  int _topShadowColor,
+  int _botShadowColor )
 {
 
   if ( _flag & ACTGRF_BGCOLOR_MASK )
-    meterColor.setColor( _bgColor, actWin->ci );
+    meterColor.setColorIndex( _bgColor, actWin->ci );
 
   if ( _flag & ACTGRF_TEXTFGCOLOR_MASK )
-    fgColor.setColor( _textFgColor, actWin->ci );
+    fgColor.setColorIndex( _textFgColor, actWin->ci );
 
   if ( _flag & ACTGRF_OFFSETCOLOR_MASK )
-    bgColor.setColor( _offsetColor, actWin->ci );
+    bgColor.setColorIndex( _offsetColor, actWin->ci );
 
   if ( _flag & ACTGRF_TEXTFGCOLOR_MASK )
-    scaleColor.setColor( _textFgColor, actWin->ci);
+    scaleColor.setColorIndex( _textFgColor, actWin->ci);
 
   if ( _flag & ACTGRF_TEXTFGCOLOR_MASK )
-    labelColor.setColor( _textFgColor, actWin->ci );
+    labelColor.setColorIndex( _textFgColor, actWin->ci );
 
   if ( _flag & ACTGRF_TOPSHADOWCOLOR_MASK )
-    tsColor.setColor( _topShadowColor, actWin->ci );
+    tsColor.setColorIndex( _topShadowColor, actWin->ci );
 
   if ( _flag & ACTGRF_BOTSHADOWCOLOR_MASK )
-    bsColor.setColor( _botShadowColor, actWin->ci );
+    bsColor.setColorIndex( _botShadowColor, actWin->ci );
 
   if ( _flag & ACTGRF_CTLFONTTAG_MASK ) {
 

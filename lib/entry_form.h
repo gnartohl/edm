@@ -522,13 +522,13 @@ int entryFormClass::addColorButton (
   char *label,
   colorInfoClass *ci,
   colorButtonClass *cb,
-  unsigned int *dest );
+  int *dest );
 
 int entryFormClass::addColorButtonWithText (
   char *label,
   colorInfoClass *ci,
   colorButtonClass *cb,
-  unsigned int *dest,
+  int *dest,
   int numCols,
   char *pvName );
 
@@ -594,7 +594,7 @@ int entryFormClass::addColorButtonArray (
   char *label,
   colorInfoClass *ci,
   colorButtonClass *cb,
-  unsigned int *dest,
+  int *dest,
   entryListBase *obj );
 
 int entryFormClass::addFontMenuArray (

@@ -592,7 +592,6 @@ cursorClass cursor;
 Widget drawWidget, executeWidget, fileSelectBox, schemeSelectBox;
 Display *d;
 int bufX, bufY, bufW, bufH;
-unsigned int bg;
 
 activeGraphicListPtr head;
 activeGraphicListPtr cutHead;
@@ -660,53 +659,53 @@ int masterSelectX0, masterSelectY0, masterSelectX1, masterSelectY1;
 
 int useFirstSelectedAsReference;
 
-unsigned int fgColor;
+int fgColor;
 colorButtonClass fgCb;
 
-unsigned int bgColor;
+int bgColor;
 colorButtonClass bgCb;
 Pixmap bgPixmap;
 
-unsigned int defaultTextFgColor;
+int defaultTextFgColor;
 colorButtonClass defaultTextFgCb;
 
-unsigned int defaultFg1Color;
+int defaultFg1Color;
 colorButtonClass defaultFg1Cb;
 
-unsigned int defaultFg2Color;
+int defaultFg2Color;
 colorButtonClass defaultFg2Cb;
 
-unsigned int defaultBgColor;
+int defaultBgColor;
 colorButtonClass defaultBgCb;
 
-unsigned int defaultTopShadowColor;
+int defaultTopShadowColor;
 colorButtonClass defaultTopShadowCb;
 
-unsigned int defaultBotShadowColor;
+int defaultBotShadowColor;
 colorButtonClass defaultBotShadowCb;
 
-unsigned int defaultOffsetColor;
+int defaultOffsetColor;
 colorButtonClass defaultOffsetCb;
 
-unsigned int allSelectedTextFgColor;
+int allSelectedTextFgColor;
 int allSelectedTextFgColorFlag;
 
-unsigned int allSelectedFg1Color;
+int allSelectedFg1Color;
 int allSelectedFg1ColorFlag;
 
-unsigned int allSelectedFg2Color;
+int allSelectedFg2Color;
 int allSelectedFg2ColorFlag;
 
-unsigned int allSelectedBgColor;
+int allSelectedBgColor;
 int allSelectedBgColorFlag;
 
-unsigned int allSelectedOffsetColor;
+int allSelectedOffsetColor;
 int allSelectedOffsetColorFlag;
 
-unsigned int allSelectedTopShadowColor;
+int allSelectedTopShadowColor;
 int allSelectedTopShadowColorFlag;
 
-unsigned int allSelectedBotShadowColor;
+int allSelectedBotShadowColor;
 int allSelectedBotShadowColorFlag;
 
 char allSelectedFontTag[127+1];

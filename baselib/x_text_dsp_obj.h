@@ -338,9 +338,9 @@ int changeValOnLoseFocus, bufChangeValOnLoseFocus;
 int fastUpdate, bufFastUpdate;
 int precision;
 efInt efPrecision, bufEfPrecision;
-unsigned int bgColor, bufBgColor;
+int bgColor, bufBgColor;
 pvColorClass fgColor;
-unsigned int bufFgColor, bufSvalColor;
+int bufFgColor, bufSvalColor;
 colorButtonClass fgCb, bgCb, svalCb;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight, stringLength, stringWidth,
@@ -496,13 +496,13 @@ void activeXTextDspClass::changeDisplayParams (
   int ctlAlignment,
   char *btnFontTag,
   int btnAlignment,
-  unsigned int textFgColor,
-  unsigned int fg1Color,
-  unsigned int fg2Color,
-  unsigned int offsetColor,
-  unsigned int bgColor,
-  unsigned int topShadowColor,
-  unsigned int botShadowColor );
+  int textFgColor,
+  int fg1Color,
+  int fg2Color,
+  int offsetColor,
+  int bgColor,
+  int topShadowColor,
+  int botShadowColor );
 
 void activeXTextDspClass::changePvNames (
   int flag,

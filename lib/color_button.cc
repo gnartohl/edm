@@ -106,15 +106,15 @@ static void setActive_cb (
 colorInfoClass *ci;
 colorButtonClass *cb;
 int stat;
-unsigned int curPixel;
+int curIndex;
 
   cb = (colorButtonClass *) client;
 
-  curPixel = cb->getPixel();
+  curIndex = cb->getIndex();
 
   ci = cb->colorInfo();
 
-  stat = ci->setCurIndexByPixel( curPixel );
+  stat = ci->setCurIndex( curIndex );
 
   stat = ci->setActiveWidget( w );
 
@@ -126,7 +126,7 @@ unsigned int curPixel;
 
 Widget colorButtonClass::create(
   Widget parent,
-  unsigned int *dest,
+  int *dest,
   colorInfoClass *ptr,
   Arg args[],
   int num_args )
@@ -140,6 +140,8 @@ Widget colorButtonClass::create(
 
   destPtr = dest;
 
+  curIndex = *dest;
+
   XtAddCallback( pb, XmNactivateCallback, setActive_cb, (XtPointer) this );
   XtAddCallback( pb, XmNdestroyCallback, destroy_cb, (XtPointer) this->ci );
 
@@ -150,7 +152,7 @@ Widget colorButtonClass::create(
 
 Widget colorButtonClass::createWithText(
   Widget parent,
-  unsigned int *dest,
+  int *dest,
   colorInfoClass *ptr,
   char *pvName,
   Arg fArgs[],
@@ -194,6 +196,8 @@ Widget colorButtonClass::createWithText(
 
   destPtr = dest;
 
+  curIndex = *dest;
+
   XtAddCallback( pb, XmNactivateCallback, setActive_cb, (XtPointer) this );
   XtAddCallback( pb, XmNdestroyCallback, destroy_cb, (XtPointer) this->ci );
 
@@ -225,7 +229,7 @@ colorInfoClass *colorButtonClass::colorInfo( void ) {
 
 }
 
-unsigned int *colorButtonClass::destination( void ) {
+int *colorButtonClass::destination( void ) {
 
   return destPtr;
 
@@ -236,11 +240,9 @@ Arg arg[10];
 int n;
 unsigned int fg;
 
-
   n = 0;
   XtSetArg( arg[n], XmNbackground, (XtArgVal) &fg ); n++;
   XtGetValues( pb, arg, n );
-
 
   return fg;
 
@@ -253,11 +255,33 @@ int colorButtonClass::setPixel (
 Arg arg[10];
 int n;
 
-
   n = 0;
   XtSetArg( arg[n], XmNbackground, (XtArgVal) p ); n++;
   XtSetValues( pb, arg, n );
 
+  return COLORBUTTON_SUCCESS;
+
+}
+
+
+int colorButtonClass::getIndex ( void ) {
+
+  return curIndex;
+
+}
+
+int colorButtonClass::setIndex (
+  int i )
+{
+
+Arg arg[10];
+int n;
+
+  curIndex = i;
+
+  n = 0;
+  XtSetArg( arg[n], XmNbackground, (XtArgVal) ci->pix(i) ); n++;
+  XtSetValues( pb, arg, n );
 
   return COLORBUTTON_SUCCESS;
 

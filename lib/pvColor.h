@@ -36,6 +36,17 @@ class pvColorClass {
 
 private:
 
+int effectiveIndex;
+int index;
+int staticIndex;
+int disconnectedIndex;
+int noalarmIndex;
+int invalidIndex;
+int minorIndex;
+int majorIndex;
+int saveValIndex; // if value is not equal to saved value
+int ruleIndex;
+
 int effectivePixel;
 int pixel;
 int staticPixel;
@@ -72,16 +83,30 @@ void pvColorClass::setDisconnected ( void );
 
 unsigned int pvColorClass::getColor( void ) const;
 
+int pvColorClass::getIndex ( void ) const;
+
 unsigned int pvColorClass::pixelColor( void ) const;
 
-unsigned int pvColorClass::disconnectColor( void );
+int pvColorClass::pixelIndex ( void ) const;
+
+void pvColorClass::_changeColor (
+  unsigned int color,
+  colorInfoClass *ci );
 
 void pvColorClass::changeColor (
   unsigned int color,
   colorInfoClass *ci );
 
+void pvColorClass::changeIndex (
+  int color,
+  colorInfoClass *ci );
+
 void pvColorClass::setColor (
   unsigned int color,
+  colorInfoClass *ci );
+
+void pvColorClass::setColorIndex (
+  int color,
   colorInfoClass *ci );
 
 void pvColorClass::setAlarmSensitive ( void );
@@ -99,7 +124,13 @@ void pvColorClass::setNotNull ( void );
 void pvColorClass::setNullColor (
   unsigned int color );
 
+void pvColorClass::setNullIndex (
+  int color,
+  colorInfoClass *ci );
+
 unsigned int pvColorClass::nullColor ( void );
+
+int pvColorClass::nullIndex ( void );
 
 void pvColorClass::setRuleMode ( void );
 
@@ -107,6 +138,10 @@ void pvColorClass::setNotRuleMode ( void );
 
 void pvColorClass::setRuleColor (
   unsigned int color,
+  colorInfoClass *ci );
+
+void pvColorClass::setRuleIndex (
+  int color,
   colorInfoClass *ci );
 
 };

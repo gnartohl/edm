@@ -207,7 +207,7 @@ activeLineClass *alo = (activeLineClass *) client;
     alo->lineColor.setAlarmSensitive();
   else
     alo->lineColor.setAlarmInsensitive();
-  alo->lineColor.setColor( alo->bufLineColor, alo->actWin->ci );
+  alo->lineColor.setColorIndex( alo->bufLineColor, alo->actWin->ci );
 
   alo->fill = alo->bufFill;
 
@@ -216,7 +216,7 @@ activeLineClass *alo = (activeLineClass *) client;
     alo->fillColor.setAlarmSensitive();
   else
     alo->fillColor.setAlarmInsensitive();
-  alo->fillColor.setColor( alo->bufFillColor, alo->actWin->ci );
+  alo->fillColor.setColorIndex( alo->bufFillColor, alo->actWin->ci );
 
   alo->lineWidth = alo->bufLineWidth;
 
@@ -518,8 +518,8 @@ int activeLineClass::createInteractive (
   numPoints = 0;
   xpoints = (XPoint *) NULL;
 
-  lineColor.setColor( actWin->defaultTextFgColor, actWin->ci );
-  fillColor.setColor( actWin->defaultBgColor, actWin->ci );
+  lineColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
+  fillColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
 
   this->editCreate();
 
@@ -544,12 +544,12 @@ char title[32], *ptr;
   bufW = w;
   bufH = h;
 
-  bufLineColor = lineColor.pixelColor();
+  bufLineColor = lineColor.pixelIndex();
   bufLineColorMode = lineColorMode;
 
   bufFill = fill;
 
-  bufFillColor = fillColor.pixelColor();
+  bufFillColor = fillColor.pixelIndex();
   bufFillColorMode = fillColorMode;
 
   bufLineWidth = lineWidth;
@@ -1166,8 +1166,7 @@ char oneName[39+1];
   if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    lineColor.setColor( pixel, actWin->ci );
+    lineColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
 
@@ -1179,8 +1178,7 @@ char oneName[39+1];
     fscanf( f, "%d\n", &fill ); actWin->incLine();
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    fillColor.setColor( pixel, actWin->ci );
+    fillColor.setColorIndex( index, actWin->ci );
 
   }
   else {
@@ -1266,14 +1264,14 @@ int i, index;
     fprintf( f, "%-d %-d\n", xpoints[i].x, xpoints[i].y );
   }
 
-  actWin->ci->getIndex( lineColor.pixelColor(), &index );
+  index = lineColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", lineColorMode );
 
   fprintf( f, "%-d\n", fill );
 
-  actWin->ci->getIndex( fillColor.pixelColor(), &index );
+  index =  fillColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", fillColorMode );
@@ -2164,20 +2162,20 @@ void activeLineClass::changeDisplayParams (
   int _ctlAlignment,
   char *_btnFontTag,
   int _btnAlignment,
-  unsigned int _textFgColor,
-  unsigned int _fg1Color,
-  unsigned int _fg2Color,
-  unsigned int _offsetColor,
-  unsigned int _bgColor,
-  unsigned int _topShadowColor,
-  unsigned int _botShadowColor )
+  int _textFgColor,
+  int _fg1Color,
+  int _fg2Color,
+  int _offsetColor,
+  int _bgColor,
+  int _topShadowColor,
+  int _botShadowColor )
 {
 
   if ( _flag & ACTGRF_FG1COLOR_MASK )
-    lineColor.setColor( _fg1Color, actWin->ci );
+    lineColor.setColorIndex( _fg1Color, actWin->ci );
 
   if ( _flag & ACTGRF_BGCOLOR_MASK )
-    fillColor.setColor( _bgColor, actWin->ci );
+    fillColor.setColorIndex( _bgColor, actWin->ci );
 
 }
 
