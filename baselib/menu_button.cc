@@ -1531,6 +1531,7 @@ int opStat;
        initialColorConnection = 1;
       value = readValue = 0;
       controlValid = readValid = 0;
+      enumCount = 0;
 
       initEnable();
 
@@ -1686,6 +1687,13 @@ int i;
 
   case 1:
 
+    if ( stateStringPvId ) {
+      enumCount = (int) stateStringPvId->get_enum_count();
+    }
+    else {
+      enumCount = 0;
+    }
+
     if ( unconnectedTimer ) {
       XtRemoveTimeOut( unconnectedTimer );
       unconnectedTimer = 0;
@@ -1737,12 +1745,14 @@ int i;
       }
     }
 
+    stateStringPvId = NULL;
+
     break;
 
   case 2:
 
     if ( widgetsCreated ) {
-      for ( i=0; i<(int)stateStringPvId->get_enum_count(); i++ ) {
+      for ( i=0; i<enumCount; i++ ) {
         XtDestroyWidget( pb[i] );
       }
       XtDestroyWidget( pullDownMenu );

@@ -230,7 +230,7 @@ expStringClass controlPvExpStr;
 char bufReadPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass readPvExpStr;
 
-int controlExists, readExists, widgetsCreated, active, activeMode;
+int controlExists, readExists, widgetsCreated, active, activeMode, enumCount;
 
 Widget popUpMenu, pullDownMenu, pb[MAX_ENUM_STATES];
 
