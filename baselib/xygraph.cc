@@ -6814,7 +6814,7 @@ char buf[63+1], xBuf[63+1], y1Buf[63+1], y2Buf[63+1];
 int pmX, pmY, ifrac;
 int yi;
 time_t t;
-struct tm *ts;
+struct tm ts;
 
   *action = 0;
 
@@ -6845,15 +6845,15 @@ struct tm *ts;
 
 	}
 
-        ts = localtime( &t );
+        localtime_r( &t, &ts );
         ifrac = (int) rint( ( dxValue - floor( dxValue ) ) * 100.0 );
         if ( ifrac > 0.0 ) {
-          sprintf( xBuf, "%02d:%02d:%02d.%02d", ts->tm_hour, ts->tm_min,
-           ts->tm_sec, ifrac );
+          sprintf( xBuf, "%02d:%02d:%02d.%02d", ts.tm_hour, ts.tm_min,
+           ts.tm_sec, ifrac );
         }
         else {
-          sprintf( xBuf, "%02d:%02d:%02d", ts->tm_hour, ts->tm_min,
-           ts->tm_sec );
+          sprintf( xBuf, "%02d:%02d:%02d", ts.tm_hour, ts.tm_min,
+           ts.tm_sec );
         }
 
       }
