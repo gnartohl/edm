@@ -179,6 +179,8 @@ activeMessageButtonClass *msgbto = (activeMessageButtonClass *) client;
   else
     msgbto->visInverted = 1;
 
+  msgbto->colorPvExpString.setRaw( msgbto->bufColorPvName );
+
   msgbto->updateDimensions();
 
 }
@@ -331,6 +333,68 @@ activeMessageButtonClass *msgbto =
 
 }
 
+static void msgbt_monitor_color_connect_state (
+  struct connection_handler_args arg )
+{
+
+activeMessageButtonClass *msgbto =
+ (activeMessageButtonClass *) ca_puser(arg.chid);
+
+  if ( arg.op == CA_OP_CONN_UP ) {
+
+    msgbto->needColorConnectInit = 1;
+
+  }
+  else {
+
+    msgbto->connection.setPvDisconnected( (void *) msgbto->colorPvConnection );
+    msgbto->active = 0;
+    msgbto->onColor.setDisconnected();
+    msgbto->offColor.setDisconnected();
+    msgbto->needDraw = 1;
+
+  }
+
+  msgbto->actWin->appCtx->proc->lock();
+  msgbto->actWin->addDefExeNode( msgbto->aglPtr );
+  msgbto->actWin->appCtx->proc->unlock();
+
+}
+
+static void msgbt_colorInfoUpdate (
+  struct event_handler_args ast_args )
+{
+
+activeMessageButtonClass *msgbto =
+ (activeMessageButtonClass *) ast_args.usr;
+
+struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
+
+  msgbto->curColorValue = controlRec.value;
+
+  msgbto->actWin->appCtx->proc->lock();
+  msgbto->needColorInit = 1;
+  msgbto->actWin->addDefExeNode( msgbto->aglPtr );
+  msgbto->actWin->appCtx->proc->unlock();
+
+}
+
+static void msgbt_colorUpdate (
+  struct event_handler_args ast_args )
+{
+
+activeMessageButtonClass *msgbto =
+ (activeMessageButtonClass *) ast_args.usr;
+
+  msgbto->curColorValue = * ( (double *) ast_args.dbr );
+
+  msgbto->actWin->appCtx->proc->lock();
+  msgbto->needColorUpdate = 1;
+  msgbto->actWin->addDefExeNode( msgbto->aglPtr );
+  msgbto->actWin->appCtx->proc->unlock();
+
+}
+
 #endif
 
 activeMessageButtonClass::activeMessageButtonClass ( void ) {
@@ -357,7 +421,7 @@ activeMessageButtonClass::activeMessageButtonClass ( void ) {
   visInverted = 0;
   strcpy( minVisString, "" );
   strcpy( maxVisString, "" );
-  connection.setMaxPvs( 2 );
+  connection.setMaxPvs( 3 );
 
 }
 
@@ -420,7 +484,7 @@ activeGraphicClass *msgbto = (activeGraphicClass *) this;
   strncpy( minVisString, source->minVisString, 39 );
   strncpy( maxVisString, source->maxVisString, 39 );
 
-  connection.setMaxPvs( 2 );
+  connection.setMaxPvs( 3 );
 
   updateDimensions();
 
@@ -570,6 +634,12 @@ int index;
   fprintf( f, "%-d\n", visInverted );
   writeStringToFile( f, minVisString );
   writeStringToFile( f, maxVisString );
+
+  //ver 2.4.0
+  if ( colorPvExpString.getRaw() )
+    writeStringToFile( f, colorPvExpString.getRaw() );
+  else
+    writeStringToFile( f, "" );
 
   return 1;
 
@@ -758,6 +828,14 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
     readStringFromFile( minVisString, 39+1, f ); actWin->incLine();
 
     readStringFromFile( maxVisString, 39+1, f ); actWin->incLine();
+
+  }
+
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 3 ) ) ) {
+
+    readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+     actWin->incLine();
+    colorPvExpString.setRaw( oneName );
 
   }
 
@@ -1125,6 +1203,12 @@ char title[32], *ptr, *envPtr, saveLock;
   else
     strcpy( bufVisPvName, "" );
 
+  if ( colorPvExpString.getRaw() )
+    strncpy( bufColorPvName, colorPvExpString.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
+  else
+    strcpy( bufColorPvName, "" );
+
   bufToggle = toggle;
   bufPressAction = pressAction;
   bufReleaseAction = releaseAction;
@@ -1231,6 +1315,9 @@ char title[32], *ptr, *envPtr, saveLock;
   ef.addFontMenu( activeMessageButtonClass_str19, actWin->fi, &fm, fontTag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
+
+  ef.addTextField( activeMessageButtonClass_str32, 30, bufColorPvName,
+   activeGraphicClass::MAX_PV_NAME );
 
   ef.addTextField( activeMessageButtonClass_str28, 30, bufVisPvName,
    activeGraphicClass::MAX_PV_NAME );
@@ -1610,7 +1697,8 @@ int stat, opStat;
 
       needConnectInit = needErase = needDraw = needPerformDownAction =
        needPerformUpAction = needWarning = needVisConnectInit =
-       needVisInit = needVisUpdate = 0;
+       needVisInit = needVisUpdate = needColorConnectInit =
+       needColorInit = needColorUpdate = 0;
        needToEraseUnconnected = 0;
       needToDrawUnconnected = 0;
       unconnectedTimer = 0;
@@ -1621,6 +1709,7 @@ int stat, opStat;
       sourcePressEventId = 0;
       sourceReleaseEventId = 0;
       visEventId = 0;
+      colorEventId = 0;
 #endif
 
       sourcePressExists = sourceReleaseExists = 0;
@@ -1653,6 +1742,15 @@ int stat, opStat;
         connection.addPv();
       }
 
+      if ( !colorPvExpString.getExpanded() ||
+         ( strcmp( colorPvExpString.getExpanded(), "" ) == 0 ) ) {
+        colorExists = 0;
+      }
+      else {
+        colorExists = 1;
+        connection.addPv();
+      }
+
       opStat = 1;
 
 #ifdef __epics__
@@ -1674,6 +1772,16 @@ int stat, opStat;
 
         stat = ca_search_and_connect( visPvExpString.getExpanded(), &visPvId,
          msgbt_monitor_vis_connect_state, this );
+        if ( stat != ECA_NORMAL ) {
+          printf( activeMessageButtonClass_str25 );
+          opStat = 0;
+        }
+      }
+
+      if ( colorExists ) {
+
+        stat = ca_search_and_connect( colorPvExpString.getExpanded(),
+         &colorPvId, msgbt_monitor_color_connect_state, this );
         if ( stat != ECA_NORMAL ) {
           printf( activeMessageButtonClass_str25 );
           opStat = 0;
@@ -1723,6 +1831,11 @@ int stat;
 
   if ( visExists ) {
     stat = ca_clear_channel( visPvId );
+    if ( stat != ECA_NORMAL ) printf( activeMessageButtonClass_str26 );
+  }
+
+  if ( colorExists ) {
+    stat = ca_clear_channel( colorPvId );
     if ( stat != ECA_NORMAL ) printf( activeMessageButtonClass_str26 );
   }
 
@@ -2006,6 +2119,8 @@ int stat, retStat = 1;
   if ( !( stat & 1 ) ) retStat = stat;
   stat = visPvExpString.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
+  stat = colorPvExpString.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
   return retStat;
 
@@ -2031,6 +2146,8 @@ int stat, retStat = 1;
   if ( !( stat & 1 ) ) retStat = stat;
   stat = visPvExpString.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
+  stat = colorPvExpString.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
   return stat;
 
@@ -2050,19 +2167,20 @@ int activeMessageButtonClass::containsMacros ( void ) {
 
   if ( visPvExpString.containsPrimaryMacros() ) return 1;
 
+  if ( colorPvExpString.containsPrimaryMacros() ) return 1;
+
   return 0;
 
 }
 
 void activeMessageButtonClass::executeDeferred ( void ) {
 
-int nc, nd, ne, npda, npua, nw, nvc, nvi, nvu;
-int stat;
+int nc, nd, ne, npda, npua, nw, nvc, nvi, nvu, ncc, nci, ncu;
+int stat, index;
 
   if ( actWin->isIconified ) return;
 
   actWin->appCtx->proc->lock();
-  visValue = curVisValue;
   nc = needConnectInit; needConnectInit = 0;
   nd = needDraw; needDraw = 0;
   ne = needErase; needErase = 0;
@@ -2072,6 +2190,11 @@ int stat;
   nvc = needVisConnectInit; needVisConnectInit = 0;
   nvi = needVisInit; needVisInit = 0;
   nvu = needVisUpdate; needVisUpdate = 0;
+  ncc = needColorConnectInit; needColorConnectInit = 0;
+  nci = needColorInit; needColorInit = 0;
+  ncu = needColorUpdate; needColorUpdate = 0;
+  visValue = curVisValue;
+  colorValue = curColorValue;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
@@ -2101,8 +2224,6 @@ int stat;
     minVis = atof( minVisString );
     maxVis = atof( maxVisString );
 
-    connection.setPvConnected( (void *) visPvConnection );
-
     stat = ca_get_callback( DBR_GR_DOUBLE, visPvId,
      msgbt_visInfoUpdate, (void *) this );
 
@@ -2124,6 +2245,43 @@ int stat;
     if ( prevVisibility != visibility ) {
       if ( !visibility ) eraseActive();
     }
+
+    connection.setPvConnected( (void *) visPvConnection );
+
+    if ( connection.pvsConnected() ) {
+      active = 1;
+      init = 1;
+      onColor.setConnected();
+      offColor.setConnected();
+      smartDrawAllActive();
+    }
+
+  }
+
+  if ( ncc ) {
+
+    stat = ca_get_callback( DBR_GR_DOUBLE, colorPvId,
+     msgbt_colorInfoUpdate, (void *) this );
+
+  }
+
+  if ( nci ) {
+
+    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, colorPvId,
+     msgbt_colorUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
+     &colorEventId, DBE_VALUE );
+    if ( stat != ECA_NORMAL ) printf( activeMessageButtonClass_str27 );
+
+    index = actWin->ci->evalRule( onColor.pixelIndex(), colorValue );
+    onColor.changeIndex( index, actWin->ci );
+
+    index = actWin->ci->evalRule( offColor.pixelIndex(), colorValue );
+    offColor.changeIndex( index, actWin->ci );
+
+    index = actWin->ci->evalRule( fgColor.pixelIndex(), colorValue );
+    fgColor.changeIndex( index, actWin->ci );
+
+    connection.setPvConnected( (void *) colorPvConnection );
 
     if ( connection.pvsConnected() ) {
       active = 1;
@@ -2209,6 +2367,21 @@ int stat;
       if ( !visibility ) eraseActive();
       stat = smartDrawAllActive();
     }
+
+  }
+
+//----------------------------------------------------------------------------
+
+  if ( ncu ) {
+
+    index = actWin->ci->evalRule( onColor.pixelIndex(), colorValue );
+    onColor.changeIndex( index, actWin->ci );
+
+    index = actWin->ci->evalRule( offColor.pixelIndex(), colorValue );
+    offColor.changeIndex( index, actWin->ci );
+
+    index = actWin->ci->evalRule( fgColor.pixelIndex(), colorValue );
+    fgColor.changeIndex( index, actWin->ci );
 
   }
 

@@ -25,7 +25,7 @@
 #include "cadef.h"
 
 #define MSGBTC_MAJOR_VERSION 2
-#define MSGBTC_MINOR_VERSION 3
+#define MSGBTC_MINOR_VERSION 4
 #define MSGBTC_RELEASE 0
 
 #define MSGBTC_K_PUSH 1
@@ -110,6 +110,15 @@ static void msgbt_visInfoUpdate (
 static void msgbt_visUpdate (
   struct event_handler_args ast_args );
 
+static void msgbt_monitor_color_connect_state (
+  struct connection_handler_args arg );
+
+static void msgbt_colorInfoUpdate (
+  struct event_handler_args ast_args );
+
+static void msgbt_colorUpdate (
+  struct event_handler_args ast_args );
+
 #endif
 
 class activeMessageButtonClass : public activeGraphicClass {
@@ -186,6 +195,15 @@ friend void msgbt_visInfoUpdate (
 friend void msgbt_visUpdate (
   struct event_handler_args ast_args );
 
+friend void msgbt_monitor_color_connect_state (
+  struct connection_handler_args arg );
+
+friend void msgbt_colorInfoUpdate (
+  struct event_handler_args ast_args );
+
+friend void msgbt_colorUpdate (
+  struct event_handler_args ast_args );
+
 int opComplete;
 
 int minW;
@@ -225,6 +243,13 @@ expStringClass sourceReleasePvExpString;
 char bufSourceReleasePvName[39+1];
 
 //-------------------------------------------------------
+static const int destPvConnection = 1;
+static const int visPvConnection = 2;
+static const int colorPvConnection = 3;
+pvConnectionClass connection;
+//-------------------------------------------------------
+
+//-------------------------------------------------------
 chid visPvId;
 evid visEventId;
 expStringClass visPvExpString;
@@ -234,10 +259,17 @@ double visValue, curVisValue, minVis, maxVis;
 char minVisString[39+1], bufMinVisString[39+1];
 char maxVisString[39+1], bufMaxVisString[39+1];
 int prevVisibility, visibility, visInverted, bufVisInverted;
-static const int destPvConnection = 1;
-static const int visPvConnection = 2;
-pvConnectionClass connection;
 int needVisConnectInit, needVisInit, needVisUpdate;
+//-------------------------------------------------------
+
+//-------------------------------------------------------
+chid colorPvId;
+evid colorEventId;
+expStringClass colorPvExpString;
+char bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
+int colorExists;
+double colorValue, curColorValue;
+int needColorConnectInit, needColorInit, needColorUpdate;
 //-------------------------------------------------------
 
 pvValType sourcePressV, sourceReleaseV, destV;

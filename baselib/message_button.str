@@ -32,4 +32,5 @@
 #define activeMessageButtonClass_str29 (char *) "Not Visible if|Visible if"
 #define activeMessageButtonClass_str30 (char *) ">="
 #define activeMessageButtonClass_str31 (char *) "and <"
+#define activeMessageButtonClass_str32 (char *) "Color PV"
 #endif
