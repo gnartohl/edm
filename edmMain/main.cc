@@ -129,8 +129,10 @@ static int num = 0;
 
   num++;
 
-  XGetErrorText( d, err->error_code, msg, 80 );
-  fprintf( stderr, main_str1, err->error_code, msg );
+  if ( err->error_code != BadAccess ) {
+    XGetErrorText( d, err->error_code, msg, 80 );
+    fprintf( stderr, main_str1, err->error_code, msg );
+  }
 
   return 0;
 
