@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <strings.h>
 #include <ctype.h>
 #include <errno.h>
 #include <time.h>
@@ -95,10 +96,10 @@ nameListPtr cur;
 
   l = strlen(ptr);
   if ( ptr[l-1] != '/' ) {
-    Strncat( file, "/edmFilters", 255 );
+    Strncat( file, (char *) "/edmFilters", 255 );
   }
   else {
-    Strncat( file, "edmFilters", 255 );
+    Strncat( file, (char *) "edmFilters", 255 );
   }
 
   f = fopen( file, "r" );
@@ -422,9 +423,40 @@ static int fileReadable (
 {
 
 FILE *f;
-int result;
 
-  f = fopen( fname, "r" );
+char nameToCheck[255+1];
+
+int result, len1, len2, remain;
+
+char *first, *last;
+
+  // if filename is of the form name[parm].ext,
+  // use name.ext in the "is readable check".
+  first = index( (const char *) fname, (int) '[' );
+  if ( first ) {
+    last = rindex( (const char *) fname, (int) ']' );
+    if ( last ) {
+      len1 = (int) first - (int) fname;
+      if ( len1 > 255 ) len1 = 255;
+      strncpy( nameToCheck, fname, len1 );
+      nameToCheck[len1] = 0;
+      remain = 255 - len1;
+      len2 = strlen( fname ) - (int) last + (int) fname - 1;
+      if ( len2 > remain ) len2 = remain;
+      strncat( nameToCheck, last+1, len2 );
+      nameToCheck[len1+len2] = 0;
+    }
+    else {
+      strncpy( nameToCheck, fname, 255 );
+      nameToCheck[255] = 0;
+    }
+  }
+  else {
+    strncpy( nameToCheck, fname, 255 );
+    nameToCheck[255] = 0;
+  }
+
+  f = fopen( nameToCheck, "r" );
   if ( f ) {
     result = 1;
     fileClose( f );
@@ -443,7 +475,7 @@ FILE *fileOpen (
 
 char fullName[255+1], cmd[255+1], prog[255+1];
 char oneExt[32], *oneExtPtr, *filterCmd, *ptr1, *ptr2, *ptr3;
-int gotExt, i, l, startPos, stat;
+ int gotExt, i, l, startPos, stat;
 
 #ifdef USECURL
 FILE *f;
@@ -502,7 +534,6 @@ mode_t curMode, newMode;
     filterCmd = findFilter( oneExt );
     if ( filterCmd ) {
 
-      // return NULL if local file is not readable
       if ( !fileReadable( fullName ) ) return NULL;
 
       stat = buildCommand( cmd, 255, prog, 255, filterCmd, fullName );
@@ -775,7 +806,6 @@ mode_t curMode, newMode;
       filterCmd = findFilter( oneExt );
       if ( filterCmd ) {
 
-        // return NULL if local file is not readable
         if ( !fileReadable( fullName ) ) return NULL;
 
         stat = buildCommand( cmd, 255, prog, 255, filterCmd, fullName );
