@@ -291,6 +291,7 @@ activeXRegTextClass *axrto = (activeXRegTextClass *) userarg;
 
 activeXRegTextClass::activeXRegTextClass ( void ) {
 
+//  printf("RegText constructor\n");
   name = new char[strlen("activeXRegTextClass")+1];
   strcpy( name, "activeXRegTextClass" );
 
@@ -552,6 +553,8 @@ int major, minor, release;
 unsigned int pixel;
 char oneValue[255+1];
 int stat = 1;
+
+//  printf("RegText createFromFile\n");
 
   this->actWin = _actWin;
 
@@ -1004,12 +1007,14 @@ int activeXRegTextClass::drawActive ( void ) {
 
 XRectangle xR = { x, y, w, h };
 int clipStat;
+//    printf("in drawActive\n");
 
   if ( !activeMode || !visibility ) return 1;
 
   prevVisibility = visibility;
 
   if ( fgVisibility ) {
+
 
     actWin->executeGc.saveFg();
 
@@ -1022,32 +1027,7 @@ int clipStat;
     }
 
     char text[80];
-    size_t len = 80;
-    strncpy( text, value.getExpanded(), 79 );
-    if (re_valid)
-    {
-        regmatch_t pmatch[2];
-        if (regexec(&compiled_re, text, 2, pmatch, 0) == 0)
-        {
-            // copy matched substring into display string
-            // match 0 is always the full match,
-            // match 1 is the first selected substring
-            int start = pmatch[1].rm_so;
-            int size = pmatch[1].rm_eo - pmatch[1].rm_so;
-            
-            if (start >= 0)
-            {
-                memmove(text, text+start, size);
-                text[size] = '\0';
-                len = size;
-            }
-            else
-            {
-                text[0] = '\0';
-                len = 0;
-            }
-        }
-    }
+    getProcessedText(text);
 
     if ( useDisplayBg ) {
 
@@ -1079,6 +1059,37 @@ int clipStat;
 
 }
 
+char * activeXRegTextClass::getProcessedText(char *text) {
+    size_t len = 80;
+//    printf("in getProcessedText\n");
+    strncpy( text, value.getExpanded(), 79 );
+    if (re_valid)
+    {
+        regmatch_t pmatch[2];
+        if (regexec(&compiled_re, text, 2, pmatch, 0) == 0)
+        {
+            // copy matched substring into display string
+            // match 0 is always the full match,
+            // match 1 is the first selected substring
+            int start = pmatch[1].rm_so;
+            int size = pmatch[1].rm_eo - pmatch[1].rm_so;
+            
+            if (start >= 0)
+            {
+                memmove(text, text+start, size);
+                text[size] = '\0';
+                len = size;
+            }
+            else
+            {
+                text[0] = '\0';
+                len = 0;
+            }
+        }
+    }
+    return text;
+}
+
 int activeXRegTextClass::eraseUnconditional ( void ) {
 
 XRectangle xR = { x, y, w, h };
@@ -1089,18 +1100,25 @@ XRectangle xR = { x, y, w, h };
     actWin->executeGc.setFontTag( fontTag, actWin->fi );
   }
 
+  char text[80];
+  getProcessedText(text);
+//    printf ("eraseUnconditional: text=%s\n", text);
+
+
   if ( useDisplayBg ) {
 
     XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.eraseGC(), stringX, stringY, fontHeight,
-     value.getExpanded(), stringLength );
+     text, stringLength );
+//    printf ("eraseUnconditional: useDisplayBg; text=%s\n", text);
 
   }
   else {
 
     XDrawImageStrings( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.eraseGC(), stringX, stringY, fontHeight,
-     value.getExpanded(), stringLength );
+     text, stringLength );
+//    printf ("eraseUnconditional: !useDisplayBg; text=%s\n", text);
 
   }
 
@@ -1127,13 +1145,17 @@ XRectangle xR = { x, y, w, h };
     actWin->executeGc.setFontTag( fontTag, actWin->fi );
   }
 
+  char text[80];
+  getProcessedText(text);
+
   if ( useDisplayBg ) {
 
     actWin->executeGc.addEraseXClipRectangle( xR );
 
     XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.eraseGC(), stringX, stringY, fontHeight,
-     value.getExpanded(), stringLength );
+     text, stringLength );
+//    printf ("eraseActive: useDisplayBg; text=%s\n", text);
 
     actWin->executeGc.removeEraseXClipRectangle();
 
@@ -1152,7 +1174,8 @@ XRectangle xR = { x, y, w, h };
 
       XDrawImageStrings( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), stringX, stringY, fontHeight,
-       value.getExpanded(), stringLength );
+       text, stringLength );
+//    printf ("eraseActive: !useDisplayBg; text=%s\n", text);
 
     }
 
@@ -1227,7 +1250,7 @@ int activeXRegTextClass::activate (
             {
                 char buf[100];
                 regerror(res, &compiled_re, buf, sizeof buf);
-                printf("Error in regular expression: %s\n", buf);
+//                printf("Error in regular expression: %s\n", buf);
             }
             else
                 re_valid = true;
@@ -1258,9 +1281,12 @@ int activeXRegTextClass::activate (
       needConnectInit = needAlarmUpdate = needVisUpdate = needRefresh =
         needPropertyUpdate = 0;
 
-      stringLength = strlen( value.getExpanded() );
+      char text[80];
+      getProcessedText(text);
 
-      updateFont( value.getExpanded(), fontTag, &fs, &fontAscent, &fontDescent,
+      stringLength = strlen( text );
+
+      updateFont( text, fontTag, &fs, &fontAscent, &fontDescent,
        &fontHeight, &stringWidth );
 
       stringY = y + fontAscent;
@@ -1510,8 +1536,10 @@ void activeXRegTextClass::updateDimensions ( void )
     stringX = x + w - stringWidth;
 
   if ( activeMode ) {
-    if ( value.getExpanded() )
-      stringLength = strlen( value.getExpanded() );
+    char text[80];
+    getProcessedText(text);
+    if ( text )
+      stringLength = strlen( text );
     else
       stringLength = 0;
   }
