@@ -83,14 +83,16 @@ int eraseActive ( void );
 
 int activate (
   int pass,
-  void *ptr );
+  void *ptr,
+  int *numSubObjects );
 
 int deactivate (
-  int pass );
+  int pass,
+  int *numSubObjects );
 
 int preReactivate (
-  int pass
-);
+  int pass,
+  int *numSubObjects );
 
 int moveSelectBox (
   int _x,

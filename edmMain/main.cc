@@ -1481,8 +1481,9 @@ parse_error:
 
     if ( !numAppsRemaining ) exitProg = 1;
 
-    stat = thread_wait_for_timer( delayH );
-    stat = thread_init_timer( delayH, 0.1 );
+    ca_pend_event( 0.1 );
+    //stat = thread_wait_for_timer( delayH );
+    //stat = thread_init_timer( delayH, 0.1 );
 
     proc.timeCount++;
     if ( proc.timeCount >= 100 ) { // 10 sec

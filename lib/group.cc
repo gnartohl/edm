@@ -903,15 +903,26 @@ btnActionListPtr curBtn;
 
 int activeGroupClass::activate (
   int pass,
-  void *ptr ) {
+  void *ptr,
+  int *numSubObjects ) {
 
 activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
 activeGraphicListPtr cur;
+int num;
 
+  *numSubObjects = 0;
   cur = head->flink;
   while ( cur != head ) {
 
-    cur->node->activate( pass, (void *) cur );
+    cur->node->activate( pass, (void *) cur, &num );
+
+    (*numSubObjects) += num;
+    if ( *numSubObjects >= activeWindowClass::NUM_PER_PENDIO ) {
+      ca_pend_io( 5.0 );
+      ca_pend_event( 0.01 );
+      processAllEvents( actWin->appCtx->appContext(), actWin->d );
+      *numSubObjects = 0;
+    }
 
     cur = cur->flink;
 
@@ -922,13 +933,15 @@ activeGraphicListPtr cur;
 }
 
 int activeGroupClass::deactivate (
-  int pass
-) {
+  int pass,
+  int *numSubObjects ) {
 
 activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
 activeGraphicListPtr cur;
 btnActionListPtr curBtn, nextBtn;
+int num;
 
+  *numSubObjects = 0;
   if ( pass == 1 ) {
 
     curBtn = btnDownActionHead->flink;
@@ -976,7 +989,15 @@ btnActionListPtr curBtn, nextBtn;
   cur = head->flink;
   while ( cur != head ) {
 
-    cur->node->deactivate( pass );
+    cur->node->deactivate( pass, &num );
+
+    (*numSubObjects) += num;
+    if ( *numSubObjects >= activeWindowClass::NUM_PER_PENDIO ) {
+      ca_pend_io( 5.0 );
+      ca_pend_event( 0.01 );
+      processAllEvents( actWin->appCtx->appContext(), actWin->d );
+      *numSubObjects = 0;
+    }
 
     cur = cur->flink;
 
@@ -987,16 +1008,26 @@ btnActionListPtr curBtn, nextBtn;
 }
 
 int activeGroupClass::preReactivate (
-  int pass
-) {
+  int pass,
+  int *numSubObjects ) {
 
 activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
 activeGraphicListPtr cur;
+int num;
 
+  *numSubObjects = 0;
   cur = head->flink;
   while ( cur != head ) {
 
-    cur->node->preReactivate( pass );
+    cur->node->preReactivate( pass, &num );
+
+    (*numSubObjects) += num;
+    if ( *numSubObjects >= activeWindowClass::NUM_PER_PENDIO ) {
+      ca_pend_io( 5.0 );
+      ca_pend_event( 0.01 );
+      processAllEvents( actWin->appCtx->appContext(), actWin->d );
+      *numSubObjects = 0;
+    }
 
     cur = cur->flink;
 
