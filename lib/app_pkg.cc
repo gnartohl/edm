@@ -2244,7 +2244,6 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], *tk;
     l = l / 4096;
     l = l * 4096 + 4096;
     curLen = l;
-    printf( "curLen = %-d\n", curLen );
     buf = new char[l];
 
     strncpy( buf, envPtr, l );
@@ -2282,7 +2281,6 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], *tk;
     l = l * 4096 + 4096;
     if ( l > curLen ) {
       curLen = l;
-      printf( "curLen = %-d\n", curLen );
       delete buf;
       buf = new char[l];
     }
