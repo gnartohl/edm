@@ -146,6 +146,7 @@ unsigned char *adr;
 void checkForServer (
   int argc,
   char **argv,
+  int portNum,
   int appendDisplay,
   char *displayName )
 {
@@ -153,8 +154,10 @@ void checkForServer (
 char addr[127+1];
 int i, len, pos, max, argCount, stat;
 IPRPC_PORT port;
-char msg[255+1];
+char msg[255+1], portNumStr[15+1];
 SYS_TIME_TYPE timeout;
+
+  sprintf( portNumStr, "%-d", portNum );
 
   stat = getHostAddr( addr );
   if ( stat ) return;
@@ -207,7 +210,7 @@ SYS_TIME_TYPE timeout;
     return;
   }
 
-  stat = ipncl_connect( addr, "19000", "", port );
+  stat = ipncl_connect( addr, portNumStr, "", port );
   if ( !( stat & 1 ) ) {
     return;
   }
@@ -287,7 +290,9 @@ MAIN_NODE_PTR node;
 IPRPC_PORT port;
 SYS_TIME_TYPE timeout;
 int len;
-char msg[255+1];
+char msg[255+1], portNumStr[15+1];
+
+int *portNumPtr = (int *) thread_get_app_data( h );
 
   stat = thread_create_handle( &delayH, NULL );
 
@@ -297,7 +302,9 @@ char msg[255+1];
     goto err_return;
   }
 
-  stat = ipnsv_create_named_port( "19000", 1, 255, "edm", &con_port );
+  sprintf( portNumStr, "%-d", *portNumPtr );
+
+  stat = ipnsv_create_named_port( portNumStr, 1, 255, "edm", &con_port );
   if ( !( stat & 1 ) ) {
     printf( main_str8 );
     goto err_return;
@@ -392,7 +399,8 @@ void checkParams (
   int *local,
   int *server,
   int *appendDisplay,
-  char *displayName )
+  char *displayName,
+  int *portNum )
 {
 
 char buf[1023+1], mac[1023+1], exp[1023+1];
@@ -405,6 +413,7 @@ Display *testDisplay;
   *local = 0;
   *server = 0;
   *appendDisplay = 1;
+  *portNum = 19000;
 
   // check first for component management commands
   if ( argc > 1 ) {
@@ -505,6 +514,14 @@ Display *testDisplay;
           }
           strncpy( displayName, argv[n], 127 );
         }
+        else if ( strcmp( argv[n], "-port" ) == 0 ) {
+          n++;
+          if ( n >= argc ) { // missing port num
+            *local = 1;
+            return;
+          }
+          *portNum = atol( argv[n] );
+        }
         else {
           *local = 1;
           return;
@@ -577,7 +594,8 @@ extern int main (
   char **argv )
 {
 
-int i, stat, numAppsRemaining, exitProg, q_stat_r, q_stat_i, local, server;
+int i, stat, numAppsRemaining, exitProg, q_stat_r, q_stat_i, local, server,
+ portNum;
 THREAD_HANDLE delayH, serverH, caPendH;
 argsPtr args;
 appListPtr cur, next, appArgsHead, newOne;
@@ -590,11 +608,12 @@ char **argArray, displayName[127+1];
 int appendDisplay;
 float hours, seconds;
 
-  checkParams( argc, argv, &local, &server, &appendDisplay, displayName );
+  checkParams( argc, argv, &local, &server, &appendDisplay, displayName,
+   &portNum );
 
   if ( server ) {
 
-    checkForServer( argc, argv, appendDisplay, displayName );
+    checkForServer( argc, argv, portNum, appendDisplay, displayName );
 
   }
 
@@ -642,8 +661,7 @@ float hours, seconds;
   obj = new objBindingClass;
   pvObj = new pvBindingClass;
 
-
-  stat = thread_create_handle( &serverH, NULL );
+  stat = thread_create_handle( &serverH, (void *) &portNum );
 
   stat = thread_create_handle( &delayH, NULL );
 

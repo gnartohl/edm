@@ -2044,6 +2044,8 @@ static void displayParamInfo ( void ) {
   printf( global_str58 );
   printf( global_str59 );
 
+  printf( global_str74 );
+
   printf( global_str60 );
   printf( global_str61 );
 
@@ -2243,6 +2245,10 @@ fileListPtr curFile;
           n++;
           if ( n >= argc ) return 2;
           strncpy( displayName, argv[n], 127 );
+        }
+        else if ( strcmp( argv[n], global_str73 ) == 0 ) {
+          n++; // just ignore, not used here
+          if ( n >= argc ) return 2;
         }
 
 #ifdef GENERIC_PV

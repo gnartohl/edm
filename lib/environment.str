@@ -36,13 +36,14 @@
 #define global_str21 "-display"
 #define global_str22 "-ul"
 #define global_str23 "-pv"
+#define global_str73 "-port"
 
 // help text (some content must agree with command line options)
 #define global_str24 "EXECUTION\n"
 #define global_str25 "edm [-x] [-noedit] [-m <\"m1=string1,m2=string2,...\">]\n"
 #define global_str26 "    [-display <display name>] [-pv <pv class> -ctl <control pv name>]\n"
 #define global_str27 "    [-display <display name>] [-ctl <control pv name>]\n"
-#define global_str28 "    [-server] [-local] [<display-file1 display-file2 ...>]\n\n"
+#define global_str28 "    [-server] [-port <port #>] [-local] [<display-file1 display-file2 ...>]\n\n"
 #define global_str29 "    -x       Open all displays in execute rather than edit mode\n\n"
 #define global_str30 "    -noedit  Remove capability to put display in edit mode, used\n"
 #define global_str31 "             with -x to produce execute only operation\n\n"
@@ -77,6 +78,8 @@
 #define global_str57 "    -server  Communicate with or become a\n"
 #define global_str58 "             display file server which can\n"
 #define global_str59 "             manage multiple displays\n\n"
+
+#define global_str74 "    -port #  Use specified TCP/IP port number (default=19000)\n\n"
 
 #define global_str60 "    -local   Do not communicate with the display\n"
 #define global_str61 "             file server (default)\n\n"
