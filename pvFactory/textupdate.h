@@ -82,6 +82,11 @@ public:
     int drawActive();
     int eraseActive();
     void executeDeferred();
+
+    // Drag & drop support
+    char *firstDragName();
+    char *nextDragName();
+    char *dragValue(int i);
     
 protected:
     void init(const char *classname);

@@ -691,6 +691,16 @@ void edmTextupdateClass::executeDeferred()
         smartDrawAllActive();
 }
 
+// Drag & drop support
+char *edmTextupdateClass::firstDragName()
+{   return "PV"; }
+
+char *edmTextupdateClass::nextDragName()
+{   return NULL; }
+
+char *edmTextupdateClass::dragValue(int i)
+{   return (char *)getExpandedPVName(); }
+
 // --------------------------------------------------------
 // Text Entry
 // --------------------------------------------------------
