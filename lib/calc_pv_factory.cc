@@ -10,12 +10,13 @@
 #include<stdlib.h>
 #include<float.h>
 #include<math.h>
-#include"calc_pv_factory.h"
 #include"postfix.h"
+#include"alarm.h"
+#include"calc_pv_factory.h"
 
 static const char *whitespace = " \t\n\r";
 
-//#define CALC_DEBUG
+#undef CALC_DEBUG
 
 // HashedExpression:
 // One formula, hashed by name, read from the config file
@@ -52,16 +53,10 @@ HashedExpression::HashedExpression(const char *_name, char *formula)
                 name, formula);
         return;
     }
-#ifdef CALC_DEBUG
-    printf("HashedExpression(%s) = %s\n", name, formula);
-#endif
 }
 
 HashedExpression::~HashedExpression()
 {
-#ifdef CALC_DEBUG
-    printf("HashedExpression(%s) deleted\n", name);
-#endif
     if (name)
     {
         free(name);
@@ -90,15 +85,52 @@ static ExpressionHash *expressions;
 
 CALC_PV_Factory::CALC_PV_Factory()
 {
-#ifdef CALC_DEBUG
+#   ifdef CALC_DEBUG
     printf("CALC_PV_Factory created\n");
-#endif
+#   endif
     if (expressions)
+    {
         fprintf(stderr, "Error: More than one CALC_PV_Factory created!\n");
+        return;
+    }
+    
+    expressions = new ExpressionHash();
+    
+    char *env = getenv(CALC_ENV);
+    if (env)
+    {
+        env = strdup(env);
+        char *start = env;
+        while(start && *start)
+        {
+            char *end = strchr(start, ':');
+            if (end)
+                *end = '\0';
+            parseFile(start);
+            if (end)
+                start = end+1;
+            else
+                start = 0;
+        }
+        free(env);
+    }
     else
     {
-        expressions = new ExpressionHash();
-        parseFile();
+        if (! parseFile(CALC_FILENAME))
+        {
+            const char *path=getenv("EDMFILES");
+            if (path)
+            {
+                char *name = (char *) malloc(strlen(path)+
+                                            strlen(CALC_FILENAME)+2);
+                if (name)
+                {
+                    sprintf(name, "%s/%s", path, CALC_FILENAME);
+                    parseFile(name);
+                    free(name);
+                }
+            }
+        }
     }
 }
 
@@ -118,9 +150,9 @@ CALC_PV_Factory::~CALC_PV_Factory()
         delete expressions;
         expressions = 0;
     }
-#ifdef CALC_DEBUG
+#   ifdef CALC_DEBUG
     printf("CALC_PV_Factory deleted\n");
-#endif
+#   endif
 }
 
 bool CALC_PV_Factory::parseFile(const char *filename)
@@ -128,18 +160,17 @@ bool CALC_PV_Factory::parseFile(const char *filename)
     char line[200], name[200];
     size_t len;
 
+#   ifdef CALC_DEBUG
+    printf("CALC_PV_Factory::parseFile '%s'\n", filename);
+#   endif
     FILE *f = fopen(filename, "rt");
     if (!f)
     {
-        const char *path=getenv("EDMFILES");
-        if (path)
-        {
-            sprintf(name, "%s/%s", path, filename);
-            f = fopen(name, "rt");
-        }
-    }
-    if (!f)
+#       ifdef CALC_DEBUG
+        printf("CALC_PV_Factory::parseFile failed\n");
+#       endif
         return false;
+    }
 
     // Check version code
     if (!fgets(line, sizeof line, f)  ||
@@ -183,6 +214,10 @@ bool CALC_PV_Factory::parseFile(const char *filename)
         else
         {
             need_name = true;
+#           ifdef CALC_DEBUG
+            printf("CALC_PV_Factory::parseFile expr '%s' <-> '%s'\n",
+                   name, p);
+#           endif
             expressions->insert(new HashedExpression(name, p));
         }
     }
@@ -274,12 +309,12 @@ ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
             ++arg_count;
     }
 
-#ifdef CALC_DEBUG
-    printf("CALC PV: '%s'\n", PV_name);
+#   ifdef CALC_DEBUG
+    printf("CALC_PV_Factory::create: '%s'\n", PV_name);
     printf("\texpression: '%s'\n", expression);
     for (size_t i=0; i<arg_count; ++i)
         printf("\targ %d: '%s'\n", i, arg_name[i]);
-#endif    
+#   endif    
     HashedExpression he;
     he.name = expression;
     ExpressionHash::iterator entry = expressions->find(&he);
@@ -309,6 +344,10 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
 {
     size_t i;
 
+#   ifdef CALC_DEBUG
+    printf("CALC_ProcessVariable '%s'\n", name);
+#   endif
+    
     for (i=0; i<MaxArgs; ++i)
     {
         arg[i] = 0.0;
@@ -341,6 +380,9 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
                         name, arg_name[i]);
                 arg[i] = 0.0;
             }
+#   ifdef CALC_DEBUG
+            printf("arg[%d] = CONSTANT %g\n", i, arg[i]);
+#   endif
         }
         else
         {   // It's a PV
@@ -355,6 +397,9 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
                 fprintf(stderr, "CALC PV %s: invalid PV arg '%s'\n",
                         name, arg_name[i]);
             }
+#   ifdef CALC_DEBUG
+            printf("arg[%d] = PV %s\n", i, arg_name[i]);
+#   endif
         }
     }
 }
@@ -379,11 +424,10 @@ CALC_ProcessVariable::~CALC_ProcessVariable()
 void CALC_ProcessVariable::status_callback(ProcessVariable *pv, void *userarg)
 {
     CALC_ProcessVariable *me = (CALC_ProcessVariable *)userarg;
-#ifdef CALC_DEBUG
-    printf("CALC %s: status change from %s. Overall: %s\n",
-           me->get_name(), pv->get_name(),
-           (const char *)(me->is_valid() ? "valid" : "invalid"));
-#endif
+#   ifdef CALC_DEBUG
+    printf("CALC %s: status callback from %s.\n",
+           me->get_name(), pv->get_name());
+#   endif
     me->recalc();
     me->do_conn_state_callbacks();
 }
@@ -391,21 +435,31 @@ void CALC_ProcessVariable::status_callback(ProcessVariable *pv, void *userarg)
 void CALC_ProcessVariable::value_callback(ProcessVariable *pv, void *userarg)
 {
     CALC_ProcessVariable *me = (CALC_ProcessVariable *)userarg;
+#   ifdef CALC_DEBUG
+    printf("CALC %s: value callback %s\n",
+           me->get_name(), pv->get_name());
+#   endif
     me->recalc();
     me->do_value_callbacks();
 }
 
 void CALC_ProcessVariable::recalc()
 {
+    size_t i;
     status = 0;
     severity = 0;
     time = 0;
     nano = 0;
     // Evaluate arguments, if any:
-    for (size_t i=0; i<arg_count; ++i)
+    for (i=0; i<arg_count; ++i)
     {
         if (!arg_pv[i])
+        {
+#   ifdef CALC_DEBUG
+            printf("arg[%d] = constant %g\n", i, arg[i]);
+#   endif
             continue;
+        }
         if (arg_pv[i]->is_valid())
         {
             arg[i] = arg_pv[i]->get_double();
@@ -422,11 +476,20 @@ void CALC_ProcessVariable::recalc()
                 severity = arg_pv[i]->get_severity();
                 status   = arg_pv[i]->get_status();
             }
+#           ifdef CALC_DEBUG
+            printf("arg[%d] = PV %s %g stat %d sevr %d\n",
+                   i, arg_pv[i]->get_name(), arg[i],
+                   arg_pv[i]->get_status(), arg_pv[i]->get_severity());
+#           endif
         }
         else
         {
             status = UDF_ALARM;
             severity = INVALID_ALARM;
+#           ifdef CALC_DEBUG
+            printf("arg[%d] = PV %s is invalid\n",
+                   i, arg_pv[i]->get_name());
+#           endif
         }
     }
         
@@ -440,15 +503,22 @@ void CALC_ProcessVariable::recalc()
         time = t.tv_sec;
         nano = t.tv_usec*(unsigned long)1000;
     }
+
+#   ifdef CALC_DEBUG
+    printf("Result: %g stat %d sevr %d (%s)\n",
+           value, status, severity,
+           (is_valid() ? "valid" : "invalid"));
+#   endif
 }
 
 bool CALC_ProcessVariable::is_valid() const
 {
     size_t i;
-    // invalid if any argument is invalid
     for (i=0; i<arg_count; ++i)
     {
-        if (arg_pv[i]==0 || !arg_pv[i]->is_valid())
+        // arg_pv == 0 -> have constant value,
+        // otherwise the PV needs to be valid
+        if (arg_pv[i]!=0 && !arg_pv[i]->is_valid())
             return false;
     }
     return true;

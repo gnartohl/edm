@@ -9,6 +9,9 @@
 
 #include"pv_factory.h"
 
+#define CALC_FILENAME "calc.list"
+#define CALC_ENV "EDMCALC"
+
 class HashedExpression
 {
 public:
@@ -34,7 +37,7 @@ public:
 
     // Called on initialization with default file.
     // Could be called later to add new files?
-    static bool parseFile(const char *filename = "calc.list");
+    static bool parseFile(const char *filename);
     
     // Result is referenced once, release when no longer needed.
     class ProcessVariable *create(const char *PV_name);
