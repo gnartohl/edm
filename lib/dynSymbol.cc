@@ -2511,7 +2511,8 @@ int i;
 
   if ( deleteRequest ) return 1;
 
-//    controlPvExpStr.expand1st( numMacros, macros, expansions );
+  gateUpPvExpStr.expand1st( numMacros, macros, expansions );
+  gateDownPvExpStr.expand1st( numMacros, macros, expansions );
 
   for ( i=0; i<numStates; i++ ) {
 
@@ -2544,7 +2545,8 @@ int i;
 
   if ( deleteRequest ) return 1;
 
-//    controlPvExpStr.expand2nd( numMacros, macros, expansions );
+  gateUpPvExpStr.expand2nd( numMacros, macros, expansions );
+  gateDownPvExpStr.expand2nd( numMacros, macros, expansions );
 
   for ( i=0; i<numStates; i++ ) {
 
