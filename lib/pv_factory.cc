@@ -8,11 +8,13 @@
 #include<stdlib.h>
 #include"epics_pv_factory.h"
 #include"calc_pv_factory.h"
+#include"loc_pv_factory.h"
 
 // Available PV_Factories:
        PV_Factory *the_PV_Factory   = new PV_Factory();
 static PV_Factory *epics_pv_factory = new EPICS_PV_Factory();
 static PV_Factory *calc_pv_factory  = new CALC_PV_Factory();
+static PV_Factory *loc_pv_factory  = new LOC_PV_Factory();
 
 //extern "C" static void remove_pv_factories()
 static void remove_pv_factories()
@@ -50,12 +52,17 @@ class ProcessVariable *pv;
 
   if (strncmp(PV_name, "EPICS\\", 6)==0) {
     pv = epics_pv_factory->create(PV_name+6);
-    pv->clearDoInitialCallback();
+    pv->setDoInitialCallback();
     return pv;
   }
   else if (strncmp(PV_name, "CALC\\", 5)==0) {
     pv = calc_pv_factory->create(PV_name+5);
-    pv->clearDoInitialCallback();
+    pv->setDoInitialCallback();
+    return pv;
+  }
+  else if (strncmp(PV_name, "LOC\\", 4)==0) {
+    pv = loc_pv_factory->create(PV_name+4);
+    pv->setDoInitialCallback();
     return pv;
   }
   else if (strchr(PV_name, '\\')) {
@@ -64,7 +71,7 @@ class ProcessVariable *pv;
   }
     
   pv = epics_pv_factory->create(PV_name);
-  pv->clearDoInitialCallback();
+  pv->setDoInitialCallback();
 
   return pv;
 
@@ -83,6 +90,11 @@ class ProcessVariable *pv;
   }
   else if (strncmp(PV_name, "CALC\\", 5)==0) {
     pv = calc_pv_factory->create(PV_name+5);
+    pv->setDoInitialCallback();
+    return pv;
+  }
+  else if (strncmp(PV_name, "LOC\\", 4)==0) {
+    pv = loc_pv_factory->create(PV_name+4);
     pv->setDoInitialCallback();
     return pv;
   }

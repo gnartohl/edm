@@ -309,6 +309,8 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
 {
     size_t i;
 
+    setDoInitialCallback();
+
     precision = 4;
     upper_display = 10.0;
     lower_display = 0.0;
