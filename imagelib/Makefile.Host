@@ -1,5 +1,6 @@
 TOP = ../../../..
 include $(TOP)/config/CONFIG_EXTENSIONS
+STATIC_BUILD=NO
 
 IMAGELIB=/usr/local
 

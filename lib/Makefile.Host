@@ -1,5 +1,6 @@
 TOP = ../../../..
 include $(TOP)/config/CONFIG_EXTENSIONS
+STATIC_BUILD=NO
 
 ifeq ($(HOST_ARCH),Linux)
 
@@ -71,5 +72,5 @@ SRCS += undo.cc
 
 include $(TOP)/config/RULES.Host
 
-G++_NORMAL = $(G++)
-G++_STRICT = $(G++)
+G++_NORMAL=$(G++)
+G++_STRICT=$(G++)
