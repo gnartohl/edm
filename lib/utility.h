@@ -32,6 +32,12 @@
 int blank (
   char *string );
 
+XtIntervalId appAddTimeOut (
+  XtAppContext app,
+  unsigned long interval,
+  XtTimerCallbackProc proc,
+  XtPointer client_data );
+
 void genericProcessAllEvents (
   int sync,
   XtAppContext app,

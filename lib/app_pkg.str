@@ -82,5 +82,7 @@
 #define appContextClass_str129 (char *) "Color mode is RGB! Edm should not normally be run in this manner."
 #define appContextClass_str130 (char *) "(-colormode index or unset EDMCOLORMODE disables this)"
 #define appContextClass_str131 (char *) "Warning - using obselete color file version"
+#define appContextClass_str132 (char *) "Shutdown"
+#define appContextClass_str133 (char *) "Shutdown all displays"
 
 #endif

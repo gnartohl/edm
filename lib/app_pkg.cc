@@ -1482,6 +1482,18 @@ unsigned int mask;
 
 }
 
+void shutdown_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+appContextClass *apco = (appContextClass *) client;
+
+  apco->shutdownFlag = 1;
+
+}
+
 void view_pvList_cb (
   Widget w,
   XtPointer client,
@@ -1689,6 +1701,9 @@ appContextClass::appContextClass (
   executeCount = 0;
   isActive = 0;
   exitFlag = 0;
+  shutdownFlag = 0;
+  saveContextOnExit = 0;
+  primaryServer = 0;
   executeOnOpen = 0;
   noEdit = 0;
   requestFlag = 0;
@@ -1747,6 +1762,17 @@ macroListPtr curMacro, nextMacro;
 fileListPtr curFile, nextFile;
 callbackBlockPtr curCbBlock, nextCbBlock;
 
+  if ( saveContextOnExit ) {
+    fprintf( shutdownFilePtr, "appCtx {\n" );
+    fprintf( shutdownFilePtr, "  primaryServer=%-d\n", primaryServer );
+    if ( blank(displayName) ) {
+      fprintf( shutdownFilePtr, "  display=<NULL>\n" );
+    }
+    else {
+      fprintf( shutdownFilePtr, "  display=%s\n", displayName );
+    }
+  }
+
   ci.closeColorWindow();
 
   // empty cut list
@@ -1760,15 +1786,26 @@ callbackBlockPtr curCbBlock, nextCbBlock;
   delete cutHead1;
 
   // walk macroList and delete
+  if ( saveContextOnExit ) {
+    fprintf( shutdownFilePtr, "  macros {\n" );
+    fprintf( shutdownFilePtr, "    num=%-d\n", numMacros );
+  }
   curMacro = macroHead->flink;
   while ( curMacro != macroHead ) {
     nextMacro = curMacro->flink;
+    if ( saveContextOnExit ) {
+      fprintf( shutdownFilePtr, "    %s=%s\n", curMacro->macro,
+       curMacro->expansion );
+    }
     if ( curMacro->macro ) delete curMacro->macro;
     if ( curMacro->expansion ) delete curMacro->expansion;
     delete curMacro;
     curMacro = nextMacro;
   }
   delete macroHead;
+  if ( saveContextOnExit ) {
+    fprintf( shutdownFilePtr, "  }\n" );
+  }
 
   // walk fileList and delete
   curFile = fileHead->flink;
@@ -1786,6 +1823,11 @@ callbackBlockPtr curCbBlock, nextCbBlock;
     next = cur->flink;
     if ( cur->node.mode == AWC_EXECUTE ) {
       cur->node.returnToEdit( 0 );
+    }
+    if ( saveContextOnExit ) {
+      fprintf( shutdownFilePtr, "  actWin {\n" );
+      cur->node.checkPoint( primaryServer, shutdownFilePtr );
+      fprintf( shutdownFilePtr, "  }\n" );
     }
     cur->blink->flink = cur->flink; // maintain list structure!
     cur->flink->blink = cur->blink;
@@ -1843,6 +1885,10 @@ callbackBlockPtr curCbBlock, nextCbBlock;
     curCbBlock = nextCbBlock;
   }
   delete callbackBlockHead;
+
+  if ( saveContextOnExit ) {
+    fprintf( shutdownFilePtr, "}\n" );
+  }
 
 }
 
@@ -2700,8 +2746,7 @@ APPDEFEXE_NODE_PTR node;
 
 }
 
-void appContextClass::createMainWindow ( void )
-{
+void appContextClass::createMainWindow ( void ) {
 
 XmString menuStr, str;
 callbackBlockPtr curBlock;
@@ -2786,6 +2831,22 @@ int i;
   XmStringFree( str );
   XtAddCallback( newB, XmNactivateCallback, exit_cb,
    (XtPointer) this );
+
+  if ( primaryServer ) {
+    if ( primaryServer == 1 ) {
+      str = XmStringCreateLocalized( appContextClass_str132 );
+    }
+    else if ( primaryServer == 2 ) {
+      str = XmStringCreateLocalized( appContextClass_str133 );
+    }
+    newB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+     filePullDown,
+     XmNlabelString, str,
+     NULL );
+    XmStringFree( str );
+    XtAddCallback( newB, XmNactivateCallback, shutdown_cb,
+     (XtPointer) this );
+  }
 
 
   viewPullDown = XmCreatePulldownMenu( menuBar, "", NULL, 0 );
@@ -3535,7 +3596,8 @@ fileListPtr curFile;
 
 int appContextClass::startApplication (
   int argc,
-  char **argv )
+  char **argv,
+  int _primaryServer )
 {
 
 int stat, opStat;
@@ -3550,6 +3612,8 @@ char title[31+1], *pTitle;
 int n;
 Arg args[10];
 XmString xmStr1;
+
+  primaryServer = _primaryServer;
 
   name = argv[0];
 
@@ -3870,6 +3934,51 @@ err_return:
   return 1;
 
 }
+
+int appContextClass::addActWin (
+  char *name,
+  int x,
+  int y,
+  int numMacs,
+  char **syms,
+  char **exps )
+{
+
+activeWindowListPtr cur;
+
+  cur = new activeWindowListType;
+  cur->requestDelete = 0;
+  cur->requestActivate = 0;
+  cur->requestReactivate = 0;
+  cur->requestOpen = 0;
+  cur->requestPosition = 0;
+  cur->requestCascade = 0;
+  cur->requestImport = 0;
+  cur->requestRefresh = 0;
+
+  cur->blink = head->blink;
+  head->blink->flink = cur;
+  head->blink = cur;
+  cur->flink = head;
+
+  cur->node.create( this, NULL, x, y, 0, 0, numMacs, syms, exps );
+  cur->node.realize();
+  cur->node.setGraphicEnvironment( &ci, &fi );
+
+  cur->node.storeFileName( name );
+
+  cur->requestOpen = 1;
+  requestFlag++;
+
+  if ( executeOnOpen ) {
+    cur->requestActivate = 1;
+    requestFlag++;
+  }
+
+  return 1;
+
+}
+
 
 void appContextClass::applicationLoop ( void ) {
 
@@ -4345,3 +4454,23 @@ activeWindowListPtr cur;
   return count;
 
 }
+
+void appContextClass::performShutdown (
+  FILE *f ) {
+
+  if ( !saveContextOnExit ) {
+    shutdownFilePtr = f;
+    saveContextOnExit = 1;
+    exitFlag = 1;
+    //abort_cb( (Widget) NULL, (XtPointer) this, (XtPointer) NULL );
+  }
+
+}
+
+int appContextClass::getShutdownFlag ( void )
+{
+
+  return shutdownFlag;
+
+}
+

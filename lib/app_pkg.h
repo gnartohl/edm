@@ -115,7 +115,6 @@ typedef struct fileListTag {
   char *file;
 } fileListType, *fileListPtr;
 
-
 class appContextClass {
 
 private:
@@ -300,6 +299,11 @@ int entryFormW;
 int entryFormH;
 int largestH;
 
+int shutdownFlag;
+int saveContextOnExit;
+int primaryServer;
+FILE *shutdownFilePtr;
+
 appContextClass::appContextClass (
   void );
 
@@ -441,7 +445,16 @@ int appContextClass::getParams(
 
 int appContextClass::startApplication (
   int argc,
-  char **argv );
+  char **argv,
+  int _primaryServer );
+
+int appContextClass::addActWin (
+  char *name,
+  int x,
+  int y,
+  int numMacs,
+  char **syms,
+  char **exps );
 
 void appContextClass::applicationLoop ( void );
 
@@ -479,6 +492,11 @@ void appContextClass::postNote (
 void appContextClass::closeNote ( void );
 
 int appContextClass::numScreens ( void );
+
+void appContextClass::performShutdown (
+  FILE *f );
+
+int appContextClass::getShutdownFlag ( void );
 
 };
 

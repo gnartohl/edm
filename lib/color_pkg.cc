@@ -111,7 +111,7 @@ int i;
 
   if ( !cio->incrementTimerActive ) return;
 
-  cio->incrementTimer = XtAppAddTimeOut( cio->appCtx,
+  cio->incrementTimer = appAddTimeOut( cio->appCtx,
    cio->incrementTimerValue, doColorBlink, client );
 
   if ( cio->blink ) {
@@ -145,7 +145,7 @@ vfunc vf;
 
   if ( !cio->incrementTimerActive ) return;
 
-  cio->incrementTimer = XtAppAddTimeOut( cio->appCtx,
+  cio->incrementTimer = appAddTimeOut( cio->appCtx,
    cio->incrementTimerValue, toggleColorBlink, client );
 
   if ( cio->blink ) {
@@ -400,7 +400,7 @@ colorCachePtr cur;
       cio->showNameBlock.i = i;
       cio->showNameBlock.ptr = (void *) cio;
       cio->showNameTimerActive = 1;
-      cio->showNameTimer = XtAppAddTimeOut( cio->appCtx, 500, showColorName,
+      cio->showNameTimer = appAddTimeOut( cio->appCtx, 500, showColorName,
        &cio->showNameBlock );
 
       //cio->msgDialog.popup( cio->colorName(i), me->x_root, me->y_root+25 );
@@ -2727,7 +2727,7 @@ term:
 
   incrementTimerValue = 1000;
   incrementTimerActive = 1;
-  incrementTimer = XtAppAddTimeOut( appCtx, incrementTimerValue,
+  incrementTimer = appAddTimeOut( appCtx, incrementTimerValue,
    toggleColorBlink, this );
 
   ncols = num_color_cols;
@@ -4524,7 +4524,7 @@ term:
     incrementTimerValue = blinkMs;
   }
   incrementTimerActive = 1;
-  incrementTimer = XtAppAddTimeOut( appCtx, incrementTimerValue,
+  incrementTimer = appAddTimeOut( appCtx, incrementTimerValue,
    toggleColorBlink, this );
 
   ncols = num_color_cols;
@@ -5279,7 +5279,7 @@ firstTry:
   if ( num_blinking_colors ) {
     incrementTimerValue = 500;
     incrementTimerActive = 1;
-    incrementTimer = XtAppAddTimeOut( appCtx, incrementTimerValue,
+    incrementTimer = appAddTimeOut( appCtx, incrementTimerValue,
      doColorBlink, this );
   }
 

@@ -1206,6 +1206,7 @@ void activeWindowClass::closeDeferred (
   int cycles );
 
 int activeWindowClass::checkPoint (
+  int primaryServer,
   FILE *fptr );
 
 void activeWindowClass::openExecuteSysFile (

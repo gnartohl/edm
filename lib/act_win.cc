@@ -266,7 +266,7 @@ activeWindowClass *awo = (activeWindowClass *) client;
       XtRemoveTimeOut( awo->restoreTimer );
       awo->restoreTimer = 0;
     }
-    awo->restoreTimer = XtAppAddTimeOut( awo->appCtx->appContext(),
+    awo->restoreTimer = appAddTimeOut( awo->appCtx->appContext(),
      3000, acw_restoreTitle, awo );
 
   }
@@ -12342,7 +12342,7 @@ void activeWindowClass::setChanged ( void ) {
       XtRemoveTimeOut( autosaveTimer );
       autosaveTimer = 0;
     }
-    autosaveTimer = XtAppAddTimeOut( appCtx->appContext(),
+    autosaveTimer = appAddTimeOut( appCtx->appContext(),
      300000, acw_autosave, this );
      //30000, acw_autosave, this );
     //printf( "[%s] %s - add autosave timer\n", str, fileName );
@@ -16030,7 +16030,7 @@ void activeWindowClass::executeFromDeferredQueue( void )
         XtRemoveTimeOut( restoreTimer );
         restoreTimer = 0;
       }
-      restoreTimer = XtAppAddTimeOut( appCtx->appContext(),
+      restoreTimer = appAddTimeOut( appCtx->appContext(),
        3000, acw_restoreTitle, this );
 
     }
@@ -16493,19 +16493,23 @@ void activeWindowClass::closeDeferred (
 }
 
 int activeWindowClass::checkPoint (
+  int primaryServer,
   FILE *fptr )
 {
 
 int i;
 
   if ( fptr ) {
-    fprintf( fptr, "name=%s\tx=%-d\ty=%-d\ti=%-d\n", fileName, x, y,
-     isIconified );
-    fprintf( fptr, "num=%-d\n", numMacros );
+    fprintf( fptr, "    name=%s\n", fileName );
+    fprintf( fptr, "    x=%-d\n", x );
+    fprintf( fptr, "    y=%-d\n", y );
+    fprintf( fptr, "    icon=%-d\n", isIconified );
+    fprintf( fptr, "    macros {\n" );
+    fprintf( fptr, "      num=%-d\n", numMacros );
     for ( i=0; i<numMacros; i++ ) {
-      fprintf( fptr, "%s=%s\n", macros[i], expansions[i] );
+      fprintf( fptr, "      %s=%s\n", macros[i], expansions[i] );
     }
-    fprintf( fptr, "\n" );
+    fprintf( fptr, "    }\n" );
   }
   else {
     printf( "name=%s\tx=%-d\ty=%-d\ti=%-d\n", fileName, x, y,
@@ -16514,7 +16518,6 @@ int i;
     for ( i=0; i<numMacros; i++ ) {
       printf( "%s=%s\n", macros[i], expansions[i] );
     }
-    printf( "\n" );
   }
 
   return 1;

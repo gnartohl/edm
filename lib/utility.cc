@@ -35,6 +35,21 @@ unsigned int i;
 
 }
 
+XtIntervalId appAddTimeOut (
+  XtAppContext app,
+  unsigned long interval,
+  XtTimerCallbackProc proc,
+  XtPointer client_data )
+{
+
+  if ( interval < 10 ) {
+    interval = 10; // ms
+  }
+
+  return XtAppAddTimeOut( app, interval, proc, client_data );
+
+}
+
 void genericProcessAllEvents (
   int sync,
   XtAppContext app,
