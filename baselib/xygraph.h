@@ -57,6 +57,7 @@
 #define XYGC_K_UPDATE_ON_X_OR_Y 1
 #define XYGC_K_UPDATE_ON_X 2
 #define XYGC_K_UPDATE_ON_Y 3
+#define XYGC_K_UPDATE_ON_TRIG 4
 
 #define XYGC_K_PLOT_STYLE_LINE 0
 #define XYGC_K_PLOT_STYLE_POINT 1
@@ -217,6 +218,12 @@ static void resetMonitorConnection (
   struct connection_handler_args arg );
 
 static void resetValueUpdate (
+  struct event_handler_args arg );
+
+static void trigMonitorConnection (
+  struct connection_handler_args arg );
+
+static void trigValueUpdate (
   struct event_handler_args arg );
 
 static void axygc_edit_ok_trace (
@@ -470,6 +477,12 @@ friend void resetMonitorConnection (
   struct connection_handler_args arg );
 
 friend void resetValueUpdate (
+  struct event_handler_args arg );
+
+friend void trigMonitorConnection (
+  struct connection_handler_args arg );
+
+friend void trigValueUpdate (
   struct event_handler_args arg );
 
 friend void axygc_edit_ok_trace (

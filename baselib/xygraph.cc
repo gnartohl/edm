@@ -871,6 +871,350 @@ short value;
 
 }
 
+static void trigMonitorConnection (
+  struct connection_handler_args arg )
+{
+
+xyGraphClass *xyo = (xyGraphClass *) ca_puser(arg.chid);
+
+  if ( arg.op == CA_OP_CONN_UP ) {
+
+    xyo->actWin->appCtx->proc->lock();
+    xyo->needTrigConnect = 1;
+    xyo->actWin->addDefExeNode( xyo->aglPtr );
+    xyo->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
+static void trigValueUpdate (
+  struct event_handler_args arg )
+{
+
+xyGraphClass *xyo = (xyGraphClass *) ca_puser(arg.chid);
+int i, ii, yi;
+char *xArray, *yArray;
+double dxValue, dyValue;
+short scaledX, scaledY;
+
+  xyo->actWin->appCtx->proc->lock();
+
+  for ( i=0; i<xyo->numTraces; i++ ) {
+
+    // make sure arrays have been allocated
+    if ( !xyo->xPvData[i] || !xyo->yPvData[i] ) {
+      xyo->actWin->appCtx->proc->unlock();
+      return;
+    }
+
+    if ( xyo->plotUpdateMode[i] == XYGC_K_UPDATE_ON_TRIG ) {
+
+      yi = 0;
+      if ( xyo->y2Scale[i] ) yi = 1;
+
+      switch ( xyo->traceType[i] ) {
+
+      case XYGC_K_TRACE_XY:
+
+        if ( xyo->xPvCount[i] > 1 ) { // vector
+
+          xyo->yArrayNeedUpdate[i] = xyo->xArrayNeedUpdate[i] = 1;
+          xyo->needVectorUpdate = 1;
+          xyo->actWin->addDefExeNode( xyo->aglPtr );
+
+        }
+        else { // scalar
+
+          //if ( xyo->yArrayGotValue[i] && xyo->xArrayGotValue[i] ) {
+
+          // x
+          ii = xyo->arrayTail[i] * xyo->xPvSize[i];
+          xArray = (char *) xyo->xPvData[i];
+          memcpy( (void *) &xArray[ii], (void *) &xyo->xPvCurValue[i],
+           xyo->xPvSize[i] ); // get cur value of x
+
+          // y
+          ii = xyo->arrayTail[i] * xyo->yPvSize[i];
+          yArray = (char *) xyo->yPvData[i];
+          memcpy( (void *) &yArray[ii], (void *) &xyo->yPvCurValue[i],
+           xyo->yPvSize[i] ); // get cur value of y
+
+          ii = xyo->arrayTail[i];
+
+          switch ( xyo->yPvType[i] ) {
+          case DBR_FLOAT:
+            dyValue = (double) ( (float *) xyo->yPvData[i] )[ii];
+            break;
+          case DBR_DOUBLE: 
+            dyValue = ( (double *) xyo->yPvData[i] )[ii];
+            break;
+          case DBR_SHORT:
+            if ( xyo->ySigned[i] ) {
+              dyValue = (double) ( (short *) xyo->yPvData[i] )[ii];
+            }
+            else {
+              dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+            }
+            break;
+          case DBR_CHAR:
+            if ( xyo->ySigned[i] ) {
+              dyValue = (double) ( (char *) xyo->yPvData[i] )[ii];
+            }
+            else {
+              dyValue = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
+            }
+            break;
+          case DBR_LONG:
+            if ( xyo->ySigned[i] ) {
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
+            }
+            else {
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
+            }
+            break;
+          case DBR_ENUM:
+            if ( xyo->ySigned[i] ) {
+              dyValue = (double) ( (short *) xyo->yPvData[i] )[ii];
+            }
+            else {
+              dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+            }
+            break;
+          default:
+            dyValue = ( (double *) xyo->yPvData[i] )[ii];
+            break;
+          }
+
+          if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+            if ( dyValue > 0 ) dyValue = log10( dyValue );
+          }
+
+          if ( xyo->y1AxisSource[yi] == XYGC_K_AUTOSCALE ) {
+            if ( xyo->kpY1MinEfDouble[yi].isNull() ) {
+              if ( dyValue < xyo->curY1Min[yi] ) {
+                xyo->needY1Rescale[yi] = 1;
+                xyo->y1RescaleValue[yi] = dyValue;
+                xyo->actWin->addDefExeNode( xyo->aglPtr );
+              }
+            }
+            if ( xyo->kpY1MaxEfDouble[yi].isNull() ) {
+              if ( dyValue > xyo->curY1Max[yi] ) {
+                xyo->needY1Rescale[yi] = 1;
+                xyo->y1RescaleValue[yi] = dyValue;
+                xyo->actWin->addDefExeNode( xyo->aglPtr );
+              }
+            }
+          }
+
+          scaledY = (short) xyo->plotAreaH -
+           (short) rint( ( dyValue - xyo->curY1Min[yi] ) *
+           xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+
+          switch ( xyo->xPvType[i] ) {
+          case DBR_FLOAT:
+            dxValue = (double) ( (float *) xyo->xPvData[i] )[ii];
+            break;
+          case DBR_DOUBLE: 
+            dxValue = ( (double *) xyo->xPvData[i] )[ii];
+            break;
+          case DBR_SHORT:
+            if ( xyo->xSigned[i] ) {
+              dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
+            }
+            else {
+              dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+            }
+            break;
+          case DBR_CHAR:
+            if ( xyo->xSigned[i] ) {
+              dxValue = (double) ( (char *) xyo->xPvData[i] )[ii];
+            }
+            else {
+              dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
+            }
+            break;
+          case DBR_LONG:
+            if ( xyo->xSigned[i] ) {
+              dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
+            }
+            else {
+              dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
+            }
+            break;
+          case DBR_ENUM:
+            if ( xyo->xSigned[i] ) {
+              dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
+            }
+            else {
+              dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+            }
+            break;
+          default:
+            dxValue = ( (double *) xyo->xPvData[i] )[ii];
+            break;
+          }
+
+          if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+            if ( dxValue > 0 ) dxValue = log10( dxValue );
+          }
+          else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+            if ( dxValue > 0 ) dxValue  = log10( dxValue );
+          }
+
+          if ( xyo->xAxisSource == XYGC_K_AUTOSCALE ) {
+            if ( xyo->kpXMinEfDouble.isNull() ) {
+              if ( dxValue < xyo->curXMin ) {
+                xyo->needXRescale = 1;
+                xyo->xRescaleValue = dxValue;
+                xyo->actWin->addDefExeNode( xyo->aglPtr );
+              }
+            }
+            if ( xyo->kpXMaxEfDouble.isNull() ) {
+              if ( dxValue > xyo->curXMax ) {
+                xyo->needXRescale = 1;
+                xyo->xRescaleValue = dxValue;
+                xyo->actWin->addDefExeNode( xyo->aglPtr );
+              }
+            }
+          }
+
+          scaledX = (short) rint( ( dxValue - xyo->curXMin ) *
+           xyo->xFactor[i] + xyo->xOffset[i] );
+
+          xyo->addPoint( dxValue, scaledX, scaledY, i );
+
+          xyo->yArrayGotValue[i] = xyo->xArrayGotValue[i] = 0;
+
+          xyo->arrayTail[i]++;
+          if ( xyo->arrayTail[i] > xyo->plotBufSize[i] ) {
+            xyo->arrayTail[i] = 0;
+          }
+          if ( xyo->arrayTail[i] == xyo->arrayHead[i] ) {
+            xyo->arrayHead[i]++;
+            if ( xyo->arrayHead[i] > xyo->plotBufSize[i] ) {
+              xyo->arrayHead[i] = 0;
+            }
+          }
+
+          if ( xyo->arrayNumPoints[i] > xyo->count ) {
+            xyo->needBufferScroll = 1;
+            xyo->needThisbufScroll[i] = 1;
+          }
+
+          xyo->needUpdate = 1;
+          xyo->xArrayNeedUpdate[i] = 1;
+          xyo->yArrayNeedUpdate[i] = 1;
+          xyo->actWin->addDefExeNode( xyo->aglPtr );
+
+	  //}
+
+        }
+
+        break;
+
+      case XYGC_K_TRACE_CHRONOLOGICAL:
+
+        if ( xyo->xPvCount[i] > 1 ) { // vector
+
+          xyo->yArrayNeedUpdate[i] = xyo->xArrayNeedUpdate[i] = 1;
+          xyo->needVectorUpdate = 1;
+          xyo->actWin->addDefExeNode( xyo->aglPtr );
+
+        }
+        else { // scalar
+
+          //if ( xyo->yArrayGotValue[i] && xyo->xArrayGotValue[i] ) {
+
+            dyValue = (double) xyo->yPvCurValue[i];
+            dxValue = (double) xyo->xPvCurValue[i];
+
+            if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+              if ( dyValue > 0 ) dyValue = log10( dyValue );
+            }
+
+            if ( xyo->xAxisSource == XYGC_K_AUTOSCALE ) {
+              if ( xyo->kpXMinEfDouble.isNull() ) {
+                if ( dxValue < xyo->curXMin ) {
+                  xyo->needXRescale = 1;
+                  xyo->xRescaleValue = dxValue;
+                  xyo->actWin->addDefExeNode( xyo->aglPtr );
+                }
+              }
+              if ( xyo->kpXMaxEfDouble.isNull() ) {
+                if ( dxValue > xyo->curXMax ) {
+                  xyo->needXRescale = 1;
+                  xyo->xRescaleValue = dxValue;
+                  xyo->actWin->addDefExeNode( xyo->aglPtr );
+                }
+              }
+            }
+
+            if ( xyo->y1AxisSource[yi] == XYGC_K_AUTOSCALE ) {
+              if ( xyo->kpY1MinEfDouble[yi].isNull() ) {
+                if ( dyValue < xyo->curY1Min[yi] ) {
+                  xyo->needY1Rescale[yi] = 1;
+                  xyo->y1RescaleValue[yi] = dyValue;
+                  xyo->actWin->addDefExeNode( xyo->aglPtr );
+                }
+              }
+              if ( xyo->kpY1MaxEfDouble[yi].isNull() ) {
+                if ( dyValue > xyo->curY1Max[yi] ) {
+                  xyo->needY1Rescale[yi] = 1;
+                  xyo->y1RescaleValue[yi] = dyValue;
+                  xyo->actWin->addDefExeNode( xyo->aglPtr );
+                }
+              }
+            }
+
+            scaledY = (short) xyo->plotAreaH -
+             (short) rint( ( dyValue - xyo->curY1Min[yi] ) *
+             xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+
+            scaledX = (short) rint( ( dxValue - xyo->curXMin ) *
+             xyo->xFactor[i] + xyo->xOffset[i] );
+
+            xyo->addPoint( dxValue, scaledX, scaledY, i );
+
+            xyo->yArrayGotValue[i] = xyo->xArrayGotValue[i] = 0;
+
+            xyo->arrayTail[i]++;
+            if ( xyo->arrayTail[i] > xyo->plotBufSize[i] ) {
+              xyo->arrayTail[i] = 0;
+            }
+            if ( xyo->arrayTail[i] == xyo->arrayHead[i] ) {
+              xyo->arrayHead[i]++;
+              if ( xyo->arrayHead[i] > xyo->plotBufSize[i] ) {
+                xyo->arrayHead[i] = 0;
+              }
+            }
+
+            if ( xyo->arrayNumPoints[i] > xyo->count ) {
+              xyo->needBufferScroll = 1;
+              xyo->needThisbufScroll[i] = 1;
+            }
+
+            xyo->needUpdate = 1;
+            xyo->xArrayNeedUpdate[i] = 1;
+            xyo->yArrayNeedUpdate[i] = 1;
+            xyo->actWin->addDefExeNode( xyo->aglPtr );
+
+	  //}
+
+	}
+
+        break;
+
+      }
+
+    }
+
+  }
+
+  xyo->actWin->appCtx->proc->unlock();
+
+}
+
 static void xMonitorConnection (
   struct connection_handler_args arg )
 {
@@ -1051,7 +1395,8 @@ short scaledX, scaledY;
 
       }
 
-      if ( ( xyo->plotUpdateMode[i] != XYGC_K_UPDATE_ON_Y ) &&
+      if ( ( xyo->plotUpdateMode[i] != XYGC_K_UPDATE_ON_TRIG ) &&
+           ( xyo->plotUpdateMode[i] != XYGC_K_UPDATE_ON_Y ) &&
              xyo->yArrayGotValue[i] ) {
 
         ii = xyo->arrayTail[i];
@@ -1404,7 +1749,7 @@ int yi;
     else { // scalar
 
       memcpy( (void *) &xyo->yPvCurValue[i], (void *) arg.dbr,
-       xyo->yPvSize[i] ); // save cur value for x event
+       xyo->yPvSize[i] ); // save cur value for x or trig event
 
       if ( ( xyo->arrayNumPoints[i] >= xyo->count ) &&
            ( xyo->plotMode == XYGC_K_PLOT_MODE_PLOT_N_STOP ) ) {
@@ -1429,7 +1774,8 @@ int yi;
 
       }
 
-      if ( ( xyo->plotUpdateMode[i] != XYGC_K_UPDATE_ON_X ) &&
+      if ( ( xyo->plotUpdateMode[i] != XYGC_K_UPDATE_ON_TRIG ) &&
+           ( xyo->plotUpdateMode[i] != XYGC_K_UPDATE_ON_X ) &&
              xyo->xArrayGotValue[i] ) {
 
         ii = xyo->arrayTail[i];
@@ -1816,10 +2162,6 @@ struct dbr_time_enum *dbrEnumPtr;
 
       }
 
-      if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-        if ( dyValue > 0 ) dyValue = log10( dyValue );
-      }
-
       if ( xyo->firstTimeSample ) {
         xyo->firstTimeSample = 0;
         xyo->curSec = sec;
@@ -1858,71 +2200,86 @@ struct dbr_time_enum *dbrEnumPtr;
 
       }
 
-      if ( xyo->xAxisSource == XYGC_K_AUTOSCALE ) {
-        if ( xyo->kpXMinEfDouble.isNull() ) {
-          if ( dxValue < xyo->curXMin ) {
-            xyo->needXRescale = 1;
-            xyo->xRescaleValue = dxValue;
-            xyo->actWin->addDefExeNode( xyo->aglPtr );
+      if ( xyo->plotUpdateMode[i] != XYGC_K_UPDATE_ON_TRIG ) {
+
+        if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+          if ( dyValue > 0 ) dyValue = log10( dyValue );
+        }
+
+        if ( xyo->xAxisSource == XYGC_K_AUTOSCALE ) {
+          if ( xyo->kpXMinEfDouble.isNull() ) {
+            if ( dxValue < xyo->curXMin ) {
+              xyo->needXRescale = 1;
+              xyo->xRescaleValue = dxValue;
+              xyo->actWin->addDefExeNode( xyo->aglPtr );
+            }
+          }
+          if ( xyo->kpXMaxEfDouble.isNull() ) {
+            if ( dxValue > xyo->curXMax ) {
+              xyo->needXRescale = 1;
+              xyo->xRescaleValue = dxValue;
+              xyo->actWin->addDefExeNode( xyo->aglPtr );
+            }
           }
         }
-        if ( xyo->kpXMaxEfDouble.isNull() ) {
-          if ( dxValue > xyo->curXMax ) {
-            xyo->needXRescale = 1;
-            xyo->xRescaleValue = dxValue;
-            xyo->actWin->addDefExeNode( xyo->aglPtr );
-          }
-	}
-      }
 
-      if ( xyo->y1AxisSource[yi] == XYGC_K_AUTOSCALE ) {
-        if ( xyo->kpY1MinEfDouble[yi].isNull() ) {
-          if ( dyValue < xyo->curY1Min[yi] ) {
-            xyo->needY1Rescale[yi] = 1;
-            xyo->y1RescaleValue[yi] = dyValue;
-            xyo->actWin->addDefExeNode( xyo->aglPtr );
+        if ( xyo->y1AxisSource[yi] == XYGC_K_AUTOSCALE ) {
+          if ( xyo->kpY1MinEfDouble[yi].isNull() ) {
+            if ( dyValue < xyo->curY1Min[yi] ) {
+              xyo->needY1Rescale[yi] = 1;
+              xyo->y1RescaleValue[yi] = dyValue;
+              xyo->actWin->addDefExeNode( xyo->aglPtr );
+            }
           }
-        }
-        if ( xyo->kpY1MaxEfDouble[yi].isNull() ) {
-          if ( dyValue > xyo->curY1Max[yi] ) {
-            xyo->needY1Rescale[yi] = 1;
-            xyo->y1RescaleValue[yi] = dyValue;
-            xyo->actWin->addDefExeNode( xyo->aglPtr );
+          if ( xyo->kpY1MaxEfDouble[yi].isNull() ) {
+            if ( dyValue > xyo->curY1Max[yi] ) {
+              xyo->needY1Rescale[yi] = 1;
+              xyo->y1RescaleValue[yi] = dyValue;
+              xyo->actWin->addDefExeNode( xyo->aglPtr );
+            }
           }
         }
-      }
 
-      scaledY = (short) xyo->plotAreaH -
-       (short) rint( ( dyValue - xyo->curY1Min[yi] ) *
-       xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+        scaledY = (short) xyo->plotAreaH -
+         (short) rint( ( dyValue - xyo->curY1Min[yi] ) *
+         xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
 
-      scaledX = (short) rint( ( dxValue - xyo->curXMin ) *
-       xyo->xFactor[i] + xyo->xOffset[i] );
+        scaledX = (short) rint( ( dxValue - xyo->curXMin ) *
+         xyo->xFactor[i] + xyo->xOffset[i] );
 
-      xyo->addPoint( dxValue, scaledX, scaledY, i );
+        xyo->addPoint( dxValue, scaledX, scaledY, i );
 
-      xyo->yArrayGotValue[i] = xyo->xArrayGotValue[i] = 0;
+        xyo->yArrayGotValue[i] = xyo->xArrayGotValue[i] = 0;
 
-      xyo->arrayTail[i]++;
-      if ( xyo->arrayTail[i] > xyo->plotBufSize[i] ) {
-        xyo->arrayTail[i] = 0;
-      }
-      if ( xyo->arrayTail[i] == xyo->arrayHead[i] ) {
-        xyo->arrayHead[i]++;
-        if ( xyo->arrayHead[i] > xyo->plotBufSize[i] ) {
-          xyo->arrayHead[i] = 0;
+        xyo->arrayTail[i]++;
+        if ( xyo->arrayTail[i] > xyo->plotBufSize[i] ) {
+          xyo->arrayTail[i] = 0;
         }
-      }
+        if ( xyo->arrayTail[i] == xyo->arrayHead[i] ) {
+          xyo->arrayHead[i]++;
+          if ( xyo->arrayHead[i] > xyo->plotBufSize[i] ) {
+            xyo->arrayHead[i] = 0;
+          }
+        }
 
-      if ( xyo->arrayNumPoints[i] > xyo->count ) {
-        xyo->needBufferScroll = 1;
-        xyo->needThisbufScroll[i] = 1;
-      }
+        if ( xyo->arrayNumPoints[i] > xyo->count ) {
+          xyo->needBufferScroll = 1;
+          xyo->needThisbufScroll[i] = 1;
+        }
 
-      xyo->needUpdate = 1;
-      xyo->xArrayNeedUpdate[i] = 1;
-      xyo->yArrayNeedUpdate[i] = 1;
-      xyo->actWin->addDefExeNode( xyo->aglPtr );
+        xyo->needUpdate = 1;
+        xyo->xArrayNeedUpdate[i] = 1;
+        xyo->yArrayNeedUpdate[i] = 1;
+        xyo->actWin->addDefExeNode( xyo->aglPtr );
+
+      }
+      else {
+
+        xyo->xPvCurValue[i] = dxValue;
+        xyo->yPvCurValue[i] = dyValue;
+        xyo->yArrayGotValue[i] = xyo->xArrayGotValue[i] = 1;
+
+      }
 
     }
 
@@ -3128,7 +3485,7 @@ int i, yi;
     //efTrace->addLabel( "  Style" );
     efTrace->addOption( "", "line|point|needle", &eBuf->bufPlotStyle[i] );
     efTrace->addLabel( "  Update" );
-    efTrace->addOption( "", "X and Y|X or Y|X|Y",
+    efTrace->addOption( "", "X and Y|X or Y|X|Y|Trigger",
      &eBuf->bufPlotUpdateMode[i] );
     efTrace->addLabel( "  Thk" );
     efTrace->addOption( "", "1|2|3|4|5|6|7|8|9", &eBuf->bufLineThk[i] );
@@ -3160,7 +3517,7 @@ int i, yi;
       //efTrace->addLabel( "  Style" );
       efTrace->addOption( "", "line|point|needle", &eBuf->bufPlotStyle[i] );
       efTrace->addLabel( "  Update" );
-      efTrace->addOption( "", "X and Y|X or Y|X|Y",
+      efTrace->addOption( "", "X and Y|X or Y|X|Y|Trigger",
        &eBuf->bufPlotUpdateMode[i] );
       efTrace->addLabel( "  Thk" );
       efTrace->addOption( "", "1|2|3|4|5|6|7|8|9", &eBuf->bufLineThk[i] );
@@ -4728,7 +5085,7 @@ int screen_num, depth;
         numYTraces[yi] = 0;
       }
 
-      resetEv = trigEv = NULL;
+      resetEv = NULL;
 
       if ( !blank( resetPvExpStr.getExpanded() ) ) {
         resetPvExists = 1;
@@ -4743,7 +5100,25 @@ int screen_num, depth;
         resetPvExists = 0;
       }
 
+      trigEv = NULL;
+
+      if ( !blank( trigPvExpStr.getExpanded() ) ) {
+        trigPvExists = 1;
+        stat = ca_search_and_connect( trigPvExpStr.getExpanded(),
+         &trigPv, trigMonitorConnection, this );
+        if ( stat != ECA_NORMAL ) {
+          printf( "ca_search_and_connect failed for [%s]\n",
+           trigPvExpStr.getExpanded() );
+        }
+      }
+      else {
+        trigPvExists = 0;
+      }
+
       for ( i=0; i<numTraces; i++ ) {
+
+        xPvCurValue[i] = 0;
+        yPvCurValue[i] = 0;
 
         if ( y2Scale[i] ) {
           yScaleIndex = 1;
@@ -4880,30 +5255,26 @@ int i, stat;
 
     msgDialog.destroy(); 
 
+    if ( resetEv ) {
+      stat = ca_clear_channel( resetPv );
+      resetEv = NULL;
+    }
+
+    if ( trigEv ) {
+      stat = ca_clear_channel( trigPv );
+      trigEv = NULL;
+    }
+
     for ( i=0; i<numTraces; i++ ) {
 
       if ( xEv[i] ) {
-        //stat = ca_clear_event( xEv[i] );
         stat = ca_clear_channel( xPv[i] );
         xEv[i] = NULL;
       }
 
       if ( yEv[i] ) {
-        //stat = ca_clear_event( xEv[i] );
         stat = ca_clear_channel( yPv[i] );
         yEv[i] = NULL;
-      }
-
-      if ( resetEv ) {
-        //stat = ca_clear_event( resetEv );
-        stat = ca_clear_channel( resetPv );
-        resetEv = NULL;
-      }
-
-      if ( trigEv ) {
-        //stat = ca_clear_event( trigEv );
-        stat = ca_clear_channel( trigPv );
-        trigEv = NULL;
       }
 
       if ( xPvData[i] ) {
@@ -5575,6 +5946,16 @@ int yi, yScaleIndex;
 
   }
 
+  if ( ntrgc ) {
+
+    stat = ca_add_array_event( DBR_DOUBLE, 1, trigPv,
+     trigValueUpdate, (void *) this, 0.0, 0.0, 0.0, &trigEv );
+    if ( stat != ECA_NORMAL ) {
+      printf( "error from ca_add_array_event\n" );
+    }
+
+  }
+
   if ( ni ) {
 
     for ( i=0; i<numTraces; i++ ) {
@@ -5794,6 +6175,8 @@ int yi, yScaleIndex;
 
     init = 1;
 
+    fullRefresh();
+
   }
 
   // this needs to come before nbs, nxresc, ny1resc
@@ -5823,6 +6206,11 @@ int yi, yScaleIndex;
           if ( yArrayNeedUpdate[i] || xArrayNeedUpdate[i] ) {
 
             switch ( plotUpdateMode[i] ) {
+
+            case XYGC_K_UPDATE_ON_TRIG:
+              genXyVector( i, &doRescale );
+              if ( doRescale ) anyRescale = 1;
+              break;
 
             case XYGC_K_UPDATE_ON_X_OR_Y:
               if ( yArrayGotValue[i] || xArrayGotValue[i] ) {
@@ -6668,6 +7056,9 @@ short curX, curY, prevX, prevY;
 
     if ( plotStyle[trace] == XYGC_K_PLOT_STYLE_NEEDLE ) {
 
+      // because we are dealing with scaled values, top of needle is minY
+      // (y increases downward)
+
       npts = 0;
       for ( i=plotAreaX; i<=plotInfoSize[trace]; i++ ) {
 
@@ -6696,11 +7087,11 @@ short curX, curY, prevX, prevY;
           plotBuf[trace][npts].y = plotInfo[trace][i].firstY;
           npts++;
 
-          plotBuf[trace][npts].x = plotInfo[trace][i].lastX;
+          plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
           plotBuf[trace][npts].y = plotInfo[trace][i].lastY;
           npts++;
 
-          plotBuf[trace][npts].x = plotInfo[trace][i].lastX;
+          plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
           plotBuf[trace][npts].y = plotAreaY+plotAreaH;
           npts++;
 
@@ -6712,7 +7103,7 @@ short curX, curY, prevX, prevY;
           npts++;
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
-          plotBuf[trace][npts].y = plotInfo[trace][i].maxY;
+          plotBuf[trace][npts].y = plotInfo[trace][i].minY;
           npts++;
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
