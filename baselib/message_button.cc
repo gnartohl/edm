@@ -1804,6 +1804,11 @@ void activeMessageButtonClass::btnUp (
   int *action )
 {
 
+  if ( !visibility ) {
+    *action = 0;
+    return;
+  }
+
   if ( usePassword ) {
     *action = 0;
     return;
@@ -1887,6 +1892,11 @@ void activeMessageButtonClass::btnDown (
   int *action )
 {
 
+  if ( !visibility ) {
+    *action = 0;
+    return;
+  }
+
   if ( usePassword ) {
 
     if ( !ef.formIsPoppedUp() ) {
@@ -1936,7 +1946,7 @@ void activeMessageButtonClass::pointerIn (
   int buttonState )
 {
 
-  if ( !active ) return;
+  if ( !active || !visibility ) return;
 
   if ( !ca_write_access( destPvId ) ) {
     actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
@@ -2076,12 +2086,9 @@ int stat;
     connection.setPvConnected( (void *) destPvConnection );
     destType = ca_field_type( destPvId );
 
-    if ( !(sourcePressExists) && !(sourceReleaseExists) ) {
+    if ( connection.pvsConnected() ) {
       active = 1;
       init = 1;
-    }
-
-    if ( connection.pvsConnected() ) {
       onColor.setConnected();
       offColor.setConnected();
       smartDrawAllActive();
@@ -2119,6 +2126,8 @@ int stat;
     }
 
     if ( connection.pvsConnected() ) {
+      active = 1;
+      init = 1;
       onColor.setConnected();
       offColor.setConnected();
       smartDrawAllActive();

@@ -236,6 +236,7 @@ int prevVisibility, visibility, visInverted, bufVisInverted;
 static const int destPvConnection = 1;
 static const int visPvConnection = 2;
 pvConnectionClass connection;
+int needVisConnectInit, needVisInit, needVisUpdate;
 //-------------------------------------------------------
 
 pvValType sourcePressV, sourceReleaseV, destV;
@@ -246,7 +247,7 @@ int sourcePressPvConnected, sourceReleasePvConnected, destPvConnected,
  active, activeMode, init;
 
 int needConnectInit, needErase, needDraw, needToEraseUnconnected,
- needToDrawUnconnected, needVisConnectInit, needVisInit, needVisUpdate;
+ needToDrawUnconnected;
 int unconnectedTimer;
 
 char pw[31+1];
