@@ -35,6 +35,15 @@ int line ( void );
 void setLine (
   int _line );
 
+const char *filename ( void );
+
+static void setFileName (
+  const char *curFileName );
+
+static void pushLevel ( void );
+
+static void popLevel ( void );
+
 int init ( void );
 
 // load for read functions

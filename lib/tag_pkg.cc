@@ -1,11 +1,16 @@
 #include "tag_pkg.h"
 
-static int g_fileLineNumber = 1;
 static int g_genDocFlag = 0;
+
+#define MAXLEVEL 5
+static int fileLineNumber[MAXLEVEL] = { 1, 1, 1, 1, 1 };
+static char fileName[MAXLEVEL][127+1];
+static int level = -1;
 
 tagClass::tagClass ( void ) {
 
 char *envPtr;
+int i;
 
   numTags = 0;
   ci = NULL;
@@ -17,6 +22,14 @@ char *envPtr;
   }
   else {
     g_genDocFlag = 0;
+  }
+
+  if ( level == -1 ) {
+    level = 0;
+    for ( i=0; i<MAXLEVEL; i++ ) {
+      fileLineNumber[level] = 1;
+      strcpy( fileName[level], "" );
+    }
   }
 
 }
@@ -36,26 +49,71 @@ void tagClass::setGenDoc (
 
 void tagClass::initLine ( void ) {
 
-  g_fileLineNumber = 1;
+  fileLineNumber[level] = 1;
 
 }
 
 void tagClass::incLine ( void ) {
 
-  g_fileLineNumber++;
+  fileLineNumber[level]++;
 
 }
 
 int tagClass::line ( void ) {
 
-  return g_fileLineNumber;
+  return fileLineNumber[level];
 
 }
 
 void tagClass::setLine (
   int _line ) {
 
-  g_fileLineNumber = _line;
+  if ( ( level > -1 ) && ( level < (MAXLEVEL-2) ) ) {
+    fileLineNumber[level] = _line;
+  }
+  else {
+    fileLineNumber[level] = 0;
+  }
+
+}
+
+const char *tagClass::filename ( void ) {
+
+  return (const char *) fileName[level];
+
+}
+
+void tagClass::setFileName (
+  const char *curFileName ) {
+
+  if ( ( level > -1 ) && ( level < (MAXLEVEL-2) ) ) {
+
+    strcpy( fileName[level], "" );
+    if ( curFileName ) {
+      strncat( fileName[level], "(", 1 );
+      strncat( fileName[level], curFileName, 125 );
+      strncat( fileName[level], ")", 1 );
+      fileName[level][127] = 0;
+    }
+
+  }
+  else {
+
+    strcpy( fileName[level], "Unknown (overflow)" );
+
+  }
+
+}
+
+void tagClass::pushLevel ( void ) {
+
+  if ( level < (MAXLEVEL-1) ) level++;
+
+}
+
+void tagClass::popLevel ( void ) {
+
+  if ( level > 0 ) level--;
 
 }
 
@@ -296,14 +354,14 @@ int firstChar, lastChar, escape;
       context = NULL;
       tk = strtok_r( &buf[firstNonWS+1], " \t\n", &context );
       if ( tk ) {
-        printf( tagClass_str1, line() );
+        printf( tagClass_str1, line(), filename() );
         return NULL;
       }
     }
 
     gotData = getCompoundValue( val, maxLen, f );
     if ( !gotData ) {
-      printf( tagClass_str2, line() );
+      printf( tagClass_str2, line(), filename() );
       return NULL;
     }
 
@@ -1226,7 +1284,7 @@ double smallDoubleArray[100];
   }
 
   if ( index == -1 ) {
-    printf( tagClass_str3, tag, line() );
+    printf( tagClass_str3, tag, line(), filename() );
     return 3;
   }
 
@@ -1315,7 +1373,7 @@ double smallDoubleArray[100];
 
       oneIndex = strtol( tk, NULL, 0 );
       if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-        printf( tagClass_str14, tagName[index], line() );
+        printf( tagClass_str14, tagName[index], line(), filename() );
         return 0;
       }
       if ( oneIndex > max ) max = oneIndex;
@@ -1331,7 +1389,7 @@ double smallDoubleArray[100];
             ci->warnIfBadIndex( intArray[oneIndex], line() );
 	  }
 	  else {
-            printf( tagClass_str24, tagName[index], line() );
+            printf( tagClass_str24, tagName[index], line(), filename() );
           }
 
         }
@@ -1342,7 +1400,7 @@ double smallDoubleArray[100];
             r = strtol( tk, NULL, 0 );
 	  }
 	  else {
-            printf( tagClass_str24, tagName[index], line() );
+            printf( tagClass_str24, tagName[index], line(), filename() );
           }
 
           tk = strtok_r( NULL, " \t\n", &context );
@@ -1350,7 +1408,7 @@ double smallDoubleArray[100];
             g = strtol( tk, NULL, 0 );
 	  }
 	  else {
-            printf( tagClass_str24, tagName[index], line() );
+            printf( tagClass_str24, tagName[index], line(), filename() );
           }
 
           tk = strtok_r( NULL, " \t\n", &context );
@@ -1358,7 +1416,7 @@ double smallDoubleArray[100];
             b = strtol( tk, NULL, 0 );
 	  }
 	  else {
-            printf( tagClass_str24, tagName[index], line() );
+            printf( tagClass_str24, tagName[index], line(), filename() );
           }
 
           ci->setRGB( r, g, b, &pixel );
@@ -1367,7 +1425,7 @@ double smallDoubleArray[100];
         }
         else {
 
-          printf( tagClass_str7, tagName[index], line() );
+          printf( tagClass_str7, tagName[index], line(), filename() );
           return 0;
 
         }
@@ -1375,7 +1433,7 @@ double smallDoubleArray[100];
       }
       else {
 
-	printf( tagClass_str24, tagName[index], line() );
+	printf( tagClass_str24, tagName[index], line(), filename() );
 
       }
 
@@ -1467,7 +1525,7 @@ double smallDoubleArray[100];
 
       oneIndex = strtol( tk, NULL, 0 );
       if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-        printf( tagClass_str14, tagName[index], line() );
+        printf( tagClass_str14, tagName[index], line(), filename() );
         return 0;
       }
       if ( oneIndex > max ) max = oneIndex;
@@ -1484,7 +1542,7 @@ double smallDoubleArray[100];
             color[oneIndex].setColorIndex( colorIndex, ci );
 	  }
 	  else {
-            printf( tagClass_str24, tagName[index], line() );
+            printf( tagClass_str24, tagName[index], line(), filename() );
           }
 
         }
@@ -1495,7 +1553,7 @@ double smallDoubleArray[100];
             r = strtol( tk, NULL, 0 );
 	  }
 	  else {
-            printf( tagClass_str24, tagName[index], line() );
+            printf( tagClass_str24, tagName[index], line(), filename() );
           }
 
           tk = strtok_r( NULL, " \t\n", &context );
@@ -1503,7 +1561,7 @@ double smallDoubleArray[100];
             g = strtol( tk, NULL, 0 );
 	  }
 	  else {
-            printf( tagClass_str24, tagName[index], line() );
+            printf( tagClass_str24, tagName[index], line(), filename() );
           }
 
           tk = strtok_r( NULL, " \t\n", &context );
@@ -1511,7 +1569,7 @@ double smallDoubleArray[100];
             b = strtol( tk, NULL, 0 );
 	  }
 	  else {
-            printf( tagClass_str24, tagName[index], line() );
+            printf( tagClass_str24, tagName[index], line(), filename() );
           }
 
           ci->setRGB( r, g, b, &pixel );
@@ -1520,7 +1578,7 @@ double smallDoubleArray[100];
         }
         else {
 
-          printf( tagClass_str7, tagName[index], line() );
+          printf( tagClass_str7, tagName[index], line(), filename() );
           return 0;
 
         }
@@ -1528,7 +1586,7 @@ double smallDoubleArray[100];
       }
       else {
 
-	printf( tagClass_str24, tagName[index], line() );
+	printf( tagClass_str24, tagName[index], line(), filename() );
 
       }
 
@@ -1623,14 +1681,14 @@ double smallDoubleArray[100];
       }
 
       if ( *( (int *) tagDestination[index] ) == -1 ) {
-        printf( tagClass_str11, tagName[index], line() );
+        printf( tagClass_str11, tagName[index], line(), filename() );
         return 0;
       }
 
     }
     else {
 
-      printf( tagClass_str12, tagName[index], line() );
+      printf( tagClass_str12, tagName[index], line(), filename() );
       return 0;
 
     }
@@ -1657,7 +1715,7 @@ double smallDoubleArray[100];
       oneIndex = strtol( tk, NULL, 0 );
 
       if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-        printf( tagClass_str14, tagName[index], line() );
+        printf( tagClass_str14, tagName[index], line(), filename() );
 	return 0;
       }
 
@@ -1679,7 +1737,7 @@ double smallDoubleArray[100];
       }
 
       if ( !foundValue ) {
-        printf( tagClass_str11, tagName[index], line() );
+        printf( tagClass_str11, tagName[index], line(), filename() );
         intArray[oneIndex] = 0;
       }
 
@@ -1691,7 +1749,7 @@ double smallDoubleArray[100];
         oneIndex = strtol( tk, NULL, 0 );
 
         if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-          printf( tagClass_str14, tagName[index], line() );
+          printf( tagClass_str14, tagName[index], line(), filename() );
 	  return 0;
         }
 
@@ -1758,7 +1816,7 @@ double smallDoubleArray[100];
     }
     else {
 
-      printf( tagClass_str12, tagName[index], line() );
+      printf( tagClass_str12, tagName[index], line(), filename() );
       return 0;
 
     }
@@ -1787,7 +1845,7 @@ double smallDoubleArray[100];
       oneIndex = strtol( tk, NULL, 0 );
 
       if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-        printf( tagClass_str14, tagName[index], line() );
+        printf( tagClass_str14, tagName[index], line(), filename() );
 	return 0;
       }
 
@@ -1810,7 +1868,7 @@ double smallDoubleArray[100];
         oneIndex = strtol( tk, NULL, 0 );
 
         if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-          printf( tagClass_str14, tagName[index], line() );
+          printf( tagClass_str14, tagName[index], line(), filename() );
 	  return 0;
         }
 
@@ -1847,7 +1905,7 @@ double smallDoubleArray[100];
     }
     else {
 
-      printf( tagClass_str12, tagName[index], line() );
+      printf( tagClass_str12, tagName[index], line(), filename() );
       return 0;
 
     }
@@ -1876,7 +1934,7 @@ double smallDoubleArray[100];
       oneIndex = strtol( tk, NULL, 0 );
 
       if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-        printf( tagClass_str14, tagName[index], line() );
+        printf( tagClass_str14, tagName[index], line(), filename() );
 	return 0;
       }
 
@@ -1899,7 +1957,7 @@ double smallDoubleArray[100];
         oneIndex = strtol( tk, NULL, 0 );
 
         if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-          printf( tagClass_str14, tagName[index], line() );
+          printf( tagClass_str14, tagName[index], line(), filename() );
 	  return 0;
         }
 
@@ -1953,7 +2011,7 @@ double smallDoubleArray[100];
       oneIndex = strtol( tk, NULL, 0 );
 
       if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-        printf( tagClass_str14, tagName[index], line() );
+        printf( tagClass_str14, tagName[index], line(), filename() );
 	return 0;
       }
 
@@ -1983,7 +2041,7 @@ double smallDoubleArray[100];
         oneIndex = strtol( tk, NULL, 0 );
 
         if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-          printf( tagClass_str14, tagName[index], line() );
+          printf( tagClass_str14, tagName[index], line(), filename() );
 	  return 0;
         }
 
@@ -2056,7 +2114,7 @@ double smallDoubleArray[100];
       oneIndex = strtol( tk, NULL, 0 );
 
       if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-        printf( tagClass_str14, tagName[index], line() );
+        printf( tagClass_str14, tagName[index], line(), filename() );
 	return 0;
       }
 
@@ -2083,7 +2141,7 @@ double smallDoubleArray[100];
         oneIndex = strtol( tk, NULL, 0 );
 
         if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-          printf( tagClass_str14, tagName[index], line() );
+          printf( tagClass_str14, tagName[index], line(), filename() );
 	  return 0;
         }
 
@@ -2119,7 +2177,7 @@ double smallDoubleArray[100];
       oneIndex = strtol( tk, NULL, 0 );
 
       if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-        printf( tagClass_str14, tagName[index], line() );
+        printf( tagClass_str14, tagName[index], line(), filename() );
 	return 0;
       }
 
@@ -2141,7 +2199,7 @@ double smallDoubleArray[100];
         oneIndex = strtol( tk, NULL, 0 );
 
         if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-          printf( tagClass_str14, tagName[index], line() );
+          printf( tagClass_str14, tagName[index], line(), filename() );
 	  return 0;
         }
 
@@ -2177,7 +2235,7 @@ double smallDoubleArray[100];
       oneIndex = strtol( tk, NULL, 0 );
 
       if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-        printf( tagClass_str14, tagName[index], line() );
+        printf( tagClass_str14, tagName[index], line(), filename() );
 	return 0;
       }
 
@@ -2199,7 +2257,7 @@ double smallDoubleArray[100];
         oneIndex = strtol( tk, NULL, 0 );
 
         if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-          printf( tagClass_str14, tagName[index], line() );
+          printf( tagClass_str14, tagName[index], line(), filename() );
 	  return 0;
         }
 
@@ -2235,7 +2293,7 @@ double smallDoubleArray[100];
       oneIndex = strtol( tk, NULL, 0 );
 
       if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-        printf( tagClass_str14, tagName[index], line() );
+        printf( tagClass_str14, tagName[index], line(), filename() );
 	return 0;
       }
 
@@ -2257,7 +2315,7 @@ double smallDoubleArray[100];
         oneIndex = strtol( tk, NULL, 0 );
 
         if ( ( oneIndex < 0 ) || ( oneIndex >= tagDestMaxSize[index] ) ) {
-          printf( tagClass_str14, tagName[index], line() );
+          printf( tagClass_str14, tagName[index], line(), filename() );
 	  return 0;
         }
 

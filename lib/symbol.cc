@@ -973,6 +973,18 @@ char *gotOne, tagName[255+1], val[4095+1];
 int isCompound;
 tagClass tag;
 
+int zero = 0;
+char *emptyStr = "";
+
+// these are discarded if read
+expStringClass visPvExpStr;
+char minVisString[39+1];
+char maxVisString[39+1];
+int visInverted;
+
+  tagClass::pushLevel();
+  tagClass::setFileName( symbolFileName );
+
   saveLine = tag.line();
 
   // delete current info ( if any )
@@ -1015,6 +1027,7 @@ tagClass tag;
     if ( !( stat & 1 ) ) {
       fclose( f );
       actWin->setLine( saveLine );
+      tagClass::popLevel();
       return stat;
     }
 
@@ -1032,11 +1045,13 @@ tagClass tag;
           // numStates = 0;
           fclose( f );
           actWin->setLine( saveLine );
+          tagClass::popLevel();
           return 0;
         }
         numStates = i+1;
         fclose( f );
         actWin->setLine( saveLine );
+        tagClass::popLevel();
         return 1;
       }
 
@@ -1045,6 +1060,7 @@ tagClass tag;
         // numStates = 0;
         fclose( f );
         actWin->setLine( saveLine );
+        tagClass::popLevel();
         return 0;
       }
 
@@ -1070,6 +1086,7 @@ tagClass tag;
           // numStates = 0;
           fclose( f );
           actWin->setLine( saveLine );
+          tagClass::popLevel();
           return 0;
         }
 
@@ -1090,6 +1107,7 @@ tagClass tag;
             printf( activeSymbolClass_str20 );
             // numStates = 0;
             actWin->setLine( saveLine );
+            tagClass::popLevel();
             return 0;
           }
 
@@ -1105,6 +1123,7 @@ tagClass tag;
             if ( !( stat & 1 ) ) {
               fclose( f );
               actWin->setLine( saveLine );
+              tagClass::popLevel();
               return stat;
             }
 
@@ -1122,6 +1141,7 @@ tagClass tag;
             printf( activeSymbolClass_str21 );
             // numStates = 0;
             actWin->setLine( saveLine );
+            tagClass::popLevel();
             return 0;
           }
 
@@ -1134,6 +1154,7 @@ tagClass tag;
       if ( !( stat & 1 ) ) {
         fclose( f );
         actWin->setLine( saveLine );
+        tagClass::popLevel();
         return stat;
       }
 
@@ -1168,6 +1189,7 @@ tagClass tag;
             //numStates = 0;
             fclose( f );
             tag.setLine( saveLine );
+            tagClass::popLevel();
             return 0;
             break;
           }
@@ -1177,6 +1199,7 @@ tagClass tag;
           //numStates = 0;
           fclose( f );
           tag.setLine( saveLine );
+          tagClass::popLevel();
           return 0;
           break;
         }
@@ -1188,6 +1211,7 @@ tagClass tag;
           //numStates = 0;
           fclose( f );
           tag.setLine( saveLine );
+          tagClass::popLevel();
           return 0;
         }
 
@@ -1244,6 +1268,7 @@ tagClass tag;
           //numStates = 0;
           fclose( f );
           tag.setLine( saveLine );
+          tagClass::popLevel();
           return 0;
         }
 
@@ -1270,6 +1295,7 @@ tagClass tag;
               //numStates = 0;
               fclose( f );
               tag.setLine( saveLine );
+	      tagClass::popLevel();
               return 0;
             }
 
@@ -1294,6 +1320,7 @@ tagClass tag;
               printf( "Insufficient virtual memory - abort\n" );
               //numStates = 0;
               tag.setLine( saveLine );
+	      tagClass::popLevel();
               return 0;
 
             }
@@ -1308,6 +1335,7 @@ tagClass tag;
             //numStates = 0;
             fclose( f );
             tag.setLine( saveLine );
+	    tagClass::popLevel();
             return 0;
           }
 
@@ -1317,6 +1345,10 @@ tagClass tag;
 
       // read group "endObjectProperties"
       tag.init();
+      tag.loadR( "visPv", &visPvExpStr, emptyStr );
+      tag.loadR( "visInvert", &visInverted, &zero );
+      tag.loadR( "visMin", 39, minVisString, emptyStr );
+      tag.loadR( "visMax", 39, maxVisString, emptyStr );
       tag.loadR( "endObjectProperties" );
 
       stat = tag.readTags( f, "endObjectProperties" );
@@ -1338,6 +1370,7 @@ tagClass tag;
   sboxH = h;
 
   tag.setLine( saveLine );
+  tagClass::popLevel();
 
   return retStat;
 
