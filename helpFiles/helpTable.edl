@@ -1,0 +1,492 @@
+4 0 0
+beginScreenProperties
+major 4
+minor 0
+release 0
+x 63
+y 83
+w 1123
+h 715
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor index 14
+bgColor index 3
+textColor index 14
+ctlFgColor1 index 14
+ctlFgColor2 index 27
+ctlBgColor1 index 4
+ctlBgColor2 index 2
+topShadowColor index 1
+botShadowColor index 10
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 18
+y 19
+w 62
+h 27
+font "helvetica-medium-r-24.0"
+fgColor index 14
+bgColor index 1
+value {
+  "Table"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 75
+w 510
+h 32
+font "helvetica-medium-r-14.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "The table widget monitors a string pv. On change, if the string value is not blank,"
+  "it is assumed to be the name of a file in the following format:"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 139
+w 341
+h 252
+font "courier-medium-r-18.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "begin"
+  "numCols <int>"
+  "headerAlign \"\{l|c|r\}numCols\""
+  "align \"1\{l|c|r\}numCols\""
+  "separators \"<character string>\""
+  "comment \"<single character>\""
+  "end"
+  "<data>"
+  "<data>"
+  "."
+  "."
+  "."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 596
+w 500
+h 80
+font "helvetica-medium-r-14.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "The parameters between begin and end are used to parse the remaining data"
+  "in the file. Blank lines and lines beginning with the comment character are"
+  "ignored. Information is separated into <numCols> columns using the separator"
+  "characters. Column data is aligned as specified by the alignment parameters."
+  "The first row uses headerAlign and all subsequent rows use align."
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 551
+y 12
+w 0
+h 692
+lineColor index 14
+fillColor index 4
+numPoints 2
+xPoints {
+  0 551
+  1 551
+}
+yPoints {
+  0 12
+  1 704
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 573
+y 16
+w 528
+h 16
+font "helvetica-medium-r-14.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Consider the following example (note that the separator character is a single TAB):"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 578
+y 52
+w 296
+h 285
+font "courier-medium-r-12.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "begin"
+  "numCols 2"
+  "headerAlign \"cc\""
+  "align \"rr\""
+  "separators \"    \""
+  "comment \";\""
+  "end"
+  "; Generated from archive data"
+  "Time    b:EqRi2a-1:VltR [kV]"
+  "01/20/2003 13:00:59.571162056   2.162"
+  "01/20/2003 13:01:09.571161656   2.161"
+  "01/20/2003 13:01:19.571161256   2.162"
+  "01/20/2003 13:01:29.071160876   2.161"
+  "01/20/2003 13:01:30.000000000   2.161"
+  "01/20/2003 13:01:40.000000000   2.161"
+  "01/20/2003 13:01:42.571160336   2.162"
+  "01/20/2003 13:01:47.571160136   2.161"
+  "01/20/2003 13:01:50.000000000   2.161"
+  "01/20/2003 13:02:00.000000000   2.161"
+}
+autoSize
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 574
+y 43
+w 310
+h 301
+lineColor index 14
+fillColor index 4
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 573
+y 356
+w 310
+h 16
+font "helvetica-medium-r-14.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "The following table is produced in execute mode:"
+}
+autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 577
+y 381
+w 508
+h 220
+file "$(help)helpTable"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 573
+y 612
+w 55
+h 16
+font "helvetica-medium-r-14.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Fg Color"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 573
+y 634
+w 55
+h 16
+font "helvetica-medium-r-14.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Bg Color"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 573
+y 656
+w 111
+h 16
+font "helvetica-medium-r-14.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Odd Col Bg Color"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 573
+y 679
+w 117
+h 16
+font "helvetica-medium-r-14.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Even Col Bg Color"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 636
+y 399
+w 63
+h 221
+lineColor index 14
+fillColor index 4
+arrows "to"
+numPoints 2
+xPoints {
+  0 636
+  1 699
+}
+yPoints {
+  0 620
+  1 399
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 636
+y 569
+w 405
+h 73
+lineColor index 14
+fillColor index 4
+arrows "to"
+numPoints 3
+xPoints {
+  0 636
+  1 1023
+  2 1041
+}
+yPoints {
+  0 642
+  1 642
+  2 569
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 693
+y 500
+w 181
+h 163
+lineColor index 14
+fillColor index 4
+arrows "to"
+numPoints 3
+xPoints {
+  0 693
+  1 842
+  2 874
+}
+yPoints {
+  0 663
+  1 663
+  2 500
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 696
+y 526
+w 201
+h 161
+lineColor index 14
+fillColor index 4
+arrows "to"
+numPoints 3
+xPoints {
+  0 696
+  1 861
+  2 897
+}
+yPoints {
+  0 687
+  1 687
+  2 526
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 434
+w 487
+h 48
+font "helvetica-medium-r-14.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "\"\{l|c|r\}numCols\" means a repitition equal to the value numCols of three single"
+  "character values, either l,c, or r, all enclosed in double-quotes. For example,"
+  "say numCols = 3. The following string values are possible:"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 48
+y 502
+w 26
+h 48
+font "helvetica-medium-r-14.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "\"lll\""
+  "\"lrr\""
+  "\"crl\""
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 559
+w 348
+h 16
+font "helvetica-medium-r-14.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "where l corresponds to Left, c to Center, and r to Right."
+}
+autoSize
+endObjectProperties
+
