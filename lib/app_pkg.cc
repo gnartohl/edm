@@ -1251,6 +1251,34 @@ appContextClass *apco = (appContextClass *) client;
 
 }
 
+void view_xy_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+appContextClass *apco = (appContextClass *) client;
+XmString str;
+
+  if ( apco->viewXy ) {
+    apco->viewXy = 0;
+    str = XmStringCreateLocalized( appContextClass_str112 );
+    XtVaSetValues( apco->viewXyB,
+     XmNlabelString, str,
+     NULL );
+    XmStringFree( str );
+  }
+  else {
+    apco->viewXy = 1;
+    str = XmStringCreateLocalized( appContextClass_str113 );
+    XtVaSetValues( apco->viewXyB,
+     XmNlabelString, str,
+     NULL );
+    XmStringFree( str );
+  }
+
+}
+
 void view_screens_cb (
   Widget w,
   XtPointer client,
@@ -1353,6 +1381,8 @@ appContextClass::appContextClass (
   cutHead1 = new activeGraphicListType;
   cutHead1->flink = cutHead1;
   cutHead1->blink = cutHead1;
+
+  viewXy = 0;
 
 }
 
@@ -1685,6 +1715,15 @@ XmString menuStr, str;
    NULL );
   XmStringFree( str );
   XtAddCallback( pvB, XmNactivateCallback, view_screens_cb,
+   (XtPointer) this );
+
+  str = XmStringCreateLocalized( appContextClass_str112 );
+  viewXyB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   viewPullDown,
+   XmNlabelString, str,
+   NULL );
+  XmStringFree( str );
+  XtAddCallback( viewXyB, XmNactivateCallback, view_xy_cb,
    (XtPointer) this );
 
   //mainDrawingArea = XtVaCreateManagedWidget( "", xmDrawingAreaWidgetClass,

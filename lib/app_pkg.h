@@ -231,6 +231,9 @@ msgDialogClass msgDialog;
 
 public:
 
+int viewXy;
+Widget viewXyB;
+
 ulBindingClass userLibObject;
 int exitFlag;
 int watchdog;

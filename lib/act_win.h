@@ -49,6 +49,7 @@
 #include "cursor.h"
 #include "scheme.h"
 #include "undo.h"
+#include "msg_dialog.h"
 
 #include "sys_types.h"
 #include "thread.h"
@@ -583,6 +584,9 @@ friend void awc_save_and_exit_cb (
   XtPointer client,
   XtPointer call );
 
+msgDialogClass msgDialog;
+int msgDialogCreated, msgDialogPoppedUp;
+
 char id[31+1], bufId[31+1];
 char title[127+1], bufTitle[127+1], restoreTitle[127+1];
 int showName;
@@ -773,6 +777,8 @@ int versionStackPtr;
 int b2PressX, b2PressY, b2PressXRoot, b2PressYRoot;
 
 undoClass undoObj;
+
+Time buttonClickTime, deltaTime;
 
 activeWindowClass::activeWindowClass ( void );
 

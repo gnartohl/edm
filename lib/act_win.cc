@@ -278,6 +278,7 @@ Atom wm_delete_window;
     awo->exit_after_save = 1;
 
     xmStr1 = XmStringCreateLocalized( "*.edl" );
+    xmStr2 = NULL;
 
     n = 0;
     XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
@@ -291,7 +292,7 @@ Atom wm_delete_window;
      n );
 
     XmStringFree( xmStr1 );
-    if ( strcmp( awo->dataFilePrefix, "" ) != 0 ) XmStringFree( xmStr2 );
+    if ( xmStr2 ) XmStringFree( xmStr2 );
 
     XtAddCallback( awo->fileSelectBox, XmNcancelCallback,
      awc_saveFileSelectCancel_cb, (void *) awo );
@@ -1143,8 +1144,10 @@ Atom wm_delete_window;
       awo->savedState = awo->state;
       awo->state = AWC_WAITING;
 
-      n = 0;
       xmStr1 = XmStringCreateLocalized( "*.edl" );
+      xmStr2 = NULL;
+
+      n = 0;
       XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
       if ( strcmp( awo->dataFilePrefix, "" ) != 0 ) {
@@ -1156,7 +1159,7 @@ Atom wm_delete_window;
        n );
 
       XmStringFree( xmStr1 );
-      if ( strcmp( awo->dataFilePrefix, "" ) != 0 ) XmStringFree( xmStr2 );
+      if ( xmStr2 ) XmStringFree( xmStr2 );
 
       XtAddCallback( awo->fileSelectBox, XmNcancelCallback,
        awc_fileSelectCancel_cb, (void *) awo );
@@ -1192,8 +1195,10 @@ Atom wm_delete_window;
       awo->savedState = awo->state;
       awo->state = AWC_WAITING;
 
-      n = 0;
       xmStr1 = XmStringCreateLocalized( "*.edl" );
+      xmStr2 = NULL;
+
+      n = 0;
       XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
       if ( strcmp( awo->userDataFilePrefix, "" ) != 0 ) {
@@ -1205,7 +1210,7 @@ Atom wm_delete_window;
        n );
 
       XmStringFree( xmStr1 );
-      if ( strcmp( awo->userDataFilePrefix, "" ) != 0 ) XmStringFree( xmStr2 );
+      if ( xmStr2 ) XmStringFree( xmStr2 );
 
       XtAddCallback( awo->fileSelectBox, XmNcancelCallback,
        awc_fileSelectCancel_cb, (void *) awo );
@@ -2304,9 +2309,10 @@ Atom wm_delete_window;
       awo->savedState = awo->state;
       awo->state = AWC_WAITING;
 
-      n = 0;
-
       xmStr1 = XmStringCreateLocalized( "*.scheme" );
+      xmStr2 = NULL;
+
+      n = 0;
       XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
       if ( strcmp( awo->dataFilePrefix, "" ) != 0 ) {
@@ -2318,7 +2324,7 @@ Atom wm_delete_window;
        n );
 
       XmStringFree( xmStr1 );
-      if ( strcmp( awo->dataFilePrefix, "" ) != 0 ) XmStringFree( xmStr2 );
+      if ( xmStr2 ) XmStringFree( xmStr2 );
 
       XtAddCallback( awo->schemeSelectBox, XmNcancelCallback,
        awc_loadSchemeSelectCancel_cb, (void *) awo );
@@ -2355,9 +2361,10 @@ Atom wm_delete_window;
       awo->savedState = awo->state;
       awo->state = AWC_WAITING;
 
-      n = 0;
-
       xmStr1 = XmStringCreateLocalized( "*.scheme" );
+      xmStr2 = NULL;
+
+      n = 0;
       XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
       if ( strcmp( awo->dataFilePrefix, "" ) != 0 ) {
@@ -2369,7 +2376,7 @@ Atom wm_delete_window;
        n );
 
       XmStringFree( xmStr1 );
-      if ( strcmp( awo->dataFilePrefix, "" ) != 0 ) XmStringFree( xmStr2 );
+      if ( xmStr2 ) XmStringFree( xmStr2 );
 
       XtAddCallback( awo->schemeSelectBox, XmNcancelCallback,
        awc_saveSchemeSelectCancel_cb, (void *) awo );
@@ -2406,9 +2413,10 @@ Atom wm_delete_window;
       awo->savedState = awo->state;
       awo->state = AWC_WAITING;
 
-      n = 0;
-
       xmStr1 = XmStringCreateLocalized( "*.edl" );
+      xmStr2 = NULL;
+
+      n = 0;
       XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
       if ( strcmp( awo->userDataFilePrefix, "" ) != 0 ) {
@@ -2420,7 +2428,7 @@ Atom wm_delete_window;
        n );
 
       XmStringFree( xmStr1 );
-      if ( strcmp( awo->userDataFilePrefix, "" ) != 0 ) XmStringFree( xmStr2 );
+      if ( xmStr2 ) XmStringFree( xmStr2 );
 
       XtAddCallback( awo->fileSelectBox, XmNcancelCallback,
        awc_saveFileSelectCancel_cb, (void *) awo );
@@ -2459,6 +2467,7 @@ Atom wm_delete_window;
         awo->state = AWC_WAITING;
 
         xmStr1 = XmStringCreateLocalized( "*.edl" );
+        xmStr2 = NULL;
 
         n = 0;
         XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
@@ -2472,8 +2481,7 @@ Atom wm_delete_window;
          n );
 
         XmStringFree( xmStr1 );
-        if ( strcmp( awo->userDataFilePrefix, "" ) != 0 )
-         XmStringFree( xmStr2 );
+        if ( xmStr2 ) XmStringFree( xmStr2 );
 
         XtAddCallback( awo->fileSelectBox, XmNcancelCallback,
          awc_saveFileSelectCancel_cb, (void *) awo );
@@ -2516,8 +2524,10 @@ Atom wm_delete_window;
       awo->savedState = awo->state;
       awo->state = AWC_WAITING;
 
-      n = 0;
       xmStr1 = XmStringCreateLocalized( "*.edl" );
+      xmStr2 = NULL;
+
+      n = 0;
       XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
       if ( strcmp( awo->dataFilePrefix, "" ) != 0 ) {
@@ -2529,7 +2539,7 @@ Atom wm_delete_window;
        n );
 
       XmStringFree( xmStr1 );
-      if ( strcmp( awo->dataFilePrefix, "" ) != 0 ) XmStringFree( xmStr2 );
+      if ( xmStr2 ) XmStringFree( xmStr2 );
 
       XtAddCallback( awo->fileSelectBox, XmNcancelCallback,
        awc_fileSelectCancel_cb, (void *) awo );
@@ -2565,8 +2575,10 @@ Atom wm_delete_window;
       awo->savedState = awo->state;
       awo->state = AWC_WAITING;
 
-      n = 0;
       xmStr1 = XmStringCreateLocalized( "*.edl" );
+      xmStr2 = NULL;
+
+      n = 0;
       XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
       if ( strcmp( awo->userDataFilePrefix, "" ) != 0 ) {
@@ -2578,7 +2590,7 @@ Atom wm_delete_window;
        n );
 
       XmStringFree( xmStr1 );
-      if ( strcmp( awo->userDataFilePrefix, "" ) != 0 ) XmStringFree( xmStr2 );
+      if ( xmStr2 ) XmStringFree( xmStr2 );
 
       XtAddCallback( awo->fileSelectBox, XmNcancelCallback,
        awc_fileSelectCancel_cb, (void *) awo );
@@ -4630,6 +4642,7 @@ const int keyBufSize = 20;
 XComposeStatus compose;
 int charCount, xInc, yInc, foundNewOneToEdit, isMultiPoint, doAgain;
 double xScaleFactor, yScaleFactor, newX, newW, newY, newH;
+ char msg[31+1];
 
 Window root, child;
 int rootX, rootY, winX, winY;
@@ -4642,6 +4655,13 @@ unsigned int mask;
   if ( awo->mode != AWC_EDIT ) return;
 
   awo->oldState = awo->state;
+
+  if ( e->type != MotionNotify ) {
+    if ( awo->msgDialogPoppedUp ) {
+      awo->msgDialog.popdown();
+      awo->msgDialogPoppedUp = 0;
+    }
+  }
 
   if ( e->type == ConfigureNotify ) {
 
@@ -5423,6 +5443,9 @@ unsigned int mask;
 
     be = (XButtonEvent *) e;
 
+    awo->deltaTime = be->time - awo->buttonClickTime;
+    awo->buttonClickTime = be->time;
+
     awo->buttonPressX = be->x;
     awo->buttonPressY = be->y;
 
@@ -5430,9 +5453,9 @@ unsigned int mask;
 
       case Button1:
 
-        if ( be->state & ShiftMask ) {
+        if ( ( be->state & ShiftMask ) || ( awo->deltaTime < 250 ) ) {
 
-//========== Shift B1 Press ===================================
+//========== Shift B1 Press or double click ========================
 
           if ( awo->state == AWC_EDITING_POINTS ) {
 
@@ -5442,6 +5465,10 @@ unsigned int mask;
 	    // a group of objects; if the next item in the group is a
 	    // multipoint object, state will get reset to AWC_EDITING_POINTS
             awo->state = AWC_EDITING;
+
+            if ( !( be->state & ShiftMask ) ) {
+              awo->currentPointObject->removeLastPoint();
+	    }
 
             awo->currentPointObject->lineEditComplete();
 
@@ -6007,6 +6034,8 @@ unsigned int mask;
         else {
 
 //========== B1 Release ===================================
+
+          if ( awo->deltaTime < 250 ) break; // switch ( be->button ) ...
 
           switch ( awo->state ) {
 
@@ -6842,11 +6871,35 @@ unsigned int mask;
     }
 
   }
+
   else if ( e->type == MotionNotify ) {
 
     if ( awo->state == AWC_WAITING ) goto done;
 
     me = (XMotionEvent *) e;
+
+    if ( awo->appCtx->viewXy ) {
+
+      if ( !awo->msgDialogCreated ) {
+        awo->msgDialog.create( awo->top );
+        awo->msgDialogCreated = 1;
+        awo->msgDialogPoppedUp = 0;
+      }
+
+      sprintf( msg, "(%-d,%-d)", me->x, me->y );
+
+      awo->msgDialog.popup( msg, awo->x+awo->w/2, awo->y+awo->h/2 );
+      awo->msgDialogPoppedUp = 1;
+
+    }
+    else {
+
+      if ( awo->msgDialogPoppedUp ) {
+        awo->msgDialog.popdown();
+        awo->msgDialogPoppedUp = 0;
+      }
+
+    }
 
     // on first motion event after a button press, use the button press x,y
     if ( awo->buttonPressX != -1 ) {
@@ -8683,6 +8736,12 @@ char *envPtr, *gotIt, buf[127+1], save[127+1], *tk;
 
   versionStackPtr = 0;
 
+  buttonClickTime = 0;
+  deltaTime = 0;
+
+  msgDialogCreated = 0;
+  msgDialogPoppedUp = 0;
+
 }
 int activeWindowClass::pushVersion ( void ) {
 
@@ -8867,6 +8926,8 @@ commentLinesPtr commentCur, commentNext;
   if ( b2ExecutePopup ) XtDestroyWidget( b2ExecutePopup );
 
   if ( drawWidget ) XtDestroyWidget( drawWidget );
+
+  if ( msgDialogCreated ) msgDialog.destroy();
 
   if ( top ) XtDestroyWidget( top );
 
@@ -12392,7 +12453,7 @@ int activeWindowClass::refresh (
 
 XRectangle xR = { _x, _y, _w, _h };
 activeGraphicListPtr cur, next;
-int needDelete;
+int needDelete = 0;
 
   if ( noRefresh ) return 1;
 
@@ -12430,7 +12491,7 @@ int needDelete;
 int activeWindowClass::refresh ( void ) {
 
 activeGraphicListPtr cur, next;
-int needDelete;
+int needDelete = 0;
 
   if ( noRefresh ) return 1;
 
@@ -15010,7 +15071,7 @@ int i, len, iIn, iOut, p0, p1, more, state, winid;
 
   state = 1; // copying
 
-  iIn = iOut = 0;
+  p0 = iIn = iOut = 0;
   more = 1;
   while ( more ) {
 

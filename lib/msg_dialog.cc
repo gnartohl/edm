@@ -29,8 +29,6 @@ msgDialogClass::msgDialogClass ( void ) {
 
 msgDialogClass::~msgDialogClass ( void ) {
 
-  // if ( shell ) XtDestroyWidget( shell );
-
 }
 
 int msgDialogClass::destroy ( void ) {
@@ -38,6 +36,7 @@ int msgDialogClass::destroy ( void ) {
   if ( !shell ) return 1;
 
   XtDestroyWidget( shell );
+  shell = (Widget) NULL;
 
   return 1;
 
@@ -132,6 +131,8 @@ Arg args[5];
 int n;
 XmString str;
 
+  XtPopdown( shell );
+
   str = XmStringCreateLocalized( text );
   n = 0;
   XtSetArg( args[n], XmNlabelString, (XtArgVal) str ); n++;
@@ -150,19 +151,7 @@ XmString str;
   XtSetArg( args[n], XmNy, (XtArgVal) _y ); n++;
   XtSetValues( shell, args, n );
 
-#if 0
-  if ( !winOpen ) {
-    winOpen = 1;
-    XtPopup( shell, XtGrabNone );
-  }
-  else {
-    XtPopdown( shell );
-    XtPopup( shell, XtGrabNone );
-  }
-#endif
-
   winOpen = 1;
-  XtPopdown( shell );
   XtPopup( shell, XtGrabNone );
   XRaiseWindow( display, XtWindow(shell) );
 
