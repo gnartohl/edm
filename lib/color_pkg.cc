@@ -539,6 +539,8 @@ int stat;
 
   incrementTimerActive = 0;
 
+  invisibleIndex = -1;
+
 }
 
 colorInfoClass::~colorInfoClass ( void ) {
@@ -1451,6 +1453,11 @@ char msg[127+1];
         strcpy( cur[n]->name, tk );
         cur[n]->index = colorIndex; // this is simply an incrementing
 	                            // sequence number
+      }
+
+      //printf( "[%s]\n", tk );
+      if ( strcmp( tk, "invisible" ) == 0 ) {
+        invisibleIndex = colorIndex;
       }
 
       stat = getToken( tk ); // {
@@ -3491,5 +3498,13 @@ int opResult, opResult1, opResult2;
   }
 
   return index;
+
+}
+
+int colorInfoClass::isInvisible(
+  int index
+) {
+
+  return ( index == invisibleIndex );
 
 }

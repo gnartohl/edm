@@ -199,6 +199,9 @@ public:
       int index,
       double value );
 
+    int colorInfoClass::isInvisible(
+      int index );
+
     // The following functions are for use in color_button.cc and
     // entry_form.cc; they are not intended for general use.
     void colorInfoClass::setCurDestination(int *ptr);
@@ -332,6 +335,9 @@ private:
     msgDialogClass msgDialog;
     int curPaletteRow, curPaletteCol;
     showNameBlockType showNameBlock;
+
+    int invisibleIndex;
+
 };
 
 #endif
