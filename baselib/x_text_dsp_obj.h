@@ -43,12 +43,26 @@
 #define XTDC_K_COLORMODE_ALARM 1
 
 #define XTDC_MAJOR_VERSION 2
-#define XTDC_MINOR_VERSION 7
+#define XTDC_MINOR_VERSION 8
 #define XTDC_RELEASE 0
 
 #ifdef __x_text_dsp_obj_cc
 
 #include "x_text_dsp_obj.str"
+
+static void dropTransferProc (
+  Widget w,
+  XtPointer clientData,
+  Atom *selType,
+  Atom *type,
+  XtPointer value,
+  unsigned long *length,
+  int format );
+
+static void handleDrop (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 static void doBlink (
   void *ptr
@@ -218,6 +232,20 @@ static void xtdoSetValueChanged (
 class activeXTextDspClass : public activeGraphicClass {
 
 private:
+
+friend void dropTransferProc (
+  Widget w,
+  XtPointer clientData,
+  Atom *selType,
+  Atom *type,
+  XtPointer value,
+  unsigned long *length,
+  int format );
+
+friend void handleDrop (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 friend void doBlink (
   void *ptr
@@ -395,6 +423,7 @@ int limitsFromDb, bufLimitsFromDb;
 int changeValOnLoseFocus, bufChangeValOnLoseFocus;
 int fastUpdate, bufFastUpdate;
 int autoSelect, bufAutoSelect;
+int updatePvOnDrop, bufUpdatePvOnDrop;
 int precision;
 efInt efPrecision, bufEfPrecision;
 int bgColor, bufBgColor;

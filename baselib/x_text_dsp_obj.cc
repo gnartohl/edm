@@ -24,6 +24,134 @@
 
 #include "thread.h"
 
+static void dropTransferProc (
+  Widget w,
+  XtPointer clientData,
+  Atom *selType,
+  Atom *type,
+  XtPointer value,
+  unsigned long *length,
+  int format )
+{
+
+activeXTextDspClass *axtdo = (activeXTextDspClass *) clientData;
+char *str = (char *) value;
+int stat, ivalue;
+double dvalue;
+char string[39+1];
+
+  if ( !axtdo ) return;
+
+  if ( *type == XA_STRING ) {
+
+    if ( str ) {
+
+      switch ( axtdo->pvType ) {
+
+      case DBR_FLOAT:
+      case DBR_DOUBLE:
+        if ( isLegalFloat(str) ) {
+          dvalue = atof( str );
+          if ( axtdo->pvExists ) {
+#ifdef __epics__
+            stat = ca_put( DBR_DOUBLE, axtdo->pvId, &dvalue );
+#endif
+          }
+          else {
+            axtdo->needUpdate = 1;
+            axtdo->actWin->appCtx->proc->lock();
+            axtdo->actWin->addDefExeNode( axtdo->aglPtr );
+            axtdo->actWin->appCtx->proc->unlock();
+          }
+
+        }
+        break;
+
+      case DBR_SHORT:
+      case DBR_LONG:
+        if ( isLegalInteger(str) ) {
+          ivalue = atol( str );
+          if ( axtdo->pvExists ) {
+#ifdef __epics__
+            stat = ca_put( DBR_LONG, axtdo->pvId, &ivalue );
+#endif
+          }
+          else {
+            axtdo->needUpdate = 1;
+            axtdo->actWin->appCtx->proc->lock();
+            axtdo->actWin->addDefExeNode( axtdo->aglPtr );
+            axtdo->actWin->appCtx->proc->unlock();
+          }
+
+        }
+        break;
+
+      case DBR_STRING:
+        strncpy( string, str, 39 );
+        string[39] = 0;
+        if ( axtdo->pvExists ) {
+#ifdef __epics__
+          stat = ca_put( DBR_STRING, axtdo->pvId, &string );
+#endif
+        }
+        else {
+          axtdo->needUpdate = 1;
+          axtdo->actWin->appCtx->proc->lock();
+          axtdo->actWin->addDefExeNode( axtdo->aglPtr );
+          axtdo->actWin->appCtx->proc->unlock();
+        }
+
+        break;
+
+      }
+
+    }
+
+  }
+
+}
+
+static void handleDrop (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeXTextDspClass *axtdo;
+XmDropProcCallback ptr = (XmDropProcCallback) call;
+XmDropTransferEntryRec transferEntries[2];
+XmDropTransferEntry transferList;
+int n;
+Arg args[10];
+Widget dc;
+
+  n = 0;
+  XtSetArg( args[n], XmNuserData, (XtPointer) &axtdo ); n++;
+  XtGetValues( w, args, n );
+  if ( !axtdo ) return;
+
+  dc = ptr->dragContext;
+
+  n = 0;
+  if ( ptr->dropAction != XmDROP ) {
+    XtSetArg( args[n], XmNtransferStatus, XmTRANSFER_FAILURE ); n++;
+    XtSetArg( args[n], XmNnumDropTransfers, 0 ); n++;
+  }
+  else {
+    transferEntries[0].target = XA_STRING;
+    transferEntries[0].client_data = (XtPointer) axtdo;
+    transferList = transferEntries;
+    XtSetArg( args[n], XmNdropTransfers, transferList ); n++;
+    XtSetArg( args[n], XmNnumDropTransfers, 1 ); n++;
+    XtSetArg( args[n], XmNtransferProc, dropTransferProc ); n++;
+  }
+
+  //  XtSetArg( args[n], XmN ); n++;
+
+  XmDropTransferStart( dc, args, n );
+
+}
+
 static void doBlink (
   void *ptr
 ) {
@@ -1330,6 +1458,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   axtdo->autoSelect = axtdo->bufAutoSelect;
 
+  axtdo->updatePvOnDrop = axtdo->bufUpdatePvOnDrop;
+
   strncpy( axtdo->id, axtdo->bufId, 31 );
   axtdo->id[31] = 0;
   axtdo->changeCallbackFlag = axtdo->bufChangeCallbackFlag;
@@ -1449,6 +1579,7 @@ int i;
   limitsFromDb = 1;
   changeValOnLoseFocus = 0;
   autoSelect = 0;
+  updatePvOnDrop = 0;
   fastUpdate = 0;
 
   efPrecision.setNull(1);
@@ -1555,6 +1686,7 @@ int i;
   limitsFromDb = source->limitsFromDb;
   changeValOnLoseFocus = source->changeValOnLoseFocus;
   autoSelect = source->autoSelect;
+  updatePvOnDrop  = source->updatePvOnDrop;
   fastUpdate = source->fastUpdate;
   precision = source->precision;
   efPrecision = source->efPrecision;
@@ -1757,6 +1889,9 @@ int index, stat;
 
   // version 2.6
   fprintf( f, "%-d\n", autoSelect );
+
+  // version 2.8
+  fprintf( f, "%-d\n", updatePvOnDrop );
 
   return 1;
 
@@ -2028,6 +2163,13 @@ unsigned int pixel;
   }
   else {
     autoSelect = 0;
+  }
+
+  if ( ( ( major == 2 ) && ( minor > 7 ) ) || ( major > 2 ) ) {
+    fscanf( f, "%d\n", &updatePvOnDrop );
+  }
+  else {
+    updatePvOnDrop = 0;
   }
 
   actWin->fi->loadFontTag( fontTag );
@@ -2387,6 +2529,7 @@ int noedit;
   bufActivateCallbackFlag = activateCallbackFlag;
   bufDeactivateCallbackFlag = deactivateCallbackFlag;
   bufAutoSelect = autoSelect;
+  bufUpdatePvOnDrop = updatePvOnDrop;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -2434,10 +2577,12 @@ int noedit;
   if ( !noedit ) {
     ef.addToggle( activeXTextDspClass_str68, &bufChangeValOnLoseFocus );
     ef.addToggle( activeXTextDspClass_str75, &bufAutoSelect );
+    ef.addToggle( activeXTextDspClass_str76, &bufUpdatePvOnDrop );
   }
   else {
     bufChangeValOnLoseFocus = changeValOnLoseFocus = 0;
     bufAutoSelect = autoSelect = 0;
+    bufUpdatePvOnDrop = updatePvOnDrop = 0;
   }
 
   ef.addToggle( activeXTextDspClass_str69, &bufFastUpdate );
@@ -3360,6 +3505,8 @@ int nc, ni, nu, nr, nd, ne;
 Arg args[10];
 unsigned int bg;
 XmFontList textFontList = NULL;
+Cardinal numImportTargets;
+Atom importList[2];
 
 #if 1
 XtTranslations parsedTrans;
@@ -3799,6 +3946,20 @@ static XtActionsRec dragActions[] = {
 
         XtAddCallback( tf_widget, XmNvalueChangedCallback,
          xtdoSetValueChanged, this );
+
+        if ( updatePvOnDrop ) {
+
+	  // change drop behavior
+
+	  importList[0] = XA_STRING;
+          numImportTargets = 1;
+	  n = 0;
+	  XtSetArg( args[n], XmNimportTargets, importList ); n++;
+	  XtSetArg( args[n], XmNnumImportTargets, numImportTargets ); n++;
+	  XtSetArg( args[n], XmNdropProc, handleDrop ); n++;
+	  XmDropSiteUpdate( tf_widget, args, n );
+
+	}
 
         switch ( pvType ) {
 

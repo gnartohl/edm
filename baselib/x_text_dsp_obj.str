@@ -76,5 +76,6 @@
 #define activeXTextDspClass_str73 (char *) "Pattern"
 #define activeXTextDspClass_str74 (char *) "Color PV"
 #define activeXTextDspClass_str75 (char *) "Auto Select Text"
+#define activeXTextDspClass_str76 (char *) "Update PV On Drop"
 
 #endif
