@@ -2578,18 +2578,23 @@ char *firstName, *nextName;
 
 }
 
+/*                    21 Aug 01 16:04:30 Thomas Birke (Thomas.Birke@mail.bessy.de)
+ * We do two things in mkDragIcon:
+ *  1. Put the DragValues (usually the PV-Names) into the primary selection
+ *     (X-Clipboard)
+ *  2. Create a small pixmap to be set as the drag-icon and write the
+ *     PV-names into the pixmap    
+ */
+
 Widget mkDragIcon( Widget w, activeGraphicClass *agc )
 {
   Arg             args[8];
   Cardinal        n;
-  Atom            exportList[1];
   Widget          sourceIcon;
-  int             textWidth, maxWidth, maxHeight, fontHeight, ascent;
+  int             textWidth=0, maxWidth, maxHeight, fontHeight;
   unsigned long   fg, bg;
-  XButtonEvent  * xbutton;
   XGCValues       gcValues;
   unsigned long   gcValueMask;
-  char *firstName, *nextName;
 
   Display *display = XtDisplay(w);
   int screenNum = DefaultScreen(display);
@@ -2598,7 +2603,7 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
   static GC gc = NULL;
   static XFontStruct * fixedFont = NULL;
 
-  if (fixedFont == NULL)
+  if (fixedFont == NULL) 
      fixedFont = XLoadQueryFont( display, "fixed" );
 
 #define X_SHIFT 8
@@ -2609,32 +2614,16 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
 
   fontHeight = fixedFont->ascent + fixedFont->descent;
 
-  char *str;
-  int idx = 0;
-  firstName = agc->firstDragName();
-  if (firstName) {
-     printf("firstDragName = '%s', value[%d] = '%s', currDragIdx = %d\n",
-	    firstName, idx, agc->dragValue(idx), agc->getCurrentDragIndex());
-     clipbdStart();
-     clipbdAdd(agc->dragValue(idx));
-     nextName = agc->nextDragName();
-     str = agc->dragValue(idx);
-     if (!str) str = "";
-     textWidth = XTextWidth(fixedFont, str, strlen(str));
-     
-     while (nextName) {
-	str = agc->dragValue(++idx);
-	if (!str) str = "";
-	printf("nextDragName = '%s', value[%d] = '%s'\n", nextName, idx, str);
-	clipbdAdd("\n");
-	clipbdAdd(str);
-	int tw = XTextWidth(fixedFont, str, strlen(str));
-	textWidth = max(tw, textWidth);
-     }
-     clipbdHold();
-  }
+  char *str = agc->dragValue(agc->getCurrentDragIndex());
+  if (!str) str = "";
+
+  clipbdStart();
+  clipbdAdd(str);
+  textWidth = XTextWidth(fixedFont, str, strlen(str));
+  clipbdHold();
+
   maxWidth = X_SHIFT + (textWidth + MARGIN);
-  maxHeight = fontHeight * (idx+1) + 2*MARGIN;
+  maxHeight = fontHeight + 2 * MARGIN;
   
   sourcePixmap = XCreatePixmap(display,
 			       RootWindow(display, screenNum),
@@ -2656,14 +2645,9 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
 
   XSetForeground(display,gc,fg);
 
-  for (int i = 0; i <= idx; i++) {
-     str = agc->dragValue(idx);
-     if (!str) str = "";
-     printf("drawing[%d] '%s'\n", i, str);
-     XDrawString( display, sourcePixmap, gc, 
-		  X_SHIFT, fixedFont->ascent + MARGIN + i * fontHeight, 
-		  str, strlen(str) );
-  }
+  XDrawString( display, sourcePixmap, gc,
+	       X_SHIFT, fixedFont->ascent + MARGIN, 
+	       str, strlen(str) );
   
   n = 0;
   XtSetArg(args[n],XmNpixmap,sourcePixmap); n++;
@@ -2682,7 +2666,6 @@ Atom expList[1];
 int n;
 Arg args[10];
 XMotionEvent dragEvent;
-char *firstName;
 
   Widget icon = mkDragIcon(actWin->executeWidget, this);
  
@@ -2716,7 +2699,6 @@ int activeGraphicClass::startDrag (
 Atom expList[1];
 int n;
 Arg args[10];
-char *firstName;
 
   Widget icon = mkDragIcon(w, this);
  
