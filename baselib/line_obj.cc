@@ -871,8 +871,8 @@ int oneX, oneY, oneW, oneH;
 
   if ( selectedOne->blink != head ) {
     XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
-     actWin->drawGc.xorGC(), selectedOne->x, selectedOne->y,
-     selectedOne->blink->x, selectedOne->blink->y );
+     actWin->drawGc.xorGC(), selectedOne->blink->x, selectedOne->blink->y,
+     selectedOne->x, selectedOne->y );
   }
 
   oneX = selectedOne->x;
@@ -910,6 +910,8 @@ int oneX, oneY, oneW, oneH;
      actWin->drawGc.xorGC(), cur->x, cur->y,
      cur->flink->x, cur->flink->y );
   }
+
+  actWin->drawGc.restoreFg();
 
   return 1;
 
