@@ -38,7 +38,6 @@
 #include "arc_obj.str"
 
 static char *dragName[] = {
-  activeArcClass_str1,
   activeArcClass_str2,
   activeArcClass_str3
 };

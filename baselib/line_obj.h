@@ -37,7 +37,6 @@
 #include "line_obj.str"
 
 static char *dragName[] = {
-  activeLineClass_str1,
   activeLineClass_str2,
   activeLineClass_str3
 };

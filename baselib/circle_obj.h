@@ -37,7 +37,6 @@
 #include "circle_obj.str"
 
 static char *dragName[] = {
-  activeCircleClass_str1,
   activeCircleClass_str2,
   activeCircleClass_str3
 };

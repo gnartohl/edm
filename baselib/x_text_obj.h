@@ -37,7 +37,6 @@
 #include "x_text_obj.str"
 
 static char *dragName[] = {
-  activeXTextClass_str1,
   activeXTextClass_str2,
   activeXTextClass_str3
 };

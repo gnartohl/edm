@@ -1435,17 +1435,13 @@ char *activeCircleClass::dragValue (
 
   switch ( i ) {
 
-  case 1:
+  case 0:
     return alarmPvExpStr.getExpanded();
-    break;
 
-  case 2:
+  case 1:
     return visPvExpStr.getExpanded();
-    break;
 
   }
-
-  // else, disabled
 
   return (char *) NULL;
 

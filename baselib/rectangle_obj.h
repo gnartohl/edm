@@ -40,7 +40,6 @@
 #include "rectangle_obj.str"
 
 static char *dragName[] = {
-  activeRectangleClass_str1,
   activeRectangleClass_str2,
   activeRectangleClass_str3
 };
