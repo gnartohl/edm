@@ -749,7 +749,12 @@ xyGraphClass
 
 ~xyGraphClass ( void );
 
-void getMinMax (
+void getXMinMax (
+  double *min,
+  double *max
+);
+
+void getYMinMax (
   double *min,
   double *max
 );

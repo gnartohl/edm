@@ -2808,7 +2808,7 @@ xyGraphClass::~xyGraphClass ( void ) {
 
 }
 
-void xyGraphClass::getMinMax (
+void xyGraphClass::getXMinMax (
   double *min,
   double *max
 ) {
@@ -2873,6 +2873,85 @@ double dxValue;
       else {
         if ( dxValue < *min ) *min = dxValue;
         if ( dxValue > *max ) *max = dxValue;
+      }
+
+      ii++;
+      if ( ii > plotBufSize[i] ) {
+        ii = 0;
+      }
+
+    }
+
+  }
+
+}
+
+
+void xyGraphClass::getYMinMax (
+  double *min,
+  double *max
+) {
+
+int i, ii, first;
+double dyValue;
+
+  first = 1;
+  for ( i=0; i<numTraces; i++ ) {
+
+    ii = arrayHead[i];
+    while ( ii != arrayTail[i] ) {
+
+      switch ( yPvType[i] ) {
+      case DBR_FLOAT:
+        dyValue = (double) ( (float *) yPvData[i] )[ii];
+        break;
+      case DBR_DOUBLE: 
+        dyValue = ( (double *) yPvData[i] )[ii];
+        break;
+      case DBR_SHORT:
+        if ( ySigned[i] ) {
+          dyValue = (double) ( (short *) yPvData[i] )[ii];
+        }
+        else {
+          dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+        }
+        break;
+      case DBR_CHAR:
+        if ( ySigned[i] ) {
+          dyValue = (double) ( (char *) yPvData[i] )[ii];
+        }
+        else {
+          dyValue = (double) ( (unsigned char *) yPvData[i] )[ii];
+        }
+        break;
+      case DBR_LONG:
+        if ( ySigned[i] ) {
+          dyValue = (double) ( (int *) yPvData[i] )[ii];
+        }
+        else {
+          dyValue = (double) ( (int *) yPvData[i] )[ii];
+        }
+        break;
+      case DBR_ENUM:
+        if ( ySigned[i] ) {
+          dyValue = (double) ( (short *) yPvData[i] )[ii];
+        }
+        else {
+          dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+        }
+        break;
+      default:
+        dyValue = ( (double *) yPvData[i] )[ii];
+        break;
+      }
+
+      if ( first ) {
+        first = 0;
+        *min = *max = dyValue;
+      }
+      else {
+        if ( dyValue < *min ) *min = dyValue;
+        if ( dyValue > *max ) *max = dyValue;
       }
 
       ii++;
@@ -5024,8 +5103,6 @@ int screen_num, depth;
         }
       }
 
-      updateDimensions();
-
       curXNumLabelTicks = xNumLabelIntervals.value();
       if ( curXNumLabelTicks < 2 ) curXNumLabelTicks = 2;
       curXMajorsPerLabel = xNumMajorPerLabel.value();
@@ -5037,6 +5114,8 @@ int screen_num, depth;
         curY1MajorsPerLabel[yi] = y1NumMajorPerLabel[yi].value();
         curY1MinorsPerMajor[yi] = y1NumMinorPerMajor[yi].value();
       }
+
+      updateDimensions();
 
       aglPtr = ptr;
       connection.init();
@@ -6502,7 +6581,7 @@ int yi, yScaleIndex;
       if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME ) ||
            ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
 
-        getMinMax( &curXMin, &oneMax );
+        getXMinMax( &curXMin, &oneMax );
 
         range = xRescaleValue - curXMin;
         curXMax = xRescaleValue + 0.33 * range;
@@ -6773,6 +6852,41 @@ int yi, yScaleIndex;
        curNpts[i] = totalCount[i] = 0;
       plotState[i] = XYGC_K_STATE_INITIALIZING;
     }
+
+    curXMin = xMin.value();
+    curXMax = xMax.value();
+    if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      curXMin = log10( curXMin );
+      curXMax = log10( curXMax );
+    }
+    else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+      curXMin = log10( curXMin );
+      curXMax = log10( curXMax );
+    }
+
+    for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+      curY1Min[yi] = y1Min[yi].value();
+      curY1Max[yi] = y1Max[yi].value();
+      if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+        curY1Min[yi] = log10( curY1Min[yi] );
+        curY1Max[yi] = log10( curY1Max[yi] );
+      }
+    }
+    
+    curXNumLabelTicks = xNumLabelIntervals.value();
+    if ( curXNumLabelTicks < 2 ) curXNumLabelTicks = 2;
+    curXMajorsPerLabel = xNumMajorPerLabel.value();
+    curXMinorsPerMajor = xNumMinorPerMajor.value();
+
+    for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+      curY1NumLabelTicks[yi] = y1NumLabelIntervals[yi].value();
+      if ( curY1NumLabelTicks[yi] < 2 ) curY1NumLabelTicks[yi] = 2;
+      curY1MajorsPerLabel[yi] = y1NumMajorPerLabel[yi].value();
+      curY1MinorsPerMajor[yi] = y1NumMinorPerMajor[yi].value();
+    }
+
+    updateDimensions();
+
     fullRefresh();
 
   }
