@@ -183,5 +183,6 @@
 #define activeWindowClass_str184 "Help"
 #define activeWindowClass_str185 "Select All"
 #define activeWindowClass_str186 "Select Scheme Set"
+#define activeWindowClass_str187 "Load Component Scheme"
 
 #endif

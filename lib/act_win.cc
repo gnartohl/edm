@@ -588,6 +588,8 @@ static void awc_change_dsp_edit_apply (
 activeWindowClass *awo = (activeWindowClass *) client;
 activeGraphicListPtr curSel;
 unsigned int flag = 0;
+char strObjType[31+1], schemeFile[255+1];
+int stat, success;
 
   if ( awo->allSelectedFontTagFlag ) flag |= ACTGRF_FONTTAG_MASK;
   if ( awo->allSelectedAlignmentFlag ) flag |= ACTGRF_ALIGNMENT_MASK;
@@ -611,6 +613,67 @@ unsigned int flag = 0;
 
   curSel = awo->selectedHead->selFlink;
   while ( curSel != awo->selectedHead ) {
+
+    if ( awo->useComponentScheme ) {
+
+      curSel->node->getObjType( 31, strObjType );
+
+      if ( strcmp( strObjType, "" ) == 0 ) { // don't have type, try all
+
+        success = 0;
+
+        if ( !success ) { // try Controls
+          if ( awo->appCtx->schemeExists ( awo->curSchemeSet,
+           curSel->node->objName(), global_str5 ) ) {
+            awo->appCtx->getScheme( awo->curSchemeSet, curSel->node->objName(),
+             global_str5, schemeFile, 255 );
+            if ( strcmp( schemeFile, "" ) != 0 ) {
+              success = awo->loadComponentScheme( schemeFile );
+            }
+	  }
+	}
+
+        if ( !success ) { // try Monitors
+          if ( awo->appCtx->schemeExists ( awo->curSchemeSet,
+           curSel->node->objName(), global_str2 ) ) {
+            awo->appCtx->getScheme( awo->curSchemeSet, curSel->node->objName(),
+             global_str2, schemeFile, 255 );
+            if ( strcmp( schemeFile, "" ) != 0 ) {
+              success = awo->loadComponentScheme( schemeFile );
+	    }
+	  }
+	}
+
+        if ( !success ) { // try Graphics
+          if ( awo->appCtx->schemeExists ( awo->curSchemeSet,
+           curSel->node->objName(), global_str3 ) ) {
+            awo->appCtx->getScheme( awo->curSchemeSet, curSel->node->objName(),
+             global_str3, schemeFile, 255 );
+            if ( strcmp( schemeFile, "" ) != 0 ) {
+              success = awo->loadComponentScheme( schemeFile );
+	    }
+	  }
+	}
+
+        if ( !success ) { // reload default
+          success = awo->loadComponentScheme( "default" );
+	}
+
+      }
+      else {
+
+        awo->appCtx->getScheme( awo->curSchemeSet, curSel->node->objName(),
+         strObjType, schemeFile, 255 );
+        if ( strcmp( schemeFile, "" ) != 0 ) {
+          stat = awo->loadComponentScheme( schemeFile );
+          if ( !( stat & 1 ) ) {
+            awo->loadComponentScheme( "default" );
+          }
+        }
+
+      }
+
+    }
 
     curSel->node->changeDisplayParams(
      flag,
@@ -4659,6 +4722,9 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode;
       awo->ef.addToggle( activeWindowClass_str68,
        &awo->allSelectedBotShadowColorFlag );
 
+      awo->ef.addToggle( activeWindowClass_str187,
+       &awo->useComponentScheme );
+
       awo->ef.finished( awc_change_dsp_edit_ok, awc_change_dsp_edit_apply,
        awc_change_dsp_edit_cancel, awo );
       awo->ef.popup();
@@ -4754,6 +4820,8 @@ char schemeFile[255+1];
       cur->defExeFlink = NULL;
       cur->defExeBlink = NULL;
       cur->node = awo->obj.createNew( curObjNameNode->objName );
+
+      cur->node->setObjType( curObjNameNode->objType );
 
       cur->blink = awo->head->blink;
       awo->head->blink->flink = cur;
@@ -8872,6 +8940,7 @@ activeWindowClass::activeWindowClass ( void ) {
   drawWidget = NULL;
   top = NULL;
 
+  useComponentScheme = 0;
   allSelectedTextFgColorFlag = 1;
   allSelectedFg1ColorFlag = 1;
   allSelectedFg2ColorFlag = 1;

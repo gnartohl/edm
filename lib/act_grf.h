@@ -129,6 +129,13 @@ Widget dc; // drag context
 char *dragData;
 int dragIndex, currentDragIndex;
 
+int objType;
+
+static const int UNKNOWN = -1;
+static const int GRAPHICS = 1;
+static const int MONITORS = 2;
+static const int CONTROLS = 3;
+
 public:
 
 activeWindowClass *actWin;
@@ -141,6 +148,13 @@ activeGraphicClass::activeGraphicClass ( void );
 void activeGraphicClass::clone ( const activeGraphicClass *source );
 
 virtual activeGraphicClass::~activeGraphicClass ( void );
+
+virtual void activeGraphicClass::setObjType (
+  char *strObjType );
+
+virtual void activeGraphicClass::getObjType (
+  int maxLen,
+  char *strObjType );
 
 virtual char *activeGraphicClass::objName ( void ) {
 

@@ -2105,6 +2105,45 @@ schemeListPtr cur;
 
 }
 
+int appContextClass::schemeExists (
+  char *schemeSetName,
+  char *objName,
+  char *objType )
+{
+
+int stat;
+schemeListPtr cur;
+char buf[255+1];
+
+  if ( !schemeListExists ) {
+    return 0;
+  }
+
+  if ( strcmp( schemeSetName, "" ) == 0 ) {
+    return 0;
+  }
+
+  strncpy( buf, schemeSetName, 255 );
+  strncat( buf, "-", 255 );
+  strncat( buf, objType, 255 );
+  strncat( buf, "-", 255 );
+  strncat( buf, objName, 255 );
+
+  stat = avl_get_match( this->schemeList, (void *) buf,
+   (void **) &cur );
+  if ( !( stat & 1 ) ) {
+    return 0;
+  }
+
+  if ( cur ) {
+    return 1;
+  }
+  else {
+    return 0;
+  }
+
+}
+
 void appContextClass::getScheme (
   char *schemeSetName,
   char *objName,

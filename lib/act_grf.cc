@@ -45,6 +45,7 @@ activeGraphicClass::activeGraphicClass ( void ) {
   editMode = AGC_K_EDIT_PROPERTIES;
   strcpy( id, "" );
   currentDragIndex = 0;
+  objType = activeGraphicClass::UNKNOWN;
 
 }
 
@@ -67,6 +68,7 @@ void activeGraphicClass::clone ( const activeGraphicClass *source ) {
   inGroup = source->inGroup;
   editMode = source->editMode;
   strncpy( id, source->id, 31 );
+  objType = source->objType;
 
   selected = 0;
   deleteRequest = 0;
@@ -83,6 +85,44 @@ activeGraphicClass::~activeGraphicClass ( void ) {
 
   if ( ef.formIsPoppedUp() ) {
     ef.popdown();
+  }
+
+}
+
+void activeGraphicClass::setObjType (
+  char *strObjType ) {
+
+  if ( strcmp( strObjType, global_str3 ) == 0 ) {
+    objType = GRAPHICS;
+  }
+  else if ( strcmp( strObjType, global_str2 ) == 0 ) {
+    objType = MONITORS;
+  }
+  else if ( strcmp( strObjType, global_str5 ) == 0 ) {
+    objType = CONTROLS;
+  }
+  else {
+    objType = UNKNOWN;
+  }
+
+}
+
+void activeGraphicClass::getObjType (
+  int maxLen,
+  char *strObjType )
+{
+
+  if ( objType == GRAPHICS ) {
+    strncpy( strObjType, global_str3, maxLen );
+  }
+  else if ( objType == MONITORS ) {
+    strncpy( strObjType, global_str2, maxLen );
+  }
+  else if ( objType == CONTROLS ) {
+    strncpy( strObjType, global_str5, maxLen );
+  }
+  else {
+    strncpy( strObjType, "", maxLen );
   }
 
 }

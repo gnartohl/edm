@@ -709,6 +709,8 @@ colorButtonClass defaultBotShadowCb;
 int defaultOffsetColor, bufDefaultOffsetColor;
 colorButtonClass defaultOffsetCb;
 
+int useComponentScheme;
+
 int allSelectedTextFgColor;
 int allSelectedTextFgColorFlag;
 

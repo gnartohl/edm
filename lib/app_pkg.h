@@ -324,6 +324,11 @@ void appContextClass::getScheme (
   char *schemeFileName,
   int maxLen );
 
+int appContextClass::schemeExists (
+  char *schemeSetName,
+  char *objName,
+  char *objType );
+
 int appContextClass::setProperty (
   char *winId,
   char *id,
