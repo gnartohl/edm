@@ -3802,6 +3802,10 @@ err_return:
     return 0; // error
   }
 
+  if ( ci.majorVersion() == 3 ) {
+    postMessage( appContextClass_str131 );
+  }
+
   XSetWindowColormap( display, XtWindow(pvList.top()), ci.getColorMap() );
 
   postNote( appContextClass_str117 );

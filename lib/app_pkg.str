@@ -81,5 +81,6 @@
 #define appContextClass_str128 (char *) "File is empty\n"
 #define appContextClass_str129 (char *) "Color mode is RGB! Edm should not normally be run in this manner."
 #define appContextClass_str130 (char *) "(-colormode index or unset EDMCOLORMODE disables this)"
+#define appContextClass_str131 (char *) "Warning - using obselete color file version"
 
 #endif
