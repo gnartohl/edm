@@ -107,7 +107,8 @@ protected:
     bool is_pvname_valid;       
     ProcessVariable *valuePvId;        // ChannelAccess, PV
     bool bufInvalid;
-    int lastval;
+    bool validFlag;
+    unsigned int value, lastval;
     
     // Properties
     enum bdir { BIGENDIAN, LITTLEENDIAN };

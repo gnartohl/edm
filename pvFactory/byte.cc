@@ -13,8 +13,8 @@
 
 edmByteClass::edmByteClass() : activeGraphicClass(), init(0), 
   is_executing(false), is_pvname_valid(false), valuePvId(0), bufInvalid(true),
-  lastval(0), theDir(BIGENDIAN),  nobt(16),shft(0), lineWidth(1), 
-  lineStyle(LineSolid), theOutline(0)
+  validFlag(false), value(0), lastval(0), theDir(BIGENDIAN),  nobt(16),
+  shft(0), lineWidth(1), lineStyle(LineSolid), theOutline(0)
 {
    name = strdup(BYTE_CLASSNAME);
 }
@@ -577,7 +577,7 @@ int edmByteClass::activate(int pass, void *ptr)
             break;
         case 2: // connect to pv
             if (valuePvId)
-                printf("textentry::activate: pv already set!\n");
+                printf("byte::activate: pv already set!\n");
             if (is_pvname_valid)
             {
                 valuePvId = the_PV_Factory->create(getExpandedPVName());
@@ -587,11 +587,6 @@ int edmByteClass::activate(int pass, void *ptr)
                     valuePvId->add_value_callback(pv_value_callback, this);
                 }
             }
-            bufInvalidate();
-            actWin->appCtx->proc->lock();
-            actWin->addDefExeNode(aglPtr);
-            actWin->appCtx->proc->unlock();
-
             break;
     }
     return 1;
@@ -626,7 +621,7 @@ inline void edmByteClass::innerDrawFull(int value, int i, int mask,
   if (i < nobt)
      current = (value & mask)?1:0;
   else
-     current = previous?0:1; 	// save checking for nobt in next line.
+     current = previous?0:1; // save checking for nobt in next line.
 
   if (current != previous)
   {
@@ -656,7 +651,9 @@ int edmByteClass::drawActive()
       drawActiveFull();
    }
    else
+   {
       drawActiveBits();
+   }
 
    return 1;
 }
@@ -694,7 +691,6 @@ inline void edmByteClass::innerDrawBits(int value, int i, int mask)
 
 int edmByteClass::drawActiveBits()
 {
-  unsigned int value;
   if ( !init || !is_executing ) return 1;
 
   actWin->executeGc.saveFg();
@@ -708,9 +704,8 @@ int edmByteClass::drawActiveBits()
      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
   }
-  else if (valuePvId && valuePvId->is_valid())
+  else if (validFlag)
   {
-     value = (valuePvId->get_int() >> shft);
      int i = 0;
      int mask;
      actWin->executeGc.setLineWidth( lineWidth );
@@ -731,7 +726,6 @@ int edmByteClass::drawActiveBits()
               innerDrawBits(value, i, mask);
         }
      }
-     lastval = value;
   }
  
   actWin->executeGc.setLineWidth( 1 );
@@ -744,7 +738,6 @@ int edmByteClass::drawActiveBits()
 
 int edmByteClass::drawActiveFull()
 {
-  unsigned int value;
   if ( !init || !is_executing ) return 1;
 
   actWin->executeGc.saveFg();
@@ -756,10 +749,8 @@ int edmByteClass::drawActiveFull()
      actWin->executeGc.normGC(), x, y, w, h );
      bufInvalid = false;
   }
-  else if (valuePvId && valuePvId->is_valid())
+  else if (validFlag)
   {
-     lastval = value;
-     value = (valuePvId->get_int() >> shft);
      int previous = 0;
      int lastseg = 0;
      int i = 0;
@@ -785,6 +776,13 @@ int edmByteClass::drawActiveFull()
         }
      }
      bufInvalid = false;
+  }
+  else // invalid PV
+  {
+    actWin->drawGc.setFG( 0 );	// white
+    XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->drawGc.normGC(), x, y, w, h );
+    bufInvalid = false;
   }
  
   actWin->executeGc.setFG( actWin->ci->getPixelByIndex(lineColor) );
@@ -835,6 +833,16 @@ void edmByteClass::pv_conn_state_callback(ProcessVariable *pv, void *userarg)
     me->actWin->appCtx->proc->lock();
     if (me->is_executing)
     {
+        if (me->valuePvId->is_valid())
+        {
+           me->lastval = me->value;
+           me->value = (me->valuePvId->get_int() >> me->shft);
+           me->validFlag = true;
+        }
+        else 
+        {
+           me->validFlag = false;
+        }
         me->bufInvalidate();
         me->actWin->addDefExeNode(me->aglPtr);
     }
@@ -847,7 +855,21 @@ void edmByteClass::pv_value_callback(ProcessVariable *pv, void *userarg)
     me->actWin->appCtx->proc->lock();
     if (me->is_executing)
     {
-        //me->bufInvalidate();
+        if (me->valuePvId->is_valid())
+        {
+           me->lastval = me->value;
+           me->value = (me->valuePvId->get_int() >> me->shft);
+           if (!me->validFlag) 
+           {
+              me->validFlag = true;
+              me->bufInvalidate();
+           }
+        }
+        else if (me->validFlag)
+        {
+           me->validFlag = false;
+           me->bufInvalidate();
+        }
         me->actWin->addDefExeNode(me->aglPtr);
     }
     me->actWin->appCtx->proc->unlock();
