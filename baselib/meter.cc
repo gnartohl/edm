@@ -923,14 +923,18 @@ int activeMeterClass::draw ( void ) {
  scaleValue = scaleMax - scaleTextIncr;
  sprintf (scaleString, fmt, scaleValue);
 
- if ( XTextWidth(scaleFs,scaleString,strlen(scaleString)) > scaleFontWidth)
-   scaleFontWidth = XTextWidth(scaleFs,scaleString,strlen(scaleString));
-						    
+ if ( scaleFs ) {
+   if ( XTextWidth(scaleFs,scaleString,strlen(scaleString)) > scaleFontWidth)
+     scaleFontWidth = XTextWidth(scaleFs,scaleString,strlen(scaleString));
+ }
+
  scaleValue = scaleMin + scaleTextIncr;
  sprintf (scaleString, fmt, scaleValue);
 
- if ( XTextWidth(scaleFs,scaleString,strlen(scaleString)) > scaleFontWidth)
-   scaleFontWidth = XTextWidth(scaleFs,scaleString,strlen(scaleString));
+ if ( scaleFs ) {
+   if ( XTextWidth(scaleFs,scaleString,strlen(scaleString)) > scaleFontWidth)
+     scaleFontWidth = XTextWidth(scaleFs,scaleString,strlen(scaleString));
+ }
 
  descentAngle = 3.1415926535898/2 - meterTotalAngle/2;
 
