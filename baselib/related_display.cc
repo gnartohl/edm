@@ -1901,29 +1901,33 @@ int blink = 0;
     }
     else {
 
-      // draw icon on button without text
+      if ( icon ) {
 
-      min = (int) ( w*3/5 );
-      if ( (int) ( h*3/5 ) < min ) min = (int) ( h*3/5 );
-      cx = x + w/2;
-      cy = y + h/2;
-      ofs = (int) ( min*2/5+0.5 );
-      size = (int) ( min*3/5-0.5 );
+        // draw icon on button without text
 
-      actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
+        min = (int) ( w*3/5 );
+        if ( (int) ( h*3/5 ) < min ) min = (int) ( h*3/5 );
+        cx = x + w/2;
+        cy = y + h/2;
+        ofs = (int) ( min*2/5+0.5 );
+        size = (int) ( min*3/5-0.5 );
 
-      XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
-       actWin->drawGc.normGC(), cx+ofs-size, cy+ofs-size, size, size );
+        actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
 
-      actWin->drawGc.setFG( bgColor.pixelIndex(), &blink );
+        XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+         actWin->drawGc.normGC(), cx+ofs-size, cy+ofs-size, size, size );
 
-      XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
-       actWin->drawGc.normGC(), cx-ofs, cy-ofs, size, size );
+        actWin->drawGc.setFG( bgColor.pixelIndex(), &blink );
 
-      actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
+        XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+         actWin->drawGc.normGC(), cx-ofs, cy-ofs, size, size );
 
-      XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
-       actWin->drawGc.normGC(), cx-ofs, cy-ofs, size, size );
+        actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
+
+        XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+         actWin->drawGc.normGC(), cx-ofs, cy-ofs, size, size );
+
+      }
 
     }
 
@@ -2098,29 +2102,33 @@ int blink = 0;
     }
     else {
 
-      // draw icon on button without text
+      if ( icon ) {
 
-      min = (int) ( w*3/5 );
-      if ( (int) ( h*3/5 ) < min ) min = (int) ( h*3/5 );
-      cx = x + w/2;
-      cy = y + h/2;
-      ofs = (int) ( min*2/5+0.5 );
-      size = (int) ( min*3/5-0.5 );
+        // draw icon on button without text
 
-      actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
+        min = (int) ( w*3/5 );
+        if ( (int) ( h*3/5 ) < min ) min = (int) ( h*3/5 );
+        cx = x + w/2;
+        cy = y + h/2;
+        ofs = (int) ( min*2/5+0.5 );
+        size = (int) ( min*3/5-0.5 );
 
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-       actWin->executeGc.normGC(), cx+ofs-size, cy+ofs-size, size, size );
+        actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
 
-      actWin->executeGc.setFG( bgColor.pixelIndex(), &blink );
+        XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), cx+ofs-size, cy+ofs-size, size, size );
 
-      XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
-       actWin->executeGc.normGC(), cx-ofs, cy-ofs, size, size );
+        actWin->executeGc.setFG( bgColor.pixelIndex(), &blink );
 
-      actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
+        XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), cx-ofs, cy-ofs, size, size );
 
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-       actWin->executeGc.normGC(), cx-ofs, cy-ofs, size, size );
+        actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
+
+        XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), cx-ofs, cy-ofs, size, size );
+
+      }
 
     }
 
