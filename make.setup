@@ -8,6 +8,9 @@ endif
 ifeq ($(HOSTNAME), xyz)
 	FOR_WHAT=RH7_SNS_ORNL
 endif
+ifeq ($(HOSTNAME), orib36)
+	FOR_WHAT=RH7_HRIBF_ORNL
+endif
 
 ifndef FOR_WHAT
 	FOR_WHAT=your_system
@@ -16,6 +19,18 @@ endif
 # Settings for RedHat7 @ SNS/LANL
 ifeq ($(FOR_WHAT), RH7_SNS_LANL)
 	EPICS=/cs/epics/R3.13.3/base
+	CC=gcc
+	CXX=g++
+	CFLAGS=-g -Wall -O0 -DMOTIF 
+	CFLAGS+=-DSINGLE_THREADED=1 -DCONFIG_linuxglibc -D_REENTRANT
+	CFLAGS+=-D__linux__=1 -D__epics__=1
+	CXXFLAGS=$(CFLAGS)
+	SL_LINK=gcc -shared -Wl
+	SL_FLAGS=-L$(EPICS)/lib/$(HOST_ARCH) -lm -lCom -lca 
+endif
+
+ifeq ($(FOR_WHAT), RH7_HRIBF_ORNL)
+	EPICS=/epics/base
 	CC=gcc
 	CXX=g++
 	CFLAGS=-g -Wall -O0 -DMOTIF 
