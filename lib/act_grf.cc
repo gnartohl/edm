@@ -45,6 +45,8 @@ activeGraphicClass::activeGraphicClass ( void ) {
   editMode = AGC_K_EDIT_PROPERTIES;
   strcpy( id, "" );
   currentDragIndex = 0;
+  curUndoObj = NULL;
+  startEdit = 0;
   objType = activeGraphicClass::UNKNOWN;
   onBlinkList = 0;
   blinkFunc = NULL;
