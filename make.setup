@@ -64,7 +64,7 @@ ifeq ($(FOR_WHAT), RH7_SNS_LANL)
 endif
 
 ifeq ($(FOR_WHAT), SOL8_SNS_ORNL)
-	EPICS=/sns/ADE/test/epics/supTop/base/R3.13.3
+	EPICS=/sns/ADE/test/epics/supTop/base/R3.13.5
 	CC=gcc
 	CXX=g++
 	CFLAGS=-g -Wall -O0 -DMOTIF -fPIC
@@ -89,7 +89,7 @@ ifeq ($(FOR_WHAT), RH7_HRIBF_ORNL)
 endif
 
 ifeq ($(FOR_WHAT), RH7_SNS_ORNL)
-	EPICS=/usr/local/epics/R3.13.3
+	EPICS=/usr/local/epics/R3.13.5
 	CC=gcc
 	CXX=g++
 	CFLAGS=-g -Wall -O0 -DMOTIF 
@@ -101,7 +101,7 @@ ifeq ($(FOR_WHAT), RH7_SNS_ORNL)
 endif
 
 ifeq ($(FOR_WHAT), RH71_ELW_HOME)
-	EPICS=/usr/local/epics/R3.13.3
+	EPICS=/usr/local/epics/R3.13.5
 	CC=gcc
 	CXX=g++
 	CFLAGS=-g -Wall -O0 -DMOTIF 
@@ -125,7 +125,7 @@ ifeq ($(FOR_WHAT), RH7_SNS_LBNL)
 endif
 
 ifeq ($(FOR_WHAT), RH71_SNS_LAPTOP)
-	EPICS=/ops/epics/supTop/base/R3.13.3
+	EPICS=/ops/epics/supTop/base/R3.13.5
 	CC=gcc
 	CXX=g++
 	CFLAGS=-g -Wall -O0 -DMOTIF 
