@@ -165,6 +165,8 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
 
   rdo->invisible = rdo->buf->bufInvisible;
 
+  rdo->noEdit = rdo->buf->bufNoEdit;
+
   rdo->useFocus = rdo->buf->bufUseFocus;
 
   rdo->x = rdo->buf->bufX;
@@ -264,6 +266,7 @@ int i;
 
   activeMode = 0;
   invisible = 0;
+  noEdit = 0;
   useFocus = 0;
 
   for ( i=0; i<maxDsps; i++ ) {
@@ -348,6 +351,7 @@ activeGraphicClass *rdo = (activeGraphicClass *) this;
   bgCb = source->bgCb;
 
   invisible = source->invisible;
+  noEdit = source->noEdit;
   useFocus = source->useFocus;
 
   for ( i=0; i<maxDsps; i++ ) {
@@ -530,6 +534,8 @@ int i, index;
   else {
     writeStringToFile( f, "" );
   }
+
+  fprintf( f, "%-d\n", noEdit );
 
   return 1;
 
@@ -749,6 +755,13 @@ char onePvName[127+1];
   }
   else {
     buttonLabel.setRaw( label[0].getRaw() );
+  }
+
+  if ( ( major > 2 ) || ( major == 2 ) && ( minor > 2 ) ) {
+    fscanf( f, "%d\n", &noEdit ); actWin->incLine();
+  }
+  else {
+    noEdit = 0;
   }
 
   actWin->fi->loadFontTag( fontTag );
@@ -1053,6 +1066,8 @@ char title[32], *ptr;
 
   buf->bufInvisible = invisible;
 
+  buf->bufNoEdit = noEdit;
+
   buf->bufUseFocus = useFocus;
 
   for ( i=0; i<maxDsps; i++ ) {
@@ -1166,6 +1181,7 @@ char title[32], *ptr;
 
   ef.addToggle( relatedDisplayClass_str17, &buf->bufUseFocus );
   ef.addToggle( relatedDisplayClass_str19, &buf->bufInvisible );
+  ef.addToggle( relatedDisplayClass_str29, &buf->bufNoEdit );
 
   for ( i=0; i<NUMPVS; i++ ) {
     ef.addTextField( relatedDisplayClass_str15, 30, buf->bufDestPvName[i],
@@ -1895,8 +1911,14 @@ int numNewMacros, max, numFound;
      numNewMacros, newMacros, newValues );
   }
   else {
-    cur->node.create( actWin->appCtx, NULL, 0, 0, 0, 0,
-     numNewMacros, newMacros, newValues );
+    if ( noEdit ) {
+      cur->node.createNoEdit( actWin->appCtx, NULL, 0, 0, 0, 0,
+       numNewMacros, newMacros, newValues );
+    }
+    else {
+      cur->node.create( actWin->appCtx, NULL, 0, 0, 0, 0,
+       numNewMacros, newMacros, newValues );
+    }
   }
 
   if ( !useSmallArrays ) {

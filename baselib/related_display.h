@@ -25,7 +25,7 @@
 #include "cadef.h"
 
 #define RDC_MAJOR_VERSION 2
-#define RDC_MINOR_VERSION 2
+#define RDC_MINOR_VERSION 3
 #define RDC_RELEASE 0
 
 typedef struct objAndIndexTag {
@@ -168,6 +168,7 @@ typedef struct bufTag {
   int bufFgColor;
   int bufBgColor;
   int bufInvisible;
+  int bufNoEdit;
   int bufCloseAction[maxDsps];
   int bufSetPostion[maxDsps];
   int bufAllowDups[maxDsps];
@@ -194,7 +195,7 @@ int topShadowColor;
 int botShadowColor;
 pvColorClass fgColor, bgColor;
 colorButtonClass fgCb, bgCb, topShadowCb, botShadowCb;
-int invisible;
+int invisible, noEdit;
 
 int closeAction[maxDsps];
 int setPostion[maxDsps];
