@@ -496,8 +496,10 @@ void CALC_ProcessVariable::value_callback(ProcessVariable *pv, void *userarg)
     printf("CALC %s: value callback %s\n",
            me->get_name(), pv->get_name());
 #   endif
-    me->recalc();
-    me->do_value_callbacks();
+    if ( me->is_valid() ) {
+      me->recalc();
+      me->do_value_callbacks();
+    }
 }
 
 void CALC_ProcessVariable::recalc()
