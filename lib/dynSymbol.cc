@@ -1271,7 +1271,7 @@ activeGraphicListPtr cur;
     down = 0;
 
 #ifdef __epics__
-    gateUpEventId = gateDownEventId = 0;
+    gateUpEventId = gateDownEventId = colorEventId = 0;
 #endif
 
     gateUpPvConnected = gateDownPvConnected = 0;
