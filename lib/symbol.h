@@ -29,7 +29,7 @@
 #include "cadef.h"
 
 #define ASC_MAJOR_VERSION 1
-#define ASC_MINOR_VERSION 6
+#define ASC_MINOR_VERSION 7
 #define ASC_RELEASE 0
 
 #define SYMBOL_K_NUM_STATES 64
@@ -46,10 +46,6 @@
 #include "symbol.str"
 
 static char *dragName[] = {
-  activeSymbolClass_str1,
-};
-
-static char *dragNameTruthTable[] = {
   activeSymbolClass_str2,
   activeSymbolClass_str3,
   activeSymbolClass_str4,
@@ -110,6 +106,9 @@ typedef struct objPlusIndexTag {
   int index;
   unsigned int setMask;
   unsigned int clrMask;
+  unsigned int andMask;
+  unsigned int xorMask;
+  int shiftCount;
 } objPlusIndexType, *objPlusIndexPtr;
 
 class activeSymbolClass : public activeGraphicClass {
@@ -180,6 +179,18 @@ int needErase, needDraw, needConnectInit, needConnect[SYMBOL_K_MAX_PVS],
 int unconnectedTimer;
 
 int orientation, bufOrientation, prevOr;
+
+unsigned int xorMask[SYMBOL_K_MAX_PVS];
+unsigned int andMask[SYMBOL_K_MAX_PVS];
+char cXorMask[SYMBOL_K_MAX_PVS][9+1];
+char cAndMask[SYMBOL_K_MAX_PVS][9+1];
+int shiftCount[SYMBOL_K_MAX_PVS];
+
+char bufXorMask[SYMBOL_K_MAX_PVS][9+1];
+char bufAndMask[SYMBOL_K_MAX_PVS][9+1];
+int bufShiftCount[SYMBOL_K_MAX_PVS];
+
+unsigned int curUiVal[SYMBOL_K_MAX_PVS];
 
 public:
 

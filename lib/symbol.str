@@ -2,11 +2,11 @@
 #define __symbol_str 1
 
 #define activeSymbolClass_str1 (char *) "Control PV"
-#define activeSymbolClass_str2 (char *) "Truth Table PV 1"
-#define activeSymbolClass_str3 (char *) "Truth Table PV 2"
-#define activeSymbolClass_str4 (char *) "Truth Table PV 3"
-#define activeSymbolClass_str5 (char *) "Truth Table PV 4"
-#define activeSymbolClass_str6 (char *) "Truth Table PV 5"
+#define activeSymbolClass_str2 (char *) "Control PV 1"
+#define activeSymbolClass_str3 (char *) "Control PV 2"
+#define activeSymbolClass_str4 (char *) "Control PV 3"
+#define activeSymbolClass_str5 (char *) "Control PV 4"
+#define activeSymbolClass_str6 (char *) "Control PV 5"
 #define activeSymbolClass_str7 (char *) "Symbol resize underflow - using original size"
 #define activeSymbolClass_str8 (char *) "Cannot read symbol file"
 #define activeSymbolClass_str9 (char *) "Unknown object"
@@ -38,5 +38,8 @@
 #define activeSymbolClass_str35 (char *) "Symbol rotate --> No-op"
 #define activeSymbolClass_str36 (char *) "Symbol flip --> No-op"
 #define activeSymbolClass_str37 (char *) "Use display orientation instead (edit)"
+#define activeSymbolClass_str38 (char *) "AND"
+#define activeSymbolClass_str39 (char *) "h  XOR"
+#define activeSymbolClass_str40 (char *) "h  Shift"
 
 #endif

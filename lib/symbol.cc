@@ -99,7 +99,7 @@ activeGraphicListPtr head, cur, next, sourceHead, curSource;
 
   }
 
-  // make current symbol obj list empty (because we stold all
+  // make current symbol obj list empty (because we stole all
   // the information above); when the edit operation proceeds and
   // the display list is destroyed and recreated from the current
   // contents of the symbol file, we don't want the current image
@@ -114,6 +114,11 @@ activeGraphicListPtr head, cur, next, sourceHead, curSource;
   for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
     aso->controlVals[i] = 0.0;
     aso->controlPvExpStr[i].setRaw( _aso->controlPvExpStr[i].rawString );
+    aso->xorMask[i] = 0;
+    aso->andMask[i] = 0;
+    aso->shiftCount[i] = 0;
+    strcpy( aso->cXorMask[i], "0" );
+    strcpy( aso->cAndMask[i], "0" );
   }
 
   strncpy( aso->symbolFileName, _aso->symbolFileName, 127 );
@@ -234,19 +239,86 @@ static void symbol_controlUpdate (
 
 objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(ast_args.chid);
 activeSymbolClass *aso = (activeSymbolClass *) ptr->objPtr;
+unsigned int uiVal;
+int i;
 
   if ( aso->active ) {
 
     if ( aso->binaryTruthTable ) {
+
       aso->controlVals[ptr->index] = *( (double *) ast_args.dbr );
       if ( aso->controlVals[ptr->index] != 0 )
         aso->iValue |= ptr->setMask;
       else
         aso->iValue &= ptr->clrMask;
       aso->curControlV = (double) aso->iValue;
+
     }
     else {
-      aso->curControlV = *( (double *) ast_args.dbr );
+
+      if ( aso->numPvs == 1 ) {
+
+        if ( ( aso->andMask[ptr->index] != 0 ) ||
+             ( aso->xorMask[ptr->index] != 0 ) ||
+             ( aso->shiftCount[ptr->index] != 0 ) ) {
+
+          aso->curControlV = *( (double *) ast_args.dbr );
+
+	}
+	else {
+
+          aso->curUiVal[ptr->index] =
+           (unsigned int) *( (double *) ast_args.dbr );
+
+          if ( aso->andMask[ptr->index] ) {
+            aso->curUiVal[ptr->index] &= aso->andMask[ptr->index];
+	  }
+
+          aso->curUiVal[ptr->index] ^= aso->xorMask[ptr->index];
+
+          if ( aso->shiftCount[ptr->index] < 0 ) {
+            aso->curUiVal[ptr->index] =
+	      aso->curUiVal[ptr->index] >> abs(aso->shiftCount[ptr->index]);
+          }
+          else {
+            aso->curUiVal[ptr->index] =
+             aso->curUiVal[ptr->index] << aso->shiftCount[ptr->index];
+	  }
+
+          aso->curControlV = (double) aso->curUiVal[ptr->index];
+
+	}
+
+      }
+      else {
+
+        aso->curUiVal[ptr->index] =
+         (unsigned int) *( (double *) ast_args.dbr );
+
+        if ( aso->andMask[ptr->index] ) {
+          aso->curUiVal[ptr->index] &= aso->andMask[ptr->index];
+        }
+
+        aso->curUiVal[ptr->index] ^= aso->xorMask[ptr->index];
+
+        if ( aso->shiftCount[ptr->index] < 0 ) {
+          aso->curUiVal[ptr->index] =
+           aso->curUiVal[ptr->index] >> abs(aso->shiftCount[ptr->index]);
+        }
+        else {
+          aso->curUiVal[ptr->index] =
+           aso->curUiVal[ptr->index] << aso->shiftCount[ptr->index];
+	}
+
+        uiVal = 0;
+        for ( i=0; i<aso->numPvs; i++ ) {
+          uiVal |= aso->curUiVal[i];
+	}
+
+        aso->curControlV = (double) uiVal;
+
+      }        
+
     }
 
     aso->needRefresh = 1;
@@ -328,6 +400,9 @@ int stat, resizeStat, i, saveW, saveH, saveX, saveY;
 
   aso->numPvs = 0;
   for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
+    aso->shiftCount[i] = aso->bufShiftCount[i];
+    strncpy( aso->cXorMask[i], aso->bufXorMask[i], 9 );
+    strncpy( aso->cAndMask[i], aso->bufAndMask[i], 9 );
     aso->controlPvExpStr[i].setRaw( aso->bufControlPvName[i] );
     if ( !blank( aso->bufControlPvName[i] ) )
       (aso->numPvs)++;
@@ -509,6 +584,11 @@ int i;
   controlV = 0.0;
   for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
     controlVals[i] = 0.0;
+    xorMask[i] = 0;
+    andMask[i] = 0;
+    shiftCount[i] = 0;
+    strcpy( cXorMask[i], "0" );
+    strcpy( cAndMask[i], "0" );
   }
   iValue = 0;
   strcpy( symbolFileName, "" );
@@ -672,6 +752,9 @@ int i;
   for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
     controlVals[i] = 0.0;
     controlPvExpStr[i].setRaw( source->controlPvExpStr[i].rawString );
+    strncpy( cXorMask[i], source->cXorMask[i], 9 );
+    strncpy( cAndMask[i], source->cAndMask[i], 9 );
+    shiftCount[i] = source->shiftCount[i];
   }
   iValue = 0;
 
@@ -762,6 +845,9 @@ char title[32], *ptr;
        activeGraphicClass::MAX_PV_NAME );
     else
       strcpy( bufControlPvName[i], "" );
+    strncpy( bufXorMask[i], cXorMask[i], 9 );
+    strncpy( bufAndMask[i], cAndMask[i], 9 );
+    bufShiftCount[i] = shiftCount[i];
   }
 
   for ( i=0; i<SYMBOL_K_NUM_STATES; i++ ) {
@@ -787,20 +873,30 @@ char title[32], *ptr;
    title, SYMBOL_K_NUM_STATES, numStates,
    symbolSetItem, (void *) this, NULL, NULL, NULL );
 
-  //ef.addTextField( activeSymbolClass_str11, 30, bufId, 31 );
+  //ef.addTextField( activeSymbolClass_str11, 32, bufId, 35 );
 
-  ef.addTextField( activeSymbolClass_str12, 30, &bufX );
-  ef.addTextField( activeSymbolClass_str13, 30, &bufY );
-  ef.addTextField( activeSymbolClass_str14, 30, bufSymbolFileName, 127 );
-  ef.addTextField( activeSymbolClass_str29, 30, bufColorPvName,
+  ef.addTextField( activeSymbolClass_str12, 32, &bufX );
+  ef.addTextField( activeSymbolClass_str13, 32, &bufY );
+  ef.addTextField( activeSymbolClass_str14, 32, bufSymbolFileName, 127 );
+  ef.addTextField( activeSymbolClass_str29, 32, bufColorPvName,
    activeGraphicClass::MAX_PV_NAME );
 
-  ef.addTextField( activeSymbolClass_str17, 30, bufControlPvName[0],
-   activeGraphicClass::MAX_PV_NAME );
-
-  for ( i=1; i<SYMBOL_K_MAX_PVS; i++ ) {
-    ef.addTextField( " ", 30, bufControlPvName[i],
-     activeGraphicClass::MAX_PV_NAME );
+  for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
+    if ( i == 0 ) {
+      ef.addTextField( activeSymbolClass_str17, 32, bufControlPvName[i],
+       activeGraphicClass::MAX_PV_NAME );
+    }
+    else {
+      ef.addTextField( " ", 32, bufControlPvName[i],
+       activeGraphicClass::MAX_PV_NAME );
+    }
+    ef.beginSubForm();
+    ef.addTextField( activeSymbolClass_str38, 4, bufAndMask[i], 4 );
+    ef.addLabel( activeSymbolClass_str39 );
+    ef.addTextField( "", 4, bufXorMask[i], 4 );
+    ef.addLabel( activeSymbolClass_str40 );
+    ef.addTextField( "", 3, &bufShiftCount[i] );
+    ef.endSubForm();
   }
 
   ef.addToggle( activeSymbolClass_str16, &bufBinaryTruthTable );
@@ -821,8 +917,8 @@ char title[32], *ptr;
     maxPtr[i] = &bufStateMaxValue[i];
   }
 
-  ef.addTextFieldArray( activeSymbolClass_str18, 30, bufStateMinValue, &elsvMin );
-  ef.addTextFieldArray( activeSymbolClass_str19, 30, bufStateMaxValue, &elsvMax );
+  ef.addTextFieldArray( activeSymbolClass_str18, 32, bufStateMinValue, &elsvMin );
+  ef.addTextFieldArray( activeSymbolClass_str19, 32, bufStateMaxValue, &elsvMax );
 
   return 1;
 
@@ -1141,6 +1237,13 @@ int i, saveX, saveY, origX, origY, origW, origH;
   fprintf( f, "%-d\n", fgColor );
   fprintf( f, "%-d\n", bgColor );
 
+  // version 1.7.0
+  for ( i=0; i<numPvs; i++ ) {
+    writeStringToFile( f, cAndMask[i] );
+    writeStringToFile( f, cXorMask[i] );
+    fprintf( f, "%-d\n", shiftCount[i] );
+  }
+
   return 1;
 
 }
@@ -1232,6 +1335,33 @@ float val;
     useOriginalColors = 1;
     fgColor = actWin->defaultTextFgColor;
     bgColor = actWin->defaultBgColor;
+  }
+
+  if ( ( major > 1 ) || ( minor > 6 ) ) {
+
+    for ( i=0; i<numPvs; i++ ) {
+      andMask[i] = 0;
+      xorMask[i] = 0;
+      readStringFromFile( cAndMask[i], 9, f );
+      readStringFromFile( cXorMask[i], 9, f );
+      fscanf( f, "%d\n", &shiftCount[i] );
+    }
+
+  }
+  else {
+
+    for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
+      andMask[i] = 0;
+      xorMask[i] = 0;
+      shiftCount[i] = 0;
+      strcpy( cXorMask[i], "0" );
+      strcpy( cAndMask[i], "0" );
+    }
+
+    if ( !binaryTruthTable ) {
+      numPvs = 1;
+    }
+
   }
 
   saveW = w;
@@ -1517,7 +1647,7 @@ activeGraphicListPtr cur;
     unconnectedTimer = 0;
     for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) needConnect[i] = 0;
     aglPtr = ptr;
-    iValue = 0; /* this get set via OR/AND operations */
+    iValue = 0; /* this gets set via OR/AND operations */
     prevIndex = -1;
     init = 0;
     controlExists = 0;
@@ -1526,12 +1656,13 @@ activeGraphicListPtr cur;
     activeMode = 1;
     controlV = 1;
 
-    if ( binaryTruthTable )
-      notControlPvConnected = (int) pow(2,numPvs) - 1;
-    else {
-      numPvs = 1;
-      notControlPvConnected = 1;
+    for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
+      curUiVal[i] = 0; /* this gets set via XOR/AND/SHIFT operations */
+      andMask[i] = strtol( cAndMask[i], NULL, 16 );
+      xorMask[i] = strtol( cXorMask[i], NULL, 16 );
     }
+
+    notControlPvConnected = (int) pow(2,numPvs) - 1;
 
     controlExists = 1;
     for ( i=0; i<numPvs; i++ ) {
@@ -2722,25 +2853,15 @@ char *activeSymbolClass::firstDragName ( void ) {
 
   dragIndex = 0;
 
-  if ( binaryTruthTable ) {
-    return dragNameTruthTable[dragIndex];
-  }
-  else {
-    return dragName[dragIndex];
-  }
+  return dragName[dragIndex];
 
 }
 
 char *activeSymbolClass::nextDragName ( void ) {
 
-  if ( binaryTruthTable ) {
-    if ( dragIndex < (int) (sizeof(dragNameTruthTable)/sizeof(char *)) - 1 ) {
-      dragIndex++;
-      return dragNameTruthTable[dragIndex];
-    }
-    else {
-      return NULL;
-    }
+  if ( dragIndex < (int) (sizeof(dragName)/sizeof(char *)) - 1 ) {
+    dragIndex++;
+    return dragName[dragIndex];
   }
   else {
     return NULL;
@@ -3341,6 +3462,9 @@ int i;
   for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
     controlVals[i] = 0.0;
     controlPvExpStr[i].setRaw( ptr->aso->controlPvExpStr[i].rawString );
+    strncpy( cAndMask[i], ptr->aso->cAndMask[i], 9 );
+    strncpy( cXorMask[i], ptr->aso->cXorMask[i], 9 );
+    shiftCount[i] = ptr->aso->shiftCount[i];
   }
 
   // restore remaining attributes
