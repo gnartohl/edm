@@ -728,14 +728,20 @@ int imageAllocated = 0;
 int imageCreated = 0;
 int fileOpened = 0;
 struct stat statBuf;
+expStringClass expStr;
+
+  expStr.setRaw( pngFileName );
+  expStr.expand1st( actWin->numMacros, actWin->macros, actWin->expansions );
 
   default_display_exponent = LUT_exponent * CRT_exponent;
   display_exponent = default_display_exponent;
 
-  this->actWin->expandUserFileName( name, pngFileName, ".png", 127 );
+  //this->actWin->expandUserFileName( name, pngFileName, ".png", 127 );
+  this->actWin->expandUserFileName( name, expStr.getExpanded(), ".png", 127 );
   fp = fopen( name, "rb" );
   if ( !fp ) {
-    this->actWin->expandFileName( name, pngFileName, ".png", 127 );
+    //this->actWin->expandFileName( name, pngFileName, ".png", 127 );
+    this->actWin->expandFileName( name, expStr.getExpanded(), ".png", 127 );
     fp = fopen( name, "rb" );
     if ( !fp ) {
       goto error_return;

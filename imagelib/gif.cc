@@ -361,11 +361,17 @@ int imageCreated = 0;
 int colorsAllocated = 0;
 int fileOpened = 0;
 struct stat statBuf;
+expStringClass expStr;
 
-  this->actWin->expandUserFileName( name, gifFileName, ".gif", 127 );
+  expStr.setRaw( gifFileName );
+  expStr.expand1st( actWin->numMacros, actWin->macros, actWin->expansions );
+
+  //this->actWin->expandUserFileName( name, gifFileName, ".gif", 127 );
+  this->actWin->expandUserFileName( name, expStr.getExpanded(), ".gif", 127 );
   gif = DGifOpenFileName( name );
   if ( !gif ) {
-    this->actWin->expandFileName( name, gifFileName, ".gif", 127 );
+    //this->actWin->expandFileName( name, gifFileName, ".gif", 127 );
+    this->actWin->expandFileName( name, expStr.getExpanded(), ".gif", 127 );
     gif = DGifOpenFileName( name );
     if ( !gif ) {
       goto error_return;
