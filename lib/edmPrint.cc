@@ -295,6 +295,7 @@ int edmPrintClass::printCmdReady ( void ) {
 }
 
 int edmPrintClass::printDialog (
+  char *_displayName,
   Widget top,
   Colormap cmap,
   int x,
@@ -308,6 +309,8 @@ int i;
   if ( !( status & 1 ) ) return status;
 
   sprintf( xwinIdBuf, "%u", (unsigned int) XtWindow(top) );
+
+  strncpy( displayName, XDisplayName(_displayName), 63 );
 
   // this is alway the "print to file" file name
   strcpy( option[MAX_OPTIONS-1], "" );
@@ -395,6 +398,9 @@ THREAD_HANDLE thread;
     else if ( strcmp( tk, "<opt1>" ) == 0 ) {
       Strncat( newCmd, option[0], 1023 );
     }
+    else if ( strcmp( tk, "<DSPNAME>" ) == 0 ) {
+      Strncat( newCmd, displayName, 1023 );
+    }
     else if ( strcmp( tk, "<opt2>" ) == 0 ) {
       Strncat( newCmd, option[1], 1023 );
     }
@@ -435,7 +441,8 @@ THREAD_HANDLE thread;
 
   }
 
-  // one more pass to translate <WINID> which may have been in a option
+  // one more pass to translate <WINID> & <DSPNAME> which may have been
+  // in an option
 
   strncpy( buf, newCmd, 1023 );
   buf[1023] = 0;
@@ -450,6 +457,9 @@ THREAD_HANDLE thread;
 
     if ( strcmp( tk, "<WINID>" ) == 0 ) {
       Strncat( newCmd, xwinIdBuf, 1023 );
+    }
+    else if ( strcmp( tk, "<DSPNAME>" ) == 0 ) {
+      Strncat( newCmd, displayName, 1023 );
     }
     else {
       Strncat( newCmd, tk,  1023 );

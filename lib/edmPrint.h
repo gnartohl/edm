@@ -157,6 +157,7 @@ int printFinished ( void );
 int printCmdReady ( void );
 
 int printDialog (
+  char *displayName,
   Widget top,
   Colormap cmap,
   int x,
@@ -223,6 +224,7 @@ int event;
 int finished;
 char xwinIdBuf[31+1];
 edmPrintThreadParamBlockType threadBlock;
+char displayName[63+1];
 
 };
 

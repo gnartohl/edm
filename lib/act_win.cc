@@ -1333,7 +1333,8 @@ Atom wm_delete_window;
 
       processAllEvents( awo->appCtx->appContext(), awo->d );
       
-      stat = awo->appCtx->epc.printDialog( awo->topWidgetId(),
+      stat = awo->appCtx->epc.printDialog( awo->appCtx->displayName,
+       awo->topWidgetId(),
        awo->appCtx->ci.getColorMap(),
        awo->b2PressXRoot, awo->b2PressYRoot );
 
@@ -2539,8 +2540,9 @@ Atom wm_delete_window;
       XRaiseWindow( awo->d, XtWindow(awo->top) );
 
       processAllEvents( awo->appCtx->appContext(), awo->d );
-      
-      stat = awo->appCtx->epc.printDialog( awo->topWidgetId(),
+
+      stat = awo->appCtx->epc.printDialog( awo->appCtx->displayName,
+       awo->topWidgetId(),
        awo->appCtx->ci.getColorMap(),
        awo->b2PressXRoot, awo->b2PressYRoot );
 

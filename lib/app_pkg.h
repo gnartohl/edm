@@ -240,7 +240,6 @@ Widget appTop, fileSelectBox, importSelectBox, mainWin, menuBar, filePullDown,
  mainDrawingArea, pathPullDown, pathCascade, helpPullDown, helpCascade;
 XtAppContext app;
 Display *display;
-char displayName[127+1];
 char colormode[7+1]; // index (default) or rgb
 int privColorMap;
 XEvent event;
@@ -286,6 +285,8 @@ int local;
 msgDialogClass msgDialog;
 
 public:
+
+char displayName[127+1];
 
 int numSchemeSets;
 char **schemeSetList;
