@@ -976,6 +976,13 @@ int activeGifClass::draw ( void ) {
 
   if ( noFile || activeMode || deleteRequest ) return 1;
 
+  if ( !actWin->appCtx->renderImages() ) {
+    actWin->drawGc.setFG( actWin->defaultTextFgColor );
+    XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.normGC(), x, y, w, h );
+    return 1;
+  }
+
   XPutImage( actWin->display(), XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), image, 0, 0, x, y, w, h );
 
@@ -993,6 +1000,13 @@ int activeGifClass::draw (
 int curW, curH;
 
   if ( noFile || activeMode || deleteRequest ) return 1;
+
+  if ( !actWin->appCtx->renderImages() ) {
+    actWin->drawGc.setFG( actWin->defaultTextFgColor );
+    XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.normGC(), x, y, w, h );
+    return 1;
+  }
 
   if ( x0 > ( x + w ) ) return 1;
   if ( x1 < x ) return 1;
@@ -1030,6 +1044,13 @@ Pixmap pixmap;
 
 //  if ( noFile || !image || !activeMode ) return 1;
   if ( noFile || !activeMode ) return 1;
+
+  if ( !actWin->appCtx->renderImages() ) {
+    actWin->executeGc.setFG( actWin->defaultTextFgColor );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+    return 1;
+  }
 
   screen_num = DefaultScreen( actWin->display() );
   visual = DefaultVisual( actWin->display(), screen_num );
@@ -1074,6 +1095,13 @@ int curW, curH;
 
   if ( noFile || !activeMode ) return 1;
 
+  if ( !actWin->appCtx->renderImages() ) {
+    actWin->executeGc.setFG( actWin->defaultTextFgColor );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+    return 1;
+  }
+
   if ( x0 > ( x + w ) ) return 1;
   if ( x1 < x ) return 1;
   if ( y0 > ( y + h ) ) return 1;
@@ -1117,6 +1145,13 @@ Visual *visual;
 Pixmap pixmap;
 
   if ( noFile || !activeMode ) return 1;
+
+  if ( !actWin->appCtx->renderImages() ) {
+    actWin->executeGc.setFG( actWin->defaultTextFgColor );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+    return 1;
+  }
 
   screen_num = DefaultScreen( actWin->display() );
   visual = DefaultVisual( actWin->display(), screen_num );
