@@ -2,7 +2,7 @@
 #define __environment_str 1
 
 
-// global_str92 is last
+// global_str94 is last
 
 
 #define environment_str1 (char *) "EDMDATAFILES"
@@ -47,6 +47,7 @@
 #define global_str86 (char *) "-restart"
 #define global_str89 (char *) "-one"
 #define global_str91 (char *) "-open"
+#define global_str93 (char *) "-eolc"
 
 // help text (some content must agree with command line options)
 #define global_str24 (char *) "EXECUTION\n"
@@ -108,6 +109,8 @@
 #define global_str90 (char *) "  -one     Allow only one edm instance\n\n"
 
 #define global_str92 (char *) "  -open    Request edm server to open files\n\n"
+
+#define global_str94 (char *) "  -eolc    Exit when last screen is closed\n\n"
 
 #define global_str62 (char *) "PV Class"
 

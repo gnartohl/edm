@@ -1386,6 +1386,8 @@ char oneFileName[127+1];
   apco->head->blink = cur;
   cur->flink = apco->head;
 
+  apco->atLeastOneOpen = 1;
+
 }
 
 void refreshUserLib_cb (
@@ -1933,6 +1935,8 @@ appContextClass::appContextClass (
   iconified = 0;
   usingControlPV = 0;
   renderImagesFlag = 1;
+  exitOnLastClose = 0;
+  atLeastOneOpen = 0;
 
   entryFormX = 0;
   entryFormY = 0;
@@ -3803,6 +3807,8 @@ static void displayParamInfo ( void ) {
 
   printf( global_str92 );
 
+  printf( global_str94 );
+
   printf( global_str38 );
 
   printf( global_str39 );
@@ -3877,6 +3883,7 @@ fileListPtr curFile;
   strcpy( colormode, "" );
   local = 0;
   privColorMap = 0;
+  exitOnLastClose = 0;
 
   // check first for component management commands
   if ( argc > 1 ) {
@@ -4042,6 +4049,9 @@ fileListPtr curFile;
         else if ( strcmp( argv[n], global_str79 ) == 0 ) { // private colormap
           privColorMap = 1;
         }
+	else if ( strcmp( argv[n], global_str93 ) == 0 ) { //exit on last close
+	  exitOnLastClose = 1;
+	}
 
 #ifdef GENERIC_PV
         else if ( strcmp( argv[n], global_str23 ) == 0 ) {
@@ -5085,6 +5095,11 @@ char msg[127+1];
 
       cur = cur->flink;
 
+    }
+
+    if ( nodeCount ) atLeastOneOpen = 1;
+    if ( exitOnLastClose && atLeastOneOpen ) {
+      if ( nodeCount == 0 ) exitFlag = 1;
     }
 
     processAllEvents( app, display );

@@ -1055,6 +1055,8 @@ Display *testDisplay;
 	}
         else if ( strcmp( argv[n], global_str79 ) == 0 ) {
 	}
+        else if ( strcmp( argv[n], global_str93 ) == 0 ) {
+	}
         else {
           *local = 1;
           return;
