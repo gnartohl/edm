@@ -136,6 +136,9 @@ static void slc_edit_cancel_delete (
 static void sl_controlUpdate (
   struct event_handler_args ast_args );
 
+static void sl_controlAlarmUpdate (
+  struct event_handler_args ast_args );
+
 static void sl_infoUpdate (
   struct event_handler_args ast_args );
 
@@ -158,6 +161,9 @@ static void sl_monitor_control_connect_state (
   struct connection_handler_args arg );
 
 static void sl_readUpdate (
+  struct event_handler_args ast_args );
+
+static void sl_readAlarmUpdate (
   struct event_handler_args ast_args );
 
 static void sl_monitor_read_connect_state (
@@ -251,6 +257,9 @@ friend void slc_edit_cancel_delete (
 friend void sl_controlUpdate (
   struct event_handler_args ast_args );
 
+friend void sl_controlAlarmUpdate (
+  struct event_handler_args ast_args );
+
 friend void sl_infoUpdate (
   struct event_handler_args ast_args );
 
@@ -273,6 +282,9 @@ friend void sl_monitor_control_connect_state (
   struct connection_handler_args arg );
 
 friend void sl_readUpdate (
+  struct event_handler_args ast_args );
+
+friend void sl_readAlarmUpdate (
   struct event_handler_args ast_args );
 
 friend void sl_monitor_read_connect_state (
@@ -309,7 +321,7 @@ double curControlV, curReadV;
 double increment, accelMultiplier;
 int controlState, compute_initial_increment, autoSetSavedV;
 
-int fgColorMode, bufFgColorMode;
+int bgColorMode, bufBgColorMode;
 int controlColorMode, bufControlColorMode;
 int readColorMode, bufReadColorMode;
 pvColorClass bgColor, fgColor, shadeColor, controlColor,
@@ -334,7 +346,7 @@ int fontAscent, fontDescent, fontHeight;
 
 chid controlPvId, controlLabelPvId, readPvId, readLabelPvId, savedValuePvId;
 evid controlEventId, readEventId, controlLabelEventId,
- readLabelEventId, savedEventId;
+ readLabelEventId, savedEventId, controlAlarmEventId, readAlarmEventId;
 
 expStringClass controlPvName, readPvName, savedValuePvName, controlLabelName,
  readLabelName;
@@ -389,6 +401,8 @@ char bufDisplayFormat[15+1];
 
 keypadClass kp;
 double kpCtlDouble, kpIncDouble;
+
+int overSave, overRestore, overInc, overControl, overRead;
 
 public:
 

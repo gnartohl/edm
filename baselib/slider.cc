@@ -336,14 +336,16 @@ activeSliderClass *slo = (activeSliderClass *) client;
 #ifdef __epics__
     stat = ca_put( DBR_DOUBLE, slo->controlPvId, &fvalue );
     if ( stat != ECA_NORMAL ) printf( activeSliderClass_str3 );
-    //slo->needCtlRefresh = 1;
+    slo->needErase = 1;
+    slo->needDraw = 1;
     slo->actWin->appCtx->proc->lock();
     slo->actWin->addDefExeNode( slo->aglPtr );
     slo->actWin->appCtx->proc->unlock();
 #endif
   }
   else if ( slo->anyCallbackFlag ) {
-    //slo->needCtlRefresh = 1;
+    slo->needErase = 1;
+    slo->needDraw = 1;
     slo->actWin->appCtx->proc->lock();
     slo->actWin->addDefExeNode( slo->aglPtr );
     slo->actWin->appCtx->proc->unlock();
@@ -354,9 +356,6 @@ activeSliderClass *slo = (activeSliderClass *) client;
   if ( slo->changeCallback ) {
     (*slo->changeCallback)( slo );
   }
-
-  slo->needErase = 1;
-  slo->needDraw = 1;
 
 }
 
@@ -404,11 +403,11 @@ activeSliderClass *slo = (activeSliderClass *) client;
   slo->controlColor.setColorIndex( slo->bufControlColor, slo->actWin->ci );
   slo->readColor.setColorIndex( slo->bufReadColor, slo->actWin->ci );
 
-  slo->fgColorMode = slo->bufFgColorMode;
-  if ( slo->fgColorMode == SLC_K_COLORMODE_ALARM )
-    slo->fgColor.setAlarmSensitive();
+  slo->bgColorMode = slo->bufBgColorMode;
+  if ( slo->bgColorMode == SLC_K_COLORMODE_ALARM )
+    slo->bgColor.setAlarmSensitive();
   else
-    slo->fgColor.setAlarmInsensitive();
+    slo->bgColor.setAlarmInsensitive();
 
   slo->controlColorMode = slo->bufControlColorMode;
   if ( slo->controlColorMode == SLC_K_COLORMODE_ALARM )
@@ -801,6 +800,24 @@ activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
 
 }
 
+static void sl_controlAlarmUpdate (
+  struct event_handler_args ast_args )
+{
+
+activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
+struct dbr_sts_double rec;
+
+  rec = *( (struct dbr_sts_double *) ast_args.dbr );
+  slo->bgColor.setStatus( rec.status, rec.severity );
+  slo->controlColor.setStatus( rec.status, rec.severity );
+
+  slo->needDraw = 1;
+  slo->actWin->appCtx->proc->lock();
+  slo->actWin->addDefExeNode( slo->aglPtr );
+  slo->actWin->appCtx->proc->unlock();
+
+}
+
 static void sl_readUpdate (
   struct event_handler_args ast_args )
 {
@@ -810,6 +827,23 @@ activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
   slo->curReadV = *( (double *) ast_args.dbr );
 
   slo->needReadRefresh = 1;
+  slo->actWin->appCtx->proc->lock();
+  slo->actWin->addDefExeNode( slo->aglPtr );
+  slo->actWin->appCtx->proc->unlock();
+
+}
+
+static void sl_readAlarmUpdate (
+  struct event_handler_args ast_args )
+{
+
+activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
+struct dbr_sts_double rec;
+
+  rec = *( (struct dbr_sts_double *) ast_args.dbr );
+  slo->readColor.setStatus( rec.status, rec.severity );
+
+  slo->needDraw = 1;
   slo->actWin->appCtx->proc->lock();
   slo->actWin->addDefExeNode( slo->aglPtr );
   slo->actWin->appCtx->proc->unlock();
@@ -884,7 +918,7 @@ activeGraphicClass *slo = (activeGraphicClass *) this;
   controlColor.copy( source->controlColor );
   readColor.copy( source->readColor );
 
-  fgColorMode = source->fgColorMode;
+  bgColorMode = source->bgColorMode;
   controlColorMode = source->controlColorMode;
   readColorMode = source->readColorMode;
 
@@ -995,7 +1029,7 @@ int xOfs;
   readColor.setColorIndex( actWin->defaultFg2Color, actWin->ci );
   shadeColor.setColorIndex( actWin->defaultOffsetColor, actWin->ci );
 
-  fgColorMode = 0;
+  bgColorMode = 0;
   controlColorMode = 0;
   readColorMode = 0;
 
@@ -1097,7 +1131,7 @@ int index, stat;
 
   //  fprintf( f, "%-d\n", formatType );
 
-  fprintf( f, "%-d\n", fgColorMode );
+  fprintf( f, "%-d\n", bgColorMode );
 
   fprintf( f, "%-d\n", controlColorMode );
 
@@ -1281,7 +1315,7 @@ float val;
 
   if ( ( major > 1 ) || ( minor > 1 ) ) {
 
-    fscanf( f, "%d\n", &fgColorMode ); actWin->incLine();
+    fscanf( f, "%d\n", &bgColorMode ); actWin->incLine();
 
     fscanf( f, "%d\n", &controlColorMode ); actWin->incLine();
 
@@ -1369,6 +1403,21 @@ float val;
 
   curControlV = oneControlV = curReadV = controlV = readV = 0.0;
 
+  if ( bgColorMode == SLC_K_COLORMODE_ALARM )
+    bgColor.setAlarmSensitive();
+  else
+    bgColor.setAlarmInsensitive();
+
+  if ( controlColorMode == SLC_K_COLORMODE_ALARM )
+    controlColor.setAlarmSensitive();
+  else
+    controlColor.setAlarmInsensitive();
+
+  if ( readColorMode == SLC_K_COLORMODE_ALARM )
+    readColor.setAlarmSensitive();
+  else
+    readColor.setAlarmInsensitive();
+
   return 1;
 
 }
@@ -1396,7 +1445,7 @@ char title[32], *ptr;
   bufShadeColor = shadeColor.pixelIndex();
   bufControlColor = controlColor.pixelIndex();
   bufReadColor = readColor.pixelIndex();
-  bufFgColorMode = fgColorMode;
+  bufBgColorMode = bgColorMode;
   bufControlColorMode = controlColorMode;
   bufReadColorMode = readColorMode;
   bufIncrement = increment;
@@ -1498,8 +1547,8 @@ char title[32], *ptr;
   ef.addTextField( activeSliderClass_str33, 35, &bufEfScaleMax );
 
   ef.addColorButton( activeSliderClass_str24, actWin->ci, &fgCb, &bufFgColor );
-  ef.addToggle( activeSliderClass_str25, &bufFgColorMode );
   ef.addColorButton( activeSliderClass_str26, actWin->ci, &bgCb, &bufBgColor );
+  ef.addToggle( activeSliderClass_str25, &bufBgColorMode );
   ef.addColorButton( activeSliderClass_str27, actWin->ci, &shadeCb, &bufShadeColor );
   ef.addColorButton( activeSliderClass_str40, actWin->ci, &controlCb,
    &bufControlColor );
@@ -1780,10 +1829,10 @@ int adjW = w - 4;
   if ( fs && controlExists ) {
 
     actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( bgColor.getColor() );
+    actWin->executeGc.setFG( bgColor.pixelColor() );
 
     actWin->executeGc.saveBg();
-    actWin->executeGc.setBG( bgColor.getColor() );
+    actWin->executeGc.setBG( bgColor.pixelColor() );
 
     xOfs = ( adjW - controlW ) / 2;
 
@@ -1823,7 +1872,7 @@ int adjW = w - 4;
   if ( fs && controlExists ) {
 
     actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( controlColor.getColor() );
+    actWin->executeGc.setFG( controlColor.pixelColor() );
 
     actWin->executeGc.saveBg();
     actWin->executeGc.setBG( shadeColor.getColor() );
@@ -1868,10 +1917,10 @@ int adjW = w - 4;
   if ( fs && readExists ) {
 
     actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( bgColor.getColor() );
+    actWin->executeGc.setFG( bgColor.pixelColor() );
 
     actWin->executeGc.saveBg();
-    actWin->executeGc.setBG( bgColor.getColor() );
+    actWin->executeGc.setBG( bgColor.pixelColor() );
 
     xOfs = ( adjW - controlW ) / 2;
 
@@ -1903,7 +1952,7 @@ int adjW = w - 4;
   if ( fs && readExists ) {
 
     actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( readColor.getColor() );
+    actWin->executeGc.setFG( readColor.pixelColor() );
 
     actWin->executeGc.saveBg();
     actWin->executeGc.setBG( shadeColor.getColor() );
@@ -1942,7 +1991,7 @@ int adjW = w - 4;
   if ( !activeMode || !init ) return 1;
 
   actWin->executeGc.saveFg();
-  actWin->executeGc.setFG( bgColor.getColor() );
+  actWin->executeGc.setFG( bgColor.pixelColor() );
 
   XFillRectangle( actWin->d, XtWindow(sliderWidget),
    actWin->executeGc.normGC(), 0, 0, w, h );
@@ -1955,6 +2004,11 @@ int adjW = w - 4;
   XFillRectangle( actWin->d, XtWindow(sliderWidget),
    actWin->executeGc.normGC(), xOfs, valueAreaH, controlAreaW,
    controlAreaH );
+
+  actWin->executeGc.setFG( bgColor.getColor() );
+  XFillRectangle( actWin->d, XtWindow(sliderWidget),
+   actWin->executeGc.normGC(), 0, valueAreaH+controlAreaH, w,
+   h-valueAreaH-controlAreaH );
 
   actWin->executeGc.setFG( controlColor.getColor() );
 
@@ -2038,7 +2092,7 @@ int adjW = w - 4;
 
       }
 
-      actWin->executeGc.setFG( controlColor.getColor() );
+      actWin->executeGc.setFG( controlColor.pixelColor() );
 
       actWin->executeGc.saveBg();
       actWin->executeGc.setBG( shadeColor.getColor() );
@@ -2091,7 +2145,7 @@ int adjW = w - 4;
 
     if ( readExists ) {
 
-      actWin->executeGc.setFG( readColor.getColor() );
+      actWin->executeGc.setFG( readColor.pixelColor() );
 
       actWin->executeGc.saveBg();
       actWin->executeGc.setBG( shadeColor.getColor() );
@@ -2588,6 +2642,176 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 
 //========== B3 Motion ========================================
 
+//========== Motion with no button press ======================
+
+    if ( me->state == 0 ) {
+
+      tX = slo->w - 6;
+      tY = 2;
+      stat = textBoundaries( slo->fs, tX, tY, XmALIGNMENT_END,
+       slo->controlValue, &x0, &y0, &x1, &y1 );
+
+      tX = slo->w / 2;
+      tY = 2;
+      stat = textBoundaries( slo->fs, tX, tY, XmALIGNMENT_CENTER,
+       slo->incString, &incX0, &incY0, &incX1, &incY1 );
+
+      if ( ( me->x > slo->markX0 ) &&
+        ( me->x < slo->markX1 ) &&
+        ( me->y > slo->markY0 ) &&
+        ( me->y < slo->markY1 ) ) {
+
+        if ( !slo->overSave ) {
+
+          slo->overSave = 1;
+          slo->actWin->executeGc.setFontTag( slo->fontTag, slo->actWin->fi );
+          slo->actWin->executeGc.saveFg();
+          slo->actWin->executeGc.saveBg();
+          slo->actWin->executeGc.setBG( slo->fgColor.getColor() );
+          slo->actWin->executeGc.setFG( slo->shadeColor.getColor() );
+          drawImageText( slo->sliderWidget, &slo->actWin->executeGc, slo->fs,
+           slo->markX1, slo->markY0, XmALIGNMENT_END,
+           activeSliderClass_str52 );
+          slo->actWin->executeGc.restoreFg();
+          slo->actWin->executeGc.restoreBg();
+
+	}
+
+      }
+      else {
+
+	if ( slo->overSave ) {
+	  slo->overSave = 0;
+          slo->actWin->executeGc.setFontTag( slo->fontTag, slo->actWin->fi );
+          slo->actWin->executeGc.saveFg();
+          slo->actWin->executeGc.saveBg();
+          slo->actWin->executeGc.setFG( slo->fgColor.getColor() );
+          slo->actWin->executeGc.setBG( slo->shadeColor.getColor() );
+          drawImageText( slo->sliderWidget, &slo->actWin->executeGc, slo->fs,
+           slo->markX1, slo->markY0, XmALIGNMENT_END,
+           activeSliderClass_str52 );
+          slo->actWin->executeGc.restoreFg();
+          slo->actWin->executeGc.restoreBg();
+	}
+
+      }
+
+      if ( ( me->x > slo->restoreX0 ) &&
+
+        ( me->x < slo->restoreX1 ) &&
+        ( me->y > slo->restoreY0 ) &&
+        ( me->y < slo->restoreY1 ) ) {
+
+        if ( !slo->overRestore ) {
+          slo->overRestore = 1;
+          slo->actWin->executeGc.setFontTag( slo->fontTag, slo->actWin->fi );
+          slo->actWin->executeGc.saveFg();
+          slo->actWin->executeGc.saveBg();
+          slo->actWin->executeGc.setBG( slo->fgColor.getColor() );
+          slo->actWin->executeGc.setFG( slo->shadeColor.getColor() );
+          drawImageText( slo->sliderWidget, &slo->actWin->executeGc, slo->fs,
+           slo->restoreX0, slo->restoreY0, XmALIGNMENT_BEGINNING,
+           activeSliderClass_str53 );
+          slo->actWin->executeGc.restoreFg();
+          slo->actWin->executeGc.restoreBg();
+        }
+
+      }
+      else {
+
+	if ( slo->overRestore ) {
+	  slo->overRestore = 0;
+          slo->actWin->executeGc.setFontTag( slo->fontTag, slo->actWin->fi );
+          slo->actWin->executeGc.saveFg();
+          slo->actWin->executeGc.saveBg();
+          slo->actWin->executeGc.setFG( slo->fgColor.getColor() );
+          slo->actWin->executeGc.setBG( slo->shadeColor.getColor() );
+          drawImageText( slo->sliderWidget, &slo->actWin->executeGc, slo->fs,
+           slo->restoreX0, slo->restoreY0, XmALIGNMENT_BEGINNING,
+           activeSliderClass_str53 );
+          slo->actWin->executeGc.restoreFg();
+          slo->actWin->executeGc.restoreBg();
+	}
+
+      }
+
+      if ( ( me->x > incX0 ) &&
+        ( me->x < incX1 ) &&
+        ( me->y > incY0 ) &&
+        ( me->y < incY1 ) ) {
+
+        if ( !slo->overInc ) {
+          slo->overInc = 1;
+          slo->actWin->executeGc.setFontTag( slo->fontTag, slo->actWin->fi );
+          slo->actWin->executeGc.saveFg();
+          slo->actWin->executeGc.saveBg();
+          slo->actWin->executeGc.setBG( slo->fgColor.getColor() );
+          slo->actWin->executeGc.setFG( slo->shadeColor.getColor() );
+          drawImageText( slo->sliderWidget, &slo->actWin->executeGc, slo->fs,
+           (int) (slo->w/2), 2, XmALIGNMENT_CENTER, slo->incString );
+          slo->actWin->executeGc.restoreFg();
+          slo->actWin->executeGc.restoreBg();
+        }
+
+      }
+      else {
+
+        if ( slo->overInc ) {
+          slo->overInc = 0;
+          slo->actWin->executeGc.setFontTag( slo->fontTag, slo->actWin->fi );
+          slo->actWin->executeGc.saveFg();
+          slo->actWin->executeGc.saveBg();
+          slo->actWin->executeGc.setFG( slo->fgColor.getColor() );
+          slo->actWin->executeGc.setBG( slo->shadeColor.getColor() );
+          drawImageText( slo->sliderWidget, &slo->actWin->executeGc, slo->fs,
+           (int) (slo->w/2), 2, XmALIGNMENT_CENTER, slo->incString );
+          slo->actWin->executeGc.restoreFg();
+          slo->actWin->executeGc.restoreBg();
+	}
+
+      }
+
+      if ( ( me->x > x0 ) &&
+        ( me->x < x1 ) &&
+        ( me->y > y0 ) &&
+        ( me->y < y1 ) ) {
+
+        if ( !slo->overControl ) {
+          slo->overControl = 1;
+          slo->actWin->executeGc.setFontTag( slo->fontTag, slo->actWin->fi );
+          slo->actWin->executeGc.saveFg();
+          slo->actWin->executeGc.saveBg();
+          slo->actWin->executeGc.setBG( slo->fgColor.getColor() );
+          slo->actWin->executeGc.setFG( slo->shadeColor.getColor() );
+          drawImageText( slo->sliderWidget, &slo->actWin->executeGc, slo->fs,
+           x0, y0, XmALIGNMENT_BEGINNING, slo->controlValue );
+          slo->actWin->executeGc.restoreFg();
+          slo->actWin->executeGc.restoreBg();
+        }
+
+      }
+      else {
+
+        if ( slo->overControl ) {
+          slo->overControl = 0;
+          slo->actWin->executeGc.setFontTag( slo->fontTag, slo->actWin->fi );
+          slo->actWin->executeGc.saveFg();
+          slo->actWin->executeGc.saveBg();
+          slo->actWin->executeGc.setFG( slo->fgColor.getColor() );
+          slo->actWin->executeGc.setBG( slo->shadeColor.getColor() );
+          drawImageText( slo->sliderWidget, &slo->actWin->executeGc, slo->fs,
+           x0, y0, XmALIGNMENT_BEGINNING, slo->controlValue );
+          slo->actWin->executeGc.restoreFg();
+          slo->actWin->executeGc.restoreBg();
+	}
+
+      }
+
+
+    }
+
+//========== Motion with no button press ======================
+
   }
 
 }
@@ -2604,144 +2828,7 @@ char callbackName[63+1];
 
   case 1:
 
-    frameWidget = XtVaCreateManagedWidget( "", xmBulletinBoardWidgetClass,
-     actWin->executeWidgetId(),
-     XmNx, x,
-     XmNy, y,
-     XmNwidth, w,
-     XmNheight, h,
-     XmNmarginHeight, 0,
-     XmNmarginWidth, 0,
-     XmNshadowThickness, 2,
-     XmNtopShadowColor, shadeColor.pixelColor(),
-     XmNbottomShadowColor, BlackPixel( actWin->display(),
-      DefaultScreen(actWin->display()) ),
-     XmNshadowType, XmSHADOW_ETCHED_OUT,
-     XmNmappedWhenManaged, False,
-     NULL );
-
-    if ( !frameWidget ) {
-      printf( activeSliderClass_str61 );
-      return 0;
-    }
-
-    sliderWidget = XtVaCreateManagedWidget( "", xmDrawingAreaWidgetClass,
-     frameWidget,
-     XmNx, 2,
-     XmNy, 2,
-     XmNwidth, w-4,
-     XmNheight, h-4,
-     XmNbackground, bgColor.pixelColor(),
-     NULL );
-
-    if ( !sliderWidget ) {
-      printf( activeSliderClass_str62 );
-      return 0;
-    }
-
-    XtAddEventHandler( sliderWidget,
-     ButtonPressMask|ButtonReleaseMask|ButtonMotionMask|ExposureMask|
-     EnterWindowMask|LeaveWindowMask, False,
-     sliderEventHandler, (XtPointer) this );
-
-    XtMapWidget( frameWidget );
-
-    strcpy( readValue, "" );
-    strcpy( controlValue, "" );
-    strcpy( incString, "" );
-    activeMode = 1;
-    init = 0;
-    active = 0;
-    aglPtr = ptr;
-    curControlV = oneControlV = curReadV = 0.0;
-    controlV = readV = 0.0;
-    needCtlConnectInit = needCtlInfoInit = needCtlRefresh =
-     needReadConnectInit = needReadInfoInit = needReadRefresh =
-     needCtlLabelConnectInit = needCtlLabelInfoInit =
-     needReadLabelConnectInit = needReadLabelInfoInit =
-     needSavedConnectInit = needSavedRefresh = needErase = needDraw = 0;
-    oldControlV = 0;
-    updateControlTimerActive = 0;
-    controlAdjusted = 0;
-    incrementTimerActive = 0;
     opComplete = 0;
-
-#ifdef __epics__
-    controlEventId = readEventId = controlLabelEventId =
-     readLabelEventId = savedEventId = 0;
-#endif
-
-    controlState = SLC_STATE_IDLE;
-
-    controlPvConnected = readPvConnected = savedValuePvConnected = 0;
-
-    fgColor.setConnectSensitive();
-
-    if ( !controlPvName.getExpanded() ||
-       ( strcmp( controlPvName.getExpanded(), "" ) == 0 ) ) {
-      controlExists = 0;
-    }
-    else {
-      controlExists = 1;
-      controlColor.setConnectSensitive();
-    }
-
-
-    if ( !readPvName.getExpanded() ||
-       ( strcmp( readPvName.getExpanded(), "" ) == 0 ) ) {
-      readExists = 0;
-    }
-    else {
-      readExists = 1;
-      readColor.setConnectSensitive();
-    }
-
-
-    if ( !savedValuePvName.getExpanded() ||
-       ( strcmp( savedValuePvName.getExpanded(), "" ) == 0 ) ) {
-      savedValueExists = 0;
-    }
-    else {
-      savedValueExists = 1;
-    }
-
-
-    if ( !controlLabelName.getExpanded() ||
-       ( strcmp( controlLabelName.getExpanded(), "" ) == 0 ) ) {
-      controlLabelExists = 0;
-    }
-    else {
-      controlLabelExists = 1;
-    }
-
-    if ( controlLabelType == SLC_K_PV_NAME ) {
-      controlLabelExists = 1;
-      strncpy( controlLabel, controlPvName.getExpanded(),
-       activeGraphicClass::MAX_PV_NAME );
-    }
-    else {
-      strncpy( controlLabel, controlLabelName.getExpanded(),
-       activeGraphicClass::MAX_PV_NAME );
-    }
-
-
-    if ( !readLabelName.getExpanded() ||
-       ( strcmp( readLabelName.getExpanded(), "" ) == 0 ) ) {
-      readLabelExists = 0;
-    }
-    else {
-      readLabelExists = 1;
-    }
-
-    if ( readLabelType == SLC_K_PV_NAME ) {
-      readLabelExists = 1;
-      strncpy( readLabel, readPvName.getExpanded(),
-       activeGraphicClass::MAX_PV_NAME );
-    }
-    else {
-      strncpy( readLabel, readLabelName.getExpanded(),
-       activeGraphicClass::MAX_PV_NAME );
-    }
 
     break;
 
@@ -2750,6 +2837,143 @@ char callbackName[63+1];
     if ( !opComplete ) {
 
       opStat = 1;
+
+      frameWidget = XtVaCreateManagedWidget( "", xmBulletinBoardWidgetClass,
+       actWin->executeWidgetId(),
+       XmNx, x,
+       XmNy, y,
+       XmNwidth, w,
+       XmNheight, h,
+       XmNmarginHeight, 0,
+       XmNmarginWidth, 0,
+       XmNshadowThickness, 2,
+       XmNtopShadowColor, shadeColor.pixelColor(),
+       XmNbottomShadowColor, BlackPixel( actWin->display(),
+       DefaultScreen(actWin->display()) ),
+       XmNshadowType, XmSHADOW_ETCHED_OUT,
+       XmNmappedWhenManaged, False,
+       NULL );
+
+      if ( !frameWidget ) {
+        printf( activeSliderClass_str61 );
+        return 0;
+      }
+
+      sliderWidget = XtVaCreateManagedWidget( "", xmDrawingAreaWidgetClass,
+       frameWidget,
+       XmNx, 2,
+       XmNy, 2,
+       XmNwidth, w-4,
+       XmNheight, h-4,
+       XmNbackground, bgColor.pixelColor(),
+       NULL );
+
+      if ( !sliderWidget ) {
+        printf( activeSliderClass_str62 );
+        return 0;
+      }
+
+      overSave = overRestore = overInc = overControl = overRead = 0;
+
+      XtAddEventHandler( sliderWidget,
+       ButtonPressMask|ButtonReleaseMask|PointerMotionMask|ExposureMask|
+       EnterWindowMask|LeaveWindowMask, False,
+       sliderEventHandler, (XtPointer) this );
+
+      XtMapWidget( frameWidget );
+
+      strcpy( readValue, "" );
+      strcpy( controlValue, "" );
+      strcpy( incString, "" );
+      activeMode = 1;
+      init = 0;
+      active = 0;
+      aglPtr = ptr;
+      curControlV = oneControlV = curReadV = 0.0;
+      controlV = readV = 0.0;
+      needCtlConnectInit = needCtlInfoInit = needCtlRefresh =
+       needReadConnectInit = needReadInfoInit = needReadRefresh =
+       needCtlLabelConnectInit = needCtlLabelInfoInit =
+       needReadLabelConnectInit = needReadLabelInfoInit =
+       needSavedConnectInit = needSavedRefresh = needErase = needDraw = 0;
+      oldControlV = 0;
+      updateControlTimerActive = 0;
+      controlAdjusted = 0;
+      incrementTimerActive = 0;
+
+#ifdef __epics__
+      controlEventId = readEventId = controlLabelEventId =
+       readLabelEventId = savedEventId = controlAlarmEventId =
+       readAlarmEventId = 0;
+#endif
+
+      controlState = SLC_STATE_IDLE;
+
+      controlPvConnected = readPvConnected = savedValuePvConnected = 0;
+
+      fgColor.setConnectSensitive();
+
+      if ( !controlPvName.getExpanded() ||
+         ( strcmp( controlPvName.getExpanded(), "" ) == 0 ) ) {
+        controlExists = 0;
+      }
+      else {
+        controlExists = 1;
+        controlColor.setConnectSensitive();
+      }
+
+      if ( !readPvName.getExpanded() ||
+         ( strcmp( readPvName.getExpanded(), "" ) == 0 ) ) {
+        readExists = 0;
+      }
+      else {
+        readExists = 1;
+        readColor.setConnectSensitive();
+      }
+
+      if ( !savedValuePvName.getExpanded() ||
+         ( strcmp( savedValuePvName.getExpanded(), "" ) == 0 ) ) {
+        savedValueExists = 0;
+      }
+      else {
+        savedValueExists = 1;
+      }
+
+      if ( !controlLabelName.getExpanded() ||
+         ( strcmp( controlLabelName.getExpanded(), "" ) == 0 ) ) {
+        controlLabelExists = 0;
+      }
+      else {
+        controlLabelExists = 1;
+      }
+
+      if ( controlLabelType == SLC_K_PV_NAME ) {
+        controlLabelExists = 1;
+        strncpy( controlLabel, controlPvName.getExpanded(),
+         activeGraphicClass::MAX_PV_NAME );
+      }
+      else {
+        strncpy( controlLabel, controlLabelName.getExpanded(),
+         activeGraphicClass::MAX_PV_NAME );
+      }
+
+      if ( !readLabelName.getExpanded() ||
+         ( strcmp( readLabelName.getExpanded(), "" ) == 0 ) ) {
+        readLabelExists = 0;
+      }
+      else {
+        readLabelExists = 1;
+      }
+
+      if ( readLabelType == SLC_K_PV_NAME ) {
+        readLabelExists = 1;
+        strncpy( readLabel, readPvName.getExpanded(),
+         activeGraphicClass::MAX_PV_NAME );
+      }
+      else {
+        strncpy( readLabel, readLabelName.getExpanded(),
+         activeGraphicClass::MAX_PV_NAME );
+      }
 
       if ( controlExists ) {
 #ifdef __epics__
@@ -2914,7 +3138,7 @@ int stat;
     XtRemoveTimeOut( updateControlTimer );
 
     XtRemoveEventHandler( sliderWidget,
-     ButtonPressMask|ButtonReleaseMask|ButtonMotionMask|ExposureMask|
+     ButtonPressMask|ButtonReleaseMask|PointerMotionMask|ExposureMask|
      EnterWindowMask|LeaveWindowMask, False,
      sliderEventHandler, (XtPointer) this );
 
@@ -3267,15 +3491,27 @@ double rv, cv, fv;
     readX = (int) ( ( readV - minFv ) /
      factor + 0.5 ) + xOfs;
 
-    if ( controlExists && !controlEventId ) {
 #ifdef __epics__
+    if ( controlExists && !controlEventId ) {
+
       stat = ca_add_masked_array_event( DBR_DOUBLE, 1, controlPvId,
        sl_controlUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
        &controlEventId, DBE_VALUE );
       if ( stat != ECA_NORMAL )
         printf( activeSliderClass_str79 );
-#endif
+
     }
+
+    if ( controlExists && !controlAlarmEventId ) {
+
+      stat = ca_add_masked_array_event( DBR_STS_DOUBLE, 1, controlPvId,
+       sl_controlAlarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
+       (float) 0.0, &controlAlarmEventId, DBE_ALARM );
+      if ( stat != ECA_NORMAL )
+        printf( activeSliderClass_str79 );
+
+    }
+#endif
 
     fgColor.setConnected();
     controlColor.setConnected();
@@ -3365,6 +3601,16 @@ double rv, cv, fv;
       stat = ca_add_masked_array_event( DBR_DOUBLE, 1, readPvId,
        sl_readUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
        &readEventId, DBE_VALUE );
+      if ( stat != ECA_NORMAL )
+        printf( activeSliderClass_str81 );
+
+    }
+
+    if ( !readAlarmEventId ) {
+
+      stat = ca_add_masked_array_event( DBR_STS_DOUBLE, 1, readPvId,
+       sl_readAlarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
+       (float) 0.0, &readAlarmEventId, DBE_ALARM );
       if ( stat != ECA_NORMAL )
         printf( activeSliderClass_str81 );
 
