@@ -475,7 +475,7 @@ int activeRadioButtonClass::createInteractive (
 
   updateDimensions();
 
-  buttonColor = actWin->defaultFg1Color;
+  buttonColor = actWin->defaultOffsetColor;
   topShadowColor = actWin->defaultTopShadowColor;
   botShadowColor = actWin->defaultBotShadowColor;
 
