@@ -26,6 +26,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include <Xm/Xm.h>
+#include <math.h>
 
 #include "sys_types.h"
 #include "thread.h"
