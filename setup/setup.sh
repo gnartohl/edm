@@ -17,29 +17,46 @@
 # mean. Include them in your login script or /etc/profile or ...
 #
 
-#HOST_ARCH=Linux
-if [ x$EPICS = x ]
+# These must be prepared:
+echo "*"
+if [ x$HOST_ARCH = x ]
 then
-    EPICS=/cs/epics/R3.13.5/base
+   echo You need to set HOST_ARCH!
+   exit 1
 fi
+if [ x$EPICS_HOST_ARCH = x ]
+then
+   echo If you are under EPICS base R3.14, you need to set EPICS_HOST_ARCH!
+fi
+echo "* Your LD_LIBRARY_PATH must be set and contain"
+echo "* the path to your EPICS base's"
+echo "* lib/HOST_ARCH resp. lib/EPICS_HOST_ARCH directory"
+echo "* so that we can use the CA, Com, ... libraries!"
+echo "* It might also need to include the Motif libraries."
+echo "*"
 
 export EDMBASE=`(cd ..;pwd)`
 
 echo Setting up EDM base directory: $EDMBASE
 echo ""
 
+if [ x$EPICS_HOST_ARCH = x ]
+then
+   ODIR=$HOST_ARCH
+else
+   ODIR=$EPICS_HOST_ARCH
+fi
 export EDMFILES=$EDMBASE/setup
 export EDMOBJECTS=$EDMBASE/setup
 export EDMPVOBJECTS=$EDMBASE/setup
 
-LD_LIBRARY_PATH=$EPICS/lib/$HOST_ARCH
 for libdir in baselib imagelib lib pvlib util
 do
-    LD_LIBRARY_PATH=$EDMBASE/$libdir/O.$HOST_ARCH:$LD_LIBRARY_PATH
+    LD_LIBRARY_PATH=$EDMBASE/$libdir/O.$ODIR:$LD_LIBRARY_PATH
 done
 export LD_LIBRARY_PATH
 
-export EDM=$EDMBASE/edmMain/O.$HOST_ARCH/edm
+export EDM=$EDMBASE/edmMain/O.$ODIR/edm
 
 if [ -f $EDMPVOBJECTS/edmPvObjects ]
 then
@@ -47,7 +64,7 @@ then
     echo To have it recreated, remove that file and restart.
     echo ""
 else
-    $EDM -addpv $EDMBASE/pvlib/O.$HOST_ARCH/libEpics.so
+    $EDM -addpv $EDMBASE/pvlib/O.$ODIR/libEpics.so
 fi
 
 if [ -f $EDMOBJECTS/edmObjects ]
@@ -56,9 +73,9 @@ then
     echo To have it recreated, remove that file and restart.
     echo ""
 else
-    $EDM -add $EDMBASE/baselib/O.$HOST_ARCH/libEdmBase.so
-    $EDM -add $EDMBASE/imagelib/O.$HOST_ARCH/lib605432d2-f29d-11d2-973b-00104b8742df.so
-    $EDM -add $EDMBASE/pvFactory/O.$HOST_ARCH/libPV.so
+    $EDM -add $EDMBASE/baselib/O.$ODIR/libEdmBase.so
+    $EDM -add $EDMBASE/imagelib/O.$ODIR/lib605432d2-f29d-11d2-973b-00104b8742df.so
+    $EDM -add $EDMBASE/pvFactory/O.$ODIR/libPV.so
 fi
 
 
