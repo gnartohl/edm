@@ -181,69 +181,40 @@ int edmRegTextupdateClass::drawActive()
         return 1;
     actWin->executeGc.saveFg();
 
-    double value = 0.0;
+    double color_value;
     char text[80];
-    int len;
-    if (pv && pv->is_valid())
+    size_t len = 80;
+    if (get_current_values(text, len, color_value) &&
+        re_valid)
     {
-        value = pv->get_double();
-        switch (displayMode)
+        regmatch_t pmatch[2];
+        if (regexec(&compiled_re, text, 2, pmatch, 0) == 0)
         {
-            case dm_hex:
-                if (pv->get_type().type < ProcessVariable::Type::enumerated)
-                {
-                    cvtLongToHexString(pv->get_int(), text);
-                    len = strlen(text);
-                    break;
-                }
-            case dm_decimal:
-                if (pv->get_type().type < ProcessVariable::Type::enumerated)
-                {
-                    cvtDoubleToString(pv->get_double(), text,
-                                      (unsigned short) precision);
-                    len = strlen(text);
-                    break;
-                }
-            default:
-                len = pv->get_string(text, 80);
-        }
-        if (re_valid)
-        {
-            regmatch_t pmatch[2];
-    	    if (regexec(&compiled_re, text, 2, pmatch, 0) == 0)
+            // copy matched substring into display string
+            // match 0 is always the full match,
+            // match 1 is the first selected substring
+            int start = pmatch[1].rm_so;
+            int size = pmatch[1].rm_eo - pmatch[1].rm_so;
+            
+            if (start >= 0)
             {
-                // copy matched substring into display string
-                // match 0 is always the full match,
-                // match 1 is the first selected substring
-                int start = pmatch[1].rm_so;
-                int size = pmatch[1].rm_eo - pmatch[1].rm_so;
-                
-                if (start >= 0)
-                {
-                    memmove(text, text+start, size);
-                    text[size] = '\0';
-                    len = size;
-                }
-                else
-                {
-                    text[0] = '\0';
-                    len = 0;
-                }
-    	    }
+                memmove(text, text+start, size);
+                text[size] = '\0';
+                len = size;
+            }
+            else
+            {
+                text[0] = '\0';
+                len = 0;
+            }
         }
     }
-    else
-    {
-        text[0] = '<';
-        strcpy(text+1, getExpandedPVName());
-        strcat(text, ">");
-        len = strlen(text);
-    }
+
     redraw_text(actWin->d,
                 XtWindow(actWin->executeWidget),
                 actWin->executeGc,
                 actWin->executeGc.normGC(),
-                text, len, value);
+                text, len, color_value);
    
     actWin->executeGc.restoreFg();
     return 1;

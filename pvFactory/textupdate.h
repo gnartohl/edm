@@ -4,8 +4,9 @@
 // kasemir@lanl.gov
 //
 // Changes:
+// 3.0.0  Added colorPv for color rules
 // 2.0.0  Use color name, fall back to index
-// 1.1.0: Added displayMode & precision
+// 1.1.0  Added displayMode & precision
 
 #ifndef __TEXTUPDATE_H__
 #define __TEXTUPDATE_H__
@@ -16,7 +17,7 @@
 
 #define TEXTUPDATE_CLASSNAME "TextupdateClass"
 #define TEXTENTRY_CLASSNAME  "TextentryClass"
-#define TEXT_MAJOR 2
+#define TEXT_MAJOR 3
 #define TEXT_MINOR 0
 #define TEXT_RELEASE 0
 
@@ -27,8 +28,6 @@ public:
     edmTextupdateClass(edmTextupdateClass *rhs);
     virtual ~edmTextupdateClass();
     char *objName();
-    const char *getRawPVName();
-    const char *getExpandedPVName();
     
     // Load/save
     int save(FILE *f);
@@ -93,11 +92,12 @@ protected:
     void clone(const edmTextupdateClass *rhs, const char *classname);
 
     bool is_executing;          // edit or execute mode?
-    bool is_pvname_valid;       
-    ProcessVariable *pv;        // ChannelAccess, PV
+    bool is_pv_valid, is_color_pv_valid;
+    ProcessVariable *pv, *color_pv;
     
     // Properties
-    expStringClass pv_exp_str;  // PV name as macro-expandable string
+    expStringClass pv_name;  // PV names as macro-expandable string
+    expStringClass color_pv_name;
 
     typedef enum { dm_default, dm_decimal, dm_hex } DisplayMode;
     DisplayMode displayMode;
@@ -117,7 +117,7 @@ protected:
     int genericEdit();
     int editCreate();
     int bufX, bufY, bufW, bufH;
-    char bufPvName[39+1];
+    char bufPvName[39+1], bufColorPvName[39+1];
     int buf_displayMode;
     int buf_precision;
     int bufTextColor;
@@ -126,6 +126,11 @@ protected:
     int bufFillColor;
     colorButtonClass fillCb;
     int bufIsFilled;
+
+    // Get text & color value.
+    // len has to be initialized with the text buffer size.
+    // Returns 1 if PV is valid
+    bool get_current_values(char *text, size_t &len, double &color_value);
 
     void redraw_text(Display *dis,
                      Drawable drw,
@@ -169,6 +174,4 @@ private:
     static void text_entered_callback(Widget, XtPointer, XtPointer);
 };
 
-
 #endif
-
