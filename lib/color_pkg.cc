@@ -2475,6 +2475,7 @@ char msg[127+1];
 	  }
           delete[] menuIndexMap;
           menuIndexMap = tmp;
+          menuMapSize = tmpSize;
         }
 
         menuIndexMap[maxMenuItems++] = cur1->index;
@@ -4263,6 +4264,7 @@ int blinkMs = 500;
 	  }
           delete[] menuIndexMap;
           menuIndexMap = tmp;
+          menuMapSize = tmpSize;
         }
 
         menuIndexMap[maxMenuItems++] = cur1->index;
