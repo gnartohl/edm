@@ -1,24 +1,24 @@
-4 0 1
+4 0 0
 beginScreenProperties
 major 4
 minor 0
-release 1
-x 21
-y 222
+release 0
+x 25
+y 243
 w 771
 h 478
 font "helvetica-medium-r-12.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
-fgColor index 14
-bgColor index 4
-textColor index 14
-ctlFgColor1 index 14
-ctlFgColor2 index 14
-ctlBgColor1 index 5
-ctlBgColor2 index 8
-topShadowColor index 1
-botShadowColor index 11
+fgColor rgb 0 0 0
+bgColor rgb 48573 47802 48573
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 0
+ctlBgColor1 rgb 44461 44718 44461
+ctlBgColor2 rgb 33924 34438 33924
+topShadowColor rgb 61423 60395 61423
+botShadowColor rgb 23130 22873 23130
 title "Help - File"
 endScreenProperties
 
@@ -32,8 +32,8 @@ x 35
 y 270
 w 354
 h 154
-lineColor index 14
-fillColor index 5
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
 lineWidth 2
 endObjectProperties
 
@@ -48,8 +48,8 @@ y 29
 w 84
 h 14
 font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 5
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
 useDisplayBg
 value {
   "Create new file"
@@ -94,8 +94,8 @@ y 29
 w 97
 h 14
 font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 5
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
 useDisplayBg
 value {
   "Open existing file"
@@ -139,9 +139,9 @@ x 400
 y 140
 w 40
 h 40
-lineColor index 14
+lineColor rgb 0 0 0
 fill
-fillColor index 14
+fillColor rgb 0 0 0
 numPoints 8
 xPoints {
   0 400
@@ -188,10 +188,10 @@ x 11
 y 441
 w 59
 h 24
-fgColor index 14
-bgColor index 5
-topShadowColor index 1
-botShadowColor index 11
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+topShadowColor rgb 61423 60395 61423
+botShadowColor rgb 23130 22873 23130
 label "Close"
 font "helvetica-medium-r-12.0"
 3d
@@ -208,8 +208,8 @@ y 284
 w 49
 h 14
 font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 5
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
 useDisplayBg
 value {
   "Save file"
@@ -228,8 +228,8 @@ y 311
 w 290
 h 96
 font "helvetica-medium-r-14.0"
-fgColor index 14
-bgColor index 5
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
 useDisplayBg
 value {
   "Saving a file is not done from the main"
