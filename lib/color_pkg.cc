@@ -5968,6 +5968,7 @@ colorCachePtr cur;
   cur = new colorCacheType;
   if ( !cur ) return 0;
 
+  colorCacheInit( cur );
   cur->rgb[0] = (unsigned int) *r;
   cur->rgb[1] = (unsigned int) *g;
   cur->rgb[2] = (unsigned int) *b;
@@ -5990,6 +5991,7 @@ colorCachePtr cur;
   cur = new colorCacheType;
   if ( !cur ) return 0;
 
+  colorCacheInit( cur );
   cur->rgb[0] = (unsigned int) *r;
   cur->rgb[1] = (unsigned int) *g;
   cur->rgb[2] = (unsigned int) *b;
