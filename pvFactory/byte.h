@@ -24,6 +24,7 @@ public:
     edmByteClass();
     edmByteClass(edmByteClass *rhs);
     virtual ~edmByteClass();
+    void bufInvalidate(void);
     char *objName();
     const char *getRawPVName();
     const char *getExpandedPVName();
@@ -96,12 +97,17 @@ public:
 protected:
 
     void clone(const edmByteClass *rhs, const char *classname);
-    inline void innerDraw(int value, int i, int mask, int current, 
+    int drawActiveFull();
+    int drawActiveBits();
+    inline void innerDrawFull(int value, int i, int mask, int current, 
                                      int &previous, int &lastseg);
+    inline void innerDrawBits(int value, int i, int mask);
 
     bool is_executing;          // edit or execute mode? (was activeMode?)
     bool is_pvname_valid;       
     ProcessVariable *valuePvId;        // ChannelAccess, PV
+    bool bufInvalid;
+    int lastval;
     
     // Properties
     enum bdir { BIGENDIAN, LITTLEENDIAN };

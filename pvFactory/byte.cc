@@ -12,8 +12,9 @@
 
 
 edmByteClass::edmByteClass() : activeGraphicClass(), init(0), 
-  is_executing(false), is_pvname_valid(false), valuePvId(0), theDir(BIGENDIAN),
-  nobt(16), shft(0), lineWidth(1), lineStyle(LineSolid), outlineOK(false)
+  is_executing(false), is_pvname_valid(false), valuePvId(0), bufInvalid(true),
+  lastval(0), theDir(BIGENDIAN),  nobt(16),shft(0), lineWidth(1), 
+  lineStyle(LineSolid), outlineOK(false)
 {
    name = strdup(BYTE_CLASSNAME);
 }
@@ -61,7 +62,8 @@ edmByteClass::~edmByteClass()
         valuePvId->release();
         valuePvId = 0;
     }
-    free(name);
+    delete[] name;
+    delete[] theOutline;
 }
 
 char *edmByteClass::objName()
@@ -585,12 +587,18 @@ int edmByteClass::activate(int pass, void *ptr)
                     valuePvId->add_value_callback(pv_value_callback, this);
                 }
             }
+            bufInvalidate();
             if (!valuePvId)
                 drawActive();
 
             break;
     }
     return 1;
+}
+
+void edmByteClass::bufInvalidate(void)
+{
+   bufInvalid = true;
 }
 
 int edmByteClass::deactivate(int pass)
@@ -609,8 +617,8 @@ int edmByteClass::deactivate(int pass)
   return 1;
 }
 
-inline void edmByteClass::innerDraw(int value, int i, int mask, int current, 
-                                  int &previous, int &lastseg)
+inline void edmByteClass::innerDrawFull(int value, int i, int mask, 
+                                  int current, int &previous, int &lastseg)
 {
   if (i < nobt)
      current = (value & mask)?1:0;
@@ -645,6 +653,58 @@ inline void edmByteClass::innerDraw(int value, int i, int mask, int current,
 
 int edmByteClass::drawActive()
 {
+   if (bufInvalid)
+   {
+      bufInvalid = false;
+      drawActiveFull();
+   }
+   else
+      drawActiveBits();
+
+   return 1;
+}
+
+inline void edmByteClass::innerDrawBits(int value, int i, int mask)
+{
+    if (value & mask)
+    {
+       // set to on-color
+       actWin->executeGc.setFG( onPixel );
+    }
+    else
+    {
+       // set to off-color
+       actWin->executeGc.setFG( offPixel );
+    }
+    if (w > h)
+    {
+       XFillRectangle(actWin->d, XtWindow(actWin->executeWidget),
+                   actWin->executeGc.normGC(),
+                   theOutline[i].x1, theOutline[i].y1,
+                   theOutline[i+1].x1 - theOutline[i].x1, h);
+       actWin->executeGc.setFG(actWin->ci->getPixelByIndex(lineColor) );
+       XDrawRectangle(actWin->d, XtWindow(actWin->executeWidget),
+                   actWin->executeGc.normGC(),
+                   theOutline[i].x1, theOutline[i].y1,
+                   theOutline[i+1].x1 - theOutline[i].x1, h);
+    }
+    else
+    {
+       XFillRectangle(actWin->d, XtWindow(actWin->executeWidget),
+                   actWin->executeGc.normGC(),
+                   theOutline[i].x1, theOutline[i].y1,
+                   w, theOutline[i+1].y1 - theOutline[i].y1);
+       actWin->executeGc.setFG(actWin->ci->getPixelByIndex(lineColor) );
+       XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+                   actWin->executeGc.normGC(), 
+                   theOutline[i].x1, theOutline[i].y1,
+                   w, theOutline[i+1].y1 - theOutline[i].y1);
+    }
+}
+
+
+int edmByteClass::drawActiveBits()
+{
   unsigned int value;
   if ( !init || !is_executing ) return 1;
 
@@ -660,6 +720,61 @@ int edmByteClass::drawActive()
   else if (valuePvId && valuePvId->is_valid())
   {
      value = valuePvId->get_int();
+     int i = 0;
+     int mask;
+     actWin->executeGc.setLineWidth( lineWidth );
+     actWin->executeGc.setLineStyle( lineStyle );
+     if (theDir == LITTLEENDIAN)
+     {
+        for (i = 0, mask = 1 << shft; i <= nobt; i++, mask <<= 1)
+        {
+           if ((lastval ^ value) & mask)
+              innerDrawBits(value, i, mask);
+        }
+     }
+     else  // BIGENDIAN
+     {
+        for (i = 0, mask= 1 << (shft + nobt -1); i <= nobt; i++, mask >>= 1)
+        {
+           if ((lastval ^ value) & mask)
+              innerDrawBits(value, i, mask);
+        }
+     }
+     lastval = value;
+  }
+ 
+  if (!outlineOK)
+  {
+     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
+  }
+  
+  actWin->executeGc.setLineWidth( 1 );
+  actWin->executeGc.setLineStyle( LineSolid );
+
+   
+  actWin->executeGc.restoreFg();
+  return 1;
+}
+
+int edmByteClass::drawActiveFull()
+{
+  unsigned int value;
+  if ( !init || !is_executing ) return 1;
+
+  actWin->executeGc.saveFg();
+
+  if (!outlineOK)
+  {
+     // old code
+     actWin->executeGc.setFG(offPixel);
+     XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+  }
+  else if (valuePvId && valuePvId->is_valid())
+  {
+     lastval = value;
+     value = valuePvId->get_int();
      int current = 0;
      int previous = 0;
      int lastseg = 0;
@@ -672,7 +787,7 @@ int edmByteClass::drawActive()
         mask <<= 1;
         for (i = 1; i <= nobt; i++, mask <<= 1)
         {
-           innerDraw(value, i, mask, current, previous, lastseg);
+           innerDrawFull(value, i, mask, current, previous, lastseg);
         }
      }
      else  // BIGENDIAN
@@ -682,7 +797,7 @@ int edmByteClass::drawActive()
         mask >>= 1;
         for (i = 1; i <= nobt; i++, mask >>= 1)
         {
-           innerDraw(value, i, mask, current, previous, lastseg);
+           innerDrawFull(value, i, mask, current, previous, lastseg);
         }
      }
   }
@@ -747,7 +862,7 @@ void edmByteClass::pv_value_callback(ProcessVariable *pv, void *userarg)
     me->actWin->appCtx->proc->lock();
     if (me->is_executing)
     {
-        me->bufInvalidate();
+        //me->bufInvalidate();
         me->actWin->addDefExeNode(me->aglPtr);
     }
     me->actWin->appCtx->proc->unlock();
@@ -764,7 +879,7 @@ void edmByteClass::executeDeferred()
     actWin->appCtx->proc->unlock();
 
     if (is_executing)
-       smartDrawAllActive();
+       drawActive();
 }
 
 // Drag & drop support
