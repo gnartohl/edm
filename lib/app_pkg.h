@@ -478,6 +478,8 @@ void appContextClass::postNote (
 
 void appContextClass::closeNote ( void );
 
+int appContextClass::numScreens ( void );
+
 };
 
 #endif

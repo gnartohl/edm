@@ -22,17 +22,40 @@
 
 #include "thread.h"
 
-void destroy_cb (
+static void doCbBlink (
+  void *ptr
+) {
+
+colorButtonClass *cb = (colorButtonClass *) ptr;
+Arg arg[10];
+int n;
+unsigned int bg;
+
+  bg = cb->ci->pixWblink(cb->curIndex);
+
+  n = 0;
+  XtSetArg( arg[n], XmNbackground, (XtArgVal) bg ); n++;
+  XtSetValues( cb->pb, arg, n );
+
+}
+
+static void destroy_cb (
   Widget w,
   XtPointer client,
   XtPointer call )
 {
 
 colorInfoClass *ci;
+colorButtonClass *cb = (colorButtonClass *) client;
 
 //   printf( "In destroy_widget_cb\n" );
 
-  ci = (colorInfoClass *) client;
+  if ( cb->blink ) {
+    cb->ci->removeFromBlinkList( (void *) cb, (void *) doCbBlink );
+    cb->blink = 0;
+  }
+
+  ci = cb->ci;
   ci->setActiveWidget( NULL );
   ci->setNameWidget( NULL );
   ci->setCurDestination( NULL );
@@ -47,6 +70,7 @@ colorButtonClass::colorButtonClass ( void ) {
   namePb = NULL;
   tf = NULL;
   colorPvName = NULL;
+  blink = 0;
 
 }
 
@@ -68,6 +92,7 @@ colorButtonClass::colorButtonClass (
   else {
     colorPvName = NULL;
   }
+  blink = 0;
 
 }
 
@@ -88,6 +113,7 @@ colorButtonClass colorButtonClass::operator = (
   else {
     colorPvName = NULL;
   }
+  blink = 0;
 
   return *this;
 
@@ -100,6 +126,11 @@ colorButtonClass::~colorButtonClass ( void ) {
   if ( colorPvName ) {
     delete colorPvName;
     colorPvName = NULL;
+  }
+
+  if ( blink ) {
+    ci->removeFromBlinkList( (void *) this, (void *) doCbBlink );
+    blink = 0;
   }
 
 }
@@ -197,15 +228,23 @@ Widget colorButtonClass::create(
   ci = ptr;
 
 
-  pb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, parent, args,
+  //pb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, parent, args,
+  pb = XtCreateManagedWidget( "", xmPushButtonGadgetClass, parent, args,
    num_args );
 
   destPtr = dest;
 
   curIndex = *dest;
 
+  if ( ci->blinking(curIndex) ) {
+    if ( !blink ) {
+      ci->addToBlinkList( (void *) this, (void *) doCbBlink );
+      blink = 1;
+    }
+  }
+
   XtAddCallback( pb, XmNactivateCallback, setActive_cb, (XtPointer) this );
-  XtAddCallback( pb, XmNdestroyCallback, destroy_cb, (XtPointer) this->ci );
+  XtAddCallback( pb, XmNdestroyCallback, destroy_cb, (XtPointer) this );
 
 
   return pb;
@@ -240,7 +279,8 @@ Widget colorButtonClass::createWithText(
   form = XtCreateManagedWidget( "", xmFormWidgetClass, parent,
     fArgs, fNum_args );
 
-  pb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, form,
+  //pb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, form,
+  pb = XtCreateManagedWidget( "", xmPushButtonGadgetClass, form,
     bArgs, bNum_args );
 
   XtSetArg( tArgs[tNum_args], XmNleftOffset, (XtArgVal) 5 ); tNum_args++;
@@ -260,8 +300,15 @@ Widget colorButtonClass::createWithText(
 
   curIndex = *dest;
 
+  if ( ci->blinking(curIndex) ) {
+    if ( !blink ) {
+      ci->addToBlinkList( (void *) this, (void *) doCbBlink );
+      blink = 1;
+    }
+  }
+
   XtAddCallback( pb, XmNactivateCallback, setActive_cb, (XtPointer) this );
-  XtAddCallback( pb, XmNdestroyCallback, destroy_cb, (XtPointer) this->ci );
+  XtAddCallback( pb, XmNdestroyCallback, destroy_cb, (XtPointer) this );
 
   return form;
 
@@ -297,11 +344,12 @@ Widget colorButtonClass::createWithRule(
   form = XtCreateManagedWidget( "", xmFormWidgetClass, parent,
     fArgs, fNum_args );
 
-  pb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, form,
+  //pb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, form,
+  pb = XtCreateManagedWidget( "", xmPushButtonGadgetClass, form,
     bArgs, bNum_args );
 
   XtAddCallback( pb, XmNactivateCallback, setActive_cb, (XtPointer) this );
-  XtAddCallback( pb, XmNdestroyCallback, destroy_cb, (XtPointer) this->ci );
+  XtAddCallback( pb, XmNdestroyCallback, destroy_cb, (XtPointer) this );
 
   if ( ci->majorVersion() >= 3 ) {
 
@@ -341,6 +389,13 @@ Widget colorButtonClass::createWithRule(
   destPtr = dest;
 
   curIndex = *dest;
+
+  if ( ci->blinking(curIndex) ) {
+    if ( !blink ) {
+      ci->addToBlinkList( (void *) this, (void *) doCbBlink );
+      blink = 1;
+    }
+  }
 
   return form;
 
@@ -427,7 +482,21 @@ unsigned int fg, bg;
 XmString str;
 
   curIndex = i;
-  bg = ci->pix(i);
+  bg = ci->pixWblink(i);
+
+  if ( ci->blinking(i) ) {
+    if ( !blink ) {
+      ci->addToBlinkList( (void *) this, (void *) doCbBlink );
+      blink = 1;
+    }
+  }
+  else {
+    if ( blink ) {
+      ci->removeFromBlinkList( (void *) this, (void *) doCbBlink );
+      blink = 0;
+    }
+  }
+
   fg = ci->labelPix(i);
 
   if ( ci->isRule(i) ) {

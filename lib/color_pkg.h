@@ -59,6 +59,19 @@
 #define COLORINFO_K_MAJOR 3
 #define COLORINFO_K_NOALARM 4
 
+class colorInfoClass;
+
+typedef struct simpleButtonTag {
+  Widget wgt;
+  class colorInfoClass *cio;
+  int x;
+  int y;
+  int w;
+  int h;
+  int colorIndex;
+  int blink;
+} simpleButtonType, *simpleButtonPtr;
+
 typedef int (*ruleFuncType)( double v1, double v2 );
 typedef int (*connectingFuncType)( int v1, int v2 );
 
@@ -82,11 +95,18 @@ typedef struct ruleTag {
     int combinedOpResult;
 } ruleType, *rulePtr;
 
+typedef struct blinkNodeTag {
+  AVL_FIELDS(blinkNodeTag)
+  void *obj;
+  void *func;
+  struct blinkNodeTag *next; // for lookaside list only
+} blinkNodeType, *blinkNodePtr;
+
 typedef struct colorCacheTag {
     AVL_FIELDS(colorCacheTag)
-    unsigned int rgb[3]; // [0]=r, [1]=g, [2]=b
+    int rgb[3]; // [0]=r, [1]=g, [2]=b
     unsigned int pixel;
-    unsigned int blinkRgb[3]; // [0]=r, [1]=g, [2]=b
+    int blinkRgb[3]; // [0]=r, [1]=g, [2]=b
     unsigned int blinkPixel;
     int index;
     int position;
@@ -104,6 +124,18 @@ typedef struct showNameBlockTag {
 
 class colorListClass;
 class colorButtonClass;
+
+#ifdef __color_pkg_cc
+
+static void doCiBlink (
+  void *ptr
+);
+
+static void drawSimpleButton (
+  simpleButtonPtr sbp
+);
+
+#endif
 
 // colorInfoClass: handles palette and colors
 //
@@ -134,6 +166,8 @@ public:
     int change;
 
     int colorWindowIsOpen;
+
+    int blink;
 
     colorInfoClass::colorInfoClass ();
     colorInfoClass::~colorInfoClass ();
@@ -179,8 +213,11 @@ public:
 
     // index <-> pixel
     unsigned int colorInfoClass::getPixelByIndex (int index);
+    unsigned int colorInfoClass::getPixelByIndexWithBlink (int index);
     unsigned int colorInfoClass::pix (int index) 
     {   return  getPixelByIndex (index); }
+    unsigned int colorInfoClass::pixWblink (int index) 
+    {   return  getPixelByIndexWithBlink (index); }
     int colorInfoClass::pixIndex (unsigned int pixel);
     
     // return reasonable fg for given bg
@@ -256,6 +293,12 @@ public:
     int colorInfoClass::getSpecialColor (int index);
     int colorInfoClass::getSpecialIndex (int index);
 
+    // These functions are used by gc_pkg.cc and are not intended for
+    // general use.
+    int colorInfoClass::blinking ( int index );
+    int colorInfoClass::addToBlinkList( void *obj, void *func );
+    int colorInfoClass::removeFromBlinkList( void *obj, void *func );
+
     // deprecated functions, for backward compatibility only
     int colorInfoClass::getIndex (unsigned int pixel, int *index);
     int colorInfoClass::setIndex (int index, unsigned int *pixel);
@@ -263,11 +306,24 @@ public:
     int colorInfoClass::canDiscardPixel (unsigned int pixel);
 
 private:
+
+    friend void doCiBlink (
+      void *ptr
+    );
+
+    friend void drawSimpleButton (
+      simpleButtonPtr sbp
+    );
+
     friend void showColorName (
         XtPointer client,
         XtIntervalId *id );
 
     friend void doColorBlink (
+        XtPointer client,
+        XtIntervalId *id );
+
+    friend void toggleColorBlink (
         XtPointer client,
         XtIntervalId *id );
 
@@ -301,6 +357,9 @@ private:
     AVL_HANDLE colorCacheByNameH;
     AVL_HANDLE colorCacheByPosH;
     AVL_HANDLE colorCacheByAliasH;
+    AVL_HANDLE blinkH;
+
+    blinkNodePtr blinkLookasideHead, blinkLookasideTail;
 
     Display *display;
     int screen;
@@ -314,6 +373,7 @@ private:
     /*  XColor *blinkingXColor[NUM_BLINKING_COLORS], */
     /*   *offBlinkingXColor[NUM_BLINKING_COLORS]; */
 
+    simpleButtonPtr simpleColorButtons;
     unsigned int *colors, *blinkingColors;
     unsigned long *blinkingColorCells;
     XColor *blinkingXColor, *offBlinkingXColor;
@@ -322,7 +382,7 @@ private:
 
     int special[NUM_SPECIAL_COLORS];
     int specialIndex[NUM_SPECIAL_COLORS];
-    int numColors, blink;
+    int numColors;
 
     int curIndex, curX, curY;
 
@@ -362,6 +422,7 @@ private:
     static const int GET_MENU_MAP = 15;
     static const int INSERT_COLOR = 16;
     static const int GET_ALIAS = 17;
+    static const int GET_BLINK_PERIOD = 18;
 
     int readFile, tokenState, parseIndex, parseLine, tokenFirst, tokenLast,
         tokenNext, gotToken, colorIndex, colorPosition;

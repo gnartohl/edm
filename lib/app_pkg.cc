@@ -3291,6 +3291,13 @@ static void displayParamInfo ( void ) {
   printf( "\n" );
   printf( global_str53 );
   printf( "\n" );
+  printf( global_str80 );
+  printf( global_str81 );
+  printf( global_str82 );
+  printf( global_str83 );
+  printf( "\n" );
+  printf( global_str84 );
+  printf( "\n" );
   printf( global_str54 );
   printf( "\n" );
 
@@ -4309,5 +4316,22 @@ int _x, _y;
 void appContextClass::closeNote ( void ) {
 
   msgDialog.popdown();
+
+}
+
+int appContextClass::numScreens ( void ) {
+
+  // return number of open screens
+
+int count = 0;
+activeWindowListPtr cur;
+
+  cur = head->flink;
+  while ( cur != head ) {
+    count++;
+    cur = cur->flink;
+  }
+
+  return count;
 
 }

@@ -46,6 +46,9 @@ activeGraphicClass::activeGraphicClass ( void ) {
   strcpy( id, "" );
   currentDragIndex = 0;
   objType = activeGraphicClass::UNKNOWN;
+  onBlinkList = 0;
+  blinkFunc = NULL;
+  blinkDisable = 0;
 
 }
 
@@ -75,6 +78,9 @@ void activeGraphicClass::clone ( const activeGraphicClass *source ) {
   currentDragIndex = 0;
   curUndoObj = NULL;
   startEdit = 0;
+  onBlinkList = 0;
+  blinkFunc = NULL;
+  blinkDisable = 0;
 
 }
 
@@ -87,6 +93,10 @@ activeGraphicClass::~activeGraphicClass ( void ) {
 
   if ( ef.formIsPoppedUp() ) {
     ef.popdown();
+  }
+
+  if ( onBlinkList ) {
+    actWin->ci->removeFromBlinkList( (void *) this, blinkFunc );
   }
 
 }
@@ -3138,4 +3148,106 @@ void activeGraphicClass::updateColors (
 
 }
 
+int activeGraphicClass::blink ( void ) {
 
+  return onBlinkList;
+
+}
+
+void activeGraphicClass::setBlink ( void ) {
+
+  onBlinkList = 1;
+
+}
+
+void activeGraphicClass::setNotBlink ( void ) {
+
+  onBlinkList = 0;
+
+}
+
+void *activeGraphicClass::blinkFunction ( void ) {
+
+  return blinkFunc;
+
+}
+
+void activeGraphicClass::setBlinkFunction (
+  void *addr
+) {
+
+  blinkFunc = addr;
+
+}
+
+void activeGraphicClass::updateExecuteModeBlink (
+  int blinkFlag
+) {
+
+  if ( !blinkDisable ) {
+    actWin->executeGc.updateBlink( this, blinkFlag );
+  }
+
+}
+
+void activeGraphicClass::updateEditModeBlink (
+  int blinkFlag
+) {
+
+  if ( !blinkDisable ) {
+    actWin->drawGc.updateBlink( this, blinkFlag );
+  }
+
+}
+
+void activeGraphicClass::updateBlink (
+  int blinkFlag
+) {
+
+int stat;
+
+  if ( !blinkDisable ) {
+
+    if ( blinkFlag ) {
+
+      if ( !blink() ) {
+        stat = actWin->ci->addToBlinkList( (void *) this,
+         blinkFunction() );
+        setBlink();
+      }
+
+    }
+    else {
+
+      if ( blink() ) {
+        stat = actWin->ci->removeFromBlinkList( (void *) this,
+         blinkFunction() );
+        setNotBlink();
+      }
+
+    }
+
+  }
+
+}
+
+void activeGraphicClass::removeBlink ( void ) {
+
+  if ( blink() ) {
+    actWin->ci->removeFromBlinkList( (void *) this, blinkFunction() );
+    setNotBlink();
+  }
+
+}
+
+void activeGraphicClass::disableBlink ( void ) {
+
+  blinkDisable = 1;
+
+}
+
+void activeGraphicClass::enableBlink ( void ) {
+
+  blinkDisable = 0;
+
+}

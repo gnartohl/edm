@@ -17,6 +17,8 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "gc_pkg.h"
+#include "color_pkg.h"
+#include "act_grf.h"
 
 #include "thread.h"
 
@@ -41,6 +43,8 @@ gcClass::gcClass ( void ) {
   eraseStackPtr = 0;
   xorStackPtr = 0;
 
+  ci = NULL;
+
 }
 
 gcClass::~gcClass ( void ) {
@@ -49,6 +53,14 @@ gcClass::~gcClass ( void ) {
   if ( x_or ) XFreeGC( display, x_or );
   if ( erase ) XFreeGC( display, erase );
   if ( invert ) XFreeGC( display, invert );
+
+}
+
+void gcClass::setCI (
+  colorInfoClass *_ci
+) {
+
+  ci = _ci;
 
 }
 
@@ -346,6 +358,45 @@ unsigned int newColor;
   XSetBackground( display, invert, newColor );
 
   return GC_SUCCESS;  
+
+}
+
+int gcClass::setFG (
+  int fgIndex,
+  int *blink )
+{
+
+  *blink = *blink || ci->blinking( fgIndex );
+
+  setFG( ci->pixWblink(fgIndex) );
+
+  return 1;
+
+}
+
+void gcClass::updateBlink (
+  activeGraphicClass *ago,
+  int blink )
+{
+
+int stat;
+
+  if ( blink ) {
+
+    if ( !ago->blink() ) {
+      stat = ci->addToBlinkList( (void *) ago, ago->blinkFunction() );
+      ago->setBlink();
+    }
+
+  }
+  else {
+
+    if ( ago->blink() ) {
+      stat = ci->removeFromBlinkList( (void *) ago, ago->blinkFunction() );
+      ago->setNotBlink();
+    }
+
+  }
 
 }
 

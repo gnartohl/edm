@@ -30,7 +30,6 @@
 #include <X11/Xlib.h>
 
 #include "font_pkg.h"
-
 #include "gc_pkg.str"
 
 #define GC_SUCCESS 1
@@ -40,6 +39,9 @@
 #define GC_STACK_UNFLO 106
 
 #define GC_STACK_MAX 5
+
+class colorInfoClass;
+class activeGraphicClass;
 
 class gcClass {
 
@@ -58,12 +60,17 @@ int eraseStackPtr;
 XRectangle eraseXRecStack[GC_STACK_MAX];
 int xorStackPtr;
 XRectangle xorXRecStack[GC_STACK_MAX];
+colorInfoClass *ci;
 
 public:
 
 gcClass::gcClass ( void );
 
 gcClass::~gcClass ( void );
+
+void gcClass::setCI (
+  colorInfoClass *_ci
+);
 
 int gcClass::create (
   Widget top );
@@ -110,6 +117,14 @@ void gcClass::restoreBaseBg ( void );
 
 int gcClass::setFG (
   unsigned int fg );
+
+int gcClass::setFG (
+  int fgIndex,
+  int *blink );
+
+void gcClass::updateBlink (
+  activeGraphicClass *ago,
+  int blink );
 
 int gcClass::setBG (
   unsigned int bg );

@@ -1295,6 +1295,7 @@ activeGraphicListPtr cur;
   cur = head->flink;
   while ( cur != head ) {
 
+    cur->node->removeBlink();
     cur->node->erase();
 
     cur = cur->flink;
@@ -1319,6 +1320,7 @@ activeGraphicListPtr cur;
   cur = head->flink;
   while ( cur != head ) {
 
+    cur->node->removeBlink();
     cur->node->eraseActive();
 
     cur = cur->flink;
@@ -1461,6 +1463,7 @@ activeGraphicListPtr cur;
          0, 0 );
       }
       cur->node->activate( pass, (void *) cur );
+      cur->node->removeBlink();
       cur = cur->flink;
 
     }
@@ -1660,6 +1663,7 @@ activeGraphicListPtr cur;
     while ( cur != head ) {
 
       cur->node->deactivate( pass );
+      cur->node->removeBlink();
 
       cur = cur->flink;
 

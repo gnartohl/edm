@@ -2,7 +2,7 @@
 #define __environment_str 1
 
 
-// global_str79 is last
+// global_str84 is last
 
 
 #define environment_str1 (char *) "EDMDATAFILES"
@@ -76,8 +76,15 @@
 #define global_str49 (char *) "EDMPVOBJECTS\t\tLocation of edmPvObjects, the edm pv component\n\t\t\tobject file\n"
 #define global_str50 (char *) "EDMDATAFILES\t\tLocation of display files given as\n"
 #define global_str51 (char *) "\t\t\t  <path 1>:<path 2>:...:<path n>\n"
-#define global_str52 (char *) "\t\t\t  (e.g. /usr/displays:/usr/more:/usr/yetMore)\n"
+#define global_str52 (char *) "\t\t\t  e.g. /usr/displays:/usr/more:/usr/yetMore\n"
 #define global_str53 (char *) "\t\t\t  If EDMDATAFILES is not set then default path is ./\n"
+
+#define global_str80 (char *) "EDMSERVERS\t\tComma separated list of server names\n\n"
+#define global_str81 (char *) "\t\t\t<server1>[:merit],<server2>[:merit]...\n"
+#define global_str82 (char *) "\t\t\te.g. node1:2,node2:1.5,node3\n"
+#define global_str83 (char *) "\t\t\t(node1 is preffered 2/1.5, 2/1 over nodes 2 & 3)\n"
+
+#define global_str84 (char *) "EDMTMPFILES\t\tLocation of autosave files (default: /tmp)\n"
 
 #define global_str54 (char *) "EDMUSERLIB\t\tLocation of user shared library file\n"
 

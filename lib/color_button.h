@@ -46,6 +46,15 @@
 
 #ifdef __color_button_cc
 
+static void doCbBlink (
+  void *ptr
+);
+
+static void destroy_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 static void nameSetActive_cb (
   Widget w,
   XtPointer client,
@@ -57,6 +66,15 @@ class colorButtonClass {
 
 private:
 
+friend void doCbBlink (
+  void *ptr
+);
+
+friend void destroy_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 friend void nameSetActive_cb (
   Widget w,
   XtPointer client,
@@ -67,6 +85,7 @@ int *destPtr;
 colorInfoClass *ci;
 char *colorPvName;
 int curIndex;
+int blink;
 
 public:
 

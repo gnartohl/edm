@@ -2790,7 +2790,7 @@ long value;
 //   printf( "old value = %-d\n", destArray[i] );
 //   printf( "new value = %-d\n", value );
 
-  destArray[i] = value;
+  destArray[i] = (int) value;
 
 }
 

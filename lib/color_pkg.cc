@@ -1,3 +1,5 @@
+#define __color_pkg_cc 1
+
 //  edm - extensible display manager
 
 //  Copyright (C) 1999 John W. Sinclair
@@ -23,6 +25,54 @@
 #include "thread.h"
 
 static int showRGB = 0;
+
+static void doCiBlink (
+  void *ptr
+) {
+
+simpleButtonPtr sbp = (simpleButtonPtr) ptr;
+
+  drawSimpleButton( sbp );
+
+}
+
+static void drawSimpleButton (
+  simpleButtonPtr sbp
+) {
+
+int stat, blink = 0;
+
+  sbp->cio->gc.setFG( sbp->colorIndex, &blink );
+  XFillRectangle( XtDisplay(sbp->wgt), XtWindow(sbp->wgt),
+   sbp->cio->gc.normGC(), sbp->x, sbp->y, 20, 20 );
+
+  if ( sbp->cio->isRule( sbp->colorIndex ) ) {
+    sbp->cio->gc.setFG( sbp->cio->labelPix(sbp->colorIndex) );
+    XFillArc( XtDisplay(sbp->wgt), XtWindow(sbp->wgt),
+     sbp->cio->gc.normGC(), sbp->x+7, sbp->y+7, 6, 6, 0, 23040 );
+  }
+
+  if ( sbp->colorIndex == sbp->cio->curIndex ) {
+    sbp->cio->gc.setFG(
+     BlackPixel( XtDisplay(sbp->wgt), DefaultScreen(XtDisplay(sbp->wgt)) ) );
+    XDrawRectangle( XtDisplay(sbp->wgt), XtWindow(sbp->wgt),
+    sbp->cio->gc.normGC(), sbp->x-2, sbp->y-2, 23, 23 );
+  }
+
+  if ( blink ) {
+    if ( !sbp->blink ) {
+      stat = sbp->cio->addToBlinkList( (void *) sbp, (void *) doCiBlink );
+      sbp->blink = 1;
+    }
+  }
+  else {
+    if ( sbp->blink ) {
+      stat = sbp->cio->removeFromBlinkList( (void *) sbp, (void *) doCiBlink );
+      sbp->blink = 0;
+    }
+  }
+
+}
 
 void showColorName (
   XtPointer client,
@@ -81,6 +131,52 @@ int i;
 
 }
 
+typedef void (*vfunc)( void *ptr );
+
+void toggleColorBlink (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+colorInfoClass *cio = (colorInfoClass *) client;
+blinkNodePtr cur;
+int stat;
+vfunc vf;
+
+  if ( !cio->incrementTimerActive ) return;
+
+  cio->incrementTimer = XtAppAddTimeOut( cio->appCtx,
+   cio->incrementTimerValue, toggleColorBlink, client );
+
+  if ( cio->blink ) {
+    cio->blink = 0;
+  }
+  else {
+    cio->blink = 1;
+  }
+
+  stat = avl_get_first( cio->blinkH, (void **) &cur );
+  if ( !( stat & 1 ) ) return;
+
+  while ( cur ) {
+
+    //printf( "obj = %-d\n", (int) cur->obj );
+
+    vf = (vfunc) cur->func;
+    if ( vf ) {
+      (*vf)( cur->obj );
+    }
+    else {
+      printf( colorInfoClass_str35 );
+    }
+
+    stat = avl_get_next( cio->blinkH, (void **) &cur );
+    if ( !( stat & 1 ) ) return;
+
+  }
+
+}
+
 void colorShellEventHandler (
   Widget w,
   XtPointer client,
@@ -88,12 +184,21 @@ void colorShellEventHandler (
   Boolean *continueToDispatch ) {
 
 colorInfoClass *cio;
+int i;
 
   cio = (colorInfoClass *) client;
 
   *continueToDispatch = False;
 
   if ( e->type == UnmapNotify ) {
+
+    for ( i=0; i<cio->max_colors+cio->num_blinking_colors; i++ ) {
+      if ( cio->simpleColorButtons[i].blink ) {
+        cio->removeFromBlinkList( (void *) &cio->simpleColorButtons[i],
+         (void *) doCiBlink );
+        cio->simpleColorButtons[i].blink = 0;
+      }
+    }
 
     if ( cio->showNameTimerActive ) {
       cio->showNameTimerActive = 0;
@@ -164,6 +269,8 @@ colorCachePtr cur;
             i = cur->index;
 	  }
 
+          drawSimpleButton( &cio->simpleColorButtons[i] );
+#if 0
           cio->gc.setFG( cio->colors[i] );
           XFillRectangle( cio->display, XtWindow(cio->form), cio->gc.normGC(),
            x, y, 20, 20 );
@@ -180,6 +287,7 @@ colorCachePtr cur;
             XDrawRectangle( cio->display, XtWindow(cio->form),
              cio->gc.normGC(), x-2, y-2, 23, 23 );
           }
+#endif
 
           pos++;
 
@@ -208,6 +316,8 @@ colorCachePtr cur;
             i = cur->index;
 	  }
 
+          drawSimpleButton( &cio->simpleColorButtons[i] );
+#if 0
           cio->gc.setFG( cio->colors[i] );
           XFillRectangle( cio->display, XtWindow(cio->form), cio->gc.normGC(),
            x, y, 20, 20 );
@@ -224,6 +334,7 @@ colorCachePtr cur;
             XDrawRectangle( cio->display, XtWindow(cio->form),
              cio->gc.normGC(), x-2, y-2, 23, 23 );
           }
+#endif
 
           pos++;
 
@@ -492,10 +603,10 @@ static int compare_key_by_color (
 
 int i;
 colorCachePtr p;
-unsigned int *oneRgb;
+int *oneRgb;
 
   p = (colorCachePtr) node;
-  oneRgb = (unsigned int *) key;
+  oneRgb = (int *) key;
 
   for ( i=0; i<3; i++ ) {
     if ( oneRgb[i] > p->rgb[i] )
@@ -594,7 +705,62 @@ ruleConditionPtr cur1, cur2;
   return 1;
 
 }
+
+static int compare_blink_nodes (
+  void *node1,
+  void *node2
+) {
 
+blinkNodePtr p1, p2;
+
+  p1 = (blinkNodePtr) node1;
+  p2 = (blinkNodePtr) node2;
+
+  if ( (unsigned long) p1->obj < (unsigned long) p2->obj )
+    return -1;
+  else if ( (unsigned long) p1->obj > (unsigned long) p2->obj )
+    return 1;
+  else
+    return 0;
+
+}
+
+static int compare_blink_key (
+  void *key,
+  void *node
+) {
+
+blinkNodePtr p;
+void *oneIndex;
+
+  p = (blinkNodePtr) node;
+  oneIndex = (void *) key;
+
+  if ( (unsigned long) oneIndex < (unsigned long) p->obj )
+    return -1;
+  else if ( (unsigned long) oneIndex > (unsigned long) p->obj )
+    return 1;
+  else
+    return 0;
+
+}
+
+static int copy_blink_nodes (
+  void *node1,
+  void *node2
+) {
+
+blinkNodePtr p1, p2;
+
+  p1 = (blinkNodePtr) node1;
+  p2 = (blinkNodePtr) node2;
+
+  *p1 = *p2;
+
+  return 1;
+
+}
+
 colorInfoClass::colorInfoClass ( void ) {
 
 int stat;
@@ -636,6 +802,14 @@ int stat;
    compare_key_by_pos, copy_nodes, &(this->colorCacheByPosH) );
   if ( !( stat & 1 ) ) this->colorCacheByPosH = (AVL_HANDLE) NULL;
 
+  stat = avl_init_tree( compare_blink_nodes,
+   compare_blink_key, copy_blink_nodes, &(this->blinkH) );
+  if ( !( stat & 1 ) ) this->blinkH = (AVL_HANDLE) NULL;
+
+  blinkLookasideHead = new blinkNodeType; // sentinel node
+  blinkLookasideTail = blinkLookasideHead;
+  blinkLookasideTail->next = NULL;
+
   curPaletteRow = -1;
   curPaletteCol = -1;
 
@@ -654,6 +828,17 @@ int stat;
 
 colorInfoClass::~colorInfoClass ( void ) {
 
+blinkNodePtr cur, next;
+int i;
+
+  for ( i=0; i<max_colors+num_blinking_colors; i++ ) {
+    if ( simpleColorButtons[i].blink ) {
+      removeFromBlinkList( (void *) &simpleColorButtons[i],
+       (void *) doCiBlink );
+      simpleColorButtons[i].blink = 0;
+    }
+  }
+
   XtDestroyWidget( shell );
 
   if ( showNameTimerActive ) {
@@ -666,6 +851,16 @@ colorInfoClass::~colorInfoClass ( void ) {
     XtRemoveTimeOut( incrementTimer );
   }
 
+  cur = blinkLookasideHead->next;
+  while ( cur ) {
+    next = cur->next;
+    delete cur;
+    cur = next;
+  }
+  delete blinkLookasideHead;
+
+  // need to delete avl trees
+
 }
 
 static void file_cb (
@@ -675,7 +870,7 @@ static void file_cb (
 {
 
 XmPushButtonCallbackStruct *cb;
-int num;
+long num;
 Widget p, curP;
 
   num = (long) client;
@@ -998,7 +1193,8 @@ int colorInfoClass::ver3InitFromFile (
 
 char tk[MAX_LINE_SIZE+1], *endptr;
 int i, ii, n, stat, nrows, ncols, remainder, dup,
- parseStatus, state, colorMult, val, index, maxSpecial, firstCond;
+ parseStatus, state, colorMult, val, index, maxSpecial, firstCond,
+ x, y, r, c, pos;
 XColor color;
 Arg arg[20];
 XmString str1, str2;
@@ -1019,7 +1215,15 @@ char msg[127+1];
   screen = DefaultScreen( d );
   depth = DefaultDepth( d, screen );
   visual = DefaultVisual( d, screen );
-  cmap = DefaultColormap( d, screen );
+
+  if ( usePrivColorMapFlag ) {
+    usingPrivateColorMap = 1;
+    cmap = XCopyColormapAndFree( display, cmap );
+    XSetWindowColormap( display, XtWindow(top), cmap );
+  }
+  else{
+    cmap = DefaultColormap( d, screen );
+  }
 
   num_color_cols = 10;
   maxColor = 0x10000;
@@ -2189,6 +2393,7 @@ term:
 
   colors = new unsigned int[max_colors];
   blinkingColors = new unsigned int[max_colors];
+  simpleColorButtons = new simpleButtonType[max_colors];
   colorNames = new char *[max_colors];
   colorNodes = new colorCachePtr[max_colors];
 
@@ -2225,9 +2430,9 @@ term:
            ( cur1->rgb[1] != cur1->blinkRgb[1] ) ||
            ( cur1->rgb[2] != cur1->blinkRgb[2] ) ) {
 
-        color.red = cur1->rgb[0];
-        color.green = cur1->rgb[1];
-        color.blue = cur1->rgb[2];
+        color.red = cur1->blinkRgb[0];
+        color.green = cur1->blinkRgb[1];
+        color.blue = cur1->blinkRgb[2];
 
         stat = XAllocColor( display, cmap, &color );
         if ( stat ) {
@@ -2241,7 +2446,7 @@ term:
       }
       else {
         blinkingColors[i] = colors[i];
-        cur1->blinkPixel = colors[i];
+        cur1->blinkPixel = blinkingColors[i];
       }
 
       // --------------------------------------------------------------
@@ -2317,6 +2522,7 @@ term:
 	                     // color for rule
 
             colors[i] = cur1->pixel;
+            blinkingColors[i] = cur1->blinkPixel;
 
             firstCond = 0;
             colorNodes[i]->pixel = cur1->pixel;
@@ -2494,6 +2700,7 @@ term:
   XSetWindowColormap( display, XtWindow(shell), cmap );
 
   gc.create( shell );
+  gc.setCI( this );
 
   n = 0;
   XtSetArg( arg[n], XmNbackground, &bgColor ); n++;
@@ -2516,6 +2723,62 @@ term:
 
   msgDialog.create( shell );
 
+  incrementTimerValue = 1000;
+  incrementTimerActive = 1;
+  incrementTimer = XtAppAddTimeOut( appCtx, incrementTimerValue,
+   toggleColorBlink, this );
+
+  ncols = num_color_cols;
+  nrows = (max_colors+num_blinking_colors) / ncols;
+  remainder = (max_colors+num_blinking_colors) % ncols;
+
+  pos = 0;
+  for ( r=0; r<nrows; r++ ) {
+
+    for ( c=0; c<ncols; c++ ) {
+
+      x = c*5 + c*20 + 5;
+      y = r*5 + r*20 + 5;
+
+      simpleColorButtons[pos].wgt = form;
+      simpleColorButtons[pos].cio = this;
+      simpleColorButtons[pos].x = x;
+      simpleColorButtons[pos].y = y;
+      simpleColorButtons[pos].w = 23;
+      simpleColorButtons[pos].h = 23;
+      simpleColorButtons[pos].colorIndex = pos;
+      simpleColorButtons[pos].blink = 0;
+
+      pos++;
+
+    }
+
+  }
+
+  if ( remainder ) {
+
+    r = nrows;
+
+    for ( c=0; c<remainder; c++ ) {
+
+      x = c*5 + c*20 + 5;
+      y = r*5 + r*20 + 5;
+
+      simpleColorButtons[pos].wgt = form;
+      simpleColorButtons[pos].cio = this;
+      simpleColorButtons[pos].x = x;
+      simpleColorButtons[pos].y = y;
+      simpleColorButtons[pos].w = 23;
+      simpleColorButtons[pos].h = 23;
+      simpleColorButtons[pos].colorIndex = pos;
+      simpleColorButtons[pos].blink = 0;
+
+      pos++;
+
+    }
+
+  }
+
   return 1;
 
 }
@@ -2532,7 +2795,9 @@ int colorInfoClass::ver4InitFromFile (
 
 char tk[MAX_LINE_SIZE+1], *endptr;
 int i, ii, n, stat, nrows, ncols, remainder, dup,
- parseStatus, state, colorMult, val, index, maxSpecial, firstCond;
+ parseStatus, state, colorMult, val, index, maxSpecial, firstCond,
+ x, y, r, c, pos;
+
 XColor color;
 Arg arg[20];
 XmString str1, str2;
@@ -2542,6 +2807,7 @@ unsigned long bgColor;
 int tmpSize;
 int *tmp;
 char msg[127+1];
+int blinkMs = 500;
 
   for ( i=0; i<NUM_SPECIAL_COLORS; i++ ) {
     special[i] = 0;
@@ -2553,7 +2819,15 @@ char msg[127+1];
   screen = DefaultScreen( d );
   depth = DefaultDepth( d, screen );
   visual = DefaultVisual( d, screen );
-  cmap = DefaultColormap( d, screen );
+
+  if ( usePrivColorMapFlag ) {
+    usingPrivateColorMap = 1;
+    cmap = XCopyColormapAndFree( display, cmap );
+    XSetWindowColormap( display, XtWindow(top), cmap );
+  }
+  else{
+    cmap = DefaultColormap( d, screen );
+  }
 
   num_color_cols = 10;
   maxColor = 0x10000;
@@ -2596,6 +2870,11 @@ char msg[127+1];
       else if ( strcmp( tk, "max" ) == 0 ) {
 
         state = GET_MAX;
+
+      }
+      else if ( strcmp( tk, "blinkms" ) == 0 ) {
+
+        state = GET_BLINK_PERIOD;
 
       }
       else if ( strcmp( tk, "menumap" ) == 0 ) {
@@ -2742,6 +3021,43 @@ char msg[127+1];
       }
       else {
         parseError( colorInfoClass_str15 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      break;
+
+    case GET_BLINK_PERIOD:
+
+      stat = getToken( tk );
+      if ( stat == FAIL ) {
+        parseError( colorInfoClass_str9 );
+        parseStatus = stat;
+	goto term;
+      }
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( colorInfoClass_str10 );
+        parseStatus = FAIL;
+        goto term;
+      }
+      else if ( strcmp( tk, "=" ) != 0 ) {
+        parseError( colorInfoClass_str13 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      stat = getToken( tk );
+      if ( stat == FAIL ) {
+        parseError( colorInfoClass_str9 );
+        parseStatus = stat;
+	goto term;
+      }
+      blinkMs = strtol( tk, &endptr, 0 );
+      if ( strcmp( endptr, "" ) == 0 ) {
+        state = GET_FIRST_TOKEN;
+      }
+      else {
+        parseError( colorInfoClass_str14 );
         parseStatus = FAIL;
         goto term;
       }
@@ -3777,6 +4093,7 @@ term:
 
   colors = new unsigned int[max_colors];
   blinkingColors = new unsigned int[max_colors];
+  simpleColorButtons = new simpleButtonType[max_colors];
   colorNames = new char *[max_colors];
   colorNodes = new colorCachePtr[max_colors];
 
@@ -3821,9 +4138,9 @@ term:
            ( cur1->rgb[1] != cur1->blinkRgb[1] ) ||
            ( cur1->rgb[2] != cur1->blinkRgb[2] ) ) {
 
-        color.red = cur1->rgb[0];
-        color.green = cur1->rgb[1];
-        color.blue = cur1->rgb[2];
+        color.red = cur1->blinkRgb[0];
+        color.green = cur1->blinkRgb[1];
+        color.blue = cur1->blinkRgb[2];
 
         stat = XAllocColor( display, cmap, &color );
         if ( stat ) {
@@ -3837,7 +4154,7 @@ term:
       }
       else {
         blinkingColors[i] = colors[i];
-        cur1->blinkPixel = colors[i];
+        cur1->blinkPixel = blinkingColors[i];
       }
 
       // --------------------------------------------------------------
@@ -3938,6 +4255,7 @@ term:
 	                     // color for rule
 
             colors[i] = cur1->pixel;
+            blinkingColors[i] = cur1->blinkPixel;
 
             firstCond = 0;
             colorNodes[i]->pixel = cur1->pixel;
@@ -4145,6 +4463,7 @@ term:
   XSetWindowColormap( display, XtWindow(shell), cmap );
 
   gc.create( shell );
+  gc.setCI( this );
 
   n = 0;
   XtSetArg( arg[n], XmNbackground, &bgColor ); n++;
@@ -4167,6 +4486,70 @@ term:
 
   msgDialog.create( shell );
 
+  if ( blinkMs < 250 ) {
+    incrementTimerValue = 250;
+  }
+  else if ( blinkMs > 2000 ) {
+    incrementTimerValue = 2000;
+  }
+  else {
+    incrementTimerValue = blinkMs;
+  }
+  incrementTimerActive = 1;
+  incrementTimer = XtAppAddTimeOut( appCtx, incrementTimerValue,
+   toggleColorBlink, this );
+
+  ncols = num_color_cols;
+  nrows = (max_colors+num_blinking_colors) / ncols;
+  remainder = (max_colors+num_blinking_colors) % ncols;
+
+  pos = 0;
+  for ( r=0; r<nrows; r++ ) {
+
+    for ( c=0; c<ncols; c++ ) {
+
+      x = c*5 + c*20 + 5;
+      y = r*5 + r*20 + 5;
+
+      simpleColorButtons[pos].wgt = form;
+      simpleColorButtons[pos].cio = this;
+      simpleColorButtons[pos].x = x;
+      simpleColorButtons[pos].y = y;
+      simpleColorButtons[pos].w = 23;
+      simpleColorButtons[pos].h = 23;
+      simpleColorButtons[pos].colorIndex = pos;
+      simpleColorButtons[pos].blink = 0;
+
+      pos++;
+
+    }
+
+  }
+
+  if ( remainder ) {
+
+    r = nrows;
+
+    for ( c=0; c<remainder; c++ ) {
+
+      x = c*5 + c*20 + 5;
+      y = r*5 + r*20 + 5;
+
+      simpleColorButtons[pos].wgt = form;
+      simpleColorButtons[pos].cio = this;
+      simpleColorButtons[pos].x = x;
+      simpleColorButtons[pos].y = y;
+      simpleColorButtons[pos].w = 23;
+      simpleColorButtons[pos].h = 23;
+      simpleColorButtons[pos].colorIndex = pos;
+      simpleColorButtons[pos].blink = 0;
+
+      pos++;
+
+    }
+
+  }
+
   return 1;
 
 }
@@ -4179,7 +4562,8 @@ int colorInfoClass::initFromFile (
 {
 
 char line[127+1], *ptr, *tk, *junk, *envPtr;
-int i, index, iOn, iOff, n, stat, nrows, ncols, remainder, dup, nSpecial;
+int i, index, iOn, iOff, n, stat, nrows, ncols, remainder, dup, nSpecial,
+ x, y, r, c, pos;
 FILE *f;
 XColor color;
 Arg arg[20];
@@ -4242,6 +4626,7 @@ restart:
   // at this point, a private color map is being used
 
   delete colors;
+  delete blinkingColors;
   delete blinkingColorCells;
   delete blinkingXColor;
   delete offBlinkingXColor;
@@ -4270,6 +4655,10 @@ restart:
    compare_key_by_pos, copy_nodes, &(this->colorCacheByPosH) );
   if ( !( stat & 1 ) ) this->colorCacheByPosH = (AVL_HANDLE) NULL;
 
+  stat = avl_init_tree( compare_blink_nodes,
+   compare_blink_key, copy_blink_nodes, &(this->blinkH) );
+  if ( !( stat & 1 ) ) this->blinkH = (AVL_HANDLE) NULL;
+
   fclose( f );
 
   f = fopen( fileName, "r" );
@@ -4292,10 +4681,12 @@ firstTry:
   }
 
   colors = new unsigned int[max_colors+num_blinking_colors];
+  blinkingColors = new unsigned int[max_colors+num_blinking_colors];
   blinkingColorCells = new unsigned long[num_blinking_colors];
   blinkingXColor = new XColor[num_blinking_colors];
   offBlinkingXColor = new XColor[num_blinking_colors];
   colorNames = new char *[max_colors+num_blinking_colors+1];
+  simpleColorButtons = new simpleButtonType[max_colors+num_blinking_colors];
 
   junk =  new char[strlen("n/a")+1]; // tiny memory leak here
   strcpy( junk, "n/a" );             // for color files < version 3
@@ -4343,6 +4734,7 @@ firstTry:
 
       if ( stat ) {
         colors[i] = color.pixel;
+        blinkingColors[i] = color.pixel;
       }
       else {
 
@@ -4354,6 +4746,7 @@ firstTry:
 	}
 
         colors[i] = BlackPixel( display, screen );
+        blinkingColors[i] = BlackPixel( display, screen );
 
       }
 
@@ -4361,9 +4754,11 @@ firstTry:
     else {
       if ( i ) {
         colors[i] = BlackPixel( display, screen );
+        blinkingColors[i] = BlackPixel( display, screen );
       }
       else {
         colors[i] = WhitePixel( display, screen );
+        blinkingColors[i] = WhitePixel( display, screen );
       }
     }
 
@@ -4374,6 +4769,7 @@ firstTry:
     cur->rgb[1] = (unsigned int) green;
     cur->rgb[2] = (unsigned int) blue;
     cur->pixel = colors[i];
+    cur->blinkPixel = blinkingColors[i]; // new
     cur->index = index;
     cur->position = index;
 
@@ -4397,6 +4793,7 @@ firstTry:
     cur->rgb[1] = (unsigned int) green;
     cur->rgb[2] = (unsigned int) blue;
     cur->pixel = colors[i];
+    cur->blinkPixel = blinkingColors[i]; // new
     cur->index = index;
     cur->position = index;
 
@@ -4420,6 +4817,7 @@ firstTry:
     cur->rgb[1] = (unsigned int) green;
     cur->rgb[2] = (unsigned int) blue;
     cur->pixel = colors[i];
+    cur->blinkPixel = blinkingColors[i]; // new
     cur->index = index;
     cur->position = index;
 
@@ -4443,6 +4841,7 @@ firstTry:
     cur->rgb[1] = (unsigned int) green;
     cur->rgb[2] = (unsigned int) blue;
     cur->pixel = colors[i];
+    cur->blinkPixel = blinkingColors[i]; // new
     cur->index = index;
     cur->position = index;
 
@@ -4511,6 +4910,7 @@ firstTry:
           color.pixel = blinkingColorCells[iOn];
           color.flags = DoRed | DoGreen | DoBlue;
           colors[numColors] = color.pixel;
+          blinkingColors[numColors] = color.pixel;
           blinkingXColor[iOn] = color;
           iOn++;
           XStoreColor( display, cmap, &color );
@@ -4524,9 +4924,11 @@ firstTry:
       else {
         if ( numColors ) {
           colors[numColors] = BlackPixel( display, screen );
+          blinkingColors[numColors] = BlackPixel( display, screen );
         }
         else {
           colors[numColors] = WhitePixel( display, screen );
+          blinkingColors[numColors] = WhitePixel( display, screen );
         }
       }
 
@@ -4539,6 +4941,7 @@ firstTry:
         cur->rgb[1] = (unsigned int) green;
         cur->rgb[2] = (unsigned int) blue;
         cur->pixel = colors[numColors];
+        cur->blinkPixel = blinkingColors[i]; // new
         cur->index = index;
         cur->position = index;
 
@@ -4562,6 +4965,7 @@ firstTry:
         cur->rgb[1] = (unsigned int) green;
         cur->rgb[2] = (unsigned int) blue;
         cur->pixel = colors[numColors];
+        cur->blinkPixel = blinkingColors[i]; // new
         cur->index = index;
         cur->position = index;
 
@@ -4585,6 +4989,7 @@ firstTry:
         cur->rgb[1] = (unsigned int) green;
         cur->rgb[2] = (unsigned int) blue;
         cur->pixel = colors[numColors];
+        cur->blinkPixel = blinkingColors[i]; // new
         cur->index = index;
         cur->position = index;
 
@@ -4608,6 +5013,7 @@ firstTry:
         cur->rgb[1] = (unsigned int) green;
         cur->rgb[2] = (unsigned int) blue;
         cur->pixel = colors[numColors];
+        cur->blinkPixel = blinkingColors[i]; // new
         cur->index = index;
         cur->position = index;
 
@@ -4718,6 +5124,31 @@ firstTry:
 
   fclose( f );
 
+#if 0
+
+  stat = avl_get_first( this->colorCacheByIndexH, (void **) &cur );
+  if ( !( stat & 1 ) ) {
+    return 0;
+  }
+
+  while ( cur ) {
+
+    printf( "name: %s, index: %-d, r: %-d, g: %-d, b: %-d, p: %-d, bp: %-d\n",
+     cur->name, cur->index, cur->rgb[0], cur->rgb[1], cur->rgb[2],
+     cur->pixel, cur->blinkPixel );
+
+    stat = avl_get_next( this->colorCacheByIndexH, (void **) &cur );
+    if ( !( stat & 1 ) ) {
+      printf( "error 1\n" );
+      return 0;
+    }
+
+  }
+
+  printf( "\n" );
+
+#endif
+
   // create window
 
   shell = XtVaAppCreateShell( colorInfoClass_str2, colorInfoClass_str2,
@@ -4782,6 +5213,7 @@ firstTry:
   XSetWindowColormap( display, XtWindow(shell), cmap );
 
   gc.create( shell );
+  gc.setCI( this );
 
    n = 0;
    XtSetArg( arg[n], XmNbackground, &bgColor ); n++;
@@ -4800,6 +5232,57 @@ firstTry:
   colorList.create( max_colors+num_blinking_colors, top, 20, this );
 
   msgDialog.create( shell );
+
+  ncols = num_color_cols;
+  nrows = (max_colors+num_blinking_colors) / ncols;
+  remainder = (max_colors+num_blinking_colors) % ncols;
+
+  pos = 0;
+  for ( r=0; r<nrows; r++ ) {
+
+    for ( c=0; c<ncols; c++ ) {
+
+      x = c*5 + c*20 + 5;
+      y = r*5 + r*20 + 5;
+
+      simpleColorButtons[pos].wgt = form;
+      simpleColorButtons[pos].cio = this;
+      simpleColorButtons[pos].x = x;
+      simpleColorButtons[pos].y = y;
+      simpleColorButtons[pos].w = 23;
+      simpleColorButtons[pos].h = 23;
+      simpleColorButtons[pos].colorIndex = pos;
+      simpleColorButtons[pos].blink = 0;
+
+      pos++;
+
+    }
+
+  }
+
+  if ( remainder ) {
+
+    r = nrows;
+
+    for ( c=0; c<remainder; c++ ) {
+
+      x = c*5 + c*20 + 5;
+      y = r*5 + r*20 + 5;
+
+      simpleColorButtons[pos].wgt = form;
+      simpleColorButtons[pos].cio = this;
+      simpleColorButtons[pos].x = x;
+      simpleColorButtons[pos].y = y;
+      simpleColorButtons[pos].w = 23;
+      simpleColorButtons[pos].h = 23;
+      simpleColorButtons[pos].colorIndex = pos;
+      simpleColorButtons[pos].blink = 0;
+
+      pos++;
+
+    }
+
+  }
 
   return 1;
 
@@ -4925,6 +5408,7 @@ colorCachePtr cur;
   cur->rgb[1] = (unsigned int) *g;
   cur->rgb[2] = (unsigned int) *b;
   cur->pixel = (unsigned int) pixel;
+  cur->blinkPixel = (unsigned int) pixel; // new
   cur->index = -1;
 
   cur->name = NULL;
@@ -4946,6 +5430,7 @@ colorCachePtr cur;
   cur->rgb[1] = (unsigned int) *g;
   cur->rgb[2] = (unsigned int) *b;
   cur->pixel = (unsigned int) pixel;
+  cur->blinkPixel = (unsigned int) pixel; // new
   cur->index = -1;
 
   cur->name = NULL;
@@ -4973,29 +5458,26 @@ int colorInfoClass::setRGB (
 
 int stat;
 colorCachePtr cur;
-int diff, bestR, bestG, bestB, min, foundOne;
+int diff, min, foundOne;
 unsigned int bestPixel;
 
+  //printf( "\n\nstart r=%-d, g=%-d, b=%-d,\n", r, g, b );
+
   foundOne = 0;
-  bestR = 0;
-  bestG = 0;
-  bestB = 0;
 
   stat = avl_get_first( this->colorCacheByColorH, (void **) &cur );
   if ( !( stat & 1 ) ) return COLORINFO_FAIL;
 
   if ( cur ) {
     foundOne = 1;
-     min = abs( (int)(r - cur->rgb[0]) ) + abs( (int)(g - cur->rgb[1]) ) +
-           abs((int)( b - cur->rgb[2]) );
+    min = abs( r - cur->rgb[0] ) + abs( g - cur->rgb[1] ) +
+          abs( b - cur->rgb[2] );
+    //printf( "min=%-d\n", min );
     if ( min == 0 ) {
       *pixel = cur->pixel;
       return COLORINFO_SUCCESS;
     }
     bestPixel = cur->pixel;
-    bestR = cur->rgb[0];
-    bestG = cur->rgb[1];
-    bestB = cur->rgb[2];
   }
 
   stat = avl_get_next( this->colorCacheByColorH, (void **) &cur );
@@ -5005,8 +5487,9 @@ unsigned int bestPixel;
 
     foundOne = 1;
 
-     diff = abs( (int)(r - cur->rgb[0]) ) + abs( (int)(g - cur->rgb[1]) ) +
-            abs( (int)(b - cur->rgb[2]) );
+    diff = abs( r - cur->rgb[0] ) + abs( g - cur->rgb[1] ) +
+          abs( b - cur->rgb[2] );
+    //printf( "min=%-d\n", diff );
     if ( diff < min ) {
       if ( diff == 0 ) {
         *pixel = cur->pixel;
@@ -5014,9 +5497,6 @@ unsigned int bestPixel;
       }
       min = diff;
       bestPixel = cur->pixel;
-      bestR = cur->rgb[0];
-      bestG = cur->rgb[1];
-      bestB = cur->rgb[2];
     }
 
     stat = avl_get_next( this->colorCacheByColorH, (void **) &cur );
@@ -5236,6 +5716,25 @@ colorCachePtr cur;
     return 0;
   else
     return 1;
+
+}
+
+unsigned int colorInfoClass::getPixelByIndexWithBlink (
+  int index )
+{
+
+  if ( index >= max_colors+num_blinking_colors )
+    return BlackPixel( display, screen );
+
+  if ( index < 0 )
+    return WhitePixel( display, screen );
+
+  if ( blink ) {
+    return blinkingColors[index];
+  }
+  else {
+    return colors[index];
+  }
 
 }
 
@@ -5610,5 +6109,83 @@ char colorMode[10+1];
 void colorInfoClass::usePrivColorMap ( void ) {
 
   usePrivColorMapFlag = 1;
+
+}
+
+int colorInfoClass::blinking (
+  int index
+) {
+
+  return (int) ( colors[index] != blinkingColors[index] );
+
+}
+
+int colorInfoClass::addToBlinkList (
+  void *obj,
+  void *func
+) {
+
+int stat, dup;
+blinkNodePtr cur;
+
+  if ( major < 3 ) {
+    return 1;
+  }
+
+  if ( blinkLookasideHead->next ) {
+    cur = blinkLookasideHead->next;
+    blinkLookasideHead->next = cur->next;
+    if ( !blinkLookasideHead->next ) {
+      blinkLookasideTail = blinkLookasideHead;
+    }
+  }
+  else {
+    cur = new blinkNodeType;
+  }
+
+  cur->func = func;
+  cur->obj = obj;
+
+  stat = avl_insert_node( this->blinkH, (void *) cur, &dup );
+
+  if ( !( stat & 1 ) ) {
+    printf( colorInfoClass_str36, stat );
+  }
+
+  return 1;
+
+}
+
+int colorInfoClass::removeFromBlinkList (
+  void *obj,
+  void *func
+) {
+
+int stat;
+blinkNodePtr cur;
+
+  if ( major < 3 ) {
+    return 1;
+  }
+
+  stat = avl_get_match( blinkH, obj, (void **) &cur );
+  if ( !( stat & 1 ) ) {
+    printf( colorInfoClass_str37, stat );
+  }
+  if ( !cur ) {
+    printf( colorInfoClass_str38 );
+    return 0;
+  }
+
+  stat = avl_delete_node( blinkH, (void **) &cur );
+  if ( !( stat & 1 ) ) {
+    printf( colorInfoClass_str39, stat );
+  }
+
+  blinkLookasideTail->next = cur;
+  blinkLookasideTail = cur;
+  blinkLookasideTail->next = NULL;
+
+  return 1;
 
 }

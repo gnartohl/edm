@@ -1,7 +1,7 @@
 #ifndef __act_win_str
 #define __act_win_str 1
 
-#define activeWindowClass_str1 (char *) "/tmp/edmFile_autosave"
+#define activeWindowClass_str1 (char *) "edmFile_autosave"
 #define activeWindowClass_str2 (char *) "Auto Save"
 #define activeWindowClass_str3 (char *) "Yes"
 #define activeWindowClass_str4 (char *) "File exists, overwrite?"

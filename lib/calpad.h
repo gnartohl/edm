@@ -30,7 +30,6 @@
 typedef struct calpadWidgetListTag {
   struct widgetListTag *flink;
   Widget pb;
-  char *ascii;
 } calpadWidgetListType, *calpadWidgetListPtr;
 
 #ifdef __calpad_cc

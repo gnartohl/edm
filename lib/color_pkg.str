@@ -35,6 +35,11 @@
 #define colorInfoClass_str32 (char *) "Color index not found"
 #define colorInfoClass_str33 (char *) "Color position empty, index = %-d\n"
 #define colorInfoClass_str34 (char *) "Warning - duplicate alias name: [%s]"
+#define colorInfoClass_str35 (char *) "Object blink function is NULL\n"
+#define colorInfoClass_str36 (char *) "addToBlinkList: error %-d from avl_insert_node\n"
+#define colorInfoClass_str37 (char *) "removeFromBlinkList: error [%-d] from avl_get_match\n"
+#define colorInfoClass_str38 (char *) "removeFromBlinkList: blink node not found!\n"
+#define colorInfoClass_str39 (char *) "removeFromBlinkList: error [%-d] from avl_delete_node\n"
 
 #endif
 

@@ -131,6 +131,10 @@ int dragIndex, currentDragIndex;
 
 int objType;
 
+int onBlinkList;
+void *blinkFunc;
+int blinkDisable;
+
 static const int UNKNOWN = -1;
 static const int GRAPHICS = 1;
 static const int MONITORS = 2;
@@ -968,6 +972,36 @@ virtual void confirmEdit ( void );
 virtual void beginEdit ( void );
 
 virtual int checkEditStatus ( void );
+
+int activeGraphicClass::blink ( void );
+
+void activeGraphicClass::setBlink ( void );
+
+void activeGraphicClass::setNotBlink ( void );
+
+void *activeGraphicClass::blinkFunction ( void );
+
+void activeGraphicClass::setBlinkFunction (
+  void *addr
+);
+
+void activeGraphicClass::updateExecuteModeBlink (
+  int blinkFlag
+);
+
+void activeGraphicClass::updateEditModeBlink (
+  int blinkFlag
+);
+
+void activeGraphicClass::updateBlink (
+  int blinkFlag
+);
+
+void activeGraphicClass::removeBlink ( void );
+
+void activeGraphicClass::disableBlink ( void );
+
+void activeGraphicClass::enableBlink ( void );
 
 };
 

@@ -177,7 +177,7 @@ static void acw_autosave (
 activeWindowClass *awo = (activeWindowClass *) client;
 //int stat;
 //char name[255+1], oldName[255+1];
-//char str[31+1];
+//char str[31+1], *envPtr;
 
 //struct sigaction sa, oldsa, dummysa;
 
@@ -229,7 +229,18 @@ activeWindowClass *awo = (activeWindowClass *) client;
   strncpy( oldName, awo->autosaveName, 255 );
   oldName[255] = 0;
 
-  strncpy( awo->autosaveName, activeWindowClass_str1, 255 );
+  envPtr = getenv( "EDMTMPFILES" );
+  if ( envPtr ) {
+    strncpy( awo->autosaveName, envPtr, 255 );
+    if ( envPtr[strlen(envPtr)] != '/' ) {
+      strncat( awo->autosaveName, "/", 255 );
+    }
+  }
+  else {
+    strncpy( awo->autosaveName, "/tmp/", 255 );
+  }
+
+  strncat( awo->autosaveName, activeWindowClass_str1, 255 );
 
   if ( strcmp( awo->fileName, "" ) != 0 ) {
     extractName( awo->fileName, name );
@@ -1728,6 +1739,13 @@ activeGraphicListPtr curCut, nextCut, curSel;
   // remove nodes off select list
   curSel = awo->selectedHead->selFlink;
   while ( curSel != awo->selectedHead ) {
+
+    // if on the blink list, remove
+    if ( curSel->node->blink() ) {
+      awo->ci->removeFromBlinkList( (void *) curSel->node,
+       curSel->node->blinkFunction() );
+      curSel->node->setNotBlink();
+    }
 
     curSel->node->eraseSelectBoxCorners();
     curSel->node->erase();
@@ -3479,10 +3497,10 @@ static void b2ReleaseManySelect_cb (
 
 activeWindowClass *awo;
 popupBlockPtr block;
-long item;
 int i, deltaX, deltaY, leftmost, rightmost, topmost, botmost, n,
  curY0, curY1, curX0, curX1, minY, maxY, minX, maxX, midX, midY,
  stat, num_selected, width, height;
+long item;
 double space, totalSpace, dY0, dX0, resid;
 activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode;
 
@@ -11906,6 +11924,7 @@ int activeWindowClass::setGraphicEnvironment (
   strncpy( defaultBtnFontTag, fi->defaultFont(), 127 );
 
   drawGc.create( drawWidget );
+  drawGc.setCI( ci );
 
   fgColor = ci->pixIndex( BlackPixel( d, DefaultScreen(d) ) );
   bgColor = ci->pixIndex( WhitePixel( d, DefaultScreen(d) ) );
@@ -11915,6 +11934,7 @@ int activeWindowClass::setGraphicEnvironment (
   drawGc.setBaseBG( ci->pix(bgColor) );
 
   executeGc.create( executeWidget );
+  executeGc.setCI( ci );
   executeGc.setBaseBG( drawGc.getBaseBG() );
 
   cursor.create( d, XtWindow(top), ci->getColorMap() );
@@ -15609,7 +15629,7 @@ void activeWindowClass::executeFromDeferredQueue( void )
   if ( doAutoSave ) {
 
     int stat;
-    char name[255+1], oldName[255+1];
+    char name[255+1], oldName[255+1], *envPtr;
 
     doAutoSave = 0;
 
@@ -15620,7 +15640,18 @@ void activeWindowClass::executeFromDeferredQueue( void )
     strncpy( oldName, autosaveName, 255 );
     oldName[255] = 0;
 
-    strncpy( autosaveName, activeWindowClass_str1, 255 );
+    envPtr = getenv( "EDMTMPFILES" );
+    if ( envPtr ) {
+      strncpy( autosaveName, envPtr, 255 );
+      if ( envPtr[strlen(envPtr)] != '/' ) {
+        strncat( autosaveName, "/", 255 );
+      }
+    }
+    else {
+      strncpy( autosaveName, "/tmp/", 255 );
+    }
+
+    strncat( autosaveName, activeWindowClass_str1, 255 );
 
     if ( strcmp( fileName, "" ) != 0 ) {
       extractName( fileName, name );
