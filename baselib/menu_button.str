@@ -35,5 +35,6 @@
 #define activeMenuButtonClass_str32 (char *) ">="
 #define activeMenuButtonClass_str33 (char *) "and <"
 #define activeMenuButtonClass_str34 (char *) "Color PV"
+#define activeMenuButtonClass_str35 (char *) " - illegal pv type"
 
 #endif

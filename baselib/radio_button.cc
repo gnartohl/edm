@@ -1071,6 +1071,7 @@ XmString str;
 Arg args[20];
 int n;
 XtTranslations parsedTrans;
+char msg[79+1];
 
 static char dragTrans[] =
   "#override\n\
@@ -1104,6 +1105,17 @@ static XtActionsRec dragActions[] = {
 #ifdef __epics__
 
   if ( nc ) {
+
+    if ( ca_field_type(controlPvId) != DBR_ENUM ) {
+      strncpy( msg, actWin->obj.getNameFromClass( "activeRadioButtonClass" ),
+       79 );
+      Strncat( msg, activeRadioButtonClass_str30, 79 );
+      actWin->appCtx->postMessage( msg );
+      connection.setPvDisconnected( controlPvId );
+      needToDrawUnconnected = 1;
+      drawActive();
+      return;
+    }
 
     stat = ca_get_callback( DBR_GR_ENUM, controlPvId,
      rbt_infoUpdate, (void *) this );
