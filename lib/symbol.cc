@@ -1046,7 +1046,10 @@ int activeSymbolClass::save (
  FILE *f )
 {
 
-int i;
+int i, saveX, saveY, origX, origY, origW, origH;
+
+  saveX = x;
+  saveY = y;
 
   switch ( orientation ) {
 
@@ -1064,13 +1067,39 @@ int i;
 
   }
 
+  origX = x;
+  origY = y;
+  origW = w;
+  origH = h;
+
+  switch ( orientation ) {
+
+  case OR_CW:
+    rotateInternal( getXMid(), getYMid(), '+' );
+    resizeSelectBoxAbsFromUndo( getX0(), getY0(),
+     getW(), getH() );
+    break;
+
+  case OR_CCW:
+    rotateInternal( getXMid(), getYMid(), '-' );
+    resizeSelectBoxAbsFromUndo( getX0(), getY0(),
+     getW(), getH() );
+    break;
+
+  }
+
+  origX += ( saveX - x );
+  origY += ( saveY - y );
+
+  moveAbs( saveX, saveY );
+
   fprintf( f, "%-d %-d %-d\n", ASC_MAJOR_VERSION, ASC_MINOR_VERSION,
    ASC_RELEASE );
 
-  fprintf( f, "%-d\n", x );
-  fprintf( f, "%-d\n", y );
-  fprintf( f, "%-d\n", w );
-  fprintf( f, "%-d\n", h );
+  fprintf( f, "%-d\n", origX );
+  fprintf( f, "%-d\n", origY );
+  fprintf( f, "%-d\n", origW );
+  fprintf( f, "%-d\n", origH );
 
   writeStringToFile( f, symbolFileName );
 
@@ -1100,22 +1129,6 @@ int i;
 
   // version 1.4.0
   fprintf( f, "%-d\n", orientation );
-
-  switch ( orientation ) {
-
-  case OR_CW:
-    rotateInternal( getXMid(), getYMid(), '+' );
-    resizeSelectBoxAbsFromUndo( getX0(), getY0(),
-     getW(), getH() );
-    break;
-
-  case OR_CCW:
-    rotateInternal( getXMid(), getYMid(), '-' );
-    resizeSelectBoxAbsFromUndo( getX0(), getY0(),
-     getW(), getH() );
-    break;
-
-  }
 
   // version 1.5.0
   if ( colorPvExpStr.getRaw() )
