@@ -599,8 +599,9 @@ undoListPtr cur;
     cur->node->actGrfAddr->setUndoText( NULL );
   }
 
-  i = head + 1;
-  if ( i >= max ) i = 0;
+  i = head;
+  //  i = head + 1;
+  //  if ( i >= max ) i = 0;
 
   while ( i != tail ) {
 
@@ -622,8 +623,9 @@ undoListPtr cur;
     cur = cur->flink;
   }
 
-  i = head + 1;
-  if ( i >= max ) i = 0;
+  i = head;
+  // i = head + 1;
+  // if ( i >= max ) i = 0;
 
   while ( i != tail ) {
 
