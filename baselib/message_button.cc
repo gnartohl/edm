@@ -2412,6 +2412,9 @@ char *activeMessageButtonClass::dragValue (
   if ( i == 0 ) {
     return destPvExpString.getExpanded();
   }
+  else if ( i == 1 ) {
+    return colorPvExpString.getExpanded();
+  }
   else {
     return visPvExpString.getExpanded();
   }
