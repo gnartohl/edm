@@ -2626,6 +2626,7 @@ int i, yi;
   }
 
   axygo->border = axygo->eBuf->bufBorder;
+  axygo->plotAreaBorder = axygo->eBuf->bufPlotAreaBorder;
 
   axygo->trigPvExpStr.setRaw( axygo->eBuf->bufTrigPvName );
   axygo->resetPvExpStr.setRaw( axygo->eBuf->bufResetPvName );
@@ -2824,6 +2825,7 @@ time_t t1, t2;
   strcpy( xFormat, "f" );
 
   border = 1;
+  plotAreaBorder = 0;
 
   activeMode = 0;
 
@@ -2885,6 +2887,7 @@ int i, yi;
   plotMode = source->plotMode;
   count = source->count;
   border = source->border;
+  plotAreaBorder = source->plotAreaBorder;
 
   numTraces = source->numTraces;
 
@@ -3344,6 +3347,9 @@ efDouble dummy;
   else
     writeStringToFile( f, "" );
 
+  // version 1.5.0
+  fprintf( f, "%-d\n", plotAreaBorder );
+
   return stat;
 
 }
@@ -3513,6 +3519,10 @@ efDouble dummy;
     y2Label.setRaw( str );
   }
 
+  if ( ( ( major == 1 ) && ( minor > 4 ) ) || ( major > 1 ) ) {
+    fscanf( d, "%d\n", &plotAreaBorder );
+  }
+
   for ( i=numTraces; i<XYGC_K_MAX_TRACES; i++ ) {
     sprintf( traceColor, "trace%-d", i );
     plotColor[i] = actWin->ci->colorIndexByAlias( traceColor );
@@ -3618,6 +3628,8 @@ int i, yi;
 
   eBuf->bufBorder = border;
 
+  eBuf->bufPlotAreaBorder = plotAreaBorder;
+
   eBuf->bufUpdateTimerValue = updateTimerValue;
 
   eBuf->bufCount = count;
@@ -3676,6 +3688,7 @@ int i, yi;
   ef.addTextField( "Count", 35, &eBuf->bufCount );
   ef.addTextField( "Update Delay (ms)", 35, &eBuf->bufUpdateTimerValue );
   ef.addToggle( "Border", &eBuf->bufBorder );
+  ef.addToggle( "Plot Area Border", &eBuf->bufPlotAreaBorder );
 
   ef.addEmbeddedEf( "X/Y/Trace Data", "... ", &efTrace );
 
@@ -5049,6 +5062,34 @@ XRectangle xR = { plotAreaX, plotAreaY, plotAreaW, plotAreaH };
   }
 
   XSetClipMask( actWin->display(), actWin->executeGc.normGC(), None );
+
+  if ( plotAreaBorder ) {
+
+    actWin->executeGc.setLineWidth(1);
+    actWin->executeGc.setLineStyle( LineSolid );
+    actWin->executeGc.setFG( actWin->ci->pix(fgColor) );
+
+    XDrawLine( actWin->d, pixmap, actWin->executeGc.normGC(),
+     plotAreaX, plotAreaY, plotAreaX+plotAreaW, plotAreaY );
+
+    if ( !xAxis ) {
+      XDrawLine( actWin->d, pixmap, actWin->executeGc.normGC(),
+       plotAreaX, plotAreaY+plotAreaH, plotAreaX+plotAreaW,
+       plotAreaY+plotAreaH );
+    }
+
+    if ( !y1Axis[0] ) {
+      XDrawLine( actWin->d, pixmap, actWin->executeGc.normGC(),
+       plotAreaX, plotAreaY, plotAreaX, plotAreaY+plotAreaH );
+    }
+
+    if ( !y1Axis[1] ) {
+      XDrawLine( actWin->d, pixmap, actWin->executeGc.normGC(),
+       plotAreaX+plotAreaW, plotAreaY, plotAreaX+plotAreaW,
+       plotAreaY+plotAreaH );
+    }
+
+  }
 
   actWin->executeGc.setLineWidth(1);
   actWin->executeGc.setLineStyle( LineSolid );
