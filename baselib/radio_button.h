@@ -269,8 +269,6 @@ int expand2nd (
 
 int containsMacros ( void );
 
-int createWidgets ( void );
-
 int activate ( int pass, void *ptr );
 
 int deactivate ( int pass );

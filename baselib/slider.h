@@ -470,8 +470,6 @@ int eraseActiveReadText ( void );
 
 int drawActiveReadText ( void );
 
-int createWidgets ( void );
-
 int expand1st (
   int numMacros,
   char *macros[],

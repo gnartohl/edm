@@ -1097,12 +1097,6 @@ int i, ii, n, count;
 
 }
 
-int menuMuxClass::createWidgets ( void ) {
-
-  return 1;
-
-}
-
 int menuMuxClass::activate (
   int pass,
   void *ptr )

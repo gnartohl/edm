@@ -846,12 +846,6 @@ int activeRadioButtonClass::containsMacros ( void ) {
 
 }
 
-int activeRadioButtonClass::createWidgets ( void ) {
-
-  return 1;
-
-}
-
 int activeRadioButtonClass::activate (
   int pass,
   void *ptr

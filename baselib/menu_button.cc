@@ -1508,12 +1508,6 @@ int activeMenuButtonClass::containsMacros ( void ) {
 
 }
 
-int activeMenuButtonClass::createWidgets ( void ) {
-
-  return 1;
-
-}
-
 int activeMenuButtonClass::activate (
   int pass,
   void *ptr
