@@ -315,6 +315,8 @@ public:
     int blinking ( int index );
     int addToBlinkList( void *obj, void *func );
     int removeFromBlinkList( void *obj, void *func );
+    int addAllToBlinkList ( void );
+    int removeAllFromBlinkList ( void );
 
     // deprecated functions, for backward compatibility only
     int getIndex (unsigned int pixel, int *index);
@@ -377,6 +379,8 @@ private:
     AVL_HANDLE blinkH;
 
     blinkNodePtr blinkLookasideHead, blinkLookasideTail;
+    blinkNodePtr addBlinkHead, addBlinkTail;
+    blinkNodePtr remBlinkHead, remBlinkTail;
 
     Display *display;
     int screen;
