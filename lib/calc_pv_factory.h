@@ -47,6 +47,9 @@ public:
     bool is_valid() const;
     const Type &get_type() const;
     double get_double() const;
+    size_t get_dimension() const;
+    const int *get_int_array() const;
+    const double *get_double_array() const;
 	time_t get_time_t() const;
 	unsigned long get_nano() const;
     short get_status() const;

@@ -103,14 +103,6 @@ public:
     void add_conn_state_callback(Callback func, void *userarg);
     void remove_conn_state_callback(Callback func, void *userarg);
 
-#ifdef DEPRECATED
-    // Deprecated: name easily confused with status property
-    void add_status_callback(Callback func, void *userarg)
-    {   add_conn_state_callback(func, userarg);}
-    void remove_status_callback(Callback func, void *userarg);
-    {   remove_conn_state_callback(func, userarg); }
-#endif    
-
     // Type information for this ProcessVariable
     typedef struct
     {
@@ -131,16 +123,32 @@ public:
 
     virtual const Type &get_type() const = 0;
    
-    // ProcessVariable internally holds the "native" value,
-    // can be asked for any type -> conversions on client side
-    // -- Don't call when is_valid() returns false!!
-    // -- Undefined for get_type().type == text or special
-    virtual double      get_double() const = 0;
+    // -- Don't call ANY of the following when is_valid() returns false!!
+
+    // Whenever possible, ProcessVariable internally holds the "native" value.
+    // For arrays, it might request int or double arrays, whatever's
+    // closer to the native type.
+    // But you can ask for any type -> conversions on client side
+    // -- These numeric values may be UNDEFINED for
+    //    get_type().type == text or special
     virtual int         get_int() const;
+    virtual double      get_double() const = 0;
     // writes strbuf, formatted according to precision etc.
     // returns actual strlen
     // Should always work for all types!
     virtual size_t      get_string(char *strbuf, size_t buflen) const;
+
+    // Support one-dim. arrays.
+    // For scalars, get_dimension() returns 1
+    // (In the future, something like get_dimension(int i) might be support
+    //  multi-dim. arrays.)
+    virtual size_t      get_dimension() const = 0;
+
+    // Use this when get_type().type == integer
+    virtual const int    *get_int_array() const = 0;
+    // Use this when get_type().type == real
+    virtual const double *get_double_array() const = 0;
+    
     // Get number and (if > 0) strings for enumerated value
     virtual size_t      get_enum_count() const;
     virtual const char *get_enum(size_t i) const;
@@ -207,11 +215,6 @@ protected:
     CallbackInfoHash conn_state_callbacks;
     void do_value_callbacks();
     void do_conn_state_callbacks();
-#ifdef DEPRECATED
-    void do_status_callbacks() 
-    {   do_conn_state_callbacks(); }
-#endif
-    
         
 private:
     char *name;            // PV name

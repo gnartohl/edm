@@ -136,18 +136,25 @@ void EPICS_ProcessVariable::ca_connect_callback(
         if (!me->value)
         {
             switch (ca_field_type(arg.chid))
-            {   // TODO: Implement more types
+            {   // TODO: Implement more types?
                 case DBF_STRING:
-                    me->value = new PVValueString();
+                    me->value = new PVValueString(me);
                     break;
                 case DBF_ENUM:
-                    me->value = new PVValueEnum();
+                    me->value = new PVValueEnum(me);
                     break;
+                case DBF_CHAR:
+                case DBF_INT:
+                case DBF_LONG:
+                    //me->value = new PVValueInt(me);
+                    //break;
                 case DBF_DOUBLE:
                 default: // fallback: request as double
-                    me->value = new PVValueDouble();
+                    me->value = new PVValueDouble(me);
             }
         }
+        // CA quirk: DBR_CTRL doesn't work with arrays,
+        // so get only one element:
         int stat = ca_array_get_callback(me->value->get_DBR()+DBR_CTRL_STRING,
                                          1u, me->pv_chid,
                                          ca_ctrlinfo_callback, me);
@@ -160,7 +167,7 @@ void EPICS_ProcessVariable::ca_connect_callback(
     else
     {
         me->is_connected = false;
-        me->do_conn_state_callbacks();
+        me->do_conn_state_callbacks(); // tell widgets we disconnected
     }
 }
 
@@ -174,7 +181,8 @@ void EPICS_ProcessVariable::ca_ctrlinfo_callback(
     {
         int stat = ca_add_masked_array_event(me->value->get_DBR()+
                                              DBR_TIME_STRING,
-                                             1, me->pv_chid,
+                                             me->get_dimension(),
+                                             me->pv_chid,
                                              ca_value_callback,
                                              (void *)me,
                                              (float) 0.0, (float) 0.0,
@@ -185,8 +193,7 @@ void EPICS_ProcessVariable::ca_ctrlinfo_callback(
             fprintf(stderr, "CA add event error('%s'): %s\n",
                     me->get_name(), ca_message(stat));
     }
-    me->do_conn_state_callbacks();
-    me->do_value_callbacks();
+    me->do_conn_state_callbacks();  // tell widgets we connected & got info
 }
 
 void EPICS_ProcessVariable::ca_value_callback(struct event_handler_args args)
@@ -202,14 +209,23 @@ bool EPICS_ProcessVariable::is_valid() const
 const ProcessVariable::Type &EPICS_ProcessVariable::get_type() const
 {   return value->get_type(); }   
 
-double EPICS_ProcessVariable::get_double() const
-{   return value->get_double(); }
-
 int EPICS_ProcessVariable::get_int() const
 {   return value->get_int(); }
 
+double EPICS_ProcessVariable::get_double() const
+{   return value->get_double(); }
+
 size_t EPICS_ProcessVariable::get_string(char *strbuf, size_t buflen) const
 {   return value->get_string(strbuf, buflen); }
+
+size_t EPICS_ProcessVariable::get_dimension() const
+{   return ca_element_count(pv_chid); }
+
+const int *EPICS_ProcessVariable::get_int_array() const
+{   return value->get_int_array(); }
+
+const double * EPICS_ProcessVariable::get_double_array() const
+{   return value->get_double_array(); }
 
 size_t EPICS_ProcessVariable::get_enum_count() const
 {   return value->get_enum_count(); }
@@ -294,10 +310,12 @@ bool EPICS_ProcessVariable::put(const char *value)
     return false;
 }
 
-
 // ---------------------- PVValue ---------------------------------
-PVValue::PVValue()
+PVValue::PVValue(EPICS_ProcessVariable *epv)
 {
+    this->epv = epv;
+    time = 0;
+    nano = 0;
     status = UDF_ALARM;
     severity = INVALID_ALARM;
     precision = 0;
@@ -324,6 +342,8 @@ size_t PVValue::get_string(char *strbuf, size_t len) const
         strcpy(strbuf, get_enum(get_int()));
     else
     {
+        // TODO: Handle arrays?
+        // TODO: Respect len!
         cvtDoubleToString(get_double(), strbuf, precision);
         if (units[0])
         {
@@ -333,6 +353,12 @@ size_t PVValue::get_string(char *strbuf, size_t len) const
     }
     return strlen(strbuf);
 }
+
+const int  *PVValue::get_int_array() const
+{   return 0; }
+
+const double *PVValue::get_double_array() const
+{   return 0; }
 
 size_t PVValue::get_enum_count() const
 {   return 0; }
@@ -348,7 +374,18 @@ static ProcessVariable::Type double_type =
     64,
     "real:64"
 };
-   
+
+PVValueDouble::PVValueDouble(EPICS_ProcessVariable *epv)
+        : PVValue(epv)
+{
+    value = new double[epv->get_dimension()];
+}
+
+PVValueDouble::~PVValueDouble()
+{
+    delete [] value;
+}
+
 const ProcessVariable::Type &PVValueDouble::get_type() const
 {   return double_type; }
 
@@ -356,6 +393,9 @@ short PVValueDouble::get_DBR() const
 {   return DBF_DOUBLE; }
 
 double PVValueDouble::get_double() const
+{   return value[0]; }
+
+const double * PVValueDouble::get_double_array() const
 {   return value; }
 
 void PVValueDouble::read_ctrlinfo(const void *buf)
@@ -374,7 +414,7 @@ void PVValueDouble::read_ctrlinfo(const void *buf)
     lower_alarm_limit = val->lower_alarm_limit;
     upper_ctrl_limit = val->upper_ctrl_limit;
     lower_ctrl_limit = val->lower_ctrl_limit;
-    value = val->value;
+    *value = val->value;
 }
 
 void PVValueDouble::read_value(const void *buf)
@@ -384,13 +424,10 @@ void PVValueDouble::read_value(const void *buf)
     nano = val->stamp.nsec;
     status = val->status;
     severity = val->severity;
-    value = val->value;
+    memcpy(value, &val->value, epv->get_dimension());
 }
 
 // ---------------------- PVValueEnum -----------------------------
-
-PVValueEnum::PVValueEnum()
-{   enums = 0; }
 
 static ProcessVariable::Type enum_type =
 {
@@ -399,6 +436,12 @@ static ProcessVariable::Type enum_type =
     "enumerated:16"
 };
    
+PVValueEnum::PVValueEnum(EPICS_ProcessVariable *epv)
+        : PVValue(epv)
+{
+    enums = 0;
+}
+
 const ProcessVariable::Type &PVValueEnum::get_type() const
 {   return enum_type; }
 
@@ -406,11 +449,11 @@ const ProcessVariable::Type &PVValueEnum::get_type() const
 short PVValueEnum::get_DBR() const
 {   return DBR_ENUM; }
 
-double PVValueEnum::get_double() const
-{   return (double)value; }
-
 int PVValueEnum::get_int() const
 {   return value; }
+
+double PVValueEnum::get_double() const
+{   return (double)value; }
 
 size_t      PVValueEnum::get_enum_count() const
 {   return enums; }
@@ -447,7 +490,8 @@ void PVValueEnum::read_value(const void *buf)
 
 // ---------------------- PVValueString -----------------------------
 
-PVValueString::PVValueString()
+PVValueString::PVValueString(EPICS_ProcessVariable *epv)
+        : PVValue(epv)
 {
     value[0] = '\0';
 }
@@ -465,11 +509,11 @@ const ProcessVariable::Type &PVValueString::get_type() const
 short PVValueString::get_DBR() const
 {   return DBR_STRING; }
 
-double PVValueString::get_double() const
-{   return atof(value); }
-
 int PVValueString::get_int() const
 {   return atoi(value); }
+
+double PVValueString::get_double() const
+{   return atof(value); }
 
 size_t PVValueString::get_string(char *strbuf, size_t buflen) const
 {
@@ -499,5 +543,3 @@ void PVValueString::read_value(const void *buf)
     severity = val->severity;
     strcpy(value, val->value);
 }
-
-

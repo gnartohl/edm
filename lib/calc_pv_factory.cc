@@ -466,6 +466,15 @@ const ProcessVariable::Type &CALC_ProcessVariable::get_type() const
 double CALC_ProcessVariable::get_double() const
 {   return value; }
 
+size_t CALC_ProcessVariable::get_dimension() const
+{   return 1; }
+
+const int *CALC_ProcessVariable::get_int_array() const
+{   return 0; }
+
+const double *CALC_ProcessVariable::get_double_array() const
+{   return &value; }
+
 time_t CALC_ProcessVariable::get_time_t() const
 {   return time; }
 

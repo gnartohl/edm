@@ -21,30 +21,25 @@ private:
     static void forget(EPICS_ProcessVariable *pv);
 };
 
+// See comments on ProcessVariable for API
 class EPICS_ProcessVariable : public ProcessVariable
 {
 public:
-    // Implies 1) connected 2) have received valid control info
     bool is_valid() const;
-
     const Type &get_type() const;
-    
-    // ProcessVariable internally holds the "native" value,
-    // can be asked for any type -> conversions on client side
-    // -- Don't call when is_valid() returns false!!
-    double      get_double() const;
+
     int         get_int() const;
-    // writes strbuf, formatted according to precision etc.
-    // returns actual strlen
+    double      get_double() const;
     size_t      get_string(char *strbuf, size_t buflen) const;
-    // Get number and (if > 0) strings for enumerated value
+    size_t      get_dimension() const;
+    const int    *get_int_array() const;
+    const double *get_double_array() const;
     size_t      get_enum_count() const;
     const char *get_enum(size_t i) const;
-    // Time: support for seconds in ANSI time_t format (since 1970 UTC)
-    // as well as nano second extension
+
 	time_t get_time_t() const;
 	unsigned long get_nano() const;
-    // Status info, various limits
+
     short       get_status() const;
     short       get_severity() const;
     short       get_precision() const;
@@ -58,7 +53,6 @@ public:
     double      get_upper_ctrl_limit() const;
     double      get_lower_ctrl_limit() const;
 
-    // Output/write methods
     bool have_write_access() const;
     bool put(double value);
     bool put(int value);
@@ -91,13 +85,15 @@ private:
 class PVValue
 {
 public:
-    PVValue();
+    PVValue(EPICS_ProcessVariable *epv);
     virtual ~PVValue();
     virtual const ProcessVariable::Type &get_type() const = 0;
     virtual short       get_DBR() const = 0;
-    virtual double      get_double() const = 0;
     virtual int         get_int() const;
+    virtual double      get_double() const = 0;
     virtual size_t      get_string(char *strbuf, size_t buflen) const;
+    virtual const int  *get_int_array() const;
+    virtual const double *get_double_array() const;
     virtual size_t      get_enum_count() const;
     virtual const char *get_enum(size_t i) const;
 	time_t get_time_t();
@@ -107,6 +103,7 @@ public:
     virtual void read_value(const void *buf) = 0;
 protected:
     friend class EPICS_ProcessVariable;
+    EPICS_ProcessVariable *epv;
 	time_t  time;
 	unsigned long nano;
     short   status;
@@ -124,32 +121,49 @@ protected:
 };
 
 // Implementations for specific types
+# if 0
+class PVValueInt : public PVValue
+{
+public:
+    const ProcessVariable::Type &get_type() const;
+    short       get_DBR() const;
+    double      get_double() const;
+    const int  *get_int_array() const;
+    const double *get_double_array() const;
+    void read_ctrlinfo(const void *buf);
+    void read_value(const void *buf);
+private:
+    double *value;
+};
+#endif
+
 class PVValueDouble : public PVValue
 {
 public:
-    virtual const ProcessVariable::Type &get_type() const;
-    virtual short       get_DBR() const;
-    virtual double      get_double() const;
-    
-    virtual void read_ctrlinfo(const void *buf);
-    virtual void read_value(const void *buf);
+    PVValueDouble(EPICS_ProcessVariable *epv);
+    ~PVValueDouble();
+    const ProcessVariable::Type &get_type() const;
+    short       get_DBR() const;
+    double      get_double() const;
+    const double *get_double_array() const;
+    void read_ctrlinfo(const void *buf);
+    void read_value(const void *buf);
 private:
-    double value;
+    double *value;
 };
 
 class PVValueEnum : public PVValue
 {
 public:
-    PVValueEnum();
-    virtual const ProcessVariable::Type &get_type() const;
-    virtual short       get_DBR() const;
-    virtual double      get_double() const;
-    virtual int         get_int() const;
-    virtual size_t      get_enum_count() const;
-    virtual const char *get_enum(size_t i) const;
-    
-    virtual void read_ctrlinfo(const void *buf);
-    virtual void read_value(const void *buf);
+    PVValueEnum(EPICS_ProcessVariable *epv);
+    const ProcessVariable::Type &get_type() const;
+    short       get_DBR() const;
+    int         get_int() const;
+    double      get_double() const;
+    size_t      get_enum_count() const;
+    const char *get_enum(size_t i) const;
+    void read_ctrlinfo(const void *buf);
+    void read_value(const void *buf);
 private:
     int    value;
     size_t enums;
@@ -159,17 +173,17 @@ private:
 class PVValueString : public PVValue
 {
 public:
-    PVValueString();
-    virtual const ProcessVariable::Type &get_type() const;
-    virtual short       get_DBR() const;
-    virtual double      get_double() const;
-    virtual int         get_int() const;
-    virtual size_t      get_string(char *strbuf, size_t buflen) const;
-    
-    virtual void read_ctrlinfo(const void *buf);
-    virtual void read_value(const void *buf);
+    PVValueString(EPICS_ProcessVariable *epv);
+    const ProcessVariable::Type &get_type() const;
+    short       get_DBR() const;
+    int         get_int() const;
+    double      get_double() const;
+    size_t      get_string(char *strbuf, size_t buflen) const;
+    void read_ctrlinfo(const void *buf);
+    void read_value(const void *buf);
 private:
     dbr_string_t value;
 };
 
 #endif
+
