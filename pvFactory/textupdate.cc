@@ -31,6 +31,9 @@ void edmTextupdateClass::init(const char *classname)
     name = strdup(classname);
     is_executing = false;
     pv = 0;
+
+    alarm_sensitive = true;
+    
     color_pv = 0;
     is_filled = true;
     strcpy(fontTag, "");
@@ -60,6 +63,7 @@ void edmTextupdateClass::clone(const edmTextupdateClass *rhs,
     displayMode = rhs->displayMode;
     precision = rhs->precision;
     textColor = rhs->textColor;
+    alarm_sensitive = rhs->alarm_sensitive;
     line_width = rhs->line_width;
     fillColor = rhs->fillColor;
     is_filled = rhs->is_filled;
@@ -113,6 +117,7 @@ int edmTextupdateClass::save(FILE *f)
     fprintf(f, "%-d\n", (int) precision);
     // textcolor, fillcolor
     writeStringToFile(f, actWin->ci->colorName(textColor));
+    fprintf(f, "%-d\n", alarm_sensitive);
     writeStringToFile(f, actWin->ci->colorName(fillColor));
     writeStringToFile(f, (char *)getRawName(color_pv_name));
     // fill mode, fonts
@@ -172,6 +177,14 @@ int edmTextupdateClass::createFromFile(FILE *f, char *filename,
     {
         readStringFromFile(name, PV_Factory::MAX_PV_NAME, f); actWin->incLine();
         textColor = actWin->ci->colorIndexByName(name);
+
+        // Since 4.0: alarm_sensitive
+        if (major < 4)
+            alarm_sensitive = true;
+        else
+        {
+            fscanf(f, "%d\n", &alarm_sensitive); actWin->incLine();
+        }
         readStringFromFile(name, PV_Factory::MAX_PV_NAME, f); actWin->incLine();
         fillColor = actWin->ci->colorIndexByName(name);
     }
@@ -268,12 +281,13 @@ int edmTextupdateClass::genericEdit() // create Property Dialog
     bufX = x; bufY = y; bufW = w; bufH = h;
     strncpy(bufPvName,      getRawName(pv_name), PV_Factory::MAX_PV_NAME);
     strncpy(bufColorPvName, getRawName(color_pv_name),PV_Factory::MAX_PV_NAME);
-    buf_displayMode = (int)displayMode;
-    buf_precision   = precision;
-    buf_line_width  = line_width;
-    bufTextColor    = textColor;
-    bufFillColor    = fillColor;
-    bufIsFilled     = is_filled;
+    buf_displayMode     = (int)displayMode;
+    buf_precision       = precision;
+    buf_line_width      = line_width;
+    bufTextColor        = textColor;
+    buf_alarm_sensitive = alarm_sensitive;
+    bufFillColor        = fillColor;
+    bufIsFilled         = is_filled;
 
     // create entry form dialog box
     ef.create(actWin->top, actWin->appCtx->ci.getColorMap(),
@@ -292,6 +306,7 @@ int edmTextupdateClass::genericEdit() // create Property Dialog
     ef.addTextField("Precision", 30, &buf_precision);
     ef.addTextField("Line Width", 30, &buf_line_width);
     ef.addColorButton("Fg Color", actWin->ci, &textCb, &bufTextColor);
+    ef.addToggle("Alarm Sensitive", &buf_alarm_sensitive);
     ef.addToggle("Filled?", &bufIsFilled);
     ef.addColorButton("Bg Color", actWin->ci, &fillCb, &bufFillColor);
     ef.addTextField("Color PV", 30, bufColorPvName, PV_Factory::MAX_PV_NAME);
@@ -307,15 +322,36 @@ void edmTextupdateClass::redraw_text(Display *dis,
                                      GC gc,
                                      const char *text,
                                      size_t len,
-                                     double value)
+                                     double value,
+                                     short severity)
 {
     int fg_pixel;
-    
+
     if (actWin->ci->isRule(textColor))
         fg_pixel = actWin->ci->getPixelByIndex(actWin->ci->evalRule(textColor,
                                                                     value));
     else
         fg_pixel = actWin->ci->getPixelByIndex(textColor);
+
+    // If alarm_sensitive, this overrides all other color determinations:
+    if (alarm_sensitive && severity > NO_ALARM)
+    {
+        switch (severity)
+        {
+            case MINOR_ALARM:
+                fg_pixel = actWin->ci->getPixelByIndex(
+                    actWin->ci->getSpecialIndex(COLORINFO_K_MINOR));
+                break;
+            case MAJOR_ALARM:
+                fg_pixel = actWin->ci->getPixelByIndex(
+                    actWin->ci->getSpecialIndex(COLORINFO_K_MAJOR));
+                break;
+            case INVALID_ALARM:
+                fg_pixel = actWin->ci->getPixelByIndex(
+                    actWin->ci->getSpecialIndex(COLORINFO_K_INVALID));
+                break;
+        }
+    }
     
     // Background fill?
     if (is_filled)
@@ -393,7 +429,7 @@ int edmTextupdateClass::draw()  // render the edit-mode image
                 XtWindow(actWin->drawWidget),
                 actWin->drawGc,
                 actWin->drawGc.normGC(),
-                pvname, len, 0.0);
+                pvname, len, 0.0, NO_ALARM);
     
     actWin->drawGc.restoreFg();
     return 1;
@@ -445,12 +481,13 @@ void edmTextupdateClass::edit_update(Widget w, XtPointer client,XtPointer call)
 
     me->pv_name.setRaw(me->bufPvName);
     me->color_pv_name.setRaw(me->bufColorPvName);
-    me->displayMode = (DisplayMode) me->buf_displayMode;
-    me->precision   = me->buf_precision;
-    me->line_width  = me->buf_line_width;
-    me->textColor = me->bufTextColor;
-    me->fillColor = me->bufFillColor;
-    me->is_filled   = me->bufIsFilled;
+    me->displayMode     = (DisplayMode) me->buf_displayMode;
+    me->precision       = me->buf_precision;
+    me->line_width      = me->buf_line_width;
+    me->textColor       = me->bufTextColor;
+    me->alarm_sensitive = me->buf_alarm_sensitive;
+    me->fillColor       = me->bufFillColor;
+    me->is_filled       = me->bufIsFilled;
 
     strncpy(me->fontTag, me->fm.currentFontTag(), 63);
     me->fontTag[63] = 0;
@@ -655,10 +692,12 @@ int edmTextupdateClass::deactivate(int pass)
 // len has to be initialized with the text buffer size.
 // Returns 1 if PV is valid
 bool edmTextupdateClass::get_current_values(char *text, size_t &len,
-                                            double &color_value)
+                                            double &color_value,
+                                            short &severity)
 {
     if (pv && pv->is_valid())
     {
+        severity = pv->get_severity();
         if (color_pv && color_pv->is_valid())
             color_value = color_pv->get_double();
         else
@@ -685,6 +724,10 @@ bool edmTextupdateClass::get_current_values(char *text, size_t &len,
         }
         return true;
     }
+    else
+    {
+        severity = INVALID_ALARM;
+    }
 
     color_value = 0.0;
     text[0] = '<';
@@ -706,12 +749,13 @@ int edmTextupdateClass::drawActive()
     double color_value;
     char text[PV_Factory::MAX_PV_NAME+1];
     size_t len = PV_Factory::MAX_PV_NAME;
-    get_current_values(text, len, color_value);
+    short severity;
+    get_current_values(text, len, color_value, severity);
     redraw_text(actWin->d,
                 XtWindow(actWin->executeWidget),
                 actWin->executeGc,
                 actWin->executeGc.normGC(),
-                text, len, color_value);
+                text, len, color_value, severity);
    
     actWin->executeGc.restoreFg();
     return 1;
@@ -904,7 +948,8 @@ int edmTextentryClass::drawActive()
     double color_value;
     char text[PV_Factory::MAX_PV_NAME+1];
     size_t len = PV_Factory::MAX_PV_NAME;
-    if (get_current_values(text, len, color_value))
+    short severity;
+    if (get_current_values(text, len, color_value, severity))
     {
         XtVaSetValues(widget, XmNeditable, True, NULL);
         if (pv->have_write_access())
