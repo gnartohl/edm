@@ -195,13 +195,22 @@ char *fontInfoClass::getStrFromFile (
   FILE *f
 ) {
 
-char *ctx, *ptr, *tk;
-char buf[maxLen+1];
-int tryAgain;
+char *ctx, *ptr, *tk, stackBuf[255+1];
+char *buf;
+int tryAgain, bufOnHeap;
 
   // ignore blank lines and comment lines
 
   if ( maxLen < 1 ) return (char *) NULL;
+
+  if ( maxLen > 255 ) {
+    buf = new char[maxLen+1];
+    bufOnHeap = 1;
+  }
+  else {
+    buf = stackBuf;
+    bufOnHeap = 0;
+  }
 
   do {
 
@@ -210,6 +219,7 @@ int tryAgain;
     ptr = fgets( str, maxLen, f );
     if ( !ptr ) {
       strcpy( str, "" );
+      if ( bufOnHeap ) delete [] buf;
       return (char *) NULL;
     }
 
@@ -234,6 +244,8 @@ int tryAgain;
   } while ( tryAgain );
 
   lastNonCommentLine = lineNum;
+
+  if ( bufOnHeap ) delete [] buf;
 
   return str;
 

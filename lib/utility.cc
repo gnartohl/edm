@@ -47,8 +47,9 @@ char *expandEnvVars (
   // expands all environment vars of the form $(envVar) found in inStr
   // and sends the expanded string to outStr
 
-int i, ii, iii, inL, state;
-char *ptr, buf[maxOut+1];
+int i, ii, iii, inL, state, bufOnHeap;
+char *ptr, stackBuf[255+1];
+char *buf;
 
 static const int DONE = -1;
 static const int FINDING_DOLLAR = 1;
@@ -59,6 +60,15 @@ static const int FINDING_RIGHT_PAREN = 3;
 
   inL = strlen( inStr );
   if ( inL < 1 ) return NULL;
+
+  if ( maxOut > 255 ) {
+    buf = new char[maxOut+1];
+    bufOnHeap = 1;
+  }
+  else {
+    buf = stackBuf;
+    bufOnHeap = 0;
+  }
 
   state = FINDING_DOLLAR;
   strcpy( outStr, "" );
@@ -152,16 +162,20 @@ static const int FINDING_RIGHT_PAREN = 3;
   if ( ii > maxOut ) goto limitErr;
   outStr[ii] = 0;
 
+  if ( bufOnHeap ) delete [] buf;
+
   return outStr;
 
 syntaxErr:
 
   printf( "Syntax error in env var reference\n" );
+  if ( bufOnHeap ) delete [] buf;
   return NULL;
 
 limitErr:
 
   printf( "Parameter size limit exceeded in env var reference\n" );
+  if ( bufOnHeap ) delete [] buf;
   return NULL;
 
 }
