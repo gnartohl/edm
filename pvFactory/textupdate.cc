@@ -220,7 +220,7 @@ int edmTextupdateClass::createFromFile(FILE *f, char *filename,
     else
     {
         fscanf(f, "%d\n", &index ); actWin->incLine();
-        if (index >=0 && index <= dm_eng)
+        if (index >=0 && index <= dm_exp)
             displayMode = (DisplayMode)index;
         else
             displayMode = dm_default;
@@ -364,7 +364,7 @@ int edmTextupdateClass::genericEdit() // create Property Dialog
     ef.addTextField("Width", 30, &bufW);
     ef.addTextField("Height", 30, &bufH);
     ef.addTextField("PV", 30, bufPvName, PV_Factory::MAX_PV_NAME);
-    ef.addOption("Mode", "default|decimal|hex|engineer", &buf_displayMode);
+    ef.addOption("Mode", "default|decimal|hex|engineer|exp", &buf_displayMode);
     ef.addTextField("Precision", 30, &buf_precision);
     ef.addTextField("Line Width", 30, &buf_line_width);
     ef.addColorButton("Fg Color", actWin->ci, &textCb, &bufTextColor);
@@ -739,6 +739,13 @@ bool edmTextupdateClass::get_current_values(char *text, size_t &len)
             textColor.updateColorValue(pv);
         switch (displayMode)
         {
+            case dm_exp:
+                if (pv->get_type().type < ProcessVariable::Type::enumerated)
+                {
+                 	len = cvtDoubleToExpString(pv->get_double(), text,
+                                               (unsigned short) precision);
+                    break;
+                }
             case dm_eng:
                 if (pv->get_type().type < ProcessVariable::Type::enumerated)
                 {
@@ -822,6 +829,30 @@ void edmTextupdateClass::pv_conn_state_callback(ProcessVariable *pv,
 void edmTextupdateClass::pv_value_callback(ProcessVariable *pv,
                                            void *userarg)
 {
+#if 0
+    printf("New Value for '%s': Type %s, Dim. %d\n",
+           pv->get_name(),
+           pv->get_type().description,
+           pv->get_dimension());
+    size_t i;
+    switch (pv->get_type().type)
+    {
+        case ProcessVariable::Type::integer:
+            for (i=0; i<pv->get_dimension(); ++i)
+                printf("%d ", pv->get_int_array()[i]);
+            printf("\n");
+            break;
+        case ProcessVariable::Type::real:
+            for (i=0; i<pv->get_dimension(); ++i)
+                printf("%g ", pv->get_double_array()[i]);
+            printf("\n");
+            break;
+        default:
+            char buf[200];
+            pv->get_string(buf, 200);
+            printf("%s\n", buf);
+    }
+#endif
     edmTextupdateClass *me = (edmTextupdateClass *)userarg;
     me->actWin->appCtx->proc->lock();
     if (me->is_executing)
