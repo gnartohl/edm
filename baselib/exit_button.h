@@ -23,7 +23,7 @@
 #include "entry_form.h"
 
 #define EBTC_MAJOR_VERSION 4
-#define EBTC_MINOR_VERSION 0
+#define EBTC_MINOR_VERSION 1
 #define EBTC_RELEASE 0
 
 #ifdef __exit_button_cc
@@ -94,7 +94,7 @@ int fgColor, bufFgColor, bgColor, bufBgColor,
  topShadowColor, bufTopShadowColor, botShadowColor, bufBotShadowColor;
 colorButtonClass fgCb, bgCb, topShadowCb, botShadowCb;
 int _3D, buf3D, invisible, bufInvisible, activeMode, iconify, bufIconify,
- exitProgram, bufExitProgram;
+ exitProgram, bufExitProgram, controlParent, bufControlParent;
 
 char label[31+1], bufLabel[31+1];
 

@@ -52,6 +52,8 @@ activeExitButtonClass *ebto = (activeExitButtonClass *) client;
 
   ebto->exitProgram = ebto->bufExitProgram;
 
+  ebto->controlParent = ebto->bufControlParent;
+
   ebto->invisible = ebto->bufInvisible;
 
   strncpy( ebto->label, ebto->bufLabel, 31 );
@@ -136,6 +138,7 @@ activeExitButtonClass::activeExitButtonClass ( void ) {
   selected = 0;
   iconify = 0;
   exitProgram = 0;
+  controlParent = 0;
 
 }
 
@@ -169,6 +172,7 @@ activeGraphicClass *ebto = (activeGraphicClass *) this;
   _3D = source->_3D;
   iconify = source->iconify;
   exitProgram = source->exitProgram;
+  controlParent = source->controlParent;
   invisible = source->invisible;
   strncpy( label, source->label, 31 );
 
@@ -214,6 +218,7 @@ int activeExitButtonClass::createInteractive (
   _3D = 1;
   iconify = 0;
   exitProgram = 0;
+  controlParent = 0;
   invisible = 0;
   strncpy( label, activeExitButtonClass_str1, 31 );
 
@@ -259,6 +264,7 @@ char *emptyStr = "";
   tag.loadBoolW( "invisible", &invisible, &zero );
   tag.loadBoolW( "iconify", &iconify, &zero );
   tag.loadBoolW( "exitProgram", &exitProgram, &zero );
+  tag.loadBoolW( "controlParent", &controlParent, &zero );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -350,6 +356,7 @@ char *emptyStr = "";
   tag.loadR( "invisible", &invisible, &zero );
   tag.loadR( "iconify", &iconify, &zero );
   tag.loadR( "exitProgram", &exitProgram, &zero );
+  tag.loadR( "controlParent", &controlParent, &zero );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.readTags( f, "endObjectProperties" );
@@ -515,6 +522,7 @@ char title[32], *ptr;
   buf3D = _3D;
   bufIconify = iconify;
   bufExitProgram = exitProgram;
+  bufControlParent = controlParent;
   bufInvisible = invisible;
   strncpy( bufLabel, label, 31 );
 
@@ -533,6 +541,7 @@ char title[32], *ptr;
   ef.addToggle( activeExitButtonClass_str10, &bufInvisible );
   ef.addToggle( activeExitButtonClass_str11, &bufIconify );
   ef.addToggle( activeExitButtonClass_str12, &bufExitProgram );
+  ef.addToggle( activeExitButtonClass_str19, &bufControlParent );
   ef.addColorButton( activeExitButtonClass_str14, actWin->ci, &fgCb, &bufFgColor );
   ef.addColorButton( activeExitButtonClass_str15, actWin->ci, &bgCb, &bufBgColor );
   ef.addColorButton( activeExitButtonClass_str16, actWin->ci, &topShadowCb, &bufTopShadowColor );
@@ -759,18 +768,58 @@ void activeExitButtonClass::btnDown (
   int *action )
 {
 
+activeWindowClass *aw0, *aw1;
+
   *action = 0;
 
   if ( !enabled ) return;
 
-  if ( actWin->isEmbedded ) {
-    actWin->appCtx->postMessage( activeExitButtonClass_str18 );
-    return;
-  }
-
   if ( exitProgram ) {
 
     actWin->appCtx->exitProgram();
+
+    return;
+
+  }
+
+  if ( actWin->isEmbedded ) {
+
+    if ( iconify && controlParent ) {
+
+      aw0 = actWin->parent;
+      while ( aw0 ) {
+
+        aw1 = aw0;
+        aw0 = aw0->parent;
+
+      }
+
+      if ( aw1 ) {
+        XIconifyWindow( aw1->d, XtWindow(aw1->topWidgetId()),
+         DefaultScreen(aw1->d) );
+      }
+
+    }
+    else if ( controlParent ) {
+
+      aw0 = actWin->parent;
+      while ( aw0 ) {
+
+        aw1 = aw0;
+        aw0 = aw0->parent;
+
+      }
+
+      if ( aw1 ) {
+        aw1->closeDeferred( 2 );
+      }
+
+    }
+    else {
+
+      actWin->appCtx->postMessage( activeExitButtonClass_str18 );
+
+    }
 
     return;
 

@@ -2423,8 +2423,10 @@ int numNewMacros, max, numFound;
 
 done:
 
-  if ( !focus && !button3Popup && closeAction[index] ) {
-    actWin->closeDeferred( 2 );
+  if ( !actWin->isEmbedded ) {
+    if ( !focus && !button3Popup && closeAction[index] ) {
+      actWin->closeDeferred( 2 );
+    }
   }
 
 }

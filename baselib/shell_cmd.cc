@@ -1985,7 +1985,12 @@ void shellCmdClass::btnDown (
 
     executeCmd();
 
-    *action = closeAction;
+    if ( actWin->isEmbedded ) {
+      *action = 0;
+    }
+    else {
+      *action = closeAction;
+    }
 
   }
   else {
@@ -2070,7 +2075,9 @@ void shellCmdClass::executeDeferred ( void ) {
   if ( ne ) {
 
     executeCmd();
-    if ( closeAction ) actWin->closeDeferred( 2 );
+    if ( !actWin->isEmbedded ) {
+      if ( closeAction ) actWin->closeDeferred( 2 );
+    }
 
   }
 

@@ -2160,7 +2160,12 @@ void activeMessageButtonClass::btnUp (
 
   performBtnUpAction();
 
-  *action = releaseAction;
+  if ( actWin->isEmbedded ) {
+    *action = 0;
+  }
+  else {
+    *action = releaseAction;
+  }
 
 }
 
@@ -2294,7 +2299,12 @@ void activeMessageButtonClass::btnDown (
 
   performBtnDownAction();
 
-  *action = pressAction;
+  if ( actWin->isEmbedded ) {
+    *action = 0;
+  }
+  else {
+    *action = pressAction;
+  }
 
 }
 
@@ -2587,7 +2597,7 @@ int stat, index, invisColor;
 
     performBtnDownAction();
 
-    if ( pressAction ) {
+    if ( pressAction && !actWin->isEmbedded ) {
 
       actWin->closeDeferred( 2 );
 
@@ -2611,7 +2621,9 @@ int stat, index, invisColor;
 
     performBtnUpAction();
 
-    if ( releaseAction ) actWin->closeDeferred( 2 );
+    if ( !actWin->isEmbedded ) {
+      if ( releaseAction ) actWin->closeDeferred( 2 );
+    }
 
   }
 

@@ -19,5 +19,6 @@
 #define activeExitButtonClass_str16 (char *) "Top Shadow"
 #define activeExitButtonClass_str17 (char *) "Bottom Shadow"
 #define activeExitButtonClass_str18 (char *) "Exit button in embedded window is disabled"
+#define activeExitButtonClass_str19 (char *) "Apply to parent"
 
 #endif

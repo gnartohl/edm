@@ -2288,7 +2288,7 @@ void pvInspectorClass::btnDown (
   int *action )
 {
 
-  *action = 0; // close screen via actWin->closeDeferred
+  *action = 0;
 
   if ( !enabled ) return;
 
