@@ -1629,11 +1629,15 @@ int num;
     cur = head->flink;
     while ( cur != head ) {
 
-      if ( !useOriginalColors ) {
-        cur->node->changeDisplayParams(
-         ACTGRF_TEXTFGCOLOR_MASK | ACTGRF_FG1COLOR_MASK | ACTGRF_BGCOLOR_MASK,
-	 "", 0, "", 0, "", 0, fgColor, fgColor, 0, 0, bgColor,
-         0, 0 );
+      if ( pass == 1 ) {
+
+        if ( !useOriginalColors ) {
+          cur->node->changeDisplayParams(
+           ACTGRF_TEXTFGCOLOR_MASK | ACTGRF_FG1COLOR_MASK |
+           ACTGRF_BGCOLOR_MASK, "", 0, "", 0, "", 0, fgColor,
+           fgColor, 0, 0, bgColor, 0, 0 );
+        }
+
       }
 
       cur->node->activate( pass, (void *) cur, &num );
