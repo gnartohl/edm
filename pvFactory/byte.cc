@@ -27,8 +27,6 @@ void edmByteClass::clone(const edmByteClass *rhs,
                                const char *classname)
 {
     // This next line must always be included
-    //activeGraphicClass *ago = (activeGraphicClass *) this;
-    //ago->clone((activeGraphicClass *)rhs);
     activeGraphicClass::clone((activeGraphicClass *)rhs);
 
     name = strdup(classname);
@@ -156,6 +154,7 @@ int edmByteClass::createFromFile(FILE *f, char *filename,
 
   fscanf( f, "%d\n", &temp ); actWin->incLine();
   theDir = (bdir)temp;
+
   fscanf( f, "%d\n", &nobt ); actWin->incLine();
   fscanf( f, "%d\n", &shft ); actWin->incLine();
   
@@ -278,21 +277,13 @@ int edmByteClass::makeOutline()
 // coloring the bits. 
 //
 {
-
-   enum orient { VERTICAL, HORIZONTAL };
-   orient theOrient = VERTICAL;
-   int len;
-
    outlineOK = false;
 
    if (nobt < 1) return 1;
 
-   if (w > h) theOrient = HORIZONTAL;
+   theOutline = new XSegment[(nobt + 3) * 2];
 
-   len = (nobt + 3) * 2; // (number of bits plus end and 2 sides) segments
-   theOutline = new XSegment[len];
-
-   if (theOrient == HORIZONTAL)
+   if (w > h)	// horizontal
    {
       bitLen = (float)w / nobt;
       for (int i=0, px = x; i <= nobt; i++, px = (int)(x + i * bitLen))
@@ -311,7 +302,7 @@ int edmByteClass::makeOutline()
       theOutline[nobt + 2].x2= x + w;
       theOutline[nobt + 2].y2= y + h;
    }
-   else // VERTICAL
+   else // vertical
    {
       bitLen = (float)h / nobt;
       for (int i=0, py = y; i <= nobt; i++, py = (int)(y + i * bitLen))
@@ -352,7 +343,9 @@ int edmByteClass::draw()  // render the edit-mode image
     actWin->drawGc.setFG( actWin->ci->getPixelByIndex(lineColor) );
     actWin->drawGc.setLineWidth( lineWidth );
     actWin->drawGc.setLineStyle( lineStyle );
-  
+
+    makeOutline();
+
     if (outlineOK)
     {
        XDrawSegments(actWin->d, XtWindow(actWin->drawWidget),
