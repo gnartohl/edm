@@ -720,6 +720,35 @@ edmTextentryClass::edmTextentryClass(const edmTextentryClass *rhs)
 }
 
 
+// callbacks for drag & drop from Motif text widgets
+
+static void drag(Widget w, XEvent *e, String *params, Cardinal numParams)
+{
+    activeGraphicClass *obj;
+    XtVaGetValues(w, XmNuserData, &obj, NULL);
+    
+    obj->startDrag(w, e);
+}
+
+static void selectDrag(Widget w, XEvent *e, String *params, Cardinal numParams)
+{
+    activeGraphicClass *obj;
+    XButtonEvent *be = (XButtonEvent *) e;
+
+    XtVaGetValues(w, XmNuserData, &obj, NULL);
+    obj->selectDragValue(obj->getX0() + be->x, obj->getY0() + be->y);
+}
+
+static char dragTrans[] =
+"#override\n~Shift<Btn2Down>: startDrag()\nShift<Btn2Up>: selectDrag()";
+
+static XtActionsRec dragActions[] =
+{
+    { "startDrag", (XtActionProc) drag },
+    { "selectDrag", (XtActionProc) selectDrag }
+};
+
+
 int edmTextentryClass::activate(int pass, void *ptr)
 {
     XmFontList fonts;
@@ -738,6 +767,12 @@ int edmTextentryClass::activate(int pass, void *ptr)
 
             // man XmTextField
             fonts = XmFontListCreate(fs, XmSTRING_DEFAULT_CHARSET);
+
+            XtTranslations parsedTrans;
+            parsedTrans = XtParseTranslationTable(dragTrans);
+            XtAppAddActions(actWin->appCtx->appContext(), dragActions,
+                            XtNumber(dragActions));
+            
             widget = XtVaCreateManagedWidget("TextEntry",
                                              xmTextFieldWidgetClass,
                                              actWin->executeWidgetId(),
@@ -755,15 +790,19 @@ int edmTextentryClass::activate(int pass, void *ptr)
                                                  (XtArgVal)alignment,
                                              XmNalignment,
                                                  (XtArgVal)alignment,
+                                             XmNtranslations, parsedTrans,
+                                             XmNuserData,
+                                                 this,// obj accessible to d&d
                                              NULL);
             /* add the callbacks for update */
             XtAddCallback(widget,XmNactivateCallback,
                           (XtCallbackProc)text_entered_callback,
                           (XtPointer)this);
 
-            /* special stuff: if user started entering new data into text field, but
-             *  doesn't do the actual Activate <CR>, then restore old value on
-             *  losing focus...
+            /* special stuff: if user started entering new data into
+             * text field, but doesn't do the actual Activate <CR>,
+             * then restore old value on
+             * losing focus...
              */
             XtAddCallback(widget,XmNmodifyVerifyCallback,
                           (XtCallbackProc)text_verify_callback,
