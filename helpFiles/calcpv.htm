@@ -61,14 +61,22 @@ Another Example:
 </pre>
 
 
-<h2>Configuration file</h2>
+<h2>Configuration File Location</h2>
 
-The configuration file has to be called "calc.list"
-and has to be 
+On startup, EDM attemps to load configuration files in the following
+order:
 <ol>
-<li> in the current directory
-<li> accessible as $EDMFILES/calc.list
+<li> If $EDMCALC is defined as a ':'-deparated list of files,
+     those files are loaded. Example:
+     <code>
+     export EDMCALC="$HOME/mycalc:/usr/share/common/calc.list"
+     </code>
+<li> Otherwise, a file "calc.list" in the current directory used. If
+it does not exist, $EDMFILES/calc.list is used.
+<li> If all fails, you cannot use any CALC PV.
 </ol>
+
+<h2>Configuration File Format</h2>
 
 The first line has to be "CALC1".<br>
 
