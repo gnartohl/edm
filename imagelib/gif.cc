@@ -1043,9 +1043,12 @@ int curW, curH;
 
 int activeGifClass::drawActive ( void ) {
 
-int screen_num, depth;
+int screen_num, depth, stat;
 Visual *visual;
 Pixmap pixmap;
+
+  stat = drawActive( x, y, x+w, y+h );
+  return stat;
 
 //  if ( noFile || !image || !activeMode ) return 1;
   if ( noFile || !activeMode ) return 1;
