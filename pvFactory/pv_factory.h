@@ -109,6 +109,10 @@ public:
     virtual double      get_upper_ctrl_limit() const = 0;
     virtual double      get_lower_ctrl_limit() const = 0;
 
+    // Plan: support getting attributes like status, precision, ...
+    //       via an attribute-itentifier
+    // virtual double      get_attribute(Attribute attribute);
+    
     // Output/write methods
     virtual bool put(double value) = 0;
     virtual bool put(int value);
