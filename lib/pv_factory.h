@@ -191,8 +191,8 @@ public:
     // if there is no write access to this PV
     virtual bool have_write_access() const;
     virtual bool put(double value) = 0;
-    virtual bool put(int value);
     virtual bool put(const char *value) = 0;
+    virtual bool put(int value);
 
     void clearDoInitialCallback();
     void setDoInitialCallback();

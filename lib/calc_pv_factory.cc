@@ -309,7 +309,11 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
 {
     size_t i;
 
-    setDoInitialCallback();
+    for (i=0; i<MaxArgs; ++i)
+    {
+        arg[i] = 0.0;
+        arg_pv[i] = 0;
+    }
 
     precision = 4;
     upper_display = 10.0;
@@ -325,14 +329,13 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
     arg_count = _arg_count;
     for (i=0; i<arg_count; ++i)
     {
+        // Is this argument a number or another PV?
         // Poor excuse for a real "number" check:
         if (strchr("0123456789+-.", arg_name[i][0]) &&
             strspn(arg_name[i], "0123456789+-.eE"))
-        {
-            arg_pv[i] = 0;
+        {   // It's a number
             arg[i] = strtod(arg_name[i], 0);
-            if (arg[i] == HUGE_VAL ||
-                arg[i] == -HUGE_VAL)
+            if (arg[i] == HUGE_VAL || arg[i] == -HUGE_VAL)
             {
                 fprintf(stderr, "CALC PV %s: invalid number arg '%s'\n",
                         name, arg_name[i]);
@@ -340,8 +343,7 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
             }
         }
         else
-        {
-            arg[i] = 0.0;
+        {   // It's a PV
             arg_pv[i] = the_PV_Factory->create(arg_name[i]);
             if (arg_pv[i])
             {
@@ -355,11 +357,7 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
             }
         }
     }
-    for (/**/; i<MaxArgs; ++i)
-    {
-        arg[i] = 0.0;
-        arg_pv[i] = 0;
-    }
+    setDoInitialCallback();
 }
 
 CALC_ProcessVariable::~CALC_ProcessVariable()
@@ -446,10 +444,12 @@ void CALC_ProcessVariable::recalc()
 }
 
 bool CALC_ProcessVariable::is_valid() const
-{   // invalid if any argument is invalid
-    for (size_t i=0; i<arg_count; ++i)
+{
+    size_t i;
+    // invalid if any argument is invalid
+    for (i=0; i<arg_count; ++i)
     {
-        if (arg_pv[i] && !arg_pv[i]->is_valid())
+        if (arg_pv[i]==0 || !arg_pv[i]->is_valid())
             return false;
     }
     return true;
