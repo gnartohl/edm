@@ -20,7 +20,7 @@ ifeq ($(HOSTNAME), ics-srv02.sns.ornl.gov)
 endif
 
 ifeq ($(HOSTNAME), ridgeman.sns.ornl.gov)
-	FOR_WHAT=RH7_SNS_ORNL
+	FOR_WHAT=RH72_SNS_ORNL
 endif
 
 ifeq ($(HOSTNAME), redman)
