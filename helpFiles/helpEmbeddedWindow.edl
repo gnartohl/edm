@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 0
-x 97
-y 44
+x 362
+y 20
 w 819
 h 898
 font "helvetica-medium-r-18.0"
@@ -28,9 +28,9 @@ major 4
 minor 0
 release 0
 x 430
-y 352
+y 471
 w 365
-h 527
+h 408
 lineColor rgb 0 0 0
 fillColor rgb 48059 48059 48059
 endObjectProperties
@@ -355,7 +355,7 @@ major 4
 minor 0
 release 0
 x 521
-y 19
+y 150
 w 147
 h 21
 font "helvetica-bold-r-18.0"
@@ -375,7 +375,7 @@ major 4
 minor 0
 release 0
 x 549
-y 64
+y 195
 w 71
 h 16
 font "helvetica-medium-r-14.0"
@@ -395,7 +395,7 @@ major 4
 minor 0
 release 0
 x 549
-y 90
+y 221
 w 157
 h 16
 font "helvetica-medium-r-14.0"
@@ -415,7 +415,7 @@ major 4
 minor 0
 release 0
 x 549
-y 116
+y 247
 w 234
 h 80
 font "helvetica-medium-r-14.0"
@@ -439,7 +439,7 @@ major 4
 minor 0
 release 0
 x 549
-y 202
+y 333
 w 218
 h 32
 font "helvetica-medium-r-14.0"
@@ -460,7 +460,7 @@ major 4
 minor 0
 release 0
 x 549
-y 244
+y 375
 w 230
 h 32
 font "helvetica-medium-r-14.0"
@@ -481,7 +481,7 @@ major 4
 minor 0
 release 0
 x 549
-y 282
+y 413
 w 239
 h 32
 font "helvetica-medium-r-14.0"
@@ -502,7 +502,7 @@ major 4
 minor 0
 release 0
 x 500
-y 65
+y 196
 w 42
 h 16
 font "helvetica-bold-r-14.0"
@@ -522,7 +522,7 @@ major 4
 minor 0
 release 0
 x 512
-y 89
+y 220
 w 30
 h 16
 font "helvetica-bold-r-14.0"
@@ -542,7 +542,7 @@ major 4
 minor 0
 release 0
 x 485
-y 117
+y 248
 w 57
 h 16
 font "helvetica-bold-r-14.0"
@@ -562,7 +562,7 @@ major 4
 minor 0
 release 0
 x 439
-y 204
+y 335
 w 103
 h 16
 font "helvetica-bold-r-14.0"
@@ -582,7 +582,7 @@ major 4
 minor 0
 release 0
 x 437
-y 245
+y 376
 w 105
 h 16
 font "helvetica-bold-r-14.0"
@@ -602,7 +602,7 @@ major 4
 minor 0
 release 0
 x 465
-y 282
+y 413
 w 77
 h 16
 font "helvetica-bold-r-14.0"
@@ -619,12 +619,12 @@ endObjectProperties
 object activePipClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 437
-y 401
+y 509
 w 350
-h 469
+h 363
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
 topShadowColor rgb 60652 60652 60652
@@ -640,8 +640,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 484
-y 367
+x 482
+y 480
 w 251
 h 21
 font "helvetica-bold-r-18.0"
@@ -650,6 +650,32 @@ bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Example Embedded Window"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 424
+y 20
+w 350
+h 112
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "If \"Center\" is selected, the target display contents are"
+  "centered in the embedded window."
+  ""
+  "If \"Set Size\" is selected, The embedded window area is"
+  "resized. Height is set to the height of the target display"
+  "plus the value of \"Size Ofs\". Width is determine in the"
+  "same manner."
 }
 autoSize
 endObjectProperties
