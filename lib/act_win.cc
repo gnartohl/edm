@@ -18,6 +18,10 @@
 
 #define __act_win_cc 1
 
+#include <signal.h>
+#include <unistd.h>
+#include <setjmp.h>
+
 #include <math.h>
 #include "app_pkg.h"
 #include "act_win.h"
@@ -139,6 +143,17 @@ activeWindowClass *awo = (activeWindowClass *) client;
 
 }
 
+static jmp_buf g_jump_h;
+
+void signal_handler (
+  int sig
+) {
+
+  //printf( "Got signal: sig = %-d\n", sig );
+  longjmp( g_jump_h, 1 );
+
+}
+
 static void acw_autosave (
   XtPointer client,
   XtIntervalId *id )
@@ -148,13 +163,33 @@ activeWindowClass *awo = (activeWindowClass *) client;
 int stat;
 char name[255+1], oldName[255+1];
 
+struct sigaction sa, oldsa, dummysa;
+
+  stat = setjmp( g_jump_h );
+  if ( !stat ) {
+
+    sa.sa_handler = signal_handler;
+    sigemptyset( &sa.sa_mask );
+    sa.sa_flags = 0;
+
+    stat = sigaction( SIGILL, &sa, &oldsa );
+    stat = sigaction( SIGSEGV, &sa, &dummysa );
+
+  }
+  else {
+
+    printf( "Auto-save failed - received exception\n" );
+    return;
+
+  }
+
   if ( strcmp( awo->startSignature, "edmActiveWindow" ) != 0 ) {
-    printf( "Garbage in acw_autosave\n" );
+    printf( "Auto-save failed - bad initial signature\n" );
     return;
   }
 
   if ( strcmp( awo->endSignature, "wodniWevitcAmde" ) != 0 ) {
-    printf( "Garbage in acw_autosave\n" );
+    printf( "Auto-save failed - bad ending signature\n" );
     return;
   }
 
@@ -2885,7 +2920,7 @@ static void b2ReleaseOneSelect_cb (
 
 activeWindowClass *awo;
 popupBlockPtr block;
-int item, stat;
+int item, stat, num_selected;
 activeGraphicListPtr cur, curSel, nextSel;
 
   block = (popupBlockPtr) client;
@@ -2908,6 +2943,8 @@ activeGraphicListPtr cur, curSel, nextSel;
       awo->selectedHead->selBlink = awo->selectedHead;
       awo->state = AWC_NONE_SELECTED;
       awo->updateMasterSelection();
+
+      awo->refresh();
 
       break;
 
@@ -3158,8 +3195,31 @@ activeGraphicListPtr cur, curSel, nextSel;
 
       }
 
-      awo->state = AWC_NONE_SELECTED;
-      awo->updateMasterSelection();
+      // determine new state
+      num_selected = 0;
+
+      curSel = awo->selectedHead->selFlink;
+      while ( ( curSel != awo->selectedHead ) &&
+              ( num_selected < 2 ) ) {
+
+        num_selected++;
+        curSel = curSel->selFlink;
+
+      }
+
+      if ( num_selected == 0 ) {
+        awo->state = AWC_NONE_SELECTED;
+        awo->updateMasterSelection();
+      }
+      else if ( num_selected == 1 ) {
+        awo->state = AWC_ONE_SELECTED;
+        awo->useFirstSelectedAsReference = 1;
+        awo->updateMasterSelection();
+      }
+      else {
+        awo->state = AWC_MANY_SELECTED;
+        awo->updateMasterSelection();
+      }
 
       awo->refresh();
 
@@ -3236,6 +3296,8 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode;
       awo->selectedHead->selBlink = awo->selectedHead;
       awo->state = AWC_NONE_SELECTED;
       awo->updateMasterSelection();
+
+      awo->refresh();
 
       break;
 
@@ -10363,16 +10425,6 @@ Atom wm_delete_window;
    (XtPointer) &curBlockListNode->block );
 
 
-  str = XmStringCreateLocalized( activeWindowClass_str113 );
-
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
-   b2OneSelectPopup,
-   XmNlabelString, str,
-   NULL );
-
-  XmStringFree( str );
-
-
   editPd1 = XmCreatePulldownMenu( b2OneSelectPopup, "", NULL, 0 );
 
   str = XmStringCreateLocalized( activeWindowClass_str140 );
@@ -11633,8 +11685,8 @@ void activeWindowClass::setChanged ( void ) {
   if ( !changeSinceAutoSave ) {
     changeSinceAutoSave = 1;
     autosaveTimer = XtAppAddTimeOut( appCtx->appContext(),
-     300000, acw_autosave, this );
-    // 10000, acw_autosave, this );
+    300000, acw_autosave, this );
+    //10000, acw_autosave, this );
   }
 
 }
