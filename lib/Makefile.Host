@@ -77,6 +77,7 @@ LIBSRCS += epics_pv_factory.cc
 LIBSRCS += pv_factory.cc
 LIBSRCS += edmPrint.cc
 LIBSRCS += tag_pkg.cc
+LIBSRCS += remFileOpen.cc
 
 include $(TOP)/config/RULES.Host
 
