@@ -2233,14 +2233,22 @@ activeWindowListPtr cur;
 
 void appContextClass::getFilePaths ( void ) {
 
-int i, stat;
-char *envPtr, *gotIt, buf[1270+1], save[127+1], path[127+1], *tk;
+int i, l, curLen, stat;
+char *envPtr, *gotIt, *buf, save[127+1], path[127+1], *tk;
 
   // EDMFILES
   envPtr = getenv( environment_str2 );
   if ( envPtr ) {
 
-    strncpy( buf, envPtr, 1270 );
+    l = strlen( envPtr ) + 1;
+    l = l / 4096;
+    l = l * 4096 + 4096;
+    curLen = l;
+    printf( "curLen = %-d\n", curLen );
+    buf = new char[l];
+
+    strncpy( buf, envPtr, l );
+    buf[l] = 0;
 
     tk = strtok( buf, ":" );
     if ( tk ) {
@@ -2269,8 +2277,19 @@ char *envPtr, *gotIt, buf[1270+1], save[127+1], path[127+1], *tk;
   envPtr = getenv( environment_str1 );
   if ( envPtr ) {
 
+    l = strlen( envPtr ) + 1;
+    l = l / 4096;
+    l = l * 4096 + 4096;
+    if ( l > curLen ) {
+      curLen = l;
+      printf( "curLen = %-d\n", curLen );
+      delete buf;
+      buf = new char[l];
+    }
+
     // count number of search paths
-    strncpy( buf, envPtr, 1270 );
+    strncpy( buf, envPtr, l );
+    buf[l] = 0;
 
     numPaths = 0;
     tk = strtok( buf, ":" );
@@ -2309,13 +2328,17 @@ char *envPtr, *gotIt, buf[1270+1], save[127+1], path[127+1], *tk;
       dataFilePrefix[0] = new char[strlen(path)+1];
       strcpy( dataFilePrefix[0], path );
 
+      delete buf;
+
       return;
 
     }
 
     dataFilePrefix = new char *[numPaths];
 
-    strncpy( buf, envPtr, 1270 );
+    strncpy( buf, envPtr, l );
+    buf[l] = 0;
+
     tk = strtok( buf, ":" );
     for ( i=0; i<numPaths; i++ ) {
 
@@ -2362,6 +2385,8 @@ char *envPtr, *gotIt, buf[1270+1], save[127+1], path[127+1], *tk;
     strcpy( dataFilePrefix[0], path );
 
   }
+
+  delete buf;
 
 }
 

@@ -460,6 +460,279 @@ sizeListPtr curSize;
 
 }
 
+int fontInfoClass::initFromFileVer2 (
+  XtAppContext app,
+  Display *d,
+  FILE *f,
+  int major,
+  int minor,
+  int release )
+{
+
+char line[127+1], buf[127+1], t1[127+1], t2[127+1], t3[127+1], t4[127+1],
+ t5[127+1], t6[127+1], t7[127+1], mod[4][127+1], fontSpec[127+1],
+ *ptr, *tk1, *tk2, *ctx1, *ctx2;
+int i, ii, iii, pointSize[200], numSizes;
+int stat, preload;
+int empty = 1;
+fontNameListPtr cur;
+int dup;
+XFontStruct *fs;
+
+  ptr = fgets ( defSiteFontTag, 127, f );
+  if ( !ptr ) {
+    fclose( f );
+    return FONTINFO_EMPTY;
+  }
+
+  defSiteFontTag[strlen(defSiteFontTag)-1] = 0; // discard \n
+
+  ptr = fgets ( defFontTag, 127, f );
+  if ( !ptr ) {
+    fclose( f );
+    return FONTINFO_EMPTY;
+  }
+
+  defFontTag[strlen(defFontTag)-1] = 0; // discard \n
+
+  do {
+
+    processAllEvents( app, display );
+
+    ptr = fgets ( line, 127, f );
+    if ( ptr ) { // ignore blank lines
+
+      ctx1 = NULL;
+      strcpy( buf, line );
+      tk1 = strtok_r( buf, " \t\n", &ctx1 );
+      if ( tk1 ) { // ignore blank lines
+
+        if ( tk1[0] != '#' ) { // ignore comment lines
+
+          ctx1 = NULL;
+          strcpy( buf, line );
+
+          tk1 = strtok_r( buf, "\t\n()", &ctx1 );
+          if ( tk1 ) {
+            strcpy( t1, tk1 );
+          }
+          else {
+            fclose( f );
+            return FONTINFO_SYNTAX;
+          }
+
+          tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
+          if ( tk1 ) {
+            strcpy( t2, tk1 );
+          }
+          else {
+            fclose( f );
+            return FONTINFO_SYNTAX;
+          }
+
+            // get bold and medium indicators
+
+            ctx2 = NULL;
+            tk2 = strtok_r( t2, ",", &ctx2 );
+            if ( tk2 ) {
+              strcpy( mod[0], tk2 );
+            }
+            else {
+              fclose( f );
+              return FONTINFO_SYNTAX;
+            }
+
+            tk2 = strtok_r( NULL, ",", &ctx2 );
+            if ( tk2 ) {
+              strcpy( mod[1], tk2 );
+            }
+            else {
+              fclose( f );
+              return FONTINFO_SYNTAX;
+            }
+
+          tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
+          if ( tk1 ) {
+            strcpy( t3, tk1 );
+          }
+          else {
+            fclose( f );
+            return FONTINFO_SYNTAX;
+          }
+
+          tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
+          if ( tk1 ) {
+            strcpy( t4, tk1 );
+          }
+          else {
+            fclose( f );
+            return FONTINFO_SYNTAX;
+          }
+
+            // get italic and regular indicators
+
+            ctx2 = NULL;
+            tk2 = strtok_r( t4, ",", &ctx2 );
+            if ( tk2 ) {
+              strcpy( mod[2], tk2 );
+            }
+            else {
+              fclose( f );
+              return FONTINFO_SYNTAX;
+            }
+
+            tk2 = strtok_r( NULL, ",", &ctx2 );
+            if ( tk2 ) {
+              strcpy( mod[3], tk2 );
+            }
+            else {
+              fclose( f );
+              return FONTINFO_SYNTAX;
+            }
+
+          tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
+          if ( tk1 ) {
+            strcpy( t5, tk1 );
+          }
+          else {
+            fclose( f );
+            return FONTINFO_SYNTAX;
+          }
+
+          tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
+          if ( tk1 ) {
+            strcpy( t6, tk1 );
+          }
+          else {
+            fclose( f );
+            return FONTINFO_SYNTAX;
+          }
+
+            // get point sizes
+            numSizes = 0;
+            ctx2 = NULL;
+            tk2 = strtok_r( t6, ",", &ctx2 );
+            if ( tk2 ) {
+              pointSize[numSizes] = atol( tk2 );
+              numSizes++;
+	      if ( numSizes >= 200 ) {
+                fclose( f );
+                return FONTINFO_SYNTAX;
+              }
+            }
+            else {
+              fclose( f );
+              return FONTINFO_SYNTAX;
+            }
+
+            do {
+
+              tk2 = strtok_r( NULL, ",", &ctx2 );
+              if ( tk2 ) {
+                pointSize[numSizes] = atol( tk2 );
+                numSizes++;
+                if ( numSizes >= 200 ) {
+                  fclose( f );
+                  return FONTINFO_SYNTAX;
+                }
+              }
+
+            } while ( tk2 );
+
+          tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
+          if ( tk1 ) {
+            strcpy( t7, tk1 );
+          }
+          else {
+            fclose( f );
+            return FONTINFO_SYNTAX;
+          }
+
+          tk1 = strtok_r( NULL, "\t\n", &ctx1 );
+          if ( tk1 ) {
+            if ( strcmp( tk1, "preload" ) == 0 ) {
+              preload = 1;
+            }
+            else {
+              preload = 0;
+            }
+          }
+          else {
+            preload = 0;
+          }
+
+          //printf( "t1 = [%s]\n", t1 );
+          //printf( "  mod[0] = [%s]\n", mod[0] );
+          //printf( "  mod[1] = [%s]\n", mod[1] );
+          //printf( "t3 = [%s]\n", t3 );
+          //printf( "  mod[2] = [%s]\n", mod[2] );
+          //printf( "  mod[3] = [%s]\n", mod[3] );
+          //printf( "t5 = [%s]\n", t5 );
+
+          //for ( i=0; i<numSizes; i++ ) {
+          //  printf( "  size[%-d] = %-d\n", i, pointSize[i] );
+          //}
+
+          //printf( "t7 = [%s]\n", t7 );
+
+          // Build fontspec
+
+          for ( i=0; i<2; i++ ) {
+
+            for ( ii=2; ii<4; ii++ ) {
+
+              for ( iii=0; iii<numSizes; iii++ ) {
+
+                sprintf( fontSpec, "%s%s%s%s%s%-d%s", t1, mod[i], t3, mod[ii],
+                 t5, pointSize[iii], t7 );
+
+                //printf( "[%s]\n", fontSpec );
+
+                cur = new fontNameListType;
+
+                stat = this->resolveFont( fontSpec, cur );
+                if ( !( stat & 1 ) ) {
+                  delete cur;
+                  return stat;
+                }
+
+                stat = avl_insert_node( this->fontNameListH, (void *) cur,
+                 &dup );
+                if ( !( stat & 1 ) ) return stat;
+                // if ( dup ) printf( "duplicate\n" );
+
+                if ( preload ) {
+                  //printf( "preload %s\n", cur->name );
+                  fs = getXFontStruct( cur->name );
+                }
+
+                stat = appendSizeMenu( cur->family, cur->size, cur->fsize );
+                if ( !( stat & 1 ) ) return stat;
+
+                empty = 0;
+
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+  } while ( ptr );
+
+  fclose( f );
+
+  if ( empty ) return FONTINFO_EMPTY;
+
+  return FONTINFO_SUCCESS;
+
+}
+
 int fontInfoClass::initFromFile (
   XtAppContext app,
   Display *d,
@@ -469,7 +742,7 @@ int fontInfoClass::initFromFile (
 // Read font specs from given file, query server, and populate data structure.
 // If font does not exist, use some other font.
 
-char line[127+1], *ptr, *fontSpec, *tk;
+char line[127+1], *ptr, *fontSpec, *tk, *ctx;
 int stat, preload;
 FILE *f;
 int empty = 1;
@@ -489,6 +762,11 @@ XFontStruct *fs;
   }
 
   fscanf( f, "%d %d %d\n", &major, &minor, &release );
+
+  if ( major == 2 ) {
+    stat = initFromFileVer2( app, d, f, major, minor, release );
+    return stat;
+  }
 
   if ( ( major > 1 ) || ( minor > 0 ) ) {
 
@@ -517,30 +795,31 @@ XFontStruct *fs;
     ptr = fgets ( line, 127, f );
     if ( ptr ) { // ignore blank lines
 
-      fontSpec = strtok( line, "\t\n" );
+      ctx = NULL;
+      fontSpec = strtok_r( line, "\t\n", &ctx );
       if ( fontSpec ) {
 
         if ( major >= 2 ) {
 
-          tk = strtok( NULL, "\t\n" );
+          tk = strtok_r( NULL, "\t\n", &ctx );
           if ( tk ) {
             if ( strcmp( tk, "preload" ) == 0 ) {
               preload = 1;
-	    }
-	    else {
+            }
+            else {
               preload = 0;
-	    }
-	  }
-	  else {
-	    preload = 0;
-	  }
+            }
+          }
+          else {
+            preload = 0;
+          }
 
-	}
-	else {
+        }
+        else {
 
-	  preload = 0;
+          preload = 0;
 
-	}
+        }
 
         cur = new fontNameListType;
 
@@ -557,7 +836,7 @@ XFontStruct *fs;
         if ( preload ) {
           //printf( "preload %s\n", cur->name );
           fs = getXFontStruct( cur->name );
-	}
+        }
 
         stat = appendSizeMenu( cur->family, cur->size, cur->fsize );
         if ( !( stat & 1 ) ) return stat;

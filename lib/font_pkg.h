@@ -40,6 +40,7 @@
 #define FONTINFO_NO_FILE 104
 #define FONTINFO_NO_FONT 106
 #define FONTINFO_NO_MEM 108
+#define FONTINFO_SYNTAX 110
 
 void processAllEvents (
   XtAppContext app,
@@ -102,6 +103,14 @@ char *defaultFont ( void ) { return defFontTag; }
 
 int addFont (
   char *name );
+
+int initFromFileVer2 (
+  XtAppContext app,
+  Display *d,
+  FILE *f,
+  int major,
+  int minor,
+  int release );
 
 int initFromFile (
   XtAppContext app,
