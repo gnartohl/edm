@@ -16,5 +16,8 @@
 #define activePipClass_str22 (char *) "error creating pv\n"
 #define activePipClass_str24 (char *) "frameWidget create failed\n"
 #define activePipClass_str26 (char *) "Embedded display not opened - possible mutual recursion"
+#define activePipClass_str27 (char *) "Macro definition file open failure: [%s]"
+#define activePipClass_str28 (char *) "Macro definition file is empty: [%s]"
+#define activePipClass_str29 (char *) "Macro definition file read failure: [%s]"
 
 #endif

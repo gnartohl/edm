@@ -1280,6 +1280,12 @@ FILE *openExchangeFile (
   char *name,
   char *mode );
 
+FILE *openAnyGenericFile (
+  char *name,
+  char *mode,
+  char *fullName,
+  int max );
+
 void executeFromDeferredQueue( void );
 
 int readUntilEndOfData (

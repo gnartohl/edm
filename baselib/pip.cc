@@ -1611,9 +1611,84 @@ char *newMacros[100];
 char *newValues[100];
 int numNewMacros, max, numFound;
 
-  // do special substitutions
-  actWin->substituteSpecial( 255, symbolsExpStr[index].getExpanded(),
-   symbolsWithSubs );
+char *formTk, *formContext, formBuf[255+1], *fileTk, *fileContext, fileBuf[255+1],
+ *result, msg[79+1], macDefFileName[127+1];
+FILE *f;
+expStringClass symbolsFromFile;
+int gotSymbolsFromFile;
+
+  // allow the syntax: @filename s1=v1,s2=v2,...
+  // which means read symbols from file and append list
+  gotSymbolsFromFile = 0;
+  strncpy( formBuf, symbolsExpStr[index].getExpanded(), 255 );
+  formBuf[255] = 0;
+  formContext = NULL;
+  formTk = strtok_r( formBuf, " \t\n", &formContext );
+  if ( formTk ) {
+    if ( formTk[0] == '@' ) {
+      if ( formTk[1] ) {
+        f = actWin->openAnyGenericFile( &formTk[1], "r", macDefFileName, 127 );
+	if ( !f ) {
+          snprintf( msg, 79, activePipClass_str27, &formTk[1] );
+	  msg[79] = 0;
+          actWin->appCtx->postMessage( msg );
+          symbolsFromFile.setRaw( "" );
+	}
+	else {
+	  result = fgets( fileBuf, 255, f );
+	  if ( result ) {
+            fileContext = NULL;
+            fileTk = strtok_r( fileBuf, "\n", &fileContext );
+            if ( fileTk ) {
+              symbolsFromFile.setRaw( fileTk );
+	    }
+	    else {
+              snprintf( msg, 79, activePipClass_str28, macDefFileName );
+              msg[79] = 0;
+              actWin->appCtx->postMessage( msg );
+              symbolsFromFile.setRaw( "" );
+	    }
+	  }
+	  else {
+            if ( errno ) {
+              snprintf( msg, 79, activePipClass_str29, macDefFileName );
+	    }
+	    else {
+              snprintf( msg, 79, activePipClass_str28, macDefFileName );
+	    }
+            msg[79] = 0;
+            actWin->appCtx->postMessage( msg );
+            symbolsFromFile.setRaw( "" );
+	  }
+	  fclose( f );
+	}
+      }
+      // append inline list to file contents
+      formTk = strtok_r( NULL, "\n", &formContext );
+      if ( formTk ) {
+        strncpy( fileBuf, symbolsFromFile.getRaw(), 255 );
+        fileBuf[255] = 0;
+        if ( blank(fileBuf) ) {
+          strcpy( fileBuf, "" );
+	}
+        else {
+          Strncat( fileBuf, ",", 255 );
+	}
+	Strncat( fileBuf, formTk, 255 );
+        symbolsFromFile.setRaw( fileBuf );
+      }
+      // do special substitutions
+      actWin->substituteSpecial( 255, symbolsFromFile.getExpanded(),
+       symbolsWithSubs );
+      gotSymbolsFromFile = 1;
+    }
+  }
+
+  if ( !gotSymbolsFromFile ) {
+    // do special substitutions
+    actWin->substituteSpecial( 255, symbolsExpStr[index].getExpanded(),
+     symbolsWithSubs );
+  }
 
   numNewMacros = 0;
 

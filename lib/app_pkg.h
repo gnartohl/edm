@@ -373,6 +373,12 @@ void expandFileName (
   char *ext,
   int maxSize );
 
+void expandFileName (
+  int index,
+  char *expandedName,
+  char *inName,
+  int maxSize );
+
 void buildSchemeList ( void );
 
 void destroySchemeList ( void );

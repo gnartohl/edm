@@ -16850,6 +16850,33 @@ int i;
 
 }
 
+FILE *activeWindowClass::openAnyGenericFile (
+  char *name,
+  char *mode,
+  char *fullName,
+  int max )
+{
+
+FILE *f;
+int i;
+
+  for ( i=0; i<appCtx->numPaths; i++ ) {
+
+    appCtx->expandFileName( i, fullName, name, max );
+
+    if ( strcmp( fullName, "" ) != 0 ) {
+      f = fopen( fullName, mode );
+      if ( f ) {
+        return f;
+      }
+    }
+
+  }
+
+  return NULL;
+
+}
+
 void activeWindowClass::executeFromDeferredQueue( void )
 {
 
