@@ -210,7 +210,7 @@ typedef struct bufTag {
   char bufRequiredHostName[63+1];
 } bufType, *bufPtr;
 
-static char * const nullHost = "";
+// static char * const nullHost = "";
 
 bufPtr buf;
 

@@ -30,6 +30,8 @@ typedef struct threadParamBlockTag {
   float secondsToDelay;
 } threadParamBlockType, *threadParamBlockPtr;
 
+static char * const g_nullHost = "";
+
 #ifdef __linux__
 static void *shellCmdThread (
   THREAD_HANDLE h )
@@ -1541,7 +1543,7 @@ XmString str;
       opComplete = 1;
 
       hostName = getenv( "HOSTNAME" );
-      if ( !hostName ) hostName = nullHost;
+      if ( !hostName ) hostName = g_nullHost;
 
       if ( numCmds == 1 ) {
         cmdIndex = 0;
