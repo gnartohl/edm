@@ -270,6 +270,23 @@ public:
       int index
     );
 
+    int writeColorIndex (
+      FILE *f,
+      char *tag,
+      int index
+    );
+
+    int writeColorArrayIndex (
+      FILE *f,
+      int index
+    );
+
+    int writeColorArrayIndex (
+      FILE *f,
+      int arrayIndex,
+      int index
+    );
+
     int readColorIndex (
       FILE *f,
       int *index

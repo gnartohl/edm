@@ -22,19 +22,15 @@
 #include "act_grf.h"
 #include "entry_form.h"
 
-#ifdef __epics__
-#include "cadef.h"
-#endif
+#include "pv_factory.h"
+#include "cvtFast.h"
 
-#ifndef __epics__
-#define MAX_ENUM_STATES 4
-#define MAX_ENUM_STRING_SIZE 16
-#endif
+#define MAX_ENUM_STATES 16
 
 #define ACBC_K_COLORMODE_STATIC 0
 #define ACBC_K_COLORMODE_ALARM 1
 
-#define ACBC_MAJOR_VERSION 1
+#define ACBC_MAJOR_VERSION 4
 #define ACBC_MINOR_VERSION 0
 #define ACBC_RELEASE 0
 
@@ -59,12 +55,6 @@ static char *dragName[] = {
   activeChoiceButtonClass_str34,
   activeChoiceButtonClass_str30
 };
-
-static void acb_infoUpdate (
-  struct event_handler_args ast_args );
-
-static void acb_readInfoUpdate (
-  struct event_handler_args ast_args );
 
 static void acbc_edit_ok (
   Widget w,
@@ -92,40 +82,36 @@ static void acbc_edit_cancel_delete (
   XtPointer call );
 
 static void acb_controlUpdate (
-  struct event_handler_args ast_args );
-
-static void acb_alarmUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void acb_monitor_control_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void acb_readUpdate (
-  struct event_handler_args ast_args );
-
-static void acb_readAlarmUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void acb_monitor_read_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void acb_monitor_vis_connect_state (
-  struct connection_handler_args arg );
-
-static void acb_visInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void acb_visUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void acb_monitor_color_connect_state (
-  struct connection_handler_args arg );
-
-static void acb_colorInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void acb_colorUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 #endif
 
@@ -140,12 +126,6 @@ friend void doBlink (
 friend void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id );
-
-friend void acb_infoUpdate (
-  struct event_handler_args ast_args );
-
-friend void acb_readInfoUpdate (
-  struct event_handler_args ast_args );
 
 friend void acbc_edit_ok (
   Widget w,
@@ -173,40 +153,36 @@ friend void acbc_edit_cancel_delete (
   XtPointer call );
 
 friend void acb_controlUpdate (
-  struct event_handler_args ast_args );
-
-friend void acb_alarmUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void acb_monitor_control_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void acb_readUpdate (
-  struct event_handler_args ast_args );
-
-friend void acb_readAlarmUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void acb_monitor_read_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void acb_monitor_vis_connect_state (
-  struct connection_handler_args arg );
-
-friend void acb_visInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void acb_visUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void acb_monitor_color_connect_state (
-  struct connection_handler_args arg );
-
-friend void acb_colorInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void acb_colorUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static const int controlPvConnection = 1;
 static const int readPvConnection = 2;
@@ -228,9 +204,6 @@ pvColorClass fgColor, bgColor, inconsistentColor, selColor;
 colorButtonClass fgCb, bgCb, inconsistentCb, selCb, topShadowCb, botShadowCb;
 int fgColorMode, bgColorMode, bufFgColorMode, bufBgColorMode;
 
-char *stateString[MAX_ENUM_STATES]; // allocated at run-time
-int numStates;
-
 fontMenuClass fm;
 char fontTag[63+1], bufFontTag[63+1];
 XmFontList fontList;
@@ -239,10 +212,7 @@ int fontAscent, fontDescent, fontHeight;
 
 int buttonPressed;
 
-#ifdef __epics__
-chid controlPvId, readPvId;
-evid alarmEventId, controlEventId, readAlarmEventId, readEventId;
-#endif
+ProcessVariable *controlPvId, *readPvId, *stateStringPvId;
 
 char bufControlPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass controlPvExpStr;
@@ -256,10 +226,11 @@ int needConnectInit, needReadConnectInit, needInfoInit,
  needReadInfoInit, needDraw, needRefresh, needToDrawUnconnected,
  needToEraseUnconnected;
 int unconnectedTimer;
+int initialConnection, initialReadConnection, initialVisConnection,
+ initialColorConnection;
 
-chid visPvId;
-evid visEventId;
-expStringClass visPvExpString;
+ProcessVariable *visPvId;
+expStringClass visPvExpStr;
 char bufVisPvName[activeGraphicClass::MAX_PV_NAME+1];
 int visExists;
 double visValue, curVisValue, minVis, maxVis;
@@ -268,15 +239,16 @@ char maxVisString[39+1], bufMaxVisString[39+1];
 int prevVisibility, visibility, visInverted, bufVisInverted;
 int needVisConnectInit, needVisInit, needVisUpdate;
 
-chid colorPvId;
-evid colorEventId;
-expStringClass colorPvExpString;
+ProcessVariable *colorPvId;
+expStringClass colorPvExpStr;
 char bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
 int colorExists;
 double colorValue, curColorValue;
 int needColorConnectInit, needColorInit, needColorUpdate;
 
 int orientation, bufOrientation;
+
+int oldStat, oldSev;
 
 public:
 
@@ -303,7 +275,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
@@ -341,6 +321,7 @@ int deactivate ( int pass );
 void updateDimensions ( void );
 
 void btnUp (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,
@@ -348,6 +329,7 @@ void btnUp (
   int *action );
 
 void btnDown (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,

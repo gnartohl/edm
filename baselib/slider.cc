@@ -31,7 +31,6 @@ static void sloSetCtlKpDoubleValue (
 {
 
 activeSliderClass *slo = (activeSliderClass *) client;
-int stat;
 double dvalue;
 
   dvalue = slo->kpCtlDouble;
@@ -46,7 +45,7 @@ double dvalue;
   }
 
   if ( slo->controlExists ) {
-    stat = ca_put( DBR_DOUBLE, slo->controlPvId, &dvalue );
+    slo->controlPvId->put( dvalue );
     slo->actWin->appCtx->proc->lock();
     slo->needCtlRefresh = 1;
     slo->actWin->addDefExeNode( slo->aglPtr );
@@ -211,13 +210,9 @@ int stat, xOfs;
   slo->curControlV = slo->controlV;
   slo->actWin->appCtx->proc->unlock();
 
-// for EPICS support
-
   if ( slo->controlExists ) {
-#ifdef __epics__
-  stat = ca_put( DBR_DOUBLE, slo->controlPvId, &fvalue );
-  if ( stat != ECA_NORMAL ) printf( activeSliderClass_str1 );
-#endif
+    stat = slo->controlPvId->put( fvalue );
+    if ( !stat ) printf( activeSliderClass_str1 );
   }
   else if ( slo->anyCallbackFlag ) {
     slo->needCtlRefresh = 1;
@@ -287,13 +282,9 @@ int stat, xOfs;
   slo->curControlV = slo->controlV;
   slo->actWin->appCtx->proc->unlock();
 
-// for EPICS support
-
   if ( slo->controlExists ) {
-#ifdef __epics__
-  stat = ca_put( DBR_DOUBLE, slo->controlPvId, &fvalue );
-  if ( stat != ECA_NORMAL ) printf( activeSliderClass_str2 );
-#endif
+    stat = slo->controlPvId->put( fvalue );
+    if ( !stat ) printf( activeSliderClass_str2 );
   }
   else if ( slo->anyCallbackFlag ) {
     slo->needCtlRefresh = 1;
@@ -342,18 +333,14 @@ activeSliderClass *slo = (activeSliderClass *) client;
   slo->curControlV = slo->controlV;
   slo->actWin->appCtx->proc->unlock();
 
-// for EPICS support
-
   if ( slo->controlExists ) {
-#ifdef __epics__
-    stat = ca_put( DBR_DOUBLE, slo->controlPvId, &fvalue );
-    if ( stat != ECA_NORMAL ) printf( activeSliderClass_str3 );
+    stat = slo->controlPvId->put( fvalue );
+    if ( !stat ) printf( activeSliderClass_str3 );
     slo->needErase = 1;
     slo->needDraw = 1;
     slo->actWin->appCtx->proc->lock();
     slo->actWin->addDefExeNode( slo->aglPtr );
     slo->actWin->appCtx->proc->unlock();
-#endif
   }
   else if ( slo->anyCallbackFlag ) {
     slo->needErase = 1;
@@ -566,16 +553,14 @@ activeSliderClass *slo = (activeSliderClass *) client;
 
 }
 
-// for EPICS support
-#ifdef __epics__
-
 static void sl_monitor_control_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeSliderClass *slo = (activeSliderClass *) ca_puser(arg.chid);
+activeSliderClass *slo = (activeSliderClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     slo->needCtlConnectInit = 1;
 
@@ -600,12 +585,13 @@ activeSliderClass *slo = (activeSliderClass *) ca_puser(arg.chid);
 }
 
 static void sl_monitor_read_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeSliderClass *slo = (activeSliderClass *) ca_puser(arg.chid);
+activeSliderClass *slo = (activeSliderClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     slo->needReadConnectInit = 1;
 
@@ -625,12 +611,13 @@ activeSliderClass *slo = (activeSliderClass *) ca_puser(arg.chid);
 }
 
 static void sl_monitor_saved_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeSliderClass *slo = (activeSliderClass *) ca_puser(arg.chid);
+activeSliderClass *slo = (activeSliderClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     slo->needSavedConnectInit = 1;
 
@@ -648,12 +635,13 @@ activeSliderClass *slo = (activeSliderClass *) ca_puser(arg.chid);
 }
 
 static void sl_monitor_control_label_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeSliderClass *slo = (activeSliderClass *) ca_puser(arg.chid);
+activeSliderClass *slo = (activeSliderClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     slo->needCtlLabelConnectInit = 1;
     slo->actWin->appCtx->proc->lock();
@@ -664,32 +652,14 @@ activeSliderClass *slo = (activeSliderClass *) ca_puser(arg.chid);
 
 }
 
-static void sl_controlLabelUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
-
-  strncpy( slo->controlLabel, (char *) ast_args.dbr, 39 );
-
-  slo->needCtlLabelInfoInit = 1;
-  slo->actWin->appCtx->proc->lock();
-  slo->actWin->addDefExeNode( slo->aglPtr );
-  slo->actWin->appCtx->proc->unlock();
-
-}
-
 static void sl_monitor_read_label_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeSliderClass *slo = (activeSliderClass *) ca_puser(arg.chid);
+activeSliderClass *slo = (activeSliderClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     slo->needReadLabelConnectInit = 1;
     slo->actWin->appCtx->proc->lock();
@@ -700,143 +670,52 @@ activeSliderClass *slo = (activeSliderClass *) ca_puser(arg.chid);
 
 }
 
-static void sl_readLabelUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
-
-  strncpy( slo->readLabel, (char *) ast_args.dbr, 39 );
-
-  slo->needReadLabelInfoInit = 1;
-  slo->actWin->appCtx->proc->lock();
-  slo->actWin->addDefExeNode( slo->aglPtr );
-  slo->actWin->appCtx->proc->unlock();
-
-}
-
-static void sl_readInfoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
-struct dbr_gr_double readRec = *( (dbr_gr_double *) ast_args.dbr );
-int prec;
-
-  if ( slo->limitsFromDb || slo->efPrecision.isNull() )
-    prec = readRec.precision;
-  else
-    prec = slo->precision;
-
-  if ( strcmp( slo->displayFormat, "GFloat" ) == 0 ) {
-    sprintf( slo->readFormat, "%%.%-dg", prec );
-  }
-  else if ( strcmp( slo->displayFormat, "Exponential" ) == 0 ) {
-    sprintf( slo->readFormat, "%%.%-de", prec );
-  }
-  else {
-    sprintf( slo->readFormat, "%%.%-df", prec );
-  }
-
-  slo->curReadV = readRec.value;
-
-  slo->needReadInfoInit = 1;
-  slo->actWin->appCtx->proc->lock();
-  slo->actWin->addDefExeNode( slo->aglPtr );
-  slo->actWin->appCtx->proc->unlock();
-
-}
-
-static void sl_infoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
-
-  if ( slo->limitsFromDb || slo->efScaleMin.isNull() ) {
-    slo->scaleMin = controlRec.lower_disp_limit;
-  }
-
-  if ( slo->limitsFromDb || slo->efScaleMax.isNull() ) {
-    slo->scaleMax = controlRec.upper_disp_limit;
-  }
-
-  if ( slo->limitsFromDb || slo->efPrecision.isNull() ) {
-    slo->precision = controlRec.precision;
-  }
-
-  if ( strcmp( slo->displayFormat, "GFloat" ) == 0 ) {
-    sprintf( slo->controlFormat, "%%.%-dg", slo->precision );
-  }
-  else if ( strcmp( slo->displayFormat, "Exponential" ) == 0 ) {
-    sprintf( slo->controlFormat, "%%.%-de", slo->precision );
-  }
-  else {
-    sprintf( slo->controlFormat, "%%.%-df", slo->precision );
-  }
-
-  slo->minFv = slo->scaleMin;
-
-  slo->maxFv = slo->scaleMax;
-
-  slo->curControlV = controlRec.value;
-
-  slo->needCtlInfoInit = 1;
-  slo->actWin->appCtx->proc->lock();
-  slo->actWin->addDefExeNode( slo->aglPtr );
-  slo->actWin->appCtx->proc->unlock();
-
-}
-
 static void sl_controlUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
+activeSliderClass *slo = (activeSliderClass *) userarg;
+int st, sev;
 
-  slo->oneControlV = *( (double *) ast_args.dbr ); // an xtimer updates image
+  st = pv->get_status();
+  sev = pv->get_severity();
+  if ( ( st != slo->oldCtrlStat ) || ( sev != slo->oldCtrlSev ) ) {
+    slo->oldCtrlStat = st;
+    slo->oldCtrlSev = sev;
+    slo->bgColor.setStatus( st, sev );
+    slo->controlColor.setStatus( st, sev );
+    slo->bufInvalidate();
+    slo->needDraw = 1;
+    slo->actWin->appCtx->proc->lock();
+    slo->actWin->addDefExeNode( slo->aglPtr );
+    slo->actWin->appCtx->proc->unlock();
+  }
+
+  slo->oneControlV = pv->get_double(); // xtimer updates widget indicator
   slo->curControlV = slo->oneControlV;
 
 }
 
-static void sl_controlAlarmUpdate (
-  struct event_handler_args ast_args )
-{
-
-activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
-struct dbr_sts_double rec;
-
-  rec = *( (struct dbr_sts_double *) ast_args.dbr );
-  slo->bgColor.setStatus( rec.status, rec.severity );
-  slo->controlColor.setStatus( rec.status, rec.severity );
-
-  slo->needDraw = 1;
-  slo->actWin->appCtx->proc->lock();
-  slo->actWin->addDefExeNode( slo->aglPtr );
-  slo->actWin->appCtx->proc->unlock();
-
-}
-
 static void sl_readUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
+activeSliderClass *slo = (activeSliderClass *) userarg;
+int st, sev;
 
-  slo->curReadV = *( (double *) ast_args.dbr );
+  st = pv->get_status();
+  sev = pv->get_severity();
+  if ( ( st != slo->oldReadStat ) || ( sev != slo->oldReadSev ) ) {
+    slo->oldReadStat = st;
+    slo->oldReadSev = sev;
+    slo->readColor.setStatus( st, sev );
+    slo->bufInvalidate();
+    slo->needDraw = 1;
+  }
+
+  slo->curReadV = pv->get_double();
 
   slo->needReadRefresh = 1;
   slo->actWin->appCtx->proc->lock();
@@ -845,30 +724,14 @@ activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
 
 }
 
-static void sl_readAlarmUpdate (
-  struct event_handler_args ast_args )
-{
-
-activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
-struct dbr_sts_double rec;
-
-  rec = *( (struct dbr_sts_double *) ast_args.dbr );
-  slo->readColor.setStatus( rec.status, rec.severity );
-
-  slo->needDraw = 1;
-  slo->actWin->appCtx->proc->lock();
-  slo->actWin->addDefExeNode( slo->aglPtr );
-  slo->actWin->appCtx->proc->unlock();
-
-}
-
 static void sl_savedValueUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
+activeSliderClass *slo = (activeSliderClass *) userarg;
 
-  slo->newSavedV = *( (double *) ast_args.dbr );
+  slo->newSavedV = pv->get_double();
 
   slo->needSavedRefresh = 1;
   slo->actWin->appCtx->proc->lock();
@@ -876,8 +739,6 @@ activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
   slo->actWin->appCtx->proc->unlock();
 
 }
-
-#endif
 
 activeSliderClass::activeSliderClass ( void ) {
 
@@ -1037,13 +898,9 @@ int stat, xOfs;
   curControlV = controlV;
   actWin->appCtx->proc->unlock();
 
-// for EPICS support
-
   if ( controlExists ) {
-#ifdef __epics__
-  stat = ca_put( DBR_DOUBLE, controlPvId, &fvalue );
-  if ( stat != ECA_NORMAL ) printf( activeSliderClass_str2 );
-#endif
+    stat = controlPvId->put( fvalue );
+    if ( !stat ) printf( activeSliderClass_str2 );
   }
   else if ( anyCallbackFlag ) {
     needCtlRefresh = 1;
@@ -1097,13 +954,9 @@ int stat, xOfs;
   curControlV = controlV;
   actWin->appCtx->proc->unlock();
 
-// for EPICS support
-
   if ( controlExists ) {
-#ifdef __epics__
-  stat = ca_put( DBR_DOUBLE, controlPvId, &fvalue );
-  if ( stat != ECA_NORMAL ) printf( activeSliderClass_str1 );
-#endif
+    stat = controlPvId->put( fvalue );
+    if ( !stat ) printf( activeSliderClass_str1 );
   }
   else if ( anyCallbackFlag ) {
     needCtlRefresh = 1;
@@ -1193,6 +1046,77 @@ int xOfs;
 }
 
 int activeSliderClass::save (
+  FILE *f )
+{
+
+int stat, major, minor, release;
+
+tagClass tag;
+
+int zero = 0;
+double dzero = 0;
+char *emptyStr = "";
+
+int labelTypeLiteral = 0;
+static char *labelEnumStr[3] = {
+  "literal",
+  "pvLabel",
+  "pvName"
+};
+static int labelEnum[3] = {
+  0,
+  1,
+  2
+};
+
+  major = SLC_MAJOR_VERSION;
+  minor = SLC_MINOR_VERSION;
+  release = SLC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadW( "bgAlarm", &bgColorMode, &zero );
+  tag.loadW( "2ndBgColor", actWin->ci, &shadeColor );
+  tag.loadW( "controlColor", actWin->ci, &controlColor );
+  tag.loadW( "controlAlarm", &controlColorMode, &zero );
+  tag.loadW( "indicatorColor", actWin->ci, &readColor );
+  tag.loadW( "indicatorAlarm", &readColorMode, &zero );
+  tag.loadW( "font", fontTag );
+  tag.loadW( "controlPv", &controlPvName, emptyStr );
+  tag.loadW( "indicatorPv", &readPvName, emptyStr );
+  tag.loadW( "savedValuePv", &savedValuePvName, emptyStr );
+  tag.loadW( "controlLabel", &controlLabelName, emptyStr );
+  tag.loadW( "controlLabelType", 3, labelEnumStr, labelEnum, &controlLabelType,
+   &labelTypeLiteral );
+  tag.loadW( "readLabel", &readLabelName, emptyStr );
+  tag.loadW( "readLabelType", 3, labelEnumStr, labelEnum, &readLabelType,
+   &labelTypeLiteral );
+  tag.loadW( "increment", &increment, &dzero );
+  tag.loadW( "incMultiplier", &accelMultiplier, &dzero );
+  tag.loadBoolW( "limitsFromDb", &limitsFromDb, &zero );
+  tag.loadW( "precision", &efPrecision );
+  tag.loadW( "scaleMin", &efScaleMin );
+  tag.loadW( "scaleMax", &efScaleMax );
+  tag.loadW( "displayFormat", displayFormat );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int activeSliderClass::old_save (
   FILE *f )
 {
 
@@ -1288,6 +1212,146 @@ int index, stat;
 }
 
 int activeSliderClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int major, minor, release, xOfs, stat;
+
+tagClass tag;
+
+int zero = 0;
+double dzero = 0;
+char *emptyStr = "";
+
+int labelTypeLiteral = 0;
+static char *labelEnumStr[3] = {
+  "literal",
+  "pvLabel",
+  "pvName"
+};
+static int labelEnum[3] = {
+  0,
+  1,
+  2
+};
+
+  actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "bgAlarm", &bgColorMode, &zero );
+  tag.loadR( "2ndBgColor", actWin->ci, &shadeColor );
+  tag.loadR( "controlColor", actWin->ci, &controlColor );
+  tag.loadR( "controlAlarm", &controlColorMode, &zero );
+  tag.loadR( "indicatorColor", actWin->ci, &readColor );
+  tag.loadR( "indicatorAlarm", &readColorMode, &zero );
+  tag.loadR( "font", 63, fontTag );
+  tag.loadR( "controlPv", &controlPvName, emptyStr );
+  tag.loadR( "indicatorPv", &readPvName, emptyStr );
+  tag.loadR( "savedValuePv", &savedValuePvName, emptyStr );
+  tag.loadR( "controlLabel", &controlLabelName, emptyStr );
+  tag.loadR( "controlLabelType", 3, labelEnumStr, labelEnum,
+   &controlLabelType, &labelTypeLiteral );
+  tag.loadR( "readLabel", &readLabelName, emptyStr );
+  tag.loadR( "readLabelType", 3, labelEnumStr, labelEnum, &readLabelType,
+   &labelTypeLiteral );
+  tag.loadR( "increment", &increment, &dzero );
+  tag.loadR( "incMultiplier", &accelMultiplier, &dzero );
+  tag.loadR( "limitsFromDb", &limitsFromDb, &zero );
+  tag.loadR( "precision", &efPrecision );
+  tag.loadR( "scaleMin", &efScaleMin );
+  tag.loadR( "scaleMax", &efScaleMax );
+  tag.loadR( "displayFormat", 15, displayFormat );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > SLC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  strcpy( this->id, "" );
+  changeCallbackFlag = 0;
+  activateCallbackFlag = 0;
+  deactivateCallbackFlag = 0;
+  anyCallbackFlag = 0;
+
+  if ( limitsFromDb || efPrecision.isNull() )
+    precision = 1;
+  else
+    precision = efPrecision.value();
+
+  if ( ( limitsFromDb || efScaleMin.isNull() ) &&
+       ( limitsFromDb || efScaleMax.isNull() ) ) {
+    minFv = scaleMin = 0;
+    maxFv = scaleMax = 10;
+  }
+  else{
+    minFv = scaleMin = efScaleMin.value();
+    maxFv = scaleMax = efScaleMax.value();
+  }
+
+  actWin->fi->loadFontTag( fontTag );
+  fs = actWin->fi->getXFontStruct( fontTag );
+
+  updateDimensions();
+
+  xOfs = ( w - controlW ) / 2;
+  controlX = xOfs;
+  readX = xOfs;
+  arcStart = 90*64 - 30*64;
+  arcStop = 60*64;
+
+  strcpy( controlValue, "0.0" );
+  strcpy( readValue, "0.0" );
+  strcpy( controlLabel, "" );
+  strcpy( readLabel, "" );
+
+  curControlV = oneControlV = curReadV = controlV = readV = 0.0;
+
+  if ( bgColorMode == SLC_K_COLORMODE_ALARM )
+    bgColor.setAlarmSensitive();
+  else
+    bgColor.setAlarmInsensitive();
+
+  if ( controlColorMode == SLC_K_COLORMODE_ALARM )
+    controlColor.setAlarmSensitive();
+  else
+    controlColor.setAlarmInsensitive();
+
+  if ( readColorMode == SLC_K_COLORMODE_ALARM )
+    readColor.setAlarmSensitive();
+  else
+    readColor.setAlarmInsensitive();
+
+  return stat;
+
+}
+
+int activeSliderClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -1737,7 +1801,7 @@ int activeSliderClass::erase ( void ) {
 
 int activeSliderClass::eraseActive ( void ) {
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   XDrawRectangle( actWin->d, XtWindow(sliderWidget),
    actWin->executeGc.eraseGC(), 0, 0, w, h );
@@ -1758,6 +1822,9 @@ int arcX, arcY, xOfs, lineX;
   actWin->drawGc.saveFg();
 
   actWin->drawGc.setFG( bgColor.pixelColor() );
+
+  actWin->drawGc.setLineStyle( LineSolid );
+  actWin->drawGc.setLineWidth( 1 );
 
   XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x, y, w, h );
@@ -1853,12 +1920,15 @@ int arcX, arcY, xOfs;
  
 int adjW = w - 4;
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   actWin->executeGc.saveFg();
 
   actWin->executeGc.setFG( shadeColor.getColor() );
   actWin->executeGc.setArcModePieSlice();
+
+  actWin->executeGc.setLineStyle( LineSolid );
+  actWin->executeGc.setLineWidth( 1 );
 
   xOfs = ( adjW - controlW ) / 2;
 
@@ -1896,13 +1966,16 @@ int arcX, arcY, xOfs;
 
 int adjW = w - 4;
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   actWin->executeGc.saveFg();
 
   actWin->executeGc.setFG( controlColor.getColor() );
 
   actWin->executeGc.setArcModePieSlice();
+
+  actWin->executeGc.setLineStyle( LineSolid );
+  actWin->executeGc.setLineWidth( 1 );
 
   xOfs = ( adjW - controlW ) / 2;
 
@@ -1954,7 +2027,7 @@ int tX, tY, xOfs;
 
 int adjW = w - 4;
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   if ( fs && controlExists ) {
 
@@ -1997,7 +2070,7 @@ int tX, tY, xOfs;
 
 int adjW = w - 4;
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   if ( fs && controlExists ) {
 
@@ -2042,7 +2115,7 @@ int tX, tY, xOfs;
 
 int adjW = w - 4;
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   if ( fs && readExists ) {
 
@@ -2077,7 +2150,7 @@ int tX, tY, xOfs;
 
 int adjW = w - 4;
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   if ( fs && readExists ) {
 
@@ -2118,10 +2191,13 @@ int arcX, arcY, tX, tY, xOfs, lineX;
 
 int adjW = w - 4;
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   actWin->executeGc.saveFg();
   actWin->executeGc.setFG( bgColor.pixelColor() );
+
+  actWin->executeGc.setLineStyle( LineSolid );
+  actWin->executeGc.setLineWidth( 1 );
 
   XFillRectangle( actWin->d, XtWindow(sliderWidget),
    actWin->executeGc.normGC(), 0, 0, w, h );
@@ -2333,12 +2409,14 @@ double fvalue;
 char title[32], *ptr;
 int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 
+  *continueToDispatch = True;
+
   slo = (activeSliderClass *) client;
 
   if ( !slo->active ) return;
 
   if ( e->type == EnterNotify ) {
-    if ( !ca_write_access( slo->controlPvId ) ) {
+    if ( !slo->controlPvId->have_write_access() ) {
       slo->actWin->cursor.set( XtWindow(slo->actWin->executeWidget),
        CURSOR_K_NO );
     }
@@ -2370,7 +2448,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 
   }
 
-  if ( !ca_write_access( slo->controlPvId ) ) return;
+  if ( !slo->controlPvId->have_write_access() ) return;
 
   if ( e->type == ButtonPress ) {
 
@@ -2395,7 +2473,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         slo->savedV = slo->controlV;
 
         if ( slo->savedValuePvConnected ) {
-          stat = ca_put( DBR_DOUBLE, slo->savedValuePvId, &slo->savedV );
+          slo->savedValuePvId->put( slo->savedV );
 	}
 	else {
           xOfs = ( slo->w - 4 - slo->controlW ) / 2;
@@ -2433,13 +2511,9 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         slo->curControlV = slo->controlV;
         slo->actWin->appCtx->proc->unlock();
 
-// for EPICS support
-
         if ( slo->controlExists ) {
-#ifdef __epics__
-          stat = ca_put( DBR_DOUBLE, slo->controlPvId, &fvalue );
-          if ( stat != ECA_NORMAL ) printf( activeSliderClass_str56 );
-#endif
+          stat = slo->controlPvId->put( fvalue );
+          if ( !stat ) printf( activeSliderClass_str56 );
         }
         else if ( slo->anyCallbackFlag ) {
           slo->needCtlRefresh = 1;
@@ -2516,8 +2590,8 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
              ( be->y > y0 ) &&
              ( be->y < y1 ) ) {
 
-          slo->kp.create( slo->actWin->top, be->x+slo->actWin->xPos()+slo->x,
-           be->y+slo->actWin->yPos()+slo->y+y1-y0, "", &slo->kpCtlDouble,
+          slo->kp.create( slo->actWin->top, be->x_root, be->y_root,
+           "", &slo->kpCtlDouble,
            (void *) slo,
            (XtCallbackProc) sloSetCtlKpDoubleValue,
            (XtCallbackProc) sloCancelKp );
@@ -2528,8 +2602,8 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
              ( be->y > incY0 ) &&
              ( be->y < incY1 ) ) {
 
-          slo->kp.create( slo->actWin->top, be->x+slo->actWin->xPos()+slo->x,
-           be->y+slo->actWin->yPos()+slo->y+y1-y0, "", &slo->kpIncDouble,
+          slo->kp.create( slo->actWin->top, be->x_root, be->y_root,
+           "", &slo->kpIncDouble,
            (void *) slo,
            (XtCallbackProc) sloSetIncKpDoubleValue,
            (XtCallbackProc) sloCancelKp );
@@ -2540,8 +2614,8 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
           slo->bufIncrement = slo->increment;
           slo->bufAccelMultiplier = slo->accelMultiplier;
           slo->bufControlV = slo->controlV;
-          slo->valueFormX = slo->actWin->xPos() + slo->x  + be->x;
-          slo->valueFormY = slo->actWin->yPos() + slo->y + be->y;
+          slo->valueFormX = be->x_root;
+          slo->valueFormY = be->y_root;
           slo->valueFormW = 0;
           slo->valueFormH = 0;
           slo->valueFormMaxH = 600;
@@ -2631,7 +2705,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
     case Button2:
 
       if ( be->state & ShiftMask ) {
-        stat = slo->selectDragValue( slo->x+be->x, slo->y+be->y );
+        stat = slo->selectDragValue( be );
       }
 
       break;
@@ -2686,12 +2760,9 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         slo->curControlV = slo->controlV;
         slo->actWin->appCtx->proc->unlock();
 
-// for EPICS support
         if ( slo->controlExists ) {
-#ifdef __epics__
-          stat = ca_put( DBR_DOUBLE, slo->controlPvId, &fvalue );
-          if ( stat != ECA_NORMAL ) printf( activeSliderClass_str59 );
-#endif
+          stat = slo->controlPvId->put( fvalue );
+          if ( !stat ) printf( activeSliderClass_str59 );
         }
         else if ( slo->anyCallbackFlag ) {
           slo->needCtlRefresh = 1;
@@ -2754,12 +2825,9 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         slo->curControlV = slo->controlV;
         slo->actWin->appCtx->proc->unlock();
 
-// for EPICS support
         if ( slo->controlExists ) {
-#ifdef __epics__
-        stat = ca_put( DBR_DOUBLE, slo->controlPvId, &fvalue );
-        if ( stat != ECA_NORMAL ) printf( activeSliderClass_str60 );
-#endif
+          stat = slo->controlPvId->put( fvalue );
+          if ( !stat ) printf( activeSliderClass_str60 );
         }
         else if ( slo->anyCallbackFlag ) {
           slo->needCtlRefresh = 1;
@@ -2959,7 +3027,7 @@ int activeSliderClass::activate (
   void *ptr )
 {
 
-int stat, opStat;
+int opStat;
 char callbackName[63+1];
 
   switch ( pass ) {
@@ -2975,6 +3043,8 @@ char callbackName[63+1];
     if ( !opComplete ) {
 
       opStat = 1;
+
+      initEnable();
 
       frameWidget = XtVaCreateManagedWidget( "", xmBulletinBoardWidgetClass,
        actWin->executeWidgetId(),
@@ -3018,7 +3088,9 @@ char callbackName[63+1];
        EnterWindowMask|LeaveWindowMask, False,
        sliderEventHandler, (XtPointer) this );
 
-      XtMapWidget( frameWidget );
+      if ( enabled ) {
+        if ( frameWidget ) XtMapWidget( frameWidget );
+      }
 
       strcpy( readValue, "" );
       strcpy( controlValue, "" );
@@ -3034,16 +3106,15 @@ char callbackName[63+1];
        needCtlLabelConnectInit = needCtlLabelInfoInit =
        needReadLabelConnectInit = needReadLabelInfoInit =
        needSavedConnectInit = needSavedRefresh = needErase = needDraw = 0;
+      initialConnection = initialReadConnection =
+       initialSavedValueConnection = 1;
+      oldCtrlStat = oldCtrlSev = oldReadStat = oldReadSev = -1;
       oldControlV = 0;
       updateControlTimerActive = 0;
       controlAdjusted = 0;
       incrementTimerActive = 0;
-
-#ifdef __epics__
-      controlEventId = readEventId = controlLabelEventId =
-       readLabelEventId = savedEventId = controlAlarmEventId =
-       readAlarmEventId = 0;
-#endif
+      controlPvId = controlLabelPvId = readPvId = readLabelPvId =
+       savedValuePvId = NULL;
 
       controlState = SLC_STATE_IDLE;
 
@@ -3114,14 +3185,15 @@ char callbackName[63+1];
       }
 
       if ( controlExists ) {
-#ifdef __epics__
-        stat = ca_search_and_connect( controlPvName.getExpanded(),
-         &controlPvId, sl_monitor_control_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+	controlPvId = the_PV_Factory->create( controlPvName.getExpanded() );
+	if ( controlPvId ) {
+	  controlPvId->add_conn_state_callback(
+           sl_monitor_control_connect_state, this );
+	}
+	else {
           printf( activeSliderClass_str63 );
           opStat = 0;
         }
-#endif
       }
       else if ( anyCallbackFlag ) {
 
@@ -3164,47 +3236,54 @@ char callbackName[63+1];
       }
 
       if ( controlLabelExists && ( controlLabelType == SLC_K_LABEL )  ) {
-#ifdef __epics__
-        stat = ca_search_and_connect( controlLabelName.getExpanded(),
-         &controlLabelPvId, sl_monitor_control_label_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeSliderClass_str67 );
+        controlLabelPvId = the_PV_Factory->create(
+         controlLabelName.getExpanded() );
+	if ( controlLabelPvId ) {
+          controlLabelPvId->add_conn_state_callback(
+           sl_monitor_control_label_connect_state, this );
+	}
+	else {
+          printf( activeSliderClass_str63 );
           opStat = 0;
         }
-#endif
       }
 
       if ( readExists ) {
-#ifdef __epics__
-        stat = ca_search_and_connect( readPvName.getExpanded(), &readPvId,
-         sl_monitor_read_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeSliderClass_str68 );
+        readPvId = the_PV_Factory->create( readPvName.getExpanded() );
+	if ( readPvId ) {
+	  readPvId->add_conn_state_callback( sl_monitor_read_connect_state,
+           this );
+	}
+	else {
+          printf( activeSliderClass_str63 );
           opStat = 0;
         }
-#endif
       }
 
       if ( readLabelExists && ( readLabelType == SLC_K_LABEL )  ) {
-#ifdef __epics__
-        stat = ca_search_and_connect( readLabelName.getExpanded(),
-         &readLabelPvId, sl_monitor_read_label_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeSliderClass_str69 );
+        readLabelPvId = the_PV_Factory->create(
+         readLabelName.getExpanded() );
+	if ( readLabelPvId ) {
+          readLabelPvId->add_conn_state_callback(
+           sl_monitor_read_label_connect_state, this );
+	}
+	else {
+          printf( activeSliderClass_str63 );
           opStat = 0;
         }
-#endif
       }
 
       if ( savedValueExists ) {
-#ifdef __epics__
-        stat = ca_search_and_connect( savedValuePvName.getExpanded(),
-         &savedValuePvId, sl_monitor_saved_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeSliderClass_str70 );
+        savedValuePvId = the_PV_Factory->create(
+         savedValuePvName.getExpanded() );
+	if ( savedValuePvId ) {
+          savedValuePvId->add_conn_state_callback(
+           sl_monitor_saved_connect_state, this );
+	}
+	else {
+          printf( activeSliderClass_str63 );
           opStat = 0;
         }
-#endif
       }
 
       if ( opStat & 1 ) {
@@ -3252,8 +3331,6 @@ int activeSliderClass::deactivate (
   int pass
 ) {
 
-int stat;
-
   activeMode = 0;
 
   if ( ef.formIsPoppedUp() ) {
@@ -3280,40 +3357,53 @@ int stat;
      EnterWindowMask|LeaveWindowMask, False,
      sliderEventHandler, (XtPointer) this );
 
-// for EPICS support
-#ifdef __epics__
-
     if ( controlExists ) {
-      stat = ca_clear_channel( controlPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeSliderClass_str71 );
+      if ( controlPvId ) {
+        controlPvId->remove_conn_state_callback(
+         sl_monitor_control_connect_state, this );
+	controlPvId->remove_value_callback( sl_controlUpdate, this );
+        controlPvId->release();
+	controlPvId = NULL;
+      }
     }
   
     if ( controlLabelExists && ( controlLabelType == SLC_K_LABEL )  ) {
-      stat = ca_clear_channel( controlLabelPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeSliderClass_str72 );
+      if ( controlLabelPvId ) {
+	controlLabelPvId->remove_conn_state_callback(
+         sl_monitor_control_label_connect_state, this );
+	controlLabelPvId->release();
+	controlLabelPvId = NULL;
+      }
     }
 
     if ( readExists ) {
-      stat = ca_clear_channel( readPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeSliderClass_str73 );
+      if ( readPvId ) {
+        readPvId->remove_conn_state_callback(
+         sl_monitor_read_connect_state, this );
+	readPvId->remove_value_callback( sl_readUpdate, this );
+        readPvId->release();
+	readPvId = NULL;
+      }
     }
 
     if ( readLabelExists && ( readLabelType == SLC_K_LABEL )  ) {
-      stat = ca_clear_channel( readLabelPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeSliderClass_str74 );
+      if ( readLabelPvId ) {
+	readLabelPvId->remove_conn_state_callback(
+         sl_monitor_read_label_connect_state, this );
+	readLabelPvId->release();
+	readLabelPvId = NULL;
+      }
     }
 
     if ( savedValueExists ) {
-      stat = ca_clear_channel( savedValuePvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeSliderClass_str75 );
+      if ( savedValuePvId ) {
+        savedValuePvId->remove_conn_state_callback(
+         sl_monitor_saved_connect_state, this );
+	savedValuePvId->remove_value_callback( sl_savedValueUpdate, this );
+        savedValuePvId->release();
+	savedValuePvId = NULL;
+      }
     }
-
-#endif
 
     break;
 
@@ -3545,7 +3635,7 @@ int activeSliderClass::containsMacros ( void ) {
 void activeSliderClass::executeDeferred ( void ) {
 
 int stat, xOfs, ncc, nci, ncr, nrc, nri, nrr, nsc, nsr, nclc, ncli, nrlc,
- nrli, ne, nd;
+ nrli, ne, nd, prec;
 double rv, cv, fv;
 
   if ( actWin->isIconified ) return;
@@ -3576,20 +3666,41 @@ double rv, cv, fv;
 
 //----------------------------------------------------------------------------
 
-#ifdef __epics__
-
   if ( ncc ) {
 
     controlPvConnected = 1;
 
-    stat = ca_get_callback( DBR_GR_DOUBLE, controlPvId,
-     sl_infoUpdate, (void *) this );
-    if ( stat != ECA_NORMAL )
-      printf( activeSliderClass_str78 );
+    if ( limitsFromDb || efScaleMin.isNull() ) {
+      scaleMin = controlPvId->get_lower_disp_limit();
+    }
+
+    if ( limitsFromDb || efScaleMax.isNull() ) {
+      scaleMax = controlPvId->get_upper_disp_limit();
+    }
+
+    if ( limitsFromDb || efPrecision.isNull() ) {
+      precision = controlPvId->get_precision();
+    }
+
+    if ( strcmp( displayFormat, "GFloat" ) == 0 ) {
+      sprintf( controlFormat, "%%.%-dg", precision );
+    }
+    else if ( strcmp( displayFormat, "Exponential" ) == 0 ) {
+      sprintf( controlFormat, "%%.%-de", precision );
+    }
+    else {
+      sprintf( controlFormat, "%%.%-df", precision );
+    }
+
+    minFv = scaleMin;
+
+    maxFv = scaleMax;
+
+    cv = curControlV = controlPvId->get_double();
+
+    nci = 1;
 
   }
-
-#endif
 
 //----------------------------------------------------------------------------
 
@@ -3629,27 +3740,13 @@ double rv, cv, fv;
     readX = (int) ( ( readV - minFv ) /
      factor + 0.5 ) + xOfs;
 
-#ifdef __epics__
-    if ( controlExists && !controlEventId ) {
+    if ( controlExists && initialConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_DOUBLE, 1, controlPvId,
-       sl_controlUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-       &controlEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL )
-        printf( activeSliderClass_str79 );
+      initialConnection = 0;
+
+      controlPvId->add_value_callback( sl_controlUpdate, this );
 
     }
-
-    if ( controlExists && !controlAlarmEventId ) {
-
-      stat = ca_add_masked_array_event( DBR_STS_DOUBLE, 1, controlPvId,
-       sl_controlAlarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &controlAlarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL )
-        printf( activeSliderClass_str79 );
-
-    }
-#endif
 
     fgColor.setConnected();
     controlColor.setConnected();
@@ -3713,16 +3810,28 @@ double rv, cv, fv;
 
 //----------------------------------------------------------------------------
 
-#ifdef __epics__
-
   if ( nrc ) {
 
     readPvConnected = 1;
 
-    stat = ca_get_callback( DBR_GR_DOUBLE, readPvId,
-     sl_readInfoUpdate, (void *) this );
-    if ( stat != ECA_NORMAL )
-      printf( activeSliderClass_str80 );
+    if ( limitsFromDb || efPrecision.isNull() )
+      prec = readPvId->get_precision();
+    else
+      prec = precision;
+
+    if ( strcmp( displayFormat, "GFloat" ) == 0 ) {
+      sprintf( readFormat, "%%.%-dg", prec );
+    }
+    else if ( strcmp( displayFormat, "Exponential" ) == 0 ) {
+      sprintf( readFormat, "%%.%-de", prec );
+    }
+    else {
+      sprintf( readFormat, "%%.%-df", prec );
+    }
+
+    rv = curReadV = readPvId->get_double();
+
+    nri = 1;
 
   }
 
@@ -3734,23 +3843,11 @@ double rv, cv, fv;
 
     sprintf( readValue, readFormat, readV );
 
-    if ( !readEventId ) {
+    if ( initialReadConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_DOUBLE, 1, readPvId,
-       sl_readUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-       &readEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL )
-        printf( activeSliderClass_str81 );
+      initialReadConnection = 0;
 
-    }
-
-    if ( !readAlarmEventId ) {
-
-      stat = ca_add_masked_array_event( DBR_STS_DOUBLE, 1, readPvId,
-       sl_readAlarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &readAlarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL )
-        printf( activeSliderClass_str81 );
+      readPvId->add_value_callback( sl_readUpdate, this );
 
     }
 
@@ -3760,21 +3857,17 @@ double rv, cv, fv;
 
   if ( nsc ) {
 
-    if ( !savedEventId ) {
+    if ( initialSavedValueConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_DOUBLE, 1, savedValuePvId,
-       sl_savedValueUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &savedEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL )
-        printf( activeSliderClass_str82 );
+      initialSavedValueConnection = 0;
+
+      savedValuePvId->add_value_callback( sl_savedValueUpdate, this );
 
     }
 
     savedValuePvConnected = 1;
 
   }
-
-#endif
 
 //----------------------------------------------------------------------------
 
@@ -3839,18 +3932,14 @@ double rv, cv, fv;
 
 //----------------------------------------------------------------------------
 
-#ifdef __epics__
-
   if ( nclc ) {
 
-    stat = ca_get_callback( DBR_STRING, controlLabelPvId,
-     sl_controlLabelUpdate, (void *) this );
-    if ( stat != ECA_NORMAL )
-      printf( activeSliderClass_str83 );
+    controlLabelPvId->get_string( controlLabel, 39 );
+    controlLabel[39] = 0;
+
+    ncli = 1;
 
   }
-
-#endif
 
 //----------------------------------------------------------------------------
 
@@ -3867,18 +3956,14 @@ double rv, cv, fv;
 
 //----------------------------------------------------------------------------
 
-#ifdef __epics__
-
   if ( nrlc ) {
 
-    stat = ca_get_callback( DBR_STRING, readLabelPvId,
-     sl_readLabelUpdate, (void *) this );
-    if ( stat != ECA_NORMAL )
-      printf( activeSliderClass_str84 );
+    readLabelPvId->get_string( readLabel, 39 );
+    readLabel[39] = 0;
+
+    nrli = 1;
 
   }
-
-#endif
 
 //----------------------------------------------------------------------------
 
@@ -3931,12 +4016,16 @@ int activeSliderClass::getProperty (
 
 char *activeSliderClass::firstDragName ( void ) {
 
+  if ( !enabled ) return NULL;
+
   dragIndex = 0;
   return dragName[dragIndex];
 
 }
 
 char *activeSliderClass::nextDragName ( void ) {
+
+  if ( !enabled ) return NULL;
 
   if ( dragIndex < (int) ( sizeof(dragName) / sizeof(char *) ) - 1 ) {
     dragIndex++;
@@ -3951,16 +4040,37 @@ char *activeSliderClass::nextDragName ( void ) {
 char *activeSliderClass::dragValue (
   int i ) {
 
-  switch ( i ) {
-  case 0:
-    return controlPvName.getExpanded();
-    break;
-  case 1:
-    return readPvName.getExpanded();
-    break;
-  case 2:
-    return savedValuePvName.getExpanded();
-    break;
+  if ( !enabled ) return NULL;
+
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    switch ( i ) {
+    case 0:
+      return controlPvName.getExpanded();
+      break;
+    case 1:
+      return readPvName.getExpanded();
+      break;
+    case 2:
+      return savedValuePvName.getExpanded();
+      break;
+    }
+
+  }
+  else {
+
+    switch ( i ) {
+    case 0:
+      return controlPvName.getRaw();
+      break;
+    case 1:
+      return readPvName.getRaw();
+      break;
+    case 2:
+      return savedValuePvName.getRaw();
+      break;
+    }
+
   }
 
   return NULL;
@@ -4038,6 +4148,21 @@ void activeSliderClass::changePvNames (
       readPvName.setRaw( readbackPvs[0] );
     }
   }
+
+}
+
+void activeSliderClass::map ( void ) {
+
+  if ( frameWidget ) XtMapWidget( frameWidget );
+
+}
+
+void activeSliderClass::unmap ( void ) {
+
+  if ( frameWidget ) XtUnmapWidget( frameWidget );
+  controlState = SLC_STATE_IDLE;
+  incrementTimerActive = 0;
+  incrementTimerValue = 101;
 
 }
 

@@ -30,7 +30,8 @@
 #include "calpad.h"
 #include "fileSelect.h"
 
-#include "cadef.h"
+#include "pv_factory.h"
+#include "cvtFast.h"
 
 // max size of char array
 #define XTDC_K_MAX 255
@@ -49,8 +50,8 @@
 #define XTDC_K_FILE_NAME_EXT 1
 #define XTDC_K_FILE_NAME 2
 
-#define XTDC_MAJOR_VERSION 2
-#define XTDC_MINOR_VERSION 12
+#define XTDC_MAJOR_VERSION 4
+#define XTDC_MINOR_VERSION 0
 #define XTDC_RELEASE 0
 
 #ifdef __x_text_dsp_obj_cc
@@ -132,28 +133,28 @@ static void selectDrag (
    Cardinal numParams );
 
 static void xtdo_monitor_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void xtdo_monitor_sval_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void xtdo_monitor_fg_connect_state (
-  struct connection_handler_args arg );
-
-static void XtextDspInfoUpdate (
-  struct event_handler_args ast_args );
-
-static void XtextAlarmUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void XtextDspUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void XtextDspSvalUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void XtextDspFgUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void axtdc_value_edit_ok (
   Widget w,
@@ -316,28 +317,28 @@ friend void selectDrag (
    Cardinal numParams );
 
 friend void xtdo_monitor_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void xtdo_monitor_sval_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void xtdo_monitor_fg_connect_state (
-  struct connection_handler_args arg );
-
-friend void XtextDspInfoUpdate (
-  struct event_handler_args ast_args );
-
-friend void XtextAlarmUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void XtextDspUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void XtextDspSvalUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void XtextDspFgUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void axtdc_value_edit_ok (
   Widget w,
@@ -424,6 +425,9 @@ friend void xtdoSetValueChanged (
   XtPointer client,
   XtPointer call );
 
+static const int pvConnection = 1;
+static const int svalPvConnection = 2;
+static const int fgPvConnection = 3;
 pvConnectionClass connection;
 
 int bufX, bufY, bufW, bufH;
@@ -465,8 +469,7 @@ int pvExists, svalPvExists, fgPvExists;
 //                 1=null when saved value pv is 0
 int nullDetectMode, bufNullDetectMode;
 
-chid pvId, svalPvId, fgPvId;
-evid eventId, alarmEventId, svalEventId, fgEventId;
+ProcessVariable *pvId, *svalPvId, *fgPvId;
 
 expStringClass pvExpStr, svalPvExpStr, fgPvExpStr;
 char pvName[activeGraphicClass::MAX_PV_NAME+1],
@@ -477,10 +480,7 @@ char pvName[activeGraphicClass::MAX_PV_NAME+1],
 expStringClass defDir, pattern;
 char bufDefDir[XTDC_K_MAX+1], bufPattern[XTDC_K_MAX+1];
 
-char *stateString[MAX_ENUM_STATES]; // allocated at run-time
 int numStates;
-
-struct dbr_gr_enum enumRec;
 
 int isWidget, bufIsWidget;
 int editable, bufEditable;
@@ -497,7 +497,8 @@ Widget tf_widget;
 int widget_value_changed;
 
 int needConnectInit, needInfoInit, needErase, needDraw, needRefresh,
- needUpdate, deferredCount, needToDrawUnconnected, needToEraseUnconnected;
+ needUpdate, deferredCount, needToDrawUnconnected, needToEraseUnconnected,
+ initialConnection;
 int unconnectedTimer;
 
 keypadClass kp;
@@ -515,6 +516,8 @@ char units[MAX_UNITS_SIZE+1];
 short prevAlarmSeverity;
 
 int useAlarmBorder, bufUseAlarmBorder;
+
+int oldStat, oldSev;
 
 public:
 
@@ -543,12 +546,20 @@ int createFromFile (
   char *name,
   activeWindowClass *_actWin );
 
+int old_createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin );
+
 int importFromXchFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin );
 
 int save (
+  FILE *f );
+
+int old_save (
   FILE *f );
 
 int genericEdit ( void );
@@ -588,16 +599,20 @@ int deactivate ( int pass );
 void updateDimensions ( void );
 
 void btnUp (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
-  int buttonNumber );
+  int buttonNumber,
+  int *action );
 
 void btnDown (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
-  int buttonNumber );
+  int buttonNumber,
+  int *action );
 
 void pointerIn (
   int _x,
@@ -652,6 +667,10 @@ void changePvNames (
   char *visPvs[],
   int numAlarmPvs,
   char *alarmPvs[] );
+
+void map ( void );
+
+void unmap ( void );
 
 };
 

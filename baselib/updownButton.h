@@ -23,10 +23,11 @@
 #include "entry_form.h"
 #include "keypad.h"
 
-#include "cadef.h"
+#include "pv_factory.h"
+#include "cvtFast.h"
 
-#define UDBTC_MAJOR_VERSION 1
-#define UDBTC_MINOR_VERSION 5
+#define UDBTC_MAJOR_VERSION 4
+#define UDBTC_MINOR_VERSION 0
 #define UDBTC_RELEASE 0
 
 #ifdef __updownButton_cc
@@ -57,31 +58,28 @@ static void menu_cb (
   XtPointer call );
 
 static void udbtc_monitor_vis_connect_state (
-  struct connection_handler_args arg );
-
-static void udbtc_visInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void udbtc_visUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
-static void udbt_monitor_color_connect_state (
-  struct connection_handler_args arg );
+static void udbtc_monitor_color_connect_state (
+  ProcessVariable *pv,
+  void *userarg );
 
-static void udbt_colorInfoUpdate (
-  struct event_handler_args ast_args );
-
-static void udbt_colorUpdate (
-  struct event_handler_args ast_args );
-
-static void udbt_infoUpdate (
- struct event_handler_args ast_args );
+static void udbtc_colorUpdate (
+  ProcessVariable *pv,
+  void *userarg );
 
 static void udbtc_controlUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void udbtc_saveUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void udbtc_decrement (
   XtPointer client,
@@ -123,10 +121,12 @@ static void udbtc_edit_cancel_delete (
   XtPointer call );
 
 static void udbtc_monitor_dest_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void udbtc_monitor_save_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 #endif
 
@@ -158,31 +158,28 @@ friend void menu_cb (
   XtPointer call );
 
 friend void udbtc_monitor_vis_connect_state (
-  struct connection_handler_args arg );
-
-friend void udbtc_visInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void udbtc_visUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
-friend void udbt_infoUpdate (
- struct event_handler_args ast_args );
+friend void udbtc_monitor_color_connect_state (
+  ProcessVariable *pv,
+  void *userarg );
 
-friend void udbt_monitor_color_connect_state (
-  struct connection_handler_args arg );
-
-friend void udbt_colorInfoUpdate (
-  struct event_handler_args ast_args );
-
-friend void udbt_colorUpdate (
-  struct event_handler_args ast_args );
+friend void udbtc_colorUpdate (
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void udbtc_controlUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void udbtc_saveUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void udbtc_decrement (
   XtPointer client,
@@ -218,10 +215,12 @@ friend void udbtc_edit_cancel_delete (
   XtPointer call );
 
 friend void udbtc_monitor_dest_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void udbtc_monitor_save_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 int opComplete;
 
@@ -252,8 +251,7 @@ static const int colorPvConnection = 3;
 
 pvConnectionClass connection;
 
-chid destPvId, savePvId;
-evid destEventId, saveEventId;
+ProcessVariable *destPvId, *savePvId;
 
 expStringClass destPvExpString;
 char bufDestPvName[activeGraphicClass::MAX_PV_NAME+1];
@@ -280,6 +278,8 @@ double controlV, curControlV, curSaveV, coarse, fine;
 int needConnectInit, needSaveConnectInit, needCtlInfoInit, needRefresh,
  needErase, needDraw, needToDrawUnconnected, needToEraseUnconnected;
 int unconnectedTimer;
+int initialConnection, initialSavedValueConnection, initialVisConnection,
+ initialColorConnection;
 
 int widgetsCreated;
 Widget popUpMenu, pullDownMenu, pbCoarse, pbFine, pbRate, pbValue,
@@ -300,8 +300,7 @@ int limitsFromDb, bufLimitsFromDb;
 double scaleMin, scaleMax, minDv, maxDv;
 efDouble efScaleMin, efScaleMax, bufEfScaleMin, bufEfScaleMax;
 
-chid visPvId;
-evid visEventId;
+ProcessVariable *visPvId;
 expStringClass visPvExpString;
 char bufVisPvName[activeGraphicClass::MAX_PV_NAME+1];
 int visExists;
@@ -311,13 +310,14 @@ char maxVisString[39+1], bufMaxVisString[39+1];
 int prevVisibility, visibility, visInverted, bufVisInverted;
 int needVisConnectInit, needVisInit, needVisUpdate;
 
-chid colorPvId;
-evid colorEventId;
+ProcessVariable *colorPvId;
 expStringClass colorPvExpString;
 char bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
 int colorExists;
 double colorValue, curColorValue;
 int needColorConnectInit, needColorInit, needColorUpdate;
+
+int rootX, rootY;
 
 public:
 
@@ -344,7 +344,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
@@ -375,6 +383,7 @@ int deactivate ( int pass );
 void updateDimensions ( void );
 
 void btnUp (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
@@ -382,6 +391,7 @@ void btnUp (
   int *action );
 
 void btnDown (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,

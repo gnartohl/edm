@@ -22,14 +22,15 @@
 #include "act_grf.h"
 #include "entry_form.h"
 
-#include "cadef.h"
+#include "pv_factory.h"
+#include "cvtFast.h"
 
 #define RDC_ORIG_POS 0
 #define RDC_BUTTON_POS 1
 #define RDC_PARENT_OFS_POS 2
 
-#define RDC_MAJOR_VERSION 2
-#define RDC_MINOR_VERSION 7
+#define RDC_MAJOR_VERSION 4
+#define RDC_MINOR_VERSION 0
 #define RDC_RELEASE 0
 
 typedef struct objAndIndexTag {
@@ -47,7 +48,8 @@ static void menu_cb (
   XtPointer call );
 
 static void relDsp_monitor_dest_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void rdc_edit_ok1 (
   Widget w,
@@ -96,7 +98,8 @@ friend void menu_cb (
   XtPointer call );
 
 friend void relDsp_monitor_dest_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void openDisplay (
   Widget w,
@@ -214,7 +217,8 @@ XmFontList fontList;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
-chid destPvId[NUMPVS];
+ProcessVariable *destPvId[NUMPVS];
+int initialConnection[NUMPVS];
 
 objAndIndexType objAndIndex[NUMPVS];
 
@@ -260,7 +264,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
@@ -304,8 +316,8 @@ int expand2nd (
 
 int containsMacros ( void );
 
-
 void btnUp (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
@@ -316,6 +328,7 @@ void popupDisplay (
   int index );
 
 void btnDown (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
@@ -345,21 +358,25 @@ void changeDisplayParams (
   int botShadowColor );
 
 void pointerIn (
+  XMotionEvent *me,
   int _x,
   int _y,
   int buttonState );
 
 void pointerOut (
+  XMotionEvent *me,
   int _x,
   int _y,
   int buttonState );
 
 void mousePointerIn (
+  XMotionEvent *me,
   int _x,
   int _y,
   int buttonState );
 
 void mousePointerOut (
+  XMotionEvent *me,
   int _x,
   int _y,
   int buttonState );

@@ -495,6 +495,88 @@ int activeRectangleClass::createFromFile (
   activeWindowClass *_actWin )
 {
 
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+int one = 1;
+char *emptyStr = "";
+
+int solid = LineSolid;
+static char *styleEnumStr[2] = {
+  "solid",
+  "dash"
+};
+static int styleEnum[2] = {
+  LineSolid,
+  LineOnOffDash
+};
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "lineColor", actWin->ci, &lineColor );
+  tag.loadR( "lineAlarm", &lineColorMode, &zero );
+  tag.loadR( "fill", &fill, &zero );
+  tag.loadR( "fillColor", actWin->ci, &fillColor );
+  tag.loadR( "fillAlarm", &fillColorMode, &zero );
+  tag.loadR( "lineWidth", &lineWidth, &one );
+  tag.loadR( "lineStyle", 2, styleEnumStr, styleEnum, &lineStyle, &solid );
+  tag.loadR( "invisible", &invisible, &zero );
+  tag.loadR( "alarmPv", &alarmPvExpStr, emptyStr );
+  tag.loadR( "visPv", &visPvExpStr, emptyStr );
+  tag.loadR( "visInvert", &visInverted, &zero );
+  tag.loadR( "visMin", 39, minVisString, emptyStr );
+  tag.loadR( "visMax", 39, maxVisString, emptyStr );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > ARC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  if ( lineColorMode == ARC_K_COLORMODE_ALARM )
+    lineColor.setAlarmSensitive();
+  else
+    lineColor.setAlarmInsensitive();
+
+  if ( fillColorMode == ARC_K_COLORMODE_ALARM )
+    fillColor.setAlarmSensitive();
+  else
+    fillColor.setAlarmInsensitive();
+
+  return stat;
+
+}
+
+int activeRectangleClass::old_createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
@@ -846,6 +928,63 @@ int activeRectangleClass::save (
   FILE *f )
 {
 
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+int one = 1;
+char *emptyStr = "";
+
+int solid = LineSolid;
+static char *styleEnumStr[2] = {
+  "solid",
+  "dash"
+};
+static int styleEnum[2] = {
+  LineSolid,
+  LineOnOffDash
+};
+
+  major = ARC_MAJOR_VERSION;
+  minor = ARC_MINOR_VERSION;
+  release = ARC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "lineColor", actWin->ci, &lineColor );
+  tag.loadBoolW( "lineAlarm", &lineColorMode, &zero );
+  tag.loadBoolW( "fill", &fill, &zero );
+  tag.loadW( "fillColor", actWin->ci, &fillColor );
+  tag.loadBoolW( "fillAlarm", &fillColorMode, &zero );
+  tag.loadW( "lineWidth", &lineWidth, &one );
+  tag.loadW( "lineStyle", 2, styleEnumStr, styleEnum, &lineStyle, &solid );
+  tag.loadBoolW( "invisible", &invisible, &zero );
+  tag.loadW( "alarmPv", &alarmPvExpStr, emptyStr  );
+  tag.loadW( "visPv", &visPvExpStr, emptyStr );
+  tag.loadBoolW( "visInvert", &visInverted, &zero );
+  tag.loadW( "visMin", minVisString, emptyStr );
+  tag.loadW( "visMax", maxVisString, emptyStr );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int activeRectangleClass::old_save (
+  FILE *f )
+{
+
 int index;
 
   fprintf( f, "%-d %-d %-d\n", ARC_MAJOR_VERSION, ARC_MINOR_VERSION,
@@ -923,7 +1062,7 @@ int blink = 0;
     }
   }
 
-  if ( !init || !activeMode || invisible || !visibility ) return 1;
+  if ( !enabled || !init || !activeMode || invisible || !visibility ) return 1;
 
   prevVisibility = visibility;
 
@@ -960,6 +1099,8 @@ int blink = 0;
 
 int activeRectangleClass::eraseUnconditional ( void ) {
 
+  if ( !enabled ) return 1;
+
   if ( fill ) {
     XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
@@ -980,7 +1121,7 @@ int activeRectangleClass::eraseUnconditional ( void ) {
 
 int activeRectangleClass::eraseActive ( void ) {
 
-  if ( !init || !activeMode || invisible ) return 1;
+  if ( !enabled || !init || !activeMode || invisible ) return 1;
 
   if ( prevVisibility == 0 ) {
     prevVisibility = visibility;
@@ -1064,6 +1205,7 @@ int activeRectangleClass::activate (
     if ( !opComplete ) {
 
       connection.init();
+      initEnable();
 
       curLineColorIndex = -1;
       curFillColorIndex = -1;
@@ -1082,12 +1224,12 @@ int activeRectangleClass::activate (
       needToDrawUnconnected = 0;
       unconnectedTimer = 0;
 
+      aglPtr = ptr;
+
       if ( !unconnectedTimer ) {
         unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
          2000, unconnectedTimeout, this );
       }
-
-      aglPtr = ptr;
 
       alarmPvId = visPvId = 0;
 
@@ -1127,10 +1269,6 @@ int activeRectangleClass::activate (
       if ( alarmPvExists ) {
         alarmPvId = the_PV_Factory->create( alarmPvExpStr.getExpanded() );
         if ( alarmPvId ) {
-          //if ( alarmPvId->is_valid() ) {
-          //  alarmPvConnectStateCallback( alarmPvId, this );
-          //  alarmPvValueCallback( alarmPvId, this );
-	  //}
           alarmPvId->add_conn_state_callback( alarmPvConnectStateCallback,
            this );
           alarmPvId->add_value_callback( alarmPvValueCallback, this );
@@ -1140,10 +1278,6 @@ int activeRectangleClass::activate (
       if ( visPvExists ) {
         visPvId = the_PV_Factory->create( visPvExpStr.getExpanded() );
         if ( visPvId ) {
-          //if ( visPvId->is_valid() ) {
-          //  visPvConnectStateCallback( visPvId, this );
-          //  visPvValueCallback( visPvId, this );
-          //}
           visPvId->add_conn_state_callback( visPvConnectStateCallback, this );
           visPvId->add_value_callback( visPvValueCallback, this );
 	}
@@ -1438,18 +1572,41 @@ char *activeRectangleClass::firstDragName ( void ) {
 int i;
 int present[MAXDRAGNAMES];
 
-  if ( !blank( alarmPvExpStr.getExpanded() ) ) {
-    present[0] = 1;
-  }
-  else {
-    present[0] = 0;
-  }
+  if ( !enabled ) return NULL;
 
-  if ( !blank( visPvExpStr.getExpanded() ) ) {
-    present[1] = 1;
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    if ( !blank( alarmPvExpStr.getExpanded() ) ) {
+      present[0] = 1;
+    }
+    else {
+      present[0] = 0;
+    }
+
+    if ( !blank( visPvExpStr.getExpanded() ) ) {
+      present[1] = 1;
+    }
+    else {
+      present[1] = 0;
+    }
+
   }
   else {
-    present[1] = 0;
+
+    if ( !blank( alarmPvExpStr.getRaw() ) ) {
+      present[0] = 1;
+    }
+    else {
+      present[0] = 0;
+    }
+
+    if ( !blank( visPvExpStr.getRaw() ) ) {
+      present[1] = 1;
+    }
+    else {
+      present[1] = 0;
+    }
+
   }
 
   for ( i=0; i<MAXDRAGNAMES; i++ ) {
@@ -1466,6 +1623,8 @@ int present[MAXDRAGNAMES];
 
 char *activeRectangleClass::nextDragName ( void ) {
 
+  if ( !enabled ) return NULL;
+
   if ( dragIndex < (int) ( sizeof(dragName) / sizeof(char *) ) - 1 ) {
     dragIndex++;
     return dragName[dragIndex];
@@ -1481,20 +1640,46 @@ char *activeRectangleClass::dragValue (
 
 int offset = 0;
 
-  if ( blank( alarmPvExpStr.getExpanded() ) ) {
-    offset++;
-    if ( blank( visPvExpStr.getExpanded() ) ) {
+  if ( !enabled ) return NULL;
+
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    if ( blank( alarmPvExpStr.getExpanded() ) ) {
       offset++;
+      if ( blank( visPvExpStr.getExpanded() ) ) {
+        offset++;
+      }
     }
+
+    switch ( i+offset ) {
+
+    case 0:
+      return alarmPvExpStr.getExpanded();
+
+    case 1:
+      return visPvExpStr.getExpanded();
+
+    }
+
   }
+  else {
 
-  switch ( i+offset ) {
+    if ( blank( alarmPvExpStr.getRaw() ) ) {
+      offset++;
+      if ( blank( visPvExpStr.getRaw() ) ) {
+        offset++;
+      }
+    }
 
-  case 0:
-    return alarmPvExpStr.getExpanded();
+    switch ( i+offset ) {
 
-  case 1:
-    return visPvExpStr.getExpanded();
+    case 0:
+      return alarmPvExpStr.getRaw();
+
+    case 1:
+      return visPvExpStr.getRaw();
+
+    }
 
   }
 

@@ -36,8 +36,8 @@ extern "C" {
 // the following defines btnActionListType & btnActionListPtr
 #include "btnActionListType.h"
 
-#define AGIFC_MAJOR_VERSION 1
-#define AGIFC_MINOR_VERSION 2
+#define AGIFC_MAJOR_VERSION 4
+#define AGIFC_MINOR_VERSION 0
 #define AGIFC_RELEASE 0
 
 #ifdef __gif_cc
@@ -164,7 +164,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );

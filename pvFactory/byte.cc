@@ -90,6 +90,82 @@ const char *edmByteClass::getExpandedPVName()
 // --------------------------------------------------------
 int edmByteClass::save(FILE *f)
 {
+
+int major, minor, release, en, stat;
+
+tagClass tag;
+
+int zero = 0;
+int one = 1;
+int sixteen = 16;
+
+static char *emptyStr = "";
+
+int solid = LineSolid;
+static char *styleEnumStr[2] = {
+  "solid",
+  "dash"
+};
+static int styleEnum[2] = {
+  LineSolid,
+  LineOnOffDash
+};
+
+int bigEndian = 0;
+static char *endianEnumStr[2] = {
+  "big",
+  "little"
+};
+static int endianEnum[2] = {
+  0,
+  1
+};
+
+  major = BYTE_MAJOR;
+  minor = BYTE_MINOR;
+  release = BYTE_RELEASE;
+
+  switch ( theDir ) {
+  case BIGENDIAN:
+    en = 0;
+    break;
+  case LITTLEENDIAN:
+    en = 1;
+    break;
+  }
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "controlPv", &pv_exp_str, emptyStr );
+  tag.loadW( "lineColor", actWin->ci, &lineColor );
+  tag.loadW( "onColor", actWin->ci, &onColor );
+  tag.loadW( "offColor", actWin->ci, &offColor );
+  tag.loadW( "lineWidth", &lineWidth, &one );
+  tag.loadW( "lineStyle", 2, styleEnumStr, styleEnum, &lineStyle, &solid );
+  tag.loadW( "endian", 2, endianEnumStr, endianEnum, &en, &bigEndian );
+  tag.loadW( "numBits", &nobt, &sixteen );
+  tag.loadW( "shift", &shft, &zero );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+// --------------------------------------------------------
+// Load/save
+// --------------------------------------------------------
+int edmByteClass::old_save(FILE *f)
+{
     // Version, bounding box
     fprintf(f, "%-d %-d %-d\n",
             BYTE_MAJOR, BYTE_MINOR, BYTE_RELEASE);
@@ -119,6 +195,109 @@ int edmByteClass::save(FILE *f)
 }
 
 int edmByteClass::createFromFile(FILE *f, char *filename,
+                                       activeWindowClass *_actWin)
+{
+
+int major, minor, release, en, temp, stat;
+
+tagClass tag;
+
+int zero = 0;
+int one = 1;
+int sixteen = 16;
+
+static char *emptyStr = "";
+
+int solid = LineSolid;
+static char *styleEnumStr[2] = {
+  "solid",
+  "dash"
+};
+static int styleEnum[2] = {
+  LineSolid,
+  LineOnOffDash
+};
+
+int bigEndian = 0;
+static char *endianEnumStr[2] = {
+  "big",
+  "little"
+};
+static int endianEnum[2] = {
+  0,
+  1
+};
+
+  actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "controlPv", &pv_exp_str, emptyStr );
+  tag.loadR( "lineColor", actWin->ci, &lineColor );
+  tag.loadR( "onColor", actWin->ci, &onColor );
+  tag.loadR( "offColor", actWin->ci, &offColor );
+  tag.loadR( "lineWidth", &lineWidth, &one );
+  tag.loadR( "lineStyle", 2, styleEnumStr, styleEnum, &lineStyle, &solid );
+  tag.loadR( "endian", 2, endianEnumStr, endianEnum, &en, &bigEndian );
+  tag.loadR( "numBits", &nobt, &sixteen );
+  tag.loadR( "shift", &shft, &zero );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > BYTE_MAJOR ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  if (actWin->ci->isRule(onColor))
+  {
+    onPixel = actWin->ci->getPixelByIndex(actWin->ci->evalRule(onColor,
+                                                                         1.0));
+    offPixel = actWin->ci->getPixelByIndex(actWin->ci->evalRule(onColor,
+                                                                         0.0));
+  }
+  else
+  {
+    onPixel = actWin->ci->getPixelByIndex(onColor);
+    offPixel = actWin->ci->getPixelByIndex(offColor);
+  }
+
+  temp = en;
+  en = (temp < 0)?0:((temp > 1)?1:temp);
+  theDir = (bdir)en;
+
+  temp = nobt;
+  nobt = (temp < 1)?1:((temp > 16)?16:temp);
+
+  temp = shft;
+  shft = (temp < 0)?0:((temp > 15)?15:temp);
+  
+  updateDimensions();
+
+  return stat;
+
+}
+
+int edmByteClass::old_createFromFile(FILE *f, char *filename,
                                        activeWindowClass *_actWin)
 {
     int major, minor, release, temp;
@@ -431,6 +610,8 @@ int edmByteClass::erase()  // erase edit-mode image
 
 int edmByteClass::eraseUnconditional ( void ) {
 
+  if ( !enabled ) return 1;
+
     XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
 
@@ -618,6 +799,7 @@ int edmByteClass::activate(int pass, void *ptr)
 
             break;
         case 2: // connect to pv
+            initEnable();
             if (valuePvId)
                 printf("byte::activate: pv already set!\n");
             if (is_pvname_valid)
@@ -655,6 +837,8 @@ inline void edmByteClass::innerDrawFull(int value, int i, int mask,
 {
   int current;
 
+  if ( !enabled ) return;
+
   if (i < nobt)
      current = (value & mask)?1:0;
   else
@@ -683,7 +867,7 @@ inline void edmByteClass::innerDrawFull(int value, int i, int mask,
 
 int edmByteClass::drawActive()
 {
-   if (is_executing)
+   if (is_executing && enabled)
    {
       if (valuePvId->is_valid())
       {
@@ -731,6 +915,9 @@ int edmByteClass::drawActive()
 
 inline void edmByteClass::innerDrawBits(int value, int i, int mask)
 {
+
+  if ( !enabled ) return;
+
     actWin->executeGc.setFG( (value & mask)?fgPixel:offPixel );
 
     if (w > h)
@@ -762,7 +949,7 @@ inline void edmByteClass::innerDrawBits(int value, int i, int mask)
 
 int edmByteClass::drawActiveBits()
 {
-  if ( !init || !is_executing ) return 1;
+  if ( !enabled || !init || !is_executing ) return 1;
 
   actWin->executeGc.saveFg();
 
@@ -809,7 +996,7 @@ int edmByteClass::drawActiveBits()
 
 int edmByteClass::drawActiveFull()
 {
-  if ( !init || !is_executing ) return 1;
+  if ( !enabled || !init || !is_executing ) return 1;
 
   actWin->executeGc.saveFg();
 
@@ -881,7 +1068,7 @@ int edmByteClass::drawActiveFull()
 
 int edmByteClass::eraseActive()
 {
-      if ( !init || !is_executing ) return 1;
+      if ( !enabled || !init || !is_executing ) return 1;
 
   XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
@@ -928,10 +1115,29 @@ void edmByteClass::executeDeferred()
 
 // Drag & drop support
 char *edmByteClass::firstDragName()
-{   return "PV"; }
+{   
+   if ( !enabled ) return NULL; 
+   return "PV";
+}
 
 char *edmByteClass::nextDragName()
-{   return NULL; }
+{
+   return NULL;
+}
 
 char *edmByteClass::dragValue(int i)
-{   return (char *)getExpandedPVName(); }
+{
+   if ( !enabled ) return NULL; 
+
+   if ( actWin->mode == AWC_EXECUTE ) {
+
+      return (char *)getExpandedPVName();
+
+   }
+   else {
+
+      return (char *)getRawPVName();
+
+   }
+
+}

@@ -22,10 +22,11 @@
 #include "act_grf.h"
 #include "entry_form.h"
 
-#include "cadef.h"
+#include "pv_factory.h"
+#include "cvtFast.h"
 
-#define MSGBTC_MAJOR_VERSION 2
-#define MSGBTC_MINOR_VERSION 5
+#define MSGBTC_MAJOR_VERSION 4
+#define MSGBTC_MINOR_VERSION 0
 #define MSGBTC_RELEASE 0
 
 #define MSGBTC_K_PUSH 1
@@ -89,43 +90,25 @@ static void msgbtc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-#if 0
-static void msgbt_sourcePressUpdate (
-  struct event_handler_args ast_args );
-
-static void msgbt_monitor_sourcePress_connect_state (
-  struct connection_handler_args arg );
-
-static void msgbt_sourceReleaseUpdate (
-  struct event_handler_args ast_args );
-
-static void msgbt_monitor_sourceRelease_connect_state (
-  struct connection_handler_args arg );
-#endif
-
 static void msgbt_monitor_dest_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void msgbt_monitor_vis_connect_state (
-  struct connection_handler_args arg );
-
-static void msgbt_destInfoUpdate (
-  struct event_handler_args ast_args );
-
-static void msgbt_visInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void msgbt_visUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void msgbt_monitor_color_connect_state (
-  struct connection_handler_args arg );
-
-static void msgbt_colorInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void msgbt_colorUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 #endif
 
@@ -181,43 +164,25 @@ friend void msgbtc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-#if 0
-friend void msgbt_sourcePressUpdate (
-  struct event_handler_args ast_args );
-
-friend void msgbt_monitor_sourcePress_connect_state (
-  struct connection_handler_args arg );
-
-friend void msgbt_sourceReleaseUpdate (
-  struct event_handler_args ast_args );
-
-friend void msgbt_monitor_sourceRelease_connect_state (
-  struct connection_handler_args arg );
-#endif
-
 friend void msgbt_monitor_dest_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void msgbt_monitor_vis_connect_state (
-  struct connection_handler_args arg );
-
-friend void msgbt_destInfoUpdate (
-  struct event_handler_args ast_args );
-
-friend void msgbt_visInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void msgbt_visUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void msgbt_monitor_color_connect_state (
-  struct connection_handler_args arg );
-
-friend void msgbt_colorInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void msgbt_colorUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 int opComplete;
 
@@ -247,8 +212,7 @@ char fontTag[63+1], bufFontTag[63+1];
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
-chid sourcePressPvId, sourceReleasePvId, destPvId;
-evid sourcePressEventId, sourceReleaseEventId;
+ProcessVariable *sourcePressPvId, *sourceReleasePvId, *destPvId;
 
 int destIsAckS;
 
@@ -267,8 +231,7 @@ pvConnectionClass connection;
 //-------------------------------------------------------
 
 //-------------------------------------------------------
-chid visPvId;
-evid visEventId;
+ProcessVariable *visPvId;
 expStringClass visPvExpString;
 char bufVisPvName[activeGraphicClass::MAX_PV_NAME+1];
 int visExists;
@@ -277,11 +240,11 @@ char minVisString[39+1], bufMinVisString[39+1];
 char maxVisString[39+1], bufMaxVisString[39+1];
 int prevVisibility, visibility, visInverted, bufVisInverted;
 int needVisConnectInit, needVisInit, needVisUpdate;
+int initialVisConnection, initialColorConnection;
 //-------------------------------------------------------
 
 //-------------------------------------------------------
-chid colorPvId;
-evid colorEventId;
+ProcessVariable *colorPvId;
 expStringClass colorPvExpString;
 char bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
 int colorExists;
@@ -309,7 +272,6 @@ int lock, bufLock;
 
 int useEnumNumeric, bufUseEnumNumeric;
 
-char *stateString[MAX_ENUM_STATES]; // allocated at run-time
 int numStates;
 
 int pwFormX, pwFormY, pwFormW, pwFormH, pwFormMaxH;
@@ -341,7 +303,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
@@ -374,6 +344,7 @@ void updateDimensions ( void );
 void performBtnUpAction ( void );
 
 void btnUp (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
@@ -383,6 +354,7 @@ void btnUp (
 void performBtnDownAction ( void );
 
 void btnDown (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
@@ -452,7 +424,7 @@ void changePvNames (
 
 int getEnumNumeric (
   char *string,
-  short *value );
+  int *value );
 
 };
 

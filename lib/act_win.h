@@ -44,6 +44,7 @@
 
 #include "ulBindings.h"
 #include "pvBindings.h"
+#include "pv_factory.h"
 #include "entry_form.h"
 #include "confirm_dialog.h"
 #include "cursor.h"
@@ -51,12 +52,14 @@
 #include "undo.h"
 #include "msg_dialog.h"
 
+#include "tag_pkg.h"
+
 #include "sys_types.h"
 #include "thread.h"
 #include "avl.h"
 
-#define AWC_MAJOR_VERSION 3
-#define AWC_MINOR_VERSION 1
+#define AWC_MAJOR_VERSION 4
+#define AWC_MINOR_VERSION 0
 #define AWC_RELEASE 0
 
 #define AWC_EDIT 1
@@ -114,6 +117,9 @@
 #define AWC_POPUP_SELECT_SCHEME_SET 150
 #define AWC_POPUP_DISTRIBUTE_MIDPT_BOTH 151
 #define AWC_POPUP_PRINT 152
+#define AWC_POPUP_COPY_GROUP_INFO 153
+#define AWC_POPUP_PASTE_GROUP_INFO 154
+#define AWC_POPUP_SAVE_TO_PATH 155
 
 #define AWC_NONE_SELECTED 1
 #define AWC_ONE_SELECTED 2
@@ -160,17 +166,17 @@ static void awc_dont_save_cb (
   XtPointer client,
   XtPointer call );
 
-static void awc_dont_save_cb (
-  Widget w,
-  XtPointer client,
-  XtPointer call );
-
 static void awc_do_save_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
 
 static void awc_do_save_and_exit_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void awc_do_save_new_path_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -444,6 +450,11 @@ friend void awc_do_save_cb (
   XtPointer call );
 
 friend void awc_do_save_and_exit_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void awc_do_save_new_path_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -788,7 +799,8 @@ int actualNumMacros;
 char **macros;
 char **expansions;
 
-char fileName[255+1];
+int haveComments;
+char fileName[255+1], fileRev[31+1], fileNameAndRev[287+1], newPath[255+1];
 char prefix[127+1], displayName[127+1], postfix[127+1];
 expStringClass expStrTitle;
 
@@ -802,7 +814,7 @@ Widget top;
 gcClass drawGc, executeGc;
 fontInfoClass *fi;
 
-int versionStack[11][3];
+int versionStack[11][4];
 int versionStackPtr;
 
 int b2PressX, b2PressY, b2PressXRoot, b2PressYRoot;
@@ -834,7 +846,7 @@ activeWindowClass ( void );
 
 ~activeWindowClass ( void );
 
-int activeWindowClass::okToDeactivate ( void );
+int okToDeactivate ( void );
 
 char *idName( void );
 
@@ -978,7 +990,14 @@ int genericCreate (
   char **_macros,
   char **_expansions );
 
+void map ( void );
+
 void realize ( void );
+
+void realizeNoMap ( void );
+
+void realize (
+  int doMap );
 
 int setGraphicEnvironment (
   colorInfoClass *Oneci,
@@ -1017,17 +1036,33 @@ int save (
 int saveNoChange (
   char *fileName );
 
+int old_genericSave (
+  char *fName,
+  int resetChangeFlag,
+  int appendExtensionFlag,
+  int backupFlag );
+
 int genericSave (
   char *fileName,
   int resetChangeFlag,
   int appendExtensionFlag,
   int backupFlag );
 
-int loadCascade ( void );
+int old_loadGeneric (
+  int x,
+  int y,
+  int setPosition );
 
-int loadCascade (
+int old_load ( void );
+
+int old_load (
   int x,
   int y );
+
+int loadGeneric (
+  int x,
+  int y,
+  int setPosition );
 
 int load ( void );
 
@@ -1111,6 +1146,9 @@ int smartDrawAllActive ( void );
 
 int requestActiveRefresh ( void );
 
+int old_saveWin (
+  FILE *fptr );
+
 int saveWin (
   FILE *fptr );
 
@@ -1118,7 +1156,14 @@ int pushVersion ( void );
 
 int popVersion ( void );
 
+void readCommentsAndVersionGeneric (
+  FILE *f,
+  int isSymbolFile );
+
 void readCommentsAndVersion (
+  FILE *f );
+
+void readSymbolCommentsAndVersion (
   FILE *f );
 
 void discardCommentsAndVersion (
@@ -1127,10 +1172,30 @@ void discardCommentsAndVersion (
   int *_minor,
   int *_release );
 
-int loadWin (
-  FILE *fptr );
+int loadWinGeneric (
+  FILE *f,
+  int _x,
+  int _y,
+  int setPosition );
 
 int loadWin (
+  FILE *f );
+
+int loadWin (
+  FILE *f,
+  int _x,
+  int _y );
+
+int old_loadWinGeneric (
+  FILE *f,
+  int _x,
+  int _y,
+  int setPosition );
+
+int old_loadWin (
+  FILE *fptr );
+
+int old_loadWin (
   FILE *fptr,
   int x,
   int y );
@@ -1248,8 +1313,7 @@ void popupDragAddItem (
   char *item );
 
 void popupDragFinish (
-  int x,
-  int y );
+  XButtonEvent *be );
 
 void enableBuffering ( void );
 

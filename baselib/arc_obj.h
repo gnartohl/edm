@@ -23,14 +23,13 @@
 #include "entry_form.h"
 
 #include "pv_factory.h"
-#include "epics_pv_factory.h"
 #include "cvtFast.h"
 
 #define AAC_K_COLORMODE_STATIC 0
 #define AAC_K_COLORMODE_ALARM 1
 
-#define AAC_MAJOR_VERSION 2
-#define AAC_MINOR_VERSION 1
+#define AAC_MAJOR_VERSION 4
+#define AAC_MINOR_VERSION 0
 #define AAC_RELEASE 0
 
 #ifdef __arc_obj_cc
@@ -220,12 +219,20 @@ int createFromFile (
   char *name,
   activeWindowClass *_actWin );
 
+int old_createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin );
+
 int importFromXchFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
 int save (
+  FILE *f );
+
+int old_save (
   FILE *f );
 
 int genericEdit ( void );

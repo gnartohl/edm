@@ -23,18 +23,73 @@
 #include "undo.h"
 #include "entry_form.h"
 
+#include "pv_factory.h"
+#include "cvtFast.h"
+
 #include "group.str"
 
 // the following defines btnActionListType & btnActionListPtr
 #include "btnActionListType.h"
 
-#ifdef __epics__
-#include "cadef.h"
+#define AGC_MAJOR_VERSION 4
+#define AGC_MINOR_VERSION 0
+#define AGC_RELEASE 0
+
+#ifdef __group_cc
+
+static void groupUnconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
+static void agc_edit_update (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void agc_edit_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void agc_edit_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void agc_edit_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 #endif
 
 class activeGroupClass : public activeGraphicClass {
 
 private:
+
+friend void groupUnconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
+friend void agc_edit_update (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void agc_edit_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void agc_edit_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void agc_edit_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 void * voidHead; // cast to activeGraphicListPtr at runtime
 btnActionListPtr btnDownActionHead;
@@ -44,7 +99,38 @@ btnActionListPtr btnFocusActionHead;
 int depth;
 undoClass undoObj;
 
+int bufX, bufY;
+ProcessVariable *visPvId;
+expStringClass visPvExpStr;
+char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
+pvValType minVis, maxVis;
+char minVisString[39+1], bufMinVisString[39+1];
+char maxVisString[39+1], bufMaxVisString[39+1];
+int visInverted  , bufVisInverted;
+
+int visPvExists;
+int activeMode, init, opComplete, op2Complete;
+
+int visibility, prevVisibility;
+static const int visPvConnection = 1;
+pvConnectionClass connection;
+
+int needConnectInit, needVisUpdate, needRefresh, needToDrawUnconnected,
+ needToEraseUnconnected;
+
+int unconnectedTimer;
+
 public:
+
+static void visPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
+
+static void visPvValueCallback (
+  ProcessVariable *pv,
+  void *userarg
+);
 
 activeGroupClass ( void );
 
@@ -62,7 +148,15 @@ int ungroup (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
@@ -108,6 +202,11 @@ int deactivate (
 
 int preReactivate (
   int pass,
+  int *numSubObjects );
+
+int reactivate (
+  int pass,
+  void *ptr,
   int *numSubObjects );
 
 int moveSelectBox (
@@ -204,6 +303,7 @@ int getButtonActionRequest (
   int *focus );
 
 void btnDown (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
@@ -211,6 +311,7 @@ void btnDown (
   int *action );
 
 void btnUp (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
@@ -218,22 +319,26 @@ void btnUp (
   int *action );
 
 void btnDrag (
+  XMotionEvent *me,
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
 void pointerIn (
+  XMotionEvent *me,
   int x,
   int y,
   int buttonState );
 
 void pointerOut (
+  XMotionEvent *me,
   int x,
   int y,
   int buttonState );
 
 void checkMouseOver (
+  XMotionEvent *me,
   int x,
   int y,
   int buttonState );
@@ -244,6 +349,8 @@ void updateGroup ( void );
 
 int initDefExeNode (
   void *ptr );
+
+void executeDeferred ( void );
 
 int containsMacros ( void );
 
@@ -371,8 +478,7 @@ int startDrag (
 );
 
 int selectDragValue (
-  int x,
-  int y
+  XButtonEvent *be
 );
 
 char *firstDragName (
@@ -394,6 +500,32 @@ char *dragValue (
 int atLeastOneDragPv (
   int x,
   int y
+);
+
+void initEnable ( void );
+
+void enable ( void );
+
+void disable ( void );
+
+void map ( void );
+
+void unmap ( void );
+
+int getGroupVisInfo (
+  expStringClass *visStr,
+  int *visInv,
+  int maxLen,
+  char *minVis,
+  char *maxVis
+);
+
+int putGroupVisInfo (
+  expStringClass *visStr,
+  int visInv,
+  int maxLen,
+  char *minVis,
+  char *maxVis
 );
 
 };

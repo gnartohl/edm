@@ -23,16 +23,11 @@
 #include "entry_form.h"
 #include "scrolled_text.h"
 
-#ifdef __epics__
-#include "cadef.h"
-#endif
+#include "pv_factory.h"
+#include "cvtFast.h"
 
-#ifndef __epics__
-#define MAX_ENUM_STRING_SIZE 16
-#endif
-
-#define MESSAGEBOXC_MAJOR_VERSION 2
-#define MESSAGEBOXC_MINOR_VERSION 2
+#define MESSAGEBOXC_MAJOR_VERSION 4
+#define MESSAGEBOXC_MINOR_VERSION 0
 #define MESSAGEBOXC_RELEASE 0
 
 #ifdef __message_box_cc
@@ -69,10 +64,12 @@ static void messageboxc_edit_cancel_delete (
   XtPointer call );
 
 static void messagebox_readUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void messagebox_monitor_read_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 #endif
 
@@ -115,10 +112,12 @@ friend void messageboxc_edit_cancel_delete (
   XtPointer call );
 
 friend void messagebox_readUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void messagebox_monitor_read_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 int bufX, bufY, bufW, bufH;
 
@@ -143,10 +142,8 @@ fontMenuClass fm;
 char fontTag[63+1];
 XFontStruct *fs;
 
-#ifdef __epics__
-chid readPvId;
-evid readEventId;
-#endif
+ProcessVariable *readPvId;
+int initialReadConnection;
 
 expStringClass readPvExpStr;
 char bufReadPvName[activeGraphicClass::MAX_PV_NAME+1];
@@ -200,7 +197,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
@@ -281,6 +286,10 @@ void changePvNames (
   char *visPvs[],
   int numAlarmPvs,
   char *alarmPvs[] );
+
+void map ( void );
+
+void unmap ( void );
 
 };
 

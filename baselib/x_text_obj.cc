@@ -610,6 +610,118 @@ int activeXTextClass::createFromFile (
   activeWindowClass *_actWin )
 {
 
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+int left = XmALIGNMENT_BEGINNING;
+static char *alignEnumStr[3] = {
+  "left",
+  "center",
+  "right"
+};
+static int alignEnum[3] = {
+  XmALIGNMENT_BEGINNING,
+  XmALIGNMENT_CENTER,
+  XmALIGNMENT_END
+};
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "font", 63, fontTag );
+  tag.loadR( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "fgAlarm", &fgColorMode, &zero );
+  tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "bgAlarm", &bgColorMode, &zero );
+  tag.loadR( "useDisplayBg", &useDisplayBg, &zero );
+  tag.loadR( "alarmPv", &alarmPvExpStr, emptyStr );
+  tag.loadR( "visPv", &visPvExpStr, emptyStr );
+  tag.loadR( "visInvert", &visInverted, &zero );
+  tag.loadR( "visMin", 39, minVisString, emptyStr );
+  tag.loadR( "visMax", 39, maxVisString, emptyStr );
+  tag.loadR( "value", &value, emptyStr );
+  tag.loadR( "autoSize", &autoSize, &zero );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > AXTC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  if ( fgColorMode )
+    fgColor.setAlarmSensitive();
+  else
+    fgColor.setAlarmInsensitive();
+
+  if ( bgColorMode )
+    bgColor.setAlarmSensitive();
+  else
+    bgColor.setAlarmInsensitive();
+
+  actWin->fi->loadFontTag( fontTag );
+  actWin->drawGc.setFontTag( fontTag, actWin->fi );
+
+  if ( value.getRaw() )
+    stringLength = strlen( value.getRaw() );
+  else
+    stringLength = 0;
+
+  fs = actWin->fi->getXFontStruct( fontTag );
+
+  if ( value.getRaw() )
+    updateFont( value.getRaw(), fontTag, &fs, &fontAscent, &fontDescent,
+     &fontHeight, &stringWidth );
+  else
+    updateFont( " ", fontTag, &fs, &fontAscent, &fontDescent,
+     &fontHeight, &stringWidth );
+
+  updateDimensions();
+
+  stringY = y + fontAscent + h/2 - stringBoxHeight/2;
+
+  if ( alignment == XmALIGNMENT_BEGINNING )
+    stringX = x;
+  else if ( alignment == XmALIGNMENT_CENTER )
+    stringX = x + w/2 - stringWidth/2;
+  else if ( alignment == XmALIGNMENT_END )
+    stringX = x + w - stringWidth;
+
+  return stat;
+
+}
+
+int activeXTextClass::old_createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
@@ -1033,58 +1145,58 @@ int activeXTextClass::save (
   FILE *f )
 {
 
-int index;
+int stat, major, minor, release;
 
-  fprintf( f, "%-d %-d %-d\n", AXTC_MAJOR_VERSION, AXTC_MINOR_VERSION,
-   AXTC_RELEASE );
-  fprintf( f, "%-d\n", x );
-  fprintf( f, "%-d\n", y );
-  fprintf( f, "%-d\n", w );
-  fprintf( f, "%-d\n", h );
+tagClass tag;
 
-  index = fgColor.pixelIndex();
-  actWin->ci->writeColorIndex( f, index );
-  //fprintf( f, "%-d\n", index );
+int zero = 0;
+char *emptyStr = "";
 
-  fprintf( f, "%-d\n", fgColorMode );
+int left = XmALIGNMENT_BEGINNING;
+static char *alignEnumStr[3] = {
+  "left",
+  "center",
+  "right"
+};
+static int alignEnum[3] = {
+  XmALIGNMENT_BEGINNING,
+  XmALIGNMENT_CENTER,
+  XmALIGNMENT_END
+};
 
-  fprintf( f, "%-d\n", useDisplayBg );
+  major = AXTC_MAJOR_VERSION;
+  minor = AXTC_MINOR_VERSION;
+  release = AXTC_RELEASE;
 
-  index = bgColor.pixelIndex();
-  actWin->ci->writeColorIndex( f, index );
-  //fprintf( f, "%-d\n", index );
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "font", fontTag );
+  tag.loadW( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadBoolW( "fgAlarm", &fgColorMode, &zero );
+  tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadBoolW( "bgAlarm", &bgColorMode, &zero );
+  tag.loadBoolW( "useDisplayBg", &useDisplayBg, &zero );
+  tag.loadW( "alarmPv", &alarmPvExpStr, emptyStr );
+  tag.loadW( "visPv", &visPvExpStr, emptyStr );
+  tag.loadBoolW( "visInvert", &visInverted, &zero );
+  tag.loadW( "visMin", minVisString, emptyStr );
+  tag.loadW( "visMax", maxVisString, emptyStr );
+  tag.loadComplexW( "value", &value, emptyStr );
+  tag.loadBoolW( "autoSize", &autoSize, &zero );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
 
-  fprintf( f, "%-d\n", bgColorMode );
+  stat = tag.writeTags( f );
 
-  if ( alarmPvExpStr.getRaw() )
-    writeStringToFile( f, alarmPvExpStr.getRaw() );
-  else
-    writeStringToFile( f, "" );
-
-  if ( visPvExpStr.getRaw() )
-    writeStringToFile( f, visPvExpStr.getRaw() );
-  else
-    writeStringToFile( f, "" );
-
-  fprintf( f, "%-d\n", visInverted );
-  writeStringToFile( f, minVisString );
-  writeStringToFile( f, maxVisString );
-
-  if ( value.getRaw() )
-    writeStringToFile( f, value.getRaw() );
-  else
-    writeStringToFile( f, "" );
-
-  writeStringToFile( f, fontTag );
-
-  fprintf( f, "%-d\n", alignment );
-
-  fprintf( f, "%-d\n", autoSize );
-
-  // version 1.4.0
-  writeStringToFile( f, this->id );
-
-  return 1;
+  return stat;
 
 }
 
@@ -1123,9 +1235,7 @@ int blink = 0;
     actWin->executeGc.restoreFg();
   }
 
-
-
-  if ( !activeMode || !visibility ) return 1;
+  if ( !enabled || !activeMode || !visibility ) return 1;
 
   prevVisibility = visibility;
 
@@ -1179,6 +1289,8 @@ int blink = 0;
 
   updateBlink( blink );
 
+  bufInvalid = 0;
+
   return 1;
 
 }
@@ -1186,6 +1298,8 @@ int blink = 0;
 int activeXTextClass::eraseUnconditional ( void ) {
 
 XRectangle xR = { x, y, w, h };
+
+  if ( !enabled ) return 1;
 
   actWin->executeGc.addEraseXClipRectangle( xR );
 
@@ -1224,7 +1338,7 @@ int activeXTextClass::eraseActive ( void ) {
 
 XRectangle xR = { x, y, w, h };
 
-  if ( !activeMode ) return 1;
+  if ( !enabled || !activeMode ) return 1;
 
   if ( prevVisibility == 0 ) {
     prevVisibility = visibility;
@@ -1257,18 +1371,31 @@ XRectangle xR = { x, y, w, h };
 
     if ( visibility && bgVisibility ) {
 
-      actWin->executeGc.setFG( bgColor.getColor() );
       actWin->executeGc.setBG( bgColor.getColor() );
+      actWin->executeGc.setFG( bgColor.getColor() );
 
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-       actWin->executeGc.normGC(), x, y, w, h );
+      if ( bufInvalid ) {
 
-      XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
-       actWin->executeGc.normGC(), x, y, w, h );
+        XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.eraseGC(), x, y, w, h );
 
-      XDrawImageStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
-       actWin->executeGc.normGC(), x, stringY, w,
-       value.getExpanded(), stringLength, &fs, alignment );
+        XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.eraseGC(), x, y, w, h );
+
+      }
+      else {
+
+        XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), x, y, w, h );
+
+        XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), x, y, w, h );
+
+        XDrawImageStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), x, stringY, w,
+         value.getExpanded(), stringLength, &fs, alignment );
+
+      }
 
     }
 
@@ -1343,6 +1470,7 @@ int activeXTextClass::activate (
     if ( !opComplete ) {
 
       connection.init();
+      initEnable();
 
       curFgColorIndex = -1;
       curBgColorIndex = -1;
@@ -1354,6 +1482,7 @@ int activeXTextClass::activate (
       fgVisibility = 0;
       prevBgVisibility = -1;
       bgVisibility = 0;
+      bufInvalid = 1;
 
       needConnectInit = needAlarmUpdate = needVisUpdate = needRefresh =
         needPropertyUpdate = 0;
@@ -1422,10 +1551,6 @@ int activeXTextClass::activate (
       if ( alarmPvExists ) {
         alarmPvId = the_PV_Factory->create( alarmPvExpStr.getExpanded() );
         if ( alarmPvId ) {
-          //if ( alarmPvId->is_valid() ) {
-          //  alarmPvConnectStateCallback( alarmPvId, this );
-          //  alarmPvValueCallback( alarmPvId, this );
-	  //}
           alarmPvId->add_conn_state_callback( alarmPvConnectStateCallback,
            this );
           alarmPvId->add_value_callback( alarmPvValueCallback, this );
@@ -1435,10 +1560,6 @@ int activeXTextClass::activate (
       if ( visPvExists ) {
         visPvId = the_PV_Factory->create( visPvExpStr.getExpanded() );
         if ( visPvId ) {
-          //if ( visPvId->is_valid() ) {
-          //  visPvConnectStateCallback( visPvId, this );
-          //  visPvValueCallback( visPvId, this );
-          //}
           visPvId->add_conn_state_callback( visPvConnectStateCallback, this );
           visPvId->add_value_callback( visPvValueCallback, this );
 	}
@@ -1886,12 +2007,63 @@ int activeXTextClass::setProperty (
 
 char *activeXTextClass::firstDragName ( void ) {
 
+#define MAXDRAGNAMES 2
+
+int i;
+int present[MAXDRAGNAMES];
+
+  if ( !enabled ) return NULL;
+
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    if ( !blank( alarmPvExpStr.getExpanded() ) ) {
+      present[0] = 1;
+    }
+    else {
+      present[0] = 0;
+    }
+
+    if ( !blank( visPvExpStr.getExpanded() ) ) {
+      present[1] = 1;
+    }
+    else {
+      present[1] = 0;
+    }
+
+  }
+  else {
+
+    if ( !blank( alarmPvExpStr.getRaw() ) ) {
+      present[0] = 1;
+    }
+    else {
+      present[0] = 0;
+    }
+
+    if ( !blank( visPvExpStr.getRaw() ) ) {
+      present[1] = 1;
+    }
+    else {
+      present[1] = 0;
+    }
+
+  }
+
+  for ( i=0; i<MAXDRAGNAMES; i++ ) {
+    if ( present[i] ) {
+      dragIndex = i;
+      return dragName[dragIndex];
+    }
+  }
+
   dragIndex = 0;
   return dragName[dragIndex];
 
 }
 
 char *activeXTextClass::nextDragName ( void ) {
+
+  if ( !enabled ) return NULL;
 
   if ( dragIndex < (int) ( sizeof(dragName) / sizeof(char *) ) - 1 ) {
     dragIndex++;
@@ -1906,13 +2078,48 @@ char *activeXTextClass::nextDragName ( void ) {
 char *activeXTextClass::dragValue (
   int i ) {
 
-  switch ( i ) {
+int offset = 0;
 
-  case 0:
-    return alarmPvExpStr.getExpanded();
+  if ( !enabled ) return NULL;
 
-  case 1:
-    return visPvExpStr.getExpanded();
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    if ( blank( alarmPvExpStr.getExpanded() ) ) {
+      offset++;
+      if ( blank( visPvExpStr.getExpanded() ) ) {
+        offset++;
+      }
+    }
+
+    switch ( i+offset ) {
+
+    case 0:
+      return alarmPvExpStr.getExpanded();
+
+    case 1:
+      return visPvExpStr.getExpanded();
+
+    }
+
+  }
+  else {
+
+    if ( blank( alarmPvExpStr.getRaw() ) ) {
+      offset++;
+      if ( blank( visPvExpStr.getRaw() ) ) {
+        offset++;
+      }
+    }
+
+    switch ( i+offset ) {
+
+    case 0:
+      return alarmPvExpStr.getRaw();
+
+    case 1:
+      return visPvExpStr.getRaw();
+
+    }
 
   }
 
@@ -2056,6 +2263,12 @@ int index, change;
     }
 
   }
+
+}
+
+void activeXTextClass::bufInvalidate ( void ) {
+
+  bufInvalid = 1;
 
 }
 

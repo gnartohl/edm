@@ -23,9 +23,6 @@
 #define menuMuxClass_str20 (char *) "Symbol"
 #define menuMuxClass_str21 (char *) "Value"
 #define menuMuxClass_str22 (char *) "Mux"
-#define menuMuxClass_str23 (char *) "error from ca_search\n"
-#define menuMuxClass_str24 (char *) "ca_clear_channel failure\n"
-#define menuMuxClass_str25 (char *) "ca_add_masked_array_event failed\n"
-#define menuMuxClass_str26 (char *) "ca_add_masked_array_event failed\n"
+#define menuMuxClass_str23 (char *) "error creating pv\n"
 
 #endif

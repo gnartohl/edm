@@ -2843,10 +2843,17 @@ int fontAscent, fontDescent, fontHeight,
  stringWidth;
 char buf[31+1];
 unsigned int white, black;
+int reverse = 0;
+
+  if ( adj_min > adj_max ) {
+    adj_min *= -1;
+    adj_max *= -1;
+    reverse = 1;
+  }
 
   if ( scaleLen < 1 ) return;
   if ( num_label_ticks < 1 ) return;
-  if ( adj_max <= adj_min ) return;
+  if ( adj_max == adj_min ) return;
 
   white = WhitePixel( d, DefaultScreen(d) );
   black = BlackPixel( d, DefaultScreen(d) );
@@ -2933,7 +2940,12 @@ unsigned int white, black;
         formatString( 0.0, buf, 31 );
       }
       else {
-        formatString( labelVal, buf, 31 );
+	if ( reverse ) {
+          formatString( -1*labelVal, buf, 31 );
+	}
+	else {
+          formatString( labelVal, buf, 31 );
+	}
       }
       if ( minConstrained ) {
         if ( first ) {
@@ -3079,7 +3091,12 @@ unsigned int white, black;
       formatString( 0.0, buf, 31 );
     }
     else {
-      formatString( labelVal, buf, 31 );
+      if ( reverse ) {
+        formatString( -1*labelVal, buf, 31 );
+      }
+      else {
+        formatString( labelVal, buf, 31 );
+      }
     }
     if ( maxConstrained ) {
       gc->setFG( black );
@@ -3591,10 +3608,17 @@ int fontAscent, fontDescent, fontHeight,
  stringWidth;
 char buf[31+1];
 unsigned int white, black;
+int reverse = 0;
+
+  if ( adj_min > adj_max ) {
+    adj_min *= -1;
+    adj_max *= -1;
+    reverse = 1;
+  }
 
   if ( scaleHeight < 1 ) return;
   if ( num_label_ticks < 1 ) return;
-  if ( adj_max <= adj_min ) return;
+  if ( adj_max == adj_min ) return;
 
   white = WhitePixel( d, DefaultScreen(d) );
   black = BlackPixel( d, DefaultScreen(d) );
@@ -3682,7 +3706,12 @@ unsigned int white, black;
         formatString( 0.0, buf, 31 );
       }
       else {
-        formatString( labelVal, buf, 31 );
+	if ( reverse ) {
+          formatString( -1*labelVal, buf, 31 );
+	}
+	else {
+          formatString( labelVal, buf, 31 );
+	}
       }
       if ( minConstrained ) {
         if ( first ) {
@@ -3826,7 +3855,12 @@ unsigned int white, black;
       formatString( 0.0, buf, 31 );
     }
     else {
-      formatString( labelVal, buf, 31 );
+      if ( reverse ) {
+        formatString( -1*labelVal, buf, 31 );
+      }
+      else {
+        formatString( labelVal, buf, 31 );
+      }
     }
     if ( maxConstrained ) {
       gc->setFG( black );
@@ -3888,10 +3922,17 @@ int fontAscent, fontDescent, fontHeight,
  stringWidth;
 char buf[31+1];
 unsigned int white, black;
+int reverse = 0;
+
+  if ( adj_min > adj_max ) {
+    adj_min *= -1;
+    adj_max *= -1;
+    reverse = 1;
+  }
 
   if ( scaleHeight < 1 ) return;
   if ( num_label_ticks < 1 ) return;
-  if ( adj_max <= adj_min ) return;
+  if ( adj_max == adj_min ) return;
 
   white = WhitePixel( d, DefaultScreen(d) );
   black = BlackPixel( d, DefaultScreen(d) );
@@ -3983,7 +4024,12 @@ unsigned int white, black;
         formatString( 0.0, buf, 31 );
       }
       else {
-        formatString( labelVal, buf, 31 );
+	if ( reverse ) {
+          formatString( -1*labelVal, buf, 31 );
+	}
+	else {
+          formatString( labelVal, buf, 31 );
+	}
       }
       if ( minConstrained ) {
         if ( first ) {
@@ -4141,7 +4187,12 @@ unsigned int white, black;
       formatString( 0.0, buf, 31 );
     }
     else {
-      formatString( labelVal, buf, 31 );
+      if ( reverse ) {
+        formatString( -1*labelVal, buf, 31 );
+      }
+      else {
+        formatString( labelVal, buf, 31 );
+      }
     }
     if ( maxConstrained ) {
       gc->setFG( black );

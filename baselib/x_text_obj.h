@@ -22,14 +22,13 @@
 #include "act_grf.h"
 #include "entry_form.h"
 #include "pv_factory.h"
-#include "epics_pv_factory.h"
 #include "cvtFast.h"
 
 #define AXTC_K_COLORMODE_STATIC 0
 #define AXTC_K_COLORMODE_ALARM 1
 
-#define AXTC_MAJOR_VERSION 2
-#define AXTC_MINOR_VERSION 1
+#define AXTC_MAJOR_VERSION 4
+#define AXTC_MINOR_VERSION 0
 #define AXTC_RELEASE 0
 
 #ifdef __x_text_obj_cc
@@ -172,6 +171,8 @@ static const int alarmPvConnection = 1;
 static const int visPvConnection = 2;
 pvConnectionClass connection;
 
+int bufInvalid;
+
 public:
 
 static void alarmPvConnectStateCallback (
@@ -221,6 +222,11 @@ int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
+
+int activeXTextClass::old_createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin );
 
 int importFromXchFile (
   FILE *fptr,
@@ -308,6 +314,8 @@ void changePvNames (
 
 void updateColors (
   double colorValue );
+
+void bufInvalidate ( void );
 
 };
 

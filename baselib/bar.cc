@@ -235,19 +235,18 @@ activeBarClass *baro = (activeBarClass *) client;
 
 }
 
-#ifdef __epics__
-
 static void bar_monitor_read_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeBarClass *baro = (activeBarClass *) ca_puser(arg.chid);
+activeBarClass *baro = (activeBarClass *) userarg;
 
   baro->actWin->appCtx->proc->lock();
 
   if ( baro->activeMode ) {
 
-    if ( arg.op == CA_OP_CONN_UP ) {
+    if ( pv->is_valid() ) {
 
       baro->pvNotConnectedMask &= ~( (unsigned char) 1 );
       if ( !baro->pvNotConnectedMask ) { // if all are connected
@@ -275,16 +274,17 @@ activeBarClass *baro = (activeBarClass *) ca_puser(arg.chid);
 }
 
 static void bar_monitor_null_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeBarClass *baro = (activeBarClass *) ca_puser(arg.chid);
+activeBarClass *baro = (activeBarClass *) userarg;
 
   baro->actWin->appCtx->proc->lock();
 
   if ( baro->activeMode ) {
 
-    if ( arg.op == CA_OP_CONN_UP ) {
+    if ( pv->is_valid() ) {
 
       baro->pvNotConnectedMask &= ~( (unsigned char) 2 );
       if ( !baro->pvNotConnectedMask ) { // if all are connected
@@ -311,55 +311,29 @@ activeBarClass *baro = (activeBarClass *) ca_puser(arg.chid);
 
 }
 
-static void bar_infoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeBarClass *baro = (activeBarClass *) ast_args.usr;
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
-
-  baro->actWin->appCtx->proc->lock();
-
-  if ( baro->activeMode ) {
-
-    baro->curReadV = controlRec.value;
-
-    if ( baro->limitsFromDb || baro->efReadMin.isNull() ) {
-      baro->readMin = controlRec.lower_disp_limit;
-    }
-
-    if ( baro->limitsFromDb || baro->efReadMax.isNull() ) {
-      baro->readMax = controlRec.upper_disp_limit;
-    }
-
-    if ( baro->limitsFromDb || baro->efPrecision.isNull() ) {
-      baro->precision = controlRec.precision;
-    }
-
-    baro->needInfoInit = 1;
-    baro->actWin->addDefExeNode( baro->aglPtr );
-
-  }
-
-  baro->actWin->appCtx->proc->unlock();
-
-}
-
 static void bar_readUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeBarClass *baro = (activeBarClass *) ast_args.usr;
+activeBarClass *baro = (activeBarClass *) userarg;
+int st, sev;
 
   baro->actWin->appCtx->proc->lock();
 
   if ( baro->active ) {
 
-    baro->curReadV = *( (double *) ast_args.dbr );
+    st = pv->get_status();
+    sev = pv->get_severity();
+    if ( ( st != baro->oldStat ) || ( sev != baro->oldSev ) ) {
+      baro->oldStat = st;
+      baro->oldSev = sev;
+      baro->fgColor.setStatus( st, sev );
+      baro->barColor.setStatus( st, sev );
+      baro->needFullDraw = 1;
+    }
+
+    baro->curReadV = pv->get_double();
     baro->needDrawCheck = 1;
     baro->actWin->addDefExeNode( baro->aglPtr );
 
@@ -370,16 +344,17 @@ activeBarClass *baro = (activeBarClass *) ast_args.usr;
 }
 
 static void bar_nullUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeBarClass *baro = (activeBarClass *) ast_args.usr;
+activeBarClass *baro = (activeBarClass *) userarg;
 
   baro->actWin->appCtx->proc->lock();
 
   if ( baro->active ) {
 
-    baro->curNullV = *( (double *) ast_args.dbr );
+    baro->curNullV = pv->get_double();
 
     baro->needDrawCheck = 1;
     baro->actWin->addDefExeNode( baro->aglPtr );
@@ -389,33 +364,6 @@ activeBarClass *baro = (activeBarClass *) ast_args.usr;
   baro->actWin->appCtx->proc->unlock();
 
 }
-
-static void bar_alarmUpdate (
-  struct event_handler_args ast_args )
-{
-
-activeBarClass *baro = (activeBarClass *) ast_args.usr;
-struct dbr_sts_double statusRec;
-
-  baro->actWin->appCtx->proc->lock();
-
-  if ( baro->active ) {
-
-    statusRec = *( (struct dbr_sts_double *) ast_args.dbr );
-
-    baro->fgColor.setStatus( statusRec.status, statusRec.severity );
-    baro->barColor.setStatus( statusRec.status, statusRec.severity );
-
-    baro->needFullDraw = 1;
-    baro->actWin->addDefExeNode( baro->aglPtr );
-
-  }
-
-  baro->actWin->appCtx->proc->unlock();
-
-}
-
-#endif
 
 activeBarClass::activeBarClass ( void ) {
 
@@ -586,6 +534,83 @@ int activeBarClass::save (
   FILE *f )
 {
 
+int stat, major, minor, release;
+
+tagClass tag;
+
+static int zero = 0;
+static char *emptyStr = "";
+
+int lit = 1;
+static char *labelTypeEnumStr[2] = {
+  "pvName",
+  "literal"
+};
+static int labelTypeEnum[2] = {
+  0,
+  1
+};
+
+int horz = 1;
+static char *orienTypeEnumStr[2] = {
+  "vertical",
+  "horizontal"
+};
+static int orienTypeEnum[2] = {
+  0,
+  1
+};
+
+  major = BARC_MAJOR_VERSION;
+  minor = BARC_MINOR_VERSION;
+  release = BARC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "indicatorColor", actWin->ci, &barColor );
+  tag.loadBoolW( "indicatorAlarm", &barColorMode, &zero );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadBoolW( "fgAlarm", &fgColorMode, &zero );
+  tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadW( "indicatorPv", &readPvExpStr, emptyStr );
+  tag.loadW( "nullPv", &nullPvExpStr, emptyStr );
+  tag.loadW( "label", label, emptyStr );
+  tag.loadW( "labelType", 2, labelTypeEnumStr, labelTypeEnum,
+   &labelType, &lit );
+  tag.loadBoolW( "showScale", &showScale, &zero );
+  tag.loadW( "origin", &efBarOriginX );
+  tag.loadW( "font", fontTag );
+  tag.loadW( "labelTicks", &labelTicks, &zero );
+  tag.loadW( "majorTicks", &majorTicks, &zero );
+  tag.loadW( "minorTicks", &minorTicks, &zero );
+  tag.loadBoolW( "border", &border, &zero );
+  tag.loadBoolW( "limitsFromDb", &limitsFromDb, &zero );
+  tag.loadW( "precision", &efPrecision );
+  tag.loadW( "min", &efReadMin );
+  tag.loadW( "max", &efReadMax );
+  tag.loadW( "scaleFormat", scaleFormat );
+  tag.loadW( "orientation", 2, orienTypeEnumStr, orienTypeEnum,
+   &horizontal, &horz );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int activeBarClass::old_save (
+  FILE *f )
+{
+
 int stat, index;
 
   fprintf( f, "%-d %-d %-d\n", BARC_MAJOR_VERSION, BARC_MINOR_VERSION,
@@ -660,6 +685,161 @@ int stat, index;
 }
 
 int activeBarClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int major, minor, release, stat;
+
+tagClass tag;
+
+static int zero = 0;
+static char *emptyStr = "";
+
+int lit = 1;
+static char *labelTypeEnumStr[2] = {
+  "pvName",
+  "literal"
+};
+static int labelTypeEnum[2] = {
+  0,
+  1
+};
+
+int horz = 1;
+static char *orienTypeEnumStr[2] = {
+  "vertical",
+  "horizontal"
+};
+static int orienTypeEnum[2] = {
+  0,
+  1
+};
+
+int l;
+char fmt[31+1], str[31+1];
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "indicatorColor", actWin->ci, &barColor );
+  tag.loadR( "indicatorAlarm", &barColorMode, &zero );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "fgAlarm", &fgColorMode, &zero );
+  tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "indicatorPv", &readPvExpStr, emptyStr );
+  tag.loadR( "nullPv", &nullPvExpStr, emptyStr );
+  tag.loadR( "label", 39, label, emptyStr );
+  tag.loadR( "labelType", 2, labelTypeEnumStr, labelTypeEnum,
+   &labelType, &lit );
+  tag.loadR( "showScale", &showScale, &zero );
+  tag.loadR( "origin", &efBarOriginX );
+  tag.loadR( "font", 63, fontTag );
+  tag.loadR( "labelTicks", &labelTicks, &zero );
+  tag.loadR( "majorTicks", &majorTicks, &zero );
+  tag.loadR( "minorTicks", &minorTicks, &zero );
+  tag.loadR( "border", &border, &zero );
+  tag.loadR( "limitsFromDb", &limitsFromDb, &zero );
+  tag.loadR( "precision", &efPrecision );
+  tag.loadR( "min", &efReadMin );
+  tag.loadR( "max", &efReadMax );
+  tag.loadR( "scaleFormat", 15, scaleFormat );
+  tag.loadR( "orientation", 2, orienTypeEnumStr, orienTypeEnum,
+   &horizontal, &horz );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > BARC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  if ( barColorMode == BARC_K_COLORMODE_ALARM )
+    barColor.setAlarmSensitive();
+  else
+    barColor.setAlarmInsensitive();
+
+  if ( fgColorMode == BARC_K_COLORMODE_ALARM )
+    fgColor.setAlarmSensitive();
+  else
+    fgColor.setAlarmInsensitive();
+
+  bgColor.setAlarmInsensitive();
+
+  actWin->fi->loadFontTag( fontTag );
+  fs = actWin->fi->getXFontStruct( fontTag );
+
+  if ( fs ) {
+    barStrLen = XTextWidth( fs, "10", 2 );
+  }
+
+  if ( limitsFromDb || efPrecision.isNull() )
+    precision = 0;
+  else
+    precision = efPrecision.value();
+
+  if ( ( limitsFromDb || efReadMin.isNull() ) &&
+       ( limitsFromDb || efReadMax.isNull() ) ) {
+    readMin = 0;
+    readMax = 10;
+  }
+  else{
+    readMin = efReadMin.value();
+    readMax = efReadMax.value();
+  }
+
+  if ( strcmp( scaleFormat, "GFloat" ) == 0 ) {
+    sprintf( fmt, "%%.%-dg", precision );
+  }
+  else if ( strcmp( scaleFormat, "Exponential" ) == 0 ) {
+    sprintf( fmt, "%%.%-de", precision );
+  }
+  else {
+    sprintf( fmt, "%%.%-df", precision );
+  }
+
+  sprintf( str, fmt, readMin );
+  if ( fs ) {
+    barStrLen = XTextWidth( fs, str, strlen(str) );
+  }
+
+  sprintf( str, fmt, readMax );
+  if ( fs ) {
+    l = XTextWidth( fs, str, strlen(str) );
+    if ( l > barStrLen ) barStrLen = l;
+  }
+
+  readV = barOriginX;
+  curReadV = barOriginX;
+  curNullV = 0.0;
+  updateDimensions();
+
+  return stat;
+
+}
+
+int activeBarClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -837,6 +1017,9 @@ float fBarOriginX;
     fscanf( f, "%d\n", &labelTicks ); actWin->incLine();
     fscanf( f, "%d\n", &majorTicks ); actWin->incLine();
     fscanf( f, "%d\n", &minorTicks ); actWin->incLine();
+
+    // majorTicks now means majors per label
+    majorTicks /= labelTicks;
 
     fscanf( f, "%d\n", &border ); actWin->incLine();
 
@@ -1098,7 +1281,7 @@ int activeBarClass::erase ( void ) {
 
 int activeBarClass::eraseActive ( void ) {
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   actWin->executeGc.setFG( bgColor.getColor() );
 
@@ -1107,11 +1290,17 @@ int activeBarClass::eraseActive ( void ) {
     actWin->executeGc.setLineWidth( 1 );
     actWin->executeGc.setLineStyle( LineSolid );
 
+    //XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    // actWin->executeGc.normGC(), x, y, w, h );
+
+    //XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    // actWin->executeGc.normGC(), x, y, w, h );
+
     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x, y, w, h );
+     actWin->executeGc.eraseGC(), x, y, w, h );
 
     XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x, y, w, h );
+     actWin->executeGc.eraseGC(), x, y, w, h );
 
   }
   else {
@@ -1138,6 +1327,13 @@ int labelTickHeight, majorTickHeight, minorTickHeight;
 int scale_len;
 double dx, inc, minorDx, minorInc;
 char fmt[31+1], str[31+1];
+
+  drawXLinearScale ( actWin->d, XtWindow(widget), gc, 1, barAreaX,
+   y0 = barY + barH + 3, barAreaW, readMin, readMax, labelTicks,
+   majorTicks, minorTicks, fgColor.pixelColor(),
+   bgColor.pixelColor(), 0, 0, 0, 0, 0, actWin->fi, fontTag, fs, 1, 0, 0, 0 );
+
+  return;
 
   if ( fs ) {
     gc->setFontTag( fontTag, actWin->fi );
@@ -1349,6 +1545,13 @@ int stat, x0, y0, x1, y1, ty;
 int labelTickWidth, majorTickWidth, minorTickWidth;
 double dy, inc, minorDy, minorInc;
 char fmt[31+1], str[31+1];
+
+  drawYLinearScale ( actWin->d, XtWindow(widget), gc, 1, barAreaX - 4,
+   barAreaY, barAreaH, readMin, readMax, labelTicks,
+   majorTicks, minorTicks, fgColor.pixelColor(),
+   bgColor.pixelColor(), 0, 0, 0, 0, 0, actWin->fi, fontTag, fs, 1, 0, 0, 0 );
+
+  return;
 
   if ( fs ) {
     gc->setFontTag( fontTag, actWin->fi );
@@ -1676,7 +1879,7 @@ char str[39+1];
     needToEraseUnconnected = 0;
   }
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   actWin->executeGc.saveFg();
 
@@ -1881,11 +2084,9 @@ char str[39+1];
       drawScale( actWin->executeWidget, &actWin->executeGc );
     }
 
-#ifdef __epics__
     if ( labelType == BARC_K_PV_NAME )
-      strncpy( str, ca_name(readPvId), 39 );
+      strncpy( str, readPvId->get_name(), 39 );
     else
-#endif
       strncpy( str, label, 39 );
 
     if ( horizontal ) {
@@ -1903,7 +2104,6 @@ char str[39+1];
 
     }
     else {
-
 
       if ( strcmp( str, "" ) != 0 ) {
         if ( fs ) {
@@ -1940,7 +2140,7 @@ int activeBarClass::activate (
   void *ptr )
 {
 
-int stat, opStat;
+int opStat;
 
   switch ( pass ) {
 
@@ -1953,6 +2153,10 @@ int stat, opStat;
     needToEraseUnconnected = 0;
     needToDrawUnconnected = 0;
     unconnectedTimer = 0;
+
+    readPvId = nullPvId = NULL;
+    initialReadConnection = initialNullConnection = 1;
+    oldStat = oldSev = -1;
 
     aglPtr = ptr;
     opComplete = 0;
@@ -1971,21 +2175,8 @@ int stat, opStat;
       oldBarY = 0;
     }
 
-#ifdef __epics__
-    controlEventId = readEventId = alarmEventId = nullEventId = 0;
-#endif
-
     pvNotConnectedMask = active = init = 0;
     activeMode = 1;
-
-    if ( !controlPvExpStr.getExpanded() ||
-       ( strcmp( controlPvExpStr.getExpanded(), "" ) == 0 ) ) {
-      controlExists = 0;
-    }
-    else {
-      controlExists = 1;
-      // pvNotConnectedMask |= 4;
-    }
 
     if ( !readPvExpStr.getExpanded() ||
        ( strcmp( readPvExpStr.getExpanded(), "" ) == 0 ) ) {
@@ -2013,6 +2204,8 @@ int stat, opStat;
 
     if ( !opComplete ) {
 
+      initEnable();
+
       if ( !unconnectedTimer ) {
         unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
          2000, unconnectedTimeout, this );
@@ -2020,38 +2213,31 @@ int stat, opStat;
 
       opStat = 1;
 
-#ifdef __epics__
-
-//       if ( controlExists ) {
-//         stat = ca_search_and_connect( controlPvExpStr.getExpanded(),
-//          &controlPvId, bar_monitor_control_connect_state, this );
-//         if ( stat != ECA_NORMAL ) {
-//           printf( activeBarClass_str35 );
-//           opStat = 0;
-//         }
-//       }
-
       if ( readExists ) {
-        stat = ca_search_and_connect( readPvExpStr.getExpanded(), &readPvId,
-         bar_monitor_read_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+	readPvId = the_PV_Factory->create( readPvExpStr.getExpanded() );
+	if ( readPvId ) {
+	  readPvId->add_conn_state_callback( bar_monitor_read_connect_state,
+           this );
+	}
+	else {
           printf( activeBarClass_str36 );
           opStat = 0;
         }
       }
 
       if ( nullExists ) {
-        stat = ca_search_and_connect( nullPvExpStr.getExpanded(), &nullPvId,
-         bar_monitor_null_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeBarClass_str37 );
+	nullPvId = the_PV_Factory->create( nullPvExpStr.getExpanded() );
+	if ( nullPvId ) {
+	  nullPvId->add_conn_state_callback( bar_monitor_null_connect_state,
+           this );
+	}
+	else {
+          printf( activeBarClass_str36 );
           opStat = 0;
         }
       }
 
       if ( opStat & 1 ) opComplete = 1;
-
-#endif
 
       return opStat;
 
@@ -2076,33 +2262,35 @@ int activeBarClass::deactivate (
   int pass
 ) {
 
-int stat;
-
   active = 0;
   activeMode = 0;
 
   if ( pass == 1 ) {
 
-  if ( unconnectedTimer ) {
-    XtRemoveTimeOut( unconnectedTimer );
-    unconnectedTimer = 0;
-  }
+    if ( unconnectedTimer ) {
+      XtRemoveTimeOut( unconnectedTimer );
+      unconnectedTimer = 0;
+    }
 
-#ifdef __epics__
+    if ( readExists ) {
+      if ( readPvId ) {
+        readPvId->remove_conn_state_callback( bar_monitor_read_connect_state,
+         this );
+        readPvId->remove_value_callback( bar_readUpdate, this );
+        readPvId->release();
+        readPvId = NULL;
+      }
+    }
 
-  if ( readExists ) {
-    stat = ca_clear_channel( readPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeBarClass_str38 );
-  }
-
-  if ( nullExists ) {
-    stat = ca_clear_channel( nullPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeBarClass_str39 );
-  }
-
-#endif
+    if ( nullExists ) {
+      if ( nullPvId ) {
+        nullPvId->remove_conn_state_callback( bar_monitor_null_connect_state,
+         this );
+        nullPvId->remove_value_callback( bar_nullUpdate, this );
+        nullPvId->release();
+        nullPvId = NULL;
+      }
+    }
 
   }
 
@@ -2277,6 +2465,8 @@ void activeBarClass::btnUp (
   int barNumber )
 {
 
+  if ( !enabled ) return;
+
 }
 
 void activeBarClass::btnDown (
@@ -2286,6 +2476,8 @@ void activeBarClass::btnDown (
   int barNumber )
 {
 
+  if ( !enabled ) return;
+
 }
 
 void activeBarClass::btnDrag (
@@ -2294,6 +2486,8 @@ void activeBarClass::btnDrag (
   int barState,
   int barNumber )
 {
+
+  if ( !enabled ) return;
 
 }
 
@@ -3018,7 +3212,7 @@ int locW, locH;
 
 void activeBarClass::executeDeferred ( void ) {
 
-int stat, l, nc, ni, nr, ne, nd, nfd, ndc;
+int l, nc, ni, nr, ne, nd, nfd, ndc;
 char fmt[31+1], str[31+1];
 double v;
 
@@ -3040,17 +3234,23 @@ double v;
 
 //----------------------------------------------------------------------------
 
-#ifdef __epics__
-
   if ( nc ) {
 
-    stat = ca_get_callback( DBR_GR_DOUBLE, readPvId, bar_infoUpdate,
-     (void *) this );
-    if ( stat != ECA_NORMAL ) {
-      printf( activeBarClass_str40 );
+    v = curReadV = readPvId->get_double();
+
+    if ( limitsFromDb || efReadMin.isNull() ) {
+      readMin = readPvId->get_lower_disp_limit();
     }
 
-    return;
+    if ( limitsFromDb || efReadMax.isNull() ) {
+      readMax = readPvId->get_upper_disp_limit();
+    }
+
+    if ( limitsFromDb || efPrecision.isNull() ) {
+      precision = readPvId->get_precision();
+    }
+
+    ni = 1;
 
   }
 
@@ -3095,45 +3295,27 @@ double v;
     updateDimensions();
     drawActive();
 
-    if ( !readEventId ) {
+    if ( initialReadConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_DOUBLE, 1, readPvId,
-       bar_readUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-       &readEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL )
-        printf( activeBarClass_str41 );
+      initialReadConnection = 0;
 
-    }
-
-    if ( !alarmEventId ) {
-
-      stat = ca_add_masked_array_event( DBR_STS_DOUBLE, 1, readPvId,
-       bar_alarmUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-       &alarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL )
-        printf( activeBarClass_str42 );
+      readPvId->add_value_callback( bar_readUpdate, this );
 
     }
 
     if ( nullExists ) {
 
-      if ( !nullEventId ) {
+      if ( initialNullConnection ) {
 
-        stat = ca_add_masked_array_event( DBR_DOUBLE, 1, nullPvId,
-         bar_nullUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-         &nullEventId, DBE_VALUE );
-        if ( stat != ECA_NORMAL )
-          printf( activeBarClass_str43 );
+        initialNullConnection = 0;
+
+        nullPvId->add_value_callback( bar_nullUpdate, this );
 
       }
 
     }
 
-    return;
-
   }
-
-#endif
 
 //----------------------------------------------------------------------------
 
@@ -3188,12 +3370,16 @@ double v;
 
 char *activeBarClass::firstDragName ( void ) {
 
+  if ( !enabled ) return NULL;
+
   dragIndex = 0;
   return dragName[dragIndex];
 
 }
 
 char *activeBarClass::nextDragName ( void ) {
+
+  if ( !enabled ) return NULL;
 
   if ( dragIndex < (int) ( sizeof(dragName) / sizeof(char *) ) - 1 ) {
     dragIndex++;
@@ -3208,11 +3394,27 @@ char *activeBarClass::nextDragName ( void ) {
 char *activeBarClass::dragValue (
   int i ) {
 
-  if ( !i ) {
-    return readPvExpStr.getExpanded();
+  if ( !enabled ) return NULL;
+
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    if ( !i ) {
+      return readPvExpStr.getExpanded();
+    }
+    else {
+      return nullPvExpStr.getExpanded();
+    }
+
   }
   else {
-    return nullPvExpStr.getExpanded();
+
+    if ( !i ) {
+      return readPvExpStr.getRaw();
+    }
+    else {
+      return nullPvExpStr.getRaw();
+    }
+
   }
 
 }

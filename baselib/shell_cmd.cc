@@ -592,6 +592,58 @@ int shellCmdClass::save (
   FILE *f )
 {
 
+int stat, major, minor, release;
+
+tagClass tag;
+
+int zero = 0;
+double dzero = 0;
+char *emptyStr = "";
+
+  major = SHCMDC_MAJOR_VERSION;
+  minor = SHCMDC_MINOR_VERSION;
+  release = SHCMDC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadW( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadW( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadW( "font", fontTag );
+  tag.loadBoolW( "invisible", &invisible, &zero );
+  tag.loadBoolW( "closeDisplay", &closeAction, &zero );
+  tag.loadW( "buttonLabel", &buttonLabel, emptyStr );
+  tag.loadW( "autoExecPeriod", &autoExecInterval, &dzero );
+  tag.loadW( "initialDelay", &threadSecondsToDelay, &dzero );
+  tag.loadW( "password", pw, emptyStr );
+  tag.loadBoolW( "lock", &lock, &zero );
+  tag.loadBoolW( "multipleInstances", &multipleInstancesAllowed,
+   &zero );
+  tag.loadW( "requiredHostName", requiredHostName, emptyStr );
+  tag.loadW( "numCmds", &numCmds );
+  tag.loadW( "commandLabel", label, numCmds, emptyStr );
+  tag.loadW( "command", shellCommand, numCmds, emptyStr );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int shellCmdClass::old_save (
+  FILE *f )
+{
+
 int i, index;
 float val;
 
@@ -673,6 +725,92 @@ float val;
 }
 
 int shellCmdClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int i, n, stat, major, minor, release;
+
+tagClass tag;
+
+int zero = 0;
+double dzero = 0;
+char *emptyStr = "";
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadR( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadR( "font", 63, fontTag );
+  tag.loadR( "invisible", &invisible, &zero );
+  tag.loadR( "closeDisplay", &closeAction, &zero );
+  tag.loadR( "buttonLabel", &buttonLabel, emptyStr );
+  tag.loadR( "autoExecPeriod", &autoExecInterval, &dzero );
+  tag.loadR( "initialDelay", &threadSecondsToDelay, &dzero );
+  tag.loadR( "password", 31, pw, emptyStr );
+  tag.loadR( "lock", &lock, &zero );
+  tag.loadR( "multipleInstances", &multipleInstancesAllowed, &zero );
+  tag.loadR( "requiredHostName", 15, requiredHostName, emptyStr );
+  tag.loadR( "numCmds", &numCmds, &zero );
+  tag.loadR( "commandLabel", maxCmds, label, &n, emptyStr );
+  tag.loadR( "command", maxCmds, shellCommand, &n, emptyStr );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > SHCMDC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  if ( blank(pw) ) {
+    usePassword = 0;
+  }
+  else {
+    usePassword = 1;
+  }
+
+  for ( i=numCmds; i<maxCmds; i++ ) {
+    shellCommand[i].setRaw( "" );
+    label[i].setRaw( "" );
+  }
+
+  actWin->fi->loadFontTag( fontTag );
+  actWin->drawGc.setFontTag( fontTag, actWin->fi );
+
+  fs = actWin->fi->getXFontStruct( fontTag );
+  actWin->fi->getTextFontList( fontTag, &fontList );
+
+  updateDimensions();
+
+  return stat;
+
+}
+
+int shellCmdClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -1322,7 +1460,7 @@ int shellCmdClass::erase ( void ) {
 
 int shellCmdClass::eraseActive ( void ) {
 
-  if ( !activeMode || invisible ) return 1;
+  if ( !enabled || !activeMode || invisible ) return 1;
 
   XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
    actWin->executeGc.eraseGC(), x, y, w, h );
@@ -1428,7 +1566,7 @@ int tX, tY;
 char string[127+1];
 XRectangle xR = { x, y, w, h };
 
-  if ( !activeMode || invisible ) return 1;
+  if ( !enabled || !activeMode || invisible ) return 1;
 
   actWin->executeGc.saveFg();
 
@@ -1544,6 +1682,8 @@ XmString str;
 
       hostName = getenv( "HOSTNAME" );
       if ( !hostName ) hostName = g_nullHost;
+
+      initEnable();
 
       if ( numCmds == 1 ) {
         cmdIndex = 0;
@@ -1696,6 +1836,7 @@ int i;
 }
 
 void shellCmdClass::btnUp (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,
@@ -1703,19 +1844,13 @@ void shellCmdClass::btnUp (
   int *action )
 {
 
-XButtonEvent be;
-
   *action = 0;
+
+  if ( !enabled ) return;
 
   if ( numCmds < 2 ) return;
 
-  posX = _x;
-  posY = _y;
-
-  memset( (void *) &be, 0, sizeof(XButtonEvent) );
-  be.x_root = actWin->xPos()+_x;
-  be.y_root = actWin->yPos()+_y;
-  XmMenuPosition( popUpMenu, &be );
+  XmMenuPosition( popUpMenu, be );
   XtManageChild( popUpMenu );
 
 }
@@ -1789,6 +1924,7 @@ char buffer[255+1];
 }
 
 void shellCmdClass::btnDown (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,
@@ -1796,12 +1932,17 @@ void shellCmdClass::btnDown (
   int *action )
 {
 
+  if ( !enabled ) {
+    *action = 0;
+    return;
+  }
+
   if ( buttonNumber != 1 ) return;
 
   if ( numCmds < 1 ) return;
 
-  pwFormX = actWin->xPos() + _x; // we may use these later
-  pwFormY = actWin->yPos() + _y;
+  pwFormX = be->x_root; // we may use these later
+  pwFormY = be->y_root;
 
   if ( numCmds == 1 ) {
 

@@ -20,17 +20,7 @@
 #define __pvColor_h 1
 
 #include "color_pkg.h"
-
-#ifdef __epics__
-#include "alarm.h"
-#endif
-
-#ifndef __epics__
-#define NO_ALARM                0x0
-#define MINOR_ALARM             0x1
-#define MAJOR_ALARM             0x2
-#define INVALID_ALARM           0x3
-#endif
+#include "pv_factory.h" // alarm definitions
 
 class pvColorClass {
 

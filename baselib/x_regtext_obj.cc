@@ -79,17 +79,6 @@ void activeXRegTextClass::edit_update (
    &me->fontAscent, &me->fontDescent, &me->fontHeight,
    &me->stringWidth );
 
-  me->stringY = me->y + me->fontAscent;
-
-  me->alignment = me->fm.currentFontAlignment();
-
-  if ( me->alignment == XmALIGNMENT_BEGINNING )
-    me->stringX = me->x;
-  else if ( me->alignment == XmALIGNMENT_CENTER )
-    me->stringX = me->x + me->w/2 - me->stringWidth/2;
-  else if ( me->alignment == XmALIGNMENT_END )
-    me->stringX = me->x + me->w - me->stringWidth;
-
   me->useDisplayBg = me->bufUseDisplayBg;
 
   me->autoSize = me->bufAutoSize;
@@ -106,14 +95,25 @@ void activeXRegTextClass::edit_update (
   me->h = me->bufH;
   me->sboxH = me->bufH;
 
+  me->alignment = me->fm.currentFontAlignment();
+
+  if ( me->alignment == XmALIGNMENT_BEGINNING )
+    me->stringX = me->x;
+  else if ( me->alignment == XmALIGNMENT_CENTER )
+    me->stringX = me->x + me->w/2 - me->stringWidth/2;
+  else if ( me->alignment == XmALIGNMENT_END )
+    me->stringX = me->x + me->w - me->stringWidth;
+
   me->updateDimensions();
 
   if ( me->autoSize && me->fs ) {
-    me->w = XTextWidth( me->fs, me->value.getRaw(), me->stringLength );
-    me->sboxW = me->w;
-    me->h = me->fs->ascent + me->fs->descent;
-    me->sboxH = me->h;
+    me->sboxW = me->w = me->stringBoxWidth;
+    me->sboxH = me->h = me->stringBoxHeight;
   }
+
+  me->stringY = me->y + me->fontAscent + me->h/2 -
+   me->stringBoxHeight/2;
+
 //-----------------------------------
   strncpy( me->regExpStr, me->bufRegExp, 39 );
 //-----------------------------------
@@ -361,6 +361,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   stringWidth = source->stringWidth;
   stringY = source->stringY;
   stringX = source->stringX;
+  stringBoxWidth = source->stringBoxWidth;
+  stringBoxHeight = source->stringBoxHeight;
 
   connection.setMaxPvs( 2 );
 //-------------------------------------
@@ -545,13 +547,126 @@ int activeXRegTextClass::createFromFile (
   activeWindowClass *_actWin )
 {
 
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+int left = XmALIGNMENT_BEGINNING;
+static char *alignEnumStr[3] = {
+  "left",
+  "center",
+  "right"
+};
+static int alignEnum[3] = {
+  XmALIGNMENT_BEGINNING,
+  XmALIGNMENT_CENTER,
+  XmALIGNMENT_END
+};
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "fgAlarm", &fgColorMode, &zero );
+  tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "bgAlarm", &bgColorMode, &zero );
+  tag.loadR( "useDisplayBg", &useDisplayBg, &zero );
+  tag.loadR( "alarmPv", &alarmPvExpStr, emptyStr );
+  tag.loadR( "visPv", &visPvExpStr, emptyStr );
+  tag.loadR( "visInvert", &visInverted, &zero );
+  tag.loadR( "visMin", 39, minVisString, emptyStr );
+  tag.loadR( "visMax", 39, maxVisString, emptyStr );
+  tag.loadR( "value", &value, emptyStr );
+  tag.loadR( "font", 63, fontTag );
+  tag.loadR( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
+  tag.loadR( "autoSize", &autoSize, &zero );
+  tag.loadR( "regExpr", 39, regExpStr, emptyStr );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > AXTC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  if ( fgColorMode )
+    fgColor.setAlarmSensitive();
+  else
+    fgColor.setAlarmInsensitive();
+
+  if ( bgColorMode )
+    bgColor.setAlarmSensitive();
+  else
+    bgColor.setAlarmInsensitive();
+
+  actWin->fi->loadFontTag( fontTag );
+  actWin->drawGc.setFontTag( fontTag, actWin->fi );
+
+  if ( value.getRaw() )
+    stringLength = strlen( value.getRaw() );
+  else
+    stringLength = 0;
+
+  fs = actWin->fi->getXFontStruct( fontTag );
+
+  if ( value.getRaw() )
+    updateFont( value.getRaw(), fontTag, &fs, &fontAscent, &fontDescent,
+     &fontHeight, &stringWidth );
+  else
+    updateFont( " ", fontTag, &fs, &fontAscent, &fontDescent,
+     &fontHeight, &stringWidth );
+
+  updateDimensions();
+
+  stringY = y + fontAscent + h/2 - stringBoxHeight/2;
+
+  if ( alignment == XmALIGNMENT_BEGINNING )
+    stringX = x;
+  else if ( alignment == XmALIGNMENT_CENTER )
+    stringX = x + w/2 - stringWidth/2;
+  else if ( alignment == XmALIGNMENT_END )
+    stringX = x + w - stringWidth;
+
+  return stat;
+
+}
+
+int activeXRegTextClass::old_createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
 char oneValue[255+1];
 int stat = 1;
 
-//  printf("RegText createFromFile\n");
+//  printf("RegText old_createFromFile\n");
 
   this->actWin = _actWin;
 
@@ -967,6 +1082,66 @@ int activeXRegTextClass::save (
   FILE *f )
 {
 
+int stat, major, minor, release;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+int left = XmALIGNMENT_BEGINNING;
+static char *alignEnumStr[3] = {
+  "left",
+  "center",
+  "right"
+};
+static int alignEnum[3] = {
+  XmALIGNMENT_BEGINNING,
+  XmALIGNMENT_CENTER,
+  XmALIGNMENT_END
+};
+
+  major = AXTC_MAJOR_VERSION;
+  minor = AXTC_MINOR_VERSION;
+  release = AXTC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "font", fontTag );
+  tag.loadW( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadBoolW( "fgAlarm", &fgColorMode, &zero );
+  tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadBoolW( "bgAlarm", &bgColorMode, &zero );
+  tag.loadBoolW( "useDisplayBg", &useDisplayBg, &zero );
+  tag.loadW( "alarmPv", &alarmPvExpStr, emptyStr );
+  tag.loadW( "visPv", &visPvExpStr, emptyStr );
+  tag.loadBoolW( "visInvert", &visInverted, &zero );
+  tag.loadW( "visMin", minVisString, emptyStr );
+  tag.loadW( "visMax", maxVisString, emptyStr );
+  tag.loadComplexW( "value", &value, emptyStr );
+  tag.loadBoolW( "autoSize", &autoSize, &zero );
+  tag.loadW( "regExpr", regExpStr, emptyStr );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int activeXRegTextClass::old_save (
+  FILE *f )
+{
+
 int index;
 
   fprintf( f, "%-d %-d %-d\n", AXTC_MAJOR_VERSION, AXTC_MINOR_VERSION,
@@ -1033,12 +1208,11 @@ XRectangle xR = { x, y, w, h };
 int clipStat;
 //    printf("in drawActive\n");
 
-  if ( !activeMode || !visibility ) return 1;
+  if ( !enabled || !activeMode || !visibility ) return 1;
 
   prevVisibility = visibility;
 
   if ( fgVisibility ) {
-
 
     actWin->executeGc.saveFg();
 
@@ -1079,6 +1253,8 @@ int clipStat;
 
   }
 
+  bufInvalid = 0;
+
   return 1;
 
 }
@@ -1118,6 +1294,8 @@ int activeXRegTextClass::eraseUnconditional ( void ) {
 
 XRectangle xR = { x, y, w, h };
 
+  if ( !enabled ) return 1;
+
   actWin->executeGc.addEraseXClipRectangle( xR );
 
   if ( strcmp( fontTag, "" ) != 0 ) {
@@ -1156,7 +1334,7 @@ int activeXRegTextClass::eraseActive ( void ) {
 
 XRectangle xR = { x, y, w, h };
 
-  if ( !activeMode ) return 1;
+  if ( !enabled || !activeMode ) return 1;
 
   if ( prevVisibility == 0 ) {
     prevVisibility = visibility;
@@ -1193,13 +1371,23 @@ XRectangle xR = { x, y, w, h };
 
     if ( visibility && bgVisibility ) {
 
-      actWin->executeGc.setFG( bgColor.getColor() );
-      actWin->executeGc.setBG( bgColor.getColor() );
+      if ( bufInvalid ) {
 
-      XDrawImageStrings( actWin->d, XtWindow(actWin->executeWidget),
-       actWin->executeGc.normGC(), stringX, stringY, fontHeight,
-       text, stringLength );
-//    printf ("eraseActive: !useDisplayBg; text=%s\n", text);
+        XDrawImageStrings( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.eraseGC(), stringX, stringY, fontHeight,
+         text, stringLength );
+
+      }
+      else {
+
+        actWin->executeGc.setFG( bgColor.getColor() );
+        actWin->executeGc.setBG( bgColor.getColor() );
+
+        XDrawImageStrings( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), stringX, stringY, fontHeight,
+         text, stringLength );
+
+      }
 
     }
 
@@ -1290,6 +1478,7 @@ int activeXRegTextClass::activate (
     if ( !opComplete ) {
 
       connection.init();
+      initEnable();
 
       curFgColorIndex = -1;
       curBgColorIndex = -1;
@@ -1301,6 +1490,7 @@ int activeXRegTextClass::activate (
       fgVisibility = 0;
       prevBgVisibility = -1;
       bgVisibility = 0;
+      bufInvalid = 1;
 
       needConnectInit = needAlarmUpdate = needVisUpdate = needRefresh =
         needPropertyUpdate = 0;
@@ -1313,7 +1503,9 @@ int activeXRegTextClass::activate (
       updateFont( text, fontTag, &fs, &fontAscent, &fontDescent,
        &fontHeight, &stringWidth );
 
-      stringY = y + fontAscent;
+      updateDimensions();
+
+      stringY = y + fontAscent + h/2 - stringBoxHeight/2;
 
       if ( alignment == XmALIGNMENT_BEGINNING )
         stringX = x;
@@ -1430,7 +1622,9 @@ int activeXRegTextClass::deactivate (
     updateFont( " ", fontTag, &fs, &fontAscent, &fontDescent,
      &fontHeight, &stringWidth );
 
-  stringY = y + fontAscent;
+  updateDimensions();
+
+  stringY = y + fontAscent + h/2 - stringBoxHeight/2;
 
   if ( alignment == XmALIGNMENT_BEGINNING )
     stringX = x;
@@ -1552,7 +1746,10 @@ XRectangle xR = { x, y, w, h };
 void activeXRegTextClass::updateDimensions ( void )
 {
 
-  stringY = y + fontAscent;
+  getStringBoxSize( value.getRaw(), stringLength, &fs, alignment,
+   &stringBoxWidth, &stringBoxHeight );
+
+  stringY = y + fontAscent + h/2 - stringBoxHeight/2;
 
   if ( alignment == XmALIGNMENT_BEGINNING )
     stringX = x;
@@ -1758,11 +1955,11 @@ pvValType pvV;
     updateFont( value.getRaw(), fontTag, &fs, &fontAscent, &fontDescent,
      &fontHeight, &stringWidth );
 
+    updateDimensions();
+
     if ( autoSize && fs ) {
-      w = XTextWidth( fs, value.getRaw(), stringLength );
-      sboxW = w;
-      h = fs->ascent + fs->descent;
-      sboxH = h;
+      sboxW = w = stringBoxWidth;
+      sboxH = h = stringBoxHeight;
     }
 
     updateDimensions();
@@ -1796,12 +1993,16 @@ int activeXRegTextClass::setProperty (
 
 char *activeXRegTextClass::firstDragName ( void ) {
 
+  if ( !enabled ) return NULL;
+
   dragIndex = 0;
   return dragName[dragIndex];
 
 }
 
 char *activeXRegTextClass::nextDragName ( void ) {
+
+  if ( !enabled ) return NULL;
 
   if ( dragIndex < (int) ( sizeof(dragName) / sizeof(char *) ) - 1 ) {
     dragIndex++;
@@ -1816,15 +2017,36 @@ char *activeXRegTextClass::nextDragName ( void ) {
 char *activeXRegTextClass::dragValue (
   int i ) {
 
-  switch ( i ) {
+  if ( !enabled ) return NULL;
 
-  case 1:
-    return alarmPvExpStr.getExpanded();
-    break;
+  if ( actWin->mode == AWC_EXECUTE ) {
 
-  case 2:
-    return visPvExpStr.getExpanded();
-    break;
+    switch ( i ) {
+
+    case 1:
+      return alarmPvExpStr.getExpanded();
+      break;
+
+    case 2:
+      return visPvExpStr.getExpanded();
+      break;
+
+    }
+
+  }
+  else {
+
+    switch ( i ) {
+
+    case 1:
+      return alarmPvExpStr.getRaw();
+      break;
+
+    case 2:
+      return visPvExpStr.getRaw();
+      break;
+
+    }
 
   }
 
@@ -1970,6 +2192,12 @@ int index, change;
     }
 
   }
+
+}
+
+void activeXRegTextClass::bufInvalidate ( void ) {
+
+  bufInvalid = 1;
 
 }
 

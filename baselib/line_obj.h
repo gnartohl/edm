@@ -22,14 +22,13 @@
 #include "act_grf.h"
 #include "entry_form.h"
 #include "pv_factory.h"
-#include "epics_pv_factory.h"
 #include "cvtFast.h"
 
 #define ALC_K_COLORMODE_STATIC 0
 #define ALC_K_COLORMODE_ALARM 1
 
-#define ALC_MAJOR_VERSION 2
-#define ALC_MINOR_VERSION 2
+#define ALC_MAJOR_VERSION 4
+#define ALC_MINOR_VERSION 0
 #define ALC_RELEASE 0
 
 #ifdef __line_obj_cc
@@ -246,7 +245,15 @@ int createFromFile (
   char *name,
   activeWindowClass *_actWin );
 
+int old_createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin );
+
 int save (
+  FILE *f );
+
+int old_save (
   FILE *f );
 
 int genericEdit ( void );

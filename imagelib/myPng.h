@@ -29,7 +29,7 @@
 // the following defines btnActionListType & btnActionListPtr
 #include "btnActionListType.h"
 
-#define APNGC_MAJOR_VERSION 1
+#define APNGC_MAJOR_VERSION 4
 #define APNGC_MINOR_VERSION 0
 #define APNGC_RELEASE 0
 
@@ -227,7 +227,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );

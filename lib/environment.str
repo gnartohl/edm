@@ -2,7 +2,7 @@
 #define __environment_str 1
 
 
-// global_str90 is last
+// global_str92 is last
 
 
 #define environment_str1 (char *) "EDMDATAFILES"
@@ -46,6 +46,7 @@
 #define global_str79 (char *) "-cmap"
 #define global_str86 (char *) "-restart"
 #define global_str89 (char *) "-one"
+#define global_str91 (char *) "-convert"
 
 // help text (some content must agree with command line options)
 #define global_str24 (char *) "EXECUTION\n"
@@ -65,6 +66,7 @@
 #define global_str77 (char *) "  -color   Set Colormode - index (default) or rgb\n\n"
 #define global_str78 (char *) "  -cmap    Use private colormap if necessary\n\n"
 #define global_str85 (char *) "  -restart Takes pid number, restart from last shutdown\n\n"
+#define global_str92 (char *) "  -convert Convert input file to new version and exit\n\n"
 #define global_str38 (char *) "  -ul      Takes name of user written shareable library\n\n"
 #define global_str39 (char *) "COMPONENT MANAGEMENT\n\n"
 #define global_str40 (char *) "edm (-add|-remove|-show) <component library file pathname>\n\n"

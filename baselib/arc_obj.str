@@ -28,10 +28,8 @@
 #define activeArcClass_str25 (char *) "Not Visible if|Visible if"
 #define activeArcClass_str26 (char *) ">="
 #define activeArcClass_str27 (char *) "and <"
-#define activeArcClass_str28 (char *) "error from ca_search\n"
-#define activeArcClass_str29 (char *) "ca_clear_event failure\n"
-#define activeArcClass_str30 (char *) "ca_clear_channel failure\n"
-#define activeArcClass_str31 (char *) "ca_add_masked_array_event failed\n"
+#define activeArcClass_str28 (char *) "error creating pv\n"
+#define activeArcClass_str29 (char *) "error adding event\n"
 #define activeArcClass_str32 (char *) "import file syntax error"
 
 #endif

@@ -18,7 +18,7 @@
 #include "strip_data.h"
 
 #define STRIP_CLASSNAME "StripClass"
-#define STRIP_MAJOR 3
+#define STRIP_MAJOR 4
 #define STRIP_MINOR 0
 #define STRIP_RELEASE 0
 
@@ -33,7 +33,9 @@ public:
     
     // Load/save
     int save(FILE *f);
+    int old_save(FILE *f);
     int createFromFile(FILE *fptr, char *name, activeWindowClass *actWin);
+    int old_createFromFile(FILE *fptr, char *name, activeWindowClass *actWin);
 
     // Edit Mode
     int createInteractive(activeWindowClass *aw_obj,

@@ -336,6 +336,23 @@ activeWindowClass *awo = (activeWindowClass *) client;
 
 }
 
+static void awc_do_save_new_path_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeWindowClass *awo = (activeWindowClass *) client;
+
+  awo->confirm1.popdown();
+  strncpy( awo->fileName, awo->newPath, 255 );
+  awo->fileName[255] = 0;
+  awo->save( awo->fileName );
+  awo->setTitle();
+  awo->state = awo->savedState;
+
+}
+
 static void awc_continue_cb (
   Widget w,
   XtPointer client,
@@ -2727,11 +2744,10 @@ Atom wm_delete_window;
        XmNpattern, &xmStr1,
        NULL );
 
-      xmStr2 = NULL;
-
       n = 0;
       XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
+      xmStr2 = NULL;
       if ( strcmp( awo->appCtx->curPath, "" ) != 0 ) {
         xmStr2 = XmStringCreateLocalized( awo->appCtx->curPath );
         XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
@@ -2831,6 +2847,32 @@ Atom wm_delete_window;
 
         awo->save( awo->fileName );
 
+      }
+
+      break;
+
+    case AWC_POPUP_SAVE_TO_PATH:
+
+      {
+        char name[255+1], saveMsg[255+1];
+        awo->savedState = awo->state;
+        awo->state = AWC_WAITING;
+        extractName( awo->fileName, name );
+	strncpy( awo->newPath, awo->appCtx->curPath, 255 );
+        awo->newPath[255] = 0;
+        Strncat( awo->newPath, name, 255 );
+        Strncat( awo->newPath, ".edl", 255 );
+        strcpy( saveMsg, activeWindowClass_str197 );
+        Strncat( saveMsg, awo->newPath, 255 );
+        Strncat( saveMsg, "?", 255 );
+        awo->confirm1.create( awo->top, awo->b2PressXRoot, awo->b2PressYRoot,
+         2, saveMsg, NULL, NULL );
+        awo->confirm1.addButton( activeWindowClass_str5, awc_dont_save_cb,
+         (void *) awo );
+        awo->confirm1.addButton( activeWindowClass_str3,
+         awc_do_save_new_path_cb, (void *) awo );
+        awo->confirm1.finished();
+        awo->confirm1.popup();
       }
 
       break;
@@ -3211,6 +3253,68 @@ activeGraphicListPtr cur, curSel, nextSel;
   awo = (activeWindowClass *) block->awo;
 
   switch ( item ) {
+
+    case AWC_POPUP_COPY_GROUP_INFO:
+
+      curSel = awo->selectedHead->selFlink;
+      if ( curSel != awo->selectedHead ) {
+
+        stat = curSel->node->getGroupVisInfo(
+         &awo->appCtx->curGroupVisPvExpStr,
+         &awo->appCtx->curGroupVisInverted, 40,
+         awo->appCtx->curGroupMinVisString,
+         awo->appCtx->curGroupMaxVisString );
+	if ( stat & 1 ) {
+          awo->appCtx->haveGroupVisInfo = 1;
+	  //printf( "pv = [%s]\n", awo->appCtx->curGroupVisPvExpStr.getRaw() );
+	  //printf( "inv = %-d\n", awo->appCtx->curGroupVisInverted );
+	  //printf( "min = [%s]\n", awo->appCtx->curGroupMinVisString );
+	  //printf( "max = [%s]\n", awo->appCtx->curGroupMaxVisString );
+	}
+	else {
+	  XBell( awo->d, 50 );
+	}
+
+      }
+      else {
+
+        printErrMsg( __FILE__, __LINE__, "Inconsistent select state" );
+
+      }
+
+      break;
+
+    case AWC_POPUP_PASTE_GROUP_INFO:
+
+      curSel = awo->selectedHead->selFlink;
+      if ( curSel != awo->selectedHead ) {
+
+        if ( awo->appCtx->haveGroupVisInfo ) {
+
+          stat = curSel->node->putGroupVisInfo(
+           &awo->appCtx->curGroupVisPvExpStr,
+           awo->appCtx->curGroupVisInverted, 40,
+           awo->appCtx->curGroupMinVisString,
+           awo->appCtx->curGroupMaxVisString );
+	  if ( !( stat & 1 ) ) {
+	    XBell( awo->d, 50 );
+	  }
+
+	}
+	else {
+
+          XBell( awo->d, 50 );
+
+        }
+
+      }
+      else {
+
+        printErrMsg( __FILE__, __LINE__, "Inconsistent select state" );
+
+      }
+
+      break;
 
     case AWC_POPUP_DESELECT:
 
@@ -5063,8 +5167,6 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
        &awo->appCtx->entryFormH, &awo->appCtx->largestH,
        activeWindowClass_str44, NULL, NULL, NULL );
 
-      //awo->ef.addTextField( activeWindowClass_str45, 35, awo->bufTitle, 127 );
-
       awo->ef.addFontMenu( activeWindowClass_str46, awo->fi, &awo->defaultFm,
        awo->allSelectedFontTag );
       awo->defaultFm.setFontAlignment( awo->allSelectedAlignment );
@@ -6385,6 +6487,31 @@ unsigned int mask;
             stat = awo->currentPointObject->removeLastPoint();
 
           }
+	  else {
+
+            cur = awo->head->blink;
+            while ( cur != awo->head ) {
+
+              if ( ( be->x > cur->node->getX0() ) &&
+                   ( be->x < cur->node->getX1() ) &&
+                   ( be->y > cur->node->getY0() ) &&
+                   ( be->y < cur->node->getY1() ) ) {
+
+                // only highest object (with a non-blank pv) may participate
+                if ( cur->node->atLeastOneDragPv( be->x, be->y ) ) {
+                  stat = cur->node->startDrag( be, be->x, be->y );
+                  if ( stat ) {
+                    break; // out of while loop
+                  }
+                }
+
+              }
+
+              cur = cur->blink;
+
+            }
+
+	  }
 
 //========== Ctrl B2 Press ===================================
 
@@ -7310,6 +7437,33 @@ unsigned int mask;
         if ( be->state & ShiftMask ) {
 
 //========== Shift B2 Release ===================================
+
+          if ( ( awo->state == AWC_CREATING_POINTS ) ||
+               ( awo->state == AWC_EDITING_POINTS ) ) {
+            // do nothing
+          }
+          else {
+
+            cur = awo->head->blink;
+            while ( cur != awo->head ) {
+
+              if ( ( be->x > cur->node->getX0() ) &&
+                   ( be->x < cur->node->getX1() ) &&
+                   ( be->y > cur->node->getY0() ) &&
+                   ( be->y < cur->node->getY1() ) ) {
+
+                if ( cur->node->atLeastOneDragPv( be->x, be->y ) ) {
+                  cur->node->selectDragValue( be );
+                  break; // out of while loop
+                }
+
+              }
+
+              cur = cur->blink;
+
+            }
+
+          }
 
 //========== Shift B2 Release ===================================
 
@@ -8760,6 +8914,8 @@ btnActionListPtr curBtn;
 int action, foundAction, numOut, numIn, buttonNum;
 activeGraphicListPtr cur;
 activeGraphicClass *ptr;
+Window root, child;
+int rootX, rootY, winX, winY;
 
   awo = (activeWindowClass *) client;
 
@@ -8811,6 +8967,9 @@ activeGraphicClass *ptr;
 
     be = (XButtonEvent *) e;
 
+    XQueryPointer( awo->d, XtWindow(awo->top), &root, &child,
+     &rootX, &rootY, &winX, &winY, &mask );
+
     if ( ( be->button == 2 ) && !( be->state & ShiftMask ) ) {
 
       cur = awo->head->blink;
@@ -8854,7 +9013,7 @@ activeGraphicClass *ptr;
           action = 0;
 
           if ( curBtn->pressed == 0 ) curBtn->pressed = 1;
-          curBtn->node->btnDown( be->x, be->y, be->state, be->button,
+          curBtn->node->btnDown( be, winX, winY, be->state, be->button,
            &action );
 
           if ( action == 1 ) { /* close window */
@@ -8963,6 +9122,9 @@ activeGraphicClass *ptr;
 
     be = (XButtonEvent *) e;
 
+    XQueryPointer( awo->d, XtWindow(awo->top), &root, &child,
+     &rootX, &rootY, &winX, &winY, &mask );
+
     if ( ( be->button == 2 ) && ( be->state & ShiftMask ) ) {
 
       cur = awo->head->blink;
@@ -8976,7 +9138,7 @@ activeGraphicClass *ptr;
           foundAction = 1;
 
           if ( cur->node->atLeastOneDragPv( be->x, be->y ) ) {
-            cur->node->selectDragValue( be->x, be->y );
+            cur->node->selectDragValue( be );
             break; // out of while loop
 	  }
 
@@ -8994,7 +9156,8 @@ activeGraphicClass *ptr;
         if ( curBtn->pressed == 1 ) {
           foundAction = 1;
           curBtn->pressed = 0;
-          curBtn->node->btnUp( be->x, be->y, be->state, be->button, &action );
+          curBtn->node->btnUp( be, winX, winY, be->state, be->button,
+           &action );
           if ( action == 1 ) { /* close window */
             awo->returnToEdit( 1 );
             goto done;
@@ -9059,8 +9222,8 @@ activeGraphicClass *ptr;
 
 //========== B2 Release ===================================
 
-          awo->b2PressX = be->x;
-          awo->b2PressY = be->y;
+          awo->b2PressX = winX;
+          awo->b2PressY = winY;
           awo->b2PressXRoot = be->x_root;
           awo->b2PressYRoot = be->y_root;
 
@@ -9112,6 +9275,9 @@ activeGraphicClass *ptr;
 
     if ( awo->state == AWC_WAITING ) goto done;
 
+    XQueryPointer( awo->d, XtWindow(awo->top), &root, &child,
+     &rootX, &rootY, &winX, &winY, &mask );
+
     me = (XMotionEvent *) e;
 
     if ( ( me->state != 0 ) && !( me->state & Button2Mask ) ) {
@@ -9134,8 +9300,9 @@ activeGraphicClass *ptr;
           else {
             buttonNum = 0;
 	  }
-          if ( buttonNum ) curBtn->node->btnDrag( me->x, me->y,
-           me->state, buttonNum );
+          if ( buttonNum ) {
+            curBtn->node->btnDrag( me, winX, winY, me->state, buttonNum );
+	  }
 
         }
 
@@ -9150,7 +9317,7 @@ activeGraphicClass *ptr;
     curBtn = awo->btnFocusActionHead->blink;
     while ( curBtn != awo->btnFocusActionHead ) {
 
-      curBtn->node->checkMouseOver( me->x, me->y, me->state );
+      curBtn->node->checkMouseOver( me, winX, winY, me->state );
 
       curBtn = curBtn->blink;
 
@@ -9171,7 +9338,7 @@ activeGraphicClass *ptr;
       }
       else {
 
-        awo->highlightedObject->pointerOut( me->x, me->y, me->state );
+        awo->highlightedObject->pointerOut( me, winX, winY, me->state );
         awo->highlightedObject = NULL;
         numOut++;
         foundAction = 1;
@@ -9188,7 +9355,7 @@ activeGraphicClass *ptr;
 
         ptr = curBtn->node->enclosingObject( me->x, me->y );
         if ( ptr ) {
-          ptr->pointerIn( me->x, me->y, me->state );
+          ptr->pointerIn( me, winX, winY, me->state );
           awo->highlightedObject = ptr;
           numIn++;
           foundAction = 1;
@@ -9489,6 +9656,10 @@ activeWindowClass::activeWindowClass ( void ) {
 
   loadFailure = 0;
 
+  haveComments = 0;
+  strcpy( fileNameAndRev, "" );
+  strcpy( fileRev, "" );
+
   mode = AWC_EDIT;
 
 }
@@ -9567,6 +9738,7 @@ int activeWindowClass::pushVersion ( void ) {
   versionStack[versionStackPtr][0] = major;
   versionStack[versionStackPtr][1] = minor;
   versionStack[versionStackPtr][2] = release;
+  versionStack[versionStackPtr][3] = haveComments;
 
   versionStackPtr++;
 
@@ -9583,6 +9755,7 @@ int activeWindowClass::popVersion ( void ) {
   major = versionStack[versionStackPtr][0];
   minor = versionStack[versionStackPtr][1];
   release = versionStack[versionStackPtr][2];
+  haveComments = versionStack[versionStackPtr][3];
 
   return 1;
 
@@ -9811,13 +9984,21 @@ XTextProperty xtext;
 char *cptr;
 char *none = activeWindowClass_str83;
 
+  strncpy( fileNameAndRev, fileName, 255 );
+  fileNameAndRev[255] = 0;
+  if ( !blank(fileRev) ) {
+    Strncat( fileNameAndRev, " (", 287 );
+    Strncat( fileNameAndRev, fileRev, 287 );
+    Strncat( fileNameAndRev, ")", 287 );
+  }
+
   if ( showName || ( mode == AWC_EDIT ) ) {
 
     if ( strcmp( fileName, "" ) == 0 ) {
       cptr = none;
     }
     else {
-      cptr = fileName;
+      cptr = fileNameAndRev;
     }
 
   }
@@ -9828,7 +10009,7 @@ char *none = activeWindowClass_str83;
         cptr = none;
       }
       else {
-        cptr = fileName;
+        cptr = fileNameAndRev;
       }
     }
     else if ( strcmp( expStrTitle.getExpanded(), "" ) == 0 ) {
@@ -9836,7 +10017,7 @@ char *none = activeWindowClass_str83;
         cptr = none;
       }
       else {
-        cptr = fileName;
+        cptr = fileNameAndRev;
       }
     }
     else {
@@ -9859,12 +10040,20 @@ XTextProperty xtext;
 char *cptr;
 char *none = activeWindowClass_str83;
 
-  if (  !expStrTitle.getExpanded() ) {
+  strncpy( fileNameAndRev, fileName, 255 );
+  fileNameAndRev[255] = 0;
+  if ( !blank(fileRev) ) {
+    Strncat( fileNameAndRev, " (", 287 );
+    Strncat( fileNameAndRev, fileRev, 287 );
+    Strncat( fileNameAndRev, ")", 287 );
+  }
+
+  if ( !expStrTitle.getExpanded() ) {
     if ( strcmp( fileName, "" ) == 0 ) {
       cptr = none;
     }
     else {
-      cptr = fileName;
+      cptr = fileNameAndRev;
     }
   }
   else if ( strcmp( expStrTitle.getExpanded(), "" ) == 0 ) {
@@ -9872,7 +10061,7 @@ char *none = activeWindowClass_str83;
       cptr = none;
     }
     else {
-      cptr = fileName;
+      cptr = fileNameAndRev;
     }
   }
   else {
@@ -10299,6 +10488,7 @@ char tmp[10];
      d,
      XmNmappedWhenManaged, False,
      XmNmwmDecorations, windowDecorations,
+     XmNresizePolicy, XmRESIZE_GROW,
      NULL );
 
     drawWidget = XtVaCreateManagedWidget( "", xmDrawingAreaWidgetClass,
@@ -10306,6 +10496,7 @@ char tmp[10];
      XmNwidth, w,
      XmNheight, h,
      XmNmappedWhenManaged, False,
+     XmNresizePolicy, XmRESIZE_GROW,
      NULL );
 
   }
@@ -10313,13 +10504,14 @@ char tmp[10];
 
     top = parent;
 
-    drawWidget = XtVaCreateManagedWidget( "", xmDrawingAreaWidgetClass,
+    drawWidget = XtVaCreateWidget( "", xmDrawingAreaWidgetClass,
      top,
      XmNx, x,
      XmNy, y,
      XmNwidth, w,
      XmNheight, h,
      XmNmappedWhenManaged, False,
+     XmNresizePolicy, XmRESIZE_GROW,
      NULL );
 
   }
@@ -10353,7 +10545,27 @@ char tmp[10];
 
 }
 
+void activeWindowClass::map ( void ) {
+
+  XtMapWidget( drawWidget );
+  if ( isEmbedded ) XtMapWidget( top );
+
+}
+
 void activeWindowClass::realize ( void ) {
+
+  realize ( (int) 1 );
+
+}
+
+void activeWindowClass::realizeNoMap ( void ) {
+
+  realize ( (int) 0 );
+
+}
+
+void activeWindowClass::realize (
+  int doMap ) {
 
 XmString str;
 Widget pb;
@@ -10363,9 +10575,14 @@ popupBlockListPtr curBlockListNode;
 int i, n;
 Arg args[3];
 
+  XtManageChild( drawWidget );
+  if ( isEmbedded ) XtManageChild( top );
   XtRealizeWidget( top );
   XSetWindowColormap( d, XtWindow(top), appCtx->ci.getColorMap() );
-  XtMapWidget( drawWidget );
+  if ( doMap ) {
+    XtMapWidget( drawWidget );
+    if ( isEmbedded ) XtMapWidget( top );
+  }
   setTitle();
 
   // create drawing popup menus
@@ -10674,6 +10891,29 @@ Arg args[3];
   curBlockListNode = new popupBlockListType;
   curBlockListNode->block.w = pb;
   curBlockListNode->block.ptr = (void *) AWC_POPUP_SAVE;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
+
+  str = XmStringCreateLocalized( activeWindowClass_str196 );
+
+  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   b2NoneSelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_SAVE_TO_PATH;
   curBlockListNode->block.awo = this;
 
   curBlockListNode->blink = popupBlockHead->blink;
@@ -11269,6 +11509,76 @@ Arg args[3];
 
   XtAddCallback( pb, XmNactivateCallback, b2ReleaseOneSelect_cb,
    (XtPointer) &curBlockListNode->block );
+
+
+
+
+
+
+
+
+
+  str = XmStringCreateLocalized( activeWindowClass_str194 );
+
+  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   b2OneSelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_COPY_GROUP_INFO;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseOneSelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
+
+
+
+
+
+  str = XmStringCreateLocalized( activeWindowClass_str195 );
+
+  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   b2OneSelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_PASTE_GROUP_INFO;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseOneSelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   orientPd1 = XmCreatePulldownMenu( b2OneSelectPopup, "", NULL, 0 );
@@ -12922,7 +13232,7 @@ int stat;
 
 }
 
-int activeWindowClass::genericSave (
+int activeWindowClass::old_genericSave (
   char *fName,
   int resetChangeFlag,
   int appendExtensionFlag,
@@ -12988,7 +13298,7 @@ int stat;
     return 0;
   }
 
-  this->saveWin( f );
+  this->old_saveWin( f );
   fprintf( f, "<<<E~O~D>>>\n" );
 
   cur = head->flink;
@@ -13001,7 +13311,7 @@ int stat;
         fprintf( f, "%s:%s\n", cur->node->objName(),
          cur->node->getCreateParam() );
       }
-      cur->node->save( f );
+      cur->node->old_save( f );
       fprintf( f, "<<<E~O~D>>>\n" );
     }
     cur = cur->flink;
@@ -13015,172 +13325,123 @@ int stat;
 
 }
 
-int activeWindowClass::loadCascade ( void ) {
+int activeWindowClass::genericSave (
+  char *fName,
+  int resetChangeFlag,
+  int appendExtensionFlag,
+  int backupFlag ) {
 
 FILE *f;
-activeWindowListPtr curWin;
-activeGraphicListPtr cur, next;
-char *gotOne, name[63+1];
-int stat, l, goodXY, n, maxX, maxY;
+char *gotOne, oneFileName[255+1], fullName[255+1], *description;
+activeGraphicListPtr cur;
 char msg[79+1];
-Arg args[5];
+int stat;
 
-  loadFailure = 1;
-
-  initLine();
-
-  // empty main list
-  cur = head->flink;
-  while ( cur != head ) {
-    next = cur->flink;
-    delete cur->node;
-    delete cur;
-    cur = next;
+  if ( resetChangeFlag ) { // this is a save initiated by the user
+    if ( restoreTimer ) { // title hold the string "Auto Save"
+      XtRemoveTimeOut( restoreTimer );
+      restoreTimer = 0;
+      if ( strcmp( title, activeWindowClass_str153 ) == 0 ) {
+        strcpy( title, restoreTitle );
+        setTitle();
+        XFlush( d );
+      }
+    }
   }
 
-  head->flink = head;
-  head->blink = head;
+  gotOne = strstr( fName, "/" );
 
-  // empty cut list
-  cur = cutHead->flink;
-  while ( cur != cutHead ) {
-    next = cur->flink;
-    delete cur->node;
-    delete cur;
-    cur = next;
+  if ( gotOne ) {
+    strncpy( oneFileName, fName, 255 );
+  }
+  else {
+    strncpy( oneFileName, appCtx->curPath, 255 );
+    Strncat( oneFileName, fName, 255 );
   }
 
-  cutHead->flink = cutHead;
-  cutHead->blink = cutHead;
+  if ( appendExtensionFlag ) {
 
-  // set select list empty
+    if ( strlen(oneFileName) > strlen(".edl") ) {
+      if (
+       strcmp( &oneFileName[strlen(oneFileName)-strlen(".edl")], ".edl" ) !=
+       0 ) {
+        Strncat( oneFileName, ".edl", 255 );
+      }
+    }
+    else {
+      Strncat( oneFileName, ".edl", 255 );
+    }
 
-  selectedHead->selFlink = selectedHead;
-  selectedHead->selBlink = selectedHead;
+  }
 
-  // read in file
-  f = this->openAny( this->fileName, "r" );
+  if ( backupFlag ) {
+
+    stat = renameToBackupFile( oneFileName );
+    if ( !( stat & 1 ) ) {
+      sprintf( msg, activeWindowClass_str154, oneFileName );
+      appCtx->postMessage( msg );
+    }
+
+  }
+
+  f = fopen( oneFileName, "w" );
   if ( !f ) {
-    sprintf( msg, activeWindowClass_str156, this->fileName );
+    sprintf( msg, activeWindowClass_str155, oneFileName );
     appCtx->postMessage( msg );
     return 0;
   }
 
-  this->setUnchanged();
+  this->saveWin( f );
 
-  stat = this->loadWin( f );
-  if ( !( stat & 1 ) ) return stat; // memory leak here
-
-  stat = readUntilEndOfData( f ); // for forward compatibility
-  if ( !( stat & 1 ) ) return stat; // memory leak here
-
-  maxX = XDisplayWidth( d, DefaultScreen(d) ) - 20;
-  maxY = XDisplayHeight( d, DefaultScreen(d) ) - 20;
-
-  do {
-
-    goodXY = 1;
-
-    curWin = appCtx->head->flink;
-    while ( curWin != appCtx->head ) {
-      if ( this != &curWin->node ) {
-        if ( strcmp( this->displayName, curWin->node.displayName ) == 0 ) {
-          if ( ( x == curWin->node.x ) && ( y == curWin->node.y ) ) {
-            x += 20;
-            if ( x > maxX ) x = 20;
-            y += 20;
-            if ( y > maxY ) y = 20;
-            goodXY = 0;
-	  }
-        }
-      }
-      curWin = curWin->flink;
-    }
-
-  } while ( !goodXY );
-
-  n = 0;
-  XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
-  XtSetArg( args[n], XmNy, (XtArgVal) y ); n++;
-  XtSetValues( this->drawWidget, args, n );
-  
-  while ( !feof(f) ) {
-
-    gotOne = fgets( name, 63, f ); incLine();
-
-    if ( gotOne ) {
-
-      l = strlen(name);
-      if ( l > 63 ) l = 63;
-      name[l-1] = 0;  // discard \n
-
-      cur = new activeGraphicListType;
-      if ( !cur ) {
-        fclose( f );
-        appCtx->postMessage(
-         activeWindowClass_str157 );
-        return 0;
-      }
-      cur->defExeFlink = NULL;
-      cur->defExeBlink = NULL;
-
-      cur->node = obj.createNew( name );
-
-      if ( cur->node ) {
-
-        stat = cur->node->createFromFile( f, name, this );
-        if ( !( stat & 1 ) ) return stat; // memory leak here
-
-        stat = readUntilEndOfData( f ); // for forward compatibility
-        if ( !( stat & 1 ) ) return stat; // memory leak here
-
-        cur->blink = head->blink;
-        head->blink->flink = cur;
-        head->blink = cur;
-        cur->flink = head;
-
+  cur = head->flink;
+  while ( cur != head ) {
+    if ( !cur->node->deleteRequest ) {
+      if ( strcmp( cur->node->getCreateParam(), "" ) == 0 ) {
+        strncpy( fullName, cur->node->objName(), 255 );
+        description = obj.getNameFromClass( fullName );
+        fprintf( f, "# (%s)\n", description );
+        fprintf( f, "object %s\n", cur->node->objName() );
       }
       else {
-        fclose( f );
-        sprintf( msg, activeWindowClass_str158, line(),
-         name );
-        appCtx->postMessage( msg );
-        return 0;
+        strncpy( fullName, cur->node->objName(), 255 );
+        Strncat( fullName, ":", 255 );
+        Strncat( fullName, cur->node->getCreateParam(), 255 );
+        description = obj.getNameFromClass( fullName );
+        if ( !description ) {
+          strcpy( description, "Unknown object" );
+	}
+        fprintf( f, "# (%s)\n", description );
+        fprintf( f, "object %s:%s\n", cur->node->objName(),
+         cur->node->getCreateParam() );
+
+        Strncat( fullName, cur->node->getCreateParam(), 255 );
+
       }
-
+      cur->node->save( f );
     }
-
+    cur = cur->flink;
   }
 
   fclose( f );
 
-  showName = 0;
-
-  setTitle();
-
-  exit_after_save = 0;
-
-  loadFailure = 0;
+  if ( resetChangeFlag ) this->setUnchanged();
 
   return 1;
 
 }
 
-int activeWindowClass::loadCascade (
+int activeWindowClass::old_loadGeneric (
   int x,
-  int y ) {
+  int y,
+  int setPosition ) {
 
 FILE *f;
-activeWindowListPtr curWin;
 activeGraphicListPtr cur, next;
 char *gotOne, name[63+1];
-int stat, l, goodXY, n, maxX, maxY;
+int stat, l;
 char msg[79+1];
-Arg args[5];
 
   loadFailure = 1;
-
-  initLine();
 
   // empty main list
   cur = head->flink;
@@ -13221,41 +13482,16 @@ Arg args[5];
 
   this->setUnchanged();
 
-  stat = this->loadWin( f, x, y );
+  if ( setPosition ) {
+    stat = this->old_loadWin( f, x, y );
+  }
+  else {
+    stat = this->old_loadWin( f );
+  }
   if ( !( stat & 1 ) ) return stat; // memory leak here
 
   stat = readUntilEndOfData( f ); // for forward compatibility
   if ( !( stat & 1 ) ) return stat; // memory leak here
-
-  maxX = XDisplayWidth( d, DefaultScreen(d) ) - 20;
-  maxY = XDisplayHeight( d, DefaultScreen(d) ) - 20;
-
-  do {
-
-    goodXY = 1;
-
-    curWin = appCtx->head->flink;
-    while ( curWin != appCtx->head ) {
-      if ( this != &curWin->node ) {
-        if ( strcmp( this->displayName, curWin->node.displayName ) == 0 ) {
-          if ( ( x == curWin->node.x ) && ( y == curWin->node.y ) ) {
-            x += 20;
-            if ( x > maxX ) x = 20;
-            y += 20;
-            if ( y > maxY ) y = 20;
-            goodXY = 0;
-	  }
-        }
-      }
-      curWin = curWin->flink;
-    }
-
-  } while ( !goodXY );
-
-  n = 0;
-  XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
-  XtSetArg( args[n], XmNy, (XtArgVal) y ); n++;
-  XtSetValues( this->drawWidget, args, n );
 
   while ( !feof(f) ) {
 
@@ -13270,8 +13506,7 @@ Arg args[5];
       cur = new activeGraphicListType;
       if ( !cur ) {
         fclose( f );
-        appCtx->postMessage(
-         activeWindowClass_str157 );
+        appCtx->postMessage( activeWindowClass_str157 );
         return 0;
       }
       cur->defExeFlink = NULL;
@@ -13281,7 +13516,8 @@ Arg args[5];
 
       if ( cur->node ) {
 
-        stat = cur->node->createFromFile( f, name, this );
+	printf( "call old_createFromFile\n" );
+        stat = cur->node->old_createFromFile( f, name, this );
         if ( !( stat & 1 ) ) return stat; // memory leak here
 
         stat = readUntilEndOfData( f ); // for forward compatibility
@@ -13319,17 +13555,37 @@ Arg args[5];
 
 }
 
-int activeWindowClass::load ( void ) {
+int activeWindowClass::old_load ( void ) {
+
+  return old_loadGeneric( 0, 0, 0 );
+
+}
+
+int activeWindowClass::old_load (
+  int x,
+  int y ) {
+
+  return old_loadGeneric( x, y, 1 );
+
+}
+
+int activeWindowClass::loadGeneric (
+  int x,
+  int y,
+  int setPosition ) {
 
 FILE *f;
 activeGraphicListPtr cur, next;
-char *gotOne, name[63+1];
+char *gotOne, name[63+1], tagName[255+1], objName[63+1], val[4095+1];
 int stat, l;
 char msg[79+1];
 
+int isCompound;
+tagClass tag;
+
   loadFailure = 1;
 
-  initLine();
+  tag.initLine();
 
   // empty main list
   cur = head->flink;
@@ -13370,53 +13626,145 @@ char msg[79+1];
 
   this->setUnchanged();
 
-  stat = this->loadWin( f );
-  if ( !( stat & 1 ) ) return stat; // memory leak here
+  readCommentsAndVersion( f );
 
-  stat = readUntilEndOfData( f ); // for forward compatibility
-  if ( !( stat & 1 ) ) return stat; // memory leak here
+  if ( major > AWC_MAJOR_VERSION ) {
+    appCtx->postMessage( activeWindowClass_str191 );
+    return 0;
+  }
 
-  while ( !feof(f) ) {
+  if ( major < 4 ) {
 
-    gotOne = fgets( name, 63, f ); incLine();
+    if ( setPosition ) {
+      stat = this->old_loadWin( f, x, y );
+    }
+    else {
+      stat = this->old_loadWin( f );
+    }
+    if ( !( stat & 1 ) ) return stat; // memory leak here
 
-    if ( gotOne ) {
+    stat = readUntilEndOfData( f ); // for forward compatibility
+    if ( !( stat & 1 ) ) return stat; // memory leak here
 
-      l = strlen(name);
-      if ( l > 63 ) l = 63;
-      name[l-1] = 0;  // discard \n
+    while ( !feof(f) ) {
 
-      cur = new activeGraphicListType;
-      if ( !cur ) {
-        fclose( f );
-        appCtx->postMessage( activeWindowClass_str157 );
-        return 0;
+      gotOne = fgets( name, 63, f ); incLine();
+
+      if ( gotOne ) {
+
+        l = strlen(name);
+        if ( l > 63 ) l = 63;
+        name[l-1] = 0;  // discard \n
+
+        cur = new activeGraphicListType;
+        if ( !cur ) {
+          fclose( f );
+          appCtx->postMessage( activeWindowClass_str157 );
+          return 0;
+        }
+        cur->defExeFlink = NULL;
+        cur->defExeBlink = NULL;
+
+        cur->node = obj.createNew( name );
+
+        if ( cur->node ) {
+
+          stat = cur->node->old_createFromFile( f, name, this );
+          if ( !( stat & 1 ) ) return stat; // memory leak here
+
+          stat = readUntilEndOfData( f ); // for forward compatibility
+          if ( !( stat & 1 ) ) return stat; // memory leak here
+
+          cur->blink = head->blink;
+          head->blink->flink = cur;
+          head->blink = cur;
+          cur->flink = head;
+
+        }
+        else {
+          fclose( f );
+          sprintf( msg, activeWindowClass_str158, line(),
+           name );
+          appCtx->postMessage( msg );
+          return 0;
+        }
+
       }
-      cur->defExeFlink = NULL;
-      cur->defExeBlink = NULL;
 
-      cur->node = obj.createNew( name );
+    }
 
-      if ( cur->node ) {
+  }
+  else {
 
-        stat = cur->node->createFromFile( f, name, this );
-        if ( !( stat & 1 ) ) return stat; // memory leak here
+    if ( setPosition ) {
+      stat = this->loadWin( f, x, y );
+    }
+    else {
+      stat = this->loadWin( f );
+    }
+    if ( !( stat & 1 ) ) return stat; // memory leak here
 
-        stat = readUntilEndOfData( f ); // for forward compatibility
-        if ( !( stat & 1 ) ) return stat; // memory leak here
+    // read file and process each "object" tag
+    tag.init();
+    tag.loadR( "object", 63, objName );
 
-        cur->blink = head->blink;
-        head->blink->flink = cur;
-        head->blink = cur;
-        cur->flink = head;
+    gotOne = tag.getName( tagName, 255, f );
+
+    while ( gotOne ) {
+
+      //printf( "name = [%s]\n", tagName );
+
+      if ( strcmp( tagName, "object" ) == 0 ) {
+
+        tag.getValue( val, 4095, f, &isCompound );
+        tag.decode( tagName, val, isCompound );
+
+        // ==============================================================
+        // Create object
+
+        //printf( "objName = [%s]\n", objName );
+
+        cur = new activeGraphicListType;
+        if ( !cur ) {
+          fclose( f );
+          appCtx->postMessage(
+           activeWindowClass_str157 );
+          return 0;
+        }
+        cur->defExeFlink = NULL;
+        cur->defExeBlink = NULL;
+
+        cur->node = obj.createNew( objName );
+
+        if ( cur->node ) {
+
+          stat = cur->node->createFromFile( f, objName, this );
+          if ( !( stat & 1 ) ) return stat; // memory leak here
+
+          cur->blink = head->blink;
+          head->blink->flink = cur;
+          head->blink = cur;
+          cur->flink = head;
+
+        }
+        else {
+          fclose( f );
+          sprintf( msg, activeWindowClass_str158, line(),
+           objName );
+          appCtx->postMessage( msg );
+          return 0;
+        }
+
+        // ===================================
+
+        gotOne = tag.getName( tagName, 255, f );
 
       }
       else {
-        fclose( f );
-        sprintf( msg, activeWindowClass_str158, line(),
-         name );
-        appCtx->postMessage( msg );
-        return 0;
+
+        printf( "Got Junk\n" );
+        gotOne = NULL;
+
       }
 
     }
@@ -13436,124 +13784,18 @@ char msg[79+1];
   return 1;
 
 }
-
+
+int activeWindowClass::load ( void ) {
+
+  return loadGeneric( 0, 0, 0 );
+
+}
+
 int activeWindowClass::load (
   int x,
   int y ) {
 
-FILE *f;
-activeGraphicListPtr cur, next;
-char *gotOne, name[63+1];
-int stat, l;
-char msg[79+1];
-
-  loadFailure = 1;
-
-  initLine();
-
-  // empty main list
-  cur = head->flink;
-  while ( cur != head ) {
-    next = cur->flink;
-    delete cur->node;
-    delete cur;
-    cur = next;
-  }
-
-  head->flink = head;
-  head->blink = head;
-
-  // empty cut list
-  cur = cutHead->flink;
-  while ( cur != cutHead ) {
-    next = cur->flink;
-    delete cur->node;
-    delete cur;
-    cur = next;
-  }
-
-  cutHead->flink = cutHead;
-  cutHead->blink = cutHead;
-
-  // set select list empty
-
-  selectedHead->selFlink = selectedHead;
-  selectedHead->selBlink = selectedHead;
-
-  // read in file
-  f = openAny( this->fileName, "r" );
-  if ( !f ) {
-    sprintf( msg, activeWindowClass_str156, this->fileName );
-    appCtx->postMessage( msg );
-    return 0;
-  }
-
-  this->setUnchanged();
-
-  stat = this->loadWin( f, x, y );
-  if ( !( stat & 1 ) ) return stat; // memory leak here
-
-  stat = readUntilEndOfData( f ); // for forward compatibility
-  if ( !( stat & 1 ) ) return stat; // memory leak here
-
-  while ( !feof(f) ) {
-
-    gotOne = fgets( name, 63, f ); incLine();
-
-    if ( gotOne ) {
-
-      l = strlen(name);
-      if ( l > 63 ) l = 63;
-      name[l-1] = 0;  // discard \n
-
-      cur = new activeGraphicListType;
-      if ( !cur ) {
-        fclose( f );
-        appCtx->postMessage( activeWindowClass_str157 );
-        return 0;
-      }
-      cur->defExeFlink = NULL;
-      cur->defExeBlink = NULL;
-
-      cur->node = obj.createNew( name );
-
-      if ( cur->node ) {
-
-        stat = cur->node->createFromFile( f, name, this );
-        if ( !( stat & 1 ) ) return stat; // memory leak here
-
-        stat = readUntilEndOfData( f ); // for forward compatibility
-        if ( !( stat & 1 ) ) return stat; // memory leak here
-
-        cur->blink = head->blink;
-        head->blink->flink = cur;
-        head->blink = cur;
-        cur->flink = head;
-
-      }
-      else {
-        fclose( f );
-        sprintf( msg, activeWindowClass_str158, line(),
-         name );
-        appCtx->postMessage( msg );
-        return 0;
-      }
-
-    }
-
-  }
-
-  fclose( f );
-
-  showName = 0;
-
-  setTitle();
-
-  exit_after_save = 0;
-
-  loadFailure = 0;
-
-  return 1;
+  return loadGeneric( x, y, 1 );
 
 }
 
@@ -13794,6 +14036,7 @@ btnActionListPtr curBtn;
       while ( cur != head ) {
 
         if ( cur->node->isMux() ) {
+          cur->node->initEnable();
           stat = cur->node->activate( pass, (void *) cur );
           if ( !( stat & 1 ) ) opStat = stat;
         }
@@ -14028,12 +14271,13 @@ char callbackName[63+1];
       while ( cur != head ) {
 
         if ( !cur->node->isMux() ) {
+          cur->node->initEnable();
           stat = cur->node->activate( pass, (void *) cur, &numSubObjects );
           if ( !( stat & 1 ) ) opStat = stat;
           cnt += numSubObjects;
           if ( cnt >= NUM_PER_PENDIO ) {
-            ca_pend_io( 5.0 );
-            ca_pend_event( 0.01 );
+            pend_io( 5.0 );
+            pend_event( 0.01 );
             //processAllEvents( appCtx->appContext(), d );
             cnt = 0;
 	  }
@@ -14206,12 +14450,13 @@ char **muxMacro, **muxExpansion;
       while ( cur != head ) {
 
         if ( !cur->node->isMux() && cur->node->containsMacros() ) {
-          stat = cur->node->activate( pass, (void *) cur, &numSubObjects );
+          cur->node->initEnable();
+          stat = cur->node->reactivate( pass, (void *) cur, &numSubObjects );
           if ( !( stat & 1 ) ) opStat = stat;
           cnt += numSubObjects;
           if ( cnt >= NUM_PER_PENDIO ) {
-            ca_pend_io( 5.0 );
-            ca_pend_event( 0.01 );
+            pend_io( 5.0 );
+            pend_event( 0.01 );
             //processAllEvents( appCtx->appContext(), d );
             cnt = 0;
 	  }
@@ -14318,8 +14563,8 @@ char callbackName[63+1];
 
     cnt += numSubObjects;
     if ( cnt >= NUM_PER_PENDIO ) {
-      ca_pend_io( 5.0 );
-      ca_pend_event( 0.01 );
+      pend_io( 5.0 );
+      pend_event( 0.01 );
       //processAllEvents( appCtx->appContext(), d );
       cnt = 0;
     }
@@ -14442,8 +14687,8 @@ int numSubObjects, cnt;
       cur->node->preReactivate( 2, &numSubObjects);
       cnt += numSubObjects;
       if ( cnt >= NUM_PER_PENDIO ) {
-        ca_pend_io( 5.0 );
-        ca_pend_event( 0.01 );
+        pend_io( 5.0 );
+        pend_event( 0.01 );
         //processAllEvents( appCtx->appContext(), d );
         cnt = 0;
       }
@@ -14566,7 +14811,7 @@ activeGraphicListPtr cur;
 
 }
 
-int activeWindowClass::saveWin (
+int activeWindowClass::old_saveWin (
   FILE *f ) {
 
 int stat, index;
@@ -14691,13 +14936,118 @@ int r, g, b;
 
 }
 
-void activeWindowClass::readCommentsAndVersion (
-  FILE *f
+int activeWindowClass::saveWin (
+  FILE *f ) {
+
+int stat;
+commentLinesPtr commentCur;
+tagClass tag;
+
+static int zero = 0;
+static int ten = 10;
+
+static int left = XmALIGNMENT_BEGINNING;
+static char *emptyStr = "";
+static char *alignEnumStr[3] = {
+  "left",
+  "center",
+  "right"
+};
+static int alignEnum[3] = {
+  XmALIGNMENT_BEGINNING,
+  XmALIGNMENT_CENTER,
+  XmALIGNMENT_END
+};
+
+char *commentFile;
+FILE *cf;
+char str[255+1], *strPtr;
+
+  if ( !haveComments ) {
+    commentFile = getenv( "EDMCOMMENTS" );
+    if ( commentFile ) {
+      cf = fopen( commentFile, "r" );
+      if ( cf ) {
+        fprintf( f, "# <<<edm-generated-comments>>>\n" );
+        fprintf( f, "#\n" );
+        do {
+          strPtr = fgets( str, 255, cf );
+          str[255] = 0;
+          if ( strPtr ) fprintf( f, "%s", str );
+          if ( !strstr( str, "\n" ) ) fprintf( f, "\n" );
+        } while ( strPtr );
+        fclose( cf );
+      }
+    }
+  }
+
+  commentCur = commentHead->flink;
+  while ( commentCur ) {
+    if ( commentCur->line ) fprintf( f, "%s", commentCur->line );
+    commentCur = commentCur->flink;
+  }
+
+  fprintf( f, "%-d %-d %-d\n", AWC_MAJOR_VERSION, AWC_MINOR_VERSION,
+   AWC_RELEASE );
+
+  major = AWC_MAJOR_VERSION;
+  minor = AWC_MINOR_VERSION;
+  release = AWC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginScreenProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "font", defaultFontTag );
+  tag.loadW( "fontAlign", 3, alignEnumStr, alignEnum,
+   &defaultAlignment, &left );
+  tag.loadW( "ctlFont", defaultCtlFontTag );
+  tag.loadW( "ctlFontAlign", 3, alignEnumStr, alignEnum,
+   &defaultCtlAlignment, &left );
+  tag.loadW( "btnFont", defaultBtnFontTag );
+  tag.loadW( "btnFontAlign", 3, alignEnumStr, alignEnum,
+   &defaultBtnAlignment, &left );
+  tag.loadW( "fgColor", &appCtx->ci, &fgColor );
+  tag.loadW( "bgColor", &appCtx->ci, &bgColor );
+  tag.loadW( "textColor", &appCtx->ci, &defaultTextFgColor );
+  tag.loadW( "ctlFgColor1", &appCtx->ci, &defaultFg1Color );
+  tag.loadW( "ctlFgColor2", &appCtx->ci, &defaultFg2Color );
+  tag.loadW( "ctlBgColor1", &appCtx->ci, &defaultBgColor );
+  tag.loadW( "ctlBgColor2", &appCtx->ci, &defaultOffsetColor );
+  tag.loadW( "topShadowColor", &appCtx->ci, &defaultTopShadowColor );
+  tag.loadW( "botShadowColor", &appCtx->ci, &defaultBotShadowColor );
+  tag.loadW( "title", title, emptyStr );
+  tag.loadBoolW( "showGrid", &gridShow, &zero );
+  tag.loadBoolW( "snapToGrid", &gridActive, &zero );
+  tag.loadW( "gridSize", &gridSpacing, &ten );
+  tag.loadBoolW( "orthoLineDraw", &orthogonal, &zero );
+  tag.loadW( "pvType", defaultPvType, emptyStr );
+  tag.loadW( "endScreenProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+void activeWindowClass::readCommentsAndVersionGeneric (
+  FILE *f,
+  int isSymbolFile
 ) {
 
-char oneLine[255+1], buf[255+1], *tk;
+char oneLine[255+1], buf[255+1], buf2[255+1], *tk, *context, *context2;
 commentLinesPtr commentCur;
-int numComments = 0, moreComments = 1;
+int numComments = 0, moreComments = 1, checkForRev = 1,
+ checkForEdmComments = 1;
+
+  haveComments = 0;
+  strcpy( fileNameAndRev, fileName );
 
   do {
 
@@ -14705,18 +15055,80 @@ int numComments = 0, moreComments = 1;
 
     strcpy( buf, oneLine );
 
-    tk = strtok( buf, " \t\n" );
+    context = NULL;
+    tk = strtok_r( buf, " \t\n", &context );
 
     if ( !tk || ( tk[0] == '#' ) ) {
 
-      numComments++;
-      commentCur = new commentLinesType;
-      commentCur->line = new char[strlen(oneLine)+4];
-      strcpy( commentCur->line, oneLine );
-      strcat( commentCur->line, "\n" );
-      commentTail->flink = commentCur;
-      commentTail = commentCur;
-      commentTail->flink = NULL;
+      if ( !isSymbolFile ) {
+
+        // check for cvs/rcs revision info
+        if ( tk && ( tk[0] == '#' ) ) {
+
+          if ( checkForEdmComments ) {
+
+            strcpy( buf2, oneLine );
+
+            context2 = NULL;
+            tk = strtok_r( buf2, " \t\n#", &context2 );
+
+            if ( tk ) {
+
+              if ( strcmp( tk, "<<<edm-generated-comments>>>" ) == 0 ) {
+
+                checkForEdmComments = 0;
+                haveComments = 1;
+
+	      }
+
+	    }
+
+	  }
+
+          if ( checkForRev ) {
+
+            strcpy( buf2, oneLine );
+
+            context2 = NULL;
+            tk = strtok_r( buf2, " \t\n#", &context2 );
+
+            if ( tk ) {
+
+              if ( strcmp( tk, "$Revision:" ) == 0 ) {
+
+                checkForRev = 0; // use first rev found, don't check any more
+
+                tk = strtok_r( NULL, " \t\n#", &context2 );
+                if ( tk ) {
+                  Strncat( fileNameAndRev, " (", 287 );
+                  Strncat( fileNameAndRev, tk, 287 );
+                  Strncat( fileNameAndRev, ")", 287 );
+                  strncpy( fileRev, tk, 31 );
+                  fileRev[31] = 0;
+	        }
+
+              }
+
+	    }
+
+	  }
+
+        }
+
+      }
+
+      if ( !isSymbolFile ) {
+
+        numComments++;
+        commentCur = new commentLinesType;
+        commentCur->line = new char[strlen(oneLine)+4];
+        strcpy( commentCur->line, oneLine );
+        strcat( commentCur->line, "\n" );
+        commentTail->flink = commentCur;
+        commentTail = commentCur;
+        commentTail->flink = NULL;
+
+      }
 
     }
     else {
@@ -14725,12 +15137,34 @@ int numComments = 0, moreComments = 1;
 
   } while ( moreComments );
 
-  if ( !numComments ) {
-    commentTail = commentHead;
-    commentTail->flink = NULL;
+  if ( !isSymbolFile ) {
+    if ( !numComments ) {
+      commentTail = commentHead;
+      commentTail->flink = NULL;
+    }
   }
 
   sscanf( oneLine, "%d %d %d\n", &major, &minor, &release );
+
+}
+
+void activeWindowClass::readCommentsAndVersion (
+  FILE *f
+) {
+
+int isSymbolFile = 0;
+
+  readCommentsAndVersionGeneric( f, isSymbolFile );
+
+}
+
+void activeWindowClass::readSymbolCommentsAndVersion (
+  FILE *f
+) {
+
+int isSymbolFile = 1;
+
+  readCommentsAndVersionGeneric( f, isSymbolFile );
 
 }
 
@@ -14766,17 +15200,38 @@ int moreComments = 1;
 
 }
 
-int activeWindowClass::loadWin (
-  FILE *f ) {
+int activeWindowClass::loadWinGeneric (
+  FILE *f,
+  int _x,
+  int _y,
+  int setPosition ) {
 
   // if this is changed then activeWindowClass::discardWinLoadData
   // must be likewise changed
 
-int stat;
-int r, g, b, n, index;
+int stat, retStat = 1;
+int fileX, fileY, n;
 Arg args[5];
-unsigned int pixel;
 
+tagClass tag;
+
+static int zero = 0;
+static int ten = 10;
+
+static int left = XmALIGNMENT_BEGINNING;
+static char *emptyStr = "";
+static char *alignEnumStr[3] = {
+  "left",
+  "center",
+  "right"
+};
+static int alignEnum[3] = {
+  XmALIGNMENT_BEGINNING,
+  XmALIGNMENT_CENTER,
+  XmALIGNMENT_END
+};
+
+#if 0
   readCommentsAndVersion( f );
 
   if ( major > AWC_MAJOR_VERSION ) {
@@ -14784,14 +15239,73 @@ unsigned int pixel;
     return 0;
   }
 
-  fscanf( f, "%d\n", &x ); incLine();
-  fscanf( f, "%d\n", &y ); incLine();
-  fscanf( f, "%d\n", &w ); incLine();
-  fscanf( f, "%d\n", &h ); incLine();
+  if ( major < 4 ) {
+    appCtx->postMessage( activeWindowClass_str191 );
+    return 0;
+  }
+#endif
 
-  if ( isEmbedded ) {
-    w = embeddedW;
-    h = embeddedH;
+  x = 0;
+  y = 0;
+  w = 100;
+  h = 150;
+  strcpy( defaultFontTag, "" );
+  strcpy( defaultCtlFontTag, "" );
+  strcpy( defaultBtnFontTag, "" );
+
+  strcpy( this->id, "" );
+  activateCallbackFlag = 0;
+  deactivateCallbackFlag = 0;
+
+  tag.init();
+  tag.loadR( "beginScreenProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &fileX );
+  tag.loadR( "y", &fileY );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "font", 63, defaultFontTag );
+  tag.loadR( "fontAlign", 3, alignEnumStr, alignEnum,
+   &defaultAlignment, &left );
+  tag.loadR( "ctlFont", 63, defaultCtlFontTag );
+  tag.loadR( "ctlFontAlign", 3, alignEnumStr, alignEnum,
+   &defaultCtlAlignment, &left );
+  tag.loadR( "btnFont", 63, defaultBtnFontTag );
+  tag.loadR( "btnFontAlign", 3, alignEnumStr, alignEnum,
+   &defaultBtnAlignment, &left );
+  tag.loadR( "fgColor", &appCtx->ci, &fgColor );
+  tag.loadR( "bgColor", &appCtx->ci, &bgColor );
+  tag.loadR( "textColor", &appCtx->ci, &defaultTextFgColor );
+  tag.loadR( "ctlFgColor1", &appCtx->ci, &defaultFg1Color );
+  tag.loadR( "ctlFgColor2", &appCtx->ci, &defaultFg2Color );
+  tag.loadR( "ctlBgColor1", &appCtx->ci, &defaultBgColor );
+  tag.loadR( "ctlBgColor2", &appCtx->ci, &defaultOffsetColor );
+  tag.loadR( "topShadowColor", &appCtx->ci, &defaultTopShadowColor );
+  tag.loadR( "botShadowColor", &appCtx->ci, &defaultBotShadowColor );
+  tag.loadR( "title", 127, title, emptyStr );
+  tag.loadR( "showGrid", &gridShow, &zero );
+  tag.loadR( "snapToGrid", &gridActive, &zero );
+  tag.loadR( "gridSize", &gridSpacing, &ten );
+  tag.loadR( "orthoLineDraw", &orthogonal, &zero );
+  tag.loadR( "pvType", 15, defaultPvType, emptyStr );
+  tag.loadR( "endScreenProperties" );
+
+  stat = tag.readTags( f, "endScreenProperties" );
+
+  if ( !( stat & 1 ) ) {
+    retStat = stat;
+    appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( setPosition ) {
+    x = _x;
+    y = _y;
+  }
+  else {
+    x = fileX;
+    y = fileY;
   }
 
   if ( !intersects( x, y, x+w, y+h, 0, 0,
@@ -14815,11 +15329,158 @@ unsigned int pixel;
 
    n = 0;
    XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
-   XtSetValues( top, args, n );
+   XtSetValues( drawWidget, args, n );
 
    n = 0;
    XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
-   XtSetValues( top, args, n );
+   XtSetValues( drawWidget, args, n );
+
+   if ( !isEmbedded ) {
+
+     n = 0;
+     XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+     XtSetValues( top, args, n );
+
+     n = 0;
+     XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+     XtSetValues( top, args, n );
+
+   }
+
+  if ( strcmp( defaultFontTag, "" ) != 0 ) {
+    stat = defaultFm.setFontTag( defaultFontTag );
+  }
+
+  stat = defaultFm.setFontAlignment( defaultAlignment );
+
+  if ( strcmp( defaultCtlFontTag, "" ) != 0 ) {
+    stat = defaultCtlFm.setFontTag( defaultCtlFontTag );
+  }
+
+  stat = defaultCtlFm.setFontAlignment( defaultCtlAlignment );
+
+  if ( strcmp( defaultBtnFontTag, "" ) != 0 ) {
+    stat = defaultBtnFm.setFontTag( defaultBtnFontTag );
+  }
+
+  stat = defaultBtnFm.setFontAlignment( defaultBtnAlignment );
+
+  drawGc.setBaseBG( ci->pix(bgColor) );
+
+  expStrTitle.setRaw( title );
+
+  if ( gridShow )
+    strcpy( gridShowStr, activeWindowClass_str3 );
+  else
+    strcpy( gridShowStr, activeWindowClass_str5 );
+
+  if ( gridActive )
+    strcpy( gridActiveStr, activeWindowClass_str3 );
+  else
+    strcpy( gridActiveStr, activeWindowClass_str5 );
+
+  updateAllSelectedDisplayInfo();
+
+  return retStat;
+
+}
+
+int activeWindowClass::loadWin (
+  FILE *f,
+  int _x,
+  int _y ) {
+
+  return loadWinGeneric( f, _x, _y, 1 );
+
+}
+
+int activeWindowClass::loadWin (
+  FILE *f
+) {
+
+  return loadWinGeneric( f, 0, 0, 0 );
+
+}
+
+int activeWindowClass::old_loadWinGeneric (
+  FILE *f,
+  int _x,
+  int _y,
+  int setPosition ) {
+
+  // if this is changed then activeWindowClass::old_discardWinLoadData
+  // must be likewise changed
+
+int stat;
+int r, g, b, n, index;
+Arg args[5];
+unsigned int pixel;
+
+#if 0
+  readCommentsAndVersion( f );
+
+  if ( major > AWC_MAJOR_VERSION ) {
+    appCtx->postMessage( activeWindowClass_str191 );
+    return 0;
+  }
+#endif
+
+  fscanf( f, "%d\n", &x ); incLine();
+  fscanf( f, "%d\n", &y ); incLine();
+
+  if ( setPosition ) {
+    x = _x;
+    y = _y;
+  }
+
+  fscanf( f, "%d\n", &w ); incLine();
+  fscanf( f, "%d\n", &h ); incLine();
+
+#if 0
+  if ( isEmbedded ) {
+    w = embeddedW;
+    h = embeddedH;
+  }
+#endif
+
+  if ( !intersects( x, y, x+w, y+h, 0, 0,
+   XDisplayWidth( d, DefaultScreen(d) ),
+   XDisplayHeight( d, DefaultScreen(d) ) ) ) {
+
+//    appCtx->postMessage(
+//    "Screen location is out of display bounds - setting location to (50,50)" );
+
+    x = y = 50;
+
+  }
+
+   n = 0;
+   XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
+   XtSetValues( drawWidget, args, n );
+
+   n = 0;
+   XtSetArg( args[n], XmNy, (XtArgVal) y ); n++;
+   XtSetValues( drawWidget, args, n );
+
+   n = 0;
+   XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+   XtSetValues( drawWidget, args, n );
+
+   n = 0;
+   XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+   XtSetValues( drawWidget, args, n );
+
+   if ( !isEmbedded ) {
+
+     n = 0;
+     XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+     XtSetValues( top, args, n );
+
+     n = 0;
+     XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+     XtSetValues( top, args, n );
+
+   }
 
    readStringFromFile( defaultFontTag, 63+1, f ); incLine();
 
@@ -14967,7 +15628,6 @@ unsigned int pixel;
     else {
       ci->setRGB( r, g, b, &pixel );
     }
-
     defaultTextFgColor = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
@@ -14991,7 +15651,6 @@ unsigned int pixel;
     else {
       ci->setRGB( r, g, b, &pixel );
     }
-
     defaultFg2Color = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
@@ -15123,366 +15782,19 @@ unsigned int pixel;
 
 }
 
-int activeWindowClass::loadWin (
+int activeWindowClass::old_loadWin (
+  FILE *f ) {
+
+  return old_loadWinGeneric( f, 0, 0, 0 );
+
+}
+
+int activeWindowClass::old_loadWin (
   FILE *f,
   int _x,
   int _y ) {
 
-  // if this is changed then activeWindowClass::discardWinLoadData
-  // must be likewise changed
-
-int stat;
-int r, g, b, n, discard, index;
-Arg args[5];
-unsigned int pixel;
-
-  readCommentsAndVersion( f );
-
-  if ( major > AWC_MAJOR_VERSION ) {
-    appCtx->postMessage( activeWindowClass_str191 );
-    return 0;
-  }
-
-  fscanf( f, "%d\n", &discard ); incLine(); // discard x
-  fscanf( f, "%d\n", &discard ); incLine(); // discard y
-
-  x = _x;
-  y = _y;
-
-  fscanf( f, "%d\n", &w ); incLine();
-  fscanf( f, "%d\n", &h ); incLine();
-
-  if ( isEmbedded ) {
-    w = embeddedW;
-    h = embeddedH;
-  }
-
-  if ( !intersects( x, y, x+w, y+h, 0, 0,
-   XDisplayWidth( d, DefaultScreen(d) ),
-   XDisplayHeight( d, DefaultScreen(d) ) ) ) {
-
-    appCtx->postMessage(
-    "Screen location is out of display bounds - setting location to (50,50)" );
-
-    x = y = 50;
-
-  }
-
-   n = 0;
-   XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
-   XtSetValues( drawWidget, args, n );
-
-   n = 0;
-   XtSetArg( args[n], XmNy, (XtArgVal) y ); n++;
-   XtSetValues( drawWidget, args, n );
-
-   n = 0;
-   XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
-   XtSetValues( top, args, n );
-
-   n = 0;
-   XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
-   XtSetValues( top, args, n );
-
-   readStringFromFile( defaultFontTag, 63+1, f ); incLine();
-
-  if ( strcmp( defaultFontTag, "" ) != 0 ) {
-    stat = defaultFm.setFontTag( defaultFontTag );
-  }
-
-  fscanf( f, "%d\n", &defaultAlignment ); incLine();
-
-  if ( defaultAlignment != 0 ) {
-    stat = defaultFm.setFontAlignment( defaultAlignment );
-  }
-
-  if ( ( major > 1 ) || ( minor > 2 ) ) {
-
-    readStringFromFile( defaultCtlFontTag, 63+1, f ); incLine();
-
-    if ( strcmp( defaultCtlFontTag, "" ) != 0 ) {
-      stat = defaultCtlFm.setFontTag( defaultCtlFontTag );
-    }
-
-    fscanf( f, "%d\n", &defaultCtlAlignment ); incLine();
-
-    if ( defaultCtlAlignment != 0 ) {
-      stat = defaultCtlFm.setFontAlignment( defaultCtlAlignment );
-    }
-
-  }
-  else {
-
-    if ( strcmp( defaultFontTag, "" ) != 0 ) {
-      stat = defaultCtlFm.setFontTag( defaultFontTag );
-    }
-
-    if ( defaultAlignment != 0 ) {
-      stat = defaultCtlFm.setFontAlignment( defaultAlignment );
-    }
-
-  }
-
-  if ( ( major > 3 ) || ( ( major == 3 ) && ( minor > 0 ) ) ) {
-
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
-    fgColor = index;
-
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
-    bgColor = index;
-
-    drawGc.setBaseBG( ci->pix(bgColor) );
-
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
-    defaultTextFgColor = index;
-
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
-    defaultFg1Color = index;
-
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
-    defaultFg2Color = index;
-
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
-    defaultBgColor = index;
-
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
-    defaultTopShadowColor = index;
-
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
-    defaultBotShadowColor = index;
-
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
-    defaultOffsetColor = index;
-
-  }
-  else if ( ( major == 3 ) && ( minor == 0 ) ) {
-
-    fscanf( f, "%d\n", &index ); incLine();
-    fgColor = index;
-
-    fscanf( f, "%d\n", &index ); incLine();
-    bgColor = index;
-
-    drawGc.setBaseBG( ci->pix(bgColor) );
-
-    fscanf( f, "%d\n", &index ); incLine();
-    defaultTextFgColor = index;
-
-    fscanf( f, "%d\n", &index ); incLine();
-    defaultFg1Color = index;
-
-    fscanf( f, "%d\n", &index ); incLine();
-    defaultFg2Color = index;
-
-    fscanf( f, "%d\n", &index ); incLine();
-    defaultBgColor = index;
-
-    fscanf( f, "%d\n", &index ); incLine();
-    defaultTopShadowColor = index;
-
-    fscanf( f, "%d\n", &index ); incLine();
-    defaultBotShadowColor = index;
-
-    fscanf( f, "%d\n", &index ); incLine();
-    defaultOffsetColor = index;
-
-  }
-  else {
-
-    fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
-    if ( ( major < 2 ) && ( minor < 4 ) ) {
-      r *= 256;
-      g *= 256;
-      b *= 256;
-    }
-    ci->setRGB( r, g, b, &pixel );
-    fgColor = ci->pixIndex( pixel );
-
-    fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
-    if ( ( major < 2 ) && ( minor < 4 ) ) {
-      r *= 256;
-      g *= 256;
-      b *= 256;
-    }
-    ci->setRGB( r, g, b, &pixel );
-    bgColor = ci->pixIndex( pixel );
-
-    drawGc.setBaseBG( ci->pix(bgColor) );
-
-    if ( ( major > 1 ) || ( minor > 2 ) ) {
-      fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
-      if ( ( major < 2 ) && ( minor < 4 ) ) {
-        r *= 256;
-        g *= 256;
-        b *= 256;
-      }
-      ci->setRGB( r, g, b, &pixel );
-      defaultTextFgColor = ci->pixIndex( pixel );
-    }
-    else {
-      ci->setRGB( r, g, b, &pixel );
-      defaultTextFgColor = ci->pixIndex( pixel );
-    }
-
-    fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
-    if ( ( major < 2 ) && ( minor < 4 ) ) {
-      r *= 256;
-      g *= 256;
-      b *= 256;
-    }
-    ci->setRGB( r, g, b, &pixel );
-    defaultFg1Color = ci->pixIndex( pixel );
-
-    if ( ( major > 1 ) || ( minor > 2 ) ) {
-      fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
-      if ( ( major < 2 ) && ( minor < 4 ) ) {
-        r *= 256;
-        g *= 256;
-        b *= 256;
-      }
-      ci->setRGB( r, g, b, &pixel );
-      defaultFg2Color = ci->pixIndex( pixel );
-    }
-    else {
-      ci->setRGB( r, g, b, &pixel );
-      defaultFg2Color = ci->pixIndex( pixel );
-    }
-
-    fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
-    if ( ( major < 2 ) && ( minor < 4 ) ) {
-      r *= 256;
-      g *= 256;
-      b *= 256;
-    }
-    ci->setRGB( r, g, b, &pixel );
-    defaultBgColor = ci->pixIndex( pixel );
-
-    fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
-    if ( ( major < 2 ) && ( minor < 4 ) ) {
-      r *= 256;
-      g *= 256;
-      b *= 256;
-    }
-    ci->setRGB( r, g, b, &pixel );
-    defaultTopShadowColor = ci->pixIndex( pixel );
-
-    fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
-    if ( ( major < 2 ) && ( minor < 4 ) ) {
-      r *= 256;
-      g *= 256;
-      b *= 256;
-    }
-    ci->setRGB( r, g, b, &pixel );
-    defaultBotShadowColor = ci->pixIndex( pixel );
-
-    fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
-    if ( ( major < 2 ) && ( minor < 4 ) ) {
-      r *= 256;
-      g *= 256;
-      b *= 256;
-    }
-    ci->setRGB( r, g, b, &pixel );
-    defaultOffsetColor = ci->pixIndex( pixel );
-
-  }
-
-  if ( ( major > 1 ) || ( minor > 1 ) ) {
-    readStringFromFile( title, 127+1, f ); incLine();
-  }
-  else {
-    strcpy( title, "" );
-  }
-  expStrTitle.setRaw( title );
-
-  if ( ( major > 1 ) || ( minor > 4 ) ) {
-
-    fscanf( f, "%d\n", &gridShow ); incLine();
-    if ( gridShow )
-      strcpy( gridShowStr, activeWindowClass_str3 );
-    else
-      strcpy( gridShowStr, activeWindowClass_str5 );
-
-    fscanf( f, "%d\n", &gridActive ); incLine();
-    if ( gridActive )
-      strcpy( gridActiveStr, activeWindowClass_str3 );
-    else
-      strcpy( gridActiveStr, activeWindowClass_str5 );
-
-    fscanf( f, "%d\n", &gridSpacing ); incLine();
-
-    fscanf( f, "%d\n", &orthogonal ); incLine();
-
-  }
-  else {
-
-    gridShow = 0;
-    strcpy( gridShowStr, activeWindowClass_str5 );
-    gridActive = 0;
-    strcpy( gridActiveStr, activeWindowClass_str5 );
-    gridSpacing = 10;
-    orthogonal = 0;
-
-  }
-
-  if ( ( major > 1 ) || ( minor > 5 ) ) {
-    readStringFromFile( defaultPvType, 15+1, f ); incLine();
-  }
-  else {
-    strcpy( defaultPvType, "epics" );
-  }
-
-  if ( ( major > 1 ) || ( minor > 6 ) ) {
-    readStringFromFile( this->id, 31+1, f ); incLine();
-    fscanf( f, "%d\n", &this->activateCallbackFlag ); incLine();
-    fscanf( f, "%d\n", &this->deactivateCallbackFlag ); incLine();
-  }
-  else {
-    strcpy( this->id, "" );
-    activateCallbackFlag = 0;
-    deactivateCallbackFlag = 0;
-  }
-
-  if ( ( major > 2 ) ||
-       ( ( major == 2 ) && ( minor > 0 ) ) ||
-       ( ( major == 2 ) && ( minor == 0 ) && ( release > 0 ) ) ) {
-
-    readStringFromFile( defaultBtnFontTag, 63+1, f ); incLine();
-
-    if ( strcmp( defaultBtnFontTag, "" ) != 0 ) {
-      stat = defaultBtnFm.setFontTag( defaultBtnFontTag );
-    }
-
-    fscanf( f, "%d\n", &defaultBtnAlignment ); incLine();
-
-    if ( defaultBtnAlignment != 0 ) {
-      stat = defaultBtnFm.setFontAlignment( defaultBtnAlignment );
-    }
-
-  }
-  else {
-
-    if ( strcmp( defaultFontTag, "" ) != 0 ) {
-      stat = defaultBtnFm.setFontTag( defaultFontTag );
-    }
-
-    if ( defaultAlignment != 0 ) {
-      stat = defaultBtnFm.setFontAlignment( defaultAlignment );
-    }
-
-  }
-
-  updateAllSelectedDisplayInfo();
-
-  return 1;
+  return old_loadWinGeneric( f, _x, _y, 1 );
 
 }
 
@@ -15685,6 +15997,11 @@ int activeWindowClass::discardWinLoadData (
   int *_minor,
   int *_release ) {
 
+  // read until end of data marker
+
+char junk[255+1];
+int stat;
+tagClass tag;
 int i, r, g, b, index;
 char s[127+1];
 
@@ -15692,142 +16009,190 @@ char s[127+1];
 
   pushVersion();
 
-  // discardCommentsAndVersion( f, _major, _minor, _release );
-  readCommentsAndVersion( f );
+  readSymbolCommentsAndVersion( f );
 
   if ( major > AWC_MAJOR_VERSION ) {
     appCtx->postMessage( activeWindowClass_str191 );
     return 0;
   }
 
-  *_major = major;
-  *_minor = minor;
-  *_release = release;
+  if ( major < 4 ) {
 
-  fscanf( f, "%d\n", &i );
-  fscanf( f, "%d\n", &i );
-  fscanf( f, "%d\n", &i );
-  fscanf( f, "%d\n", &i );
+    *_major = major;
+    *_minor = minor;
+    *_release = release;
 
-  readStringFromFile( s, 63+1, f );
+    fscanf( f, "%d\n", &i );
+    fscanf( f, "%d\n", &i );
+    fscanf( f, "%d\n", &i );
+    fscanf( f, "%d\n", &i );
 
-  fscanf( f, "%d\n",&i );
-
-  if ( ( *_major > 1 ) || ( *_minor > 2 ) ) {
     readStringFromFile( s, 63+1, f );
+
     fscanf( f, "%d\n",&i );
-  }
 
-  if ( ( major > 3 ) || ( ( major == 3 ) && ( minor > 0 ) ) ) {
+    if ( ( major > 1 ) || ( minor > 2 ) ) {
+      readStringFromFile( s, 63+1, f );
+      fscanf( f, "%d\n",&i );
+    }
 
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
+    if ( ( major > 3 ) || ( ( major == 3 ) && ( minor > 0 ) ) ) {
 
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
+      ci->readColorIndex( f, &index );
+      incLine(); incLine();
 
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
+      ci->readColorIndex( f, &index );
+      incLine(); incLine();
 
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
+      ci->readColorIndex( f, &index );
+      incLine(); incLine();
 
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
+      ci->readColorIndex( f, &index );
+      incLine(); incLine();
 
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
+      ci->readColorIndex( f, &index );
+      incLine(); incLine();
 
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
+      ci->readColorIndex( f, &index );
+      incLine(); incLine();
 
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
+      ci->readColorIndex( f, &index );
+      incLine(); incLine();
 
-    ci->readColorIndex( f, &index );
-    incLine(); incLine();
+      ci->readColorIndex( f, &index );
+      incLine(); incLine();
 
-  }
-  else if ( ( major == 3 ) && ( minor == 0 ) ) {
+      ci->readColorIndex( f, &index );
+      incLine(); incLine();
 
-    fscanf( f, "%d\n", &index ); incLine();
+    }
+    else if ( ( major == 3 ) && ( minor == 0 ) ) {
 
-    fscanf( f, "%d\n", &index ); incLine();
+      fscanf( f, "%d\n", &index ); incLine();
 
-    fscanf( f, "%d\n", &index ); incLine();
+      fscanf( f, "%d\n", &index ); incLine();
 
-    fscanf( f, "%d\n", &index ); incLine();
+      fscanf( f, "%d\n", &index ); incLine();
 
-    fscanf( f, "%d\n", &index ); incLine();
+      fscanf( f, "%d\n", &index ); incLine();
 
-    fscanf( f, "%d\n", &index ); incLine();
+      fscanf( f, "%d\n", &index ); incLine();
 
-    fscanf( f, "%d\n", &index ); incLine();
+      fscanf( f, "%d\n", &index ); incLine();
 
-    fscanf( f, "%d\n", &index ); incLine();
+      fscanf( f, "%d\n", &index ); incLine();
 
-    fscanf( f, "%d\n", &index ); incLine();
+      fscanf( f, "%d\n", &index ); incLine();
+
+      fscanf( f, "%d\n", &index ); incLine();
+
+    }
+    else {
+
+      fscanf( f, "%d %d %d\n", &r, &g, &b );
+
+      fscanf( f, "%d %d %d\n", &r, &g, &b );
+
+      if ( ( major > 1 ) || ( minor > 2 ) ) {
+        fscanf( f, "%d %d %d\n", &r, &g, &b );
+      }
+
+      fscanf( f, "%d %d %d\n", &r, &g, &b );
+
+      if ( ( major > 1 ) || ( minor > 2 ) ) {
+        fscanf( f, "%d %d %d\n", &r, &g, &b );
+      }
+
+      fscanf( f, "%d %d %d\n", &r, &g, &b );
+
+      fscanf( f, "%d %d %d\n", &r, &g, &b );
+
+      fscanf( f, "%d %d %d\n", &r, &g, &b );
+
+      fscanf( f, "%d %d %d\n", &r, &g, &b );
+
+    }
+
+    if ( ( major > 1 ) || ( minor > 1 ) ) {
+      readStringFromFile( s, 127+1, f );
+    }
+
+    if ( ( major > 1 ) || ( minor > 4 ) ) {
+
+      fscanf( f, "%d\n", &i );
+
+      fscanf( f, "%d\n", &i );
+
+      fscanf( f, "%d\n", &i );
+
+      fscanf( f, "%d\n", &i );
+
+    }
+
+    if ( ( major > 1 ) || ( minor > 5 ) ) {
+      readStringFromFile( s, 15+1, f );
+    }
+
+    if ( ( major > 1 ) || ( minor > 6 ) ) {
+      readStringFromFile( s, 31+1, f );
+      fscanf( f, "%d\n", &i );
+      fscanf( f, "%d\n", &i );
+    }
+
+    if ( ( major > 2 ) ||
+         ( ( major == 2 ) && ( minor > 0 ) ) ||
+         ( ( major == 2 ) && ( minor == 0 ) && ( release > 0 ) ) ) {
+  
+      readStringFromFile( s, 63+1, f );
+
+      fscanf( f, "%d\n", &i );
+
+    }
 
   }
   else {
 
-    fscanf( f, "%d %d %d\n", &r, &g, &b );
+  *_major = major;
+  *_minor = minor;
+  *_release = release;
 
-    fscanf( f, "%d %d %d\n", &r, &g, &b );
+  tag.init();
+  tag.loadR( "beginScreenProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", 255, junk );
+  tag.loadR( "y", 255, junk );
+  tag.loadR( "w", 255, junk );
+  tag.loadR( "h", 255, junk );
+  tag.loadR( "font", 255, junk );
+  tag.loadR( "fontAlign", 255, junk );
+  tag.loadR( "ctlFont", 255, junk );
+  tag.loadR( "ctlFontAlign", 255, junk );
+  tag.loadR( "btnFont", 255, junk );
+  tag.loadR( "btnFontAlign", 255, junk );
+  tag.loadR( "fgColor", 255, junk );
+  tag.loadR( "bgColor", 255, junk );
+  tag.loadR( "textColor", 255, junk );
+  tag.loadR( "ctlFgColor1", 255, junk );
+  tag.loadR( "ctlFgColor2", 255, junk );
+  tag.loadR( "ctlBgColor1", 255, junk );
+  tag.loadR( "ctlBgColor2", 255, junk );
+  tag.loadR( "topShadowColor", 255, junk );
+  tag.loadR( "botShadowColor", 255, junk );
+  tag.loadR( "title", 255, junk );
+  tag.loadR( "showGrid", 255, junk );
+  tag.loadR( "snapToGrid", 255, junk );
+  tag.loadR( "gridSize", 255, junk );
+  tag.loadR( "orthoLineDraw", 255, junk );
+  tag.loadR( "pvType", 255, junk );
+  tag.loadR( "endScreenProperties" );
 
-    if ( ( *_major > 1 ) || ( *_minor > 2 ) ) {
-      fscanf( f, "%d %d %d\n", &r, &g, &b );
-    }
+  stat = tag.readTags( f, "endScreenProperties" );
 
-    fscanf( f, "%d %d %d\n", &r, &g, &b );
-
-    if ( ( *_major > 1 ) || ( *_minor > 2 ) ) {
-      fscanf( f, "%d %d %d\n", &r, &g, &b );
-    }
-
-    fscanf( f, "%d %d %d\n", &r, &g, &b );
-
-    fscanf( f, "%d %d %d\n", &r, &g, &b );
-
-    fscanf( f, "%d %d %d\n", &r, &g, &b );
-
-    fscanf( f, "%d %d %d\n", &r, &g, &b );
-
+  if ( !( stat & 1 ) ) {
+    appCtx->postMessage( tag.errMsg() );
   }
-
-  if ( ( *_major > 1 ) || ( *_minor > 1 ) ) {
-    readStringFromFile( s, 127+1, f );
-  }
-
-  if ( ( *_major > 1 ) || ( *_minor > 4 ) ) {
-
-    fscanf( f, "%d\n", &i );
-
-    fscanf( f, "%d\n", &i );
-
-    fscanf( f, "%d\n", &i );
-
-    fscanf( f, "%d\n", &i );
-
-  }
-
-  if ( ( *_major > 1 ) || ( *_minor > 5 ) ) {
-    readStringFromFile( s, 15+1, f );
-  }
-
-  if ( ( *_major > 1 ) || ( *_minor > 6 ) ) {
-    readStringFromFile( s, 31+1, f );
-    fscanf( f, "%d\n", &i );
-    fscanf( f, "%d\n", &i );
-  }
-
-  if ( ( major > 2 ) ||
-       ( ( major == 2 ) && ( minor > 0 ) ) ||
-       ( ( major == 2 ) && ( minor == 0 ) && ( release > 0 ) ) ) {
-
-    readStringFromFile( s, 63+1, f );
-
-    fscanf( f, "%d\n", &i );
 
   }
 
@@ -16945,18 +17310,10 @@ Widget pb;
 }
 
 void activeWindowClass::popupDragFinish (
-  int _x,
-  int _y )
+  XButtonEvent *be )
 {
 
-XButtonPressedEvent be;
-
-  memset( (char *) &be, 0, sizeof(be) );
-  be.type = ButtonPress;
-  be.x_root = x + _x;
-  be.y_root = y + _y;
-
-  XmMenuPosition( dragPopup, &be );
+  XmMenuPosition( dragPopup, be );
   XtManageChild( dragPopup );
 
 }

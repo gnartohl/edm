@@ -1,4 +1,4 @@
-//  edm - extensible display manager
+//  Edm - extensible display manager
 
 //  Copyright (C) 1999 John W. Sinclair
 
@@ -253,15 +253,14 @@ activeDynSymbolClass *dso = (activeDynSymbolClass *) client;
 
 }
 
-#ifdef __epics__
-
 static void dynSymbol_monitor_color_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeDynSymbolClass *dso = (activeDynSymbolClass *) ca_puser(arg.chid);
+activeDynSymbolClass *dso = (activeDynSymbolClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     dso->needColorInit = 1;
     dso->colorPvConnected = 1;
@@ -283,14 +282,15 @@ activeDynSymbolClass *dso = (activeDynSymbolClass *) ca_puser(arg.chid);
 }
 
 static void dynSymbol_colorUpdate (
-  struct event_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeDynSymbolClass *dso = (activeDynSymbolClass *) ca_puser(arg.chid);
+activeDynSymbolClass *dso = (activeDynSymbolClass *) userarg;
 
   if ( dso->active ) {
 
-    dso->curColorV = *( (double *) arg.dbr );
+    dso->curColorV = pv->get_double();
 
     dso->needColorRefresh = 1;
     dso->actWin->appCtx->proc->lock();
@@ -302,12 +302,13 @@ activeDynSymbolClass *dso = (activeDynSymbolClass *) ca_puser(arg.chid);
 }
 
 static void dynSymbol_monitor_gateUp_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeDynSymbolClass *dso = (activeDynSymbolClass *) ca_puser(arg.chid);
+activeDynSymbolClass *dso = (activeDynSymbolClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     dso->needGateUpConnect = 1;
     dso->gateUpPvConnected = 1;
@@ -329,12 +330,15 @@ activeDynSymbolClass *dso = (activeDynSymbolClass *) ca_puser(arg.chid);
 }
 
 static void dynSymbol_gateUpUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeDynSymbolClass *dso = (activeDynSymbolClass *) ca_puser(ast_args.chid);
+activeDynSymbolClass *dso = (activeDynSymbolClass *) userarg;
 
-  if ( *( (int *) ast_args.dbr ) == dso->gateUpValue ) {
+  //printf( "dynSymbol_gateUpUpdate, value = %-d\n", pv->get_int() );
+
+  if ( pv->get_int() == dso->gateUpValue ) {
 
     if ( dso->active ) {
       dso->needGateUp = 1;
@@ -348,12 +352,13 @@ activeDynSymbolClass *dso = (activeDynSymbolClass *) ca_puser(ast_args.chid);
 }
 
 static void dynSymbol_monitor_gateDown_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeDynSymbolClass *dso = (activeDynSymbolClass *) ca_puser(arg.chid);
+activeDynSymbolClass *dso = (activeDynSymbolClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     dso->needGateDownConnect = 1;
     dso->gateDownPvConnected = 1;
@@ -375,12 +380,13 @@ activeDynSymbolClass *dso = (activeDynSymbolClass *) ca_puser(arg.chid);
 }
 
 static void dynSymbol_gateDownUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeDynSymbolClass *dso = (activeDynSymbolClass *) ca_puser(ast_args.chid);
+activeDynSymbolClass *dso = (activeDynSymbolClass *) userarg;
 
-  if ( *( (int *) ast_args.dbr ) == dso->gateDownValue  ) {
+  if ( pv->get_int() == dso->gateDownValue  ) {
 
     if ( dso->active ) {
       dso->needGateDown = 1;
@@ -392,8 +398,6 @@ activeDynSymbolClass *dso = (activeDynSymbolClass *) ca_puser(ast_args.chid);
   }
 
 }
-
-#endif
 
 static void dsc_edit_update (
   Widget w,
@@ -919,6 +923,394 @@ int activeDynSymbolClass::editCreate ( void )
 int activeDynSymbolClass::readDynSymbolFile ( void )
 {
 
+int l, more, maxW, maxH, gX, gY, gW, gH, dX, dY, saveLine;
+int winMajor, winMinor, winRelease;
+char itemName[127+1], *tk;
+activeGraphicListPtr head, cur, next;
+int i;
+FILE *f;
+char name[127+1];
+expStringClass expStr;
+
+int major, minor, release, stat, retStat = 1;
+char *gotOne, tagName[255+1], val[4095+1];
+int isCompound;
+tagClass tag;
+
+  saveLine = tag.line();
+
+  // delete current info ( if any )
+
+  for ( i=0; i<DYNSYMBOL_K_NUM_STATES; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while ( cur != head ) {
+      next = cur->flink;
+      delete cur->node;
+      delete cur;
+      cur = next;
+    }
+    head->flink = head;
+    head->blink = head;
+
+  }
+
+  if ( strcmp( dynSymbolFileName, "" ) == 0 ) return 0;
+
+  actWin->substituteSpecial( 127, dynSymbolFileName, name );
+
+  expStr.setRaw( name );
+  expStr.expand1st( actWin->numMacros, actWin->macros, actWin->expansions );
+
+  f = actWin->openAnySymFile( expStr.getExpanded(), "r" );
+  if ( !f ) {
+    numStates = 0;
+    return 0;
+  }
+
+  actWin->discardWinLoadData( f, &winMajor, &winMinor, &winRelease );
+
+  if ( winMajor < 4 ) {
+
+    // for forward compatibility
+    stat = actWin->readUntilEndOfData( f, winMajor, winMinor, winRelease );
+    if ( !( stat & 1 ) ) {
+      fclose( f );
+      actWin->setLine( saveLine );
+      return stat;
+    }
+
+    index = 0;
+    maxW = 0;
+    maxH = 0;
+
+    for ( i=0; i<DYNSYMBOL_K_NUM_STATES; i++ ) {
+
+      head = (activeGraphicListPtr) voidHead[i];
+
+      gotOne = fgets( itemName, 127, f ); // discard "activeGroupClass"
+      if ( !gotOne ) {
+        if ( i == 0 ) {
+          numStates = 0;
+          fclose( f );
+          actWin->setLine( saveLine );
+          return 0;
+        }
+        break;
+      }
+
+      numStates = i+1;
+
+      tk = strtok( itemName, " \t\n" );
+      if ( strcmp( tk, "activeGroupClass" ) != 0 ) {
+        numStates = 0;
+        fclose( f );
+        actWin->setLine( saveLine );
+        return 0;
+      }
+
+      fscanf( f, "%d\n", &gX );
+      fscanf( f, "%d\n", &gY );
+      fscanf( f, "%d\n", &gW );
+      fscanf( f, "%d\n", &gH );
+
+      if ( gW > maxW ) maxW = gW;
+      if ( gH > maxH ) maxH = gH;
+
+      dX = x - gX;
+      dY = y - gY;
+
+      fgets( itemName, 127, f ); // discard "{"
+
+      do {
+
+        // read and create sub-objects until a "}" is found
+
+        gotOne = fgets( itemName, 127, f );
+        if ( !gotOne ) {
+          numStates = 0;
+          fclose( f );
+          actWin->setLine( saveLine );
+          return 0;
+        }
+
+        l = strlen(itemName);
+        if ( l > 127 ) l = 127;
+        itemName[l-1] = 0;
+
+        if ( strcmp( itemName, "}" ) == 0 )
+          more = 0;
+        else
+          more = 1;
+
+        if ( more ) {
+
+          cur = new activeGraphicListType;
+          if ( !cur ) {
+            fclose( f );
+            printf( "Insufficient virtual memory - abort\n" );
+            numStates = 0;
+            fclose( f );
+            actWin->setLine( saveLine );
+            return 0;
+          }
+
+          cur->node = actWin->obj.createNew( itemName );
+
+          if ( cur->node ) {
+
+            cur->node->old_createFromFile( f, itemName, actWin );
+
+            // for forward compatibility
+            stat = actWin->readUntilEndOfData( f, winMajor, winMinor,
+             winRelease );
+            if ( !( stat & 1 ) ) {
+              fclose( f );
+              actWin->setLine( saveLine );
+              return stat;
+            }
+
+            // adjust origin
+            cur->node->move( dX, dY );
+
+            cur->blink = head->blink;
+            head->blink->flink = cur;
+            head->blink = cur;
+            cur->flink = head;
+
+          }
+          else {
+            fclose( f );
+            printf( "Insufficient virtual memory - abort\n" );
+            numStates = 0;
+            actWin->setLine( saveLine );
+            return 0;
+          }
+
+        }
+
+      } while ( more );
+
+      // for forward compatibility
+      stat = actWin->readUntilEndOfData( f, winMajor, winMinor, winRelease );
+      if ( !( stat & 1 ) ) {
+        fclose( f );
+        actWin->setLine( saveLine );
+        return stat;
+      }
+
+    }
+
+  }
+  else {
+
+    index = 0;
+    maxW = 0;
+    maxH = 0;
+
+    for ( i=0; i<DYNSYMBOL_K_NUM_STATES; i++ ) {
+
+      head = (activeGraphicListPtr) voidHead[i];
+
+      tag.init();
+      tag.loadR( "object", 127, itemName );
+
+      gotOne = tag.getName( tagName, 255, f );
+
+      if ( gotOne ) {
+
+        //printf( "name = [%s]\n", tagName );
+
+        if ( strcmp( tagName, "object" ) == 0 ) {
+
+          tag.getValue( val, 4095, f, &isCompound );
+          tag.decode( tagName, val, isCompound );
+
+          if ( strcmp( itemName, "activeGroupClass" ) != 0 ) {
+            numStates = 0;
+            fclose( f );
+            tag.setLine( saveLine );
+            return 0;
+            break;
+          }
+
+        }
+        else {
+          numStates = 0;
+          fclose( f );
+          tag.setLine( saveLine );
+          return 0;
+          break;
+        }
+
+      }
+      else {
+
+        if ( i == 0 ) {
+          numStates = 0;
+          fclose( f );
+          tag.setLine( saveLine );
+          return 0;
+        }
+
+        break;
+
+      }
+
+      numStates = i+1;
+
+      // read in group properties
+      tag.init();
+      tag.loadR( "beginObjectProperties" );
+      tag.loadR( "major", &major );
+      tag.loadR( "minor", &minor );
+      tag.loadR( "release", &release );
+      tag.loadR( "x", &gX );
+      tag.loadR( "y", &gY );
+      tag.loadR( "w", &gW );
+      tag.loadR( "h", &gH );
+      tag.loadR( "beginGroup" );
+
+      stat = tag.readTags( f, "beginGroup" );
+
+      if ( !( stat & 1 ) ) {
+        retStat = stat;
+        actWin->appCtx->postMessage( tag.errMsg() );
+      }
+
+      if ( major > AGC_MAJOR_VERSION ) {
+        postIncompatable();
+        return 0;
+      }
+
+      if ( major < 4 ) {
+        postIncompatable();
+        return 0;
+      }
+
+      if ( gW > maxW ) maxW = gW;
+      if ( gH > maxH ) maxH = gH;
+
+      dX = x - gX;
+      dY = y - gY;
+
+      tag.init();
+      tag.loadR( "object", 63, itemName );
+      tag.loadR( "endGroup" );
+      do {
+
+        // read and create sub-objects until "endGroup" is found
+
+        gotOne = tag.getName( tagName, 255, f );
+        if ( !gotOne ) {
+          numStates = 0;
+          fclose( f );
+          tag.setLine( saveLine );
+          return 0;
+        }
+
+        if ( gotOne ) {
+
+          //printf( "name = [%s]\n", tagName );
+
+          if ( strcmp( tagName, "object" ) == 0 ) {
+
+            tag.getValue( val, 4095, f, &isCompound );
+            tag.decode( tagName, val, isCompound );
+
+            // =======================================================
+            // Create object
+
+            //printf( "objName = [%s]\n", itemName );
+
+            more = 1;
+
+            cur = new activeGraphicListType;
+            if ( !cur ) {
+              fclose( f );
+              printf( "Insufficient virtual memory - abort\n" );
+              numStates = 0;
+              fclose( f );
+              tag.setLine( saveLine );
+              return 0;
+            }
+
+            cur->node = actWin->obj.createNew( itemName );
+
+            if ( cur->node ) {
+
+              cur->node->createFromFile( f, itemName, actWin );
+
+              // adjust origin
+              cur->node->move( dX, dY );
+
+              cur->blink = head->blink;
+              head->blink->flink = cur;
+              head->blink = cur;
+              cur->flink = head;
+
+            }
+            else {
+
+              fclose( f );
+              printf( "Insufficient virtual memory - abort\n" );
+              numStates = 0;
+              tag.setLine( saveLine );
+              return 0;
+
+            }
+
+          }
+          else if ( strcmp( tagName, "endGroup" ) == 0 ) {
+
+            more = 0;
+
+          }
+          else {
+            numStates = 0;
+            fclose( f );
+            tag.setLine( saveLine );
+            return 0;
+          }
+
+        }
+
+      } while ( more );
+
+      // read group "endObjectProperties"
+      tag.init();
+      tag.loadR( "endObjectProperties" );
+
+      stat = tag.readTags( f, "endObjectProperties" );
+
+      if ( !( stat & 1 ) ) {
+        retStat = stat;
+        actWin->appCtx->postMessage( tag.errMsg() );
+      }
+
+    }
+
+  }
+
+  fclose( f );
+
+  w = maxW;
+  sboxW = w;
+  h = maxH;
+  sboxH = h;
+
+  tag.setLine( saveLine );
+
+  return retStat;
+
+}
+
+#if 0
+int activeDynSymbolClass::old_readDynSymbolFile ( void )
+{
+
 int l, more, maxW, maxH, gX, gY, gW, gH, dX, dY, stat, saveLine;
 int winMajor, winMinor, winRelease;
 char itemName[127+1], *gotOne, *tk;
@@ -1050,7 +1442,7 @@ expStringClass expStr;
 
         if ( cur->node ) {
 
-          cur->node->createFromFile( f, itemName, actWin );
+          cur->node->old_createFromFile( f, itemName, actWin );
 
           // for forward compatibility
           stat = actWin->readUntilEndOfData( f, winMajor, winMinor,
@@ -1103,8 +1495,60 @@ expStringClass expStr;
   return 1;
 
 }
+#endif
 
 int activeDynSymbolClass::save (
+ FILE *f )
+{
+
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+double dzero = 0.0;
+char *emptyStr = "";
+
+  major = DSC_MAJOR_VERSION;
+  minor = DSC_MINOR_VERSION;
+  release = DSC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "file", dynSymbolFileName, emptyStr );
+  tag.loadW( "gateUpPv", &gateUpPvExpStr, emptyStr );
+  tag.loadW( "gateDownPv", &gateDownPvExpStr, emptyStr );
+  tag.loadBoolW( "useGate", &useGate, &zero );
+  tag.loadW( "gateUpValue", &gateUpValue, &zero );
+  tag.loadBoolW( "gateDownValue", &gateDownValue, &zero );
+  tag.loadBoolW( "continuous", &continuous, &zero );
+  tag.loadW( "rate", &rate, &dzero );
+  tag.loadW( "numStates", &numStates );
+  tag.loadBoolW( "useOriginalSize", &useOriginalSize, &zero );
+  tag.loadW( "initialIndex", &initialIndex, &zero );
+  tag.loadW( "colorPv", &colorPvExpStr, emptyStr );
+  tag.loadBoolW( "useOriginalColors", &useOriginalColors, &zero );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadBoolW( "showOOBState", &showOOBState, &zero );
+  tag.loadBoolW( "gateOnMouseOver", &gateOnMouseOver, &zero );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int activeDynSymbolClass::old_save (
  FILE *f )
 {
 
@@ -1173,6 +1617,100 @@ int activeDynSymbolClass::save (
 }
 
 int activeDynSymbolClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int resizeStat, readSymfileStat, saveW, saveH;
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+double dzero = 0.0;
+char *emptyStr = "";
+
+  this->actWin = _actWin;
+
+  // read file and process each "object" tag
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "file", 127, dynSymbolFileName, emptyStr );
+  tag.loadR( "gateUpPv", &gateUpPvExpStr, emptyStr );
+  tag.loadR( "gateDownPv", &gateDownPvExpStr, emptyStr );
+  tag.loadR( "useGate", &useGate, &zero );
+  tag.loadR( "gateUpValue", &gateUpValue, &zero );
+  tag.loadR( "gateDownValue", &gateDownValue, &zero );
+  tag.loadR( "continuous", &continuous, &zero );
+  tag.loadR( "rate", &rate, &dzero );
+  tag.loadR( "numStates", &numStates );
+  tag.loadR( "useOriginalSize", &useOriginalSize, &zero );
+  tag.loadR( "initialIndex", &initialIndex, &zero );
+  tag.loadR( "colorPv", &colorPvExpStr, emptyStr );
+  tag.loadR( "useOriginalColors", &useOriginalColors, &zero );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "showOOBState", &showOOBState, &zero );
+  tag.loadR( "gateOnMouseOver", &gateOnMouseOver, &zero );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > DSC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox();
+
+  if ( numStates < 1 ) numStates = 1;
+  if ( numStates > DYNSYMBOL_K_NUM_STATES ) numStates = DYNSYMBOL_K_NUM_STATES;
+
+  saveW = w;
+  saveH = h;
+
+  readSymfileStat = readDynSymbolFile();
+  if ( !( readSymfileStat & 1 ) ) {
+    actWin->appCtx->postMessage( activeDynSymbolClass_str23 );
+  }
+  else {
+    if ( !useOriginalSize ) {
+      if ( ( saveW != w ) || ( saveH != h ) ) {
+        resizeStat = checkResizeSelectBoxAbs( -1, -1, saveW, saveH );
+        if ( resizeStat & 1 ) {
+          resizeSelectBoxAbs( -1, -1, saveW, saveH );
+          resizeAbs( -1, -1, saveW, saveH );
+        }
+        else {
+          actWin->appCtx->postMessage(
+           activeDynSymbolClass_str24 );
+        }
+      }
+    }
+  }
+
+  return stat;
+
+}
+
+int activeDynSymbolClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -1333,7 +1871,7 @@ int activeDynSymbolClass::eraseActive ( void ) {
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
 
-  if ( !init || !activeMode || ( numStates < 1 ) ) return 1;
+  if ( !enabled || !init || !activeMode || ( numStates < 1 ) ) return 1;
 
   if ( ( prevIndex < 0 ) || ( prevIndex >= numStates ) ) return 1;
 
@@ -1408,7 +1946,7 @@ int activeDynSymbolClass::drawActive ( void ) {
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
 
-  if ( !init || !activeMode || ( numStates < 1 ) ) return 1;
+  if ( !enabled || !init || !activeMode || ( numStates < 1 ) ) return 1;
 
   if ( ( index < 0 ) || ( index >= numStates ) ) return 1;
 
@@ -1450,6 +1988,8 @@ void activeDynSymbolClass::mousePointerIn (
   int _y,
   int buttonState )
 {
+
+  if ( !enabled ) return;
 
   if ( useGate && gateOnMouseOver ) {
 
@@ -1501,6 +2041,8 @@ void activeDynSymbolClass::mousePointerOut (
   int buttonState )
 {
 
+  if ( !enabled ) return;
+
   if ( useGate && gateOnMouseOver ) {
 
     if ( continuous ) {
@@ -1543,21 +2085,21 @@ void activeDynSymbolClass::mousePointerOut (
 }
 
 int activeDynSymbolClass::getButtonActionRequest (
-  int *up,
-  int *down,
-  int *drag,
-  int *focus )
+  int *_up,
+  int *_down,
+  int *_drag,
+  int *_focus )
 {
 
-  *up = 1;
-  *down = 1;
-  *drag = 0;
+  *_up = 1;
+  *_down = 1;
+  *_drag = 0;
 
   if ( useGate && gateOnMouseOver ) {
-    *focus = 1;
+    *_focus = 1;
   }
   else {
-    *focus = 0;
+    *_focus = 0;
   }
 
   return 1;
@@ -1573,6 +2115,8 @@ void activeDynSymbolClass::btnDown (
 
   // inc index on button down, dec index on shift button down
 
+  if ( !enabled ) return;
+
 }
 
 void activeDynSymbolClass::btnUp (
@@ -1582,6 +2126,8 @@ void activeDynSymbolClass::btnUp (
   int buttonNumber )
 {
 
+  if ( !enabled ) return;
+
 }
 
 int activeDynSymbolClass::activate (
@@ -1589,7 +2135,7 @@ int activeDynSymbolClass::activate (
   void *ptr,
   int *numSubObjects ) {
 
-int i, stat, opStat;
+int i, opStat;
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
 int num;
@@ -1609,12 +2155,13 @@ int num;
          0, 0 );
       }
 
+      cur->node->initEnable();
       cur->node->activate( pass, (void *) cur, &num );
 
       (*numSubObjects) += num;
       if ( *numSubObjects >= activeWindowClass::NUM_PER_PENDIO ) {
-        ca_pend_io( 5.0 );
-        ca_pend_event( 0.01 );
+        pend_io( 5.0 );
+        pend_event( 0.01 );
         //processAllEvents( actWin->appCtx->appContext(), actWin->d );
         *numSubObjects = 0;
       }
@@ -1649,9 +2196,9 @@ int num;
     up = 0;
     down = 0;
 
-#ifdef __epics__
-    gateUpEventId = gateDownEventId = colorEventId = 0;
-#endif
+    gateUpPvId = gateDownPvId = colorPvId = NULL;
+    initialGateUpConnection = initialGateDownConnection =
+     initialColorConnection = 1;
 
     gateUpPvConnected = gateDownPvConnected = 0;
 
@@ -1706,36 +2253,43 @@ int num;
       argRec.setMask = (unsigned int) 1 << i;
       argRec.clrMask = ~(argRec.setMask);
 
-#ifdef __epics__
-
       if ( gateUpExists ) {
-        stat = ca_search_and_connect( gateUpPvExpStr.getExpanded(),
-         &gateUpPvId, dynSymbol_monitor_gateUp_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+        gateUpPvId = the_PV_Factory->create( gateUpPvExpStr.getExpanded() );
+	if ( gateUpPvId ) {
+	  gateUpPvId->add_conn_state_callback(
+           dynSymbol_monitor_gateUp_connect_state, this );
+	}
+	else {
           printf( activeDynSymbolClass_str25 );
           opStat = 0;
         }
       }
 
       if ( gateDownExists ) {
-        stat = ca_search_and_connect( gateDownPvExpStr.getExpanded(),
-         &gateDownPvId, dynSymbol_monitor_gateDown_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeDynSymbolClass_str26 );
+        gateDownPvId = the_PV_Factory->create(
+         gateDownPvExpStr.getExpanded() );
+	if ( gateDownPvId ) {
+	  gateDownPvId->add_conn_state_callback(
+           dynSymbol_monitor_gateDown_connect_state, this );
+	}
+	else {
+          printf( activeDynSymbolClass_str25 );
           opStat = 0;
         }
       }
 
       if ( colorExists ) {
-        stat = ca_search_and_connect( colorPvExpStr.getExpanded(),
-         &colorPvId, dynSymbol_monitor_color_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeDynSymbolClass_str26 );
+        colorPvId = the_PV_Factory->create(
+         colorPvExpStr.getExpanded() );
+	if ( colorPvId ) {
+	  colorPvId->add_conn_state_callback(
+           dynSymbol_monitor_color_connect_state, this );
+	}
+	else {
+          printf( activeDynSymbolClass_str25 );
           opStat = 0;
         }
       }
-
-#endif
 
       // initialIndex is used only when no pv's are connected
       if ( !gateUpExists && !gateDownExists ) {
@@ -1801,7 +2355,7 @@ int activeDynSymbolClass::deactivate (
   int pass,
   int *numSubObjects ) {
 
-int i, stat;
+int i;
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
 int num;
@@ -1825,8 +2379,8 @@ int num;
 
       (*numSubObjects) += num;
       if ( *numSubObjects >= activeWindowClass::NUM_PER_PENDIO ) {
-        ca_pend_io( 5.0 );
-        ca_pend_event( 0.01 );
+        pend_io( 5.0 );
+        pend_event( 0.01 );
         //processAllEvents( actWin->appCtx->appContext(), actWin->d );
         *numSubObjects = 0;
       }
@@ -1844,48 +2398,32 @@ int num;
   active = 0;
   activeMode = 0;
 
-#ifdef __epics__
-
-  if ( gateUpEventId ) {
-    stat = ca_clear_event( gateUpEventId );
-    if ( stat != ECA_NORMAL )
-      printf( activeDynSymbolClass_str27 );
-    gateUpEventId = 0;
+  if ( gateUpPvId ) {
+    gateUpPvId->remove_conn_state_callback(
+     dynSymbol_monitor_gateUp_connect_state, (void *) &argRec );
+    gateUpPvId->remove_value_callback(
+     dynSymbol_gateUpUpdate, this );
+    gateUpPvId->release();
+    gateUpPvId = NULL;
   }
 
-  if ( gateDownEventId ) {
-    stat = ca_clear_event( gateDownEventId );
-    if ( stat != ECA_NORMAL )
-      printf( activeDynSymbolClass_str28 );
-    gateDownEventId = 0;
+  if ( gateDownPvId ) {
+    gateDownPvId->remove_conn_state_callback(
+     dynSymbol_monitor_gateDown_connect_state, (void *) &argRec );
+    gateDownPvId->remove_value_callback(
+     dynSymbol_gateDownUpdate, this );
+    gateDownPvId->release();
+    gateDownPvId = NULL;
   }
 
-  if ( colorEventId ) {
-    stat = ca_clear_event( colorEventId );
-    if ( stat != ECA_NORMAL )
-      printf( activeDynSymbolClass_str28 );
-    colorEventId = 0;
+  if ( colorPvId ) {
+    colorPvId->remove_conn_state_callback(
+     dynSymbol_monitor_color_connect_state, this );
+    colorPvId->remove_value_callback(
+     dynSymbol_colorUpdate, this );
+    colorPvId->release();
+    colorPvId = NULL;
   }
-
-  if ( gateUpExists ) {
-    stat = ca_clear_channel( gateUpPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeDynSymbolClass_str29 );
-  }
-
-  if ( gateDownExists ) {
-    stat = ca_clear_channel( gateDownPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeDynSymbolClass_str30 );
-  }
-
-  if ( colorExists ) {
-    stat = ca_clear_channel( colorPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeDynSymbolClass_str30 );
-  }
-
-#endif
 
   }
 
@@ -2621,18 +3159,14 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd, ncolori, ncr;
 
 //----------------------------------------------------------------------------
 
-#ifdef __epics__
-
   if ( nguc ) {
 
-    if ( !gateUpEventId ) {
+    if ( initialGateUpConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_LONG, 1,
-       gateUpPvId, dynSymbol_gateUpUpdate, (void *) &argRec,
-       (float) 0.0, (float) 0.0, (float) 0.0, &gateUpEventId,
-       DBE_VALUE );
-      if ( stat != ECA_NORMAL )
-        printf( activeDynSymbolClass_str31 );
+      initialGateUpConnection = 0;
+
+      gateUpPvId->add_value_callback( dynSymbol_gateUpUpdate,
+       this );
 
     }
 
@@ -2645,14 +3179,12 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd, ncolori, ncr;
 
   if ( ngdc ) {
 
-    if ( !gateDownEventId ) {
+    if ( initialGateDownConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_LONG, 1,
-       gateDownPvId, dynSymbol_gateDownUpdate, (void *) &argRec,
-       (float) 0.0, (float) 0.0, (float) 0.0, &gateDownEventId,
-       DBE_VALUE );
-      if ( stat != ECA_NORMAL )
-        printf( activeDynSymbolClass_str32 );
+      initialGateDownConnection = 0;
+
+      gateDownPvId->add_value_callback( dynSymbol_gateDownUpdate,
+       this );
 
     }
 
@@ -2665,14 +3197,11 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd, ncolori, ncr;
 
   if ( ncolori ) {
 
-    if ( !colorEventId ) {
+    if ( initialColorConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_DOUBLE, 1,
-       colorPvId, dynSymbol_colorUpdate, (void *) this,
-       (float) 0.0, (float) 0.0, (float) 0.0, &colorEventId,
-       DBE_VALUE );
-      if ( stat != ECA_NORMAL )
-        printf( activeDynSymbolClass_str32 );
+      initialColorConnection = 0;
+
+      colorPvId->add_value_callback( dynSymbol_colorUpdate, this );
 
     }
 
@@ -2684,11 +3213,11 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd, ncolori, ncr;
 
   }
 
-#endif
-
 //----------------------------------------------------------------------------
 
   if ( ngu ) {
+
+    //printf( "ngu, up = %-d, down = %-d\n", up, down );
 
     if ( !init ) {
       curCount = numStates-1;
@@ -2698,17 +3227,27 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd, ncolori, ncr;
       stat = smartDrawAllActive();
     }
 
-    up = 1;
-    down = 0;
-    timer = appAddTimeOut( actWin->appCtx->appContext(),
-     (unsigned long) (rate*1000.0), dsc_updateControl, this );
-    timerActive = 1;
+    if ( !up || down ) {
+
+      //printf( "ngu, do up\n" );
+
+      up = 1;
+      down = 0;
+      if ( !timerActive ) {
+        timer = appAddTimeOut( actWin->appCtx->appContext(),
+         (unsigned long) (rate*1000.0), dsc_updateControl, this );
+        timerActive = 1;
+      }
+
+    }
 
   }
 
 //----------------------------------------------------------------------------
 
   if ( ngd ) {
+
+    //printf( "ngd, up = %-d, down = %-d\n", up, down );
 
     if ( !init ) {
       if ( showOOBState ) {
@@ -2723,12 +3262,20 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd, ncolori, ncr;
       stat = smartDrawAllActive();
     }
 
-    up = 0;
-    down = 1;
-    if ( !continuous ) {
-      timer = appAddTimeOut( actWin->appCtx->appContext(),
-       (unsigned long) (rate*1000.0), dsc_updateControl, this );
-      timerActive = 1;
+    if ( up || !down ) {
+
+      //printf( "ngd, do down\n" );
+
+      up = 0;
+      down = 1;
+      if ( !continuous ) {
+        if ( !timerActive ) {
+          timer = appAddTimeOut( actWin->appCtx->appContext(),
+           (unsigned long) (rate*1000.0), dsc_updateControl, this );
+          timerActive = 1;
+        }
+      }
+
     }
 
   }
@@ -2807,9 +3354,11 @@ int activeDynSymbolClass::setProperty (
         up = 1;
         down = 0;
         if ( !continuous ) {
-          timer = appAddTimeOut( actWin->appCtx->appContext(),
-           (unsigned long) (rate*1000.0), dsc_updateControl, this );
-          timerActive = 1;
+	  if ( !timerActive ) {
+            timer = appAddTimeOut( actWin->appCtx->appContext(),
+             (unsigned long) (rate*1000.0), dsc_updateControl, this );
+            timerActive = 1;
+	  }
         }
       }
 
@@ -2820,9 +3369,11 @@ int activeDynSymbolClass::setProperty (
         up = 0;
         down = 1;
         if ( !continuous ) {
-          timer = appAddTimeOut( actWin->appCtx->appContext(),
-           (unsigned long) (rate*1000.0), dsc_updateControl, this );
-          timerActive = 1;
+	  if ( !timerActive ) {
+            timer = appAddTimeOut( actWin->appCtx->appContext(),
+             (unsigned long) (rate*1000.0), dsc_updateControl, this );
+            timerActive = 1;
+	  }
         }
       }
 
@@ -2845,9 +3396,11 @@ int activeDynSymbolClass::setProperty (
           else
             up = 1;
 	}
-        timer = appAddTimeOut( actWin->appCtx->appContext(),
-         (unsigned long) (rate*1000.0), dsc_updateControl, this );
-        timerActive = 1;
+        if ( !timerActive ) {
+          timer = appAddTimeOut( actWin->appCtx->appContext(),
+           (unsigned long) (rate*1000.0), dsc_updateControl, this );
+          timerActive = 1;
+	}
       }
 
     }
@@ -2874,12 +3427,16 @@ int activeDynSymbolClass::setProperty (
 
 char *activeDynSymbolClass::firstDragName ( void ) {
 
+  if ( !enabled ) return NULL;
+
   dragIndex = 0;
   return dragName[dragIndex];
 
 }
 
 char *activeDynSymbolClass::nextDragName ( void ) {
+
+  if ( !enabled ) return NULL;
 
   if ( dragIndex < (int) ( sizeof(dragName) / sizeof(char *) ) - 1 ) {
     dragIndex++;
@@ -2894,14 +3451,33 @@ char *activeDynSymbolClass::nextDragName ( void ) {
 char *activeDynSymbolClass::dragValue (
   int i ) {
 
-  if ( i == 0 ) {
-    return dynSymbolFileName;
-  }
-  else if ( i == 1 ) {
-    return gateUpPvExpStr.getExpanded();
+  if ( !enabled ) return NULL;
+
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    if ( i == 0 ) {
+      return dynSymbolFileName;
+    }
+    else if ( i == 1 ) {
+      return gateUpPvExpStr.getExpanded();
+    }
+    else {
+      return gateDownPvExpStr.getExpanded();
+    }
+
   }
   else {
-    return gateDownPvExpStr.getExpanded();
+
+    if ( i == 0 ) {
+      return dynSymbolFileName;
+    }
+    else if ( i == 1 ) {
+      return gateUpPvExpStr.getRaw();
+    }
+    else {
+      return gateDownPvExpStr.getRaw();
+    }
+
   }
 
 }

@@ -12,8 +12,8 @@
 #include "pv_factory.h"
 
 #define BYTE_CLASSNAME "ByteClass"
-#define BYTE_MAJOR 1
-#define BYTE_MINOR 1
+#define BYTE_MAJOR 4
+#define BYTE_MINOR 0
 #define BYTE_RELEASE 0
 #define BYTE_COLORMODE_STATIC 0
 #define BYTE_COLORMODE_ALARM 1
@@ -32,7 +32,9 @@ public:
     
     // Load/save
     int save(FILE *f);
+    int old_save(FILE *f);
     int createFromFile(FILE *fptr, char *name, activeWindowClass *actWin);
+    int old_createFromFile(FILE *fptr, char *name, activeWindowClass *actWin);
 
     // Edit Mode
     int createInteractive(activeWindowClass *aw_obj,

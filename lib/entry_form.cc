@@ -651,6 +651,7 @@ entryFormClass::entryFormClass ( void ) {
 
   firstItem = 1;
   firstColorButton = 1;
+  leftAttachmentExists = 0;
 
   entryFontList = NULL;
   actionFontList = NULL;
@@ -804,6 +805,7 @@ XmString str;
   firstArrayItem = 1;
   firstColorButton = 1;
   curWidgetIsLabel = 0;
+  leftAttachmentExists = 0;
 
   if ( fi ) {
 
@@ -1006,6 +1008,7 @@ char buf[16];
   firstArrayItem = 1;
   firstColorButton = 1;
   curWidgetIsLabel = 0;
+  leftAttachmentExists = 0;
 
   if ( fi ) {
 
@@ -1365,9 +1368,22 @@ fontMenuEntry *cur;
     n = 0;
     XtSetArg( args[n], XmNtopAttachment, (XtArgVal) XmATTACH_WIDGET ); n++;
     XtSetArg( args[n], XmNtopWidget, (XtArgVal) curW ); n++;
-    XtSetArg( args[n], XmNleftAttachment,
-     (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
-    XtSetArg( args[n], XmNleftWidget, (XtArgVal) curRW ); n++;
+
+    if ( leftAttachmentExists ) {
+
+      XtSetArg( args[n], XmNleftAttachment,
+       (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
+      XtSetArg( args[n], XmNleftWidget, (XtArgVal) curRW ); n++;
+
+    }
+    else {
+
+      XtSetArg( args[n], XmNrightAttachment,
+       (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
+      XtSetArg( args[n], XmNrightWidget, (XtArgVal) curRW ); n++;
+
+    }
+
     XtSetArg( args[n], XmNmarginWidth, (XtArgVal) 0 ); n++;
 
     cur->activeW = fm->createFontMenu( topForm, fi, args, n,
@@ -1717,6 +1733,8 @@ textEntry *cur;
 XmString str;
 char buf[127+1];
 
+  leftAttachmentExists = 1;
+
   sprintf( buf, "%-d", *dest );
 
   cur = new textEntry;
@@ -1860,6 +1878,8 @@ int entryFormClass::addTextField (
 textEntry *cur;
 XmString str;
 char buf[127+1];
+
+  leftAttachmentExists = 1;
 
   if ( dest->isNull() )
     strcpy( buf, "" );
@@ -2008,6 +2028,8 @@ textEntry *cur;
 XmString str;
 char buf[127+1];
 
+  leftAttachmentExists = 1;
+
   sprintf( buf, "%-g", *dest );
 
 //   printf( "entryFormClass::addTextField - new textEntry\n" );
@@ -2153,6 +2175,8 @@ int entryFormClass::addTextField (
 textEntry *cur;
 XmString str;
 char buf[127+1];
+
+  leftAttachmentExists = 1;
 
   if ( dest->isNull() )
     strcpy( buf, "" );
@@ -2300,6 +2324,8 @@ int entryFormClass::addTextField (
 
 textEntry *cur;
 XmString str;
+
+  leftAttachmentExists = 1;
 
   cur = new textEntry;
 
@@ -2452,6 +2478,8 @@ XmString str;
 int n;
 Arg args[20];
 Widget scrolledTextWidget = NULL;
+
+  leftAttachmentExists = 1;
 
   cur = new textEntry;
 
@@ -2625,6 +2653,8 @@ int entryFormClass::addPasswordField (
 textEntry *cur;
 XmString str;
 
+  leftAttachmentExists = 1;
+
   cur = new textEntry;
 
   // textField widget
@@ -2776,6 +2806,8 @@ int entryFormClass::addLockedField (
 
 textEntry *cur;
 XmString str;
+
+  leftAttachmentExists = 1;
 
   cur = new textEntry;
 

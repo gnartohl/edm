@@ -190,5 +190,9 @@
 #define activeWindowClass_str191 (char *) "Incompatable file version"
 #define activeWindowClass_str192 (char *) "Print..."
 #define activeWindowClass_str193 (char *) "Close/Deactivate command ignored - window is not ready"
+#define activeWindowClass_str194 (char *) "Copy Group Vis Info"
+#define activeWindowClass_str195 (char *) "Paste Group Vis Info"
+#define activeWindowClass_str196 (char *) "Save To Current Path"
+#define activeWindowClass_str197 (char *) "Save file to "
 
 #endif

@@ -18,6 +18,9 @@
 
 #define __pip_cc 1
 
+#define SMALL_SYM_ARRAY_SIZE 10
+#define SMALL_SYM_ARRAY_LEN 31
+
 #include "pip.h"
 #include <sys/stat.h>
 #include <unistd.h>
@@ -26,7 +29,25 @@
 
 #include "thread.h"
 
-static void pipc_edit_update (
+static void menu_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+int i;
+activePipClass *pipo = (activePipClass *) client;
+
+  for ( i=0; i<pipo->maxDsps; i++ ) {
+    if ( w == pipo->pb[i] ) {
+      pipo->readPvId->put( i );
+      return;
+    }
+  }
+
+}
+
+static void pipc_edit_ok1 (
   Widget w,
   XtPointer client,
   XtPointer call )
@@ -34,38 +55,99 @@ static void pipc_edit_update (
 
 activePipClass *pipo = (activePipClass *) client;
 
+  pipo->ef1->popdownNoDestroy();
+
+}
+
+static void pipc_edit_update (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activePipClass *pipo = (activePipClass *) client;
+int i, more;
+
   pipo->actWin->setChanged();
 
   pipo->eraseSelectBoxCorners();
   pipo->erase();
 
+  pipo->displayFileName[0].setRaw( pipo->buf->bufDisplayFileName[0] );
+  if ( blank( pipo->displayFileName[0].getRaw() ) ) {
+    pipo->propagateMacros[0] = 1;
+    pipo->label[0].setRaw( "" );
+    pipo->symbolsExpStr[0].setRaw( "" );
+    pipo->replaceSymbols[0] = 0;
+    pipo->numDsps = 0;
+  }
+  else {
+    pipo->propagateMacros[0] = pipo->buf->bufPropagateMacros[0];
+    pipo->label[0].setRaw( pipo->buf->bufLabel[0] );
+    pipo->symbolsExpStr[0].setRaw( pipo->buf->bufSymbols[0] );
+    pipo->replaceSymbols[0] = pipo->buf->bufReplaceSymbols[0];
+    pipo->numDsps = 1;
+  }
+
+  if ( pipo->numDsps ) {
+    more = 1;
+    for ( i=1; (i<pipo->maxDsps) && more; i++ ) {
+      pipo->displayFileName[i].setRaw( pipo->buf->bufDisplayFileName[i] );
+      if ( blank( pipo->displayFileName[i].getRaw() ) ) {
+        pipo->propagateMacros[i] = 1;
+        pipo->label[i].setRaw( "" );
+        pipo->symbolsExpStr[i].setRaw( "" );
+        pipo->replaceSymbols[i] = 0;
+        more = 0;
+      }
+      else {
+        pipo->propagateMacros[i] = pipo->buf->bufPropagateMacros[i];
+        pipo->label[i].setRaw( pipo->buf->bufLabel[i] );
+        pipo->symbolsExpStr[i].setRaw( pipo->buf->bufSymbols[i] );
+        pipo->replaceSymbols[i] = pipo->buf->bufReplaceSymbols[i];
+        (pipo->numDsps)++;
+      }
+    }
+  }
+
+  for ( i=pipo->numDsps; i<pipo->maxDsps; i++ ) {
+    pipo->propagateMacros[i] = 1;
+    pipo->label[i].setRaw( "" );
+    pipo->symbolsExpStr[i].setRaw( "" );
+    pipo->replaceSymbols[i] = 0;
+  }
+
   pipo->fgColor.setColorIndex(
-   pipo->bufFgColor, pipo->actWin->ci );
+   pipo->buf->bufFgColor, pipo->actWin->ci );
 
   pipo->bgColor.setColorIndex(
-   pipo->bufBgColor, pipo->actWin->ci );
+   pipo->buf->bufBgColor, pipo->actWin->ci );
 
   pipo->topShadowColor.setColorIndex(
-   pipo->bufTopShadowColor, pipo->actWin->ci );
+   pipo->buf->bufTopShadowColor, pipo->actWin->ci );
 
   pipo->botShadowColor.setColorIndex(
-   pipo->bufBotShadowColor, pipo->actWin->ci );
+   pipo->buf->bufBotShadowColor, pipo->actWin->ci );
 
-  pipo->readPvExpStr.setRaw( pipo->bufReadPvName );
+  pipo->readPvExpStr.setRaw( pipo->buf->bufReadPvName );
 
-  pipo->fileNameExpStr.setRaw( pipo->bufFileName );
+  pipo->labelPvExpStr.setRaw( pipo->buf->bufLabelPvName );
 
-  pipo->x = pipo->bufX;
-  pipo->sboxX = pipo->bufX;
+  pipo->fileNameExpStr.setRaw( pipo->buf->bufFileName );
 
-  pipo->y = pipo->bufY;
-  pipo->sboxY = pipo->bufY;
+  pipo->displaySource = pipo->buf->bufDisplaySource;
 
-  pipo->w = pipo->bufW;
-  pipo->sboxW = pipo->bufW;
+  pipo->x = pipo->buf->bufX;
+  pipo->sboxX = pipo->buf->bufX;
 
-  pipo->h = pipo->bufH;
-  pipo->sboxH = pipo->bufH;
+  pipo->y = pipo->buf->bufY;
+  pipo->sboxY = pipo->buf->bufY;
+
+  pipo->w = pipo->buf->bufW;
+  pipo->sboxW = pipo->buf->bufW;
+
+  pipo->h = pipo->buf->bufH;
+  pipo->sboxH = pipo->buf->bufH;
 
   if ( pipo->h < pipo->minH ) {
     pipo->h = pipo->minH;
@@ -99,6 +181,9 @@ activePipClass *pipo = (activePipClass *) client;
   pipo->ef.popdown();
   pipo->operationComplete();
 
+  delete pipo->buf;
+  pipo->buf = NULL;
+
 }
 
 static void pipc_edit_cancel (
@@ -112,6 +197,9 @@ activePipClass *pipo = (activePipClass *) client;
   pipo->ef.popdown();
   pipo->operationCancel();
 
+  delete pipo->buf;
+  pipo->buf = NULL;
+
 }
 
 static void pipc_edit_cancel_delete (
@@ -122,6 +210,9 @@ static void pipc_edit_cancel_delete (
 
 activePipClass *pipo = (activePipClass *) client;
 
+  delete pipo->buf;
+  pipo->buf = NULL;
+
   pipo->ef.popdown();
   pipo->operationCancel();
   pipo->erase();
@@ -130,16 +221,14 @@ activePipClass *pipo = (activePipClass *) client;
 
 }
 
-#ifdef __epics__
-
 static void pip_monitor_read_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activePipClass *pipo =
- (activePipClass *) ca_puser(arg.chid);
+activePipClass *pipo = (activePipClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     pipo->needConnectInit = 1;
 
@@ -160,16 +249,16 @@ activePipClass *pipo =
 }
 
 static void pip_readUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-char *str;
-activePipClass *pipo = (activePipClass *) ast_args.usr;
+activePipClass *pipo = (activePipClass *) userarg;
 
   if ( pipo->active ) {
 
-    str = (char *) ast_args.dbr;
-    if ( str ) strncpy( pipo->curReadV, str, 39 );
+    pv->get_string( pipo->curReadV, 39 );
+    pipo->curReadV[39] = 0;
 
     pipo->actWin->appCtx->proc->lock();
     pipo->needUpdate = 1;
@@ -180,9 +269,74 @@ activePipClass *pipo = (activePipClass *) ast_args.usr;
 
 }
 
-#endif
+static void pip_monitor_menu_connect_state (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+activePipClass *pipo = (activePipClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+    pipo->needMenuConnectInit = 1;
+
+  }
+  else {
+
+    pipo->readPvConnected = 0;
+    pipo->active = 0;
+    pipo->fgColor.setDisconnected();
+    pipo->needDraw = 1;
+
+  }
+
+  pipo->actWin->appCtx->proc->lock();
+  pipo->actWin->addDefExeNode( pipo->aglPtr );
+  pipo->actWin->appCtx->proc->unlock();
+
+}
+
+static void pip_menuUpdate (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+activePipClass *pipo = (activePipClass *) userarg;
+
+  if ( pipo->active ) {
+
+    pipo->curReadIV = pv->get_int();
+    if ( pipo->curReadIV < -1 ) pipo->curReadIV = 0;
+    if ( pipo->curReadIV >= pipo->numDsps ) pipo->curReadIV = pipo->numDsps;
+
+    if ( pipo->firstEvent ) { // don't let menu pop up if pv is -1 initially
+      pipo->firstEvent = 0;
+      if ( pipo->curReadIV == -1 ) {
+        pipo->curReadIV = 0;
+        pv->put( pipo->curReadIV );
+        return;
+      }
+    }
+
+    pipo->actWin->appCtx->proc->lock();
+    pipo->needMenuUpdate = 1;
+    pipo->actWin->addDefExeNode( pipo->aglPtr );
+    pipo->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
+static void pip_monitor_label_connect_state (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+}
 
 activePipClass::activePipClass ( void ) {
+
+int i;
 
   name = new char[strlen("activePipClass")+1];
   strcpy( name, "activePipClass" );
@@ -192,9 +346,20 @@ activePipClass::activePipClass ( void ) {
   frameWidget = NULL;
   aw = NULL;
   strcpy( curFileName, "" );
+  displaySource = 0;
   readPvId = 0;
-  readEventId = 0;
+  labelPvId = 0;
   activateIsComplete = 0;
+
+  for ( i=0; i<maxDsps; i++ ) {
+    propagateMacros[i] = 1;
+    replaceSymbols[i] = 0;
+  }
+
+  numDsps = 0;
+  popUpMenu = NULL;
+
+  buf = NULL;
 
 }
 
@@ -203,6 +368,7 @@ activePipClass::activePipClass
  ( const activePipClass *source ) {
 
 activeGraphicClass *pipo = (activeGraphicClass *) this;
+int i;
 
   pipo->clone( (activeGraphicClass *) source );
 
@@ -220,6 +386,7 @@ activeGraphicClass *pipo = (activeGraphicClass *) this;
   botShadowColor.copy( source->botShadowColor );
 
   readPvExpStr.copy( source->readPvExpStr );
+  labelPvExpStr.copy( source->labelPvExpStr );
   fileNameExpStr.copy( source->fileNameExpStr );
 
   minW = 50;
@@ -227,15 +394,33 @@ activeGraphicClass *pipo = (activeGraphicClass *) this;
   frameWidget = NULL;
   aw = NULL;
   strcpy( curFileName, "" );
+  displaySource = source->displaySource;
   readPvId = 0;
-  readEventId = 0;
+  labelPvId = 0;
   activateIsComplete = 0;
+
+  for ( i=0; i<maxDsps; i++ ) {
+    propagateMacros[i] = source->propagateMacros[i];
+    replaceSymbols[i] = source->replaceSymbols[i];
+    displayFileName[i].copy( source->displayFileName[i] );
+    label[i].copy( source->label[i] );
+    symbolsExpStr[i].copy( source->symbolsExpStr[i] );
+  }
+
+  numDsps = source->numDsps;
+  popUpMenu = NULL;
+  buf = NULL;
 
 }
 
 activePipClass::~activePipClass ( void ) {
 
   if ( name ) delete name;
+
+  if ( buf ) {
+    delete buf;
+    buf = NULL;
+  }
 
 }
 
@@ -279,6 +464,67 @@ int activePipClass::save (
   FILE *f )
 {
 
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+int one = 1;
+static char *emptyStr = "";
+
+int displaySourceFromPV = 0;
+static char *displaySourceEnumStr[3] = {
+  "stringPV",
+  "file",
+  "menu"
+};
+static int displaySourceEnum[3] = {
+  0,
+  1,
+  2
+};
+
+  major = PIPC_MAJOR_VERSION;
+  minor = PIPC_MINOR_VERSION;
+  release = PIPC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadW( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadW( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadW( "displaySource", 3, displaySourceEnumStr, displaySourceEnum,
+   &displaySource, &displaySourceFromPV );
+  tag.loadW( "filePv", &readPvExpStr, emptyStr );
+  tag.loadW( "labelPv", &labelPvExpStr, emptyStr );
+  tag.loadW( "file", &fileNameExpStr, emptyStr );
+  tag.loadW( "numDsps", &numDsps );
+  tag.loadW( "displayFileName", displayFileName, numDsps, emptyStr );
+  tag.loadW( "menuLabel", label, numDsps, emptyStr );
+  tag.loadW( "symbols", symbolsExpStr, numDsps, emptyStr );
+  tag.loadW( "replaceSymbols", replaceSymbols, numDsps, &zero );
+  tag.loadW( "propagateMacros", propagateMacros, numDsps, &one );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int activePipClass::old_save (
+  FILE *f )
+{
+
 int index;
 
   fprintf( f, "%-d %-d %-d\n", PIPC_MAJOR_VERSION,
@@ -316,6 +562,83 @@ int index;
 }
 
 int activePipClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int major, minor, release, stat, n;
+
+tagClass tag;
+
+int zero = 0;
+int one = 1;
+static char *emptyStr = "";
+
+int displaySourceFromPV = 0;
+static char *displaySourceEnumStr[3] = {
+  "stringPV",
+  "file",
+  "menu"
+};
+static int displaySourceEnum[3] = {
+  0,
+  1,
+  2
+};
+
+  this->actWin = _actWin;
+
+  // read file and process each "object" tag
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadR( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadR( "displaySource", 3, displaySourceEnumStr, displaySourceEnum,
+   &displaySource, &displaySourceFromPV );
+  tag.loadR( "filePv", &readPvExpStr, emptyStr );
+  tag.loadR( "labelPv", &labelPvExpStr, emptyStr );
+  tag.loadR( "file", &fileNameExpStr, emptyStr );
+  tag.loadR( "numDsps", &numDsps, &zero );
+  tag.loadR( "displayFileName", maxDsps, displayFileName, &n, emptyStr );
+  tag.loadR( "menuLabel", maxDsps, label, &n, emptyStr );
+  tag.loadR( "symbols", maxDsps, symbolsExpStr, &n, emptyStr );
+  tag.loadR( "replaceSymbols", maxDsps, replaceSymbols, &n, &zero );
+  tag.loadR( "propagateMacros", maxDsps, propagateMacros, &n, &one );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > PIPC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox();
+
+  return stat;
+
+}
+
+int activePipClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -370,6 +693,9 @@ char oneFileName[127+1];
 int activePipClass::genericEdit ( void ) {
 
 char title[32], *ptr;
+int i;
+
+  buf = new bufType;
 
   ptr = actWin->obj.getNameFromClass( "activePipClass" );
   if ( ptr )
@@ -379,26 +705,59 @@ char title[32], *ptr;
 
   Strncat( title, activePipClass_str5, 31 );
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
+  buf->bufX = x;
+  buf->bufY = y;
+  buf->bufW = w;
+  buf->bufH = h;
 
-  bufFgColor = fgColor.pixelIndex();
-  bufBgColor = bgColor.pixelIndex();
-  bufTopShadowColor = topShadowColor.pixelIndex();
-  bufBotShadowColor = botShadowColor.pixelIndex();
+  buf->bufFgColor = fgColor.pixelIndex();
+  buf->bufBgColor = bgColor.pixelIndex();
+  buf->bufTopShadowColor = topShadowColor.pixelIndex();
+  buf->bufBotShadowColor = botShadowColor.pixelIndex();
 
   if ( readPvExpStr.getRaw() )
-    strncpy( bufReadPvName, readPvExpStr.getRaw(),
+    strncpy( buf->bufReadPvName, readPvExpStr.getRaw(),
      activeGraphicClass::MAX_PV_NAME );
   else
-    strcpy( bufReadPvName, "" );
+    strcpy( buf->bufReadPvName, "" );
+
+  if ( labelPvExpStr.getRaw() )
+    strncpy( buf->bufLabelPvName, labelPvExpStr.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
+  else
+    strcpy( buf->bufLabelPvName, "" );
 
   if ( fileNameExpStr.getRaw() )
-    strncpy( bufFileName, fileNameExpStr.getRaw(), 127 );
+    strncpy( buf->bufFileName, fileNameExpStr.getRaw(), 127 );
   else
-    strcpy( bufFileName, "" );
+    strcpy( buf->bufFileName, "" );
+
+  buf->bufDisplaySource = displaySource;
+
+  for ( i=0; i<maxDsps; i++ ) {
+
+    if ( displayFileName[i].getRaw() )
+      strncpy( buf->bufDisplayFileName[i], displayFileName[i].getRaw(), 127 );
+    else
+      strncpy( buf->bufDisplayFileName[i], "", 127 );
+
+    if ( label[i].getRaw() )
+      strncpy( buf->bufLabel[i], label[i].getRaw(), 127 );
+    else
+      strncpy( buf->bufLabel[i], "", 127 );
+
+    if ( symbolsExpStr[i].getRaw() ) {
+      strncpy( buf->bufSymbols[i], symbolsExpStr[i].getRaw(), 255 );
+    }
+    else {
+      strncpy( buf->bufSymbols[i], "", 255 );
+    }
+
+    buf->bufPropagateMacros[i] = propagateMacros[i];
+
+    buf->bufReplaceSymbols[i] = replaceSymbols[i];
+
+  }
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -406,19 +765,56 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activePipClass_str6, 35, &bufX );
-  ef.addTextField( activePipClass_str7, 35, &bufY );
-  ef.addTextField( activePipClass_str8, 35, &bufW );
-  ef.addTextField( activePipClass_str9, 35, &bufH );
-  ef.addTextField( activePipClass_str11, 35, bufReadPvName,
+  ef.addTextField( activePipClass_str6, 35, &buf->bufX );
+  ef.addTextField( activePipClass_str7, 35, &buf->bufY );
+  ef.addTextField( activePipClass_str8, 35, &buf->bufW );
+  ef.addTextField( activePipClass_str9, 35, &buf->bufH );
+  ef.addOption( "Display Source", "String PV|Form|Menu",
+   &buf->bufDisplaySource );
+  ef.addTextField( activePipClass_str11, 35, buf->bufReadPvName,
    activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activePipClass_str12, 35, bufFileName, 127 );
-  ef.addColorButton( activePipClass_str16, actWin->ci, &fgCb, &bufFgColor );
-  ef.addColorButton( activePipClass_str18, actWin->ci, &bgCb, &bufBgColor );
+  ef.addTextField( "Label PV", 35, buf->bufLabelPvName,
+   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activePipClass_str12, 35, buf->bufFileName, 127 );
+  ef.addEmbeddedEf( "Menu Info", "...", &ef1 );
+
+  ef1->create( actWin->top, actWin->appCtx->ci.getColorMap(),
+   &actWin->appCtx->entryFormX,
+   &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
+   &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
+   title, NULL, NULL, NULL );
+
+  for ( i=0; i<maxDsps; i++ ) {
+
+    ef1->beginSubForm();
+    ef1->addTextField( "Label", 35, buf->bufLabel[i], 127 );
+    ef1->addLabel( "  File" );
+    ef1->addTextField( "", 35, buf->bufDisplayFileName[i], 127 );
+    ef1->addLabel( "  Macros" );
+    ef1->addTextField( "", 35, buf->bufSymbols[i], 255 );
+    ef1->endSubForm();
+
+    ef1->beginLeftSubForm();
+    ef1->addLabel( "  Mode" );
+    ef1->addOption( "", "Append|Replace",
+     &buf->bufReplaceSymbols[i] );
+    ef1->addLabel( " " );
+    ef1->addToggle( " ", &buf->bufPropagateMacros[i] );
+    ef1->addLabel( "Propagate  " );
+    ef1->endSubForm();
+
+  }
+
+  ef1->finished( pipc_edit_ok1, this );
+
+  ef.addColorButton( activePipClass_str16, actWin->ci, &fgCb,
+   &buf->bufFgColor );
+  ef.addColorButton( activePipClass_str18, actWin->ci, &bgCb,
+   &buf->bufBgColor );
   ef.addColorButton( activePipClass_str19, actWin->ci, &topCb,
-   &bufTopShadowColor );
+   &buf->bufTopShadowColor );
   ef.addColorButton( activePipClass_str20, actWin->ci, &botCb,
-   &bufBotShadowColor );
+   &buf->bufBotShadowColor );
 
   return 1;
 
@@ -488,7 +884,7 @@ int activePipClass::draw ( void ) {
 
 int activePipClass::drawActive ( void ) {
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   if ( aw ) {
     if ( aw->loadFailure ) {
@@ -511,7 +907,9 @@ int activePipClass::activate (
   void *ptr )
 {
 
-int stat;
+int i, n;
+Arg args[5];
+XmString str;
 
   switch ( pass ) {
 
@@ -527,14 +925,20 @@ int stat;
 
       opComplete = 1;
 
-      aglPtr = ptr;
-      needConnectInit = needUpdate = needDraw = needFileOpen = 0;
-      activateIsComplete = 0;
+      initEnable();
 
-#ifdef __epics__
-      readPvId = 0;
-      readEventId = 0;
-#endif
+      aglPtr = ptr;
+      needConnectInit = needUpdate = needMenuConnectInit = needMenuUpdate =
+       needDraw = needFileOpen = needInitMenuFileOpen = needUnmap =
+       needMap = 0;
+      activateIsComplete = 0;
+      curReadIV = 0;
+      strcpy( curReadV, "" );
+      firstEvent = 1;
+      initialReadConnection = initialMenuConnection =
+       initialLabelConnection = 1;
+
+      readPvId = labelPvId = NULL;
 
       readPvConnected = active = init = 0;
       activeMode = 1;
@@ -548,7 +952,15 @@ int stat;
         fgColor.setConnectSensitive();
       }
 
-      if ( readExists || !fileNameExpStr.getExpanded() ||
+      if ( !labelPvExpStr.getExpanded() ||
+            blank( labelPvExpStr.getExpanded() ) ) {
+        labelExists = 0;
+      }
+      else {
+        labelExists = 1;
+      }
+
+      if ( !fileNameExpStr.getExpanded() ||
             blank( fileNameExpStr.getExpanded() ) ) {
         fileExists = 0;
       }
@@ -556,25 +968,114 @@ int stat;
         fileExists = 1;
       }
 
-      if ( fileExists ) {
-        needFileOpen = 1;
-        actWin->addDefExeNode( aglPtr );
-      }
-      else {
-        activateIsComplete = 1;
-      }
+      switch ( displaySource ) {
 
-#ifdef __epics__
+      case displayFromPV:
 
-      if ( readExists ) {
-        stat = ca_search_and_connect( readPvExpStr.getExpanded(), &readPvId,
-         pip_monitor_read_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activePipClass_str22 );
+        if ( readExists ) {
+	  readPvId = the_PV_Factory->create( readPvExpStr.getExpanded() );
+	  if ( readPvId ) {
+	    readPvId->add_conn_state_callback( pip_monitor_read_connect_state,
+             this );
+	  }
+	  else {
+            printf( activePipClass_str22 );
+          }
         }
-      }
 
+        activateIsComplete = 1;
+
+      break;
+
+      case displayFromForm:
+
+        if ( fileExists ) {
+          needFileOpen = 1;
+          actWin->addDefExeNode( aglPtr );
+        }
+        else {
+          activateIsComplete = 1;
+        }
+
+        break;
+
+      case displayFromMenu:
+
+        if ( readExists && ( numDsps > 0 ) ) {
+
+	  readPvId = the_PV_Factory->create( readPvExpStr.getExpanded() );
+	  if ( readPvId ) {
+	    readPvId->add_conn_state_callback( pip_monitor_menu_connect_state,
+             this );
+	  }
+	  else {
+            printf( activePipClass_str22 );
+          }
+
+	  labelPvId = the_PV_Factory->create( labelPvExpStr.getExpanded() );
+	  if ( labelPvId ) {
+	    labelPvId->add_conn_state_callback(
+             pip_monitor_label_connect_state, this );
+	  }
+	  else {
+            printf( activePipClass_str22 );
+          }
+
+          if ( !popUpMenu ) {
+
+            n = 0;
+            XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+            popUpMenu = XmCreatePopupMenu( actWin->topWidgetId(), "", args,
+             n );
+
+            pullDownMenu = XmCreatePulldownMenu( popUpMenu, "", NULL, 0 );
+
+            for ( i=0; i<numDsps; i++ ) {
+
+              if ( label[i].getExpanded() ) {
+                str = XmStringCreateLocalized( label[i].getExpanded() );
+              }
+              else {
+                str = XmStringCreateLocalized( " " );
+              }
+              pb[i] = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+               popUpMenu,
+               XmNlabelString, str,
+               NULL );
+              XmStringFree( str );
+
+              XtAddCallback( pb[i], XmNactivateCallback, menu_cb,
+               (XtPointer) this );
+
+            }
+
+          }
+
+#if 0
+          if ( !blank( displayFileName[0].getExpanded() ) ) {
+            needInitMenuFileOpen = 1;
+            actWin->addDefExeNode( aglPtr );
+          }
+          else {
+            activateIsComplete = 1;
+          }
 #endif
+
+	}
+	else {
+
+          activateIsComplete = 1;
+
+        }
+
+        break;
+
+      default:
+
+        activateIsComplete = 1;
+        break;
+
+      }
 
     }
 
@@ -597,7 +1098,7 @@ int activePipClass::deactivate (
   int pass
 ) {
 
-int stat, okToClose;
+int okToClose;
 activeWindowListPtr cur;
 
   if ( pass == 1 ) {
@@ -622,11 +1123,10 @@ activeWindowListPtr cur;
       // make sure the window was successfully opened
       cur = actWin->appCtx->head->flink;
       while ( cur != actWin->appCtx->head ) {
-
         if ( &cur->node == aw ) {
           okToClose = 1;
           break;
-	}
+        }
         cur = cur->flink;
       }
 
@@ -642,16 +1142,30 @@ activeWindowListPtr cur;
       frameWidget = NULL;
     }
 
-#ifdef __epics__
-
     if ( readPvId ) {
-      stat = ca_clear_channel( readPvId );
+      readPvId->remove_conn_state_callback( pip_monitor_read_connect_state,
+       this );
+      if ( !initialReadConnection ) {
+        readPvId->remove_value_callback( pip_readUpdate, this );
+      }
+      if ( !initialMenuConnection ) {
+        readPvId->remove_value_callback( pip_menuUpdate, this );
+      }
+      readPvId->release();
       readPvId = NULL;
-      if ( stat != ECA_NORMAL )
-        printf( activePipClass_str23 );
     }
 
-#endif
+    if ( labelPvId ) {
+      labelPvId->remove_conn_state_callback( pip_monitor_label_connect_state,
+       this );
+      labelPvId->release();
+      labelPvId = NULL;
+    }
+
+    if ( popUpMenu ) {
+      XtDestroyWidget( popUpMenu );
+      popUpMenu = NULL;
+    }
 
   }
 
@@ -662,7 +1176,7 @@ activeWindowListPtr cur;
 int activePipClass::preReactivate (
   int pass ) {
 
-int stat, okToClose;
+int okToClose;
 activeWindowListPtr cur;
 
   if ( pass == 1 ) {
@@ -675,6 +1189,10 @@ activeWindowListPtr cur;
         aw = NULL;
         frameWidget = NULL;
       }
+    }
+
+    if ( frameWidget ) {
+      if ( *frameWidget ) XtUnmapWidget( *frameWidget );
     }
 
     if ( aw ) {
@@ -698,15 +1216,34 @@ activeWindowListPtr cur;
 
     }
 
-#ifdef __epics__
-
-    if ( readPvId ) {
-      stat = ca_clear_channel( readPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activePipClass_str23 );
+    if ( frameWidget ) {
+      frameWidget = NULL;
     }
 
-#endif
+    if ( readPvId ) {
+      readPvId->remove_conn_state_callback( pip_monitor_read_connect_state,
+       this );
+      if ( !initialReadConnection ) {
+        readPvId->remove_value_callback( pip_readUpdate, this );
+      }
+      if ( !initialMenuConnection ) {
+        readPvId->remove_value_callback( pip_menuUpdate, this );
+      }
+      readPvId->release();
+      readPvId = NULL;
+    }
+
+    if ( labelPvId ) {
+      labelPvId->remove_conn_state_callback( pip_monitor_label_connect_state,
+       this );
+      labelPvId->release();
+      labelPvId = NULL;
+    }
+
+    if ( popUpMenu ) {
+      XtDestroyWidget( popUpMenu );
+      popUpMenu = NULL;
+    }
 
   }
 
@@ -718,7 +1255,9 @@ int activePipClass::reactivate (
   int pass,
   void *ptr ) {
 
-int status;
+int i, n;
+Arg args[5];
+XmString str;
 
   switch ( pass ) {
 
@@ -734,14 +1273,18 @@ int status;
 
       opComplete = 1;
 
+      //initEnable();
+
       aglPtr = ptr;
-      needConnectInit = needUpdate = needDraw = needFileOpen = 0;
+      needConnectInit = needUpdate = needMenuConnectInit = needMenuUpdate =
+       needDraw = needFileOpen = needInitMenuFileOpen = needUnmap =
+       needMap = 0;
+      activateIsComplete = 0;
+      curReadIV = 0;
+      strcpy( curReadV, "" );
 
-
-#ifdef __epics__
       readPvId = 0;
-      readEventId = 0;
-#endif
+      labelPvId = 0;
 
       readPvConnected = active = init = 0;
       activeMode = 1;
@@ -755,6 +1298,14 @@ int status;
         fgColor.setConnectSensitive();
       }
 
+      if ( !labelPvExpStr.getExpanded() ||
+            blank( labelPvExpStr.getExpanded() ) ) {
+        labelExists = 0;
+      }
+      else {
+        labelExists = 1;
+      }
+
       if ( !fileNameExpStr.getExpanded() ||
             blank( fileNameExpStr.getExpanded() ) ) {
         fileExists = 0;
@@ -763,25 +1314,104 @@ int status;
         fileExists = 1;
       }
 
-      if ( fileExists ) {
-        needFileOpen = 1;
-        actWin->addDefExeNode( aglPtr );
-      }
-      else {
-        activateIsComplete = 1;
-      }
+      switch ( displaySource ) {
 
-#ifdef __epics__
+      case displayFromPV:
 
-      if ( readExists ) {
-        status = ca_search_and_connect( readPvExpStr.getExpanded(), &readPvId,
-         pip_monitor_read_connect_state, this );
-        if ( status != ECA_NORMAL ) {
-          printf( activePipClass_str22 );
+        if ( readExists ) {
+ 	  readPvId = the_PV_Factory->create( readPvExpStr.getExpanded() );
+	  if ( readPvId ) {
+	    readPvId->add_conn_state_callback( pip_monitor_read_connect_state,
+             this );
+	  }
+	  else {
+            printf( activePipClass_str22 );
+          }
         }
-      }
 
-#endif
+        activateIsComplete = 1;
+
+        break;
+
+      case displayFromForm:
+
+        if ( fileExists ) {
+          needFileOpen = 1;
+          actWin->addDefExeNode( aglPtr );
+        }
+        else {
+          activateIsComplete = 1;
+        }
+
+        break;
+
+      case displayFromMenu:
+
+        if ( readExists && ( numDsps > 0 ) ) {
+
+	  readPvId = the_PV_Factory->create( readPvExpStr.getExpanded() );
+	  if ( readPvId ) {
+	    readPvId->add_conn_state_callback( pip_monitor_menu_connect_state,
+             this );
+	  }
+	  else {
+            printf( activePipClass_str22 );
+          }
+
+	  labelPvId = the_PV_Factory->create( labelPvExpStr.getExpanded() );
+	  if ( labelPvId ) {
+	    labelPvId->add_conn_state_callback(
+             pip_monitor_label_connect_state, this );
+	  }
+	  else {
+            printf( activePipClass_str22 );
+          }
+
+          if ( !popUpMenu ) {
+
+            n = 0;
+            XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+            popUpMenu = XmCreatePopupMenu( actWin->topWidgetId(), "", args,
+             n );
+
+            pullDownMenu = XmCreatePulldownMenu( popUpMenu, "", NULL, 0 );
+
+            for ( i=0; i<numDsps; i++ ) {
+
+              if ( label[i].getExpanded() ) {
+                str = XmStringCreateLocalized( label[i].getExpanded() );
+              }
+              else {
+                str = XmStringCreateLocalized( " " );
+              }
+              pb[i] = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+               popUpMenu,
+               XmNlabelString, str,
+               NULL );
+              XmStringFree( str );
+
+              XtAddCallback( pb[i], XmNactivateCallback, menu_cb,
+               (XtPointer) this );
+
+            }
+
+          }
+
+	}
+	else {
+
+          activateIsComplete = 1;
+
+        }
+
+        break;
+
+      default:
+
+        activateIsComplete = 1;
+        break;
+
+      }
 
     }
 
@@ -806,12 +1436,26 @@ int activePipClass::expand1st (
   char *expansions[] )
 {
 
-int stat;
+int stat, retStat, i;
 
-  stat = readPvExpStr.expand1st( numMacros, macros, expansions );
+  retStat = readPvExpStr.expand1st( numMacros, macros, expansions );
+
+  stat = labelPvExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+
   stat = fileNameExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
-  return stat;
+  for ( i=0; i<numDsps; i++ ) {
+    stat = symbolsExpStr[i].expand1st( numMacros, macros, expansions );
+    if ( !( stat & 1 ) ) retStat = stat;
+    stat = label[i].expand1st( numMacros, macros, expansions );
+    if ( !( stat & 1 ) ) retStat = stat;
+    stat = displayFileName[i].expand1st( numMacros, macros, expansions );
+    if ( !( stat & 1 ) ) retStat = stat;
+  }
+
+  return retStat;
 
 }
 
@@ -821,15 +1465,24 @@ int activePipClass::expand2nd (
   char *expansions[] )
 {
 
-int stat, retStat;
+int stat, retStat, i;
 
-  retStat = 1;
+  retStat = readPvExpStr.expand2nd( numMacros, macros, expansions );
 
-  stat = readPvExpStr.expand2nd( numMacros, macros, expansions );
+  stat = labelPvExpStr.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
   stat = fileNameExpStr.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
+
+  for ( i=0; i<numDsps; i++ ) {
+    stat = symbolsExpStr[i].expand2nd( numMacros, macros, expansions );
+    if ( !( stat & 1 ) ) retStat = stat;
+    stat = label[i].expand2nd( numMacros, macros, expansions );
+    if ( !( stat & 1 ) ) retStat = stat;
+    stat = displayFileName[i].expand2nd( numMacros, macros, expansions );
+    if ( !( stat & 1 ) ) retStat = stat;
+  }
 
   return retStat;
 
@@ -837,9 +1490,19 @@ int stat, retStat;
 
 int activePipClass::containsMacros ( void ) {
 
+int i;
+
   if ( readPvExpStr.containsPrimaryMacros() ) return 1;
 
+  if ( labelPvExpStr.containsPrimaryMacros() ) return 1;
+
   if ( fileExists && fileNameExpStr.containsPrimaryMacros() ) return 1;
+
+  for ( i=0; i<numDsps; i++ ) {
+    if ( symbolsExpStr[i].containsPrimaryMacros() ) return 1;
+    if ( label[i].containsPrimaryMacros() ) return 1;
+    if ( displayFileName[i].containsPrimaryMacros() ) return 1;
+  }
 
   return 0;
 
@@ -850,21 +1513,23 @@ int activePipClass::createPipWidgets ( void ) {
   frameWidget = new Widget;
   *frameWidget = NULL;
 
-  *frameWidget = XtVaCreateManagedWidget( "", xmBulletinBoardWidgetClass,
+  *frameWidget = XtVaCreateWidget( "", xmScrolledWindowWidgetClass,
    actWin->executeWidgetId(),
    XmNx, x,
    XmNy, y,
    XmNwidth, w,
    XmNheight, h,
-   XmNresizePolicy, XmRESIZE_NONE,
+   XmNscrollBarDisplayPolicy, XmAS_NEEDED,
+   XmNscrollingPolicy, XmAUTOMATIC,
+   XmNvisualPolicy, XmCONSTANT,
    XmNmarginWidth, 0,
    XmNmarginHeight, 0,
-   //XmNshadowThickness, 2,
-   //XmNshadowType, XmSHADOW_ETCHED_OUT,
-   //XmNtopShadowColor, topShadowColor.pixelColor(),
-   //XmNbottomShadowColor, botShadowColor.pixelColor(),
+   XmNtopShadowColor, topShadowColor.pixelColor(),
+   XmNbottomShadowColor, botShadowColor.pixelColor(),
+   XmNborderColor, bgColor.pixelColor(),
+   XmNhighlightColor, bgColor.pixelColor(),
+   XmNforeground, bgColor.pixelColor(),
    XmNbackground, bgColor.pixelColor(),
-   XmNmappedWhenManaged, False,
    NULL );
 
   if ( !(*frameWidget) ) {
@@ -932,20 +1597,222 @@ int tmpw, tmph, ret_stat;
 
 }
 
+void activePipClass::openEmbeddedByIndex (
+  int index )
+{
+
+activeWindowListPtr cur;
+int i, l, stat;
+char symbolsWithSubs[255+1];
+int useSmallArrays, symbolCount, maxSymbolLength;
+char smallNewMacros[SMALL_SYM_ARRAY_SIZE+1][SMALL_SYM_ARRAY_LEN+1+1];
+char smallNewValues[SMALL_SYM_ARRAY_SIZE+1][SMALL_SYM_ARRAY_LEN+1+1];
+char *newMacros[100];
+char *newValues[100];
+int numNewMacros, max, numFound;
+
+  // do special substitutions
+  actWin->substituteSpecial( 255, symbolsExpStr[index].getExpanded(),
+   symbolsWithSubs );
+
+  numNewMacros = 0;
+
+  // get info on whether to use the small local array for symbols
+  stat = countSymbolsAndValues( symbolsWithSubs, &symbolCount,
+   &maxSymbolLength );
+
+  if ( !replaceSymbols[index] ) {
+
+    if ( propagateMacros[index] ) {
+
+      for ( i=0; i<actWin->numMacros; i++ ) {
+
+        l = strlen(actWin->macros[i]);
+        if ( l > maxSymbolLength ) maxSymbolLength = l;
+
+        l = strlen(actWin->expansions[i]);
+        if ( l > maxSymbolLength ) maxSymbolLength = l;
+
+      }
+
+      symbolCount += actWin->numMacros;
+
+    }
+    else {
+
+      for ( i=0; i<actWin->appCtx->numMacros; i++ ) {
+
+        l = strlen(actWin->appCtx->macros[i]);
+        if ( l > maxSymbolLength ) maxSymbolLength = l;
+
+        l = strlen(actWin->appCtx->expansions[i]);
+        if ( l > maxSymbolLength ) maxSymbolLength = l;
+
+      }
+
+      symbolCount += actWin->appCtx->numMacros;
+
+    }
+
+  }
+
+  useSmallArrays = 1;
+  if ( symbolCount > SMALL_SYM_ARRAY_SIZE ) useSmallArrays = 0;
+  if ( maxSymbolLength > SMALL_SYM_ARRAY_LEN ) useSmallArrays = 0;
+
+  if ( useSmallArrays ) {
+
+    for ( i=0; i<SMALL_SYM_ARRAY_SIZE; i++ ) {
+      newMacros[i] = &smallNewMacros[i][0];
+      newValues[i] = &smallNewValues[i][0];
+    }
+
+    if ( !replaceSymbols[index] ) {
+
+      if ( propagateMacros[index] ) {
+
+        for ( i=0; i<actWin->numMacros; i++ ) {
+
+          strcpy( newMacros[i], actWin->macros[i] );
+
+          strcpy( newValues[i], actWin->expansions[i] );
+
+          numNewMacros++;
+
+        }
+
+      }
+      else {
+
+        for ( i=0; i<actWin->appCtx->numMacros; i++ ) {
+
+          strcpy( newMacros[i], actWin->appCtx->macros[i] );
+
+          strcpy( newValues[i], actWin->appCtx->expansions[i] );
+
+          numNewMacros++;
+
+        }
+
+      }
+
+    }
+
+    max = SMALL_SYM_ARRAY_SIZE - numNewMacros;
+    stat = parseLocalSymbolsAndValues( symbolsWithSubs, max,
+     SMALL_SYM_ARRAY_LEN, &newMacros[numNewMacros], &newValues[numNewMacros],
+     &numFound );
+    numNewMacros += numFound;
+
+  }
+  else {
+
+    if ( !replaceSymbols[index] ) {
+
+      if ( propagateMacros[index] ) {
+
+        for ( i=0; i<actWin->numMacros; i++ ) {
+
+          l = strlen(actWin->macros[i]) + 1;
+          newMacros[i] = (char *) new char[l];
+          strcpy( newMacros[i], actWin->macros[i] );
+
+          l = strlen(actWin->expansions[i]) + 1;
+          newValues[i] = (char *) new char[l];
+          strcpy( newValues[i], actWin->expansions[i] );
+
+          numNewMacros++;
+
+        }
+
+      }
+      else {
+
+        for ( i=0; i<actWin->appCtx->numMacros; i++ ) {
+
+          l = strlen(actWin->appCtx->macros[i]) + 1;
+          newMacros[i] = (char *) new char[l];
+          strcpy( newMacros[i], actWin->appCtx->macros[i] );
+
+          l = strlen(actWin->appCtx->expansions[i]) + 1;
+          newValues[i] = (char *) new char[l];
+          strcpy( newValues[i], actWin->appCtx->expansions[i] );
+
+          numNewMacros++;
+
+        }
+
+      }
+
+    }
+
+    max = 100 - numNewMacros;
+    stat = parseSymbolsAndValues( symbolsWithSubs, max,
+     &newMacros[numNewMacros], &newValues[numNewMacros], &numFound );
+    numNewMacros += numFound;
+
+  }
+
+  cur = new activeWindowListType;
+  actWin->appCtx->addActiveWindow( cur );
+
+  cur->node.createEmbedded( actWin->appCtx, frameWidget, 0, 0, w, h,
+   x, y, numNewMacros, newMacros, newValues );
+
+  cur->node.realize();
+
+  cur->node.setGraphicEnvironment( &cur->node.appCtx->ci,
+   &cur->node.appCtx->fi );
+
+  if ( index < 0 ) index = 0;
+  if ( index >= numDsps ) index = numDsps;
+  cur->node.storeFileName( displayFileName[index].getExpanded() );
+
+  actWin->appCtx->openActivateActiveWindow( &cur->node, 0, 0 );
+
+  aw = &cur->node;
+
+  aw->parent = actWin;
+  (actWin->numChildren)++;
+
+  activateIsComplete = 1;
+
+  if ( !useSmallArrays ) {
+
+    for ( i=0; i<numNewMacros; i++ ) {
+      delete newMacros[i];
+      delete newValues[i];
+    }
+
+  }
+
+}
+
 void activePipClass::executeDeferred ( void ) {
 
+int iv;
 char v[39+1];
-int stat, nc, nu, nd, nfo, okToClose;
+int i, nc, nu, nmc, nmu, nd, nfo, nimfo, nmap, nunmap, okToClose;
 activeWindowListPtr cur;
+Window root, child;
+int rootX, rootY, winX, winY;
+unsigned int mask;
+XButtonEvent be;
 
 //----------------------------------------------------------------------------
 
   actWin->appCtx->proc->lock();
   nc = needConnectInit; needConnectInit = 0;
   nu = needUpdate; needUpdate = 0;
+  nmc = needMenuConnectInit; needMenuConnectInit = 0;
+  nmu = needMenuUpdate; needMenuUpdate = 0;
   nd = needDraw; needDraw = 0;
   nfo = needFileOpen; needFileOpen = 0;
+  nimfo = needInitMenuFileOpen; needInitMenuFileOpen = 0;
+  nmap = needMap; needMap = 0;
+  nunmap = needUnmap; needUnmap = 0;
   strncpy( v, curReadV, 39 );
+  iv = curReadIV;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
@@ -953,21 +1820,17 @@ activeWindowListPtr cur;
 
 //----------------------------------------------------------------------------
 
-#ifdef __epics__
-
   if ( nc ) {
 
     readPvConnected = 1;
     active = 1;
     init = 1;
 
-    if ( !readEventId ) {
+    if ( initialReadConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_STRING, 1, readPvId,
-       pip_readUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &readEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL )
-        printf( activePipClass_str25 );
+      initialReadConnection = 0;
+
+      readPvId->add_value_callback( pip_readUpdate, this );
 
     }
 
@@ -976,14 +1839,31 @@ activeWindowListPtr cur;
 
   }
 
-#endif
+  if ( nmc ) {
+
+    readPvConnected = 1;
+    active = 1;
+    init = 1;
+
+    if ( initialMenuConnection ) {
+
+      initialMenuConnection = 0;
+
+      readPvId->add_value_callback( pip_menuUpdate, this );
+
+    }
+
+    fgColor.setConnected();
+    drawActive();
+
+  }
 
   if ( nu ) {
 
     strncpy( readV, v, 39 );
     //printf( "readV = [%s]\n", readV );
 
-    if ( !blank( readV ) ) {
+    if ( enabled && !blank( readV ) ) {
 
       // close old
 
@@ -1005,7 +1885,7 @@ activeWindowListPtr cur;
         }
 
         if ( okToClose ) {
-          aw->returnToEdit( 1 );
+          aw->returnToEdit( 1 ); // this frees frameWidget
         }
 
         aw = NULL;
@@ -1033,7 +1913,7 @@ activeWindowListPtr cur;
 
         if ( !aw ) {
 
-          //printf( "1) Open file %s\n", readV );
+          //printf( "Open file %s\n", readV );
 
           strncpy( curFileName, readV, 127 );
           curFileName[127] = 0;
@@ -1058,12 +1938,145 @@ activeWindowListPtr cur;
           aw->parent = actWin;
           (actWin->numChildren)++;
 
+          activateIsComplete = 1;
+
           drawActive();
 
         }
 
       }
 
+    }
+    else {
+
+      activateIsComplete = 1;
+
+    }
+
+    if ( !enabled ) { // copy filename to be used when enabled becomes true
+      strncpy( curFileName, readV, 127 );
+      curFileName[127] = 0;
+    }
+
+  }
+
+//----------------------------------------------------------------------------
+
+  if ( nmu ) {
+
+    i = iv;
+
+    if ( enabled ) {
+
+      if ( i == -1 ) {
+
+        XQueryPointer( actWin->d, XtWindow(actWin->top), &root, &child,
+         &rootX, &rootY, &winX, &winY, &mask );
+        be.x_root = rootX;
+        be.y_root = rootY;
+        be.x = 0;
+        be.y = 0;
+        XmMenuPosition( popUpMenu, &be );
+        XtManageChild( popUpMenu );
+
+      }
+      else {
+
+        if ( i < numDsps ) {
+
+          if ( !blank( displayFileName[i].getExpanded() ) ) {
+
+            // close old
+
+            if ( frameWidget ) {
+              if ( *frameWidget ) XtUnmapWidget( *frameWidget );
+            }
+
+            if ( aw ) {
+
+              okToClose = 0;
+              // make sure the window was successfully opened
+              cur = actWin->appCtx->head->flink;
+              while ( cur != actWin->appCtx->head ) {
+                if ( &cur->node == aw ) {
+                  okToClose = 1;
+                  break;
+                }
+                cur = cur->flink;
+              }
+
+              if ( okToClose ) {
+                aw->returnToEdit( 1 ); // this frees frameWidget
+              }
+
+              aw = NULL;
+
+            }
+
+            if ( frameWidget ) {
+              frameWidget = NULL;
+            }
+
+            // prevent possible mutual recursion
+            if (actWin->sameAncestorName( displayFileName[i].getExpanded() )) {
+
+              actWin->appCtx->postMessage( activePipClass_str26 );
+              activateIsComplete = 1;
+
+            }
+            else {
+
+              // open new
+
+              if ( !frameWidget ) {
+                createPipWidgets();
+              }
+
+              if ( !aw ) {
+
+                //printf( "Open file %s\n", readV );
+
+                strncpy( curFileName, displayFileName[i].getExpanded(), 127 );
+                curFileName[127] = 0;
+
+                openEmbeddedByIndex( i );
+
+                if ( labelPvId ) {
+		  labelPvId->putText( label[i].getExpanded() );
+		}
+
+                drawActive();
+
+              }
+
+            }
+
+          }
+	  else {
+
+	    activateIsComplete = 1;
+
+	  }
+
+        }
+	else {
+
+	  activateIsComplete = 1;
+
+	}
+
+      }
+
+    }
+    else {
+
+      activateIsComplete = 1;
+
+    }
+
+    if ( !enabled ) { // copy filename to be used when enabled becomes true
+      strncpy( curFileName, displayFileName[i].getExpanded(), 127 );
+      curFileName[127] = 0;
     }
 
   }
@@ -1076,49 +2089,221 @@ activeWindowListPtr cur;
 
 //----------------------------------------------------------------------------
 
-  if ( nfo && fileExists ) {
+  if ( nfo ) {
 
-    //printf( "2) Open file %s\n", fileNameExpStr.getExpanded() );
+    if ( enabled && fileExists ) {
 
-    strncpy( curFileName, fileNameExpStr.getExpanded(), 127 );
-    curFileName[127] = 0;
+      //printf( "Open file %s\n", fileNameExpStr.getExpanded() );
 
-    // prevent possible mutual recursion
-    if ( actWin->sameAncestorName( curFileName ) ) {
+      strncpy( curFileName, fileNameExpStr.getExpanded(), 127 );
+      curFileName[127] = 0;
 
-      actWin->appCtx->postMessage( activePipClass_str26 );
-      activateIsComplete = 1;
+      // prevent possible mutual recursion
+      if ( actWin->sameAncestorName( curFileName ) ) {
 
-    }
-    else {
+        actWin->appCtx->postMessage( activePipClass_str26 );
+        activateIsComplete = 1;
 
-      if ( !frameWidget ) {
-        createPipWidgets();
+      }
+      else {
+
+        if ( !frameWidget ) {
+          createPipWidgets();
+        }
+
+        if ( !aw ) {
+
+          cur = new activeWindowListType;
+          actWin->appCtx->addActiveWindow( cur );
+
+          cur->node.createEmbedded( actWin->appCtx, frameWidget, 0, 0, w, h,
+           x, y, actWin->numMacros, actWin->macros, actWin->expansions );
+
+          cur->node.realize();
+
+          cur->node.setGraphicEnvironment( &cur->node.appCtx->ci,
+           &cur->node.appCtx->fi );
+
+          cur->node.storeFileName( fileNameExpStr.getExpanded() );
+
+          actWin->appCtx->openActivateActiveWindow( &cur->node, 0, 0 );
+
+          aw = &cur->node;
+
+          aw->parent = actWin;
+          (actWin->numChildren)++;
+
+          activateIsComplete = 1;
+
+        }
+
       }
 
-      if ( !aw ) {
+    }
 
-        cur = new activeWindowListType;
-        actWin->appCtx->addActiveWindow( cur );
+    if ( !enabled ) { // copy filename to be used when enabled becomes true
+      strncpy( curFileName, fileNameExpStr.getExpanded(), 127 );
+      curFileName[127] = 0;
+    }
 
-        cur->node.createEmbedded( actWin->appCtx, frameWidget, 0, 0, w, h,
-         x, y, actWin->numMacros, actWin->macros, actWin->expansions );
+  }
 
-        cur->node.realize();
+//----------------------------------------------------------------------------
 
-        cur->node.setGraphicEnvironment( &cur->node.appCtx->ci,
-         &cur->node.appCtx->fi );
+  if ( nimfo ) {
 
-        cur->node.storeFileName( fileNameExpStr.getExpanded() );
+    if ( enabled ) {
 
-        actWin->appCtx->openActivateActiveWindow( &cur->node, 0, 0 );
+      strncpy( curFileName, displayFileName[0].getExpanded(), 127 );
+      curFileName[127] = 0;
 
-        aw = &cur->node;
+      // prevent possible mutual recursion
+      if ( actWin->sameAncestorName( curFileName ) ) {
 
-        aw->parent = actWin;
-        (actWin->numChildren)++;
-
+        actWin->appCtx->postMessage( activePipClass_str26 );
         activateIsComplete = 1;
+
+      }
+      else {
+
+        if ( !frameWidget ) {
+          createPipWidgets();
+        }
+
+        if ( !aw ) {
+
+	  openEmbeddedByIndex( 0 );
+
+          if ( labelPvId ) {
+            labelPvId->putText( label[0].getExpanded() );
+	  }
+        }
+
+      }
+
+    }
+
+    if ( !enabled ) { // copy filename to be used when enabled becomes true
+      strncpy( curFileName, displayFileName[0].getExpanded(), 127 );
+      curFileName[127] = 0;
+    }
+
+  }
+
+//----------------------------------------------------------------------------
+
+  if ( nunmap ) {
+
+    if ( frameWidget ) {
+      if ( *frameWidget ) XtUnmapWidget( *frameWidget );
+    }
+
+    if ( aw ) {
+
+      okToClose = 0;
+      // make sure the window was successfully opened
+      cur = actWin->appCtx->head->flink;
+      while ( cur != actWin->appCtx->head ) {
+        if ( &cur->node == aw ) {
+          okToClose = 1;
+          break;
+        }
+        cur = cur->flink;
+      }
+
+      if ( okToClose ) {
+        aw->returnToEdit( 1 ); // this frees frameWidget
+      }
+
+      aw = NULL;
+
+    }
+
+    if ( frameWidget ) {
+      frameWidget = NULL;
+    }
+
+  }
+
+//----------------------------------------------------------------------------
+
+  if ( nmap ) {
+
+    // curFileName should contain the file to open
+
+    if ( !blank( curFileName ) ) {
+
+      // close old ( however, one should not be open )
+
+      if ( frameWidget ) {
+        if ( *frameWidget ) XtUnmapWidget( *frameWidget );
+      }
+
+      if ( aw ) {
+
+        okToClose = 0;
+        // make sure the window was successfully opened
+        cur = actWin->appCtx->head->flink;
+        while ( cur != actWin->appCtx->head ) {
+          if ( &cur->node == aw ) {
+            okToClose = 1;
+            break;
+          }
+          cur = cur->flink;
+        }
+
+        if ( okToClose ) {
+          aw->returnToEdit( 1 ); // this frees frameWidget
+        }
+
+        aw = NULL;
+
+      }
+
+      if ( frameWidget ) {
+        frameWidget = NULL;
+      }
+
+      // prevent possible mutual recursion
+      if ( actWin->sameAncestorName( curFileName ) ) {
+
+        actWin->appCtx->postMessage( activePipClass_str26 );
+        activateIsComplete = 1;
+
+      }
+      else {
+
+        // open new
+
+        if ( !frameWidget ) {
+          createPipWidgets();
+        }
+
+        if ( !aw ) {
+
+          cur = new activeWindowListType;
+          actWin->appCtx->addActiveWindow( cur );
+
+          cur->node.createEmbedded( actWin->appCtx, frameWidget, 0, 0, w, h,
+           x, y, actWin->numMacros, actWin->macros, actWin->expansions );
+
+          cur->node.realize();
+
+          cur->node.setGraphicEnvironment( &cur->node.appCtx->ci,
+           &cur->node.appCtx->fi );
+
+          cur->node.storeFileName( curFileName );
+
+          actWin->appCtx->openActivateActiveWindow( &cur->node, 0, 0 );
+
+          aw = &cur->node;
+
+          aw->parent = actWin;
+          (actWin->numChildren)++;
+
+          drawActive();
+
+        }
 
       }
 
@@ -1214,6 +2399,20 @@ int flag;
   }
 
   return flag;
+
+}
+
+void activePipClass::map ( void ) {
+
+  needMap = 1;
+  actWin->addDefExeNode( aglPtr );
+
+}
+
+void activePipClass::unmap ( void ) {
+
+  needUnmap = 1;
+  actWin->addDefExeNode( aglPtr );
 
 }
 

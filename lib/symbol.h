@@ -26,10 +26,11 @@
 // the following defines btnActionListType & btnActionListPtr
 #include "btnActionListType.h"
 
-#include "cadef.h"
+#include "pv_factory.h"
+#include "cvtFast.h"
 
-#define ASC_MAJOR_VERSION 1
-#define ASC_MINOR_VERSION 7
+#define ASC_MAJOR_VERSION 4
+#define ASC_MINOR_VERSION 0
 #define ASC_RELEASE 0
 
 #define SYMBOL_K_NUM_STATES 64
@@ -58,16 +59,20 @@ static void symUnconnectedTimeout (
   XtIntervalId *id );
 
 static void symbol_monitor_control_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void symbol_monitor_color_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void symbol_controlUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void symbol_colorUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void symbolSetItem (
   Widget w,
@@ -124,11 +129,9 @@ void *voidHead[SYMBOL_K_NUM_STATES]; // cast to activeGraphicListPtr
 
 int numPvs;
 
-chid controlPvId[SYMBOL_K_MAX_PVS];
-evid controlEventId[SYMBOL_K_MAX_PVS];
-
-chid colorPvId;
-evid colorEventId;
+ProcessVariable *controlPvId[SYMBOL_K_MAX_PVS];
+ProcessVariable *colorPvId;
+int initialCtrlConnection[SYMBOL_K_MAX_PVS], initialColorConnection;
 
 unsigned int notControlPvConnected;
 int init, active, activeMode, opComplete, controlExists, colorExists,
@@ -201,16 +204,20 @@ friend void symUnconnectedTimeout (
   XtIntervalId *id );
 
 friend void symbol_monitor_control_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void symbol_monitor_color_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void symbol_controlUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void symbol_colorUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void symbolSetItem (
   Widget w,
@@ -257,6 +264,8 @@ int editCreate ( void );
 
 int readSymbolFile ( void );
 
+//int old_readSymbolFile ( void );
+
 int createInteractive (
   activeWindowClass *aw_obj,
   int x,
@@ -267,7 +276,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );

@@ -22,8 +22,8 @@
 #include "act_grf.h"
 #include "entry_form.h"
 
-#define EBTC_MAJOR_VERSION 2
-#define EBTC_MINOR_VERSION 1
+#define EBTC_MAJOR_VERSION 4
+#define EBTC_MINOR_VERSION 0
 #define EBTC_RELEASE 0
 
 #ifdef __exit_button_cc
@@ -132,7 +132,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );

@@ -2,7 +2,7 @@
 #define __pvConnection_h 1
 
 #include "math.h"
-#include "cadef.h"
+#include "stdio.h"
 
 class pvConnectionClass {
 
@@ -12,15 +12,8 @@ int maxPvs;
 int numPvs;
 int numConnectionsExpected;
 void **id; // dynamic array
-chid *pvId; // dynamic array
 unsigned int *mask; // dynamic array
 unsigned int connectionMask;
-
-int findPv (
-  chid Pv );
-
-int addPvToList (
-  chid Pv );
 
 int findPv (
   void *Pv );
@@ -36,12 +29,6 @@ pvConnectionClass ( void );
 
 int setMaxPvs (
   int _maxPvs );
-
-int setPvConnected (
-  chid Pv );
-
-int setPvDisconnected (
-  chid Pv );
 
 int setPvConnected (
   void *Pv );

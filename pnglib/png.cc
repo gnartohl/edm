@@ -1118,6 +1118,44 @@ int activePngClass::save (
  FILE *f )
 {
 
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+static char *emptyStr = "";
+
+  major = APNGC_MAJOR_VERSION;
+  minor = APNGC_MINOR_VERSION;
+  release = APNGC_RELEASE;
+
+  // read file and process each "object" tag
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "file", pngFileName, emptyStr );
+  tag.loadW( "refreshRate", &refreshRate, &zero );
+  tag.loadBoolW( "uniformSize", &uniformSize, &zero );
+  tag.loadBoolW( "fastErase", &fastErase, &zero );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int activePngClass::old_save (
+ FILE *f )
+{
+
   fprintf( f, "%-d %-d %-d\n", APNGC_MAJOR_VERSION, APNGC_MINOR_VERSION,
    APNGC_RELEASE );
 
@@ -1137,6 +1175,69 @@ int activePngClass::save (
 }
 
 int activePngClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int major, minor, release, stat, status;
+
+tagClass tag;
+
+int zero = 0;
+static char *emptyStr = "";
+
+  this->actWin = _actWin;
+
+  strcpy( pngFileName, "" );
+  refreshRate = 0;
+  uniformSize = 0;
+  fastErase = 0;
+
+  // read file and process each "object" tag
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "file", 127, pngFileName, emptyStr );
+  tag.loadR( "refreshRate", &refreshRate, &zero );
+  tag.loadR( "uniformSize", &uniformSize, &zero );
+  tag.loadR( "fastErase", &fastErase, &zero );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > APNGC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  status = readPngFile();
+  if ( !( status & 1 ) ) {
+    actWin->appCtx->postMessage( "Cannot read png file" );
+  }
+
+  return stat;
+
+}
+
+int activePngClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -1204,7 +1305,7 @@ int activePngClass::erase ( void ) {
 
 int activePngClass::eraseActive ( void ) {
 
-  if ( noFile || !activeMode ) return 1;
+  if ( !enabled || noFile || !activeMode ) return 1;
 
   XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
    actWin->executeGc.eraseGC(), x, y, w, h );
@@ -1339,7 +1440,7 @@ int activePngClass::drawActive (
 
 int curW, curH;
 
-  if ( noFile || !activeMode ) return 1;
+  if ( !enabled || noFile || !activeMode ) return 1;
 
   if ( !actWin->appCtx->renderImages() ) {
     actWin->executeGc.setFG( actWin->defaultTextFgColor );
@@ -1398,6 +1499,7 @@ int activePngClass::activate (
       opComplete = 1;
       activeMode = 1;
       active = 1;
+      initEnable();
 
       if ( refreshRate > 0 ) {
         timerValue = refreshRate;

@@ -22,6 +22,19 @@ static ProcessVariable::Type enum_type =
 static ProcessVariable::Type string_type =
 { ProcessVariable::Type::text, 0, "text:0" };
 
+// specific types
+static ProcessVariable::specificType i_type =
+{ ProcessVariable::specificType::integer, 32 };
+
+static ProcessVariable::specificType d_type =
+{ ProcessVariable::specificType::real, 64 };
+
+static ProcessVariable::specificType e_type =
+{ ProcessVariable::specificType::enumerated, 16 };
+   
+static ProcessVariable::specificType str_type =
+{ ProcessVariable::specificType::text, 0 };
+
 /* 1/1/90 20 yr (5 leap) of seconds */
 static const unsigned epochSecPast1970 = 7305*86400;
 
@@ -219,14 +232,14 @@ LOC_ProcessVariable::LOC_ProcessVariable(const char *_name)
     status = UDF_ALARM;
     severity = INVALID_ALARM;
     precision = 4;
-    upper_disp_limit = 1000.0;
-    lower_disp_limit = -1000.0;
+    upper_disp_limit = DBL_MAX;
+    lower_disp_limit = -DBL_MAX;
     upper_alarm_limit = DBL_MAX;
     lower_alarm_limit = -DBL_MAX;
     upper_warning_limit = DBL_MAX;
     lower_warning_limit = -DBL_MAX;
-    upper_ctrl_limit = 1000.0;
-    lower_ctrl_limit = -1000.0;
+    upper_ctrl_limit = DBL_MAX;
+    lower_ctrl_limit = -DBL_MAX;
     is_connected = true;
     have_ctrlinfo = true;
     strcpy( buf, "" );
@@ -296,11 +309,39 @@ const ProcessVariable::Type &LOC_ProcessVariable::get_type() const
 
 }   
 
+const ProcessVariable::specificType &LOC_ProcessVariable::get_specific_type() const
+{
+
+  switch ( dataType ) {
+
+  case 'd':
+
+    return d_type;
+
+  case 'i':
+
+    return i_type;
+
+  case 's':
+
+    return str_type;
+
+  case 'e':
+
+    return e_type;
+
+  }
+
+  return str_type;
+
+}   
+
 int LOC_ProcessVariable::get_int() const
 {
 
 int i = atol( buf );
 
+  //printf( "[%s] int value is %-d\n", get_name(), i );
   return i;
 
 }
@@ -310,16 +351,17 @@ double LOC_ProcessVariable::get_double() const
 
 double d = atof( buf );
 
+  //printf( "[%s] double value is %-.15g\n", get_name(), d );
   return d;
 
 }
 
-size_t LOC_ProcessVariable::get_string(char *strbuf, size_t buflen) const
+size_t LOC_ProcessVariable::get_string(char *strbuf, size_t len) const
 {
 
 size_t l = bufLen;
 
-  if ( buflen < l ) l = buflen;
+  if ( len < l ) l = len;
   strncpy( strbuf, buf, l );
   strbuf[l] = 0;
 
@@ -331,6 +373,13 @@ size_t LOC_ProcessVariable::get_dimension() const
 {
 
   return 1;
+
+}
+
+const char *LOC_ProcessVariable::get_char_array() const
+{
+
+  return (char *) NULL;
 
 }
 
@@ -358,7 +407,7 @@ size_t LOC_ProcessVariable::get_enum_count() const
 const char *LOC_ProcessVariable::get_enum(size_t i) const
 {
 
-  if ( ( i > 0 ) && ( i < numEnumStates ) ) {
+  if ( ( i >= 0 ) && ( i < numEnumStates ) ) {
     return enums[i];
   }
   else {
@@ -475,10 +524,12 @@ bool LOC_ProcessVariable::have_write_access() const
 bool LOC_ProcessVariable::put(double value)
 {
 
+  //printf( "[%s] put double, value = %-.15g\n", get_name(), value );
+
   status = 0;
   severity = 0;
 
-  snprintf( buf, MAX_BUF_CHARS, "%-g", value );
+  snprintf( buf, MAX_BUF_CHARS, "%-.15g", value );
   bufLen = strlen( buf );
   do_value_callbacks();
 
@@ -488,6 +539,8 @@ bool LOC_ProcessVariable::put(double value)
 
 bool LOC_ProcessVariable::put(int value)
 {
+
+  //printf( "[%s] put int, value = %-d\n", get_name(), value );
 
   status = 0;
   severity = 0;
@@ -503,11 +556,68 @@ bool LOC_ProcessVariable::put(int value)
 bool LOC_ProcessVariable::put(const char *value)
 {
 
+int l;
+
   status = 0;
   severity = 0;
 
-  strncpy( buf, value, MAX_BUF_CHARS );
-  buf[MAX_BUF_CHARS] = 0;
+  if ( strlen(value)+1 > (unsigned int) MAX_BUF_CHARS ) {
+    l = MAX_BUF_CHARS;
+  }
+  else {
+    l = strlen(value);
+  }
+
+  strncpy( buf, value, l );
+  buf[l] = 0;
+  bufLen = strlen( buf );
+  do_value_callbacks();
+
+  return true;
+
+}
+
+bool LOC_ProcessVariable::putText(char *value)
+{
+
+int l;
+
+  status = 0;
+  severity = 0;
+
+  if ( strlen(value)+1 > (unsigned int) MAX_BUF_CHARS ) {
+    l = MAX_BUF_CHARS;
+  }
+  else {
+    l = strlen(value);
+  }
+
+  strncpy( buf, value, l );
+  buf[l] = 0;
+  bufLen = strlen( buf );
+  do_value_callbacks();
+
+  return true;
+
+}
+
+bool LOC_ProcessVariable::putArrayText(char *value)
+{
+
+int l;
+
+  status = 0;
+  severity = 0;
+
+  if ( strlen(value)+1 > (unsigned int) MAX_BUF_CHARS ) {
+    l = MAX_BUF_CHARS;
+  }
+  else {
+    l = strlen(value);
+  }
+
+  strncpy( buf, value, l );
+  buf[l] = 0;
   bufLen = strlen( buf );
   do_value_callbacks();
 

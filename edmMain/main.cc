@@ -33,6 +33,7 @@
 #include <Xm/Frame.h>
 #include <Xm/RowColumn.h>
 
+#include "pv_factory.h"
 #include "color_pkg.h"
 #include "color_button.h"
 #include "font_pkg.h"
@@ -156,6 +157,11 @@ static int num = 0;
   }
 
   num++;
+
+  if ( !strcmp( msg,
+   "XtPopdown requires a subclass of shellWidgetClass" ) ) {
+    return;
+  }
 
   fprintf( stderr, "xtErrorHandler - %s\n", msg );
 
@@ -681,10 +687,8 @@ int stat;
 
   do {
 
-#ifdef __epics__
-    stat = ca_pend_io( 5.0 );
-    stat = ca_pend_event( 0.05 );
-#endif
+    stat = pend_io( 5.0 );
+    stat = pend_event( 0.05 );
 
   } while ( 1 );
 
@@ -884,7 +888,8 @@ void checkParams (
   char *displayName,
   int *portNum,
   int *restart,
-  int *oneInstance )
+  int *oneInstance,
+  int *convertOnly )
 {
 
 char buf[1023+1], mac[1023+1], exp[1023+1];
@@ -900,6 +905,7 @@ Display *testDisplay;
   *appendDisplay = 1;
   *portNum = 19000;
   *restart = 0;
+  *convertOnly = 0;
 
   // check first for component management commands
   if ( argc > 1 ) {
@@ -924,6 +930,12 @@ Display *testDisplay;
         if ( strcmp( argv[n], global_str9 ) == 0 ) {
           *local = 1;
         }
+	else if ( strcmp( argv[n], global_str91 ) == 0 ) {
+          *convertOnly = 1;
+	  *oneInstance = 0;
+          *server = 0;
+          *local = 1;
+	}
         else if ( strcmp( argv[n], global_str10 ) == 0 ) {
           *server = 1;
           *local = 0;
@@ -1103,7 +1115,7 @@ extern int main (
 
 int i, j, stat, numAppsRemaining, exitProg, shutdown, q_stat_r, q_stat_i,
  local, server, portNum, restart, n, x, y, icon, sessionNoEdit, screenNoEdit,
- oneInstance, needConnect;
+ oneInstance, convertOnly, needConnect;
 THREAD_HANDLE delayH, serverH; //, caPendH;
 argsPtr args;
 appListPtr cur, next, appArgsHead, newOne, first;
@@ -1128,8 +1140,7 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
   g_numClients = 1;
 
   checkParams( argc, argv, &local, &server, &appendDisplay, displayName,
-   &portNum, &restart, &oneInstance );
-
+   &portNum, &restart, &oneInstance, &convertOnly );
 
   // if doing a restart, read in check point file
   if ( restart ) {
@@ -1238,10 +1249,8 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
   if ( server ) stat = thread_create_proc( serverH, serverThread );
 
 #if 0
-#ifdef __epics__
   stat = thread_create_handle( &caPendH, NULL );
   stat = thread_create_proc( caPendH, caPendThread );
-#endif
 #endif
 
   args = new argsType;
@@ -1343,11 +1352,11 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
 
   if ( server ) {
     stat = args->appCtxPtr->startApplication( args->argc, args->argv, 2,
-     oneInstance );
+     oneInstance, convertOnly );
   }
   else {
     stat = args->appCtxPtr->startApplication( args->argc, args->argv, 1,
-     oneInstance );
+     oneInstance, convertOnly );
   }
   if ( !( stat & 1 ) ) exit( 0 );
 
@@ -1463,7 +1472,7 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
         args->appCtxPtr->proc = &proc;
 
         stat = args->appCtxPtr->startApplication( args->argc, args->argv, 0,
-         0 );
+         0, 0 );
 
         if ( stat & 1 ) { // success
           oneAppCtx = args->appCtxPtr->appContext();
@@ -1717,7 +1726,7 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
               args->appCtxPtr->proc = &proc;
 
               stat = args->appCtxPtr->startApplication( args->argc, args->argv,
-               0, 0 );
+               0, 0, 0 );
 
               if ( stat & 1 ) { // success
                 oneAppCtx = args->appCtxPtr->appContext();
@@ -1751,7 +1760,7 @@ parse_error:
 
     if ( !numAppsRemaining ) exitProg = 1;
 
-    ca_pend_event( 0.1 );
+    pend_event( 0.1 );
     //stat = thread_wait_for_timer( delayH );
     //stat = thread_init_timer( delayH, 0.1 );
 

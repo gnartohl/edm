@@ -14,8 +14,8 @@ extern "C"
 
 #define REGTEXTUPDATE_CLASSNAME "RegTextupdateClass"
 #define REGTEXTENTRY_CLASSNAME "RegTextentryClass"
-#define REGTEXT_MAJOR 1
-#define REGTEXT_MINOR 1
+#define REGTEXT_MAJOR 10
+#define REGTEXT_MINOR 0
 #define REGTEXT_RELEASE 0
 
 class edmRegTextupdateClass : protected edmTextupdateClass {
@@ -25,7 +25,9 @@ public:
     
     // Load/save
     int save(FILE *f);
+    int old_save(FILE *f);
     int createFromFile(FILE *fptr, char *name, activeWindowClass *actWin);
+    int old_createFromFile(FILE *fptr, char *name, activeWindowClass *actWin);
 
     // Edit Mode
     int edit();

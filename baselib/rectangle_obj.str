@@ -26,13 +26,6 @@
 #define activeRectangleClass_str23 (char *) ">="
 #define activeRectangleClass_str24 (char *) "and <"
 #define activeRectangleClass_str25 (char *) "import file syntax error"
-#define activeRectangleClass_str39 (char *) "error from ca_search\n"
-#define activeRectangleClass_str40 (char *) "error from ca_search\n"
-#define activeRectangleClass_str41 (char *) "ca_clear_event failure\n"
-#define activeRectangleClass_str42 (char *) "ca_clear_event failure\n"
-#define activeRectangleClass_str43 (char *) "ca_clear_channel failure\n"
-#define activeRectangleClass_str44 (char *) "ca_clear_channel failure\n"
-#define activeRectangleClass_str45 (char *) "ca_add_masked_array_event failed\n"
-#define activeRectangleClass_str46 (char *) "ca_add_masked_array_event failed\n"
+#define activeRectangleClass_str39 (char *) "error creating pv\n"
 
 #endif

@@ -52,6 +52,7 @@ activeGraphicClass::activeGraphicClass ( void ) {
   blinkFunc = NULL;
   blinkDisable = 0;
   createParam = NULL;
+  defaultEnabled = enabled = prevEnabled = 1;
   needSmartDraw = 0;
   mouseOver = 0;
 
@@ -86,6 +87,7 @@ void activeGraphicClass::clone ( const activeGraphicClass *source ) {
   onBlinkList = 0;
   blinkFunc = NULL;
   blinkDisable = 0;
+  defaultEnabled = enabled = prevEnabled = 1;
   needSmartDraw = 0;
   mouseOver = 0;
 
@@ -550,6 +552,8 @@ activeGraphicClass *activeGraphicClass::enclosingObject (
 {
 
 int xx0, yy0, xx1, yy1;
+
+  if ( !enabled ) return 0;
 
   xx0 = this->x;
   xx1 = this->x + this->w;
@@ -1148,22 +1152,7 @@ XRectangle xR = { _x, _y, _w, _h };
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
-
     cur->node->drawActiveIfIntersects( x0, y0, x1, y1 );
-
-#if 0
-    if ( cur->node->intersects( x0, y0, x1, y1 ) ) {
-      normClipStat = actWin->executeGc.addNormXClipRectangle( xR );
-      xorClipStat = actWin->executeGc.addXorXClipRectangle( xR );
-      eraseClipStat = actWin->executeGc.addEraseXClipRectangle( xR );
-      cur->node->bufInvalidate();
-      cur->node->drawActive( x0, y0, x1, y1 );
-      if ( normClipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
-      if ( xorClipStat & 1 ) actWin->executeGc.removeXorXClipRectangle();
-      if ( eraseClipStat & 1 ) actWin->executeGc.removeEraseXClipRectangle();
-    }
-#endif
-
     cur = cur->flink;
   }
 
@@ -1831,6 +1820,19 @@ int stat;
 
 }
 
+int activeGraphicClass::reactivate (
+  int pass,
+  void *ptr,
+  int *numSubObjects // for groups & symbols
+) {
+
+int stat;
+
+  stat = activate( pass, ptr, numSubObjects );
+  return stat;
+
+}
+
 int activeGraphicClass::deactivate ( void ) {
 
   return 1;
@@ -1921,6 +1923,16 @@ int activeGraphicClass::createFromFile (
 
 }
 
+int activeGraphicClass::old_createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin )
+{
+
+  return 1;
+
+}
+
 int activeGraphicClass::importFromXchFile (
   FILE *f,
   char *name,
@@ -1973,6 +1985,14 @@ int activeGraphicClass::save (
 
 }
 
+int activeGraphicClass::old_save (
+  FILE *fptr )
+{
+
+  return save( fptr );
+
+}
+
 activeGraphicClass *activeGraphicClass::copy ( void ) {
 
   return NULL;
@@ -1996,38 +2016,21 @@ int activeGraphicClass::doEdit (
 ) {
 
 activeGraphicListPtr cur;
-int stat, isGroup;
+int stat;
 
   curUndoObj = _undoObj;
   startEdit = 1;
   beginEdit();
 
-  if ( strcmp( objName(), "activeGroupClass" ) == 0 )
-    isGroup = 1;
-  else
-    isGroup = 0;
-
-  if ( !isGroup ) {
-
-    cur = actWin->selectedHead->selFlink;
-    while ( cur != actWin->selectedHead ) {
-      //if ( strcmp( cur->node->objName(), "activeGroupClass" ) != 0 ) {
-        cur->node->drawSelectBoxCorners(); // erase all via xor
-      //}
-      cur = cur->selFlink;
-    }
-
-    actWin->setCurrentObject( this );
-
+  cur = actWin->selectedHead->selFlink;
+  while ( cur != actWin->selectedHead ) {
+    cur->node->drawSelectBoxCorners(); // erase all via xor
+    cur = cur->selFlink;
   }
 
-  //  if ( inGroup && !isMultiPointObject() && !isGroup ) {
-  //    drawSelectBoxCorners();
-  //  }
+  actWin->setCurrentObject( this );
 
-  if ( !isGroup ) {
-    drawSelectBoxCorners();
-  }
+  drawSelectBoxCorners();
 
   if ( isMultiPointObject() ) {
 
@@ -2204,9 +2207,10 @@ void activeGraphicClass::adjustCoordinates (
 
 }
 
+
 void activeGraphicClass::btnUp (
-  int x,
-  int y,
+  int _x,
+  int _y,
   int buttonState,
   int buttonNumber )
 {
@@ -2214,21 +2218,34 @@ void activeGraphicClass::btnUp (
 }
 
 void activeGraphicClass::btnUp (
-  int x,
-  int y,
+  int _x,
+  int _y,
   int buttonState,
   int buttonNumber,
   int *action )
 {
 
   *action = 0;
-  btnUp( x, y, buttonState, buttonNumber );
+  btnUp( _x, _y, buttonState, buttonNumber );
+
+}
+
+void activeGraphicClass::btnUp (
+  XButtonEvent *be,
+  int _x,
+  int _y,
+  int buttonState,
+  int buttonNumber,
+  int *action )
+{
+
+  btnUp( be->x, be->y, buttonState, buttonNumber, action );
 
 }
 
 void activeGraphicClass::btnDown (
-  int x,
-  int y,
+  int _x,
+  int _y,
   int buttonState,
   int buttonNumber )
 {
@@ -2236,24 +2253,49 @@ void activeGraphicClass::btnDown (
 }
 
 void activeGraphicClass::btnDown (
-  int x,
-  int y,
+  int _x,
+  int _y,
   int buttonState,
   int buttonNumber,
   int *action )
 {
 
   *action = 0;
-  btnDown( x, y, buttonState, buttonNumber );
+  btnDown( _x, _y, buttonState, buttonNumber );
+
+}
+
+void activeGraphicClass::btnDown (
+  XButtonEvent *be,
+  int _x,
+  int _y,
+  int buttonState,
+  int buttonNumber,
+  int *action )
+{
+
+  btnDown( be->x, be->y, buttonState, buttonNumber, action );
 
 }
 
 void activeGraphicClass::btnDrag (
-  int x,
-  int y,
+  int _x,
+  int _y,
   int buttonState,
   int buttonNumber )
 {
+
+}
+
+void activeGraphicClass::btnDrag (
+  XMotionEvent *me,
+  int _x,
+  int _y,
+  int buttonState,
+  int buttonNumber )
+{
+
+  btnDrag( me->x, me->y, buttonState, buttonNumber );
 
 }
 
@@ -2262,6 +2304,8 @@ void activeGraphicClass::pointerIn (
   int _y,
   int buttonState )
 {
+
+  if ( !enabled ) return;
 
   actWin->executeGc.saveFg();
 
@@ -2275,6 +2319,19 @@ void activeGraphicClass::pointerIn (
   actWin->executeGc.setLineWidth( 1 );
 
   actWin->executeGc.restoreFg();
+
+}
+
+void activeGraphicClass::pointerIn (
+  XMotionEvent *me,
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+  if ( !enabled ) return;
+
+  pointerIn( me->x, me->y, buttonState );
 
 }
 
@@ -2296,11 +2353,24 @@ void activeGraphicClass::pointerOut (
 
 }
 
+void activeGraphicClass::pointerOut (
+  XMotionEvent *me,
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+  pointerOut( me->x, me->y, buttonState );
+
+}
+
 void activeGraphicClass::checkMouseOver (
   int _x,
   int _y,
   int buttonState )
 {
+
+  if ( !enabled ) return;
 
   if ( enclosingObject( _x, _y ) ) {
 
@@ -2321,6 +2391,34 @@ void activeGraphicClass::checkMouseOver (
 
 }
 
+void activeGraphicClass::checkMouseOver (
+  XMotionEvent *me,
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+  if ( !enabled ) return;
+
+  if ( enclosingObject( me->x, me->y ) ) {
+
+    if ( !mouseIsOver() ) {
+      setMouseOver();
+      mousePointerIn( me, _x, _y, buttonState );
+    }
+
+  }
+  else {
+
+    if ( mouseIsOver() ) {
+      clearMouseOver();
+      mousePointerOut( me, _x, _y, buttonState );
+    }
+
+  }
+
+}
+
 void activeGraphicClass::mousePointerIn (
   int _x,
   int _y,
@@ -2329,11 +2427,33 @@ void activeGraphicClass::mousePointerIn (
 
 }
 
+void activeGraphicClass::mousePointerIn (
+  XMotionEvent *me,
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+  mousePointerIn( me->x, me->y, buttonState );
+
+}
+
 void activeGraphicClass::mousePointerOut (
   int _x,
   int _y,
   int buttonState )
 {
+
+}
+
+void activeGraphicClass::mousePointerOut (
+  XMotionEvent *me,
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+  mousePointerOut( me->x, me->y, buttonState );
 
 }
 
@@ -2963,29 +3083,28 @@ int l;
 }
 
 int activeGraphicClass::selectDragValue (
-  int x,
-  int y )
+  XButtonEvent *be )
 {
 
 char *firstName, *nextName;
 
   currentDragIndex = 0;
 
-  firstName = firstDragName( x, y );
+  firstName = firstDragName( be->x, be->y );
   if ( !firstName ) return 0;
 
   actWin->popupDragBegin( actWin->obj.getNameFromClass( objName() ) );
   actWin->popupDragAddItem( (void *) this, firstName );
 
-  nextName = nextDragName( x, y );
+  nextName = nextDragName( be->x, be->y );
   while ( nextName ) {
 
     actWin->popupDragAddItem( (void *) this, nextName );
-    nextName = nextDragName( x, y );
+    nextName = nextDragName( be->x, be->y );
 
   }
 
-  actWin->popupDragFinish( x, y );
+  actWin->popupDragFinish( be );
 
   return 1;
 
@@ -3121,7 +3240,7 @@ Arg args[10];
 
   Widget icon = mkDragIcon(w, this);
   if ( !icon ) return 0;
-
+ 
   expList[0] = XA_STRING;
   n = 0;
   XtSetArg( args[n], XmNexportTargets, expList ); n++;
@@ -3669,5 +3788,86 @@ char line[31+1];
 
   actWin->appCtx->postMessage( msg );
 
+
+}
+
+void activeGraphicClass::setDefaultEnable (
+  int flag ) {
+
+  defaultEnabled = flag;
+
+}
+
+void activeGraphicClass::initEnable ( void ) {
+
+  prevEnabled = -1;
+  enabled = defaultEnabled;
+
+}
+
+void activeGraphicClass::enable ( void ) { // smartDrawAllActive should be
+                                           // called after this
+  if ( enabled ) return;
+
+  bufInvalidate();
+  enabled = 1;
+  map();
+
+}
+
+void activeGraphicClass::disable ( void ) {
+
+  if ( !enabled ) return;
+
+  bufInvalidate();
+  eraseActive();
+
+  enabled = 0;
+
+  unmap();
+
+}
+
+int activeGraphicClass::isEnabled ( void ) {
+
+  return enabled;
+
+}
+
+int activeGraphicClass::isDisabled ( void ) {
+
+  return !enabled;
+
+}
+
+void activeGraphicClass::map ( void ) {
+
+}
+
+void activeGraphicClass::unmap ( void ) {
+
+}
+
+int activeGraphicClass::getGroupVisInfo ( // for group objects
+  expStringClass *visStr,
+  int *visInv,
+  int maxLen,
+  char *minVis,
+  char *maxVis
+) {
+
+  return 0; // error, only implemented for group objects
+
+}
+
+int activeGraphicClass::putGroupVisInfo ( // for group objects
+  expStringClass *visStr,
+  int visInv,
+  int maxLen,
+  char *minVis,
+  char *maxVis
+) {
+
+  return 0; // error, only implemented for group objects
 
 }

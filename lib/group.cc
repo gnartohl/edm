@@ -16,6 +16,8 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+#define __group_cc 1
+
 #include "group.h"
 #include "app_pkg.h"
 #include "act_win.h"
@@ -23,6 +25,184 @@
 #include "thread.h"
 
 static char *groupDragName = "?";
+
+static void groupUnconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activeGroupClass *ago = (activeGroupClass *) client;
+
+  if ( !ago->activeMode ) return;
+
+  if ( !ago->init ) {
+    ago->needToDrawUnconnected = 1;
+    ago->needRefresh = 1;
+    ago->actWin->addDefExeNode( ago->aglPtr );
+  }
+
+  ago->unconnectedTimer = 0;
+
+}
+
+void agc_edit_update (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeGroupClass *ago = (activeGroupClass *) client;
+
+activeGraphicListPtr head = (activeGraphicListPtr) ago->voidHead;
+activeGraphicListPtr cur;
+int dx, dy;
+
+  ago->actWin->setChanged();
+
+  ago->eraseSelectBoxCorners();
+  ago->erase();
+
+  ago->visPvExpStr.setRaw( ago->bufVisPvName );
+
+  if ( ago->bufVisInverted )
+    ago->visInverted = 0;
+  else
+    ago->visInverted = 1;
+
+  strncpy( ago->minVisString, ago->bufMinVisString, 39 );
+  strncpy( ago->maxVisString, ago->bufMaxVisString, 39 );
+
+  dx = ago->bufX - ago->x;
+  dy = ago->bufY - ago->y;
+
+  ago->x = ago->bufX;
+  ago->sboxX = ago->bufX;
+
+  ago->y = ago->bufY;
+  ago->sboxY = ago->bufY;
+
+  cur = head->flink;
+  while ( cur != head ) {
+
+    cur->node->move( dx, dy );
+    cur->node->moveSelectBox( dx, dy );
+    cur->node->updateDimensions();
+    cur->node->setDefaultEnable( 1 );
+    cur->node->initEnable();
+
+    cur = cur->flink;
+
+  }
+
+  ago->smartDrawAll();
+
+}
+
+void agc_edit_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeGroupClass *ago = (activeGroupClass *) client;
+
+  agc_edit_update( w, client, call );
+  ago->refresh( ago );
+
+}
+
+void agc_edit_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeGroupClass *ago = (activeGroupClass *) client;
+activeGraphicListPtr head = (activeGraphicListPtr) ago->voidHead;
+activeGraphicListPtr cur;
+
+  agc_edit_update( w, client, call );
+  ago->ef.popdown();
+
+  cur = head->flink;
+  if ( cur ) {
+    cur->node->doEdit( &ago->undoObj );
+  }
+  else {
+    ago->operationComplete();
+  }
+
+}
+
+void agc_edit_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeGroupClass *ago = (activeGroupClass *) client;
+
+  ago->ef.popdown();
+  ago->operationCancel();
+
+}
+
+void activeGroupClass::visPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeGroupClass *ago = (activeGroupClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+  }
+  else { // lost connection
+
+    ago->connection.setPvDisconnected( (void *) ago->visPvConnection );
+
+    ago->actWin->appCtx->proc->lock();
+    ago->needRefresh = 1;
+    ago->actWin->addDefExeNode( ago->aglPtr );
+    ago->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
+void activeGroupClass::visPvValueCallback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeGroupClass *ago = (activeGroupClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+    if ( !ago->connection.pvsConnected() ) {
+
+      ago->connection.setPvConnected( (void *) visPvConnection );
+
+      if ( ago->connection.pvsConnected() ) {
+        ago->actWin->appCtx->proc->lock();
+        ago->needConnectInit = 1;
+        ago->actWin->addDefExeNode( ago->aglPtr );
+        ago->actWin->appCtx->proc->unlock();
+      }
+
+    }
+    else {
+
+      ago->actWin->appCtx->proc->lock();
+      ago->needVisUpdate = 1;
+      ago->actWin->addDefExeNode( ago->aglPtr );
+      ago->actWin->appCtx->proc->unlock();
+
+    }
+
+  }
+
+}
 
 activeGroupClass::activeGroupClass ( void ) {
 
@@ -53,6 +233,15 @@ activeGraphicListPtr head;
   btnFocusActionHead = new btnActionListType;
   btnFocusActionHead->flink = btnFocusActionHead;
   btnFocusActionHead->blink = btnFocusActionHead;
+
+  connection.setMaxPvs( 1 );
+  unconnectedTimer = 0;
+
+  visInverted = 0;
+  strcpy( minVisString, "" );
+  strcpy( maxVisString, "" );
+
+  activeMode = 0;
 
 }
 
@@ -127,6 +316,13 @@ btnActionListPtr curBtnAction, nextBtnAction;
 
   if ( name ) delete name;
 
+#if 0
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
+#endif
+
 }
 
 // copy constructor
@@ -181,6 +377,16 @@ activeGraphicListPtr head, cur, curSource, sourceHead;
   btnFocusActionHead = new btnActionListType;
   btnFocusActionHead->flink = btnFocusActionHead;
   btnFocusActionHead->blink = btnFocusActionHead;
+
+  visInverted = source->visInverted;
+  visPvExpStr.setRaw( source->visPvExpStr.rawString );
+  strncpy( minVisString, source->minVisString, 39 );
+  strncpy( maxVisString, source->maxVisString, 39 );
+
+  connection.setMaxPvs( 1 );
+  unconnectedTimer = 0;
+
+  activeMode = 0;
 
 }
 
@@ -316,6 +522,8 @@ activeGraphicClass *tailNode;
 
     next = cur->flink;
 
+    cur->node->setDefaultEnable( 1 );
+    cur->node->initEnable();
     cur->node->clearInGroup();
     cur->node->clearNextToEdit();
 
@@ -362,8 +570,92 @@ int activeGroupClass::save (
 
 activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
 activeGraphicListPtr cur;
+char fullName[255+1], *description;
+int stat;
+int retStat = 1;
+int major, minor, release;
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+  major = AGC_MAJOR_VERSION;
+  minor = AGC_MINOR_VERSION;
+  release = AGC_RELEASE;
+
+  // read file and process each "object" tag
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "" );
+  tag.loadW( "beginGroup" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+  if ( !( stat & 1 ) ) retStat = stat;
+
+  cur = head->flink;
+  while( cur != head ) {
+
+    if ( strcmp( cur->node->getCreateParam(), "" ) == 0 ) {
+      strncpy( fullName, cur->node->objName(), 255 );
+      description = actWin->obj.getNameFromClass( fullName );
+      fprintf( f, "# (%s)\n", description );
+      fprintf( f, "object %s\n", cur->node->objName() );
+    }
+    else {
+      strncpy( fullName, cur->node->objName(), 255 );
+      Strncat( fullName, ":", 255 );
+      Strncat( fullName, cur->node->getCreateParam(), 255 );
+      description = actWin->obj.getNameFromClass( fullName );
+      fprintf( f, "# (%s)\n", description );
+      fprintf( f, "object %s:%s\n", cur->node->objName(),
+       cur->node->getCreateParam() );
+    }
+
+    stat = cur->node->save( f );
+    if ( !( stat & 1 ) ) retStat = stat;
+
+    cur = cur->flink;
+
+  }
+
+  tag.init();
+
+  tag.loadW( "endGroup" );
+  tag.loadW( "" );
+
+  tag.loadW( "visPv", &visPvExpStr, emptyStr );
+  tag.loadBoolW( "visInvert", &visInverted, &zero );
+  tag.loadW( "visMin", minVisString, emptyStr );
+  tag.loadW( "visMax", maxVisString, emptyStr );
+
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+  if ( !( stat & 1 ) ) retStat = stat;
+
+  return retStat;
+
+}
+
+int activeGroupClass::old_save (
+  FILE *f )
+{
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
 int stat;
 
+  fprintf( f, "%-d %-d %-d\n", AGC_MAJOR_VERSION, AGC_MINOR_VERSION,
+   AGC_RELEASE );
   fprintf( f, "%-d\n", x );
   fprintf( f, "%-d\n", y );
   fprintf( f, "%-d\n", w );
@@ -375,13 +667,22 @@ int stat;
 
     fprintf( f, "%s\n", cur->node->objName() );
     stat = cur->node->save( f );
-    fprintf( f, "E\002O\002D\n" );
+    fprintf( f, "<<<E~O~D>>>\n" );
 
     cur = cur->flink;
 
   }
 
   fprintf( f, "}\n" );
+
+  if ( visPvExpStr.getRaw() )
+    writeStringToFile( f, visPvExpStr.getRaw() );
+  else
+    writeStringToFile( f, "" );
+
+  fprintf( f, "%-d\n", visInverted );
+  writeStringToFile( f, minVisString );
+  writeStringToFile( f, maxVisString );
 
   return 1;
 
@@ -393,18 +694,237 @@ int activeGroupClass::createFromFile (
   activeWindowClass *_actWin )
 {
 
-int l, more, stat;
-char itemName[127+1], *gotOne;
+int major, minor, release, stat, retStat = 1;
+
+char *gotOne, tagName[255+1], val[4095+1];
+int isCompound;
+tagClass tag;
+
+int more;
+char itemName[63+1];
 activeGraphicListPtr cur, next;
 activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
 int isGroup;
 activeGraphicClass *tailNode;
 
+int zero = 0;
+char *emptyStr = "";
+
   this->actWin = _actWin;
   this->selected = 0;
   this->deleteRequest = 0;
 
-  fscanf( f, "%d\n", &x ); actWin->incLine();
+  // read file and process each "object" tag
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "beginGroup" );
+
+  stat = tag.readTags( f, "beginGroup" );
+
+  if ( !( stat & 1 ) ) {
+    retStat = stat;
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > AGC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox();
+
+  tag.init();
+  tag.loadR( "object", 63, itemName );
+  tag.loadR( "endGroup" );
+  more = 1;
+  do {
+
+    gotOne = tag.getName( tagName, 255, f );
+
+    while ( gotOne ) {
+
+      //printf( "name = [%s]\n", tagName );
+
+      if ( strcmp( tagName, "object" ) == 0 ) {
+
+        tag.getValue( val, 4095, f, &isCompound );
+        tag.decode( tagName, val, isCompound );
+
+        // ==============================================================
+        // Create sub-object
+
+        //printf( "objName = [%s]\n", itemName );
+
+        cur = new activeGraphicListType;
+        if ( !cur ) {
+          fclose( f );
+          printf( activeGroupClass_str1 );
+          return 0;
+        }
+
+        cur->node = actWin->obj.createNew( itemName );
+
+        if ( cur->node ) {
+
+          stat = cur->node->createFromFile( f, itemName, actWin );
+          if ( !( stat & 1 ) ) return stat; // memory leak here
+
+          cur->blink = head->blink;
+          head->blink->flink = cur;
+          head->blink = cur;
+          cur->flink = head;
+
+        }
+        else {
+
+          fclose( f );
+          printf( activeGroupClass_str1 );
+          return 0;
+
+        }
+
+        gotOne = tag.getName( tagName, 255, f );
+
+      }
+      else if ( strcmp( tagName, "endGroup" ) == 0 ) {
+
+        more = 0;
+        gotOne = NULL;
+
+      }
+
+    }
+
+  } while ( more );
+
+  tag.init();
+  tag.loadR( "visPv", &visPvExpStr, emptyStr );
+  tag.loadR( "visInvert", &visInverted, &zero );
+  tag.loadR( "visMin", 39, minVisString, emptyStr );
+  tag.loadR( "visMax", 39, maxVisString, emptyStr );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    retStat = stat;
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  // traverse list and set nextToEdit for group editing
+  cur = head->flink;
+  while ( cur != head ) {
+
+    if ( strcmp( cur->node->objName(), "activeGroupClass" ) == 0 )
+      isGroup = 1;
+    else
+      isGroup = 0;
+
+    next = cur->flink;
+
+    cur->node->setInGroup();
+
+    if ( next != head ) {
+      cur->node->setNextToEdit( next->node );
+      if ( isGroup ) {
+        tailNode = cur->node->getTail();
+        tailNode->setNextToEdit( next->node );
+      }
+    }
+    else
+      cur->node->clearNextToEdit();
+
+    cur = next;
+
+  }
+
+  return stat;
+
+}
+
+int activeGroupClass::old_createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int l, more, stat;
+char itemName[127+1], buf[63+1], *tk1, *tk2, *tk3, *context, *gotOne;
+activeGraphicListPtr cur, next;
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+int isGroup;
+activeGraphicClass *tailNode;
+int major, minor, release;
+char oneName[PV_Factory::MAX_PV_NAME+1];
+
+  this->actWin = _actWin;
+  this->selected = 0;
+  this->deleteRequest = 0;
+
+  // ------------------------------------------------------------------
+  // Initial problem: I failed to include the standard version info
+  // in the group object. As a result, we have to do the following:
+
+  fgets( buf, 63, f ); actWin->incLine();
+  context = NULL;
+  tk1 = strtok_r( buf, " ", &context );
+  tk2 = strtok_r( NULL, " ", &context );
+  tk3 = strtok_r( NULL, " ", &context );
+
+  if ( !tk2 ) {
+
+    major = 1;
+    minor = 0;
+    release = 0;
+    if ( tk1 ) {
+      x = atol( tk1 );
+    }
+    else {
+      x = 0;
+    }
+
+  }
+  else {
+
+    if ( tk1 ) {
+      major = atol( tk1 );
+    }
+    else {
+      major = 1;
+    }
+
+    if ( tk2 ) {
+      minor = atol( tk2 );
+    }
+    else {
+      minor = 0;
+    }
+
+    if ( tk3 ) {
+      release = atol( tk3 );
+    }
+    else {
+      release = 0;
+    }
+
+    fscanf( f, "%d\n", &x ); actWin->incLine();
+
+  }
+
+  // ------------------------------------------------------------------
+
   fscanf( f, "%d\n", &y ); actWin->incLine();
   fscanf( f, "%d\n", &w ); actWin->incLine();
   fscanf( f, "%d\n", &h ); actWin->incLine();
@@ -442,7 +962,7 @@ activeGraphicClass *tailNode;
 
       if ( cur->node ) {
 
-        cur->node->createFromFile( f, itemName, actWin );
+        cur->node->old_createFromFile( f, itemName, actWin );
 
         stat = actWin->readUntilEndOfData( f ); // for forward compatibility
         if ( !( stat & 1 ) ) return stat; // memory leak here
@@ -490,20 +1010,81 @@ activeGraphicClass *tailNode;
 
   }
 
+  if ( major >= 2 ) {
+
+    readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
+     actWin->incLine();
+    visPvExpStr.setRaw( oneName );
+    fscanf( f, "%d\n", &visInverted ); actWin->incLine();
+    readStringFromFile( minVisString, 39+1, f ); actWin->incLine();
+    readStringFromFile( maxVisString, 39+1, f ); actWin->incLine();
+
+  }
+  else {
+
+    visPvExpStr.setRaw( "" );
+    visInverted = 0;
+    strcpy( minVisString, "" );
+    strcpy( maxVisString, "" );
+
+  }
+
   return 1;
 
 }
 
 int activeGroupClass::edit ( void ) {
 
+char title[32], *ptr;
 activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
 activeGraphicListPtr cur;
 
   cur = head->flink;
   if ( cur ) {
     addUndoEditNode( curUndoObj );
-    cur->node->doEdit( &undoObj );
   }
+
+  ptr = actWin->obj.getNameFromClass( "activeGroupClass" );
+  if ( ptr )
+    strncpy( title, ptr, 31 );
+  else
+    strncpy( title, "Unknown Object" , 31 );
+
+  Strncat( title, "Properties", 31 );
+
+  bufX = x;
+  bufY = y;
+
+  if ( visPvExpStr.getRaw() )
+    strncpy( bufVisPvName, visPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+  else
+    strcpy( bufVisPvName, "" );
+
+  if ( visInverted )
+    bufVisInverted = 0;
+  else
+    bufVisInverted = 1;
+
+  strncpy( bufMinVisString, minVisString, 39 );
+  strncpy( bufMaxVisString, maxVisString, 39 );
+
+  ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
+   &actWin->appCtx->entryFormX,
+   &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
+   &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
+   title, NULL, NULL, NULL );
+
+  ef.addTextField( "X", 30, &bufX );
+  ef.addTextField( "Y", 30, &bufY );
+  ef.addTextField( "Visibility PV", 30, bufVisPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addOption( " ", "Not Visible if|Visible if", &bufVisInverted );
+  ef.addTextField( ">=", 30, bufMinVisString, 39 );
+  ef.addTextField( "and <", 30, bufMaxVisString, 39 );
+
+  ef.finished( agc_edit_ok, agc_edit_apply, agc_edit_cancel, this );
+  actWin->currentEf = &ef;
+  ef.popup();
 
   return 1;
 
@@ -584,6 +1165,8 @@ activeGraphicClass *activeGroupClass::enclosingObject (
 
 btnActionListPtr curBtn;
 activeGraphicClass *obj;
+
+  if ( !enabled ) return 0;
 
   curBtn = btnDownActionHead->blink;
   while ( curBtn != btnDownActionHead ) {
@@ -863,6 +1446,7 @@ int OneUp, OneDown, OneDrag, OneFocus, stat;
 }
 
 void activeGroupClass::btnDown (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
@@ -875,12 +1459,12 @@ btnActionListPtr curBtn;
   curBtn = btnDownActionHead->flink;
   while ( curBtn != btnDownActionHead ) {
 
-    if ( ( x > curBtn->node->getX0() ) &&
-         ( x < curBtn->node->getX1() ) &&
-         ( y > curBtn->node->getY0() ) &&
-         ( y < curBtn->node->getY1() ) ) {
+    if ( ( be->x > curBtn->node->getX0() ) &&
+         ( be->x < curBtn->node->getX1() ) &&
+         ( be->y > curBtn->node->getY0() ) &&
+         ( be->y < curBtn->node->getY1() ) ) {
 
-      curBtn->node->btnDown( x, y, buttonState, buttonNumber, action );
+      curBtn->node->btnDown( be, x, y, buttonState, buttonNumber, action );
 
     }
 
@@ -891,6 +1475,7 @@ btnActionListPtr curBtn;
 }
 
 void activeGroupClass::btnUp (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
@@ -903,12 +1488,12 @@ btnActionListPtr curBtn;
   curBtn = btnUpActionHead->flink;
   while ( curBtn != btnUpActionHead ) {
 
-    if ( ( x > curBtn->node->getX0() ) &&
-         ( x < curBtn->node->getX1() ) &&
-         ( y > curBtn->node->getY0() ) &&
-         ( y < curBtn->node->getY1() ) ) {
+    if ( ( be->x > curBtn->node->getX0() ) &&
+         ( be->x < curBtn->node->getX1() ) &&
+         ( be->y > curBtn->node->getY0() ) &&
+         ( be->y < curBtn->node->getY1() ) ) {
 
-      curBtn->node->btnUp( x, y, buttonState, buttonNumber, action );
+      curBtn->node->btnUp( be, x, y, buttonState, buttonNumber, action );
 
     }
 
@@ -919,6 +1504,7 @@ btnActionListPtr curBtn;
 }
 
 void activeGroupClass::btnDrag (
+  XMotionEvent *me,
   int x,
   int y,
   int buttonState,
@@ -930,12 +1516,12 @@ btnActionListPtr curBtn;
   curBtn = btnMotionActionHead->flink;
   while ( curBtn != btnMotionActionHead ) {
 
-    if ( ( x > curBtn->node->getX0() ) &&
-         ( x < curBtn->node->getX1() ) &&
-         ( y > curBtn->node->getY0() ) &&
-         ( y < curBtn->node->getY1() ) ) {
+    if ( ( me->x > curBtn->node->getX0() ) &&
+         ( me->x < curBtn->node->getX1() ) &&
+         ( me->y > curBtn->node->getY0() ) &&
+         ( me->y < curBtn->node->getY1() ) ) {
 
-      curBtn->node->btnDrag( x, y, buttonState, buttonNumber );
+      curBtn->node->btnDrag( me, x, y, buttonState, buttonNumber );
 
     }
 
@@ -946,6 +1532,7 @@ btnActionListPtr curBtn;
 }
 
 void activeGroupClass::pointerIn (
+  XMotionEvent *me,
   int _x,
   int _y,
   int buttonState )
@@ -954,15 +1541,17 @@ void activeGroupClass::pointerIn (
 btnActionListPtr curBtn;
 activeGraphicClass *ptr;
 
+  if ( !enabled ) return;
+
   curBtn = btnFocusActionHead->flink;
   while ( curBtn != btnFocusActionHead ) {
 
-    ptr = curBtn->node->enclosingObject( _x, _y );
+    ptr = curBtn->node->enclosingObject( me->x, me->y );
     if ( ptr ) {
 
       if ( curBtn->in != 1 ) {
         curBtn->in = 1;
-        ptr->pointerIn( _x, _y, buttonState );
+        ptr->pointerIn( me, _x, _y, buttonState );
       }
 
     }
@@ -974,6 +1563,7 @@ activeGraphicClass *ptr;
 }
 
 void activeGroupClass::pointerOut (
+  XMotionEvent *me,
   int _x,
   int _y,
   int buttonState )
@@ -985,12 +1575,12 @@ activeGraphicClass *ptr;
   curBtn = btnFocusActionHead->flink;
   while ( curBtn != btnFocusActionHead ) {
 
-    ptr = curBtn->node->enclosingObject( _x, _y );
+    ptr = curBtn->node->enclosingObject( me->x, me->y );
     if ( !ptr ) {
 
       if ( curBtn->in == 1 ) {
         curBtn->in = 0;
-        curBtn->node->pointerOut( _x, _y, buttonState );
+        curBtn->node->pointerOut( me, _x, _y, buttonState );
       }
 
     }
@@ -1002,6 +1592,7 @@ activeGraphicClass *ptr;
 }
 
 void activeGroupClass::checkMouseOver (
+  XMotionEvent *me,
   int _x,
   int _y,
   int buttonState )
@@ -1009,10 +1600,12 @@ void activeGroupClass::checkMouseOver (
 
 btnActionListPtr curBtn;
 
+  if ( !enabled ) return;
+
   curBtn = btnFocusActionHead->flink;
   while ( curBtn != btnFocusActionHead ) {
 
-    curBtn->node->checkMouseOver( _x, _y, buttonState );
+    curBtn->node->checkMouseOver( me, _x, _y, buttonState );
 
     curBtn = curBtn->flink;
 
@@ -1029,21 +1622,123 @@ activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
 activeGraphicListPtr cur;
 int num;
 
+  switch ( pass ) {
+
+  case 1: // initialize
+
+    opComplete = 0;
+
+    break;
+
+  case 2: // connect to pv's
+
+    if ( !opComplete ) {
+
+      initEnable();
+
+      connection.init();
+
+      needConnectInit = needVisUpdate = needRefresh = 0;
+
+      needToEraseUnconnected = 0;
+      needToDrawUnconnected = 0;
+      unconnectedTimer = 0;
+
+      aglPtr = ptr;
+      visPvId = 0;
+      prevVisibility = -1;
+      visibility = 0;
+
+      init = 1; // this stays true if there are no pvs
+
+      if ( !visPvExpStr.getExpanded() ||
+           blank( visPvExpStr.getExpanded() ) ) {
+        visPvExists = 0;
+      }
+      else {
+        connection.addPv();
+        visPvExists = 1;
+        init = 0;
+      }
+
+      opComplete = 1;
+
+    }
+
+    break;
+
+  case 3:
+  case 4:
+  case 5:
+
+    break;
+
+  }
+
   *numSubObjects = 0;
   cur = head->flink;
   while ( cur != head ) {
 
+    if ( pass == 2 ) {
+      if ( visPvExists ) {
+        cur->node->setDefaultEnable( 0 );
+      }
+    }
     cur->node->activate( pass, (void *) cur, &num );
 
     (*numSubObjects) += num;
     if ( *numSubObjects >= activeWindowClass::NUM_PER_PENDIO ) {
-      ca_pend_io( 5.0 );
-      ca_pend_event( 0.01 );
-      processAllEvents( actWin->appCtx->appContext(), actWin->d );
+      pend_io( 5.0 );
+      pend_event( 0.01 );
+      //processAllEvents( actWin->appCtx->appContext(), actWin->d );
       *numSubObjects = 0;
     }
 
     cur = cur->flink;
+
+  }
+
+  switch ( pass ) {
+
+  case 1: // initialize
+
+    op2Complete = 0;
+
+    break;
+
+  case 2:
+  case 3:
+  case 4:
+  case 5:
+
+    break;
+
+  case 6:
+
+    if ( !op2Complete ) {
+
+      activeMode = 1;
+
+      if ( visPvExists ) {
+
+        visPvId = the_PV_Factory->create( visPvExpStr.getExpanded() );
+        visPvId->add_conn_state_callback( visPvConnectStateCallback, this );
+        visPvId->add_value_callback( visPvValueCallback, this );
+
+#if 0
+        if ( !unconnectedTimer ) {
+          unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
+           2000, groupUnconnectedTimeout, this );
+        }
+#endif
+
+      }
+
+      op2Complete = 1;
+
+    }
+
+    break;
 
   }
 
@@ -1061,7 +1756,24 @@ btnActionListPtr curBtn, nextBtn;
 int num;
 
   *numSubObjects = 0;
+
   if ( pass == 1 ) {
+
+    activeMode = 0;
+
+#if 0
+    if ( unconnectedTimer ) {
+      XtRemoveTimeOut( unconnectedTimer );
+      unconnectedTimer = 0;
+    }
+#endif
+
+    if ( visPvId ) {
+      visPvId->remove_conn_state_callback( visPvConnectStateCallback, this );
+      visPvId->remove_value_callback( visPvValueCallback, this );
+      visPvId->release();
+      visPvId = 0;
+    }
 
     curBtn = btnDownActionHead->flink;
     while ( curBtn != btnDownActionHead ) {
@@ -1112,9 +1824,9 @@ int num;
 
     (*numSubObjects) += num;
     if ( *numSubObjects >= activeWindowClass::NUM_PER_PENDIO ) {
-      ca_pend_io( 5.0 );
-      ca_pend_event( 0.01 );
-      processAllEvents( actWin->appCtx->appContext(), actWin->d );
+      pend_io( 5.0 );
+      pend_event( 0.01 );
+      //processAllEvents( actWin->appCtx->appContext(), actWin->d );
       *numSubObjects = 0;
     }
 
@@ -1135,6 +1847,27 @@ activeGraphicListPtr cur;
 int num;
 
   *numSubObjects = 0;
+
+  if ( pass == 1 ) {
+
+    activeMode = 0;
+
+#if 0
+    if ( unconnectedTimer ) {
+      XtRemoveTimeOut( unconnectedTimer );
+      unconnectedTimer = 0;
+    }
+#endif
+
+    if ( visPvId ) {
+      visPvId->remove_conn_state_callback( visPvConnectStateCallback, this );
+      visPvId->remove_value_callback( visPvValueCallback, this );
+      visPvId->release();
+      visPvId = 0;
+    }
+
+  }
+
   cur = head->flink;
   while ( cur != head ) {
 
@@ -1142,13 +1875,147 @@ int num;
 
     (*numSubObjects) += num;
     if ( *numSubObjects >= activeWindowClass::NUM_PER_PENDIO ) {
-      ca_pend_io( 5.0 );
-      ca_pend_event( 0.01 );
-      processAllEvents( actWin->appCtx->appContext(), actWin->d );
+      pend_io( 5.0 );
+      pend_event( 0.01 );
+      //processAllEvents( actWin->appCtx->appContext(), actWin->d );
       *numSubObjects = 0;
     }
 
     cur = cur->flink;
+
+  }
+
+  return 1;
+
+}
+
+int activeGroupClass::reactivate (
+  int pass,
+  void *ptr,
+  int *numSubObjects ) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+int num;
+
+  switch ( pass ) {
+
+  case 1: // initialize
+
+    opComplete = 0;
+
+    break;
+
+  case 2: // connect to pv's
+
+    if ( !opComplete ) {
+
+      initEnable();
+
+      connection.init();
+
+      needConnectInit = needVisUpdate = needRefresh = 0;
+
+      needToEraseUnconnected = 0;
+      needToDrawUnconnected = 0;
+      unconnectedTimer = 0;
+
+      aglPtr = ptr;
+      visPvId = 0;
+      prevVisibility = -1;
+      visibility = 0;
+
+      init = 1; // this stays true if there are no pvs
+
+      if ( !visPvExpStr.getExpanded() ||
+           blank( visPvExpStr.getExpanded() ) ) {
+        visPvExists = 0;
+      }
+      else {
+        connection.addPv();
+        visPvExists = 1;
+        init = 0;
+      }
+
+      opComplete = 1;
+
+    }
+
+    break;
+
+  case 3:
+  case 4:
+  case 5:
+
+    break;
+
+  }
+
+  *numSubObjects = 0;
+  cur = head->flink;
+  while ( cur != head ) {
+
+    if ( pass == 2 ) {
+      if ( visPvExists ) {
+        cur->node->setDefaultEnable( 0 );
+      }
+    }
+    cur->node->reactivate( pass, (void *) cur, &num );
+
+    (*numSubObjects) += num;
+
+    if ( *numSubObjects >= activeWindowClass::NUM_PER_PENDIO ) {
+      pend_io( 5.0 );
+      pend_event( 0.01 );
+      //processAllEvents( actWin->appCtx->appContext(), actWin->d );
+      *numSubObjects = 0;
+    }
+
+    cur = cur->flink;
+
+  }
+
+  switch ( pass ) {
+
+  case 1: // initialize
+
+    op2Complete = 0;
+
+    break;
+
+  case 2:
+  case 3:
+  case 4:
+  case 5:
+
+    break;
+
+  case 6:
+
+    if ( !op2Complete ) {
+
+      activeMode = 1;
+
+      if ( visPvExists ) {
+
+        visPvId = the_PV_Factory->create( visPvExpStr.getExpanded() );
+        visPvId->add_conn_state_callback( visPvConnectStateCallback, this );
+        visPvId->add_value_callback( visPvValueCallback, this );
+
+#if 0
+        if ( !unconnectedTimer ) {
+          unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
+           2000, groupUnconnectedTimeout, this );
+        }
+#endif
+
+      }
+
+      op2Complete = 1;
+
+    }
+
+    break;
 
   }
 
@@ -1826,6 +2693,61 @@ activeGraphicListPtr cur;
 
 }
 
+void activeGroupClass::executeDeferred ( void ) {
+
+int stat, nc, nvu, nr;
+pvValType pvV;
+
+  if ( actWin->isIconified ) return;
+
+  actWin->appCtx->proc->lock();
+  nc = needConnectInit; needConnectInit = 0;
+  nvu = needVisUpdate; needVisUpdate = 0;
+  nr = needRefresh; needRefresh = 0;
+  actWin->remDefExeNode( aglPtr );
+  actWin->appCtx->proc->unlock();
+
+  if ( !activeMode ) return;
+
+  if ( nc ) {
+
+    minVis.d = (double) atof( minVisString );
+    maxVis.d = (double) atof( maxVisString );
+
+    nvu = 1;
+
+    init = 1;
+
+  }
+
+  if ( nvu && visPvId->is_valid() ) {
+
+    pvV.d = visPvId->get_double();
+    if ( ( pvV.d >= minVis.d ) && ( pvV.d < maxVis.d ) )
+      visibility = 1 ^ visInverted;
+    else
+      visibility = 0 ^ visInverted;
+
+    if ( prevVisibility != visibility ) {
+      if ( !visibility ) {
+        disable();
+      }
+      else {
+        enable();
+      }
+
+      prevVisibility = visibility;
+
+    }
+
+  }
+
+  if ( nr ) {
+    stat = smartDrawAllActive();
+  }
+
+}
+
 int activeGroupClass::containsMacros ( void )
 {
 
@@ -1833,6 +2755,8 @@ activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
 activeGraphicListPtr cur;
 
   if ( deleteRequest ) return 1;
+
+  if ( visPvExpStr.containsPrimaryMacros() ) return 1;
 
   cur = head->flink;
   while ( cur != head ) {
@@ -1858,6 +2782,8 @@ activeGraphicListPtr cur;
 
   if ( deleteRequest ) return 1;
 
+  visPvExpStr.expand1st( numMacros, macros, expansions );
+
   cur = head->flink;
   while ( cur != head ) {
 
@@ -1881,6 +2807,8 @@ activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
 activeGraphicListPtr cur;
 
   if ( deleteRequest ) return 1;
+
+  visPvExpStr.expand2nd( numMacros, macros, expansions );
 
   cur = head->flink;
   while ( cur != head ) {
@@ -2506,9 +3434,8 @@ int stat = 0;
 }
 
 int activeGroupClass::selectDragValue (
-  int x,
-  int y )
-{
+  XButtonEvent *be
+) {
 
 activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
 activeGraphicListPtr cur;
@@ -2517,31 +3444,31 @@ char *firstName, *nextName;
   cur = head->blink;
   while ( cur != head ) {
 
-    if ( ( x > cur->node->getX0() ) &&
-         ( x < cur->node->getX1() ) &&
-         ( y > cur->node->getY0() ) &&
-         ( y < cur->node->getY1() ) ) {
+    if ( ( be->x > cur->node->getX0() ) &&
+         ( be->x < cur->node->getX1() ) &&
+         ( be->y > cur->node->getY0() ) &&
+         ( be->y < cur->node->getY1() ) ) {
 
-      if ( cur->node->atLeastOneDragPv( x, y ) ) {
+      if ( cur->node->atLeastOneDragPv( be->x, be->y ) ) {
 
         currentDragIndex = 0;
 
-        firstName = cur->node->firstDragName( x, y );
+        firstName = cur->node->firstDragName( be->x, be->y );
         if ( !firstName ) return 0;
 
         actWin->popupDragBegin(
-         actWin->obj.getNameFromClass( cur->node->objName() ) );
+        actWin->obj.getNameFromClass( cur->node->objName() ) );
         actWin->popupDragAddItem( (void *) cur->node, firstName );
 
-        nextName = cur->node->nextDragName( x, y );
+        nextName = cur->node->nextDragName( be->x, be->y );
         while ( nextName ) {
 
           actWin->popupDragAddItem( (void *) cur->node, nextName );
-          nextName = cur->node->nextDragName( x, y );
+          nextName = cur->node->nextDragName( be->x, be->y );
 
         }
 
-        actWin->popupDragFinish( x, y );
+        actWin->popupDragFinish( be );
 
         break; // out of while loop
 
@@ -2681,5 +3608,109 @@ activeGraphicListPtr cur;
   }
 
   return 0;
+
+}
+
+void activeGroupClass::initEnable ( void ) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  cur = head->flink;
+  while ( cur != head ) {
+
+    cur->node->initEnable();
+
+    cur = cur->flink;
+
+  }
+
+}
+
+void activeGroupClass::enable ( void ) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  activeGraphicClass::enable();
+
+  cur = head->flink;
+  while ( cur != head ) {
+
+    cur->node->enable();
+    cur = cur->flink;
+
+  }
+
+  actWin->requestActiveRefresh();
+
+}
+
+void activeGroupClass::disable ( void ) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  enabled = 0;
+
+  cur = head->flink;
+  while ( cur != head ) {
+
+    cur->node->disable();
+    cur = cur->flink;
+
+  }
+
+  actWin->requestActiveRefresh();
+
+}
+
+void activeGroupClass::map ( void ) {
+
+}
+
+void activeGroupClass::unmap ( void ) {
+
+}
+
+int activeGroupClass::getGroupVisInfo (
+  expStringClass *visStr,
+  int *visInv,
+  int maxLen,
+  char *minVis,
+  char *maxVis
+) {
+
+  if ( maxLen < 40 ) return 0; // error
+
+  visStr->copy( visPvExpStr );
+  *visInv = visInverted;
+  strncpy( minVis, minVisString, 39 );
+  minVis[39] = 0;
+  strncpy( maxVis, maxVisString, 39 );
+  maxVis[39] = 0;
+
+  return 1; // success
+
+}
+
+int activeGroupClass::putGroupVisInfo (
+  expStringClass *visStr,
+  int visInv,
+  int maxLen,
+  char *minVis,
+  char *maxVis
+) {
+
+  if ( maxLen < 40 ) return 0; // error
+
+  visPvExpStr.copy( *visStr );
+  visInverted = visInv;
+  strncpy( minVisString, minVis, 39 );
+  minVisString[39] = 0;
+  strncpy( maxVisString, maxVis, 39 );
+  maxVisString[39] = 0;
+
+  return 1; // success
 
 }

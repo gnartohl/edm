@@ -45,6 +45,9 @@
 #include "thread.h"
 #include "avl.h"
 
+#include "pv_factory.h"
+#include "cvtFast.h"
+
 #include "app_pkg.str"
 #include "environment.str"
 
@@ -99,9 +102,9 @@ typedef struct activeWindowListTag {
   int requestRefresh;
   int requestActiveRedraw;
   int requestPosition;
-  int requestCascade;
   int requestImport;
   int requestIconize;
+  int requestConvertAndExit;
   int x;
   int y;
 } activeWindowListType, *activeWindowListPtr;
@@ -159,17 +162,13 @@ friend void shutdown_cb (
   XtPointer client,
   XtPointer call );
 
-#ifdef __epics__
-friend void ctlPvUpdate (
-  struct event_handler_args ast_args );
-#endif
+friend void ctlPvMonitorConnection (
+  ProcessVariable *pv,
+  void *userarg );
 
-#ifdef GENERIC_PV
 friend void ctlPvUpdate (
-  pvClass *classPtr,
-  void *clientData,
-  void *args );
-#endif
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void new_cb (
   Widget w,
@@ -273,23 +272,8 @@ fileListPtr fileHead;
 char ctlPV[127+1];
 char userLib[127+1];
 
-#ifdef __epics__
-
-chid ctlPvId;
-evid ctlPvEventId;
-
-#else
-
-#ifdef GENERIC_PV
-
-pvBindingClass pvObj;
-char pvClassName[15+1];
-pvClass *ctlPvId;
-pvEventClass *ctlPvEventId;
-
-#endif
-
-#endif
+ProcessVariable *ctlPvId;
+int initialConnection;
 
 confirmDialogClass confirm;
 int local;
@@ -362,6 +346,15 @@ int reloadFlag;
 edmPrintClass epc;
 
 clipBdClass clipBd;
+
+int convertOnly;
+
+// group visibility info
+int haveGroupVisInfo;
+expStringClass curGroupVisPvExpStr;
+int curGroupVisInverted;
+char curGroupMinVisString[39+1];
+char curGroupMaxVisString[39+1];
 
 appContextClass (
   void );
@@ -494,14 +487,6 @@ int openActivateIconifiedActiveWindow (
   int x,
   int y );
 
-int openActivateCascadeActiveWindow (
-  activeWindowClass *activeWindowNode );
-
-int openActivateCascadeActiveWindow (
-  activeWindowClass *activeWindowNode,
-  int x,
-  int y );
-
 int activateActiveWindow (
   activeWindowClass *activeWindowNode );
 
@@ -521,7 +506,8 @@ int startApplication (
   int argc,
   char **argv,
   int _primaryServer,
-  int _oneInstance );
+  int _oneInstance,
+  int _convertOnly );
 
 void openInitialFiles ( void );
 

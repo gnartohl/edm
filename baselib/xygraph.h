@@ -35,13 +35,10 @@
 #include "app_pkg.h"
 #include "act_win.h"
 
-#include "epicsVersion.h"
+#include "pv_factory.h"
+#include "cvtFast.h"
 
 #include "edmTime.h"
-
-#include "pv_factory.h"
-#include "epics_pv_factory.h"
-#include "cvtFast.h"
 
 #define XYGC_K_MAX_TRACES 14
 
@@ -101,8 +98,8 @@
 #define XYGC_K_SCOPE_MODE 0
 #define XYGC_K_PLOT_SORTED_X_MODE 1
 
-#define XYGC_MAJOR_VERSION 1
-#define XYGC_MINOR_VERSION 4
+#define XYGC_MAJOR_VERSION 4
+#define XYGC_MINOR_VERSION 0
 #define XYGC_RELEASE 0
 
 #ifdef __xygraph_cc
@@ -251,37 +248,40 @@ static void cancelKpYMax (
   int yIndex );
 
 static void xMonitorConnection (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void yMonitorConnection (
-  struct connection_handler_args arg );
-
-static void xInfoUpdate (
-  struct event_handler_args arg );
-
-static void yInfoUpdate (
-  struct event_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void xValueUpdate (
-  struct event_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void yValueUpdate (
-  struct event_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void yValueWithTimeUpdate (
-  struct event_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void resetMonitorConnection (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void resetValueUpdate (
-  struct event_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void trigMonitorConnection (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void trigValueUpdate (
-  struct event_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void axygc_edit_ok_trace (
   Widget w,
@@ -531,37 +531,40 @@ friend void cancelKpYMax (
   int yIndex );
 
 friend void xMonitorConnection (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void yMonitorConnection (
-  struct connection_handler_args arg );
-
-friend void xInfoUpdate (
-  struct event_handler_args arg );
-
-friend void yInfoUpdate (
-  struct event_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void xValueUpdate (
-  struct event_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void yValueUpdate (
-  struct event_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void yValueWithTimeUpdate (
-  struct event_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void resetMonitorConnection (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void resetValueUpdate (
-  struct event_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void trigMonitorConnection (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void trigValueUpdate (
-  struct event_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void axygc_edit_ok_trace (
   Widget w,
@@ -626,10 +629,14 @@ expStringClass graphTitle, xLabel, yLabel, y2Label;
 int numTraces;
 int plotAreaX, plotAreaY, plotAreaW, plotAreaH;
 
-objPlusIndexType argRec[XYGC_K_MAX_TRACES];
+objPlusIndexType xcArgRec[XYGC_K_MAX_TRACES];
+objPlusIndexType xvArgRec[XYGC_K_MAX_TRACES];
+objPlusIndexType ycArgRec[XYGC_K_MAX_TRACES];
+objPlusIndexType yvArgRec[XYGC_K_MAX_TRACES];
 
-chid xPv[XYGC_K_MAX_TRACES], yPv[XYGC_K_MAX_TRACES];
-evid xEv[XYGC_K_MAX_TRACES], yEv[XYGC_K_MAX_TRACES];
+ProcessVariable *xPv[XYGC_K_MAX_TRACES], *yPv[XYGC_K_MAX_TRACES];
+int initialXConnection[XYGC_K_MAX_TRACES],
+ initialYConnection[XYGC_K_MAX_TRACES];
 
 int plotColor[XYGC_K_MAX_TRACES];
 int lineThk[XYGC_K_MAX_TRACES];
@@ -689,8 +696,8 @@ int arrayHead[XYGC_K_MAX_TRACES], arrayTail[XYGC_K_MAX_TRACES],
 
 int effectiveCount[XYGC_K_MAX_TRACES], totalCount[XYGC_K_MAX_TRACES];
 
-chid resetPv, trigPv;
-evid resetEv, trigEv;
+ProcessVariable *resetPv, *trigPv;
+int initialResetConnection, initialTrigConnection;
 expStringClass trigPvExpStr, resetPvExpStr;
 
 int count, bufferScrollSize, plotStyle[XYGC_K_MAX_TRACES], plotMode, resetMode;
@@ -859,12 +866,20 @@ int createFromFile (
   char *name,
   activeWindowClass *_actWin );
 
+int old_createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin );
+
 int importFromXchFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin );
 
 int save (
+  FILE *f );
+
+int old_save (
   FILE *f );
 
 int genericEdit ( void );
@@ -947,22 +962,27 @@ int deactivate ( int pass );
 void updateDimensions ( void );
 
 void btnDrag (
+  XMotionEvent *me,
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
 void btnUp (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
-  int buttonNumber );
+  int buttonNumber,
+  int *action );
 
 void btnDown (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
-  int buttonNumber );
+  int buttonNumber,
+  int *action );
 
 int getButtonActionRequest (
   int *up,

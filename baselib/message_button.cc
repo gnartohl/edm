@@ -264,22 +264,20 @@ activeMessageButtonClass *msgbto = (activeMessageButtonClass *) client;
 
 }
 
-#ifdef __epics__
-
 static void msgbt_monitor_dest_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeMessageButtonClass *msgbto = (activeMessageButtonClass *) ca_puser(arg.chid);
+activeMessageButtonClass *msgbto = (activeMessageButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     msgbto->needConnectInit = 1;
 
   }
   else {
 
-    
     msgbto->connection.setPvDisconnected( (void *) msgbto->destPvConnection );
     msgbto->active = 0;
     msgbto->onColor.setDisconnected();
@@ -295,13 +293,13 @@ activeMessageButtonClass *msgbto = (activeMessageButtonClass *) ca_puser(arg.chi
 }
 
 static void msgbt_monitor_vis_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeMessageButtonClass *msgbto =
- (activeMessageButtonClass *) ca_puser(arg.chid);
+activeMessageButtonClass *msgbto = (activeMessageButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     msgbto->needVisConnectInit = 1;
 
@@ -322,65 +320,14 @@ activeMessageButtonClass *msgbto =
 
 }
 
-static void msgbt_destInfoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-int i;
-activeMessageButtonClass *msgbto =
- (activeMessageButtonClass *) ast_args.usr;
-struct dbr_gr_enum enumRec;
-
-  enumRec = *( (struct dbr_gr_enum *) ast_args.dbr );
-
-  msgbto->numStates = enumRec.no_str;
-
-  for ( i=0; i<msgbto->numStates; i++ ) {
-
-    if ( msgbto->stateString[i] == NULL ) {
-      msgbto->stateString[i] = new char[MAX_ENUM_STRING_SIZE+1];
-    }
-
-    strncpy( msgbto->stateString[i], enumRec.strs[i], MAX_ENUM_STRING_SIZE );
-
-  }
-
-}
-
-static void msgbt_visInfoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeMessageButtonClass *msgbto =
- (activeMessageButtonClass *) ast_args.usr;
-
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
-
-  msgbto->curVisValue = controlRec.value;
-
-  msgbto->actWin->appCtx->proc->lock();
-  msgbto->needVisInit = 1;
-  msgbto->actWin->addDefExeNode( msgbto->aglPtr );
-  msgbto->actWin->appCtx->proc->unlock();
-
-}
-
 static void msgbt_visUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeMessageButtonClass *msgbto =
- (activeMessageButtonClass *) ast_args.usr;
+activeMessageButtonClass *msgbto = (activeMessageButtonClass *) userarg;
 
-  msgbto->curVisValue = * ( (double *) ast_args.dbr );
+  msgbto->curVisValue = pv->get_double();
 
   msgbto->actWin->appCtx->proc->lock();
   msgbto->needVisUpdate = 1;
@@ -390,13 +337,14 @@ activeMessageButtonClass *msgbto =
 }
 
 static void msgbt_monitor_color_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
 activeMessageButtonClass *msgbto =
- (activeMessageButtonClass *) ca_puser(arg.chid);
+  (activeMessageButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     msgbto->needColorConnectInit = 1;
 
@@ -417,36 +365,14 @@ activeMessageButtonClass *msgbto =
 
 }
 
-static void msgbt_colorInfoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeMessageButtonClass *msgbto =
- (activeMessageButtonClass *) ast_args.usr;
-
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
-
-  msgbto->curColorValue = controlRec.value;
-
-  msgbto->actWin->appCtx->proc->lock();
-  msgbto->needColorInit = 1;
-  msgbto->actWin->addDefExeNode( msgbto->aglPtr );
-  msgbto->actWin->appCtx->proc->unlock();
-
-}
-
 static void msgbt_colorUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeMessageButtonClass *msgbto =
- (activeMessageButtonClass *) ast_args.usr;
+activeMessageButtonClass *msgbto = (activeMessageButtonClass *) userarg;
 
-  msgbto->curColorValue = * ( (double *) ast_args.dbr );
+  msgbto->curColorValue = pv->get_double();
 
   msgbto->actWin->appCtx->proc->lock();
   msgbto->needColorUpdate = 1;
@@ -454,8 +380,6 @@ activeMessageButtonClass *msgbto =
   msgbto->actWin->appCtx->proc->unlock();
 
 }
-
-#endif
 
 activeMessageButtonClass::activeMessageButtonClass ( void ) {
 
@@ -621,6 +545,63 @@ int activeMessageButtonClass::save (
   FILE *f )
 {
 
+int stat, major, minor, release;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+  major = MSGBTC_MAJOR_VERSION;
+  minor = MSGBTC_MINOR_VERSION;
+  release = MSGBTC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadW( "onColor", actWin->ci, &onColor );
+  tag.loadW( "offColor", actWin->ci, &offColor );
+  tag.loadW( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadW( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadW( "controlPv", &destPvExpString, emptyStr );
+  tag.loadW( "pressValue",  &sourcePressPvExpString, emptyStr );
+  tag.loadW( "releaseValue",  &sourceReleasePvExpString, emptyStr );
+  tag.loadW( "onLabel", &onLabel, emptyStr );
+  tag.loadW( "offLabel", &offLabel, emptyStr );
+  tag.loadBoolW( "toggle", &toggle, &zero );
+  tag.loadBoolW( "closeOnPress", &pressAction, &zero );
+  tag.loadBoolW( "closeOnRelease", &releaseAction, &zero );
+  tag.loadBoolW( "3d", &_3D, &zero );
+  tag.loadBoolW( "invisible", &invisible, &zero );
+  tag.loadBoolW( "useEnumNumeric", &useEnumNumeric, &zero );
+  tag.loadW( "password", pw, emptyStr );
+  tag.loadBoolW( "lock", &lock, &zero );
+  tag.loadW( "font", fontTag );
+  tag.loadW( "visPv", &visPvExpString, emptyStr );
+  tag.loadBoolW( "visInvert", &visInverted, &zero );
+  tag.loadW( "visMin", minVisString, emptyStr );
+  tag.loadW( "visMax", maxVisString, emptyStr );
+  tag.loadW( "colorPv", &colorPvExpString, emptyStr  );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int activeMessageButtonClass::old_save (
+  FILE *f )
+{
+
 int index;
 
   fprintf( f, "%-d %-d %-d\n", MSGBTC_MAJOR_VERSION, MSGBTC_MINOR_VERSION,
@@ -722,6 +703,93 @@ int index;
 }
 
 int activeMessageButtonClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "onColor", actWin->ci, &onColor );
+  tag.loadR( "offColor", actWin->ci, &offColor );
+  tag.loadR( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadR( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadR( "controlPv", &destPvExpString, emptyStr );
+  tag.loadR( "pressValue",  &sourcePressPvExpString, emptyStr );
+  tag.loadR( "releaseValue",  &sourceReleasePvExpString, emptyStr );
+  tag.loadR( "onLabel", &onLabel, emptyStr );
+  tag.loadR( "offLabel", &offLabel, emptyStr );
+  tag.loadR( "toggle", &toggle, &zero );
+  tag.loadR( "closeOnPress", &pressAction, &zero );
+  tag.loadR( "closeOnRelease", &releaseAction, &zero );
+  tag.loadR( "3d", &_3D, &zero );
+  tag.loadR( "invisible", &invisible, &zero );
+  tag.loadR( "useEnumNumeric", &useEnumNumeric, &zero );
+  tag.loadR( "password", 31, pw, emptyStr );
+  tag.loadR( "lock", &lock, &zero );
+  tag.loadR( "font", 63, fontTag );
+  tag.loadR( "visPv", &visPvExpString, emptyStr );
+  tag.loadR( "visInvert", &visInverted, &zero );
+  tag.loadR( "visMin", 39, minVisString, emptyStr );
+  tag.loadR( "visMax", 39, maxVisString, emptyStr );
+  tag.loadR( "colorPv", &colorPvExpString, emptyStr );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > MSGBTC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  actWin->fi->loadFontTag( fontTag );
+  fs = actWin->fi->getXFontStruct( fontTag );
+
+  if ( blank(pw) ) {
+    usePassword = 0;
+  }
+  else if ( strcmp( pw, "*" ) == 0 ) {
+    usePassword = 0;
+  }
+  else {
+    usePassword = 1;
+  }
+
+  updateDimensions();
+
+  return 1;
+
+}
+
+int activeMessageButtonClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -1467,7 +1535,7 @@ int activeMessageButtonClass::erase ( void ) {
 
 int activeMessageButtonClass::eraseActive ( void ) {
 
-  if ( !init || !activeMode || invisible ) return 1;
+  if ( !enabled || !init || !activeMode || invisible ) return 1;
 
   if ( prevVisibility == 0 ) {
     prevVisibility = visibility;
@@ -1625,7 +1693,7 @@ int blink = 0;
     }
   }
 
-  if ( !init || !activeMode || invisible || !visibility ) return 1;
+  if ( !enabled || !init || !activeMode || invisible || !visibility ) return 1;
 
   prevVisibility = visibility;
 
@@ -1788,7 +1856,7 @@ int activeMessageButtonClass::activate (
   void *ptr )
 {
 
-int stat, opStat, i, l;
+int opStat, i, l;
 char tmpPvName[activeGraphicClass::MAX_PV_NAME+1];
 
   switch ( pass ) {
@@ -1804,11 +1872,9 @@ char tmpPvName[activeGraphicClass::MAX_PV_NAME+1];
     if ( !opComplete ) {
 
       connection.init();
+      initEnable();
 
       numStates = 0;
-      for ( i=0; i<MAX_ENUM_STATES; i++ ) {
-        stateString[i] = NULL;
-      }
 
       needConnectInit = needErase = needDraw = needPerformDownAction =
        needPerformUpAction = needWarning = needVisConnectInit =
@@ -1817,16 +1883,11 @@ char tmpPvName[activeGraphicClass::MAX_PV_NAME+1];
        needToEraseUnconnected = 0;
       needToDrawUnconnected = 0;
       unconnectedTimer = 0;
+      initialVisConnection = 1;
+      initialColorConnection = 1;
       init = 0;
       aglPtr = ptr;
       destPvId = visPvId = colorPvId = NULL;
-
-#ifdef __epics__
-      sourcePressEventId = 0;
-      sourceReleaseEventId = 0;
-      visEventId = 0;
-      colorEventId = 0;
-#endif
 
       sourcePressExists = sourceReleaseExists = 0;
 
@@ -1869,8 +1930,6 @@ char tmpPvName[activeGraphicClass::MAX_PV_NAME+1];
 
       opStat = 1;
 
-#ifdef __epics__
-
       destIsAckS = 0;
 
       if ( destExists ) {
@@ -1887,9 +1946,12 @@ char tmpPvName[activeGraphicClass::MAX_PV_NAME+1];
 	  }
 	}
 
-        stat = ca_search_and_connect( tmpPvName, &destPvId,
-         msgbt_monitor_dest_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+        destPvId = the_PV_Factory->create( tmpPvName );
+	if ( destPvId ) {
+	  destPvId->add_conn_state_callback( msgbt_monitor_dest_connect_state,
+           this );
+	}
+	else {
           printf( activeMessageButtonClass_str25 );
           opStat = 0;
         }
@@ -1904,27 +1966,33 @@ char tmpPvName[activeGraphicClass::MAX_PV_NAME+1];
 
       if ( visExists ) {
 
-        stat = ca_search_and_connect( visPvExpString.getExpanded(), &visPvId,
-         msgbt_monitor_vis_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+        visPvId = the_PV_Factory->create( visPvExpString.getExpanded() );
+	if ( visPvId ) {
+	  visPvId->add_conn_state_callback( msgbt_monitor_vis_connect_state,
+           this );
+	}
+	else {
           printf( activeMessageButtonClass_str25 );
           opStat = 0;
         }
+
       }
 
       if ( colorExists ) {
 
-        stat = ca_search_and_connect( colorPvExpString.getExpanded(),
-         &colorPvId, msgbt_monitor_color_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+        colorPvId = the_PV_Factory->create( colorPvExpString.getExpanded() );
+	if ( colorPvId ) {
+	  colorPvId->add_conn_state_callback(
+           msgbt_monitor_color_connect_state, this );
+	}
+	else {
           printf( activeMessageButtonClass_str25 );
           opStat = 0;
         }
+
       }
 
       if ( opStat & 1 ) opComplete = 1;
-
-#endif
 
       return opStat;
 
@@ -1949,8 +2017,6 @@ int activeMessageButtonClass::deactivate (
   int pass
 ) {
 
-int i, stat;
-
   if ( pass == 1 ) {
 
   active = 0;
@@ -1963,40 +2029,33 @@ int i, stat;
 
   updateBlink( 0 );
 
-#ifdef __epics__
-
   if ( destExists ) {
     if ( destPvId ) {
-      stat = ca_clear_channel( destPvId );
-      if ( stat != ECA_NORMAL ) printf( activeMessageButtonClass_str26 );
+      destPvId->remove_conn_state_callback( msgbt_monitor_dest_connect_state,
+       this );
+      destPvId->release();
       destPvId = NULL;
     }
   }
 
   if ( visExists ) {
     if ( visPvId ) {
-      stat = ca_clear_channel( visPvId );
-      if ( stat != ECA_NORMAL ) printf( activeMessageButtonClass_str26 );
+      visPvId->remove_conn_state_callback( msgbt_monitor_vis_connect_state,
+       this );
+      visPvId->remove_value_callback( msgbt_visUpdate, this );
+      visPvId->release();
       visPvId = NULL;
     }
   }
 
   if ( colorExists ) {
     if ( colorPvId ) {
-      stat = ca_clear_channel( colorPvId );
-      if ( stat != ECA_NORMAL ) printf( activeMessageButtonClass_str26 );
+      colorPvId->remove_conn_state_callback( msgbt_monitor_color_connect_state,
+       this );
+      colorPvId->remove_value_callback( msgbt_colorUpdate, this );
+      colorPvId->release();
       colorPvId = NULL;
     }
-  }
-
-#endif
-
-  if ( numStates ) {
-    for ( i=0; i<numStates; i++ ) {
-      delete stateString[i];
-      stateString[i] = NULL;
-    }
-    numStates = 0;
   }
 
   }
@@ -2032,56 +2091,44 @@ int stat;
 
   if ( strcmp( sourceReleasePvExpString.getExpanded(), "" ) == 0 ) return;
 
-#ifdef __epics__
-
   if ( destIsAckS ) {
 
     destV.s = (short) atol( sourceReleasePvExpString.getExpanded() );
-    stat = ca_put( DBR_PUT_ACKS, destPvId, &destV.s );
+    destPvId->putAck( destV.s );
 
   }
   else {
 
     switch ( destType ) {
 
-    case DBR_DOUBLE:
+    case ProcessVariable::Type::real:
       destV.d = atof( sourceReleasePvExpString.getExpanded() );
-      stat = ca_put( DBR_DOUBLE, destPvId, &destV.d );
+      destPvId->put( destV.d );
       break;
 
-    case DBR_LONG:
+    case ProcessVariable::Type::integer:
       destV.l = atol( sourceReleasePvExpString.getExpanded() );
-      stat = ca_put( DBR_LONG, destPvId, &destV.l );
+      destPvId->put( destV.l );
       break;
 
-    case DBR_SHORT:
-      destV.s = (short) atol( sourceReleasePvExpString.getExpanded() );
-      stat = ca_put( DBR_SHORT, destPvId, &destV.s );
-      break;
-
-    case DBR_CHAR:
-      destV.str[0] = (char) atol( sourceReleasePvExpString.getExpanded() );
-      stat = ca_put( DBR_CHAR, destPvId, &destV.str[0] );
-      break;
-
-    case DBR_STRING:
+    case ProcessVariable::Type::text:
       strncpy( destV.str, sourceReleasePvExpString.getExpanded(), 39 );
-      stat = ca_put( DBR_STRING, destPvId, &destV.str );
+      destPvId->put( destV.str );
       break;
 
-    case DBR_ENUM:
+    case ProcessVariable::Type::enumerated:
       if ( useEnumNumeric ) {
-        destV.s = (short) atol( sourceReleasePvExpString.getExpanded() );
-        stat = ca_put( DBR_ENUM, destPvId, &destV.s );
+        destV.l = atol( sourceReleasePvExpString.getExpanded() );
+        destPvId->put( destV.l );
       }
       else {
         stat = getEnumNumeric( sourceReleasePvExpString.getExpanded(),
-         &destV.s );
+         &destV.l );
         if ( !( stat & 1 ) ) {
           actWin->appCtx->postMessage( activeMessageButtonClass_str40 );
         }
         else {
-          stat = ca_put( DBR_ENUM, destPvId, &destV.s );
+          destPvId->put( destV.l );
         }
       }
       break;
@@ -2090,11 +2137,10 @@ int stat;
 
   }
 
-#endif
-
 }
 
 void activeMessageButtonClass::btnUp (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
@@ -2102,7 +2148,7 @@ void activeMessageButtonClass::btnUp (
   int *action )
 {
 
-  if ( !visibility ) {
+  if ( !enabled || !visibility ) {
     *action = 0;
     return;
   }
@@ -2146,56 +2192,43 @@ char labelValue[39+1];
 
   if ( strcmp( labelValue, "" ) == 0 ) return;
 
-#ifdef __epics__
-
   if ( destIsAckS ) {
 
     destV.s = (short) atol( labelValue );
-    stat = ca_put( DBR_PUT_ACKS, destPvId, &destV.s );
+    destPvId->putAck( destV.s );
 
   }
   else {
 
     switch ( destType ) {
 
-    case DBR_FLOAT:
-    case DBR_DOUBLE:
+    case ProcessVariable::Type::real:
       destV.d = atof( labelValue );
-      stat = ca_put( DBR_DOUBLE, destPvId, &destV.d );
+      destPvId->put( destV.d );
       break;
 
-    case DBR_LONG:
+    case ProcessVariable::Type::integer:
       destV.l = atol( labelValue );
-      stat = ca_put( DBR_LONG, destPvId, &destV.l );
+      destPvId->put( destV.l );
       break;
 
-    case DBR_SHORT:
-      destV.s = (short) atol( labelValue );
-      stat = ca_put( DBR_SHORT, destPvId, &destV.s );
-      break;
-
-    case DBR_CHAR:
-      destV.str[0] = (char) atol( labelValue );
-      stat = ca_put( DBR_CHAR, destPvId, &destV.str[0] );
-      break;
-
-    case DBR_STRING:
+    case ProcessVariable::Type::text:
       strncpy( destV.str, labelValue, 39 );
-      stat = ca_put( DBR_STRING, destPvId, destV.str );
+      destPvId->put( destV.str );
       break;
 
-    case DBR_ENUM:
+    case ProcessVariable::Type::enumerated:
       if ( useEnumNumeric ) {
-        destV.s = (short) atol( labelValue );
-        stat = ca_put( DBR_ENUM, destPvId, &destV.s );
+        destV.l = atol( labelValue );
+        destPvId->put( destV.l );
       }
       else {
-        stat = getEnumNumeric( labelValue, &destV.s );
+        stat = getEnumNumeric( labelValue, &destV.l );
         if ( !( stat & 1 ) ) {
           actWin->appCtx->postMessage( activeMessageButtonClass_str39 );
         }
         else {
-          stat = ca_put( DBR_ENUM, destPvId, &destV.s );
+          destPvId->put( destV.l );
         }
       }
       break;
@@ -2204,11 +2237,10 @@ char labelValue[39+1];
 
   }
 
-#endif
-
 }
 
 void activeMessageButtonClass::btnDown (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
@@ -2218,7 +2250,7 @@ void activeMessageButtonClass::btnDown (
 
   if ( buttonNumber != 1 ) return;
 
-  if ( !visibility ) {
+  if ( !enabled || !visibility ) {
     *action = 0;
     return;
   }
@@ -2227,8 +2259,8 @@ void activeMessageButtonClass::btnDown (
 
     if ( !ef.formIsPoppedUp() ) {
 
-      pwFormX = actWin->x + x;
-      pwFormY = actWin->y + y;
+      pwFormX = be->x_root;
+      pwFormY = be->y_root;
       pwFormW = 0;
       pwFormH = 0;
       pwFormMaxH = 600;
@@ -2272,9 +2304,9 @@ void activeMessageButtonClass::pointerIn (
   int buttonState )
 {
 
-  if ( !active || !visibility ) return;
+  if ( !enabled || !active || !visibility ) return;
 
-  if ( !ca_write_access( destPvId ) ) {
+  if ( !destPvId->have_write_access() ) {
     actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
   }
   else {
@@ -2415,17 +2447,17 @@ int stat, index, invisColor;
 
 //----------------------------------------------------------------------------
 
-#ifdef __epics__
-
   if ( nc ) {
 
-    connection.setPvConnected( (void *) destPvConnection );
-    destType = ca_field_type( destPvId );
+    destType = (int) destPvId->get_type().type;
 
-    if ( destType == DBR_ENUM ) {
-      stat = ca_get_callback( DBR_GR_ENUM, destPvId,
-       msgbt_destInfoUpdate, (void *) this );
+    if ( destType == ProcessVariable::Type::enumerated ) {
+
+      numStates = (int) destPvId->get_enum_count();
+
     }
+
+    connection.setPvConnected( (void *) destPvConnection );
 
     if ( connection.pvsConnected() ) {
       active = 1;
@@ -2439,20 +2471,21 @@ int stat, index, invisColor;
 
   if ( nvc ) {
 
+    curVisValue = visPvId->get_double();
+
     minVis = atof( minVisString );
     maxVis = atof( maxVisString );
 
-    stat = ca_get_callback( DBR_GR_DOUBLE, visPvId,
-     msgbt_visInfoUpdate, (void *) this );
+    nvi = 1;
 
   }
 
   if ( nvi ) {
 
-    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, visPvId,
-     msgbt_visUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-     &visEventId, DBE_VALUE );
-    if ( stat != ECA_NORMAL ) printf( activeMessageButtonClass_str27 );
+    if ( initialVisConnection ) {
+      initialVisConnection = 0;
+      visPvId->add_value_callback( msgbt_visUpdate, this );
+    }
 
     if ( ( visValue >= minVis ) &&
          ( visValue < maxVis ) )
@@ -2478,17 +2511,18 @@ int stat, index, invisColor;
 
   if ( ncc ) {
 
-    stat = ca_get_callback( DBR_GR_DOUBLE, colorPvId,
-     msgbt_colorInfoUpdate, (void *) this );
+    curColorValue = colorPvId->get_double();
+
+    nci = 1;
 
   }
 
   if ( nci ) {
 
-    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, colorPvId,
-     msgbt_colorUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-     &colorEventId, DBE_VALUE );
-    if ( stat != ECA_NORMAL ) printf( activeMessageButtonClass_str27 );
+    if ( initialColorConnection ) {
+      initialColorConnection = 0;
+      colorPvId->add_value_callback( msgbt_colorUpdate, this );
+    }
 
     invisColor = 0;
 
@@ -2530,8 +2564,6 @@ int stat, index, invisColor;
     }
 
   }
-
-#endif
 
 //----------------------------------------------------------------------------
 
@@ -2649,12 +2681,16 @@ int stat, index, invisColor;
 
 char *activeMessageButtonClass::firstDragName ( void ) {
 
+  if ( !enabled ) return NULL;
+
   dragIndex = 0;
   return dragName[dragIndex];
 
 }
 
 char *activeMessageButtonClass::nextDragName ( void ) {
+
+  if ( !enabled ) return NULL;
 
   if ( dragIndex < (int) ( sizeof(dragName) / sizeof(char *) ) - 1 ) {
     dragIndex++;
@@ -2669,14 +2705,33 @@ char *activeMessageButtonClass::nextDragName ( void ) {
 char *activeMessageButtonClass::dragValue (
   int i ) {
 
-  if ( i == 0 ) {
-    return destPvExpString.getExpanded();
-  }
-  else if ( i == 1 ) {
-    return colorPvExpString.getExpanded();
+  if ( !enabled ) return NULL;
+
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    if ( i == 0 ) {
+      return destPvExpString.getExpanded();
+    }
+    else if ( i == 1 ) {
+      return colorPvExpString.getExpanded();
+    }
+    else {
+      return visPvExpString.getExpanded();
+    }
+
   }
   else {
-    return visPvExpString.getExpanded();
+
+    if ( i == 0 ) {
+      return destPvExpString.getRaw();
+    }
+    else if ( i == 1 ) {
+      return colorPvExpString.getRaw();
+    }
+    else {
+      return visPvExpString.getRaw();
+    }
+
   }
 
 }
@@ -2753,13 +2808,13 @@ void activeMessageButtonClass::changePvNames (
 
 int activeMessageButtonClass::getEnumNumeric (
   char *string,
-  short *value ) {
+  int *value ) {
 
   int i;
 
   for ( i=0; i<numStates; i++ ) {
-    if ( strcmp( string, stateString[i] ) == 0 ) {
-      *value = (short) i;
+    if ( strcmp( string, destPvId->get_enum( i ) ) == 0 ) {
+      *value = i;
       return 1;
     }
   }

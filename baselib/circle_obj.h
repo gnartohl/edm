@@ -22,14 +22,13 @@
 #include "act_grf.h"
 #include "entry_form.h"
 #include "pv_factory.h"
-#include "epics_pv_factory.h"
 #include "cvtFast.h"
 
 #define ACC_K_COLORMODE_STATIC 0
 #define ACC_K_COLORMODE_ALARM 1
 
-#define ACC_MAJOR_VERSION 2
-#define ACC_MINOR_VERSION 1
+#define ACC_MAJOR_VERSION 4
+#define ACC_MINOR_VERSION 0
 #define ACC_RELEASE 0
 
 #ifdef __circle_obj_cc
@@ -213,12 +212,20 @@ int createFromFile (
   char *name,
   activeWindowClass *_actWin );
 
+int old_createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
 int importFromXchFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
 int save (
+  FILE *f );
+
+int old_save (
   FILE *f );
 
 int genericEdit ( void );

@@ -10,6 +10,32 @@
 #include"calc_pv_factory.h"
 #include"loc_pv_factory.h"
 
+int pend_io ( double sec )
+{
+
+#ifdef __epics__
+  return (int) ca_pend_io( sec );
+#endif
+
+#ifndef __epics__
+  return (int) ECA_NORMAL;
+#endif
+
+}
+
+int pend_event ( double sec )
+{
+
+#ifdef __epics__
+  return (int) ca_pend_event( sec );
+#endif
+
+#ifndef __epics__
+  return (int) ECA_NORMAL;
+#endif
+
+}
+
 // Available PV_Factories:
        PV_Factory *the_PV_Factory   = new PV_Factory();
 static PV_Factory *epics_pv_factory = new EPICS_PV_Factory();
@@ -235,3 +261,5 @@ bool ProcessVariable::have_write_access() const
 bool ProcessVariable::put(int value)
 {   return put(double(value)); }
 
+bool ProcessVariable::putAck(short value)
+{    return true; }

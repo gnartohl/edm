@@ -966,21 +966,33 @@ libRecPtr head, tail, cur, prev, next;
 
 }
 
-#ifdef __epics__
-
-void ctlPvUpdate (
-  struct event_handler_args ast_args )
+void ctlPvMonitorConnection (
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-appContextClass *apco = (appContextClass *) ast_args.usr;
-char *fName, str[41], name[127+1];
-int stat;
+}
+
+void ctlPvUpdate (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+appContextClass *apco = (appContextClass *) userarg;
+char str[41], name[127+1];
 activeWindowListPtr cur;
 SYS_PROC_ID_TYPE procId;
 
-  fName = (char *) ast_args.dbr;
+  pv->get_string( name, 127 );
+  name[127] = 0;
 
-  if ( strcmp( fName, "" ) == 0 ) {
+  if ( apco->initialConnection ) {
+    apco->initialConnection = 0;
+    pv->putText( "" );
+    return;
+  }
+
+  if ( blank(name) ) {
     return;
   }
 
@@ -988,25 +1000,23 @@ SYS_PROC_ID_TYPE procId;
     return;
   }
 
-  if ( strcmp( fName, "* SHUTDOWN *" ) == 0 ) {
+  if ( strcmp( name, "* SHUTDOWN *" ) == 0 ) {
     apco->shutdownFlag = 1;
     sys_get_proc_id( &procId );
     sprintf( str, "%-d", (int) procId.id );
-    stat = ca_put( DBR_STRING, apco->ctlPvId, &str );
+    pv->putText( str );
     return;
   }
-  else if ( strcmp( fName, "* RELOAD *" ) == 0 ) {
+  else if ( strcmp( name, "* RELOAD *" ) == 0 ) {
     apco->reloadFlag = 1;
     strcpy( str, "" );
-    stat = ca_put( DBR_STRING, apco->ctlPvId, &str );
+    pv->putText( str );
     return;
   }
 
-  if ( fName[0] == ' ' ) {
+  if ( name[0] == ' ' ) {
     return;
   }
-
-  getFileName( name, fName, 127 );
 
   cur = apco->head->flink;
   while ( cur != apco->head ) {
@@ -1017,7 +1027,7 @@ SYS_PROC_ID_TYPE procId;
       XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
       snprintf( str, 40, " %-lu", XtWindow(cur->node.topWidgetId()) );
       //strcpy( str, "" );
-      stat = ca_put( DBR_STRING, apco->ctlPvId, &str );
+      pv->putText( str );
       return;  // display is already open; don't open another instance
     }
     cur = cur->flink;
@@ -1030,11 +1040,11 @@ SYS_PROC_ID_TYPE procId;
   cur->requestReactivate = 0;
   cur->requestOpen = 0;
   cur->requestPosition = 0;
-  cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
   cur->requestActiveRedraw = 0;
   cur->requestIconize = 0;
+  cur->requestConvertAndExit = 0;
 
   cur->node.create( apco, NULL, 0, 0, 0, 0, apco->numMacros, apco->macros,
    apco->expansions );
@@ -1046,7 +1056,7 @@ SYS_PROC_ID_TYPE procId;
   apco->head->blink = cur;
   cur->flink = apco->head;
 
-  cur->node.storeFileName( fName );
+  cur->node.storeFileName( name );
 
   cur->requestOpen = 1;
   (apco->requestFlag)++;
@@ -1055,112 +1065,9 @@ SYS_PROC_ID_TYPE procId;
   (apco->requestFlag)++;
 
   strcpy( str, "" );
-  stat = ca_put( DBR_STRING, apco->ctlPvId, &str );
+  pv->putText( str );
 
 }
-
-#else
-
-#ifdef GENERIC_PV
-
-void ctlPvUpdate (
-  pvClass *classPtr,
-  void *clientData,
-  void *args
-) {
-
-appContextClass *apco = (appContextClass *) clientData;
-char *fName, str[41], name[127+1];
-int stat;
-activeWindowListPtr cur;
-
-//apco->proc->lock();
-
-  fName = (char *) apco->ctlPvId->getValue( args );
-
-  if ( strcmp( fName, "" ) == 0 ) {
-    //    apco->proc->unlock();
-    return;
-  }
-
-  if ( apco->shutdownFlag ) {
-    //    apco->proc->unlock();
-    return;
-  }
-
-  if ( strcmp( fName, "* SHUTDOWN *" ) == 0 ) {
-    apco->shutdownFlag = 1;
-    sys_get_proc_id( &procId );
-    sprintf( str, "%-d", (int) procId.id );
-    stat = ca_put( DBR_STRING, apco->ctlPvId, &str );
-    //    apco->proc->unlock();
-    return;
-  }
-
-  if ( fName[0] == ' ' ) {
-    //    apco->proc->unlock();
-    return;
-  }
-
-  getFileName( name, fName, 127 );
-
-  cur = apco->head->flink;
-  while ( cur != apco->head ) {
-    if ( strcmp( name, cur->node.displayName ) == 0 ) {
-      // deiconify
-      XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
-      // raise
-      XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
-      snprintf( str, 40, " %-lu", XtWindow(cur->node.topWidgetId()) );
-      //strcpy( str, "" );
-      stat = apco->ctlPvId->put( apco->ctlPvId->pvrString(), str );
-      //      apco->proc->unlock();
-      return;  // display is already open; don't open another instance
-    }
-    cur = cur->flink;
-  }
-
-  cur = new activeWindowListType;
-  cur->requestDelete = 0;
-  cur->requestActivate = 0;
-  cur->requestActivateClear = 0;
-  cur->requestReactivate = 0;
-  cur->requestOpen = 0;
-  cur->requestPosition = 0;
-  cur->requestCascade = 0;
-  cur->requestImport = 0;
-  cur->requestRefresh = 0;
-  cur->requestActiveRedraw = 0;
-  cur->requestIconize = 0;
-
-  cur->node.create( apco, NULL, 0, 0, 0, 0, apco->numMacros, apco->macros,
-   apco->expansions );
-  cur->node.realize();
-  cur->node.setGraphicEnvironment( &apco->ci, &apco->fi );
-
-  cur->blink = apco->head->blink;
-  apco->head->blink->flink = cur;
-  apco->head->blink = cur;
-  cur->flink = apco->head;
-
-  cur->node.storeFileName( fName );
-
-  cur->requestOpen = 1;
-  (apco->requestFlag)++;
-
-  cur->requestActivate = 1;
-  (apco->requestFlag)++;
-
-  strcpy( str, "" );
-  stat = apco->ctlPvId->put( apco->ctlPvId->pvrString(), str );
-
-  //  apco->proc->unlock();
-
-}
-
-#endif
-
-#endif
 
 void setPath_cb (
   Widget w,
@@ -1207,11 +1114,11 @@ char *fName;
   cur->requestReactivate = 0;
   cur->requestOpen = 0;
   cur->requestPosition = 0;
-  cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
   cur->requestActiveRedraw = 0;
   cur->requestIconize = 0;
+  cur->requestConvertAndExit = 0;
 
   cur->node.create( apco, NULL, 0, 0, 0, 0, apco->numMacros, apco->macros,
    apco->expansions );
@@ -1280,11 +1187,11 @@ char *fName;
   cur->requestReactivate = 0;
   cur->requestOpen = 0;
   cur->requestPosition = 0;
-  cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
   cur->requestActiveRedraw = 0;
   cur->requestIconize = 0;
+  cur->requestConvertAndExit = 0;
 
   cur->node.create( apco, NULL, 0, 0, 0, 0, apco->numMacros, apco->macros,
    apco->expansions );
@@ -1359,11 +1266,11 @@ char oneFileName[127+1];
   cur->requestReactivate = 0;
   cur->requestOpen = 0;
   cur->requestPosition = 0;
-  cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
   cur->requestActiveRedraw = 0;
   cur->requestIconize = 0;
+  cur->requestConvertAndExit = 0;
   cur->node.create( apco, NULL, 100, 100, 500, 600, apco->numMacros,
    apco->macros, apco->expansions );
   cur->node.realize();
@@ -1883,11 +1790,11 @@ char *sysMacros[] = {
   cur->requestReactivate = 0;
   cur->requestOpen = 0;
   cur->requestPosition = 0;
-  cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
   cur->requestActiveRedraw = 0;
   cur->requestIconize = 0;
+  cur->requestConvertAndExit = 0;
 
   cur->node.createNoEdit( apco, NULL, 0, 0, 0, 0, numMacros,
    sysMacros, sysValues );
@@ -1962,6 +1869,8 @@ appContextClass::appContextClass (
   cutHead1->blink = cutHead1;
 
   viewXy = 0;
+
+  haveGroupVisInfo = 0;
 
   getFilePaths();
   strncpy( curPath, dataFilePrefix[0], 127 );
@@ -2195,11 +2104,11 @@ activeWindowListPtr cur;
       cur->requestOpen = 1;
       requestFlag++;
       cur->requestPosition = 1;
-      cur->requestCascade = 0;
       cur->requestImport = 0;
       cur->requestRefresh = 0;
       cur->requestActiveRedraw = 0;
       cur->requestIconize = 0;
+      cur->requestConvertAndExit = 0;
       cur->x = cur->node.x;
       cur->y = cur->node.y;
       if ( cur->node.mode == AWC_EXECUTE ) {
@@ -3404,11 +3313,11 @@ void appContextClass::addActiveWindow (
   node->requestReactivate = 0;
   node->requestOpen = 0;
   node->requestPosition = 0;
-  node->requestCascade = 0;
   node->requestImport = 0;
   node->requestRefresh = 0;
   node->requestActiveRedraw = 0;
   node->requestIconize = 0;
+  node->requestConvertAndExit = 0;
 
   node->blink = head->blink;
   head->blink->flink = node;
@@ -3497,7 +3406,6 @@ activeWindowListPtr cur;
     if ( &(cur->node) == activeWindowNode ) {
       cur->requestOpen = 1;
       cur->requestPosition = 0;
-      cur->requestCascade = 0;
       cur->requestImport = 0;
       requestFlag++;
     }
@@ -3521,9 +3429,9 @@ activeWindowListPtr cur;
     if ( &(cur->node) == activeWindowNode ) {
       cur->requestOpen = 1;
       cur->requestPosition = 0;
-      cur->requestCascade = 0;
       cur->requestImport = 0;
       cur->requestIconize = 0;
+      cur->requestConvertAndExit = 0;
       requestFlag++;
       cur->requestActivate = 1;
       requestFlag++;
@@ -3550,9 +3458,9 @@ activeWindowListPtr cur;
     if ( &(cur->node) == activeWindowNode ) {
       cur->requestOpen = 1;
       cur->requestPosition = 1;
-      cur->requestCascade = 0;
       cur->requestImport = 0;
       cur->requestIconize = 0;
+      cur->requestConvertAndExit = 0;
       cur->x = x;
       cur->y = y;
       requestFlag++;
@@ -3582,67 +3490,11 @@ activeWindowListPtr cur;
     if ( &(cur->node) == activeWindowNode ) {
       cur->requestOpen = 1;
       cur->requestPosition = 1;
-      cur->requestCascade = 0;
       cur->requestImport = 0;
       cur->requestIconize = 1;
+      cur->requestConvertAndExit = 0;
       cur->x = x;
       cur->y = y;
-      requestFlag++;
-      cur->requestActivate = 1;
-      requestFlag++;
-    }
-    cur = cur->flink;
-  }
-
-  return 1;
-
-}
-
-int appContextClass::openActivateCascadeActiveWindow (
-  activeWindowClass *activeWindowNode )
-{
-
-  // simply mark for open and activation and increment request flag
-
-activeWindowListPtr cur;
-
-  cur = head->flink;
-  while ( cur != head ) {
-    if ( &(cur->node) == activeWindowNode ) {
-      cur->requestOpen = 1;
-      cur->requestPosition = 0;
-      cur->requestCascade = 1;
-      cur->requestImport = 0;
-      cur->requestIconize = 0;
-      requestFlag++;
-      cur->requestActivate = 1;
-      requestFlag++;
-    }
-    cur = cur->flink;
-  }
-
-  return 1;
-
-}
-
-int appContextClass::openActivateCascadeActiveWindow (
-  activeWindowClass *activeWindowNode,
-  int x,
-  int y )
-{
-
-  // simply mark for open and activation and increment request flag
-
-activeWindowListPtr cur;
-
-  cur = head->flink;
-  while ( cur != head ) {
-    if ( &(cur->node) == activeWindowNode ) {
-      cur->requestOpen = 1;
-      cur->requestPosition = 1;
-      cur->requestCascade = 1;
-      cur->requestImport = 0;
-      cur->requestIconize = 0;
       requestFlag++;
       cur->requestActivate = 1;
       requestFlag++;
@@ -3730,15 +3582,7 @@ static void displayParamInfo ( void ) {
 
   printf( global_str25 );
 
-#ifdef GENERIC_PV
-
-  printf( global_str26 );
-
-#else
-
   printf( global_str27 );
-
-#endif
 
   printf( global_str28 );
 
@@ -3750,10 +3594,6 @@ static void displayParamInfo ( void ) {
   printf( global_str32 );
   printf( global_str33 );
 
-#ifdef GENERIC_PV
-  printf( global_str34 );
-#endif
-
   printf( global_str35 );
   printf( global_str36 );
   printf( global_str37 );
@@ -3763,6 +3603,7 @@ static void displayParamInfo ( void ) {
   printf( global_str77 );
   printf( global_str78 );
   printf( global_str85 );
+  printf( global_str92 );
 
   printf( global_str57 );
   printf( global_str58 );
@@ -3840,10 +3681,6 @@ int i, n = 1;
 char *tk;
 macroListPtr curMacro;
 fileListPtr curFile;
-
-#ifdef GENERIC_PV
-  strcpy( pvClassName, "" );
-#endif
 
   strcpy( displayName, "" );
   strcpy( colormode, "" );
@@ -3933,6 +3770,8 @@ fileListPtr curFile;
         }
         else if ( strcmp( argv[n], global_str89 ) == 0 ) {
         }
+        else if ( strcmp( argv[n], global_str91 ) == 0 ) {
+        }
         else if ( strcmp( argv[n], global_str86 ) == 0 ) {
           n++; // just ignore, not used here
           if ( n >= argc ) return 2;
@@ -4013,15 +3852,6 @@ fileListPtr curFile;
           privColorMap = 1;
         }
 
-#ifdef GENERIC_PV
-        else if ( strcmp( argv[n], global_str23 ) == 0 ) {
-          n++;
-          if ( n >= argc ) return 2;
-          strncpy( pvClassName, argv[n], 15 );
-          pvClassName[15] = 0;
-        }
-#endif
-
         else {
           return -2;
         }
@@ -4090,7 +3920,7 @@ int appContextClass::startApplication (
   int _primaryServer )
 {
 
-  return startApplication( argc, argv, _primaryServer, 0 );
+  return startApplication( argc, argv, _primaryServer, 0, 0 );
 
 }
 
@@ -4098,7 +3928,8 @@ int appContextClass::startApplication (
   int argc,
   char **argv,
   int _primaryServer,
-  int _oneInstance )
+  int _oneInstance,
+  int _convertOnly )
 {
 
 int stat, opStat;
@@ -4116,6 +3947,7 @@ XmString xmStr1;
 
   primaryServer = _primaryServer;
   oneInstance = _oneInstance;
+  convertOnly = _convertOnly;
 
   name = argv[0];
 
@@ -4151,105 +3983,21 @@ err_return:
   }
 
 
-#ifdef __epics__
-
   if ( strcmp( ctlPV, "" ) != 0 ) {
 
-    stat = ca_search( ctlPV, &ctlPvId );
-    if ( stat != ECA_NORMAL ) {
-
-      sprintf( msg, appContextClass_str99 );
-      postMessage( msg );
-
+    initialConnection = 1;
+    ctlPvId = the_PV_Factory->create( ctlPV );
+    if ( ctlPvId ) {
+      ctlPvId->add_conn_state_callback( ctlPvMonitorConnection, this );
+      ctlPvId->add_value_callback( ctlPvUpdate, this );
+      usingControlPV = 1;
     }
     else {
-
-      stat = ca_pend_io( 10.0 );
-      ca_pend_event( 0.00001 );
-      if ( stat != ECA_NORMAL ) {
-
-        sprintf( msg, appContextClass_str100 );
-        postMessage( msg );
-
-      }
-      else {
-
-        stat = ca_put( DBR_STRING, ctlPvId, "" );
-        stat = ca_pend_io( 10.0 );
-        ca_pend_event( 0.00001 );
-
-        stat = ca_add_masked_array_event( DBR_STRING, 1, ctlPvId,
-         ctlPvUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-         &ctlPvEventId, DBE_VALUE );
-        if ( stat != ECA_NORMAL ) {
-          sprintf( msg,
-           appContextClass_str101 );
-          postMessage( msg );
-        }
-
-        usingControlPV = 1;
-
-      }
-
+      sprintf( msg, appContextClass_str99 );
+      postMessage( msg );
     }
 
   }
-
-#else
-
-#ifdef GENERIC_PV
-
-  if ( strcmp( ctlPV, "" ) != 0 ) {
-
-    ctlPvId = pvObj.createNew( pvClassName );
-    if ( ctlPvId ) {
-
-      ctlPvId->createEventId( &ctlPvEventId );
-
-      expStr.setRaw( ctlPV );
-      stat = ctlPvId->search( &expStr );
-      if ( stat != PV_E_SUCCESS ) {
-
-        sprintf( msg, appContextClass_str102 );
-        postMessage( msg );
-
-      }
-      else {
-
-        stat = ctlPvId->pendIo( 10.0 );
-        if ( stat != PV_E_SUCCESS ) {
-
-          sprintf( msg, appContextClass_str103 );
-          postMessage( msg );
-
-        }
-        else {
-
-          stat = ctlPvId->put( ctlPvId->pvrString(), (void *) "" );
-          stat = ctlPvId->pendIo( 10.0 );
-
-          stat = ctlPvId->addEvent( ctlPvId->pvrString(), 1,
-	   ctlPvUpdate, (void *) this, ctlPvEventId,
-	   ctlPvId->pveValue() );
-          if ( stat != PV_E_SUCCESS ) {
-            sprintf( msg,
-             appContextClass_str104 );
-            postMessage( msg );
-          }
-
-          usingControlPV = 1;
-
-        }
-
-      }
-
-    }
-
-  }
-
-#endif
-
-#endif
 
   {
 
@@ -4434,11 +4182,17 @@ err_return:
     cur->requestReactivate = 0;
     cur->requestOpen = 0;
     cur->requestPosition = 0;
-    cur->requestCascade = 0;
     cur->requestImport = 0;
     cur->requestRefresh = 0;
     cur->requestActiveRedraw = 0;
     cur->requestIconize = 0;
+
+    if ( convertOnly ) {
+      cur->requestConvertAndExit = 1;
+    }
+    else {
+      cur->requestConvertAndExit = 0;
+    }
 
     cur->blink = head->blink;
     head->blink->flink = cur;
@@ -4530,11 +4284,11 @@ char tmpName[131+1];
       cur->requestReactivate = 0;
       cur->requestOpen = 0;
       cur->requestPosition = 0;
-      cur->requestCascade = 0;
       cur->requestImport = 0;
       cur->requestRefresh = 0;
       cur->requestActiveRedraw = 0;
       cur->requestIconize = 0;
+      cur->requestConvertAndExit = 0;
 
       cur->blink = head->blink;
       head->blink->flink = cur;
@@ -4582,11 +4336,11 @@ activeWindowListPtr cur;
   cur->requestReactivate = 0;
   cur->requestOpen = 0;
   cur->requestPosition = 0;
-  cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
   cur->requestActiveRedraw = 0;
   cur->requestIconize = 0;
+  cur->requestConvertAndExit = 0;
 
   cur->blink = head->blink;
   head->blink->flink = cur;
@@ -4723,21 +4477,16 @@ char msg[127+1];
         else {
           if ( cur->requestPosition ) {
             cur->requestPosition = 0;
-            if ( cur->requestCascade ) {
-              cur->requestCascade = 0;
-              stat = cur->node.loadCascade( cur->x, cur->y );
-            }
-            else {
-              stat = cur->node.load( cur->x, cur->y );
-            }
-          }
-          else if ( cur->requestCascade ) {
-            cur->requestPosition = 0;
-            cur->requestCascade = 0;
-            stat = cur->node.loadCascade();
+            stat = cur->node.load( cur->x, cur->y );
           }
           else {
             stat = cur->node.load();
+            if ( cur->requestConvertAndExit ) {
+              cur->requestConvertAndExit = 0;
+	      printf( "Converting file [%s]\n", cur->node.fileName );
+              cur->node.save( cur->node.fileName );
+              exitFlag = 1;
+	    }
           }
         }
         if ( !reloadFlag ) {
@@ -4808,16 +4557,12 @@ char msg[127+1];
           cur->requestActivate = 3;
           cur->node.execute();
 
-#ifdef __epics__
-          stat = ca_pend_io( 1.0 );
-          ca_pend_event( 0.00001 );
-#endif
+          stat = pend_io( 1.0 );
+          pend_event( 0.00001 );
           cur->node.processObjects();
 
-#ifdef __epics__
-          stat = ca_pend_io( 1.0 );
-          ca_pend_event( 0.00001 );
-#endif
+          stat = pend_io( 1.0 );
+          pend_event( 0.00001 );
           processAllEvents( app, display );
 
           actionCount++;
@@ -4882,20 +4627,16 @@ char msg[127+1];
        NULL );
     }
 
-#ifdef __epics__
-    stat = ca_pend_io( 1.0 );
-    ca_pend_event( 0.00001 );
-#endif
+    stat = pend_io( 1.0 );
+    pend_event( 0.00001 );
     processAllEvents( app, display );
 
     cur = cur->flink;
 
   }
 
-#ifdef __epics__
-  stat = ca_pend_io( 10.0 );
-  ca_pend_event( 0.00001 );
-#endif
+  stat = pend_io( 10.0 );
+  pend_event( 0.00001 );
 
   processAllEvents( app, display );
 

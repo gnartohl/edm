@@ -176,16 +176,15 @@ activeMessageBoxClass *messageboxo = (activeMessageBoxClass *) client;
 
 }
 
-#ifdef __epics__
-
 static void messagebox_monitor_read_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
 activeMessageBoxClass *messageboxo =
- (activeMessageBoxClass *) ca_puser(arg.chid);
+ (activeMessageBoxClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     messageboxo->needConnectInit = 1;
 
@@ -206,11 +205,11 @@ activeMessageBoxClass *messageboxo =
 }
 
 static void messagebox_readUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-char *str;
-activeMessageBoxClass *messageboxo = (activeMessageBoxClass *) ast_args.usr;
+activeMessageBoxClass *messageboxo = (activeMessageBoxClass *) userarg;
 
   if ( messageboxo->active ) {
 
@@ -219,8 +218,7 @@ activeMessageBoxClass *messageboxo = (activeMessageBoxClass *) ast_args.usr;
       return;
     }
 
-    str = (char *) ast_args.dbr;
-    if ( str ) strncpy( messageboxo->curReadV, str, 39 );
+    pv->get_string( messageboxo->curReadV, 39 );
 
     messageboxo->actWin->appCtx->proc->lock();
     messageboxo->needUpdate = 1;
@@ -230,8 +228,6 @@ activeMessageBoxClass *messageboxo = (activeMessageBoxClass *) ast_args.usr;
   }
 
 }
-
-#endif
 
 activeMessageBoxClass::activeMessageBoxClass ( void ) {
 
@@ -388,6 +384,52 @@ int activeMessageBoxClass::save (
   FILE *f )
 {
 
+
+int stat, major, minor, release;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+  major = MESSAGEBOXC_MAJOR_VERSION;
+  minor = MESSAGEBOXC_MINOR_VERSION;
+  release = MESSAGEBOXC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadW( "2ndBgColor", actWin->ci, &bg2Color );
+  tag.loadW( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadW( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadW( "indicatorPv", &readPvExpStr, emptyStr );
+  tag.loadW( "font", fontTag );
+  tag.loadW( "bufferSize", &size );
+  tag.loadW( "fileSize", &fileSize, &zero );
+  tag.loadW( "flushTimerValue", &flushTimerValue, &zero );
+  tag.loadW( "logFileName", logFileName, emptyStr );
+  tag.loadBoolW( "readOnly", &fileIsReadOnly, &zero );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int activeMessageBoxClass::old_save (
+  FILE *f )
+{
+
 int index;
 
   fprintf( f, "%-d %-d %-d\n", MESSAGEBOXC_MAJOR_VERSION,
@@ -441,6 +483,72 @@ int index;
 }
 
 int activeMessageBoxClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "2ndBgColor", actWin->ci, &bg2Color );
+  tag.loadR( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadR( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadR( "indicatorPv", &readPvExpStr, emptyStr );
+  tag.loadR( "font", 63, fontTag );
+  tag.loadR( "bufferSize", &size );
+  tag.loadR( "fileSize", &fileSize, &zero );
+  tag.loadR( "flushTimerValue", &flushTimerValue, &zero );
+  tag.loadR( "logFileName", 127, logFileName, emptyStr );
+  tag.loadR( "readOnly", &fileIsReadOnly, &zero );
+  tag.loadR( "endObjectProperties" );
+  tag.loadR( "" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > MESSAGEBOXC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  actWin->fi->loadFontTag( fontTag );
+  fs = actWin->fi->getXFontStruct( fontTag );
+
+  logFileOpen = 0;
+
+  return stat;
+
+}
+
+int activeMessageBoxClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -734,7 +842,7 @@ int activeMessageBoxClass::drawActive ( void ) {
 int n;
 Arg args[10];
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   if ( scrolledText.textWidget() ) {
     n = 0;
@@ -846,13 +954,9 @@ struct stat fileStat;
 
       aglPtr = ptr;
       needConnectInit = needUpdate = needDraw = 0;
-
-#ifdef __epics__
-      readEventId = 0;
-#endif
-
+      readPvId = NULL;
+      initialReadConnection = 1;
       firstReadUpdate = 1;
-
       readPvConnected = active = init = 0;
       activeMode = 1;
 
@@ -866,25 +970,25 @@ struct stat fileStat;
       }
 
       frameWidget = NULL;
+      initEnable();
 
       opStat = 1;
 
       createMessageBoxWidgets();
 
-#ifdef __epics__
-
       if ( readExists ) {
-        status = ca_search_and_connect( readPvExpStr.getExpanded(), &readPvId,
-         messagebox_monitor_read_connect_state, this );
-        if ( status != ECA_NORMAL ) {
+        readPvId = the_PV_Factory->create( readPvExpStr.getExpanded() );
+	if ( readPvId ) {
+	  readPvId->add_conn_state_callback(
+           messagebox_monitor_read_connect_state, this );
+	}
+	else {
           printf( activeMessageBoxClass_str22 );
           opStat = 0;
         }
       }
 
       if ( opStat & 1 ) opComplete = 1;
-
-#endif
 
       return opStat;
 
@@ -913,8 +1017,6 @@ struct stat fileStat;
          flushTimerValue*1000, messageboxc_flush_log_file, (void *) this );
       }
 
-      // XSync( actWin->display(), False );
-
     }
 
     break;
@@ -929,8 +1031,6 @@ int activeMessageBoxClass::deactivate (
   int pass
 ) {
 
-int stat;
-
   if ( pass == 1 ) {
 
     active = 0;
@@ -944,15 +1044,16 @@ int stat;
       XtRemoveTimeOut( flushTimer );
     }
 
-#ifdef __epics__
-
     if ( readExists ) {
-      stat = ca_clear_channel( readPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeMessageBoxClass_str23 );
+      if ( readPvId ) {
+        readPvId->remove_conn_state_callback(
+         messagebox_monitor_read_connect_state, this );
+        readPvId->remove_value_callback(
+         messagebox_readUpdate, this );
+	readPvId->release();
+	readPvId = NULL;
+      }
     }
-
-#endif
 
     if ( logFileOpen ) {
       fclose( logFile );
@@ -1084,7 +1185,9 @@ Widget widget;
   XtSetArg( args[n], XmNbackground, bg2Color.pixelColor() ); n++;
   XtSetValues( scrolledText.clearPbWidget(), args, n );
 
-  XtMapWidget( frameWidget );
+  if ( enabled ) {
+    XtMapWidget( frameWidget );
+  }
 
   return 1;
 
@@ -1148,7 +1251,7 @@ int tmpw, tmph, ret_stat;
 void activeMessageBoxClass::executeDeferred ( void ) {
 
 char v[39+1];
-int stat, nc, nu, nd, l;
+int nc, nu, nd, l;
 
 //----------------------------------------------------------------------------
 
@@ -1164,21 +1267,17 @@ int stat, nc, nu, nd, l;
 
 //----------------------------------------------------------------------------
 
-#ifdef __epics__
-
   if ( nc ) {
 
     readPvConnected = 1;
     active = 1;
     init = 1;
 
-    if ( !readEventId ) {
+    if ( initialReadConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_STRING, 1, readPvId,
-       messagebox_readUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &readEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL )
-        printf( activeMessageBoxClass_str25 );
+      initialReadConnection = 0;
+
+      readPvId->add_value_callback( messagebox_readUpdate, this );
 
     }
 
@@ -1187,13 +1286,9 @@ int stat, nc, nu, nd, l;
 
   }
 
-#endif
-
   if ( nu ) {
 
     strncpy( readV, v, 39 );
-
-    //printf( "logFileExists = %-d, readV = [%s]\n", logFileExists, readV );
 
     if ( readV ) scrolledText.addTextNoNL( readV );
 
@@ -1296,6 +1391,23 @@ void activeMessageBoxClass::changePvNames (
   }
 
 }
+
+void activeMessageBoxClass::map ( void ) {
+
+  if ( frameWidget ) {
+    XtMapWidget( frameWidget );
+  }
+
+}
+
+void activeMessageBoxClass::unmap ( void ) {
+
+  if ( frameWidget ) {
+    XtUnmapWidget( frameWidget );
+  }
+
+}
+
 
 #ifdef __cplusplus
 extern "C" {

@@ -186,6 +186,90 @@ char *edmTextupdateClass::objName()
 // --------------------------------------------------------
 int edmTextupdateClass::save(FILE *f)
 {
+
+int major, minor, release, alarmSens, oneDspMode, stat;
+pvColorClass tc, fc;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+int deflt = 0;
+static char *dspModeEnumStr[5] = {
+  "default",
+  "decimal",
+  "hex",
+  "engineer",
+  "exp"
+};
+static int dspMode[5] = {
+  0,
+  1,
+  2,
+  3,
+  4,
+};
+
+int left = XmALIGNMENT_BEGINNING;
+static char *alignEnumStr[3] = {
+  "left",
+  "center",
+  "right"
+};
+static int alignEnum[3] = {
+  XmALIGNMENT_BEGINNING,
+  XmALIGNMENT_CENTER,
+  XmALIGNMENT_END
+};
+
+  major = TEXT_MAJOR;
+  minor = TEXT_MINOR;
+  release = TEXT_RELEASE;
+
+  alarmSens = textColor.isAlarmSensitive();
+
+  oneDspMode = (int) displayMode;
+
+  tc.setColorIndex( textColor.getIndex(), actWin->ci );
+  fc.setColorIndex( fillColor.getIndex(), actWin->ci );
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "controlPv", &pv_name, emptyStr );
+  tag.loadW( "displayMode", 5, dspModeEnumStr, dspMode, &oneDspMode,
+   &deflt );
+  tag.loadW( "precision", &precision, &zero );
+  tag.loadW( "fgColor", actWin->ci, &tc );
+  tag.loadBoolW( "fgAlarm", &alarmSens, &zero );
+  tag.loadW( "bgColor", actWin->ci, &fc );
+  tag.loadW( "colorPv", &color_pv_name, emptyStr );
+  tag.loadBoolW( "fill", &is_filled, &zero );
+  tag.loadW( "font", fontTag );
+  tag.loadW( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
+  tag.loadW( "lineWidth", &line_width );
+  tag.loadBoolW( "lineAlarm", &is_line_alarm_sensitive, &zero );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+// --------------------------------------------------------
+// Load/save
+// --------------------------------------------------------
+int edmTextupdateClass::old_save(FILE *f)
+{
     // Version, bounding box
     fprintf(f, "%-d %-d %-d\n",
             TEXT_MAJOR, TEXT_MINOR, TEXT_RELEASE);
@@ -215,6 +299,113 @@ int edmTextupdateClass::save(FILE *f)
 }
 
 int edmTextupdateClass::createFromFile(FILE *f, char *filename,
+                                       activeWindowClass *_actWin)
+{
+
+int major, minor, release, alarmSens, oneDspMode, stat;
+pvColorClass tc, fc;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+int deflt = 0;
+static char *dspModeEnumStr[5] = {
+  "default",
+  "decimal",
+  "hex",
+  "engineer",
+  "exp"
+};
+static int dspMode[5] = {
+  0,
+  1,
+  2,
+  3,
+  4,
+};
+
+int left = XmALIGNMENT_BEGINNING;
+static char *alignEnumStr[3] = {
+  "left",
+  "center",
+  "right"
+};
+static int alignEnum[3] = {
+  XmALIGNMENT_BEGINNING,
+  XmALIGNMENT_CENTER,
+  XmALIGNMENT_END
+};
+
+  actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "controlPv", &pv_name, emptyStr );
+  tag.loadR( "displayMode", 5, dspModeEnumStr, dspMode, &oneDspMode,
+   &deflt );
+  tag.loadR( "precision", &precision, &zero );
+  tag.loadR( "fgColor", actWin->ci, &tc );
+  tag.loadR( "fgAlarm", &alarmSens, &zero );
+  tag.loadR( "bgColor", actWin->ci, &fc );
+  tag.loadR( "colorPv", &color_pv_name, emptyStr );
+  tag.loadR( "fill", &is_filled, &zero );
+  tag.loadR( "font", 63, fontTag );
+  tag.loadR( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
+  tag.loadR( "lineWidth", &line_width );
+  tag.loadR( "lineAlarm", &is_line_alarm_sensitive, &zero );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > TEXT_MAJOR ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 10 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  displayMode = (DisplayMode) oneDspMode;
+
+  textColor.setIndex( tc.pixelIndex() );
+  lineColor.setIndex( tc.pixelIndex() );
+
+  textColor.setAlarmSensitive( alarmSens );
+
+  fillColor.setIndex( fc.pixelIndex() );
+
+  actWin->fi->loadFontTag(fontTag);
+  fs = actWin->fi->getXFontStruct(fontTag);
+  updateFont(fontTag, &fs,
+   &fontAscent, &fontDescent, &fontHeight);
+
+  if (is_line_alarm_sensitive && line_width.value() <= 0)
+    line_width.setValue(1);
+
+  lineColor.setAlarmSensitive(is_line_alarm_sensitive);
+
+  return stat;
+
+}
+
+int edmTextupdateClass::old_createFromFile(FILE *f, char *filename,
                                        activeWindowClass *_actWin)
 {
     int major, minor, release;
@@ -736,6 +927,7 @@ int edmTextupdateClass::activate(int pass, void *ptr)
             is_executing = true;
             is_pv_valid = strcmp(getExpandedName(pv_name), "") != 0;
             is_color_pv_valid =strcmp(getExpandedName(color_pv_name), "") != 0;
+            initEnable();
             break;
         case 2: // connect to pv
             if (pv)
@@ -858,7 +1050,7 @@ bool edmTextupdateClass::get_current_values(char *text, size_t &len)
 
 int edmTextupdateClass::drawActive()
 {
-    if (!is_executing)
+    if ( !enabled || !is_executing )
         return 1;
     actWin->executeGc.saveFg();
 
@@ -877,7 +1069,7 @@ int edmTextupdateClass::drawActive()
 
 int edmTextupdateClass::eraseActive()
 {
-    if (!is_executing)
+    if ( !enabled || !is_executing )
         return 1;
     remove_text(actWin->d,
                 XtWindow(actWin->executeWidget),
@@ -949,13 +1141,40 @@ void edmTextupdateClass::executeDeferred()
 
 // Drag & drop support
 char *edmTextupdateClass::firstDragName()
-{   return "PV"; }
+{   
+
+    if ( !enabled ) return NULL;
+
+    return "PV";
+
+}
 
 char *edmTextupdateClass::nextDragName()
-{   return NULL; }
+{
+
+    if ( !enabled ) return NULL;
+
+   return NULL;
+
+}
 
 char *edmTextupdateClass::dragValue(int i)
-{   return (char *)getExpandedName(pv_name); }
+{
+
+   if ( !enabled ) return NULL;
+
+   if ( actWin->mode == AWC_EXECUTE ) {
+
+      return (char *)getExpandedName(pv_name);
+
+   }
+   else {
+
+      return (char *)getRawName(pv_name);
+
+   }
+
+}
 
 // --------------------------------------------------------
 // Text Entry
@@ -992,7 +1211,7 @@ static void selectDrag(Widget w, XEvent *e, String *params, Cardinal numParams)
     XButtonEvent *be = (XButtonEvent *) e;
 
     XtVaGetValues(w, XmNuserData, &obj, NULL);
-    obj->selectDragValue(obj->getX0() + be->x, obj->getY0() + be->y);
+    obj->selectDragValue( be );
 }
 
 int edmTextentryClass::activate(int pass, void *ptr)
@@ -1005,6 +1224,7 @@ int edmTextentryClass::activate(int pass, void *ptr)
     {
         case 1: // initialize
             // from man XmTextField
+            initEnable();
             fonts = XmFontListCreate(fs, XmSTRING_DEFAULT_CHARSET);
 	    if ( g_transInit ) {
 	      g_transInit = 0;
@@ -1051,6 +1271,11 @@ int edmTextentryClass::activate(int pass, void *ptr)
             XtAddCallback(widget,XmNmodifyVerifyCallback,
                           (XtCallbackProc)text_edit_callback,
                           (XtPointer)this);
+
+            if ( !enabled ) {
+	      if ( widget ) XtUnmapWidget( widget );
+            }
+
             break;
     }
     return 1;
@@ -1075,7 +1300,7 @@ int edmTextentryClass::deactivate(int pass)
 
 int edmTextentryClass::drawActive()
 {
-    if (!is_executing)
+    if ( !enabled || !is_executing )
         return 1;
     if (editing)
         return 1;
@@ -1215,4 +1440,16 @@ void edmTextentryClass::text_noedit_callback(Widget w,
            (me->pv ? me->pv->get_name() : "<no PV>"));
 #endif
     pv_value_callback(me->pv, me);
+}
+
+void edmTextentryClass::map( void ) {
+
+  if ( widget ) XtMapWidget( widget );
+
+}
+
+void edmTextentryClass::unmap( void ) {
+
+  if ( widget ) XtUnmapWidget( widget );
+
 }

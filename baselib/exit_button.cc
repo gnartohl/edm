@@ -229,6 +229,51 @@ int activeExitButtonClass::save (
   FILE *f )
 {
 
+int stat, major, minor, release;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+  major = EBTC_MAJOR_VERSION;
+  minor = EBTC_MINOR_VERSION;
+  release = EBTC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadW( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadW( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadW( "label", label, emptyStr );
+  tag.loadW( "font", fontTag );
+  tag.loadBoolW( "3d", &_3D, &zero );
+  tag.loadBoolW( "invisible", &invisible, &zero );
+  tag.loadBoolW( "iconify", &iconify, &zero );
+  tag.loadBoolW( "exitProgram", &exitProgram, &zero );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+  return 1;
+
+}
+
+int activeExitButtonClass::old_save (
+  FILE *f )
+{
+
 int index;
 
   fprintf( f, "%-d %-d %-d\n", EBTC_MAJOR_VERSION, EBTC_MINOR_VERSION,
@@ -272,6 +317,69 @@ int index;
 }
 
 int activeExitButtonClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int stat, major, minor, release;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadR( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadR( "label", 31, label, emptyStr );
+  tag.loadR( "font", 63, fontTag );
+  tag.loadR( "3d", &_3D, &zero );
+  tag.loadR( "invisible", &invisible, &zero );
+  tag.loadR( "iconify", &iconify, &zero );
+  tag.loadR( "exitProgram", &exitProgram, &zero );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > EBTC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  actWin->fi->loadFontTag( fontTag );
+  fs = actWin->fi->getXFontStruct( fontTag );
+
+  updateDimensions();
+
+  return stat;
+
+}
+
+int activeExitButtonClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -476,7 +584,7 @@ int activeExitButtonClass::erase ( void ) {
 
 int activeExitButtonClass::eraseActive ( void ) {
 
-  if ( !activeMode || invisible ) return 1;
+  if ( !enabled || !activeMode || invisible ) return 1;
 
   XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.eraseGC(), x, y, w, h );
@@ -578,7 +686,7 @@ XRectangle xR = { x, y, w, h };
 
 int activeExitButtonClass::drawActive ( void ) {
 
-  if ( !activeMode || invisible ) return 1;
+  if ( !enabled || !activeMode || invisible ) return 1;
 
   draw();
 
@@ -596,6 +704,7 @@ int activeExitButtonClass::activate (
   case 1:
 
     activeMode = 1;
+    initEnable();
     aglPtr = ptr;
     break;
 
@@ -638,6 +747,7 @@ void activeExitButtonClass::btnUp (
 {
 
   *action = 0;
+  if ( !enabled ) return;
 
 }
 
@@ -650,6 +760,8 @@ void activeExitButtonClass::btnDown (
 {
 
   *action = 0;
+
+  if ( !enabled ) return;
 
   if ( actWin->isEmbedded ) {
     actWin->appCtx->postMessage( activeExitButtonClass_str18 );
@@ -665,8 +777,6 @@ void activeExitButtonClass::btnDown (
   }
 
   if ( iconify ) {
-
-    *action = 0;
 
     XIconifyWindow( actWin->d, XtWindow(actWin->topWidgetId()),
      DefaultScreen(actWin->d) );

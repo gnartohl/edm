@@ -26,8 +26,6 @@ class undoSymbolOpClass;
 
 #include "thread.h"
 
-#ifdef __epics__
-
 class undoSymbolOpClass : public undoOpClass {
 
 public:
@@ -176,13 +174,14 @@ activeSymbolClass *aso = (activeSymbolClass *) client;
 }
 
 static void symbol_monitor_control_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
+objPlusIndexPtr ptr = (objPlusIndexPtr) userarg;
 activeSymbolClass *aso = (activeSymbolClass *) ptr->objPtr;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     aso->needConnectInit = 1;
     aso->needConnect[ptr->index] = 1;
@@ -206,12 +205,13 @@ activeSymbolClass *aso = (activeSymbolClass *) ptr->objPtr;
 }
 
 static void symbol_monitor_color_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeSymbolClass *aso = (activeSymbolClass *) ca_puser(arg.chid);
+activeSymbolClass *aso = (activeSymbolClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     aso->needColorInit = 1;
     aso->colorPvConnected = 1;
@@ -233,10 +233,11 @@ activeSymbolClass *aso = (activeSymbolClass *) ca_puser(arg.chid);
 }
 
 static void symbol_controlUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(ast_args.chid);
+objPlusIndexPtr ptr = (objPlusIndexPtr) userarg;
 activeSymbolClass *aso = (activeSymbolClass *) ptr->objPtr;
 unsigned int uiVal;
 int i;
@@ -245,7 +246,7 @@ int i;
 
     if ( aso->binaryTruthTable ) {
 
-      aso->controlVals[ptr->index] = *( (double *) ast_args.dbr );
+      aso->controlVals[ptr->index] = pv->get_double();
       if ( aso->controlVals[ptr->index] != 0 )
         aso->iValue |= ptr->setMask;
       else
@@ -261,13 +262,12 @@ int i;
              ( aso->xorMask[ptr->index] == 0 ) &&
              ( aso->shiftCount[ptr->index] == 0 ) ) {
 
-          aso->curControlV = *( (double *) ast_args.dbr );
+          aso->curControlV = pv->get_double();
 
 	}
 	else {
 
-          aso->curUiVal[ptr->index] =
-           (unsigned int) *( (double *) ast_args.dbr );
+          aso->curUiVal[ptr->index] = (unsigned int) pv->get_int();
 
           if ( aso->andMask[ptr->index] ) {
             aso->curUiVal[ptr->index] &= aso->andMask[ptr->index];
@@ -291,8 +291,7 @@ int i;
       }
       else {
 
-        aso->curUiVal[ptr->index] =
-         (unsigned int) *( (double *) ast_args.dbr );
+        aso->curUiVal[ptr->index] = (unsigned int) pv->get_int();
 
         if ( aso->andMask[ptr->index] ) {
           aso->curUiVal[ptr->index] &= aso->andMask[ptr->index];
@@ -330,14 +329,15 @@ int i;
 }
 
 static void symbol_colorUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeSymbolClass *aso = (activeSymbolClass *) ca_puser(ast_args.chid);
+activeSymbolClass *aso = (activeSymbolClass *) userarg;
 
   if ( aso->activeMode ) {
 
-    aso->curColorV = *( (double *) ast_args.dbr );
+    aso->curColorV = pv->get_double();
 
     aso->needColorRefresh = 1;
     aso->actWin->appCtx->proc->lock();
@@ -347,8 +347,6 @@ activeSymbolClass *aso = (activeSymbolClass *) ca_puser(ast_args.chid);
   }
 
 }
-
-#endif
 
 static void symbolSetItem (
   Widget w,
@@ -951,6 +949,394 @@ int activeSymbolClass::editCreate ( void )
 int activeSymbolClass::readSymbolFile ( void )
 {
 
+int l, more, maxW, maxH, gX, gY, gW, gH, dX, dY, saveLine;
+int winMajor, winMinor, winRelease;
+char itemName[127+1], *tk;
+activeGraphicListPtr head, cur, next;
+int i;
+FILE *f;
+char name[127+1];
+expStringClass expStr;
+
+int major, minor, release, stat, retStat = 1;
+char *gotOne, tagName[255+1], val[4095+1];
+int isCompound;
+tagClass tag;
+
+  saveLine = tag.line();
+
+  // delete current info ( if any )
+
+  for ( i=0; i<SYMBOL_K_NUM_STATES; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while ( cur != head ) {
+      next = cur->flink;
+      delete cur->node;
+      delete cur;
+      cur = next;
+    }
+    head->flink = head;
+    head->blink = head;
+
+  }
+
+  if ( strcmp( symbolFileName, "" ) == 0 ) return 0;
+
+  actWin->substituteSpecial( 127, symbolFileName, name );
+
+  expStr.setRaw( name );
+  expStr.expand1st( actWin->numMacros, actWin->macros, actWin->expansions );
+
+  f = actWin->openAnySymFile( expStr.getExpanded(), "r" );
+  if ( !f ) {
+    // numStates = 0;
+    return 0;
+  }
+
+  actWin->discardWinLoadData( f, &winMajor, &winMinor, &winRelease );
+
+  if ( winMajor < 4 ) {
+
+    // for forward compatibility
+    stat = actWin->readUntilEndOfData( f, winMajor, winMinor, winRelease );
+    if ( !( stat & 1 ) ) {
+      fclose( f );
+      actWin->setLine( saveLine );
+      return stat;
+    }
+
+    index = 0;
+    maxW = 0;
+    maxH = 0;
+
+    for ( i=0; i<numStates; i++ ) {
+
+      head = (activeGraphicListPtr) voidHead[i];
+
+      gotOne = fgets( itemName, 127, f ); // discard "activeGroupClass"
+      if ( !gotOne ) {
+        if ( i == 0 ) {
+          // numStates = 0;
+          fclose( f );
+          actWin->setLine( saveLine );
+          return 0;
+        }
+        numStates = i+1;
+        fclose( f );
+        actWin->setLine( saveLine );
+        return 1;
+      }
+
+      tk = strtok( itemName, " \t\n" );
+      if ( strcmp( tk, "activeGroupClass" ) != 0 ) {
+        // numStates = 0;
+        fclose( f );
+        actWin->setLine( saveLine );
+        return 0;
+      }
+
+      fscanf( f, "%d\n", &gX );
+      fscanf( f, "%d\n", &gY );
+      fscanf( f, "%d\n", &gW );
+      fscanf( f, "%d\n", &gH );
+
+      if ( gW > maxW ) maxW = gW;
+      if ( gH > maxH ) maxH = gH;
+
+      dX = x - gX;
+      dY = y - gY;
+
+      fgets( itemName, 127, f ); // discard "{"
+
+      do {
+
+        // read and create sub-objects until a "}" is found
+
+        gotOne = fgets( itemName, 127, f );
+        if ( !gotOne ) {
+          // numStates = 0;
+          fclose( f );
+          actWin->setLine( saveLine );
+          return 0;
+        }
+
+        l = strlen(itemName);
+        if ( l > 127 ) l = 127;
+        itemName[l-1] = 0;
+
+        if ( strcmp( itemName, "}" ) == 0 )
+          more = 0;
+        else
+          more = 1;
+
+        if ( more ) {
+
+          cur = new activeGraphicListType;
+          if ( !cur ) {
+            fclose( f );
+            printf( activeSymbolClass_str20 );
+            // numStates = 0;
+            actWin->setLine( saveLine );
+            return 0;
+          }
+
+          cur->node = actWin->obj.createNew( itemName );
+
+          if ( cur->node ) {
+
+            cur->node->old_createFromFile( f, itemName, actWin );
+
+            // for forward compatibility
+            stat = actWin->readUntilEndOfData( f, winMajor, winMinor,
+             winRelease );
+            if ( !( stat & 1 ) ) {
+              fclose( f );
+              actWin->setLine( saveLine );
+              return stat;
+            }
+
+            // adjust origin
+            cur->node->move( dX, dY );
+
+            cur->blink = head->blink;
+            head->blink->flink = cur;
+            head->blink = cur;
+            cur->flink = head;
+
+          }
+          else {
+            fclose( f );
+            printf( activeSymbolClass_str21 );
+            // numStates = 0;
+            actWin->setLine( saveLine );
+            return 0;
+          }
+
+        }
+
+      } while ( more );
+
+      // for forward compatibility
+      stat = actWin->readUntilEndOfData( f, winMajor, winMinor, winRelease );
+      if ( !( stat & 1 ) ) {
+        fclose( f );
+        actWin->setLine( saveLine );
+        return stat;
+      }
+
+    }
+
+  }
+  else {
+
+    index = 0;
+    maxW = 0;
+    maxH = 0;
+
+    for ( i=0; i<numStates; i++ ) {
+
+      head = (activeGraphicListPtr) voidHead[i];
+
+      tag.init();
+      tag.loadR( "object", 127, itemName );
+
+      gotOne = tag.getName( tagName, 255, f );
+
+      if ( gotOne ) {
+
+        //printf( "name = [%s]\n", tagName );
+
+        if ( strcmp( tagName, "object" ) == 0 ) {
+
+          tag.getValue( val, 4095, f, &isCompound );
+          tag.decode( tagName, val, isCompound );
+
+          if ( strcmp( itemName, "activeGroupClass" ) != 0 ) {
+            //numStates = 0;
+            fclose( f );
+            tag.setLine( saveLine );
+            return 0;
+            break;
+          }
+
+        }
+        else {
+          //numStates = 0;
+          fclose( f );
+          tag.setLine( saveLine );
+          return 0;
+          break;
+        }
+
+      }
+      else {
+
+        if ( i == 0 ) {
+          //numStates = 0;
+          fclose( f );
+          tag.setLine( saveLine );
+          return 0;
+        }
+
+        numStates = i+1;
+
+        break;
+
+      }
+
+      // read in group properties
+      tag.init();
+      tag.loadR( "beginObjectProperties" );
+      tag.loadR( "major", &major );
+      tag.loadR( "minor", &minor );
+      tag.loadR( "release", &release );
+      tag.loadR( "x", &gX );
+      tag.loadR( "y", &gY );
+      tag.loadR( "w", &gW );
+      tag.loadR( "h", &gH );
+      tag.loadR( "beginGroup" );
+
+      stat = tag.readTags( f, "beginGroup" );
+
+      if ( !( stat & 1 ) ) {
+        retStat = stat;
+        actWin->appCtx->postMessage( tag.errMsg() );
+      }
+
+      if ( major > AGC_MAJOR_VERSION ) {
+        postIncompatable();
+        return 0;
+      }
+
+      if ( major < 4 ) {
+        postIncompatable();
+        return 0;
+      }
+
+      if ( gW > maxW ) maxW = gW;
+      if ( gH > maxH ) maxH = gH;
+
+      dX = x - gX;
+      dY = y - gY;
+
+      tag.init();
+      tag.loadR( "object", 63, itemName );
+      tag.loadR( "endGroup" );
+      do {
+
+        // read and create sub-objects until "endGroup" is found
+
+        gotOne = tag.getName( tagName, 255, f );
+        if ( !gotOne ) {
+          //numStates = 0;
+          fclose( f );
+          tag.setLine( saveLine );
+          return 0;
+        }
+
+        if ( gotOne ) {
+
+          //printf( "name = [%s]\n", tagName );
+
+          if ( strcmp( tagName, "object" ) == 0 ) {
+
+            tag.getValue( val, 4095, f, &isCompound );
+            tag.decode( tagName, val, isCompound );
+
+            // =======================================================
+            // Create object
+
+            //printf( "objName = [%s]\n", itemName );
+
+            more = 1;
+
+            cur = new activeGraphicListType;
+            if ( !cur ) {
+              fclose( f );
+              printf( "Insufficient virtual memory - abort\n" );
+              //numStates = 0;
+              fclose( f );
+              tag.setLine( saveLine );
+              return 0;
+            }
+
+            cur->node = actWin->obj.createNew( itemName );
+
+            if ( cur->node ) {
+
+              cur->node->createFromFile( f, itemName, actWin );
+
+              // adjust origin
+              cur->node->move( dX, dY );
+
+              cur->blink = head->blink;
+              head->blink->flink = cur;
+              head->blink = cur;
+              cur->flink = head;
+
+            }
+            else {
+
+              fclose( f );
+              printf( "Insufficient virtual memory - abort\n" );
+              //numStates = 0;
+              tag.setLine( saveLine );
+              return 0;
+
+            }
+
+          }
+          else if ( strcmp( tagName, "endGroup" ) == 0 ) {
+
+            more = 0;
+
+          }
+          else {
+            //numStates = 0;
+            fclose( f );
+            tag.setLine( saveLine );
+            return 0;
+          }
+
+        }
+
+      } while ( more );
+
+      // read group "endObjectProperties"
+      tag.init();
+      tag.loadR( "endObjectProperties" );
+
+      stat = tag.readTags( f, "endObjectProperties" );
+
+      if ( !( stat & 1 ) ) {
+        retStat = stat;
+        actWin->appCtx->postMessage( tag.errMsg() );
+      }
+
+    }
+
+  }
+
+  fclose( f );
+
+  w = maxW;
+  sboxW = w;
+  h = maxH;
+  sboxH = h;
+
+  tag.setLine( saveLine );
+
+  return retStat;
+
+}
+
+#if 0
+int activeSymbolClass::old_readSymbolFile ( void )
+{
+
 int l, more, maxW, maxH, gX, gY, gW, gH, dX, dY, stat, saveLine;
 int winMajor, winMinor, winRelease;
 char itemName[127+1], *gotOne, *tk;
@@ -1082,7 +1468,7 @@ expStringClass expStr;
 
         if ( cur->node ) {
 
-          cur->node->createFromFile( f, itemName, actWin );
+          cur->node->old_createFromFile( f, itemName, actWin );
 
           // for forward compatibility
           stat = actWin->readUntilEndOfData( f, winMajor, winMinor,
@@ -1136,8 +1522,130 @@ expStringClass expStr;
   return 1;
 
 }
+#endif
 
 int activeSymbolClass::save (
+ FILE *f )
+{
+
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+unsigned int uzero = 0;
+double dzero = 0;
+char *emptyStr = "";
+
+int orienOriginal = OR_ORIG;
+static char *orienEnumStr[5] = {
+  "original",
+  "rotateCW",
+  "rotateCCW",
+  "FlipV",
+  "FlipH"
+};
+
+static int orienEnum[5] = {
+  OR_ORIG,
+  OR_CW,
+  OR_CCW,
+  OR_V,
+  OR_H
+};
+
+int i, saveX, saveY, origX, origY, origW, origH;
+
+  major = ASC_MAJOR_VERSION;
+  minor = ASC_MINOR_VERSION;
+  release = ASC_RELEASE;
+
+  saveX = x;
+  saveY = y;
+
+  switch ( orientation ) {
+
+  case OR_CW:
+    rotateInternal( getXMid(), getYMid(), '-' );
+    resizeSelectBoxAbsFromUndo( getX0(), getY0(),
+     getW(), getH() );
+    break;
+
+  case OR_CCW:
+    rotateInternal( getXMid(), getYMid(), '+' );
+    resizeSelectBoxAbsFromUndo( getX0(), getY0(),
+     getW(), getH() );
+    break;
+
+  }
+
+  origX = x;
+  origY = y;
+  origW = w;
+  origH = h;
+
+  switch ( orientation ) {
+
+  case OR_CW:
+    rotateInternal( getXMid(), getYMid(), '+' );
+    resizeSelectBoxAbsFromUndo( getX0(), getY0(),
+     getW(), getH() );
+    break;
+
+  case OR_CCW:
+    rotateInternal( getXMid(), getYMid(), '-' );
+    resizeSelectBoxAbsFromUndo( getX0(), getY0(),
+     getW(), getH() );
+    break;
+
+  }
+
+  origX += ( saveX - x );
+  origY += ( saveY - y );
+
+  moveAbs( saveX, saveY );
+
+  for ( i=0; i<numPvs; i++ ) {
+    andMask[i] = strtol( cAndMask[i], NULL, 16 );
+    xorMask[i] = strtol( cXorMask[i], NULL, 16 );
+  }
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &origX );
+  tag.loadW( "y", &origY );
+  tag.loadW( "w", &origW );
+  tag.loadW( "h", &origH );
+  tag.loadW( "file", symbolFileName, emptyStr );
+  tag.loadBoolW( "truthTable", &binaryTruthTable, &zero );
+  tag.loadW( "numStates", &numStates );
+  tag.loadW( "minValues", stateMinValue, numStates, &dzero );
+  tag.loadW( "maxValues", stateMaxValue, numStates, &dzero );
+  tag.loadW( "controlPvs", controlPvExpStr, numPvs, emptyStr );
+  tag.loadW( "numPvs", &numPvs );
+  tag.loadHexW( "andMask", andMask, numPvs, &uzero );
+  tag.loadHexW( "xorMask", xorMask, numPvs, &uzero );
+  tag.loadW( "shiftCount", shiftCount, numPvs, &zero );
+  tag.loadBoolW( "useOriginalSize", &useOriginalSize, &zero );
+  tag.loadW( "orientation", 5, orienEnumStr, orienEnum,
+   &orientation, &orienOriginal );
+  tag.loadW( "colorPv", &colorPvExpStr, emptyStr );
+  tag.loadBoolW( "useOriginalColors", &useOriginalColors, &zero );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int activeSymbolClass::old_save (
  FILE *f )
 {
 
@@ -1248,6 +1756,155 @@ int i, saveX, saveY, origX, origY, origW, origH;
 }
 
 int activeSymbolClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+unsigned int uzero = 0;
+double dzero = 0;
+char *emptyStr = "";
+
+int orienOriginal = OR_ORIG;
+static char *orienEnumStr[5] = {
+  "original",
+  "rotateCW",
+  "rotateCCW",
+  "FlipV",
+  "FlipH"
+};
+
+static int orienEnum[5] = {
+  OR_ORIG,
+  OR_CW,
+  OR_CCW,
+  OR_V,
+  OR_H
+};
+
+int resizeStat, readSymfileStat, i, n1, n2, saveW, saveH;
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "file", 127, symbolFileName, emptyStr );
+  tag.loadR( "truthTable", &binaryTruthTable, &zero );
+  tag.loadR( "numStates", &numStates, &zero );
+  tag.loadR( "minValues", SYMBOL_K_NUM_STATES, stateMinValue, &n1,
+   &dzero );
+  tag.loadR( "maxValues", SYMBOL_K_NUM_STATES, stateMaxValue, &n1,
+   &dzero );
+  tag.loadR( "numPvs", &numPvs, &zero );
+  tag.loadR( "controlPvs", SYMBOL_K_MAX_PVS, controlPvExpStr, &n2,
+   emptyStr );
+  tag.loadR( "andMask", SYMBOL_K_MAX_PVS, andMask, &n2, &uzero );
+  tag.loadR( "xorMask", SYMBOL_K_MAX_PVS, xorMask, &n2, &uzero );
+  tag.loadR( "shiftCount", SYMBOL_K_MAX_PVS, shiftCount, &n2, &zero );
+  tag.loadR( "useOriginalSize", &useOriginalSize, &zero );
+  tag.loadR( "orientation", 5, orienEnumStr, orienEnum,
+   &orientation, &orienOriginal );
+  tag.loadR( "colorPv", &colorPvExpStr, emptyStr );
+  tag.loadR( "useOriginalColors", &useOriginalColors, &zero );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > ASC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox();
+
+  if ( numStates < 1 ) numStates = 1;
+  if ( numStates > SYMBOL_K_NUM_STATES ) numStates = SYMBOL_K_NUM_STATES;
+
+  for ( i=0; i<numPvs; i++ ) {
+    snprintf( cAndMask[i], 9, "%-x", andMask[i] );
+    snprintf( cXorMask[i], 9, "%-x", xorMask[i] );
+  }
+
+  saveW = w;
+  saveH = h;
+
+  readSymfileStat = readSymbolFile();
+  if ( !( readSymfileStat & 1 ) ) {
+    actWin->appCtx->postMessage( activeSymbolClass_str22 );
+  }
+  else {
+    if ( !useOriginalSize ) {
+      if ( ( saveW != w ) || ( saveH != h ) ) {
+        resizeStat = checkResizeSelectBoxAbs( -1, -1, saveW, saveH );
+        if ( resizeStat & 1 ) {
+          resizeSelectBoxAbs( -1, -1, saveW, saveH );
+          resizeAbs( -1, -1, saveW, saveH );
+        }
+        else {
+          actWin->appCtx->postMessage(
+           activeSymbolClass_str23 );
+        }
+      }
+    }
+
+    switch ( orientation ) {
+
+    case OR_CW:
+      rotateInternal( getXMid(), getYMid(), '+' );
+      resizeSelectBoxAbsFromUndo( getX0(), getY0(),
+       getW(), getH() );
+      break;
+
+    case OR_CCW:
+      rotateInternal( getXMid(), getYMid(), '-' );
+      resizeSelectBoxAbsFromUndo( getX0(), getY0(),
+       getW(), getH() );
+      break;
+
+    case OR_V:
+      flipInternal( getXMid(), getYMid(), 'V' );
+      resizeSelectBoxAbsFromUndo( getX0(), getY0(),
+       getW(), getH() );
+      break;
+
+    case OR_H:
+      flipInternal( getXMid(), getYMid(), 'H' );
+      resizeSelectBoxAbsFromUndo( getX0(), getY0(),
+       getW(), getH() );
+      break;
+
+    }
+
+  }
+
+  return stat;
+
+}
+
+int activeSymbolClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -1461,7 +2118,7 @@ int activeSymbolClass::eraseActive ( void ) {
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
 
-  if ( !init || !activeMode || ( numStates < 1 ) ) return 1;
+  if ( !enabled || !init || !activeMode || ( numStates < 1 ) ) return 1;
 
   if ( ( prevIndex >= 0 ) && ( prevIndex < numStates ) ) {
 
@@ -1558,7 +2215,7 @@ pvColorClass tmpColor;
     needToEraseUnconnected = 0;
   }
 
-  if ( !init || !activeMode || ( numStates < 1 ) ) return 1;
+  if ( !enabled || !init || !activeMode || ( numStates < 1 ) ) return 1;
 
   if ( ( index < 0 ) || ( index >= numStates ) ) return 1;
 
@@ -1600,6 +2257,8 @@ void activeSymbolClass::btnDown (
 
   // inc index on button down, dec index on shift button down
 
+  if ( !enabled ) return;
+
 }
 
 void activeSymbolClass::btnUp (
@@ -1609,6 +2268,8 @@ void activeSymbolClass::btnUp (
   int buttonNumber )
 {
 
+  if ( !enabled ) return;
+
 }
 
 int activeSymbolClass::activate (
@@ -1616,7 +2277,7 @@ int activeSymbolClass::activate (
   void *ptr,
   int *numSubObjects ) {
 
-int i, stat, opStat;
+int i, opStat;
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
 int num;
@@ -1638,14 +2299,16 @@ int num;
            fgColor, 0, 0, bgColor, 0, 0 );
         }
 
+        cur->node->initEnable();
+
       }
 
       cur->node->activate( pass, (void *) cur, &num );
 
       (*numSubObjects) += num;
       if ( *numSubObjects >= activeWindowClass::NUM_PER_PENDIO ) {
-        ca_pend_io( 5.0 );
-        ca_pend_event( 0.01 );
+        pend_io( 5.0 );
+        pend_event( 0.01 );
         //processAllEvents( actWin->appCtx->appContext(), actWin->d );
         *numSubObjects = 0;
       }
@@ -1677,11 +2340,14 @@ int num;
     active = 0;
     activeMode = 1;
     controlV = 1;
+    initialColorConnection = 1;
 
     for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
       curUiVal[i] = 0; /* this gets set via XOR/AND/SHIFT operations */
       andMask[i] = strtol( cAndMask[i], NULL, 16 );
       xorMask[i] = strtol( cXorMask[i], NULL, 16 );
+      controlPvId[i] = NULL;
+      initialCtrlConnection[i] = 1;
     }
 
     notControlPvConnected = (int) pow(2,numPvs) - 1;
@@ -1691,10 +2357,6 @@ int num;
       controlExists = 1;
 
       for ( i=0; i<numPvs; i++ ) {
-
-#ifdef __epics__
-        controlEventId[i] = 0;
-#endif
 
         if ( !controlPvExpStr[i].getExpanded() ||
              blank( controlPvExpStr[i].getExpanded() ) ) controlExists = 0;
@@ -1715,10 +2377,6 @@ int num;
       colorExists = 1;
     }
 
-#ifdef __epics__
-    colorEventId = 0;
-#endif
-
     break;
 
   case 2:
@@ -1726,6 +2384,8 @@ int num;
     if ( !opComplete ) {
 
       opStat = 1;
+
+      initEnable();
 
       if ( !unconnectedTimer ) {
         unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
@@ -1741,14 +2401,16 @@ int num;
           argRec[i].setMask = (unsigned int) 1 << i;
           argRec[i].clrMask = ~(argRec[i].setMask);
 
-#ifdef __epics__
-          stat = ca_search_and_connect( controlPvExpStr[i].getExpanded(),
-           &controlPvId[i], symbol_monitor_control_connect_state, &argRec[i] );
-          if ( stat != ECA_NORMAL ) {
+	  controlPvId[i] = the_PV_Factory->create(
+           controlPvExpStr[i].getExpanded() );
+	  if ( controlPvId[i] ) {
+	    controlPvId[i]->add_conn_state_callback(
+             symbol_monitor_control_connect_state, &argRec[i] );
+	  }
+	  else {
             printf( activeSymbolClass_str24 );
             opStat = 0;
           }
-#endif
 
         }
 
@@ -1763,14 +2425,15 @@ int num;
 
       if ( colorExists ) {
 
-#ifdef __epics__
-        stat = ca_search_and_connect( colorPvExpStr.getExpanded(),
-         &colorPvId, symbol_monitor_color_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+	colorPvId = the_PV_Factory->create( colorPvExpStr.getExpanded() );
+	if ( colorPvId ) {
+          colorPvId->add_conn_state_callback(
+            symbol_monitor_color_connect_state, this );
+	}
+	else {
           printf( activeSymbolClass_str24 );
           opStat = 0;
         }
-#endif
 
       }
 
@@ -1799,7 +2462,7 @@ int activeSymbolClass::deactivate (
   int pass,
   int *numSubObjects ) {
 
-int i, stat;
+int i;
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
 int num;
@@ -1816,8 +2479,8 @@ int num;
 
       (*numSubObjects) += num;
       if ( *numSubObjects >= activeWindowClass::NUM_PER_PENDIO ) {
-        ca_pend_io( 5.0 );
-        ca_pend_event( 0.01 );
+        pend_io( 5.0 );
+        pend_event( 0.01 );
         //processAllEvents( actWin->appCtx->appContext(), actWin->d );
         *numSubObjects = 0;
       }
@@ -1840,39 +2503,31 @@ int num;
     unconnectedTimer = 0;
   }
 
-#ifdef __epics__
-
   for ( i=0; i<numPvs; i++ ) {
 
-    if ( controlEventId[i] ) {
-      stat = ca_clear_event( controlEventId[i] );
-      if ( stat != ECA_NORMAL )
-        printf( activeSymbolClass_str25 );
-      controlEventId[i] = 0;
-    }
-
     if ( controlExists ) {
-      stat = ca_clear_channel( controlPvId[i] );
-      if ( stat != ECA_NORMAL )
-        printf( activeSymbolClass_str26 );
+      if ( controlPvId[i] ) {
+        controlPvId[i]->remove_conn_state_callback(
+         symbol_monitor_control_connect_state, &argRec[i] );
+        controlPvId[i]->remove_value_callback(
+         symbol_controlUpdate, &argRec[i] );
+        controlPvId[i]->release();
+        controlPvId[i] = NULL;
+      }
     }
 
-  }
-
-  if ( colorEventId ) {
-    stat = ca_clear_event( colorEventId );
-    if ( stat != ECA_NORMAL )
-      printf( activeSymbolClass_str25 );
-    colorEventId = 0;
   }
 
   if ( colorExists ) {
-    stat = ca_clear_channel( colorPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeSymbolClass_str26 );
+    if ( colorPvId ) {
+      colorPvId->remove_conn_state_callback(
+       symbol_monitor_color_connect_state, this );
+      colorPvId->remove_value_callback(
+       symbol_colorUpdate, this );
+      colorPvId->release();
+      colorPvId = NULL;
+    }
   }
-
-#endif
 
   }
 
@@ -2751,8 +3406,6 @@ int stat, i, nci, nc[SYMBOL_K_MAX_PVS], nr, ne, nd, ncolori, ncr;
 
 //----------------------------------------------------------------------------
 
-#ifdef __epics__
-
   if ( nci ) {
 
     if ( !notControlPvConnected ) {
@@ -2770,14 +3423,12 @@ int stat, i, nci, nc[SYMBOL_K_MAX_PVS], nr, ne, nd, ncolori, ncr;
 
       if ( nc[i] ) {
 
-        if ( !controlEventId[i] ) {
+        if ( initialCtrlConnection[i] ) {
 
-          stat = ca_add_masked_array_event( DBR_DOUBLE, 1,
-           controlPvId[i], symbol_controlUpdate, (void *) &argRec[i],
-           (float) 0.0, (float) 0.0, (float) 0.0, &controlEventId[i],
-           DBE_VALUE );
-          if ( stat != ECA_NORMAL )
-            printf( activeSymbolClass_str27 );
+	  initialCtrlConnection[i] = 0;
+
+          controlPvId[i]->add_value_callback( symbol_controlUpdate,
+           (void *) &argRec[i] );
 
         }
 
@@ -2797,16 +3448,15 @@ int stat, i, nci, nc[SYMBOL_K_MAX_PVS], nr, ne, nd, ncolori, ncr;
       }
     }
 
-    stat = ca_add_masked_array_event( DBR_DOUBLE, 1,
-     colorPvId, symbol_colorUpdate, (void *) this,
-     (float) 0.0, (float) 0.0, (float) 0.0, &colorEventId,
-     DBE_VALUE );
-    if ( stat != ECA_NORMAL )
-      printf( activeSymbolClass_str27 );
+    if ( initialColorConnection ) {
+
+      initialColorConnection = 0;
+
+      colorPvId->add_value_callback( symbol_colorUpdate, this );
+
+    }
 
   }
-
-#endif
 
 //----------------------------------------------------------------------------
 
@@ -2903,6 +3553,8 @@ int i, stat;
 
 char *activeSymbolClass::firstDragName ( void ) {
 
+  if ( !enabled ) return NULL;
+
   dragIndex = 0;
 
   return dragName[dragIndex];
@@ -2910,6 +3562,8 @@ char *activeSymbolClass::firstDragName ( void ) {
 }
 
 char *activeSymbolClass::nextDragName ( void ) {
+
+  if ( !enabled ) return NULL;
 
   if ( dragIndex < (int) (sizeof(dragName)/sizeof(char *)) - 1 ) {
     dragIndex++;
@@ -2924,9 +3578,21 @@ char *activeSymbolClass::nextDragName ( void ) {
 char *activeSymbolClass::dragValue (
   int i ) {
 
+  if ( !enabled ) return NULL;
+
   if ( i < 0 ) i = 0;
   if ( i > 4 ) i = 0;
-  return controlPvExpStr[i].getExpanded();
+
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    return controlPvExpStr[i].getExpanded();
+
+  }
+  else {
+
+    return controlPvExpStr[i].getRaw();
+
+  }
 
 }
 

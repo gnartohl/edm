@@ -25,14 +25,7 @@
 #define activeXTextClass_str22 (char *) "and <"
 #define activeXTextClass_str23 (char *) "Text String"
 #define activeXTextClass_str24 (char *) "import file syntax error"
-#define activeXTextClass_str25 (char *) "error from ca_search\n"
-#define activeXTextClass_str26 (char *) "error from ca_search\n"
-#define activeXTextClass_str27 (char *) "ca_clear_event failure\n"
-#define activeXTextClass_str28 (char *) "ca_clear_event failure\n"
-#define activeXTextClass_str29 (char *) "ca_clear_channel failure\n"
-#define activeXTextClass_str30 (char *) "ca_clear_channel failure\n"
-#define activeXTextClass_str31 (char *) "ca_add_masked_array_event failed\n"
-#define activeXTextClass_str32 (char *) "ca_add_masked_array_event failed\n"
+#define activeXTextClass_str25 (char *) "error creating pv\n"
 #define activeXTextClass_str33 (char *) "value"
 
 #endif

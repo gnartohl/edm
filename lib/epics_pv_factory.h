@@ -27,11 +27,12 @@ class EPICS_ProcessVariable : public ProcessVariable
 public:
     bool is_valid() const;
     const Type &get_type() const;
-
+    const specificType &get_specific_type() const;
     int         get_int() const;
     double      get_double() const;
     size_t      get_string(char *strbuf, size_t buflen) const;
     size_t      get_dimension() const;
+    const char   *get_char_array() const;
     const int    *get_int_array() const;
     const double *get_double_array() const;
     size_t      get_enum_count() const;
@@ -57,6 +58,9 @@ public:
     bool put(double value);
     bool put(int value);
     bool put(const char *value);
+    bool putText(char *value);
+    bool putArrayText(char *value);
+    bool putAck(short value);
 
 private:
     friend class EPICS_PV_Factory;
@@ -88,10 +92,12 @@ public:
     PVValue(EPICS_ProcessVariable *epv);
     virtual ~PVValue();
     virtual const ProcessVariable::Type &get_type() const = 0;
+    virtual const ProcessVariable::specificType &get_specific_type() const;
     virtual short       get_DBR() const = 0;
     virtual int         get_int() const;
     virtual double      get_double() const = 0;
     virtual size_t      get_string(char *strbuf, size_t buflen) const;
+    virtual const char *get_char_array() const;
     virtual const int  *get_int_array() const;
     virtual const double *get_double_array() const;
     virtual size_t      get_enum_count() const;
@@ -118,6 +124,7 @@ protected:
     double  lower_alarm_limit;
     double  upper_ctrl_limit;
     double  lower_ctrl_limit;
+    ProcessVariable::specificType specific_type;
 };
 
 // Implementations for specific types
@@ -125,6 +132,7 @@ class PVValueInt : public PVValue
 {
 public:
     PVValueInt(EPICS_ProcessVariable *epv);
+    PVValueInt(EPICS_ProcessVariable *epv, char* typeInfo);
     ~PVValueInt();
     const ProcessVariable::Type &get_type() const;
     short       get_DBR() const;
@@ -142,6 +150,7 @@ class PVValueDouble : public PVValue
 {
 public:
     PVValueDouble(EPICS_ProcessVariable *epv);
+    PVValueDouble(EPICS_ProcessVariable *epv, char* typeInfo);
     ~PVValueDouble();
     const ProcessVariable::Type &get_type() const;
     short       get_DBR() const;
@@ -195,6 +204,7 @@ public:
     short       get_DBR() const;
     int         get_int() const;
     double      get_double() const;
+const char * PVValueChar::get_char_array() const;
     size_t      get_string(char *strbuf, size_t buflen) const;
     void read_ctrlinfo(const void *buf);
     void read_value(const void *buf);

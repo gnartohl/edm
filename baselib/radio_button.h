@@ -22,20 +22,16 @@
 #include "act_grf.h"
 #include "entry_form.h"
 
-#ifdef __epics__
-#include "cadef.h"
-#endif
+#include "pv_factory.h"
+#include "cvtFast.h"
 
-#ifndef __epics__
-#define MAX_ENUM_STATES 4
-#define MAX_ENUM_STRING_SIZE 16
-#endif
+#define MAX_ENUM_STATES 16
 
 #define RBTC_K_COLORMODE_STATIC 0
 #define RBTC_K_COLORMODE_ALARM 1
 
-#define RBTC_MAJOR_VERSION 1
-#define RBTC_MINOR_VERSION 2
+#define RBTC_MAJOR_VERSION 4
+#define RBTC_MINOR_VERSION 0
 #define RBTC_RELEASE 0
 
 #define RBTC_K_LITERAL 1
@@ -77,9 +73,6 @@ static void selectDrag (
    String *params,
    Cardinal numParams );
 
-static void rbt_infoUpdate (
-  struct event_handler_args ast_args );
-
 static void putValue (
   Widget w,
   XtPointer client,
@@ -111,13 +104,12 @@ static void rbtc_edit_cancel_delete (
   XtPointer call );
 
 static void rbt_controlUpdate (
-  struct event_handler_args ast_args );
-
-static void rbt_alarmUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void rbt_monitor_control_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 #endif
 
@@ -153,9 +145,6 @@ friend void selectDrag (
    String *params,
    Cardinal numParams );
 
-friend void rbt_infoUpdate (
-  struct event_handler_args ast_args );
-
 friend void putValue (
   Widget w,
   XtPointer client,
@@ -187,13 +176,12 @@ friend void rbtc_edit_cancel_delete (
   XtPointer call );
 
 friend void rbt_controlUpdate (
-  struct event_handler_args ast_args );
-
-friend void rbt_alarmUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void rbt_monitor_control_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 pvConnectionClass connection;
 
@@ -221,10 +209,7 @@ XmFontList fontList;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
-#ifdef __epics__
-chid controlPvId;
-evid alarmEventId, controlEventId;
-#endif
+ProcessVariable *controlPvId;
 
 char bufControlPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass controlPvExpStr;
@@ -236,6 +221,11 @@ Widget bulBrd, radioBox, pb[MAX_ENUM_STATES];
 int needConnectInit, needInfoInit, needDraw, needRefresh,
  needToDrawUnconnected, needToEraseUnconnected;
 int unconnectedTimer;
+int initialConnection;
+
+int firstValueChange;
+
+int oldStat, oldSev;
 
 public:
 
@@ -262,7 +252,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
@@ -336,6 +334,10 @@ void changePvNames (
   char *visPvs[],
   int numAlarmPvs,
   char *alarmPvs[] );
+
+void map ( void );
+
+void unmap ( void );
 
 };
 

@@ -23,13 +23,16 @@
 #include "act_grf.h"
 #include "entry_form.h"
 
-#include "cadef.h"
+#include "pv_factory.h"
+#include "cvtFast.h"
+
+#define MAX_ENUM_STRING_SIZE 16
 
 #define BTC_K_COLORMODE_STATIC 0
 #define BTC_K_COLORMODE_ALARM 1
 
-#define BTC_MAJOR_VERSION 2
-#define BTC_MINOR_VERSION 4
+#define BTC_MAJOR_VERSION 4
+#define BTC_MINOR_VERSION 0
 #define BTC_RELEASE 0
 
 #define BTC_K_LITERAL 1
@@ -82,43 +85,36 @@ static void btc_edit_cancel_delete (
   XtPointer call );
 
 static void bt_controlUpdate (
-  struct event_handler_args ast_args );
-
-static void bt_controlInfoUpdate (
-  struct event_handler_args ast_args );
-
-static void bt_readInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void bt_readUpdate (
-  struct event_handler_args ast_args );
-
-static void bt_alarmUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void bt_monitor_control_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void bt_monitor_read_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void bt_monitor_vis_connect_state (
-  struct connection_handler_args arg );
-
-static void bt_visInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void bt_visUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void bt_monitor_color_connect_state (
-  struct connection_handler_args arg );
-
-static void bt_colorInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void bt_colorUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 #endif
 
@@ -160,43 +156,36 @@ friend void btc_edit_cancel_delete (
   XtPointer call );
 
 friend void bt_controlUpdate (
-  struct event_handler_args ast_args );
-
-friend void bt_controlInfoUpdate (
-  struct event_handler_args ast_args );
-
-friend void bt_readInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void bt_readUpdate (
-  struct event_handler_args ast_args );
-
-friend void bt_alarmUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void bt_monitor_control_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void bt_monitor_read_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void bt_monitor_vis_connect_state (
-  struct connection_handler_args arg );
-
-friend void bt_visInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void bt_visUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void bt_monitor_color_connect_state (
-  struct connection_handler_args arg );
-
-friend void bt_colorInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void bt_colorUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 int opComplete;
 
@@ -221,9 +210,8 @@ int bufInconsistentColor;
 colorButtonClass fgCb, onCb, offCb, topShadowCb, botShadowCb, inconsistentCb;
 char onLabel[MAX_ENUM_STRING_SIZE+1], bufOnLabel[MAX_ENUM_STRING_SIZE+1];
 char offLabel[MAX_ENUM_STRING_SIZE+1], bufOffLabel[MAX_ENUM_STRING_SIZE+1];
-char stateString[2][MAX_ENUM_STRING_SIZE+1];
 char _3DString[7+1], invisibleString[7+1];
-int no_str, labelType, buttonType, _3D, invisible;
+int labelType, buttonType, _3D, invisible;
 char labelTypeString[15+1];
 char buttonTypeStr[7+1];
 
@@ -245,8 +233,7 @@ static const int colorPvConnection = 4;
 
 pvConnectionClass connection;
 
-chid controlPvId, readPvId;
-evid infoEventId, controlEventId, readEventId, alarmEventId;
+ProcessVariable *controlPvId, *readPvId, *stateStringPvId;
 
 char controlBufPvName[activeGraphicClass::MAX_PV_NAME+1];
 char readBufPvName[activeGraphicClass::MAX_PV_NAME+1];
@@ -257,8 +244,7 @@ int controlExists, readExists, toggle;
 int controlPvConnected, readPvConnected, init, active, activeMode,
  controlValid, readValid;
 
-chid visPvId;
-evid visEventId;
+ProcessVariable *visPvId;
 expStringClass visPvExpString;
 char bufVisPvName[activeGraphicClass::MAX_PV_NAME+1];
 int visExists;
@@ -267,14 +253,17 @@ char minVisString[39+1], bufMinVisString[39+1];
 char maxVisString[39+1], bufMaxVisString[39+1];
 int prevVisibility, visibility, visInverted, bufVisInverted;
 int needVisConnectInit, needVisInit, needVisUpdate;
+int initialConnection, initialReadConnection, initialVisConnection,
+ initialColorConnection;
 
-chid colorPvId;
-evid colorEventId;
+ProcessVariable *colorPvId;
 expStringClass colorPvExpString;
 char bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
 int colorExists;
 double colorValue, curColorValue;
 int needColorConnectInit, needColorInit, needColorUpdate;
+
+int oldStat, oldSev;
 
 public:
 
@@ -301,7 +290,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );

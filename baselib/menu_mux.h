@@ -22,7 +22,8 @@
 #include "act_grf.h"
 #include "entry_form.h"
 
-#include "cadef.h"
+#include "pv_factory.h"
+#include "cvtFast.h"
 
 #define MMUX_MAX_ENTRIES 4
 #define MMUX_MAX_STATES 16
@@ -31,8 +32,8 @@
 #define MMUXC_K_COLORMODE_STATIC 0
 #define MMUXC_K_COLORMODE_ALARM 1
 
-#define MMUXC_MAJOR_VERSION 2
-#define MMUXC_MINOR_VERSION 1
+#define MMUXC_MAJOR_VERSION 4
+#define MMUXC_MINOR_VERSION 0
 #define MMUXC_RELEASE 0
 
 #define MMUXC_K_LITERAL 1
@@ -98,16 +99,12 @@ static void mmuxc_edit_cancel_delete (
   XtPointer call );
 
 static void mmux_controlUpdate (
-  struct event_handler_args ast_args );
-
-static void mmux_alarmUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void mmux_monitor_control_connect_state (
-  struct connection_handler_args arg );
-
-static void mmux_infoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void mmuxSetItem (
   Widget w,
@@ -172,16 +169,12 @@ friend void mmuxc_edit_cancel_delete (
   XtPointer call );
 
 friend void mmux_controlUpdate (
-  struct event_handler_args ast_args );
-
-friend void mmux_alarmUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void mmux_monitor_control_connect_state (
-  struct connection_handler_args arg );
-
-friend void mmux_infoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void mmuxSetItem (
   Widget w,
@@ -226,8 +219,7 @@ XmFontList fontList;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
-chid controlPvId;
-evid alarmEventId, controlEventId;
+ProcessVariable *controlPvId;
 
 char bufControlPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass controlPvExpStr;
@@ -247,8 +239,11 @@ Widget popUpMenu, pullDownMenu, pb[MAX_ENUM_STATES];
 int needConnectInit, needDisconnect, needInfoInit, needUpdate, needDraw,
  needToDrawUnconnected, needToEraseUnconnected;
 int unconnectedTimer;
+int initialConnection;
 
 int buttonPressed;
+
+int oldStat, oldSev;
 
 public:
 
@@ -275,7 +270,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
@@ -311,6 +314,7 @@ int deactivate ( int pass );
 void updateDimensions ( void );
 
 void btnUp (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,
@@ -318,6 +322,7 @@ void btnUp (
   int *action );
 
 void btnDown (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,

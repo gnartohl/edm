@@ -22,13 +22,14 @@
 #include "act_grf.h"
 #include "entry_form.h"
 
-#include "cadef.h"
+#include "pv_factory.h"
+#include "cvtFast.h"
 
 #define BARC_K_COLORMODE_STATIC 0
 #define BARC_K_COLORMODE_ALARM 1
 
-#define BARC_MAJOR_VERSION 2
-#define BARC_MINOR_VERSION 2
+#define BARC_MAJOR_VERSION 4
+#define BARC_MINOR_VERSION 0
 #define BARC_RELEASE 0
 
 #define BARC_K_PV_NAME 0
@@ -78,33 +79,21 @@ static void barc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-#if 0
-static void bar_controlUpdate (
-  struct event_handler_args ast_args );
-#endif
-
-static void bar_infoUpdate (
-  struct event_handler_args ast_args );
-
 static void bar_readUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void bar_nullUpdate (
-  struct event_handler_args ast_args );
-
-static void bar_alarmUpdate (
-  struct event_handler_args ast_args );
-
-#if 0
-static void bar_monitor_control_connect_state (
-  struct connection_handler_args arg );
-#endif
+  ProcessVariable *pv,
+  void *userarg );
 
 static void bar_monitor_read_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void bar_monitor_null_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 #endif
 
@@ -141,29 +130,21 @@ friend void barc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-friend void bar_controlUpdate (
-  struct event_handler_args ast_args );
-
-friend void bar_infoUpdate (
-  struct event_handler_args ast_args );
-
 friend void bar_readUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void bar_nullUpdate (
-  struct event_handler_args ast_args );
-
-friend void bar_alarmUpdate (
-  struct event_handler_args ast_args );
-
-friend void bar_monitor_control_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void bar_monitor_read_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void bar_monitor_null_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 int horizontal, bufHorizontal;
 
@@ -186,8 +167,9 @@ char fontTag[63+1];
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
-chid controlPvId, readPvId, nullPvId;
-evid controlEventId, readEventId, nullEventId, alarmEventId;
+ProcessVariable *readPvId, *nullPvId;
+int initialReadConnection, initialNullConnection;
+int oldStat, oldSev;
 
 expStringClass controlPvExpStr, readPvExpStr, nullPvExpStr;
 char bufControlPvName[activeGraphicClass::MAX_PV_NAME+1];
@@ -259,7 +241,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );

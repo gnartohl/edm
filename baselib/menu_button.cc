@@ -67,16 +67,16 @@ static void menu_cb (
 {
 
 activeMenuButtonClass *mbto = (activeMenuButtonClass *) client;
-int i, stat;
+int i;
 short value;
 
-  for ( i=0; i<mbto->numStates; i++ ) {
+  if ( !mbto->controlPvId->have_write_access() ) return;
+
+  for ( i=0; i<(int)mbto->stateStringPvId->get_enum_count(); i++ ) {
 
     if ( w == mbto->pb[i] ) {
       value = (short) i;
-#ifdef __epics__
-      stat = ca_put( DBR_ENUM, mbto->controlPvId, &value );
-#endif
+      mbto->controlPvId->put( value );
       break;
     }
 
@@ -84,15 +84,14 @@ short value;
 
 }
 
-#ifdef __epics__
-
 static void mbt_monitor_control_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
+activeMenuButtonClass *mbto = (activeMenuButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     mbto->connection.setPvConnected( (void *) mbto->controlPvConnection );
     mbto->needConnectInit = 1;
@@ -118,48 +117,24 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
 
 }
 
-static void mbt_infoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-int i;
-activeMenuButtonClass *mbto = (activeMenuButtonClass *) ast_args.usr;
-struct dbr_gr_enum enumRec;
-
-  enumRec = *( (struct dbr_gr_enum *) ast_args.dbr );
-
-  mbto->numStates = enumRec.no_str;
-
-  for ( i=0; i<mbto->numStates; i++ ) {
-
-    if ( mbto->stateString[i] == NULL ) {
-      mbto->stateString[i] = new char[MAX_ENUM_STRING_SIZE+1];
-    }
-
-    strncpy( mbto->stateString[i], enumRec.strs[i], MAX_ENUM_STRING_SIZE );
-
-  }
-
-  mbto->curValue = enumRec.value;
-
-  mbto->needInfoInit = 1;
-  mbto->actWin->appCtx->proc->lock();
-  mbto->actWin->addDefExeNode( mbto->aglPtr );
-  mbto->actWin->appCtx->proc->unlock();
-
-}
-
 static void mbt_controlUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeMenuButtonClass *mbto = (activeMenuButtonClass *) ast_args.usr;
+activeMenuButtonClass *mbto = (activeMenuButtonClass *) userarg;
+int st, sev;
 
-  mbto->curValue = *( (short *) ast_args.dbr );
+  mbto->curValue = (short) pv->get_int();
+
+  st = pv->get_status();
+  sev = pv->get_severity();
+  if ( ( st != mbto->oldStat ) || ( sev != mbto->oldSev ) ) {
+    mbto->oldStat = st;
+    mbto->oldSev = sev;
+    mbto->fgColor.setStatus( st, sev );
+    mbto->bufInvalidate();
+  }
 
   mbto->controlValid = 1;
   mbto->needRefresh = 1;
@@ -170,36 +145,14 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) ast_args.usr;
 
 }
 
-static void mbt_alarmUpdate (
-  struct event_handler_args ast_args )
-{
-
-activeMenuButtonClass *mbto = (activeMenuButtonClass *) ast_args.usr;
-struct dbr_sts_enum statusRec;
-
-  if ( !mbto->readExists ) {
-
-    statusRec = *( (struct dbr_sts_enum *) ast_args.dbr );
-
-    mbto->fgColor.setStatus( statusRec.status, statusRec.severity );
-    mbto->bgColor.setStatus( statusRec.status, statusRec.severity );
-
-    mbto->needDraw = 1;
-    mbto->actWin->appCtx->proc->lock();
-    mbto->actWin->addDefExeNode( mbto->aglPtr );
-    mbto->actWin->appCtx->proc->unlock();
-
-  }
-
-}
-
 static void mbt_monitor_read_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
+activeMenuButtonClass *mbto = (activeMenuButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     mbto->connection.setPvConnected( (void *) mbto->readPvConnection );
     mbto->needReadConnectInit = 1;
@@ -225,53 +178,26 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
 
 }
 
-static void mbt_readInfoUpdate (
-  struct event_handler_args ast_args )
+static void mbt_readUpdate (
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
+activeMenuButtonClass *mbto = (activeMenuButtonClass *) userarg;
+int st, sev;
 
-int i;
-activeMenuButtonClass *mbto = (activeMenuButtonClass *) ast_args.usr;
-struct dbr_gr_enum enumRec;
-
-  enumRec = *( (struct dbr_gr_enum *) ast_args.dbr );
+  mbto->curReadValue = (short) pv->get_int();
 
   if ( !mbto->controlExists ) {
-
-  mbto->numStates = enumRec.no_str;
-
-    for ( i=0; i<mbto->numStates; i++ ) {
-
-      if ( mbto->stateString[i] == NULL ) {
-        mbto->stateString[i] = new char[MAX_ENUM_STRING_SIZE+1];
-      }
-
-      strncpy( mbto->stateString[i], enumRec.strs[i],
-       MAX_ENUM_STRING_SIZE );
-
+    st = pv->get_status();
+    sev = pv->get_severity();
+    if ( ( st != mbto->oldStat ) || ( sev != mbto->oldSev ) ) {
+      mbto->oldStat = st;
+      mbto->oldSev = sev;
+      mbto->fgColor.setStatus( st, sev );
+      mbto->bufInvalidate();
     }
-
   }
-
-  mbto->curReadValue = enumRec.value;
-
-  mbto->needReadInfoInit = 1;
-  mbto->actWin->appCtx->proc->lock();
-  mbto->actWin->addDefExeNode( mbto->aglPtr );
-  mbto->actWin->appCtx->proc->unlock();
-
-}
-
-static void mbt_readUpdate (
-  struct event_handler_args ast_args )
-{
-
-activeMenuButtonClass *mbto = (activeMenuButtonClass *) ast_args.usr;
-
-  mbto->curReadValue = *( (short *) ast_args.dbr );
 
   mbto->readValid = 1;
   mbto->needRefresh = 1;
@@ -282,32 +208,14 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) ast_args.usr;
 
 }
 
-static void mbt_readAlarmUpdate (
-  struct event_handler_args ast_args )
-{
-
-activeMenuButtonClass *mbto = (activeMenuButtonClass *) ast_args.usr;
-struct dbr_sts_enum statusRec;
-
-  statusRec = *( (struct dbr_sts_enum *) ast_args.dbr );
-
-  mbto->fgColor.setStatus( statusRec.status, statusRec.severity );
-  mbto->bgColor.setStatus( statusRec.status, statusRec.severity );
-
-  mbto->needDraw = 1;
-  mbto->actWin->appCtx->proc->lock();
-  mbto->actWin->addDefExeNode( mbto->aglPtr );
-  mbto->actWin->appCtx->proc->unlock();
-
-}
-
 static void mbt_monitor_vis_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
+activeMenuButtonClass *mbto = (activeMenuButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     mbto->needVisConnectInit = 1;
 
@@ -327,34 +235,14 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
 
 }
 
-static void mbt_visInfoUpdate (
-  struct event_handler_args arg )
-{
-
-  if ( arg.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
-
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) arg.dbr );
-
-  mbto->curVisValue = controlRec.value;
-
-  mbto->actWin->appCtx->proc->lock();
-  mbto->needVisInit = 1;
-  mbto->actWin->addDefExeNode( mbto->aglPtr );
-  mbto->actWin->appCtx->proc->unlock();
-
-}
-
 static void mbt_visUpdate (
-  struct event_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
+activeMenuButtonClass *mbto = (activeMenuButtonClass *) userarg;
 
-  mbto->curVisValue = * ( (double *) arg.dbr );
+  mbto->curVisValue = pv->get_double();
 
   mbto->actWin->appCtx->proc->lock();
   mbto->needVisUpdate = 1;
@@ -364,12 +252,13 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
 }
 
 static void mbt_monitor_color_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
+activeMenuButtonClass *mbto = (activeMenuButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     mbto->needColorConnectInit = 1;
 
@@ -389,34 +278,14 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
 
 }
 
-static void mbt_colorInfoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeMenuButtonClass *mbto = (activeMenuButtonClass *) ast_args.usr;
-
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
-
-  mbto->curColorValue = controlRec.value;
-
-  mbto->actWin->appCtx->proc->lock();
-  mbto->needColorInit = 1;
-  mbto->actWin->addDefExeNode( mbto->aglPtr );
-  mbto->actWin->appCtx->proc->unlock();
-
-}
-
 static void mbt_colorUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeMenuButtonClass *mbto = (activeMenuButtonClass *) ast_args.usr;
+activeMenuButtonClass *mbto = (activeMenuButtonClass *) userarg;
 
-  mbto->curColorValue = * ( (double *) ast_args.dbr );
+  mbto->curColorValue = pv->get_double();
 
   mbto->actWin->appCtx->proc->lock();
   mbto->needColorUpdate = 1;
@@ -424,8 +293,6 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) ast_args.usr;
   mbto->actWin->appCtx->proc->unlock();
 
 }
-
-#endif
 
 static void mbtc_edit_update (
   Widget w,
@@ -466,7 +333,7 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) client;
   mbto->inconsistentColor.setColorIndex( mbto->bufInconsistentColor,
    mbto->actWin->ci );
 
-  mbto->visPvExpString.setRaw( mbto->bufVisPvName );
+  mbto->visPvExpStr.setRaw( mbto->bufVisPvName );
   strncpy( mbto->minVisString, mbto->bufMinVisString, 39 );
   strncpy( mbto->maxVisString, mbto->bufMaxVisString, 39 );
 
@@ -475,7 +342,7 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) client;
   else
     mbto->visInverted = 1;
 
-  mbto->colorPvExpString.setRaw( mbto->bufColorPvName );
+  mbto->colorPvExpStr.setRaw( mbto->bufColorPvName );
 
   mbto->x = mbto->bufX;
   mbto->sboxX = mbto->bufX;
@@ -554,16 +421,12 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) client;
 }
 
 activeMenuButtonClass::activeMenuButtonClass ( void ) {
-
 int i;
 
   name = new char[strlen("activeMenuButtonClass")+1];
   strcpy( name, "activeMenuButtonClass" );
 
-  numStates = 0;
-
   for ( i=0; i<MAX_ENUM_STATES; i++ ) {
-    stateString[i] = NULL;
     pb[i] = NULL;
   }
 
@@ -608,18 +471,15 @@ activeMenuButtonClass::~activeMenuButtonClass ( void ) {
 activeMenuButtonClass::activeMenuButtonClass
  ( const activeMenuButtonClass *source ) {
 
-int i;
 activeGraphicClass *mbto = (activeGraphicClass *) this;
+int i;
 
   mbto->clone( (activeGraphicClass *) source );
 
   name = new char[strlen("activeMenuButtonClass")+1];
   strcpy( name, "activeMenuButtonClass" );
 
-  numStates = 0;
-
   for ( i=0; i<MAX_ENUM_STATES; i++ ) {
-    stateString[i] = NULL;
     pb[i] = NULL;
   }
 
@@ -648,8 +508,8 @@ activeGraphicClass *mbto = (activeGraphicClass *) this;
 
   controlPvExpStr.copy( source->controlPvExpStr );
   readPvExpStr.copy( source->readPvExpStr );
-  visPvExpString.copy( source->visPvExpString );
-  colorPvExpString.copy( source->colorPvExpString );
+  visPvExpStr.copy( source->visPvExpStr );
+  colorPvExpStr.copy( source->colorPvExpStr );
 
   widgetsCreated = 0;
   active = 0;
@@ -709,6 +569,54 @@ int activeMenuButtonClass::save (
   FILE *f )
 {
 
+int stat, major, minor, release;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+  major = MBTC_MAJOR_VERSION;
+  minor = MBTC_MINOR_VERSION;
+  release = MBTC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadBoolW( "fgAlarm", &fgColorMode, &zero );
+  tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadBoolW( "bgAlarm", &bgColorMode, &zero );
+  tag.loadW( "inconsistentColor", actWin->ci, &inconsistentColor );
+  tag.loadW( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadW( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadW( "controlPv", &controlPvExpStr, emptyStr );
+  tag.loadW( "indicatorPv", &readPvExpStr, emptyStr );
+  tag.loadW( "font", fontTag );
+  tag.loadW( "visPv", &visPvExpStr, emptyStr );
+  tag.loadBoolW( "visInvert", &visInverted, &zero );
+  tag.loadW( "visMin", minVisString, emptyStr );
+  tag.loadW( "visMax", maxVisString, emptyStr );
+  tag.loadW( "colorPv", &colorPvExpStr, emptyStr  );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int activeMenuButtonClass::old_save (
+  FILE *f )
+{
+
 int index;
 
   fprintf( f, "%-d %-d %-d\n", MBTC_MAJOR_VERSION, MBTC_MINOR_VERSION,
@@ -756,8 +664,8 @@ int index;
   fprintf( f, "%-d\n", index );
 
   //ver 2.3.0
-  if ( visPvExpString.getRaw() )
-    writeStringToFile( f, visPvExpString.getRaw() );
+  if ( visPvExpStr.getRaw() )
+    writeStringToFile( f, visPvExpStr.getRaw() );
   else
     writeStringToFile( f, "" );
   fprintf( f, "%-d\n", visInverted );
@@ -765,8 +673,8 @@ int index;
   writeStringToFile( f, maxVisString );
 
   //ver 2.4.0
-  if ( colorPvExpString.getRaw() )
-    writeStringToFile( f, colorPvExpString.getRaw() );
+  if ( colorPvExpStr.getRaw() )
+    writeStringToFile( f, colorPvExpStr.getRaw() );
   else
     writeStringToFile( f, "" );
 
@@ -775,6 +683,87 @@ int index;
 }
 
 int activeMenuButtonClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "fgAlarm", &fgColorMode, &zero );
+  tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "bgAlarm", &bgColorMode, &zero );
+  tag.loadR( "inconsistentColor", actWin->ci, &inconsistentColor );
+  tag.loadR( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadR( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadR( "controlPv", &controlPvExpStr, emptyStr );
+  tag.loadR( "indicatorPv", &readPvExpStr, emptyStr );
+  tag.loadR( "font", 63, fontTag );
+  tag.loadR( "visPv", &visPvExpStr, emptyStr );
+  tag.loadR( "visInvert", &visInverted, &zero );
+  tag.loadR( "visMin", 39, minVisString, emptyStr );
+  tag.loadR( "visMax", 39, maxVisString, emptyStr );
+  tag.loadR( "colorPv", &colorPvExpStr, emptyStr );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > MBTC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  if ( fgColorMode == MBTC_K_COLORMODE_ALARM )
+    fgColor.setAlarmSensitive();
+  else
+    fgColor.setAlarmInsensitive();
+
+  if ( bgColorMode == MBTC_K_COLORMODE_ALARM )
+    bgColor.setAlarmSensitive();
+  else
+    bgColor.setAlarmInsensitive();
+
+  actWin->fi->loadFontTag( fontTag );
+  actWin->drawGc.setFontTag( fontTag, actWin->fi );
+
+  fs = actWin->fi->getXFontStruct( fontTag );
+  actWin->fi->getTextFontList( fontTag, &fontList );
+
+  updateDimensions();
+
+  return 1;
+
+}
+
+int activeMenuButtonClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -961,7 +950,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
     readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
      actWin->incLine();
-    visPvExpString.setRaw( oneName );
+    visPvExpStr.setRaw( oneName );
 
     fscanf( f, "%d\n", &visInverted ); actWin->incLine();
 
@@ -975,7 +964,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
     readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
      actWin->incLine();
-    colorPvExpString.setRaw( oneName );
+    colorPvExpStr.setRaw( oneName );
 
   }
 
@@ -1027,8 +1016,8 @@ char title[32], *ptr;
   else
     strcpy( bufReadPvName, "" );
 
-  if ( visPvExpString.getRaw() )
-    strncpy( bufVisPvName, visPvExpString.getRaw(),
+  if ( visPvExpStr.getRaw() )
+    strncpy( bufVisPvName, visPvExpStr.getRaw(),
      activeGraphicClass::MAX_PV_NAME );
   else
     strcpy( bufVisPvName, "" );
@@ -1038,8 +1027,8 @@ char title[32], *ptr;
   else
     bufVisInverted = 1;
 
-  if ( colorPvExpString.getRaw() )
-    strncpy( bufColorPvName, colorPvExpString.getRaw(),
+  if ( colorPvExpStr.getRaw() )
+    strncpy( bufColorPvName, colorPvExpStr.getRaw(),
      activeGraphicClass::MAX_PV_NAME );
   else
     strcpy( bufColorPvName, "" );
@@ -1133,7 +1122,7 @@ int activeMenuButtonClass::erase ( void ) {
 
 int activeMenuButtonClass::eraseActive ( void ) {
 
-  if ( !init || !activeMode ) return 1;
+  if ( !enabled || !init || !activeMode ) return 1;
 
   if ( prevVisibility == 0 ) {
     prevVisibility = visibility;
@@ -1270,7 +1259,6 @@ int activeMenuButtonClass::drawActive ( void ) {
 int tX, tY, bumpX, bumpY;
 short v;
 XRectangle xR = { x+3, y, w-23, h };
-char string[MAX_ENUM_STRING_SIZE+1];
 int blink = 0;
 
   if ( !init ) {
@@ -1297,7 +1285,7 @@ int blink = 0;
     smartDrawAllActive();
   }
 
-  if ( !init || !activeMode || !visibility ) return 1;
+  if ( !enabled || !init || !activeMode || !visibility ) return 1;
 
   prevVisibility = visibility;
 
@@ -1430,15 +1418,14 @@ int blink = 0;
     tX = x + w/2 - 10;
     tY = y + h/2 - fontAscent/2;
 
-    if ( ( v >= 0 ) && ( v < numStates ) ) {
-      strncpy( string, stateString[v], MAX_ENUM_STRING_SIZE );
+    if ( ( v >= 0 ) && ( v < (short) stateStringPvId->get_enum_count() ) ) {
+      drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
+       XmALIGNMENT_CENTER, (char *) stateStringPvId->get_enum( v ) );
     }
     else {
-      strcpy( string, "?" );
+      drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
+       XmALIGNMENT_CENTER, "?" );
     }
-
-    drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
-     XmALIGNMENT_CENTER, string );
 
     actWin->executeGc.removeNormXClipRectangle();
 
@@ -1464,9 +1451,9 @@ int stat, retStat = 1;;
   if ( !( stat & 1 ) ) retStat = stat;
   stat = readPvExpStr.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
-  stat = visPvExpString.expand1st( numMacros, macros, expansions );
+  stat = visPvExpStr.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
-  stat = colorPvExpString.expand1st( numMacros, macros, expansions );
+  stat = colorPvExpStr.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
   return retStat;
@@ -1485,9 +1472,9 @@ int stat, retStat = 1;
   if ( !( stat & 1 ) ) retStat = stat;
   stat = readPvExpStr.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
-  stat = visPvExpString.expand2nd( numMacros, macros, expansions );
+  stat = visPvExpStr.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
-  stat = colorPvExpString.expand2nd( numMacros, macros, expansions );
+  stat = colorPvExpStr.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
   return retStat;
@@ -1500,9 +1487,9 @@ int activeMenuButtonClass::containsMacros ( void ) {
 
   if ( readPvExpStr.containsPrimaryMacros() ) return 1;
 
-  if ( visPvExpString.containsPrimaryMacros() ) return 1;
+  if ( visPvExpStr.containsPrimaryMacros() ) return 1;
 
-  if ( colorPvExpString.containsPrimaryMacros() ) return 1;
+  if ( colorPvExpStr.containsPrimaryMacros() ) return 1;
 
   return 0;
 
@@ -1513,7 +1500,7 @@ int activeMenuButtonClass::activate (
   void *ptr
 ) {
 
-int stat, opStat;
+int opStat;
 
   switch ( pass ) {
 
@@ -1536,22 +1523,21 @@ int stat, opStat;
       needToDrawUnconnected = 0;
       unconnectedTimer = 0;
       controlValid = readValid = 0;
-      controlPvId = readPvId = visPvId = colorPvId = NULL;
-
+      controlPvId = readPvId = stateStringPvId = visPvId = colorPvId = NULL;
       controlExists = readExists = visExists = colorExists = 0;
-
       pvCheckExists = 0;
       connection.init();
+      initialConnection = initialReadConnection = initialVisConnection =
+       initialColorConnection = 1;
 
-#ifdef __epics__
-      alarmEventId = controlEventId = readAlarmEventId = readEventId =
-       visEventId = colorEventId = 0;
-#endif
+      initEnable();
+
+      oldStat = -1;
+      oldSev = -1;
 
       init = 0;
       active = 0;
       activeMode = 1;
-      numStates = 0;
 
       buttonPressed = 0;
 
@@ -1582,7 +1568,7 @@ int stat, opStat;
           readExists = 0;
 	}
 
-        if ( strcmp( visPvExpString.getRaw(), "" ) != 0 ) {
+        if ( strcmp( visPvExpStr.getRaw(), "" ) != 0 ) {
           visExists = 1;
           connection.addPv(); // must do this only once per pv
         }
@@ -1591,7 +1577,7 @@ int stat, opStat;
           visibility = 1;
         }
 
-        if ( strcmp( colorPvExpString.getRaw(), "" ) != 0 ) {
+        if ( strcmp( colorPvExpStr.getRaw(), "" ) != 0 ) {
           colorExists = 1;
           connection.addPv(); // must do this only once per pv
         }
@@ -1602,53 +1588,69 @@ int stat, opStat;
 
       opStat = 1;
 
-#ifdef __epics__
-
       if ( controlExists ) {
-        stat = ca_search_and_connect( controlPvExpStr.getExpanded(),
-         &controlPvId, mbt_monitor_control_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+
+	controlPvId = the_PV_Factory->create( controlPvExpStr.getExpanded() );
+        if ( controlPvId ) {
+	  controlPvId->add_conn_state_callback(
+           mbt_monitor_control_connect_state, this );
+          stateStringPvId = controlPvId;
+	}
+	else {
           printf( activeMenuButtonClass_str20,
            controlPvExpStr.getExpanded() );
           opStat = 0;
         }
+
       }
 
       if ( readExists ) {
-        stat = ca_search_and_connect( readPvExpStr.getExpanded(),
-         &readPvId, mbt_monitor_read_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeMenuButtonClass_str21,
+
+	readPvId = the_PV_Factory->create( readPvExpStr.getExpanded() );
+        if ( readPvId ) {
+	  readPvId->add_conn_state_callback(
+           mbt_monitor_read_connect_state, this );
+          if ( !controlExists ) stateStringPvId = readPvId;
+	}
+	else {
+          printf( activeMenuButtonClass_str20,
            readPvExpStr.getExpanded() );
           opStat = 0;
         }
+
       }
 
       if ( visExists ) {
 
-        stat = ca_search_and_connect( visPvExpString.getExpanded(), &visPvId,
-         mbt_monitor_vis_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeMenuButtonClass_str21,
-           visPvExpString.getExpanded() );
+	visPvId = the_PV_Factory->create( visPvExpStr.getExpanded() );
+        if ( visPvId ) {
+	  visPvId->add_conn_state_callback(
+           mbt_monitor_vis_connect_state, this );
+	}
+	else {
+          printf( activeMenuButtonClass_str20,
+           visPvExpStr.getExpanded() );
           opStat = 0;
         }
+
       }
 
       if ( colorExists ) {
 
-        stat = ca_search_and_connect( colorPvExpString.getExpanded(),
-         &colorPvId, mbt_monitor_color_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+	colorPvId = the_PV_Factory->create( colorPvExpStr.getExpanded() );
+        if ( colorPvId ) {
+	  colorPvId->add_conn_state_callback(
+           mbt_monitor_color_connect_state, this );
+	}
+	else {
           printf( activeMenuButtonClass_str20,
-           colorPvExpString.getExpanded() );
+           colorPvExpStr.getExpanded() );
           opStat = 0;
         }
+
       }
 
       opComplete = opStat;
-
-#endif
 
       return opStat;
 
@@ -1673,7 +1675,7 @@ int activeMenuButtonClass::deactivate (
   int pass
 ) {
 
-int stat, i;
+int i;
 
   active = 0;
   activeMode = 0;
@@ -1689,60 +1691,61 @@ int stat, i;
 
     updateBlink( 0 );
 
-#ifdef __epics__
-
     if ( controlExists ) {
       if ( controlPvId ) {
-        stat = ca_clear_channel( controlPvId );
-        if ( stat != ECA_NORMAL ) printf( activeMenuButtonClass_str23 );
+        controlPvId->remove_conn_state_callback(
+         mbt_monitor_control_connect_state, this );
+        controlPvId->remove_value_callback(
+         mbt_controlUpdate, this );
+	controlPvId->release();
         controlPvId = NULL;
       }
     }
 
     if ( readExists ) {
       if ( readPvId ) {
-        stat = ca_clear_channel( readPvId );
-        if ( stat != ECA_NORMAL ) printf( activeMenuButtonClass_str23 );
+        readPvId->remove_conn_state_callback(
+         mbt_monitor_read_connect_state, this );
+        readPvId->remove_value_callback(
+         mbt_readUpdate, this );
+	readPvId->release();
         readPvId = NULL;
       }
     }
 
     if ( visExists ) {
       if ( visPvId ) {
-        stat = ca_clear_channel( visPvId );
-        if ( stat != ECA_NORMAL ) printf( activeMenuButtonClass_str23 );
+        visPvId->remove_conn_state_callback(
+         mbt_monitor_vis_connect_state, this );
+        visPvId->remove_value_callback(
+         mbt_visUpdate, this );
+	visPvId->release();
         visPvId = NULL;
       }
     }
 
     if ( colorExists ) {
       if ( colorPvId ) {
-        stat = ca_clear_channel( colorPvId );
-        if ( stat != ECA_NORMAL ) printf( activeMenuButtonClass_str22 );
+        colorPvId->remove_conn_state_callback(
+         mbt_monitor_color_connect_state, this );
+        colorPvId->remove_value_callback(
+         mbt_colorUpdate, this );
+	colorPvId->release();
         colorPvId = NULL;
       }
     }
-
-#endif
 
     break;
 
   case 2:
 
     if ( widgetsCreated ) {
-      for ( i=0; i<numStates; i++ ) {
+      for ( i=0; i<(int)stateStringPvId->get_enum_count(); i++ ) {
         XtDestroyWidget( pb[i] );
       }
       XtDestroyWidget( pullDownMenu );
       XtDestroyWidget( popUpMenu );
       widgetsCreated = 0;
-    }
-
-    for ( i=0; i<numStates; i++ ) {
-      if ( stateString[i] ) {
-        delete stateString[i];
-        stateString[i] = NULL;
-      }
     }
 
     break;
@@ -1770,6 +1773,7 @@ void activeMenuButtonClass::updateDimensions ( void )
 }
 
 void activeMenuButtonClass::btnUp (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,
@@ -1777,11 +1781,9 @@ void activeMenuButtonClass::btnUp (
   int *action )
 {
 
-XButtonEvent be;
-
   *action = 0;
 
-  if ( !init || !visibility ) return;
+  if ( !enabled || !init || !visibility ) return;
 
   if ( !buttonPressed ) return;
 
@@ -1791,10 +1793,7 @@ XButtonEvent be;
 
   if ( buttonNumber == 1 ) {
 
-    memset( (void *) &be, 0, sizeof(XButtonEvent) );
-    be.x_root = actWin->xPos()+_x;
-    be.y_root = actWin->yPos()+_y;
-    XmMenuPosition( popUpMenu, &be );
+    XmMenuPosition( popUpMenu, be );
     XtManageChild( popUpMenu );
 
   }
@@ -1802,6 +1801,7 @@ XButtonEvent be;
 }
 
 void activeMenuButtonClass::btnDown (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,
@@ -1811,11 +1811,9 @@ void activeMenuButtonClass::btnDown (
 
   *action = 0;
 
-  if ( !init || !visibility ) return;
+  if ( !enabled || !init || !visibility ) return;
 
   if ( !controlExists ) return;
-
-  if ( !ca_write_access( controlPvId ) ) return;
 
   if ( buttonNumber == 1 ) {
     buttonPressed = 1;
@@ -1829,9 +1827,9 @@ void activeMenuButtonClass::pointerIn (
   int buttonState )
 {
 
-  if ( !init || !visibility ) return;
+  if ( !enabled || !init || !visibility ) return;
 
-  if ( !ca_write_access( controlPvId ) ) {
+  if ( !controlPvId->have_write_access() ) {
     actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
   }
   else {
@@ -1907,11 +1905,9 @@ char msg[79+1];
 
 //----------------------------------------------------------------------------
 
-#ifdef __epics__
-
   if ( nc ) {
 
-    if ( ca_field_type(controlPvId) != DBR_ENUM ) {
+    if ( controlPvId->get_type().type != ProcessVariable::Type::enumerated ) {
       strncpy( msg, actWin->obj.getNameFromClass( "activeMenuButtonClass" ),
        79 );
       Strncat( msg, activeMenuButtonClass_str35, 79 );
@@ -1922,15 +1918,17 @@ char msg[79+1];
       return;
     }
 
-    stat = ca_get_callback( DBR_GR_ENUM, controlPvId,
-     mbt_infoUpdate, (void *) this );
+    v = curValue = (short) controlPvId->get_int();
+
+    ni = 1;
 
   }
 
   if ( nrc ) {
 
-    stat = ca_get_callback( DBR_GR_ENUM, readPvId,
-     mbt_readInfoUpdate, (void *) this );
+    rV = curReadValue = (short) readPvId->get_int();
+
+    nri = 1;
 
   }
 
@@ -1940,7 +1938,7 @@ char msg[79+1];
 
     if ( widgetsCreated ) {
 
-      for ( i=0; i<numStates; i++ ) {
+      for ( i=0; i<(int)stateStringPvId->get_enum_count(); i++ ) {
         XtDestroyWidget( pb[i] );
       }
       XtDestroyWidget( pullDownMenu );
@@ -1956,10 +1954,9 @@ char msg[79+1];
 
     pullDownMenu = XmCreatePulldownMenu( popUpMenu, "", NULL, 0 );
 
-    for ( i=0; i<numStates; i++ ) {
+    for ( i=0; i<(int)stateStringPvId->get_enum_count(); i++ ) {
 
-      //str = XmStringCreate( stateString[i], fontTag );
-      str = XmStringCreateLocalized( stateString[i] );
+      str = XmStringCreateLocalized( (char *) stateStringPvId->get_enum( i ) );
 
       pb[i] = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
        popUpMenu,
@@ -1976,25 +1973,11 @@ char msg[79+1];
 
     widgetsCreated = 1;
 
-    if ( !controlEventId ) {
+    if ( initialConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_ENUM, 1, controlPvId,
-       mbt_controlUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &controlEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL ) {
-        printf( activeMenuButtonClass_str24 );
-      }
-
-    }
-
-    if ( !alarmEventId ) {
-
-      stat = ca_add_masked_array_event( DBR_STS_ENUM, 1, controlPvId,
-       mbt_alarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &alarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL ) {
-        printf( activeMenuButtonClass_str25 );
-      }
+      initialConnection = 0;
+      
+      controlPvId->add_value_callback( mbt_controlUpdate, this );
 
     }
 
@@ -2010,25 +1993,11 @@ char msg[79+1];
 
     curReadValue = rV;
 
-    if ( !readEventId ) {
+    if ( initialReadConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_ENUM, 1, readPvId,
-       mbt_readUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &readEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL ) {
-        printf( activeMenuButtonClass_str26 );
-      }
-
-    }
-
-    if ( !readAlarmEventId ) {
-
-      stat = ca_add_masked_array_event( DBR_STS_ENUM, 1, readPvId,
-       mbt_readAlarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &readAlarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL ) {
-        printf( activeMenuButtonClass_str27 );
-      }
+      initialReadConnection = 0;
+      
+      readPvId->add_value_callback( mbt_readUpdate, this );
 
     }
 
@@ -2047,17 +2016,21 @@ char msg[79+1];
 
     connection.setPvConnected( (void *) visPvConnection );
 
-    stat = ca_get_callback( DBR_GR_DOUBLE, visPvId,
-     mbt_visInfoUpdate, (void *) this );
+    visValue = curVisValue = visPvId->get_double();
+
+    nvi = 1;
 
   }
 
   if ( nvi ) {
 
-    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, visPvId,
-     mbt_visUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-     &visEventId, DBE_VALUE );
-    if ( stat != ECA_NORMAL ) printf( activeMenuButtonClass_str27 );
+    if ( initialVisConnection ) {
+
+      initialVisConnection = 0;
+      
+      visPvId->add_value_callback( mbt_visUpdate, this );
+
+    }
 
     if ( ( visValue >= minVis ) &&
          ( visValue < maxVis ) )
@@ -2080,17 +2053,21 @@ char msg[79+1];
 
   if ( ncolc ) {
 
-    stat = ca_get_callback( DBR_GR_DOUBLE, colorPvId,
-     mbt_colorInfoUpdate, (void *) this );
+    colorValue = curColorValue = colorPvId->get_double();
+
+    ncoli = 1;
 
   }
 
   if ( ncoli ) {
 
-    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, colorPvId,
-     mbt_colorUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-     &colorEventId, DBE_VALUE );
-    if ( stat != ECA_NORMAL ) printf( activeMenuButtonClass_str25 );
+    if ( initialColorConnection ) {
+
+      initialColorConnection = 0;
+      
+      colorPvId->add_value_callback( mbt_colorUpdate, this );
+
+    }
 
     invisColor = 0;
 
@@ -2127,8 +2104,6 @@ char msg[79+1];
     }
 
   }
-
-#endif
 
 //----------------------------------------------------------------------------
 
@@ -2199,12 +2174,16 @@ char msg[79+1];
 
 char *activeMenuButtonClass::firstDragName ( void ) {
 
+  if ( !enabled ) return NULL;
+
   dragIndex = 0;
   return dragName[dragIndex];
 
 }
 
 char *activeMenuButtonClass::nextDragName ( void ) {
+
+  if ( !enabled ) return NULL;
 
   if ( dragIndex < (int) ( sizeof(dragName) / sizeof(char *) ) - 1 ) {
     dragIndex++;
@@ -2219,17 +2198,39 @@ char *activeMenuButtonClass::nextDragName ( void ) {
 char *activeMenuButtonClass::dragValue (
   int i ) {
 
-  if ( i == 0 ) {
-    return controlPvExpStr.getExpanded();
-  }
-  else if ( i == 1 ) {
-    return readPvExpStr.getExpanded();
-  }
-  else if ( i == 2 ) {
-    return colorPvExpString.getExpanded();
+  if ( !enabled ) return NULL;
+
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    if ( i == 0 ) {
+      return controlPvExpStr.getExpanded();
+    }
+    else if ( i == 1 ) {
+      return readPvExpStr.getExpanded();
+    }
+    else if ( i == 2 ) {
+      return colorPvExpStr.getExpanded();
+    }
+    else {
+      return visPvExpStr.getExpanded();
+    }
+
   }
   else {
-    return visPvExpString.getExpanded();
+
+    if ( i == 0 ) {
+      return controlPvExpStr.getRaw();
+    }
+    else if ( i == 1 ) {
+      return readPvExpStr.getRaw();
+    }
+    else if ( i == 2 ) {
+      return colorPvExpStr.getRaw();
+    }
+    else {
+      return visPvExpStr.getRaw();
+    }
+
   }
 
 }
@@ -2298,7 +2299,7 @@ void activeMenuButtonClass::changePvNames (
 
   if ( flag & ACTGRF_VISPVS_MASK ) {
     if ( numVisPvs ) {
-      visPvExpString.setRaw( ctlPvs[0] );
+      visPvExpStr.setRaw( ctlPvs[0] );
     }
   }
 

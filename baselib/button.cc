@@ -216,15 +216,14 @@ activeButtonClass *bto = (activeButtonClass *) client;
 
 }
 
-#ifdef __epics__
-
 static void bt_monitor_control_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeButtonClass *bto = (activeButtonClass *) ca_puser(arg.chid);
+activeButtonClass *bto = (activeButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     bto->needCtlConnectInit = 1;
 
@@ -248,56 +247,30 @@ activeButtonClass *bto = (activeButtonClass *) ca_puser(arg.chid);
 
 }
 
-static void bt_controlInfoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
-struct dbr_gr_enum controlRec = *( (dbr_gr_enum *) ast_args.dbr );
-
-  bto->curControlV = controlRec.value;
-
-  if ( !(bto->readExists) ) {
-
-//      bto->active = 1;
-//      bto->init = 1;
-
-    bto->no_str = controlRec.no_str;
-
-    if ( bto->no_str > 0 ) {
-      strncpy( bto->stateString[0], controlRec.strs[0], MAX_ENUM_STRING_SIZE );
-    }
-    else {
-      strncpy( bto->stateString[0], "?0?", MAX_ENUM_STRING_SIZE );
-    }
-    if ( bto->no_str > 1 ) {
-    strncpy( bto->stateString[1], controlRec.strs[1], MAX_ENUM_STRING_SIZE );
-    }
-    else {
-      strncpy( bto->stateString[1], "?1?", MAX_ENUM_STRING_SIZE );
-    }
-
-  }
-
-  bto->needCtlInfoInit = 1;
-  bto->actWin->appCtx->proc->lock();
-  bto->actWin->addDefExeNode( bto->aglPtr );
-  bto->actWin->appCtx->proc->unlock();
-
-}
-
 static void bt_controlUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
+activeButtonClass *bto = (activeButtonClass *) userarg;
+int st, sev;
 
   bto->controlValid = 1;
-  bto->curControlV = *( (short *) ast_args.dbr );
+  bto->curControlV = (short) pv->get_int();
+
+  if ( !bto->readExists ) {
+
+    st = pv->get_status();
+    sev = pv->get_severity();
+    if ( ( st != bto->oldStat ) || ( sev != bto->oldSev ) ) {
+      bto->oldStat = st;
+      bto->oldSev = sev;
+      bto->fgColor.setStatus( st, sev );
+      bto->bufInvalidate();
+    }
+
+  }
+
   bto->needCtlRefresh = 1;
   bto->actWin->appCtx->proc->lock();
   bto->actWin->addDefExeNode( bto->aglPtr );
@@ -306,12 +279,13 @@ activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
 }
 
 static void bt_monitor_read_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeButtonClass *bto = (activeButtonClass *) ca_puser(arg.chid);
+activeButtonClass *bto = (activeButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     bto->needReadConnectInit = 1;
 
@@ -335,49 +309,26 @@ activeButtonClass *bto = (activeButtonClass *) ca_puser(arg.chid);
 
 }
 
-static void bt_readInfoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
-struct dbr_gr_enum readRec = *( (dbr_gr_enum *) ast_args.dbr );
-
-  bto->curReadV = readRec.value;
-
-  bto->no_str = readRec.no_str;
-
-  if ( bto->no_str > 0 ) {
-    strncpy( bto->stateString[0], readRec.strs[0], MAX_ENUM_STRING_SIZE );
-  }
-  else {
-    strncpy( bto->stateString[0], "?", MAX_ENUM_STRING_SIZE );
-  }
-  if ( bto->no_str > 1 ) {
-  strncpy( bto->stateString[1], readRec.strs[1], MAX_ENUM_STRING_SIZE );
-  }
-  else {
-    strncpy( bto->stateString[1], "?", MAX_ENUM_STRING_SIZE );
-  }
-
-  bto->needReadInfoInit = 1;
-  bto->actWin->appCtx->proc->lock();
-  bto->actWin->addDefExeNode( bto->aglPtr );
-  bto->actWin->appCtx->proc->unlock();
-
-}
-
 static void bt_readUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
+activeButtonClass *bto = (activeButtonClass *) userarg;
+int st, sev;
 
   bto->readValid = 1;
-  bto->curReadV = *( (short *) ast_args.dbr );
+  bto->curReadV = (short) pv->get_int();
+
+  st = pv->get_status();
+  sev = pv->get_severity();
+  if ( ( st != bto->oldStat ) || ( sev != bto->oldSev ) ) {
+    bto->oldStat = st;
+    bto->oldSev = sev;
+    bto->fgColor.setStatus( st, sev );
+    bto->bufInvalidate();
+  }
+
   bto->needReadRefresh = 1;
   bto->actWin->appCtx->proc->lock();
   bto->actWin->addDefExeNode( bto->aglPtr );
@@ -385,32 +336,14 @@ activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
 
 }
 
-static void bt_alarmUpdate (
-  struct event_handler_args ast_args )
-{
-
-activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
-struct dbr_sts_enum statusRec;
-
-  statusRec = *( (struct dbr_sts_enum *) ast_args.dbr );
-
-  bto->fgColor.setStatus( statusRec.status, statusRec.severity );
-
-  bto->needErase = 1;
-  bto->needDraw = 1;
-  bto->actWin->appCtx->proc->lock();
-  bto->actWin->addDefExeNode( bto->aglPtr );
-  bto->actWin->appCtx->proc->unlock();
-
-}
-
 static void bt_monitor_vis_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeButtonClass *bto = (activeButtonClass *) ca_puser(arg.chid);
+activeButtonClass *bto = (activeButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     bto->needVisConnectInit = 1;
 
@@ -432,34 +365,14 @@ activeButtonClass *bto = (activeButtonClass *) ca_puser(arg.chid);
 
 }
 
-static void bt_visInfoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
-
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
-
-  bto->curVisValue = controlRec.value;
-
-  bto->actWin->appCtx->proc->lock();
-  bto->needVisInit = 1;
-  bto->actWin->addDefExeNode( bto->aglPtr );
-  bto->actWin->appCtx->proc->unlock();
-
-}
-
 static void bt_visUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
+activeButtonClass *bto = (activeButtonClass *) userarg;
 
-  bto->curVisValue = * ( (double *) ast_args.dbr );
+  bto->curVisValue = pv->get_double();
 
   bto->actWin->appCtx->proc->lock();
   bto->needVisUpdate = 1;
@@ -469,12 +382,13 @@ activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
 }
 
 static void bt_monitor_color_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeButtonClass *bto = (activeButtonClass *) ca_puser(arg.chid);
+activeButtonClass *bto = (activeButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     bto->needColorConnectInit = 1;
 
@@ -495,34 +409,14 @@ activeButtonClass *bto = (activeButtonClass *) ca_puser(arg.chid);
 
 }
 
-static void bt_colorInfoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
-
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
-
-  bto->curColorValue = controlRec.value;
-
-  bto->actWin->appCtx->proc->lock();
-  bto->needColorInit = 1;
-  bto->actWin->addDefExeNode( bto->aglPtr );
-  bto->actWin->appCtx->proc->unlock();
-
-}
-
 static void bt_colorUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
+activeButtonClass *bto = (activeButtonClass *) userarg;
 
-  bto->curColorValue = * ( (double *) ast_args.dbr );
+  bto->curColorValue = pv->get_double();
 
   bto->actWin->appCtx->proc->lock();
   bto->needColorUpdate = 1;
@@ -531,17 +425,12 @@ activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
 
 }
 
-#endif
-
 activeButtonClass::activeButtonClass ( void ) {
 
   name = new char[strlen("activeButtonClass")+1];
   strcpy( name, "activeButtonClass" );
   deleteRequest = 0;
   selected = 0;
-  strcpy( stateString[0], "" );
-  strcpy( stateString[1], "" );
-
   strcpy( id, "" );
   downCallbackFlag = 0;
   upCallbackFlag = 0;
@@ -578,8 +467,6 @@ activeGraphicClass *bto = (activeGraphicClass *) this;
 
   name = new char[strlen("activeButtonClass")+1];
   strcpy( name, "activeButtonClass" );
-  strcpy( stateString[0], "" );
-  strcpy( stateString[1], "" );
 
   deleteRequest = 0;
 
@@ -685,9 +572,6 @@ int activeButtonClass::createInteractive (
   topShadowColor = actWin->defaultTopShadowColor;
   botShadowColor = actWin->defaultBotShadowColor;
 
-  strcpy( stateString[0], "" );
-  strcpy( stateString[1], "" );
-
   strcpy( fontTag, actWin->defaultBtnFontTag );
   actWin->fi->loadFontTag( fontTag );
   fs = actWin->fi->getXFontStruct( fontTag );
@@ -723,6 +607,103 @@ int activeButtonClass::createInteractive (
 }
 
 int activeButtonClass::save (
+  FILE *f )
+{
+
+int stat, major, minor, release;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+int labelTypePvState = 0;
+static char *labelEnumStr[2] = {
+  "pvState",
+  "literal"
+};
+static int labelEnum[2] = {
+  BTC_K_PV_STATE,
+  BTC_K_LITERAL
+};
+
+int buttonTypeToggle = BTC_K_TOGGLE;
+static char *buttonTypeEnumStr[2] = {
+  "toggle",
+  "push"
+};
+static int buttonTypeEnum[2] = {
+  BTC_K_TOGGLE,
+  BTC_K_PUSH
+};
+
+int objTypeUnknown = activeGraphicClass::UNKNOWN;
+static char *objTypeEnumStr[4] = {
+  "graphics",
+  "monitors",
+  "controls",
+  "unknown"
+};
+static int objTypeEnum[4] = {
+  activeGraphicClass::GRAPHICS,
+  activeGraphicClass::MONITORS,
+  activeGraphicClass::CONTROLS,
+  activeGraphicClass::UNKNOWN
+};
+
+  major = BTC_MAJOR_VERSION;
+  minor = BTC_MINOR_VERSION;
+  release = BTC_RELEASE;
+
+  if ( toggle )
+    buttonType = BTC_K_TOGGLE;
+  else
+    buttonType = BTC_K_PUSH;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadBoolW( "fgAlarm", &fgColorMode, &zero );
+  tag.loadW( "onColor", actWin->ci, &onColor );
+  tag.loadW( "offColor", actWin->ci, &offColor );
+  tag.loadW( "inconsistentColor", actWin->ci, &inconsistentColor );
+  tag.loadW( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadW( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadW( "controlPv", &controlPvName, emptyStr );
+  tag.loadW( "indicatorPv", &readPvName, emptyStr );
+  tag.loadW( "onLabel", onLabel, emptyStr );
+  tag.loadW( "offLabel", offLabel, emptyStr );
+  tag.loadW( "labelType", 2, labelEnumStr, labelEnum, &labelType,
+   &labelTypePvState );
+  tag.loadW( "buttonType", 2, buttonTypeEnumStr, buttonTypeEnum, &buttonType,
+   &buttonTypeToggle );
+  tag.loadBoolW( "3d", &_3D, &zero );
+  tag.loadBoolW( "invisible", &invisible, &zero );
+  tag.loadW( "font", fontTag );
+  tag.loadW( "objType", 4, objTypeEnumStr, objTypeEnum, &objType,
+   &objTypeUnknown );
+  tag.loadW( "visPv", &visPvExpString, emptyStr );
+  tag.loadBoolW( "visInvert", &visInverted, &zero );
+  tag.loadW( "visMin", minVisString, emptyStr );
+  tag.loadW( "visMax", maxVisString, emptyStr );
+  tag.loadW( "colorPv", &colorPvExpString, emptyStr  );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int activeButtonClass::old_save (
   FILE *f )
 {
 
@@ -820,6 +801,136 @@ int index;
 }
 
 int activeButtonClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+int labelTypePvState = 0;
+static char *labelEnumStr[2] = {
+  "pvState",
+  "literal"
+};
+static int labelEnum[2] = {
+  BTC_K_PV_STATE,
+  BTC_K_LITERAL
+};
+
+int buttonTypeToggle = BTC_K_TOGGLE;
+static char *buttonTypeEnumStr[2] = {
+  "toggle",
+  "push"
+};
+static int buttonTypeEnum[2] = {
+  BTC_K_TOGGLE,
+  BTC_K_PUSH
+};
+
+int objTypeUnknown = activeGraphicClass::UNKNOWN;
+static char *objTypeEnumStr[4] = {
+  "graphics",
+  "monitors",
+  "controls",
+  "unknown"
+};
+static int objTypeEnum[4] = {
+  activeGraphicClass::GRAPHICS,
+  activeGraphicClass::MONITORS,
+  activeGraphicClass::CONTROLS,
+  activeGraphicClass::UNKNOWN
+};
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "fgAlarm", &fgColorMode, &zero );
+  tag.loadR( "onColor", actWin->ci, &onColor );
+  tag.loadR( "offColor", actWin->ci, &offColor );
+  tag.loadR( "inconsistentColor", actWin->ci, &inconsistentColor );
+  tag.loadR( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadR( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadR( "controlPv", &controlPvName, emptyStr );
+  tag.loadR( "indicatorPv", &readPvName, emptyStr );
+  tag.loadR( "onLabel", MAX_ENUM_STRING_SIZE, onLabel, emptyStr );
+  tag.loadR( "offLabel", MAX_ENUM_STRING_SIZE, offLabel, emptyStr );
+  tag.loadR( "labelType", 2, labelEnumStr, labelEnum, &labelType,
+   &labelTypePvState );
+  tag.loadR( "buttonType", 2, buttonTypeEnumStr, buttonTypeEnum, &buttonType,
+   &buttonTypeToggle );
+  tag.loadR( "3d", &_3D, &zero );
+  tag.loadR( "invisible", &invisible, &zero );
+  tag.loadR( "font", 63, fontTag );
+  tag.loadR( "objType", 4, objTypeEnumStr, objTypeEnum, &objType,
+   &objTypeUnknown );
+  tag.loadR( "visPv", &visPvExpString, emptyStr );
+  tag.loadR( "visInvert", &visInverted, &zero );
+  tag.loadR( "visMin", 39, minVisString, emptyStr );
+  tag.loadR( "visMax", 39, maxVisString, emptyStr );
+  tag.loadR( "colorPv", &colorPvExpString, emptyStr );
+  tag.loadR( "endObjectProperties" );
+  tag.loadR( "" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > BTC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  if ( fgColorMode == BTC_K_COLORMODE_ALARM )
+    fgColor.setAlarmSensitive();
+  else
+    fgColor.setAlarmInsensitive();
+
+  if ( buttonType == BTC_K_TOGGLE )
+    toggle = 1;
+  else
+    toggle = 0;
+
+  strcpy( this->id, "" );
+  downCallbackFlag = 0;
+  upCallbackFlag = 0;
+  activateCallbackFlag = 0;
+  deactivateCallbackFlag = 0;
+  anyCallbackFlag = 0;
+
+  actWin->fi->loadFontTag( fontTag );
+  fs = actWin->fi->getXFontStruct( fontTag );
+
+  updateDimensions();
+
+  return stat;
+
+}
+
+int activeButtonClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -1085,9 +1196,6 @@ char *tk, *gotData, *context, buf[255+1];
    actWin->ci );
   topShadowColor = actWin->defaultTopShadowColor;
   botShadowColor = actWin->defaultBotShadowColor;
-
-  strcpy( stateString[0], "" );
-  strcpy( stateString[1], "" );
 
   strcpy( fontTag, actWin->defaultBtnFontTag );
   actWin->fi->loadFontTag( fontTag );
@@ -1520,7 +1628,7 @@ int activeButtonClass::erase ( void ) {
 
 int activeButtonClass::eraseActive ( void ) {
 
-  if ( !init || !activeMode || invisible ) return 1;
+  if ( !enabled || !init || !activeMode || invisible ) return 1;
 
   if ( prevVisibility == 0 ) {
     prevVisibility = visibility;
@@ -1529,11 +1637,11 @@ int activeButtonClass::eraseActive ( void ) {
 
   prevVisibility = visibility;
 
-  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-   actWin->executeGc.eraseGC(), x, y, w, h );
+  XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.eraseGC(), x, y, w, h );
 
-  XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
-   actWin->executeGc.eraseGC(), x, y, w, h );
+  XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.eraseGC(), x, y, w, h );
 
   return 1;
 
@@ -1665,7 +1773,7 @@ int blink = 0;
     }
   }
 
-  if ( !init || !activeMode || invisible || !visibility ) return 1;
+  if ( !enabled || !init || !activeMode || invisible || !visibility ) return 1;
 
   prevVisibility = visibility;
 
@@ -1753,7 +1861,14 @@ int blink = 0;
       strncpy( string, offLabel, MAX_ENUM_STRING_SIZE );
     }
     else {
-      strncpy( string, stateString[0], MAX_ENUM_STRING_SIZE );
+      if ( stateStringPvId->get_enum_count() > 0 ) {
+        strncpy( string, (char *) stateStringPvId->get_enum( 0 ),
+         MAX_ENUM_STRING_SIZE );
+      }
+      else {
+        strncpy( string, "0", MAX_ENUM_STRING_SIZE );
+      }
+
     }
 
     if ( _3D ) {
@@ -1815,7 +1930,13 @@ int blink = 0;
       strncpy( string, onLabel, MAX_ENUM_STRING_SIZE );
     }
     else {
-      strncpy( string, stateString[1], MAX_ENUM_STRING_SIZE );
+      if ( stateStringPvId->get_enum_count() > 1 ) {
+        strncpy( string, (char *) stateStringPvId->get_enum( 1 ),
+         MAX_ENUM_STRING_SIZE );
+      }
+      else {
+        strncpy( string, "1", MAX_ENUM_STRING_SIZE );
+      }
     }
 
     if ( _3D ) {
@@ -1911,7 +2032,7 @@ int activeButtonClass::activate (
   void *ptr )
 {
 
-int stat, opStat;
+int opStat;
 char callbackName[63+1];
 
   switch ( pass ) {
@@ -1927,6 +2048,7 @@ char callbackName[63+1];
     if ( !opComplete ) {
 
       connection.init();
+      initEnable();
 
       aglPtr = ptr;
       needCtlConnectInit = needCtlInfoInit = needCtlRefresh =
@@ -1937,16 +2059,15 @@ char callbackName[63+1];
       needToEraseUnconnected = 0;
       needToDrawUnconnected = 0;
       unconnectedTimer = 0;
+      initialConnection = initialReadConnection = initialVisConnection =
+       initialColorConnection = 1;
+      oldStat = -1;
+      oldSev = -1;
       init = 0;
       controlValid = 0;
       readValid = 0;
       controlV = 0;
-      controlPvId = readPvId = visPvId = colorPvId = NULL;
-
-#ifdef __epics__
-      controlEventId = readEventId = alarmEventId = visEventId =
-       colorEventId = 0;
-#endif
+      controlPvId = readPvId = visPvId = colorPvId = stateStringPvId = NULL;
 
       controlPvConnected = readPvConnected = active = 0;
       activeMode = 1;
@@ -2031,49 +2152,65 @@ char callbackName[63+1];
 
       opStat = 1;
 
-#ifdef __epics__
-
       if ( controlExists ) {
-        stat = ca_search_and_connect( controlPvName.getExpanded(),
-         &controlPvId, bt_monitor_control_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+
+	controlPvId = the_PV_Factory->create( controlPvName.getExpanded() );
+        if ( controlPvId ) {
+	  controlPvId->add_conn_state_callback(
+           bt_monitor_control_connect_state, this );
+          if ( !readExists ) stateStringPvId = controlPvId;
+	}
+	else {
           printf( activeButtonClass_str47 );
           opStat = 0;
         }
+
       }
 
       if ( readExists ) {
-        stat = ca_search_and_connect( readPvName.getExpanded(), &readPvId,
-         bt_monitor_read_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeButtonClass_str48 );
+
+	readPvId = the_PV_Factory->create( readPvName.getExpanded() );
+        if ( readPvId ) {
+	  readPvId->add_conn_state_callback(
+           bt_monitor_read_connect_state, this );
+          stateStringPvId = readPvId;
+	}
+	else {
+          printf( activeButtonClass_str47 );
           opStat = 0;
         }
+
       }
 
       if ( visExists ) {
 
-        stat = ca_search_and_connect( visPvExpString.getExpanded(), &visPvId,
-         bt_monitor_vis_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeButtonClass_str48 );
+	visPvId = the_PV_Factory->create( visPvExpString.getExpanded() );
+        if ( visPvId ) {
+	  visPvId->add_conn_state_callback(
+           bt_monitor_vis_connect_state, this );
+	}
+	else {
+          printf( activeButtonClass_str47 );
           opStat = 0;
         }
+
       }
 
       if ( colorExists ) {
 
-        stat = ca_search_and_connect( colorPvExpString.getExpanded(),
-         &colorPvId, bt_monitor_color_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+	colorPvId = the_PV_Factory->create( colorPvExpString.getExpanded() );
+        if ( colorPvId ) {
+	  colorPvId->add_conn_state_callback(
+           bt_monitor_color_connect_state, this );
+	}
+	else {
           printf( activeButtonClass_str47 );
           opStat = 0;
         }
+
       }
 
       if ( !( opStat & 1 ) ) opComplete = 1;
-
-#endif
 
       if ( !controlExists && !readExists ) {
         init = 1;
@@ -2107,8 +2244,6 @@ int activeButtonClass::deactivate (
   int pass
 ) {
 
-int stat;
-
   active = 0;
   activeMode = 0;
 
@@ -2125,41 +2260,49 @@ int stat;
     (*deactivateCallback)( this );
   }
 
-#ifdef __epics__
-
   if ( controlExists ) {
     if ( controlPvId ) {
-      stat = ca_clear_channel( controlPvId );
-      if ( stat != ECA_NORMAL ) printf( activeButtonClass_str49 );
+      controlPvId->remove_conn_state_callback(
+       bt_monitor_control_connect_state, this );
+      controlPvId->remove_value_callback(
+       bt_controlUpdate, this );
+      controlPvId->release();
       controlPvId = NULL;
     }
   }
 
   if ( readExists ) {
     if ( readPvId ) {
-      stat = ca_clear_channel( readPvId );
-      if ( stat != ECA_NORMAL ) printf( activeButtonClass_str50 );
+      readPvId->remove_conn_state_callback(
+       bt_monitor_read_connect_state, this );
+      readPvId->remove_value_callback(
+       bt_readUpdate, this );
+      readPvId->release();
       readPvId = NULL;
     }
   }
 
   if ( visExists ) {
     if ( visPvId ) {
-      stat = ca_clear_channel( visPvId );
-      if ( stat != ECA_NORMAL ) printf( activeButtonClass_str50 );
+      visPvId->remove_conn_state_callback(
+       bt_monitor_vis_connect_state, this );
+      visPvId->remove_value_callback(
+       bt_visUpdate, this );
+      visPvId->release();
       visPvId = NULL;
     }
   }
 
   if ( colorExists ) {
     if ( colorPvId ) {
-      stat = ca_clear_channel( colorPvId );
-      if ( stat != ECA_NORMAL ) printf( activeButtonClass_str49 );
+      colorPvId->remove_conn_state_callback(
+       bt_monitor_color_connect_state, this );
+      colorPvId->remove_value_callback(
+       bt_colorUpdate, this );
+      colorPvId->release();
       colorPvId = NULL;
     }
   }
-
-#endif
 
   }
 
@@ -2193,9 +2336,9 @@ void activeButtonClass::btnUp (
 short value;
 int stat;
 
-  if ( !active || !visibility ) return;
+  if ( !enabled || !active || !visibility ) return;
 
-  if ( !ca_write_access( controlPvId ) ) return;
+  if ( !controlPvId->have_write_access() ) return;
 
   if ( toggle ) return;
 
@@ -2207,10 +2350,8 @@ int stat;
     (*upCallback)( this );
   }
 
-#ifdef __epics__
   if ( !controlExists ) return;
-  stat = ca_put( DBR_ENUM, controlPvId, &value );
-#endif
+  stat = controlPvId->put( value );
 
 }
 
@@ -2224,10 +2365,10 @@ void activeButtonClass::btnDown (
 short value;
 int stat;
 
-  if ( !active || !visibility ) return;
+  if ( !enabled || !active || !visibility ) return;
 
   if ( controlExists ) {
-    if ( !ca_write_access( controlPvId ) ) return;
+    if ( !controlPvId->have_write_access() ) return;
   }
 
   if ( buttonNumber != 1 ) return;
@@ -2256,10 +2397,8 @@ int stat;
     }
   }
 
-#ifdef __epics__
   if ( !controlExists ) return;
-  stat = ca_put( DBR_ENUM, controlPvId, &value );
-#endif
+  stat = controlPvId->put( value );
 
 }
 
@@ -2269,9 +2408,9 @@ void activeButtonClass::pointerIn (
   int buttonState )
 {
 
-  if ( !active || !visibility ) return;
+  if ( !enabled || !active || !visibility ) return;
 
-  if ( !ca_write_access( controlPvId ) ) {
+  if ( !controlPvId->have_write_access() ) {
     actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
   }
   else {
@@ -2396,11 +2535,9 @@ char msg[79+1];
 
   if ( !activeMode ) return;
 
-#ifdef __epics__
-
   if ( ncc ) {
 
-    if ( ca_field_type(controlPvId) != DBR_ENUM ) {
+    if ( controlPvId->get_type().type != ProcessVariable::Type::enumerated ) {
       strncpy( msg, actWin->obj.getNameFromClass( "activeButtonClass" ),
        79 );
       Strncat( msg, activeButtonClass_str51, 79 );
@@ -2410,8 +2547,9 @@ char msg[79+1];
       return;
     }
 
-    stat = ca_get_callback( DBR_GR_ENUM, controlPvId,
-     bt_controlInfoUpdate, (void *) this );
+    cv = curControlV = (short) controlPvId->get_int();
+
+    nci = 1;
 
   }
 
@@ -2419,27 +2557,11 @@ char msg[79+1];
 
     connection.setPvConnected( (void *) controlPvConnection );
 
-    if ( !controlEventId ) {
+    if ( initialConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_ENUM, 1, controlPvId,
-       bt_controlUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-       &controlEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL )
-        printf( activeButtonClass_str52 );
-
-    }
-
-    if ( !(readExists) ) {
-
-      if ( !alarmEventId ) {
-
-        stat = ca_add_masked_array_event( DBR_STS_ENUM, 1, controlPvId,
-         bt_alarmUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-         &alarmEventId, DBE_ALARM );
-        if ( stat != ECA_NORMAL )
-          printf( activeButtonClass_str53 );
-
-      }
+      initialConnection = 0;
+      
+      controlPvId->add_value_callback( bt_controlUpdate, this );
 
     }
 
@@ -2470,7 +2592,7 @@ char msg[79+1];
 
   if ( nrc ) {
 
-    if ( ca_field_type(readPvId) != DBR_ENUM ) {
+    if ( readPvId->get_type().type != ProcessVariable::Type::enumerated ) {
       strncpy( msg, actWin->obj.getNameFromClass( "activeButtonClass" ),
        79 );
       Strncat( msg, activeButtonClass_str54, 79 );
@@ -2480,8 +2602,9 @@ char msg[79+1];
       return;
     }
 
-    stat = ca_get_callback( DBR_GR_ENUM, readPvId,
-     bt_readInfoUpdate, (void *) this );
+    rv = curReadV = (short) readPvId->get_int();
+
+    nri = 1;
 
   }
 
@@ -2489,23 +2612,11 @@ char msg[79+1];
 
     connection.setPvConnected( (void *) readPvConnection );
 
-    if ( !readEventId ) {
+    if ( initialReadConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_ENUM, 1, readPvId,
-       bt_readUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-       &readEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL )
-        printf( activeButtonClass_str55 );
-
-    }
-
-    if ( !alarmEventId ) {
-
-      stat = ca_add_masked_array_event( DBR_STS_ENUM, 1, readPvId,
-       bt_alarmUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-       &alarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL )
-        printf( activeButtonClass_str56 );
+      initialReadConnection = 0;
+      
+      readPvId->add_value_callback( bt_readUpdate, this );
 
     }
 
@@ -2532,17 +2643,21 @@ char msg[79+1];
 
     connection.setPvConnected( (void *) visPvConnection );
 
-    stat = ca_get_callback( DBR_GR_DOUBLE, visPvId,
-     bt_visInfoUpdate, (void *) this );
+    visValue = curVisValue = visPvId->get_double();
+
+    nvi = 1;
 
   }
 
   if ( nvi ) {
 
-    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, visPvId,
-     bt_visUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-     &visEventId, DBE_VALUE );
-    if ( stat != ECA_NORMAL ) printf( activeButtonClass_str55 );
+    if ( initialVisConnection ) {
+
+      initialVisConnection = 0;
+      
+      visPvId->add_value_callback( bt_visUpdate, this );
+
+    }
 
     if ( ( visValue >= minVis ) &&
          ( visValue < maxVis ) )
@@ -2566,17 +2681,21 @@ char msg[79+1];
 
   if ( ncolc ) {
 
-    stat = ca_get_callback( DBR_GR_DOUBLE, colorPvId,
-     bt_colorInfoUpdate, (void *) this );
+    colorValue = curColorValue = colorPvId->get_double();
+
+    ncoli = 1;
 
   }
 
   if ( ncoli ) {
 
-    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, colorPvId,
-     bt_colorUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-     &colorEventId, DBE_VALUE );
-    if ( stat != ECA_NORMAL ) printf( activeButtonClass_str52 );
+    if ( initialColorConnection ) {
+
+      initialColorConnection = 0;
+      
+      colorPvId->add_value_callback( bt_colorUpdate, this );
+
+    }
 
     invisColor = 0;
 
@@ -2618,8 +2737,6 @@ char msg[79+1];
     }
 
   }
-
-#endif
 
   if ( nrr ) {
 
@@ -2726,12 +2843,16 @@ int activeButtonClass::setProperty (
 
 char *activeButtonClass::firstDragName ( void ) {
 
+  if ( !enabled ) return NULL;
+
   dragIndex = 0;
   return dragName[dragIndex];
 
 }
 
 char *activeButtonClass::nextDragName ( void ) {
+
+  if ( !enabled ) return NULL;
 
   if ( dragIndex < (int) ( sizeof(dragName) / sizeof(char *) ) - 1 ) {
     dragIndex++;
@@ -2746,17 +2867,39 @@ char *activeButtonClass::nextDragName ( void ) {
 char *activeButtonClass::dragValue (
   int i ) {
 
-  if ( i == 0 ) {
-    return controlPvName.getExpanded();
-  }
-  else if ( i == 1 ) {
-    return readPvName.getExpanded();
-  }
-  else if ( i == 2 ) {
-    return colorPvExpString.getExpanded();
+  if ( !enabled ) return NULL;
+
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    if ( i == 0 ) {
+      return controlPvName.getExpanded();
+    }
+    else if ( i == 1 ) {
+      return readPvName.getExpanded();
+    }
+    else if ( i == 2 ) {
+      return colorPvExpString.getExpanded();
+    }
+    else {
+      return visPvExpString.getExpanded();
+    }
+
   }
   else {
-    return visPvExpString.getExpanded();
+
+    if ( i == 0 ) {
+      return controlPvName.getRaw();
+    }
+    else if ( i == 1 ) {
+      return readPvName.getRaw();
+    }
+    else if ( i == 2 ) {
+      return colorPvExpString.getRaw();
+    }
+    else {
+      return visPvExpString.getRaw();
+    }
+
   }
 
 }

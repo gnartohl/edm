@@ -22,13 +22,14 @@
 #include "act_grf.h"
 #include "entry_form.h"
 
-#include "cadef.h"
+#include "pv_factory.h"
+#include "cvtFast.h"
 
 #define METERC_K_COLORMODE_STATIC 0
 #define METERC_K_COLORMODE_ALARM 1
 
-#define METERC_MAJOR_VERSION 2
-#define METERC_MINOR_VERSION 1
+#define METERC_MAJOR_VERSION 4
+#define METERC_MINOR_VERSION 0
 #define METERC_RELEASE 0
 
 #define METERC_K_LITERAL 1
@@ -75,17 +76,13 @@ static void meterc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-static void meter_infoUpdate (
-  struct event_handler_args ast_args );
-
 static void meter_readUpdate (
-  struct event_handler_args ast_args );
-
-static void meter_alarmUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void meter_monitor_read_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 #endif
 
@@ -122,23 +119,13 @@ friend void meterc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-friend void meter_controlUpdate (
-  struct event_handler_args ast_args );
-
-friend void meter_infoUpdate (
-  struct event_handler_args ast_args );
-
 friend void meter_readUpdate (
-  struct event_handler_args ast_args );
-
-friend void meter_alarmUpdate (
-  struct event_handler_args ast_args );
-
-friend void meter_monitor_control_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void meter_monitor_read_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 int bufX, bufY, bufW, bufH;
 
@@ -164,8 +151,9 @@ XFontStruct *scaleFs, *labelFs;
 int scaleFontAscent, scaleFontDescent, scaleFontHeight;
 int labelFontAscent, labelFontDescent, labelFontHeight;
 
-chid controlPvId, readPvId;
-evid readEventId, alarmEventId;
+ProcessVariable *readPvId;
+int initialReadConnection;
+int oldStat, oldSev;
 
 expStringClass controlPvExpStr, readPvExpStr;
 char bufControlPvName[activeGraphicClass::MAX_PV_NAME+1];
@@ -186,8 +174,8 @@ int showScale;
 int useDisplayBg;
 
 int bufMeterColorMode, bufFgColorMode, bufScaleColorMode;
-int bufMajorIntervals, bufMinorIntervals;
-int majorIntervals, minorIntervals;
+int bufLabelIntervals, bufMajorIntervals, bufMinorIntervals;
+int labelIntervals, majorIntervals, minorIntervals;
 int bufMeterColor, bufFgColor, bufBgColor;
 int bufLabelColor, bufScaleColor;
 int bufTsColor,bufBsColor;
@@ -234,7 +222,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );

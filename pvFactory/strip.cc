@@ -107,6 +107,77 @@ const char *edmStripClass::PVName(size_t i, bool expanded)
 // --------------------------------------------------------
 int edmStripClass::save(FILE *f)
 {
+
+    int i, stat, major, minor, release;
+
+    int tmp[num_pvs];
+
+    tagClass tag;
+
+    int zero = 0;
+    int n = (int) num_pvs;
+    double dzero = 0;
+    char *emptyStr = "";
+
+    int left = XmALIGNMENT_BEGINNING;
+    static char *alignEnumStr[3] = {
+      "left",
+      "center",
+      "right"
+    };
+    static int alignEnum[3] = {
+      XmALIGNMENT_BEGINNING,
+      XmALIGNMENT_CENTER,
+      XmALIGNMENT_END
+    };
+
+    major = STRIP_MAJOR;
+    minor = STRIP_MINOR;
+    release = STRIP_RELEASE;
+
+    tag.init();
+    tag.loadW( "beginObjectProperties" );
+    tag.loadW( "major", &major );
+    tag.loadW( "minor", &minor );
+    tag.loadW( "release", &release );
+
+    tag.loadW( "# Geometry" );
+    tag.loadW( "x", &x );
+    tag.loadW( "y", &y );
+    tag.loadW( "w", &w );
+    tag.loadW( "h", &h );
+
+    tag.loadW( "# Trace Properties" );
+    tag.loadW( "numPvs", &n );
+    tag.loadW( "yPv", pv_name, (int) num_pvs, emptyStr );
+    tag.loadW( "plotColor", actWin->ci, pv_color, (int) num_pvs );
+    for ( i=0; i<num_pvs; i++ ) {
+      tmp[i] = (int) ( use_pv_time[i] ? 1 : 0 );
+    }
+    tag.loadW( "usePvTime", tmp, (int) num_pvs, &zero );
+
+    tag.loadW( "# Operating Modes" );
+    tag.loadW( "updateTime", &seconds, &dzero );
+
+    tag.loadW( "# Appearance" );
+    tag.loadW( "lineThickness", &line_width );
+    tag.loadW( "fgColor", actWin->ci, &fgColor );
+    tag.loadW( "bgColor", actWin->ci, &bgColor );
+    tag.loadW( "textColor", actWin->ci, &textColor );
+    tag.loadW( "font", font_tag );
+    tag.loadW( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
+
+    tag.loadW( "endObjectProperties" );
+    tag.loadW( "" );
+    
+    stat = tag.writeTags( f );
+
+    return stat;
+
+}
+
+int edmStripClass::old_save(FILE *f)
+{
     // Version, bounding box
     fprintf(f, "%-d %-d %-d\n",
             STRIP_MAJOR, STRIP_MINOR, STRIP_RELEASE);
@@ -137,6 +208,106 @@ int edmStripClass::save(FILE *f)
 }
 
 int edmStripClass::createFromFile(FILE *f, char *filename,
+                                  activeWindowClass *_actWin)
+{
+
+    int i, n, stat, major, minor, release;
+
+    int tmp[num_pvs];
+
+    tagClass tag;
+
+    int zero = 0;
+    double dzero = 0;
+    char *emptyStr = "";
+
+    int left = XmALIGNMENT_BEGINNING;
+    static char *alignEnumStr[3] = {
+      "left",
+      "center",
+      "right"
+    };
+    static int alignEnum[3] = {
+      XmALIGNMENT_BEGINNING,
+      XmALIGNMENT_CENTER,
+      XmALIGNMENT_END
+    };
+
+    int file_num_pvs;
+
+    actWin = _actWin;
+
+    tag.init();
+    tag.loadR( "beginObjectProperties" );
+    tag.loadR( "major", &major );
+    tag.loadR( "minor", &minor );
+    tag.loadR( "release", &release );
+
+    tag.loadR( "# Geometry" );
+    tag.loadR( "x", &x );
+    tag.loadR( "y", &y );
+    tag.loadR( "w", &w );
+    tag.loadR( "h", &h );
+
+    tag.loadR( "# Trace Properties" );
+    tag.loadR( "numPvs", &file_num_pvs, &zero );
+    tag.loadR( "yPv", (int) num_pvs, pv_name, &n, emptyStr );
+    tag.loadR( "plotColor", actWin->ci, (int) num_pvs, pv_color,
+     &n );
+    tag.loadR( "usePvTime", (int) num_pvs, tmp, &n,
+     &zero );
+    for ( i=0; i<num_pvs; i++ ) {
+      use_pv_time[i] = tmp[i] != 0;
+    }
+
+    tag.loadR( "# Operating Modes" );
+    tag.loadR( "updateTime", &seconds, &dzero );
+
+    tag.loadR( "# Appearance" );
+    tag.loadR( "lineThickness", &line_width );
+    tag.loadR( "fgColor", actWin->ci, &fgColor );
+    tag.loadR( "bgColor", actWin->ci, &bgColor );
+    tag.loadR( "textColor", actWin->ci, &textColor );
+    tag.loadR( "font", 63, font_tag );
+    tag.loadR( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
+
+    tag.loadR( "endObjectProperties" );
+
+    stat = tag.readTags( f, "endObjectProperties" );
+
+    if ( !( stat & 1 ) ) {
+      actWin->appCtx->postMessage( tag.errMsg() );
+    }
+
+   if ( major > STRIP_MAJOR ) {
+      postIncompatable();
+      return 0;
+    }
+
+    if ( major < 4 ) {
+      postIncompatable();
+      return 0;
+    }
+
+    this->initSelectBox(); // call after getting x,y,w,h
+
+    if (file_num_pvs != num_pvs)
+    {
+        printf ("File has Stripchart with %d PVs, can only handle %d\n",
+                file_num_pvs, num_pvs);
+        return 0;
+    }
+
+    actWin->fi->loadFontTag(font_tag);
+    fs = actWin->fi->getXFontStruct(font_tag);
+    updateFont(font_tag, &fs,
+               &fontAscent, &fontDescent, &fontHeight);
+    
+    return 1;
+
+}
+
+int edmStripClass::old_createFromFile(FILE *f, char *filename,
                                   activeWindowClass *_actWin)
 {
     int major, minor, release;

@@ -60,15 +60,14 @@ activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) client;
 
 }
 
-#ifdef __epics__
-
 static void acb_monitor_control_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ca_puser(arg.chid);
+activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     acbo->connection.setPvConnected( (void *) acbo->controlPvConnection );
     acbo->needConnectInit = 1;
@@ -94,48 +93,24 @@ activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ca_puser(arg.chid);
 
 }
 
-static void acb_infoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-int i;
-activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ast_args.usr;
-struct dbr_gr_enum enumRec;
-
-  enumRec = *( (struct dbr_gr_enum *) ast_args.dbr );
-
-  acbo->numStates = enumRec.no_str;
-
-  for ( i=0; i<acbo->numStates; i++ ) {
-
-    if ( acbo->stateString[i] == NULL ) {
-      acbo->stateString[i] = new char[MAX_ENUM_STRING_SIZE+1];
-    }
-
-    strncpy( acbo->stateString[i], enumRec.strs[i], MAX_ENUM_STRING_SIZE );
-
-  }
-
-  acbo->curValue = enumRec.value;
-
-  acbo->needInfoInit = 1;
-  acbo->actWin->appCtx->proc->lock();
-  acbo->actWin->addDefExeNode( acbo->aglPtr );
-  acbo->actWin->appCtx->proc->unlock();
-
-}
-
 static void acb_controlUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ast_args.usr;
+activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) userarg;
+int st, sev;
 
-  acbo->curValue = *( (short *) ast_args.dbr );
+  acbo->curValue = (short) pv->get_int();
+
+  st = pv->get_status();
+  sev = pv->get_severity();
+  if ( ( st != acbo->oldStat ) || ( sev != acbo->oldSev ) ) {
+    acbo->oldStat = st;
+    acbo->oldSev = sev;
+    acbo->fgColor.setStatus( st, sev );
+    acbo->bufInvalidate();
+  }
 
   acbo->controlValid = 1;
   acbo->needRefresh = 1;
@@ -146,36 +121,14 @@ activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ast_args.usr;
 
 }
 
-static void acb_alarmUpdate (
-  struct event_handler_args ast_args )
-{
-
-activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ast_args.usr;
-struct dbr_sts_enum statusRec;
-
-  if ( !acbo->readExists ) {
-
-    statusRec = *( (struct dbr_sts_enum *) ast_args.dbr );
-
-    acbo->fgColor.setStatus( statusRec.status, statusRec.severity );
-    acbo->bgColor.setStatus( statusRec.status, statusRec.severity );
-
-    acbo->needDraw = 1;
-    acbo->actWin->appCtx->proc->lock();
-    acbo->actWin->addDefExeNode( acbo->aglPtr );
-    acbo->actWin->appCtx->proc->unlock();
-
-  }
-
-}
-
 static void acb_monitor_read_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ca_puser(arg.chid);
+activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     acbo->connection.setPvConnected( (void *) acbo->readPvConnection );
     acbo->needReadConnectInit = 1;
@@ -201,53 +154,26 @@ activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ca_puser(arg.chid);
 
 }
 
-static void acb_readInfoUpdate (
-  struct event_handler_args ast_args )
+static void acb_readUpdate (
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
+activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) userarg;
+int st, sev;
 
-int i;
-activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ast_args.usr;
-struct dbr_gr_enum enumRec;
-
-  enumRec = *( (struct dbr_gr_enum *) ast_args.dbr );
+  acbo->curReadValue = (short) pv->get_int();
 
   if ( !acbo->controlExists ) {
-
-    acbo->numStates = enumRec.no_str;
-
-    for ( i=0; i<acbo->numStates; i++ ) {
-
-      if ( acbo->stateString[i] == NULL ) {
-        acbo->stateString[i] = new char[MAX_ENUM_STRING_SIZE+1];
-      }
-
-      strncpy( acbo->stateString[i], enumRec.strs[i],
-       MAX_ENUM_STRING_SIZE );
-
+    st = pv->get_status();
+    sev = pv->get_severity();
+    if ( ( st != acbo->oldStat ) || ( sev != acbo->oldSev ) ) {
+      acbo->oldStat = st;
+      acbo->oldSev = sev;
+      acbo->fgColor.setStatus( st, sev );
+      acbo->bufInvalidate();
     }
-
   }
-
-  acbo->curReadValue = enumRec.value;
-
-  acbo->needReadInfoInit = 1;
-  acbo->actWin->appCtx->proc->lock();
-  acbo->actWin->addDefExeNode( acbo->aglPtr );
-  acbo->actWin->appCtx->proc->unlock();
-
-}
-
-static void acb_readUpdate (
-  struct event_handler_args ast_args )
-{
-
-activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ast_args.usr;
-
-  acbo->curReadValue = *( (short *) ast_args.dbr );
 
   acbo->readValid = 1;
   acbo->needRefresh = 1;
@@ -258,32 +184,14 @@ activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ast_args.usr;
 
 }
 
-static void acb_readAlarmUpdate (
-  struct event_handler_args ast_args )
-{
-
-activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ast_args.usr;
-struct dbr_sts_enum statusRec;
-
-  statusRec = *( (struct dbr_sts_enum *) ast_args.dbr );
-
-  acbo->fgColor.setStatus( statusRec.status, statusRec.severity );
-  acbo->bgColor.setStatus( statusRec.status, statusRec.severity );
-
-  acbo->needDraw = 1;
-  acbo->actWin->appCtx->proc->lock();
-  acbo->actWin->addDefExeNode( acbo->aglPtr );
-  acbo->actWin->appCtx->proc->unlock();
-
-}
-
 static void acb_monitor_vis_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ca_puser(arg.chid);
+activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     acbo->needVisConnectInit = 1;
 
@@ -303,34 +211,14 @@ activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ca_puser(arg.chid);
 
 }
 
-static void acb_visInfoUpdate (
-  struct event_handler_args arg )
-{
-
-  if ( arg.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ca_puser(arg.chid);
-
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) arg.dbr );
-
-  acbo->curVisValue = controlRec.value;
-
-  acbo->actWin->appCtx->proc->lock();
-  acbo->needVisInit = 1;
-  acbo->actWin->addDefExeNode( acbo->aglPtr );
-  acbo->actWin->appCtx->proc->unlock();
-
-}
-
 static void acb_visUpdate (
-  struct event_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ca_puser(arg.chid);
+activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) userarg;
 
-  acbo->curVisValue = * ( (double *) arg.dbr );
+  acbo->curVisValue = pv->get_double();
 
   acbo->actWin->appCtx->proc->lock();
   acbo->needVisUpdate = 1;
@@ -340,12 +228,13 @@ activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ca_puser(arg.chid);
 }
 
 static void acb_monitor_color_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ca_puser(arg.chid);
+activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     acbo->needColorConnectInit = 1;
 
@@ -365,34 +254,14 @@ activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ca_puser(arg.chid);
 
 }
 
-static void acb_colorInfoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ast_args.usr;
-
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
-
-  acbo->curColorValue = controlRec.value;
-
-  acbo->actWin->appCtx->proc->lock();
-  acbo->needColorInit = 1;
-  acbo->actWin->addDefExeNode( acbo->aglPtr );
-  acbo->actWin->appCtx->proc->unlock();
-
-}
-
 static void acb_colorUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ast_args.usr;
+activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) userarg;
 
-  acbo->curColorValue = * ( (double *) ast_args.dbr );
+  acbo->curColorValue = pv->get_double();
 
   acbo->actWin->appCtx->proc->lock();
   acbo->needColorUpdate = 1;
@@ -400,8 +269,6 @@ activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) ast_args.usr;
   acbo->actWin->appCtx->proc->unlock();
 
 }
-
-#endif
 
 static void acbc_edit_update (
   Widget w,
@@ -444,7 +311,7 @@ activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) client;
   acbo->inconsistentColor.setColorIndex( acbo->bufInconsistentColor,
    acbo->actWin->ci );
 
-  acbo->visPvExpString.setRaw( acbo->bufVisPvName );
+  acbo->visPvExpStr.setRaw( acbo->bufVisPvName );
   strncpy( acbo->minVisString, acbo->bufMinVisString, 39 );
   strncpy( acbo->maxVisString, acbo->bufMaxVisString, 39 );
 
@@ -453,7 +320,7 @@ activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) client;
   else
     acbo->visInverted = 1;
 
-  acbo->colorPvExpString.setRaw( acbo->bufColorPvName );
+  acbo->colorPvExpStr.setRaw( acbo->bufColorPvName );
 
   acbo->x = acbo->bufX;
   acbo->sboxX = acbo->bufX;
@@ -536,16 +403,8 @@ activeChoiceButtonClass *acbo = (activeChoiceButtonClass *) client;
 
 activeChoiceButtonClass::activeChoiceButtonClass ( void ) {
 
-int i;
-
   name = new char[strlen("activeChoiceButtonClass")+1];
   strcpy( name, "activeChoiceButtonClass" );
-
-  numStates = 0;
-
-  for ( i=0; i<MAX_ENUM_STATES; i++ ) {
-    stateString[i] = NULL;
-  }
 
   fgColorMode = ACBC_K_COLORMODE_STATIC;
   bgColorMode = ACBC_K_COLORMODE_STATIC;
@@ -589,19 +448,12 @@ activeChoiceButtonClass::~activeChoiceButtonClass ( void ) {
 activeChoiceButtonClass::activeChoiceButtonClass
  ( const activeChoiceButtonClass *source ) {
 
-int i;
 activeGraphicClass *acbo = (activeGraphicClass *) this;
 
   acbo->clone( (activeGraphicClass *) source );
 
   name = new char[strlen("activeChoiceButtonClass")+1];
   strcpy( name, "activeChoiceButtonClass" );
-
-  numStates = 0;
-
-  for ( i=0; i<MAX_ENUM_STATES; i++ ) {
-    stateString[i] = NULL;
-  }
 
   strncpy( fontTag, source->fontTag, 63 );
   fs = actWin->fi->getXFontStruct( fontTag );
@@ -630,8 +482,8 @@ activeGraphicClass *acbo = (activeGraphicClass *) this;
 
   controlPvExpStr.copy( source->controlPvExpStr );
   readPvExpStr.copy( source->readPvExpStr );
-  visPvExpString.copy( source->visPvExpString );
-  colorPvExpString.copy( source->colorPvExpString );
+  visPvExpStr.copy( source->visPvExpStr );
+  colorPvExpStr.copy( source->colorPvExpStr );
 
   active = 0;
   activeMode = 0;
@@ -693,6 +545,67 @@ int activeChoiceButtonClass::save (
   FILE *f )
 {
 
+int stat, major, minor, release;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+int vert = 0;
+static char *orienTypeEnumStr[2] = {
+  "vertical",
+  "horizontal"
+};
+static int orienTypeEnum[2] = {
+  0,
+  1
+};
+
+  major = ACBC_MAJOR_VERSION;
+  minor = ACBC_MINOR_VERSION;
+  release = ACBC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadBoolW( "fgAlarm", &fgColorMode, &zero );
+  tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadBoolW( "bgAlarm", &bgColorMode, &zero );
+  tag.loadW( "selectColor", actWin->ci, &selColor );
+  tag.loadW( "inconsistentColor", actWin->ci, &inconsistentColor );
+  tag.loadW( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadW( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadW( "controlPv", &controlPvExpStr, emptyStr );
+  tag.loadW( "indicatorPv", &readPvExpStr, emptyStr );
+  tag.loadW( "font", fontTag );
+  tag.loadW( "visPv", &visPvExpStr, emptyStr );
+  tag.loadBoolW( "visInvert", &visInverted, &zero );
+  tag.loadW( "visMin", minVisString, emptyStr );
+  tag.loadW( "visMax", maxVisString, emptyStr );
+  tag.loadW( "colorPv", &colorPvExpStr, emptyStr );
+  tag.loadW( "orientation", 2, orienTypeEnumStr, orienTypeEnum,
+   &orientation, &vert );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int activeChoiceButtonClass::old_save (
+  FILE *f )
+{
+
 int index;
 
   fprintf( f, "%-d %-d %-d\n", ACBC_MAJOR_VERSION, ACBC_MINOR_VERSION,
@@ -737,16 +650,16 @@ int index;
   index = inconsistentColor.pixelIndex();
   actWin->ci->writeColorIndex( f, index );
 
-  if ( visPvExpString.getRaw() )
-    writeStringToFile( f, visPvExpString.getRaw() );
+  if ( visPvExpStr.getRaw() )
+    writeStringToFile( f, visPvExpStr.getRaw() );
   else
     writeStringToFile( f, "" );
   fprintf( f, "%-d\n", visInverted );
   writeStringToFile( f, minVisString );
   writeStringToFile( f, maxVisString );
 
-  if ( colorPvExpString.getRaw() )
-    writeStringToFile( f, colorPvExpString.getRaw() );
+  if ( colorPvExpStr.getRaw() )
+    writeStringToFile( f, colorPvExpStr.getRaw() );
   else
     writeStringToFile( f, "" );
 
@@ -757,6 +670,100 @@ int index;
 }
 
 int activeChoiceButtonClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+char *emptyStr = "";
+
+int vert = 0;
+static char *orienTypeEnumStr[2] = {
+  "vertical",
+  "horizontal"
+};
+static int orienTypeEnum[2] = {
+  0,
+  1
+};
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "fgAlarm", &fgColorMode, &zero );
+  tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "bgAlarm", &bgColorMode, &zero );
+  tag.loadR( "selectColor", actWin->ci, &selColor );
+  tag.loadR( "inconsistentColor", actWin->ci, &inconsistentColor );
+  tag.loadR( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadR( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadR( "controlPv", &controlPvExpStr, emptyStr );
+  tag.loadR( "indicatorPv", &readPvExpStr, emptyStr );
+  tag.loadR( "font", 63, fontTag );
+  tag.loadR( "visPv", &visPvExpStr, emptyStr );
+  tag.loadR( "visInvert", &visInverted, &zero );
+  tag.loadR( "visMin", 39, minVisString, emptyStr );
+  tag.loadR( "visMax", 39, maxVisString, emptyStr );
+  tag.loadR( "colorPv", &colorPvExpStr, emptyStr );
+  tag.loadR( "orientation", 2, orienTypeEnumStr, orienTypeEnum,
+   &orientation, &vert );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > ACBC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  if ( fgColorMode == ACBC_K_COLORMODE_ALARM )
+    fgColor.setAlarmSensitive();
+  else
+    fgColor.setAlarmInsensitive();
+
+  if ( bgColorMode == ACBC_K_COLORMODE_ALARM )
+    bgColor.setAlarmSensitive();
+  else
+    bgColor.setAlarmInsensitive();
+
+  actWin->fi->loadFontTag( fontTag );
+  actWin->drawGc.setFontTag( fontTag, actWin->fi );
+
+  fs = actWin->fi->getXFontStruct( fontTag );
+  actWin->fi->getTextFontList( fontTag, &fontList );
+
+  updateDimensions();
+
+  return 1;
+
+}
+
+int activeChoiceButtonClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -838,7 +845,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
    actWin->incLine();
-  visPvExpString.setRaw( oneName );
+  visPvExpStr.setRaw( oneName );
 
   fscanf( f, "%d\n", &visInverted ); actWin->incLine();
 
@@ -848,7 +855,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
    actWin->incLine();
-  colorPvExpString.setRaw( oneName );
+  colorPvExpStr.setRaw( oneName );
 
   fscanf( f, "%d\n", &orientation );
 
@@ -902,8 +909,8 @@ char title[32], *ptr;
   else
     strcpy( bufReadPvName, "" );
 
-  if ( visPvExpString.getRaw() )
-    strncpy( bufVisPvName, visPvExpString.getRaw(),
+  if ( visPvExpStr.getRaw() )
+    strncpy( bufVisPvName, visPvExpStr.getRaw(),
      activeGraphicClass::MAX_PV_NAME );
   else
     strcpy( bufVisPvName, "" );
@@ -913,8 +920,8 @@ char title[32], *ptr;
   else
     bufVisInverted = 1;
 
-  if ( colorPvExpString.getRaw() )
-    strncpy( bufColorPvName, colorPvExpString.getRaw(),
+  if ( colorPvExpStr.getRaw() )
+    strncpy( bufColorPvName, colorPvExpStr.getRaw(),
      activeGraphicClass::MAX_PV_NAME );
   else
     strcpy( bufColorPvName, "" );
@@ -1016,7 +1023,7 @@ int activeChoiceButtonClass::erase ( void ) {
 
 int activeChoiceButtonClass::eraseActive ( void ) {
 
-  if ( !init || !activeMode ) return 1;
+  if ( !enabled || !init || !activeMode ) return 1;
 
   if ( prevVisibility == 0 ) {
     prevVisibility = visibility;
@@ -1344,11 +1351,11 @@ int inconsistent;
     smartDrawAllActive();
   }
 
-  if ( !init || !activeMode || !visibility ) return 1;
+  if ( !enabled || !init || !activeMode || !visibility ) return 1;
 
   prevVisibility = visibility;
 
-  buttonNumStates = numStates;
+  buttonNumStates = (int) stateStringPvId->get_enum_count();
 
   actWin->executeGc.saveFg();
   actWin->executeGc.setLineWidth( 1 );
@@ -1515,7 +1522,7 @@ int inconsistent;
         tY = buttonY + buttonH/2 - fontAscent/2;
 
         drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
-         XmALIGNMENT_CENTER, stateString[i] );
+         XmALIGNMENT_CENTER, (char *) stateStringPvId->get_enum( i ) );
 
         actWin->executeGc.removeNormXClipRectangle();
 
@@ -1654,7 +1661,7 @@ int inconsistent;
         tY = buttonY + buttonH/2 - fontAscent/2;
 
         drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
-         XmALIGNMENT_CENTER, stateString[i] );
+         XmALIGNMENT_CENTER, (char *) stateStringPvId->get_enum( i ) );
 
         actWin->executeGc.removeNormXClipRectangle();
 
@@ -1686,9 +1693,9 @@ int stat, retStat = 1;;
   if ( !( stat & 1 ) ) retStat = stat;
   stat = readPvExpStr.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
-  stat = visPvExpString.expand1st( numMacros, macros, expansions );
+  stat = visPvExpStr.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
-  stat = colorPvExpString.expand1st( numMacros, macros, expansions );
+  stat = colorPvExpStr.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
   return retStat;
@@ -1707,9 +1714,9 @@ int stat, retStat = 1;
   if ( !( stat & 1 ) ) retStat = stat;
   stat = readPvExpStr.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
-  stat = visPvExpString.expand2nd( numMacros, macros, expansions );
+  stat = visPvExpStr.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
-  stat = colorPvExpString.expand2nd( numMacros, macros, expansions );
+  stat = colorPvExpStr.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
   return retStat;
@@ -1722,9 +1729,9 @@ int activeChoiceButtonClass::containsMacros ( void ) {
 
   if ( readPvExpStr.containsPrimaryMacros() ) return 1;
 
-  if ( visPvExpString.containsPrimaryMacros() ) return 1;
+  if ( visPvExpStr.containsPrimaryMacros() ) return 1;
 
-  if ( colorPvExpString.containsPrimaryMacros() ) return 1;
+  if ( colorPvExpStr.containsPrimaryMacros() ) return 1;
 
   return 0;
 
@@ -1735,7 +1742,7 @@ int activeChoiceButtonClass::activate (
   void *ptr
 ) {
 
-int stat, opStat;
+int opStat;
 
   switch ( pass ) {
 
@@ -1764,16 +1771,17 @@ int stat, opStat;
 
       pvCheckExists = 0;
       connection.init();
+      initialConnection = initialReadConnection = initialVisConnection =
+       initialColorConnection = 1;
 
-#ifdef __epics__
-      alarmEventId = controlEventId = readAlarmEventId = readEventId =
-       visEventId = colorEventId = 0;
-#endif
+      initEnable();
+
+      oldStat = -1;
+      oldSev = -1;
 
       init = 0;
       active = 0;
       activeMode = 1;
-      numStates = 0;
 
       buttonPressed = 0;
 
@@ -1802,7 +1810,7 @@ int stat, opStat;
           readExists = 0;
 	}
 
-        if ( strcmp( visPvExpString.getRaw(), "" ) != 0 ) {
+        if ( strcmp( visPvExpStr.getRaw(), "" ) != 0 ) {
           visExists = 1;
           connection.addPv(); // must do this only once per pv
         }
@@ -1811,7 +1819,7 @@ int stat, opStat;
           visibility = 1;
         }
 
-        if ( strcmp( colorPvExpString.getRaw(), "" ) != 0 ) {
+        if ( strcmp( colorPvExpStr.getRaw(), "" ) != 0 ) {
           colorExists = 1;
           connection.addPv(); // must do this only once per pv
         }
@@ -1822,53 +1830,69 @@ int stat, opStat;
 
       opStat = 1;
 
-#ifdef __epics__
-
       if ( controlExists ) {
-        stat = ca_search_and_connect( controlPvExpStr.getExpanded(),
-         &controlPvId, acb_monitor_control_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+
+	controlPvId = the_PV_Factory->create( controlPvExpStr.getExpanded() );
+        if ( controlPvId ) {
+	  controlPvId->add_conn_state_callback(
+           acb_monitor_control_connect_state, this );
+          stateStringPvId = controlPvId;
+	}
+	else {
           printf( activeChoiceButtonClass_str20,
            controlPvExpStr.getExpanded() );
           opStat = 0;
         }
+
       }
 
       if ( readExists ) {
-        stat = ca_search_and_connect( readPvExpStr.getExpanded(),
-         &readPvId, acb_monitor_read_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+
+	readPvId = the_PV_Factory->create( readPvExpStr.getExpanded() );
+        if ( readPvId ) {
+	  readPvId->add_conn_state_callback(
+           acb_monitor_read_connect_state, this );
+          if ( !controlExists ) stateStringPvId = readPvId;
+	}
+	else {
           printf( activeChoiceButtonClass_str21,
            readPvExpStr.getExpanded() );
           opStat = 0;
         }
+
       }
 
       if ( visExists ) {
 
-        stat = ca_search_and_connect( visPvExpString.getExpanded(), &visPvId,
-         acb_monitor_vis_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+	visPvId = the_PV_Factory->create( visPvExpStr.getExpanded() );
+        if ( visPvId ) {
+	  visPvId->add_conn_state_callback(
+           acb_monitor_vis_connect_state, this );
+	}
+	else {
           printf( activeChoiceButtonClass_str21,
-           visPvExpString.getExpanded() );
+           visPvExpStr.getExpanded() );
           opStat = 0;
         }
+
       }
 
       if ( colorExists ) {
 
-        stat = ca_search_and_connect( colorPvExpString.getExpanded(),
-         &colorPvId, acb_monitor_color_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeChoiceButtonClass_str20,
-           colorPvExpString.getExpanded() );
+	colorPvId = the_PV_Factory->create( colorPvExpStr.getExpanded() );
+        if ( colorPvId ) {
+	  colorPvId->add_conn_state_callback(
+           acb_monitor_color_connect_state, this );
+	}
+	else {
+          printf( activeChoiceButtonClass_str21,
+           colorPvExpStr.getExpanded() );
           opStat = 0;
         }
+
       }
 
       opComplete = opStat;
-
-#endif
 
       return opStat;
 
@@ -1893,8 +1917,6 @@ int activeChoiceButtonClass::deactivate (
   int pass
 ) {
 
-int stat, i;
-
   active = 0;
   activeMode = 0;
 
@@ -1909,52 +1931,53 @@ int stat, i;
 
     updateBlink( 0 );
 
-#ifdef __epics__
-
     if ( controlExists ) {
       if ( controlPvId ) {
-        stat = ca_clear_channel( controlPvId );
-        if ( stat != ECA_NORMAL ) printf( activeChoiceButtonClass_str23 );
+        controlPvId->remove_conn_state_callback(
+         acb_monitor_control_connect_state, this );
+        controlPvId->remove_value_callback(
+         acb_controlUpdate, this );
+	controlPvId->release();
         controlPvId = NULL;
       }
     }
 
     if ( readExists ) {
       if ( readPvId ) {
-        stat = ca_clear_channel( readPvId );
-        if ( stat != ECA_NORMAL ) printf( activeChoiceButtonClass_str23 );
+        readPvId->remove_conn_state_callback(
+         acb_monitor_read_connect_state, this );
+        readPvId->remove_value_callback(
+         acb_readUpdate, this );
+	readPvId->release();
         readPvId = NULL;
       }
     }
 
     if ( visExists ) {
       if ( visPvId ) {
-        stat = ca_clear_channel( visPvId );
-        if ( stat != ECA_NORMAL ) printf( activeChoiceButtonClass_str23 );
+        visPvId->remove_conn_state_callback(
+         acb_monitor_vis_connect_state, this );
+        visPvId->remove_value_callback(
+         acb_visUpdate, this );
+	visPvId->release();
         visPvId = NULL;
       }
     }
 
     if ( colorExists ) {
       if ( colorPvId ) {
-        stat = ca_clear_channel( colorPvId );
-        if ( stat != ECA_NORMAL ) printf( activeChoiceButtonClass_str22 );
+        colorPvId->remove_conn_state_callback(
+         acb_monitor_color_connect_state, this );
+        colorPvId->remove_value_callback(
+         acb_colorUpdate, this );
+	colorPvId->release();
         colorPvId = NULL;
       }
     }
 
-#endif
-
     break;
 
   case 2:
-
-    for ( i=0; i<numStates; i++ ) {
-      if ( stateString[i] ) {
-        delete stateString[i];
-        stateString[i] = NULL;
-      }
-    }
 
     break;
 
@@ -1981,6 +2004,7 @@ void activeChoiceButtonClass::updateDimensions ( void )
 }
 
 void activeChoiceButtonClass::btnUp (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,
@@ -1993,6 +2017,7 @@ void activeChoiceButtonClass::btnUp (
 }
 
 void activeChoiceButtonClass::btnDown (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,
@@ -2001,15 +2026,18 @@ void activeChoiceButtonClass::btnDown (
 {
 
 short value;
-int stat, i, state, buttonX, buttonY, buttonH, buttonW, margin = 2;
+int stat, i, state, buttonX, buttonY, buttonH, buttonW, margin = 2,
+ numStates;
 
   *action = 0;
 
-  if ( !init || !visibility ) return;
+  if ( !enabled || !init || !visibility ) return;
 
   if ( !controlExists ) return;
 
-  if ( !ca_write_access( controlPvId ) ) return;
+  if ( !controlPvId->have_write_access() ) return;
+
+  numStates = (int) stateStringPvId->get_enum_count();
 
   if ( buttonNumber == 1 ) {
 
@@ -2035,7 +2063,7 @@ int stat, i, state, buttonX, buttonY, buttonH, buttonW, margin = 2;
 
         buttonX += buttonW + margin;
 
-        if ( buttonX > _x ) {
+        if ( buttonX > be->x ) {
           state = i;
           break;
 	}
@@ -2063,7 +2091,7 @@ int stat, i, state, buttonX, buttonY, buttonH, buttonW, margin = 2;
 
         buttonY += buttonH + margin;
 
-        if ( buttonY > _y ) {
+        if ( buttonY > be->y ) {
           state = i;
           break;
 	}
@@ -2074,7 +2102,7 @@ int stat, i, state, buttonX, buttonY, buttonH, buttonW, margin = 2;
 
     if ( ( state >= 0 ) && ( state < numStates ) ) {
       value = (short) state;
-      stat = ca_put( DBR_ENUM, controlPvId, &value );
+      stat = controlPvId->put( value );
     }
 
   }
@@ -2087,9 +2115,9 @@ void activeChoiceButtonClass::pointerIn (
   int buttonState )
 {
 
-  if ( !init || !visibility ) return;
+  if ( !enabled || !init || !visibility ) return;
 
-  if ( !ca_write_access( controlPvId ) ) {
+  if ( !controlPvId->have_write_access() ) {
     actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
   }
   else {
@@ -2162,11 +2190,9 @@ char msg[79+1];
 
 //----------------------------------------------------------------------------
 
-#ifdef __epics__
-
   if ( nc ) {
 
-    if ( ca_field_type(controlPvId) != DBR_ENUM ) {
+    if ( controlPvId->get_type().type != ProcessVariable::Type::enumerated ) {
       strncpy( msg, actWin->obj.getNameFromClass( "activeChoiceButtonClass" ),
        79 );
       Strncat( msg, activeChoiceButtonClass_str38, 79 );
@@ -2177,15 +2203,17 @@ char msg[79+1];
       return;
     }
 
-    stat = ca_get_callback( DBR_GR_ENUM, controlPvId,
-     acb_infoUpdate, (void *) this );
+    v = curValue = controlPvId->get_int();
+
+    ni = 1;
 
   }
 
   if ( nrc ) {
 
-    stat = ca_get_callback( DBR_GR_ENUM, readPvId,
-     acb_readInfoUpdate, (void *) this );
+    rV = curReadValue = readPvId->get_int();
+
+    nri = 1;
 
   }
 
@@ -2193,25 +2221,11 @@ char msg[79+1];
 
     value = v;
 
-    if ( !controlEventId ) {
+    if ( initialConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_ENUM, 1, controlPvId,
-       acb_controlUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &controlEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL ) {
-        printf( activeChoiceButtonClass_str24 );
-      }
-
-    }
-
-    if ( !alarmEventId ) {
-
-      stat = ca_add_masked_array_event( DBR_STS_ENUM, 1, controlPvId,
-       acb_alarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &alarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL ) {
-        printf( activeChoiceButtonClass_str25 );
-      }
+      initialConnection = 0;
+      
+      controlPvId->add_value_callback( acb_controlUpdate, this );
 
     }
 
@@ -2227,25 +2241,11 @@ char msg[79+1];
 
     curReadValue = rV;
 
-    if ( !readEventId ) {
+    if ( initialReadConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_ENUM, 1, readPvId,
-       acb_readUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &readEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL ) {
-        printf( activeChoiceButtonClass_str26 );
-      }
-
-    }
-
-    if ( !readAlarmEventId ) {
-
-      stat = ca_add_masked_array_event( DBR_STS_ENUM, 1, readPvId,
-       acb_readAlarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &readAlarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL ) {
-        printf( activeChoiceButtonClass_str27 );
-      }
+      initialReadConnection = 0;
+      
+      readPvId->add_value_callback( acb_readUpdate, this );
 
     }
 
@@ -2264,17 +2264,21 @@ char msg[79+1];
 
     connection.setPvConnected( (void *) visPvConnection );
 
-    stat = ca_get_callback( DBR_GR_DOUBLE, visPvId,
-     acb_visInfoUpdate, (void *) this );
+    visValue = curVisValue = visPvId->get_double();
+
+    nvi = 1;
 
   }
 
   if ( nvi ) {
 
-    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, visPvId,
-     acb_visUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-     &visEventId, DBE_VALUE );
-    if ( stat != ECA_NORMAL ) printf( activeChoiceButtonClass_str27 );
+    if ( initialVisConnection ) {
+
+      initialVisConnection = 0;
+      
+      visPvId->add_value_callback( acb_visUpdate, this );
+
+    }
 
     if ( ( visValue >= minVis ) &&
          ( visValue < maxVis ) )
@@ -2297,17 +2301,21 @@ char msg[79+1];
 
   if ( ncolc ) {
 
-    stat = ca_get_callback( DBR_GR_DOUBLE, colorPvId,
-     acb_colorInfoUpdate, (void *) this );
+    colorValue = curColorValue = colorPvId->get_double();
+
+    ncoli = 1;
 
   }
 
   if ( ncoli ) {
 
-    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, colorPvId,
-     acb_colorUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-     &colorEventId, DBE_VALUE );
-    if ( stat != ECA_NORMAL ) printf( activeChoiceButtonClass_str25 );
+    if ( initialColorConnection ) {
+
+      initialColorConnection = 0;
+      
+      colorPvId->add_value_callback( acb_colorUpdate, this );
+
+    }
 
     invisColor = 0;
 
@@ -2344,8 +2352,6 @@ char msg[79+1];
     }
 
   }
-
-#endif
 
 //----------------------------------------------------------------------------
 
@@ -2416,12 +2422,16 @@ char msg[79+1];
 
 char *activeChoiceButtonClass::firstDragName ( void ) {
 
+  if ( !enabled ) return NULL;
+
   dragIndex = 0;
   return dragName[dragIndex];
 
 }
 
 char *activeChoiceButtonClass::nextDragName ( void ) {
+
+  if ( !enabled ) return NULL;
 
   if ( dragIndex < (int) ( sizeof(dragName) / sizeof(char *) ) - 1 ) {
     dragIndex++;
@@ -2436,6 +2446,8 @@ char *activeChoiceButtonClass::nextDragName ( void ) {
 char *activeChoiceButtonClass::dragValue (
   int i ) {
 
+  if ( !enabled ) return NULL;
+
   if ( i == 0 ) {
     return controlPvExpStr.getExpanded();
   }
@@ -2443,10 +2455,10 @@ char *activeChoiceButtonClass::dragValue (
     return readPvExpStr.getExpanded();
   }
   else if ( i == 2 ) {
-    return colorPvExpString.getExpanded();
+    return colorPvExpStr.getExpanded();
   }
   else {
-    return visPvExpString.getExpanded();
+    return visPvExpStr.getExpanded();
   }
 
 }
@@ -2515,7 +2527,7 @@ void activeChoiceButtonClass::changePvNames (
 
   if ( flag & ACTGRF_VISPVS_MASK ) {
     if ( numVisPvs ) {
-      visPvExpString.setRaw( ctlPvs[0] );
+      visPvExpStr.setRaw( ctlPvs[0] );
     }
   }
 

@@ -148,8 +148,13 @@ void EPICS_ProcessVariable::ca_connect_callback(
                     me->value = new PVValueChar(me);
                     break;
                 case DBF_INT:
+                    me->value = new PVValueInt(me,"short");
+                    break;
                 case DBF_LONG:
                     me->value = new PVValueInt(me);
+                    break;
+                case DBF_FLOAT:
+                    me->value = new PVValueDouble(me,"float");
                     break;
                 case DBF_DOUBLE:
                 default: // fallback: request as double
@@ -218,6 +223,9 @@ bool EPICS_ProcessVariable::is_valid() const
 const ProcessVariable::Type &EPICS_ProcessVariable::get_type() const
 {   return value->get_type(); }   
 
+const ProcessVariable::specificType &EPICS_ProcessVariable::get_specific_type() const
+{   return value->get_specific_type(); }   
+
 int EPICS_ProcessVariable::get_int() const
 {   return value->get_int(); }
 
@@ -229,6 +237,9 @@ size_t EPICS_ProcessVariable::get_string(char *strbuf, size_t buflen) const
 
 size_t EPICS_ProcessVariable::get_dimension() const
 {   return ca_element_count(pv_chid); }
+
+const char *EPICS_ProcessVariable::get_char_array() const
+{   return value->get_char_array(); }
 
 const int *EPICS_ProcessVariable::get_int_array() const
 {   return value->get_int_array(); }
@@ -319,6 +330,36 @@ bool EPICS_ProcessVariable::put(const char *value)
     return false;
 }
 
+bool EPICS_ProcessVariable::putText(char *value)
+{
+  if (is_valid())
+    {
+        ca_put( DBR_STRING, pv_chid, value);
+        return true;
+    }
+    return false;
+}
+
+bool EPICS_ProcessVariable::putArrayText(char *value)
+{
+  if (is_valid())
+    {
+        ca_array_put( DBR_CHAR, strlen(value)+1, pv_chid, value );
+        return true;
+    }
+    return false;
+}
+
+bool EPICS_ProcessVariable::putAck(short value)
+{
+  if (is_valid())
+    {
+        ca_put( DBR_PUT_ACKS, pv_chid, &value );
+        return true;
+    }
+    return false;
+}
+
 // ---------------------- PVValue ---------------------------------
 PVValue::PVValue(EPICS_ProcessVariable *epv)
 {
@@ -363,6 +404,9 @@ size_t PVValue::get_string(char *strbuf, size_t len) const
     return strlen(strbuf);
 }
 
+const char *PVValue::get_char_array() const
+{   return 0; }
+
 const int  *PVValue::get_int_array() const
 {   return 0; }
 
@@ -375,15 +419,37 @@ size_t PVValue::get_enum_count() const
 const char *PVValue::get_enum(size_t i) const
 {   return "<not enumerated>"; }
 
+const ProcessVariable::specificType &PVValue::get_specific_type() const
+{   return specific_type; }
+
 // ---------------------- PVValueInt ---------------------------
 
 static ProcessVariable::Type integer_type =
 { ProcessVariable::Type::integer, 32, "integer:32" };
 
+static ProcessVariable::specificType i_type =
+{ ProcessVariable::specificType::integer, 32 };
+
+static ProcessVariable::specificType s_type =
+{ ProcessVariable::specificType::shrt, 16 };
+
 PVValueInt::PVValueInt(EPICS_ProcessVariable *epv)
         : PVValue(epv)
 {
     value = new int[epv->get_dimension()];
+    specific_type = i_type;
+}
+
+PVValueInt::PVValueInt(EPICS_ProcessVariable *epv, char* typeInfo)
+        : PVValue(epv)
+{
+    value = new int[epv->get_dimension()];
+    if ( !strcmp( typeInfo, "short" ) ) {
+      specific_type = s_type;
+    }
+    else {
+      specific_type = i_type;
+    }
 }
 
 PVValueInt::~PVValueInt()
@@ -457,10 +523,29 @@ void PVValueInt::read_value(const void *buf)
 static ProcessVariable::Type double_type =
 { ProcessVariable::Type::real, 64, "real:64" };
 
+static ProcessVariable::specificType d_type =
+{ ProcessVariable::specificType::real, 32 };
+
+static ProcessVariable::specificType f_type =
+{ ProcessVariable::specificType::flt, 16 };
+
 PVValueDouble::PVValueDouble(EPICS_ProcessVariable *epv)
         : PVValue(epv)
 {
     value = new double[epv->get_dimension()];
+    specific_type = d_type;
+}
+
+PVValueDouble::PVValueDouble(EPICS_ProcessVariable *epv, char* typeInfo)
+        : PVValue(epv)
+{
+    value = new double[epv->get_dimension()];
+    if ( !strcmp( typeInfo, "float" ) ) {
+      specific_type = f_type;
+    }
+    else {
+      specific_type = d_type;
+    }
 }
 
 PVValueDouble::~PVValueDouble()
@@ -513,16 +598,19 @@ void PVValueDouble::read_value(const void *buf)
 
 static ProcessVariable::Type enum_type =
 { ProcessVariable::Type::enumerated, 16, "enumerated:16" };
-   
+
+static ProcessVariable::specificType e_type =
+{ ProcessVariable::specificType::enumerated, 16 };
+
 PVValueEnum::PVValueEnum(EPICS_ProcessVariable *epv)
         : PVValue(epv)
 {
     enums = 0;
+    specific_type = e_type;
 }
 
 const ProcessVariable::Type &PVValueEnum::get_type() const
 {   return enum_type; }
-
 
 short PVValueEnum::get_DBR() const
 {   return DBR_ENUM; }
@@ -568,15 +656,20 @@ void PVValueEnum::read_value(const void *buf)
 
 // ---------------------- PVValueString -----------------------------
 
-PVValueString::PVValueString(EPICS_ProcessVariable *epv)
-        : PVValue(epv)
-{
-    value[0] = '\0';
-}
 
 static ProcessVariable::Type string_type =
 { ProcessVariable::Type::text, 0, "text:0" };
    
+static ProcessVariable::specificType str_type =
+{ ProcessVariable::specificType::text, 0 };
+
+PVValueString::PVValueString(EPICS_ProcessVariable *epv)
+        : PVValue(epv)
+{
+    value[0] = '\0';
+    specific_type = str_type;
+}
+
 const ProcessVariable::Type &PVValueString::get_type() const
 {   return string_type; }
 
@@ -620,6 +713,9 @@ void PVValueString::read_value(const void *buf)
 
 // ---------------------- PVValueChar -------------------------------
 
+static ProcessVariable::specificType c_type =
+{ ProcessVariable::specificType::chr, 8 };
+
 PVValueChar::PVValueChar(EPICS_ProcessVariable *epv)
         : PVValue(epv)
 {
@@ -628,6 +724,7 @@ PVValueChar::PVValueChar(EPICS_ProcessVariable *epv)
         room = 2;
     value = new char[room];
     len = 0;
+    specific_type = c_type;
 
     //    printf("PVValueChar(%s): dimension %d, room %d\n",
     //           epv->get_name(), epv->get_dimension(), room);
@@ -650,6 +747,9 @@ int PVValueChar::get_int() const
 
 double PVValueChar::get_double() const
 {   return (len > 0) ? (double)value[0] : 0; }
+
+const char * PVValueChar::get_char_array() const
+{   return value; }
 
 size_t PVValueChar::get_string(char *strbuf, size_t buflen) const
 {

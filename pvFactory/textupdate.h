@@ -21,7 +21,7 @@
 
 #define TEXTUPDATE_CLASSNAME "TextupdateClass"
 #define TEXTENTRY_CLASSNAME  "TextentryClass"
-#define TEXT_MAJOR 7
+#define TEXT_MAJOR 10
 #define TEXT_MINOR 0
 #define TEXT_RELEASE 0
 
@@ -39,7 +39,9 @@ public:
     
     // Load/save
     int save(FILE *f);
+    int old_save(FILE *f);
     int createFromFile(FILE *fptr, char *name, activeWindowClass *actWin);
+    int old_createFromFile(FILE *fptr, char *name, activeWindowClass *actWin);
 
     // Edit Mode
     int createInteractive(activeWindowClass *aw_obj,
@@ -179,6 +181,8 @@ protected:
     int deactivate(int pass);
     int drawActive();
     int eraseActive();
+    void map( void );
+    void unmap( void );
 private:
     static void text_edit_callback(Widget, XtPointer, XtPointer);
     static void text_noedit_callback(Widget, XtPointer, XtPointer);

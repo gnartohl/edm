@@ -24,14 +24,7 @@
 #define activeCircleClass_str21 (char *) "Not Visible if|Visible if"
 #define activeCircleClass_str22 (char *) ">="
 #define activeCircleClass_str23 (char *) "and <"
-#define activeCircleClass_str24 (char *) "error from ca_search\n"
-#define activeCircleClass_str25 (char *) "error from ca_search\n"
-#define activeCircleClass_str26 (char *) "ca_clear_event failure\n"
-#define activeCircleClass_str27 (char *) "ca_clear_event failure\n"
-#define activeCircleClass_str28 (char *) "ca_clear_channel failure\n"
-#define activeCircleClass_str29 (char *) "ca_clear_channel failure\n"
-#define activeCircleClass_str30 (char *) "ca_add_masked_array_event failed\n"
-#define activeCircleClass_str31 (char *) "ca_add_masked_array_event failed\n"
+#define activeCircleClass_str24 (char *) "error creating pv\n"
 #define activeCircleClass_str32 (char *) "import file syntax error"
 
 #endif

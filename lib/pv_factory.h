@@ -11,6 +11,9 @@
 #include"hashtable.h"
 #include"dl_list.h"
 
+int pend_io ( double sec );
+int pend_event ( double sec );
+
 // PV_Factory: Factory for ProcessVariables.
 // When e.g. a widget asks for PV by name for the first time,
 // a new PV will be created. Next time,
@@ -105,7 +108,7 @@ class ProcessVariable
 {
 public:
     const char *get_name() const;
-    
+
     // When no longer used, release, don't delete:
     void reference();
     void release();
@@ -140,7 +143,16 @@ public:
         const char *description;
     } Type;
 
+    typedef struct
+    {
+        enum { real, integer, enumerated, text, special, flt, chr,
+               shrt } type;
+        size_t size;
+    } specificType;
+
     virtual const Type &get_type() const = 0;
+   
+    virtual const specificType &get_specific_type() const = 0;
    
     // -- Don't call ANY of the following when is_valid() returns false!!
 
@@ -148,7 +160,7 @@ public:
     // of the control system. So no matter if the raw value was an int
     // or double or enumrated, you can ask for int, double or a string.
     // 
-    // It the value is really enumerated, you can ask for the enumeration
+    // If the value is really enumerated, you can ask for the enumeration
     // strings. Otherwise the enumeration strings are undefined.
     // For arrays, you have to respect the native type.
     // Example: call get_int_array() only if get_type() reports integer.
@@ -168,6 +180,8 @@ public:
     //  multi-dim. arrays.)
     virtual size_t      get_dimension() const = 0;
 
+    // Use this when get_specific_type().type == chr
+    virtual const char   *get_char_array() const = 0;
     // Use this when get_type().type == integer
     virtual const int    *get_int_array() const = 0;
     // Use this when get_type().type == real
@@ -208,6 +222,9 @@ public:
     virtual bool put(double value) = 0;
     virtual bool put(const char *value) = 0;
     virtual bool put(int value);
+    virtual bool putText(char *value) = 0;
+    virtual bool putArrayText(char *value) = 0;
+    virtual bool putAck(short value);
 
 protected:
     // hidden, use PV_Factory::create()/ProcessVariable::release()

@@ -74,6 +74,8 @@ double fvalue;
 
   XtVaGetValues( w, XmNuserData, &mslo, NULL );
 
+  if ( !mslo->enabled || !mslo->active ) return;
+
   if ( mslo->increment == 0 ) return;
 
   if ( mslo->dragIndicator ) {
@@ -138,7 +140,7 @@ double fvalue;
   if ( mslo->controlExists ) {
     if ( mslo->controlPvId ) {
       stat = mslo->controlPvId->put( fvalue );
-      //if ( stat != ECA_NORMAL ) printf( activeMotifSliderClass_str59 );
+      if ( !stat ) printf( activeMotifSliderClass_str59 );
     }
   }
 
@@ -157,6 +159,8 @@ activeMotifSliderClass *mslo;
 double fvalue;
 
   XtVaGetValues( w, XmNuserData, &mslo, NULL );
+
+  if ( !mslo->enabled || !mslo->active ) return;
 
   mslo->dragIndicator = 1;
 
@@ -196,7 +200,7 @@ double fvalue;
   if ( mslo->controlExists ) {
     if ( mslo->controlPvId ) {
       stat = mslo->controlPvId->put( fvalue );
-      //if ( stat != ECA_NORMAL ) printf( activeMotifSliderClass_str59 );
+      if ( !stat ) printf( activeMotifSliderClass_str59 );
     }
   }
 
@@ -284,8 +288,8 @@ char strVal[255+1];
 
     mslo->bufIncrement = mslo->increment;
     mslo->bufControlV = mslo->controlV;
-    mslo->valueFormX = mslo->actWin->xPos() + mslo->x  + be->x;
-    mslo->valueFormY = mslo->actWin->yPos() + mslo->y + be->y;
+    mslo->valueFormX = be->x_root;
+    mslo->valueFormY = be->y_root;
     mslo->valueFormW = 0;
     mslo->valueFormH = 0;
     mslo->valueFormMaxH = 600;
@@ -337,6 +341,8 @@ int stat;
 
   XtVaGetValues( w, XmNuserData, &mslo, NULL );
 
+  if ( !mslo->enabled ) return;
+
   stat = mslo->startDrag( w, e );
 
 }
@@ -354,7 +360,9 @@ XButtonEvent *be = (XButtonEvent *) e;
 
   XtVaGetValues( w, XmNuserData, &mslo, NULL );
 
-  stat = mslo->selectDragValue( mslo->x + be->x, mslo->y + be->y );
+  if ( !mslo->enabled ) return;
+
+  stat = mslo->selectDragValue( be );
 
 }
 
@@ -373,6 +381,7 @@ double fv;
      mslo->updateControlTimerValue, mslc_updateControl, client );
   }
   else {
+    mslo->updateControlTimer = 0;
     return;
   }
 
@@ -471,7 +480,7 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
   if ( mslo->controlExists ) {
     if ( mslo->controlPvId ) {
       stat = mslo->controlPvId->put( fvalue );
-      //if ( stat != ECA_NORMAL ) printf( activeMotifSliderClass_str3 );
+      if ( !stat ) printf( activeMotifSliderClass_str3 );
       mslo->actWin->appCtx->proc->lock();
       mslo->actWin->addDefExeNode( mslo->aglPtr );
       mslo->actWin->appCtx->proc->unlock();
@@ -811,6 +820,7 @@ activeMotifSliderClass::activeMotifSliderClass ( void ) {
 
   frameWidget = NULL;
   scaleWidget = NULL;
+  scrollBarWidget = NULL;
 
   unconnectedTimer = 0;
 
@@ -881,6 +891,7 @@ activeGraphicClass *mslo = (activeGraphicClass *) this;
 
   frameWidget = NULL;
   scaleWidget = NULL;
+  scrollBarWidget = NULL;
 
   unconnectedTimer = 0;
 
@@ -948,6 +959,97 @@ int activeMotifSliderClass::save (
   FILE *f )
 {
 
+int stat, major, minor, release;
+
+tagClass tag;
+
+int zero = 0;
+double dzero = 0;
+char *emptyStr = "";
+
+int labelTypeLiteral = 0;
+static char *labelEnumStr[3] = {
+  "literal",
+  "pvLabel",
+  "pvName"
+};
+static int labelEnum[3] = {
+  0,
+  1,
+  2
+};
+
+int formatTypeFfloat = 0;
+static char *formatTypeEnumStr[3] = {
+  "ffloat",
+  "exponential",
+  "gfloat"
+};
+static int formatTypeEnum[3] = {
+  0,
+  1,
+  2
+};
+
+int horz = 0;
+static char *orienTypeEnumStr[2] = {
+  "horizontal",
+  "vertical"
+};
+static int orienTypeEnum[2] = {
+  0,
+  1
+};
+
+  major = MSLC_MAJOR_VERSION;
+  minor = MSLC_MINOR_VERSION;
+  release = MSLC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadW( "bgAlarm", &bgColorMode, &zero );
+  tag.loadW( "2ndBgColor", actWin->ci, &shadeColor );
+  tag.loadW( "topShadowColor", actWin->ci, &topColor );
+  tag.loadW( "botShadowColor", actWin->ci, &botColor );
+  tag.loadW( "increment", &increment, &dzero );
+  tag.loadW( "controlPv", &controlPvName, emptyStr );
+  tag.loadW( "controlLabel", &controlLabelName, emptyStr );
+  tag.loadW( "controlLabelType", 3, labelEnumStr, labelEnum, &controlLabelType,
+   &labelTypeLiteral );
+  tag.loadW( "font", fontTag );
+  tag.loadW( "displayFormat", 3, formatTypeEnumStr, formatTypeEnum,
+   &formatType, &formatTypeFfloat );
+  tag.loadBoolW( "limitsFromDb", &limitsFromDb, &zero );
+  tag.loadW( "precision", &efPrecision );
+  tag.loadW( "scaleMin", &efScaleMin );
+  tag.loadW( "scaleMax", &efScaleMax );
+  tag.loadBoolW( "showLimits", &showLimits, &zero );
+  tag.loadBoolW( "showLabel", &showLabel, &zero );
+  tag.loadBoolW( "showValue", &showValue, &zero );
+  tag.loadW( "orientation", 2, orienTypeEnumStr, orienTypeEnum,
+   &orientation, &horz );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int activeMotifSliderClass::old_save (
+  FILE *f )
+{
+
 int index, stat;
 
   fprintf( f, "%-d %-d %-d\n", MSLC_MAJOR_VERSION, MSLC_MINOR_VERSION,
@@ -1011,6 +1113,146 @@ int index, stat;
 }
 
 int activeMotifSliderClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+double dzero = 0;
+char *emptyStr = "";
+
+int labelTypeLiteral = 0;
+static char *labelEnumStr[3] = {
+  "literal",
+  "pvLabel",
+  "pvName"
+};
+static int labelEnum[3] = {
+  0,
+  1,
+  2
+};
+
+int formatTypeFfloat = 0;
+static char *formatTypeEnumStr[3] = {
+  "ffloat",
+  "exponential",
+  "gfloat"
+};
+static int formatTypeEnum[3] = {
+  0,
+  1,
+  2
+};
+
+int horz = 0;
+static char *orienTypeEnumStr[2] = {
+  "horizontal",
+  "vertical"
+};
+static int orienTypeEnum[2] = {
+  0,
+  1
+};
+
+  actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "bgAlarm", &bgColorMode, &zero );
+  tag.loadR( "2ndBgColor", actWin->ci, &shadeColor );
+  tag.loadR( "topShadowColor", actWin->ci, &topColor );
+  tag.loadR( "botShadowColor", actWin->ci, &botColor );
+  tag.loadR( "increment", &increment, &dzero );
+  tag.loadR( "controlPv", &controlPvName, emptyStr );
+  tag.loadR( "controlLabel", &controlLabelName, emptyStr );
+  tag.loadR( "controlLabelType", 3, labelEnumStr, labelEnum,
+   &controlLabelType, &labelTypeLiteral );
+  tag.loadR( "font", 63, fontTag );
+  tag.loadR( "displayFormat", 3, formatTypeEnumStr, formatTypeEnum,
+   &formatType, &formatTypeFfloat );
+  tag.loadR( "limitsFromDb", &limitsFromDb, &zero );
+  tag.loadR( "precision", &efPrecision );
+  tag.loadR( "scaleMin", &efScaleMin );
+  tag.loadR( "scaleMax", &efScaleMax );
+  tag.loadR( "showLimits", &showLimits, &zero );
+  tag.loadR( "showLabel", &showLabel, &zero );
+  tag.loadR( "showValue", &showValue, &zero );
+  tag.loadR( "orientation", 2, orienTypeEnumStr, orienTypeEnum, &orientation,
+   &horz );
+  tag.loadW( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > MSLC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  if ( bgColorMode == MSLC_K_COLORMODE_ALARM ) {
+    bgColor.setAlarmSensitive();
+  }
+  else {
+    bgColor.setAlarmInsensitive();
+  }
+
+  if ( limitsFromDb || efPrecision.isNull() )
+    precision = 1;
+  else
+    precision = efPrecision.value();
+
+  if ( ( limitsFromDb || efScaleMin.isNull() ) &&
+       ( limitsFromDb || efScaleMax.isNull() ) ) {
+    minFv = scaleMin = 0;
+    maxFv = scaleMax = 10;
+  }
+  else{
+    minFv = scaleMin = efScaleMin.value();
+    maxFv = scaleMax = efScaleMax.value();
+  }
+
+  actWin->fi->loadFontTag( fontTag );
+  fs = actWin->fi->getXFontStruct( fontTag );
+
+  updateDimensions();
+
+  controlX = 0;
+
+  strcpy( controlValue, "0.0" );
+  strcpy( controlLabel, "" );
+
+  curControlV = oneControlV = controlV = 0.0;
+
+  return stat;
+
+}
+
+int activeMotifSliderClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -1296,7 +1538,7 @@ int activeMotifSliderClass::erase ( void ) {
 
 int activeMotifSliderClass::eraseActive ( void ) {
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !active || !init ) return 1;
 
   actWin->executeGc.saveFg();
   actWin->executeGc.setFG( bgColor.getColor() );
@@ -1437,7 +1679,7 @@ int activeMotifSliderClass::eraseActiveControlText ( void ) {
 
 int tX, tY;
 
-  if ( !activeMode || !init || !showValue ) return 1;
+  if ( !enabled || !active || !init || !showValue ) return 1;
 
   if ( fs && controlExists ) {
 
@@ -1471,7 +1713,7 @@ int activeMotifSliderClass::drawActiveControlText ( void ) {
 
 int tX, tY;
 
-  if ( !activeMode || !init || !showValue ) return 1;
+  if ( !enabled || !active || !init || !showValue ) return 1;
 
   if ( fs && controlExists ) {
 
@@ -1529,7 +1771,7 @@ int tX, tY;
     needToEraseUnconnected = 0;
   }
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !active || !init ) return 1;
 
   XtVaSetValues( frameWidget,
    XmNbackground, bgColor.getColor(),
@@ -1635,6 +1877,7 @@ static void scrollBarEventHandler (
   Boolean *continueToDispatch ) {
 
 activeMotifSliderClass *mslo;
+XButtonEvent *be;
 
   *continueToDispatch = True;
 
@@ -1643,6 +1886,7 @@ activeMotifSliderClass *mslo;
   if ( !mslo->active ) return;
 
   if ( e->type == EnterNotify ) {
+
     if ( mslo->controlPvId ) {
       if ( !mslo->controlPvId->have_write_access() ) {
         mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
@@ -1653,11 +1897,34 @@ activeMotifSliderClass *mslo;
          CURSOR_K_DEFAULT );
       }
     }
-  }
 
-  if ( e->type == LeaveNotify ) {
+  }
+  else if ( e->type == LeaveNotify ) {
+
     mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
      CURSOR_K_DEFAULT );
+
+  }
+  else if ( e->type == ButtonPress ) {
+
+    be = (XButtonEvent *) e;
+
+    mslo->buttonPressed = 1;
+
+  }
+  else if ( e->type == ButtonRelease ) {
+
+    be = (XButtonEvent *) e;
+
+    mslo->buttonPressed = 0;
+
+    if ( mslo->frameWidget ) {
+      if ( mslo->needUnmap && mslo->isMapped ) {
+        XtUnmapWidget( mslo->frameWidget );
+        mslo->isMapped = 0;
+      }
+    }
+
   }
 
 }
@@ -1677,9 +1944,10 @@ char title[32], *ptr, strVal[255+1];
 
   mslo = (activeMotifSliderClass *) client;
 
-  if ( !mslo->active ) return;
+  if ( !mslo->enabled || !mslo->active ) return;
 
   if ( e->type == EnterNotify ) {
+
     if ( mslo->controlPvId ) {
       if ( !mslo->controlPvId->have_write_access() ) {
         mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
@@ -1690,11 +1958,13 @@ char title[32], *ptr, strVal[255+1];
          CURSOR_K_DEFAULT );
       }
     }
-  }
 
-  if ( e->type == LeaveNotify ) {
+  }
+  else if ( e->type == LeaveNotify ) {
+
     mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
      CURSOR_K_DEFAULT );
+
   }
 
   ptr = mslo->actWin->obj.getNameFromClass( "activeMotifSliderClass" );
@@ -1741,8 +2011,8 @@ char title[32], *ptr, strVal[255+1];
 
       mslo->bufIncrement = mslo->increment;
       mslo->bufControlV = mslo->controlV;
-      mslo->valueFormX = mslo->actWin->xPos() + mslo->x  + be->x;
-      mslo->valueFormY = mslo->actWin->yPos() + mslo->y + be->y;
+      mslo->valueFormX = be->x_root;
+      mslo->valueFormY = be->y_root;
       mslo->valueFormW = 0;
       mslo->valueFormH = 0;
       mslo->valueFormMaxH = 600;
@@ -1787,7 +2057,7 @@ char title[32], *ptr, strVal[255+1];
     case Button2:
 
       if ( be->state & ShiftMask ) {
-        stat = mslo->selectDragValue( mslo->x+be->x, mslo->y+be->y );
+        stat = mslo->selectDragValue( be );
       }
 
       break;
@@ -1819,6 +2089,11 @@ int opStat;
     if ( !opComplete ) {
 
       opComplete = 1;
+
+      initEnable();
+      isMapped = 0;
+      buttonPressed = 0;
+      needUnmap = 0;
 
       oldStat = -1;
       oldSev = -1;
@@ -1958,6 +2233,26 @@ int activeMotifSliderClass::deactivate (
 
   case 1:
 
+// for EPICS support
+
+    if ( controlPvId ) {
+      controlPvId->remove_conn_state_callback(
+       monitorControlConnectState, this );
+      controlPvId->remove_value_callback(
+       controlUpdate, this );
+      controlPvId->release();
+      controlPvId = 0;
+    }
+
+    if ( controlLabelPvId ) {
+      controlLabelPvId->remove_conn_state_callback(
+       monitorControlLabelConnectState, this );
+      controlLabelPvId->remove_value_callback(
+       controlLabelUpdate, this );
+      controlLabelPvId->release();
+      controlLabelPvId = 0;
+    }
+
     if ( ef.formIsPoppedUp() ) {
       ef.popdown();
     }
@@ -1979,40 +2274,34 @@ int activeMotifSliderClass::deactivate (
        motifSliderEventHandler, (XtPointer) this );
     }
 
-// for EPICS support
-
-    if ( controlPvId ) {
-      controlPvId->remove_conn_state_callback(
-       monitorControlConnectState, this );
-      controlPvId->remove_value_callback(
-       controlUpdate, this );
-      controlPvId->release();
-      controlPvId = 0;
+    if ( scrollBarWidget ) {
+      XtRemoveEventHandler( scrollBarWidget,
+       EnterWindowMask|LeaveWindowMask, False,
+       scrollBarEventHandler, (XtPointer) this );
     }
 
-    if ( controlLabelPvId ) {
-      controlLabelPvId->remove_conn_state_callback(
-       monitorControlLabelConnectState, this );
-      controlLabelPvId->remove_value_callback(
-       controlLabelUpdate, this );
-      controlLabelPvId->release();
-      controlLabelPvId = 0;
+    if ( scaleWidget ) {
+      XtRemoveCallback( scaleWidget, XmNvalueChangedCallback,
+       msloValueChangeCB, (XtPointer) this );
+      XtRemoveCallback( scaleWidget, XmNdragCallback,
+       msloIndicatorDragCB, (XtPointer) this );
+    }
+
+    if ( frameWidget ) {
+      if ( scaleWidget ) {
+        XtUnmanageChild( scaleWidget );
+        XtDestroyWidget( scaleWidget );
+        scaleWidget = NULL;
+        scrollBarWidget = NULL;
+      }
+      XtUnmanageChild( frameWidget );
+      XtDestroyWidget( frameWidget );
+      frameWidget = NULL;
     }
 
     break;
 
   case 2:
-
-    if ( frameWidget ) {
-      if ( scaleWidget ) {
-        XtUnmapWidget( scaleWidget );
-        XtDestroyWidget( scaleWidget );
-        scaleWidget = NULL;
-      }
-      XtUnmapWidget( frameWidget );
-      XtDestroyWidget( frameWidget );
-      frameWidget = NULL;
-    }
 
     break;
 
@@ -2221,6 +2510,7 @@ Cardinal numChildren;
        XmNmarginWidth, 0,
        XmNresizePolicy, XmRESIZE_NONE,
        XmNbackground, bgColor.pixelColor(),
+       XmNmappedWhenManaged, False,
        NULL );
 
       if ( frameWidget ) {
@@ -2323,8 +2613,8 @@ Cardinal numChildren;
            NULL );
 
           XtAddEventHandler( scrollBarWidget,
-           EnterWindowMask|LeaveWindowMask, False,
-           scrollBarEventHandler, (XtPointer) this );
+           ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask,
+           False, scrollBarEventHandler, (XtPointer) this );
 
         }
 
@@ -2335,6 +2625,14 @@ Cardinal numChildren;
          msloIndicatorDragCB, (XtPointer) this );
 
         XtManageChild( frameWidget );
+
+	if ( enabled ) {
+          XtMapWidget( frameWidget );
+          isMapped = 1;
+	}
+        else {
+          isMapped = 0;
+	}
 
       }
 
@@ -2485,12 +2783,16 @@ int activeMotifSliderClass::getProperty (
 
 char *activeMotifSliderClass::firstDragName ( void ) {
 
+  if ( !enabled ) return NULL;
+
   dragIndex = 0;
   return dragName[dragIndex];
 
 }
 
 char *activeMotifSliderClass::nextDragName ( void ) {
+
+  if ( !enabled ) return NULL;
 
   if ( dragIndex < (int) ( sizeof(dragName) / sizeof(char *) ) - 1 ) {
     dragIndex++;
@@ -2505,10 +2807,25 @@ char *activeMotifSliderClass::nextDragName ( void ) {
 char *activeMotifSliderClass::dragValue (
   int i ) {
 
-  switch ( i ) {
-  case 0:
-    return controlPvName.getExpanded();
-    break;
+  if ( !enabled ) return NULL;
+
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    switch ( i ) {
+    case 0:
+      return controlPvName.getExpanded();
+      break;
+    }
+
+  }
+  else {
+
+    switch ( i ) {
+    case 0:
+      return controlPvName.getRaw();
+      break;
+    }
+
   }
 
   return NULL;
@@ -2578,6 +2895,42 @@ void activeMotifSliderClass::changePvNames (
   if ( flag & ACTGRF_CTLPVS_MASK ) {
     if ( numCtlPvs ) {
       controlPvName.setRaw( ctlPvs[0] );
+    }
+  }
+
+}
+
+void activeMotifSliderClass::map ( void ) {
+
+  needUnmap = 0;
+
+  if ( frameWidget ) {
+    if ( !isMapped ) {
+      //printf( "map\n" );
+      XtMapWidget( frameWidget );
+      isMapped = 1;
+    }
+  }
+
+}
+
+void _edmDebug( void );
+
+void activeMotifSliderClass::unmap ( void ) {
+
+  if ( buttonPressed ) {
+    needUnmap = 1;
+    return;
+  }
+  else {
+    needUnmap = 0;
+  }
+
+  if ( frameWidget ) {
+    if ( isMapped ) {
+      //printf( "unmap\n" );
+      XtUnmapWidget( frameWidget );
+      isMapped = 0;
     }
   }
 

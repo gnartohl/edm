@@ -118,8 +118,6 @@ int i;
 
 }
 
-#ifdef __epics__
-
 static void mmux_putValue (
   Widget w,
   XtPointer client,
@@ -127,13 +125,13 @@ static void mmux_putValue (
 {
 
 menuMuxClass *mmuxo = (menuMuxClass *) client;
-int i, stat, value;
+int i, value;
 
   for ( i=0; i<mmuxo->numStates; i++ ) {
 
     if ( w == mmuxo->pb[i] ) {
       value = i;
-      stat = ca_put( DBR_LONG, mmuxo->controlPvId, &value );
+      mmuxo->controlPvId->put( value );
       return;
     }
 
@@ -142,12 +140,13 @@ int i, stat, value;
 }
 
 static void mmux_monitor_control_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-menuMuxClass *mmuxo = (menuMuxClass *) ca_puser(arg.chid);
+menuMuxClass *mmuxo = (menuMuxClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     mmuxo->needConnectInit = 1;
 
@@ -164,74 +163,41 @@ menuMuxClass *mmuxo = (menuMuxClass *) ca_puser(arg.chid);
 
 }
 
-static void mmux_infoUpdate (
-  struct event_handler_args ast_args )
-{
-
-struct dbr_gr_long longRec;
-menuMuxClass *mmuxo = (menuMuxClass *) ast_args.usr;
-
-  longRec = *( (struct dbr_gr_long *) ast_args.dbr );
-
-  mmuxo->needInfoInit = 1;
-
-  mmuxo->actWin->appCtx->proc->lock();
-
-  mmuxo->curControlV = longRec.value;
-  mmuxo->actWin->addDefExeNode( mmuxo->aglPtr );
-
-  mmuxo->actWin->appCtx->proc->unlock();
-
-
-}
-
 static void mmux_controlUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-menuMuxClass *mmuxo = (menuMuxClass *) ast_args.usr;
+menuMuxClass *mmuxo = (menuMuxClass *) userarg;
+int st, sev;
 
   if ( !mmuxo->active ) return;
 
-  mmuxo->needUpdate = 1;
-
   mmuxo->actWin->appCtx->proc->lock();
 
-  mmuxo->curControlV = *( (int *) ast_args.dbr );
+  mmuxo->curControlV = pv->get_int();
   if ( mmuxo->curControlV < 0 )
     mmuxo->curControlV = 0;
   else if ( mmuxo->curControlV >= mmuxo->numStates )
     mmuxo->curControlV = mmuxo->numStates - 1;
 
+  st = pv->get_status();
+  sev = pv->get_severity();
+  if ( ( st != mmuxo->oldStat ) || ( sev != mmuxo->oldSev ) ) {
+    mmuxo->oldStat = st;
+    mmuxo->oldSev = sev;
+    mmuxo->fgColor.setStatus( st, sev );
+    mmuxo->bgColor.setStatus( st, sev );
+    mmuxo->bufInvalidate();
+    mmuxo->needDraw = 1;
+  }
+
+  mmuxo->needUpdate = 1;
   mmuxo->actWin->addDefExeNode( mmuxo->aglPtr );
 
   mmuxo->actWin->appCtx->proc->unlock();
 
 }
-
-static void mmux_alarmUpdate (
-  struct event_handler_args ast_args )
-{
-
-menuMuxClass *mmuxo = (menuMuxClass *) ast_args.usr;
-struct dbr_sts_enum statusRec;
-
-  statusRec = *( (struct dbr_sts_enum *) ast_args.dbr );
-
-  mmuxo->fgColor.setStatus( statusRec.status, statusRec.severity );
-  mmuxo->bgColor.setStatus( statusRec.status, statusRec.severity );
-
-  mmuxo->needDraw = 1;
-
-  mmuxo->actWin->appCtx->proc->lock();
-
-  mmuxo->actWin->addDefExeNode( mmuxo->aglPtr );
-
-  mmuxo->actWin->appCtx->proc->unlock();
-
-}
-
-#endif
 
 static void mmuxc_edit_update (
   Widget w,
@@ -543,6 +509,68 @@ int menuMuxClass::save (
   FILE *f )
 {
 
+int i, ii, stat, major, minor, release;
+char tmpS[MMUX_MAX_ENTRIES][15+1], tmpV[MMUX_MAX_ENTRIES][15+1];
+char tmpBufS[MMUX_MAX_ENTRIES][MMUX_MAX_STATES][MMUX_MAX_STRING_SIZE+1];
+char tmpBufV[MMUX_MAX_ENTRIES][MMUX_MAX_STATES][MMUX_MAX_STRING_SIZE+1];
+
+tagClass itemTag;
+
+int zero = 0;
+char *emptyStr = "";
+
+  major = MMUXC_MAJOR_VERSION;
+  minor = MMUXC_MINOR_VERSION;
+  release = MMUXC_RELEASE;
+
+  itemTag.init();
+  itemTag.loadW( "beginObjectProperties" );
+  itemTag.loadW( "major", &major );
+  itemTag.loadW( "minor", &minor );
+  itemTag.loadW( "release", &release );
+  itemTag.loadW( "x", &x );
+  itemTag.loadW( "y", &y );
+  itemTag.loadW( "w", &w );
+  itemTag.loadW( "h", &h );
+  itemTag.loadW( "fgColor", actWin->ci, &fgColor );
+  itemTag.loadBoolW( "fgAlarm", &fgColorMode, &zero );
+  itemTag.loadW( "bgColor", actWin->ci, &bgColor );
+  itemTag.loadBoolW( "bgAlarm", &bgColorMode, &zero );
+  itemTag.loadW( "topShadowColor", actWin->ci, &topShadowColor );
+  itemTag.loadW( "botShadowColor", actWin->ci, &botShadowColor );
+  itemTag.loadW( "controlPv", &controlPvExpStr, emptyStr );
+  itemTag.loadW( "font", fontTag );
+  itemTag.loadW( "initialState", &initialStateExpStr, emptyStr );
+  itemTag.loadW( "numItems", &numItems );
+  itemTag.loadW( "symbolTag", MMUX_MAX_STRING_SIZE+1, tag[0], numItems,
+   emptyStr );
+  for ( i=0; i<MMUX_MAX_ENTRIES; i++ ) {
+    for ( ii=0; ii<MMUX_MAX_STATES; ii++ ) {
+      strcpy( tmpBufS[i][ii], m[ii][i] );
+      strcpy( tmpBufV[i][ii], e[ii][i] );
+    }
+  }
+  for ( i=0; i<MMUX_MAX_ENTRIES; i++ ) {
+    snprintf( tmpS[i], 15, "symbol%-d", i );
+    itemTag.loadW( tmpS[i], MMUX_MAX_STRING_SIZE+1, tmpBufS[i][0], numItems,
+     emptyStr );
+    snprintf( tmpV[i], 15, "value%-d", i );
+    itemTag.loadW( tmpV[i], MMUX_MAX_STRING_SIZE+1, tmpBufV[i][0], numItems,
+     emptyStr );
+  }
+  itemTag.loadW( "endObjectProperties" );
+  itemTag.loadW( "" );
+
+  stat = itemTag.writeTags( f );
+
+  return stat;
+
+}
+
+int menuMuxClass::old_save (
+  FILE *f )
+{
+
 int index, i, ii;
 
   fprintf( f, "%-d %-d %-d\n", MMUXC_MAJOR_VERSION, MMUXC_MINOR_VERSION,
@@ -600,6 +628,106 @@ int index, i, ii;
 }
 
 int menuMuxClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int i, ii, n, stat, major, minor, release;
+char tmpS[MMUX_MAX_ENTRIES][15+1], tmpV[MMUX_MAX_ENTRIES][15+1];
+char tmpBufS[MMUX_MAX_ENTRIES][MMUX_MAX_STATES][MMUX_MAX_STRING_SIZE+1];
+char tmpBufV[MMUX_MAX_ENTRIES][MMUX_MAX_STATES][MMUX_MAX_STRING_SIZE+1];
+
+tagClass itemTag;
+
+int zero = 0;
+char *emptyStr = "";
+
+  this->actWin = _actWin;
+
+  itemTag.init();
+  itemTag.loadR( "beginObjectProperties" );
+  itemTag.loadR( "major", &major );
+  itemTag.loadR( "minor", &minor );
+  itemTag.loadR( "release", &release );
+  itemTag.loadR( "x", &x );
+  itemTag.loadR( "y", &y );
+  itemTag.loadR( "w", &w );
+  itemTag.loadR( "h", &h );
+  itemTag.loadR( "fgColor", actWin->ci, &fgColor );
+  itemTag.loadR( "fgAlarm", &fgColorMode, &zero );
+  itemTag.loadR( "bgColor", actWin->ci, &bgColor );
+  itemTag.loadR( "bgAlarm", &bgColorMode, &zero );
+  itemTag.loadR( "topShadowColor", actWin->ci, &topShadowColor );
+  itemTag.loadR( "botShadowColor", actWin->ci, &botShadowColor );
+  itemTag.loadR( "controlPv", &controlPvExpStr, emptyStr );
+  itemTag.loadR( "font", 63, fontTag );
+  itemTag.loadR( "initialState", &initialStateExpStr, emptyStr );
+  itemTag.loadR( "numItems", &numItems );
+  itemTag.loadR( "symbolTag", MMUX_MAX_STATES, MMUX_MAX_STRING_SIZE+1, tag[0],
+   &numItems, emptyStr );
+  for ( i=0; i<MMUX_MAX_ENTRIES; i++ ) {
+    snprintf( tmpS[i], 15, "symbol%-d", i );
+    itemTag.loadR( tmpS[i], MMUX_MAX_ENTRIES, MMUX_MAX_STRING_SIZE+1,
+     tmpBufS[i][0], &n, emptyStr );
+    snprintf( tmpV[i], 15, "value%-d", i );
+    itemTag.loadR( tmpV[i], MMUX_MAX_ENTRIES, MMUX_MAX_STRING_SIZE+1,
+     tmpBufV[i][0], &n, emptyStr );
+  }
+  itemTag.loadR( "endObjectProperties" );
+
+  stat = itemTag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( itemTag.errMsg() );
+  }
+
+  if ( major > MMUXC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  for ( i=0; i<MMUX_MAX_ENTRIES; i++ ) {
+    for ( ii=0; ii<MMUX_MAX_STATES; ii++ ) {
+      strcpy( m[ii][i], tmpBufS[i][ii] );
+      strcpy( e[ii][i], tmpBufV[i][ii] );
+    }
+  }
+
+  if ( fgColorMode == MMUXC_K_COLORMODE_ALARM )
+    fgColor.setAlarmSensitive();
+  else
+    fgColor.setAlarmInsensitive();
+
+  if ( bgColorMode == MMUXC_K_COLORMODE_ALARM )
+    bgColor.setAlarmSensitive();
+  else
+    bgColor.setAlarmInsensitive();
+
+  actWin->fi->loadFontTag( fontTag );
+  actWin->drawGc.setFontTag( fontTag, actWin->fi );
+
+  fs = actWin->fi->getXFontStruct( fontTag );
+  actWin->fi->getTextFontList( fontTag, &fontList );
+
+  updateDimensions();
+
+  numMac = 0;
+  mac = NULL;
+  exp = NULL;
+
+  return stat;
+
+}
+
+int menuMuxClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -1303,7 +1431,7 @@ int menuMuxClass::activate (
   void *ptr )
 {
 
-int stat, opStat;
+int opStat;
 
   switch ( pass ) {
 
@@ -1327,13 +1455,12 @@ int stat, opStat;
       firstEvent = 1;
       controlV = 0;
       buttonPressed = 0;
-
-#ifdef __epics__
-      alarmEventId = controlEventId = 0;
-#endif
+      initialConnection = 1;
+      oldStat = oldSev = -1;
 
       controlPvConnected = active = 0;
       activeMode = 1;
+      controlPvId = NULL;
 
       popUpMenu = (Widget) NULL;
 
@@ -1351,16 +1478,15 @@ int stat, opStat;
 
       if ( controlExists ) {
 
-#ifdef __epics__
-
-        stat = ca_search_and_connect( controlPvExpStr.getExpanded(),
-         &controlPvId, mmux_monitor_control_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+	controlPvId = the_PV_Factory->create( controlPvExpStr.getExpanded() );
+        if ( controlPvId ) {
+	  controlPvId->add_conn_state_callback(
+           mmux_monitor_control_connect_state, this );
+	}
+	else {
           printf( menuMuxClass_str23 );
           opStat = 0;
         }
-
-#endif
 
       }
       else {
@@ -1403,7 +1529,7 @@ int menuMuxClass::deactivate (
   int pass
 ) {
 
-int i, stat;
+int i;
 
   active = 0;
   activeMode = 0;
@@ -1417,15 +1543,16 @@ int i, stat;
 
     updateBlink( 0 );
 
-#ifdef __epics__
-
     if ( controlExists ) {
-      stat = ca_clear_channel( controlPvId );
-      if ( stat != ECA_NORMAL )
-        printf( menuMuxClass_str24 );
+      if ( controlPvId ) {
+        controlPvId->remove_conn_state_callback(
+         mmux_monitor_control_connect_state, this );
+        controlPvId->remove_value_callback(
+         mmux_controlUpdate, this );
+	controlPvId->release();
+        controlPvId = NULL;
+      }
     }
-
-#endif
 
   }
   else if ( pass == 2 ) {
@@ -1462,6 +1589,7 @@ void menuMuxClass::updateDimensions ( void )
 }
 
 void menuMuxClass::btnUp (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,
@@ -1469,9 +1597,9 @@ void menuMuxClass::btnUp (
   int *action )
 {
 
-XButtonEvent be;
-
   *action = 0;
+
+  if ( !enabled ) return;
 
   if ( !buttonPressed ) return;
 
@@ -1479,10 +1607,7 @@ XButtonEvent be;
 
   if ( buttonNumber == 1 ) {
 
-    memset( (void *) &be, 0, sizeof(XButtonEvent) );
-    be.x_root = actWin->xPos()+_x;
-    be.y_root = actWin->yPos()+_y;
-    XmMenuPosition( popUpMenu, &be );
+    XmMenuPosition( popUpMenu, be );
     XtManageChild( popUpMenu );
 
   }
@@ -1490,6 +1615,7 @@ XButtonEvent be;
 }
 
 void menuMuxClass::btnDown (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,
@@ -1499,8 +1625,10 @@ void menuMuxClass::btnDown (
 
   *action = 0;
 
+  if ( !enabled ) return;
+
   if ( controlExists ) {
-    if ( !ca_write_access( controlPvId ) ) return;
+    if ( !controlPvId->have_write_access() ) return;
   }
 
   if ( buttonNumber == 1 ) {
@@ -1515,8 +1643,10 @@ void menuMuxClass::pointerIn (
   int buttonState )
 {
 
+  if ( !enabled ) return;
+
   if ( controlExists ) {
-    if ( !ca_write_access( controlPvId ) ) {
+    if ( !controlPvId->have_write_access() ) {
       actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
     }
     else {
@@ -1574,7 +1704,7 @@ XButtonEvent *be = (XButtonEvent *) e;
 
   XtVaGetValues( w, XmNuserData, &mmo, NULL );
 
-  stat = mmo->selectDragValue( mmo->x + be->x, mmo->y + be->y );
+  stat = mmo->selectDragValue( be );
 
 }
 #endif
@@ -1603,15 +1733,14 @@ int n;
 
 //----------------------------------------------------------------------------
 
-#ifdef __epics__
-
   if ( nc ) {
 
-    stat = ca_get_callback( DBR_GR_LONG, controlPvId,
-     mmux_infoUpdate, (void *) this );
+    v = curControlV = controlPvId->get_int();
 
     controlPvConnected = 1;
     fgColor.setConnected();
+
+    ni = 1;
 
   }
 
@@ -1694,18 +1823,12 @@ int n;
 
     if ( controlExists ) {
 
-      stat = ca_add_masked_array_event( DBR_LONG, 1, controlPvId,
-       mmux_controlUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &controlEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL ) {
-        printf( menuMuxClass_str25 );
-      }
+      if ( initialConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_STS_LONG, 1, controlPvId,
-       mmux_alarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &alarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL ) {
-        printf( menuMuxClass_str26 );
+        initialConnection = 0;
+
+        controlPvId->add_value_callback( mmux_controlUpdate, this );
+
       }
 
     }
@@ -1718,8 +1841,6 @@ int n;
     nu = 1;
 
   }
-
-#endif
 
 //----------------------------------------------------------------------------
 
@@ -1764,7 +1885,16 @@ char *menuMuxClass::nextDragName ( void ) {
 char *menuMuxClass::dragValue (
   int i ) {
 
-  return controlPvExpStr.getExpanded();
+  if ( actWin->mode != AWC_EXECUTE ) {
+
+    return controlPvExpStr.getExpanded();
+
+  }
+  else {
+
+    return controlPvExpStr.getRaw();
+
+  }
 
 }
 

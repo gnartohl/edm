@@ -22,8 +22,8 @@
 #include "act_grf.h"
 #include "entry_form.h"
 
-#define SHCMDC_MAJOR_VERSION 2
-#define SHCMDC_MINOR_VERSION 5
+#define SHCMDC_MAJOR_VERSION 4
+#define SHCMDC_MINOR_VERSION 0
 #define SHCMDC_RELEASE 0
 
 #ifdef __shell_cmd_cc
@@ -256,8 +256,6 @@ Widget popUpMenu, pullDownMenu, pb[maxCmds];
 
 entryFormClass *ef1;
 
-int posX, posY;
-
 char *hostName;
 char requiredHostName[15+1];
 
@@ -286,7 +284,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
@@ -331,6 +337,7 @@ int expand2nd (
 int containsMacros ( void );
 
 void btnUp (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,
@@ -340,6 +347,7 @@ void btnUp (
 void executeCmd ( void );
 
 void btnDown (
+  XButtonEvent *be,
   int x,
   int y,
   int buttonState,

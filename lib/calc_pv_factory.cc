@@ -531,14 +531,26 @@ static ProcessVariable::Type calc_type =
     "real:64"
 };
 
+static ProcessVariable::specificType calc_specific_type =
+{
+    ProcessVariable::specificType::real,
+    64
+};
+
 const ProcessVariable::Type &CALC_ProcessVariable::get_type() const
 {   return calc_type; }
+
+const ProcessVariable::specificType &CALC_ProcessVariable::get_specific_type() const
+{   return calc_specific_type; }
 
 double CALC_ProcessVariable::get_double() const
 {   return value; }
 
 size_t CALC_ProcessVariable::get_dimension() const
 {   return 1; }
+
+const char *CALC_ProcessVariable::get_char_array() const
+{   return 0; }
 
 const int *CALC_ProcessVariable::get_int_array() const
 {   return 0; }
@@ -594,5 +606,8 @@ bool CALC_ProcessVariable::put(const char *value)
 bool CALC_ProcessVariable::put(int value)
 {   return false; }
 
+bool CALC_ProcessVariable::putText(char *value)
+{   return false; }
 
-
+bool CALC_ProcessVariable::putArrayText(char *value)
+{   return false; }

@@ -24,14 +24,13 @@
 #include "act_grf.h"
 #include "entry_form.h"
 #include "pv_factory.h"
-#include "epics_pv_factory.h"
 #include "cvtFast.h"
 
 #define AXTC_K_COLORMODE_STATIC 0
 #define AXTC_K_COLORMODE_ALARM 1
 
-#define AXTC_MAJOR_VERSION 2
-#define AXTC_MINOR_VERSION 1
+#define AXTC_MAJOR_VERSION 4
+#define AXTC_MINOR_VERSION 0
 #define AXTC_RELEASE 0
 
 extern "C"
@@ -121,7 +120,7 @@ char fontTag[63+1], bufFontTag[63+1];
 int useDisplayBg, bufUseDisplayBg, alignment;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight, stringLength, stringWidth,
- stringY, stringX;
+ stringY, stringX, stringBoxWidth, stringBoxHeight;
 int autoSize, bufAutoSize;
 
 int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh,
@@ -131,6 +130,8 @@ int curFgColorIndex, curBgColorIndex, curStatus, curSeverity;
 static const int alarmPvConnection = 1;
 static const int visPvConnection = 2;
 pvConnectionClass connection;
+
+int bufInvalid;
 
 //----------------------------------
     char regExpStr[39+1], bufRegExp[39+1];
@@ -188,7 +189,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
@@ -281,6 +290,8 @@ void changePvNames (
 
 void updateColors (
   double colorValue );
+
+void bufInvalidate ( void );
 
 };
 

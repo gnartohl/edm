@@ -78,7 +78,6 @@ static void udbtoSetKpDoubleValue (
   XtPointer call )
 {
 
-int stat;
 double v;
 activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
 
@@ -106,9 +105,7 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
       else {
 	v = udbto->kpDouble;
       }
-#ifdef __epics__
-      stat = ca_put( DBR_DOUBLE, udbto->destPvId, &v );
-#endif
+      udbto->destPvId->put( v );
     }
   }
 
@@ -120,19 +117,14 @@ static void menu_cb (
   XtPointer call )
 {
 
-int stat;
 double v;
 activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
-int rootX, rootY;
-
-  rootX = udbto->actWin->xPos()+udbto->x+udbto->w;
-  rootY = udbto->actWin->yPos()+udbto->y+10;
 
   if ( w == udbto->pbCoarse ) {
 
     udbto->kpDest = udbto->kpCoarseDest;
     udbto->kp.create( udbto->actWin->top,
-     rootX, rootY, "", &udbto->kpDouble,
+     udbto->rootX, udbto->rootY, "", &udbto->kpDouble,
      (void *) client,
      (XtCallbackProc) udbtoSetKpDoubleValue,
      (XtCallbackProc) udbtoCancelKp );
@@ -143,7 +135,7 @@ int rootX, rootY;
 
     udbto->kpDest = udbto->kpFineDest;
     udbto->kp.create( udbto->actWin->top,
-     rootX, rootY, "", &udbto->kpDouble,
+     udbto->rootX, udbto->rootY, "", &udbto->kpDouble,
      (void *) client,
      (XtCallbackProc) udbtoSetKpDoubleValue,
      (XtCallbackProc) udbtoCancelKp );
@@ -154,7 +146,7 @@ int rootX, rootY;
 
     udbto->kpDest = udbto->kpRateDest;
     udbto->kp.create( udbto->actWin->top,
-     rootX, rootY, "", &udbto->kpDouble,
+     udbto->rootX, udbto->rootY, "", &udbto->kpDouble,
      (void *) client,
      (XtCallbackProc) udbtoSetKpDoubleValue,
      (XtCallbackProc) udbtoCancelKp );
@@ -165,7 +157,7 @@ int rootX, rootY;
 
     udbto->kpDest = udbto->kpValueDest;
     udbto->kp.create( udbto->actWin->top,
-     rootX, rootY, "", &udbto->kpDouble,
+     udbto->rootX, udbto->rootY, "", &udbto->kpDouble,
      (void *) client,
      (XtCallbackProc) udbtoSetKpDoubleValue,
      (XtCallbackProc) udbtoCancelKp );
@@ -175,7 +167,7 @@ int rootX, rootY;
   else if ( w == udbto->pbSave ) {
 
     if ( udbto->savePvConnected ) {
-      stat = ca_put( DBR_DOUBLE, udbto->savePvId, &udbto->curControlV );
+      udbto->savePvId->put( udbto->curControlV );
     }
     else {
       XBell( udbto->actWin->d, 50 );
@@ -194,7 +186,7 @@ int rootX, rootY;
       else {
 	v = udbto->curSaveV;
       }
-      stat = ca_put( DBR_DOUBLE, udbto->destPvId, &v );
+      udbto->destPvId->put( v );
     }
     else {
       XBell( udbto->actWin->d, 50 );
@@ -335,15 +327,14 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
 
 }
 
-#ifdef __epics__
-
 static void udbtc_monitor_dest_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) ca_puser(arg.chid);
+activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     udbto->needConnectInit = 1;
 
@@ -364,12 +355,13 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) ca_puser(arg.chid);
 }
 
 static void udbtc_monitor_save_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) ca_puser(arg.chid);
+activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     udbto->needSaveConnectInit = 1;
     udbto->actWin->appCtx->proc->lock();
@@ -385,48 +377,16 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) ca_puser(arg.chid);
 
 }
 
-static void udbt_infoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeUpdownButtonClass *udbto =
- (activeUpdownButtonClass *) ca_puser(ast_args.chid);
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
-
-  if ( udbto->limitsFromDb || udbto->efScaleMin.isNull() ) {
-    udbto->scaleMin = controlRec.lower_disp_limit;
-  }
-
-  if ( udbto->limitsFromDb || udbto->efScaleMax.isNull() ) {
-    udbto->scaleMax = controlRec.upper_disp_limit;
-  }
-
-  udbto->minDv = udbto->scaleMin;
-
-  udbto->maxDv = udbto->scaleMax;
-
-  udbto->curControlV = controlRec.value;
-
-  udbto->needCtlInfoInit = 1;
-  udbto->actWin->appCtx->proc->lock();
-  udbto->actWin->addDefExeNode( udbto->aglPtr );
-  udbto->actWin->appCtx->proc->unlock();
-
-}
-
 static void udbtc_controlUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) ast_args.usr;
+activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) userarg;
 
   udbto->actWin->appCtx->proc->lock();
 
-  udbto->curControlV = *( (double *) ast_args.dbr );
+  udbto->curControlV = pv->get_double();
 
   if ( udbto->savePvConnected ) {
     if ( !udbto->isSaved && ( udbto->curControlV == udbto->curSaveV ) ) {
@@ -446,14 +406,15 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) ast_args.usr;
 }
 
 static void udbtc_saveUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) ast_args.usr;
+activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) userarg;
 
   udbto->actWin->appCtx->proc->lock();
 
-  udbto->curSaveV = *( (double *) ast_args.dbr );
+  udbto->curSaveV = pv->get_double();
 
   if ( !udbto->isSaved && ( udbto->curControlV == udbto->curSaveV ) ) {
     udbto->isSaved = 1;
@@ -473,13 +434,13 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) ast_args.usr;
 }
 
 static void udbtc_monitor_vis_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeUpdownButtonClass *udbto =
- (activeUpdownButtonClass *) ca_puser(arg.chid);
+activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     udbto->needVisConnectInit = 1;
 
@@ -499,36 +460,14 @@ activeUpdownButtonClass *udbto =
 
 }
 
-static void udbtc_visInfoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeUpdownButtonClass *udbto =
- (activeUpdownButtonClass *) ast_args.usr;
-
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
-
-  udbto->curVisValue = controlRec.value;
-
-  udbto->actWin->appCtx->proc->lock();
-  udbto->needVisInit = 1;
-  udbto->actWin->addDefExeNode( udbto->aglPtr );
-  udbto->actWin->appCtx->proc->unlock();
-
-}
-
 static void udbtc_visUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeUpdownButtonClass *udbto =
- (activeUpdownButtonClass *) ast_args.usr;
+activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) userarg;
 
-  udbto->curVisValue = * ( (double *) ast_args.dbr );
+  udbto->curVisValue = pv->get_double();
 
   udbto->actWin->appCtx->proc->lock();
   udbto->needVisUpdate = 1;
@@ -537,14 +476,14 @@ activeUpdownButtonClass *udbto =
 
 }
 
-static void udbt_monitor_color_connect_state (
-  struct connection_handler_args arg )
+static void udbtc_monitor_color_connect_state (
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeUpdownButtonClass *udbto =
- (activeUpdownButtonClass *) ca_puser(arg.chid);
+activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     udbto->needColorConnectInit = 1;
 
@@ -564,36 +503,14 @@ activeUpdownButtonClass *udbto =
 
 }
 
-static void udbt_colorInfoUpdate (
-  struct event_handler_args ast_args )
+static void udbtc_colorUpdate (
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
+activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) userarg;
 
-activeUpdownButtonClass *udbto =
- (activeUpdownButtonClass *) ast_args.usr;
-
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
-
-  udbto->curColorValue = controlRec.value;
-
-  udbto->actWin->appCtx->proc->lock();
-  udbto->needColorInit = 1;
-  udbto->actWin->addDefExeNode( udbto->aglPtr );
-  udbto->actWin->appCtx->proc->unlock();
-
-}
-
-static void udbt_colorUpdate (
-  struct event_handler_args ast_args )
-{
-
-activeUpdownButtonClass *udbto =
- (activeUpdownButtonClass *) ast_args.usr;
-
-  udbto->curColorValue = * ( (double *) ast_args.dbr );
+  udbto->curColorValue = pv->get_double();
 
   udbto->actWin->appCtx->proc->lock();
   udbto->needColorUpdate = 1;
@@ -602,15 +519,12 @@ activeUpdownButtonClass *udbto =
 
 }
 
-#endif
-
 static void udbtc_decrement (
   XtPointer client,
   XtIntervalId *id )
 {
 
 activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
-int stat;
 double dval;
 Window root, child;
 int rootX, rootY, winX, winY;
@@ -646,9 +560,7 @@ unsigned int mask;
   }
 
   if ( udbto->destExists ) {
-#ifdef __epics__
-  stat = ca_put( DBR_DOUBLE, udbto->destPvId, &dval );
-#endif
+    udbto->destPvId->put( dval );
   }
 
 }
@@ -659,7 +571,6 @@ static void udbtc_increment (
 {
 
 activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
-int stat;
 double dval;
 Window root, child;
 int rootX, rootY, winX, winY;
@@ -695,9 +606,7 @@ unsigned int mask;
   }
 
   if ( udbto->destExists ) {
-#ifdef __epics__
-  stat = ca_put( DBR_DOUBLE, udbto->destPvId, &dval );
-#endif
+    udbto->destPvId->put( dval );
   }
 
 }
@@ -843,6 +752,62 @@ int activeUpdownButtonClass::save (
   FILE *f )
 {
 
+int stat, major, minor, release;
+
+tagClass tag;
+
+int zero = 0;
+double dzero = 0;
+char *emptyStr = "";
+
+  major = UDBTC_MAJOR_VERSION;
+  minor = UDBTC_MINOR_VERSION;
+  release = UDBTC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadW( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadW( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadW( "controlPv", &destPvExpString, emptyStr );
+  tag.loadW( "savedValuePv", &savePvExpString, emptyStr );
+  tag.loadW( "coarseValue",  &coarseExpString, emptyStr );
+  tag.loadW( "fineValue",  &fineExpString, emptyStr );
+  tag.loadW( "label", &label, emptyStr );
+  tag.loadBoolW( "3d", &_3D, &zero );
+  tag.loadBoolW( "invisible", &invisible, &zero );
+  tag.loadW( "rate", &rate, &dzero );
+  tag.loadW( "font", fontTag );
+  tag.loadBoolW( "limitsFromDb", &limitsFromDb, &zero );
+  tag.loadW( "scaleMin", &efScaleMin );
+  tag.loadW( "scaleMax", &efScaleMax );
+  tag.loadW( "visPv", &visPvExpString, emptyStr );
+  tag.loadBoolW( "visInvert", &visInverted, &zero );
+  tag.loadW( "visMin", minVisString, emptyStr );
+  tag.loadW( "visMax", maxVisString, emptyStr );
+  tag.loadW( "colorPv", &colorPvExpString, emptyStr  );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int activeUpdownButtonClass::old_save (
+  FILE *f )
+{
+
 int index;
 
   fprintf( f, "%-d %-d %-d\n", UDBTC_MAJOR_VERSION, UDBTC_MINOR_VERSION,
@@ -928,6 +893,91 @@ int index;
 }
 
 int activeUpdownButtonClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int stat, major, minor, release;
+
+tagClass tag;
+
+int zero = 0;
+double dzero = 0;
+char *emptyStr = "";
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "topShadowColor", actWin->ci, &topShadowColor );
+  tag.loadR( "botShadowColor", actWin->ci, &botShadowColor );
+  tag.loadR( "controlPv", &destPvExpString, emptyStr );
+  tag.loadR( "savedValuePv", &savePvExpString, emptyStr );
+  tag.loadR( "coarseValue",  &coarseExpString, emptyStr );
+  tag.loadR( "fineValue",  &fineExpString, emptyStr );
+  tag.loadR( "label", &label, emptyStr );
+  tag.loadR( "3d", &_3D, &zero );
+  tag.loadR( "invisible", &invisible, &zero );
+  tag.loadR( "rate", &rate, &dzero );
+  tag.loadR( "font", 63, fontTag );
+  tag.loadR( "limitsFromDb", &limitsFromDb, &zero );
+  tag.loadR( "scaleMin", &efScaleMin );
+  tag.loadR( "scaleMax", &efScaleMax );
+  tag.loadR( "visPv", &visPvExpString, emptyStr );
+  tag.loadR( "visInvert", &visInverted, &zero );
+  tag.loadR( "visMin", 39, minVisString, emptyStr );
+  tag.loadR( "visMax", 39, maxVisString, emptyStr );
+  tag.loadR( "colorPv", &colorPvExpString, emptyStr );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > UDBTC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  if ( ( limitsFromDb || efScaleMin.isNull() ) &&
+       ( limitsFromDb || efScaleMax.isNull() ) ) {
+    minDv = scaleMin = 0;
+    maxDv = scaleMax = 10;
+  }
+  else{
+    minDv = scaleMin = efScaleMin.value();
+    maxDv = scaleMax = efScaleMax.value();
+  }
+
+  actWin->fi->loadFontTag( fontTag );
+  fs = actWin->fi->getXFontStruct( fontTag );
+
+  updateDimensions();
+
+  return 1;
+
+}
+
+int activeUpdownButtonClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -1504,7 +1554,7 @@ int activeUpdownButtonClass::erase ( void ) {
 
 int activeUpdownButtonClass::eraseActive ( void ) {
 
-  if ( !init || !activeMode || invisible ) return 1;
+  if ( !enabled || !init || !activeMode || invisible ) return 1;
 
   if ( prevVisibility == 0 ) {
     prevVisibility = visibility;
@@ -1666,7 +1716,7 @@ int blink = 0;
     }
   }
 
-  if ( !init || !activeMode || invisible || !visibility ) return 1;
+  if ( !enabled || !init || !activeMode || invisible || !visibility ) return 1;
 
   prevVisibility = visibility;
 
@@ -1823,7 +1873,7 @@ int activeUpdownButtonClass::activate (
   void *ptr )
 {
 
-int stat, opStat, n;
+int opStat, n;
 Arg args[5];
 XmString str;
 
@@ -1841,6 +1891,8 @@ XmString str;
 
       connection.init();
 
+      initEnable();
+
       needConnectInit = needSaveConnectInit = needCtlInfoInit = 
        needRefresh = needErase = needDraw = needVisConnectInit =
        needVisInit = needVisUpdate = needColorConnectInit =
@@ -1856,10 +1908,8 @@ XmString str;
       incrementTimer = 0;
       incrementTimerActive = 0;
       destPvId = visPvId = colorPvId = savePvId = NULL;
-
-#ifdef __epics__
-      destEventId = saveEventId = visEventId = colorEventId = 0;
-#endif
+      initialConnection = initialSavedValueConnection = initialVisConnection =
+       initialColorConnection = -1;
 
       destPvConnected = savePvConnected = active = buttonPressed = 0;
       activeMode = 1;
@@ -1998,36 +2048,48 @@ XmString str;
 
       opStat = 1;
 
-#ifdef __epics__
-
       if ( destExists ) {
-        stat = ca_search_and_connect( destPvExpString.getExpanded(), &destPvId,
-         udbtc_monitor_dest_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+
+	destPvId = the_PV_Factory->create( destPvExpString.getExpanded() );
+	if ( destPvId ) {
+	  destPvId->add_conn_state_callback( udbtc_monitor_dest_connect_state,
+           this );
+	}
+	else {
           printf( activeUpdownButtonClass_str20 );
           opStat = 0;
         }
+
       }
       else {
+
         init = 1;
         smartDrawAllActive();
+
       }
 
       if ( visExists ) {
 
-        stat = ca_search_and_connect( visPvExpString.getExpanded(), &visPvId,
-         udbtc_monitor_vis_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+	visPvId = the_PV_Factory->create( visPvExpString.getExpanded() );
+	if ( visPvId ) {
+	  visPvId->add_conn_state_callback( udbtc_monitor_vis_connect_state,
+           this );
+	}
+	else {
           printf( activeUpdownButtonClass_str20 );
           opStat = 0;
         }
+
       }
 
       if ( colorExists ) {
 
-        stat = ca_search_and_connect( colorPvExpString.getExpanded(),
-         &colorPvId, udbt_monitor_color_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+	colorPvId = the_PV_Factory->create( colorPvExpString.getExpanded() );
+	if ( colorPvId ) {
+	  colorPvId->add_conn_state_callback(
+           udbtc_monitor_color_connect_state, this );
+	}
+	else {
           printf( activeUpdownButtonClass_str20 );
           opStat = 0;
         }
@@ -2035,17 +2097,20 @@ XmString str;
       }
 
       if ( saveExists ) {
-        stat = ca_search_and_connect( savePvExpString.getExpanded(), &savePvId,
-         udbtc_monitor_save_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+
+	savePvId = the_PV_Factory->create( savePvExpString.getExpanded() );
+	if ( savePvId ) {
+	  savePvId->add_conn_state_callback( udbtc_monitor_save_connect_state,
+           this );
+	}
+	else {
           printf( activeUpdownButtonClass_str20 );
           opStat = 0;
         }
+
       }
 
       if ( opStat & 1 ) opComplete = 1;
-
-#endif
 
       return opStat;
 
@@ -2069,8 +2134,6 @@ XmString str;
 int activeUpdownButtonClass::deactivate (
   int pass
 ) {
-
-int stat;
 
   if ( pass == 1 ) {
 
@@ -2101,43 +2164,45 @@ int stat;
     kp.popdown();
   }
 
-#ifdef __epics__
-
   if ( destExists ) {
     if ( destPvId ) {
-      stat = ca_clear_channel( destPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeUpdownButtonClass_str22 );
+      destPvId->remove_conn_state_callback( udbtc_monitor_dest_connect_state,
+       this );
+      destPvId->remove_value_callback( udbtc_controlUpdate, this );
+      destPvId->release();
       destPvId = NULL;
     }
   }
 
   if ( visExists ) {
     if ( visPvId ) {
-      stat = ca_clear_channel( visPvId );
-      if ( stat != ECA_NORMAL ) printf( activeUpdownButtonClass_str22 );
+      visPvId->remove_conn_state_callback( udbtc_monitor_vis_connect_state,
+       this );
+      visPvId->remove_value_callback( udbtc_visUpdate, this );
+      visPvId->release();
       visPvId = NULL;
     }
   }
 
   if ( colorExists ) {
     if ( colorPvId ) {
-      stat = ca_clear_channel( colorPvId );
-      if ( stat != ECA_NORMAL ) printf( activeUpdownButtonClass_str22 );
+      colorPvId->remove_conn_state_callback( udbtc_monitor_color_connect_state,
+       this );
+      colorPvId->remove_value_callback( udbtc_colorUpdate, this );
+      colorPvId->release();
       colorPvId = NULL;
     }
   }
 
   if ( saveExists ) {
     if ( savePvId ) {
-      stat = ca_clear_channel( savePvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeUpdownButtonClass_str22 );
+      savePvId->remove_conn_state_callback( udbtc_monitor_save_connect_state,
+       this );
+      savePvId->remove_value_callback( udbtc_saveUpdate, this );
+      savePvId->release();
       savePvId = NULL;
     }
   }
-
-#endif
 
   }
 
@@ -2162,6 +2227,7 @@ void activeUpdownButtonClass::updateDimensions ( void )
 }
 
 void activeUpdownButtonClass::btnUp (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,
@@ -2169,9 +2235,10 @@ void activeUpdownButtonClass::btnUp (
   int *action )
 {
 
-XButtonEvent be;
-
   *action = 0;
+
+  rootX = be->x_root;
+  rootY = be->y_root;
 
   if ( incrementTimerActive ) {
     if ( incrementTimer ) {
@@ -2181,15 +2248,12 @@ XButtonEvent be;
     incrementTimerActive = 0;
   }
 
-  if ( !init || !visibility ) return;
+  if ( !enabled || !init || !visibility ) return;
 
-  if ( !ca_write_access( destPvId ) ) return;
+  if ( !destPvId->have_write_access() ) return;
 
-  if ( ( _y - y ) < 10 ) {
-    memset( (void *) &be, 0, sizeof(XButtonEvent) );
-    be.x_root = actWin->xPos()+_x;
-    be.y_root = actWin->yPos()+_y;
-    XmMenuPosition( popUpMenu, &be );
+  if ( ( be->y - y ) < 10 ) {
+    XmMenuPosition( popUpMenu, be );
     XtManageChild( popUpMenu );
     return;
   }
@@ -2210,6 +2274,7 @@ XButtonEvent be;
 }
 
 void activeUpdownButtonClass::btnDown (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,
@@ -2217,24 +2282,21 @@ void activeUpdownButtonClass::btnDown (
   int *action )
 {
 
-int stat;
 double dval;
 
   *action = 0;
 
-  if ( !init || !visibility ) return;
+  if ( !enabled || !init || !visibility ) return;
 
-  if ( !ca_write_access( destPvId ) ) return;
+  if ( !destPvId->have_write_access() ) return;
 
   if ( keyPadOpen ) return;
 
-  if ( ( _y - y ) < 10 ) return;
+  if ( ( be->y - y ) < 10 ) return;
 
   buttonPressed = 1;
 
 //    printf( "btn down, x=%-d, y=%-d\n", _x-x, _y-y );
-
-#ifdef __epics__
 
   actWin->appCtx->proc->lock();
   dval = curControlV;
@@ -2256,9 +2318,7 @@ double dval;
     dval = maxDv;
   }
 
-#ifdef __epics__
-  stat = ca_put( DBR_DOUBLE, destPvId, &dval );
-#endif
+  destPvId->put( dval );
 
   if ( buttonNumber == 3 ) {
     incrementTimer = appAddTimeOut( actWin->appCtx->appContext(),
@@ -2274,8 +2334,6 @@ double dval;
     incrementTimerActive = 0;
   }
 
-#endif
-
 }
 
 void activeUpdownButtonClass::pointerIn (
@@ -2284,9 +2342,9 @@ void activeUpdownButtonClass::pointerIn (
   int buttonState )
 {
 
-  if ( !init || !visibility ) return;
+  if ( !enabled || !init || !visibility ) return;
 
-  if ( !ca_write_access( destPvId ) ) {
+  if ( !destPvId->have_write_access() ) {
     actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
   }
   else {
@@ -2427,27 +2485,38 @@ int stat, index, invisColor;
 
 //----------------------------------------------------------------------------
 
-#ifdef __epics__
-
   if ( nc ) {
 
     connection.setPvConnected( (void *) destPvConnection );
-    destType = ca_field_type( destPvId );
+    destType = (int) destPvId->get_type().type;
 
-    stat = ca_get_callback( DBR_GR_DOUBLE, destPvId,
-     udbt_infoUpdate, (void *) this );
-    if ( stat != ECA_NORMAL )
-      printf( activeUpdownButtonClass_str23 );
+    if ( limitsFromDb || efScaleMin.isNull() ) {
+      scaleMin = destPvId->get_lower_disp_limit();
+    }
+
+    if ( limitsFromDb || efScaleMax.isNull() ) {
+      scaleMax = destPvId->get_upper_disp_limit();
+    }
+
+    minDv = scaleMin;
+
+    maxDv = scaleMax;
+
+    curControlV = destPvId->get_double();
+
+    nci = 1;
 
   }
 
   if ( nci ) {
 
-    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, destPvId,
-     udbtc_controlUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-     &destEventId, DBE_VALUE );
-    if ( stat != ECA_NORMAL )
-      printf( activeUpdownButtonClass_str23 );
+    if ( initialConnection ) {
+
+      initialConnection = 0;
+
+      destPvId->add_value_callback( udbtc_controlUpdate, this );
+
+    }
 
     if ( connection.pvsConnected() ) {
       bgColor.setConnected();
@@ -2460,13 +2529,15 @@ int stat, index, invisColor;
   if ( nsc ) {
 
     savePvConnected = 1;
-    saveType = ca_field_type( savePvId );
+    saveType = (int) savePvId->get_type().type;
 
-    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, savePvId,
-     udbtc_saveUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-     &saveEventId, DBE_VALUE );
-    if ( stat != ECA_NORMAL )
-      printf( activeUpdownButtonClass_str23 );
+    if ( initialSavedValueConnection ) {
+
+      initialSavedValueConnection = 0;
+
+      savePvId->add_value_callback( udbtc_saveUpdate, this );
+
+    }
 
   }
 
@@ -2477,17 +2548,21 @@ int stat, index, invisColor;
 
     connection.setPvConnected( (void *) visPvConnection );
 
-    stat = ca_get_callback( DBR_GR_DOUBLE, visPvId,
-     udbtc_visInfoUpdate, (void *) this );
+    visValue = curVisValue = visPvId->get_double();
+
+    nvi = 1;
 
   }
 
   if ( nvi ) {
 
-    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, visPvId,
-     udbtc_visUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-     &visEventId, DBE_VALUE );
-    if ( stat != ECA_NORMAL ) printf( activeUpdownButtonClass_str23 );
+    if ( initialVisConnection ) {
+
+      initialVisConnection = 0;
+
+      visPvId->add_value_callback( udbtc_visUpdate, this );
+
+    }
 
     if ( ( visValue >= minVis ) &&
          ( visValue < maxVis ) )
@@ -2509,17 +2584,21 @@ int stat, index, invisColor;
 
   if ( ncolc ) {
 
-    stat = ca_get_callback( DBR_GR_DOUBLE, colorPvId,
-     udbt_colorInfoUpdate, (void *) this );
+    colorValue = curColorValue = colorPvId->get_double();
+
+    ncoli = 1;
 
   }
 
   if ( ncoli ) {
 
-    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, colorPvId,
-     udbt_colorUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-     &colorEventId, DBE_VALUE );
-    if ( stat != ECA_NORMAL ) printf( activeUpdownButtonClass_str23 );
+    if ( initialColorConnection ) {
+
+      initialColorConnection = 0;
+
+      colorPvId->add_value_callback( udbtc_colorUpdate, this );
+
+    }
 
     invisColor = 0;
 
@@ -2555,8 +2634,6 @@ int stat, index, invisColor;
     }
 
   }
-
-#endif
 
 //----------------------------------------------------------------------------
 
@@ -2637,12 +2714,16 @@ int stat, index, invisColor;
 
 char *activeUpdownButtonClass::firstDragName ( void ) {
 
+  if ( !enabled ) return NULL;
+
   dragIndex = 0;
   return dragName[dragIndex];
 
 }
 
 char *activeUpdownButtonClass::nextDragName ( void ) {
+
+  if ( !enabled ) return NULL;
 
   if ( dragIndex < (int) ( sizeof(dragName) / sizeof(char *) ) - 1 ) {
     dragIndex++;
@@ -2657,17 +2738,39 @@ char *activeUpdownButtonClass::nextDragName ( void ) {
 char *activeUpdownButtonClass::dragValue (
   int i ) {
 
-  if ( i == 0 ) {
-    return destPvExpString.getExpanded();
-  }
-  else if ( i == 1 ) {
-    return savePvExpString.getExpanded();
-  }
-  else if ( i == 2 ) {
-    return colorPvExpString.getExpanded();
+  if ( !enabled ) return NULL;
+
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    if ( i == 0 ) {
+      return destPvExpString.getExpanded();
+    }
+    else if ( i == 1 ) {
+      return savePvExpString.getExpanded();
+    }
+    else if ( i == 2 ) {
+      return colorPvExpString.getExpanded();
+    }
+    else {
+      return visPvExpString.getExpanded();
+    }
+
   }
   else {
-    return visPvExpString.getExpanded();
+
+    if ( i == 0 ) {
+      return destPvExpString.getRaw();
+    }
+    else if ( i == 1 ) {
+      return savePvExpString.getRaw();
+    }
+    else if ( i == 2 ) {
+      return colorPvExpString.getRaw();
+    }
+    else {
+      return visPvExpString.getRaw();
+    }
+
   }
 
 }

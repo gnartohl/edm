@@ -36,6 +36,11 @@
 #include "gc_pkg.h"
 #include "entry_form.h"
 #include "pvConnection.h"
+#include "tag_pkg.h"
+
+#define MAX_UNITS_SIZE 16
+#define MAX_ENUM_STRING_SIZE 16
+#define MAX_ENUM_STATES 16
 
 class undoOpClass;
 class undoClass;
@@ -138,12 +143,17 @@ int blinkDisable;
 
 int mouseOver;
 
+int defaultEnabled,
+ enabled, prevEnabled; // this is a run-time attribute;
+                       // if not enabled, widget should be
+                       // unmapped/invisible and nonfunctional
+
+public:
+
 static const int UNKNOWN = -1;
 static const int GRAPHICS = 1;
 static const int MONITORS = 2;
 static const int CONTROLS = 3;
-
-public:
 
 static const int MAX_PV_NAME = 100;
 
@@ -457,6 +467,11 @@ virtual int reactivate (
   int pass,
   void *ptr );
 
+virtual int reactivate (
+  int pass,
+  void *ptr,
+  int *numSubObjects );
+
 virtual int raise ( void );
 
 virtual int lower ( void );
@@ -473,12 +488,20 @@ virtual int createFromFile (
   char *name,
   activeWindowClass *actWin );
 
+virtual int old_createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
 virtual int importFromXchFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
 virtual int save (
+  FILE *fptr );
+
+virtual int old_save (
   FILE *fptr );
 
 virtual activeGraphicClass *copy ( void );
@@ -722,6 +745,14 @@ virtual void btnUp (
   int buttonNumber,
   int *action );
 
+virtual void btnUp (
+  XButtonEvent *be,
+  int x,
+  int y,
+  int buttonState,
+  int buttonNumber,
+  int *action );
+
 virtual void btnDown (
   int x,
   int y,
@@ -735,7 +766,22 @@ virtual void btnDown (
   int buttonNumber,
   int *action );
 
+virtual void btnDown (
+  XButtonEvent *be,
+  int x,
+  int y,
+  int buttonState,
+  int buttonNumber,
+  int *action );
+
 virtual void btnDrag (
+  int x,
+  int y,
+  int buttonState,
+  int buttonNumber );
+
+virtual void btnDrag (
+  XMotionEvent *me,
   int x,
   int y,
   int buttonState,
@@ -746,7 +792,19 @@ virtual void pointerIn (
   int y,
   int buttonState );
 
+virtual void pointerIn (
+  XMotionEvent *me,
+  int x,
+  int y,
+  int buttonState );
+
 virtual void pointerOut (
+  int x,
+  int y,
+  int buttonState );
+
+virtual void pointerOut (
+  XMotionEvent *me,
   int x,
   int y,
   int buttonState );
@@ -756,12 +814,30 @@ virtual void checkMouseOver (
   int y,
   int buttonState );
 
+virtual void checkMouseOver (
+  XMotionEvent *me,
+  int x,
+  int y,
+  int buttonState );
+
 virtual void mousePointerIn (
   int _x,
   int _y,
   int buttonState );
 
+virtual void mousePointerIn (
+  XMotionEvent *me,
+  int _x,
+  int _y,
+  int buttonState );
+
 virtual void mousePointerOut (
+  int _x,
+  int _y,
+  int buttonState );
+
+virtual void mousePointerOut (
+  XMotionEvent *me,
   int _x,
   int _y,
   int buttonState );
@@ -885,8 +961,7 @@ virtual int editSegmentsSet ( void );
 virtual int editLineSegments ( void );
 
 virtual int selectDragValue (
-  int x,
-  int y );
+  XButtonEvent *be );
 
 virtual int startDrag (
   XButtonEvent *be,
@@ -1103,6 +1178,40 @@ void setCreateParam (
 char *getCreateParam ( void );
 
 void postIncompatable ( void );
+
+virtual void setDefaultEnable (
+  int flag
+);
+
+virtual void initEnable ( void );
+
+virtual void enable ( void );
+
+virtual void disable ( void );
+
+virtual int isEnabled ( void );
+
+virtual int isDisabled ( void );
+
+virtual void map ( void );
+
+virtual void unmap ( void );
+
+virtual int getGroupVisInfo ( // for group objects
+  expStringClass *visStr,
+  int *visInv,
+  int maxLen,
+  char *minVis,
+  char *maxVis
+);
+
+virtual int putGroupVisInfo ( // for group objects
+  expStringClass *visStr,
+  int visInv,
+  int maxLen,
+  char *minVis,
+  char *maxVis
+);
 
 };
 

@@ -22,10 +22,8 @@
 #define activeMessageBoxClass_str19 (char *) "Top Shadow Color"
 #define activeMessageBoxClass_str20 (char *) "Bot Shadow Color"
 #define activeMessageBoxClass_str21 (char *) "Message Box"
-#define activeMessageBoxClass_str22 (char *) "error from ca_search\n"
-#define activeMessageBoxClass_str23 (char *) "ca_clear_channel failure\n"
+#define activeMessageBoxClass_str22 (char *) "error creating pv\n"
 #define activeMessageBoxClass_str24 (char *) "frameWidget create failed\n"
-#define activeMessageBoxClass_str25 (char *) "ca_add_masked_array_event failed\n"
 #define activeMessageBoxClass_str26 (char *) "Read Only"
 
 #endif

@@ -25,10 +25,11 @@
 #include "utility.h"
 #include "keypad.h"
 
-#include "cadef.h"
+#include "pv_factory.h"
+#include "cvtFast.h"
 
-#define SLC_MAJOR_VERSION 2
-#define SLC_MINOR_VERSION 2
+#define SLC_MAJOR_VERSION 4
+#define SLC_MINOR_VERSION 0
 #define SLC_RELEASE 0
 
 #define SLC_STATE_IDLE 1
@@ -70,10 +71,12 @@ static void sloCancelKp (
   XtPointer call );
 
 static void sl_monitor_saved_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void sl_savedValueUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void sliderEventHandler(
   Widget w,
@@ -134,40 +137,28 @@ static void slc_edit_cancel_delete (
   XtPointer call );
 
 static void sl_controlUpdate (
-  struct event_handler_args ast_args );
-
-static void sl_controlAlarmUpdate (
-  struct event_handler_args ast_args );
-
-static void sl_infoUpdate (
-  struct event_handler_args ast_args );
-
-static void sl_readInfoUpdate (
-  struct event_handler_args ast_args );
-
-static void sl_controlLabelUpdate (
-  struct event_handler_args ast_args );
-
-static void sl_readLabelUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void sl_monitor_control_label_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void sl_monitor_read_label_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void sl_monitor_control_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void sl_readUpdate (
-  struct event_handler_args ast_args );
-
-static void sl_readAlarmUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void sl_monitor_read_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 #endif
 
@@ -191,10 +182,12 @@ friend void sloCancelKp (
   XtPointer call );
 
 friend void sl_savedValueUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void sl_monitor_saved_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void sliderEventHandler(
   Widget w,
@@ -255,40 +248,28 @@ friend void slc_edit_cancel_delete (
   XtPointer call );
 
 friend void sl_controlUpdate (
-  struct event_handler_args ast_args );
-
-friend void sl_controlAlarmUpdate (
-  struct event_handler_args ast_args );
-
-friend void sl_infoUpdate (
-  struct event_handler_args ast_args );
-
-friend void sl_readInfoUpdate (
-  struct event_handler_args ast_args );
-
-friend void sl_controlLabelUpdate (
-  struct event_handler_args ast_args );
-
-friend void sl_readLabelUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void sl_monitor_control_label_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void sl_monitor_read_label_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void sl_monitor_control_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void sl_readUpdate (
-  struct event_handler_args ast_args );
-
-friend void sl_readAlarmUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void sl_monitor_read_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 XtIntervalId updateControlTimer;
 int updateControlTimerValue;
@@ -344,9 +325,8 @@ char fontTag[63+1], bufFontTag[63+1];
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
-chid controlPvId, controlLabelPvId, readPvId, readLabelPvId, savedValuePvId;
-evid controlEventId, readEventId, controlLabelEventId,
- readLabelEventId, savedEventId, controlAlarmEventId, readAlarmEventId;
+ProcessVariable *controlPvId, *controlLabelPvId, *readPvId, *readLabelPvId,
+ *savedValuePvId;
 
 expStringClass controlPvName, readPvName, savedValuePvName, controlLabelName,
  readLabelName;
@@ -381,6 +361,7 @@ int needCtlLabelConnectInit, needCtlLabelInfoInit;
 int needReadLabelConnectInit, needReadLabelInfoInit;
 int needSavedConnectInit, needSavedRefresh;
 int needErase, needDraw;
+int initialConnection, initialReadConnection, initialSavedValueConnection;
 
 VPFUNC changeCallback, activateCallback, deactivateCallback;
 int changeCallbackFlag, activateCallbackFlag, deactivateCallbackFlag,
@@ -403,6 +384,8 @@ keypadClass kp;
 double kpCtlDouble, kpIncDouble;
 
 int overSave, overRestore, overInc, overControl, overRead;
+
+int oldCtrlStat, oldCtrlSev, oldReadStat, oldReadSev;
 
 public:
 
@@ -437,7 +420,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
@@ -541,6 +532,10 @@ void changePvNames (
   char *visPvs[],
   int numAlarmPvs,
   char *alarmPvs[] );
+
+void map ( void );
+ 
+void unmap ( void );
 
 };
 

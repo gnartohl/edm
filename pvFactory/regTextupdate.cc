@@ -38,6 +38,31 @@ void edmRegTextupdateClass::clone(const edmRegTextupdateClass *rhs,
 int edmRegTextupdateClass::save(FILE *f)
 {
 
+int stat;
+
+tagClass tag;
+
+char *emptyStr = "";
+
+    edmTextupdateClass::save(f); // save all the normal textupdate stuff
+
+    // plus what RegTextupdate adds
+    tag.init();
+    tag.loadW( "# Additional properties" );
+    tag.loadW( "beginObjectProperties" );
+    tag.loadW( "regExpr", regExpStr, emptyStr );
+    tag.loadW( "endObjectProperties" );
+    tag.loadW( "" );
+
+    stat = tag.writeTags( f );
+
+    return stat;
+
+}
+
+int edmRegTextupdateClass::old_save(FILE *f)
+{
+
     edmTextupdateClass::save(f); // save all the normal textupdate stuff
 
     writeStringToFile(f, regExpStr);
@@ -49,7 +74,34 @@ int edmRegTextupdateClass::save(FILE *f)
 int edmRegTextupdateClass::createFromFile(FILE *f, char *name,
                                           activeWindowClass *_actWin)
 {
+
+int stat;
+
+tagClass tag;
+
+char *emptyStr = "";
+
     edmTextupdateClass::createFromFile(f, name, _actWin);
+
+    tag.init();
+    tag.loadR( "beginObjectProperties" );
+    tag.loadR( "regExpr", PV_Factory::MAX_PV_NAME, regExpStr, emptyStr );
+    tag.loadR( "endObjectProperties" );
+
+    stat = tag.readTags( f, "endObjectProperties" );
+
+    if ( !( stat & 1 ) ) {
+      actWin->appCtx->postMessage( tag.errMsg() );
+    }
+
+    return stat;
+
+}
+
+int edmRegTextupdateClass::old_createFromFile(FILE *f, char *name,
+                                          activeWindowClass *_actWin)
+{
+    edmTextupdateClass::old_createFromFile(f, name, _actWin);
 
     // read regular expression from file
     readStringFromFile(regExpStr, PV_Factory::MAX_PV_NAME, f);
@@ -194,6 +246,3 @@ int edmRegTextupdateClass::drawActive()
     actWin->executeGc.restoreFg();
     return 1;
 }
-
-
-

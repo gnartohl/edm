@@ -26,12 +26,11 @@
 // the following defines btnActionListType & btnActionListPtr
 #include "btnActionListType.h"
 
-#ifdef __epics__
-#include "cadef.h"
-#endif
+#include "pv_factory.h"
+#include "cvtFast.h"
 
-#define DSC_MAJOR_VERSION 1
-#define DSC_MINOR_VERSION 5
+#define DSC_MAJOR_VERSION 4
+#define DSC_MINOR_VERSION 0
 #define DSC_RELEASE 0
 
 #define DYNSYMBOL_K_NUM_STATES 64
@@ -51,22 +50,28 @@ static void dsc_updateControl (
   XtIntervalId *id );
 
 static void dynSymbol_monitor_color_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void dynSymbol_colorUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void dynSymbol_monitor_gateUp_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void dynSymbol_gateUpUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void dynSymbol_monitor_gateDown_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void dynSymbol_gateDownUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void dsc_edit_update (
   Widget w,
@@ -113,10 +118,9 @@ dsObjPlusIndexType argRec;
 void *voidHead[DYNSYMBOL_K_NUM_STATES]; // cast to activeGraphicListPtr
                                      // array at runtime
 
-#ifdef __epics__
-chid controlPvId, gateUpPvId, gateDownPvId, colorPvId;
-evid controlEventId, gateUpEventId, gateDownEventId, colorEventId;
-#endif
+ProcessVariable *gateUpPvId, *gateDownPvId, *colorPvId;
+int initialGateUpConnection, initialGateDownConnection,
+ initialColorConnection;
 
 int curCount, timerActive, up, down;
 XtIntervalId timer;
@@ -191,22 +195,28 @@ friend void dsc_updateControl (
   XtIntervalId *id );
 
 friend void dynSymbol_monitor_color_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void dynSymbol_colorUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void dynSymbol_monitor_gateUp_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void dynSymbol_gateUpUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void dynSymbol_monitor_gateDown_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void dynSymbol_gateDownUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void dsc_edit_update (
   Widget w,
@@ -248,6 +258,8 @@ int editCreate ( void );
 
 int readDynSymbolFile ( void );
 
+//int old_readDynSymbolFile ( void );
+
 int createInteractive (
   activeWindowClass *aw_obj,
   int x,
@@ -258,7 +270,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );

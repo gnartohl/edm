@@ -49,8 +49,10 @@ public:
     // ProcessVariable methods
     bool is_valid() const;
     const Type &get_type() const;
+    const specificType &get_specific_type() const;
     double get_double() const;
     size_t get_dimension() const;
+    const char *get_char_array() const;
     const int *get_int_array() const;
     const double *get_double_array() const;
 	time_t get_time_t() const;
@@ -69,6 +71,8 @@ public:
     bool put(double value);
     bool put(const char *value);
     bool put(int value);
+    bool putText(char *value);
+    bool putArrayText(char *value);
 
 protected:
     friend class CALC_PV_Factory;

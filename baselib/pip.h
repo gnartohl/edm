@@ -22,21 +22,26 @@
 #include "act_grf.h"
 #include "entry_form.h"
 
-#ifdef __epics__
-#include "cadef.h"
-#endif
+#include "pv_factory.h"
+#include "cvtFast.h"
 
-#ifndef __epics__
-#define MAX_ENUM_STRING_SIZE 16
-#endif
-
-#define PIPC_MAJOR_VERSION 1
+#define PIPC_MAJOR_VERSION 4
 #define PIPC_MINOR_VERSION 0
 #define PIPC_RELEASE 0
 
 #ifdef __pip_cc
 
 #include "pip.str"
+
+static void menu_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void pipc_edit_ok1 (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 static void pipc_edit_ok (
   Widget w,
@@ -64,16 +69,40 @@ static void pipc_edit_cancel_delete (
   XtPointer call );
 
 static void pip_readUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void pip_monitor_read_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
+
+static void pip_monitor_label_connect_state (
+  ProcessVariable *pv,
+  void *userarg );
+
+static void pip_menuUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
+static void pip_monitor_menu_connect_state (
+  ProcessVariable *pv,
+  void *userarg );
 
 #endif
 
 class activePipClass : public activeGraphicClass {
 
 private:
+
+friend void menu_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void pipc_edit_ok1 (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 friend void pipc_edit_ok (
   Widget w,
@@ -101,10 +130,53 @@ friend void pipc_edit_cancel_delete (
   XtPointer call );
 
 friend void pip_readUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void pip_monitor_read_connect_state (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
+
+friend void pip_monitor_label_connect_state (
+  ProcessVariable *pv,
+  void *userarg );
+
+friend void pip_menuUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
+friend void pip_monitor_menu_connect_state (
+  ProcessVariable *pv,
+  void *userarg );
+
+static const int maxDsps = 20;
+static const int displayFromPV = 0;
+static const int displayFromForm = 1;
+static const int displayFromMenu = 2;
+
+typedef struct bufTag {
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  int bufFgColor;
+  int bufBgColor;
+  int bufTopShadowColor;
+  int bufBotShadowColor;
+  int bufDisplaySource; // string pv, filename, or menu
+  char bufReadPvName[activeGraphicClass::MAX_PV_NAME+1];
+  char bufLabelPvName[activeGraphicClass::MAX_PV_NAME+1];
+  char bufFileName[127+1];
+  int bufPropagateMacros[maxDsps];
+  char bufDisplayFileName[maxDsps][127+1];;
+  char bufSymbols[maxDsps][255+1];;
+  int bufReplaceSymbols[maxDsps];
+  char bufLabel[maxDsps][127+1];;
+} bufType, *bufPtr;
+
+int numDsps, dspIndex;
+
+bufPtr buf;
 
 int bufX, bufY, bufW, bufH;
 
@@ -113,22 +185,34 @@ int opComplete;
 int minW;
 int minH;
 
-Widget *frameWidget;
+Widget *frameWidget, popUpMenu, pullDownMenu, pb[maxDsps];
 
+int propagateMacros[maxDsps];
+expStringClass displayFileName[maxDsps];
+expStringClass symbolsExpStr[maxDsps];
+char symbols[maxDsps][255+1];
+int replaceSymbols[maxDsps]; // else append
+expStringClass label[maxDsps];
+
+int curReadIV;
 char readV[39+1], curReadV[39+1];
 char curFileName[127+1];
 int bufInvalid;
 
-#ifdef __epics__
-chid readPvId;
-evid readEventId;
-#endif
+int firstEvent;
 
-expStringClass readPvExpStr, fileNameExpStr;
+entryFormClass *ef1;
+
+ProcessVariable *readPvId, *labelPvId;
+
+int displaySource;
+
+expStringClass readPvExpStr, labelPvExpStr, fileNameExpStr;
 char bufReadPvName[activeGraphicClass::MAX_PV_NAME+1];
+char bufLabelPvName[activeGraphicClass::MAX_PV_NAME+1];
 char bufFileName[127+1];
 
-int readExists, fileExists;
+int readExists, labelExists, fileExists;
 
 int readPvConnected, init, active, activeMode;
 
@@ -136,7 +220,9 @@ pvColorClass fgColor, bgColor, topShadowColor, botShadowColor;
 colorButtonClass fgCb, bgCb, topCb, botCb;
 int bufFgColor, bufBgColor, bufTopShadowColor, bufBotShadowColor;
 
-int needConnectInit, needUpdate, needDraw, needFileOpen;
+int needConnectInit, needUpdate, needMenuConnectInit, needMenuUpdate,
+ needDraw, needFileOpen, needInitMenuFileOpen, needMap, needUnmap;
+int initialReadConnection, initialMenuConnection, initialLabelConnection;
 
 activeWindowClass *aw;
 
@@ -167,7 +253,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
@@ -223,6 +317,9 @@ int checkResizeSelectBoxAbs (
   int _w,
   int _h );
 
+void activePipClass::openEmbeddedByIndex (
+  int index );
+
 void executeDeferred ( void );
 
 void changeDisplayParams (
@@ -257,6 +354,10 @@ void changePvNames (
 int isWindowContainer ( void );
 
 int activateComplete ( void );
+
+void activePipClass::map ( void );
+
+void activePipClass::unmap ( void );
 
 };
 

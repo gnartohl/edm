@@ -162,8 +162,8 @@ int yi;
       xyo->eBuf = new xyGraphClass::editBufType;
     }
 
-    xyo->adjpFormX = xyo->actWin->xPos() + xyo->x + xyo->popupMenuX;
-    xyo->adjpFormY = xyo->actWin->yPos() + xyo->y + xyo->popupMenuY;
+    xyo->adjpFormX = xyo->popupMenuX;
+    xyo->adjpFormY = xyo->popupMenuY;
     xyo->adjpFormW = 0;
     xyo->adjpFormH = 0;
     xyo->adjpFormMaxH = 600;
@@ -356,14 +356,16 @@ double dxValue, minValue;
       ii = xyo->arrayHead[i];
       while ( ii != xyo->arrayTail[i] ) {
 
+        // There are two views of pv types, Type and specificType; this uses
+        // specificType
         switch ( xyo->xPvType[i] ) {
-        case DBR_FLOAT:
+        case ProcessVariable::specificType::flt:
           dxValue = (double) ( (float *) xyo->xPvData[i] )[ii];
           break;
-        case DBR_DOUBLE: 
+        case ProcessVariable::specificType::real: 
           dxValue = ( (double *) xyo->xPvData[i] )[ii];
           break;
-        case DBR_SHORT:
+        case ProcessVariable::specificType::shrt:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
           }
@@ -371,7 +373,7 @@ double dxValue, minValue;
             dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
           }
           break;
-        case DBR_CHAR:
+        case ProcessVariable::specificType::chr:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (char *) xyo->xPvData[i] )[ii];
           }
@@ -379,7 +381,7 @@ double dxValue, minValue;
             dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
           }
           break;
-        case DBR_LONG:
+        case ProcessVariable::specificType::integer:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
           }
@@ -387,7 +389,7 @@ double dxValue, minValue;
             dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
           }
           break;
-        case DBR_ENUM:
+        case ProcessVariable::specificType::enumerated:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
           }
@@ -493,14 +495,16 @@ double dxValue, maxValue;
       ii = xyo->arrayHead[i];
       while ( ii != xyo->arrayTail[i] ) {
 
+        // There are two views of pv types, Type and specificType; this uses
+        // specificType
         switch ( xyo->xPvType[i] ) {
-        case DBR_FLOAT:
+        case ProcessVariable::specificType::flt:
           dxValue = (double) ( (float *) xyo->xPvData[i] )[ii];
           break;
-        case DBR_DOUBLE: 
+        case ProcessVariable::specificType::real: 
           dxValue = ( (double *) xyo->xPvData[i] )[ii];
           break;
-        case DBR_SHORT:
+        case ProcessVariable::specificType::shrt:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
           }
@@ -508,7 +512,7 @@ double dxValue, maxValue;
             dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
           }
           break;
-        case DBR_CHAR:
+        case ProcessVariable::specificType::chr:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (char *) xyo->xPvData[i] )[ii];
           }
@@ -516,7 +520,7 @@ double dxValue, maxValue;
             dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
           }
           break;
-        case DBR_LONG:
+        case ProcessVariable::specificType::integer:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
           }
@@ -524,7 +528,7 @@ double dxValue, maxValue;
             dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
           }
           break;
-        case DBR_ENUM:
+        case ProcessVariable::specificType::enumerated:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
           }
@@ -752,14 +756,16 @@ int yi = yIndex;
         ii = xyo->arrayHead[i];
         while ( ii != xyo->arrayTail[i] ) {
 
+        // There are two views of pv types, Type and specificType; this uses
+        // specificType
           switch ( xyo->yPvType[i] ) {
-          case DBR_FLOAT:
+          case ProcessVariable::specificType::flt:
             dy1Value = (double) ( (float *) xyo->yPvData[i] )[ii];
             break;
-          case DBR_DOUBLE: 
+          case ProcessVariable::specificType::real: 
             dy1Value = ( (double *) xyo->yPvData[i] )[ii];
             break;
-          case DBR_SHORT:
+          case ProcessVariable::specificType::shrt:
             if ( xyo->ySigned[i] ) {
               dy1Value = (double) ( (short *) xyo->yPvData[i] )[ii];
             }
@@ -767,7 +773,7 @@ int yi = yIndex;
               dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
             }
             break;
-          case DBR_CHAR:
+          case ProcessVariable::specificType::chr:
             if ( xyo->ySigned[i] ) {
               dy1Value = (double) ( (char *) xyo->yPvData[i] )[ii];
             }
@@ -775,7 +781,7 @@ int yi = yIndex;
               dy1Value = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
             }
             break;
-          case DBR_LONG:
+          case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
               dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
             }
@@ -783,7 +789,7 @@ int yi = yIndex;
               dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
             }
             break;
-          case DBR_ENUM:
+          case ProcessVariable::specificType::enumerated:
             if ( xyo->ySigned[i] ) {
               dy1Value = (double) ( (short *) xyo->yPvData[i] )[ii];
             }
@@ -913,14 +919,16 @@ int yi = yIndex;
         ii = xyo->arrayHead[i];
         while ( ii != xyo->arrayTail[i] ) {
 
+          // There are two views of pv types, Type and specificType; this uses
+          // specificType
           switch ( xyo->yPvType[i] ) {
-          case DBR_FLOAT:
+          case ProcessVariable::specificType::flt:
             dy1Value = (double) ( (float *) xyo->yPvData[i] )[ii];
             break;
-          case DBR_DOUBLE: 
+          case ProcessVariable::specificType::real: 
             dy1Value = ( (double *) xyo->yPvData[i] )[ii];
             break;
-          case DBR_SHORT:
+          case ProcessVariable::specificType::shrt:
             if ( xyo->ySigned[i] ) {
               dy1Value = (double) ( (short *) xyo->yPvData[i] )[ii];
             }
@@ -928,7 +936,7 @@ int yi = yIndex;
               dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
             }
             break;
-          case DBR_CHAR:
+          case ProcessVariable::specificType::chr:
             if ( xyo->ySigned[i] ) {
               dy1Value = (double) ( (char *) xyo->yPvData[i] )[ii];
             }
@@ -936,7 +944,7 @@ int yi = yIndex;
               dy1Value = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
             }
             break;
-          case DBR_LONG:
+          case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
               dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
             }
@@ -944,7 +952,7 @@ int yi = yIndex;
               dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
             }
             break;
-          case DBR_ENUM:
+          case ProcessVariable::specificType::enumerated:
             if ( xyo->ySigned[i] ) {
               dy1Value = (double) ( (short *) xyo->yPvData[i] )[ii];
             }
@@ -993,12 +1001,13 @@ int yi = yIndex;
 }
 
 static void resetMonitorConnection (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-xyGraphClass *xyo = (xyGraphClass *) ca_puser(arg.chid);
+xyGraphClass *xyo = (xyGraphClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     xyo->actWin->appCtx->proc->lock();
     xyo->needResetConnect = 1;
@@ -1010,13 +1019,14 @@ xyGraphClass *xyo = (xyGraphClass *) ca_puser(arg.chid);
 }
 
 static void resetValueUpdate (
-  struct event_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-xyGraphClass *xyo = (xyGraphClass *) ca_puser(arg.chid);
+xyGraphClass *xyo = (xyGraphClass *) userarg;
 short value;
 
-  value = *( (short *) arg.dbr );
+  value = pv->get_int();
   if ( (  value && ( xyo->resetMode == XYGC_K_RESET_MODE_IF_NOT_ZERO ) ) ||
        ( !value && ( xyo->resetMode == XYGC_K_RESET_MODE_IF_ZERO ) ) ) {
 
@@ -1030,12 +1040,13 @@ short value;
 }
 
 static void trigMonitorConnection (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-xyGraphClass *xyo = (xyGraphClass *) ca_puser(arg.chid);
+xyGraphClass *xyo = (xyGraphClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     xyo->actWin->appCtx->proc->lock();
     xyo->needTrigConnect = 1;
@@ -1047,10 +1058,11 @@ xyGraphClass *xyo = (xyGraphClass *) ca_puser(arg.chid);
 }
 
 static void trigValueUpdate (
-  struct event_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-xyGraphClass *xyo = (xyGraphClass *) ca_puser(arg.chid);
+xyGraphClass *xyo = (xyGraphClass *) userarg;
 int i, ii, yi;
 char *xArray, *yArray;
 double dxValue, dyValue;
@@ -1100,14 +1112,16 @@ double scaledX, scaledY;
 
           ii = xyo->arrayTail[i];
 
+          // There are two views of pv types, Type and specificType; this uses
+          // specificType
           switch ( xyo->yPvType[i] ) {
-          case DBR_FLOAT:
+          case ProcessVariable::specificType::flt:
             dyValue = (double) ( (float *) xyo->yPvData[i] )[ii];
             break;
-          case DBR_DOUBLE: 
+          case ProcessVariable::specificType::real: 
             dyValue = ( (double *) xyo->yPvData[i] )[ii];
             break;
-          case DBR_SHORT:
+          case ProcessVariable::specificType::shrt:
             if ( xyo->ySigned[i] ) {
               dyValue = (double) ( (short *) xyo->yPvData[i] )[ii];
             }
@@ -1115,7 +1129,7 @@ double scaledX, scaledY;
               dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
             }
             break;
-          case DBR_CHAR:
+          case ProcessVariable::specificType::chr:
             if ( xyo->ySigned[i] ) {
               dyValue = (double) ( (char *) xyo->yPvData[i] )[ii];
             }
@@ -1123,7 +1137,7 @@ double scaledX, scaledY;
               dyValue = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
             }
             break;
-          case DBR_LONG:
+          case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
               dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
             }
@@ -1131,7 +1145,7 @@ double scaledX, scaledY;
               dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
             }
             break;
-          case DBR_ENUM:
+          case ProcessVariable::specificType::enumerated:
             if ( xyo->ySigned[i] ) {
               dyValue = (double) ( (short *) xyo->yPvData[i] )[ii];
             }
@@ -1169,14 +1183,16 @@ double scaledX, scaledY;
            rint( ( dyValue - xyo->curY1Min[yi] ) *
            xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
 
+          // There are two views of pv types, Type and specificType; this uses
+          // specificType
           switch ( xyo->xPvType[i] ) {
-          case DBR_FLOAT:
+          case ProcessVariable::specificType::flt:
             dxValue = (double) ( (float *) xyo->xPvData[i] )[ii];
             break;
-          case DBR_DOUBLE: 
+          case ProcessVariable::specificType::real: 
             dxValue = ( (double *) xyo->xPvData[i] )[ii];
             break;
-          case DBR_SHORT:
+          case ProcessVariable::specificType::shrt:
             if ( xyo->xSigned[i] ) {
               dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
             }
@@ -1184,7 +1200,7 @@ double scaledX, scaledY;
               dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
             }
             break;
-          case DBR_CHAR:
+          case ProcessVariable::specificType::chr:
             if ( xyo->xSigned[i] ) {
               dxValue = (double) ( (char *) xyo->xPvData[i] )[ii];
             }
@@ -1192,7 +1208,7 @@ double scaledX, scaledY;
               dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
             }
             break;
-          case DBR_LONG:
+          case ProcessVariable::specificType::integer:
             if ( xyo->xSigned[i] ) {
               dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
             }
@@ -1200,7 +1216,7 @@ double scaledX, scaledY;
               dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
             }
             break;
-          case DBR_ENUM:
+          case ProcessVariable::specificType::enumerated:
             if ( xyo->xSigned[i] ) {
               dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
             }
@@ -1374,13 +1390,14 @@ double scaledX, scaledY;
 }
 
 static void xMonitorConnection (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
+objPlusIndexPtr ptr = (objPlusIndexPtr) userarg;
 xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     if ( !xyo->connection.pvsConnected() ) {
 
@@ -1413,36 +1430,12 @@ xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 
 }
 
-static void xInfoUpdate (
-  struct event_handler_args arg )
-{
-
-  if ( arg.status == ECA_DISCONN ) {
-    return;
-  }
-
-objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
-xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
-struct dbr_gr_double grRec = *( (dbr_gr_double *) arg.dbr );
-int i =  ptr->index;
-
-  xyo->dbXMin[i] = grRec.lower_disp_limit;
-  xyo->dbXMax[i] = grRec.upper_disp_limit;
-  xyo->dbXPrec[i] = grRec.precision;
-
-  xyo->actWin->appCtx->proc->lock();
-  xyo->needInit = 1;
-  xyo->xArrayNeedInit[i] = 1;
-  xyo->actWin->addDefExeNode( xyo->aglPtr );
-  xyo->actWin->appCtx->proc->unlock();
-
-}
-
 static void xValueUpdate (
-  struct event_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
+objPlusIndexPtr ptr = (objPlusIndexPtr) userarg;
 xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 int i =  ptr->index;
 int ii, yi;
@@ -1465,58 +1458,61 @@ double scaledX, scaledY;
 
       for ( ii=0; ii<xyo->xPvCount[i]; ii++ ) {
 
+        // There are two views of pv types, Type and specificType; this uses
+        // specificType
         switch ( xyo->xPvType[i] ) {
 
-        case DBR_FLOAT:
-          ( (float *) xyo->xPvData[i] )[ii] = ( (float *) arg.dbr )[ii];
+        case ProcessVariable::specificType::flt:
+          ( (float *) xyo->xPvData[i] )[ii] =
+           (float) pv->get_double_array()[ii];
           break;
 
-        case DBR_DOUBLE: 
-          ( (double *) xyo->xPvData[i] )[ii] = ( (double *) arg.dbr )[ii];
+        case ProcessVariable::specificType::real: 
+          ( (double *) xyo->xPvData[i] )[ii] = pv->get_double_array()[ii];
           break;
 
-        case DBR_SHORT:
+        case ProcessVariable::specificType::shrt:
           if ( xyo->xSigned[i] ) {
-            ( (short *) xyo->xPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
+            ( (short *) xyo->xPvData[i] )[ii] = (short) pv->get_int_array()[ii];
           }
           else {
             ( (unsigned short *) xyo->xPvData[i] )[ii] =
-             ( (unsigned short *) arg.dbr )[ii];
+             (unsigned short) pv->get_int_array()[ii];
           }
           break;
 
-        case DBR_CHAR:
+        case ProcessVariable::specificType::chr:
           if ( xyo->xSigned[i] ) {
-            ( (char *) xyo->xPvData[i] )[ii] = ( (char *) arg.dbr )[ii];
+            ( (char *) xyo->xPvData[i] )[ii] = (char) pv->get_char_array()[ii];
           }
           else {
             ( (unsigned char *) xyo->xPvData[i] )[ii] =
-             ( (unsigned char *) arg.dbr )[ii];
+             (unsigned char) pv->get_char_array()[ii];
           }
           break;
 
-        case DBR_LONG:
+        case ProcessVariable::specificType::integer:
           if ( xyo->xSigned[i] ) {
-            ( (long *) xyo->xPvData[i] )[ii] = ( (long *) arg.dbr )[ii];
+            ( (long *) xyo->xPvData[i] )[ii] = pv->get_int_array()[ii];
           }
           else {
             ( (unsigned long *) xyo->xPvData[i] )[ii] =
-             ( (unsigned long *) arg.dbr )[ii];
+             (unsigned long) pv->get_int_array()[ii];
           }
           break;
 
-        case DBR_ENUM:
+        case ProcessVariable::specificType::enumerated:
           if ( xyo->xSigned[i] ) {
-            ( (short *) xyo->xPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
+            ( (short *) xyo->xPvData[i] )[ii] = (short) pv->get_int_array()[ii];
           }
           else {
             ( (unsigned short *) xyo->xPvData[i] )[ii] =
-             ( (unsigned short *) arg.dbr )[ii];
+             (unsigned short) pv->get_int_array()[ii];
           }
           break;
 
         default:
-          ( (double *) xyo->xPvData[i] )[ii] = ( (double *) arg.dbr )[ii];
+          ( (double *) xyo->xPvData[i] )[ii] = pv->get_double_array()[ii];
           break;
 
         }
@@ -1536,8 +1532,23 @@ double scaledX, scaledY;
     }
     else { // scalar
 
-      memcpy( (void *) &xyo->xPvCurValue[i], (void *) arg.dbr,
-       xyo->xPvSize[i] ); // save cur value for y event
+      // There are two views of pv types, Type and specificType; this uses Type
+
+      // There are two views of pv types, Type and specificType; this uses
+      // specificType
+
+      // There are two views of pv types, Type and specificType; this uses
+      // Type
+      switch ( xyo->xPvType[i] ) {
+      case ProcessVariable::Type::real:
+	( (double *) xyo->xPvCurValue )[i] = pv->get_double();
+	break;
+      case ProcessVariable::specificType::integer:
+	( (int *) xyo->xPvCurValue )[i] = pv->get_int();
+	break;
+      }
+      //memcpy( (void *) &xyo->xPvCurValue[i], (void *) arg.dbr,
+      //xyo->xPvSize[i] ); // save cur value for y event
 
       if ( ( xyo->arrayNumPoints[i] >= xyo->count ) &&
            ( xyo->plotMode == XYGC_K_PLOT_MODE_PLOT_N_STOP ) ) {
@@ -1548,7 +1559,18 @@ double scaledX, scaledY;
       // x
       ii = xyo->arrayTail[i] * xyo->xPvSize[i];
       xArray = (char *) xyo->xPvData[i];
-      memcpy( (void *) &xArray[ii], (void *) arg.dbr, xyo->xPvSize[i] );
+
+      // There are two views of pv types, Type and specificType; this uses
+      // specificType
+      switch ( xyo->xPvType[i] ) {
+      case ProcessVariable::Type::real:
+	( (double *) xArray )[i] = pv->get_double();
+	break;
+      case ProcessVariable::specificType::integer:
+	( (int *) xArray )[i] = pv->get_int();
+	break;
+      }
+      //memcpy( (void *) &xArray[ii], (void *) arg.dbr, xyo->xPvSize[i] );
 
       if ( ( xyo->plotUpdateMode[i] == XYGC_K_UPDATE_ON_X_OR_Y ) ||
            ( xyo->plotUpdateMode[i] == XYGC_K_UPDATE_ON_X ) ) {
@@ -1568,14 +1590,16 @@ double scaledX, scaledY;
 
         ii = xyo->arrayTail[i];
 
+        // There are two views of pv types, Type and specificType; this uses
+        // specificType
         switch ( xyo->yPvType[i] ) {
-        case DBR_FLOAT:
+        case ProcessVariable::specificType::flt:
           dyValue = (double) ( (float *) xyo->yPvData[i] )[ii];
           break;
-        case DBR_DOUBLE: 
+        case ProcessVariable::specificType::real: 
           dyValue = ( (double *) xyo->yPvData[i] )[ii];
           break;
-        case DBR_SHORT:
+        case ProcessVariable::specificType::shrt:
           if ( xyo->ySigned[i] ) {
             dyValue = (double) ( (short *) xyo->yPvData[i] )[ii];
           }
@@ -1583,7 +1607,7 @@ double scaledX, scaledY;
             dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
           }
           break;
-        case DBR_CHAR:
+        case ProcessVariable::specificType::chr:
           if ( xyo->ySigned[i] ) {
             dyValue = (double) ( (char *) xyo->yPvData[i] )[ii];
           }
@@ -1591,7 +1615,7 @@ double scaledX, scaledY;
             dyValue = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
           }
           break;
-        case DBR_LONG:
+        case ProcessVariable::specificType::integer:
           if ( xyo->ySigned[i] ) {
             dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
           }
@@ -1599,7 +1623,7 @@ double scaledX, scaledY;
             dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
           }
           break;
-        case DBR_ENUM:
+        case ProcessVariable::specificType::enumerated:
           if ( xyo->ySigned[i] ) {
             dyValue = (double) ( (short *) xyo->yPvData[i] )[ii];
           }
@@ -1637,14 +1661,16 @@ double scaledX, scaledY;
          rint( ( dyValue - xyo->curY1Min[yi] ) *
          xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
 
+        // There are two views of pv types, Type and specificType; this uses
+        // specificType
         switch ( xyo->xPvType[i] ) {
-        case DBR_FLOAT:
+        case ProcessVariable::specificType::flt:
           dxValue = (double) ( (float *) xyo->xPvData[i] )[ii];
           break;
-        case DBR_DOUBLE: 
+        case ProcessVariable::specificType::real: 
           dxValue = ( (double *) xyo->xPvData[i] )[ii];
           break;
-        case DBR_SHORT:
+        case ProcessVariable::specificType::shrt:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
           }
@@ -1652,7 +1678,7 @@ double scaledX, scaledY;
             dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
           }
           break;
-        case DBR_CHAR:
+        case ProcessVariable::specificType::chr:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (char *) xyo->xPvData[i] )[ii];
           }
@@ -1660,7 +1686,7 @@ double scaledX, scaledY;
             dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
           }
           break;
-        case DBR_LONG:
+        case ProcessVariable::specificType::integer:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
           }
@@ -1668,7 +1694,7 @@ double scaledX, scaledY;
             dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
           }
           break;
-        case DBR_ENUM:
+        case ProcessVariable::specificType::enumerated:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
           }
@@ -1757,13 +1783,14 @@ double scaledX, scaledY;
 }
 
 static void yMonitorConnection (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
+objPlusIndexPtr ptr = (objPlusIndexPtr) userarg;
 xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     if ( !xyo->connection.pvsConnected() ) {
 
@@ -1798,36 +1825,12 @@ xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 
 }
 
-static void yInfoUpdate (
-  struct event_handler_args arg )
-{
-
-  if ( arg.status == ECA_DISCONN ) {
-    return;
-  }
-
-objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
-xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
-struct dbr_gr_double grRec = *( (dbr_gr_double *) arg.dbr );
-int i =  ptr->index;
-
-  xyo->dbYMin[i] = grRec.lower_disp_limit;
-  xyo->dbYMax[i] = grRec.upper_disp_limit;
-  xyo->dbYPrec[i] = grRec.precision;
-
-  xyo->actWin->appCtx->proc->lock();
-  xyo->needInit = 1;
-  xyo->yArrayNeedInit[i] = 1;
-  xyo->actWin->addDefExeNode( xyo->aglPtr );
-  xyo->actWin->appCtx->proc->unlock();
-
-}
-
 static void yValueUpdate (
-  struct event_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
+objPlusIndexPtr ptr = (objPlusIndexPtr) userarg;
 xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 int ii, i =  ptr->index;
 char *xArray, *yArray;
@@ -1848,63 +1851,64 @@ int yi;
 
     if ( xyo->yPvCount[i] > 1 ) { // vector
 
-      //memcpy( xyo->yPvData[i], arg.dbr, xyo->yPvSize[i] );
-      //xyo->arrayNumPoints[i] = xyo->yPvCount[i];
-
       for ( ii=0; ii<xyo->yPvCount[i]; ii++ ) {
 
+        // There are two views of pv types, Type and specificType; this uses
+        // specificType
         switch ( xyo->yPvType[i] ) {
 
-        case DBR_FLOAT:
-          ( (float *) xyo->yPvData[i] )[ii] = ( (float *) arg.dbr )[ii];
+        case ProcessVariable::specificType::flt:
+          ( (float *) xyo->yPvData[i] )[ii] =
+           (float) pv->get_double_array()[ii];
           break;
 
-        case DBR_DOUBLE: 
-          ( (double *) xyo->yPvData[i] )[ii] = ( (double *) arg.dbr )[ii];
+        case ProcessVariable::specificType::real: 
+          ( (double *) xyo->yPvData[i] )[ii] = pv->get_double_array()[ii];
           break;
 
-        case DBR_SHORT:
+        case ProcessVariable::specificType::shrt:
           if ( xyo->ySigned[i] ) {
-          ( (short *) xyo->yPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
+          ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int_array()[ii];
           }
           else {
           ( (unsigned short *) xyo->yPvData[i] )[ii] =
-           ( (unsigned short *) arg.dbr )[ii];
+           (unsigned short) pv->get_int_array()[ii];
           }
           break;
 
-        case DBR_CHAR:
+        case ProcessVariable::specificType::chr:
           if ( xyo->ySigned[i] ) {
-          ( (char *) xyo->yPvData[i] )[ii] = ( (char *) arg.dbr )[ii];
+          ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_char_array()[ii];
           }
           else {
           ( (unsigned char *) xyo->yPvData[i] )[ii] =
-           ( (unsigned char *) arg.dbr )[ii];
+           (unsigned char) pv->get_char_array()[ii];
           }
           break;
 
-        case DBR_LONG:
+        case ProcessVariable::specificType::integer:
           if ( xyo->ySigned[i] ) {
-            ( (long *) xyo->yPvData[i] )[ii] = ( (long *) arg.dbr )[ii];
+            ( (long *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
           }
           else {
             ( (unsigned long *) xyo->yPvData[i] )[ii] =
-           ( (unsigned long *) arg.dbr )[ii];
+             (unsigned long) pv->get_int_array()[ii];
           }
           break;
 
-        case DBR_ENUM:
+        case ProcessVariable::specificType::enumerated:
           if ( xyo->ySigned[i] ) {
-          ( (short *) xyo->yPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
+            ( (short *) xyo->yPvData[i] )[ii] =
+             (short) pv->get_int_array()[ii];
           }
           else {
-          ( (unsigned short *) xyo->yPvData[i] )[ii] =
-           ( (unsigned short *) arg.dbr )[ii];
+            ( (unsigned short *) xyo->yPvData[i] )[ii] =
+             (unsigned short) pv->get_int_array()[ii];
           }
           break;
 
         default:
-          ( (double *) xyo->yPvData[i] )[ii] = ( (double *) arg.dbr )[ii];
+          ( (double *) xyo->yPvData[i] )[ii] = pv->get_double_array()[ii];
           break;
 
         }
@@ -1924,8 +1928,18 @@ int yi;
     }
     else { // scalar
 
-      memcpy( (void *) &xyo->yPvCurValue[i], (void *) arg.dbr,
-       xyo->yPvSize[i] ); // save cur value for x or trig event
+      // There are two views of pv types, Type and specificType; this uses
+      // Type
+      switch ( xyo->yPvType[i] ) {
+      case ProcessVariable::Type::real:
+	( (double *) xyo->yPvCurValue )[i] = pv->get_double();
+	break;
+      case ProcessVariable::specificType::integer:
+	( (int *) xyo->yPvCurValue )[i] = pv->get_int();
+	break;
+      }
+      //memcpy( (void *) &xyo->yPvCurValue[i], (void *) arg.dbr,
+      // xyo->yPvSize[i] ); // save cur value for x or trig event
 
       if ( ( xyo->arrayNumPoints[i] >= xyo->count ) &&
            ( xyo->plotMode == XYGC_K_PLOT_MODE_PLOT_N_STOP ) ) {
@@ -1936,7 +1950,18 @@ int yi;
       // y
       ii = xyo->arrayTail[i] * xyo->yPvSize[i];
       yArray = (char *) xyo->yPvData[i];
-      memcpy( (void *) &yArray[ii], (void *) arg.dbr, xyo->yPvSize[i] );
+
+      // There are two views of pv types, Type and specificType; this uses
+      // Type
+      switch ( xyo->yPvType[i] ) {
+      case ProcessVariable::Type::real:
+	( (double *) yArray )[i] = pv->get_double();
+	break;
+      case ProcessVariable::specificType::integer:
+	( (int *) yArray )[i] = pv->get_int();
+	break;
+      }
+      //memcpy( (void *) &yArray[ii], (void *) arg.dbr, xyo->yPvSize[i] );
 
       if ( ( xyo->plotUpdateMode[i] == XYGC_K_UPDATE_ON_X_OR_Y ) ||
            ( xyo->plotUpdateMode[i] == XYGC_K_UPDATE_ON_Y ) ) {
@@ -1956,14 +1981,16 @@ int yi;
 
         ii = xyo->arrayTail[i];
 
+        // There are two views of pv types, Type and specificType; this uses
+        // specificType
         switch ( xyo->yPvType[i] ) {
-        case DBR_FLOAT:
+        case ProcessVariable::specificType::flt:
           dyValue = (double) ( (float *) xyo->yPvData[i] )[ii];
           break;
-        case DBR_DOUBLE: 
+        case ProcessVariable::specificType::real: 
           dyValue = ( (double *) xyo->yPvData[i] )[ii];
           break;
-        case DBR_SHORT:
+        case ProcessVariable::specificType::shrt:
           if ( xyo->ySigned[i] ) {
             dyValue = (double) ( (short *) xyo->yPvData[i] )[ii];
           }
@@ -1971,7 +1998,7 @@ int yi;
             dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
           }
           break;
-        case DBR_CHAR:
+        case ProcessVariable::specificType::chr:
           if ( xyo->ySigned[i] ) {
             dyValue = (double) ( (char *) xyo->yPvData[i] )[ii];
           }
@@ -1979,7 +2006,7 @@ int yi;
             dyValue = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
           }
           break;
-        case DBR_LONG:
+        case ProcessVariable::specificType::integer:
           if ( xyo->ySigned[i] ) {
             dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
 	  }
@@ -1987,7 +2014,7 @@ int yi;
             dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
 	  }
           break;
-        case DBR_ENUM:
+        case ProcessVariable::specificType::enumerated:
           if ( xyo->ySigned[i] ) {
             dyValue = (double) ( (short *) xyo->yPvData[i] )[ii];
 	  }
@@ -2025,14 +2052,16 @@ int yi;
          rint( ( dyValue - xyo->curY1Min[yi] ) *
          xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
 
+        // There are two views of pv types, Type and specificType; this uses
+        // specificType
         switch ( xyo->xPvType[i] ) {
-        case DBR_FLOAT:
+        case ProcessVariable::specificType::flt:
           dxValue = (double) ( (float *) xyo->xPvData[i] )[ii];
           break;
-        case DBR_DOUBLE: 
+        case ProcessVariable::specificType::real: 
           dxValue = ( (double *) xyo->xPvData[i] )[ii];
           break;
-        case DBR_SHORT:
+        case ProcessVariable::specificType::shrt:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
 	  }
@@ -2040,7 +2069,7 @@ int yi;
             dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
 	  }
           break;
-        case DBR_CHAR:
+        case ProcessVariable::specificType::chr:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (char *) xyo->xPvData[i] )[ii];
 	  }
@@ -2048,7 +2077,7 @@ int yi;
             dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
 	  }
           break;
-        case DBR_LONG:
+        case ProcessVariable::specificType::integer:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
 	  }
@@ -2056,7 +2085,7 @@ int yi;
             dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
 	  }
           break;
-        case DBR_ENUM:
+        case ProcessVariable::specificType::enumerated:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
 	  }
@@ -2145,22 +2174,16 @@ int yi;
 }
 
 static void yValueWithTimeUpdate (
-  struct event_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
+objPlusIndexPtr ptr = (objPlusIndexPtr) userarg;
 xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 int ii, yi, i =  ptr->index;
 int sec, nsec;
 double dxValue, dyValue;
 double scaledX, scaledY;
-//struct timespec ts;
-struct dbr_time_float *dbrFltPtr;
-struct dbr_time_double *dbrDblPtr;
-struct dbr_time_short *dbrShrtPtr;
-struct dbr_time_char *dbrChrPtr;
-struct dbr_time_long *dbrLngPtr;
-struct dbr_time_enum *dbrEnumPtr;
 
   if ( !xyo->activeMode ) return;
 
@@ -2182,58 +2205,64 @@ struct dbr_time_enum *dbrEnumPtr;
 
       for ( ii=0; ii<xyo->yPvCount[i]; ii++ ) {
 
+        // There are two views of pv types, Type and specificType; this uses
+        // specificType
         switch ( xyo->yPvType[i] ) {
 
-        case DBR_FLOAT:
-          ( (float *) xyo->yPvData[i] )[ii] = ( (float *) arg.dbr )[ii];
+        case ProcessVariable::specificType::flt:
+          ( (float *) xyo->yPvData[i] )[ii] =
+           (float) pv->get_double_array()[ii];
           break;
 
-        case DBR_DOUBLE: 
-          ( (double *) xyo->yPvData[i] )[ii] = ( (double *) arg.dbr )[ii];
+        case ProcessVariable::specificType::real: 
+          ( (double *) xyo->yPvData[i] )[ii] =
+	    pv->get_double_array()[ii];
           break;
 
-        case DBR_SHORT:
+        case ProcessVariable::specificType::shrt:
           if ( xyo->ySigned[i] ) {
-            ( (short *) xyo->yPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
+            ( (short *) xyo->yPvData[i] )[ii] =
+             (short) pv->get_int_array()[ii];
 	  }
 	  else {
             ( (unsigned short *) xyo->yPvData[i] )[ii] =
-             ( (unsigned short *) arg.dbr )[ii];
+             (unsigned short) pv->get_int_array()[ii];
 	  }
           break;
 
-        case DBR_CHAR:
+        case ProcessVariable::specificType::chr:
           if ( xyo->ySigned[i] ) {
-            ( (char *) xyo->yPvData[i] )[ii] = ( (char *) arg.dbr )[ii];
+            ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_char_array()[ii];
 	  }
 	  else {
             ( (unsigned char *) xyo->yPvData[i] )[ii] =
-             ( (unsigned char *) arg.dbr )[ii];
+	      (unsigned char) pv->get_char_array()[ii];
 	  }
           break;
 
-        case DBR_LONG:
+        case ProcessVariable::specificType::integer:
           if ( xyo->ySigned[i] ) {
-            ( (long *) xyo->yPvData[i] )[ii] = ( (long *) arg.dbr )[ii];
+            ( (long *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
 	  }
 	  else {
             ( (unsigned long *) xyo->yPvData[i] )[ii] =
-             ( (unsigned long *) arg.dbr )[ii];
+	      (unsigned long) pv->get_int_array()[ii];
 	  }
           break;
 
-        case DBR_ENUM:
+        case ProcessVariable::specificType::enumerated:
           if ( xyo->ySigned[i] ) {
-            ( (short *) xyo->yPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
+            ( (short *) xyo->yPvData[i] )[ii] =
+             (short) pv->get_int_array()[ii];
 	  }
 	  else {
             ( (unsigned short *) xyo->yPvData[i] )[ii] =
-             ( (unsigned short *) arg.dbr )[ii];
+	      (unsigned short) pv->get_int_array()[ii];
 	  }
           break;
 
         default:
-          ( (double *) xyo->yPvData[i] )[ii] = ( (double *) arg.dbr )[ii];
+          ( (double *) xyo->yPvData[i] )[ii] = pv->get_double_array()[ii];
           break;
 
         }
@@ -2262,82 +2291,83 @@ struct dbr_time_enum *dbrEnumPtr;
 
       ii = xyo->arrayTail[i];
 
+      // There are two views of pv types, Type and specificType; this uses
+      // specificType
       switch ( xyo->yPvType[i] ) {
 
-      case DBR_FLOAT:
-        dbrFltPtr = (struct dbr_time_float *) arg.dbr;
-        ( (float *) xyo->yPvData[i] )[ii] = dbrFltPtr->value;
-        dyValue = (double) dbrFltPtr->value;
-        sec = dbrFltPtr->stamp.secPastEpoch;
-        nsec = dbrFltPtr->stamp.nsec;
+      case ProcessVariable::specificType::flt:
+        ( (float *) xyo->yPvData[i] )[ii] = dyValue = (float) pv->get_double();
+        sec = pv->get_time_t();
+        nsec = pv->get_nano();
         break;
 
-      case DBR_DOUBLE: 
-        dbrDblPtr = (struct dbr_time_double *) arg.dbr;
-        ( (double *) xyo->yPvData[i] )[ii] = dbrDblPtr->value;
-        dyValue = dbrDblPtr->value;
-        sec = dbrDblPtr->stamp.secPastEpoch;
-        nsec = dbrDblPtr->stamp.nsec;
+      case ProcessVariable::specificType::real: 
+        ( (double *) xyo->yPvData[i] )[ii] = dyValue = pv->get_double();
+        sec = pv->get_time_t();
+        nsec = pv->get_nano();
         break;
 
-      case DBR_SHORT:
-        dbrShrtPtr = (struct dbr_time_short *) arg.dbr;
+      case ProcessVariable::specificType::shrt:
         if ( xyo->ySigned[i] ) {
-          ( (short *) xyo->yPvData[i] )[ii] = dbrShrtPtr->value;
+          ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int();
+          dyValue = (short) pv->get_int();
         }
         else {
-          ( (unsigned short *) xyo->yPvData[i] )[ii] = dbrShrtPtr->value;
+          ( (unsigned short *) xyo->yPvData[i] )[ii] =
+           (unsigned short) pv->get_int();
+	  dyValue = (unsigned short) pv->get_int();
         }
-        dyValue = (double) dbrShrtPtr->value;
-        sec = dbrShrtPtr->stamp.secPastEpoch;
-        nsec = dbrShrtPtr->stamp.nsec;
+        sec = pv->get_time_t();
+        nsec = pv->get_nano();
         break;
 
-      case DBR_CHAR:
-        dbrChrPtr = (struct dbr_time_char *) arg.dbr;
+      case ProcessVariable::specificType::chr:
         if ( xyo->ySigned[i] ) {
-          ( (char *) xyo->yPvData[i] )[ii] = dbrChrPtr->value;
+          ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_int();
+	  dyValue = (char) pv->get_int();
         }
         else {
-          ( (unsigned char *) xyo->yPvData[i] )[ii] = dbrChrPtr->value;
+          ( (unsigned char *) xyo->yPvData[i] )[ii] =
+	   (unsigned char) pv->get_int();
+	  dyValue = (unsigned char) pv->get_int();
         }
-        dyValue = (double) dbrChrPtr->value;
-        sec = dbrChrPtr->stamp.secPastEpoch;
-        nsec = dbrChrPtr->stamp.nsec;
+        sec = pv->get_time_t();
+        nsec = pv->get_nano();
         break;
 
-      case DBR_LONG:
-        dbrLngPtr = (struct dbr_time_long *) arg.dbr;
+      case ProcessVariable::specificType::integer:
         if ( xyo->ySigned[i] ) {
-          ( (long *) xyo->yPvData[i] )[ii] = dbrLngPtr->value;
+          ( (long *) xyo->yPvData[i] )[ii] = pv->get_int();
+	  dyValue = pv->get_int();
         }
         else {
-          ( (unsigned long *) xyo->yPvData[i] )[ii] = dbrLngPtr->value;
+          ( (unsigned long *) xyo->yPvData[i] )[ii] =
+           (unsigned long) pv->get_int();
+	  dyValue = (unsigned long) pv->get_int();
         }
-        dyValue = (double) dbrLngPtr->value;
-        sec = dbrLngPtr->stamp.secPastEpoch;
-        nsec = dbrLngPtr->stamp.nsec;
+        sec = pv->get_time_t();
+        nsec = pv->get_nano();
         break;
 
-      case DBR_ENUM:
-        dbrEnumPtr = (struct dbr_time_enum *) arg.dbr;
+      case ProcessVariable::specificType::enumerated:
         if ( xyo->ySigned[i] ) {
-          ( (short *) xyo->yPvData[i] )[ii] = dbrEnumPtr->value;
+          ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int();
+	  dyValue = (short) pv->get_int();
         }
         else {
-          ( (unsigned short *) xyo->yPvData[i] )[ii] = dbrEnumPtr->value;
+          ( (unsigned short *) xyo->yPvData[i] )[ii] =
+           (unsigned short) pv->get_int();
+	  dyValue = (unsigned short) pv->get_int();
         }
-        dyValue = (double) dbrEnumPtr->value;
-        sec = dbrEnumPtr->stamp.secPastEpoch;
-        nsec = dbrEnumPtr->stamp.nsec;
+        sec = pv->get_time_t();
+        nsec = pv->get_nano();
         break;
 
       default:
-        dbrDblPtr = (struct dbr_time_double *) arg.dbr;
-        ( (double *) xyo->yPvData[i] )[ii] = dbrDblPtr->value;
-        dyValue = dbrDblPtr->value;
-        sec = dbrDblPtr->stamp.secPastEpoch;
-        nsec = dbrDblPtr->stamp.nsec;
+        ( (double *) xyo->yPvData[i] )[ii] = pv->get_double();
+	dyValue = pv->get_double();
+        sec = pv->get_time_t();
+        nsec = pv->get_nano();
         break;
 
       }
@@ -2784,8 +2814,6 @@ time_t t1, t2;
   for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
     xPv[i] = NULL;
     yPv[i] = NULL;
-    xEv[i] = NULL;
-    yEv[i] = NULL;
     xPvData[i] = NULL;
     yPvData[i] = NULL;
     plotBuf[i] = NULL;
@@ -2795,8 +2823,6 @@ time_t t1, t2;
   }
   trigPv = NULL;
   resetPv = NULL;
-  resetEv = NULL;
-  trigEv = NULL;
 
   pixmap = (Pixmap) NULL;
 
@@ -2902,8 +2928,6 @@ int i, yi;
     yPvExpStr[i].copy( source->yPvExpStr[i] );
     xPv[i] = NULL;
     yPv[i] = NULL;
-    xEv[i] = NULL;
-    yEv[i] = NULL;
     xPvData[i] = NULL;
     yPvData[i] = NULL;
     plotBuf[i] = NULL;
@@ -2913,13 +2937,11 @@ int i, yi;
   }
 
   trigPv = NULL;
-  trigEv = NULL;
   trigPvExpStr.copy( source->trigPvExpStr );
 
   pixmap = (Pixmap) NULL;
 
   resetPv = NULL;
-  resetEv = NULL;
   resetPvExpStr.copy( source->resetPvExpStr );
   resetMode = source->resetMode;
 
@@ -3013,14 +3035,16 @@ double dxValue;
     ii = arrayHead[i];
     while ( ii != arrayTail[i] ) {
 
+      // There are two views of pv types, Type and specificType; this uses
+      // specificType
       switch ( xPvType[i] ) {
-      case DBR_FLOAT:
+      case ProcessVariable::specificType::flt:
         dxValue = (double) ( (float *) xPvData[i] )[ii];
         break;
-      case DBR_DOUBLE: 
+      case ProcessVariable::specificType::real: 
         dxValue = ( (double *) xPvData[i] )[ii];
         break;
-      case DBR_SHORT:
+      case ProcessVariable::specificType::shrt:
         if ( xSigned[i] ) {
           dxValue = (double) ( (short *) xPvData[i] )[ii];
         }
@@ -3028,7 +3052,7 @@ double dxValue;
           dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
         }
         break;
-      case DBR_CHAR:
+      case ProcessVariable::specificType::chr:
         if ( xSigned[i] ) {
           dxValue = (double) ( (char *) xPvData[i] )[ii];
         }
@@ -3036,7 +3060,7 @@ double dxValue;
           dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
         }
         break;
-      case DBR_LONG:
+      case ProcessVariable::specificType::integer:
         if ( xSigned[i] ) {
           dxValue = (double) ( (int *) xPvData[i] )[ii];
         }
@@ -3044,7 +3068,7 @@ double dxValue;
           dxValue = (double) ( (int *) xPvData[i] )[ii];
         }
         break;
-      case DBR_ENUM:
+      case ProcessVariable::specificType::enumerated:
         if ( xSigned[i] ) {
           dxValue = (double) ( (short *) xPvData[i] )[ii];
         }
@@ -3099,14 +3123,16 @@ double dyValue[NUM_Y_AXES];
       ii = arrayHead[i];
       while ( ii != arrayTail[i] ) {
 
+        // There are two views of pv types, Type and specificType; this uses
+        // specificType
         switch ( yPvType[i] ) {
-        case DBR_FLOAT:
+        case ProcessVariable::specificType::flt:
           dyValue[yi] = (double) ( (float *) yPvData[i] )[ii];
           break;
-        case DBR_DOUBLE: 
+        case ProcessVariable::specificType::real: 
           dyValue[yi] = ( (double *) yPvData[i] )[ii];
           break;
-        case DBR_SHORT:
+        case ProcessVariable::specificType::shrt:
           if ( ySigned[i] ) {
             dyValue[yi] = (double) ( (short *) yPvData[i] )[ii];
           }
@@ -3114,7 +3140,7 @@ double dyValue[NUM_Y_AXES];
             dyValue[yi] = (double) ( (unsigned short *) yPvData[i] )[ii];
           }
           break;
-        case DBR_CHAR:
+        case ProcessVariable::specificType::chr:
           if ( ySigned[i] ) {
             dyValue[yi] = (double) ( (char *) yPvData[i] )[ii];
           }
@@ -3122,7 +3148,7 @@ double dyValue[NUM_Y_AXES];
             dyValue[yi] = (double) ( (unsigned char *) yPvData[i] )[ii];
           }
           break;
-        case DBR_LONG:
+        case ProcessVariable::specificType::integer:
           if ( ySigned[i] ) {
             dyValue[yi] = (double) ( (int *) yPvData[i] )[ii];
           }
@@ -3130,7 +3156,7 @@ double dyValue[NUM_Y_AXES];
             dyValue[yi] = (double) ( (int *) yPvData[i] )[ii];
           }
           break;
-        case DBR_ENUM:
+        case ProcessVariable::specificType::enumerated:
           if ( ySigned[i] ) {
             dyValue[yi] = (double) ( (short *) yPvData[i] )[ii];
           }
@@ -3212,6 +3238,279 @@ char traceColor[15+1];
 }
 
 int xyGraphClass::save (
+  FILE *f )
+{
+
+int stat, major, minor, release;
+
+tagClass tag;
+
+int zero = 0;
+int one = 1;
+char *emptyStr = "";
+
+int plotModePlotNPtsAndStop = 0;
+static char *plotModeEnumStr[2] = {
+  "plotNPtsAndStop",
+  "plotLastNPts"
+};
+static int plotModeEnum[2] = {
+  0,
+  1
+};
+
+int opModeScope = 0;
+static char *opModeEnumStr[2] = {
+  "scope",
+  "plot"
+};
+static int opModeEnum[2] = {
+  0,
+  1
+};
+
+int plotStyleLine = 0;
+static char *plotStyleEnumStr[3] = {
+  "line",
+  "point",
+  "needle"
+};
+static int plotStyleEnum[3] = {
+  0,
+  1,
+  2
+};
+
+int updateModexAndY = 0;
+static char *updateModeEnumStr[5] = {
+  "xAndY",
+  "xOrY",
+  "x",
+  "y",
+  "trigger"
+};
+static int updateModeEnum[5] = {
+  0,
+  1,
+  2,
+  3,
+  4
+};
+
+int styleSolid = LineSolid;
+static char *styleEnumStr[2] = {
+  "solid",
+  "dash"
+};
+static int styleEnum[2] = {
+  LineSolid,
+  LineOnOffDash
+};
+
+int symbolNone = 0;
+static char *symbolEnumStr[4] = {
+  "none",
+  "circle",
+  "square",
+  "diamond"
+};
+static int symbolEnum[4] = {
+  0,
+  1,
+  2,
+  3
+};
+
+int xAxisStyleLinear = 0;
+static char *xAxisStyleEnumStr[4] = {
+  "linear",
+  "log10",
+  "time",
+  "log10(time)"
+};
+static int xAxisStyleEnum[4] = {
+  0,
+  1,
+  2,
+  3
+};
+
+int yAxisStyleLinear = 0;
+static char *yAxisStyleEnumStr[4] = {
+  "linear",
+  "log10"
+};
+static int yAxisStyleEnum[4] = {
+  0,
+  1
+};
+
+int axisSrcFromPv = 0;
+static char *axisSrcEnumStr[3] = {
+  "fromPv",
+  "fromUser",
+  "AutoScale"
+};
+static int axisSrcEnum[3] = {
+  0,
+  1,
+  2
+};
+
+int timeFormatSec = 0;
+static char *timeFormatEnumStr[2] = {
+  "seconds",
+  "dateTime"
+};
+static int timeFormatEnum[2] = {
+  0,
+  1
+};
+
+int annoFormatF = 0;
+static char *annoFormatEnumStr[2] = {
+  "f",
+  "g"
+};
+static int annoFormatEnum[2] = {
+  0,
+  1
+};
+
+int resetModeIfNotZero = 0;
+static char *resetModeEnumStr[2] = {
+  "ifNotZero",
+  "ifZero"
+};
+static int resetModeEnum[2] = {
+  0,
+  1
+};
+
+  major = XYGC_MAJOR_VERSION;
+  minor = XYGC_MINOR_VERSION;
+  release = XYGC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+
+  tag.loadW( "# Geometry" );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+
+  tag.loadW( "# Appearance" );
+  tag.loadBoolW( "border", &border, &zero );
+  tag.loadW( "graphTitle", &graphTitle, emptyStr );
+  tag.loadW( "xLabel", &xLabel, emptyStr );
+  tag.loadW( "yLabel", &yLabel, emptyStr );
+  tag.loadW( "y2Label", &y2Label, emptyStr );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadW( "gridColor", actWin->ci, &gridColor );
+  tag.loadW( "font", fontTag );
+
+  tag.loadW( "# Operating Modes" );
+  tag.loadW( "plotMode", 2, plotModeEnumStr, plotModeEnum, &plotMode,
+   &plotModePlotNPtsAndStop );
+  tag.loadW( "nPts", &count );
+  tag.loadW( "updateTimerMs", &updateTimerValue, &zero );
+  tag.loadW( "triggerPv", &trigPvExpStr, emptyStr );
+  tag.loadW( "resetPv", &resetPvExpStr, emptyStr );
+  tag.loadW( "resetMode", 2, resetModeEnumStr, resetModeEnum, &resetMode,
+   &resetModeIfNotZero );
+
+  tag.loadW( "# X axis properties" );
+  tag.loadBoolW( "showXAxis", &xAxis, &zero );
+  tag.loadW( "xAxisStyle", 4, xAxisStyleEnumStr, xAxisStyleEnum, &xAxisStyle,
+   &xAxisStyleLinear );
+  tag.loadW( "xAxisSrc", 3, axisSrcEnumStr, axisSrcEnum, &xAxisSource,
+   &axisSrcFromPv );
+  tag.loadW( "xMin", &xMin );
+  tag.loadW( "xMax", &xMax );
+  tag.loadW( "xAxisTimeFormat", 2, timeFormatEnumStr, timeFormatEnum,
+   &xAxisTimeFormat, &timeFormatSec );
+  tag.loadW( "xLabelIntervals", &xNumLabelIntervals );
+  tag.loadW( "xMajorsPerLabel", &xNumMajorPerLabel );
+  tag.loadW( "xMinorsPerMajor", &xNumMinorPerMajor );
+  tag.loadBoolW( "xShowLabelGrid", &xLabelGrid, &zero );
+  tag.loadBoolW( "xShowMajorGrid", &xMajorGrid, &zero );
+  tag.loadBoolW( "xShowMinorGrid", &xMinorGrid, &zero );
+  tag.loadW( "xLableFormat", 2, annoFormatEnumStr, annoFormatEnum,
+   &xAnnotationFormat, &annoFormatF );
+  tag.loadW( "xLablePrecision", &xAnnotationPrecision );
+
+  tag.loadW( "# Y axis properties" );
+  tag.loadBoolW( "showYAxis", &y1Axis[0], &zero );
+  tag.loadW( "yAxisStyle", 4, yAxisStyleEnumStr, yAxisStyleEnum,
+   &y1AxisStyle[0], &yAxisStyleLinear );
+  tag.loadW( "yAxisSrc", 3, axisSrcEnumStr, axisSrcEnum, &y1AxisSource[0],
+   &axisSrcFromPv );
+  tag.loadW( "yMin", &y1Min[0] );
+  tag.loadW( "yMax", &y1Max[0] );
+  tag.loadW( "yLabelIntervals", &y1NumLabelIntervals[0] );
+  tag.loadW( "yMajorsPerLabel", &y1NumMajorPerLabel[0] );
+  tag.loadW( "yMinorsPerMajor", &y1NumMinorPerMajor[0] );
+  tag.loadBoolW( "yShowLabelGrid", &y1LabelGrid[0], &zero );
+  tag.loadBoolW( "yShowMajorGrid", &y1MajorGrid[0], &zero );
+  tag.loadBoolW( "yShowMinorGrid", &y1MinorGrid[0], &zero );
+  tag.loadW( "yAxisFormat", 2, annoFormatEnumStr, annoFormatEnum,
+   &y1AnnotationFormat[0], &annoFormatF );
+  tag.loadW( "yAxisPrecision", &y1AnnotationPrecision[0] );
+
+  tag.loadW( "# Y2 axis properties" );
+  tag.loadBoolW( "showY2Axis", &y1Axis[1], &zero );
+  tag.loadW( "y2AxisStyle", 4, yAxisStyleEnumStr, yAxisStyleEnum,
+   &y1AxisStyle[1], &yAxisStyleLinear );
+  tag.loadW( "y2AxisSrc", 3, axisSrcEnumStr, axisSrcEnum, &y1AxisSource[1],
+   &axisSrcFromPv );
+  tag.loadW( "y2Min", &y1Min[1] );
+  tag.loadW( "y2Max", &y1Max[1] );
+  tag.loadW( "y2LabelIntervals", &y1NumLabelIntervals[1] );
+  tag.loadW( "y2MajorsPerLabel", &y1NumMajorPerLabel[1] );
+  tag.loadW( "y2MinorsPerMajor", &y1NumMinorPerMajor[1] );
+  tag.loadBoolW( "y2ShowLabelGrid", &y1LabelGrid[1], &zero );
+  tag.loadBoolW( "y2ShowMajorGrid", &y1MajorGrid[1], &zero );
+  tag.loadBoolW( "y2ShowMinorGrid", &y1MinorGrid[1], &zero );
+  tag.loadW( "y2AxisFormat", 2, annoFormatEnumStr, annoFormatEnum,
+   &y1AnnotationFormat[1], &annoFormatF );
+  tag.loadW( "y2AxisPrecision", &y1AnnotationPrecision[1] );
+
+  // trace properties (arrays)
+  tag.loadW( "# Trace Properties" );
+  tag.loadW( "numTraces", &numTraces );
+  tag.loadW( "xPv", xPvExpStr, numTraces, emptyStr );
+  tag.loadW( "yPv", yPvExpStr, numTraces, emptyStr );
+  tag.loadW( "plotStyle", 3, plotStyleEnumStr, plotStyleEnum, plotStyle,
+   numTraces, &plotStyleLine );
+  tag.loadW( "lineThickness", lineThk, numTraces, &one );
+  tag.loadW( "lineStyle", 2, styleEnumStr, styleEnum, lineStyle, numTraces,
+   &styleSolid );
+  tag.loadW( "plotUpdateMode", 5, updateModeEnumStr, updateModeEnum,
+   plotUpdateMode, numTraces, &updateModexAndY );
+  tag.loadW( "plotSymbolType", 4, symbolEnumStr, symbolEnum, plotSymbolType,
+   numTraces, &symbolNone );
+  tag.loadW( "opMode", 2, opModeEnumStr, opModeEnum, opMode, numTraces,
+   &opModeScope );
+  tag.loadW( "useY2Axis", y2Scale, numTraces, &zero );
+  tag.loadW( "xSigned", xSigned, numTraces, &zero );
+  tag.loadW( "ySigned", ySigned, numTraces, &zero );
+  tag.loadW( "plotColor", actWin->ci, plotColor, numTraces );
+
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int xyGraphClass::old_save (
   FILE *f )
 {
 
@@ -3354,6 +3653,365 @@ int xyGraphClass::createFromFile (
   activeWindowClass *_actWin )
 {
 
+int major, minor, release, i, n, yi, stat;
+char traceColor[15+1];
+
+tagClass tag;
+
+int zero = 0;
+int one = 1;
+char *emptyStr = "";
+
+int plotModePlotNPtsAndStop = 0;
+static char *plotModeEnumStr[2] = {
+  "plotNPtsAndStop",
+  "plotLastNPts"
+};
+static int plotModeEnum[2] = {
+  0,
+  1
+};
+
+int opModeScope = 0;
+static char *opModeEnumStr[2] = {
+  "scope",
+  "plot"
+};
+static int opModeEnum[2] = {
+  0,
+  1
+};
+
+int plotStyleLine = 0;
+static char *plotStyleEnumStr[3] = {
+  "line",
+  "point",
+  "needle"
+};
+static int plotStyleEnum[3] = {
+  0,
+  1,
+  2
+};
+
+int updateModexAndY = 0;
+static char *updateModeEnumStr[5] = {
+  "xAndY",
+  "xOrY",
+  "x",
+  "y",
+  "trigger"
+};
+static int updateModeEnum[5] = {
+  0,
+  1,
+  2,
+  3,
+  4
+};
+
+int styleSolid = LineSolid;
+static char *styleEnumStr[2] = {
+  "solid",
+  "dash"
+};
+static int styleEnum[2] = {
+  LineSolid,
+  LineOnOffDash
+};
+
+int symbolNone = 0;
+static char *symbolEnumStr[4] = {
+  "none",
+  "circle",
+  "square",
+  "diamond"
+};
+static int symbolEnum[4] = {
+  0,
+  1,
+  2,
+  3
+};
+
+int xAxisStyleLinear = 0;
+static char *xAxisStyleEnumStr[4] = {
+  "linear",
+  "log10",
+  "time",
+  "log10(time)"
+};
+static int xAxisStyleEnum[4] = {
+  0,
+  1,
+  2,
+  3
+};
+
+int yAxisStyleLinear = 0;
+static char *yAxisStyleEnumStr[4] = {
+  "linear",
+  "log10"
+};
+static int yAxisStyleEnum[4] = {
+  0,
+  1
+};
+
+int axisSrcFromPv = 0;
+static char *axisSrcEnumStr[3] = {
+  "fromPv",
+  "fromUser",
+  "AutoScale"
+};
+static int axisSrcEnum[3] = {
+  0,
+  1,
+  2
+};
+
+int timeFormatSec = 0;
+static char *timeFormatEnumStr[2] = {
+  "seconds",
+  "dateTime"
+};
+static int timeFormatEnum[2] = {
+  0,
+  1
+};
+
+int annoFormatF = 0;
+static char *annoFormatEnumStr[2] = {
+  "f",
+  "g"
+};
+static int annoFormatEnum[2] = {
+  0,
+  1
+};
+
+int resetModeIfNotZero = 0;
+static char *resetModeEnumStr[2] = {
+  "ifNotZero",
+  "ifZero"
+};
+static int resetModeEnum[2] = {
+  0,
+  1
+};
+
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+
+  //tag.loadR( "# Geometry" );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+
+  //tag.loadR( "# Appearance" );
+  tag.loadR( "border", &border, &zero );
+  tag.loadR( "graphTitle", &graphTitle, emptyStr );
+  tag.loadR( "xLabel", &xLabel, emptyStr );
+  tag.loadR( "yLabel", &yLabel, emptyStr );
+  tag.loadR( "y2Label", &y2Label, emptyStr );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "gridColor", actWin->ci, &gridColor );
+  tag.loadR( "font", 63, fontTag );
+
+  //tag.loadR( "# Operating Modes" );
+  tag.loadR( "plotMode", 2, plotModeEnumStr, plotModeEnum, &plotMode,
+   &plotModePlotNPtsAndStop );
+  tag.loadR( "nPts", &count );
+  tag.loadR( "updateTimerMs", &updateTimerValue, &zero );
+  tag.loadR( "triggerPv", &trigPvExpStr, emptyStr );
+  tag.loadR( "resetPv", &resetPvExpStr, emptyStr );
+  tag.loadR( "resetMode", 2, resetModeEnumStr, resetModeEnum, &resetMode,
+   &resetModeIfNotZero );
+
+  //tag.loadR( "# X axis properties" );
+  tag.loadR( "showXAxis", &xAxis, &zero );
+  tag.loadR( "xAxisStyle", 4, xAxisStyleEnumStr, xAxisStyleEnum, &xAxisStyle,
+   &xAxisStyleLinear );
+  tag.loadR( "xAxisSrc", 3, axisSrcEnumStr, axisSrcEnum, &xAxisSource,
+   &axisSrcFromPv );
+  tag.loadR( "xMin", &xMin );
+  tag.loadR( "xMax", &xMax );
+  tag.loadR( "xAxisTimeFormat", 2, timeFormatEnumStr, timeFormatEnum,
+   &xAxisTimeFormat, &timeFormatSec );
+  tag.loadR( "xLabelIntervals", &xNumLabelIntervals );
+  tag.loadR( "xMajorsPerLabel", &xNumMajorPerLabel );
+  tag.loadR( "xMinorsPerMajor", &xNumMinorPerMajor );
+  tag.loadR( "xShowLabelGrid", &xLabelGrid, &zero );
+  tag.loadR( "xShowMajorGrid", &xMajorGrid, &zero );
+  tag.loadR( "xShowMinorGrid", &xMinorGrid, &zero );
+  tag.loadR( "xLableFormat", 2, annoFormatEnumStr, annoFormatEnum,
+   &xAnnotationFormat, &annoFormatF );
+  tag.loadR( "xLablePrecision", &xAnnotationPrecision );
+
+  //tag.loadR( "# Y axis properties" );
+  tag.loadR( "showYAxis", &y1Axis[0], &zero );
+  tag.loadR( "yAxisStyle", 4, yAxisStyleEnumStr, yAxisStyleEnum,
+   &y1AxisStyle[0], &yAxisStyleLinear );
+  tag.loadR( "yAxisSrc", 3, axisSrcEnumStr, axisSrcEnum, &y1AxisSource[0],
+   &axisSrcFromPv );
+  tag.loadR( "yMin", &y1Min[0] );
+  tag.loadR( "yMax", &y1Max[0] );
+  tag.loadR( "yLabelIntervals", &y1NumLabelIntervals[0] );
+  tag.loadR( "yMajorsPerLabel", &y1NumMajorPerLabel[0] );
+  tag.loadR( "yMinorsPerMajor", &y1NumMinorPerMajor[0] );
+  tag.loadR( "yShowLabelGrid", &y1LabelGrid[0], &zero );
+  tag.loadR( "yShowMajorGrid", &y1MajorGrid[0], &zero );
+  tag.loadR( "yShowMinorGrid", &y1MinorGrid[0], &zero );
+  tag.loadR( "yAxisFormat", 2, annoFormatEnumStr, annoFormatEnum,
+   &y1AnnotationFormat[0], &annoFormatF );
+  tag.loadR( "yAxisPrecision", &y1AnnotationPrecision[0] );
+
+  //tag.loadR( "# Y2 axis properties" );
+  tag.loadR( "showY2Axis", &y1Axis[1], &zero );
+  tag.loadR( "y2AxisStyle", 4, yAxisStyleEnumStr, yAxisStyleEnum,
+   &y1AxisStyle[1], &yAxisStyleLinear );
+  tag.loadR( "y2AxisSrc", 3, axisSrcEnumStr, axisSrcEnum, &y1AxisSource[1],
+   &axisSrcFromPv );
+  tag.loadR( "y2Min", &y1Min[1] );
+  tag.loadR( "y2Max", &y1Max[1] );
+  tag.loadR( "y2LabelIntervals", &y1NumLabelIntervals[1] );
+  tag.loadR( "y2MajorsPerLabel", &y1NumMajorPerLabel[1] );
+  tag.loadR( "y2MinorsPerMajor", &y1NumMinorPerMajor[1] );
+  tag.loadR( "y2ShowLabelGrid", &y1LabelGrid[1], &zero );
+  tag.loadR( "y2ShowMajorGrid", &y1MajorGrid[1], &zero );
+  tag.loadR( "y2ShowMinorGrid", &y1MinorGrid[1], &zero );
+  tag.loadR( "y2AxisFormat", 2, annoFormatEnumStr, annoFormatEnum,
+   &y1AnnotationFormat[1], &annoFormatF );
+  tag.loadR( "y2AxisPrecision", &y1AnnotationPrecision[1] );
+
+  // trace properties (arrays)
+  //tag.loadR( "# Trace Properties" );
+  tag.loadR( "numTraces", &numTraces, &zero );
+  tag.loadR( "xPv", XYGC_K_MAX_TRACES, xPvExpStr, &n, emptyStr );
+  tag.loadR( "yPv", XYGC_K_MAX_TRACES, yPvExpStr, &n, emptyStr );
+  tag.loadR( "plotStyle", 3, plotStyleEnumStr, plotStyleEnum,
+   XYGC_K_MAX_TRACES, plotStyle, &n, &plotStyleLine );
+  tag.loadR( "lineThickness", XYGC_K_MAX_TRACES, lineThk, &n, &one );
+  tag.loadR( "lineStyle", 2, styleEnumStr, styleEnum, XYGC_K_MAX_TRACES,
+   lineStyle, &n, &styleSolid );
+  tag.loadR( "plotUpdateMode", 5, updateModeEnumStr, updateModeEnum,
+   XYGC_K_MAX_TRACES, plotUpdateMode, &n, &updateModexAndY );
+  tag.loadR( "plotSymbolType", 4, symbolEnumStr, symbolEnum, XYGC_K_MAX_TRACES,
+   plotSymbolType, &n, &symbolNone );
+  tag.loadR( "opMode", 2, opModeEnumStr, opModeEnum, XYGC_K_MAX_TRACES,
+   opMode, &n, &opModeScope );
+  tag.loadR( "useY2Axis", XYGC_K_MAX_TRACES, y2Scale, &n, &zero );
+  tag.loadR( "xSigned", XYGC_K_MAX_TRACES, xSigned, &n, &zero );
+  tag.loadR( "ySigned", XYGC_K_MAX_TRACES, ySigned, &n, &zero );
+  tag.loadR( "plotColor", actWin->ci, XYGC_K_MAX_TRACES, plotColor,
+   &n );
+
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > XYGC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  for ( i=0; i<numTraces; i++ ) {
+
+    if ( ( !blank( xPvExpStr[i].getRaw() ) ) &&
+         ( !blank( yPvExpStr[i].getRaw() ) ) ) {
+      traceType[i] = XYGC_K_TRACE_XY;
+    }
+    else if ( !blank( yPvExpStr[i].getRaw() ) ) {
+      traceType[i] = XYGC_K_TRACE_CHRONOLOGICAL;
+    }
+    else {
+      traceType[i] = XYGC_K_TRACE_INVALID;
+    }
+
+  }
+
+  for ( i=numTraces; i<XYGC_K_MAX_TRACES; i++ ) {
+    sprintf( traceColor, "trace%-d", i );
+    plotColor[i] = actWin->ci->colorIndexByAlias( traceColor );
+    lineThk[i] = 1;
+    lineStyle[i] = LineSolid;
+    plotUpdateMode[i] = XYGC_K_UPDATE_ON_X_AND_Y;
+    plotSymbolType[i] = XYGC_K_SYMBOL_TYPE_NONE;
+    opMode[i] = XYGC_K_SCOPE_MODE;
+    y2Scale[i] = 0;
+  }
+
+  actWin->fi->loadFontTag( fontTag );
+  actWin->drawGc.setFontTag( fontTag, actWin->fi );
+
+  // check for conflicts
+
+  for ( i=0; i<numTraces; i++ ) {
+
+    if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      if ( xMin.value() <= 0.0 ) xMin.setValue( 1.0 );
+    }
+    else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+      if ( xMin.value() <= 0.0 ) xMin.setValue( 1.0 );
+    }
+
+    if ( xMin.value() >= xMax.value() ) {
+      xMax.setValue( xMin.value() * 2.0 );
+    }
+
+    if ( xMin.value() >= xMax.value() ) { // in case xMin is 0
+      xMax.setValue( xMin.value() + 1.0 );
+    }
+
+    for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+
+      if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+        if ( y1Min[yi].value() <= 0.0 ) y1Min[yi].setValue( 1.0 );
+      }
+
+      if ( y1Min[yi].value() >= y1Max[yi].value() ) {
+        y1Max[yi].setValue( y1Min[yi].value() * 2.0 );
+      }
+
+      if ( y1Min[yi].value() >= y1Max[yi].value() ) { // in case y Min is 0
+        y1Max[yi].setValue( y1Min[yi].value() + 1.0 );
+      }
+
+    }
+
+  }
+
+  updateDimensions();
+
+  return stat;
+
+}
+
+int xyGraphClass::old_createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
 int i, yi;
 int major, minor, release;
 int stat = 1;
@@ -3491,12 +4149,14 @@ efDouble dummy;
       ySigned[i] = 0;
     }
 
+#if 0
     if ( lineStyle[i] == 0 ) {
       lineStyle[i] = LineSolid;
     }
     else {
       lineStyle[i] = LineOnOffDash;
     }
+#endif
 
   }
 
@@ -3517,7 +4177,7 @@ efDouble dummy;
     sprintf( traceColor, "trace%-d", i );
     plotColor[i] = actWin->ci->colorIndexByAlias( traceColor );
     lineThk[i] = 1;
-    lineStyle[i] = 0; // solid
+    lineStyle[i] = LineSolid;
     plotUpdateMode[i] = XYGC_K_UPDATE_ON_X_AND_Y;
     plotSymbolType[i] = XYGC_K_SYMBOL_TYPE_NONE;
     opMode[i] = XYGC_K_SCOPE_MODE;
@@ -3714,7 +4374,7 @@ int i, yi;
       eBuf->bufPlotUpdateMode[i] = XYGC_K_UPDATE_ON_X_AND_Y;
       eBuf->bufPlotColor[i] = plotColor[i];
       eBuf->bufLineThk[i] = 0;
-      eBuf->bufLineStyle[i] = 0;
+      eBuf->bufLineStyle[i] = LineSolid;
       eBuf->bufOpMode[i] = XYGC_K_SCOPE_MODE;
       eBuf->bufY2Scale[i] = 0;
       eBuf->bufXSigned[i] = 0;
@@ -3979,14 +4639,16 @@ double scaledX, scaledY;
     ii = arrayHead[i];
     while ( ii != arrayTail[i] ) {
 
+      // There are two views of pv types, Type and specificType; this uses
+      // specificType
       switch ( yPvType[i] ) {
-      case DBR_FLOAT:
+      case ProcessVariable::specificType::flt:
         dyValue = (double) ( (float *) yPvData[i] )[ii];
         break;
-      case DBR_DOUBLE: 
+      case ProcessVariable::specificType::real: 
         dyValue = ( (double *) yPvData[i] )[ii];
         break;
-      case DBR_SHORT:
+      case ProcessVariable::specificType::shrt:
         if ( ySigned[i] ) {
           dyValue = (double) ( (short *) yPvData[i] )[ii];
 	}
@@ -3994,7 +4656,7 @@ double scaledX, scaledY;
           dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
 	}
         break;
-      case DBR_CHAR:
+      case ProcessVariable::specificType::chr:
         if ( ySigned[i] ) {
           dyValue = (double) ( (char *) yPvData[i] )[ii];
 	}
@@ -4002,7 +4664,7 @@ double scaledX, scaledY;
           dyValue = (double) ( (unsigned char *) yPvData[i] )[ii];
 	}
         break;
-      case DBR_LONG:
+      case ProcessVariable::specificType::integer:
           if ( ySigned[i] ) {
             dyValue = (double) ( (int *) yPvData[i] )[ii];
 	  }
@@ -4010,7 +4672,7 @@ double scaledX, scaledY;
             dyValue = (double) ( (int *) yPvData[i] )[ii];
 	  }
         break;
-      case DBR_ENUM:
+      case ProcessVariable::specificType::enumerated:
         if ( ySigned[i] ) {
           dyValue = (double) ( (short *) yPvData[i] )[ii];
 	}
@@ -4031,14 +4693,16 @@ double scaledX, scaledY;
        rint( ( dyValue - curY1Min[yi] ) *
        y1Factor[yi][i] - y1Offset[yi][i] );
   
+      // There are two views of pv types, Type and specificType; this uses
+      // specificType
       switch ( xPvType[i] ) {
-      case DBR_FLOAT:
+      case ProcessVariable::specificType::flt:
         dxValue = (double) ( (float *) xPvData[i] )[ii];
         break;
-      case DBR_DOUBLE: 
+      case ProcessVariable::specificType::real: 
         dxValue = ( (double *) xPvData[i] )[ii];
         break;
-      case DBR_SHORT:
+      case ProcessVariable::specificType::shrt:
         if ( xSigned[i] ) {
           dxValue = (double) ( (short *) xPvData[i] )[ii];
 	}
@@ -4046,7 +4710,7 @@ double scaledX, scaledY;
           dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
 	}
         break;
-      case DBR_CHAR:
+      case ProcessVariable::specificType::chr:
         if ( xSigned[i] ) {
           dxValue = (double) ( (char *) xPvData[i] )[ii];
 	}
@@ -4054,7 +4718,7 @@ double scaledX, scaledY;
           dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
 	}
         break;
-      case DBR_LONG:
+      case ProcessVariable::specificType::integer:
         if ( xSigned[i] ) {
           dxValue = (double) ( (int *) xPvData[i] )[ii];
 	}
@@ -4062,7 +4726,7 @@ double scaledX, scaledY;
           dxValue = (double) ( (int *) xPvData[i] )[ii];
 	}
         break;
-      case DBR_ENUM:
+      case ProcessVariable::specificType::enumerated:
         if ( xSigned[i] ) {
           dxValue = (double) ( (short *) xPvData[i] )[ii];
 	}
@@ -4120,14 +4784,16 @@ char format[31+1];
 
   for ( ii=0; ii<yPvCount[i]; ii++ ) {
 
+    // There are two views of pv types, Type and specificType; this uses
+    // specificType
     switch ( yPvType[i] ) {
-    case DBR_FLOAT:
+    case ProcessVariable::specificType::flt:
       dyValue = (double) ( (float *) yPvData[i] )[ii];
       break;
-    case DBR_DOUBLE: 
+    case ProcessVariable::specificType::real: 
       dyValue = ( (double *) yPvData[i] )[ii];
       break;
-    case DBR_SHORT:
+    case ProcessVariable::specificType::shrt:
       if ( ySigned[i] ) {
         dyValue = (double) ( (short *) yPvData[i] )[ii];
       }
@@ -4135,7 +4801,7 @@ char format[31+1];
         dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
       }
       break;
-    case DBR_CHAR:
+    case ProcessVariable::specificType::chr:
       if ( ySigned[i] ) {
         dyValue = (double) ( (char *) yPvData[i] )[ii];
       }
@@ -4143,7 +4809,7 @@ char format[31+1];
         dyValue = (double) ( (unsigned char *) yPvData[i] )[ii];
       }
       break;
-    case DBR_LONG:
+    case ProcessVariable::specificType::integer:
       if ( ySigned[i] ) {
         dyValue = (double) ( (int *) yPvData[i] )[ii];
       }
@@ -4151,7 +4817,7 @@ char format[31+1];
         dyValue = (double) ( (int *) yPvData[i] )[ii];
       }
       break;
-    case DBR_ENUM:
+    case ProcessVariable::specificType::enumerated:
       if ( ySigned[i] ) {
         dyValue = (double) ( (short *) yPvData[i] )[ii];
       }
@@ -4172,14 +4838,16 @@ char format[31+1];
      rint( ( dyValue - curY1Min[yi] ) *
      y1Factor[yi][i] - y1Offset[yi][i] );
   
+    // There are two views of pv types, Type and specificType; this uses
+    // specificType
     switch ( xPvType[i] ) {
-    case DBR_FLOAT:
+    case ProcessVariable::specificType::flt:
       dxValue = (double) ( (float *) xPvData[i] )[ii];
       break;
-    case DBR_DOUBLE: 
+    case ProcessVariable::specificType::real: 
       dxValue = ( (double *) xPvData[i] )[ii];
       break;
-    case DBR_SHORT:
+    case ProcessVariable::specificType::shrt:
       if ( xSigned[i] ) {
         dxValue = (double) ( (short *) xPvData[i] )[ii];
       }
@@ -4187,7 +4855,7 @@ char format[31+1];
         dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
       }
       break;
-    case DBR_CHAR:
+    case ProcessVariable::specificType::chr:
       if ( xSigned[i] ) {
         dxValue = (double) ( (char *) xPvData[i] )[ii];
       }
@@ -4195,7 +4863,7 @@ char format[31+1];
         dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
       }
       break;
-    case DBR_LONG:
+    case ProcessVariable::specificType::integer:
       if ( xSigned[i] ) {
         dxValue = (double) ( (int *) xPvData[i] )[ii];
       }
@@ -4203,7 +4871,7 @@ char format[31+1];
         dxValue = (double) ( (int *) xPvData[i] )[ii];
       }
       break;
-    case DBR_ENUM:
+    case ProcessVariable::specificType::enumerated:
       if ( xSigned[i] ) {
         dxValue = (double) ( (short *) xPvData[i] )[ii];
       }
@@ -4334,14 +5002,16 @@ char format[31+1];
 
   for ( ii=0; ii<n; ii++ ) {
 
+    // There are two views of pv types, Type and specificType; this uses
+    // specificType
     switch ( yPvType[i] ) {
-    case DBR_FLOAT:
+    case ProcessVariable::specificType::flt:
       dyValue = (double) ( (float *) yPvData[i] )[ii];
       break;
-    case DBR_DOUBLE: 
+    case ProcessVariable::specificType::real: 
       dyValue = ( (double *) yPvData[i] )[ii];
       break;
-    case DBR_SHORT:
+    case ProcessVariable::specificType::shrt:
       if ( ySigned[i] ) {
         dyValue = (double) ( (short *) yPvData[i] )[ii];
       }
@@ -4349,7 +5019,7 @@ char format[31+1];
         dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
       }
       break;
-    case DBR_CHAR:
+    case ProcessVariable::specificType::chr:
       if ( ySigned[i] ) {
         dyValue = (double) ( (char *) yPvData[i] )[ii];
       }
@@ -4357,7 +5027,7 @@ char format[31+1];
         dyValue = (double) ( (unsigned char *) yPvData[i] )[ii];
       }
       break;
-    case DBR_LONG:
+    case ProcessVariable::specificType::integer:
       if ( ySigned[i] ) {
         dyValue = (double) ( (int *) yPvData[i] )[ii];
       }
@@ -4365,7 +5035,7 @@ char format[31+1];
         dyValue = (double) ( (int *) yPvData[i] )[ii];
       }
       break;
-    case DBR_ENUM:
+    case ProcessVariable::specificType::enumerated:
       if ( ySigned[i] ) {
         dyValue = (double) ( (short *) yPvData[i] )[ii];
       }
@@ -4386,14 +5056,16 @@ char format[31+1];
      rint( ( dyValue - curY1Min[yi] ) *
      y1Factor[yi][i] - y1Offset[yi][i] );
   
+    // There are two views of pv types, Type and specificType; this uses
+    // specificType
     switch ( xPvType[i] ) {
-    case DBR_FLOAT:
+    case ProcessVariable::specificType::flt:
       dxValue = (double) ( (float *) xPvData[i] )[ii];
       break;
-    case DBR_DOUBLE: 
+    case ProcessVariable::specificType::real: 
       dxValue = ( (double *) xPvData[i] )[ii];
       break;
-    case DBR_SHORT:
+    case ProcessVariable::specificType::shrt:
       if ( xSigned[i] ) {
         dxValue = (double) ( (short *) xPvData[i] )[ii];
       }
@@ -4401,7 +5073,7 @@ char format[31+1];
         dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
       }
       break;
-    case DBR_CHAR:
+    case ProcessVariable::specificType::chr:
       if ( xSigned[i] ) {
         dxValue = (double) ( (char *) xPvData[i] )[ii];
       }
@@ -4409,7 +5081,7 @@ char format[31+1];
         dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
       }
       break;
-    case DBR_LONG:
+    case ProcessVariable::specificType::integer:
       if ( xSigned[i] ) {
         dxValue = (double) ( (int *) xPvData[i] )[ii];
       }
@@ -4417,7 +5089,7 @@ char format[31+1];
         dxValue = (double) ( (int *) xPvData[i] )[ii];
       }
       break;
-    case DBR_ENUM:
+    case ProcessVariable::specificType::enumerated:
       if ( xSigned[i] ) {
         dxValue = (double) ( (short *) xPvData[i] )[ii];
       }
@@ -4530,7 +5202,7 @@ int xyGraphClass::fullRefresh ( void ) {
 
 int i;
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   actWin->executeGc.saveFg();
 
@@ -4756,10 +5428,10 @@ int numFullDraws, remainder, i, ii, j, jj, symHW, symHH;
 int xyGraphClass::eraseActive ( void ) {
 
 int i;
-XRectangle xR = { plotAreaX, plotAreaY, plotAreaW, plotAreaH };
+XRectangle xR = { plotAreaX+1, plotAreaY, plotAreaW-2, plotAreaH };
 //XRectangle xR = { plotAreaX+1, plotAreaY+1, plotAreaW-2, plotAreaH-2 };
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   if ( bufInvalid ) {
     return 1;
@@ -5019,10 +5691,10 @@ int npts;
 int xyGraphClass::drawActive ( void ) {
 
 int i;
-XRectangle xR = { plotAreaX, plotAreaY, plotAreaW, plotAreaH };
+XRectangle xR = { plotAreaX+1, plotAreaY, plotAreaW-2, plotAreaH };
 //XRectangle xR = { plotAreaX+1, plotAreaY+1, plotAreaW-2, plotAreaH-2 };
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   if ( bufInvalid ) {
     actWin->appCtx->proc->lock();
@@ -5176,12 +5848,16 @@ int i, result;
 
 char *xyGraphClass::firstDragName ( void ) {
 
+  if ( !enabled ) return NULL;
+
   dragIndex = 0;
   return dragName[dragIndex];
 
 }
 
 char *xyGraphClass::nextDragName ( void ) {
+
+  if ( !enabled ) return NULL;
 
   if ( dragIndex < (int) ( sizeof(dragName) / sizeof(char *) ) - 1 ) {
     dragIndex++;
@@ -5199,25 +5875,58 @@ char *xyGraphClass::dragValue (
 
 int ii;
 
-  if ( ( i >= 0 ) && ( i < XYGC_K_MAX_TRACES ) ) {
+  if ( !enabled ) return NULL;
 
-    return yPvExpStr[i].getExpanded();
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    if ( ( i >= 0 ) && ( i < XYGC_K_MAX_TRACES ) ) {
+
+      return yPvExpStr[i].getExpanded();
+
+    }
+    else if ( ( i >= XYGC_K_MAX_TRACES ) &&
+            ( i < ( XYGC_K_MAX_TRACES * 2 ) ) ) {
+
+      ii = i - XYGC_K_MAX_TRACES;
+      return xPvExpStr[ii].getExpanded();
+
+    }
+    else if ( i == ( XYGC_K_MAX_TRACES * 2 ) ) {
+
+      return trigPvExpStr.getExpanded();
+
+    }
+    else if ( i == ( XYGC_K_MAX_TRACES * 2 + 1 ) ) {
+
+      return resetPvExpStr.getExpanded();
+
+    }
 
   }
-  else if ( ( i >= XYGC_K_MAX_TRACES ) && ( i < ( XYGC_K_MAX_TRACES * 2 ) ) ) {
+  else {
 
-    ii = i - XYGC_K_MAX_TRACES;
-    return xPvExpStr[ii].getExpanded();
+    if ( ( i >= 0 ) && ( i < XYGC_K_MAX_TRACES ) ) {
 
-  }
-  else if ( i == ( XYGC_K_MAX_TRACES * 2 ) ) {
+      return yPvExpStr[i].getRaw();
 
-    return trigPvExpStr.getExpanded();
+    }
+    else if ( ( i >= XYGC_K_MAX_TRACES ) &&
+            ( i < ( XYGC_K_MAX_TRACES * 2 ) ) ) {
 
-  }
-  else if ( i == ( XYGC_K_MAX_TRACES * 2 + 1 ) ) {
+      ii = i - XYGC_K_MAX_TRACES;
+      return xPvExpStr[ii].getRaw();
 
-    return resetPvExpStr.getExpanded();
+    }
+    else if ( i == ( XYGC_K_MAX_TRACES * 2 ) ) {
+
+      return trigPvExpStr.getRaw();
+
+    }
+    else if ( i == ( XYGC_K_MAX_TRACES * 2 + 1 ) ) {
+
+      return resetPvExpStr.getRaw();
+
+    }
 
   }
 
@@ -5230,7 +5939,7 @@ int xyGraphClass::activate (
   void *ptr )
 {
 
-int i, yScaleIndex, yi, stat, n;
+int i, yScaleIndex, yi, n;
 int screen_num, depth;
 Arg args[5];
 XmString str;
@@ -5249,6 +5958,8 @@ XmString str;
       opComplete = 1;
 
       widgetsCreated = 0;
+
+      initEnable();
 
       // for popup menu
       if ( !widgetsCreated ) {
@@ -5408,14 +6119,16 @@ XmString str;
       }
 
       resetPv = NULL;
-      resetEv = NULL;
+      initialResetConnection = 1;
 
       if ( !blank( resetPvExpStr.getExpanded() ) ) {
         resetPvExists = 1;
-        stat = ca_search_and_connect( resetPvExpStr.getExpanded(),
-         &resetPv, resetMonitorConnection, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( "ca_search_and_connect failed for [%s]\n",
+        resetPv = the_PV_Factory->create( resetPvExpStr.getExpanded() );
+	if ( resetPv ) {
+	  resetPv->add_conn_state_callback( resetMonitorConnection, this );
+	}
+	else {
+          printf( "pv create failed for [%s]\n",
            resetPvExpStr.getExpanded() );
         }
       }
@@ -5424,14 +6137,16 @@ XmString str;
       }
 
       trigPv = NULL;
-      trigEv = NULL;
+      initialTrigConnection = 1;
 
       if ( !blank( trigPvExpStr.getExpanded() ) ) {
         trigPvExists = 1;
-        stat = ca_search_and_connect( trigPvExpStr.getExpanded(),
-         &trigPv, trigMonitorConnection, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( "ca_search_and_connect failed for [%s]\n",
+        trigPv = the_PV_Factory->create( trigPvExpStr.getExpanded() );
+	if ( trigPv ) {
+	  trigPv->add_conn_state_callback( trigMonitorConnection, this );
+	}
+	else {
+          printf( "pv create failed for [%s]\n",
            trigPvExpStr.getExpanded() );
         }
       }
@@ -5470,9 +6185,9 @@ XmString str;
         xPvData[i] = NULL;
         yPvData[i] = NULL;
         xPv[i] = NULL;
+        initialXConnection[i] = 1;
         yPv[i] = NULL;
-        xEv[i] = NULL;
-        yEv[i] = NULL;
+        initialYConnection[i] = 1;
         plotBuf[i] = NULL;
         plotBufSize[i] = 0;
         plotInfoHead[i] = 0;
@@ -5491,29 +6206,35 @@ XmString str;
 
           if ( traceType[i] == XYGC_K_TRACE_XY ) {
 
-            argRec[i].objPtr = (void *) this;
-            argRec[i].index = i + XYGC_K_MAX_TRACES;
+            ycArgRec[i].objPtr = (void *) this;
+            ycArgRec[i].index = i + XYGC_K_MAX_TRACES;
 
             connection.addPv();
 
-            stat = ca_search_and_connect( yPvExpStr[i].getExpanded(),
-             &yPv[i], yMonitorConnection, &argRec[i] );
-            if ( stat != ECA_NORMAL ) {
-              printf( "ca_search_and_connect failed for [%s]\n",
+	    yPv[i] = the_PV_Factory->create( yPvExpStr[i].getExpanded() );
+	    if ( yPv[i] ) {
+	      yPv[i]->add_conn_state_callback( yMonitorConnection,
+               &ycArgRec[i] );
+	    }
+	    else {
+              printf( "pv create failed for [%s]\n",
                yPvExpStr[i].getExpanded() );
             }
 
             if ( !blank( xPvExpStr[i].getExpanded() ) ) {
 
-              argRec[i].objPtr = (void *) this;
-              argRec[i].index = i;
+              xcArgRec[i].objPtr = (void *) this;
+              xcArgRec[i].index = i;
 
               connection.addPv();
 
-              stat = ca_search_and_connect( xPvExpStr[i].getExpanded(),
-               &xPv[i], xMonitorConnection, &argRec[i] );
-              if ( stat != ECA_NORMAL ) {
-                printf( "ca_search_and_connect failed for [%s]\n",
+	      xPv[i] = the_PV_Factory->create( xPvExpStr[i].getExpanded() );
+	      if ( xPv[i] ) {
+	        xPv[i]->add_conn_state_callback( xMonitorConnection,
+                 &xcArgRec[i] );
+	      }
+	      else {
+                printf( "pv create failed for [%s]\n",
                  xPvExpStr[i].getExpanded() );
               }
 
@@ -5522,15 +6243,18 @@ XmString str;
           }
           else if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 
-            argRec[i].objPtr = (void *) this;
-            argRec[i].index = i + XYGC_K_MAX_TRACES;
+            ycArgRec[i].objPtr = (void *) this;
+            ycArgRec[i].index = i + XYGC_K_MAX_TRACES;
 
             connection.addPv();
 
-            stat = ca_search_and_connect( yPvExpStr[i].getExpanded(),
-             &yPv[i], yMonitorConnection, &argRec[i] );
-            if ( stat != ECA_NORMAL ) {
-              printf( "ca_search_and_connect failed for [%s]\n",
+	    yPv[i] = the_PV_Factory->create( yPvExpStr[i].getExpanded() );
+	    if ( yPv[i] ) {
+	      yPv[i]->add_conn_state_callback( yMonitorConnection,
+               &ycArgRec[i] );
+	    }
+	    else {
+              printf( "pv create failed for [%s]\n",
                yPvExpStr[i].getExpanded() );
             }
 
@@ -5561,7 +6285,7 @@ int xyGraphClass::deactivate (
   int pass
 ) {
 
-int i, stat;
+int i;
 
   switch ( pass ) {
 
@@ -5589,29 +6313,48 @@ int i, stat;
     msgDialog.destroy(); 
 
     if ( resetPv ) {
-      stat = ca_clear_channel( resetPv );
+      resetPv->remove_conn_state_callback( resetMonitorConnection, this );
+      resetPv->remove_value_callback( resetValueUpdate, this );
+      resetPv->release();
       resetPv = NULL;
-      resetEv = NULL;
     }
 
     if ( trigPv ) {
-      stat = ca_clear_channel( trigPv );
+      trigPv->remove_conn_state_callback( trigMonitorConnection, this );
+      trigPv->remove_value_callback( trigValueUpdate, this );
+      trigPv->release();
       trigPv = NULL;
-      trigEv = NULL;
     }
 
     for ( i=0; i<numTraces; i++ ) {
 
-      if ( xPv[i] ) {
-        stat = ca_clear_channel( xPv[i] );
-        xPv[i] = NULL;
-        xEv[i] = NULL;
+      if ( yPv[i] ) {
+
+        yPv[i]->remove_conn_state_callback( yMonitorConnection, &ycArgRec[i] );
+
+        if ( traceType[i] == XYGC_K_TRACE_XY ) {
+          yPv[i]->remove_value_callback( yValueUpdate, &yvArgRec[i] );
+	}
+        else if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
+          yPv[i]->remove_value_callback( yValueWithTimeUpdate, &yvArgRec[i] );
+	}
+
+        yPv[i]->release();
+        yPv[i] = NULL;
+
       }
 
-      if ( yPv[i] ) {
-        stat = ca_clear_channel( yPv[i] );
-        yPv[i] = NULL;
-        yEv[i] = NULL;
+      if ( xPv[i] ) {
+
+        xPv[i]->remove_conn_state_callback( xMonitorConnection, &xcArgRec[i] );
+
+        if ( traceType[i] == XYGC_K_TRACE_XY ) {
+          xPv[i]->remove_value_callback( xValueUpdate, &xvArgRec[i] );
+	}
+
+        xPv[i]->release();
+        xPv[i] = NULL;
+
       }
 
       if ( xPvData[i] ) {
@@ -5767,6 +6510,7 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
 }
 
 void xyGraphClass::btnDrag (
+  XMotionEvent *me,
   int _x,
   int _y,
   int buttonState,
@@ -5776,8 +6520,10 @@ void xyGraphClass::btnDrag (
 int rsw, rsh;
 int pmX, pmY;
 
-  pmX = _x - this->x;
-  pmY = _y - this->y;
+  if ( !enabled ) return;
+
+  pmX = me->x - this->x;
+  pmY = me->y - this->y;
 
   if ( doingBoxRescale ) {
 
@@ -5814,18 +6560,24 @@ int pmX, pmY;
 }
 
 void xyGraphClass::btnUp (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,
-  int buttonNumber )
+  int buttonNumber,
+  int *action )
 {
+
 int pmX, pmY;
 double dx0, dy0, dx1, dy1;
 int yi = 0;
-XButtonEvent be;
 
-  pmX = _x - this->x;
-  pmY = _y - this->y;
+  *action = 0;
+
+  if ( !enabled ) return;
+
+  pmX = be->x - this->x;
+  pmY = be->y - this->y;
 
   if ( doingBoxRescale ) {
 
@@ -5902,12 +6654,9 @@ XButtonEvent be;
       !( buttonState & ShiftMask ) &&
       !( buttonState & ControlMask ) ) {
 
-    memset( (void *) &be, 0, sizeof(XButtonEvent) );
-    popupMenuX = _x;
-    popupMenuY = _y;
-    be.x_root = actWin->xPos()+_x;
-    be.y_root = actWin->yPos()+_y;
-    XmMenuPosition( popUpMenu, &be );
+    popupMenuX = be->x_root;
+    popupMenuY = be->y_root;
+    XmMenuPosition( popUpMenu, be );
     XtManageChild( popUpMenu );
     return;
 
@@ -5991,10 +6740,12 @@ XButtonEvent be;
 }
 
 void xyGraphClass::btnDown (
+  XButtonEvent *be,
   int _x,
   int _y,
   int buttonState,
-  int buttonNumber )
+  int buttonNumber,
+  int *action )
 {
 
 double dxValue, dyValue, dyValue2;
@@ -6004,8 +6755,12 @@ int yi;
 time_t t;
 struct tm *ts;
 
-  pmX = _x - this->x;
-  pmY = _y - this->y;
+  *action = 0;
+
+  if ( !enabled ) return;
+
+  pmX = be->x - this->x;
+  pmY = be->y - this->y;
 
   if ( ( buttonNumber == 1 ) &&
        ( buttonState & ShiftMask ) ) {
@@ -6084,7 +6839,8 @@ struct tm *ts;
         msgDialog.popdown();
       }
       sprintf( buf, "(%s,%s%s)", xBuf, y1Buf, y2Buf );
-      msgDialog.popup( buf, actWin->xPos()+this->x, actWin->yPos()+this->y );
+      msgDialog.popup( buf, this->x+_x-be->x+actWin->xPos(),
+       this->y+_y-be->y+actWin->yPos() );
       msgDialogPopedUp = 1;
 
     }
@@ -6135,8 +6891,7 @@ struct tm *ts;
       if ( ( xMinX0 <= pmX ) && ( xMinX1 >= pmX ) &&
            ( xMinY0 <= pmY ) && ( xMinY1 >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->top, pmX+actWin->xPos()+this->x,
-           pmY+actWin->yPos()+this->y, "",
+          kp.create( actWin->top, be->x_root, be->y_root, "",
            &kpXMin, (void *) this,
            (XtCallbackProc) setKpXMinDoubleValue,
            (XtCallbackProc) cancelKpXMin );
@@ -6146,8 +6901,7 @@ struct tm *ts;
       if ( ( xMaxX0 <= pmX ) && ( xMaxX1 >= pmX ) &&
            ( xMaxY0 <= pmY ) && ( xMaxY1 >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->top, pmX+actWin->xPos()+this->x,
-           pmY+actWin->yPos()+this->y, "",
+          kp.create( actWin->top, be->x_root, be->y_root, "",
            &kpXMax, (void *) this,
            (XtCallbackProc) setKpXMaxDoubleValue,
            (XtCallbackProc) cancelKpXMax );
@@ -6160,8 +6914,7 @@ struct tm *ts;
       if ( ( y1MinX0[yi] <= pmX ) && ( y1MinX1[yi] >= pmX ) &&
            ( y1MinY0[yi] <= pmY ) && ( y1MinY1[yi] >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->top, pmX+actWin->xPos()+this->x,
-           pmY+actWin->yPos()+this->y, "",
+          kp.create( actWin->top, be->x_root, be->y_root, "",
            &kpY1Min[yi], (void *) this,
            (XtCallbackProc) setKpY1MinDoubleValue,
            (XtCallbackProc) cancelKpY1Min );
@@ -6171,8 +6924,7 @@ struct tm *ts;
       if ( ( y1MaxX0[yi] <= pmX ) && ( y1MaxX1[yi] >= pmX ) &&
            ( y1MaxY0[yi] <= pmY ) && ( y1MaxY1[yi] >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->top, pmX+actWin->xPos()+this->x,
-           pmY+actWin->yPos()+this->y, "",
+          kp.create( actWin->top, be->x_root, be->y_root, "",
            &kpY1Max[yi], (void *) this,
            (XtCallbackProc) setKpY1MaxDoubleValue,
            (XtCallbackProc) cancelKpY1Max );
@@ -6185,8 +6937,7 @@ struct tm *ts;
       if ( ( y1MinX0[yi] <= pmX ) && ( y1MinX1[yi] >= pmX ) &&
            ( y1MinY0[yi] <= pmY ) && ( y1MinY1[yi] >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->top, pmX+actWin->xPos()+this->x,
-           pmY+actWin->yPos()+this->y, "",
+          kp.create( actWin->top, be->x_root, be->y_root, "",
            &kpY1Min[yi], (void *) this,
            (XtCallbackProc) setKpY2MinDoubleValue,
            (XtCallbackProc) cancelKpY2Min );
@@ -6196,8 +6947,7 @@ struct tm *ts;
       if ( ( y1MaxX0[yi] <= pmX ) && ( y1MaxX1[yi] >= pmX ) &&
            ( y1MaxY0[yi] <= pmY ) && ( y1MaxY1[yi] >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->top, pmX+actWin->xPos()+this->x,
-           pmY+actWin->yPos()+this->y, "",
+          kp.create( actWin->top, be->x_root, be->y_root, "",
            &kpY1Max[yi], (void *) this,
            (XtCallbackProc) setKpY2MaxDoubleValue,
            (XtCallbackProc) cancelKpY2Max );
@@ -6229,9 +6979,9 @@ int xyGraphClass::getButtonActionRequest (
 
 void xyGraphClass::executeDeferred ( void ) {
 
-int i, ii, stat, nc, ni, nu, nvu, nru, nr, ne, nd, nrstc, nrst, ntrgc,
+int i, ii, nc, ni, nu, nvu, nru, nr, ne, nd, nrstc, nrst, ntrgc,
  ntrg, nxrescl, nbs, nbrescl, nnl, nol,
- eleSize, structType, doRescale, anyRescale, size,
+ eleSize, doRescale, anyRescale, size,
  ny1rescl[NUM_Y_AXES], num;
 double dyValue, dxValue, range, oneMax, oldXMin, xmin, xmax, ymin[2], ymax[2],
  scaledX, scaledY;
@@ -6275,84 +7025,90 @@ int yi, yScaleIndex;
 
       if ( yPv[i] ) {
 
-        yPvType[i] = ca_field_type( yPv[i] );
-        yPvCount[i] = ca_element_count( yPv[i] );
+        if ( yPv[i]->is_valid() ) {
 
-        switch ( yPvType[i] ) {
-        case DBR_FLOAT:
-          eleSize = 4;
-          break;
-        case DBR_DOUBLE: 
-          eleSize = 8;
-          break;
-        case DBR_SHORT:
-          eleSize = 2;
-          break;
-        case DBR_CHAR:
-          eleSize = 1;
-          break;
-        case DBR_LONG:
-          eleSize = 4;
-          break;
-        case DBR_ENUM:
-          eleSize = 2;
-          break;
-        default:
-          eleSize = 8;
-          break;
-        }
+          yPvType[i] = (int) yPv[i]->get_specific_type().type;
+          yPvCount[i] = (int) yPv[i]->get_dimension();
 
-        yPvSize[i] = ca_element_count( yPv[i] ) * eleSize;
+          // There are two views of pv types, Type and specificType; this uses
+          // specificType
+          switch ( yPvType[i] ) {
+          case ProcessVariable::specificType::flt:
+            eleSize = 4;
+            break;
+          case ProcessVariable::specificType::real: 
+            eleSize = 8;
+            break;
+          case ProcessVariable::specificType::shrt:
+            eleSize = 2;
+            break;
+          case ProcessVariable::specificType::chr:
+            eleSize = 1;
+            break;
+          case ProcessVariable::specificType::integer:
+            eleSize = 4;
+            break;
+          case ProcessVariable::specificType::enumerated:
+            eleSize = 2;
+            break;
+          default:
+            eleSize = 8;
+            break;
+          }
 
-        argRec[i].objPtr = (void *) this;
-        argRec[i].index = i;
+          yPvSize[i] = yPvCount[i] * eleSize;
+          dbYMin[i] = yPv[i]->get_lower_disp_limit();
+          dbYMax[i] = yPv[i]->get_upper_disp_limit();
+          dbYPrec[i] = yPv[i]->get_precision();
 
-        stat = ca_get_callback( DBR_GR_DOUBLE, yPv[i],
-         yInfoUpdate, (void *) argRec );
-        if ( stat != ECA_NORMAL ) {
-          printf( "error from ca_get_callback\n" );
+          ni = 1;
+          yArrayNeedInit[i] = 1;
+
         }
 
       }
 
       if ( xPv[i] ) {
 
-        xPvType[i] = ca_field_type( xPv[i] );
-        xPvCount[i] = ca_element_count( xPv[i] );
+        if ( xPv[i]->is_valid() ) {
 
-        switch ( xPvType[i] ) {
-        case DBR_FLOAT:
-          eleSize = 4;
-          break;
-        case DBR_DOUBLE: 
-          eleSize = 8;
-          break;
-        case DBR_SHORT:
-          eleSize = 2;
-          break;
-        case DBR_CHAR:
-          eleSize = 1;
-          break;
-        case DBR_LONG:
-          eleSize = 4;
-          break;
-        case DBR_ENUM:
-          eleSize = 2;
-          break;
-        default:
-          eleSize = 8;
-          break;
-        }
+          xPvType[i] = (int) xPv[i]->get_specific_type().type;
+          xPvCount[i] = (int) xPv[i]->get_dimension();
 
-        xPvSize[i] = ca_element_count( xPv[i] ) * eleSize;
+          // There are two views of pv types, Type and specificType; this uses
+          // specificType
+          switch ( xPvType[i] ) {
+          case ProcessVariable::specificType::flt:
+            eleSize = 4;
+            break;
+          case ProcessVariable::specificType::real: 
+            eleSize = 8;
+            break;
+          case ProcessVariable::specificType::shrt:
+            eleSize = 2;
+            break;
+          case ProcessVariable::specificType::chr:
+            eleSize = 1;
+            break;
+          case ProcessVariable::specificType::integer:
+            eleSize = 4;
+            break;
+          case ProcessVariable::specificType::enumerated:
+            eleSize = 2;
+            break;
+          default:
+            eleSize = 8;
+            break;
+          }
 
-        argRec[i].objPtr = (void *) this;
-        argRec[i].index = i;
+          xPvSize[i] = xPvCount[i] * eleSize;
+          dbXMin[i] = xPv[i]->get_lower_disp_limit();
+          dbXMax[i] = xPv[i]->get_upper_disp_limit();
+          dbXPrec[i] = xPv[i]->get_precision();
 
-        stat = ca_get_callback( DBR_GR_DOUBLE, xPv[i],
-         xInfoUpdate, (void *) argRec );
-        if ( stat != ECA_NORMAL ) {
-          printf( "error from ca_get_callback\n" );
+          ni = 1;
+          xArrayNeedInit[i] = 1;
+
         }
 
       }
@@ -6363,20 +7119,24 @@ int yi, yScaleIndex;
 
   if ( nrstc ) {
 
-    stat = ca_add_array_event( DBR_SHORT, 1, resetPv,
-     resetValueUpdate, (void *) this, 0.0, 0.0, 0.0, &resetEv );
-    if ( stat != ECA_NORMAL ) {
-      printf( "error from ca_add_array_event\n" );
+    if ( initialResetConnection ) {
+
+      initialResetConnection = 0;
+
+      resetPv->add_value_callback( resetValueUpdate, this );
+
     }
 
   }
 
   if ( ntrgc ) {
 
-    stat = ca_add_array_event( DBR_DOUBLE, 1, trigPv,
-     trigValueUpdate, (void *) this, 0.0, 0.0, 0.0, &trigEv );
-    if ( stat != ECA_NORMAL ) {
-      printf( "error from ca_add_array_event\n" );
+    if ( initialTrigConnection ) {
+
+      initialTrigConnection = 0;
+
+      trigPv->add_value_callback( trigValueUpdate, this );
+
     }
 
   }
@@ -6432,8 +7192,8 @@ int yi, yScaleIndex;
          (double) ( plotAreaH ) / ( curY1Max[yi] - curY1Min[yi] );
         y1Offset[yi][i] = plotAreaY;
 
-        argRec[i].objPtr = (void *) this;
-        argRec[i].index = i;
+        yvArgRec[i].objPtr = (void *) this;
+        yvArgRec[i].index = i;
 
         if ( !yPvData[i] ) {
 
@@ -6501,11 +7261,13 @@ int yi, yScaleIndex;
             }
           }
 
-          stat = ca_add_array_event( ca_field_type(yPv[i]), yPvCount[i],
-           yPv[i], yValueUpdate, (void *) argRec, 0.0, 0.0, 0.0, &yEv[i] );
-          if ( stat != ECA_NORMAL ) {
-            printf( "error from ca_add_array_event\n" );
-          }
+          if ( initialYConnection[i] ) {
+
+	    initialYConnection[i] = 0;
+
+	    yPv[i]->add_value_callback( yValueUpdate, &yvArgRec[i] );
+
+	  }
 
         }
         else if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
@@ -6526,46 +7288,26 @@ int yi, yScaleIndex;
 
           if ( yPvCount[i] > 1 ) { // vector
 
-            stat = ca_add_array_event( yPvType[i], yPvCount[i],
-             yPv[i], yValueWithTimeUpdate, (void *) argRec, 0.0, 0.0, 0.0,
-              &yEv[i] );
-            if ( stat != ECA_NORMAL ) {
-              printf( "error from ca_add_array_event\n" );
-            }
+            if ( initialYConnection[i] ) {
+
+	      initialYConnection[i] = 0;
+
+	      yPv[i]->add_value_callback( yValueWithTimeUpdate,
+               &yvArgRec[i] );
+
+	    }
 
           }
           else {
 
-            switch ( yPvType[i] ) {
-            case DBR_FLOAT:
-              structType = DBR_TIME_FLOAT;
-              break;
-            case DBR_DOUBLE: 
-              structType = DBR_TIME_DOUBLE;
-              break;
-            case DBR_SHORT:
-              structType = DBR_TIME_SHORT;
-              break;
-            case DBR_CHAR:
-              structType = DBR_TIME_CHAR;
-              break;
-            case DBR_LONG:
-              structType = DBR_TIME_LONG;
-              break;
-            case DBR_ENUM:
-              structType = DBR_TIME_ENUM;
-              break;
-            default:
-              structType = DBR_TIME_DOUBLE;
-              break;
-            }
+            if ( initialYConnection[i] ) {
 
-            stat = ca_add_array_event( structType, yPvCount[i],
-             yPv[i], yValueWithTimeUpdate, (void *) argRec, 0.0, 0.0, 0.0,
-              &yEv[i] );
-            if ( stat != ECA_NORMAL ) {
-              printf( "error from ca_add_array_event\n" );
-            }
+	      initialYConnection[i] = 0;
+
+	      yPv[i]->add_value_callback( yValueWithTimeUpdate,
+               &yvArgRec[i] );
+
+	    }
 
           }
 
@@ -6577,8 +7319,8 @@ int yi, yScaleIndex;
 
         xArrayNeedInit[i] = 0;
 
-        argRec[i].objPtr = (void *) this;
-        argRec[i].index = i;
+        xvArgRec[i].objPtr = (void *) this;
+        xvArgRec[i].index = i;
 
         if ( !xPvData[i] ) {
 
@@ -6599,11 +7341,13 @@ int yi, yScaleIndex;
 
         if ( traceType[i] == XYGC_K_TRACE_XY ) { // sanity check
 
-          stat = ca_add_array_event( ca_field_type(xPv[i]), xPvCount[i],
-           xPv[i], xValueUpdate, (void *) argRec, 0.0, 0.0, 0.0, &xEv[i] );
-          if ( stat != ECA_NORMAL ) {
-            printf( "error from ca_add_array_event\n" );
-          }
+          if ( initialXConnection[i] ) {
+
+	    initialXConnection[i] = 0;
+
+	    xPv[i]->add_value_callback( xValueUpdate, &xvArgRec[i] );
+
+	  }
 
         }
 
@@ -6835,14 +7579,16 @@ int yi, yScaleIndex;
 
             do {
 
+              // There are two views of pv types, Type and specificType; this
+              // uses specificType
               switch ( yPvType[i] ) {
-              case DBR_FLOAT:
+              case ProcessVariable::specificType::flt:
                 dyValue = (double) ( (float *) yPvData[i] )[ii];
                 break;
-              case DBR_DOUBLE: 
+              case ProcessVariable::specificType::real: 
                 dyValue = ( (double *) yPvData[i] )[ii];
                 break;
-              case DBR_SHORT:
+              case ProcessVariable::specificType::shrt:
                 if ( ySigned[i] ) {
                   dyValue = (double) ( (short *) yPvData[i] )[ii];
                 }
@@ -6850,7 +7596,7 @@ int yi, yScaleIndex;
                   dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
                 }
                 break;
-              case DBR_CHAR:
+              case ProcessVariable::specificType::chr:
                 if ( ySigned[i] ) {
                   dyValue = (double) ( (char *) yPvData[i] )[ii];
                 }
@@ -6858,7 +7604,7 @@ int yi, yScaleIndex;
                   dyValue = (double) ( (unsigned char *) yPvData[i] )[ii];
                 }
                 break;
-              case DBR_LONG:
+              case ProcessVariable::specificType::integer:
                 if ( ySigned[i] ) {
                   dyValue = (double) ( (int *) yPvData[i] )[ii];
                 }
@@ -6866,7 +7612,7 @@ int yi, yScaleIndex;
                   dyValue = (double) ( (int *) yPvData[i] )[ii];
                 }
                 break;
-              case DBR_ENUM:
+              case ProcessVariable::specificType::enumerated:
                 if ( ySigned[i] ) {
                   dyValue = (double) ( (short *) yPvData[i] )[ii];
                 }
@@ -6887,14 +7633,16 @@ int yi, yScaleIndex;
                rint( ( dyValue - curY1Min[yi] ) *
                y1Factor[yi][i] - y1Offset[yi][i] );
 
+              // There are two views of pv types, Type and specificType; this
+              // uses specificType
               switch ( xPvType[i] ) {
-              case DBR_FLOAT:
+              case ProcessVariable::specificType::flt:
                 dxValue = (double) ( (float *) xPvData[i] )[ii];
                 break;
-              case DBR_DOUBLE: 
+              case ProcessVariable::specificType::real: 
                 dxValue = ( (double *) xPvData[i] )[ii];
                 break;
-              case DBR_SHORT:
+              case ProcessVariable::specificType::shrt:
                 if ( xSigned[i] ) {
                   dxValue = (double) ( (short *) xPvData[i] )[ii];
                 }
@@ -6902,7 +7650,7 @@ int yi, yScaleIndex;
                   dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
                 }
                 break;
-              case DBR_CHAR:
+              case ProcessVariable::specificType::chr:
                 if ( xSigned[i] ) {
                   dxValue = (double) ( (char *) xPvData[i] )[ii];
                 }
@@ -6910,7 +7658,7 @@ int yi, yScaleIndex;
                   dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
                 }
                 break;
-              case DBR_LONG:
+              case ProcessVariable::specificType::integer:
                 if ( xSigned[i] ) {
                   dxValue = (double) ( (int *) xPvData[i] )[ii];
                 }
@@ -6918,7 +7666,7 @@ int yi, yScaleIndex;
                   dxValue = (double) ( (int *) xPvData[i] )[ii];
                 }
                 break;
-              case DBR_ENUM:
+              case ProcessVariable::specificType::enumerated:
                 if ( xSigned[i] ) {
                   dxValue = (double) ( (short *) xPvData[i] )[ii];
                 }

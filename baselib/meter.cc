@@ -88,6 +88,7 @@ activeMeterClass *metero = (activeMeterClass *) client;
 
   metero->needleType = metero->bufNeedleType;
 
+  metero->labelIntervals = metero->bufLabelIntervals;
   metero->majorIntervals = metero->bufMajorIntervals;
   metero->minorIntervals = metero->bufMinorIntervals;
 
@@ -191,15 +192,14 @@ activeMeterClass *metero = (activeMeterClass *) client;
 
 }
 
-#ifdef __epics__
-
 static void meter_monitor_read_connect_state (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeMeterClass *metero = (activeMeterClass *) ca_puser(arg.chid);
+activeMeterClass *metero = (activeMeterClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     metero->needConnectInit = 1;
     metero->actWin->appCtx->proc->lock();
@@ -224,74 +224,37 @@ activeMeterClass *metero = (activeMeterClass *) ca_puser(arg.chid);
 
 }
 
-static void meter_infoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-activeMeterClass *metero = (activeMeterClass *) ast_args.usr;
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
-
-  metero->needInfoInit = 1;
-  metero->actWin->appCtx->proc->lock();
-  metero->actWin->addDefExeNode( metero->aglPtr );
-  metero->actWin->appCtx->proc->unlock();
-
-  metero->curReadV = controlRec.value;
-  metero->readMin = controlRec.lower_disp_limit;
-  metero->readMax = controlRec.upper_disp_limit;
-
-
-  metero->needErase = 1;
-  metero->needDraw = 1;
-  metero->actWin->appCtx->proc->lock();
-  metero->actWin->addDefExeNode( metero->aglPtr );
-  metero->actWin->appCtx->proc->unlock();
-}
-
 static void meter_readUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-  activeMeterClass *metero = (activeMeterClass *) ast_args.usr;
+activeMeterClass *metero = (activeMeterClass *) userarg;
+int st, sev;
 
   if ( metero->active ) {
 
-    metero->curReadV = *( (double *) ast_args.dbr );
+    st = pv->get_status();
+    sev = pv->get_severity();
+    if ( ( st != metero->oldStat ) || ( sev != metero->oldSev ) ) {
+      metero->oldStat = st;
+      metero->oldSev = sev;
+      metero->fgColor.setStatus( st, sev );
+      metero->scaleColor.setStatus( st, sev );
+      metero->meterColor.setStatus( st, sev );
+      metero->bufInvalidate();
+    }
+
+    metero->curReadV = pv->get_double();
     metero->needErase = 1;
     metero->needDraw = 1;
     metero->actWin->appCtx->proc->lock();
     metero->actWin->addDefExeNode( metero->aglPtr );
     metero->actWin->appCtx->proc->unlock();
+
   }
 
 }
-
-static void meter_alarmUpdate (
-  struct event_handler_args ast_args )
-{
-
-activeMeterClass *metero = (activeMeterClass *) ast_args.usr;
-struct dbr_sts_double statusRec;
-
-  statusRec = *( (struct dbr_sts_double *) ast_args.dbr );
-
-  metero->fgColor.setStatus( statusRec.status, statusRec.severity );
-  metero->scaleColor.setStatus( statusRec.status, statusRec.severity );
-  metero->meterColor.setStatus( statusRec.status, statusRec.severity );
-
-  metero->bufInvalidate();
-  metero->needDraw = 1;
-  metero->actWin->appCtx->proc->lock();
-  metero->actWin->addDefExeNode( metero->aglPtr );
-  metero->actWin->appCtx->proc->unlock();
-
-}
-
-#endif
 
 activeMeterClass::activeMeterClass ( void ) {
 
@@ -309,7 +272,8 @@ activeMeterClass::activeMeterClass ( void ) {
   meterAngle = 180.0;
   scaleMin = 0;
   scaleMax = 10;
-  majorIntervals = 10;
+  labelIntervals = 10;
+  majorIntervals = 2;
   minorIntervals = 5;
   strcpy( scaleFormat, "FFloat" );
   scalePrecision = 0;
@@ -387,6 +351,7 @@ activeGraphicClass *metero = (activeGraphicClass *) this;
   useDisplayBg = source->useDisplayBg;
   drawStaticFlag = source->drawStaticFlag;
 
+  labelIntervals = source->labelIntervals;
   majorIntervals = source->majorIntervals;
   minorIntervals = source->minorIntervals;
 
@@ -458,6 +423,82 @@ int activeMeterClass::createInteractive (
 }
 
 int activeMeterClass::save (
+  FILE *f )
+{
+
+int stat, major, minor, release;
+
+tagClass tag;
+
+int zero = 0;
+double a180 = 180;
+double dzero = 0;
+char *emptyStr = "";
+
+int lit = 2;
+static char *labelTypeEnumStr[3] = {
+  "pvName",
+  "pvLabel",
+  "literal"
+};
+static int labelTypeEnum[3] = {
+  0,
+  1,
+  2
+};
+
+  major = METERC_MAJOR_VERSION;
+  minor = METERC_MINOR_VERSION;
+  release = METERC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "caseColor", actWin->ci, &meterColor );
+  tag.loadBoolW( "caseAlarm", &meterColorMode, &zero );
+  tag.loadW( "scaleColor", actWin->ci, &scaleColor );
+  tag.loadBoolW( "scaleAlarm", &scaleColorMode, &zero );
+  tag.loadW( "labelColor", actWin->ci, &labelColor );
+  tag.loadW( "fgColor", actWin->ci, &fgColor );
+  tag.loadBoolW( "fgAlarm", &fgColorMode, &zero );
+  tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadW( "topShadowColor", actWin->ci, &tsColor );
+  tag.loadW( "botShadowColor", actWin->ci, &bsColor );
+  tag.loadW( "readPv", &readPvExpStr, emptyStr );
+  tag.loadW( "label", literalLabel, emptyStr );
+  tag.loadW( "labelType", 3, labelTypeEnumStr, labelTypeEnum,
+   &labelType, &lit );
+  tag.loadBoolW( "showScale", &showScale, &zero );
+  tag.loadW( "scaleFormat", scaleFormat );
+  tag.loadW( "scalePrecision", &scalePrecision, &zero );
+  tag.loadBoolW( "scaleLimitsFromDb", &scaleLimitsFromDb, &zero );
+  tag.loadBoolW( "useDisplayBg", &useDisplayBg, &zero );
+  tag.loadW( "labelIntervals", &labelIntervals, &zero );
+  tag.loadW( "majorIntervals", &majorIntervals, &zero );
+  tag.loadW( "minorIntervals", &minorIntervals, &zero );
+  tag.loadBoolW( "complexNeedle", &needleType, &zero );
+  tag.loadBoolW( "3d", &shadowMode, &zero );
+  tag.loadW( "scaleMin", &scaleMin, &dzero );
+  tag.loadW( "scaleMax", &scaleMax, &dzero );
+  tag.loadW( "labelFontTag", labelFontTag );
+  tag.loadW( "scaleFontTag", scaleFontTag );
+  tag.loadW( "meterAngle", &meterAngle, &a180 );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int activeMeterClass::old_save (
   FILE *f )
 {
 
@@ -545,6 +586,129 @@ int index;
 }
 
 int activeMeterClass::createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+double a180 = 180;
+double dzero = 0;
+char *emptyStr = "";
+
+int lit = 2;
+static char *labelTypeEnumStr[3] = {
+  "pvName",
+  "pvLabel",
+  "literal"
+};
+static int labelTypeEnum[3] = {
+  0,
+  1,
+  2
+};
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "caseColor", actWin->ci, &meterColor );
+  tag.loadR( "caseAlarm", &meterColorMode, &zero );
+  tag.loadR( "scaleColor", actWin->ci, &scaleColor );
+  tag.loadR( "scaleAlarm", &scaleColorMode, &zero );
+  tag.loadR( "labelColor", actWin->ci, &labelColor );
+  tag.loadR( "fgColor", actWin->ci, &fgColor );
+  tag.loadR( "fgAlarm", &fgColorMode, &zero );
+  tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "topShadowColor", actWin->ci, &tsColor );
+  tag.loadR( "botShadowColor", actWin->ci, &bsColor );
+  tag.loadR( "readPv", &readPvExpStr, emptyStr );
+  tag.loadR( "label", 39, literalLabel, emptyStr );
+  tag.loadR( "labelType", 3, labelTypeEnumStr, labelTypeEnum,
+   &labelType, &lit );
+  tag.loadR( "showScale", &showScale, &zero );
+  tag.loadR( "scaleFormat", 15, scaleFormat );
+  tag.loadR( "scalePrecision", &scalePrecision, &zero );
+  tag.loadR( "scaleLimitsFromDb", &scaleLimitsFromDb, &zero );
+  tag.loadR( "useDisplayBg", &useDisplayBg, &zero );
+  tag.loadR( "labelIntervals", &labelIntervals, &zero );
+  tag.loadR( "majorIntervals", &majorIntervals, &zero );
+  tag.loadR( "minorIntervals", &minorIntervals, &zero );
+  tag.loadR( "complexNeedle", &needleType, &zero );
+  tag.loadR( "3d", &shadowMode, &zero );
+  tag.loadR( "scaleMin", &scaleMin, &dzero );
+  tag.loadR( "scaleMax", &scaleMax, &dzero );
+  tag.loadR( "labelFontTag", 63, labelFontTag );
+  tag.loadR( "scaleFontTag", 63, scaleFontTag );
+  tag.loadR( "meterAngle", &meterAngle, &a180 );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > METERC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+
+  if ( meterColorMode == METERC_K_COLORMODE_ALARM )
+    meterColor.setAlarmSensitive();
+  else
+    meterColor.setAlarmInsensitive();
+
+  if ( scaleColorMode == METERC_K_COLORMODE_ALARM )
+    scaleColor.setAlarmSensitive();
+  else
+    scaleColor.setAlarmInsensitive();
+
+  if ( fgColorMode == METERC_K_COLORMODE_ALARM )
+    fgColor.setAlarmSensitive();
+  else
+    fgColor.setAlarmInsensitive();
+
+  bgColor.setAlarmInsensitive();
+
+  controlPvExpStr.setRaw( "" );
+
+  actWin->fi->loadFontTag( labelFontTag );
+  labelFs = actWin->fi->getXFontStruct( labelFontTag );
+  updateFont( labelFontTag, &labelFs, &labelFontAscent, &labelFontDescent,
+   &labelFontHeight );
+
+  actWin->fi->loadFontTag( scaleFontTag );
+  scaleFs = actWin->fi->getXFontStruct( scaleFontTag );
+  updateFont( scaleFontTag, &scaleFs, &scaleFontAscent, &scaleFontDescent,
+   &scaleFontHeight );
+
+  updateDimensions();
+
+  return stat;
+
+}
+
+int activeMeterClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -745,6 +909,16 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
     strncpy( scaleFormat, oneName, 15 );
   }
 
+  if ( strcmp( scaleFormat, "g" ) == 0 ) {
+    strcpy( scaleFormat, "GFloat" );
+  }
+  else if ( strcmp( scaleFormat, "f" ) == 0 ) {
+    strcpy( scaleFormat, "FFloat" );
+  }
+  else if ( strcmp( scaleFormat, "e" ) == 0 ) {
+    strcpy( scaleFormat, "Exponential" );
+  }
+
   fscanf( f, "%d\n", &scalePrecision ); actWin->incLine();
 
   fscanf( f, "%d\n", &scaleLimitsFromDb ); actWin->incLine();
@@ -759,6 +933,11 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
   fscanf( f, "%d\n", &useDisplayBg ); actWin->incLine();
   fscanf( f, "%d\n", &majorIntervals ); actWin->incLine();
   fscanf( f, "%d\n", &minorIntervals ); actWin->incLine();
+
+  labelIntervals = majorIntervals;
+  majorIntervals = minorIntervals;
+  minorIntervals = 1;
+
   fscanf( f, "%d\n", &needleType ); actWin->incLine();
   fscanf( f, "%d\n", &shadowMode ); actWin->incLine();
 
@@ -807,6 +986,7 @@ char title[32], *ptr;
   bufMeterColorMode = meterColorMode;
   bufScaleColorMode = scaleColorMode;
 
+  bufLabelIntervals = labelIntervals;
   bufMajorIntervals = majorIntervals;
   bufMinorIntervals = minorIntervals;
 
@@ -878,6 +1058,7 @@ char title[32], *ptr;
   ef.addTextField(activeMeterClass_str22, 35, &bufScaleMax);
   ef.addColorButton( activeMeterClass_str24, actWin->ci,&scaleCb,&bufScaleColor);
   ef.addToggle( activeMeterClass_str25, &bufScaleColorMode );
+  ef.addTextField(activeMeterClass_str44, 35, &bufLabelIntervals);
   ef.addTextField(activeMeterClass_str26, 35, &bufMajorIntervals);
   ef.addTextField(activeMeterClass_str27, 35, &bufMinorIntervals);
   ef.addToggle(activeMeterClass_str28, &bufNeedleType);  
@@ -926,6 +1107,9 @@ int activeMeterClass::erase ( void ) {
 
   if ( deleteRequest ) return 1;
 
+  actWin->drawGc.setLineStyle( LineSolid );
+  actWin->drawGc.setLineWidth( 1 );
+
   XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.eraseGC(), x, y, w, h );
 
@@ -938,12 +1122,18 @@ int activeMeterClass::erase ( void ) {
 
 int activeMeterClass::eraseActive ( void ) {
 
-  if ( !activeMode) return 1;
+  if ( !enabled || !activeMode) return 1;
 
   if ( bufInvalid) { 
 
-    XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
-		    actWin->executeGc.eraseGC(), oldMeterX, y, oldMeterW, h );
+    actWin->executeGc.setLineStyle( LineSolid );
+    actWin->executeGc.setLineWidth( 1 );
+
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+		    actWin->executeGc.eraseGC(), x, y, w, h );
+
+    XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+		    actWin->executeGc.eraseGC(), x, y, w, h );
   }
 
   return 1;
@@ -952,11 +1142,11 @@ int activeMeterClass::eraseActive ( void ) {
 
 int activeMeterClass::draw ( void ) {
 
-  int tX, tY;
+  int i, ii, tX, tY;
   char scaleMinString[39+1],scaleMaxString[39+1],scaleString[39+1];
-  double majorAngle, majorAngleIncr, minorAngleIncr;
+  double labelAngle, labelAngleIncr, majorAngleIncr, minorAngleIncr;
   double needleLength, insideArc;
-  double majorTickSize = 10, minorTickSize = 5, midTickSize = 7;
+  double labelTickSize = 10, majorTickSize = 5, minorTickSize = 7;
   double needlePlusScale, scaleTextIncr, scaleValue;
   double meterTotalAngle, beginAngle, endAngle;
   double descentAngle;
@@ -966,7 +1156,7 @@ int activeMeterClass::draw ( void ) {
   int scaleMinWidth,scaleMaxWidth,scaleFontWidth;
   int faceX,faceY,faceW,faceH;
   double tickSize;
-  int  farEndX, farEndY, nearEndX, nearEndY, i;
+  int  farEndX, farEndY, nearEndX, nearEndY;
   char fmt[31+1];
 
   if (meterAngle < 10)  meterAngle = 10;
@@ -976,6 +1166,9 @@ int activeMeterClass::draw ( void ) {
   if ( deleteRequest ) return 1;
 
   actWin->drawGc.saveFg();
+
+  actWin->drawGc.setLineStyle( LineSolid );
+  actWin->drawGc.setLineWidth( 1 );
 
  if (scaleLimitsFromDb){
    scaleMin = readMin;
@@ -1031,8 +1224,8 @@ int activeMeterClass::draw ( void ) {
  else
    scaleFontWidth = scaleMaxWidth;
 
- if (majorIntervals < 1) majorIntervals = 1;
- scaleTextIncr = (scaleMax - scaleMin) / majorIntervals;
+ if (labelIntervals < 1) labelIntervals = 1;
+ scaleTextIncr = (scaleMax - scaleMin) / labelIntervals;
 
  scaleValue = scaleMax - scaleTextIncr;
  sprintf (scaleString, fmt, scaleValue);
@@ -1080,18 +1273,15 @@ int activeMeterClass::draw ( void ) {
 	
  // needleLength = 0.83 * needlePlusScale;
  // insideArc    = 0.85 * needlePlusScale;
- // // majorTickSize= 0.15 * needlePlusScale;
+ // // labelTickSize= 0.15 * needlePlusScale;
 
- majorTickSize = scaleFontHeight * 0.8;
- if ( majorTickSize > 15 ) majorTickSize = 15;
- insideArc     = needlePlusScale - majorTickSize;
+ labelTickSize = scaleFontHeight * 0.8;
+ if ( labelTickSize > 15 ) labelTickSize = 15;
+ insideArc     = needlePlusScale - labelTickSize;
  needleLength = 0.98 * insideArc;
 
- // printf ("major tick size is   %f\n",majorTickSize);
- // printf ("scale font height is %d\n\n",scaleFontHeight);
-
- minorTickSize= 0.5 * majorTickSize;
- midTickSize  = 0.7 * majorTickSize;
+ majorTickSize= 0.7 * labelTickSize;
+ minorTickSize  = 0.4 * labelTickSize;
 
  meterNeedleXorigin = faceW / 2;
  meterNeedleYorigin = (int) ( needlePlusScale + 4 + scaleFontHeight);
@@ -1101,155 +1291,184 @@ int activeMeterClass::draw ( void ) {
  meterNeedleXend    += faceX;
  meterNeedleYend    += faceY;    
 
-   actWin->executeGc.setFG( meterColor.getColor() );
+   actWin->drawGc.setFG( meterColor.pixelColor() );
    
-   XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
-		   actWin->executeGc.normGC(), x, y, w, h );
+   XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+		   actWin->drawGc.normGC(), x, y, w, h );
 
    
-   actWin->executeGc.setFG( bgColor.getColor() );
+   actWin->drawGc.setFG( bgColor.pixelColor() );
    
-   XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
-		   actWin->executeGc.normGC(),
+   XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+		   actWin->drawGc.normGC(),
 		   faceX, faceY, faceW, faceH );
 
-   actWin->executeGc.setFG( labelColor.getColor() );
+   actWin->drawGc.setFG( labelColor.pixelColor() );
 
    if ( strcmp( labelFontTag, "" ) != 0 ) {
-     actWin->executeGc.setFontTag( labelFontTag, actWin->fi );
+     actWin->drawGc.setFontTag( labelFontTag, actWin->fi );
    }
 
    if (strlen (label)){
-     drawText (actWin->executeWidget, &actWin->executeGc,
+     drawText (actWin->drawWidget, &actWin->drawGc,
 	       labelFs, faceX + 2, faceY + faceH + 2,
 	       XmALIGNMENT_BEGINNING, label);
    }
 
    if (shadowMode) {
 
-     actWin->executeGc.setFG( tsColor.getColor() );
+     actWin->drawGc.setFG( tsColor.pixelColor() );
 
-     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-		   actWin->executeGc.normGC(), x, y, w, h );
+     XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+		   actWin->drawGc.normGC(), x, y, w, h );
 
-     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-		   actWin->executeGc.normGC(),
+     XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+		   actWin->drawGc.normGC(),
 		     faceX, faceY, faceW, faceH );
 
-    actWin->executeGc.setFG( bsColor.getColor() );
+    actWin->drawGc.setFG( bsColor.pixelColor() );
 
-    XDrawLine (actWin->d, XtWindow(actWin->executeWidget),
-	       actWin->executeGc.normGC(),
+    XDrawLine (actWin->d, XtWindow(actWin->drawWidget),
+	       actWin->drawGc.normGC(),
 	       x,y+h,
 	       x+w,y+h);
 
-    XDrawLine (actWin->d, XtWindow(actWin->executeWidget),
-	       actWin->executeGc.normGC(),
+    XDrawLine (actWin->d, XtWindow(actWin->drawWidget),
+	       actWin->drawGc.normGC(),
 	       x+w, y,
 	       x+w,y+h);
 
-    XDrawLine (actWin->d, XtWindow(actWin->executeWidget),
-	       actWin->executeGc.normGC(),
+    XDrawLine (actWin->d, XtWindow(actWin->drawWidget),
+	       actWin->drawGc.normGC(),
 	       faceX, faceY,
 	       faceX, faceY + faceH);
 
-    XDrawLine (actWin->d, XtWindow(actWin->executeWidget),
-	       actWin->executeGc.normGC(),
+    XDrawLine (actWin->d, XtWindow(actWin->drawWidget),
+	       actWin->drawGc.normGC(),
 	       faceX, faceY,
 	       faceX + faceW, faceY );
 
    }
  
- // if (drawStaticFlag && showScale){
- 
- 
- if ((majorIntervals != 0) && (minorIntervals !=0 && showScale)){
+   if ((labelIntervals != 0) && (labelIntervals !=0 && showScale)){
 
-   //   majorAngleIncr = 3.14159265 / majorIntervals;
-   majorAngleIncr = meterTotalAngle / majorIntervals;
+   labelAngleIncr = meterTotalAngle / labelIntervals;
+   majorAngleIncr = labelAngleIncr / majorIntervals;
    minorAngleIncr = majorAngleIncr / minorIntervals;
    beginAngle = descentAngle;
    endAngle   = meterTotalAngle + beginAngle;
 
-   for (majorAngle = beginAngle, scaleValue = scaleMax;
-	majorAngle <= (1.001 * endAngle);
-	majorAngle += majorAngleIncr, scaleValue -= scaleTextIncr){
+   for (labelAngle = beginAngle, scaleValue = scaleMax;
+	labelAngle <= (1.001 * endAngle);
+	labelAngle += labelAngleIncr, scaleValue -= scaleTextIncr){
      
-     farEndX = (int) (meterNeedleXorigin + (insideArc + majorTickSize) * cos(majorAngle));
-     farEndY = (int) (meterNeedleYorigin - (insideArc + majorTickSize) * sin(majorAngle));
-     nearEndX = (int) (meterNeedleXorigin + insideArc * cos(majorAngle));
-     nearEndY = (int) (meterNeedleYorigin - insideArc * sin(majorAngle));
+     farEndX = (int) (meterNeedleXorigin + (insideArc + labelTickSize) *
+      cos(labelAngle));
+     farEndY = (int) (meterNeedleYorigin - (insideArc + labelTickSize) *
+      sin(labelAngle));
+     nearEndX = (int) (meterNeedleXorigin + insideArc * cos(labelAngle));
+     nearEndY = (int) (meterNeedleYorigin - insideArc * sin(labelAngle));
      
-     actWin->executeGc.setFG( scaleColor.getColor() );
-     XDrawLine (actWin->d, XtWindow(actWin->executeWidget),
-		actWin->executeGc.normGC(),
+     actWin->drawGc.setFG( scaleColor.pixelColor() );
+     XDrawLine (actWin->d, XtWindow(actWin->drawWidget),
+		actWin->drawGc.normGC(),
 		farEndX,farEndY,
 		nearEndX,nearEndY);
      
      if ( strcmp( scaleFontTag, "" ) != 0 ) {
-       actWin->executeGc.setFontTag( scaleFontTag, actWin->fi );
+       actWin->drawGc.setFontTag( scaleFontTag, actWin->fi );
      }
      
      updateDimensions();
      
-     if (majorAngle < (beginAngle + 0.001)){
+     if (labelAngle < (beginAngle + 0.001)){
        tX = farEndX + 2;
        tY = farEndY - scaleFontAscent/2;
-       drawText (actWin->executeWidget, &actWin->executeGc, scaleFs, tX, tY,
+       drawText (actWin->drawWidget, &actWin->drawGc, scaleFs, tX, tY,
 		 XmALIGNMENT_BEGINNING, scaleMaxString);
      }
-     else if (majorAngle <= 1.50){
+     else if (labelAngle <= 1.50){
        sprintf (scaleString, fmt, scaleValue);
        tX = farEndX + 2;
        tY = farEndY - scaleFontAscent;
-       drawText (actWin->executeWidget, &actWin->executeGc, scaleFs, tX, tY,
+       drawText (actWin->drawWidget, &actWin->drawGc, scaleFs, tX, tY,
 		 XmALIGNMENT_BEGINNING, scaleString);
      }
-     else if (majorAngle <= 1.65){
+     else if (labelAngle <= 1.65){
        sprintf (scaleString, fmt, scaleValue);
        tX = farEndX;
        tY = farEndY - scaleFontAscent - 2;
-       drawText (actWin->executeWidget, &actWin->executeGc, scaleFs, tX, tY,
+       drawText (actWin->drawWidget, &actWin->drawGc, scaleFs, tX, tY,
 		 XmALIGNMENT_CENTER, scaleString);
      }
-     else if (majorAngle <= (endAngle - 0.001)){
+     else if (labelAngle <= (endAngle - 0.001)){
        sprintf (scaleString, fmt, scaleValue);
        tX = farEndX - 2;
        tY = farEndY - scaleFontAscent;
-       drawText (actWin->executeWidget, &actWin->executeGc, scaleFs, tX, tY,
+       drawText (actWin->drawWidget, &actWin->drawGc, scaleFs, tX, tY,
 		 XmALIGNMENT_END, scaleString);
      }
-     else if (majorAngle > (endAngle - 0.001)){
+     else if (labelAngle > (endAngle - 0.001)){
        tX = farEndX -2;
        tY = farEndY - scaleFontAscent/2;
-       drawText (actWin->executeWidget, &actWin->executeGc, scaleFs, tX, tY,
+       drawText (actWin->drawWidget, &actWin->drawGc, scaleFs, tX, tY,
 		 XmALIGNMENT_END, scaleMinString);
      }       
+
    }
-   for (majorAngle = beginAngle;
-	majorAngle <(0.99 *endAngle);
-	majorAngle += majorAngleIncr){
+
+   for (labelAngle = beginAngle;
+	labelAngle <(0.99 *endAngle);
+	labelAngle += labelAngleIncr){
      
-     for (i=1; i < minorIntervals; i++){
-       if ((i * minorAngleIncr) == (majorAngleIncr /2))
-	 tickSize = midTickSize;
-       else
-	 tickSize = minorTickSize;
+     for (i=0; i<majorIntervals; i++){
+
+       for (ii=1; ii<minorIntervals; ii++){
+
+         tickSize = minorTickSize;
        
-       farEndX = (int) (meterNeedleXorigin +
-	 (insideArc + tickSize) * cos(i * minorAngleIncr + majorAngle));
-       farEndY = (int) (meterNeedleYorigin -
-	 (insideArc + tickSize) * sin(i * minorAngleIncr + majorAngle));
-       nearEndX = (int) (meterNeedleXorigin + insideArc * cos(i * minorAngleIncr + majorAngle));
-       nearEndY = (int) (meterNeedleYorigin - insideArc * sin(i * minorAngleIncr + majorAngle));
-       XDrawLine (actWin->d, XtWindow(actWin->executeWidget),
-		  actWin->executeGc.normGC(),
-		  farEndX,farEndY,
-		  nearEndX,nearEndY);
+         farEndX = (int) (meterNeedleXorigin +
+           (insideArc + tickSize) * cos(ii * minorAngleIncr + labelAngle +
+           i * majorAngleIncr));
+         farEndY = (int) (meterNeedleYorigin -
+           (insideArc + tickSize) * sin(ii * minorAngleIncr + labelAngle +
+           i * majorAngleIncr));
+         nearEndX = (int) (meterNeedleXorigin +
+          insideArc * cos(ii * minorAngleIncr + labelAngle +
+          i * majorAngleIncr));
+         nearEndY = (int) (meterNeedleYorigin -
+          insideArc * sin(ii * minorAngleIncr + labelAngle +
+          i * majorAngleIncr));
+         XDrawLine (actWin->d, XtWindow(actWin->drawWidget),
+          actWin->drawGc.normGC(), farEndX, farEndY, nearEndX, nearEndY );
+
+       }
+
+       if ( i > 0 ) {
+
+         tickSize = majorTickSize;
+       
+         farEndX = (int) (meterNeedleXorigin +
+  	 (insideArc + tickSize) * cos(i * majorAngleIncr + labelAngle));
+         farEndY = (int) (meterNeedleYorigin -
+  	 (insideArc + tickSize) * sin(i * majorAngleIncr + labelAngle));
+         nearEndX = (int) (meterNeedleXorigin +
+          insideArc * cos(i * majorAngleIncr + labelAngle));
+         nearEndY = (int) (meterNeedleYorigin -
+          insideArc * sin(i * majorAngleIncr + labelAngle));
+         XDrawLine (actWin->d, XtWindow(actWin->drawWidget),
+          actWin->drawGc.normGC(), farEndX, farEndY, nearEndX, nearEndY );
+
+       }
+
      }
+
    }
+
  }
+
  // }
+
  actWin->drawGc.restoreFg();
  
  return 1;
@@ -1258,24 +1477,24 @@ int activeMeterClass::draw ( void ) {
 
 int activeMeterClass::drawActive ( void ) {
 
-  int tX, tY;
+  int i, ii, tX, tY;
   //XRectangle xR = { x, y, w, h };
  char scaleMinString[39+1],scaleMaxString[39+1],scaleString[39+1];
- double majorAngle, majorAngleIncr, minorAngleIncr;
+ double labelAngle, labelAngleIncr, majorAngleIncr, minorAngleIncr;
  double meterTotalAngle, beginAngle, endAngle;
  double descentAngle;
  double verticalExtent, visibleFraction;
  double biggestVertNeedlePlusScale, biggestHorizNeedlePlusScale;
  double needleAngle;
  double needleLength, insideArc;
- double majorTickSize = 10, minorTickSize = 5, midTickSize = 7;
+ double labelTickSize = 10, majorTickSize = 5, minorTickSize = 7;
  double needlePlusScale, scaleTextIncr, scaleValue;
  int caseWidth = 5;
  int scaleMinWidth,scaleMaxWidth,scaleFontWidth;
  int faceX,faceY,faceW,faceH;
  XRectangle xR;
  double tickSize;
- int  farEndX, farEndY, nearEndX, nearEndY, i;
+ int  farEndX, farEndY, nearEndX, nearEndY;
  char fmt[31+1];
 
 XPoint xpoints[3];
@@ -1300,7 +1519,7 @@ XPoint xpoints[3];
     needToEraseUnconnected = 0;
   }
 
- if ( !activeMode || !activeInitFlag) return 1;
+ if ( !enabled || !activeMode || !activeInitFlag) return 1;
 
  meterTotalAngle = 3.1415926535898 * meterAngle / 180.0;
 
@@ -1331,6 +1550,9 @@ XPoint xpoints[3];
 
  actWin->executeGc.saveFg();
 
+  actWin->executeGc.setLineStyle( LineSolid );
+  actWin->executeGc.setLineWidth( 1 );
+
  if(scalePrecision > 10 || scalePrecision < 0) scalePrecision = 1;
 
  if ( strcmp( scaleFormat, "GFloat" ) == 0 ) {
@@ -1360,8 +1582,8 @@ XPoint xpoints[3];
  else
    scaleFontWidth = scaleMaxWidth;
 
- if (majorIntervals < 1) majorIntervals = 1;
- scaleTextIncr = (scaleMax - scaleMin) / majorIntervals;
+ if (labelIntervals < 1) labelIntervals = 1;
+ scaleTextIncr = (scaleMax - scaleMin) / labelIntervals;
 
  scaleValue = scaleMax - scaleTextIncr;
  sprintf (scaleString, fmt, scaleValue);
@@ -1408,15 +1630,15 @@ XPoint xpoints[3];
 
  // needleLength = 0.83 * needlePlusScale;
  // insideArc    = 0.85 * needlePlusScale;
- // majorTickSize= 0.15 * needlePlusScale;
+ // labelTickSize= 0.15 * needlePlusScale;
 
- majorTickSize = scaleFontHeight * 0.8;
- if ( majorTickSize > 15 ) majorTickSize = 15;
- insideArc     = needlePlusScale - majorTickSize;
+ labelTickSize = scaleFontHeight * 0.8;
+ if ( labelTickSize > 15 ) labelTickSize = 15;
+ insideArc     = needlePlusScale - labelTickSize;
  needleLength = 0.98 * insideArc;
 
- minorTickSize= 0.5 * majorTickSize;
- midTickSize  = 0.7 * majorTickSize;
+ majorTickSize= 0.7 * labelTickSize;
+ minorTickSize  = 0.4 * labelTickSize;
 
  // crude attempt to prevent divide by zero in angle calc
  if ((scaleMax - scaleMin) < 0.000001 * (readV - scaleMin)){
@@ -1511,7 +1733,7 @@ if (drawStaticFlag){
    drawStaticFlag = 0;
 
    
-   if ((majorIntervals != 0) && (minorIntervals !=0 && showScale)){
+   if ((labelIntervals != 0) && (labelIntervals !=0 && showScale)){
      
      xR.x = faceX;
      xR.y = faceY;
@@ -1520,25 +1742,20 @@ if (drawStaticFlag){
 
      actWin->executeGc.addNormXClipRectangle( xR );
 
-     //     majorAngleIncr = 3.14159265 / majorIntervals;
-     majorAngleIncr = meterTotalAngle / majorIntervals;
+     labelAngleIncr = meterTotalAngle / labelIntervals;
+     majorAngleIncr = labelAngleIncr / majorIntervals;
      minorAngleIncr = majorAngleIncr / minorIntervals;
      beginAngle = descentAngle;
      endAngle   = meterTotalAngle + beginAngle;
 
-     //      printf ("needleLength %5.1f meterNeedleXOrigin %5d\n",needleLength,meterNeedleXorigin);
-     
-     //      printf ("majorAngleIncr %5.1f minorAngleIncr %5.1f\n",majorAngleIncr,minorAngleIncr);
-     //      printf ("insideArc %5.1f majorTickSize %5.1f\n",insideArc, majorTickSize);
-     
-     for (majorAngle = beginAngle, scaleValue = scaleMax;
-	  majorAngle <= (1.001 * endAngle);
-	  majorAngle += majorAngleIncr, scaleValue -= scaleTextIncr){
+     for (labelAngle = beginAngle, scaleValue = scaleMax;
+	  labelAngle <= (1.001 * endAngle);
+	  labelAngle += labelAngleIncr, scaleValue -= scaleTextIncr){
        
-       farEndX = (int) (meterNeedleXorigin + (insideArc + majorTickSize) * cos(majorAngle));
-       farEndY = (int) (meterNeedleYorigin - (insideArc + majorTickSize) * sin(majorAngle));
-       nearEndX = (int) (meterNeedleXorigin + insideArc * cos(majorAngle));
-       nearEndY = (int) (meterNeedleYorigin - insideArc * sin(majorAngle));
+       farEndX = (int) (meterNeedleXorigin + (insideArc + labelTickSize) * cos(labelAngle));
+       farEndY = (int) (meterNeedleYorigin - (insideArc + labelTickSize) * sin(labelAngle));
+       nearEndX = (int) (meterNeedleXorigin + insideArc * cos(labelAngle));
+       nearEndY = (int) (meterNeedleYorigin - insideArc * sin(labelAngle));
        
        actWin->executeGc.setFG( scaleColor.getColor() );
        XDrawLine (actWin->d, XtWindow(actWin->executeWidget),
@@ -1552,63 +1769,88 @@ if (drawStaticFlag){
 
        updateDimensions();
 
-       if (majorAngle < (beginAngle + 0.001)){
+       if (labelAngle < (beginAngle + 0.001)){
 	 tX = farEndX + 2;
 	 tY = farEndY - scaleFontAscent/2;
 	 drawText (actWin->executeWidget, &actWin->executeGc, scaleFs, tX, tY,
 		   XmALIGNMENT_BEGINNING, scaleMaxString);
        }
-       else if (majorAngle <= 1.50){
+       else if (labelAngle <= 1.50){
 	 sprintf (scaleString, fmt, scaleValue);
 	 tX = farEndX + 2;
 	 tY = farEndY - scaleFontAscent;
 	 drawText (actWin->executeWidget, &actWin->executeGc, scaleFs, tX, tY,
 		   XmALIGNMENT_BEGINNING, scaleString);
        }
-       else if (majorAngle <= 1.65){
+       else if (labelAngle <= 1.65){
 	 sprintf (scaleString, fmt, scaleValue);
 	 tX = farEndX;
 	 tY = farEndY - scaleFontAscent - 2;
 	 drawText (actWin->executeWidget, &actWin->executeGc, scaleFs, tX, tY,
 		   XmALIGNMENT_CENTER, scaleString);
        }
-       else if (majorAngle <= (endAngle - 0.001)){
+       else if (labelAngle <= (endAngle - 0.001)){
 	 sprintf (scaleString, fmt, scaleValue);
 	 tX = farEndX - 2;
 	 tY = farEndY - scaleFontAscent;
 	 drawText (actWin->executeWidget, &actWin->executeGc, scaleFs, tX, tY,
 		   XmALIGNMENT_END, scaleString);
        }
-       else if (majorAngle > (endAngle - 0.001)){
+       else if (labelAngle > (endAngle - 0.001)){
 	 tX = farEndX -2;
 	 tY = farEndY - scaleFontAscent/2;
 	 drawText (actWin->executeWidget, &actWin->executeGc, scaleFs, tX, tY,
 		   XmALIGNMENT_END, scaleMinString);
        }       
+
      }
-     for (majorAngle = beginAngle;
-	  majorAngle < (0.99 * endAngle);
-	  majorAngle += majorAngleIncr){
+
+     for (labelAngle = beginAngle;
+	  labelAngle <(0.99 *endAngle);
+	  labelAngle += labelAngleIncr){
+     
+       for (i=0; i<majorIntervals; i++){
+
+         for (ii=1; ii<minorIntervals; ii++){
+
+           tickSize = minorTickSize;
        
-       for (i=1; i < minorIntervals; i++){
-	 if ((i * minorAngleIncr) == (majorAngleIncr /2))
-	   tickSize = midTickSize;
-	 else
-	   tickSize = minorTickSize;
-	 
-	 farEndX = (int) (meterNeedleXorigin +
-	   (insideArc + tickSize) * cos(i * minorAngleIncr + majorAngle));
-	 farEndY = (int) (meterNeedleYorigin -
-	   (insideArc + tickSize) * sin(i * minorAngleIncr + majorAngle));
-	 nearEndX = (int) (meterNeedleXorigin +
-			   insideArc * cos(i * minorAngleIncr + majorAngle));
-	 nearEndY = (int) (meterNeedleYorigin -
-			   insideArc * sin(i * minorAngleIncr + majorAngle));
-	 XDrawLine (actWin->d, XtWindow(actWin->executeWidget),
-		    actWin->executeGc.normGC(),
-		    farEndX,farEndY,
-		    nearEndX,nearEndY);
+           farEndX = (int) (meterNeedleXorigin +
+             (insideArc + tickSize) * cos(ii * minorAngleIncr + labelAngle +
+             i * majorAngleIncr));
+           farEndY = (int) (meterNeedleYorigin -
+             (insideArc + tickSize) * sin(ii * minorAngleIncr + labelAngle +
+             i * majorAngleIncr));
+           nearEndX = (int) (meterNeedleXorigin +
+            insideArc * cos(ii * minorAngleIncr + labelAngle +
+            i * majorAngleIncr));
+           nearEndY = (int) (meterNeedleYorigin -
+            insideArc * sin(ii * minorAngleIncr + labelAngle +
+            i * majorAngleIncr));
+           XDrawLine (actWin->d, XtWindow(actWin->executeWidget),
+            actWin->executeGc.normGC(), farEndX, farEndY, nearEndX, nearEndY );
+
+         }
+
+         if ( i > 0 ) {
+
+           tickSize = majorTickSize;
+       
+           farEndX = (int) (meterNeedleXorigin +
+  	   (insideArc + tickSize) * cos(i * majorAngleIncr + labelAngle));
+           farEndY = (int) (meterNeedleYorigin -
+  	   (insideArc + tickSize) * sin(i * majorAngleIncr + labelAngle));
+           nearEndX = (int) (meterNeedleXorigin +
+            insideArc * cos(i * majorAngleIncr + labelAngle));
+           nearEndY = (int) (meterNeedleYorigin -
+            insideArc * sin(i * majorAngleIncr + labelAngle));
+           XDrawLine (actWin->d, XtWindow(actWin->executeWidget),
+            actWin->executeGc.normGC(), farEndX, farEndY, nearEndX, nearEndY );
+
+         }
+
        }
+
      }
 
      actWin->executeGc.removeNormXClipRectangle();
@@ -1638,30 +1880,6 @@ if (drawStaticFlag){
 	      oldMeterNeedleXOrigin, oldMeterNeedleYOrigin);
    }
    else {
-
-     //printf ("needleType is %5d\n",needleType);
-#if 0
-   XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-	      actWin->executeGc.normGC(),
-	      oldMeterNeedleXEnd, oldMeterNeedleYEnd,
-	      oldMeterNeedleXOrigin, oldMeterNeedleYOrigin);
-   XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-	      actWin->executeGc.normGC(),
-	      oldMeterNeedleXEnd, oldMeterNeedleYEnd,
-	      oldMeterNeedleXOrigin+1, oldMeterNeedleYOrigin);
-   XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-	      actWin->executeGc.normGC(),
-	      oldMeterNeedleXEnd, oldMeterNeedleYEnd,
-	      oldMeterNeedleXOrigin, oldMeterNeedleYOrigin-1);
-   XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-	      actWin->executeGc.normGC(),
-	      oldMeterNeedleXEnd, oldMeterNeedleYEnd,
-	      oldMeterNeedleXOrigin-1, oldMeterNeedleYOrigin);
-   XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-	      actWin->executeGc.normGC(),
-	      oldMeterNeedleXEnd, oldMeterNeedleYEnd,
-	      oldMeterNeedleXOrigin, oldMeterNeedleYOrigin+1);
-#endif
 
      xpoints[0].x = oldMeterNeedleXOrigin-1;
      xpoints[0].y = oldMeterNeedleYOrigin;
@@ -1700,25 +1918,6 @@ if (drawStaticFlag){
    }
    else {
 
-#if 0
-     XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-		actWin->executeGc.normGC(),
-		meterNeedleXend, meterNeedleYend,
-		meterNeedleXorigin+1, meterNeedleYorigin);
-     XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-		actWin->executeGc.normGC(),
-		meterNeedleXend, meterNeedleYend,
-		meterNeedleXorigin-1, meterNeedleYorigin);
-     XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-		actWin->executeGc.normGC(),
-		meterNeedleXend, meterNeedleYend,
-		meterNeedleXorigin, meterNeedleYorigin-1);
-     XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-		actWin->executeGc.normGC(),
-		meterNeedleXend, meterNeedleYend,
-		meterNeedleXorigin, meterNeedleYorigin+1);
-#endif
-
      xpoints[0].x = meterNeedleXorigin-1;
      xpoints[0].y = meterNeedleYorigin;
 
@@ -1742,14 +1941,6 @@ if (drawStaticFlag){
 
      actWin->executeGc.setFG( meterColor.getColor() );
 
-#if 0     
-     XFillArc( actWin->d, XtWindow(actWin->executeWidget),
-	       actWin->executeGc.normGC(), meterNeedleXorigin-5,
-	       meterNeedleYorigin-5, 10, 10, 0, 23040 );
-     XDrawArc( actWin->d, XtWindow(actWin->executeWidget),
-	       actWin->executeGc.normGC(), meterNeedleXorigin-5,
-	       meterNeedleYorigin-5, 10, 10, 0, 23040 );
-#endif
    }
 
    actWin->executeGc.removeNormXClipRectangle();
@@ -1779,33 +1970,27 @@ if (drawStaticFlag){
    }    
    else{
 
-     XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-		actWin->executeGc.normGC(),
-		meterNeedleXend, meterNeedleYend,
-		meterNeedleXorigin+1, meterNeedleYorigin);
-     XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-		actWin->executeGc.normGC(),
-		meterNeedleXend, meterNeedleYend,
-		meterNeedleXorigin-1, meterNeedleYorigin);
-     XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-		actWin->executeGc.normGC(),
-		meterNeedleXend, meterNeedleYend,
-		meterNeedleXorigin, meterNeedleYorigin-1);
-     XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-		actWin->executeGc.normGC(),
-		meterNeedleXend, meterNeedleYend,
-		meterNeedleXorigin, meterNeedleYorigin+1);
-     
-     actWin->executeGc.setFG( meterColor.getColor() );
+     xpoints[0].x = meterNeedleXorigin-1;
+     xpoints[0].y = meterNeedleYorigin;
 
-#if 0       
-     XFillArc( actWin->d, XtWindow(actWin->executeWidget),
-	       actWin->executeGc.normGC(), meterNeedleXorigin-5,
-	       meterNeedleYorigin-5, 10, 10, 0, 23040 );
-     XDrawArc( actWin->d, XtWindow(actWin->executeWidget),
-	       actWin->executeGc.normGC(), meterNeedleXorigin-5,
-	       meterNeedleYorigin-5, 10, 10, 0, 23040 );
-#endif
+     xpoints[1].x = meterNeedleXend;
+     xpoints[1].y = meterNeedleYend;
+
+     xpoints[2].x = meterNeedleXorigin+1;
+     xpoints[2].y = meterNeedleYorigin;
+
+     xpoints[3].x = meterNeedleXorigin;
+     xpoints[3].y = meterNeedleYorigin-1;
+
+     xpoints[4].x = meterNeedleXend;
+     xpoints[4].y = meterNeedleYend;
+
+     xpoints[5].x = meterNeedleXorigin;
+     xpoints[5].y = meterNeedleYorigin+1;
+
+     XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+      actWin->executeGc.normGC(), xpoints, 6, CoordModeOrigin );
+
    }
 
    actWin->executeGc.removeNormXClipRectangle();
@@ -1825,7 +2010,7 @@ int activeMeterClass::activate (
   void *ptr )
 {
 
-int stat, opStat;
+int opStat;
 
   switch ( pass ) {
 
@@ -1845,10 +2030,9 @@ int stat, opStat;
     oldMeterNeedleYEnd = 0;
     oldMeterNeedleXOrigin = 0;
     oldMeterNeedleYOrigin = 0;
-
-#ifdef __epics__
-    readEventId = alarmEventId = 0;
-#endif
+    readPvId = NULL;
+    initialReadConnection = 1;
+    oldStat = oldSev = -1;
 
     drawStaticFlag = 1;
 
@@ -1880,6 +2064,8 @@ int stat, opStat;
 
     if ( !opComplete ) {
 
+      initEnable();
+
       opStat = 1;
 
       if ( !unconnectedTimer ) {
@@ -1887,29 +2073,19 @@ int stat, opStat;
          2000, unconnectedTimeout, this );
       }
 
-#ifdef __epics__
-
-//       if ( controlExists ) {
-//         stat = ca_search_and_connect( controlPvExpStr.getExpanded(),
-//          &controlPvId, meter_monitor_control_connect_state, this );
-//         if ( stat != ECA_NORMAL ) {
-//           printf( activeMeterClass_str37 );
-//           opStat = 0;
-//         }
-//       }
-
       if ( readExists ) {
-        stat = ca_search_and_connect( readPvExpStr.getExpanded(), &readPvId,
-         meter_monitor_read_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
+	readPvId = the_PV_Factory->create( readPvExpStr.getExpanded() );
+	if ( readPvId ) {
+	  readPvId->add_conn_state_callback( meter_monitor_read_connect_state,
+           this );
+	}
+	else {
           printf( activeMeterClass_str38 );
           opStat = 0;
         }
       }
 
       if ( opStat & 1 ) opComplete = 1;
-
-#endif
 
       return opStat;
 
@@ -1934,27 +2110,25 @@ int activeMeterClass::deactivate (
   int pass
 ) {
 
-int stat;
-
   if ( pass == 1 ) {
 
-  active = 0;
-  activeMode = 0;
+    active = 0;
+    activeMode = 0;
 
-  if ( unconnectedTimer ) {
-    XtRemoveTimeOut( unconnectedTimer );
-    unconnectedTimer = 0;
-  }
+    if ( unconnectedTimer ) {
+      XtRemoveTimeOut( unconnectedTimer );
+      unconnectedTimer = 0;
+    }
 
-#ifdef __epics__
-
-  if ( readExists ) {
-    stat = ca_clear_channel( readPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeMeterClass_str39 );
-  }
-
-#endif
+    if ( readExists ) {
+      if ( readPvId ) {
+        readPvId->remove_conn_state_callback( meter_monitor_read_connect_state,
+         this );
+        readPvId->remove_value_callback( meter_readUpdate, this );
+        readPvId->release();
+        readPvId = NULL;
+      }
+    }
 
   }
 
@@ -1996,6 +2170,8 @@ void activeMeterClass::btnUp (
   int meterNumber )
 {
 
+  if ( !enabled ) return;
+
 }
 
 void activeMeterClass::btnDown (
@@ -2005,6 +2181,8 @@ void activeMeterClass::btnDown (
   int meterNumber )
 {
 
+  if ( !enabled ) return;
+
 }
 
 void activeMeterClass::btnDrag (
@@ -2013,6 +2191,8 @@ void activeMeterClass::btnDrag (
   int meterState,
   int meterNumber )
 {
+
+  if ( !enabled ) return;
 
 }
 
@@ -2140,7 +2320,7 @@ int tmpw, tmph, ret_stat;
 void activeMeterClass::executeDeferred ( void ) {
 
 double v;
-int stat, nc, ni, nr, ne, nd;
+int nc, ni, nr, ne, nd;
 
   if ( actWin->isIconified ) return;
 
@@ -2156,40 +2336,25 @@ int stat, nc, ni, nr, ne, nd;
 
   if ( !activeMode ) return;
 
-#ifdef __epics__
-
   if ( nc ) {
 
     readPvConnected = 1;
 
-    stat = ca_get_callback( DBR_GR_DOUBLE, readPvId, meter_infoUpdate,
-     (void *) this );
-    if ( stat != ECA_NORMAL )
-      printf( activeMeterClass_str40 );
+    v = curReadV = readPvId->get_double();
+    readMin = readPvId->get_lower_disp_limit();
+    readMax = readPvId->get_upper_disp_limit();
 
-    return;
+    ni = ne = nd = 1;
 
   }
 
   if ( ni ) {
 
-    if ( !readEventId ) {
+    if ( initialReadConnection ) {
 
-      stat = ca_add_masked_array_event( DBR_DOUBLE, 1, readPvId,
-       meter_readUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &readEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL )
-        printf( activeMeterClass_str41 );
+      initialReadConnection = 0;
 
-    }
-
-    if ( !alarmEventId ) {
-
-      stat = ca_add_masked_array_event( DBR_STS_DOUBLE, 1, readPvId,
-       meter_alarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &alarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL )
-        printf( activeMeterClass_str42 );
+      readPvId->add_value_callback( meter_readUpdate, this );
 
     }
 
@@ -2214,11 +2379,7 @@ int stat, nc, ni, nr, ne, nd;
     eraseActive();
     drawActive();
 
-    return;
-
   }
-
-#endif
 
   if ( nr ) {
     bufInvalidate();
@@ -2239,6 +2400,8 @@ int stat, nc, ni, nr, ne, nd;
 
 char *activeMeterClass::firstDragName ( void ) {
 
+  if ( !enabled ) return NULL;
+
   dragIndex = 0;
   return dragName[dragIndex];
 
@@ -2253,7 +2416,18 @@ char *activeMeterClass::nextDragName ( void ) {
 char *activeMeterClass::dragValue (
   int i ) {
 
-  return readPvExpStr.getExpanded();
+  if ( !enabled ) return NULL;
+
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    return readPvExpStr.getExpanded();
+
+  }
+  else {
+
+    return readPvExpStr.getRaw();
+
+  }
 
 }
 

@@ -422,7 +422,7 @@ int object_type; // type of object to which this form applies
                  // when used as a property form
                  // may be EF_K_RECTANGULAR or EF_K_MULTIPOINT
 
-int firstItem, firstArrayItem, curWidgetIsLabel;
+int firstItem, firstArrayItem, curWidgetIsLabel, leftAttachmentExists;
 int firstColorButton;
 Widget curW, curRW, curArrayW, curArrayRW;
 XmFontList entryFontList, actionFontList;

@@ -23,16 +23,16 @@
 #include "act_grf.h"
 #include "entry_form.h"
 #include "utility.h"
+#include "keypad.h"
 
 #include "Xm/Scale.h"
 #include "Xm/ScrollBar.h"
 
 #include "pv_factory.h"
-#include "epics_pv_factory.h"
 #include "cvtFast.h"
 
-#define MSLC_MAJOR_VERSION 1
-#define MSLC_MINOR_VERSION 1
+#define MSLC_MAJOR_VERSION 4
+#define MSLC_MINOR_VERSION 0
 #define MSLC_RELEASE 0
 
 #define MSLC_STATE_IDLE 1
@@ -153,8 +153,6 @@ static void mslc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-#endif
-
 class activeMotifSliderClass : public activeGraphicClass {
 
 private:
@@ -196,6 +194,19 @@ friend void selectDrag (
    XEvent *e,
    String *params,
    Cardinal numParams );
+
+
+
+friend void msloSetIncKpDoubleValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void msloCancelKp (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+#endif
 
 friend void scrollBarEventHandler (
   Widget w,
@@ -347,6 +358,8 @@ int incIndex;
 
 int oldStat, oldSev; // for alarms
 
+int isMapped, buttonPressed, needUnmap;
+
 public:
 
 activeMotifSliderClass ( void );
@@ -392,7 +405,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
@@ -488,6 +509,10 @@ void changePvNames (
   char *visPvs[],
   int numAlarmPvs,
   char *alarmPvs[] );
+
+void map ( void );
+
+void unmap ( void );
 
 };
 
