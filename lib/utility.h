@@ -60,6 +60,46 @@ void readStringFromFile (
   int maxChars,
   FILE *f );
 
+int xDrawText (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  XFontStruct *fs,
+  int _x,
+  int _y,
+  int _alignment,
+  char *value );
+
+int xEraseText (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  XFontStruct *fs,
+  int _x,
+  int _y,
+  int _alignment,
+  char *value );
+
+int xDrawImageText (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  XFontStruct *fs,
+  int _x,
+  int _y,
+  int _alignment,
+  char *value );
+
+int xEraseImageText (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  XFontStruct *fs,
+  int _x,
+  int _y,
+  int _alignment,
+  char *value );
+
 int drawText (
   Widget widget,
   gcClass *gc,
@@ -189,6 +229,28 @@ int parseLocalSymbolsAndValues (
   int *numFound
 );
 
+int get_scale_params1 (
+  double min,
+  double max,
+  double *adj_min,
+  double *adj_max,
+  int *num_label_ticks,
+  int *majors_per_label,
+  int *minors_per_major,
+  char *format
+);
+
+int get_log10_scale_params1 (
+  double min,
+  double max,
+  double *adj_min,
+  double *adj_max,
+  int *num_label_ticks,
+  int *majors_per_label,
+  int *minors_per_major,
+  char *format
+);
+
 int get_scale_params (
   double min,
   double max,
@@ -198,6 +260,222 @@ int get_scale_params (
   int *majors_per_label,
   int *minor_per_major,
   char *format
+);
+
+void drawXLinearScale (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  int drawScale,
+  int x,
+  int y,
+  int scaleLen,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  int majors_per_label,
+  int minors_per_major,
+  unsigned int scaleColor,
+  unsigned int bgColor,
+  int labelGrid,
+  int majorGrid,
+  int minorGrid,
+  int gridHeight,
+  unsigned int gridColor,
+  fontInfoClass *fi,
+  char *fontTag,
+  XFontStruct *fs,
+  int annotateScale,
+  int xminConstrained,
+  int xmaxConstrained,
+  int erase
+);
+
+void drawXLog10Scale (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  int drawScale,
+  int x,
+  int y,
+  int scaleLen,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  int majors_per_label,
+  int minors_per_major,
+  unsigned int scaleColor,
+  unsigned int bgColor,
+  int labelGrid,
+  int majorGrid,
+  int minorGrid,
+  int gridHeight,
+  unsigned int gridColor,
+  fontInfoClass *fi,
+  char *fontTag,
+  XFontStruct *fs,
+  int annotateScale,
+  int xminConstrained,
+  int xmaxConstrained,
+  int erase
+);
+
+int xScaleHeight (
+  char *fontTag,
+  XFontStruct *fs
+);
+
+int xScaleMargin (
+  char *fontTag,
+  XFontStruct *fs,
+  double adj_min,
+  double adj_max
+);
+
+void getXLimitCoords (
+  int x,
+  int y,
+  int scaleLen,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  char *fontTag,
+  XFontStruct *fs,
+  int *xMinX0,
+  int *xMinX1,
+  int *xMinY0,
+  int *xMinY1,
+  int *xMaxX0,
+  int *xMaxX1,
+  int *xMaxY0,
+  int *xMaxY1
+);
+
+void getXLog10LimitCoords (
+  int x,
+  int y,
+  int scaleLen,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  char *fontTag,
+  XFontStruct *fs,
+  int *xMinX0,
+  int *xMinX1,
+  int *xMinY0,
+  int *xMinY1,
+  int *xMaxX0,
+  int *xMaxX1,
+  int *xMaxY0,
+  int *xMaxY1
+);
+
+void drawYLinearScale (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  int drawScale,
+  int x,
+  int y,
+  int scaleHeight,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  int majors_per_label,
+  int minors_per_major,
+  unsigned int scaleColor,
+  unsigned int bgColor,
+  int labelGrid,
+  int majorGrid,
+  int minorGrid,
+  int gridLen,
+  unsigned int gridColor,
+  fontInfoClass *fi,
+  char *fontTag,
+  XFontStruct *fs,
+  int annotateScale,
+  int xminConstrained,
+  int xmaxConstrained,
+  int erase
+);
+
+void drawYLog10Scale (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  int drawScale,
+  int x,
+  int y,
+  int scaleHeight,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  int majors_per_label,
+  int minors_per_major,
+  unsigned int scaleColor,
+  unsigned int bgColor,
+  int labelGrid,
+  int majorGrid,
+  int minorGrid,
+  int gridLen,
+  unsigned int gridColor,
+  fontInfoClass *fi,
+  char *fontTag,
+  XFontStruct *fs,
+  int annotateScale,
+  int xminConstrained,
+  int xmaxConstrained,
+  int erase
+);
+
+int yScaleWidth (
+  char *fontTag,
+  XFontStruct *fs,
+  double adj_min,
+  double adj_max
+);
+
+int yScaleMargin (
+  char *fontTag,
+  XFontStruct *fs
+);
+
+void getYLimitCoords (
+  int x,
+  int y,
+  int scaleLen,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  char *fontTag,
+  XFontStruct *fs,
+  int *yMinX0,
+  int *yMinX1,
+  int *yMinY0,
+  int *yMinY1,
+  int *yMaxX0,
+  int *yMaxX1,
+  int *yMaxY0,
+  int *yMaxY1
+);
+
+void getYLog10LimitCoords (
+  int x,
+  int y,
+  int scaleLen,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  char *fontTag,
+  XFontStruct *fs,
+  int *yMinX0,
+  int *yMinX1,
+  int *yMinY0,
+  int *yMinY1,
+  int *yMaxX0,
+  int *yMaxX1,
+  int *yMaxY0,
+  int *yMaxY1
 );
 
 #endif

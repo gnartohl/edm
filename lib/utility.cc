@@ -526,8 +526,9 @@ char buf[1023+1];
 }
 #endif
 
-int drawText (
-  Widget widget,
+int xDrawText (
+  Display *d,
+  Window win,
   gcClass *gc,
   XFontStruct *fs,
   int _x,
@@ -558,15 +559,16 @@ int stringLength, stringWidth, stringX, stringY;
   else if ( _alignment == XmALIGNMENT_END )
     stringX = _x - stringWidth;
 
-  XDrawString( XtDisplay(widget), XtWindow(widget),
+  XDrawString( d, win,
    gc->normGC(), stringX, stringY, value, stringLength );
 
   return 1;
 
 }
 
-int eraseText (
-  Widget widget,
+int xEraseText (
+  Display *d,
+  Window win,
   gcClass *gc,
   XFontStruct *fs,
   int _x,
@@ -597,7 +599,87 @@ int stringLength, stringWidth, stringX, stringY;
   else if ( _alignment == XmALIGNMENT_END )
     stringX = _x - stringWidth;
 
-  XDrawString( XtDisplay(widget), XtWindow(widget),
+  XDrawString( d, win,
+   gc->eraseGC(), stringX, stringY, value, stringLength );
+
+  return 1;
+
+}
+
+int xDrawImageText (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  XFontStruct *fs,
+  int _x,
+  int _y,
+  int _alignment,
+  char *value ) {
+
+int stringLength, stringWidth, stringX, stringY;
+
+  stringLength = strlen( value );
+
+  if ( fs ) {
+    stringWidth = XTextWidth( fs, value, stringLength );
+    stringY = _y + fs->ascent;
+  }
+  else {
+    stringWidth = 0;
+    stringY = _y;
+  }
+
+  stringX = _x;
+
+  if ( _alignment == XmALIGNMENT_BEGINNING ) {
+    // no change
+  }
+  else if ( _alignment == XmALIGNMENT_CENTER )
+    stringX = _x - stringWidth/2;
+  else if ( _alignment == XmALIGNMENT_END )
+    stringX = _x - stringWidth;
+
+  XDrawImageString( d, win,
+   gc->normGC(), stringX, stringY, value, stringLength );
+
+  return 1;
+
+}
+
+int xEraseImageText (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  XFontStruct *fs,
+  int _x,
+  int _y,
+  int _alignment,
+  char *value ) {
+
+int stringLength, stringWidth, stringX, stringY;
+
+  stringLength = strlen( value );
+
+  if ( fs ) {
+    stringWidth = XTextWidth( fs, value, stringLength );
+    stringY = _y + fs->ascent;
+  }
+  else {
+    stringWidth = 0;
+    stringY = _y;
+  }
+
+  stringX = _x;
+
+  if ( _alignment == XmALIGNMENT_BEGINNING ) {
+    // no change
+  }
+  else if ( _alignment == XmALIGNMENT_CENTER )
+    stringX = _x - stringWidth/2;
+  else if ( _alignment == XmALIGNMENT_END )
+    stringX = _x - stringWidth;
+
+  XDrawImageString( d, win,
    gc->eraseGC(), stringX, stringY, value, stringLength );
 
   return 1;
@@ -679,6 +761,42 @@ int stringLength, stringWidth, stringX, stringY;
    gc->eraseGC(), stringX, stringY, value, stringLength );
 
   return 1;
+
+}
+
+int drawText (
+  Widget widget,
+  gcClass *gc,
+  XFontStruct *fs,
+  int _x,
+  int _y,
+  int _alignment,
+  char *value ) {
+
+int stat;
+
+  stat = xDrawText( XtDisplay(widget), XtWindow(widget),
+   gc, fs, _x, _y, _alignment, value );
+
+  return stat;
+
+}
+
+int eraseText (
+  Widget widget,
+  gcClass *gc,
+  XFontStruct *fs,
+  int _x,
+  int _y,
+  int _alignment,
+  char *value ) {
+
+int stat;
+
+  stat = xEraseText( XtDisplay(widget), XtWindow(widget),
+   gc, fs, _x, _y, _alignment, value );
+
+  return stat;
 
 }
 
@@ -1303,12 +1421,12 @@ char *context, *tk, buf[511+1];
 
 }
 
-int get_scale_params (
+int get_scale_params1 (
   double min,
   double max,
   double *adj_min,
   double *adj_max,
-  double *label_tick,
+  int *num_label_ticks,
   int *majors_per_label,
   int *minors_per_major,
   char *format
@@ -1508,7 +1626,7 @@ int imag, inorm, imin, imax, inc1, inc2, inc5, imin1, imax1,
   *adj_min = (double) bestMin * pow(10.0,imag);
   *adj_max = (double) bestMax * pow(10.0,imag);
 
-  *label_tick = ( *adj_max - *adj_min ) / (double) idiv;
+  *num_label_ticks = idiv;
 
   if ( choice == 1 ) {
     *majors_per_label = 5;
@@ -1528,5 +1646,1698 @@ int imag, inorm, imin, imax, inc1, inc2, inc5, imin1, imax1,
   if ( !ok ) return 0;
 
   return 1;
+
+}
+
+int get_log10_scale_params1 (
+  double min,
+  double max,
+  double *adj_min,
+  double *adj_max,
+  int *num_label_ticks,
+  int *majors_per_label,
+  int *minors_per_major,
+  char *format
+) {
+
+//double dmin, dmax, diff, mag, norm;
+
+//int imag, inorm, imin, imax, inc1, inc2, inc5, imin1, imax1,
+// imin2, imax2, imin5, imax5, best, bestInc, bestMin, bestMax, idiff, idiv,
+// choice, ok, div;
+
+int imin, imax, inc1, imin1, imax1,
+ bestInc, bestMin, bestMax, idiff, idiv,
+ choice, ok, div;
+
+//printf( "\n\n=========================================================\n" );
+//printf( "get_log10_scale_params1, min=%-g, max=%-g\n", min, max );
+
+  div = 1;
+  ok = 0;
+
+  imin = (int) floor( min );
+  imax = (int) ceil( max );
+  //printf( "imin = %-d, imax = %-d\n", imin, imax );
+
+  do {
+
+    if ( imin < 0 ) {
+      if ( imin % div )
+        imin1 = imin - div - ( imin % div );
+      else
+        imin1 = imin;
+    }
+    else {
+      imin1 = imin - ( imin % div );
+    }
+
+    if ( imax < 0 ) {
+      imax1 = imax - div - ( imax % div );
+    }
+    else {
+      if ( imax % div )
+        imax1 = imax + div - ( imax % div );
+      else
+        imax1 = imax;
+    }
+
+    inc1 = ( imax1 - imin1 ) / div;
+    if ( inc1 < 1 ) inc1 = 1;
+    if ( inc1 < 8 ) ok = 1;
+
+    //printf( "1st adj min 1 = %-d, 1st adj max 1 = %-d\n", imin1, imax1 );
+    //printf( "inc1 = %-d\n", inc1 );
+
+    if ( !ok ) div *= 10;
+
+  } while ( !ok );
+
+  //printf( "2 inc1 = %-d\n", inc1 );
+
+  bestInc = inc1;
+  bestMin = imin1;
+  bestMax = imax1;
+  idiv = inc1;
+  choice = 1;
+
+  idiff = ( bestMax - bestMin );
+  *adj_min = floor( (double) bestMin );
+  *adj_max = ceil( (double) bestMax );
+
+  *num_label_ticks = idiv;
+
+  *majors_per_label = div;
+
+  *minors_per_major = 10;
+
+  strcpy( format, "-g" );
+
+  return 1;
+
+}
+
+int get_scale_params (
+  double min,
+  double max,
+  double *adj_min,
+  double *adj_max,
+  double *label_tick,
+  int *majors_per_label,
+  int *minors_per_major,
+  char *format
+) {
+
+int num_label_ticks, stat;
+
+  stat = get_scale_params1 (
+   min, max, adj_min, adj_max,
+   &num_label_ticks, majors_per_label,
+   minors_per_major, format );
+
+  if ( num_label_ticks < 1 ) num_label_ticks = 1;
+
+  *label_tick = ( *adj_max - *adj_min ) /
+   (double) num_label_ticks;
+
+  return stat;
+
+}
+
+static int formatString (
+  double value,
+  char *string,
+  int len
+) {
+
+char buf[128];
+
+  if ( !string ) return 0;
+  if ( len < 1 ) return 0;
+
+  sprintf( buf, "%-g", value );
+
+  if ( strlen(buf) > 8 ) {
+    sprintf( buf, "%-3g", value );
+  }
+
+  strncpy( string, buf, len );
+
+  return 1;
+
+}
+
+static void updateFontInfo (
+  char *string,
+  char *fontTag,
+  XFontStruct **fs,
+  int *ascent,
+  int *descent,
+  int *height,
+  int *width )
+{
+
+int l;
+
+  if ( string )
+    l = strlen(string);
+  else
+    l = 0;
+
+  if ( *fs ) {
+
+    *ascent = (*fs)->ascent;
+    *descent = (*fs)->descent;
+    *height = *ascent + *descent;
+    *width = XTextWidth( *fs, string, l );
+
+  }
+  else {
+
+    *ascent = 10;
+    *descent = 5;
+    *height = *ascent + *descent;
+    *width = 10;
+
+  }
+
+}
+
+int xScaleHeight (
+  char *fontTag,
+  XFontStruct *fs
+) {
+
+int label_tick_height, fontAscent, fontDescent, fontHeight,
+ stringWidth;
+
+  updateFontInfo( " ", fontTag, &fs,
+   &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+
+  label_tick_height = (int) ( 0.8 * (double) ( fontHeight - 2 ) );
+
+  return fontHeight + label_tick_height * 2;
+
+}
+
+int xScaleMargin (
+  char *fontTag,
+  XFontStruct *fs,
+  double adj_min,
+  double adj_max
+) {
+
+int stat, scaleOfs, l;
+char buf[31+1];
+
+  stat = formatString( adj_min, buf, 31 );
+  scaleOfs = XTextWidth( fs, buf, strlen(buf) );
+
+  stat = formatString( adj_max, buf, 31 );
+  l = XTextWidth( fs, buf, strlen(buf) );
+  if ( l > scaleOfs ) scaleOfs = l;
+
+  scaleOfs = scaleOfs / 2 + 6;
+
+  return scaleOfs;
+
+}
+
+void drawXLinearScale (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  int drawScale,
+  int x,
+  int y,
+  int scaleLen,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  int majors_per_label,
+  int minors_per_major,
+  unsigned int scaleColor,
+  unsigned int bgColor,
+  int labelGrid,
+  int majorGrid,
+  int minorGrid,
+  int gridHeight,
+  unsigned int gridColor,
+  fontInfoClass *fi,
+  char *fontTag,
+  XFontStruct *fs,
+  int annotateScale,
+  int minConstrained,
+  int maxConstrained,
+  int erase
+) {
+
+int count, ii, iii, x0, y0, x1, y1;
+int label_tick_height, major_tick_height, minor_tick_height, first;
+double xFactor, xOffset, labelVal, majorInc, majorVal,
+ minorInc, minorVal, lastInc, labelInc;
+int fontAscent, fontDescent, fontHeight,
+ stringWidth;
+char buf[31+1];
+unsigned int white, black;
+
+  white = WhitePixel( d, DefaultScreen(d) );
+  black = BlackPixel( d, DefaultScreen(d) );
+
+  gc->saveFg();
+  gc->saveBg();
+
+  gc->setLineWidth(1);
+  gc->setLineStyle( LineSolid );
+  gc->setFG( scaleColor );
+  gc->setBG( bgColor );
+
+  labelInc = ( adj_max - adj_min ) / num_label_ticks;
+
+  xFactor = (double) ( scaleLen ) / ( adj_max - adj_min );
+  xOffset = x;
+
+  labelVal = adj_min;
+
+  if ( drawScale ) {
+
+  first = 1;
+
+  updateFontInfo( " ", fontTag, &fs,
+   &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+
+  /* draw axis */
+  x0 = x;
+  y0 = y;
+  x1 = x0 + scaleLen;
+  y1 = y0;
+  if ( erase )
+    XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+  else
+    XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+  }
+  else {
+
+    fontHeight = 1;
+
+  }
+
+  label_tick_height = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
+  major_tick_height = (int) ( 0.7 * ( double) label_tick_height );
+  minor_tick_height = (int) ( ( double) label_tick_height * 0.4 );
+
+  lastInc = labelInc * 0.5;
+
+  /* draw label ticks */
+
+  count = 0;
+  while ( labelVal < ( adj_max - lastInc ) ) {
+
+    x0 = (int) rint( ( labelVal - adj_min ) * xFactor + xOffset );
+    x1 = x0;
+    y0 = y;
+    y1 = y0 + label_tick_height;
+
+    if ( labelGrid && count++ ) {
+      if ( erase ) {
+        XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y0-gridHeight );
+      }
+      else {
+        gc->setFG( gridColor );
+        XDrawLine( d, win, gc->normGC(), x0, y0, x1, y0-gridHeight );
+        gc->setFG( scaleColor );
+      }
+    }
+
+    if ( drawScale ) {
+
+    if ( erase )
+      XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+    else
+      XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+    if ( annotateScale ) {
+      gc->setFontTag( fontTag, fi );
+      y1 = y0 + (int) ( 1.2 * label_tick_height );
+      formatString( labelVal, buf, 31 );
+      if ( minConstrained ) {
+        if ( first ) {
+          gc->setFG( black );
+          gc->setBG( white );
+        }
+      }
+      if ( erase )
+        xEraseImageText( d, win, gc, fs, x0, y1,
+         XmALIGNMENT_CENTER, buf );
+      else
+        xDrawImageText( d, win, gc, fs, x0, y1,
+         XmALIGNMENT_CENTER, buf );
+      if ( minConstrained ) {
+        if ( first ) {
+          first = 0;
+          gc->setFG( scaleColor );
+          gc->setBG( bgColor );
+        }
+      }
+    }
+
+    }
+
+    if ( majors_per_label > 0 ) {
+
+      majorInc = labelInc / majors_per_label;
+      majorVal = labelVal;
+      for ( ii=0; ii<majors_per_label; ii++ ) {
+
+        if ( ii > 0 ) {
+
+          x0 = (int) rint( ( majorVal - adj_min ) * xFactor + xOffset );
+          x1 = x0;
+          y0 = y;
+          y1 = y0 + major_tick_height;
+
+          if ( majorGrid ) {
+            if ( erase ) {
+              XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y0-gridHeight );
+            }
+            else {
+              gc->setFG( gridColor );
+              XDrawLine( d, win, gc->normGC(), x0, y0, x1, y0-gridHeight );
+              gc->setFG( scaleColor );
+            }
+          }
+
+          if ( drawScale ) {
+
+          if ( erase )
+            XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+          else
+            XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+	  }
+
+        }
+
+        if ( minors_per_major  > 0 ) {
+
+          minorInc = majorInc / minors_per_major;
+          minorVal = majorVal + minorInc;
+
+          for ( iii=1; iii<minors_per_major; iii++ ) {
+
+            x0 = (int) rint( ( minorVal - adj_min ) *
+             xFactor + xOffset );
+            x1 = x0;
+            y0 = y;
+            y1 = y0 + minor_tick_height;
+
+            if ( minorGrid ) {
+              gc->setLineStyle( LineOnOffDash );
+              if ( erase ) {
+                XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y0-gridHeight );
+              }
+              else {
+                gc->setFG( gridColor );
+                XDrawLine( d, win, gc->normGC(), x0, y0, x1, y0-gridHeight );
+                gc->setFG( scaleColor );
+              }
+              gc->setLineStyle( LineSolid );
+            }
+
+            if ( drawScale ) {
+
+            if ( erase )
+              XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+            else
+              XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+	    }
+
+            minorVal += minorInc;
+
+	  }
+
+	}
+
+        majorVal += majorInc;
+
+      }
+
+    }
+
+    labelVal += labelInc;
+
+  }
+
+  // draw last label tick
+
+  x0 = (int) rint( ( labelVal - adj_min ) * xFactor + xOffset );
+  x1 = x0;
+  y0 = y;
+  y1 = y0 + label_tick_height;
+
+  if ( labelGrid ) {
+    if ( erase ) {
+      XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y0-gridHeight );
+    }
+    else {
+      gc->setFG( gridColor );
+      XDrawLine( d, win, gc->normGC(), x0, y0, x1, y0-gridHeight );
+      gc->setFG( scaleColor );
+    }
+  }
+
+  if ( drawScale ) {
+
+  if ( erase )
+    XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+  else
+    XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+  if ( annotateScale ) {
+    gc->setFontTag( fontTag, fi );
+    y1 = y0 + (int) ( 1.2 * label_tick_height );
+    formatString( labelVal, buf, 31 );
+    if ( maxConstrained ) {
+      gc->setFG( black );
+      gc->setBG( white );
+    }
+    if ( erase )
+      xEraseImageText( d, win, gc, fs, x0, y1,
+       XmALIGNMENT_CENTER, buf );
+    else
+      xDrawImageText( d, win, gc, fs, x0, y1,
+       XmALIGNMENT_CENTER, buf );
+    if ( maxConstrained ) {
+     gc->setFG( scaleColor );
+      gc->setBG( bgColor );
+    }
+  }
+
+  }
+
+  gc->restoreFg();
+  gc->restoreBg();
+
+}
+
+void drawXLog10Scale (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  int drawScale,
+  int x,
+  int y,
+  int scaleLen,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  int majors_per_label,
+  int minors_per_major,
+  unsigned int scaleColor,
+  unsigned int bgColor,
+  int labelGrid,
+  int majorGrid,
+  int minorGrid,
+  int gridHeight,
+  unsigned int gridColor,
+  fontInfoClass *fi,
+  char *fontTag,
+  XFontStruct *fs,
+  int annotateScale,
+  int minConstrained,
+  int maxConstrained,
+  int erase
+) {
+
+int count, ii, iii, x0, y0, x1, y1;
+int label_tick_height, major_tick_height, minor_tick_height, first;
+double xFactor, xOffset, labelVal, majorInc, majorVal,
+ minorInc, minorVal, lastInc, labelInc, val, val0, val1;
+int fontAscent, fontDescent, fontHeight,
+ stringWidth;
+char buf[31+1];
+unsigned int white, black;
+
+  white = WhitePixel( d, DefaultScreen(d) );
+  black = BlackPixel( d, DefaultScreen(d) );
+
+  gc->saveFg();
+  gc->saveBg();
+
+  gc->setLineWidth(1);
+  gc->setLineStyle( LineSolid );
+  gc->setFG( scaleColor );
+  gc->setBG( bgColor );
+
+  labelInc = ( adj_max - adj_min ) / num_label_ticks;
+
+  xFactor = (double) ( scaleLen ) / ( adj_max - adj_min );
+  xOffset = x;
+
+  labelVal = adj_min;
+
+  if ( drawScale ) {
+
+  first = 1;
+
+  updateFontInfo( " ", fontTag, &fs,
+   &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+
+  /* draw axis */
+  x0 = x;
+  y0 = y;
+  x1 = x0 + scaleLen;
+  y1 = y0;
+  if ( erase )
+    XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+  else
+    XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+  }
+  else {
+
+    fontHeight = 1;
+
+  }
+
+  label_tick_height = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
+  major_tick_height = (int) ( 0.7 * ( double) label_tick_height );
+  minor_tick_height = (int) ( ( double) label_tick_height * 0.4 );
+
+  lastInc = labelInc * 0.5;
+
+  /* draw label ticks */
+
+  count = 0;
+  while ( labelVal < ( adj_max - lastInc ) ) {
+
+    x0 = (int) rint( ( labelVal - adj_min ) * xFactor + xOffset );
+    x1 = x0;
+    y0 = y;
+    y1 = y0 + label_tick_height;
+
+    if ( labelGrid && count++ ) {
+      if ( erase ) {
+        XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y0-gridHeight );
+      }
+      else {
+        gc->setFG( gridColor );
+        XDrawLine( d, win, gc->normGC(), x0, y0, x1, y0-gridHeight );
+        gc->setFG( scaleColor );
+      }
+    }
+
+    if ( drawScale ) {
+
+    if ( erase )
+      XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+    else
+      XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+    if ( annotateScale ) {
+      gc->setFontTag( fontTag, fi );
+      y1 = y0 + (int) ( 1.2 * label_tick_height );
+      formatString( pow(10,labelVal), buf, 31 );
+      if ( minConstrained ) {
+        if ( first ) {
+          gc->setFG( black );
+          gc->setBG( white );
+        }
+      }
+      if ( erase )
+        xEraseImageText( d, win, gc, fs, x0, y1,
+         XmALIGNMENT_CENTER, buf );
+      else
+        xDrawImageText( d, win, gc, fs, x0, y1,
+         XmALIGNMENT_CENTER, buf );
+      if ( minConstrained ) {
+        if ( first ) {
+          first = 0;
+          gc->setFG( scaleColor );
+          gc->setBG( bgColor );
+        }
+      }
+    }
+
+    }
+
+    if ( majors_per_label > 0 ) {
+
+      majorInc = labelInc / majors_per_label;
+      majorVal = labelVal;
+      for ( ii=0; ii<majors_per_label; ii++ ) {
+
+        if ( ii > 0 ) {
+
+          x0 = (int) rint( ( majorVal - adj_min ) * xFactor + xOffset );
+          x1 = x0;
+          y0 = y;
+          y1 = y0 + major_tick_height;
+
+          if ( majorGrid ) {
+            if ( erase ) {
+              XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y0-gridHeight );
+            }
+            else {
+              gc->setFG( gridColor );
+              XDrawLine( d, win, gc->normGC(), x0, y0, x1, y0-gridHeight );
+              gc->setFG( scaleColor );
+            }
+          }
+
+          if ( drawScale ) {
+
+          if ( erase )
+            XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+          else
+            XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+	  }
+
+        }
+
+        if ( minors_per_major  > 0 ) {
+
+          val0 = pow( 10, majorVal );
+          val1 = val0 * 10;
+          minorInc = ( val1 - val0 ) / minors_per_major;
+          val = val0 + minorInc;
+
+          for ( iii=1; iii<minors_per_major; iii++ ) {
+
+            minorVal = log10( val );
+
+            x0 = (int) rint( ( minorVal - adj_min ) *
+             xFactor + xOffset );
+            x1 = x0;
+            y0 = y;
+            y1 = y0 + minor_tick_height;
+
+            if ( minorGrid ) {
+              gc->setLineStyle( LineOnOffDash );
+              if ( erase ) {
+                XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y0-gridHeight );
+              }
+              else {
+                gc->setFG( gridColor );
+                XDrawLine( d, win, gc->normGC(), x0, y0, x1, y0-gridHeight );
+                gc->setFG( scaleColor );
+              }
+              gc->setLineStyle( LineSolid );
+            }
+
+            if ( drawScale ) {
+
+            if ( erase )
+              XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+            else
+              XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+	    }
+
+            val += minorInc;
+
+	  }
+
+	}
+
+        majorVal += majorInc;
+
+      }
+
+    }
+
+    labelVal += labelInc;
+
+  }
+
+  // draw last label tick
+
+  x0 = (int) rint( ( labelVal - adj_min ) * xFactor + xOffset );
+  x1 = x0;
+  y0 = y;
+  y1 = y0 + label_tick_height;
+
+  if ( labelGrid ) {
+    if ( erase ) {
+      XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y0-gridHeight );
+    }
+    else {
+      gc->setFG( gridColor );
+      XDrawLine( d, win, gc->normGC(), x0, y0, x1, y0-gridHeight );
+      gc->setFG( scaleColor );
+    }
+  }
+
+  if ( drawScale ) {
+
+  if ( erase )
+    XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+  else
+    XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+  if ( annotateScale ) {
+    gc->setFontTag( fontTag, fi );
+    y1 = y0 + (int) ( 1.2 * label_tick_height );
+    formatString( pow(10,labelVal), buf, 31 );
+    if ( maxConstrained ) {
+      gc->setFG( black );
+      gc->setBG( white );
+    }
+    if ( erase )
+      xEraseImageText( d, win, gc, fs, x0, y1,
+       XmALIGNMENT_CENTER, buf );
+    else
+      xDrawImageText( d, win, gc, fs, x0, y1,
+       XmALIGNMENT_CENTER, buf );
+    if ( maxConstrained ) {
+     gc->setFG( scaleColor );
+      gc->setBG( bgColor );
+    }
+  }
+
+  }
+
+  gc->restoreFg();
+  gc->restoreBg();
+
+}
+
+void getXLimitCoords (
+  int x,
+  int y,
+  int scaleLen,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  char *fontTag,
+  XFontStruct *fs,
+  int *xMinX0,
+  int *xMinX1,
+  int *xMinY0,
+  int *xMinY1,
+  int *xMaxX0,
+  int *xMaxX1,
+  int *xMaxY0,
+  int *xMaxY1
+) {
+
+int x0, y0, x1, y1, count;
+int label_tick_height;
+double xFactor, xOffset, labelVal, lastInc, labelInc;
+int fontAscent, fontDescent, fontHeight, stringWidth;
+char buf[31+1];
+
+  labelInc = ( adj_max - adj_min ) / num_label_ticks;
+
+  xFactor = (double) ( scaleLen ) / ( adj_max - adj_min );
+  xOffset = x;
+
+  labelVal = adj_min;
+
+  updateFontInfo( " ", fontTag, &fs,
+   &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+
+  label_tick_height = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
+  x0 = x;
+  x1 = x0;
+  y0 = y;
+  y1 = y0 + (int) ( 1.2 * label_tick_height );
+
+  lastInc = labelInc * 0.5;
+
+  count = 0;
+  while ( labelVal < ( adj_max + lastInc ) ) {
+
+    formatString( labelVal, buf, 31 );
+
+    stringWidth = XTextWidth( fs, buf, strlen(buf) );
+
+    if ( count == 0 ) {
+      *xMinX0 = (int) ( x0 - stringWidth * 0.5 );
+      *xMinX1 = (int) ( x0 + stringWidth * 0.5 );
+      *xMinY0 = y1;
+      *xMinY1 = y1 + fontHeight;
+    }
+    else {
+      *xMaxX0 = (int) ( x0 - stringWidth * 0.5 );
+      *xMaxX1 = (int) ( x0 + stringWidth * 0.5 );
+      *xMaxY0 = y1;
+      *xMaxY1 = y1 + fontHeight;
+    }
+
+    count++;
+
+    labelVal += labelInc;
+    x0 = x1 = (int) rint( ( labelVal - adj_min ) * xFactor + xOffset );
+
+  }
+
+}
+
+void getXLog10LimitCoords (
+  int x,
+  int y,
+  int scaleLen,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  char *fontTag,
+  XFontStruct *fs,
+  int *xMinX0,
+  int *xMinX1,
+  int *xMinY0,
+  int *xMinY1,
+  int *xMaxX0,
+  int *xMaxX1,
+  int *xMaxY0,
+  int *xMaxY1
+) {
+
+int x0, y0, x1, y1, count;
+int label_tick_height;
+double xFactor, xOffset, labelVal, lastInc, labelInc;
+int fontAscent, fontDescent, fontHeight, stringWidth;
+char buf[31+1];
+
+  labelInc = ( adj_max - adj_min ) / num_label_ticks;
+
+  xFactor = (double) ( scaleLen ) / ( adj_max - adj_min );
+  xOffset = x;
+
+  labelVal = adj_min;
+
+  updateFontInfo( " ", fontTag, &fs,
+   &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+
+  label_tick_height = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
+  x0 = x;
+  x1 = x0;
+  y0 = y;
+  y1 = y0 + (int) ( 1.2 * label_tick_height );
+
+  lastInc = labelInc * 0.5;
+
+  count = 0;
+  while ( labelVal < ( adj_max + lastInc ) ) {
+
+    formatString( pow(10,labelVal), buf, 31 );
+
+    stringWidth = XTextWidth( fs, buf, strlen(buf) );
+
+    if ( count == 0 ) {
+      *xMinX0 = (int) ( x0 - stringWidth * 0.5 );
+      *xMinX1 = (int) ( x0 + stringWidth * 0.5 );
+      *xMinY0 = y1;
+      *xMinY1 = y1 + fontHeight;
+    }
+    else {
+      *xMaxX0 = (int) ( x0 - stringWidth * 0.5 );
+      *xMaxX1 = (int) ( x0 + stringWidth * 0.5 );
+      *xMaxY0 = y1;
+      *xMaxY1 = y1 + fontHeight;
+    }
+
+    count++;
+
+    labelVal += labelInc;
+    x0 = x1 = (int) rint( ( labelVal - adj_min ) * xFactor + xOffset );
+
+  }
+
+}
+
+void drawYLinearScale (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  int drawScale,
+  int x,
+  int y,
+  int scaleHeight,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  int majors_per_label,
+  int minors_per_major,
+  unsigned int scaleColor,
+  unsigned int bgColor,
+  int labelGrid,
+  int majorGrid,
+  int minorGrid,
+  int gridLen,
+  unsigned int gridColor,
+  fontInfoClass *fi,
+  char *fontTag,
+  XFontStruct *fs,
+  int annotateScale,
+  int minConstrained,
+  int maxConstrained,
+  int erase
+) {
+
+int count, ii, iii, x0, y0, x1, y1;
+int label_tick_height, major_tick_height, minor_tick_height, first;
+double yFactor, yOffset, labelVal, majorInc, majorVal,
+ minorInc, minorVal, lastInc, labelInc;
+int fontAscent, fontDescent, fontHeight,
+ stringWidth;
+char buf[31+1];
+unsigned int white, black;
+
+  white = WhitePixel( d, DefaultScreen(d) );
+  black = BlackPixel( d, DefaultScreen(d) );
+
+  gc->saveFg();
+  gc->saveBg();
+
+  gc->setLineWidth(1);
+  gc->setLineStyle( LineSolid );
+  gc->setFG( scaleColor );
+  gc->setBG( bgColor );
+
+  labelInc = ( adj_max - adj_min ) / num_label_ticks;
+
+  yFactor = (double) ( scaleHeight ) / ( adj_max - adj_min );
+  yOffset = y;
+
+  labelVal = adj_min;
+
+  if ( drawScale ) {
+
+  first = 1;
+
+  updateFontInfo( " ", fontTag, &fs,
+   &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+
+  /* draw axis */
+  x0 = x;
+  y0 = y;
+  x1 = x0;
+  y1 = y0 - scaleHeight;
+  if ( erase )
+    XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+  else
+    XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+  }
+  else {
+
+    fontHeight = 1;
+
+  }
+
+  label_tick_height = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
+  major_tick_height = (int) ( 0.7 * ( double) label_tick_height );
+  minor_tick_height = (int) ( ( double) label_tick_height * 0.4 );
+
+  lastInc = labelInc * 0.5;
+
+  /* draw label ticks */
+
+  count = 0;
+  while ( labelVal < ( adj_max - lastInc ) ) {
+
+    x0 = x;
+    x1 = x0 - label_tick_height;
+    y0 = (int) rint( yOffset - ( labelVal - adj_min ) * yFactor );
+    y1 = y0;
+
+    if ( labelGrid && count++ ) {
+      if ( erase ) {
+        XDrawLine( d, win, gc->eraseGC(), x0, y0, x0+gridLen, y1 );
+      }
+      else {
+        gc->setFG( gridColor );
+        XDrawLine( d, win, gc->normGC(), x0, y0, x0+gridLen, y1 );
+        gc->setFG( scaleColor );
+      }
+    }
+
+    if ( drawScale ) {
+
+    if ( erase )
+      XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+    else
+      XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+    if ( annotateScale ) {
+      gc->setFontTag( fontTag, fi );
+      x0 = x - (int) ( 1.2 * label_tick_height );
+      y1 = y0 - (int) ( fontHeight * 0.5 );
+      formatString( labelVal, buf, 31 );
+      if ( minConstrained ) {
+        if ( first ) {
+          gc->setFG( black );
+          gc->setBG( white );
+        }
+      }
+      if ( erase )
+        xEraseImageText( d, win, gc, fs, x0, y1,
+         XmALIGNMENT_END, buf );
+      else
+        xDrawImageText( d, win, gc, fs, x0, y1,
+         XmALIGNMENT_END, buf );
+      if ( minConstrained ) {
+        if ( first ) {
+          first = 0;
+          gc->setFG( scaleColor );
+          gc->setBG( bgColor );
+        }
+      }
+    }
+
+    }
+
+    if ( majors_per_label > 0 ) {
+
+      majorInc = labelInc / majors_per_label;
+      majorVal = labelVal;
+      for ( ii=0; ii<majors_per_label; ii++ ) {
+
+        if ( ii > 0 ) {
+
+          x0 = x;
+          x1 = x0 - major_tick_height;
+          y0 = (int) rint( yOffset - ( majorVal - adj_min ) * yFactor );
+          y1 = y0;
+
+          if ( majorGrid ) {
+            if ( erase ) {
+              XDrawLine( d, win, gc->eraseGC(), x0, y0, x0+gridLen, y1 );
+            }
+            else {
+              gc->setFG( gridColor );
+              XDrawLine( d, win, gc->normGC(), x0, y0, x0+gridLen, y1 );
+              gc->setFG( scaleColor );
+            }
+          }
+
+          if ( drawScale ) {
+
+          if ( erase )
+            XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+          else
+            XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+	  }
+
+        }
+
+        if ( minors_per_major  > 0 ) {
+
+          minorInc = majorInc / minors_per_major;
+          minorVal = majorVal + minorInc;
+
+          for ( iii=1; iii<minors_per_major; iii++ ) {
+
+            x0 = x;
+            x1 = x0 - minor_tick_height;
+            y0 = (int) rint( yOffset - ( minorVal - adj_min ) * yFactor );
+            y1 = y0;
+
+            if ( minorGrid ) {
+              gc->setLineStyle( LineOnOffDash );
+              if ( erase ) {
+                XDrawLine( d, win, gc->eraseGC(), x0, y0, x0+gridLen, y1 );
+              }
+              else {
+                gc->setFG( gridColor );
+                XDrawLine( d, win, gc->normGC(), x0, y0, x0+gridLen, y1 );
+                gc->setFG( scaleColor );
+              }
+              gc->setLineStyle( LineSolid );
+            }
+
+            if ( drawScale ) {
+
+            if ( erase )
+              XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+            else
+              XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+	    }
+
+            minorVal += minorInc;
+
+	  }
+
+	}
+
+        majorVal += majorInc;
+
+      }
+
+    }
+
+    labelVal += labelInc;
+
+  }
+
+  // draw last label tick
+
+  x0 = x;
+  x1 = x0 - label_tick_height;
+  y0 = (int) rint( yOffset - ( labelVal - adj_min ) * yFactor );
+  y1 = y0;
+
+  if ( labelGrid ) {
+    if ( erase ) {
+      XDrawLine( d, win, gc->eraseGC(), x0, y0, x0+gridLen, y1 );
+    }
+    else {
+      gc->setFG( gridColor );
+      XDrawLine( d, win, gc->normGC(), x0, y0, x0+gridLen, y1 );
+      gc->setFG( scaleColor );
+    }
+  }
+
+  if ( drawScale ) {
+
+  if ( erase )
+    XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+  else
+    XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+  if ( annotateScale ) {
+    gc->setFontTag( fontTag, fi );
+    x0 = x - (int) ( 1.2 * label_tick_height );
+    y1 = y0 - (int) ( fontHeight * 0.5 );
+    formatString( labelVal, buf, 31 );
+    if ( maxConstrained ) {
+      gc->setFG( black );
+      gc->setBG( white );
+    }
+    if ( erase )
+      xEraseImageText( d, win, gc, fs, x0, y1,
+       XmALIGNMENT_END, buf );
+    else
+      xDrawImageText( d, win, gc, fs, x0, y1,
+       XmALIGNMENT_END, buf );
+    if ( maxConstrained ) {
+     gc->setFG( scaleColor );
+      gc->setBG( bgColor );
+    }
+  }
+
+  }
+ 
+  gc->restoreFg();
+  gc->restoreBg();
+
+}
+
+void drawYLog10Scale (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  int drawScale,
+  int x,
+  int y,
+  int scaleHeight,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  int majors_per_label,
+  int minors_per_major,
+  unsigned int scaleColor,
+  unsigned int bgColor,
+  int labelGrid,
+  int majorGrid,
+  int minorGrid,
+  int gridLen,
+  unsigned int gridColor,
+  fontInfoClass *fi,
+  char *fontTag,
+  XFontStruct *fs,
+  int annotateScale,
+  int minConstrained,
+  int maxConstrained,
+  int erase
+) {
+
+int count, ii, iii, x0, y0, x1, y1;
+int label_tick_height, major_tick_height, minor_tick_height, first;
+double yFactor, yOffset, labelVal, majorInc, majorVal,
+ minorInc, minorVal, lastInc, labelInc, val, val0, val1;
+int fontAscent, fontDescent, fontHeight,
+ stringWidth;
+char buf[31+1];
+unsigned int white, black;
+
+//printf( "adj_min = %-g\n", adj_min );
+//printf( "adj_max = %-g\n", adj_max );
+
+  white = WhitePixel( d, DefaultScreen(d) );
+  black = BlackPixel( d, DefaultScreen(d) );
+
+  gc->saveFg();
+  gc->saveBg();
+
+  gc->setLineWidth(1);
+  gc->setLineStyle( LineSolid );
+  gc->setFG( scaleColor );
+  gc->setBG( bgColor );
+
+  labelInc = ( adj_max - adj_min ) / num_label_ticks;
+
+  yFactor = (double) ( scaleHeight ) / ( adj_max - adj_min );
+  yOffset = y;
+
+  labelVal = adj_min;
+
+  if ( drawScale ) {
+
+  first = 1;
+
+  updateFontInfo( " ", fontTag, &fs,
+   &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+
+  /* draw axis */
+  x0 = x;
+  y0 = y;
+  x1 = x0;
+  y1 = y0 - scaleHeight;
+  if ( erase )
+    XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+  else
+    XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+  }
+  else {
+
+    fontHeight = 1;
+
+  }
+
+  label_tick_height = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
+  major_tick_height = (int) ( 0.7 * ( double) label_tick_height );
+  minor_tick_height = (int) ( ( double) label_tick_height * 0.4 );
+
+  lastInc = labelInc * 0.5;
+
+  /* draw label ticks */
+
+  count = 0;
+  while ( labelVal < ( adj_max - lastInc ) ) {
+
+    x0 = x;
+    x1 = x0 - label_tick_height;
+    y0 = (int) rint( yOffset - ( labelVal - adj_min ) * yFactor );
+    y1 = y0;
+
+    if ( labelGrid && count++ ) {
+      if ( erase ) {
+        XDrawLine( d, win, gc->eraseGC(), x0, y0, x0+gridLen, y1 );
+      }
+      else {
+        gc->setFG( gridColor );
+        XDrawLine( d, win, gc->normGC(), x0, y0, x0+gridLen, y1 );
+        gc->setFG( scaleColor );
+      }
+    }
+
+    if ( drawScale ) {
+
+    if ( erase )
+      XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+    else
+      XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+    if ( annotateScale ) {
+      gc->setFontTag( fontTag, fi );
+      x0 = x - (int) ( 1.2 * label_tick_height );
+      y1 = y0 - (int) ( fontHeight * 0.5 );
+      formatString( pow(10,labelVal), buf, 31 );
+      if ( minConstrained ) {
+        if ( first ) {
+          gc->setFG( black );
+          gc->setBG( white );
+        }
+      }
+      if ( erase )
+        xEraseImageText( d, win, gc, fs, x0, y1,
+         XmALIGNMENT_END, buf );
+      else
+        xDrawImageText( d, win, gc, fs, x0, y1,
+         XmALIGNMENT_END, buf );
+      if ( minConstrained ) {
+        if ( first ) {
+          first = 0;
+          gc->setFG( scaleColor );
+          gc->setBG( bgColor );
+        }
+      }
+    }
+
+    }
+
+    if ( majors_per_label > 0 ) {
+
+      majorInc = labelInc / majors_per_label;
+      majorVal = labelVal;
+      for ( ii=0; ii<majors_per_label; ii++ ) {
+
+        if ( ii > 0 ) {
+
+          x0 = x;
+          x1 = x0 - major_tick_height;
+          y0 = (int) rint( yOffset - ( majorVal - adj_min ) * yFactor );
+          y1 = y0;
+
+          if ( majorGrid ) {
+            if ( erase ) {
+              XDrawLine( d, win, gc->eraseGC(), x0, y0, x0+gridLen, y1 );
+            }
+            else {
+              gc->setFG( gridColor );
+              XDrawLine( d, win, gc->normGC(), x0, y0, x0+gridLen, y1 );
+              gc->setFG( scaleColor );
+            }
+          }
+
+          if ( drawScale ) {
+
+          if ( erase )
+            XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+          else
+            XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+	  }
+
+        }
+
+        if ( minors_per_major  > 0 ) {
+
+          val0 = pow( 10, majorVal );
+          val1 = val0 * 10;
+          minorInc = ( val1 - val0 ) / minors_per_major;
+          val = val0 + minorInc;
+
+          for ( iii=1; iii<minors_per_major; iii++ ) {
+
+            minorVal = log10( val );
+
+            x0 = x;
+            x1 = x0 - minor_tick_height;
+            y0 = (int) rint( yOffset - ( minorVal - adj_min ) * yFactor );
+            y1 = y0;
+
+            if ( minorGrid ) {
+              gc->setLineStyle( LineOnOffDash );
+              if ( erase ) {
+                XDrawLine( d, win, gc->eraseGC(), x0, y0, x0+gridLen, y1 );
+              }
+              else {
+                gc->setFG( gridColor );
+                XDrawLine( d, win, gc->normGC(), x0, y0, x0+gridLen, y1 );
+                gc->setFG( scaleColor );
+              }
+              gc->setLineStyle( LineSolid );
+            }
+
+            if ( drawScale ) {
+
+            if ( erase )
+              XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+            else
+              XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+	    }
+
+            val += minorInc;
+
+	  }
+
+	}
+
+        majorVal += majorInc;
+
+      }
+
+    }
+
+    labelVal += labelInc;
+
+  }
+
+  // draw last label tick
+
+  x0 = x;
+  x1 = x0 - label_tick_height;
+  y0 = (int) rint( yOffset - ( labelVal - adj_min ) * yFactor );
+  y1 = y0;
+
+  if ( labelGrid ) {
+    if ( erase ) {
+      XDrawLine( d, win, gc->eraseGC(), x0, y0, x0+gridLen, y1 );
+    }
+    else {
+      gc->setFG( gridColor );
+      XDrawLine( d, win, gc->normGC(), x0, y0, x0+gridLen, y1 );
+      gc->setFG( scaleColor );
+    }
+  }
+
+  if ( drawScale ) {
+
+  if ( erase )
+    XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y1 );
+  else
+    XDrawLine( d, win, gc->normGC(), x0, y0, x1, y1 );
+
+  if ( annotateScale ) {
+    gc->setFontTag( fontTag, fi );
+    x0 = x - (int) ( 1.2 * label_tick_height );
+    y1 = y0 - (int) ( fontHeight * 0.5 );
+    formatString( pow(10,labelVal), buf, 31 );
+    if ( maxConstrained ) {
+      gc->setFG( black );
+      gc->setBG( white );
+    }
+    if ( erase )
+      xEraseImageText( d, win, gc, fs, x0, y1,
+       XmALIGNMENT_END, buf );
+    else
+      xDrawImageText( d, win, gc, fs, x0, y1,
+       XmALIGNMENT_END, buf );
+    if ( maxConstrained ) {
+     gc->setFG( scaleColor );
+      gc->setBG( bgColor );
+    }
+  }
+
+  }
+
+  gc->restoreFg();
+  gc->restoreBg();
+
+}
+
+int yScaleWidth (
+  char *fontTag,
+  XFontStruct *fs,
+  double adj_min,
+  double adj_max
+) {
+
+int fontAscent, fontDescent, fontHeight,
+ stringWidth, stat, label_tick_length, scaleWidth, l;
+char buf[31+1];
+
+  updateFontInfo( " ", fontTag, &fs,
+   &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+
+  label_tick_length = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
+
+  stat = formatString( adj_min, buf, 31 );
+  scaleWidth = XTextWidth( fs, buf, strlen(buf) );
+
+  stat = formatString( adj_max, buf, 31 );
+  l = XTextWidth( fs, buf, strlen(buf) );
+  if ( l > scaleWidth ) scaleWidth = l;
+
+  scaleWidth += label_tick_length + 6;
+
+  return scaleWidth;
+
+}
+
+int yScaleMargin (
+  char *fontTag,
+  XFontStruct *fs
+) {
+
+int fontAscent, fontDescent, fontHeight, stringWidth;
+
+  updateFontInfo( " ", fontTag, &fs,
+   &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+
+  return fontHeight;
+
+}
+
+void getYLimitCoords (
+  int x,
+  int y,
+  int scaleHeight,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  char *fontTag,
+  XFontStruct *fs,
+  int *yMinX0,
+  int *yMinX1,
+  int *yMinY0,
+  int *yMinY1,
+  int *yMaxX0,
+  int *yMaxX1,
+  int *yMaxY0,
+  int *yMaxY1
+) {
+
+int x0, y0, x1, y1, count;
+int label_tick_height;
+double yFactor, yOffset, labelVal, lastInc, labelInc;
+int fontAscent, fontDescent, fontHeight, stringWidth;
+char buf[31+1];
+
+  labelInc = ( adj_max - adj_min ) / num_label_ticks;
+
+  yFactor = (double) ( scaleHeight ) / ( adj_max - adj_min );
+  yOffset = y;
+
+  labelVal = adj_min;
+
+  updateFontInfo( " ", fontTag, &fs,
+   &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+
+  label_tick_height = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
+  x0 = x - (int) ( 1.2 * label_tick_height );
+  x1 = x0;
+  y0 = y - (int) ( 0.5 * fontHeight );
+  y1 = y0 + fontHeight;
+
+  lastInc = labelInc * 0.5;
+
+  /* draw label ticks */
+
+  count = 0;
+  while ( labelVal < ( adj_max + lastInc ) ) {
+
+    formatString( labelVal, buf, 31 );
+
+    stringWidth = XTextWidth( fs, buf, strlen(buf) );
+
+    if ( count == 0 ) {
+      *yMinX0 = x0 - stringWidth;
+      *yMinX1 = x0;
+      *yMinY0 = y0;
+      *yMinY1 = y1;
+    }
+    else {
+      *yMaxX0 = x0 - stringWidth;
+      *yMaxX1 = x0;
+      *yMaxY0 = y0;
+      *yMaxY1 = y1;
+    }
+
+    count++;
+
+    labelVal += labelInc;
+    y0 = (int) ( rint( yOffset - ( labelVal - adj_min ) * yFactor ) -
+     fontHeight * 0.5 );
+    y1 = y0 + fontHeight;
+
+  }
+
+}
+
+void getYLog10LimitCoords (
+  int x,
+  int y,
+  int scaleHeight,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  char *fontTag,
+  XFontStruct *fs,
+  int *yMinX0,
+  int *yMinX1,
+  int *yMinY0,
+  int *yMinY1,
+  int *yMaxX0,
+  int *yMaxX1,
+  int *yMaxY0,
+  int *yMaxY1
+) {
+
+int x0, y0, x1, y1, count;
+int label_tick_height;
+double yFactor, yOffset, labelVal, lastInc, labelInc;
+int fontAscent, fontDescent, fontHeight, stringWidth;
+char buf[31+1];
+
+  labelInc = ( adj_max - adj_min ) / num_label_ticks;
+
+  yFactor = (double) ( scaleHeight ) / ( adj_max - adj_min );
+  yOffset = y;
+
+  labelVal = adj_min;
+
+  updateFontInfo( " ", fontTag, &fs,
+   &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+
+  label_tick_height = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
+  x0 = x - (int) ( 1.2 * label_tick_height );
+  x1 = x0;
+  y0 = y - (int) ( 0.5 * fontHeight );
+  y1 = y0 + fontHeight;
+
+  lastInc = labelInc * 0.5;
+
+  /* draw label ticks */
+
+  count = 0;
+  while ( labelVal < ( adj_max + lastInc ) ) {
+
+    formatString( pow(10,labelVal), buf, 31 );
+
+    stringWidth = XTextWidth( fs, buf, strlen(buf) );
+
+    if ( count == 0 ) {
+      *yMinX0 = x0 - stringWidth;
+      *yMinX1 = x0;
+      *yMinY0 = y0;
+      *yMinY1 = y1;
+    }
+    else {
+      *yMaxX0 = x0 - stringWidth;
+      *yMaxX1 = x0;
+      *yMaxY0 = y0;
+      *yMaxY1 = y1;
+    }
+
+    count++;
+
+    labelVal += labelInc;
+    y0 = (int) ( rint( yOffset - ( labelVal - adj_min ) * yFactor ) -
+     fontHeight * 0.5 );
+    y1 = y0 + fontHeight;
+
+  }
 
 }
