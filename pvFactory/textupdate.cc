@@ -718,6 +718,7 @@ int edmTextentryClass::activate(int pass, void *ptr)
                 fillColor.setConnectSensitive();
             }
 
+            // man XmTextField
             fonts = XmFontListCreate(fs, XmSTRING_DEFAULT_CHARSET);
             widget = XtVaCreateManagedWidget("TextEntry",
                                              xmTextFieldWidgetClass,
@@ -726,6 +727,8 @@ int edmTextentryClass::activate(int pass, void *ptr)
                                              XtNy, (XtArgVal)y,
                                              XtNheight,(XtArgVal)h,
                                              XtNwidth, (XtArgVal)w,
+                                             XmNforeground, (XtArgVal)
+                                                 lineColor.pixelColor(),
                                              XmNfontList, (XtArgVal)fonts,
                                              NULL);
             /* add the callbacks for update */
