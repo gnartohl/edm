@@ -5136,7 +5136,8 @@ int screen_num, depth;
       needConnect = needInit = needRefresh = needErase = needDraw = 
        needUpdate = needResetConnect = needReset = needTrigConnect =
        needTrig = needXRescale = needBufferScroll = needVectorUpdate =
-       needRealUpdate = needBoxRescale = needNewLimits = 0;
+       needRealUpdate = needBoxRescale = needNewLimits =
+       needOriginalLimits = 0;
       drawGridFlag = 0;
 
       for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
@@ -5628,6 +5629,39 @@ int yi = 0;
     }
 
   }
+  else if ( ( buttonNumber == 3 ) &&
+      ( buttonState & ShiftMask ) &&
+      !( buttonState & ControlMask ) ) {
+
+    if ( !firstBoxRescale ) {
+
+      firstBoxRescale = 1;
+      boxXMin = savedXMin;
+      boxXMax = savedXMax;
+      for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+        if ( numYTraces[yi] > 0 ) {
+          boxYMin[yi] = savedYMin[yi];
+          boxYMax[yi] = savedYMax[yi];
+	}
+      }
+
+    }
+
+    for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+      if ( numYTraces[yi] > 0 ) {
+        kpY1MinEfDouble[yi].setNull(1);
+        kpY1MaxEfDouble[yi].setNull(1);
+      }
+    }
+    kpXMinEfDouble.setNull(1);
+    kpXMaxEfDouble.setNull(1);
+
+    actWin->appCtx->proc->lock();
+    needOriginalLimits = 1;
+    actWin->addDefExeNode( aglPtr );
+    actWin->appCtx->proc->unlock();
+
+  }
 
   if ( msgDialogPopedUp ) {
     msgDialog.popdown();
@@ -5877,7 +5911,7 @@ int xyGraphClass::getButtonActionRequest (
 void xyGraphClass::executeDeferred ( void ) {
 
 int i, ii, stat, nc, ni, nu, nvu, nru, nr, ne, nd, nrstc, nrst, ntrgc,
- ntrg, nxrescl, nbs, nbrescl, nnl,
+ ntrg, nxrescl, nbs, nbrescl, nnl, nol,
  eleSize, scaledX, scaledY, structType, doRescale, anyRescale, size,
  ny1rescl[NUM_Y_AXES];
 double dyValue, dxValue, range, oneMax, oldXMin;
@@ -5903,6 +5937,7 @@ int yi, yScaleIndex;
   nbs = needBufferScroll; needBufferScroll = 0;
   nbrescl = needBoxRescale; needBoxRescale = 0;
   nnl = needNewLimits; needNewLimits = 0;
+  nol = needOriginalLimits; needOriginalLimits = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
@@ -6857,6 +6892,9 @@ int yi, yScaleIndex;
         xOffset[i] = plotAreaX;
       }
 
+      kpXMinEfDouble.setNull(1);
+      kpXMaxEfDouble.setNull(1);
+
     }
 
     for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
@@ -6882,6 +6920,11 @@ int yi, yScaleIndex;
           y1Factor[yi][i] =
            (double) ( plotAreaH ) / ( curY1Max[yi] - curY1Min[yi] );
           y1Offset[yi][i] = plotAreaY;
+        }
+
+        if ( numYTraces[yi] > 0 ) {
+          kpY1MinEfDouble[yi].setNull(1);
+          kpY1MaxEfDouble[yi].setNull(1);
         }
 
       }
@@ -6940,6 +6983,83 @@ int yi, yScaleIndex;
        curNpts[i] = totalCount[i] = 0;
       plotState[i] = XYGC_K_STATE_INITIALIZING;
     }
+
+    curXMin = xMin.value();
+    curXMax = xMax.value();
+    if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      curXMin = log10( curXMin );
+      curXMax = log10( curXMax );
+    }
+    else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+      curXMin = log10( curXMin );
+      curXMax = log10( curXMax );
+    }
+
+    for ( i=0; i<numTraces; i++ ) {
+      xFactor[i] =
+       (double) ( plotAreaW ) / ( curXMax - curXMin );
+      xOffset[i] = plotAreaX;
+    }
+
+    for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+
+      curY1Min[yi] = y1Min[yi].value();
+      curY1Max[yi] = y1Max[yi].value();
+      if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+        curY1Min[yi] = log10( curY1Min[yi] );
+        curY1Max[yi] = log10( curY1Max[yi] );
+      }
+
+      for ( i=0; i<numTraces; i++ ) {
+        y1Factor[yi][i] =
+         (double) ( plotAreaH ) / ( curY1Max[yi] - curY1Min[yi] );
+        y1Offset[yi][i] = plotAreaY;
+      }
+
+    }
+    
+    curXNumLabelTicks = xNumLabelIntervals.value();
+    if ( curXNumLabelTicks < 2 ) curXNumLabelTicks = 2;
+    curXMajorsPerLabel = xNumMajorPerLabel.value();
+    curXMinorsPerMajor = xNumMinorPerMajor.value();
+
+    for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+      curY1NumLabelTicks[yi] = y1NumLabelIntervals[yi].value();
+      if ( curY1NumLabelTicks[yi] < 2 ) curY1NumLabelTicks[yi] = 2;
+      curY1MajorsPerLabel[yi] = y1NumMajorPerLabel[yi].value();
+      curY1MinorsPerMajor[yi] = y1NumMinorPerMajor[yi].value();
+    }
+
+    if ( !firstBoxRescale ) {
+
+      firstBoxRescale = 1;
+      boxXMin = savedXMin;
+      boxXMax = savedXMax;
+      for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+        if ( numYTraces[yi] > 0 ) {
+          boxYMin[yi] = savedYMin[yi];
+          boxYMax[yi] = savedYMax[yi];
+	}
+      }
+
+    }
+
+    for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+      if ( numYTraces[yi] > 0 ) {
+        kpY1MinEfDouble[yi].setNull(1);
+        kpY1MaxEfDouble[yi].setNull(1);
+      }
+    }
+    kpXMinEfDouble.setNull(1);
+    kpXMaxEfDouble.setNull(1);
+
+    updateDimensions();
+
+    fullRefresh();
+
+  }
+
+  if ( nol ) {
 
     curXMin = xMin.value();
     curXMax = xMax.value();

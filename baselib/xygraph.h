@@ -708,7 +708,7 @@ Widget plotWidget;
 int needConnect, needInit, needRefresh, needUpdate, needErase, needDraw,
  needResetConnect, needReset, needTrigConnect, needTrig, needXRescale,
  needY1Rescale[NUM_Y_AXES], needY2Rescale, needBufferScroll, needVectorUpdate,
- needRealUpdate, needBoxRescale, needNewLimits;
+ needRealUpdate, needBoxRescale, needNewLimits, needOriginalLimits;
 
 int numBufferScrolls;
 
