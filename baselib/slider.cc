@@ -153,7 +153,7 @@ double fvalue;
 int stat, xOfs;
 
   if ( slo->incrementTimerActive ) {
-    if ( slo->incrementTimerValue > 1 ) slo->incrementTimerValue -= 10;
+    if ( slo->incrementTimerValue > 50 ) slo->incrementTimerValue -= 5;
     slo->incrementTimer = XtAppAddTimeOut( slo->actWin->appCtx->appContext(),
      slo->incrementTimerValue, slc_decrement, client );
   }
@@ -228,7 +228,7 @@ double fvalue;
 int stat, xOfs;
 
   if ( slo->incrementTimerActive ) {
-    if ( slo->incrementTimerValue > 1 ) slo->incrementTimerValue -= 10;
+    if ( slo->incrementTimerValue > 50 ) slo->incrementTimerValue -= 5;
     slo->incrementTimer = XtAppAddTimeOut( slo->actWin->appCtx->appContext(),
      slo->incrementTimerValue, slc_increment, client );
   }

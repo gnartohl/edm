@@ -2048,6 +2048,8 @@ void activeMessageButtonClass::btnDown (
   int *action )
 {
 
+  if ( buttonNumber != 1 ) return;
+
   if ( !visibility ) {
     *action = 0;
     return;

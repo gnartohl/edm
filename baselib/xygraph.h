@@ -508,6 +508,7 @@ int firstTimeSample, curSec, curNsec;
 
 int xAxis, xAxisStyle, xAxisSource, xAxisTimeFormat;
 efDouble xMin, xMax;
+double stripChartXMax;
 
 int y1Axis, y1AxisStyle, y1AxisSource;
 efDouble y1Min, y1Max;

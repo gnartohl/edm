@@ -1478,6 +1478,8 @@ void shellCmdClass::btnDown (
   int *action )
 {
 
+  if ( buttonNumber != 1 ) return;
+
   if ( usePassword ) {
 
     if ( !ef.formIsPoppedUp() ) {

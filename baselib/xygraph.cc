@@ -3796,6 +3796,8 @@ int screen_num, depth;
 	curXMax = log10( curXMax );
       }
 
+      stripChartXMax = curXMax;
+
       curY1Min = y1Min.value();
       curY1Max = y1Max.value();
       if ( y1AxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
@@ -4670,6 +4672,7 @@ char format[31+1];
                 curXMin = log10( curXMin );
         	curXMax = log10( curXMax );
               }
+              stripChartXMax = curXMax;
             }
           }
 
@@ -5249,6 +5252,8 @@ char format[31+1];
        &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor, format );
     }
 
+    stripChartXMax = curXMax;
+
     updateDimensions();
 
     for ( i=0; i<numTraces; i++ ) {
@@ -5624,7 +5629,7 @@ int i;
       if ( scaledY < plotInfo[trace][scaledX].minY ) {
         plotInfo[trace][scaledX].minY = scaledY;
       }
-      else if ( scaledY > plotInfo[trace][scaledX].maxY ) {
+      else if ( scaledY >= plotInfo[trace][scaledX].maxY ) {
         plotInfo[trace][scaledX].maxY = scaledY;
       }
 
@@ -5633,7 +5638,7 @@ int i;
         plotInfo[trace][scaledX].firstX = scaledX;
         plotInfo[trace][scaledX].firstY = scaledY;
       }
-      else if ( x > plotInfo[trace][scaledX].lastDX ) {
+      else if ( x >= plotInfo[trace][scaledX].lastDX ) {
         plotInfo[trace][scaledX].lastDX = x;
         plotInfo[trace][scaledX].lastX = scaledX;
         plotInfo[trace][scaledX].lastY = scaledY;

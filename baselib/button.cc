@@ -2154,8 +2154,6 @@ int stat;
 
   if ( !ca_write_access( controlPvId ) ) return;
 
-  if ( buttonNumber != 1 ) return;
-
   if ( toggle ) return;
 
   value = 0;
