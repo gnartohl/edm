@@ -1662,8 +1662,6 @@ int numNewMacros, max, numFound;
 
   stat = getFileName( name, displayFileName.getExpanded(), 127 );
 
-  printf( "filename = [%s]\n", name );
-
   // calc crc
 
   crc = 0;
