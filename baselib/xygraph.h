@@ -708,7 +708,7 @@ Widget plotWidget;
 int needConnect, needInit, needRefresh, needUpdate, needErase, needDraw,
  needResetConnect, needReset, needTrigConnect, needTrig, needXRescale,
  needY1Rescale[NUM_Y_AXES], needY2Rescale, needBufferScroll, needVectorUpdate,
- needRealUpdate, needBoxRescale;
+ needRealUpdate, needBoxRescale, needNewLimits;
 
 int numBufferScrolls;
 
@@ -755,6 +755,7 @@ void getXMinMax (
 );
 
 void getYMinMax (
+  int yi,
   double *min,
   double *max
 );

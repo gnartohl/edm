@@ -2888,75 +2888,84 @@ double dxValue;
 
 
 void xyGraphClass::getYMinMax (
-  double *min,
-  double *max
+  int yi,
+  double min[],
+  double max[]
 ) {
 
-int i, ii, first;
-double dyValue;
+int i, ii, first[NUM_Y_AXES];
+double dyValue[NUM_Y_AXES];
 
-  first = 1;
+  for ( i=0; i<NUM_Y_AXES; i++ ) {
+    first[i] = 1;
+  }
+
   for ( i=0; i<numTraces; i++ ) {
 
-    ii = arrayHead[i];
-    while ( ii != arrayTail[i] ) {
+    if ( ( ( yi == 0 ) && !y2Scale[i] ) ||
+         ( ( yi > 0 ) && y2Scale[i] ) ) {
 
-      switch ( yPvType[i] ) {
-      case DBR_FLOAT:
-        dyValue = (double) ( (float *) yPvData[i] )[ii];
-        break;
-      case DBR_DOUBLE: 
-        dyValue = ( (double *) yPvData[i] )[ii];
-        break;
-      case DBR_SHORT:
-        if ( ySigned[i] ) {
-          dyValue = (double) ( (short *) yPvData[i] )[ii];
-        }
-        else {
-          dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
-        }
-        break;
-      case DBR_CHAR:
-        if ( ySigned[i] ) {
-          dyValue = (double) ( (char *) yPvData[i] )[ii];
-        }
-        else {
-          dyValue = (double) ( (unsigned char *) yPvData[i] )[ii];
-        }
-        break;
-      case DBR_LONG:
-        if ( ySigned[i] ) {
-          dyValue = (double) ( (int *) yPvData[i] )[ii];
-        }
-        else {
-          dyValue = (double) ( (int *) yPvData[i] )[ii];
-        }
-        break;
-      case DBR_ENUM:
-        if ( ySigned[i] ) {
-          dyValue = (double) ( (short *) yPvData[i] )[ii];
-        }
-        else {
-          dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
-        }
-        break;
-      default:
-        dyValue = ( (double *) yPvData[i] )[ii];
-        break;
-      }
+      ii = arrayHead[i];
+      while ( ii != arrayTail[i] ) {
 
-      if ( first ) {
-        first = 0;
-        *min = *max = dyValue;
-      }
-      else {
-        if ( dyValue < *min ) *min = dyValue;
-        if ( dyValue > *max ) *max = dyValue;
-      }
+        switch ( yPvType[i] ) {
+        case DBR_FLOAT:
+          dyValue[yi] = (double) ( (float *) yPvData[i] )[ii];
+          break;
+        case DBR_DOUBLE: 
+          dyValue[yi] = ( (double *) yPvData[i] )[ii];
+          break;
+        case DBR_SHORT:
+          if ( ySigned[i] ) {
+            dyValue[yi] = (double) ( (short *) yPvData[i] )[ii];
+          }
+          else {
+            dyValue[yi] = (double) ( (unsigned short *) yPvData[i] )[ii];
+          }
+          break;
+        case DBR_CHAR:
+          if ( ySigned[i] ) {
+            dyValue[yi] = (double) ( (char *) yPvData[i] )[ii];
+          }
+          else {
+            dyValue[yi] = (double) ( (unsigned char *) yPvData[i] )[ii];
+          }
+          break;
+        case DBR_LONG:
+          if ( ySigned[i] ) {
+            dyValue[yi] = (double) ( (int *) yPvData[i] )[ii];
+          }
+          else {
+            dyValue[yi] = (double) ( (int *) yPvData[i] )[ii];
+          }
+          break;
+        case DBR_ENUM:
+          if ( ySigned[i] ) {
+            dyValue[yi] = (double) ( (short *) yPvData[i] )[ii];
+          }
+          else {
+            dyValue[yi] = (double) ( (unsigned short *) yPvData[i] )[ii];
+          }
+          break;
+        default:
+          dyValue[yi] = ( (double *) yPvData[i] )[ii];
+          break;
+        }
 
-      ii++;
-      if ( ii > plotBufSize[i] ) {
-        ii = 0;
+        if ( first[yi] ) {
+          first[yi] = 0;
+          min[yi] = max[yi] = dyValue[yi];
+        }
+        else {
+          if ( dyValue[yi] < min[yi] ) min[yi] = dyValue[yi];
+          if ( dyValue[yi] > max[yi] ) max[yi] = dyValue[yi];
+        }
+
+        ii++;
+        if ( ii > plotBufSize[i] ) {
+          ii = 0;
+        }
+
       }
 
     }
@@ -5126,9 +5135,8 @@ int screen_num, depth;
       numBufferScrolls = 0;
       needConnect = needInit = needRefresh = needErase = needDraw = 
        needUpdate = needResetConnect = needReset = needTrigConnect =
-       needTrig = needXRescale =
-       needBufferScroll = needVectorUpdate = needRealUpdate =
-       needBoxRescale = 0;
+       needTrig = needXRescale = needBufferScroll = needVectorUpdate =
+       needRealUpdate = needBoxRescale = needNewLimits = 0;
       drawGridFlag = 0;
 
       for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
@@ -5610,6 +5618,14 @@ int yi = 0;
       actWin->appCtx->proc->unlock();
 
     }
+    else {
+
+      actWin->appCtx->proc->lock();
+      needNewLimits = 1;
+      actWin->addDefExeNode( aglPtr );
+      actWin->appCtx->proc->unlock();
+
+    }
 
   }
 
@@ -5861,7 +5877,7 @@ int xyGraphClass::getButtonActionRequest (
 void xyGraphClass::executeDeferred ( void ) {
 
 int i, ii, stat, nc, ni, nu, nvu, nru, nr, ne, nd, nrstc, nrst, ntrgc,
- ntrg, nxrescl, nbs, nbrescl,
+ ntrg, nxrescl, nbs, nbrescl, nnl,
  eleSize, scaledX, scaledY, structType, doRescale, anyRescale, size,
  ny1rescl[NUM_Y_AXES];
 double dyValue, dxValue, range, oneMax, oldXMin;
@@ -5886,8 +5902,11 @@ int yi, yScaleIndex;
   nxrescl = needXRescale; needXRescale = 0;
   nbs = needBufferScroll; needBufferScroll = 0;
   nbrescl = needBoxRescale; needBoxRescale = 0;
+  nnl = needNewLimits; needNewLimits = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
+
+  doRescale = 0;
 
   for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
     ny1rescl[yi] = needY1Rescale[yi]; needY1Rescale[yi] = 0;
@@ -6567,7 +6586,6 @@ int yi, yScaleIndex;
 
   }
 
-  doRescale = 0;
   if ( nxrescl ) {
 
     oldXMin = curXMin;
@@ -6807,6 +6825,76 @@ int yi, yScaleIndex;
 
   }
 
+  if ( nnl ) {
+
+    anyRescale = 0;
+
+    if ( xAxisSource == XYGC_K_AUTOSCALE ) {
+
+      anyRescale = 1;
+
+      getXMinMax( &curXMin, &curXMax );
+
+      if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+        get_log10_scale_params1( curXMin, curXMax, &curXMin, &curXMax,
+         &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+         format );
+      }
+      else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+        get_log10_scale_params1( curXMin, curXMax, &curXMin, &curXMax,
+         &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+         format );
+      }
+      else {
+        get_scale_params1( curXMin, curXMax, &curXMin, &curXMax,
+         &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+         format );
+      }
+
+      for ( i=0; i<numTraces; i++ ) {
+        xFactor[i] =
+         (double) ( plotAreaW ) / ( curXMax - curXMin );
+        xOffset[i] = plotAreaX;
+      }
+
+    }
+
+    for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+
+      if ( y1AxisSource[yi] == XYGC_K_AUTOSCALE ) {
+
+        getYMinMax( yi, curY1Min, curY1Max );
+
+        anyRescale = 1;
+
+        if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+          get_log10_scale_params1( curY1Min[yi], curY1Max[yi], &curY1Min[yi],
+           &curY1Max[yi], &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
+           &curY1MinorsPerMajor[yi], format );
+        }
+        else {
+          get_scale_params1( curY1Min[yi], curY1Max[yi], &curY1Min[yi],
+           &curY1Max[yi], &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
+           &curY1MinorsPerMajor[yi], format );
+        }
+
+        for ( i=0; i<numTraces; i++ ) {
+          y1Factor[yi][i] =
+           (double) ( plotAreaH ) / ( curY1Max[yi] - curY1Min[yi] );
+          y1Offset[yi][i] = plotAreaY;
+        }
+
+      }
+
+    }
+
+    if ( anyRescale ) {
+      updateDimensions();
+      doRescale = 1;
+    }
+
+  }
+
   if ( doRescale ) {
 
     regenBuffer();
@@ -6864,13 +6952,27 @@ int yi, yScaleIndex;
       curXMax = log10( curXMax );
     }
 
+    for ( i=0; i<numTraces; i++ ) {
+      xFactor[i] =
+       (double) ( plotAreaW ) / ( curXMax - curXMin );
+      xOffset[i] = plotAreaX;
+    }
+
     for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+
       curY1Min[yi] = y1Min[yi].value();
       curY1Max[yi] = y1Max[yi].value();
       if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
         curY1Min[yi] = log10( curY1Min[yi] );
         curY1Max[yi] = log10( curY1Max[yi] );
       }
+
+      for ( i=0; i<numTraces; i++ ) {
+        y1Factor[yi][i] =
+         (double) ( plotAreaH ) / ( curY1Max[yi] - curY1Min[yi] );
+        y1Offset[yi][i] = plotAreaY;
+      }
+
     }
     
     curXNumLabelTicks = xNumLabelIntervals.value();
