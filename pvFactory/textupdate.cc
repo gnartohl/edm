@@ -794,18 +794,16 @@ int edmTextentryClass::activate(int pass, void *ptr)
                                              XmNuserData,
                                                  this,// obj accessible to d&d
                                              NULL);
-            /* add the callbacks for update */
+            // callback: text entered, sent it to PV
             XtAddCallback(widget,XmNactivateCallback,
                           (XtCallbackProc)text_entered_callback,
                           (XtPointer)this);
 
-            /* special stuff: if user started entering new data into
-             * text field, but doesn't do the actual Activate <CR>,
-             * then restore old value on
-             * losing focus...
-             */
-            XtAddCallback(widget,XmNmodifyVerifyCallback,
-                          (XtCallbackProc)text_verify_callback,
+            // callback: go into edit mode
+            // Used to try XmNmodifyVerifyCallback,
+            // but this one is better (John found it)
+            XtAddCallback(widget,XmNmotionVerifyCallback,
+                          (XtCallbackProc)text_edit_callback,
                           (XtPointer)this);
             break;
         case 2: // connect to pv
@@ -942,7 +940,7 @@ void edmTextentryClass::text_entered_callback(Widget w,
     XtFree(text);
 }
 
-void edmTextentryClass::text_verify_callback(Widget w,
+void edmTextentryClass::text_edit_callback(Widget w,
                                              XtPointer clientData,
                                              XtPointer pCallbackData)
 {
@@ -957,7 +955,7 @@ void edmTextentryClass::text_verify_callback(Widget w,
             case XtCallbackNoList:
             case XtCallbackHasNone:
                 XtAddCallback(w, XmNlosingFocusCallback,
-                              (XtCallbackProc)text_unfocus_callback, me);
+                              (XtCallbackProc)text_noedit_callback, me);
                 me->editing = true;
                 break;
             case XtCallbackHasSome:
@@ -967,14 +965,14 @@ void edmTextentryClass::text_verify_callback(Widget w,
     }
 }
 
-void edmTextentryClass::text_unfocus_callback(Widget w,
-                                              XtPointer clientData,
-                                              XtPointer pCallbackData)
+void edmTextentryClass::text_noedit_callback(Widget w,
+                                             XtPointer clientData,
+                                             XtPointer pCallbackData)
 {
     edmTextentryClass *me = (edmTextentryClass *) clientData;
 
     XtRemoveCallback(w, XmNlosingFocusCallback,
-                     (XtCallbackProc)text_unfocus_callback, me);
+                     (XtCallbackProc)text_noedit_callback, me);
     me->editing= false;
     pv_value_callback(me->pv, me);
 }

@@ -1,6 +1,6 @@
 3 0 1
-364
-87
+98
+72
 546
 452
 helvetica-medium-r-18.0
@@ -386,5 +386,57 @@ PV+PV+PV
 helvetica-medium-r-18.0
 0
 1
+<<<empty>>>
+EOD
+TextentryClass
+2 0 0
+275
+271
+119
+31
+jane
+0
+0
+Monitor: NORMAL
+Wid-bg/Anno-pri
+1
+helvetica-medium-r-12.0
+0
+0 1
+EOD
+activeXTextDspClass
+2 4 0
+414
+280
+112
+21
+jane
+helvetica-medium-r-18.0
+1
+0
+0
+5
+0
+0
+1
+1
+1
+1
+0 1
+<<<empty>>>
+0
+0
+0
+<<<empty>>>
+36
+0
+<<<empty>>>
+0
+0
+0
+0
+0
+0
+<<<empty>>>
 <<<empty>>>
 EOD

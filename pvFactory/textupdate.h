@@ -163,10 +163,11 @@ protected:
     int drawActive();
     int eraseActive();
 private:
+    static void text_edit_callback(Widget, XtPointer, XtPointer);
+    static void text_noedit_callback(Widget, XtPointer, XtPointer);
     static void text_entered_callback(Widget, XtPointer, XtPointer);
-    static void text_verify_callback(Widget, XtPointer, XtPointer);
-    static void text_unfocus_callback(Widget, XtPointer, XtPointer);
 };
 
 
 #endif
+
