@@ -98,6 +98,7 @@ typedef struct activeWindowListTag {
   int requestPosition;
   int requestCascade;
   int requestImport;
+  int requestIconize;
   int x;
   int y;
 } activeWindowListType, *activeWindowListPtr;
@@ -130,6 +131,21 @@ friend void continue_cb (
   XtPointer call );
 
 friend void abort_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void dont_shutdown_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void do_shutdown_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void shutdown_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -172,6 +188,11 @@ friend void exit_cb (
   XtPointer call );
 
 friend void renderImages_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void checkpointPid_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -279,6 +300,8 @@ Widget viewXyB;
 
 int renderImagesFlag;
 Widget renderImagesB;
+
+Widget checkpointPidB;
 
 ulBindingClass userLibObject;
 int exitFlag;
@@ -435,6 +458,11 @@ int appContextClass::openActivateActiveWindow (
   int x,
   int y );
 
+int appContextClass::openActivateIconifiedActiveWindow (
+  activeWindowClass *activeWindowNode,
+  int x,
+  int y );
+
 int appContextClass::openActivateCascadeActiveWindow (
   activeWindowClass *activeWindowNode );
 
@@ -516,6 +544,16 @@ int appContextClass::renderImages ( void );
 
 void appContextClass::setRenderImages (
   int flag
+);
+
+int appContextClass::openCheckPointScreen (
+  char *screenName,
+  int x,
+  int y,
+  int icon,
+  int noEdit,
+  int numCheckPointMacros,
+  char *checkPointMacros
 );
 
 };

@@ -2,7 +2,7 @@
 #define __environment_str 1
 
 
-// global_str84 is last
+// global_str86 is last
 
 
 #define environment_str1 (char *) "EDMDATAFILES"
@@ -43,25 +43,27 @@
 #define global_str73 (char *) "-port"
 #define global_str76 (char *) "-color"
 #define global_str79 (char *) "-cmap"
+#define global_str86 (char *) "-restart"
 
 // help text (some content must agree with command line options)
 #define global_str24 (char *) "EXECUTION\n"
 #define global_str25 (char *) "edm [-x] [-noedit] [-m <\"m1=string1,m2=string2,...\">]\n"
-#define global_str26 (char *) "    [-display <display name>] [-pv <pv class> -ctl <control pv name>]\n"
-#define global_str27 (char *) "    [-display <display name>] [-ctl <control pv name>] [-color rgb or index]\n"
-#define global_str28 (char *) "    [-server] [-port <port #>] [-local] [<display-file1 display-file2 ...>]\n\n"
-#define global_str29 (char *) "    -x       Open all displays in execute rather than edit mode\n\n"
-#define global_str30 (char *) "    -noedit  Remove capability to put display in edit mode, used\n"
-#define global_str31 (char *) "             with -x to produce execute only operation\n\n"
-#define global_str32 (char *) "    -m       Introduces list of macros/expansions\n\n"
-#define global_str33 (char *) "               e.g. -m \"facility=beamline-5,section=z\"\n\n"
-#define global_str34 (char *) "    -pv      Takes PV class name (.e.g epics)\n\n"
-#define global_str35 (char *) "    -ctl     Takes name of string process variable, writing\n"
-#define global_str36 (char *) "             a display file name to this string causes edm\n"
-#define global_str37 (char *) "             to open the display in execute mode\n\n"
-#define global_str77 (char *) "    -color   Set Colormode - index (default) or rgb\n\n"
-#define global_str78 (char *) "    -cmap    Use private colormap if necessary\n\n"
-#define global_str38 (char *) "    -ul      Takes name of user written shareable library\n\n"
+#define global_str26 (char *) "  [-display <display name>] [-pv <pv class> -ctl <control pv name>]\n"
+#define global_str27 (char *) "  [-display <display name>] [-ctl <control pv name>] [-color rgb or index]\n"
+#define global_str28 (char *) "  [-server] [-port <port #>] [-local] [<display-file1 display-file2 ...>]\n\n"
+#define global_str29 (char *) "  -x       Open all displays in execute rather than edit mode\n\n"
+#define global_str30 (char *) "  -noedit  Remove capability to put display in edit mode, used\n"
+#define global_str31 (char *) "           with -x to produce execute only operation\n\n"
+#define global_str32 (char *) "  -m       Introduces list of macros/expansions\n\n"
+#define global_str33 (char *) "             e.g. -m \"facility=beamline-5,section=z\"\n\n"
+#define global_str34 (char *) "  -pv      Takes PV class name (.e.g epics)\n\n"
+#define global_str35 (char *) "  -ctl     Takes name of string process variable, writing\n"
+#define global_str36 (char *) "           a display file name to this string causes edm\n"
+#define global_str37 (char *) "           to open the display in execute mode\n\n"
+#define global_str77 (char *) "  -color   Set Colormode - index (default) or rgb\n\n"
+#define global_str78 (char *) "  -cmap    Use private colormap if necessary\n\n"
+#define global_str85 (char *) "  -restart Takes pid number, restart from last shutdown\n\n"
+#define global_str38 (char *) "  -ul      Takes name of user written shareable library\n\n"
 #define global_str39 (char *) "COMPONENT MANAGEMENT\n\n"
 #define global_str40 (char *) "edm (-add|-remove|-show) <component library file pathname>\n\n"
 #define global_str41 (char *) "    -add     Add all library components to edmObjects\n\n"

@@ -1010,6 +1010,7 @@ activeWindowListPtr cur;
   cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
+  cur->requestIconize = 0;
 
   cur->node.create( apco, NULL, 0, 0, 0, 0, apco->numMacros, apco->macros,
    apco->expansions );
@@ -1086,6 +1087,7 @@ activeWindowListPtr cur;
   cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
+  cur->requestIconize = 0;
 
   cur->node.create( apco, NULL, 0, 0, 0, 0, apco->numMacros, apco->macros,
    apco->expansions );
@@ -1163,6 +1165,7 @@ char *fName;
   cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
+  cur->requestIconize = 0;
 
   cur->node.create( apco, NULL, 0, 0, 0, 0, apco->numMacros, apco->macros,
    apco->expansions );
@@ -1233,6 +1236,7 @@ char *fName;
   cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
+  cur->requestIconize = 0;
 
   cur->node.create( apco, NULL, 0, 0, 0, 0, apco->numMacros, apco->macros,
    apco->expansions );
@@ -1299,6 +1303,7 @@ activeWindowListPtr cur, next;
   cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
+  cur->requestIconize = 0;
   cur->node.create( apco, NULL, 100, 100, 500, 600, apco->numMacros,
    apco->macros, apco->expansions );
   cur->node.realize();
@@ -1472,7 +1477,8 @@ unsigned int mask;
     apco->confirm.create( apco->appTop, rootX, rootY, 2,
      appContextClass_str24, NULL, NULL );
     apco->confirm.addButton( appContextClass_str25, abort_cb, (void *) apco );
-    apco->confirm.addButton( appContextClass_str26, continue_cb, (void *) apco );
+    apco->confirm.addButton( appContextClass_str26, continue_cb,
+     (void *) apco );
     apco->confirm.finished();
     apco->confirm.popup();
     XSetWindowColormap( apco->display, XtWindow(apco->confirm.top()),
@@ -1484,6 +1490,31 @@ unsigned int mask;
 
 }
 
+void dont_shutdown_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+appContextClass *apco = (appContextClass *) client;
+
+  apco->confirm.popdown();
+
+}
+
+void do_shutdown_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+appContextClass *apco = (appContextClass *) client;
+
+  apco->confirm.popdown();
+  apco->shutdownFlag = 1;
+
+}
+
 void shutdown_cb (
   Widget w,
   XtPointer client,
@@ -1491,6 +1522,41 @@ void shutdown_cb (
 {
 
 appContextClass *apco = (appContextClass *) client;
+
+activeWindowListPtr cur;
+int changes = 0;
+
+Window root, child;
+int rootX, rootY, winX, winY;
+unsigned int mask;
+
+  cur = apco->head->flink;
+  while ( cur != apco->head ) {
+    if ( cur->node.changed() ) changes = 1;
+    cur = cur->flink;
+  }
+
+  if ( changes ) {
+
+    XQueryPointer( apco->display, XtWindow(apco->appTop), &root, &child,
+     &rootX, &rootY, &winX, &winY, &mask );
+
+    apco->confirm.create( apco->appTop, rootX, rootY, 2,
+     appContextClass_str24, NULL, NULL );
+    apco->confirm.addButton( appContextClass_str137, do_shutdown_cb,
+     (void *) apco );
+    apco->confirm.addButton( appContextClass_str26, dont_shutdown_cb,
+     (void *) apco );
+    apco->confirm.finished();
+
+    apco->confirm.popup();
+
+    XSetWindowColormap( apco->display, XtWindow(apco->confirm.top()),
+     apco->ci.getColorMap() );
+
+    return;
+
+  }
 
   apco->shutdownFlag = 1;
 
@@ -1639,6 +1705,23 @@ appContextClass *apco = (appContextClass *) client;
 
 }
 
+void checkpointPid_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+appContextClass *apco = (appContextClass *) client;
+char procIdName[31+1];
+SYS_PROC_ID_TYPE procId;
+
+  sys_get_proc_id( &procId );
+  sprintf( procIdName, "PID = %-d", (int) procId.id );
+
+  apco->postMessage( procIdName );
+
+}
+
 void help_cb (
   Widget w,
   XtPointer client,
@@ -1710,6 +1793,7 @@ char *sysMacros[] = {
   cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
+  cur->requestIconize = 0;
 
   cur->node.createNoEdit( apco, NULL, 0, 0, 0, 0, numMacros,
    sysMacros, sysValues );
@@ -1799,7 +1883,7 @@ appContextClass::~appContextClass (
   void )
 {
 
-int i;
+int i, numOpenWindows;
 activeWindowListPtr cur, next;
 activeGraphicListPtr curCut, nextCut;
 macroListPtr curMacro, nextMacro;
@@ -1807,14 +1891,18 @@ fileListPtr curFile, nextFile;
 callbackBlockPtr curCbBlock, nextCbBlock;
 
   if ( saveContextOnExit ) {
-    fprintf( shutdownFilePtr, "appCtx {\n" );
-    fprintf( shutdownFilePtr, "  primaryServer=%-d\n", primaryServer );
-    if ( blank(displayName) ) {
-      fprintf( shutdownFilePtr, "  display=<NULL>\n" );
-    }
-    else {
-      fprintf( shutdownFilePtr, "  display=%s\n", displayName );
-    }
+    //fprintf( shutdownFilePtr, "appCtx {\n" );
+    //fprintf( shutdownFilePtr, "  primaryServer=%-d\n", primaryServer );
+    fprintf( shutdownFilePtr, "%-d\n", primaryServer );
+    //if ( blank(displayName) ) {
+      //fprintf( shutdownFilePtr, "  display=<NULL>\n" );
+    //}
+    //else {
+    //  fprintf( shutdownFilePtr, "  display=%s\n", displayName );
+    //}
+    writeStringToFile( shutdownFilePtr, displayName );
+    //fprintf( shutdownFilePtr, "  noEdit=%-d\n", noEdit );
+    fprintf( shutdownFilePtr, "%-d\n", noEdit );
   }
 
   ci.closeColorWindow();
@@ -1831,14 +1919,17 @@ callbackBlockPtr curCbBlock, nextCbBlock;
 
   // walk macroList and delete
   if ( saveContextOnExit ) {
-    fprintf( shutdownFilePtr, "  macros {\n" );
-    fprintf( shutdownFilePtr, "    num=%-d\n", numMacros );
+    //fprintf( shutdownFilePtr, "  macros {\n" );
+    //fprintf( shutdownFilePtr, "    num=%-d\n", numMacros );
+    fprintf( shutdownFilePtr, "%-d\n", numMacros );
   }
   curMacro = macroHead->flink;
   while ( curMacro != macroHead ) {
     nextMacro = curMacro->flink;
     if ( saveContextOnExit ) {
-      fprintf( shutdownFilePtr, "    %s=%s\n", curMacro->macro,
+      //fprintf( shutdownFilePtr, "    %s=%s\n", curMacro->macro,
+      // curMacro->expansion );
+      fprintf( shutdownFilePtr, "%s=%s\n", curMacro->macro,
        curMacro->expansion );
     }
     if ( curMacro->macro ) delete curMacro->macro;
@@ -1847,9 +1938,9 @@ callbackBlockPtr curCbBlock, nextCbBlock;
     curMacro = nextMacro;
   }
   delete macroHead;
-  if ( saveContextOnExit ) {
-    fprintf( shutdownFilePtr, "  }\n" );
-  }
+  //if ( saveContextOnExit ) {
+  //  fprintf( shutdownFilePtr, "  }\n" );
+  //}
 
   // walk fileList and delete
   curFile = fileHead->flink;
@@ -1861,6 +1952,17 @@ callbackBlockPtr curCbBlock, nextCbBlock;
   }
   delete fileHead;
 
+  if ( saveContextOnExit ) {
+    // get number of open windows
+    numOpenWindows = 0;
+    cur = head->flink;
+    while ( cur != head ) {
+      numOpenWindows++;
+      cur = cur->flink;
+    }
+    fprintf( shutdownFilePtr, "%-d\n", numOpenWindows );
+  }
+
   // walk activeWindowList and delete
   cur = head->flink;
   while ( cur != head ) {
@@ -1869,9 +1971,9 @@ callbackBlockPtr curCbBlock, nextCbBlock;
       cur->node.returnToEdit( 0 );
     }
     if ( saveContextOnExit ) {
-      fprintf( shutdownFilePtr, "  actWin {\n" );
+      //fprintf( shutdownFilePtr, "  actWin {\n" );
       cur->node.checkPoint( primaryServer, shutdownFilePtr );
-      fprintf( shutdownFilePtr, "  }\n" );
+      //fprintf( shutdownFilePtr, "  }\n" );
     }
     cur->blink->flink = cur->flink; // maintain list structure!
     cur->flink->blink = cur->blink;
@@ -1930,9 +2032,9 @@ callbackBlockPtr curCbBlock, nextCbBlock;
   }
   delete callbackBlockHead;
 
-  if ( saveContextOnExit ) {
-    fprintf( shutdownFilePtr, "}\n" );
-  }
+  //if ( saveContextOnExit ) {
+  //  fprintf( shutdownFilePtr, "}\n" );
+  //}
 
   // these are done in main.cc
       //XtCloseDisplay( display );
@@ -1958,6 +2060,7 @@ activeWindowListPtr cur;
       cur->requestCascade = 0;
       cur->requestImport = 0;
       cur->requestRefresh = 0;
+      cur->requestIconize = 0;
       cur->x = cur->node.x;
       cur->y = cur->node.y;
       if ( cur->node.mode == AWC_EXECUTE ) {
@@ -3018,6 +3121,14 @@ int i;
   XtAddCallback( renderImagesB, XmNactivateCallback, renderImages_cb,
    (XtPointer) this );
 
+  str = XmStringCreateLocalized( appContextClass_str136 );
+  checkpointPidB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   viewPullDown,
+   XmNlabelString, str,
+   NULL );
+  XmStringFree( str );
+  XtAddCallback( checkpointPidB, XmNactivateCallback, checkpointPid_cb,
+   (XtPointer) this );
 
 
   pathPullDown = XmCreatePulldownMenu( menuBar, "", NULL, 0 );
@@ -3122,6 +3233,7 @@ void appContextClass::addActiveWindow (
   node->requestCascade = 0;
   node->requestImport = 0;
   node->requestRefresh = 0;
+  node->requestIconize = 0;
 
   node->blink = head->blink;
   head->blink->flink = node;
@@ -3213,6 +3325,7 @@ activeWindowListPtr cur;
       cur->requestPosition = 0;
       cur->requestCascade = 0;
       cur->requestImport = 0;
+      cur->requestIconize = 0;
       requestFlag++;
       cur->requestActivate = 1;
       requestFlag++;
@@ -3241,6 +3354,39 @@ activeWindowListPtr cur;
       cur->requestPosition = 1;
       cur->requestCascade = 0;
       cur->requestImport = 0;
+      cur->requestIconize = 0;
+      cur->x = x;
+      cur->y = y;
+      requestFlag++;
+      cur->requestActivate = 1;
+      requestFlag++;
+    }
+    cur = cur->flink;
+  }
+
+  return 1;
+
+}
+
+int appContextClass::openActivateIconifiedActiveWindow (
+  activeWindowClass *activeWindowNode,
+  int x,
+  int y )
+{
+
+  // simply mark for open and activation and increment request flag
+  // request window to be iconified
+
+activeWindowListPtr cur;
+
+  cur = head->flink;
+  while ( cur != head ) {
+    if ( &(cur->node) == activeWindowNode ) {
+      cur->requestOpen = 1;
+      cur->requestPosition = 1;
+      cur->requestCascade = 0;
+      cur->requestImport = 0;
+      cur->requestIconize = 1;
       cur->x = x;
       cur->y = y;
       requestFlag++;
@@ -3269,6 +3415,7 @@ activeWindowListPtr cur;
       cur->requestPosition = 0;
       cur->requestCascade = 1;
       cur->requestImport = 0;
+      cur->requestIconize = 0;
       requestFlag++;
       cur->requestActivate = 1;
       requestFlag++;
@@ -3297,6 +3444,7 @@ activeWindowListPtr cur;
       cur->requestPosition = 1;
       cur->requestCascade = 1;
       cur->requestImport = 0;
+      cur->requestIconize = 0;
       requestFlag++;
       cur->requestActivate = 1;
       requestFlag++;
@@ -3413,6 +3561,7 @@ static void displayParamInfo ( void ) {
   printf( global_str37 );
   printf( global_str77 );
   printf( global_str78 );
+  printf( global_str85 );
 
   printf( global_str57 );
   printf( global_str58 );
@@ -3578,6 +3727,10 @@ fileListPtr curFile;
           local = 1;
         }
         else if ( strcmp( argv[n], global_str10 ) == 0 ) {
+        }
+        else if ( strcmp( argv[n], global_str86 ) == 0 ) {
+          n++; // just ignore, not used here
+          if ( n >= argc ) return 2;
         }
         else if ( strcmp( argv[n], global_str18 ) == 0 ) {
           noEdit = 1;
@@ -4066,6 +4219,7 @@ err_return:
     cur->requestCascade = 0;
     cur->requestImport = 0;
     cur->requestRefresh = 0;
+    cur->requestIconize = 0;
 
     cur->blink = head->blink;
     head->blink->flink = cur;
@@ -4118,6 +4272,7 @@ activeWindowListPtr cur;
   cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
+  cur->requestIconize = 0;
 
   cur->blink = head->blink;
   head->blink->flink = cur;
@@ -4300,6 +4455,16 @@ char msg[127+1];
           if ( requestFlag > 0 ) requestFlag--;
           cur->node.setRefresh();
           cur->node.refreshActive();
+
+          // need to iconify?
+          if ( cur->requestIconize ) {
+            cur->requestIconize = 0;
+            XIconifyWindow( display,
+             XtWindow(XtParent(cur->node.executeWidget)),
+             DefaultScreen(display) );
+            cur->node.isIconified = 1;
+          }
+
         }
         if ( cur->requestReactivate == 2 ) {
           cur->requestReactivate = 0;
@@ -4663,4 +4828,86 @@ void appContextClass::setRenderImages (
 
 }
 
+int appContextClass::openCheckPointScreen (
+  char *screenName,
+  int x,
+  int y,
+  int icon,
+  int noEdit,
+  int numCheckPointMacros,
+  char *checkPointMacros
+) {
 
+activeWindowListPtr cur;
+int n, stat;
+char *newMacros[100+1];
+char *newValues[100+1];
+
+  //printf( "appContextClass::openCheckPointScreen\n" );
+
+  if ( numCheckPointMacros ) {
+    stat = parseSymbolsAndValues( checkPointMacros, 100,
+     newMacros, newValues, &n );
+  }
+  else {
+    n = 0;
+  }
+
+  //printf( "screenName = [%s]\n", screenName );
+  //printf( "x = %-d\n", x );
+  //printf( "y = %-d\n", y );
+  //printf( "icon = %-d\n", icon );
+  //printf( "numCheckPointMacros = %-d\n", numCheckPointMacros );
+  //printf( "checkPointMacros = [%s]\n", checkPointMacros );
+
+  //printf( "found %-d macros\n", n );
+  //for ( i=0; i<n; i++ ) {
+  //  printf( "sym=[%s]  val=[%s]\n", newMacros[i], newValues[i] );
+  //}
+
+  cur = new activeWindowListType;
+
+  addActiveWindow( cur );
+
+  if ( n > 0 ) {
+    if ( noEdit ) {
+      cur->node.createNoEdit( this, NULL, 0, 0, 0, 0,
+       n, newMacros, newValues );
+    }
+    else {
+      cur->node.create( this, NULL, 0, 0, 0, 0,
+       n, newMacros, newValues );
+    }
+  }
+  else {
+    if ( noEdit ) {
+      cur->node.createNoEdit( this, NULL, 0, 0, 0, 0,
+       0, NULL, NULL );
+    }
+    else {
+      cur->node.create( this, NULL, 0, 0, 0, 0,
+       0, NULL, NULL );
+    }
+  }
+
+  cur->node.realize();
+
+  cur->node.setGraphicEnvironment( &ci, &fi );
+
+  cur->node.storeFileName( screenName );
+
+  cur->node.noRaise = 1;
+  cur->node.isIconified = True;
+
+  if ( icon ) {
+    stat = openActivateIconifiedActiveWindow( &cur->node, x, y );
+  }
+  else {
+    stat = openActivateActiveWindow( &cur->node, x, y );
+  }
+
+  processAllEventsWithSync( app, display );
+
+  return 1;
+
+}

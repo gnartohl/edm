@@ -9364,6 +9364,8 @@ activeWindowClass::activeWindowClass ( void ) {
 
   noRaise = 0;
 
+  noEdit = 0;
+
 }
 
 int activeWindowClass::pushVersion ( void ) {
@@ -9945,6 +9947,8 @@ char tmp[10];
   change = 0;
   changeSinceAutoSave = 0;
   exit_after_save = 0;
+
+  noEdit = _noEdit;
 
   this->numMacros = _numMacros;
 
@@ -16561,16 +16565,28 @@ int activeWindowClass::checkPoint (
 int i;
 
   if ( fptr ) {
-    fprintf( fptr, "    name=%s\n", fileName );
-    fprintf( fptr, "    x=%-d\n", x );
-    fprintf( fptr, "    y=%-d\n", y );
-    fprintf( fptr, "    icon=%-d\n", isIconified );
-    fprintf( fptr, "    macros {\n" );
-    fprintf( fptr, "      num=%-d\n", numMacros );
+    //fprintf( fptr, "    name=%s\n", fileName );
+    //fprintf( fptr, "    x=%-d\n", x );
+    //fprintf( fptr, "    y=%-d\n", y );
+    //fprintf( fptr, "    icon=%-d\n", isIconified );
+    //fprintf( fptr, "    noEdit=%-d\n", noEdit );
+    //fprintf( fptr, "    macros {\n" );
+    //fprintf( fptr, "      num=%-d\n", numMacros );
+    //for ( i=0; i<numMacros; i++ ) {
+    //  fprintf( fptr, "      %s=%s\n", macros[i], expansions[i] );
+    //}
+    //fprintf( fptr, "    }\n" );
+    fprintf( fptr, "%s\n", fileName );
+    fprintf( fptr, "%-d\n", x-4 );
+    fprintf( fptr, "%-d\n", y-25 );
+    fprintf( fptr, "%-d\n", isIconified );
+    fprintf( fptr, "%-d\n", noEdit );
+    //fprintf( fptr, "    macros {\n" );
+    fprintf( fptr, "%-d\n", numMacros );
     for ( i=0; i<numMacros; i++ ) {
-      fprintf( fptr, "      %s=%s\n", macros[i], expansions[i] );
+      fprintf( fptr, "%s=%s\n", macros[i], expansions[i] );
     }
-    fprintf( fptr, "    }\n" );
+    //fprintf( fptr, "    }\n" );
   }
   else {
     printf( "name=%s\tx=%-d\ty=%-d\ti=%-d\n", fileName, x, y,

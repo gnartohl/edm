@@ -401,6 +401,18 @@ int xScaleMargin (
   double adj_max
 );
 
+int xTimeScaleHeight (
+  char *fontTag,
+  XFontStruct *fs
+);
+
+int xTimeScaleMargin (
+  char *fontTag,
+  XFontStruct *fs,
+  double adj_min,
+  double adj_max
+);
+
 void getXLimitCoords (
   int x,
   int y,

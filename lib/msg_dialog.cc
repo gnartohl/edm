@@ -54,7 +54,7 @@ XmString str;
    top,
    XmNmappedWhenManaged, False,
    XmNmwmDecorations, 0,
-   XmNoverrideRedirect, True,
+   //XmNoverrideRedirect, True,
    NULL );
 
   labelForm = XtVaCreateWidget( "", xmFormWidgetClass, shell, NULL );
@@ -92,7 +92,7 @@ XmString str;
    top,
    XmNmappedWhenManaged, False,
    XmNmwmDecorations, 0,
-   XmNoverrideRedirect, True,
+   //XmNoverrideRedirect, True,
    NULL );
 
   labelForm = XtVaCreateWidget( "", xmFormWidgetClass, shell, NULL );

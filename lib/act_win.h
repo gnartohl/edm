@@ -806,6 +806,8 @@ Time buttonClickTime, deltaTime;
 
 int noRaise;
 
+int noEdit; // used only to save the no-edit state for checkpointing
+
 activeWindowClass::activeWindowClass ( void );
 
 activeWindowClass::~activeWindowClass ( void );

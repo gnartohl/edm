@@ -2277,6 +2277,43 @@ char buf[31+1];
 
 }
 
+int xTimeScaleHeight (
+  char *fontTag,
+  XFontStruct *fs
+) {
+
+int label_tick_height, fontAscent, fontDescent, fontHeight,
+ stringWidth;
+
+  updateFontInfo( " ", fontTag, &fs,
+   &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+
+  label_tick_height = (int) ( 0.8 * (double) ( fontHeight - 2 ) );
+
+  return fontHeight * 2.5 + label_tick_height * 2;
+
+}
+
+int xTimeScaleMargin (
+  char *fontTag,
+  XFontStruct *fs,
+  double adj_min,
+  double adj_max
+) {
+
+int stat, scaleOfs, l;
+char buf[31+1];
+
+  strcpy( buf, "00:00:00" );
+  scaleOfs = XTextWidth( fs, buf, strlen(buf) );
+
+  scaleOfs = scaleOfs / 2 + 6;
+
+  return scaleOfs;
+
+}
+
 void drawXLinearTimeScale (
   Display *d,
   Window win,
@@ -2306,21 +2343,25 @@ void drawXLinearTimeScale (
   int erase
 ) {
 
-int count, ii, iii, x0, y0, x1, y1;
+int count, firstLabel, ii, iii, x0, y0, x1, y1;
 int label_tick_height, major_tick_height, minor_tick_height, first;
 double xFactor, xOffset, labelVal, majorInc, majorVal,
- minorInc, minorVal, lastInc, labelInc, z;
+ minorInc, minorVal, lastInc, labelInc;
 int fontAscent, fontDescent, fontHeight,
  stringWidth;
-char buf[31+1];
+char buf1[31+1], buf2[31+1];
 unsigned int white, black;
 
 double adj_min, adj_max;
 struct tm *t;
+time_t absoluteTime;
+
+  firstLabel = 1;
 
   t = localtime( &absolute_min );
   adj_min = (double) t->tm_sec;
   adj_max = adj_min + rint(numSeconds);
+  absoluteTime = absolute_min;
 
   white = WhitePixel( d, DefaultScreen(d) );
   black = BlackPixel( d, DefaultScreen(d) );
@@ -2402,25 +2443,47 @@ struct tm *t;
     if ( annotateScale ) {
       gc->setFontTag( fontTag, fi );
       y1 = y0 + (int) ( 1.2 * label_tick_height );
+
+      t = localtime( &absoluteTime );
+      sprintf( buf1, "%02d:%02d:%02d", t->tm_hour, t->tm_min, t->tm_sec );
+      sprintf( buf2, "%02d-%02d-%02d", t->tm_mon, t->tm_mday, t->tm_year-100 );
+
+      absoluteTime += (time_t) labelInc;
+
+#if 0
       z = fabs( labelVal - 0.0 ) / labelInc;
       if ( z < 1e-5 ) {
-        formatString( 0.0, buf, 31 );
+        formatString( 0.0, buf1, 31 );
       }
       else {
-        formatString( labelVal, buf, 31 );
+        formatString( labelVal, buf1, 31 );
       }
+#endif
+
       if ( minConstrained ) {
         if ( first ) {
           gc->setFG( black );
           gc->setBG( white );
         }
       }
-      if ( erase )
+      if ( erase ) {
         xEraseImageText( d, win, gc, fs, x0, y1,
-         XmALIGNMENT_CENTER, buf );
-      else
+         XmALIGNMENT_CENTER, buf1 );
+        if ( firstLabel ) {
+          firstLabel = 0;
+          xEraseImageText( d, win, gc, fs, x0, y1+(int)(fontHeight),
+           XmALIGNMENT_CENTER, buf2 );
+	}
+      }
+      else {
         xDrawImageText( d, win, gc, fs, x0, y1,
-         XmALIGNMENT_CENTER, buf );
+         XmALIGNMENT_CENTER, buf1 );
+        if ( firstLabel ) {
+          firstLabel = 0;
+          xDrawImageText( d, win, gc, fs, x0, y1+(int)(fontHeight),
+           XmALIGNMENT_CENTER, buf2 );
+	}
+      }
       if ( minConstrained ) {
         if ( first ) {
           first = 0;
@@ -2546,23 +2609,39 @@ struct tm *t;
   if ( annotateScale ) {
     gc->setFontTag( fontTag, fi );
     y1 = y0 + (int) ( 1.2 * label_tick_height );
+
+    t = localtime( &absoluteTime );
+    sprintf( buf1, "%02d:%02d:%02d", t->tm_hour, t->tm_min, t->tm_sec );
+    sprintf( buf2, "%02d-%02d-%02d", t->tm_mon, t->tm_mday, t->tm_year-100 );
+
+    absoluteTime += (time_t) labelInc;
+
+#if 0
     z = fabs( labelVal - 0.0 ) / labelInc;
     if ( z < 1e-5 ) {
-      formatString( 0.0, buf, 31 );
+      formatString( 0.0, buf1, 31 );
     }
     else {
-      formatString( labelVal, buf, 31 );
+      formatString( labelVal, buf1, 31 );
     }
+#endif
+
     if ( maxConstrained ) {
       gc->setFG( black );
       gc->setBG( white );
     }
-    if ( erase )
+    if ( erase ) {
       xEraseImageText( d, win, gc, fs, x0, y1,
-       XmALIGNMENT_CENTER, buf );
-    else
+       XmALIGNMENT_CENTER, buf1 );
+      xEraseImageText( d, win, gc, fs, x0, y1+(int)(fontHeight),
+       XmALIGNMENT_CENTER, buf2 );
+    }
+    else {
       xDrawImageText( d, win, gc, fs, x0, y1,
-       XmALIGNMENT_CENTER, buf );
+       XmALIGNMENT_CENTER, buf1 );
+      xDrawImageText( d, win, gc, fs, x0, y1+(int)(fontHeight),
+       XmALIGNMENT_CENTER, buf2 );
+    }
     if ( maxConstrained ) {
      gc->setFG( scaleColor );
       gc->setBG( bgColor );
