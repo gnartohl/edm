@@ -75,7 +75,7 @@ ruleClass::ruleClass (
 
 ruleClass::~ruleClass( void );
 
-ruleClass::init (
+void ruleClass::init (
   void *_userPtr,
   int _ruleId,
   RULECALLBACK _userFunc );
