@@ -6,8 +6,8 @@ This is now translated to EPICS.
 
 Popup buttons now created with XmNpopupEnabled set to false.
 
-Add wheel mouse support to up/down button (just experimenting for the
-moment).
+Add wheel mouse support to up/down button, slider, motif slider
+(just experimenting for the moment).
 
 
 Version 1-10-0e-beta
