@@ -1075,12 +1075,12 @@ int i;
     efTrace->beginSubForm();
     efTrace->addTextField( "X ", 30, eBuf->bufXPvName[i],
      activeGraphicClass::MAX_PV_NAME );
-    efTrace->addLabel( " Y " );
+    efTrace->addLabel( "  Y " );
     efTrace->addTextField( "", 30, eBuf->bufYPvName[i],
      activeGraphicClass::MAX_PV_NAME );
-    efTrace->addLabel( "Thk" );
+    efTrace->addLabel( "  Thk" );
     efTrace->addOption( "", "1|2|3|4|5|6|7|8|9", &eBuf->bufLineThk[i] );
-    efTrace->addLabel( "Style " );
+    efTrace->addLabel( "  Style " );
     efTrace->addOption( "", "Solid|Dash", &eBuf->bufLineStyle[i] );
     efTrace->addLabel( " " );
     efTrace->addColorButton( "", actWin->ci, &plotCb[i],
@@ -1092,12 +1092,12 @@ int i;
       efTrace->beginLeftSubForm();
       efTrace->addTextField( "X ", 30, eBuf->bufXPvName[i],
        activeGraphicClass::MAX_PV_NAME );
-      efTrace->addLabel( " Y " );
+      efTrace->addLabel( "  Y " );
       efTrace->addTextField( "", 30, eBuf->bufYPvName[i],
        activeGraphicClass::MAX_PV_NAME );
-      efTrace->addLabel( "Thk" );
+      efTrace->addLabel( "  Thk" );
       efTrace->addOption( "", "1|2|3|4|5|6|7|8|9", &eBuf->bufLineThk[i] );
-      efTrace->addLabel( "Style " );
+      efTrace->addLabel( "  Style " );
       efTrace->addOption( "", "Solid|Dash", &eBuf->bufLineStyle[i] );
       efTrace->addLabel( " " );
       efTrace->addColorButton( "", actWin->ci, &plotCb[i],
