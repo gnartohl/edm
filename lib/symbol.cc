@@ -26,6 +26,23 @@
 
 #ifdef __epics__
 
+static void symUnconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activeSymbolClass *aso = (activeSymbolClass *) client;
+
+  if ( !aso->init ) {
+    aso->needToDrawUnconnected = 1;
+    aso->needDraw = 1;
+    aso->actWin->addDefExeNode( aso->aglPtr );
+  }
+
+  aso->unconnectedTimer = 0;
+
+}
+
 static void symbol_monitor_control_connect_state (
   struct connection_handler_args arg )
 {
@@ -451,6 +468,11 @@ int i;
   delete btnMotionActionHead;
 
   if ( name ) delete name;
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
 
 }
 
@@ -1213,13 +1235,15 @@ activeGraphicListPtr cur;
 pvColorClass tmpColor;
 
   if ( !init ) {
-    tmpColor.setColorIndex( 0, actWin->ci );
-    actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( tmpColor.getDisconnected() );
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x, y, w, h );
-    actWin->executeGc.restoreFg();
-    needToEraseUnconnected = 1;
+    if ( needToDrawUnconnected ) {
+      tmpColor.setColorIndex( 0, actWin->ci );
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( tmpColor.getDisconnected() );
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
+      actWin->executeGc.restoreFg();
+      needToEraseUnconnected = 1;
+    }
   }
   else if ( needToEraseUnconnected ) {
     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
@@ -1315,6 +1339,8 @@ activeGraphicListPtr cur;
     needErase = needDraw = needRefresh = needConnectInit =
      needColorInit = needColorRefresh = 0;
     needToEraseUnconnected = 0;
+    needToDrawUnconnected = 0;
+    unconnectedTimer = 0;
     for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) needConnect[i] = 0;
     aglPtr = ptr;
     iValue = 0; /* this get set via OR/AND operations */
@@ -1363,6 +1389,11 @@ activeGraphicListPtr cur;
     if ( !opComplete ) {
 
       opStat = 1;
+
+      if ( !unconnectedTimer ) {
+        unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+         2000, symUnconnectedTimeout, this );
+      }
 
       if ( controlExists ) {
 

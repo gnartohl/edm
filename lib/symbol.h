@@ -57,6 +57,10 @@ static char *dragNameTruthTable[] = {
   activeSymbolClass_str6,
 };
 
+static void symUnconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void symbol_monitor_control_connect_state (
   struct connection_handler_args arg );
 
@@ -169,13 +173,19 @@ int binaryTruthTable, bufBinaryTruthTable;
 entryListBase *pvNamesObj;
 
 int needErase, needDraw, needConnectInit, needConnect[SYMBOL_K_MAX_PVS],
- needRefresh, needColorInit, needColorRefresh, needToEraseUnconnected;
+ needRefresh, needColorInit, needColorRefresh, needToDrawUnconnected,
+ needToEraseUnconnected;
+int unconnectedTimer;
 
 undoClass undoObj;
 
 int orientation, bufOrientation, prevOr;
 
 public:
+
+friend void symUnconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void symbol_monitor_control_connect_state (
   struct connection_handler_args arg );
