@@ -30,7 +30,7 @@
 #endif
 
 #define DSC_MAJOR_VERSION 1
-#define DSC_MINOR_VERSION 1
+#define DSC_MINOR_VERSION 2
 #define DSC_RELEASE 0
 
 #define DYNSYMBOL_K_NUM_STATES 32
@@ -48,6 +48,12 @@ static char *dragName[] = {
 static void dsc_updateControl (
   XtPointer client,
   XtIntervalId *id );
+
+static void dynSymbol_monitor_color_connect_state (
+  struct connection_handler_args arg );
+
+static void dynSymbol_colorUpdate (
+  struct event_handler_args ast_args );
 
 static void dynSymbol_monitor_gateUp_connect_state (
   struct connection_handler_args arg );
@@ -105,8 +111,8 @@ void *voidHead[DYNSYMBOL_K_NUM_STATES]; // cast to activeGraphicListPtr
                                      // array at runtime
 
 #ifdef __epics__
-chid controlPvId, gateUpPvId, gateDownPvId;
-evid controlEventId, gateUpEventId, gateDownEventId;
+chid controlPvId, gateUpPvId, gateDownPvId, colorPvId;
+evid controlEventId, gateUpEventId, gateDownEventId, colorEventId;
 #endif
 
 int curCount, timerActive, up, down;
@@ -115,16 +121,19 @@ XtIntervalId timer;
 int useGate, continuous;
 double rate;
 
-unsigned int gateUpPvConnected, gateDownPvConnected;
-int init, active, activeMode, opComplete, gateUpExists, gateDownExists;
+unsigned int gateUpPvConnected, gateDownPvConnected, colorPvConnected;
+int init, active, activeMode, opComplete, gateUpExists, gateDownExists,
+ colorExists;
 int gateDownValue, gateUpValue;
+double curColorV;
 
 int iValue;
 double controlVal, controlV, curControlV;
 double stateMinValue[DYNSYMBOL_K_NUM_STATES];
 double stateMaxValue[DYNSYMBOL_K_NUM_STATES];
 char dynSymbolFileName[127+1];
-expStringClass controlPvExpStr, gateUpPvExpStr, gateDownPvExpStr;
+expStringClass controlPvExpStr, gateUpPvExpStr, gateDownPvExpStr,
+ colorPvExpStr;
 
 btnActionListPtr btnDownActionHead;
 btnActionListPtr btnUpActionHead;
@@ -146,7 +155,7 @@ int bufH;
 double bufStateMinValue[DYNSYMBOL_K_NUM_STATES];
 double bufStateMaxValue[DYNSYMBOL_K_NUM_STATES];
 char bufDynSymbolFileName[127+1], bufControlPvName[39+1],
- bufGateDownPvName[39+1], bufGateUpPvName[39+1];
+ bufGateDownPvName[39+1], bufGateUpPvName[39+1], bufColorPvName[39+1];
 int bufNumStates, bufUseOriginalSize, bufUseGate, bufContinuous;
 double bufRate;
 int bufGateDownValue, bufGateUpValue;
@@ -157,12 +166,19 @@ entryListBase *pvNamesObj;
 int needErase, needDraw, needRefresh;
 int needGateUp, needGateUpConnect;
 int needGateDown, needGateDownConnect;
+int needColorInit, needColorRefresh;
 
 public:
 
 friend void dsc_updateControl (
   XtPointer client,
   XtIntervalId *id );
+
+friend void dynSymbol_monitor_color_connect_state (
+  struct connection_handler_args arg );
+
+friend void dynSymbol_colorUpdate (
+  struct event_handler_args ast_args );
 
 friend void dynSymbol_monitor_gateUp_connect_state (
   struct connection_handler_args arg );
@@ -361,6 +377,9 @@ void activeDynSymbolClass::changePvNames (
   char *visPvs[],
   int numAlarmPvs,
   char *alarmPvs[] );
+
+void activeDynSymbolClass::updateColors (
+  double colorValue );
 
 int activeDynSymbolClass::rotate (
   int xOrigin,

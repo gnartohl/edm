@@ -57,6 +57,33 @@ activeSymbolClass *aso = (activeSymbolClass *) ptr->objPtr;
 
 }
 
+static void symbol_monitor_color_connect_state (
+  struct connection_handler_args arg )
+{
+
+activeSymbolClass *aso = (activeSymbolClass *) ca_puser(arg.chid);
+
+  if ( arg.op == CA_OP_CONN_UP ) {
+
+    aso->needColorInit = 1;
+    aso->colorPvConnected = 1;
+
+  }
+  else {
+
+    aso->colorPvConnected = 0;
+    aso->active = 0;
+    aso->bufInvalidate();
+    aso->needDraw = 1;
+
+  }
+
+  aso->actWin->appCtx->proc->lock();
+  aso->actWin->addDefExeNode( aso->aglPtr );
+  aso->actWin->appCtx->proc->unlock();
+
+}
+
 static void symbol_controlUpdate (
   struct event_handler_args ast_args )
 {
@@ -79,6 +106,25 @@ activeSymbolClass *aso = (activeSymbolClass *) ptr->objPtr;
     }
 
     aso->needRefresh = 1;
+    aso->actWin->appCtx->proc->lock();
+    aso->actWin->addDefExeNode( aso->aglPtr );
+    aso->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
+static void symbol_colorUpdate (
+  struct event_handler_args ast_args )
+{
+
+activeSymbolClass *aso = (activeSymbolClass *) ca_puser(ast_args.chid);
+
+  if ( aso->active ) {
+
+    aso->curColorV = *( (double *) ast_args.dbr );
+
+    aso->needColorRefresh = 1;
     aso->actWin->appCtx->proc->lock();
     aso->actWin->addDefExeNode( aso->aglPtr );
     aso->actWin->appCtx->proc->unlock();
@@ -137,6 +183,8 @@ int stat, resizeStat, i, saveW, saveH, saveX, saveY;
     else
       break; /* pv entries on form must be contiguous */
   }
+
+  aso->colorPvExpStr.setRaw( aso->bufColorPvName );
 
   strncpy( aso->symbolFileName, aso->bufSymbolFileName, 127 );
 
@@ -285,7 +333,6 @@ activeSymbolClass::activeSymbolClass ( void ) {
 
 activeGraphicListPtr head;
 int i;
-char *p = NULL;
 
   name = new char[strlen("activeSymbolClass")+1];
   strcpy( name, "activeSymbolClass" );
@@ -528,6 +575,11 @@ char title[32], *ptr;
 
   strncpy( bufSymbolFileName, symbolFileName, 127 );
 
+  if ( colorPvExpStr.getRaw() )
+    strncpy( bufColorPvName, colorPvExpStr.getRaw(), 39 );
+  else
+    strncpy( bufColorPvName, "", 39 );
+
   for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
     if ( controlPvExpStr[i].getRaw() )
       strncpy( bufControlPvName[i], controlPvExpStr[i].getRaw(), 39 );
@@ -569,6 +621,8 @@ char title[32], *ptr;
   for ( i=1; i<SYMBOL_K_MAX_PVS; i++ ) {
     ef.addTextField( " ", 27, bufControlPvName[i], 39 );
   }
+
+  ef.addTextField( activeSymbolClass_str29, 27, bufColorPvName, 39 );
 
   for ( i=0; i<SYMBOL_K_NUM_STATES; i++ ) {
     minPtr[i] = &bufStateMinValue[i];
@@ -864,6 +918,12 @@ int i;
 
   }
 
+  // version 1.5.0
+  if ( colorPvExpStr.getRaw() )
+    writeStringToFile( f, colorPvExpStr.getRaw() );
+  else
+    writeStringToFile( f, "" );
+
   return 1;
 
 }
@@ -937,6 +997,11 @@ float val;
   }
   else {
     orientation = OR_ORIG;
+  }
+
+  if ( ( major > 1 ) || ( minor > 4 ) ) {
+    readStringFromFile( string, 39, f ); actWin->incLine();
+    colorPvExpStr.setRaw( string );
   }
 
   saveW = w;
@@ -1174,7 +1239,8 @@ activeGraphicListPtr cur;
 
   case 1:
 
-    needErase = needDraw = needRefresh = needConnectInit = 0;
+    needErase = needDraw = needRefresh = needConnectInit =
+     needColorInit = needColorRefresh = 0;
     for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) needConnect[i] = 0;
     aglPtr = ptr;
     iValue = 0; /* this get set via OR/AND operations */
@@ -1207,6 +1273,17 @@ activeGraphicListPtr cur;
     }
 
     controlExists = 1;
+
+    if ( blank( colorPvExpStr.getExpanded() ) ) {
+      colorExists = 0;
+    }
+    else {
+      colorExists = 1;
+    }
+
+#ifdef __epics__
+    colorEventId = 0;
+#endif
 
     break;
 
@@ -1242,6 +1319,19 @@ activeGraphicListPtr cur;
         init = 1;
         active = 1;
         index = 1;
+
+      }
+
+      if ( colorExists ) {
+
+#ifdef __epics__
+        stat = ca_search_and_connect( colorPvExpStr.getExpanded(),
+         &colorPvId, symbol_monitor_color_connect_state, this );
+        if ( stat != ECA_NORMAL ) {
+          printf( activeSymbolClass_str24 );
+          opStat = 0;
+        }
+#endif
 
       }
 
@@ -1311,6 +1401,19 @@ activeGraphicListPtr cur;
         printf( activeSymbolClass_str26 );
     }
 
+  }
+
+  if ( colorEventId ) {
+    stat = ca_clear_event( colorEventId );
+    if ( stat != ECA_NORMAL )
+      printf( activeSymbolClass_str25 );
+    colorEventId = 0;
+  }
+
+  if ( colorExists ) {
+    stat = ca_clear_channel( colorPvId );
+    if ( stat != ECA_NORMAL )
+      printf( activeSymbolClass_str26 );
   }
 
 #endif
@@ -2145,7 +2248,7 @@ int i;
 void activeSymbolClass::executeDeferred ( void ) {
 
 double v;
-int stat, i, nci, nc[SYMBOL_K_MAX_PVS], nr, ne, nd;
+int stat, i, nci, nc[SYMBOL_K_MAX_PVS], nr, ne, nd, ncolori, ncr;
 
   if ( actWin->isIconified ) return;
 
@@ -2159,6 +2262,8 @@ int stat, i, nci, nc[SYMBOL_K_MAX_PVS], nr, ne, nd;
   nr = needRefresh; needRefresh = 0;
   ne = needErase; needErase = 0;
   nd = needDraw; needDraw = 0;
+  ncolori = needColorInit; needColorInit = 0;
+  ncr = needColorRefresh; needColorRefresh = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
@@ -2169,7 +2274,14 @@ int stat, i, nci, nc[SYMBOL_K_MAX_PVS], nr, ne, nd;
   if ( nci ) {
 
     if ( !notControlPvConnected ) {
-      active = 1;
+      if ( colorExists ) {
+        if ( colorPvConnected ) {
+          active = 1;
+	}
+      }
+      else {
+        active = 1;
+      }
     }
 
     for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
@@ -2190,6 +2302,25 @@ int stat, i, nci, nc[SYMBOL_K_MAX_PVS], nr, ne, nd;
       }
 
     }
+
+  }
+
+//----------------------------------------------------------------------------
+
+  if ( ncolori ) {
+
+    if ( !notControlPvConnected ) {
+      if ( colorExists && colorPvConnected ) {
+        active = 1;
+      }
+    }
+
+    stat = ca_add_masked_array_event( DBR_DOUBLE, 1,
+     colorPvId, symbol_colorUpdate, (void *) this,
+     (float) 0.0, (float) 0.0, (float) 0.0, &colorEventId,
+     DBE_VALUE );
+    if ( stat != ECA_NORMAL )
+      printf( activeSymbolClass_str27 );
 
   }
 
@@ -2235,6 +2366,14 @@ int stat, i, nci, nc[SYMBOL_K_MAX_PVS], nr, ne, nd;
 //      drawActive();
     stat = smartDrawAllActive();
 //      actWin->requestActiveRefresh();
+  }
+
+//----------------------------------------------------------------------------
+
+  if ( ncr ) {
+
+    updateColors( curColorV );
+
   }
 
 //----------------------------------------------------------------------------
@@ -2881,5 +3020,45 @@ int stat;
   if ( !( stat & 1 ) ) XBell( actWin->d, 50 );
 
   return 1;
+
+}
+
+void activeSymbolClass::updateColors (
+  double colorValue
+) {
+
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+int i;
+
+  for ( i=0; i<numStates; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while ( cur != head ) {
+
+      cur->node->updateColors( colorValue );
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+  if ( ( index < 0 ) || ( index >= numStates ) ) return;
+
+  head = (activeGraphicListPtr) voidHead[index];
+
+  cur = head->flink;
+  while ( cur != head ) {
+
+    cur->node->eraseUnconditional();
+
+    cur = cur->flink;
+
+  }
+
+  smartDrawAllActive();
 
 }

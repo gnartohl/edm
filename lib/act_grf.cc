@@ -1488,6 +1488,15 @@ int activeGraphicClass::eraseActive ( void ) {
 
 }
 
+int activeGraphicClass::eraseUnconditional ( void ) {
+
+int stat;
+
+  stat = eraseActive();
+  return stat;
+
+}
+
 void activeGraphicClass::bufInvalidate ( void ) {
 
 }
@@ -2910,3 +2919,13 @@ int activeGraphicClass::undoFlip (
   return 1;
 
 }
+
+void activeGraphicClass::updateColors (
+  double colorValue )
+{
+
+  return;
+
+}
+
+

@@ -576,6 +576,8 @@ virtual int activeGraphicClass::setValue ( void *ptr ) {
 
 virtual int activeGraphicClass::eraseActive ( void );
 
+virtual int activeGraphicClass::eraseUnconditional ( void );
+
 virtual int activeGraphicClass::drawActive ( void );
 
 virtual int activeGraphicClass::drawActive (
@@ -937,6 +939,9 @@ virtual int activeGraphicClass::undoFlip (
   int y,
   int w,
   int h );
+
+virtual void activeGraphicClass::updateColors (
+  double colorValue );
 
 };
 

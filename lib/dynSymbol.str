@@ -34,5 +34,6 @@
 #define activeDynSymbolClass_str31 "ca_add_masked_array_event failed\n"
 #define activeDynSymbolClass_str32 "ca_add_masked_array_event failed\n"
 #define activeDynSymbolClass_str33 "Symbol File Name"
+#define activeDynSymbolClass_str34 "Color PV"
 
 #endif

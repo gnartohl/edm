@@ -33,27 +33,42 @@ activeDynSymbolClass *dso = (activeDynSymbolClass *) client;
 
   if ( !dso->timerActive ) return;
 
-  if ( dso->useGate ) {
-    if ( dso->up )
-      (dso->curCount)++;
-    else if ( dso->down )
-      (dso->curCount)--;
-    else
-      dso->timerActive = 0;
-  }
-  else {
-    (dso->curCount)++;
-  }
-
   if ( dso->continuous ) {
-    if ( dso->up ) {
+
+    if ( dso->useGate ) {
+
+      if ( dso->up ) { // use only the gate-up pv
+        (dso->curCount)++;
+        if ( dso->curCount > dso->numStates-1 ) dso->curCount = 1;
+      }
+      else {
+        dso->timerActive = 0;
+      }
+
+    }
+    else {
+
+      dso->timerActive = 1;
+      (dso->curCount)++;
       if ( dso->curCount > dso->numStates-1 ) dso->curCount = 1;
+
     }
-    else if ( dso->down ) {
-      if ( dso->curCount < 1 ) dso->curCount = dso->numStates-1;
-    }
+
   }
   else {
+
+    if ( dso->useGate ) {
+      if ( dso->up )
+        (dso->curCount)++;
+      else if ( dso->down )
+        (dso->curCount)--;
+      else
+        dso->timerActive = 0;
+    }
+    else {
+      (dso->curCount)++;
+    }
+
     if ( dso->up ) {
       if ( dso->curCount > dso->numStates-1 ) {
         dso->curCount = dso->numStates-1;
@@ -66,6 +81,7 @@ activeDynSymbolClass *dso = (activeDynSymbolClass *) client;
         dso->timerActive = 0;
       }
     }
+
   }
 
   dso->curControlV = (double) (dso->curCount);
@@ -85,6 +101,52 @@ activeDynSymbolClass *dso = (activeDynSymbolClass *) client;
 }
 
 #ifdef __epics__
+
+static void dynSymbol_monitor_color_connect_state (
+  struct connection_handler_args arg )
+{
+
+activeDynSymbolClass *dso = (activeDynSymbolClass *) ca_puser(arg.chid);
+
+  if ( arg.op == CA_OP_CONN_UP ) {
+
+    dso->needColorInit = 1;
+    dso->colorPvConnected = 1;
+
+  }
+  else {
+
+    dso->colorPvConnected = 0;
+    dso->active = 0;
+    dso->bufInvalidate();
+    dso->needDraw = 1;
+
+  }
+
+  dso->actWin->appCtx->proc->lock();
+  dso->actWin->addDefExeNode( dso->aglPtr );
+  dso->actWin->appCtx->proc->unlock();
+
+}
+
+static void dynSymbol_colorUpdate (
+  struct event_handler_args arg )
+{
+
+activeDynSymbolClass *dso = (activeDynSymbolClass *) ca_puser(arg.chid);
+
+  if ( dso->active ) {
+
+    dso->curColorV = *( (double *) arg.dbr );
+
+    dso->needColorRefresh = 1;
+    dso->actWin->appCtx->proc->lock();
+    dso->actWin->addDefExeNode( dso->aglPtr );
+    dso->actWin->appCtx->proc->unlock();
+
+  }
+
+}
 
 static void dynSymbol_monitor_gateUp_connect_state (
   struct connection_handler_args arg )
@@ -210,6 +272,7 @@ int stat, resizeStat, saveW, saveH;
 
   dso->gateUpPvExpStr.setRaw( dso->bufGateUpPvName );
   dso->gateDownPvExpStr.setRaw( dso->bufGateDownPvName );
+  dso->colorPvExpStr.setRaw( dso->bufColorPvName );
   dso->useGate = dso->bufUseGate;
   dso->gateUpValue = dso->bufGateUpValue;
   dso->gateDownValue = dso->bufGateDownValue;
@@ -573,6 +636,11 @@ char title[32], *ptr;
 
   bufInitialIndex = initialIndex;
 
+  if ( colorPvExpStr.getRaw() )
+    strncpy( bufColorPvName, colorPvExpStr.getRaw(), 39 );
+  else
+    strncpy( bufColorPvName, "", 39 );
+
 //    ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
 //     &actWin->appCtx->entryFormX,
 //     &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -605,6 +673,8 @@ char title[32], *ptr;
   ef.addTextField( activeDynSymbolClass_str21, 27, &bufRate );
 
   ef.addTextField( activeDynSymbolClass_str22, 27, &bufInitialIndex );
+
+  ef.addTextField( activeDynSymbolClass_str34, 27, bufColorPvName, 39 );
 
   return 1;
 
@@ -863,6 +933,12 @@ int activeDynSymbolClass::save (
   writeStringToFile( f, this->id );
   fprintf( f, "%-d\n", initialIndex );
 
+  // version 1.2.0
+  if ( colorPvExpStr.getRaw() )
+    writeStringToFile( f, colorPvExpStr.getRaw() );
+  else
+    writeStringToFile( f, "" );
+
   return 1;
 
 }
@@ -923,6 +999,11 @@ char string[39+1];
   else {
     strcpy( this->id, "" );
     initialIndex = 1;
+  }
+
+  if ( ( major > 1 ) || ( minor > 1 ) ) {
+    readStringFromFile( string, 39, f ); actWin->incLine();
+    colorPvExpStr.setRaw( string );
   }
 
   saveW = w;
@@ -1130,7 +1211,7 @@ activeGraphicListPtr cur;
   case 1:
 
     needErase = needDraw = needRefresh = needGateUpConnect = needGateUp =
-     needGateDownConnect = needGateDown = 0;
+     needGateDownConnect = needGateDown = needColorInit = needColorRefresh = 0;
     aglPtr = ptr;
     iValue = 0; /* this get set via OR/AND operations */
     prevIndex = -1;
@@ -1171,6 +1252,13 @@ activeGraphicListPtr cur;
 
     }
 
+    if ( blank( colorPvExpStr.getExpanded() ) ) {
+      colorExists = 0;
+    }
+    else {
+      colorExists = 1;
+    }
+
     break;
 
   case 2:
@@ -1204,6 +1292,15 @@ activeGraphicListPtr cur;
         }
       }
 
+      if ( colorExists ) {
+        stat = ca_search_and_connect( colorPvExpStr.getExpanded(),
+         &colorPvId, dynSymbol_monitor_color_connect_state, this );
+        if ( stat != ECA_NORMAL ) {
+          printf( activeDynSymbolClass_str26 );
+          opStat = 0;
+        }
+      }
+
 #endif
 
       // initialIndex is used only when no pv's are connected
@@ -1221,7 +1318,7 @@ activeGraphicListPtr cur;
 
       if ( opComplete ) {
 
-        if ( continuous ) {
+        if ( continuous && !useGate ) {
           timer = XtAppAddTimeOut( actWin->appCtx->appContext(),
            (unsigned long) 1000, dsc_updateControl, this );
           timerActive = 1;
@@ -1302,6 +1399,13 @@ activeGraphicListPtr cur;
     gateDownEventId = 0;
   }
 
+  if ( colorEventId ) {
+    stat = ca_clear_event( colorEventId );
+    if ( stat != ECA_NORMAL )
+      printf( activeDynSymbolClass_str28 );
+    colorEventId = 0;
+  }
+
   if ( gateUpExists ) {
     stat = ca_clear_channel( gateUpPvId );
     if ( stat != ECA_NORMAL )
@@ -1310,6 +1414,12 @@ activeGraphicListPtr cur;
 
   if ( gateDownExists ) {
     stat = ca_clear_channel( gateDownPvId );
+    if ( stat != ECA_NORMAL )
+      printf( activeDynSymbolClass_str30 );
+  }
+
+  if ( colorExists ) {
+    stat = ca_clear_channel( colorPvId );
     if ( stat != ECA_NORMAL )
       printf( activeDynSymbolClass_str30 );
   }
@@ -2026,7 +2136,7 @@ int i;
 void activeDynSymbolClass::executeDeferred ( void ) {
 
 double v;
-int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd;
+int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd, ncolori, ncr;
 
   if ( actWin->isIconified ) return;
 
@@ -2039,6 +2149,8 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd;
   nr = needRefresh; needRefresh = 0;
   ne = needErase; needErase = 0;
   nd = needDraw; needDraw = 0;
+  ncolori = needColorInit; needColorInit = 0;
+  ncr = needColorRefresh; needColorRefresh = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
@@ -2059,7 +2171,8 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd;
 
     }
 
-    if ( gateDownPvConnected || !gateDownExists ) {
+    if ( ( gateDownPvConnected || !gateDownExists ) &&
+         ( colorPvConnected || !colorExists ) ) {
       active = 1;
     }
 
@@ -2078,7 +2191,29 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd;
 
     }
 
-    if ( gateUpPvConnected || !gateUpExists ) {
+    if ( ( gateUpPvConnected || !gateUpExists ) &&
+         ( colorPvConnected || !colorExists ) ) {
+      active = 1;
+    }
+
+  }
+
+  if ( ncolori ) {
+
+    if ( !colorEventId ) {
+
+      stat = ca_add_masked_array_event( DBR_DOUBLE, 1,
+       colorPvId, dynSymbol_colorUpdate, (void *) this,
+       (float) 0.0, (float) 0.0, (float) 0.0, &colorEventId,
+       DBE_VALUE );
+      if ( stat != ECA_NORMAL )
+        printf( activeDynSymbolClass_str32 );
+
+    }
+
+    if ( ( gateUpPvConnected || !gateUpExists ) &&
+         ( gateDownPvConnected || !gateDownExists ) ) {
+
       active = 1;
     }
 
@@ -2095,15 +2230,14 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd;
       controlV = curCount;
       index = curCount;
       init = 1;
+      stat = smartDrawAllActive();
     }
 
     up = 1;
     down = 0;
-    if ( !continuous ) {
-      timer = XtAppAddTimeOut( actWin->appCtx->appContext(),
-       (unsigned long) (rate*1000.0), dsc_updateControl, this );
-      timerActive = 1;
-    }
+    timer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+     (unsigned long) (rate*1000.0), dsc_updateControl, this );
+    timerActive = 1;
 
   }
 
@@ -2116,6 +2250,7 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd;
       controlV = curCount;
       index = curCount;
       init = 1;
+      stat = smartDrawAllActive();
     }
 
     up = 0;
@@ -2129,6 +2264,23 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd;
   }
 
 //----------------------------------------------------------------------------
+
+  if ( ncr ) {
+
+    if ( !init ) {
+      curCount = numStates-1;
+      controlV = curCount;
+      index = curCount;
+      init = 1;
+      stat = smartDrawAllActive();
+    }
+
+    updateColors( curColorV );
+
+  }
+
+//----------------------------------------------------------------------------
+
 
   if ( nr ) {
 
@@ -2304,6 +2456,46 @@ void activeDynSymbolClass::changePvNames (
       gateDownPvExpStr.setRaw( ctlPvs[0] );
     }
   }
+
+}
+
+void activeDynSymbolClass::updateColors (
+  double colorValue )
+{
+
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+int i;
+
+  for ( i=0; i<numStates; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while ( cur != head ) {
+
+      cur->node->updateColors( colorValue );
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+  if ( ( index < 0 ) || ( index >= numStates ) ) return;
+
+  head = (activeGraphicListPtr) voidHead[index];
+
+  cur = head->flink;
+  while ( cur != head ) {
+
+    cur->node->eraseUnconditional();
+
+    cur = cur->flink;
+
+  }
+
+  smartDrawAllActive();
 
 }
 

@@ -29,5 +29,6 @@
 #define activeSymbolClass_str26 "ca_clear_channel failure\n"
 #define activeSymbolClass_str27 "ca_add_masked_array_event failed\n"
 #define activeSymbolClass_str28 "value"
+#define activeSymbolClass_str29 "Color PV"
 
 #endif

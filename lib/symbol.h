@@ -29,7 +29,7 @@
 #include "cadef.h"
 
 #define ASC_MAJOR_VERSION 1
-#define ASC_MINOR_VERSION 4
+#define ASC_MINOR_VERSION 5
 #define ASC_RELEASE 0
 
 #define SYMBOL_K_NUM_STATES 32
@@ -60,7 +60,13 @@ static char *dragNameTruthTable[] = {
 static void symbol_monitor_control_connect_state (
   struct connection_handler_args arg );
 
+static void symbol_monitor_color_connect_state (
+  struct connection_handler_args arg );
+
 static void symbol_controlUpdate (
+  struct event_handler_args ast_args );
+
+static void symbol_colorUpdate (
   struct event_handler_args ast_args );
 
 static void symbolSetItem (
@@ -116,15 +122,20 @@ int numPvs;
 chid controlPvId[SYMBOL_K_MAX_PVS];
 evid controlEventId[SYMBOL_K_MAX_PVS];
 
+chid colorPvId;
+evid colorEventId;
+
 unsigned int notControlPvConnected;
-int init, active, activeMode, opComplete, controlExists;
+int init, active, activeMode, opComplete, controlExists, colorExists,
+ colorPvConnected;
 
 int iValue;
-double controlVals[SYMBOL_K_MAX_PVS], controlV, curControlV;
+double controlVals[SYMBOL_K_MAX_PVS], controlV, curControlV, curColorV;
 double stateMinValue[SYMBOL_K_NUM_STATES];
 double stateMaxValue[SYMBOL_K_NUM_STATES];
 char symbolFileName[127+1];
 expStringClass controlPvExpStr[SYMBOL_K_MAX_PVS];
+expStringClass colorPvExpStr;
 
 btnActionListPtr btnDownActionHead;
 btnActionListPtr btnUpActionHead;
@@ -146,6 +157,7 @@ int bufH;
 double bufStateMinValue[SYMBOL_K_NUM_STATES];
 double bufStateMaxValue[SYMBOL_K_NUM_STATES];
 char bufSymbolFileName[127+1], bufControlPvName[SYMBOL_K_MAX_PVS][39+1];
+char bufColorPvName[39+1];
 int bufNumStates, bufUseOriginalSize;
 
 int binaryTruthTable, bufBinaryTruthTable;
@@ -153,7 +165,7 @@ int binaryTruthTable, bufBinaryTruthTable;
 entryListBase *pvNamesObj;
 
 int needErase, needDraw, needConnectInit, needConnect[SYMBOL_K_MAX_PVS],
- needRefresh;
+ needRefresh, needColorInit, needColorRefresh;
 
 undoClass undoObj;
 
@@ -164,7 +176,13 @@ public:
 friend void symbol_monitor_control_connect_state (
   struct connection_handler_args arg );
 
+friend void symbol_monitor_color_connect_state (
+  struct connection_handler_args arg );
+
 friend void symbol_controlUpdate (
+  struct event_handler_args ast_args );
+
+friend void symbol_colorUpdate (
   struct event_handler_args ast_args );
 
 friend void symbolSetItem (
@@ -450,6 +468,9 @@ int activeSymbolClass::undoFlip (
   int y,
   int w,
   int h );
+
+void activeSymbolClass::updateColors (
+  double colorValue );
 
 };
 
