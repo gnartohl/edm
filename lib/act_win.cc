@@ -1850,6 +1850,7 @@ static int undo (
 int stat;
 
   stat = awo->undoObj.performUndo();
+  awo->setChanged();
   awo->clear();
   awo->refresh();
   awo->updateMasterSelection();
@@ -6393,6 +6394,7 @@ unsigned int mask;
 
             awo->currentPointObject->lineEditCancel();
             stat = awo->undoObj.performUndo();
+            awo->setChanged();
             awo->clear();
             awo->refresh();
             awo->updateMasterSelection();
