@@ -1,12 +1,12 @@
 #ifndef __color_list_str
 #define __color_list_str 1
 
-#define colorListClass_str1 (char *) "File "
-#define colorListClass_str2 (char *) "Filter "
-#define colorListClass_str3 (char *) "Prefix "
-#define colorListClass_str4 (char *) "Upper"
-#define colorListClass_str5 (char *) "Lower"
-#define colorListClass_str6 (char *) "Dismiss"
-#define colorListClass_str7 (char *) "Color Names"
+#define colorListClass_str1 (char *) (char *) "File "
+#define colorListClass_str2 (char *) (char *) "Filter "
+#define colorListClass_str3 (char *) (char *) "Prefix "
+#define colorListClass_str4 (char *) (char *) "Upper"
+#define colorListClass_str5 (char *) (char *) "Lower"
+#define colorListClass_str6 (char *) (char *) "Dismiss"
+#define colorListClass_str7 (char *) (char *) "Color Names"
 
 #endif

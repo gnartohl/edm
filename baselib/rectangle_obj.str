@@ -9,7 +9,7 @@
 #define activeRectangleClass_str6 (char *) "X"
 #define activeRectangleClass_str7 (char *) "Y"
 #define activeRectangleClass_str8 (char *) "Width"
-#define activeRectangleClass_str9 "Height"
+#define activeRectangleClass_str9 (char *) "Height"
 #define activeRectangleClass_str10 (char *) "Line Thk"
 #define activeRectangleClass_str11 (char *) "0|1|2|3|4|5|6|7|8|9|10"
 #define activeRectangleClass_str12 (char *) "Line Style"

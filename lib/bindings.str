@@ -1,10 +1,10 @@
 #ifndef __bindings_str
 #define __bindings_str 1
 
-#define objBindingClass_str1 "Cannot open object file - %s\n"
-#define objBindingClass_str2 "No objects in file - %s\n"
-#define objBindingClass_str3 "Insufficient virtual memory\n"
-#define objBindingClass_str4 "Object definition syntax error\n"
-#define objBindingClass_str5 "Number of items does not match contents in %s\n"
+#define objBindingClass_str1 (char *) "Cannot open object file - %s\n"
+#define objBindingClass_str2 (char *) "No objects in file - %s\n"
+#define objBindingClass_str3 (char *) "Insufficient virtual memory\n"
+#define objBindingClass_str4 (char *) "Object definition syntax error\n"
+#define objBindingClass_str5 (char *) "Number of items does not match contents in %s\n"
 
 #endif
