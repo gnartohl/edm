@@ -1805,7 +1805,7 @@ int stat;
 fontNameListPtr cur;
 double radians = rotation * 0.017453;
 double s, c, pixels;
-int term;
+double term;
 char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
 
   stat = avl_get_match( this->fontNameListH, (void *) fontTag,
@@ -1847,13 +1847,15 @@ char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
   Strncat( name, "-", len );
   Strncat( name, "-", len );
 
-  tk = strtok_r( NULL, "-", &context );		// pixels
-  Strncat( name, "*", len );
+  tk = strtok_r( NULL, "-", &context );		// points
+  Strncat( name, "0", len );
   Strncat( name, "-", len );
+
+  tk = strtok_r( NULL, "-", &context );		// pixels
 
   strncpy( matrix, "[", 63 );
 
-  pixels = atof( tk );
+  pixels = atof( tk ) / 10.0;
 
   if ( c < 0.0 ) {
     strcpy( sign, "~" );
@@ -1862,8 +1864,8 @@ char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
     strcpy( sign, "+" );
   }
 
-  term = (int) ( fabs(c) * pixels );
-  sprintf( tmp, "%s%-d", sign, term );
+  term = fabs(c) * pixels;
+  sprintf( tmp, "%s%-.1f", sign, term );
   Strncat( matrix, tmp, 63 );
 
   if ( s < 0.0 ) {
@@ -1873,8 +1875,8 @@ char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
     strcpy( sign, "+" );
   }
 
-  term = (int) ( fabs(s) * pixels );
-  sprintf( tmp, "%s%-d", sign, term );
+  term = fabs(s) * pixels;
+  sprintf( tmp, "%s%-.1f", sign, term );
   Strncat( matrix, tmp, 63 );
 
   if ( s < 0.0 ) {
@@ -1884,8 +1886,8 @@ char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
     strcpy( sign, "~" );
   }
 
-  term = (int) ( fabs(s) * pixels );
-  sprintf( tmp, "%s%-d", sign, term );
+  term = fabs(s) * pixels;
+  sprintf( tmp, "%s%-.1f", sign, term );
   Strncat( matrix, tmp, 63 );
 
   if ( c < 0.0 ) {
@@ -1895,16 +1897,14 @@ char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
     strcpy( sign, "+" );
   }
 
-  term = (int) ( fabs(c) * pixels );
-  sprintf( tmp, "%s%-d", sign, term );
+  term = fabs(c) * pixels;
+  sprintf( tmp, "%s%-.1f", sign, term );
   Strncat( matrix, tmp, 63 );
 
   Strncat( matrix, "]", 63 );
 
   Strncat( name, matrix, len );
   Strncat( name, "-", len );
-
-  tk = strtok_r( NULL, "-", &context );		// points (discard)
 
   tk = strtok_r( NULL, "-", &context );		// horz res
   Strncat( name, tk, len );
@@ -1919,7 +1919,7 @@ char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
   Strncat( name, "-", len );
 
   tk = strtok_r( NULL, "-", &context );		// average width
-  Strncat( name, "*", len );
+  Strncat( name, "0", len );
   Strncat( name, "-", len );
 
   tk = strtok_r( NULL, "-", &context );		// char set
