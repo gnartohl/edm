@@ -90,6 +90,7 @@ int status;
     apngo->refreshRate = 1000;
   }
   apngo->fastErase = apngo->bufFastErase;
+  apngo->noErase = apngo->bufNoErase;
 
   status = apngo->readPngFile();
 
@@ -277,6 +278,7 @@ int status;
   uniformSize = 0;
   refreshRate = 0;
   fastErase = 0;
+  noErase = 0;
 
   status = avl_init_tree( compare_nodes_by_color,
    compare_key_by_color, copy_nodes, &(colorCacheByColorH) );
@@ -341,6 +343,7 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   uniformSize = source->uniformSize;
   refreshRate = source->refreshRate;
   fastErase = source->fastErase;
+  noErase = source->noErase;
 
   status = avl_init_tree( compare_nodes_by_color,
    compare_key_by_color, copy_nodes, &(colorCacheByColorH) );
@@ -647,6 +650,7 @@ char title[32], *ptr;
   bufUniformSize = uniformSize;
   bufRefreshRate = refreshRate;
   bufFastErase = fastErase;
+  bufNoErase = noErase;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -660,6 +664,7 @@ char title[32], *ptr;
   ef.addTextField( activePngClass_str7, 27, &bufRefreshRate );
   ef.addToggle( activePngClass_str8, &bufUniformSize );
   ef.addToggle( activePngClass_str9, &bufFastErase );
+  ef.addToggle( activePngClass_str10, &bufNoErase );
 
   return 1;
 
@@ -1146,6 +1151,7 @@ static char *emptyStr = "";
   tag.loadW( "refreshRate", &refreshRate, &zero );
   tag.loadBoolW( "uniformSize", &uniformSize, &zero );
   tag.loadBoolW( "fastErase", &fastErase, &zero );
+  tag.loadBoolW( "noErase", &noErase, &zero );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -1196,6 +1202,7 @@ static char *emptyStr = "";
   refreshRate = 0;
   uniformSize = 0;
   fastErase = 0;
+  noErase = 0;
 
   // read file and process each "object" tag
   tag.init();
@@ -1211,6 +1218,7 @@ static char *emptyStr = "";
   tag.loadR( "refreshRate", &refreshRate, &zero );
   tag.loadR( "uniformSize", &uniformSize, &zero );
   tag.loadR( "fastErase", &fastErase, &zero );
+  tag.loadR( "noErase", &noErase, &zero );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.readTags( f, "endObjectProperties" );
@@ -1281,6 +1289,8 @@ int major, minor, release;
     fastErase = 0;
   }
 
+  noErase = 0;
+
   status = readPngFile();
   if ( !( status & 1 ) ) {
     actWin->appCtx->postMessage( "Cannot read png file" );
@@ -1307,6 +1317,8 @@ int activePngClass::erase ( void ) {
 }
 
 int activePngClass::eraseActive ( void ) {
+
+  if ( noErase ) return 1;
 
   if ( !enabled || noFile || !activeMode ) return 1;
 

@@ -109,6 +109,7 @@ int status;
     agifo->refreshRate = 1000;
   }
   agifo->fastErase = agifo->bufFastErase;
+  agifo->noErase = agifo->bufNoErase;
 
   status = agifo->readGifFile();
 
@@ -194,6 +195,7 @@ activeGifClass::activeGifClass ( void ) {
   uniformSize = 0;
   refreshRate = 0;
   fastErase = 0;
+  noErase = 0;
 
 }
 
@@ -249,6 +251,7 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   uniformSize = source->uniformSize;
   refreshRate = source->refreshRate;
   fastErase = source->fastErase;
+  noErase = source->noErase;
 
   status = readGifFile();
 
@@ -299,6 +302,7 @@ char title[32], *ptr;
   bufUniformSize = uniformSize;
   bufRefreshRate = refreshRate;
   bufFastErase = fastErase;
+  bufNoErase = noErase;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -312,6 +316,7 @@ char title[32], *ptr;
   ef.addTextField( activeGifClass_str7, 27, &bufRefreshRate );
   ef.addToggle( activeGifClass_str8, &bufUniformSize );
   ef.addToggle( activeGifClass_str9, &bufFastErase );
+  ef.addToggle( activeGifClass_str10, &bufNoErase );
 
   return 1;
 
@@ -956,6 +961,7 @@ static char *emptyStr = "";
   tag.loadW( "refreshRate", &refreshRate, &zero );
   tag.loadBoolW( "uniformSize", &uniformSize, &zero );
   tag.loadBoolW( "fastErase", &fastErase, &zero );
+  tag.loadBoolW( "noErase", &noErase, &zero );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -1016,6 +1022,7 @@ static char *emptyStr = "";
   tag.loadR( "refreshRate", &refreshRate, &zero );
   tag.loadR( "uniformSize", &uniformSize, &zero );
   tag.loadR( "fastErase", &fastErase, &zero );
+  tag.loadR( "noErase", &noErase, &zero );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.readTags( f, "endObjectProperties" );
@@ -1086,6 +1093,8 @@ int major, minor, release;
     fastErase = 0;
   }
 
+  noErase = 0;
+
   status = readGifFile();
   if ( !( status & 1 ) ) {
     actWin->appCtx->postMessage( "Cannot read gif file" );
@@ -1112,6 +1121,8 @@ int activeGifClass::erase ( void ) {
 }
 
 int activeGifClass::eraseActive ( void ) {
+
+  if ( noErase ) return 1;
 
   if ( !enabled || noFile || !activeMode ) return 1;
 

@@ -10,5 +10,6 @@
 #define activePngClass_str7 (char *) "Refresh Rate (ms)"
 #define activePngClass_str8 (char *) "Uniform Size"
 #define activePngClass_str9 (char *) "Fast Erase"
+#define activePngClass_str10 (char *) "No Erase"
 
 #endif

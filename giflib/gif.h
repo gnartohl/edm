@@ -103,6 +103,7 @@ int timerActive;
 int uniformSize, bufUniformSize;
 int refreshRate, bufRefreshRate;
 int fastErase, bufFastErase;
+int noErase, bufNoErase;
 
 int needErase;
 

@@ -10,5 +10,6 @@
 #define activeGifClass_str7 (char *) "Refresh Rate (ms)"
 #define activeGifClass_str8 (char *) "Uniform Size"
 #define activeGifClass_str9 (char *) "Fast Erase"
+#define activeGifClass_str10 (char *) "No Erase"
 
 #endif
