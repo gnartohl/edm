@@ -521,10 +521,15 @@ int activeGraphicClass::intersects (
 
 int xx0, yy0, xx1, yy1;
 
-  xx0 = this->getX0();
-  xx1 = this->getX1();
-  yy0 = this->getY0();
-  yy1 = this->getY1();
+  xx0 = this->x;
+  xx1 = this->x + this->w;
+  yy0 = this->y;
+  yy1 = this->y + this->h;
+
+  if ( xx0 > x1 ) return 0;
+  if ( xx1 < x0 ) return 0;
+  if ( yy0 > y1 ) return 0;
+  if ( yy1 < y0 ) return 0;
 
   if ( ( x0 <= xx0 ) &&
        ( x1 >= xx1 ) &&
@@ -675,11 +680,14 @@ XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
+
     if ( cur->node->intersects( x0-5, y0-5, x1+5, y1+5 ) ) {
       cur->node->bufInvalidate();
       cur->node->drawActive( x0, y0, x1, y1 );
     }
+
     cur = cur->flink;
+
   }
 
   actWin->executeGc.removeNormXClipRectangle();
