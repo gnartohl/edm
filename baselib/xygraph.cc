@@ -1564,10 +1564,10 @@ double scaledX, scaledY;
       // specificType
       switch ( xyo->xPvType[i] ) {
       case ProcessVariable::Type::real:
-	( (double *) xArray )[i] = pv->get_double();
+	*( (double *) &xArray[ii] ) = pv->get_double();
 	break;
       case ProcessVariable::specificType::integer:
-	( (int *) xArray )[i] = pv->get_int();
+	*( (int *) &xArray[ii] ) = pv->get_int();
 	break;
       }
       //memcpy( (void *) &xArray[ii], (void *) arg.dbr, xyo->xPvSize[i] );
@@ -1955,10 +1955,10 @@ int yi;
       // Type
       switch ( xyo->yPvType[i] ) {
       case ProcessVariable::Type::real:
-	( (double *) yArray )[i] = pv->get_double();
+	*( (double *) &yArray[ii] ) = pv->get_double();
 	break;
       case ProcessVariable::specificType::integer:
-	( (int *) yArray )[i] = pv->get_int();
+	*( (int *) &yArray[ii] ) = pv->get_int();
 	break;
       }
       //memcpy( (void *) &yArray[ii], (void *) arg.dbr, xyo->yPvSize[i] );
@@ -7204,6 +7204,10 @@ int yi, yScaleIndex;
       yi = 0;
       if ( y2Scale[i] ) yi = 1;
 
+      // ------------------------------------------------------------------
+      // pass one - init, pass two - add events
+
+      // pass one
       if ( yArrayNeedInit[i] ) {
 
         if ( i == lowestYScaleIndex[yi] ) {
@@ -7220,7 +7224,7 @@ int yi, yScaleIndex;
           }
         }
 
-        yArrayNeedInit[i] = 0;
+        //yArrayNeedInit[i] = 0;
 
         xFactor[i] =
          (double) ( plotAreaW ) / ( curXMax - curXMin );
@@ -7299,13 +7303,13 @@ int yi, yScaleIndex;
             }
           }
 
-          if ( initialYConnection[i] ) {
+          //if ( initialYConnection[i] ) {
 
-	    initialYConnection[i] = 0;
+	  //  initialYConnection[i] = 0;
 
-	    yPv[i]->add_value_callback( yValueUpdate, &yvArgRec[i] );
+	  //  yPv[i]->add_value_callback( yValueUpdate, &yvArgRec[i] );
 
-	  }
+	  //}
 
         }
         else if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
@@ -7323,6 +7327,94 @@ int yi, yScaleIndex;
               ( (double *) xPvData[i] )[ii] = (double) ii;
             }
           }
+
+          //if ( yPvCount[i] > 1 ) { // vector
+
+          //  if ( initialYConnection[i] ) {
+
+	  //    initialYConnection[i] = 0;
+
+	  //    yPv[i]->add_value_callback( yValueWithTimeUpdate,
+          //     &yvArgRec[i] );
+
+	  //  }
+
+          //}
+          //else {
+
+          //  if ( initialYConnection[i] ) {
+
+	  //    initialYConnection[i] = 0;
+
+	  //    yPv[i]->add_value_callback( yValueWithTimeUpdate,
+          //     &yvArgRec[i] );
+
+	  //  }
+
+          //}
+
+        }
+
+      }
+
+      if ( xArrayNeedInit[i] ) {
+
+        //xArrayNeedInit[i] = 0;
+
+        xvArgRec[i].objPtr = (void *) this;
+        xvArgRec[i].index = i;
+
+        if ( !xPvData[i] ) {
+
+          if ( xPvCount[i] > 1 ) { // vector
+
+            xPvData[i] = (void *) new char[xPvSize[i]*(xPvCount[i]+10)];
+
+          }
+          else { // scalar
+
+            if ( count < 2 ) count = 2;
+
+            xPvData[i] = (void *) new char[xPvSize[i]*(count+10)];
+
+          }
+
+        }
+
+        //if ( traceType[i] == XYGC_K_TRACE_XY ) { // sanity check
+
+        //  if ( initialXConnection[i] ) {
+
+	//    initialXConnection[i] = 0;
+
+	//    xPv[i]->add_value_callback( xValueUpdate, &xvArgRec[i] );
+
+	//  }
+
+        //}
+
+      }
+
+      // end of pass one
+      // ------------------------------------------------------------------
+
+      // pass two
+      if ( yArrayNeedInit[i] ) {
+
+        yArrayNeedInit[i] = 0;
+
+        if ( traceType[i] == XYGC_K_TRACE_XY ) {
+
+          if ( initialYConnection[i] ) {
+
+	    initialYConnection[i] = 0;
+
+	    yPv[i]->add_value_callback( yValueUpdate, &yvArgRec[i] );
+
+	  }
+
+        }
+        else if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 
           if ( yPvCount[i] > 1 ) { // vector
 
@@ -7357,26 +7449,6 @@ int yi, yScaleIndex;
 
         xArrayNeedInit[i] = 0;
 
-        xvArgRec[i].objPtr = (void *) this;
-        xvArgRec[i].index = i;
-
-        if ( !xPvData[i] ) {
-
-          if ( xPvCount[i] > 1 ) { // vector
-
-            xPvData[i] = (void *) new char[xPvSize[i]*(xPvCount[i]+10)];
-
-          }
-          else { // scalar
-
-            if ( count < 2 ) count = 2;
-
-            xPvData[i] = (void *) new char[xPvSize[i]*(count+10)];
-
-          }
-
-        }
-
         if ( traceType[i] == XYGC_K_TRACE_XY ) { // sanity check
 
           if ( initialXConnection[i] ) {
@@ -7390,6 +7462,9 @@ int yi, yScaleIndex;
         }
 
       }
+
+      // end of pass two
+      // ------------------------------------------------------------------
 
       arrayHead[i] = 0;
       arrayTail[i] = 0;
