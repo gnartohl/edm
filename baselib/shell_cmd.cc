@@ -24,6 +24,11 @@
 
 #include "thread.h"
 
+typedef struct threadFuncBlockTag {
+  int multipleInstancesAllowed;
+  char *cmd;
+} threadFuncBlockType, *threadFuncBlockPtr;
+
 #ifdef __linux__
 static void *shellCmdThread (
   THREAD_HANDLE h )
@@ -43,14 +48,19 @@ static void shellCmdThread (
 #endif
 
 int stat;
-shellCmdClass *shcmdo = (shellCmdClass *) thread_get_app_data( h );
+threadFuncBlockPtr threadFuncBlock =
+ (threadFuncBlockPtr) thread_get_app_data( h );
 
-  stat = system( shcmdo->bufShellCommand );
+  stat = system( threadFuncBlock->cmd );
 
-  if ( shcmdo->multipleInstancesAllowed ) {
+  if ( threadFuncBlock->multipleInstancesAllowed ) {
+    delete threadFuncBlock->cmd;
+    delete threadFuncBlock;
     stat = thread_detached_exit( h, NULL ); // this call deallocates h
   }
   else {
+    delete threadFuncBlock->cmd;
+    delete threadFuncBlock;
     stat = thread_exit( h, NULL ); // this requires a join
   }
 
@@ -70,6 +80,7 @@ static void shcmdc_executeCmd (
 {
 
 shellCmdClass *shcmdo = (shellCmdClass *) client;
+threadFuncBlockPtr threadFuncBlock;
 int stat;
 
   if ( shcmdo->timerActive ) {
@@ -85,7 +96,12 @@ int stat;
    shcmdo->bufShellCommand );
 
   if ( shcmdo->multipleInstancesAllowed ) {
-    stat = thread_create_handle( &shcmdo->thread, shcmdo );
+    threadFuncBlock = new threadFuncBlockType;
+    threadFuncBlock->cmd = new (char)[strlen(shcmdo->bufShellCommand)+1];
+    strcpy( threadFuncBlock->cmd, shcmdo->bufShellCommand );
+    threadFuncBlock->multipleInstancesAllowed =
+     shcmdo->multipleInstancesAllowed;
+    stat = thread_create_handle( &shcmdo->thread, threadFuncBlock );
     stat = thread_create_proc( shcmdo->thread, shellCmdThread );
     stat = thread_detach( shcmdo->thread );
   }
@@ -94,12 +110,22 @@ int stat;
       stat = thread_wait_til_complete_no_block( shcmdo->thread );
       if ( stat & 1 ) {
         stat = thread_destroy_handle( shcmdo->thread );
-        stat = thread_create_handle( &shcmdo->thread, shcmdo );
+        threadFuncBlock = new threadFuncBlockType;
+        threadFuncBlock->cmd = new (char)[strlen(shcmdo->bufShellCommand)+1];
+        strcpy( threadFuncBlock->cmd, shcmdo->bufShellCommand );
+        threadFuncBlock->multipleInstancesAllowed =
+         shcmdo->multipleInstancesAllowed;
+        stat = thread_create_handle( &shcmdo->thread, threadFuncBlock );
         stat = thread_create_proc( shcmdo->thread, shellCmdThread );
       }
     }
     else {
-      stat = thread_create_handle( &shcmdo->thread, shcmdo );
+      threadFuncBlock = new threadFuncBlockType;
+      threadFuncBlock->cmd = new (char)[strlen(shcmdo->bufShellCommand)+1];
+      strcpy( threadFuncBlock->cmd, shcmdo->bufShellCommand );
+      threadFuncBlock->multipleInstancesAllowed =
+       shcmdo->multipleInstancesAllowed;
+      stat = thread_create_handle( &shcmdo->thread, threadFuncBlock );
       stat = thread_create_proc( shcmdo->thread, shellCmdThread );
     }
   }
@@ -1188,6 +1214,7 @@ void shellCmdClass::btnDown (
 {
 
 int stat;
+threadFuncBlockPtr threadFuncBlock;
 
   actWin->substituteSpecial( 127, shellCommand.getExpanded(),
    bufShellCommand );
@@ -1197,7 +1224,12 @@ int stat;
 
   if ( multipleInstancesAllowed ) {
 
-    stat = thread_create_handle( &thread, this );
+    threadFuncBlock = new threadFuncBlockType;
+    threadFuncBlock->cmd = new (char)[strlen(bufShellCommand)+1];
+    strcpy( threadFuncBlock->cmd, bufShellCommand );
+    threadFuncBlock->multipleInstancesAllowed =
+     multipleInstancesAllowed;
+    stat = thread_create_handle( &thread, threadFuncBlock );
     stat = thread_create_proc( thread, shellCmdThread );
     stat = thread_detach( thread );
 
@@ -1212,14 +1244,24 @@ int stat;
       }
       else {
         stat = thread_destroy_handle( thread );
-        stat = thread_create_handle( &thread, this );
+        threadFuncBlock = new threadFuncBlockType;
+        threadFuncBlock->cmd = new (char)[strlen(bufShellCommand)+1];
+        strcpy( threadFuncBlock->cmd, bufShellCommand );
+        threadFuncBlock->multipleInstancesAllowed =
+         multipleInstancesAllowed;
+        stat = thread_create_handle( &thread, threadFuncBlock );
         stat = thread_create_proc( thread, shellCmdThread );
       }
 
     }
     else {
 
-      stat = thread_create_handle( &thread, this );
+      threadFuncBlock = new threadFuncBlockType;
+      threadFuncBlock->cmd = new (char)[strlen(bufShellCommand)+1];
+      strcpy( threadFuncBlock->cmd, bufShellCommand );
+      threadFuncBlock->multipleInstancesAllowed =
+       multipleInstancesAllowed;
+      stat = thread_create_handle( &thread, threadFuncBlock );
       stat = thread_create_proc( thread, shellCmdThread );
 
     }
