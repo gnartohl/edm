@@ -9312,19 +9312,19 @@ activeWindowClass::activeWindowClass ( void ) {
   top = NULL;
 
   useComponentScheme = 0;
-  allSelectedTextFgColorFlag = 1;
-  allSelectedFg1ColorFlag = 1;
-  allSelectedFg2ColorFlag = 1;
-  allSelectedBgColorFlag = 1;
-  allSelectedOffsetColorFlag = 1;
-  allSelectedTopShadowColorFlag = 1;
-  allSelectedBotShadowColorFlag = 1;
-  allSelectedFontTagFlag = 1;
-  allSelectedAlignmentFlag = 1;
-  allSelectedCtlFontTagFlag = 1;
-  allSelectedCtlAlignmentFlag = 1;
-  allSelectedBtnFontTagFlag = 1;
-  allSelectedBtnAlignmentFlag = 1;
+  allSelectedTextFgColorFlag = 0;
+  allSelectedFg1ColorFlag = 0;
+  allSelectedFg2ColorFlag = 0;
+  allSelectedBgColorFlag = 0;
+  allSelectedOffsetColorFlag = 0;
+  allSelectedTopShadowColorFlag = 0;
+  allSelectedBotShadowColorFlag = 0;
+  allSelectedFontTagFlag = 0;
+  allSelectedAlignmentFlag = 0;
+  allSelectedCtlFontTagFlag = 0;
+  allSelectedCtlAlignmentFlag = 0;
+  allSelectedBtnFontTagFlag = 0;
+  allSelectedBtnAlignmentFlag = 0;
 
   strcpy( allSelectedCtlPvName[0], "" );
   strcpy( allSelectedReadbackPvName[0], "" );
@@ -9332,11 +9332,11 @@ activeWindowClass::activeWindowClass ( void ) {
   strcpy( allSelectedVisPvName[0], "" );
   strcpy( allSelectedAlarmPvName[0], "" );
 
-  allSelectedCtlPvNameFlag = 1;
-  allSelectedReadbackPvNameFlag = 1;
-  allSelectedNullPvNameFlag = 1;
-  allSelectedVisPvNameFlag = 1;
-  allSelectedAlarmPvNameFlag = 1;
+  allSelectedCtlPvNameFlag = 0;
+  allSelectedReadbackPvNameFlag = 0;
+  allSelectedNullPvNameFlag = 0;
+  allSelectedVisPvNameFlag = 0;
+  allSelectedAlarmPvNameFlag = 0;
 
   versionStackPtr = 0;
 
