@@ -1115,7 +1115,7 @@ short scaledX, scaledY;
 
       case XYGC_K_TRACE_CHRONOLOGICAL:
 
-        if ( xyo->xPvCount[i] > 1 ) { // vector
+        if ( xyo->yPvCount[i] > 1 ) { // vector
 
           xyo->yArrayNeedUpdate[i] = xyo->xArrayNeedUpdate[i] = 1;
           xyo->needVectorUpdate = 1;
@@ -1362,9 +1362,14 @@ short scaledX, scaledY;
       }
 
       xyo->xArrayGotValue[i] = 1;
-      xyo->xArrayNeedUpdate[i] = 1;
-      xyo->needVectorUpdate = 1;
-      xyo->actWin->addDefExeNode( xyo->aglPtr );
+
+      if ( xyo->plotUpdateMode[i] != XYGC_K_UPDATE_ON_TRIG ) {
+
+        xyo->xArrayNeedUpdate[i] = 1;
+        xyo->needVectorUpdate = 1;
+        xyo->actWin->addDefExeNode( xyo->aglPtr );
+
+      }
 
     }
     else { // scalar
@@ -1741,9 +1746,14 @@ int yi;
       }
 
       xyo->yArrayGotValue[i] = 1;
-      xyo->yArrayNeedUpdate[i] = 1;
-      xyo->needVectorUpdate = 1;
-      xyo->actWin->addDefExeNode( xyo->aglPtr );
+
+      if ( xyo->plotUpdateMode[i] != XYGC_K_UPDATE_ON_TRIG ) {
+
+        xyo->yArrayNeedUpdate[i] = 1;
+        xyo->needVectorUpdate = 1;
+        xyo->actWin->addDefExeNode( xyo->aglPtr );
+
+      }
 
     }
     else { // scalar
@@ -2067,9 +2077,13 @@ struct dbr_time_enum *dbrEnumPtr;
 
       }
 
-      xyo->yArrayNeedUpdate[i] = 1;
-      xyo->needVectorUpdate = 1;
-      xyo->actWin->addDefExeNode( xyo->aglPtr );
+      if ( xyo->plotUpdateMode[i] != XYGC_K_UPDATE_ON_TRIG ) {
+
+        xyo->yArrayNeedUpdate[i] = 1;
+        xyo->needVectorUpdate = 1;
+        xyo->actWin->addDefExeNode( xyo->aglPtr );
+
+      }
 
     }
     else { // scalar
@@ -4502,8 +4516,7 @@ int numFullDraws, remainder, i, ii, j, jj, symHW, symHH;
 int xyGraphClass::eraseActive ( void ) {
 
 int i;
-XRectangle xR = { plotAreaX-1, plotAreaY-1, plotAreaW+2, plotAreaH+2 };
-int clipStat;
+XRectangle xR = { plotAreaX+1, plotAreaY+1, plotAreaW-2, plotAreaH-2 };
 
   if ( !activeMode || !init ) return 1;
 
@@ -4514,7 +4527,8 @@ int clipStat;
   actWin->executeGc.saveFg();
   actWin->executeGc.setFG( actWin->ci->pix(bgColor) );
 
-  clipStat = actWin->executeGc.addNormXClipRectangle( xR );
+  XSetClipRectangles( actWin->display(), actWin->executeGc.normGC(), 0, 0,
+   &xR, 1, Unsorted );
 
   for ( i=0; i<numTraces; i++ ) {
 
@@ -4587,7 +4601,7 @@ int clipStat;
 
   }
 
-  if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
+  XSetClipMask( actWin->display(), actWin->executeGc.normGC(), None );
 
   actWin->executeGc.setLineWidth(1);
   actWin->executeGc.setLineStyle( LineSolid );
@@ -4764,8 +4778,7 @@ int npts;
 int xyGraphClass::drawActive ( void ) {
 
 int i;
-XRectangle xR = { plotAreaX-1, plotAreaY-1, plotAreaW+2, plotAreaH+2 };
-int clipStat;
+XRectangle xR = { plotAreaX+1, plotAreaY+1, plotAreaW-2, plotAreaH-2 };
 
   if ( !activeMode || !init ) return 1;
 
@@ -4784,7 +4797,8 @@ int clipStat;
 
   actWin->executeGc.saveFg();
 
-  clipStat = actWin->executeGc.addNormXClipRectangle( xR );
+  XSetClipRectangles( actWin->display(), actWin->executeGc.normGC(), 0, 0,
+   &xR, 1, Unsorted );
 
   for ( i=0; i<numTraces; i++ ) {
 
@@ -4792,49 +4806,7 @@ int clipStat;
 
   }
 
-  if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
-
-  actWin->executeGc.setLineWidth(1);
-  actWin->executeGc.setLineStyle( LineSolid );
-  actWin->executeGc.restoreFg();
-
-  XCopyArea( actWin->display(), pixmap,
-   XtWindow(actWin->executeWidget), actWin->executeGc.normGC(),
-   0, 0, w+1, h+1, x, y );
-
-  return 1;
-
-}
-
-int xyGraphClass::altDrawActiveOne (
-  int i // trace
-) {
-
-XRectangle xR = { plotAreaX-1, plotAreaY-1, plotAreaW+2, plotAreaH+2 };
-int clipStat;
-
-  if ( !activeMode || !init ) return 1;
-
-  if ( bufInvalid ) {
-    actWin->appCtx->proc->lock();
-    needRefresh = 1;
-    actWin->addDefExeNode( aglPtr );
-    actWin->appCtx->proc->unlock();
-    return 1;
-  }
-
-  if ( drawGridFlag ) {
-    drawGridFlag = 0;
-    drawGrid();
-  }
-
-  actWin->executeGc.saveFg();
-
-  clipStat = actWin->executeGc.addNormXClipRectangle( xR );
-
-  drawActiveOne( i );
-
-  if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
+  XSetClipMask( actWin->display(), actWin->executeGc.normGC(), None );
 
   actWin->executeGc.setLineWidth(1);
   actWin->executeGc.setLineStyle( LineSolid );
@@ -6508,14 +6480,9 @@ int yi, yScaleIndex;
 
         }
 
-        // altDrawActiveOne( i );
-
       }
 
     }
-
-    //eraseActive();
-    //drawActive();
 
     nu = 1;
 
@@ -7568,3 +7535,4 @@ xyGraphClass *ptr, *srcPtr;
 #ifdef __cplusplus
 }
 #endif
+

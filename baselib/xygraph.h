@@ -836,10 +836,6 @@ int drawActiveOne (
 
 int drawActive ( void );
 
-int altDrawActiveOne (
-  int i // trace
-);
-
 int eraseActive ( void );
 
 void bufInvalidate ( void );
