@@ -974,7 +974,7 @@ int boxH;
   if ( deleteRequest ) return 1;
 
   actWin->drawGc.saveFg();
-  actWin->drawGc.setFG( actWin->fgColor );
+  actWin->drawGc.setFG( actWin->ci->pix(actWin->fgColor) );
 
   actWin->executeGc.setLineWidth( 1 );
   actWin->drawGc.setLineStyle( LineSolid );
@@ -1027,7 +1027,7 @@ int activeGraphicClass::drawSelectBox ( void ) {
   if ( deleteRequest ) return 1;
 
   actWin->drawGc.saveFg();
-  actWin->drawGc.setFG( actWin->fgColor );
+  actWin->drawGc.setFG( actWin->ci->pix(actWin->fgColor) );
 
   actWin->drawGc.setLineStyle( LineSolid );
 
@@ -1868,7 +1868,7 @@ void activeGraphicClass::pointerIn (
 
   actWin->executeGc.saveFg();
 
-  actWin->executeGc.setFG( actWin->fgColor );
+  actWin->executeGc.setFG( actWin->ci->pix(actWin->fgColor) );
   actWin->executeGc.setLineWidth( 2 );
   actWin->executeGc.setLineStyle( LineSolid );
 
