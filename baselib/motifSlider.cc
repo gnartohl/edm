@@ -1136,7 +1136,34 @@ int activeMotifSliderClass::eraseActive ( void ) {
 
 int activeMotifSliderClass::draw ( void ) {
 
+int tX, tY;
+
   if ( deleteRequest ) return 1;
+
+  if ( orientation == MSLC_K_HORIZONTAL ) {
+    scaleX = 1;
+    scaleW = w - 2;
+    scaleY = labelH + limitsH + 1;
+    scaleH = h - scaleY - 2;
+  }
+  else {
+    if ( showLimits || showValue ) {
+      scaleX = (int) ( 0.6 * (double) w );
+      scaleW = w - scaleX - 2;
+      if ( scaleW < 14 ) {
+        scaleW = 14;
+        scaleX = w - scaleW - 2;
+      }
+    }
+    else {
+      scaleX = 1;
+      scaleW = w - 2;
+    }
+    scaleY = labelH + 1;
+    scaleH = h - scaleY - 2;
+    midVertScaleY = scaleH/2 + scaleY -
+     (int) ( (double) fontHeight * 0.5 );
+  }
 
   actWin->drawGc.saveFg();
 
@@ -1145,23 +1172,79 @@ int activeMotifSliderClass::draw ( void ) {
   XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x, y, w, h );
 
-#if 0
-  if ( fs ) {
+  actWin->drawGc.setFG( actWin->ci->pix(shadeColor) );
 
-    actWin->drawGc.setFG( fgColor.pixelColor() );
+  XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), x+scaleX+2, y+scaleY+2, scaleW-4, scaleH-4 );
 
-    actWin->drawGc.setFontTag( fontTag, actWin->fi );
+  actWin->drawGc.setFG( fgColor.pixelColor() );
 
-    drawText( actWin->drawWidget, &actWin->drawGc, fs, x,
-     y+valueAreaH+controlAreaH+labelAreaH/2-2,
-     XmALIGNMENT_BEGINNING, "0.0" );
+  actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
-    drawText( actWin->drawWidget, &actWin->drawGc, fs, x+w,
-     y+valueAreaH+controlAreaH+labelAreaH/2-2,
-     XmALIGNMENT_END, "0.0" );
+  if ( showLimits ) {
+
+    if ( orientation == MSLC_K_HORIZONTAL ) {
+
+      tX = 2;
+      tY = labelH;
+      drawText( actWin->drawWidget, &actWin->drawGc, fs, x+tX, y+tY,
+       XmALIGNMENT_BEGINNING, "0.0" );
+
+      tX = w - 2;
+      tY = labelH;
+      drawText( actWin->drawWidget, &actWin->drawGc, fs, tX+x, tY+y,
+       XmALIGNMENT_END, "10.0" );
+
+    }
+    else {
+
+      tX = scaleX;
+      tY = h - 2 - limitsH;
+      drawText( actWin->drawWidget, &actWin->drawGc, fs, tX+x, tY+y,
+       XmALIGNMENT_END, "0.0" );
+
+      tX = scaleX;
+      tY = scaleY;
+      drawText( actWin->drawWidget, &actWin->drawGc, fs, tX+x, tY+y,
+       XmALIGNMENT_END, "10.0" );
+
+    }
 
   }
-#endif
+
+  if ( showValue ) {
+
+    if ( orientation == MSLC_K_HORIZONTAL ) {
+      tX = w/2;
+      tY = labelH;
+      drawText( actWin->drawWidget, &actWin->drawGc, fs, tX+x, tY+y,
+       XmALIGNMENT_CENTER, "0.0" );
+    }
+    else {
+      tX = scaleX;
+      tY = midVertScaleY;
+      drawText( actWin->drawWidget, &actWin->drawGc, fs, tX+x, tY+y,
+       XmALIGNMENT_END, "0.0" );
+    }
+
+  }
+
+  if ( showLabel ) {
+
+    if ( orientation == MSLC_K_HORIZONTAL ) {
+      tX = 2;
+      tY = 0;
+      drawText( actWin->drawWidget, &actWin->drawGc, fs, tX+x, tY+y,
+       XmALIGNMENT_BEGINNING, "Label" );
+    }
+    else {
+      tX = w - 2;
+      tY = 0;
+      drawText( actWin->drawWidget, &actWin->drawGc, fs, tX+x, tY+y,
+       XmALIGNMENT_END, "Label" );
+    }
+
+  }
 
   actWin->drawGc.restoreFg();
 
@@ -1186,7 +1269,7 @@ int tX, tY;
       tX = w/2;
       tY = labelH;
       drawText( frameWidget, &actWin->executeGc, fs, tX, tY,
-       XmALIGNMENT_END, controlValue );
+       XmALIGNMENT_CENTER, controlValue );
     }
     else {
       tX = scaleX;
@@ -1222,7 +1305,7 @@ int tX, tY;
         tX = w/2;
         tY = labelH;
         drawText( frameWidget, &actWin->executeGc, fs, tX, tY,
-         XmALIGNMENT_END, controlValue );
+         XmALIGNMENT_CENTER, controlValue );
       }
       else {
         tX = scaleX;
@@ -1303,7 +1386,7 @@ int tX, tY;
           tX = w/2;
           tY = labelH;
           drawText( frameWidget, &actWin->executeGc, fs, tX, tY,
-           XmALIGNMENT_END, controlValue );
+           XmALIGNMENT_CENTER, controlValue );
         }
         else {
           tX = scaleX;
