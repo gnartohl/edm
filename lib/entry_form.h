@@ -607,6 +607,12 @@ int entryFormClass::addTextField (
   char *dest,
   int stringSize );
 
+int entryFormClass::addPasswordField (
+  char *label,
+  int length,
+  char *dest,
+  int stringSize );
+
 int entryFormClass::addOption (
   char *label,
   char *options,

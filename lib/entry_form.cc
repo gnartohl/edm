@@ -1426,6 +1426,23 @@ int entryFormClass::addFontMenuNoAlignInfo (
 
 }
 
+void TextFieldToStringPW (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+class textEntry *teo;
+XmTextVerifyCallbackStruct *xmv;
+
+  teo = (class textEntry *) client;
+
+  xmv = (XmTextVerifyCallbackStruct *) call;
+  strncat( teo->charDest, xmv->text->ptr, teo->maxLen );
+  xmv->doit = False;
+
+}
+
 void TextFieldToString (
   Widget w,
   XtPointer client,
@@ -2385,6 +2402,158 @@ XmString str;
   }
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextFieldToString,
+   cur );
+
+  itemTail->flink = cur;
+  itemTail = cur;
+  itemTail->flink = NULL;
+
+  return 1;
+
+}
+
+int entryFormClass::addPasswordField (
+  char *label,
+  int length,
+  char *dest,
+  int stringSize )
+{
+
+textEntry *cur;
+XmString str;
+
+  cur = new textEntry;
+
+  // textField widget
+
+  if ( curTopParent  == topForm ) {
+
+  if ( firstItem ) {
+
+    firstItem = 0;
+
+    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+     topForm,
+     XmNcolumns, (short) length,
+     XmNvalue, dest,
+     XmNmaxLength, stringSize,
+     XmNtopAttachment, XmATTACH_FORM,
+     XmNrightAttachment, XmATTACH_FORM,
+     XmNfontList, entryFontList,
+     XmNverifyBell, False,
+     NULL );
+
+     curW = cur->activeW;
+     curRW = cur->activeW;
+
+  }
+  else {
+
+    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+     topForm,
+     XmNcolumns, (short) length,
+     XmNvalue, dest,
+     XmNmaxLength, stringSize,
+     XmNtopAttachment, XmATTACH_WIDGET,
+     XmNtopWidget, curW,
+     XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
+     XmNrightWidget, curRW,
+     XmNfontList, entryFontList,
+     XmNverifyBell, False,
+     NULL );
+
+     curW = cur->activeW;
+     curRW = cur->activeW;
+
+  }
+
+  cur->charDest = dest;
+  cur->maxLen = stringSize;
+
+  if ( entryTag )
+    str = XmStringCreate( label, entryTag );
+  else
+    str = XmStringCreateLocalized( label );
+
+  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+   topForm,
+   XmNlabelString, str,
+   XmNmarginTop, 7,
+   XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+   XmNtopWidget, curW,
+   XmNrightAttachment, XmATTACH_WIDGET,
+   XmNrightWidget, curW,
+   XmNfontList, entryFontList,
+   NULL );
+
+  XmStringFree( str );
+
+  }
+  else {
+
+  if ( firstSubFormChild ) {
+
+    firstSubFormChild = 0;
+
+    if ( entryTag )
+      str = XmStringCreate( label, entryTag );
+    else
+      str = XmStringCreateLocalized( label );
+
+    cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+     curTopParent,
+     XmNlabelString, str,
+     XmNmarginTop, 7,
+     XmNtopAttachment, XmATTACH_FORM,
+     XmNleftAttachment, XmATTACH_FORM,
+     XmNfontList, entryFontList,
+     NULL );
+
+    XmStringFree( str );
+
+    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+     curTopParent,
+     XmNcolumns, (short) length,
+     XmNvalue, dest,
+     XmNmaxLength, stringSize,
+     XmNmarginTop, 7,
+     XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+     XmNtopWidget, cur->labelW,
+     XmNleftAttachment, XmATTACH_WIDGET,
+     XmNleftWidget, cur->labelW,
+     XmNfontList, entryFontList,
+     XmNverifyBell, False,
+     NULL );
+
+    prevW = cur->activeW;
+
+  }
+  else {
+
+    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+     curTopParent,
+     XmNcolumns, (short) length,
+     XmNvalue, dest,
+     XmNmaxLength, stringSize,
+     XmNmarginTop, 7,
+     XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+     XmNtopWidget, prevW,
+     XmNleftAttachment, XmATTACH_WIDGET,
+     XmNleftWidget, prevW,
+     XmNfontList, entryFontList,
+     XmNverifyBell, False,
+     NULL );
+
+    prevW = cur->activeW;
+
+  }
+
+  cur->charDest = dest;
+  cur->maxLen = stringSize;
+
+  }
+
+  XtAddCallback( cur->activeW, XmNmodifyVerifyCallback, TextFieldToStringPW,
    cur );
 
   itemTail->flink = cur;
