@@ -214,6 +214,19 @@ virtual void entryListBase::setValue ( char *value ) { }
 };
 
 
+class subFormWidget : public entryListBase { // merely hold the pointer
+
+public:
+
+Widget *wPtr;
+
+subFormWidget::subFormWidget ( void );
+
+virtual subFormWidget::~subFormWidget ( void );
+
+};
+
+
 class colorButtonEntry : public entryListBase {
 
 public:

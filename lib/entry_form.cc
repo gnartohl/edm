@@ -413,6 +413,23 @@ XConfigureEvent *ce;
 
 }
 
+subFormWidget::subFormWidget ( void ) {
+
+  wPtr = NULL;
+  activeW = NULL;
+  labelW = NULL;
+
+}
+
+subFormWidget::~subFormWidget ( void ) {
+
+  if ( wPtr ) {
+    delete wPtr;
+    wPtr = NULL;
+  }
+
+}
+
 toggleEntry::toggleEntry ( void ) {
 
   destination = NULL;
@@ -4837,8 +4854,6 @@ int entryFormClass::formIsPoppedUp ( void ) {
 
 }
 
-// Experimental - notice the memory leak
-
 int entryFormClass::beginSubForm ( void ) {
 
   subForm = new Widget;
@@ -4914,12 +4929,13 @@ int entryFormClass::beginLeftSubForm ( void ) {
 
 int entryFormClass::endSubForm ( void ) {
 
-textEntry *cur;
+subFormWidget *cur;
 
   curTopParent = topForm;
   XtManageChild( *subForm );
 
-  cur = new textEntry;
+  cur = new subFormWidget;
+  cur->wPtr = subForm;
   cur->activeW = *subForm;
   cur->labelW = NULL;
 
