@@ -4591,12 +4591,12 @@ XmString str;
 Arg args[5];
 int n;
 
+  cur = new toggleEntry;
+
   if ( dest[0] )
     cur->value = 1;
   else
     cur->value = 0;
-
-  cur = new toggleEntry;
 
   // togglebutton widget
 
@@ -4647,7 +4647,7 @@ int n;
   cur->arrayDsc.size = sizeof(int);
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback, toggleToIntArray,
-   &cur );
+   cur );
 
   if ( entryTag )
     str = XmStringCreate( label, entryTag );
@@ -5016,7 +5016,7 @@ XmString str;
   cur->arrayDsc.size = stringSize;
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextFieldToStringArray,
-   cur );
+   &(cur->arrayDsc) );
 
   if ( entryTag )
     str = XmStringCreate( label, entryTag );
@@ -5108,7 +5108,7 @@ char buf[127+1];
   cur->arrayDsc.size = sizeof(int);
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextFieldToIntArray,
-   cur );
+   &(cur->arrayDsc) );
 
   if ( entryTag )
     str = XmStringCreate( label, entryTag );
@@ -5202,7 +5202,7 @@ char buf[127+1];
   cur->arrayDsc.size = sizeof(int);
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextFieldToEfIntArray,
-   cur );
+   &(cur->arrayDsc) );
 
   if ( entryTag )
     str = XmStringCreate( label, entryTag );
@@ -5293,7 +5293,7 @@ char buf[127+1];
   cur->arrayDsc.size = sizeof(double);
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextFieldToDoubleArray,
-   cur );
+   &(cur->arrayDsc) );
 
   if ( entryTag )
     str = XmStringCreate( label, entryTag );
@@ -5385,7 +5385,7 @@ char buf[127+1];
   cur->arrayDsc.size = sizeof(int);
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback,
-   TextFieldToEfDoubleArray, cur );
+   TextFieldToEfDoubleArray, &(cur->arrayDsc) );
 
   if ( entryTag )
     str = XmStringCreate( label, entryTag );

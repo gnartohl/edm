@@ -298,7 +298,6 @@ public:
 
 int value;
 void *destination;
-efArrayCallbackDscType arrayDsc;
 
 toggleEntry ( void );
 
