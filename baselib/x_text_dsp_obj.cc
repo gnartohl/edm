@@ -2287,14 +2287,16 @@ int activeXTextDspClass::genericEdit ( void ) {
 char title[32], *ptr;
 int noedit;
 
+  strcpy( title, "activeXTextDspClass" );
   if ( strcmp( this->getCreateParam(), "noedit" ) == 0 ) {
     noedit = 1;
+    strncat( title, ":noedit", 31 );
   }
   else {
     noedit = 0;
   }
 
-  ptr = actWin->obj.getNameFromClass( "activeXTextDspClass" );
+  ptr = actWin->obj.getNameFromClass( title );
   if ( ptr ) {
     strncpy( title, ptr, 31 );
     title[31] = 0;
