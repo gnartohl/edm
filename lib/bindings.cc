@@ -23,8 +23,8 @@
 objBindingClass::objBindingClass ( void ) {
 
 int needToOpenDll, i, index, comment;
-char *more, *envPtr, *tk, *error;
-char prefix[127+1], fname[127+1], line[255+1], buf[255+1];
+char *more, *envPtr, *tk, *tk1, *c1, *c2, *c3, *error;
+char prefix[127+1], fname[127+1], line[255+1], buf[255+1], buf1[255];
 FILE *f;
 
 //   printf( "objBindingClass::objBindingClass\n" );
@@ -53,7 +53,8 @@ FILE *f;
 
     more = fgets( line, 255, f );
     if ( more ) {
-      tk = strtok( line, "\n" );
+      c1 = NULL;
+      tk = strtok_r( line, "\n", &c1 );
       num = atol( tk );
       if ( num <= 0 ) {
         printf( objBindingClass_str2, fname );
@@ -75,6 +76,13 @@ FILE *f;
     classNames = new char *[num+2]; /* add one more for symbols and
                                          one more for dynSymbols */
     if ( !classNames ) {
+      printf( objBindingClass_str3 );
+      exit(-1);
+    }
+
+    param = new char *[num+2]; /* add one more for symbols and
+                                         one more for dynSymbols */
+    if ( !param ) {
       printf( objBindingClass_str3 );
       exit(-1);
     }
@@ -107,7 +115,8 @@ FILE *f;
         strncpy( buf, line, 255 );
 
         comment = 0;
-        tk = strtok( buf, " \t\n" );
+        c2 = NULL;
+        tk = strtok_r( buf, " \t\n", &c2 );
 
         if ( !tk ) {
           comment = 1;
@@ -120,15 +129,34 @@ FILE *f;
 
           if ( index < num ) {
 
-            tk = strtok( line, " \t\n" );
+            c1 = NULL;
+            tk = strtok_r( line, " \t\n", &c1 );
             if ( !tk ) {
               printf( objBindingClass_str4 );
               exit(-1);
             }
+
             classNames[index] = new char[strlen(tk)+1];
             strcpy( classNames[index], tk );
 
-            tk = strtok( NULL, " \t\n" );
+            // allow a paramter string (no white space) to be supplied
+            // in the form object:param
+
+            strncpy( buf1, tk, 255 );
+
+            c3 = NULL;
+            tk1 = strtok_r( buf1, ":", &c3 );
+            tk1 = strtok_r( NULL, ":", &c3 );
+            if ( tk1 ) {
+              param[index] = new char[strlen(tk1)+1];
+              strcpy( param[index], tk1 );
+	    }
+            else {
+              param[index] = new char[1];
+              strcpy( param[index], "" );
+	    }
+
+            tk = strtok_r( NULL, " \t\n", &c1 );
             if ( !tk ) {
               printf( objBindingClass_str4 );
               exit(-1);
@@ -136,7 +164,7 @@ FILE *f;
             dllName[index] = new char[strlen(tk)+1];
             strcpy( dllName[index], tk );
 
-            tk = strtok( NULL, " \t\n" );
+            tk = strtok_r( NULL, " \t\n", &c1 );
             if ( !tk ) {
               printf( objBindingClass_str4 );
               exit(-1);
@@ -144,7 +172,7 @@ FILE *f;
             types[index] = new char[strlen(tk)+1];
             strcpy( types[index], tk );
 
-            tk = strtok( NULL, "\n" );
+            tk = strtok_r( NULL, "\n", &c1 );
             if ( !tk ) {
               printf( objBindingClass_str4 );
               exit(-1);
@@ -208,6 +236,9 @@ FILE *f;
     classNames[num] = new char[strlen("activeSymbolClass")+1];
     strcpy( classNames[num], "activeSymbolClass" );
 
+    param[num] = new char[1];
+    strcpy( param[num], "" );
+
     names[num] = new char[strlen(global_str1)+1];
     strcpy( names[num], global_str1 );
 
@@ -219,6 +250,9 @@ FILE *f;
 
     classNames[num+1] = new char[strlen("activeDynSymbolClass")+1];
     strcpy( classNames[num+1], "activeDynSymbolClass" );
+
+    param[num+1] = new char[1];
+    strcpy( param[num+1], "" );
 
     names[num+1] = new char[strlen(global_str4)+1];
     strcpy( names[num+1], global_str4 );
@@ -292,7 +326,7 @@ typedef void *(*VPFUNC)( void );
 VPFUNC func;
 activeGraphicClass *cur;
 int i;
-char name[127+1], *error;
+char name[127+1], *error, buf[127+1], *tk;
 
 //    printf( "objBindingClass::createNew - name = [%s]\n", oneClassName );
 
@@ -427,8 +461,12 @@ char name[127+1], *error;
 
     if ( strcmp( oneClassName, classNames[i] ) == 0 ) {
 
+      strncpy( buf, oneClassName, 127 );
+      tk = strtok( buf, ":" );
+
       strcpy( name, "create_" );
-      strncat( name, classNames[i], 127 );
+      //strncat( name, classNames[i], 127 );
+      strncat( name, tk, 127 );
       strncat( name, "Ptr", 127 );
 
 //        printf( "func name = [%s]\n", name );
@@ -441,6 +479,8 @@ char name[127+1], *error;
       }
 
       cur = (activeGraphicClass *) (*func)();
+      cur->setCreateParam( param[i] );
+
       return cur;
 
     }
@@ -460,7 +500,7 @@ typedef void *(*VPFUNC)( void * );
 VPFUNC func;
 activeGraphicClass *cur;
 int i;
-char name[127+1], *error;
+char name[127+1], *error, buf[127+1], *tk;
 
 //    printf( "In objBindingClass::clone, name = [%s]\n", oneClassName );
 
@@ -596,8 +636,12 @@ char name[127+1], *error;
 
     if ( strcmp( oneClassName, classNames[i] ) == 0 ) {
 
+      strncpy( buf, oneClassName, 127 );
+      tk = strtok( buf, ":" );
+
       strcpy( name, "clone_" );
-      strncat( name, classNames[i], 127 );
+      //strncat( name, classNames[i], 127 );
+      strncat( name, tk, 127 );
       strncat( name, "Ptr", 127 );
 
       func = (VPFUNC) dlsym( dllHandle[i], name );

@@ -518,4 +518,15 @@ void getYLog10LimitCoords (
   int *yMaxY1
 );
 
+int intersects (
+  int x0,
+  int y0,
+  int x1,
+  int y1,
+  int xx0,
+  int yy0,
+  int xx1,
+  int yy1
+);
+
 #endif

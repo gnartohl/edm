@@ -111,6 +111,7 @@ entryFormClass ef;
 
 char *baseName;
 char *name;
+char *createParam;
 int xOrigin, yOrigin;
 int x, y, w, h;
 int sboxX, sboxY, sboxW, sboxH;
@@ -1002,6 +1003,12 @@ void activeGraphicClass::removeBlink ( void );
 void activeGraphicClass::disableBlink ( void );
 
 void activeGraphicClass::enableBlink ( void );
+
+void activeGraphicClass::setCreateParam (
+  char *param
+);
+
+char *activeGraphicClass::getCreateParam ( void );
 
 };
 

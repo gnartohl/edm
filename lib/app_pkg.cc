@@ -31,6 +31,8 @@ typedef struct libRecTag {
   char *text;
 } libRecType, *libRecPtr;
 
+static int g_needXtInit = 1;
+
 static int compare_nodes (
   void *node1,
   void *node2
@@ -1903,6 +1905,10 @@ callbackBlockPtr curCbBlock, nextCbBlock;
     fprintf( shutdownFilePtr, "}\n" );
   }
 
+  // these are done in main.cc
+      //XtCloseDisplay( display );
+      //XtDestroyApplicationContext( app );
+
 }
 
 void appContextClass::reloadAll ( void )
@@ -2215,7 +2221,7 @@ int stat, dup, state, i;
         if ( tk ) {
 
           if ( strcmp( tk, "{" ) != 0 ) {
-            printf( "syntax err\n" );
+            printf( "appContextClass::buildSchemeList syntax err 1\n" );
             fclose( f );
             numSchemeSets = 0;
             schemeListExists = 0;
@@ -2224,7 +2230,7 @@ int stat, dup, state, i;
 
 	}
 	else {
-          printf( "syntax err\n" );
+          printf( "appContextClass::buildSchemeList syntax err 2\n" );
           fclose( f );
           numSchemeSets = 0;
           schemeListExists = 0;
@@ -2233,7 +2239,7 @@ int stat, dup, state, i;
 
       }
       else {
-        printf( "syntax err\n" );
+        printf( "appContextClass::buildSchemeList syntax err 3\n" );
         fclose( f );
         numSchemeSets = 0;
         schemeListExists = 0;
@@ -2251,7 +2257,7 @@ int stat, dup, state, i;
         return;
       }
       if ( dup ) {
-        printf( "dups\n" );
+        printf( "appContextClass::buildSchemeList dups\n" );
       }
       else {
         numSchemeSets++;
@@ -2269,7 +2275,7 @@ int stat, dup, state, i;
 
         ptr = fgets ( line, 255, f );
         if ( !ptr ) {
-          printf( "syntax err\n" );
+          printf( "appContextClass::buildSchemeList syntax err 4\n" );
           fclose( f );
           numSchemeSets = 0;
           schemeListExists = 0;
@@ -2319,12 +2325,12 @@ int stat, dup, state, i;
             return;
           }
           if ( dup ) {
-            printf( "dups\n" );
+            printf( "appContextClass::buildSchemeList dups\n" );
           }
 
         }
         else {
-          printf( "syntax err\n" );
+          printf( "appContextClass::buildSchemeList syntax err 5\n" );
           fclose( f );
           numSchemeSets = 0;
           schemeListExists = 0;
@@ -2333,7 +2339,7 @@ int stat, dup, state, i;
 
       }
       else {
-        printf( "syntax err\n" );
+        printf( "appContextClass::buildSchemeList syntax err 6\n" );
         fclose( f );
         numSchemeSets = 0;
         schemeListExists = 0;
@@ -3834,6 +3840,7 @@ err_return:
 
     if ( strcmp( displayName, "" ) == 0 ) argCount = 1;
 
+#if 0
     if ( executeOnOpen ) {
       appTop = XtVaAppInitialize( &app, "edm", NULL, 0, &argCount,
        args, NULL,
@@ -3849,6 +3856,36 @@ err_return:
        NULL );
       iconified = 0;
     }
+#endif
+
+#if 1
+    if ( g_needXtInit ) {
+      g_needXtInit = 0;
+      XtToolkitInitialize();
+      XtSetLanguageProc( NULL, NULL, NULL );
+    }
+
+    app = XtCreateApplicationContext();
+
+    display = XtOpenDisplay( app, NULL, NULL, "edm", NULL, 0, &argCount,
+     args );
+
+    if ( executeOnOpen ) {
+      appTop = XtVaAppCreateShell( NULL, "test", applicationShellWidgetClass,
+       display,
+       XmNiconic, True,
+       NULL );
+      iconified = 1;
+    }
+    else {
+      appTop = XtVaAppCreateShell( NULL, "test", applicationShellWidgetClass,
+       display,
+       XmNiconic, False,
+       XmNmappedWhenManaged, False,
+       NULL );
+      iconified = 0;
+    }
+#endif
 
   }
 

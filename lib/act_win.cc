@@ -9282,7 +9282,9 @@ activeWindowClass::activeWindowClass ( void ) {
   strcpy( title, "" );
   strcpy( autosaveName, "" );
   showName = 0;
-  numMacros = 0;
+  numMacros = actualNumMacros = 0;
+  macros = NULL;
+  expansions = NULL;
 
   activateCallbackFlag = deactivateCallbackFlag = 0;
 
@@ -9500,14 +9502,19 @@ commentLinesPtr commentCur, commentNext;
 
   if ( pollHead ) delete pollHead;
 
-  for ( i=0; i<numMacros; i++ ) {
+  for ( i=0; i<actualNumMacros; i++ ) {
     delete macros[i];
     delete expansions[i];
   }
 
-  if ( numMacros > 0 ) {
+  if ( macros ) {
     delete macros;
+    macros = NULL;
+  }
+
+  if ( expansions ) {
     delete expansions;
+    expansions = NULL;
   }
 
   if ( top ) {
@@ -9926,6 +9933,7 @@ int i, l, n, wPix, bPix;
 Arg args[3];
 unsigned int crc = 0;
 Atom wm_delete_window;
+char tmp[10];
 
   appCtx = ctx;
 
@@ -9940,35 +9948,44 @@ Atom wm_delete_window;
 
   this->numMacros = _numMacros;
 
-  if ( _numMacros ) {
+  actualNumMacros = _numMacros + 2;
 
-    l = _numMacros;
-    this->macros = new char *[l];
-    this->expansions = new char *[l];
+  this->macros = new char *[actualNumMacros];
+  this->expansions = new char *[actualNumMacros];
 
-    for ( i=0; i<_numMacros; i++ ) {
+  for ( i=0; i<_numMacros; i++ ) {
 
-      l = strlen(_macros[i]) + 1;
-      this->macros[i] = new char[l];
-      strcpy( this->macros[i], _macros[i] );
-      crc = updateCRC( crc, this->macros[i], l-1 );
+    l = strlen(_macros[i]) + 1;
+    this->macros[i] = new char[l];
+    strcpy( this->macros[i], _macros[i] );
+    crc = updateCRC( crc, this->macros[i], l-1 );
 
-      l = strlen(_expansions[i]) + 1;
-      this->expansions[i] = new char[l];
-      strcpy( this->expansions[i], _expansions[i] );
-      crc = updateCRC( crc, this->expansions[i], l-1 );
-
-    }
-
-  }
-  else {
-
-    this->macros = NULL;
-    this->expansions = NULL;
+    l = strlen(_expansions[i]) + 1;
+    this->expansions[i] = new char[l];
+    strcpy( this->expansions[i], _expansions[i] );
+    crc = updateCRC( crc, this->expansions[i], l-1 );
 
   }
 
   this->crc = crc;
+
+  // autocreate
+
+  this->macros[actualNumMacros-2] = new char[strlen("!W")+1];
+  strcpy( this->macros[actualNumMacros-2], "!W" );
+
+  snprintf( tmp, 9, "%-lx", (unsigned long) this );
+
+  this->expansions[actualNumMacros-2] = new char[strlen((char *) tmp)+1];
+  strcpy( this->expansions[actualNumMacros-2], (char *) tmp );
+
+  this->macros[actualNumMacros-1] = new char[strlen("!A")+1];
+  strcpy( this->macros[actualNumMacros-1], "!A" );
+
+  snprintf( tmp, 9, "%-lx", (unsigned long) this->appCtx );
+
+  this->expansions[actualNumMacros-1] = new char[strlen((char *) tmp)+1];
+  strcpy( this->expansions[actualNumMacros-1], (char *) tmp );
 
   state = AWC_NONE_SELECTED;
   updateMasterSelection();
@@ -12649,7 +12666,13 @@ int stat;
   cur = head->flink;
   while ( cur != head ) {
     if ( !cur->node->deleteRequest ) {
-      fprintf( f, "%s\n", cur->node->objName() );
+      if ( strcmp( cur->node->getCreateParam(), "" ) == 0 ) {
+        fprintf( f, "%s\n", cur->node->objName() );
+      }
+      else {
+        fprintf( f, "%s:%s\n", cur->node->objName(),
+         cur->node->getCreateParam() );
+      }
       cur->node->save( f );
       fprintf( f, "<<<E~O~D>>>\n" );
     }
@@ -13607,12 +13630,12 @@ char callbackName[63+1];
 
   executeGc.setBaseBG( drawGc.getBaseBG() );
 
-  expandTitle( 1, numMacros, macros, expansions );
+  expandTitle( 1, actualNumMacros, macros, expansions );
 
   cur = head->flink;
   while ( cur != head ) {
 
-    stat = cur->node->expand1st( numMacros, macros, expansions );
+    stat = cur->node->expand1st( actualNumMacros, macros, expansions );
 
     cur = cur->flink;
 
@@ -13635,7 +13658,7 @@ char callbackName[63+1];
 
       if ( numMuxMacros > 0 ) {
 
-        expandTitle( 2, numMacros, macros, expansions );
+        expandTitle( 2, actualNumMacros, macros, expansions );
 
         cur1 = head->flink;
         while ( cur1 != head ) {
@@ -13789,13 +13812,13 @@ char **muxMacro, **muxExpansion;
 
   isIconified = False;
 
-  expandTitle( 1, numMacros, macros, expansions );
+  expandTitle( 1, actualNumMacros, macros, expansions );
 
   cur = head->flink;
   while ( cur != head ) {
 
     if ( !cur->node->isMux() && cur->node->containsMacros() ) {
-      stat = cur->node->expand1st( numMacros, macros, expansions );
+      stat = cur->node->expand1st( actualNumMacros, macros, expansions );
     }
 
     cur = cur->flink;
@@ -14368,6 +14391,17 @@ unsigned int pixel;
   fscanf( f, "%d\n", &w ); incLine();
   fscanf( f, "%d\n", &h ); incLine();
 
+  if ( !intersects( x, y, x+w, y+h, 0, 0,
+   XDisplayWidth( d, DefaultScreen(d) ),
+   XDisplayHeight( d, DefaultScreen(d) ) ) ) {
+
+    appCtx->postMessage(
+    "Screen location is out of display bounds - setting location to (50,50)" );
+
+    x = y = 50;
+
+  }
+
    n = 0;
    XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
    XtSetValues( drawWidget, args, n );
@@ -14709,6 +14743,17 @@ unsigned int pixel;
 
   fscanf( f, "%d\n", &w ); incLine();
   fscanf( f, "%d\n", &h ); incLine();
+
+  if ( !intersects( x, y, x+w, y+h, 0, 0,
+   XDisplayWidth( d, DefaultScreen(d) ),
+   XDisplayHeight( d, DefaultScreen(d) ) ) ) {
+
+    appCtx->postMessage(
+    "Screen location is out of display bounds - setting location to (50,50)" );
+
+    x = y = 50;
+
+  }
 
    n = 0;
    XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
@@ -16546,7 +16591,7 @@ void activeWindowClass::openExecuteSysFile (
 
 activeWindowListPtr cur;
 char buf[255+1], *envPtr;
-int i, numMacros;
+int i, numSysMacros;
 char *sysValues[5], *ptr;
 
 char *sysMacros[] = {
@@ -16588,13 +16633,13 @@ char *sysMacros[] = {
 
   // build system macros
 
-  numMacros = 0;
+  numSysMacros = 0;
 
   ptr = new char[strlen(buf)+1];
   strcpy( ptr, buf );
   sysValues[0] = ptr;
 
-  numMacros++;
+  numSysMacros++;
 
   // ============
 
@@ -16604,10 +16649,10 @@ char *sysMacros[] = {
   cur = new activeWindowListType;
   appCtx->addActiveWindow( cur );
 
-  cur->node.createNoEdit( appCtx, NULL, 0, 0, 0, 0, numMacros,
+  cur->node.createNoEdit( appCtx, NULL, 0, 0, 0, 0, numSysMacros,
    sysMacros, sysValues );
 
-  for ( i=0; i<numMacros; i++ ) {
+  for ( i=0; i<numSysMacros; i++ ) {
     delete sysValues[i];
   }
 

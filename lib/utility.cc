@@ -3753,3 +3753,113 @@ char buf[31+1];
   }
 
 }
+
+int intersects (
+  int x0,
+  int y0,
+  int x1,
+  int y1,
+  int xx0,
+  int yy0,
+  int xx1,
+  int yy1
+) {
+
+  if ( xx0 > x1 ) return 0;
+  if ( xx1 < x0 ) return 0;
+  if ( yy0 > y1 ) return 0;
+  if ( yy1 < y0 ) return 0;
+
+  if ( ( x0 <= xx0 ) &&
+       ( x1 >= xx1 ) &&
+       ( yy0 <= y0 ) &&
+       ( yy1 >= y1 ) ) {
+
+    return 1;
+
+  }
+
+  if ( ( y0 <= yy0 ) &&
+       ( y1 >= yy1 ) &&
+       ( xx0 <= x0 ) &&
+       ( xx1 >= x1 ) ) {
+
+    return 1;
+
+  }
+
+  if ( ( x0 >= xx0 ) &&
+       ( x0 <= xx1 ) &&
+       ( y0 >= yy0 ) &&
+       ( y0 <= yy1 ) ) {
+
+    return 1;
+
+  }
+
+  if ( ( x0 >= xx0 ) &&
+       ( x0 <= xx1 ) &&
+       ( y1 >= yy0 ) &&
+       ( y1 <= yy1 ) ) {
+
+    return 1;
+
+  }
+
+  if ( ( x1 >= xx0 ) &&
+       ( x1 <= xx1 ) &&
+       ( y0 >= yy0 ) &&
+       ( y0 <= yy1 ) ) {
+
+    return 1;
+
+  }
+
+  if ( ( x1 >= xx0 ) &&
+       ( x1 <= xx1 ) &&
+       ( y1 >= yy0 ) &&
+       ( y1 <= yy1 ) ) {
+
+    return 1;
+
+  }
+
+  if ( ( xx0 >= x0 ) &&
+       ( xx0 <= x1 ) &&
+       ( yy0 >= y0 ) &&
+       ( yy0 <= y1 ) ) {
+
+    return 1;
+
+  }
+
+  if ( ( xx0 >= x0 ) &&
+       ( xx0 <= x1 ) &&
+       ( yy1 >= y0 ) &&
+       ( yy1 <= y1 ) ) {
+
+    return 1;
+
+  }
+
+  if ( ( xx1 >= x0 ) &&
+       ( xx1 <= x1 ) &&
+       ( yy0 >= y0 ) &&
+       ( yy0 <= y1 ) ) {
+
+    return 1;
+
+  }
+
+  if ( ( xx1 >= x0 ) &&
+       ( xx1 <= x1 ) &&
+       ( yy1 >= y0 ) &&
+       ( yy1 <= y1 ) ) {
+
+    return 1;
+
+  }
+
+  return 0;
+
+}

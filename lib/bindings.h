@@ -68,6 +68,7 @@
 static int num = 0;
 static char **names = NULL;
 static char **classNames = NULL;
+static char **param = NULL;
 static char **types = NULL;
 static void **dllHandle = NULL;
 static char **dllName = NULL;

@@ -777,6 +777,7 @@ int allSelectedAlarmPvNameFlag;
 appContextClass *appCtx;
 
 int numMacros;
+int actualNumMacros;
 char **macros;
 char **expansions;
 

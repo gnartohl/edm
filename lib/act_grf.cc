@@ -49,6 +49,7 @@ activeGraphicClass::activeGraphicClass ( void ) {
   onBlinkList = 0;
   blinkFunc = NULL;
   blinkDisable = 0;
+  createParam = NULL;
 
 }
 
@@ -81,6 +82,14 @@ void activeGraphicClass::clone ( const activeGraphicClass *source ) {
   onBlinkList = 0;
   blinkFunc = NULL;
   blinkDisable = 0;
+
+  if ( source->createParam ) {
+    createParam = new char[strlen(source->createParam)+1];
+    strcpy( createParam, source->createParam );
+  }
+  else {
+    createParam = NULL;
+  }
 
 }
 
@@ -3251,3 +3260,28 @@ void activeGraphicClass::enableBlink ( void ) {
   blinkDisable = 0;
 
 }
+
+void activeGraphicClass::setCreateParam (
+  char *param
+) {
+
+  // can set this immutable param once
+
+  if ( !createParam ) {
+    createParam = new char[strlen(param)+1];
+    strcpy( createParam, param );
+  }
+
+}
+
+char *activeGraphicClass::getCreateParam ( void ) {
+
+  if ( !createParam ) {
+    createParam = new char[1];
+    strcpy( createParam, "" );
+  }
+
+  return createParam;
+
+}
+
