@@ -82,7 +82,7 @@ double fv;
     if ( slo->updateControlTimerValue < 100 ) {
       slo->updateControlTimerValue = 100;
     }
-    slo->updateControlTimer = XtAppAddTimeOut(
+    slo->updateControlTimer = appAddTimeOut(
      slo->actWin->appCtx->appContext(),
      slo->updateControlTimerValue, slc_updateControl, client );
   }
@@ -158,7 +158,7 @@ int stat, xOfs;
   if ( slo->incrementTimerActive ) {
     if ( slo->incrementTimerValue > 50 ) slo->incrementTimerValue -= 5;
     if ( slo->incrementTimerValue < 45 ) slo->incrementTimerValue = 45;
-    slo->incrementTimer = XtAppAddTimeOut( slo->actWin->appCtx->appContext(),
+    slo->incrementTimer = appAddTimeOut( slo->actWin->appCtx->appContext(),
      slo->incrementTimerValue, slc_decrement, client );
   }
 
@@ -234,7 +234,7 @@ int stat, xOfs;
   if ( slo->incrementTimerActive ) {
     if ( slo->incrementTimerValue > 50 ) slo->incrementTimerValue -= 5;
     if ( slo->incrementTimerValue < 45 ) slo->incrementTimerValue = 45;
-    slo->incrementTimer = XtAppAddTimeOut( slo->actWin->appCtx->appContext(),
+    slo->incrementTimer = appAddTimeOut( slo->actWin->appCtx->appContext(),
      slo->incrementTimerValue, slc_increment, client );
   }
 
@@ -2270,7 +2270,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         slo->incrementTimerActive = 1;
         slo->incrementTimerValue = 101;
 
-        slo->incrementTimer = XtAppAddTimeOut(
+        slo->incrementTimer = appAddTimeOut(
          slo->actWin->appCtx->appContext(), 300,
          slc_increment, (void *) slo );
 
@@ -2283,7 +2283,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         slo->incrementTimerActive = 1;
         slo->incrementTimerValue = 101;
 
-        slo->incrementTimer = XtAppAddTimeOut(
+        slo->incrementTimer = appAddTimeOut(
          slo->actWin->appCtx->appContext(), 300,
          slc_decrement, (void *) slo );
 
@@ -2823,7 +2823,7 @@ char callbackName[63+1];
 
         updateControlTimerActive = 1;
         updateControlTimerValue = 100;
-        updateControlTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+        updateControlTimer = appAddTimeOut( actWin->appCtx->appContext(),
          updateControlTimerValue, slc_updateControl, (void *) this );
 
         opComplete = 1;

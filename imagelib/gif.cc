@@ -50,7 +50,7 @@ activeGifClass *agifo = (activeGifClass *) client;
 
   if ( !agifo->timerActive ) return;
 
-  agifo->timer = XtAppAddTimeOut(
+  agifo->timer = appAddTimeOut(
    agifo->actWin->appCtx->appContext(),
    agifo->timerValue, agifc_update, client );
 
@@ -1192,7 +1192,7 @@ int activeGifClass::activate (
 
       if ( refreshRate > 0 ) {
         timerValue = refreshRate;
-        timer = XtAppAddTimeOut(
+        timer = appAddTimeOut(
          actWin->appCtx->appContext(), timerValue, agifc_update, this );
         timerActive = 1;
       }

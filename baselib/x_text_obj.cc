@@ -1298,7 +1298,7 @@ int activeXTextClass::activate (
       unconnectedTimer = 0;
 
       if ( !unconnectedTimer ) {
-        unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+        unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
          2000, unconnectedTimeout, this );
       }
 

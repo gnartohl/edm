@@ -127,7 +127,7 @@ threadParamBlockPtr threadParamBlock;
 int stat;
 
   if ( shcmdo->timerActive ) {
-    shcmdo->timer = XtAppAddTimeOut(
+    shcmdo->timer = appAddTimeOut(
      shcmdo->actWin->appCtx->appContext(),
      shcmdo->timerValue, shcmdc_executeCmd, client );
   }
@@ -1291,7 +1291,7 @@ int shellCmdClass::activate (
 
     if ( autoExecInterval > 0.5 ) {
       timerValue = (int) ( autoExecInterval * 1000.0 );
-      timer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+      timer = appAddTimeOut( actWin->appCtx->appContext(),
        timerValue, shcmdc_executeCmd, this );
       timerActive = 1;
     }

@@ -35,7 +35,7 @@ xyGraphClass *xyo = (xyGraphClass *) client;
     return;
   }
 
-  xyo->updateTimer = XtAppAddTimeOut(
+  xyo->updateTimer = appAddTimeOut(
    xyo->actWin->appCtx->appContext(),
    xyo->updateTimerValue, updateTimerAction, client );
 
@@ -5474,7 +5474,7 @@ char format[31+1];
     }
     else {
       if ( !updateTimerActive ) {
-        updateTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+        updateTimer = appAddTimeOut( actWin->appCtx->appContext(),
          updateTimerValue, updateTimerAction, this );
         updateTimerActive = 1;
       }

@@ -2786,7 +2786,7 @@ char callbackName[63+1];
     if ( !opComplete ) {
 
       if ( !unconnectedTimer ) {
-        unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+        unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
          2000, unconnectedTimeout, this );
       }
 

@@ -1542,7 +1542,7 @@ int stat, opStat;
       popUpMenu = (Widget) NULL;
 
       if ( !unconnectedTimer ) {
-        unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+        unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
          2000, unconnectedTimeout, this );
       }
 

@@ -616,7 +616,7 @@ unsigned int mask;
     return;
   }
 
-  udbto->incrementTimer = XtAppAddTimeOut(
+  udbto->incrementTimer = appAddTimeOut(
    udbto->actWin->appCtx->appContext(),
    udbto->incrementTimerValue, udbtc_decrement, client );
 
@@ -665,7 +665,7 @@ unsigned int mask;
     return;
   }
 
-  udbto->incrementTimer = XtAppAddTimeOut(
+  udbto->incrementTimer = appAddTimeOut(
    udbto->actWin->appCtx->appContext(),
    udbto->incrementTimerValue, udbtc_increment, client );
 
@@ -1900,7 +1900,7 @@ XmString str;
       }
 
       if ( !unconnectedTimer ) {
-        unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+        unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
          2000, unconnectedTimeout, this );
       }
 
@@ -2223,12 +2223,12 @@ double dval;
 #endif
 
   if ( buttonNumber == 3 ) {
-    incrementTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+    incrementTimer = appAddTimeOut( actWin->appCtx->appContext(),
      500, udbtc_increment, this );
     incrementTimerActive = 1;
   }
   else if ( buttonNumber == 1 ) {
-    incrementTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+    incrementTimer = appAddTimeOut( actWin->appCtx->appContext(),
      500, udbtc_decrement, this );
     incrementTimerActive = 1;
   }

@@ -48,7 +48,7 @@ activeMessageBoxClass *messageboxo = (activeMessageBoxClass *) client;
 
   // printf( "In messageboxc_flush_log_file\n" );
 
-  messageboxo->flushTimer = XtAppAddTimeOut(
+  messageboxo->flushTimer = appAddTimeOut(
    messageboxo->actWin->appCtx->appContext(),
    messageboxo->flushTimerValue*1000, messageboxc_flush_log_file, client );
 
@@ -898,7 +898,7 @@ struct stat fileStat;
       opComplete = 1;
 
       if ( logFileExists ) {
-        flushTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+        flushTimer = appAddTimeOut( actWin->appCtx->appContext(),
          flushTimerValue*1000, messageboxc_flush_log_file, (void *) this );
       }
 

@@ -400,7 +400,7 @@ int stat;
 double fv;
 
   if ( mslo->updateControlTimerActive ) {
-    mslo->updateControlTimer = XtAppAddTimeOut(
+    mslo->updateControlTimer = appAddTimeOut(
      mslo->actWin->appCtx->appContext(),
      mslo->updateControlTimerValue, mslc_updateControl, client );
   }
@@ -1299,18 +1299,18 @@ int activeMotifSliderClass::erase ( void ) {
 
 int activeMotifSliderClass::eraseActive ( void ) {
 
-  return 1;
-
   if ( !activeMode || !init ) return 1;
 
-  actWin->executeGc.setLineWidth( 1 );
-  actWin->executeGc.setLineStyle( LineSolid );
+  actWin->executeGc.saveFg();
+  actWin->executeGc.setFG( bgColor.getColor() );
 
   XDrawRectangle( actWin->d, XtWindow(frameWidget),
-   actWin->executeGc.eraseGC(), 0, 0, w, h );
+   actWin->executeGc.normGC(), 0, 0, w, h );
 
   XFillRectangle( actWin->d, XtWindow(frameWidget),
-   actWin->executeGc.eraseGC(), 0, 0, w, h );
+   actWin->executeGc.normGC(), 0, 0, w, h );
+
+  actWin->executeGc.restoreFg();
 
   return 1;
 
@@ -1843,7 +1843,7 @@ int opStat;
       unconnectedTimer = 0;
 
       if ( !unconnectedTimer ) {
-        unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+        unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
          2000, unconnectedTimeout, this );
       }
 
@@ -1899,12 +1899,13 @@ int opStat;
       opStat = 1;
 
       if ( controlExists ) {
-        controlPvId = pv_factory->create( controlPvName.getExpanded() );
+        controlPvId = pv_factory->createWithInitialCallbacks(
+         controlPvName.getExpanded() );
         if ( controlPvId ) {
-          if ( controlPvId->is_valid() ) {
-            monitorControlConnectState( controlPvId, this );
-            controlUpdate( controlPvId, this );
-	  }
+          //if ( controlPvId->is_valid() ) {
+          //  monitorControlConnectState( controlPvId, this );
+          //  controlUpdate( controlPvId, this );
+	  //}
           controlPvId->add_conn_state_callback(
            monitorControlConnectState, this );
           controlPvId->add_value_callback(
@@ -1914,12 +1915,13 @@ int opStat;
 
       if ( controlLabelExists && ( controlLabelType == MSLC_K_LABEL )  ) {
         controlLabelPvId =
-         pv_factory->create( controlLabelName.getExpanded() );
+         pv_factory->createWithInitialCallbacks(
+          controlLabelName.getExpanded() );
         if ( controlLabelPvId ) {
-          if ( controlLabelPvId->is_valid() ) {
-           monitorControlLabelConnectState( controlLabelPvId, this );
-            controlLabelUpdate( controlLabelPvId, this );
-	  }
+          //if ( controlLabelPvId->is_valid() ) {
+          //  monitorControlLabelConnectState( controlLabelPvId, this );
+          //  controlLabelUpdate( controlLabelPvId, this );
+	  //}
           controlLabelPvId->add_conn_state_callback(
            monitorControlLabelConnectState, this );
           controlLabelPvId->add_value_callback(
@@ -1932,7 +1934,7 @@ int opStat;
 
         updateControlTimerActive = 1;
         updateControlTimerValue = 100;
-        updateControlTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+        updateControlTimer = appAddTimeOut( actWin->appCtx->appContext(),
          updateControlTimerValue, mslc_updateControl, (void *) this );
 
         opComplete = 1;

@@ -50,7 +50,7 @@ activePngClass *apngo = (activePngClass *) client;
 
   if ( !apngo->timerActive ) return;
 
-  apngo->timer = XtAppAddTimeOut(
+  apngo->timer = appAddTimeOut(
    apngo->actWin->appCtx->appContext(),
    apngo->timerValue, apngc_update, client );
 
@@ -1361,7 +1361,7 @@ int activePngClass::activate (
 
       if ( refreshRate > 0 ) {
         timerValue = refreshRate;
-        timer = XtAppAddTimeOut(
+        timer = appAddTimeOut(
          actWin->appCtx->appContext(), timerValue, apngc_update, this );
         timerActive = 1;
       }

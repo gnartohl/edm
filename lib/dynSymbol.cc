@@ -243,7 +243,7 @@ activeDynSymbolClass *dso = (activeDynSymbolClass *) client;
   dso->actWin->appCtx->proc->unlock();
 
   if ( dso->timerActive ) {
-    dso->timer = XtAppAddTimeOut( dso->actWin->appCtx->appContext(),
+    dso->timer = appAddTimeOut( dso->actWin->appCtx->appContext(),
      (unsigned long) (dso->rate*1000.0), dsc_updateControl, client );
   }
   else {
@@ -1601,7 +1601,7 @@ activeGraphicListPtr cur;
       if ( opComplete ) {
 
         if ( continuous && !useGate ) {
-          timer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+          timer = appAddTimeOut( actWin->appCtx->appContext(),
            (unsigned long) 1000, dsc_updateControl, this );
           timerActive = 1;
           up = 1;
@@ -2530,7 +2530,7 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd, ncolori, ncr;
 
     up = 1;
     down = 0;
-    timer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+    timer = appAddTimeOut( actWin->appCtx->appContext(),
      (unsigned long) (rate*1000.0), dsc_updateControl, this );
     timerActive = 1;
 
@@ -2556,7 +2556,7 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd, ncolori, ncr;
     up = 0;
     down = 1;
     if ( !continuous ) {
-      timer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+      timer = appAddTimeOut( actWin->appCtx->appContext(),
        (unsigned long) (rate*1000.0), dsc_updateControl, this );
       timerActive = 1;
     }
@@ -2637,7 +2637,7 @@ int activeDynSymbolClass::setProperty (
         up = 1;
         down = 0;
         if ( !continuous ) {
-          timer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+          timer = appAddTimeOut( actWin->appCtx->appContext(),
            (unsigned long) (rate*1000.0), dsc_updateControl, this );
           timerActive = 1;
         }
@@ -2650,7 +2650,7 @@ int activeDynSymbolClass::setProperty (
         up = 0;
         down = 1;
         if ( !continuous ) {
-          timer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+          timer = appAddTimeOut( actWin->appCtx->appContext(),
            (unsigned long) (rate*1000.0), dsc_updateControl, this );
           timerActive = 1;
         }
@@ -2675,7 +2675,7 @@ int activeDynSymbolClass::setProperty (
           else
             up = 1;
 	}
-        timer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+        timer = appAddTimeOut( actWin->appCtx->appContext(),
          (unsigned long) (rate*1000.0), dsc_updateControl, this );
         timerActive = 1;
       }
