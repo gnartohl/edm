@@ -302,6 +302,35 @@ int get_scale_params (
   char *format
 );
 
+void drawXLinearTimeScale (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  int drawScale,
+  int x,
+  int y,
+  int scaleLen,
+  time_t absolute_min,
+  double numSeconds,
+  int num_label_ticks,
+  int majors_per_label,
+  int minors_per_major,
+  unsigned int scaleColor,
+  unsigned int bgColor,
+  int labelGrid,
+  int majorGrid,
+  int minorGrid,
+  int gridHeight,
+  unsigned int gridColor,
+  fontInfoClass *fi,
+  char *fontTag,
+  XFontStruct *fs,
+  int annotateScale,
+  int xminConstrained,
+  int xmaxConstrained,
+  int erase
+);
+
 void drawXLinearScale (
   Display *d,
   Window win,
