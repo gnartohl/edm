@@ -260,6 +260,8 @@ friend void axygc_edit_cancel_delete (
 
 int bufX, bufY, bufW, bufH;
 
+Pixmap pixmap;
+
 pvConnectionClass connection;
 
 expStringClass graphTitle, xLabel, yLabel;
