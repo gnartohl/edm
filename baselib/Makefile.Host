@@ -16,7 +16,7 @@ endif
 
 USR_LDFLAGS += -shared -L../../../../lib/$(HOST_ARCH) -L../../../../bin/$(HOST_ARCH)
 
-PROD = libEdmBase.so
+LIBRARY = EdmBase
 
 PROD_LIBS += ca Com
 
@@ -38,26 +38,26 @@ HCLXt_DIR = $(X11_LIB)
 Xlib_DIR = $(X11_LIB)
 HCLXmu_DIR = $(X11_LIB)
 
-SRCS += line_obj.cc
-SRCS += rectangle_obj.cc
-SRCS += circle_obj.cc
-SRCS += arc_obj.cc
-SRCS += x_text_obj.cc
-SRCS += meter.cc
-SRCS += bar.cc
-SRCS += x_text_dsp_obj.cc
-SRCS += button.cc
-SRCS += menu_button.cc
-SRCS += message_button.cc
-SRCS += exit_button.cc
-SRCS += menu_mux.cc
-SRCS += related_display.cc
-SRCS += message_box.cc
-SRCS += slider.cc
-SRCS += shell_cmd.cc
-SRCS += reg_libEdmBase.cc
+LIBSRCS += line_obj.cc
+LIBSRCS += rectangle_obj.cc
+LIBSRCS += circle_obj.cc
+LIBSRCS += arc_obj.cc
+LIBSRCS += x_text_obj.cc
+LIBSRCS += meter.cc
+LIBSRCS += bar.cc
+LIBSRCS += x_text_dsp_obj.cc
+LIBSRCS += button.cc
+LIBSRCS += menu_button.cc
+LIBSRCS += message_button.cc
+LIBSRCS += exit_button.cc
+LIBSRCS += menu_mux.cc
+LIBSRCS += related_display.cc
+LIBSRCS += message_box.cc
+LIBSRCS += slider.cc
+LIBSRCS += shell_cmd.cc
+LIBSRCS += reg_libEdmBase.cc
 
-SRCS += expRect.cc
+LIBSRCS += expRect.cc
 
 include $(TOP)/config/RULES.Host
 

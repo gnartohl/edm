@@ -20,7 +20,7 @@ endif
 
 USR_LDFLAGS += -shared -L../../../../lib/$(HOST_ARCH)
 
-PROD = libcfcaa62e-8199-11d3-a77f-00104b8742df.so
+LIBRARY = cfcaa62e-8199-11d3-a77f-00104b8742df
 
 PROD_LIBS += ca Com
 
@@ -42,35 +42,34 @@ HCLXt_DIR = $(X11_LIB)
 Xlib_DIR = $(X11_LIB)
 HCLXmu_DIR = $(X11_LIB)
 
-SRCS += process.cc
-SRCS += app_pkg.cc
-SRCS += act_win.cc
-SRCS += act_grf.cc
-SRCS += font_pkg.cc
-SRCS += color_pkg.cc
-SRCS += font_menu.cc
-SRCS += utility.cc
-SRCS += pvColor.cc
-SRCS += expString.cc
-SRCS += cursor.cc
-SRCS += color_button.cc
-SRCS += gc_pkg.cc
-SRCS += entry_form.cc
-SRCS += confirm_dialog.cc
-SRCS += bindings.cc
-SRCS += scheme.cc
-SRCS += scrolled_text.cc
-SRCS += scrolled_list.cc
-SRCS += ulBindings.cc
-SRCS += pvBindings.cc
-SRCS += pvConnection.cc
-SRCS += group.cc
-SRCS += symbol.cc
-SRCS += dynSymbol.cc
-SRCS += keypad.cc
-SRCS += undo.cc
-
-SRCS += rules.cc
+LIBSRCS += process.cc
+LIBSRCS += app_pkg.cc
+LIBSRCS += act_win.cc
+LIBSRCS += act_grf.cc
+LIBSRCS += font_pkg.cc
+LIBSRCS += color_pkg.cc
+LIBSRCS += font_menu.cc
+LIBSRCS += utility.cc
+LIBSRCS += pvColor.cc
+LIBSRCS += expString.cc
+LIBSRCS += cursor.cc
+LIBSRCS += color_button.cc
+LIBSRCS += gc_pkg.cc
+LIBSRCS += entry_form.cc
+LIBSRCS += confirm_dialog.cc
+LIBSRCS += bindings.cc
+LIBSRCS += scheme.cc
+LIBSRCS += scrolled_text.cc
+LIBSRCS += scrolled_list.cc
+LIBSRCS += ulBindings.cc
+LIBSRCS += pvBindings.cc
+LIBSRCS += pvConnection.cc
+LIBSRCS += group.cc
+LIBSRCS += symbol.cc
+LIBSRCS += dynSymbol.cc
+LIBSRCS += keypad.cc
+LIBSRCS += undo.cc
+LIBSRCS += rules.cc
 
 include $(TOP)/config/RULES.Host
 
