@@ -36,7 +36,7 @@ void printErrMsg (
 
 static jmp_buf g_jump_h;
 
-void signal_handler (
+static void signal_handler (
   int sig
 ) {
 
