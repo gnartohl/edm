@@ -37,13 +37,18 @@
 
 #include "epicsVersion.h"
 
-#if BASE_VERSION >= 3
+#if BASE_VERSION == 3
 #if BASE_REVISION >= 14
 #include "epicsTime.h"
 #define osiTime epicsTime
 #else
 #include "osiTime.h"
 #endif
+#endif
+
+#if BASE_VERSION > 3
+#include "epicsTime.h"
+#define osiTime epicsTime
 #endif
 
 #include "pv_factory.h"
