@@ -954,6 +954,10 @@ static XtActionsRec dragActions[] = {
       widgetsCreated = 0;
     }
 
+    parsedTrans = XtParseTranslationTable( dragTrans );
+    XtAppAddActions( actWin->appCtx->appContext(), dragActions,
+     XtNumber(dragActions) );
+
     n = 0;
     XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
     XtSetArg( args[n], XmNy, (XtArgVal) y ); n++;
@@ -1011,10 +1015,6 @@ static XtActionsRec dragActions[] = {
       XmStringFree( str );
 
     }
-
-    parsedTrans = XtParseTranslationTable( dragTrans );
-    XtAppAddActions( actWin->appCtx->appContext(), dragActions,
-     XtNumber(dragActions) );
 
 #if 0
     XtAddEventHandler( radioBox,
