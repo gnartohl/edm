@@ -70,6 +70,7 @@ LIBSRCS += symbol.cc
 LIBSRCS += dynSymbol.cc
 LIBSRCS += keypad.cc
 LIBSRCS += calpad.cc
+LIBSRCS += fileSelect.cc
 LIBSRCS += undo.cc
 LIBSRCS += rules.cc
 LIBSRCS += color_list.cc
