@@ -89,6 +89,11 @@ scrolledTextClass::scrolledTextClass ( void ) {
   autoOpenWindow = 1;
   autoRaiseWindow = 1;
   windowIsOpen = 0;
+  shell = NULL;
+  pane = NULL;
+  topScrolledText = NULL;
+  topForm = NULL;
+  clear_pb = NULL;
 
 }
 
@@ -117,6 +122,12 @@ int scrolledTextClass::destroy ( void ) {
 
   maxSize = 0;
   bufSize = 0;
+
+  shell = NULL;
+  pane = NULL;
+  topScrolledText = NULL;
+  topForm = NULL;
+  clear_pb = NULL;
 
   return 1;
 
@@ -402,7 +413,8 @@ int scrolledTextClass::createEmbeddedWH (
   int _h,
   int _bufSize,
   fontInfoClass *fi,
-  const char *textFontTag )
+  const char *textFontTag,
+  int provideClearButton )
 {
 
 int n;
@@ -453,23 +465,32 @@ XmString str;
 
   topScrolledText = XmCreateScrolledText( pane, "", args, n );
 
-  if ( textTag )
-    str = XmStringCreate( scrolledTextClass_str2, textTag );
-  else
-    str = XmStringCreateLocalized( scrolledTextClass_str2 );
+  if ( provideClearButton ) {
 
-  clear_pb = XtVaCreateManagedWidget( "", xmPushButtonGadgetClass,
-   topForm,
-   XmNtopAttachment, XmATTACH_FORM,
-   XmNrightAttachment, XmATTACH_FORM,
-   XmNdefaultButtonShadowThickness, 1,
-   XmNlabelString, str,
-   XmNfontList, textFontList,
-   NULL );
+    if ( textTag )
+      str = XmStringCreate( scrolledTextClass_str2, textTag );
+    else
+      str = XmStringCreateLocalized( scrolledTextClass_str2 );
 
-  XmStringFree( str );
+    clear_pb = XtVaCreateManagedWidget( "", xmPushButtonGadgetClass,
+     topForm,
+     XmNtopAttachment, XmATTACH_FORM,
+     XmNrightAttachment, XmATTACH_FORM,
+     XmNdefaultButtonShadowThickness, 1,
+     XmNlabelString, str,
+     XmNfontList, textFontList,
+     NULL );
 
-  XtAddCallback( clear_pb, XmNactivateCallback, stc_clear, this );
+    XmStringFree( str );
+
+    XtAddCallback( clear_pb, XmNactivateCallback, stc_clear, this );
+
+  }
+  else {
+
+    clear_pb = NULL;
+
+  }
 
   autoOpenWindow = 0;
   autoRaiseWindow = 0;
@@ -483,6 +504,26 @@ XmString str;
   windowIsOpen = 0;
 
   return 1;
+
+}
+
+int scrolledTextClass::createEmbeddedWH (
+  Widget top,
+  int _x,
+  int _y,
+  int _w,
+  int _h,
+  int _bufSize,
+  fontInfoClass *fi,
+  const char *textFontTag )
+{
+
+int stat;
+
+  stat = createEmbeddedWH( top, _x, _y, _w, _h, _bufSize, fi,
+   textFontTag, 1 );
+
+  return stat;
 
 }
 

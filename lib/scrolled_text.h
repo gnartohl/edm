@@ -113,6 +113,17 @@ int scrolledTextClass::createEmbeddedWH (
   int _h,
   int _bufSize,
   fontInfoClass *fi,
+  const char *textFontTag,
+  int provideClearButton );
+
+int scrolledTextClass::createEmbeddedWH (
+  Widget top,
+  int _x,
+  int _y,
+  int _w,
+  int _h,
+  int _bufSize,
+  fontInfoClass *fi,
   const char *textFontTag );
 
 int scrolledTextClass::addTextNoNL (
