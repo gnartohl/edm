@@ -29,6 +29,23 @@
 
 #include "thread.h"
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activePipClass *pipo = (activePipClass *) client;
+
+  if ( !pipo->init ) {
+    pipo->needToDrawUnconnected = 1;
+    pipo->needConnectTimeout = 1;
+    pipo->actWin->addDefExeNode( pipo->aglPtr );
+  }
+
+  pipo->unconnectedTimer = 0;
+
+}
+
 static void menu_cb (
   Widget w,
   XtPointer client,
@@ -355,8 +372,8 @@ int i;
   aw = NULL;
   strcpy( curFileName, "" );
   displaySource = 0;
-  readPvId = 0;
-  labelPvId = 0;
+  readPvId = NULL;
+  labelPvId = NULL;
   activateIsComplete = 0;
 
   for ( i=0; i<maxDsps; i++ ) {
@@ -366,7 +383,7 @@ int i;
 
   numDsps = 0;
   popUpMenu = NULL;
-
+  unconnectedTimer = 0;
   buf = NULL;
 
 }
@@ -407,8 +424,8 @@ int i;
   aw = NULL;
   strcpy( curFileName, "" );
   displaySource = source->displaySource;
-  readPvId = 0;
-  labelPvId = 0;
+  readPvId = NULL;
+  labelPvId = NULL;
   activateIsComplete = 0;
 
   for ( i=0; i<maxDsps; i++ ) {
@@ -421,6 +438,7 @@ int i;
 
   numDsps = source->numDsps;
   popUpMenu = NULL;
+  unconnectedTimer = 0;
   buf = NULL;
 
 }
@@ -432,6 +450,11 @@ activePipClass::~activePipClass ( void ) {
   if ( buf ) {
     delete buf;
     buf = NULL;
+  }
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
   }
 
 }
@@ -910,6 +933,26 @@ int activePipClass::draw ( void ) {
 
 int activePipClass::drawActive ( void ) {
 
+  if ( !init ) {
+    if ( needToDrawUnconnected ) {
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( bgColor.getDisconnected() );
+      actWin->executeGc.setLineWidth( 1 );
+      actWin->executeGc.setLineStyle( LineSolid );
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
+      actWin->executeGc.restoreFg();
+      needToEraseUnconnected = 1;
+    }
+  }
+  else if ( needToEraseUnconnected ) {
+    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineStyle( LineSolid );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.eraseGC(), x, y, w, h );
+    needToEraseUnconnected = 0;
+  }
+
   if ( !enabled || !activeMode || !init ) return 1;
 
   if ( aw ) {
@@ -956,7 +999,9 @@ XmString str;
       aglPtr = ptr;
       needConnectInit = needUpdate = needMenuConnectInit = needMenuUpdate =
        needDraw = needFileOpen = needInitMenuFileOpen = needUnmap =
-       needMap = 0;
+       needMap = needToEraseUnconnected = needToDrawUnconnected =
+       needConnectTimeout = 0;
+      unconnectedTimer = 0;
       activateIsComplete = 0;
       curReadIV = 0;
       strcpy( curReadV, "" );
@@ -999,6 +1044,12 @@ XmString str;
       case displayFromPV:
 
         if ( readExists ) {
+
+          if ( !unconnectedTimer ) {
+            unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
+             10000, unconnectedTimeout, this );
+          }
+
 	  readPvId = the_PV_Factory->create( readPvExpStr.getExpanded() );
 	  if ( readPvId ) {
 	    readPvId->add_conn_state_callback( pip_monitor_read_connect_state,
@@ -1007,6 +1058,7 @@ XmString str;
 	  else {
             printf( activePipClass_str22 );
           }
+
         }
 
         activateIsComplete = 1;
@@ -1029,6 +1081,11 @@ XmString str;
 
         if ( readExists && ( numDsps > 0 ) ) {
 
+          if ( !unconnectedTimer ) {
+            unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
+             5000, unconnectedTimeout, this );
+          }
+
 	  readPvId = the_PV_Factory->create( readPvExpStr.getExpanded() );
 	  if ( readPvId ) {
 	    readPvId->add_conn_state_callback( pip_monitor_menu_connect_state,
@@ -1038,14 +1095,16 @@ XmString str;
             printf( activePipClass_str22 );
           }
 
-	  labelPvId = the_PV_Factory->create( labelPvExpStr.getExpanded() );
-	  if ( labelPvId ) {
-	    labelPvId->add_conn_state_callback(
-             pip_monitor_label_connect_state, this );
+          if ( labelExists ) {
+	    labelPvId = the_PV_Factory->create( labelPvExpStr.getExpanded() );
+	    if ( labelPvId ) {
+	      labelPvId->add_conn_state_callback(
+               pip_monitor_label_connect_state, this );
+	    }
+	    else {
+              printf( activePipClass_str22 );
+            }
 	  }
-	  else {
-            printf( activePipClass_str22 );
-          }
 
           if ( !popUpMenu ) {
 
@@ -1131,6 +1190,11 @@ activeWindowListPtr cur;
 
     active = 0;
     activeMode = 0;
+
+    if ( unconnectedTimer ) {
+      XtRemoveTimeOut( unconnectedTimer );
+      unconnectedTimer = 0;
+    }
 
     if ( aw ) {
       if ( aw->loadFailure ) {
@@ -1309,8 +1373,7 @@ XmString str;
       curReadIV = 0;
       strcpy( curReadV, "" );
 
-      readPvId = 0;
-      labelPvId = 0;
+      readPvId = labelPvId = NULL;
 
       readPvConnected = active = init = 0;
       activeMode = 1;
@@ -1345,6 +1408,12 @@ XmString str;
       case displayFromPV:
 
         if ( readExists ) {
+
+          if ( !unconnectedTimer ) {
+            unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
+             5000, unconnectedTimeout, this );
+          }
+
  	  readPvId = the_PV_Factory->create( readPvExpStr.getExpanded() );
 	  if ( readPvId ) {
 	    readPvId->add_conn_state_callback( pip_monitor_read_connect_state,
@@ -1353,6 +1422,7 @@ XmString str;
 	  else {
             printf( activePipClass_str22 );
           }
+
         }
 
         activateIsComplete = 1;
@@ -1375,6 +1445,11 @@ XmString str;
 
         if ( readExists && ( numDsps > 0 ) ) {
 
+          if ( !unconnectedTimer ) {
+            unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
+             5000, unconnectedTimeout, this );
+          }
+
 	  readPvId = the_PV_Factory->create( readPvExpStr.getExpanded() );
 	  if ( readPvId ) {
 	    readPvId->add_conn_state_callback( pip_monitor_menu_connect_state,
@@ -1384,14 +1459,16 @@ XmString str;
             printf( activePipClass_str22 );
           }
 
-	  labelPvId = the_PV_Factory->create( labelPvExpStr.getExpanded() );
-	  if ( labelPvId ) {
-	    labelPvId->add_conn_state_callback(
-             pip_monitor_label_connect_state, this );
+          if ( labelExists ) {
+	    labelPvId = the_PV_Factory->create( labelPvExpStr.getExpanded() );
+	    if ( labelPvId ) {
+	      labelPvId->add_conn_state_callback(
+               pip_monitor_label_connect_state, this );
+	    }
+	    else {
+              printf( activePipClass_str22 );
+            }
 	  }
-	  else {
-            printf( activePipClass_str22 );
-          }
 
           if ( !popUpMenu ) {
 
@@ -1934,7 +2011,7 @@ void activePipClass::executeDeferred ( void ) {
 
 int iv;
 char v[39+1];
-int i, nc, nu, nmc, nmu, nd, nfo, nimfo, nmap, nunmap, okToClose;
+int i, nc, nu, nmc, nmu, nd, nfo, nimfo, ncto, nmap, nunmap, okToClose;
 activeWindowListPtr cur;
 Window root, child;
 int rootX, rootY, winX, winY;
@@ -1951,6 +2028,7 @@ XButtonEvent be;
   nd = needDraw; needDraw = 0;
   nfo = needFileOpen; needFileOpen = 0;
   nimfo = needInitMenuFileOpen; needInitMenuFileOpen = 0;
+  ncto = needConnectTimeout; needConnectTimeout = 0;
   nmap = needMap; needMap = 0;
   nunmap = needUnmap; needUnmap = 0;
   strncpy( v, curReadV, 39 );
@@ -2331,6 +2409,16 @@ XButtonEvent be;
       strncpy( curFileName, displayFileName[0].getExpanded(), 127 );
       curFileName[127] = 0;
     }
+
+  }
+
+//----------------------------------------------------------------------------
+
+  if ( ncto ) {
+
+    activateIsComplete = 1;
+
+    drawActive();
 
   }
 

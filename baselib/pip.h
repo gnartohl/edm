@@ -33,6 +33,10 @@
 
 #include "pip.str"
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void menu_cb (
   Widget w,
   XtPointer client,
@@ -100,6 +104,10 @@ static const int displayFromForm = 1;
 static const int displayFromMenu = 2;
 
 private:
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void menu_cb (
   Widget w,
@@ -228,8 +236,10 @@ colorButtonClass fgCb, bgCb, topCb, botCb;
 int bufFgColor, bufBgColor, bufTopShadowColor, bufBotShadowColor;
 
 int needConnectInit, needUpdate, needMenuConnectInit, needMenuUpdate,
- needDraw, needFileOpen, needInitMenuFileOpen, needMap, needUnmap;
-int initialReadConnection, initialMenuConnection, initialLabelConnection;
+ needDraw, needFileOpen, needInitMenuFileOpen, needMap, needUnmap,
+ needToDrawUnconnected, needToEraseUnconnected, needConnectTimeout;
+int initialReadConnection, initialMenuConnection, initialLabelConnection,
+ unconnectedTimer;
 
 activeWindowClass *aw;
 
