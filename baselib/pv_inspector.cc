@@ -257,14 +257,14 @@ char syms[255+1];
 
       if ( pio->useRtype[i] ) {
         snprintf( syms, 255,
-         "name=%s,rtype=%s,type=%s,specType=%s,vector=%s",
+         "name=%s,rtype=%s,type=%s,specType=%s,dim=%s",
          pio->entryValue, pio->rtype, pio->pvTypeName(pio->pvType),
          pio->pvSpecificTypeName(pio->pvSpecificType),
          pio->vectorId(pio->isVector) );
       }
       else {
         snprintf( syms, 255,
-         "name=%s,type=%s,specType=%s,vector=%s",
+         "name=%s,type=%s,specType=%s,dim=%s",
          pio->entryValue, pio->pvTypeName(pio->pvType),
          pio->pvSpecificTypeName(pio->pvSpecificType),
          pio->vectorId(pio->isVector) );
@@ -2482,14 +2482,14 @@ activeWindowListPtr cur;
         if ( numDsps == 1 ) {
           if ( useAnyRtype ) {
             snprintf( syms, 255,
-             "name=%s,rtype=%s,type=%s,specType=%s,vector=%s",
+             "name=%s,rtype=%s,type=%s,specType=%s,dim=%s",
              value, rtype, pvTypeName(pvType),
              pvSpecificTypeName(pvSpecificType),
              vectorId(isVector) );
 	  }
 	  else {
             snprintf( syms, 255,
-             "name=%s,type=%s,specType=%s,vector=%s",
+             "name=%s,type=%s,specType=%s,dim=%s",
              value, pvTypeName(pvType), pvSpecificTypeName(pvSpecificType),
              vectorId(isVector) );
 	  }
@@ -2531,7 +2531,7 @@ activeWindowListPtr cur;
         displayOpen = 1;
         if ( numDsps == 1 ) {
           snprintf( syms, 255,
-           "name=%s,rtype=%s,type=%s,specType=%s,vector=%s",
+           "name=%s,rtype=%s,type=%s,specType=%s,dim=%s",
            value, rtype, pvTypeName(pvType),
            pvSpecificTypeName(pvSpecificType),
            vectorId(isVector) );
@@ -2588,7 +2588,7 @@ activeWindowListPtr cur;
         displayOpen = 1;
         if ( numDsps == 1 ) {
           snprintf( syms, 255,
-           "name=%s,rtype=N/A,type=%s,specType=%s,vector=%s",
+           "name=%s,rtype=N/A,type=%s,specType=%s,dim=%s",
            value, pvTypeName(pvType), pvSpecificTypeName(pvSpecificType),
            vectorId(isVector) );
           symbolsExpStr[0].setRaw( syms );
