@@ -22,7 +22,7 @@ endif
 
 USR_LDFLAGS += -shared -L../../../../lib/$(HOST_ARCH) -L../../../../bin/$(HOST_ARCH) -L$(IMAGELIB)
 
-PROD = lib605432d2-f29d-11d2-973b-00104b8742df.so
+LIBRARY = 605432d2-f29d-11d2-973b-00104b8742df
 
 PROD_LIBS += ca Com
 
@@ -44,9 +44,9 @@ HCLXt_DIR = $(X11_LIB)
 Xlib_DIR = $(X11_LIB)
 HCLXmu_DIR = $(X11_LIB)
 
-SRCS += gif.cc
-SRCS += png.cc
-SRCS += reg_lib605432d2-f29d-11d2-973b-00104b8742df.cc
+LIBSRCS += gif.cc
+LIBSRCS += png.cc
+LIBSRCS += reg_lib605432d2-f29d-11d2-973b-00104b8742df.cc
 
 include $(TOP)/config/RULES.Host
 
