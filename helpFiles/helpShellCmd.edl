@@ -1,487 +1,410 @@
-3 1 0
-237
-52
-477
-869
-helvetica-medium-r-18.0
-0
-helvetica-medium-r-12.0
-0
-index
-14
-index
-3
-index
-14
-index
-14
-index
-25
-index
-4
-index
-1
-index
-11
-index
-2
-Shell Command
-0
-0
-10
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-shellCmdClass
-2 5 0
-164
-94
-91
-41
-index
-14
-index
-4
-index
-1
-index
-11
-ls 1
-Cmd Menu
-helvetica-bold-r-14.0
-0
-0
-0
-0
-0
-<<<empty>>>
-0
-Cmd 1
-3
-ls 2
-Cmd 2
-ls 3
-Cmd 3
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-28
-28
-172
-27
-index
-14
-0
-0
-index
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Shell Command
-helvetica-medium-r-24.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-1 2 0
-220
-124
-42
-67
-$(help)helpShellCommandParamsGif
-0
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-29
-249
-302
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Symbols may be used in labels and commands.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-29
-751
-420
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Pressing the Additional Cmds button brings up another dialog box
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-29
-768
-406
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-containing 19 groups of command attribute entry fields. Up to 19
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-29
-783
-418
-32
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-shell commands definitions may be specified and configured here.\nPress the button below for an example.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-relatedDisplayClass
-2 6 0
-29
-825
-237
-30
-index
-14
-index
-4
-index
-1
-index
-11
-$(help)helpShellCmdParams
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Shell Command Params Example
-0
-0
-0
-<<<E~O~D>>>
-shellCmdClass
-2 5 0
-29
-94
-91
-41
-index
-14
-index
-4
-index
-1
-index
-11
-ls 1
-One Cmd
-helvetica-bold-r-14.0
-0
-0
-0
-0
-0
-<<<empty>>>
-0
-<<<empty>>>
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-29
-222
-346
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-This object executes the specified OS shell command.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-28
-320
-319
-48
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Button is still active when invisible box is checked\nbut is not active when it becomes invisible as the\nresult of a rule evaluation.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-27
-379
-430
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-The current display may be closed when the command is executed.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-28
-603
-356
-128
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-If a password is entered (and successfully confirmed)\nthen, in execute mode, the button operation wil be\nprotected by a password.\n\nThe * character clears the password.\n\nIf locked is checked, the password may not be changed\n(unless edm is running in supervisor mode).
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-30
-406
-331
-64
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-If Allow Multiple Instances is checked, then multiple\ninstances of the shell command may be active\nconcurrently, otherwise the current command must\ncomplete before another may be executed.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-29
-482
-354
-48
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Initial Exec Delay gives the number of seconds to delay\nafter the button is pressed before executing the shell\ncommand.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-29
-541
-360
-48
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-If Auto Exec Interval is non-zero, then the command will\nexecute automatically at the given period (in seconds) \nwhenever the display is executed.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-29
-277
-409
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-If Required Host is not blank, the hostname on which the current
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-29
-292
-249
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-instance of edm is running must match.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
+4 0 0
+beginScreenProperties
+major 4
+minor 0
+release 0
+x 241
+y 72
+w 477
+h 869
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 51400 51400 51400
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 65535
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+title "Shell Command"
+endScreenProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 164
+y 94
+w 91
+h 41
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-bold-r-14.0"
+buttonLabel "Cmd Menu"
+numCmds 3
+commandLabel {
+  0 "Cmd 1"
+  1 "Cmd 2"
+  2 "Cmd 3"
+}
+command {
+  0 "ls 1"
+  1 "ls 2"
+  2 "ls 3"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 28
+y 28
+w 172
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 60652 60652 60652
+value {
+  "Shell Command"
+}
+autoSize
+endObjectProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 220
+y 124
+w 42
+h 67
+file "$(help)helpShellCommandParamsGif"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 29
+y 249
+w 302
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Symbols may be used in labels and commands."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 29
+y 751
+w 420
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Pressing the Additional Cmds button brings up another dialog box"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 29
+y 768
+w 406
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "containing 19 groups of command attribute entry fields. Up to 19"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 29
+y 783
+w 418
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "shell commands definitions may be specified and configured here."
+  "Press the button below for an example."
+}
+autoSize
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 29
+y 825
+w 237
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+buttonLabel "Shell Command Params Example"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpShellCmdParams"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 29
+y 94
+w 91
+h 41
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-bold-r-14.0"
+buttonLabel "One Cmd"
+numCmds 1
+command {
+  0 "ls 1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 29
+y 222
+w 346
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "This object executes the specified OS shell command."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 28
+y 320
+w 319
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Button is still active when invisible box is checked"
+  "but is not active when it becomes invisible as the"
+  "result of a rule evaluation."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 27
+y 379
+w 430
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "The current display may be closed when the command is executed."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 28
+y 603
+w 356
+h 128
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "If a password is entered (and successfully confirmed)"
+  "then, in execute mode, the button operation wil be"
+  "protected by a password."
+  ""
+  "The * character clears the password."
+  ""
+  "If locked is checked, the password may not be changed"
+  "(unless edm is running in supervisor mode)."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 30
+y 406
+w 331
+h 64
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "If Allow Multiple Instances is checked, then multiple"
+  "instances of the shell command may be active"
+  "concurrently, otherwise the current command must"
+  "complete before another may be executed."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 29
+y 482
+w 354
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Initial Exec Delay gives the number of seconds to delay"
+  "after the button is pressed before executing the shell"
+  "command."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 29
+y 541
+w 360
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "If Auto Exec Interval is non-zero, then the command will"
+  "execute automatically at the given period (in seconds) "
+  "whenever the display is executed."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 29
+y 277
+w 409
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "If Required Host is not blank, the hostname on which the current"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 29
+y 292
+w 249
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "instance of edm is running must match."
+}
+autoSize
+endObjectProperties
+

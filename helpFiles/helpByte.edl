@@ -1,863 +1,726 @@
-3 1 0
-503
-109
-498
-677
-helvetica-medium-r-18.0
-0
-helvetica-medium-r-12.0
-0
-index
-14
-index
-3
-index
-14
-index
-14
-index
-27
-index
-4
-index
-1
-index
-10
-index
-2
-Byte
-0
-0
-10
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-24
-25
-51
-27
-index
-14
-0
-0
-index
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Byte
-helvetica-medium-r-24.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-250
-105
-53
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-nobt = 8
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-250
-124
-128
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Direction: BigEndian
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-238
-276
-193
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Lower 4 examples LittleEndian
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-250
-143
-48
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-shft = 0
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-235
-174
-217
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Same PV displayed by textUpdate
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-251
-317
-119
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Line Style: Dashed
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-255
-208
-133
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-nobt = 4 and shft = 0
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-1 2 0
-22
-80
-185
-266
-$(help)helpByteGif.gif
-0
-0
-0
-<<<E~O~D>>>
-activeLineClass
-2 2 0
-49
-52
-91
-63
-2
-49 115
-140 52
-index
-14
-0
-0
-index
-4
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-99
-35
-57
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-On Color
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 2 0
-171
-51
-54
-65
-2
-171 116
-225 51
-index
-14
-0
-0
-index
-4
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-193
-35
-55
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Off Color
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-303
-35
-65
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Line Color
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 2 0
-177
-118
-0
-0
-1
-177 118
-index
-14
-0
-0
-index
-4
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<E~O~D>>>
-activeLineClass
-2 2 0
-177
-53
-140
-66
-2
-177 119
-317 53
-index
-14
-0
-0
-index
-4
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<E~O~D>>>
-activeLineClass
-2 2 0
-145
-175
-84
-4
-2
-145 175
-229 179
-index
-14
-0
-0
-index
-4
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<E~O~D>>>
-activeLineClass
-2 2 0
-196
-202
-51
-10
-2
-196 202
-247 212
-index
-14
-0
-0
-index
-4
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<E~O~D>>>
-activeLineClass
-2 2 0
-112
-213
-135
-29
-2
-112 213
-247 242
-index
-14
-0
-0
-index
-4
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-255
-236
-133
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-nobt = 4 and shft = 4
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 2 0
-177
-284
-62
-34
-4
-177 284
-239 318
-239 318
-239 318
-index
-14
-0
-0
-index
-4
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-251
-338
-113
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Line Thickness: 2
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 2 0
-177
-310
-66
-33
-4
-177 310
-242 343
-243 343
-243 343
-index
-14
-0
-0
-index
-4
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-12
-441
-0
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-12
-385
-423
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-The byte widget takes its shape and size from its outline rectangle.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-12
-411
-456
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-The bits of the value to which it is connected are arrayed along the long
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-12
-436
-343
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-axis in the order specified by the "Direction" selection.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-12
-474
-465
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Simple colors may be entered for the "On" and "Off" colors, or a color rule
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-12
-500
-450
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-may be specified for the "On Color".  In the latter case the "Off Color" is
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-12
-526
-339
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-ignored.  Rules are not supported for the "Line Color".
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-571
-470
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-The byte widget is intended to display mbbiDirect records but can display 
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-597
-428
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-other small integer channels.  Shift (shft) must be in the range 0-15
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-623
-255
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-and number of bits (nobt) must be 1-16.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-239
-292
-133
-16
-index
-14
-0
-1
-index
-4
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-(same PV as above)
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
+4 0 0
+beginScreenProperties
+major 4
+minor 0
+release 0
+x 426
+y 64
+w 498
+h 677
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 51400 51400 51400
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 49344
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+title "Byte"
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 24
+y 25
+w 51
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 60652 60652 60652
+value {
+  "Byte"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 250
+y 105
+w 53
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "nobt = 8"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 250
+y 124
+w 128
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Direction: BigEndian"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 238
+y 276
+w 193
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Lower 4 examples LittleEndian"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 250
+y 143
+w 48
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "shft = 0"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 235
+y 174
+w 217
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Same PV displayed by textUpdate"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 251
+y 317
+w 119
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Line Style: Dashed"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 255
+y 208
+w 133
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "nobt = 4 and shft = 0"
+}
+autoSize
+endObjectProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 22
+y 80
+w 185
+h 266
+file "$(help)helpByteGif.gif"
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 49
+y 52
+w 91
+h 63
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+numPoints 2
+xPoints {
+  0 49
+  1 140
+}
+yPoints {
+  0 115
+  1 52
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 99
+y 35
+w 57
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "On Color"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 171
+y 51
+w 54
+h 65
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+numPoints 2
+xPoints {
+  0 171
+  1 225
+}
+yPoints {
+  0 116
+  1 51
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 193
+y 35
+w 55
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Off Color"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 303
+y 35
+w 65
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Line Color"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 177
+y 118
+w 0
+h 0
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+numPoints 1
+xPoints {
+  0 177
+}
+yPoints {
+  0 118
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 177
+y 53
+w 140
+h 66
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+numPoints 2
+xPoints {
+  0 177
+  1 317
+}
+yPoints {
+  0 119
+  1 53
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 145
+y 175
+w 84
+h 4
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+numPoints 2
+xPoints {
+  0 145
+  1 229
+}
+yPoints {
+  0 175
+  1 179
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 196
+y 202
+w 51
+h 10
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+numPoints 2
+xPoints {
+  0 196
+  1 247
+}
+yPoints {
+  0 202
+  1 212
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 112
+y 213
+w 135
+h 29
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+numPoints 2
+xPoints {
+  0 112
+  1 247
+}
+yPoints {
+  0 213
+  1 242
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 255
+y 236
+w 133
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "nobt = 4 and shft = 4"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 177
+y 284
+w 62
+h 34
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+numPoints 4
+xPoints {
+  0 177
+  1 239
+  2 239
+  3 239
+}
+yPoints {
+  0 284
+  1 318
+  2 318
+  3 318
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 251
+y 338
+w 113
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Line Thickness: 2"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 177
+y 310
+w 66
+h 33
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+numPoints 4
+xPoints {
+  0 177
+  1 242
+  2 243
+  3 243
+}
+yPoints {
+  0 310
+  1 343
+  2 343
+  3 343
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 12
+y 441
+w 0
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 12
+y 385
+w 423
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "The byte widget takes its shape and size from its outline rectangle."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 12
+y 411
+w 456
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "The bits of the value to which it is connected are arrayed along the long"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 12
+y 436
+w 343
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "axis in the order specified by the \"Direction\" selection."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 12
+y 474
+w 465
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Simple colors may be entered for the \"On\" and \"Off\" colors, or a color rule"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 12
+y 500
+w 450
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "may be specified for the \"On Color\".  In the latter case the \"Off Color\" is"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 12
+y 526
+w 339
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "ignored.  Rules are not supported for the \"Line Color\"."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 13
+y 571
+w 470
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "The byte widget is intended to display mbbiDirect records but can display "
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 13
+y 597
+w 428
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "other small integer channels.  Shift (shft) must be in the range 0-15"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 13
+y 623
+w 255
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "and number of bits (nobt) must be 1-16."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 239
+y 292
+w 133
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "(same PV as above)"
+}
+autoSize
+endObjectProperties
+
