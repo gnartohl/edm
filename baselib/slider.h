@@ -423,6 +423,10 @@ char *objName ( void ) {
 
 }
 
+void doIncrement ( void );
+
+void doDecrement ( void );
+
 int createInteractive (
   activeWindowClass *aw_obj,
   int x,

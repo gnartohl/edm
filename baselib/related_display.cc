@@ -179,6 +179,10 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
 
   rdo->invisible = rdo->buf->bufInvisible;
 
+  rdo->ofsX = rdo->buf->bufOfsX;
+
+  rdo->ofsY = rdo->buf->bufOfsY;
+
   rdo->noEdit = rdo->buf->bufNoEdit;
 
   rdo->useFocus = rdo->buf->bufUseFocus;
@@ -280,6 +284,8 @@ int i;
 
   activeMode = 0;
   invisible = 0;
+  ofsX = 0;
+  ofsY = 0;
   noEdit = 0;
   useFocus = 0;
 
@@ -367,6 +373,8 @@ activeGraphicClass *rdo = (activeGraphicClass *) this;
   bgCb = source->bgCb;
 
   invisible = source->invisible;
+  ofsX = source->ofsX;
+  ofsY = source->ofsY;
   noEdit = source->noEdit;
   useFocus = source->useFocus;
 
@@ -560,6 +568,10 @@ int i, index;
   }
 
   fprintf( f, "%-d\n", noEdit );
+
+  fprintf( f, "%-d\n", ofsX );
+
+  fprintf( f, "%-d\n", ofsY );
 
   return 1;
 
@@ -881,6 +893,15 @@ char onePvName[activeGraphicClass::MAX_PV_NAME+1];
 
   }
 
+  if ( ( major > 2 ) || ( major == 2 ) && ( minor > 5 ) ) {
+    fscanf( f, "%d\n", &ofsX ); actWin->incLine();
+    fscanf( f, "%d\n", &ofsY ); actWin->incLine();
+  }
+  else {
+    ofsX = 0;
+    ofsY = 0;
+  }
+
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
@@ -1183,6 +1204,10 @@ char title[32], *ptr;
 
   buf->bufInvisible = invisible;
 
+  buf->bufOfsX = ofsX;
+
+  buf->bufOfsY = ofsY;
+
   buf->bufNoEdit = noEdit;
 
   buf->bufUseFocus = useFocus;
@@ -1262,7 +1287,10 @@ char title[32], *ptr;
   ef.addTextField( "Macros", 35, buf->bufSymbols[0], 255 );
   ef.addOption( "Mode", "Append|Replace", &buf->bufReplaceSymbols[0] );
   ef.addToggle( "Propagate", &buf->bufPropagateMacros[0] );
-  ef.addToggle( "Set Position", &buf->bufSetPostion[0] );
+  ef.addOption( "Display Position", relatedDisplayClass_str31,
+   &buf->bufSetPostion[0] );
+  ef.addTextField( relatedDisplayClass_str32, 35, &buf->bufOfsX );
+  ef.addTextField( relatedDisplayClass_str33, 35, &buf->bufOfsY );
   ef.addToggle( "Close Current", &buf->bufCloseAction[0] );
   ef.addToggle( "Dups Allowed", &buf->bufAllowDups[0] );
   ef.addToggle( "Cascade", &buf->bufCascade[0] );
@@ -1291,8 +1319,9 @@ char title[32], *ptr;
     ef1->addLabel( " " );
     ef1->addToggle( " ", &buf->bufPropagateMacros[i] );
     ef1->addLabel( "Propagate  " );
-    ef1->addToggle( " ", &buf->bufSetPostion[i] );
-    ef1->addLabel( "Set Position  " );
+    ef1->addLabel( relatedDisplayClass_str30 );
+    ef1->addOption( " ", relatedDisplayClass_str31, &buf->bufSetPostion[i] );
+    ef1->addLabel( " " );
     ef1->addToggle( " ", &buf->bufCloseAction[i] );
     ef1->addLabel( "Close Current  " );
     ef1->addToggle( " ", &buf->bufAllowDups[i] );
@@ -2068,14 +2097,24 @@ int numNewMacros, max, numFound;
 
   cur->node.storeFileName( displayFileName[index].getExpanded() );
 
-  if ( setPostion[index] ) {
+  if ( setPostion[index] == RDC_BUTTON_POS ) {
     if ( cascade[index] ) {
       actWin->appCtx->openActivateCascadeActiveWindow( &cur->node,
-       actWin->x+posX, actWin->y+posY );
+       actWin->x+x+ofsX, actWin->y+y+ofsY );
     }
     else {
       actWin->appCtx->openActivateActiveWindow( &cur->node,
-       actWin->x+posX, actWin->y+posY );
+       actWin->x+x+ofsX, actWin->y+y+ofsY );
+    }
+  }
+  else if ( setPostion[index] == RDC_PARENT_OFS_POS ) {
+    if ( cascade[index] ) {
+      actWin->appCtx->openActivateCascadeActiveWindow( &cur->node,
+       actWin->x+ofsX, actWin->y+ofsY );
+    }
+    else {
+      actWin->appCtx->openActivateActiveWindow( &cur->node,
+       actWin->x+ofsX, actWin->y+ofsY );
     }
   }
   else {
@@ -2161,21 +2200,11 @@ void relatedDisplayClass::pointerIn (
   int buttonState )
 {
 
-int buttonNumber = -1;
-int action;
 int focus;
 
   focus = useFocus;
-  if ( numDsps > 1 ) focus = 0;
 
-  if ( focus ) {
-
-    if ( aw ) return;
-
-    btnDown( _x, _y, buttonState, buttonNumber, &action );
-
-  }
-  else {
+  if ( !focus ) {
 
     activeGraphicClass::pointerIn( _x, _y, buttonState );
 
@@ -2192,17 +2221,53 @@ void relatedDisplayClass::pointerOut (
 int focus;
 
   focus = useFocus;
+
+  if ( !focus ) {
+
+    activeGraphicClass::pointerOut( _x, _y, buttonState );
+
+  }
+
+}
+
+void relatedDisplayClass::mousePointerIn (
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+int buttonNumber = -1;
+int action;
+int focus;
+
+  focus = useFocus;
+  if ( numDsps > 1 ) focus = 0;
+
+  if ( focus ) {
+
+    if ( aw ) return;
+
+    btnDown( _x, _y, buttonState, buttonNumber, &action );
+
+  }
+
+}
+
+void relatedDisplayClass::mousePointerOut (
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+int focus;
+
+  focus = useFocus;
   if ( numDsps > 1 ) focus = 0;
 
   if ( focus ) {
 
     needClose = 1;
     actWin->addDefExeNode( aglPtr );
-
-  }
-  else {
-
-    activeGraphicClass::pointerOut( _x, _y, buttonState );
 
   }
 

@@ -155,12 +155,12 @@ activeSliderClass *slo = (activeSliderClass *) client;
 double fvalue;
 int stat, xOfs;
 
-  if ( slo->incrementTimerActive ) {
-    if ( slo->incrementTimerValue > 50 ) slo->incrementTimerValue -= 5;
-    if ( slo->incrementTimerValue < 45 ) slo->incrementTimerValue = 45;
-    slo->incrementTimer = appAddTimeOut( slo->actWin->appCtx->appContext(),
-     slo->incrementTimerValue, slc_decrement, client );
-  }
+  if ( !(slo->incrementTimerActive) ) return;
+
+  if ( slo->incrementTimerValue > 50 ) slo->incrementTimerValue -= 5;
+  if ( slo->incrementTimerValue < 45 ) slo->incrementTimerValue = 45;
+  slo->incrementTimer = appAddTimeOut( slo->actWin->appCtx->appContext(),
+   slo->incrementTimerValue, slc_decrement, client );
 
   slo->eraseActiveControlText();
   slo->eraseActivePointers();
@@ -231,12 +231,12 @@ activeSliderClass *slo = (activeSliderClass *) client;
 double fvalue;
 int stat, xOfs;
 
-  if ( slo->incrementTimerActive ) {
-    if ( slo->incrementTimerValue > 50 ) slo->incrementTimerValue -= 5;
-    if ( slo->incrementTimerValue < 45 ) slo->incrementTimerValue = 45;
-    slo->incrementTimer = appAddTimeOut( slo->actWin->appCtx->appContext(),
-     slo->incrementTimerValue, slc_increment, client );
-  }
+  if ( !(slo->incrementTimerActive) ) return;
+
+  if ( slo->incrementTimerValue > 50 ) slo->incrementTimerValue -= 5;
+  if ( slo->incrementTimerValue < 45 ) slo->incrementTimerValue = 45;
+  slo->incrementTimer = appAddTimeOut( slo->actWin->appCtx->appContext(),
+   slo->incrementTimerValue, slc_increment, client );
 
   slo->eraseActiveControlText();
   slo->eraseActivePointers();
@@ -987,6 +987,124 @@ activeGraphicClass *slo = (activeGraphicClass *) this;
   strncpy( displayFormat, source->displayFormat, 15 );
 
   frameWidget = NULL;
+
+}
+
+void activeSliderClass::doIncrement ( void ) {
+
+double fvalue;
+int stat, xOfs;
+
+  eraseActiveControlText();
+  eraseActivePointers();
+
+  fvalue = controlV + increment;
+
+  if ( positive ) {
+    if ( fvalue < minFv ) fvalue = minFv;
+    if ( fvalue > maxFv ) fvalue = maxFv;
+  }
+  else {
+    if ( fvalue > minFv ) fvalue = minFv;
+    if ( fvalue < maxFv ) fvalue = maxFv;
+  }
+
+  controlV = fvalue;
+
+  xOfs = ( w - 4 - controlW ) / 2;
+
+  controlX = (int) ( ( fvalue - minFv ) / factor + 0.5 ) + xOfs;
+
+  savedX = (int) ( ( savedV - minFv ) / factor + 0.5 ) + xOfs;
+
+  sprintf( controlValue, controlFormat, controlV );
+  stat = drawActiveControlText();
+  stat = drawActivePointers();
+
+  actWin->appCtx->proc->lock();
+  curControlV = controlV;
+  actWin->appCtx->proc->unlock();
+
+// for EPICS support
+
+  if ( controlExists ) {
+#ifdef __epics__
+  stat = ca_put( DBR_DOUBLE, controlPvId, &fvalue );
+  if ( stat != ECA_NORMAL ) printf( activeSliderClass_str2 );
+#endif
+  }
+  else if ( anyCallbackFlag ) {
+    needCtlRefresh = 1;
+    actWin->appCtx->proc->lock();
+    actWin->addDefExeNode( aglPtr );
+    actWin->appCtx->proc->unlock();
+  }
+
+  controlAdjusted = 1;
+
+  if ( changeCallback ) {
+    (*changeCallback)( this );
+  }
+
+}
+
+void activeSliderClass::doDecrement ( void ) {
+
+double fvalue;
+int stat, xOfs;
+
+  eraseActiveControlText();
+  eraseActivePointers();
+
+  fvalue = controlV - increment;
+
+  if ( positive ) {
+    if ( fvalue < minFv ) fvalue = minFv;
+    if ( fvalue > maxFv ) fvalue = maxFv;
+  }
+  else {
+    if ( fvalue > minFv ) fvalue = minFv;
+    if ( fvalue < maxFv ) fvalue = maxFv;
+  }
+
+  controlV = fvalue;
+
+  xOfs = ( w - 4 - controlW ) / 2;
+
+  controlX = (int) ( ( fvalue - minFv ) /
+   factor + 0.5 ) + xOfs;
+
+  savedX = (int) ( ( savedV - minFv ) /
+   factor + 0.5 ) + xOfs;
+
+  sprintf( controlValue, controlFormat, controlV );
+  stat = drawActiveControlText();
+  stat = drawActivePointers();
+
+  actWin->appCtx->proc->lock();
+  curControlV = controlV;
+  actWin->appCtx->proc->unlock();
+
+// for EPICS support
+
+  if ( controlExists ) {
+#ifdef __epics__
+  stat = ca_put( DBR_DOUBLE, controlPvId, &fvalue );
+  if ( stat != ECA_NORMAL ) printf( activeSliderClass_str1 );
+#endif
+  }
+  else if ( anyCallbackFlag ) {
+    needCtlRefresh = 1;
+    actWin->appCtx->proc->lock();
+    actWin->addDefExeNode( aglPtr );
+    actWin->appCtx->proc->unlock();
+  }
+
+  controlAdjusted = 1;
+
+  if ( changeCallback ) {
+    (*changeCallback)( this );
+  }
 
 }
 
@@ -2342,11 +2460,13 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 
         /* auto inc */
 
+        slo->doIncrement();
+
         slo->incrementTimerActive = 1;
         slo->incrementTimerValue = 101;
 
         slo->incrementTimer = appAddTimeOut(
-         slo->actWin->appCtx->appContext(), 300,
+         slo->actWin->appCtx->appContext(), 500,
          slc_increment, (void *) slo );
 
       }
@@ -2355,11 +2475,13 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 
         /* auto dec */
 
+        slo->doDecrement();
+
         slo->incrementTimerActive = 1;
         slo->incrementTimerValue = 101;
 
         slo->incrementTimer = appAddTimeOut(
-         slo->actWin->appCtx->appContext(), 300,
+         slo->actWin->appCtx->appContext(), 500,
          slc_decrement, (void *) slo );
 
       }
@@ -2481,6 +2603,10 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
   if ( e->type == ButtonRelease ) {
 
 //========== Any B Release ========================================
+
+    if ( slo->incrementTimerActive ) {
+      XtRemoveTimeOut( slo->incrementTimer );
+    }
 
     slo->controlState = SLC_STATE_IDLE;
     slo->incrementTimerActive = 0;

@@ -23,7 +23,7 @@
 #include "entry_form.h"
 
 #define SHCMDC_MAJOR_VERSION 2
-#define SHCMDC_MINOR_VERSION 4
+#define SHCMDC_MINOR_VERSION 5
 #define SHCMDC_RELEASE 0
 
 #ifdef __shell_cmd_cc
@@ -207,6 +207,7 @@ typedef struct bufTag {
   double bufThreadSecondsToDelay;
   double bufAutoExecInterval;
   int bufMultipleInstancesAllowed;
+  char bufRequiredHostName[63+1];
 } bufType, *bufPtr;
 
 bufPtr buf;
@@ -254,6 +255,9 @@ Widget popUpMenu, pullDownMenu, pb[maxCmds];
 entryFormClass *ef1;
 
 int posX, posY;
+
+char *hostName;
+char requiredHostName[15+1];
 
 public:
 

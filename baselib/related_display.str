@@ -18,7 +18,7 @@
 #define relatedDisplayClass_str15 (char *) "PV"
 #define relatedDisplayClass_str16 (char *) "Value"
 #define relatedDisplayClass_str17 (char *) "On Focus"
-#define relatedDisplayClass_str18 (char *) "Set Display Position"
+#define relatedDisplayClass_str18 (char *) "Display Position"
 #define relatedDisplayClass_str19 (char *) "Invisible"
 #define relatedDisplayClass_str20 (char *) "Close Current Display"
 #define relatedDisplayClass_str21 (char *) "Duplicates Allowed"
@@ -30,5 +30,9 @@
 #define relatedDisplayClass_str27 (char *) "error from ca_search_and_connect\n"
 #define relatedDisplayClass_str28 (char *) "ca_clear_channel failure\n"
 #define relatedDisplayClass_str29 (char *) "No Edit"
+#define relatedDisplayClass_str30 (char *) "Display Position"
+#define relatedDisplayClass_str31 (char *) "Original|Button|Parent Window"
+#define relatedDisplayClass_str32 (char *) "X Offset"
+#define relatedDisplayClass_str33 (char *) "Y Offset"
 
 #endif

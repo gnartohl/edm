@@ -203,6 +203,14 @@ char buffer[255+1];
 
   if ( shcmdo->numCmds != 1 ) return;
 
+  if ( !blank( shcmdo->requiredHostName ) ) {
+    if ( strcmp( shcmdo->requiredHostName, shcmdo->hostName ) != 0 ) {
+      sprintf( buffer, shellCmdClass_str31, shcmdo->requiredHostName );
+      shcmdo->actWin->appCtx->postMessage( buffer );
+      return;
+    }
+  }
+
   i = 0; // this is called from an X timer, always use command index 0
 
   if ( shcmdo->timerActive ) {
@@ -370,6 +378,9 @@ int i;
 
   shcmdo->lock = shcmdo->buf->bufLock;
 
+  strncpy( shcmdo->requiredHostName, shcmdo->buf->bufRequiredHostName, 15 );
+  shcmdo->requiredHostName[15] = 0;
+
   shcmdo->updateDimensions();
 
 }
@@ -461,6 +472,7 @@ shellCmdClass::shellCmdClass ( void ) {
   numCmds = 0;
   cmdIndex = 0;
   buf = NULL;
+  strcpy( requiredHostName, "" );
 
 }
 
@@ -532,6 +544,9 @@ int i;
   timerActive = 0;
 
   activeMode = 0;
+
+  strncpy( requiredHostName, source->requiredHostName, 15 );
+  requiredHostName[15] = 0;
 
   buf = NULL;
 
@@ -647,6 +662,9 @@ float val;
       writeStringToFile( f, "" );
 
   }
+
+  // ver 2.5.0
+  writeStringToFile( f, requiredHostName );
 
   return 1;
 
@@ -815,6 +833,13 @@ float val;
   for ( i=numCmds; i<maxCmds; i++ ) {
     shellCommand[i].setRaw( "" );
     label[i].setRaw( "" );
+  }
+
+  if ( ( major > 2 ) || ( major == 2 ) && ( minor > 4 ) ) {
+    readStringFromFile( requiredHostName, 15+1, f );
+  }
+  else {
+    strcpy( requiredHostName, "" );
   }
 
   actWin->fi->loadFontTag( fontTag );
@@ -1167,6 +1192,9 @@ char title[32], *ptr, *envPtr, saveLock;
     buf->bufLock = lock;
   }
 
+  strncpy( buf->bufRequiredHostName, requiredHostName, 15 );
+  buf->bufRequiredHostName[15] = 0;
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -1213,6 +1241,8 @@ char title[32], *ptr, *envPtr, saveLock;
   ef1->finished( shcmdc_edit_ok1, this );
 
   ef.addTextField( shellCmdClass_str21, 35, buf->bufButtonLabel, 127 );
+
+  ef.addTextField( shellCmdClass_str30, 35, buf->bufRequiredHostName, 15 );
 
   if ( !lock ) {
     ef.addPasswordField( shellCmdClass_str24, 35, bufPw1, 31 );
@@ -1510,6 +1540,8 @@ XmString str;
 
       opComplete = 1;
 
+      hostName = getenv( "HOSTNAME" );
+
       if ( numCmds == 1 ) {
         cmdIndex = 0;
         if ( autoExecInterval > 0.5 ) {
@@ -1689,6 +1721,14 @@ void shellCmdClass::executeCmd ( void ) {
 int stat;
 threadParamBlockPtr threadParamBlock;
 char buffer[255+1];
+
+  if ( !blank( requiredHostName ) ) {
+    if ( strcmp( requiredHostName, hostName ) != 0 ) {
+      sprintf( buffer, shellCmdClass_str32, requiredHostName, hostName );
+      actWin->appCtx->postMessage( buffer );
+      return;
+    }
+  }
 
   actWin->substituteSpecial( 255, shellCommand[cmdIndex].getExpanded(),
    buffer );

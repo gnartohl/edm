@@ -24,8 +24,12 @@
 
 #include "cadef.h"
 
+#define RDC_ORIG_POS 0
+#define RDC_BUTTON_POS 1
+#define RDC_PARENT_OFS_POS 2
+
 #define RDC_MAJOR_VERSION 2
-#define RDC_MINOR_VERSION 5
+#define RDC_MINOR_VERSION 6
 #define RDC_RELEASE 0
 
 typedef struct objAndIndexTag {
@@ -169,6 +173,8 @@ typedef struct bufTag {
   char bufFontTag[63+1];;
   char bufDestPvName[NUMPVS][activeGraphicClass::MAX_PV_NAME+1];
   char bufSource[NUMPVS][39+1];
+  int bufOfsX;
+  int bufOfsY;
 } bufType, *bufPtr;
 
 int numDsps, dspIndex;
@@ -225,6 +231,8 @@ Widget popUpMenu, pullDownMenu, pb[maxDsps];
 entryFormClass *ef1;
 
 int posX, posY;
+
+int ofsX, ofsY;
 
 public:
 
@@ -341,6 +349,16 @@ void pointerIn (
   int buttonState );
 
 void pointerOut (
+  int _x,
+  int _y,
+  int buttonState );
+
+void mousePointerIn (
+  int _x,
+  int _y,
+  int buttonState );
+
+void mousePointerOut (
   int _x,
   int _y,
   int buttonState );
