@@ -1394,17 +1394,17 @@ Display *testDisplay;
   if ( strcmp( displayName, "" ) == 0 ) {
 
     envPtr = getenv("DISPLAY");
-    if ( envPtr ) strncpy( displayName, envPtr, 31 );
+    if ( envPtr ) strncpy( displayName, envPtr, 127 );
 
     if ( strcmp( displayName, "" ) == 0 ) {
 
-      stat = gethostname( displayName, 31 );
+      stat = gethostname( displayName, 127 );
       if ( stat ) {
         printf( main_str35 );
         exit(0);
       }
 
-      Strncat( displayName, ":0.0", 31 );
+      Strncat( displayName, ":0.0", 127 );
 
     }
 
@@ -1438,7 +1438,7 @@ objBindingClass *obj;
 pvBindingClass *pvObj;
 char *tk, *buf1;
 MAIN_NODE_PTR node;
-char **argArray, displayName[127+1];
+char **argArray, displayName[255+1];
 int appendDisplay;
 float hours, seconds;
 
