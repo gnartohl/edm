@@ -42,6 +42,10 @@ int avl_init_tree(
   AVL_HANDLE *handle
 );
 
+int avl_destroy(
+  AVL_HANDLE handle
+);
+
 int avl_dup_handle(
   AVL_HANDLE handle,
   AVL_HANDLE *dup_handle

@@ -275,6 +275,8 @@ cma_t_attr attr;
     goto err_return;
   }
 
+  priv_handle->process_active = 0;
+
   if ( g_init ) {
     g_init = 0;
     cma_init();
@@ -397,15 +399,39 @@ cma_t_attr attr;
 
   cma_attr_delete( &priv_handle->thr_attr );
 
-  cma_thread_detach( &priv_handle->os_thread_id );
+  if ( priv_handle->process_active ) {
+    cma_thread_detach( &priv_handle->os_thread_id );
+  }
 
   free( priv_handle );
+  priv_handle = NULL;
 
 norm_return:
   return THR_SUCCESS;
 
 err_return:
   return ret_stat;
+
+}
+
+int thread_destroy_lock_handle (
+  THREAD_LOCK_HANDLE handle
+) {
+
+THREAD_LOCK_PTR priv_thr_lock;
+
+  if ( g_init ) return THR_BADSTATE;
+
+  priv_thr_lock = (THREAD_LOCK_PTR) handle;
+  if ( !priv_thr_lock ) return THR_BADPARAM;
+
+  cma_attr_delete( &priv_thr_lock->mu_attr );
+  cma_mutex_delete( &priv_thr_lock->mutex );
+
+  free( priv_thr_lock );
+  priv_thr_lock = NULL;
+
+  return THR_SUCCESS;
 
 }
 
@@ -443,6 +469,8 @@ int ret_stat, stat;
 
   cma_thread_create( &priv_handle->os_thread_id, &priv_handle->thr_attr,
    proc, handle );
+
+  priv_handle->process_active = 1;
 
 norm_return:
   return THR_SUCCESS;
@@ -515,6 +543,8 @@ int result, stat;
   if ( !priv_handle ) return THR_BADPARAM;
 
   cma_thread_join( &priv_handle->os_thread_id, &stat, &result );
+
+  priv_handle->process_active = 0;
 
   return stat;
 

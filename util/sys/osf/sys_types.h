@@ -58,6 +58,10 @@ int sys_iniq (
   void *queue
 );
 
+int sys_destroyq (
+  void *queue
+);
+
 int sys_insqt (
   void *node,
   void *queue,

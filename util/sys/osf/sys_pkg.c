@@ -69,6 +69,23 @@ GEN_QUEUE_PTR gen_queue;
 
 }
 
+int sys_destroyq (
+  void *queue
+) {
+
+int stat;
+
+GEN_QUEUE_PTR gen_queue;
+
+  gen_queue = (GEN_QUEUE_PTR) queue;
+
+  stat = thread_destroy_lock_handle( &gen_queue->lock );
+  if ( !( stat & 1 ) ) return stat;
+
+  return 1;
+
+}
+
 int sys_insqt (
   void *node,
   void *queue,

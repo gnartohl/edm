@@ -30,6 +30,7 @@ typedef struct thread_id_tag {
   cma_t_date_time timer_exp_time;
   cma_t_date_time delta_time;
   void *application_data;
+  int process_active;
 } THREAD_ID_TYPE;
 typedef THREAD_ID_TYPE *THREAD_ID_PTR;
 

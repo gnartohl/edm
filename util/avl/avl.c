@@ -869,6 +869,21 @@ static void avl___find_depth(
 
 }
 
+extern int avl_destroy(
+  AVL_HANDLE handle
+) {
+
+PRIV_AVL_HANDLE priv_handle;
+
+  priv_handle = (PRIV_AVL_HANDLE) handle;
+  if ( !priv_handle ) return AVL_BADHNDL;
+
+  free( priv_handle );
+
+  return AVL_SUCCESS;
+
+}
+
 extern int avl_init_tree(
   AVL_INT_FUNC comp_node_func,
   AVL_INT_FUNC comp_item_func,
