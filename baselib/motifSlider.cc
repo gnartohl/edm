@@ -243,16 +243,17 @@ char strVal[255+1];
      &mslo->valueFormW, &mslo->valueFormH, &mslo->valueFormMaxH,
      title, NULL, NULL, NULL );
 
-    mslo->ef.addTextField( activeMotifSliderClass_str57, 14,
+    mslo->ef.addTextField( activeMotifSliderClass_str57, 20,
      &mslo->bufControlV );
 
-    mslo->ef.addTextField( activeMotifSliderClass_str58, 14,
+    mslo->ef.addTextField( activeMotifSliderClass_str58, 20,
      &mslo->bufIncrement );
 
     calcIncRange( mslo->efScaleMin.value(), mslo->efScaleMax.value(),
      strVal, mslo->incArray );
     mslo->incIndex = 0;
-    mslo->ef.addOption( "Increment", strVal, &mslo->incIndex );
+    mslo->ef.addOption( activeMotifSliderClass_str58, strVal,
+     &mslo->incIndex );
 
     mslo->ef.finished( mslc_value_ok, mslc_value_apply, mslc_value_cancel,
      mslo );
@@ -1630,16 +1631,17 @@ char title[32], *ptr, strVal[255+1];
        &mslo->valueFormW, &mslo->valueFormH, &mslo->valueFormMaxH,
        title, NULL, NULL, NULL );
 
-      mslo->ef.addTextField( activeMotifSliderClass_str57, 14,
+      mslo->ef.addTextField( activeMotifSliderClass_str57, 20,
        &mslo->bufControlV );
 
-      mslo->ef.addTextField( activeMotifSliderClass_str58, 14,
+      mslo->ef.addTextField( activeMotifSliderClass_str58, 20,
        &mslo->bufIncrement );
 
       calcIncRange( mslo->efScaleMin.value(), mslo->efScaleMax.value(),
        strVal, mslo->incArray );
       mslo->incIndex = 0;
-      mslo->ef.addOption( "Increment", strVal, &mslo->incIndex );
+      mslo->ef.addOption( activeMotifSliderClass_str58, strVal,
+       &mslo->incIndex );
 
       mslo->ef.finished( mslc_value_ok, mslc_value_apply, mslc_value_cancel,
        mslo );
