@@ -32,5 +32,8 @@
 #define activeLineClass_str30 (char *) "ca_clear_channel failure\n"
 #define activeLineClass_str31 (char *) "ca_add_masked_array_event failed\n"
 #define activeLineClass_str32 (char *) "ca_add_masked_array_event failed\n"
+#define activeLineClass_str33 (char *) "Close Polygon"
+#define activeLineClass_str34 (char *) "Arrows"
+#define activeLineClass_str35 (char *) "None|From|To|Both"
 
 #endif

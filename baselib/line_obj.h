@@ -29,7 +29,7 @@
 #define ALC_K_COLORMODE_ALARM 1
 
 #define ALC_MAJOR_VERSION 2
-#define ALC_MINOR_VERSION 1
+#define ALC_MINOR_VERSION 2
 #define ALC_RELEASE 0
 
 #ifdef __line_obj_cc
@@ -190,6 +190,14 @@ int curLineColorIndex, curFillColorIndex, curStatus, curSeverity;
 static const int alarmPvConnection = 1;
 static const int visPvConnection = 2;
 pvConnectionClass connection;
+
+int closePolygon, bufClosePolygon;
+int arrows, bufArrows;
+
+static const int ARROW_NONE = 0;
+static const int ARROW_FROM = 1;
+static const int ARROW_TO   = 2;
+static const int ARROW_BOTH = 3;
 
 public:
 
@@ -397,6 +405,11 @@ int activeLineClass::undoFlip (
   int y,
   int w,
   int h );
+
+void activeLineClass::getArrowCoords (
+  int arrows,
+  XPoint *points
+);
 
 };
 

@@ -157,6 +157,10 @@ activeLineClass *alo = (activeLineClass *) client;
   strncpy( alo->minVisString, alo->bufMinVisString, 39 );
   strncpy( alo->maxVisString, alo->bufMaxVisString, 39 );
 
+  alo->closePolygon = alo->bufClosePolygon;
+
+  alo->arrows = alo->bufArrows;
+
   alo->x = alo->bufX;
   alo->sboxX = alo->bufX;
 
@@ -441,6 +445,8 @@ activeLineClass::activeLineClass ( void ) {
   strcpy( minVisString, "" );
   strcpy( maxVisString, "" );
   xpoints = NULL;
+  closePolygon = 0;
+  arrows = ARROW_NONE;
 
   wasSelected = 0;
 
@@ -518,7 +524,7 @@ int i;
   head->blink = head;
 
   numPoints = source->numPoints;
-  xpoints = new XPoint[source->numPoints];
+  xpoints = new XPoint[source->numPoints+1];
 
   for ( i=0; i<numPoints; i++ ) {
     xpoints[i].x = source->xpoints[i].x;
@@ -529,6 +535,8 @@ int i;
   joinStyle = source->joinStyle;
   lineStyle = source->lineStyle;
   lineWidth = source->lineWidth;
+  closePolygon = source->closePolygon;
+  arrows = source->arrows;
 
   wasSelected = 0;
 
@@ -622,6 +630,9 @@ char title[32], *ptr;
   strncpy( bufMinVisString, minVisString, 39 );
   strncpy( bufMaxVisString, maxVisString, 39 );
 
+  bufArrows = arrows;
+  bufClosePolygon = closePolygon;
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -634,10 +645,14 @@ char title[32], *ptr;
   ef.addTextField( activeLineClass_str9, 30, &bufH );
   ef.addOption( activeLineClass_str10, activeLineClass_str11, &bufLineWidth );
   ef.addOption( activeLineClass_str12, activeLineClass_str13, &bufLineStyle );
-  ef.addColorButton( activeLineClass_str14, actWin->ci, &lineCb, &bufLineColor );
+  ef.addOption( activeLineClass_str34, activeLineClass_str35, &bufArrows );
+  ef.addToggle( activeLineClass_str33, &bufClosePolygon );
+  ef.addColorButton( activeLineClass_str14, actWin->ci, &lineCb,
+   &bufLineColor );
   ef.addToggle( activeLineClass_str15, &bufLineColorMode );
   ef.addToggle( activeLineClass_str16, &bufFill );
-  ef.addColorButton( activeLineClass_str17, actWin->ci, &fillCb, &bufFillColor );
+  ef.addColorButton( activeLineClass_str17, actWin->ci, &fillCb,
+   &bufFillColor );
   ef.addToggle( activeLineClass_str18, &bufFillColorMode );
   ef.addTextField( activeLineClass_str19, 30, bufAlarmPvName,
    PV_Factory::MAX_PV_NAME );
@@ -1122,7 +1137,7 @@ int n, oneX, oneY, oneW, oneH, minX, minY, maxX, maxY;
   initSelectBox();
 
   // build XPoint array
-  xpoints = new XPoint[numPoints];
+  xpoints = new XPoint[numPoints+1];
   n = 0;
   cur = head->flink;
   while ( cur != head ) {
@@ -1202,7 +1217,7 @@ char oneName[PV_Factory::MAX_PV_NAME+1];
 
   fscanf( f, "%d\n", &numPoints ); actWin->incLine();
 
-  xpoints = new XPoint[numPoints];
+  xpoints = new XPoint[numPoints+1];
 
   for ( i=0; i<numPoints; i++ ) {
     fscanf( f, "%d %d\n", &oneX, &oneY ); actWin->incLine();
@@ -1310,6 +1325,15 @@ char oneName[PV_Factory::MAX_PV_NAME+1];
     strcpy( maxVisString, "1" );
   }
 
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 1 ) ) ) {
+    fscanf( f, "%d\n", &closePolygon ); actWin->incLine();
+    fscanf( f, "%d\n", &arrows ); actWin->incLine();
+  }
+  else {
+    closePolygon = 0;
+    arrows = ARROW_NONE;
+  }
+
   this->wasSelected = 0;
 
   return 1;
@@ -1366,6 +1390,10 @@ int i, index;
   writeStringToFile( f, minVisString );
   writeStringToFile( f, maxVisString );
 
+  // ver 2.2.0
+  fprintf( f, "%-d\n", closePolygon );
+  fprintf( f, "%-d\n", arrows );
+
   return 1;
 
 }
@@ -1373,7 +1401,8 @@ int i, index;
 int activeLineClass::drawActive ( void )
 {
 
-int blink = 0;
+int n, drawArrows = ARROW_NONE, blink = 0;
+XPoint arrowXPoints[8];
 
   if ( !init ) {
     if ( needToDrawUnconnected ) {
@@ -1401,7 +1430,21 @@ int blink = 0;
 
   prevVisibility = visibility;
 
-  if ( numPoints > 0 ) {
+  if ( ( numPoints > 1 ) && ( arrows != ARROW_NONE ) ) {
+    drawArrows = arrows;
+    getArrowCoords( drawArrows, arrowXPoints );
+  }
+
+  if ( ( numPoints > 2 ) && closePolygon ) {
+    xpoints[numPoints].x = xpoints[0].x;
+    xpoints[numPoints].y = xpoints[0].y;
+    n = numPoints + 1;
+  }
+  else {
+    n = numPoints;
+  }
+
+  if ( n > 0 ) {
 
     actWin->executeGc.setLineStyle( lineStyle );
     actWin->executeGc.setLineWidth( lineWidth );
@@ -1414,16 +1457,38 @@ int blink = 0;
       actWin->executeGc.setFG( fillColor.getIndex(), &blink );
 
       XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
-       actWin->executeGc.normGC(), xpoints, numPoints, Complex,
+       actWin->executeGc.normGC(), xpoints, n, Complex,
        CoordModeOrigin );
 
     }
 
     if ( lineVisibility ) {
+
       //actWin->executeGc.setFG( lineColor.getColor() );
       actWin->executeGc.setFG( lineColor.getIndex(), &blink );
+
       XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
-       actWin->executeGc.normGC(), xpoints, numPoints, CoordModeOrigin );
+       actWin->executeGc.normGC(), xpoints, n, CoordModeOrigin );
+
+      if ( ( drawArrows == ARROW_FROM ) || ( drawArrows == ARROW_BOTH ) ) {
+        actWin->executeGc.setLineStyle( LineSolid );
+        XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), arrowXPoints, 4, Complex,
+         CoordModeOrigin );
+        XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), arrowXPoints, 4, CoordModeOrigin );
+        actWin->executeGc.setLineStyle( lineStyle );
+      }
+      if ( ( drawArrows == ARROW_TO ) || ( drawArrows == ARROW_BOTH ) ) {
+        actWin->executeGc.setLineStyle( LineSolid );
+        XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), &arrowXPoints[4], 4, Complex,
+         CoordModeOrigin );
+        XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), &arrowXPoints[4], 4, CoordModeOrigin );
+        actWin->executeGc.setLineStyle( lineStyle );
+      }
+
     }
 
     actWin->executeGc.restoreFg();
@@ -1440,8 +1505,25 @@ int blink = 0;
 
 int activeLineClass::eraseUnconditional ( void )
 {
+ 
+int n, drawArrows = ARROW_NONE;
+XPoint arrowXPoints[8];
 
-  if ( numPoints > 0 ) {
+  if ( ( numPoints > 1 ) && ( arrows != ARROW_NONE ) ) {
+    drawArrows = arrows;
+    getArrowCoords( drawArrows, arrowXPoints );
+  }
+
+  if ( ( numPoints > 2 ) && closePolygon ) {
+    xpoints[numPoints].x = xpoints[0].x;
+    xpoints[numPoints].y = xpoints[0].y;
+    n = numPoints + 1;
+  }
+  else {
+    n = numPoints;
+  }
+
+  if ( n > 0 ) {
 
     actWin->executeGc.setLineStyle( lineStyle );
     actWin->executeGc.setLineWidth( lineWidth );
@@ -1449,13 +1531,32 @@ int activeLineClass::eraseUnconditional ( void )
     if ( fill ) {
 
       XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
-       actWin->executeGc.eraseGC(), xpoints, numPoints, Complex,
+       actWin->executeGc.eraseGC(), xpoints, n, Complex,
        CoordModeOrigin );
 
     }
 
     XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.eraseGC(), xpoints, numPoints, CoordModeOrigin );
+     actWin->executeGc.eraseGC(), xpoints, n, CoordModeOrigin );
+
+    if ( ( drawArrows == ARROW_FROM ) || ( drawArrows == ARROW_BOTH ) ) {
+      actWin->executeGc.setLineStyle( LineSolid );
+      XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.eraseGC(), arrowXPoints, 4, Complex,
+       CoordModeOrigin );
+      XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.eraseGC(), arrowXPoints, 4, CoordModeOrigin );
+      actWin->executeGc.setLineStyle( lineStyle );
+    }
+    if ( ( drawArrows == ARROW_TO ) || ( drawArrows == ARROW_BOTH ) ) {
+      actWin->executeGc.setLineStyle( LineSolid );
+      XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.eraseGC(), &arrowXPoints[4], 4, Complex,
+       CoordModeOrigin );
+      XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.eraseGC(), &arrowXPoints[4], 4, CoordModeOrigin );
+      actWin->executeGc.setLineStyle( lineStyle );
+    }
 
     actWin->executeGc.setLineStyle( LineSolid );
     actWin->executeGc.setLineWidth( 1 );
@@ -1469,6 +1570,9 @@ int activeLineClass::eraseUnconditional ( void )
 int activeLineClass::eraseActive ( void )
 {
 
+int n, drawArrows = ARROW_NONE;
+XPoint arrowXPoints[8];
+
   if ( !activeMode ) return 1;
 
   if ( prevVisibility == 0 ) {
@@ -1478,7 +1582,21 @@ int activeLineClass::eraseActive ( void )
 
   prevVisibility = visibility;
 
-  if ( numPoints > 0 ) {
+  if ( ( numPoints > 1 ) && ( arrows != ARROW_NONE ) ) {
+    drawArrows = arrows;
+    getArrowCoords( drawArrows, arrowXPoints );
+  }
+
+  if ( ( numPoints > 2 ) && closePolygon ) {
+    xpoints[numPoints].x = xpoints[0].x;
+    xpoints[numPoints].y = xpoints[0].y;
+    n = numPoints + 1;
+  }
+  else {
+    n = numPoints;
+  }
+
+  if ( n > 0 ) {
 
     actWin->executeGc.setLineStyle( lineStyle );
     actWin->executeGc.setLineWidth( lineWidth );
@@ -1486,13 +1604,32 @@ int activeLineClass::eraseActive ( void )
     if ( fill ) {
 
       XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
-       actWin->executeGc.eraseGC(), xpoints, numPoints, Complex,
+       actWin->executeGc.eraseGC(), xpoints, n, Complex,
        CoordModeOrigin );
 
     }
 
     XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.eraseGC(), xpoints, numPoints, CoordModeOrigin );
+     actWin->executeGc.eraseGC(), xpoints, n, CoordModeOrigin );
+
+    if ( ( drawArrows == ARROW_FROM ) || ( drawArrows == ARROW_BOTH ) ) {
+      actWin->executeGc.setLineStyle( LineSolid );
+      XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.eraseGC(), arrowXPoints, 4, Complex,
+       CoordModeOrigin );
+      XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.eraseGC(), arrowXPoints, 4, CoordModeOrigin );
+      actWin->executeGc.setLineStyle( lineStyle );
+    }
+    if ( ( drawArrows == ARROW_TO ) || ( drawArrows == ARROW_BOTH ) ) {
+      actWin->executeGc.setLineStyle( LineSolid );
+      XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.eraseGC(), &arrowXPoints[4], 4, Complex,
+       CoordModeOrigin );
+      XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.eraseGC(), &arrowXPoints[4], 4, CoordModeOrigin );
+      actWin->executeGc.setLineStyle( lineStyle );
+    }
 
     actWin->executeGc.setLineStyle( LineSolid );
     actWin->executeGc.setLineWidth( 1 );
@@ -1697,14 +1834,29 @@ int activeLineClass::deactivate (
 
 int activeLineClass::draw ( void ) {
 
-int blink = 0;
+int n, drawArrows = ARROW_NONE, blink = 0;
+XPoint arrowXPoints[8];
 
   if ( activeMode ) return 1;
   if ( deleteRequest ) return 1;
 
+  if ( ( numPoints > 1 ) && ( arrows != ARROW_NONE ) ) {
+    drawArrows = arrows;
+    getArrowCoords( drawArrows, arrowXPoints );
+  }
+
+  if ( ( numPoints > 2 ) && closePolygon ) {
+    xpoints[numPoints].x = xpoints[0].x;
+    xpoints[numPoints].y = xpoints[0].y;
+    n = numPoints + 1;
+  }
+  else {
+    n = numPoints;
+  }
+
   actWin->drawGc.saveFg();
 
-  if ( numPoints > 0 ) {
+  if ( n > 0 ) {
 
     actWin->drawGc.setLineStyle( lineStyle );
     actWin->drawGc.setLineWidth( lineWidth );
@@ -1715,7 +1867,7 @@ int blink = 0;
       actWin->drawGc.setFG( fillColor.pixelIndex(), &blink );
 
       XFillPolygon( actWin->d, XtWindow(actWin->drawWidget),
-       actWin->drawGc.normGC(), xpoints, numPoints, Complex,
+       actWin->drawGc.normGC(), xpoints, n, Complex,
        CoordModeOrigin );
 
     }
@@ -1724,7 +1876,26 @@ int blink = 0;
     actWin->drawGc.setFG( lineColor.pixelIndex(), &blink );
 
     XDrawLines( actWin->d, XtWindow(actWin->drawWidget),
-     actWin->drawGc.normGC(), xpoints, numPoints, CoordModeOrigin );
+     actWin->drawGc.normGC(), xpoints, n, CoordModeOrigin );
+
+    if ( ( drawArrows == ARROW_FROM ) || ( drawArrows == ARROW_BOTH ) ) {
+      actWin->drawGc.setLineStyle( LineSolid );
+      XFillPolygon( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->drawGc.normGC(), arrowXPoints, 4, Complex,
+       CoordModeOrigin );
+      XDrawLines( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->drawGc.normGC(), arrowXPoints, 4, CoordModeOrigin );
+      actWin->drawGc.setLineStyle( lineStyle );
+    }
+    if ( ( drawArrows == ARROW_TO ) || ( drawArrows == ARROW_BOTH ) ) {
+      actWin->drawGc.setLineStyle( LineSolid );
+      XFillPolygon( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->drawGc.normGC(), &arrowXPoints[4], 4, Complex,
+       CoordModeOrigin );
+      XDrawLines( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->drawGc.normGC(), &arrowXPoints[4], 4, CoordModeOrigin );
+      actWin->drawGc.setLineStyle( lineStyle );
+    }
 
     actWin->drawGc.restoreFg();
     actWin->drawGc.setLineStyle( LineSolid );
@@ -1741,10 +1912,27 @@ int blink = 0;
 int activeLineClass::erase ( void )
 {
 
+int n, drawArrows = ARROW_NONE;
+XPoint arrowXPoints[8];
+
   if ( activeMode ) return 1;
   if ( deleteRequest ) return 1;
 
-  if ( numPoints > 0 ) {
+  if ( ( numPoints > 1 ) && ( arrows != ARROW_NONE ) ) {
+    drawArrows = arrows;
+    getArrowCoords( drawArrows, arrowXPoints );
+  }
+
+  if ( ( numPoints > 2 ) && closePolygon ) {
+    xpoints[numPoints].x = xpoints[0].x;
+    xpoints[numPoints].y = xpoints[0].y;
+    n = numPoints + 1;
+  }
+  else {
+    n = numPoints;
+  }
+
+  if ( n > 0 ) {
 
     actWin->drawGc.setLineStyle( lineStyle );
     actWin->drawGc.setLineWidth( lineWidth );
@@ -1752,13 +1940,32 @@ int activeLineClass::erase ( void )
     if ( fill ) {
 
       XFillPolygon( actWin->d, XtWindow(actWin->drawWidget),
-       actWin->drawGc.eraseGC(), xpoints, numPoints, Complex,
+       actWin->drawGc.eraseGC(), xpoints, n, Complex,
        CoordModeOrigin );
 
     }
 
     XDrawLines( actWin->d, XtWindow(actWin->drawWidget),
-     actWin->drawGc.eraseGC(), xpoints, numPoints, CoordModeOrigin );
+     actWin->drawGc.eraseGC(), xpoints, n, CoordModeOrigin );
+
+    if ( ( drawArrows == ARROW_FROM ) || ( drawArrows == ARROW_BOTH ) ) {
+      actWin->drawGc.setLineStyle( LineSolid );
+      XFillPolygon( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->drawGc.eraseGC(), arrowXPoints, 4, Complex,
+       CoordModeOrigin );
+      XDrawLines( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->drawGc.eraseGC(), arrowXPoints, 4, CoordModeOrigin );
+      actWin->drawGc.setLineStyle( lineStyle );
+    }
+    if ( ( drawArrows == ARROW_TO ) || ( drawArrows == ARROW_BOTH ) ) {
+      actWin->drawGc.setLineStyle( LineSolid );
+      XFillPolygon( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->drawGc.eraseGC(), &arrowXPoints[4], 4, Complex,
+       CoordModeOrigin );
+      XDrawLines( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->drawGc.eraseGC(), &arrowXPoints[4], 4, CoordModeOrigin );
+      actWin->drawGc.setLineStyle( lineStyle );
+    }
 
     actWin->drawGc.setLineStyle( LineSolid );
     actWin->drawGc.setLineWidth( 1 );
@@ -2495,6 +2702,307 @@ int stat;
   stat = undoRotate( _opPtr, x, y, w, h );
 
   return stat;
+
+}
+
+void activeLineClass::getArrowCoords (
+  int arrows,
+  XPoint *points
+) {
+
+int n0, n1, i, slopeUndef, slopeUndefP;
+double x0, x1, y0, y1, slope;
+double x0P, x1P, y0P, y1P, slopeP;
+double ax0, ay0, ax1, ay1, ax2, ay2, theta;
+
+double len = 14.0;
+double halfLen = 5.0;
+
+  if ( numPoints < 2 ) {
+    for ( i=0; i<8; i++ ) {
+      points[i].x = 0;
+      points[i].y = 0;
+    }
+    return;
+  }
+
+  // slope for points 0 & 1
+  if ( ( arrows == ARROW_FROM ) || ( arrows == ARROW_BOTH ) ) {
+
+    x0 = (double) xpoints[0].x;
+    y0 = (double) xpoints[0].y;
+    x1 = (double) xpoints[1].x;
+    y1 = (double) xpoints[1].y;
+
+    if ( xpoints[1].x != xpoints[0].x ) {
+
+      slope = ( y1 - y0 ) / ( x1 - x0 );
+      slopeUndef = 0;
+
+    }
+    else {
+
+      slope = 1e30;
+      slopeUndef = 1;
+      //printf( "1 slope undefined\n" );
+
+    }
+
+    //printf( "x0 = %-g\n", x0 );
+    //printf( "y0 = %-g\n", y0 );
+    //printf( "x1 = %-g\n", x1 );
+    //printf( "y1 = %-g\n", y1 );
+    //printf( "slope = %-g\n", slope );
+
+
+    x0P = (double) xpoints[0].y;
+    y0P = (double) xpoints[0].x;
+    x1P = (double) xpoints[1].y;
+    y1P = (double) xpoints[1].x;
+
+    if ( xpoints[1].y != xpoints[0].y ) {
+
+      slopeP = ( y0P - y1P ) / ( x1P - x0P );
+      slopeUndefP = 0;
+
+    }
+    else {
+
+      slopeP = 1e30;
+      slopeUndefP = 1;
+      //printf( "2 slopeP undefined\n" );
+
+    }
+
+  }
+
+  //printf( "x0P = %-g\n", x0P );
+  //printf( "y0P = %-g\n", y0P );
+  //printf( "x1P = %-g\n", x1P );
+  //printf( "y1P = %-g\n", y1P );
+  //printf( "slopeP = %-g\n", slopeP );
+
+  // point interscting first line
+  if ( slopeUndef ) {
+    ax0 = x0;
+    if ( y0 >= y1 ) {
+      ay0 = y0 - len;
+    }
+    else {
+      ay0 = y0 + len;
+    }
+  }
+  else {
+    theta = atan( slope );
+    //printf( "theta = %-g\n", theta );
+    if ( x0 >= x1 ) {
+      ax0 = x0 - len * fabs( cos( theta ) );
+    }
+    else {
+      ax0 = x0 + len * fabs( cos( theta ) );
+    }
+    if ( y0 >= y1 ) {
+      ay0 = y0 - len * fabs( sin( theta ) );
+    }
+    else {
+      ay0 = y0 + len * fabs( sin( theta ) );
+    }
+  }
+
+  //printf( "ax0 = %-g\n", ax0 );
+  //printf( "ay0 = %-g\n", ay0 );
+
+
+  // fisrt corner
+  if ( slopeUndefP ) {
+    ax1 = ax2 = ax0;
+    if ( x0 >= x1 ) {
+      ay1 = ay0 - halfLen;
+      ay2 = ay0 + halfLen;
+    }
+    else {
+      ay1 = ay0 + halfLen;
+      ay2 = ay0 - halfLen;
+    }
+  }
+  else {
+    theta = atan( slopeP );
+    if ( x0P >= x1P ) {
+      ax1 = ax0 + halfLen * fabs( cos( theta ) );
+      ax2 = ax0 - halfLen * fabs( cos( theta ) );
+    }
+    else {
+      ax1 = ax0 - halfLen * fabs( cos( theta ) );
+      ax2 = ax0 + halfLen * fabs( cos( theta ) );
+    }
+    if ( y0P >= y1P ) {
+      ay1 = ay0 - halfLen * fabs( sin( theta ) );
+      ay2 = ay0 + halfLen * fabs( sin( theta ) );
+    }
+    else {
+      ay1 = ay0 + halfLen * fabs( sin( theta ) );
+      ay2 = ay0 - halfLen * fabs( sin( theta ) );
+    }
+
+  }
+
+  //printf( "ax1 = %-g\n", ax1 );
+  //printf( "ay1 = %-g\n", ay1 );
+  //printf( "ax2 = %-g\n", ax2 );
+  //printf( "ay2 = %-g\n", ay2 );
+
+  points[0].x = (short) rint(x0);
+  points[0].y = (short) rint(y0);
+
+  points[1].x = (short) rint(ax1);
+  points[1].y = (short) rint(ay1);
+
+  points[2].x = (short) rint(ax2);
+  points[2].y = (short) rint(ay2);
+
+  points[3].x = (short) rint(x0);
+  points[3].y = (short) rint(y0);
+
+  if ( ( arrows == ARROW_TO ) || ( arrows == ARROW_BOTH ) ) {
+
+    n0 = numPoints - 1;
+    n1 = numPoints - 2;
+
+  // slope for points n-1 & n
+
+    x0 = (double) xpoints[n0].x;
+    y0 = (double) xpoints[n0].y;
+    x1 = (double) xpoints[n1].x;
+    y1 = (double) xpoints[n1].y;
+
+    if ( xpoints[n1].x != xpoints[n0].x ) {
+
+      slope = ( y1 - y0 ) / ( x1 - x0 );
+      slopeUndef = 0;
+
+    }
+    else {
+
+      slope = 1e30;
+      slopeUndef = 1;
+      //printf( "3 slope undefined\n" );
+
+    }
+
+    //printf( "x0 = %-g\n", x0 );
+    //printf( "y0 = %-g\n", y0 );
+    //printf( "x1 = %-g\n", x1 );
+    //printf( "y1 = %-g\n", y1 );
+    //printf( "slope = %-g\n", slope );
+
+
+    x0P = (double) xpoints[n0].y;
+    y0P = (double) xpoints[n0].x;
+    x1P = (double) xpoints[n1].y;
+    y1P = (double) xpoints[n1].x;
+
+    if ( xpoints[n1].y != xpoints[n0].y ) {
+
+      slopeP = ( y0P - y1P ) / ( x1P - x0P );
+      slopeUndefP = 0;
+
+    }
+    else {
+
+      slopeP = 1e30;
+      slopeUndefP = 1;
+      //printf( "4 slopeP undefined\n" );
+
+    }
+
+  }
+
+  //printf( "x0P = %-g\n", x0P );
+  //printf( "y0P = %-g\n", y0P );
+  //printf( "x1P = %-g\n", x1P );
+  //printf( "y1P = %-g\n", y1P );
+  //printf( "slopeP = %-g\n", slopeP );
+
+  // point interscting first line
+  if ( slopeUndef ) {
+    ax0 = x0;
+    if ( y0 >= y1 ) {
+      ay0 = y0 - len;
+    }
+    else {
+      ay0 = y0 + len;
+    }
+  }
+  else {
+    theta = atan( slope );
+    //printf( "theta = %-g\n", theta );
+    if ( x0 >= x1 ) {
+      ax0 = x0 - len * fabs( cos( theta ) );
+    }
+    else {
+      ax0 = x0 + len * fabs( cos( theta ) );
+    }
+    if ( y0 >= y1 ) {
+      ay0 = y0 - len * fabs( sin( theta ) );
+    }
+    else {
+      ay0 = y0 + len * fabs( sin( theta ) );
+    }
+  }
+
+  //printf( "ax0 = %-g\n", ax0 );
+  //printf( "ay0 = %-g\n", ay0 );
+
+
+  // fisrt corner
+  if ( slopeUndefP ) {
+    ax1 = ax2 = ax0;
+    if ( x0 >= x1 ) {
+      ay1 = ay0 - halfLen;
+      ay2 = ay0 + halfLen;
+    }
+    else {
+      ay1 = ay0 + halfLen;
+      ay2 = ay0 - halfLen;
+    }
+  }
+  else {
+    theta = atan( slopeP );
+    if ( x0P >= x1P ) {
+      ax1 = ax0 + halfLen * fabs( cos( theta ) );
+      ax2 = ax0 - halfLen * fabs( cos( theta ) );
+    }
+    else {
+      ax1 = ax0 - halfLen * fabs( cos( theta ) );
+      ax2 = ax0 + halfLen * fabs( cos( theta ) );
+    }
+    if ( y0P >= y1P ) {
+      ay1 = ay0 - halfLen * fabs( sin( theta ) );
+      ay2 = ay0 + halfLen * fabs( sin( theta ) );
+    }
+    else {
+      ay1 = ay0 + halfLen * fabs( sin( theta ) );
+      ay2 = ay0 - halfLen * fabs( sin( theta ) );
+    }
+
+  }
+
+  //printf( "ax1 = %-g\n", ax1 );
+  //printf( "ay1 = %-g\n", ay1 );
+  //printf( "ax2 = %-g\n", ax2 );
+  //printf( "ay2 = %-g\n", ay2 );
+
+  points[4].x = (short) rint(x0);
+  points[4].y = (short) rint(y0);
+
+  points[5].x = (short) rint(ax1);
+  points[5].y = (short) rint(ay1);
+
+  points[6].x = (short) rint(ax2);
+  points[6].y = (short) rint(ay2);
+
+  points[7].x = (short) rint(x0);
+  points[7].y = (short) rint(y0);
 
 }
 
