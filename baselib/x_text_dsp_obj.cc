@@ -1278,17 +1278,6 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
    &axtdo->fontAscent, &axtdo->fontDescent, &axtdo->fontHeight,
    &axtdo->stringWidth );
 
-  axtdo->stringY = axtdo->y + axtdo->fontAscent;
-
-  axtdo->alignment = axtdo->fm.currentFontAlignment();
-
-  if ( axtdo->alignment == XmALIGNMENT_BEGINNING )
-    axtdo->stringX = axtdo->x;
-  else if ( axtdo->alignment == XmALIGNMENT_CENTER )
-    axtdo->stringX = axtdo->x + axtdo->w/2 - axtdo->stringWidth/2;
-  else if ( axtdo->alignment == XmALIGNMENT_END )
-    axtdo->stringX = axtdo->x + axtdo->w - axtdo->stringWidth;
-
   axtdo->useDisplayBg = axtdo->bufUseDisplayBg;
 
   axtdo->autoHeight = axtdo->bufAutoHeight;
@@ -1363,6 +1352,18 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
     axtdo->h = axtdo->fontHeight;
     axtdo->sboxH = axtdo->h;
   }
+
+  axtdo->stringY = axtdo->y + axtdo->fontAscent + axtdo->h/2 -
+   axtdo->fontHeight/2;
+
+  axtdo->alignment = axtdo->fm.currentFontAlignment();
+
+  if ( axtdo->alignment == XmALIGNMENT_BEGINNING )
+    axtdo->stringX = axtdo->x;
+  else if ( axtdo->alignment == XmALIGNMENT_CENTER )
+    axtdo->stringX = axtdo->x + axtdo->w/2 - axtdo->stringWidth/2;
+  else if ( axtdo->alignment == XmALIGNMENT_END )
+    axtdo->stringX = axtdo->x + axtdo->w - axtdo->stringWidth;
 
 }
 
@@ -2028,7 +2029,7 @@ unsigned int pixel;
   updateFont( value, fontTag, &fs, &fontAscent, &fontDescent, &fontHeight,
    &stringWidth );
 
-  stringY = y + fontAscent;
+  stringY = y + fontAscent + h/2 - fontHeight/2;
 
   if ( alignment == XmALIGNMENT_BEGINNING )
     stringX = x;
@@ -2271,7 +2272,7 @@ unsigned int pixel;
   else if ( alignment == XmALIGNMENT_END )
     stringX = x + w - stringWidth;
 
-  stringY = y + fontAscent;
+  stringY = y + fontAscent + h/2 - fontHeight/2;
 
   return stat;
 
@@ -2502,6 +2503,12 @@ XRectangle xR = { x, y, w, h };
   }
   else {
 
+    XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.eraseGC(), x, y, w, h );
+
+    XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.eraseGC(), x, y, w, h );
+
     XDrawImageString( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.eraseGC(), stringX, stringY,
      value, stringLength );
@@ -2547,6 +2554,12 @@ int len;
     actWin->executeGc.setFG( actWin->ci->pix(bgColor) );
     actWin->executeGc.setBG( actWin->ci->pix(bgColor) );
 
+    XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+
+    XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+
     XDrawImageString( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), stringX, stringY,
      bufValue, len );
@@ -2571,10 +2584,6 @@ int blink = 0;
   actWin->drawGc.saveFg();
   actWin->drawGc.saveBg();
 
-  //actWin->drawGc.setFG( fgColor.pixelColor() );
-  actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
-  actWin->drawGc.setBG( actWin->ci->pix(bgColor) );
-
   clipStat = actWin->drawGc.addNormXClipRectangle( xR );
 
   if ( strcmp( fontTag, "" ) != 0 ) {
@@ -2583,12 +2592,26 @@ int blink = 0;
 
   if ( useDisplayBg ) {
 
+    actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
+    actWin->drawGc.setBG( actWin->ci->pix(bgColor) );
+
     XDrawString( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.normGC(), stringX, stringY,
      value, stringLength );
 
   }
   else {
+
+    actWin->drawGc.setFG( actWin->ci->pix(bgColor) );
+
+    XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.normGC(), x, y, w, h );
+
+    XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.normGC(), x, y, w, h );
+
+    actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
+    actWin->drawGc.setBG( actWin->ci->pix(bgColor) );
 
     XDrawImageString( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.normGC(), stringX, stringY,
@@ -2675,11 +2698,6 @@ int blink = 0;
   actWin->executeGc.saveFg();
   actWin->executeGc.saveBg();
 
-  //actWin->executeGc.setFG( fgColor.getColor() );
-  actWin->executeGc.setFG( fgColor.getIndex(), &blink );
-
-  actWin->executeGc.setBG( actWin->ci->pix(bgColor) );
-
   if ( strcmp( fontTag, "" ) != 0 ) {
     actWin->executeGc.setFontTag( fontTag, actWin->fi );
   }
@@ -2688,12 +2706,26 @@ int blink = 0;
 
   if ( useDisplayBg ) {
 
+    actWin->executeGc.setFG( fgColor.getIndex(), &blink );
+    actWin->executeGc.setBG( actWin->ci->pix(bgColor) );
+
     XDrawString( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), stringX, stringY,
      value, stringLength );
 
   }
   else {
+
+    actWin->executeGc.setFG( actWin->ci->pix(bgColor) );
+
+    XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+
+    XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+
+    actWin->executeGc.setFG( fgColor.getIndex(), &blink );
+    actWin->executeGc.setBG( actWin->ci->pix(bgColor) );
 
     XDrawImageString( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), stringX, stringY, 
@@ -3072,7 +3104,7 @@ void activeXTextDspClass::updateDimensions ( void )
     stringWidth = 0;
   }
 
-  stringY = y + fontAscent;
+  stringY = y + fontAscent + h/2 - fontHeight/2;
 
   stringX = x;
 
@@ -4076,7 +4108,7 @@ int changed = 0;
      &fontAscent, &fontDescent, &fontHeight,
      &stringWidth );
 
-    stringY = y + fontAscent;
+    stringY = y + fontAscent + h/2 - fontHeight/2;
 
     if ( alignment == XmALIGNMENT_BEGINNING )
       stringX = x;
