@@ -329,8 +329,10 @@ int edmStripClass::old_createFromFile(FILE *f, char *filename,
     fscanf(f, "%d\n", &h); actWin->incLine();
     this->initSelectBox(); // call after getting x,y,w,h
     // PV Name
+    int tmpi;
     size_t file_num_pvs;
-    fscanf(f, "%d\n", &file_num_pvs); actWin->incLine();
+    fscanf(f, "%d\n", &tmpi); actWin->incLine();
+    file_num_pvs = (size_t) tmpi;
     if (file_num_pvs != num_pvs)
     {
         printf ("File has Stripchart with %d PVs, can only handle %d\n",
@@ -776,7 +778,7 @@ int edmStripClass::activate(int pass, void *ptr)
             // Check PV names
             for (i=0; i<num_pvs; ++i)
 	        // is_pvname_valid[i] = strcmp(PVName(i, true), "") != 0;
-	        is_pvname_valid[i] = !blankOrComment( PVName(i, true) );
+	        is_pvname_valid[i] = !blankOrComment( (char *) PVName(i, true) );
             time_t now;
             time(&now);
             strip_data = new StripData(num_pvs, w, seconds, now, 0);
