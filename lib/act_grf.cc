@@ -3010,10 +3010,6 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
   unsigned long   gcValueMask;
   char tmpStr[131+1];
 
-  //char *str = agc->dragValue(agc->getCurrentDragIndex());
-  //if ( !str ) return NULL;
-  //if ( blank(str) ) return NULL;
-
   Display *display = XtDisplay(w);
   int screenNum = DefaultScreen(display);
 

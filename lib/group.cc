@@ -2527,18 +2527,18 @@ char *firstName, *nextName;
 
         currentDragIndex = 0;
 
-        firstName = cur->node->firstDragName();
+        firstName = cur->node->firstDragName( x, y );
         if ( !firstName ) return 0;
 
         actWin->popupDragBegin(
          actWin->obj.getNameFromClass( cur->node->objName() ) );
         actWin->popupDragAddItem( (void *) cur->node, firstName );
 
-        nextName = cur->node->nextDragName();
+        nextName = cur->node->nextDragName( x, y );
         while ( nextName ) {
 
           actWin->popupDragAddItem( (void *) cur->node, nextName );
-          nextName = cur->node->nextDragName();
+          nextName = cur->node->nextDragName( x, y );
 
         }
 
@@ -2576,7 +2576,7 @@ activeGraphicListPtr cur;
 
       if ( cur->node->atLeastOneDragPv( x, y ) ) {
 
-        return cur->node->firstDragName();
+        return cur->node->firstDragName( x, y );
 
       }
 
@@ -2608,7 +2608,7 @@ activeGraphicListPtr cur;
 
       if ( cur->node->atLeastOneDragPv( x, y ) ) {
 
-        return cur->node->nextDragName();
+        return cur->node->nextDragName( x, y );
 
       }
 
@@ -2684,4 +2684,3 @@ activeGraphicListPtr cur;
   return 0;
 
 }
-

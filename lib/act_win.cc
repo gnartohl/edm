@@ -8980,10 +8980,6 @@ activeGraphicClass *ptr;
             break; // out of while loop
 	  }
 
-          //if ( cur->node->dragValue( cur->node->getCurrentDragIndex() ) ) {
-          //cur->node->selectDragValue( be->x, be->y );
-          //break; // out of while loop
-
 	}
 
         cur = cur->blink;
