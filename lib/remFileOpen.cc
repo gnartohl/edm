@@ -160,6 +160,8 @@ CURLcode result;
       curl_easy_setopt( curlH, CURLOPT_FILE, f );
       curl_easy_setopt( curlH, CURLOPT_ERRORBUFFER, errBuf );
       curl_easy_setopt( curlH, CURLOPT_FAILONERROR, 1 );
+      curl_easy_setopt( curlH, CURLOPT_SSL_VERIFYPEER, 0 );
+      curl_easy_setopt( curlH, CURLOPT_SSL_VERIFYHOST, 0 );
       strcpy( errBuf, "" );
       result = curl_easy_perform( curlH );
       if ( debugMode() ) printf( "result = %-d, errno = %-d\n",

@@ -204,7 +204,7 @@ public:
     short       get_DBR() const;
     int         get_int() const;
     double      get_double() const;
-const char * PVValueChar::get_char_array() const;
+    const char * get_char_array() const;
     size_t      get_string(char *strbuf, size_t buflen) const;
     void read_ctrlinfo(const void *buf);
     void read_value(const void *buf);

@@ -471,7 +471,7 @@ int undoFlip (
   int w,
   int h );
 
-int activeGroupClass::showPvInfo (
+int showPvInfo (
   XButtonEvent *be,
   int x,
   int y );

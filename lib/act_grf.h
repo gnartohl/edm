@@ -39,8 +39,8 @@
 #include "tag_pkg.h"
 #include "pv_factory.h"
 
-#define MAX_UNITS_SIZE 16
-#define MAX_ENUM_STRING_SIZE 16
+#define MAX_UNITS_SIZE 8
+#define MAX_ENUM_STRING_SIZE 26
 #define MAX_ENUM_STATES 16
 
 class undoOpClass;
@@ -1003,7 +1003,7 @@ virtual void setCurrentDragIndex (
 
 virtual int getCurrentDragIndex ( void );
 
-virtual void activeGraphicClass::getPvs (
+virtual void getPvs (
   int max,
   ProcessVariable *pvs[],
   int *n );

@@ -108,7 +108,7 @@ fontInfoClass ( void );   // constructor
 
 ~fontInfoClass ( void );   // destructor
 
-char *fontInfoClass::getStrFromFile (
+char *getStrFromFile (
   char *str,
   int maxLen,
   FILE *f
@@ -148,7 +148,7 @@ int addFont (
 int flushToBrace (
   FILE *f );
 
-int fontInfoClass::checkSingleFontSpecGeneric (
+int checkSingleFontSpecGeneric (
   XtAppContext app,
   Display *d,
   char *userFontFamilyName,
@@ -246,14 +246,14 @@ int appendSizeMenu(
   int size,
   float fsize );
 
-int fontInfoClass::getFirstFontMapping (
+int getFirstFontMapping (
   char *tag,
   int tagMax,
   char *spec,
   int specMax
 );
 
-int fontInfoClass::getNextFontMapping (
+int getNextFontMapping (
   char *tag,
   int tagMax,
   char *spec,
