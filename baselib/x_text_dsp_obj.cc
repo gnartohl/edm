@@ -49,9 +49,9 @@ static void dropTransferProc (
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) clientData;
 char *str = (char *) value;
-int stat, ivalue;
+int stat, ivalue, doPut;
 double dvalue;
-char string[39+1];
+char string[39+1], tmp[127+1];
 
   if ( !axtdo ) return;
 
@@ -63,8 +63,40 @@ char string[39+1];
 
       case DBR_FLOAT:
       case DBR_DOUBLE:
-        if ( isLegalFloat(str) ) {
-          dvalue = atof( str );
+
+        doPut = 0;
+        if ( axtdo->formatType == XTDC_K_FORMAT_HEX ) {
+          if ( strlen( str ) > 2 ) {
+            if ( ( strncmp( str, "0x", 2 ) != 0 ) &&
+                 ( strncmp( str, "0X", 2 ) != 0 ) ) {
+              strcpy( tmp, "0x" );
+            }
+            else {
+              strcpy( tmp, "" );
+            }
+            Strncat( tmp, str, 15 );
+            tmp[15] = 0;
+	  }
+	  else {
+            strcpy( tmp, "0x" );
+            Strncat( tmp, str, 15 );
+            tmp[15] = 0;
+          }
+          if ( isLegalInteger(tmp) ) {
+            doPut = 1;
+            ivalue = strtol( tmp, NULL, 0 );
+            dvalue = (double) ivalue;
+	  }
+	}
+	else {
+          if ( isLegalFloat(str) ) {
+            doPut = 1;
+            dvalue = atof( str );
+          }
+	}
+
+        if ( doPut ) {
+
           if ( axtdo->pvExists ) {
 #ifdef __epics__
             stat = ca_put( DBR_DOUBLE, axtdo->pvId, &dvalue );
@@ -78,13 +110,35 @@ char string[39+1];
           }
 
         }
+
         break;
 
       case DBR_SHORT:
       case DBR_LONG:
-        if ( isLegalInteger(str) ) {
-          //ivalue = atol( str );
-          ivalue = strtol( str, NULL, 0 );
+        if ( axtdo->formatType == XTDC_K_FORMAT_HEX ) {
+          if ( strlen( str ) > 2 ) {
+            if ( ( strncmp( str, "0x", 2 ) != 0 ) &&
+                 ( strncmp( str, "0X", 2 ) != 0 ) ) {
+              strcpy( tmp, "0x" );
+            }
+            else {
+              strcpy( tmp, "" );
+            }
+            Strncat( tmp, str, 15 );
+            tmp[15] = 0;
+	  }
+	  else {
+            strcpy( tmp, "0x" );
+            Strncat( tmp, str, 15 );
+            tmp[15] = 0;
+          }
+	}
+	else {
+          strncpy( tmp, str, 127 );
+          tmp[127] = 0;
+	}
+        if ( isLegalInteger(tmp) ) {
+          ivalue = strtol( tmp, NULL, 0 );
           if ( axtdo->pvExists ) {
 #ifdef __epics__
             stat = ca_put( DBR_LONG, axtdo->pvId, &ivalue );
@@ -507,20 +561,42 @@ static void xtdoTextFieldToIntA (
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int ivalue, stat;
-char *buf;
+char *buf, tmp[127+1];
 
   buf = XmTextGetString( axtdo->tf_widget );
   strncpy( axtdo->entryValue, buf, 39 );
   axtdo->entryValue[39] = 0;
   XtFree( buf );
 
-  if ( isLegalInteger(axtdo->entryValue) ) {
+  if ( axtdo->formatType == XTDC_K_FORMAT_HEX ) {
+    if ( strlen( axtdo->entryValue ) > 2 ) {
+      if ( ( strncmp( axtdo->entryValue, "0x", 2 ) != 0 ) &&
+           ( strncmp( axtdo->entryValue, "0X", 2 ) != 0 ) ) {
+        strcpy( tmp, "0x" );
+      }
+      else {
+        strcpy( tmp, "" );
+      }
+      Strncat( tmp, axtdo->entryValue, 15 );
+      tmp[15] = 0;
+    }
+    else {
+      strcpy( tmp, "0x" );
+      Strncat( tmp, axtdo->entryValue, 15 );
+      tmp[15] = 0;
+    }
+  }
+  else {
+    strncpy( tmp, axtdo->entryValue, 127 );
+    tmp[127] = 0;
+  }
 
-    strncpy( axtdo->curValue, axtdo->entryValue, 39 );
+  if ( isLegalInteger(tmp) ) {
+
+    strncpy( axtdo->curValue, tmp, 39 );
     axtdo->curValue[39] = 0;
 
-    //ivalue = atol( axtdo->entryValue );
-    ivalue = strtol( axtdo->entryValue, NULL, 0 );
+    ivalue = strtol( tmp, NULL, 0 );
     if ( axtdo->pvExists ) {
 #ifdef __epics__
       stat = ca_put( DBR_LONG, axtdo->pvId, &ivalue );
@@ -552,6 +628,7 @@ int ivalue, stat;
 char *buf;
 Arg args[10];
 int n;
+char tmp[127+1];
 
   n = 0;
   XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
@@ -568,13 +645,35 @@ int n;
   axtdo->entryValue[39] = 0;
   XtFree( buf );
 
-  if ( isLegalInteger(axtdo->entryValue) ) {
+  if ( axtdo->formatType == XTDC_K_FORMAT_HEX ) {
+    if ( strlen( axtdo->entryValue ) > 2 ) {
+      if ( ( strncmp( axtdo->entryValue, "0x", 2 ) != 0 ) &&
+           ( strncmp( axtdo->entryValue, "0X", 2 ) != 0 ) ) {
+        strcpy( tmp, "0x" );
+      }
+      else {
+        strcpy( tmp, "" );
+      }
+      Strncat( tmp, axtdo->entryValue, 15 );
+      tmp[15] = 0;
+    }
+    else {
+      strcpy( tmp, "0x" );
+      Strncat( tmp, axtdo->entryValue, 15 );
+      tmp[15] = 0;
+    }
+  }
+  else {
+    strncpy( tmp, axtdo->entryValue, 127 );
+    tmp[127] = 0;
+  }
 
-    strncpy( axtdo->curValue, axtdo->entryValue, 39 );
+  if ( isLegalInteger(tmp) ) {
+
+    strncpy( axtdo->curValue, tmp, 39 );
     axtdo->curValue[39] = 0;
 
-    //ivalue = atol( axtdo->entryValue );
-    ivalue = strtol( axtdo->entryValue, NULL, 0 );
+    ivalue = strtol( tmp, NULL, 0 );
     if ( axtdo->pvExists ) {
 #ifdef __epics__
       stat = ca_put( DBR_LONG, axtdo->pvId, &ivalue );
@@ -598,21 +697,60 @@ static void xtdoTextFieldToDoubleA (
 {
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
-int stat;
+int stat, ivalue, doPut;
 double dvalue;
-char *buf;
+char *buf, tmp[127+1];
 
   buf = XmTextGetString( axtdo->tf_widget );
   strncpy( axtdo->entryValue, buf, 39 );
   axtdo->entryValue[39] = 0;
   XtFree( buf );
 
-  if ( isLegalFloat(axtdo->entryValue) ) {
+  doPut = 0;
 
-    strncpy( axtdo->curValue, axtdo->entryValue, 39 );
+  if ( axtdo->formatType == XTDC_K_FORMAT_HEX ) {
+
+    if ( strlen( axtdo->entryValue ) > 2 ) {
+      if ( ( strncmp( axtdo->entryValue, "0x", 2 ) != 0 ) &&
+           ( strncmp( axtdo->entryValue, "0X", 2 ) != 0 ) ) {
+        strcpy( tmp, "0x" );
+      }
+      else {
+        strcpy( tmp, "" );
+      }
+      Strncat( tmp, axtdo->entryValue, 15 );
+      tmp[15] = 0;
+    }
+    else {
+      strcpy( tmp, "0x" );
+      Strncat( tmp, axtdo->entryValue, 15 );
+      tmp[15] = 0;
+    }
+
+    if ( isLegalInteger(tmp) ) {
+      doPut = 1;
+      ivalue = strtol( tmp, NULL, 0 );
+      dvalue = (double) ivalue;
+    }
+
+  }
+  else {
+
+    Strncat( tmp, axtdo->entryValue, 39 );
+    tmp[39] = 0;
+
+    if ( isLegalFloat(tmp) ) {
+      doPut = 1;
+      dvalue = atof( tmp );
+    }
+
+  }
+
+  if ( doPut ) {
+
+    strncpy( axtdo->curValue, tmp, 39 );
     axtdo->curValue[39] = 0;
 
-    dvalue = atof( axtdo->entryValue );
     if ( axtdo->pvExists ) {
 #ifdef __epics__
       stat = ca_put( DBR_DOUBLE, axtdo->pvId, &dvalue );
@@ -640,9 +778,9 @@ static void xtdoTextFieldToDoubleLF (
 {
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
-int stat;
+int stat, ivalue, doPut;
 double dvalue;
-char *buf;
+char *buf, tmp[127+1];
 Arg args[10];
 int n;
 
@@ -661,12 +799,51 @@ int n;
   axtdo->entryValue[39] = 0;
   XtFree( buf );
 
-  if ( isLegalFloat(axtdo->entryValue) ) {
+  doPut = 0;
 
-    strncpy( axtdo->curValue, axtdo->entryValue, 39 );
+  if ( axtdo->formatType == XTDC_K_FORMAT_HEX ) {
+
+    if ( strlen( axtdo->entryValue ) > 2 ) {
+      if ( ( strncmp( axtdo->entryValue, "0x", 2 ) != 0 ) &&
+           ( strncmp( axtdo->entryValue, "0X", 2 ) != 0 ) ) {
+        strcpy( tmp, "0x" );
+      }
+      else {
+        strcpy( tmp, "" );
+      }
+      Strncat( tmp, axtdo->entryValue, 15 );
+      tmp[15] = 0;
+    }
+    else {
+      strcpy( tmp, "0x" );
+      Strncat( tmp, axtdo->entryValue, 15 );
+      tmp[15] = 0;
+    }
+
+    if ( isLegalInteger(tmp) ) {
+      doPut = 1;
+      ivalue = strtol( tmp, NULL, 0 );
+      dvalue = (double) ivalue;
+    }
+
+  }
+  else {
+
+    Strncat( tmp, axtdo->entryValue, 39 );
+    tmp[39] = 0;
+
+    if ( isLegalFloat(tmp) ) {
+      doPut = 1;
+      dvalue = atof( tmp );
+    }
+
+  }
+
+  if ( doPut ) {
+
+    strncpy( axtdo->curValue, tmp, 39 );
     axtdo->curValue[39] = 0;
 
-    dvalue = atof( axtdo->entryValue );
     if ( axtdo->pvExists ) {
 #ifdef __epics__
       stat = ca_put( DBR_DOUBLE, axtdo->pvId, &dvalue );
@@ -1281,9 +1458,9 @@ static void axtdc_value_edit_apply (
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 double dvalue;
-int ivalue, stat;
+int ivalue, stat, doPut;
 short svalue;
-char string[39+1];
+char string[39+1], tmp[127+1];
 
   strncpy( axtdo->curValue, axtdo->entryValue, 39 );
   axtdo->curValue[39] = 0;
@@ -1292,8 +1469,45 @@ char string[39+1];
 
   case DBR_FLOAT:
   case DBR_DOUBLE:
-    if ( isLegalFloat(axtdo->entryValue) ) {
-      dvalue = atof( axtdo->entryValue );
+
+    doPut = 0;
+
+    if ( axtdo->formatType == XTDC_K_FORMAT_HEX ) {
+
+      if ( strlen( axtdo->entryValue ) > 2 ) {
+        if ( ( strncmp( axtdo->entryValue, "0x", 2 ) != 0 ) &&
+             ( strncmp( axtdo->entryValue, "0X", 2 ) != 0 ) ) {
+          strcpy( tmp, "0x" );
+        }
+        else {
+          strcpy( tmp, "" );
+        }
+        Strncat( tmp, axtdo->entryValue, 15 );
+        tmp[15] = 0;
+      }
+      else {
+        strcpy( tmp, "0x" );
+        Strncat( tmp, axtdo->entryValue, 15 );
+        tmp[15] = 0;
+      }
+
+      if ( isLegalInteger(tmp) ) {
+        doPut = 1;
+        ivalue = strtol( tmp, NULL, 0 );
+        dvalue = (double) ivalue;
+      }
+
+    }
+    else {
+
+      if ( isLegalFloat(axtdo->entryValue) ) {
+        doPut = 1;
+        dvalue = atof( axtdo->entryValue );
+      }
+
+    }
+
+    if ( doPut ) {
       if ( axtdo->pvExists ) {
 #ifdef __epics__
         stat = ca_put( DBR_DOUBLE, axtdo->pvId, &dvalue );
@@ -1311,9 +1525,32 @@ char string[39+1];
 
   case DBR_SHORT:
   case DBR_LONG:
-    if ( isLegalInteger(axtdo->entryValue) ) {
-      //ivalue = atol( axtdo->entryValue );
-      ivalue = strtol( axtdo->entryValue, NULL, 0 );
+
+    if ( axtdo->formatType == XTDC_K_FORMAT_HEX ) {
+      if ( strlen( axtdo->entryValue ) > 2 ) {
+        if ( ( strncmp( axtdo->entryValue, "0x", 2 ) != 0 ) &&
+             ( strncmp( axtdo->entryValue, "0X", 2 ) != 0 ) ) {
+          strcpy( tmp, "0x" );
+        }
+        else {
+          strcpy( tmp, "" );
+        }
+        Strncat( tmp, axtdo->entryValue, 15 );
+        tmp[15] = 0;
+      }
+      else {
+        strcpy( tmp, "0x" );
+        Strncat( tmp, axtdo->entryValue, 15 );
+        tmp[15] = 0;
+      }
+    }
+    else {
+      strncpy( tmp, axtdo->entryValue, 127 );
+      tmp[127] = 0;
+    }
+
+    if ( isLegalInteger(tmp) ) {
+      ivalue = strtol( tmp, NULL, 0 );
       if ( axtdo->pvExists ) {
 #ifdef __epics__
         stat = ca_put( DBR_LONG, axtdo->pvId, &ivalue );
@@ -1485,6 +1722,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   axtdo->updatePvOnDrop = axtdo->bufUpdatePvOnDrop;
 
+  axtdo->useHexPrefix = axtdo->bufUseHexPrefix;
+
   strncpy( axtdo->id, axtdo->bufId, 31 );
   axtdo->id[31] = 0;
   axtdo->changeCallbackFlag = axtdo->bufChangeCallbackFlag;
@@ -1605,6 +1844,7 @@ int i;
   changeValOnLoseFocus = 0;
   autoSelect = 0;
   updatePvOnDrop = 0;
+  useHexPrefix = 1;
   fastUpdate = 0;
 
   efPrecision.setNull(1);
@@ -1712,6 +1952,7 @@ int i;
   changeValOnLoseFocus = source->changeValOnLoseFocus;
   autoSelect = source->autoSelect;
   updatePvOnDrop  = source->updatePvOnDrop;
+  useHexPrefix = source->useHexPrefix;
   fastUpdate = source->fastUpdate;
   precision = source->precision;
   efPrecision = source->efPrecision;
@@ -1917,6 +2158,9 @@ int index, stat;
 
   // version 2.8
   fprintf( f, "%-d\n", updatePvOnDrop );
+
+  // version 2.9
+  fprintf( f, "%-d\n", useHexPrefix );
 
   return 1;
 
@@ -2195,6 +2439,13 @@ unsigned int pixel;
   }
   else {
     updatePvOnDrop = 0;
+  }
+
+  if ( ( ( major == 2 ) && ( minor > 8 ) ) || ( major > 2 ) ) {
+    fscanf( f, "%d\n", &useHexPrefix );
+  }
+  else {
+    useHexPrefix = 1;
   }
 
   actWin->fi->loadFontTag( fontTag );
@@ -2555,6 +2806,7 @@ int noedit;
   bufDeactivateCallbackFlag = deactivateCallbackFlag;
   bufAutoSelect = autoSelect;
   bufUpdatePvOnDrop = updatePvOnDrop;
+  bufUseHexPrefix = useHexPrefix;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -2577,6 +2829,7 @@ int noedit;
    &bufNullDetectMode );
   ef.addOption( activeXTextDspClass_str18,
    activeXTextDspClass_str19, &bufFormatType );
+  ef.addToggle( activeXTextDspClass_str77, &bufUseHexPrefix );
   ef.addToggle( activeXTextDspClass_str20, &bufLimitsFromDb );
   ef.addTextField( activeXTextDspClass_str21, 35, &bufEfPrecision );
 
@@ -3783,7 +4036,12 @@ Atom importList[2];
         sprintf( format, "%%-d" );
         break;
       case XTDC_K_FORMAT_HEX:
-        sprintf( format, "0x%%-X" );
+        if ( useHexPrefix ) {
+          sprintf( format, "0x%%-X" );
+	}
+	else {
+          sprintf( format, "%%-X" );
+	}
         break;
       default:
         sprintf( format, "%%-d" );
@@ -3821,7 +4079,12 @@ Atom importList[2];
         sprintf( format, "%%-d" );
         break;
       case XTDC_K_FORMAT_HEX:
-        sprintf( format, "0x%%-X" );
+        if ( useHexPrefix ) {
+          sprintf( format, "0x%%-X" );
+	}
+	else {
+          sprintf( format, "%%-X" );
+	}
         break;
       default:
         sprintf( format, "%%-d" );
