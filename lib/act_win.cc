@@ -17372,6 +17372,7 @@ char s[127+1];
   tag.loadR( "gridSize", 255, junk );
   tag.loadR( "orthoLineDraw", 255, junk );
   tag.loadR( "pvType", 255, junk );
+  tag.loadR( "disableScroll", 255, junk );
   tag.loadR( "endScreenProperties" );
 
   stat = tag.readTags( f, "endScreenProperties" );

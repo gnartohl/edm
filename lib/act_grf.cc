@@ -1204,7 +1204,7 @@ int boxH;
 
   if ( deleteRequest ) return 1;
 
-  actWin->executeGc.setLineWidth( 1 );
+  actWin->drawGc.setLineWidth( 1 );
   actWin->drawGc.setLineStyle( LineSolid );
 
   boxX = sboxX-3;
@@ -1273,7 +1273,7 @@ int boxH;
   actWin->drawGc.saveFg();
   actWin->drawGc.setFG( actWin->ci->pix(actWin->fgColor) );
 
-  actWin->executeGc.setLineWidth( 1 );
+  actWin->drawGc.setLineWidth( 1 );
   actWin->drawGc.setLineStyle( LineSolid );
 
   boxX = sboxX-3;

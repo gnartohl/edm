@@ -395,10 +395,10 @@ pvInspectorClass *pio = (pvInspectorClass *) client;
     pio->setPostion[0] = 0;
     pio->allowDups[0] = 0;
     pio->label[0].setRaw( "" );
-    pio->useRtype[i] = 0;
-    pio->useType[i] = 0;
-    pio->useSpecType[i] = 0;
-    pio->useDim[i] = 0;
+    pio->useRtype[0] = 0;
+    pio->useType[0] = 0;
+    pio->useSpecType[0] = 0;
+    pio->useDim[0] = 0;
     pio->numDsps = 0;
   }
   else {

@@ -1,478 +1,358 @@
-3 1 0
-195
-356
-345
-366
-helvetica-medium-r-12.0
-0
-helvetica-medium-r-12.0
-0
-rgb
-0,0,0
-rgb
-46810,47850,46810
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-rgb
-34327,34327,34327
-Help - Fine Mouse Control
-0
-0
-10
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-47
-97
-15
-15
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-137
-97
-15
-15
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-227
-97
-15
-15
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-47
-217
-15
-15
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-137
-217
-15
-15
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-227
-217
-15
-15
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-47
-157
-15
-15
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-227
-157
-15
-15
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-54
-104
-181
-121
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-144
-228
-91
-60
-3
-235 228
-173 288
-144 228
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-57
-298
-273
-13
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-When mouse cursor is over control point
-courier-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-57
-314
-280
-13
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-keyboard arrow buttons may be pressed to
-courier-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-57
-330
-245
-13
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-resize pixel-by-pixel. Left B click
-courier-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-57
-347
-175
-13
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-terminates the operation.
-courier-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-18
-11
-287
-13
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-When mouse cursor is over object interior
-courier-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-18
-27
-280
-13
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-keyboard arrow buttons may be pressed to
-courier-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-18
-43
-231
-13
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-move pixel-by-pixel. Left B click
-courier-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-18
-60
-175
-13
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-terminates the operation.
-courier-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-73
-77
-37
-73
-2
-73 77
-110 150
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 538
+y 385
+w 368
+h 372
+font "helvetica-medium-r-12.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48573 47802 48573
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 0
+ctlBgColor1 rgb 44461 44718 44461
+ctlBgColor2 rgb 33924 34438 33924
+topShadowColor rgb 61423 60395 61423
+botShadowColor rgb 23130 22873 23130
+title "Help - Fine Mouse Control"
+endScreenProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 47
+y 97
+w 15
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 137
+y 97
+w 15
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 227
+y 97
+w 15
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 47
+y 217
+w 15
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 137
+y 217
+w 15
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 227
+y 217
+w 15
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 47
+y 157
+w 15
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 227
+y 157
+w 15
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 54
+y 104
+w 181
+h 121
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 144
+y 228
+w 91
+h 60
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+numPoints 3
+xPoints {
+  0 235
+  1 173
+  2 144
+}
+yPoints {
+  0 228
+  1 288
+  2 228
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 18
+y 295
+w 273
+h 13
+font "courier-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "When mouse cursor is over control point"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 18
+y 311
+w 280
+h 13
+font "courier-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "keyboard arrow buttons may be pressed to"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 18
+y 327
+w 245
+h 13
+font "courier-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "resize pixel-by-pixel. Left B click"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 18
+y 344
+w 175
+h 13
+font "courier-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "terminates the operation."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 18
+y 11
+w 287
+h 13
+font "courier-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "When mouse cursor is over object interior"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 18
+y 27
+w 280
+h 13
+font "courier-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "keyboard arrow buttons may be pressed to"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 18
+y 43
+w 231
+h 13
+font "courier-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "move pixel-by-pixel. Left B click"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 18
+y 60
+w 175
+h 13
+font "courier-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "terminates the operation."
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 73
+y 77
+w 37
+h 73
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+numPoints 2
+xPoints {
+  0 73
+  1 110
+}
+yPoints {
+  0 77
+  1 150
+}
+endObjectProperties
+
