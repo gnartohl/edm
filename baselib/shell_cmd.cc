@@ -1557,9 +1557,12 @@ int stat;
 
   if ( pass == 1 ) {
 
+    activeMode = 0;
+
     if ( ef.formIsPoppedUp() ) ef.popdown();
 
-    activeMode = 0;
+    XtDestroyWidget( popUpMenu );
+
     if ( timerActive ) {
       XtRemoveTimeOut( timer );
       timerActive = 0;
