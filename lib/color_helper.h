@@ -92,7 +92,7 @@ inline ColorHelper & ColorHelper::operator = (const ColorHelper &rhs)
 
 inline void ColorHelper::updatePVStatus(const ProcessVariable *pv)
 {
-    if (pv->is_valid())
+    if (pv && pv->is_valid())
         severity = pv->get_severity();
     else
         severity = INVALID_ALARM;
