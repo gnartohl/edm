@@ -120,6 +120,7 @@ void edmTextupdateClass::init(const char *classname)
     strcpy(fontTag, "");
     fs = 0;
     alignment = XmALIGNMENT_BEGINNING;
+    is_line_alarm_sensitive = false;
 }
 
 edmTextupdateClass::edmTextupdateClass(edmTextupdateClass *rhs)
@@ -144,7 +145,6 @@ void edmTextupdateClass::clone(const edmTextupdateClass *rhs,
     displayMode = rhs->displayMode;
     precision = rhs->precision;
     textColor = rhs->textColor;
-    line_width = rhs->line_width;
     fillColor = rhs->fillColor;
     is_filled = rhs->is_filled;
     strncpy(fontTag, rhs->fontTag, 63);
@@ -154,6 +154,9 @@ void edmTextupdateClass::clone(const edmTextupdateClass *rhs,
     fontDescent = rhs->fontDescent;
     fontHeight = rhs->fontHeight;
     alignment = rhs->alignment;
+    line_width = rhs->line_width;
+    lineColor = rhs->lineColor;
+    is_line_alarm_sensitive = rhs->is_line_alarm_sensitive;
 }
 
 edmTextupdateClass::~edmTextupdateClass()
@@ -197,16 +200,16 @@ int edmTextupdateClass::save(FILE *f)
     fprintf(f, "%-d\n", (int) precision);
     // textcolor, fillcolor
     actWin->ci->writeColorIndex( f, textColor.getIndex() );
-    //fprintf(f, "%-d\n", textColor.getIndex());
     fprintf(f, "%-d\n", textColor.isAlarmSensitive());
     actWin->ci->writeColorIndex( f, fillColor.getIndex() );
-    //fprintf(f, "%-d\n", fillColor.getIndex());
     writeStringToFile(f, (char *)getRawName(color_pv_name));
     // fill mode, fonts
     fprintf(f, "%-d\n", is_filled);
     writeStringToFile(f, fontTag);
     fprintf(f, "%-d\n", alignment);
+    // Line
     line_width.write(f);
+    fprintf(f, "%-d\n", is_line_alarm_sensitive);
    
     return 1;
 }
@@ -257,6 +260,7 @@ int edmTextupdateClass::createFromFile(FILE *f, char *filename,
         actWin->ci->readColorIndex( f, &index );
         actWin->incLine(); actWin->incLine();
         textColor.setIndex(index);
+        lineColor.setIndex(index);
     }
     else if (major < 2 || major == 5)
     {
@@ -314,7 +318,18 @@ int edmTextupdateClass::createFromFile(FILE *f, char *filename,
     {
         line_width.setNull(1);
     }
-    
+
+    // Since 7.0.0: line can be alarm sensitive
+    if (major >= 7)
+    {
+        fscanf(f, "%d\n", &is_line_alarm_sensitive); actWin->incLine();
+        if (is_line_alarm_sensitive && line_width.value() <= 0)
+            line_width.setValue(1);
+        lineColor.setAlarmSensitive(is_line_alarm_sensitive);
+    }
+    else
+        is_line_alarm_sensitive = false;
+
     return 1;
 }
 
@@ -334,6 +349,7 @@ int edmTextupdateClass::createInteractive(activeWindowClass *aw_obj,
     displayMode = dm_default;
     precision = 0;
     textColor.setIndex(actWin->defaultFg1Color);
+    lineColor.setIndex(actWin->defaultFg1Color);
     line_width.setNull(1);
     fillColor.setIndex(actWin->defaultBgColor);
     strcpy(fontTag, actWin->defaultCtlFontTag);
@@ -384,13 +400,14 @@ int edmTextupdateClass::genericEdit() // create Property Dialog
     bufX = x; bufY = y; bufW = w; bufH = h;
     strncpy(bufPvName,      getRawName(pv_name), PV_Factory::MAX_PV_NAME);
     strncpy(bufColorPvName, getRawName(color_pv_name),PV_Factory::MAX_PV_NAME);
-    buf_displayMode     = (int)displayMode;
-    buf_precision       = precision;
-    buf_line_width      = line_width;
-    bufTextColor        = textColor.getIndex();
-    buf_alarm_sensitive = textColor.isAlarmSensitive();
-    bufFillColor        = fillColor.getIndex();
-    bufIsFilled         = is_filled;
+    buf_displayMode          = (int)displayMode;
+    buf_precision            = precision;
+    buf_line_width           = line_width;
+    bufTextColor             = textColor.getIndex();
+    buf_alarm_sensitive      = textColor.isAlarmSensitive();
+    bufFillColor             = fillColor.getIndex();
+    bufIsFilled              = is_filled;
+    buf_alarm_sensitive_line = is_line_alarm_sensitive;
 
     // create entry form dialog box
     ef.create(actWin->top, actWin->appCtx->ci.getColorMap(),
@@ -408,8 +425,9 @@ int edmTextupdateClass::genericEdit() // create Property Dialog
     ef.addOption("Mode", "default|decimal|hex|engineer|exp", &buf_displayMode);
     ef.addTextField("Precision", 35, &buf_precision);
     ef.addTextField("Line Width", 35, &buf_line_width);
+    ef.addToggle("Alarm Sensitive Line", &buf_alarm_sensitive_line);
     ef.addColorButton("Fg Color", actWin->ci, &textCb, &bufTextColor);
-    ef.addToggle("Alarm Sensitive", &buf_alarm_sensitive);
+    ef.addToggle("Alarm Sensitive Text", &buf_alarm_sensitive);
     ef.addToggle("Filled?", &bufIsFilled);
     ef.addColorButton("Bg Color", actWin->ci, &fillCb, &bufFillColor);
     ef.addTextField("Color PV", 35, bufColorPvName, PV_Factory::MAX_PV_NAME);
@@ -434,14 +452,19 @@ void edmTextupdateClass::redraw_text(Display *dis,
         gcc.setFG(fillColor.getPixel(actWin->ci));
         XFillRectangle(dis, drw, gc, x, y, w, h);
     }
-    gcc.setFG(fg_pixel);
-    // Border
-    if (!line_width.isNull())
+    // Border: if line width > 0, but don't show the
+    // line if we're alarm sensitive and there is no alarm
+    if (line_width.value() > 0 &&
+        !(is_line_alarm_sensitive &&
+          pv && pv->is_valid() && pv->get_severity() == 0))
     {
+        int line_pixel = lineColor.getPixel(actWin->ci);
+        gcc.setFG(line_pixel);
         gcc.setLineWidth(line_width.value());
         XDrawRectangle(dis, drw, gc, x, y, w, h);
         gcc.setLineWidth(1);
     }
+    gcc.setFG(fg_pixel);
     if (len > 0)
     {
         // Text
@@ -501,6 +524,7 @@ int edmTextupdateClass::draw()  // render the edit-mode image
     const char *pvname = getRawName(pv_name);
     size_t len = strlen(pvname);
     textColor.reset();
+    lineColor.reset();
     redraw_text(actWin->d,
                 XtWindow(actWin->drawWidget),
                 actWin->drawGc,
@@ -560,8 +584,11 @@ void edmTextupdateClass::edit_update(Widget w, XtPointer client,XtPointer call)
     me->displayMode     = (DisplayMode) me->buf_displayMode;
     me->precision       = me->buf_precision;
     me->line_width      = me->buf_line_width;
+    me->is_line_alarm_sensitive = me->buf_alarm_sensitive_line;
     me->textColor.setIndex(me->bufTextColor);
     me->textColor.setAlarmSensitive(me->buf_alarm_sensitive > 0);
+    me->lineColor.setIndex(me->bufTextColor);
+    me->lineColor.setAlarmSensitive(me->buf_alarm_sensitive_line > 0);
     me->fillColor.setIndex(me->bufFillColor);
     me->is_filled       = me->bufIsFilled;
 
@@ -632,7 +659,10 @@ void edmTextupdateClass::changeDisplayParams(unsigned int flag,
                                              int botShadowColor)
 {
     if (flag & ACTGRF_FG1COLOR_MASK)
+    {
         textColor.setIndex(fg1Color);
+        lineColor.setIndex(fg1Color);
+    }
     if (flag & ACTGRF_BGCOLOR_MASK)
         fillColor.setIndex(bgColor);
     if (flag & ACTGRF_FONTTAG_MASK)
@@ -772,6 +802,7 @@ int edmTextupdateClass::deactivate(int pass)
 bool edmTextupdateClass::get_current_values(char *text, size_t &len)
 {
     textColor.updatePVStatus(pv);
+    lineColor.updatePVStatus(pv);
     if (pv && pv->is_valid())
     {
         if (color_pv)
@@ -816,6 +847,7 @@ bool edmTextupdateClass::get_current_values(char *text, size_t &len)
         }
         return true;
     }
+    // Disconnected: Display the PV name
     text[0] = '<';
     strcpy(text+1, getExpandedName(pv_name));
     strcat(text, ">");

@@ -4,6 +4,8 @@
 // kasemir@lanl.gov
 //
 // Changes:
+// 7.0.0  Added alarm-sensitive border
+// 6.0.0  Mods for site-independent color
 // 5.0.0  Use color index instead of name as per EDM video conference
 // 4.0.0  Added "Alarm Sensitive" to text color
 // 3.0.0  Added colorPv for color rules
@@ -19,7 +21,7 @@
 
 #define TEXTUPDATE_CLASSNAME "TextupdateClass"
 #define TEXTENTRY_CLASSNAME  "TextentryClass"
-#define TEXT_MAJOR 6
+#define TEXT_MAJOR 7
 #define TEXT_MINOR 0
 #define TEXT_RELEASE 0
 
@@ -110,8 +112,10 @@ protected:
     DisplayMode displayMode;
     int precision;
 
-    ColorHelper textColor, fillColor;
+    // line color == text color except for alarm sensitivity
+    ColorHelper textColor, fillColor, lineColor;
     efInt line_width;
+    int is_line_alarm_sensitive;
     int is_filled;
     fontMenuClass fm;
     char fontTag[63+1], bufFontTag[63+1];
@@ -127,7 +131,7 @@ protected:
     char bufColorPvName[PV_Factory::MAX_PV_NAME+1];
     int buf_displayMode;
     int buf_precision;
-    int buf_alarm_sensitive;
+    int buf_alarm_sensitive, buf_alarm_sensitive_line;
     int bufTextColor, bufFillColor;
     
     efInt buf_line_width;
