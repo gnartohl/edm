@@ -409,6 +409,9 @@ friend void axygc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
+static const int symHalfWidth = 2;
+static const int symHalfHeight = 2;
+
 int bufX, bufY, bufW, bufH;
 
 Pixmap pixmap;
@@ -686,6 +689,24 @@ int xyGraphClass::fullRefresh ( void );
 int xyGraphClass::draw ( void );
 
 int xyGraphClass::erase ( void );
+
+void xyGraphClass::drawCircles (
+  int index,
+  XPoint *xp,
+  int n
+);
+
+void xyGraphClass::drawSquares (
+  int index,
+  XPoint *xp,
+  int n
+);
+
+void xyGraphClass::drawDiamonds (
+  int index,
+  XPoint *xp,
+  int n
+);
 
 int xyGraphClass::drawActiveOne (
   int i // trace

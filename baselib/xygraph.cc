@@ -3890,6 +3890,164 @@ int xyGraphClass::erase ( void ) {
 
 }
 
+void xyGraphClass::drawCircles (
+  int index,
+  XPoint *xp,
+  int n
+) {
+
+struct XArc arc[100];
+int numFullDraws, remainder, i, ii, j, symHW, symHH;
+
+  symHH = symHalfHeight + lineThk[index];
+  symHW = symHalfWidth + lineThk[index];
+
+  numFullDraws = n / 100;
+  for ( i=0, j=0; i<numFullDraws; i++, j+=100 ) {
+
+    for ( ii=0; ii<100; ii++ ) {
+      arc[ii].x = xp[j+ii].x - symHW;
+      arc[ii].y = xp[j+ii].y - symHH;
+      arc[ii].width = symHW + symHW;
+      arc[ii].height = symHH + symHH;
+      arc[ii].angle1 = 0;
+      arc[ii].angle2 = 360*64;
+    }
+
+    XDrawArcs( actWin->d, pixmap,
+     actWin->executeGc.normGC(), arc, 100 );
+
+  }
+
+  remainder = n % 100;
+  for ( ii=0; ii<remainder; ii++ ) {
+    arc[ii].x = xp[j+ii].x - symHW;
+    arc[ii].y = xp[j+ii].y - symHH;
+    arc[ii].width = symHW + symHW;
+    arc[ii].height = symHH + symHH;
+    arc[ii].angle1 = 0;
+    arc[ii].angle2 = 360*64;
+  }
+
+  XDrawArcs( actWin->d, pixmap,
+   actWin->executeGc.normGC(), arc, remainder );
+
+}
+
+void xyGraphClass::drawSquares (
+  int index,
+  XPoint *xp,
+  int n
+) {
+
+struct XRectangle rec[100];
+int numFullDraws, remainder, i, ii, j, symHW, symHH;
+
+  symHH = symHalfHeight + lineThk[index];
+  symHW = symHalfWidth + lineThk[index];
+
+  numFullDraws = n / 100;
+  for ( i=0, j=0; i<numFullDraws; i++, j+=100 ) {
+
+    for ( ii=0; ii<100; ii++ ) {
+      rec[ii].x = xp[j+ii].x - symHW;
+      rec[ii].y = xp[j+ii].y - symHH;
+      rec[ii].width = symHW + symHW;
+      rec[ii].height = symHH + symHH;
+    }
+
+    XDrawRectangles( actWin->d, pixmap,
+     actWin->executeGc.normGC(), rec, 100 );
+
+  }
+
+  remainder = n % 100;
+  for ( ii=0; ii<remainder; ii++ ) {
+    rec[ii].x = xp[j+ii].x - symHW;
+    rec[ii].y = xp[j+ii].y - symHH;
+    rec[ii].width = symHW + symHW;
+    rec[ii].height = symHH + symHH;
+  }
+
+  XDrawRectangles( actWin->d, pixmap,
+   actWin->executeGc.normGC(), rec, remainder );
+
+}
+
+void xyGraphClass::drawDiamonds (
+  int index,
+  XPoint *xp,
+  int n
+) {
+
+struct XSegment seg[400];
+int numFullDraws, remainder, i, ii, j, jj, symHW, symHH;
+
+  symHH = (int) ( 1.4 * ( (double) symHalfHeight + (double) lineThk[index] ) );
+  symHW = (int) ( 1.4 * ( (double) symHalfWidth + (double) lineThk[index] ) );
+
+  numFullDraws = n / 100;
+  for ( i=0, j=0; i<numFullDraws; i++, j+=100 ) {
+
+    for ( ii=0, jj=0; ii<100; ii++, jj+=4 ) {
+
+      seg[jj].x1 = xp[j+ii].x;
+      seg[jj].y1 = xp[j+ii].y + symHH;
+      seg[jj].x2 = xp[j+ii].x + symHW;
+      seg[jj].y2 = xp[j+ii].y;
+
+      seg[jj+1].x1 = xp[j+ii].x + symHW;
+      seg[jj+1].y1 = xp[j+ii].y;
+      seg[jj+1].x2 = xp[j+ii].x;
+      seg[jj+1].y2 = xp[j+ii].y - symHH;
+
+      seg[jj+2].x1 = xp[j+ii].x;
+      seg[jj+2].y1 = xp[j+ii].y - symHH;
+      seg[jj+2].x2 = xp[j+ii].x - symHW;
+      seg[jj+2].y2 = xp[j+ii].y;
+
+      seg[jj+3].x1 = xp[j+ii].x - symHW;
+      seg[jj+3].y1 = xp[j+ii].y;
+      seg[jj+3].x2 = xp[j+ii].x;
+      seg[jj+3].y2 = xp[j+ii].y + symHH;
+
+    }
+
+    XDrawSegments( actWin->d, pixmap,
+     actWin->executeGc.normGC(), seg, 400 );
+
+  }
+
+  remainder = n % 100;
+  for ( ii=0, jj=0; ii<remainder; ii++, jj+=4 ) {
+
+    seg[jj].x1 = xp[j+ii].x;
+    seg[jj].y1 = xp[j+ii].y + symHH;
+    seg[jj].x2 = xp[j+ii].x + symHW;
+    seg[jj].y2 = xp[j+ii].y;
+
+    seg[jj+1].x1 = xp[j+ii].x + symHW;
+    seg[jj+1].y1 = xp[j+ii].y;
+    seg[jj+1].x2 = xp[j+ii].x;
+    seg[jj+1].y2 = xp[j+ii].y - symHH;
+
+    seg[jj+2].x1 = xp[j+ii].x;
+    seg[jj+2].y1 = xp[j+ii].y - symHH;
+    seg[jj+2].x2 = xp[j+ii].x - symHW;
+    seg[jj+2].y2 = xp[j+ii].y;
+
+    seg[jj+3].x1 = xp[j+ii].x - symHW;
+    seg[jj+3].y1 = xp[j+ii].y;
+    seg[jj+3].x2 = xp[j+ii].x;
+    seg[jj+3].y2 = xp[j+ii].y + symHH;
+
+  }
+
+  XDrawSegments( actWin->d, pixmap,
+   actWin->executeGc.normGC(), seg, remainder*4 );
+
+}
+
 int xyGraphClass::eraseActive ( void ) {
 
 int i;
@@ -3911,8 +4069,8 @@ int clipStat;
 
     if ( yArrayNeedUpdate[i] && xArrayNeedUpdate[i] && traceIsDrawn[i] ) {
 
-      actWin->executeGc.setLineWidth( lineThk[i] );
-      actWin->executeGc.setLineStyle( lineStyle[i] );
+      actWin->executeGc.setLineWidth(1);
+      actWin->executeGc.setLineStyle( LineSolid );
 
       //actWin->executeGc.setFGforGivenBG( actWin->ci->pix(plotColor[i]),
       // actWin->ci->pix(bgColor) );
@@ -3922,18 +4080,54 @@ int clipStat;
       if ( plotStyle[i] == XYGC_K_PLOT_STYLE_POINT ) {
 
         if ( curNpts[i] > 1 ) {
-          XDrawPoints( actWin->d, pixmap,
-           actWin->executeGc.normGC(), plotBuf[i], curNpts[i],
-           CoordModeOrigin );
+
+          if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_NONE ) {
+
+            XDrawPoints( actWin->d, pixmap,
+             actWin->executeGc.normGC(), plotBuf[i], curNpts[i],
+             CoordModeOrigin );
+
+	  }
+	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_CIRCLE ) {
+
+            drawCircles( i, plotBuf[i], curNpts[i] );
+
+	  }
+	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_SQUARE ) {
+
+            drawSquares( i, plotBuf[i], curNpts[i] );
+
+	  }
+	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_DIAMOND ) {
+
+            drawDiamonds( i, plotBuf[i], curNpts[i] );
+
+	  }
+
         }
 
       }
       else{
 
         if ( curNpts[i] > 1 ) {
+
+	  if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_CIRCLE ) {
+            drawCircles( i, plotBuf[i], curNpts[i] );
+	  }
+	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_SQUARE ) {
+            drawSquares( i, plotBuf[i], curNpts[i] );
+	  }
+	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_DIAMOND ) {
+            drawDiamonds( i, plotBuf[i], curNpts[i] );
+	  }
+
+          actWin->executeGc.setLineWidth( lineThk[i] );
+          actWin->executeGc.setLineStyle( lineStyle[i] );
+
           XDrawLines( actWin->d, pixmap,
            actWin->executeGc.normGC(), plotBuf[i], curNpts[i],
            CoordModeOrigin );
+
         }
 
       }
@@ -3976,8 +4170,8 @@ int xyGraphClass::drawActiveOne (
 
 int npts;
 
-  actWin->executeGc.setLineWidth( lineThk[i] );
-  actWin->executeGc.setLineStyle( lineStyle[i] );
+  actWin->executeGc.setLineWidth(1);
+  actWin->executeGc.setLineStyle( LineSolid );
 
   yArrayNeedUpdate[i] = xArrayNeedUpdate[i] = 1;
   if ( yArrayNeedUpdate[i] && xArrayNeedUpdate[i] ) {
@@ -4000,19 +4194,53 @@ int npts;
 
         if ( plotStyle[i] == XYGC_K_PLOT_STYLE_POINT ) {
 
-          //printf( "draw active: draw lines, npts = %-d\n", npts );
-          XDrawPoints( actWin->d, pixmap,
-           actWin->executeGc.normGC(), plotBuf[i], npts,
-           CoordModeOrigin );
+          if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_NONE ) {
+
+            //printf( "draw active: draw lines, npts = %-d\n", npts );
+            XDrawPoints( actWin->d, pixmap,
+             actWin->executeGc.normGC(), plotBuf[i], npts,
+             CoordModeOrigin );
+
+	  }
+	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_CIRCLE ) {
+
+            drawCircles( i, plotBuf[i], curNpts[i] );
+
+	  }
+	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_SQUARE ) {
+
+            drawSquares( i, plotBuf[i], curNpts[i] );
+
+	  }
+	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_DIAMOND ) {
+
+            drawDiamonds( i, plotBuf[i], curNpts[i] );
+
+	  }
+
           curNpts[i] = npts;
 
         }
         else {
 
+	  if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_CIRCLE ) {
+            drawCircles( i, plotBuf[i], curNpts[i] );
+	  }
+	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_SQUARE ) {
+            drawSquares( i, plotBuf[i], curNpts[i] );
+	  }
+	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_DIAMOND ) {
+            drawDiamonds( i, plotBuf[i], curNpts[i] );
+	  }
+
+          actWin->executeGc.setLineWidth( lineThk[i] );
+          actWin->executeGc.setLineStyle( lineStyle[i] );
+
           //printf( "draw active: draw lines, npts = %-d\n", npts );
           XDrawLines( actWin->d, pixmap,
            actWin->executeGc.normGC(), plotBuf[i], npts,
            CoordModeOrigin );
+
           curNpts[i] = npts;
 
         }
@@ -4031,19 +4259,53 @@ int npts;
 
         if ( plotStyle[i] == XYGC_K_PLOT_STYLE_POINT ) {
 
-          //printf( "draw active: draw lines, npts = %-d\n", npts );
-          XDrawPoints( actWin->d, pixmap,
-           actWin->executeGc.normGC(), plotBuf[i], npts,
-           CoordModeOrigin );
+          if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_NONE ) {
+
+            //printf( "draw active: draw lines, npts = %-d\n", npts );
+            XDrawPoints( actWin->d, pixmap,
+             actWin->executeGc.normGC(), plotBuf[i], npts,
+             CoordModeOrigin );
+
+	  }
+	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_CIRCLE ) {
+
+            drawCircles( i, plotBuf[i], curNpts[i] );
+
+	  }
+	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_SQUARE ) {
+
+            drawSquares( i, plotBuf[i], curNpts[i] );
+
+	  }
+	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_DIAMOND ) {
+
+            drawDiamonds( i, plotBuf[i], curNpts[i] );
+
+	  }
+
           curNpts[i] = npts;
 
         }
 	else {
 
+	  if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_CIRCLE ) {
+            drawCircles( i, plotBuf[i], curNpts[i] );
+	  }
+	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_SQUARE ) {
+            drawSquares( i, plotBuf[i], curNpts[i] );
+	  }
+	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_DIAMOND ) {
+            drawDiamonds( i, plotBuf[i], curNpts[i] );
+	  }
+
+          actWin->executeGc.setLineWidth( lineThk[i] );
+          actWin->executeGc.setLineStyle( lineStyle[i] );
+
           //printf( "draw active: draw lines, npts = %-d\n", npts );
           XDrawLines( actWin->d, pixmap,
            actWin->executeGc.normGC(), plotBuf[i], npts,
            CoordModeOrigin );
+
           curNpts[i] = npts;
 
         }
