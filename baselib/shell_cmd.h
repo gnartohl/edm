@@ -23,7 +23,7 @@
 #include "entry_form.h"
 
 #define SHCMDC_MAJOR_VERSION 2
-#define SHCMDC_MINOR_VERSION 3
+#define SHCMDC_MINOR_VERSION 4
 #define SHCMDC_RELEASE 0
 
 #ifdef __shell_cmd_cc
@@ -45,6 +45,11 @@ static void shellCmdThread (
   THREAD_HANDLE h );
 #endif
 
+static void menu_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 static void shcmdc_executeCmd (
   XtPointer client,
   XtIntervalId *id );
@@ -60,6 +65,11 @@ static void pw_apply (
   XtPointer call );
 
 static void pw_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void shcmdc_edit_ok1 (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -110,6 +120,11 @@ friend void shellCmdThread (
   THREAD_HANDLE h );
 #endif
 
+friend void menu_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 friend void shcmdc_executeCmd (
   XtPointer client,
   XtIntervalId *id );
@@ -125,6 +140,11 @@ friend void pw_apply (
   XtPointer call );
 
 friend void pw_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void shcmdc_edit_ok1 (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -154,48 +174,74 @@ friend void shcmdc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-int bufX, bufY, bufW, bufH;
+static const int maxCmds = 20;
 
-int topShadowColor, bufTopShadowColor;
-int botShadowColor, bufBotShadowColor;
-int bufFgColor, bufBgColor;
+typedef struct bufTag {
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  int bufTopShadowColor;
+  int bufBotShadowColor;
+  int bufFgColor;
+  int bufBgColor;
+  int bufInvisible;
+  int bufCloseAction;
+  char bufShellCommand[maxCmds][255+1];
+  char bufLabel[maxCmds][127+1];
+  char bufButtonLabel[127+1];
+  char bufFontTag[63+1];;
+  int bufLock;
+  double bufThreadSecondsToDelay;
+  double bufAutoExecInterval;
+  int bufMultipleInstancesAllowed;
+} bufType, *bufPtr;
+
+bufPtr buf;
+
+char bufPw1[31+1];
+char bufPw2[31+1];
+
+int topShadowColor, botShadowColor;
 pvColorClass fgColor, bgColor;
 colorButtonClass fgCb, bgCb, topShadowCb, botShadowCb;
-int invisible, bufInvisible;
-int closeAction, bufCloseAction;
+int invisible;
+
+int closeAction;
 
 fontMenuClass fm;
-char fontTag[63+1], bufFontTag[63+1];
+char fontTag[63+1];
 XmFontList fontList;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
-char bufShellCommand[127+1];
-expStringClass shellCommand;
-
-char bufLabel[127+1];
-expStringClass label;
-//char label[127+1];
+int cmdIndex;
+int numCmds;
+expStringClass shellCommand[maxCmds];
+expStringClass label[maxCmds];
+expStringClass buttonLabel;
 
 char pw[31+1];
-char bufPw1[31+1];
-char bufPw2[31+1];
 int usePassword;
-
-int lock, bufLock;
+int lock;
 
 int activeMode;
+int opComplete;
 
-double threadSecondsToDelay, bufThreadSecondsToDelay;
-double autoExecInterval, bufAutoExecInterval;
+double threadSecondsToDelay, autoExecInterval;
 XtIntervalId timer;
-int timerActive, timerValue;
-int multipleInstancesAllowed, bufMultipleInstancesAllowed;
+int timerActive, timerValue, multipleInstancesAllowed;
 THREAD_HANDLE thread;
 
 int pwFormX, pwFormY, pwFormW, pwFormH, pwFormMaxH;
 
 int needExecute, needWarning;
+
+Widget popUpMenu, pullDownMenu, pb[maxCmds];
+
+entryFormClass *ef1;
+
+int posX, posY;
 
 public:
 

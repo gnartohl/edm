@@ -79,6 +79,72 @@ threadParamBlockPtr threadParamBlock =
 
 }
 
+static void menu_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+int i;
+shellCmdClass *shcmdo = (shellCmdClass *) client;
+
+  for ( i=0; i<shcmdo->maxCmds; i++ ) {
+
+    if ( w == shcmdo->pb[i] ) {
+
+      shcmdo->cmdIndex = i;
+
+      if ( shcmdo->usePassword ) {
+
+        if ( !shcmdo->ef.formIsPoppedUp() ) {
+
+          //pwFormX = actWin->x + _x; got these from btnDown
+          //pwFormY = actWin->y + _y;
+          shcmdo->pwFormW = 0;
+          shcmdo->pwFormH = 0;
+          shcmdo->pwFormMaxH = 600;
+
+          shcmdo->ef.create( shcmdo->actWin->top,
+           shcmdo->actWin->appCtx->ci.getColorMap(),
+           &shcmdo->pwFormX, &shcmdo->pwFormY,
+           &shcmdo->pwFormW, &shcmdo->pwFormH, &shcmdo->pwFormMaxH,
+           "", NULL, NULL, NULL );
+
+          strcpy( shcmdo->bufPw1, "" );
+
+          shcmdo->ef.addPasswordField( shellCmdClass_str24, 35,
+           shcmdo->bufPw1, 31 );
+
+          shcmdo->ef.finished( pw_ok, pw_apply, pw_cancel, shcmdo );
+
+          shcmdo->ef.popup();
+
+	  return;
+
+	}
+	else {
+
+	  return;
+
+	}
+
+      }
+      else {
+
+        shcmdo->actWin->appCtx->proc->lock();
+        shcmdo->needExecute = 1;
+        shcmdo->actWin->addDefExeNode( shcmdo->aglPtr );
+        shcmdo->actWin->appCtx->proc->unlock();
+        return;
+
+      }
+
+    }
+
+  }
+
+}
+
 static void pw_ok (
   Widget w,
   XtPointer client,
@@ -88,6 +154,7 @@ shellCmdClass *shcmdo = (shellCmdClass *) client;
 
   shcmdo->ef.popdown();
 
+  shcmdo->actWin->appCtx->proc->lock();
   if ( strcmp( shcmdo->bufPw1, shcmdo->pw ) == 0 ) {
     shcmdo->needExecute = 1;
     shcmdo->actWin->addDefExeNode( shcmdo->aglPtr );
@@ -96,6 +163,7 @@ shellCmdClass *shcmdo = (shellCmdClass *) client;
     shcmdo->needWarning = 1;
     shcmdo->actWin->addDefExeNode( shcmdo->aglPtr );
   }
+  shcmdo->actWin->appCtx->proc->unlock();
 
 }
 
@@ -124,7 +192,12 @@ static void shcmdc_executeCmd (
 
 shellCmdClass *shcmdo = (shellCmdClass *) client;
 threadParamBlockPtr threadParamBlock;
-int stat;
+int stat, i;
+char buffer[255+1];
+
+  if ( shcmdo->numCmds != 1 ) return;
+
+  i = 0; // this is called from an X timer, always use command index 0
 
   if ( shcmdo->timerActive ) {
     shcmdo->timer = appAddTimeOut(
@@ -135,13 +208,15 @@ int stat;
     return;
   }
 
-  shcmdo->actWin->substituteSpecial( 127, shcmdo->shellCommand.getExpanded(),
-   shcmdo->bufShellCommand );
+  shcmdo->actWin->substituteSpecial( 255,
+   shcmdo->shellCommand[i].getExpanded(),
+   buffer );
 
   if ( shcmdo->multipleInstancesAllowed ) {
     threadParamBlock = new threadParamBlockType;
-    threadParamBlock->cmd = new char[strlen(shcmdo->bufShellCommand)+1];
-    strcpy( threadParamBlock->cmd, shcmdo->bufShellCommand );
+    threadParamBlock->cmd =
+     new char[strlen(buffer)+1];
+    strcpy( threadParamBlock->cmd, buffer );
     threadParamBlock->multipleInstancesAllowed =
      shcmdo->multipleInstancesAllowed;
     threadParamBlock->secondsToDelay = (float) shcmdo->threadSecondsToDelay;
@@ -155,19 +230,22 @@ int stat;
       if ( stat & 1 ) {
         stat = thread_destroy_handle( shcmdo->thread );
         threadParamBlock = new threadParamBlockType;
-        threadParamBlock->cmd = new char[strlen(shcmdo->bufShellCommand)+1];
-        strcpy( threadParamBlock->cmd, shcmdo->bufShellCommand );
+        threadParamBlock->cmd =
+         new char[strlen(buffer)+1];
+        strcpy( threadParamBlock->cmd, buffer );
         threadParamBlock->multipleInstancesAllowed =
          shcmdo->multipleInstancesAllowed;
-        threadParamBlock->secondsToDelay = (float) shcmdo->threadSecondsToDelay;
+        threadParamBlock->secondsToDelay =
+         (float) shcmdo->threadSecondsToDelay;
         stat = thread_create_handle( &shcmdo->thread, threadParamBlock );
         stat = thread_create_proc( shcmdo->thread, shellCmdThread );
       }
     }
     else {
       threadParamBlock = new threadParamBlockType;
-      threadParamBlock->cmd = new char[strlen(shcmdo->bufShellCommand)+1];
-      strcpy( threadParamBlock->cmd, shcmdo->bufShellCommand );
+      threadParamBlock->cmd =
+       new char[strlen(buffer)+1];
+      strcpy( threadParamBlock->cmd, buffer );
       threadParamBlock->multipleInstancesAllowed =
        shcmdo->multipleInstancesAllowed;
       threadParamBlock->secondsToDelay = (float) shcmdo->threadSecondsToDelay;
@@ -185,6 +263,7 @@ static void shcmdc_edit_update (
 {
 
 shellCmdClass *shcmdo = (shellCmdClass *) client;
+int i;
 
   shcmdo->actWin->setChanged();
 
@@ -197,39 +276,59 @@ shellCmdClass *shcmdo = (shellCmdClass *) client;
   shcmdo->actWin->fi->getTextFontList( shcmdo->fontTag, &shcmdo->fontList );
   shcmdo->fs = shcmdo->actWin->fi->getXFontStruct( shcmdo->fontTag );
 
-  shcmdo->topShadowColor = shcmdo->bufTopShadowColor;
-  shcmdo->botShadowColor = shcmdo->bufBotShadowColor;
+  shcmdo->topShadowColor = shcmdo->buf->bufTopShadowColor;
+  shcmdo->botShadowColor = shcmdo->buf->bufBotShadowColor;
 
-  shcmdo->fgColor.setColorIndex( shcmdo->bufFgColor, shcmdo->actWin->ci );
+  shcmdo->fgColor.setColorIndex( shcmdo->buf->bufFgColor, shcmdo->actWin->ci );
 
-  shcmdo->bgColor.setColorIndex( shcmdo->bufBgColor, shcmdo->actWin->ci );
+  shcmdo->bgColor.setColorIndex( shcmdo->buf->bufBgColor, shcmdo->actWin->ci );
 
-  shcmdo->invisible = shcmdo->bufInvisible;
+  shcmdo->invisible = shcmdo->buf->bufInvisible;
 
-  shcmdo->closeAction = shcmdo->bufCloseAction;
+  shcmdo->closeAction = shcmdo->buf->bufCloseAction;
 
-  shcmdo->x = shcmdo->bufX;
-  shcmdo->sboxX = shcmdo->bufX;
+  shcmdo->x = shcmdo->buf->bufX;
+  shcmdo->sboxX = shcmdo->buf->bufX;
 
-  shcmdo->y = shcmdo->bufY;
-  shcmdo->sboxY = shcmdo->bufY;
+  shcmdo->y = shcmdo->buf->bufY;
+  shcmdo->sboxY = shcmdo->buf->bufY;
 
-  shcmdo->w = shcmdo->bufW;
-  shcmdo->sboxW = shcmdo->bufW;
+  shcmdo->w = shcmdo->buf->bufW;
+  shcmdo->sboxW = shcmdo->buf->bufW;
 
-  shcmdo->h = shcmdo->bufH;
-  shcmdo->sboxH = shcmdo->bufH;
+  shcmdo->h = shcmdo->buf->bufH;
+  shcmdo->sboxH = shcmdo->buf->bufH;
 
-  shcmdo->shellCommand.setRaw( shcmdo->bufShellCommand );
+  shcmdo->buttonLabel.setRaw( shcmdo->buf->bufButtonLabel );
+  shcmdo->shellCommand[0].setRaw( shcmdo->buf->bufShellCommand[0] );
+  shcmdo->label[0].setRaw( shcmdo->buf->bufLabel[0] );
 
-  shcmdo->label.setRaw( shcmdo->bufLabel );
-  // strncpy( shcmdo->label, shcmdo->bufLabel, 127 );
+  shcmdo->numCmds = 0;
+  if ( !blank(shcmdo->buf->bufShellCommand[0]) ) {
+    (shcmdo->numCmds)++;
+  }
 
-  shcmdo->autoExecInterval = shcmdo->bufAutoExecInterval;
+  if ( shcmdo->numCmds > 0 ) {
+    for ( i=1; i<shcmdo->maxCmds; i++ ) {
+      if ( ( !blank(shcmdo->buf->bufShellCommand[i]) ) &&
+	   ( !blank(shcmdo->buf->bufLabel[i]) ) ) {
+        shcmdo->shellCommand[i].setRaw( shcmdo->buf->bufShellCommand[i] );
+        shcmdo->label[i].setRaw( shcmdo->buf->bufLabel[i] );
+        (shcmdo->numCmds)++;
+      }
+    }
+  }
 
-  shcmdo->multipleInstancesAllowed = shcmdo->bufMultipleInstancesAllowed;
+  for ( i=shcmdo->numCmds; i<shcmdo->maxCmds; i++ ) {
+    shcmdo->shellCommand[i].setRaw( "" );
+    shcmdo->label[i].setRaw( "" );
+  }
 
-  shcmdo->threadSecondsToDelay = shcmdo->bufThreadSecondsToDelay;
+  shcmdo->autoExecInterval = shcmdo->buf->bufAutoExecInterval;
+
+  shcmdo->multipleInstancesAllowed = shcmdo->buf->bufMultipleInstancesAllowed;
+
+  shcmdo->threadSecondsToDelay = shcmdo->buf->bufThreadSecondsToDelay;
 
   if ( blank(shcmdo->bufPw1) || blank(shcmdo->bufPw2) ) {
     if ( blank(shcmdo->pw) ) {
@@ -240,11 +339,12 @@ shellCmdClass *shcmdo = (shellCmdClass *) client;
     }
   }
   else if ( strcmp( shcmdo->bufPw1, shcmdo->bufPw2 ) != 0 ) {
-    shcmdo->actWin->appCtx->postMessage( "Password not changed" );
+    shcmdo->actWin->appCtx->postMessage( shellCmdClass_str25 );
     if ( blank(shcmdo->pw) ) {
       shcmdo->usePassword = 0;
     }
     else if ( strcmp( shcmdo->pw, "*" ) == 0 ) {
+      strcpy( shcmdo->pw, "" );
       shcmdo->usePassword = 0;
     }
     else {
@@ -254,6 +354,7 @@ shellCmdClass *shcmdo = (shellCmdClass *) client;
   else {
     strcpy( shcmdo->pw, shcmdo->bufPw2 );
     if ( strcmp( shcmdo->pw, "*" ) == 0 ) {
+      strcpy( shcmdo->pw, "" );
       shcmdo->usePassword = 0;
     }
     else {
@@ -261,7 +362,7 @@ shellCmdClass *shcmdo = (shellCmdClass *) client;
     }
   }
 
-  shcmdo->lock = shcmdo->bufLock;
+  shcmdo->lock = shcmdo->buf->bufLock;
 
   shcmdo->updateDimensions();
 
@@ -291,6 +392,18 @@ shellCmdClass *shcmdo = (shellCmdClass *) client;
   shcmdc_edit_update( w, client, call );
   shcmdo->ef.popdown();
   shcmdo->operationComplete();
+
+}
+
+static void shcmdc_edit_ok1 (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+shellCmdClass *shcmdo = (shellCmdClass *) client;
+
+  shcmdo->ef1->popdownNoDestroy();
 
 }
 
@@ -329,7 +442,6 @@ shellCmdClass::shellCmdClass ( void ) {
   strcpy( name, "shellCmdClass" );
 
   activeMode = 0;
-  // strcpy( label, "" );
   invisible = 0;
   closeAction = 0;
   multipleInstancesAllowed = 0;
@@ -340,6 +452,8 @@ shellCmdClass::shellCmdClass ( void ) {
   strcpy( pw, "" );
   usePassword = 0;
   lock = 0;
+  numCmds = 0;
+  cmdIndex = 0;
 
 }
 
@@ -355,6 +469,7 @@ shellCmdClass::shellCmdClass
  ( const shellCmdClass *source ) {
 
 activeGraphicClass *shcmdo = (activeGraphicClass *) this;
+int i;
 
   shcmdo->clone( (activeGraphicClass *) source );
 
@@ -383,10 +498,10 @@ activeGraphicClass *shcmdo = (activeGraphicClass *) this;
 
   closeAction = source->closeAction;
 
-  shellCommand.copy( source->shellCommand );
-
-  label.copy( source->label );
-  // strncpy( label, source->label, 127 );
+  for ( i=0; i<maxCmds; i++ ) {
+    shellCommand[i].copy( source->shellCommand[i] );
+    label[i].copy( source->label[i] );
+  }
 
   autoExecInterval = source->autoExecInterval;
 
@@ -397,6 +512,9 @@ activeGraphicClass *shcmdo = (activeGraphicClass *) this;
   strcpy( pw, source->pw );
   usePassword = source->usePassword;
   lock = source->lock;
+
+  numCmds = source->numCmds;
+  cmdIndex = 0;
 
   timerActive = 0;
 
@@ -442,7 +560,7 @@ int shellCmdClass::save (
   FILE *f )
 {
 
-int index;
+int i, index;
 float val;
 
   fprintf( f, "%-d %-d %-d\n", SHCMDC_MAJOR_VERSION, SHCMDC_MINOR_VERSION,
@@ -455,34 +573,25 @@ float val;
 
   index = fgColor.pixelIndex();
   actWin->ci->writeColorIndex( f, index );
-  //fprintf( f, "%-d\n", index );
 
   index = bgColor.pixelIndex();
   actWin->ci->writeColorIndex( f, index );
-  //fprintf( f, "%-d\n", index );
 
   index = topShadowColor;
   actWin->ci->writeColorIndex( f, index );
-  //fprintf( f, "%-d\n", index );
 
   index = botShadowColor;
   actWin->ci->writeColorIndex( f, index );
-  //fprintf( f, "%-d\n", index );
 
-  if ( shellCommand.getRaw() )
-    writeStringToFile( f, shellCommand.getRaw() );
+  if ( shellCommand[0].getRaw() )
+    writeStringToFile( f, shellCommand[0].getRaw() );
   else
     writeStringToFile( f, "" );
 
-  if ( label.getRaw() )
-    writeStringToFile( f, label.getRaw() );
+  if ( buttonLabel.getRaw() )
+    writeStringToFile( f, buttonLabel.getRaw() );
   else
     writeStringToFile( f, "" );
-
-  //if ( label )
-  //  writeStringToFile( f, label );
-  //else
-  //  writeStringToFile( f, "" );
 
   writeStringToFile( f, fontTag );
 
@@ -502,6 +611,28 @@ float val;
   writeStringToFile( f, pw );
   fprintf( f, "%-d\n", lock );
 
+  // ver 2.4.0
+  if ( label[0].getRaw() )
+    writeStringToFile( f, label[0].getRaw() );
+  else
+    writeStringToFile( f, "" );
+
+  fprintf( f, "%-d\n", numCmds );
+
+  for ( i=1; i<numCmds; i++ ) {
+
+    if ( shellCommand[i].getRaw() )
+      writeStringToFile( f, shellCommand[i].getRaw() );
+    else
+      writeStringToFile( f, "" );
+
+    if ( label[i].getRaw() )
+      writeStringToFile( f, label[i].getRaw() );
+    else
+      writeStringToFile( f, "" );
+
+  }
+
   return 1;
 
 }
@@ -512,10 +643,10 @@ int shellCmdClass::createFromFile (
   activeWindowClass *_actWin )
 {
 
-int r, g, b, index;
+int i, r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[127+1];
+char oneName[255+1];
 float val;
 
   this->actWin = _actWin;
@@ -585,12 +716,11 @@ float val;
 
   }
 
-  readStringFromFile( oneName, 127+1, f ); actWin->incLine();
-  shellCommand.setRaw( oneName );
+  readStringFromFile( oneName, 255+1, f ); actWin->incLine();
+  shellCommand[0].setRaw( oneName );
 
   readStringFromFile( oneName, 127+1, f ); actWin->incLine();
-  label.setRaw( oneName );
-  // strncpy( label, oneName, 127 );
+  buttonLabel.setRaw( oneName );
 
   readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
@@ -636,6 +766,37 @@ float val;
     lock = 0;
   }
 
+  // after v 2.3 menu label 0, numCmds, and then the array data
+  if ( ( major > 2 ) || ( major == 2 ) && ( minor > 3 ) ) {
+
+    readStringFromFile( oneName, 127+1, f ); actWin->incLine();
+    label[0].setRaw( oneName );
+
+    fscanf( f, "%d\n", &numCmds ); actWin->incLine();
+
+    for ( i=1; i<numCmds; i++ ) {
+
+      readStringFromFile( oneName, 255+1, f ); actWin->incLine();
+      shellCommand[i].setRaw( oneName );
+
+      readStringFromFile( oneName, 127+1, f ); actWin->incLine();
+      label[i].setRaw( oneName );
+
+    }
+
+  }
+  else {
+
+    numCmds = 1;
+    if ( blank( shellCommand[0].getRaw() ) ) numCmds = 0;
+
+  }
+
+  for ( i=numCmds; i<maxCmds; i++ ) {
+    shellCommand[i].setRaw( "" );
+    label[i].setRaw( "" );
+  }
+
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
@@ -656,7 +817,7 @@ int shellCmdClass::importFromXchFile (
 
 int fgR, fgG, fgB, bgR, bgG, bgB, more, index;
 unsigned int pixel;
-char *tk, *gotData, *context, buf[255+1];
+char *tk, *gotData, *context, buffer[255+1];
 
   fgR = 0xffff;
   fgG = 0xffff;
@@ -680,7 +841,7 @@ char *tk, *gotData, *context, buf[255+1];
 
   do {
 
-    gotData = getNextDataString( buf, 255, f );
+    gotData = getNextDataString( buffer, 255, f );
     if ( !gotData ) {
       actWin->appCtx->postMessage( shellCmdClass_str1 );
       return 0;
@@ -688,7 +849,7 @@ char *tk, *gotData, *context, buf[255+1];
 
     context = NULL;
 
-    tk = strtok_r( buf, " \t\n", &context );
+    tk = strtok_r( buffer, " \t\n", &context );
     if ( !tk ) {
       actWin->appCtx->postMessage( shellCmdClass_str1 );
       return 0;
@@ -864,7 +1025,7 @@ char *tk, *gotData, *context, buf[255+1];
           return 0;
         }
 
-        shellCommand.setRaw( tk );
+        shellCommand[0].setRaw( tk );
 
       }
 
@@ -876,8 +1037,7 @@ char *tk, *gotData, *context, buf[255+1];
           return 0;
         }
 
-        label.setRaw( tk );
-        // strncpy( label, tk, 127 );
+        buttonLabel.setRaw( tk );
 
       }
 
@@ -907,14 +1067,16 @@ char *tk, *gotData, *context, buf[255+1];
 
 int shellCmdClass::genericEdit ( void ) {
 
+int i;
 char title[32], *ptr, *envPtr, saveLock;
+
+  buf = new bufType;
 
   envPtr = getenv( "EDMSUPERVISORMODE" );
   if ( envPtr ) {
     if ( strcmp( envPtr, "TRUE" ) == 0 ) {
       if ( lock ) {
-        actWin->appCtx->postMessage(
-         "Supervisor mode - password lock cleared" );
+        actWin->appCtx->postMessage( shellCmdClass_str26 );
       }
       saveLock = lock;
       lock = 0;
@@ -929,55 +1091,60 @@ char title[32], *ptr, *envPtr, saveLock;
 
   strncat( title, shellCmdClass_str3, 31 );
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
+  buf->bufX = x;
+  buf->bufY = y;
+  buf->bufW = w;
+  buf->bufH = h;
 
-  strncpy( bufFontTag, fontTag, 63 );
+  strncpy( buf->bufFontTag, fontTag, 63 );
 
-  bufTopShadowColor = topShadowColor;
-  bufBotShadowColor = botShadowColor;
+  buf->bufTopShadowColor = topShadowColor;
+  buf->bufBotShadowColor = botShadowColor;
 
-  bufFgColor = fgColor.pixelIndex();
+  buf->bufFgColor = fgColor.pixelIndex();
 
-  bufBgColor = bgColor.pixelIndex();
+  buf->bufBgColor = bgColor.pixelIndex();
 
-  if ( shellCommand.getRaw() )
-    strncpy( bufShellCommand, shellCommand.getRaw(), 127 );
+  for ( i=0; i<maxCmds; i++ ) {
+    if ( shellCommand[i].getRaw() )
+      strncpy( buf->bufShellCommand[i], shellCommand[i].getRaw(), 255 );
+    else
+      strncpy( buf->bufShellCommand[i], "", 255 );
+    if ( label[i].getRaw() )
+      strncpy( buf->bufLabel[i], label[i].getRaw(), 127 );
+    else
+      strncpy( buf->bufLabel[i], "", 127 );
+  }
+  for ( i=numCmds; i<maxCmds; i++ ) {
+    strncpy( buf->bufShellCommand[i], "", 255 );
+    strncpy( buf->bufLabel[i], "", 127 );
+  }
+
+  if ( buttonLabel.getRaw() )
+    strncpy( buf->bufButtonLabel, buttonLabel.getRaw(), 127 );
   else
-    strncpy( bufShellCommand, "", 127 );
+    strncpy( buf->bufButtonLabel, "", 127 );
 
-  if ( label.getRaw() )
-    strncpy( bufLabel, label.getRaw(), 127 );
-  else
-    strncpy( bufLabel, "", 127 );
+  buf->bufInvisible = invisible;
 
-  //if ( label )
-  //  strncpy( bufLabel, label, 127 );
-  //else
-  //  strncpy( bufLabel, "", 127 );
+  buf->bufCloseAction = closeAction;
 
-  bufInvisible = invisible;
+  buf->bufAutoExecInterval = autoExecInterval;
 
-  bufCloseAction = closeAction;
+  buf->bufMultipleInstancesAllowed = multipleInstancesAllowed;
 
-  bufAutoExecInterval = autoExecInterval;
-
-  bufMultipleInstancesAllowed = multipleInstancesAllowed;
-
-  bufThreadSecondsToDelay = threadSecondsToDelay;
+  buf->bufThreadSecondsToDelay = threadSecondsToDelay;
 
   strcpy( bufPw1, "" );
   strcpy( bufPw2, "" );
 
   if ( envPtr ) {
     if ( strcmp( envPtr, "TRUE" ) == 0 ) {
-      bufLock = saveLock;
+      buf->bufLock = saveLock;
     }
   }
   else {
-    bufLock = lock;
+    buf->bufLock = lock;
   }
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
@@ -986,42 +1153,69 @@ char title[32], *ptr, *envPtr, saveLock;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( shellCmdClass_str4, 35, &bufX );
-  ef.addTextField( shellCmdClass_str5, 35, &bufY );
-  ef.addTextField( shellCmdClass_str6, 35, &bufW );
-  ef.addTextField( shellCmdClass_str7, 35, &bufH );
+  ef.addTextField( shellCmdClass_str4, 35, &buf->bufX );
+  ef.addTextField( shellCmdClass_str5, 35, &buf->bufY );
+  ef.addTextField( shellCmdClass_str6, 35, &buf->bufW );
+  ef.addTextField( shellCmdClass_str7, 35, &buf->bufH );
 
   if ( !lock ) {
-    ef.addTextField( shellCmdClass_str14, 35, bufShellCommand, 127 );
+    ef.addTextField( shellCmdClass_str14, 35, buf->bufShellCommand[0], 255 );
   }
   else {
-    ef.addLockedField( shellCmdClass_str14, 35, bufShellCommand, 127 );
+    ef.addLockedField( shellCmdClass_str14, 35, buf->bufShellCommand[0], 255 );
   }
 
-  ef.addTextField( shellCmdClass_str13, 35, bufLabel, 127 );
+  ef.addTextField( shellCmdClass_str13, 35, buf->bufLabel[0], 127 );
+
+  ef.addEmbeddedEf( shellCmdClass_str22, "...", &ef1 );
+
+  ef1->create( actWin->top, actWin->appCtx->ci.getColorMap(),
+   &actWin->appCtx->entryFormX,
+   &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
+   &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
+   title, NULL, NULL, NULL );
+
+  for ( i=1; i<maxCmds; i++ ) {
+    ef1->beginSubForm();
+    ef1->addTextField( shellCmdClass_str13, 35, buf->bufLabel[i], 127 );
+    ef1->addLabel( shellCmdClass_str23 );
+    if ( !lock ) {
+      ef1->addTextField( shellCmdClass_str14, 35, buf->bufShellCommand[i],
+       255 );
+    }
+    else {
+      ef1->addLockedField( shellCmdClass_str14, 35, buf->bufShellCommand[i],
+       255 );
+    }
+    ef1->endSubForm();
+  }
+
+  ef1->finished( shcmdc_edit_ok1, this );
+
+  ef.addTextField( shellCmdClass_str21, 35, buf->bufButtonLabel, 127 );
 
   if ( !lock ) {
-    ef.addPasswordField( "Password", 35, bufPw1, 31 );
-    ef.addPasswordField( "Confirm", 35, bufPw2, 31 );
-    ef.addToggle( "Lock (forever)", &bufLock );
+    ef.addPasswordField( shellCmdClass_str24, 35, bufPw1, 31 );
+    ef.addPasswordField( shellCmdClass_str27, 35, bufPw2, 31 );
+    ef.addToggle( shellCmdClass_str28, &buf->bufLock );
   }
   else {
-    ef.addLockedField( "Password", 35, bufPw1, 31 );
-    ef.addLockedField( "Confirm", 35, bufPw2, 31 );
+    ef.addLockedField( shellCmdClass_str24, 35, bufPw1, 31 );
+    ef.addLockedField( shellCmdClass_str27, 35, bufPw2, 31 );
   }
 
-  ef.addToggle( shellCmdClass_str15, &bufInvisible );
-  ef.addToggle( shellCmdClass_str16, &bufCloseAction );
-  ef.addToggle( shellCmdClass_str17, &bufMultipleInstancesAllowed );
-  ef.addTextField( shellCmdClass_str20, 35, &bufThreadSecondsToDelay );
-  ef.addTextField( shellCmdClass_str18, 35, &bufAutoExecInterval );
+  ef.addToggle( shellCmdClass_str15, &buf->bufInvisible );
+  ef.addToggle( shellCmdClass_str16, &buf->bufCloseAction );
+  ef.addToggle( shellCmdClass_str17, &buf->bufMultipleInstancesAllowed );
+  ef.addTextField( shellCmdClass_str20, 35, &buf->bufThreadSecondsToDelay );
+  ef.addTextField( shellCmdClass_str18, 35, &buf->bufAutoExecInterval );
 
-  ef.addColorButton( shellCmdClass_str8, actWin->ci, &fgCb, &bufFgColor );
-  ef.addColorButton( shellCmdClass_str9, actWin->ci, &bgCb, &bufBgColor );
+  ef.addColorButton( shellCmdClass_str8, actWin->ci, &fgCb, &buf->bufFgColor );
+  ef.addColorButton( shellCmdClass_str9, actWin->ci, &bgCb, &buf->bufBgColor );
   ef.addColorButton( shellCmdClass_str10, actWin->ci, &topShadowCb,
-   &bufTopShadowColor );
+   &buf->bufTopShadowColor );
   ef.addColorButton( shellCmdClass_str11, actWin->ci, &botShadowCb,
-   &bufBotShadowColor );
+   &buf->bufBotShadowColor );
 
   ef.addFontMenu( shellCmdClass_str12, actWin->fi, &fm, fontTag );
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
@@ -1159,15 +1353,12 @@ XRectangle xR = { x, y, w, h };
     tX = x + w/2;
     tY = y + h/2 - fontAscent/2;
 
-    if ( label.getRaw() )
+    if ( buttonLabel.getRaw() )
       drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
-       XmALIGNMENT_CENTER, label.getRaw() );
+       XmALIGNMENT_CENTER, buttonLabel.getRaw() );
     else
       drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
        XmALIGNMENT_CENTER, "" );
-
-    // drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
-    //  XmALIGNMENT_CENTER, label );
 
     actWin->drawGc.removeNormXClipRectangle();
 
@@ -1182,7 +1373,7 @@ XRectangle xR = { x, y, w, h };
 int shellCmdClass::drawActive ( void ) {
 
 int tX, tY;
-char string[39+1];
+char string[127+1];
 XRectangle xR = { x, y, w, h };
 
   if ( !activeMode || invisible ) return 1;
@@ -1197,12 +1388,10 @@ XRectangle xR = { x, y, w, h };
   XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
    actWin->executeGc.normGC(), x, y, w, h );
 
-  if ( label.getExpanded() )
-    strncpy( string, label.getExpanded(), 39 );
+  if ( buttonLabel.getExpanded() )
+    strncpy( string, buttonLabel.getExpanded(), 127 );
   else
-    strncpy( string, "", 39 );
-
-  // strncpy( string, label, 39 );
+    strncpy( string, "", 127 );
 
   actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 
@@ -1280,6 +1469,10 @@ int shellCmdClass::activate (
   void *ptr )
 {
 
+int i, n;
+Arg args[5];
+XmString str;
+
   switch ( pass ) {
 
   case 1:
@@ -1287,18 +1480,55 @@ int shellCmdClass::activate (
     thread = NULL;
     activeMode = 1;
     aglPtr = ptr;
-    needExecute = needWarning = 0;
-
-    if ( autoExecInterval > 0.5 ) {
-      timerValue = (int) ( autoExecInterval * 1000.0 );
-      timer = appAddTimeOut( actWin->appCtx->appContext(),
-       timerValue, shcmdc_executeCmd, this );
-      timerActive = 1;
-    }
+    needExecute = needWarning = opComplete = 0;
 
     break;
 
   case 2:
+
+    if ( !opComplete ) {
+
+      opComplete = 1;
+
+      if ( numCmds == 1 ) {
+        cmdIndex = 0;
+        if ( autoExecInterval > 0.5 ) {
+          timerValue = (int) ( autoExecInterval * 1000.0 );
+          timer = appAddTimeOut( actWin->appCtx->appContext(),
+           timerValue, shcmdc_executeCmd, this );
+          timerActive = 1;
+        }
+      }
+
+      n = 0;
+      XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+      popUpMenu = XmCreatePopupMenu( actWin->topWidgetId(), "", args, n );
+
+      pullDownMenu = XmCreatePulldownMenu( popUpMenu, "", NULL, 0 );
+
+      for ( i=0; i<numCmds; i++ ) {
+
+        if ( label[i].getExpanded() ) {
+           str = XmStringCreateLocalized( label[i].getExpanded() );
+        }
+        else {
+          str = XmStringCreateLocalized( " " );
+        }
+        pb[i] = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+         popUpMenu,
+         XmNlabelString, str,
+         NULL );
+        XmStringFree( str );
+
+        XtAddCallback( pb[i], XmNactivateCallback, menu_cb,
+         (XtPointer) this );
+
+      }
+
+    }
+
+    break;
+
   case 3:
   case 4:
   case 5:
@@ -1363,10 +1593,13 @@ int shellCmdClass::expand1st (
   char *expansions[] )
 {
 
-int stat;
+int i, stat;
 
-  stat = shellCommand.expand1st( numMacros, macros, expansions );
-  stat = label.expand1st( numMacros, macros, expansions );
+  for ( i=0; i<numCmds; i++ ) {
+    stat = shellCommand[i].expand1st( numMacros, macros, expansions );
+    stat = label[i].expand1st( numMacros, macros, expansions );
+  }
+  stat = buttonLabel.expand1st( numMacros, macros, expansions );
 
   return stat;
 
@@ -1378,10 +1611,13 @@ int shellCmdClass::expand2nd (
   char *expansions[] )
 {
 
-int stat;
+int i, stat;
 
-  stat = shellCommand.expand2nd( numMacros, macros, expansions );
-  stat = label.expand2nd( numMacros, macros, expansions );
+  for ( i=0; i<numCmds; i++ ) {
+    stat = shellCommand[i].expand2nd( numMacros, macros, expansions );
+    stat = label[i].expand2nd( numMacros, macros, expansions );
+  }
+  stat = buttonLabel.expand2nd( numMacros, macros, expansions );
 
   return stat;
 
@@ -1389,22 +1625,39 @@ int stat;
 
 int shellCmdClass::containsMacros ( void ) {
 
-  if ( shellCommand.containsPrimaryMacros() ) return 1;
-  if ( label.containsPrimaryMacros() ) return 1;
+int i;
+
+  for ( i=0; i<numCmds; i++ ) {
+    if ( shellCommand[i].containsPrimaryMacros() ) return 1;
+    if ( label[i].containsPrimaryMacros() ) return 1;
+  }
+  if ( buttonLabel.containsPrimaryMacros() ) return 1;
 
   return 0;
 
 }
 
 void shellCmdClass::btnUp (
-  int x,
-  int y,
+  int _x,
+  int _y,
   int buttonState,
   int buttonNumber,
   int *action )
 {
 
+XButtonEvent be;
+
   *action = 0;
+
+  if ( numCmds < 2 ) return;
+
+  posX = _x;
+  posY = _y;
+
+  be.x_root = actWin->x+_x;
+  be.y_root = actWin->y+_y;
+  XmMenuPosition( popUpMenu, &be );
+  XtManageChild( popUpMenu );
 
 }
 
@@ -1412,18 +1665,16 @@ void shellCmdClass::executeCmd ( void ) {
 
 int stat;
 threadParamBlockPtr threadParamBlock;
+char buffer[255+1];
 
-  actWin->substituteSpecial( 127, shellCommand.getExpanded(),
-   bufShellCommand );
-
-  //printf( "shellCmdClass::executeCmd, shellCommand = [%s]\n",
-  // bufShellCommand );
+  actWin->substituteSpecial( 255, shellCommand[cmdIndex].getExpanded(),
+   buffer );
 
   if ( multipleInstancesAllowed ) {
 
     threadParamBlock = new threadParamBlockType;
-    threadParamBlock->cmd = new char[strlen(bufShellCommand)+1];
-    strcpy( threadParamBlock->cmd, bufShellCommand );
+    threadParamBlock->cmd = new char[strlen(buffer)+1];
+    strcpy( threadParamBlock->cmd, buffer );
     threadParamBlock->multipleInstancesAllowed =
      multipleInstancesAllowed;
     threadParamBlock->secondsToDelay = (float) threadSecondsToDelay;
@@ -1443,8 +1694,8 @@ threadParamBlockPtr threadParamBlock;
       else {
         stat = thread_destroy_handle( thread );
         threadParamBlock = new threadParamBlockType;
-        threadParamBlock->cmd = new char[strlen(bufShellCommand)+1];
-        strcpy( threadParamBlock->cmd, bufShellCommand );
+        threadParamBlock->cmd = new char[strlen(buffer)+1];
+        strcpy( threadParamBlock->cmd, buffer );
         threadParamBlock->multipleInstancesAllowed =
          multipleInstancesAllowed;
         threadParamBlock->secondsToDelay = (float) threadSecondsToDelay;
@@ -1456,8 +1707,8 @@ threadParamBlockPtr threadParamBlock;
     else {
 
       threadParamBlock = new threadParamBlockType;
-      threadParamBlock->cmd = new char[strlen(bufShellCommand)+1];
-      strcpy( threadParamBlock->cmd, bufShellCommand );
+      threadParamBlock->cmd = new char[strlen(buffer)+1];
+      strcpy( threadParamBlock->cmd, buffer );
       threadParamBlock->multipleInstancesAllowed =
        multipleInstancesAllowed;
       threadParamBlock->secondsToDelay = (float) threadSecondsToDelay;
@@ -1471,8 +1722,8 @@ threadParamBlockPtr threadParamBlock;
 }
 
 void shellCmdClass::btnDown (
-  int x,
-  int y,
+  int _x,
+  int _y,
   int buttonState,
   int buttonNumber,
   int *action )
@@ -1480,46 +1731,60 @@ void shellCmdClass::btnDown (
 
   if ( buttonNumber != 1 ) return;
 
-  if ( usePassword ) {
+  if ( numCmds < 1 ) return;
 
-    if ( !ef.formIsPoppedUp() ) {
+  pwFormX = actWin->x + _x; // we may use these later
+  pwFormY = actWin->y + _y;
 
-      pwFormX = actWin->x + x;
-      pwFormY = actWin->y + y;
-      pwFormW = 0;
-      pwFormH = 0;
-      pwFormMaxH = 600;
+  if ( numCmds == 1 ) {
 
-      ef.create( actWin->top,
-       actWin->appCtx->ci.getColorMap(),
-       &pwFormX, &pwFormY,
-       &pwFormW, &pwFormH, &pwFormMaxH,
-       "", NULL, NULL, NULL );
+    cmdIndex = 0;
 
-      strcpy( bufPw1, "" );
+    if ( usePassword ) {
 
-      ef.addPasswordField( "Password", 35, bufPw1, 31 );
+      if ( !ef.formIsPoppedUp() ) {
 
-      ef.finished( pw_ok, pw_apply, pw_cancel, this );
+        pwFormW = 0;
+        pwFormH = 0;
+        pwFormMaxH = 600;
 
-      ef.popup();
+        ef.create( actWin->top,
+         actWin->appCtx->ci.getColorMap(),
+         &pwFormX, &pwFormY,
+         &pwFormW, &pwFormH, &pwFormMaxH,
+         "", NULL, NULL, NULL );
 
-      *action = 0;
-      return;
+        strcpy( bufPw1, "" );
+
+        ef.addPasswordField( shellCmdClass_str24, 35, bufPw1, 31 );
+
+        ef.finished( pw_ok, pw_apply, pw_cancel, this );
+
+        ef.popup();
+
+        *action = 0; // close screen via actWin->closeDeferred
+        return;
+
+      }
+      else {
+
+        *action = 0;
+        return;
+
+      }
 
     }
-    else {
 
-      *action = 0;
-      return;
+    executeCmd();
 
-    }
+    *action = closeAction;
 
   }
+  else {
 
-  executeCmd();
+    *action = 0;
 
-  *action = closeAction;
+  }
 
 }
 
@@ -1534,7 +1799,7 @@ int shellCmdClass::getButtonActionRequest (
   *down = 1;
   *up = 1;
 
-  if ( !blank( shellCommand.getRaw() ) )
+  if ( numCmds > 0 )
     *focus = 1;
   else
     *focus = 0;
@@ -1603,7 +1868,7 @@ void shellCmdClass::executeDeferred ( void ) {
 
   if ( nw ) {
 
-    actWin->appCtx->postMessage( "Incorrect Password" );
+    actWin->appCtx->postMessage( shellCmdClass_str29 );
 
   }
 
