@@ -2821,7 +2821,7 @@ Atom wm_delete_window;
        &awo->defaultTopShadowCb, &awo->defaultTopShadowColor );
       awo->ef.addColorButton( activeWindowClass_str39, awo->ci,
        &awo->defaultBotShadowCb, &awo->defaultBotShadowColor );
-      awo->ef.addFontMenu( activeWindowClass_str40, awo->fi, &awo->defaultFm,
+      awo->ef.addFontMenu( activeWindowClass_str183, awo->fi, &awo->defaultFm,
        awo->defaultFontTag );
       awo->defaultFm.setFontAlignment( awo->defaultAlignment );
       awo->ef.addFontMenu( activeWindowClass_str40, awo->fi, &awo->defaultCtlFm,

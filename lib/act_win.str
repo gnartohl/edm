@@ -179,5 +179,6 @@
 #define activeWindowClass_str180 "Flip Vertically"
 #define activeWindowClass_str181 "Undo Rotate (z)"
 #define activeWindowClass_str182 "Undo Flip (z)"
+#define activeWindowClass_str183 "Default Text Font"
 
 #endif
