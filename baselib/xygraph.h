@@ -93,7 +93,7 @@
 #define XYGC_K_PLOT_SORTED_X_MODE 1
 
 #define XYGC_MAJOR_VERSION 1
-#define XYGC_MINOR_VERSION 1
+#define XYGC_MINOR_VERSION 2
 #define XYGC_RELEASE 0
 
 #ifdef __xygraph_cc
@@ -295,6 +295,8 @@ typedef struct editBufTag {
   efInt bufY2Precision;
 
   int bufUpdateTimerValue;
+
+  efDouble bufScrollMagnitude;
 
 } editBufType, *editBufPtr;
 
@@ -509,7 +511,7 @@ evid resetEv, trigEv;
 expStringClass trigPvExpStr, resetPvExpStr;
 
 int count, bufferScrollSize, plotStyle[XYGC_K_MAX_TRACES], plotMode, resetMode;
-int firstTimeSample, curSec, curNsec;
+int firstTimeSample, curSec, curNsec, drawGridFlag;
 
 int xAxis, xAxisStyle, xAxisSource, xAxisTimeFormat;
 efDouble xMin, xMax;
@@ -523,6 +525,8 @@ efDouble y2Min, y2Max;
 
 double curXMin, curXMax, curY1Min, curY1Max, curY2Min, curY2Max;
 int curXPrec, curY1Prec, curY2Prec;
+
+efDouble scrollMagnitude;
 
 int curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor;
 int curY1NumLabelTicks, curY1MajorsPerLabel, curY1MinorsPerMajor;
@@ -631,6 +635,11 @@ xyGraphClass::xyGraphClass
  ( const xyGraphClass *source );
 
 xyGraphClass::~xyGraphClass ( void );
+
+void xyGraphClass::getMinMax (
+  double *min,
+  double *max
+);
 
 static void xyGraphClass::plotPvConnectStateCallback (
   ProcessVariable *pv,

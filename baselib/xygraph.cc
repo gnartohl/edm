@@ -53,8 +53,6 @@ static void setKpXMinDoubleValue (
 
 xyGraphClass *xyo = (xyGraphClass *) client;
 
-  //printf( "setKpXMinDoubleValue\n" );
-
   xyo->actWin->appCtx->proc->lock();
   xyo->kpXMinEfDouble.setValue( xyo->kpXMin );
   xyo->needXRescale = 1;
@@ -83,8 +81,6 @@ static void setKpXMaxDoubleValue (
   XtPointer call ) {
 
 xyGraphClass *xyo = (xyGraphClass *) client;
-
-  //printf( "setKpXMaxDoubleValue\n" );
 
   xyo->actWin->appCtx->proc->lock();
   xyo->kpXMaxEfDouble.setValue( xyo->kpXMax );
@@ -116,8 +112,6 @@ static void cancelKpXMin (
 xyGraphClass *xyo = (xyGraphClass *) client;
 int i, ii, first;
 double dxValue, minValue;
-
-  //printf( "cancelKpXMin\n" );
 
   xyo->actWin->appCtx->proc->lock();
 
@@ -176,34 +170,34 @@ double dxValue, minValue;
         case DBR_SHORT:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_CHAR:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (char *) xyo->xPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_LONG:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_ENUM:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
-	  }
+          }
           break;
         default:
           dxValue = ( (double *) xyo->xPvData[i] )[ii];
@@ -238,8 +232,6 @@ double dxValue, minValue;
 
   }
 
-  //printf( "min value = %-g\n", minValue );
-
   xyo->needXRescale = 1;
   xyo->kpCancelMinX = 1;
   xyo->xRescaleValue = minValue;
@@ -257,8 +249,6 @@ static void cancelKpXMax (
 xyGraphClass *xyo = (xyGraphClass *) client;
 int i, ii, first;
 double dxValue, maxValue;
-
-  //printf( "cancelKpXMax\n" );
 
   xyo->actWin->appCtx->proc->lock();
 
@@ -317,34 +307,34 @@ double dxValue, maxValue;
         case DBR_SHORT:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_CHAR:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (char *) xyo->xPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_LONG:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_ENUM:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
-	  }
+          }
           break;
         default:
           dxValue = ( (double *) xyo->xPvData[i] )[ii];
@@ -379,8 +369,6 @@ double dxValue, maxValue;
 
   }
 
-  //printf( "max value = %-g\n", maxValue );
-
   xyo->needXRescale = 1;
   xyo->kpCancelMaxX = 1;
   xyo->xRescaleValue = maxValue;
@@ -396,8 +384,6 @@ static void setKpY1MinDoubleValue (
   XtPointer call ) {
 
 xyGraphClass *xyo = (xyGraphClass *) client;
-
-  //printf( "setKpY1MinDoubleValue\n" );
 
   xyo->actWin->appCtx->proc->lock();
   xyo->kpY1MinEfDouble.setValue( xyo->kpY1Min );
@@ -426,8 +412,6 @@ static void setKpY1MaxDoubleValue (
   XtPointer call ) {
 
 xyGraphClass *xyo = (xyGraphClass *) client;
-
-  //printf( "setKpY1MaxDoubleValue\n" );
 
   xyo->actWin->appCtx->proc->lock();
   xyo->kpY1MaxEfDouble.setValue( xyo->kpY1Max );
@@ -458,8 +442,6 @@ static void cancelKpY1Min (
 xyGraphClass *xyo = (xyGraphClass *) client;
 int i, ii, first;
 double dy1Value, minValue;
-
-  //printf( "cancelKpY1Min\n" );
 
   xyo->actWin->appCtx->proc->lock();
 
@@ -510,34 +492,34 @@ double dy1Value, minValue;
         case DBR_SHORT:
           if ( xyo->ySigned[i] ) {
             dy1Value = (double) ( (short *) xyo->yPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_CHAR:
           if ( xyo->ySigned[i] ) {
             dy1Value = (double) ( (char *) xyo->yPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dy1Value = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_LONG:
           if ( xyo->ySigned[i] ) {
             dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_ENUM:
           if ( xyo->ySigned[i] ) {
             dy1Value = (double) ( (short *) xyo->yPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
-	  }
+          }
           break;
         default:
           dy1Value = ( (double *) xyo->yPvData[i] )[ii];
@@ -568,8 +550,6 @@ double dy1Value, minValue;
 
   }
 
-  //printf( "min value = %-g\n", minValue );
-
   xyo->needY1Rescale = 1;
   xyo->kpCancelMinY1 = 1;
   xyo->y1RescaleValue = minValue;
@@ -587,8 +567,6 @@ static void cancelKpY1Max (
 xyGraphClass *xyo = (xyGraphClass *) client;
 int i, ii, first;
 double dy1Value, maxValue;
-
-  //printf( "cancelKpY1Max\n" );
 
   xyo->actWin->appCtx->proc->lock();
 
@@ -639,34 +617,34 @@ double dy1Value, maxValue;
         case DBR_SHORT:
           if ( xyo->ySigned[i] ) {
             dy1Value = (double) ( (short *) xyo->yPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_CHAR:
           if ( xyo->ySigned[i] ) {
             dy1Value = (double) ( (char *) xyo->yPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dy1Value = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_LONG:
           if ( xyo->ySigned[i] ) {
             dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_ENUM:
           if ( xyo->ySigned[i] ) {
             dy1Value = (double) ( (short *) xyo->yPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
-	  }
+          }
           break;
         default:
           dy1Value = ( (double *) xyo->yPvData[i] )[ii];
@@ -696,8 +674,6 @@ double dy1Value, maxValue;
     }
 
   }
-
-  //printf( "max value = %-g\n", maxValue );
 
   xyo->needY1Rescale = 1;
   xyo->kpCancelMaxY1 = 1;
@@ -818,8 +794,6 @@ char *xArray, *yArray;
 double dxValue, dyValue;
 short scaledX, scaledY;
 
-  //printf( "xValueUpdate, i=%-d, size=%-d\n", i, xyo->xPvSize[i] );
-
   if ( !xyo->activeMode ) return;
 
   xyo->actWin->appCtx->proc->lock();
@@ -845,41 +819,41 @@ short scaledX, scaledY;
         case DBR_SHORT:
           if ( xyo->xSigned[i] ) {
             ( (short *) xyo->xPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
-	  }
-	  else {
+          }
+          else {
             ( (unsigned short *) xyo->xPvData[i] )[ii] =
              ( (unsigned short *) arg.dbr )[ii];
-	  }
+          }
           break;
 
         case DBR_CHAR:
           if ( xyo->xSigned[i] ) {
             ( (char *) xyo->xPvData[i] )[ii] = ( (char *) arg.dbr )[ii];
-	  }
-	  else {
+          }
+          else {
             ( (unsigned char *) xyo->xPvData[i] )[ii] =
              ( (unsigned char *) arg.dbr )[ii];
-	  }
+          }
           break;
 
         case DBR_LONG:
           if ( xyo->xSigned[i] ) {
             ( (long *) xyo->xPvData[i] )[ii] = ( (long *) arg.dbr )[ii];
-	  }
-	  else {
+          }
+          else {
             ( (unsigned long *) xyo->xPvData[i] )[ii] =
              ( (unsigned long *) arg.dbr )[ii];
-	  }
+          }
           break;
 
         case DBR_ENUM:
           if ( xyo->xSigned[i] ) {
             ( (short *) xyo->xPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
-	  }
-	  else {
+          }
+          else {
             ( (unsigned short *) xyo->xPvData[i] )[ii] =
              ( (unsigned short *) arg.dbr )[ii];
-	  }
+          }
           break;
 
         default:
@@ -897,10 +871,6 @@ short scaledX, scaledY;
 
     }
     else { // scalar
-
-      //printf( "scalar\n" );
-      //printf( "head = %-d, tail = %-d\n", xyo->arrayHead[i],
-      // xyo->arrayTail[i] );
 
       memcpy( (void *) &xyo->xPvCurValue[i], (void *) arg.dbr,
        xyo->xPvSize[i] ); // save cur value for y event
@@ -943,34 +913,34 @@ short scaledX, scaledY;
         case DBR_SHORT:
           if ( xyo->ySigned[i] ) {
             dyValue = (double) ( (short *) xyo->yPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_CHAR:
           if ( xyo->ySigned[i] ) {
             dyValue = (double) ( (char *) xyo->yPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dyValue = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_LONG:
           if ( xyo->ySigned[i] ) {
             dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_ENUM:
           if ( xyo->ySigned[i] ) {
             dyValue = (double) ( (short *) xyo->yPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
-	  }
+          }
           break;
         default:
           dyValue = ( (double *) xyo->yPvData[i] )[ii];
@@ -1012,34 +982,34 @@ short scaledX, scaledY;
         case DBR_SHORT:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_CHAR:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (char *) xyo->xPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_LONG:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_ENUM:
           if ( xyo->xSigned[i] ) {
             dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
-	  }
+          }
           break;
         default:
           dxValue = ( (double *) xyo->xPvData[i] )[ii];
@@ -1059,16 +1029,16 @@ short scaledX, scaledY;
               xyo->needXRescale = 1;
               xyo->xRescaleValue = dxValue;
               xyo->actWin->addDefExeNode( xyo->aglPtr );
-	    }
-	  }
+            }
+          }
           if ( xyo->kpXMaxEfDouble.isNull() ) {
             if ( dxValue > xyo->curXMax ) {
               xyo->needXRescale = 1;
               xyo->xRescaleValue = dxValue;
               xyo->actWin->addDefExeNode( xyo->aglPtr );
-	    }
-	  }
-	}
+            }
+          }
+        }
 
         scaledX = (short) rint( ( dxValue - xyo->curXMin ) *
          xyo->xFactor[i] + xyo->xOffset[i] );
@@ -1091,7 +1061,7 @@ short scaledX, scaledY;
         if ( xyo->arrayNumPoints[i] > xyo->count ) {
           xyo->needBufferScroll = 1;
           xyo->needThisbufScroll[i] = 1;
-	}
+        }
 
         xyo->needUpdate = 1;
         xyo->xArrayNeedUpdate[i] = 1;
@@ -1172,8 +1142,6 @@ xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 struct dbr_gr_double grRec = *( (dbr_gr_double *) arg.dbr );
 int i =  ptr->index;
 
-  //printf( "yInfoUpdate, i=%-d\n", i );
-
   xyo->dbYMin[i] = grRec.lower_disp_limit;
   xyo->dbYMax[i] = grRec.upper_disp_limit;
   xyo->dbYPrec[i] = grRec.precision;
@@ -1196,8 +1164,6 @@ int ii, i =  ptr->index;
 char *xArray, *yArray;
 double dxValue, dyValue;
 short scaledX, scaledY;
-
-  //printf( "yValueUpdate, i=%-d, size=%-d\n", i, xyo->yPvSize[i] );
 
   if ( !xyo->activeMode ) return;
 
@@ -1227,41 +1193,41 @@ short scaledX, scaledY;
         case DBR_SHORT:
           if ( xyo->ySigned[i] ) {
           ( (short *) xyo->yPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
-	  }
-	  else {
+          }
+          else {
           ( (unsigned short *) xyo->yPvData[i] )[ii] =
            ( (unsigned short *) arg.dbr )[ii];
-	  }
+          }
           break;
 
         case DBR_CHAR:
           if ( xyo->ySigned[i] ) {
           ( (char *) xyo->yPvData[i] )[ii] = ( (char *) arg.dbr )[ii];
-	  }
-	  else {
+          }
+          else {
           ( (unsigned char *) xyo->yPvData[i] )[ii] =
            ( (unsigned char *) arg.dbr )[ii];
-	  }
+          }
           break;
 
         case DBR_LONG:
           if ( xyo->ySigned[i] ) {
             ( (long *) xyo->yPvData[i] )[ii] = ( (long *) arg.dbr )[ii];
-	  }
-	  else {
+          }
+          else {
             ( (unsigned long *) xyo->yPvData[i] )[ii] =
            ( (unsigned long *) arg.dbr )[ii];
-	  }
+          }
           break;
 
         case DBR_ENUM:
           if ( xyo->ySigned[i] ) {
           ( (short *) xyo->yPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
-	  }
-	  else {
+          }
+          else {
           ( (unsigned short *) xyo->yPvData[i] )[ii] =
            ( (unsigned short *) arg.dbr )[ii];
-	  }
+          }
           break;
 
         default:
@@ -1279,10 +1245,6 @@ short scaledX, scaledY;
 
     }
     else { // scalar
-
-      //printf( "scalar\n" );
-      //printf( "head = %-d, tail = %-d\n", xyo->arrayHead[i],
-      // xyo->arrayTail[i] );
 
       memcpy( (void *) &xyo->yPvCurValue[i], (void *) arg.dbr,
        xyo->yPvSize[i] ); // save cur value for x event
@@ -1325,18 +1287,18 @@ short scaledX, scaledY;
         case DBR_SHORT:
           if ( xyo->ySigned[i] ) {
             dyValue = (double) ( (short *) xyo->yPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_CHAR:
           if ( xyo->ySigned[i] ) {
             dyValue = (double) ( (char *) xyo->yPvData[i] )[ii];
-	  }
-	  else {
+          }
+          else {
             dyValue = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
-	  }
+          }
           break;
         case DBR_LONG:
           if ( xyo->ySigned[i] ) {
@@ -1521,7 +1483,8 @@ struct dbr_time_char *dbrChrPtr;
 struct dbr_time_long *dbrLngPtr;
 struct dbr_time_enum *dbrEnumPtr;
 
-  //printf( "yValueWithTimeUpdate, i=%-d, size=%-d\n", i, xyo->yPvSize[i] );
+struct tm *t;
+time_t s;
 
   if ( !xyo->activeMode ) return;
 
@@ -1607,10 +1570,6 @@ struct dbr_time_enum *dbrEnumPtr;
 
     }
     else { // scalar
-
-      //printf( "scalar\n" );
-      //printf( "head = %-d, tail = %-d\n", xyo->arrayHead[i],
-      // xyo->arrayTail[i] );
 
       if ( ( xyo->arrayNumPoints[i] >= xyo->count ) &&
            ( xyo->plotMode == XYGC_K_PLOT_MODE_PLOT_N_STOP ) ) {
@@ -1704,22 +1663,27 @@ struct dbr_time_enum *dbrEnumPtr;
         if ( dyValue > 0 ) dyValue = log10( dyValue );
       }
 
-      //printf( "pv: sec = %-d, nsec = %-d\n", sec, nsec );
-
-      if ( xyo->firstTimeSample ) {
-        //time( &ts.tv_sec );
-        //sec = ts.tv_sec - 631152000;
-        //nsec = 0;
-	//printf( "cur: sec = %-d, nsec = %-d\n", sec, nsec );
+      if ( xyo->firstTimeSample &&
+           ( xyo->xAxisStyle != XYGC_K_AXIS_STYLE_STRIPCHART ) ) {
         xyo->firstTimeSample = 0;
         xyo->curSec = sec;
-        xyo->curNsec = nsec;
-        sec = nsec = 0;
+        xyo->curNsec = 0;
+        sec = 0;
+      }
+      else if ( ( xyo->firstTimeSample == 1 ) &&
+           ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_STRIPCHART ) ) {
+        xyo->firstTimeSample = 0;
+        xyo->curSec = sec;
+        xyo->curNsec = 0;
+        sec = 0;
       }
       else {
         sec -= xyo->curSec;
         nsec -= xyo->curNsec;
       }
+
+      s = (time_t) xyo->curSec + 633744000;
+      t = localtime( &s );
 
       if ( ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME ) ||
            ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_STRIPCHART ) ) {
@@ -1748,8 +1712,6 @@ struct dbr_time_enum *dbrEnumPtr;
         if ( dxValue > 0 ) dxValue = log10( dxValue );
 
       }
-
-      //printf( "dxValue = %-g, dyValue = %-g\n", dxValue, dyValue );
 
       if ( xyo->xAxisSource == XYGC_K_AUTOSCALE ) {
         if ( xyo->kpXMinEfDouble.isNull() ) {
@@ -1972,6 +1934,7 @@ int i;
   axygo->y2AxisSource = axygo->eBuf->bufY2AxisSource;
   axygo->y2Min = axygo->eBuf->bufY2Min;
   axygo->y2Max = axygo->eBuf->bufY2Max;
+  axygo->scrollMagnitude = axygo->eBuf->bufScrollMagnitude;
 
   axygo->border = axygo->eBuf->bufBorder;
 
@@ -2013,14 +1976,6 @@ int i;
   // check for conflicts
 
   for ( i=0; i<axygo->numTraces; i++ ) {
-
-#if 0
-    if ( ( axygo->traceType[i] == XYGC_K_TRACE_XY ) &&
-         ( ( axygo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME ) ||
-           ( axygo->xAxisStyle == XYGC_K_AXIS_STYLE_STRIPCHART ) ) ) {
-      axygo->traceType[i] = XYGC_K_TRACE_INVALID;
-    }
-#endif
 
     if ( axygo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( axygo->xMin.value() <= 0.0 ) axygo->xMin.setValue( 1.0 );
@@ -2303,6 +2258,7 @@ int i;
   y2AxisSource = source->y2AxisSource;
   y2Min = source->y2Min;
   y2Max = source->y2Max;
+  scrollMagnitude = source->scrollMagnitude;
 
   xFormatType = source->xFormatType;
   strncpy( xFormat, source->xFormat, 15 );
@@ -2369,6 +2325,85 @@ xyGraphClass::~xyGraphClass ( void ) {
   if ( eBuf ) delete eBuf;
 
 }
+
+void xyGraphClass::getMinMax (
+  double *min,
+  double *max
+) {
+
+int i, ii, first;
+double dxValue;
+
+  first = 1;
+  for ( i=0; i<numTraces; i++ ) {
+
+    ii = arrayHead[i];
+    while ( ii != arrayTail[i] ) {
+
+      switch ( xPvType[i] ) {
+      case DBR_FLOAT:
+        dxValue = (double) ( (float *) xPvData[i] )[ii];
+        break;
+      case DBR_DOUBLE: 
+        dxValue = ( (double *) xPvData[i] )[ii];
+        break;
+      case DBR_SHORT:
+        if ( xSigned[i] ) {
+          dxValue = (double) ( (short *) xPvData[i] )[ii];
+        }
+        else {
+          dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+        }
+        break;
+      case DBR_CHAR:
+        if ( xSigned[i] ) {
+          dxValue = (double) ( (char *) xPvData[i] )[ii];
+        }
+        else {
+          dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
+        }
+        break;
+      case DBR_LONG:
+        if ( xSigned[i] ) {
+          dxValue = (double) ( (int *) xPvData[i] )[ii];
+        }
+        else {
+          dxValue = (double) ( (int *) xPvData[i] )[ii];
+        }
+        break;
+      case DBR_ENUM:
+        if ( xSigned[i] ) {
+          dxValue = (double) ( (short *) xPvData[i] )[ii];
+        }
+        else {
+          dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+        }
+        break;
+      default:
+        dxValue = ( (double *) xPvData[i] )[ii];
+        break;
+      }
+
+      if ( first ) {
+        first = 0;
+        *min = *max = dxValue;
+      }
+      else {
+        if ( dxValue < *min ) *min = dxValue;
+        if ( dxValue > *max ) *max = dxValue;
+      }
+
+      ii++;
+      if ( ii > plotBufSize[i] ) {
+        ii = 0;
+      }
+
+    }
+
+  }
+
+}
+
 
 void xyGraphClass::plotPvConnectStateCallback (
   ProcessVariable *pv,
@@ -2602,6 +2637,8 @@ int i, stat = 1;
 
   }
 
+  scrollMagnitude.write( f );
+
   return stat;
 
 }
@@ -2763,6 +2800,13 @@ char str[127+1], traceColor[15+1], onePv[activeGraphicClass::MAX_PV_NAME+1];
 
   }
 
+  if ( ( ( major == 1 ) && ( minor > 1 ) ) || ( major > 1 ) ) {
+    stat = scrollMagnitude.read( f ); actWin->incLine();
+  }
+  else {
+    scrollMagnitude.setNull( 1 );
+  }
+
   for ( i=numTraces; i<XYGC_K_MAX_TRACES; i++ ) {
     sprintf( traceColor, "trace%-d", i );
     plotColor[i] = actWin->ci->colorIndexByAlias( traceColor );
@@ -2780,15 +2824,6 @@ char str[127+1], traceColor[15+1], onePv[activeGraphicClass::MAX_PV_NAME+1];
   // check for conflicts
 
   for ( i=0; i<numTraces; i++ ) {
-
-#if 0
-    if ( ( traceType[i] == XYGC_K_TRACE_XY ) &&
-         ( ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME ) ||
-           ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ||
-           ( axygo->xAxisStyle == XYGC_K_AXIS_STYLE_STRIPCHART ) ) ) {
-      traceType[i] = XYGC_K_TRACE_INVALID;
-    }
-#endif
 
     if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( xMin.value() <= 0.0 ) xMin.setValue( 1.0 );
@@ -3080,6 +3115,7 @@ int i;
   eBuf->bufY2AxisSource = y2AxisSource;
   eBuf->bufY2Min = y2Min;
   eBuf->bufY2Max = y2Max;
+  eBuf->bufScrollMagnitude = scrollMagnitude;
 
   ef.addEmbeddedEf( "Axis Data", "... ", &efAxis );
 
@@ -3128,6 +3164,13 @@ int i;
     efAxis->addTextField( "", 3, &eBuf->bufXAnnotationPrecision );
     efAxis->endSubForm();
    
+    efAxis->beginLeftSubForm();
+    efAxis->addLabel( "    " );
+    efAxis->addLabel( "  Scrolling Magnitude " );
+    efAxis->addTextField( "", 8, &eBuf->bufScrollMagnitude );
+    efAxis->addLabel( " (for stripchart only)" );
+    efAxis->endSubForm();
+
     efAxis->addSeparator();
 
     efAxis->beginLeftSubForm();
@@ -3243,8 +3286,6 @@ void xyGraphClass::regenBuffer ( void ) {
 int i, ii;
 double dxValue, dyValue;
 short scaledX, scaledY;
-
-  //printf( "xyGraphClass::regenBuffer\n" );
 
   for ( i=0; i<numTraces; i++ ) {
 
@@ -3498,19 +3539,6 @@ char format[31+1];
     scaledX = (short) rint( ( dxValue - curXMin ) *
      xFactor[i] + xOffset[i] );
 
-#if 0
-    printf( "[%-d]\tdxValue = %-g\n", ii, dxValue );
-    printf( "\tdyValue = %-g\n", dyValue );
-    printf( "\tscaledX = %-d\n", scaledX );
-    printf( "\tscaledY = %-d\n\n", scaledY );
-    printf( "curY1Min = %-g\n", curY1Min );
-    printf( "y1Factor[i] = %-g\n", y1Factor[i] );
-    printf( "y1Offset[i] = %-g\n", y1Offset[i] );
-    printf( "curXMin = %-g\n", curXMin );
-    printf( "xFactor[i] = %-g\n", xFactor[i] );
-    printf( "xOffset[i] = %-g\n\n", xOffset[i] );
-#endif
-
     addPoint( dxValue, scaledX, scaledY, i );
 
     if ( xAxisSource == XYGC_K_AUTOSCALE ) {
@@ -3722,19 +3750,6 @@ char format[31+1];
     scaledX = (short) rint( ( dxValue - curXMin ) *
      xFactor[i] + xOffset[i] );
 
-#if 0
-    printf( "[%-d]\tdxValue = %-g\n", ii, dxValue );
-    printf( "\tdyValue = %-g\n", dyValue );
-    printf( "\tscaledX = %-d\n", scaledX );
-    printf( "\tscaledY = %-d\n\n", scaledY );
-    printf( "curY1Min = %-g\n", curY1Min );
-    printf( "y1Factor[i] = %-g\n", y1Factor[i] );
-    printf( "y1Offset[i] = %-g\n", y1Offset[i] );
-    printf( "curXMin = %-g\n", curXMin );
-    printf( "xFactor[i] = %-g\n", xFactor[i] );
-    printf( "xOffset[i] = %-g\n\n", xOffset[i] );
-#endif
-
     addPoint( dxValue, scaledX, scaledY, i );
 
     if ( xAxisSource == XYGC_K_AUTOSCALE ) {
@@ -3826,8 +3841,6 @@ int xyGraphClass::fullRefresh ( void ) {
 int i;
 
   if ( !activeMode || !init ) return 1;
-
-  //printf( "full refresh\n" );
 
   actWin->executeGc.saveFg();
 
@@ -4185,10 +4198,7 @@ int npts;
 
     if ( yPvCount[i] > 1 ) { // vector
 
-      //printf( "draw active: vector, npts = %-d\n", arrayNumPoints[i] );
-
       npts = fillPlotArray( i );
-      //printf( "i=%-d, npts=%-d\n", i, npts );
 
       if ( npts > 1 ) {
 
@@ -4196,7 +4206,6 @@ int npts;
 
           if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_NONE ) {
 
-            //printf( "draw active: draw lines, npts = %-d\n", npts );
             XDrawPoints( actWin->d, pixmap,
              actWin->executeGc.normGC(), plotBuf[i], npts,
              CoordModeOrigin );
@@ -4204,17 +4213,17 @@ int npts;
 	  }
 	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_CIRCLE ) {
 
-            drawCircles( i, plotBuf[i], curNpts[i] );
+            drawCircles( i, plotBuf[i], npts );
 
 	  }
 	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_SQUARE ) {
 
-            drawSquares( i, plotBuf[i], curNpts[i] );
+            drawSquares( i, plotBuf[i], npts );
 
 	  }
 	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_DIAMOND ) {
 
-            drawDiamonds( i, plotBuf[i], curNpts[i] );
+            drawDiamonds( i, plotBuf[i], npts );
 
 	  }
 
@@ -4224,19 +4233,18 @@ int npts;
         else {
 
 	  if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_CIRCLE ) {
-            drawCircles( i, plotBuf[i], curNpts[i] );
+            drawCircles( i, plotBuf[i], npts );
 	  }
 	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_SQUARE ) {
-            drawSquares( i, plotBuf[i], curNpts[i] );
+            drawSquares( i, plotBuf[i], npts );
 	  }
 	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_DIAMOND ) {
-            drawDiamonds( i, plotBuf[i], curNpts[i] );
+            drawDiamonds( i, plotBuf[i], npts );
 	  }
 
           actWin->executeGc.setLineWidth( lineThk[i] );
           actWin->executeGc.setLineStyle( lineStyle[i] );
 
-          //printf( "draw active: draw lines, npts = %-d\n", npts );
           XDrawLines( actWin->d, pixmap,
            actWin->executeGc.normGC(), plotBuf[i], npts,
            CoordModeOrigin );
@@ -4250,10 +4258,7 @@ int npts;
     }
     else { // scalar
 
-      //printf( "draw active: scalar, num pts = %-d\n", arrayNumPoints[i] );
-
       npts = fillPlotArray( i );
-      //printf( "i=%-d, npts=%-d\n", i, npts );
 
       if ( npts > 1 ) {
 
@@ -4261,7 +4266,6 @@ int npts;
 
           if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_NONE ) {
 
-            //printf( "draw active: draw lines, npts = %-d\n", npts );
             XDrawPoints( actWin->d, pixmap,
              actWin->executeGc.normGC(), plotBuf[i], npts,
              CoordModeOrigin );
@@ -4269,17 +4273,17 @@ int npts;
 	  }
 	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_CIRCLE ) {
 
-            drawCircles( i, plotBuf[i], curNpts[i] );
+            drawCircles( i, plotBuf[i], npts );
 
 	  }
 	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_SQUARE ) {
 
-            drawSquares( i, plotBuf[i], curNpts[i] );
+            drawSquares( i, plotBuf[i], npts );
 
 	  }
 	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_DIAMOND ) {
 
-            drawDiamonds( i, plotBuf[i], curNpts[i] );
+            drawDiamonds( i, plotBuf[i], npts );
 
 	  }
 
@@ -4289,19 +4293,18 @@ int npts;
 	else {
 
 	  if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_CIRCLE ) {
-            drawCircles( i, plotBuf[i], curNpts[i] );
+            drawCircles( i, plotBuf[i], npts );
 	  }
 	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_SQUARE ) {
-            drawSquares( i, plotBuf[i], curNpts[i] );
+            drawSquares( i, plotBuf[i], npts );
 	  }
 	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_DIAMOND ) {
-            drawDiamonds( i, plotBuf[i], curNpts[i] );
+            drawDiamonds( i, plotBuf[i], npts );
 	  }
 
           actWin->executeGc.setLineWidth( lineThk[i] );
           actWin->executeGc.setLineStyle( lineStyle[i] );
 
-          //printf( "draw active: draw lines, npts = %-d\n", npts );
           XDrawLines( actWin->d, pixmap,
            actWin->executeGc.normGC(), plotBuf[i], npts,
            CoordModeOrigin );
@@ -4336,7 +4339,10 @@ int clipStat;
     return 1;
   }
 
-  drawGrid();
+  if ( drawGridFlag ) {
+    drawGridFlag = 0;
+    drawGrid();
+  }
 
   actWin->executeGc.saveFg();
 
@@ -4379,7 +4385,10 @@ int clipStat;
     return 1;
   }
 
-  drawGrid();
+  if ( drawGridFlag ) {
+    drawGridFlag = 0;
+    drawGrid();
+  }
 
   actWin->executeGc.saveFg();
 
@@ -4637,6 +4646,7 @@ int screen_num, depth;
        needTrig = needXRescale = needY1Rescale = needY2Rescale =
        needBufferScroll = needVectorUpdate = needRealUpdate =
        needBoxRescale = 0;
+      drawGridFlag = 0;
 
       resetEv = trigEv = NULL;
 
@@ -4866,6 +4876,9 @@ int l, l1, bInc, tInc, xlInc, ylInc;
   else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
     l1 = xScaleMargin( fontTag, fs, pow(10,curXMin), pow(10,curXMax) );
   }
+  else if ( xAxisStyle == XYGC_K_AXIS_STYLE_STRIPCHART ) {
+    l1 = xTimeScaleMargin( fontTag, fs, curXMin, curXMax );
+  }
   else {
     l1 = xScaleMargin( fontTag, fs, curXMin, curXMax );
   }
@@ -4877,9 +4890,13 @@ int l, l1, bInc, tInc, xlInc, ylInc;
     plotAreaX = l + fontHeight;
     plotAreaW = w - plotAreaX - l1 - 10;
 
-    //printf( "curXMin = %-g, curXMax = %-g\n", curXMin, curXMax );
+    if ( xAxisStyle == XYGC_K_AXIS_STYLE_STRIPCHART ) {
+      plotAreaH = h - xTimeScaleHeight( fontTag, fs ) - 3 * fontHeight;
+    }
+    else {
+      plotAreaH = h - xScaleHeight( fontTag, fs ) - 3 * fontHeight;
+    }
 
-    plotAreaH = h - xScaleHeight( fontTag, fs ) - 3 * fontHeight;
     plotAreaY = 2 * fontHeight;
 
   }
@@ -4975,8 +4992,6 @@ double dx0, dy0, dx1, dy1;
 
   if ( doingBoxRescale ) {
 
-    //printf( "btnUp, curXMin=%-g, curXMax=%-g\n", curXMin, curXMax );
-
     actWin->executeGc.saveFg();
     actWin->executeGc.setLineWidth(1);
     actWin->executeGc.setLineStyle( LineSolid );
@@ -5021,9 +5036,6 @@ double dx0, dy0, dx1, dy1;
     kpXMaxEfDouble.setNull(0);
     kpY1MinEfDouble.setNull(0);
     kpY1MaxEfDouble.setNull(0);
-
-    //printf( "rescale to (%-g,%-g) (%-g,%-g)\n", boxXMin, boxYMin,
-    // boxXMax, boxYMax );
 
     actWin->appCtx->proc->lock();
     needBoxRescale = 1;
@@ -5103,8 +5115,6 @@ int pmX, pmY;
         dyValue = pow(10,dyValue);
       }
  
-      //printf( "pmX=%-g, pmY=%-g\n", dxValue, dyValue );
-
       if ( msgDialogPopedUp ) {
         msgDialog.popdown();
       }
@@ -5223,7 +5233,7 @@ int i, ii, stat, nc, ni, nu, nvu, nru, nr, ne, nd, nrstc, nrst, ntrgc,
  ntrg, nxrescl, ny1rescl, ny2rescl, nbs, nbrescl,
  eleSize, scaledX, scaledY, structType, doRescale, anyRescale, size,
  firstSample;
-double dyValue, dxValue, range, max, timeInc;
+double dyValue, dxValue, range, max, timeInc, oneMax, maxDiff, newInc;
 char format[31+1];
 
   if ( actWin->isIconified ) return;
@@ -5252,8 +5262,6 @@ char format[31+1];
   if ( !activeMode ) return;
 
   if ( nc ) {
-
-    //printf( "need connect\n" );
 
     for ( i=0; i<numTraces; i++ ) {
 
@@ -5402,20 +5410,16 @@ char format[31+1];
 
           if ( yPvCount[i] > 1 ) { // vector
 
-            //printf( "count = %-d\n", yPvCount[i] );
-
             yPvData[i] = (void *) new char[yPvSize[i]*(yPvCount[i]+10)];
 
             size = (plotAreaX+plotAreaW)*4+10;
             if ( 3*yPvCount[i]+10 > size ) size = 3*yPvCount[i]+10;
-            //printf( "plotBuf size = %-d\n", size );
             plotBuf[i] = (XPoint *) new XPoint[size];
 
             plotBufSize[i] = yPvCount[i]+1; // used with plotInfo in scope mode
 
             size = plotAreaX+plotAreaW+10;
             if ( 2*yPvCount[i]+10 > size ) size = 2*yPvCount[i]+10;
-            //printf( "plotInfo size = %-d\n", size );
             plotInfo[i] =
              (plotInfoPtr) new plotInfoType[size];
             plotInfoSize[i] = plotAreaX + plotAreaW;
@@ -5430,19 +5434,16 @@ char format[31+1];
             bufferScrollSize = (int) ( (double) count * 0.1 );
             if ( bufferScrollSize < 1 ) bufferScrollSize = 1;
 
-            //printf( "count = %-d\n", count );
             yPvData[i] = (void *) new char[yPvSize[i]*(count+10)];
 
             size = (plotAreaX+plotAreaW)*4+10;
             if ( 2*count+10 > size ) size = 2*count+10;
-            //printf( "plotBuf size = %-d\n", size );
             plotBuf[i] = (XPoint *) new XPoint[size];
 
             plotBufSize[i] = count+1; // used with plotInfo in scope mode
 
             size = plotAreaX+plotAreaW+10;
             if ( 2*count+10 > size ) size = 2*count+10;
-            //printf( "plotInfo size = %-d\n", size );
             plotInfo[i] =
              (plotInfoPtr) new plotInfoType[size];
             plotInfoSize[i] = plotAreaX + plotAreaW;
@@ -5555,8 +5556,6 @@ char format[31+1];
 
           if ( xPvCount[i] > 1 ) { // vector
 
-            //printf( "count = %-d\n", xPvCount[i] );
-            
             xPvData[i] = (void *) new char[xPvSize[i]*(xPvCount[i]+10)];
 
           }
@@ -5564,7 +5563,6 @@ char format[31+1];
 
             if ( count < 2 ) count = 2;
 
-            //printf( "count = %-d\n", count );
             xPvData[i] = (void *) new char[xPvSize[i]*(count+10)];
 
           }
@@ -5596,6 +5594,8 @@ char format[31+1];
 
   // this needs to come before nbs, nxresc, ny1resc, ny2resc
   if ( nvu ) {
+
+    drawGridFlag = 1;
 
     anyRescale = 0;
     for ( i=0; i<numTraces; i++ ) {
@@ -5669,10 +5669,6 @@ char format[31+1];
   }
 
   if ( nbrescl ) {
-
-    //printf( "box rescale\n" );
-    //printf( "rescale to (%-g,%-g) (%-g,%-g)\n", boxXMin, boxYMin,
-    // boxXMax, boxYMax );
 
     curXMin = boxXMin;
     curY1Min = boxYMin;
@@ -5750,6 +5746,8 @@ char format[31+1];
   }
 
   if ( nbs ) {
+
+    drawGridFlag = 1;
 
     //for ( i=0; i<numTraces; i++ ) {
     //  yArrayNeedUpdate[i] = xArrayNeedUpdate[i] = 1;
@@ -5926,179 +5924,209 @@ char format[31+1];
          ( kpXMaxEfDouble.isNull() ) &&
          ( kpXMinEfDouble.isNull() ) ) {
 
-      timeInc = ( curXMax - curXMin ) / (double) curXNumLabelTicks;
+      timeInc = scrollMagnitude.value();
       firstSample = 1;
+
+      // find max of all traces
       for ( i=0; i<numTraces; i++ ) {
 
-      if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
+        if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 
-      if ( arrayTail[i] != arrayHead[i] ) {
+          if ( arrayTail[i] != arrayHead[i] ) {
 
-        ii = arrayHead[i];
-        if ( firstSample ) {
-          firstSample = 0;
-          max = ( (double *) xPvData[i] )[ii];
-	}
-        do {
+            ii = arrayHead[i];
+            if ( firstSample ) {
+              firstSample = 0;
+              max = ( (double *) xPvData[i] )[ii];
+            }
+            do {
 
-          dxValue = ( (double *) xPvData[i] )[ii];
-          if ( dxValue > max ) max = dxValue;
+              dxValue = ( (double *) xPvData[i] )[ii];
+              if ( dxValue > max ) max = dxValue;
 
-          ii++;
-          if ( ii > plotBufSize[i] ) {
-            ii = 0;
+              ii++;
+              if ( ii > plotBufSize[i] ) {
+                ii = 0;
+              }
+
+            } while ( ii != arrayTail[i] );
+
           }
 
-        } while ( ii != arrayTail[i] );
+        }
 
       }
 
+      maxDiff = max - curXMax;
+
+      // adjust min, max
+      newInc = 0;
+      while ( newInc < maxDiff ) {
+        newInc += timeInc;
       }
 
-      }
-
-      timeInc = max - curXMax + timeInc;
-      if ( timeInc < 0 ) timeInc = 0;
-      curSec += (int) timeInc;
+      //timeInc = max - curXMax + timeInc;
+      //if ( timeInc < 0 ) timeInc = 0;
+      //curSec += (int) timeInc;
 
       for ( i=0; i<numTraces; i++ ) {
 
-      if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
+        if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 
-      if ( arrayTail[i] != arrayHead[i] ) {
+          if ( arrayTail[i] != arrayHead[i] ) {
 
-        ii = arrayHead[i];
-        do {
+            ii = arrayHead[i];
+            do {
 
-          dxValue = ( (double *) xPvData[i] )[ii];
-          dxValue -= timeInc;
-          ( (double *) xPvData[i] )[ii] = dxValue;
+              dxValue = ( (double *) xPvData[i] )[ii];
+              dxValue -= newInc;
+              ( (double *) xPvData[i] )[ii] = dxValue;
 
-          ii++;
-          if ( ii > plotBufSize[i] ) {
-            ii = 0;
+              ii++;
+              if ( ii > plotBufSize[i] ) {
+                ii = 0;
+              }
+
+            } while ( ii != arrayTail[i] );
+
+            doRescale = 1;
+
           }
 
-        } while ( ii != arrayTail[i] );
-
-        doRescale = 1;
+        }
 
       }
 
-      }
-
-      }
+      curSec += (int) newInc;
 
     }
     else {
 
-    if ( xRescaleValue < curXMin ) {
-      range = curXMax - xRescaleValue;
-      curXMin = xRescaleValue - 0.1 * range;
-    }
-    else if ( xRescaleValue > curXMax ) {
-      range = xRescaleValue - curXMin;
-      curXMax = xRescaleValue + 0.1 * range;
-    }
-
-    if ( !kpXMinEfDouble.isNull() ) {
-      curXMin = kpXMinEfDouble.value();
-      if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
-           ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
-        if ( curXMin > 0 ) {
-          curXMin = log10(curXMin);
-	}
-        else {
-          curXMin = 0;
-	}
+      if ( xRescaleValue < curXMin ) {
+        range = curXMax - xRescaleValue;
+        curXMin = xRescaleValue - 0.1 * range;
       }
-    }
+      else if ( xRescaleValue > curXMax ) {
 
-    if ( !kpXMaxEfDouble.isNull() ) {
-      //printf( "user xmax = %-g\n", kpXMaxEfDouble.value() );
-      curXMax = kpXMaxEfDouble.value();
-      if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
-           ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
-        if ( curXMax > 0 ) {
-          curXMax = log10(curXMax);
+        if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME ) ||
+             ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
+
+          getMinMax( &curXMin, &oneMax );
+
+          range = xRescaleValue - curXMin;
+          curXMax = xRescaleValue + 0.33 * range;
+
 	}
-        else {
-          curXMax = 0;
+	else {
+
+          range = xRescaleValue - curXMin;
+          curXMax = xRescaleValue + 0.1 * range;
+
 	}
+
       }
-    }
 
-    if ( kpCancelMinX ) {
-      kpCancelMinX = 0;
-      if ( xAxisSource == XYGC_K_FROM_PV ) {
-        curXMin = dbXMin[0];
+      if ( !kpXMinEfDouble.isNull() ) {
+        curXMin = kpXMinEfDouble.value();
+        if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
+             ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
+          if ( curXMin > 0 ) {
+            curXMin = log10(curXMin);
+          }
+          else {
+            curXMin = 0;
+          }
+        }
+      }
+
+      if ( !kpXMaxEfDouble.isNull() ) {
+        //printf( "user xmax = %-g\n", kpXMaxEfDouble.value() );
+        curXMax = kpXMaxEfDouble.value();
+        if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
+             ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
+          if ( curXMax > 0 ) {
+            curXMax = log10(curXMax);
+          }
+          else {
+            curXMax = 0;
+          }
+        }
+      }
+
+      if ( kpCancelMinX ) {
+        kpCancelMinX = 0;
+        if ( xAxisSource == XYGC_K_FROM_PV ) {
+          curXMin = dbXMin[0];
+          if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+            if ( curXMin > 0 ) curXMin = log10( curXMin );
+          }
+          else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+            if ( curXMin > 0 ) curXMin = log10( curXMin );
+          }
+        }
+        else {
+          curXMin = xRescaleValue;
+        }
+      }
+
+      if ( kpCancelMaxX ) {
+        kpCancelMaxX = 0;
+        if ( xAxisSource == XYGC_K_FROM_PV ) {
+          curXMax = dbXMax[0];
+          if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+            if ( curXMax > 0 ) curXMax = log10( curXMax );
+          }
+          else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+            if ( curXMax > 0 ) curXMax = log10( curXMax );
+          }
+        }
+        else {
+          curXMax = xRescaleValue;
+        }
+      }
+
+      if ( curXMin >= curXMax ) {
         if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-          if ( curXMin > 0 ) curXMin = log10( curXMin );
+          curXMax = curXMin * 10.0;
         }
         else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-          if ( curXMin > 0 ) curXMin = log10( curXMin );
+          curXMax = curXMin * 10.0;
+        }
+        else {
+          curXMax = curXMin * 2.0;
         }
       }
-      else {
-        curXMin = xRescaleValue;
+      if ( curXMin >= curXMax ) { // in case xMin is 0
+        curXMax = curXMin + 1.0;
       }
-    }
 
-    if ( kpCancelMaxX ) {
-      kpCancelMaxX = 0;
-      if ( xAxisSource == XYGC_K_FROM_PV ) {
-        curXMax = dbXMax[0];
-        if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-          if ( curXMax > 0 ) curXMax = log10( curXMax );
-        }
-        else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-          if ( curXMax > 0 ) curXMax = log10( curXMax );
-        }
-      }
-      else {
-        curXMax = xRescaleValue;
-      }
-    }
-
-    if ( curXMin >= curXMax ) {
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-        curXMax = curXMin * 10.0;
+        get_log10_scale_params1( curXMin, curXMax, &curXMin, &curXMax,
+         &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+         format );
       }
       else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-        curXMax = curXMin * 10.0;
+        get_log10_scale_params1( curXMin, curXMax, &curXMin, &curXMax,
+         &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+         format );
       }
       else {
-        curXMax = curXMin * 2.0;
+        get_scale_params1( curXMin, curXMax, &curXMin, &curXMax,
+         &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+         format );
       }
-    }
-    if ( curXMin >= curXMax ) { // in case xMin is 0
-      curXMax = curXMin + 1.0;
-    }
 
-    if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-      get_log10_scale_params1( curXMin, curXMax, &curXMin, &curXMax,
-       &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor, format );
-    }
-    else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-      get_log10_scale_params1( curXMin, curXMax, &curXMin, &curXMax,
-       &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor, format );
-    }
-    else {
-      get_scale_params1( curXMin, curXMax, &curXMin, &curXMax,
-       &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor, format );
-    }
+      stripChartXMax = curXMax;
 
-    stripChartXMax = curXMax;
+      updateDimensions();
 
-    updateDimensions();
+      for ( i=0; i<numTraces; i++ ) {
+        xFactor[i] =
+         (double) ( plotAreaW ) / ( curXMax - curXMin );
+        xOffset[i] = plotAreaX;
+      }
 
-    for ( i=0; i<numTraces; i++ ) {
-      xFactor[i] =
-       (double) ( plotAreaW ) / ( curXMax - curXMin );
-      xOffset[i] = plotAreaX;
-    }
-
-    doRescale = 1;
+      doRescale = 1;
 
     }
 
@@ -6113,10 +6141,6 @@ char format[31+1];
   }
 
   if ( ny1rescl ) {
-
-    //printf( "need y1 rescale, y = %-g\n", y1RescaleValue );
-    //printf( "need y1 rescale, curY1Min = %-g\n", curY1Min );
-    //printf( "need y1 rescale, curY1Max = %-g\n", curY1Max );
 
     if ( y1RescaleValue < curY1Min ) {
       range = curY1Max - y1RescaleValue;
@@ -6214,8 +6238,6 @@ char format[31+1];
 
   if ( ny2rescl ) {
 
-    //printf( "need y2 rescale, y = %-g\n", y2RescaleValue );
-
     if ( y2RescaleValue < curY2Min ) {
       range = curY2Max - y2RescaleValue;
       curY2Min = y2RescaleValue - 0.1 * range;
@@ -6224,44 +6246,6 @@ char format[31+1];
       range = y2RescaleValue - curY2Min;
       curY2Max = y2RescaleValue + 0.1 * range;
     }
-
-#if 0
-    if ( !kpYwMinEfDouble.isNull() ) {
-      //printf( "user y2min = %-g\n", kpY2MinEfDouble.value() );
-      curY2Min = kpY2MinEfDouble.value();
-      if ( y2AxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-        if ( curY2Min > 0 ) {
-          curY2Min = log10(curY2Min);
-	}
-        else {
-          curY2Min = 0;
-	}
-      }
-    }
-
-    if ( !kpY2MaxEfDouble.isNull() ) {
-      //printf( "user y2max = %-g\n", kpY2MaxEfDouble.value() );
-      curY2Max = kpY2MaxEfDouble.value();
-      if ( y2AxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-        if ( curY2Max > 0 ) {
-          curY2Max = log10(curY2Max);
-	}
-        else {
-          curY2Max = 0;
-	}
-      }
-    }
-
-    if ( kpCancelMinY2 ) {
-      kpCancelMinY2 = 0;
-      curY2Min = y2RescaleValue;
-    }
-
-    if ( kpCancelMaxY2 ) {
-      kpCancelMaxY2 = 0;
-      curY2Max = y2RescaleValue;
-    }
-#endif
 
     if ( curY2Min >= curY2Max ) {
       if ( y2AxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
@@ -6322,7 +6306,6 @@ char format[31+1];
 
   if ( nru ) {
 
-    //printf( "need real update\n" );
     eraseActive();
     drawActive();
 
@@ -6335,7 +6318,7 @@ char format[31+1];
 
   if ( nrst ) {
 
-    firstTimeSample = 1;
+    firstTimeSample = 2;
     for ( i=0; i<numTraces; i++ ) {
       initPlotInfo( i );
       yArrayNeedUpdate[i] = xArrayNeedUpdate[i] = 0;
@@ -6376,15 +6359,6 @@ void xyGraphClass::addPoint (
   int trace
 ) {
 
-  //printf( "xyGraphClass::addPoint, scaledX=%-d, scaledY=%-d\n",
-  // scaledX, scaledY );
-
-  //printf( "plotInfoHead=%-d, plotInfoTail=%-d\n",
-  // plotInfoHead[trace], plotInfoTail[trace] );
-
-  //printf( "plotInfoSize[trace] = %-d\n", plotInfoSize[trace] );
-  //printf( "plotBufSize[trace] = %-d\n", plotBufSize[trace] );
-
 int i;
 
   if ( !plotInfo[trace] ) return;
@@ -6413,13 +6387,9 @@ int i;
   }
   else { // plot sorted by x
 
-    //printf( "xyGraphClass::addPoint, plot sorted by x\n" );
-
     if ( ( scaledX < plotAreaX ) || ( scaledX > plotInfoSize[trace] ) ) {
       return;
     }
-
-    //printf( "xyGraphClass::addPoint, continue\n" );
 
     if ( plotInfo[trace][scaledX].n == 0 ) {
 
@@ -6488,8 +6458,6 @@ int i;
 
     arrayNumPoints[trace]++;
 
-    //printf( "arrayNumPoints = %-d\n", arrayNumPoints[trace] );
-
   }
 
 }
@@ -6500,9 +6468,6 @@ int xyGraphClass::fillPlotArray (
 
 int i, npts;
 short curX, curY, prevX, prevY;
-
-  //printf( "fillPlotArray, plotInfoHead=%-d, plotInfoTail=%-d\n",
-  // plotInfoHead[trace], plotInfoTail[trace] );
 
   npts = 0;
 
@@ -6610,8 +6575,6 @@ short curX, curY, prevX, prevY;
   }
   else { // plot sorted by x
 
-    //printf( "fillPlotArray, plot sorted by x\n" );
-
     if ( plotStyle[trace] == XYGC_K_PLOT_STYLE_NEEDLE ) {
 
       npts = 0;
@@ -6717,8 +6680,6 @@ short curX, curY, prevX, prevY;
 
     }
 
-    //printf( "npts=%-d\n", npts );
-
   }
 
   return npts;
@@ -6740,6 +6701,9 @@ void xyGraphClass::drawBorder ( void ) {
 }
 
 void xyGraphClass::drawXScale ( void ) {
+
+struct tm *t;
+time_t s;
 
   if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
        ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
@@ -6769,15 +6733,35 @@ void xyGraphClass::drawXScale ( void ) {
   }
   else {
 
-    drawXLinearScale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
-     plotAreaX, plotAreaY+plotAreaH, plotAreaW,
-     curXMin, curXMax,
-     curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
-     actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
-     xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
-     actWin->fi, fontTag, fs, 1,
-     !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
-     0 );
+    if ( xAxisStyle == XYGC_K_AXIS_STYLE_STRIPCHART ) {
+
+      s = (time_t) curSec + 633744000;
+      t = localtime( &s );
+
+      drawXLinearTimeScale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
+       plotAreaX, plotAreaY+plotAreaH, plotAreaW,
+       s, curXMax,
+       curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
+       actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
+       xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
+       actWin->fi, fontTag, fs, 1,
+       !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
+       0 );
+
+    }
+    else {
+
+      drawXLinearScale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
+       plotAreaX, plotAreaY+plotAreaH, plotAreaW,
+       curXMin, curXMax,
+       curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
+       actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
+       xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
+       actWin->fi, fontTag, fs, 1,
+       !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
+       0 );
+
+    }
 
     if ( xAxis ) {
       getXLimitCoords( plotAreaX, plotAreaY+plotAreaH, plotAreaW,
@@ -6851,6 +6835,9 @@ void xyGraphClass::drawY1Scale ( void ) {
 
 void xyGraphClass::drawGrid ( void ) {
 
+struct tm *t;
+time_t s;
+
   if ( xLabelGrid || xMajorGrid || xMinorGrid ) {
 
   if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
@@ -6869,15 +6856,35 @@ void xyGraphClass::drawGrid ( void ) {
     }
     else {
 
-      drawXLinearScale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
-       plotAreaX, plotAreaY+plotAreaH, plotAreaW,
-       curXMin, curXMax,
-       curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
-       actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
-       xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
-       actWin->fi, fontTag, fs, 1,
-       !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
-       0 );
+      if ( xAxisStyle == XYGC_K_AXIS_STYLE_STRIPCHART ) {
+
+        s = (time_t) curSec + 633744000;
+        t = localtime( &s );
+
+        drawXLinearTimeScale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
+         plotAreaX, plotAreaY+plotAreaH, plotAreaW,
+         s, curXMax,
+         curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
+         actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
+         xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
+         actWin->fi, fontTag, fs, 1,
+         !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
+         0 );
+
+      }
+      else {
+
+        drawXLinearScale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
+         plotAreaX, plotAreaY+plotAreaH, plotAreaW,
+         curXMin, curXMax,
+         curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
+         actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
+         xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
+         actWin->fi, fontTag, fs, 1,
+         !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
+         0 );
+
+      }
 
     }
 
