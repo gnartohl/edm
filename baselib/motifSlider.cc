@@ -1623,7 +1623,7 @@ char title[32], *ptr, strVal[255+1];
     case Button2:
 
       if ( !( be->state & ShiftMask ) ) {
-        stat = mslo->startDrag();
+        stat = mslo->startDrag( w, e );
       }
 
       break;
