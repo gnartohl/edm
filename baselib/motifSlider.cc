@@ -2330,7 +2330,7 @@ static XtActionsRec dragActions[] = {
            XmNtroughColor, actWin->ci->pix(shadeColor),
            XmNtopShadowColor, actWin->ci->pix(topColor),
            XmNbottomShadowColor, actWin->ci->pix(botColor),
-           XmNinitialDelay, 100,
+           XmNinitialDelay, 500,
            XmNrepeatDelay, 1,
            NULL );
 
