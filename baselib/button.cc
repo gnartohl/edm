@@ -24,6 +24,23 @@
 
 #include "thread.h"
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activeButtonClass *bto = (activeButtonClass *) client;
+
+  if ( !bto->init ) {
+    bto->needToDrawUnconnected = 1;
+    bto->needDraw = 1;
+    bto->actWin->addDefExeNode( bto->aglPtr );
+  }
+
+  bto->unconnectedTimer = 0;
+
+}
+
 static void btc_edit_update (
   Widget w,
   XtPointer client,
@@ -438,6 +455,17 @@ activeGraphicClass *bto = (activeGraphicClass *) this;
   invisible = source->invisible;
 
   updateDimensions();
+
+}
+
+activeButtonClass::~activeButtonClass ( void ) {
+
+  if ( name ) delete name;
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
 
 }
 
@@ -1293,14 +1321,16 @@ XRectangle xR = { x, y, w, h };
 char string[MAX_ENUM_STRING_SIZE+1];
 
   if ( !init ) {
-    actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( onColor.getDisconnected() );
-    actWin->executeGc.setLineWidth( 1 );
-    actWin->executeGc.setLineStyle( LineSolid );
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x, y, w, h );
-    actWin->executeGc.restoreFg();
-    needToEraseUnconnected = 1;
+    if ( needToDrawUnconnected ) {
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( onColor.getDisconnected() );
+      actWin->executeGc.setLineWidth( 1 );
+      actWin->executeGc.setLineStyle( LineSolid );
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
+      actWin->executeGc.restoreFg();
+      needToEraseUnconnected = 1;
+    }
   }
   else if ( needToEraseUnconnected ) {
     actWin->executeGc.setLineWidth( 1 );
@@ -1549,6 +1579,8 @@ char callbackName[63+1];
      needReadConnectInit = needReadInfoInit = needReadRefresh =
      needErase = needDraw = 0;
     needToEraseUnconnected = 0;
+    needToDrawUnconnected = 0;
+    unconnectedTimer = 0;
     init = 0;
     opComplete = 0;
     controlValid = 0;
@@ -1583,6 +1615,9 @@ char callbackName[63+1];
   case 2:
 
     if ( !opComplete ) {
+
+      unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+       2000, unconnectedTimeout, this );
 
       if ( anyCallbackFlag ) {
 

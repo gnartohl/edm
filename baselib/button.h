@@ -46,6 +46,10 @@ static char *dragName[] = {
   activeButtonClass_str2
 };
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void btc_edit_ok (
   Widget w,
   XtPointer client,
@@ -97,6 +101,10 @@ static void bt_monitor_read_connect_state (
 class activeButtonClass : public activeGraphicClass {
 
 private:
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void btc_edit_ok (
   Widget w,
@@ -155,7 +163,8 @@ short controlV, curControlV, readV, curReadV;
 
 int needCtlConnectInit, needCtlInfoInit, needCtlRefresh;
 int needReadConnectInit, needReadInfoInit, needReadRefresh;
-int needErase, needDraw, needToEraseUnconnected;
+int needErase, needDraw, needToDrawUnconnected, needToEraseUnconnected;
+int unconnectedTimer;
 
 int fgColorMode, bufFgColorMode;
 int bufFgColor, bufOnColor, bufOffColor;
@@ -202,11 +211,7 @@ activeButtonClass::activeButtonClass ( void );
 activeButtonClass::activeButtonClass
  ( const activeButtonClass *source );
 
-activeButtonClass::~activeButtonClass ( void ) {
-
-  if ( name ) delete name;
-
-}
+activeButtonClass::~activeButtonClass ( void );
 
 char *activeButtonClass::objName ( void ) {
 

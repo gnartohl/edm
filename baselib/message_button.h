@@ -39,6 +39,10 @@ static char *dragName[] = {
   activeMessageButtonClass_str18,
 };
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void msgbtc_edit_ok (
   Widget w,
   XtPointer client,
@@ -86,6 +90,10 @@ static void msgbt_monitor_dest_connect_state (
 class activeMessageButtonClass : public activeGraphicClass {
 
 private:
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void msgbtc_edit_ok (
   Widget w,
@@ -174,7 +182,9 @@ int destExists, sourcePressExists, sourceReleaseExists, buttonPressed;
 int sourcePressPvConnected, sourceReleasePvConnected, destPvConnected,
  active, activeMode, init;
 
-int needConnectInit, needErase, needDraw, needToEraseUnconnected;
+int needConnectInit, needErase, needDraw, needToEraseUnconnected,
+ needToDrawUnconnected;
+int unconnectedTimer;
 
 public:
 
@@ -183,11 +193,7 @@ activeMessageButtonClass::activeMessageButtonClass ( void );
 activeMessageButtonClass::activeMessageButtonClass
  ( const activeMessageButtonClass *source );
 
-activeMessageButtonClass::~activeMessageButtonClass ( void ) {
-
-  if ( name ) delete name;
-
-}
+activeMessageButtonClass::~activeMessageButtonClass ( void );
 
 char *activeMessageButtonClass::objName ( void ) {
 
