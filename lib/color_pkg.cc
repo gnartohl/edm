@@ -24,6 +24,31 @@
 
 static int showRGB = 0;
 
+void showColorName (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+showNameBlockPtr block = (showNameBlockPtr) client;
+colorInfoClass *cio = (colorInfoClass *) block->ptr;
+int x, y, i;
+Window root, child;
+int rootX, rootY, winX, winY;
+unsigned int mask;
+
+  if ( !cio->showNameTimerActive ) return;
+
+  XQueryPointer( cio->display, XtWindow(cio->shell), &root, &child,
+   &rootX, &rootY, &winX, &winY, &mask );
+
+  x = rootX + 10;
+  y = rootY + 10;
+  i = block->i;
+
+  cio->msgDialog.popup( cio->colorName(i), x, y );
+
+}
+
 void doColorBlink (
   XtPointer client,
   XtIntervalId *id )
@@ -31,6 +56,8 @@ void doColorBlink (
 
 colorInfoClass *cio = (colorInfoClass *) client;
 int i;
+
+  if ( !cio->incrementTimerActive ) return;
 
   cio->incrementTimer = XtAppAddTimeOut( cio->appCtx,
    cio->incrementTimerValue, doColorBlink, client );
@@ -52,16 +79,44 @@ int i;
 
 }
 
+void colorShellEventHandler (
+  Widget w,
+  XtPointer client,
+  XEvent *e,
+  Boolean *continueToDispatch ) {
+
+colorInfoClass *cio;
+
+  cio = (colorInfoClass *) client;
+
+  *continueToDispatch = False;
+
+  if ( e->type == UnmapNotify ) {
+
+    if ( cio->showNameTimerActive ) {
+      cio->showNameTimerActive = 0;
+      XtRemoveTimeOut( cio->showNameTimer );
+    }
+    cio->msgDialog.popdown();
+    cio->curPaletteRow = -1;
+    cio->curPaletteCol = -1;
+
+  }
+
+}
+
 void colorFormEventHandler (
   Widget w,
   XtPointer client,
   XEvent *e,
   Boolean *continueToDispatch ) {
 
+XMotionEvent *me;
 XExposeEvent *expe;
 XButtonEvent *be;
+XCrossingEvent *ce;
 colorInfoClass *cio;
-int x, y, i, r, c, ncols, nrows, remainder;
+int x, y, i, r, c, ncols, nrows, remainder, count;
 unsigned int bg;
 int *dest;
 int red, green, blue;
@@ -70,10 +125,17 @@ int red, green, blue;
 
   *continueToDispatch = False;
 
-  if ( e->type == Expose ) {
+  if ( ( e->type == Expose ) || ( e->type == ConfigureNotify ) ) {
 
-    expe = (XExposeEvent *) e;
-    if ( !expe->count ) {
+    if ( e->type == Expose ) {
+      expe = (XExposeEvent *) e;
+      count = expe->count;
+    }
+    else if ( e->type == ConfigureNotify ) {
+      count = 0;
+    }
+
+    if ( !count ) {
 
       ncols = cio->num_color_cols;
       nrows = (cio->max_colors+cio->num_blinking_colors) / ncols;
@@ -133,6 +195,55 @@ int red, green, blue;
     }
 
   }
+  else if ( e->type == LeaveNotify ) {
+
+    ce = (XCrossingEvent *) e;
+
+    if ( cio->showNameTimerActive ) {
+      cio->showNameTimerActive = 0;
+      XtRemoveTimeOut( cio->showNameTimer );
+    }
+    cio->msgDialog.popdown();
+    cio->curPaletteRow = -1;
+    cio->curPaletteCol = -1;
+
+  }
+  else if ( e->type == MotionNotify ) {
+
+    me = (XMotionEvent *) e;
+
+    ncols = cio->num_color_cols;
+    nrows = (cio->max_colors+cio->num_blinking_colors) / ncols;
+    remainder = (cio->max_colors+cio->num_blinking_colors) % ncols;
+    if ( remainder ) nrows++;
+
+    r = me->y / 25;
+    if ( r > nrows-1 ) r = nrows-1;
+    c = me->x / 25;
+    if ( c > ncols-1 ) c = ncols-1;
+
+    i = r * ncols + c;
+    if ( i > cio->numColors-1 ) i = cio->numColors-1;
+
+    if ( ( r != cio->curPaletteRow ) || ( c != cio->curPaletteCol ) ) {
+      cio->msgDialog.popdown();
+      if ( cio->showNameTimerActive ) {
+        cio->showNameTimerActive = 0;
+        XtRemoveTimeOut( cio->showNameTimer );
+      }
+      cio->showNameBlock.x = me->x_root;
+      cio->showNameBlock.y = me->y_root;
+      cio->showNameBlock.i = i;
+      cio->showNameBlock.ptr = (void *) cio;
+      cio->showNameTimerActive = 1;
+      cio->showNameTimer = XtAppAddTimeOut( cio->appCtx, 500, showColorName,
+       &cio->showNameBlock );
+      //cio->msgDialog.popup( cio->colorName(i), me->x_root, me->y_root+25 );
+      cio->curPaletteRow = r;
+      cio->curPaletteCol = c;
+    }
+
+  }
   else if ( e->type == ButtonPress ) {
 
     be = (XButtonEvent *) e;
@@ -174,7 +285,7 @@ int red, green, blue;
 
     if ( showRGB ) {
       cio->getRGB( bg, &red, &green, &blue );
-      printf( "index=%-d,  r=%-d, g=%-d, b=%-d\n", i, red, green, blue );
+      printf( colorInfoClass_str8, i, red, green, blue );
     }
 
   }
@@ -414,11 +525,29 @@ int stat;
    compare_key_by_name, copy_nodes, &(this->colorCacheByNameH) );
   if ( !( stat & 1 ) ) this->colorCacheByNameH = (AVL_HANDLE) NULL;
 
+  curPaletteRow = -1;
+  curPaletteCol = -1;
+
+  showNameTimer = 0;
+  showNameTimerActive = 0;
+
+  incrementTimerActive = 0;
+
 }
 
 colorInfoClass::~colorInfoClass ( void ) {
 
   XtDestroyWidget( shell );
+
+  if ( showNameTimerActive ) {
+    showNameTimerActive = 0;
+    XtRemoveTimeOut( showNameTimer );
+  }
+
+  if ( incrementTimerActive ) {
+    incrementTimerActive = 0;
+    XtRemoveTimeOut( incrementTimer );
+  }
 
 }
 
@@ -465,7 +594,7 @@ void colorInfoClass::initParseEngine (
   readFile = 1;
   tokenState = GET_1ST_NONWS_CHAR;
   parseIndex = -1;
-  parseLine = 0;
+  parseLine = 2;
   parseFile = f;
   colorIndex = 0;
 
@@ -708,7 +837,6 @@ int *tmp;
   parseStatus = SUCCESS;
   initParseEngine( f );
 
-  // temporary ??????????????
   num_blinking_colors = 0;
 
   max_colors = 0;
@@ -723,7 +851,7 @@ int *tmp;
 
       stat = getToken( tk );
       if ( stat == FAIL ) {
-        parseError( "Sytax error" );
+        parseError( colorInfoClass_str9 );
         parseStatus = stat;
 	goto term;
       }
@@ -747,17 +875,17 @@ int *tmp;
 
         stat = getToken( tk );
         if ( stat == FAIL ) {
-          parseError( "Sytax error" );
+          parseError( colorInfoClass_str9 );
           parseStatus = stat;
           goto term;
         }
         if ( strcmp( tk, "" ) == 0 ) {
-          parseError( "Unexpected end of file" );
+          parseError( colorInfoClass_str10 );
           parseStatus = FAIL;
           goto term;
         }
         if ( strcmp( tk, "{" ) != 0 ) {
-          parseError( "Expected {" );
+          parseError( colorInfoClass_str11 );
           parseStatus = FAIL;
           goto term;
         }
@@ -773,17 +901,17 @@ int *tmp;
 
         stat = getToken( tk );
         if ( stat == FAIL ) {
-          parseError( "Sytax error" );
+          parseError( colorInfoClass_str9 );
           parseStatus = stat;
           goto term;
         }
         if ( strcmp( tk, "" ) == 0 ) {
-          parseError( "Unexpected end of file" );
+          parseError( colorInfoClass_str10 );
           parseStatus = FAIL;
           goto term;
         }
         if ( strcmp( tk, "{" ) != 0 ) {
-          parseError( "Expected {" );
+          parseError( colorInfoClass_str11 );
           parseStatus = FAIL;
           goto term;
         }
@@ -805,7 +933,7 @@ int *tmp;
       }
       else if ( strcmp( tk, "" ) != 0 ) {
 
-        parseError( "Expecting max, columns, alarm, rule, or static" );
+        parseError( colorInfoClass_str12 );
         parseStatus = FAIL;
         state = -1;
 
@@ -817,24 +945,24 @@ int *tmp;
 
       stat = getToken( tk );
       if ( stat == FAIL ) {
-        parseError( "Sytax error" );
+        parseError( colorInfoClass_str9 );
         parseStatus = stat;
 	goto term;
       }
       if ( strcmp( tk, "" ) == 0 ) {
-        parseError( "Unexpected end of file" );
+        parseError( colorInfoClass_str10 );
         parseStatus = FAIL;
         state = -1;
       }
       else if ( strcmp( tk, "=" ) != 0 ) {
-        parseError( "Expecting =" );
+        parseError( colorInfoClass_str13 );
         parseStatus = FAIL;
         state = -1;
       }
 
       stat = getToken( tk );
       if ( stat == FAIL ) {
-        parseError( "Sytax error" );
+        parseError( colorInfoClass_str9 );
         parseStatus = stat;
 	goto term;
       }
@@ -843,7 +971,7 @@ int *tmp;
         state = GET_FIRST_TOKEN;
       }
       else {
-        parseError( "Expecting number of columns" );
+        parseError( colorInfoClass_str14 );
         parseStatus = FAIL;
         state = -1;
       }
@@ -854,24 +982,24 @@ int *tmp;
 
       stat = getToken( tk );
       if ( stat == FAIL ) {
-        parseError( "Sytax error" );
+        parseError( colorInfoClass_str9 );
         parseStatus = stat;
 	goto term;
       }
       if ( strcmp( tk, "" ) == 0 ) {
-        parseError( "Unexpected end of file" );
+        parseError( colorInfoClass_str10 );
         parseStatus = FAIL;
         state = -1;
       }
       else if ( strcmp( tk, "=" ) != 0 ) {
-        parseError( "Expecting =" );
+        parseError( colorInfoClass_str13 );
         parseStatus = FAIL;
         state = -1;
       }
 
       stat = getToken( tk );
       if ( stat == FAIL ) {
-        parseError( "Sytax error" );
+        parseError( colorInfoClass_str9 );
         parseStatus = stat;
 	goto term;
       }
@@ -881,7 +1009,7 @@ int *tmp;
         state = GET_FIRST_TOKEN;
       }
       else {
-        parseError( "Expecting max RGB value" );
+        parseError( colorInfoClass_str15 );
         parseStatus = FAIL;
         state = -1;
       }
@@ -892,12 +1020,12 @@ int *tmp;
 
       stat = getToken( tk );
       if ( stat == FAIL ) {
-        parseError( "Sytax error" );
+        parseError( colorInfoClass_str9 );
         parseStatus = stat;
         goto term;
       }
       if ( strcmp( tk, "" ) == 0 ) {
-        parseError( "Unexpected end of file" );
+        parseError( colorInfoClass_str10 );
         parseStatus = FAIL;
         state = -1;
       }
@@ -918,12 +1046,12 @@ int *tmp;
 
       stat = getToken( tk ); // color name
       if ( stat == FAIL ) {
-        parseError( "Sytax error" );
+        parseError( colorInfoClass_str9 );
         parseStatus = stat;
         goto term;
       }
       if ( strcmp( tk, "" ) == 0 ) {
-        parseError( "Unexpected end of file" );
+        parseError( colorInfoClass_str10 );
         parseStatus = FAIL;
         state = -1;
         break;
@@ -937,18 +1065,18 @@ int *tmp;
 
       stat = getToken( tk ); // {
       if ( stat == FAIL ) {
-        parseError( "Sytax error" );
+        parseError( colorInfoClass_str9 );
         parseStatus = stat;
         goto term;
       }
       if ( strcmp( tk, "" ) == 0 ) {
-        parseError( "Unexpected end of file" );
+        parseError( colorInfoClass_str10 );
         parseStatus = FAIL;
         state = -1;
         break;
       }
       else if ( strcmp( tk, "{" ) != 0 ) {
-        parseError( "Expected {" );
+        parseError( colorInfoClass_str11 );
         parseStatus = FAIL;
         state = -1;
         break;
@@ -959,12 +1087,12 @@ int *tmp;
 
         stat = getToken( tk );
         if ( stat == FAIL ) {
-          parseError( "Sytax error" );
+          parseError( colorInfoClass_str9 );
           parseStatus = stat;
           goto term;
         }
         if ( strcmp( tk, "" ) == 0 ) {
-          parseError( "Unexpected end of file" );
+          parseError( colorInfoClass_str10 );
           parseStatus = FAIL;
           state = -1;
           break;
@@ -972,7 +1100,7 @@ int *tmp;
         for( n=0; n<3; n++ ) {
           val = strtol( tk, &endptr, 0 );
           if ( strcmp( endptr, "" ) != 0 ) {
-            parseError( "Expected integer" );
+            parseError( colorInfoClass_str16 );
             parseStatus = FAIL;
             state = -1;
             break;
@@ -987,12 +1115,12 @@ int *tmp;
 
       stat = getToken( tk ); // try }
       if ( stat == FAIL ) {
-        parseError( "Sytax error" );
+        parseError( colorInfoClass_str9 );
         parseStatus = stat;
         goto term;
       }
       if ( strcmp( tk, "" ) == 0 ) {
-        parseError( "Unexpected end of file" );
+        parseError( colorInfoClass_str10 );
         parseStatus = FAIL;
         state = -1;
         break;
@@ -1003,7 +1131,7 @@ int *tmp;
         for( n=0; n<3; n++ ) {
           val = strtol( tk, &endptr, 0 );
           if ( strcmp( endptr, "" ) != 0 ) {
-            parseError( "Expected integer" );
+            parseError( colorInfoClass_str16 );
             parseStatus = FAIL;
             state = -1;
             break;
@@ -1016,12 +1144,12 @@ int *tmp;
 
           stat = getToken( tk ); // R
           if ( stat == FAIL ) {
-            parseError( "Sytax error" );
+            parseError( colorInfoClass_str9 );
             parseStatus = stat;
             goto term;
           }
           if ( strcmp( tk, "" ) == 0 ) {
-            parseError( "Unexpected end of file" );
+            parseError( colorInfoClass_str10 );
             parseStatus = FAIL;
             state = -1;
             break;
@@ -1029,7 +1157,7 @@ int *tmp;
           for( n=0; n<3; n++ ) {
             val = strtol( tk, &endptr, 0 );
             if ( strcmp( endptr, "" ) != 0 ) {
-              parseError( "Expected integer" );
+              parseError( colorInfoClass_str16 );
               parseStatus = FAIL;
               state = -1;
               break;
@@ -1041,18 +1169,18 @@ int *tmp;
 
         stat = getToken( tk ); // get }
         if ( stat == FAIL ) {
-          parseError( "Sytax error" );
+          parseError( colorInfoClass_str9 );
           parseStatus = stat;
           goto term;
         }
         if ( strcmp( tk, "" ) == 0 ) {
-          parseError( "Unexpected end of file" );
+          parseError( colorInfoClass_str10 );
           parseStatus = FAIL;
           state = -1;
           break;
         }
         else if ( strcmp( tk, "}" ) != 0 ) {
-          parseError( "Expected }" );
+          parseError( colorInfoClass_str17 );
           parseStatus = FAIL;
           state = -1;
           break;
@@ -1099,12 +1227,12 @@ int *tmp;
 
       stat = getToken( tk );
       if ( stat == FAIL ) {
-        parseError( "Sytax error" );
+        parseError( colorInfoClass_str9 );
         parseStatus = stat;
         goto term;
       }
       if ( strcmp( tk, "" ) == 0 ) {
-        parseError( "Unexpected end of file" );
+        parseError( colorInfoClass_str10 );
         parseStatus = FAIL;
         state = -1;
       }
@@ -1119,7 +1247,12 @@ int *tmp;
         stat = avl_get_match( this->colorCacheByNameH, (void *) tk,
          (void **) &cur1 );
         if ( !( stat & 1 ) ) {
-          parseError( "Menu color name not found" );
+          parseError( colorInfoClass_str18 );
+          parseStatus = FAIL;
+          goto term;
+        }
+        if ( !cur1 ) {
+          parseError( colorInfoClass_str18 );
           parseStatus = FAIL;
           goto term;
         }
@@ -1144,12 +1277,12 @@ int *tmp;
 
       stat = getToken( tk );
       if ( stat == FAIL ) {
-        parseError( "Sytax error" );
+        parseError( colorInfoClass_str9 );
         parseStatus = stat;
         goto term;
       }
       if ( strcmp( tk, "" ) == 0 ) {
-        parseError( "Unexpected end of file" );
+        parseError( colorInfoClass_str10 );
         parseStatus = FAIL;
         state = -1;
       }
@@ -1162,17 +1295,17 @@ int *tmp;
 
         stat = getToken( tk );
         if ( stat == FAIL ) {
-          parseError( "Sytax error" );
+          parseError( colorInfoClass_str9 );
           parseStatus = stat;
           goto term;
         }
         if ( strcmp( tk, "" ) == 0 ) {
-          parseError( "Unexpected end of file" );
+          parseError( colorInfoClass_str10 );
           parseStatus = FAIL;
           goto term;
         }
         if ( strcmp( tk, ":" ) != 0 ) {
-          parseError( "Expected :" );
+          parseError( colorInfoClass_str19 );
           parseStatus = FAIL;
           goto term;
         }
@@ -1180,12 +1313,12 @@ int *tmp;
         // get color name
         stat = getToken( tk );
         if ( stat == FAIL ) {
-          parseError( "Sytax error" );
+          parseError( colorInfoClass_str9 );
           parseStatus = stat;
           goto term;
         }
         if ( strcmp( tk, "" ) == 0 ) {
-          parseError( "Unexpected end of file" );
+          parseError( colorInfoClass_str10 );
           parseStatus = FAIL;
           goto term;
         }
@@ -1193,12 +1326,12 @@ int *tmp;
         stat = avl_get_match( this->colorCacheByNameH, (void *) tk,
          (void **) &curSpecial );
         if ( !( stat & 1 ) ) {
-          parseError( "Alarm color name not found" );
+          parseError( colorInfoClass_str20 );
           parseStatus = FAIL;
           goto term;
         }
         if ( !curSpecial ) {
-          parseError( "Alarm color name not found" );
+          parseError( colorInfoClass_str20 );
           parseStatus = FAIL;
           goto term;
         }
@@ -1213,17 +1346,17 @@ int *tmp;
 
         stat = getToken( tk );
         if ( stat == FAIL ) {
-          parseError( "Sytax error" );
+          parseError( colorInfoClass_str9 );
           parseStatus = stat;
           goto term;
         }
         if ( strcmp( tk, "" ) == 0 ) {
-          parseError( "Unexpected end of file" );
+          parseError( colorInfoClass_str10 );
           parseStatus = FAIL;
           goto term;
         }
         if ( strcmp( tk, ":" ) != 0 ) {
-          parseError( "Expected :" );
+          parseError( colorInfoClass_str19 );
           parseStatus = FAIL;
           goto term;
         }
@@ -1231,12 +1364,12 @@ int *tmp;
         // get color name
         stat = getToken( tk );
         if ( stat == FAIL ) {
-          parseError( "Sytax error" );
+          parseError( colorInfoClass_str9 );
           parseStatus = stat;
           goto term;
         }
         if ( strcmp( tk, "" ) == 0 ) {
-          parseError( "Unexpected end of file" );
+          parseError( colorInfoClass_str10 );
           parseStatus = FAIL;
           goto term;
         }
@@ -1244,12 +1377,12 @@ int *tmp;
         stat = avl_get_match( this->colorCacheByNameH, (void *) tk,
          (void **) &curSpecial );
         if ( !( stat & 1 ) ) {
-          parseError( "Alarm color name not found" );
+          parseError( colorInfoClass_str20 );
           parseStatus = FAIL;
           goto term;
         }
         if ( !curSpecial ) {
-          parseError( "Alarm color name not found" );
+          parseError( colorInfoClass_str20 );
           parseStatus = FAIL;
           goto term;
         }
@@ -1264,17 +1397,17 @@ int *tmp;
 
         stat = getToken( tk );
         if ( stat == FAIL ) {
-          parseError( "Sytax error" );
+          parseError( colorInfoClass_str9 );
           parseStatus = stat;
           goto term;
         }
         if ( strcmp( tk, "" ) == 0 ) {
-          parseError( "Unexpected end of file" );
+          parseError( colorInfoClass_str10 );
           parseStatus = FAIL;
           goto term;
         }
         if ( strcmp( tk, ":" ) != 0 ) {
-          parseError( "Expected :" );
+          parseError( colorInfoClass_str19 );
           parseStatus = FAIL;
           goto term;
         }
@@ -1282,12 +1415,12 @@ int *tmp;
         // get color name
         stat = getToken( tk );
         if ( stat == FAIL ) {
-          parseError( "Sytax error" );
+          parseError( colorInfoClass_str9 );
           parseStatus = stat;
           goto term;
         }
         if ( strcmp( tk, "" ) == 0 ) {
-          parseError( "Unexpected end of file" );
+          parseError( colorInfoClass_str10 );
           parseStatus = FAIL;
           goto term;
         }
@@ -1295,12 +1428,12 @@ int *tmp;
         stat = avl_get_match( this->colorCacheByNameH, (void *) tk,
          (void **) &curSpecial );
         if ( !( stat & 1 ) ) {
-          parseError( "Alarm color name not found" );
+          parseError( colorInfoClass_str20 );
           parseStatus = FAIL;
           goto term;
         }
         if ( !curSpecial ) {
-          parseError( "Alarm color name not found" );
+          parseError( colorInfoClass_str20 );
           parseStatus = FAIL;
           goto term;
         }
@@ -1315,17 +1448,17 @@ int *tmp;
 
         stat = getToken( tk );
         if ( stat == FAIL ) {
-          parseError( "Sytax error" );
+          parseError( colorInfoClass_str9 );
           parseStatus = stat;
           goto term;
         }
         if ( strcmp( tk, "" ) == 0 ) {
-          parseError( "Unexpected end of file" );
+          parseError( colorInfoClass_str10 );
           parseStatus = FAIL;
           goto term;
         }
         if ( strcmp( tk, ":" ) != 0 ) {
-          parseError( "Expected :" );
+          parseError( colorInfoClass_str19 );
           parseStatus = FAIL;
           goto term;
         }
@@ -1333,12 +1466,12 @@ int *tmp;
         // get color name
         stat = getToken( tk );
         if ( stat == FAIL ) {
-          parseError( "Sytax error" );
+          parseError( colorInfoClass_str9 );
           parseStatus = stat;
           goto term;
         }
         if ( strcmp( tk, "" ) == 0 ) {
-          parseError( "Unexpected end of file" );
+          parseError( colorInfoClass_str10 );
           parseStatus = FAIL;
           goto term;
         }
@@ -1346,12 +1479,12 @@ int *tmp;
         stat = avl_get_match( this->colorCacheByNameH, (void *) tk,
          (void **) &curSpecial );
         if ( !( stat & 1 ) ) {
-          parseError( "Alarm color name not found" );
+          parseError( colorInfoClass_str20 );
           parseStatus = FAIL;
           goto term;
         }
         if ( !curSpecial ) {
-          parseError( "Alarm color name not found" );
+          parseError( colorInfoClass_str20 );
           parseStatus = FAIL;
           goto term;
         }
@@ -1366,17 +1499,17 @@ int *tmp;
 
         stat = getToken( tk );
         if ( stat == FAIL ) {
-          parseError( "Sytax error" );
+          parseError( colorInfoClass_str9 );
           parseStatus = stat;
           goto term;
         }
         if ( strcmp( tk, "" ) == 0 ) {
-          parseError( "Unexpected end of file" );
+          parseError( colorInfoClass_str10 );
           parseStatus = FAIL;
           goto term;
         }
         if ( strcmp( tk, ":" ) != 0 ) {
-          parseError( "Expected :" );
+          parseError( colorInfoClass_str19 );
           parseStatus = FAIL;
           goto term;
         }
@@ -1384,12 +1517,12 @@ int *tmp;
         // get color name
         stat = getToken( tk );
         if ( stat == FAIL ) {
-          parseError( "Sytax error" );
+          parseError( colorInfoClass_str9 );
           parseStatus = stat;
           goto term;
         }
         if ( strcmp( tk, "" ) == 0 ) {
-          parseError( "Unexpected end of file" );
+          parseError( colorInfoClass_str10 );
           parseStatus = FAIL;
           goto term;
         }
@@ -1404,12 +1537,12 @@ int *tmp;
           stat = avl_get_match( this->colorCacheByNameH, (void *) tk,
            (void **) &curSpecial );
           if ( !( stat & 1 ) ) {
-            parseError( "Alarm color name not found" );
+            parseError( colorInfoClass_str20 );
             parseStatus = FAIL;
             goto term;
           }
           if ( !curSpecial ) {
-            parseError( "Alarm color name not found" );
+            parseError( colorInfoClass_str20 );
             parseStatus = FAIL;
             goto term;
           }
@@ -1421,7 +1554,7 @@ int *tmp;
       else if ( strcmp( tk, "}" ) == 0 ) {
 
         if ( maxSpecial < 4 ) {
-          parseError( "All alarm colors have not been specified" );
+          parseError( colorInfoClass_str21 );
           parseStatus = FAIL;
           goto term;
         }
@@ -1431,7 +1564,7 @@ int *tmp;
       }
       else {
 
-        parseError( "Alarm specification syntax error" );
+        parseError( colorInfoClass_str22 );
         parseStatus = FAIL;
         goto term;
 
@@ -1605,14 +1738,20 @@ term:
   remainder = (max_colors) % ncols;
   if ( remainder ) nrows++;
 
-  form = XtVaCreateManagedWidget( "", xmDrawingAreaWidgetClass, rc,
+  form = XtVaCreateWidget( "", xmDrawingAreaWidgetClass, rc,
    XmNwidth, ncols*20 + ncols*5 + 5,
    XmNheight, nrows*20 + nrows*5 + 5,
+   XmNresizePolicy, XmRESIZE_NONE,
    NULL );
 
   XtAddEventHandler( form,
-   ButtonPressMask|ExposureMask, False,
+   PointerMotionMask|ButtonPressMask|ExposureMask|
+   LeaveWindowMask|StructureNotifyMask, False,
    colorFormEventHandler, (XtPointer) this );
+
+  XtAddEventHandler( shell,
+   StructureNotifyMask, False,
+   colorShellEventHandler, (XtPointer) this );
 
   Atom wm_delete_window = XmInternAtom( XtDisplay(shell), "WM_DELETE_WINDOW",
    False );
@@ -1624,6 +1763,7 @@ term:
 
   XtManageChild( mbar );
   XtManageChild( rc );
+  XtManageChild( form );
   XtRealizeWidget( shell );
   XSetWindowColormap( display, XtWindow(shell), cmap );
 
@@ -1647,6 +1787,8 @@ term:
       special[i] = -1;
     }
   }
+
+  msgDialog.create( top );
 
   return 1;
 
@@ -1696,7 +1838,7 @@ unsigned long plane_masks[1], bgColor;
 
   if ( major == 3 ) {
     stat = ver3InitFromFile( f, app, d, top, fileName );
-    colorList.create( max_colors, top, 20, this );
+    if ( stat & 1 ) colorList.create( max_colors, top, 20, this );
     return stat;
   }
 
@@ -1754,8 +1896,8 @@ firstTry:
   offBlinkingXColor = new XColor[num_blinking_colors];
   colorNames = new (char *)[max_colors+num_blinking_colors+1];
 
-  junk =  new char[strlen("n/a")+1]; // memory leak here
-  strcpy( junk, "n/a" );
+  junk =  new char[strlen("n/a")+1]; // tiny memory leak here
+  strcpy( junk, "n/a" );             // for color files < version 3
 
   numColors = 0;
 
@@ -2165,8 +2307,13 @@ firstTry:
    NULL );
 
   XtAddEventHandler( form,
-   ButtonPressMask|ExposureMask, False,
+   PointerMotionMask|ButtonPressMask|ExposureMask|
+   LeaveWindowMask|StructureNotifyMask, False,
    colorFormEventHandler, (XtPointer) this );
+
+  XtAddEventHandler( shell,
+   StructureNotifyMask, False,
+   colorShellEventHandler, (XtPointer) this );
 
   Atom wm_delete_window = XmInternAtom( XtDisplay(shell), "WM_DELETE_WINDOW",
    False );
@@ -2192,11 +2339,14 @@ firstTry:
 
   if ( num_blinking_colors ) {
     incrementTimerValue = 500;
+    incrementTimerActive = 1;
     incrementTimer = XtAppAddTimeOut( appCtx, incrementTimerValue,
      doColorBlink, this );
   }
 
   colorList.create( max_colors+num_blinking_colors, top, 20, this );
+
+  msgDialog.create( top );
 
   return 1;
 
@@ -2640,8 +2790,6 @@ int sum;
 
     sum = cur->rgb[0] + cur->rgb[1] * 3 + cur->rgb[2];
 
-    // printf( "sum = %-d\n", sum );
-
     if ( sum < 180000 )
       return WhitePixel( display, screen );
     else
@@ -2772,7 +2920,7 @@ int colorInfoClass::menuPosition (
 
 int i;
 
-  if ( !menuIndexMap ) return index;
+  if ( !menuIndexMap ) return index + 1;
 
   if ( index < 0 ) return 0;
 
@@ -2786,6 +2934,9 @@ int i;
 
 int colorInfoClass::menuSize ( void ) {
 
-  return maxMenuItems;
+  if ( menuIndexMap )
+    return maxMenuItems;
+  else
+    return max_colors+num_blinking_colors;
 
 }

@@ -39,6 +39,7 @@
 #include "gc_pkg.h"
 #include "color_pkg.str"
 #include "color_list.h"
+#include "msg_dialog.h"
 
 #define COLORINFO_SUCCESS 1
 #define COLORINFO_EMPTY 100
@@ -86,6 +87,13 @@ typedef struct colorCacheTag {
   rulePtr rule;
 } colorCacheType, *colorCachePtr;
 
+typedef struct showNameBlockTag {
+  int x;
+  int y;
+  int i;
+  void *ptr;
+} showNameBlockType, *showNameBlockPtr;
+
 class colorListClass;
 class colorButtonClass;
 
@@ -93,9 +101,25 @@ class colorInfoClass {
 
 private:
 
+friend void showColorName (
+  XtPointer client,
+  XtIntervalId *id );
+
 friend void doColorBlink (
   XtPointer client,
   XtIntervalId *id );
+
+friend void colorShellEventHandler (
+  Widget w,
+  XtPointer client,
+  XEvent *e,
+  Boolean *continueToDispatch );
+
+friend void colorRcEventHandler (
+  Widget w,
+  XtPointer client,
+  XEvent *e,
+  Boolean *continueToDispatch );
 
 friend void colorFormEventHandler (
   Widget w,
@@ -138,8 +162,8 @@ int numColors, blink;
 int curIndex, curX, curY;
 
 XtAppContext appCtx;
-XtIntervalId incrementTimer;
-int incrementTimerValue;
+XtIntervalId incrementTimer, showNameTimer;
+int incrementTimerValue, incrementTimerActive, showNameTimerActive;
 
 Widget activeWidget, nameWidget;
 int *curDestination;
@@ -176,6 +200,10 @@ int maxColor, numPaletteCols;
 
 int maxMenuItems, menuMapSize;
 int *menuIndexMap; // dynamic array
+
+msgDialogClass msgDialog;
+int curPaletteRow, curPaletteCol;
+showNameBlockType showNameBlock;
 
 public:
 

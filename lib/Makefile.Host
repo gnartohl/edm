@@ -72,6 +72,7 @@ LIBSRCS += keypad.cc
 LIBSRCS += undo.cc
 LIBSRCS += rules.cc
 LIBSRCS += color_list.cc
+LIBSRCS += msg_dialog.cc
 
 include $(TOP)/config/RULES.Host
 

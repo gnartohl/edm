@@ -2407,8 +2407,6 @@ int i, *destArray, value;
 
 }
 
-void _edmDebug( void );
-
 int entryFormClass::addColorButton (
   char *label,
   colorInfoClass *ci,
@@ -2421,8 +2419,6 @@ Arg fArgs[15], bArgs[15], nbArgs[15], tArgs[15];
 int fN, bN, nbN, tN;
 
 colorButtonEntry *cur;
-
- _edmDebug();
 
   cur = new colorButtonEntry;
 
