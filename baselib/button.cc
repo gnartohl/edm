@@ -1861,7 +1861,7 @@ int blink = 0;
       strncpy( string, offLabel, MAX_ENUM_STRING_SIZE );
     }
     else {
-      if ( stateStringPvId->get_enum_count() > 0 ) {
+      if ( stateStringPvId && stateStringPvId->get_enum_count() > 0 ) {
         strncpy( string, (char *) stateStringPvId->get_enum( 0 ),
          MAX_ENUM_STRING_SIZE );
       }
@@ -1930,7 +1930,7 @@ int blink = 0;
       strncpy( string, onLabel, MAX_ENUM_STRING_SIZE );
     }
     else {
-      if ( stateStringPvId->get_enum_count() > 1 ) {
+      if ( stateStringPvId && stateStringPvId->get_enum_count() > 1 ) {
         strncpy( string, (char *) stateStringPvId->get_enum( 1 ),
          MAX_ENUM_STRING_SIZE );
       }
