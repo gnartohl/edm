@@ -621,13 +621,9 @@ int fontInfoClass::checkSingleFontSpecGeneric (
 
 char buf[255+1], t1[255+1], t2[255+1], t3[255+1], t4[255+1],
  t5[255+1], t6[255+1], t7[255+1], mod[4][255+1], fontSpec[255+1],
- *ptr, *tk1, *tk2, *ctx1, *ctx2;
+ *tk1, *tk2, *ctx1, *ctx2;
 int i, ii, iii, n, pointSize[200], numSizes;
-int stat, preload;
-int empty = 1;
-fontNameListType rec;
-int dup;
-XFontStruct *fs;
+int preload;
 char **list;
 
   strncpy( buf, line, 255 );
@@ -863,7 +859,7 @@ int fontInfoClass::getSingleFontSpec (
 
 char t1[255+1], t2[255+1], t3[255+1], t4[255+1],
  t5[255+1], t6[255+1], t7[255+1], mod[4][255+1], fontSpec[255+1],
- *ptr, *tk1, *tk2, *ctx1, *ctx2;
+ *tk1, *tk2, *ctx1, *ctx2;
 int i, ii, iii, pointSize[200], numSizes;
 int stat, preload;
 int empty = 1;
@@ -1110,15 +1106,8 @@ int fontInfoClass::processFontGroup (
   int release )
 {
 
-char line[255+1], buf[255+1], t1[255+1], t2[255+1], t3[255+1], t4[255+1],
- t5[255+1], t6[255+1], t7[255+1], mod[4][255+1], fontSpec[255+1],
- lastLine[255+1], *ptr, *tk1, *tk2, *ctx1, *ctx2;
-int i, ii, iii, pointSize[200], numSizes;
-int stat, preload;
-int empty = 1;
-fontNameListPtr cur;
-int dup;
-XFontStruct *fs;
+char line[255+1], buf[255+1], lastLine[255+1], *ptr, *tk1, *ctx1;
+int stat;
 int foundBrace;
 
   strcpy( lastLine, "" );
@@ -1197,15 +1186,9 @@ int fontInfoClass::initFromFileVer3 (
   int release )
 {
 
-char line[255+1], buf[255+1], t1[255+1], t2[255+1], t3[255+1], t4[255+1],
- t5[255+1], t6[255+1], t7[255+1], mod[4][255+1], fontSpec[255+1],
- userFontFamilyName[63+1], *ptr, *tk1, *tk2, *ctx1, *ctx2;
-int i, ii, iii, pointSize[200], numSizes;
-int stat, preload;
+char line[255+1], buf[255+1], userFontFamilyName[63+1], *ptr, *tk1, *ctx1;
+int stat;
 int empty = 1;
-fontNameListPtr cur;
-int dup;
-XFontStruct *fs;
 
   ptr = getStrFromFile( defSiteFontTag, 127, f );
   if ( !ptr ) {
