@@ -1159,6 +1159,8 @@ int activeMeterClass::drawActive ( void ) {
  int  farEndX, farEndY, nearEndX, nearEndY, i;
  char fmt[31+1];
 
+XPoint xpoints[3];
+
  meterTotalAngle = 3.1415926535898 * meterAngle / 180.0;
 
  if ( !activeMode || !activeInitFlag) return 1;
@@ -1491,6 +1493,7 @@ if (drawStaticFlag){
    else {
 
      //printf ("needleType is %5d\n",needleType);
+#if 0
    XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
 	      actWin->executeGc.normGC(),
 	      oldMeterNeedleXEnd, oldMeterNeedleYEnd,
@@ -1511,6 +1514,29 @@ if (drawStaticFlag){
 	      actWin->executeGc.normGC(),
 	      oldMeterNeedleXEnd, oldMeterNeedleYEnd,
 	      oldMeterNeedleXOrigin, oldMeterNeedleYOrigin+1);
+#endif
+
+     xpoints[0].x = oldMeterNeedleXOrigin-1;
+     xpoints[0].y = oldMeterNeedleYOrigin;
+
+     xpoints[1].x = oldMeterNeedleXEnd;
+     xpoints[1].y = oldMeterNeedleYEnd;
+
+     xpoints[2].x = oldMeterNeedleXOrigin+1;
+     xpoints[2].y = oldMeterNeedleYOrigin;
+
+     xpoints[3].x = oldMeterNeedleXOrigin;
+     xpoints[3].y = oldMeterNeedleYOrigin-1;
+
+     xpoints[4].x = oldMeterNeedleXEnd;
+     xpoints[4].y = oldMeterNeedleYEnd;
+
+     xpoints[5].x = oldMeterNeedleXOrigin;
+     xpoints[5].y = oldMeterNeedleYOrigin+1;
+
+    XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), xpoints, 6, Nonconvex, CoordModeOrigin );
+
    }
    
    /* draw new needle */
@@ -1527,6 +1553,7 @@ if (drawStaticFlag){
    }
    else {
 
+#if 0
      XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
 		actWin->executeGc.normGC(),
 		meterNeedleXend, meterNeedleYend,
@@ -1543,16 +1570,39 @@ if (drawStaticFlag){
 		actWin->executeGc.normGC(),
 		meterNeedleXend, meterNeedleYend,
 		meterNeedleXorigin, meterNeedleYorigin+1);
+#endif
+
+     xpoints[0].x = meterNeedleXorigin-1;
+     xpoints[0].y = meterNeedleYorigin;
+
+     xpoints[1].x = meterNeedleXend;
+     xpoints[1].y = meterNeedleYend;
+
+     xpoints[2].x = meterNeedleXorigin+1;
+     xpoints[2].y = meterNeedleYorigin;
+
+     xpoints[3].x = meterNeedleXorigin;
+     xpoints[3].y = meterNeedleYorigin-1;
+
+     xpoints[4].x = meterNeedleXend;
+     xpoints[4].y = meterNeedleYend;
+
+     xpoints[5].x = meterNeedleXorigin;
+     xpoints[5].y = meterNeedleYorigin+1;
+
+     XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+      actWin->executeGc.normGC(), xpoints, 6, Nonconvex, CoordModeOrigin );
 
      actWin->executeGc.setFG( meterColor.getColor() );
-     
+
+#if 0     
      XFillArc( actWin->d, XtWindow(actWin->executeWidget),
 	       actWin->executeGc.normGC(), meterNeedleXorigin-5,
 	       meterNeedleYorigin-5, 10, 10, 0, 23040 );
      XDrawArc( actWin->d, XtWindow(actWin->executeWidget),
 	       actWin->executeGc.normGC(), meterNeedleXorigin-5,
 	       meterNeedleYorigin-5, 10, 10, 0, 23040 );
-     
+#endif
    }
 
    actWin->executeGc.removeNormXClipRectangle();
@@ -1600,14 +1650,15 @@ if (drawStaticFlag){
 		meterNeedleXorigin, meterNeedleYorigin+1);
      
      actWin->executeGc.setFG( meterColor.getColor() );
-       
+
+#if 0       
      XFillArc( actWin->d, XtWindow(actWin->executeWidget),
 	       actWin->executeGc.normGC(), meterNeedleXorigin-5,
 	       meterNeedleYorigin-5, 10, 10, 0, 23040 );
      XDrawArc( actWin->d, XtWindow(actWin->executeWidget),
 	       actWin->executeGc.normGC(), meterNeedleXorigin-5,
 	       meterNeedleYorigin-5, 10, 10, 0, 23040 );
-       
+#endif
    }
 
    actWin->executeGc.removeNormXClipRectangle();

@@ -44,7 +44,7 @@ void genericProcessAllEvents (
 XEvent Xev;
 int result, isXEvent, count;
 
-  count = 30;
+  count = 1000;
 
   if ( sync ) {
     XFlush( d );
