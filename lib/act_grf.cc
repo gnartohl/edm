@@ -3365,6 +3365,10 @@ ProcessVariable *pv;
 ProcessVariable *pvs[50];
 int i, n, foundOne;
 char msg[79+1];
+//char frac[31+1];
+double fs;
+struct tm theTime;
+time_t timet;
 
   foundOne = 0;
 
@@ -3403,6 +3407,18 @@ char msg[79+1];
       actWin->appCtx->postMessage( msg );
       snprintf( msg, 79, "  Num references = %-d\n",
        pv->get_num_references() );
+      actWin->appCtx->postMessage( msg );
+      timet = pv->get_time_t() - 631152000;
+      localtime_r( &timet, &theTime );
+      fs = (double) pv->get_nano() / 1.0e9;
+      //snprintf( msg, 79, "  Time stamp = %-d/%-d/%-d %-d:%-d:%.6f",
+      // theTime.tm_mon+1, theTime.tm_mday, theTime.tm_year+1880,
+      // theTime.tm_hour, theTime.tm_min, fs );
+      strcpy( msg, "  Time stamp = " );
+      asctime_r( &theTime, &msg[15] );
+      //msg[strlen(msg)-1] = 0;
+      //snprintf( frac, 31, " (%.6f)", fs ); 
+      //Strncat( msg, frac, 79 );
       actWin->appCtx->postMessage( msg );
       snprintf( msg, 79, "\n" );
       actWin->appCtx->postMessage( msg );
