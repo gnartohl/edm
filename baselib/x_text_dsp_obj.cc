@@ -1448,6 +1448,7 @@ int i;
   }
   limitsFromDb = 1;
   changeValOnLoseFocus = 0;
+  autoSelect = 0;
   fastUpdate = 0;
 
   efPrecision.setNull(1);
@@ -1553,6 +1554,7 @@ int i;
 
   limitsFromDb = source->limitsFromDb;
   changeValOnLoseFocus = source->changeValOnLoseFocus;
+  autoSelect = source->autoSelect;
   fastUpdate = source->fastUpdate;
   precision = source->precision;
   efPrecision = source->efPrecision;
