@@ -55,6 +55,7 @@ XmString str;
    top,
    XmNmappedWhenManaged, False,
    XmNmwmDecorations, 0,
+   XmNoverrideRedirect, True,
    NULL );
 
   labelForm = XtVaCreateWidget( "", xmFormWidgetClass, shell, NULL );

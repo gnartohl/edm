@@ -1788,7 +1788,7 @@ term:
     }
   }
 
-  msgDialog.create( top );
+  msgDialog.create( shell );
 
   return 1;
 
@@ -2346,7 +2346,7 @@ firstTry:
 
   colorList.create( max_colors+num_blinking_colors, top, 20, this );
 
-  msgDialog.create( top );
+  msgDialog.create( shell );
 
   return 1;
 
