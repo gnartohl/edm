@@ -33,9 +33,7 @@ then
     echo To have it recreated, remove that file and restart.
     echo ""
 else
-    echo "1"     > $EDMPVOBJECTS/edmPvObjects
-    echo "epicsPv $EDMBASE/pvlib/O.$HOST_ARCH/libEpics.so epics" \
-     >>$EDMPVOBJECTS/edmPvObjects
+    $EDM -addpv $EDMBASE/pvlib/O.$HOST_ARCH/libEpics.so
 fi
 
 if [ -f $EDMOBJECTS/edmObjects ]
