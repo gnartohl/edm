@@ -35,19 +35,6 @@ activeMessageBoxClass *messageboxo = (activeMessageBoxClass *) client;
 
   if ( messageboxo->logFileExists ) fflush( messageboxo->logFile );
 
-//   if ( messageboxo->logFileOpen ) fclose( messageboxo->logFile );
-
-//   messageboxo->logFile = fopen( messageboxo->logFileName, "a" );
-//   if ( !messageboxo->logFile ) {
-//     messageboxo->logFileExists = 0;
-//     messageboxo->logFileOpen = 0;
-//   }
-//   else {
-//     messageboxo->logFileOpen = 1;
-//   }
-
-  // printf( "In messageboxc_flush_log_file\n" );
-
   messageboxo->flushTimer = appAddTimeOut(
    messageboxo->actWin->appCtx->appContext(),
    messageboxo->flushTimerValue*1000, messageboxc_flush_log_file, client );
@@ -97,7 +84,8 @@ activeMessageBoxClass *messageboxo = (activeMessageBoxClass *) client;
 
   messageboxo->fileIsReadOnly = messageboxo->bufFileIsReadOnly;
 
-  strncpy( messageboxo->logFileName, messageboxo->eBuf->bufLogFileName, 127 );
+  messageboxo->logFileName.setRaw( messageboxo->eBuf->bufLogFileName );
+
   messageboxo->flushTimerValue = messageboxo->bufFlushTimerValue;
   if ( messageboxo->flushTimerValue < 5 ) messageboxo->flushTimerValue = 5;
 
@@ -241,7 +229,6 @@ activeMessageBoxClass::activeMessageBoxClass ( void ) {
   size = 1000;
   fileSize = 100000;
   fileIsReadOnly = 1;
-  strcpy( logFileName, "" );
   flushTimerValue = 600;
   logFileOpen = 0;
   eBuf = NULL;
@@ -284,7 +271,7 @@ activeGraphicClass *messageboxo = (activeGraphicClass *) this;
   size = source->size;
   fileSize = source->fileSize;
   fileIsReadOnly = source->fileIsReadOnly;
-  strncpy( logFileName, source->logFileName, 127 );
+  logFileName.copy( source->logFileName );
   flushTimerValue = source->flushTimerValue;
 
   eBuf = NULL;
@@ -300,7 +287,7 @@ int stat;
 
   if ( logFileExists ) {
 
-    strncpy( newName, logFileName, 255 );
+    strncpy( newName, logFileName.getExpanded(), 255 );
     Strncat( newName, "_2", 255 );
 
     //printf( "unlink %s\n", newName );
@@ -308,13 +295,13 @@ int stat;
 
     fclose( logFile );
 
-    //printf( "rename %s to %s\n", logFileName, newName );
-    stat = rename( logFileName, newName );
+    //printf( "rename %s to %s\n", logFileName.getExpanded(), newName );
+    stat = rename( logFileName.getExpanded(), newName );
     if ( stat < 0 ) {
-      printf( activeMessageBoxClass_str1, logFileName, newName );
+      printf( activeMessageBoxClass_str1, logFileName.getExpanded(), newName );
     }
 
-    logFile = fopen( logFileName, "a" );
+    logFile = fopen( logFileName.getExpanded(), "a" );
     if ( !logFile ) {
       logFileExists = 0;
       logFileOpen = 0;
@@ -418,7 +405,7 @@ char *emptyStr = "";
   tag.loadW( "bufferSize", &size );
   tag.loadW( "fileSize", &fileSize, &zero );
   tag.loadW( "flushTimerValue", &flushTimerValue, &zero );
-  tag.loadW( "logFileName", logFileName, emptyStr );
+  tag.loadW( "logFileName", &logFileName, emptyStr );
   tag.loadBoolW( "readOnly", &fileIsReadOnly, &zero );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
@@ -476,7 +463,10 @@ int index;
 
   fprintf( f, "%-d\n", flushTimerValue );
 
-  writeStringToFile( f, logFileName );
+  if ( logFileName.getRaw() )
+    writeStringToFile( f, logFileName.getRaw() );
+  else
+    writeStringToFile( f, "" );
 
   // version 2.1.0
   fprintf( f, "%-d\n", fileIsReadOnly );
@@ -519,7 +509,7 @@ char *emptyStr = "";
   tag.loadR( "bufferSize", &size );
   tag.loadR( "fileSize", &fileSize, &zero );
   tag.loadR( "flushTimerValue", &flushTimerValue, &zero );
-  tag.loadR( "logFileName", 127, logFileName, emptyStr );
+  tag.loadR( "logFileName", &logFileName, emptyStr );
   tag.loadR( "readOnly", &fileIsReadOnly, &zero );
   tag.loadR( "endObjectProperties" );
   tag.loadR( "" );
@@ -561,6 +551,7 @@ int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
 char oneName[PV_Factory::MAX_PV_NAME+1];
+char oneFileName[127+1];
 
   this->actWin = _actWin;
 
@@ -661,7 +652,8 @@ char oneName[PV_Factory::MAX_PV_NAME+1];
 
   fscanf( f, "%d\n", &flushTimerValue );
 
-  readStringFromFile( logFileName, 127+1, f );
+  readStringFromFile( oneFileName, 127+1, f );
+  logFileName.setRaw( oneFileName );
 
   if ( ( major > 2 ) || ( ( major == 2 ) && ( minor == 1 ) ) ) {
     fscanf( f, "%d\n", &fileIsReadOnly );
@@ -713,7 +705,11 @@ char title[32], *ptr;
   bufFileSize = fileSize;
   bufFileIsReadOnly = fileIsReadOnly;
   bufFlushTimerValue = flushTimerValue;
-  strncpy( eBuf->bufLogFileName, logFileName, 127 );
+
+  if ( logFileName.getRaw() )
+    strncpy( eBuf->bufLogFileName, logFileName.getRaw(), 127 );
+  else
+    strcpy( eBuf->bufLogFileName, "" );
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -882,9 +878,9 @@ struct stat fileStat;
 
       curFileSize = 0;
 
-      if ( strcmp( logFileName, "" ) != 0 ) {
+      if ( strcmp( logFileName.getExpanded(), "" ) != 0 ) {
 
-        status = stat( logFileName, &fileStat );
+        status = stat( logFileName.getExpanded(), &fileStat );
         if ( status == 0 ) {
           thisFileSize = fileStat.st_size;
         }
@@ -901,7 +897,7 @@ struct stat fileStat;
           else
             discard = 0;
 
-          logFile = fopen( logFileName, "r" );
+          logFile = fopen( logFileName.getExpanded(), "r" );
           if ( logFile ) {
             do {
               gotSome = fgets( line, 255, logFile );
@@ -925,7 +921,7 @@ struct stat fileStat;
 
         if ( !fileIsReadOnly ) {
 
-          logFile = fopen( logFileName, "a" );
+          logFile = fopen( logFileName.getExpanded(), "a" );
           if ( !logFile ) {
             logFileExists = 0;
             logFileOpen = 0;
@@ -1079,11 +1075,17 @@ int activeMessageBoxClass::expand1st (
   char *expansions[] )
 {
 
-int stat;
+int retStat, stat;
+
+  retStat = 1;
 
   stat = readPvExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
-  return stat;
+  stat = logFileName.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+
+  return retStat;
 
 }
 
@@ -1093,21 +1095,26 @@ int activeMessageBoxClass::expand2nd (
   char *expansions[] )
 {
 
-int stat;
+int retStat, stat;
+
+  retStat = 1;
 
   stat = readPvExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
-  return stat;
+  stat = logFileName.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+
+  return retStat;
 
 }
 
 int activeMessageBoxClass::containsMacros ( void ) {
 
-int stat;
+  if ( readPvExpStr.containsPrimaryMacros()  ) return 1;
+  if ( logFileName.containsPrimaryMacros()  ) return 1;
 
-  stat = readPvExpStr.containsPrimaryMacros();
-
-  return stat;
+  return 0;
 
 }
 

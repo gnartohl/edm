@@ -28,7 +28,7 @@
 
 #define MESSAGEBOXC_MAJOR_VERSION 4
 #define MESSAGEBOXC_MINOR_VERSION 0
-#define MESSAGEBOXC_RELEASE 0
+#define MESSAGEBOXC_RELEASE 1
 
 #ifdef __message_box_cc
 
@@ -139,7 +139,7 @@ Widget frameWidget;
 scrolledTextClass scrolledText;
 
 char readV[39+1], curReadV[39+1];
-char logFileName[127+1];
+expStringClass logFileName;
 FILE *logFile;
 int logFileOpen;
 int fileSize;
