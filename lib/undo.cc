@@ -642,3 +642,23 @@ undoListPtr cur;
   head = tail = 0;
 
 }
+
+// ==================================================
+
+void undoClass::show( void ) {
+
+undoListPtr cur;
+int stat;
+
+  if ( tail == head ) {
+    return;
+  }
+
+  // process all nodes in list
+  cur = undoList[tail].head->flink;
+
+  while ( cur ) {
+    cur = cur->flink;
+  }
+
+}

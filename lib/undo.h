@@ -183,11 +183,11 @@ typedef struct undoListHead {
 class undoClass {
 
 private:
-static const int max = 32+1;
+static const int max = 32;
 
 int head, tail;
-undoListHeadType undoList[max];
-char undoButtonText[max][15+1];
+undoListHeadType undoList[max+1];
+char undoButtonText[max+1][15+1];
 
 public:
 
@@ -268,6 +268,8 @@ int undoClass::performUndo ( void );
 int undoClass::performSubUndo ( void ); // called from group.cc
 
 void undoClass::flush ( void );
+
+void undoClass::show ( void );
 
 };
 
