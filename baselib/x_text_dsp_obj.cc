@@ -83,7 +83,8 @@ char string[39+1];
       case DBR_SHORT:
       case DBR_LONG:
         if ( isLegalInteger(str) ) {
-          ivalue = atol( str );
+          //ivalue = atol( str );
+          ivalue = strtol( str, NULL, 0 );
           if ( axtdo->pvExists ) {
 #ifdef __epics__
             stat = ca_put( DBR_LONG, axtdo->pvId, &ivalue );
@@ -518,7 +519,8 @@ char *buf;
     strncpy( axtdo->curValue, axtdo->entryValue, 39 );
     axtdo->curValue[39] = 0;
 
-    ivalue = atol( axtdo->entryValue );
+    //ivalue = atol( axtdo->entryValue );
+    ivalue = strtol( axtdo->entryValue, NULL, 0 );
     if ( axtdo->pvExists ) {
 #ifdef __epics__
       stat = ca_put( DBR_LONG, axtdo->pvId, &ivalue );
@@ -571,7 +573,8 @@ int n;
     strncpy( axtdo->curValue, axtdo->entryValue, 39 );
     axtdo->curValue[39] = 0;
 
-    ivalue = atol( axtdo->entryValue );
+    //ivalue = atol( axtdo->entryValue );
+    ivalue = strtol( axtdo->entryValue, NULL, 0 );
     if ( axtdo->pvExists ) {
 #ifdef __epics__
       stat = ca_put( DBR_LONG, axtdo->pvId, &ivalue );
@@ -695,6 +698,14 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) ca_puser(arg.chid);
     if ( arg.op == CA_OP_CONN_UP ) {
 
       axtdo->pvType = (int) ca_field_type( axtdo->pvId );
+
+      // if format is hex, force double/float type to long
+      if ( axtdo->formatType == XTDC_K_FORMAT_HEX ) {
+        if ( ( axtdo->pvType == DBR_DOUBLE ) ||
+             ( axtdo->pvType == DBR_FLOAT ) ) {
+          axtdo->pvType = DBR_LONG;
+	}
+      }
 
       axtdo->connection.setPvConnected( axtdo->pvId );
 
@@ -1301,7 +1312,8 @@ char string[39+1];
   case DBR_SHORT:
   case DBR_LONG:
     if ( isLegalInteger(axtdo->entryValue) ) {
-      ivalue = atol( axtdo->entryValue );
+      //ivalue = atol( axtdo->entryValue );
+      ivalue = strtol( axtdo->entryValue, NULL, 0 );
       if ( axtdo->pvExists ) {
 #ifdef __epics__
         stat = ca_put( DBR_LONG, axtdo->pvId, &ivalue );
@@ -3755,7 +3767,7 @@ Atom importList[2];
         sprintf( format, "%%-d" );
         break;
       case XTDC_K_FORMAT_HEX:
-        sprintf( format, "%%-X" );
+        sprintf( format, "0x%%-X" );
         break;
       default:
         sprintf( format, "%%-d" );
@@ -3793,7 +3805,7 @@ Atom importList[2];
         sprintf( format, "%%-d" );
         break;
       case XTDC_K_FORMAT_HEX:
-        sprintf( format, "%%-X" );
+        sprintf( format, "0x%%-X" );
         break;
       default:
         sprintf( format, "%%-d" );
