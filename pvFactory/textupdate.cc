@@ -1,7 +1,11 @@
 // -*- C++ -*-
 // EDM textupdate Widget
 //
+// Ideas for TextEntry stolen from MEDM
+//
 // kasemir@lanl.gov
+
+// #define DEBUG_TEXTWIDGETS
 
 #include "textupdate.h"
 #include "app_pkg.h"
@@ -988,15 +992,18 @@ int edmTextentryClass::activate(int pass, void *ptr)
                                              XmNuserData,
                                                  this,// obj accessible to d&d
                                              NULL);
-            // callback: text entered, sent it to PV
-            XtAddCallback(widget,XmNactivateCallback,
+            // callback: text entered ==> send it to the PV
+            XtAddCallback(widget, XmNactivateCallback,
                           (XtCallbackProc)text_entered_callback,
                           (XtPointer)this);
 
             // callback: go into edit mode
-            // Used to try XmNmodifyVerifyCallback,
-            // but this one is better (John found it)
+            // MEDM uses XmNmodifyVerifyCallback,
+            // John Sinclair uses XmNmotionVerifyCallback
             XtAddCallback(widget,XmNmotionVerifyCallback,
+                          (XtCallbackProc)text_edit_callback,
+                          (XtPointer)this);
+            XtAddCallback(widget,XmNmodifyVerifyCallback,
                           (XtCallbackProc)text_edit_callback,
                           (XtPointer)this);
             break;
@@ -1059,7 +1066,9 @@ int edmTextentryClass::eraseActive()
     return 1;
 }
 
-/* Switch to edit mode */
+// Switch to edit mode
+//
+// (Invoked by the ModifyVerify or MotionVerify callback)
 void edmTextentryClass::text_edit_callback(Widget w,
                                            XtPointer clientData,
                                            XtPointer pCallbackData)
@@ -1070,21 +1079,32 @@ void edmTextentryClass::text_edit_callback(Widget w,
     /* NULL event means value changed programmatically; hence don't process */
     if (pcbs->event != NULL)
     {
+        me->editing = true;
+#ifdef DEBUG_TEXTWIDGETS
+        printf("Textentry: Editing '%s'\n",
+               (me->pv ? me->pv->get_name() : "<no PV>"));
+#endif
         switch (XtHasCallbacks(w,XmNlosingFocusCallback))
         {
             case XtCallbackNoList:
             case XtCallbackHasNone:
                 XtAddCallback(w, XmNlosingFocusCallback,
                               (XtCallbackProc)text_noedit_callback, me);
-                me->editing = true;
-                XSetInputFocus( me->actWin->display(), XtWindow(w),
-				RevertToNone, CurrentTime );
+                /* John added this: Allows to enter text while
+                   the EDM window is not the active one ?!
+                   Confuses the Mac X server: steals keyboard
+                   from Striptool until EDM is stopped!
+                   
+                   XSetInputFocus(me->actWin->display(), XtWindow(w),
+                   RevertToNone, CurrentTime);
+                */
                 break;
             case XtCallbackHasSome:
+                /* Callback already installed */
                 break;
         }
-        pcbs->doit = True;
     }
+    pcbs->doit = True;
 }
 
 /* Text has been entered, send to PV */
@@ -1096,7 +1116,14 @@ void edmTextentryClass::text_entered_callback(Widget w,
     char *text = XmTextFieldGetString(w);
     double num;
     int hexnum;
-    
+
+    // Just copied the current 'text' that we'll write
+    // Allow updates from now on:
+    me->editing= false;
+    XtVaSetValues(w, XmNcursorPosition, (XmTextPosition) 0, NULL);
+#ifdef DEBUG_TEXTWIDGETS
+    printf("Textentry: Writing '%s'\n", text);
+#endif
     if (me->pv && me->pv->is_valid())
     {
         switch (me->displayMode)
@@ -1122,7 +1149,10 @@ void edmTextentryClass::text_entered_callback(Widget w,
         }
     }
     XtFree(text);
-    me->editing= false;
+    // Display current value again,
+    // though we'll soon expect a monitor
+    // from the PV which reflects the new value
+    pv_value_callback(me->pv, me);
 }
 
 /* Ignore editing, abort and repaint original value */
@@ -1131,14 +1161,13 @@ void edmTextentryClass::text_noedit_callback(Widget w,
                                              XtPointer pCallbackData)
 {
     edmTextentryClass *me = (edmTextentryClass *) clientData;
-
     XtRemoveCallback(w, XmNlosingFocusCallback,
                      (XtCallbackProc)text_noedit_callback, me);
     me->editing= false;
+#ifdef DEBUG_TEXTWIDGETS
+    printf("Textentry: Quit editing '%s'\n",
+           (me->pv ? me->pv->get_name() : "<no PV>"));
+#endif
     pv_value_callback(me->pv, me);
 }
-
-
-
-
 
