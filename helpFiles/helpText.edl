@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 126
-y 48
-w 1074
-h 940
+x 103
+y 21
+w 1069
+h 973
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
@@ -910,20 +910,20 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 505
+x 508
 y 5
 w 0
-h 927
+h 960
 lineColor rgb 0 0 0
 fillColor rgb 46517 46774 46517
 lineWidth 2
 numPoints 2
 xPoints {
-  0 505
-  1 505
+  0 508
+  1 508
 }
 yPoints {
-  0 932
+  0 965
   1 5
 }
 endObjectProperties
@@ -975,7 +975,7 @@ major 4
 minor 1
 release 0
 x 542
-y 414
+y 465
 w 441
 h 16
 font "helvetica-medium-r-14.0"
@@ -1035,7 +1035,7 @@ major 4
 minor 1
 release 0
 x 542
-y 430
+y 481
 w 466
 h 16
 font "helvetica-medium-r-14.0"
@@ -1075,7 +1075,7 @@ major 4
 minor 1
 release 0
 x 542
-y 469
+y 520
 w 445
 h 16
 font "helvetica-medium-r-14.0"
@@ -1095,7 +1095,7 @@ major 4
 minor 1
 release 0
 x 542
-y 485
+y 536
 w 480
 h 16
 font "helvetica-medium-r-14.0"
@@ -1115,7 +1115,7 @@ major 4
 minor 1
 release 0
 x 542
-y 501
+y 552
 w 462
 h 16
 font "helvetica-medium-r-14.0"
@@ -1135,7 +1135,7 @@ major 4
 minor 1
 release 0
 x 542
-y 517
+y 568
 w 267
 h 16
 font "helvetica-medium-r-14.0"
@@ -1195,7 +1195,7 @@ major 4
 minor 1
 release 0
 x 542
-y 657
+y 708
 w 450
 h 16
 font "helvetica-medium-r-14.0"
@@ -1215,7 +1215,7 @@ major 4
 minor 1
 release 0
 x 542
-y 672
+y 723
 w 282
 h 16
 font "helvetica-medium-r-14.0"
@@ -1274,7 +1274,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 543
+x 541
 y 239
 w 127
 h 43
@@ -1287,8 +1287,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 683
-y 245
+x 543
+y 296
 w 154
 h 16
 font "helvetica-bold-r-14.0"
@@ -1328,7 +1328,7 @@ major 4
 minor 1
 release 0
 x 542
-y 542
+y 593
 w 460
 h 16
 font "helvetica-medium-r-14.0"
@@ -1348,7 +1348,7 @@ major 4
 minor 1
 release 0
 x 542
-y 558
+y 609
 w 468
 h 16
 font "helvetica-medium-r-14.0"
@@ -1368,7 +1368,7 @@ major 4
 minor 1
 release 0
 x 542
-y 574
+y 625
 w 364
 h 16
 font "helvetica-medium-r-14.0"
@@ -1388,7 +1388,7 @@ major 4
 minor 1
 release 0
 x 542
-y 700
+y 751
 w 481
 h 16
 font "helvetica-medium-r-14.0"
@@ -1408,7 +1408,7 @@ major 4
 minor 1
 release 0
 x 542
-y 716
+y 767
 w 461
 h 16
 font "helvetica-medium-r-14.0"
@@ -1448,7 +1448,7 @@ major 4
 minor 1
 release 0
 x 542
-y 829
+y 869
 w 474
 h 16
 font "helvetica-medium-r-14.0"
@@ -1468,7 +1468,7 @@ major 4
 minor 1
 release 0
 x 542
-y 845
+y 885
 w 477
 h 16
 font "helvetica-medium-r-14.0"
@@ -1488,7 +1488,7 @@ major 4
 minor 1
 release 0
 x 542
-y 861
+y 901
 w 362
 h 16
 font "helvetica-medium-r-14.0"
@@ -1508,7 +1508,7 @@ major 4
 minor 1
 release 0
 x 542
-y 599
+y 650
 w 444
 h 16
 font "helvetica-medium-r-14.0"
@@ -1528,7 +1528,7 @@ major 4
 minor 1
 release 0
 x 542
-y 615
+y 666
 w 441
 h 16
 font "helvetica-medium-r-14.0"
@@ -1548,7 +1548,7 @@ major 4
 minor 1
 release 0
 x 542
-y 631
+y 682
 w 305
 h 16
 font "helvetica-medium-r-14.0"
@@ -1568,7 +1568,7 @@ major 4
 minor 1
 release 0
 x 542
-y 759
+y 810
 w 514
 h 16
 font "helvetica-medium-r-14.0"
@@ -1608,7 +1608,7 @@ major 4
 minor 1
 release 0
 x 564
-y 799
+y 839
 w 369
 h 16
 font "helvetica-medium-r-14.0"
@@ -1628,7 +1628,7 @@ major 4
 minor 1
 release 0
 x 542
-y 887
+y 927
 w 436
 h 16
 font "helvetica-medium-r-14.0"
@@ -1648,7 +1648,7 @@ major 4
 minor 1
 release 0
 x 542
-y 904
+y 944
 w 408
 h 16
 font "helvetica-medium-r-14.0"
@@ -1668,7 +1668,7 @@ major 4
 minor 1
 release 0
 x 542
-y 274
+y 325
 w 501
 h 128
 font "helvetica-medium-r-14.0"
