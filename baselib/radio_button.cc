@@ -228,6 +228,7 @@ activeRadioButtonClass *rbto = (activeRadioButtonClass *) client;
   rbto->buttonColor = rbto->bufButtonColor;
   rbto->topShadowColor = rbto->bufTopShadowColor;
   rbto->botShadowColor = rbto->bufBotShadowColor;
+  rbto->selectColor = rbto->bufSelectColor;
 
   rbto->fgColorMode = rbto->bufFgColorMode;
   if ( rbto->fgColorMode == RBTC_K_COLORMODE_ALARM )
@@ -388,9 +389,11 @@ activeGraphicClass *rbto = (activeGraphicClass *) this;
   buttonColor = source->buttonColor;
   topShadowColor = source->topShadowColor;
   botShadowColor = source->botShadowColor;
+  selectColor = source->selectColor;
   buttonCb = source->buttonCb;
   topShadowCb = source->topShadowCb;
   botShadowCb = source->botShadowCb;
+  selectCb = source->selectCb;
 
   fgColor.copy(source->fgColor);
   bgColor.copy(source->bgColor);
@@ -435,6 +438,7 @@ int activeRadioButtonClass::createInteractive (
   buttonColor = actWin->defaultOffsetColor;
   topShadowColor = actWin->defaultTopShadowColor;
   botShadowColor = actWin->defaultBotShadowColor;
+  selectColor = actWin->defaultFg1Color;
 
   fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
   bgColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
@@ -491,6 +495,10 @@ int index;
     writeStringToFile( f, "" );
 
   writeStringToFile( f, fontTag );
+
+  // version 1.2.0
+  index = selectColor;
+  actWin->ci->writeColorIndex( f, index );
 
   return 1;
 
@@ -593,6 +601,14 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
+  if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 1 ) ) ) {
+    fscanf( f, "%d\n", &index ); actWin->incLine();
+    selectColor = index;
+  }
+  else {
+    selectColor = buttonColor;
+  }
+
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
@@ -627,6 +643,7 @@ char title[32], *ptr;
   bufButtonColor = buttonColor;
   bufTopShadowColor = topShadowColor;
   bufBotShadowColor = botShadowColor;
+  bufSelectColor = selectColor;
 
   bufFgColor = fgColor.pixelIndex();
   bufFgColorMode = fgColorMode;
@@ -662,6 +679,9 @@ char title[32], *ptr;
 
   ef.addColorButton( activeRadioButtonClass_str28, actWin->ci, &buttonCb,
    &bufButtonColor );
+
+  ef.addColorButton( activeRadioButtonClass_str29, actWin->ci, &selectCb,
+   &bufSelectColor );
 
   ef.addColorButton( activeRadioButtonClass_str14, actWin->ci, &topShadowCb,
    &bufTopShadowColor );
@@ -1150,6 +1170,7 @@ static XtActionsRec dragActions[] = {
        XmNtranslations, parsedTrans,
        XmNuserData, this,
        XmNspacing, 0,
+       XmNselectColor, actWin->ci->pix(selectColor),
        NULL );
 
       if ( controlExists ) {
@@ -1317,6 +1338,9 @@ void activeRadioButtonClass::changeDisplayParams (
 
   if ( _flag & ACTGRF_TEXTFGCOLOR_MASK )
     fgColor.setColorIndex( _textFgColor, actWin->ci );
+
+  if ( _flag & ACTGRF_FG1COLOR_MASK )
+    selectColor = _fg1Color;
 
   if ( _flag & ACTGRF_BGCOLOR_MASK )
     bgColor.setColorIndex( _bgColor, actWin->ci );

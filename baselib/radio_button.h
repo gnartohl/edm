@@ -35,7 +35,7 @@
 #define RBTC_K_COLORMODE_ALARM 1
 
 #define RBTC_MAJOR_VERSION 1
-#define RBTC_MINOR_VERSION 1
+#define RBTC_MINOR_VERSION 2
 #define RBTC_RELEASE 0
 
 #define RBTC_K_LITERAL 1
@@ -182,9 +182,10 @@ short curValue;
 int buttonColor, bufButtonColor;
 int topShadowColor, bufTopShadowColor;
 int botShadowColor, bufBotShadowColor;
+int selectColor, bufSelectColor;
 int bufFgColor, bufBgColor;
 pvColorClass fgColor, bgColor;
-colorButtonClass fgCb, bgCb, buttonCb, topShadowCb, botShadowCb;
+colorButtonClass fgCb, bgCb, buttonCb, topShadowCb, botShadowCb, selectCb;
 int fgColorMode, bgColorMode, bufFgColorMode, bufBgColorMode;
 
 char *stateString[MAX_ENUM_STATES]; // allocated at run-time

@@ -29,5 +29,6 @@
 #define activeRadioButtonClass_str26 (char *) "ca_add_masked_array_event failed\n"
 #define activeRadioButtonClass_str27 (char *) "ca_add_masked_array_event failed\n"
 #define activeRadioButtonClass_str28 (char *) "Button"
+#define activeRadioButtonClass_str29 (char *) "Selected"
 
 #endif
