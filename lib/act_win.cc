@@ -1870,9 +1870,12 @@ activeGraphicListPtr curCut, curSel, newOne;
 int newX, newY, locMinX, locMinY, locDeltaX, locDeltaY;
 
   // Don't allow a paste operation where x or y is off the page
-  if ( ( x < 0 ) || ( y < 0 ) || ( x >= awo->w ) || ( y >= awo->h ) ) {
-    XBell( awo->d, 50 );
-    return;
+  // but always allow a "paste in place" operation
+  if ( item != AWC_POPUP_PASTE_IN_PLACE ) {
+    if ( ( x < 0 ) || ( y < 0 ) || ( x >= awo->w ) || ( y >= awo->h ) ) {
+      XBell( awo->d, 50 );
+      return;
+    }
   }
 
   // empty select buffer then copy all nodes from cut buffer
