@@ -1,6 +1,12 @@
 -*- outline -*-
 
-* pv_factory
+This directory currently generates a library libPV.so
+that includes the following.
+In the future, the PV factory could be part of EDM,
+the EPICS PV Factory would be one shared module
+as well as the widgets.
+
+* pv_factory.*
 Base class for a process-variable factory.
 Handles connection, subscription, retrieval
 of meta information.
@@ -12,7 +18,7 @@ when configuring the widget (Epics, Vsystem, ...).
 Currently this is not possible, widgets hard-link the
 implementation.
 
-* epics_pv_factory
+* epics_pv_factory.*
 Implementaion for EPICS/ChannelAccess
 
 * Widget: Monitors/Textupdate
