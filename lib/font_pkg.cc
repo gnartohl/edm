@@ -311,6 +311,92 @@ char *tk, spec[127+1], name[127+1], family[63+1], weight[31+1],
 
 }
 
+int fontInfoClass::resolveFont (
+  char *fontSpec,
+  char *userFontFamilyName,
+  fontNameListPtr ptr ) {
+
+int n, isize, isScalable;
+float fsize;
+char **list;
+char *tk, spec[127+1], name[127+1], family[63+1], weight[31+1],
+ slant[31+1], size[31+1];
+
+  ptr->fontLoaded = 0;
+
+  list = XListFonts( this->display, fontSpec, 1, &n );
+  if ( n == 0 ) {
+    list = findBestFont( this->display, fontSpec, &n );
+    if ( n == 0 ) {
+      return FONTINFO_NO_FONT;
+    }
+  }
+
+  strncpy( spec, list[0], 127 );
+
+  //  printf( "Spec is [%s]\n", spec );
+
+  tk = strtok( spec, "-" );
+
+  tk = strtok( NULL, "-" );
+  strncpy( family, tk, 63 );
+
+  tk = strtok( NULL, "-" );
+  strncpy( weight, tk, 31 );
+
+  tk = strtok( NULL, "-" );
+  if ( strcmp( tk, "r" ) == 0 )
+    strncpy( slant, "r", 31 );
+  else
+    strncpy( slant, "i", 31 );
+
+  tk = strtok( NULL, "-" );
+  tk = strtok( NULL, "-" );
+
+  tk = strtok( NULL, "-" );
+  strncpy( size, tk, 31 );
+  if ( strcmp( size, "0" ) == 0 )
+    isScalable = 1;
+  else
+    isScalable = 0;
+
+  isize = atol( size );
+  fsize = atof( size );
+  fsize /= 10;
+  ptr->size = isize;
+  ptr->fsize = fsize;
+
+  sprintf( size, "%-.1f", fsize );
+
+  strncpy( name, userFontFamilyName, 127 );
+  Strncat( name, "-", 127 );
+  Strncat( name, weight, 127 );
+  Strncat( name, "-", 127 );
+  Strncat( name, slant, 127 );
+  Strncat( name, "-", 127 );
+  Strncat( name, size, 127 );
+
+  ptr->isScalable = (char) isScalable;
+
+  ptr->fullName = new char[strlen(list[0])+1];
+  strcpy( ptr->fullName, list[0] );
+
+  ptr->name = new char[strlen(name)+1];
+  strcpy( ptr->name, name );
+
+  ptr->family = new char[strlen(userFontFamilyName)+1];
+  strcpy( ptr->family, userFontFamilyName );
+
+  ptr->weight = weight[0];
+
+  ptr->slant = slant[0];
+
+  XFreeFontNames( list );
+
+  return FONTINFO_SUCCESS;
+
+}
+
 int fontInfoClass::resolveOneFont (
   char *fontSpec,
   fontNameListPtr ptr ) {
@@ -469,9 +555,9 @@ int fontInfoClass::initFromFileVer3 (
   int release )
 {
 
-char line[127+1], buf[127+1], t1[127+1], t2[127+1], t3[127+1], t4[127+1],
- t5[127+1], t6[127+1], t7[127+1], mod[4][127+1], fontSpec[127+1],
- *ptr, *tk1, *tk2, *ctx1, *ctx2;
+char line[255+1], buf[255+1], t1[255+1], t2[255+1], t3[255+1], t4[255+1],
+ t5[255+1], t6[255+1], t7[255+1], mod[4][255+1], fontSpec[255+1],
+ userFontFamilyName[63+1], *famTk, *ptr, *tk1, *tk2, *ctx1, *ctx2;
 int i, ii, iii, pointSize[200], numSizes;
 int stat, preload;
 int empty = 1;
@@ -499,7 +585,7 @@ XFontStruct *fs;
 
     processAllEvents( app, display );
 
-    ptr = fgets ( line, 127, f );
+    ptr = fgets ( line, 255, f );
     if ( ptr ) { // ignore blank lines
 
       ctx1 = NULL;
@@ -512,7 +598,17 @@ XFontStruct *fs;
           ctx1 = NULL;
           strcpy( buf, line );
 
-          tk1 = strtok_r( buf, "\t\n()", &ctx1 );
+          tk1 = strtok_r( buf, "=\t\n()", &ctx1 );
+          if ( tk1 ) {
+            strncpy( userFontFamilyName, tk1, 63 );
+            userFontFamilyName[63] = 0;
+          }
+          else {
+            fclose( f );
+            return FONTINFO_SYNTAX;
+          }
+
+          tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
           if ( tk1 ) {
             strcpy( t1, tk1 );
           }
@@ -690,7 +786,7 @@ XFontStruct *fs;
 
                 cur = new fontNameListType;
 
-                stat = this->resolveFont( fontSpec, cur );
+                stat = this->resolveFont( fontSpec, userFontFamilyName, cur );
                 if ( !( stat & 1 ) ) {
                   delete cur;
                   return stat;

@@ -121,6 +121,11 @@ int resolveFont (
   char *fontSpec,
   fontNameListPtr ptr );
 
+int resolveFont (
+  char *fontSpec,
+  char *userFontFamilyName,
+  fontNameListPtr ptr );
+
 int resolveOneFont (
   char *fontSpec,
   fontNameListPtr ptr );
