@@ -1,7 +1,20 @@
 #ifndef __font_pkg_str
 #define __font_pkg_str 1
 
-#define fontInfoClass_str1 (char *) "error from avl_get_first\n"
-#define fontInfoClass_str2 (char *) "error from avl_get_next\n"
+#define fontInfoClass_str1 (char *) "Error from avl_get_first\n"
+#define fontInfoClass_str2 (char *) "Error from avl_get_next\n"
+#define fontInfoClass_str3 (char *) "Expected default site font near line %-d\n"
+#define fontInfoClass_str4 (char *) "Expected default text create font near line %-d\n"
+#define fontInfoClass_str5 (char *) "Font file syntax error near line %-d\n"
+#define fontInfoClass_str6 (char *) "No fonts were specified\n"
+#define fontInfoClass_str7 (char *) "To many font sizes at line %-d\n"
+#define fontInfoClass_str8 (char *) "No such font available: [%s]\n"
+#define fontInfoClass_str9 (char *) "Last line processed: %-d\n"
+#define fontInfoClass_str10 (char *) "Missing \"}\" in font group definition\n"
+#define fontInfoClass_str11 (char *) "Internal error at line %-d in file %s\n"
+#define fontInfoClass_str12 (char *) "Font group syntax error near line %-d\n"
+#define fontInfoClass_str13 (char *) "Warning - duplicate font tag name: [%s], from line: %-d\n"
+
+//#define fontInfoClass_str (char *) "\n"
 
 #endif

@@ -41,6 +41,10 @@
 #define FONTINFO_NO_FONT 106
 #define FONTINFO_NO_MEM 108
 #define FONTINFO_SYNTAX 110
+#define FONTINFO_BADSPEC 112
+#define FONTINFO_TOOMANYSIZES 114
+#define FONTINFO_MISSINGBRACE 116
+#define FONTINFO_GROUPSYNTAX 118
 
 void processAllEvents (
   XtAppContext app,
@@ -91,11 +95,48 @@ Display *display;
 
 char defFontTag[127+1], defSiteFontTag[127+1];
 
+int requireExactMatch; // all font sizes/types must exist, do no substitution
+
+char mediumString[63+1], boldString[63+1], regularString[63+1],
+ italicString[63+1];
+
+int lineNum, lastNonCommentLine;
+
 public:
 
 fontInfoClass ( void );   // constructor
 
 ~fontInfoClass ( void );   // destructor
+
+char *fontInfoClass::getStrFromFile (
+  char *str,
+  int maxLen,
+  FILE *f
+);
+
+void setMediumString (
+  char *str
+);
+
+void setBoldString (
+  char *str
+);
+
+void setRegularString (
+  char *str
+);
+
+void setItalicString (
+  char *str
+);
+
+int parseFontSpec (
+  char *fontSpec,
+  char *foundary,
+  char *family,
+  char *weight,
+  char *slant,
+  char *pixelSize );
 
 char *defaultSiteFont ( void ) { return defSiteFontTag; }
 
