@@ -242,7 +242,9 @@ char *expStringClass::getExpanded ( void ) {
     }
     else {
 
-      if ( strcmp( expandedString1, "" ) == 0 ) return rawString;
+      //if ( strcmp( expandedString1, "" ) == 0 ) return rawString;
+      if ( strcmp( expandedString1, "" ) == 0 ) return g_expStrBlank;
+
       return expandedString1;
 
     }
@@ -250,7 +252,9 @@ char *expStringClass::getExpanded ( void ) {
   }
   else {
 
-    if ( strcmp( expandedString2, "" ) == 0 ) return rawString;
+    // if ( strcmp( expandedString2, "" ) == 0 ) return rawString;
+    if ( strcmp( expandedString2, "" ) == 0 ) return g_expStrBlank;
+
     return expandedString2;
 
   }
@@ -572,8 +576,15 @@ int state, foundOne, i, ii, nOut, nIn, nMacro, outStrLen;
 
   }
   else {
+
+    if ( *outStringSize == 0 ) {
+      *outStringSize = 1;
+      *outString = new char[1];
+    }
+
     if ( outString ) strcpy( *outString, "" );
     *outStringLen = 0;
+
   }
 
   return EXPSTR_SUCCESS;

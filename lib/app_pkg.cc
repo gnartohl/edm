@@ -3591,7 +3591,18 @@ fileListPtr curFile;
             strncpy( mac, tk, 1023 );
             tk = strtok( NULL, "=," );
             if ( tk ) {
-              strncpy( exp, tk, 1023 );
+              if ( strcmp( tk, "\"\"" ) == 0 ) {
+                strcpy( exp, "" );
+	      }
+              else if ( strcmp( tk, "\'\'" ) == 0 ) {
+                strcpy( exp, "" );
+	      }
+              else if ( strcmp( tk, "\\'\\'" ) == 0 ) {
+                strcpy( exp, "" );
+	      }
+	      else {
+                strncpy( exp, tk, 1023 );
+	      }
             }
             else {
               return 4; // macro, but no value
