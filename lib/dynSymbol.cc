@@ -742,6 +742,8 @@ char itemName[127+1], *gotOne, *tk;
 activeGraphicListPtr head, cur, next;
 int i;
 FILE *f;
+char name[127+1];
+expStringClass expStr;
 
   saveLine = actWin->line();
 
@@ -765,7 +767,12 @@ FILE *f;
 
   if ( strcmp( dynSymbolFileName, "" ) == 0 ) return 0;
 
-  f = actWin->openAny( dynSymbolFileName, "r" );
+  actWin->substituteSpecial( 127, dynSymbolFileName, name );
+
+  expStr.setRaw( name );
+  expStr.expand1st( actWin->numMacros, actWin->macros, actWin->expansions );
+
+  f = actWin->openAny( expStr.getExpanded(), "r" );
   if ( !f ) {
     numStates = 0;
     return 0;

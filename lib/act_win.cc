@@ -15243,7 +15243,7 @@ void activeWindowClass::substituteSpecial (
   char *bufOut )
 {
 
-char param[1023+1], dspName[127+1];
+char param[1023+1], dspName[127+1], *envPtr;
 int i, len, iIn, iOut, p0, p1, more, state, winid;
 
   state = 1; // copying
@@ -15319,6 +15319,15 @@ int i, len, iIn, iOut, p0, p1, more, state, winid;
           strncat( bufOut, userDataFilePrefix, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
+	}
+        else if ( strcmp( param, "<HELPDIR>" ) == 0 ) {
+          bufOut[iOut] = 0;
+          envPtr = getenv( "EDMHELPFILES" );
+          if ( envPtr ) {
+            strncat( bufOut, envPtr, max );
+            iOut = strlen( bufOut );
+            if ( iOut >= max ) iOut = max - 1;
+	  }
 	}
         else if ( strcmp( param, "<DSPNAME>" ) == 0 ) {
           bufOut[iOut] = 0;

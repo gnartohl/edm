@@ -327,11 +327,17 @@ void activeGifClass::checkGifFileTime ( void )
 int status;
 char name[127+1];
 struct stat statBuf;
+expStringClass expStr;
 
-  this->actWin->expandUserFileName( name, gifFileName, ".gif", 127 );
+  this->actWin->substituteSpecial( 127, gifFileName, name );
+
+  expStr.setRaw( name );
+  expStr.expand1st( actWin->numMacros, actWin->macros, actWin->expansions );
+
+  this->actWin->expandUserFileName( name, expStr.getExpanded(), ".gif", 127 );
   status = stat( name, &statBuf );
   if ( status ) {
-    this->actWin->expandFileName( name, gifFileName, ".gif", 127 );
+    this->actWin->expandFileName( name, expStr.getExpanded(), ".gif", 127 );
     status = stat( name, &statBuf );
     if ( status ) {
       fileModTime = 0;
@@ -363,14 +369,14 @@ int fileOpened = 0;
 struct stat statBuf;
 expStringClass expStr;
 
-  expStr.setRaw( gifFileName );
+  this->actWin->substituteSpecial( 127, gifFileName, name );
+
+  expStr.setRaw( name );
   expStr.expand1st( actWin->numMacros, actWin->macros, actWin->expansions );
 
-  //this->actWin->expandUserFileName( name, gifFileName, ".gif", 127 );
   this->actWin->expandUserFileName( name, expStr.getExpanded(), ".gif", 127 );
   gif = DGifOpenFileName( name );
   if ( !gif ) {
-    //this->actWin->expandFileName( name, gifFileName, ".gif", 127 );
     this->actWin->expandFileName( name, expStr.getExpanded(), ".gif", 127 );
     gif = DGifOpenFileName( name );
     if ( !gif ) {
