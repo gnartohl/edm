@@ -18,6 +18,8 @@
 
 #include "expString.h"
 
+static char *g_expStrBlank = "";
+
 expStringClass::expStringClass ( void )
 {
 
@@ -162,7 +164,14 @@ void expStringClass::copy ( const expStringClass &source )
 }
 
 char *expStringClass::getRaw ( void ) {
-  return rawString;
+
+  if ( !rawString ) {
+    return g_expStrBlank;
+  }
+  else {
+    return rawString;
+  }
+
 }
 
 int expStringClass::setRaw (
@@ -223,7 +232,12 @@ char *expStringClass::getExpanded ( void ) {
 
     if ( !expandedString1 ) {
 
-      return rawString;
+      if ( !rawString ) {
+        return g_expStrBlank;
+      }
+      else {
+        return rawString;
+      }
 
     }
     else {
