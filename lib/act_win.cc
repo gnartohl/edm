@@ -14868,41 +14868,30 @@ char s[127+1];
 
     ci->readColorIndex( f, &index );
     incLine(); incLine();
-    fgColor = index;
 
     ci->readColorIndex( f, &index );
     incLine(); incLine();
-    bgColor = index;
-
-    drawGc.setBaseBG( ci->pix(bgColor) );
 
     ci->readColorIndex( f, &index );
     incLine(); incLine();
-    defaultTextFgColor = index;
 
     ci->readColorIndex( f, &index );
     incLine(); incLine();
-    defaultFg1Color = index;
 
     ci->readColorIndex( f, &index );
     incLine(); incLine();
-    defaultFg2Color = index;
 
     ci->readColorIndex( f, &index );
     incLine(); incLine();
-    defaultBgColor = index;
 
     ci->readColorIndex( f, &index );
     incLine(); incLine();
-    defaultTopShadowColor = index;
 
     ci->readColorIndex( f, &index );
     incLine(); incLine();
-    defaultBotShadowColor = index;
 
     ci->readColorIndex( f, &index );
     incLine(); incLine();
-    defaultOffsetColor = index;
 
   }
   else if ( ( major == 3 ) && ( minor == 0 ) ) {
