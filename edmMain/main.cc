@@ -85,6 +85,7 @@ typedef struct main_que_tag { /* locked queue header */
 #define QUERY_LOAD 1
 #define CONNECT 2
 #define OPEN_INITIAL 3
+#define OPEN 4
 
 typedef struct argsTag {
   int argc;
@@ -385,7 +386,8 @@ void checkForServer (
   int portNum,
   int appendDisplay,
   char *displayName,
-  int oneInstance )
+  int oneInstance,
+  int openCmd )
 {
 
 char chkHost[31+1], host[31+1], addr[31+1];
@@ -557,13 +559,28 @@ nextHost:
 
   if ( oneInstance ) {
 
-    msg[0] = (char) OPEN_INITIAL;
-    pos = 1;
-    max = 255 - pos;
+    if ( openCmd ) {
 
-    strncpy( &msg[pos], "*OIS*|", max );
-    pos = strlen(msg);
-    max = 255 - pos;
+      msg[0] = (char) OPEN;
+      pos = 1;
+      max = 255 - pos;
+
+      strncpy( &msg[pos], "*OPN*|", max );
+      pos = strlen(msg);
+      max = 255 - pos;
+
+    }
+    else {
+
+      msg[0] = (char) OPEN_INITIAL;
+      pos = 1;
+      max = 255 - pos;
+
+      strncpy( &msg[pos], "*OIS*|", max );
+      pos = strlen(msg);
+      max = 255 - pos;
+
+    }
 
     strncpy( &msg[pos], displayName, max );
     pos = strlen(msg);
@@ -793,6 +810,7 @@ int *portNumPtr = (int *) thread_get_app_data( h );
     switch ( cmd ) {
 
     case OPEN_INITIAL:
+    case OPEN:
 
       stat = thread_lock_master( h );
 
@@ -889,6 +907,7 @@ void checkParams (
   int *portNum,
   int *restart,
   int *oneInstance,
+  int *openCmd,
   int *convertOnly )
 {
 
@@ -902,6 +921,7 @@ Display *testDisplay;
   *local = 0;
   *server = 0;
   *oneInstance = 0;
+  *openCmd = 0;
   *appendDisplay = 1;
   *portNum = 19000;
   *restart = 0;
@@ -944,6 +964,12 @@ Display *testDisplay;
 	  *oneInstance = 1;
           *server = 1;
           *local = 0;
+        }
+	else if ( strcmp( argv[n], global_str93 ) == 0 ) {
+	  *oneInstance = 1;
+          *server = 1;
+          *local = 0;
+          *openCmd = 1;
         }
         else if ( strcmp( argv[n], global_str86 ) == 0 ) {
           n++;
@@ -1115,7 +1141,7 @@ extern int main (
 
 int i, j, stat, numAppsRemaining, exitProg, shutdown, q_stat_r, q_stat_i,
  local, server, portNum, restart, n, x, y, icon, sessionNoEdit, screenNoEdit,
- oneInstance, convertOnly, needConnect;
+ oneInstance, openCmd, convertOnly, needConnect;
 THREAD_HANDLE delayH, serverH; //, caPendH;
 argsPtr args;
 appListPtr cur, next, appArgsHead, newOne, first;
@@ -1140,7 +1166,7 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
   g_numClients = 1;
 
   checkParams( argc, argv, &local, &server, &appendDisplay, displayName,
-   &portNum, &restart, &oneInstance, &convertOnly );
+   &portNum, &restart, &oneInstance, &openCmd, &convertOnly );
 
   // if doing a restart, read in check point file
   if ( restart ) {
@@ -1169,6 +1195,7 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
 
       if ( oneInstanceFlag ) {
         oneInstance = 1;
+        openCmd = 0;
         server = 1;
         appendDisplay = 1;
         local = 0;
@@ -1194,11 +1221,18 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
   if ( server ) {
 
     checkForServer( argc, argv, portNum, appendDisplay, displayName,
-     oneInstance );
+     oneInstance, openCmd );
 
   }
 
   if ( server ) {
+
+    // If openCmd is true, we want the server to open some screens;
+    // if no server is running, we do not want to launch an instance of edm
+    if ( openCmd ) {
+      printf( main_str46 );
+      exit(0);
+    }
 
     stat = sys_iniq( &g_mainFreeQueue );
     if ( !( stat & 1 ) ) {
@@ -1646,7 +1680,29 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
             tk = strtok_r( tmpMsg, "|", &buf1 );
             if ( !tk ) goto parse_error;
 
-	    if ( strcmp( tk, "*OIS*" ) == 0 ) {
+	    if ( strcmp( tk, "*OPN*" ) == 0 ) {
+
+              needConnect = 1;
+              tk = strtok_r( NULL, "|", &buf1 ); // should contain display name
+
+	      // make 1st app ctx open/deiconify/raise initial files
+	      // and deiconify/raise main window so things look like
+	      // a new instance of edm is starting
+              first = appArgsHead->flink;
+              while ( first != appArgsHead ) {
+		if ( ( strcmp( tk, ":0.0" ) == 0 ) ||
+                     ( strcmp( tk,
+                        first->appArgs->appCtxPtr->displayName ) == 0 ) ) {
+                  tk = strtok_r( NULL, "|", &buf1 );
+                  first->appArgs->appCtxPtr->openFiles( node->msg );
+                  needConnect = 0;
+                  break;
+		}
+                first = first->flink;
+	      }
+
+	    }
+	    else if ( strcmp( tk, "*OIS*" ) == 0 ) {
 
               needConnect = 1;
               tk = strtok_r( NULL, "|", &buf1 ); // should contain display name
@@ -1675,7 +1731,8 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
             tk = strtok_r( tmpMsg, "|", &buf1 );
             if ( !tk ) goto parse_error;
 
-	    if ( ( strcmp( tk, "*OIS*" ) != 0 ) ||
+	    if ( ( ( strcmp( tk, "*OIS*" ) != 0 ) &&
+                   ( strcmp( tk, "*OPN*" ) != 0 ) ) ||
                  needConnect ) {
 
               args = new argsType;
