@@ -39,6 +39,27 @@ static XtActionsRec g_dragActions[] = {
   { "selectDrag", (XtActionProc) selectDrag }
 };
 
+static int stringPut (
+  ProcessVariable *id,
+  int size,
+  char *string
+) {
+
+  if ( size == 1 ) {
+
+    id->putText( string );
+
+  }
+  else {
+
+    id->putArrayText( string );
+
+  }
+
+  return 1;
+
+}
+
 static void eventHandler (
   Widget w,
   XtPointer client,
@@ -46,6 +67,9 @@ static void eventHandler (
   Boolean *continueToDispatch ) {
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
+int stat;
+char string[XTDC_K_MAX+1];
+char *buf;
 
   *continueToDispatch = True;
 
@@ -69,38 +93,44 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
   }
   else if ( e->type == LeaveNotify ) {
 
-    axtdo->grabUpdate = 0;
+    if ( axtdo->changeValOnLoseFocus ) {
 
-    axtdo->bufInvalidate();
-    axtdo->actWin->appCtx->proc->lock();
-    axtdo->needUpdate = 1;
-    axtdo->actWin->addDefExeNode( axtdo->aglPtr );
-    axtdo->actWin->appCtx->proc->unlock();
+      buf = XmTextGetString( axtdo->tf_widget );
+      strncpy( axtdo->entryValue, buf, XTDC_K_MAX );
+      axtdo->entryValue[XTDC_K_MAX] = 0;
+      XtFree( buf );
+      strncpy( axtdo->curValue, axtdo->entryValue, XTDC_K_MAX );
+      axtdo->curValue[XTDC_K_MAX] = 0;
+      strncpy( string, axtdo->entryValue, XTDC_K_MAX );
+      string[XTDC_K_MAX] = 0;
+
+      if ( axtdo->pvExists ) {
+        stat = stringPut( axtdo->pvId, axtdo->pvCount, string );
+      }
+      else {
+        axtdo->grabUpdate = 0;
+        axtdo->bufInvalidate();
+        axtdo->actWin->appCtx->proc->lock();
+        axtdo->needUpdate = 1;
+        axtdo->actWin->addDefExeNode( axtdo->aglPtr );
+        axtdo->actWin->appCtx->proc->unlock();
+      }
+
+    }
+    else {
+
+      axtdo->grabUpdate = 0;
+      axtdo->bufInvalidate();
+      axtdo->actWin->appCtx->proc->lock();
+      axtdo->needUpdate = 1;
+      axtdo->actWin->addDefExeNode( axtdo->aglPtr );
+      axtdo->actWin->appCtx->proc->unlock();
+
+    }
 
     *continueToDispatch = False;
 
   }
-
-}
-
-static int stringPut (
-  ProcessVariable *id,
-  int size,
-  char *string
-) {
-
-  if ( size == 1 ) {
-
-    id->putText( string );
-
-  }
-  else {
-
-    id->putArrayText( string );
-
-  }
-
-  return 1;
 
 }
 
@@ -653,6 +683,8 @@ char *buf;
 Arg args[10];
 int n;
 
+  axtdo->grabUpdate = 0;
+
   n = 0;
   XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
   XtSetValues( axtdo->tf_widget, args, n );
@@ -754,6 +786,8 @@ char *buf;
 Arg args[10];
 int n;
 char tmp[XTDC_K_MAX+1];
+
+  axtdo->grabUpdate = 0;
 
   n = 0;
   XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
@@ -900,6 +934,8 @@ double dvalue;
 char *buf, tmp[XTDC_K_MAX+1];
 Arg args[10];
 int n;
+
+  axtdo->grabUpdate = 0;
 
   n = 0;
   XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
