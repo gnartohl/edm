@@ -26,6 +26,9 @@
 #define activeXTextClass_str23 (char *) "Text String"
 #define activeXTextClass_str24 (char *) "import file syntax error"
 #define activeXTextClass_str25 (char *) "error creating pv\n"
+#define activeXTextClass_str26 (char *) "Border"
+#define activeXTextClass_str27 (char *) "Line Thk"
+#define activeXTextClass_str28 (char *) "0|1|2|3|4|5|6|7|8|9|10"
 #define activeXTextClass_str33 (char *) "value"
 
 #endif
