@@ -1443,12 +1443,15 @@ void activeDynSymbolClass::btnUp (
 
 int activeDynSymbolClass::activate (
   int pass,
-  void *ptr ) {
+  void *ptr,
+  int *numSubObjects ) {
 
 int i, stat, opStat;
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
+int num;
 
+  *numSubObjects = 0;
   for ( i=0; i<numStates; i++ ) {
 
     head = (activeGraphicListPtr) voidHead[i];
@@ -1462,8 +1465,19 @@ activeGraphicListPtr cur;
 	 "", 0, "", 0, "", 0, fgColor, fgColor, 0, 0, bgColor,
          0, 0 );
       }
-      cur->node->activate( pass, (void *) cur );
+
+      cur->node->activate( pass, (void *) cur, &num );
+
+      (*numSubObjects) += num;
+      if ( *numSubObjects >= activeWindowClass::NUM_PER_PENDIO ) {
+        ca_pend_io( 5.0 );
+        ca_pend_event( 0.01 );
+        processAllEvents( actWin->appCtx->appContext(), actWin->d );
+        *numSubObjects = 0;
+      }
+
       cur->node->removeBlink();
+
       cur = cur->flink;
 
     }
@@ -1641,12 +1655,13 @@ activeGraphicListPtr cur;
 }
 
 int activeDynSymbolClass::deactivate (
-  int pass
-) {
+  int pass,
+  int *numSubObjects ) {
 
 int i, stat;
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
+int num;
 
   timerActive = 0;
 
@@ -1655,6 +1670,7 @@ activeGraphicListPtr cur;
     timer = 0;
   }
 
+  *numSubObjects = 0;
   for ( i=0; i<numStates; i++ ) {
 
     head = (activeGraphicListPtr) voidHead[i];
@@ -1662,7 +1678,16 @@ activeGraphicListPtr cur;
     cur = head->flink;
     while ( cur != head ) {
 
-      cur->node->deactivate( pass );
+      cur->node->deactivate( pass, &num );
+
+      (*numSubObjects) += num;
+      if ( *numSubObjects >= activeWindowClass::NUM_PER_PENDIO ) {
+        ca_pend_io( 5.0 );
+        ca_pend_event( 0.01 );
+        processAllEvents( actWin->appCtx->appContext(), actWin->d );
+        *numSubObjects = 0;
+      }
+
       cur->node->removeBlink();
 
       cur = cur->flink;

@@ -4522,7 +4522,7 @@ char msg[127+1];
   }
 
 #ifdef __epics__
-  stat = ca_pend_io( 3.0 );
+  stat = ca_pend_io( 10.0 );
   ca_pend_event( 0.00001 );
 #endif
 

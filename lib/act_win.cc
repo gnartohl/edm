@@ -13699,7 +13699,8 @@ activeGraphicListPtr node = (activeGraphicListPtr) ptr;
 
 int activeWindowClass::execute ( void ) {
 
-int pass, opStat, stat, nTries, btnUp, btnDown, btnDrag, btnFocus, cnt;
+int pass, opStat, stat, nTries, btnUp, btnDown, btnDrag, btnFocus, cnt,
+ numSubObjects;
 activeGraphicListPtr cur, cur1;
 btnActionListPtr curBtn;
 int numMuxMacros;
@@ -13803,25 +13804,18 @@ char callbackName[63+1];
       while ( cur != head ) {
 
         if ( !cur->node->isMux() ) {
-          stat = cur->node->activate( pass, (void *) cur );
+          stat = cur->node->activate( pass, (void *) cur, &numSubObjects );
           if ( !( stat & 1 ) ) opStat = stat;
+          cnt += numSubObjects;
+          if ( cnt >= NUM_PER_PENDIO ) {
+            ca_pend_io( 5.0 );
+            ca_pend_event( 0.01 );
+            processAllEvents( appCtx->appContext(), d );
+            cnt = 0;
+	  }
         }
 
         cur = cur->flink;
-
-#if 1
-        cnt++;
-        if ( !( cnt % 1000 ) ) {
-          ca_pend_io( 3.0 );
-          if ( pass == 6 ) {
-            ca_pend_event( 0.01 );
-	  }
-          else {
-            ca_pend_event( 0.1 );
-	  }
-          processAllEvents( appCtx->appContext(), d );
-	}
-#endif
 
       }
 
@@ -13914,7 +13908,7 @@ char callbackName[63+1];
 
 int activeWindowClass::reexecute ( void ) { // for multiplexor
 
-int pass, opStat, stat, nTries, cnt;
+int pass, opStat, stat, nTries, cnt, numSubObjects;
 activeGraphicListPtr cur, cur1;
 
 int numMuxMacros;
@@ -13986,25 +13980,18 @@ char **muxMacro, **muxExpansion;
       while ( cur != head ) {
 
         if ( !cur->node->isMux() && cur->node->containsMacros() ) {
-          stat = cur->node->activate( pass, (void *) cur );
+          stat = cur->node->activate( pass, (void *) cur, &numSubObjects );
           if ( !( stat & 1 ) ) opStat = stat;
+          cnt += numSubObjects;
+          if ( cnt >= NUM_PER_PENDIO ) {
+            ca_pend_io( 5.0 );
+            ca_pend_event( 0.01 );
+            processAllEvents( appCtx->appContext(), d );
+            cnt = 0;
+	  }
         }
 
         cur = cur->flink;
-
-#if 1
-        cnt++;
-        if ( !( cnt % 1000 ) ) {
-          ca_pend_io( 3.0 );
-          if ( pass == 6 ) {
-            ca_pend_event( 0.01 );
-	  }
-          else {
-            ca_pend_event( 0.1 );
-	  }
-          processAllEvents( appCtx->appContext(), d );
-	}
-#endif
 
       }
 
@@ -14031,7 +14018,7 @@ activeGraphicListPtr cur;
 btnActionListPtr curBtn, nextBtn;
 
 Window root, child;
-int rootX, rootY, winX, winY, pass, cnt;
+int rootX, rootY, winX, winY, pass, cnt, numSubObjects;
 unsigned int mask;
 char callbackName[63+1];
 
@@ -14090,25 +14077,19 @@ char callbackName[63+1];
   while ( cur != head ) {
 
     for ( pass=1; pass<=2; pass++ ) {
-      cur->node->deactivate( pass );
+      cur->node->deactivate( pass, &numSubObjects );
     }
     cur->node->deselect();
 
     cur = cur->flink;
 
-#if 1
-    cnt++;
-    if ( !( cnt % 1000 ) ) {
-      ca_pend_io( 3.0 );
-      if ( pass == 2 ) {
-        ca_pend_event( 0.01 );
-      }
-      else {
-        ca_pend_event( 0.1 );
-      }
+    cnt += numSubObjects;
+    if ( cnt >= NUM_PER_PENDIO ) {
+      ca_pend_io( 5.0 );
+      ca_pend_event( 0.01 );
       processAllEvents( appCtx->appContext(), d );
+      cnt = 0;
     }
-#endif
 
   }
 
@@ -14211,19 +14192,28 @@ int activeWindowClass::preReexecute ( void )
 {
 
 activeGraphicListPtr cur;
+int numSubObjects, cnt;
 
   if ( mode == AWC_EDIT ) return 1;
 
   mode = AWC_EDIT;
 
+  cnt = 0;
   cur = head->flink;
   while ( cur != head ) {
 
     if ( !cur->node->isMux() && cur->node->containsMacros() ) {
       cur->node->bufInvalidate();
       cur->node->eraseActive();
-      cur->node->preReactivate(1);
-      cur->node->preReactivate(2);
+      cur->node->preReactivate( 1, &numSubObjects);
+      cur->node->preReactivate( 2, &numSubObjects);
+      cnt += numSubObjects;
+      if ( cnt >= NUM_PER_PENDIO ) {
+        ca_pend_io( 5.0 );
+        ca_pend_event( 0.01 );
+        processAllEvents( appCtx->appContext(), d );
+        cnt = 0;
+      }
     }
 
     cur = cur->flink;

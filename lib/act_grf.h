@@ -440,6 +440,12 @@ virtual int activate (
   int pass,
   void *ptr );
 
+virtual int activate (
+  int pass,
+  void *ptr,
+  int *numSubObjects // for groups & symbols
+);
+
 virtual int reactivate (
   int pass );
 
@@ -649,7 +655,18 @@ virtual int deactivate (
   int pass
 );
 
-virtual int preReactivate ( int pass );
+virtual int deactivate (
+  int pass,
+  int *numSubObjects // for groups & symbols
+);
+
+virtual int preReactivate (
+  int pass );
+
+virtual int preReactivate (
+  int pass,
+  int *numSubObjects // for groups & symbols
+);
 
 virtual int createGroup (
   activeWindowClass *actWin );

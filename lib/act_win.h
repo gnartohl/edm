@@ -390,6 +390,8 @@ class activeWindowClass {
 
 public:
 
+static const int NUM_PER_PENDIO = 1000;
+
 char curSchemeSet[63+1];
 
 char startSignature[15+1];

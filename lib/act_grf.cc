@@ -1686,9 +1686,24 @@ int activeGraphicClass::activate (
   void *ptr )
 {
 
-  activate( pass );
+int stat;
 
-  return 1;
+  stat = activate( pass );
+  return stat;
+
+}
+
+int activeGraphicClass::activate (
+  int pass,
+  void *ptr,
+  int *numSubObjects // for groups & symbols
+) {
+
+int stat;
+
+  stat = activate( pass, ptr );
+  *numSubObjects = 1;
+  return stat;
 
 }
 
@@ -1736,6 +1751,19 @@ int stat;
 
 }
 
+int activeGraphicClass::deactivate (
+  int pass ,
+  int *numSubObjects // for groups & symbols
+) {
+
+int stat;
+
+  stat = deactivate( pass );
+  *numSubObjects = 1;
+  return stat;
+
+}
+
 int activeGraphicClass::preReactivate (
   int pass )
 {
@@ -1743,6 +1771,18 @@ int activeGraphicClass::preReactivate (
 int stat;
 
   stat = deactivate( pass );
+  return stat;
+
+}
+
+int activeGraphicClass::preReactivate (
+  int pass,
+  int *numSubObjects // for groups & symbols
+) {
+
+int stat;
+
+  stat = deactivate( pass, numSubObjects );
   return stat;
 
 }
