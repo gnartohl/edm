@@ -185,6 +185,12 @@ int red, green, blue;
           XFillRectangle( cio->display, XtWindow(cio->form), cio->gc.normGC(),
            x, y, 20, 20 );
 
+          if ( cio->isRule( i ) ) {
+            cio->gc.setFG( cio->labelPix(i) );
+            XFillArc( cio->display, XtWindow(cio->form),
+             cio->gc.normGC(), x+7, y+7, 6, 6, 0, 23040 );
+	  }
+
           if ( i == cio->curIndex ) {
             cio->gc.setFG(
              BlackPixel( cio->display, DefaultScreen(cio->display) ) );
