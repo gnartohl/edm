@@ -74,6 +74,7 @@ ProcessVariable *EPICS_PV_Factory::create(const char *PV_name)
     {
         pv = (*entry)->pv;
         pv->reference();
+        //pv->processExistingPv();
     }
     else
     {
@@ -129,6 +130,23 @@ EPICS_ProcessVariable::~EPICS_ProcessVariable()
         ca_clear_channel(pv_chid);
     //printf("EPICS_ProcessVariable %s deleted\n", get_name());
     delete value;
+}
+
+void EPICS_ProcessVariable::processExistingPv ( void ) {
+
+    // This function is not currently in use
+
+    if ( value ) {
+
+        int stat = ca_array_get_callback(value->get_DBR()+DBR_CTRL_STRING,
+         1u, pv_chid, ca_ctrlinfo_refresh_callback, this);
+
+        if (stat != ECA_NORMAL)
+          fprintf(stderr, "CA get control info error('%s'): %s\n",
+           get_name(), ca_message(stat));
+
+    }
+
 }
 
 void EPICS_ProcessVariable::ca_connect_callback(
@@ -187,6 +205,7 @@ void EPICS_ProcessVariable::ca_connect_callback(
     else
     {
         me->is_connected = false;
+        me->have_ctrlinfo = false;
         me->do_conn_state_callbacks(); // tell widgets we disconnected
     }
 }
@@ -202,7 +221,6 @@ void EPICS_ProcessVariable::ca_ctrlinfo_callback(
     if ( !args.dbr ) return;
 
     me->value->read_ctrlinfo(args.dbr);
-    me->have_ctrlinfo = true;
     if (!me->pv_value_evid)
     {
         int stat = ca_add_masked_array_event(me->value->get_DBR()+
@@ -219,15 +237,48 @@ void EPICS_ProcessVariable::ca_ctrlinfo_callback(
             fprintf(stderr, "CA add event error('%s'): %s\n",
                     me->get_name(), ca_message(stat));
     }
-    me->do_conn_state_callbacks();  // tell widgets we connected & got info
+    else
+    {
+        if ( !me->have_ctrlinfo ) {
+            me->have_ctrlinfo = true;
+            me->do_conn_state_callbacks();  // tell widgets we connected
+	}                                   // & got info
+    }
+}
+
+void EPICS_ProcessVariable::ca_ctrlinfo_refresh_callback(
+    struct event_handler_args args)
+{
+
+    // This function is not currently in use
+
+    EPICS_ProcessVariable *me = (EPICS_ProcessVariable *)args.usr;
+
+    // Sometimes "get callback" functions get called with
+    // args.status set to ECA_DISCONN and args.dbr set to NULL.
+    // If so, return
+    if ( !args.dbr ) return;
+
+    me->value->read_ctrlinfo(args.dbr);
+
 }
 
 void EPICS_ProcessVariable::ca_value_callback(struct event_handler_args args)
 {
     EPICS_ProcessVariable *me = (EPICS_ProcessVariable *)args.usr;
+
     if (args.status == ECA_NORMAL  &&  args.dbr)
     {
         me->value->read_value(args.dbr);
+    }
+
+    if ( !me->have_ctrlinfo ) {
+      me->have_ctrlinfo = true;
+      me->do_conn_state_callbacks();  // tell widgets we connected & got info
+    }
+
+    if (args.status == ECA_NORMAL  &&  args.dbr)
+    {
         me->do_value_callbacks();
     }
     else
@@ -498,14 +549,18 @@ static ProcessVariable::specificType s_type =
 PVValueInt::PVValueInt(EPICS_ProcessVariable *epv)
         : PVValue(epv)
 {
+    int i;
     value = new int[epv->get_dimension()];
+    for ( i=0; i<epv->get_dimension(); i++ ) value[i] = 0;
     specific_type = i_type;
 }
 
 PVValueInt::PVValueInt(EPICS_ProcessVariable *epv, const char* typeInfo)
         : PVValue(epv)
 {
+    int i;
     value = new int[epv->get_dimension()];
+    for ( i=0; i<epv->get_dimension(); i++ ) value[i] = 0;
     if ( !strcmp( typeInfo, "short" ) ) {
       specific_type = s_type;
     }
@@ -594,14 +649,18 @@ static ProcessVariable::specificType f_type =
 PVValueDouble::PVValueDouble(EPICS_ProcessVariable *epv)
         : PVValue(epv)
 {
+    int i;
     value = new double[epv->get_dimension()];
+    for ( i=0; i<epv->get_dimension(); i++ ) value[i] = 0;
     specific_type = d_type;
 }
 
 PVValueDouble::PVValueDouble(EPICS_ProcessVariable *epv, const char* typeInfo)
         : PVValue(epv)
 {
+    int i;
     value = new double[epv->get_dimension()];
+    for ( i=0; i<epv->get_dimension(); i++ ) value[i] = 0;
     if ( !strcmp( typeInfo, "float" ) ) {
       specific_type = f_type;
     }
@@ -781,10 +840,12 @@ static ProcessVariable::specificType c_type =
 PVValueChar::PVValueChar(EPICS_ProcessVariable *epv)
         : PVValue(epv)
 {
+    int i;
     size_t room = epv->get_dimension() + 1;
     if (room < 2)
         room = 2;
     value = new char[room];
+    for ( i=0; i<epv->get_dimension(); i++ ) value[i] = 0;
     len = 0;
     specific_type = c_type;
 
@@ -863,3 +924,4 @@ void PVValueChar::read_value(const void *buf)
     //    printf("PVValueChar(%s)::read_value '%s'\n",
     //           epv->get_name(), value);
 }
+

@@ -8568,11 +8568,11 @@ int xyGraphClass::fillPlotArray (
   int trace
 ) {
 
-int i, npts;
+int i, npts, curCount;
 short curX, curY, prevX, prevY;
 double n;
 
-  npts = 0;
+  curCount = npts = 0;
 
   if ( opMode[trace] == XYGC_K_SCOPE_MODE ) {
 
@@ -8599,6 +8599,9 @@ double n;
         npts++;
 
       }
+
+      curCount++;
+      if ( curCount >= count ) return npts;
 
       i++;
       if ( i >= plotBufSize[trace] ) { // use plotBufSize here
@@ -8628,6 +8631,9 @@ double n;
           npts++;
 
         }
+
+        curCount++;
+        if ( curCount >= count ) return npts;
 
         i++;
         if ( i >= plotBufSize[trace] ) { // use plotBufSize here
@@ -8659,6 +8665,9 @@ double n;
         npts++;
       }
 
+      curCount++;
+      if ( curCount >= count ) return npts;
+
       i++;
       if ( i >= plotBufSize[trace] ) { // use plotBufSize here
         i = 0;
@@ -8687,6 +8696,9 @@ double n;
           plotBuf[trace][npts].y = curY;
           npts++;
         }
+
+        curCount++;
+        if ( curCount >= count ) return npts;
 
         i++;
         if ( i >= plotBufSize[trace] ) { // use plotBufSize here

@@ -71,6 +71,8 @@ private:
     EPICS_ProcessVariable &operator = (const ProcessVariable &rhs); // not impl.
     virtual ~EPICS_ProcessVariable();
 
+    void processExistingPv ( void );
+
     bool is_connected;     // currently connected to CA?
     bool have_ctrlinfo;    // have received DBR_CTRL_XXX
     chid pv_chid;          // CAC channel ID
@@ -79,6 +81,7 @@ private:
     
     static void ca_connect_callback(struct connection_handler_args arg);
     static void ca_ctrlinfo_callback(struct event_handler_args args);
+    static void ca_ctrlinfo_refresh_callback(struct event_handler_args args);
     static void ca_value_callback(struct event_handler_args args);
 };
 
