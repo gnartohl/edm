@@ -1765,7 +1765,8 @@ int relatedDisplayClass::eraseActive ( void ) {
 
 int relatedDisplayClass::draw ( void ) {
 
-int tX, tY;
+char *ptr;
+int tX, tY, cx, cy, min, ofs, size, strW;
 XRectangle xR = { x, y, w, h };
 int blink = 0;
 
@@ -1829,18 +1830,91 @@ int blink = 0;
 
     actWin->drawGc.addNormXClipRectangle( xR );
 
-    actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
-    actWin->drawGc.setFontTag( fontTag, actWin->fi );
+    if ( buttonLabel.getRaw() && !blank( buttonLabel.getRaw() ) ) {
 
-    tX = x + w/2;
-    tY = y + h/2 - fontAscent/2;
+      ptr = buttonLabel.getRaw();
 
-    if ( buttonLabel.getRaw() )
-      drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
-       XmALIGNMENT_CENTER, buttonLabel.getRaw() );
-    else
-      drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
-       XmALIGNMENT_CENTER, "" );
+      if ( strncmp( ptr, "-", 1 ) == 0 ) {
+
+	// no icon
+
+        tX = x + w/2;
+        tY = y + h/2 - fontHeight/2;
+
+        actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
+        actWin->drawGc.setFontTag( fontTag, actWin->fi );
+
+        drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
+         XmALIGNMENT_CENTER, &ptr[1] );
+
+      }
+      else {
+
+	// draw icon and text
+
+        strW = XTextWidth( fs, ptr, strlen(ptr) ) +
+         (int) ( 1.2*fontAscent+0.5 );
+
+        tX = x + (int) ( w/2+0.5 ) - (int) ( strW/2+0.5 ) +
+         (int) ( 1.2*fontAscent+0.5 );
+        tY = y + (int) ( h/2+0.5 ) - (int) ( fontHeight/2+0.5 );
+
+        cx = tX - (int) ( 1.2*fontAscent+0.5 );
+        cy = tY + (int) ( fontHeight*0.1+0.5 );
+        ofs = (int) ( fontHeight*0.2+0.5 );
+        size = (int) ( fontHeight-2.0*ofs+0.5 );
+
+        actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
+
+        XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+         actWin->drawGc.normGC(), cx+ofs, cy+ofs, size, size );
+
+        actWin->drawGc.setFG( bgColor.pixelIndex(), &blink );
+
+        XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+         actWin->drawGc.normGC(), cx, cy, size, size );
+
+        actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
+
+        XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+         actWin->drawGc.normGC(), cx, cy, size, size );
+
+        actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
+        actWin->drawGc.setFontTag( fontTag, actWin->fi );
+
+        drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
+         XmALIGNMENT_BEGINNING, ptr );
+
+      }
+
+    }
+    else {
+
+      // draw icon on button without text
+
+      min = (int) ( w*3/5 );
+      if ( (int) ( h*3/5 ) < min ) min = (int) ( h*3/5 );
+      cx = x + w/2;
+      cy = y + h/2;
+      ofs = (int) ( min*2/5+0.5 );
+      size = (int) ( min*3/5-0.5 );
+
+      actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
+
+      XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->drawGc.normGC(), cx+ofs-size, cy+ofs-size, size, size );
+
+      actWin->drawGc.setFG( bgColor.pixelIndex(), &blink );
+
+      XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->drawGc.normGC(), cx-ofs, cy-ofs, size, size );
+
+      actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
+
+      XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->drawGc.normGC(), cx-ofs, cy-ofs, size, size );
+
+    }
 
     actWin->drawGc.removeNormXClipRectangle();
 
@@ -1856,7 +1930,7 @@ int blink = 0;
 
 int relatedDisplayClass::drawActive ( void ) {
 
-int tX, tY;
+int tX, tY, cx, cy, min, ofs, size, strW;
 char string[39+1];
 XRectangle xR = { x, y, w, h };
 int blink = 0;
@@ -1955,14 +2029,89 @@ int blink = 0;
 
     actWin->executeGc.addNormXClipRectangle( xR );
 
-    actWin->executeGc.setFG( fgColor.getIndex(), &blink );
-    actWin->executeGc.setFontTag( fontTag, actWin->fi );
+    if ( !blank( string ) ) {
 
-    tX = x + w/2;
-    tY = y + h/2 - fontAscent/2;
+      if ( strncmp( string, "-", 1 ) == 0 ) {
 
-    drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
-     XmALIGNMENT_CENTER, string );
+	// no icon
+
+        tX = x + w/2;
+        tY = y + h/2 - fontHeight/2;
+
+        actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
+        actWin->executeGc.setFontTag( fontTag, actWin->fi );
+
+        drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
+         XmALIGNMENT_CENTER, &string[1] );
+
+      }
+      else {
+
+	// draw icon and text
+
+        strW = XTextWidth( fs, string, strlen(string) ) +
+         (int) ( 1.2*fontAscent+0.5 );
+
+        tX = x + (int) ( w/2+0.5 ) - (int) ( strW/2+0.5 ) +
+         (int) ( 1.2*fontAscent+0.5 );
+        tY = y + (int) ( h/2+0.5 ) - (int) ( fontHeight/2+0.5 );
+
+        cx = tX - (int) ( 1.2*fontAscent+0.5 );
+        cy = tY + (int) ( fontHeight*0.1+0.5 );
+        ofs = (int) ( fontHeight*0.2+0.5 );
+        size = (int) ( fontHeight-2.0*ofs+0.5 );
+
+        actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
+
+        XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), cx+ofs, cy+ofs, size, size );
+
+        actWin->executeGc.setFG( bgColor.pixelIndex(), &blink );
+
+        XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), cx, cy, size, size );
+
+        actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
+
+        XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), cx, cy, size, size );
+
+        actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
+        actWin->executeGc.setFontTag( fontTag, actWin->fi );
+
+        drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
+         XmALIGNMENT_BEGINNING, string );
+
+      }
+
+    }
+    else {
+
+      // draw icon on button without text
+
+      min = (int) ( w*3/5 );
+      if ( (int) ( h*3/5 ) < min ) min = (int) ( h*3/5 );
+      cx = x + w/2;
+      cy = y + h/2;
+      ofs = (int) ( min*2/5+0.5 );
+      size = (int) ( min*3/5-0.5 );
+
+      actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
+
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), cx+ofs-size, cy+ofs-size, size, size );
+
+      actWin->executeGc.setFG( bgColor.pixelIndex(), &blink );
+
+      XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), cx-ofs, cy-ofs, size, size );
+
+      actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
+
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), cx-ofs, cy-ofs, size, size );
+
+    }
 
     actWin->executeGc.removeNormXClipRectangle();
 

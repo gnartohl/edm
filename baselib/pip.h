@@ -185,6 +185,7 @@ typedef struct bufTag {
   int bufCenter;
   int bufSetSize;
   int bufSizeOfs;
+  int bufNoScroll;
 } bufType, *bufPtr;
 
 int numDsps, dspIndex;
@@ -198,6 +199,7 @@ int minH;
 int center;
 int setSize;
 int sizeOfs;
+int noScroll;
 
 Widget *frameWidget, clipWidget, hsbWidget, vsbWidget, popUpMenu,
  pullDownMenu, pb[maxDsps];

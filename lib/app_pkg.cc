@@ -4947,8 +4947,10 @@ char msg[127+1];
        NULL );
     }
 
-    stat = pend_io( 1.0 );
-    pend_event( 0.00001 );
+    if ( !( n % 30 ) ) {
+      stat = pend_io( 10.0 );
+      pend_event( 0.00001 );
+    }
     processAllEvents( app, display );
 
     cur = cur->flink;

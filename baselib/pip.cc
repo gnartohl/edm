@@ -157,6 +157,7 @@ int i, more;
   pipo->center = pipo->buf->bufCenter;
   pipo->setSize = pipo->buf->bufSetSize;
   pipo->sizeOfs = pipo->buf->bufSizeOfs;
+  pipo->noScroll = pipo->buf->bufNoScroll;
 
   pipo->x = pipo->buf->bufX;
   pipo->sboxX = pipo->buf->bufX;
@@ -366,6 +367,7 @@ int i;
   center = 0;
   setSize = 0;
   sizeOfs = 5;
+  noScroll = 0;
   activeMode = 0;
   frameWidget = NULL;
   clipWidget = NULL;
@@ -419,6 +421,7 @@ int i;
   center = source->center;
   setSize = source->setSize;
   sizeOfs = source->sizeOfs;
+  noScroll = source->noScroll;
   frameWidget = NULL;
   clipWidget = NULL;
   aw = NULL;
@@ -541,8 +544,8 @@ static int displaySourceEnum[3] = {
   tag.loadW( "filePv", &readPvExpStr, emptyStr );
   tag.loadW( "labelPv", &labelPvExpStr, emptyStr );
   tag.loadW( "file", &fileNameExpStr, emptyStr );
-  tag.loadW( "center", &center, &zero );
-  tag.loadW( "setSize", &setSize, &zero );
+  tag.loadBoolW( "center", &center, &zero );
+  tag.loadBoolW( "setSize", &setSize, &zero );
   tag.loadW( "sizeOfs", &sizeOfs, &zero );
   tag.loadW( "numDsps", &numDsps );
   tag.loadW( "displayFileName", displayFileName, numDsps, emptyStr );
@@ -550,6 +553,7 @@ static int displaySourceEnum[3] = {
   tag.loadW( "symbols", symbolsExpStr, numDsps, emptyStr );
   tag.loadW( "replaceSymbols", replaceSymbols, numDsps, &zero );
   tag.loadW( "propagateMacros", propagateMacros, numDsps, &one );
+  tag.loadBoolW( "noScroll", &noScroll, &zero );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -655,6 +659,7 @@ static int displaySourceEnum[3] = {
   tag.loadR( "symbols", maxDsps, symbolsExpStr, &n, emptyStr );
   tag.loadR( "replaceSymbols", maxDsps, replaceSymbols, &n, &zero );
   tag.loadR( "propagateMacros", maxDsps, propagateMacros, &n, &one );
+  tag.loadR( "noScroll", &noScroll, &zero );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.readTags( f, "endObjectProperties" );
@@ -778,6 +783,7 @@ int i;
   buf->bufCenter = center;
   buf->bufSetSize = setSize;
   buf->bufSizeOfs = sizeOfs;
+  buf->bufNoScroll = noScroll;
 
   for ( i=0; i<maxDsps; i++ ) {
 
@@ -824,6 +830,7 @@ int i;
   ef.addToggle( "Center", &buf->bufCenter );
   ef.addToggle( "Set Size", &buf->bufSetSize );
   ef.addTextField( "Size Ofs", 35, &buf->bufSizeOfs );
+  ef.addToggle( "Disable Scroll Bars", &buf->bufNoScroll );
 
   ef.addEmbeddedEf( "Menu Info", "...", &ef1 );
 
@@ -1616,70 +1623,101 @@ int activePipClass::createPipWidgets ( void ) {
   frameWidget = new Widget;
   *frameWidget = NULL;
 
-  *frameWidget = XtVaCreateWidget( "", xmScrolledWindowWidgetClass,
-   actWin->executeWidgetId(),
-   XmNx, x,
-   XmNy, y,
-   XmNwidth, w,
-   XmNheight, h,
-   XmNscrollBarDisplayPolicy, XmAS_NEEDED,
-   XmNscrollingPolicy, XmAUTOMATIC,
-   XmNvisualPolicy, XmCONSTANT,
-   XmNmarginWidth, 0,
-   XmNmarginHeight, 0,
-   XmNtopShadowColor, topShadowColor.pixelColor(),
-   XmNbottomShadowColor, botShadowColor.pixelColor(),
-   XmNborderColor, bgColor.pixelColor(),
-   XmNhighlightColor, bgColor.pixelColor(),
-   XmNforeground, bgColor.pixelColor(),
-   XmNbackground, bgColor.pixelColor(),
-   NULL );
+  if ( noScroll ) {
 
-  if ( !(*frameWidget) ) {
-    printf( activePipClass_str24 );
-    frameWidget = NULL;
-    return 0;
-  }
-
-  XtVaGetValues( *frameWidget,
-   XmNclipWindow, &clipWidget,
-   XmNhorizontalScrollBar, &hsbWidget,
-   XmNverticalScrollBar, &vsbWidget,
-   NULL );
-
-  if ( clipWidget ) {
-    XtVaSetValues( clipWidget,
-      XmNtopShadowColor, topShadowColor.pixelColor(),
-      XmNbottomShadowColor, botShadowColor.pixelColor(),
-      XmNborderColor, bgColor.pixelColor(),
-      XmNhighlightColor, bgColor.pixelColor(),
-      XmNforeground, bgColor.pixelColor(),
-      XmNbackground, bgColor.pixelColor(),
+    *frameWidget = XtVaCreateWidget( "", xmBulletinBoardWidgetClass,
+     actWin->executeWidgetId(),
+     XmNx, x,
+     XmNy, y,
+     XmNwidth, w,
+     XmNheight, h,
+     XmNnoResize, True,
+     XmNresizePolicy, XmRESIZE_NONE,
+     XmNmarginWidth, 0,
+     XmNmarginHeight, 0,
+     XmNtopShadowColor, topShadowColor.pixelColor(),
+     XmNbottomShadowColor, botShadowColor.pixelColor(),
+     XmNborderColor, bgColor.pixelColor(),
+     XmNhighlightColor, bgColor.pixelColor(),
+     XmNforeground, bgColor.pixelColor(),
+     XmNbackground, bgColor.pixelColor(),
      NULL );
-  }
 
-  if ( hsbWidget ) {
-    XtVaSetValues( hsbWidget,
-      XmNtopShadowColor, topShadowColor.pixelColor(),
-      XmNbottomShadowColor, botShadowColor.pixelColor(),
-      XmNborderColor, bgColor.pixelColor(),
-      XmNhighlightColor, bgColor.pixelColor(),
-      XmNforeground, bgColor.pixelColor(),
-      XmNbackground, fgColor.pixelColor(),
-      XmNtroughColor, bgColor.pixelColor(),
-      NULL );
-  }
+    if ( !(*frameWidget) ) {
+      printf( activePipClass_str24 );
+      frameWidget = NULL;
+      return 0;
+    }
 
-  if ( vsbWidget ) {
-    XtVaSetValues( vsbWidget,
-      XmNtopShadowColor, topShadowColor.pixelColor(),
-      XmNbottomShadowColor, botShadowColor.pixelColor(),
-      XmNborderColor, bgColor.pixelColor(),
-      XmNhighlightColor, bgColor.pixelColor(),
-      XmNforeground, bgColor.pixelColor(),
-      XmNbackground, fgColor.pixelColor(),
-      XmNtroughColor, bgColor.pixelColor(),
-      NULL );
+  }
+  else {
+
+    *frameWidget = XtVaCreateWidget( "", xmScrolledWindowWidgetClass,
+     actWin->executeWidgetId(),
+     XmNx, x,
+     XmNy, y,
+     XmNwidth, w,
+     XmNheight, h,
+     XmNscrollBarDisplayPolicy, XmAS_NEEDED,
+     XmNscrollingPolicy, XmAUTOMATIC,
+     XmNvisualPolicy, XmCONSTANT,
+     XmNmarginWidth, 0,
+     XmNmarginHeight, 0,
+     XmNtopShadowColor, topShadowColor.pixelColor(),
+     XmNbottomShadowColor, botShadowColor.pixelColor(),
+     XmNborderColor, bgColor.pixelColor(),
+     XmNhighlightColor, bgColor.pixelColor(),
+     XmNforeground, bgColor.pixelColor(),
+     XmNbackground, bgColor.pixelColor(),
+     NULL );
+
+    if ( !(*frameWidget) ) {
+      printf( activePipClass_str24 );
+      frameWidget = NULL;
+      return 0;
+    }
+
+    XtVaGetValues( *frameWidget,
+     XmNclipWindow, &clipWidget,
+     XmNhorizontalScrollBar, &hsbWidget,
+     XmNverticalScrollBar, &vsbWidget,
+     NULL );
+
+    if ( clipWidget ) {
+      XtVaSetValues( clipWidget,
+        XmNtopShadowColor, topShadowColor.pixelColor(),
+        XmNbottomShadowColor, botShadowColor.pixelColor(),
+        XmNborderColor, bgColor.pixelColor(),
+        XmNhighlightColor, bgColor.pixelColor(),
+        XmNforeground, bgColor.pixelColor(),
+        XmNbackground, bgColor.pixelColor(),
+       NULL );
+    }
+
+    if ( hsbWidget ) {
+      XtVaSetValues( hsbWidget,
+        XmNtopShadowColor, topShadowColor.pixelColor(),
+        XmNbottomShadowColor, botShadowColor.pixelColor(),
+        XmNborderColor, bgColor.pixelColor(),
+        XmNhighlightColor, bgColor.pixelColor(),
+        XmNforeground, bgColor.pixelColor(),
+        XmNbackground, fgColor.pixelColor(),
+        XmNtroughColor, bgColor.pixelColor(),
+        NULL );
+    }
+
+    if ( vsbWidget ) {
+      XtVaSetValues( vsbWidget,
+        XmNtopShadowColor, topShadowColor.pixelColor(),
+        XmNbottomShadowColor, botShadowColor.pixelColor(),
+        XmNborderColor, bgColor.pixelColor(),
+        XmNhighlightColor, bgColor.pixelColor(),
+        XmNforeground, bgColor.pixelColor(),
+        XmNbackground, fgColor.pixelColor(),
+        XmNtroughColor, bgColor.pixelColor(),
+        NULL );
+    }
+
   }
 
   return 1;
@@ -1976,7 +2014,8 @@ int gotSymbolsFromFile;
   actWin->appCtx->addActiveWindow( cur );
 
   cur->node.createEmbedded( actWin->appCtx, frameWidget, 0, 0, w, h,
-   x, y, center, setSize, sizeOfs, numNewMacros, newMacros, newValues );
+   x, y, center, setSize, sizeOfs, noScroll, numNewMacros, newMacros,
+   newValues );
 
   cur->node.realize();
 
@@ -2142,8 +2181,8 @@ XButtonEvent be;
           actWin->appCtx->addActiveWindow( cur );
 
           cur->node.createEmbedded( actWin->appCtx, frameWidget, 0, 0, w, h,
-           x, y, center, setSize, sizeOfs, actWin->numMacros, actWin->macros,
-           actWin->expansions );
+           x, y, center, setSize, sizeOfs, noScroll, actWin->numMacros,
+           actWin->macros, actWin->expansions );
 
           cur->node.realize();
 
@@ -2338,8 +2377,8 @@ XButtonEvent be;
           actWin->appCtx->addActiveWindow( cur );
 
           cur->node.createEmbedded( actWin->appCtx, frameWidget, 0, 0, w, h,
-           x, y, center, setSize, sizeOfs, actWin->numMacros, actWin->macros,
-           actWin->expansions );
+           x, y, center, setSize, sizeOfs, noScroll, actWin->numMacros,
+           actWin->macros, actWin->expansions );
 
           cur->node.realize();
 
@@ -2517,8 +2556,8 @@ XButtonEvent be;
           actWin->appCtx->addActiveWindow( cur );
 
           cur->node.createEmbedded( actWin->appCtx, frameWidget, 0, 0, w, h,
-           x, y, center, setSize, sizeOfs, actWin->numMacros, actWin->macros,
-           actWin->expansions );
+           x, y, center, setSize, sizeOfs, noScroll, actWin->numMacros,
+           actWin->macros, actWin->expansions );
 
           cur->node.realize();
 

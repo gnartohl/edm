@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 0
-x 362
-y 20
+x 331
+y 32
 w 819
-h 898
+h 945
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
@@ -28,7 +28,7 @@ major 4
 minor 0
 release 0
 x 430
-y 471
+y 513
 w 365
 h 408
 lineColor rgb 0 0 0
@@ -53,7 +53,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 18
 y 19
@@ -72,7 +72,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 16
 y 63
@@ -105,7 +105,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 312
@@ -125,7 +125,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 44
 y 338
@@ -162,7 +162,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 433
@@ -182,7 +182,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 44
 y 459
@@ -219,7 +219,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 556
@@ -239,7 +239,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 44
 y 582
@@ -261,7 +261,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 44
 y 645
@@ -283,7 +283,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 44
 y 711
@@ -307,7 +307,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 44
 y 812
@@ -331,20 +331,20 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 405
+x 407
 y 13
 w 0
-h 865
+h 911
 lineColor rgb 0 0 0
 fillColor rgb 48059 48059 48059
 numPoints 2
 xPoints {
-  0 405
-  1 405
+  0 407
+  1 407
 }
 yPoints {
   0 13
-  1 878
+  1 924
 }
 endObjectProperties
 
@@ -352,10 +352,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 521
-y 150
+y 192
 w 147
 h 21
 font "helvetica-bold-r-18.0"
@@ -372,10 +372,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 549
-y 195
+y 237
 w 71
 h 16
 font "helvetica-medium-r-14.0"
@@ -392,10 +392,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 549
-y 221
+y 263
 w 157
 h 16
 font "helvetica-medium-r-14.0"
@@ -412,10 +412,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 549
-y 247
+y 289
 w 234
 h 80
 font "helvetica-medium-r-14.0"
@@ -436,10 +436,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 549
-y 333
+y 375
 w 218
 h 32
 font "helvetica-medium-r-14.0"
@@ -457,10 +457,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 549
-y 375
+y 417
 w 230
 h 32
 font "helvetica-medium-r-14.0"
@@ -478,10 +478,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 549
-y 413
+y 455
 w 239
 h 32
 font "helvetica-medium-r-14.0"
@@ -499,10 +499,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 500
-y 196
+y 238
 w 42
 h 16
 font "helvetica-bold-r-14.0"
@@ -519,10 +519,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 512
-y 220
+y 262
 w 30
 h 16
 font "helvetica-bold-r-14.0"
@@ -539,10 +539,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 485
-y 248
+y 290
 w 57
 h 16
 font "helvetica-bold-r-14.0"
@@ -559,10 +559,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 439
-y 335
+y 377
 w 103
 h 16
 font "helvetica-bold-r-14.0"
@@ -579,10 +579,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 437
-y 376
+y 418
 w 105
 h 16
 font "helvetica-bold-r-14.0"
@@ -599,10 +599,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 465
-y 413
+y 455
 w 77
 h 16
 font "helvetica-bold-r-14.0"
@@ -622,7 +622,7 @@ major 4
 minor 1
 release 0
 x 437
-y 509
+y 551
 w 350
 h 363
 fgColor rgb 0 0 0
@@ -638,10 +638,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 482
-y 480
+y 522
 w 251
 h 21
 font "helvetica-bold-r-18.0"
@@ -658,12 +658,39 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
-x 424
+x 430
 y 20
-w 350
-h 112
+w 346
+h 128
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "If \"Set Size\" is selected, the embedded window area is"
+  "resized. Height is set to the height of the target display"
+  "plus the value of \"Size Ofs\". Width is determine in the"
+  "same manner."
+  ""
+  "If \"Disable Scroll Bars\" is selected, scroll bars will"
+  "not be created even if the target display is larger than"
+  "the embedded window area."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 28
+y 894
+w 341
+h 32
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
@@ -671,11 +698,6 @@ useDisplayBg
 value {
   "If \"Center\" is selected, the target display contents are"
   "centered in the embedded window."
-  ""
-  "If \"Set Size\" is selected, The embedded window area is"
-  "resized. Height is set to the height of the target display"
-  "plus the value of \"Size Ofs\". Width is determine in the"
-  "same manner."
 }
 autoSize
 endObjectProperties

@@ -513,6 +513,8 @@ static void xtdoGrabUpdate (
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
+  if ( !axtdo->enabled ) return;
+
   if ( !axtdo->grabUpdate ) {
 
     //XSetInputFocus( axtdo->actWin->display(),

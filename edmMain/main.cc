@@ -23,6 +23,16 @@
 #include <netinet/in.h>
 #include <netdb.h> 
 #include <errno.h>
+#include <signal.h>
+#include <setjmp.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#define FD_TABLE_SIZE getdtablesize()
 
 #include <Xm/Xm.h>
 #include <Xm/MainW.h>
@@ -48,8 +58,6 @@
 #include "bindings.h"
 
 #include "sys_types.h"
-#include "ipnsv.h"
-#include "ipncl.h"
 #include "thread.h"
 
 #include "main.str"
@@ -82,6 +90,8 @@ typedef struct main_que_tag { /* locked queue header */
 #define SWITCHES 1
 #define FILES 2
 
+// remote one-byte command type
+// (no future command type value may be 10 - '\n' is control char)
 #define QUERY_LOAD 1
 #define CONNECT 2
 #define OPEN_INITIAL 3
@@ -101,7 +111,6 @@ typedef struct appListTag {
 
 static MAIN_QUE_TYPE g_mainFreeQueue, g_mainActiveQueue;
 static MAIN_NODE_TYPE g_mainNodes[MAIN_QUEUE_SIZE];
-static IPRPC_PORT g_conPort;
 static int g_numClients = 0;
 static int g_pidNum = 0;
 static char g_restartId[31+1];
@@ -356,16 +365,127 @@ int i;
 
 }
 
+static int sendCmd (
+  int socketFd,
+  char *msg,
+  int len
+) {
+
+struct timeval timeout;
+int more, fd, i, remain;
+fd_set fds;
+
+  timeout.tv_sec = 5;
+  timeout.tv_usec = 0;
+
+  more = 1;
+  i = 0;
+  remain = len;
+  while ( more ) {
+
+    FD_ZERO( &fds );
+    FD_SET( socketFd, &fds );
+
+    fd = select( getdtablesize(), (fd_set *) NULL, &fds,
+     (fd_set *) NULL, &timeout );
+
+    if ( fd == 0 ) { /* timeout */
+      /* printf( "timeout\n" ); */
+      return 0;
+    }
+
+    if ( fd < 0 ) { /* error */
+      //perror( "select" );
+      return 0;
+    }
+
+    len = write( socketFd, &msg[i], remain );
+    if ( len < 1 ) return len;
+
+    remain -= len;
+    i += len;
+
+    if ( remain < 1 ) more = 0;
+
+  } while ( more );
+
+  return i;
+
+}
+
+static int getReply (
+  int socketFd,
+  char *msg,
+  int maxLen
+) {
+
+struct timeval timeout;
+int more, fd, i, ii, remain, len;
+fd_set fds;
+
+  timeout.tv_sec = 10;
+  timeout.tv_usec = 0;
+
+  more = 1;
+  i = 0;
+  remain = maxLen;
+  while ( more ) {
+
+    FD_ZERO( &fds );
+    FD_SET( socketFd, &fds );
+
+    fd = select( getdtablesize(), &fds, (fd_set *) NULL,
+     (fd_set *) NULL, &timeout );
+
+    if ( fd == 0 ) { /* timeout */
+      return 0;
+    }
+    if ( fd < 0 ) { /* error */
+      //perror( "select" );
+      return 0;
+    }
+
+    strcpy( msg, "" );
+
+    len = read( socketFd, &msg[i], remain );
+    if ( len < 0 ) return len; // error
+    if ( len == 0 ) return i; // return total chars read
+    msg[len] = 0;
+
+    for ( ii=0; ii<len; ii++ ) {
+      if ( msg[i+ii] == '\n' ) {
+        msg[i+ii] = 0;
+        len = strlen(msg);
+        i += len;
+        more = 0;
+	break;
+      }
+    }
+
+    if ( more ) {
+
+      remain -= len;
+      i += len;
+
+      if ( remain <= 0 ) return 0;
+
+    }
+
+  } while ( more );
+
+  return i;
+
+}
+
 int getHostAddr (
   char *name,
-  char *addr )
+  int *addr )
 {
 
 struct hostent *entry;
-unsigned char *adr;
 char *tk, *buf;
 
-  strcpy( addr, "0.0.0.0" );
+  *addr = 0;
 
   tk = strtok_r( name, ":,", &buf );
   if ( !tk ) tk = name;
@@ -373,8 +493,7 @@ char *tk, *buf;
   entry = gethostbyname( tk );
   if ( entry->h_length != 4 ) return -1;
 
-  adr = (unsigned char *) (entry->h_addr_list)[0];
-  sprintf( addr, "%-d.%-d.%-d.%-d", adr[0], adr[1], adr[2], adr[3] );
+  *addr = *( (int *) (entry->h_addr_list)[0] );
 
   return 0;
 
@@ -390,13 +509,16 @@ void checkForServer (
   int openCmd )
 {
 
-char chkHost[31+1], host[31+1], addr[31+1];
-int i, len, pos, max, argCount, stat, result, item, useItem;
-IPRPC_PORT port;
-char msg[255+1], portNumStr[15+1];
+char chkHost[31+1], host[31+1], buf[511+1];
+int i, len, pos, max, argCount, stat, item, useItem;
+char msg[255+1];
 SYS_TIME_TYPE timeout;
 char *envPtr, *tk1, *tk2, *buf1, *buf2;
 double merit, min, num;
+struct sockaddr_in s;
+int ip_addr, sockfd;
+unsigned short port_num;
+int value, n, nIn, nOut;
 
   envPtr = getenv( "EDMSERVERS" );
 
@@ -405,8 +527,6 @@ double merit, min, num;
     if ( stat ) return;
     envPtr = host;
   }
-
-  sprintf( portNumStr, "%-d", portNum );
 
   if ( appendDisplay ) {
     argCount = argc + 2; // we will add two parameters below
@@ -423,7 +543,10 @@ double merit, min, num;
 
   // do simple load balancing
 
-  tk1 = strtok_r( envPtr, ",", &buf1 );
+  strncpy( buf, envPtr, 511 );
+  buf[511] = 0;
+
+  tk1 = strtok_r( buf, ",", &buf1 );
   if ( tk1 ) {
     strncpy( host, tk1, 31 );
     host[31] = 0;
@@ -457,84 +580,75 @@ double merit, min, num;
 
     //printf( "Checking host [%s], merit = %-f\n", chkHost, merit );
 
-    stat = getHostAddr( chkHost, addr );
+    stat = getHostAddr( chkHost, &ip_addr );
     if ( stat ) return;
 
-    stat = ipncl_create_port( 1, 4096, "edm", &port );
-    if ( !( stat & 1 ) ) {
-      printf( main_str4 );
+    sockfd = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
+    if ( sockfd == -1 ) {
+      //perror( "" );
       return;
     }
 
-    stat = ipncl_connect( addr, portNumStr, "", port );
-    if ( !( stat & 1 ) ) {
-      return;
+    value = 1;
+    len = sizeof(value);
+    stat = setsockopt( sockfd, SOL_SOCKET, SO_KEEPALIVE,
+     &value, len );
+
+    port_num = (unsigned short) portNum;
+
+    port_num = htons( port_num );
+
+    bzero( (char *) &s, sizeof(s) );
+    s.sin_family = AF_INET;
+    s.sin_addr.s_addr = ip_addr;
+    s.sin_port = port_num;
+
+    stat = connect( sockfd, (struct sockaddr *) &s, sizeof(s) );
+    if ( stat ) {
+      //perror( "connect" );
+      close( sockfd );
+      goto abortClose;
     }
+
+    //printf( "connected\n" );
 
     msg[0] = (char) QUERY_LOAD;
-    msg[1] = 0;
+    msg[1] = '\n';
+    msg[2] = 0;
 
-    len = strlen(msg) + 1;
-
-    stat = ipncl_send_msg( port, len, msg );
-    if ( !( stat & 1 ) ) {
-      printf( main_str5 );
-      return;
-    }
-
-    stat = ipncl_wait_on_port( port, &timeout, &result );
-    if ( !( stat & 1 ) ) {
-      printf( main_str42 );
-      stat = ipncl_disconnect( port );
-      stat = ipncl_delete_port( &port );
+    nOut = sendCmd( sockfd, msg, 2 );
+    if ( !nOut ) {
       goto nextHost;
     }
 
-    if ( !result ) {
+    strcpy( msg, "" );
 
-      // timeout
-      stat = ipncl_disconnect( port );
-      stat = ipncl_delete_port( &port );
-      stat = ipncl_disconnect( g_conPort );
+    nIn = getReply( sockfd, msg, 255 );
+
+    sscanf( msg, "%d", &n );
+
+    //printf( "nIn = %-d, reply = %-d\n", nIn, n );
+
+    if ( !nIn ) {
       goto nextHost;
-
-    }
-    else {
-
-      stat = ipncl_receive_msg( port, 255, &len, msg );
-      if ( !( stat & 1 ) ) {
-        printf( main_str43 );
-        stat = ipncl_disconnect( port );
-        stat = ipncl_delete_port( &port );
-        goto nextHost;
-      }
-
-      num = (double) ntohl( *( (int *) msg ) );
-
-      //printf( "received num = %-f\n", num );
-
-      num = num / merit;
-
-      if ( ( num < min ) || ( min == -1 ) ) {
-        min = num;
-        strncpy( host, chkHost, 31 );
-        host[31] = 0;
-        useItem = item;
-      }
-
-      //printf( "min = %-f, adj num = %-f\n", min, num );
-
     }
 
-    // don't check status, we're probably already disconnected
-    stat = ipncl_disconnect( port );
+    num = (double) n / merit;
 
-    stat = ipncl_delete_port( &port );
-    if ( !( stat & 1 ) ) {
-      printf( main_str7 );
+    if ( ( num < min ) || ( min == -1 ) ) {
+      min = num;
+      strncpy( host, chkHost, 31 );
+      host[31] = 0;
+      useItem = item;
     }
+
+    //printf( "min = %-f, adj num = %-f\n", min, num );
 
 nextHost:
+
+    // don't check status, we're probably already disconnected
+    stat = shutdown( sockfd, 2 );
+    stat = close( sockfd );
 
     item++;
     tk1 = strtok_r( NULL, ",", &buf1 );
@@ -543,19 +657,37 @@ nextHost:
 
   //printf( "Using host [%s], item %-d\n", host, useItem );
 
-  stat = getHostAddr( host, addr );
+  stat = getHostAddr( host, &ip_addr );
   if ( stat ) return;
 
-  stat = ipncl_create_port( 1, 4096, "edm", &port );
-  if ( !( stat & 1 ) ) {
-    printf( main_str4 );
+  sockfd = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
+  if ( sockfd == -1 ) {
+    //perror( "" );
     return;
   }
 
-  stat = ipncl_connect( addr, portNumStr, "", port );
-  if ( !( stat & 1 ) ) {
-    return;
+  value = 1;
+  len = sizeof(value);
+  stat = setsockopt( sockfd, SOL_SOCKET, SO_KEEPALIVE,
+   &value, len );
+
+  port_num = (unsigned short) portNum;
+
+  port_num = htons( port_num );
+
+  bzero( (char *) &s, sizeof(s) );
+  s.sin_family = AF_INET;
+  s.sin_addr.s_addr = ip_addr;
+  s.sin_port = port_num;
+
+  stat = connect( sockfd, (struct sockaddr *) &s, sizeof(s) );
+  if ( stat ) {
+    //perror( "connect" );
+    close( sockfd );
+    goto abortClose;
   }
+
+  //printf( "connected\n" );
 
   if ( oneInstance ) {
 
@@ -656,23 +788,138 @@ nextHost:
 
   }
 
-  len = strlen(msg) + 1;
+  Strncat( msg, "\n", max );
 
-  stat = ipncl_send_msg( port, len, msg );
-  if ( !( stat & 1 ) ) {
-    printf( main_str5 );
-    return;
+  nOut = sendCmd( sockfd, msg, strlen(msg) );
+  if ( !nOut ) {
+    goto abort;
   }
 
   // don't check status, we're probably already disconnected
-  stat = ipncl_disconnect( port );
-
-  stat = ipncl_delete_port( &port );
-  if ( !( stat & 1 ) ) {
-    printf( main_str7 );
-  }
+  stat = shutdown( sockfd, 2 );
+  stat = close( sockfd );
 
   exit(0);
+
+abort:
+  stat = shutdown( sockfd, 2 );
+
+abortClose:
+  stat = close( sockfd );
+
+  return;
+
+}
+
+static int reply (
+  int socketFd,
+  char *msg,
+  int len
+) {
+
+struct timeval timeout;
+int more, fd, i, remain;
+fd_set fds;
+
+  timeout.tv_sec = 5;
+  timeout.tv_usec = 0;
+
+  more = 1;
+  i = 0;
+  remain = len;
+  while ( more ) {
+
+    FD_ZERO( &fds );
+    FD_SET( socketFd, &fds );
+
+    fd = select( FD_TABLE_SIZE, (fd_set *) NULL, &fds,
+     (fd_set *) NULL, &timeout );
+
+    if ( fd == 0 ) { /* timeout */
+      /* printf( "timeout\n" ); */
+      return 0;
+    }
+
+    if ( fd < 0 ) { /* error */
+      perror( "select" );
+      return 0;
+    }
+
+    len = write( socketFd, &msg[i], remain );
+    if ( len < 1 ) return len; /* error */
+
+    remain -= len;
+    i += len;
+
+    if ( remain < 1 ) more = 0;
+
+  } while ( more );
+
+  return i;
+
+}
+
+static int getCommand (
+  int socketFd,
+  char *msg,
+  int maxLen
+) {
+
+struct timeval timeout;
+int more, i, ii, remain, len, count, n;
+fd_set fds;
+
+  timeout.tv_sec = 5;
+  timeout.tv_usec = 0;
+
+  more = 1;
+  i = count = 0;
+  remain = maxLen;
+  while ( more ) {
+
+    /* printf( "socketFd = %-d\n", socketFd ); */
+
+    FD_ZERO( &fds );
+    FD_SET( socketFd, &fds );
+
+    n = select( FD_TABLE_SIZE, &fds, (fd_set *) NULL,
+     (fd_set *) NULL, &timeout );
+
+    if ( n == 0 ) { /* timeout */
+      return 0;
+    }
+    if ( n < 0 ) { /* error */
+      perror( "select" );
+      return n;
+    }
+
+    strcpy( msg, "" );
+
+    len = read( socketFd, &msg[i], remain );
+    if ( len < 0 ) return len; // error
+    if ( len == 0 ) return i; // return total chars read
+
+    for ( ii=0; ii<len; ii++ ) {
+      if ( msg[i+ii] == '\n' ) {
+        msg[i+ii] = 0;
+        len = strlen(msg);
+        more = 0;
+        break;
+      }
+    }
+
+    if ( more ) {
+
+      remain -= len;
+      i += len;
+
+      if ( remain <= 0 ) return 0;
+
+    }
+
+  } while ( more );
+
+  return len;
 
 }
 
@@ -735,13 +982,15 @@ void *serverThread (
 {
 #endif
 
-int stat, n, q_stat_r, q_stat_i, result;
+int value, stat, n, n_in, q_stat_r, q_stat_i;
 THREAD_HANDLE delayH;
 MAIN_NODE_PTR node;
-IPRPC_PORT port;
 SYS_TIME_TYPE timeout;
-int len, num, cmd;
-char msg[255+1], portNumStr[15+1];
+int len, cliLen, num, cmd;
+char msg[255+1], msg1[255+1];
+struct sockaddr_in s, cli_s;
+int sockfd, newsockfd, more;
+unsigned short port_num;
 
 int *portNumPtr = (int *) thread_get_app_data( h );
 
@@ -753,125 +1002,143 @@ int *portNumPtr = (int *) thread_get_app_data( h );
     goto err_return;
   }
 
-  sprintf( portNumStr, "%-d", *portNumPtr );
-
-  stat = ipnsv_create_named_port( portNumStr, 1, 255, "edm", &g_conPort );
-  if ( !( stat & 1 ) ) {
-    printf( main_str8 );
-    goto err_return;
-  }
-
   n = 0;
   while ( 1 ) {
 
-    stat = ipnsv_create_port( 1, 255, "edm data", &port );
-    if ( !( stat & 1 ) ) {
-      printf( main_str9 );
+    sockfd = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
+    if ( sockfd == -1 ) {
+      perror( "socket" );
       goto err_return;
     }
 
-    stat = ipnsv_accept_connection( g_conPort, port, " " );
-    if ( !( stat & 1 ) ) {
-      printf( main_str11 );
+    value = 1;
+    len = sizeof(value);
+
+    stat = setsockopt( sockfd, SOL_SOCKET, SO_REUSEADDR,
+     &value, len );
+
+    if ( sockfd == -1 ) {
+      perror( "setsockopt" );
       goto err_return;
     }
 
-    stat = ipnsv_wait_on_port( port, &timeout, &result );
-    if ( !( stat & 1 ) ) {
-      printf( main_str13 );
-      stat = ipnsv_disconnect( port );
-      stat = ipnsv_delete_port( &port );
-      continue;
+    port_num = (unsigned short) *portNumPtr;
+
+    port_num = htons( port_num );
+
+    bzero( (char *) &s, sizeof(s) );
+    s.sin_family = AF_INET;
+    s.sin_addr.s_addr = htonl(INADDR_ANY);
+    s.sin_port = port_num;
+
+    /* do bind and listen */
+    stat = bind( sockfd, (struct sockaddr*) &s, sizeof(s) );
+    if ( stat < 0 ) {
+      perror( "bind" );
+      goto err_return;
     }
 
-    if ( !result ) {
-
-      // timeout
-      stat = ipnsv_disconnect( port );
-      stat = ipnsv_delete_port( &port );
-      stat = ipnsv_disconnect( g_conPort );
-      continue;
-
+    stat = listen( sockfd, 5 );
+    if ( stat < 0 ) {
+      perror( "listen" );
+      goto err_return;
     }
-    else {
 
-      stat = ipnsv_receive_msg( port, 255, &len, msg );
-      if ( !( stat & 1 ) ) {
-        printf( main_str15 );
-        stat = ipnsv_disconnect( port );
-        stat = ipnsv_delete_port( &port );
-        continue;
+    more = 1;
+    while ( more ) {
+
+      /*printf( "sockfd = %-d\n", sockfd ); */
+
+      /* accept connection */
+      cliLen = sizeof(cli_s);
+      newsockfd = accept( sockfd, (struct sockaddr *) &cli_s,
+       (socklen_t *) &cliLen );
+
+      if ( newsockfd < 0 ) {
+        perror( "accept" );
+        goto err_branch;
       }
 
-    }
+      n = getCommand( newsockfd, msg, 255 );
+      if ( n ) {
 
-    cmd = (int) msg[0];
+        cmd = (int) msg[0];
 
-    switch ( cmd ) {
+        switch ( cmd ) {
 
-    case OPEN_INITIAL:
-    case OPEN:
+        case OPEN_INITIAL:
+        case OPEN:
 
-      stat = thread_lock_master( h );
+          stat = thread_lock_master( h );
 
-      q_stat_r = REMQHI( (void *) &g_mainFreeQueue, (void **) &node, 0 );
-      if ( q_stat_r & 1 ) {
-        strncpy( node->msg, &msg[1], 254 );
-        q_stat_i = INSQTI( (void *) node, (void *) &g_mainActiveQueue, 0 );
-        if ( !( q_stat_i & 1 ) ) {
-          printf( main_str17 );
+          q_stat_r = REMQHI( (void *) &g_mainFreeQueue, (void **) &node, 0 );
+          if ( q_stat_r & 1 ) {
+            strncpy( node->msg, &msg[1], 254 );
+            q_stat_i = INSQTI( (void *) node, (void *) &g_mainActiveQueue, 0 );
+            if ( !( q_stat_i & 1 ) ) {
+              printf( main_str17 );
+            }
+          }
+          else {
+            printf( main_str18 );
+          }
+
+          stat = thread_unlock_master( h );
+
+          break;
+
+        case QUERY_LOAD:
+
+          stat = thread_lock_master( h );
+          num = g_numClients;
+          stat = thread_unlock_master( h );
+
+          snprintf( msg1, 255, "%-d\n", num );
+
+          n_in = reply( newsockfd, msg1, strlen(msg1) );
+          if ( n_in < 1 ) {
+            printf( main_str44 );
+          }
+
+          break;
+
+        case CONNECT:
+
+          stat = thread_lock_master( h );
+
+          q_stat_r = REMQHI( (void *) &g_mainFreeQueue, (void **) &node, 0 );
+          if ( q_stat_r & 1 ) {
+            n++;
+            strncpy( node->msg, &msg[1], 254 );
+            q_stat_i = INSQTI( (void *) node, (void *) &g_mainActiveQueue, 0 );
+            if ( !( q_stat_i & 1 ) ) {
+              printf( main_str17 );
+            }
+          }
+          else {
+            printf( main_str18 );
+          }
+
+          stat = thread_unlock_master( h );
+
+          break;
+
         }
-      }
-      else {
-        printf( main_str18 );
+
       }
 
-      stat = thread_unlock_master( h );
+      //disconnect asychronously
 
-      break;
+      stat = shutdown( newsockfd, 2 );
 
-    case QUERY_LOAD:
-
-      stat = thread_lock_master( h );
-      num = g_numClients;
-      stat = thread_unlock_master( h );
-
-      *( (int *) msg ) = htonl( num );
-      len = 4;
-
-      stat = ipnsv_send_msg( port, len, msg );
-      if ( !( stat & 1 ) ) {
-        printf( main_str44 );
-      }
-
-      break;
-
-    case CONNECT:
-
-      stat = thread_lock_master( h );
-
-      q_stat_r = REMQHI( (void *) &g_mainFreeQueue, (void **) &node, 0 );
-      if ( q_stat_r & 1 ) {
-        n++;
-        strncpy( node->msg, &msg[1], 254 );
-        q_stat_i = INSQTI( (void *) node, (void *) &g_mainActiveQueue, 0 );
-        if ( !( q_stat_i & 1 ) ) {
-          printf( main_str17 );
-        }
-      }
-      else {
-        printf( main_str18 );
-      }
-
-      stat = thread_unlock_master( h );
-
-      break;
+      stat = close( newsockfd );
 
     }
 
-    stat = ipnsv_disconnect( port );
-    stat = ipnsv_delete_port( &port );
-    stat = ipnsv_disconnect( g_conPort );
+err_branch:
+
+    stat = shutdown( sockfd, 2 );
+    stat = close( sockfd );
 
     if ( cmd == CONNECT ) {
       thread_delay( delayH, 0.5 );
@@ -1922,7 +2189,7 @@ parse_error:
   }
 
   if ( server ) {
-    stat = ipnsv_delete_port( &g_conPort );
+    // ?
   }
 
   if ( shutdown ) {

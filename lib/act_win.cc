@@ -10599,6 +10599,7 @@ int activeWindowClass::createAutoPopup (
    ctx->noEdit,
    0,
    0,
+   0,
    NULL,
    _numMacros,
    _macros,
@@ -10627,6 +10628,7 @@ int activeWindowClass::create (
    1,
    ctx->noEdit,
    1,
+   0,
    0,
    NULL,
    _numMacros,
@@ -10657,6 +10659,7 @@ int activeWindowClass::createNoEdit (
    1,
    1,
    0,
+   0,
    NULL,
    _numMacros,
    _macros,
@@ -10676,6 +10679,7 @@ int activeWindowClass::createEmbedded (
   int _embCenter,
   int _embSetSize,
   int _embSizeOfs,
+  int _embNoScroll,
   int _numMacros,
   char **_macros,
   char **_expansions ) {
@@ -10693,6 +10697,7 @@ int stat;
    1,      // yes: no edit
    0,      //  no: close allowed
    1,      // yes: embedded
+   _embNoScroll,
    parent, // need to deallocate parent
    _numMacros,
    _macros,
@@ -10721,6 +10726,7 @@ int activeWindowClass::genericCreate (
   int _noEdit,
   int _closeAllowed,
   int _isEmbedded,
+  int _noScroll,
   Widget *_widgetToDeallocate,
   int _numMacros,
   char **_macros,
@@ -10744,6 +10750,7 @@ char tmp[10];
   noEdit = _noEdit;
   closeAllowed = _closeAllowed;
   isEmbedded = _isEmbedded;
+  embNoScroll = _noScroll;
   widgetToDeallocate = _widgetToDeallocate;
 
   this->numMacros = _numMacros;
@@ -13924,7 +13931,7 @@ char msg[79+1];
 
       cur = new activeGraphicListType;
       if ( !cur ) {
-        fclose( f );
+        fileClose( f );
         appCtx->postMessage( activeWindowClass_str157 );
         return 0;
       }
@@ -13949,7 +13956,7 @@ char msg[79+1];
 
       }
       else {
-        fclose( f );
+        fileClose( f );
         sprintf( msg, activeWindowClass_str158, line(),
          name );
         appCtx->postMessage( msg );
@@ -13960,7 +13967,7 @@ char msg[79+1];
 
   }
 
-  fclose( f );
+  fileClose( f );
 
   showName = 0;
 
@@ -14077,7 +14084,7 @@ tagClass tag;
 
         cur = new activeGraphicListType;
         if ( !cur ) {
-          fclose( f );
+          fileClose( f );
           appCtx->postMessage( activeWindowClass_str157 );
           return 0;
         }
@@ -14101,7 +14108,7 @@ tagClass tag;
 
         }
         else {
-          fclose( f );
+          fileClose( f );
           sprintf( msg, activeWindowClass_str158, line(),
            name );
           appCtx->postMessage( msg );
@@ -14145,7 +14152,7 @@ tagClass tag;
 
         cur = new activeGraphicListType;
         if ( !cur ) {
-          fclose( f );
+          fileClose( f );
           appCtx->postMessage(
            activeWindowClass_str157 );
           return 0;
@@ -14167,7 +14174,7 @@ tagClass tag;
 
         }
         else {
-          fclose( f );
+          fileClose( f );
           sprintf( msg, activeWindowClass_str158, line(),
            objName );
           appCtx->postMessage( msg );
@@ -14190,7 +14197,7 @@ tagClass tag;
 
   }
 
-  fclose( f );
+  fileClose( f );
 
   showName = 0;
 
@@ -16831,7 +16838,7 @@ int result;
   f = fileOpen( fname, "r" );
   if ( f ) {
     result = 1;
-    fclose( f );
+    fileClose( f );
   }
   else
     result = 0;
@@ -16872,7 +16879,7 @@ int result;
   f = fileOpen( oneFileName, "r" );
   if ( f ) {
     result = 1;
-    fclose( f );
+    fileClose( f );
   }
   else
     result = 0;

@@ -784,7 +784,7 @@ char buf[10000+1];
 
   ptr = fgets( buf, 10000, f );
   if ( !ptr ) {
-    strcpy( str, "" );
+    strcpy( str, "4 0 0" );
     return;
   }
   buf[10000] = 0;

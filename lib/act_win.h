@@ -870,7 +870,7 @@ int numChildren;
 activeWindowClass *parent;
 
 int isEmbedded, embeddedX, embeddedY, embeddedW, embeddedH, embSizeOfs,
- embSetSize, embCenter, embBg;
+ embSetSize, embCenter, embBg, embNoScroll;
 Widget *widgetToDeallocate;
 
 int btnDownX, btnDownY;
@@ -1008,6 +1008,7 @@ int createEmbedded (
   int _embCenter,
   int _embSetSize,
   int _embSizeOfs,
+  int _embNoScroll,
   int _numMacros,
   char **_macros,
   char **_expansions );
@@ -1023,6 +1024,7 @@ int genericCreate (
   int _noEdit,
   int closeAllowed,
   int _isEmbedded,
+  int _noScroll,
   Widget *_widgetToDeallocate,
   int _numMacros,
   char **_macros,
