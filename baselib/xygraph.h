@@ -35,7 +35,16 @@
 #include "app_pkg.h"
 #include "act_win.h"
 
+#include "epicsVersion.h"
+
+#if BASE_VERSION >= 3
+#if BASE_REVISION >= 14
+#include "epicsTime.h"
+#define osiTime epicsTime
+#else
 #include "osiTime.h"
+#endif
+#endif
 
 #include "pv_factory.h"
 #include "epics_pv_factory.h"
