@@ -24,9 +24,6 @@
 
 #include "thread.h"
 
-// This is the EPICS specific line right now:
-static PV_Factory *pv_factory = new EPICS_PV_Factory();
-
 static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id )
@@ -1899,13 +1896,8 @@ int opStat;
       opStat = 1;
 
       if ( controlExists ) {
-        controlPvId = pv_factory->createWithInitialCallbacks(
-         controlPvName.getExpanded() );
+        controlPvId = the_PV_Factory->create( controlPvName.getExpanded() );
         if ( controlPvId ) {
-          //if ( controlPvId->is_valid() ) {
-          //  monitorControlConnectState( controlPvId, this );
-          //  controlUpdate( controlPvId, this );
-	  //}
           controlPvId->add_conn_state_callback(
            monitorControlConnectState, this );
           controlPvId->add_value_callback(
@@ -1915,13 +1907,8 @@ int opStat;
 
       if ( controlLabelExists && ( controlLabelType == MSLC_K_LABEL )  ) {
         controlLabelPvId =
-         pv_factory->createWithInitialCallbacks(
-          controlLabelName.getExpanded() );
+         the_PV_Factory->create( controlLabelName.getExpanded() );
         if ( controlLabelPvId ) {
-          //if ( controlLabelPvId->is_valid() ) {
-          //  monitorControlLabelConnectState( controlLabelPvId, this );
-          //  controlLabelUpdate( controlLabelPvId, this );
-	  //}
           controlLabelPvId->add_conn_state_callback(
            monitorControlLabelConnectState, this );
           controlLabelPvId->add_value_callback(
