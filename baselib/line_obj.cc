@@ -432,6 +432,8 @@ activeLineClass::activeLineClass ( void ) {
 
   connection.setMaxPvs( 2 );
 
+  unconnectedTimer = 0;
+
 }
 
 activeLineClass::~activeLineClass ( void ) {
@@ -509,6 +511,8 @@ int i;
   wasSelected = 0;
 
   connection.setMaxPvs( 2 );
+
+  unconnectedTimer = 0;
 
 }
 

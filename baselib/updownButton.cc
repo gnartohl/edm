@@ -553,6 +553,7 @@ activeUpdownButtonClass::activeUpdownButtonClass ( void ) {
   limitsFromDb = 1;
   efScaleMin.setNull(1);
   efScaleMax.setNull(1);
+  unconnectedTimer = 0;
 
 }
 
@@ -602,6 +603,7 @@ activeGraphicClass *udbto = (activeGraphicClass *) this;
   scaleMax = source->scaleMax;
   efScaleMin = source->efScaleMin;
   efScaleMax = source->efScaleMax;
+  unconnectedTimer = 0;
 
   updateDimensions();
 

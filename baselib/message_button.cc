@@ -206,6 +206,7 @@ activeMessageButtonClass::activeMessageButtonClass ( void ) {
   releaseAction = 0;
   _3D = 1;
   invisible = 0;
+  unconnectedTimer = 0;
 
 }
 
@@ -256,6 +257,7 @@ activeGraphicClass *msgbto = (activeGraphicClass *) this;
   releaseAction = source->releaseAction;
   _3D = source->_3D;
   invisible = source->invisible;
+  unconnectedTimer = 0;
 
   updateDimensions();
 

@@ -827,6 +827,8 @@ activeMotifSliderClass::activeMotifSliderClass ( void ) {
   frameWidget = NULL;
   scaleWidget = NULL;
 
+  unconnectedTimer = 0;
+
 }
 
 // copy constructor
@@ -894,6 +896,8 @@ activeGraphicClass *mslo = (activeGraphicClass *) this;
 
   frameWidget = NULL;
   scaleWidget = NULL;
+
+  unconnectedTimer = 0;
 
 }
 

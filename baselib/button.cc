@@ -388,6 +388,8 @@ activeButtonClass::activeButtonClass ( void ) {
 
   fgColorMode = BTC_K_COLORMODE_STATIC;
 
+  unconnectedTimer = 0;
+
 }
 
 // copy constructor
@@ -453,6 +455,8 @@ activeGraphicClass *bto = (activeGraphicClass *) this;
 
   _3D = source->_3D;
   invisible = source->invisible;
+
+  unconnectedTimer = 0;
 
   updateDimensions();
 

@@ -379,6 +379,7 @@ int i, ii;
   activeMode = 0;
   widgetsCreated = 0;
   fontList = NULL;
+  unconnectedTimer = 0;
 
 }
 
@@ -443,6 +444,7 @@ activeGraphicClass *mmuxo = (activeGraphicClass *) this;
   widgetsCreated = 0;
   active = 0;
   activeMode = 0;
+  unconnectedTimer = 0;
 
 }
 

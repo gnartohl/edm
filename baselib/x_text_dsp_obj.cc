@@ -1414,6 +1414,8 @@ int i;
 
   connection.setMaxPvs( 3 );
 
+  unconnectedTimer = 0;
+
 }
 
 // copy constructor
@@ -1514,6 +1516,8 @@ int i;
   nullDetectMode = source->nullDetectMode;
 
   connection.setMaxPvs( 3 );
+
+  unconnectedTimer = 0;
 
 }
 

@@ -338,6 +338,8 @@ int i;
 
   connection.setMaxPvs( 2 );
 
+  unconnectedTimer = 0;
+
 }
 
 activeRadioButtonClass::~activeRadioButtonClass ( void ) {
@@ -401,6 +403,8 @@ activeGraphicClass *rbto = (activeGraphicClass *) this;
   activeMode = 0;
 
   connection.setMaxPvs( 1 );
+
+  unconnectedTimer = 0;
 
 }
 

@@ -319,6 +319,7 @@ activeXTextClass::activeXTextClass ( void ) {
   strcpy( maxVisString, "" );
   strcpy( id, "" );
   connection.setMaxPvs( 2 );
+  unconnectedTimer = 0;
 
 }
 
@@ -376,6 +377,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   stringX = source->stringX;
 
   connection.setMaxPvs( 2 );
+
+  unconnectedTimer = 0;
 
 }
 

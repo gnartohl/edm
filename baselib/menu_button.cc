@@ -447,6 +447,8 @@ int i;
 
   connection.setMaxPvs( 2 );
 
+  unconnectedTimer = 0;
+
 }
 
 activeMenuButtonClass::~activeMenuButtonClass ( void ) {
@@ -509,6 +511,8 @@ activeGraphicClass *mbto = (activeGraphicClass *) this;
   activeMode = 0;
 
   connection.setMaxPvs( 2 );
+
+  unconnectedTimer = 0;
 
 }
 

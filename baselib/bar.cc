@@ -446,6 +446,7 @@ activeBarClass::activeBarClass ( void ) {
   efBarOriginX.setNull(1);
   strcpy( scaleFormat, "FFloat" );
   precision = 0;
+  unconnectedTimer = 0;
 
 }
 
@@ -508,6 +509,8 @@ activeGraphicClass *baro = (activeGraphicClass *) this;
   strcpy( label, source->label );
 
   horizontal = source->horizontal;
+
+  unconnectedTimer = 0;
 
   updateDimensions();
 

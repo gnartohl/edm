@@ -340,6 +340,7 @@ activeArcClass::activeArcClass ( void ) {
   totalAngle = 180 * 64;
   fillMode = 0;
   connection.setMaxPvs( 2 );
+  unconnectedTimer = 0;
 
 }
 
@@ -396,6 +397,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   fillMode = source->fillMode;
 
   connection.setMaxPvs( 2 );
+
+  unconnectedTimer = 0;
 
 }
 

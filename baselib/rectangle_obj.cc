@@ -286,6 +286,7 @@ activeRectangleClass::activeRectangleClass ( void ) {
   strcpy( minVisString, "" );
   strcpy( maxVisString, "" );
   connection.setMaxPvs( 2 );
+  unconnectedTimer = 0;
 
 }
 
@@ -323,6 +324,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   lineStyle = source->lineStyle;
 
   connection.setMaxPvs( 2 );
+
+  unconnectedTimer = 0;
 
 }
 

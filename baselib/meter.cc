@@ -324,6 +324,8 @@ activeMeterClass::activeMeterClass ( void ) {
   readMin = scaleMin;
   readMax = scaleMax;
 
+  unconnectedTimer = 0;
+
 }
 
 // copy constructor
@@ -390,6 +392,8 @@ activeGraphicClass *metero = (activeGraphicClass *) this;
   minW = 100;
   minH = 50;
   activeMode = 0;
+
+  unconnectedTimer = 0;
 
   updateDimensions();
 
