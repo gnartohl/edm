@@ -1332,25 +1332,21 @@ void open_cb (
 appContextClass *apco = (appContextClass *) client;
 int n;
 Arg args[10];
-XmString xmStr1, xmStr2;
+XmString xmStr;
 char prefix[127+1];
 
   strncpy( prefix, apco->curPath, 127 );
 
   n = 0;
 
-  xmStr1 = XmStringCreateLocalized( "*.edl" );
-  XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
-
   if ( strcmp( prefix, "" ) != 0 ) {
-    xmStr2 = XmStringCreateLocalized( prefix );
-    XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
+    xmStr = XmStringCreateLocalized( prefix );
+    XtSetArg( args[n], XmNdirectory, xmStr ); n++;
   }
 
   XtSetValues( apco->fileSelectBox, args, n );
 
-  XmStringFree( xmStr1 );
-  if ( strcmp( prefix, "" ) != 0 ) XmStringFree( xmStr2 );
+  if ( strcmp( prefix, "" ) != 0 ) XmStringFree( xmStr );
 
   XtManageChild( apco->fileSelectBox );
 
@@ -1368,25 +1364,21 @@ void open_user_cb (
 appContextClass *apco = (appContextClass *) client;
 int n;
 Arg args[10];
-XmString xmStr1, xmStr2;
+XmString xmStr;
 char prefix[127+1];
 
   strncpy( prefix, apco->curPath, 127 );
 
   n = 0;
 
-  xmStr1 = XmStringCreateLocalized( "*.edl" );
-  XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
-
   if ( strcmp( prefix, "" ) != 0 ) {
-    xmStr2 = XmStringCreateLocalized( prefix );
-    XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
+    xmStr = XmStringCreateLocalized( prefix );
+    XtSetArg( args[n], XmNdirectory, xmStr ); n++;
   }
 
   XtSetValues( apco->fileSelectBox, args, n );
 
-  XmStringFree( xmStr1 );
-  if ( strcmp( prefix, "" ) != 0 ) XmStringFree( xmStr2 );
+  if ( strcmp( prefix, "" ) != 0 ) XmStringFree( xmStr );
 
   XtManageChild( apco->fileSelectBox );
 
@@ -1404,25 +1396,21 @@ void import_cb (
 appContextClass *apco = (appContextClass *) client;
 int n;
 Arg args[10];
-XmString xmStr1, xmStr2;
+XmString xmStr;
 char prefix[127+1];
 
   strncpy( prefix, apco->curPath, 127 );
 
   n = 0;
 
-  xmStr1 = XmStringCreateLocalized( "*.xch" );
-  XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
-
   if ( strcmp( prefix, "" ) != 0 ) {
-    xmStr2 = XmStringCreateLocalized( prefix );
-    XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
+    xmStr = XmStringCreateLocalized( prefix );
+    XtSetArg( args[n], XmNdirectory, xmStr ); n++;
   }
 
   XtSetValues( apco->importSelectBox, args, n );
 
-  XmStringFree( xmStr1 );
-  if ( strcmp( prefix, "" ) != 0 ) XmStringFree( xmStr2 );
+  if ( strcmp( prefix, "" ) != 0 ) XmStringFree( xmStr );
 
   XtManageChild( apco->importSelectBox );
 
@@ -3559,6 +3547,9 @@ expStringClass expStr;
 Atom wm_delete_window;
 XTextProperty xtext;
 char title[31+1], *pTitle;
+int n;
+Arg args[10];
+XmString xmStr1;
 
   name = argv[0];
 
@@ -3746,14 +3737,27 @@ err_return:
 
   pvList.create( appTop, 20 );
 
-  fileSelectBox = XmCreateFileSelectionDialog( appTop, "", NULL, 0 );
+  n = 0;
+  xmStr1 = XmStringCreateLocalized( "*.edl" );
+  XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
+
+  fileSelectBox = XmCreateFileSelectionDialog( appTop, "", args, n );
+
+  XmStringFree( xmStr1 );
 
   XtAddCallback( fileSelectBox, XmNcancelCallback,
    app_fileSelectCancel_cb, (void *) this );
   XtAddCallback( fileSelectBox, XmNokCallback,
    app_fileSelectOk_cb, (void *) this );
 
-  importSelectBox = XmCreateFileSelectionDialog( appTop, "", NULL, 0 );
+
+  n = 0;
+  xmStr1 = XmStringCreateLocalized( "*.xch" );
+  XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
+
+  importSelectBox = XmCreateFileSelectionDialog( appTop, "", args, n );
+
+  XmStringFree( xmStr1 );
 
   XtAddCallback( importSelectBox, XmNcancelCallback,
    app_importSelectCancel_cb, (void *) this );

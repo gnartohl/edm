@@ -366,7 +366,10 @@ Atom wm_delete_window;
 
     awo->exit_after_save = 1;
 
-    xmStr1 = XmStringCreateLocalized( "*.edl" );
+    XtVaGetValues( awo->appCtx->fileSelectBoxWidgetId(),
+     XmNpattern, &xmStr1,
+     NULL );
+
     xmStr2 = NULL;
 
     n = 0;
@@ -1349,7 +1352,10 @@ Atom wm_delete_window;
       awo->savedState = awo->state;
       awo->state = AWC_WAITING;
 
-      xmStr1 = XmStringCreateLocalized( "*.edl" );
+      XtVaGetValues( awo->appCtx->fileSelectBoxWidgetId(),
+       XmNpattern, &xmStr1,
+       NULL );
+
       xmStr2 = NULL;
 
       n = 0;
@@ -1400,7 +1406,10 @@ Atom wm_delete_window;
       awo->savedState = awo->state;
       awo->state = AWC_WAITING;
 
-      xmStr1 = XmStringCreateLocalized( "*.edl" );
+      XtVaGetValues( awo->appCtx->fileSelectBoxWidgetId(),
+       XmNpattern, &xmStr1,
+       NULL );
+
       xmStr2 = NULL;
 
       n = 0;
@@ -2677,7 +2686,10 @@ Atom wm_delete_window;
       awo->savedState = awo->state;
       awo->state = AWC_WAITING;
 
-      xmStr1 = XmStringCreateLocalized( "*.edl" );
+      XtVaGetValues( awo->appCtx->fileSelectBoxWidgetId(),
+       XmNpattern, &xmStr1,
+       NULL );
+
       xmStr2 = NULL;
 
       n = 0;
@@ -2730,7 +2742,10 @@ Atom wm_delete_window;
         awo->savedState = awo->state;
         awo->state = AWC_WAITING;
 
-        xmStr1 = XmStringCreateLocalized( "*.edl" );
+        XtVaGetValues( awo->appCtx->fileSelectBoxWidgetId(),
+         XmNpattern, &xmStr1,
+         NULL );
+
         xmStr2 = NULL;
 
         n = 0;
@@ -2788,7 +2803,10 @@ Atom wm_delete_window;
       awo->savedState = awo->state;
       awo->state = AWC_WAITING;
 
-      xmStr1 = XmStringCreateLocalized( "*.edl" );
+      XtVaGetValues( awo->appCtx->fileSelectBoxWidgetId(),
+       XmNpattern, &xmStr1,
+       NULL );
+
       xmStr2 = NULL;
 
       n = 0;
@@ -2839,7 +2857,10 @@ Atom wm_delete_window;
       awo->savedState = awo->state;
       awo->state = AWC_WAITING;
 
-      xmStr1 = XmStringCreateLocalized( "*.edl" );
+      XtVaGetValues( awo->appCtx->fileSelectBoxWidgetId(),
+       XmNpattern, &xmStr1,
+       NULL );
+
       xmStr2 = NULL;
 
       n = 0;
