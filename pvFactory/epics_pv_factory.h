@@ -59,7 +59,7 @@ public:
     double      get_lower_ctrl_limit() const;
 
     // Output/write methods
-    bool have_write_access();
+    bool have_write_access() const;
     bool put(double value);
     bool put(int value);
     bool put(const char *value);

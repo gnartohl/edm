@@ -259,7 +259,7 @@ double EPICS_ProcessVariable::get_upper_ctrl_limit() const
 double EPICS_ProcessVariable::get_lower_ctrl_limit() const
 {   return value->lower_ctrl_limit; }
 
-bool EPICS_ProcessVariable::have_write_access()
+bool EPICS_ProcessVariable::have_write_access() const
 {   return ca_write_access(pv_chid) != 0; }
 
 bool EPICS_ProcessVariable::put(double value)
