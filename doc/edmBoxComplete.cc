@@ -296,10 +296,10 @@ static void ebc_edit_cancel_delete (
 
 edmBoxClass *ebo = (edmBoxClass *) client;
 
-  ebo->erase();
-  ebo->deleteRequest = 1;
   ebo->ef.popdown();
   ebo->operationCancel();
+  ebo->erase();
+  ebo->deleteRequest = 1;
   ebo->drawAll();
 
 }
