@@ -293,8 +293,8 @@ bool EPICS_ProcessVariable::put(int value)
 {
     if (is_valid())
     {
-        dbr_int_t v = value;
-        ca_put(DBR_INT, pv_chid, &v);
+        dbr_long_t v = value;
+        ca_put(DBR_LONG, pv_chid, &v);
         return true;
     }
     return false;
