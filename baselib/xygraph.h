@@ -37,8 +37,8 @@
 
 #include "epicsVersion.h"
 
-#if BASE_VERSION == 3
-#if BASE_REVISION >= 14
+#if EPICS_VERSION == 3
+#if EPICS_REVISION >= 14
 #include "epicsTime.h"
 #define osiTime epicsTime
 #else
