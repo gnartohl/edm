@@ -30,5 +30,9 @@
 #define activeMenuButtonClass_str27 (char *) "ca_add_masked_array_event failed\n"
 #define activeMenuButtonClass_str28 (char *) "Readback PV"
 #define activeMenuButtonClass_str29 (char *) "Inconsistent Color"
+#define activeMenuButtonClass_str30 (char *) "Visibility PV"
+#define activeMenuButtonClass_str31 (char *) "Not Visible if|Visible if"
+#define activeMenuButtonClass_str32 (char *) ">="
+#define activeMenuButtonClass_str33 (char *) "and <"
 
 #endif

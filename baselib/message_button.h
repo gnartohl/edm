@@ -37,6 +37,7 @@
 
 static char *dragName[] = {
   activeMessageButtonClass_str18,
+  activeMessageButtonClass_str28
 };
 
 static void pw_ok (

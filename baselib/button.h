@@ -29,7 +29,7 @@
 #define BTC_K_COLORMODE_ALARM 1
 
 #define BTC_MAJOR_VERSION 2
-#define BTC_MINOR_VERSION 2
+#define BTC_MINOR_VERSION 3
 #define BTC_RELEASE 0
 
 #define BTC_K_LITERAL 1
@@ -43,7 +43,8 @@
 
 static char *dragName[] = {
   activeButtonClass_str1,
-  activeButtonClass_str2
+  activeButtonClass_str2,
+  activeButtonClass_str58
 };
 
 static void unconnectedTimeout (
@@ -95,6 +96,15 @@ static void bt_monitor_control_connect_state (
 
 static void bt_monitor_read_connect_state (
   struct connection_handler_args arg );
+
+static void bt_monitor_vis_connect_state (
+  struct connection_handler_args arg );
+
+static void bt_visInfoUpdate (
+  struct event_handler_args ast_args );
+
+static void bt_visUpdate (
+  struct event_handler_args ast_args );
 
 #endif
 
@@ -152,6 +162,15 @@ friend void bt_monitor_control_connect_state (
 friend void bt_monitor_read_connect_state (
   struct connection_handler_args arg );
 
+friend void bt_monitor_vis_connect_state (
+  struct connection_handler_args arg );
+
+friend void bt_visInfoUpdate (
+  struct event_handler_args ast_args );
+
+friend void bt_visUpdate (
+  struct event_handler_args ast_args );
+
 int opComplete;
 
 int minW;
@@ -203,6 +222,21 @@ int controlExists, readExists, toggle;
 
 int controlPvConnected, readPvConnected, init, active, activeMode,
  controlValid, readValid;
+
+chid visPvId;
+evid visEventId;
+expStringClass visPvExpString;
+char bufVisPvName[activeGraphicClass::MAX_PV_NAME+1];
+int visExists;
+double visValue, curVisValue, minVis, maxVis;
+char minVisString[39+1], bufMinVisString[39+1];
+char maxVisString[39+1], bufMaxVisString[39+1];
+int prevVisibility, visibility, visInverted, bufVisInverted;
+static const int controlPvConnection = 1;
+static const int readPvConnection = 2;
+static const int visPvConnection = 3;
+pvConnectionClass connection;
+int needVisConnectInit, needVisInit, needVisUpdate;
 
 public:
 

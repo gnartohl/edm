@@ -2223,14 +2223,25 @@ char *activeMessageButtonClass::firstDragName ( void ) {
 
 char *activeMessageButtonClass::nextDragName ( void ) {
 
-  return NULL;
+  if ( dragIndex < (int) ( sizeof(dragName) / sizeof(char *) ) - 1 ) {
+    dragIndex++;
+    return dragName[dragIndex];
+  }
+  else {
+    return NULL;
+  }
 
 }
 
 char *activeMessageButtonClass::dragValue (
   int i ) {
 
-  return destPvExpString.getExpanded();
+  if ( i == 0 ) {
+    return destPvExpString.getExpanded();
+  }
+  else {
+    return visPvExpString.getExpanded();
+  }
 
 }
 
@@ -2293,6 +2304,12 @@ void activeMessageButtonClass::changePvNames (
   if ( flag & ACTGRF_CTLPVS_MASK ) {
     if ( numCtlPvs ) {
       destPvExpString.setRaw( ctlPvs[0] );
+    }
+  }
+
+  if ( flag & ACTGRF_VISPVS_MASK ) {
+    if ( numVisPvs ) {
+      visPvExpString.setRaw( ctlPvs[0] );
     }
   }
 

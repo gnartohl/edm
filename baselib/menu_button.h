@@ -35,7 +35,7 @@
 #define MBTC_K_COLORMODE_ALARM 1
 
 #define MBTC_MAJOR_VERSION 2
-#define MBTC_MINOR_VERSION 2
+#define MBTC_MINOR_VERSION 3
 #define MBTC_RELEASE 0
 
 #define MBTC_K_LITERAL 1
@@ -57,6 +57,7 @@ static void menu_cb (
 static char *dragName[] = {
   activeMenuButtonClass_str1,
   activeMenuButtonClass_str28,
+  activeMenuButtonClass_str30
 };
 
 static void mbt_infoUpdate (
@@ -107,6 +108,15 @@ static void mbt_readAlarmUpdate (
 
 static void mbt_monitor_read_connect_state (
   struct connection_handler_args arg );
+
+static void mbt_monitor_vis_connect_state (
+  struct connection_handler_args arg );
+
+static void mbt_visInfoUpdate (
+  struct event_handler_args ast_args );
+
+static void mbt_visUpdate (
+  struct event_handler_args ast_args );
 
 #endif
 
@@ -172,6 +182,19 @@ friend void mbt_readAlarmUpdate (
 friend void mbt_monitor_read_connect_state (
   struct connection_handler_args arg );
 
+friend void mbt_monitor_vis_connect_state (
+  struct connection_handler_args arg );
+
+friend void mbt_visInfoUpdate (
+  struct event_handler_args ast_args );
+
+friend void mbt_visUpdate (
+  struct event_handler_args ast_args );
+
+static const int controlPvConnection = 1;
+static const int readPvConnection = 2;
+static const int visPvConnection = 3;
+
 pvConnectionClass connection;
 
 int init, opComplete, pvCheckExists, controlValid, readValid;
@@ -217,6 +240,17 @@ int needConnectInit, needReadConnectInit, needInfoInit,
  needReadInfoInit, needDraw, needRefresh, needToDrawUnconnected,
  needToEraseUnconnected;
 int unconnectedTimer;
+
+chid visPvId;
+evid visEventId;
+expStringClass visPvExpString;
+char bufVisPvName[activeGraphicClass::MAX_PV_NAME+1];
+int visExists;
+double visValue, curVisValue, minVis, maxVis;
+char minVisString[39+1], bufMinVisString[39+1];
+char maxVisString[39+1], bufMaxVisString[39+1];
+int prevVisibility, visibility, visInverted, bufVisInverted;
+int needVisConnectInit, needVisInit, needVisUpdate;
 
 public:
 

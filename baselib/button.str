@@ -58,5 +58,9 @@
 #define activeButtonClass_str55 (char *) "ca_add_masked_array_event failed\n"
 #define activeButtonClass_str56 (char *) "ca_add_masked_array_event failed\n"
 #define activeButtonClass_str57 (char *) "import file syntax error"
+#define activeButtonClass_str58 (char *) "Visibility PV"
+#define activeButtonClass_str59 (char *) "Not Visible if|Visible if"
+#define activeButtonClass_str60 (char *) ">="
+#define activeButtonClass_str61 (char *) "and <"
 
 #endif

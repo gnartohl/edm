@@ -75,7 +75,7 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
 
   if ( arg.op == CA_OP_CONN_UP ) {
 
-    mbto->connection.setPvConnected( mbto->controlPvId );
+    mbto->connection.setPvConnected( (void *) mbto->controlPvConnection );
     mbto->needConnectInit = 1;
 
     if ( mbto->connection.pvsConnected() ) {
@@ -85,7 +85,7 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
   }
   else {
 
-    mbto->connection.setPvDisconnected( mbto->controlPvId );
+    mbto->connection.setPvDisconnected( (void *) mbto->controlPvConnection );
     mbto->fgColor.setDisconnected();
     mbto->controlValid = 0;
     mbto->needDraw = 1;
@@ -178,7 +178,7 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
 
   if ( arg.op == CA_OP_CONN_UP ) {
 
-    mbto->connection.setPvConnected( mbto->readPvId );
+    mbto->connection.setPvConnected( (void *) mbto->readPvConnection );
     mbto->needReadConnectInit = 1;
 
     if ( mbto->connection.pvsConnected() ) {
@@ -188,7 +188,7 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
   }
   else {
 
-    mbto->connection.setPvDisconnected( mbto->readPvId );
+    mbto->connection.setPvDisconnected( (void *) mbto->readPvConnection );
     mbto->fgColor.setDisconnected();
     mbto->readValid = 0;
     mbto->needDraw = 1;
@@ -274,6 +274,64 @@ struct dbr_sts_enum statusRec;
 
 }
 
+static void mbt_monitor_vis_connect_state (
+  struct connection_handler_args arg )
+{
+
+activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
+
+  if ( arg.op == CA_OP_CONN_UP ) {
+
+    mbto->needVisConnectInit = 1;
+
+  }
+  else {
+
+    mbto->connection.setPvDisconnected( (void *) mbto->visPvConnection );
+    mbto->fgColor.setDisconnected();
+    mbto->active = 0;
+    mbto->needDraw = 1;
+
+  }
+
+  mbto->actWin->appCtx->proc->lock();
+  mbto->actWin->addDefExeNode( mbto->aglPtr );
+  mbto->actWin->appCtx->proc->unlock();
+
+}
+
+static void mbt_visInfoUpdate (
+  struct event_handler_args arg )
+{
+
+activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
+
+struct dbr_gr_double controlRec = *( (dbr_gr_double *) arg.dbr );
+
+  mbto->curVisValue = controlRec.value;
+
+  mbto->actWin->appCtx->proc->lock();
+  mbto->needVisInit = 1;
+  mbto->actWin->addDefExeNode( mbto->aglPtr );
+  mbto->actWin->appCtx->proc->unlock();
+
+}
+
+static void mbt_visUpdate (
+  struct event_handler_args arg )
+{
+
+activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
+
+  mbto->curVisValue = * ( (double *) arg.dbr );
+
+  mbto->actWin->appCtx->proc->lock();
+  mbto->needVisUpdate = 1;
+  mbto->actWin->addDefExeNode( mbto->aglPtr );
+  mbto->actWin->appCtx->proc->unlock();
+
+}
+
 #endif
 
 static void mbtc_edit_update (
@@ -314,6 +372,15 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) client;
 
   mbto->inconsistentColor.setColorIndex( mbto->bufInconsistentColor,
    mbto->actWin->ci );
+
+  mbto->visPvExpString.setRaw( mbto->bufVisPvName );
+  strncpy( mbto->minVisString, mbto->bufMinVisString, 39 );
+  strncpy( mbto->maxVisString, mbto->bufMaxVisString, 39 );
+
+  if ( mbto->bufVisInverted )
+    mbto->visInverted = 0;
+  else
+    mbto->visInverted = 1;
 
   mbto->x = mbto->bufX;
   mbto->sboxX = mbto->bufX;
@@ -414,9 +481,15 @@ int i;
 
   fontList = NULL;
 
-  connection.setMaxPvs( 2 );
+  connection.setMaxPvs( 3 );
 
   unconnectedTimer = 0;
+
+  visibility = 0;
+  prevVisibility = -1;
+  visInverted = 0;
+  strcpy( minVisString, "" );
+  strcpy( maxVisString, "" );
 
 }
 
@@ -481,9 +554,15 @@ activeGraphicClass *mbto = (activeGraphicClass *) this;
   active = 0;
   activeMode = 0;
 
-  connection.setMaxPvs( 2 );
+  connection.setMaxPvs( 3 );
 
   unconnectedTimer = 0;
+
+  visibility = 0;
+  prevVisibility = -1;
+  visInverted = source->visInverted;
+  strncpy( minVisString, source->minVisString, 39 );
+  strncpy( maxVisString, source->maxVisString, 39 );
 
 }
 
@@ -572,6 +651,15 @@ int index;
   // version 2.1.0
   index = inconsistentColor.pixelIndex();
   fprintf( f, "%-d\n", index );
+
+  //ver 2.3.0
+  if ( visPvExpString.getRaw() )
+    writeStringToFile( f, visPvExpString.getRaw() );
+  else
+    writeStringToFile( f, "" );
+  fprintf( f, "%-d\n", visInverted );
+  writeStringToFile( f, minVisString );
+  writeStringToFile( f, maxVisString );
 
   return 1;
 
@@ -755,6 +843,20 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
   fs = actWin->fi->getXFontStruct( fontTag );
   actWin->fi->getTextFontList( fontTag, &fontList );
 
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 2 ) ) ) {
+
+    readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+     actWin->incLine();
+    visPvExpString.setRaw( oneName );
+
+    fscanf( f, "%d\n", &visInverted ); actWin->incLine();
+
+    readStringFromFile( minVisString, 39+1, f ); actWin->incLine();
+
+    readStringFromFile( maxVisString, 39+1, f ); actWin->incLine();
+
+  }
+
   updateDimensions();
 
   return 1;
@@ -803,6 +905,20 @@ char title[32], *ptr;
   else
     strcpy( bufReadPvName, "" );
 
+  if ( visPvExpString.getRaw() )
+    strncpy( bufVisPvName, visPvExpString.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
+  else
+    strcpy( bufVisPvName, "" );
+
+  if ( visInverted )
+    bufVisInverted = 0;
+  else
+    bufVisInverted = 1;
+
+  strncpy( bufMinVisString, minVisString, 39 );
+  strncpy( bufMaxVisString, maxVisString, 39 );
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -837,6 +953,12 @@ char title[32], *ptr;
   ef.addFontMenu( activeMenuButtonClass_str16, actWin->fi, &fm, fontTag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
+
+  ef.addTextField( activeMenuButtonClass_str30, 30, bufVisPvName,
+   activeGraphicClass::MAX_PV_NAME );
+  ef.addOption( " ", activeMenuButtonClass_str31, &bufVisInverted );
+  ef.addTextField( activeMenuButtonClass_str32, 30, bufMinVisString, 39 );
+  ef.addTextField( activeMenuButtonClass_str33, 30, bufMaxVisString, 39 );
 
   return 1;
 
@@ -881,6 +1003,13 @@ int activeMenuButtonClass::erase ( void ) {
 int activeMenuButtonClass::eraseActive ( void ) {
 
   if ( !init || !activeMode ) return 1;
+
+  if ( prevVisibility == 0 ) {
+    prevVisibility = visibility;
+    return 1;
+  }
+
+  prevVisibility = visibility;
 
   XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.eraseGC(), x, y, w, h );
@@ -1029,7 +1158,9 @@ char string[MAX_ENUM_STRING_SIZE+1];
     smartDrawAllActive();
   }
 
-  if ( !init || !activeMode ) return 1;
+  if ( !init || !activeMode || !visibility ) return 1;
+
+  prevVisibility = visibility;
 
   actWin->executeGc.saveFg();
   actWin->executeGc.setLineWidth( 1 );
@@ -1180,12 +1311,16 @@ int activeMenuButtonClass::expand1st (
   char *expansions[] )
 {
 
-int stat;
+int stat, retStat = 1;;
 
   stat = controlPvExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = readPvExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+  stat = visPvExpString.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
-  return stat;
+  return retStat;
 
 }
 
@@ -1195,12 +1330,16 @@ int activeMenuButtonClass::expand2nd (
   char *expansions[] )
 {
 
-int stat;
+int stat, retStat = 1;
 
   stat = controlPvExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = readPvExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+  stat = visPvExpString.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
-  return stat;
+  return retStat;
 
 }
 
@@ -1209,6 +1348,8 @@ int activeMenuButtonClass::containsMacros ( void ) {
   if ( controlPvExpStr.containsPrimaryMacros() ) return 1;
 
   if ( readPvExpStr.containsPrimaryMacros() ) return 1;
+
+  if ( visPvExpString.containsPrimaryMacros() ) return 1;
 
   return 0;
 
@@ -1231,38 +1372,41 @@ int stat, opStat;
 
   case 1:
 
-    aglPtr = ptr;
-    needConnectInit = needInfoInit = needReadConnectInit = needReadInfoInit =
-     needRefresh = needDraw = 0;
     opComplete = 0;
-    needToEraseUnconnected = 0;
-    needToDrawUnconnected = 0;
-    unconnectedTimer = 0;
-    controlValid = readValid = 0;
-
-    controlExists = readExists = 0;
-
-    pvCheckExists = 0;
-    connection.init();
-
-#ifdef __epics__
-    alarmEventId = controlEventId = readAlarmEventId = readEventId = 0;
-#endif
-
-    init = 0;
-    active = 0;
-    activeMode = 1;
-    numStates = 0;
-
-    buttonPressed = 0;
-
-    popUpMenu = (Widget) NULL;
 
     break;
 
   case 2:
 
     if ( !opComplete ) {
+
+      aglPtr = ptr;
+      needConnectInit = needInfoInit = needReadConnectInit = needReadInfoInit =
+       needRefresh = needDraw = needVisConnectInit = needVisInit =
+       needVisUpdate = 0;
+      needToEraseUnconnected = 0;
+      needToDrawUnconnected = 0;
+      unconnectedTimer = 0;
+      controlValid = readValid = 0;
+
+      controlExists = readExists = visExists = 0;
+
+      pvCheckExists = 0;
+      connection.init();
+
+#ifdef __epics__
+      alarmEventId = controlEventId = readAlarmEventId = readEventId =
+       visEventId = 0;
+#endif
+
+      init = 0;
+      active = 0;
+      activeMode = 1;
+      numStates = 0;
+
+      buttonPressed = 0;
+
+      popUpMenu = (Widget) NULL;
 
       if ( !unconnectedTimer ) {
         unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
@@ -1289,6 +1433,15 @@ int stat, opStat;
           readExists = 0;
 	}
 
+        if ( strcmp( visPvExpString.getRaw(), "" ) != 0 ) {
+          visExists = 1;
+          connection.addPv(); // must do this only once per pv
+        }
+        else {
+          visExists = 0;
+          visibility = 1;
+        }
+
       }
 
       opStat = 1;
@@ -1311,6 +1464,17 @@ int stat, opStat;
         if ( stat != ECA_NORMAL ) {
           printf( activeMenuButtonClass_str21,
            readPvExpStr.getExpanded() );
+          opStat = 0;
+        }
+      }
+
+      if ( visExists ) {
+
+        stat = ca_search_and_connect( visPvExpString.getExpanded(), &visPvId,
+         mbt_monitor_vis_connect_state, this );
+        if ( stat != ECA_NORMAL ) {
+          printf( activeMenuButtonClass_str21,
+           visPvExpString.getExpanded() );
           opStat = 0;
         }
       }
@@ -1355,15 +1519,18 @@ int stat, i;
 
     if ( controlExists ) {
       stat = ca_clear_channel( controlPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeMenuButtonClass_str22 );
+      if ( stat != ECA_NORMAL ) printf( activeMenuButtonClass_str23 );
     }
 
     if ( readExists ) {
       stat = ca_clear_channel( readPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeMenuButtonClass_str23 );
+      if ( stat != ECA_NORMAL ) printf( activeMenuButtonClass_str23 );
     }
+
+  if ( visExists ) {
+    stat = ca_clear_channel( visPvId );
+    if ( stat != ECA_NORMAL ) printf( activeMenuButtonClass_str23 );
+  }
 
 #endif
 
@@ -1421,7 +1588,7 @@ void activeMenuButtonClass::btnUp (
 
   *action = 0;
 
-  if ( !init ) return;
+  if ( !init || !visibility ) return;
 
   if ( !buttonPressed ) return;
 
@@ -1443,7 +1610,7 @@ XButtonEvent be;
 
   *action = 0;
 
-  if ( !init ) return;
+  if ( !init || !visibility ) return;
 
   if ( !controlExists ) return;
 
@@ -1471,7 +1638,7 @@ void activeMenuButtonClass::pointerIn (
   int buttonState )
 {
 
-  if ( !init ) return;
+  if ( !init || !visibility ) return;
 
   if ( !ca_write_access( controlPvId ) ) {
     actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
@@ -1514,7 +1681,7 @@ int activeMenuButtonClass::getButtonActionRequest (
 void activeMenuButtonClass::executeDeferred ( void ) {
 
 short v, rV;
-int stat, i, nc, nrc, ni, nri, nr, nd;
+int stat, i, nc, nrc, ni, nri, nr, nd, nvc, nvi, nvu;
 XmString str;
 Arg args[15];
 int n;
@@ -1530,8 +1697,12 @@ int n;
   nri = needReadInfoInit; needReadInfoInit = 0;
   nr = needRefresh; needRefresh = 0;
   nd = needDraw; needDraw = 0;
+  nvc = needVisConnectInit; needVisConnectInit = 0;
+  nvi = needVisInit; needVisInit = 0;
+  nvu = needVisUpdate; needVisUpdate = 0;
   v = curValue;
   rV = curReadValue;
+  visValue = curVisValue;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
@@ -1661,6 +1832,44 @@ int n;
 
   }
 
+  if ( nvc ) {
+
+    minVis = atof( minVisString );
+    maxVis = atof( maxVisString );
+
+    connection.setPvConnected( (void *) visPvConnection );
+
+    stat = ca_get_callback( DBR_GR_DOUBLE, visPvId,
+     mbt_visInfoUpdate, (void *) this );
+
+  }
+
+  if ( nvi ) {
+
+    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, visPvId,
+     mbt_visUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
+     &visEventId, DBE_VALUE );
+    if ( stat != ECA_NORMAL ) printf( activeMenuButtonClass_str27 );
+
+    if ( ( visValue >= minVis ) &&
+         ( visValue < maxVis ) )
+      visibility = 1 ^ visInverted;
+    else
+      visibility = 0 ^ visInverted;
+
+    if ( prevVisibility != visibility ) {
+      if ( !visibility ) eraseActive();
+    }
+
+    if ( connection.pvsConnected() ) {
+      active = 1;
+      init = 1;
+      fgColor.setConnected();
+      smartDrawAllActive();
+    }
+
+  }
+
 #endif
 
 //----------------------------------------------------------------------------
@@ -1679,6 +1888,21 @@ int n;
   }
 
 //----------------------------------------------------------------------------
+
+  if ( nvu ) {
+
+    if ( ( visValue >= minVis ) &&
+         ( visValue < maxVis ) )
+      visibility = 1 ^ visInverted;
+    else
+      visibility = 0 ^ visInverted;
+
+    if ( prevVisibility != visibility ) {
+      if ( !visibility ) eraseActive();
+      stat = smartDrawAllActive();
+    }
+
+  }
 
 }
 
@@ -1707,8 +1931,11 @@ char *activeMenuButtonClass::dragValue (
   if ( i == 0 ) {
     return controlPvExpStr.getExpanded();
   }
-  else {
+  else if ( i == 1 ) {
     return readPvExpStr.getExpanded();
+  }
+  else {
+    return visPvExpString.getExpanded();
   }
 
 }
@@ -1772,6 +1999,12 @@ void activeMenuButtonClass::changePvNames (
   if ( flag & ACTGRF_CTLPVS_MASK ) {
     if ( numCtlPvs ) {
       controlPvExpStr.setRaw( ctlPvs[0] );
+    }
+  }
+
+  if ( flag & ACTGRF_VISPVS_MASK ) {
+    if ( numVisPvs ) {
+      visPvExpString.setRaw( ctlPvs[0] );
     }
   }
 

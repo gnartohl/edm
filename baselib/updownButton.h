@@ -79,7 +79,9 @@ static void udbtc_increment (
   XtIntervalId *id );
 
 static char *dragName[] = {
-  activeUpdownButtonClass_str18,
+  activeUpdownButtonClass_str8,
+  activeUpdownButtonClass_str25,
+  activeUpdownButtonClass_str29
 };
 
 static void udbtc_edit_ok (
