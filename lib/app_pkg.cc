@@ -1589,11 +1589,18 @@ int i, stat;
     printf( appContextClass_str30 );
     return 2;
   }
+  stat = sys_iniq( &appDefExeActiveNextQueue );
+  if ( !( stat & 1 ) ) {
+    printf( appContextClass_str30 );
+    return 2;
+  }
 
   appDefExeFreeQueue.flink = NULL;
   appDefExeFreeQueue.blink = NULL;
   appDefExeActiveQueue.flink = NULL;
   appDefExeActiveQueue.blink = NULL;
+  appDefExeActiveNextQueue.flink = NULL;
+  appDefExeActiveNextQueue.blink = NULL;
 
   for ( i=0; i<APPDEFEXE_QUEUE_SIZE; i++ ) {
 
@@ -1619,6 +1626,28 @@ void appContextClass::removeAllDeferredExecutionQueueNode (
 int q_stat_r, q_stat_i;
 APPDEFEXE_NODE_PTR node;
 
+  // first, place all next queue nodes on active queue
+  do {
+
+    q_stat_r = REMQHI( (void *) &appDefExeActiveNextQueue, (void **) &node,
+     0 );
+
+    if ( q_stat_r & 1 ) {
+
+      q_stat_i = INSQTI( (void *) node, (void *) &appDefExeActiveQueue,
+       0 );
+      if ( !( q_stat_i & 1 ) ) {
+        printf( appContextClass_str33 );
+      }
+
+    }
+    else if ( q_stat_r != QUEWASEMP ) {
+      printf( appContextClass_str32 );
+    }
+
+  } while ( q_stat_r & 1 );
+
+  // now, remove all associated nodes from active queue
   do {
 
     q_stat_r = REMQHI( (void *) &appDefExeActiveQueue, (void **) &node, 0 );
@@ -1637,7 +1666,7 @@ APPDEFEXE_NODE_PTR node;
 	}
 	else { // don't remove, put it back
 
-          q_stat_i = INSQTI( (void *) node, (void *) &appDefExeActiveQueue,
+          q_stat_i = INSQTI( (void *) node, (void *) &appDefExeActiveNextQueue,
            0 );
           if ( !( q_stat_i & 1 ) ) {
             printf( appContextClass_str33 );
@@ -1658,7 +1687,7 @@ APPDEFEXE_NODE_PTR node;
 	}
 	else { // don't remove, put it back
 
-          q_stat_i = INSQTI( (void *) node, (void *) &appDefExeActiveQueue,
+          q_stat_i = INSQTI( (void *) node, (void *) &appDefExeActiveNextQueue,
            0 );
           if ( !( q_stat_i & 1 ) ) {
             printf( appContextClass_str33 );
@@ -1683,6 +1712,28 @@ void appContextClass::processDeferredExecutionQueue ( void )
 int q_stat_r, q_stat_i;
 APPDEFEXE_NODE_PTR node;
 
+  // first, place all next queue nodes on active queue
+  do {
+
+    q_stat_r = REMQHI( (void *) &appDefExeActiveNextQueue, (void **) &node,
+     0 );
+
+    if ( q_stat_r & 1 ) {
+
+      q_stat_i = INSQTI( (void *) node, (void *) &appDefExeActiveQueue,
+       0 );
+      if ( !( q_stat_i & 1 ) ) {
+        printf( appContextClass_str33 );
+      }
+
+    }
+    else if ( q_stat_r != QUEWASEMP ) {
+      printf( appContextClass_str32 );
+    }
+
+  } while ( q_stat_r & 1 );
+
+  // process all active nodes
   do {
 
     q_stat_r = REMQHI( (void *) &appDefExeActiveQueue, (void **) &node, 0 );
@@ -1747,6 +1798,60 @@ APPDEFEXE_NODE_PTR node;
       node->obj = NULL;
 
       q_stat_i = INSQTI( (void *) node, (void *) &appDefExeActiveQueue, 0 );
+      if ( !( q_stat_i & 1 ) ) {
+        printf( appContextClass_str33 );
+      }
+
+    }
+    else {
+      printf( appContextClass_str34 );
+    }
+
+}
+
+void appContextClass::postDeferredExecutionNextQueue (
+  class activeGraphicClass *ptr )
+{
+
+int q_stat_r, q_stat_i;
+APPDEFEXE_NODE_PTR node;
+
+    q_stat_r = REMQHI( (void *) &appDefExeFreeQueue, (void **) &node, 0 );
+
+    if ( q_stat_r & 1 ) {
+
+      node->awObj = NULL;
+      node->obj = ptr;
+
+      q_stat_i = INSQTI( (void *) node, (void *) &appDefExeActiveNextQueue,
+       0 );
+      if ( !( q_stat_i & 1 ) ) {
+        printf( appContextClass_str33 );
+      }
+
+    }
+    else {
+      printf( appContextClass_str34 );
+    }
+
+}
+
+void appContextClass::postDeferredExecutionNextQueue (
+  class activeWindowClass *ptr )
+{
+
+int q_stat_r, q_stat_i;
+APPDEFEXE_NODE_PTR node;
+
+    q_stat_r = REMQHI( (void *) &appDefExeFreeQueue, (void **) &node, 0 );
+
+    if ( q_stat_r & 1 ) {
+
+      node->awObj = ptr;
+      node->obj = NULL;
+
+      q_stat_i = INSQTI( (void *) node, (void *) &appDefExeActiveNextQueue,
+       0 );
       if ( !( q_stat_i & 1 ) ) {
         printf( appContextClass_str33 );
       }

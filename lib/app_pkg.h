@@ -70,7 +70,7 @@ typedef struct appDefExe_que_tag { /* locked queue header */
 #define QUEWASEMP SYS_QUEWASEMP
 #define ONEENTQUE SYS_ONEENTQUE
 
-#define APPDEFEXE_QUEUE_SIZE 200
+#define APPDEFEXE_QUEUE_SIZE 1000
 
 typedef struct activeWindowListTag {
   struct activeWindowListTag *flink;
@@ -181,7 +181,8 @@ friend void app_importSelectOk_cb (
 
 friend class activeWindowClass;
 
-APPDEFEXE_QUE_TYPE appDefExeFreeQueue, appDefExeActiveQueue;
+APPDEFEXE_QUE_TYPE appDefExeFreeQueue, appDefExeActiveQueue,
+ appDefExeActiveNextQueue;
 APPDEFEXE_NODE_TYPE appDefExeNodes[APPDEFEXE_QUEUE_SIZE+1];
 
 Widget appTop, fileSelectBox, importSelectBox, mainWin, menuBar, filePullDown,
@@ -320,6 +321,12 @@ void appContextClass::postDeferredExecutionQueue (
   class activeGraphicClass *ptr );
 
 void appContextClass::postDeferredExecutionQueue (
+  class activeWindowClass *ptr );
+
+void appContextClass::postDeferredExecutionNextQueue (
+  class activeGraphicClass *ptr );
+
+void appContextClass::postDeferredExecutionNextQueue (
   class activeWindowClass *ptr );
 
 Display *appContextClass::getDisplay ( void ) {

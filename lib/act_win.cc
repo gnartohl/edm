@@ -36,6 +36,21 @@ int i;
   i = 1;
 
 }
+
+void printErrMsg (
+  const char *fileName,
+  int lineNum,
+  const char *msg )
+{
+
+  printf( "==============================================================\n" );
+  printf( "Internal error in %s at line %-d\nError Message: %s\n\n",
+   fileName, lineNum, msg );
+  printf( "Please contact the author of this software or else send \n" );
+  printf( "the text of this message to tech-talk@aps.anl.gov\n" );
+  printf( "==============================================================\n" );
+
+}
 
 static void extractName(
   char *fileName, 
@@ -3040,7 +3055,8 @@ activeGraphicListPtr cur, curSel, nextSel;
       }
       else {
 
-        printf( "Klingons decloaking! (1)\n" );
+        printErrMsg( __FILE__, __LINE__, "Inconsistent select state" );
+        //printf( "Klingons decloaking! (1)\n" );
 
       }
 
@@ -3078,7 +3094,8 @@ activeGraphicListPtr cur, curSel, nextSel;
       }
       else {
 
-        printf( "Klingons decloaking! (2)\n" );
+        printErrMsg( __FILE__, __LINE__, "Inconsistent select state" );
+        //printf( "Klingons decloaking! (2)\n" );
 
       }
 
@@ -5796,7 +5813,9 @@ unsigned int mask;
                   awo->updateMasterSelection();
                 }
                 else {
-                  printf( "Klingons decloaking! (3)\n" );
+                  printErrMsg( __FILE__, __LINE__,
+                   "Inconsistent select state" );
+                  //printf( "Klingons decloaking! (3)\n" );
                   awo->state = AWC_MANY_SELECTED;
                   awo->updateMasterSelection();
                 }
@@ -6171,7 +6190,9 @@ unsigned int mask;
                 awo->updateMasterSelection();
               }
               else {
-                printf( "Klingons decloaking! (4)\n" );
+                  printErrMsg( __FILE__, __LINE__,
+                   "Inconsistent select state" );
+                  //printf( "Klingons decloaking! (4)\n" );
                 awo->state = AWC_MANY_SELECTED;
                 awo->updateMasterSelection();
               }
@@ -6606,7 +6627,9 @@ unsigned int mask;
                   awo->updateMasterSelection();
                 }
                 else {
-                  printf( "Klingons decloaking! (5)\n" );
+                  printErrMsg( __FILE__, __LINE__,
+                   "Inconsistent select state" );
+                  //printf( "Klingons decloaking! (5)\n" );
                   awo->state = AWC_MANY_SELECTED;
                   awo->updateMasterSelection();
                 }
@@ -11772,7 +11795,7 @@ int activeWindowClass::changed ( void ) {
 void activeWindowClass::setChanged ( void ) {
 
 //char str[31+1];
-int stat;
+//int stat;
 
   change = 1;
 
@@ -15265,11 +15288,11 @@ void activeWindowClass::executeFromDeferredQueue( void )
         returnToEdit( 1 );
       }
       else if ( waiting < 0 ) { // wait, don't close
-        appCtx->postDeferredExecutionQueue( this );
+        appCtx->postDeferredExecutionNextQueue( this );
       }
       else {                    // close after n cycles
         waiting--;
-        appCtx->postDeferredExecutionQueue( this );
+        appCtx->postDeferredExecutionNextQueue( this );
       }
 
     }
@@ -15697,7 +15720,7 @@ void activeWindowClass::closeDeferred (
   int cycles )
 {
 
-  waiting = 2;
+  waiting = 1;
   doClose = 1;
   appCtx->postDeferredExecutionQueue( this );
 
