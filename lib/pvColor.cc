@@ -36,6 +36,7 @@ pvColorClass::pvColorClass( void )
   severity = 0;
   null = 0;
   alarmed = 0;
+  ruleMode = 0;
 
 }
 
@@ -58,6 +59,7 @@ void pvColorClass::copy( const pvColorClass &source )
   severity = source.severity;
   null = 0;
   alarmed = 0;
+  ruleMode = 0;
 
 }
 
@@ -182,7 +184,12 @@ void pvColorClass::changeColor (
 
    if ( !alarmSensitive ) {
 
-      effectivePixel = pixel;
+     if ( ruleMode ) {
+       effectivePixel = rulePixel;
+     }
+     else {
+       effectivePixel = pixel;
+     }
 
     }
     else {
@@ -203,7 +210,12 @@ void pvColorClass::changeColor (
 
       default:
         if ( noalarmPixel == -1 )
-          effectivePixel = pixel;
+          if ( ruleMode ) {
+            effectivePixel = rulePixel;
+          }
+          else {
+            effectivePixel = pixel;
+          }
         else
           effectivePixel = noalarmPixel;
         break;
@@ -283,5 +295,29 @@ void pvColorClass::setNotNull ( void )
   if ( !alarmed ) {
     effectivePixel = pixel;
   }
+
+}
+
+void pvColorClass::setRuleMode ( void )
+{
+
+  ruleMode = 1;
+
+}
+
+void pvColorClass::setNotRuleMode ( void )
+{
+
+  ruleMode = 0;
+
+}
+
+void pvColorClass::setRuleColor (
+  unsigned int color,
+  colorInfoClass *ci )
+{
+
+  rulePixel = color;
+  changeColor( color, ci );
 
 }

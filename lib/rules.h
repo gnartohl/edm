@@ -53,14 +53,15 @@ friend void monitor_connect_state (
 friend void valueUpdate (
   struct event_handler_args ast_args );
 
-int numIds, activated, eventsBooked, ruleId;
+int numIds, activated, eventsBooked, ruleId, first, prevValue;
 chid id[32];
 evid eventId[32];
 double val[32];
 short pvType[32];
 ruleElementType re[32];
-pvConnectionClass connection;
+pvConnectionClass connection, valueConnection;
 void *userPtr;
+RULECALLBACK connectFunc;
 RULECALLBACK userFunc;
 RULEFUNC func;
 
@@ -71,6 +72,7 @@ ruleClass::ruleClass ( void );
 ruleClass::ruleClass (
   void *_userPtr,
   int _ruleId,
+  RULECALLBACK _connectFunc,
   RULECALLBACK _userFunc );
 
 ruleClass::~ruleClass( void );
@@ -78,6 +80,7 @@ ruleClass::~ruleClass( void );
 void ruleClass::init (
   void *_userPtr,
   int _ruleId,
+  RULECALLBACK _connectFunc,
   RULECALLBACK _userFunc );
 
 int ruleClass::activate (

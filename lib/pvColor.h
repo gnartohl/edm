@@ -45,8 +45,9 @@ int invalidPixel;
 int minorPixel;
 int majorPixel;
 int saveValPixel; // if value is not equal to saved value
+int rulePixel;
 
-int null, alarmed;
+int null, alarmed, ruleMode;
 
 int alarmSensitive;
 int connectSensitive;
@@ -100,10 +101,14 @@ void pvColorClass::setNullColor (
 
 unsigned int pvColorClass::nullColor ( void );
 
+void pvColorClass::setRuleMode ( void );
+
+void pvColorClass::setNotRuleMode ( void );
+
+void pvColorClass::setRuleColor (
+  unsigned int color,
+  colorInfoClass *ci );
+
 };
 
 #endif
-
-
-
-

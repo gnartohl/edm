@@ -29,6 +29,7 @@ static void monitor_connect_state (
 ruleElementPtr rep = (ruleElementPtr) ca_puser(arg.chid);
 ruleClass *rc = (ruleClass *) rep->r;
 int i = rep->i;
+int n, stat;
 
   if ( arg.op == CA_OP_CONN_UP ) {
 
@@ -38,12 +39,26 @@ int i = rep->i;
     rc->id[i] = arg.chid;
     rc->connection.setPvConnected( arg.chid );
 
+    //printf( "set %-d connected\n", (int) arg.chid );
+    //printf( "connection mask = %-x\n", rc->connection.pvsConnected() );
+
+    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, rc->id[i],
+     valueUpdate, (void *) rep, (float) 0.0, (float) 0.0,
+     (float) 0.0, &rc->eventId[i], DBE_VALUE );
+
+    if ( rc->connection.pvsConnected() ) {
+      (*rc->connectFunc)( rc->userPtr, rc->ruleId, arg.op );
+    }
+
   }
   else {
 
     //printf( "monitor_connect_state - disconnect %-d\n", i );
 
     rc->connection.setPvDisconnected( arg.chid );
+    (*rc->connectFunc)( rc->userPtr, rc->ruleId, arg.op );
+
+    rc->valueConnection.setPvDisconnected( arg.chid );
 
   }
 
@@ -57,22 +72,27 @@ ruleElementPtr rep = (ruleElementPtr) ca_puser(arg.chid);
 ruleClass *rc = (ruleClass *) rep->r;
 int result, n, i = rep->i;
 
+// don't consider pv connected until we get a value change callback
+
   rc->val[i] = *( (double *) arg.dbr );
 
-  if ( rc->connection.pvsConnected() ) {
-    //printf( "All connected\n" );
-    for ( n=0; n<rc->numIds; n++ ) {
-      //printf( "val[%-d] = %-g\n", n, rc->val[n] );
-    }
-    result = (*rc->func)( (void *) rc, rc->numIds, (void *) rc->val );
-    //printf( "result = %-d\n", result );
-    //printf( "ruleId = %-d\n", rc->ruleId );
+  if ( !rc->valueConnection.pvsConnected() ) {
+    rc->valueConnection.setPvConnected( arg.chid );
+    if ( !rc->valueConnection.pvsConnected() ) return;
+  }
+
+  //for ( n=0; n<rc->numIds; n++ ) {
+    //printf( "val[%-d] = %-g\n", n, rc->val[n] );
+  //}
+  result = (*rc->func)( (void *) rc, rc->numIds, (void *) rc->val );
+  //printf( "result = %-d\n", result );
+  //printf( "ruleId = %-d\n", rc->ruleId );
+  if ( rc->first || ( result != rc->prevValue ) ) {
+    rc->first = 0;
+    rc->prevValue = result;
     if ( rc->userFunc ) {
       (*rc->userFunc)( rc->userPtr, rc->ruleId, result );
     }
-  }
-  else {
-    //printf( "waiting\n" );
   }
 
 }
@@ -92,12 +112,14 @@ int i;
   ruleId = -1;
   userPtr = NULL;
   userFunc = NULL;
+  connectFunc = NULL;
 
 }
 
 ruleClass::ruleClass (
   void *_userPtr,
   int _ruleId,
+  RULECALLBACK _connectFunc,
   RULECALLBACK _userFunc
 ) {
 
@@ -112,6 +134,7 @@ int i;
   }
   ruleId = _ruleId;
   userPtr = _userPtr;
+  connectFunc = _connectFunc;
   userFunc = _userFunc;
 
 }
@@ -125,6 +148,7 @@ ruleClass::~ruleClass( void ) {
 void ruleClass::init (
   void *_userPtr,
   int _ruleId,
+  RULECALLBACK _connectFunc,
   RULECALLBACK _userFunc
 ) {
 
@@ -139,6 +163,7 @@ int i;
   }
   ruleId = _ruleId;
   userPtr = _userPtr;
+  connectFunc = _connectFunc;
   userFunc = _userFunc;
 
 }
@@ -155,6 +180,7 @@ int stat;
   if ( activated ) return 1;
 
   activated = 1;
+  first = 1;
 
   //printf( "ruleClass::activate, string = [%s]\n", string );
 
@@ -167,11 +193,15 @@ int stat;
   tok = strtok_r( buf, "(),", &context );
   if ( !tok ) return 0;
 
-  _edmDebug();
+  //_edmDebug();
   func = ul->getRuleFunc( tok );
   //printf( "func = %s, addr=%-x\n", tok, (int) func );
 
   connection.init();
+  connection.setMaxPvs( 32 );
+
+  valueConnection.init();
+  valueConnection.setMaxPvs( 32 );
 
   numIds = 0;
   do {
@@ -183,6 +213,7 @@ int stat;
         re[numIds].r = this;
         re[numIds].i = numIds;
         connection.addPv();
+        valueConnection.addPv();
         stat = ca_search_and_connect( tok, &id[numIds], monitor_connect_state,
          &re[numIds] );
         numIds++;
@@ -200,6 +231,8 @@ int stat;
 int ruleClass::bookEvents ( void ) {
 
 int stat, i;
+
+  return 1;
 
   if ( eventsBooked ) return 1;
 
