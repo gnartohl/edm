@@ -20,7 +20,8 @@ INCLUDES = ../os.h ../os_objs.h ../sys_types.h ../os_priv.h ../ipncl.h \
  ../server_iprpc.h ../iprpc.h ../ipnis.h ../ipnis_priv.h ../avl.h \
  ../avl_priv.h ../crc.h
 
-util : lib114135a4-6f6c-11d3-95bc-00104b8742df.so \
+util : $(INCLUDES) \
+	lib114135a4-6f6c-11d3-95bc-00104b8742df.so \
 	lib114135a4-6f6c-11d3-95bc-00104b8742df.a
 	@echo "done"
 
