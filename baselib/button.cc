@@ -627,6 +627,8 @@ activeGraphicClass *bto = (activeGraphicClass *) this;
   strncpy( maxVisString, source->maxVisString, 39 );
   activeMode = 0;
 
+  fgColorMode = source->fgColorMode;
+
   connection.setMaxPvs( 4 );
 
   updateDimensions();
