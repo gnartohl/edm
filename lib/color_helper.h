@@ -100,7 +100,7 @@ inline void ColorHelper::updatePVStatus(const ProcessVariable *pv)
 
 inline void ColorHelper::updateColorValue(const ProcessVariable *pv)
 {
-    if (pv->is_valid())
+    if (pv && pv->is_valid())
         color_value = pv->get_double();
     else
         color_value = 0.0;
