@@ -3398,6 +3398,8 @@ int colorInfoClass::isRule (
   int index )
 {
 
+  if ( major < 3 ) return 0;
+
   if ( index >= max_colors+num_blinking_colors )
     return 0;
 
