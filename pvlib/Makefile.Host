@@ -13,9 +13,12 @@ USR_LIBS_Linux = cfcaa62e-8199-11d3-a77f-00104b8742df pthread dl
 USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
 USR_LIBS_solaris = cfcaa62e-8199-11d3-a77f-00104b8742df pthread dl
 
+USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
+USR_LIBS_hpux11_11_mt = cfcaa62e-8199-11d3-a77f-00104b8742df pthread 
 
 # Add Debugging
-USR_LDFLAGS += -g
+#USR_LDFLAGS += -g
+
 USR_LDFLAGS += -L$(INSTALL_LIB)
 
 LIBRARY = Epics

@@ -13,6 +13,10 @@ USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
 
 USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt gif png
 
+USR_CXXFLAGS_hpux11_11_mt += -DHP_UX__ -DSINGLE_THREADED=1 -D__epics__=1
+
+USR_LIBS_hpux11_11_mt = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt X11 Xext pthread ungif png z
+
 USR_LDFLAGS += -L$(INSTALL_LIB) -L$(IMAGELIB)
 
 LIBRARY = 605432d2-f29d-11d2-973b-00104b8742df

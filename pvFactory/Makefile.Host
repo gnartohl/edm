@@ -24,9 +24,14 @@ endif
 #CFLAGS=-g -Wall -O0 -DMOTIF 
 
 # Add Debugging
-CFLAGS+= -g -O0
+#CFLAGS+= -g -O0
 
+# hpux
+#CFLAGS+=+W652 -DHP_UX=1111 -D__epics__=1
+
+# linux
 CFLAGS+=-D__linux__=1 -D__epics__=1
+
 CXXFLAGS=$(CFLAGS)
 
 include $(TOP)/config/RULES.Host
