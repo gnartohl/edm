@@ -1010,6 +1010,7 @@ activeWindowListPtr cur;
   cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
+  cur->requestActiveRedraw = 0;
   cur->requestIconize = 0;
 
   cur->node.create( apco, NULL, 0, 0, 0, 0, apco->numMacros, apco->macros,
@@ -1087,6 +1088,7 @@ activeWindowListPtr cur;
   cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
+  cur->requestActiveRedraw = 0;
   cur->requestIconize = 0;
 
   cur->node.create( apco, NULL, 0, 0, 0, 0, apco->numMacros, apco->macros,
@@ -1165,6 +1167,7 @@ char *fName;
   cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
+  cur->requestActiveRedraw = 0;
   cur->requestIconize = 0;
 
   cur->node.create( apco, NULL, 0, 0, 0, 0, apco->numMacros, apco->macros,
@@ -1236,6 +1239,7 @@ char *fName;
   cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
+  cur->requestActiveRedraw = 0;
   cur->requestIconize = 0;
 
   cur->node.create( apco, NULL, 0, 0, 0, 0, apco->numMacros, apco->macros,
@@ -1303,6 +1307,7 @@ activeWindowListPtr cur, next;
   cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
+  cur->requestActiveRedraw = 0;
   cur->requestIconize = 0;
   cur->node.create( apco, NULL, 100, 100, 500, 600, apco->numMacros,
    apco->macros, apco->expansions );
@@ -1793,6 +1798,7 @@ char *sysMacros[] = {
   cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
+  cur->requestActiveRedraw = 0;
   cur->requestIconize = 0;
 
   cur->node.createNoEdit( apco, NULL, 0, 0, 0, 0, numMacros,
@@ -2060,6 +2066,7 @@ activeWindowListPtr cur;
       cur->requestCascade = 0;
       cur->requestImport = 0;
       cur->requestRefresh = 0;
+      cur->requestActiveRedraw = 0;
       cur->requestIconize = 0;
       cur->x = cur->node.x;
       cur->y = cur->node.y;
@@ -3233,6 +3240,7 @@ void appContextClass::addActiveWindow (
   node->requestCascade = 0;
   node->requestImport = 0;
   node->requestRefresh = 0;
+  node->requestActiveRedraw = 0;
   node->requestIconize = 0;
 
   node->blink = head->blink;
@@ -3255,6 +3263,29 @@ activeWindowListPtr cur;
     if ( &(cur->node) == activeWindowNode ) {
       if ( !cur->requestRefresh ) {
         cur->requestRefresh = 1;
+        requestFlag++;
+      }
+    }
+    cur = cur->flink;
+  }
+
+  return 1;
+
+}
+
+int appContextClass::smartDrawAllActive (
+  activeWindowClass *activeWindowNode )
+{
+
+  // simply mark for redraw and increment request flag
+
+activeWindowListPtr cur;
+
+  cur = head->flink;
+  while ( cur != head ) {
+    if ( &(cur->node) == activeWindowNode ) {
+      if ( !cur->requestActiveRedraw ) {
+        cur->requestActiveRedraw = 1;
         requestFlag++;
       }
     }
@@ -4219,6 +4250,7 @@ err_return:
     cur->requestCascade = 0;
     cur->requestImport = 0;
     cur->requestRefresh = 0;
+    cur->requestActiveRedraw = 0;
     cur->requestIconize = 0;
 
     cur->blink = head->blink;
@@ -4272,6 +4304,7 @@ activeWindowListPtr cur;
   cur->requestCascade = 0;
   cur->requestImport = 0;
   cur->requestRefresh = 0;
+  cur->requestActiveRedraw = 0;
   cur->requestIconize = 0;
 
   cur->blink = head->blink;
@@ -4323,6 +4356,11 @@ char msg[127+1];
           cur->requestRefresh = 0;
           if ( requestFlag > 0 ) requestFlag--;
           cur->node.refreshActive();
+        }
+        if ( cur->requestActiveRedraw ) {
+          cur->requestActiveRedraw = 0;
+          if ( requestFlag > 0 ) requestFlag--;
+          cur->node.smartDrawAllActive();
         }
       }
       cur = cur->flink;

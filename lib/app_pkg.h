@@ -95,6 +95,7 @@ typedef struct activeWindowListTag {
   int requestReactivate; // for multiplexors
   int requestClose;
   int requestRefresh;
+  int requestActiveRedraw;
   int requestPosition;
   int requestCascade;
   int requestImport;
@@ -442,6 +443,9 @@ void addActiveWindow (
   activeWindowListPtr node );
 
 int refreshActiveWindow (
+  activeWindowClass *activeWindowNode );
+
+int appContextClass::smartDrawAllActive (
   activeWindowClass *activeWindowNode );
 
 int removeActiveWindow (

@@ -213,6 +213,10 @@ activeGraphicClass *tailNode;
 
   while ( curSel != actWin->selectedHead ) {
 
+    if ( strcmp( curSel->node->objName(), "menuMuxClass" ) == 0 ) {
+      actWin->appCtx->postMessage( activeGroupClass_str2 );
+    }
+
     if ( curSel->node->getX0() < minX ) minX = curSel->node->getX0();
     if ( curSel->node->getX1() > maxX ) maxX = curSel->node->getX1();
     if ( curSel->node->getY0() < minY ) minY = curSel->node->getY0();
@@ -570,6 +574,81 @@ activeGraphicListPtr cur;
   }
 
   return 1;
+
+}
+
+int activeGroupClass::doSmartDrawAllActive ( void ) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  cur = head->flink;
+  while ( cur != head ) {
+
+    if ( cur->node->smartDrawCount() ) {
+      cur->node->doSmartDrawAllActive();
+    }
+
+    cur = cur->flink;
+
+  }
+
+  return 1;
+
+}
+
+int activeGroupClass::drawActiveIfIntersects (
+  int x0,
+  int y0,
+  int x1,
+  int y1 )
+{
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  if ( deleteRequest ) return 1;
+
+  cur = head->flink;
+  while ( cur != head ) {
+
+    //printf( "group ... " );
+    cur->node->drawActiveIfIntersects( x0, y0, x1, y1 );
+
+    cur = cur->flink;
+
+  }
+
+  return 1;
+
+}
+
+int activeGroupClass::smartDrawCount ( void ) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+int n = 0;
+
+  cur = head->flink;
+  while ( cur != head ) {
+    n += cur->node->smartDrawCount();
+    cur = cur->flink;
+  }
+
+  return n;
+
+}
+
+void activeGroupClass::resetSmartDrawCount ( void ) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  cur = head->flink;
+  while ( cur != head ) {
+    cur->node->resetSmartDrawCount();
+    cur = cur->flink;
+  }
 
 }
 

@@ -52,6 +52,7 @@ activeGraphicClass::activeGraphicClass ( void ) {
   blinkFunc = NULL;
   blinkDisable = 0;
   createParam = NULL;
+  needSmartDraw = 0;
 
 }
 
@@ -84,6 +85,7 @@ void activeGraphicClass::clone ( const activeGraphicClass *source ) {
   onBlinkList = 0;
   blinkFunc = NULL;
   blinkDisable = 0;
+  needSmartDraw = 0;
 
   if ( source->createParam ) {
     createParam = new char[strlen(source->createParam)+1];
@@ -772,16 +774,34 @@ XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
 
 int activeGraphicClass::smartDrawAllActive ( void ) {
 
+  // this simply makes a request for a "draw all". It may result
+  // in a dumb redraw or multiple smart redraws by the following
+  // routine: doSmartDrawAllActive
+  drawActive();
+  needSmartDraw = 1;
+  actWin->requestSmartDrawAllActive();
+
+  return 1;
+
+}
+
+int activeGraphicClass::doSmartDrawAllActive ( void ) {
+
 activeGraphicListPtr cur;
 int x0, x1, y0, y1;
 XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
 
 //  actWin->appCtx->proc->lock();
 
+  resetSmartDrawCount();
+
   x0 = this->getX0();
   y0 = this->getY0();
   x1 = this->getX1();
   y1 = this->getY1();
+
+  //printf( "activeGraphicClass::doSmartDrawAllActive, %s\n", objName() );
+  //printf( "x0=%-d, y0=%-d, x1=%-d, y1=%-d\n", x0, y0, x1, y1 );
 
   this->bufInvalidate();
   this->eraseActive();
@@ -793,10 +813,11 @@ XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
 
-    if ( cur->node->intersects( x0, y0, x1, y1 ) ) {
-      cur->node->bufInvalidate();
-      cur->node->drawActive( x0, y0, x1, y1 );
-    }
+    cur->node->drawActiveIfIntersects( x0, y0, x1, y1 );
+    //if ( cur->node->intersects( x0, y0, x1, y1 ) ) {
+    //  cur->node->bufInvalidate();
+    //  cur->node->drawActive( x0, y0, x1, y1 );
+    //}
 
     cur = cur->flink;
 
@@ -809,6 +830,39 @@ XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
   //  actWin->appCtx->proc->unlock();
 
   return 1;
+
+}
+
+int activeGraphicClass::drawActiveIfIntersects (
+  int x0,
+  int y0,
+  int x1,
+  int y1 )
+{
+
+  //printf( "x0=%-d, y0=%-d, x1=%-d, y1=%-d\n", x0, y0, x1, y1 );
+  if ( intersects( x0, y0, x1, y1 ) ) {
+    //printf( "%s intersects\n", objName() );
+    bufInvalidate();
+    drawActive( x0, y0, x1, y1 );
+  }
+  else {
+    //printf( "%s not intersects\n", objName() );
+  }
+
+  return 1;
+
+}
+
+int activeGraphicClass::smartDrawCount ( void ) {
+
+  return needSmartDraw;
+
+}
+
+void activeGraphicClass::resetSmartDrawCount ( void ) {
+
+  needSmartDraw = 0;
 
 }
 

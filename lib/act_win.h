@@ -1074,6 +1074,10 @@ int refreshActive (
   int _w,
   int _h );
 
+int requestSmartDrawAllActive ( void );
+
+int smartDrawAllActive ( void );
+
 int requestActiveRefresh ( void );
 
 int saveWin (

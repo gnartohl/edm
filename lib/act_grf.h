@@ -152,6 +152,8 @@ int startEdit, editConfirmed;
 
 int deleteRequest; // if true, then wants to be deleted
 
+int needSmartDraw;
+
 activeGraphicClass ( void );
 
 void clone ( const activeGraphicClass *source );
@@ -501,11 +503,11 @@ virtual int addPoint (
   int x,
   int y );
 
-virtual int activeGraphicClass::insertPoint (
+virtual int insertPoint (
   int x,
   int y );
 
-virtual int activeGraphicClass::removePoint (
+virtual int removePoint (
   int x,
   int y );
 
@@ -625,29 +627,41 @@ virtual int drawActive (
   int _w,
   int _h );
 
-int drawAllActive ( void );
+virtual int drawAllActive ( void );
 
-int intersects (
+virtual int intersects (
   int x0,
   int y0,
   int x1,
   int y1 );
 
-int smartDrawAllActive ( void );
+virtual int smartDrawAllActive ( void );
 
-int smartDrawAll ( void );
+virtual int doSmartDrawAllActive ( void );
 
-int clearActive ( void );
+virtual int drawActiveIfIntersects (
+  int x0,
+  int y0,
+  int x1,
+  int y1 );
 
-int refreshActive ( void );
+virtual int smartDrawCount ( void );
 
-int refreshActive (
+virtual void resetSmartDrawCount ( void );
+
+virtual int smartDrawAll ( void );
+
+virtual int clearActive ( void );
+
+virtual int refreshActive ( void );
+
+virtual int refreshActive (
   int _x,
   int _y,
   int _w,
   int _h );
 
-void flushActive ( void );
+virtual void flushActive ( void );
 
 virtual int deactivate ( void );
 
@@ -1037,7 +1051,7 @@ void setCreateParam (
 
 char *getCreateParam ( void );
 
-void activeGraphicClass::postIncompatable ( void );
+void postIncompatable ( void );
 
 };
 

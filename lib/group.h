@@ -81,6 +81,18 @@ int drawActive ( void );
 
 int eraseActive ( void );
 
+int doSmartDrawAllActive ( void );
+
+int drawActiveIfIntersects (
+  int x0,
+  int y0,
+  int x1,
+  int y1 );
+
+int smartDrawCount ( void );
+
+void resetSmartDrawCount ( void );
+
 int activate (
   int pass,
   void *ptr,

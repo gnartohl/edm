@@ -13814,7 +13814,7 @@ char callbackName[63+1];
           if ( cnt >= NUM_PER_PENDIO ) {
             ca_pend_io( 5.0 );
             ca_pend_event( 0.01 );
-            processAllEvents( appCtx->appContext(), d );
+            //processAllEvents( appCtx->appContext(), d );
             cnt = 0;
 	  }
         }
@@ -13990,7 +13990,7 @@ char **muxMacro, **muxExpansion;
           if ( cnt >= NUM_PER_PENDIO ) {
             ca_pend_io( 5.0 );
             ca_pend_event( 0.01 );
-            processAllEvents( appCtx->appContext(), d );
+            //processAllEvents( appCtx->appContext(), d );
             cnt = 0;
 	  }
         }
@@ -14091,7 +14091,7 @@ char callbackName[63+1];
     if ( cnt >= NUM_PER_PENDIO ) {
       ca_pend_io( 5.0 );
       ca_pend_event( 0.01 );
-      processAllEvents( appCtx->appContext(), d );
+      //processAllEvents( appCtx->appContext(), d );
       cnt = 0;
     }
 
@@ -14215,7 +14215,7 @@ int numSubObjects, cnt;
       if ( cnt >= NUM_PER_PENDIO ) {
         ca_pend_io( 5.0 );
         ca_pend_event( 0.01 );
-        processAllEvents( appCtx->appContext(), d );
+        //processAllEvents( appCtx->appContext(), d );
         cnt = 0;
       }
     }
@@ -14231,6 +14231,54 @@ int numSubObjects, cnt;
 int activeWindowClass::clearActive ( void ) {
 
   XClearWindow( d, XtWindow(executeWidget) );
+
+  return 1;
+
+}
+
+int activeWindowClass::requestSmartDrawAllActive ( void ) {
+
+  appCtx->smartDrawAllActive( this );
+
+  return 1;
+
+}
+
+int activeWindowClass::smartDrawAllActive ( void ) {
+
+activeGraphicListPtr cur;
+int n = 0;
+
+  cur = head->flink;
+  while ( cur != head ) {
+    n += cur->node->smartDrawCount();
+    cur = cur->flink;
+  }
+
+  if ( ( n < 1 ) || ( n > 10 ) ) {
+
+    cur = head->flink;
+    while ( cur != head ) {
+      if ( cur->node->smartDrawCount() ) {
+        cur->node->resetSmartDrawCount();
+      }
+      cur->node->bufInvalidate();
+      cur->node->drawActive();
+      cur = cur->flink;
+    }
+
+  }
+  else {
+
+    cur = head->flink;
+    while ( cur != head ) {
+      if ( cur->node->smartDrawCount() ) {
+        cur->node->doSmartDrawAllActive();
+      }
+      cur = cur->flink;
+    }
+
+  }
 
   return 1;
 
