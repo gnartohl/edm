@@ -150,7 +150,8 @@ shellCmdClass *shcmdo = (shellCmdClass *) client;
 
   shcmdo->shellCommand.setRaw( shcmdo->bufShellCommand );
 
-  strncpy( shcmdo->label, shcmdo->bufLabel, 127 );
+  shcmdo->label.setRaw( shcmdo->bufLabel );
+  // strncpy( shcmdo->label, shcmdo->bufLabel, 127 );
 
   shcmdo->autoExecInterval = shcmdo->bufAutoExecInterval;
 
@@ -222,7 +223,7 @@ shellCmdClass::shellCmdClass ( void ) {
   strcpy( name, "shellCmdClass" );
 
   activeMode = 0;
-  strcpy( label, "" );
+  // strcpy( label, "" );
   invisible = 0;
   closeAction = 0;
   multipleInstancesAllowed = 0;
@@ -274,7 +275,8 @@ activeGraphicClass *shcmdo = (activeGraphicClass *) this;
 
   shellCommand.copy( source->shellCommand );
 
-  strncpy( label, source->label, 127 );
+  label.copy( source->label );
+  // strncpy( label, source->label, 127 );
 
   autoExecInterval = source->autoExecInterval;
 
@@ -352,10 +354,15 @@ float val;
   else
     writeStringToFile( f, "" );
 
-  if ( label )
-    writeStringToFile( f, label );
+  if ( label.getRaw() )
+    writeStringToFile( f, label.getRaw() );
   else
     writeStringToFile( f, "" );
+
+  //if ( label )
+  //  writeStringToFile( f, label );
+  //else
+  //  writeStringToFile( f, "" );
 
   writeStringToFile( f, fontTag );
 
@@ -436,7 +443,8 @@ float val;
   shellCommand.setRaw( oneName );
 
   readStringFromFile( oneName, 127, f ); actWin->incLine();
-  strncpy( label, oneName, 127 );
+  label.setRaw( oneName );
+  // strncpy( label, oneName, 127 );
 
   readStringFromFile( fontTag, 63, f ); actWin->incLine();
 
@@ -698,7 +706,8 @@ char *tk, *gotData, *context, buf[255+1];
           return 0;
         }
 
-        strncpy( label, tk, 127 );
+        label.setRaw( tk );
+        // strncpy( label, tk, 127 );
 
       }
 
@@ -757,10 +766,15 @@ char title[32], *ptr;
   else
     strncpy( bufShellCommand, "", 127 );
 
-  if ( label )
-    strncpy( bufLabel, label, 127 );
+  if ( label.getRaw() )
+    strncpy( bufLabel, label.getRaw(), 127 );
   else
     strncpy( bufLabel, "", 127 );
+
+  //if ( label )
+  //  strncpy( bufLabel, label, 127 );
+  //else
+  //  strncpy( bufLabel, "", 127 );
 
   bufInvisible = invisible;
 
@@ -922,7 +936,10 @@ XRectangle xR = { x, y, w, h };
     tY = y + h/2 - fontAscent/2;
 
     drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
-     XmALIGNMENT_CENTER, label );
+     XmALIGNMENT_CENTER, label.getRaw() );
+
+    // drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
+    //  XmALIGNMENT_CENTER, label );
 
     actWin->drawGc.removeNormXClipRectangle();
 
@@ -952,7 +969,8 @@ XRectangle xR = { x, y, w, h };
   XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
    actWin->executeGc.normGC(), x, y, w, h );
 
-    strncpy( string, label, 39 );
+    strncpy( string, label.getExpanded(), 39 );
+    // strncpy( string, label, 39 );
 
     actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 
@@ -1111,6 +1129,7 @@ int shellCmdClass::expand1st (
 int stat;
 
   stat = shellCommand.expand1st( numMacros, macros, expansions );
+  stat = label.expand1st( numMacros, macros, expansions );
 
   return stat;
 
@@ -1125,6 +1144,7 @@ int shellCmdClass::expand2nd (
 int stat;
 
   stat = shellCommand.expand2nd( numMacros, macros, expansions );
+  stat = label.expand2nd( numMacros, macros, expansions );
 
   return stat;
 
@@ -1133,6 +1153,7 @@ int stat;
 int shellCmdClass::containsMacros ( void ) {
 
   if ( shellCommand.containsPrimaryMacros() ) return 1;
+  if ( label.containsPrimaryMacros() ) return 1;
 
   return 0;
 

@@ -144,7 +144,8 @@ char bufShellCommand[127+1];
 expStringClass shellCommand;
 
 char bufLabel[127+1];
-char label[127+1];
+expStringClass label;
+//char label[127+1];
 
 int activeMode;
 
