@@ -6777,18 +6777,18 @@ unsigned int mask;
                 if ( num_selected == 0 ) {
                   awo->state = AWC_NONE_SELECTED;
                   awo->updateMasterSelection();
-		  doAgain = 1;
+		  // doAgain = 1;
 		}
                 else if ( num_selected == 1 ) {
                   awo->state = AWC_ONE_SELECTED;
                   awo->useFirstSelectedAsReference = 1;
                   awo->updateMasterSelection();
-                  if ( prev_num_selected == num_selected ) doAgain = 1;
+                  // if ( prev_num_selected == num_selected ) doAgain = 1;
 		}
                 else {
                   awo->state = AWC_MANY_SELECTED;
                   awo->updateMasterSelection();
-                  if ( prev_num_selected == num_selected ) doAgain = 1;
+                  // if ( prev_num_selected == num_selected ) doAgain = 1;
 		}
 
               }
