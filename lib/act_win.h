@@ -604,6 +604,9 @@ friend void awc_save_and_exit_cb (
 msgDialogClass msgDialog;
 int msgDialogCreated, msgDialogPoppedUp;
 
+msgDialogClass objNameDialog;
+int objNameDialogCreated, objNameDialogPoppedUp;
+
 char id[31+1], bufId[31+1];
 char title[127+1], bufTitle[127+1], restoreTitle[127+1];
 int showName;
@@ -1117,6 +1120,8 @@ void activeWindowClass::setDisplayScheme (
  void activeWindowClass::updateEditSelectionPointers ( void );
 
 void activeWindowClass::updateMasterSelection ( void );
+
+void activeWindowClass::showSelectionObject ( void );
 
 int activeWindowClass::initDefExeNode (
   void *node );

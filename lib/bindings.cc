@@ -656,6 +656,10 @@ int i, l1, l2;
 
   }
 
+  if ( strcmp( className, "activeGroupClass" ) == 0 ) {
+    return groupName;
+  }
+
   return NULL;
 
 }

@@ -6325,6 +6325,7 @@ unsigned int mask;
                 awo->useFirstSelectedAsReference = 1;
                 awo->state = AWC_ONE_SELECTED;
                 awo->updateMasterSelection();
+                awo->showSelectionObject();
               }
               else {
                   printErrMsg( __FILE__, __LINE__,
@@ -8985,6 +8986,9 @@ activeWindowClass::activeWindowClass ( void ) {
   msgDialogCreated = 0;
   msgDialogPoppedUp = 0;
 
+  objNameDialogCreated = 0;
+  objNameDialogPoppedUp = 0;
+
   strcpy( curSchemeSet, "" );
 
 }
@@ -9183,6 +9187,8 @@ commentLinesPtr commentCur, commentNext;
   if ( drawWidget ) XtDestroyWidget( drawWidget );
 
   if ( msgDialogCreated ) msgDialog.destroy();
+
+  if ( objNameDialogCreated ) objNameDialog.destroy();
 
   if ( top ) XtDestroyWidget( top );
 
@@ -15099,6 +15105,71 @@ int x0, y0, x1, y1;
 
   if ( masterSelectX1 == masterSelectX0 ) masterSelectX1 = masterSelectX0 + 1;
   if ( masterSelectY1 == masterSelectY0 ) masterSelectY1 = masterSelectY0 + 1;
+
+
+
+// !!!!!! notice coupling with activeWindowClass::showSelectionObject()
+
+  if ( objNameDialogPoppedUp ) {
+    objNameDialog.popdown();
+    objNameDialogPoppedUp = 0;
+  }
+
+
+}
+
+void activeWindowClass::showSelectionObject ( void ) {
+
+// !!!!!! notice coupling with activeWindowClass::updateMasterSelection()
+
+activeGraphicListPtr cur;
+int x1, y1;
+char buf[31+1];
+int num_selected;
+
+  num_selected = 0;
+  cur = selectedHead->selFlink;
+  while ( ( cur != selectedHead ) &&
+          ( num_selected < 2 ) ) {
+
+    if ( cur->node->objName() ) {
+      if ( obj.getNameFromClass( cur->node->objName() ) ) {
+        strncpy( buf, obj.getNameFromClass( cur->node->objName() ), 31 );
+      }
+      else {
+        strcpy( buf, "?" );
+      }
+    }
+    else {
+      strcpy( buf, "?" );
+    }
+
+    x1 = cur->node->getX1();
+    y1 = cur->node->getY1();
+
+    num_selected++;
+    cur = cur->selFlink;
+
+  }
+
+  if ( top ) {
+
+    if ( !objNameDialogCreated ) {
+      objNameDialog.create( top );
+      objNameDialogCreated = 1;
+      objNameDialogPoppedUp = 0;
+    }
+
+    if ( objNameDialogPoppedUp ) {
+      objNameDialog.popdown();
+    }
+
+    if ( num_selected == 1 ) {
+      objNameDialog.popup( buf, x+x1, y+y1 );
+      objNameDialogPoppedUp = 1;
+    }
+
+  }
 
 }
 

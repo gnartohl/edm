@@ -6,5 +6,6 @@
 #define objBindingClass_str3 (char *) "Insufficient virtual memory\n"
 #define objBindingClass_str4 (char *) "Object definition syntax error\n"
 #define objBindingClass_str5 (char *) "Number of items does not match contents in %s\n"
+#define objBindingClass_str6 (char *) "Group"
 
 #endif

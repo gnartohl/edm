@@ -71,6 +71,8 @@ static char **classNames = NULL;
 static char **types = NULL;
 static void **dllHandle = NULL;
 static char **dllName = NULL;
+static char *groupName = objBindingClass_str6;
+
 #endif
 
 class objBindingClass {
