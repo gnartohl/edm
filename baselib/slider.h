@@ -28,7 +28,7 @@
 #include "cadef.h"
 
 #define SLC_MAJOR_VERSION 2
-#define SLC_MINOR_VERSION 0
+#define SLC_MINOR_VERSION 1
 #define SLC_RELEASE 0
 
 #define SLC_STATE_IDLE 1
@@ -298,7 +298,7 @@ int bufX, bufY, bufW, bufH;
 
 Widget frameWidget, sliderWidget;
 
-double bufControlV, bufIncrement;
+double bufControlV, bufIncrement, bufAccelMultiplier;
 int valueFormX, valueFormY, valueFormW, valueFormH, valueFormMaxH;
 
 double minFv, maxFv, factor, controlV, readV, savedV, newSavedV, oldControlV;
@@ -306,7 +306,7 @@ int xRef;
 
 double curControlV, curReadV;
 
-double increment;
+double increment, accelMultiplier;
 int controlState, compute_initial_increment, autoSetSavedV;
 
 int fgColorMode, bufFgColorMode;

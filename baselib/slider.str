@@ -86,5 +86,6 @@
 #define activeSliderClass_str83 (char *) "ca_get_callback failed\n"
 #define activeSliderClass_str84 (char *) "ca_get_callback failed\n"
 #define activeSliderClass_str85 (char *) "controlValue"
+#define activeSliderClass_str86 (char *) "Inc Multiplier"
 
 #endif

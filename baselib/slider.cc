@@ -161,7 +161,12 @@ int stat, xOfs;
   slo->eraseActiveControlText();
   slo->eraseActivePointers();
 
-  fvalue = slo->controlV - slo->increment;
+  if ( slo->incrementTimerValue < 50 ) {
+    fvalue = slo->controlV - slo->increment * slo->accelMultiplier;
+  }
+  else {
+    fvalue = slo->controlV - slo->increment;
+  }
 
   if ( slo->positive ) {
     if ( fvalue < slo->minFv ) fvalue = slo->minFv;
@@ -231,7 +236,12 @@ int stat, xOfs;
   slo->eraseActiveControlText();
   slo->eraseActivePointers();
 
-  fvalue = slo->controlV + slo->increment;
+  if ( slo->incrementTimerValue < 50 ) {
+    fvalue = slo->controlV + slo->increment * slo->accelMultiplier;
+  }
+  else {
+    fvalue = slo->controlV + slo->increment;
+  }
 
   if ( slo->positive ) {
     if ( fvalue < slo->minFv ) fvalue = slo->minFv;
@@ -308,6 +318,8 @@ activeSliderClass *slo = (activeSliderClass *) client;
 
   slo->increment = slo->bufIncrement;
   sprintf( slo->incString, slo->controlFormat, slo->increment );
+
+  slo->accelMultiplier = slo->bufAccelMultiplier;
 
   slo->actWin->appCtx->proc->lock();
   slo->curControlV = slo->controlV;
@@ -407,6 +419,8 @@ activeSliderClass *slo = (activeSliderClass *) client;
 
   slo->increment = slo->bufIncrement;
   sprintf( slo->incString, slo->controlFormat, slo->increment );
+
+  slo->accelMultiplier = slo->bufAccelMultiplier;
 
   slo->controlPvName.setRaw( slo->controlBufPvName );
   slo->readPvName.setRaw( slo->readBufPvName );
@@ -891,6 +905,7 @@ activeGraphicClass *slo = (activeGraphicClass *) this;
   strncpy( readLabelTypeStr, source->readLabelTypeStr, 15 );
 
   increment = source->increment;
+  accelMultiplier = source->accelMultiplier;
   savedV = source->savedV;
 
   positive = source->positive;
@@ -938,6 +953,7 @@ int xOfs;
   h = _h;
 
   increment = 0.0;
+  accelMultiplier = 1.0;
   controlAreaW = w - 40;
   controlH = 16;
   controlAreaH = controlH + 1;
@@ -1069,6 +1085,9 @@ int index, stat;
   stat = efScaleMin.write( f );
   stat = efScaleMax.write( f );
   writeStringToFile( f, displayFormat );
+
+  // version 2.1.0
+  fprintf( f, "%-g\n", accelMultiplier );
 
   return 1;
 
@@ -1266,6 +1285,14 @@ float val;
 
   }
 
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 0 ) ) ) {
+    fscanf( f, "%g\n", &val );
+    accelMultiplier = (double) val;
+  }
+  else {
+    accelMultiplier = 1.0;
+  }
+
   actWin->fi->loadFontTag( fontTag );
   fs = actWin->fi->getXFontStruct( fontTag );
 
@@ -1315,6 +1342,7 @@ char title[32], *ptr;
   bufControlColorMode = controlColorMode;
   bufReadColorMode = readColorMode;
   bufIncrement = increment;
+  bufAccelMultiplier = accelMultiplier;
   strncpy( bufFontTag, fontTag, 63 );
 
   bufChangeCallbackFlag = changeCallbackFlag;
@@ -1401,6 +1429,8 @@ char title[32], *ptr;
    readLabelTypeStr, 15 );
 
   ef.addTextField( activeSliderClass_str28, 35, &bufIncrement );
+
+  ef.addTextField( activeSliderClass_str86, 35, &bufAccelMultiplier );
 
   ef.addToggle( activeSliderClass_str29, &bufLimitsFromDb );
   ef.addOption( activeSliderClass_str30, activeSliderClass_str35,
@@ -2262,6 +2292,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 	else {
 
           slo->bufIncrement = slo->increment;
+          slo->bufAccelMultiplier = slo->accelMultiplier;
           slo->bufControlV = slo->controlV;
           slo->valueFormX = slo->actWin->x + slo->x  + be->x;
           slo->valueFormY = slo->actWin->y + slo->y + be->y;
@@ -2279,6 +2310,8 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
            &slo->bufControlV );
           slo->ef.addTextField( activeSliderClass_str58, 14,
            &slo->bufIncrement );
+          slo->ef.addTextField( activeSliderClass_str86, 14,
+           &slo->bufAccelMultiplier );
           slo->ef.finished( slc_value_ok, slc_value_apply, slc_value_cancel,
            slo );
           slo->ef.popup();
