@@ -5650,6 +5650,16 @@ int colorInfoClass::getSpecialColor (
 int colorInfoClass::getSpecialIndex (
   int index ) {
 
+int ix, stat;
+unsigned int pixel;
+
+  if ( major < 3 ) {
+    pixel = getSpecialColor( index );
+    stat = getIndex( pixel, &ix );
+    if ( !( stat & 1 ) ) ix = -1;
+    return ix;
+  }
+
   if ( index < 0 ) return -1;
   if ( index >= NUM_SPECIAL_COLORS ) return -1;
 
@@ -6179,7 +6189,7 @@ char colorMode[10+1];
     if ( ( *index < 0 ) || ( *index >= max_colors+num_blinking_colors ) ) {
       printf( "colorInfoClass::readColorIndex - bad index encountered [%-d]\n",
        *index );
-      *index = 0;
+      *index = getSpecialIndex( COLORINFO_K_INVALID );
     }
 
   }
