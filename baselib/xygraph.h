@@ -111,6 +111,26 @@ static void updateTimerAction (
   XtPointer client,
   XtIntervalId *id );
 
+static void adjp_edit_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void adjp_edit_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void adjp_edit_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void menu_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 static void setKpXMinDoubleValue (
   Widget w,
   XtPointer client,
@@ -370,6 +390,26 @@ typedef struct objPlusIndexTag {
 friend void updateTimerAction (
   XtPointer client,
   XtIntervalId *id );
+
+friend void adjp_edit_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void adjp_edit_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void adjp_edit_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void menu_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 friend void setKpXMinDoubleValue (
   Widget w,
@@ -742,6 +782,13 @@ int xSigned[XYGC_K_MAX_TRACES], ySigned[XYGC_K_MAX_TRACES];
 int lowestYScaleIndex[NUM_Y_AXES], numYTraces[NUM_Y_AXES];
 
 time_t timeOffset;
+
+int widgetsCreated;
+Widget popUpMenu, pullDownMenu, pbAutoScale, pbOrigScale, pbAdjustParams;
+
+int adjpFormX, adjpFormY, adjpFormW, adjpFormH, adjpFormMaxH;
+
+int popupMenuX, popupMenuY;
 
 public:
 

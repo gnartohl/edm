@@ -48,6 +48,167 @@ xyGraphClass *xyo = (xyGraphClass *) client;
 
 }
 
+static void adjp_edit_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+xyGraphClass *xyo = (xyGraphClass *) client;
+
+  // x
+  if ( !xyo->eBuf->bufXMin.isNull() ) {
+    xyo->kpXMin = xyo->eBuf->bufXMin.value();
+    setKpXMinDoubleValue( w, client, call );
+  }
+
+  if ( !xyo->eBuf->bufXMax.isNull() ) {
+    xyo->kpXMax = xyo->eBuf->bufXMax.value();
+    setKpXMaxDoubleValue( w, client, call );
+  }
+
+  // y1
+  if ( !xyo->eBuf->bufY1Min[0].isNull() ) {
+    xyo->kpY1Min[0] = xyo->eBuf->bufY1Min[0].value();
+    setKpY1MinDoubleValue( w, client, call );
+  }
+
+  if ( !xyo->eBuf->bufY1Max[0].isNull() ) {
+    xyo->kpY1Max[0] = xyo->eBuf->bufY1Max[0].value();
+    setKpY1MaxDoubleValue( w, client, call );
+  }
+
+  // y2
+  if ( !xyo->eBuf->bufY1Min[1].isNull() ) {
+    xyo->kpY1Min[1] = xyo->eBuf->bufY1Min[1].value();
+    setKpY2MinDoubleValue( w, client, call );
+  }
+
+  if ( !xyo->eBuf->bufY1Max[1].isNull() ) {
+    xyo->kpY1Max[1] = xyo->eBuf->bufY1Max[1].value();
+    setKpY2MaxDoubleValue( w, client, call );
+  }
+
+}
+
+static void adjp_edit_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+xyGraphClass *xyo = (xyGraphClass *) client;
+
+  adjp_edit_apply( w, client, call );
+  xyo->ef.popdown();
+
+}
+
+static void adjp_edit_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+xyGraphClass *xyo = (xyGraphClass *) client;
+
+  xyo->ef.popdown();
+
+}
+
+static void menu_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+xyGraphClass *xyo = (xyGraphClass *) client;
+int yi;
+
+  if ( w == xyo->pbAutoScale ) {
+
+    for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+      if ( xyo->numYTraces[yi] > 0 ) {
+        xyo->kpY1MinEfDouble[yi].setNull(1);
+        xyo->kpY1MaxEfDouble[yi].setNull(1);
+      }
+    }
+    xyo->kpXMinEfDouble.setNull(1);
+    xyo->kpXMaxEfDouble.setNull(1);
+
+    xyo->actWin->appCtx->proc->lock();
+    xyo->needNewLimits = 1;
+    xyo->actWin->addDefExeNode( xyo->aglPtr );
+    xyo->actWin->appCtx->proc->unlock();
+
+  }
+  else if ( w == xyo->pbOrigScale ) {
+
+    for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+      if ( xyo->numYTraces[yi] > 0 ) {
+        xyo->kpY1MinEfDouble[yi].setNull(1);
+        xyo->kpY1MaxEfDouble[yi].setNull(1);
+      }
+    }
+    xyo->kpXMinEfDouble.setNull(1);
+    xyo->kpXMaxEfDouble.setNull(1);
+
+    xyo->actWin->appCtx->proc->lock();
+    xyo->needOriginalLimits = 1;
+    xyo->actWin->addDefExeNode( xyo->aglPtr );
+    xyo->actWin->appCtx->proc->unlock();
+
+  }
+  else if ( w == xyo->pbAdjustParams ) {
+
+    if ( !xyo->eBuf ) {
+      xyo->eBuf = new xyGraphClass::editBufType;
+    }
+
+    xyo->adjpFormX = xyo->actWin->x + xyo->x + xyo->popupMenuX;
+    xyo->adjpFormY = xyo->actWin->y + xyo->y + xyo->popupMenuY;
+    xyo->adjpFormW = 0;
+    xyo->adjpFormH = 0;
+    xyo->adjpFormMaxH = 600;
+
+    xyo->ef.create( xyo->actWin->top,
+     xyo->actWin->appCtx->ci.getColorMap(),
+     &xyo->adjpFormX, &xyo->adjpFormY,
+     &xyo->adjpFormW, &xyo->adjpFormH, &xyo->adjpFormMaxH,
+     "Adjust Params", NULL, NULL, NULL );
+
+    xyo->eBuf->bufXMin.setNull(1);
+    xyo->eBuf->bufXMax.setNull(1);
+    xyo->eBuf->bufY1Min[0].setNull(1);
+    xyo->eBuf->bufY1Max[0].setNull(1);
+    xyo->eBuf->bufY1Min[1].setNull(1);
+    xyo->eBuf->bufY1Max[1].setNull(1);
+
+    if ( ( xyo->xAxisStyle != XYGC_K_AXIS_STYLE_TIME ) ||
+         ( xyo->xAxisTimeFormat == XYGC_K_AXIS_TIME_FMT_SEC ) ) {
+
+      xyo->ef.addTextField( "X Min", 10, &xyo->eBuf->bufXMin );
+      xyo->ef.addTextField( "X Max", 10, &xyo->eBuf->bufXMax );
+
+    }
+
+    xyo->ef.addTextField( "Y1 Min", 10, &xyo->eBuf->bufY1Min[0] );
+
+    xyo->ef.addTextField( "Y1 Max", 10, &xyo->eBuf->bufY1Max[0] );
+
+    xyo->ef.addTextField( "Y2 Min", 10, &xyo->eBuf->bufY1Min[1] );
+
+    xyo->ef.addTextField( "Y2 Max", 10, &xyo->eBuf->bufY1Max[1] );
+
+    xyo->ef.finished( adjp_edit_ok, adjp_edit_apply, adjp_edit_cancel,
+     xyo );
+
+    xyo->ef.popup();
+
+  }
+
+}
+
 static void setKpXMinDoubleValue (
   Widget w,
   XtPointer client,
@@ -5063,8 +5224,10 @@ int xyGraphClass::activate (
   void *ptr )
 {
 
-int i, yScaleIndex, yi, stat;
+int i, yScaleIndex, yi, stat, n;
 int screen_num, depth;
+Arg args[5];
+XmString str;
 
   switch ( pass ) {
 
@@ -5078,6 +5241,51 @@ int screen_num, depth;
     if ( !opComplete ) {
 
       opComplete = 1;
+
+      widgetsCreated = 0;
+
+      // for popup menu
+      if ( !widgetsCreated ) {
+
+        n = 0;
+        XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+        popUpMenu = XmCreatePopupMenu( actWin->topWidgetId(), "", args, n );
+
+        pullDownMenu = XmCreatePulldownMenu( popUpMenu, "", NULL, 0 );
+
+        str = XmStringCreateLocalized( "Perform auto-scale" );
+        pbAutoScale = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+         popUpMenu,
+         XmNlabelString, str,
+         NULL );
+        XmStringFree( str );
+
+        XtAddCallback( pbAutoScale, XmNactivateCallback, menu_cb,
+         (XtPointer) this );
+
+        str = XmStringCreateLocalized( "Restore original scale" );
+        pbOrigScale = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+         popUpMenu,
+         XmNlabelString, str,
+         NULL );
+        XmStringFree( str );
+
+        XtAddCallback( pbOrigScale, XmNactivateCallback, menu_cb,
+         (XtPointer) this );
+
+        str = XmStringCreateLocalized( "Adjust scale params" );
+        pbAdjustParams = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+         popUpMenu,
+         XmNlabelString, str,
+         NULL );
+        XmStringFree( str );
+
+        XtAddCallback( pbAdjustParams, XmNactivateCallback, menu_cb,
+         (XtPointer) this );
+
+	widgetsCreated = 1;
+
+      }
 
       // for keypad functions
 
@@ -5361,6 +5569,15 @@ int i, stat;
       updateTimerActive = 0;
     }
 
+    if ( ef.formIsPoppedUp() ) {
+      ef.popdown();
+    }
+
+    if ( widgetsCreated ) {
+      XtDestroyWidget( popUpMenu );
+      widgetsCreated = 0;
+    }
+
     msgDialog.destroy(); 
 
     if ( resetEv ) {
@@ -5593,6 +5810,7 @@ void xyGraphClass::btnUp (
 int pmX, pmY;
 double dx0, dy0, dx1, dy1;
 int yi = 0;
+XButtonEvent be;
 
   pmX = _x - this->x;
   pmY = _y - this->y;
@@ -5672,6 +5890,16 @@ int yi = 0;
       !( buttonState & ShiftMask ) &&
       !( buttonState & ControlMask ) ) {
 
+    memset( (void *) &be, 0, sizeof(XButtonEvent) );
+    popupMenuX = _x;
+    popupMenuY = _y;
+    be.x_root = actWin->x+_x;
+    be.y_root = actWin->y+_y;
+    XmMenuPosition( popUpMenu, &be );
+    XtManageChild( popUpMenu );
+    return;
+
+#if 0
     if ( !firstBoxRescale ) {
 
       firstBoxRescale = 1;
@@ -5702,6 +5930,8 @@ int yi = 0;
       actWin->appCtx->proc->unlock();
 
     }
+#endif
+
 
   }
   else if ( ( buttonNumber == 3 ) &&
