@@ -1041,6 +1041,33 @@ int edmTextentryClass::eraseActive()
     return 1;
 }
 
+/* Switch to edit mode */
+void edmTextentryClass::text_edit_callback(Widget w,
+                                           XtPointer clientData,
+                                           XtPointer pCallbackData)
+{
+    edmTextentryClass *me = (edmTextentryClass *) clientData;
+    XmTextVerifyCallbackStruct *pcbs =
+        (XmTextVerifyCallbackStruct *) pCallbackData;
+    /* NULL event means value changed programmatically; hence don't process */
+    if (pcbs->event != NULL)
+    {
+        switch (XtHasCallbacks(w,XmNlosingFocusCallback))
+        {
+            case XtCallbackNoList:
+            case XtCallbackHasNone:
+                XtAddCallback(w, XmNlosingFocusCallback,
+                              (XtCallbackProc)text_noedit_callback, me);
+                me->editing = true;
+                break;
+            case XtCallbackHasSome:
+                break;
+        }
+        pcbs->doit = True;
+    }
+}
+
+/* Text has been entered, send to PV */
 void edmTextentryClass::text_entered_callback(Widget w,
                                               XtPointer clientData,
                                               XtPointer)
@@ -1075,33 +1102,10 @@ void edmTextentryClass::text_entered_callback(Widget w,
         }
     }
     XtFree(text);
+    me->editing= false;
 }
 
-void edmTextentryClass::text_edit_callback(Widget w,
-                                           XtPointer clientData,
-                                           XtPointer pCallbackData)
-{
-    edmTextentryClass *me = (edmTextentryClass *) clientData;
-    XmTextVerifyCallbackStruct *pcbs =
-        (XmTextVerifyCallbackStruct *) pCallbackData;
-    /* NULL event means value changed programmatically; hence don't process */
-    if (pcbs->event != NULL)
-    {
-        switch (XtHasCallbacks(w,XmNlosingFocusCallback))
-        {
-            case XtCallbackNoList:
-            case XtCallbackHasNone:
-                XtAddCallback(w, XmNlosingFocusCallback,
-                              (XtCallbackProc)text_noedit_callback, me);
-                me->editing = true;
-                break;
-            case XtCallbackHasSome:
-                break;
-        }
-        pcbs->doit = True;
-    }
-}
-
+/* Ignore editing, abort and repaint original value */
 void edmTextentryClass::text_noedit_callback(Widget w,
                                              XtPointer clientData,
                                              XtPointer pCallbackData)
@@ -1113,4 +1117,8 @@ void edmTextentryClass::text_noedit_callback(Widget w,
     me->editing= false;
     pv_value_callback(me->pv, me);
 }
+
+
+
+
 
