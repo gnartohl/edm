@@ -5,29 +5,22 @@ SHARED_LIBRARIES=YES
 
 IMAGELIB=/usr/local
 
-ifeq ($(HOST_ARCH),Linux)
+USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
 
-  USR_CXXFLAGS += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl gif png
 
-  USR_LIBS_DEFAULT = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl gif png
+USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
 
-endif
+USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt gif png
 
-ifeq ($(HOST_ARCH),solaris)
-
-  USR_CXXFLAGS += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
-
-  USR_LIBS_DEFAULT = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt gif png
-
-endif
-
-USR_LDFLAGS += -shared -L../../../../lib/$(HOST_ARCH) -L../../../../bin/$(HOST_ARCH) -L$(IMAGELIB)
+USR_LDFLAGS += -L$(INSTALL_LIB) -L$(IMAGELIB)
 
 LIBRARY = 605432d2-f29d-11d2-973b-00104b8742df
 
 PROD_LIBS += ca Com
 
 USR_INCLUDES = -I../ -I../../util -I../../lib -I../../pvlib
+USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC) -I$(GIF_INC)
 
 Xm_DIR = $(MOTIF_LIB)
 Xt_DIR = $(X11_LIB)
@@ -44,6 +37,8 @@ XmStatXt_DIR = $(MOTIF_LIB)
 HCLXt_DIR = $(X11_LIB)
 Xlib_DIR = $(X11_LIB)
 HCLXmu_DIR = $(X11_LIB)
+
+gif_DIR=$(GIF_LIB)
 
 LIBSRCS += gif.cc
 LIBSRCS += png.cc

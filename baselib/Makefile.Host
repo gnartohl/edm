@@ -5,23 +5,20 @@ include $(TOP)/config/CONFIG_EXTENSIONS
 STATIC_BUILD=NO
 SHARED_LIBRARIES=YES
 
-ifeq ($(HOST_ARCH),Linux)
-  USR_CXXFLAGS += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
-  USR_LIBS_DEFAULT = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl
-endif
+  USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+  USR_LIBS_Linux = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl
 
-ifeq ($(HOST_ARCH),solaris)
-  USR_CXXFLAGS += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
-  USR_LIBS_DEFAULT = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt
-endif
+  USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+  USR_LIBS_solaris = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt
 
-USR_LDFLAGS += -shared -L../../../../lib/$(HOST_ARCH) -L../../../../bin/$(HOST_ARCH)
+USR_LDFLAGS += -L$(INSTALL_LIB) -L$(INSTALL_BIN)
 
 LIBRARY = EdmBase
 
 PROD_LIBS += ca Com
 
 USR_INCLUDES = -I../ -I../../util -I../../pvlib -I../../lib
+USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
 
 Xm_DIR = $(MOTIF_LIB)
 Xt_DIR = $(X11_LIB)
