@@ -104,7 +104,7 @@ char *defaultFont ( void ) { return defFontTag; }
 int addFont (
   char *name );
 
-int initFromFileVer2 (
+int initFromFileVer3 (
   XtAppContext app,
   Display *d,
   FILE *f,

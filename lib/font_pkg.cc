@@ -460,7 +460,7 @@ sizeListPtr curSize;
 
 }
 
-int fontInfoClass::initFromFileVer2 (
+int fontInfoClass::initFromFileVer3 (
   XtAppContext app,
   Display *d,
   FILE *f,
@@ -763,8 +763,8 @@ XFontStruct *fs;
 
   fscanf( f, "%d %d %d\n", &major, &minor, &release );
 
-  if ( major == 2 ) {
-    stat = initFromFileVer2( app, d, f, major, minor, release );
+  if ( major == 3 ) {
+    stat = initFromFileVer3( app, d, f, major, minor, release );
     return stat;
   }
 
