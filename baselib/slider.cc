@@ -1352,44 +1352,49 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeSliderClass_str18, 30, bufId, 31 );
+  //ef.addTextField( activeSliderClass_str18, 30, bufId, 31 );
   ef.addTextField( activeSliderClass_str19, 30, &bufX );
   ef.addTextField( activeSliderClass_str20, 30, &bufY );
   ef.addTextField( activeSliderClass_str21, 30, &bufW );
   ef.addTextField( activeSliderClass_str22, 30, &bufH );
-  ef.addColorButton( activeSliderClass_str24, actWin->ci, &fgCb, &bufFgColor );
-  ef.addToggle( activeSliderClass_str25, &bufFgColorMode );
-  ef.addColorButton( activeSliderClass_str26, actWin->ci, &bgCb, &bufBgColor );
-  ef.addColorButton( activeSliderClass_str27, actWin->ci, &shadeCb, &bufShadeColor );
+
+  ef.addTextField( activeSliderClass_str36, 30, controlBufPvName, 39 );
+  ef.addTextField( activeSliderClass_str42, 30, readBufPvName, 39 );
+  ef.addTextField( activeSliderClass_str48, 30, savedValueBufPvName, 39 );
+
+  ef.addTextField( activeSliderClass_str37, 30, controlBufLabelName, 39 );
+  ef.addOption( activeSliderClass_str38, activeSliderClass_str39,
+   controlLabelTypeStr, 15 );
+
+  ef.addTextField( activeSliderClass_str43, 30, readBufLabelName, 39 );
+  ef.addOption( activeSliderClass_str44, activeSliderClass_str45,
+   readLabelTypeStr, 15 );
+
   ef.addTextField( activeSliderClass_str28, 30, &bufIncrement );
 
   ef.addToggle( activeSliderClass_str29, &bufLimitsFromDb );
-  ef.addOption( activeSliderClass_str30, "g|f|e", bufDisplayFormat, 2 );
+  ef.addOption( activeSliderClass_str30, activeSliderClass_str35,
+   bufDisplayFormat, 2 );
   ef.addTextField( activeSliderClass_str31, 30, &bufEfPrecision );
   ef.addTextField( activeSliderClass_str32, 30, &bufEfScaleMin );
   ef.addTextField( activeSliderClass_str33, 30, &bufEfScaleMax );
 
-  //  ef.addOption( activeSliderClass_str34, activeSliderClass_str35, &bufFormatType );
-
-  ef.addTextField( activeSliderClass_str36, 30, controlBufPvName, 39 );
-  ef.addTextField( activeSliderClass_str37, 30, controlBufLabelName, 39 );
-  ef.addOption( activeSliderClass_str38, activeSliderClass_str39,
-   controlLabelTypeStr, 15 );
+  ef.addColorButton( activeSliderClass_str24, actWin->ci, &fgCb, &bufFgColor );
+  ef.addToggle( activeSliderClass_str25, &bufFgColorMode );
+  ef.addColorButton( activeSliderClass_str26, actWin->ci, &bgCb, &bufBgColor );
+  ef.addColorButton( activeSliderClass_str27, actWin->ci, &shadeCb, &bufShadeColor );
   ef.addColorButton( activeSliderClass_str40, actWin->ci, &controlCb,
    &bufControlColor );
   ef.addToggle( activeSliderClass_str41, &bufControlColorMode );
-  ef.addTextField( activeSliderClass_str42, 30, readBufPvName, 39 );
-  ef.addTextField( activeSliderClass_str43, 30, readBufLabelName, 39 );
-  ef.addOption( activeSliderClass_str44, activeSliderClass_str45,
-   readLabelTypeStr, 15 );
   ef.addColorButton( activeSliderClass_str46, actWin->ci, &readCb,
    &bufReadColor );
   ef.addToggle( activeSliderClass_str47, &bufReadColorMode );
-  ef.addTextField( activeSliderClass_str48, 30, savedValueBufPvName, 39 );
-  ef.addToggle( activeSliderClass_str49, &bufActivateCallbackFlag );
-  ef.addToggle( activeSliderClass_str50, &bufDeactivateCallbackFlag );
-  ef.addToggle( activeSliderClass_str51, &bufChangeCallbackFlag );
+
   ef.addFontMenu( activeSliderClass_str23, actWin->fi, &fm, fontTag );
+
+  //ef.addToggle( activeSliderClass_str49, &bufActivateCallbackFlag );
+  //ef.addToggle( activeSliderClass_str50, &bufDeactivateCallbackFlag );
+  //ef.addToggle( activeSliderClass_str51, &bufChangeCallbackFlag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 

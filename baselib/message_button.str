@@ -18,7 +18,7 @@
 #define activeMessageButtonClass_str15 "Release Label"
 #define activeMessageButtonClass_str16 "Press Value"
 #define activeMessageButtonClass_str17 "Release Value"
-#define activeMessageButtonClass_str18 "Destination"
+#define activeMessageButtonClass_str18 "Destination PV"
 #define activeMessageButtonClass_str19 "Label Font"
 #define activeMessageButtonClass_str20 "Fg"
 #define activeMessageButtonClass_str21 "On"

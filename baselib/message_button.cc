@@ -854,20 +854,31 @@ char title[32], *ptr;
   ef.addTextField( activeMessageButtonClass_str5, 30, &bufY );
   ef.addTextField( activeMessageButtonClass_str6, 30, &bufW );
   ef.addTextField( activeMessageButtonClass_str7, 30, &bufH );
+
+  ef.addTextField( activeMessageButtonClass_str18, 30, bufDestPvName, 39 );
+
   ef.addOption( activeMessageButtonClass_str8, activeMessageButtonClass_str9, &bufToggle );
   ef.addToggle( activeMessageButtonClass_str10, &buf3D );
   ef.addToggle( activeMessageButtonClass_str11, &bufInvisible );
   ef.addToggle( activeMessageButtonClass_str12, &bufPressAction );
   ef.addToggle( activeMessageButtonClass_str13, &bufReleaseAction );
+
   ef.addTextField( activeMessageButtonClass_str14, 30, bufOnLabel, MAX_ENUM_STRING_SIZE );
-  ef.addTextField( activeMessageButtonClass_str15, 30, bufOffLabel, MAX_ENUM_STRING_SIZE );
+
   ef.addTextField( activeMessageButtonClass_str16, 30, bufSourcePressPvName, 39 );
+
+  ef.addTextField( activeMessageButtonClass_str15, 30, bufOffLabel, MAX_ENUM_STRING_SIZE );
+
   ef.addTextField( activeMessageButtonClass_str17, 30, bufSourceReleasePvName, 39 );
-  ef.addTextField( activeMessageButtonClass_str18, 30, bufDestPvName, 39 );
+
   ef.addColorButton( activeMessageButtonClass_str20, actWin->ci, &fgCb, &bufFgColor );
+
   ef.addColorButton( activeMessageButtonClass_str21, actWin->ci, &onCb, &bufOnColor );
+
   ef.addColorButton( activeMessageButtonClass_str22, actWin->ci, &offCb, &bufOffColor );
+
   ef.addColorButton( activeMessageButtonClass_str23, actWin->ci, &topShadowCb, &bufTopShadowColor );
+
   ef.addColorButton( activeMessageButtonClass_str24, actWin->ci, &botShadowCb, &bufBotShadowColor );
 
   ef.addFontMenu( activeMessageButtonClass_str19, actWin->fi, &fm, fontTag );

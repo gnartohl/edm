@@ -23,7 +23,7 @@
 #define activeXTextClass_str20 "Not Visible if|Visible if"
 #define activeXTextClass_str21 ">="
 #define activeXTextClass_str22 "and <"
-#define activeXTextClass_str23 "Value"
+#define activeXTextClass_str23 "Text String"
 #define activeXTextClass_str24 "import file syntax error"
 #define activeXTextClass_str25 "error from ca_search\n"
 #define activeXTextClass_str26 "error from ca_search\n"

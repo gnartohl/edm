@@ -846,21 +846,23 @@ char title[32], *ptr;
   ef.addTextField( shellCmdClass_str5, 30, &bufY );
   ef.addTextField( shellCmdClass_str6, 30, &bufW );
   ef.addTextField( shellCmdClass_str7, 30, &bufH );
-  ef.addColorButton( shellCmdClass_str8, actWin->ci, &fgCb, &bufFgColor );
-  ef.addColorButton( shellCmdClass_str9, actWin->ci, &bgCb, &bufBgColor );
-  ef.addColorButton( shellCmdClass_str10, actWin->ci, &topShadowCb,
-   &bufTopShadowColor );
-  ef.addColorButton( shellCmdClass_str11, actWin->ci, &botShadowCb,
-   &bufBotShadowColor );
-  ef.addFontMenu( shellCmdClass_str12, actWin->fi, &fm, fontTag );
-  ef.addTextField( shellCmdClass_str13, 30, bufLabel, 127 );
+
   ef.addTextField( shellCmdClass_str14, 30, bufShellCommand, 127 );
+  ef.addTextField( shellCmdClass_str13, 30, bufLabel, 127 );
   ef.addToggle( shellCmdClass_str15, &bufInvisible );
   ef.addToggle( shellCmdClass_str16, &bufCloseAction );
   ef.addToggle( shellCmdClass_str17, &bufMultipleInstancesAllowed );
   ef.addTextField( shellCmdClass_str20, 30, &bufThreadSecondsToDelay );
   ef.addTextField( shellCmdClass_str18, 30, &bufAutoExecInterval );
 
+  ef.addColorButton( shellCmdClass_str8, actWin->ci, &fgCb, &bufFgColor );
+  ef.addColorButton( shellCmdClass_str9, actWin->ci, &bgCb, &bufBgColor );
+  ef.addColorButton( shellCmdClass_str10, actWin->ci, &topShadowCb,
+   &bufTopShadowColor );
+  ef.addColorButton( shellCmdClass_str11, actWin->ci, &botShadowCb,
+   &bufBotShadowColor );
+
+  ef.addFontMenu( shellCmdClass_str12, actWin->fi, &fm, fontTag );
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 
   return 1;

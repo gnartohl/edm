@@ -212,7 +212,7 @@ evid alarmEventId, controlEventId;
 char bufControlPvName[39+1];
 expStringClass controlPvExpStr;
 
-char bufInitialState[15+1];
+char bufInitialState[30+1];
 expStringClass initialStateExpStr;
 
 int controlExists, widgetsCreated, controlPvConnected, active, activeMode;

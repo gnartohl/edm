@@ -10,7 +10,7 @@
 #define menuMuxClass_str7 "Height"
 #define menuMuxClass_str8 "FG Color"
 #define menuMuxClass_str9 "FG Color Mode"
-#define menuMuxClass_str10 "Static|Alarm"
+#define menuMuxClass_str10 "Alarm Sensitive"
 #define menuMuxClass_str11 "BG Color"
 #define menuMuxClass_str12 "BG Color Mode"
 #define menuMuxClass_str13 "Static|Alarm"

@@ -1124,8 +1124,6 @@ char title[32], *ptr;
   ef.addTextField( relatedDisplayClass_str6, 30, &buf->bufW );
   ef.addTextField( relatedDisplayClass_str7, 30, &buf->bufH );
 
-  ef.addTextField( relatedDisplayClass_str13, 30, buf->bufButtonLabel, 127 );
-
   ef.addEmbeddedEf( relatedDisplayClass_str14, &ef1 );
 
   ef1->create( actWin->top, actWin->appCtx->ci.getColorMap(),
@@ -1164,6 +1162,17 @@ char title[32], *ptr;
 
   ef1->finished( rdc_edit_ok1, rdc_edit_apply1, rdc_edit_cancel1, this );
 
+  ef.addTextField( relatedDisplayClass_str13, 30, buf->bufButtonLabel, 127 );
+
+  ef.addToggle( relatedDisplayClass_str17, &buf->bufUseFocus );
+  ef.addToggle( relatedDisplayClass_str19, &buf->bufInvisible );
+
+  for ( i=0; i<NUMPVS; i++ ) {
+    ef.addTextField( relatedDisplayClass_str15, 30, buf->bufDestPvName[i],
+     39 );
+    ef.addTextField( relatedDisplayClass_str16, 30, buf->bufSource[i], 39 );
+  }
+
   ef.addColorButton( relatedDisplayClass_str8, actWin->ci, &fgCb, &buf->bufFgColor );
   ef.addColorButton( relatedDisplayClass_str9, actWin->ci, &bgCb, &buf->bufBgColor );
   ef.addColorButton( relatedDisplayClass_str10, actWin->ci, &topShadowCb,
@@ -1171,27 +1180,6 @@ char title[32], *ptr;
   ef.addColorButton( relatedDisplayClass_str11, actWin->ci, &botShadowCb,
    &buf->bufBotShadowColor );
   ef.addFontMenu( relatedDisplayClass_str12, actWin->fi, &fm, fontTag );
-
-  //ef.addTextField( relatedDisplayClass_str13, 30, buf->bufLabel, 127 );
-  //ef.addTextField( relatedDisplayClass_str14, 30, buf->bufDisplayFileName, 127 );
-
-  for ( i=0; i<NUMPVS; i++ ) {
-    ef.addTextField( relatedDisplayClass_str15, 30, buf->bufDestPvName[i], 39 );
-    ef.addTextField( relatedDisplayClass_str16, 30, buf->bufSource[i], 39 );
-  }
-
-  ef.addToggle( relatedDisplayClass_str17, &buf->bufUseFocus );
-  //ef.addToggle( relatedDisplayClass_str18, &buf->bufSetPostion );
-  ef.addToggle( relatedDisplayClass_str19, &buf->bufInvisible );
-  //ef.addToggle( relatedDisplayClass_str20, &buf->bufCloseAction );
-  //ef.addToggle( relatedDisplayClass_str21, &buf->bufAllowDups );
-  //ef.addToggle( relatedDisplayClass_str22, &buf->bufCascade );
-
-  //ef.addOption( relatedDisplayClass_str23, relatedDisplayClass_str24, &buf->bufReplaceSymbols );
-
-  //ef.addToggle( relatedDisplayClass_str25, &buf->bufPropagateMacros );
-
-  //ef.addTextField( relatedDisplayClass_str26, 30, buf->bufSymbols, 255 );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 

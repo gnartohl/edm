@@ -10,7 +10,7 @@
 #define activeMenuButtonClass_str7 "Height"
 #define activeMenuButtonClass_str8 "FG Color"
 #define activeMenuButtonClass_str9 "FG Color Mode"
-#define activeMenuButtonClass_str10 "Static|Alarm"
+#define activeMenuButtonClass_str10 "Alarm Sensitive"
 #define activeMenuButtonClass_str11 "BG Color"
 #define activeMenuButtonClass_str12 "BG Color Mode"
 #define activeMenuButtonClass_str13 "Static|Alarm"

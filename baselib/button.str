@@ -41,7 +41,7 @@
 #define activeButtonClass_str38 "Label Font"
 #define activeButtonClass_str39 "Fg"
 #define activeButtonClass_str40 "FG Mode"
-#define activeButtonClass_str41 "Static|Alarm"
+#define activeButtonClass_str41 "Alarm Sensitive"
 #define activeButtonClass_str42 "On"
 #define activeButtonClass_str43 "Off"
 #define activeButtonClass_str44 "Inconsistent"

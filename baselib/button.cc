@@ -1086,7 +1086,7 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeButtonClass_str17, 30, bufId, 31 );
+  //ef.addTextField( activeButtonClass_str17, 30, bufId, 31 );
   ef.addTextField( activeButtonClass_str18, 30, &bufX );
   ef.addTextField( activeButtonClass_str19, 30, &bufY );
   ef.addTextField( activeButtonClass_str20, 30, &bufW );
@@ -1099,18 +1099,23 @@ char title[32], *ptr;
   ef.addOption( activeButtonClass_str30, activeButtonClass_str31, labelTypeString, 15 );
   ef.addTextField( activeButtonClass_str32, 30, bufOnLabel, MAX_ENUM_STRING_SIZE );
   ef.addTextField( activeButtonClass_str33, 30, bufOffLabel, MAX_ENUM_STRING_SIZE );
-  ef.addToggle( activeButtonClass_str34, &bufActivateCallbackFlag );
-  ef.addToggle( activeButtonClass_str35, &bufDeactivateCallbackFlag );
-  ef.addToggle( activeButtonClass_str36, &bufDownCallbackFlag );
-  ef.addToggle( activeButtonClass_str37, &bufUpCallbackFlag );
+
+  //ef.addToggle( activeButtonClass_str34, &bufActivateCallbackFlag );
+  //ef.addToggle( activeButtonClass_str35, &bufDeactivateCallbackFlag );
+  //ef.addToggle( activeButtonClass_str36, &bufDownCallbackFlag );
+  //ef.addToggle( activeButtonClass_str37, &bufUpCallbackFlag );
+
   ef.addColorButton( activeButtonClass_str39, actWin->ci, &fgCb, &bufFgColor );
-  ef.addOption( activeButtonClass_str40, activeButtonClass_str41, &bufFgColorMode );
+  ef.addToggle( activeButtonClass_str41, &bufFgColorMode );
   ef.addColorButton( activeButtonClass_str42, actWin->ci, &onCb, &bufOnColor );
-  ef.addColorButton( activeButtonClass_str43, actWin->ci, &offCb, &bufOffColor );
+  ef.addColorButton( activeButtonClass_str43, actWin->ci, &offCb,
+   &bufOffColor );
   ef.addColorButton( activeButtonClass_str44, actWin->ci,
    &inconsistentCb, &bufInconsistentColor );
-  ef.addColorButton( activeButtonClass_str45, actWin->ci, &topShadowCb, &bufTopShadowColor );
-  ef.addColorButton( activeButtonClass_str46, actWin->ci, &botShadowCb, &bufBotShadowColor );
+  ef.addColorButton( activeButtonClass_str45, actWin->ci, &topShadowCb,
+   &bufTopShadowColor );
+  ef.addColorButton( activeButtonClass_str46, actWin->ci, &botShadowCb,
+   &bufBotShadowColor );
 
   ef.addFontMenu( activeButtonClass_str38, actWin->fi, &fm, fontTag );
 

@@ -471,12 +471,13 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeXTextClass_str6, 30, bufId, 31 );
+  //ef.addTextField( activeXTextClass_str6, 30, bufId, 31 );
 
   ef.addTextField( activeXTextClass_str7, 30, &bufX );
   ef.addTextField( activeXTextClass_str8, 30, &bufY );
   ef.addTextField( activeXTextClass_str9, 30, &bufW );
   ef.addTextField( activeXTextClass_str10, 30, &bufH );
+  ef.addTextField( activeXTextClass_str23, 30, bufValue, 255 );
   ef.addToggle( activeXTextClass_str11, &bufAutoSize );
   ef.addColorButton( activeXTextClass_str13, actWin->ci, &fgCb, &bufFgColor );
   ef.addToggle( activeXTextClass_str14, &bufFgColorMode );
@@ -490,7 +491,6 @@ char title[32], *ptr;
   ef.addOption( " ", activeXTextClass_str20, &bufVisInverted );
   ef.addTextField( activeXTextClass_str21, 30, bufMinVisString, 39 );
   ef.addTextField( activeXTextClass_str22, 30, bufMaxVisString, 39 );
-  ef.addTextField( activeXTextClass_str23, 30, bufValue, 255 );
 
   return 1;
 

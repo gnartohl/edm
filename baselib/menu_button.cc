@@ -733,17 +733,23 @@ char title[32], *ptr;
   ef.addTextField( activeMenuButtonClass_str5, 30, &bufY );
   ef.addTextField( activeMenuButtonClass_str6, 30, &bufW );
   ef.addTextField( activeMenuButtonClass_str7, 30, &bufH );
-  ef.addColorButton( activeMenuButtonClass_str8, actWin->ci, &fgCb, &bufFgColor );
-  ef.addOption( activeMenuButtonClass_str9, activeMenuButtonClass_str10, &bufFgColorMode );
-  ef.addColorButton( activeMenuButtonClass_str11, actWin->ci, &bgCb, &bufBgColor );
-//   ef.addOption( activeMenuButtonClass_str12, activeMenuButtonClass_str13, &bufBgColorMode );
-  ef.addColorButton( activeMenuButtonClass_str14, actWin->ci, &topShadowCb,
-   &bufTopShadowColor );
-  ef.addColorButton( activeMenuButtonClass_str15, actWin->ci, &botShadowCb,
-   &bufBotShadowColor );
-  ef.addFontMenu( activeMenuButtonClass_str16, actWin->fi, &fm, fontTag );
   ef.addTextField( activeMenuButtonClass_str17, 30, bufControlPvName, 39 );
   ef.addTextField( activeMenuButtonClass_str18, 30, bufReadPvName, 39 );
+
+  ef.addColorButton( activeMenuButtonClass_str8, actWin->ci, &fgCb,
+   &bufFgColor );
+  ef.addToggle( activeMenuButtonClass_str10, &bufFgColorMode );
+
+  ef.addColorButton( activeMenuButtonClass_str11, actWin->ci, &bgCb,
+   &bufBgColor );
+
+  ef.addColorButton( activeMenuButtonClass_str14, actWin->ci, &topShadowCb,
+   &bufTopShadowColor );
+
+  ef.addColorButton( activeMenuButtonClass_str15, actWin->ci, &botShadowCb,
+   &bufBotShadowColor );
+
+  ef.addFontMenu( activeMenuButtonClass_str16, actWin->fi, &fm, fontTag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 

@@ -403,7 +403,8 @@ chid pvId, svalPvId, fgPvId;
 evid eventId, alarmEventId, svalEventId, fgEventId;
 
 expStringClass pvExpStr, svalPvExpStr, fgPvExpStr;
-char pvName[39+1], bufPvName[39+1], bufSvalPvName[39+1];
+char pvName[39+1], bufPvName[39+1], bufSvalPvName[39+1],
+ bufColorPvName[39+1];
 
 expStringClass defDir, pattern;
 char bufDefDir[127+1], bufPattern[127+1];

@@ -25,7 +25,7 @@
 #define activeBarClass_str22 "Minor Tick Intervals"
 #define activeBarClass_str23 "Scale Info From DB"
 #define activeBarClass_str24 "Scale Format"
-#define activeBarClass_str25 "g|f|e"
+#define activeBarClass_str25 "GFloat|FFloat|Exponential"
 #define activeBarClass_str26 "Scale Precision"
 #define activeBarClass_str27 "Min Scale Value"
 #define activeBarClass_str28 "Max Scale Value"

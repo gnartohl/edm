@@ -1122,10 +1122,11 @@ char title[32], *ptr;
   ef.addTextField( activeUpdownButtonClass_str6, 30, &bufW );
   ef.addTextField( activeUpdownButtonClass_str7, 30, &bufH );
   ef.addTextField( activeUpdownButtonClass_str8, 30, bufDestPvName, 39 );
+  ef.addTextField( activeUpdownButtonClass_str25, 30, bufSavePvName, 39 );
+
   ef.addToggle( activeUpdownButtonClass_str26, &bufLimitsFromDb );
   ef.addTextField( activeUpdownButtonClass_str27, 30, &bufEfScaleMin );
   ef.addTextField( activeUpdownButtonClass_str28, 30, &bufEfScaleMax );
-  ef.addTextField( activeUpdownButtonClass_str25, 30, bufSavePvName, 39 );
   ef.addTextField( activeUpdownButtonClass_str9, 30, bufCoarse, 39 );
   ef.addTextField( activeUpdownButtonClass_str10, 30, bufFine, 39 );
   ef.addTextField( activeUpdownButtonClass_str11, 30, &bufRate );

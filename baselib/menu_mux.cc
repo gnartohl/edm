@@ -769,17 +769,18 @@ char title[32], *ptr;
   ef.addTextField( menuMuxClass_str5, 30, &bufY );
   ef.addTextField( menuMuxClass_str6, 30, &bufW );
   ef.addTextField( menuMuxClass_str7, 30, &bufH );
+  ef.addTextField( menuMuxClass_str17, 30, bufControlPvName, 39 );
+  ef.addTextField( menuMuxClass_str18, 30, bufInitialState, 30 );
+
   ef.addColorButton( menuMuxClass_str8, actWin->ci, &fgCb, &bufFgColor );
-  ef.addOption( menuMuxClass_str9, menuMuxClass_str10, &bufFgColorMode );
+  ef.addToggle( menuMuxClass_str10, &bufFgColorMode );
   ef.addColorButton( menuMuxClass_str11, actWin->ci, &bgCb, &bufBgColor );
-//   ef.addOption( menuMuxClass_str12, menuMuxClass_str13, &bufBgColorMode );
   ef.addColorButton( menuMuxClass_str14, actWin->ci, &topShadowCb,
    &bufTopShadowColor );
   ef.addColorButton( menuMuxClass_str15, actWin->ci, &botShadowCb,
    &bufBotShadowColor );
+
   ef.addFontMenu( menuMuxClass_str16, actWin->fi, &fm, fontTag );
-  ef.addTextField( menuMuxClass_str17, 30, bufControlPvName, 39 );
-  ef.addTextField( menuMuxClass_str18, 15, bufInitialState, 15 );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 

@@ -765,7 +765,8 @@ char title[32], *ptr;
   ef.addColorButton( activeMeterClass_str14, actWin->ci,&labelCb,&bufLabelColor);
   ef.addTextField(activeMeterClass_str15,30,&bufMeterAngle);
   ef.addToggle( activeMeterClass_str16, &bufShowScale );
-  ef.addOption( activeMeterClass_str17, "g|f|e", bufScaleFormat, 2 );
+  ef.addOption( activeMeterClass_str17, activeMeterClass_str43,
+   bufScaleFormat, 2 );
   ef.addTextField( activeMeterClass_str19,30,&bufScalePrecision);
   ef.addToggle( activeMeterClass_str20, &bufScaleLimitsFromDb );
   ef.addTextField(activeMeterClass_str21,30,&bufScaleMin);
