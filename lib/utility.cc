@@ -23,11 +23,14 @@
 
 int debugMode ( void ) {
 
+int val;
 char *envPtr;
 
   envPtr = getenv( "EDMDEBUGMODE" );
   if ( envPtr ) {
-    return atol(envPtr);
+    val = atol(envPtr);
+    if ( !val ) val = 1; // if value is non-numeric make it 1
+    return val;
   }
   else {
     return 0;

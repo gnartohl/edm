@@ -200,6 +200,9 @@ int i, ii;
   cmdReady = 0;
   event = 0;
   finished = 0;
+  printFailureFlag = 0;
+  fileDefError = 0;
+  lineNo = 0;
 
   efW = 300;
   efH = 400;
@@ -263,15 +266,108 @@ int i, ii;
 
 }
 
+char *edmPrintClass::errorMsg ( void ) {
+
+  return errMsg;
+
+}
+
+void edmPrintClass::setErrorMsg (
+  char *msg
+) {
+
+  if ( !errMsg ) {
+    errMsg = new char[ERR_MSG_SIZE+1];
+  }
+
+  strncpy( errMsg, msg, ERR_MSG_SIZE );
+  errMsg[ERR_MSG_SIZE] = 0;
+
+}
+
+void edmPrintClass::setErrorMsg (
+  char *msg,
+  char *arg
+) {
+
+  if ( !errMsg ) {
+    errMsg = new char[ERR_MSG_SIZE+1];
+  }
+
+  snprintf( errMsg, ERR_MSG_SIZE, msg, arg );
+
+}
+
+void edmPrintClass::setErrorMsg (
+  char *msg,
+  int arg
+) {
+
+  if ( !errMsg ) {
+    errMsg = new char[ERR_MSG_SIZE+1];
+  }
+
+  snprintf( errMsg, ERR_MSG_SIZE, msg, arg );
+
+}
+
+void edmPrintClass::setErrorMsg (
+  char *msg,
+  char *sarg,
+  int iarg
+) {
+
+  if ( !errMsg ) {
+    errMsg = new char[ERR_MSG_SIZE+1];
+  }
+
+  snprintf( errMsg, ERR_MSG_SIZE, msg, sarg, iarg );
+
+}
+
+int edmPrintClass::printStatus ( void ) {
+
+  return status;
+
+}
+
 int edmPrintClass::printStatusOK ( void ) {
 
   return ( status & 1 );
 
 }
 
+int edmPrintClass::printFailure ( void ) {
+
+int flag = printFailureFlag;
+
+  if ( printFailureFlag ) {
+    printFailureFlag = 0;
+    if ( event > 0 ) event--;
+  }
+
+  return flag;
+
+}
+
 int edmPrintClass::printEvent ( void ) {
 
+  // i.e. send a print event to caller
+
   return event;
+
+}
+
+int edmPrintClass::printDefFileError ( void )  {
+
+int flag = fileDefError;
+
+  if ( fileDefError ) {
+    fileDefError = 0;
+    if ( event > 0 ) event--;
+  }
+
+  return flag;
 
 }
 
@@ -364,9 +460,29 @@ THREAD_HANDLE thread;
   if ( printToFile ) {
 
     if ( blank( option[MAX_OPTIONS-1] ) ) { //last option is the file name
+
       printInProgress = cmdReady = 0;
       if ( event > 0 ) event--;
+
+      setErrorMsg( edmPrint_str9 );
+      printFailureFlag = 1;
+      event++;
+
       return FAILURE;
+
+    }
+
+    if ( !printToFileCmd ) {
+
+      printInProgress = cmdReady = 0;
+      if ( event > 0 ) event--;
+
+      setErrorMsg( edmPrint_str10 );
+      printFailureFlag = 1;
+      event++;
+
+      return FAILURE;
+
     }
 
     strncpy( buf, printToFileCmd, 1023 );
@@ -374,6 +490,19 @@ THREAD_HANDLE thread;
 
   }
   else {
+
+    if ( !printCmd ) {
+
+      printInProgress = cmdReady = 0;
+      if ( event > 0 ) event--;
+
+      setErrorMsg( edmPrint_str10 );
+      printFailureFlag = 1;
+      event++;
+
+      return FAILURE;
+
+    }
 
     strncpy( buf, printCmd, 1023 );
     buf[1023] = 0;
@@ -388,7 +517,18 @@ THREAD_HANDLE thread;
 
   ctx = NULL;
   tk = strtok_r( buf, " \t\n", &ctx );
-  if ( !tk ) return NO_PRINT_CMD;
+  if ( !tk ) {
+ 
+    printInProgress = cmdReady = 0;
+    if ( event > 0 ) event--;
+
+    setErrorMsg( edmPrint_str10 );
+    printFailureFlag = 1;
+    event++;
+
+    return NO_PRINT_CMD;
+
+  }
 
   while ( tk ) {
 
@@ -451,7 +591,18 @@ THREAD_HANDLE thread;
 
   ctx = NULL;
   tk = strtok_r( buf, " \t\n", &ctx );
-  if ( !tk ) return NO_PRINT_CMD;
+  if ( !tk ) {
+
+    printInProgress = cmdReady = 0;
+    if ( event > 0 ) event--;
+
+    setErrorMsg( edmPrint_str10 );
+    printFailureFlag = 1;
+    event++;
+
+    return NO_PRINT_CMD;
+
+  }
 
   while ( tk ) {
 
@@ -471,7 +622,16 @@ THREAD_HANDLE thread;
 
   }
 
-  if ( debugMode() ) printf( "[%s]\n", newCmd );
+  if ( debugMode() ) {
+
+    // dummy error to make the print command display
+    setErrorMsg( "print command = [%s]", newCmd );
+    fileDefError = 1;
+    event++;
+
+    printf( "[%s]\n", errMsg );
+
+  }
 
   threadBlock.cmd = newCmd;
   threadBlock.epo = this;
@@ -627,6 +787,7 @@ int ignore;
         if ( !tk ) return NULL;
 
         needFileRead = 0;
+        lineNo++;
 
         ctx = NULL;
         tk = getTok( lineBuf, &ctx );
@@ -694,9 +855,14 @@ char *tk, tmp[31+1];
   lineBuf = new char[MAX_LINE_SIZE+1];
   lineBuf2 = new char[MAX_LINE_SIZE+1];
   tokenInBuffer = 0;
+  fileDefError = 0;
 
   status = openPrintDefFile();
-  if ( !( status & 1 ) ) return status;
+  if ( !( status & 1 ) ) {
+    fileDefError = 1;
+    event++;
+    return status;
+  }
 
   state = GET_KEYWORD;
   numFields = 0;
@@ -731,9 +897,8 @@ char *tk, tmp[31+1];
 	state = GET_ADVANCED_OPTION_NAME;
       }
       else {
-        printf( "Unknown keyword [%s]\n", tk );
-        status = FAILURE;
-        return FAILURE;
+        setErrorMsg( edmPrint_str2, tk, lineNo );
+        goto syntaxError;
       }
 
       break;
@@ -741,6 +906,7 @@ char *tk, tmp[31+1];
     case GET_PRINT_DIALOG:
 
       if ( strcmp( tk, "{" ) != 0 ) {
+	setErrorMsg( edmPrint_str5, lineNo );
 	goto syntaxError;
       }
 
@@ -759,19 +925,23 @@ char *tk, tmp[31+1];
 
         tk = nextTk();
         if ( !tk ) {
+          setErrorMsg( edmPrint_str6 );
           goto missingData;
         }
 
         if ( strcmp( tk, "=" ) != 0 ) {
+          setErrorMsg( edmPrint_str5, lineNo );
           goto syntaxError;
         }
 
         tk = nextTk();
         if ( !tk ) {
+          setErrorMsg( edmPrint_str6 );
           goto missingData;
         }
 
         if ( !posInt(tk) ) {
+          setErrorMsg( edmPrint_str5, lineNo );
           goto syntaxError;
         }
         efW = atol(tk);
@@ -781,19 +951,23 @@ char *tk, tmp[31+1];
 
         tk = nextTk();
         if ( !tk ) {
+          setErrorMsg( edmPrint_str6 );
           goto missingData;
         }
 
         if ( strcmp( tk, "=" ) != 0 ) {
+          setErrorMsg( edmPrint_str5, lineNo );
           goto syntaxError;
         }
 
         tk = nextTk();
         if ( !tk ) {
+          setErrorMsg( edmPrint_str6 );
           goto missingData;
         }
 
         if ( !posInt(tk) ) {
+          setErrorMsg( edmPrint_str5, lineNo );
           goto syntaxError;
         }
         efH = efMaxH = atol(tk);
@@ -801,6 +975,7 @@ char *tk, tmp[31+1];
       }
       else {
 
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
 
       }
@@ -811,16 +986,19 @@ char *tk, tmp[31+1];
     case GET_PRINT_CMD:
 
       if ( strcmp( tk, "=" ) != 0 ) {
+	setErrorMsg( edmPrint_str5, lineNo );
 	goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
       if ( printCmd ) {
-	printf( "Multiple definitions of printCmd\n" );
+        setErrorMsg( edmPrint_str3, lineNo );
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
       printCmd = strdup( tk );
@@ -834,16 +1012,18 @@ char *tk, tmp[31+1];
     case GET_PRINT_TO_FILE_CMD:
 
       if ( strcmp( tk, "=" ) != 0 ) {
+	setErrorMsg( edmPrint_str5, lineNo );
 	goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
       if ( printToFileCmd ) {
-	printf( "Multiple definitions of printToFileCmd\n" );
+        setErrorMsg( edmPrint_str4, lineNo );
         goto syntaxError;
       }
       printToFileCmd = strdup( tk );
@@ -858,6 +1038,7 @@ char *tk, tmp[31+1];
         state = GET_OPTION_DEFAULT_VALUE;
       }
       else {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
       break;
@@ -870,32 +1051,44 @@ char *tk, tmp[31+1];
       }
 
       if ( strncmp( tk, "opt", 3 ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
       if ( strlen( tk ) < 4 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
       strncpy( tmp, &tk[3], 10 );
       tmp[10] = 0;
       if ( !posInt( tmp ) ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
       index = atol( tmp );
-      if ( index < 1 ) goto limitError;
-      if ( index > MAX_OPTIONS-1 ) goto limitError; // one option reserved
+      if ( index < 1 ) {
+        setErrorMsg( edmPrint_str7, lineNo );
+        goto limitError;
+      }
+      if ( index > MAX_OPTIONS-1 ) {
+        setErrorMsg( edmPrint_str7, lineNo );
+        goto limitError; // one option reserved
+      }
       index -= 1;
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
       if ( strcmp( tk, "=" ) != 0 ) {
+	setErrorMsg( edmPrint_str5, lineNo );
 	goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
@@ -914,11 +1107,18 @@ char *tk, tmp[31+1];
     case GET_OPTION_NAME:
 
       if ( !posInt( tk ) ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
       index = atol( tk );
-      if ( index < 1 ) goto limitError;
-      if ( index > MAX_OPTIONS-1 ) goto limitError; // one option reserved
+      if ( index < 1 ) {
+        setErrorMsg( edmPrint_str7, lineNo );
+        goto limitError;
+      }
+      if ( index > MAX_OPTIONS-1 ) {
+        setErrorMsg( edmPrint_str7, lineNo );
+        goto limitError; // one option reserved
+      }
       index -= 1;
 
       if ( index+1 > numOptions ) numOptions = index+1;
@@ -930,6 +1130,7 @@ char *tk, tmp[31+1];
 
       tk = nextTk(); // option name
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
@@ -938,15 +1139,18 @@ char *tk, tmp[31+1];
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
       if ( strcmp( tk, "=" ) != 0 ) {
+	setErrorMsg( edmPrint_str5, lineNo );
 	goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
@@ -954,6 +1158,7 @@ char *tk, tmp[31+1];
 
         tk = nextTk();
         if ( !tk ) {
+          setErrorMsg( edmPrint_str6 );
           goto missingData;
         }
 
@@ -964,10 +1169,12 @@ char *tk, tmp[31+1];
 
         tk = nextTk();
         if ( !tk ) {
+          setErrorMsg( edmPrint_str6 );
           goto missingData;
         }
 
         if ( strcmp( tk, "{" ) != 0 ) {
+	  setErrorMsg( edmPrint_str5, lineNo );
 	  goto syntaxError;
         }
 
@@ -982,10 +1189,12 @@ char *tk, tmp[31+1];
 
         tk = nextTk();
         if ( !tk ) {
+          setErrorMsg( edmPrint_str6 );
           goto missingData;
         }
 
         if ( strcmp( tk, "{" ) != 0 ) {
+	  setErrorMsg( edmPrint_str5, lineNo );
 	  goto syntaxError;
         }
 
@@ -1000,10 +1209,12 @@ char *tk, tmp[31+1];
 
         tk = nextTk();
         if ( !tk ) {
+          setErrorMsg( edmPrint_str6 );
           goto missingData;
         }
 
         if ( strcmp( tk, "{" ) != 0 ) {
+	  setErrorMsg( edmPrint_str5, lineNo );
 	  goto syntaxError;
         }
 
@@ -1012,6 +1223,7 @@ char *tk, tmp[31+1];
       }
       else {
 
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
 
       }
@@ -1024,20 +1236,24 @@ char *tk, tmp[31+1];
     case GET_MENU_LABEL:
 
       if ( strcmp( tk, "label" ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
       if ( strcmp( tk, "=" ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
@@ -1051,20 +1267,24 @@ char *tk, tmp[31+1];
     case GET_MENU_DEFAULT:
 
       if ( strcmp( tk, "default" ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
       if ( strcmp( tk, "=" ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
@@ -1085,23 +1305,33 @@ char *tk, tmp[31+1];
       }
 
       if ( !posInt(tk) ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
       caseIndex = atol( tk );
-      if ( caseIndex < 0 ) goto limitError;
-      if ( caseIndex > MAX_ACTIONS-1 ) goto limitError;
+      if ( caseIndex < 0 ) {
+	setErrorMsg( edmPrint_str7, lineNo );
+	goto limitError;
+      }
+      if ( caseIndex > MAX_ACTIONS-1 ) {
+	setErrorMsg( edmPrint_str7, lineNo );
+	goto limitError;
+      }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
       if ( strcmp( tk, "option" ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
@@ -1112,11 +1342,13 @@ char *tk, tmp[31+1];
         op = OP_PLUS_EQUAL;
       }
       else {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
@@ -1135,20 +1367,24 @@ char *tk, tmp[31+1];
     case GET_TOGGLE_LABEL:
 
       if ( strcmp( tk, "label" ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
       if ( strcmp( tk, "=" ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
@@ -1162,20 +1398,24 @@ char *tk, tmp[31+1];
     case GET_TOGGLE_DEFAULT:
 
       if ( strcmp( tk, "default" ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
       if ( strcmp( tk, "=" ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
@@ -1196,23 +1436,33 @@ char *tk, tmp[31+1];
       }
 
       if ( !posInt(tk) ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
       caseIndex = atol( tk );
-      if ( caseIndex < 0 ) goto limitError;
-      if ( caseIndex > MAX_ACTIONS-1 ) goto limitError;
+      if ( caseIndex < 0 ) {
+	setErrorMsg( edmPrint_str7, lineNo );
+	goto limitError;
+      }
+      if ( caseIndex > MAX_ACTIONS-1 ) {
+	setErrorMsg( edmPrint_str7, lineNo );
+	goto limitError;
+      }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
       if ( strcmp( tk, "option" ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
@@ -1223,11 +1473,13 @@ char *tk, tmp[31+1];
         op = OP_PLUS_EQUAL;
       }
       else {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
@@ -1246,20 +1498,24 @@ char *tk, tmp[31+1];
     case GET_TEXT_LABEL:
 
       if ( strcmp( tk, "label" ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
       if ( strcmp( tk, "=" ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
@@ -1273,20 +1529,24 @@ char *tk, tmp[31+1];
     case GET_TEXT_DEFAULT:
 
       if ( strcmp( tk, "default" ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
       if ( strcmp( tk, "=" ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
@@ -1301,11 +1561,13 @@ char *tk, tmp[31+1];
     case GET_TEXT_VALUE:
 
       if ( strcmp( tk, "option" ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
@@ -1316,11 +1578,13 @@ char *tk, tmp[31+1];
         op = OP_PLUS_EQUAL;
       }
       else {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
@@ -1331,10 +1595,12 @@ char *tk, tmp[31+1];
 
       tk = nextTk();
       if ( !tk ) {
+        setErrorMsg( edmPrint_str6 );
         goto missingData;
       }
 
       if ( strcmp( tk, "}" ) != 0 ) {
+        setErrorMsg( edmPrint_str5, lineNo );
         goto syntaxError;
       }
 
@@ -1356,8 +1622,11 @@ char *tk, tmp[31+1];
   delete lineBuf2;
   lineBuf2 = NULL;
   status = closePrintDefFile();
-  if ( !( status & 1 ) ) return status;
-
+  if ( !( status & 1 ) ) {
+    fileDefError = 1;
+    event++;
+    return status;
+  }
 
   // add print to file info
 
@@ -1384,27 +1653,40 @@ char *tk, tmp[31+1];
   actionOperator[numFields][0] = OP_EQUAL;
   numFields++;
 
+  if ( !printCmd || !printToFileCmd ) {
+    setErrorMsg( edmPrint_str11 );
+    printf( "%s\n", errMsg );
+    fileDefError = 1;
+    event++;
+    status = FAILURE;
+    return status;
+  }
+
   return SUCCESS;
 
 missingData:
 
-  printf( "Missing information in print definition file\n" );
+  printf( "%s\n", errMsg );
   status = FAILURE;
+  fileDefError = 1;
+  event++;
   return status;
 
 syntaxError:
 
-  printf( "Syntax error in print definition file\n" );
+  printf( "%s\n", errMsg );
   status = FAILURE;
+  fileDefError = 1;
+  event++;
   return status;
 
 limitError:
 
-  printf( "Parameter exceeds limit in print definition file\n" );
+  printf( "%s\n", errMsg );
   status = FAILURE;
+  fileDefError = 1;
+  event++;
   return status;
-
-  return SUCCESS;
 
 }
 
@@ -1416,6 +1698,7 @@ char buf[127+1];
   if ( !( status & 1 ) ) return status;
 
   needFileRead = 1;
+  lineNo = 0;
 
   // str7="EDMPRINTDEF"
   envPtr = getenv( environment_str7 );
@@ -1451,8 +1734,7 @@ char buf[127+1];
 
   printDefFile = fopen( buf, "r" );
   if ( !printDefFile ) {
-    errMsg = strdup( edmPrint_str1 );
-    status = FAILURE; // error
+    setErrorMsg( edmPrint_str1, buf );
     return FAILURE;
   }
 
@@ -1462,11 +1744,16 @@ char buf[127+1];
 
 int edmPrintClass::closePrintDefFile ( void ) {
 
+int stat;
+
   if ( !( status & 1 ) ) return status;
 
-  fclose( printDefFile );
+  stat = fclose( printDefFile );
+  if ( stat ) {
+    setErrorMsg( edmPrint_str8 );
+    return FAILURE;
+  }
 
   return SUCCESS;
 
 }
-

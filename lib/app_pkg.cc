@@ -4380,13 +4380,24 @@ activeWindowListPtr cur, next;
 char msg[127+1];
 
   if ( epc.printEvent() ) {
+
+    if ( epc.printDefFileError() ) {
+      postMessage( epc.errorMsg() );
+    }
+
     if ( epc.printCmdReady() ) {
       epc.doPrint();
     }
+
     if ( epc.printFinished() ) {
       postNote( appContextClass_str138 );
       msgCount = 20;
     }
+
+    if ( epc.printFailure() ) {
+      postMessage( epc.errorMsg() );
+    }
+
   }
 
   if ( msgCount > 0 ) {

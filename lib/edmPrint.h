@@ -125,6 +125,7 @@ static const int NOT_READY = 5;
 static const int FAILURE = 100;
 static const int NO_PRINT_CMD = 102;
 
+static const int ERR_MSG_SIZE = 511;
 static const int MAX_OPTION_CHARS = 1023;
 static const int MAX_OPTIONS = 11;
 static const int MAX_ACTIONS = 20;
@@ -148,9 +149,37 @@ edmPrintClass ( void );
 
 ~edmPrintClass ( void );
 
+char *errorMsg ( void );
+
+void setErrorMsg (
+  char *msg
+);
+
+void setErrorMsg (
+  char *msg,
+  char *arg
+);
+
+void setErrorMsg (
+  char *msg,
+  int arg
+);
+
+void setErrorMsg (
+  char *msg,
+  char *sarg,
+  int iarg
+);
+
+int printStatus ( void );
+
 int printStatusOK ( void );
 
 int printEvent ( void );
+
+int edmPrintClass::printFailure ( void );
+
+int printDefFileError ( void );
 
 int printFinished ( void );
 
@@ -204,6 +233,7 @@ char *menu[MAX_FIELDS];
 int printToFile;
 
 FILE *printDefFile;
+int lineNo;
 char *printCmd, *newCmd;
 char *printToFileCmd;
 entryFormClass ef;
@@ -222,6 +252,8 @@ int printInProgress;
 int cmdReady;
 int event;
 int finished;
+int printFailureFlag;
+int fileDefError;
 char xwinIdBuf[31+1];
 edmPrintThreadParamBlockType threadBlock;
 char displayName[63+1];

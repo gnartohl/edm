@@ -1,6 +1,16 @@
 #ifndef __edmPrint_str
 #define __edmPrint_str 1
 
-#define edmPrint_str1 (char *) "Cannot open print definition file"
+#define edmPrint_str1 (char *) "Cannot open print definition file - [%s]"
+#define edmPrint_str2 (char *) "Print definition file error - unknown keyword [%s] at line %-d"
+#define edmPrint_str3 (char *) "Print definition file error - multiple definitions of printCmd at line %-d"
+#define edmPrint_str4 (char *) "Print definition file error - multiple definitions of printToFileCmd at line %-d"
+#define edmPrint_str5 (char *) "Print definition file error - syntax error at line %-d"
+#define edmPrint_str6 (char *) "Print definition file error - unexpected end of file"
+#define edmPrint_str7 (char *) "Print definition file error - parameter out of bounds at line %-d"
+#define edmPrint_str8 (char *) "Cannot close print definition file"
+#define edmPrint_str9 (char *) "Missing print file name"
+#define edmPrint_str10 (char *) "Missing print command"
+#define edmPrint_str11 (char *) "Print definition file error - Missing print command"
 
 #endif
