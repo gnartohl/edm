@@ -37,14 +37,14 @@ activeMenuButtonClass *ambo = (activeMenuButtonClass *) client;
   if ( !ambo->active ) return;
 
   if ( e->type == EnterNotify ) {
-    //if ( !ca_write_access( ambo->controlPvId ) ) {
+    if ( !ca_write_access( ambo->controlPvId ) ) {
       ambo->actWin->cursor.set( XtWindow(ambo->actWin->executeWidget),
        CURSOR_K_NO );
-    //}
-    //else {
-    //  ambo->actWin->cursor.set( XtWindow(ambo->actWin->executeWidget),
-    //   CURSOR_K_DEFAULT );
-    //}
+    }
+    else {
+      ambo->actWin->cursor.set( XtWindow(ambo->actWin->executeWidget),
+       CURSOR_K_DEFAULT );
+    }
   }
 
   if ( e->type == LeaveNotify ) {
