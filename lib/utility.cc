@@ -1857,7 +1857,7 @@ int imag, inorm, imin, imax, inc1, inc2, inc5, imin1, imax1,
   }
 
   if ( imax < 0 ) {
-    imax2 = imax - 2 - ( imax % 2 );
+    imax2 = imax + 2 + ( imax % 2 );
   }
   else {
     if ( imax % 2 )
@@ -1882,7 +1882,7 @@ int imag, inorm, imin, imax, inc1, inc2, inc5, imin1, imax1,
   }
 
   if ( imax < 0 ) {
-    imax5 = imax - 5 - ( imax % 5 );
+    imax5 = imax + 5 + ( imax % 5 );
   }
   else {
     if ( imax % 5 )
@@ -1926,7 +1926,7 @@ int imag, inorm, imin, imax, inc1, inc2, inc5, imin1, imax1,
     }
 
     if ( imax < 0 ) {
-      imax2 = imax - 2 - ( imax % 2 );
+      imax2 = imax + 2 + ( imax % 2 );
     }
     else {
       if ( imax % 2 )
@@ -1951,7 +1951,7 @@ int imag, inorm, imin, imax, inc1, inc2, inc5, imin1, imax1,
     }
 
     if ( imax < 0 ) {
-      imax5 = imax - 5 - ( imax % 5 );
+      imax5 = imax + 5 + ( imax % 5 );
     }
     else {
       if ( imax % 5 )
@@ -2069,7 +2069,10 @@ int imin, imax, inc1, imin1, imax1,
     }
 
     if ( imax < 0 ) {
-      imax1 = imax - div - ( imax % div );
+      if ( imax % div )
+        imax1 = imax + div + ( imax % div );
+      else
+        imax1 = imax;
     }
     else {
       if ( imax % div )
@@ -2105,7 +2108,7 @@ int imin, imax, inc1, imin1, imax1,
 
   *majors_per_label = div;
 
-  *minors_per_major = 10;
+  *minors_per_major = 9;
 
   strcpy( format, "-g" );
 
@@ -3261,6 +3264,8 @@ unsigned int white, black;
 
 }
 
+void _edmDebug( void );
+
 void drawYLog10Scale (
   Display *d,
   Window win,
@@ -3302,6 +3307,8 @@ unsigned int white, black;
 //printf( "adj_min = %-g\n", adj_min );
 //printf( "adj_max = %-g\n", adj_max );
 
+  _edmDebug();
+
   white = WhitePixel( d, DefaultScreen(d) );
   black = BlackPixel( d, DefaultScreen(d) );
 
@@ -3317,6 +3324,12 @@ unsigned int white, black;
 
   yFactor = (double) ( scaleHeight ) / ( adj_max - adj_min );
   yOffset = y;
+
+  //printf( "adj_min = %-g\n", adj_min );
+  //printf( "adj_max = %-g\n", adj_max );
+  //printf( "yOffset = %-g\n", yOffset );
+  //printf( "yFactor = %-g\n", yFactor );
+  //printf( "scaleHeight = %-d\n", scaleHeight );
 
   labelVal = adj_min;
 
@@ -3447,11 +3460,20 @@ unsigned int white, black;
           val0 = pow( 10, majorVal );
           val1 = val0 * 10;
           minorInc = ( val1 - val0 ) / minors_per_major;
+
+	  //printf( "val0 = %-g\n", val0 );
+	  //printf( "val1 = %-g\n", val1 );
+	  //printf( "minorInc = %-g\n", minorInc );
+	  //printf( "minors_per_major = %-d\n", minors_per_major );
+
           val = val0 + minorInc;
+	  //printf( "val = %-g\n", val );
+	  //printf( "adj_min = %-g\n", adj_min );
 
           for ( iii=1; iii<minors_per_major; iii++ ) {
 
             minorVal = log10( val );
+	    //printf( "minorVal = %-g\n", minorVal );
 
             x0 = x;
             x1 = x0 - minor_tick_height;
