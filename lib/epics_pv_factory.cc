@@ -144,6 +144,8 @@ void EPICS_ProcessVariable::ca_connect_callback(
                     me->value = new PVValueEnum(me);
                     break;
                 case DBF_CHAR:
+                    me->value = new PVValueChar(me);
+                    break;
                 case DBF_INT:
                 case DBF_LONG:
                     me->value = new PVValueInt(me);
@@ -386,7 +388,7 @@ const ProcessVariable::Type &PVValueInt::get_type() const
 {   return integer_type; }
 
 short PVValueInt::get_DBR() const
-{   return DBF_LONG; }
+{   return DBR_LONG; }
 
 int PVValueInt::get_int() const
 {   return value[0]; }
@@ -463,7 +465,7 @@ const ProcessVariable::Type &PVValueDouble::get_type() const
 {   return double_type; }
 
 short PVValueDouble::get_DBR() const
-{   return DBF_DOUBLE; }
+{   return DBR_DOUBLE; }
 
 double PVValueDouble::get_double() const
 {   return value[0]; }
@@ -607,4 +609,92 @@ void PVValueString::read_value(const void *buf)
     status = val->status;
     severity = val->severity;
     strcpy(value, val->value);
+}
+
+// ---------------------- PVValueChar -------------------------------
+
+PVValueChar::PVValueChar(EPICS_ProcessVariable *epv)
+        : PVValue(epv)
+{
+    size_t room = epv->get_dimension() + 1;
+    if (room < 2)
+        room = 2;
+    value = new char[room];
+    len = 0;
+
+    //    printf("PVValueChar(%s): dimension %d, room %d\n",
+    //           epv->get_name(), epv->get_dimension(), room);
+}
+
+PVValueChar::~PVValueChar()
+{
+    //    printf("~PVValueChar(%s)\n", epv->get_name());
+    delete [] value;
+}
+
+const ProcessVariable::Type &PVValueChar::get_type() const
+{   return string_type; }
+
+short PVValueChar::get_DBR() const
+{   return DBR_CHAR; }
+
+int PVValueChar::get_int() const
+{   return (len > 0) ? (int)value[0] : 0; }
+
+double PVValueChar::get_double() const
+{   return (len > 0) ? (double)value[0] : 0; }
+
+size_t PVValueChar::get_string(char *strbuf, size_t buflen) const
+{
+    size_t src = 0, dst = 0;
+
+    while (value[src]  &&  src < len  &&  dst < buflen)
+    {
+        if (isprint(value[src]))
+        {
+            strbuf[dst++] = value[src++];
+            printf("copy '%c'\n", value[src-1]);
+        }
+        else  if (dst < buflen-5)
+        {
+            sprintf(strbuf+dst, "(%02X)", (int)value[src]);
+            printf("show %d as '%c%c%c%c'\n",
+                   (int)value[src], strbuf[dst],
+                   strbuf[dst+1], strbuf[dst+2], strbuf[dst+3]);
+            dst += 4;
+            ++src;
+        }
+        else
+            break;
+    }
+    strbuf[dst] = '\0';
+    
+    return dst;
+};
+
+void PVValueChar::read_ctrlinfo(const void *buf)
+{
+    const struct dbr_sts_char *val = (const dbr_sts_char *)buf;
+    status = val->status;
+    severity = val->severity;
+    value[0] = val->value;
+    value[1] = '\0';
+    len = 1;
+    //   printf("PVValueChar(%s)::read_ctrlinfo '%s'\n",
+    //           epv->get_name(), value);
+}
+    
+void PVValueChar::read_value(const void *buf)
+{
+    const struct dbr_time_char *val = (const dbr_time_char *)buf;
+    time = val->stamp.secPastEpoch + epochSecPast1970;
+    nano = val->stamp.nsec;
+    status = val->status;
+    severity = val->severity;
+    size_t copy = epv->get_dimension();
+    memcpy(value, &val->value, copy);
+    value[copy] = '\0';
+    len = copy;
+    //    printf("PVValueChar(%s)::read_value '%s'\n",
+    //           epv->get_name(), value);
 }

@@ -186,5 +186,22 @@ private:
     dbr_string_t value;
 };
 
+class PVValueChar : public PVValue
+{
+public:
+    PVValueChar(EPICS_ProcessVariable *epv);
+    ~PVValueChar();
+    const ProcessVariable::Type &get_type() const;
+    short       get_DBR() const;
+    int         get_int() const;
+    double      get_double() const;
+    size_t      get_string(char *strbuf, size_t buflen) const;
+    void read_ctrlinfo(const void *buf);
+    void read_value(const void *buf);
+private:
+    char *value;
+    size_t len;
+};
+
 #endif
 
