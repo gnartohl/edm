@@ -99,7 +99,7 @@
 #define XYGC_K_PLOT_SORTED_X_MODE 1
 
 #define XYGC_MAJOR_VERSION 4
-#define XYGC_MINOR_VERSION 0
+#define XYGC_MINOR_VERSION 1
 #define XYGC_RELEASE 0
 
 #ifdef __xygraph_cc
@@ -406,6 +406,7 @@ typedef struct editBufTag {
   int bufGridColor;
   int bufFormatType;
   int bufBorder;
+  int bufPlotAreaBorder;
   int bufXFormatType;
   efInt bufXPrecision;
   int bufY1FormatType[NUM_Y_AXES];
@@ -744,6 +745,7 @@ fontMenuClass fm;
 char fontTag[63+1];
 
 int border;
+int plotAreaBorder;
 
 int opComplete, active, activeMode, init, bufInvalid;
 XFontStruct *fs;

@@ -2656,6 +2656,7 @@ int i, yi;
   }
 
   axygo->border = axygo->eBuf->bufBorder;
+  axygo->plotAreaBorder = axygo->eBuf->bufPlotAreaBorder;
 
   axygo->trigPvExpStr.setRaw( axygo->eBuf->bufTrigPvName );
   axygo->resetPvExpStr.setRaw( axygo->eBuf->bufResetPvName );
@@ -2850,6 +2851,7 @@ time_t t1, t2;
   strcpy( xFormat, "f" );
 
   border = 1;
+  plotAreaBorder = 0;
 
   activeMode = 0;
 
@@ -2911,6 +2913,7 @@ int i, yi;
   plotMode = source->plotMode;
   count = source->count;
   border = source->border;
+  plotAreaBorder = source->plotAreaBorder;
 
   numTraces = source->numTraces;
 
@@ -3405,6 +3408,7 @@ static int resetModeEnum[2] = {
 
   tag.loadW( "# Appearance" );
   tag.loadBoolW( "border", &border, &zero );
+  tag.loadBoolW( "plotAreaBorder", &plotAreaBorder, &zero );
   tag.loadW( "graphTitle", &graphTitle, emptyStr );
   tag.loadW( "xLabel", &xLabel, emptyStr );
   tag.loadW( "yLabel", &yLabel, emptyStr );
@@ -3817,6 +3821,7 @@ static int resetModeEnum[2] = {
 
   //tag.loadR( "# Appearance" );
   tag.loadR( "border", &border, &zero );
+  tag.loadR( "plotAreaBorder", &plotAreaBorder, &zero );
   tag.loadR( "graphTitle", &graphTitle, emptyStr );
   tag.loadR( "xLabel", &xLabel, emptyStr );
   tag.loadR( "yLabel", &yLabel, emptyStr );
@@ -4278,6 +4283,8 @@ int i, yi;
 
   eBuf->bufBorder = border;
 
+  eBuf->bufPlotAreaBorder = plotAreaBorder;
+
   eBuf->bufUpdateTimerValue = updateTimerValue;
 
   eBuf->bufCount = count;
@@ -4336,6 +4343,7 @@ int i, yi;
   ef.addTextField( "Count", 35, &eBuf->bufCount );
   ef.addTextField( "Update Delay (ms)", 35, &eBuf->bufUpdateTimerValue );
   ef.addToggle( "Border", &eBuf->bufBorder );
+  ef.addToggle( "Plot Area Border", &eBuf->bufPlotAreaBorder );
 
   ef.addEmbeddedEf( "X/Y/Trace Data", "... ", &efTrace );
 
@@ -5722,10 +5730,40 @@ XRectangle xR = { plotAreaX+1, plotAreaY, plotAreaW-2, plotAreaH };
 
   XSetClipMask( actWin->display(), actWin->executeGc.normGC(), None );
 
+  if ( plotAreaBorder ) {
+
+    actWin->executeGc.setLineWidth(1);
+    actWin->executeGc.setLineStyle( LineSolid );
+    actWin->executeGc.setFG( actWin->ci->pix(fgColor) );
+
+    XDrawLine( actWin->d, pixmap, actWin->executeGc.normGC(),
+     plotAreaX, plotAreaY, plotAreaX+plotAreaW, plotAreaY );
+
+    if ( !xAxis ) {
+      XDrawLine( actWin->d, pixmap, actWin->executeGc.normGC(),
+       plotAreaX, plotAreaY+plotAreaH, plotAreaX+plotAreaW,
+       plotAreaY+plotAreaH );
+    }
+
+    if ( !y1Axis[0] ) {
+      XDrawLine( actWin->d, pixmap, actWin->executeGc.normGC(),
+       plotAreaX, plotAreaY, plotAreaX, plotAreaY+plotAreaH );
+    }
+
+    if ( !y1Axis[1] ) {
+      XDrawLine( actWin->d, pixmap, actWin->executeGc.normGC(),
+       plotAreaX+plotAreaW, plotAreaY, plotAreaX+plotAreaW,
+       plotAreaY+plotAreaH );
+    }
+
+  }
+
+  // Restore defaults
   actWin->executeGc.setLineWidth(1);
   actWin->executeGc.setLineStyle( LineSolid );
   actWin->executeGc.restoreFg();
 
+  // Output buffer to window
   XCopyArea( actWin->display(), pixmap,
    XtWindow(actWin->executeWidget), actWin->executeGc.normGC(),
    0, 0, w+1, h+1, x, y );
