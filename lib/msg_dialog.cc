@@ -81,7 +81,7 @@ XmString str;
 
 }
 
-int msgDialogClass::createWithDecorations (
+int msgDialogClass::createWithOffset (
   Widget top )
 {
 
@@ -92,6 +92,8 @@ XmString str;
   shell = XtVaCreatePopupShell( "", xmDialogShellWidgetClass,
    top,
    XmNmappedWhenManaged, False,
+   XmNmwmDecorations, 0,
+   XmNoverrideRedirect, True,
    NULL );
 
   labelForm = XtVaCreateWidget( "", xmFormWidgetClass, shell, NULL );

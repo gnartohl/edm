@@ -1693,7 +1693,7 @@ XmString menuStr, str;
 
   XtManageChild( menuBar );
 
-  msgDialog.createWithDecorations( appTop );
+  msgDialog.createWithOffset( appTop );
 
 }
 
