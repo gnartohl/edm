@@ -19,6 +19,10 @@ ifeq ($(HOSTNAME), ridgeman.sns.ornl.gov)
 	FOR_WHAT=RH7_SNS_ORNL
 endif
 
+ifeq ($(HOSTNAME), frog)
+	FOR_WHAT=SOL7_SNS_LBNL
+endif
+
 ifndef FOR_WHAT
 	FOR_WHAT=your_system
 endif
@@ -72,6 +76,18 @@ ifeq ($(FOR_WHAT), RH7_SNS_ORNL)
 	CXXFLAGS=$(CFLAGS)
 	SL_LINK=gcc -shared -Wl
 	SL_FLAGS=-L$(EPICS)/lib/$(HOST_ARCH) -lm -lCom -lca 
+endif
+
+ifeq ($(FOR_WHAT), SOL7_SNS_LBNL)
+        EPICS=${ADE}/${EPICS_RELEASE}/support/base/R3-13-3
+	CC=gcc
+	CXX=g++
+	CFLAGS=-g -Wall -O0 -DMOTIF -fPIC
+	CFLAGS+=-DSINGLE_THREADED=1 -DCONFIG_linuxglibc -D_REENTRANT
+	CFLAGS+=-D__solaris__=1 -D__epics__=1
+	CXXFLAGS=$(CFLAGS)
+	SL_LINK=gcc -shared -Wl
+	SL_FLAGS=-L$(EPICS)/lib/$(HOST_ARCH) -lm -lCom -lca  
 endif
 
 ifeq ($(FOR_WHAT), "your_system")
