@@ -995,6 +995,12 @@ SYS_PROC_ID_TYPE procId;
     stat = ca_put( DBR_STRING, apco->ctlPvId, &str );
     return;
   }
+  else if ( strcmp( fName, "* RELOAD *" ) == 0 ) {
+    apco->reloadFlag = 1;
+    strcpy( str, "" );
+    stat = ca_put( DBR_STRING, apco->ctlPvId, &str );
+    return;
+  }
 
   getFileName( name, fName, 127 );
 
