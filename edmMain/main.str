@@ -25,5 +25,6 @@
 #define main_str42 (char *) "timeout from ipncl_wait_on_port\n"
 #define main_str43 (char *) "Error from ipncl_receive_msg\n"
 #define main_str44 (char *) "Error from ipnsv_send_msg\n"
+#define main_str45 (char *) "Exit command ignored - some window is not ready"
 
 #endif

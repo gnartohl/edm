@@ -649,6 +649,13 @@ void activeExitButtonClass::btnDown (
   int *action )
 {
 
+  *action = 0;
+
+  if ( actWin->isEmbedded ) {
+    actWin->appCtx->postMessage( activeExitButtonClass_str18 );
+    return;
+  }
+
   if ( exitProgram ) {
 
     actWin->appCtx->exitProgram();

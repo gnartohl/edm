@@ -123,13 +123,16 @@ static void menu_cb (
 int stat;
 double v;
 activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
+int rootX, rootY;
+
+  rootX = udbto->actWin->xPos()+udbto->x+udbto->w;
+  rootY = udbto->actWin->yPos()+udbto->y+10;
 
   if ( w == udbto->pbCoarse ) {
 
     udbto->kpDest = udbto->kpCoarseDest;
     udbto->kp.create( udbto->actWin->top,
-     udbto->x+udbto->actWin->x+udbto->w,
-     udbto->y+udbto->actWin->y+10, "", &udbto->kpDouble,
+     rootX, rootY, "", &udbto->kpDouble,
      (void *) client,
      (XtCallbackProc) udbtoSetKpDoubleValue,
      (XtCallbackProc) udbtoCancelKp );
@@ -140,8 +143,7 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
 
     udbto->kpDest = udbto->kpFineDest;
     udbto->kp.create( udbto->actWin->top,
-     udbto->x+udbto->actWin->x+udbto->w,
-     udbto->y+udbto->actWin->y+10, "", &udbto->kpDouble,
+     rootX, rootY, "", &udbto->kpDouble,
      (void *) client,
      (XtCallbackProc) udbtoSetKpDoubleValue,
      (XtCallbackProc) udbtoCancelKp );
@@ -152,8 +154,7 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
 
     udbto->kpDest = udbto->kpRateDest;
     udbto->kp.create( udbto->actWin->top,
-     udbto->x+udbto->actWin->x+udbto->w,
-     udbto->y+udbto->actWin->y+10, "", &udbto->kpDouble,
+     rootX, rootY, "", &udbto->kpDouble,
      (void *) client,
      (XtCallbackProc) udbtoSetKpDoubleValue,
      (XtCallbackProc) udbtoCancelKp );
@@ -164,8 +165,7 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
 
     udbto->kpDest = udbto->kpValueDest;
     udbto->kp.create( udbto->actWin->top,
-     udbto->x+udbto->actWin->x+udbto->w,
-     udbto->y+udbto->actWin->y+10, "", &udbto->kpDouble,
+     rootX, rootY, "", &udbto->kpDouble,
      (void *) client,
      (XtCallbackProc) udbtoSetKpDoubleValue,
      (XtCallbackProc) udbtoCancelKp );
@@ -2187,8 +2187,8 @@ XButtonEvent be;
 
   if ( ( _y - y ) < 10 ) {
     memset( (void *) &be, 0, sizeof(XButtonEvent) );
-    be.x_root = actWin->x+_x;
-    be.y_root = actWin->y+_y;
+    be.x_root = actWin->xPos()+_x;
+    be.y_root = actWin->yPos()+_y;
     XmMenuPosition( popUpMenu, &be );
     XtManageChild( popUpMenu );
     return;

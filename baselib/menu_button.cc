@@ -1792,8 +1792,8 @@ XButtonEvent be;
   if ( buttonNumber == 1 ) {
 
     memset( (void *) &be, 0, sizeof(XButtonEvent) );
-    be.x_root = actWin->x+_x;
-    be.y_root = actWin->y+_y;
+    be.x_root = actWin->xPos()+_x;
+    be.y_root = actWin->yPos()+_y;
     XmMenuPosition( popUpMenu, &be );
     XtManageChild( popUpMenu );
 

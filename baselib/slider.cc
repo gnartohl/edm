@@ -2504,8 +2504,8 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
              ( be->y > y0 ) &&
              ( be->y < y1 ) ) {
 
-          slo->kp.create( slo->actWin->top, be->x+slo->actWin->x+slo->x,
-           be->y+slo->actWin->y+slo->y+y1-y0, "", &slo->kpCtlDouble,
+          slo->kp.create( slo->actWin->top, be->x+slo->actWin->xPos()+slo->x,
+           be->y+slo->actWin->yPos()+slo->y+y1-y0, "", &slo->kpCtlDouble,
            (void *) slo,
            (XtCallbackProc) sloSetCtlKpDoubleValue,
            (XtCallbackProc) sloCancelKp );
@@ -2516,8 +2516,8 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
              ( be->y > incY0 ) &&
              ( be->y < incY1 ) ) {
 
-          slo->kp.create( slo->actWin->top, be->x+slo->actWin->x+slo->x,
-           be->y+slo->actWin->y+slo->y+y1-y0, "", &slo->kpIncDouble,
+          slo->kp.create( slo->actWin->top, be->x+slo->actWin->xPos()+slo->x,
+           be->y+slo->actWin->yPos()+slo->y+y1-y0, "", &slo->kpIncDouble,
            (void *) slo,
            (XtCallbackProc) sloSetIncKpDoubleValue,
            (XtCallbackProc) sloCancelKp );
@@ -2528,8 +2528,8 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
           slo->bufIncrement = slo->increment;
           slo->bufAccelMultiplier = slo->accelMultiplier;
           slo->bufControlV = slo->controlV;
-          slo->valueFormX = slo->actWin->x + slo->x  + be->x;
-          slo->valueFormY = slo->actWin->y + slo->y + be->y;
+          slo->valueFormX = slo->actWin->xPos() + slo->x  + be->x;
+          slo->valueFormY = slo->actWin->yPos() + slo->y + be->y;
           slo->valueFormW = 0;
           slo->valueFormH = 0;
           slo->valueFormMaxH = 600;

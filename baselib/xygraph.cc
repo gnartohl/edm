@@ -165,8 +165,8 @@ int yi;
       xyo->eBuf = new xyGraphClass::editBufType;
     }
 
-    xyo->adjpFormX = xyo->actWin->x + xyo->x + xyo->popupMenuX;
-    xyo->adjpFormY = xyo->actWin->y + xyo->y + xyo->popupMenuY;
+    xyo->adjpFormX = xyo->actWin->xPos() + xyo->x + xyo->popupMenuX;
+    xyo->adjpFormY = xyo->actWin->yPos() + xyo->y + xyo->popupMenuY;
     xyo->adjpFormW = 0;
     xyo->adjpFormH = 0;
     xyo->adjpFormMaxH = 600;
@@ -5956,8 +5956,8 @@ XButtonEvent be;
     memset( (void *) &be, 0, sizeof(XButtonEvent) );
     popupMenuX = _x;
     popupMenuY = _y;
-    be.x_root = actWin->x+_x;
-    be.y_root = actWin->y+_y;
+    be.x_root = actWin->xPos()+_x;
+    be.y_root = actWin->yPos()+_y;
     XmMenuPosition( popUpMenu, &be );
     XtManageChild( popUpMenu );
     return;
@@ -6135,7 +6135,7 @@ struct tm *ts;
         msgDialog.popdown();
       }
       sprintf( buf, "(%s,%s%s)", xBuf, y1Buf, y2Buf );
-      msgDialog.popup( buf, actWin->x+this->x, actWin->y+this->y );
+      msgDialog.popup( buf, actWin->xPos()+this->x, actWin->yPos()+this->y );
       msgDialogPopedUp = 1;
 
     }
@@ -6186,8 +6186,8 @@ struct tm *ts;
       if ( ( xMinX0 <= pmX ) && ( xMinX1 >= pmX ) &&
            ( xMinY0 <= pmY ) && ( xMinY1 >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->top, pmX+actWin->x+this->x,
-           pmY+actWin->y+this->y, "",
+          kp.create( actWin->top, pmX+actWin->xPos()+this->x,
+           pmY+actWin->yPos()+this->y, "",
            &kpXMin, (void *) this,
            (XtCallbackProc) setKpXMinDoubleValue,
            (XtCallbackProc) cancelKpXMin );
@@ -6197,8 +6197,8 @@ struct tm *ts;
       if ( ( xMaxX0 <= pmX ) && ( xMaxX1 >= pmX ) &&
            ( xMaxY0 <= pmY ) && ( xMaxY1 >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->top, pmX+actWin->x+this->x,
-           pmY+actWin->y+this->y, "",
+          kp.create( actWin->top, pmX+actWin->xPos()+this->x,
+           pmY+actWin->yPos()+this->y, "",
            &kpXMax, (void *) this,
            (XtCallbackProc) setKpXMaxDoubleValue,
            (XtCallbackProc) cancelKpXMax );
@@ -6211,8 +6211,8 @@ struct tm *ts;
       if ( ( y1MinX0[yi] <= pmX ) && ( y1MinX1[yi] >= pmX ) &&
            ( y1MinY0[yi] <= pmY ) && ( y1MinY1[yi] >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->top, pmX+actWin->x+this->x,
-           pmY+actWin->y+this->y, "",
+          kp.create( actWin->top, pmX+actWin->xPos()+this->x,
+           pmY+actWin->yPos()+this->y, "",
            &kpY1Min[yi], (void *) this,
            (XtCallbackProc) setKpY1MinDoubleValue,
            (XtCallbackProc) cancelKpY1Min );
@@ -6222,8 +6222,8 @@ struct tm *ts;
       if ( ( y1MaxX0[yi] <= pmX ) && ( y1MaxX1[yi] >= pmX ) &&
            ( y1MaxY0[yi] <= pmY ) && ( y1MaxY1[yi] >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->top, pmX+actWin->x+this->x,
-           pmY+actWin->y+this->y, "",
+          kp.create( actWin->top, pmX+actWin->xPos()+this->x,
+           pmY+actWin->yPos()+this->y, "",
            &kpY1Max[yi], (void *) this,
            (XtCallbackProc) setKpY1MaxDoubleValue,
            (XtCallbackProc) cancelKpY1Max );
@@ -6236,8 +6236,8 @@ struct tm *ts;
       if ( ( y1MinX0[yi] <= pmX ) && ( y1MinX1[yi] >= pmX ) &&
            ( y1MinY0[yi] <= pmY ) && ( y1MinY1[yi] >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->top, pmX+actWin->x+this->x,
-           pmY+actWin->y+this->y, "",
+          kp.create( actWin->top, pmX+actWin->xPos()+this->x,
+           pmY+actWin->yPos()+this->y, "",
            &kpY1Min[yi], (void *) this,
            (XtCallbackProc) setKpY2MinDoubleValue,
            (XtCallbackProc) cancelKpY2Min );
@@ -6247,8 +6247,8 @@ struct tm *ts;
       if ( ( y1MaxX0[yi] <= pmX ) && ( y1MaxX1[yi] >= pmX ) &&
            ( y1MaxY0[yi] <= pmY ) && ( y1MaxY1[yi] >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->top, pmX+actWin->x+this->x,
-           pmY+actWin->y+this->y, "",
+          kp.create( actWin->top, pmX+actWin->xPos()+this->x,
+           pmY+actWin->yPos()+this->y, "",
            &kpY1Max[yi], (void *) this,
            (XtCallbackProc) setKpY2MaxDoubleValue,
            (XtCallbackProc) cancelKpY2Max );

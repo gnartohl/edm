@@ -104,8 +104,8 @@ shellCmdClass *shcmdo = (shellCmdClass *) client;
 
         if ( !shcmdo->ef.formIsPoppedUp() ) {
 
-          //pwFormX = actWin->x + _x; got these from btnDown
-          //pwFormY = actWin->y + _y;
+          //pwFormX = actWin->xPos() + _x; got these from btnDown
+          //pwFormY = actWin->yPos() + _y;
           shcmdo->pwFormW = 0;
           shcmdo->pwFormH = 0;
           shcmdo->pwFormMaxH = 600;
@@ -1710,8 +1710,9 @@ XButtonEvent be;
   posX = _x;
   posY = _y;
 
-  be.x_root = actWin->x+_x;
-  be.y_root = actWin->y+_y;
+  memset( (void *) &be, 0, sizeof(XButtonEvent) );
+  be.x_root = actWin->xPos()+_x;
+  be.y_root = actWin->yPos()+_y;
   XmMenuPosition( popUpMenu, &be );
   XtManageChild( popUpMenu );
 
@@ -1797,8 +1798,8 @@ void shellCmdClass::btnDown (
 
   if ( numCmds < 1 ) return;
 
-  pwFormX = actWin->x + _x; // we may use these later
-  pwFormY = actWin->y + _y;
+  pwFormX = actWin->xPos() + _x; // we may use these later
+  pwFormY = actWin->yPos() + _y;
 
   if ( numCmds == 1 ) {
 

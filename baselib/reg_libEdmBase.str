@@ -22,6 +22,7 @@
 #define reg_str22 (char *) "Motif Slider"
 #define reg_str23 (char *) "Radio Box"
 #define reg_str24 (char *) "Text Control"
+#define reg_str25 (char *) "Embedded Window"
 
 
 #define reg_str98 (char *) "Text w. Reg. Exp."

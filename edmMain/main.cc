@@ -1432,6 +1432,15 @@ int primaryServerFlag, numCheckPointMacros;
 
       if ( cur->appArgs->appCtxPtr->exitFlag ) {
 
+        if ( !cur->appArgs->appCtxPtr->okToExit() ) {
+          cur->appArgs->appCtxPtr->postMessage( main_str45 );
+          cur->appArgs->appCtxPtr->exitFlag = 0;
+	}
+
+      }
+
+      if ( cur->appArgs->appCtxPtr->exitFlag ) {
+
         cur->blink->flink = cur->flink;
         cur->flink->blink = cur->blink;
 

@@ -284,8 +284,8 @@ char strVal[255+1];
 
     mslo->bufIncrement = mslo->increment;
     mslo->bufControlV = mslo->controlV;
-    mslo->valueFormX = mslo->actWin->x + mslo->x  + be->x;
-    mslo->valueFormY = mslo->actWin->y + mslo->y + be->y;
+    mslo->valueFormX = mslo->actWin->xPos() + mslo->x  + be->x;
+    mslo->valueFormY = mslo->actWin->yPos() + mslo->y + be->y;
     mslo->valueFormW = 0;
     mslo->valueFormH = 0;
     mslo->valueFormMaxH = 600;
@@ -1741,8 +1741,8 @@ char title[32], *ptr, strVal[255+1];
 
       mslo->bufIncrement = mslo->increment;
       mslo->bufControlV = mslo->controlV;
-      mslo->valueFormX = mslo->actWin->x + mslo->x  + be->x;
-      mslo->valueFormY = mslo->actWin->y + mslo->y + be->y;
+      mslo->valueFormX = mslo->actWin->xPos() + mslo->x  + be->x;
+      mslo->valueFormY = mslo->actWin->yPos() + mslo->y + be->y;
       mslo->valueFormW = 0;
       mslo->valueFormH = 0;
       mslo->valueFormMaxH = 600;

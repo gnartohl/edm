@@ -3747,8 +3747,8 @@ int i;
 
   if ( editDialogIsActive ) return;
 
-  teX = x + actWin->x;
-  teY = this->y + actWin->y + h;
+  teX = x + actWin->xPos();
+  teY = this->y + actWin->yPos() + h;
   teW = w;
   teH = h;
   teLargestH = 600;
