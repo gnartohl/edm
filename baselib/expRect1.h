@@ -16,14 +16,16 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#ifndef __expRect_h
-#define __expRect_h 1
+#ifndef __expRect1_h
+#define __expRect1_h 1
 
 #include "act_grf.h"
 #include "entry_form.h"
 #include "rules.h"
-
 #include "cadef.h"
+#include "pv_factory.h"
+#include "epics_pv_factory.h"
+#include "cvtFast.h"
 
 #define ARC_K_COLORMODE_STATIC 0
 #define ARC_K_COLORMODE_ALARM 1
@@ -34,7 +36,7 @@
 
 #define BG_RULE 1
 
-#ifdef __expRect_cc
+#ifdef __expRect1_cc
 
 #include "expRect.str"
 
@@ -172,10 +174,7 @@ char maxVisString[39+1], bufMaxVisString[39+1];
 
 int prevVisibility, visibility, visInverted, bufVisInverted;
 
-chid alarmPvId;
-evid alarmEventId;
-chid visPvId;
-evid visEventId;
+ProcessVariable *alarmPv, *visPv;
 
 expStringClass alarmPvExpStr;
 char bufAlarmPvName[39+1];
@@ -200,6 +199,16 @@ unsigned int bgRuleColor;
 int useBgRule;
 
 public:
+
+static void pv_value_callback (
+  ProcessVariable *pv,
+  void *userarg
+);
+
+static void pv_status_callback (
+  ProcessVariable *pv,
+  void *userarg
+);
 
 expRectClass::expRectClass ( void );
 

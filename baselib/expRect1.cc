@@ -16,13 +16,16 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#define __expRect_cc 1
+#define __expRect1_cc 1
 
-#include "expRect.h"
+#include "expRect1.h"
 #include "app_pkg.h"
 #include "act_win.h"
 
 #include "thread.h"
+
+// This is the EPICS specific line right now:
+static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
 #ifdef __epics__
 
@@ -46,8 +49,6 @@ static void bgRuleCb (
 ) {
 
 expRectClass *aro = (expRectClass *) ptr;
-
-//printf( "bgRuleCb, ruleId = %-d, value = %-d\n", ruleId, value );
 
   aro->bufInvalidate();
   if ( value != -1 ) {
@@ -289,6 +290,92 @@ expRectClass *aro = (expRectClass *) client;
   aro->ef.popdown();
   aro->operationCancel();
   aro->drawAll();
+
+}
+
+void expRectClass::pv_status_callback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+class expRectClass *aro = (expRectClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+    if ( !aro->needAlarmConnectInit ) {
+      aro->needAlarmConnectInit = 1;
+      aro->lineColor.setConnected();
+      aro->fillColor.setConnected();
+    }
+
+    aro->lineColor.setStatus( pv->get_status(), pv->get_severity() );
+    aro->fillColor.setStatus( pv->get_status(), pv->get_severity() );
+    aro->bufInvalidate();
+    aro->needRefresh = 1;
+
+  }
+  else {
+
+    aro->alarmPvConnected = 0;
+    aro->active = 0;
+    aro->lineColor.setDisconnected();
+    aro->fillColor.setDisconnected();
+    aro->bufInvalidate();
+    aro->needDraw = 1;
+
+  }
+
+  aro->actWin->addDefExeNode( aro->aglPtr );
+
+}
+
+void expRectClass::pv_value_callback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+pvValType pvV;
+class expRectClass *aro = (expRectClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+    aro->lineColor.setConnected();
+    aro->fillColor.setConnected();
+    if ( !aro->visPvConnected ) {
+      aro->needVisConnectInit = 1;
+    }
+
+    pvV.d = pv->get_double();
+    if ( ( pvV.d >= aro->minVis.d ) && ( pvV.d < aro->maxVis.d ) )
+      aro->visibility = 1 ^ aro->visInverted;
+    else
+      aro->visibility = 0 ^ aro->visInverted;
+
+    if ( aro->visibility ) {
+
+      aro->needRefresh = 1;
+
+    }
+    else {
+
+      aro->needErase = 1;
+      aro->needRefresh = 1;
+
+    }
+
+  }
+  else {
+
+    aro->lineColor.setDisconnected();
+    aro->fillColor.setDisconnected();
+    aro->visPvConnected = 0;
+    aro->active = 0;
+    aro->bufInvalidate();
+    aro->needDraw = 1;
+
+  }
+
+  aro->actWin->addDefExeNode( aro->aglPtr );
 
 }
 
@@ -987,16 +1074,14 @@ char string[255+1];
 
   case 1: // initialize
 
+    visPv = 0;
+    alarmPv = 0;
     needVisConnectInit = 0;
     needAlarmConnectInit = 0;
-    needErase = needDraw = needRefresh = needColorUpdate = 0;
+    needErase = needDraw = needRefresh = 0;
     firstRuleInit = 1;
     aglPtr = ptr;
     opComplete = 0;
-
-#ifdef __epics__
-    alarmEventId = visEventId = 0;
-#endif
 
     alarmPvConnected = visPvConnected = 0;
     activeMode = 1;
@@ -1038,30 +1123,22 @@ char string[255+1];
 
     if ( !opComplete ) {
 
-#ifdef __epics__
-
       if ( alarmPvExists ) {
-        stat = ca_search_and_connect( alarmPvExpStr.getExpanded(), &alarmPvId,
-         aroMonitorAlarmPvConnectState, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( expRectClass_str39 );
-          return 0;
+        alarmPv = pv_factory->create( alarmPvExpStr.getExpanded() );
+	if ( alarmPv ) {
+	  alarmPv->add_status_callback( pv_status_callback, this );
         }
       }
 
       if ( visPvExists ) {
-        stat = ca_search_and_connect( visPvExpStr.getExpanded(), &visPvId,
-         aroMonitorVisPvConnectState, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( expRectClass_str40 );
-          return 0;
+        visPv = pv_factory->create( visPvExpStr.getExpanded() );
+        if ( visPv ) {
+          visPv->add_value_callback( pv_value_callback, this );
         }
       }
 
       opComplete = 1;
       this->bufInvalidate();
-
-#endif
 
     }
 
@@ -1077,8 +1154,6 @@ char string[255+1];
     break;
 
   case 4:
-    break;
-
   case 5:
   case 6:
 
@@ -1098,38 +1173,22 @@ int stat;
 
   if ( pass == 1 ) {
 
-  activeMode = 0;
-  fillColor.setNotRuleMode();
+    activeMode = 0;
+    fillColor.setNotRuleMode();
 
-#ifdef __epics__
+    bgRule->deactivate();
 
-  bgRule->deactivate();
+    if ( visPv ) {
+      visPv->remove_value_callback( pv_value_callback, this );
+      visPv->release();
+      visPv = 0;
+    }
 
-  if ( alarmEventId ) {
-    stat = ca_clear_event( alarmEventId );
-    if ( stat != ECA_NORMAL )
-      printf( expRectClass_str41 );
-  }
-
-  if ( visEventId ) {
-    stat = ca_clear_event( visEventId );
-    if ( stat != ECA_NORMAL )
-      printf( expRectClass_str42 );
-  }
-
-  if ( alarmPvExists ) {
-    stat = ca_clear_channel( alarmPvId );
-    if ( stat != ECA_NORMAL )
-      printf( expRectClass_str43 );
-  }
-
-  if ( visPvExists ) {
-    stat = ca_clear_channel( visPvId );
-    if ( stat != ECA_NORMAL )
-      printf( expRectClass_str44 );
-  }
-
-#endif
+    if ( alarmPv ) {
+      alarmPv->remove_status_callback( pv_status_callback, this );
+      alarmPv->release();
+      alarmPv = 0;
+    }
 
   }
 
@@ -1208,15 +1267,13 @@ int stat, nvc, nac, ne, nd, nr, ncu;
 
   if ( nvc ) {
 
-    if ( ( ca_field_type(visPvId) == DBR_ENUM ) ||
-         ( ca_field_type(visPvId) == DBR_INT ) ||
-         ( ca_field_type(visPvId) == DBR_LONG ) ||
-         ( ca_field_type(visPvId) == DBR_FLOAT ) ||
-         ( ca_field_type(visPvId) == DBR_DOUBLE ) ) {
+    if ( ( visPv->get_type().type == ProcessVariable::Type::enumerated ) ||
+         ( visPv->get_type().type == ProcessVariable::Type::integer ) ||
+         ( visPv->get_type().type == ProcessVariable::Type::real ) ) {
 
       visPvConnected = 1;
 
-      pvType = ca_field_type( visPvId );
+      pvType = visPv->get_type().type;
 
       minVis.d = (double) atof( minVisString );
       maxVis.d = (double) atof( maxVisString );
@@ -1237,15 +1294,6 @@ int stat, nvc, nac, ne, nd, nr, ncu;
 
         actWin->requestActiveRefresh();
 
-      }
-
-      if ( !visEventId ) {
-        stat = ca_add_masked_array_event( DBR_DOUBLE, 1, visPvId,
-         rectangleVisUpdate, (void *) this, (float) 0.0, (float) 0.0,
-         (float) 0.0, &visEventId, DBE_VALUE );
-        if ( stat != ECA_NORMAL ) {
-          printf( expRectClass_str45 );
-        }
       }
 
     }
@@ -1283,15 +1331,6 @@ int stat, nvc, nac, ne, nd, nr, ncu;
 
     }
 
-    if ( !alarmEventId ) {
-      stat = ca_add_masked_array_event( DBR_STS_FLOAT, 1, alarmPvId,
-       rectangleAlarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &alarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL ) {
-        printf( expRectClass_str46 );
-      }
-    }
-
   }
 
 #endif
@@ -1301,12 +1340,10 @@ int stat, nvc, nac, ne, nd, nr, ncu;
   }
 
   if ( nd ) {
-//      drawActive();
     stat = smartDrawAllActive();
   }
 
   if ( nr ) {
-//      actWin->requestActiveRefresh();
     stat = smartDrawAllActive();
   }
 
