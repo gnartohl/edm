@@ -14,12 +14,12 @@
 #define activeTableClass_str15 (char *) "Font"
 #define activeTableClass_str16 (char *) "Fg Color"
 #define activeTableClass_str17 (char *) "Bg Color"
-#define activeTableClass_str18 (char *) "Odd Col Bg Color"
+#define activeTableClass_str18 (char *) "Odd Row Bg Color"
 #define activeTableClass_str19 (char *) "Top Shadow Color"
 #define activeTableClass_str20 (char *) "Bot Shadow Color"
 #define activeTableClass_str21 (char *) "Table"
 #define activeTableClass_str22 (char *) "error creating pv\n"
 #define activeTableClass_str24 (char *) "frameWidget create failed\n"
-#define activeTableClass_str25 (char *) "Even Col Bg Color"
+#define activeTableClass_str25 (char *) "Even Row Bg Color"
 
 #endif
