@@ -99,6 +99,7 @@ typedef struct blinkNodeTag {
   AVL_FIELDS(blinkNodeTag)
   void *obj;
   void *func;
+  int op; // 1=add, 2=remove
   struct blinkNodeTag *next; // for lookaside list only
 } blinkNodeType, *blinkNodePtr;
 

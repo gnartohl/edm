@@ -302,6 +302,8 @@ int activate (
   void *ptr,
   int *numSubObjects );
 
+void removePrevBlink ( void );
+
 int deactivate (
   int pass,
   int *numSubObjects );

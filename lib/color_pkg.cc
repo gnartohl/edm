@@ -6835,6 +6835,8 @@ blinkNodePtr cur;
     return 1;
   }
 
+  //printf( "colorInfoClass::addToBlinkList - obj = %-X\n", (int) obj );
+
   if ( blinkLookasideHead->next ) {
     cur = blinkLookasideHead->next;
     blinkLookasideHead->next = cur->next;
@@ -6848,6 +6850,7 @@ blinkNodePtr cur;
 
   cur->func = func;
   cur->obj = obj;
+  cur->op = 1;
 
   addBlinkTail->next = cur;
   addBlinkTail = cur;
@@ -6873,6 +6876,8 @@ blinkNodePtr cur;
     return 1;
   }
 
+  //printf( "colorInfoClass::removeFromBlinkList - obj = %-X\n", (int) obj );
+
   if ( blinkLookasideHead->next ) {
     cur = blinkLookasideHead->next;
     blinkLookasideHead->next = cur->next;
@@ -6886,10 +6891,11 @@ blinkNodePtr cur;
 
   cur->func = func;
   cur->obj = obj;
+  cur->op = 2;
 
-  remBlinkTail->next = cur;
-  remBlinkTail = cur;
-  remBlinkTail->next = NULL;
+  addBlinkTail->next = cur;
+  addBlinkTail = cur;
+  addBlinkTail->next = NULL;
 
   //stat = avl_get_match( blinkH, obj, (void **) &cur );
   //if ( !( stat & 1 ) ) {
@@ -6916,25 +6922,92 @@ blinkNodePtr cur;
 int colorInfoClass::addAllToBlinkList ( void ) {
 
 int stat, dup;
-blinkNodePtr cur, next;
+blinkNodePtr cur, next, prev, curBlinkNode;
 
   if ( major < 3 ) {
     return 1;
   }
 
+  prev = addBlinkHead;
   cur = addBlinkHead->next;
   while ( cur ) {
 
     next = cur->next;
 
-    stat = avl_insert_node( this->blinkH, (void *) cur, &dup );
-    if ( !( stat & 1 ) ) {
-      printf( colorInfoClass_str36, stat );
-      delete cur;
+    if ( cur->op == 1 ) {
+
+      // remove cur from list
+      prev->next = next;
+      cur->next = NULL; // diagnostic
+
+      //printf( "colorInfoClass::addAllToBlinkList - insert\n" );
+
+      stat = avl_insert_node( this->blinkH, (void *) cur, &dup );
+      if ( !( stat & 1 ) ) {
+        printf( colorInfoClass_str36, stat );
+        blinkLookasideTail->next = cur;
+        blinkLookasideTail = cur;
+        blinkLookasideTail->next = NULL;
+      }
+      else if ( dup ) {
+        printf( "dup\n" );
+        blinkLookasideTail->next = cur;
+        blinkLookasideTail = cur;
+        blinkLookasideTail->next = NULL;
+      }
+
     }
-    else if ( dup ) {
-      printf( "dup\n" );
-      delete cur;
+    else if ( cur->op == 2 ) {
+
+      //printf( "colorInfoClass::removeAllFromBlinkList - find\n" );
+
+      stat = avl_get_match( blinkH, cur->obj, (void **) &curBlinkNode );
+      if ( !( stat & 1 ) ) {
+        printf( colorInfoClass_str37, stat );
+      }
+      else if ( !curBlinkNode ) {
+        printf( colorInfoClass_str38 );
+      }
+      else {
+
+        //printf( "colorInfoClass::removeAllFromBlinkList - delete\n" );
+
+        stat = avl_delete_node( blinkH, (void **) &curBlinkNode );
+        if ( !( stat & 1 ) ) {
+          printf( colorInfoClass_str39, stat );
+        }
+
+        blinkLookasideTail->next = curBlinkNode;
+        blinkLookasideTail = curBlinkNode;
+        blinkLookasideTail->next = NULL;
+
+      }
+
+      prev = cur;
+
+    }
+
+    cur = next;
+
+  }
+
+  // remove all "remove from blink list request" nodes from list
+  cur = addBlinkHead->next;
+  while ( cur ) {
+
+    next = cur->next;
+
+    if ( cur->op == 2 ) { // sanity check
+
+      blinkLookasideTail->next = cur;
+      blinkLookasideTail = cur;
+      blinkLookasideTail->next = NULL;
+
+    }
+    else {
+
+      printf( "Bad request node\n" );
+
     }
 
     cur = next;
@@ -6955,6 +7028,8 @@ int colorInfoClass::removeAllFromBlinkList ( void ) {
 int stat;
 blinkNodePtr cur, next, curBlinkNode;
 
+  return 1;
+
   if ( major < 3 ) {
     return 1;
   }
@@ -6965,6 +7040,8 @@ blinkNodePtr cur, next, curBlinkNode;
 
     next = cur->next;
 
+    printf( "colorInfoClass::removeAllFromBlinkList - find\n" );
+
     stat = avl_get_match( blinkH, cur->obj, (void **) &curBlinkNode );
     if ( !( stat & 1 ) ) {
       printf( colorInfoClass_str37, stat );
@@ -6973,6 +7050,8 @@ blinkNodePtr cur, next, curBlinkNode;
       printf( colorInfoClass_str38 );
     }
     else {
+
+      printf( "colorInfoClass::removeAllFromBlinkList - delete\n" );
 
       stat = avl_delete_node( blinkH, (void **) &curBlinkNode );
       if ( !( stat & 1 ) ) {

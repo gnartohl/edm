@@ -83,6 +83,7 @@ activeGraphicListPtr head, cur, next, sourceHead, curSource;
       next = curSource->flink;
 
       cur = curSource;
+      cur->node->updateBlink(0);
 
       cur->blink = head->blink;
       head->blink->flink = cur;
@@ -2145,7 +2146,6 @@ activeGraphicListPtr cur;
   cur = head->flink;
   while ( cur != head ) {
 
-    cur->node->removeBlink();
     cur->node->erase();
 
     cur = cur->flink;
@@ -2170,7 +2170,7 @@ activeGraphicListPtr cur;
     cur = head->flink;
     while ( cur != head ) {
 
-      cur->node->removeBlink();
+      // cur->node->removeBlink();
       cur->node->eraseActive();
 
       cur = cur->flink;
@@ -2274,6 +2274,32 @@ pvColorClass tmpColor;
   }
 
   return 1;
+
+}
+
+void activeSymbolClass::removePrevBlink ( void ) {
+
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+
+  if ( !enabled || !init || !activeMode || ( numStates < 1 ) ) return;
+
+  if ( ( prevIndex >= 0 ) && ( prevIndex < numStates ) ) {
+
+    head = (activeGraphicListPtr) voidHead[prevIndex];
+
+    cur = head->flink;
+    while ( cur != head ) {
+
+      cur->node->removeBlink();
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+  return;
 
 }
 
@@ -3530,6 +3556,7 @@ int stat, i, nci, nc[SYMBOL_K_MAX_PVS], nr, ne, nd, ncolori, ncr;
     }
 
     if ( index != prevIndex ) {
+      removePrevBlink();
       eraseActive();
       stat = smartDrawAllActive();
     }

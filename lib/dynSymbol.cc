@@ -83,6 +83,7 @@ activeGraphicListPtr head, cur, next, sourceHead, curSource;
       next = curSource->flink;
 
       cur = curSource;
+      cur->node->updateBlink(0);
 
       cur->blink = head->blink;
       head->blink->flink = cur;
@@ -1901,7 +1902,7 @@ activeGraphicListPtr cur;
   cur = head->flink;
   while ( cur != head ) {
 
-    cur->node->removeBlink();
+    //cur->node->removeBlink();
     cur->node->erase();
 
     cur = cur->flink;
@@ -1926,7 +1927,7 @@ activeGraphicListPtr cur;
   cur = head->flink;
   while ( cur != head ) {
 
-    cur->node->removeBlink();
+    //cur->node->removeBlink();
     cur->node->eraseActive();
 
     cur = cur->flink;
@@ -2010,6 +2011,32 @@ activeGraphicListPtr cur;
   prevIndex = index;
 
   return 1;
+
+}
+
+void activeDynSymbolClass::removePrevBlink ( void ) {
+
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+
+  if ( !enabled || !init || !activeMode || ( numStates < 1 ) ) return;
+
+  if ( ( prevIndex >= 0 ) && ( prevIndex < numStates ) ) {
+
+    head = (activeGraphicListPtr) voidHead[prevIndex];
+
+    cur = head->flink;
+    while ( cur != head ) {
+
+      cur->node->removeBlink();
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+  return;
 
 }
 
@@ -3363,6 +3390,7 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd, ncolori, ncr;
     }
 
     if ( index != prevIndex ) {
+      removePrevBlink();
       stat = eraseActive();
       stat = smartDrawAllActive();
       // stat = drawActive();
@@ -3575,6 +3603,10 @@ int i;
   }
 
   if ( ( index < 0 ) || ( index >= numStates ) ) return;
+
+  if ( index != prevIndex ) {
+    removePrevBlink();
+  }
 
   head = (activeGraphicListPtr) voidHead[index];
 

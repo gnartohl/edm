@@ -306,6 +306,8 @@ int drawActive ( void );
 
 int eraseActive ( void );
 
+void removePrevBlink ( void );
+
 int activate (
   int pass,
   void *ptr,
