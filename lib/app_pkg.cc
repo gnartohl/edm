@@ -5162,7 +5162,6 @@ activeWindowListPtr cur;
 int n, stat;
 char *newMacros[100+1];
 char *newValues[100+1];
-fileListPtr curFile;
 
   //printf( "appContextClass::openCheckPointScreen\n" );
 
@@ -5228,18 +5227,6 @@ fileListPtr curFile;
   }
 
   processAllEventsWithSync( app, display );
-
-  // add file name to file list
-  numFiles++;
-  curFile = new fileListType;
-  if ( !curFile ) return 6;
-  curFile->file = new char[strlen(screenName)+1];
-  if ( !curFile->file ) return 6;
-  strcpy( curFile->file, screenName );
-  fileHead->blink->flink = curFile;
-  curFile->flink = fileHead;
-  curFile->blink = fileHead->blink;
-  fileHead->blink = curFile;
 
   return 1;
 
