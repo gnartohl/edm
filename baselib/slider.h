@@ -375,7 +375,7 @@ int changeCallbackFlag, activateCallbackFlag, deactivateCallbackFlag,
  anyCallbackFlag;
 int bufChangeCallbackFlag, bufActivateCallbackFlag, bufDeactivateCallbackFlag;
 
-char displayFormat[3+1];
+char displayFormat[15+1];
 int limitsFromDb;
 double scaleMin, scaleMax;
 efDouble efScaleMin, efScaleMax;
@@ -385,7 +385,7 @@ efInt efPrecision;
 int bufLimitsFromDb;
 efDouble bufEfScaleMin, bufEfScaleMax;
 efInt bufEfPrecision;
-char bufDisplayFormat[3+1];
+char bufDisplayFormat[15+1];
 
 keypadClass kp;
 double kpCtlDouble, kpIncDouble;

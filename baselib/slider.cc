@@ -430,7 +430,7 @@ activeSliderClass *slo = (activeSliderClass *) client;
 
   //  slo->formatType = slo->bufFormatType;
 
-  strncpy( slo->displayFormat, slo->bufDisplayFormat, 2 );
+  strncpy( slo->displayFormat, slo->bufDisplayFormat, 15 );
 
   slo->limitsFromDb = slo->bufLimitsFromDb;
   slo->efPrecision = slo->bufEfPrecision;
@@ -441,7 +441,7 @@ activeSliderClass *slo = (activeSliderClass *) client;
   slo->maxFv = slo->scaleMax = slo->efScaleMax.value();
 
   if ( slo->efPrecision.isNull() )
-    slo->precision = 2;
+    slo->precision = 1;
   else
     slo->precision = slo->efPrecision.value();
 
@@ -694,7 +694,15 @@ int prec;
   else
     prec = slo->precision;
 
-  sprintf( slo->readFormat, "%%.%-d%s", prec, slo->displayFormat );
+  if ( strcmp( slo->displayFormat, "GFloat" ) == 0 ) {
+    sprintf( slo->readFormat, "%%.%-dg", prec );
+  }
+  else if ( strcmp( slo->displayFormat, "Exponential" ) == 0 ) {
+    sprintf( slo->readFormat, "%%.%-de", prec );
+  }
+  else {
+    sprintf( slo->readFormat, "%%.%-df", prec );
+  }
 
   slo->curReadV = readRec.value;
 
@@ -724,8 +732,15 @@ struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
     slo->precision = controlRec.precision;
   }
 
-  sprintf( slo->controlFormat, "%%.%-d%s", slo->precision,
-   slo->displayFormat );
+  if ( strcmp( slo->displayFormat, "GFloat" ) == 0 ) {
+    sprintf( slo->controlFormat, "%%.%-dg", slo->precision );
+  }
+  else if ( strcmp( slo->displayFormat, "Exponential" ) == 0 ) {
+    sprintf( slo->controlFormat, "%%.%-de", slo->precision );
+  }
+  else {
+    sprintf( slo->controlFormat, "%%.%-df", slo->precision );
+  }
 
   slo->minFv = slo->scaleMin;
 
@@ -807,8 +822,8 @@ activeSliderClass::activeSliderClass ( void ) {
   efScaleMin.setNull(1);
   efScaleMax.setNull(1);
   efPrecision.setNull(1);
-  strcpy( displayFormat, "g" );
-  precision = 3;
+  strcpy( displayFormat, "FFloat" );
+  precision = 1;
 
   frameWidget = NULL;
 
@@ -899,7 +914,7 @@ activeGraphicClass *slo = (activeGraphicClass *) this;
   efScaleMin = source->efScaleMin;
   efScaleMax = source->efScaleMax;
   efPrecision = source->efPrecision;
-  strncpy( displayFormat, source->displayFormat, 2 );
+  strncpy( displayFormat, source->displayFormat, 15 );
 
   frameWidget = NULL;
 
@@ -1219,10 +1234,10 @@ float val;
     efScaleMax.read( f ); actWin->incLine();
 
     readStringFromFile( oneName, 39, f ); actWin->incLine();
-    strncpy( displayFormat, oneName, 1 );
+    strncpy( displayFormat, oneName, 15 );
 
     if ( limitsFromDb || efPrecision.isNull() )
-      precision = 2;
+      precision = 1;
     else
       precision = efPrecision.value();
 
@@ -1239,8 +1254,8 @@ float val;
   }
   else {
 
-    efPrecision.setValue( 2 );
-    precision = 2;
+    efPrecision.setValue( 1 );
+    precision = 1;
     scaleMin = 0;
     scaleMax = 10;
 
@@ -1344,7 +1359,7 @@ char title[32], *ptr;
   bufEfPrecision = efPrecision;
   bufEfScaleMin = efScaleMin;
   bufEfScaleMax = efScaleMax;
-  strncpy( bufDisplayFormat, displayFormat, 2 );
+  strncpy( bufDisplayFormat, displayFormat, 15 );
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -1374,7 +1389,7 @@ char title[32], *ptr;
 
   ef.addToggle( activeSliderClass_str29, &bufLimitsFromDb );
   ef.addOption( activeSliderClass_str30, activeSliderClass_str35,
-   bufDisplayFormat, 2 );
+   bufDisplayFormat, 15 );
   ef.addTextField( activeSliderClass_str31, 30, &bufEfPrecision );
   ef.addTextField( activeSliderClass_str32, 30, &bufEfScaleMin );
   ef.addTextField( activeSliderClass_str33, 30, &bufEfScaleMax );

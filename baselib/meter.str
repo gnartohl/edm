@@ -42,6 +42,6 @@
 #define activeMeterClass_str40 "ca_add_masked_array_event failed\n"
 #define activeMeterClass_str41 "ca_add_masked_array_event failed\n"
 #define activeMeterClass_str42 "ca_add_masked_array_event failed\n"
-#define activeMeterClass_str43 "GFLoat|FFloat|Exponential"
+#define activeMeterClass_str43 "GFloat|FFloat|Exponential"
 
 #endif

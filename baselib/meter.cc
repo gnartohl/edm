@@ -66,7 +66,7 @@ activeMeterClass *metero = (activeMeterClass *) client;
   metero->scaleLimitsFromDb = metero->bufScaleLimitsFromDb;
   metero->scaleMin   = metero->bufScaleMin;
   metero->scaleMax   = metero->bufScaleMax;
-  strncpy( metero->scaleFormat, metero->bufScaleFormat, 2 );
+  strncpy( metero->scaleFormat, metero->bufScaleFormat, 15 );
   metero->scalePrecision = metero->bufScalePrecision;
 
   metero->needleType = metero->bufNeedleType;
@@ -289,7 +289,7 @@ activeMeterClass::activeMeterClass ( void ) {
   scaleMax = 10;
   majorIntervals = 10;
   minorIntervals = 5;
-  strcpy( scaleFormat, "f" );
+  strcpy( scaleFormat, "FFloat" );
   scalePrecision = 0;
   needleType = 1;
   shadowMode = 1;
@@ -354,7 +354,7 @@ activeGraphicClass *metero = (activeGraphicClass *) this;
   scaleLimitsFromDb = source->scaleLimitsFromDb;
   needleType = source->needleType;
   scalePrecision = source->scalePrecision;
-  strncpy( scaleFormat, source->scaleFormat, 2 );
+  strncpy( scaleFormat, source->scaleFormat, 15 );
   meterAngle = source->meterAngle;
   scaleMin = source->scaleMin;
   scaleMax = source->scaleMax;
@@ -641,7 +641,7 @@ char oneName[39+1];
 
   if ( major > 1 || minor > 1 ) {
     readStringFromFile( oneName, 39, f ); actWin->incLine();
-    strncpy( scaleFormat, oneName, 1 );
+    strncpy( scaleFormat, oneName, 15 );
   }
 
   fscanf( f, "%d\n", &scalePrecision ); actWin->incLine();
@@ -746,7 +746,7 @@ char title[32], *ptr;
   bufScaleMax = scaleMax;
   bufShowScale = showScale;
   bufUseDisplayBg = useDisplayBg;
-  strncpy( bufScaleFormat, scaleFormat, 2 );
+  strncpy( bufScaleFormat, scaleFormat, 15 );
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -766,7 +766,7 @@ char title[32], *ptr;
   ef.addTextField(activeMeterClass_str15,30,&bufMeterAngle);
   ef.addToggle( activeMeterClass_str16, &bufShowScale );
   ef.addOption( activeMeterClass_str17, activeMeterClass_str43,
-   bufScaleFormat, 2 );
+   bufScaleFormat, 15 );
   ef.addTextField( activeMeterClass_str19,30,&bufScalePrecision);
   ef.addToggle( activeMeterClass_str20, &bufScaleLimitsFromDb );
   ef.addTextField(activeMeterClass_str21,30,&bufScaleMin);
@@ -898,8 +898,16 @@ int activeMeterClass::draw ( void ) {
 //}
 
  if(scalePrecision > 10 || scalePrecision < 0) scalePrecision = 1;
- 
- sprintf( fmt, "%%.%-d%s", scalePrecision, scaleFormat );
+
+ if ( strcmp( scaleFormat, "GFloat" ) == 0 ) {
+   sprintf( fmt, "%%.%-dg", scalePrecision );
+ }
+ else if ( strcmp( scaleFormat, "Exponential" ) == 0 ) {
+   sprintf( fmt, "%%.%-de", scalePrecision );
+ }
+ else {
+   sprintf( fmt, "%%.%-df", scalePrecision );
+ }
 
  sprintf (scaleMinString, fmt, scaleMin);
  sprintf (scaleMaxString, fmt, scaleMax);
@@ -1199,8 +1207,16 @@ XPoint xpoints[3];
  actWin->executeGc.saveFg();
 
  if(scalePrecision > 10 || scalePrecision < 0) scalePrecision = 1;
- 
- sprintf( fmt, "%%.%-d%s", scalePrecision, scaleFormat );
+
+ if ( strcmp( scaleFormat, "GFloat" ) == 0 ) {
+   sprintf( fmt, "%%.%-dg", scalePrecision );
+ }
+ else if ( strcmp( scaleFormat, "Exponential" ) == 0 ) {
+   sprintf( fmt, "%%.%-de", scalePrecision );
+ }
+ else {
+   sprintf( fmt, "%%.%-df", scalePrecision );
+ }
 
  sprintf (scaleMinString,fmt,scaleMin);
  sprintf (scaleMaxString,fmt,scaleMax);

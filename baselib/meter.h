@@ -187,7 +187,7 @@ char bufLabel[39+1];
 char bufLiteralLabel[39+1],literalLabel[39+1];
 int bufLabelType;
 double bufMeterAngle, meterAngle;
-char scaleFormat[3+1], bufScaleFormat[3+1];
+char scaleFormat[15+1], bufScaleFormat[15+1];
 int bufScalePrecision, scalePrecision;
 double  bufScaleMin, scaleMin;
 double  bufScaleMax, scaleMax;

@@ -74,7 +74,7 @@ int l;
 
   baro->border = baro->bufBorder;
 
-  strncpy( baro->scaleFormat, baro->bufScaleFormat, 2 );
+  strncpy( baro->scaleFormat, baro->bufScaleFormat, 15 );
   baro->showScale = baro->bufShowScale;
   baro->labelTicks = baro->bufLabelTicks;
   baro->majorTicks = baro->bufMajorTicks;
@@ -108,7 +108,15 @@ int l;
   else
     baro->precision = baro->efPrecision.value();
 
-  sprintf( fmt, "%%.%-d%s", baro->precision, baro->scaleFormat );
+  if ( strcmp( baro->scaleFormat, "GFloat" ) == 0 ) {
+    sprintf( fmt, "%%.%-dg", baro->precision );
+  }
+  else if ( strcmp( baro->scaleFormat, "Exponential" ) == 0 ) {
+    sprintf( fmt, "%%.%-de", baro->precision );
+  }
+  else {
+    sprintf( fmt, "%%.%-df", baro->precision );
+  }
 
   if ( ( baro->efReadMin.isNull() ) && ( baro->efReadMax.isNull() ) ) {
     baro->readMin = 0;
@@ -420,7 +428,7 @@ activeBarClass::activeBarClass ( void ) {
   efReadMax.setNull(1);
   efPrecision.setNull(1);
   efBarOriginX.setNull(1);
-  strcpy( scaleFormat, "f" );
+  strcpy( scaleFormat, "FFloat" );
   precision = 0;
 
 }
@@ -479,7 +487,7 @@ activeGraphicClass *baro = (activeGraphicClass *) this;
   efReadMax = source->efReadMax;
   efPrecision = source->efPrecision;
   efBarOriginX = source->efBarOriginX;
-  strncpy( scaleFormat, source->scaleFormat, 2 );
+  strncpy( scaleFormat, source->scaleFormat, 15 );
 
   strcpy( label, source->label );
 
@@ -787,7 +795,7 @@ float fBarOriginX;
     efReadMax.read( f ); actWin->incLine();
 
     readStringFromFile( oneName, 39, f ); actWin->incLine();
-    strncpy( scaleFormat, oneName, 1 );
+    strncpy( scaleFormat, oneName, 15 );
 
     if ( limitsFromDb || efPrecision.isNull() )
       precision = 0;
@@ -826,7 +834,16 @@ float fBarOriginX;
 
   }
 
-  sprintf( fmt, "%%.%-d%s", precision, scaleFormat );
+  if ( strcmp( scaleFormat, "GFloat" ) == 0 ) {
+    sprintf( fmt, "%%.%-dg", precision );
+  }
+  else if ( strcmp( scaleFormat, "Exponential" ) == 0 ) {
+    sprintf( fmt, "%%.%-de", precision );
+  }
+  else {
+    sprintf( fmt, "%%.%-df", precision );
+  }
+
   sprintf( str, fmt, readMin );
   if ( fs ) {
     barStrLen = XTextWidth( fs, str, strlen(str) );
@@ -910,7 +927,7 @@ char title[32], *ptr;
   bufEfPrecision = efPrecision;
   bufEfReadMin = efReadMin;
   bufEfReadMax = efReadMax;
-  strncpy( bufScaleFormat, scaleFormat, 2 );
+  strncpy( bufScaleFormat, scaleFormat, 15 );
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -935,7 +952,7 @@ char title[32], *ptr;
   ef.addTextField( activeBarClass_str22, 30, &bufMinorTicks );
 
   ef.addToggle( activeBarClass_str23, &bufLimitsFromDb );
-  ef.addOption( activeBarClass_str24, activeBarClass_str25, bufScaleFormat, 2 );
+  ef.addOption( activeBarClass_str24, activeBarClass_str25, bufScaleFormat, 15 );
   ef.addTextField( activeBarClass_str26, 30, &bufEfPrecision );
   ef.addTextField( activeBarClass_str27, 30, &bufEfReadMin );
   ef.addTextField( activeBarClass_str28, 30, &bufEfReadMax );
@@ -1041,7 +1058,15 @@ char fmt[31+1], str[31+1];
     gc->setFontTag( fontTag, actWin->fi );
   }
 
-  sprintf( fmt, "%%.%-d%s", precision, scaleFormat );
+  if ( strcmp( scaleFormat, "GFloat" ) == 0 ) {
+    sprintf( fmt, "%%.%-dg", precision );
+  }
+  else if ( strcmp( scaleFormat, "Exponential" ) == 0 ) {
+    sprintf( fmt, "%%.%-de", precision );
+  }
+  else {
+    sprintf( fmt, "%%.%-df", precision );
+  }
 
   scale_len = w;
 
@@ -1244,7 +1269,15 @@ char fmt[31+1], str[31+1];
     gc->setFontTag( fontTag, actWin->fi );
   }
 
-  sprintf( fmt, "%%.%-d%s", precision, scaleFormat );
+  if ( strcmp( scaleFormat, "GFloat" ) == 0 ) {
+    sprintf( fmt, "%%.%-dg", precision );
+  }
+  else if ( strcmp( scaleFormat, "Exponential" ) == 0 ) {
+    sprintf( fmt, "%%.%-de", precision );
+  }
+  else {
+    sprintf( fmt, "%%.%-df", precision );
+  }
 
   // draw scale and annotation
 
@@ -2876,7 +2909,15 @@ double v;
       barOriginX = readMin;
     }
 
-    sprintf( fmt, "%%.%-d%s", precision, scaleFormat );
+    if ( strcmp( scaleFormat, "GFloat" ) == 0 ) {
+      sprintf( fmt, "%%.%-dg", precision );
+    }
+    else if ( strcmp( scaleFormat, "Exponential" ) == 0 ) {
+      sprintf( fmt, "%%.%-de", precision );
+    }
+    else {
+      sprintf( fmt, "%%.%-df", precision );
+    }
 
     sprintf( str, fmt, readMin );
     if ( fs ) {
