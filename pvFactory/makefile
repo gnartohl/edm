@@ -13,6 +13,8 @@ OBJS   += $(ODIR)/pv_register.o
 
 all: 	$(LIBNAME)
 
+buildInstall: all
+
 $(LIBNAME): $(OBJS)
 	$(SL_LINK) -o $(LIBNAME) $(OBJS) $(SL_FLAGS)
 
