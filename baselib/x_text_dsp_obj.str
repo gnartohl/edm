@@ -70,5 +70,9 @@
 #define activeXTextDspClass_str67 "Keypad"
 #define activeXTextDspClass_str68 "Lose Focus Update"
 #define activeXTextDspClass_str69 "Fast Update"
+#define activeXTextDspClass_str70 "Date"
+#define activeXTextDspClass_str71 "File"
+#define activeXTextDspClass_str72 "Default Dir"
+#define activeXTextDspClass_str73 "Pattern"
 
 #endif

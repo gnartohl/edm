@@ -39,7 +39,7 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
 }
 
-static void xtdoCancelCp (
+static void xtdoCancelStr (
   Widget w,
   XtPointer client,
   XtPointer call )
@@ -61,9 +61,37 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int stat;
 
   axtdo->cp.getDate( axtdo->entryValue, 127 );
+  strncpy( axtdo->curValue, axtdo->entryValue, 39 );
 
   axtdo->editDialogIsActive = 0;
+
+  if ( axtdo->pvExists ) {
+#ifdef __epics__
+    stat = ca_put( DBR_STRING, axtdo->pvId, &axtdo->curValue );
+#endif
+  }
+
+  axtdo->actWin->appCtx->proc->lock();
+  axtdo->needUpdate = 1;
+  axtdo->actWin->addDefExeNode( axtdo->aglPtr );
+  axtdo->actWin->appCtx->proc->unlock();
+
+}
+
+static void xtdoSetFsValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
+int stat;
+
+  axtdo->fsel.getSelection( axtdo->entryValue, 127 );
+
   strncpy( axtdo->curValue, axtdo->entryValue, 39 );
+
+  axtdo->editDialogIsActive = 0;
 
   if ( axtdo->pvExists ) {
 #ifdef __epics__
@@ -896,6 +924,10 @@ struct dbr_gr_enum enumInfoRec;
 
     axtdo->fgColor.setStatus( floatInfoRec.status, floatInfoRec.severity );
 
+    axtdo->isDate = 0;
+
+    axtdo->isFile = 0;
+
     break;
 
   case DBR_DOUBLE:
@@ -908,6 +940,10 @@ struct dbr_gr_enum enumInfoRec;
 
     axtdo->fgColor.setStatus( doubleInfoRec.status, doubleInfoRec.severity );
 
+    axtdo->isDate = 0;
+
+    axtdo->isFile = 0;
+
     break;
 
   case DBR_SHORT:
@@ -916,6 +952,10 @@ struct dbr_gr_enum enumInfoRec;
 
     axtdo->fgColor.setStatus( shortInfoRec.status, shortInfoRec.severity );
 
+    axtdo->isDate = 0;
+
+    axtdo->isFile = 0;
+
     break;
 
   case DBR_LONG:
@@ -923,6 +963,10 @@ struct dbr_gr_enum enumInfoRec;
     longInfoRec = *( (dbr_gr_long *) ast_args.dbr );
 
     axtdo->fgColor.setStatus( longInfoRec.status, longInfoRec.severity );
+
+    axtdo->isDate = 0;
+
+    axtdo->isFile = 0;
 
     break;
 
@@ -962,6 +1006,10 @@ struct dbr_gr_enum enumInfoRec;
     axtdo->isWidget = 0;
 
     axtdo->fgColor.setStatus( enumInfoRec.status, enumInfoRec.severity );
+
+    axtdo->isDate = 0;
+
+    axtdo->isFile = 0;
 
     break;
 
@@ -1121,6 +1169,9 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   axtdo->fgPvExpStr.setRaw( axtdo->fgCb.getPv() );
 
+  axtdo->defDir.setRaw( axtdo->bufDefDir );
+  axtdo->pattern.setRaw( axtdo->bufPattern );
+
   strncpy( axtdo->fontTag, axtdo->fm.currentFontTag(), 63 );
   axtdo->fontTag[63] = 0;
   axtdo->actWin->fi->loadFontTag( axtdo->fontTag );
@@ -1171,6 +1222,10 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
   axtdo->editable = axtdo->bufEditable;
 
   axtdo->isWidget = axtdo->bufIsWidget;
+
+  axtdo->isDate = axtdo->bufIsDate;
+
+  axtdo->isFile = axtdo->bufIsFile;
 
   axtdo->useKp = axtdo->bufUseKp;
 
@@ -1284,6 +1339,8 @@ int i;
   smartRefresh = 0;
   isWidget = 0;
   useKp = 0;
+  isDate = 0;
+  isFile = 0;
   numStates = 0;
   entryState = 0;
   for ( i=0; i<MAX_ENUM_STATES; i++ ) {
@@ -1348,6 +1405,10 @@ int i;
 
   useKp = source->useKp;
 
+  isDate = source->isDate;
+
+  isFile = source->isFile;
+
   bgColor = source->bgColor;
 
   fgColor.copy(source->fgColor);
@@ -1382,6 +1443,9 @@ int i;
   pvExpStr.copy( source->pvExpStr );
   svalPvExpStr.copy( source->svalPvExpStr );
   fgPvExpStr.copy( source->fgPvExpStr );
+
+  defDir.copy( source->defDir );
+  pattern.copy( source->pattern );
 
   limitsFromDb = source->limitsFromDb;
   changeValOnLoseFocus = source->changeValOnLoseFocus;
@@ -1455,6 +1519,8 @@ int activeXTextDspClass::createInteractive (
   smartRefresh = 0;
   isWidget = 0;
   useKp = 0;
+  isDate = 0;
+  isFile = 0;
 
   strcpy( fontTag, actWin->defaultFontTag );
 
@@ -1552,6 +1618,21 @@ int index, stat;
   // version 2.3.0
   fprintf( f, "%-d\n", fastUpdate );
 
+  // version 2.3.0
+  fprintf( f, "%-d\n", isDate );
+
+  fprintf( f, "%-d\n", isFile );
+
+  if ( defDir.getRaw() )
+    writeStringToFile( f, defDir.getRaw() );
+  else
+    writeStringToFile( f, "" );
+
+  if ( pattern.getRaw() )
+    writeStringToFile( f, pattern.getRaw() );
+  else
+    writeStringToFile( f, "" );
+
   return 1;
 
 }
@@ -1565,7 +1646,7 @@ int activeXTextDspClass::createFromFile (
 int r, g, b, index;
 int major, minor, release;
 int stat = 1;
-char oneName[39+1];
+char oneName[127+1];
 unsigned int pixel;
 
   this->actWin = _actWin;
@@ -1771,6 +1852,25 @@ unsigned int pixel;
 
   }
 
+  if ( ( ( major == 2 ) && ( minor > 2 ) ) || ( major > 3 ) ) {
+
+    fscanf( f, "%d\n", &isDate );
+    fscanf( f, "%d\n", &isFile );
+
+    readStringFromFile( oneName, 127, f ); actWin->incLine();
+    defDir.setRaw( oneName );
+
+    readStringFromFile( oneName, 127, f ); actWin->incLine();
+    pattern.setRaw( oneName );
+
+  }
+  else {
+
+    isDate = 0;
+    isFile = 0;
+
+  }
+
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
@@ -1829,6 +1929,8 @@ unsigned int pixel;
   smartRefresh = 0;
   isWidget = 0;
   useKp = 0;
+  isDate = 0;
+  isFile = 0;
 
   strcpy( fontTag, actWin->defaultFontTag );
 
@@ -2064,6 +2166,7 @@ char title[32], *ptr;
   bufValue[127] = 0;
   strncpy( bufPvName, pvName, 39 );
   bufPvName[39] = 0;
+
   if ( svalPvExpStr.getRaw() ) {
     strncpy( bufSvalPvName, svalPvExpStr.getRaw(), 39 );
     bufSvalPvName[39] = 0;
@@ -2072,6 +2175,23 @@ char title[32], *ptr;
     strncpy( bufSvalPvName, "", 39 );
     bufSvalPvName[39] = 0;
   }
+
+  if ( defDir.getRaw() ) {
+    strncpy( bufDefDir, defDir.getRaw(), 127 );
+    bufDefDir[127] = 0;
+  }
+  else {
+    strcpy( bufDefDir, "" );
+  }
+
+  if ( pattern.getRaw() ) {
+    strncpy( bufPattern, pattern.getRaw(), 127 );
+    bufPattern[127] = 0;
+  }
+  else {
+    strcpy( bufPattern, "" );
+  }
+
   bufSvalColor = fgColor.nullIndex();
   bufNullDetectMode = nullDetectMode;
 
@@ -2079,6 +2199,8 @@ char title[32], *ptr;
   bufSmartRefresh = smartRefresh;
   bufIsWidget = isWidget;
   bufUseKp = useKp;
+  bufIsDate = isDate;
+  bufIsFile = isFile;
   bufLimitsFromDb = limitsFromDb;
   bufChangeValOnLoseFocus = changeValOnLoseFocus;
   bufFastUpdate = fastUpdate;
@@ -2130,6 +2252,10 @@ char title[32], *ptr;
   ef.addToggle( activeXTextDspClass_str29, &bufIsWidget );
   ef.addToggle( activeXTextDspClass_str68, &bufChangeValOnLoseFocus );
   ef.addToggle( activeXTextDspClass_str69, &bufFastUpdate );
+  ef.addToggle( activeXTextDspClass_str70, &bufIsDate );
+  ef.addToggle( activeXTextDspClass_str71, &bufIsFile );
+  ef.addTextField( activeXTextDspClass_str72, 31, bufDefDir, 127 );
+  ef.addTextField( activeXTextDspClass_str73, 31, bufPattern, 127 );
   ef.addToggle( activeXTextDspClass_str30, &bufActivateCallbackFlag );
   ef.addToggle( activeXTextDspClass_str31, &bufDeactivateCallbackFlag );
   ef.addToggle( activeXTextDspClass_str32, &bufChangeCallbackFlag );
@@ -2376,6 +2502,8 @@ int stat;
   stat = pvExpStr.expand1st( numMacros, macros, expansions );
   stat = svalPvExpStr.expand1st( numMacros, macros, expansions );
   stat = fgPvExpStr.expand1st( numMacros, macros, expansions );
+  stat = defDir.expand1st( numMacros, macros, expansions );
+  stat = pattern.expand1st( numMacros, macros, expansions );
 
   return stat;
 
@@ -2391,6 +2519,8 @@ int stat;
   stat = pvExpStr.expand2nd( numMacros, macros, expansions );
   stat = svalPvExpStr.expand2nd( numMacros, macros, expansions );
   stat = fgPvExpStr.expand2nd( numMacros, macros, expansions );
+  stat = defDir.expand2nd( numMacros, macros, expansions );
+  stat = pattern.expand2nd( numMacros, macros, expansions );
 
   return stat;
 
@@ -2407,6 +2537,12 @@ int result;
   if ( result ) return 1;
 
   result = fgPvExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
+
+  result = defDir.containsPrimaryMacros();
+  if ( result ) return 1;
+
+  result = pattern.containsPrimaryMacros();
   if ( result ) return 1;
 
   return 0;
@@ -2622,6 +2758,10 @@ int stat;
     cp.popdown();
   }
 
+  if ( fsel.isPoppedUp() ) {
+    fsel.popdown();
+  }
+
   if ( textEntry.formIsPoppedUp() ) {
     textEntry.popdown();
     editDialogIsActive = 0;
@@ -2719,7 +2859,7 @@ void activeXTextDspClass::btnDown (
   int buttonNumber )
 {
 
-char selectString[127+1];
+char selectString[127+1], bufDir[127+1], bufPat[127+1];
 int i;
 
   if ( !editable || isWidget ) return;
@@ -2735,6 +2875,7 @@ int i;
   teLargestH = 600;
 
   if ( useKp ) {
+
     if ( ( pvType == DBR_FLOAT ) || ( pvType == DBR_DOUBLE ) ) {
       kp.create( actWin->top, teX, teY, "", &kpDouble,
        (void *) this,
@@ -2752,14 +2893,48 @@ int i;
       return;
     }
     else if ( pvType == DBR_STRING ) {
-      cp.create( actWin->top, teX, teY, entryValue, 127,
-       (void *) this,
-       (XtCallbackProc) xtdoSetCpValue,
-       (XtCallbackProc) xtdoCancelCp );
-      cp.setDate( curValue );
-      editDialogIsActive = 1;
-      return;
+
+      if ( isFile ) {
+
+        if ( defDir.getExpanded() ) {
+          strncpy( bufDir, defDir.getExpanded(), 127 );
+          bufDir[127] = 0;
+	}
+        else {
+          strcpy( bufDir, "" );
+	}
+
+        if ( pattern.getExpanded() ) {
+          strncpy( bufPat, pattern.getExpanded(), 127 );
+          bufPat[127] = 0;
+	}
+        else {
+          strcpy( bufPat, "" );
+	}
+
+        fsel.create( actWin->top, teX, teY,
+         bufDir, bufPat,
+         (void *) this,
+         (XtCallbackProc) xtdoSetFsValue,
+         (XtCallbackProc) xtdoCancelStr );
+        editDialogIsActive = 1;
+        return;
+
+      }
+      else if ( isDate ) {
+
+        cp.create( actWin->top, teX, teY, entryValue, 127,
+         (void *) this,
+         (XtCallbackProc) xtdoSetCpValue,
+         (XtCallbackProc) xtdoCancelStr );
+        cp.setDate( curValue );
+        editDialogIsActive = 1;
+        return;
+
+      }
+
     }
+
   }
 
   strncpy( entryValue, value, 127 );

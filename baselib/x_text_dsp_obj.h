@@ -28,6 +28,7 @@
 #include "entry_form.h"
 #include "keypad.h"
 #include "calpad.h"
+#include "fileSelect.h"
 
 #include "cadef.h"
 
@@ -42,7 +43,7 @@
 #define XTDC_K_COLORMODE_ALARM 1
 
 #define XTDC_MAJOR_VERSION 2
-#define XTDC_MINOR_VERSION 3
+#define XTDC_MINOR_VERSION 4
 #define XTDC_RELEASE 0
 
 #ifdef __x_text_dsp_obj_cc
@@ -54,12 +55,17 @@ static char *dragName[] = {
   activeXTextDspClass_str2
 };
 
-static void xtdoCancelCp (
+static void xtdoCancelStr (
   Widget w,
   XtPointer client,
   XtPointer call );
 
 static void xtdoSetCpValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void xtdoSetFsValue (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -200,12 +206,17 @@ class activeXTextDspClass : public activeGraphicClass {
 
 private:
 
-friend void xtdoCancelCp (
+friend void xtdoCancelStr (
   Widget w,
   XtPointer client,
   XtPointer call );
 
 friend void xtdoSetCpValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void xtdoSetFsValue (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -384,6 +395,9 @@ evid eventId, alarmEventId, svalEventId, fgEventId;
 expStringClass pvExpStr, svalPvExpStr, fgPvExpStr;
 char pvName[39+1], bufPvName[39+1], bufSvalPvName[39+1];
 
+expStringClass defDir, pattern;
+char bufDefDir[127+1], bufPattern[127+1];
+
 char *stateString[MAX_ENUM_STATES]; // allocated at run-time
 int numStates;
 
@@ -395,6 +409,8 @@ entryFormClass textEntry;
 int teX, teY, teW, teH, teLargestH;
 char entryValue[127+1];
 int entryState, editDialogIsActive;
+int isDate, bufIsDate;
+int isFile, bufIsFile;
 
 Widget tf_widget;
 int widget_value_changed;
@@ -407,6 +423,7 @@ int kpInt;
 double kpDouble;
 int useKp, bufUseKp;
 calpadClass cp;
+fselectClass fsel;
 
 public:
 
