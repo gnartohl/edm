@@ -764,6 +764,20 @@ void edmByteClass::changePvNames(int flag,
     }
 
 }
+
+void edmByteClass::getPvs(int max,
+			  ProcessVariable *pvs[],
+			  int *n)
+{
+  if ( max < 1 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 1;
+  pvs[0] = valuePvId;
+
+}
     
 // --------------------------------------------------------
 // Macro support

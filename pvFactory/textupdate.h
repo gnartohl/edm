@@ -79,6 +79,10 @@ public:
                        char *visPvs[],
                        int numAlarmPvs,
                        char *alarmPvs[]);
+
+void edmTextupdateClass::getPvs(int max,
+				ProcessVariable *pvs[],
+				int *n);
     
     // Macro support
     int containsMacros();

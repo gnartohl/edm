@@ -71,6 +71,10 @@ public:
                        int numAlarmPvs,
                        char *alarmPvs[]);
     
+void edmByteClass::getPvs(int max,
+			  ProcessVariable *pvs[],
+			  int *n);
+
     // Macro support
     int containsMacros();
     int expand1st(int numMacros, char *macros[], char *expansions[]);

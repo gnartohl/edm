@@ -891,6 +891,21 @@ void edmTextupdateClass::changePvNames(int flag,
             color_pv_name.setRaw(visPvs[0]);
     }
 }
+
+void edmTextupdateClass::getPvs(int max,
+				ProcessVariable *pvs[],
+				int *n)
+{
+  if ( max < 2 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 2;
+  pvs[0] = pv;
+  pvs[1] = color_pv;
+
+}
     
 // --------------------------------------------------------
 // Macro support
