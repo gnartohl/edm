@@ -79,8 +79,11 @@
    
    -- Note we are using gcc-2.96 (Linux native compiler) and GNU make version 3.79.1
 
-   -- Need to make the following softlink so edm can find motif headers:
-      "ln -s ../X11R6/include/Xm  Xm". Note there is already a softlink for X11
+   -- Need to make the following softlinks in /usr/include so edm can find motif headers:
+      "ln -s ../X11R6/include/Xm  Xm".
+      "ln -s ../X11R6/include/X11  X11".
+
+ Note there is already a softlink for X11
    -- Now go for the gusto and compile
 
 3. Run Time Configuration/Setup
