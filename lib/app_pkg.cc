@@ -1015,6 +1015,7 @@ SYS_PROC_ID_TYPE procId;
   cur = new activeWindowListType;
   cur->requestDelete = 0;
   cur->requestActivate = 0;
+  cur->requestActivateClear = 0;
   cur->requestReactivate = 0;
   cur->requestOpen = 0;
   cur->requestPosition = 0;
@@ -1105,6 +1106,7 @@ activeWindowListPtr cur;
   cur = new activeWindowListType;
   cur->requestDelete = 0;
   cur->requestActivate = 0;
+  cur->requestActivateClear = 0;
   cur->requestReactivate = 0;
   cur->requestOpen = 0;
   cur->requestPosition = 0;
@@ -1184,6 +1186,7 @@ char *fName;
 
   cur->requestDelete = 0;
   cur->requestActivate = 0;
+  cur->requestActivateClear = 0;
   cur->requestReactivate = 0;
   cur->requestOpen = 0;
   cur->requestPosition = 0;
@@ -1256,6 +1259,7 @@ char *fName;
 
   cur->requestDelete = 0;
   cur->requestActivate = 0;
+  cur->requestActivateClear = 0;
   cur->requestReactivate = 0;
   cur->requestOpen = 0;
   cur->requestPosition = 0;
@@ -1324,6 +1328,7 @@ activeWindowListPtr cur, next;
   cur = new activeWindowListType;
   cur->requestDelete = 0;
   cur->requestActivate = 0;
+  cur->requestActivateClear = 0;
   cur->requestReactivate = 0;
   cur->requestOpen = 0;
   cur->requestPosition = 0;
@@ -1815,6 +1820,7 @@ char *sysMacros[] = {
   cur = new activeWindowListType;
   cur->requestDelete = 0;
   cur->requestActivate = 0;
+  cur->requestActivateClear = 0;
   cur->requestReactivate = 0;
   cur->requestOpen = 0;
   cur->requestPosition = 0;
@@ -2076,15 +2082,15 @@ void appContextClass::reloadAll ( void )
 
 activeWindowListPtr cur;
 
-  requestFlag = 1;
-
   // walk activeWindowList and reload
   cur = head->flink;
   while ( cur != head ) {
     if ( !cur->requestDelete ) {
       cur->requestActivate = 0;
+      cur->requestActivateClear = 0;
       cur->requestReactivate = 0;
       cur->requestOpen = 1;
+      requestFlag++;
       cur->requestPosition = 1;
       cur->requestCascade = 0;
       cur->requestImport = 0;
@@ -2098,6 +2104,8 @@ activeWindowListPtr cur;
         cur->node.noRaise = 1;
         processAllEvents( app, display );
         cur->requestActivate = 1;
+        cur->requestActivateClear = 1;
+        requestFlag++;
       }
       cur->node.reloadSelf();
     }
@@ -3257,6 +3265,7 @@ void appContextClass::addActiveWindow (
 
   node->requestDelete = 0;
   node->requestActivate = 0;
+  node->requestActivateClear = 0;
   node->requestReactivate = 0;
   node->requestOpen = 0;
   node->requestPosition = 0;
@@ -4270,6 +4279,7 @@ err_return:
     cur = new activeWindowListType;
     cur->requestDelete = 0;
     cur->requestActivate = 0;
+    cur->requestActivateClear = 0;
     cur->requestReactivate = 0;
     cur->requestOpen = 0;
     cur->requestPosition = 0;
@@ -4324,6 +4334,7 @@ activeWindowListPtr cur;
   cur = new activeWindowListType;
   cur->requestDelete = 0;
   cur->requestActivate = 0;
+  cur->requestActivateClear = 0;
   cur->requestReactivate = 0;
   cur->requestOpen = 0;
   cur->requestPosition = 0;
@@ -4481,6 +4492,22 @@ char msg[127+1];
 
     processAllEvents( app, display );
 
+    cur = head->flink;
+    while ( cur != head ) {
+      if ( !cur->requestDelete ) {
+        if ( cur->requestActivate == 3 ) {
+          if ( requestFlag > 0 ) requestFlag--;
+          cur->requestActivate = 0;
+          if ( cur->requestActivateClear ) {
+            cur->requestActivateClear = 0;
+            cur->node.clearActive();
+            cur->node.refreshActive();
+	  }
+	}
+      }
+      cur = cur->flink;
+    }
+
     nodeCount = iconNodeCount = actionCount = iconActionCount = 0;
     cur = head->flink;
     while ( cur != head ) {
@@ -4492,7 +4519,7 @@ char msg[127+1];
       }
       if ( !cur->requestDelete ) {
         if ( cur->requestActivate == 2 ) {
-          cur->requestActivate = 0;
+          cur->requestActivate = 3;
           cur->node.execute();
 
 #ifdef __epics__
@@ -4509,7 +4536,6 @@ char msg[127+1];
 
           actionCount++;
           iconActionCount++;
-          if ( requestFlag > 0 ) requestFlag--;
           cur->node.setRefresh();
           cur->node.refreshActive();
 
@@ -4532,7 +4558,9 @@ char msg[127+1];
           cur->node.refreshActive();
         }
       }
+
       cur = cur->flink;
+
     }
 
     processAllEvents( app, display );

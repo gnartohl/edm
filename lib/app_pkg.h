@@ -92,6 +92,7 @@ typedef struct activeWindowListTag {
   int requestDelete;
   int requestOpen;
   int requestActivate;
+  int requestActivateClear;
   int requestReactivate; // for multiplexors
   int requestClose;
   int requestRefresh;
