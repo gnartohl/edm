@@ -60,6 +60,7 @@ LIBSRCS += shell_cmd.cc
 LIBSRCS += updownButton.cc
 LIBSRCS += reg_libEdmBase.cc
 LIBSRCS += motifSlider.cc
+LIBSRCS += radio_button.cc
 
 LIBSRCS += expRect.cc
 
