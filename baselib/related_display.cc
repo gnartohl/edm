@@ -72,6 +72,8 @@ int i = ptr->index;
 
 #endif
 
+#if 0
+
 static void rdc_edit_update1 (
   Widget w,
   XtPointer client,
@@ -82,32 +84,6 @@ int i;
 relatedDisplayClass *rdo = (relatedDisplayClass *) client;
 
   rdo->actWin->setChanged();
-
-  rdo->numDsps = 1;
-  for ( i=1; i<rdo->maxDsps; i++ ) {
-    rdo->displayFileName[i].setRaw( rdo->buf->bufDisplayFileName[i] );
-    if ( blank( rdo->displayFileName[i].getRaw() ) ) {
-      rdo->closeAction[i] = 0;
-      rdo->setPostion[i] = 0;
-      rdo->allowDups[i] = 0;
-      rdo->cascade[i] = 0;
-      rdo->propagateMacros[i] = 1;
-      rdo->label[i].setRaw( "" );
-      rdo->symbolsExpStr[i].setRaw( "" );
-      rdo->replaceSymbols[i] = 0;
-    }
-    else {
-      rdo->closeAction[i] = rdo->buf->bufCloseAction[i];
-      rdo->setPostion[i] = rdo->buf->bufSetPostion[i];
-      rdo->allowDups[i] = rdo->buf->bufAllowDups[i];
-      rdo->cascade[i] = rdo->buf->bufCascade[i];
-      rdo->propagateMacros[i] = rdo->buf->bufPropagateMacros[i];
-      rdo->label[i].setRaw( rdo->buf->bufLabel[i] );
-      rdo->symbolsExpStr[i].setRaw( rdo->buf->bufSymbols[i] );
-      rdo->replaceSymbols[i] = rdo->buf->bufReplaceSymbols[i];
-      (rdo->numDsps)++;
-    }
-  }
 
 }
 
@@ -120,6 +96,7 @@ static void rdc_edit_apply1 (
   rdc_edit_update1 ( w, client, call );
 
 }
+#endif
 
 static void rdc_edit_ok1 (
   Widget w,
@@ -129,11 +106,12 @@ static void rdc_edit_ok1 (
 
 relatedDisplayClass *rdo = (relatedDisplayClass *) client;
 
-  rdc_edit_update1 ( w, client, call );
+  //rdc_edit_update1 ( w, client, call );
   rdo->ef1->popdownNoDestroy();
 
 }
 
+#if 0
 static void rdc_edit_cancel1 (
   Widget w,
   XtPointer client,
@@ -145,6 +123,7 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
   rdo->ef1->popdownNoDestroy();
 
 }
+#endif
 
 static void rdc_edit_update (
 
@@ -188,11 +167,28 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
   if ( rdo->numDsps ) {
     more = 1;
     for ( i=1; (i<rdo->maxDsps) && more; i++ ) {
-      if ( !blank( rdo->displayFileName[i].getRaw() ) ) {
-        (rdo->numDsps)++;
+      rdo->displayFileName[i].setRaw( rdo->buf->bufDisplayFileName[i] );
+      if ( blank( rdo->displayFileName[i].getRaw() ) ) {
+        rdo->closeAction[i] = 0;
+        rdo->setPostion[i] = 0;
+        rdo->allowDups[i] = 0;
+        rdo->cascade[i] = 0;
+        rdo->propagateMacros[i] = 1;
+        rdo->label[i].setRaw( "" );
+        rdo->symbolsExpStr[i].setRaw( "" );
+        rdo->replaceSymbols[i] = 0;
+        more = 0;
       }
       else {
-	more = 0;
+        rdo->closeAction[i] = rdo->buf->bufCloseAction[i];
+        rdo->setPostion[i] = rdo->buf->bufSetPostion[i];
+        rdo->allowDups[i] = rdo->buf->bufAllowDups[i];
+        rdo->cascade[i] = rdo->buf->bufCascade[i];
+        rdo->propagateMacros[i] = rdo->buf->bufPropagateMacros[i];
+        rdo->label[i].setRaw( rdo->buf->bufLabel[i] );
+        rdo->symbolsExpStr[i].setRaw( rdo->buf->bufSymbols[i] );
+        rdo->replaceSymbols[i] = rdo->buf->bufReplaceSymbols[i];
+        (rdo->numDsps)++;
       }
     }
   }
@@ -1317,7 +1313,8 @@ char title[32], *ptr;
 
   }
 
-  ef1->finished( rdc_edit_ok1, rdc_edit_apply1, rdc_edit_cancel1, this );
+  //ef1->finished( rdc_edit_ok1, rdc_edit_apply1, rdc_edit_cancel1, this );
+  ef1->finished( rdc_edit_ok1, this );
 
   ef.addTextField( relatedDisplayClass_str13, 30, buf->bufButtonLabel, 127 );
 
