@@ -210,6 +210,8 @@ int activeXRegTextClass::erase ( void );
 
 int activeXRegTextClass::drawActive ( void );
 
+char * activeXRegTextClass::getProcessedText(char *text);
+
 int activeXRegTextClass::eraseActive ( void );
 
 int activeXRegTextClass::eraseUnconditional ( void );
