@@ -771,7 +771,7 @@ activeGraphicClass *udbto = (activeGraphicClass *) this;
   strncpy( minVisString, source->minVisString, 39 );
   strncpy( maxVisString, source->maxVisString, 39 );
 
-  connection.setMaxPvs( 2 );
+  connection.setMaxPvs( 4 );
 
   setBlinkFunction( (void *) doBlink );
 
@@ -2054,6 +2054,7 @@ int stat;
 
   active = 0;
   activeMode = 0;
+  updateBlink( 0 );
 
   if ( incrementTimerActive ) {
     if ( incrementTimer ) {

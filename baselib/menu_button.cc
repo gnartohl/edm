@@ -637,7 +637,7 @@ activeGraphicClass *mbto = (activeGraphicClass *) this;
   active = 0;
   activeMode = 0;
 
-  connection.setMaxPvs( 3 );
+  connection.setMaxPvs( 4 );
 
   unconnectedTimer = 0;
 
@@ -1663,6 +1663,8 @@ int stat, i;
   switch ( pass ) {
 
   case 1:
+
+    updateBlink( 0 );
 
 #ifdef __epics__
 

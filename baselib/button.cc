@@ -625,7 +625,7 @@ activeGraphicClass *bto = (activeGraphicClass *) this;
   strncpy( minVisString, source->minVisString, 39 );
   strncpy( maxVisString, source->maxVisString, 39 );
 
-  connection.setMaxPvs( 3 );
+  connection.setMaxPvs( 4 );
 
   updateDimensions();
 
@@ -2087,6 +2087,8 @@ int stat;
   activeMode = 0;
 
   if ( pass == 1 ) {
+
+  updateBlink( 0 );
 
   if ( deactivateCallback ) {
     (*deactivateCallback)( this );

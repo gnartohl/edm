@@ -1402,6 +1402,7 @@ int activeXTextClass::deactivate (
   if ( pass == 1 ) {
 
   activeMode = 0;
+  updateBlink( 0 );
 
   if ( value.getRaw() )
     stringLength = strlen( value.getRaw() );

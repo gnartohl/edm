@@ -2948,6 +2948,7 @@ int stat;
   if ( pass == 1 ) {
 
   activeMode = 0;
+  updateBlink( 0 );
 
   if ( kp.isPoppedUp() ) {
     kp.popdown();

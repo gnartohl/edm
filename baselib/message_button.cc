@@ -1861,6 +1861,7 @@ int stat;
 
   active = 0;
   activeMode = 0;
+  updateBlink( 0 );
 
 #ifdef __epics__
 

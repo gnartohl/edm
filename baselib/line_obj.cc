@@ -1670,6 +1670,8 @@ int activeLineClass::deactivate (
 
     activeMode = 0;
 
+    updateBlink( 0 );
+
     if ( alarmPvId ) {
       alarmPvId->remove_conn_state_callback( alarmPvConnectStateCallback,
        this );
