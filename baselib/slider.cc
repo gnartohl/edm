@@ -2360,6 +2360,10 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 
     case Button2:
 
+      slo->controlState = SLC_STATE_IDLE;
+      slo->incrementTimerActive = 0;
+      slo->incrementTimerValue = 101;
+
       if ( !( be->state & ShiftMask ) ) {
         stat = slo->startDrag( w, e );
       }
@@ -2371,6 +2375,10 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 //========== B3 Press ========================================
 
     case Button3:
+
+      slo->controlState = SLC_STATE_IDLE;
+      slo->incrementTimerActive = 0;
+      slo->incrementTimerValue = 101;
 
       if ( ( be->x > slo->controlX - slo->controlAreaH/2 ) &&
            ( be->x < slo->controlX + slo->controlAreaH/2 ) &&
@@ -2394,6 +2402,10 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 
 //========== Any B Release ========================================
 
+    slo->controlState = SLC_STATE_IDLE;
+    slo->incrementTimerActive = 0;
+    slo->incrementTimerValue = 101;
+
     be = (XButtonEvent *) e;
 
     switch ( be->button ) {
@@ -2403,13 +2415,6 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
       if ( be->state & ShiftMask ) {
         stat = slo->selectDragValue( slo->x+be->x, slo->y+be->y );
       }
-
-      break;
-
-    default:
-
-      slo->controlState = SLC_STATE_IDLE;
-      slo->incrementTimerActive = 0;
 
       break;
 
