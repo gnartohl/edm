@@ -1,8 +1,8 @@
 3 1 0
-87
-197
-362
-279
+276
+89
+409
+338
 helvetica-medium-r-12.0
 0
 helvetica-medium-r-12.0
@@ -10,7 +10,7 @@ helvetica-medium-r-12.0
 rgb
 0,0,0
 rgb
-50971,52011,50971
+51400,51400,51400
 rgb
 0,0,0
 rgb
@@ -18,13 +18,13 @@ rgb
 rgb
 0,0,0
 rgb
-44730,44730,44730
+44718,44718,44718
 rgb
-61374,61374,61374
+60652,60652,60652
 rgb
-22885,22885,22885
+23130,23130,23130
 rgb
-34327,34327,34327
+34181,34181,34181
 Help - Creating Lines
 0
 0
@@ -48,7 +48,7 @@ rgb
 0
 1
 rgb
-44730,44730,44730
+44718,44718,44718
 0
 <<<empty>>>
 <<<empty>>>
@@ -72,7 +72,7 @@ rgb
 0
 1
 rgb
-44730,44730,44730
+44718,44718,44718
 0
 <<<empty>>>
 <<<empty>>>
@@ -96,7 +96,7 @@ rgb
 0
 1
 rgb
-44730,44730,44730
+44718,44718,44718
 0
 <<<empty>>>
 <<<empty>>>
@@ -120,7 +120,7 @@ rgb
 0
 1
 rgb
-44730,44730,44730
+44718,44718,44718
 0
 <<<empty>>>
 <<<empty>>>
@@ -144,7 +144,7 @@ rgb
 0
 1
 rgb
-44730,44730,44730
+44718,44718,44718
 0
 <<<empty>>>
 <<<empty>>>
@@ -160,22 +160,22 @@ helvetica-medium-r-12.0
 activeXTextClass
 2 1 0
 40
-120
-265
+201
+263
 14
 rgb
 0,0,0
 0
 1
 rgb
-44730,44730,44730
+44718,44718,44718
 0
 <<<empty>>>
 <<<empty>>>
 0
 <<<empty>>>
 <<<empty>>>
-o Shft middle B click deletes the last node point
+o Ctrl middle B click deletes the last node point
 helvetica-medium-r-12.0
 0
 1
@@ -184,7 +184,7 @@ helvetica-medium-r-12.0
 activeXTextClass
 2 1 0
 40
-140
+150
 199
 14
 rgb
@@ -192,7 +192,7 @@ rgb
 0
 1
 rgb
-44730,44730,44730
+44718,44718,44718
 0
 <<<empty>>>
 <<<empty>>>
@@ -208,7 +208,7 @@ helvetica-medium-r-12.0
 activeXTextClass
 2 1 0
 20
-160
+220
 125
 14
 rgb
@@ -216,7 +216,7 @@ rgb
 0
 1
 rgb
-44730,44730,44730
+44718,44718,44718
 0
 <<<empty>>>
 <<<empty>>>
@@ -232,7 +232,7 @@ helvetica-medium-r-12.0
 activeXTextClass
 2 1 0
 40
-180
+240
 98
 14
 rgb
@@ -240,7 +240,7 @@ rgb
 0
 1
 rgb
-44730,44730,44730
+44718,44718,44718
 0
 <<<empty>>>
 <<<empty>>>
@@ -256,7 +256,7 @@ helvetica-medium-r-12.0
 activeXTextClass
 2 1 0
 80
-200
+260
 11
 14
 rgb
@@ -264,7 +264,7 @@ rgb
 0
 1
 rgb
-44730,44730,44730
+44718,44718,44718
 0
 <<<empty>>>
 <<<empty>>>
@@ -280,7 +280,7 @@ helvetica-medium-r-12.0
 activeXTextClass
 2 1 0
 40
-220
+280
 119
 14
 rgb
@@ -288,7 +288,7 @@ rgb
 0
 1
 rgb
-44730,44730,44730
+44718,44718,44718
 0
 <<<empty>>>
 <<<empty>>>
@@ -304,21 +304,117 @@ helvetica-medium-r-12.0
 activeExitButtonClass
 2 1 0
 4
-249
+309
 59
 24
 rgb
 0,0,0
 rgb
-44730,44730,44730
+44718,44718,44718
 rgb
-61374,61374,61374
+60652,60652,60652
 rgb
-22885,22885,22885
+23130,23130,23130
 1
 0
 helvetica-medium-r-14.0
 Close
 0
 0
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+40
+117
+322
+14
+rgb
+0,0,0
+0
+1
+rgb
+44718,44718,44718
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+o Right B click inserts a node point after a reference point
+helvetica-medium-r-12.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+52
+133
+239
+14
+rgb
+0,0,0
+0
+1
+rgb
+44718,44718,44718
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+(mouse pointer must be on reference point)
+helvetica-medium-r-12.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+40
+167
+215
+14
+rgb
+0,0,0
+0
+1
+rgb
+44718,44718,44718
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+o Ctrl Right B click delets a node point
+helvetica-medium-r-12.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+52
+183
+259
+14
+rgb
+0,0,0
+0
+1
+rgb
+44718,44718,44718
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+(mouse pointer must be on point to be deleted)
+helvetica-medium-r-12.0
+0
+1
+<<<empty>>>
 <<<E~O~D>>>
