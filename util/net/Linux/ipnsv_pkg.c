@@ -12,6 +12,7 @@
 #include <arpa/inet.h>
 
 #ifdef __osf__
+#include <time.h>
 #include <sys/time.h>
 #endif
 
