@@ -2202,13 +2202,13 @@ struct dbr_time_enum *dbrEnumPtr;
       }
       else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LINEAR ) {
 
-        dxValue = (double) ++(xyo->totalCount[i]);
+        dxValue = (double) ( ++(xyo->totalCount[i]) % xyo->count );
         ( (double *) xyo->xPvData[i] )[ii] = dxValue;
 
       }
       else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
 
-        dxValue = (double) ++(xyo->totalCount[i]);
+        dxValue = (double) ( ++(xyo->totalCount[i]) % xyo->count );
         ( (double *) xyo->xPvData[i] )[ii] = dxValue;
         if ( dxValue > 0 ) dxValue = log10( dxValue );
 
@@ -4603,7 +4603,7 @@ int numFullDraws, remainder, i, ii, j, jj, symHW, symHH;
 
 int xyGraphClass::eraseActive ( void ) {
 
-int i;
+int i, n;
 XRectangle xR = { plotAreaX+1, plotAreaY+1, plotAreaW-2, plotAreaH-2 };
 
   if ( !activeMode || !init ) return 1;
@@ -4677,9 +4677,26 @@ XRectangle xR = { plotAreaX+1, plotAreaY+1, plotAreaW-2, plotAreaH-2 };
           actWin->executeGc.setLineWidth( lineThk[i] );
           actWin->executeGc.setLineStyle( lineStyle[i] );
 
-          XDrawLines( actWin->d, pixmap,
-           actWin->executeGc.normGC(), plotBuf[i], curNpts[i],
-           CoordModeOrigin );
+          if ( ( wrapIndex > 0 ) && ( wrapIndex < curNpts[i]-1 ) ) {
+
+            n = wrapIndex + 1;
+            XDrawLines( actWin->d, pixmap,
+            actWin->executeGc.normGC(), &plotBuf[i][0], n,
+            CoordModeOrigin );
+
+            n = curNpts[i] - wrapIndex - 1;
+            XDrawLines( actWin->d, pixmap,
+            actWin->executeGc.normGC(), &plotBuf[i][wrapIndex+1], n,
+            CoordModeOrigin );
+
+	  }
+	  else {
+
+            XDrawLines( actWin->d, pixmap,
+             actWin->executeGc.normGC(), plotBuf[i], curNpts[i],
+             CoordModeOrigin );
+
+	  }
 
         }
 
@@ -4721,7 +4738,7 @@ int xyGraphClass::drawActiveOne (
   int i // trace
 ) {
 
-int npts;
+int npts, n;
 
   actWin->executeGc.setLineWidth(1);
   actWin->executeGc.setLineStyle( LineSolid );
@@ -4739,6 +4756,7 @@ int npts;
     if ( yPvCount[i] > 1 ) { // vector
 
       npts = fillPlotArray( i );
+      //wrapIndex = -1;
 
       if ( npts > 1 ) {
 
@@ -4845,9 +4863,26 @@ int npts;
           actWin->executeGc.setLineWidth( lineThk[i] );
           actWin->executeGc.setLineStyle( lineStyle[i] );
 
-          XDrawLines( actWin->d, pixmap,
-           actWin->executeGc.normGC(), plotBuf[i], npts,
-           CoordModeOrigin );
+          if ( ( wrapIndex > 0 ) && ( wrapIndex < npts-1 ) ) {
+
+            n = wrapIndex + 1;
+            XDrawLines( actWin->d, pixmap,
+            actWin->executeGc.normGC(), &plotBuf[i][0], n,
+            CoordModeOrigin );
+
+            n = npts - wrapIndex - 1;
+            XDrawLines( actWin->d, pixmap,
+            actWin->executeGc.normGC(), &plotBuf[i][wrapIndex+1], n,
+            CoordModeOrigin );
+
+	  }
+	  else {
+
+            XDrawLines( actWin->d, pixmap,
+             actWin->executeGc.normGC(), plotBuf[i], npts,
+             CoordModeOrigin );
+
+	  }
 
           curNpts[i] = npts;
 
@@ -5139,6 +5174,7 @@ int screen_num, depth;
        needRealUpdate = needBoxRescale = needNewLimits =
        needOriginalLimits = 0;
       drawGridFlag = 0;
+      wrapIndex = -1;
 
       for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
         needY1Rescale[yi] = 0;
@@ -7149,6 +7185,7 @@ int i;
 
     i = plotInfoTail[trace];
 
+    plotInfo[trace][i].firstDX = x;
     plotInfo[trace][i].firstX = scaledX;
     plotInfo[trace][i].firstY = scaledY;
 
@@ -7248,8 +7285,9 @@ int xyGraphClass::fillPlotArray (
   int trace
 ) {
 
-int i, npts;
+int i, npts, findWrap;
 short curX, curY, prevX, prevY;
+double logWrapValue;
 
   npts = 0;
 
@@ -7332,7 +7370,47 @@ short curX, curY, prevX, prevY;
         i = 0;
       }
 
+      if (
+           ( plotStyle[trace] == XYGC_K_PLOT_STYLE_LINE ) &&
+           ( traceType[trace] == XYGC_K_TRACE_CHRONOLOGICAL ) &&
+           ( yPvCount[trace] == 1 ) && // must be scalar; use y here,
+                                       // x is not used for chonological
+           ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LINEAR ) ||
+             ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) )
+	 ) {
+
+        findWrap = 1;
+
+      }
+      else {
+        findWrap = 0;
+      }
+
+      this->wrapIndex = -1;
+
+      logWrapValue = -1;
+      if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+        if ( count > 1 ) {
+          logWrapValue = log10((double)(count-1));
+	}
+      }
+
       while ( i != plotInfoTail[trace] ) {
+
+	if ( findWrap ) {
+          if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+            if ( plotInfo[trace][i].firstDX == logWrapValue ) {
+              this->wrapIndex = i;
+              findWrap = 0;
+	    }
+	  }
+	  else {
+            if ( rint(plotInfo[trace][i].firstDX) == count-1 ) {
+              this->wrapIndex = i;
+              findWrap = 0;
+	    }
+	  }
+	}
 
         curX = plotInfo[trace][i].firstX;
         curY = plotInfo[trace][i].firstY;

@@ -740,6 +740,8 @@ int lowestYScaleIndex[NUM_Y_AXES], numYTraces[NUM_Y_AXES];
 
 time_t timeOffset;
 
+int wrapIndex;
+
 public:
 
 xyGraphClass ( void );
