@@ -233,6 +233,15 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
   udbto->minDv = udbto->scaleMin = udbto->efScaleMin.value();
   udbto->maxDv = udbto->scaleMax = udbto->efScaleMax.value();
 
+  udbto->visPvExpString.setRaw( udbto->bufVisPvName );
+  strncpy( udbto->minVisString, udbto->bufMinVisString, 39 );
+  strncpy( udbto->maxVisString, udbto->bufMaxVisString, 39 );
+
+  if ( udbto->bufVisInverted )
+    udbto->visInverted = 0;
+  else
+    udbto->visInverted = 1;
+
   udbto->x = udbto->bufX;
   udbto->sboxX = udbto->bufX;
 
@@ -320,7 +329,7 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) ca_puser(arg.chid);
   }
   else {
 
-    udbto->destPvConnected = 0;
+    udbto->connection.setPvDisconnected( (void *) udbto->destPvConnection );
     udbto->active = 0;
     udbto->bgColor.setDisconnected();
     udbto->needDraw = 1;
@@ -435,6 +444,67 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) ast_args.usr;
   udbto->actWin->appCtx->proc->unlock();
 
   udbto->savePvConnected = 1;
+
+}
+
+static void udbtc_monitor_vis_connect_state (
+  struct connection_handler_args arg )
+{
+
+activeUpdownButtonClass *udbto =
+ (activeUpdownButtonClass *) ca_puser(arg.chid);
+
+  if ( arg.op == CA_OP_CONN_UP ) {
+
+    udbto->needVisConnectInit = 1;
+
+  }
+  else {
+
+    udbto->connection.setPvDisconnected( (void *) udbto->visPvConnection );
+    udbto->active = 0;
+    udbto->bgColor.setDisconnected();
+    udbto->needDraw = 1;
+
+  }
+
+  udbto->actWin->appCtx->proc->lock();
+  udbto->actWin->addDefExeNode( udbto->aglPtr );
+  udbto->actWin->appCtx->proc->unlock();
+
+}
+
+static void udbtc_visInfoUpdate (
+  struct event_handler_args ast_args )
+{
+
+activeUpdownButtonClass *udbto =
+ (activeUpdownButtonClass *) ast_args.usr;
+
+struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
+
+  udbto->curVisValue = controlRec.value;
+
+  udbto->actWin->appCtx->proc->lock();
+  udbto->needVisInit = 1;
+  udbto->actWin->addDefExeNode( udbto->aglPtr );
+  udbto->actWin->appCtx->proc->unlock();
+
+}
+
+static void udbtc_visUpdate (
+  struct event_handler_args ast_args )
+{
+
+activeUpdownButtonClass *udbto =
+ (activeUpdownButtonClass *) ast_args.usr;
+
+  udbto->curVisValue = * ( (double *) ast_args.dbr );
+
+  udbto->actWin->appCtx->proc->lock();
+  udbto->needVisUpdate = 1;
+  udbto->actWin->addDefExeNode( udbto->aglPtr );
+  udbto->actWin->appCtx->proc->unlock();
 
 }
 
@@ -554,6 +624,12 @@ activeUpdownButtonClass::activeUpdownButtonClass ( void ) {
   efScaleMin.setNull(1);
   efScaleMax.setNull(1);
   unconnectedTimer = 0;
+  visibility = 0;
+  prevVisibility = -1;
+  visInverted = 0;
+  strcpy( minVisString, "" );
+  strcpy( maxVisString, "" );
+  connection.setMaxPvs( 2 );
 
 }
 
@@ -604,6 +680,14 @@ activeGraphicClass *udbto = (activeGraphicClass *) this;
   efScaleMin = source->efScaleMin;
   efScaleMax = source->efScaleMax;
   unconnectedTimer = 0;
+
+  visibility = 0;
+  prevVisibility = -1;
+  visInverted = source->visInverted;
+  strncpy( minVisString, source->minVisString, 39 );
+  strncpy( maxVisString, source->maxVisString, 39 );
+
+  connection.setMaxPvs( 2 );
 
   updateDimensions();
 
@@ -722,6 +806,15 @@ int index;
   efScaleMin.write( f );
   efScaleMax.write( f );
 
+  // ver 1.4.0
+  if ( visPvExpString.getRaw() )
+    writeStringToFile( f, visPvExpString.getRaw() );
+  else
+    writeStringToFile( f, "" );
+  fprintf( f, "%-d\n", visInverted );
+  writeStringToFile( f, minVisString );
+  writeStringToFile( f, maxVisString );
+
   return 1;
 
 }
@@ -832,6 +925,20 @@ float fval;
 
   actWin->fi->loadFontTag( fontTag );
   fs = actWin->fi->getXFontStruct( fontTag );
+
+  if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 3 ) ) ) {
+
+    readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+     actWin->incLine();
+    visPvExpString.setRaw( oneName );
+
+    fscanf( f, "%d\n", &visInverted ); actWin->incLine();
+
+    readStringFromFile( minVisString, 39+1, f ); actWin->incLine();
+
+    readStringFromFile( maxVisString, 39+1, f ); actWin->incLine();
+
+  }
 
   updateDimensions();
 
@@ -1172,6 +1279,20 @@ char title[32], *ptr;
   bufEfScaleMin = efScaleMin;
   bufEfScaleMax = efScaleMax;
 
+  if ( visPvExpString.getRaw() )
+    strncpy( bufVisPvName, visPvExpString.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
+  else
+    strcpy( bufVisPvName, "" );
+
+  if ( visInverted )
+    bufVisInverted = 0;
+  else
+    bufVisInverted = 1;
+
+  strncpy( bufMinVisString, minVisString, 39 );
+  strncpy( bufMaxVisString, maxVisString, 39 );
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -1204,6 +1325,12 @@ char title[32], *ptr;
   ef.addFontMenu( activeUpdownButtonClass_str15, actWin->fi, &fm, fontTag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
+
+  ef.addTextField( activeUpdownButtonClass_str29, 30, bufVisPvName,
+   activeGraphicClass::MAX_PV_NAME );
+  ef.addOption( " ", activeUpdownButtonClass_str30, &bufVisInverted );
+  ef.addTextField( activeUpdownButtonClass_str31, 30, bufMinVisString, 39 );
+  ef.addTextField( activeUpdownButtonClass_str32, 30, bufMaxVisString, 39 );
 
   return 1;
 
@@ -1248,6 +1375,13 @@ int activeUpdownButtonClass::erase ( void ) {
 int activeUpdownButtonClass::eraseActive ( void ) {
 
   if ( !init || !activeMode || invisible ) return 1;
+
+  if ( prevVisibility == 0 ) {
+    prevVisibility = visibility;
+    return 1;
+  }
+
+  prevVisibility = visibility;
 
   XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.eraseGC(), x, y, w, h );
@@ -1394,7 +1528,9 @@ XRectangle xR = { x, y, w, h };
     }
   }
 
-  if ( !init || !activeMode || invisible ) return 1;
+  if ( !init || !activeMode || invisible || !visibility ) return 1;
+
+  prevVisibility = visibility;
 
   actWin->executeGc.saveFg();
 
@@ -1553,67 +1689,82 @@ XmString str;
 
   case 1:
 
-    needConnectInit = needSaveConnectInit = needCtlInfoInit = 
-     needRefresh = needErase = needDraw = 0;
-    needToEraseUnconnected = 0;
-    needToDrawUnconnected = 0;
-    unconnectedTimer = 0;
-    init = 0;
-    aglPtr = ptr;
     opComplete = 0;
-    widgetsCreated = 0;
-    keyPadOpen = 0;
-    isSaved = 0;
-    incrementTimer = 0;
-    incrementTimerActive = 0;
-
-#ifdef __epics__
-    destEventId = saveEventId = 0;
-#endif
-
-    destPvConnected = savePvConnected = active = buttonPressed = 0;
-    activeMode = 1;
-
-    incrementTimerValue = (int) ( 1000.0 * rate );
-    if ( incrementTimerValue < 50 ) incrementTimerValue = 50;
-
-    if ( !fineExpString.getExpanded() ||
-       ( strcmp( fineExpString.getExpanded(), "" ) == 0 ) ) {
-      fine = 0;
-    }
-    else {
-      fine = atof( fineExpString.getExpanded() );
-    }
-
-    if ( !coarseExpString.getExpanded() ||
-       ( strcmp( coarseExpString.getExpanded(), "" ) == 0 ) ) {
-      coarse = 0;
-    }
-    else {
-      coarse = atof( coarseExpString.getExpanded() );
-    }
-
-    if ( !destPvExpString.getExpanded() ||
-       ( strcmp( destPvExpString.getExpanded(), "" ) == 0 ) ) {
-      destExists = 0;
-    }
-    else {
-      destExists = 1;
-    }
-
-    if ( !savePvExpString.getExpanded() ||
-       ( strcmp( savePvExpString.getExpanded(), "" ) == 0 ) ) {
-      saveExists = 0;
-    }
-    else {
-      saveExists = 1;
-    }
 
     break;
 
   case 2:
 
     if ( !opComplete ) {
+
+      connection.init();
+
+      needConnectInit = needSaveConnectInit = needCtlInfoInit = 
+       needRefresh = needErase = needDraw = needVisConnectInit =
+       needVisInit = needVisUpdate = 0;
+      needToEraseUnconnected = 0;
+      needToDrawUnconnected = 0;
+      unconnectedTimer = 0;
+      init = 0;
+      aglPtr = ptr;
+      widgetsCreated = 0;
+      keyPadOpen = 0;
+      isSaved = 0;
+      incrementTimer = 0;
+      incrementTimerActive = 0;
+
+#ifdef __epics__
+      destEventId = saveEventId = visEventId = 0;
+#endif
+
+      destPvConnected = savePvConnected = active = buttonPressed = 0;
+      activeMode = 1;
+
+      incrementTimerValue = (int) ( 1000.0 * rate );
+      if ( incrementTimerValue < 50 ) incrementTimerValue = 50;
+
+      if ( !fineExpString.getExpanded() ||
+         ( strcmp( fineExpString.getExpanded(), "" ) == 0 ) ) {
+        fine = 0;
+      }
+      else {
+        fine = atof( fineExpString.getExpanded() );
+      }
+
+      if ( !coarseExpString.getExpanded() ||
+         ( strcmp( coarseExpString.getExpanded(), "" ) == 0 ) ) {
+        coarse = 0;
+      }
+      else {
+        coarse = atof( coarseExpString.getExpanded() );
+      }
+
+      if ( !destPvExpString.getExpanded() ||
+         ( strcmp( destPvExpString.getExpanded(), "" ) == 0 ) ) {
+        destExists = 0;
+      }
+      else {
+        destExists = 1;
+        connection.addPv();
+      }
+
+      if ( !visPvExpString.getExpanded() ||
+         ( strcmp( visPvExpString.getExpanded(), "" ) == 0 ) ) {
+        visExists = 0;
+        visibility = 1;
+      }
+      else {
+        visExists = 1;
+        connection.addPv();
+      }
+
+      if ( !savePvExpString.getExpanded() ||
+         ( strcmp( savePvExpString.getExpanded(), "" ) == 0 ) ) {
+        saveExists = 0;
+      }
+      else {
+        saveExists = 1;
+      }
 
       if ( !unconnectedTimer ) {
         unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
@@ -1709,6 +1860,16 @@ XmString str;
         smartDrawAllActive();
       }
 
+      if ( visExists ) {
+
+        stat = ca_search_and_connect( visPvExpString.getExpanded(), &visPvId,
+         udbtc_monitor_vis_connect_state, this );
+        if ( stat != ECA_NORMAL ) {
+          printf( activeUpdownButtonClass_str20 );
+          opStat = 0;
+        }
+      }
+
       if ( saveExists ) {
         stat = ca_search_and_connect( savePvExpString.getExpanded(), &savePvId,
          udbtc_monitor_save_connect_state, this );
@@ -1777,6 +1938,11 @@ int stat;
       printf( activeUpdownButtonClass_str22 );
   }
 
+  if ( visExists ) {
+    stat = ca_clear_channel( visPvId );
+    if ( stat != ECA_NORMAL ) printf( activeUpdownButtonClass_str22 );
+  }
+
   if ( saveExists ) {
     stat = ca_clear_channel( savePvId );
     if ( stat != ECA_NORMAL )
@@ -1819,7 +1985,7 @@ XButtonEvent be;
 
   *action = 0;
 
-  if ( !init ) return;
+  if ( !init || !visibility ) return;
 
   if ( !ca_write_access( destPvId ) ) return;
 
@@ -1868,7 +2034,7 @@ double dval;
 
   *action = 0;
 
-  if ( !init ) return;
+  if ( !init || !visibility ) return;
 
   if ( !ca_write_access( destPvId ) ) return;
 
@@ -1927,7 +2093,7 @@ void activeUpdownButtonClass::pointerIn (
   int buttonState )
 {
 
-  if ( !init ) return;
+  if ( !init || !visibility ) return;
 
   if ( !ca_write_access( destPvId ) ) {
     actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
@@ -1985,6 +2151,8 @@ int stat, retStat = 1;
   if ( !( stat & 1 ) ) retStat = stat;
   stat = label.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
+  stat = visPvExpString.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
   return retStat;
 
@@ -2008,6 +2176,8 @@ int stat, retStat = 1;
   if ( !( stat & 1 ) ) retStat = stat;
   stat = label.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
+  stat = visPvExpString.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
   return stat;
 
@@ -2025,23 +2195,29 @@ int activeUpdownButtonClass::containsMacros ( void ) {
 
   if ( label.containsPrimaryMacros() ) return 1;
 
+  if ( visPvExpString.containsPrimaryMacros() ) return 1;
+
   return 0;
 
 }
 
 void activeUpdownButtonClass::executeDeferred ( void ) {
 
-int nc, nsc, nci, nd, ne, nr, stat;
+int nc, nsc, nci, nd, ne, nr, nvc, nvi, nvu, stat;
 
   if ( actWin->isIconified ) return;
 
   actWin->appCtx->proc->lock();
+  visValue = curVisValue;
   nc = needConnectInit; needConnectInit = 0;
   nsc = needSaveConnectInit; needSaveConnectInit = 0;
   nci = needCtlInfoInit; needCtlInfoInit = 0;
   nd = needDraw; needDraw = 0;
   ne = needErase; needErase = 0;
   nr = needRefresh; needRefresh = 0;
+  nvc = needVisConnectInit; needVisConnectInit = 0;
+  nvi = needVisInit; needVisInit = 0;
+  nvu = needVisUpdate; needVisUpdate = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
@@ -2053,7 +2229,7 @@ int nc, nsc, nci, nd, ne, nr, stat;
 
   if ( nc ) {
 
-    destPvConnected = 1;
+    connection.setPvConnected( (void *) destPvConnection );
     destType = ca_field_type( destPvId );
 
     stat = ca_get_callback( DBR_GR_DOUBLE, destPvId,
@@ -2071,10 +2247,11 @@ int nc, nsc, nci, nd, ne, nr, stat;
     if ( stat != ECA_NORMAL )
       printf( activeUpdownButtonClass_str23 );
 
-    bgColor.setConnected();
-
-    init = 1;
-    smartDrawAllActive();
+    if ( connection.pvsConnected() ) {
+      bgColor.setConnected();
+      init = 1;
+      smartDrawAllActive();
+    }
 
   }
 
@@ -2088,6 +2265,43 @@ int nc, nsc, nci, nd, ne, nr, stat;
      &saveEventId, DBE_VALUE );
     if ( stat != ECA_NORMAL )
       printf( activeUpdownButtonClass_str23 );
+
+  }
+
+  if ( nvc ) {
+
+    minVis = atof( minVisString );
+    maxVis = atof( maxVisString );
+
+    connection.setPvConnected( (void *) visPvConnection );
+
+    stat = ca_get_callback( DBR_GR_DOUBLE, visPvId,
+     udbtc_visInfoUpdate, (void *) this );
+
+  }
+
+  if ( nvi ) {
+
+    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, visPvId,
+     udbtc_visUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
+     &visEventId, DBE_VALUE );
+    if ( stat != ECA_NORMAL ) printf( activeUpdownButtonClass_str23 );
+
+    if ( ( visValue >= minVis ) &&
+         ( visValue < maxVis ) )
+      visibility = 1 ^ visInverted;
+    else
+      visibility = 0 ^ visInverted;
+
+    if ( prevVisibility != visibility ) {
+      if ( !visibility ) eraseActive();
+    }
+
+    if ( connection.pvsConnected() ) {
+      bgColor.setConnected();
+      init = 1;
+      smartDrawAllActive();
+    }
 
   }
 
@@ -2119,6 +2333,21 @@ int nc, nsc, nci, nd, ne, nr, stat;
   }
 
 //----------------------------------------------------------------------------
+
+  if ( nvu ) {
+
+    if ( ( visValue >= minVis ) &&
+         ( visValue < maxVis ) )
+      visibility = 1 ^ visInverted;
+    else
+      visibility = 0 ^ visInverted;
+
+    if ( prevVisibility != visibility ) {
+      if ( !visibility ) eraseActive();
+      stat = smartDrawAllActive();
+    }
+
+  }
 
 }
 

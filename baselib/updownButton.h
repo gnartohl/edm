@@ -26,7 +26,7 @@
 #include "cadef.h"
 
 #define UDBTC_MAJOR_VERSION 1
-#define UDBTC_MINOR_VERSION 3
+#define UDBTC_MINOR_VERSION 4
 #define UDBTC_RELEASE 0
 
 #ifdef __updownButton_cc
@@ -51,6 +51,15 @@ static void menu_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
+
+static void udbtc_monitor_vis_connect_state (
+  struct connection_handler_args arg );
+
+static void udbtc_visInfoUpdate (
+  struct event_handler_args ast_args );
+
+static void udbtc_visUpdate (
+  struct event_handler_args ast_args );
 
 static void udbt_infoUpdate (
  struct event_handler_args ast_args );
@@ -128,6 +137,15 @@ friend void menu_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
+
+friend void udbtc_monitor_vis_connect_state (
+  struct connection_handler_args arg );
+
+friend void udbtc_visInfoUpdate (
+  struct event_handler_args ast_args );
+
+friend void udbtc_visUpdate (
+  struct event_handler_args ast_args );
 
 friend void udbt_infoUpdate (
  struct event_handler_args ast_args );
@@ -247,6 +265,20 @@ static const int kpValueDest = 4;
 int limitsFromDb, bufLimitsFromDb;
 double scaleMin, scaleMax, minDv, maxDv;
 efDouble efScaleMin, efScaleMax, bufEfScaleMin, bufEfScaleMax;;
+
+chid visPvId;
+evid visEventId;
+expStringClass visPvExpString;
+char bufVisPvName[activeGraphicClass::MAX_PV_NAME+1];
+int visExists;
+double visValue, curVisValue, minVis, maxVis;
+char minVisString[39+1], bufMinVisString[39+1];
+char maxVisString[39+1], bufMaxVisString[39+1];
+int prevVisibility, visibility, visInverted, bufVisInverted;
+static const int destPvConnection = 1;
+static const int visPvConnection = 2;
+pvConnectionClass connection;
+int needVisConnectInit, needVisInit, needVisUpdate;
 
 public:
 

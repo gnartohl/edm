@@ -29,5 +29,9 @@
 #define activeUpdownButtonClass_str26 (char *) "Limits From DB"
 #define activeUpdownButtonClass_str27 (char *) "Min"
 #define activeUpdownButtonClass_str28 (char *) "Max"
+#define activeUpdownButtonClass_str29 (char *) "Visibility PV"
+#define activeUpdownButtonClass_str30 (char *) "Not Visible if|Visible if"
+#define activeUpdownButtonClass_str31 (char *) ">="
+#define activeUpdownButtonClass_str32 (char *) "and <"
 
 #endif
