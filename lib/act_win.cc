@@ -13289,12 +13289,6 @@ char callbackName[63+1];
 
       }
 
-#if 0
-      if ( !( opStat & 1 ) ) {
-        processAllEvents( appCtx->appContext(), d );
-      }
-#endif
-
       nTries--;
 
     } while ( nTries && !( opStat & 1 ) );
@@ -13471,12 +13465,6 @@ char **muxMacro, **muxExpansion;
 #endif
 
       }
-
-#if 0
-      if ( !( opStat & 1 ) ) {
-        processAllEvents( appCtx->appContext(), d );
-      }
-#endif
 
       nTries--;
 
