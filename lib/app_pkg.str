@@ -64,5 +64,8 @@
 #define appContextClass_str111 "Name"
 #define appContextClass_str112 "Show X/Y"
 #define appContextClass_str113 "Hide X/Y"
+#define appContextClass_str114 "Help"
+#define appContextClass_str115 "On-line"
+#define appContextClass_str116 "About"
 
 #endif

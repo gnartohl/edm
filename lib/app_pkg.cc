@@ -1342,6 +1342,103 @@ appContextClass *apco = (appContextClass *) client;
 
 }
 
+void help_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+appContextClass *apco = (appContextClass *) client;
+activeWindowListPtr cur;
+char buf[255+1], *envPtr;
+int i, numMacros;
+char *sysValues[5], *ptr;
+
+char *fName = "helpMain";
+
+char *sysMacros[] = {
+  "help"
+};
+
+  // is help file already open?
+  cur = apco->head->flink;
+  while ( cur != apco->head ) {
+    if ( strcmp( fName, cur->node.name ) == 0 ) {
+      // deiconify
+      XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+      // raise
+      XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+      return;  // display is already open; don't open another instance
+    }
+    cur = cur->flink;
+  }
+
+  envPtr = getenv( "EDMHELPFILES" );
+  if ( envPtr ) {
+
+    strncpy( buf, envPtr, 255 );
+
+    if ( buf[strlen(buf)-1] != '/' ) {
+      strncat( buf, "/", 255 );
+    }
+
+  }
+  else {
+
+    strcpy( buf, "/etc/" );
+
+  }
+
+  // build system macros
+
+  numMacros = 0;
+
+  ptr = new char[strlen(buf)+1];
+  strcpy( ptr, buf );
+  sysValues[0] = ptr;
+
+  numMacros++;
+
+  // ============
+
+  strncat( buf, fName, 255 );
+  strncat( buf, ".edl", 255 );
+
+  cur = new activeWindowListType;
+  cur->requestDelete = 0;
+  cur->requestActivate = 0;
+  cur->requestReactivate = 0;
+  cur->requestOpen = 0;
+  cur->requestPosition = 0;
+  cur->requestCascade = 0;
+  cur->requestImport = 0;
+  cur->requestRefresh = 0;
+
+  cur->node.createNoEdit( apco, NULL, 0, 0, 0, 0, numMacros,
+   sysMacros, sysValues );
+
+  for ( i=0; i<numMacros; i++ ) {
+    delete sysValues[i];
+  }
+
+  cur->node.realize();
+  cur->node.setGraphicEnvironment( &apco->ci, &apco->fi );
+
+  cur->blink = apco->head->blink;
+  apco->head->blink->flink = cur;
+  apco->head->blink = cur;
+  cur->flink = apco->head;
+
+  cur->node.storeFileName( buf );
+
+  cur->requestOpen = 1;
+  (apco->requestFlag)++;
+
+  cur->requestActivate = 1;
+  (apco->requestFlag)++;
+
+}
+
 appContextClass::appContextClass (
   void )
 {
@@ -1725,6 +1822,35 @@ XmString menuStr, str;
   XmStringFree( str );
   XtAddCallback( viewXyB, XmNactivateCallback, view_xy_cb,
    (XtPointer) this );
+
+  helpPullDown = XmCreatePulldownMenu( menuBar, "", NULL, 0 );
+
+  menuStr = XmStringCreateLocalized( appContextClass_str114 );
+  helpCascade = XtVaCreateManagedWidget( "", xmCascadeButtonWidgetClass,
+   menuBar,
+   XmNlabelString, menuStr,
+   XmNmnemonic, 'h',
+   XmNsubMenuId, helpPullDown,
+   NULL );
+  XmStringFree( menuStr );
+
+  str = XmStringCreateLocalized( appContextClass_str115 );
+  msgB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   helpPullDown,
+   XmNlabelString, str,
+   NULL );
+  XmStringFree( str );
+  XtAddCallback( msgB, XmNactivateCallback, help_cb,
+   (XtPointer) this );
+
+  //str = XmStringCreateLocalized( appContextClass_str116 );
+  //msgB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  // helpPullDown,
+  // XmNlabelString, str,
+  // NULL );
+  //XmStringFree( str );
+  //XtAddCallback( msgB, XmNactivateCallback, help_cb,
+  // (XtPointer) this );
 
   //mainDrawingArea = XtVaCreateManagedWidget( "", xmDrawingAreaWidgetClass,
   // mainWin,

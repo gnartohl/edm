@@ -164,6 +164,11 @@ friend void view_msgBox_cb (
   XtPointer client,
   XtPointer call );
 
+friend void help_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 friend void app_fileSelectOk_cb (
   Widget w,
   XtPointer client,
@@ -181,7 +186,7 @@ APPDEFEXE_NODE_TYPE appDefExeNodes[APPDEFEXE_QUEUE_SIZE+1];
 
 Widget appTop, fileSelectBox, importSelectBox, mainWin, menuBar, filePullDown,
  fileCascade, newB, openB, exitB, viewPullDown, viewCascade, msgB, pvB,
- mainDrawingArea;
+ mainDrawingArea, helpPullDown, helpCascade;
 XtAppContext app;
 Display *display;
 char displayName[31+1];

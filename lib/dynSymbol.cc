@@ -31,6 +31,8 @@ static void dsc_updateControl (
 
 activeDynSymbolClass *dso = (activeDynSymbolClass *) client;
 
+  dso->timer = 0;
+
   if ( !dso->timerActive ) return;
 
   if ( dso->continuous ) {
@@ -1408,7 +1410,10 @@ activeGraphicListPtr cur;
 
   timerActive = 0;
 
-  // if ( timer ) XtRemoveTimeOut( timer );
+  if ( timer ) {
+    XtRemoveTimeOut( timer );
+    timer = 0;
+  }
 
   for ( i=0; i<numStates; i++ ) {
 

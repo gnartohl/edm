@@ -881,6 +881,17 @@ int activeWindowClass::create (
   char **macros,
   char **expansions );
 
+int activeWindowClass::createNoEdit (
+  appContextClass *ctx,
+  Widget parent,
+  int x,
+  int y,
+  int w,
+  int h,
+  int nMacros,
+  char **macros,
+  char **expansions );
+
 int activeWindowClass::genericCreate (
   appContextClass *ctx,
   Widget parent,
@@ -889,6 +900,7 @@ int activeWindowClass::genericCreate (
   int OneW,
   int OneH,
   int windowDecorations,
+  int _noEdit,
   int closeAllowed,
   int _numMacros,
   char **_macros,

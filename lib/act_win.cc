@@ -9230,6 +9230,7 @@ int activeWindowClass::createAutoPopup (
    OneW,
    OneH,
    0,
+   ctx->noEdit,
    0,
    _numMacros,
    _macros,
@@ -9256,6 +9257,34 @@ int activeWindowClass::create (
    OneW,
    OneH,
    1,
+   ctx->noEdit,
+   1,
+   _numMacros,
+   _macros,
+   _expansions );
+
+}
+
+int activeWindowClass::createNoEdit (
+  appContextClass *ctx,
+  Widget parent,
+  int OneX,
+  int OneY,
+  int OneW,
+  int OneH,
+  int _numMacros,
+  char **_macros,
+  char **_expansions ) {
+
+  return genericCreate(
+   ctx,
+   parent,
+   OneX,
+   OneY,
+   OneW,
+   OneH,
+   1,
+   1,
    1,
    _numMacros,
    _macros,
@@ -9271,6 +9300,7 @@ int activeWindowClass::genericCreate (
   int OneW,
   int OneH,
   int windowDecorations,
+  int _noEdit,
   int closeAllowed,
   int _numMacros,
   char **_macros,
@@ -11314,7 +11344,7 @@ Atom wm_delete_window;
   XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
   b2ExecutePopup = XmCreatePopupMenu( top, "", args, n );
 
-  if ( !ctx->noEdit && closeAllowed ) {
+  if ( !_noEdit && closeAllowed ) {
 
     str = XmStringCreateLocalized( activeWindowClass_str145 );
 
@@ -15590,7 +15620,7 @@ char *sysMacros[] = {
   cur = new activeWindowListType;
   appCtx->addActiveWindow( cur );
 
-  cur->node.create( appCtx, NULL, 0, 0, 0, 0, numMacros,
+  cur->node.createNoEdit( appCtx, NULL, 0, 0, 0, 0, numMacros,
    sysMacros, sysValues );
 
   for ( i=0; i<numMacros; i++ ) {
