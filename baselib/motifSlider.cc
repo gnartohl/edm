@@ -53,7 +53,12 @@ int v, stat;
 activeMotifSliderClass *mslo;
 double fvalue;
 
+  // this only gets called when the left mouse button is clicked
+  // on the scrollbar background or indicator
+
   XtVaGetValues( w, XmNuserData, &mslo, NULL );
+
+  if ( mslo->increment == 0 ) return;
 
   if ( mslo->dragIndicator ) {
     mslo->dragIndicator = 0;
