@@ -4281,6 +4281,7 @@ int n;
      XmNleftAttachment, XmATTACH_FORM,
      XmNlabelString, str,
      XmNfontList, entryFontList,
+     XmNindicatorOn, XmINDICATOR_CROSS_BOX,
      NULL );
 
      curW = cur->activeW;
@@ -4298,6 +4299,7 @@ int n;
      XmNleftWidget, curRW,
      XmNlabelString, str,
      XmNfontList, entryFontList,
+     XmNindicatorOn, XmINDICATOR_CROSS_BOX,
      NULL );
 
     curW = cur->activeW;
@@ -4334,6 +4336,7 @@ int n;
      XmNleftWidget, cur->labelW,
      XmNlabelString, str,
      XmNfontList, entryFontList,
+     XmNindicatorOn, XmINDICATOR_CROSS_BOX,
      NULL );
 
     prevW = cur->activeW;
@@ -4351,6 +4354,7 @@ int n;
      XmNleftWidget, prevW,
      XmNlabelString, str,
      XmNfontList, entryFontList,
+     XmNindicatorOn, XmINDICATOR_CROSS_BOX,
      NULL );
 
     prevW = cur->activeW;
@@ -4411,6 +4415,7 @@ int n;
      XmNnavigationType, XmTAB_GROUP,
      XmNtopAttachment, XmATTACH_FORM,
      XmNrightAttachment, XmATTACH_FORM,
+     XmNindicatorOn, XmINDICATOR_CROSS_BOX,
      NULL );
 
      curW = cur->activeW;
@@ -4426,6 +4431,7 @@ int n;
      XmNtopWidget, curW,
      XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNrightWidget, curRW,
+     XmNindicatorOn, XmINDICATOR_CROSS_BOX,
      NULL );
 
     curW = cur->activeW;
