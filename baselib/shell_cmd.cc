@@ -884,15 +884,16 @@ char *tk, *gotData, *context, buf[255+1];
 
 int shellCmdClass::genericEdit ( void ) {
 
-char title[32], *ptr;
+char title[32], *ptr, *envPtr, saveLock;
 
-  ptr = getenv( "EDMSUPERVISORMODE" );
-  if ( ptr ) {
-    if ( strcmp( ptr, "TRUE" ) == 0 ) {
+  envPtr = getenv( "EDMSUPERVISORMODE" );
+  if ( envPtr ) {
+    if ( strcmp( envPtr, "TRUE" ) == 0 ) {
       if ( lock ) {
         actWin->appCtx->postMessage(
          "Supervisor mode - password lock cleared" );
       }
+      saveLock = lock;
       lock = 0;
     }
   }
@@ -947,7 +948,14 @@ char title[32], *ptr;
   strcpy( bufPw1, "" );
   strcpy( bufPw2, "" );
 
-  bufLock = lock;
+  if ( envPtr ) {
+    if ( strcmp( envPtr, "TRUE" ) == 0 ) {
+      bufLock = saveLock;
+    }
+  }
+  else {
+    bufLock = lock;
+  }
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -994,6 +1002,12 @@ char title[32], *ptr;
 
   ef.addFontMenu( shellCmdClass_str12, actWin->fi, &fm, fontTag );
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
+
+  if ( envPtr ) {
+    if ( strcmp( envPtr, "TRUE" ) == 0 ) {
+      lock = saveLock;
+    }
+  }
 
   return 1;
 
