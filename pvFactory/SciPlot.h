@@ -193,7 +193,7 @@ extern "C"
     double SciPlotGetY (Widget wi, int screen_y);
     
 #ifdef __cplusplus
-};
+}
 #endif
 
 #endif /* _SCIPLOT_H */

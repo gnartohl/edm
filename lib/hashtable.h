@@ -18,6 +18,13 @@
 
 //#include <iostream.h>
 #include <iostream>
+
+// the following was introduced to get edm
+// to compile under gcc 3.4.1
+#if (__GNUC__==3)&&(__GNUC_MINOR__==4)
+using namespace std;
+#endif
+
 template <class T, size_t o, size_t N=5>
 class Hashtable
 {
