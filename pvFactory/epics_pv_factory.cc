@@ -9,6 +9,8 @@
 #include<cvtFast.h>
 #include"epics_pv_factory.h"
 
+//#define DEBUG_EPICS
+
 /* 1/1/90 20 yr (5 leap) of seconds */
 static const unsigned epochSecPast1970 = 7305*86400;
 
@@ -39,12 +41,16 @@ static PVHash processvariables;
 
 EPICS_PV_Factory::EPICS_PV_Factory()
 {
-    fprintf(stderr, "EPICS_PV_Factory created\n");
+#ifdef DEBUG_EPICS
+    printf("EPICS_PV_Factory created\n");
+#endif
 }
 
 EPICS_PV_Factory::~EPICS_PV_Factory()
 {
-    fprintf(stderr, "EPICS_PV_Factory deleted\n");
+#ifdef DEBUG_EPICS
+    printf("EPICS_PV_Factory deleted\n");
+#endif
 }
 
 ProcessVariable *EPICS_PV_Factory::create(const char *PV_name)
@@ -81,8 +87,8 @@ void EPICS_PV_Factory::forget(EPICS_ProcessVariable *pv)
         delete p_item;
         return;
     }
-    printf("EPICS_PV_Factory: internal error in 'forget', PV %s\n",
-           pv->get_name());
+    fprintf(stderr,"EPICS_PV_Factory: internal error in 'forget', PV %s\n",
+            pv->get_name());
 }
 
 // ---------------------- EPICS_ProcessVariable -------------------------
@@ -100,8 +106,8 @@ EPICS_ProcessVariable::EPICS_ProcessVariable(const char *_name)
                                      ca_connect_callback, this);
     if (stat != ECA_NORMAL)
     {
-        printf("CA search & connect error('%s'): %s\n",
-               get_name(), ca_message(stat));
+        fprintf(stderr, "CA search & connect error('%s'): %s\n",
+                get_name(), ca_message(stat));
     }
 }
 
@@ -142,8 +148,8 @@ void EPICS_ProcessVariable::ca_connect_callback(
                                          1u, me->pv_chid,
                                          ca_ctrlinfo_callback, me);
         if (stat != ECA_NORMAL)
-            printf("CA get control info error('%s'): %s\n",
-                   me->get_name(), ca_message(stat));
+            fprintf(stderr, "CA get control info error('%s'): %s\n",
+                    me->get_name(), ca_message(stat));
         me->is_connected = true;
         // status_callback only after ctrlinfo arrives
     }
@@ -172,8 +178,8 @@ void EPICS_ProcessVariable::ca_ctrlinfo_callback(
                                              &me->pv_value_evid,
                                              DBE_VALUE|DBE_ALARM);
         if (stat != ECA_NORMAL)
-            printf("CA add event error('%s'): %s\n",
-                   me->get_name(), ca_message(stat));
+            fprintf(stderr, "CA add event error('%s'): %s\n",
+                    me->get_name(), ca_message(stat));
     }
     me->do_status_callbacks();
     me->do_value_callbacks();

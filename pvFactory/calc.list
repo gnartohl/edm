@@ -19,12 +19,33 @@ CALC1 -*- shell-script -*-
 # Implementation is in EPICS CALC record syntax,
 # with A, B, C, ... being variable names for the arguments.
 #
+# Usage Examples:
+#
+# "CALC\sum(fred, jane)"
+# executes the definition of "sum" with
+#  A = value of fred
+#  B = value of jane
+# whenever either PV changes.
+# The time stamp of the result is the most recent of the PVs'.
+# If no time stamp is available from arguments, the current
+# host time is used.
+# Status/severity is maximized,
+# i.e. if fred is in ??/MINOR and jane in READ/INVALID,
+# the result will be READ/INVALID.
+#
 # kasemir@vla.com
 
-# Formula to create random number:
+# Formula to create random number.
+# This one does not need arguments.
+# With no PV input, this one will never update!
+# Possible circumvention: Provide a PV just to
+# trigger recalculation, e.g. use
+#    "CALC\random(some_1Hz_PV)"
+# to see changes at ~1Hz.
 random
 # Implementation:
 RNDM
+
 
 # Another one:
 sum   

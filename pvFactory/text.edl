@@ -1,6 +1,6 @@
 3 0 1
-238
-112
+250
+181
 546
 452
 helvetica-medium-r-18.0
@@ -276,8 +276,8 @@ helvetica-medium-r-12.0
 EOD
 TextupdateClass
 1 1 0
-308
-401
+388
+397
 126
 28
 CALC\sum(fred,CALC\sum(fred,fred))
@@ -292,8 +292,8 @@ helvetica-medium-r-18.0
 EOD
 TextupdateClass
 1 1 0
-168
-401
+388
+362
 126
 28
 CALC\sum(fred, 1)
@@ -305,4 +305,86 @@ CALC\sum(fred, 1)
 helvetica-medium-r-18.0
 0
 135663272 1080014445
+EOD
+TextupdateClass
+1 1 0
+388
+326
+126
+28
+EPICS\fred
+0
+0
+0
+1
+1
+helvetica-medium-r-18.0
+0
+135663272 1080014445
+EOD
+activeXTextClass
+2 0 0
+344
+328
+31
+21
+0
+0
+1
+20
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+PV:
+helvetica-medium-r-18.0
+0
+1
+<<<empty>>>
+EOD
+activeXTextClass
+2 0 0
+324
+366
+51
+21
+0
+0
+1
+20
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+PV+1:
+helvetica-medium-r-18.0
+0
+1
+<<<empty>>>
+EOD
+activeXTextClass
+2 0 0
+277
+403
+98
+21
+0
+0
+1
+20
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+PV+PV+PV
+helvetica-medium-r-18.0
+0
+1
+<<<empty>>>
 EOD

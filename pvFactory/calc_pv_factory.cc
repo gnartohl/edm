@@ -15,6 +15,8 @@
 
 static const char *whitespace = " \t\n\r";
 
+//#define CALC_DEBUG
+
 // HashedExpression:
 // One formula, hashed by name, read from the config file
 // and converted into postfix notation.
@@ -50,12 +52,16 @@ HashedExpression::HashedExpression(const char *_name, char *formula)
                 name, formula);
         return;
     }
-    fprintf(stderr, "HashedExpression(%s) = %s\n", name, formula);
+#ifdef CALC_DEBUG
+    printf("HashedExpression(%s) = %s\n", name, formula);
+#endif
 }
 
 HashedExpression::~HashedExpression()
 {
-    fprintf(stderr, "HashedExpression(%s) deleted\n", name);
+#ifdef CALC_DEBUG
+    printf("HashedExpression(%s) deleted\n", name);
+#endif
     if (name)
     {
         free(name);
@@ -84,11 +90,11 @@ static ExpressionHash *expressions;
 
 CALC_PV_Factory::CALC_PV_Factory()
 {
-    fprintf(stderr, "CALC_PV_Factory created\n");
+#ifdef CALC_DEBUG
+    printf("CALC_PV_Factory created\n");
+#endif
     if (expressions)
-    {
         fprintf(stderr, "Error: More than one CALC_PV_Factory created!\n");
-    }
     else
     {
         expressions = new ExpressionHash();
@@ -112,7 +118,9 @@ CALC_PV_Factory::~CALC_PV_Factory()
         delete expressions;
         expressions = 0;
     }
-    fprintf(stderr, "CALC_PV_Factory deleted\n");
+#ifdef CALC_DEBUG
+    printf("CALC_PV_Factory deleted\n");
+#endif
 }
 
 bool CALC_PV_Factory::parseFile(const char *filename)
@@ -265,11 +273,13 @@ ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
         while ((p=get_arg(p, &arg_name[arg_count])) != 0)
             ++arg_count;
     }
+
+#ifdef CALC_DEBUG
     printf("CALC PV: '%s'\n", PV_name);
     printf("\texpression: '%s'\n", expression);
     for (size_t i=0; i<arg_count; ++i)
         printf("\targ %d: '%s'\n", i, arg_name[i]);
-    
+#endif    
     HashedExpression he;
     he.name = expression;
     ExpressionHash::iterator entry = expressions->find(&he);
@@ -279,10 +289,8 @@ ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
         return 0;
     }
     CALC_ProcessVariable *pv =
-        new CALC_ProcessVariable(PV_name,
-                                 *entry,
-                                 arg_count,
-                                 (const char **)arg_name);
+        new CALC_ProcessVariable(PV_name, *entry,
+                                 arg_count, (const char **)arg_name);
     // 'he' will delete the strdup'ed  expression
     for (size_t i=0; i<arg_count; ++i)
         free(arg_name[i]);
@@ -315,9 +323,11 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
     arg_count = _arg_count;
     for (i=0; i<arg_count; ++i)
     {
+        // Poor excuse for a real "number" check:
         if (strchr("0123456789+-.", arg_name[i][0]) &&
-            strspn(arg_name[i], "0123456789+-.eEx"))
+            strspn(arg_name[i], "0123456789+-.eE"))
         {
+            arg_pv[i] = 0;
             arg[i] = strtod(arg_name[i], 0);
             if (arg[i] == HUGE_VAL ||
                 arg[i] == -HUGE_VAL)
@@ -329,8 +339,6 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
         }
         else
         {
-            
-            
             arg[i] = 0.0;
             arg_pv[i] = the_PV_Factory->create(arg_name[i]);
             if (arg_pv[i])
@@ -354,7 +362,9 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
 
 CALC_ProcessVariable::~CALC_ProcessVariable()
 {
-    fprintf(stderr, "CALC_ProcessVariable(%s) deleted\n", get_name());
+#ifdef CALC_DEBUG
+    printf("CALC_ProcessVariable(%s) deleted\n", get_name());
+#endif
     for (size_t i=0; i<arg_count; ++i)
     {
         if (arg_pv[i])
@@ -370,9 +380,11 @@ CALC_ProcessVariable::~CALC_ProcessVariable()
 void CALC_ProcessVariable::status_callback(ProcessVariable *pv, void *userarg)
 {
     CALC_ProcessVariable *me = (CALC_ProcessVariable *)userarg;
+#ifdef CALC_DEBUG
     printf("CALC %s: status change from %s. Overall: %s\n",
            me->get_name(), pv->get_name(),
            (const char *)(me->is_valid() ? "valid" : "invalid"));
+#endif
     me->recalc();
     me->do_status_callbacks();
 }
@@ -388,12 +400,24 @@ void CALC_ProcessVariable::recalc()
 {
     status = 0;
     severity = 0;
-    
+    time = 0;
+    nano = 0;
+    // Evaluate arguments, if any:
     for (size_t i=0; i<arg_count; ++i)
     {
-        if (arg_pv[i] && arg_pv[i]->is_valid())
+        if (!arg_pv[i])
+            continue;
+        if (arg_pv[i]->is_valid())
         {
             arg[i] = arg_pv[i]->get_double();
+            // Maximize time stamp and severity
+            if (arg_pv[i]->get_time_t() > time  ||
+                (arg_pv[i]->get_time_t() == time  ||
+                 arg_pv[i]->get_nano() > nano))
+            {
+                time = arg_pv[i]->get_time_t();
+                nano = arg_pv[i]->get_nano();
+            }
             if (arg_pv[i]->get_severity() > severity)
             {
                 severity = arg_pv[i]->get_severity();
@@ -407,12 +431,16 @@ void CALC_ProcessVariable::recalc()
         }
     }
         
-    expression->calc(arg, value);
+    if (severity != INVALID_ALARM)
+        expression->calc(arg, value);
 
-    struct timeval t;
-    gettimeofday(&t, 0);
-    time = t.tv_sec;
-    nano = t.tv_usec*(unsigned long)1000;
+    if (time == 0)
+    {
+        struct timeval t;
+        gettimeofday(&t, 0);
+        time = t.tv_sec;
+        nano = t.tv_usec*(unsigned long)1000;
+    }
 }
 
 bool CALC_ProcessVariable::is_valid() const
