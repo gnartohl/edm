@@ -3599,6 +3599,7 @@ err_return:
     else {
 
       stat = ca_pend_io( 10.0 );
+      ca_pend_event( 0.00001 );
       if ( stat != ECA_NORMAL ) {
 
         sprintf( msg, appContextClass_str100 );
@@ -3609,6 +3610,7 @@ err_return:
 
         stat = ca_put( DBR_STRING, ctlPvId, "" );
         stat = ca_pend_io( 10.0 );
+        ca_pend_event( 0.00001 );
 
         stat = ca_add_masked_array_event( DBR_STRING, 1, ctlPvId,
          ctlPvUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
@@ -3995,13 +3997,13 @@ char msg[127+1];
 
 #ifdef __epics__
           stat = ca_pend_io( 1.0 );
-          //ca_pend_event( 0.00001 );
+          ca_pend_event( 0.00001 );
 #endif
           cur->node.processObjects();
 
 #ifdef __epics__
           stat = ca_pend_io( 1.0 );
-          //ca_pend_event( 0.00001 );
+          ca_pend_event( 0.00001 );
 #endif
           processAllEvents( app, display );
 
@@ -4058,7 +4060,7 @@ char msg[127+1];
 
 #ifdef __epics__
     stat = ca_pend_io( 1.0 );
-    //ca_pend_event( 0.00001 );
+    ca_pend_event( 0.00001 );
 #endif
     processAllEvents( app, display );
 
@@ -4068,7 +4070,7 @@ char msg[127+1];
 
 #ifdef __epics__
   stat = ca_pend_io( 3.0 );
-  //ca_pend_event( 0.00001 );
+  ca_pend_event( 0.00001 );
 #endif
 
   processAllEvents( app, display );
