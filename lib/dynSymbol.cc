@@ -674,8 +674,6 @@ char title[32], *ptr;
   ef.addTextField( activeDynSymbolClass_str10, 27, bufDynSymbolFileName, 127 );
   ef.addTextField( activeDynSymbolClass_str34, 27, bufColorPvName, 39 );
 
-  ef.addToggle( activeDynSymbolClass_str11, &bufUseOriginalSize );
-
   ef.addToggle( activeDynSymbolClass_str13, &bufUseGate );
   ef.addTextField( activeDynSymbolClass_str14, 27, bufGateUpPvName, 39 );
   ef.addOption( activeDynSymbolClass_str15, activeDynSymbolClass_str16,
@@ -688,6 +686,8 @@ char title[32], *ptr;
   ef.addTextField( activeDynSymbolClass_str21, 27, &bufRate );
 
   ef.addTextField( activeDynSymbolClass_str22, 27, &bufInitialIndex );
+
+  ef.addToggle( activeDynSymbolClass_str11, &bufUseOriginalSize );
 
   ef.addToggle( activeDynSymbolClass_str35, &bufUseOriginalColors );
 
