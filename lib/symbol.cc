@@ -1693,7 +1693,8 @@ int num;
       for ( i=0; i<numPvs; i++ ) {
 
 #ifdef __epics__
-        controlEventId[i] = 0;
+        controlPvId[i] = NULL;
+        controlEventId[i] = NULL;
 #endif
 
         if ( !controlPvExpStr[i].getExpanded() ||
@@ -1716,7 +1717,8 @@ int num;
     }
 
 #ifdef __epics__
-    colorEventId = 0;
+    colorPvId = NULL;
+    colorEventId = NULL;
 #endif
 
     break;
@@ -1844,32 +1846,26 @@ int num;
 
   for ( i=0; i<numPvs; i++ ) {
 
-    if ( controlEventId[i] ) {
-      stat = ca_clear_event( controlEventId[i] );
-      if ( stat != ECA_NORMAL )
-        printf( activeSymbolClass_str25 );
-      controlEventId[i] = 0;
-    }
-
     if ( controlExists ) {
-      stat = ca_clear_channel( controlPvId[i] );
-      if ( stat != ECA_NORMAL )
-        printf( activeSymbolClass_str26 );
+      if ( controlPvId[i] ) {
+        stat = ca_clear_channel( controlPvId[i] );
+        if ( stat != ECA_NORMAL ) {
+          printf( activeSymbolClass_str26 );
+	}
+	controlPvId[i] = NULL;
+      }
     }
 
-  }
-
-  if ( colorEventId ) {
-    stat = ca_clear_event( colorEventId );
-    if ( stat != ECA_NORMAL )
-      printf( activeSymbolClass_str25 );
-    colorEventId = 0;
   }
 
   if ( colorExists ) {
-    stat = ca_clear_channel( colorPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeSymbolClass_str26 );
+    if ( colorPvId ) {
+      stat = ca_clear_channel( colorPvId );
+      if ( stat != ECA_NORMAL ) {
+        printf( activeSymbolClass_str26 );
+      }
+      colorPvId = NULL;
+    }
   }
 
 #endif
@@ -2797,12 +2793,15 @@ int stat, i, nci, nc[SYMBOL_K_MAX_PVS], nr, ne, nd, ncolori, ncr;
       }
     }
 
-    stat = ca_add_masked_array_event( DBR_DOUBLE, 1,
-     colorPvId, symbol_colorUpdate, (void *) this,
-     (float) 0.0, (float) 0.0, (float) 0.0, &colorEventId,
-     DBE_VALUE );
-    if ( stat != ECA_NORMAL )
-      printf( activeSymbolClass_str27 );
+    if ( !colorEventId ) {
+      stat = ca_add_masked_array_event( DBR_DOUBLE, 1,
+       colorPvId, symbol_colorUpdate, (void *) this,
+       (float) 0.0, (float) 0.0, (float) 0.0, &colorEventId,
+       DBE_VALUE );
+      if ( stat != ECA_NORMAL ) {
+        printf( activeSymbolClass_str27 );
+      }
+    }
 
   }
 

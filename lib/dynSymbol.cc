@@ -1650,7 +1650,8 @@ int num;
     down = 0;
 
 #ifdef __epics__
-    gateUpEventId = gateDownEventId = colorEventId = 0;
+    gateUpPvId = gateDownPvId = colorPvId = NULL;
+    gateUpEventId = gateDownEventId = colorEventId = NULL;
 #endif
 
     gateUpPvConnected = gateDownPvConnected = 0;
@@ -1846,43 +1847,34 @@ int num;
 
 #ifdef __epics__
 
-  if ( gateUpEventId ) {
-    stat = ca_clear_event( gateUpEventId );
-    if ( stat != ECA_NORMAL )
-      printf( activeDynSymbolClass_str27 );
-    gateUpEventId = 0;
-  }
-
-  if ( gateDownEventId ) {
-    stat = ca_clear_event( gateDownEventId );
-    if ( stat != ECA_NORMAL )
-      printf( activeDynSymbolClass_str28 );
-    gateDownEventId = 0;
-  }
-
-  if ( colorEventId ) {
-    stat = ca_clear_event( colorEventId );
-    if ( stat != ECA_NORMAL )
-      printf( activeDynSymbolClass_str28 );
-    colorEventId = 0;
-  }
-
   if ( gateUpExists ) {
-    stat = ca_clear_channel( gateUpPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeDynSymbolClass_str29 );
+    if ( gateUpPvId ) {
+      stat = ca_clear_channel( gateUpPvId );
+      if ( stat != ECA_NORMAL ) {
+        printf( activeDynSymbolClass_str29 );
+      }
+      gateUpPvId = NULL;
+    }
   }
 
   if ( gateDownExists ) {
-    stat = ca_clear_channel( gateDownPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeDynSymbolClass_str30 );
+    if ( gateDownPvId ) {
+      stat = ca_clear_channel( gateDownPvId );
+      if ( stat != ECA_NORMAL ) {
+        printf( activeDynSymbolClass_str30 );
+      }
+      gateDownPvId = NULL;
+    }
   }
 
   if ( colorExists ) {
-    stat = ca_clear_channel( colorPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeDynSymbolClass_str30 );
+    if ( colorPvId ) {
+      stat = ca_clear_channel( colorPvId );
+      if ( stat != ECA_NORMAL ) {
+        printf( activeDynSymbolClass_str30 );
+      }
+      colorPvId = NULL;
+    }
   }
 
 #endif
