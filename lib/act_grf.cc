@@ -2839,6 +2839,14 @@ static void dragFin (
   XtPointer call_data )
 {
 
+Widget icon = NULL;
+
+  XtVaGetValues( w, XmNsourcePixmapIcon, &icon, NULL );
+
+  if ( icon ) {
+    XtDestroyWidget( icon );
+  }
+
 }
 
 static Boolean cvt (
@@ -3009,7 +3017,6 @@ Arg args[10];
 XMotionEvent dragEvent;
 
   Widget icon = mkDragIcon(actWin->executeWidget, this);
- 
 
   expList[0] = XA_STRING;
   n = 0;
