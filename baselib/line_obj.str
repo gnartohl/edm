@@ -20,7 +20,7 @@
 #define activeLineClass_str17 "Fill Color"
 #define activeLineClass_str18 "Alarm Sensitive"
 #define activeLineClass_str19 "Color PV"
-#define activeLineClass_str20 "Visability PV"
+#define activeLineClass_str20 "Visibility PV"
 #define activeLineClass_str22 "Not Visible if|Visible if"
 #define activeLineClass_str23 ">="
 #define activeLineClass_str24 "and <"

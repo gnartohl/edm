@@ -24,7 +24,7 @@
 #define activeArcClass_str21 "Fill Color"
 #define activeArcClass_str22 "Alarm Sensitive"
 #define activeArcClass_str23 "Color PV"
-#define activeArcClass_str24 "Visability PV"
+#define activeArcClass_str24 "Visibility PV"
 #define activeArcClass_str25 "Not Visible if|Visible if"
 #define activeArcClass_str26 ">="
 #define activeArcClass_str27 "and <"

@@ -21,7 +21,7 @@
 #define activeRectangleClass_str18 (char *) "Alarm Sensitive"
 #define activeRectangleClass_str19 (char *) "Invisible"
 #define activeRectangleClass_str20 (char *) "Color PV"
-#define activeRectangleClass_str21 (char *) "Visability PV"
+#define activeRectangleClass_str21 (char *) "Visibility PV"
 #define activeRectangleClass_str22 (char *) "Not Visible if|Visible if"
 #define activeRectangleClass_str23 (char *) ">="
 #define activeRectangleClass_str24 (char *) "and <"

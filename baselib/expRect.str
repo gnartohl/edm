@@ -21,7 +21,7 @@
 #define expRectClass_str18 "Alarm Sensitive"
 #define expRectClass_str19 "Invisible"
 #define expRectClass_str20 "Alarm PV"
-#define expRectClass_str21 "Visability PV"
+#define expRectClass_str21 "Visibility PV"
 #define expRectClass_str22 "Not Visible if|Visible if"
 #define expRectClass_str23 ">="
 #define expRectClass_str24 "and <"
