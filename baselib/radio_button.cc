@@ -26,6 +26,23 @@
 
 #include "Xm/CascadeBG.h"
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activeRadioButtonClass *rbto = (activeRadioButtonClass *) client;
+
+  if ( !rbto->connection.pvsConnected() ) {
+    rbto->needToDrawUnconnected = 1;
+    rbto->needDraw = 1;
+    rbto->actWin->addDefExeNode( rbto->aglPtr );
+  }
+
+  rbto->unconnectedTimer = 0;
+
+}
+
 static void radioBoxEventHandler (
   Widget w,
   XtPointer client,
@@ -327,6 +344,11 @@ activeRadioButtonClass::~activeRadioButtonClass ( void ) {
 
   if ( name ) delete name;
   if ( fontList ) XmFontListFree( fontList );
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
 
 }
 
@@ -685,13 +707,15 @@ XRectangle xR = { x, y, w, h };
 int activeRadioButtonClass::drawActive ( void ) {
 
   if ( !connection.pvsConnected() ) {
-    actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( fgColor.getDisconnected() );
-    actWin->executeGc.setFontTag( fontTag, actWin->fi );
-    drawText( actWin->executeWidget, &actWin->executeGc,
-     fs, x, y, XmALIGNMENT_BEGINNING, "?" );
-    actWin->executeGc.restoreFg();
-    needToEraseUnconnected = 1;
+    if ( needToDrawUnconnected ) {
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( fgColor.getDisconnected() );
+      actWin->executeGc.setFontTag( fontTag, actWin->fi );
+      drawText( actWin->executeWidget, &actWin->executeGc,
+       fs, x, y, XmALIGNMENT_BEGINNING, "?" );
+      actWin->executeGc.restoreFg();
+      needToEraseUnconnected = 1;
+    }
   }
   else if ( needToEraseUnconnected ) {
     actWin->executeGc.setFontTag( fontTag, actWin->fi );
@@ -760,6 +784,8 @@ int stat, opStat;
     aglPtr = ptr;
     needConnectInit = needInfoInit = needRefresh = needDraw = 0;
     needToEraseUnconnected = 0;
+    needToDrawUnconnected = 0;
+    unconnectedTimer = 0;
     opComplete = 0;
 
     controlExists = 0;
@@ -783,6 +809,11 @@ int stat, opStat;
   case 2:
 
     if ( !opComplete ) {
+
+      if ( !unconnectedTimer ) {
+        unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+         2000, unconnectedTimeout, this );
+      }
 
       if ( !pvCheckExists ) {
 

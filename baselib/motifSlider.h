@@ -60,6 +60,10 @@ static char *dragName[] = {
   activeMotifSliderClass_str36,
 };
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void changeParams (
   Widget w,
   XEvent *e,
@@ -170,6 +174,10 @@ static void mslc_edit_cancel_delete (
 class activeMotifSliderClass : public activeGraphicClass {
 
 private:
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void changeParams (
   Widget w,
@@ -348,6 +356,8 @@ int positive;
 int needCtlConnectInit, needCtlInfoInit, needCtlRefresh;
 int needCtlLabelConnectInit, needCtlLabelInfoInit, needCtlUpdate;
 int needErase, needDraw;
+int needToDrawUnconnected, needToEraseUnconnected;
+int unconnectedTimer;
 
 char displayFormat[15+1];
 int limitsFromDb;
@@ -376,11 +386,7 @@ activeMotifSliderClass::activeMotifSliderClass ( void );
 activeMotifSliderClass::activeMotifSliderClass
  ( const activeMotifSliderClass *source );
 
-activeMotifSliderClass::~activeMotifSliderClass ( void ) {
-
-  if ( name ) delete name;
-
-}
+activeMotifSliderClass::~activeMotifSliderClass ( void );
 
 static void activeMotifSliderClass::controlUpdate (
   ProcessVariable *pv,

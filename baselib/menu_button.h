@@ -45,6 +45,10 @@
 
 #include "menu_button.str"
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void menuButtonEventHandler (
   Widget w,
   XtPointer client,
@@ -120,6 +124,10 @@ static void mbt_monitor_read_connect_state (
 class activeMenuButtonClass : public activeGraphicClass {
 
 private:
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void menuButtonEventHandler (
   Widget w,
@@ -228,7 +236,9 @@ Widget optionMenu, pulldownMenu, curHistoryWidget,
  pb[MAX_ENUM_STATES];
 
 int needConnectInit, needReadConnectInit, needInfoInit,
- needReadInfoInit, needDraw, needRefresh, needToEraseUnconnected;
+ needReadInfoInit, needDraw, needRefresh, needToDrawUnconnected,
+ needToEraseUnconnected;
+int unconnectedTimer;
 
 public:
 

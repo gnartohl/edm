@@ -46,6 +46,10 @@ static char *dragName[] = {
   activeMeterClass_str1
 };
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void meterc_edit_ok (
   Widget w,
   XtPointer client,
@@ -88,6 +92,10 @@ static void meter_monitor_read_connect_state (
 class activeMeterClass : public activeGraphicClass {
 
 private:
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void meterc_edit_ok (
   Widget w,
@@ -198,6 +206,8 @@ int bufUseDisplayBg;
 char bufScaleFontTag[63+1],bufLabelFontTag[63+1];
 
 int needErase, needDraw, needConnectInit, needRefresh, needInfoInit;
+int needToDrawUnconnected, needToEraseUnconnected;
+int unconnectedTimer;
 
 public:
 
@@ -206,11 +216,7 @@ activeMeterClass::activeMeterClass ( void );
 activeMeterClass::activeMeterClass
  ( const activeMeterClass *source );
 
-activeMeterClass::~activeMeterClass ( void ) {
-
-  if ( name ) delete name;
-
-}
+activeMeterClass::~activeMeterClass ( void );
 
 char *activeMeterClass::objName ( void ) {
 

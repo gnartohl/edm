@@ -50,6 +50,10 @@
 
 #include "x_text_dsp_obj.str"
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static char *dragName[] = {
   activeXTextDspClass_str1,
   activeXTextDspClass_str2
@@ -210,6 +214,10 @@ static void xtdoSetValueChanged (
 class activeXTextDspClass : public activeGraphicClass {
 
 private:
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void xtdoCancelStr (
   Widget w,
@@ -429,7 +437,8 @@ Widget tf_widget;
 int widget_value_changed;
 
 int needConnectInit, needInfoInit, needErase, needDraw, needRefresh,
- needUpdate, deferredCount, needToEraseUnconnected;
+ needUpdate, deferredCount, needToDrawUnconnected, needToEraseUnconnected;
+int unconnectedTimer;
 
 keypadClass kp;
 int kpInt;

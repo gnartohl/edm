@@ -27,6 +27,22 @@
 // This is the EPICS specific line right now:
 static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
+
+  if ( !mslo->init ) {
+    mslo->needToDrawUnconnected = 1;
+    mslo->needDraw = 1;
+    mslo->actWin->addDefExeNode( mslo->aglPtr );
+  }
+
+  mslo->unconnectedTimer = 0;
+
+}
 static void msloValueChangeCB (
   Widget w,
   XtPointer client,
@@ -875,6 +891,17 @@ activeGraphicClass *mslo = (activeGraphicClass *) this;
 
 }
 
+activeMotifSliderClass::~activeMotifSliderClass ( void ) {
+
+  if ( name ) delete name;
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
+
+}
+
 int activeMotifSliderClass::createInteractive (
   activeWindowClass *aw_obj,
   int _x,
@@ -1441,11 +1468,23 @@ int activeMotifSliderClass::drawActive ( void ) {
 int tX, tY;
 
   if ( !init ) {
-    actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( bgColor.getDisconnected() );
+    if ( needToDrawUnconnected ) {
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( bgColor.getDisconnected() );
+      actWin->executeGc.setLineWidth( 1 );
+      actWin->executeGc.setLineStyle( LineSolid );
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
+      actWin->executeGc.restoreFg();
+      needToEraseUnconnected = 1;
+    }
+  }
+  else if ( needToEraseUnconnected ) {
+    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineStyle( LineSolid );
     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x, y, w, h );
-    actWin->executeGc.restoreFg();
+     actWin->executeGc.eraseGC(), x, y, w, h );
+    needToEraseUnconnected = 0;
   }
 
   if ( !activeMode || !init ) return 1;
@@ -1753,6 +1792,16 @@ int opStat;
       needCtlConnectInit = needCtlInfoInit = needCtlRefresh =
        needCtlLabelConnectInit = needCtlLabelInfoInit =
        needErase = needDraw = 0;
+
+      needToEraseUnconnected = 0;
+      needToDrawUnconnected = 0;
+      unconnectedTimer = 0;
+
+      if ( !unconnectedTimer ) {
+        unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+         2000, unconnectedTimeout, this );
+      }
+
       oldControlV = 0;
       updateControlTimerActive = 0;
       controlAdjusted = 0;

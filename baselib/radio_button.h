@@ -45,6 +45,10 @@
 
 #include "radio_button.str"
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void radioBoxEventHandler (
   Widget w,
   XtPointer client,
@@ -108,6 +112,10 @@ static void rbt_monitor_control_connect_state (
 class activeRadioButtonClass : public activeGraphicClass {
 
 private:
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void radioBoxEventHandler (
   Widget w,
@@ -201,7 +209,8 @@ int controlExists, widgetsCreated, active, activeMode;
 Widget radioBox, pb[MAX_ENUM_STATES];
 
 int needConnectInit, needInfoInit, needDraw, needRefresh,
- needToEraseUnconnected;
+ needToDrawUnconnected, needToEraseUnconnected;
+int unconnectedTimer;
 
 public:
 

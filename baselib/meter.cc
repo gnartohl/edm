@@ -25,6 +25,23 @@
 
 #include "thread.h"
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activeMeterClass *metero = (activeMeterClass *) client;
+
+  if ( !metero->activeInitFlag ) {
+    metero->needToDrawUnconnected = 1;
+    metero->needDraw = 1;
+    metero->actWin->addDefExeNode( metero->aglPtr );
+  }
+
+  metero->unconnectedTimer = 0;
+
+}
+
 static void meterc_edit_update (
   Widget w,
   XtPointer client,
@@ -375,6 +392,17 @@ activeGraphicClass *metero = (activeGraphicClass *) this;
   activeMode = 0;
 
   updateDimensions();
+
+}
+
+activeMeterClass::~activeMeterClass ( void ) {
+
+  if ( name ) delete name;
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
 
 }
 
@@ -1183,11 +1211,23 @@ int activeMeterClass::drawActive ( void ) {
 XPoint xpoints[3];
 
   if ( !activeInitFlag ) {
-    actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( meterColor.getDisconnected() );
+    if ( needToDrawUnconnected ) {
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( meterColor.getDisconnected() );
+      actWin->executeGc.setLineWidth( 1 );
+      actWin->executeGc.setLineStyle( LineSolid );
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
+      actWin->executeGc.restoreFg();
+      needToEraseUnconnected = 1;
+    }
+  }
+  else if ( needToEraseUnconnected ) {
+    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineStyle( LineSolid );
     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x, y, w, h );
-    actWin->executeGc.restoreFg();
+     actWin->executeGc.eraseGC(), x, y, w, h );
+    needToEraseUnconnected = 0;
   }
 
  if ( !activeMode || !activeInitFlag) return 1;
@@ -1722,6 +1762,9 @@ int stat, opStat;
   case 1:
 
     needConnectInit = needInfoInit = needRefresh = needErase = needDraw = 0;
+    needToEraseUnconnected = 0;
+    needToDrawUnconnected = 0;
+    unconnectedTimer = 0;
     aglPtr = ptr;
     meterW = 0;
     oldMeterW = 0;
@@ -1768,6 +1811,11 @@ int stat, opStat;
     if ( !opComplete ) {
 
       opStat = 1;
+
+      if ( !unconnectedTimer ) {
+        unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+         2000, unconnectedTimeout, this );
+      }
 
 #ifdef __epics__
 

@@ -27,6 +27,23 @@
 // This is the EPICS specific line right now:
 static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activeXTextClass *axto = (activeXTextClass *) client;
+
+  if ( !axto->init ) {
+    axto->needToDrawUnconnected = 1;
+    axto->needRefresh = 1;
+    axto->actWin->addDefExeNode( axto->aglPtr );
+  }
+
+  axto->unconnectedTimer = 0;
+
+}
+
 static void axtc_edit_update (
   Widget w,
   XtPointer client,
@@ -359,6 +376,17 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   stringX = source->stringX;
 
   connection.setMaxPvs( 2 );
+
+}
+
+activeXTextClass::~activeXTextClass ( void ) {
+
+  if ( name ) delete name;
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
 
 }
 
@@ -977,16 +1005,18 @@ XRectangle xR = { x, y, w, h };
 int clipStat;
 
   if ( !init ) {
-    actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( fgColor.getDisconnected() );
-    if ( strcmp( fontTag, "" ) != 0 ) {
-      actWin->executeGc.setFontTag( fontTag, actWin->fi );
+    if ( needToDrawUnconnected ) {
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( fgColor.getDisconnected() );
+      if ( strcmp( fontTag, "" ) != 0 ) {
+        actWin->executeGc.setFontTag( fontTag, actWin->fi );
+      }
+      XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), stringX, stringY, fontHeight,
+       value.getExpanded(), stringLength );
+      actWin->executeGc.restoreFg();
+      needToEraseUnconnected = 1;
     }
-    XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), stringX, stringY, fontHeight,
-     value.getExpanded(), stringLength );
-    actWin->executeGc.restoreFg();
-    needToEraseUnconnected = 1;
   }
   else if ( needToEraseUnconnected ) {
     needToEraseUnconnected = 0;
@@ -1210,6 +1240,13 @@ int activeXTextClass::activate (
       needConnectInit = needAlarmUpdate = needVisUpdate = needRefresh =
         needPropertyUpdate = 0;
       needToEraseUnconnected = 0;
+      needToDrawUnconnected = 0;
+      unconnectedTimer = 0;
+
+      if ( !unconnectedTimer ) {
+        unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+         2000, unconnectedTimeout, this );
+      }
 
       stringLength = strlen( value.getExpanded() );
 

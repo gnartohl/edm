@@ -46,6 +46,10 @@ static char *dragName[] = {
   menuMuxClass_str1,
 };
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void selectDrag (
    Widget w,
    XEvent *e,
@@ -109,6 +113,10 @@ static void mmuxSetItem (
 class menuMuxClass : public activeGraphicClass {
 
 private:
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void selectDrag (
    Widget w,
@@ -221,7 +229,8 @@ Widget optionMenu, pulldownMenu, curHistoryWidget,
  pb[MMUX_MAX_STATES];
 
 int needConnectInit, needDisconnect, needInfoInit, needUpdate, needDraw,
- needToEraseUnconnected;
+ needToDrawUnconnected, needToEraseUnconnected;
+int unconnectedTimer;
 
 public:
 

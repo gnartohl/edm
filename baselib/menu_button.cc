@@ -26,6 +26,23 @@
 
 #include "Xm/CascadeBG.h"
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activeMenuButtonClass *ambo = (activeMenuButtonClass *) client;
+
+  if ( !ambo->connection.pvsConnected() ) {
+    ambo->needToDrawUnconnected = 1;
+    ambo->needDraw = 1;
+    ambo->actWin->addDefExeNode( ambo->aglPtr );
+  }
+
+  ambo->unconnectedTimer = 0;
+
+}
+
 static void menuButtonEventHandler (
   Widget w,
   XtPointer client,
@@ -436,6 +453,11 @@ activeMenuButtonClass::~activeMenuButtonClass ( void ) {
 
   if ( name ) delete name;
   if ( fontList ) XmFontListFree( fontList );
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
 
 }
 
@@ -880,13 +902,15 @@ Arg args[10];
 int n;
 
   if ( !connection.pvsConnected() ) {
-    actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( fgColor.getDisconnected() );
-    actWin->executeGc.setFontTag( fontTag, actWin->fi );
-    drawText( actWin->executeWidget, &actWin->executeGc,
-     fs, x, y, XmALIGNMENT_BEGINNING, "?" );
-    actWin->executeGc.restoreFg();
-    needToEraseUnconnected = 1;
+    if ( needToDrawUnconnected ) {
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( fgColor.getDisconnected() );
+      actWin->executeGc.setFontTag( fontTag, actWin->fi );
+      drawText( actWin->executeWidget, &actWin->executeGc,
+       fs, x, y, XmALIGNMENT_BEGINNING, "?" );
+      actWin->executeGc.restoreFg();
+      needToEraseUnconnected = 1;
+    }
   }
   else if ( needToEraseUnconnected ) {
     actWin->executeGc.setFontTag( fontTag, actWin->fi );
@@ -968,6 +992,8 @@ int stat, opStat;
      needRefresh = needDraw = 0;
     opComplete = 0;
     needToEraseUnconnected = 0;
+    needToDrawUnconnected = 0;
+    unconnectedTimer = 0;
 
     controlExists = readExists = 0;
 
@@ -990,6 +1016,11 @@ int stat, opStat;
   case 2:
 
     if ( !opComplete ) {
+
+      if ( !unconnectedTimer ) {
+        unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+         2000, unconnectedTimeout, this );
+      }
 
       if ( !pvCheckExists ) {
 

@@ -24,6 +24,23 @@
 
 #include "thread.h"
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activeBarClass *baro = (activeBarClass *) client;
+
+  if ( !baro->init ) {
+    baro->needToDrawUnconnected = 1;
+    baro->needRefresh = 1;
+    baro->actWin->addDefExeNode( baro->aglPtr );
+  }
+
+  baro->unconnectedTimer = 0;
+
+}
+
 static void barc_edit_update (
   Widget w,
   XtPointer client,
@@ -246,7 +263,7 @@ activeBarClass *baro = (activeBarClass *) ca_puser(arg.chid);
       baro->barColor.setDisconnected();
       baro->fgColor.setDisconnected();
       baro->bufInvalidate();
-      baro->needDraw = 1;
+      baro->needFullDraw = 1;
       baro->actWin->addDefExeNode( baro->aglPtr );
 
     }
@@ -501,6 +518,11 @@ activeBarClass::~activeBarClass ( void ) {
 /*   printf( "In activeBarClass::~activeBarClass\n" ); */
 
   if ( name ) delete name;
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
 
 }
 
@@ -1579,11 +1601,23 @@ int tX, tY, x0, y0, x1, y1;
 char str[39+1];
 
   if ( !init ) {
-    actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( bgColor.getDisconnected() );
+    if ( needToDrawUnconnected ) {
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( bgColor.getDisconnected() );
+      actWin->executeGc.setLineWidth( 1 );
+      actWin->executeGc.setLineStyle( LineSolid );
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
+      actWin->executeGc.restoreFg();
+      needToEraseUnconnected = 1;
+    }
+  }
+  else if ( needToEraseUnconnected ) {
+    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineStyle( LineSolid );
     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x, y, w, h );
-    actWin->executeGc.restoreFg();
+     actWin->executeGc.eraseGC(), x, y, w, h );
+    needToEraseUnconnected = 0;
   }
 
   if ( !activeMode || !init ) return 1;
@@ -1850,6 +1884,10 @@ int stat, opStat;
     oldAboveBarOrigin = 0;
     needConnectInit = needInfoInit = needRefresh = needErase = needDrawCheck =
      needDraw = 0;
+    needToEraseUnconnected = 0;
+    needToDrawUnconnected = 0;
+    unconnectedTimer = 0;
+
     aglPtr = ptr;
     opComplete = 0;
     curNullV = 0.0;
@@ -1908,6 +1946,11 @@ int stat, opStat;
   case 2:
 
     if ( !opComplete ) {
+
+      if ( !unconnectedTimer ) {
+        unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+         2000, unconnectedTimeout, this );
+      }
 
       opStat = 1;
 

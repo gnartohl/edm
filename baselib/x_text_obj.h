@@ -42,6 +42,10 @@ static char *dragName[] = {
   activeXTextClass_str3
 };
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void axtc_edit_ok (
   Widget w,
   XtPointer client,
@@ -72,6 +76,10 @@ static void axtc_edit_cancel_delete (
 class activeXTextClass : public activeGraphicClass {
 
 private:
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void axtc_edit_ok (
   Widget w,
@@ -147,7 +155,8 @@ int fontAscent, fontDescent, fontHeight, stringLength, stringWidth,
 int autoSize, bufAutoSize;
 
 int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh,
- needPropertyUpdate, needToEraseUnconnected;
+ needPropertyUpdate, needToDrawUnconnected, needToEraseUnconnected;
+int unconnectedTimer;
 
 int curFgColorIndex, curBgColorIndex, curStatus, curSeverity;
 static const int alarmPvConnection = 1;
@@ -181,11 +190,7 @@ activeXTextClass::activeXTextClass ( void );
 activeXTextClass::activeXTextClass
  ( const activeXTextClass *source );
 
-activeXTextClass::~activeXTextClass ( void ) {
-
-  if ( name ) delete name;
-
-}
+activeXTextClass::~activeXTextClass ( void );
 
 char *activeXTextClass::objName ( void ) {
 

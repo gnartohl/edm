@@ -24,6 +24,25 @@
 
 #include "thread.h"
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+menuMuxClass *mmo = (menuMuxClass *) client;
+
+  if ( !mmo->controlPvConnected ) {
+    if ( mmo->controlExists ) {
+      mmo->needToDrawUnconnected = 1;
+      mmo->needDraw = 1;
+      mmo->actWin->addDefExeNode( mmo->aglPtr );
+    }
+  }
+
+  mmo->unconnectedTimer = 0;
+
+}
+
 static void mmuxSetItem (
   Widget w,
   XtPointer client,
@@ -432,6 +451,11 @@ menuMuxClass::~menuMuxClass ( void ) {
 int i;
 
   if ( name ) delete name;
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
 
   if ( mac && exp ) {
     for ( i=0; i<numMac; i++ ) {
@@ -901,13 +925,15 @@ int n;
 
   if ( !controlPvConnected ) {
     if ( controlExists ) {
-      actWin->executeGc.saveFg();
-      actWin->executeGc.setFG( fgColor.getDisconnected() );
-      actWin->executeGc.setFontTag( fontTag, actWin->fi );
-      drawText( actWin->executeWidget, &actWin->executeGc,
-       fs, x, y, XmALIGNMENT_BEGINNING, "?" );
-      actWin->executeGc.restoreFg();
-      needToEraseUnconnected = 1;
+      if ( needToDrawUnconnected ) {
+        actWin->executeGc.saveFg();
+        actWin->executeGc.setFG( fgColor.getDisconnected() );
+        actWin->executeGc.setFontTag( fontTag, actWin->fi );
+        drawText( actWin->executeWidget, &actWin->executeGc,
+         fs, x, y, XmALIGNMENT_BEGINNING, "?" );
+        actWin->executeGc.restoreFg();
+        needToEraseUnconnected = 1;
+      }
     }
     else if ( needToEraseUnconnected ) {
       actWin->executeGc.setFontTag( fontTag, actWin->fi );
@@ -1046,6 +1072,8 @@ int stat, opStat;
     needConnectInit = needDisconnect = needInfoInit = needUpdate =
      needDraw = 0;
     needToEraseUnconnected = 0;
+    needToDrawUnconnected = 0;
+    unconnectedTimer = 0;
     widgetsCreated = 0;
     opComplete = 0;
     firstEvent = 1;
@@ -1070,6 +1098,11 @@ int stat, opStat;
   case 2:
 
     if ( !opComplete ) {
+
+      if ( !unconnectedTimer ) {
+        unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+         2000, unconnectedTimeout, this );
+      }
 
       opStat = 1;
 

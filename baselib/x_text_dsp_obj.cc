@@ -24,6 +24,23 @@
 
 #include "thread.h"
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
+
+  if ( !axtdo->init ) {
+    axtdo->needToDrawUnconnected = 1;
+    axtdo->needRefresh = 1;
+    axtdo->actWin->addDefExeNode( axtdo->aglPtr );
+  }
+
+  axtdo->unconnectedTimer = 0;
+
+}
+
 static void xtdoRestoreValue (
   Widget w,
   XtPointer client,
@@ -1506,6 +1523,11 @@ int i;
 
   if ( name ) delete name;
 
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
+
   for ( i=0; i<MAX_ENUM_STATES; i++ ) {
     if ( stateString[i] ) {
       stateString[i] = NULL;
@@ -2465,13 +2487,15 @@ Arg args[10];
 int n;
 
   if ( !init && !connection.pvsConnected() ) {
-    actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( fgColor.getDisconnected() );
-    actWin->executeGc.setFontTag( fontTag, actWin->fi );
-    drawText( actWin->executeWidget, &actWin->executeGc,
-     fs, x, y, XmALIGNMENT_BEGINNING, "?" );
-    actWin->executeGc.restoreFg();
-    needToEraseUnconnected = 1;
+    if ( needToDrawUnconnected ) {
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( fgColor.getDisconnected() );
+      actWin->executeGc.setFontTag( fontTag, actWin->fi );
+      drawText( actWin->executeWidget, &actWin->executeGc,
+       fs, x, y, XmALIGNMENT_BEGINNING, "?" );
+      actWin->executeGc.restoreFg();
+      needToEraseUnconnected = 1;
+    }
   }
   else if ( needToEraseUnconnected ) {
     actWin->executeGc.setFontTag( fontTag, actWin->fi );
@@ -2634,6 +2658,9 @@ char callbackName[63+1];
     deferredCount = 0;
     needConnectInit = needInfoInit = needErase = needDraw = needRefresh =
      needUpdate = 0;
+    needToEraseUnconnected = 0;
+    needToDrawUnconnected = 0;
+    unconnectedTimer = 0;
     aglPtr = ptr;
     strcpy( curValue, "" );
     strcpy( value, "" );
@@ -2651,7 +2678,6 @@ char callbackName[63+1];
     grabUpdate = 0;
     pvExistCheck = 0;
     connection.init();
-    needToEraseUnconnected = 0;
     pvId = svalPvId = fgPvId = NULL;
 
     break;
@@ -2659,6 +2685,11 @@ char callbackName[63+1];
   case 2:
 
     if ( !opComplete ) {
+
+      if ( !unconnectedTimer ) {
+        unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+         2000, unconnectedTimeout, this );
+      }
 
       fgColor.setNotNull();
 

@@ -49,6 +49,10 @@ static char *dragName[] = {
   activeBarClass_str2,
 };
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void barc_edit_ok (
   Widget w,
   XtPointer client,
@@ -107,6 +111,10 @@ static void bar_monitor_null_connect_state (
 class activeBarClass : public activeGraphicClass {
 
 private:
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void barc_edit_ok (
   Widget w,
@@ -223,6 +231,8 @@ efDouble bufEfBarOriginX;
 
 int needErase, needDraw, needFullDraw, needDrawCheck, needConnectInit,
  needRefresh, needInfoInit;
+int needToDrawUnconnected, needToEraseUnconnected;
+int unconnectedTimer;
 
 public:
 
