@@ -28,22 +28,22 @@ double *v = (double *) values;
   if ( v[0] == 0.0 ) {
     return 31;
   }
-  else if ( v[1] < 10.0 ) {
+  else if ( v[1] < -2 ) {
     return 8;
   }
-  else if ( v[1] < 20.0 ) {
+  else if ( v[1] < -1 ) {
     return 9;
   }
-  else if ( v[1] < 30.0 ) {
+  else if ( v[1] < 0 ) {
     return 10;
   }
-  else if ( v[1] < 40.0 ) {
+  else if ( v[1] < 1 ) {
     return 11;
   }
-  else if ( v[1] < 50.0 ) {
+  else if ( v[1] < 2 ) {
     return 12;
   }
-  else if ( v[1] < 60.0 ) {
+  else if ( v[1] < 3 ) {
     return 13;
   }
 

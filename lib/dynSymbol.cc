@@ -2149,7 +2149,8 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd;
 
     if ( index != prevIndex ) {
       stat = eraseActive();
-      stat = drawActive();
+      stat = smartDrawAllActive();
+      // stat = drawActive();
     }
 
   }
@@ -2163,7 +2164,8 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd;
 //----------------------------------------------------------------------------
 
   if ( nd ) {
-    drawActive();
+    //drawActive();
+    stat = smartDrawAllActive();
   }
 
 //----------------------------------------------------------------------------
