@@ -3040,9 +3040,11 @@ char callbackName[63+1];
       incrementTimerActive = 0;
 
 #ifdef __epics__
+      controlPvId = controlLabelPvId = readPvId = readLabelPvId =
+       savedValuePvId = NULL;
       controlEventId = readEventId = controlLabelEventId =
        readLabelEventId = savedEventId = controlAlarmEventId =
-       readAlarmEventId = 0;
+       readAlarmEventId = NULL;
 #endif
 
       controlState = SLC_STATE_IDLE;
@@ -3284,33 +3286,53 @@ int stat;
 #ifdef __epics__
 
     if ( controlExists ) {
-      stat = ca_clear_channel( controlPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeSliderClass_str71 );
+      if ( controlPvId ) {
+        stat = ca_clear_channel( controlPvId );
+        if ( stat != ECA_NORMAL ) {
+          printf( activeSliderClass_str71 );
+        }
+        controlPvId = NULL;
+      }
     }
   
     if ( controlLabelExists && ( controlLabelType == SLC_K_LABEL )  ) {
-      stat = ca_clear_channel( controlLabelPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeSliderClass_str72 );
+      if ( controlLabelPvId ) {
+        stat = ca_clear_channel( controlLabelPvId );
+        if ( stat != ECA_NORMAL ) {
+          printf( activeSliderClass_str72 );
+        }
+        controlLabelPvId = NULL;
+      }
     }
 
     if ( readExists ) {
-      stat = ca_clear_channel( readPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeSliderClass_str73 );
+      if ( readPvId ) {
+        stat = ca_clear_channel( readPvId );
+        if ( stat != ECA_NORMAL ) {
+          printf( activeSliderClass_str73 );
+        }
+        readPvId = NULL;
+      }
     }
 
     if ( readLabelExists && ( readLabelType == SLC_K_LABEL )  ) {
-      stat = ca_clear_channel( readLabelPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeSliderClass_str74 );
+      if ( readLabelPvId ) {
+        stat = ca_clear_channel( readLabelPvId );
+        if ( stat != ECA_NORMAL ) {
+          printf( activeSliderClass_str74 );
+        }
+        readLabelPvId = NULL;
+      }
     }
 
     if ( savedValueExists ) {
-      stat = ca_clear_channel( savedValuePvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeSliderClass_str75 );
+      if ( savedValuePvId ) {
+        stat = ca_clear_channel( savedValuePvId );
+        if ( stat != ECA_NORMAL ) {
+          printf( activeSliderClass_str75 );
+        }
+        savedValuePvId = NULL;
+      }
     }
 
 #endif

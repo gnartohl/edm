@@ -1329,6 +1329,7 @@ int stat, opStat;
       buttonPressed = 0;
 
 #ifdef __epics__
+      controlPvId = NULL;
       alarmEventId = controlEventId = 0;
 #endif
 
@@ -1420,9 +1421,13 @@ int i, stat;
 #ifdef __epics__
 
     if ( controlExists ) {
-      stat = ca_clear_channel( controlPvId );
-      if ( stat != ECA_NORMAL )
-        printf( menuMuxClass_str24 );
+      if ( controlPvId ) {
+        stat = ca_clear_channel( controlPvId );
+        if ( stat != ECA_NORMAL ) {
+          printf( menuMuxClass_str24 );
+	}
+	controlPvId = NULL;
+      }
     }
 
 #endif
@@ -1694,18 +1699,22 @@ int n;
 
     if ( controlExists ) {
 
-      stat = ca_add_masked_array_event( DBR_LONG, 1, controlPvId,
-       mmux_controlUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &controlEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL ) {
-        printf( menuMuxClass_str25 );
+      if ( !controlEventId ) {
+        stat = ca_add_masked_array_event( DBR_LONG, 1, controlPvId,
+         mmux_controlUpdate, (void *) this, (float) 0.0, (float) 0.0,
+         (float) 0.0, &controlEventId, DBE_VALUE );
+        if ( stat != ECA_NORMAL ) {
+          printf( menuMuxClass_str25 );
+        }
       }
 
-      stat = ca_add_masked_array_event( DBR_STS_LONG, 1, controlPvId,
-       mmux_alarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &alarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL ) {
-        printf( menuMuxClass_str26 );
+      if ( !alarmEventId ) {
+        stat = ca_add_masked_array_event( DBR_STS_LONG, 1, controlPvId,
+         mmux_alarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
+         (float) 0.0, &alarmEventId, DBE_ALARM );
+        if ( stat != ECA_NORMAL ) {
+          printf( menuMuxClass_str26 );
+        }
       }
 
     }

@@ -1847,6 +1847,7 @@ int stat, opStat;
     oldMeterNeedleYOrigin = 0;
 
 #ifdef __epics__
+    readPvId = NULL;
     readEventId = alarmEventId = 0;
 #endif
 
@@ -1888,15 +1889,6 @@ int stat, opStat;
       }
 
 #ifdef __epics__
-
-//       if ( controlExists ) {
-//         stat = ca_search_and_connect( controlPvExpStr.getExpanded(),
-//          &controlPvId, meter_monitor_control_connect_state, this );
-//         if ( stat != ECA_NORMAL ) {
-//           printf( activeMeterClass_str37 );
-//           opStat = 0;
-//         }
-//       }
 
       if ( readExists ) {
         stat = ca_search_and_connect( readPvExpStr.getExpanded(), &readPvId,
@@ -1949,9 +1941,13 @@ int stat;
 #ifdef __epics__
 
   if ( readExists ) {
-    stat = ca_clear_channel( readPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeMeterClass_str39 );
+    if ( readPvId ) {
+      stat = ca_clear_channel( readPvId );
+      if ( stat != ECA_NORMAL ) {
+        printf( activeMeterClass_str39 );
+      }
+      readPvId = NULL;
+    }
   }
 
 #endif

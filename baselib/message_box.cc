@@ -848,7 +848,8 @@ struct stat fileStat;
       needConnectInit = needUpdate = needDraw = 0;
 
 #ifdef __epics__
-      readEventId = 0;
+      readPvId = NULL;
+      readEventId = NULL;
 #endif
 
       firstReadUpdate = 1;
@@ -947,9 +948,13 @@ int stat;
 #ifdef __epics__
 
     if ( readExists ) {
-      stat = ca_clear_channel( readPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeMessageBoxClass_str23 );
+      if ( readPvId ) {
+        stat = ca_clear_channel( readPvId );
+        if ( stat != ECA_NORMAL ) {
+          printf( activeMessageBoxClass_str23 );
+	}
+	readPvId = NULL;
+      }
     }
 
 #endif

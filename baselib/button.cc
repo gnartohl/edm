@@ -2539,10 +2539,12 @@ char msg[79+1];
 
   if ( nvi ) {
 
-    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, visPvId,
-     bt_visUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-     &visEventId, DBE_VALUE );
-    if ( stat != ECA_NORMAL ) printf( activeButtonClass_str55 );
+    if ( !visEventId ) {
+      stat = ca_add_masked_array_event( DBR_DOUBLE, 1, visPvId,
+       bt_visUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
+       &visEventId, DBE_VALUE );
+      if ( stat != ECA_NORMAL ) printf( activeButtonClass_str55 );
+    }
 
     if ( ( visValue >= minVis ) &&
          ( visValue < maxVis ) )
@@ -2573,10 +2575,12 @@ char msg[79+1];
 
   if ( ncoli ) {
 
-    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, colorPvId,
-     bt_colorUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-     &colorEventId, DBE_VALUE );
-    if ( stat != ECA_NORMAL ) printf( activeButtonClass_str52 );
+    if ( !colorEventId ) {
+      stat = ca_add_masked_array_event( DBR_DOUBLE, 1, colorPvId,
+       bt_colorUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
+       &colorEventId, DBE_VALUE );
+      if ( stat != ECA_NORMAL ) printf( activeButtonClass_str52 );
+    }
 
     invisColor = 0;
 

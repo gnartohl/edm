@@ -1972,6 +1972,7 @@ int stat, opStat;
     }
 
 #ifdef __epics__
+    controlPvId = readPvId = nullPvId = NULL;
     controlEventId = readEventId = alarmEventId = nullEventId = 0;
 #endif
 
@@ -2091,15 +2092,23 @@ int stat;
 #ifdef __epics__
 
   if ( readExists ) {
-    stat = ca_clear_channel( readPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeBarClass_str38 );
+    if ( readPvId ) {
+      stat = ca_clear_channel( readPvId );
+      if ( stat != ECA_NORMAL ) {
+        printf( activeBarClass_str38 );
+      }
+      readPvId = NULL;
+    }
   }
 
   if ( nullExists ) {
-    stat = ca_clear_channel( nullPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeBarClass_str39 );
+    if ( nullPvId ) {
+      stat = ca_clear_channel( nullPvId );
+      if ( stat != ECA_NORMAL ) {
+        printf( activeBarClass_str39 );
+      }
+      nullPvId = NULL;
+    }
   }
 
 #endif
