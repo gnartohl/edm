@@ -102,7 +102,7 @@
 #define XYGC_K_PLOT_SORTED_X_MODE 1
 
 #define XYGC_MAJOR_VERSION 1
-#define XYGC_MINOR_VERSION 3
+#define XYGC_MINOR_VERSION 4
 #define XYGC_RELEASE 0
 
 #ifdef __xygraph_cc
@@ -282,6 +282,7 @@ typedef struct editBufTag {
   char bufGraphTitle[127+1];
   char bufXLabel[127+1];
   char bufYLabel[127+1];
+  char bufY2Label[127+1];
   int bufPlotMode;
   int bufResetMode;
   int bufPlotStyle[XYGC_K_MAX_TRACES];
@@ -545,7 +546,7 @@ int kpCancelMinY1[NUM_Y_AXES], kpCancelMaxY1[NUM_Y_AXES];
 int y1MinX0[NUM_Y_AXES], y1MinX1[NUM_Y_AXES], y1MinY0[NUM_Y_AXES], y1MinY1[NUM_Y_AXES];
 int y1MaxX0[NUM_Y_AXES], y1MaxX1[NUM_Y_AXES], y1MaxY0[NUM_Y_AXES], y1MaxY1[NUM_Y_AXES];
 
-expStringClass graphTitle, xLabel, yLabel;
+expStringClass graphTitle, xLabel, yLabel, y2Label;
 
 int numTraces;
 int plotAreaX, plotAreaY, plotAreaW, plotAreaH;
@@ -923,6 +924,8 @@ void drawTitle ( void );
 void drawXlabel ( void );
 
 void drawYlabel ( void );
+
+void drawY2label ( void );
 
 };
 

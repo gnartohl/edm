@@ -2383,6 +2383,8 @@ int i, yi;
 
   axygo->yLabel.setRaw( axygo->eBuf->bufYLabel );
 
+  axygo->y2Label.setRaw( axygo->eBuf->bufY2Label );
+
   axygo->fgColor = axygo->eBuf->bufFgColor;
 
   axygo->bgColor = axygo->eBuf->bufBgColor;
@@ -2706,6 +2708,7 @@ int i, yi;
   graphTitle.copy( source->graphTitle );
   xLabel.copy( source->xLabel );
   yLabel.copy( source->yLabel );
+  y2Label.copy( source->y2Label );
 
   fgCb = source->fgCb;
   bgCb = source->bgCb;
@@ -3221,6 +3224,12 @@ efDouble dummy;
 
   dummy.write( f );
 
+  // version 1.4.0
+  if ( y2Label.getRaw() )
+    writeStringToFile( f, y2Label.getRaw() );
+  else
+    writeStringToFile( f, "" );
+
   return stat;
 
 }
@@ -3385,6 +3394,11 @@ efDouble dummy;
     stat = dummy.read( f ); actWin->incLine();
   }
 
+  if ( ( ( major == 1 ) && ( minor > 3 ) ) || ( major > 1 ) ) {
+    readStringFromFile( str, 127+1, f ); actWin->incLine();
+    y2Label.setRaw( str );
+  }
+
   for ( i=numTraces; i<XYGC_K_MAX_TRACES; i++ ) {
     sprintf( traceColor, "trace%-d", i );
     plotColor[i] = actWin->ci->colorIndexByAlias( traceColor );
@@ -3497,6 +3511,7 @@ int i, yi;
   strncpy( eBuf->bufGraphTitle, graphTitle.getRaw(), 127 );
   strncpy( eBuf->bufXLabel, xLabel.getRaw(), 127 );
   strncpy( eBuf->bufYLabel, yLabel.getRaw(), 127 );
+  strncpy( eBuf->bufY2Label, y2Label.getRaw(), 127 );
   eBuf->bufFgColor = fgColor;
   eBuf->bufBgColor = bgColor;
   eBuf->bufGridColor = gridColor;
@@ -3539,6 +3554,7 @@ int i, yi;
   ef.addTextField( "Title", 35, eBuf->bufGraphTitle, 127 );
   ef.addTextField( "X Label", 35, eBuf->bufXLabel, 127 );
   ef.addTextField( "Y Label", 35, eBuf->bufYLabel, 127 );
+  ef.addTextField( "Y2 Label", 35, eBuf->bufY2Label, 127 );
   ef.addColorButton( "Foreground", actWin->ci, &fgCb, &eBuf->bufFgColor );
   ef.addColorButton( "Background", actWin->ci, &bgCb, &eBuf->bufBgColor );
   ef.addColorButton( "Grid", actWin->ci, &gridCb, &eBuf->bufGridColor );
@@ -4432,6 +4448,7 @@ int i;
   drawTitle();
   drawXlabel();
   drawYlabel();
+  drawY2label();
 
   actWin->executeGc.setLineWidth(1);
   actWin->executeGc.setLineStyle( LineSolid );
@@ -4952,6 +4969,9 @@ int i, stat, retStat = 1;
   stat = yLabel.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
+  stat = y2Label.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+
   stat = trigPvExpStr.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
@@ -4985,6 +5005,9 @@ int i, stat, retStat = 1;
   stat = yLabel.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
+  stat = y2Label.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+
   stat = trigPvExpStr.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
@@ -5013,6 +5036,9 @@ int i, result;
   if ( result ) return result;
 
   result = yLabel.containsPrimaryMacros();
+  if ( result ) return result;
+
+  result = y2Label.containsPrimaryMacros();
   if ( result ) return result;
 
   result = trigPvExpStr.containsPrimaryMacros();
@@ -5396,7 +5422,7 @@ int i, stat;
 
 void xyGraphClass::updateDimensions ( void ) {
 
-int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, yi;
+int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
 
   fs = actWin->fi->getXFontStruct( fontTag );
   if ( fs ) {
@@ -5493,13 +5519,18 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, yi;
   else
     xlInc = fontHeight + 1;
 
-  if ( blank( yLabel.getExpanded() ) )
+  if ( !y1Axis[0] || blank( yLabel.getExpanded() ) )
     ylInc = 0;
   else
     ylInc = fontHeight + 1;
 
+  if ( !y1Axis[1] || blank( y2Label.getExpanded() ) )
+    y2lInc = 0;
+  else
+    y2lInc = fontHeight + 1;
+
   plotAreaX = ly1 + bInc + ylInc;
-  plotAreaW = w - bInc - bInc - ylInc - ly1 - ly2;
+  plotAreaW = w - bInc - bInc - ylInc - ly1 - ly2 - y2lInc;
   plotAreaY = 0 + bInc + (int) ( 1.5 * tInc );
   plotAreaH = h - bInc - bInc - (int) ( 1.5 * tInc ) -
    (int) ( 1.5 * xlInc ) - (int) ( 1.5 * hx );
@@ -7901,13 +7932,13 @@ unsigned int i;
 int lX, lY, lW, inc, stat;
 char fullName[127+1], label[127+1];
 
-  if ( !blank( yLabel.getExpanded() ) ) {
+  if ( y1Axis[0] && !blank( yLabel.getExpanded() ) ) {
 
     strncpy( label, yLabel.getExpanded(), 127 );
     label[127] = 0;
 
     lX = fontHeight;
-    lY = h - fontHeight * 3 / 2;
+    //lY = h - fontHeight * 3 / 2;
     lW = XTextWidth( fs, label, strlen(label) );
     lY = plotAreaY + ( plotAreaH + lW ) / 2;
 
@@ -7924,6 +7955,43 @@ char fullName[127+1], label[127+1];
 
       inc = XTextWidth( fs, &label[i], 1 );
       lY -= inc;
+
+    }
+
+    actWin->executeGc.restoreFg();
+
+  }
+
+}
+
+void xyGraphClass::drawY2label ( void ) {
+
+unsigned int i;
+int lX, lY, lW, inc, stat;
+char fullName[127+1], label[127+1];
+
+  if ( y1Axis[1] && !blank( y2Label.getExpanded() ) ) {
+
+    strncpy( label, y2Label.getExpanded(), 127 );
+    label[127] = 0;
+
+    lX = w - fontHeight;
+    lW = XTextWidth( fs, label, strlen(label) );
+    lY = plotAreaY + ( plotAreaH - lW ) / 2;
+
+    actWin->executeGc.saveFg();
+    actWin->executeGc.setFG( actWin->ci->pix(fgColor) );
+
+    stat = actWin->fi->getFontName( fontTag, 270.0, fullName, 127 );
+    actWin->executeGc.setNativeFont( fullName, actWin->fi );
+
+    for ( i=0; i<strlen(label); i++ ) {
+
+      XDrawString( actWin->d, pixmap,
+       actWin->executeGc.normGC(), lX, lY, &label[i], 1 );
+
+      inc = XTextWidth( fs, &label[i], 1 );
+      lY += inc;
 
     }
 
