@@ -17,7 +17,6 @@ edmByteClass::edmByteClass() : activeGraphicClass(), init(0),
   theDir(BIGENDIAN),  nobt(16), shft(0), lineWidth(1), lineStyle(LineSolid), 
   theOutline(0)
 {
-
    name = strdup(BYTE_CLASSNAME);
 }
 
@@ -682,8 +681,6 @@ int edmByteClass::drawActive()
       if (valuePvId->is_valid())
       {
          unsigned int severity;
-         lastval = value;
-         value = ((valuePvId->get_int() >> shft) & dmask);
          // logic for non-invalid alarm colors would go here.  
          severity = valuePvId->get_severity();
          switch(severity)
@@ -912,7 +909,11 @@ void edmByteClass::executeDeferred()
     if (is_executing)
     {
        if (!actWin->isIconified)
+       {
+           lastval = value;
+           value = ((valuePvId->get_int() >> shft) & dmask);
            drawActive();
+       }
 
        actWin->appCtx->proc->lock();
        actWin->remDefExeNode(aglPtr);
