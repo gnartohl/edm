@@ -4,6 +4,11 @@ Version 1-10-0g-beta
 Default pvtype under the old generic pv scheme used to be "epics".
 This is now translated to EPICS.
 
+Popup buttons now created with XmNpopupEnabled set to false.
+
+Add wheel mouse support to up/down button (just experimenting for the
+moment).
+
 
 Version 1-10-0e-beta
 --------------------
