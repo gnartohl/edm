@@ -1518,8 +1518,10 @@ int activeLineClass::activate (
       needToDrawUnconnected = 0;
       unconnectedTimer = 0;
 
-      unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
-       2000, unconnectedTimeout, this );
+      if ( !unconnectedTimer ) {
+        unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+         2000, unconnectedTimeout, this );
+      }
 
       aglPtr = ptr;
 
