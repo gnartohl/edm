@@ -633,7 +633,7 @@ int activeRectangleClass::importFromXchFile (
   activeWindowClass *_actWin )
 {
 
-int fgR, fgG, fgB, bgR, bgG, bgB, more;
+int fgR, fgG, fgB, bgR, bgG, bgB, more, index;
 unsigned int pixel;
 char *tk, *gotData, *context, buf[255+1];
 
@@ -825,11 +825,15 @@ char *tk, *gotData, *context, buf[255+1];
   this->initSelectBox(); // call after getting x,y,w,h
 
   actWin->ci->setRGB( fgR, fgG, fgB, &pixel );
-  lineColor.setColorIndex( pixel, actWin->ci );
+  index = -1;
+  index = actWin->ci->pixIndex( pixel );
+  lineColor.setColorIndex( index, actWin->ci );
   lineColor.setAlarmInsensitive();
 
   actWin->ci->setRGB( bgR, bgG, bgB, &pixel );
-  fillColor.setColorIndex( pixel, actWin->ci );
+  index = -1;
+  index = actWin->ci->pixIndex( pixel );
+  fillColor.setColorIndex( index, actWin->ci );
   fillColor.setAlarmSensitive();
 
   return 1;

@@ -2280,6 +2280,14 @@ unsigned int pixel;
 int activeXTextDspClass::genericEdit ( void ) {
 
 char title[32], *ptr;
+int noedit;
+
+  if ( strcmp( this->getCreateParam(), "noedit" ) == 0 ) {
+    noedit = 1;
+  }
+  else {
+    noedit = 0;
+  }
 
   ptr = actWin->obj.getNameFromClass( "activeXTextDspClass" );
   if ( ptr ) {
@@ -2391,18 +2399,45 @@ char title[32], *ptr;
   ef.addTextField( activeXTextDspClass_str21, 35, &bufEfPrecision );
 
   ef.addToggle( activeXTextDspClass_str11, &bufAutoHeight );
-  ef.addToggle( activeXTextDspClass_str27, &bufEditable );
-  ef.addToggle( activeXTextDspClass_str67, &bufUseKp );
+
+  if ( !noedit ) {
+    ef.addToggle( activeXTextDspClass_str27, &bufEditable );
+  }
+  else {
+    bufEditable = editable = 0;
+  }
+
+  if ( !noedit ) {
+    ef.addToggle( activeXTextDspClass_str67, &bufUseKp );
+  }
+  else {
+    bufUseKp = useKp = 0;
+  }
+
   ef.addToggle( activeXTextDspClass_str28, &bufSmartRefresh );
   ef.addToggle( activeXTextDspClass_str29, &bufIsWidget );
-  ef.addToggle( activeXTextDspClass_str68, &bufChangeValOnLoseFocus );
-  ef.addToggle( activeXTextDspClass_str75, &bufAutoSelect );
+
+  if ( !noedit ) {
+    ef.addToggle( activeXTextDspClass_str68, &bufChangeValOnLoseFocus );
+    ef.addToggle( activeXTextDspClass_str75, &bufAutoSelect );
+  }
+  else {
+    bufChangeValOnLoseFocus = changeValOnLoseFocus = 0;
+    bufAutoSelect = autoSelect = 0;
+  }
 
   ef.addToggle( activeXTextDspClass_str69, &bufFastUpdate );
-  ef.addToggle( activeXTextDspClass_str70, &bufIsDate );
-  ef.addToggle( activeXTextDspClass_str71, &bufIsFile );
-  ef.addTextField( activeXTextDspClass_str72, 35, bufDefDir, 127 );
-  ef.addTextField( activeXTextDspClass_str73, 35, bufPattern, 127 );
+
+  if ( !noedit ) {
+    ef.addToggle( activeXTextDspClass_str70, &bufIsDate );
+    ef.addToggle( activeXTextDspClass_str71, &bufIsFile );
+    ef.addTextField( activeXTextDspClass_str72, 35, bufDefDir, 127 );
+    ef.addTextField( activeXTextDspClass_str73, 35, bufPattern, 127 );
+  }
+  else {
+    bufIsDate = isDate = 0;
+    bufIsFile = isFile = 0;
+  }
 
   ef.addColorButton( activeXTextDspClass_str15, actWin->ci, &fgCb,
    &bufFgColor );
