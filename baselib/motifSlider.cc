@@ -34,13 +34,6 @@ static char g_dragTrans[] =
    Shift~Ctrl<Btn2Up>: selectDrag()\n\
    <Btn3Up>: changeParams()";
 
-#if 0
-
-   Ctrl<Btn1Down>: dummy()\n\
-   Ctrl<Btn1Up>: dummy()\n\
-
-#endif
-
 static XtActionsRec g_dragActions[] = {
   { "startDrag", (XtActionProc) drag },
   { "pvInfo", (XtActionProc) pvInfo },
@@ -846,6 +839,8 @@ activeMotifSliderClass::activeMotifSliderClass ( void ) {
   labelH = 0;
   midVertScaleY = 0;
 
+  keySensitive = 0;
+
   frameWidget = NULL;
   scaleWidget = NULL;
   scrollBarWidget = NULL;
@@ -918,6 +913,8 @@ activeGraphicClass *mslo = (activeGraphicClass *) this;
   showValue = source->showValue;
 
   orientation = source->orientation;
+
+  keySensitive = source->keySensitive;
 
   frameWidget = NULL;
   scaleWidget = NULL;
@@ -1932,6 +1929,8 @@ double mult, fvalue;
 
   if ( e->type == EnterNotify ) {
 
+    *continueToDispatch = False;
+
     if ( mslo->controlPvId ) {
       if ( !mslo->controlPvId->have_write_access() ) {
         mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
@@ -1941,15 +1940,18 @@ double mult, fvalue;
         mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
          CURSOR_K_DEFAULT );
         XmProcessTraversal( mslo->scaleWidget, XmTRAVERSE_CURRENT );
+        mslo->keySensitive = 1;
       }
     }
 
   }
   else if ( e->type == LeaveNotify ) {
 
+    *continueToDispatch = False;
+
     mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
      CURSOR_K_DEFAULT );
-    XmProcessTraversal( mslo->actWin->executeWidget, XmTRAVERSE_CURRENT );
+    mslo->keySensitive = 0;
 
   }
   else if ( e->type == ButtonPress ) {
@@ -1967,6 +1969,7 @@ double mult, fvalue;
 
 //========== B4 Press ========================================
 
+#if 0
     case Button4:
 
       XmScaleGetValue( mslo->scaleWidget, &v );
@@ -2013,11 +2016,13 @@ double mult, fvalue;
       mslo->controlAdjusted = 1;
 
       break;
+#endif
 
 //========== B4 Press ========================================
 
 //========== B5 Press ========================================
 
+#if 0
     case Button5:
 
       XmScaleGetValue( mslo->scaleWidget, &v );
@@ -2064,6 +2069,7 @@ double mult, fvalue;
       mslo->controlAdjusted = 1;
 
       break;
+#endif
 
 //========== B5 Press ========================================
 
@@ -2091,6 +2097,15 @@ double mult, fvalue;
     ke = (XKeyEvent *) e;
 
     charCount = XLookupString( ke, keyBuf, keyBufSize, &key, &compose );
+
+    if ( !mslo->keySensitive ) {
+
+      if ( key != XK_Tab ) {
+        *continueToDispatch = False;
+      }
+      return;
+
+    }
 
     if ( ke->state & ControlMask ) {
       mult = 10.0;
@@ -2181,8 +2196,12 @@ XButtonEvent *be;
 activeMotifSliderClass *mslo;
  int stat;
 char title[32], *ptr, strVal[255+1];
+
+#if 0
+// wheel mouse support (btn 4, 5)
 int v;
 double fvalue, mult;
+#endif
 
   *continueToDispatch = True;
 
@@ -2235,12 +2254,15 @@ double fvalue, mult;
 
     be = (XButtonEvent *) e;
 
+#if 0
+// wheel mouse support (btn 4, 5)
     if ( be->state & ControlMask ) {
       mult = 10.0;
     }
     else {
       mult = 1.0;
     }
+#endif
 
     switch ( be->button ) {
 
@@ -2304,6 +2326,7 @@ double fvalue, mult;
 
 //========== B4 Press ========================================
 
+#if 0
     case Button4:
 
       XmScaleGetValue( mslo->scaleWidget, &v );
@@ -2350,11 +2373,13 @@ double fvalue, mult;
       mslo->controlAdjusted = 1;
 
       break;
+#endif
 
 //========== B4 Press ========================================
 
 //========== B5 Press ========================================
 
+#if 0
     case Button5:
 
       XmScaleGetValue( mslo->scaleWidget, &v );
@@ -2401,6 +2426,7 @@ double fvalue, mult;
       mslo->controlAdjusted = 1;
 
       break;
+#endif
 
 //========== B5 Press ========================================
 
@@ -2939,9 +2965,9 @@ Cardinal numChildren;
          XmNscaleMultiple, 1,
          XmNminimum, 0,
          XmNmaximum, 100000,
-         //XmNnavigationType, XmEXCLUSIVE_TAB_GROUP,
-         //XmNtraversalOn, False,
-         XmNhighlightOnEnter, True,
+         XmNnavigationType, XmTAB_GROUP,
+         XmNtraversalOn, True,
+         XmNhighlightOnEnter, False,
          XmNuserData, this,
          XmNforeground, fgColor.getColor(),
          XmNbackground, bgColor.pixelColor(),

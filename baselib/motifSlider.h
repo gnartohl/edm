@@ -378,6 +378,8 @@ int isMapped, buttonPressed, needUnmap;
 
 int doTimerUpdate;
 
+int keySensitive;
+
 public:
 
 activeMotifSliderClass ( void );

@@ -39,6 +39,50 @@ static XtActionsRec g_dragActions[] = {
   { "selectDrag", (XtActionProc) selectDrag }
 };
 
+static void eventHandler (
+  Widget w,
+  XtPointer client,
+  XEvent *e,
+  Boolean *continueToDispatch ) {
+
+activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
+
+  *continueToDispatch = True;
+
+  axtdo = (activeXTextDspClass *) client;
+
+  if ( e->type == EnterNotify ) {
+
+    if ( !axtdo->enabled ) return;
+
+    if ( !axtdo->grabUpdate ) {
+
+      XSetInputFocus( axtdo->actWin->display(),
+       XtWindow(axtdo->tf_widget), RevertToNone, CurrentTime );
+
+    }
+
+    axtdo->grabUpdate = 1;
+
+    *continueToDispatch = False;
+
+  }
+  else if ( e->type == LeaveNotify ) {
+
+    axtdo->grabUpdate = 0;
+
+    axtdo->bufInvalidate();
+    axtdo->actWin->appCtx->proc->lock();
+    axtdo->needUpdate = 1;
+    axtdo->actWin->addDefExeNode( axtdo->aglPtr );
+    axtdo->actWin->appCtx->proc->unlock();
+
+    *continueToDispatch = False;
+
+  }
+
+}
+
 static int stringPut (
   ProcessVariable *id,
   int size,
@@ -513,6 +557,8 @@ static void xtdoGrabUpdate (
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
+  return;
+
   if ( !axtdo->enabled ) return;
 
   if ( !axtdo->grabUpdate ) {
@@ -592,8 +638,6 @@ char *buf;
 
   XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
 
-  axtdo->grabUpdate = 0;
-
 }
 
 static void xtdoTextFieldToStringLF (
@@ -614,8 +658,6 @@ int n;
   XtSetValues( axtdo->tf_widget, args, n );
 
   //XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
-
-  axtdo->grabUpdate = 0;
 
   if ( !axtdo->widget_value_changed ) return;
  
@@ -698,8 +740,6 @@ char *buf, tmp[XTDC_K_MAX+1];
 
   }
 
-  axtdo->grabUpdate = 0;
-
 }
 
 static void xtdoTextFieldToIntLF (
@@ -720,8 +760,6 @@ char tmp[XTDC_K_MAX+1];
   XtSetValues( axtdo->tf_widget, args, n );
 
   //XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
-
-  axtdo->grabUpdate = 0;
 
   if ( !axtdo->widget_value_changed ) return;
 
@@ -848,8 +886,6 @@ char *buf, tmp[XTDC_K_MAX+1];
 
   }
 
-  axtdo->grabUpdate = 0;
-
 }
 
 static void xtdoTextFieldToDoubleLF (
@@ -870,8 +906,6 @@ int n;
   XtSetValues( axtdo->tf_widget, args, n );
 
   //XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
-
-  axtdo->grabUpdate = 0;
 
   if ( !axtdo->widget_value_changed ) return;
 
@@ -4690,6 +4724,9 @@ Atom importList[2];
 	  XmDropSiteUpdate( tf_widget, args, n );
 
 	}
+
+        XtAddEventHandler( tf_widget, EnterWindowMask|LeaveWindowMask, False,
+         eventHandler, (XtPointer) this );
 
         switch ( pvType ) {
 

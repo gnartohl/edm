@@ -58,6 +58,12 @@
 
 #include "x_text_dsp_obj.str"
 
+static void eventHandler (
+  Widget w,
+  XtPointer client,
+  XEvent *e,
+  Boolean *continueToDispatch );
+
 static void dropTransferProc (
   Widget w,
   XtPointer clientData,
@@ -252,6 +258,12 @@ static void xtdoSetValueChanged (
 class activeXTextDspClass : public activeGraphicClass {
 
 private:
+
+friend void eventHandler (
+  Widget w,
+  XtPointer client,
+  XEvent *e,
+  Boolean *continueToDispatch );
 
 friend void dropTransferProc (
   Widget w,

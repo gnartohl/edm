@@ -2729,21 +2729,25 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 
 //========== B4 Press ========================================
 
+#if 0
     case Button4:
 
       slo->doIncrement();
 
       break;
+#endif
 
 //========== B4 Press ========================================
 
 //========== B5 Press ========================================
 
+#if 0
     case Button5:
 
       slo->doDecrement();
 
       break;
+#endif
 
 //========== B5 Press ========================================
 
