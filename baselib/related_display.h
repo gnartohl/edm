@@ -29,7 +29,7 @@
 #define RDC_PARENT_OFS_POS 2
 
 #define RDC_MAJOR_VERSION 2
-#define RDC_MINOR_VERSION 6
+#define RDC_MINOR_VERSION 7
 #define RDC_RELEASE 0
 
 typedef struct objAndIndexTag {
@@ -175,6 +175,7 @@ typedef struct bufTag {
   char bufSource[NUMPVS][39+1];
   int bufOfsX;
   int bufOfsY;
+  int bufButton3Popup;
 } bufType, *bufPtr;
 
 int numDsps, dspIndex;
@@ -182,7 +183,7 @@ int numDsps, dspIndex;
 bufPtr buf;
 
 activeWindowClass *aw;
-int useFocus, needClose;
+int useFocus, needClose, button3Popup;
 
 int topShadowColor;
 int botShadowColor;

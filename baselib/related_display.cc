@@ -187,6 +187,13 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
 
   rdo->useFocus = rdo->buf->bufUseFocus;
 
+  if ( !rdo->useFocus ) {
+    rdo->button3Popup = rdo->buf->bufButton3Popup;
+  }
+  else {
+    rdo->button3Popup = 0;
+  }
+
   rdo->x = rdo->buf->bufX;
   rdo->sboxX = rdo->buf->bufX;
 
@@ -288,6 +295,7 @@ int i;
   ofsY = 0;
   noEdit = 0;
   useFocus = 0;
+  button3Popup = 0;
 
   for ( i=0; i<maxDsps; i++ ) {
     closeAction[i] = 0;
@@ -377,6 +385,7 @@ activeGraphicClass *rdo = (activeGraphicClass *) this;
   ofsY = source->ofsY;
   noEdit = source->noEdit;
   useFocus = source->useFocus;
+  button3Popup = source->button3Popup;
 
   for ( i=0; i<maxDsps; i++ ) {
     closeAction[i] = source->closeAction[i];
@@ -572,6 +581,8 @@ int i, index;
   fprintf( f, "%-d\n", ofsX );
 
   fprintf( f, "%-d\n", ofsY );
+
+  fprintf( f, "%-d\n", button3Popup );
 
   return 1;
 
@@ -900,6 +911,17 @@ char onePvName[activeGraphicClass::MAX_PV_NAME+1];
   else {
     ofsX = 0;
     ofsY = 0;
+  }
+
+  if ( ( major > 2 ) || ( major == 2 ) && ( minor > 6 ) ) {
+    fscanf( f, "%d\n", &button3Popup ); actWin->incLine();
+  }
+  else {
+    button3Popup = 0;
+  }
+
+  if ( useFocus ) {
+    button3Popup = 0;
   }
 
   actWin->fi->loadFontTag( fontTag );
@@ -1271,6 +1293,8 @@ char title[32], *ptr;
     strncpy( buf->bufButtonLabel, "", 127 );
   }
 
+  buf->bufButton3Popup = button3Popup;
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -1282,18 +1306,20 @@ char title[32], *ptr;
   ef.addTextField( relatedDisplayClass_str6, 35, &buf->bufW );
   ef.addTextField( relatedDisplayClass_str7, 35, &buf->bufH );
 
-  ef.addTextField( "Menu Label", 35, buf->bufLabel[0], 127 );
-  ef.addTextField( "File", 35, buf->bufDisplayFileName[0], 127 );
-  ef.addTextField( "Macros", 35, buf->bufSymbols[0], 255 );
-  ef.addOption( "Mode", "Append|Replace", &buf->bufReplaceSymbols[0] );
-  ef.addToggle( "Propagate", &buf->bufPropagateMacros[0] );
-  ef.addOption( "Display Position", relatedDisplayClass_str31,
+  ef.addTextField( relatedDisplayClass_str36, 35, buf->bufLabel[0], 127 );
+  ef.addTextField( relatedDisplayClass_str37, 35, buf->bufDisplayFileName[0],
+   127 );
+  ef.addTextField( relatedDisplayClass_str26, 35, buf->bufSymbols[0], 255 );
+  ef.addOption( relatedDisplayClass_str23, relatedDisplayClass_str24,
+   &buf->bufReplaceSymbols[0] );
+  ef.addToggle( relatedDisplayClass_str25, &buf->bufPropagateMacros[0] );
+  ef.addOption( relatedDisplayClass_str30, relatedDisplayClass_str31,
    &buf->bufSetPostion[0] );
   ef.addTextField( relatedDisplayClass_str32, 35, &buf->bufOfsX );
   ef.addTextField( relatedDisplayClass_str33, 35, &buf->bufOfsY );
-  ef.addToggle( "Close Current", &buf->bufCloseAction[0] );
-  ef.addToggle( "Dups Allowed", &buf->bufAllowDups[0] );
-  ef.addToggle( "Cascade", &buf->bufCascade[0] );
+  ef.addToggle( relatedDisplayClass_str20, &buf->bufCloseAction[0] );
+  ef.addToggle( relatedDisplayClass_str21, &buf->bufAllowDups[0] );
+  ef.addToggle( relatedDisplayClass_str22, &buf->bufCascade[0] );
 
   ef.addEmbeddedEf( relatedDisplayClass_str14, "...", &ef1 );
 
@@ -1306,28 +1332,29 @@ char title[32], *ptr;
   for ( i=1; i<maxDsps; i++ ) {
 
     ef1->beginSubForm();
-    ef1->addTextField( "Label", 35, buf->bufLabel[i], 127 );
-    ef1->addLabel( "  File" );
+    ef1->addTextField( relatedDisplayClass_str38, 35, buf->bufLabel[i], 127 );
+    ef1->addLabel( relatedDisplayClass_str39 );
     ef1->addTextField( "", 35, buf->bufDisplayFileName[i], 127 );
-    ef1->addLabel( "  Macros" );
+    ef1->addLabel( relatedDisplayClass_str40 );
     ef1->addTextField( "", 35, buf->bufSymbols[i], 255 );
     ef1->endSubForm();
 
     ef1->beginLeftSubForm();
-    ef1->addLabel( "  Mode" );
-    ef1->addOption( "", "Append|Replace", &buf->bufReplaceSymbols[i] );
+    ef1->addLabel( relatedDisplayClass_str41 );
+    ef1->addOption( "", relatedDisplayClass_str24,
+     &buf->bufReplaceSymbols[i] );
     ef1->addLabel( " " );
     ef1->addToggle( " ", &buf->bufPropagateMacros[i] );
-    ef1->addLabel( "Propagate  " );
+    ef1->addLabel( relatedDisplayClass_str42 );
     ef1->addLabel( relatedDisplayClass_str30 );
     ef1->addOption( " ", relatedDisplayClass_str31, &buf->bufSetPostion[i] );
     ef1->addLabel( " " );
     ef1->addToggle( " ", &buf->bufCloseAction[i] );
-    ef1->addLabel( "Close Current  " );
+    ef1->addLabel( relatedDisplayClass_str35 );
     ef1->addToggle( " ", &buf->bufAllowDups[i] );
-    ef1->addLabel( "Dups Allowed  " );
+    ef1->addLabel( relatedDisplayClass_str43 );
     ef1->addToggle( " ", &buf->bufCascade[i] );
-    ef1->addLabel( "Cascade" );
+    ef1->addLabel( relatedDisplayClass_str22 );
     ef1->endSubForm();
 
   }
@@ -1340,6 +1367,7 @@ char title[32], *ptr;
   ef.addToggle( relatedDisplayClass_str17, &buf->bufUseFocus );
   ef.addToggle( relatedDisplayClass_str19, &buf->bufInvisible );
   ef.addToggle( relatedDisplayClass_str29, &buf->bufNoEdit );
+  ef.addToggle( relatedDisplayClass_str34, &buf->bufButton3Popup );
 
   for ( i=0; i<NUMPVS; i++ ) {
     ef.addTextField( relatedDisplayClass_str15, 35, buf->bufDestPvName[i],
@@ -1852,7 +1880,9 @@ char *newValues[100];
 int numNewMacros, max, numFound;
 
   focus = useFocus;
-  if ( numDsps > 1 ) focus = 0;
+  if ( numDsps > 1 ) {
+    focus = 0;
+  }
 
   // do special substitutions
   actWin->substituteSpecial( 255, symbolsExpStr[index].getExpanded(),
@@ -2048,7 +2078,7 @@ int numNewMacros, max, numFound;
     cur = actWin->appCtx->head->flink;
     while ( cur != actWin->appCtx->head ) {
       if ( ( strcmp( name, cur->node.displayName ) == 0 ) &&
-           ( crc == cur->node.crc ) ) {
+           ( crc == cur->node.crc ) && !cur->node.isEmbedded ) {
         // deiconify
         XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
         // raise
@@ -2068,7 +2098,7 @@ int numNewMacros, max, numFound;
   cur = new activeWindowListType;
   actWin->appCtx->addActiveWindow( cur );
 
-  if ( focus ) {
+  if ( focus || button3Popup ) {
     cur->node.createAutoPopup( actWin->appCtx, NULL, 0, 0, 0, 0,
      numNewMacros, newMacros, newValues );
   }
@@ -2100,21 +2130,21 @@ int numNewMacros, max, numFound;
   if ( setPostion[index] == RDC_BUTTON_POS ) {
     if ( cascade[index] ) {
       actWin->appCtx->openActivateCascadeActiveWindow( &cur->node,
-       actWin->x+x+ofsX, actWin->y+y+ofsY );
+       actWin->xPos()+x+ofsX, actWin->yPos()+y+ofsY );
     }
     else {
       actWin->appCtx->openActivateActiveWindow( &cur->node,
-       actWin->x+x+ofsX, actWin->y+y+ofsY );
+       actWin->xPos()+x+ofsX, actWin->yPos()+y+ofsY );
     }
   }
   else if ( setPostion[index] == RDC_PARENT_OFS_POS ) {
     if ( cascade[index] ) {
       actWin->appCtx->openActivateCascadeActiveWindow( &cur->node,
-       actWin->x+ofsX, actWin->y+ofsY );
+       actWin->xPos()+ofsX, actWin->yPos()+ofsY );
     }
     else {
       actWin->appCtx->openActivateActiveWindow( &cur->node,
-       actWin->x+ofsX, actWin->y+ofsY );
+       actWin->xPos()+ofsX, actWin->yPos()+ofsY );
     }
   }
   else {
@@ -2126,13 +2156,16 @@ int numNewMacros, max, numFound;
     }
   }
 
-  if ( focus ) {
+  if ( focus || button3Popup ) {
     aw = &cur->node;
+  }
+  else {
+    aw = NULL;
   }
 
 done:
 
-  if ( !focus && closeAction[index] ) {
+  if ( !focus && !button3Popup && closeAction[index] ) {
     actWin->closeDeferred( 2 );
   }
 
@@ -2150,13 +2183,22 @@ XButtonEvent be;
 
   *action = 0;
 
+  if ( numDsps == 1 ) {
+    if ( button3Popup ) {
+      needClose = 1;
+      actWin->addDefExeNode( aglPtr );
+      return;
+    }
+  }
+
   if ( numDsps < 2 ) return;
 
   posX = _x;
   posY = _y;
 
-  be.x_root = actWin->x+_x;
-  be.y_root = actWin->y+_y;
+  memset( (void *) &be, 0, sizeof(XButtonEvent) );
+  be.x_root = actWin->xPos()+_x;
+  be.y_root = actWin->yPos()+_y;
   XmMenuPosition( popUpMenu, &be );
   XtManageChild( popUpMenu );
 
@@ -2179,7 +2221,10 @@ int focus;
     if ( buttonNumber != -1 ) return;
   }
   else {
-    if ( buttonNumber != 1 ) return;
+    if ( ( buttonNumber != 1 ) && ( buttonNumber != 3 ) ) return;
+    if ( ( buttonNumber == 3 ) && !button3Popup ) return;
+    if ( ( buttonNumber == 1 ) && button3Popup ) return;
+    if ( button3Popup && aw ) return;
   }
 
   if ( numDsps < 1 ) return;
