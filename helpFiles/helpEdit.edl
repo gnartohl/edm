@@ -1,6 +1,6 @@
 3 0 1
-207
-68
+211
+92
 805
 648
 helvetica-medium-r-12.0
@@ -670,7 +670,7 @@ EOD
 activeXTextClass
 2 0 0
 254
-275
+342
 65
 14
 14
@@ -683,7 +683,7 @@ activeXTextClass
 0
 <<<empty>>>
 <<<empty>>>
-3) Click OK
+4) Click OK
 helvetica-medium-r-12.0
 0
 1
@@ -691,12 +691,12 @@ helvetica-medium-r-12.0
 EOD
 activeLineClass
 2 0 0
-325
-290
-300
-300
+323
+349
+302
+241
 2
-325 290
+323 349
 625 590
 14
 0
@@ -885,6 +885,28 @@ activeXTextClass
 <<<empty>>>
 Edit multiple objects
 helvetica-bold-r-14.0
+0
+1
+<<<empty>>>
+EOD
+activeXTextClass
+2 0 0
+254
+258
+95
+14
+14
+0
+1
+5
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+3) Edit properties
+helvetica-medium-r-12.0
 0
 1
 <<<empty>>>
