@@ -2050,7 +2050,8 @@ void relatedDisplayClass::popupDisplay (
 {
 
 activeWindowListPtr cur;
-int i, l, stat;
+Arg args[10];
+int i, l, stat, newX, newY, n;
 char name[127+1], symbolsWithSubs[255+1];
 pvValType destV;
 unsigned int crc;
@@ -2259,17 +2260,36 @@ int numNewMacros, max, numFound;
     while ( cur != actWin->appCtx->head ) {
       if ( ( strcmp( name, cur->node.displayName ) == 0 ) &&
            ( crc == cur->node.crc ) && !cur->node.isEmbedded ) {
+        // display is already open; don't open another instance
+	// move (maybe)
+        if ( setPostion[index] == RDC_BUTTON_POS ) {
+          newX = actWin->xPos()+posX+ofsX;
+	  newY = actWin->yPos()+posY+ofsY;
+          n = 0;
+          XtSetArg( args[n], XmNx, (XtArgVal) newX ); n++;
+          XtSetArg( args[n], XmNy, (XtArgVal) newY ); n++;
+          XtSetValues( cur->node.drawWidget, args, n );
+        }
+        else if ( setPostion[index] == RDC_PARENT_OFS_POS ) {
+          newX = actWin->xPos()+ofsX;
+	  newY = actWin->yPos()+ofsY;
+          n = 0;
+          XtSetArg( args[n], XmNx, (XtArgVal) newX ); n++;
+          XtSetArg( args[n], XmNy, (XtArgVal) newY ); n++;
+          XtSetValues( cur->node.drawWidget, args, n );
+        }
         // deiconify
         XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
         // raise
         XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+	// cleanup
         if ( !useSmallArrays ) {
           for ( i=0; i<numNewMacros; i++ ) {
             delete newMacros[i];
             delete newValues[i];
           }
         }
-        goto done; // display is already open; don't open another instance
+        goto done;
       }
       cur = cur->flink;
     }
