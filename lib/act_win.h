@@ -1388,6 +1388,16 @@ int xPos ( void );
 
 int yPos ( void );
 
+void move (
+  int newX,
+  int newY
+);
+
+void getDrawWinPos (
+  int *curX,
+  int *curY
+);
+
 int sameAncestorName (
   char *name
 );

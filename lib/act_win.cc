@@ -15197,6 +15197,7 @@ char callbackName[63+1];
 
   highlightedObject = NULL;
 
+#if 0
 #ifdef ADD_SCROLLED_WIN
 
   if ( appCtx->useScrollBars ) {
@@ -15245,6 +15246,7 @@ char callbackName[63+1];
 
   }
 
+#endif
 #endif
 
   cursor.set( XtWindow(drawWidget), CURSOR_K_CROSSHAIR );
@@ -18631,6 +18633,48 @@ int activeWindowClass::yPos ( void ) {
   }
   else {
     return y;
+  }
+
+}
+
+void activeWindowClass::move (
+  int newX,
+  int newY
+) {
+
+int n;
+Arg args[10];
+
+  n = 0;
+  XtSetArg( args[n], XmNx, (XtArgVal) newX ); n++;
+  XtSetArg( args[n], XmNy, (XtArgVal) newY ); n++;
+
+  if ( scroll ) {
+    XtSetValues( scroll, args, n );
+  }
+  else {
+    XtSetValues( drawWidget, args, n );
+  }
+
+}
+
+void activeWindowClass::getDrawWinPos (
+  int *curX,
+  int *curY
+) {
+
+  if ( scroll ) {
+    short drawWinX, drawWinY;
+    XtVaGetValues( drawWidget,
+     XmNx, &drawWinX,
+     XmNy, &drawWinY,
+     NULL );
+    *curX = (int) drawWinX;
+    *curY = (int) drawWinY;
+  }
+  else {
+    *curX = 0;
+    *curY = 0;
   }
 
 }

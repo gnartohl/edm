@@ -2468,8 +2468,7 @@ void relatedDisplayClass::popupDisplay (
 {
 
 activeWindowListPtr cur;
-Arg args[10];
-int i, l, stat, newX, newY, n;
+int i, l, stat, newX, newY;
 char name[127+1], symbolsWithSubs[255+1];
 pvValType destV;
 unsigned int crc;
@@ -2761,18 +2760,12 @@ char prefix[127+1];
         if ( setPostion[index] == RDC_BUTTON_POS ) {
           newX = actWin->xPos()+posX+ofsX;
 	  newY = actWin->yPos()+posY+ofsY;
-          n = 0;
-          XtSetArg( args[n], XmNx, (XtArgVal) newX ); n++;
-          XtSetArg( args[n], XmNy, (XtArgVal) newY ); n++;
-          XtSetValues( cur->node.drawWidget, args, n );
+          cur->node.move( newX, newY );
         }
         else if ( setPostion[index] == RDC_PARENT_OFS_POS ) {
           newX = actWin->xPos()+ofsX;
 	  newY = actWin->yPos()+ofsY;
-          n = 0;
-          XtSetArg( args[n], XmNx, (XtArgVal) newX ); n++;
-          XtSetArg( args[n], XmNy, (XtArgVal) newY ); n++;
-          XtSetValues( cur->node.drawWidget, args, n );
+          cur->node.move( newX, newY );
         }
         // deiconify
         XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
@@ -2862,6 +2855,8 @@ void relatedDisplayClass::btnUp (
   int *action )
 {
 
+int drawWinX, drawWinY;
+
   *action = 0;
 
   if ( !enabled ) return;
@@ -2877,6 +2872,11 @@ void relatedDisplayClass::btnUp (
   if ( numDsps < 2 ) return;
 
   if ( buttonNumber != 1 ) return;
+
+  actWin->getDrawWinPos( &drawWinX, &drawWinY );
+
+  _x += (int) drawWinX;
+  _y += (int) drawWinY;
 
   posX = x + _x - be->x;
   posY = y + _y - be->y;
@@ -2895,7 +2895,7 @@ void relatedDisplayClass::btnDown (
   int *action )
 {
 
-int focus;
+int focus, drawWinX, drawWinY;
 
   *action = 0; // close screen via actWin->closeDeferred
 
@@ -2915,6 +2915,11 @@ int focus;
   }
 
   if ( numDsps < 1 ) return;
+
+  actWin->getDrawWinPos( &drawWinX, &drawWinY );
+
+  _x += (int) drawWinX;
+  _y += (int) drawWinY;
 
   if ( numDsps == 1 ) {
     posX = x + _x - be->x;
