@@ -1,1146 +1,841 @@
-3 1 0
-397
-369
-454
-424
-helvetica-medium-r-18.0
-0
-helvetica-medium-r-12.0
-0
-rgb
-0,0,0
-rgb
-51400,51400,51400
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-0,0,65535
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-rgb
-56026,56026,56026
-Objects
-0
-0
-10
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-166
-28
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpMeter
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Meter
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-166
-61
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpBar
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Bar
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-166
-94
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpMessageBox
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Message Box
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-319
-28
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpText
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Text
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-319
-61
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpSlider
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Slider
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-319
-94
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpButton
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Button
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-319
-126
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpMenuButton
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Menu Button
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-319
-256
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpMessageButton
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Message Button
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-319
-224
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpUpDownButton
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Up-Down Button
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-319
-353
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpRelatedDisplay
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Related Display
-1
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-34
-4
-73
-16
-rgb
-0,0,0
-0
-1
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Graphics
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-191
-4
-70
-16
-rgb
-0,0,0
-0
-1
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Monitors
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-344
-4
-66
-16
-rgb
-0,0,0
-0
-1
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Controls
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeExitButtonClass
-2 1 0
-196
-384
-59
-24
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-1
-0
-helvetica-medium-r-12.0
-Close
-0
-0
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-11
-28
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpLines
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Lines
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-11
-61
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpRectangle
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Rectangle
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-11
-94
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpCircle
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Circle
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-11
-127
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpArc
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Arc
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-11
-159
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpStaticText
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Static Text
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-11
-192
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpGif
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Gif Image
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-11
-225
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpPng
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Png Image
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-11
-257
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpDynamicSymbol
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Dynamic Symbol
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-165
-127
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpByte
-Byte
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Byte
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-319
-321
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpShellCmd
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Shell Command
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-319
-159
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpChoiceButton
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Choice Button
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-319
-191
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpRadioBox
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Radio Box
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-166
-160
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpXYGraph
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-X-Y Graph
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-165
-193
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpSymbol
-Byte
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Symbol
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-319
-384
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpMenuMux
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Menu Mux
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-319
-289
-118
-25
-rgb
-0,0,0
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-23130,23130,23130
-$(help)helpExitButton
-<<<empty>>>
-helvetica-medium-r-14.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Exit Button
-1
-<<<E~O~D>>>
+4 0 0
+beginScreenProperties
+major 4
+minor 0
+release 0
+x 92
+y 326
+w 454
+h 424
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 51400 51400 51400
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 65535
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+title "Objects"
+endScreenProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 166
+y 28
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Meter"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpMeter"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 166
+y 61
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Bar"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpBar"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 166
+y 94
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Message Box"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpMessageBox"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 319
+y 28
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Text"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpText"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 319
+y 61
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Slider"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpSlider"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 319
+y 94
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Button"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpButton"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 319
+y 126
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Menu Button"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpMenuButton"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 319
+y 256
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Message Button"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpMessageButton"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 319
+y 224
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Up-Down Button"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpUpDownButton"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 319
+y 353
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Related Display"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpRelatedDisplay"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 34
+y 4
+w 73
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Graphics"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 191
+y 4
+w 70
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Monitors"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 344
+y 4
+w 66
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Controls"
+}
+autoSize
+endObjectProperties
+
+# (Exit Button)
+object activeExitButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 196
+y 384
+w 59
+h 24
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+label "Close"
+font "helvetica-medium-r-12.0"
+3d
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 11
+y 28
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Lines"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpLines"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 11
+y 61
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Rectangle"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpRectangle"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 11
+y 94
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Circle"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpCircle"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 11
+y 127
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Arc"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpArc"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 11
+y 159
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Static Text"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpStaticText"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 11
+y 192
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Gif Image"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpGif"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 11
+y 225
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Png Image"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpPng"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 11
+y 257
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Dynamic Symbol"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpDynamicSymbol"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 165
+y 127
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Byte"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpByte"
+}
+menuLabel {
+  0 "Byte"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 319
+y 321
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Shell Command"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpShellCmd"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 319
+y 159
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Choice Button"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpChoiceButton"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 319
+y 191
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Radio Box"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpRadioBox"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 166
+y 160
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "X-Y Graph"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpXYGraph"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 165
+y 193
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Table"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpTable"
+}
+menuLabel {
+  0 "Byte"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 319
+y 384
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Menu Mux"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpMenuMux"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 319
+y 289
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Exit Button"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpExitButton"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 165
+y 224
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Symbol"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpSymbol"
+}
+menuLabel {
+  0 "Byte"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+

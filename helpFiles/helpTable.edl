@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 0
-x 70
-y 120
+x 78
+y 160
 w 1123
 h 715
 font "helvetica-medium-r-18.0"
@@ -292,14 +292,14 @@ minor 0
 release 0
 x 573
 y 656
-w 111
+w 117
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
-  "Odd Col Bg Color"
+  "Odd Row Bg Color"
 }
 autoSize
 endObjectProperties
@@ -312,14 +312,14 @@ minor 0
 release 0
 x 573
 y 679
-w 117
+w 123
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
-  "Even Col Bg Color"
+  "Even Row Bg Color"
 }
 autoSize
 endObjectProperties
