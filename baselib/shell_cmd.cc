@@ -454,6 +454,7 @@ shellCmdClass::shellCmdClass ( void ) {
   lock = 0;
   numCmds = 0;
   cmdIndex = 0;
+  buf = NULL;
 
 }
 
@@ -461,6 +462,10 @@ shellCmdClass::~shellCmdClass ( void ) {
 
   if ( name ) delete name;
   if ( fontList ) XmFontListFree( fontList );
+  if ( buf ) {
+    delete buf;
+    buf = NULL;
+  }
 
 }
 
@@ -519,6 +524,8 @@ int i;
   timerActive = 0;
 
   activeMode = 0;
+
+  buf = NULL;
 
 }
 
