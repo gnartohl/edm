@@ -7,5 +7,6 @@
 #define activeGraphicClass_str4 (char *) "Cannot find default window font: [%s]\n"
 #define activeGraphicClass_str5 (char *) "  Using default site font: [%s]\n"
 #define activeGraphicClass_str6 (char *) "Cannot find default site font: [%s]\n"
+#define activeGraphicClass_str7 (char *) " object version is incompatable - line "
 
 #endif

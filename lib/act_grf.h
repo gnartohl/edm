@@ -1037,6 +1037,8 @@ void setCreateParam (
 
 char *getCreateParam ( void );
 
+void activeGraphicClass::postIncompatable ( void );
+
 };
 
 #endif

@@ -12850,7 +12850,8 @@ Arg args[5];
 
   this->setUnchanged();
 
-  this->loadWin( f );
+  stat = this->loadWin( f );
+  if ( !( stat & 1 ) ) return stat; // memory leak here
 
   stat = readUntilEndOfData( f ); // for forward compatibility
   if ( !( stat & 1 ) ) return stat; // memory leak here
@@ -12998,7 +12999,8 @@ Arg args[5];
 
   this->setUnchanged();
 
-  this->loadWin( f, x, y );
+  stat = this->loadWin( f, x, y );
+  if ( !( stat & 1 ) ) return stat; // memory leak here
 
   stat = readUntilEndOfData( f ); // for forward compatibility
   if ( !( stat & 1 ) ) return stat; // memory leak here
@@ -13142,7 +13144,8 @@ char msg[79+1];
 
   this->setUnchanged();
 
-  this->loadWin( f );
+  stat = this->loadWin( f );
+  if ( !( stat & 1 ) ) return stat; // memory leak here
 
   stat = readUntilEndOfData( f ); // for forward compatibility
   if ( !( stat & 1 ) ) return stat; // memory leak here
@@ -13257,7 +13260,8 @@ char msg[79+1];
 
   this->setUnchanged();
 
-  this->loadWin( f, x, y );
+  stat = this->loadWin( f, x, y );
+  if ( !( stat & 1 ) ) return stat; // memory leak here
 
   stat = readUntilEndOfData( f ); // for forward compatibility
   if ( !( stat & 1 ) ) return stat; // memory leak here
@@ -14488,6 +14492,11 @@ unsigned int pixel;
 
   readCommentsAndVersion( f );
 
+  if ( major > AWC_MAJOR_VERSION ) {
+    appCtx->postMessage( activeWindowClass_str191 );
+    return 0;
+  }
+
   fscanf( f, "%d\n", &x ); incLine();
   fscanf( f, "%d\n", &y ); incLine();
   fscanf( f, "%d\n", &w ); incLine();
@@ -14836,6 +14845,11 @@ Arg args[5];
 unsigned int pixel;
 
   readCommentsAndVersion( f );
+
+  if ( major > AWC_MAJOR_VERSION ) {
+    appCtx->postMessage( activeWindowClass_str191 );
+    return 0;
+  }
 
   fscanf( f, "%d\n", &discard ); incLine(); // discard x
   fscanf( f, "%d\n", &discard ); incLine(); // discard y
@@ -15383,6 +15397,11 @@ char s[127+1];
 
   // discardCommentsAndVersion( f, _major, _minor, _release );
   readCommentsAndVersion( f );
+
+  if ( major > AWC_MAJOR_VERSION ) {
+    appCtx->postMessage( activeWindowClass_str191 );
+    return 0;
+  }
 
   *_major = major;
   *_minor = minor;

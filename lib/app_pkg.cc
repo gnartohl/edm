@@ -4396,12 +4396,14 @@ char msg[127+1];
             cur->requestActivate = 0;
             if ( requestFlag > 0 ) requestFlag--;
           }
+          if ( requestFlag == 0 ) requestFlag = 1; // because req Del = 1
         }
         else {
           if ( requestFlag > 0 ) requestFlag--;
           if ( cur->requestActivate == 1 ) cur->node.setNoRefresh();
           if ( cur->requestReactivate == 1 ) cur->node.setNoRefresh();
         }
+
       }
       cur = cur->flink;
     }

@@ -3433,3 +3433,23 @@ char *activeGraphicClass::getCreateParam ( void ) {
 
 }
 
+void activeGraphicClass::postIncompatable ( void ) {
+
+char msg[255+1];
+char line[31+1];
+
+  strncpy( msg, actWin->obj.getNameFromClass( objName() ), 255 );
+  msg[255] = 0;
+
+  strncat( msg, activeGraphicClass_str7, 255 );
+  msg[255] = 0;
+
+  sprintf( line, "%-d", actWin->line() );
+
+  strncat( msg, line, 255 );
+  msg[255] = 0;
+
+  actWin->appCtx->postMessage( msg );
+
+
+}
