@@ -672,7 +672,7 @@ void edmTextupdateClass::redraw_text(Display *dis,
         clip.height = h;
         gcc.addNormXClipRectangle(clip);
         gcc.setFontTag(fontTag, actWin->fi);
-        int txt_width = XTextWidth(fs, text, len);
+        int txt_width = (fs)?XTextWidth(fs, text, len):10;
         int tx;
         switch (alignment)
         {

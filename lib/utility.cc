@@ -1533,7 +1533,7 @@ int i, start, l, strL, stringWidth, maxWidth, maxHeight, charHeight;
 
       if ( l ) {
 
-        if ( fs ) {
+        if ( fs && *fs ) {
           stringWidth = XTextWidth( *fs, &str[start], l );
           charHeight = (*fs)->ascent + (*fs)->descent;
 	}
@@ -1564,7 +1564,7 @@ int i, start, l, strL, stringWidth, maxWidth, maxHeight, charHeight;
 
   if ( l ) {
 
-    if ( fs ) {
+    if ( fs && *fs ) {
       stringWidth = XTextWidth( *fs, &str[start], l );
       charHeight = (*fs)->ascent + (*fs)->descent;
     }
@@ -1608,7 +1608,7 @@ int charHeight, i, start, l, strL, stringWidth, stringX;
 
       if ( l ) {
 
-        if ( fs ) {
+        if ( fs && *fs ) {
           stringWidth = XTextWidth( *fs, &str[start], l );
           charHeight = (*fs)->ascent + (*fs)->descent;
 	}
@@ -1646,7 +1646,7 @@ int charHeight, i, start, l, strL, stringWidth, stringX;
 
   if ( l ) {
 
-    if ( fs ) {
+    if ( fs && *fs ) {
       stringWidth = XTextWidth( *fs, &str[start], l );
       charHeight = (*fs)->ascent + (*fs)->descent;
     }
@@ -1692,7 +1692,7 @@ int charHeight, i, start, l, strL, stringWidth, stringX;
 
       if ( l ) {
 
-        if ( fs ) {
+        if ( fs && *fs ) {
           stringWidth = XTextWidth( *fs, &str[start], l );
           charHeight = (*fs)->ascent + (*fs)->descent;
 	}
@@ -1730,7 +1730,7 @@ int charHeight, i, start, l, strL, stringWidth, stringX;
 
   if ( l ) {
 
-    if ( fs ) {
+    if ( fs && *fs ) {
       stringWidth = XTextWidth( *fs, &str[start], l );
       charHeight = (*fs)->ascent + (*fs)->descent;
     }
@@ -2416,7 +2416,7 @@ int l;
   else
     l = 0;
 
-  if ( *fs ) {
+  if ( fs && *fs ) {
 
     *ascent = (*fs)->ascent;
     *descent = (*fs)->descent;
