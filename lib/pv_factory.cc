@@ -14,6 +14,7 @@
 static PV_Factory *epics_pv_factory = new EPICS_PV_Factory();
 static PV_Factory *calc_pv_factory  = new CALC_PV_Factory();
 
+//extern "C" static void remove_pv_factories()
 static void remove_pv_factories()
 {
     if (calc_pv_factory)

@@ -65,34 +65,34 @@ FILE *f;
       return;
     }
 
-    names = new (char *)[num+2]; /* add one more for symbols and
+    names = new char *[num+2]; /* add one more for symbols and
                                     one more for dynSymbols */
     if ( !names ) {
       printf( objBindingClass_str3 );
       exit(-1);
     }
 
-    classNames = new (char *)[num+2]; /* add one more for symbols and
+    classNames = new char *[num+2]; /* add one more for symbols and
                                          one more for dynSymbols */
     if ( !classNames ) {
       printf( objBindingClass_str3 );
       exit(-1);
     }
 
-    types = new (char *)[num+2]; /* add one more for symbols and
+    types = new char *[num+2]; /* add one more for symbols and
                                          one more for dynSymbols */
     if ( !types ) {
       printf( objBindingClass_str3 );
       exit(-1);
     }
 
-    dllHandle = new (void *)[num];
+    dllHandle = new void *[num];
     if ( !dllHandle ) {
       printf( objBindingClass_str3 );
       exit(-1);
     }
 
-    dllName = new (char *)[num];
+    dllName = new char *[num];
     if ( !dllName ) {
       printf( objBindingClass_str3 );
       exit(-1);

@@ -355,13 +355,13 @@ libRecPtr head, tail, cur, prev, next;
         tail = cur;
         tail->flink = NULL;
 
-        cur->className = new (char)[strlen(classNamePtr)+1];
+        cur->className = new char[strlen(classNamePtr)+1];
         strcpy( cur->className, classNamePtr );
-        cur->fileName = new (char)[strlen(libFile)+1];
+        cur->fileName = new char[strlen(libFile)+1];
         strcpy( cur->fileName, libFile );
-        cur->typeName = new (char)[strlen(typeNamePtr)+1];
+        cur->typeName = new char[strlen(typeNamePtr)+1];
         strcpy( cur->typeName, typeNamePtr );
-        cur->text = new (char)[strlen(textPtr)+1];
+        cur->text = new char[strlen(textPtr)+1];
         strcpy( cur->text, textPtr );
 
         numComponents++;
@@ -786,11 +786,11 @@ libRecPtr head, tail, cur, prev, next;
         tail = cur;
         tail->flink = NULL;
 
-        cur->className = new (char)[strlen(classNamePtr)+1];
+        cur->className = new char[strlen(classNamePtr)+1];
         strcpy( cur->className, classNamePtr );
-        cur->fileName = new (char)[strlen(libFile)+1];
+        cur->fileName = new char[strlen(libFile)+1];
         strcpy( cur->fileName, libFile );
-        cur->text = new (char)[strlen(textPtr)+1];
+        cur->text = new char[strlen(textPtr)+1];
         strcpy( cur->text, textPtr );
 
         numComponents++;
@@ -1930,7 +1930,7 @@ char *envPtr, *gotIt, buf[1270+1], save[127+1], path[127+1], *tk;
        strncat( path, "/", 127 );
 
       numPaths = 1;
-      dataFilePrefix = new (char *)[1];
+      dataFilePrefix = new char *[1];
       dataFilePrefix[0] = new char[strlen(path)+1];
       strcpy( dataFilePrefix[0], path );
 
@@ -1938,7 +1938,7 @@ char *envPtr, *gotIt, buf[1270+1], save[127+1], path[127+1], *tk;
 
     }
 
-    dataFilePrefix = new (char *)[numPaths];
+    dataFilePrefix = new char *[numPaths];
 
     strncpy( buf, envPtr, 1270 );
     tk = strtok( buf, ":" );
@@ -1982,7 +1982,7 @@ char *envPtr, *gotIt, buf[1270+1], save[127+1], path[127+1], *tk;
 
     numPaths = 1;
 
-    dataFilePrefix = new (char *)[1];
+    dataFilePrefix = new char *[1];
     dataFilePrefix[0] = new char[strlen(path)+1];
     strcpy( dataFilePrefix[0], path );
 
@@ -2254,7 +2254,7 @@ done:
     return;
   }
 
-  schemeSetList = new (char *)[numSchemeSets];
+  schemeSetList = new char *[numSchemeSets];
   i = 0;
   while ( curSet ) {
 
@@ -3522,8 +3522,8 @@ fileListPtr curFile;
   }
 
   if ( numMacros > 0 ) {
-    macros = new (char *)[numMacros];
-    expansions = new (char *)[numMacros];
+    macros = new char *[numMacros];
+    expansions = new char *[numMacros];
     i = 0;
     curMacro = macroHead->flink;
     while ( curMacro != macroHead ) {

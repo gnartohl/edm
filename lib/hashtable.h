@@ -82,7 +82,7 @@ inline Hashtable<T,o,N>::iterator::iterator(Hashtable *_hash, size_t _n,
 }
 
 template <class T, size_t o, size_t N>
-inline Hashtable<T,o,N>::iterator::iterator &
+inline Hashtable<T,o,N>::iterator &
 Hashtable<T,o,N>::iterator::operator ++ ()
 {
     ++pos;

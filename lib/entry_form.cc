@@ -2776,13 +2776,14 @@ void OptionToIntArray (
 
 widgetListPtr curpb;
 efArrayCallbackDscPtr dsc;
-int i, *destArray, value;
+int i, *destArray;
+long value;
 
   curpb = (widgetListPtr) client;
   dsc = &curpb->arrayDsc;
   destArray = (int *) dsc->destPtr;
   i = *(dsc->indexPtr);
-  value = (int) dsc->valuePtr;
+  value = (long) dsc->valuePtr;
 
 //   printf( "In OptionToIntArray\n" );
 //   printf ( "i = %-d\n", i );

@@ -1233,7 +1233,7 @@ char *context, *tk, buf[511+1];
   while ( tk ) {
 
     l = strlen(tk) + 1;
-    symbols[*numFound] = new (char)[l];
+    symbols[*numFound] = new char[l];
     strcpy( symbols[*numFound], tk );
     trimWhiteSpace( symbols[*numFound] );
 
@@ -1241,7 +1241,7 @@ char *context, *tk, buf[511+1];
     if ( !tk ) return 101; // missing value
 
     l = strlen(tk) + 1;
-    values[*numFound] = new (char)[l];
+    values[*numFound] = new char[l];
     strcpy( values[*numFound], tk );
 
     (*numFound)++;

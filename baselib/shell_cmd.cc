@@ -140,7 +140,7 @@ int stat;
 
   if ( shcmdo->multipleInstancesAllowed ) {
     threadParamBlock = new threadParamBlockType;
-    threadParamBlock->cmd = new (char)[strlen(shcmdo->bufShellCommand)+1];
+    threadParamBlock->cmd = new char[strlen(shcmdo->bufShellCommand)+1];
     strcpy( threadParamBlock->cmd, shcmdo->bufShellCommand );
     threadParamBlock->multipleInstancesAllowed =
      shcmdo->multipleInstancesAllowed;
@@ -155,7 +155,7 @@ int stat;
       if ( stat & 1 ) {
         stat = thread_destroy_handle( shcmdo->thread );
         threadParamBlock = new threadParamBlockType;
-        threadParamBlock->cmd = new (char)[strlen(shcmdo->bufShellCommand)+1];
+        threadParamBlock->cmd = new char[strlen(shcmdo->bufShellCommand)+1];
         strcpy( threadParamBlock->cmd, shcmdo->bufShellCommand );
         threadParamBlock->multipleInstancesAllowed =
          shcmdo->multipleInstancesAllowed;
@@ -166,7 +166,7 @@ int stat;
     }
     else {
       threadParamBlock = new threadParamBlockType;
-      threadParamBlock->cmd = new (char)[strlen(shcmdo->bufShellCommand)+1];
+      threadParamBlock->cmd = new char[strlen(shcmdo->bufShellCommand)+1];
       strcpy( threadParamBlock->cmd, shcmdo->bufShellCommand );
       threadParamBlock->multipleInstancesAllowed =
        shcmdo->multipleInstancesAllowed;
@@ -1422,7 +1422,7 @@ threadParamBlockPtr threadParamBlock;
   if ( multipleInstancesAllowed ) {
 
     threadParamBlock = new threadParamBlockType;
-    threadParamBlock->cmd = new (char)[strlen(bufShellCommand)+1];
+    threadParamBlock->cmd = new char[strlen(bufShellCommand)+1];
     strcpy( threadParamBlock->cmd, bufShellCommand );
     threadParamBlock->multipleInstancesAllowed =
      multipleInstancesAllowed;
@@ -1443,7 +1443,7 @@ threadParamBlockPtr threadParamBlock;
       else {
         stat = thread_destroy_handle( thread );
         threadParamBlock = new threadParamBlockType;
-        threadParamBlock->cmd = new (char)[strlen(bufShellCommand)+1];
+        threadParamBlock->cmd = new char[strlen(bufShellCommand)+1];
         strcpy( threadParamBlock->cmd, bufShellCommand );
         threadParamBlock->multipleInstancesAllowed =
          multipleInstancesAllowed;
@@ -1456,7 +1456,7 @@ threadParamBlockPtr threadParamBlock;
     else {
 
       threadParamBlock = new threadParamBlockType;
-      threadParamBlock->cmd = new (char)[strlen(bufShellCommand)+1];
+      threadParamBlock->cmd = new char[strlen(bufShellCommand)+1];
       strcpy( threadParamBlock->cmd, bufShellCommand );
       threadParamBlock->multipleInstancesAllowed =
        multipleInstancesAllowed;

@@ -266,7 +266,7 @@ static const int kpValueDest = 4;
 
 int limitsFromDb, bufLimitsFromDb;
 double scaleMin, scaleMax, minDv, maxDv;
-efDouble efScaleMin, efScaleMax, bufEfScaleMin, bufEfScaleMax;;
+efDouble efScaleMin, efScaleMax, bufEfScaleMin, bufEfScaleMax;
 
 chid visPvId;
 evid visEventId;

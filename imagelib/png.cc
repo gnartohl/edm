@@ -1686,7 +1686,7 @@ uch *src;
      &numColors );
 
     if ( pixels ) delete pixels;
-    pixels = new (unsigned int)[numColors+1];
+    pixels = new unsigned int[numColors+1];
 
     for ( ii=0; ii<numColors; ii++ ) {
 

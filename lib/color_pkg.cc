@@ -678,7 +678,7 @@ XmPushButtonCallbackStruct *cb;
 int num;
 Widget p, curP;
 
-  num = (int) client;
+  num = (long) client;
   cb = (XmPushButtonCallbackStruct *) call;
 
   if ( num == 0 ) {   // close window
@@ -2189,7 +2189,7 @@ term:
 
   colors = new unsigned int[max_colors];
   blinkingColors = new unsigned int[max_colors];
-  colorNames = new (char *)[max_colors];
+  colorNames = new char *[max_colors];
   colorNodes = new colorCachePtr[max_colors];
 
   stat = avl_get_first( this->colorCacheByIndexH, (void **) &cur1 );
@@ -3777,7 +3777,7 @@ term:
 
   colors = new unsigned int[max_colors];
   blinkingColors = new unsigned int[max_colors];
-  colorNames = new (char *)[max_colors];
+  colorNames = new char *[max_colors];
   colorNodes = new colorCachePtr[max_colors];
 
   for ( i=0; i<max_colors; i++ ) {
@@ -4295,7 +4295,7 @@ firstTry:
   blinkingColorCells = new unsigned long[num_blinking_colors];
   blinkingXColor = new XColor[num_blinking_colors];
   offBlinkingXColor = new XColor[num_blinking_colors];
-  colorNames = new (char *)[max_colors+num_blinking_colors+1];
+  colorNames = new char *[max_colors+num_blinking_colors+1];
 
   junk =  new char[strlen("n/a")+1]; // tiny memory leak here
   strcpy( junk, "n/a" );             // for color files < version 3
@@ -4986,8 +4986,8 @@ unsigned int bestPixel;
 
   if ( cur ) {
     foundOne = 1;
-    min = abs( r - cur->rgb[0] ) + abs( g - cur->rgb[1] ) +
-          abs( b - cur->rgb[2] );
+     min = abs( (int)(r - cur->rgb[0]) ) + abs( (int)(g - cur->rgb[1]) ) +
+           abs((int)( b - cur->rgb[2]) );
     if ( min == 0 ) {
       *pixel = cur->pixel;
       return COLORINFO_SUCCESS;
@@ -5005,8 +5005,8 @@ unsigned int bestPixel;
 
     foundOne = 1;
 
-    diff = abs( r - cur->rgb[0] ) + abs( g - cur->rgb[1] ) +
-          abs( b - cur->rgb[2] );
+     diff = abs( (int)(r - cur->rgb[0]) ) + abs( (int)(g - cur->rgb[1]) ) +
+            abs( (int)(b - cur->rgb[2]) );
     if ( diff < min ) {
       if ( diff == 0 ) {
         *pixel = cur->pixel;

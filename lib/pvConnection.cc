@@ -100,8 +100,8 @@ int i;
 
   maxPvs = _maxPvs;
   pvId = new chid[maxPvs];
-  id = new (void *)[maxPvs];
-  mask = new (unsigned int)[maxPvs];
+  id = new void *[maxPvs];
+  mask = new unsigned int[maxPvs];
 
   for ( i=0; i<maxPvs; i++ ) {
     pvId[i] = NULL;

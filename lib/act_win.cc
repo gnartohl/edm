@@ -1257,10 +1257,10 @@ static void b1ReleaseOneSelect_cb (
 
 activeWindowClass *awo;
 popupBlockPtr block;
-int item;
+long item;
 
   block = (popupBlockPtr) client;
-  item = (int) block->ptr;
+  item = (long) block->ptr;
   awo = (activeWindowClass *) block->awo;
 
   switch ( item ) {
@@ -1295,14 +1295,14 @@ static void b2ReleaseExecute_cb (
 
 activeWindowClass *awo;
 popupBlockPtr block;
-int item;
+long item;
 int n;
 Arg args[10];
 XmString xmStr1, xmStr2;
 Atom wm_delete_window;
 
   block = (popupBlockPtr) client;
-  item = (int) block->ptr;
+  item = (long) block->ptr;
   awo = (activeWindowClass *) block->awo;
 
   switch ( item ) {
@@ -1978,7 +1978,8 @@ static void b2ReleaseNoneSelect_cb (
 
 activeWindowClass *awo;
 popupBlockPtr block;
-int stat, item, wasSelected, num_selected;
+int stat, wasSelected, num_selected;
+long item;
 activeGraphicListPtr curSel;
 activeGraphicListPtr symHead, cur1, cur2, curGroup, next1, next2;
 int n;
@@ -2001,7 +2002,7 @@ struct {
 Atom wm_delete_window;
 
   block = (popupBlockPtr) client;
-  item = (int) block->ptr;
+  item = (long) block->ptr;
   awo = (activeWindowClass *) block->awo;
 
   switch ( item ) {
@@ -3125,11 +3126,12 @@ static void b2ReleaseOneSelect_cb (
 
 activeWindowClass *awo;
 popupBlockPtr block;
-int item, stat, num_selected;
+int stat, num_selected;
+long item;
 activeGraphicListPtr cur, curSel, nextSel;
 
   block = (popupBlockPtr) client;
-  item = (int) block->ptr;
+  item = (long) block->ptr;
   awo = (activeWindowClass *) block->awo;
 
   switch ( item ) {
@@ -3477,14 +3479,15 @@ static void b2ReleaseManySelect_cb (
 
 activeWindowClass *awo;
 popupBlockPtr block;
-int i, item, deltaX, deltaY, leftmost, rightmost, topmost, botmost, n,
+long item;
+int i, deltaX, deltaY, leftmost, rightmost, topmost, botmost, n,
  curY0, curY1, curX0, curX1, minY, maxY, minX, maxX, midX, midY,
  stat, num_selected, width, height;
 double space, totalSpace, dY0, dX0, resid;
 activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode;
 
   block = (popupBlockPtr) client;
-  item = (int) block->ptr;
+  item = (long) block->ptr;
   awo = (activeWindowClass *) block->awo;
 
   switch ( item ) {
@@ -9582,8 +9585,8 @@ Atom wm_delete_window;
   if ( _numMacros ) {
 
     l = _numMacros;
-    this->macros = new (char *)[l];
-    this->expansions = new (char *)[l];
+    this->macros = new char *[l];
+    this->expansions = new char *[l];
 
     for ( i=0; i<_numMacros; i++ ) {
 
@@ -13904,7 +13907,7 @@ int numComments = 0, moreComments = 1;
 
       numComments++;
       commentCur = new commentLinesType;
-      commentCur->line = new (char)[strlen(oneLine)+4];
+      commentCur->line = new char[strlen(oneLine)+4];
       strcpy( commentCur->line, oneLine );
       strcat( commentCur->line, "\n" );
       commentTail->flink = commentCur;

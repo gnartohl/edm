@@ -131,7 +131,7 @@ XmString str;
 
   indexColor = 0;
   numColors = _numColors;
-  items = new (void *)[numColors];
+  items = new void *[numColors];
 
   numVisibleItems = numVisItems;
   ci = _ci;

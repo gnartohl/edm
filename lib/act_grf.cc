@@ -2620,7 +2620,7 @@ int l;
     return false;
   }
 
-  ago->dragData = new (char)[l+1];
+  ago->dragData = new char[l+1];
   strncpy( ago->dragData, ago->dragValue( ago->currentDragIndex ), l );
   ago->dragData[l] = 0;
 

@@ -21,7 +21,7 @@ StripData::StripData(size_t _channel_count,
     sec2bucket.setSource(-seconds, 0);
     sec2bucket.setDestination(0, bucket_count);
 
-    buckets = new (Bucket *)[channel_count];
+    buckets = new Bucket *[channel_count];
     last_added = new size_t[channel_count];
     last_entry = new size_t[channel_count];
     for (size_t i=0; i<channel_count; ++i)

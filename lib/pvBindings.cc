@@ -81,25 +81,25 @@ FILE *f;
       return;
     }
 
-    names = new (char *)[num];
+    names = new char *[num];
     if ( !names ) {
       printf( pvBindingClass_str4 );
       exit(-1);
     }
 
-    classNames = new (char *)[num];
+    classNames = new char *[num];
     if ( !classNames ) {
       printf( pvBindingClass_str5 );
       exit(-1);
     }
 
-    dllHandle = new (void *)[num];
+    dllHandle = new void *[num];
     if ( !dllHandle ) {
       printf( pvBindingClass_str6 );
       exit(-1);
     }
 
-    dllName = new (char *)[num];
+    dllName = new char *[num];
     if ( !dllName ) {
       printf( pvBindingClass_str7 );
       exit(-1);

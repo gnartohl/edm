@@ -26,7 +26,7 @@
 typedef struct keypadWidgetListTag {
   struct widgetListTag *flink;
   Widget pb;
-  char ascii[0];
+  char *ascii;
 } keypadWidgetListType, *keypadWidgetListPtr;
 
 #ifdef __keypad_cc
