@@ -3016,48 +3016,57 @@ double dxValue;
     ii = arrayHead[i];
     while ( ii != arrayTail[i] ) {
 
-      switch ( xPvType[i] ) {
-      case DBR_FLOAT:
-        dxValue = (double) ( (float *) xPvData[i] )[ii];
-        break;
-      case DBR_DOUBLE: 
-        dxValue = ( (double *) xPvData[i] )[ii];
-        break;
-      case DBR_SHORT:
-        if ( xSigned[i] ) {
-          dxValue = (double) ( (short *) xPvData[i] )[ii];
+      if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
+
+	dxValue = ( (double *) xPvData[i] )[ii];
+
+      }
+      else {
+
+        switch ( xPvType[i] ) {
+        case DBR_FLOAT:
+          dxValue = (double) ( (float *) xPvData[i] )[ii];
+          break;
+        case DBR_DOUBLE: 
+          dxValue = ( (double *) xPvData[i] )[ii];
+          break;
+        case DBR_SHORT:
+          if ( xSigned[i] ) {
+            dxValue = (double) ( (short *) xPvData[i] )[ii];
+          }
+          else {
+            dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+          }
+          break;
+        case DBR_CHAR:
+          if ( xSigned[i] ) {
+            dxValue = (double) ( (char *) xPvData[i] )[ii];
+          }
+          else {
+            dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
+          }
+          break;
+        case DBR_LONG:
+          if ( xSigned[i] ) {
+            dxValue = (double) ( (int *) xPvData[i] )[ii];
+          }
+          else {
+            dxValue = (double) ( (int *) xPvData[i] )[ii];
+          }
+          break;
+        case DBR_ENUM:
+          if ( xSigned[i] ) {
+            dxValue = (double) ( (short *) xPvData[i] )[ii];
+          }
+          else {
+            dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+          }
+          break;
+        default:
+          dxValue = ( (double *) xPvData[i] )[ii];
+          break;
         }
-        else {
-          dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
-        }
-        break;
-      case DBR_CHAR:
-        if ( xSigned[i] ) {
-          dxValue = (double) ( (char *) xPvData[i] )[ii];
-        }
-        else {
-          dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
-        }
-        break;
-      case DBR_LONG:
-        if ( xSigned[i] ) {
-          dxValue = (double) ( (int *) xPvData[i] )[ii];
-        }
-        else {
-          dxValue = (double) ( (int *) xPvData[i] )[ii];
-        }
-        break;
-      case DBR_ENUM:
-        if ( xSigned[i] ) {
-          dxValue = (double) ( (short *) xPvData[i] )[ii];
-        }
-        else {
-          dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
-        }
-        break;
-      default:
-        dxValue = ( (double *) xPvData[i] )[ii];
-        break;
+
       }
 
       if ( first ) {
@@ -4044,48 +4053,57 @@ double scaledX, scaledY;
        rint( ( dyValue - curY1Min[yi] ) *
        y1Factor[yi][i] - y1Offset[yi][i] );
   
-      switch ( xPvType[i] ) {
-      case DBR_FLOAT:
-        dxValue = (double) ( (float *) xPvData[i] )[ii];
-        break;
-      case DBR_DOUBLE: 
+      if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
+
         dxValue = ( (double *) xPvData[i] )[ii];
-        break;
-      case DBR_SHORT:
-        if ( xSigned[i] ) {
-          dxValue = (double) ( (short *) xPvData[i] )[ii];
-	}
-	else {
-          dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
-	}
-        break;
-      case DBR_CHAR:
-        if ( xSigned[i] ) {
-          dxValue = (double) ( (char *) xPvData[i] )[ii];
-	}
-	else {
-          dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
-	}
-        break;
-      case DBR_LONG:
-        if ( xSigned[i] ) {
-          dxValue = (double) ( (int *) xPvData[i] )[ii];
-	}
-	else {
-          dxValue = (double) ( (int *) xPvData[i] )[ii];
-	}
-        break;
-      case DBR_ENUM:
-        if ( xSigned[i] ) {
-          dxValue = (double) ( (short *) xPvData[i] )[ii];
-	}
-	else {
-          dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
-	}
-        break;
-      default:
-        dxValue = ( (double *) xPvData[i] )[ii];
-        break;
+
+      }
+      else {
+
+        switch ( xPvType[i] ) {
+        case DBR_FLOAT:
+          dxValue = (double) ( (float *) xPvData[i] )[ii];
+          break;
+        case DBR_DOUBLE: 
+          dxValue = ( (double *) xPvData[i] )[ii];
+          break;
+        case DBR_SHORT:
+          if ( xSigned[i] ) {
+            dxValue = (double) ( (short *) xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+	  }
+          break;
+        case DBR_CHAR:
+          if ( xSigned[i] ) {
+            dxValue = (double) ( (char *) xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
+	  }
+          break;
+        case DBR_LONG:
+          if ( xSigned[i] ) {
+            dxValue = (double) ( (int *) xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (int *) xPvData[i] )[ii];
+	  }
+          break;
+        case DBR_ENUM:
+          if ( xSigned[i] ) {
+            dxValue = (double) ( (short *) xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+	  }
+          break;
+        default:
+          dxValue = ( (double *) xPvData[i] )[ii];
+          break;
+        }
+
       }
 
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
@@ -6484,7 +6502,7 @@ int yi, yScaleIndex;
 
           if ( yPvCount[i] > 1 ) { // vector
 
-            yPvData[i] = (void *) new char[yPvSize[i]*(yPvCount[i]+10)];
+            yPvData[i] = (void *) new char[yPvSize[i]+80];
 
             size = (plotAreaX+plotAreaW)*4+10;
             if ( 3*yPvCount[i]+10 > size ) size = 3*yPvCount[i]+10;
@@ -6629,7 +6647,7 @@ int yi, yScaleIndex;
 
           if ( xPvCount[i] > 1 ) { // vector
 
-            xPvData[i] = (void *) new char[xPvSize[i]*(xPvCount[i]+10)];
+            xPvData[i] = (void *) new char[xPvSize[i]+80];
 
           }
           else { // scalar
@@ -6932,49 +6950,58 @@ int yi, yScaleIndex;
                rint( ( dyValue - curY1Min[yi] ) *
                y1Factor[yi][i] - y1Offset[yi][i] );
 
-              switch ( xPvType[i] ) {
-              case DBR_FLOAT:
-                dxValue = (double) ( (float *) xPvData[i] )[ii];
-                break;
-              case DBR_DOUBLE: 
+              if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
+
                 dxValue = ( (double *) xPvData[i] )[ii];
-                break;
-              case DBR_SHORT:
-                if ( xSigned[i] ) {
-                  dxValue = (double) ( (short *) xPvData[i] )[ii];
-                }
-                else {
-                  dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
-                }
-                break;
-              case DBR_CHAR:
-                if ( xSigned[i] ) {
-                  dxValue = (double) ( (char *) xPvData[i] )[ii];
-                }
-                else {
-                  dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
-                }
-                break;
-              case DBR_LONG:
-                if ( xSigned[i] ) {
-                  dxValue = (double) ( (int *) xPvData[i] )[ii];
-                }
-                else {
-                  dxValue = (double) ( (int *) xPvData[i] )[ii];
-                }
-                break;
-              case DBR_ENUM:
-                if ( xSigned[i] ) {
-                  dxValue = (double) ( (short *) xPvData[i] )[ii];
-                }
-                else {
-                  dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
-                }
-                break;
-              default:
-                dxValue = ( (double *) xPvData[i] )[ii];
-                break;
+
               }
+              else {
+
+                switch ( xPvType[i] ) {
+                case DBR_FLOAT:
+                  dxValue = (double) ( (float *) xPvData[i] )[ii];
+                  break;
+                case DBR_DOUBLE: 
+                  dxValue = ( (double *) xPvData[i] )[ii];
+                  break;
+                case DBR_SHORT:
+                  if ( xSigned[i] ) {
+                    dxValue = (double) ( (short *) xPvData[i] )[ii];
+                  }
+                  else {
+                    dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+                  }
+                  break;
+                case DBR_CHAR:
+                  if ( xSigned[i] ) {
+                    dxValue = (double) ( (char *) xPvData[i] )[ii];
+                  }
+                  else {
+                    dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
+                  }
+                  break;
+                case DBR_LONG:
+                  if ( xSigned[i] ) {
+                    dxValue = (double) ( (int *) xPvData[i] )[ii];
+                  }
+                  else {
+                    dxValue = (double) ( (int *) xPvData[i] )[ii];
+                  }
+                  break;
+                case DBR_ENUM:
+                  if ( xSigned[i] ) {
+                    dxValue = (double) ( (short *) xPvData[i] )[ii];
+                  }
+                  else {
+                    dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+                  }
+                  break;
+                default:
+                  dxValue = ( (double *) xPvData[i] )[ii];
+                  break;
+                }
+
+	      }
 
               if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
                 if ( dxValue > 0 ) dxValue = log10( dxValue );
