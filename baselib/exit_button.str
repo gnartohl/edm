@@ -1,0 +1,22 @@
+#ifndef __exit_button_str
+#define __exit_button_str 1
+
+#define activeExitButtonClass_str1 "EXIT"
+#define activeExitButtonClass_str2 "Unknown object"
+#define activeExitButtonClass_str3 " Properties"
+#define activeExitButtonClass_str4 "X"
+#define activeExitButtonClass_str5 "Y"
+#define activeExitButtonClass_str6 "Width"
+#define activeExitButtonClass_str7 "Height"
+#define activeExitButtonClass_str8 "Label"
+#define activeExitButtonClass_str9 "3-D Look"
+#define activeExitButtonClass_str10 "Invisible"
+#define activeExitButtonClass_str11 "Iconify only"
+#define activeExitButtonClass_str12 "Exit program"
+#define activeExitButtonClass_str13 "Font"
+#define activeExitButtonClass_str14 "Fg"
+#define activeExitButtonClass_str15 "Bg"
+#define activeExitButtonClass_str16 "Top Shadow"
+#define activeExitButtonClass_str17 "Bottom Shadow"
+
+#endif

@@ -1,0 +1,10 @@
+sys/linux/os
+sys/linux/sys
+msg/msg
+sys/osf/unix
+net/linux/ipnis
+net/linux/ipnsv
+net/linux/ipncl
+thread/linux/thread
+iprpc/osf/iprpc
+avl/avl

@@ -1,0 +1,4 @@
+#ifndef __confirm_dialog_str
+#define __confirm_dialog_str 1
+
+#endif

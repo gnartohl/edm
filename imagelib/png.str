@@ -1,0 +1,14 @@
+#ifndef __png_str
+#define __png_str 1
+
+#define activePngClass_str1 "Cannot read png file"
+#define activePngClass_str2 "Unknown object"
+#define activePngClass_str3 " Properties"
+#define activePngClass_str4 "X"
+#define activePngClass_str5 "Y"
+#define activePngClass_str6 "PNG File"
+#define activePngClass_str7 "Refresh Rate (ms)"
+#define activePngClass_str8 "Uniform Size"
+#define activePngClass_str9 "Fast Erase"
+
+#endif

@@ -1,0 +1,3144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-1">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="StarOffice/5.2 (Linux)">
+	<META NAME="AUTHOR" CONTENT="john w">
+	<META NAME="CREATED" CONTENT="20001011;11352800">
+	<META NAME="CHANGEDBY" CONTENT="john w">
+	<META NAME="CHANGED" CONTENT="20001110;17113400">
+	<STYLE>
+	<!--
+		@page { size: 8.5in 10.96in; margin-left: 1.25in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 1in }
+	-->
+	</STYLE>
+</HEAD>
+<BODY>
+<P STYLE="margin-bottom: 0.1in"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Introduction</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>With
+the introduction of tools like EPICS and VSystem, the task of
+building complex distributed control systems has been greatly
+simplified. Furthermore, extending both the content and functionality
+of these systems is a trivial task. This is generally not the case
+for applications that have been built on top of these core components
+and in most cases this is acceptable. There is one class of
+applications, namely interactive graphical display tools, where the
+lack of user extensibility is a severe liability. This deficiency
+arrests the growth of the suite of common display elements and
+prevents the development and customization of site specific elements
+for special requirements. Just as EPICS record and device support is
+easily extended without in-depth knowledge of the core software, so
+also should the elements of a display tool be extensible, again
+without in-depth knowledge of either the core behavior of the display
+tool or the more esoteric details of window-based graphical user
+interface systems.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Edm
+is an attempt to fulfill this objective.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Figure
+1 is a screenshot showing most of the display elements provided by
+the core object library.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Program
+Execution</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in">Synopsis</P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=6*>
+	<COL WIDTH=250*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>edm [
+				option option ... ] [ filename filename ... ]</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+</TABLE>
+<P><BR>Options</P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=6*>
+	<COL WIDTH=93*>
+	<COL WIDTH=157*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=37%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-x</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=61%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>execute
+				file on open</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=37%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-nodeit</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=61%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>disallow
+				edit mode</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=37%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-m
+				<FONT SIZE=2>&quot;&lt;sym1&gt;=&lt;val1&gt;,&lt;sym2&gt;=&lt;val2&gt;,...&quot;</FONT></FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=61%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>build
+				macro substitution list</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=37%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-ctl
+				<FONT SIZE=2>&lt;string process variable name&gt;</FONT></FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=61%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>writing
+				a file name to this pv instructs edm to open and execute the
+				display file</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=37%>
+				<P ALIGN=LEFT><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-h,
+				-?, -help</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=61%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>displays
+				help information</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=37%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-v,
+				-version</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=61%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>displays
+				current version information</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><BR><BR>
+</P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0in"><IMG SRC="sv14514510.jpg" NAME="Graphic2" ALIGN=LEFT WIDTH=509 HEIGHT=741 BORDER=0><BR CLEAR=LEFT><FONT FACE="helvetica, sans-serif"><FONT SIZE=3><BR>Figure
+1<BR>edm core component examples</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%; page-break-before: always">
+<FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Environment
+Variables</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=46*>
+	<COL WIDTH=206*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P ALIGN=LEFT><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P ALIGN=LEFT><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>EDMFILES</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=80%>
+				<P ALIGN=LEFT><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Location
+				of fonts.list and colors.list, overrides /etc.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P ALIGN=LEFT><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P ALIGN=LEFT><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>EDMOBJECTS</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=80%>
+				<P ALIGN=LEFT><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Location
+				of edmObjects, the edm component object file, overrides /etc.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P ALIGN=LEFT><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P ALIGN=LEFT><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>EDMDATAFILES</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=80%>
+				<P ALIGN=LEFT><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Location
+				of display files and display scheme files, overrides ./. The
+				variable takes two values as given below:</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P ALIGN=LEFT><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P ALIGN=LEFT><BR>
+				</P>
+			</TD>
+			<TD WIDTH=80%>
+				<P ALIGN=LEFT><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;project
+				directory&gt;:&lt;user directory&gt;</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Bash
+				example:</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+</TABLE>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=5*>
+	<COL WIDTH=247*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=97%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>export
+				EDMDATAFILES=/usr/project/screens:/home/me/myscreens</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><BR>When
+a display is opened in execute mode, the user directory is searched
+first.<BR></FONT></FONT></FONT><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Program
+Operation</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>When
+edm executes, the small main window shown in figure 2 is created.</FONT></FONT></FONT></P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0.1in"><IMG SRC="sv14514511.jpg" NAME="Graphic3" ALIGN=LEFT WIDTH=136 HEIGHT=186 BORDER=0><BR CLEAR=LEFT><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><BR>Figure
+2</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>File
+Menu functions</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><IMG SRC="htmlFig3.gif" NAME="Graphic6" ALIGN=LEFT WIDTH=169 HEIGHT=201 BORDER=0><BR CLEAR=LEFT><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="helvetica, sans-serif"><FONT SIZE=3>Figure
+3</FONT></FONT></P>
+<P STYLE="margin-left: 1.81in; text-indent: -1.81in; margin-bottom: 0.1in">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Figure 3
+illustrates the File menu items. Each is described below.</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=7*>
+	<COL WIDTH=50*>
+	<COL WIDTH=199*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=3%>
+				<P STYLE="text-indent: 0.01in"><BR>
+				</P>
+			</TD>
+			<TD WIDTH=20%>
+				<P STYLE="text-indent: 0.01in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>New</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=78%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Create a
+				new display file</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=3%>
+				<P STYLE="text-indent: 0.01in"><BR>
+				</P>
+			</TD>
+			<TD WIDTH=20%>
+				<P STYLE="text-indent: 0.01in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Open</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=78%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Open a
+				display file, default directory is the project file directory</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=3%>
+				<P STYLE="text-indent: 0.01in"><BR>
+				</P>
+			</TD>
+			<TD WIDTH=20%>
+				<P STYLE="text-indent: 0.01in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Open
+				User File</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=78%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Open a
+				display file, default directory is the user file directory</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=3%>
+				<P STYLE="text-indent: 0.01in"><BR>
+				</P>
+			</TD>
+			<TD WIDTH=20%>
+				<P STYLE="text-indent: 0.01in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Import
+				Exchange File</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=78%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Read and
+				convert a display information exchange file</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=3%>
+				<P STYLE="text-indent: 0.01in"><BR>
+				</P>
+			</TD>
+			<TD WIDTH=20%>
+				<P STYLE="text-indent: 0.01in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Refresh
+				User Library</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=78%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Experimental
+				use</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=3%>
+				<P STYLE="text-indent: 0.01in"><BR>
+				</P>
+			</TD>
+			<TD WIDTH=20%>
+				<P STYLE="text-indent: 0.01in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Exit</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=78%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Exit edm</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+behavior of each menu item is self evident.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>View
+Menu Functions</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><IMG SRC="htmlFig4.gif" NAME="Graphic4" ALIGN=LEFT WIDTH=136 HEIGHT=186 BORDER=0><BR CLEAR=LEFT><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><BR>Figure
+4</FONT></FONT></FONT></P>
+<P STYLE="margin-left: 1.81in; text-indent: -1.81in; margin-bottom: 0.1in">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Figure 4
+illustrates the View menu items. Each is described below.</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=6*>
+	<COL WIDTH=21*>
+	<COL WIDTH=229*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=3%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=8%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Messages</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=89%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Open
+				information message window</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=3%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=8%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>PV List</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=89%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Open pv
+				list dialog box</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=3%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=8%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Screens</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=89%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Open
+				information message window and show names of display files that
+				are currently open; total number of open files is also displayed</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-left: 1.5in; text-indent: -1.5in; margin-bottom: 0.1in">
+<BR><BR>
+</P>
+<P STYLE="margin-left: 1.5in; text-indent: -1.5in; margin-bottom: 0.1in">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The behavior of
+each menu item is self evident with the exception of the <I>PV List</I>
+item.</FONT></FONT></FONT></P>
+<P STYLE="margin-left: 1.5in; text-indent: -1.5in; margin-bottom: 0.1in; page-break-before: always">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>When <I>PV List</I>
+is chosen, the dialog box shown in figure 5 opens:</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><IMG SRC="sv14814893.gif" NAME="Graphic1" ALIGN=LEFT WIDTH=535 HEIGHT=577 BORDER=0><BR CLEAR=LEFT><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><BR>Figure
+5 &amp; Figure 6</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>If
+a file name containing a list of pv names is entered in the File
+field and the enter key pressed, the list box will be filled with the
+contents of the file. At any time, a filter value may be entered
+(currently one of &lt;string&gt;<FONT FACE="times, serif">*</FONT>,
+<FONT FACE="times, serif">*&lt;string&gt;, or &lt;string&gt;). When
+the enter key is pressed the list will be so qualified. In addition,
+a prefix string may be entered in the corresponding box and the enter
+key pressed. Later, when display elements are being created and the
+user selects a pv from the pv list box</FONT>, a string consisting of
+the prefix concatenated with the selected pv will become the current
+selection and will appear in the text box at the bottom of the pv
+list dialog box. A fully populated example of this is shown in figure
+6. This string may then be pasted into any other dialog box with the
+middle mouse button.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%; page-break-before: always">
+<FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Creating
+New Displays</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>To
+create a new display, select <I>new</I> from the main window <I>file</I>
+menu. This creates a new, empty display window. The window may be
+sized as desired and various display attributes may be set by
+clicking the middle button in the new display window and selecting
+<I>Display Properties</I> from the popup menu. This opens a dialog
+box with which various display attributes may be set. There is one
+group of attributes that require special consideration. The following
+fields comprise the current display scheme:</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=6*>
+	<COL WIDTH=58*>
+	<COL WIDTH=192*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=23%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Display
+				Fg</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=75%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Display
+				window foreground color</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=23%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Display
+				Bg</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=75%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Display
+				window background color</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=23%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Text Fg</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=75%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Default
+				text color</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=23%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>1<SUP>st</SUP>
+				Control Fg</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=75%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Default
+				graphics foreground color #1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=23%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>2<SUP>nd</SUP>
+				Control Fg</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=75%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Default
+				graphics foreground color #2</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=23%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>1<SUP>st</SUP>
+				Control Bg</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=75%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Default
+				graphics background color #1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=23%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>2<SUP>nd</SUP>
+				Control Bg</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=75%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Default
+				graphics background color #2</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=23%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Top
+				Shadow</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=75%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Default
+				top shadow color</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=23%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Bottom
+				Shadow</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=75%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Default
+				bottom shadow color</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=23%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Default
+				Text Font</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=75%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Default
+				font for text objects</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=23%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Default
+				Button Font</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=75%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Default
+				font for button objects</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=23%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Default
+				Control Font</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=75%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Default
+				font for text objects inside other display objects</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P ALIGN=LEFT STYLE="margin-left: 0.01in; text-indent: -0.01in; margin-bottom: 0.1in">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>When edm
+starts, the file default.scheme in the current project directory
+defines the display scheme for all new displays. Alternatively,
+display schemes may be interactively loaded by name. The display
+scheme attributes are used as color and font defaults in the creation
+of the various control element objects. When a new project is
+initiated, edm may be used to create a new display scheme by opening
+a new window, setting the color and font display properties, and
+saving the scheme as <I>default.scheme</I> in the project file
+directory. A display scheme is saved by clicking the middle button in
+the display window and selecting <I>Save Display Scheme</I> from the
+popup menu.</FONT></FONT></FONT></P>
+<P ALIGN=LEFT STYLE="margin-left: 0.01in; text-indent: -0.01in; margin-bottom: 0.1in">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>After the
+display attributes have been properly set, display element objects
+may be created as desired and the display file saved by clicking the
+middle button in the display window and selecting <I>Save As</I> from
+the popup menu. This opens a dialog box in which the file name may be
+entered. Note that it is not necessary to enter the file extension
+(.edl).</FONT></FONT></FONT></P>
+<P ALIGN=LEFT STYLE="margin-left: 0.01in; text-indent: -0.01in; margin-bottom: 0.1in">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Note that the
+display title may contain symbols that will be expanded in execute
+mode (see the section entitled <I>Editing Object Properties</I> for
+more information on symbol expansion).</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Comments
+in Edm Display Files</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Comment
+lines and blank lines may be inserted into the front of edm data
+files. These lines will be read in and wrtten out again when the file
+is edited. Therefore, edm data files may contain RCS markers and
+other comment information.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 150%; text-decoration: none">
+<FONT FACE="helvetica, sans-serif"><FONT SIZE=5 STYLE="font-size: 20pt"><B>Edit
+Mode Operations</B></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Creating
+Display Objects</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Display
+objects are created by dragging a rectangle with the left mouse
+button and releasing the button. In most cases, the size of the
+rectangle will correspond to the initial size of the display object
+being created. After the button is released, a popup menu will be
+displayed from which an object category may be selected. Selecting a
+category opens an additional menu from which the display object may
+be selected. When an object name is chosen, a property dialog box
+opens in which the display object properties are specified. This
+dialog box contains the standard <I>OK</I>, <I>Apply</I>, and <I>Cancel</I>
+buttons. The functions provided by these buttons may also be invoked
+by double-clicking the left, center, or right mouse button. The left
+button corresponds to <I>OK</I>, the center to <I>Apply</I>, and the
+right to <I>Cancel</I>. This is especially useful during an edit
+operation, where perhaps only one attribute is being changed. The
+double-click operation can be used to minimize mouse motion.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Display
+object properties will be discussed for each individual object in a
+later section.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Selecting
+Objects</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="helvetica, sans-serif"><FONT SIZE=3>Objects
+may be selected as follows:</FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Left
+				click selects one object</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Left
+				clicking on a selected object performs an edit operation.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Left
+				clicking on the display background deselects all objects.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Shift-left
+				click adds an unselected object to the set of selected objects or
+				removes a selected object from the set of selected objects.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Middle
+				dragging a box from top-left to bottom-right adds an object to
+				the set of selected objects if the box encloses the entire extent
+				of the object.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Middle
+				dragging a box from bottom-right to top-left adds an object to
+				the set of selected objects if the box encloses at least one
+				corner of the object.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Control-left
+				click Is used to cycle through a number of objects of similar
+				size that lie on top of each other. One and only one object must
+				be selected for this to have any effect.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P ALIGN=LEFT><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P ALIGN=LEFT><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Objects
+				may be deselected by left clicking on the display background or
+				by clicking the middle button in the display window and selecting
+				<I>Deselect</I> from the popup menu.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Moving
+and Resizing Objects</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>When
+objects are selected, eight control points appear on the boundary of
+the object. Objects are moved by placing the mouse cursor inside the
+boundary of an object, clicking the left mouse button, and dragging
+the object to a new location. Objects are resized by placing the
+mouse cursor over one of the eight control points and left-click
+dragging the control point to a new location. Once the motion has
+begun, an arrow key may be pressed to disengage the mouse and engage
+an arrow keypress pixel-by-pixel motion instead. As before, the
+operation completes when the mouse button is released. If several
+objects are selected, they will be moved or resized together.
+Alternatively, the display object position and size may be specified
+in the object property dialog box during a create or edit operation.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>It
+is difficult to move very small objects because the control points
+overlap one another. As a result, a move operation may be forced by
+control-clicking the left button anywhere on an object and dragging
+the object to a new location.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>If
+the display window property <I>Snap to Grid</I> has been turned on,
+the position and size of an object will be constrained accordingly.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Editing
+Object Properties</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Left-clicking
+on a selected object opens the object property dialog box. If more
+that one object is selected, pressing the OK button (or
+double-clicking the left mouse button) will complete the edit of the
+current object and open the property box for the next one. This
+continues until each object has been edited or the cancel button is
+pressed. Editing a group of objects (that have been explicitly
+grouped) proceeds in a similar manner. Each individual object is
+edited in succession until all edits have completed or until the
+cancel button is pressed.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Symbol
+Substitution</B></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>When
+edm is started, a list of <I>symbol</I>=<I>value</I> pairs may be
+entered from the command line. These symbols may be referenced in the
+specification of certain object properties by embedding the form</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P STYLE="font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>$(symbol)</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>with
+a string. A simple example will illustrate this.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Suppose
+edm was started as</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P STYLE="font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>edm
+				<FONT FACE="times, serif">-</FONT>m &quot;1=one&quot;</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>This
+associates the value <I>one</I> with symbol <I>1</I>. Now if an
+object property is specified as</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P STYLE="font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>$(1)<FONT FACE="times, serif">_</FONT>two_three</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>then,
+in execute mode, the property value would be expanded to
+<I>one_two<FONT FACE="times, serif">_</FONT>three</I>. Multiplexor
+objects can also affect the value of symbols in execute mode.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Edit
+Mode Display Window Menu Operations</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+following menus may be opened by clicking the middle button on the
+display window background. Three menus are available and depend on
+the number of objects currently selected.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><IMG SRC="sv14814894.gif" NAME="Graphic5" ALIGN=LEFT WIDTH=481 HEIGHT=335 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Most
+operations function in a self evident manner. Operations which
+require additional information are discussed below.</FONT></FONT></FONT></P>
+<P STYLE="margin-left: 1.86in; text-indent: -1.86in; margin-bottom: 0.1in">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Operation</B>
+<B>Explanation</B></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Edit
+Outlier Searches for objects that have become positioned off the
+visible portion of the display and, if any are found, opens the
+property dialog box for the first one found.</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=24*>
+	<COL WIDTH=228*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=9%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Center </FONT></FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=89%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Centers
+				a group of objects relative to the center position of a reference
+				object. The operation works as follows: if no objects are
+				selected and then all objects are selected at once, the leftmost
+				or topmost object is taken as the reference for horizontal or
+				vertical centering operations respectively; if, one the other
+				hand, one object is selected and then the remaining objects are
+				selected, the first selected object is taken as the reference
+				object.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=9%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Size </FONT></FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=89%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Sizes a
+				group of objects relative to the size of a reference object. The
+				operation works as follows: if no objects are selected and then
+				all objects are selected at once, the topmost object is taken as
+				the reference for all resizing operations; if, one the other
+				hand, one object is selected and then the remaining objects are
+				selected, the first selected object is taken as the reference
+				object.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=9%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Edit </FONT></FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=89%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Edits
+				either the display attributes (fonts &amp; colors) or the PV
+				names for a selected group of objects.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-left: 0.2in; text-indent: -0.2in; margin-bottom: 0in">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 150%; text-decoration: none">
+<FONT FACE="helvetica, sans-serif"><FONT SIZE=5 STYLE="font-size: 20pt"><B>Execute
+Mode Operations</B></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Execute
+Mode Display Window Menu Operations</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+following menu may be opened by clicking the middle button on the
+display window background.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><IMG SRC="sv14514521.jpg" NAME="Graphic16" ALIGN=LEFT WIDTH=114 HEIGHT=151 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Most
+operations function in a self evident manner. Operations which
+require additional information are discussed below.</FONT></FONT></FONT></P>
+<P STYLE="margin-left: 1.86in; text-indent: -1.86in; margin-bottom: 0.1in">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Operation</B>
+<B>Explanation</B></FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=32*>
+	<COL WIDTH=220*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P ALIGN=LEFT><BR>
+				</P>
+			</TD>
+			<TD WIDTH=12%>
+				<P ALIGN=LEFT><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Toggle
+				Title </FONT></FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=86%>
+				<P ALIGN=LEFT><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Toggles
+				the title contents between the display title string and the
+				display file name. This is useful when edm is executing with the
+				noedit option and the display file name needs to be discovered.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+</TABLE>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Drag
+and Drop Operations</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>It
+is often useful to be able to drag-and-drop a PV name from a display
+object into another application (e.g. StripTool). Core components
+which contain PVs support this operation via the middle mouse button.
+Several components contain multiple PVs and it is therefore necessary
+to select the drag-and-drop source is these cases. This is
+accomplished by shift-clicking the middle button over the object and
+selecting the source PV from a menu of choices.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Control
+Object Stacking</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Objects
+that have not been implemented as motif widgets may be stacked on top
+of each other to produce multiple actions per pointer click, i.e.
+clicking on a point lying within the boundaries of N objects will
+affect all N objects. The following core objects may be used in this
+manner:</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Button</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Message
+				Button</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Related
+				Display</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Shell
+				Command</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 150%; text-decoration: none">
+<FONT FACE="helvetica, sans-serif"><FONT SIZE=5 STYLE="font-size: 20pt"><B>Core
+Display Objects</B></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Objects
+will be listed by category. Categories include Graphics, Monitors,
+and Controls. Note that several control objects may also be used as
+monitors.<BR></FONT></FONT></FONT><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 150%; text-decoration: none">
+<FONT FACE="helvetica, sans-serif"><FONT SIZE=5 STYLE="font-size: 20pt"><B>Graphics</B></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Circle</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Attributes
+and behavior are self evident.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Alarm
+PV</I> and <I>Visibility PV</I> may contain symbols.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Arc</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Attributes
+and behavior are self evident.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Alarm
+PV</I> and <I>Visibility PV</I> may contain symbols.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Dynamic
+Symbol</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Dynamic
+symbols exist primarily to build symbol catalogs with a minimum
+amount of screen real estate. They may also be used to achieve simple
+animation. For more information on building symbols, see the section
+entitled <I>Symbol</I> below. A description of some attributes
+follows.</FONT></FONT></FONT></P>
+<P STYLE="margin-left: 1.5in; text-indent: -1.5in; margin-bottom: 0.1in">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Attribute</B>
+<B>Description</B></FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=5*>
+	<COL WIDTH=47*>
+	<COL WIDTH=205*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>DynSymbol
+				File</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=80%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Symbol
+				file name. This is nothing more than a normal edm display file
+				that has been created according to certain specified rules. These
+				will be described in the section entitled <I>Symbol</I> below.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Use Gate</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=80%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>If this
+				box is checked, The <I>Gate Up PV</I> and <I>Gate Down PV</I><SPAN STYLE="font-style: normal">
+				fields should contain valid names. When the </SPAN><I>Gate Up PV</I><SPAN STYLE="font-style: normal">
+				contains a value equal to the </SPAN><I>Gate Up Value</I><SPAN STYLE="font-style: normal">,
+				the symbol will cycle upward through its states at a rate give by
+				<I>Rate</I> (in seconds). The <I>Gate</I> <I>Down</I> properties
+				work in a similar manner, causing the symbol to cycle downward
+				through its states.</SPAN></FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Continuous</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=80%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Checking
+				this box makes the symbol cycle <SPAN STYLE="font-style: normal">upward</SPAN>
+				<SPAN STYLE="font-style: normal">through its states at a rate
+				given by <I>Rate</I> (in seconds).</SPAN></FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Initial</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=80%>
+				<P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Sets
+				the initial display state of the symbol</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in; font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Note
+that state zero is never displayed, not even if the <I>Initial</I>
+field is set to 0.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Other
+attributes are self evident.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Gate
+Up PV</I> and <I>Gate Down PV</I> may contain symbols.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>GIF
+Image</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Attributes
+and behavior are self evident.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Lines</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Attributes
+and behavior are self evident, but lines are created and edited
+unlike most other objects. The procedure for creating lines begins
+like any other object, i.e. a box is drawn with the left mouse button
+and a property box opens. After the OK button is pressed, however,
+the behavior changes. At this point, the mouse becomes dedicated to
+creating and editing line segments. Button action versus function is
+listed below.</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=47*>
+	<COL WIDTH=205*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=19%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Action</B></FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=80%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Operation</B></FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=19%>
+				<P STYLE="font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Left
+				Click</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=80%>
+				<P STYLE="font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Create
+				a line end point</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=19%>
+				<P STYLE="font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Shift-Middle-Click</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=80%>
+				<P STYLE="font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Delete
+				most recently created end point</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=19%>
+				<P STYLE="font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Middle-Drag</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=80%>
+				<P STYLE="font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Move
+				a line end point; the mouse cursor must be touching the end point
+				to be moved at the initiation of the drag operation</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=19%>
+				<P STYLE="font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Shift-Left-Click</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=80%>
+				<P STYLE="font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Exit
+				line create mode</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>When
+the left mouse button is clicked on a selected line object, the menu
+shown in the figure below is displayed:</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><IMG SRC="sv14514522.jpg" NAME="Graphic13" ALIGN=LEFT WIDTH=132 HEIGHT=46 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0.1in; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+user may then choose to edit line properties via the dialog box or
+line segments via the line segment create/edit mouse operations.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Alarm
+PV</I> and <I>Visibility PV</I> may contain symbols.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Rectangle</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Rectangle
+attributes and behavior are self evident with the exception of the
+invisible flag. This flag is only used in conjuction with symbols and
+will be discussed in a following section.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Alarm
+PV</I> and <I>Visibility PV</I> may contain symbols.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Static
+Text</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Attributes
+and behavior are self evident.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Alarm
+PV,</I> <I>Visibility PV</I><SPAN STYLE="font-style: normal">, and
+</SPAN><I>Value</I> may contain symbols.<BR></FONT></FONT></FONT><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 150%; text-decoration: none">
+<FONT FACE="helvetica, sans-serif"><FONT SIZE=5 STYLE="font-size: 20pt"><B>Monitors</B></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Bar</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+bar object maps the value of a pv to a bar length.When the initial
+box is drawn to create a bar object, the aspect ration of the box
+determines the orientation of the created bar object.</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=51*>
+	<COL WIDTH=201*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=20%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Attribute</B></FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=78%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Description</B></FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=20%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Readback
+				PV</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=78%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Primary
+				pv; if <I>Null PV</I> is blank, bar length represents the value
+				of this pv</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=20%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Null PV</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=78%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>If
+				non-blank, then the bar length represents the difference between
+				the value of the <I>Readback PV</I> and the value of this pv</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=20%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Label </FONT></FONT></FONT>
+				</P>
+			</TD>
+			<TD WIDTH=78%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Literal
+				value used when <I>Label Type</I> is <I>Literal</I></FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=20%>
+				<P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Scale
+				Format</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=78%>
+				<P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>f
+				maps precision to the number of decimal places</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=20%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=78%>
+				<P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>g
+				maps precision to the number of significant digits</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=20%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=78%>
+				<P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>e
+				maps precision to the number of decimal places but value always
+				includes exponent</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in; font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Other
+attributes are self evident.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in; font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Readback
+PV</I> and <I>Null PV</I> may contain symbols.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Message
+Box</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+message box objects provides a simple scrollable message log window
+that may be associated with a log file. Values written to the string
+pv Readback PV are logged to the window and optionally logged to the
+associated file. The value may end with &quot;\n&quot; which causes
+the message log window to advance to a newline and puts a newline
+into the log file. When the log file fills up (as determined by <I>Max
+File Size</I>) it is renamed to &lt;name&gt;_2. Any existing file of
+this name is deleted.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>All
+<SPAN STYLE="font-style: normal">attributes are self evident.</SPAN></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in; font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Readback
+PV</I> may contain symbols.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Symbol</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+symbol object maps the value of a pv or a group of pvs into 1 of N
+images contained in another edm display file.</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=49*>
+	<COL WIDTH=203*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=19%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Attribute</B></FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=79%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Description</B></FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=19%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Symbol
+				File</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=79%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Symbol
+				file name. This is nothing more than a normal edm display file
+				that has been created according to certain specified rules.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=19%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Binary
+				Truth Table</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=79%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>If
+				checked, all pv names listed are mapped into a single bit of the
+				final value that determines the image to be displayed. The first
+				pv in the list corresponds to bit 0, the second to bit 1, and so
+				on. Each pv is considered to have a value of 0 if the actual
+				numerical value is also 0. Otherwise, the value is considered to
+				be 1. This value, 0 or 1, is then mapped into the associated bit
+				position and all bits are considered to determine the final
+				numerical value.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=19%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=79%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>If not
+				checked, only the first pv in the list is used in determining the
+				displayed image.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=19%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Number
+				of Items</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=79%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Total
+				number of images in the symbol. This must be less than or equal
+				to the actual number of images in the symbol file.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=19%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Item
+				Number</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=79%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>This
+				field is special in that in selects one element of a group of
+				array fields labeled <I>&lt;=</I> and <I>&lt;</I>.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=19%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&gt;=
+				and &lt;</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=79%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>These
+				fields are used to determine a value match against the value of
+				one or a group of pvs. The first match determines the image that
+				will be displayed.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Note
+that image (and item) number 1 is reserved for the out-of-band
+condition and the value range should reflect this fact. If not, image
+1 will be displayed for the specified range of values and also for
+the case in which the value of the pv matches none of the specified
+ranges.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Note
+also, in edit mode, image number 2 is displayed.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>All
+other <SPAN STYLE="font-style: normal">attributes are self evident.</SPAN></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in; font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>All
+<I>PV Names</I> may contain symbols.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in; font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=4><B>Creating
+a Symbol File</B></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>A legal symbol
+file is one which contains N non-nested groups of objects. The image
+number corresponds to the stacking level of the grouped object, i.e.
+The lowest object is image 1 and the highest object is image N. So a
+symbol file may be created by the following steps.</FONT></FONT></FONT></P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+	<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Draw
+	components of all images (no groups allowed)</FONT></FONT></FONT></P>
+	<LI><P STYLE="margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+	<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Group all
+	components of each image once and only once</FONT></FONT></FONT></P>
+	<LI><P STYLE="margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+	<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Order the
+	groups by using the raise and lower operations to make image 1 the
+	lowest and image N the highest</FONT></FONT></FONT></P>
+	<LI><P STYLE="margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+	<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Save the
+	display file</FONT></FONT></FONT></P>
+</UL>
+<P STYLE="margin-left: 0.01in; text-indent: -0.01in; margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>This is, at
+best, a tedious procedure. As a result, a method of automating this
+process is included. This procedure is outlined below and relies on
+the use of the invisible rectangle. Here are the steps.</FONT></FONT></FONT></P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+	<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Draw a
+	rectangle and make it invisible</FONT></FONT></FONT></P>
+	<LI><P STYLE="margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+	<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Draw all
+	static portions of the symbol inside the invisible rectangle</FONT></FONT></FONT></P>
+	<LI><P STYLE="margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+	<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Copy and paste
+	these image components N times</FONT></FONT></FONT></P>
+	<LI><P STYLE="margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+	<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>For each
+	resulting image, draw the dynamic components</FONT></FONT></FONT></P>
+	<LI><P STYLE="margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+	<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>When all
+	images are complete, make sure all groups have been ungrouped,
+	arrange all images by columns and rows, click the middle button on
+	the display background and choose Auto Make Symbol. Edm will display
+	the status of this operation in the message box. When arranging the
+	images, note that column 1, row 1 is image 1; column 2, row 1 is
+	image 2; and so on from left-top to right-bottom.</FONT></FONT></FONT></P>
+	<LI><P STYLE="margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+	<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Save the
+	display file</FONT></FONT></FONT></P>
+</UL>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 150%; text-decoration: none">
+<FONT FACE="helvetica, sans-serif"><FONT SIZE=5 STYLE="font-size: 20pt"><B>Controls</B></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Text</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="helvetica, sans-serif"><FONT SIZE=3>The
+text control displays the value of a pv as text. This control is
+commonly used as a monitor.</FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=45*>
+	<COL WIDTH=207*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Attribute</B></FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=81%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Description</B></FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Fg
+				Color</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=81%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Notice
+				the text field to the right of this attribute. The name of a pv
+				may be entered here. If so, the integer value of the pv is mapped
+				to the corresponding color in the edm color pallatte. This color
+				is then used for the text foreground color in execute mode.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Use
+				Display Bg</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=81%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Ignore
+				<I>Bg Color</I> attribute, use display background color instead.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Display
+				Format</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=81%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Natural
+				- depends on pv type, self evident except for floating point pvs
+				where precision is mapped to number of significant digits.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=81%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Float
+				- Precision is mapped to number of decimal places.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=81%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Exponential
+				- Precision is mapped to number of decimal places and exponent is
+				included in display.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=81%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>All
+				other format values are self evident.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Null
+				PV Name</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=81%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>If
+				non-blank, the value of this pv is compared to the value of the
+				pv given by <I>PV Name</I>. If these values are equal, the <I>Null
+				Color</I> is used for the text foreground color in execute mode.
+				We use this feature to indicate that the current value of a pv is
+				the same as the corresponding saved value.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Smart
+				Refresh</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=81%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>This
+				box must be checked if the text will be on top of a graphics
+				object.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>All other
+attributes are self evident.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The pv
+associated with <I>Fg Color, PV Name</I>, and <I>Null PV Name</I> may
+contain symbols.<BR></FONT></FONT></FONT><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Slider</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+slider object controls the value of a numeric pv and may optionally
+monitory the value of another numeric readback pv.</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=40*>
+	<COL WIDTH=212*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=16%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Attribute</B></FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=83%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Description</B></FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=16%>
+				<P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Display
+				Format</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=83%>
+				<P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>f
+				maps precision to the number of decimal places</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=16%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=83%>
+				<P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>g
+				maps precision to the number of significant digits</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=16%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=83%>
+				<P STYLE="font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>e
+				maps precision to the number of decimal places but value always
+				includes exponent</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in; font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><BR>Other
+attributes are self evident.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in; font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Control
+</I>PV, <I>Control Label PV</I>, Readback<I> PV</I>, <I>Readback
+label PV</I> and <I>Saved Value PV</I> may contain symbols.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in; font-style: normal"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+figure below shows an example of a slider in execute mode.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><IMG SRC="sv14514523.jpg" NAME="Graphic14" ALIGN=LEFT WIDTH=434 HEIGHT=117 BORDER=0><BR CLEAR=LEFT><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><SPAN STYLE="font-style: normal"><BR>The
+black arrow is the control lever, the white</SPAN> arrow is the
+readback indicator, the vertical mark to the right of the control
+lever is the current saved value, and the value 0.1 in the
+upper-middle is the current increment value. Dragging the control
+lever changes the control value continuously. Clicking to the left of
+the control lever decrements the value by the amount given by the
+current increment (clicking and holding invokes an auto-repeat
+decrement). Clicking to the right of the control lever increments the
+value by the amount given by the current increment (clicking and
+holding invokes an auto-repeat increment). Clicking on the <I>save</I>
+box saves the current value of the control pv and clicking on the
+<I>restore</I> box restores the saved value.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Finally,
+clicking above the control lever opens a dialog box like the one show
+below. The control value and the current increment may be changed
+here.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><IMG SRC="sv14514524.jpg" NAME="Graphic15" ALIGN=LEFT WIDTH=180 HEIGHT=171 BORDER=0><BR CLEAR=LEFT><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Button</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+button object is used to control or monitor a two state enumerated
+type pv. Optionally, a readback pv may also be specified.</FONT></FONT></FONT></P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>If
+<I>Control PV</I> and <I>Readback PV</I> are both non-blank and their
+values are not equal, then the button background color is given by
+the <I>Inconsistent</I> color button.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>All
+other attributes are self evident.</FONT></FONT></FONT></P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Control
+PV</I> and <I>Readback PV</I><SPAN STYLE="font-style: normal"> may
+contain symbols.</SPAN></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Menu
+Button</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+menu button object is used to control or monitor any enumerated type
+pv. This object employs a motif widget and does not align with other
+objects well.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>All
+attributes are self evident.</FONT></FONT></FONT></P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Control
+PV</I><SPAN STYLE="font-style: normal"> and <I>Readback PV</I> may
+contain symbols.</SPAN></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Message
+Button</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+message button object can send a value to any type pv. A value is
+sent on press, on release, or in both cases. If <I>Button Type</I> is
+<I>Toggle</I>, then the <I>Press Value</I> is sent on the toggle-on
+action and the <I>Release Value</I> is sent on the toggle-off action.
+A null entry for either <I>Press Value</I><SPAN STYLE="font-style: normal">
+or </SPAN><I>Release Value</I><SPAN STYLE="font-style: normal">
+implies that no value should be sent for the respective operation.</SPAN></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Destination</I>
+is the name of the pv to which the value is sent.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>All
+other attributes are self evident.</FONT></FONT></FONT></P>
+<P ALIGN=LEFT STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Destination</I><SPAN STYLE="font-style: normal">
+may contain symbols.</SPAN></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Exit
+Button</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+exit button object is used to close an active display. Optionally it
+may only iconize the display. It may also be employed to exit edm.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Menu
+Mux</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+menu mux object is a multiplexor object which can dynamically change
+the value of up to four symbols and then deactivate/reactive a
+display. In this manner, connections to pvs from various controls may
+be dynamically changed by selecting a new multiplexor state.</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=45*>
+	<COL WIDTH=207*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Attribute</B></FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=81%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Description</B></FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>PV
+				Name</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=81%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>An
+				optional numeric control pv which works in conjunction with the
+				multiplexor. The integer value of this pv is changed when the
+				user changes the multiplexor menu. Conversely, changing the value
+				of the pv will also change the multiplexor state. Note that a
+				value of 0 corresponds to the first menu entry.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Number
+				of Items</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=81%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Sets
+				the number of multiplexor menu items and the number of values for
+				the set of symbols</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Item
+				Number</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=81%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>This
+				field is special in that in selects one element of a group of
+				array fields labeled <I>Tag</I>, <I>Symbol</I>, <I>Value</I>, ...</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Tag</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=81%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+				string displayed in the menu for this set of symbol,value pairs</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Symbol</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=81%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Symbol
+				string that gets expanded to <I>Value</I></FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Value</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=81%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Expansion
+				value corresponding to previous <I>Symbol</I> string</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=18%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Initital
+				State</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=81%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Initial
+				multiplexor state (starting at 0); effective only if <I>PV Name</I>
+				is null</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>PV
+Name</I> and <SPAN STYLE="font-weight: medium"><I>Initital State</I><SPAN STYLE="font-style: normal">
+</SPAN></SPAN><SPAN STYLE="font-style: normal">may contain symbols,
+but these symbols are not affected by the multiplexor.</SPAN></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Related
+Display</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+related display object is used to open another display in execute
+mode. The values of up to four pvs may optionally be set.</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=42*>
+	<COL WIDTH=209*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=17%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Attribute</B></FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=82%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Description</B></FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=17%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Display
+				File Name</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=82%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Name
+				of display file to open. Explicit directory paths are honored; if
+				no directory is specified, the user directory is searched before
+				the project directory.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=17%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>On
+				Focus</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=82%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><SPAN STYLE="font-weight: medium"><SPAN STYLE="font-style: normal">Opens
+				the display file without window decorations when the </SPAN></SPAN>pointer
+				moves inside the button rather than on a button click. When the
+				pointer moves outside the button to some other region on the
+				parent window not occupied by a Motif widget, the display file
+				closes. Note that the <I>Close Current Display</I><SPAN STYLE="font-style: normal">
+				option</SPAN> has no effect when this option is selected.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=17%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Set
+				Display Position</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=82%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Opens
+				new display file near related display button</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=17%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Duplicates
+				Allowed</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=82%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Allows
+				multiple instances of the display to be opened at the same time.
+				A display file is uniquely identified by its name and by its list
+				of symbols,value pairs, so a duplicate is one which has the same
+				name as another and also contains the same list of symbols and
+				values.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=17%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Cascade</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=82%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Opens
+				additional instances of a display in a cascading manner. This
+				does not currently work with all window managers.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=17%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Macros</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=82%>
+				<P STYLE="font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><SPAN STYLE="font-style: normal">New
+				list of symbol,value pairs as sym1=val1,sym2=val2,... that will
+				be passed to the new display depending on the value of <I>Mode</I>
+				and </SPAN><I>Propagate</I></FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=42*>
+	<COL WIDTH=209*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P ALIGN=LEFT><BR>
+				</P>
+			</TD>
+			<TD WIDTH=17%>
+				<P ALIGN=LEFT><BR>
+				</P>
+			</TD>
+			<TD WIDTH=82%>
+				<P ALIGN=LEFT STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+				special strings &lt;WINID&gt;, &lt;TITLE&gt;, &lt;PROJDIR&gt;,
+				and &lt;USERDIR&gt; may be used as symbol values and will be
+				translated to the window id, the display title, the project
+				display directory, and the user display directory.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=17%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=82%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Mode
+				&amp; Propagate <I>Mode</I>=<I>Append</I>,<I>Propagate</I> not
+				checked - append specified list of macros to the list at the time
+				edm was executed and pass the result to the new display.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=17%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=82%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Mode</I>=<I>Replace</I>,<I>Propagate</I>
+				not checked - pass only the specified list of macros to the new
+				display.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=17%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=82%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Mode</I>=<I>Append</I>,<I>Propagate</I>
+				checked - append specified list of macros to the list in the
+				current display file.</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=17%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=82%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Mode</I>=<I>Replace</I>,<I>Propagate</I>
+				checked - pass only the specified list of macros to the new
+				display (same as above).</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Other
+attributes are self evident.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><SPAN STYLE="font-weight: medium"><SPAN STYLE="font-style: normal">All<I>
+PV</I> fields may contain symbols</SPAN></SPAN>.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Shell
+Command</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+shell command object is used to invoke a system shell command by
+pressing a button.</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=57*>
+	<COL WIDTH=195*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=22%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Attribute</B></FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=76%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><B>Description</B></FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=22%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Allow
+				Multiple Instances</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=76%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Allow
+				another shell command to be invoked before a previous one has
+				completed</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=22%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Auto
+				Exec Interval</FONT></FONT></FONT></P>
+			</TD>
+			<TD WIDTH=76%>
+				<P STYLE="font-style: normal; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Execute
+				shell command periodically at this rate (seconds)</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Other
+attributes are self evident.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in; font-weight: medium"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><I>Shell
+Command</I><SPAN STYLE="font-style: normal"> may contain symbols.</SPAN></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in; font-style: normal; font-weight: medium">
+<FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The special
+strings &lt;WINID&gt;, &lt;TITLE&gt;, &lt;PROJDIR&gt;, and &lt;USERDIR&gt;
+may be supplied in the command argument list and will be translated
+to the window id, the display title, the project display directory,
+and the user display directory. We use these to print displays and to
+export displays to GIF format for dynamic web publishing.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 150%; text-decoration: none; page-break-before: always">
+<FONT FACE="helvetica, sans-serif"><FONT SIZE=5 STYLE="font-size: 20pt"><B>Administrator's
+Guide</B></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Site
+Font and Color Files</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Presently,
+fonts and colors are specified in two files, fonts.list and
+colors.list respectively. The default location is /etc but may be
+overridden with the environment variable EDMFILES.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Colors</B></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+color file structure is shown below, where r, g, and b are integers
+ranging from 0 to 65535:</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;Major
+				version number&gt; &lt;Minor version number&gt; &lt;Release
+				number&gt;</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;Number
+				of non-blinking colors&gt; &lt;Number of blinking colors&gt;
+				&lt;Number of color palette columns&gt;</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;r&gt;
+				&lt;g&gt; &lt;b&gt;</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;r&gt;
+				&lt;g&gt; &lt;b&gt;</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;r&gt;
+				&lt;g&gt; &lt;b&gt;</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>and
+so on for the total number of non-blinking colors</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;r&gt;
+				&lt;g&gt; &lt;b&gt; (blink color 1 on)</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;r&gt;
+				&lt;g&gt; &lt;b&gt; (blink color 1 off)</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;r&gt;
+				&lt;g&gt; &lt;b&gt; (blink color 2 on)</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;r&gt;
+				&lt;g&gt; &lt;b&gt; (blink color 2 off)</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>and
+so on for the total number of blinking colors</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;r&gt;
+				&lt;g&gt; &lt;b&gt; (disconnected color)</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;r&gt;
+				&lt;g&gt; &lt;b&gt; (invalid color)</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;r&gt;
+				&lt;g&gt; &lt;b&gt; (major alarm color)</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;r&gt;
+				&lt;g&gt; &lt;b&gt; (minor alarm color)</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;r&gt;
+				&lt;g&gt; &lt;b&gt; (no alarm color)</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+specification for the no alarm state may either be a valid r, g, b
+combination or may be -1 -1 -1. In the former case, for object colors
+which are alarm sensitive, the specified r, g, b values determine the
+non-alarm color. In the later case, the object takes on the user
+specified color when no alarms are present.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Fonts</B></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+font file structure contains three lines of header information and a
+list of X font specifications such that for a given font family and
+set of sizes, each family-size pair contains a normal regular font, a
+normal italic font, a bold regular font, and a bold italic font.
+Furthermore, the font weight must be &quot;bold&quot; or &quot;medium&quot;
+and the slant must be &quot;o&quot; or &quot;i&quot;.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+header information follows:</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;Major
+				version number&gt; &lt;Minor version number&gt; &lt;Release
+				number&gt;</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Default
+				display element font tag given as family-weight-slant-pointsize
+				(e.g. helvetica-medium-r-10.0)</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Default
+				text font tag given as family-weight-slant-pointsize (e.g.
+				helvetica-medium-r-18.0)</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>These
+default fonts are used if all other attempts to resolve a given font
+specification fail. This can occur, for example, if a display file is
+copied from one site to another where the two sites have been
+configured with different sets of available fonts.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Bitmap
+fonts are specified as shown in the followings example for the
+courier family:</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-courier-bold-o-normal--10-100-75-75-m-60-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-courier-bold-o-normal--12-120-75-75-m-70-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-courier-bold-o-normal--14-140-75-75-m-90-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-courier-bold-r-normal--10-100-75-75-m-60-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-courier-bold-r-normal--12-120-75-75-m-70-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-courier-bold-r-normal--14-140-75-75-m-90-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-courier-medium-o-normal--10-100-75-75-m-60-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-courier-medium-o-normal--12-120-75-75-m-70-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-courier-medium-o-normal--14-140-75-75-m-90-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-courier-medium-r-normal--10-100-75-75-m-60-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-courier-medium-r-normal--12-120-75-75-m-70-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-courier-medium-r-normal--14-140-75-75-m-90-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Note
+that only 10, 12, and 14 point fonts have been specified. All
+available fonts will normally be included in the list.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Scalable
+fonts are specified as shown in the followings example for the utopia
+family:</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-utopia-bold-i-normal--*-90-75-75-p-*-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-utopia-bold-i-normal--*-100-75-75-p-*-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-utopia-bold-i-normal--*-110-75-75-p-*-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-utopia-bold-i-normal--*-2880-75-75-p-*-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-utopia-bold-r-normal--*-90-75-75-p-*-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-utopia-bold-r-normal--*-100-75-75-p-*-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-utopia-bold-r-normal--*-110-75-75-p-*-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-utopia-bold-r-normal--*-2880-75-75-p-*-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-utopia-medium-i-normal--*-90-75-75-p-*-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-utopia-medium-i-normal--*-100-75-75-p-*-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-utopia-medium-i-normal--*-110-75-75-p-*-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-utopia-medium-i-normal--*-2880-75-75-p-*-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-utopia-medium-r-normal--*-90-75-75-p-*-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-utopia-medium-r-normal--*-100-75-75-p-*-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-utopia-medium-r-normal--*-110-75-75-p-*-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>-adobe-utopia-medium-r-normal--*-2880-75-75-p-*-iso8859-1</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Again,
+note that only a few fonts sizes have been specified.<BR></FONT></FONT></FONT><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Site
+Component Object Files</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Display
+Objects</B></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3><BR>Display
+element components are specified in the file edmObjects. This file is
+included in the distribution and is updated only when additional
+components are installed. The default location is /etc but may be
+overridden with the environment variable EDMOBJECTS. The file
+contains a single line header and one line of information per
+component as shown below.</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;Number
+				of components&gt;</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;component
+				1 id&gt; &lt;sharable library file&gt; &lt;type&gt; &lt;name&gt;</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;component
+				2 id&gt; &lt;sharable library file&gt; &lt;type&gt; &lt;name&gt;</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>and
+so on, until all components have been enumerated</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>The
+component id must be unique and may be a uuid.<BR><BR>Each sharable
+library file may contain multiple components.<BR><BR>The values for
+type are <SPAN STYLE="font-weight: medium"><I>Graphics</I></SPAN>,
+<SPAN STYLE="font-weight: medium"><I>Monitors</I></SPAN>, and
+<SPAN STYLE="font-weight: medium"><I>Controls</I></SPAN>.<BR><BR>Name
+is the name seen by the user in the object creation menu and should
+be unique but may be changed by the user in the case of namespace
+collision.<BR><BR>Independently developed components intended to be
+shared among members of a larger community should include object ids
+and library file names which are derived from uuids.<BR><BR>In
+general, the edm object file need not be manually manipulated. If the
+component developer has done things correctly, new components are
+added to the system as follows:</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>edm -add
+				&lt;edm component library file with full directory path&gt;</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>For
+example, the command:</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>edm -add
+				/usr/edm/components/newstuff.so</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>will
+add all components in newstuff.o to the edm object file. Note that to
+add new components, you must have read and write permission to the
+edm object file.<BR><BR>Library file components may be listed with
+the command:</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>edm
+				-show &lt;edm component library file with full directory path&gt;</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Therefore,
+to examine the components in the library file from the previous
+example, the command becomes:</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>edm
+				-show /usr/edm/components/newstuff.so</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><B>PV
+Objects</B></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in">PV components are used only by the
+generic PV version of edm. The EPICS specific version does not make
+use of PV components but the PV component file must be installed
+nevertheless.<BR><BR>PV components are specified in the file
+edmPvObjects. This file is included in the distribution and is
+updated only when additional components are installed. The default
+location is /etc but may be overridden with the environment variable
+EDMPVOBJECTS. The file contains a single line header and one line of
+information per component as shown below.</P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;Number
+				of components&gt;</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;component
+				1 id&gt; &lt;sharable library file&gt; &lt;PV name&gt;</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>&lt;component
+				2 id&gt; &lt;sharable library file&gt; &lt;PV name&gt;</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>and
+so on, until all components have been enumerated.<BR>There are
+currently no edm commands to manage these components.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 150%"><FONT FACE="helvetica, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><U><B>Utility
+Library and Include Files</B></U></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Edm
+requires the following library and include files which provides
+various services, including a number of platform dependent functions.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Library:</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>lib114135a4-6f6c-11d3-95bc-00104b8742df.so</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>Include
+Files:</FONT></FONT></FONT></P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=4*>
+	<COL WIDTH=252*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>avl.h</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>crc.h</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>sys_types.h</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=2%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=98%>
+				<P><FONT COLOR="#000000"><FONT FACE="Times"><FONT SIZE=3>thread.h</FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0.1in"><BR><BR>
+</P>
+</BODY>
+</HTML>

@@ -1,0 +1,5 @@
+#!/sbin/sh
+diff msg.h ../../util1/msg
+diff msg.mes ../../util1/msg
+diff msg_pkg.c ../../util1/msg
+diff msg_priv.h ../../util1/msg

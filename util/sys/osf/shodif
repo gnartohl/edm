@@ -1,0 +1,9 @@
+#!/sbin/sh
+diff os.h ../../../util1/sys/osf
+diff os.mes ../../../util1/sys/osf
+diff os_objs.h ../../../util1/sys/osf
+diff os_pkg.c ../../../util1/sys/osf
+diff os_priv.h ../../../util1/sys/osf
+diff sys_pkg.c ../../../util1/sys/osf
+diff sys_types.h ../../../util1/sys/osf
+diff unix.mes ../../../util1/sys/osf

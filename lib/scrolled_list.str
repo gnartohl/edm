@@ -1,0 +1,11 @@
+#ifndef __scrolled_list_str
+#define __scrolled_list_str 1
+
+#define scrolledListClass_str1 "File "
+#define scrolledListClass_str2 "Filter "
+#define scrolledListClass_str3 "Prefix "
+#define scrolledListClass_str4 "Upper"
+#define scrolledListClass_str5 "Lower"
+#define scrolledListClass_str6 "Dismiss"
+
+#endif

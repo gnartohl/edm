@@ -1,0 +1,30 @@
+#ifndef __message_box_str
+#define __message_box_str 1
+
+#define activeMessageBoxClass_str1 "rename %s to %s failed\n"
+#define activeMessageBoxClass_str2 "Cannot get file lock - no logging to file will be done\n"
+#define activeMessageBoxClass_str3 "No logging to file will be done\n"
+#define activeMessageBoxClass_str4 "Unknown object"
+#define activeMessageBoxClass_str5 " Properties"
+#define activeMessageBoxClass_str6 "X"
+#define activeMessageBoxClass_str7 "Y"
+#define activeMessageBoxClass_str8 "Width"
+#define activeMessageBoxClass_str9 "Height"
+#define activeMessageBoxClass_str10 "Buffer Size in Bytes"
+#define activeMessageBoxClass_str11 "Readback PV"
+#define activeMessageBoxClass_str12 "Log File Name"
+#define activeMessageBoxClass_str13 "Max File Size (bytes)"
+#define activeMessageBoxClass_str14 "File Flush Time (sec)"
+#define activeMessageBoxClass_str15 "Font"
+#define activeMessageBoxClass_str16 "Fg Color"
+#define activeMessageBoxClass_str17 "Bg Color"
+#define activeMessageBoxClass_str18 "Text Bg Color"
+#define activeMessageBoxClass_str19 "Top Shadow Color"
+#define activeMessageBoxClass_str20 "Bot Shadow Color"
+#define activeMessageBoxClass_str21 "Message Box"
+#define activeMessageBoxClass_str22 "error from ca_search\n"
+#define activeMessageBoxClass_str23 "ca_clear_channel failure\n"
+#define activeMessageBoxClass_str24 "frameWidget create failed\n"
+#define activeMessageBoxClass_str25 "ca_add_masked_array_event failed\n"
+
+#endif

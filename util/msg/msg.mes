@@ -1,0 +1,25 @@
+.facility	msg
+.prefix		msg_
+.value		7
+
+.severity	message
+ERROR_STATUS_PRE_TEXT		<Status code: >
+ERROR_STATUS_POST_TEXT		<~ [hex]>
+INTERNAL_INIT_ERR_TEXT		<[Internal initialization error - abort]>
+PROCESSED_MSG_TEXT		<Processed >
+CHANNEL_MSG_TEXT		<[Processed %-d channel]\n>
+CHANNELS_MSG_TEXT		<[Processed %-d channels]\n>
+SUCCESS_COMP_MSG_TEXT		<Successful completion>
+ERROR_MSG_TEXT			<~ error, >
+ERRORS_MSG_TEXT			<~ errors, >
+WARNING_MSG_TEXT		<~ warning>
+WARNINGS_MSG_TEXT		<~ warnings>
+COMPLETED_MSG_TEXT		<~>
+OUT_FIL_DEL_MSG_TEXT		<, output file not created>
+PREFIX_LINE_MSG_TEXT		<, line >
+POSTFIX_LINE_MSG_TEXT		<:>
+PREFIX_CUR_FILE_MSG_TEXT	<Current file: >
+POSTFIX_CUR_FILE_MSG_TEXT	<~>
+PREFIX_REF_FILE_MSG_TEXT	<Referenced file: >
+POSTFIX_REF_FILE_MSG_TEXT	<~>
+EXE_ABORT_MSG_TEXT		<Execution Aborted>

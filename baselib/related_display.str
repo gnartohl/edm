@@ -1,0 +1,33 @@
+#ifndef __related_display_str
+#define __related_display_str 1
+
+#define relatedDisplayClass_str1 "import file syntax error"
+#define relatedDisplayClass_str2 "Unknown object"
+#define relatedDisplayClass_str3 " Properties"
+#define relatedDisplayClass_str4 "X"
+#define relatedDisplayClass_str5 "Y"
+#define relatedDisplayClass_str6 "Width"
+#define relatedDisplayClass_str7 "Height"
+#define relatedDisplayClass_str8 "FG Color"
+#define relatedDisplayClass_str9 "BG Color"
+#define relatedDisplayClass_str10 "Top Shadow"
+#define relatedDisplayClass_str11 "Bottom Shadow"
+#define relatedDisplayClass_str12 "Font"
+#define relatedDisplayClass_str13 "Button Label"
+#define relatedDisplayClass_str14 "Display File Name"
+#define relatedDisplayClass_str15 "PV"
+#define relatedDisplayClass_str16 "Value"
+#define relatedDisplayClass_str17 "On Focus"
+#define relatedDisplayClass_str18 "Set Display Position"
+#define relatedDisplayClass_str19 "Invisible"
+#define relatedDisplayClass_str20 "Close Current Display"
+#define relatedDisplayClass_str21 "Duplicates Allowed"
+#define relatedDisplayClass_str22 "Cascade"
+#define relatedDisplayClass_str23 "Mode"
+#define relatedDisplayClass_str24 "Append|Replace"
+#define relatedDisplayClass_str25 "Propagate"
+#define relatedDisplayClass_str26 "Macros"
+#define relatedDisplayClass_str27 "error from ca_search_and_connect\n"
+#define relatedDisplayClass_str28 "ca_clear_channel failure\n"
+
+#endif

@@ -1,0 +1,17 @@
+#ifndef __pvBindings_str
+#define __pvBindings_str 1
+
+#define pvBindingClass_str1 "Cannot open pv objects file - %s\n"
+#define pvBindingClass_str2 "No pv objects in file - %s\n"
+#define pvBindingClass_str3 "No objects in file - %s\n"
+#define pvBindingClass_str4 "Insufficient virtual memory\n"
+#define pvBindingClass_str5 "Insufficient virtual memory\n"
+#define pvBindingClass_str6 "Insufficient virtual memory\n"
+#define pvBindingClass_str7 "Insufficient virtual memory\n"
+#define pvBindingClass_str8 "Object definition syntax error\n"
+#define pvBindingClass_str9 "Object definition syntax error\n"
+#define pvBindingClass_str10 "Object definition syntax error\n"
+#define pvBindingClass_str11 "Object definition syntax error\n"
+#define pvBindingClass_str12 "Number of items does not match contents in %s\n"
+
+#endif

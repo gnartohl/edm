@@ -1,0 +1,5 @@
+#!/sbin/sh
+diff thread.h ../../../util1/thread/vxworks
+diff thread.mes ../../../util1/thread/vxworks
+diff thread_pkg.c ../../../util1/thread/vxworks
+diff thread_priv.h ../../../util1/thread/vxworks

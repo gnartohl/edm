@@ -1,0 +1,188 @@
+typedef struct area_attr_tag {
+  int num_top_title_lines;
+  char *top_font,
+  int num_bottom_title_lines;
+  char *bottom_font,
+  int xannotation,		/* flag */
+  char *x_scale_font,
+  int xtitle;			/* flag */
+  char *x_title_font,
+  int yannotation,		/* flag */
+  char *y_scale_font,
+  int ytitle,			/* flag */
+  char *y_title_font
+} AREA_ATTR;
+
+int graph_create_window (
+  double origin_x,	/* inches */
+  double origin_y,	/* inches */
+  double height,		/* inches */
+  double width,		/* inches */
+  char *window_name,
+  char *icon_name,
+  char *bg_color,
+  GWIN_ID *id
+);
+
+int graph_regen_window (
+  GWIN_ID id,
+);
+
+int graph_set_window_background (
+  GWIN_ID id,
+  char *color
+);
+
+int graph_create_area (
+  GWIN_ID id,
+  AREA_ATTR area_attributes,
+  double origin_x,	/* inches */
+  double origin_y,	/* inches */
+  double height,		/* inches */
+  double width,		/* inches */
+  AREA_ID *id
+);
+
+int graph_set_user_coords (
+  AREA_ID id,
+  double xmin,
+  double xmax,
+  double ymin,
+  double ymax
+);
+
+int graph_set_area_background (
+  AREA_ID id,
+  char *color
+);
+
+int graph_set_area_border (
+  AREA_ID id,
+  char *color,
+  int line_thickness
+);
+
+int graph_set_top_title (
+  AREA_ID id,
+  int line_num,
+  char *color,
+  char *font,
+  char *title
+);
+
+int graph_set_bottom_title (
+  AREA_ID id,
+  int line_num,
+  char *color,
+  char *font,
+  char *title
+);
+
+int graph_set_x_label (
+  AREA_ID id,
+  char *color,
+  char *font,
+  char *label
+);
+
+int graph_set_x_scale (
+  AREA_ID id,
+  double xmin,
+  double xmax,
+  int num_labeled_ticks,
+  int num_major_ticks,
+  int num_minor_ticks_per_major_interval
+);
+
+int graph_set_x_annotation (
+  AREA_ID id,
+  char *color,
+  char *font,
+  char *format	/* for C printf */
+);
+
+int graph_set_y_label (
+  AREA_ID id,
+  char *color,
+  char *font,
+  char *label
+);
+
+int graph_set_y_scale (
+  AREA_ID id,
+  double ymin,
+  double ymax,
+  int num_labeled_ticks,
+  int num_major_ticks,
+  int num_minor_ticks_per_major_interval
+);
+
+int graph_set_y_annotation (
+  AREA_ID id,
+  char *color,
+  char *font,
+  char *format	/* for C printf */
+);
+
+int graph_create_plot (
+  AREA_ID id,
+  PLOT_ID *id
+);
+
+int graph_delete_plot (
+  PLOT_ID id
+);
+
+int graph_set_plot_attr (
+  PLOT_ID id,
+  int plot_style,	/* 1=point, 2=line, 3=bar */
+  int symbol,		/* 0=none, 1=circle, 2=square, 3=triangle, 4=diamond */
+  char *line_color,
+  int line_type,	/* 1=solid, 2= . 3= - 4= .-.- 5= --.--. 6= ..-..- */
+  int line_thickness,
+  int fill_bar,		/* flag */
+  char *symbol_color,
+  int symbol_line_thickness,
+  int fill_symbol	/* flag */
+);
+
+int graph_add_data_points (
+  PLOT_ID id,
+  int n;
+  double x[],
+  double y[]
+);
+
+int graph_show_plot (
+  PLOT_ID id
+);
+
+int graph_create_text (
+  AREA_ID area_id or GWIN_ID gwin_id,
+  TEXT_ID *id
+);
+
+int graph_set_text_attr (
+  TEXT_ID id,
+  char *color,
+  char *font
+);
+
+int graph_put_text (
+  TEXT_ID id,
+  double x,
+  double y,
+  char *text
+);
+
+int graph_plot_text (
+  TEXT_ID id,
+  double x,
+  double y,
+  char *text
+);
+
+int graph_delete_text (
+  TEXT_ID id
+);
+

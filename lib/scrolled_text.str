@@ -1,0 +1,9 @@
+#ifndef __scrolled_text_str
+#define __scrolled_text_str 1
+
+#define scrolledTextClass_str1 "Dismiss"
+#define scrolledTextClass_str2 "Clear"
+#define scrolledTextClass_str3 "Auto Open"
+#define scrolledTextClass_str4 "Auto Raise"
+
+#endif

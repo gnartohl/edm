@@ -1,0 +1,33 @@
+#ifndef __symbol_str
+#define __symbol_str 1
+
+#define activeSymbolClass_str1 "Control PV"
+#define activeSymbolClass_str2 "Truth Table PV 1"
+#define activeSymbolClass_str3 "Truth Table PV 2"
+#define activeSymbolClass_str4 "Truth Table PV 3"
+#define activeSymbolClass_str5 "Truth Table PV 4"
+#define activeSymbolClass_str6 "Truth Table PV 5"
+#define activeSymbolClass_str7 "Symbol resize underflow - using original size"
+#define activeSymbolClass_str8 "Cannot read symbol file"
+#define activeSymbolClass_str9 "Unknown object"
+#define activeSymbolClass_str10 " Properties"
+#define activeSymbolClass_str11 "ID"
+#define activeSymbolClass_str12 "X"
+#define activeSymbolClass_str13 "Y"
+#define activeSymbolClass_str14 "Symbol File"
+#define activeSymbolClass_str15 "Preserve Original Size"
+#define activeSymbolClass_str16 "Binary Truth Table"
+#define activeSymbolClass_str17 "PV Names"
+#define activeSymbolClass_str18 ">="
+#define activeSymbolClass_str19 "<"
+#define activeSymbolClass_str20 "Insufficient virtual memory - abort\n"
+#define activeSymbolClass_str21 "Insufficient virtual memory - abort\n"
+#define activeSymbolClass_str22 "Cannot read symbol file"
+#define activeSymbolClass_str23 "Symbol resize underflow - using original size"
+#define activeSymbolClass_str24 "error from ca_search\n"
+#define activeSymbolClass_str25 "ca_clear_event failure\n"
+#define activeSymbolClass_str26 "ca_clear_channel failure\n"
+#define activeSymbolClass_str27 "ca_add_masked_array_event failed\n"
+#define activeSymbolClass_str28 "value"
+
+#endif

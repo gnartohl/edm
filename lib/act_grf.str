@@ -1,0 +1,11 @@
+#ifndef __act_grf_str
+#define __act_grf_str 1
+
+#define activeGraphicClass_str1 "import file syntax error"
+#define activeGraphicClass_str2 "Cannot find font: [%s]\n"
+#define activeGraphicClass_str3 "  Using default window font: [%s]\n"
+#define activeGraphicClass_str4 "Cannot find default window font: [%s]\n"
+#define activeGraphicClass_str5 "  Using default site font: [%s]\n"
+#define activeGraphicClass_str6 "Cannot find default site font: [%s]\n"
+
+#endif

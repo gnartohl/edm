@@ -1,0 +1,4 @@
+.phony : buildInstall
+
+buildInstall : ;
+	@$(MAKE) -f ../makefile.$(HOST_ARCH)

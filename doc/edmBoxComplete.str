@@ -1,0 +1,31 @@
+#ifndef __edmBoxComplete_str
+#define __edmBoxComplete_str 1
+
+#define edmBoxComplete_str1 "Control PV"
+#define edmBoxComplete_str2 "Unknown object"
+#define edmBoxComplete_str3 " Properties"
+#define edmBoxComplete_str4 "X"
+#define edmBoxComplete_str5 "Y"
+#define edmBoxComplete_str6 "Width"
+#define edmBoxComplete_str7 "Height"
+#define edmBoxComplete_str8 "Line Thk"
+#define edmBoxComplete_str9 "Line Style"
+#define edmBoxComplete_str10 "Line Color"
+#define edmBoxComplete_str11 "Alarm Sensitive"
+#define edmBoxComplete_str12 "Fill"
+#define edmBoxComplete_str13 "Fill Color"
+#define edmBoxComplete_str14 "PV"
+#define edmBoxComplete_str15 "Min Value"
+#define edmBoxComplete_str16 "Max Value"
+#define edmBoxComplete_str17 "Font"
+#define edmBoxComplete_str18 "Label"
+#define edmBoxComplete_str19 "0|1|2|3|4|5|6|7|8|9|10"
+#define edmBoxComplete_str20 "Solid|Dash"
+#define edmBoxComplete_str21 "error from ca_search\n"
+#define edmBoxComplete_str22 "ca_clear_event failure\n"
+#define edmBoxComplete_str23 "ca_clear_channel failure\n"
+#define edmBoxComplete_str24 "ca_get_callback failed\n"
+#define edmBoxComplete_str25 "edmBoxClass - Process variable must be numeric"
+#define edmBoxComplete_str26 "ca_add_masked_array_event failed\n"
+
+#endif

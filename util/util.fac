@@ -1,0 +1,58 @@
+#ifndef __util_FAC
+#define __util_FAC 1
+
+#define MSG_MAIN_FACILITY "util"
+
+/***
+* severity
+*/
+#define _INF_ 0x10000000
+#define _WRN_ 0x20000000
+#define _ERR_ 0x30000000
+#define _MSG_ 0x40000000
+
+/***
+* facilities
+*/
+#define __AVL__ 0x65000
+#define __IPNCL__ 0x70000
+#define __IPNIS__ 0x6A000
+#define __IPNSV__ 0x71000
+#define __IPRPC__ 0x68000
+#define __MSG__ 0x7000
+#define __OS__ 0x9000
+#define __SYS__ 0x8000
+#define __THR__ 0x69000
+#define __UNIX__ 0x1000
+
+#define MSG_GET_FAC(num,fac)\
+  switch ( num ) {\
+    case 0: fac = __AVL__; break;\
+    case 1: fac = __IPNCL__; break;\
+    case 2: fac = __IPNIS__; break;\
+    case 3: fac = __IPNSV__; break;\
+    case 4: fac = __IPRPC__; break;\
+    case 5: fac = __MSG__; break;\
+    case 6: fac = __OS__; break;\
+    case 7: fac = __SYS__; break;\
+    case 8: fac = __THR__; break;\
+    case 9: fac = __UNIX__; break;\
+  }
+
+#define MSG_GET_STR(num,str)\
+  switch ( num ) {\
+    case 0: strcpy( str, "AVL" ); break;\
+    case 1: strcpy( str, "IPNCL" ); break;\
+    case 2: strcpy( str, "IPNIS" ); break;\
+    case 3: strcpy( str, "IPNSV" ); break;\
+    case 4: strcpy( str, "IPRPC" ); break;\
+    case 5: strcpy( str, "MSG" ); break;\
+    case 6: strcpy( str, "OS" ); break;\
+    case 7: strcpy( str, "SYS" ); break;\
+    case 8: strcpy( str, "THR" ); break;\
+    case 9: strcpy( str, "UNIX" ); break;\
+  }
+
+#define MSG_MAX_FAC 10
+
+#endif

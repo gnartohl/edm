@@ -1,0 +1,84 @@
+30065002 BADHNDL Internal failure
+30065004 LBERR Internal failure
+30065006 NOMEM Insufficient virtual memory
+30065008 NULLEFT Internal failure
+3006500A NULRIGHT Internal failure
+3006500C NULROOT Internal failure
+3006500E RBERR Internal failure
+30065010 STKOFL Internal failure
+10065001 SUCCESS Normal completion
+30065012 UNKBF Internal failure
+30070002 BADPARAM Bad function parameter
+30070004 BIND_FAIL Bind operation failed
+30070006 CONNECT_FAIL Connect operation failed
+30070008 CON_CLOSED Connect has closed
+3007000A CON_RESET Connection reset by server
+3007000C MSG_TRUNC Send message was truncated
+3007000E NOMEM Insufficient virtual memory
+30070010 NOTCON Port is not connected
+30070012 SHUTDOWN_FAIL Socket shutdown failed
+30070014 SOCKET_FAIL Socket operation failure
+10070001 SUCCESS Normal completion
+30070016 TIMEOUT I/O read timeout
+30070018 UNKNOWN_HOST Unknown host name
+3007001A UNKNOWN_SERVICE Unknown service name
+1006A001 SUCCESS Normal completion
+3006A002 UNKSVC Unknown remote service name
+30071002 BADPARAM Bad function parameter
+30071004 CON_CLOSED Connect has closed
+30071006 CON_RESET Connection reset by server
+30071008 MSG_TRUNC Send message was truncated
+3007100A NOMEM Insufficient virtual memory
+3007100C NOTCON Port is not connected
+10071001 SUCCESS Normal completion
+3007100E UNKNOWN_SERVICE Unknown service name
+30068002 ARGBUFOVFLO RPC argument buffer length exceeded
+30068004 BADFUNCINDEX Bad RPC function index
+30068006 BADPARAM Bad function parameter
+30068008 BADSEQ Bad RPC sequence number
+3006800A DATAOVFLO RPC data buffer length exceeded
+3006800C INVTYPE Invalid RPC argument type
+3006800E NOMEM Insufficient virtual memory
+30068010 NOSUCHFUNC Unknown RPC function
+30068012 NUMARGSINV Invalid number of arguments for RPC function
+10068001 SUCCESS Normal completion
+40007001 CHANNELS_MSG_TEXT [Processed %-d channels]\n
+40007002 CHANNEL_MSG_TEXT [Processed %-d channel]\n
+40007003 COMPLETED_MSG_TEXT ~
+40007004 ERRORS_MSG_TEXT ~ errors, 
+40007005 ERROR_MSG_TEXT ~ error, 
+40007006 ERROR_STATUS_POST_TEXT ~ [hex]
+40007007 ERROR_STATUS_PRE_TEXT Status code: 
+40007008 EXE_ABORT_MSG_TEXT Execution Aborted
+40007009 INTERNAL_INIT_ERR_TEXT [Internal initialization error - abort]
+4000700A OUT_FIL_DEL_MSG_TEXT , output file not created
+4000700B POSTFIX_CUR_FILE_MSG_TEXT ~
+4000700C POSTFIX_LINE_MSG_TEXT :
+4000700D POSTFIX_REF_FILE_MSG_TEXT ~
+4000700E PREFIX_CUR_FILE_MSG_TEXT Current file: 
+4000700F PREFIX_LINE_MSG_TEXT , line 
+40007010 PREFIX_REF_FILE_MSG_TEXT Referenced file: 
+40007011 PROCESSED_MSG_TEXT Processed 
+40007012 SUCCESS_COMP_MSG_TEXT Successful completion
+40007013 WARNINGS_MSG_TEXT ~ warnings
+40007014 WARNING_MSG_TEXT ~ warning
+30009002 BADDOUB Internal failure - please submit an SPR
+30009004 BADFLT Internal failure - please submit an SPR
+30009006 BADID Internal failure - please submit an SPR
+30009008 BADLGNAM Internal failure - please submit an SPR
+3000900A NOFID Source file is either remote or not accessable
+3000900C NOMEM Insufficient virtual memory
+10009001 SUCCESS Normal completion
+30008002 FAIL Failure
+10008001 ONEENTQUE Queue contains one entry
+30008004 QUEWASEMP Queue was empty
+10008003 SUCCESS Normal completion
+30069002 BADPARAM Bad function parameter
+30069004 BADSTATE Facility not properly initialized
+30069006 FAIL Failure
+30069008 NOJOIN Child thread not ready to exit
+3006900A NOMEM Insufficient virtual memory
+10069001 SUCCESS Normal completion
+3006900C TIMEOUT Signal wait timeout
+30001002 ERROR System error, see errno
+10001001 SUCCESS Normal completion

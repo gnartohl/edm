@@ -1,0 +1,66 @@
+TOP = ../../../..
+include $(TOP)/config/CONFIG_EXTENSIONS
+
+ifeq ($(HOST_ARCH),Linux)
+
+  USR_CXXFLAGS += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+
+  USR_LIBS_DEFAULT = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl
+
+endif
+
+ifeq ($(HOST_ARCH),solaris)
+
+  USR_CXXFLAGS += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+
+  USR_LIBS_DEFAULT = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt
+
+endif
+
+USR_LDFLAGS += -shared -L../../../../lib/$(HOST_ARCH) -L../../../../bin/$(HOST_ARCH)
+
+PROD = libEdmBase.so
+
+PROD_LIBS += ca Com
+
+USR_INCLUDES = -I../ -I../../util -I../../pvlib -I../../lib
+
+Xm_DIR = $(MOTIF_LIB)
+Xt_DIR = $(X11_LIB)
+X11_DIR = $(X11_LIB)
+Xmu_DIR = $(X11_LIB)
+# ELW added following two lines for 
+# Red Hat 7.0 LINUX 
+Xp_DIR = $(X11_LIB)
+Xext = $(X11)/lib
+#
+XlibGUI_DIR = $(X11_LIB)
+XmStatic_DIR = $(MOTIF_LIB)
+XmStatXt_DIR = $(MOTIF_LIB)
+HCLXt_DIR = $(X11_LIB)
+Xlib_DIR = $(X11_LIB)
+HCLXmu_DIR = $(X11_LIB)
+
+SRCS += line_obj.cc
+SRCS += rectangle_obj.cc
+SRCS += circle_obj.cc
+SRCS += arc_obj.cc
+SRCS += x_text_obj.cc
+SRCS += meter.cc
+SRCS += bar.cc
+SRCS += x_text_dsp_obj.cc
+SRCS += button.cc
+SRCS += menu_button.cc
+SRCS += message_button.cc
+SRCS += exit_button.cc
+SRCS += menu_mux.cc
+SRCS += related_display.cc
+SRCS += message_box.cc
+SRCS += slider.cc
+SRCS += shell_cmd.cc
+SRCS += reg_libEdmBase.cc
+
+include $(TOP)/config/RULES.Host
+
+G++_NORMAL = $(G++)
+G++_STRICT = $(G++)

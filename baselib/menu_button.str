@@ -1,0 +1,32 @@
+#ifndef __menu_button_str
+#define __menu_button_str 1
+
+#define activeMenuButtonClass_str1 "Control PV"
+#define activeMenuButtonClass_str2 "Unknown object"
+#define activeMenuButtonClass_str3 " Properties"
+#define activeMenuButtonClass_str4 "X"
+#define activeMenuButtonClass_str5 "Y"
+#define activeMenuButtonClass_str6 "Width"
+#define activeMenuButtonClass_str7 "Height"
+#define activeMenuButtonClass_str8 "FG Color"
+#define activeMenuButtonClass_str9 "FG Color Mode"
+#define activeMenuButtonClass_str10 "Static|Alarm"
+#define activeMenuButtonClass_str11 "BG Color"
+#define activeMenuButtonClass_str12 "BG Color Mode"
+#define activeMenuButtonClass_str13 "Static|Alarm"
+#define activeMenuButtonClass_str14 "Top Shadow"
+#define activeMenuButtonClass_str15 "Bottom Shadow"
+#define activeMenuButtonClass_str16 "Font"
+#define activeMenuButtonClass_str17 "Control PV"
+#define activeMenuButtonClass_str18 "Readback PV"
+#define activeMenuButtonClass_str19 "Menu"
+#define activeMenuButtonClass_str20 "error from ca_search for [%s]\n"
+#define activeMenuButtonClass_str21 "error from ca_search for [%s]\n"
+#define activeMenuButtonClass_str22 "ca_clear_channel failure\n"
+#define activeMenuButtonClass_str23 "ca_clear_channel failure\n"
+#define activeMenuButtonClass_str24 "ca_add_masked_array_event failed\n"
+#define activeMenuButtonClass_str25 "ca_add_masked_array_event failed\n"
+#define activeMenuButtonClass_str26 "ca_add_masked_array_event failed\n"
+#define activeMenuButtonClass_str27 "ca_add_masked_array_event failed\n"
+
+#endif

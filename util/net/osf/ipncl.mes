@@ -1,0 +1,21 @@
+.facility	ipncl
+.prefix		ipncl_
+.value		112
+
+.severity	success
+SUCCESS		<Normal completion>
+
+.severity	error
+NOMEM		<Insufficient virtual memory>
+BADPARAM	<Bad function parameter>
+NOTCON		<Port is not connected>
+TIMEOUT		<I/O read timeout>
+SOCKET_FAIL	<Socket operation failure>
+SHUTDOWN_FAIL	<Socket shutdown failed>
+UNKNOWN_HOST	<Unknown host name>
+UNKNOWN_SERVICE	<Unknown service name>
+BIND_FAIL	<Bind operation failed>
+CONNECT_FAIL	<Connect operation failed>
+CON_CLOSED	<Connect has closed>
+MSG_TRUNC	<Send message was truncated>
+CON_RESET	<Connection reset by server>

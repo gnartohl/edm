@@ -1,0 +1,26 @@
+#ifndef __main_str
+#define __main_str 1
+
+#define main_str1 "X Error: code=%-d, msg: %s\n"
+#define main_str3 "error from sys_cvt_seconds_to_timeout\n"
+#define main_str4 "error from ipncl_create_port\n"
+#define main_str5 "error from ipncl_send_msg\n"
+#define main_str6 "error from ipncl_disconnect\n"
+#define main_str7 "error from ipncl_delete_port\n"
+#define main_str8 "error from ipnsv_create_named_port\n"
+#define main_str9 "error from ipnsv_create_port\n"
+#define main_str11 "error from ipnsv_accept_connection\n"
+#define main_str13 "error from ipnsv_wait_on_port\n"
+#define main_str15 "error from ipnsv_receive_msg\n"
+#define main_str16 "error from ipnsv_send_msg\n"
+#define main_str17 "Cannot insert node into active queue\n"
+#define main_str18 "Cannot remove node from free queue\n"
+#define main_str35 "Cannot get display name\n"
+#define main_str36 "Cannot open display\n"
+#define main_str37 "Cannot initialize main free queue - abort\n"
+#define main_str38 "Cannot initialize main active queue - abort\n"
+#define main_str39 "Cannot initialize main queue - abort\n"
+#define main_str40 "Cannot reinsert node into free queue\n"
+#define main_str41 "Cannot remove node from active queue\n"
+
+#endif
