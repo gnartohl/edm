@@ -19,4 +19,6 @@
 #define reg_str19 "Related Display"
 #define reg_str20 "Shell Command"
 
+#define reg_str99 "Exp Rectangle"
+
 #endif

@@ -1410,7 +1410,7 @@ fileListPtr curFile, nextFile;
     delete cur;
     cur = next;
   }
-#  processAllEventsWithSync( app, display );
+  //  processAllEventsWithSync( app, display );
   processAllEvents( app, display );
   delete head;
 
@@ -1438,12 +1438,12 @@ fileListPtr curFile, nextFile;
 
   XtDestroyWidget( mainWin );
 
-#  processAllEventsWithSync( app, display );
+  //  processAllEventsWithSync( app, display );
   processAllEvents( app, display );
 
   XtDestroyWidget( appTop );
 
-#  processAllEventsWithSync( app, display );
+  //  processAllEventsWithSync( app, display );
   processAllEvents( app, display );
 
 }
@@ -2653,7 +2653,7 @@ char msg[127+1];
       cur = cur->flink;
     }
 
-#    processAllEventsWithSync( app, display );
+    //    processAllEventsWithSync( app, display );
     processAllEvents( app, display );
 
     nodeCount = iconNodeCount = actionCount = iconActionCount = 0;
@@ -2687,7 +2687,7 @@ char msg[127+1];
       cur = cur->flink;
     }
 
-#    processAllEventsWithSync( app, display );
+    //    processAllEventsWithSync( app, display );
     processAllEvents( app, display );
 
     /* if all windows have been activated then iconify main window */

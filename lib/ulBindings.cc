@@ -95,3 +95,25 @@ char *error;
   return func;
 
 }
+
+RULEFUNC ulBindingClass::getRuleFunc (
+  char *funcName )
+{
+
+RULEFUNC func;
+char *error;
+
+// printf( "ulBindingClass::getRuleFunc, func name = [%s]\n", funcName );
+
+  if ( !dllHandle ) return NULL;
+
+  func = (RULEFUNC) dlsym( dllHandle, funcName );
+  if ((error = dlerror()) != NULL)  {
+    fputs(error, stderr);
+    fputs( "\n", stderr );
+    return NULL;
+  }
+
+  return func;
+
+}

@@ -70,6 +70,8 @@ SRCS += dynSymbol.cc
 SRCS += keypad.cc
 SRCS += undo.cc
 
+SRCS += rules.cc
+
 include $(TOP)/config/RULES.Host
 
 G++_NORMAL=$(G++)

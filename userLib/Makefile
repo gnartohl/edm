@@ -1,15 +1,12 @@
-# Makefile for medm top level
-
-TOP = ../..
+TOP = ../../..
 ifneq ($(wildcard $(TOP)/config)x,x)
   # New Makefile.Host config file location
   include $(TOP)/config/CONFIG_EXTENSIONS
-  DIRS = lib baselib edmMain pvlib imagelib userLib
-  include $(TOP)/config/RULES_DIRS
+  include $(TOP)/config/RULES_ARCHS
 else
   # Old Makefile.Unix config file location
   EPICS=../../..
   include $(EPICS)/config/CONFIG_EXTENSIONS
-  DIRS = lib baselib edmMain pvlib imagelib userLib
-  include $(EPICS)/config/RULES_DIRS
+  include $(EPICS)/config/RULES_ARCHS
 endif
+

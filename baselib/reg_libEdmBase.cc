@@ -33,6 +33,7 @@ static libRecType libRec[] = {
   { "activeCircleClass", global_str3, reg_str4 },
   { "activeArcClass", global_str3, reg_str5 },
   { "activeXTextClass", global_str3, reg_str6 },
+  { "expRectClass", global_str3, reg_str99 },
   { "activeMeterClass", global_str2, reg_str8 },
   { "activeBarClass", global_str2, reg_str9 },
   { "activeMessageBoxClass", global_str2, reg_str10 },

@@ -57,6 +57,8 @@ SRCS += slider.cc
 SRCS += shell_cmd.cc
 SRCS += reg_libEdmBase.cc
 
+SRCS += expRect.cc
+
 include $(TOP)/config/RULES.Host
 
 G++_NORMAL = $(G++)

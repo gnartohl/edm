@@ -28,6 +28,7 @@
 #include "environment.str"
 
 typedef void (*VPFUNC)( void *ptr );
+typedef int (*RULEFUNC)( void *classPtr, int arraySize, void *valArray );
 
 class ulBindingClass {
 
@@ -46,6 +47,9 @@ int ulBindingClass::openUserLibrary (
   char *libName );
 
 VPFUNC ulBindingClass::getFunc (
+  char *funcName );
+
+RULEFUNC ulBindingClass::getRuleFunc (
   char *funcName );
 
 };
