@@ -775,7 +775,8 @@ int edmStripClass::activate(int pass, void *ptr)
         case 1: // initialize
             // Check PV names
             for (i=0; i<num_pvs; ++i)
-                is_pvname_valid[i] = strcmp(PVName(i, true), "") != 0;
+	        // is_pvname_valid[i] = strcmp(PVName(i, true), "") != 0;
+	        is_pvname_valid[i] = !blankOrComment( PVName(i, true) );
             time_t now;
             time(&now);
             strip_data = new StripData(num_pvs, w, seconds, now, 0);

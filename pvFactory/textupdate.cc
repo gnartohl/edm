@@ -940,8 +940,14 @@ int edmTextupdateClass::activate(int pass, void *ptr)
         case 1: // initialize
             aglPtr = ptr;
             is_executing = true;
-            is_pv_valid = strcmp(getExpandedName(pv_name), "") != 0;
-            is_color_pv_valid =strcmp(getExpandedName(color_pv_name), "") != 0;
+            //is_pv_valid =
+            // strcmp(getExpandedName(pv_name), "") != 0;
+	    is_pv_valid =
+             !blankOrComment( (char *) getExpandedName(pv_name) );
+            //is_color_pv_valid =
+            // strcmp(getExpandedName(color_pv_name), "") != 0;
+	    is_color_pv_valid =
+             !blankOrComment( (char *) getExpandedName(color_pv_name) );
             initEnable();
             break;
         case 2: // connect to pv

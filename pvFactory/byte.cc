@@ -807,7 +807,8 @@ int edmByteClass::activate(int pass, void *ptr)
            is_executing = 1;
        
            is_executing = true;
-           is_pvname_valid = strcmp(getExpandedPVName(), "") != 0;
+           //is_pvname_valid = strcmp(getExpandedPVName(), "") != 0;
+	   is_pvname_valid = !blankOrComment( (char *) getExpandedPVName() );
 
            init = 1;
 
