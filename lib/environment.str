@@ -14,6 +14,8 @@
 #define environment_str7 (char *) "EDMPRINTDEF"
 #define environment_str8 (char *) "EDMTMPFILES"
 #define environment_str9 (char *) "EDMHTTPDOCROOT"
+#define environment_str10 (char *) "EDMCOLORFILE"
+#define environment_str11 (char *) "EDMFONTFILE"
 
 #define global_str1 (char *) "Symbol"
 #define global_str2 (char *) "Monitors"

@@ -33,6 +33,7 @@
 #include "remFileOpen.h"
 
 static int gFastRefresh = -1;
+static const int gMaxExecutePasses = 7;
 
 
 void _edmDebug ( void ) {
@@ -14456,7 +14457,7 @@ btnActionListPtr curBtn;
 
   // each pass must complete successfully in approx 10 seconds
 
-  for ( pass=1; pass<7; pass++ ) {
+  for ( pass=1; pass<gMaxExecutePasses; pass++ ) {
 
     nTries = 200;
     do {
@@ -14698,7 +14699,7 @@ char callbackName[63+1];
 
   // each pass must complete successfully in approx 10 seconds
 
-  for ( pass=1; pass<7; pass++ ) {
+  for ( pass=1; pass<gMaxExecutePasses; pass++ ) {
 
     nTries = 200;
     do {
@@ -14885,7 +14886,7 @@ char **muxMacro, **muxExpansion;
 
   // each pass must complete successfully in approx 10 seconds
 
-  for ( pass=1; pass<7; pass++ ) {
+  for ( pass=1; pass<gMaxExecutePasses; pass++ ) {
 
     nTries = 200;
     do {

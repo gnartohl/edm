@@ -727,6 +727,11 @@ static int alignEnum[3] = {
 
   updateDimensions();
 
+  if ( autoSize && fs ) {
+    sboxW = w = stringBoxWidth;
+    sboxH = h = stringBoxHeight;
+  }
+
   stringY = y + fontAscent + h/2 - stringBoxHeight/2;
 
   if ( alignment == XmALIGNMENT_BEGINNING )

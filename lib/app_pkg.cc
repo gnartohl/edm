@@ -4218,7 +4218,7 @@ err_return:
   XtAddCallback( importSelectBox, XmNokCallback,
    app_importSelectOk_cb, (void *) this );
 
-  envPtr = getenv(environment_str2);
+  envPtr = getenv(environment_str2); // EDMFILES
   if ( envPtr ) {
     strncpy( prefix, envPtr, 127 );
     if ( prefix[strlen(prefix)-1] != '/' ) Strncat( prefix, "/", 127 );
@@ -4227,8 +4227,18 @@ err_return:
     strcpy( prefix, "/etc/edm/" );
   }
 
-  strncpy( fname, prefix, 127 );
-  Strncat( fname, "colors.list", 127 );
+  envPtr = getenv(environment_str10); // EDMCOLORFILE
+  if ( envPtr ) {
+
+    strncpy( fname, envPtr, 127 );
+
+  }
+  else {
+
+    strncpy( fname, prefix, 127 );
+    Strncat( fname, "colors.list", 127 );
+
+  }
 
   if ( privColorMap ) {
     ci.usePrivColorMap();
@@ -4264,8 +4274,19 @@ err_return:
 
   processAllEvents( app, display );
 
-  strncpy( fname, prefix, 127 );
-  Strncat( fname, "fonts.list", 127 );
+  envPtr = getenv(environment_str11); // EDMFONTFILE
+  if ( envPtr ) {
+
+    strncpy( fname, envPtr, 127 );
+
+  }
+  else {
+
+    strncpy( fname, prefix, 127 );
+    Strncat( fname, "fonts.list", 127 );
+
+  }
+
   opStat = fi.initFromFile( app, display, fname );
 
   closeNote();
