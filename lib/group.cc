@@ -2354,6 +2354,55 @@ activeGraphicListPtr cur;
 
 }
 
+int activeGroupClass::selectDragValue (
+  int x,
+  int y )
+{
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+char *firstName, *nextName;
+
+  cur = head->blink;
+  while ( cur != head ) {
+
+    if ( ( x > cur->node->getX0() ) &&
+         ( x < cur->node->getX1() ) &&
+         ( y > cur->node->getY0() ) &&
+         ( y < cur->node->getY1() ) ) {
+
+      currentDragIndex = 0;
+
+      firstName = cur->node->firstDragName();
+      if ( !firstName ) return 0;
+
+      actWin->popupDragBegin(
+       actWin->obj.getNameFromClass( cur->node->objName() ) );
+      actWin->popupDragAddItem( (void *) cur->node, firstName );
+
+      nextName = cur->node->nextDragName();
+      while ( nextName ) {
+
+        actWin->popupDragAddItem( (void *) cur->node, nextName );
+        nextName = cur->node->nextDragName();
+
+      }
+
+      actWin->popupDragFinish( x, y );
+
+      // only the highest object may participate
+      break; // out of while loop
+
+    }
+
+    cur = cur->blink;
+
+  }
+
+  return 1;
+
+}
+
 char *activeGroupClass::dragValue (
   int i )
 {

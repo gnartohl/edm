@@ -348,6 +348,11 @@ int startDrag (
   int y
 );
 
+int activeGroupClass::selectDragValue (
+  int x,
+  int y
+);
+
 char *dragValue (
   int i
 );
