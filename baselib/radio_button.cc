@@ -351,12 +351,21 @@ int i;
 
 activeRadioButtonClass::~activeRadioButtonClass ( void ) {
 
+int i;
+
   if ( name ) delete name;
+
   if ( fontList ) XmFontListFree( fontList );
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
     unconnectedTimer = 0;
+  }
+
+  for ( i=0; i<MAX_ENUM_STATES; i++ ) {
+    if ( stateString[i] ) {
+      delete stateString[i];
+    }
   }
 
 }
