@@ -102,6 +102,7 @@ static MAIN_NODE_TYPE g_mainNodes[MAIN_QUEUE_SIZE];
 static IPRPC_PORT g_conPort;
 static int g_numClients = 0;
 static int g_pidNum = 0;
+static char g_restartId[31+1];
 
 //#include "alloc.h"
 #ifdef DIAGNOSTIC_ALLOC
@@ -187,10 +188,10 @@ SYS_PROC_ID_TYPE procId;
 
 static void getCheckPointFileName (
   char *checkPointFileName,
-  int procId
+  char *procIdName
 ) {
 
-char procIdName[31+1], *envPtr;
+char *envPtr;
 
   envPtr = getenv( "EDMTMPFILES" );
   if ( envPtr ) {
@@ -203,9 +204,8 @@ char procIdName[31+1], *envPtr;
     strncpy( checkPointFileName, "/tmp/", 255 );
   }
   Strncat( checkPointFileName, "edmCheckPointFile_", 255 );
-  sprintf( procIdName, "%-d", procId );
   Strncat( checkPointFileName, procIdName, 255 );
-  //printf( "[%s]\n", checkPointFileName );
+  //printf( "%-d, [%s]\n", g_pidNum, checkPointFileName );
 
 }
 
@@ -889,7 +889,7 @@ void checkParams (
 
 char buf[1023+1], mac[1023+1], exp[1023+1];
 int state = SWITCHES;
-int stat, nm=0, n = 1;
+int stat, l, nm = 0, n = 1;
 char *envPtr, *tk, *buf1;
 Display *testDisplay;
 
@@ -940,6 +940,9 @@ Display *testDisplay;
           }
           *restart = 1;
           g_pidNum = atol( argv[n] );
+	  l = strlen( argv[n] );
+	  if ( l > 31 ) l = 31;
+	  strncpy( g_restartId, argv[n], l );
 	}
         else if ( strcmp( argv[n], global_str11 ) == 0 ) {
           *local = 1;
@@ -1133,7 +1136,7 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
 
     //printf( "restart\n" );
 
-    getCheckPointFileName( checkPointFileName, g_pidNum );
+    getCheckPointFileName( checkPointFileName, g_restartId );
     f = fopen( checkPointFileName, "r" );
     if ( f ) {
 
@@ -1494,7 +1497,9 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
 
   if ( f ) {
     fclose( f );
-    unlink( checkPointFileName ); // delete checkpoint file
+    if ( g_pidNum != 0 ) {
+      unlink( checkPointFileName ); // delete checkpoint file
+    }
   }
 
   proc.timeCount = 0;
