@@ -1,0 +1,38 @@
+<html>
+<head>
+<base>
+<title>RegTextupdate</title>
+</head>
+
+<body bgcolor=#C0C0FF>
+<blockquote>
+  <h2>RegTextupdate</h2>
+  Based on the <a href="textupdate.htm">textupdate widget</a>,
+  this widget displays the value of a PV <U>after</U> filtering it
+  with a regular expression.<br>
+  Most of the configuration values are inherited from the
+  <a href="textupdate.htm">textupdate widget</a>
+
+
+  <UL>
+  <LI><B>Reg.Exp:</B><br>
+      The widget reads the current value of the PV as a string
+      and then applies this regular expression. The expression must
+      have submatches, defined as braces, and the result of the
+      submatch is then displayed.<br>
+      Examples:
+      <pre>
+         (\+?\-?[.0-9]+)
+         - cuts a number out of a string
+
+	 [.0-9]+ (.*)
+	 - cuts the text following a number and a space from the string
+      </pre>
+  </UL>
+  <hr>
+  <address>
+  <a HREF="mailto:pamgurd@sns.gov"><p>Pam (pamgurd@sns.gov)</a></p>
+  </address>
+</blockquote>
+</body>
+</html>

@@ -309,41 +309,41 @@ void edmTextupdateClass::redraw_text(Display *dis,
     {
         gcc.setLineWidth(line_width.value());
         XDrawRectangle(dis, drw, gc, x, y, w, h);
+        gcc.setLineWidth(1);
     }
-    // Text
-    // Positioning is calculated for each call
-    // -> not terrible for critical situation?
-    //    a) called during edit -> good enough
-    //    b) called for changed value -> have to do it, text is different
-    //    c) called for total redraw after window hidden -> hmmm.
-    // Right now I care most about b) to assert best update rate.
-    XRectangle clip;
-    clip.x = x;
-    clip.y = y;
-    clip.width = w;
-    clip.height = h;
-    gcc.addNormXClipRectangle(clip);
-
-    gcc.setFontTag(fontTag, actWin->fi);
-    int txt_width = XTextWidth(fs, text, len);
-    int tx;
-    switch (alignment)
+    if (len > 0)
     {
-        case XmALIGNMENT_BEGINNING:
-            tx = x;
-            break;
-        case XmALIGNMENT_CENTER:
-            tx = x + (w - txt_width)/2;
-            break;
-        default:
-            tx = x + w - txt_width;
+        // Text
+        // Positioning is calculated for each call
+        // -> not terrible for critical situation?
+        //    a) called during edit -> good enough
+        //    b) called for changed value -> have to do it, text is different
+        //    c) called for total redraw after window hidden -> hmmm.
+        // Right now I care most about b) to assert best update rate.
+        XRectangle clip;
+        clip.x = x;
+        clip.y = y;
+        clip.width = w;
+        clip.height = h;
+        gcc.addNormXClipRectangle(clip);
+        gcc.setFontTag(fontTag, actWin->fi);
+        int txt_width = XTextWidth(fs, text, len);
+        int tx;
+        switch (alignment)
+        {
+            case XmALIGNMENT_BEGINNING:
+                tx = x;
+                break;
+            case XmALIGNMENT_CENTER:
+                tx = x + (w - txt_width)/2;
+                break;
+            default:
+                tx = x + w - txt_width;
+        }
+        int ty = y + (fontAscent + h)/2;
+        XDrawString(dis, drw, gc, tx, ty, text, len);
+        gcc.removeNormXClipRectangle();
     }
-    int ty = y + (fontAscent + h)/2;
-    XDrawString(dis, drw, gc, tx, ty, text, len);
-    // required (return to known state)
-    gcc.setLineWidth(1);
-    gcc.setLineStyle(LineSolid);
-    gcc.removeNormXClipRectangle();
 }
 
 void  edmTextupdateClass::remove_text(Display *dis,

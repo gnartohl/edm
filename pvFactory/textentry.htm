@@ -1,0 +1,47 @@
+<html>
+<head>
+<base>
+<title>Textentry</title>
+</head>
+
+<body bgcolor=#C0C0FF>
+<blockquote>
+  <h2>Textentry</h2>
+  Based on the <a href="textupdate.htm">textupdate widget</a>,
+  this widget displays the value of a PV and allows to enter new
+  values.<br>
+  All configuration values are inherited from the
+  <a href="textupdate.htm">textupdate widget</a>
+
+  <H3>Detail on Behaviour</H3>
+  There is a <I>update</I> and <I>edit</I> mode.
+  In update mode, new values of the PV are displayed. But if
+  the PV is constantly changing, it is hard to enter a new
+  value because the new value will always overwrite
+  what you just entered.
+  Therefore the widget will switch to edit mode, i.e. "freeze"
+  after the cursor is moved inside the widget.
+  This means you get into edit mode as soon as you enter anything, use
+  the cursor keys or click the mouse inside the textentry widget.
+  Now you can edit the content undisturbed, until you either leave the
+  widget by selecting another widget, in which case all entries are
+  lost and replaced by the current value of the PV, or you press
+  ENTER, in which case the entered value is sent to the PV.
+
+  <h2>Stripchart</h2>
+  Yet another one. Uses a SciPlot widget, modified to stop
+  the flicker.<br>
+  Details on properties:<br>
+  "Use IOC Time" means that the time stamps from the IOC are used.
+  This is an experimental option, in principle the IOC should have
+  the correct time and this way you can compare values with
+  their time stamps.
+  In reality, if they are 1min old and you are only plotting the
+  last 30secs, you see nothing, so it might not be too useful.
+  <hr>
+  <address>
+  <a HREF="mailto:kasemir@lanl.gov"><p>-Kay (kasemir@lanl.gov)</a></p>
+  </address>
+</blockquote>
+</body>
+</html>

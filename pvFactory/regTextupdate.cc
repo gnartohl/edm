@@ -16,6 +16,7 @@ edmRegTextupdateClass::edmRegTextupdateClass()
 {
     init(REGTEXTUPDATE_CLASSNAME);
     strcpy( regExpStr, "");
+    re_valid = false;
 }
 
 edmRegTextupdateClass::edmRegTextupdateClass(edmRegTextupdateClass *rhs)
@@ -24,10 +25,11 @@ edmRegTextupdateClass::edmRegTextupdateClass(edmRegTextupdateClass *rhs)
 }
 
 void edmRegTextupdateClass::clone(const edmRegTextupdateClass *rhs,
-                               const char *classname)
+                                  const char *classname)
 {
     edmTextupdateClass::clone(rhs, classname);
     strncpy( regExpStr, rhs->regExpStr, 39);
+    re_valid = false;
 }
 
 // --------------------------------------------------------
@@ -45,7 +47,7 @@ int edmRegTextupdateClass::save(FILE *f)
 }
 
 int edmRegTextupdateClass::createFromFile(FILE *f, char *name,
-                                       activeWindowClass *_actWin)
+                                          activeWindowClass *_actWin)
 {
     edmTextupdateClass::createFromFile(f, name, _actWin);
 
@@ -63,16 +65,16 @@ int edmRegTextupdateClass::createFromFile(FILE *f, char *name,
 // createInteractive -> editCreate -> genericEdit (delete on cancel)
 // edit -> genericEdit (ignore changes on cancel)
 int edmRegTextupdateClass::createInteractive(activeWindowClass *aw_obj,
-                                          int _x, int _y, int _w, int _h)
+                                             int _x, int _y, int _w, int _h)
 {   // required
     actWin = (activeWindowClass *) aw_obj;
     x = _x; y = _y; w = _w; h = _h;
     // Honor display scheme
     displayMode = dm_default;
     precision = 0;
-    textColor.setColorIndex(actWin->defaultFg1Color, actWin->ci);
+    textColor = actWin->defaultFg1Color;
     line_width.setNull(1);
-    fillColor.setColorIndex(actWin->defaultBgColor, actWin->ci);
+    fillColor = actWin->defaultBgColor;
     strcpy(fontTag, actWin->defaultCtlFontTag);
     alignment = actWin->defaultCtlAlignment;
     fs = actWin->fi->getXFontStruct(fontTag);
@@ -117,7 +119,8 @@ int edmRegTextupdateClass::genericEdit() // create Property Dialog
 }
 
 // Callbacks from property dialog
-void edmRegTextupdateClass::edit_update(Widget w, XtPointer client,XtPointer call)
+void edmRegTextupdateClass::edit_update(Widget w, XtPointer client,
+                                        XtPointer call)
 {
     edmRegTextupdateClass *me = (edmRegTextupdateClass *) client;
     edmTextupdateClass::edit_update(w, client, call);
@@ -130,7 +133,8 @@ void edmRegTextupdateClass::edit_ok(Widget w, XtPointer client, XtPointer call)
     edmTextupdateClass::edit_ok(w, client, call);
 }
 
-void edmRegTextupdateClass::edit_apply(Widget w, XtPointer client, XtPointer call)
+void edmRegTextupdateClass::edit_apply(Widget w, XtPointer client,
+                                       XtPointer call)
 {
     edit_update(w, client, call);
     edmTextupdateClass::edit_apply(w, client, call);
@@ -140,16 +144,49 @@ void edmRegTextupdateClass::edit_apply(Widget w, XtPointer client, XtPointer cal
 // Execute
 // --------------------------------------------------------
 
+int edmRegTextupdateClass::activate(int pass, void *ptr)
+{
+    if (pass == 1)
+    {
+        re_valid = false;
+        if (strlen(regExpStr) > 0)
+        {
+            int res = regcomp(&compiled_re, regExpStr, REG_EXTENDED);
+            if (res)
+            {
+                char buf[100];
+                regerror(res, &compiled_re, buf, sizeof buf);
+                printf("Error in regular expression: %s\n", buf);
+            }
+            else
+                re_valid = true;
+        }
+    }
+    return edmTextupdateClass::activate(pass, ptr);
+}
+
+int edmRegTextupdateClass::deactivate(int pass)
+{
+    if (pass == 1 && re_valid)
+    {
+        regfree(&compiled_re);
+        re_valid = false;
+    }
+    return edmTextupdateClass::deactivate(pass);
+}
+
 int edmRegTextupdateClass::drawActive()
 {
     if (!is_executing)
         return 1;
     actWin->executeGc.saveFg();
 
+    double value = 0.0;
     char text[80];
     int len;
     if (pv && pv->is_valid())
     {
+        value = pv->get_double();
         switch (displayMode)
         {
             case dm_hex:
@@ -170,13 +207,28 @@ int edmRegTextupdateClass::drawActive()
             default:
                 len = pv->get_string(text, 80);
         }
-        if (strcmp(regExpStr, "")) {
-    	    if (char* cregex = regcmp(regExpStr, 0)) {
-    	        char newText[80];
-    	        if ( regex(cregex, text, newText) ) {
-    		    strncpy(text, newText, 79);
-    	        }
-    	        free(cregex);
+        if (re_valid)
+        {
+            regmatch_t pmatch[2];
+    	    if (regexec(&compiled_re, text, 2, pmatch, 0) == 0)
+            {
+                // copy matched substring into display string
+                // match 0 is always the full match,
+                // match 1 is the first selected substring
+                int start = pmatch[1].rm_so;
+                int size = pmatch[1].rm_eo - pmatch[1].rm_so;
+                
+                if (start >= 0)
+                {
+                    memmove(text, text+start, size);
+                    text[size] = '\0';
+                    len = size;
+                }
+                else
+                {
+                    text[0] = '\0';
+                    len = 0;
+                }
     	    }
         }
     }
@@ -191,7 +243,7 @@ int edmRegTextupdateClass::drawActive()
                 XtWindow(actWin->executeWidget),
                 actWin->executeGc,
                 actWin->executeGc.normGC(),
-                text, len);
+                text, len, value);
    
     actWin->executeGc.restoreFg();
     return 1;

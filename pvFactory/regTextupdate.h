@@ -6,7 +6,8 @@
 #ifndef __REGTEXTUPDATE_H__
 #define __REGTEXTUPDATE_H__
 
-#include "textupdate.h"
+#include"textupdate.h"
+#include<regex.h>
 
 #define REGTEXTUPDATE_CLASSNAME "RegTextupdateClass"
 #define REGTEXTENTRY_CLASSNAME "RegTextentryClass"
@@ -70,8 +71,8 @@ public:
 //    int expand2nd(int numMacros, char *macros[], char *expansions[]);
     
     // Execute
-//    int activate(int pass, void *ptr);
-//    int deactivate(int pass);
+    int activate(int pass, void *ptr);
+    int deactivate(int pass);
     int drawActive();
 //    int eraseActive();
 //    void executeDeferred();
@@ -86,6 +87,9 @@ protected:
     // buffers for property dialog
     char regExpStr[40];
     char bufRegExp[40];
+
+    regex_t compiled_re;
+    bool    re_valid;
 
 //    void redraw_text(Display *dis,
 //                     Drawable drw,
