@@ -1819,6 +1819,7 @@ char tmpPvName[activeGraphicClass::MAX_PV_NAME+1];
       unconnectedTimer = 0;
       init = 0;
       aglPtr = ptr;
+      destPvId = visPvId = colorPvId = NULL;
 
 #ifdef __epics__
       sourcePressEventId = 0;
@@ -1965,18 +1966,27 @@ int i, stat;
 #ifdef __epics__
 
   if ( destExists ) {
-    stat = ca_clear_channel( destPvId );
-    if ( stat != ECA_NORMAL ) printf( activeMessageButtonClass_str26 );
+    if ( destPvId ) {
+      stat = ca_clear_channel( destPvId );
+      if ( stat != ECA_NORMAL ) printf( activeMessageButtonClass_str26 );
+      destPvId = NULL;
+    }
   }
 
   if ( visExists ) {
-    stat = ca_clear_channel( visPvId );
-    if ( stat != ECA_NORMAL ) printf( activeMessageButtonClass_str26 );
+    if ( visPvId ) {
+      stat = ca_clear_channel( visPvId );
+      if ( stat != ECA_NORMAL ) printf( activeMessageButtonClass_str26 );
+      visPvId = NULL;
+    }
   }
 
   if ( colorExists ) {
-    stat = ca_clear_channel( colorPvId );
-    if ( stat != ECA_NORMAL ) printf( activeMessageButtonClass_str26 );
+    if ( colorPvId ) {
+      stat = ca_clear_channel( colorPvId );
+      if ( stat != ECA_NORMAL ) printf( activeMessageButtonClass_str26 );
+      colorPvId = NULL;
+    }
   }
 
 #endif

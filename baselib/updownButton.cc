@@ -1855,6 +1855,7 @@ XmString str;
       isSaved = 0;
       incrementTimer = 0;
       incrementTimerActive = 0;
+      destPvId = visPvId = colorPvId = savePvId = NULL;
 
 #ifdef __epics__
       destEventId = saveEventId = visEventId = colorEventId = 0;
@@ -2103,25 +2104,37 @@ int stat;
 #ifdef __epics__
 
   if ( destExists ) {
-    stat = ca_clear_channel( destPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeUpdownButtonClass_str22 );
+    if ( destPvId ) {
+      stat = ca_clear_channel( destPvId );
+      if ( stat != ECA_NORMAL )
+        printf( activeUpdownButtonClass_str22 );
+      destPvId = NULL;
+    }
   }
 
   if ( visExists ) {
-    stat = ca_clear_channel( visPvId );
-    if ( stat != ECA_NORMAL ) printf( activeUpdownButtonClass_str22 );
+    if ( visPvId ) {
+      stat = ca_clear_channel( visPvId );
+      if ( stat != ECA_NORMAL ) printf( activeUpdownButtonClass_str22 );
+      visPvId = NULL;
+    }
   }
 
   if ( colorExists ) {
-    stat = ca_clear_channel( colorPvId );
-    if ( stat != ECA_NORMAL ) printf( activeUpdownButtonClass_str22 );
+    if ( colorPvId ) {
+      stat = ca_clear_channel( colorPvId );
+      if ( stat != ECA_NORMAL ) printf( activeUpdownButtonClass_str22 );
+      colorPvId = NULL;
+    }
   }
 
   if ( saveExists ) {
-    stat = ca_clear_channel( savePvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeUpdownButtonClass_str22 );
+    if ( savePvId ) {
+      stat = ca_clear_channel( savePvId );
+      if ( stat != ECA_NORMAL )
+        printf( activeUpdownButtonClass_str22 );
+      savePvId = NULL;
+    }
   }
 
 #endif

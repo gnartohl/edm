@@ -1682,6 +1682,7 @@ int stat, opStat;
       needToDrawUnconnected = 0;
       unconnectedTimer = 0;
       controlValid = readValid = 0;
+      controlPvId = readPvId = visPvId = colorPvId = NULL;
 
       controlExists = readExists = visExists = colorExists = 0;
 
@@ -1835,24 +1836,36 @@ int stat, i;
 #ifdef __epics__
 
     if ( controlExists ) {
-      stat = ca_clear_channel( controlPvId );
-      if ( stat != ECA_NORMAL ) printf( activeChoiceButtonClass_str23 );
+      if ( controlPvId ) {
+        stat = ca_clear_channel( controlPvId );
+        if ( stat != ECA_NORMAL ) printf( activeChoiceButtonClass_str23 );
+        controlPvId = NULL;
+      }
     }
 
     if ( readExists ) {
-      stat = ca_clear_channel( readPvId );
-      if ( stat != ECA_NORMAL ) printf( activeChoiceButtonClass_str23 );
+      if ( readPvId ) {
+        stat = ca_clear_channel( readPvId );
+        if ( stat != ECA_NORMAL ) printf( activeChoiceButtonClass_str23 );
+        readPvId = NULL;
+      }
     }
 
-  if ( visExists ) {
-    stat = ca_clear_channel( visPvId );
-    if ( stat != ECA_NORMAL ) printf( activeChoiceButtonClass_str23 );
-  }
+    if ( visExists ) {
+      if ( visPvId ) {
+        stat = ca_clear_channel( visPvId );
+        if ( stat != ECA_NORMAL ) printf( activeChoiceButtonClass_str23 );
+        visPvId = NULL;
+      }
+    }
 
-  if ( colorExists ) {
-    stat = ca_clear_channel( colorPvId );
-    if ( stat != ECA_NORMAL ) printf( activeChoiceButtonClass_str22 );
-  }
+    if ( colorExists ) {
+      if ( colorPvId ) {
+        stat = ca_clear_channel( colorPvId );
+        if ( stat != ECA_NORMAL ) printf( activeChoiceButtonClass_str22 );
+        colorPvId = NULL;
+      }
+    }
 
 #endif
 

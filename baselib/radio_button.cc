@@ -870,6 +870,7 @@ int stat, opStat;
       needToEraseUnconnected = 0;
       needToDrawUnconnected = 0;
       unconnectedTimer = 0;
+      controlPvId = NULL;
 
 #ifdef __epics__
       alarmEventId = controlEventId = 0;
@@ -964,9 +965,12 @@ int stat, i;
 #ifdef __epics__
 
     if ( controlExists ) {
-      stat = ca_clear_channel( controlPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeRadioButtonClass_str22 );
+      if ( controlPvId ) {
+        stat = ca_clear_channel( controlPvId );
+        if ( stat != ECA_NORMAL )
+          printf( activeRadioButtonClass_str22 );
+	controlPvId = NULL;
+      }
     }
 
 #endif

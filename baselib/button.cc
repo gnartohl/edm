@@ -1941,6 +1941,7 @@ char callbackName[63+1];
       controlValid = 0;
       readValid = 0;
       controlV = 0;
+      controlPvId = readPvId = visPvId = colorPvId = NULL;
 
 #ifdef __epics__
       controlEventId = readEventId = alarmEventId = visEventId =
@@ -2127,23 +2128,35 @@ int stat;
 #ifdef __epics__
 
   if ( controlExists ) {
-    stat = ca_clear_channel( controlPvId );
-    if ( stat != ECA_NORMAL ) printf( activeButtonClass_str49 );
+    if ( controlPvId ) {
+      stat = ca_clear_channel( controlPvId );
+      if ( stat != ECA_NORMAL ) printf( activeButtonClass_str49 );
+      controlPvId = NULL;
+    }
   }
 
   if ( readExists ) {
-    stat = ca_clear_channel( readPvId );
-    if ( stat != ECA_NORMAL ) printf( activeButtonClass_str50 );
+    if ( readPvId ) {
+      stat = ca_clear_channel( readPvId );
+      if ( stat != ECA_NORMAL ) printf( activeButtonClass_str50 );
+      readPvId = NULL;
+    }
   }
 
   if ( visExists ) {
-    stat = ca_clear_channel( visPvId );
-    if ( stat != ECA_NORMAL ) printf( activeButtonClass_str50 );
+    if ( visPvId ) {
+      stat = ca_clear_channel( visPvId );
+      if ( stat != ECA_NORMAL ) printf( activeButtonClass_str50 );
+      visPvId = NULL;
+    }
   }
 
   if ( colorExists ) {
-    stat = ca_clear_channel( colorPvId );
-    if ( stat != ECA_NORMAL ) printf( activeButtonClass_str49 );
+    if ( colorPvId ) {
+      stat = ca_clear_channel( colorPvId );
+      if ( stat != ECA_NORMAL ) printf( activeButtonClass_str49 );
+      colorPvId = NULL;
+    }
   }
 
 #endif
