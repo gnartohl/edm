@@ -150,7 +150,7 @@ int defaultEnabled,
 
 public:
 
-static const int UNKNOWN = -1;
+static const int UNKNOWN = 0;
 static const int GRAPHICS = 1;
 static const int MONITORS = 2;
 static const int CONTROLS = 3;
