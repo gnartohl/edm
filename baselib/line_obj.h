@@ -42,6 +42,10 @@ static char *dragName[] = {
   activeLineClass_str3
 };
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void alc_edit_ok (
   Widget w,
   XtPointer client,
@@ -77,6 +81,10 @@ static void alc_edit_cancel_delete (
 class activeLineClass : public activeGraphicClass {
 
 private:
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void alc_edit_ok (
   Widget w,
@@ -167,6 +175,8 @@ int alarmPvExists, visPvExists;
 int activeMode, init, opComplete;
 
 int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh;
+int needToDrawUnconnected, needToEraseUnconnected;
+int unconnectedTimer;
 
 int curLineColorIndex, curFillColorIndex, curStatus, curSeverity;
 static const int alarmPvConnection = 1;

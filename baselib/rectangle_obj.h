@@ -45,6 +45,10 @@ static char *dragName[] = {
   activeRectangleClass_str3
 };
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void arc_edit_ok (
   Widget w,
   XtPointer client,
@@ -75,6 +79,10 @@ class activeRectangleClass : public activeGraphicClass {
 #endif
 
 private:
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void arc_edit_ok (
   Widget w,
@@ -146,6 +154,8 @@ int lineWidth, bufLineWidth;
 int lineStyle, bufLineStyle;
 
 int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh;
+int needToDrawUnconnected, needToEraseUnconnected;
+int unconnectedTimer;
 
 int curLineColorIndex, curFillColorIndex, curStatus, curSeverity;
 
@@ -181,11 +191,7 @@ activeRectangleClass::activeRectangleClass ( void );
 activeRectangleClass::activeRectangleClass
  ( const activeRectangleClass *source );
 
-activeRectangleClass::~activeRectangleClass ( void ) {
-
-  if ( name ) delete name;
-
-}
+activeRectangleClass::~activeRectangleClass ( void );
 
 char *activeRectangleClass::objName ( void ) {
 

@@ -23,6 +23,23 @@
 // This is the EPICS specific line right now:
 static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activeRectangleClass *aro = (activeRectangleClass *) client;
+
+  if ( !aro->init ) {
+    aro->needToDrawUnconnected = 1;
+    aro->needRefresh = 1;
+    aro->actWin->addDefExeNode( aro->aglPtr );
+  }
+
+  aro->unconnectedTimer = 0;
+
+}
+
 void arc_edit_update (
   Widget w,
   XtPointer client,
@@ -306,6 +323,17 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   lineStyle = source->lineStyle;
 
   connection.setMaxPvs( 2 );
+
+}
+
+activeRectangleClass::~activeRectangleClass ( void ) {
+
+  if ( name ) delete name;
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
 
 }
 
@@ -813,11 +841,27 @@ int index;
 int activeRectangleClass::drawActive ( void ) {
 
   if ( !init ) {
-    actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( lineColor.getDisconnected() );
+    if ( needToDrawUnconnected ) {
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( lineColor.getDisconnected() );
+      actWin->executeGc.setLineWidth( 1 );
+      actWin->executeGc.setLineStyle( LineSolid );
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
+      actWin->executeGc.restoreFg();
+      needToEraseUnconnected = 1;
+    }
+  }
+  else if ( needToEraseUnconnected ) {
+    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineStyle( LineSolid );
     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x, y, w, h );
-    actWin->executeGc.restoreFg();
+     actWin->executeGc.eraseGC(), x, y, w, h );
+    needToEraseUnconnected = 0;
+    if ( invisible ) {
+      eraseActive();
+      smartDrawAllActive();
+    }
   }
 
   if ( !init || !activeMode || invisible || !visibility ) return 1;
@@ -970,6 +1014,14 @@ int activeRectangleClass::activate (
       fillVisibility = 0;
 
       needConnectInit = needAlarmUpdate = needVisUpdate = needRefresh = 0;
+
+      needToEraseUnconnected = 0;
+      needToDrawUnconnected = 0;
+      unconnectedTimer = 0;
+
+      unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+       2000, unconnectedTimeout, this );
+
       aglPtr = ptr;
 
       alarmPvId = visPvId = 0;

@@ -43,6 +43,10 @@ static char *dragName[] = {
   activeArcClass_str3
 };
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void aac_edit_ok (
   Widget w,
   XtPointer client,
@@ -73,6 +77,10 @@ static void aac_edit_cancel_delete (
 class activeArcClass : public activeGraphicClass {
 
 private:
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void aac_edit_ok (
   Widget w,
@@ -143,6 +151,8 @@ int lineWidth, bufLineWidth;
 int lineStyle, bufLineStyle;
 
 int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh;
+int needToDrawUnconnected, needToEraseUnconnected;
+int unconnectedTimer;
 
 int curLineColorIndex, curFillColorIndex, curStatus, curSeverity;
 static const int alarmPvConnection = 1;
@@ -183,11 +193,7 @@ activeArcClass::activeArcClass ( void );
 activeArcClass::activeArcClass
 ( const activeArcClass *source );
 
-activeArcClass::~activeArcClass ( void ) {
-
-  if ( name ) delete name;
-
-}
+activeArcClass::~activeArcClass ( void );
 
 char *activeArcClass::objName ( void ) {
 

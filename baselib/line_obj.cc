@@ -27,6 +27,23 @@
 // This is the EPICS specific line right now:
 static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activeLineClass *alo = (activeLineClass *) client;
+
+  if ( !alo->init ) {
+    alo->needToDrawUnconnected = 1;
+    alo->needRefresh = 1;
+    alo->actWin->addDefExeNode( alo->aglPtr );
+  }
+
+  alo->unconnectedTimer = 0;
+
+}
+
 class undoLineOpClass : public undoOpClass {
 
 public:
@@ -422,6 +439,11 @@ activeLineClass::~activeLineClass ( void ) {
   if ( name ) delete name;
   if ( head ) delete head;
   if ( xpoints ) delete xpoints;
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
 
 }
 
@@ -1300,11 +1322,23 @@ int activeLineClass::drawActive ( void )
 {
 
   if ( !init ) {
-    actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( lineColor.getDisconnected() );
+    if ( needToDrawUnconnected ) {
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( lineColor.getDisconnected() );
+      actWin->executeGc.setLineWidth( 1 );
+      actWin->executeGc.setLineStyle( LineSolid );
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
+      actWin->executeGc.restoreFg();
+      needToEraseUnconnected = 1;
+    }
+  }
+  else if ( needToEraseUnconnected ) {
+    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineStyle( LineSolid );
     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x, y, w, h );
-    actWin->executeGc.restoreFg();
+     actWin->executeGc.eraseGC(), x, y, w, h );
+    needToEraseUnconnected = 0;
   }
 
   if ( !activeMode || !visibility ) return 1;
@@ -1479,6 +1513,14 @@ int activeLineClass::activate (
       fillVisibility = 0;
 
       needConnectInit = needAlarmUpdate = needVisUpdate = needRefresh = 0;
+
+      needToEraseUnconnected = 0;
+      needToDrawUnconnected = 0;
+      unconnectedTimer = 0;
+
+      unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+       2000, unconnectedTimeout, this );
+
       aglPtr = ptr;
 
       alarmPvId = visPvId = 0;

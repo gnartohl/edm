@@ -42,6 +42,10 @@ static char *dragName[] = {
   activeCircleClass_str3
 };
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void acc_edit_ok (
   Widget w,
   XtPointer client,
@@ -72,6 +76,10 @@ static void acc_edit_cancel_delete (
 class activeCircleClass : public activeGraphicClass {
 
 private:
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void acc_edit_ok (
   Widget w,
@@ -142,6 +150,8 @@ int lineWidth, bufLineWidth;
 int lineStyle, bufLineStyle;
 
 int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh;
+int needToDrawUnconnected, needToEraseUnconnected;
+int unconnectedTimer;
 
 int curLineColorIndex, curFillColorIndex, curStatus, curSeverity;
 static const int alarmPvConnection = 1;
@@ -176,11 +186,7 @@ activeCircleClass::activeCircleClass ( void );
 activeCircleClass::activeCircleClass
 ( const activeCircleClass *source );
 
-activeCircleClass::~activeCircleClass ( void ) {
-
-  if ( name ) delete name;
-
-}
+activeCircleClass::~activeCircleClass ( void );
 
 char *activeCircleClass::objName ( void ) {
 

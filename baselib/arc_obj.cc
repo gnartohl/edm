@@ -27,6 +27,23 @@
 // This is the EPICS specific line right now:
 static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activeArcClass *aao = (activeArcClass *) client;
+
+  if ( !aao->init ) {
+    aao->needToDrawUnconnected = 1;
+    aao->needRefresh = 1;
+    aao->actWin->addDefExeNode( aao->aglPtr );
+  }
+
+  aao->unconnectedTimer = 0;
+
+}
+
 class undoArcOpClass : public undoOpClass {
 
 public:
@@ -379,6 +396,17 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   fillMode = source->fillMode;
 
   connection.setMaxPvs( 2 );
+
+}
+
+activeArcClass::~activeArcClass ( void ) {
+
+  if ( name ) delete name;
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
 
 }
 
@@ -887,11 +915,23 @@ int activeArcClass::drawActive ( void )
 {
 
   if ( !init ) {
-    actWin->executeGc.saveFg();
-    actWin->executeGc.setFG( lineColor.getDisconnected() );
+    if ( needToDrawUnconnected ) {
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( lineColor.getDisconnected() );
+      actWin->executeGc.setLineWidth( 1 );
+      actWin->executeGc.setLineStyle( LineSolid );
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
+      actWin->executeGc.restoreFg();
+      needToEraseUnconnected = 1;
+    }
+  }
+  else if ( needToEraseUnconnected ) {
+    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineStyle( LineSolid );
     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x, y, w, h );
-    actWin->executeGc.restoreFg();
+     actWin->executeGc.eraseGC(), x, y, w, h );
+    needToEraseUnconnected = 0;
   }
 
   if ( !activeMode || !visibility ) return 1;
@@ -1059,6 +1099,13 @@ int activeArcClass::activate (
       fillVisibility = 0;
 
       needConnectInit = needAlarmUpdate = needVisUpdate = needRefresh = 0;
+
+      needToEraseUnconnected = 0;
+      needToDrawUnconnected = 0;
+      unconnectedTimer = 0;
+
+      unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+       2000, unconnectedTimeout, this );
 
       aglPtr = ptr;
 
