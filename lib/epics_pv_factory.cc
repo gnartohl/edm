@@ -5,6 +5,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<float.h>
+#include<ctype.h>
 
 #include<alarm.h>
 #include<cvtFast.h>
@@ -653,14 +654,10 @@ size_t PVValueChar::get_string(char *strbuf, size_t buflen) const
         if (isprint(value[src]))
         {
             strbuf[dst++] = value[src++];
-            printf("copy '%c'\n", value[src-1]);
         }
         else  if (dst < buflen-5)
         {
             sprintf(strbuf+dst, "(%02X)", (int)value[src]);
-            printf("show %d as '%c%c%c%c'\n",
-                   (int)value[src], strbuf[dst],
-                   strbuf[dst+1], strbuf[dst+2], strbuf[dst+3]);
             dst += 4;
             ++src;
         }
