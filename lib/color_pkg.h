@@ -186,6 +186,8 @@ public:
     char *colorInfoClass::colorName (int index);
     int colorInfoClass::colorIndexByName (const char *name);
 
+    // Returns true/false depending on wether
+    // this index is rule-based
     int colorInfoClass::isRule (int index );
 
     char *colorInfoClass::firstColor (colorCachePtr node);
@@ -199,6 +201,9 @@ public:
 
     int colorInfoClass::menuSize ();
 
+    // IF index refers to a rule-based color (see isRule()),
+    // this routine returns the index of the
+    // color to use for the given value.
     int colorInfoClass::evalRule (
       int index,
       double value );
