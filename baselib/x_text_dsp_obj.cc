@@ -24,6 +24,19 @@
 
 #include "thread.h"
 
+static int g_transInit = 1;
+XtTranslations g_parsedTrans;
+
+static char g_dragTrans[] =
+  "#override\n\
+   ~Shift<Btn2Down>: startDrag()\n\
+   Shift<Btn2Up>: selectDrag()";
+
+static XtActionsRec g_dragActions[] = {
+  { "startDrag", (XtActionProc) drag },
+  { "selectDrag", (XtActionProc) selectDrag }
+};
+
 static void dropTransferProc (
   Widget w,
   XtPointer clientData,
@@ -3508,20 +3521,6 @@ XmFontList textFontList = NULL;
 Cardinal numImportTargets;
 Atom importList[2];
 
-#if 1
-XtTranslations parsedTrans;
-
-static char dragTrans[] =
-  "#override\n\
-   ~Shift<Btn2Down>: startDrag()\n\
-   Shift<Btn2Up>: selectDrag()";
-
-static XtActionsRec dragActions[] = {
-  { "startDrag", (XtActionProc) drag },
-  { "selectDrag", (XtActionProc) selectDrag }
-};
-#endif
-
   if ( actWin->isIconified ) return;
 
   if ( !fastUpdate ) {
@@ -3898,11 +3897,12 @@ static XtActionsRec dragActions[] = {
 
       if ( !tf_widget ) {
 
-#if 1
-      parsedTrans = XtParseTranslationTable( dragTrans );
-      XtAppAddActions( actWin->appCtx->appContext(), dragActions,
-       XtNumber(dragActions) );
-#endif
+      if ( g_transInit ) {
+        g_transInit = 0;
+        g_parsedTrans = XtParseTranslationTable( g_dragTrans );
+        XtAppAddActions( actWin->appCtx->appContext(), g_dragActions,
+         XtNumber(g_dragActions) );
+      }
 
       tf_widget = XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
        actWin->executeWidget,
@@ -3918,7 +3918,7 @@ static XtActionsRec dragActions[] = {
        XmNpendingDelete, True,
        XmNmarginHeight, 0,
        XmNfontList, textFontList,
-       XmNtranslations, parsedTrans,
+       XmNtranslations, g_parsedTrans,
        XmNuserData, this,
        XmNcursorPositionVisible, False,
        NULL );

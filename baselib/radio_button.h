@@ -59,6 +59,18 @@ static char *dragName[] = {
   activeRadioButtonClass_str1,
 };
 
+static void dummy (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams );
+
+static void drag (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams );
+
 static void selectDrag (
    Widget w,
    XEvent *e,
@@ -122,6 +134,18 @@ friend void radioBoxEventHandler (
   XtPointer client,
   XEvent *e,
   Boolean *continueToDispatch );
+
+friend void dummy (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams );
+
+friend void drag (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams );
 
 friend void selectDrag (
    Widget w,

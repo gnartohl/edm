@@ -26,6 +26,21 @@
 
 #include "Xm/CascadeBG.h"
 
+static int g_transInit = 1;
+static XtTranslations g_parsedTrans;
+
+static char g_dragTrans[] =
+  "#override\n\
+   ~Shift<Btn2Down>: startDrag()\n\
+   Shift<Btn2Down>: dummy()\n\
+   Shift<Btn2Up>: selectDrag()";
+
+static XtActionsRec g_dragActions[] = {
+  { "startDrag", (XtActionProc) drag },
+  { "dummy", (XtActionProc) dummy },
+  { "selectDrag", (XtActionProc) selectDrag }
+};
+
 static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id )
@@ -1081,20 +1096,7 @@ int stat, i, nc, ni, nr, nd, notify;
 XmString str;
 Arg args[20];
 int n;
-XtTranslations parsedTrans;
 char msg[79+1];
-
-static char dragTrans[] =
-  "#override\n\
-   ~Shift<Btn2Down>: startDrag()\n\
-   Shift<Btn2Down>: dummy()\n\
-   Shift<Btn2Up>: selectDrag()";
-
-static XtActionsRec dragActions[] = {
-  { "startDrag", (XtActionProc) drag },
-  { "dummy", (XtActionProc) dummy },
-  { "selectDrag", (XtActionProc) selectDrag }
-};
 
   if ( actWin->isIconified ) return;
 
@@ -1158,9 +1160,12 @@ static XtActionsRec dragActions[] = {
      XmNmarginWidth, 0,
      NULL );
 
-    parsedTrans = XtParseTranslationTable( dragTrans );
-    XtAppAddActions( actWin->appCtx->appContext(), dragActions,
-     XtNumber(dragActions) );
+    if ( g_transInit ) {
+      g_transInit = 0;
+      g_parsedTrans = XtParseTranslationTable( g_dragTrans );
+      XtAppAddActions( actWin->appCtx->appContext(), g_dragActions,
+       XtNumber(g_dragActions) );
+    }
 
     n = 0;
     XtSetArg( args[n], XmNx, (XtArgVal) 0 ); n++;
@@ -1169,7 +1174,7 @@ static XtActionsRec dragActions[] = {
     XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
     XtSetArg( args[n], XmNbackground, (XtArgVal) bgColor.getColor() ); n++;
     XtSetArg( args[n], XmNforeground, (XtArgVal) fgColor.getColor() ); n++;
-    XtSetArg( args[n], XmNtranslations, parsedTrans ); n++;
+    XtSetArg( args[n], XmNtranslations, g_parsedTrans ); n++;
     XtSetArg( args[n], XmNnavigationType, XmNONE ); n++;
     XtSetArg( args[n], XmNtraversalOn, False ); n++;
     XtSetArg( args[n], XmNuserData, this ); n++;
@@ -1198,7 +1203,7 @@ static XtActionsRec dragActions[] = {
        XmNhighlightOnEnter, False,
        XmNindicatorType, XmN_OF_MANY,
        XmNindicatorOn, XmINDICATOR_CHECK_BOX,
-       XmNtranslations, parsedTrans,
+       XmNtranslations, g_parsedTrans,
        XmNuserData, this,
        XmNspacing, 0,
        XmNselectColor, actWin->ci->pix(selectColor),

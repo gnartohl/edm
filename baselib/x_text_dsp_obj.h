@@ -112,6 +112,12 @@ static void xtdoSetKpIntValue (
   XtPointer client,
   XtPointer call );
 
+static void drag (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams );
+
 static void selectDrag (
    Widget w,
    XEvent *e,
@@ -289,6 +295,12 @@ friend void xtdoSetKpIntValue (
   Widget w,
   XtPointer client,
   XtPointer call );
+
+friend void drag (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams );
 
 friend void selectDrag (
    Widget w,

@@ -24,6 +24,25 @@
 
 #include "thread.h"
 
+static int g_transInit = 1;
+static XtTranslations g_parsedTrans;
+
+static char g_dragTrans[] =
+  "#override None<Btn2Down>: startDrag()\n\
+   Shift<Btn2Down>: dummy()\n\
+   Shift<Btn2Up>: selectDrag()\n\
+   Ctrl<Btn1Down>: dummy()\n\
+   Ctrl<Btn1Up>: dummy()\n\
+   <Btn3Up>: changeParams()\n\
+   <Key>: dummy()";
+
+static XtActionsRec g_dragActions[] = {
+  { "startDrag", (XtActionProc) drag },
+  { "dummy", (XtActionProc) dummy },
+  { "changeParams", (XtActionProc) changeParams },
+  { "selectDrag", (XtActionProc) selectDrag }
+};
+
 static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id )
@@ -2162,25 +2181,8 @@ void activeMotifSliderClass::executeDeferred ( void ) {
 int stat, ncc, nci, ncr, nclc, ncli, ne, nd, i;
 unsigned char orien, pd;
 double cv, fv;
-XtTranslations parsedTrans;
 WidgetList children;
 Cardinal numChildren;
-
-static char dragTrans[] =
-  "#override None<Btn2Down>: startDrag()\n\
-   Shift<Btn2Down>: dummy()\n\
-   Shift<Btn2Up>: selectDrag()\n\
-   Ctrl<Btn1Down>: dummy()\n\
-   Ctrl<Btn1Up>: dummy()\n\
-   <Btn3Up>: changeParams()\n\
-   <Key>: dummy()";
-
-static XtActionsRec dragActions[] = {
-  { "startDrag", (XtActionProc) drag },
-  { "dummy", (XtActionProc) dummy },
-  { "changeParams", (XtActionProc) changeParams },
-  { "selectDrag", (XtActionProc) selectDrag }
-};
 
   if ( actWin->isIconified ) return;
 
@@ -2253,9 +2255,12 @@ static XtActionsRec dragActions[] = {
            (int) ( (double) fontHeight * 0.5 );
         }
 
-        parsedTrans = XtParseTranslationTable( dragTrans );
-        XtAppAddActions( actWin->appCtx->appContext(), dragActions,
-         XtNumber(dragActions) );
+        if ( g_transInit ) {
+          g_transInit = 0;
+          g_parsedTrans = XtParseTranslationTable( g_dragTrans );
+          XtAppAddActions( actWin->appCtx->appContext(), g_dragActions,
+           XtNumber(g_dragActions) );
+	}
 
         if ( orientation == MSLC_K_HORIZONTAL ) {
           orien = XmHORIZONTAL;
@@ -2300,10 +2305,9 @@ static XtActionsRec dragActions[] = {
           if ( XtClass( children[i] ) == xmScrollBarWidgetClass) {
             scrollBarWidget = children[i];
             XtVaSetValues( children[i],
-             //XmNtranslations, parsedTrans,
              XmNuserData, this,
              NULL );
-            XtOverrideTranslations( children[i], parsedTrans );
+            XtOverrideTranslations( children[i], g_parsedTrans );
           }
         }
 
