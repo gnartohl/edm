@@ -24,6 +24,25 @@
 
 #include "thread.h"
 
+static void doBlink (
+  void *ptr
+) {
+
+activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) ptr;
+
+  if ( !udbto->activeMode ) {
+    if ( udbto->isSelected() ) udbto->drawSelectBoxCorners(); //erase via xor
+    udbto->smartDrawAll();
+    if ( udbto->isSelected() ) udbto->drawSelectBoxCorners();
+  }
+  else {
+    udbto->bufInvalidate();
+    udbto->needDraw = 1;
+    udbto->actWin->addDefExeNode( udbto->aglPtr );
+  }
+
+}
+
 static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id )
@@ -241,6 +260,8 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
     udbto->visInverted = 0;
   else
     udbto->visInverted = 1;
+
+  udbto->colorPvExpString.setRaw( udbto->bufColorPvName );
 
   udbto->x = udbto->bufX;
   udbto->sboxX = udbto->bufX;
@@ -508,6 +529,67 @@ activeUpdownButtonClass *udbto =
 
 }
 
+static void udbt_monitor_color_connect_state (
+  struct connection_handler_args arg )
+{
+
+activeUpdownButtonClass *udbto =
+ (activeUpdownButtonClass *) ca_puser(arg.chid);
+
+  if ( arg.op == CA_OP_CONN_UP ) {
+
+    udbto->needColorConnectInit = 1;
+
+  }
+  else {
+
+    udbto->connection.setPvDisconnected( (void *) udbto->colorPvConnection );
+    udbto->active = 0;
+    udbto->bgColor.setDisconnected();
+    udbto->needDraw = 1;
+
+  }
+
+  udbto->actWin->appCtx->proc->lock();
+  udbto->actWin->addDefExeNode( udbto->aglPtr );
+  udbto->actWin->appCtx->proc->unlock();
+
+}
+
+static void udbt_colorInfoUpdate (
+  struct event_handler_args ast_args )
+{
+
+activeUpdownButtonClass *udbto =
+ (activeUpdownButtonClass *) ast_args.usr;
+
+struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
+
+  udbto->curColorValue = controlRec.value;
+
+  udbto->actWin->appCtx->proc->lock();
+  udbto->needColorInit = 1;
+  udbto->actWin->addDefExeNode( udbto->aglPtr );
+  udbto->actWin->appCtx->proc->unlock();
+
+}
+
+static void udbt_colorUpdate (
+  struct event_handler_args ast_args )
+{
+
+activeUpdownButtonClass *udbto =
+ (activeUpdownButtonClass *) ast_args.usr;
+
+  udbto->curColorValue = * ( (double *) ast_args.dbr );
+
+  udbto->actWin->appCtx->proc->lock();
+  udbto->needColorUpdate = 1;
+  udbto->actWin->addDefExeNode( udbto->aglPtr );
+  udbto->actWin->appCtx->proc->unlock();
+
+}
+
 #endif
 
 static void udbtc_decrement (
@@ -629,7 +711,9 @@ activeUpdownButtonClass::activeUpdownButtonClass ( void ) {
   visInverted = 0;
   strcpy( minVisString, "" );
   strcpy( maxVisString, "" );
-  connection.setMaxPvs( 2 );
+  connection.setMaxPvs( 4 );
+
+  setBlinkFunction( (void *) doBlink );
 
 }
 
@@ -662,11 +746,11 @@ activeGraphicClass *udbto = (activeGraphicClass *) this;
   botShadowColor = source->botShadowColor;
 
   destPvExpString.copy( source->destPvExpString );
-
   savePvExpString.copy( source->savePvExpString );
+  visPvExpString.copy( source->visPvExpString );
+  colorPvExpString.copy( source->colorPvExpString );
 
   fineExpString.copy( source->fineExpString );
-
   coarseExpString.copy( source->coarseExpString );
 
   label.copy( source->label );
@@ -688,6 +772,8 @@ activeGraphicClass *udbto = (activeGraphicClass *) this;
   strncpy( maxVisString, source->maxVisString, 39 );
 
   connection.setMaxPvs( 2 );
+
+  setBlinkFunction( (void *) doBlink );
 
   updateDimensions();
 
@@ -815,6 +901,12 @@ int index;
   writeStringToFile( f, minVisString );
   writeStringToFile( f, maxVisString );
 
+  //ver 1.5.0
+  if ( colorPvExpString.getRaw() )
+    writeStringToFile( f, colorPvExpString.getRaw() );
+  else
+    writeStringToFile( f, "" );
+
   return 1;
 
 }
@@ -937,6 +1029,14 @@ float fval;
     readStringFromFile( minVisString, 39+1, f ); actWin->incLine();
 
     readStringFromFile( maxVisString, 39+1, f ); actWin->incLine();
+
+  }
+
+  if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 4 ) ) ) {
+
+    readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+     actWin->incLine();
+    colorPvExpString.setRaw( oneName );
 
   }
 
@@ -1290,6 +1390,12 @@ char title[32], *ptr;
   else
     bufVisInverted = 1;
 
+  if ( colorPvExpString.getRaw() )
+    strncpy( bufColorPvName, colorPvExpString.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
+  else
+    strcpy( bufColorPvName, "" );
+
   strncpy( bufMinVisString, minVisString, 39 );
   strncpy( bufMaxVisString, maxVisString, 39 );
 
@@ -1325,6 +1431,9 @@ char title[32], *ptr;
   ef.addFontMenu( activeUpdownButtonClass_str15, actWin->fi, &fm, fontTag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
+
+  ef.addTextField( activeUpdownButtonClass_str33, 30, bufColorPvName,
+   activeGraphicClass::MAX_PV_NAME );
 
   ef.addTextField( activeUpdownButtonClass_str29, 30, bufVisPvName,
    activeGraphicClass::MAX_PV_NAME );
@@ -1397,12 +1506,14 @@ int activeUpdownButtonClass::draw ( void ) {
 
 int tX, tY;
 XRectangle xR = { x, y, w, h };
+int blink = 0;
 
   if ( deleteRequest ) return 1;
 
   actWin->drawGc.saveFg();
 
-  actWin->drawGc.setFG( bgColor.pixelColor() );
+  //actWin->drawGc.setFG( bgColor.pixelColor() );
+  actWin->drawGc.setFG( bgColor.pixelIndex(), &blink );
 
   actWin->drawGc.setLineStyle( LineSolid );
   actWin->drawGc.setLineWidth( 1 );
@@ -1467,7 +1578,8 @@ XRectangle xR = { x, y, w, h };
 
   }
 
-  actWin->drawGc.setFG( fgColor.pixelColor() );
+  //actWin->drawGc.setFG( fgColor.pixelColor() );
+  actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
 
   XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x+5, y+9, x+w-5, y+9 );
@@ -1494,6 +1606,8 @@ XRectangle xR = { x, y, w, h };
 
   actWin->drawGc.restoreFg();
 
+  updateBlink( blink );
+
   return 1;
 
 }
@@ -1503,17 +1617,20 @@ int activeUpdownButtonClass::drawActive ( void ) {
 int tX, tY;
 char string[63+1];
 XRectangle xR = { x, y, w, h };
+int blink = 0;
 
   if ( !init ) {
     if ( needToDrawUnconnected ) {
       actWin->executeGc.saveFg();
-      actWin->executeGc.setFG( bgColor.getDisconnected() );
+      //actWin->executeGc.setFG( bgColor.getDisconnected() );
+      actWin->executeGc.setFG( bgColor.getDisconnectedIndex(), &blink );
       actWin->executeGc.setLineWidth( 1 );
       actWin->executeGc.setLineStyle( LineSolid );
       XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
+      updateBlink( blink );
     }
   }
   else if ( needToEraseUnconnected ) {
@@ -1534,7 +1651,8 @@ XRectangle xR = { x, y, w, h };
 
   actWin->executeGc.saveFg();
 
-  actWin->executeGc.setFG( bgColor.getColor() );
+  //actWin->executeGc.setFG( bgColor.getColor() );
+  actWin->executeGc.setFG( bgColor.getIndex(), &blink );
 
   actWin->executeGc.setLineStyle( LineSolid );
   actWin->executeGc.setLineWidth( 1 );
@@ -1640,7 +1758,8 @@ XRectangle xR = { x, y, w, h };
 
   }
 
-  actWin->executeGc.setFG( fgColor.getColor() );
+  //actWin->executeGc.setFG( fgColor.getColor() );
+  actWin->executeGc.setFG( fgColor.getIndex(), &blink );
 
   XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
    actWin->executeGc.normGC(), x+5, y+9, x+w-5, y+9 );
@@ -1672,6 +1791,8 @@ XRectangle xR = { x, y, w, h };
 
   actWin->executeGc.restoreFg();
 
+  updateBlink( blink );
+
   return 1;
 
 }
@@ -1701,7 +1822,8 @@ XmString str;
 
       needConnectInit = needSaveConnectInit = needCtlInfoInit = 
        needRefresh = needErase = needDraw = needVisConnectInit =
-       needVisInit = needVisUpdate = 0;
+       needVisInit = needVisUpdate = needColorConnectInit =
+       needColorInit = needColorUpdate = 0;
       needToEraseUnconnected = 0;
       needToDrawUnconnected = 0;
       unconnectedTimer = 0;
@@ -1714,7 +1836,7 @@ XmString str;
       incrementTimerActive = 0;
 
 #ifdef __epics__
-      destEventId = saveEventId = visEventId = 0;
+      destEventId = saveEventId = visEventId = colorEventId = 0;
 #endif
 
       destPvConnected = savePvConnected = active = buttonPressed = 0;
@@ -1755,6 +1877,15 @@ XmString str;
       }
       else {
         visExists = 1;
+        connection.addPv();
+      }
+
+      if ( !colorPvExpString.getExpanded() ||
+         ( strcmp( colorPvExpString.getExpanded(), "" ) == 0 ) ) {
+        colorExists = 0;
+      }
+      else {
+        colorExists = 1;
         connection.addPv();
       }
 
@@ -1870,6 +2001,17 @@ XmString str;
         }
       }
 
+      if ( colorExists ) {
+
+        stat = ca_search_and_connect( colorPvExpString.getExpanded(),
+         &colorPvId, udbt_monitor_color_connect_state, this );
+        if ( stat != ECA_NORMAL ) {
+          printf( activeUpdownButtonClass_str20 );
+          opStat = 0;
+        }
+
+      }
+
       if ( saveExists ) {
         stat = ca_search_and_connect( savePvExpString.getExpanded(), &savePvId,
          udbtc_monitor_save_connect_state, this );
@@ -1940,6 +2082,11 @@ int stat;
 
   if ( visExists ) {
     stat = ca_clear_channel( visPvId );
+    if ( stat != ECA_NORMAL ) printf( activeUpdownButtonClass_str22 );
+  }
+
+  if ( colorExists ) {
+    stat = ca_clear_channel( colorPvId );
     if ( stat != ECA_NORMAL ) printf( activeUpdownButtonClass_str22 );
   }
 
@@ -2153,6 +2300,8 @@ int stat, retStat = 1;
   if ( !( stat & 1 ) ) retStat = stat;
   stat = visPvExpString.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
+  stat = colorPvExpString.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
   return retStat;
 
@@ -2178,6 +2327,8 @@ int stat, retStat = 1;
   if ( !( stat & 1 ) ) retStat = stat;
   stat = visPvExpString.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
+  stat = colorPvExpString.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
   return stat;
 
@@ -2197,18 +2348,20 @@ int activeUpdownButtonClass::containsMacros ( void ) {
 
   if ( visPvExpString.containsPrimaryMacros() ) return 1;
 
+  if ( colorPvExpString.containsPrimaryMacros() ) return 1;
+
   return 0;
 
 }
 
 void activeUpdownButtonClass::executeDeferred ( void ) {
 
-int nc, nsc, nci, nd, ne, nr, nvc, nvi, nvu, stat;
+int nc, nsc, nci, nd, ne, nr, nvc, nvi, nvu, ncolc, ncoli, ncolu;
+int stat, index, invisColor;
 
   if ( actWin->isIconified ) return;
 
   actWin->appCtx->proc->lock();
-  visValue = curVisValue;
   nc = needConnectInit; needConnectInit = 0;
   nsc = needSaveConnectInit; needSaveConnectInit = 0;
   nci = needCtlInfoInit; needCtlInfoInit = 0;
@@ -2218,6 +2371,11 @@ int nc, nsc, nci, nd, ne, nr, nvc, nvi, nvu, stat;
   nvc = needVisConnectInit; needVisConnectInit = 0;
   nvi = needVisInit; needVisInit = 0;
   nvu = needVisUpdate; needVisUpdate = 0;
+  ncolc = needColorConnectInit; needColorConnectInit = 0;
+  ncoli = needColorInit; needColorInit = 0;
+  ncolu = needColorUpdate; needColorUpdate = 0;
+  visValue = curVisValue;
+  colorValue = curColorValue;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
@@ -2305,6 +2463,55 @@ int nc, nsc, nci, nd, ne, nr, nvc, nvi, nvu, stat;
 
   }
 
+  if ( ncolc ) {
+
+    stat = ca_get_callback( DBR_GR_DOUBLE, colorPvId,
+     udbt_colorInfoUpdate, (void *) this );
+
+  }
+
+  if ( ncoli ) {
+
+    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, colorPvId,
+     udbt_colorUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
+     &colorEventId, DBE_VALUE );
+    if ( stat != ECA_NORMAL ) printf( activeUpdownButtonClass_str23 );
+
+    invisColor = 0;
+
+    index = actWin->ci->evalRule( bgColor.pixelIndex(), colorValue );
+    invisColor |= actWin->ci->isInvisible( index );
+    bgColor.changeIndex( index, actWin->ci );
+
+    index = actWin->ci->evalRule( fgColor.pixelIndex(), colorValue );
+    invisColor |= actWin->ci->isInvisible( index );
+    fgColor.changeIndex( index, actWin->ci );
+
+    if ( !visExists ) {
+
+      if ( invisColor ) {
+        visibility = 0;
+      }
+      else {
+        visibility = 1;
+      }
+
+      if ( prevVisibility != visibility ) {
+        if ( !visibility ) eraseActive();
+      }
+
+    }
+
+    connection.setPvConnected( (void *) colorPvConnection );
+
+    if ( connection.pvsConnected() ) {
+      bgColor.setConnected();
+      init = 1;
+      smartDrawAllActive();
+    }
+
+  }
+
 #endif
 
 //----------------------------------------------------------------------------
@@ -2349,6 +2556,39 @@ int nc, nsc, nci, nd, ne, nr, nvc, nvi, nvu, stat;
 
   }
 
+//----------------------------------------------------------------------------
+
+  if ( ncolu ) {
+
+    invisColor = 0;
+
+    index = actWin->ci->evalRule( bgColor.pixelIndex(), colorValue );
+    invisColor |= actWin->ci->isInvisible( index );
+    bgColor.changeIndex( index, actWin->ci );
+
+    index = actWin->ci->evalRule( fgColor.pixelIndex(), colorValue );
+    invisColor |= actWin->ci->isInvisible( index );
+    fgColor.changeIndex( index, actWin->ci );
+
+    if ( !visExists ) {
+
+      if ( invisColor ) {
+        visibility = 0;
+      }
+      else {
+        visibility = 1;
+      }
+
+      if ( prevVisibility != visibility ) {
+        if ( !visibility ) eraseActive();
+      }
+
+    }
+
+    stat = smartDrawAllActive();
+
+  }
+
 }
 
 char *activeUpdownButtonClass::firstDragName ( void ) {
@@ -2378,6 +2618,9 @@ char *activeUpdownButtonClass::dragValue (
   }
   else if ( i == 1 ) {
     return savePvExpString.getExpanded();
+  }
+  else if ( i == 2 ) {
+    return colorPvExpString.getExpanded();
   }
   else {
     return visPvExpString.getExpanded();

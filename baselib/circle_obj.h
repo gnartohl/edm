@@ -42,6 +42,10 @@ static char *dragName[] = {
   activeCircleClass_str3
 };
 
+static void doBlink (
+  void *ptr
+);
+
 static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id );
@@ -76,6 +80,10 @@ static void acc_edit_cancel_delete (
 class activeCircleClass : public activeGraphicClass {
 
 private:
+
+friend void doBlink (
+  void *ptr
+);
 
 friend void unconnectedTimeout (
   XtPointer client,

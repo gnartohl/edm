@@ -23,6 +23,42 @@
 // This is the EPICS specific line right now:
 static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
+static void resetMonitorConnection (
+  struct connection_handler_args arg )
+{
+
+xyGraphClass *xyo = (xyGraphClass *) ca_puser(arg.chid);
+
+  if ( arg.op == CA_OP_CONN_UP ) {
+
+    xyo->actWin->appCtx->proc->lock();
+    xyo->needResetConnect = 1;
+    xyo->actWin->addDefExeNode( xyo->aglPtr );
+    xyo->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
+static void resetValueUpdate (
+  struct event_handler_args arg )
+{
+
+xyGraphClass *xyo = (xyGraphClass *) ca_puser(arg.chid);
+short value;
+
+  value = *( (short *) arg.dbr );
+  if ( value ) {
+
+    xyo->actWin->appCtx->proc->lock();
+    xyo->needReset = 1;
+    xyo->actWin->addDefExeNode( xyo->aglPtr );
+    xyo->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
 static void xMonitorConnection (
   struct connection_handler_args arg )
 {
@@ -177,15 +213,60 @@ static void yValueUpdate (
 
 objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
 xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
-int i =  ptr->index;
+char *array;
+int ii, i =  ptr->index;
 
-  //printf( "yValueUpdate, i=%-d, size=%-d\n", i, xyo->yPvSize[i] );
+//printf( "yValueUpdate, i=%-d, size=%-d\n", i, xyo->yPvSize[i] );
 
   xyo->actWin->appCtx->proc->lock();
-  memcpy( xyo->yPvData[i], arg.dbr, xyo->yPvSize[i] );
+
+  if ( xyo->yPvCount[i] > 1 ) { // vector
+
+    //printf( "vector\n" );
+
+    memcpy( xyo->yPvData[i], arg.dbr, xyo->yPvSize[i] );
+    xyo->yArrayNumPoints[i] = xyo->yPvCount[i];
+
+  }
+  else { // scalar
+
+    //printf( "scalar\n" );
+    //printf( "head = %-d, tail = %-d\n", xyo->yArrayHead[i],
+    // xyo->yArrayTail[i] );
+
+    if ( ( xyo->yArrayNumPoints[i] >= xyo->count ) &&
+         ( xyo->plotMode == XYGC_K_PLOT_MODE_PLOT_N_STOP ) ) {
+      xyo->actWin->appCtx->proc->unlock();
+      return;
+    }
+
+    ii = xyo->yArrayTail[i] * xyo->yPvSize[i];
+
+    array = (char *) xyo->yPvData[i];
+    memcpy( &array[ii], arg.dbr, xyo->yPvSize[i] );
+
+    xyo->yArrayTail[i]++;
+    if ( xyo->yArrayTail[i] > xyo->count ) {
+      xyo->yArrayTail[i] = 0;
+    }
+    if ( xyo->yArrayTail[i] == xyo->yArrayHead[i] ) {
+      xyo->yArrayNumPoints[i] = xyo->count;
+      xyo->yArrayHead[i]++;
+      if ( xyo->yArrayHead[i] > xyo->count ) {
+        xyo->yArrayHead[i] = 0;
+      }
+    }
+    else {
+      //printf( "inc npts\n" );
+      xyo->yArrayNumPoints[i]++;
+    }
+
+  }
+
   xyo->needUpdate = 1;
   xyo->yArrayNeedUpdate[i] = 1;
   xyo->actWin->addDefExeNode( xyo->aglPtr );
+
   xyo->actWin->appCtx->proc->unlock();
 
 }
@@ -301,8 +382,8 @@ int i;
   axygo->y2Max = axygo->eBuf->bufY2Max;
 
   axygo->trigPvExpStr.setRaw( axygo->eBuf->bufTrigPvName );
-  axygo->erasePvExpStr.setRaw( axygo->eBuf->bufErasePvName );
-  axygo->eraseMode = axygo->eBuf->bufEraseMode;
+  axygo->resetPvExpStr.setRaw( axygo->eBuf->bufResetPvName );
+  axygo->resetMode = axygo->eBuf->bufResetMode;
 
   strncpy( axygo->fontTag, axygo->fm.currentFontTag(), 63 );
   axygo->actWin->fi->loadFontTag( axygo->fontTag );
@@ -406,7 +487,7 @@ int i;
 
   plotStyle = XYGC_K_PLOT_STYLE_POINT;
   plotMode = XYGC_K_PLOT_MODE_PLOT_N_STOP;
-  count = 1;
+  count = 2;
 
   numTraces = 0;
 
@@ -415,9 +496,9 @@ int i;
     yPv[i] = NULL;
   }
   trigPv = NULL;
-  erasePv = NULL;
+  resetPv = NULL;
 
-  eraseMode = 0;
+  resetMode = 0;
   xAxisStyle = 0;
   xAxisSource = 0;
   xAxisTimeFormat = 0;
@@ -515,9 +596,9 @@ int i;
   trigPv = NULL;
   trigPvExpStr.copy( source->trigPvExpStr );
 
-  erasePv = NULL;
-  erasePvExpStr.copy( source->erasePvExpStr );
-  eraseMode = source->eraseMode;
+  resetPv = NULL;
+  resetPvExpStr.copy( source->resetPvExpStr );
+  resetMode = source->resetMode;
 
   xAxisStyle = source->xAxisStyle;
   xAxisSource = source->xAxisSource;
@@ -728,12 +809,12 @@ int i, stat = 1;
   else
     writeStringToFile( f, "" );
 
-  if ( erasePvExpStr.getRaw() )
-    writeStringToFile( f, erasePvExpStr.getRaw() );
+  if ( resetPvExpStr.getRaw() )
+    writeStringToFile( f, resetPvExpStr.getRaw() );
   else
     writeStringToFile( f, "" );
 
-  fprintf( f, "%-d\n", eraseMode );
+  fprintf( f, "%-d\n", resetMode );
 
   writeStringToFile( f, fontTag );
 
@@ -880,9 +961,9 @@ char str[127+1], traceColor[15+1], onePv[activeGraphicClass::MAX_PV_NAME+1];
 
   readStringFromFile( onePv, activeGraphicClass::MAX_PV_NAME+1, f );
    actWin->incLine();
-  erasePvExpStr.setRaw( onePv );
+  resetPvExpStr.setRaw( onePv );
 
-  fscanf( f, "%d\n", &eraseMode ); actWin->incLine();
+  fscanf( f, "%d\n", &resetMode ); actWin->incLine();
 
   readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
@@ -1001,9 +1082,9 @@ int i;
   eBuf->bufGridColor = gridColor;
   strncpy( eBuf->bufTrigPvName, trigPvExpStr.getRaw(),
    activeGraphicClass::MAX_PV_NAME );
-  strncpy( eBuf->bufErasePvName, erasePvExpStr.getRaw(),
+  strncpy( eBuf->bufResetPvName, resetPvExpStr.getRaw(),
    activeGraphicClass::MAX_PV_NAME );
-  eBuf->bufEraseMode = eraseMode;
+  eBuf->bufResetMode = resetMode;
 
   eBuf->bufXNumLabelIntervals = xNumLabelIntervals;
   eBuf->bufXLabelGrid = xLabelGrid;
@@ -1252,11 +1333,11 @@ int i;
    
     efAxis->finished( axygc_edit_ok_axis, this );
 
-  ef.addTextField( "Trigger Channel", 35, eBuf->bufTrigPvName,
+  ef.addTextField( "Trigger PV", 35, eBuf->bufTrigPvName,
    activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( "Erase Channel", 35, eBuf->bufErasePvName,
+  ef.addTextField( "Reset PV", 35, eBuf->bufResetPvName,
    activeGraphicClass::MAX_PV_NAME );
-  ef.addOption( "Erase Mode", "if not zero|if zero", &eBuf->bufEraseMode );
+  ef.addOption( "Reset Mode", "if not zero|if zero", &eBuf->bufResetMode );
   ef.addFontMenuNoAlignInfo( "Font", actWin->fi, &fm, fontTag );
 
   return 1;
@@ -1548,7 +1629,7 @@ short xVal, yVal;
 
 int xyGraphClass::fullRefresh ( void ) {
 
-int i, ii, iii;
+int i, ii, iii, npts;
 XRectangle xR = { 1, 1, plotAreaW, plotAreaH };
 int clipStat;
 double labelInc, labelVal, majorInc, majorVal, minorInc, minorVal,
@@ -1735,10 +1816,10 @@ short xVal, yVal;
   //clipStat = actWin->executeGc.addNormXClipRectangle( xR );
   clipStat = actWin->executeGc.addXorXClipRectangle( xR );
 
-  xmax = (double) yPvCount[0] - 1;
+  xmax = (double) yArrayNumPoints[0] - 1;
   for ( i=1; i<numTraces; i++ ) {
-    if ( xmax < (double) yPvCount[i] - 1 ) {
-      xmax = (double) yPvCount[i] - 1;
+    if ( xmax < (double) yArrayNumPoints[i] - 1 ) {
+      xmax = (double) yArrayNumPoints[i] - 1;
     }
   }
 
@@ -1750,44 +1831,108 @@ short xVal, yVal;
     actWin->executeGc.setFGforGivenBG( actWin->ci->pix(plotColor[i]),
    actWin->ci->pix(bgColor) );
 
-    for ( ii=0; ii<yPvCount[i]; ii++ ) {
+    if ( yPvCount[i] > 1 ) { // vector
 
-      switch ( yPvType[i] ) {
-      case DBR_FLOAT:
-        dValue = (double) ( (float *) yPvData[i] )[ii];
-        break;
-      case DBR_DOUBLE: 
-        dValue = ( (double *) yPvData[i] )[ii];
-        break;
-      case DBR_SHORT:
-        dValue = (double) ( (unsigned short *) yPvData[i] )[ii];
-        break;
-      case DBR_CHAR:
-        dValue = (double) ( (unsigned char *) yPvData[i] )[ii];
-        break;
-      case DBR_LONG:
-        dValue = (double) ( (int *) yPvData[i] )[ii];
-        break;
-      case DBR_ENUM:
-        dValue = (double) ( (unsigned short *) yPvData[i] )[ii];
-        break;
-      default:
-        dValue = ( (double *) yPvData[i] )[ii];
-        break;
+      //printf( "full refresh: vector, npts = %-d\n", yArrayNumPoints[i] );
+
+      for ( ii=0; ii<yPvCount[i]; ii++ ) {
+
+        switch ( yPvType[i] ) {
+        case DBR_FLOAT:
+          dValue = (double) ( (float *) yPvData[i] )[ii];
+          break;
+        case DBR_DOUBLE: 
+          dValue = ( (double *) yPvData[i] )[ii];
+          break;
+        case DBR_SHORT:
+          dValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+          break;
+        case DBR_CHAR:
+          dValue = (double) ( (unsigned char *) yPvData[i] )[ii];
+          break;
+        case DBR_LONG:
+          dValue = (double) ( (int *) yPvData[i] )[ii];
+          break;
+        case DBR_ENUM:
+          dValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+          break;
+        default:
+          dValue = ( (double *) yPvData[i] )[ii];
+          break;
+        }
+
+        plotBuf[i][ii].y = (short) plotAreaH -
+         (short) rint( dValue * y1Factor + y1Offset );
+        plotBuf[i][ii].x =
+         (short) rint( (double) ii * xFactor + xOffset );
       }
 
-      plotBuf[i][ii].y = (short) plotAreaH -
-       (short) rint( dValue * y1Factor + y1Offset );
-      plotBuf[i][ii].x =
-       (short) rint( (double) ii * xFactor + xOffset );
-    }
+      actWin->executeGc.setLineWidth( lineThk[i] );
+      actWin->executeGc.setLineStyle( lineStyle[i] );
+      yArrayCurNumPoints[i] = ii;
+      if ( ii > 1 ) {
+        XDrawLines( actWin->d, pixmap,
+         //actWin->executeGc.normGC(), plotBuf[i], ii, CoordModeOrigin );
+         actWin->executeGc.xorGC(), plotBuf[i], ii, CoordModeOrigin );
+      }
 
-    actWin->executeGc.setLineWidth( lineThk[i] );
-    actWin->executeGc.setLineStyle( lineStyle[i] );
-    if ( ii ) {
-      XDrawLines( actWin->d, pixmap,
-       //actWin->executeGc.normGC(), plotBuf[i], ii, CoordModeOrigin );
-       actWin->executeGc.xorGC(), plotBuf[i], ii, CoordModeOrigin );
+    }
+    else { // scalar
+
+      //printf( "full refresh: scalar, npts = %-d\n", yArrayNumPoints[i] );
+
+      ii = yArrayHead[i];
+      npts = 0;
+      while ( ii != yArrayTail[i] ) {
+
+        switch ( yPvType[i] ) {
+        case DBR_FLOAT:
+          dValue = (double) ( (float *) yPvData[i] )[ii];
+          break;
+        case DBR_DOUBLE: 
+          dValue = ( (double *) yPvData[i] )[ii];
+          break;
+        case DBR_SHORT:
+          dValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+          break;
+        case DBR_CHAR:
+          dValue = (double) ( (unsigned char *) yPvData[i] )[ii];
+          break;
+        case DBR_LONG:
+          dValue = (double) ( (int *) yPvData[i] )[ii];
+          break;
+        case DBR_ENUM:
+          dValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+          break;
+        default:
+          dValue = ( (double *) yPvData[i] )[ii];
+          break;
+        }
+
+        //printf( "y[%-d] = %-f\n", ii, dValue );
+
+        plotBuf[i][npts].y = (short) plotAreaH -
+         (short) rint( dValue * y1Factor + y1Offset );
+        plotBuf[i][npts].x = (short) rint( (double) npts * xFactor +
+         xOffset );
+
+        npts++;
+        ii++;
+        if ( ii > this->count ) {
+          ii = 0;
+        }
+
+      }
+
+      actWin->executeGc.setLineWidth( lineThk[i] );
+      actWin->executeGc.setLineStyle( lineStyle[i] );
+      yArrayCurNumPoints[i] = npts;
+      if ( npts > 1 ) {
+        XDrawLines( actWin->d, pixmap,
+         //actWin->executeGc.normGC(), plotBuf[i], npts, CoordModeOrigin );
+         actWin->executeGc.xorGC(), plotBuf[i], npts, CoordModeOrigin );
+      }
+
     }
 
   }
@@ -1924,9 +2069,11 @@ int clipStat;
 
         traceIsDrawn[i] = 0;
 
-        XDrawLines( actWin->d, pixmap,
-	 actWin->executeGc.xorGC(), plotBuf[i], yPvCount[i],
-	  CoordModeOrigin );
+        if ( yArrayCurNumPoints[i] > 1 ) {
+          XDrawLines( actWin->d, pixmap,
+	   actWin->executeGc.xorGC(), plotBuf[i], yArrayCurNumPoints[i],
+	    CoordModeOrigin );
+	}
 
       }
 
@@ -2069,17 +2216,22 @@ double dValue, xmax, xFactor, xOffset, y1Factor, y1Offset;
 
 int xyGraphClass::drawActive ( void ) {
 
-int i, ii;
+int i, ii, npts;
 XRectangle xR = { 1, 1, plotAreaW, plotAreaH };
 int clipStat;
 double dValue, xmax, xFactor, xOffset, y1Factor, y1Offset;
 
   if ( !activeMode || !init ) return 1;
 
-  xmax = (double) yPvCount[0] - 1;
+  xmax = (double) yArrayNumPoints[0] - 1;
+
+  if ( !xMax.isNull() ) {
+    if ( xMax.value() > xmax ) xmax = xMax.value();
+  }
+
   for ( i=1; i<numTraces; i++ ) {
-    if ( xmax < (double) yPvCount[i] - 1 ) {
-      xmax = (double) yPvCount[i] - 1;
+    if ( xmax < (double) yArrayNumPoints[i] - 1 ) {
+      xmax = (double) yArrayNumPoints[i] - 1;
     }
   }
 
@@ -2115,40 +2267,103 @@ double dValue, xmax, xFactor, xOffset, y1Factor, y1Offset;
 
       yArrayNeedUpdate[i] = 0;
 
-      for ( ii=0; ii<yPvCount[i]; ii++ ) {
+      if ( yPvCount[i] > 1 ) { // vector
 
-        switch ( yPvType[i] ) {
-        case DBR_FLOAT:
-          dValue = (double) ( (float *) yPvData[i] )[ii];
-          break;
-        case DBR_DOUBLE: 
-          dValue = ( (double *) yPvData[i] )[ii];
-          break;
-        case DBR_SHORT:
-          dValue = (double) ( (unsigned short *) yPvData[i] )[ii];
-          break;
-        case DBR_CHAR:
-          dValue = (double) ( (unsigned char *) yPvData[i] )[ii];
-          break;
-        case DBR_LONG:
-          dValue = (double) ( (int *) yPvData[i] )[ii];
-          break;
-        case DBR_ENUM:
-          dValue = (double) ( (unsigned short *) yPvData[i] )[ii];
-          break;
-        default:
-          dValue = ( (double *) yPvData[i] )[ii];
-          break;
+	//printf( "draw active: vector, npts = %-d\n", yArrayNumPoints[i] );
+
+        for ( ii=0; ii<yArrayNumPoints[i]; ii++ ) {
+
+          switch ( yPvType[i] ) {
+          case DBR_FLOAT:
+            dValue = (double) ( (float *) yPvData[i] )[ii];
+            break;
+          case DBR_DOUBLE: 
+            dValue = ( (double *) yPvData[i] )[ii];
+            break;
+          case DBR_SHORT:
+            dValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+            break;
+          case DBR_CHAR:
+            dValue = (double) ( (unsigned char *) yPvData[i] )[ii];
+            break;
+          case DBR_LONG:
+            dValue = (double) ( (int *) yPvData[i] )[ii];
+            break;
+          case DBR_ENUM:
+            dValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+            break;
+          default:
+            dValue = ( (double *) yPvData[i] )[ii];
+            break;
+          }
+
+          //printf( "y = %-f\n", dValue );
+
+          plotBuf[i][ii].y = (short) plotAreaH -
+           (short) rint( dValue * y1Factor + y1Offset );
+          plotBuf[i][ii].x = (short) rint( (double) ii * xFactor + xOffset );
         }
 
-        plotBuf[i][ii].y = (short) plotAreaH -
-         (short) rint( dValue * y1Factor + y1Offset );
-        plotBuf[i][ii].x = (short) rint( (double) ii * xFactor + xOffset );
-      }
+        yArrayCurNumPoints[i] = ii;
+        if ( ii > 1 ) {
+          XDrawLines( actWin->d, pixmap,
+           actWin->executeGc.xorGC(), plotBuf[i], ii, CoordModeOrigin );
+        }
 
-      if ( ii ) {
-        XDrawLines( actWin->d, pixmap,
-	 actWin->executeGc.xorGC(), plotBuf[i], ii, CoordModeOrigin );
+      }
+      else { // scalar
+
+	//printf( "draw active: scalar, num pts = %-d\n", yArrayNumPoints[i] );
+
+        ii = yArrayHead[i];
+        npts = 0;
+        while ( ii != yArrayTail[i] ) {
+
+          switch ( yPvType[i] ) {
+          case DBR_FLOAT:
+            dValue = (double) ( (float *) yPvData[i] )[ii];
+            break;
+          case DBR_DOUBLE: 
+            dValue = ( (double *) yPvData[i] )[ii];
+            break;
+          case DBR_SHORT:
+            dValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+            break;
+          case DBR_CHAR:
+            dValue = (double) ( (unsigned char *) yPvData[i] )[ii];
+            break;
+          case DBR_LONG:
+            dValue = (double) ( (int *) yPvData[i] )[ii];
+            break;
+          case DBR_ENUM:
+            dValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+            break;
+          default:
+            dValue = ( (double *) yPvData[i] )[ii];
+            break;
+          }
+
+          //printf( "y[%-d] = %-f\n", ii, dValue );
+
+          plotBuf[i][npts].y = (short) plotAreaH -
+           (short) rint( dValue * y1Factor + y1Offset );
+          plotBuf[i][npts].x = (short) rint( (double) npts * xFactor +
+           xOffset );
+
+          npts++;
+          ii++;
+          if ( ii > this->count ) {
+            ii = 0;
+	  }
+
+        }
+
+        yArrayCurNumPoints[i] = npts;
+        if ( npts > 1 ) {
+          XDrawLines( actWin->d, pixmap,
+           actWin->executeGc.xorGC(), plotBuf[i], npts, CoordModeOrigin );
+	}
+
       }
 
     }
@@ -2194,7 +2409,7 @@ int i, stat, retStat = 1;
   stat = trigPvExpStr.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
-  stat = erasePvExpStr.expand1st( numMacros, macros, expansions );
+  stat = resetPvExpStr.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
   for ( i=0; i<numTraces; i++ ) {
@@ -2227,7 +2442,7 @@ int i, stat, retStat = 1;
   stat = trigPvExpStr.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
-  stat = erasePvExpStr.expand2nd( numMacros, macros, expansions );
+  stat = resetPvExpStr.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
   for ( i=0; i<numTraces; i++ ) {
@@ -2257,7 +2472,7 @@ int i, result;
   result = trigPvExpStr.containsPrimaryMacros();
   if ( result ) return result;
 
-  result = erasePvExpStr.containsPrimaryMacros();
+  result = resetPvExpStr.containsPrimaryMacros();
   if ( result ) return result;
 
   for ( i=0; i<numTraces; i++ ) {
@@ -2303,7 +2518,23 @@ int screen_num, depth;
       bufInvalid = 1;
       activeMode = 1; 
       needConnect = needInit = needRefresh = needErase = needDraw = 
-       needUpdate = 0;
+       needUpdate = needResetConnect = needReset = needTrigConnect =
+       needTrig = 0;
+
+      resetEv = trigEv = NULL;
+
+      if ( resetPvExpStr.getExpanded() ) {
+        resetPvExists = 1;
+	stat = ca_search_and_connect( resetPvExpStr.getExpanded(),
+         &resetPv, resetMonitorConnection, this );
+        if ( stat != ECA_NORMAL ) {
+          printf( "ca_search_and_connect failed for [%s]\n",
+           resetPvExpStr.getExpanded() );
+        }
+      }
+      else {
+        resetPvExists = 0;
+      }
 
       for ( i=0; i<numTraces; i++ ) {
         xArrayNeedInit[i] = 0;
@@ -2379,6 +2610,11 @@ int i, stat;
       if ( yEv[i] ) {
         stat = ca_clear_channel( yPv[i] );
         yEv[i] = NULL;
+      }
+
+      if ( resetEv ) {
+        stat = ca_clear_channel( resetPv );
+        resetEv = NULL;
       }
 
       if ( xPvData[i] ) {
@@ -2469,7 +2705,7 @@ int xyGraphClass::getButtonActionRequest (
 
 void xyGraphClass::executeDeferred ( void ) {
 
-int i, stat, nc, ni, nu, nr, ne, nd, eleSize;
+int i, stat, nc, ni, nu, nr, ne, nd, nrstc, nrst, ntrgc, ntrg, eleSize;
 
   if ( actWin->isIconified ) return;
 
@@ -2480,6 +2716,10 @@ int i, stat, nc, ni, nu, nr, ne, nd, eleSize;
   nr = needRefresh; needRefresh = 0;
   ne = needErase; needErase = 0;
   nd = needDraw; needDraw = 0;
+  nrstc = needResetConnect; needResetConnect = 0;
+  nrst = needReset; needReset = 0;
+  ntrgc = needTrigConnect; needTrigConnect = 0;
+  ntrg = needTrig; needTrig = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
@@ -2531,6 +2771,16 @@ int i, stat, nc, ni, nu, nr, ne, nd, eleSize;
 
   }
 
+  if ( nrstc ) {
+
+    stat = ca_add_array_event( DBR_SHORT, 1, resetPv,
+     resetValueUpdate, (void *) this, 0.0, 0.0, 0.0, &resetEv );
+    if ( stat != ECA_NORMAL ) {
+      printf( "error from ca_add_array_event\n" );
+    }
+
+  }
+
   if ( ni ) {
 
     //printf( "need init\n" );
@@ -2545,9 +2795,24 @@ int i, stat, nc, ni, nu, nr, ne, nd, eleSize;
         argRec[i].index = i;
 
         if ( !yPvData[i] ) {
-          //printf( "count = %-d\n", yPvCount[i] );
-          yPvData[i] = (void *) new char[yPvSize[i]*yPvCount[i]];
-          plotBuf[i] = (XPoint *) new XPoint[yPvCount[i]];
+
+          if ( yPvCount[i] > 1 ) { // vector
+
+            //printf( "count = %-d\n", yPvCount[i] );
+            yPvData[i] = (void *) new char[yPvSize[i]*yPvCount[i]];
+            plotBuf[i] = (XPoint *) new XPoint[yPvCount[i]];
+
+          }
+	  else { // scalar
+
+            if ( count < 2 ) count = 2;
+
+            //printf( "count = %-d\n", count );
+            yPvData[i] = (void *) new char[yPvSize[i]*(count+1)];
+            plotBuf[i] = (XPoint *) new XPoint[(count+1)];
+
+          }
+
         }
 
         stat = ca_add_array_event( ca_field_type(yPv[i]), yPvCount[i], yPv[i],
@@ -2557,6 +2822,11 @@ int i, stat, nc, ni, nu, nr, ne, nd, eleSize;
         }
 
       }
+
+      yArrayHead[i] = 0;
+      yArrayTail[i] = 0;
+      yArrayNumPoints[i] = 0;
+      yArrayCurNumPoints[i] = 0;
 
     }
 
@@ -2596,6 +2866,19 @@ int i, stat, nc, ni, nu, nr, ne, nd, eleSize;
 
   if ( nr ) {
     fullRefresh();
+  }
+
+  if ( nrst ) {
+
+    for ( i=0; i<numTraces; i++ ) {
+      if ( yPvCount[i] == 1 ) { // scalar
+        yArrayNeedUpdate[i] = 1;
+        eraseActive();
+        yArrayHead[i] = yArrayTail[i] = yArrayNumPoints[i] = 0;
+        drawActive();
+      }
+    }
+
   }
 
 }

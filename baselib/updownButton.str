@@ -33,5 +33,6 @@
 #define activeUpdownButtonClass_str30 (char *) "Not Visible if|Visible if"
 #define activeUpdownButtonClass_str31 (char *) ">="
 #define activeUpdownButtonClass_str32 (char *) "and <"
+#define activeUpdownButtonClass_str33 (char *) "Color PV"
 
 #endif

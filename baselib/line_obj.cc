@@ -27,6 +27,24 @@
 // This is the EPICS specific line right now:
 static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
+static void doBlink (
+  void *ptr
+) {
+
+activeLineClass *alo = (activeLineClass *) ptr;
+
+  if ( !alo->activeMode ) {
+    if ( alo->isSelected() ) alo->drawSelectBoxCorners(); // erase via xor
+    alo->smartDrawAll();
+    if ( alo->isSelected() ) alo->drawSelectBoxCorners();
+  }
+  else {
+    alo->bufInvalidate();
+    alo->smartDrawAllActive();
+  }
+
+}
+
 static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id )
@@ -434,6 +452,8 @@ activeLineClass::activeLineClass ( void ) {
 
   unconnectedTimer = 0;
 
+  setBlinkFunction( (void *) doBlink );
+
 }
 
 activeLineClass::~activeLineClass ( void ) {
@@ -513,6 +533,8 @@ int i;
   connection.setMaxPvs( 2 );
 
   unconnectedTimer = 0;
+
+  setBlinkFunction( (void *) doBlink );
 
 }
 
@@ -1347,16 +1369,20 @@ int i, index;
 int activeLineClass::drawActive ( void )
 {
 
+int blink = 0;
+
   if ( !init ) {
     if ( needToDrawUnconnected ) {
       actWin->executeGc.saveFg();
-      actWin->executeGc.setFG( lineColor.getDisconnected() );
+      //actWin->executeGc.setFG( lineColor.getDisconnected() );
+      actWin->executeGc.setFG( lineColor.getDisconnectedIndex(), &blink );
       actWin->executeGc.setLineWidth( 1 );
       actWin->executeGc.setLineStyle( LineSolid );
       XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
+      updateBlink( blink );
     }
   }
   else if ( needToEraseUnconnected ) {
@@ -1380,7 +1406,8 @@ int activeLineClass::drawActive ( void )
 
     if ( fill && fillVisibility ) {
 
-      actWin->executeGc.setFG( fillColor.getColor() );
+      //actWin->executeGc.setFG( fillColor.getColor() );
+      actWin->executeGc.setFG( fillColor.getIndex(), &blink );
 
       XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), xpoints, numPoints, Complex,
@@ -1389,7 +1416,8 @@ int activeLineClass::drawActive ( void )
     }
 
     if ( lineVisibility ) {
-      actWin->executeGc.setFG( lineColor.getColor() );
+      //actWin->executeGc.setFG( lineColor.getColor() );
+      actWin->executeGc.setFG( lineColor.getIndex(), &blink );
       XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), xpoints, numPoints, CoordModeOrigin );
     }
@@ -1399,6 +1427,8 @@ int activeLineClass::drawActive ( void )
     actWin->executeGc.setLineWidth( 1 );
 
   }
+
+  updateBlink( blink );
 
   return 1;
 
@@ -1661,6 +1691,8 @@ int activeLineClass::deactivate (
 
 int activeLineClass::draw ( void ) {
 
+int blink = 0;
+
   if ( activeMode ) return 1;
   if ( deleteRequest ) return 1;
 
@@ -1673,7 +1705,8 @@ int activeLineClass::draw ( void ) {
 
     if ( fill ) {
 
-      actWin->drawGc.setFG( fillColor.pixelColor() );
+      //actWin->drawGc.setFG( fillColor.pixelColor() );
+      actWin->drawGc.setFG( fillColor.pixelIndex(), &blink );
 
       XFillPolygon( actWin->d, XtWindow(actWin->drawWidget),
        actWin->drawGc.normGC(), xpoints, numPoints, Complex,
@@ -1681,7 +1714,8 @@ int activeLineClass::draw ( void ) {
 
     }
 
-    actWin->drawGc.setFG( lineColor.pixelColor() );
+    //actWin->drawGc.setFG( lineColor.pixelColor() );
+    actWin->drawGc.setFG( lineColor.pixelIndex(), &blink );
 
     XDrawLines( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.normGC(), xpoints, numPoints, CoordModeOrigin );
@@ -1691,6 +1725,8 @@ int activeLineClass::draw ( void ) {
     actWin->drawGc.setLineWidth( 1 );
 
   }
+
+  updateBlink( blink );
 
   return 1;
 

@@ -41,6 +41,10 @@ static char *dragName[] = {
   activeMessageButtonClass_str28
 };
 
+static void doBlink (
+  void *ptr
+);
+
 static void pw_ok (
   Widget w,
   XtPointer client,
@@ -125,6 +129,10 @@ static void msgbt_colorUpdate (
 class activeMessageButtonClass : public activeGraphicClass {
 
 private:
+
+friend void doBlink (
+  void *ptr
+);
 
 friend void pw_ok (
   Widget w,

@@ -24,6 +24,34 @@
 
 #include "thread.h"
 
+static void doBlink (
+  void *ptr
+) {
+
+activeXTextDspClass *axtdo = (activeXTextDspClass *) ptr;
+
+  if ( !axtdo->activeMode ) {
+    if ( axtdo->isSelected() ) axtdo->drawSelectBoxCorners(); // erase via xor
+    if ( axtdo->smartRefresh ) {
+      axtdo->smartDrawAll();
+    }
+    else {
+      axtdo->draw();
+    }
+    if ( axtdo->isSelected() ) axtdo->drawSelectBoxCorners();
+  }
+  else {
+    axtdo->bufInvalidate();
+    if ( axtdo->smartRefresh ) {
+      axtdo->smartDrawAllActive();
+    }
+    else {
+      axtdo->drawActive();
+    }
+  }
+
+}
+
 static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id )
@@ -1429,6 +1457,8 @@ int i;
 
   unconnectedTimer = 0;
 
+  setBlinkFunction( (void *) doBlink );
+
 }
 
 // copy constructor
@@ -1531,6 +1561,8 @@ int i;
   connection.setMaxPvs( 3 );
 
   unconnectedTimer = 0;
+
+  setBlinkFunction( (void *) doBlink );
 
 }
 
@@ -2486,13 +2518,15 @@ int activeXTextDspClass::draw ( void ) {
 
 XRectangle xR = { x, y, w, h };
 int clipStat;
+int blink = 0;
 
   if ( activeMode || deleteRequest ) return 1;
 
   actWin->drawGc.saveFg();
   actWin->drawGc.saveBg();
 
-  actWin->drawGc.setFG( fgColor.pixelColor() );
+  //actWin->drawGc.setFG( fgColor.pixelColor() );
+  actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
   actWin->drawGc.setBG( actWin->ci->pix(bgColor) );
 
   clipStat = actWin->drawGc.addNormXClipRectangle( xR );
@@ -2521,6 +2555,8 @@ int clipStat;
   actWin->drawGc.restoreFg();
   actWin->drawGc.restoreBg();
 
+  updateBlink( blink );
+
   return 1;
 
 }
@@ -2529,17 +2565,20 @@ int activeXTextDspClass::drawActive ( void ) {
 
 Arg args[10];
 int n;
+int blink = 0;
 
   if ( !init && !connection.pvsConnected() ) {
     if ( needToDrawUnconnected ) {
       actWin->executeGc.saveFg();
-      actWin->executeGc.setFG( fgColor.getDisconnected() );
+      //actWin->executeGc.setFG( fgColor.getDisconnected() );
+      actWin->executeGc.setFG( fgColor.getDisconnectedIndex(), &blink );
       actWin->executeGc.setLineWidth( 1 );
       actWin->executeGc.setLineStyle( LineSolid );
       XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
+      updateBlink( blink );
     }
   }
   else if ( needToEraseUnconnected ) {
@@ -2590,7 +2629,8 @@ int n;
   actWin->executeGc.saveFg();
   actWin->executeGc.saveBg();
 
-  actWin->executeGc.setFG( fgColor.getColor() );
+  //actWin->executeGc.setFG( fgColor.getColor() );
+  actWin->executeGc.setFG( fgColor.getIndex(), &blink );
 
   actWin->executeGc.setBG( actWin->ci->pix(bgColor) );
 
@@ -2621,6 +2661,8 @@ int n;
   strncpy( bufValue, value, 127 );
   bufValue[127] = 0;
   bufInvalid = 0;
+
+  updateBlink( blink );
 
   return 1;
 

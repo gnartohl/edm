@@ -35,7 +35,7 @@
 #define MBTC_K_COLORMODE_ALARM 1
 
 #define MBTC_MAJOR_VERSION 2
-#define MBTC_MINOR_VERSION 3
+#define MBTC_MINOR_VERSION 4
 #define MBTC_RELEASE 0
 
 #define MBTC_K_LITERAL 1
@@ -44,6 +44,10 @@
 #ifdef __menu_button_cc
 
 #include "menu_button.str"
+
+static void doBlink (
+  void *ptr
+);
 
 static void unconnectedTimeout (
   XtPointer client,
@@ -57,6 +61,7 @@ static void menu_cb (
 static char *dragName[] = {
   activeMenuButtonClass_str1,
   activeMenuButtonClass_str28,
+  activeMenuButtonClass_str34,
   activeMenuButtonClass_str30
 };
 
@@ -118,11 +123,24 @@ static void mbt_visInfoUpdate (
 static void mbt_visUpdate (
   struct event_handler_args ast_args );
 
+static void mbt_monitor_color_connect_state (
+  struct connection_handler_args arg );
+
+static void mbt_colorInfoUpdate (
+  struct event_handler_args ast_args );
+
+static void mbt_colorUpdate (
+  struct event_handler_args ast_args );
+
 #endif
 
 class activeMenuButtonClass : public activeGraphicClass {
 
 private:
+
+friend void doBlink (
+  void *ptr
+);
 
 friend void unconnectedTimeout (
   XtPointer client,
@@ -191,9 +209,19 @@ friend void mbt_visInfoUpdate (
 friend void mbt_visUpdate (
   struct event_handler_args ast_args );
 
+friend void mbt_monitor_color_connect_state (
+  struct connection_handler_args arg );
+
+friend void mbt_colorInfoUpdate (
+  struct event_handler_args ast_args );
+
+friend void mbt_colorUpdate (
+  struct event_handler_args ast_args );
+
 static const int controlPvConnection = 1;
 static const int readPvConnection = 2;
 static const int visPvConnection = 3;
+static const int colorPvConnection = 4;
 
 pvConnectionClass connection;
 
@@ -251,6 +279,14 @@ char minVisString[39+1], bufMinVisString[39+1];
 char maxVisString[39+1], bufMaxVisString[39+1];
 int prevVisibility, visibility, visInverted, bufVisInverted;
 int needVisConnectInit, needVisInit, needVisUpdate;
+
+chid colorPvId;
+evid colorEventId;
+expStringClass colorPvExpString;
+char bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
+int colorExists;
+double colorValue, curColorValue;
+int needColorConnectInit, needColorInit, needColorUpdate;
 
 public:
 

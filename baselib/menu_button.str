@@ -34,5 +34,6 @@
 #define activeMenuButtonClass_str31 (char *) "Not Visible if|Visible if"
 #define activeMenuButtonClass_str32 (char *) ">="
 #define activeMenuButtonClass_str33 (char *) "and <"
+#define activeMenuButtonClass_str34 (char *) "Color PV"
 
 #endif

@@ -23,6 +23,24 @@
 // This is the EPICS specific line right now:
 static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
+static void doBlink (
+  void *ptr
+) {
+
+activeRectangleClass *aro = (activeRectangleClass *) ptr;
+
+  if ( !aro->activeMode ) {
+    if ( aro->isSelected() ) aro->drawSelectBoxCorners(); // erase via xor
+    aro->smartDrawAll();
+    if ( aro->isSelected() ) aro->drawSelectBoxCorners();
+  }
+  else {
+    aro->needRefresh = 1;
+    aro->actWin->addDefExeNode( aro->aglPtr );
+  }
+
+}
+
 static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id )
@@ -287,6 +305,7 @@ activeRectangleClass::activeRectangleClass ( void ) {
   strcpy( maxVisString, "" );
   connection.setMaxPvs( 2 );
   unconnectedTimer = 0;
+  setBlinkFunction( (void *) doBlink );
 
 }
 
@@ -326,6 +345,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   connection.setMaxPvs( 2 );
 
   unconnectedTimer = 0;
+
+  setBlinkFunction( (void *) doBlink );
 
 }
 
@@ -866,16 +887,20 @@ int index;
 
 int activeRectangleClass::drawActive ( void ) {
 
+int blink = 0;
+
   if ( !init ) {
     if ( needToDrawUnconnected ) {
       actWin->executeGc.saveFg();
-      actWin->executeGc.setFG( lineColor.getDisconnected() );
+      //actWin->executeGc.setFG( lineColor.getDisconnected() );
+      actWin->executeGc.setFG( lineColor.getDisconnectedIndex(), &blink );
       actWin->executeGc.setLineWidth( 1 );
       actWin->executeGc.setLineStyle( LineSolid );
       XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
+      updateBlink( blink );
     }
   }
   else if ( needToEraseUnconnected ) {
@@ -897,14 +922,16 @@ int activeRectangleClass::drawActive ( void ) {
   actWin->executeGc.saveFg();
 
   if ( fill && fillVisibility ) {
-    actWin->executeGc.setFG( fillColor.getColor() );
+    actWin->executeGc.setFG( fillColor.getIndex(), &blink );
+    //actWin->executeGc.setFG( fillColor.getColor() );
     XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
   }
 
   if ( lineVisibility ) {
 
-    actWin->executeGc.setFG( lineColor.getColor() );
+    actWin->executeGc.setFG( lineColor.getIndex(), &blink );
+    //actWin->executeGc.setFG( lineColor.getColor() );
     actWin->executeGc.setLineWidth( lineWidth );
     actWin->executeGc.setLineStyle( lineStyle );
 
@@ -916,6 +943,8 @@ int activeRectangleClass::drawActive ( void ) {
   actWin->executeGc.setLineWidth( 1 );
   actWin->executeGc.setLineStyle( LineSolid );
   actWin->executeGc.restoreFg();
+
+  updateBlink( blink );
 
   return 1;
 
@@ -1162,18 +1191,22 @@ int activeRectangleClass::deactivate (
 
 int activeRectangleClass::draw ( void ) {
 
+int blink = 0;
+
   if ( activeMode ) return 1;
   if ( deleteRequest ) return 1;
 
   actWin->drawGc.saveFg();
 
   if ( fill ) {
-    actWin->drawGc.setFG( fillColor.pixelColor() );
+    //actWin->drawGc.setFG( fillColor.pixelColor() );
+    actWin->drawGc.setFG( fillColor.pixelIndex(), &blink );
     XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.normGC(), x, y, w, h );
   }
 
-  actWin->drawGc.setFG( lineColor.pixelColor() );
+  //actWin->drawGc.setFG( lineColor.pixelColor() );
+  actWin->drawGc.setFG( lineColor.pixelIndex(), &blink );
   actWin->drawGc.setLineWidth( lineWidth );
   actWin->drawGc.setLineStyle( lineStyle );
 
@@ -1183,6 +1216,8 @@ int activeRectangleClass::draw ( void ) {
   actWin->drawGc.setLineWidth( 1 );
   actWin->drawGc.setLineStyle( LineSolid );
   actWin->drawGc.restoreFg();
+
+  updateBlink( blink );
 
   return 1;
 

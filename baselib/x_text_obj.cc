@@ -27,6 +27,24 @@
 // This is the EPICS specific line right now:
 static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
+static void doBlink (
+  void *ptr
+) {
+
+activeXTextClass *axto = (activeXTextClass *) ptr;
+
+  if ( !axto->activeMode ) {
+    if ( axto->isSelected() ) axto->drawSelectBoxCorners(); // erase via xor
+    axto->smartDrawAll();
+    if ( axto->isSelected() ) axto->drawSelectBoxCorners();
+  }
+  else {
+    axto->bufInvalidate();
+    axto->smartDrawAllActive();
+  }
+
+}
+
 static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id )
@@ -320,6 +338,7 @@ activeXTextClass::activeXTextClass ( void ) {
   strcpy( id, "" );
   connection.setMaxPvs( 2 );
   unconnectedTimer = 0;
+  setBlinkFunction( (void *) doBlink );
 
 }
 
@@ -379,6 +398,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   connection.setMaxPvs( 2 );
 
   unconnectedTimer = 0;
+
+  setBlinkFunction( (void *) doBlink );
 
 }
 
@@ -1028,11 +1049,13 @@ int activeXTextClass::drawActive ( void ) {
 
 XRectangle xR = { x, y, w, h };
 int clipStat;
+int blink = 0;
 
   if ( !init ) {
     if ( needToDrawUnconnected ) {
       actWin->executeGc.saveFg();
-      actWin->executeGc.setFG( fgColor.getDisconnected() );
+      //actWin->executeGc.setFG( fgColor.getDisconnected() );
+      actWin->executeGc.setFG( fgColor.getDisconnectedIndex(), &blink );
       if ( strcmp( fontTag, "" ) != 0 ) {
         actWin->executeGc.setFontTag( fontTag, actWin->fi );
       }
@@ -1041,6 +1064,7 @@ int clipStat;
        value.getExpanded(), stringLength );
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
+      updateBlink( blink );
     }
   }
   else if ( needToEraseUnconnected ) {
@@ -1064,7 +1088,8 @@ int clipStat;
 
     actWin->executeGc.saveFg();
 
-    actWin->executeGc.setFG( fgColor.getColor() );
+    //actWin->executeGc.setFG( fgColor.getColor() );
+    actWin->executeGc.setFG( fgColor.getIndex(), &blink );
 
     clipStat = actWin->executeGc.addNormXClipRectangle( xR );
 
@@ -1097,6 +1122,8 @@ int clipStat;
     actWin->executeGc.restoreFg();
 
   }
+
+  updateBlink( blink );
 
   return 1;
 
@@ -1422,6 +1449,7 @@ int activeXTextClass::draw ( void ) {
 
 XRectangle xR = { x, y, w, h };
 int clipStat;
+int blink = 0;
 
   if ( activeMode ) return 1;
   if ( deleteRequest ) return 1;
@@ -1429,7 +1457,8 @@ int clipStat;
   actWin->drawGc.saveFg();
   actWin->drawGc.saveBg();
 
-  actWin->drawGc.setFG( fgColor.pixelColor() );
+  //actWin->drawGc.setFG( fgColor.pixelColor() );
+  actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
   actWin->drawGc.setBG( bgColor.pixelColor() );
 
   clipStat = actWin->drawGc.addNormXClipRectangle( xR );
@@ -1464,6 +1493,8 @@ int clipStat;
 
   actWin->drawGc.restoreFg();
   actWin->drawGc.restoreBg();
+
+  updateBlink( blink );
 
   return 1;
 

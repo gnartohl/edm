@@ -50,6 +50,10 @@
 
 #include "x_text_dsp_obj.str"
 
+static void doBlink (
+  void *ptr
+);
+
 static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id );
@@ -214,6 +218,10 @@ static void xtdoSetValueChanged (
 class activeXTextDspClass : public activeGraphicClass {
 
 private:
+
+friend void doBlink (
+  void *ptr
+);
 
 friend void unconnectedTimeout (
   XtPointer client,

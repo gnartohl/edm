@@ -42,8 +42,8 @@
 #define XYGC_K_PLOT_MODE_PLOT_N_STOP 0
 #define XYGC_K_PLOT_MODE_PLOT_LAST_N 1
 
-#define XYGC_K_ERASE_MODE_IF_NOT_ZERO 0
-#define XYGC_K_ERASE_MODE_IF_ZERO 1
+#define XYGC_K_RESET_MODE_IF_NOT_ZERO 0
+#define XYGC_K_RESET_MODE_IF_ZERO 1
 
 #define XYGC_K_AXIS_STYLE_LINEAR 0
 #define XYGC_K_AXIS_STYLE_LOG10 1
@@ -79,6 +79,12 @@ static void xValueUpdate (
   struct event_handler_args arg );
 
 static void yValueUpdate (
+  struct event_handler_args arg );
+
+static void resetMonitorConnection (
+  struct connection_handler_args arg );
+
+static void resetValueUpdate (
   struct event_handler_args arg );
 
 static void axygc_edit_ok_trace (
@@ -133,14 +139,14 @@ typedef struct editBufTag {
   char bufYLabel[127+1];
   int bufPlotStyle;
   int bufPlotMode;
-  int bufEraseMode;
+  int bufResetMode;
   int bufPlotColor[XYGC_K_MAX_TRACES];
   char bufXPvName[XYGC_K_MAX_TRACES][activeGraphicClass::MAX_PV_NAME+1];
   char bufYPvName[XYGC_K_MAX_TRACES][activeGraphicClass::MAX_PV_NAME+1];
   int bufLineThk[XYGC_K_MAX_TRACES];
   int bufLineStyle[XYGC_K_MAX_TRACES];
   char bufTrigPvName[activeGraphicClass::MAX_PV_NAME+1];
-  char bufErasePvName[activeGraphicClass::MAX_PV_NAME+1];
+  char bufResetPvName[activeGraphicClass::MAX_PV_NAME+1];
   int bufCount;
   int bufXAxisStyle;
   int bufXAxisSource;
@@ -223,6 +229,12 @@ friend void xValueUpdate (
 friend void yValueUpdate (
   struct event_handler_args arg );
 
+friend void resetMonitorConnection (
+  struct connection_handler_args arg );
+
+friend void resetValueUpdate (
+  struct event_handler_args arg );
+
 friend void axygc_edit_ok_trace (
   Widget w,
   XtPointer client,
@@ -297,17 +309,23 @@ XPoint *plotBuf[XYGC_K_MAX_TRACES];
 int traceIsDrawn[XYGC_K_MAX_TRACES];
 
 double dbXMin[XYGC_K_MAX_TRACES], dbXMax[XYGC_K_MAX_TRACES];
-int dbXPrec[XYGC_K_MAX_TRACES],
- xArrayNeedInit[XYGC_K_MAX_TRACES], xArrayNeedUpdate[XYGC_K_MAX_TRACES];
+int dbXPrec[XYGC_K_MAX_TRACES], xArrayNeedInit[XYGC_K_MAX_TRACES],
+ xArrayNeedUpdate[XYGC_K_MAX_TRACES], xArrayHead[XYGC_K_MAX_TRACES],
+ xArrayTail[XYGC_K_MAX_TRACES], xArrayNumPoints[XYGC_K_MAX_TRACES],
+ xArrayCurNumPoints[XYGC_K_MAX_TRACES];
 
 double dbYMin[XYGC_K_MAX_TRACES], dbYMax[XYGC_K_MAX_TRACES];
-int dbYPrec[XYGC_K_MAX_TRACES],
- yArrayNeedInit[XYGC_K_MAX_TRACES], yArrayNeedUpdate[XYGC_K_MAX_TRACES];
+int dbYPrec[XYGC_K_MAX_TRACES], yArrayNeedInit[XYGC_K_MAX_TRACES],
+ yArrayNeedUpdate[XYGC_K_MAX_TRACES], yArrayHead[XYGC_K_MAX_TRACES],
+ yArrayTail[XYGC_K_MAX_TRACES], yArrayNumPoints[XYGC_K_MAX_TRACES],
+ yArrayCurNumPoints[XYGC_K_MAX_TRACES];
 
-ProcessVariable *trigPv, *erasePv;
-expStringClass trigPvExpStr, erasePvExpStr;
+//ProcessVariable *trigPv, *resetPv;
+chid resetPv, trigPv;
+evid resetEv, trigEv;
+expStringClass trigPvExpStr, resetPvExpStr;
 
-int count, plotStyle, plotMode, eraseMode;
+int count, plotStyle, plotMode, resetMode;
 
 int xAxisStyle, xAxisSource, xAxisTimeFormat;
 efDouble xMin, xMax;
@@ -374,11 +392,12 @@ efInt y2AnnotationPrecision;
 int y2AnnotationFormat;
 
 int xPvExists[XYGC_K_MAX_TRACES], yPvExists[XYGC_K_MAX_TRACES],
- trigPvExists, erasePvExists;
+ trigPvExists, resetPvExists;
 
 Widget plotWidget;
 
-int needConnect, needInit, needRefresh, needUpdate, needErase, needDraw;
+int needConnect, needInit, needRefresh, needUpdate, needErase, needDraw,
+ needResetConnect, needReset, needTrigConnect, needTrig;
 
 entryFormClass *efTrace, *efAxis;
 

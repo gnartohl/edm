@@ -24,6 +24,25 @@
 
 #include "thread.h"
 
+static void doBlink (
+  void *ptr
+) {
+
+activeMessageButtonClass *msgbto = (activeMessageButtonClass *) ptr;
+
+  if ( !msgbto->activeMode ) {
+    if ( msgbto->isSelected() ) msgbto->drawSelectBoxCorners(); //erase via xor
+    msgbto->smartDrawAll();
+    if ( msgbto->isSelected() ) msgbto->drawSelectBoxCorners();
+  }
+  else {
+    msgbto->bufInvalidate();
+    msgbto->needDraw = 1;
+    msgbto->actWin->addDefExeNode( msgbto->aglPtr );
+  }
+
+}
+
 static void pw_ok (
   Widget w,
   XtPointer client,
@@ -423,6 +442,8 @@ activeMessageButtonClass::activeMessageButtonClass ( void ) {
   strcpy( maxVisString, "" );
   connection.setMaxPvs( 3 );
 
+  setBlinkFunction( (void *) doBlink );
+
 }
 
 // copy constructor
@@ -458,6 +479,8 @@ activeGraphicClass *msgbto = (activeGraphicClass *) this;
   destPvExpString.copy( source->destPvExpString );
   sourcePressPvExpString.copy( source->sourcePressPvExpString );
   sourceReleasePvExpString.copy( source->sourceReleasePvExpString );
+  visPvExpString.copy( source->visPvExpString );
+  colorPvExpString.copy( source->colorPvExpString );
 
   // strncpy( sourcePressPvName, source->sourcePressPvName, 39 );
   // strncpy( sourceReleasePvName, source->sourceReleasePvName, 39 );
@@ -485,6 +508,8 @@ activeGraphicClass *msgbto = (activeGraphicClass *) this;
   strncpy( maxVisString, source->maxVisString, 39 );
 
   connection.setMaxPvs( 3 );
+
+  setBlinkFunction( (void *) doBlink );
 
   updateDimensions();
 
@@ -1396,12 +1421,14 @@ int activeMessageButtonClass::draw ( void ) {
 
 int tX, tY;
 XRectangle xR = { x, y, w, h };
+int blink = 0;
 
   if ( deleteRequest ) return 1;
 
   actWin->drawGc.saveFg();
 
-  actWin->drawGc.setFG( onColor.pixelColor() );
+  //actWin->drawGc.setFG( onColor.pixelColor() );
+  actWin->drawGc.setFG( onColor.pixelIndex(), &blink );
 
   XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x, y, w, h );
@@ -1467,7 +1494,8 @@ XRectangle xR = { x, y, w, h };
 
     actWin->drawGc.addNormXClipRectangle( xR );
 
-    actWin->drawGc.setFG( fgColor.pixelColor() );
+    //actWin->drawGc.setFG( fgColor.pixelColor() );
+    actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
     actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
     tX = x + w/2;
@@ -1489,6 +1517,8 @@ XRectangle xR = { x, y, w, h };
 
   actWin->drawGc.restoreFg();
 
+  updateBlink( blink );
+
   return 1;
 
 }
@@ -1498,17 +1528,20 @@ int activeMessageButtonClass::drawActive ( void ) {
 int tX, tY;
 char string[39+1];
 XRectangle xR = { x, y, w, h };
+int blink = 0;
 
   if ( !init ) {
     if ( needToDrawUnconnected ) {
       actWin->executeGc.saveFg();
-      actWin->executeGc.setFG( onColor.getDisconnected() );
+      //actWin->executeGc.setFG( onColor.getDisconnected() );
+      actWin->executeGc.setFG( onColor.getDisconnectedIndex(), &blink );
       actWin->executeGc.setLineWidth( 1 );
       actWin->executeGc.setLineStyle( LineSolid );
       XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
+      updateBlink( blink );
     }
   }
   else if ( needToEraseUnconnected ) {
@@ -1531,10 +1564,14 @@ XRectangle xR = { x, y, w, h };
   actWin->executeGc.setLineWidth( 1 );
   actWin->executeGc.setLineStyle( LineSolid );
 
-  if ( !buttonPressed )
-    actWin->executeGc.setFG( offColor.getColor() );
-  else
-    actWin->executeGc.setFG( onColor.getColor() );
+  if ( !buttonPressed ) {
+    //actWin->executeGc.setFG( offColor.getColor() );
+    actWin->executeGc.setFG( offColor.getIndex(), &blink );
+  }
+  else {
+    //actWin->executeGc.setFG( onColor.getColor() );
+    actWin->executeGc.setFG( onColor.getIndex(), &blink );
+  }
 
   XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
    actWin->executeGc.normGC(), x, y, w, h );
@@ -1655,7 +1692,8 @@ XRectangle xR = { x, y, w, h };
 
     actWin->executeGc.addNormXClipRectangle( xR );
 
-    actWin->executeGc.setFG( fgColor.getColor() );
+    //actWin->executeGc.setFG( fgColor.getColor() );
+    actWin->executeGc.setFG( fgColor.getIndex(), &blink );
     actWin->executeGc.setFontTag( fontTag, actWin->fi );
 
     tX = x + w/2;
@@ -1669,6 +1707,8 @@ XRectangle xR = { x, y, w, h };
   }
 
   actWin->executeGc.restoreFg();
+
+  updateBlink( blink );
 
   return 1;
 

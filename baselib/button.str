@@ -62,5 +62,6 @@
 #define activeButtonClass_str59 (char *) "Not Visible if|Visible if"
 #define activeButtonClass_str60 (char *) ">="
 #define activeButtonClass_str61 (char *) "and <"
+#define activeButtonClass_str62 (char *) "Color PV"
 
 #endif

@@ -1961,11 +1961,11 @@ int numNewMacros, max, numFound;
         for ( i=0; i<actWin->numMacros; i++ ) {
 
           l = strlen(actWin->macros[i]) + 1;
-          newMacros[i] = (char *) new (char)[l];
+          newMacros[i] = (char *) new char[l];
           strcpy( newMacros[i], actWin->macros[i] );
 
           l = strlen(actWin->expansions[i]) + 1;
-          newValues[i] = (char *) new (char)[l];
+          newValues[i] = (char *) new char[l];
           strcpy( newValues[i], actWin->expansions[i] );
 
           numNewMacros++;
@@ -1978,11 +1978,11 @@ int numNewMacros, max, numFound;
         for ( i=0; i<actWin->appCtx->numMacros; i++ ) {
 
           l = strlen(actWin->appCtx->macros[i]) + 1;
-          newMacros[i] = (char *) new (char)[l];
+          newMacros[i] = (char *) new char[l];
           strcpy( newMacros[i], actWin->appCtx->macros[i] );
 
           l = strlen(actWin->appCtx->expansions[i]) + 1;
-          newValues[i] = (char *) new (char)[l];
+          newValues[i] = (char *) new char[l];
           strcpy( newValues[i], actWin->appCtx->expansions[i] );
 
           numNewMacros++;

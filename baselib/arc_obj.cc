@@ -27,6 +27,24 @@
 // This is the EPICS specific line right now:
 static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
+static void doBlink (
+  void *ptr
+) {
+
+activeArcClass *aao = (activeArcClass *) ptr;
+
+  if ( !aao->activeMode ) {
+    if ( aao->isSelected() ) aao->drawSelectBoxCorners(); // erase via xor
+    aao->smartDrawAll();
+    if ( aao->isSelected() ) aao->drawSelectBoxCorners();
+  }
+  else {
+    aao->bufInvalidate();
+    aao->smartDrawAllActive();
+  }
+
+}
+
 static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id )
@@ -341,6 +359,7 @@ activeArcClass::activeArcClass ( void ) {
   fillMode = 0;
   connection.setMaxPvs( 2 );
   unconnectedTimer = 0;
+  setBlinkFunction( (void *) doBlink );
 
 }
 
@@ -399,6 +418,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   connection.setMaxPvs( 2 );
 
   unconnectedTimer = 0;
+
+  setBlinkFunction( (void *) doBlink );
 
 }
 
@@ -939,16 +960,20 @@ int index;
 int activeArcClass::drawActive ( void )
 {
 
+int blink = 0;
+
   if ( !init ) {
     if ( needToDrawUnconnected ) {
       actWin->executeGc.saveFg();
-      actWin->executeGc.setFG( lineColor.getDisconnected() );
+      //actWin->executeGc.setFG( lineColor.getDisconnected() );
+      actWin->executeGc.setFG( lineColor.getDisconnectedIndex(), &blink );
       actWin->executeGc.setLineWidth( 1 );
       actWin->executeGc.setLineStyle( LineSolid );
       XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
+      updateBlink( blink );
     }
   }
   else if ( needToEraseUnconnected ) {
@@ -974,13 +999,15 @@ int activeArcClass::drawActive ( void )
     else {
       actWin->executeGc.setArcModeChord();
     }
-    actWin->executeGc.setFG( fillColor.getColor() );
+    //actWin->executeGc.setFG( fillColor.getColor() );
+    actWin->executeGc.setFG( fillColor.getIndex(), &blink );
     XFillArc( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h, startAngle, totalAngle );
   }
 
   if ( lineVisibility ) {
-    actWin->executeGc.setFG( lineColor.getColor() );
+    //actWin->executeGc.setFG( lineColor.getColor() );
+    actWin->executeGc.setFG( lineColor.getIndex(), &blink );
     XDrawArc( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h, startAngle, totalAngle );
   }
@@ -988,6 +1015,8 @@ int activeArcClass::drawActive ( void )
   actWin->executeGc.setLineStyle( LineSolid );
   actWin->executeGc.setLineWidth( 1 );
   actWin->executeGc.restoreFg();
+
+  updateBlink( blink );
 
   return 1;
 
@@ -1246,6 +1275,8 @@ int activeArcClass::deactivate (
 
 int activeArcClass::draw ( void ) {
 
+int blink = 0;
+
   if ( activeMode ) return 1;
   if ( deleteRequest ) return 1;
 
@@ -1260,18 +1291,22 @@ int activeArcClass::draw ( void ) {
     else {
       actWin->drawGc.setArcModeChord();
     }
-    actWin->drawGc.setFG( fillColor.pixelColor() );
+    //actWin->drawGc.setFG( fillColor.pixelColor() );
+    actWin->drawGc.setFG( fillColor.pixelIndex(), &blink );
     XFillArc( actWin->d, XtWindow(actWin->drawWidget), actWin->drawGc.normGC(),
      x, y, w, h, startAngle, totalAngle );
   }
 
-  actWin->drawGc.setFG( lineColor.pixelColor() );
+  //actWin->drawGc.setFG( lineColor.pixelColor() );
+  actWin->drawGc.setFG( lineColor.pixelIndex(), &blink );
   XDrawArc( actWin->d, XtWindow(actWin->drawWidget), actWin->drawGc.normGC(),
    x, y, w, h, startAngle, totalAngle );
 
   actWin->drawGc.setLineStyle( LineSolid );
   actWin->drawGc.setLineWidth( 1 );
   actWin->drawGc.restoreFg();
+
+  updateBlink( blink );
 
   return 1;
 

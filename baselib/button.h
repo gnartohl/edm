@@ -29,7 +29,7 @@
 #define BTC_K_COLORMODE_ALARM 1
 
 #define BTC_MAJOR_VERSION 2
-#define BTC_MINOR_VERSION 3
+#define BTC_MINOR_VERSION 4
 #define BTC_RELEASE 0
 
 #define BTC_K_LITERAL 1
@@ -44,8 +44,13 @@
 static char *dragName[] = {
   activeButtonClass_str1,
   activeButtonClass_str2,
+  activeButtonClass_str62,
   activeButtonClass_str58
 };
+
+static void doBlink (
+  void *ptr
+);
 
 static void unconnectedTimeout (
   XtPointer client,
@@ -106,11 +111,24 @@ static void bt_visInfoUpdate (
 static void bt_visUpdate (
   struct event_handler_args ast_args );
 
+static void bt_monitor_color_connect_state (
+  struct connection_handler_args arg );
+
+static void bt_colorInfoUpdate (
+  struct event_handler_args ast_args );
+
+static void bt_colorUpdate (
+  struct event_handler_args ast_args );
+
 #endif
 
 class activeButtonClass : public activeGraphicClass {
 
 private:
+
+friend void doBlink (
+  void *ptr
+);
 
 friend void unconnectedTimeout (
   XtPointer client,
@@ -171,6 +189,15 @@ friend void bt_visInfoUpdate (
 friend void bt_visUpdate (
   struct event_handler_args ast_args );
 
+friend void bt_monitor_color_connect_state (
+  struct connection_handler_args arg );
+
+friend void bt_colorInfoUpdate (
+  struct event_handler_args ast_args );
+
+friend void bt_colorUpdate (
+  struct event_handler_args ast_args );
+
 int opComplete;
 
 int minW;
@@ -211,6 +238,13 @@ char fontTag[63+1], bufFontTag[63+1];
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
+static const int controlPvConnection = 1;
+static const int readPvConnection = 2;
+static const int visPvConnection = 3;
+static const int colorPvConnection = 4;
+
+pvConnectionClass connection;
+
 chid controlPvId, readPvId;
 evid infoEventId, controlEventId, readEventId, alarmEventId;
 
@@ -232,11 +266,15 @@ double visValue, curVisValue, minVis, maxVis;
 char minVisString[39+1], bufMinVisString[39+1];
 char maxVisString[39+1], bufMaxVisString[39+1];
 int prevVisibility, visibility, visInverted, bufVisInverted;
-static const int controlPvConnection = 1;
-static const int readPvConnection = 2;
-static const int visPvConnection = 3;
-pvConnectionClass connection;
 int needVisConnectInit, needVisInit, needVisUpdate;
+
+chid colorPvId;
+evid colorEventId;
+expStringClass colorPvExpString;
+char bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
+int colorExists;
+double colorValue, curColorValue;
+int needColorConnectInit, needColorInit, needColorUpdate;
 
 public:
 
