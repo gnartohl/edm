@@ -13,7 +13,7 @@
 
 edmByteClass::edmByteClass() : activeGraphicClass(), init(0), 
   is_executing(false), is_pvname_valid(false), valuePvId(0), bufInvalid(0),
-  validFlag(false), value(0), lastval(0), theDir(BIGENDIAN),  nobt(16),
+  validFlag(false), value(0), lastval(0), dmask(0),theDir(BIGENDIAN),  nobt(16),
   shft(0), lineWidth(1), lineStyle(LineSolid), theOutline(0)
 {
    name = strdup(BYTE_CLASSNAME);
@@ -45,10 +45,12 @@ void edmByteClass::clone(const edmByteClass *rhs,
     offColorCb = rhs->offColorCb;
     lineWidth = rhs->lineWidth;
     lineStyle = rhs->lineStyle;
+    fgPixel = rhs->fgPixel;
     onPixel = rhs->onPixel;
     offPixel = rhs->offPixel;
     nobt = rhs->nobt;
     shft = rhs->shft;
+    dmask = rhs->dmask;
     theDir = rhs->theDir;
     theOutline = 0;
 }
@@ -116,7 +118,7 @@ int edmByteClass::createFromFile(FILE *f, char *filename,
                                        activeWindowClass *_actWin)
 {
     int major, minor, release, temp;
-    char tname[PV_Factory::MAX_PV_NAME+1];
+    char tname[40];
 
     actWin = _actWin;
     // Version, bounding box
@@ -146,7 +148,7 @@ int edmByteClass::createFromFile(FILE *f, char *filename,
 
 
   // PV Name
-  readStringFromFile(tname, PV_Factory::MAX_PV_NAME+1, f); actWin->incLine();
+  readStringFromFile(tname, 39, f); actWin->incLine();
   pv_exp_str.setRaw(tname);
 
 
@@ -242,7 +244,7 @@ int edmByteClass::genericEdit() // create Property Dialog
   bufLineWidth = lineWidth;
   bufLineStyle = lineStyle;
 
-  strncpy(bufPvName, getRawPVName(), PV_Factory::MAX_PV_NAME);
+  strncpy(bufPvName, getRawPVName(), 39);
 
   bufTheDir = theDir;
   bufNobt = nobt;
@@ -264,7 +266,7 @@ int edmByteClass::genericEdit() // create Property Dialog
     ef.addColorButton( "On Color/Rule", actWin->ci, &onColorCb, &bufOnColor );
     ef.addColorButton( "Off Color/Don't Care", actWin->ci, &offColorCb,
                         &bufOffColor );
-    ef.addTextField("PV", 30, bufPvName, PV_Factory::MAX_PV_NAME);
+    ef.addTextField("PV", 30, bufPvName, 39);
     ef.addOption( "Line Thk", "0|1|2|3|4|5|6|7|8|9|10", &bufLineWidth );
     ef.addOption( "Line Style", "Solid|Dash", &bufLineStyle );
     ef.addOption( "Direction", "BigEndian|LittleEndian", (int *)&bufTheDir);
@@ -280,8 +282,16 @@ void edmByteClass::updateDimensions()
 // call.  It is also used to get coordinates for the XFillRectangle calls 
 // for coloring the bits. 
 //
+// updateDimensions also sets up dmask.
+//
 {
    float bitLen;
+
+   dmask = 0;
+   for (int i = 0, lmask = 1; i < nobt; i++, lmask <<=1)
+   {
+      dmask |= lmask;
+   }
 
    delete[] theOutline;
 
@@ -618,7 +628,7 @@ inline void edmByteClass::innerDrawFull(int value, int i, int mask,
 
   if (current != previous)
   {
-     actWin->executeGc.setFG( previous?onPixel:offPixel );
+     actWin->executeGc.setFG( previous?fgPixel:offPixel );
 
      if (w > h)
         XFillRectangle(actWin->d, XtWindow(actWin->executeWidget),
@@ -644,18 +654,21 @@ int edmByteClass::drawActive()
       if (valuePvId->is_valid())
       {
          lastval = value;
-         value = (valuePvId->get_int() >> shft);
+         value = ((valuePvId->get_int() >> shft) & dmask);
          if (!validFlag) 
          {
             validFlag = true;
             bufInvalidate();
+            // logic for non-invalid alarm colors would go here.  
+            fgPixel = onPixel;
          }
-       }
-       else if (validFlag)
-       {
-          validFlag = false;
-          bufInvalidate();
-       }
+      }
+      else if (validFlag)
+      {
+         validFlag = false;
+         bufInvalidate();
+         fgPixel = 0;
+      }
    }
    if (bufInvalid)
    {
@@ -670,7 +683,7 @@ int edmByteClass::drawActive()
 
 inline void edmByteClass::innerDrawBits(int value, int i, int mask)
 {
-    actWin->executeGc.setFG( (value & mask)?onPixel:offPixel );
+    actWin->executeGc.setFG( (value & mask)?fgPixel:offPixel );
 
     if (w > h)
     {
@@ -754,12 +767,12 @@ int edmByteClass::drawActiveFull()
 
   if (!theOutline)
   {
-     actWin->executeGc.setFG(offPixel);
+     actWin->executeGc.setFG(0);
      XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
      bufValidate();
   }
-  else if (validFlag)
+  else if (validFlag || value != 0)
   {
      int previous = 0;
      int lastseg = 0;
@@ -787,7 +800,7 @@ int edmByteClass::drawActiveFull()
      }
      bufValidate();
   }
-  else // invalid PV
+  else // invalid PV and data zero
   {
     actWin->drawGc.setFG( 0 );	// white
     XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
