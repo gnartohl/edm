@@ -117,7 +117,8 @@ protected:
     int genericEdit();
     int editCreate();
     int bufX, bufY, bufW, bufH;
-    char bufPvName[39+1], bufColorPvName[39+1];
+    char bufPvName[PV_Factory::MAX_PV_NAME+1];
+    char bufColorPvName[PV_Factory::MAX_PV_NAME+1];
     int buf_displayMode;
     int buf_precision;
     int bufTextColor;

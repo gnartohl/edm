@@ -28,7 +28,7 @@ void edmRegTextupdateClass::clone(const edmRegTextupdateClass *rhs,
                                   const char *classname)
 {
     edmTextupdateClass::clone(rhs, classname);
-    strncpy( regExpStr, rhs->regExpStr, 39);
+    strncpy( regExpStr, rhs->regExpStr, PV_Factory::MAX_PV_NAME);
     re_valid = false;
 }
 
@@ -52,7 +52,7 @@ int edmRegTextupdateClass::createFromFile(FILE *f, char *name,
     edmTextupdateClass::createFromFile(f, name, _actWin);
 
     // read regular expression from file
-    readStringFromFile(regExpStr, 39, f);     
+    readStringFromFile(regExpStr, PV_Factory::MAX_PV_NAME, f);
     actWin->incLine();
     return 1;
 }
@@ -110,10 +110,10 @@ int edmRegTextupdateClass::genericEdit() // create Property Dialog
     edmTextupdateClass::genericEdit();
     // add dialog box entry field for regular expression
     if (regExpStr)
-    	strncpy(bufRegExp, regExpStr, 39);
+    	strncpy(bufRegExp, regExpStr, PV_Factory::MAX_PV_NAME);
     else
-    	strncpy(bufRegExp, "", 39);
-    ef.addTextField("Reg. Exp", 27, bufRegExp, 39);
+    	strncpy(bufRegExp, "", PV_Factory::MAX_PV_NAME);
+    ef.addTextField("Reg. Exp", 30, bufRegExp, PV_Factory::MAX_PV_NAME);
 
     return 1;
 }
@@ -124,7 +124,7 @@ void edmRegTextupdateClass::edit_update(Widget w, XtPointer client,
 {
     edmRegTextupdateClass *me = (edmRegTextupdateClass *) client;
     edmTextupdateClass::edit_update(w, client, call);
-    strncpy(me->regExpStr, me->bufRegExp, 40 );
+    strncpy(me->regExpStr, me->bufRegExp, PV_Factory::MAX_PV_NAME);
 }
 
 void edmRegTextupdateClass::edit_ok(Widget w, XtPointer client, XtPointer call)
@@ -219,3 +219,6 @@ int edmRegTextupdateClass::drawActive()
     actWin->executeGc.restoreFg();
     return 1;
 }
+
+
+

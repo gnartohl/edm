@@ -88,8 +88,8 @@ protected:
     int genericEdit();
     int editCreate();
     // buffers for property dialog
-    char regExpStr[40];
-    char bufRegExp[40];
+    char regExpStr[PV_Factory::MAX_PV_NAME+1];
+    char bufRegExp[PV_Factory::MAX_PV_NAME+1];
 
     regex_t compiled_re;
     bool    re_valid;
@@ -119,3 +119,6 @@ protected:
 
 
 #endif
+
+
+

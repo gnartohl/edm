@@ -129,7 +129,7 @@ int edmTextupdateClass::createFromFile(FILE *f, char *filename,
 {
     int major, minor, release;
     int index;
-    char name[100];
+    char name[PV_Factory::MAX_PV_NAME+1];
 
     actWin = _actWin;
     // Version, bounding box
@@ -140,7 +140,7 @@ int edmTextupdateClass::createFromFile(FILE *f, char *filename,
     fscanf(f, "%d\n", &h); actWin->incLine();
     this->initSelectBox(); // call after getting x,y,w,h
     // PV Name
-    readStringFromFile(name, 39, f); actWin->incLine();
+    readStringFromFile(name, PV_Factory::MAX_PV_NAME, f); actWin->incLine();
     pv_name.setRaw(name);
     // Added in 1.1.0: displayMode & precision
     if (major == 1  && minor == 0)
@@ -170,9 +170,9 @@ int edmTextupdateClass::createFromFile(FILE *f, char *filename,
     }
     else
     {
-        readStringFromFile(name, 99, f); actWin->incLine();
+        readStringFromFile(name, PV_Factory::MAX_PV_NAME, f); actWin->incLine();
         textColor = actWin->ci->colorIndexByName(name);
-        readStringFromFile(name, 99, f); actWin->incLine();
+        readStringFromFile(name, PV_Factory::MAX_PV_NAME, f); actWin->incLine();
         fillColor = actWin->ci->colorIndexByName(name);
     }
     // Since 3.0.0: Use color pv
@@ -180,7 +180,7 @@ int edmTextupdateClass::createFromFile(FILE *f, char *filename,
         color_pv_name.setRaw(0);
     else
     {
-        readStringFromFile(name, 39, f); actWin->incLine();
+        readStringFromFile(name, PV_Factory::MAX_PV_NAME, f); actWin->incLine();
         color_pv_name.setRaw(name);
     }
 
@@ -266,8 +266,8 @@ int edmTextupdateClass::genericEdit() // create Property Dialog
    
     // Copy data member contents into edit buffers
     bufX = x; bufY = y; bufW = w; bufH = h;
-    strncpy(bufPvName,      getRawName(pv_name), 39);
-    strncpy(bufColorPvName, getRawName(color_pv_name), 39);
+    strncpy(bufPvName,      getRawName(pv_name), PV_Factory::MAX_PV_NAME);
+    strncpy(bufColorPvName, getRawName(color_pv_name),PV_Factory::MAX_PV_NAME);
     buf_displayMode = (int)displayMode;
     buf_precision   = precision;
     buf_line_width  = line_width;
@@ -287,14 +287,14 @@ int edmTextupdateClass::genericEdit() // create Property Dialog
     ef.addTextField("Y", 30, &bufY);
     ef.addTextField("Width", 30, &bufW);
     ef.addTextField("Height", 30, &bufH);
-    ef.addTextField("PV", 30, bufPvName, 39);
+    ef.addTextField("PV", 30, bufPvName, PV_Factory::MAX_PV_NAME);
     ef.addOption("Mode", "default|decimal|hex", &buf_displayMode);
     ef.addTextField("Precision", 30, &buf_precision);
     ef.addTextField("Line Width", 30, &buf_line_width);
     ef.addColorButton("Fg Color", actWin->ci, &textCb, &bufTextColor);
     ef.addToggle("Filled?", &bufIsFilled);
     ef.addColorButton("Bg Color", actWin->ci, &fillCb, &bufFillColor);
-    ef.addTextField("Color PV", 30, bufColorPvName, 39);
+    ef.addTextField("Color PV", 30, bufColorPvName, PV_Factory::MAX_PV_NAME);
     ef.addFontMenu("Font", actWin->fi, &fm, fontTag );
     fm.setFontAlignment(alignment);
 
@@ -704,8 +704,8 @@ int edmTextupdateClass::drawActive()
     actWin->executeGc.saveFg();
 
     double color_value;
-    char text[80];
-    size_t len = 80;
+    char text[PV_Factory::MAX_PV_NAME+1];
+    size_t len = PV_Factory::MAX_PV_NAME;
     get_current_values(text, len, color_value);
     redraw_text(actWin->d,
                 XtWindow(actWin->executeWidget),
@@ -902,8 +902,8 @@ int edmTextentryClass::drawActive()
         return 1;
 
     double color_value;
-    char text[80];
-    size_t len = 80;
+    char text[PV_Factory::MAX_PV_NAME+1];
+    size_t len = PV_Factory::MAX_PV_NAME;
     if (get_current_values(text, len, color_value))
     {
         XtVaSetValues(widget, XmNeditable, True, NULL);

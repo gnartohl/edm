@@ -141,7 +141,7 @@ int edmStripClass::createFromFile(FILE *f, char *filename,
 {
     int major, minor, release;
     int index;
-    char name[100];
+    char name[PV_Factory::MAX_PV_NAME+1];
 
     actWin = _actWin;
     // Version, bounding box
@@ -162,19 +162,20 @@ int edmStripClass::createFromFile(FILE *f, char *filename,
     }
     for (size_t i=0; i<num_pvs; ++i)
     {
-        readStringFromFile(name, 39, f); actWin->incLine();
+        readStringFromFile(name, PV_Factory::MAX_PV_NAME, f);
+        actWin->incLine();
         pv_name[i].setRaw(name);
-
         if (major < 3)
         {
             fscanf(f, "%d\n", &pv_color[i]); actWin->incLine();
         }
         else
         {
-            readStringFromFile(name, 99, f); actWin->incLine();
+            readStringFromFile(name, PV_Factory::MAX_PV_NAME, f);
+            actWin->incLine();
             pv_color[i] = actWin->ci->colorIndexByName(name);
         }
-        fscanf(f, "%d\n", &index ); actWin->incLine();
+        fscanf(f, "%d\n", &index); actWin->incLine();
         use_pv_time[i] = index != 0;
     }
     fscanf(f, "%lf\n", &seconds);
@@ -183,27 +184,30 @@ int edmStripClass::createFromFile(FILE *f, char *filename,
 
     if (major < 2)
     {
-        fscanf(f, "%d\n", &index ); actWin->incLine();
+        fscanf(f, "%d\n", &index); actWin->incLine();
         bgColor = index;
         textColor = actWin->defaultTextFgColor;
         fgColor   = actWin->defaultFg1Color;
     }
     else if (major < 3)
     {
-        fscanf(f, "%d\n", &index ); actWin->incLine();
+        fscanf(f, "%d\n", &index); actWin->incLine();
         bgColor = index;
-        fscanf(f, "%d\n", &index ); actWin->incLine();
+        fscanf(f, "%d\n", &index); actWin->incLine();
         textColor = index;
-        fscanf(f, "%d\n", &index ); actWin->incLine();
+        fscanf(f, "%d\n", &index); actWin->incLine();
         fgColor = index;
     }
     else
     {
-        readStringFromFile(name, 99, f); actWin->incLine();
+        readStringFromFile(name, PV_Factory::MAX_PV_NAME, f);
+        actWin->incLine();
         bgColor = actWin->ci->colorIndexByName(name);
-        readStringFromFile(name, 99, f); actWin->incLine();
+        readStringFromFile(name, PV_Factory::MAX_PV_NAME, f);
+        actWin->incLine();
         textColor = actWin->ci->colorIndexByName(name);
-        readStringFromFile(name, 99, f); actWin->incLine();
+        readStringFromFile(name, PV_Factory::MAX_PV_NAME, f);
+        actWin->incLine();
         fgColor = actWin->ci->colorIndexByName(name);
     }
     
@@ -299,7 +303,7 @@ int edmStripClass::genericEdit() // create Property Dialog
     bufX = x; bufY = y; bufW = w; bufH = h;
     for (i=0; i<num_pvs; ++i)
     {
-        strncpy(buf_pv_name[i], PVName(i), 39);
+        strncpy(buf_pv_name[i], PVName(i), PV_Factory::MAX_PV_NAME);
         buf_pv_color[i] = pv_color[i];
         buf_use_pv_time[i] = use_pv_time[i] ? 1 : 0;
     }
@@ -323,7 +327,7 @@ int edmStripClass::genericEdit() // create Property Dialog
     for (i=0; i<num_pvs; ++i)
     {
         ef.beginSubForm();
-        ef.addTextField("PV", 25, buf_pv_name[i], 39);
+        ef.addTextField("PV", 25, buf_pv_name[i], PV_Factory::MAX_PV_NAME);
         ef.addColorButton("", actWin->ci,
                           &pv_color_cb[i], &buf_pv_color[i]);
         ef.addLabel(" CA Time");
@@ -1016,4 +1020,7 @@ void edmStripClass::executeDeferred()
     if (is_executing)
         smartDrawAllActive();
 }
+
+
+
 
