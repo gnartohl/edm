@@ -349,7 +349,7 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
 activeRectangleClass::~activeRectangleClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -1785,6 +1785,22 @@ int index, change;
     }
 
   }
+
+}
+
+void activeRectangleClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 2 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 2;
+  pvs[0] = alarmPvId;
+  pvs[1] = visPvId;
 
 }
 

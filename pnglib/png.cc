@@ -296,7 +296,7 @@ activePngClass::~activePngClass ( void ) {
 
 //   printf( "In activePngClass::~activePngClass\n" );
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
   discardColorList();
 
@@ -308,7 +308,7 @@ activePngClass::~activePngClass ( void ) {
   }
 
   if ( pixels ) {
-    delete pixels;
+    delete[] pixels;
     pixels = NULL;
   }
 
@@ -1830,7 +1830,7 @@ uch *src;
     png_get_PLTE( png_ptr, info_ptr, &palette,
      &numColors );
 
-    if ( pixels ) delete pixels;
+    if ( pixels ) delete[] pixels;
     pixels = new unsigned int[numColors+1];
 
     for ( ii=0; ii<numColors; ii++ ) {

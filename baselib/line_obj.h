@@ -432,6 +432,11 @@ void getArrowCoords (
 
 int ctlBoxLen ( void );
 
+void getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
+
 };
 
 #ifdef __cplusplus

@@ -1453,29 +1453,31 @@ int activeXRegTextClass::activate (
 
   case 1: // initialize
 
-// --------------------------------------------------------
-        re_valid = false;
-        if (strlen(regExpStr) > 0)
-        {
-            int res = regcomp(&compiled_re, regExpStr, REG_EXTENDED);
-            if (res)
-            {
-                char buf[100];
-                regerror(res, &compiled_re, buf, sizeof buf);
-//                printf("Error in regular expression: %s\n", buf);
-            }
-            else
-                re_valid = true;
-        }
-// --------------------------------------------------------
-
     opComplete = 0;
+    re_valid = false;
 
     break;
 
   case 2: // connect to pv's
 
     if ( !opComplete ) {
+
+      if ( !re_valid ) {
+        if (strlen(regExpStr) > 0)
+        {
+            int res = regcomp(&compiled_re, regExpStr, REG_EXTENDED);
+            if (res)
+            {
+	        // The compile failed, but memory was allocated (leak)
+                char buf[100];
+                regerror(res, &compiled_re, buf, sizeof buf);
+                // printf("Error in regular expression: %s\n", buf);
+            }
+            else {
+                re_valid = true;
+	    }
+        }
+      }
 
       connection.init();
       initEnable();
@@ -1603,8 +1605,8 @@ int activeXRegTextClass::deactivate (
 
 // --------------------------------------------------------
     if ( re_valid ) {
-       regfree(&compiled_re);
-       re_valid = false;
+      printf( "regfree\n" );
+      regfree(&compiled_re);
     }
 // --------------------------------------------------------
 
@@ -2198,6 +2200,22 @@ int index, change;
 void activeXRegTextClass::bufInvalidate ( void ) {
 
   bufInvalid = 1;
+
+}
+
+void activeXRegTextClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 2 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 2;
+  pvs[0] = alarmPvId;
+  pvs[1] = visPvId;
 
 }
 

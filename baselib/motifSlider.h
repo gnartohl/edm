@@ -97,6 +97,12 @@ static void selectDrag (
    String *params,
    Cardinal numParams );
 
+static void pvInfo (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams );
+
 static void scrollBarEventHandler (
   Widget w,
   XtPointer client,
@@ -195,7 +201,11 @@ friend void selectDrag (
    String *params,
    Cardinal numParams );
 
-
+friend void pvInfo (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams );
 
 friend void msloSetIncKpDoubleValue (
   Widget w,
@@ -515,6 +525,11 @@ void changePvNames (
 void map ( void );
 
 void unmap ( void );
+
+void getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
 
 };
 

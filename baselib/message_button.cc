@@ -487,7 +487,7 @@ activeGraphicClass *msgbto = (activeGraphicClass *) this;
 
 activeMessageButtonClass::~activeMessageButtonClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -2821,6 +2821,21 @@ int activeMessageButtonClass::getEnumNumeric (
 
   *value = 0;
   return 0;
+
+}
+
+void activeMessageButtonClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 1 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 1;
+  pvs[0] = destPvId;
 
 }
 

@@ -203,7 +203,7 @@ int i;
 
 //   printf( "In activeGifClass::~activeGifClass\n" );
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
   if ( pixels ) {
 

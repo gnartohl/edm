@@ -455,7 +455,7 @@ int i;
 
 activeMenuButtonClass::~activeMenuButtonClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
   if ( fontList ) XmFontListFree( fontList );
 
   if ( unconnectedTimer ) {
@@ -1529,6 +1529,8 @@ int opStat;
       connection.init();
       initialConnection = initialReadConnection = initialVisConnection =
        initialColorConnection = 1;
+      value = readValue = 0;
+      controlValid = readValid = 0;
 
       initEnable();
 
@@ -2304,6 +2306,25 @@ void activeMenuButtonClass::changePvNames (
   }
 
 }
+
+void activeMenuButtonClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 4) {
+    *n = 0;
+    return;
+  }
+
+  *n = 4;
+  pvs[0] = controlPvId;
+  pvs[1] = readPvId;
+  pvs[2] = colorPvId;
+  pvs[3] = visPvId;
+
+}
+
 
 #ifdef __cplusplus
 extern "C" {

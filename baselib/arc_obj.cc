@@ -422,7 +422,7 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
 activeArcClass::~activeArcClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -2076,6 +2076,22 @@ undoArcOpClass *opPtr = (undoArcOpClass *) _opPtr;
 
   stat = activeGraphicClass::undoFlip( _opPtr, _x, _y, _w,_h );
   return stat;
+
+}
+
+void activeArcClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 2 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 2;
+  pvs[0] = alarmPvId;
+  pvs[1] = visPvId;
 
 }
 

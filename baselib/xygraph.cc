@@ -3019,7 +3019,7 @@ int i, yi;
 
 xyGraphClass::~xyGraphClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
   if ( eBuf ) delete eBuf;
 
 }
@@ -6396,23 +6396,23 @@ int i;
       }
 
       if ( xPvData[i] ) {
-        delete (char *) xPvData[i];
+        delete[] (char *) xPvData[i];
         xPvData[i] = NULL;
       }
 
       if ( yPvData[i] ) {
-        delete (char *) yPvData[i];
+        delete[] (char *) yPvData[i];
         yPvData[i] = NULL;
       }
 
       if ( plotBuf[i] ) {
-        delete plotBuf[i];
+        delete[] plotBuf[i];
         plotBuf[i] = NULL;
         plotBufSize[i] = 0;
       }
 
       if ( plotInfo[i] ) {
-        delete plotInfo[i];
+        delete[] plotInfo[i];
         plotInfo[i] = NULL;
         plotInfoSize[i] = 0;
       }
@@ -9053,6 +9053,31 @@ char fullName[127+1], label[127+1];
     actWin->executeGc.restoreFg();
 
   }
+
+}
+
+void xyGraphClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+int i, ii, num;
+
+  num = XYGC_K_MAX_TRACES + XYGC_K_MAX_TRACES + 2;
+
+  if ( max < num ) {
+    *n = 0;
+    return;
+  }
+
+  *n = num;
+  ii = 0;
+  for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
+    pvs[ii++] = xPv[i];
+    pvs[ii++] = yPv[i];
+  }
+  pvs[ii++] = resetPv;
+  pvs[ii++] = trigPv;
 
 }
 

@@ -311,6 +311,11 @@ void changePvNames (
 void updateColors (
   double colorValue );
 
+void getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
+
 };
 
 #ifdef __cplusplus

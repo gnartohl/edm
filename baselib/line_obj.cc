@@ -96,9 +96,9 @@ int i;
 ~undoLineOpClass ()
 {
 
-  delete x;
+  delete[] x;
   x = NULL;
-  delete y;
+  delete[] y;
   y = NULL;
   n = 0;
 
@@ -460,9 +460,9 @@ activeLineClass::activeLineClass ( void ) {
 
 activeLineClass::~activeLineClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
   if ( head ) delete head;
-  if ( xpoints ) delete xpoints;
+  if ( xpoints ) delete[] xpoints;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -753,7 +753,7 @@ pointPtr cur;
 
     if ( this->numPoints > 0 ) {
       this->numPoints = 0;
-      delete this->xpoints;
+      delete[] this->xpoints;
     }
 
   }
@@ -1447,8 +1447,8 @@ static int arrowsEnum[4] = {
 
   }
 
-  delete xArray;
-  delete yArray;
+  delete[] xArray;
+  delete[] yArray;
 
   if ( lineColorMode == ALC_K_COLORMODE_ALARM )
     lineColor.setAlarmSensitive();
@@ -1707,8 +1707,8 @@ static int arrowsEnum[4] = {
 
   stat = tag.writeTags( f );
 
-  delete xArray;
-  delete yArray;
+  delete[] xArray;
+  delete[] yArray;
 
   return stat;
 
@@ -3141,7 +3141,7 @@ undoLineOpClass *opPtr = (undoLineOpClass *) _opPtr;
 int i;
 int oneW, oneH, minX, minY, maxX, maxY;
 
-  if ( xpoints ) delete xpoints;
+  if ( xpoints ) delete[] xpoints;
   numPoints = opPtr->n;
   xpoints = new XPoint[numPoints+1];
 
@@ -3539,6 +3539,22 @@ int activeLineClass::ctlBoxLen ( void ) {
   else {
     return 3;
   }
+
+}
+
+void activeLineClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 2 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 2;
+  pvs[0] = alarmPvId;
+  pvs[1] = visPvId;
 
 }
 

@@ -169,7 +169,7 @@ activeXRegTextClass
 
 ~activeXRegTextClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
 }
 
@@ -292,6 +292,11 @@ void updateColors (
   double colorValue );
 
 void bufInvalidate ( void );
+
+void getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
 
 };
 

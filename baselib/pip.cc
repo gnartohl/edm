@@ -415,7 +415,7 @@ int i;
 
 activePipClass::~activePipClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
   if ( buf ) {
     delete buf;
@@ -1855,8 +1855,8 @@ int gotSymbolsFromFile;
   if ( !useSmallArrays ) {
 
     for ( i=0; i<numNewMacros; i++ ) {
-      delete newMacros[i];
-      delete newValues[i];
+      delete[] newMacros[i];
+      delete[] newValues[i];
     }
 
   }

@@ -432,7 +432,7 @@ activeChoiceButtonClass::activeChoiceButtonClass ( void ) {
 
 activeChoiceButtonClass::~activeChoiceButtonClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
   if ( fontList ) XmFontListFree( fontList );
 
   if ( unconnectedTimer ) {
@@ -2530,6 +2530,24 @@ void activeChoiceButtonClass::changePvNames (
       visPvExpStr.setRaw( ctlPvs[0] );
     }
   }
+
+}
+
+void activeChoiceButtonClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 4 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 4;
+  pvs[0] = controlPvId;
+  pvs[1] = readPvId;
+  pvs[2] = visPvId;
+  pvs[3] = colorPvId;
 
 }
 

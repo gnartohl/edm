@@ -1026,6 +1026,11 @@ void drawYlabel ( void );
 
 void drawY2label ( void );
 
+void getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
+
 };
 
 #ifdef __cplusplus

@@ -704,7 +704,7 @@ activeGraphicClass *udbto = (activeGraphicClass *) this;
 
 activeUpdownButtonClass::~activeUpdownButtonClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -2839,6 +2839,22 @@ void activeUpdownButtonClass::changePvNames (
       visPvExpString.setRaw( ctlPvs[0] );
     }
   }
+
+}
+
+void activeUpdownButtonClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 2 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 2;
+  pvs[0] = destPvId;
+  pvs[1] = savePvId;
 
 }
 

@@ -31,12 +31,14 @@ static XtTranslations g_parsedTrans;
 
 static char g_dragTrans[] =
   "#override\n\
-   ~Shift<Btn2Down>: startDrag()\n\
-   Shift<Btn2Down>: dummy()\n\
-   Shift<Btn2Up>: selectDrag()";
+   ~Ctrl~Shift<Btn2Down>: startDrag()\n\
+   Ctrl~Shift<Btn2Down>: pvInfo()\n\
+   Shift~Ctrl<Btn2Down>: dummy()\n\
+   Shift~Ctrl<Btn2Up>: selectDrag()";
 
 static XtActionsRec g_dragActions[] = {
   { "startDrag", (XtActionProc) drag },
+  { "pvInfo", (XtActionProc) pvInfo },
   { "dummy", (XtActionProc) dummy },
   { "selectDrag", (XtActionProc) selectDrag }
 };
@@ -324,7 +326,7 @@ int i;
 
 activeRadioButtonClass::~activeRadioButtonClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
   if ( fontList ) XmFontListFree( fontList );
 
@@ -1120,7 +1122,7 @@ static void drag (
    Cardinal numParams )
 {
 
-class activeRadioButtonClass *rbto;
+activeRadioButtonClass *rbto;
 int stat;
 
   XtVaGetValues( w, XmNuserData, &rbto, NULL );
@@ -1136,13 +1138,29 @@ static void selectDrag (
    Cardinal numParams )
 {
 
-class activeRadioButtonClass *rbto;
+activeRadioButtonClass *rbto;
 int stat;
 XButtonEvent *be = (XButtonEvent *) e;
 
   XtVaGetValues( w, XmNuserData, &rbto, NULL );
 
   stat = rbto->selectDragValue( be );
+
+}
+
+static void pvInfo (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams )
+{
+
+activeRadioButtonClass *rbto;
+XButtonEvent *be = (XButtonEvent *) e;
+
+  XtVaGetValues( w, XmNuserData, &rbto, NULL );
+
+  rbto->showPvInfo( be, be->x, be->y );
 
 }
 
@@ -1496,6 +1514,21 @@ void activeRadioButtonClass::unmap ( void ) {
   if ( bulBrd ) {
     XtUnmapWidget( bulBrd );
   }
+
+}
+
+void activeRadioButtonClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 1 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 1;
+  pvs[0] = controlPvId;
 
 }
 

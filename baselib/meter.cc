@@ -370,7 +370,7 @@ activeGraphicClass *metero = (activeGraphicClass *) this;
 
 activeMeterClass::~activeMeterClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -2504,6 +2504,21 @@ void activeMeterClass::changePvNames (
       readPvExpStr.setRaw( readbackPvs[0] );
     }
   }
+
+}
+
+void activeMeterClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 1 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 1;
+  pvs[0] = readPvId;
 
 }
 

@@ -480,7 +480,7 @@ shellCmdClass::shellCmdClass ( void ) {
 
 shellCmdClass::~shellCmdClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
   if ( fontList ) XmFontListFree( fontList );
   if ( buf ) {
     delete buf;

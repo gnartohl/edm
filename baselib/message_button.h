@@ -426,6 +426,11 @@ int getEnumNumeric (
   char *string,
   int *value );
 
+void getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
+
 };
 
 #ifdef __cplusplus

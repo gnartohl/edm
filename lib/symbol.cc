@@ -682,7 +682,7 @@ int i;
   btnMotionActionHead->blink = NULL;
   delete btnMotionActionHead;
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -4299,5 +4299,25 @@ int i;
   }
 
   smartDrawAllActive();
+
+}
+
+void activeSymbolClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+int i;
+
+  if ( max < ( SYMBOL_K_MAX_PVS + 1 ) ) {
+    *n = 0;
+    return;
+  }
+
+  *n = SYMBOL_K_MAX_PVS + 1;
+  for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
+    pvs[i] = controlPvId[i];
+  }
+  pvs[i] = colorPvId;
 
 }

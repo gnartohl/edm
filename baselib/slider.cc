@@ -2658,8 +2658,12 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
       slo->incrementTimerActive = 0;
       slo->incrementTimerValue = 101;
 
-      if ( !( be->state & ShiftMask ) ) {
+      if ( !( be->state & ( ControlMask | ShiftMask ) ) ) {
         stat = slo->startDrag( w, e );
+      }
+      else if ( !( be->state & ShiftMask ) &&
+                ( be->state & ControlMask ) ) {
+        stat = slo->showPvInfo( be, be->x, be->y );
       }
 
       break;
@@ -2730,7 +2734,8 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 
     case Button2:
 
-      if ( be->state & ShiftMask ) {
+      if ( ( be->state & ShiftMask ) &&
+           !( be->state & ControlMask ) ) {
         stat = slo->selectDragValue( be );
       }
 
@@ -3142,6 +3147,9 @@ char callbackName[63+1];
       controlPvId = controlLabelPvId = readPvId = readLabelPvId =
        savedValuePvId = NULL;
       doTimerUpdate = 1;
+      savedV = 0.0;
+      minFv = maxFv = 0.0;
+      factor = 1.0;
 
       controlState = SLC_STATE_IDLE;
 
@@ -4190,6 +4198,23 @@ void activeSliderClass::unmap ( void ) {
   controlState = SLC_STATE_IDLE;
   incrementTimerActive = 0;
   incrementTimerValue = 101;
+
+}
+
+void activeSliderClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 3 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 3;
+  pvs[0] = controlPvId;
+  pvs[1] = readPvId;
+  pvs[2] = savedValuePvId;
 
 }
 

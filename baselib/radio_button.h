@@ -73,6 +73,12 @@ static void selectDrag (
    String *params,
    Cardinal numParams );
 
+static void pvInfo (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams );
+
 static void putValue (
   Widget w,
   XtPointer client,
@@ -140,6 +146,12 @@ friend void drag (
    Cardinal numParams );
 
 friend void selectDrag (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams );
+
+friend void pvInfo (
    Widget w,
    XEvent *e,
    String *params,
@@ -338,6 +350,11 @@ void changePvNames (
 void map ( void );
 
 void unmap ( void );
+
+void getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
 
 };
 

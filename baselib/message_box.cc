@@ -959,6 +959,7 @@ struct stat fileStat;
       firstReadUpdate = 1;
       readPvConnected = active = init = 0;
       activeMode = 1;
+      strcpy( curReadV, "" );
 
       if ( !readPvExpStr.getExpanded() ||
          ( strcmp( readPvExpStr.getExpanded(), "" ) == 0 ) ) {
@@ -1408,6 +1409,20 @@ void activeMessageBoxClass::unmap ( void ) {
 
 }
 
+void activeMessageBoxClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 1 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 1;
+  pvs[0] = readPvId;
+
+}
 
 #ifdef __cplusplus
 extern "C" {

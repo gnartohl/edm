@@ -112,7 +112,7 @@ activeExitButtonClass
 
 ~activeExitButtonClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
 }
 

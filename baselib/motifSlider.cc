@@ -28,9 +28,10 @@ static int g_transInit = 1;
 static XtTranslations g_parsedTrans;
 
 static char g_dragTrans[] =
-  "#override None<Btn2Down>: startDrag()\n\
+  "#override ~Ctrl~Shift<Btn2Down>: startDrag()\n\
+   Ctrl~Shift<Btn2Down>: pvInfo()\n\
    Shift<Btn2Down>: dummy()\n\
-   Shift<Btn2Up>: selectDrag()\n\
+   Shift~Ctrl<Btn2Up>: selectDrag()\n\
    Ctrl<Btn1Down>: dummy()\n\
    Ctrl<Btn1Up>: dummy()\n\
    <Btn3Up>: changeParams()\n\
@@ -38,6 +39,7 @@ static char g_dragTrans[] =
 
 static XtActionsRec g_dragActions[] = {
   { "startDrag", (XtActionProc) drag },
+  { "pvInfo", (XtActionProc) pvInfo },
   { "dummy", (XtActionProc) dummy },
   { "changeParams", (XtActionProc) changeParams },
   { "selectDrag", (XtActionProc) selectDrag }
@@ -363,6 +365,22 @@ XButtonEvent *be = (XButtonEvent *) e;
   if ( !mslo->enabled ) return;
 
   stat = mslo->selectDragValue( be );
+
+}
+
+static void pvInfo (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams )
+{
+
+activeMotifSliderClass *mslo;
+XButtonEvent *be = (XButtonEvent *) e;
+
+  XtVaGetValues( w, XmNuserData, &mslo, NULL );
+
+  mslo->showPvInfo( be, be->x, be->y );
 
 }
 
@@ -905,7 +923,7 @@ activeGraphicClass *mslo = (activeGraphicClass *) this;
 
 activeMotifSliderClass::~activeMotifSliderClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -2005,8 +2023,12 @@ double fvalue;
 
     case Button2:
 
-      if ( !( be->state & ShiftMask ) ) {
+      if ( !( be->state & ( ControlMask | ShiftMask ) ) ) {
         stat = mslo->startDrag( w, e );
+      }
+      else if ( !( be->state & ShiftMask ) &&
+                ( be->state & ControlMask ) ) {
+        stat = mslo->showPvInfo( be, be->x, be->y );
       }
 
       break;
@@ -2166,7 +2188,8 @@ double fvalue;
 
     case Button2:
 
-      if ( be->state & ShiftMask ) {
+      if ( ( be->state & ShiftMask ) &&
+           !( be->state & ControlMask ) ) {
         stat = mslo->selectDragValue( be );
       }
 
@@ -3044,6 +3067,21 @@ void activeMotifSliderClass::unmap ( void ) {
       isMapped = 0;
     }
   }
+
+}
+
+void activeMotifSliderClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 1 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 1;
+  pvs[0] = controlPvId;
 
 }
 

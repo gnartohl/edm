@@ -177,7 +177,7 @@ activeMessageBoxClass
 
 ~activeMessageBoxClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
 }
 
@@ -290,6 +290,11 @@ void changePvNames (
 void map ( void );
 
 void unmap ( void );
+
+void getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
 
 };
 

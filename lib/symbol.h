@@ -529,6 +529,11 @@ int undoFlip (
 void updateColors (
   double colorValue );
 
+void getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
+
 };
 
 #endif

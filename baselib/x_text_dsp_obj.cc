@@ -29,11 +29,13 @@ static XtTranslations g_parsedTrans;
 
 static char g_dragTrans[] =
   "#override\n\
-   ~Shift<Btn2Down>: startDrag()\n\
-   Shift<Btn2Up>: selectDrag()";
+   ~Ctrl~Shift<Btn2Down>: startDrag()\n\
+   Ctrl~Shift<Btn2Down>: pvInfo()\n\
+   Shift~Ctrl<Btn2Up>: selectDrag()";
 
 static XtActionsRec g_dragActions[] = {
   { "startDrag", (XtActionProc) drag },
+  { "pvInfo", (XtActionProc) pvInfo },
   { "selectDrag", (XtActionProc) selectDrag }
 };
 
@@ -1896,7 +1898,7 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
 activeXTextDspClass::~activeXTextDspClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -4179,7 +4181,7 @@ static void drag (
    Cardinal numParams )
 {
 
-class activeXTextDspClass *atdo;
+activeXTextDspClass *atdo;
 int stat;
 
   XtVaGetValues( w, XmNuserData, &atdo, NULL );
@@ -4195,13 +4197,29 @@ static void selectDrag (
    Cardinal numParams )
 {
 
-class activeXTextDspClass *atdo;
+activeXTextDspClass *atdo;
 int stat;
 XButtonEvent *be = (XButtonEvent *) e;
 
   XtVaGetValues( w, XmNuserData, &atdo, NULL );
 
   stat = atdo->selectDragValue( be );
+
+}
+
+static void pvInfo (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams )
+{
+
+activeXTextDspClass *atdo;
+XButtonEvent *be = (XButtonEvent *) e;
+
+  XtVaGetValues( w, XmNuserData, &atdo, NULL );
+
+  atdo->showPvInfo( be, be->x, be->y );
 
 }
 
@@ -4973,6 +4991,23 @@ void activeXTextDspClass::unmap ( void ) {
       XtUnmapWidget( tf_widget );
     }
   }
+
+}
+
+void activeXTextDspClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 3 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 3;
+  pvs[0] = pvId;
+  pvs[1] = svalPvId;
+  pvs[2] = fgPvId;
 
 }
 

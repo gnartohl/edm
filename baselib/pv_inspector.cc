@@ -18,21 +18,228 @@
 
 
 
-// Cascade option is no longer used
-
-
-
-#define __related_display_cc 1
+#define __pv_inspector_cc 1
 
 #define SMALL_SYM_ARRAY_SIZE 10
 #define SMALL_SYM_ARRAY_LEN 31
 
-#include "related_display.h"
+#include "pv_inspector.h"
 #include "app_pkg.h"
 #include "act_win.h"
 
 #include "thread.h"
 #include "crc.h"
+
+static char *G_SpecTypeNameReal = "Real";
+static char *G_SpecTypeNameFloat = "Float";
+static char *G_SpecTypeNameInt = "Int";
+static char *G_SpecTypeNameShort = "Short";
+static char *G_SpecTypeNameChar = "Char";
+static char *G_SpecTypeNameEnum = "Enum";
+static char *G_SpecTypeNameText = "Text";
+static char *G_SpecTypeNameUnknown = "Unknown";
+
+static char *G_TypeNameReal = "Real";
+static char *G_TypeNameInt = "Int";
+static char *G_TypeNameEnum = "Enum";
+static char *G_TypeNameText = "Text";
+static char *G_TypeNameUnknown = "Unknown";
+
+static char *G_VectorID = "V";
+static char *G_ScalarID = "S";
+
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+pvInspectorClass *pio = (pvInspectorClass *) client;
+
+  pio->needTimeout = 1;
+  pio->actWin->addDefExeNode( pio->aglPtr );
+  pio->unconnectedTimer = 0;
+
+}
+
+static void rtypeUnconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+pvInspectorClass *pio = (pvInspectorClass *) client;
+
+  pio->needRtypeTimeout = 1;
+  pio->actWin->addDefExeNode( pio->aglPtr );
+  pio->rtypeUnconnectedTimer = 0;
+
+}
+
+static void pioUpdateValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+pvInspectorClass *pio = (pvInspectorClass *) client;
+char *buf;
+
+  if ( pio->resolvingName ) {
+    XBell( pio->actWin->d, 50 );
+    return;
+  }
+
+  buf = XmTextGetString( pio->tf_widget );
+  strncpy( pio->entryValue, buf, PV_Factory::MAX_PV_NAME );
+  pio->entryValue[PV_Factory::MAX_PV_NAME] = 0;
+  XtFree( buf );
+
+  pio->needResolvePvName = 1;
+  pio->actWin->addDefExeNode( pio->aglPtr );
+
+}
+
+static void pioSetValueChanged (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+pvInspectorClass *pio = (pvInspectorClass *) client;
+
+  pio->widget_value_changed = 1;
+
+}
+
+static void pioGrabUpdate (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+pvInspectorClass *pio = (pvInspectorClass *) client;
+
+  if ( !pio->grabUpdate ) {
+
+    XSetInputFocus( pio->actWin->display(),
+     XtWindow(pio->tf_widget), RevertToNone, CurrentTime );
+
+  }
+
+  pio->grabUpdate = 1;
+
+}
+
+static void pioSetSelection (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+pvInspectorClass *pio = (pvInspectorClass *) client;
+int l;
+char *buf;
+Arg args[10];
+int n;
+
+  pio->widget_value_changed = 0;
+
+  buf = XmTextGetString( pio->tf_widget );
+  l = strlen(buf);
+  XtFree( buf );
+
+  n = 0;
+  XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) True ); n++;
+  XtSetValues( pio->tf_widget, args, n );
+
+#if 0
+  if ( pio->autoSelect ) {
+    XmTextSetSelection( pio->tf_widget, 0, l,
+    XtLastTimestampProcessed( pio->actWin->display() ) );
+  }
+#endif
+
+  XmTextSetInsertionPosition( pio->tf_widget, l );
+
+}
+
+static void dropTransferProc (
+  Widget w,
+  XtPointer clientData,
+  Atom *selType,
+  Atom *type,
+  XtPointer value,
+  unsigned long *length,
+  int format )
+{
+
+pvInspectorClass *pio = (pvInspectorClass *) clientData;
+char *str = (char *) value;
+
+  if ( !pio ) return;
+
+  if ( pio->resolvingName ) {
+    XBell( pio->actWin->d, 50 );
+    return;
+  }
+
+  if ( *type == XA_STRING ) {
+
+    if ( str ) {
+
+      strncpy( pio->entryValue, str, PV_Factory::MAX_PV_NAME );
+      pio->entryValue[PV_Factory::MAX_PV_NAME] = 0;
+
+      XmTextFieldSetString( pio->tf_widget, str );
+
+      pio->needResolvePvName = 1;
+      pio->actWin->addDefExeNode( pio->aglPtr );
+
+    }
+
+  }
+
+}
+
+static void handleDrop (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+pvInspectorClass *pio;
+XmDropProcCallback ptr = (XmDropProcCallback) call;
+XmDropTransferEntryRec transferEntries[2];
+XmDropTransferEntry transferList;
+int n;
+Arg args[10];
+Widget dc;
+
+  n = 0;
+  XtSetArg( args[n], XmNuserData, (XtPointer) &pio ); n++;
+  XtGetValues( w, args, n );
+  if ( !pio ) return;
+
+  dc = ptr->dragContext;
+
+  n = 0;
+  if ( ptr->dropAction != XmDROP ) {
+    XtSetArg( args[n], XmNtransferStatus, XmTRANSFER_FAILURE ); n++;
+    XtSetArg( args[n], XmNnumDropTransfers, 0 ); n++;
+  }
+  else {
+    transferEntries[0].target = XA_STRING;
+    transferEntries[0].client_data = (XtPointer) pio;
+    transferList = transferEntries;
+    XtSetArg( args[n], XmNdropTransfers, transferList ); n++;
+    XtSetArg( args[n], XmNnumDropTransfers, 1 ); n++;
+    XtSetArg( args[n], XmNtransferProc, dropTransferProc ); n++;
+  }
+
+  //  XtSetArg( args[n], XmN ); n++;
+
+  XmDropTransferStart( dc, args, n );
+
+}
 
 static void menu_cb (
   Widget w,
@@ -41,54 +248,133 @@ static void menu_cb (
 {
 
 int i;
-relatedDisplayClass *rdo = (relatedDisplayClass *) client;
+pvInspectorClass *pio = (pvInspectorClass *) client;
+char syms[255+1];
 
- for ( i=0; i<rdo->maxDsps; i++ ) {
-   if ( w == rdo->pb[i] ) {
-     rdo->popupDisplay( i );
-     return;
-   }
- }
+  for ( i=0; i<pio->maxDsps; i++ ) {
+
+    if ( w == pio->pb[i] ) {
+
+      if ( pio->useRtype[i] ) {
+        snprintf( syms, 255,
+         "name=%s,rtype=%s,type=%s,specType=%s,vector=%s",
+         pio->entryValue, pio->rtype, pio->pvTypeName(pio->pvType),
+         pio->pvSpecificTypeName(pio->pvSpecificType),
+         pio->vectorId(pio->isVector) );
+      }
+      else {
+        snprintf( syms, 255,
+         "name=%s,type=%s,specType=%s,vector=%s",
+         pio->entryValue, pio->pvTypeName(pio->pvType),
+         pio->pvSpecificTypeName(pio->pvSpecificType),
+         pio->vectorId(pio->isVector) );
+      }
+      pio->symbolsExpStr[i].setRaw( syms );
+
+      pio->popupDisplay( i );
+
+      return;
+
+    }
+
+  }
 
 }
 
-static void relDsp_monitor_dest_connect_state (
+static void monitor_pv_connect_state (
   ProcessVariable *pv,
   void *userarg )
 {
 
-objAndIndexType *ptr = (objAndIndexType *) userarg;
-relatedDisplayClass *rdo = (relatedDisplayClass *) ptr->obj;
-int i = ptr->index;
+pvInspectorClass *pio = (pvInspectorClass *) userarg;
 
   if ( pv->is_valid() ) {
-
-    rdo->destConnected[i] = 1;
-    rdo->destType[i] = (int) pv->get_type().type;
 
   }
   else {
 
-    rdo->destConnected[i] = 0;
+    pio->pvConnected = 0;
 
   }
 
 }
 
-static void rdc_edit_ok1 (
+static void monitor_rtype_pv_connect_state (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+pvInspectorClass *pio = (pvInspectorClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+  }
+  else {
+
+    pio->rtypePvConnected = 0;
+
+  }
+
+}
+
+static void pv_update (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+pvInspectorClass *pio = (pvInspectorClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+    pio->pvConnected = 1;
+    pio->pvType = (int) pv->get_type().type;
+    pio->pvSpecificType = (int) pv->get_specific_type().type;
+    if ( pv->get_dimension() > 1 ) {
+      pio->isVector = 1;
+    }
+    else {
+      pio->isVector = 0;
+    }
+    pio->needConnect = 1;
+    pio->actWin->addDefExeNode( pio->aglPtr );
+
+  }
+
+}
+
+static void rtype_pv_update (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+pvInspectorClass *pio = (pvInspectorClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+    pv->get_string( pio->rtype, 63 );
+    pio->rtype[63] = 0;
+    pio->rtypePvConnected = 1;
+    pio->needRtypeConnect = 1;
+    pio->actWin->addDefExeNode( pio->aglPtr );
+
+  }
+
+}
+
+static void pic_edit_ok1 (
   Widget w,
   XtPointer client,
   XtPointer call )
 {
 
-relatedDisplayClass *rdo = (relatedDisplayClass *) client;
+pvInspectorClass *pio = (pvInspectorClass *) client;
 
-  //rdc_edit_update1 ( w, client, call );
-  rdo->ef1->popdownNoDestroy();
+  //pic_edit_update1 ( w, client, call );
+  pio->ef1->popdownNoDestroy();
 
 }
 
-static void rdc_edit_update (
+static void pic_edit_update (
 
   Widget w,
   XtPointer client,
@@ -96,217 +382,204 @@ static void rdc_edit_update (
 {
 
 int i, more;
-relatedDisplayClass *rdo = (relatedDisplayClass *) client;
+pvInspectorClass *pio = (pvInspectorClass *) client;
 
-  rdo->actWin->setChanged();
+  pio->actWin->setChanged();
 
-  rdo->eraseSelectBoxCorners();
-  rdo->erase();
+  pio->eraseSelectBoxCorners();
+  pio->erase();
 
-  rdo->displayFileName[0].setRaw( rdo->buf->bufDisplayFileName[0] );
-  if ( blank( rdo->displayFileName[0].getRaw() ) ) {
-    rdo->closeAction[0] = 0;
-    rdo->setPostion[0] = 0;
-    rdo->allowDups[0] = 0;
-    rdo->cascade[0] = 0;
-    rdo->propagateMacros[0] = 1;
-    rdo->label[0].setRaw( "" );
-    rdo->symbolsExpStr[0].setRaw( "" );
-    rdo->replaceSymbols[0] = 0;
-    rdo->numDsps = 0;
+  pio->useAnyRtype = 0;
+  pio->displayFileName[0].setRaw( pio->buf->bufDisplayFileName[0] );
+  if ( blank( pio->displayFileName[0].getRaw() ) ) {
+    pio->setPostion[0] = 0;
+    pio->allowDups[0] = 0;
+    pio->label[0].setRaw( "" );
+    pio->useRtype[i] = 0;
+    pio->useType[i] = 0;
+    pio->useSpecType[i] = 0;
+    pio->useDim[i] = 0;
+    pio->numDsps = 0;
   }
   else {
-    rdo->closeAction[0] = rdo->buf->bufCloseAction[0];
-    rdo->setPostion[0] = rdo->buf->bufSetPostion[0];
-    rdo->allowDups[0] = rdo->buf->bufAllowDups[0];
-    rdo->cascade[0] = rdo->buf->bufCascade[0];
-    rdo->propagateMacros[0] = rdo->buf->bufPropagateMacros[0];
-    rdo->label[0].setRaw( rdo->buf->bufLabel[0] );
-    rdo->symbolsExpStr[0].setRaw( rdo->buf->bufSymbols[0] );
-    rdo->replaceSymbols[0] = rdo->buf->bufReplaceSymbols[0];
-    rdo->numDsps = 1;
+    pio->setPostion[0] = pio->buf->bufSetPostion[0];
+    pio->allowDups[0] = pio->buf->bufAllowDups[0];
+    pio->label[0].setRaw( pio->buf->bufLabel[0] );
+    pio->useRtype[0] = pio->buf->bufUseRtype[0];
+    if ( pio->useRtype[0] ) pio->useAnyRtype = 1;
+    pio->useType[0] = pio->buf->bufUseType[0];
+    pio->useSpecType[0] = pio->buf->bufUseSpecType[0];
+    pio->useDim[0] = pio->buf->bufUseDim[0];
+    pio->numDsps = 1;
   }
 
-  if ( rdo->numDsps ) {
+  if ( pio->numDsps ) {
     more = 1;
-    for ( i=1; (i<rdo->maxDsps) && more; i++ ) {
-      rdo->displayFileName[i].setRaw( rdo->buf->bufDisplayFileName[i] );
-      if ( blank( rdo->displayFileName[i].getRaw() ) ) {
-        rdo->closeAction[i] = 0;
-        rdo->setPostion[i] = 0;
-        rdo->allowDups[i] = 0;
-        rdo->cascade[i] = 0;
-        rdo->propagateMacros[i] = 1;
-        rdo->label[i].setRaw( "" );
-        rdo->symbolsExpStr[i].setRaw( "" );
-        rdo->replaceSymbols[i] = 0;
+    for ( i=1; (i<pio->maxDsps) && more; i++ ) {
+      pio->displayFileName[i].setRaw( pio->buf->bufDisplayFileName[i] );
+      if ( blank( pio->displayFileName[i].getRaw() ) ) {
+        pio->setPostion[i] = 0;
+        pio->allowDups[i] = 0;
+        pio->label[i].setRaw( "" );
+        pio->useRtype[i] = 0;
+        pio->useType[i] = 0;
+        pio->useSpecType[i] = 0;
+        pio->useDim[i] = 0;
         more = 0;
       }
       else {
-        rdo->closeAction[i] = rdo->buf->bufCloseAction[i];
-        rdo->setPostion[i] = rdo->buf->bufSetPostion[i];
-        rdo->allowDups[i] = rdo->buf->bufAllowDups[i];
-        rdo->cascade[i] = rdo->buf->bufCascade[i];
-        rdo->propagateMacros[i] = rdo->buf->bufPropagateMacros[i];
-        rdo->label[i].setRaw( rdo->buf->bufLabel[i] );
-        rdo->symbolsExpStr[i].setRaw( rdo->buf->bufSymbols[i] );
-        rdo->replaceSymbols[i] = rdo->buf->bufReplaceSymbols[i];
-        (rdo->numDsps)++;
+        pio->setPostion[i] = pio->buf->bufSetPostion[i];
+        pio->allowDups[i] = pio->buf->bufAllowDups[i];
+        pio->label[i].setRaw( pio->buf->bufLabel[i] );
+        pio->useRtype[i] = pio->buf->bufUseRtype[i];
+        if ( pio->useRtype[i] ) pio->useAnyRtype = 1;
+        pio->useType[i] = pio->buf->bufUseType[i];
+        pio->useSpecType[i] = pio->buf->bufUseSpecType[i];
+        pio->useDim[i] = pio->buf->bufUseDim[i];
+        (pio->numDsps)++;
       }
     }
   }
 
-  for ( i=rdo->numDsps; i<rdo->maxDsps; i++ ) {
-    rdo->closeAction[i] = 0;
-    rdo->setPostion[i] = 0;
-    rdo->allowDups[i] = 0;
-    rdo->cascade[i] = 0;
-    rdo->propagateMacros[i] = 1;
-    rdo->label[i].setRaw( "" );
-    rdo->symbolsExpStr[i].setRaw( "" );
-    rdo->replaceSymbols[i] = 0;
+  for ( i=pio->numDsps; i<pio->maxDsps; i++ ) {
+    pio->setPostion[i] = 0;
+    pio->allowDups[i] = 0;
+    pio->label[i].setRaw( "" );
+    pio->useRtype[i] = 0;
+    pio->useType[i] = 0;
+    pio->useSpecType[i] = 0;
+    pio->useDim[i] = 0;
   }
 
-  strncpy( rdo->fontTag, rdo->fm.currentFontTag(), 63 );
-  rdo->actWin->fi->loadFontTag( rdo->fontTag );
-  rdo->actWin->drawGc.setFontTag( rdo->fontTag, rdo->actWin->fi );
-  rdo->actWin->fi->getTextFontList( rdo->fontTag, &rdo->fontList );
-  rdo->fs = rdo->actWin->fi->getXFontStruct( rdo->fontTag );
+  strncpy( pio->fontTag, pio->fm.currentFontTag(), 63 );
+  pio->actWin->fi->loadFontTag( pio->fontTag );
+  pio->actWin->drawGc.setFontTag( pio->fontTag, pio->actWin->fi );
+  pio->actWin->fi->getTextFontList( pio->fontTag, &pio->fontList );
+  pio->fs = pio->actWin->fi->getXFontStruct( pio->fontTag );
 
-  rdo->topShadowColor = rdo->buf->bufTopShadowColor;
-  rdo->botShadowColor = rdo->buf->bufBotShadowColor;
+  pio->topShadowColor = pio->buf->bufTopShadowColor;
+  pio->botShadowColor = pio->buf->bufBotShadowColor;
 
-  rdo->fgColor.setColorIndex( rdo->buf->bufFgColor, rdo->actWin->ci );
+  pio->fgColor.setColorIndex( pio->buf->bufFgColor, pio->actWin->ci );
 
-  rdo->bgColor.setColorIndex( rdo->buf->bufBgColor, rdo->actWin->ci );
+  pio->bgColor.setColorIndex( pio->buf->bufBgColor, pio->actWin->ci );
 
-  rdo->invisible = rdo->buf->bufInvisible;
+  pio->ofsX = pio->buf->bufOfsX;
 
-  rdo->ofsX = rdo->buf->bufOfsX;
+  pio->ofsY = pio->buf->bufOfsY;
 
-  rdo->ofsY = rdo->buf->bufOfsY;
+  pio->noEdit = pio->buf->bufNoEdit;
 
-  rdo->noEdit = rdo->buf->bufNoEdit;
+  pio->x = pio->buf->bufX;
+  pio->sboxX = pio->buf->bufX;
 
-  rdo->useFocus = rdo->buf->bufUseFocus;
+  pio->y = pio->buf->bufY;
+  pio->sboxY = pio->buf->bufY;
 
-  if ( !rdo->useFocus ) {
-    rdo->button3Popup = rdo->buf->bufButton3Popup;
+  pio->w = pio->buf->bufW;
+  pio->sboxW = pio->buf->bufW;
+
+  pio->h = pio->buf->bufH;
+  pio->sboxH = pio->buf->bufH;
+
+  pio->buttonLabel.setRaw( pio->buf->bufButtonLabel );
+
+  pio->updateDimensions();
+
+  if ( pio->fs ) {
+    pio->h = pio->fontHeight;
+    pio->sboxH = pio->h;
   }
-  else {
-    rdo->button3Popup = 0;
-  }
-
-  rdo->x = rdo->buf->bufX;
-  rdo->sboxX = rdo->buf->bufX;
-
-  rdo->y = rdo->buf->bufY;
-  rdo->sboxY = rdo->buf->bufY;
-
-  rdo->w = rdo->buf->bufW;
-  rdo->sboxW = rdo->buf->bufW;
-
-  rdo->h = rdo->buf->bufH;
-  rdo->sboxH = rdo->buf->bufH;
-
-  rdo->buttonLabel.setRaw( rdo->buf->bufButtonLabel );
-
-  for ( i=0; i<rdo->NUMPVS; i++ ) {
-    rdo->destPvExpString[i].setRaw( rdo->buf->bufDestPvName[i] );
-    rdo->sourceExpString[i].setRaw( rdo->buf->bufSource[i] );
-  }
-
-  rdo->updateDimensions();
 
 }
 
-static void rdc_edit_apply (
+static void pic_edit_apply (
   Widget w,
   XtPointer client,
   XtPointer call )
 {
 
-relatedDisplayClass *rdo = (relatedDisplayClass *) client;
+pvInspectorClass *pio = (pvInspectorClass *) client;
 
-  rdc_edit_update ( w, client, call );
-  rdo->refresh( rdo );
+  pic_edit_update ( w, client, call );
+  pio->refresh( pio );
 
 }
 
-static void rdc_edit_ok (
+static void pic_edit_ok (
   Widget w,
   XtPointer client,
   XtPointer call )
 {
 
-relatedDisplayClass *rdo = (relatedDisplayClass *) client;
+pvInspectorClass *pio = (pvInspectorClass *) client;
 
-  rdc_edit_update ( w, client, call );
-  rdo->ef.popdown();
-  rdo->operationComplete();
+  pic_edit_update ( w, client, call );
+  pio->ef.popdown();
+  pio->operationComplete();
 
-  delete rdo->buf;
-  rdo->buf = NULL;
+  delete pio->buf;
+  pio->buf = NULL;
 
 }
 
-static void rdc_edit_cancel (
+static void pic_edit_cancel (
   Widget w,
   XtPointer client,
   XtPointer call )
 {
 
-relatedDisplayClass *rdo = (relatedDisplayClass *) client;
+pvInspectorClass *pio = (pvInspectorClass *) client;
 
-  rdo->ef.popdown();
-  rdo->operationCancel();
+  pio->ef.popdown();
+  pio->operationCancel();
 
-  delete rdo->buf;
-  rdo->buf = NULL;
+  delete pio->buf;
+  pio->buf = NULL;
 
 }
 
-static void rdc_edit_cancel_delete (
+static void pic_edit_cancel_delete (
   Widget w,
   XtPointer client,
   XtPointer call )
 {
 
-relatedDisplayClass *rdo = (relatedDisplayClass *) client;
+pvInspectorClass *pio = (pvInspectorClass *) client;
 
-  delete rdo->buf;
-  rdo->buf = NULL;
+  delete pio->buf;
+  pio->buf = NULL;
 
-  rdo->ef.popdown();
-  rdo->operationCancel();
-  rdo->erase();
-  rdo->deleteRequest = 1;
-  rdo->drawAll();
+  pio->ef.popdown();
+  pio->operationCancel();
+  pio->erase();
+  pio->deleteRequest = 1;
+  pio->drawAll();
 
 }
 
-relatedDisplayClass::relatedDisplayClass ( void ) {
+pvInspectorClass::pvInspectorClass ( void ) {
 
 int i;
 
-  name = new char[strlen("relatedDisplayClass")+1];
-  strcpy( name, "relatedDisplayClass" );
+  name = new char[strlen("pvInspectorClass")+1];
+  strcpy( name, "pvInspectorClass" );
 
   activeMode = 0;
-  invisible = 0;
   ofsX = 0;
   ofsY = 0;
   noEdit = 0;
-  useFocus = 0;
-  button3Popup = 0;
+  useAnyRtype = 0;
 
   for ( i=0; i<maxDsps; i++ ) {
-    closeAction[i] = 0;
     setPostion[i] = 0;
     allowDups[i] = 0;
-    cascade[i] = 0;
     propagateMacros[i] = 1;
     replaceSymbols[i] = 0;
+    useRtype[i] = 0;
+    useType[i] = 0;
+    useSpecType[i] = 0;
+    useDim[i] = 0;
   }
 
   numDsps = 0;
@@ -314,15 +587,15 @@ int i;
   fontList = NULL;
   aw = NULL;
   buf = NULL;
+  unconnectedTimer = 0;
+  rtypeUnconnectedTimer = 0;
 
 }
 
-relatedDisplayClass::~relatedDisplayClass ( void ) {
+pvInspectorClass::~pvInspectorClass ( void ) {
 
 int okToClose;
 activeWindowListPtr cur;
-
-/*   printf( "In relatedDisplayClass::~relatedDisplayClass\n" ); */
 
   if ( aw ) {
 
@@ -354,16 +627,16 @@ activeWindowListPtr cur;
 }
 
 // copy constructor
-relatedDisplayClass::relatedDisplayClass
- ( const relatedDisplayClass *source ) {
+pvInspectorClass::pvInspectorClass
+ ( const pvInspectorClass *source ) {
 
 int i;
-activeGraphicClass *rdo = (activeGraphicClass *) this;
+activeGraphicClass *pio = (activeGraphicClass *) this;
 
-  rdo->clone( (activeGraphicClass *) source );
+  pio->clone( (activeGraphicClass *) source );
 
-  name = new char[strlen("relatedDisplayClass")+1];
-  strcpy( name, "relatedDisplayClass" );
+  name = new char[strlen("pvInspectorClass")+1];
+  strcpy( name, "pvInspectorClass" );
 
   strncpy( fontTag, source->fontTag, 63 );
   fs = actWin->fi->getXFontStruct( fontTag );
@@ -383,26 +656,23 @@ activeGraphicClass *rdo = (activeGraphicClass *) this;
   fgCb = source->fgCb;
   bgCb = source->bgCb;
 
-  invisible = source->invisible;
   ofsX = source->ofsX;
   ofsY = source->ofsY;
   noEdit = source->noEdit;
-  useFocus = source->useFocus;
-  button3Popup = source->button3Popup;
+  useAnyRtype = 0;
 
   for ( i=0; i<maxDsps; i++ ) {
-    closeAction[i] = source->closeAction[i];
     setPostion[i] = source->setPostion[i];
     allowDups[i] = source->allowDups[i];
-    cascade[i] = source->cascade[i];
     propagateMacros[i] = source->propagateMacros[i];
     displayFileName[i].copy( source->displayFileName[i] );
-    //strncpy( displayFileName[i], source->displayFileName[i], 127 );
     label[i].copy( source->label[i] );
-    // strncpy( label[i], source->label[i], 127 );
     symbolsExpStr[i].copy( source->symbolsExpStr[i] );
-    // strncpy( symbols[i], source->symbols[i], 255 );
     replaceSymbols[i] = source->replaceSymbols[i];
+    useRtype[i] = source->useRtype[i];
+    useType[i] = source->useType[i];
+    useSpecType[i] = source->useSpecType[i];
+    useDim[i] = source->useDim[i];
   }
 
   numDsps = source->numDsps;
@@ -411,17 +681,14 @@ activeGraphicClass *rdo = (activeGraphicClass *) this;
 
   activeMode = 0;
 
-  for ( i=0; i<NUMPVS; i++ ) {
-    destPvExpString[i].copy( source->destPvExpString[i] );
-    sourceExpString[i].copy( source->sourceExpString[i] );
-  }
-
   aw = NULL;
   buf = NULL;
+  unconnectedTimer = 0;
+  rtypeUnconnectedTimer = 0;
 
 }
 
-int relatedDisplayClass::createInteractive (
+int pvInspectorClass::createInteractive (
   activeWindowClass *aw_obj,
   int _x,
   int _y,
@@ -455,16 +722,15 @@ int relatedDisplayClass::createInteractive (
 
 }
 
-int relatedDisplayClass::save (
+int pvInspectorClass::save (
   FILE *f )
 {
 
-int stat, numPvs, major, minor, release;
+int stat, major, minor, release;
 
 tagClass tag;
 
 int zero = 0;
-int one = 1;
 char *emptyStr = "";
 
 int setPosOriginal = 0;
@@ -479,11 +745,9 @@ static int setPosEnum[3] = {
   2
 };
 
-  major = RDC_MAJOR_VERSION;
-  minor = RDC_MINOR_VERSION;
-  release = RDC_RELEASE;
-
-  numPvs = NUMPVS;
+  major = PIC_MAJOR_VERSION;
+  minor = PIC_MINOR_VERSION;
+  release = PIC_RELEASE;
 
   tag.init();
   tag.loadW( "beginObjectProperties" );
@@ -502,25 +766,17 @@ static int setPosEnum[3] = {
   tag.loadW( "xPosOffset", &ofsX, &zero );
   tag.loadW( "yPosOffset", &ofsY, &zero );
   tag.loadBoolW( "noEdit", &noEdit, &zero );
-  tag.loadBoolW( "useFocus", &useFocus, &zero );
-  tag.loadBoolW( "button3Popup", &button3Popup, &zero );
-  tag.loadBoolW( "invisible", &invisible, &zero );
   tag.loadW( "buttonLabel", &buttonLabel, emptyStr );
-  tag.loadW( "numPvs", &numPvs );
-  tag.loadW( "pv", destPvExpString, NUMPVS, emptyStr );
-  tag.loadW( "value", sourceExpString, NUMPVS, emptyStr );
   tag.loadW( "numDsps", &numDsps );
   tag.loadW( "displayFileName", displayFileName, numDsps, emptyStr );
   tag.loadW( "menuLabel", label, numDsps, emptyStr );
-  tag.loadW( "closeAction", closeAction, numDsps, &zero );
   tag.loadW( "setPosition", 3, setPosEnumStr, setPosEnum, setPostion, 
    numDsps, &setPosOriginal );
   tag.loadW( "allowDups", allowDups, numDsps, &zero );
-  //tag.loadW( "cascade", cascade, numDsps, &zero );
-  tag.loadW( "symbols", symbolsExpStr, numDsps, emptyStr );
-  tag.loadW( "replaceSymbols", replaceSymbols, numDsps, &zero );
-  tag.loadW( "propagateMacros", propagateMacros, numDsps, &one );
-  tag.loadW( "closeDisplay", closeAction, numDsps, &zero );
+  tag.loadW( "appendRtype", useRtype, numDsps, &zero );
+  tag.loadW( "appendType", useType, numDsps, &zero );
+  tag.loadW( "appendSpecificType", useSpecType, numDsps, &zero );
+  tag.loadW( "appendDimension", useDim, numDsps, &zero );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -530,14 +786,14 @@ static int setPosEnum[3] = {
 
 }
 
-int relatedDisplayClass::old_save (
+int pvInspectorClass::old_save (
   FILE *f )
 {
 
 int i, index;
 
-  fprintf( f, "%-d %-d %-d\n", RDC_MAJOR_VERSION, RDC_MINOR_VERSION,
-   RDC_RELEASE );
+  fprintf( f, "%-d %-d %-d\n", PIC_MAJOR_VERSION, PIC_MINOR_VERSION,
+   PIC_RELEASE );
 
   fprintf( f, "%-d\n", x );
   fprintf( f, "%-d\n", y );
@@ -572,45 +828,9 @@ int i, index;
 
   writeStringToFile( f, fontTag );
 
-  fprintf( f, "%-d\n", invisible );
-
-  fprintf( f, "%-d\n", closeAction[0] );
-
   fprintf( f, "%-d\n", setPostion[0] );
 
-  fprintf( f, "%-d\n", NUMPVS );
-
-  for ( i=0; i<NUMPVS; i++ ) {
-    if ( destPvExpString[i].getRaw() ) {
-      writeStringToFile( f, destPvExpString[i].getRaw() );
-    }
-    else {
-      writeStringToFile( f, "" );
-    }
-    if ( sourceExpString[i].getRaw() ) {
-      writeStringToFile( f, sourceExpString[i].getRaw() );
-    }
-    else {
-      writeStringToFile( f, "" );
-    }
-  }
-
   fprintf( f, "%-d\n", allowDups[0] );
-
-  fprintf( f, "%-d\n", cascade[0] );
-
-  if ( symbolsExpStr[0].getRaw() ) {
-    writeStringToFile( f, symbolsExpStr[0].getRaw() );
-  }
-  else {
-    writeStringToFile( f, "" );
-  }
-
-  fprintf( f, "%-d\n", replaceSymbols[0] );
-
-  fprintf( f, "%-d\n", propagateMacros[0] );
-
-  fprintf( f, "%-d\n", useFocus );
 
   fprintf( f, "%-d\n", numDsps );
 
@@ -626,24 +846,9 @@ int i, index;
     else
       writeStringToFile( f, "" );
 
-    fprintf( f, "%-d\n", closeAction[i] );
-
     fprintf( f, "%-d\n", setPostion[i] );
 
     fprintf( f, "%-d\n", allowDups[i] );
-
-    fprintf( f, "%-d\n", cascade[i] );
-
-    if ( symbolsExpStr[i].getRaw() ) {
-      writeStringToFile( f, symbolsExpStr[i].getRaw() );
-    }
-    else {
-      writeStringToFile( f, "" );
-    }
-
-    fprintf( f, "%-d\n", replaceSymbols[i] );
-
-    fprintf( f, "%-d\n", propagateMacros[i] );
 
   }
 
@@ -660,24 +865,21 @@ int i, index;
 
   fprintf( f, "%-d\n", ofsY );
 
-  fprintf( f, "%-d\n", button3Popup );
-
   return 1;
 
 }
 
-int relatedDisplayClass::createFromFile (
+int pvInspectorClass::createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
 {
 
-int i, n1, n2, numPvs, stat, major, minor, release;
+int i, n1, stat, major, minor, release;
 
 tagClass tag;
 
 int zero = 0;
-int one = 1;
 char *emptyStr = "";
 
 int setPosOriginal = 0;
@@ -692,9 +894,9 @@ static int setPosEnum[3] = {
   2
 };
 
-  major = RDC_MAJOR_VERSION;
-  minor = RDC_MINOR_VERSION;
-  release = RDC_RELEASE;
+  major = PIC_MAJOR_VERSION;
+  minor = PIC_MINOR_VERSION;
+  release = PIC_RELEASE;
 
   this->actWin = _actWin;
 
@@ -715,25 +917,17 @@ static int setPosEnum[3] = {
   tag.loadR( "xPosOffset", &ofsX, &zero );
   tag.loadR( "yPosOffset", &ofsY, &zero );
   tag.loadR( "noEdit", &noEdit, &zero );
-  tag.loadR( "useFocus", &useFocus, &zero );
-  tag.loadR( "button3Popup", &button3Popup, &zero );
-  tag.loadR( "invisible", &invisible, &zero );
   tag.loadR( "buttonLabel", &buttonLabel, emptyStr );
-  tag.loadR( "numPvs", &numPvs, &zero );
-  tag.loadR( "pv", NUMPVS, destPvExpString, &n1, emptyStr );
-  tag.loadR( "value", NUMPVS, sourceExpString, &n1, emptyStr );
   tag.loadR( "numDsps", &numDsps, &zero );
-  tag.loadR( "displayFileName", maxDsps, displayFileName, &n2, emptyStr );
-  tag.loadR( "menuLabel", maxDsps, label, &n2, emptyStr );
-  tag.loadR( "closeAction", maxDsps, closeAction, &n2, &zero );
+  tag.loadR( "displayFileName", maxDsps, displayFileName, &n1, emptyStr );
+  tag.loadR( "menuLabel", maxDsps, label, &n1, emptyStr );
   tag.loadR( "setPosition", 3, setPosEnumStr, setPosEnum, maxDsps, setPostion, 
-   &n2, &setPosOriginal );
-  tag.loadR( "allowDups", maxDsps, allowDups, &n2, &zero );
-  tag.loadR( "cascade", maxDsps, cascade, &n2, &zero );
-  tag.loadR( "symbols", maxDsps, symbolsExpStr, &n2, emptyStr );
-  tag.loadR( "replaceSymbols", maxDsps, replaceSymbols, &n2, &zero );
-  tag.loadR( "propagateMacros", maxDsps, propagateMacros, &n2, &one );
-  tag.loadR( "closeDisplay", maxDsps, closeAction, &n2, &zero );
+   &n1, &setPosOriginal );
+  tag.loadR( "allowDups", maxDsps, allowDups, &n1, &zero );
+  tag.loadR( "appendRtype", maxDsps, useRtype, &n1, &zero );
+  tag.loadR( "appendType", maxDsps, useType, &n1, &zero );
+  tag.loadR( "appendSpecificType", maxDsps, useSpecType, &n1, &zero );
+  tag.loadR( "appendDimension", maxDsps, useDim, &n1, &zero );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.loadR( "endObjectProperties" );
@@ -744,7 +938,14 @@ static int setPosEnum[3] = {
     actWin->appCtx->postMessage( tag.errMsg() );
   }
 
-  if ( major > RDC_MAJOR_VERSION ) {
+  useAnyRtype = 0;
+  for ( i=0; i<numDsps; i++ ) {
+    if ( useRtype[i] ) {
+      useAnyRtype = 1;
+    }
+  }
+
+  if ( major > PIC_MAJOR_VERSION ) {
     postIncompatable();
     return 0;
   }
@@ -755,11 +956,6 @@ static int setPosEnum[3] = {
   }
 
   this->initSelectBox(); // call after getting x,y,w,h
-
-  for ( i=numPvs; i<NUMPVS; i++ ) {
-    destPvExpString[i].setRaw( "" );
-    sourceExpString[i].setRaw( "" );
-  }
 
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
@@ -773,23 +969,22 @@ static int setPosEnum[3] = {
 
 }
 
-int relatedDisplayClass::old_createFromFile (
+int pvInspectorClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
 {
 
-int i, numPvs, r, g, b, index, more, md;
+int i, r, g, b, index, more, md;
 int major, minor, release;
 unsigned int pixel;
 char oneName[255+1];
-char onePvName[activeGraphicClass::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
   fscanf( f, "%d %d %d\n", &major, &minor, &release ); actWin->incLine();
 
-  if ( major > RDC_MAJOR_VERSION ) {
+  if ( major > PIC_MAJOR_VERSION ) {
     postIncompatable();
     return 0;
   }
@@ -894,15 +1089,6 @@ char onePvName[activeGraphicClass::MAX_PV_NAME+1];
 
   readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
-  if ( ( major > 1 ) || ( minor > 2 ) ) {
-    fscanf( f, "%d\n", &invisible ); actWin->incLine();
-    fscanf( f, "%d\n", &closeAction[0] ); actWin->incLine();
-  }
-  else {
-    invisible = 0;
-    closeAction[0] = 0;
-  }
-
   if ( ( major > 1 ) || ( minor > 3 ) ) {
     fscanf( f, "%d\n", &setPostion[0] ); actWin->incLine();
   }
@@ -910,64 +1096,11 @@ char onePvName[activeGraphicClass::MAX_PV_NAME+1];
     setPostion[0] = 0;
   }
 
-  if ( ( major > 1 ) || ( minor > 4 ) ) {
-    fscanf( f, "%d\n", &numPvs ); actWin->incLine();
-    for ( i=0; i<numPvs; i++ ) {
-      if ( i >= NUMPVS ) i = NUMPVS - 1;
-      readStringFromFile( onePvName, activeGraphicClass::MAX_PV_NAME+1, f );
-       actWin->incLine();
-      destPvExpString[i].setRaw( onePvName );
-      readStringFromFile( onePvName, 39+1, f ); actWin->incLine();
-      sourceExpString[i].setRaw( onePvName );
-    }
-    for ( i=numPvs; i<NUMPVS; i++ ) {
-      destPvExpString[i].setRaw( "" );
-      sourceExpString[i].setRaw( "" );
-    }
-  }
-  else {
-    for ( i=numPvs; i<NUMPVS; i++ ) {
-      destPvExpString[i].setRaw( "" );
-      sourceExpString[i].setRaw( "" );
-    }
-  }
-
   if ( ( major > 1 ) || ( minor > 6 ) ) {
     fscanf( f, "%d\n", &allowDups[0] ); actWin->incLine();
   }
   else {
     allowDups[0] = 0;
-  }
-
-  if ( ( major > 1 ) || ( minor > 7 ) ) {
-    fscanf( f, "%d\n", &cascade[0] ); actWin->incLine();
-  }
-  else {
-    cascade[0] = 0;
-  }
-
-  if ( ( major > 1 ) || ( minor > 8 ) ) {
-    readStringFromFile( oneName, 255+1, f ); actWin->incLine();
-    symbolsExpStr[0].setRaw( oneName );
-    fscanf( f, "%d\n", &replaceSymbols[0] ); actWin->incLine();
-  }
-  else {
-    symbolsExpStr[0].setRaw( "" );
-    replaceSymbols[0]  = 0;
-  }
-
-  if ( ( major > 1 ) || ( minor > 9 ) ) {
-    fscanf( f, "%d\n", &propagateMacros[0] ); actWin->incLine();
-  }
-  else {
-    propagateMacros[0] = 0;
-  }
-
-  if ( ( major > 1 ) || ( minor > 10 ) ) {
-    fscanf( f, "%d\n", &useFocus ); actWin->incLine();
-  }
-  else {
-    useFocus = 0;
   }
 
   // after v 2.3 read numDsps and then the data
@@ -992,32 +1125,16 @@ char onePvName[activeGraphicClass::MAX_PV_NAME+1];
         readStringFromFile( oneName, 127+1, f ); actWin->incLine();
         label[i].setRaw( oneName );
 
-        fscanf( f, "%d\n", &closeAction[i] );
-
         fscanf( f, "%d\n", &setPostion[i] );
 
         fscanf( f, "%d\n", &allowDups[i] );
 
-        fscanf( f, "%d\n", &cascade[i] );
-
-        readStringFromFile( oneName, 255+1, f ); actWin->incLine();
-        symbolsExpStr[i].setRaw( oneName );
-
-        fscanf( f, "%d\n", &replaceSymbols[i] );
-
-        fscanf( f, "%d\n", &propagateMacros[i] );
-
       }
 
       for ( i=numDsps; i<maxDsps; i++ ) {
-        closeAction[i] = 0;
         setPostion[i] = 0;
         allowDups[i] = 0;
-        cascade[i] = 0;
-        propagateMacros[i] = 1;
-        replaceSymbols[i] = 0;
         label[i].setRaw( "" );
-        symbolsExpStr[i].setRaw( "" );
       }
 
     }
@@ -1054,32 +1171,16 @@ char onePvName[activeGraphicClass::MAX_PV_NAME+1];
       readStringFromFile( oneName, 127+1, f ); actWin->incLine();
       label[i].setRaw( oneName );
 
-      fscanf( f, "%d\n", &closeAction[i] );
-
       fscanf( f, "%d\n", &setPostion[i] );
 
       fscanf( f, "%d\n", &allowDups[i] );
 
-      fscanf( f, "%d\n", &cascade[i] );
-
-      readStringFromFile( oneName, 255+1, f ); actWin->incLine();
-      symbolsExpStr[i].setRaw( oneName );
-
-      fscanf( f, "%d\n", &replaceSymbols[i] );
-
-      fscanf( f, "%d\n", &propagateMacros[i] );
-
     }
 
     for ( i=numDsps; i<maxDsps; i++ ) {
-      closeAction[i] = 0;
       setPostion[i] = 0;
       allowDups[i] = 0;
-      cascade[i] = 0;
-      propagateMacros[i] = 1;
-      replaceSymbols[i] = 0;
       label[i].setRaw( "" );
-      symbolsExpStr[i].setRaw( "" );
     }
 
     readStringFromFile( oneName, 127+1, f ); actWin->incLine();
@@ -1098,17 +1199,6 @@ char onePvName[activeGraphicClass::MAX_PV_NAME+1];
     ofsY = 0;
   }
 
-  if ( ( major > 2 ) || ( major == 2 ) && ( minor > 6 ) ) {
-    fscanf( f, "%d\n", &button3Popup ); actWin->incLine();
-  }
-  else {
-    button3Popup = 0;
-  }
-
-  if ( useFocus ) {
-    button3Popup = 0;
-  }
-
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
@@ -1121,279 +1211,20 @@ char onePvName[activeGraphicClass::MAX_PV_NAME+1];
 
 }
 
-int relatedDisplayClass::importFromXchFile (
-  FILE *f,
-  char *name,
-  activeWindowClass *_actWin ) {
-
-int fgR, fgG, fgB, bgR, bgG, bgB, more, index;
-unsigned int pixel;
-char *tk, *gotData, *context, buf[255+1];
-
-  fgR = 0xffff;
-  fgG = 0xffff;
-  fgB = 0xffff;
-
-  bgR = 0xffff;
-  bgG = 0xffff;
-  bgB = 0xffff;
-
-  this->actWin = _actWin;
-
-  strcpy( fontTag, actWin->defaultBtnFontTag );
-  actWin->fi->loadFontTag( fontTag );
-
-  topShadowColor = actWin->defaultTopShadowColor;
-  botShadowColor = actWin->defaultBotShadowColor;
-
-  fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
-  bgColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
-
-  // continue until tag is <eod>
-
-  do {
-
-    gotData = getNextDataString( buf, 255, f );
-    if ( !gotData ) {
-      actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-      return 0;
-    }
-
-    context = NULL;
-
-    tk = strtok_r( buf, " \t\n", &context );
-    if ( !tk ) {
-      actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-      return 0;
-    }
-
-    if ( strcmp( tk, "<eod>" ) == 0 ) {
-
-      more = 0;
-
-    }
-    else {
-
-      more = 1;
-
-      if ( strcmp( tk, "x" ) == 0 ) {
-
-        tk = strtok_r( NULL, "\"\n", &context );
-        if ( !tk ) {
-          actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-          return 0;
-        }
-
-        x = atol( tk );
-
-      }
-      else if ( strcmp( tk, "y" ) == 0 ) {
-
-        tk = strtok_r( NULL, "\"\n", &context );
-        if ( !tk ) {
-          actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-          return 0;
-        }
-
-        y = atol( tk );
-
-      }
-      else if ( strcmp( tk, "w" ) == 0 ) {
-
-        tk = strtok_r( NULL, "\"\n", &context );
-        if ( !tk ) {
-          actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-          return 0;
-        }
-
-        w = atol( tk );
-
-      }
-      else if ( strcmp( tk, "h" ) == 0 ) {
-
-        tk = strtok_r( NULL, "\"\n", &context );
-        if ( !tk ) {
-          actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-          return 0;
-        }
-
-        h = atol( tk );
-
-      }
-            
-      else if ( strcmp( tk, "fgred" ) == 0 ) {
-
-        tk = strtok_r( NULL, "\"\n", &context );
-        if ( !tk ) {
-          actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-          return 0;
-        }
-
-        fgR = atol( tk );
-
-      }
-            
-      else if ( strcmp( tk, "fggreen" ) == 0 ) {
-
-        tk = strtok_r( NULL, "\"\n", &context );
-        if ( !tk ) {
-          actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-          return 0;
-        }
-
-        fgG = atol( tk );
-
-      }
-            
-      else if ( strcmp( tk, "fgblue" ) == 0 ) {
-
-        tk = strtok_r( NULL, "\"\n", &context );
-        if ( !tk ) {
-          actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-          return 0;
-        }
-
-        fgB = atol( tk );
-
-      }
-            
-      else if ( strcmp( tk, "bgred" ) == 0 ) {
-
-        tk = strtok_r( NULL, "\"\n", &context );
-        if ( !tk ) {
-          actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-          return 0;
-        }
-
-        bgR = atol( tk );
-
-      }
-            
-      else if ( strcmp( tk, "bggreen" ) == 0 ) {
-
-        tk = strtok_r( NULL, "\"\n", &context );
-        if ( !tk ) {
-          actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-          return 0;
-        }
-
-        bgG = atol( tk );
-
-      }
-            
-      else if ( strcmp( tk, "bgblue" ) == 0 ) {
-
-        tk = strtok_r( NULL, "\"\n", &context );
-        if ( !tk ) {
-          actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-          return 0;
-        }
-
-        bgB = atol( tk );
-
-      }
-            
-      else if ( strcmp( tk, "closecurrent" ) == 0 ) {
-
-        tk = strtok_r( NULL, "\"\n", &context );
-        if ( !tk ) {
-          actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-          return 0;
-        }
-
-        closeAction[0] = atol( tk );
-
-      }
-            
-      else if ( strcmp( tk, "invisible" ) == 0 ) {
-
-        tk = strtok_r( NULL, "\"\n", &context );
-        if ( !tk ) {
-          actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-          return 0;
-        }
-
-        invisible = atol( tk );
-
-      }
-            
-      else if ( strcmp( tk, "font" ) == 0 ) {
-
-        tk = strtok_r( NULL, "\"\n", &context );
-        if ( !tk ) {
-          actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-          return 0;
-        }
-
-        strncpy( fontTag, tk, 63 );
-
-      }
-
-      else if ( strcmp( tk, "displayname" ) == 0 ) {
-
-        tk = strtok_r( NULL, "\"", &context );
-        if ( !tk ) {
-          actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-          return 0;
-        }
-
-        displayFileName[0].setRaw( tk );
-
-      }
-
-      else if ( strcmp( tk, "label" ) == 0 ) {
-
-        tk = strtok_r( NULL, "\"", &context );
-        if ( !tk ) {
-          actWin->appCtx->postMessage( relatedDisplayClass_str1 );
-          return 0;
-        }
-
-        buttonLabel.setRaw( tk );
-        label[0].setRaw( tk );
-
-      }
-
-    }
-
-  } while ( more );
-
-  this->initSelectBox(); // call after getting x,y,w,h
-
-  actWin->ci->setRGB( fgR, fgG, fgB, &pixel );
-  index = actWin->ci->pixIndex( pixel );
-  fgColor.setColorIndex( index, actWin->ci );
-
-  actWin->ci->setRGB( bgR, bgG, bgB, &pixel );
-  index = actWin->ci->pixIndex( pixel );
-  bgColor.setColorIndex( index, actWin->ci );
-
-  actWin->fi->loadFontTag( fontTag );
-  actWin->drawGc.setFontTag( fontTag, actWin->fi );
-
-  fs = actWin->fi->getXFontStruct( fontTag );
-  actWin->fi->getTextFontList( fontTag, &fontList );
-
-  updateDimensions();
-
-  return 1;
-
-}
-
-int relatedDisplayClass::genericEdit ( void ) {
+int pvInspectorClass::genericEdit ( void ) {
 
 int i;
 char title[32], *ptr;
 
   buf = new bufType;
 
-  ptr = actWin->obj.getNameFromClass( "relatedDisplayClass" );
+  ptr = actWin->obj.getNameFromClass( "pvInspectorClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
   else
-    strncpy( title, relatedDisplayClass_str17, 31 );
+    strncpy( title, pvInspectorClass_str1, 31 );
 
-  Strncat( title, relatedDisplayClass_str3, 31 );
+  Strncat( title, pvInspectorClass_str2, 31 );
 
   buf->bufX = x;
   buf->bufY = y;
@@ -1409,15 +1240,11 @@ char title[32], *ptr;
 
   buf->bufBgColor = bgColor.pixelIndex();
 
-  buf->bufInvisible = invisible;
-
   buf->bufOfsX = ofsX;
 
   buf->bufOfsY = ofsY;
 
   buf->bufNoEdit = noEdit;
-
-  buf->bufUseFocus = useFocus;
 
   for ( i=0; i<maxDsps; i++ ) {
 
@@ -1431,43 +1258,15 @@ char title[32], *ptr;
     else
       strncpy( buf->bufLabel[i], "", 127 );
 
-    buf->bufCloseAction[i] = closeAction[i];
-
     buf->bufSetPostion[i] = setPostion[i];
 
     buf->bufAllowDups[i] = allowDups[i];
 
-    buf->bufCascade[i] = cascade[i];
+    buf->bufUseRtype[i] = useRtype[i];
+    buf->bufUseType[i] = useType[i];
+    buf->bufUseSpecType[i] = useSpecType[i];
+    buf->bufUseDim[i] = useDim[i];
 
-    buf->bufPropagateMacros[i] = propagateMacros[i];
-
-    if ( symbolsExpStr[i].getRaw() ) {
-      strncpy( buf->bufSymbols[i], symbolsExpStr[i].getRaw(), 255 );
-    }
-    else {
-      strncpy( buf->bufSymbols[i], "", 255 );
-    }
-
-    buf->bufReplaceSymbols[i] = replaceSymbols[i];
-
-  }
-
-  for ( i=0; i<NUMPVS; i++ ) {
-    if ( destPvExpString[i].getRaw() ) {
-      strncpy( buf->bufDestPvName[i], destPvExpString[i].getRaw(),
-       activeGraphicClass::MAX_PV_NAME );
-      buf->bufDestPvName[i][activeGraphicClass::MAX_PV_NAME] = 0;
-    }
-    else {
-      strcpy( buf->bufDestPvName[i], "" );
-    }
-    if ( sourceExpString[i].getRaw() ) {
-      strncpy( buf->bufSource[i], sourceExpString[i].getRaw(), 39 );
-      buf->bufSource[i][39] = 0;
-    }
-    else {
-      strcpy( buf->bufSource[i], "" );
-    }
   }
 
   if ( buttonLabel.getRaw() ) {
@@ -1478,35 +1277,27 @@ char title[32], *ptr;
     strncpy( buf->bufButtonLabel, "", 127 );
   }
 
-  buf->bufButton3Popup = button3Popup;
-
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( relatedDisplayClass_str4, 35, &buf->bufX );
-  ef.addTextField( relatedDisplayClass_str5, 35, &buf->bufY );
-  ef.addTextField( relatedDisplayClass_str6, 35, &buf->bufW );
-  ef.addTextField( relatedDisplayClass_str7, 35, &buf->bufH );
+  ef.addTextField( pvInspectorClass_str4, 35, &buf->bufX );
+  ef.addTextField( pvInspectorClass_str5, 35, &buf->bufY );
+  ef.addTextField( pvInspectorClass_str6, 35, &buf->bufW );
+  ef.addTextField( pvInspectorClass_str7, 35, &buf->bufH );
 
-  ef.addTextField( relatedDisplayClass_str36, 35, buf->bufLabel[0], 127 );
-  ef.addTextField( relatedDisplayClass_str37, 35, buf->bufDisplayFileName[0],
+  ef.addTextField( pvInspectorClass_str20, 35, buf->bufLabel[0], 127 );
+  ef.addTextField( pvInspectorClass_str21, 35, buf->bufDisplayFileName[0],
    127 );
-  ef.addTextField( relatedDisplayClass_str26, 35, buf->bufSymbols[0], 255 );
-  ef.addOption( relatedDisplayClass_str23, relatedDisplayClass_str24,
-   &buf->bufReplaceSymbols[0] );
-  ef.addToggle( relatedDisplayClass_str25, &buf->bufPropagateMacros[0] );
-  ef.addOption( relatedDisplayClass_str30, relatedDisplayClass_str31,
+  ef.addOption( pvInspectorClass_str16, pvInspectorClass_str17,
    &buf->bufSetPostion[0] );
-  ef.addTextField( relatedDisplayClass_str32, 35, &buf->bufOfsX );
-  ef.addTextField( relatedDisplayClass_str33, 35, &buf->bufOfsY );
-  ef.addToggle( relatedDisplayClass_str20, &buf->bufCloseAction[0] );
-  ef.addToggle( relatedDisplayClass_str21, &buf->bufAllowDups[0] );
-  //ef.addToggle( relatedDisplayClass_str22, &buf->bufCascade[0] );
+  ef.addTextField( pvInspectorClass_str18, 35, &buf->bufOfsX );
+  ef.addTextField( pvInspectorClass_str19, 35, &buf->bufOfsY );
+  ef.addToggle( pvInspectorClass_str3, &buf->bufAllowDups[0] );
 
-  ef.addEmbeddedEf( relatedDisplayClass_str14, "...", &ef1 );
+  ef.addEmbeddedEf( pvInspectorClass_str14, "...", &ef1 );
 
   ef1->create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -1517,56 +1308,43 @@ char title[32], *ptr;
   for ( i=1; i<maxDsps; i++ ) {
 
     ef1->beginSubForm();
-    ef1->addTextField( relatedDisplayClass_str38, 35, buf->bufLabel[i], 127 );
-    ef1->addLabel( relatedDisplayClass_str39 );
+    ef1->addTextField( pvInspectorClass_str22, 35, buf->bufLabel[i], 127 );
+    ef1->addLabel( pvInspectorClass_str23 );
     ef1->addTextField( "", 35, buf->bufDisplayFileName[i], 127 );
-    ef1->addLabel( relatedDisplayClass_str40 );
-    ef1->addTextField( "", 35, buf->bufSymbols[i], 255 );
     ef1->endSubForm();
 
     ef1->beginLeftSubForm();
-    ef1->addLabel( relatedDisplayClass_str41 );
-    ef1->addOption( "", relatedDisplayClass_str24,
-     &buf->bufReplaceSymbols[i] );
+    ef1->addLabel( pvInspectorClass_str16 );
+    ef1->addOption( " ", pvInspectorClass_str17, &buf->bufSetPostion[i] );
     ef1->addLabel( " " );
-    ef1->addToggle( " ", &buf->bufPropagateMacros[i] );
-    ef1->addLabel( relatedDisplayClass_str42 );
-    ef1->addLabel( relatedDisplayClass_str30 );
-    ef1->addOption( " ", relatedDisplayClass_str31, &buf->bufSetPostion[i] );
-    ef1->addLabel( " " );
-    ef1->addToggle( " ", &buf->bufCloseAction[i] );
-    ef1->addLabel( relatedDisplayClass_str35 );
-    ef1->addToggle( " ", &buf->bufAllowDups[i] );
-    ef1->addLabel( relatedDisplayClass_str43 );
-    //ef1->addToggle( " ", &buf->bufCascade[i] );
-    //ef1->addLabel( relatedDisplayClass_str22 );
+    ef1->addToggle( pvInspectorClass_str24, &buf->bufAllowDups[i] );
+    ef1->addToggle( pvInspectorClass_str32, &buf->bufUseRtype[i] );
+    ef1->addToggle( pvInspectorClass_str33, &buf->bufUseType[i] );
+    ef1->addToggle( pvInspectorClass_str34, &buf->bufUseSpecType[i] );
+    ef1->addToggle( pvInspectorClass_str35, &buf->bufUseDim[i] );
     ef1->endSubForm();
 
   }
 
-  //ef1->finished( rdc_edit_ok1, rdc_edit_apply1, rdc_edit_cancel1, this );
-  ef1->finished( rdc_edit_ok1, this );
+  //ef1->finished( pic_edit_ok1, pic_edit_apply1, pic_edit_cancel1, this );
+  ef1->finished( pic_edit_ok1, this );
 
-  ef.addTextField( relatedDisplayClass_str13, 35, buf->bufButtonLabel, 127 );
+  ef.addTextField( pvInspectorClass_str13, 35, buf->bufButtonLabel, 127 );
 
-  ef.addToggle( relatedDisplayClass_str17, &buf->bufUseFocus );
-  ef.addToggle( relatedDisplayClass_str19, &buf->bufInvisible );
-  ef.addToggle( relatedDisplayClass_str29, &buf->bufNoEdit );
-  ef.addToggle( relatedDisplayClass_str34, &buf->bufButton3Popup );
+  ef.addToggle( pvInspectorClass_str15, &buf->bufNoEdit );
 
-  for ( i=0; i<NUMPVS; i++ ) {
-    ef.addTextField( relatedDisplayClass_str15, 35, buf->bufDestPvName[i],
-     activeGraphicClass::MAX_PV_NAME );
-    ef.addTextField( relatedDisplayClass_str16, 35, buf->bufSource[i], 39 );
-  }
+  ef.addToggle( pvInspectorClass_str28, &buf->bufUseRtype[0] );
+  ef.addToggle( pvInspectorClass_str29, &buf->bufUseType[0] );
+  ef.addToggle( pvInspectorClass_str30, &buf->bufUseSpecType[0] );
+  ef.addToggle( pvInspectorClass_str31, &buf->bufUseDim[0] );
 
-  ef.addColorButton( relatedDisplayClass_str8, actWin->ci, &fgCb, &buf->bufFgColor );
-  ef.addColorButton( relatedDisplayClass_str9, actWin->ci, &bgCb, &buf->bufBgColor );
-  ef.addColorButton( relatedDisplayClass_str10, actWin->ci, &topShadowCb,
+  ef.addColorButton( pvInspectorClass_str8, actWin->ci, &fgCb, &buf->bufFgColor );
+  ef.addColorButton( pvInspectorClass_str9, actWin->ci, &bgCb, &buf->bufBgColor );
+  ef.addColorButton( pvInspectorClass_str10, actWin->ci, &topShadowCb,
    &buf->bufTopShadowColor );
-  ef.addColorButton( relatedDisplayClass_str11, actWin->ci, &botShadowCb,
+  ef.addColorButton( pvInspectorClass_str11, actWin->ci, &botShadowCb,
    &buf->bufBotShadowColor );
-  ef.addFontMenu( relatedDisplayClass_str12, actWin->fi, &fm, fontTag );
+  ef.addFontMenu( pvInspectorClass_str12, actWin->fi, &fm, fontTag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 
@@ -1574,10 +1352,10 @@ char title[32], *ptr;
 
 }
 
-int relatedDisplayClass::editCreate ( void ) {
+int pvInspectorClass::editCreate ( void ) {
 
   this->genericEdit();
-  ef.finished( rdc_edit_ok, rdc_edit_apply, rdc_edit_cancel_delete, this );
+  ef.finished( pic_edit_ok, pic_edit_apply, pic_edit_cancel_delete, this );
   actWin->currentEf = NULL;
   ef.popup();
 
@@ -1585,10 +1363,10 @@ int relatedDisplayClass::editCreate ( void ) {
 
 }
 
-int relatedDisplayClass::edit ( void ) {
+int pvInspectorClass::edit ( void ) {
 
   this->genericEdit();
-  ef.finished( rdc_edit_ok, rdc_edit_apply, rdc_edit_cancel, this );
+  ef.finished( pic_edit_ok, pic_edit_apply, pic_edit_cancel, this );
   actWin->currentEf = &ef;
   ef.popup();
 
@@ -1596,7 +1374,7 @@ int relatedDisplayClass::edit ( void ) {
 
 }
 
-int relatedDisplayClass::erase ( void ) {
+int pvInspectorClass::erase ( void ) {
 
   if ( deleteRequest ) return 1;
 
@@ -1610,9 +1388,9 @@ int relatedDisplayClass::erase ( void ) {
 
 }
 
-int relatedDisplayClass::eraseActive ( void ) {
+int pvInspectorClass::eraseActive ( void ) {
 
-  if ( !enabled || !activeMode || invisible ) return 1;
+  if ( !enabled || !activeMode ) return 1;
 
   XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
    actWin->executeGc.eraseGC(), x, y, w, h );
@@ -1624,7 +1402,7 @@ int relatedDisplayClass::eraseActive ( void ) {
 
 }
 
-int relatedDisplayClass::draw ( void ) {
+int pvInspectorClass::draw ( void ) {
 
 int tX, tY;
 XRectangle xR = { x, y, w, h };
@@ -1712,13 +1490,15 @@ XRectangle xR = { x, y, w, h };
 
 }
 
-int relatedDisplayClass::drawActive ( void ) {
+int pvInspectorClass::drawActive ( void ) {
 
 int tX, tY;
 char string[39+1];
 XRectangle xR = { x, y, w, h };
 
-  if ( !enabled || !activeMode || invisible ) return 1;
+  if ( !enabled || !activeMode ) return 1;
+
+  return 1;
 
   actWin->executeGc.saveFg();
 
@@ -1806,14 +1586,17 @@ XRectangle xR = { x, y, w, h };
 
 }
 
-int relatedDisplayClass::activate (
+int pvInspectorClass::activate (
   int pass,
   void *ptr )
 {
 
-int i, ii, opStat, n;
+int ii, opStat, n;
 Arg args[5];
 XmString str;
+XmFontList textFontList = NULL;
+Cardinal numImportTargets;
+Atom importList[2];
 
   switch ( pass ) {
 
@@ -1821,23 +1604,22 @@ XmString str;
 
     aglPtr = ptr;
     aw = NULL;
-    needClose = 0;
+    needClose = needResolvePvName = needConnect =
+     needRtypeConnect = needTimeout = needRtypeTimeout = 0;
+    tf_widget = NULL;
+    grabUpdate = 0;
+    resolvingName = 0;
+    pvId = NULL;
+    unconnectedTimer = 0;
+    rtypeUnconnectedTimer = 0;
+    msgDialogPoppedUp = 0;
+    pvType = 0;
+    pvSpecificType = 0;
+    isVector = 0;
+    pvConnected = 0;
+    rtypePvConnected = 0;
 
-    for ( i=0; i<NUMPVS; i++ ) {
-
-      opComplete[i] = 0;
-
-      if ( !destPvExpString[i].getExpanded() ||
-         ( strcmp( destPvExpString[i].getExpanded(), "" ) == 0 ) ) {
-        destExists[i] = 0;
-        destConnected[i] = 1;
-      }
-      else {
-        destExists[i] = 1;
-        destConnected[i] = 0;
-      }
-
-    }
+    opComplete = 0;
 
     activeMode = 1;
 
@@ -1847,64 +1629,94 @@ XmString str;
 
     opStat = 1;
 
-    for ( i=0; i<NUMPVS; i++ ) {
+    msgDialog.create( actWin->executeWidgetId() );
 
-      if ( !opComplete[i] ) {
+    if ( !tf_widget ) {
 
-        initEnable();
+      if ( fontTag ) {
+        actWin->fi->getTextFontList( fontTag, &textFontList );
+      }
+      else {
+        textFontList = NULL;
+      }
 
-        initialConnection[i] = 1;
-        destPvId[i] = NULL;
+      tf_widget = XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+       actWin->executeWidget,
+       XmNx, x,
+       XmNy, y-3,
+       XmNforeground, fgColor.getColor(),
+       XmNbackground, bgColor.getColor(),
+       XmNhighlightThickness, 0,
+       XmNwidth, w,
+       XmNvalue, entryValue,
+       XmNmaxLength, (short) PV_Factory::MAX_PV_NAME,
+       XmNpendingDelete, True,
+       XmNmarginHeight, 0,
+       XmNfontList, textFontList,
+       XmNuserData, this,
+       XmNcursorPositionVisible, False,
+       NULL );
 
-        if ( i == 0 ) {
+      if ( !enabled ) {
+        XtUnmapWidget( tf_widget );
+      }
 
-          n = 0;
-          XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
-          popUpMenu = XmCreatePopupMenu( actWin->topWidgetId(), "", args, n );
+      if ( textFontList ) XmFontListFree( textFontList );
 
-          pullDownMenu = XmCreatePulldownMenu( popUpMenu, "", NULL, 0 );
+      XtAddCallback( tf_widget, XmNfocusCallback,
+       pioSetSelection, this );
 
-          for ( ii=0; ii<numDsps; ii++ ) {
+      XtAddCallback( tf_widget, XmNmotionVerifyCallback,
+       pioGrabUpdate, this );
 
-            if ( label[ii].getExpanded() ) {
-              str = XmStringCreateLocalized( label[ii].getExpanded() );
-	    }
-	    else {
-              str = XmStringCreateLocalized( " " );
-	    }
-            pb[ii] = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
-             popUpMenu,
-             XmNlabelString, str,
-             NULL );
-            XmStringFree( str );
+      XtAddCallback( tf_widget, XmNvalueChangedCallback,
+       pioSetValueChanged, this );
 
-            XtAddCallback( pb[ii], XmNactivateCallback, menu_cb,
-             (XtPointer) this );
+      XtAddCallback( tf_widget, XmNactivateCallback,
+       pioUpdateValue, this );
 
-	  }
+      // change drop behavior
 
+      importList[0] = XA_STRING;
+      numImportTargets = 1;
+      n = 0;
+      XtSetArg( args[n], XmNimportTargets, importList ); n++;
+      XtSetArg( args[n], XmNnumImportTargets, numImportTargets ); n++;
+      XtSetArg( args[n], XmNdropProc, handleDrop ); n++;
+      XmDropSiteUpdate( tf_widget, args, n );
+
+    }
+
+    if ( !opComplete ) {
+
+      initEnable();
+
+      n = 0;
+      XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
+      popUpMenu = XmCreatePopupMenu( actWin->topWidgetId(), "", args, n );
+
+      pullDownMenu = XmCreatePulldownMenu( popUpMenu, "", NULL, 0 );
+
+      for ( ii=0; ii<numDsps; ii++ ) {
+
+        if ( label[ii].getExpanded() ) {
+          str = XmStringCreateLocalized( label[ii].getExpanded() );
 	}
+	else {
+          str = XmStringCreateLocalized( " " );
+	}
+        pb[ii] = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+         popUpMenu,
+         XmNlabelString, str,
+         NULL );
+        XmStringFree( str );
 
-        if ( destExists[i] ) {
-
-          objAndIndex[i].obj = (void *) this;
-          objAndIndex[i].index = i;
-
-	  destPvId[i] = the_PV_Factory->create(
-           destPvExpString[i].getExpanded() );
-	  if ( destPvId[i] ) {
-	    destPvId[i]->add_conn_state_callback(
-             relDsp_monitor_dest_connect_state, (void *) &objAndIndex[i] );
-            opComplete[i] = 1;
-	  }
-	  else {
-            printf( relatedDisplayClass_str27 );
-            opStat = 0;
-          }
-
-        }
+        XtAddCallback( pb[ii], XmNactivateCallback, menu_cb,
+         (XtPointer) this );
 
       }
+
+      opComplete = 1;
 
     }
 
@@ -1925,30 +1737,37 @@ XmString str;
 
 }
 
-int relatedDisplayClass::deactivate (
+int pvInspectorClass::deactivate (
   int pass )
 {
-
-int i;
 
   if ( pass == 1 ) {
 
     activeMode = 0;
 
-    XtDestroyWidget( popUpMenu );
-
-    for ( i=0; i<NUMPVS; i++ ) {
-
-      if ( destExists[i] ) {
-        if ( destPvId[i] ) {
-	  destPvId[i]->remove_conn_state_callback(
-           relDsp_monitor_dest_connect_state, (void *) &objAndIndex[i] );
-	  destPvId[i]->release();
-	  destPvId[i] = NULL;
-	}
-      }
-
+    if ( msgDialogPoppedUp ) {
+      msgDialogPoppedUp = 0;
+      msgDialog.popdown();
     }
+
+    msgDialog.destroy(); 
+
+    if ( unconnectedTimer ) {
+      XtRemoveTimeOut( unconnectedTimer );
+      unconnectedTimer = 0;
+    }
+
+    if ( rtypeUnconnectedTimer ) {
+      XtRemoveTimeOut( rtypeUnconnectedTimer );
+      rtypeUnconnectedTimer = 0;
+    }
+
+    if ( tf_widget ) {
+      XtDestroyWidget( tf_widget );
+      tf_widget = NULL;
+    }
+
+    XtDestroyWidget( popUpMenu );
 
   }
 
@@ -1958,7 +1777,7 @@ int i;
 
 }
 
-void relatedDisplayClass::updateDimensions ( void )
+void pvInspectorClass::updateDimensions ( void )
 {
 
   if ( fs ) {
@@ -1974,7 +1793,7 @@ void relatedDisplayClass::updateDimensions ( void )
 
 }
 
-int relatedDisplayClass::expand1st (
+int pvInspectorClass::expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] )
@@ -1982,13 +1801,7 @@ int relatedDisplayClass::expand1st (
 
 int i;
 
-  for ( i=0; i<NUMPVS; i++ ) {
-    destPvExpString[i].expand1st( numMacros, macros, expansions );
-    sourceExpString[i].expand1st( numMacros, macros, expansions );
-  }
-
   for ( i=0; i<maxDsps; i++ ) {
-    symbolsExpStr[i].expand1st( numMacros, macros, expansions );
     label[i].expand1st( numMacros, macros, expansions );
     displayFileName[i].expand1st( numMacros, macros, expansions );
   }
@@ -1999,7 +1812,7 @@ int i;
 
 }
 
-int relatedDisplayClass::expand2nd (
+int pvInspectorClass::expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] )
@@ -2007,13 +1820,7 @@ int relatedDisplayClass::expand2nd (
 
 int i;
 
-  for ( i=0; i<NUMPVS; i++ ) {
-    destPvExpString[i].expand2nd( numMacros, macros, expansions );
-    sourceExpString[i].expand2nd( numMacros, macros, expansions );
-  }
-
   for ( i=0; i<maxDsps; i++ ) {
-    symbolsExpStr[i].expand2nd( numMacros, macros, expansions );
     label[i].expand2nd( numMacros, macros, expansions );
     displayFileName[i].expand2nd( numMacros, macros, expansions );
   }
@@ -2024,17 +1831,11 @@ int i;
 
 }
 
-int relatedDisplayClass::containsMacros ( void ) {
+int pvInspectorClass::containsMacros ( void ) {
 
 int i;
 
-  for ( i=0; i<NUMPVS; i++ ) {
-    if ( destPvExpString[i].containsPrimaryMacros() ) return 1;
-    if ( sourceExpString[i].containsPrimaryMacros() ) return 1;
-  }
-
   for ( i=0; i<maxDsps; i++ ) {
-    if ( symbolsExpStr[i].containsPrimaryMacros() ) return 1;
     if ( label[i].containsPrimaryMacros() ) return 1;
     if ( displayFileName[i].containsPrimaryMacros() ) return 1;
   }
@@ -2045,15 +1846,78 @@ int i;
 
 }
 
-void relatedDisplayClass::popupDisplay (
+char *pvInspectorClass::vectorId (
+  int isVector )
+{
+
+  if ( isVector ) {
+    return G_VectorID;
+  }
+  else {
+    return G_ScalarID;
+  }
+
+}
+
+char *pvInspectorClass::pvSpecificTypeName (
+  int pvSpecificTypeNum )
+{
+
+  if ( pvSpecificTypeNum == (int) ProcessVariable::specificType::real ) {
+    return G_SpecTypeNameReal;
+  }
+  else if ( pvSpecificTypeNum == (int) ProcessVariable::specificType::flt ) {
+    return G_SpecTypeNameFloat;
+  }
+  else if ( pvSpecificTypeNum == (int) ProcessVariable::specificType::integer ) {
+    return G_SpecTypeNameInt;
+  }
+  else if ( pvSpecificTypeNum == (int) ProcessVariable::specificType::shrt ) {
+    return G_SpecTypeNameShort;
+  }
+  else if ( pvSpecificTypeNum == (int) ProcessVariable::specificType::chr ) {
+    return G_SpecTypeNameChar;
+  }
+  else if ( pvSpecificTypeNum == (int) ProcessVariable::specificType::enumerated ) {
+    return G_SpecTypeNameEnum;
+  }
+  else if ( pvSpecificTypeNum == (int) ProcessVariable::specificType::text ) {
+    return G_SpecTypeNameText;
+  }
+
+  return G_SpecTypeNameUnknown;
+
+}
+
+char *pvInspectorClass::pvTypeName (
+  int pvTypeNum )
+{
+
+  if ( pvTypeNum == (int) ProcessVariable::Type::real ) {
+    return G_TypeNameReal;
+  }
+  else if ( pvTypeNum == (int) ProcessVariable::Type::integer ) {
+    return G_TypeNameInt;
+  }
+  else if ( pvTypeNum == (int) ProcessVariable::Type::enumerated ) {
+    return G_TypeNameEnum;
+  }
+  else if ( pvTypeNum == (int) ProcessVariable::Type::text ) {
+    return G_TypeNameText;
+  }
+
+  return G_TypeNameUnknown;
+
+}
+
+void pvInspectorClass::popupDisplay (
   int index )
 {
 
 activeWindowListPtr cur;
 Arg args[10];
 int i, l, stat, newX, newY, n;
-char name[127+1], symbolsWithSubs[255+1];
-pvValType destV;
+char name[127+1], nameWithParams[127+1], symbolsWithSubs[255+1];
 unsigned int crc;
 char *tk, *context, buf[255+1], *fileTk, *fileContext, fileBuf[255+1],
  *result, msg[79+1];
@@ -2061,7 +1925,7 @@ FILE *f;
 expStringClass symbolsFromFile;
 int gotSymbolsFromFile;
 
-int useSmallArrays, symbolCount, maxSymbolLength, focus;
+int useSmallArrays, symbolCount, maxSymbolLength;
 
 char smallNewMacros[SMALL_SYM_ARRAY_SIZE+1][SMALL_SYM_ARRAY_LEN+1+1];
 char smallNewValues[SMALL_SYM_ARRAY_SIZE+1][SMALL_SYM_ARRAY_LEN+1+1];
@@ -2070,10 +1934,8 @@ char *newMacros[100];
 char *newValues[100];
 int numNewMacros, max, numFound;
 
-  focus = useFocus;
-  if ( numDsps > 1 ) {
-    focus = 0;
-  }
+  posX = x;
+  posY = y;
 
   // allow the syntax: @filename s1=v1,s2=v2,...
   // which means read symbols from file and append list
@@ -2087,7 +1949,7 @@ int numNewMacros, max, numFound;
       if ( tk[1] ) {
         f = actWin->openAnyGenericFile( &tk[1], "r", name, 127 );
 	if ( !f ) {
-          snprintf( msg, 79, relatedDisplayClass_str44, &tk[1] );
+          snprintf( msg, 79, pvInspectorClass_str25, &tk[1] );
 	  msg[79] = 0;
           actWin->appCtx->postMessage( msg );
           symbolsFromFile.setRaw( "" );
@@ -2101,7 +1963,7 @@ int numNewMacros, max, numFound;
               symbolsFromFile.setRaw( fileTk );
 	    }
 	    else {
-              snprintf( msg, 79, relatedDisplayClass_str45, name );
+              snprintf( msg, 79, pvInspectorClass_str26, name );
               msg[79] = 0;
               actWin->appCtx->postMessage( msg );
               symbolsFromFile.setRaw( "" );
@@ -2109,10 +1971,10 @@ int numNewMacros, max, numFound;
 	  }
 	  else {
             if ( errno ) {
-              snprintf( msg, 79, relatedDisplayClass_str46, name );
+              snprintf( msg, 79, pvInspectorClass_str27, name );
 	    }
 	    else {
-              snprintf( msg, 79, relatedDisplayClass_str45, name );
+              snprintf( msg, 79, pvInspectorClass_str26, name );
 	    }
             msg[79] = 0;
             actWin->appCtx->postMessage( msg );
@@ -2146,39 +2008,6 @@ int numNewMacros, max, numFound;
     // do special substitutions
     actWin->substituteSpecial( 255, symbolsExpStr[index].getExpanded(),
      symbolsWithSubs );
-  }
-
-  // set all existing pvs
-  for ( i=0; i<NUMPVS; i++ ) {
-
-    if ( destExists[i] && destConnected[i] ) {
-
-      switch ( destType[i] ) {
-
-      case ProcessVariable::Type::real:
-        destV.d = atof( sourceExpString[i].getExpanded() );
-        destPvId[i]->put( destV.d );
-        break;
-
-      case ProcessVariable::Type::integer:
-        destV.l = atol( sourceExpString[i].getExpanded() );
-        destPvId[i]->put( destV.l );
-        break;
-
-      case ProcessVariable::Type::text:
-        strncpy( destV.str, sourceExpString[i].getExpanded(), 39 );
-        destPvId[i]->putText( destV.str );
-        break;
-
-      case ProcessVariable::Type::enumerated:
-        destV.s = (short) atol( sourceExpString[i].getExpanded() );
-        destPvId[i]->put( destV.s );
-        break;
-
-      }
-
-    }
-
   }
 
   numNewMacros = 0;
@@ -2319,7 +2148,15 @@ int numNewMacros, max, numFound;
 
   }
 
-  stat = getFileName( name, displayFileName[index].getExpanded(), 127 );
+  strncpy( nameWithParams, displayFileName[index].getExpanded(), 127 );
+  nameWithParams[127] = 0;
+  if ( useRtype[index]) Strncat( nameWithParams, rtype, 127 );
+  if ( useType[index] ) Strncat( nameWithParams, pvTypeName(pvType), 127 );
+  if ( useSpecType[index] )
+   Strncat( nameWithParams, pvSpecificTypeName(pvSpecificType), 127 );
+  if ( useDim[index] ) Strncat( nameWithParams, vectorId(isVector), 127 );
+
+  stat = getFileName( name, nameWithParams, 127 );
 
   // calc crc
 
@@ -2336,7 +2173,7 @@ int numNewMacros, max, numFound;
            ( crc == cur->node.crc ) && !cur->node.isEmbedded ) {
         // display is already open; don't open another instance
 	// move (maybe)
-        if ( setPostion[index] == RDC_BUTTON_POS ) {
+        if ( setPostion[index] == PIC_BUTTON_POS ) {
           newX = actWin->xPos()+posX+ofsX;
 	  newY = actWin->yPos()+posY+ofsY;
           n = 0;
@@ -2344,7 +2181,7 @@ int numNewMacros, max, numFound;
           XtSetArg( args[n], XmNy, (XtArgVal) newY ); n++;
           XtSetValues( cur->node.drawWidget, args, n );
         }
-        else if ( setPostion[index] == RDC_PARENT_OFS_POS ) {
+        else if ( setPostion[index] == PIC_PARENT_OFS_POS ) {
           newX = actWin->xPos()+ofsX;
 	  newY = actWin->yPos()+ofsY;
           n = 0;
@@ -2372,19 +2209,13 @@ int numNewMacros, max, numFound;
   cur = new activeWindowListType;
   actWin->appCtx->addActiveWindow( cur );
 
-  if ( focus || button3Popup ) {
-    cur->node.createAutoPopup( actWin->appCtx, NULL, 0, 0, 0, 0,
+  if ( noEdit ) {
+    cur->node.createNoEdit( actWin->appCtx, NULL, 0, 0, 0, 0,
      numNewMacros, newMacros, newValues );
   }
   else {
-    if ( noEdit ) {
-      cur->node.createNoEdit( actWin->appCtx, NULL, 0, 0, 0, 0,
-       numNewMacros, newMacros, newValues );
-    }
-    else {
-      cur->node.create( actWin->appCtx, NULL, 0, 0, 0, 0,
-       numNewMacros, newMacros, newValues );
-    }
+    cur->node.create( actWin->appCtx, NULL, 0, 0, 0, 0,
+     numNewMacros, newMacros, newValues );
   }
 
   if ( !useSmallArrays ) {
@@ -2399,14 +2230,15 @@ int numNewMacros, max, numFound;
   cur->node.realize();
   cur->node.setGraphicEnvironment( &actWin->appCtx->ci, &actWin->appCtx->fi );
 
-  cur->node.storeFileName( displayFileName[index].getExpanded() );
+  //cur->node.storeFileName( displayFileName[index].getExpanded() );
+  cur->node.storeFileName( name );
 
-  if ( setPostion[index] == RDC_BUTTON_POS ) {
+  if ( setPostion[index] == PIC_BUTTON_POS ) {
     actWin->appCtx->openActivateActiveWindow( &cur->node,
      //actWin->xPos()+x+ofsX, actWin->yPos()+y+ofsY );
      actWin->xPos()+posX+ofsX, actWin->yPos()+posY+ofsY );
   }
-  else if ( setPostion[index] == RDC_PARENT_OFS_POS ) {
+  else if ( setPostion[index] == PIC_PARENT_OFS_POS ) {
     actWin->appCtx->openActivateActiveWindow( &cur->node,
      actWin->xPos()+ofsX, actWin->yPos()+ofsY );
   }
@@ -2414,22 +2246,15 @@ int numNewMacros, max, numFound;
     actWin->appCtx->openActivateActiveWindow( &cur->node );
   }
 
-  if ( focus || button3Popup ) {
-    aw = &cur->node;
-  }
-  else {
-    aw = NULL;
-  }
+  aw = NULL;
 
 done:
 
-  if ( !focus && !button3Popup && closeAction[index] ) {
-    actWin->closeDeferred( 2 );
-  }
+  return;
 
 }
 
-void relatedDisplayClass::btnUp (
+void pvInspectorClass::btnUp (
   XButtonEvent *be,
   int _x,
   int _y,
@@ -2441,14 +2266,6 @@ void relatedDisplayClass::btnUp (
   *action = 0;
 
   if ( !enabled ) return;
-
-  if ( numDsps == 1 ) {
-    if ( button3Popup ) {
-      needClose = 1;
-      actWin->addDefExeNode( aglPtr );
-      return;
-    }
-  }
 
   if ( numDsps < 2 ) return;
 
@@ -2462,7 +2279,7 @@ void relatedDisplayClass::btnUp (
 
 }
 
-void relatedDisplayClass::btnDown (
+void pvInspectorClass::btnDown (
   XButtonEvent *be,
   int _x,
   int _y,
@@ -2471,24 +2288,11 @@ void relatedDisplayClass::btnDown (
   int *action )
 {
 
-int focus;
-
   *action = 0; // close screen via actWin->closeDeferred
 
   if ( !enabled ) return;
 
-  focus = useFocus;
-  if ( numDsps > 1 ) focus = 0;
-
-  if ( focus ) {
-    if ( buttonNumber != -1 ) return;
-  }
-  else {
-    if ( ( buttonNumber != 1 ) && ( buttonNumber != 3 ) ) return;
-    if ( ( buttonNumber == 3 ) && !button3Popup ) return;
-    if ( ( buttonNumber == 1 ) && button3Popup ) return;
-    if ( button3Popup && aw ) return;
-  }
+  if ( buttonNumber != 1 ) return;
 
   if ( numDsps < 1 ) return;
 
@@ -2500,100 +2304,55 @@ int focus;
 
 }
 
-void relatedDisplayClass::pointerIn (
+void pvInspectorClass::pointerIn (
   XMotionEvent *me,
   int _x,
   int _y,
   int buttonState )
 {
 
-int focus;
-
   if ( !enabled ) return;
 
-  focus = useFocus;
-
-  if ( !focus ) {
-
-    activeGraphicClass::pointerIn( me, me->x, me->y, buttonState );
-
-  }
+  activeGraphicClass::pointerIn( me, me->x, me->y, buttonState );
 
 }
 
-void relatedDisplayClass::pointerOut (
+void pvInspectorClass::pointerOut (
   XMotionEvent *me,
   int _x,
   int _y,
   int buttonState )
 {
 
-int focus;
-
   if ( !enabled ) return;
 
-  focus = useFocus;
-
-  if ( !focus ) {
-
-    activeGraphicClass::pointerOut( me, me->x, me->y, buttonState );
-
-  }
+  activeGraphicClass::pointerOut( me, me->x, me->y, buttonState );
 
 }
 
-void relatedDisplayClass::mousePointerIn (
+void pvInspectorClass::mousePointerIn (
   XMotionEvent *me,
   int _x,
   int _y,
   int buttonState )
 {
 
-int buttonNumber = -1;
-int action;
-int focus;
-XButtonEvent *be;
-
   if ( !enabled ) return;
-
-  focus = useFocus;
-  if ( numDsps > 1 ) focus = 0;
-
-  if ( focus ) {
-
-    if ( aw ) return;
-
-    be = (XButtonEvent *) me;
-    btnDown( be, _x, _y, buttonState, buttonNumber, &action );
-
-  }
 
 }
 
-void relatedDisplayClass::mousePointerOut (
+void pvInspectorClass::mousePointerOut (
   XMotionEvent *me,
   int _x,
   int _y,
   int buttonState )
 {
 
-int focus;
-
   if ( !enabled ) return;
-
-  focus = useFocus;
-  if ( numDsps > 1 ) focus = 0;
-
-  if ( focus ) {
-
-    needClose = 1;
-    actWin->addDefExeNode( aglPtr );
-
-  }
 
 }
 
-int relatedDisplayClass::getButtonActionRequest (
+int pvInspectorClass::getButtonActionRequest (
   int *up,
   int *down,
   int *drag,
@@ -2601,19 +2360,15 @@ int relatedDisplayClass::getButtonActionRequest (
 {
 
   *drag = 0;
-  *down = 1;
-  *up = 1;
-
-  if ( !blank( displayFileName[0].getExpanded() ) )
-    *focus = 1;
-  else
-    *focus = 0;
+  *down = 0;
+  *up = 0;
+  *focus = 0;
 
   return 1;
 
 }
 
-void relatedDisplayClass::changeDisplayParams (
+void pvInspectorClass::changeDisplayParams (
   unsigned int _flag,
   char *_fontTag,
   int _alignment,
@@ -2652,15 +2407,206 @@ void relatedDisplayClass::changeDisplayParams (
 
 }
 
-void relatedDisplayClass::executeDeferred ( void ) {
+void pvInspectorClass::executeDeferred ( void ) {
 
-int nc, okToClose;
+int nc, nrpv, ncon, nrtcon, nto, nrto, okToClose;
+char value[PV_Factory::MAX_PV_NAME+1], syms[255+1];
 activeWindowListPtr cur;
 
   actWin->appCtx->proc->lock();
+  nrpv = needResolvePvName; needResolvePvName = 0;
+  ncon = needConnect; needConnect = 0;
+  nrtcon = needRtypeConnect; needRtypeConnect = 0;
+  nto = needTimeout; needTimeout = 0;
+  nrto = needRtypeTimeout; needRtypeTimeout = 0;
   nc = needClose; needClose = 0;
+  strncpy( value, entryValue, PV_Factory::MAX_PV_NAME );
+  value[PV_Factory::MAX_PV_NAME] = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
+
+  if ( nrpv && !blank(value) ) {
+
+    pvConnected = rtypePvConnected = displayOpen = isVector = 0;
+    pvType = pvSpecificType = -1;
+    resolvingName = 1;
+    strcpy( rtypeFieldName, "" );
+    Strncat( rtypeFieldName, value, PV_Factory::MAX_PV_NAME );
+    Strncat( rtypeFieldName, ".RTYP", PV_Factory::MAX_PV_NAME );
+
+    if ( useAnyRtype ) {
+      rtypePvId = the_PV_Factory->create( rtypeFieldName );
+      rtypePvId->add_conn_state_callback( monitor_rtype_pv_connect_state,
+       (void *) this );
+      rtypePvId->add_value_callback( rtype_pv_update,
+       (void *) this );
+      if ( !unconnectedTimer ) {
+        rtypeUnconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
+         5000, rtypeUnconnectedTimeout, this );
+      }
+    }
+    else {
+      rtypePvId = NULL;
+      strcpy( rtype, "" );
+    }
+
+    pvId = the_PV_Factory->create( value );
+    pvId->add_conn_state_callback( monitor_pv_connect_state,
+     (void *) this );
+    pvId->add_value_callback( pv_update,
+     (void *) this );
+
+    if ( !unconnectedTimer ) {
+      unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
+       5000, unconnectedTimeout, this );
+    }
+
+    msgDialog.popup( pvInspectorClass_str36, x+actWin->xPos(),
+     y+actWin->yPos() );
+    msgDialogPoppedUp = 1;
+
+  }
+
+  if ( ncon ) {
+    if ( pvId ) {
+      if ( unconnectedTimer ) {
+        XtRemoveTimeOut( unconnectedTimer );
+        unconnectedTimer = 0;
+      }
+      if ( ( rtypePvConnected || !useAnyRtype ) && !displayOpen ) {
+        if ( msgDialogPoppedUp ) {
+          msgDialog.popdown();
+          msgDialogPoppedUp = 0;
+	}
+        displayOpen = 1;
+        if ( numDsps == 1 ) {
+          if ( useAnyRtype ) {
+            snprintf( syms, 255,
+             "name=%s,rtype=%s,type=%s,specType=%s,vector=%s",
+             value, rtype, pvTypeName(pvType),
+             pvSpecificTypeName(pvSpecificType),
+             vectorId(isVector) );
+	  }
+	  else {
+            snprintf( syms, 255,
+             "name=%s,type=%s,specType=%s,vector=%s",
+             value, pvTypeName(pvType), pvSpecificTypeName(pvSpecificType),
+             vectorId(isVector) );
+	  }
+          symbolsExpStr[0].setRaw( syms );
+          popupDisplay( 0 );
+	}
+	else {
+          XButtonEvent be;
+	  memset( (char *) &be, 0, sizeof(be) );
+          be.x = x;
+          be.y = y;
+          be.x_root = x+actWin->xPos();
+          be.y_root = y+actWin->yPos();
+          XmMenuPosition( popUpMenu, &be );
+          XtManageChild( popUpMenu );
+	}
+      }
+      pvId->remove_conn_state_callback( monitor_pv_connect_state,
+       (void *) this );
+      pvId->remove_value_callback( pv_update,
+       (void *) this );
+      pvId->release();
+      pvId = NULL;
+      resolvingName = 0;
+    }
+  }
+
+  if ( nrtcon ) {
+    if ( rtypePvId ) {
+      if ( rtypeUnconnectedTimer ) {
+        XtRemoveTimeOut( rtypeUnconnectedTimer );
+        rtypeUnconnectedTimer = 0;
+      }
+      if ( pvConnected && !displayOpen ) {
+        if ( msgDialogPoppedUp ) {
+          msgDialog.popdown();
+          msgDialogPoppedUp = 0;
+	}
+        displayOpen = 1;
+        if ( numDsps == 1 ) {
+          snprintf( syms, 255,
+           "name=%s,rtype=%s,type=%s,specType=%s,vector=%s",
+           value, rtype, pvTypeName(pvType),
+           pvSpecificTypeName(pvSpecificType),
+           vectorId(isVector) );
+          symbolsExpStr[0].setRaw( syms );
+          popupDisplay( 0 );
+	}
+	else {
+          XButtonEvent be;
+	  memset( (char *) &be, 0, sizeof(be) );
+          be.x = x;
+          be.y = y;
+          be.x_root = x+actWin->xPos();
+          be.y_root = y+actWin->yPos();
+          XmMenuPosition( popUpMenu, &be );
+          XtManageChild( popUpMenu );
+	}
+      }
+      rtypePvId->remove_conn_state_callback( monitor_rtype_pv_connect_state,
+       (void *) this );
+      rtypePvId->remove_value_callback( rtype_pv_update,
+       (void *) this );
+      rtypePvId->release();
+      rtypePvId = NULL;
+    }
+  }
+
+  if ( nto ) {
+    if ( pvId ) {
+      pvId->remove_conn_state_callback( monitor_pv_connect_state,
+       (void *) this );
+      pvId->release();
+      pvId = NULL;
+      resolvingName = 0;
+      actWin->appCtx->postMessage( pvInspectorClass_str37 );
+      if ( msgDialogPoppedUp ) {
+        msgDialog.popdown();
+        msgDialogPoppedUp = 0;
+      }
+    }
+  }
+
+  if ( nrto ) {
+    if ( rtypePvId ) {
+      rtypePvId->remove_conn_state_callback( monitor_rtype_pv_connect_state,
+       (void *) this );
+      rtypePvId->release();
+      rtypePvId = NULL;
+      strcpy( rtype, "" );
+      if ( pvConnected && !displayOpen ) {
+        if ( msgDialogPoppedUp ) {
+          msgDialog.popdown();
+          msgDialogPoppedUp = 0;
+        }
+        displayOpen = 1;
+        if ( numDsps == 1 ) {
+          snprintf( syms, 255,
+           "name=%s,rtype=N/A,type=%s,specType=%s,vector=%s",
+           value, pvTypeName(pvType), pvSpecificTypeName(pvSpecificType),
+           vectorId(isVector) );
+          symbolsExpStr[0].setRaw( syms );
+          popupDisplay( 0 );
+	}
+	else {
+          XButtonEvent be;
+	  memset( (char *) &be, 0, sizeof(be) );
+          be.x = x;
+          be.y = y;
+          be.x_root = x+actWin->xPos();
+          be.y_root = y+actWin->yPos();
+          XmMenuPosition( popUpMenu, &be );
+          XtManageChild( popUpMenu );
+	}
+      }
+    }
+  }
 
   if ( nc ) {
 
@@ -2695,24 +2641,24 @@ activeWindowListPtr cur;
 extern "C" {
 #endif
 
-void *create_relatedDisplayClassPtr ( void ) {
+void *create_pvInspectorClassPtr ( void ) {
 
-relatedDisplayClass *ptr;
+pvInspectorClass *ptr;
 
-  ptr = new relatedDisplayClass;
+  ptr = new pvInspectorClass;
   return (void *) ptr;
 
 }
 
-void *clone_relatedDisplayClassPtr (
+void *clone_pvInspectorClassPtr (
   void *_srcPtr )
 {
 
-relatedDisplayClass *ptr, *srcPtr;
+pvInspectorClass *ptr, *srcPtr;
 
-  srcPtr = (relatedDisplayClass *) _srcPtr;
+  srcPtr = (pvInspectorClass *) _srcPtr;
 
-  ptr = new relatedDisplayClass( srcPtr );
+  ptr = new pvInspectorClass( srcPtr );
 
   return (void *) ptr;
 

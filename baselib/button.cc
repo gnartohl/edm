@@ -542,7 +542,7 @@ activeGraphicClass *bto = (activeGraphicClass *) this;
 
 activeButtonClass::~activeButtonClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -2980,6 +2980,24 @@ void activeButtonClass::changePvNames (
       visPvExpString.setRaw( ctlPvs[0] );
     }
   }
+
+}
+
+void activeButtonClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 4 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 4;
+  pvs[0] = controlPvId;
+  pvs[1] = readPvId;
+  pvs[2] = colorPvId;
+  pvs[3] = visPvId;
 
 }
 

@@ -317,6 +317,11 @@ void updateColors (
 
 void bufInvalidate ( void );
 
+void getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
+
 };
 
 #ifdef __cplusplus

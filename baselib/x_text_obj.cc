@@ -177,7 +177,7 @@ activeXTextClass *axto = (activeXTextClass *) client;
   axtc_edit_update ( w, client, call );
 
   if ( axto->bufValue ) {
-    delete axto->bufValue;
+    delete[] axto->bufValue;
     axto->bufValue = NULL;
   }
 
@@ -195,7 +195,7 @@ static void axtc_edit_cancel (
 activeXTextClass *axto = (activeXTextClass *) client;
 
   if ( axto->bufValue ) {
-    delete axto->bufValue;
+    delete[] axto->bufValue;
     axto->bufValue = NULL;
   }
 
@@ -213,7 +213,7 @@ static void axtc_edit_cancel_delete (
 activeXTextClass *axto = (activeXTextClass *) client;
 
   if ( axto->bufValue ) {
-    delete axto->bufValue;
+    delete[] axto->bufValue;
     axto->bufValue = NULL;
   }
 
@@ -423,9 +423,9 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
 activeXTextClass::~activeXTextClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
-  if ( bufValue ) delete bufValue;
+  if ( bufValue ) delete[] bufValue;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -1960,7 +1960,7 @@ pvValType pvV;
     if ( bufValue ) {
       value.setRaw( bufValue );
       stringLength = strlen( bufValue );
-      delete bufValue;
+      delete[] bufValue;
       bufValue = NULL;
     }
 
@@ -2269,6 +2269,22 @@ int index, change;
 void activeXTextClass::bufInvalidate ( void ) {
 
   bufInvalid = 1;
+
+}
+
+void activeXTextClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 2 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 2;
+  pvs[0] = alarmPvId;
+  pvs[1] = visPvId;
 
 }
 

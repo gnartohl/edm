@@ -441,7 +441,7 @@ menuMuxClass::~menuMuxClass ( void ) {
 
 int i;
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -451,18 +451,18 @@ int i;
   if ( mac && exp ) {
     for ( i=0; i<numMac; i++ ) {
       if ( mac[i] ) {
-	delete mac[i];
+	delete[] mac[i];
       }
       if ( exp[i] ) {
-	delete exp[i];
+	delete[] exp[i];
       }
     }
   }
-  if ( mac ) delete mac;
-  if ( exp ) delete exp;
+  if ( mac ) delete[] mac;
+  if ( exp ) delete[] exp;
 
   for ( i=0; i<MMUX_MAX_STATES; i++ ) {
-    if ( stateString[i] ) delete stateString[i];
+    if ( stateString[i] ) delete[] stateString[i];
   }
 
   if ( fontList ) XmFontListFree( fontList );
@@ -642,6 +642,13 @@ tagClass itemTag;
 
 int zero = 0;
 char *emptyStr = "";
+
+  for ( i=0; i<MMUX_MAX_ENTRIES; i++ ) {
+    for ( ii=0; ii<MMUX_MAX_STATES; ii++ ) {
+      strcpy( tmpBufS[i][ii], "" );
+      strcpy( tmpBufV[i][ii], "" );
+    }
+  }
 
   this->actWin = _actWin;
 
@@ -1378,20 +1385,20 @@ int i, ii, n, count;
 
     for ( i=0; i<numMac; i++ ) {
       if ( mac[i] ) {
-        delete mac[i];
+        delete[] mac[i];
         mac[i] = NULL;
       }
       if ( exp[i] ) {
-        delete exp[i];
+        delete[] exp[i];
         exp[i] = NULL;
       }
     }
     if ( mac ) {
-      delete mac;
+      delete[] mac;
       mac = NULL;
     }
     if ( exp ) {
-      delete exp;
+      delete[] exp;
       exp = NULL;
     }
 
@@ -1959,6 +1966,21 @@ void menuMuxClass::changePvNames (
       controlPvExpStr.setRaw( ctlPvs[0] );
     }
   }
+
+}
+
+void menuMuxClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 1 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 1;
+  pvs[0] = controlPvId;
 
 }
 

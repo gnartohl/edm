@@ -459,6 +459,11 @@ void changePvNames (
   int numAlarmPvs,
   char *alarmPvs[] );
 
+void getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
+
 };
 
 #ifdef __cplusplus

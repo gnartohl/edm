@@ -472,7 +472,7 @@ activeBarClass::~activeBarClass ( void ) {
 
 /*   printf( "In activeBarClass::~activeBarClass\n" ); */
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -2149,7 +2149,7 @@ int opStat;
     zeroCrossover = 0;
     oldAboveBarOrigin = 0;
     needConnectInit = needInfoInit = needRefresh = needErase = needDrawCheck =
-     needDraw = 0;
+     needDraw = needFullDraw = 0;
     needToEraseUnconnected = 0;
     needToDrawUnconnected = 0;
     unconnectedTimer = 0;
@@ -3485,6 +3485,22 @@ void activeBarClass::changePvNames (
       nullPvExpStr.setRaw( nullPvs[0] );
     }
   }
+
+}
+
+void activeBarClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 2 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 2;
+  pvs[0] = readPvId;
+  pvs[1] = nullPvId;
 
 }
 
