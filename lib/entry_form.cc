@@ -2564,6 +2564,159 @@ XmString str;
 
 }
 
+int entryFormClass::addLockedField (
+  char *label,
+  int length,
+  char *dest,
+  int stringSize )
+{
+
+textEntry *cur;
+XmString str;
+
+  cur = new textEntry;
+
+  // textField widget
+
+  if ( curTopParent  == topForm ) {
+
+  if ( firstItem ) {
+
+    firstItem = 0;
+
+    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+     topForm,
+     XmNcolumns, (short) length,
+     XmNvalue, "<LOCKED>",
+     XmNmaxLength, stringSize,
+     XmNtopAttachment, XmATTACH_FORM,
+     XmNrightAttachment, XmATTACH_FORM,
+     XmNfontList, entryFontList,
+     XmNeditable, False,
+     XmNcursorPositionVisible, False,
+     NULL );
+
+     curW = cur->activeW;
+     curRW = cur->activeW;
+
+  }
+  else {
+
+    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+     topForm,
+     XmNcolumns, (short) length,
+     XmNvalue, "<LOCKED>",
+     XmNmaxLength, stringSize,
+     XmNtopAttachment, XmATTACH_WIDGET,
+     XmNtopWidget, curW,
+     XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
+     XmNrightWidget, curRW,
+     XmNfontList, entryFontList,
+     XmNeditable, False,
+     XmNcursorPositionVisible, False,
+     NULL );
+
+     curW = cur->activeW;
+     curRW = cur->activeW;
+
+  }
+
+  cur->charDest = NULL;
+  cur->maxLen = 0;
+
+  if ( entryTag )
+    str = XmStringCreate( label, entryTag );
+  else
+    str = XmStringCreateLocalized( label );
+
+  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+   topForm,
+   XmNlabelString, str,
+   XmNmarginTop, 7,
+   XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+   XmNtopWidget, curW,
+   XmNrightAttachment, XmATTACH_WIDGET,
+   XmNrightWidget, curW,
+   XmNfontList, entryFontList,
+   NULL );
+
+  XmStringFree( str );
+
+  }
+  else {
+
+  if ( firstSubFormChild ) {
+
+    firstSubFormChild = 0;
+
+    if ( entryTag )
+      str = XmStringCreate( label, entryTag );
+    else
+      str = XmStringCreateLocalized( label );
+
+    cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+     curTopParent,
+     XmNlabelString, str,
+     XmNmarginTop, 7,
+     XmNtopAttachment, XmATTACH_FORM,
+     XmNleftAttachment, XmATTACH_FORM,
+     XmNfontList, entryFontList,
+     NULL );
+
+    XmStringFree( str );
+
+    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+     curTopParent,
+     XmNcolumns, (short) length,
+     XmNvalue, "<LOCKED>",
+     XmNmaxLength, stringSize,
+     XmNmarginTop, 7,
+     XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+     XmNtopWidget, cur->labelW,
+     XmNleftAttachment, XmATTACH_WIDGET,
+     XmNleftWidget, cur->labelW,
+     XmNfontList, entryFontList,
+     XmNeditable, False,
+     XmNcursorPositionVisible, False,
+     NULL );
+
+    prevW = cur->activeW;
+
+  }
+  else {
+
+    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+     curTopParent,
+     XmNcolumns, (short) length,
+     XmNvalue, "<LOCKED>",
+     XmNmaxLength, stringSize,
+     XmNmarginTop, 7,
+     XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+     XmNtopWidget, prevW,
+     XmNleftAttachment, XmATTACH_WIDGET,
+     XmNleftWidget, prevW,
+     XmNfontList, entryFontList,
+     XmNeditable, False,
+     XmNcursorPositionVisible, False,
+     NULL );
+
+    prevW = cur->activeW;
+
+  }
+
+  cur->charDest = NULL;
+  cur->maxLen = 0;
+
+  }
+
+  itemTail->flink = cur;
+  itemTail = cur;
+  itemTail->flink = NULL;
+
+  return 1;
+
+}
+
 void OptionToString (
   Widget w,
   XtPointer client,

@@ -613,6 +613,12 @@ int entryFormClass::addPasswordField (
   char *dest,
   int stringSize );
 
+int entryFormClass::addLockedField (
+  char *label,
+  int length,
+  char *dest,
+  int stringSize );
+
 int entryFormClass::addOption (
   char *label,
   char *options,
