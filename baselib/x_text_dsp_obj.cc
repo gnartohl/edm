@@ -2036,7 +2036,7 @@ static int fileCompEnum[3] = {
   2
 };
 
-int objTypeUnknown = activeGraphicClass::UNKNOWN;
+int objTypeUnknown = 0; // activeGraphicClass::UNKNOWN
 static char *objTypeEnumStr[4] = {
   "graphics",
   "monitors",
