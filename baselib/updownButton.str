@@ -1,0 +1,30 @@
+#ifndef __updownButton_str
+#define __updownButton_str 1
+
+#define activeUpdownButtonClass_str1 (char *) "import file syntax error"
+#define activeUpdownButtonClass_str2 (char *) "Unknown object"
+#define activeUpdownButtonClass_str3 (char *) " Properties"
+#define activeUpdownButtonClass_str4 (char *) "X"
+#define activeUpdownButtonClass_str5 (char *) "Y"
+#define activeUpdownButtonClass_str6 (char *) "Width"
+#define activeUpdownButtonClass_str7 (char *) "Height"
+#define activeUpdownButtonClass_str8 (char *) "Control PV"
+#define activeUpdownButtonClass_str9 (char *) "Coarse"
+#define activeUpdownButtonClass_str10 (char *) "Fine"
+#define activeUpdownButtonClass_str11 (char *) "Repeat Rate (sec)"
+#define activeUpdownButtonClass_str12 (char *) "3-D Look"
+#define activeUpdownButtonClass_str13 (char *) "Invisible"
+#define activeUpdownButtonClass_str14 (char *) "Label"
+#define activeUpdownButtonClass_str15 (char *) "Label Font"
+#define activeUpdownButtonClass_str16 (char *) "Fg"
+#define activeUpdownButtonClass_str17 (char *) "Bg"
+#define activeUpdownButtonClass_str18 (char *) "Top Shadow"
+#define activeUpdownButtonClass_str19 (char *) "Bottom Shadow"
+#define activeUpdownButtonClass_str20 (char *) "error from ca_search\n"
+#define activeUpdownButtonClass_str21 (char *) "ca_clear_event failure\n"
+#define activeUpdownButtonClass_str22 (char *) "ca_clear_channel failure\n"
+#define activeUpdownButtonClass_str23 (char *) "Add event failure\n"
+#define activeUpdownButtonClass_str24 (char *) "ca_put failure\n"
+#define activeUpdownButtonClass_str25 (char *) "Save/Restore PV"
+
+#endif

@@ -18,6 +18,7 @@
 #define reg_str18 "Menu Mux"
 #define reg_str19 "Related Display"
 #define reg_str20 "Shell Command"
+#define reg_str21 "Up/Down Button"
 
 #define reg_str99 "Exp Rectangle"
 
