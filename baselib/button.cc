@@ -1295,9 +1295,23 @@ char string[MAX_ENUM_STRING_SIZE+1];
   if ( !init ) {
     actWin->executeGc.saveFg();
     actWin->executeGc.setFG( onColor.getDisconnected() );
+    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineStyle( LineSolid );
     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
     actWin->executeGc.restoreFg();
+    needToEraseUnconnected = 1;
+  }
+  else if ( needToEraseUnconnected ) {
+    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineStyle( LineSolid );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.eraseGC(), x, y, w, h );
+    needToEraseUnconnected = 0;
+    if ( invisible ) {
+      eraseActive();
+      smartDrawAllActive();
+    }
   }
 
   if ( !init || !activeMode || invisible ) return 1;
@@ -1306,6 +1320,8 @@ char string[MAX_ENUM_STRING_SIZE+1];
   rV = readV;
 
   actWin->executeGc.saveFg();
+  actWin->executeGc.setLineWidth( 1 );
+  actWin->executeGc.setLineStyle( LineSolid );
 
   if ( controlExists && readExists ) {
 
@@ -1532,6 +1548,7 @@ char callbackName[63+1];
     needCtlConnectInit = needCtlInfoInit = needCtlRefresh =
      needReadConnectInit = needReadInfoInit = needReadRefresh =
      needErase = needDraw = 0;
+    needToEraseUnconnected = 0;
     init = 0;
     opComplete = 0;
     controlValid = 0;
@@ -1965,7 +1982,7 @@ char msg[79+1];
       eraseActive();
       readV = rv;
       controlV = cv;
-      drawActive();
+      smartDrawAllActive();
     }
 
   }
@@ -1975,7 +1992,7 @@ char msg[79+1];
     eraseActive();
     readV = rv; 
     controlV = cv;
-    drawActive();
+    smartDrawAllActive();
 
   }
 
@@ -2029,7 +2046,7 @@ char msg[79+1];
       eraseActive();
       controlV = cv;
       readV = rv;
-      drawActive();
+      smartDrawAllActive();
     }
 
   }
@@ -2041,19 +2058,20 @@ char msg[79+1];
     eraseActive();
     controlV = cv;
     readV = rv;
-    drawActive();
+    smartDrawAllActive();
 
   }
 
   if ( ne ) {
 
     eraseActive();
+    smartDrawAllActive();
 
   }
 
   if ( nd ) {
 
-    drawActive();
+    smartDrawAllActive();
 
   }
 

@@ -1316,9 +1316,23 @@ XRectangle xR = { x, y, w, h };
   if ( !init ) {
     actWin->executeGc.saveFg();
     actWin->executeGc.setFG( bgColor.getDisconnected() );
+    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineStyle( LineSolid );
     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
     actWin->executeGc.restoreFg();
+    needToEraseUnconnected = 1;
+  }
+  else if ( needToEraseUnconnected ) {
+    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineStyle( LineSolid );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.eraseGC(), x, y, w, h );
+    needToEraseUnconnected = 0;
+    if ( invisible ) {
+      eraseActive();
+      smartDrawAllActive();
+    }
   }
 
   if ( !init || !activeMode || invisible ) return 1;
@@ -1482,6 +1496,7 @@ XmString str;
 
     needConnectInit = needSaveConnectInit = needCtlInfoInit = 
      needRefresh = needErase = needDraw = 0;
+    needToEraseUnconnected = 0;
     init = 0;
     aglPtr = ptr;
     opComplete = 0;
@@ -1625,7 +1640,7 @@ XmString str;
       }
       else {
         init = 1;
-        drawActive();
+        smartDrawAllActive();
       }
 
       if ( saveExists ) {
@@ -1993,7 +2008,7 @@ int nc, nsc, nci, nd, ne, nr, stat;
     bgColor.setConnected();
 
     init = 1;
-    drawActive();
+    smartDrawAllActive();
 
   }
 
@@ -2016,7 +2031,7 @@ int nc, nsc, nci, nd, ne, nr, stat;
 
   if ( nd ) {
 
-    drawActive();
+    smartDrawAllActive();
 
   }
 
@@ -2025,6 +2040,7 @@ int nc, nsc, nci, nd, ne, nr, stat;
   if ( ne ) {
 
     eraseActive();
+    smartDrawAllActive();
 
   }
 
@@ -2033,7 +2049,7 @@ int nc, nsc, nci, nd, ne, nr, stat;
   if ( nr ) {
 
     eraseActive();
-    drawActive();
+    smartDrawAllActive();
 
   }
 

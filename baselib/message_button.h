@@ -174,7 +174,7 @@ int destExists, sourcePressExists, sourceReleaseExists, buttonPressed;
 int sourcePressPvConnected, sourceReleasePvConnected, destPvConnected,
  active, activeMode, init;
 
-int needConnectInit, needErase, needDraw;
+int needConnectInit, needErase, needDraw, needToEraseUnconnected;
 
 public:
 

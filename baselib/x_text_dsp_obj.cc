@@ -3644,15 +3644,6 @@ static XtActionsRec dragActions[] = {
     fgColor.setConnected();
     init = 1;
 
-#if 0
-    if ( needToEraseUnconnected ) {
-      actWin->executeGc.setFontTag( fontTag, actWin->fi );
-      stat = eraseText( actWin->executeWidget, &actWin->executeGc,
-       fs, x, y, XmALIGNMENT_BEGINNING, "?" );
-      needToEraseUnconnected = 0;
-    }
-#endif
-
     bufInvalidate();
     eraseActive();
     drawActive();

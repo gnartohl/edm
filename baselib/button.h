@@ -155,7 +155,7 @@ short controlV, curControlV, readV, curReadV;
 
 int needCtlConnectInit, needCtlInfoInit, needCtlRefresh;
 int needReadConnectInit, needReadInfoInit, needReadRefresh;
-int needErase, needDraw;
+int needErase, needDraw, needToEraseUnconnected;
 
 int fgColorMode, bufFgColorMode;
 int bufFgColor, bufOnColor, bufOffColor;
