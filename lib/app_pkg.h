@@ -359,6 +359,8 @@ int curGroupVisInverted;
 char curGroupMinVisString[39+1];
 char curGroupMaxVisString[39+1];
 
+int syncOnce;
+
 appContextClass (
   void );
 

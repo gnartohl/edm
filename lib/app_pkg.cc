@@ -1897,6 +1897,8 @@ appContextClass::appContextClass (
 
   thread_unlock( actionsLock );
 
+  syncOnce = 1;
+
 }
 
 appContextClass::~appContextClass (
@@ -5133,6 +5135,7 @@ void appContextClass::xSynchronize (
   int onoff
 ) {
 
+  postMessage( "X Sync mode is on" );
   XSynchronize( display, (Bool) onoff );
 
 }
