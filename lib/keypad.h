@@ -26,7 +26,6 @@
 typedef struct keypadWidgetListTag {
   struct widgetListTag *flink;
   Widget pb;
-  char *ascii;
 } keypadWidgetListType, *keypadWidgetListPtr;
 
 #ifdef __keypad_cc
@@ -70,9 +69,10 @@ friend void intKeypadPress (
   XtPointer call );
 
 static const int MAXCHARS = 14;
-static const int ZERO = 0;
-static const int NODECPOINT = 1;
-static const int DECPOINT = 2;
+static const int ISNULL = 0;
+static const int ZERO = 1;
+static const int NODECPOINT = 2;
+static const int DECPOINT = 3;
 static const int INT = 100;
 static const int DOUBLE = 101;
 
