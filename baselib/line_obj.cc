@@ -268,7 +268,7 @@ pointPtr cur;
 
   alo->actWin->setCurrentPointObject( alo );
 
-  alo->lineEditBegin();
+  alo->lineCreateBegin();
 
 }
 
@@ -699,7 +699,7 @@ pointPtr cur;
 // object, refresh the screen, and re-select the object to get rid of the
 // select box corners.
 
-  confirmEdit();
+  confirmEdit(); // this creates an "edit undo" object
 
   if ( this->isSelected() ) {
     this->wasSelected = 1;
