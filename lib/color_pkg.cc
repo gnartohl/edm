@@ -2811,6 +2811,48 @@ term:
 
 }
 
+static unsigned int bestColor (
+  Display *display,
+  int depth,
+  Colormap cmap,
+  int num,
+  XColor *colors,
+  XColor oneColor
+) {
+
+int i, stat;
+double best, diff;
+unsigned int bestPixel;
+
+  if ( depth != 8 ) return BlackPixel( display, DefaultScreen(display) );
+
+  best = fabs( oneColor.red - colors[0].red ) +
+   fabs( oneColor.green - colors[0].green ) +
+   fabs( oneColor.blue - colors[0].blue );
+  bestPixel = 0;
+
+  for ( i=1; i<num; i++ ) {
+
+    diff = fabs( (double) oneColor.red - (double) colors[i].red ) +
+     fabs( (double) oneColor.green - (double) colors[i].green ) +
+     fabs( (double) oneColor.blue - (double) colors[i].blue );
+
+    if ( diff < best ) {
+      best = diff;
+      bestPixel = i;
+    }
+
+  }
+
+  stat = XAllocColor( display, cmap, &colors[bestPixel] );
+  if ( !stat ) {
+    return BlackPixel( display, DefaultScreen(display) );
+  }
+
+  return colors[bestPixel].pixel;
+
+}
+
 int colorInfoClass::ver4InitFromFile (
   FILE *f,
   XtAppContext app,
@@ -2836,6 +2878,9 @@ int tmpSize;
 int *tmp;
 char msg[127+1];
 int blinkMs = 500;
+XColor ebitColors[256];
+int numEbitC;
+int numColors = 0;
 
   for ( i=0; i<NUM_SPECIAL_COLORS; i++ ) {
     special[i] = 0;
@@ -2847,6 +2892,25 @@ int blinkMs = 500;
   screen = DefaultScreen( d );
   depth = DefaultDepth( d, screen );
   visual = DefaultVisual( d, screen );
+
+  numEbitC = 0;
+  if ( depth == 8 ) {
+
+    for ( i=0; i<256; i++ ) {
+
+      ebitColors[numEbitC].red = 0;
+      ebitColors[numEbitC].blue = 0;
+      ebitColors[numEbitC].green = 0;
+      ebitColors[numEbitC].flags = 0;
+      ebitColors[numEbitC].pixel = (unsigned) i;
+      stat = XQueryColor( d, cmap, &ebitColors[numEbitC] );
+      if ( stat ) {
+        numEbitC++;
+      }
+
+    }
+
+  }
 
   if ( usePrivColorMapFlag ) {
     usingPrivateColorMap = 1;
@@ -4158,7 +4222,8 @@ term:
         colors[i] = color.pixel;
       }
       else {
-        colors[i] = BlackPixel( display, screen );
+        colors[i] = bestColor( display, depth, cmap, numEbitC, ebitColors,
+         color );
       }
       cur1->pixel = colors[i];
 
@@ -4175,7 +4240,8 @@ term:
           blinkingColors[i] = color.pixel;
         }
         else {
-          blinkingColors[i] = BlackPixel( display, screen );
+          blinkingColors[i] = bestColor( display, depth, cmap, numEbitC,
+           ebitColors, color );
         }
         cur1->blinkPixel = blinkingColors[i];
 
