@@ -639,16 +639,16 @@ static int buttonTypeEnum[2] = {
 
 int objTypeUnknown = activeGraphicClass::UNKNOWN;
 static char *objTypeEnumStr[4] = {
+  "unknown",
   "graphics",
   "monitors",
   "controls",
-  "unknown"
 };
 static int objTypeEnum[4] = {
+  activeGraphicClass::UNKNOWN,
   activeGraphicClass::GRAPHICS,
   activeGraphicClass::MONITORS,
-  activeGraphicClass::CONTROLS,
-  activeGraphicClass::UNKNOWN
+  activeGraphicClass::CONTROLS
 };
 
   major = BTC_MAJOR_VERSION;
