@@ -266,6 +266,11 @@ void activeButtonClass::btnDown (
   int buttonState,
   int buttonNumber );
 
+void activeButtonClass::pointerIn (
+  int _x,
+  int _y,
+  int buttonState );
+
 int activeButtonClass::getButtonActionRequest (
   int *up,
   int *down,

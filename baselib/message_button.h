@@ -249,6 +249,11 @@ void activeMessageButtonClass::btnDown (
   int buttonNumber,
   int *action );
 
+void activeMessageButtonClass::pointerIn (
+  int _x,
+  int _y,
+  int buttonState );
+
 int activeMessageButtonClass::getButtonActionRequest (
   int *up,
   int *down,

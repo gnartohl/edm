@@ -1204,6 +1204,19 @@ static XtActionsRec dragActions[] = {
       n = 0;
       XtSetArg( args[n], XmNwidth, w-42 ); n++;
       XtSetArg( args[n], XmNheight, h-14 ); n++;
+
+      if ( controlExists ) {
+        if ( ca_write_access(controlPvId) ) {
+          XtSetArg( args[n], XmNsensitive, True ); n++;
+	}
+	else {
+          XtSetArg( args[n], XmNsensitive, False ); n++;
+	}
+      }
+      else {
+        XtSetArg( args[n], XmNsensitive, False ); n++;
+      }
+
       XtSetValues( pb[i], args, n );
 
       XtAddCallback( pb[i], XmNactivateCallback, putValue,

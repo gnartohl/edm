@@ -2862,7 +2862,7 @@ void activeXTextDspClass::btnDown (
 char selectString[127+1], bufDir[127+1], bufPat[127+1];
 int i;
 
-  if ( !editable || isWidget ) return;
+  if ( !editable || isWidget || !ca_write_access( pvId ) ) return;
 
   if ( buttonNumber != 1 ) return;
 
@@ -2971,13 +2971,49 @@ int i;
 
 }
 
+void activeXTextDspClass::pointerIn (
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+  if ( !init ) return;
+
+  if ( !ca_write_access( pvId ) ) {
+
+    if ( isWidget ) {
+      XtVaSetValues( tf_widget,
+       XmNeditable, (XtArgVal) False,
+       XmNcursorPositionVisible, (XtArgVal) False,
+       NULL );
+    }
+
+    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
+
+  }
+
+  if ( !isWidget ) {
+    activeGraphicClass::pointerIn( _x, _y, buttonState );
+  }
+
+}
+
 int activeXTextDspClass::getButtonActionRequest (
   int *up,
   int *down,
-  int *drag )
+  int *drag,
+  int *focus )
 {
 
-  *down = 1;
+  if ( pvExists && editable ) {
+    *down = 1;
+    *focus = 1;
+  }
+  else {
+    *down = 0;
+    *focus = 0;
+  }
+
   *up = 0;
   *drag = 0;
 

@@ -2030,6 +2030,18 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 
   if ( !slo->active ) return;
 
+  if ( e->type == EnterNotify ) {
+    if ( !ca_write_access( slo->controlPvId ) ) {
+      slo->actWin->cursor.set( XtWindow(slo->actWin->executeWidget),
+       CURSOR_K_NO );
+    }
+  }
+
+  if ( e->type == LeaveNotify ) {
+    slo->actWin->cursor.set( XtWindow(slo->actWin->executeWidget),
+     CURSOR_K_DEFAULT );
+  }
+
   ptr = slo->actWin->obj.getNameFromClass( "activeSliderClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -2046,7 +2058,10 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 //      stat = slo->drawActivePointers();
 
   }
-  else if ( e->type == ButtonPress ) {
+
+  if ( !ca_write_access( slo->controlPvId ) ) return;
+
+  if ( e->type == ButtonPress ) {
 
     be = (XButtonEvent *) e;
 
@@ -2479,7 +2494,8 @@ char callbackName[63+1];
     }
 
     XtAddEventHandler( sliderWidget,
-     ButtonPressMask|ButtonReleaseMask|ButtonMotionMask|ExposureMask, False,
+     ButtonPressMask|ButtonReleaseMask|ButtonMotionMask|ExposureMask|
+     EnterWindowMask|LeaveWindowMask, False,
      sliderEventHandler, (XtPointer) this );
 
     XtMapWidget( frameWidget );
@@ -2748,7 +2764,8 @@ int stat;
     XtRemoveTimeOut( updateControlTimer );
 
     XtRemoveEventHandler( sliderWidget,
-     ButtonPressMask|ButtonReleaseMask|ButtonMotionMask, False,
+     ButtonPressMask|ButtonReleaseMask|ButtonMotionMask|ExposureMask|
+     EnterWindowMask|LeaveWindowMask, False,
      sliderEventHandler, (XtPointer) this );
 
 // for EPICS support

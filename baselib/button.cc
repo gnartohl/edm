@@ -1688,6 +1688,10 @@ void activeButtonClass::btnUp (
 short value;
 int stat;
 
+  if ( !active ) return;
+
+  if ( !ca_write_access( controlPvId ) ) return;
+
   if ( buttonNumber != 1 ) return;
 
   if ( toggle ) return;
@@ -1716,6 +1720,10 @@ void activeButtonClass::btnDown (
 
 short value;
 int stat;
+
+  if ( !active ) return;
+
+  if ( !ca_write_access( controlPvId ) ) return;
 
   if ( buttonNumber != 1 ) return;
 
@@ -1747,6 +1755,22 @@ int stat;
   if ( !controlExists ) return;
   stat = ca_put( DBR_ENUM, controlPvId, &value );
 #endif
+
+}
+
+void activeButtonClass::pointerIn (
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+  if ( !active ) return;
+
+  if ( !ca_write_access( controlPvId ) ) {
+    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
+  }
+
+  activeGraphicClass::pointerIn( _x, _y, buttonState );
 
 }
 

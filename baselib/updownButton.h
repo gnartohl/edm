@@ -301,6 +301,11 @@ void activeUpdownButtonClass::btnDown (
   int buttonNumber,
   int *action );
 
+void activeUpdownButtonClass::pointerIn (
+  int _x,
+  int _y,
+  int buttonState );
+
 int activeUpdownButtonClass::getButtonActionRequest (
   int *up,
   int *down,

@@ -1608,6 +1608,10 @@ XButtonEvent be;
 
   *action = 0;
 
+  if ( !init ) return;
+
+  if ( !ca_write_access( destPvId ) ) return;
+
   if ( ( _y - y ) < 10 ) {
     memset( (void *) &be, 0, sizeof(XButtonEvent) );
     be.x_root = actWin->x+_x;
@@ -1653,6 +1657,10 @@ double dval;
 
   *action = 0;
 
+  if ( !init ) return;
+
+  if ( !ca_write_access( destPvId ) ) return;
+
   if ( keyPadOpen ) return;
 
   if ( ( _y - y ) < 10 ) return;
@@ -1692,6 +1700,22 @@ double dval;
   }
 
 #endif
+
+}
+
+void activeUpdownButtonClass::pointerIn (
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+  if ( !init ) return;
+
+  if ( !ca_write_access( destPvId ) ) {
+    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
+  }
+
+  activeGraphicClass::pointerIn( _x, _y, buttonState );
 
 }
 

@@ -1424,6 +1424,23 @@ char labelValue[39+1];
 
 }
 
+void activeMessageButtonClass::pointerIn (
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+  if ( !active ) return;
+
+  if ( !ca_write_access( destPvId ) ) {
+    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
+  }
+
+  activeGraphicClass::pointerIn( _x, _y, buttonState );
+
+
+}
+
 int activeMessageButtonClass::getButtonActionRequest (
   int *up,
   int *down,

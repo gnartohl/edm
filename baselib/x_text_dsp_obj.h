@@ -508,10 +508,16 @@ void activeXTextDspClass::btnDown (
   int buttonState,
   int buttonNumber );
 
+void activeXTextDspClass::pointerIn (
+  int _x,
+  int _y,
+  int buttonState );
+
 int activeXTextDspClass::getButtonActionRequest (
   int *up,
   int *down,
-  int *drag );
+  int *drag,
+  int *focus );
 
 void activeXTextDspClass::executeDeferred ( void );
 
