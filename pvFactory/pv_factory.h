@@ -155,6 +155,11 @@ public:
     // virtual double      get_attribute(Attribute attribute);
     
     // Output/write methods
+    // Some systems might implement access rights,
+    // e.g. based on the current user ID.
+    // A control widget might choose to indicate
+    // if there is no write access to this PV
+    virtual bool have_write_access();
     virtual bool put(double value) = 0;
     virtual bool put(int value);
     virtual bool put(const char *value) = 0;

@@ -143,6 +143,11 @@ void ProcessVariable::do_value_callbacks()
         (*entry)->call(this);
 }
 
+bool ProcessVariable::have_write_access()
+{
+    return true;
+}
+
 bool ProcessVariable::put(int value)
 {   return put(double(value)); }
 

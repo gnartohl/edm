@@ -9,7 +9,6 @@
 #include "epics_pv_factory.h"
 #ifdef SCIPLOT
 #include "SciPlot.h"
-#include <X11/cursorfont.h>
 #endif
 
 edmStripClass::edmStripClass()
@@ -663,9 +662,7 @@ int edmStripClass::activate(int pass, void *ptr)
             XtAddEventHandler(plot_widget, ButtonPressMask, False,
                               (XtEventHandler)button_callback,
                               (XtPointer)this);
-
-            cursor = XCreateFontCursor(XtDisplay(plot_widget), XC_crosshair);
-            XDefineCursor(XtDisplay(plot_widget),XtWindow(plot_widget), cursor); 
+            actWin->cursor.set(XtWindow(plot_widget), CURSOR_K_CROSSHAIR);
 #else
             // Create double-buffer pixmap and GC for this
             pixmap = XCreatePixmap(actWin->display(),
@@ -746,8 +743,6 @@ int edmStripClass::deactivate(int pass)
 #ifdef SCIPLOT
             if (plot_widget)
             {
-                XDefineCursor(XtDisplay(plot_widget), XtWindow(plot_widget), None); 
-                XFreeCursor(XtDisplay(plot_widget), cursor); 
                 XtUnmapWidget(plot_widget);
                 for (size_t i=0; i<num_pvs; ++i)
                 {

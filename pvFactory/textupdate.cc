@@ -882,7 +882,11 @@ int edmTextentryClass::drawActive()
                 pv->get_string(text, 80);
         }
         XtVaSetValues(widget, XmNeditable, True, NULL);
-        //XDefineCursor(XtDisplay(widget), XtWindow(widget), rubberbandCursor);
+
+        if (pv->have_write_access())
+            actWin->cursor.set(XtWindow(widget), CURSOR_K_DEFAULT);
+        else
+            actWin->cursor.set(XtWindow(widget), CURSOR_K_NO);
     }
     else
     {
@@ -890,7 +894,7 @@ int edmTextentryClass::drawActive()
         strcpy(text+1, getExpandedPVName());
         strcat(text, ">");
         XtVaSetValues(widget, XmNeditable, False, NULL);
-        //XDefineCursor(XtDisplay(widget), XtWindow(widget),noWriteAccessCursor);
+        actWin->cursor.set(XtWindow(widget), CURSOR_K_WAIT);
     }
     XmTextFieldSetString(widget, text);
    
