@@ -883,7 +883,7 @@ expStringClass expStr;
             r = *src++;
             g = *src++;
             b = *src++;
-  	}
+          }
           else { // == 4
             r = *src++;
             g = *src++;
@@ -1038,7 +1038,7 @@ expStringClass expStr;
             r = *src++;
             g = *src++;
             b = *src++;
-  	}
+          }
           else { // == 4
             r = *src++;
             g = *src++;

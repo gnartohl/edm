@@ -1007,6 +1007,15 @@ void addPoint (
 );
 
 int fillPlotArray (
+  int trace,
+  int isVector
+);
+
+int fillScalarPlotArray (
+  int trace
+);
+
+int fillVectorPlotArray (
   int trace
 );
 

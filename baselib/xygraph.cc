@@ -5612,7 +5612,7 @@ int npts;
 
     if ( yPvCount[i] > 1 ) { // vector
 
-      npts = fillPlotArray( i );
+      npts = fillVectorPlotArray( i );
 
       if ( npts > 0 ) {
 
@@ -5676,7 +5676,7 @@ int npts;
     }
     else { // scalar
 
-      npts = fillPlotArray( i );
+      npts = fillScalarPlotArray( i );
 
       if ( npts > 0 ) {
 
@@ -8565,7 +8565,8 @@ short scaledX, scaledY;
 }
 
 int xyGraphClass::fillPlotArray (
-  int trace
+  int trace,
+  int isVector
 ) {
 
 int i, npts, curCount;
@@ -8600,8 +8601,10 @@ double n;
 
       }
 
-      curCount++;
-      if ( curCount >= count ) return npts;
+      if ( !isVector ) {
+        curCount++;
+        if ( curCount >= count ) return npts;
+      }
 
       i++;
       if ( i >= plotBufSize[trace] ) { // use plotBufSize here
@@ -8632,8 +8635,10 @@ double n;
 
         }
 
-        curCount++;
-        if ( curCount >= count ) return npts;
+        if ( !isVector ) {
+          curCount++;
+          if ( curCount >= count ) return npts;
+	}
 
         i++;
         if ( i >= plotBufSize[trace] ) { // use plotBufSize here
@@ -8665,8 +8670,10 @@ double n;
         npts++;
       }
 
-      curCount++;
-      if ( curCount >= count ) return npts;
+      if ( !isVector ) {
+        curCount++;
+        if ( curCount >= count ) return npts;
+      }
 
       i++;
       if ( i >= plotBufSize[trace] ) { // use plotBufSize here
@@ -8697,8 +8704,10 @@ double n;
           npts++;
         }
 
-        curCount++;
-        if ( curCount >= count ) return npts;
+        if ( !isVector ) {
+          curCount++;
+          if ( curCount >= count ) return npts;
+	}
 
         i++;
         if ( i >= plotBufSize[trace] ) { // use plotBufSize here
@@ -8823,6 +8832,28 @@ double n;
   }
 
   return npts;
+
+}
+
+int xyGraphClass::fillScalarPlotArray (
+  int trace
+) {
+
+int stat;
+
+  stat = fillPlotArray ( trace, 0 );
+  return stat;
+
+}
+
+int xyGraphClass::fillVectorPlotArray (
+  int trace
+) {
+
+int stat;
+
+  stat = fillPlotArray ( trace, 1 );
+  return stat;
 
 }
 
