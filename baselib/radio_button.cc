@@ -26,6 +26,34 @@
 
 #include "Xm/CascadeBG.h"
 
+static void radioBoxEventHandler (
+  Widget w,
+  XtPointer client,
+  XEvent *e,
+  Boolean *continueToDispatch ) {
+
+activeRadioButtonClass *rbto = (activeRadioButtonClass *) client;
+
+  if ( !rbto->active ) return;
+
+  if ( e->type == EnterNotify ) {
+    if ( !ca_write_access( rbto->controlPvId ) ) {
+      rbto->actWin->cursor.set( XtWindow(rbto->actWin->executeWidget),
+       CURSOR_K_NO );
+    }
+    else {
+      rbto->actWin->cursor.set( XtWindow(rbto->actWin->executeWidget),
+       CURSOR_K_DEFAULT );
+    }
+  }
+
+  if ( e->type == LeaveNotify ) {
+    rbto->actWin->cursor.set( XtWindow(rbto->actWin->executeWidget),
+     CURSOR_K_DEFAULT );
+  }
+
+}
+
 #ifdef __epics__
 
 static void putValue (
@@ -873,12 +901,12 @@ static void drag (
    Cardinal numParams )
 {
 
-class activeRadioButtonClass *ambo;
+class activeRadioButtonClass *rbto;
 int stat;
 
-  XtVaGetValues( w, XmNuserData, &ambo, NULL );
+  XtVaGetValues( w, XmNuserData, &rbto, NULL );
 
-  stat = ambo->startDrag( w, e );
+  stat = rbto->startDrag( w, e );
 
 }
 
@@ -889,13 +917,13 @@ static void selectDrag (
    Cardinal numParams )
 {
 
-class activeRadioButtonClass *ambo;
+class activeRadioButtonClass *rbto;
 int stat;
 XButtonEvent *be = (XButtonEvent *) e;
 
-  XtVaGetValues( w, XmNuserData, &ambo, NULL );
+  XtVaGetValues( w, XmNuserData, &rbto, NULL );
 
-  stat = ambo->selectDragValue( ambo->x + be->x, ambo->y + be->y );
+  stat = rbto->selectDragValue( rbto->x + be->x, rbto->y + be->y );
 
 }
 
@@ -1019,11 +1047,30 @@ static XtActionsRec dragActions[] = {
 
     }
 
-#if 0
+{
+
+WidgetList children;
+Cardinal numChildren;
+int ii;
+
     XtAddEventHandler( radioBox,
-     ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask,
+     EnterWindowMask|LeaveWindowMask,
      False, radioBoxEventHandler, (XtPointer) this );
-#endif
+
+    XtVaGetValues( radioBox,
+     XmNnumChildren, &numChildren,
+     XmNchildren, &children,
+     NULL );
+
+    for ( ii=0; ii<(int)numChildren; ii++ ) {
+
+      XtAddEventHandler( children[ii],
+       EnterWindowMask,
+       False, radioBoxEventHandler, (XtPointer) this );
+
+    }
+
+}
 
     XtManageChild( radioBox );
 

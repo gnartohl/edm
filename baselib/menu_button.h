@@ -45,6 +45,12 @@
 
 #include "menu_button.str"
 
+static void menuButtonEventHandler (
+  Widget w,
+  XtPointer client,
+  XEvent *e,
+  Boolean *continueToDispatch );
+
 static char *dragName[] = {
   activeMenuButtonClass_str1,
 };
@@ -114,6 +120,12 @@ static void mbt_monitor_read_connect_state (
 class activeMenuButtonClass : public activeGraphicClass {
 
 private:
+
+friend void menuButtonEventHandler (
+  Widget w,
+  XtPointer client,
+  XEvent *e,
+  Boolean *continueToDispatch );
 
 friend void selectDrag (
    Widget w,

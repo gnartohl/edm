@@ -26,6 +26,34 @@
 
 #include "Xm/CascadeBG.h"
 
+static void menuButtonEventHandler (
+  Widget w,
+  XtPointer client,
+  XEvent *e,
+  Boolean *continueToDispatch ) {
+
+activeMenuButtonClass *ambo = (activeMenuButtonClass *) client;
+
+  if ( !ambo->active ) return;
+
+  if ( e->type == EnterNotify ) {
+    //if ( !ca_write_access( ambo->controlPvId ) ) {
+      ambo->actWin->cursor.set( XtWindow(ambo->actWin->executeWidget),
+       CURSOR_K_NO );
+    //}
+    //else {
+    //  ambo->actWin->cursor.set( XtWindow(ambo->actWin->executeWidget),
+    //   CURSOR_K_DEFAULT );
+    //}
+  }
+
+  if ( e->type == LeaveNotify ) {
+    ambo->actWin->cursor.set( XtWindow(ambo->actWin->executeWidget),
+     CURSOR_K_DEFAULT );
+  }
+
+}
+
 #ifdef __epics__
 
 static void putValue (
@@ -1287,6 +1315,10 @@ int ii;
        XmNnumChildren, &numChildren,
        XmNchildren, &children,
        NULL );
+
+      XtAddEventHandler( optionMenu,
+       EnterWindowMask|LeaveWindowMask,
+       False, menuButtonEventHandler, (XtPointer) this );
 
       for ( ii=0; ii<(int)numChildren; ii++ ) {
 

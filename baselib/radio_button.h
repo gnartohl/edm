@@ -45,6 +45,12 @@
 
 #include "radio_button.str"
 
+static void radioBoxEventHandler (
+  Widget w,
+  XtPointer client,
+  XEvent *e,
+  Boolean *continueToDispatch );
+
 static char *dragName[] = {
   activeRadioButtonClass_str1,
 };
@@ -102,6 +108,12 @@ static void rbt_monitor_control_connect_state (
 class activeRadioButtonClass : public activeGraphicClass {
 
 private:
+
+friend void radioBoxEventHandler (
+  Widget w,
+  XtPointer client,
+  XEvent *e,
+  Boolean *continueToDispatch );
 
 friend void selectDrag (
    Widget w,
