@@ -5,6 +5,9 @@
 ifeq ($(HOSTNAME), bogart)
 	FOR_WHAT=RH7_SNS_LANL
 endif
+ifeq ($(findstring lanl,$(HOSTNAME)), lanl)
+	FOR_WHAT=RH7_SNS_LANL
+endif
 ifeq ($(HOSTNAME), ics-srv01)
 	FOR_WHAT=RH7_SNS_ORNL
 endif
