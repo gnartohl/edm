@@ -218,7 +218,7 @@ void pvColorClass::setNullColor (
   unsigned int color )
 {
 
-  printf( "pvColorClass::setNullColor\n" );
+  //printf( "pvColorClass::setNullColor\n" );
 
   saveValPixel = color;
 
@@ -253,7 +253,7 @@ void pvColorClass::changeColor (
   colorInfoClass *ci )
 {
 
-  printf( "changeColor\n" );
+  //printf( "changeColor\n" );
 
   pixel = color;
   //saveValPixel = color;
@@ -468,7 +468,7 @@ void pvColorClass::setColor (
   colorInfoClass *ci )
 {
 
-  printf( "pvColorClass::setColor\n" );
+  //printf( "pvColorClass::setColor\n" );
 
   staticPixel = color;
   _changeColor( color, ci );
@@ -557,7 +557,7 @@ void pvColorClass::setRuleColor (
   colorInfoClass *ci )
 {
 
-  printf( "pvColorClass::setRuleColor\n" );
+  //printf( "pvColorClass::setRuleColor\n" );
 
   rulePixel = color;
   _changeColor( color, ci );

@@ -2593,7 +2593,7 @@ int colorInfoClass::setIndex (
 int stat;
 colorCachePtr cur;
 
-  printf( "obsolete colorInfoClass::setIndex\n" );
+//printf( "obsolete colorInfoClass::setIndex\n" );
 
   stat = avl_get_match( this->colorCacheByIndexH, (void *) &index,
    (void **) &cur );
