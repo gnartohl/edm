@@ -12654,6 +12654,7 @@ char callbackName[63+1];
   }
 
   mode = AWC_EXECUTE;
+  waiting = 0; // for deferred screen close action
 
   // activate mux controls
   executeMux();
@@ -12822,6 +12823,7 @@ char **muxMacro, **muxExpansion;
   }
 
   mode = AWC_EXECUTE;
+  waiting = 0; // for deferred screen close action
 
   // now reactivate all non-mux controls
 
@@ -14828,7 +14830,16 @@ void activeWindowClass::executeFromDeferredQueue( void )
 
   if ( mode != AWC_EDIT ) {
 
-    returnToEdit( 1 );
+    if ( waiting == 0 ) {
+      returnToEdit( 1 );
+    }
+    else if ( waiting < 0 ) { // wait, don't close
+      appCtx->postDeferredExecutionQueue( this );
+    }
+    else {                    // close after n cycles
+      waiting--;
+      appCtx->postDeferredExecutionQueue( this );
+    }
 
   }
   else {
@@ -15208,5 +15219,14 @@ XmString str;
     XmStringFree( str );
 
   }
+
+}
+
+void activeWindowClass::closeDeferred (
+  int cycles )
+{
+
+  waiting = 2;
+  appCtx->postDeferredExecutionQueue( this );
 
 }

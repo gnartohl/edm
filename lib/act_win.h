@@ -627,6 +627,7 @@ eventListPtr eventHead;
 eventListPtr limEventHead;
 pollListPtr pollHead;
 int mode; // AW_EDIT or AW_EXECUTE
+int waiting;
 int change;
 int exit_after_save;
 
@@ -1158,6 +1159,9 @@ void activeWindowClass::disableBuffering ( void );
 
 void activeWindowClass::setUndoText (
   char *string );
+
+void activeWindowClass::closeDeferred (
+  int cycles );
 
 };
 

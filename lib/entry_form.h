@@ -542,7 +542,7 @@ int entryFormClass::addColorButtonWithRule (
 
 int entryFormClass::addEmbeddedEf (
   char *label,
-  entryFormClass *ef );
+  entryFormClass **ef );
 
 int entryFormClass::addFontMenu (
   char *label,
@@ -669,6 +669,8 @@ int entryFormClass::finished (
 
 int entryFormClass::beginSubForm ( void );
 
+int entryFormClass::beginLeftSubForm ( void );
+
 int entryFormClass::endSubForm ( void );
 
 int entryFormClass::popup ( void );
@@ -692,7 +694,7 @@ friend void embeddedEfPopup_cb (
 
 public:
 
-entryFormClass *ef;
+entryFormClass ef;
 
 embeddedEfEntry::embeddedEfEntry ( void ) {
 
@@ -700,7 +702,7 @@ embeddedEfEntry::embeddedEfEntry ( void ) {
 
 virtual embeddedEfEntry::~embeddedEfEntry ( void ) {
 
-  ef->destroy();
+  ef.destroy();
 
 }
 

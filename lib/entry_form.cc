@@ -125,7 +125,7 @@ static void embeddedEfPopup_cb (
 
 embeddedEfEntry *eeo = (embeddedEfEntry *) client;
 
-  eeo->ef->popup();
+  eeo->ef.popup();
 
 }
 
@@ -1209,7 +1209,7 @@ char buf[16];
 
 int entryFormClass::addEmbeddedEf (
   char *label,
-  entryFormClass *ef )
+  entryFormClass **ef )
 {
 
 XmString str;
@@ -1218,7 +1218,8 @@ embeddedEfEntry *cur;
 
   cur = new embeddedEfEntry;
 
-  cur->ef = ef;
+  // cur->ef = ef;
+  *ef = &cur->ef;
 
   if ( firstItem ) {
 
@@ -1274,7 +1275,6 @@ embeddedEfEntry *cur;
    NULL );
 
   XmStringFree( str );
-
 
   itemTail->flink = cur;
   itemTail = cur;
@@ -4849,7 +4849,7 @@ int entryFormClass::beginSubForm ( void ) {
 
     *subForm = XtVaCreateWidget( "", xmFormWidgetClass, topForm,
      XmNtopAttachment, XmATTACH_FORM,
-     XmNrightAttachment, XmATTACH_FORM,
+     XmNleftAttachment, XmATTACH_FORM,
      NULL );
     curW = *subForm;
     curRW = *subForm;
@@ -4864,7 +4864,43 @@ int entryFormClass::beginSubForm ( void ) {
      XmNrightWidget, curRW,
      NULL );
     curW = *subForm;
+    //curRW = *subForm;
+
+  }
+
+  curTopParent = *subForm;
+
+  firstSubFormChild = 1;
+
+  return 1;
+
+}
+
+int entryFormClass::beginLeftSubForm ( void ) {
+
+  subForm = new Widget;
+
+  if ( firstItem ) {
+
+    firstItem = 0;
+
+    *subForm = XtVaCreateWidget( "", xmFormWidgetClass, topForm,
+     XmNtopAttachment, XmATTACH_FORM,
+     XmNleftAttachment, XmATTACH_FORM,
+     NULL );
+    curW = *subForm;
     curRW = *subForm;
+
+  }
+  else {
+
+    *subForm = XtVaCreateWidget( "", xmFormWidgetClass, topForm,
+     XmNtopAttachment, XmATTACH_WIDGET,
+     XmNtopWidget, curW,
+     XmNleftAttachment, XmATTACH_FORM,
+     NULL );
+    curW = *subForm;
+    //curRW = *subForm;
 
   }
 
