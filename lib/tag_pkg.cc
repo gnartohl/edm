@@ -1261,6 +1261,8 @@ double smallDoubleArray[100];
       tk = strtok_r( NULL, " \t\n", &context );
       *( (int *) tagDestination[index] ) = strtol( tk, NULL, 0 );
 
+      ci->warnIfBadIndex( *( (int *) tagDestination[index] ), line() );
+
     }
     else if ( strcmp( tk, "rgb" ) == 0 ) { // color
 
@@ -1326,6 +1328,7 @@ double smallDoubleArray[100];
           tk = strtok_r( NULL, " \t\n", &context );
 	  if ( tk ) {
             intArray[oneIndex] = strtol( tk, NULL, 0 );
+            ci->warnIfBadIndex( intArray[oneIndex], line() );
 	  }
 	  else {
             printf( tagClass_str24, tagName[index], line() );
@@ -1409,6 +1412,7 @@ double smallDoubleArray[100];
 
       tk = strtok_r( NULL, " \t\n", &context );
       colorIndex = strtol( tk, NULL, 0 );
+      ci->warnIfBadIndex( colorIndex, line() );
       color->setColorIndex( colorIndex, ci );
 
     }
@@ -1476,6 +1480,7 @@ double smallDoubleArray[100];
           tk = strtok_r( NULL, " \t\n", &context );
 	  if ( tk ) {
             colorIndex = strtol( tk, NULL, 0 );
+            ci->warnIfBadIndex( colorIndex, line() );
             color[oneIndex].setColorIndex( colorIndex, ci );
 	  }
 	  else {
