@@ -1002,6 +1002,10 @@ SYS_PROC_ID_TYPE procId;
     return;
   }
 
+  if ( fName[0] == ' ' ) {
+    return;
+  }
+
   getFileName( name, fName, 127 );
 
   cur = apco->head->flink;
@@ -1011,7 +1015,8 @@ SYS_PROC_ID_TYPE procId;
       XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
       // raise
       XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
-      strcpy( str, "" );
+      snprintf( str, 40, " %-lu", XtWindow(cur->node.topWidgetId()) );
+      //strcpy( str, "" );
       stat = ca_put( DBR_STRING, apco->ctlPvId, &str );
       return;  // display is already open; don't open another instance
     }
@@ -1092,6 +1097,11 @@ activeWindowListPtr cur;
     return;
   }
 
+  if ( fName[0] == ' ' ) {
+    //    apco->proc->unlock();
+    return;
+  }
+
   getFileName( name, fName, 127 );
 
   cur = apco->head->flink;
@@ -1101,7 +1111,8 @@ activeWindowListPtr cur;
       XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
       // raise
       XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
-      strcpy( str, "" );
+      snprintf( str, 40, " %-lu", XtWindow(cur->node.topWidgetId()) );
+      //strcpy( str, "" );
       stat = apco->ctlPvId->put( apco->ctlPvId->pvrString(), str );
       //      apco->proc->unlock();
       return;  // display is already open; don't open another instance
