@@ -2971,17 +2971,17 @@ char *firstName, *nextName;
 
   currentDragIndex = 0;
 
-  firstName = firstDragName();
+  firstName = firstDragName( x, y );
   if ( !firstName ) return 0;
 
   actWin->popupDragBegin( actWin->obj.getNameFromClass( objName() ) );
   actWin->popupDragAddItem( (void *) this, firstName );
 
-  nextName = nextDragName();
+  nextName = nextDragName( x, y );
   while ( nextName ) {
 
     actWin->popupDragAddItem( (void *) this, nextName );
-    nextName = nextDragName();
+    nextName = nextDragName( x, y );
 
   }
 
@@ -3008,10 +3008,11 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
   unsigned long   fg, bg;
   XGCValues       gcValues;
   unsigned long   gcValueMask;
+  char tmpStr[131+1];
 
-  char *str = agc->dragValue(agc->getCurrentDragIndex());
-  if ( !str ) return NULL;
-  if ( blank(str) ) return NULL;
+  //char *str = agc->dragValue(agc->getCurrentDragIndex());
+  //if ( !str ) return NULL;
+  //if ( blank(str) ) return NULL;
 
   Display *display = XtDisplay(w);
   int screenNum = DefaultScreen(display);
@@ -3031,12 +3032,18 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
 
   fontHeight = fixedFont->ascent + fixedFont->descent;
 
-  // char *str = agc->dragValue(agc->getCurrentDragIndex());
-  // if (!str) str = "";
+  strcpy( tmpStr, "[N/A]" );
+  char *str = agc->dragValue(agc->getCurrentDragIndex());
+  if ( str ) {
+    if ( !blank(str) ) {
+      strncpy( tmpStr, str, 131 );
+      tmpStr[131] = 0;
+    }
+  }
 
   clipbdStart();
-  clipbdAdd(str);
-  textWidth = XTextWidth(fixedFont, str, strlen(str));
+  clipbdAdd(tmpStr);
+  textWidth = XTextWidth(fixedFont, tmpStr, strlen(tmpStr));
   clipbdHold();
 
   maxWidth = X_SHIFT + (textWidth + MARGIN);
@@ -3064,7 +3071,7 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
 
   XDrawString( display, sourcePixmap, gc,
 	       X_SHIFT, fixedFont->ascent + MARGIN, 
-	       str, strlen(str) );
+	       tmpStr, strlen(tmpStr) );
   
   n = 0;
   XtSetArg(args[n],XmNpixmap,sourcePixmap); n++;
@@ -3142,9 +3149,27 @@ Arg args[10];
 
 }
 
+char *activeGraphicClass::firstDragName (
+  int x,
+  int y
+) {
+
+  return firstDragName();
+
+}
+
 char *activeGraphicClass::firstDragName ( void ) {
 
   return NULL;
+
+}
+
+char *activeGraphicClass::nextDragName (
+  int x,
+  int y
+) {
+
+  return nextDragName();
 
 }
 
@@ -3155,10 +3180,47 @@ char *activeGraphicClass::nextDragName ( void ) {
 }
 
 char *activeGraphicClass::dragValue (
+  int x,
+  int y,
+  int i
+) {
+
+  return dragValue( i );
+
+}
+
+char *activeGraphicClass::dragValue (
   int i )
 {
 
   return NULL;
+
+}
+
+int activeGraphicClass::atLeastOneDragPv (
+  int x,
+  int y
+) {
+
+int i, n;
+char *oneName;
+
+  n = 0;
+  oneName = firstDragName( x, y );
+  while ( oneName ) {
+    n++;
+    oneName = nextDragName( x, y );
+  }
+
+  for ( i=0; i<n; i++ ) {
+    if ( dragValue( x, y, i) ) {
+      if ( !blank( dragValue( x, y, i) ) ) {
+        return 1;
+      }
+    }
+  }
+
+  return 0;
 
 }
 

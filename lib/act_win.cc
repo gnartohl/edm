@@ -8821,8 +8821,8 @@ activeGraphicClass *ptr;
              ( be->y > cur->node->getY0() ) &&
              ( be->y < cur->node->getY1() ) ) {
 
-          // only the highest object may participate
-          if ( cur->node->dragValue( cur->node->getCurrentDragIndex() ) ) {
+          // only the highest object (with a non-blank pv) may participate
+          if ( cur->node->atLeastOneDragPv( be->x, be->y ) ) {
             action = cur->node->startDrag( be->x, be->y );
             if ( action ) {
               foundAction = 1;
@@ -8975,8 +8975,14 @@ activeGraphicClass *ptr;
 
           foundAction = 1;
 
-          cur->node->selectDragValue( be->x, be->y );
-          break; // out of while loop
+          if ( cur->node->atLeastOneDragPv( be->x, be->y ) ) {
+            cur->node->selectDragValue( be->x, be->y );
+            break; // out of while loop
+	  }
+
+          //if ( cur->node->dragValue( cur->node->getCurrentDragIndex() ) ) {
+          //cur->node->selectDragValue( be->x, be->y );
+          //break; // out of while loop
 
 	}
 

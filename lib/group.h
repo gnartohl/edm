@@ -374,8 +374,25 @@ int selectDragValue (
   int y
 );
 
+char *firstDragName (
+  int x,
+  int y
+);
+
+char *nextDragName (
+  int x,
+  int y
+);
+
 char *dragValue (
+  int x,
+  int y,
   int i
+);
+
+int atLeastOneDragPv (
+  int x,
+  int y
 );
 
 };

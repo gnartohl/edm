@@ -2491,12 +2491,10 @@ int stat = 0;
          ( y > cur->node->getY0() ) &&
          ( y < cur->node->getY1() ) ) {
 
-      // only the highest object may participate
-      if ( cur->node->dragValue( cur->node->getCurrentDragIndex() ) ) {
+      if ( cur->node->atLeastOneDragPv( x, y ) ) {
         stat = cur->node->startDrag( x, y );
         if ( stat ) break;
       }
-      //break; // out of while loop
 
     }
 
@@ -2525,27 +2523,30 @@ char *firstName, *nextName;
          ( y > cur->node->getY0() ) &&
          ( y < cur->node->getY1() ) ) {
 
-      currentDragIndex = 0;
+      if ( cur->node->atLeastOneDragPv( x, y ) ) {
 
-      firstName = cur->node->firstDragName();
-      if ( !firstName ) return 0;
+        currentDragIndex = 0;
 
-      actWin->popupDragBegin(
-       actWin->obj.getNameFromClass( cur->node->objName() ) );
-      actWin->popupDragAddItem( (void *) cur->node, firstName );
+        firstName = cur->node->firstDragName();
+        if ( !firstName ) return 0;
 
-      nextName = cur->node->nextDragName();
-      while ( nextName ) {
+        actWin->popupDragBegin(
+         actWin->obj.getNameFromClass( cur->node->objName() ) );
+        actWin->popupDragAddItem( (void *) cur->node, firstName );
 
-        actWin->popupDragAddItem( (void *) cur->node, nextName );
         nextName = cur->node->nextDragName();
+        while ( nextName ) {
+
+          actWin->popupDragAddItem( (void *) cur->node, nextName );
+          nextName = cur->node->nextDragName();
+
+        }
+
+        actWin->popupDragFinish( x, y );
+
+        break; // out of while loop
 
       }
-
-      actWin->popupDragFinish( x, y );
-
-      // only the highest object may participate
-      break; // out of while loop
 
     }
 
@@ -2557,10 +2558,130 @@ char *firstName, *nextName;
 
 }
 
+char *activeGroupClass::firstDragName (
+  int x,
+  int y
+) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  cur = head->blink;
+  while ( cur != head ) {
+
+    if ( ( x > cur->node->getX0() ) &&
+         ( x < cur->node->getX1() ) &&
+         ( y > cur->node->getY0() ) &&
+         ( y < cur->node->getY1() ) ) {
+
+      if ( cur->node->atLeastOneDragPv( x, y ) ) {
+
+        return cur->node->firstDragName();
+
+      }
+
+    }
+
+    cur = cur->blink;
+
+  }
+
+  return NULL;
+
+}
+
+char *activeGroupClass::nextDragName (
+  int x,
+  int y
+) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  cur = head->blink;
+  while ( cur != head ) {
+
+    if ( ( x > cur->node->getX0() ) &&
+         ( x < cur->node->getX1() ) &&
+         ( y > cur->node->getY0() ) &&
+         ( y < cur->node->getY1() ) ) {
+
+      if ( cur->node->atLeastOneDragPv( x, y ) ) {
+
+        return cur->node->nextDragName();
+
+      }
+
+    }
+
+    cur = cur->blink;
+
+  }
+
+  return NULL;
+
+}
+
 char *activeGroupClass::dragValue (
-  int i )
-{
+  int x,
+  int y,
+  int i
+) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  cur = head->blink;
+  while ( cur != head ) {
+
+    if ( ( x > cur->node->getX0() ) &&
+         ( x < cur->node->getX1() ) &&
+         ( y > cur->node->getY0() ) &&
+         ( y < cur->node->getY1() ) ) {
+
+      if ( cur->node->atLeastOneDragPv( x, y ) ) {
+
+        return cur->node->dragValue( x, y, i );
+
+      }
+
+    }
+
+    cur = cur->blink;
+
+  }
 
   return groupDragName;
 
 }
+
+int activeGroupClass::atLeastOneDragPv (
+  int x,
+  int y
+) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  cur = head->blink;
+  while ( cur != head ) {
+
+    if ( ( x > cur->node->getX0() ) &&
+         ( x < cur->node->getX1() ) &&
+         ( y > cur->node->getY0() ) &&
+         ( y < cur->node->getY1() ) ) {
+
+      if ( cur->node->atLeastOneDragPv( x, y ) ) {
+        return 1;
+      }
+
+    }
+
+    cur = cur->blink;
+
+  }
+
+  return 0;
+
+}
+

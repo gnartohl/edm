@@ -897,17 +897,34 @@ virtual int startDrag (
   Widget w,
   XEvent *e );
 
+virtual char *firstDragName (
+  int x,
+  int y );
+
 virtual char *firstDragName ( void );
+
+virtual char *nextDragName (
+  int x,
+  int y );
 
 virtual char *nextDragName ( void );
 
 virtual char *dragValue (
+  int x,
+  int y,
   int i );
+
+virtual char *dragValue (
+  int i );
+
+virtual int atLeastOneDragPv (
+  int x,
+  int y );
 
 virtual void setCurrentDragIndex (
   int num );
 
-int getCurrentDragIndex ( void );
+virtual int getCurrentDragIndex ( void );
 
 #define ACTGRF_FONTTAG_MASK		1
 #define ACTGRF_ALIGNMENT_MASK		2
