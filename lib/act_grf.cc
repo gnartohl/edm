@@ -3133,11 +3133,11 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
   int screenNum = DefaultScreen(display);
 
   Pixmap sourcePixmap = (Pixmap)NULL;
-  static GC gc = NULL;
-  static XFontStruct * fixedFont = NULL;
+  //static GC gc = NULL;
+  //static XFontStruct * fixedFont = NULL;
 
-  if (fixedFont == NULL) 
-     fixedFont = XLoadQueryFont( display, "fixed" );
+  if (agc->actWin->appCtx->ddFixedFont == NULL) 
+     agc->actWin->appCtx->ddFixedFont = XLoadQueryFont( display, "fixed" );
 
 #define X_SHIFT 8
 #define MARGIN  2
@@ -3145,7 +3145,8 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
   bg = BlackPixel(display,screenNum);
   fg = WhitePixel(display,screenNum);
 
-  fontHeight = fixedFont->ascent + fixedFont->descent;
+  fontHeight = agc->actWin->appCtx->ddFixedFont->ascent +
+   agc->actWin->appCtx->ddFixedFont->descent;
 
   strcpy( tmpStr, "[N/A]" );
   char *str = agc->dragValue(agc->getCurrentDragIndex());
@@ -3158,7 +3159,8 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
 
   agc->actWin->appCtx->clipBd.clipbdStart();
   agc->actWin->appCtx->clipBd.clipbdAdd(tmpStr);
-  textWidth = XTextWidth(fixedFont, tmpStr, strlen(tmpStr));
+  textWidth = XTextWidth(agc->actWin->appCtx->ddFixedFont, tmpStr,
+   strlen(tmpStr));
   agc->actWin->appCtx->clipBd.clipbdHold();
 
   maxWidth = X_SHIFT + (textWidth + MARGIN);
@@ -3168,24 +3170,25 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
 			       RootWindow(display, screenNum),
 			       maxWidth,maxHeight,
 			       DefaultDepth(display,screenNum));  
-  if (gc == NULL) 
-     gc = XCreateGC(display,sourcePixmap,0,NULL);
+  if ( agc->actWin->appCtx->ddgc == NULL ) 
+     agc->actWin->appCtx->ddgc = XCreateGC(display,sourcePixmap,0,NULL);
   
   gcValueMask = GCForeground|GCBackground|GCFunction|GCFont;
   
   gcValues.foreground = bg;
   gcValues.background = bg;
   gcValues.function   = GXcopy;
-  gcValues.font       = fixedFont->fid;
+  gcValues.font       = agc->actWin->appCtx->ddFixedFont->fid;
   
-  XChangeGC(display,gc,gcValueMask,&gcValues);
+  XChangeGC(display,agc->actWin->appCtx->ddgc,gcValueMask,&gcValues);
   
-  XFillRectangle(display,sourcePixmap,gc,0,0,maxWidth,maxHeight);
+  XFillRectangle(display,sourcePixmap,agc->actWin->appCtx->ddgc,0,0,maxWidth,
+   maxHeight);
 
-  XSetForeground(display,gc,fg);
+  XSetForeground(display,agc->actWin->appCtx->ddgc,fg);
 
-  XDrawString( display, sourcePixmap, gc,
-	       X_SHIFT, fixedFont->ascent + MARGIN, 
+  XDrawString( display, sourcePixmap, agc->actWin->appCtx->ddgc,
+	       X_SHIFT, agc->actWin->appCtx->ddFixedFont->ascent + MARGIN, 
 	       tmpStr, strlen(tmpStr) );
   
   n = 0;
@@ -3197,7 +3200,6 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
 
   return sourceIcon;
 }
-
 
 int activeGraphicClass::startDrag (
   XButtonEvent *be,

@@ -1911,6 +1911,9 @@ appContextClass::appContextClass (
 
   syncOnce = 1;
 
+  ddgc = NULL;
+  ddFixedFont = NULL;
+
 }
 
 appContextClass::~appContextClass (
@@ -2015,6 +2018,16 @@ actionsPtr curAct, nextAct;
   thread_destroy_lock_handle( actionsLock );
 
   termDeferredExecutionQueue();
+
+  if ( ddgc ) {
+    XFreeGC( display, ddgc );
+    ddgc = NULL;
+  }
+
+  if ( ddFixedFont ) {
+    XFreeFont( display, ddFixedFont );
+    ddFixedFont = NULL;
+  }
 
 }
 

@@ -361,6 +361,9 @@ char curGroupMaxVisString[39+1];
 
 int syncOnce;
 
+GC ddgc; // for drag and drop
+XFontStruct *ddFixedFont; // for drag and drop
+
 appContextClass (
   void );
 
