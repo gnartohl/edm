@@ -83,6 +83,7 @@ typedef struct main_que_tag { /* locked queue header */
 
 #define QUERY_LOAD 1
 #define CONNECT 2
+#define OPEN_INITIAL 3
 
 typedef struct argsTag {
   int argc;
@@ -371,7 +372,8 @@ void checkForServer (
   char **argv,
   int portNum,
   int appendDisplay,
-  char *displayName )
+  char *displayName,
+  int oneInstance )
 {
 
 char chkHost[31+1], host[31+1], addr[31+1];
@@ -541,36 +543,88 @@ nextHost:
     return;
   }
 
-  msg[0] = (char) CONNECT;
-  pos = 1;
+  if ( oneInstance ) {
 
-  sprintf( &msg[pos], "%-d|", argCount );
-  pos = strlen(msg);
-  max = 255 - pos;
+    msg[0] = (char) OPEN_INITIAL;
+    pos = 1;
+    max = 255 - pos;
 
-  strncpy( &msg[pos], "edm|", max );
-  pos = strlen(msg);
-  max = 255 - pos;
-
-  if ( appendDisplay ) {
-    strncpy( &msg[pos], global_str56, max );
+    strncpy( &msg[pos], "*OIS*|", max );
     pos = strlen(msg);
     max = 255 - pos;
+
     strncpy( &msg[pos], displayName, max );
     pos = strlen(msg);
     max = 255 - pos;
-    Strncat( &msg[pos], "|", max );
-    pos = strlen(msg);
-    max = 255 - pos;
-  }
 
-  for ( i=1; i<argc; i++ ) {
-    strncpy( &msg[pos], argv[i], max );
+    strncpy( &msg[pos], "|", max );
     pos = strlen(msg);
     max = 255 - pos;
-    Strncat( &msg[pos], "|", max );
+
+    snprintf( &msg[pos], max, "%-d|", argCount );
     pos = strlen(msg);
     max = 255 - pos;
+
+    strncpy( &msg[pos], "edm|", max );
+    pos = strlen(msg);
+    max = 255 - pos;
+
+    if ( appendDisplay ) {
+      strncpy( &msg[pos], global_str56, max );
+      pos = strlen(msg);
+      max = 255 - pos;
+      strncpy( &msg[pos], displayName, max );
+      pos = strlen(msg);
+      max = 255 - pos;
+      Strncat( &msg[pos], "|", max );
+      pos = strlen(msg);
+      max = 255 - pos;
+    }
+
+    for ( i=1; i<argc; i++ ) {
+      strncpy( &msg[pos], argv[i], max );
+      pos = strlen(msg);
+      max = 255 - pos;
+      Strncat( &msg[pos], "|", max );
+      pos = strlen(msg);
+      max = 255 - pos;
+    }
+
+  }
+  else {
+
+    msg[0] = (char) CONNECT;
+    pos = 1;
+
+    sprintf( &msg[pos], "%-d|", argCount );
+    pos = strlen(msg);
+    max = 255 - pos;
+
+    strncpy( &msg[pos], "edm|", max );
+    pos = strlen(msg);
+    max = 255 - pos;
+
+    if ( appendDisplay ) {
+      strncpy( &msg[pos], global_str56, max );
+      pos = strlen(msg);
+      max = 255 - pos;
+      strncpy( &msg[pos], displayName, max );
+      pos = strlen(msg);
+      max = 255 - pos;
+      Strncat( &msg[pos], "|", max );
+      pos = strlen(msg);
+      max = 255 - pos;
+    }
+
+    for ( i=1; i<argc; i++ ) {
+      strncpy( &msg[pos], argv[i], max );
+      pos = strlen(msg);
+      max = 255 - pos;
+      Strncat( &msg[pos], "|", max );
+      pos = strlen(msg);
+      max = 255 - pos;
+    }
+
   }
 
   len = strlen(msg) + 1;
@@ -728,6 +782,26 @@ int *portNumPtr = (int *) thread_get_app_data( h );
 
     switch ( cmd ) {
 
+    case OPEN_INITIAL:
+
+      stat = thread_lock_master( h );
+
+      q_stat_r = REMQHI( (void *) &g_mainFreeQueue, (void **) &node, 0 );
+      if ( q_stat_r & 1 ) {
+        strncat( node->msg, &msg[1], 254 );
+        q_stat_i = INSQTI( (void *) node, (void *) &g_mainActiveQueue, 0 );
+        if ( !( q_stat_i & 1 ) ) {
+          printf( main_str17 );
+        }
+      }
+      else {
+        printf( main_str18 );
+      }
+
+      stat = thread_unlock_master( h );
+
+      break;
+
     case QUERY_LOAD:
 
       stat = thread_lock_master( h );
@@ -803,7 +877,8 @@ void checkParams (
   int *appendDisplay,
   char *displayName,
   int *portNum,
-  int *restart )
+  int *restart,
+  int *oneInstance )
 {
 
 char buf[1023+1], mac[1023+1], exp[1023+1];
@@ -815,6 +890,7 @@ Display *testDisplay;
   strcpy( displayName, "" );
   *local = 0;
   *server = 0;
+  *oneInstance = 0;
   *appendDisplay = 1;
   *portNum = 19000;
   *restart = 0;
@@ -843,6 +919,11 @@ Display *testDisplay;
           *local = 1;
         }
         else if ( strcmp( argv[n], global_str10 ) == 0 ) {
+          *server = 1;
+          *local = 0;
+        }
+	else if ( strcmp( argv[n], global_str89 ) == 0 ) {
+	  *oneInstance = 1;
           *server = 1;
           *local = 0;
         }
@@ -1011,10 +1092,11 @@ extern int main (
 {
 
 int i, j, stat, numAppsRemaining, exitProg, shutdown, q_stat_r, q_stat_i,
- local, server, portNum, restart, n, x, y, icon, sessionNoEdit, screenNoEdit;
+ local, server, portNum, restart, n, x, y, icon, sessionNoEdit, screenNoEdit,
+ oneInstance, needConnect;
 THREAD_HANDLE delayH, serverH; //, caPendH;
 argsPtr args;
-appListPtr cur, next, appArgsHead, newOne;
+appListPtr cur, next, appArgsHead, newOne, first;
 processClass proc;
 objBindingClass *obj;
 pvBindingClass *pvObj;
@@ -1024,7 +1106,7 @@ char **argArray, displayName[127+1];
 int appendDisplay;
 float hours, seconds;
 
-char checkPointFileName[255+1], screenName[255+1];
+char checkPointFileName[255+1], screenName[255+1], tmpMsg[255+1];
 
 Display *oneDisplay;
 XtAppContext oneAppCtx;
@@ -1036,7 +1118,7 @@ int primaryServerFlag, numCheckPointMacros;
   g_numClients = 1;
 
   checkParams( argc, argv, &local, &server, &appendDisplay, displayName,
-   &portNum, &restart );
+   &portNum, &restart, &oneInstance );
 
 
   // if doing a restart, read in check point file
@@ -1080,7 +1162,8 @@ int primaryServerFlag, numCheckPointMacros;
 
   if ( server ) {
 
-    checkForServer( argc, argv, portNum, appendDisplay, displayName );
+    checkForServer( argc, argv, portNum, appendDisplay, displayName,
+     oneInstance );
 
   }
 
@@ -1447,8 +1530,11 @@ int primaryServerFlag, numCheckPointMacros;
         oneAppCtx = cur->appArgs->appCtxPtr->appContext();
 	oneDisplay = cur->appArgs->appCtxPtr->getDisplay();
         delete cur->appArgs->appCtxPtr;
-        XtCloseDisplay( oneDisplay );
-        XtDestroyApplicationContext( oneAppCtx );
+        // Can't execute the next two lines; program crashes. Have to live
+	// with memory leak. This only applies to the case where one server
+	// is managing multiple app ctx's / displays.
+        //XtCloseDisplay( oneDisplay );
+        //XtDestroyApplicationContext( oneAppCtx );
         for ( i=0; i<cur->appArgs->argc; i++ ) delete cur->appArgs->argv[i];
         delete cur->appArgs->argv;
 
@@ -1469,6 +1555,7 @@ int primaryServerFlag, numCheckPointMacros;
 
       cur = next;
 
+      needConnect = 0;
       if ( server ) {
 
         do {
@@ -1479,47 +1566,100 @@ int primaryServerFlag, numCheckPointMacros;
 
           if ( q_stat_r & 1 ) {
 
-            args = new argsType;
+            strncpy( tmpMsg, node->msg, 255 );
+            tmpMsg[255] = 0;
 
-            tk = strtok( node->msg, "|" );
+            tk = strtok( tmpMsg, "|" );
             if ( !tk ) goto parse_error;
 
-            argc = (int) atol( tk );
-            if ( argc == 0 ) goto parse_error;
+	    if ( strcmp( tk, "*OIS*" ) == 0 ) {
 
-            argArray = new char*[argc];
+              needConnect = 1;
+              tk = strtok( NULL, "|" ); // should contain display name
 
-            for ( i=0; i<argc; i++ ) {
-              tk = strtok( NULL, "|" );
-              if ( !tk ) goto parse_error;
-              argArray[i] = new char[strlen(tk)+1];
-              strcpy( argArray[i], tk );
-            }
+	      // make 1st app ctx open/deiconify/raise initial files
+	      // and deiconify/raise main window so things look like
+	      // a new instance of edm is starting
+              first = appArgsHead->flink;
+              while ( first != appArgsHead ) {
+		if ( ( strcmp( tk, ":0.0" ) == 0 ) ||
+                     ( strcmp( tk,
+                        first->appArgs->appCtxPtr->displayName ) == 0 ) ) {
+                  first->appArgs->appCtxPtr->openInitialFiles();
+                  first->appArgs->appCtxPtr->findTop();
+                  needConnect = 0;
+                  break;
+		}
+                first = first->flink;
+	      }
 
-            args->argc = argc;
-            args->argv = argArray;
-
-            newOne = new appListType;
-            newOne->appArgs = args;
-
-            newOne->blink = appArgsHead->blink;
-            appArgsHead->blink->flink = newOne;
-            newOne->flink = appArgsHead;
-            appArgsHead->blink = newOne;
-
-            args->appCtxPtr = new appContextClass;
-            args->appCtxPtr->proc = &proc;
-
-            stat = args->appCtxPtr->startApplication( args->argc, args->argv,
-             0 );
-
-            if ( stat & 1 ) { // success
-              oneAppCtx = args->appCtxPtr->appContext();
-              XtAppSetErrorHandler( oneAppCtx, xtErrorHandler );
-              XtAppSetWarningHandler( oneAppCtx, xtErrorHandler );
 	    }
 
-            g_numClients++;
+            strncpy( tmpMsg, node->msg, 255 );
+            tmpMsg[255] = 0;
+            tk = strtok( tmpMsg, "|" );
+            if ( !tk ) goto parse_error;
+
+	    if ( ( strcmp( tk, "*OIS*" ) != 0 ) ||
+                 needConnect ) {
+
+              args = new argsType;
+
+	      if ( needConnect ) {
+                strncpy( tmpMsg, node->msg, 255 );
+                tmpMsg[255] = 0;
+                tk = strtok( tmpMsg, "|" ); // discard two
+                if ( !tk ) goto parse_error;
+                tk = strtok( NULL, "|" );
+                if ( !tk ) goto parse_error;
+                tk = strtok( NULL, "|" );
+                if ( !tk ) goto parse_error;
+	      }
+	      else {
+                strncpy( tmpMsg, node->msg, 255 );
+                tmpMsg[255] = 0;
+                tk = strtok( tmpMsg, "|" );
+                if ( !tk ) goto parse_error;
+	      }
+
+              argc = (int) atol( tk );
+              if ( argc == 0 ) goto parse_error;
+
+              argArray = new char*[argc];
+
+              for ( i=0; i<argc; i++ ) {
+                tk = strtok( NULL, "|" );
+                if ( !tk ) goto parse_error;
+                argArray[i] = new char[strlen(tk)+1];
+                strcpy( argArray[i], tk );
+              }
+
+              args->argc = argc;
+              args->argv = argArray;
+
+              newOne = new appListType;
+              newOne->appArgs = args;
+
+              newOne->blink = appArgsHead->blink;
+              appArgsHead->blink->flink = newOne;
+              newOne->flink = appArgsHead;
+              appArgsHead->blink = newOne;
+
+              args->appCtxPtr = new appContextClass;
+              args->appCtxPtr->proc = &proc;
+
+              stat = args->appCtxPtr->startApplication( args->argc, args->argv,
+               0 );
+
+              if ( stat & 1 ) { // success
+                oneAppCtx = args->appCtxPtr->appContext();
+                XtAppSetErrorHandler( oneAppCtx, xtErrorHandler );
+                XtAppSetWarningHandler( oneAppCtx, xtErrorHandler );
+	      }
+
+              g_numClients++;
+
+	    }
 
 parse_error:
 
