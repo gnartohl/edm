@@ -294,6 +294,11 @@ public:
 
     void usePrivColorMap ( void );
 
+    void warnIfBadIndex (
+      int index,
+      int line
+    );
+
     // The following functions are for use in color_button.cc and
     // entry_form.cc; they are not intended for general use.
     void setCurDestination(int *ptr);

@@ -6635,13 +6635,16 @@ int colorInfoClass::writeColorIndex (
   int index
 ) {
 
-int r, g, b;
+int r, g, b, idx;
 unsigned int pixel;
 
   if ( ( index < 0 ) || ( index >= max_colors+num_blinking_colors ) ) {
     printf( "colorInfoClass::writeColorIndex - bad index encountered [%-d]\n",
      index );
-    index = getSpecialIndex( COLORINFO_K_INVALID );
+    idx = getSpecialIndex( COLORINFO_K_INVALID );
+  }
+  else {
+    idx = index;
   }
 
   if ( useIndexFlag ) {
@@ -6653,7 +6656,7 @@ unsigned int pixel;
   else {
 
     writeStringToFile( f, "rgb" );
-    pixel = pix( index );
+    pixel = pix( idx );
     getRGB( pixel, &r, &g, &b );
     fprintf( f, "%-d,%-d,%-d\n", r, g, b );
 
@@ -6669,13 +6672,16 @@ int colorInfoClass::writeColorIndex (
   int index
 ) {
 
-int r, g, b;
+int r, g, b, idx;
 unsigned int pixel;
 
   if ( ( index < 0 ) || ( index >= max_colors+num_blinking_colors ) ) {
     printf( "colorInfoClass::writeColorIndex - bad index encountered [%-d]\n",
      index );
-    index = getSpecialIndex( COLORINFO_K_INVALID );
+    idx = getSpecialIndex( COLORINFO_K_INVALID );
+  }
+  else {
+    idx = index;
   }
 
   if ( useIndexFlag ) {
@@ -6685,7 +6691,7 @@ unsigned int pixel;
   }
   else {
 
-    pixel = pix( index );
+    pixel = pix( idx );
     getRGB( pixel, &r, &g, &b );
     fprintf( f, "%s rgb %-d %-d %-d\n", tag, r, g, b );
 
@@ -6701,13 +6707,16 @@ int colorInfoClass::writeColorArrayIndex (
   int index
 ) {
 
-int r, g, b;
+int r, g, b, idx;
 unsigned int pixel;
 
   if ( ( index < 0 ) || ( index >= max_colors+num_blinking_colors ) ) {
-    printf( "colorInfoClass::writeColorIndex - bad index encountered [%-d]\n",
+    printf( "colorInfoClass::writeColorArrayIndex - bad index encountered [%-d]\n",
      index );
-    index = getSpecialIndex( COLORINFO_K_INVALID );
+    idx = getSpecialIndex( COLORINFO_K_INVALID );
+  }
+  else {
+    idx = index;
   }
 
   if ( useIndexFlag ) {
@@ -6717,7 +6726,7 @@ unsigned int pixel;
   }
   else {
 
-    pixel = pix( index );
+    pixel = pix( idx );
     getRGB( pixel, &r, &g, &b );
     fprintf( f, "%-d rgb %-d %-d %-d\n", arrayIndex, r, g, b );
 
@@ -6732,13 +6741,16 @@ int colorInfoClass::writeColorArrayIndex (
   int index
 ) {
 
-int r, g, b;
+int r, g, b, idx;
 unsigned int pixel;
 
   if ( ( index < 0 ) || ( index >= max_colors+num_blinking_colors ) ) {
-    printf( "colorInfoClass::writeColorIndex - bad index encountered [%-d]\n",
+    printf( "colorInfoClass::writeColorArrayIndex - bad index encountered [%-d]\n",
      index );
-    index = getSpecialIndex( COLORINFO_K_INVALID );
+    idx = getSpecialIndex( COLORINFO_K_INVALID );
+  }
+  else {
+    idx = index;
   }
 
   if ( useIndexFlag ) {
@@ -6748,7 +6760,7 @@ unsigned int pixel;
   }
   else {
 
-    pixel = pix( index );
+    pixel = pix( idx );
     getRGB( pixel, &r, &g, &b );
     fprintf( f, "rgb %-d %-d %-d\n", r, g, b );
 
@@ -6785,7 +6797,7 @@ char colorMode[10+1];
   if ( ( *index < 0 ) || ( *index >= max_colors+num_blinking_colors ) ) {
     printf( "colorInfoClass::readColorIndex - bad index encountered [%-d]\n",
      *index );
-    *index = getSpecialIndex( COLORINFO_K_INVALID );
+    //*index = getSpecialIndex( COLORINFO_K_INVALID );
   }
 
   return 1;
@@ -6995,5 +7007,17 @@ blinkNodePtr cur, next, curBlinkNode;
   remBlinkTail->next = NULL;
 
   return 1;
+
+}
+
+void colorInfoClass::warnIfBadIndex (
+  int index,
+  int line
+) {
+
+  if ( ( index < 0 ) || ( index >= max_colors+num_blinking_colors ) ) {
+    printf( "Bad color index encountered [%-d] near line %-d\n",
+     index, line );
+  }
 
 }
