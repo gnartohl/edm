@@ -569,6 +569,8 @@ short prevAlarmSeverity;
 
 int useAlarmBorder;
 
+int newPositioning;
+
 int oldStat, oldSev;
 
 public:

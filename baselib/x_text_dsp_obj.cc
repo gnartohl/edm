@@ -1651,6 +1651,7 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   if ( axtdo->autoHeight && axtdo->fs ) {
     axtdo->h = axtdo->fontHeight;
+    if ( axtdo->isWidget ) axtdo->h += 4;
     axtdo->sboxH = axtdo->h;
   }
 
@@ -1769,6 +1770,8 @@ activeXTextDspClass::activeXTextDspClass ( void ) {
 
   useAlarmBorder = 0;
 
+  newPositioning = 1;
+
   prevAlarmSeverity = -1;
   pvCount = svalPvCount = 1;
 
@@ -1880,6 +1883,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   nullDetectMode = source->nullDetectMode;
 
   useAlarmBorder = source->useAlarmBorder;
+
+  newPositioning = 1;
 
   prevAlarmSeverity = -1;
   pvCount = svalPvCount = 1;
@@ -2101,6 +2106,7 @@ static int objTypeEnum[4] = {
   tag.loadBoolW( "dateAsFileName", &dateAsFileName, &zero );
   tag.loadBoolW( "showUnits", &showUnits, &zero );
   tag.loadBoolW( "useAlarmBorder", &useAlarmBorder, &zero );
+  tag.loadBoolW( "newPos", &newPositioning, &zero );
   tag.loadW( "objType", 4, objTypeEnumStr, objTypeEnum, &objType,
    &objTypeUnknown );
   tag.loadW( "endObjectProperties" );
@@ -2349,6 +2355,7 @@ static int objTypeEnum[4] = {
   tag.loadR( "dateAsFileName", &dateAsFileName, &zero );
   tag.loadR( "showUnits", &showUnits, &zero );
   tag.loadR( "useAlarmBorder", &useAlarmBorder, &zero );
+  tag.loadR( "newPos", &newPositioning, &zero );
   tag.loadR( "objType", 4, objTypeEnumStr, objTypeEnum, &objType,
    &objTypeUnknown );
   tag.loadR( "endObjectProperties" );
@@ -2369,7 +2376,16 @@ static int objTypeEnum[4] = {
     return 0;
   }
 
+  if ( !newPositioning ) {
+    newPositioning = 1;
+    if ( isWidget ) {
+      y -= 3;
+      autoHeight = 1;
+    }
+  }
+    
   this->initSelectBox(); // call after getting x,y,w,h
+
 
   strcpy( this->id, "" );
   changeCallbackFlag = 0;
@@ -2722,6 +2738,12 @@ int tmpFgColor, tmpSvalColor;
   }
   else {
     useAlarmBorder = 0;
+  }
+
+  newPositioning = 1;
+  if ( isWidget ) {
+    y -= 3;
+    autoHeight = 1;
   }
 
   actWin->fi->loadFontTag( fontTag );
@@ -4556,24 +4578,74 @@ Atom importList[2];
         pixel = fgColor.getColor();
       }
 
-      tf_widget = XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
-       actWin->executeWidget,
-       XmNx, x,
-       XmNy, y-3,
-       XmNforeground, pixel,
-       XmNbackground, bg,
-       XmNhighlightThickness, 0,
-       XmNwidth, w,
-       //XmNcolumns, (short) numCols,
-       XmNvalue, entryValue,
-       XmNmaxLength, (short) XTDC_K_MAX,
-       XmNpendingDelete, True,
-       XmNmarginHeight, 0,
-       XmNfontList, textFontList,
-       XmNtranslations, g_parsedTrans,
-       XmNuserData, this,
-       XmNcursorPositionVisible, False,
-       NULL );
+      if ( newPositioning ) {
+
+        if ( autoHeight ) {
+
+          tf_widget = XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+           actWin->executeWidget,
+           XmNx, x,
+           XmNy, y,
+           XmNforeground, pixel,
+           XmNbackground, bg,
+           XmNhighlightThickness, 0,
+           XmNwidth, w,
+           XmNvalue, entryValue,
+           XmNmaxLength, (short) XTDC_K_MAX,
+           XmNpendingDelete, True,
+           XmNmarginHeight, 0,
+           XmNfontList, textFontList,
+           XmNtranslations, g_parsedTrans,
+           XmNuserData, this,
+           XmNcursorPositionVisible, False,
+           NULL );
+
+        }
+        else {
+
+          tf_widget = XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+           actWin->executeWidget,
+           XmNx, x,
+           XmNy, y,
+           XmNforeground, pixel,
+           XmNbackground, bg,
+           XmNhighlightThickness, 0,
+           XmNwidth, w,
+           XmNheight, h,
+           XmNvalue, entryValue,
+           XmNmaxLength, (short) XTDC_K_MAX,
+           XmNpendingDelete, True,
+           XmNmarginHeight, 0,
+           XmNfontList, textFontList,
+           XmNtranslations, g_parsedTrans,
+           XmNuserData, this,
+           XmNcursorPositionVisible, False,
+           NULL );
+
+        }
+
+      }
+      else {
+
+        tf_widget = XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+         actWin->executeWidget,
+         XmNx, x,
+         XmNy, y-3,
+         XmNforeground, pixel,
+         XmNbackground, bg,
+         XmNhighlightThickness, 0,
+         XmNwidth, w,
+         XmNvalue, entryValue,
+         XmNmaxLength, (short) XTDC_K_MAX,
+         XmNpendingDelete, True,
+         XmNmarginHeight, 0,
+         XmNfontList, textFontList,
+         XmNtranslations, g_parsedTrans,
+         XmNuserData, this,
+         XmNcursorPositionVisible, False,
+         NULL );
+
+      }
 
       if ( !enabled ) {
         XtUnmapWidget( tf_widget );
