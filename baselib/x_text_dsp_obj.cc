@@ -24,6 +24,21 @@
 
 #include "thread.h"
 
+static void xtdoRestoreValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
+
+  axtdo->actWin->appCtx->proc->lock();
+  axtdo->needRefresh = 1;
+  axtdo->actWin->addDefExeNode( axtdo->aglPtr );
+  axtdo->actWin->appCtx->proc->unlock();
+
+}
+
 static void xtdoCancelKp (
   Widget w,
   XtPointer client,
@@ -135,8 +150,8 @@ char *buf;
 #endif
   }
   else {
-    axtdo->needUpdate = 1;
     axtdo->actWin->appCtx->proc->lock();
+    axtdo->needUpdate = 1;
     axtdo->actWin->addDefExeNode( axtdo->aglPtr );
     axtdo->actWin->appCtx->proc->unlock();
   }
@@ -1103,6 +1118,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   axtdo->changeValOnLoseFocus = axtdo->bufChangeValOnLoseFocus;
 
+  axtdo->fastUpdate = axtdo->bufFastUpdate;
+
   axtdo->efPrecision = axtdo->bufEfPrecision;
 
   if ( axtdo->efPrecision.isNull() )
@@ -1237,6 +1254,7 @@ int i;
   }
   limitsFromDb = 1;
   changeValOnLoseFocus = 0;
+  fastUpdate = 0;
 
   efPrecision.setNull(1);
   precision = 3;
@@ -1330,6 +1348,7 @@ int i;
 
   limitsFromDb = source->limitsFromDb;
   changeValOnLoseFocus = source->changeValOnLoseFocus;
+  fastUpdate = source->fastUpdate;
   precision = source->precision;
   efPrecision = source->efPrecision;
 
@@ -1492,6 +1511,9 @@ int index, stat;
 
   // version 2.2.0
   fprintf( f, "%-d\n", changeValOnLoseFocus );
+
+  // version 2.3.0
+  fprintf( f, "%-d\n", fastUpdate );
 
   return 1;
 
@@ -1694,6 +1716,17 @@ char oneName[39+1];
   else {
 
     changeValOnLoseFocus = 1; // older version behavior
+
+  }
+
+  if ( ( ( major == 2 ) && ( minor > 2 ) ) || ( major > 2 ) ) {
+
+    fscanf( f, "%d\n", &fastUpdate ); actWin->incLine();
+
+  }
+  else {
+
+    fastUpdate = 0; // older version behavior
 
   }
 
@@ -1914,6 +1947,7 @@ char *tk, *gotData, *context, buf[255+1];
 
   limitsFromDb = 1;
   changeValOnLoseFocus = 0;
+  fastUpdate = 0;
   precision = 3;
   efPrecision.setValue( 3 );
 
@@ -2004,6 +2038,7 @@ char title[32], *ptr;
   bufUseKp = useKp;
   bufLimitsFromDb = limitsFromDb;
   bufChangeValOnLoseFocus = changeValOnLoseFocus;
+  bufFastUpdate = fastUpdate;
   bufEfPrecision = efPrecision;
   bufChangeCallbackFlag = changeCallbackFlag;
   bufActivateCallbackFlag = activateCallbackFlag;
@@ -2043,6 +2078,7 @@ char title[32], *ptr;
   ef.addToggle( activeXTextDspClass_str28, &bufSmartRefresh );
   ef.addToggle( activeXTextDspClass_str29, &bufIsWidget );
   ef.addToggle( activeXTextDspClass_str68, &bufChangeValOnLoseFocus );
+  ef.addToggle( activeXTextDspClass_str69, &bufFastUpdate );
   ef.addToggle( activeXTextDspClass_str30, &bufActivateCallbackFlag );
   ef.addToggle( activeXTextDspClass_str31, &bufDeactivateCallbackFlag );
   ef.addToggle( activeXTextDspClass_str32, &bufChangeCallbackFlag );
@@ -2203,27 +2239,35 @@ int n;
 
   if ( !activeMode || !init ) return 1;
 
-  if ( isWidget ) {
-
-     if ( tf_widget ) {
-
-       strncpy( entryValue, value, 39 );
-       entryValue[39] = 0;
-       n = 0;
-       XtSetArg( args[n], XmNvalue, (XtArgVal) entryValue ); n++;
-
-       XtSetArg( args[n], XmNforeground, fgColor.getColor() ); n++;
-
-       XtSetValues( tf_widget, args, n );
-
-     }
-
-     return 1;
-
-  }
-
   if ( !bufInvalid && ( strlen(value) == strlen(bufValue) ) ) {
     if ( strcmp( value, bufValue ) == 0 ) return 1;
+  }
+
+  if ( isWidget ) {
+
+    if ( tf_widget ) {
+
+      if ( bufInvalid ) {
+        bufInvalid = 0;
+        n = 0;
+        XtSetArg( args[n], XmNvalue, (XtArgVal) value ); n++;
+        XtSetArg( args[n], XmNforeground, fgColor.getColor() ); n++;
+        XtSetValues( tf_widget, args, n );
+      }
+      else {
+        XmTextFieldSetString( tf_widget, value );
+      }
+
+    }
+
+    strncpy( entryValue, value, 127 );
+    entryValue[127] = 0;
+
+    strncpy( bufValue, value, 127 );
+    bufValue[127] = 0;
+
+    return 1;
+
   }
 
   actWin->executeGc.saveFg();
@@ -2768,16 +2812,18 @@ static XtActionsRec dragActions[] = {
 
   if ( actWin->isIconified ) return;
 
-  actWin->appCtx->proc->lock();
-  if ( !needConnectInit && !needInfoInit && !needRefresh ) {
-    deferredCount--;
-    if ( deferredCount > 0 ) {
-      actWin->appCtx->proc->unlock();
-      return;
+  if ( !fastUpdate ) {
+    actWin->appCtx->proc->lock();
+    if ( !needConnectInit && !needInfoInit && !needRefresh ) {
+      deferredCount--;
+      if ( deferredCount > 0 ) {
+        actWin->appCtx->proc->unlock();
+        return;
+      }
+      deferredCount = actWin->appCtx->proc->halfSecCount;
     }
-    deferredCount = actWin->appCtx->proc->halfSecCount;
+    actWin->appCtx->proc->unlock();
   }
-  actWin->appCtx->proc->unlock();
 
   actWin->appCtx->proc->lock();
   nc = needConnectInit; needConnectInit = 0;
@@ -2788,6 +2834,7 @@ static XtActionsRec dragActions[] = {
   ne = needErase; needErase = 0;
   strncpy( value, curValue, 127 );
   value[127] = 0;
+  actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
 #ifdef __epics__
@@ -3143,7 +3190,7 @@ static XtActionsRec dragActions[] = {
        XtNumber(dragActions) );
 #endif
 
-      tf_widget = XtVaCreateManagedWidget( "", xmTextWidgetClass,
+      tf_widget = XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
        actWin->executeWidget,
        XmNx, x,
        XmNy, y-3,
@@ -3192,6 +3239,11 @@ static XtActionsRec dragActions[] = {
             XtAddCallback( tf_widget, XmNlosingFocusCallback,
              xtdoTextFieldToStringLF, this );
 	  }
+	  else {
+            XtAddCallback( tf_widget, XmNlosingFocusCallback,
+             xtdoRestoreValue, this );
+	  }
+
           break;
 
         case DBR_SHORT:
@@ -3203,6 +3255,10 @@ static XtActionsRec dragActions[] = {
           if ( changeValOnLoseFocus ) {
             XtAddCallback( tf_widget, XmNlosingFocusCallback,
              xtdoTextFieldToIntLF, this );
+	  }
+	  else {
+            XtAddCallback( tf_widget, XmNlosingFocusCallback,
+             xtdoRestoreValue, this );
 	  }
 
           break;
@@ -3217,6 +3273,10 @@ static XtActionsRec dragActions[] = {
             XtAddCallback( tf_widget, XmNlosingFocusCallback,
              xtdoTextFieldToDoubleLF, this );
 	  }
+	  else {
+            XtAddCallback( tf_widget, XmNlosingFocusCallback,
+             xtdoRestoreValue, this );
+	  }
 
           break;
 
@@ -3229,8 +3289,8 @@ static XtActionsRec dragActions[] = {
     } // end if ( isWidget )
 
     fgColor.setConnected();
-    bufInvalidate();
     init = 1;
+    bufInvalidate();
     eraseActive();
     drawActive();
 
@@ -3276,10 +3336,6 @@ static XtActionsRec dragActions[] = {
     drawActive();
 
   }
-
-  actWin->appCtx->proc->lock();
-  actWin->remDefExeNode( aglPtr );
-  actWin->appCtx->proc->unlock();
 
 }
 

@@ -41,7 +41,7 @@
 #define XTDC_K_COLORMODE_ALARM 1
 
 #define XTDC_MAJOR_VERSION 2
-#define XTDC_MINOR_VERSION 2
+#define XTDC_MINOR_VERSION 3
 #define XTDC_RELEASE 0
 
 #ifdef __x_text_dsp_obj_cc
@@ -52,6 +52,11 @@ static char *dragName[] = {
   activeXTextDspClass_str1,
   activeXTextDspClass_str2
 };
+
+static void xtdoRestoreValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 static void xtdoCancelKp (
   Widget w,
@@ -183,6 +188,11 @@ static void xtdoSetValueChanged (
 class activeXTextDspClass : public activeGraphicClass {
 
 private:
+
+friend void xtdoRestoreValue (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 friend void xtdoCancelKp (
   Widget w,
@@ -325,6 +335,7 @@ char fontTag[63+1], bufFontTag[63+1];
 int useDisplayBg, bufUseDisplayBg, alignment, autoHeight, bufAutoHeight;
 int limitsFromDb, bufLimitsFromDb;
 int changeValOnLoseFocus, bufChangeValOnLoseFocus;
+int fastUpdate, bufFastUpdate;
 int precision;
 efInt efPrecision, bufEfPrecision;
 unsigned int bgColor, bufBgColor;
