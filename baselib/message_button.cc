@@ -24,6 +24,44 @@
 
 #include "thread.h"
 
+static void pw_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call ) {
+
+activeMessageButtonClass *msgbto = (activeMessageButtonClass *) client;
+
+  msgbto->ef.popdown();
+
+  if ( strcmp( msgbto->bufPw1, msgbto->pw ) == 0 ) {
+    msgbto->needPerformDownAction = 1;
+    msgbto->actWin->addDefExeNode( msgbto->aglPtr );
+  }
+  else {
+    msgbto->needWarning = 1;
+    msgbto->actWin->addDefExeNode( msgbto->aglPtr );
+  }
+
+}
+
+static void pw_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call ) {
+
+}
+
+static void pw_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call ) {
+
+activeMessageButtonClass *msgbto = (activeMessageButtonClass *) client;
+
+  msgbto->ef.popdown();
+
+}
+
 static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id )
@@ -99,6 +137,38 @@ activeMessageButtonClass *msgbto = (activeMessageButtonClass *) client;
 
   msgbto->h = msgbto->bufH;
   msgbto->sboxH = msgbto->bufH;
+
+  if ( blank(msgbto->bufPw1) || blank(msgbto->bufPw2) ) {
+    if ( blank(msgbto->pw) ) {
+      msgbto->usePassword = 0;
+    }
+    else {
+      msgbto->usePassword = 1;
+    }
+  }
+  else if ( strcmp( msgbto->bufPw1, msgbto->bufPw2 ) != 0 ) {
+    msgbto->actWin->appCtx->postMessage( "Password not changed" );
+    if ( blank(msgbto->pw) ) {
+      msgbto->usePassword = 0;
+    }
+    else if ( strcmp( msgbto->pw, "*" ) == 0 ) {
+      msgbto->usePassword = 0;
+    }
+    else {
+      msgbto->usePassword = 1;
+    }
+  }
+  else {
+    strcpy( msgbto->pw, msgbto->bufPw2 );
+    if ( strcmp( msgbto->pw, "*" ) == 0 ) {
+      msgbto->usePassword = 0;
+    }
+    else {
+      msgbto->usePassword = 1;
+    }
+  }
+
+  msgbto->lock = msgbto->bufLock;
 
   msgbto->updateDimensions();
 
@@ -207,6 +277,9 @@ activeMessageButtonClass::activeMessageButtonClass ( void ) {
   _3D = 1;
   invisible = 0;
   unconnectedTimer = 0;
+  strcpy( pw, "" );
+  usePassword = 0;
+  lock = 0;
 
 }
 
@@ -258,6 +331,10 @@ activeGraphicClass *msgbto = (activeGraphicClass *) this;
   _3D = source->_3D;
   invisible = source->invisible;
   unconnectedTimer = 0;
+
+  strcpy( pw, source->pw );
+  usePassword = source->usePassword;
+  lock = source->lock;
 
   updateDimensions();
 
@@ -389,6 +466,10 @@ int index;
   fprintf( f, "%-d\n", invisible );
 
   writeStringToFile( f, fontTag );
+
+  // ver 2.1.0
+  writeStringToFile( f, pw );
+  fprintf( f, "%-d\n", lock );
 
   return 1;
 
@@ -523,6 +604,25 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   actWin->fi->loadFontTag( fontTag );
   fs = actWin->fi->getXFontStruct( fontTag );
+
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 0 ) ) ) {
+    readStringFromFile( pw, 31+1, f ); actWin->incLine();
+    if ( blank(pw) ) {
+      usePassword = 0;
+    }
+    else if ( strcmp( pw, "*" ) == 0 ) {
+      usePassword = 0;
+    }
+    else {
+      usePassword = 1;
+    }
+    fscanf( f, "%d\n", &lock );
+  }
+  else {
+    strcpy( pw, "" );
+    usePassword = 0;
+    lock = 0;
+  }
 
   updateDimensions();
 
@@ -814,6 +914,17 @@ int activeMessageButtonClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  ptr = getenv( "EDMSUPERVISORMODE" );
+  if ( ptr ) {
+    if ( strcmp( ptr, "TRUE" ) == 0 ) {
+      if ( lock ) {
+        actWin->appCtx->postMessage(
+         "Supervisor mode - password lock cleared" );
+      }
+      lock = 0;
+    }
+  }
+
   ptr = actWin->obj.getNameFromClass( "activeMessageButtonClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -876,6 +987,11 @@ char title[32], *ptr;
   buf3D = _3D;
   bufInvisible = invisible;
 
+  strcpy( bufPw1, "" );
+  strcpy( bufPw2, "" );
+
+  bufLock = lock;
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -887,32 +1003,71 @@ char title[32], *ptr;
   ef.addTextField( activeMessageButtonClass_str6, 30, &bufW );
   ef.addTextField( activeMessageButtonClass_str7, 30, &bufH );
 
-  ef.addTextField( activeMessageButtonClass_str18, 30, bufDestPvName,
-   activeGraphicClass::MAX_PV_NAME );
+  if ( !lock ) {
+    ef.addTextField( activeMessageButtonClass_str18, 30, bufDestPvName,
+     activeGraphicClass::MAX_PV_NAME );
+  }
+  else {
+    ef.addLockedField( activeMessageButtonClass_str18, 30, bufDestPvName,
+     activeGraphicClass::MAX_PV_NAME );
+  }
 
-  ef.addOption( activeMessageButtonClass_str8, activeMessageButtonClass_str9, &bufToggle );
+  ef.addOption( activeMessageButtonClass_str8, activeMessageButtonClass_str9,
+   &bufToggle );
   ef.addToggle( activeMessageButtonClass_str10, &buf3D );
   ef.addToggle( activeMessageButtonClass_str11, &bufInvisible );
   ef.addToggle( activeMessageButtonClass_str12, &bufPressAction );
   ef.addToggle( activeMessageButtonClass_str13, &bufReleaseAction );
 
-  ef.addTextField( activeMessageButtonClass_str14, 30, bufOnLabel, MAX_ENUM_STRING_SIZE );
+  ef.addTextField( activeMessageButtonClass_str14, 30, bufOnLabel,
+   MAX_ENUM_STRING_SIZE );
 
-  ef.addTextField( activeMessageButtonClass_str16, 30, bufSourcePressPvName, 39 );
+  if ( !lock ) {
+    ef.addTextField( activeMessageButtonClass_str16, 30, bufSourcePressPvName,
+     39 );
+  }
+  else {
+    ef.addLockedField( activeMessageButtonClass_str16, 30,
+     bufSourcePressPvName, 39 );
+  }
 
-  ef.addTextField( activeMessageButtonClass_str15, 30, bufOffLabel, MAX_ENUM_STRING_SIZE );
+  ef.addTextField( activeMessageButtonClass_str15, 30, bufOffLabel,
+   MAX_ENUM_STRING_SIZE );
 
-  ef.addTextField( activeMessageButtonClass_str17, 30, bufSourceReleasePvName, 39 );
+  if ( !lock ) {
 
-  ef.addColorButton( activeMessageButtonClass_str20, actWin->ci, &fgCb, &bufFgColor );
+    ef.addTextField( activeMessageButtonClass_str17, 30,
+     bufSourceReleasePvName, 39 );
 
-  ef.addColorButton( activeMessageButtonClass_str21, actWin->ci, &onCb, &bufOnColor );
+    ef.addPasswordField( "Password", 30, bufPw1, 31 );
+    ef.addPasswordField( "Confirm", 30, bufPw2, 31 );
+    ef.addToggle( "Lock (forever)", &bufLock );
 
-  ef.addColorButton( activeMessageButtonClass_str22, actWin->ci, &offCb, &bufOffColor );
+  }
+  else {
 
-  ef.addColorButton( activeMessageButtonClass_str23, actWin->ci, &topShadowCb, &bufTopShadowColor );
+    ef.addLockedField( activeMessageButtonClass_str17, 30,
+     bufSourceReleasePvName, 39 );
 
-  ef.addColorButton( activeMessageButtonClass_str24, actWin->ci, &botShadowCb, &bufBotShadowColor );
+    ef.addLockedField( "Password", 30, bufPw1, 31 );
+    ef.addLockedField( "Confirm", 30, bufPw2, 31 );
+
+  }
+
+  ef.addColorButton( activeMessageButtonClass_str20, actWin->ci, &fgCb,
+   &bufFgColor );
+
+  ef.addColorButton( activeMessageButtonClass_str21, actWin->ci, &onCb,
+   &bufOnColor );
+
+  ef.addColorButton( activeMessageButtonClass_str22, actWin->ci, &offCb,
+   &bufOffColor );
+
+  ef.addColorButton( activeMessageButtonClass_str23, actWin->ci, &topShadowCb,
+   &bufTopShadowColor );
+
+  ef.addColorButton( activeMessageButtonClass_str24, actWin->ci, &botShadowCb,
+    &bufBotShadowColor );
 
   ef.addFontMenu( activeMessageButtonClass_str19, actWin->fi, &fm, fontTag );
 
@@ -1263,7 +1418,8 @@ int stat, opStat;
 
   case 1:
 
-    needConnectInit = needErase = needDraw = 0;
+    needConnectInit = needErase = needDraw = needPerformDownAction =
+     needPerformUpAction = needWarning = 0;
     needToEraseUnconnected = 0;
     needToDrawUnconnected = 0;
     unconnectedTimer = 0;
@@ -1384,21 +1540,11 @@ void activeMessageButtonClass::updateDimensions ( void )
 
 }
 
-void activeMessageButtonClass::btnUp (
-  int x,
-  int y,
-  int buttonState,
-  int buttonNumber,
-  int *action )
-{
+void activeMessageButtonClass::performBtnUpAction ( void ) {
 
 int stat;
 
-  *action = 0;
-
   if ( toggle ) return;
-
-  *action = releaseAction;
 
   buttonPressed = 0;
   smartDrawAllActive();
@@ -1435,7 +1581,7 @@ int stat;
 
 }
 
-void activeMessageButtonClass::btnDown (
+void activeMessageButtonClass::btnUp (
   int x,
   int y,
   int buttonState,
@@ -1443,10 +1589,16 @@ void activeMessageButtonClass::btnDown (
   int *action )
 {
 
+  performBtnUpAction();
+
+  *action = releaseAction;
+
+}
+
+void activeMessageButtonClass::performBtnDownAction ( void ) {
+
 int stat;
 char labelValue[39+1];
-
-  *action = pressAction;
 
   if ( toggle ) {
     if ( buttonPressed ) {
@@ -1499,6 +1651,57 @@ char labelValue[39+1];
   }
 
 #endif
+
+}
+
+void activeMessageButtonClass::btnDown (
+  int x,
+  int y,
+  int buttonState,
+  int buttonNumber,
+  int *action )
+{
+
+  if ( usePassword ) {
+
+    if ( !ef.formIsPoppedUp() ) {
+
+      pwFormX = actWin->x + x;
+      pwFormY = actWin->y + y;
+      pwFormW = 0;
+      pwFormH = 0;
+      pwFormMaxH = 600;
+
+      ef.create( actWin->top,
+       actWin->appCtx->ci.getColorMap(),
+       &pwFormX, &pwFormY,
+       &pwFormW, &pwFormH, &pwFormMaxH,
+       "", NULL, NULL, NULL );
+
+      strcpy( bufPw1, "" );
+
+      ef.addPasswordField( "Password", 30, bufPw1, 31 );
+
+      ef.finished( pw_ok, pw_apply, pw_cancel, this );
+
+      ef.popup();
+
+      *action = 0;
+      return;
+
+    }
+    else {
+
+      *action = 0;
+      return;
+
+    }
+
+  }
+
+  performBtnDownAction();
+
+  *action = pressAction;
 
 }
 
@@ -1612,7 +1815,7 @@ int activeMessageButtonClass::containsMacros ( void ) {
 
 void activeMessageButtonClass::executeDeferred ( void ) {
 
-int nc, nd, ne;
+int nc, nd, ne, npda, npua, nw;
 
   if ( actWin->isIconified ) return;
 
@@ -1620,6 +1823,9 @@ int nc, nd, ne;
   nc = needConnectInit; needConnectInit = 0;
   nd = needDraw; needDraw = 0;
   ne = needErase; needErase = 0;
+  npda = needPerformDownAction; needPerformDownAction = 0;
+  npua = needPerformUpAction; needPerformUpAction = 0;
+  nw = needWarning; needWarning = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
@@ -1665,6 +1871,39 @@ int nc, nd, ne;
   }
 
 //----------------------------------------------------------------------------
+
+  if ( npda ) {
+
+    performBtnDownAction();
+
+    if ( !toggle ) {
+      actWin->appCtx->proc->lock();
+      needPerformUpAction = 1;
+      actWin->addDefExeNode( aglPtr );
+      actWin->appCtx->proc->unlock();
+    }
+
+    if ( pressAction ) actWin->closeDeferred( 2 );
+
+  }
+
+//----------------------------------------------------------------------------
+
+  if ( npua ) {
+
+    performBtnUpAction();
+
+    if ( releaseAction ) actWin->closeDeferred( 2 );
+
+  }
+
+//----------------------------------------------------------------------------
+
+  if ( nw ) {
+
+    actWin->appCtx->postMessage( "Incorrect Password" );
+
+  }
 
 }
 

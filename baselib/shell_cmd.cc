@@ -79,23 +79,13 @@ threadParamBlockPtr threadParamBlock =
 
 }
 
-static void shcmdc_pw_update (
+static void pw_ok (
   Widget w,
   XtPointer client,
   XtPointer call ) {
 
 shellCmdClass *shcmdo = (shellCmdClass *) client;
 
-}
-
-static void shcmdc_pw_ok (
-  Widget w,
-  XtPointer client,
-  XtPointer call ) {
-
-shellCmdClass *shcmdo = (shellCmdClass *) client;
-
-  shcmdc_pw_update( w, client, call );
   shcmdo->ef.popdown();
 
   if ( strcmp( shcmdo->bufPw1, shcmdo->pw ) == 0 ) {
@@ -109,18 +99,14 @@ shellCmdClass *shcmdo = (shellCmdClass *) client;
 
 }
 
-static void shcmdc_pw_apply (
+static void pw_apply (
   Widget w,
   XtPointer client,
   XtPointer call ) {
 
-shellCmdClass *shcmdo = (shellCmdClass *) client;
-
-  shcmdc_pw_update( w, client, call );
-
 }
 
-static void shcmdc_pw_cancel (
+static void pw_cancel (
   Widget w,
   XtPointer client,
   XtPointer call ) {
@@ -900,6 +886,17 @@ int shellCmdClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  ptr = getenv( "EDMSUPERVISORMODE" );
+  if ( ptr ) {
+    if ( strcmp( ptr, "TRUE" ) == 0 ) {
+      if ( lock ) {
+        actWin->appCtx->postMessage(
+         "Supervisor mode - password lock cleared" );
+      }
+      lock = 0;
+    }
+  }
+
   ptr = actWin->obj.getNameFromClass( "shellCmdClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -966,6 +963,9 @@ char title[32], *ptr;
   if ( !lock ) {
     ef.addTextField( shellCmdClass_str14, 30, bufShellCommand, 127 );
   }
+  else {
+    ef.addLockedField( shellCmdClass_str14, 30, bufShellCommand, 127 );
+  }
 
   ef.addTextField( shellCmdClass_str13, 30, bufLabel, 127 );
 
@@ -973,6 +973,10 @@ char title[32], *ptr;
     ef.addPasswordField( "Password", 30, bufPw1, 31 );
     ef.addPasswordField( "Confirm", 30, bufPw2, 31 );
     ef.addToggle( "Lock (forever)", &bufLock );
+  }
+  else {
+    ef.addLockedField( "Password", 30, bufPw1, 31 );
+    ef.addLockedField( "Confirm", 30, bufPw2, 31 );
   }
 
   ef.addToggle( shellCmdClass_str15, &bufInvisible );
@@ -1441,23 +1445,23 @@ void shellCmdClass::btnDown (
 
     if ( !ef.formIsPoppedUp() ) {
 
-      valueFormX = actWin->x + x;
-      valueFormY = actWin->y + y;
-      valueFormW = 0;
-      valueFormH = 0;
-      valueFormMaxH = 600;
+      pwFormX = actWin->x + x;
+      pwFormY = actWin->y + y;
+      pwFormW = 0;
+      pwFormH = 0;
+      pwFormMaxH = 600;
 
       ef.create( actWin->top,
        actWin->appCtx->ci.getColorMap(),
-       &valueFormX, &valueFormY,
-       &valueFormW, &valueFormH, &valueFormMaxH,
+       &pwFormX, &pwFormY,
+       &pwFormW, &pwFormH, &pwFormMaxH,
        "", NULL, NULL, NULL );
 
       strcpy( bufPw1, "" );
 
       ef.addPasswordField( "Password", 30, bufPw1, 31 );
 
-      ef.finished( shcmdc_pw_ok, shcmdc_pw_apply, shcmdc_pw_cancel, this );
+      ef.finished( pw_ok, pw_apply, pw_cancel, this );
 
       ef.popup();
 

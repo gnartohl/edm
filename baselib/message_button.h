@@ -25,7 +25,7 @@
 #include "cadef.h"
 
 #define MSGBTC_MAJOR_VERSION 2
-#define MSGBTC_MINOR_VERSION 0
+#define MSGBTC_MINOR_VERSION 1
 #define MSGBTC_RELEASE 0
 
 #define MSGBTC_K_PUSH 1
@@ -38,6 +38,21 @@
 static char *dragName[] = {
   activeMessageButtonClass_str18,
 };
+
+static void pw_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void pw_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void pw_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 static void unconnectedTimeout (
   XtPointer client,
@@ -90,6 +105,21 @@ static void msgbt_monitor_dest_connect_state (
 class activeMessageButtonClass : public activeGraphicClass {
 
 private:
+
+friend void pw_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void pw_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void pw_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 friend void unconnectedTimeout (
   XtPointer client,
@@ -186,6 +216,17 @@ int needConnectInit, needErase, needDraw, needToEraseUnconnected,
  needToDrawUnconnected;
 int unconnectedTimer;
 
+char pw[31+1];
+char bufPw1[31+1];
+char bufPw2[31+1];
+int usePassword;
+
+int lock, bufLock;
+
+int pwFormX, pwFormY, pwFormW, pwFormH, pwFormMaxH;
+
+int needPerformDownAction, needPerformUpAction, needWarning;
+
 public:
 
 activeMessageButtonClass::activeMessageButtonClass ( void );
@@ -241,12 +282,16 @@ int activeMessageButtonClass::deactivate ( int pass );
 
 void activeMessageButtonClass::updateDimensions ( void );
 
+void activeMessageButtonClass::performBtnUpAction ( void );
+
 void activeMessageButtonClass::btnUp (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
+
+void activeMessageButtonClass::performBtnDownAction ( void );
 
 void activeMessageButtonClass::btnDown (
   int x,

@@ -49,22 +49,17 @@ static void shcmdc_executeCmd (
   XtPointer client,
   XtIntervalId *id );
 
-static void shcmdc_pw_ok (
+static void pw_ok (
   Widget w,
   XtPointer client,
   XtPointer call );
 
-static void shcmdc_pw_update (
+static void pw_apply (
   Widget w,
   XtPointer client,
   XtPointer call );
 
-static void shcmdc_pw_apply (
-  Widget w,
-  XtPointer client,
-  XtPointer call );
-
-static void shcmdc_pw_cancel (
+static void pw_cancel (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -119,22 +114,17 @@ friend void shcmdc_executeCmd (
   XtPointer client,
   XtIntervalId *id );
 
-friend void shcmdc_pw_ok (
+friend void pw_ok (
   Widget w,
   XtPointer client,
   XtPointer call );
 
-friend void shcmdc_pw_update (
+friend void pw_apply (
   Widget w,
   XtPointer client,
   XtPointer call );
 
-friend void shcmdc_pw_apply (
-  Widget w,
-  XtPointer client,
-  XtPointer call );
-
-friend void shcmdc_pw_cancel (
+friend void pw_cancel (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -203,7 +193,7 @@ int timerActive, timerValue;
 int multipleInstancesAllowed, bufMultipleInstancesAllowed;
 THREAD_HANDLE thread;
 
-int valueFormX, valueFormY, valueFormW, valueFormH, valueFormMaxH;
+int pwFormX, pwFormY, pwFormW, pwFormH, pwFormMaxH;
 
 int needExecute, needWarning;
 
