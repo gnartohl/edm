@@ -92,7 +92,6 @@ char *buf;
   buf = XmTextGetString( axtdo->tf_widget );
   l = strlen(buf);
   XtFree( buf );
-  XmTextSetInsertionPosition( axtdo->tf_widget, l );
 
   axtdo->grabUpdate = 0;
 
@@ -229,6 +228,16 @@ static void xtdoGrabUpdate (
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
+  if ( !axtdo->grabUpdate ) {
+
+    //XSetInputFocus( axtdo->actWin->display(),
+     // XtWindow(axtdo->actWin->executeWidget), RevertToNone, CurrentTime );
+
+    XSetInputFocus( axtdo->actWin->display(),
+     XtWindow(axtdo->tf_widget), RevertToNone, CurrentTime );
+
+  }
+
   axtdo->grabUpdate = 1;
 
 }
@@ -319,7 +328,7 @@ int n;
   XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
   XtSetValues( axtdo->tf_widget, args, n );
 
-  XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
+  //XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
 
   axtdo->grabUpdate = 0;
 
@@ -381,7 +390,7 @@ char *buf;
       axtdo->actWin->appCtx->proc->unlock();
     }
 
-    XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
+    //XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
 
   }
 
@@ -405,7 +414,7 @@ int n;
   XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
   XtSetValues( axtdo->tf_widget, args, n );
 
-  XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
+  //XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
 
   axtdo->grabUpdate = 0;
 
@@ -472,7 +481,7 @@ char *buf;
       axtdo->actWin->appCtx->proc->unlock();
     }
 
-    XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
+    //XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
 
   }
 
@@ -497,7 +506,7 @@ int n;
   XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
   XtSetValues( axtdo->tf_widget, args, n );
 
-  XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
+  //XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
 
   axtdo->grabUpdate = 0;
 
@@ -3675,6 +3684,7 @@ static XtActionsRec dragActions[] = {
        XmNfontList, textFontList,
        XmNtranslations, parsedTrans,
        XmNuserData, this,
+       XmNcursorPositionVisible, False,
        NULL );
 
       if ( textFontList ) XmFontListFree( textFontList );
@@ -3684,13 +3694,13 @@ static XtActionsRec dragActions[] = {
         n = 0;
         XtSetArg( args[n], XmNeditable, (XtArgVal) False ); n++;
         XtSetArg( args[n], XmNnavigationType, (XtArgVal) XmNONE ); n++;
-        XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
+        //XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
         XtSetValues( tf_widget, args, n );
 
       }
       else {
 
-        XmTextSetInsertionPosition( tf_widget, csrPos );
+        //XmTextSetInsertionPosition( tf_widget, csrPos );
 
         XtAddCallback( tf_widget, XmNfocusCallback,
          xtdoSetSelection, this );
