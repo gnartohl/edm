@@ -1288,9 +1288,6 @@ double smallDoubleArray[100];
     return 3;
   }
 
-  strncpy( tmp, val, MAXBUF );
-  tmp[MAXBUF] = 0;
-
   switch ( tagDestType[index] ) {
 
   case tagClass::LABEL: // section header label - no-op
@@ -1312,7 +1309,7 @@ double smallDoubleArray[100];
     //                                        color index)
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
 
     if ( strcmp( tk, "index" ) == 0 ) { // color index
 
@@ -1367,7 +1364,7 @@ double smallDoubleArray[100];
     intArray = (int *) tagDestination[index];
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
 
     while ( tk && ( i < tagDestMaxSize[index] ) ) {
 
@@ -1464,7 +1461,7 @@ double smallDoubleArray[100];
     color = (pvColorClass *) tagDestination[index];
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
 
     if ( strcmp( tk, "index" ) == 0 ) { // color index
 
@@ -1519,7 +1516,7 @@ double smallDoubleArray[100];
     color = (pvColorClass *) tagDestination[index];
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
 
     while ( tk && ( i < tagDestMaxSize[index] ) ) {
 
@@ -1615,7 +1612,7 @@ double smallDoubleArray[100];
     }
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
 
     if ( !tk ) {
 
@@ -1645,7 +1642,7 @@ double smallDoubleArray[100];
     }
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
 
     if ( !tk ) {
 
@@ -1669,7 +1666,7 @@ double smallDoubleArray[100];
 
     *( (int *) tagDestination[index] ) = -1;
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
 
     if ( tk ) {
 
@@ -1709,7 +1706,7 @@ double smallDoubleArray[100];
     i = 0;
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
     if ( tk ) {
 
       oneIndex = strtol( tk, NULL, 0 );
@@ -1780,7 +1777,7 @@ double smallDoubleArray[100];
     }
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
 
     if ( !tk ) {
 
@@ -1805,7 +1802,7 @@ double smallDoubleArray[100];
     }
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
 
     if ( tk ) {
 
@@ -1839,7 +1836,7 @@ double smallDoubleArray[100];
     i = 0;
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
     if ( tk ) {
 
       oneIndex = strtol( tk, NULL, 0 );
@@ -1894,7 +1891,7 @@ double smallDoubleArray[100];
     }
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
 
     if ( tk ) {
 
@@ -1928,7 +1925,7 @@ double smallDoubleArray[100];
     i = 0;
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
     if ( tk ) {
 
       oneIndex = strtol( tk, NULL, 0 );
@@ -2005,7 +2002,7 @@ double smallDoubleArray[100];
     i = 0;
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
     if ( tk ) {
 
       oneIndex = strtol( tk, NULL, 0 );
@@ -2108,7 +2105,7 @@ double smallDoubleArray[100];
     i = 0;
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
     if ( tk ) {
 
       oneIndex = strtol( tk, NULL, 0 );
@@ -2171,7 +2168,7 @@ double smallDoubleArray[100];
     i = 0;
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
     if ( tk ) {
 
       oneIndex = strtol( tk, NULL, 0 );
@@ -2229,7 +2226,7 @@ double smallDoubleArray[100];
     i = 0;
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
     if ( tk ) {
 
       oneIndex = strtol( tk, NULL, 0 );
@@ -2287,7 +2284,7 @@ double smallDoubleArray[100];
     i = 0;
 
     context = NULL;
-    tk = strtok_r( tmp, " \t\n", &context );
+    tk = strtok_r( val, " \t\n", &context );
     if ( tk ) {
 
       oneIndex = strtol( tk, NULL, 0 );
@@ -2337,6 +2334,9 @@ double smallDoubleArray[100];
       printf( tagClass_str18, tag );
       return 0;
     }
+
+    strncpy( tmp, val, MAXBUF );
+    tmp[MAXBUF] = 0;
 
     // first, count tokens and allocate array (two tokens per value)
 
@@ -2414,6 +2414,9 @@ double smallDoubleArray[100];
       printf( tagClass_str20, tag );
       return 0;
     }
+
+    strncpy( tmp, val, MAXBUF );
+    tmp[MAXBUF] = 0;
 
     // first, count tokens and allocate array (two tokens per value)
 
