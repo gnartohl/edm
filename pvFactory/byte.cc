@@ -118,7 +118,7 @@ int edmByteClass::createFromFile(FILE *f, char *filename,
                                        activeWindowClass *_actWin)
 {
     int major, minor, release, temp;
-    char tname[40];
+    char tname[PV_Factory::MAX_PV_NAME+1];
 
     actWin = _actWin;
     // Version, bounding box
@@ -148,7 +148,7 @@ int edmByteClass::createFromFile(FILE *f, char *filename,
 
 
   // PV Name
-  readStringFromFile(tname, 39, f); actWin->incLine();
+  readStringFromFile(tname, PV_Factory::MAX_PV_NAME+1, f); actWin->incLine();
   pv_exp_str.setRaw(tname);
 
 
@@ -244,7 +244,7 @@ int edmByteClass::genericEdit() // create Property Dialog
   bufLineWidth = lineWidth;
   bufLineStyle = lineStyle;
 
-  strncpy(bufPvName, getRawPVName(), 39);
+  strncpy(bufPvName, getRawPVName(), PV_Factory::MAX_PV_NAME);
 
   bufTheDir = theDir;
   bufNobt = nobt;
@@ -266,7 +266,7 @@ int edmByteClass::genericEdit() // create Property Dialog
     ef.addColorButton( "On Color/Rule", actWin->ci, &onColorCb, &bufOnColor );
     ef.addColorButton( "Off Color/Don't Care", actWin->ci, &offColorCb,
                         &bufOffColor );
-    ef.addTextField("PV", 30, bufPvName, 39);
+    ef.addTextField("PV", 30, bufPvName, PV_Factory::MAX_PV_NAME);
     ef.addOption( "Line Thk", "0|1|2|3|4|5|6|7|8|9|10", &bufLineWidth );
     ef.addOption( "Line Style", "Solid|Dash", &bufLineStyle );
     ef.addOption( "Direction", "BigEndian|LittleEndian", (int *)&bufTheDir);
