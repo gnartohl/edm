@@ -104,7 +104,7 @@ class relatedDisplayClass : public activeGraphicClass {
 public:
 
 static const int NUMPVS = 4;
-static const int maxDsps = 20;
+static const int maxDsps = 24;
 
 private:
 
