@@ -5466,6 +5466,7 @@ XmString str;
         numYTraces[yi] = 0;
       }
 
+      resetPv = NULL;
       resetEv = NULL;
 
       if ( !blank( resetPvExpStr.getExpanded() ) ) {
@@ -5481,6 +5482,7 @@ XmString str;
         resetPvExists = 0;
       }
 
+      trigPv = NULL;
       trigEv = NULL;
 
       if ( !blank( trigPvExpStr.getExpanded() ) ) {
@@ -5645,25 +5647,29 @@ int i, stat;
 
     msgDialog.destroy(); 
 
-    if ( resetEv ) {
+    if ( resetPv ) {
       stat = ca_clear_channel( resetPv );
+      resetPv = NULL;
       resetEv = NULL;
     }
 
-    if ( trigEv ) {
+    if ( trigPv ) {
       stat = ca_clear_channel( trigPv );
+      trigPv = NULL;
       trigEv = NULL;
     }
 
     for ( i=0; i<numTraces; i++ ) {
 
-      if ( xEv[i] ) {
+      if ( xPv[i] ) {
         stat = ca_clear_channel( xPv[i] );
+        xPv[i] = NULL;
         xEv[i] = NULL;
       }
 
-      if ( yEv[i] ) {
+      if ( yPv[i] ) {
         stat = ca_clear_channel( yPv[i] );
+        yPv[i] = NULL;
         yEv[i] = NULL;
       }
 
