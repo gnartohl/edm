@@ -104,6 +104,55 @@ char *defaultFont ( void ) { return defFontTag; }
 int addFont (
   char *name );
 
+int flushToBrace (
+  FILE *f );
+
+int fontInfoClass::checkSingleFontSpecGeneric (
+  XtAppContext app,
+  Display *d,
+  char *userFontFamilyName,
+  char *line,
+  int checkBestFont,
+  int major,
+  int minor,
+  int release );
+
+int checkSingleFontSpec (
+  XtAppContext app,
+  Display *d,
+  char *userFontFamilyName,
+  char *buf,
+  int major,
+  int minor,
+  int release );
+
+int checkBestSingleFontSpec (
+  XtAppContext app,
+  Display *d,
+  char *userFontFamilyName,
+  char *buf,
+  int major,
+  int minor,
+  int release );
+
+int getSingleFontSpec (
+  XtAppContext app,
+  Display *d,
+  char *userFontFamilyName,
+  char *buf,
+  int major,
+  int minor,
+  int release );
+
+int processFontGroup (
+  XtAppContext app,
+  Display *d,
+  char *userFontFamilyName,
+  FILE *f,
+  int major,
+  int minor,
+  int release );
+
 int initFromFileVer3 (
   XtAppContext app,
   Display *d,
