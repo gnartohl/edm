@@ -81,6 +81,9 @@ typedef struct main_que_tag { /* locked queue header */
 #define SWITCHES 1
 #define FILES 2
 
+#define QUERY_LOAD 1
+#define CONNECT 2
+
 typedef struct argsTag {
   int argc;
   char **argv;
@@ -96,6 +99,7 @@ typedef struct appListTag {
 static MAIN_QUE_TYPE mainFreeQueue, mainActiveQueue;
 static MAIN_NODE_TYPE mainNodes[MAIN_QUEUE_SIZE];
 static IPRPC_PORT con_port;
+static int numClients = 0;
 
 //#include "alloc.h"
 #ifdef DIAGNOSTIC_ALLOC
@@ -120,20 +124,20 @@ char msg[80];
 }
 
 int getHostAddr (
+  char *name,
   char *addr )
 {
 
-int stat;
 struct hostent *entry;
-char name[255+1];
 unsigned char *adr;
+char *tk, *buf;
 
   strcpy( addr, "0.0.0.0" );
 
-  stat = gethostname( name, 255 );
-  if ( stat ) return stat;
+  tk = strtok_r( name, ":,", &buf );
+  if ( !tk ) tk = name;
 
-  entry = gethostbyname( name );
+  entry = gethostbyname( tk );
   if ( entry->h_length != 4 ) return -1;
 
   adr = (unsigned char *) (entry->h_addr_list)[0];
@@ -151,16 +155,23 @@ void checkForServer (
   char *displayName )
 {
 
-char addr[127+1];
-int i, len, pos, max, argCount, stat;
+char chkHost[31+1], host[31+1], addr[31+1];
+int i, len, pos, max, argCount, stat, result, item, useItem;
 IPRPC_PORT port;
 char msg[255+1], portNumStr[15+1];
 SYS_TIME_TYPE timeout;
+char *envPtr, *tk1, *tk2, *buf1, *buf2;
+double merit, min, num;
+
+  envPtr = getenv( "EDMSERVERS" );
+
+  if ( !envPtr ) {
+    stat = gethostname( host, 31 );
+    if ( stat ) return;
+    envPtr = host;
+  }
 
   sprintf( portNumStr, "%-d", portNum );
-
-  stat = getHostAddr( addr );
-  if ( stat ) return;
 
   if ( appendDisplay ) {
     argCount = argc + 2; // we will add two parameters below
@@ -169,7 +180,152 @@ SYS_TIME_TYPE timeout;
     argCount = argc;
   }
 
-  sprintf( msg, "%-d|", argCount );
+  stat = sys_cvt_seconds_to_timeout( 10.0, &timeout );
+  if ( !( stat & 1 ) ) {
+    printf( main_str3 );
+    return;
+  }
+
+  // do simple load balancing
+
+  tk1 = strtok_r( envPtr, ",", &buf1 );
+  if ( tk1 ) {
+    strncpy( host, tk1, 31 );
+    host[31] = 0;
+    min = -1;
+    useItem = 1;
+  }
+
+  item = 1;
+  while ( tk1 ) {
+
+    strncpy( chkHost, tk1, 31 );
+    chkHost[31] = 0;
+    merit = 1.0;
+
+    // use msg as a tmp buffer
+    strncpy( msg, tk1, 254 );
+    msg[254] = 0;
+    tk2 = strtok_r( msg, ":", &buf2 );
+
+    if ( tk2 ) {
+
+      strncpy( chkHost, tk2, 31 );
+
+      tk2 = strtok_r( NULL, ":", &buf2 );
+      if ( tk2 ) {
+        merit = atof( tk2 );
+        if ( merit <= 0.0 ) merit = 1.0;
+      }
+
+    }
+
+    //printf( "Checking host [%s], merit = %-f\n", chkHost, merit );
+
+    stat = getHostAddr( chkHost, addr );
+    if ( stat ) return;
+
+    stat = ipncl_create_port( 1, 4096, "test", &port );
+    if ( !( stat & 1 ) ) {
+      printf( main_str4 );
+      return;
+    }
+
+    stat = ipncl_connect( addr, portNumStr, "", port );
+    if ( !( stat & 1 ) ) {
+      return;
+    }
+
+    msg[0] = (char) QUERY_LOAD;
+    msg[1] = 0;
+
+    len = strlen(msg) + 1;
+
+    stat = ipncl_send_msg( port, len, msg );
+    if ( !( stat & 1 ) ) {
+      printf( main_str5 );
+      return;
+    }
+
+    stat = ipncl_wait_on_port( port, &timeout, &result );
+    if ( !( stat & 1 ) ) {
+      printf( main_str42 );
+      stat = ipncl_disconnect( port );
+      stat = ipncl_delete_port( &port );
+      goto nextHost;
+    }
+
+    if ( !result ) {
+
+      // timeout
+      stat = ipncl_disconnect( port );
+      stat = ipncl_delete_port( &port );
+      stat = ipncl_disconnect( con_port );
+      goto nextHost;
+
+    }
+    else {
+
+      stat = ipncl_receive_msg( port, 255, &len, msg );
+      if ( !( stat & 1 ) ) {
+        printf( main_str43 );
+        stat = ipncl_disconnect( port );
+        stat = ipncl_delete_port( &port );
+        goto nextHost;
+      }
+
+      num = (double) ntohl( *( (int *) msg ) );
+
+      //printf( "received num = %-f\n", num );
+
+      num = num / merit;
+
+      if ( ( num < min ) || ( min == -1 ) ) {
+        min = num;
+        strncpy( host, chkHost, 31 );
+        host[31] = 0;
+        useItem = item;
+      }
+
+      //printf( "min = %-f, adj num = %-f\n", min, num );
+
+    }
+
+    // don't check status, we're probably already disconnected
+    stat = ipncl_disconnect( port );
+
+    stat = ipncl_delete_port( &port );
+    if ( !( stat & 1 ) ) {
+      printf( main_str7 );
+    }
+
+nextHost:
+
+    item++;
+    tk1 = strtok_r( NULL, ",", &buf1 );
+
+  }
+
+  //printf( "Using host [%s], item %-d\n", host, useItem );
+
+  stat = getHostAddr( host, addr );
+  if ( stat ) return;
+
+  stat = ipncl_create_port( 1, 4096, "test", &port );
+  if ( !( stat & 1 ) ) {
+    printf( main_str4 );
+    return;
+  }
+
+  stat = ipncl_connect( addr, portNumStr, "", port );
+  if ( !( stat & 1 ) ) {
+    return;
+  }
+
+  msg[0] = (char) CONNECT;
+  pos = 1;
+
+  sprintf( &msg[pos], "%-d|", argCount );
   pos = strlen(msg);
   max = 255 - pos;
 
@@ -196,23 +352,6 @@ SYS_TIME_TYPE timeout;
     strncat( &msg[pos], "|", max );
     pos = strlen(msg);
     max = 255 - pos;
-  }
-
-  stat = sys_cvt_seconds_to_timeout( 10.0, &timeout );
-  if ( !( stat & 1 ) ) {
-    printf( main_str3 );
-    return;
-  }
-
-  stat = ipncl_create_port( 1, 4096, "test", &port );
-  if ( !( stat & 1 ) ) {
-    printf( main_str4 );
-    return;
-  }
-
-  stat = ipncl_connect( addr, portNumStr, "", port );
-  if ( !( stat & 1 ) ) {
-    return;
   }
 
   len = strlen(msg) + 1;
@@ -289,7 +428,7 @@ THREAD_HANDLE delayH;
 MAIN_NODE_PTR node;
 IPRPC_PORT port;
 SYS_TIME_TYPE timeout;
-int len;
+int len, num, cmd;
 char msg[255+1], portNumStr[15+1];
 
 int *portNumPtr = (int *) thread_get_app_data( h );
@@ -354,28 +493,56 @@ int *portNumPtr = (int *) thread_get_app_data( h );
 
     }
 
-    stat = thread_lock_master( h );
+    cmd = (int) msg[0];
 
-    q_stat_r = REMQHI( (void *) &mainFreeQueue, (void **) &node, 0 );
-    if ( q_stat_r & 1 ) {
-      n++;
-      strncpy( node->msg, msg, 255 );
-      q_stat_i = INSQTI( (void *) node, (void *) &mainActiveQueue, 0 );
-      if ( !( q_stat_i & 1 ) ) {
-        printf( main_str17 );
+    switch ( cmd ) {
+
+    case QUERY_LOAD:
+
+      stat = thread_lock_master( h );
+      num = numClients;
+      stat = thread_unlock_master( h );
+
+      *( (int *) msg ) = htonl( num );
+      len = 4;
+
+      stat = ipnsv_send_msg( port, len, msg );
+      if ( !( stat & 1 ) ) {
+        printf( main_str44 );
       }
-    }
-    else {
-      printf( main_str18 );
-    }
 
-    stat = thread_unlock_master( h );
+      break;
+
+    case CONNECT:
+
+      stat = thread_lock_master( h );
+
+      q_stat_r = REMQHI( (void *) &mainFreeQueue, (void **) &node, 0 );
+      if ( q_stat_r & 1 ) {
+        n++;
+        strncpy( node->msg, &msg[1], 254 );
+        q_stat_i = INSQTI( (void *) node, (void *) &mainActiveQueue, 0 );
+        if ( !( q_stat_i & 1 ) ) {
+          printf( main_str17 );
+        }
+      }
+      else {
+        printf( main_str18 );
+      }
+
+      stat = thread_unlock_master( h );
+
+      break;
+
+    }
 
     stat = ipnsv_disconnect( port );
     stat = ipnsv_delete_port( &port );
     stat = ipnsv_disconnect( con_port );
 
-    thread_delay( delayH, 0.5 );
+    if ( cmd == CONNECT ) {
+      thread_delay( delayH, 0.5 );
+    }
 
   }
 
@@ -514,7 +681,7 @@ Display *testDisplay;
           }
           strncpy( displayName, argv[n], 127 );
         }
-        else if ( strcmp( argv[n], "-port" ) == 0 ) {
+        else if ( strcmp( argv[n], global_str73 ) == 0 ) {
           n++;
           if ( n >= argc ) { // missing port num
             *local = 1;
@@ -522,6 +689,10 @@ Display *testDisplay;
           }
           *portNum = atol( argv[n] );
         }
+        else if ( strcmp( argv[n], global_str76 ) == 0 ) {
+	}
+        else if ( strcmp( argv[n], global_str79 ) == 0 ) {
+	}
         else {
           *local = 1;
           return;
@@ -607,6 +778,8 @@ MAIN_NODE_PTR node;
 char **argArray, displayName[127+1];
 int appendDisplay;
 float hours, seconds;
+
+  numClients = 1;
 
   checkParams( argc, argv, &local, &server, &appendDisplay, displayName,
    &portNum );
@@ -747,6 +920,10 @@ float hours, seconds;
         delete cur;
 #endif
 
+        stat = thread_lock_master( serverH );
+        numClients--;
+        stat = thread_unlock_master( serverH );
+
       }
       else {
         numAppsRemaining++;
@@ -796,6 +973,8 @@ float hours, seconds;
             args->appCtxPtr->proc = &proc;
 
             args->appCtxPtr->startApplication( args->argc, args->argv );
+
+            numClients++;
 
 parse_error:
 
