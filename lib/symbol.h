@@ -32,7 +32,7 @@
 #define ASC_MINOR_VERSION 6
 #define ASC_RELEASE 0
 
-#define SYMBOL_K_NUM_STATES 32
+#define SYMBOL_K_NUM_STATES 64
 #define SYMBOL_K_MAX_PVS 5
 
 #define OR_ORIG 0

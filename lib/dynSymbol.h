@@ -33,7 +33,7 @@
 #define DSC_MINOR_VERSION 3
 #define DSC_RELEASE 0
 
-#define DYNSYMBOL_K_NUM_STATES 32
+#define DYNSYMBOL_K_NUM_STATES 64
 
 #ifdef __dynSymbol_cc
 
