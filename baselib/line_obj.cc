@@ -1255,7 +1255,8 @@ char oneName[PV_Factory::MAX_PV_NAME+1];
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    lineColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    lineColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
 
@@ -1273,7 +1274,8 @@ char oneName[PV_Factory::MAX_PV_NAME+1];
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    fillColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    fillColor.setColorIndex( index, actWin->ci );
 
   }
 
