@@ -2743,7 +2743,7 @@ textEntry *te;
 
     nbN = 0;
     XtSetArg( nbArgs[nbN], XmNnavigationType, XmTAB_GROUP ); nbN++;
-    //XtSetArg( nbArgs[nbN], XmNwidth, (XtArgVal) 130 ); nbN++;
+    XtSetArg( nbArgs[nbN], XmNwidth, (XtArgVal) 130 ); nbN++;
     XtSetArg( nbArgs[nbN], XmNheight, (XtArgVal) 25 ); nbN++;
     XtSetArg( nbArgs[nbN], XmNrecomputeSize, (XtArgVal) 1 ); nbN++;
     XtSetArg( nbArgs[nbN], XmNlabelString, (XtArgVal) str2 ); nbN++;
@@ -2802,7 +2802,7 @@ textEntry *te;
 
     nbN = 0;
     XtSetArg( nbArgs[nbN], XmNnavigationType, XmTAB_GROUP ); nbN++;
-    //XtSetArg( nbArgs[nbN], XmNwidth, (XtArgVal) 130 ); nbN++;
+    XtSetArg( nbArgs[nbN], XmNwidth, (XtArgVal) 130 ); nbN++;
     XtSetArg( nbArgs[nbN], XmNheight, (XtArgVal) 25 ); nbN++;
     XtSetArg( nbArgs[nbN], XmNrecomputeSize, (XtArgVal) 1 ); nbN++;
     XtSetArg( nbArgs[nbN], XmNlabelString, (XtArgVal) str2 ); nbN++;
