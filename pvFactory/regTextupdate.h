@@ -7,7 +7,10 @@
 #define __REGTEXTUPDATE_H__
 
 #include"textupdate.h"
+extern "C"
+{
 #include<regex.h>
+}
 
 #define REGTEXTUPDATE_CLASSNAME "RegTextupdateClass"
 #define REGTEXTENTRY_CLASSNAME "RegTextentryClass"
