@@ -253,6 +253,7 @@ undoListPtr cur, next;
   while ( cur ) {
     next = cur->flink;
     delete cur->node;
+    cur->node = NULL;
     delete cur;
     cur = next;
   }
@@ -601,7 +602,7 @@ undoListPtr cur;
 
   i = head;
 
-  while ( i != tail ) {
+  while ( i <= tail ) {
 
     // delete all nodes in list
     deleteNodes( i );
