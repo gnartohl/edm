@@ -378,6 +378,8 @@ class activeWindowClass {
 
 public:
 
+char startSignature[15+1];
+
 int dragItemIndex;
 dragPopupBlockType dragPopupBlock[10];
 
@@ -1189,6 +1191,8 @@ int activeWindowClass::checkPoint (
 
 void activeWindowClass::openExecuteSysFile (
   char *fName );
+
+char endSignature[15+1];
 
 };
 

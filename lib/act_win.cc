@@ -148,6 +148,16 @@ activeWindowClass *awo = (activeWindowClass *) client;
 int stat;
 char name[255+1], oldName[255+1];
 
+  if ( strcmp( awo->startSignature, "edmActiveWindow" ) != 0 ) {
+    printf( "Garbage in acw_autosave\n" );
+    return;
+  }
+
+  if ( strcmp( awo->endSignature, "wodniWevitcAmde" ) != 0 ) {
+    printf( "Garbage in acw_autosave\n" );
+    return;
+  }
+
   awo->doAutoSave = 1;
   awo->appCtx->postDeferredExecutionQueue( awo );
   return;
@@ -8530,6 +8540,9 @@ activeWindowClass::activeWindowClass ( void ) {
 
 int stat;
 char *envPtr, *gotIt, buf[127+1], save[127+1], *tk;
+
+  strcpy( startSignature, "edmActiveWindow" );
+  strcpy( endSignature, "wodniWevitcAmde" );
 
   strcpy( defaultPvType, "" );
 
