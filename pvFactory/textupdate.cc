@@ -1047,8 +1047,8 @@ void edmTextentryClass::text_entered_callback(Widget w,
 }
 
 void edmTextentryClass::text_edit_callback(Widget w,
-                                             XtPointer clientData,
-                                             XtPointer pCallbackData)
+                                           XtPointer clientData,
+                                           XtPointer pCallbackData)
 {
     edmTextentryClass *me = (edmTextentryClass *) clientData;
     XmTextVerifyCallbackStruct *pcbs =
