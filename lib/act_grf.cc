@@ -112,6 +112,11 @@ activeGraphicClass::~activeGraphicClass ( void ) {
     actWin->ci->removeFromBlinkList( (void *) this, blinkFunc );
   }
 
+  if ( createParam ) {
+    delete createParam;
+    createParam = NULL;
+  }
+
 }
 
 void activeGraphicClass::setObjType (

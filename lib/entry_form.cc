@@ -558,6 +558,7 @@ widgetListPtr cur, next;
   while ( cur ) {
     next = cur->flink;
 //     printf( "optionEntry::~optionEntry - delete node\n" );
+    delete cur->value;
     delete cur;
     cur = next;
   }

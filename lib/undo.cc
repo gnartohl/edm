@@ -239,7 +239,7 @@ int i;
 
     // delete all nodes in list
     deleteNodes( i );
-    delete undoList[i].head;
+    //delete undoList[i].head;
 
     i++;
     if ( i >= max ) i = 0;
@@ -248,7 +248,11 @@ int i;
 
   i = tail;
   deleteNodes( i );
-  delete undoList[i].head;
+  //delete undoList[i].head;
+
+  for ( i=0; i<undoClass::max; i++ ) {
+    delete undoList[i].head;
+  }
 
 }
 
