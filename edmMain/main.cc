@@ -1253,6 +1253,7 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
     if ( !blank(displayName) ) n += 2;
     if ( numCheckPointMacros ) n += 2;
     if ( sessionNoEdit ) n++;
+    n++; // add -x (execute)
 
     argArray = new char*[argc+n];
 
@@ -1260,6 +1261,10 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
 
     argArray[i] = new char[strlen(argv[i])+1];
     strcpy( argArray[i], argv[i] );
+    i++;
+
+    argArray[i] = new char[strlen("-x")+1];
+    strcpy( argArray[i], "-x" );
     i++;
 
     if ( sessionNoEdit ) {
@@ -1386,6 +1391,7 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
         if ( !blank(displayName) ) n += 2;
         if ( numCheckPointMacros ) n += 2;
         if ( sessionNoEdit ) n++;
+        n++; // add -x (execute)
 
         argArray = new char*[argc+n];
 
@@ -1393,6 +1399,10 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
 
         argArray[i] = new char[strlen(argv[i])+1];
         strcpy( argArray[i], argv[i] );
+        i++;
+
+        argArray[i] = new char[strlen("-x")+1];
+        strcpy( argArray[i], "-x" );
         i++;
 
         if ( sessionNoEdit ) {
