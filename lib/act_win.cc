@@ -15230,3 +15230,32 @@ void activeWindowClass::closeDeferred (
   appCtx->postDeferredExecutionQueue( this );
 
 }
+
+int activeWindowClass::checkPoint (
+  FILE *fptr )
+{
+
+int i;
+
+  if ( fptr ) {
+    fprintf( fptr, "name=%s\tx=%-d\ty=%-d\ti=%-d\n", fileName, x, y,
+     isIconified );
+    fprintf( fptr, "num=%-d\n", numMacros );
+    for ( i=0; i<numMacros; i++ ) {
+      fprintf( fptr, "%s=%s\n", macros[i], expansions[i] );
+    }
+    fprintf( fptr, "\n" );
+  }
+  else {
+    printf( "name=%s\tx=%-d\ty=%-d\ti=%-d\n", fileName, x, y,
+     isIconified );
+    printf( "num=%-d\n", numMacros );
+    for ( i=0; i<numMacros; i++ ) {
+      printf( "%s=%s\n", macros[i], expansions[i] );
+    }
+    printf( "\n" );
+  }
+
+  return 1;
+
+}

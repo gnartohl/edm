@@ -1163,6 +1163,9 @@ void activeWindowClass::setUndoText (
 void activeWindowClass::closeDeferred (
   int cycles );
 
+int activeWindowClass::checkPoint (
+  FILE *fptr );
+
 };
 
 #endif
