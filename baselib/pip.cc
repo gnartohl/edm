@@ -1024,7 +1024,7 @@ XmString str;
           if ( !popUpMenu ) {
 
             n = 0;
-            XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+            XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
             popUpMenu = XmCreatePopupMenu( actWin->topWidgetId(), "", args,
              n );
 
@@ -1370,7 +1370,7 @@ XmString str;
           if ( !popUpMenu ) {
 
             n = 0;
-            XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+            XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
             popUpMenu = XmCreatePopupMenu( actWin->topWidgetId(), "", args,
              n );
 

@@ -5965,7 +5965,7 @@ XmString str;
       if ( !widgetsCreated ) {
 
         n = 0;
-        XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+        XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
         popUpMenu = XmCreatePopupMenu( actWin->topWidgetId(), "", args, n );
 
         pullDownMenu = XmCreatePulldownMenu( popUpMenu, "", NULL, 0 );

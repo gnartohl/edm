@@ -1977,7 +1977,7 @@ XmString str;
       if ( !widgetsCreated ) {
 
         n = 0;
-        XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+        XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
         popUpMenu = XmCreatePopupMenu( actWin->topWidgetId(), "", args, n );
 
         pullDownMenu = XmCreatePulldownMenu( popUpMenu, "", NULL, 0 );
@@ -2296,7 +2296,7 @@ double dval;
 
   buttonPressed = 1;
 
-//    printf( "btn down, x=%-d, y=%-d\n", _x-x, _y-y );
+  //printf( "btn down, x=%-d, y=%-d, bn=%-d\n", _x-x, _y-y , buttonNumber );
 
   actWin->appCtx->proc->lock();
   dval = curControlV;
@@ -2304,10 +2304,10 @@ double dval;
   actWin->addDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
-  if ( buttonNumber == 3 ) {
+  if ( ( buttonNumber == 3 ) || ( buttonNumber == 4 ) ) {
     dval += fine;
   }
-  else if ( buttonNumber == 1 ) {
+  else if ( ( buttonNumber ) == 1 || ( buttonNumber == 5 ) ) {
     dval -= fine;
   }
 
