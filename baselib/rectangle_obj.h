@@ -74,9 +74,9 @@ static void arc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-class activeRectangleClass : public activeGraphicClass {
-
 #endif
+
+class activeRectangleClass : public activeGraphicClass {
 
 private:
 
