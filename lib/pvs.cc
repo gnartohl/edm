@@ -309,6 +309,7 @@ struct hostent *hostEntry;
 #endif
 
   hostEntry = gethostbyname( ipAddrArg );
+  if ( !hostEntry ) return 2; // error
   ip_addr = *( (int *) hostEntry->h_addr_list[0] );
 
   //ip_addr = inet_addr( ipAddrArg );
