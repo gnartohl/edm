@@ -461,6 +461,8 @@ int keypadClass::create (
    XmNlabelString, str,
    NULL );
 
+  XmStringFree( str );
+
   XtAddCallback( pb7, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
@@ -476,6 +478,8 @@ int keypadClass::create (
    XmNlabelString, str,
    NULL );
 
+  XmStringFree( str );
+
   XtAddCallback( pb8, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
@@ -490,6 +494,8 @@ int keypadClass::create (
    kprowcol,
    XmNlabelString, str,
    NULL );
+
+  XmStringFree( str );
 
   XtAddCallback( pb9, XmNactivateCallback, (XtCallbackProc) func, this );
 
@@ -511,6 +517,8 @@ int keypadClass::create (
    XmNlabelString, str,
    NULL );
 
+  XmStringFree( str );
+
   XtAddCallback( pb4, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
@@ -526,6 +534,8 @@ int keypadClass::create (
    XmNlabelString, str,
    NULL );
 
+  XmStringFree( str );
+
   XtAddCallback( pb5, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
@@ -540,6 +550,8 @@ int keypadClass::create (
    kprowcol,
    XmNlabelString, str,
    NULL );
+
+  XmStringFree( str );
 
   XtAddCallback( pb6, XmNactivateCallback, (XtCallbackProc) func, this );
 
@@ -561,6 +573,8 @@ int keypadClass::create (
    XmNlabelString, str,
    NULL );
 
+  XmStringFree( str );
+
   XtAddCallback( pb1, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
@@ -576,6 +590,8 @@ int keypadClass::create (
    XmNlabelString, str,
    NULL );
 
+  XmStringFree( str );
+
   XtAddCallback( pb2, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
@@ -590,6 +606,8 @@ int keypadClass::create (
    kprowcol,
    XmNlabelString, str,
    NULL );
+
+  XmStringFree( str );
 
   XtAddCallback( pb3, XmNactivateCallback, (XtCallbackProc) func, this );
 
@@ -611,6 +629,8 @@ int keypadClass::create (
    XmNlabelString, str,
    NULL );
 
+  XmStringFree( str );
+
   XtAddCallback( pb0, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
@@ -626,6 +646,8 @@ int keypadClass::create (
    XmNlabelString, str,
    NULL );
 
+  XmStringFree( str );
+
   XtAddCallback( pbPoint, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
@@ -640,6 +662,8 @@ int keypadClass::create (
    kprowcol,
    XmNlabelString, str,
    NULL );
+
+  XmStringFree( str );
 
   XtAddCallback( pbSign, XmNactivateCallback, (XtCallbackProc) func, this );
 
@@ -663,6 +687,8 @@ int keypadClass::create (
    XmNleftAttachment, XmATTACH_FORM,
    NULL );
 
+  XmStringFree( str );
+
   XtAddCallback( pbCancel, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
@@ -679,6 +705,8 @@ int keypadClass::create (
    XmNbottomAttachment, XmATTACH_FORM,
    XmNrightAttachment, XmATTACH_FORM,
    NULL );
+
+  XmStringFree( str );
 
   XtAddCallback( pbOK, XmNactivateCallback, (XtCallbackProc) func, this );
 
@@ -699,6 +727,8 @@ int keypadClass::create (
    XmNleftAttachment, XmATTACH_WIDGET,
    XmNleftWidget, pbCancel,
    NULL );
+
+  XmStringFree( str );
 
   XtAddCallback( pbBksp, XmNactivateCallback, (XtCallbackProc) func, this );
 
