@@ -736,7 +736,7 @@ char *buf, tmp[127+1];
   }
   else {
 
-    Strncat( tmp, axtdo->entryValue, 39 );
+    strncpy( tmp, axtdo->entryValue, 39 );
     tmp[39] = 0;
 
     if ( isLegalFloat(tmp) ) {
@@ -829,7 +829,7 @@ int n;
   }
   else {
 
-    Strncat( tmp, axtdo->entryValue, 39 );
+    strncpy( tmp, axtdo->entryValue, 39 );
     tmp[39] = 0;
 
     if ( isLegalFloat(tmp) ) {
