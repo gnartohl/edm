@@ -108,12 +108,24 @@ int z=2, zz=0;
 #endif
 
 
+#define MAX_X_ERRORS 100
+
 static int xErrorHandler (
   Display *d,
   XErrorEvent *err )
 {
 
 char msg[80];
+static int num = 0;
+
+  if ( num > MAX_X_ERRORS ) {
+    return 0;
+  }
+  else if ( num == MAX_X_ERRORS ) {
+    fprintf( stderr, "Too many X errors\n" );
+    return 0;
+  }
+  num++;
 
   if ( err->error_code != BadAccess ) {
     XGetErrorText( d, err->error_code, msg, 80 );
@@ -121,6 +133,25 @@ char msg[80];
   }
 
   return 0;
+
+}
+
+void xtErrorHandler (
+  char *msg )
+{
+
+static int num = 0;
+
+  if ( num > MAX_X_ERRORS ) {
+    return;
+  }
+  else if ( num == MAX_X_ERRORS ) {
+    fprintf( stderr, "Too many Xt errors\n" );
+    return;
+  }
+  num++;
+
+  fprintf( stderr, "xtErrorHandler - %s\n", msg );
 
 }
 
@@ -1206,6 +1237,11 @@ int primaryServerFlag, numCheckPointMacros;
   }
   if ( !( stat & 1 ) ) exit( 0 );
 
+  if ( stat & 1 ) { // success
+    oneAppCtx = args->appCtxPtr->appContext();
+    XtAppSetErrorHandler( oneAppCtx, xtErrorHandler );
+    XtAppSetWarningHandler( oneAppCtx, xtErrorHandler );
+  }
 
   if ( restart ) { // open all displays
 
@@ -1307,7 +1343,13 @@ int primaryServerFlag, numCheckPointMacros;
         args->appCtxPtr = new appContextClass;
         args->appCtxPtr->proc = &proc;
 
-        args->appCtxPtr->startApplication( args->argc, args->argv, 0 );
+        stat = args->appCtxPtr->startApplication( args->argc, args->argv, 0 );
+
+        if ( stat & 1 ) { // success
+          oneAppCtx = args->appCtxPtr->appContext();
+          XtAppSetErrorHandler( oneAppCtx, xtErrorHandler );
+          XtAppSetWarningHandler( oneAppCtx, xtErrorHandler );
+	}
 
         g_numClients++;
 
@@ -1455,7 +1497,14 @@ int primaryServerFlag, numCheckPointMacros;
             args->appCtxPtr = new appContextClass;
             args->appCtxPtr->proc = &proc;
 
-            args->appCtxPtr->startApplication( args->argc, args->argv, 0 );
+            stat = args->appCtxPtr->startApplication( args->argc, args->argv,
+             0 );
+
+            if ( stat & 1 ) { // success
+              oneAppCtx = args->appCtxPtr->appContext();
+              XtAppSetErrorHandler( oneAppCtx, xtErrorHandler );
+              XtAppSetWarningHandler( oneAppCtx, xtErrorHandler );
+	    }
 
             g_numClients++;
 
