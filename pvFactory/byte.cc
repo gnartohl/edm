@@ -13,9 +13,11 @@
 
 edmByteClass::edmByteClass() : activeGraphicClass(), init(0), 
   is_executing(false), is_pvname_valid(false), valuePvId(0), bufInvalid(0),
-  validFlag(false), value(0), lastval(0), dmask(0),theDir(BIGENDIAN),  nobt(16),
-  shft(0), lineWidth(1), lineStyle(LineSolid), theOutline(0)
+  validFlag(false), value(0), lastval(0), dmask(0), lastsev(0), 
+  theDir(BIGENDIAN),  nobt(16), shft(0), lineWidth(1), lineStyle(LineSolid), 
+  theOutline(0)
 {
+
    name = strdup(BYTE_CLASSNAME);
 }
 
@@ -121,6 +123,7 @@ int edmByteClass::createFromFile(FILE *f, char *filename,
     char tname[PV_Factory::MAX_PV_NAME+1];
 
     actWin = _actWin;
+
     // Version, bounding box
     fscanf(f, "%d %d %d\n", &major, &minor, &release); actWin->incLine();
     fscanf(f, "%d\n", &x); actWin->incLine();
@@ -165,6 +168,7 @@ int edmByteClass::createFromFile(FILE *f, char *filename,
   shft = (temp < 0)?0:((temp > 15)?15:temp);
   
   updateDimensions();
+
 
   return 1;
 
@@ -278,11 +282,11 @@ int edmByteClass::genericEdit() // create Property Dialog
 
 void edmByteClass::updateDimensions()
 //
-// The outline of the byte widget is the segment list for an XDrawSegments 
-// call.  It is also used to get coordinates for the XFillRectangle calls 
-// for coloring the bits. 
+// Generates the outline of the byte widget, which is the segment list for an 
+// XDrawSegments call.  It is also used to get coordinates for the 
+// XFillRectangle calls for coloring the bits. 
 //
-// updateDimensions also sets up dmask.
+// updateDimensions also sets up dmask and the alarm pixel values.
 //
 {
    float bitLen;
@@ -292,6 +296,13 @@ void edmByteClass::updateDimensions()
    {
       dmask |= lmask;
    }
+
+   minorPixel = actWin->ci->getPixelByIndex(
+                    actWin->ci->getSpecialIndex(COLORINFO_K_MINOR));
+   majorPixel = actWin->ci->getPixelByIndex(
+                    actWin->ci->getSpecialIndex(COLORINFO_K_MAJOR));
+   invalidPixel = actWin->ci->getPixelByIndex(
+                    actWin->ci->getSpecialIndex(COLORINFO_K_INVALID));
 
    delete[] theOutline;
 
@@ -469,6 +480,7 @@ void edmByteClass::edit_update(Widget w, XtPointer client,XtPointer call)
     me->sboxH = me->bufH;
 
     me->updateDimensions();
+
   
 }
 
@@ -653,21 +665,37 @@ int edmByteClass::drawActive()
    {
       if (valuePvId->is_valid())
       {
+         unsigned int severity;
          lastval = value;
          value = ((valuePvId->get_int() >> shft) & dmask);
-         if (!validFlag) 
+         // logic for non-invalid alarm colors would go here.  
+         severity = valuePvId->get_severity();
+         switch(severity)
+         {
+             case NO_ALARM:  
+                fgPixel = onPixel;
+                break;
+             case MINOR_ALARM:
+                fgPixel = minorPixel;
+                break;
+             case MAJOR_ALARM:
+                fgPixel = majorPixel;
+                break;
+             default:
+                fgPixel = invalidPixel;
+         }
+         if (!validFlag || lastsev != severity) 
          {
             validFlag = true;
+            lastsev = severity;
             bufInvalidate();
-            // logic for non-invalid alarm colors would go here.  
-            fgPixel = onPixel;
          }
       }
       else if (validFlag)
       {
          validFlag = false;
          bufInvalidate();
-         fgPixel = 0;
+         fgPixel = invalidPixel;
       }
    }
    if (bufInvalid)
@@ -772,7 +800,7 @@ int edmByteClass::drawActiveFull()
      actWin->executeGc.normGC(), x, y, w, h );
      bufValidate();
   }
-  else if (validFlag || value != 0)
+  else if (validFlag)
   {
      int previous = 0;
      int lastseg = 0;
@@ -800,7 +828,7 @@ int edmByteClass::drawActiveFull()
      }
      bufValidate();
   }
-  else // invalid PV and data zero
+  else // disconnected
   {
     actWin->drawGc.setFG( 0 );	// white
     XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),

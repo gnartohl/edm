@@ -87,6 +87,7 @@ public:
     int lineColor;
     int onColor, offColor;
     int onPixel, offPixel, fgPixel;
+    int minorPixel, majorPixel, invalidPixel;
     void updateDimensions();
 
     char *firstDragName();
@@ -109,7 +110,7 @@ protected:
     ProcessVariable *valuePvId;        // ChannelAccess, PV
     int bufInvalid;
     bool validFlag;
-    unsigned int value, lastval, dmask;
+    unsigned int value, lastval, dmask, lastsev;
     
     // Properties
     enum bdir { BIGENDIAN, LITTLEENDIAN };
@@ -139,7 +140,7 @@ protected:
 
     XSegment *theOutline;
 
-    char bufPvName[39+1];
+    char bufPvName[PV_Factory::MAX_PV_NAME+1];
     int bufOnColor;
     int bufOffColor;
 
