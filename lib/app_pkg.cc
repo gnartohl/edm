@@ -2236,6 +2236,9 @@ void appContextClass::getFilePaths ( void ) {
 int i, l, allocL, curLen, stat;
 char *envPtr, *gotIt, *buf, save[127+1], path[127+1], *tk;
 
+  curLen = -1;
+  buf = NULL;
+
   // EDMFILES
   envPtr = getenv( environment_str2 );
   if ( envPtr ) {
@@ -2279,10 +2282,17 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], *tk;
     l = strlen( envPtr ) + 1;
     allocL = l / 4096;
     allocL = allocL * 4096 + 4096;
-    if ( allocL > curLen ) {
+
+    if ( !buf ) {
       curLen = allocL;
-      delete buf;
       buf = new char[allocL];
+    }
+    else {
+      if ( allocL > curLen ) {
+        curLen = allocL;
+        delete buf;
+        buf = new char[allocL];
+      }
     }
 
     // count number of search paths
@@ -2326,7 +2336,7 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], *tk;
       dataFilePrefix[0] = new char[strlen(path)+1];
       strcpy( dataFilePrefix[0], path );
 
-      delete buf;
+      if ( buf ) delete buf;
 
       return;
 
@@ -2384,7 +2394,7 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], *tk;
 
   }
 
-  delete buf;
+  if ( buf ) delete buf;
 
 }
 
