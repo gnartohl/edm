@@ -5709,10 +5709,10 @@ struct tm *ts;
 
         {
 
-          osiTime base( (const unsigned long) ( curSec ),
+          edmTime base( (const unsigned long) ( curSec ),
            (const unsigned long) curNsec );
-          osiTime cur( (double) dxValue );
-          osiTime total = base + cur;
+          edmTime cur( (double) dxValue );
+          edmTime total = base + cur;
 
           t = total.getSec() + timeOffset;
 
@@ -7580,7 +7580,7 @@ void xyGraphClass::drawXScale ( void ) {
 
         time_t t;
 
-        osiTime base( (const unsigned long) ( curSec ),
+        edmTime base( (const unsigned long) ( curSec ),
          (const unsigned long) curNsec );
 
         t = base.getSec() + timeOffset;

@@ -37,19 +37,7 @@
 
 #include "epicsVersion.h"
 
-#if EPICS_VERSION == 3
-#if EPICS_REVISION >= 14
-#include "epicsTime.h"
-#define osiTime epicsTime
-#else
-#include "osiTime.h"
-#endif
-#endif
-
-#if EPICS_VERSION > 3
-#include "epicsTime.h"
-#define osiTime epicsTime
-#endif
+#include "edmTime.h"
 
 #include "pv_factory.h"
 #include "epics_pv_factory.h"
