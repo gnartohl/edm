@@ -15005,8 +15005,8 @@ void activeWindowClass::substituteSpecial (
   char *bufOut )
 {
 
-char param[1023+1];
-int len, iIn, iOut, p0, p1, more, state, winid;
+char param[1023+1], dspName[127+1];
+int i, len, iIn, iOut, p0, p1, more, state, winid;
 
   state = 1; // copying
 
@@ -15018,7 +15018,12 @@ int len, iIn, iOut, p0, p1, more, state, winid;
 
     case 1: // copying
 
-      if ( bufIn[iIn] == '<' ) {
+      if ( bufIn[iIn] == 0 ) {
+        bufOut[iOut] = bufIn[iIn];
+        more = 0;
+        break;
+      }
+      else if ( bufIn[iIn] == '<' ) {
         state = 2; // finding param
 	p0 = iIn;
 	break;
@@ -15029,7 +15034,12 @@ int len, iIn, iOut, p0, p1, more, state, winid;
 
     case 2: // finding param
 
-      if ( bufIn[iIn] == '>' ) {
+      if ( bufIn[iIn] == 0 ) {
+        bufOut[iOut] = bufIn[iIn];
+        more = 0;
+        break;
+      }
+      else if ( bufIn[iIn] == '>' ) {
 	p1 = iIn;
 	len = p1 - p0 + 1;
         if ( len > 1023 ) len = 1023;
@@ -15069,6 +15079,23 @@ int len, iIn, iOut, p0, p1, more, state, winid;
         else if ( strcmp( param, "<USERDIR>" ) == 0 ) {
           bufOut[iOut] = 0;
           strncat( bufOut, userDataFilePrefix, max );
+          iOut = strlen( bufOut );
+          if ( iOut >= max ) iOut = max - 1;
+	}
+        else if ( strcmp( param, "<DSPNAME>" ) == 0 ) {
+          bufOut[iOut] = 0;
+          strncpy( dspName, XDisplayName(""), 127 );
+          strncat( bufOut, dspName, max );
+          iOut = strlen( bufOut );
+          if ( iOut >= max ) iOut = max - 1;
+	}
+        else if ( strcmp( param, "<DSPID>" ) == 0 ) {
+          bufOut[iOut] = 0;
+          strncpy( dspName, XDisplayName(""), 127 );
+          for ( i=0; i<(int) strlen(dspName); i++ ) {
+            if ( dspName[i] == '.' ) dspName[i] = '-';
+	  }
+          strncat( bufOut, dspName, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
 	}
