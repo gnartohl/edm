@@ -178,6 +178,12 @@ void EPICS_ProcessVariable::ca_ctrlinfo_callback(
     struct event_handler_args args)
 {
     EPICS_ProcessVariable *me = (EPICS_ProcessVariable *)args.usr;
+
+    // Sometimes "get callback" functions get called with
+    // args.status set to ECA_DISCONN and args.dbr set to NULL.
+    // If so, return
+    if ( !args.dbr ) return;
+
     me->value->read_ctrlinfo(args.dbr);
     me->have_ctrlinfo = true;
     if (!me->pv_value_evid)
