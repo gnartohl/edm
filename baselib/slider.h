@@ -404,6 +404,8 @@ double kpCtlDouble, kpIncDouble;
 
 int overSave, overRestore, overInc, overControl, overRead;
 
+int doTimerUpdate;
+
 public:
 
 activeSliderClass ( void );

@@ -347,6 +347,8 @@ int incIndex;
 
 int oldStat, oldSev; // for alarms
 
+int doTimerUpdate;
+
 public:
 
 activeMotifSliderClass ( void );

@@ -384,9 +384,11 @@ double fv;
   }
 
   if ( mslo->prevScaleV != -1 ) {
-    if ( mslo->oldControlV == mslo->oneControlV ) return;
+    //if ( mslo->oldControlV == mslo->oneControlV ) return;
+    if ( !mslo->doTimerUpdate ) return;
   }
 
+  mslo->doTimerUpdate = 0;
   mslo->oldControlV = mslo->oneControlV;
 
   mslo->eraseActiveControlText();
@@ -772,6 +774,10 @@ int st, sev;
     mslo->actWin->appCtx->proc->lock();
     mslo->actWin->addDefExeNode( mslo->aglPtr );
     mslo->actWin->appCtx->proc->unlock();
+  }
+
+  if ( mslo->oneControlV != mslo->oldControlV ) {
+    mslo->doTimerUpdate = 1;
   }
 
   // xtimer updates image
@@ -1852,6 +1858,7 @@ int opStat;
       updateControlTimer = 0;
       controlAdjusted = 0;
       incrementTimerActive = 0;
+      doTimerUpdate = 1;
 
       controlPvConnected = 0;
 

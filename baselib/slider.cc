@@ -107,8 +107,10 @@ double fv;
     return;
   }
 
-  if ( slo->oldControlV == slo->oneControlV ) return;
+  //if ( slo->oldControlV == slo->oneControlV ) return;
+  if ( !slo->doTimerUpdate ) return;
 
+  slo->doTimerUpdate = 0;
   slo->oldControlV = slo->oneControlV;
 
   slo->eraseActiveControlText();
@@ -809,6 +811,10 @@ activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
 
   slo->oneControlV = *( (double *) ast_args.dbr ); // an xtimer updates image
   slo->curControlV = slo->oneControlV;
+
+  if ( slo->oneControlV != slo->oldControlV ) {
+    slo->doTimerUpdate = 1;
+  }
 
 }
 
@@ -3038,6 +3044,7 @@ char callbackName[63+1];
       updateControlTimerActive = 0;
       controlAdjusted = 0;
       incrementTimerActive = 0;
+      doTimerUpdate = 1;
 
 #ifdef __epics__
       controlPvId = controlLabelPvId = readPvId = readLabelPvId =
