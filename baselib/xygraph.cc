@@ -1272,6 +1272,7 @@ double scaledX, scaledY;
           }
 
           if ( xyo->arrayNumPoints[i] > xyo->count ) {
+            xyo->arrayNumPoints[i] = xyo->count;
             xyo->needBufferScroll = 1;
             xyo->needThisbufScroll[i] = 1;
           }
@@ -1364,6 +1365,7 @@ double scaledX, scaledY;
             }
 
             if ( xyo->arrayNumPoints[i] > xyo->count ) {
+              xyo->arrayNumPoints[i] = xyo->count;
               xyo->needBufferScroll = 1;
               xyo->needThisbufScroll[i] = 1;
             }
@@ -1554,6 +1556,7 @@ double scaledX, scaledY;
 
       if ( ( xyo->arrayNumPoints[i] >= xyo->count ) &&
            ( xyo->plotMode == XYGC_K_PLOT_MODE_PLOT_N_STOP ) ) {
+        xyo->arrayNumPoints[i] = xyo->count;
         xyo->actWin->appCtx->proc->unlock();
         return;
       }
@@ -1752,6 +1755,7 @@ double scaledX, scaledY;
         }
 
         if ( xyo->arrayNumPoints[i] > xyo->count ) {
+          xyo->arrayNumPoints[i] = xyo->count;
           xyo->needBufferScroll = 1;
           xyo->needThisbufScroll[i] = 1;
         }
@@ -1947,6 +1951,7 @@ int yi;
 
       if ( ( xyo->arrayNumPoints[i] >= xyo->count ) &&
            ( xyo->plotMode == XYGC_K_PLOT_MODE_PLOT_N_STOP ) ) {
+        xyo->arrayNumPoints[i] = xyo->count;
         xyo->actWin->appCtx->proc->unlock();
         return;
       }
@@ -2145,6 +2150,7 @@ int yi;
         }
 
         if ( xyo->arrayNumPoints[i] > xyo->count ) {
+          xyo->arrayNumPoints[i] = xyo->count;
           xyo->needBufferScroll = 1;
           xyo->needThisbufScroll[i] = 1;
 	}
@@ -2291,6 +2297,7 @@ double scaledX, scaledY;
 
       if ( ( xyo->arrayNumPoints[i] >= xyo->count ) &&
            ( xyo->plotMode == XYGC_K_PLOT_MODE_PLOT_N_STOP ) ) {
+        xyo->arrayNumPoints[i] = xyo->count;
         xyo->actWin->appCtx->proc->unlock();
         return;
       }
@@ -2489,6 +2496,7 @@ double scaledX, scaledY;
         }
 
         if ( xyo->arrayNumPoints[i] > xyo->count ) {
+          xyo->arrayNumPoints[i] = xyo->count;
           xyo->needBufferScroll = 1;
           xyo->needThisbufScroll[i] = 1;
         }
@@ -7060,7 +7068,7 @@ int xyGraphClass::getButtonActionRequest (
 
 void xyGraphClass::executeDeferred ( void ) {
 
-int i, ii, nc, ni, nu, nvu, nru, nr, ne, nd, nrstc, nrst, ntrgc,
+int i, ii, nc, ni, nu, nvu, nru, nr, ne, nd, nrstc, nrst, ntrgc, tmpC,
  ntrg, nxrescl, nbs, nbrescl, nnl, nol,
  eleSize, doRescale, anyRescale, size,
  ny1rescl[NUM_Y_AXES], num;
@@ -7303,21 +7311,24 @@ int yi, yScaleIndex;
           }
           else { // scalar
 
-            if ( count < 2 ) count = 2;
+            if ( count < 2 )
+	      tmpC = 2;
+	    else
+	      tmpC = count;
 
-            bufferScrollSize = (int) ( (double) count * 0.1 );
+            bufferScrollSize = (int) ( (double) tmpC * 0.1 );
             if ( bufferScrollSize < 1 ) bufferScrollSize = 1;
 
-            yPvData[i] = (void *) new char[yPvSize[i]*(count+10)];
+            yPvData[i] = (void *) new char[yPvSize[i]*(tmpC+10)];
 
             size = (plotAreaX+plotAreaW)*4+10;
-            if ( 2*count+10 > size ) size = 2*count+10;
+            if ( 2*tmpC+10 > size ) size = 2*tmpC+10;
             plotBuf[i] = (XPoint *) new XPoint[size];
 
-            plotBufSize[i] = count+1; // used with plotInfo in scope mode
+            plotBufSize[i] = tmpC+1; // used with plotInfo in scope mode
 
             size = plotAreaX+plotAreaW+10;
-            if ( 2*count+10 > size ) size = 2*count+10;
+            if ( 2*tmpC+10 > size ) size = 2*tmpC+10;
             plotInfo[i] =
              (plotInfoPtr) new plotInfoType[size];
             plotInfoSize[i] = plotAreaX + plotAreaW;
@@ -7416,9 +7427,12 @@ int yi, yScaleIndex;
           }
           else { // scalar
 
-            if ( count < 2 ) count = 2;
+            if ( count < 2 )
+	      tmpC = 2;
+	    else
+	      tmpC = count;
 
-            xPvData[i] = (void *) new char[xPvSize[i]*(count+10)];
+            xPvData[i] = (void *) new char[xPvSize[i]*(tmpC+10)];
 
           }
 
