@@ -1,3 +1,53 @@
+Version 1-10-0g-beta
+--------------------
+
+Default pvtype under the old generic pv scheme used to be "epics".
+This is now translated to EPICS.
+
+
+Version 1-10-0e-beta
+--------------------
+
+Related display widget and embedded window features added.
+
+Macro symbol definition may now include the following syntax forms:
+
+  s1=v1,s2=v2,...        (this variation is currently supported)
+
+      or
+
+  @<filename>
+
+      or
+
+  @<filename> s1=v1,s2=v2,...
+
+In the 2nd and 3rd variations, macro definitions will be read from the
+first line of an ascii file. Optionally (as shown by the 3nd variation), a
+list of inline definitions will be appended to the definitions obtained
+from the file.
+
+
+Version 1-10-0d-beta
+--------------------
+
+Fixed bit edit pvs bitmask
+
+
+Version 1-10-0c-beta
+--------------------
+
+Fixed problem with button press/release actions. When member of a group, if
+button is pushed, mouse pointer moves away from putton, and then button
+is released, the release action is not seen by the button.
+
+
+Version 1-10-0b-beta
+--------------------
+
+Default pv type specified in display properties now works.
+
+
 Version 1-10-0beta
 ------------------
 
