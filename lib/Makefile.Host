@@ -63,6 +63,7 @@ LIBSRCS += confirm_dialog.cc
 LIBSRCS += bindings.cc
 LIBSRCS += scheme.cc
 LIBSRCS += scrolled_text.cc
+LIBSRCS += pvs.cc
 LIBSRCS += scrolled_list.cc
 LIBSRCS += ulBindings.cc
 LIBSRCS += pvBindings.cc

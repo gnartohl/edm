@@ -22,6 +22,7 @@
 #include <ctype.h>
 #include "scrolled_list.h"
 #include "thread.h"
+#include "pvs.hpp"
 
 static void cvtToUpper (
   char *str )
@@ -501,45 +502,103 @@ Widget w;
 void scrolledListClass::filterList ( void )
 {
 
-int l;
+int l, stat, n;
 FILE *f;
-char pv[63+1], *ptr;
+char pv[63+1], *ptr, *name;
+pvsClass *pvs;
 
-  f = fopen( fileName, "r" );
+  if ( strstr( fileName, ":" ) ) { // assume host:port
 
-  if ( f ) {
+    pvs = new pvsClass( fileName );
+    if ( !pvs ) {
+      addItem( "<Error>" );
+      return;
+    }
+
+    stat = pvs->getNumPvs( &n );
+    if ( !( stat & 1 ) ) {
+      addItem( "<Error>" );
+      goto errRet;
+    }
+
+    if ( !n ) {
+      addItem( "<No PVs found>" );
+      goto errRet;
+    }
 
     numItems = 0;
-    do {
 
-      ptr = fgets( pv, 63, f );
+    stat = pvs->getFirstPvsName( &name );
+    if ( !( stat & 1 ) ) {
+      addItem( "<Error>" );
+      goto errRet;
+    }
 
-      if ( ptr ) {
+    while ( stat != pvsClass::PVS_NOMORE ) {
 
-        l = strlen(pv);
-        if ( l ) {
-          if ( pv[l-1] == '\n' ) {
-            pv[l-1] = 0;
-            l--;
-          }
-        }
+      strncpy( pv, name, 63 );
+      pv[63] = 0;
 
-	if ( l && match( filterString, pv ) ) {
-          addItem( pv );
-        }
+      l = strlen(pv);
 
+      if ( l && match( filterString, pv ) ) {
+        addItem( pv );
       }
 
-    } while ( ptr );
+      stat = pvs->getNextPvsName( &name );
+      if ( !( stat & 1 ) ) {
+        addItem( "<Error>" );
+        goto errRet;
+      }
+
+    }
+
+errRet:
+
+    delete pvs;
 
     addComplete();
 
-    fclose( f );
-
   }
-  else {
+  else { // file
 
-    return;
+    f = fopen( fileName, "r" );
+
+    if ( f ) {
+
+      numItems = 0;
+      do {
+
+        ptr = fgets( pv, 63, f );
+
+        if ( ptr ) {
+
+          l = strlen(pv);
+          if ( l ) {
+            if ( pv[l-1] == '\n' ) {
+              pv[l-1] = 0;
+              l--;
+            }
+          }
+
+          if ( l && match( filterString, pv ) ) {
+            addItem( pv );
+          }
+
+        }
+
+      } while ( ptr );
+
+      addComplete();
+
+      fclose( f );
+
+    }
+    else {
+
+      return;
+
+    }
 
   }
 

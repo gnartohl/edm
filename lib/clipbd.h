@@ -87,9 +87,9 @@ int clipbdHold ( void );
  */
 void clipbdGiveup ( void );
 
-private:
-
 static const int CLIPBD_SIZE=1024;
+
+private:
 
 /* private clipboard data */
 typedef struct ClipBdRec_ {
