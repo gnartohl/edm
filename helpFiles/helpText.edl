@@ -1,24 +1,24 @@
-4 0 0
+4 0 1
 beginScreenProperties
 major 4
 minor 0
-release 0
-x 43
-y 59
+release 1
+x 126
+y 48
 w 1074
 h 940
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 51400 51400 51400
+bgColor rgb 52942 52171 52942
 textColor rgb 0 0 0
 ctlFgColor1 rgb 0 0 0
-ctlFgColor2 rgb 0 0 49344
-ctlBgColor1 rgb 48059 48059 48059
-ctlBgColor2 rgb 56026 56026 56026
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 26985 26985 26985
+ctlFgColor2 rgb 0 0 65535
+ctlBgColor1 rgb 46517 46774 46517
+ctlBgColor2 rgb 57054 56283 57054
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 25443 24929 25443
 title "Text"
 endScreenProperties
 
@@ -32,8 +32,8 @@ x 34
 y 305
 w 151
 h 21
-lineColor rgb 40606 40606 40606
-fillColor rgb 48059 48059 48059
+lineColor rgb 40092 40606 40092
+fillColor rgb 46517 46774 46517
 lineStyle "dash"
 endObjectProperties
 
@@ -47,8 +47,8 @@ x 34
 y 273
 w 151
 h 21
-lineColor rgb 40606 40606 40606
-fillColor rgb 48059 48059 48059
+lineColor rgb 40092 40606 40092
+fillColor rgb 46517 46774 46517
 lineStyle "dash"
 endObjectProperties
 
@@ -56,7 +56,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 29
@@ -64,7 +64,7 @@ w 49
 h 27
 font "helvetica-medium-r-24.0"
 fgColor rgb 0 0 0
-bgColor rgb 60652 60652 60652
+bgColor rgb 61423 61423 61423
 value {
   "Text"
 }
@@ -75,7 +75,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 148
 y 88
@@ -83,7 +83,7 @@ w 55
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Fg Color"
@@ -95,7 +95,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 399
@@ -103,7 +103,7 @@ w 380
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Color PV is used with dynaimic colors and alarm sensitivity."
@@ -115,7 +115,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 417
@@ -123,7 +123,7 @@ w 324
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "If both are present, alarm colors have precedence."
@@ -135,7 +135,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 148
 y 105
@@ -143,7 +143,7 @@ w 55
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Bg Color"
@@ -155,7 +155,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 148
 y 123
@@ -163,7 +163,7 @@ w 130
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Use Display Bg: Yes"
@@ -175,7 +175,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 34
 y 104
@@ -216,16 +216,16 @@ x 207
 y 108
 w 18
 h 9
-lineColor rgb 57825 63736 45489
+lineColor rgb 59367 60395 44461
 fill
-fillColor rgb 57825 63736 45489
+fillColor rgb 59367 60395 44461
 endObjectProperties
 
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 148
 y 165
@@ -233,7 +233,7 @@ w 55
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Fg Color"
@@ -245,7 +245,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 148
 y 182
@@ -253,7 +253,7 @@ w 55
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Bg Color"
@@ -265,7 +265,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 148
 y 200
@@ -273,7 +273,7 @@ w 123
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Use Display Bg: No"
@@ -285,7 +285,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 34
 y 181
@@ -293,7 +293,7 @@ w 45
 h 21
 font "helvetica-medium-r-18.0"
 fgColor rgb 0 0 0
-bgColor rgb 57825 63736 45489
+bgColor rgb 59367 60395 44461
 value {
   "155.4"
 }
@@ -325,16 +325,16 @@ x 207
 y 185
 w 18
 h 9
-lineColor rgb 57825 63736 45489
+lineColor rgb 59367 60395 44461
 fill
-fillColor rgb 57825 63736 45489
+fillColor rgb 59367 60395 44461
 endObjectProperties
 
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 802
@@ -342,7 +342,7 @@ w 355
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Auto Height sets the boundary Height of the text control"
@@ -354,7 +354,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 34
 y 273
@@ -374,7 +374,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 34
 y 305
@@ -394,7 +394,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 34
 y 240
@@ -419,8 +419,8 @@ x 34
 y 240
 w 151
 h 21
-lineColor rgb 40606 40606 40606
-fillColor rgb 48059 48059 48059
+lineColor rgb 40092 40606 40092
+fillColor rgb 46517 46774 46517
 lineStyle "dash"
 endObjectProperties
 
@@ -428,7 +428,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 215
 y 242
@@ -436,7 +436,7 @@ w 164
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Auto Size: No, left justified"
@@ -448,7 +448,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 215
 y 275
@@ -456,7 +456,7 @@ w 174
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Auto Size: No, right justified"
@@ -468,7 +468,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 215
 y 307
@@ -476,7 +476,7 @@ w 187
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Auto Size: No, center justified"
@@ -488,7 +488,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 347
@@ -496,7 +496,7 @@ w 412
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Note: The dashed lines around the text strings have been added"
@@ -508,7 +508,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 367
@@ -516,7 +516,7 @@ w 269
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "to show the actual object size boundaries."
@@ -528,7 +528,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 466
@@ -536,7 +536,7 @@ w 338
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Condition is true, the Fg Color is set to the Null Color."
@@ -548,7 +548,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 450
@@ -556,7 +556,7 @@ w 339
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Null PV is used with the Null Condition rule. If the Null"
@@ -568,7 +568,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 482
@@ -576,7 +576,7 @@ w 393
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "If Alarm Sensitivity is present, alarm colors have precedence."
@@ -588,7 +588,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 31
 y 516
@@ -596,7 +596,7 @@ w 150
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Display Format Options"
@@ -608,15 +608,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 64
 y 564
-w 332
+w 328
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Default - precision gives number of significant digits"
@@ -628,15 +628,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 64
 y 582
-w 314
+w 310
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Float - precision gives number of decimal places"
@@ -648,15 +648,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 64
 y 600
-w 359
+w 355
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Exponential - precision gives number of decimal places,"
@@ -668,7 +668,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 31
 y 755
@@ -676,7 +676,7 @@ w 418
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "If Display Info From DB is checked, then precision, scale min, and"
@@ -688,7 +688,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 31
 y 771
@@ -696,7 +696,7 @@ w 377
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "scale max are taken from HOPR & LOPR fields in database."
@@ -708,7 +708,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 47
 y 545
@@ -716,7 +716,7 @@ w 91
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "PV Type: Real"
@@ -728,15 +728,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 64
 y 645
-w 112
+w 108
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Default - Decimal"
@@ -748,15 +748,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 64
 y 663
-w 121
+w 117
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Decimal - Base 10"
@@ -768,15 +768,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 64
 y 681
-w 95
+w 91
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Hex - Base 16"
@@ -788,7 +788,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 47
 y 626
@@ -796,7 +796,7 @@ w 109
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "PV Type: Integer"
@@ -808,15 +808,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 64
 y 727
-w 101
+w 97
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Default - ASCII"
@@ -828,7 +828,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 47
 y 708
@@ -836,7 +836,7 @@ w 100
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "PV Type: String"
@@ -848,7 +848,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 833
@@ -856,7 +856,7 @@ w 458
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Editable makes the object a control (checked) or a monitor (unchecked)"
@@ -868,7 +868,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 866
@@ -876,7 +876,7 @@ w 369
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Editable + Keypad + PV type = Numeric : Edit with keypad"
@@ -888,7 +888,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 896
@@ -896,7 +896,7 @@ w 410
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Editable + Keypad + Date + PV type = String : Edit with calendar"
@@ -915,7 +915,7 @@ y 5
 w 0
 h 927
 lineColor rgb 0 0 0
-fillColor rgb 48059 48059 48059
+fillColor rgb 46517 46774 46517
 lineWidth 2
 numPoints 2
 xPoints {
@@ -932,7 +932,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
 y 173
@@ -940,7 +940,7 @@ w 468
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "If the Motif Widget box is checked, the text is displayed in a motif text field"
@@ -952,7 +952,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
 y 190
@@ -960,7 +960,7 @@ w 408
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "widget. Lose Focus Update and Auto Select Text are applicable"
@@ -972,15 +972,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 305
+y 414
 w 441
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "If Lose Focus Update is unchecked, to change the value of a PV, the"
@@ -992,7 +992,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 544
 y 21
@@ -1000,7 +1000,7 @@ w 434
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Editable + Keypad + File + PV type = String : Edit with file select box"
@@ -1012,7 +1012,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 567
 y 48
@@ -1020,7 +1020,7 @@ w 344
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Default Dir and Pattern apply only to this configuration."
@@ -1032,15 +1032,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 321
+y 430
 w 466
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "ENTER key must be pressed. This is the normal configuration for numeric"
@@ -1052,15 +1052,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 337
+y 446
 w 31
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "PVs."
@@ -1072,15 +1072,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 360
+y 469
 w 445
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "If Lose Focus Update is checked, the value of a PV will change either"
@@ -1092,15 +1092,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 376
+y 485
 w 480
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "when the ENTER key is pressed or the widget loses focus (as it does when"
@@ -1112,15 +1112,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 392
+y 501
 w 462
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "the TAB key is pressed). This configuration is useful when EDM is being"
@@ -1132,15 +1132,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 408
+y 517
 w 267
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "to implement some type of data entry form."
@@ -1152,7 +1152,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
 y 125
@@ -1160,7 +1160,7 @@ w 440
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "If the text object has been placed on top of a graphic object (e.g. a gif"
@@ -1172,7 +1172,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
 y 143
@@ -1180,7 +1180,7 @@ w 358
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "background), the Smart Refresh box should be checked."
@@ -1192,15 +1192,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 548
+y 657
 w 450
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Normally, text update occurs no faster than .5 seconds. To disable this"
@@ -1212,15 +1212,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 563
+y 672
 w 282
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "output throttling, check the Fast Update box."
@@ -1232,7 +1232,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 591
 y 72
@@ -1240,7 +1240,7 @@ w 382
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Default Dir sets the default file directory in the file select box."
@@ -1252,7 +1252,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 591
 y 89
@@ -1260,7 +1260,7 @@ w 311
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Pattern sets the default filter in the file select box."
@@ -1285,18 +1285,18 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 683
-y 252
-w 139
+y 245
+w 154
 h 16
-font "helvetica-medium-r-14.0"
+font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
-  "Motif Widget Example"
+  "Motif Widget Behavior"
 }
 autoSize
 endObjectProperties
@@ -1305,7 +1305,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
 y 207
@@ -1313,7 +1313,7 @@ w 135
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "only for motif widgets."
@@ -1325,15 +1325,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 433
+y 542
 w 460
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "If Auto Select Text is checked, the text is selected when the widget gets"
@@ -1345,15 +1345,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 449
+y 558
 w 468
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "keyboard focus either from the mouse pointer entering the display window"
@@ -1365,15 +1365,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 465
+y 574
 w 364
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "or when the TAB key is used to advance to the next field."
@@ -1385,15 +1385,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 591
+y 700
 w 481
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "If Editable, Keypad, and Date are checked, clicking on the text area calls up"
@@ -1405,15 +1405,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 607
+y 716
 w 461
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "at calendar window in which the date and time may be entered. This may"
@@ -1425,15 +1425,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 623
+y 732
 w 190
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "be used only with a string PV."
@@ -1445,15 +1445,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 720
+y 829
 w 474
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "If Editable, Keypad, and File are checked, clicking on the text area calls up"
@@ -1465,15 +1465,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 736
+y 845
 w 477
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "a file selection dialog which uses the contents of Default Dir and Pattern as"
@@ -1485,15 +1485,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 752
+y 861
 w 362
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "filter parameters. This may be used only with a string PV."
@@ -1505,15 +1505,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 490
-w 452
+y 599
+w 444
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "If Update PV On Drop is checked, then a drag-and-drop operation will"
@@ -1525,15 +1525,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 506
+y 615
 w 441
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "replace the entire contents of the text field with the drag contents and"
@@ -1545,15 +1545,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 522
+y 631
 w 305
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "the new value will be written to the attached PV."
@@ -1565,15 +1565,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 650
+y 759
 w 514
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "If Convert Date To File Name is checked, then the returned string will be suitable"
@@ -1585,15 +1585,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 667
+y 776
 w 139
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "for use as a file name."
@@ -1605,15 +1605,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 564
-y 690
-w 377
+y 799
+w 369
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "(e.g. jan-05-2003 11:30:10 becomes jan05_2003_113010)"
@@ -1625,15 +1625,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 778
+y 887
 w 436
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "The full path, the filename and extension, or just the file name may be"
@@ -1645,18 +1645,45 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 542
-y 795
+y 904
 w 408
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "returned depending on the option selected in the \"Return\" menu."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 274
+w 501
+h 128
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "If Allow Input Focus Updates is unchecked, updates are disallowed when the"
+  "widget has input focus (but only until the return key is pressed); i.e. if"
+  "the PV value changes due to an external agent, the widget value does not"
+  "update while the widget has input focus."
+  ""
+  "If Allow Input Focus Updates is checked, then updates (due to an external"
+  "agent changing the value of a PV) are disallowed only when the mouse pointer"
+  "is inside the widget."
 }
 autoSize
 endObjectProperties
