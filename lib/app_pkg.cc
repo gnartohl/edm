@@ -3801,6 +3801,8 @@ static void displayParamInfo ( void ) {
 
   printf( global_str90 );
 
+  printf( global_str92 );
+
   printf( global_str38 );
 
   printf( global_str39 );
@@ -3958,6 +3960,8 @@ fileListPtr curFile;
         else if ( strcmp( argv[n], global_str10 ) == 0 ) {
         }
         else if ( strcmp( argv[n], global_str89 ) == 0 ) {
+        }
+        else if ( strcmp( argv[n], global_str91 ) == 0 ) {
         }
         else if ( strcmp( argv[n], global_str86 ) == 0 ) {
           n++; // just ignore, not used here
@@ -4497,6 +4501,102 @@ err_return:
 
 }
 
+void appContextClass::openFiles (
+char *list
+) {
+
+activeWindowListPtr cur;
+int i, doOpen;
+unsigned int crc;
+char *tk, *buf1, tmpMsg[255+1];
+
+  //printf( "[%s]\n", list );
+
+  buf1 = NULL;
+  strncpy( tmpMsg, list, 255 );
+  tmpMsg[255] = 0;
+  tk = strtok_r( tmpMsg, "|", &buf1 );
+  tk = strtok_r( NULL, "|", &buf1 );
+  tk = strtok_r( NULL, "|", &buf1 );
+  tk = strtok_r( NULL, "|", &buf1 );
+  tk = strtok_r( NULL, "|", &buf1 );
+  tk = strtok_r( NULL, "|", &buf1 );
+  tk = strtok_r( NULL, "|", &buf1 );
+
+  tk = strtok_r( NULL, "|", &buf1 );
+  while ( tk ) {
+
+    // printf( "%s\n", tk );
+
+    doOpen = 1;
+    cur = head->flink;
+    while ( cur != head ) {
+
+      crc = 0;
+      for ( i=0; i<numMacros; i++ ) {
+        crc = updateCRC( crc, macros[i], strlen(macros[i]) );
+        crc = updateCRC( crc, expansions[i], strlen(expansions[i]) );
+      }
+
+      if ( ( strcmp( tk, cur->node.displayName ) == 0 ) &&
+           ( crc == cur->node.crc ) && !cur->node.isEmbedded ) {
+
+	doOpen = 0; // display is already open, just raise/deiconify it
+
+        XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+        XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+
+	break;
+
+      }
+
+      cur = cur->flink;
+
+    }
+
+    if ( doOpen ) {
+
+      //printf( "Do open\n" );
+
+      cur = new activeWindowListType;
+      cur->requestDelete = 0;
+      cur->requestActivate = 0;
+      cur->requestActivateClear = 0;
+      cur->requestReactivate = 0;
+      cur->requestOpen = 0;
+      cur->requestPosition = 0;
+      cur->requestCascade = 0;
+      cur->requestImport = 0;
+      cur->requestRefresh = 0;
+      cur->requestActiveRedraw = 0;
+      cur->requestIconize = 0;
+
+      cur->blink = head->blink;
+      head->blink->flink = cur;
+      head->blink = cur;
+      cur->flink = head;
+
+      cur->node.create( this, NULL, 0, 0, 0, 0, numMacros, macros,
+       expansions );
+      cur->node.realize();
+      cur->node.setGraphicEnvironment( &ci, &fi );
+
+      cur->node.storeFileName( tk );
+
+      cur->requestOpen = 1;
+      requestFlag++;
+
+      cur->requestActivate = 1;
+      requestFlag++;
+
+    }
+
+    tk = strtok_r( NULL, "|", &buf1 );
+
+  }
+
+}
+
 void appContextClass::openInitialFiles ( void ) {
 
 fileListPtr curFile;
@@ -4508,7 +4608,7 @@ char tmpName[131+1];
   curFile = fileHead->flink;
   while ( curFile != fileHead ) {
 
-    //printf( "[%s]\n", curFile->file );
+    //printf( "openInitialFiles [%s]\n", curFile->file );
 
     doOpen = 1;
     cur = head->flink;
