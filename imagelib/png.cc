@@ -1150,7 +1150,7 @@ int major, minor, release;
   fscanf( f, "%d\n", &w ); actWin->incLine();
   fscanf( f, "%d\n", &h ); actWin->incLine();
 
-  readStringFromFile( pngFileName, 127, f ); actWin->incLine();
+  readStringFromFile( pngFileName, 127+1, f ); actWin->incLine();
 
   if ( ( major > 1 ) || ( minor > 0 ) ) {
     fscanf( f, "%d\n", &refreshRate );
