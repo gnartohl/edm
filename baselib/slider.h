@@ -410,8 +410,6 @@ int overSave, overRestore, overInc, overControl, overRead;
 
 int oldCtrlStat, oldCtrlSev, oldReadStat, oldReadSev;
 
-int doTimerUpdate;
-
 public:
 
 activeSliderClass ( void );

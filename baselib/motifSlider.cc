@@ -401,12 +401,6 @@ double fv;
 
   if ( !mslo->active || !mslo->init ) return;
 
-  if ( mslo->prevScaleV != -1 ) {
-    //if ( mslo->oldControlV == mslo->oneControlV ) return;
-    if ( !mslo->doTimerUpdate ) return;
-  }
-
-  mslo->doTimerUpdate = 0;
   mslo->oldControlV = mslo->oneControlV;
 
   mslo->eraseActiveControlText();
@@ -816,16 +810,12 @@ int st, sev;
     mslo->actWin->appCtx->proc->unlock();
   }
 
-  if ( mslo->oneControlV != mslo->oldControlV ) {
-    mslo->doTimerUpdate = 1;
-    if ( !mslo->updateControlTimerActive ) {
-      mslo->updateControlTimerActive = 1;
-      mslo->updateControlTimerValue = 100;
-      mslo->updateControlTimer = appAddTimeOut(
-       mslo->actWin->appCtx->appContext(), mslo->updateControlTimerValue,
-       mslc_updateControl, (void *) mslo );
-    }
-
+  if ( !mslo->updateControlTimerActive ) {
+    mslo->updateControlTimerActive = 1;
+    mslo->updateControlTimerValue = 100;
+    mslo->updateControlTimer = appAddTimeOut(
+     mslo->actWin->appCtx->appContext(), mslo->updateControlTimerValue,
+     mslc_updateControl, (void *) mslo );
   }
 
   // xtimer updates image
@@ -2793,7 +2783,6 @@ int opStat;
       updateControlTimerActive = 0;
       updateControlTimer = 0;
       incrementTimerActive = 0;
-      doTimerUpdate = 1;
 
       controlPvConnected = 0;
 

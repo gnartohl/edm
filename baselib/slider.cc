@@ -109,10 +109,6 @@ double fv;
     //return;
   }
 
-  //if ( slo->oldControlV == slo->oneControlV ) return;
-  if ( !slo->doTimerUpdate ) return;
-
-  slo->doTimerUpdate = 0;
   slo->oldControlV = slo->oneControlV;
 
   slo->eraseActiveControlText();
@@ -729,15 +725,12 @@ int st, sev;
   slo->oneControlV = pv->get_double(); // xtimer updates widget indicator
   slo->curControlV = slo->oneControlV;
 
-  if ( slo->oneControlV != slo->oldControlV ) {
-    slo->doTimerUpdate = 1;
-    if ( !slo->updateControlTimerActive ) {
-      slo->updateControlTimerActive = 1;
-      slo->updateControlTimerValue = 100;
-      slo->updateControlTimer = appAddTimeOut(
-       slo->actWin->appCtx->appContext(), slo->updateControlTimerValue,
-       slc_updateControl, (void *) slo );
-    }
+  if ( !slo->updateControlTimerActive ) {
+    slo->updateControlTimerActive = 1;
+    slo->updateControlTimerValue = 100;
+    slo->updateControlTimer = appAddTimeOut(
+     slo->actWin->appCtx->appContext(), slo->updateControlTimerValue,
+     slc_updateControl, (void *) slo );
   }
 
 }
@@ -3196,7 +3189,6 @@ char callbackName[63+1];
       incrementTimerActive = 0;
       controlPvId = controlLabelPvId = readPvId = readLabelPvId =
        savedValuePvId = NULL;
-      doTimerUpdate = 1;
       savedV = 0.0;
       minFv = maxFv = 0.0;
       factor = 1.0;

@@ -379,8 +379,6 @@ int oldStat, oldSev; // for alarms
 
 int isMapped, buttonPressed, needUnmap;
 
-int doTimerUpdate;
-
 int keySensitive;
 
 public:
