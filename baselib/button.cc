@@ -584,7 +584,7 @@ int activeButtonClass::createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[39+1];
+char oneName[100+1];
 
   this->actWin = _actWin;
 
@@ -694,10 +694,10 @@ char oneName[39+1];
 
   }
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, 100, f ); actWin->incLine();
   controlPvName.setRaw( oneName );
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, 100, f ); actWin->incLine();
   readPvName.setRaw( oneName );
 
   readStringFromFile( onLabel, MAX_ENUM_STRING_SIZE, f ); actWin->incLine();
@@ -1053,14 +1053,14 @@ char title[32], *ptr;
   strncpy( bufFontTag, fontTag, 63 );
 
   if ( controlPvName.getRaw() )
-    strncpy( controlBufPvName, controlPvName.getRaw(), 39 );
+    strncpy( controlBufPvName, controlPvName.getRaw(), 100 );
   else
-    strncpy( controlBufPvName, "", 39 );
+    strncpy( controlBufPvName, "", 100 );
 
   if ( readPvName.getRaw() )
-    strncpy( readBufPvName, readPvName.getRaw(), 39 );
+    strncpy( readBufPvName, readPvName.getRaw(), 100 );
   else
-    strncpy( readBufPvName, "", 39 );
+    strncpy( readBufPvName, "", 100 );
 
   strncpy( bufOnLabel, onLabel, MAX_ENUM_STRING_SIZE );
   strncpy( bufOffLabel, offLabel, MAX_ENUM_STRING_SIZE );
@@ -1101,8 +1101,8 @@ char title[32], *ptr;
   ef.addTextField( activeButtonClass_str19, 30, &bufY );
   ef.addTextField( activeButtonClass_str20, 30, &bufW );
   ef.addTextField( activeButtonClass_str21, 30, &bufH );
-  ef.addTextField( activeButtonClass_str22, 30, controlBufPvName, 39 );
-  ef.addTextField( activeButtonClass_str23, 30, readBufPvName, 39 );
+  ef.addTextField( activeButtonClass_str22, 30, controlBufPvName, 100 );
+  ef.addTextField( activeButtonClass_str23, 30, readBufPvName, 100 );
   ef.addOption( activeButtonClass_str24, activeButtonClass_str25, buttonTypeStr, 7 );
   ef.addOption( activeButtonClass_str26, activeButtonClass_str27, _3DString, 7 );
   ef.addOption( activeButtonClass_str28, activeButtonClass_str29, invisibleString, 7 );
