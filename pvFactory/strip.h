@@ -122,6 +122,7 @@ private:
     Widget plot_widget;
     int list_id[num_pvs];
     double *xlist, *ylist[num_pvs];
+    Cursor cursor;
 #else
     Pixmap pixmap;
     GC     pixmap_GC;
@@ -138,8 +139,9 @@ private:
     static void pv_status_callback(ProcessVariable *pv, void *userarg);
     static void pv_value_callback(ProcessVariable *pv, void *userarg);
 
-    // Timer
+    // X callbacks
     static void timer_callback(XtPointer call, XtIntervalId *id);
+    static void button_callback(Widget w, XtPointer call, XButtonEvent *event);
 };
 
 #endif

@@ -9,6 +9,7 @@
 #include "epics_pv_factory.h"
 #ifdef SCIPLOT
 #include "SciPlot.h"
+#include <X11/cursorfont.h>
 #endif
 
 // This is the EPICS specific line right now:
@@ -650,6 +651,12 @@ int edmStripClass::activate(int pass, void *ptr)
                 }
             }
             SciPlotUpdate(plot_widget);
+            XtAddEventHandler(plot_widget, ButtonPressMask, False,
+                              (XtEventHandler)button_callback,
+                              (XtPointer)this);
+
+            cursor = XCreateFontCursor(XtDisplay(plot_widget), XC_crosshair);
+            XDefineCursor(XtDisplay(plot_widget),XtWindow(plot_widget), cursor); 
 #else
             // Create double-buffer pixmap and GC for this
             pixmap = XCreatePixmap(actWin->display(),
@@ -730,6 +737,8 @@ int edmStripClass::deactivate(int pass)
 #ifdef SCIPLOT
             if (plot_widget)
             {
+                XDefineCursor(XtDisplay(plot_widget), XtWindow(plot_widget), None); 
+                XFreeCursor(XtDisplay(plot_widget), cursor); 
                 XtUnmapWidget(plot_widget);
                 for (size_t i=0; i<num_pvs; ++i)
                 {
@@ -967,6 +976,30 @@ void edmStripClass::timer_callback(XtPointer call, XtIntervalId *id)
                                 (unsigned long)(100),
                                 timer_callback,
                                 me);
+}
+
+void edmStripClass::button_callback(Widget w, XtPointer call, XButtonEvent *event)
+{
+    edmStripClass *me = (edmStripClass *) call;
+
+    double x = SciPlotGetX(me->plot_widget, (int) event->x);
+    double y = SciPlotGetY(me->plot_widget, (int) event->y);
+    char xlabel[80], ylabel[80];
+    if (event->button == 1)
+    {
+        sprintf(xlabel, "Time [s] @ %g", x);
+        sprintf(ylabel, "Value @ %g", y);
+    }
+    else
+    {
+        sprintf(xlabel, "Time [s]");
+        sprintf(ylabel, "Value");
+    }
+    XtVaSetValues(me->plot_widget,
+                  XtNxLabel, xlabel,
+                  XtNyLabel, ylabel,
+                  0);
+    
 }
 
 void edmStripClass::executeDeferred()

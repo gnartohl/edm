@@ -2080,6 +2080,17 @@ PlotX (SciPlotWidget w, real xin)
     return xout;
 }
 
+double SciPlotGetX (Widget wi, int screen_x)
+{
+    SciPlotWidget w = (SciPlotWidget) wi;
+    if (!XtIsSciPlot(wi))
+        return False;
+    
+    if (w->plot.XLog)
+        return 0.0;
+    return (screen_x - w->plot.x.Origin) / (w->plot.x.Size / w->plot.x.DrawSize) +  w->plot.x.DrawOrigin;
+}
+
 static real 
 PlotY (SciPlotWidget w, real yin)
 {
@@ -2094,6 +2105,18 @@ PlotY (SciPlotWidget w, real yin)
             ((yin - w->plot.y.DrawOrigin) *
              (w->plot.y.Size / w->plot.y.DrawSize));
     return yout;
+}
+
+double SciPlotGetY (Widget wi, int screen_y)
+{
+    SciPlotWidget w = (SciPlotWidget) wi;
+    if (!XtIsSciPlot(wi))
+        return False;
+    
+    if (w->plot.YLog)
+        return 0.0;
+    return (w->plot.y.Origin + w->plot.y.Size - screen_y)
+        / (w->plot.y.Size / w->plot.y.DrawSize) +  w->plot.y.DrawOrigin;
 }
 
 static void 

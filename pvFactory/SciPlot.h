@@ -189,6 +189,9 @@ extern "C"
 
 #undef P_
 
+    double SciPlotGetX (Widget wi, int screen_x);
+    double SciPlotGetY (Widget wi, int screen_y);
+    
 #ifdef __cplusplus
 };
 #endif
