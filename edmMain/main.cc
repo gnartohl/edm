@@ -1536,7 +1536,7 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
     cur = appArgsHead->flink;
     while ( cur != appArgsHead ) {
 
-      next = cur->flink;
+      next = cur->flink; // cur might get deleted
 
       cur->appArgs->appCtxPtr->applicationLoop();
 
@@ -1548,7 +1548,8 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
         shutdown = 1;
       }
 
-      if ( cur->appArgs->appCtxPtr->exitFlag ) {
+      if ( cur->appArgs->appCtxPtr->exitFlag &&
+           !cur->appArgs->appCtxPtr->objDelFlag ) {
 
         if ( !cur->appArgs->appCtxPtr->okToExit() ) {
           cur->appArgs->appCtxPtr->postMessage( main_str45 );
@@ -1557,27 +1558,55 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
 
       }
 
-      if ( cur->appArgs->appCtxPtr->exitFlag ) {
+      if ( cur->appArgs->appCtxPtr->exitFlag &&
+           !cur->appArgs->appCtxPtr->objDelFlag ) {
 
+        cur->appArgs->appCtxPtr->closeDownAppCtx();
+
+        cur->appArgs->appCtxPtr->objDelFlag = 5;
+
+	// blank display name
+	strcpy( cur->appArgs->appCtxPtr->displayName, "" );
+
+        stat = thread_lock_master( serverH );
+        g_numClients--;
+        stat = thread_unlock_master( serverH );
+
+        numAppsRemaining++;
+
+      }
+      else if ( cur->appArgs->appCtxPtr->exitFlag &&
+       cur->appArgs->appCtxPtr->objDelFlag > 1 ) {
+
+        //printf( "decrement\n" );
+
+        (cur->appArgs->appCtxPtr->objDelFlag)--;
+
+        numAppsRemaining++;
+
+      }
+      else if ( cur->appArgs->appCtxPtr->exitFlag &&
+       cur->appArgs->appCtxPtr->objDelFlag == 1 ) {
+
+        //printf( "delete\n" );
+
+        // unlink and delete
         cur->blink->flink = cur->flink;
         cur->flink->blink = cur->blink;
 
         oneAppCtx = cur->appArgs->appCtxPtr->appContext();
-	oneDisplay = cur->appArgs->appCtxPtr->getDisplay();
+        oneDisplay = cur->appArgs->appCtxPtr->getDisplay();
         delete cur->appArgs->appCtxPtr;
-        // Can't execute the next two lines; program crashes. Have to live
-	// with memory leak. This only applies to the case where one server
-	// is managing multiple app ctx's / displays.
-        //XtCloseDisplay( oneDisplay );
-        //XtDestroyApplicationContext( oneAppCtx );
         for ( i=0; i<cur->appArgs->argc; i++ ) delete cur->appArgs->argv[i];
         delete cur->appArgs->argv;
 
         delete cur;
 
-        stat = thread_lock_master( serverH );
-        g_numClients--;
-        stat = thread_unlock_master( serverH );
+        // Can't execute the next two lines; program crashes. Have to live
+        // with memory leak. This only applies to the case where one server
+        // is managing multiple app ctx's / displays.
+        //XtCloseDisplay( oneDisplay );
+        //XtDestroyApplicationContext( oneAppCtx );
 
       }
       else if ( shutdown ) {
