@@ -415,8 +415,6 @@ int stat;
 
 colorInfoClass::~colorInfoClass ( void ) {
 
-//    printf( "colorInfoClass::~colorInfoClass\n" );
-
   XtDestroyWidget( shell );
 
 }
@@ -685,8 +683,6 @@ XmString str1, str2;
 colorCachePtr cur1, cur2, cur[2], curSpecial;
 unsigned long bgColor;
 
-  printf( "ver3InitFromFile\n" );
-
   for ( i=0; i<NUM_SPECIAL_COLORS; i++ ) {
     special[i] = 0;
     specialIndex[i] = 0;
@@ -725,8 +721,6 @@ unsigned long bgColor;
         parseStatus = stat;
 	goto term;
       }
-      //printf( "\n" );
-      //printf( "%s ", tk );
 
       if ( strcmp( tk, "" ) == 0 ) {
 
@@ -795,7 +789,6 @@ unsigned long bgColor;
         parseStatus = stat;
 	goto term;
       }
-      //printf( "%s ", tk );
       if ( strcmp( tk, "" ) == 0 ) {
         parseError( "Unexpected end of file" );
         parseStatus = FAIL;
@@ -813,7 +806,6 @@ unsigned long bgColor;
         parseStatus = stat;
 	goto term;
       }
-      //printf( "%s ", tk );
       num_color_cols = strtol( tk, &endptr, 0 );
       if ( strcmp( endptr, "" ) == 0 ) {
         state = GET_FIRST_TOKEN;
@@ -834,7 +826,6 @@ unsigned long bgColor;
         parseStatus = stat;
 	goto term;
       }
-      //printf( "%s ", tk );
       if ( strcmp( tk, "" ) == 0 ) {
         parseError( "Unexpected end of file" );
         parseStatus = FAIL;
@@ -852,7 +843,6 @@ unsigned long bgColor;
         parseStatus = stat;
 	goto term;
       }
-      //printf( "%s ", tk );
       maxColor = strtol( tk, &endptr, 0 );
       if ( strcmp( endptr, "" ) == 0 ) {
         colorMult = (int) rint( 0x10000 / maxColor );
@@ -874,7 +864,6 @@ unsigned long bgColor;
         parseStatus = stat;
         goto term;
       }
-      //printf( "%s ", tk );
       if ( strcmp( tk, "" ) == 0 ) {
         parseError( "Unexpected end of file" );
         parseStatus = FAIL;
@@ -901,7 +890,6 @@ unsigned long bgColor;
         parseStatus = stat;
         goto term;
       }
-      //printf( "%s ", tk );
       if ( strcmp( tk, "" ) == 0 ) {
         parseError( "Unexpected end of file" );
         parseStatus = FAIL;
@@ -921,7 +909,6 @@ unsigned long bgColor;
         parseStatus = stat;
         goto term;
       }
-      //printf( "%s ", tk );
       if ( strcmp( tk, "" ) == 0 ) {
         parseError( "Unexpected end of file" );
         parseStatus = FAIL;
@@ -944,7 +931,6 @@ unsigned long bgColor;
           parseStatus = stat;
           goto term;
         }
-        //printf( "%s ", tk );
         if ( strcmp( tk, "" ) == 0 ) {
           parseError( "Unexpected end of file" );
           parseStatus = FAIL;
@@ -973,7 +959,6 @@ unsigned long bgColor;
         parseStatus = stat;
         goto term;
       }
-      //printf( "%s ", tk );
       if ( strcmp( tk, "" ) == 0 ) {
         parseError( "Unexpected end of file" );
         parseStatus = FAIL;
@@ -1003,7 +988,6 @@ unsigned long bgColor;
             parseStatus = stat;
             goto term;
           }
-          //printf( "%s ", tk );
           if ( strcmp( tk, "" ) == 0 ) {
             parseError( "Unexpected end of file" );
             parseStatus = FAIL;
@@ -1029,7 +1013,6 @@ unsigned long bgColor;
           parseStatus = stat;
           goto term;
         }
-        //printf( "%s ", tk );
         if ( strcmp( tk, "" ) == 0 ) {
           parseError( "Unexpected end of file" );
           parseStatus = FAIL;
@@ -1070,19 +1053,6 @@ unsigned long bgColor;
         colorIndex++;
 
         max_colors++;
-
-#if 0
-        if ( ( cur[0]->rgb[0] != cur[0]->blinkRgb[0] ) ||
-             ( cur[0]->rgb[1] != cur[0]->blinkRgb[1] ) ||
-             ( cur[0]->rgb[2] != cur[0]->blinkRgb[2] ) ) {
-
-          max_colors++;
-
-	}
-#endif
-
-        //printf( "got 1 color, r=%-d, g=%-d, b=%-d\n", cur[0]->rgb[0],
-	//        cur[0]->rgb[1], cur[0]->rgb[2] );
 
         state = GET_FIRST_TOKEN;
 
@@ -1395,11 +1365,7 @@ unsigned long bgColor;
 
 term:
 
-  //printf( "\n", tk );
-
   fclose( f );
-
-  printf( "max_colors = %-d\n", max_colors );
 
   if ( parseStatus == FAIL ) {
     return 0;
@@ -1416,7 +1382,6 @@ term:
 
   stat = avl_get_first( this->colorCacheByIndexH, (void **) &cur1 );
   if ( !( stat & 1 ) ) {
-    printf( "error 1\n" );
     return 0;
   }
 
@@ -1450,7 +1415,6 @@ term:
         blinkingColors[i] = color.pixel;
       }
       else {
-	printf( "XAllocColor failed\n" );
         blinkingColors[i] = BlackPixel( display, screen );
       }
       cur1->blinkPixel = blinkingColors[i];
@@ -1473,7 +1437,6 @@ term:
 
     stat = avl_get_next( this->colorCacheByIndexH, (void **) &cur1 );
     if ( !( stat & 1 ) ) {
-      printf( "error 1\n" );
       return 0;
     }
 
@@ -1481,11 +1444,10 @@ term:
 
   }
 
-#if 1
+#if 0
 
   stat = avl_get_first( this->colorCacheByIndexH, (void **) &cur1 );
   if ( !( stat & 1 ) ) {
-    printf( "error 1\n" );
     return 0;
   }
 
@@ -2284,29 +2246,15 @@ int colorInfoClass::setRGB (
 {
 
 int stat;
-unsigned int rgb[3];
 colorCachePtr cur;
 int diff, bestPixel, bestR, bestG, bestB, min;
-
-  rgb[0] = (unsigned int) r;
-  rgb[1] = (unsigned int) g;
-  rgb[2] = (unsigned int) b;
-
-  stat = avl_get_match( this->colorCacheByColorH, (void *) rgb,
-   (void **) &cur );
-  if ( !(stat & 1) ) return stat;
-
-  if ( cur ) {
-    *pixel = cur->pixel;
-    return COLORINFO_SUCCESS;
-  }
 
   bestPixel = -1;
   bestR = 0;
   bestG = 0;
   bestB = 0;
 
-  stat = avl_get_first( this->colorCacheByColorH, (void **) &cur );
+  stat = avl_get_first( this->colorCacheByIndexH, (void **) &cur );
   if ( !( stat & 1 ) ) return COLORINFO_FAIL;
 
   if ( cur ) {
@@ -2330,7 +2278,7 @@ int diff, bestPixel, bestR, bestG, bestB, min;
       bestB = cur->rgb[2];
     }
 
-    stat = avl_get_next( this->colorCacheByColorH, (void **) &cur );
+    stat = avl_get_next( this->colorCacheByIndexH, (void **) &cur );
     if ( !( stat & 1 ) ) return COLORINFO_FAIL;
 
   }
@@ -2372,7 +2320,7 @@ int colorInfoClass::setIndex (
 int stat;
 colorCachePtr cur;
 
-  printf( "colorInfoClass::setIndex\n" );
+  printf( "obsolete colorInfoClass::setIndex\n" );
 
   stat = avl_get_match( this->colorCacheByIndexH, (void *) &index,
    (void **) &cur );

@@ -44,9 +44,9 @@ void edmTextupdateClass::clone(const edmTextupdateClass *rhs,
     pv_exp_str.setRaw(rhs->pv_exp_str.rawString);
     displayMode = rhs->displayMode;
     precision = rhs->precision;
-    lineColor.setColor(rhs->lineColor.pixelColor(), actWin->ci);
+    lineColor.setColorIndex(rhs->lineColor.pixelIndex(), actWin->ci);
     line_width = rhs->line_width;
-    fillColor.setColor(rhs->fillColor.pixelColor(), actWin->ci);
+    fillColor.setColorIndex(rhs->fillColor.pixelIndex(), actWin->ci);
     is_filled = rhs->is_filled;
     strncpy(fontTag, rhs->fontTag, 63);
     fontTag[63] = 0;
@@ -103,10 +103,10 @@ int edmTextupdateClass::save(FILE *f)
     fprintf(f, "%-d\n", (int) displayMode);
     fprintf(f, "%-d\n", (int) precision);
     // linecolor index
-    actWin->ci->getIndex(lineColor.pixelColor(), &index);
+    index = lineColor.pixelIndex();
     fprintf(f, "%-d\n", index);
     // fillcolor index & mode
-    actWin->ci->getIndex(fillColor.pixelColor(), &index);
+    index = fillColor.pixelIndex();
     fprintf(f, "%-d\n", index);
     fprintf(f, "%-d\n", is_filled);
     writeStringToFile(f, fontTag);
@@ -121,7 +121,6 @@ int edmTextupdateClass::createFromFile(FILE *f, char *name,
 {
     int major, minor, release;
     int index;
-    unsigned int pixel;
     char oneName[39+1];
 
     actWin = _actWin;
@@ -153,12 +152,10 @@ int edmTextupdateClass::createFromFile(FILE *f, char *name,
     }
     // linecolor index
     fscanf(f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex(index, &pixel);
-    lineColor.setColor(pixel, actWin->ci);
+    lineColor.setColorIndex(index, actWin->ci);
     // fillcolor index & mode
     fscanf(f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex(index, &pixel);
-    fillColor.setColor(pixel, actWin->ci);
+    fillColor.setColorIndex(index, actWin->ci);
     fscanf(f, "%d\n", &is_filled); actWin->incLine();
     readStringFromFile(fontTag, 63, f); actWin->incLine();
     fscanf( f, "%d\n", &alignment ); actWin->incLine();
@@ -191,9 +188,9 @@ int edmTextupdateClass::createInteractive(activeWindowClass *aw_obj,
     // Honor display scheme
     displayMode = dm_default;
     precision = 0;
-    lineColor.setColor(actWin->defaultFg1Color, actWin->ci);
+    lineColor.setColorIndex(actWin->defaultFg1Color, actWin->ci);
     line_width.setNull(1);
-    fillColor.setColor(actWin->defaultBgColor, actWin->ci);
+    fillColor.setColorIndex(actWin->defaultBgColor, actWin->ci);
     strcpy(fontTag, actWin->defaultCtlFontTag);
     alignment = actWin->defaultCtlAlignment;
     fs = actWin->fi->getXFontStruct(fontTag);
@@ -243,8 +240,8 @@ int edmTextupdateClass::genericEdit() // create Property Dialog
     buf_displayMode = (int)displayMode;
     buf_precision   = precision;
     buf_line_width  = line_width;
-    bufLineColor    = lineColor.pixelColor();
-    bufFillColor    = fillColor.pixelColor();
+    bufLineColor    = lineColor.pixelIndex();
+    bufFillColor    = fillColor.pixelIndex();
     bufIsFilled     = is_filled;
 
     // create entry form dialog box
@@ -409,8 +406,8 @@ void edmTextupdateClass::edit_update(Widget w, XtPointer client,XtPointer call)
     me->displayMode = (DisplayMode) me->buf_displayMode;
     me->precision   = me->buf_precision;
     me->line_width  = me->buf_line_width;
-    me->lineColor.setColor(me->bufLineColor, me->actWin->ci);
-    me->fillColor.setColor(me->bufFillColor, me->actWin->ci);
+    me->lineColor.setColorIndex(me->bufLineColor, me->actWin->ci);
+    me->fillColor.setColorIndex(me->bufFillColor, me->actWin->ci);
     me->is_filled   = me->bufIsFilled;
 
     strncpy(me->fontTag, me->fm.currentFontTag(), 63);
@@ -471,18 +468,18 @@ void edmTextupdateClass::changeDisplayParams(unsigned int flag,
                                              int ctlAlignment,
                                              char *btnFontTag,
                                              int btnAlignment,
-                                             unsigned int textFgColor,
-                                             unsigned int fg1Color,
-                                             unsigned int fg2Color,
-                                             unsigned int offsetColor,
-                                             unsigned int bgColor,
-                                             unsigned int topShadowColor,
-                                             unsigned int botShadowColor)
+                                             int textFgColor,
+                                             int fg1Color,
+                                             int fg2Color,
+                                             int offsetColor,
+                                             int bgColor,
+                                             int topShadowColor,
+                                             int botShadowColor)
 {
     if (flag & ACTGRF_FG1COLOR_MASK)
-        lineColor.setColor(fg1Color, actWin->ci);
+        lineColor.setColorIndex(fg1Color, actWin->ci);
     if (flag & ACTGRF_BGCOLOR_MASK)
-        fillColor.setColor(bgColor, actWin->ci);
+        fillColor.setColorIndex(bgColor, actWin->ci);
     if (flag & ACTGRF_FONTTAG_MASK)
     {
         strcpy(fontTag, _fontTag);

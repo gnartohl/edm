@@ -121,18 +121,18 @@ int edmStripClass::save(FILE *f)
     for (size_t i=0; i<num_pvs; ++i)
     {
         writeStringToFile(f, (char *)PVName(i));
-        actWin->ci->getIndex(pv_color[i].pixelColor(), &index);
+        index = pv_color[i].pixelIndex();
         fprintf(f, "%-d\n", index);
         index = use_pv_time[i] ? 1 : 0;
         fprintf(f, "%-d\n", index);
     }
     fprintf(f, "%.1f\n", seconds);
     line_width.write(f);
-    actWin->ci->getIndex(bgColor, &index);
+    index = bgColor;
     fprintf(f, "%-d\n", index);
-    actWin->ci->getIndex(textColor, &index);
+    index = textColor;
     fprintf(f, "%-d\n", index);
-    actWin->ci->getIndex(fgColor, &index);
+    index = fgColor;
     fprintf(f, "%-d\n", index);
     writeStringToFile(f, font_tag);
     fprintf(f, "%-d\n", alignment);
@@ -145,7 +145,6 @@ int edmStripClass::createFromFile(FILE *f, char *name,
 {
     int major, minor, release;
     int index;
-    unsigned int pixel;
     char oneName[39+1];
 
     actWin = _actWin;
@@ -171,8 +170,7 @@ int edmStripClass::createFromFile(FILE *f, char *name,
         pv_name[i].setRaw(oneName);
 
         fscanf(f, "%d\n", &index ); actWin->incLine();
-        actWin->ci->setIndex(index, &pixel);
-        pv_color[i].setColor(pixel, actWin->ci);
+        pv_color[i].setColorIndex(index, actWin->ci);
 
         fscanf(f, "%d\n", &index ); actWin->incLine();
         use_pv_time[i] = index != 0;
@@ -182,16 +180,13 @@ int edmStripClass::createFromFile(FILE *f, char *name,
     line_width.read(f); actWin->incLine();
 
     fscanf(f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex(index, &pixel);
-    bgColor = pixel;
+    bgColor = index;
     if (major >= 2)
     {
         fscanf(f, "%d\n", &index ); actWin->incLine();
-        actWin->ci->setIndex(index, &pixel);
-        textColor = pixel;
+        textColor = index;
         fscanf(f, "%d\n", &index ); actWin->incLine();
-        actWin->ci->setIndex(index, &pixel);
-        fgColor = pixel;
+        fgColor = index;
     }
     else
     {
@@ -231,6 +226,9 @@ static int default_RGB[][3] =
 int edmStripClass::createInteractive(activeWindowClass *aw_obj,
                                      int _x, int _y, int _w, int _h)
 {   // required
+
+  int index;
+
     actWin = (activeWindowClass *) aw_obj;
     x = _x; y = _y; w = _w; h = _h;
 
@@ -241,7 +239,8 @@ int edmStripClass::createInteractive(activeWindowClass *aw_obj,
                                            default_RGB[i][1],
                                            default_RGB[i][2],
                                            &pixel);
-        pv_color[i].setColor(pixel, actWin->ci);
+        index = actWin->ci->pixIndex( pixel );
+        pv_color[i].setColorIndex(index, actWin->ci);
     }
     bgColor = actWin->defaultBgColor;
     textColor = actWin->defaultTextFgColor;
@@ -292,7 +291,7 @@ int edmStripClass::genericEdit() // create Property Dialog
     for (i=0; i<num_pvs; ++i)
     {
         strncpy(buf_pv_name[i], PVName(i), 39);
-        buf_pv_color[i] = pv_color[i].pixelColor();
+        buf_pv_color[i] = pv_color[i].pixelIndex();
         buf_use_pv_time[i] = use_pv_time[i] ? 1 : 0;
     }
     buf_seconds = seconds;
@@ -350,10 +349,10 @@ int edmStripClass::draw()  // render the edit-mode image
     GC gc = actWin->drawGc.normGC();
 
     // Background
-    gcc.setFG(bgColor);
+    gcc.setFG(actWin->ci->pix(bgColor));
     XFillRectangle(dis, drw, gc, x, y, w, h);
     // Text
-    gcc.setFG(fgColor); // not used
+    gcc.setFG(actWin->ci->pix(fgColor)); // not used
     gcc.setFontTag(font_tag, actWin->fi);
     int ty = y;
     for (size_t i=0; i<num_pvs; ++i)
@@ -381,7 +380,7 @@ int edmStripClass::erase()  // erase edit-mode image
     gcClass &gcc =actWin->drawGc;
     GC gc = actWin->drawGc.eraseGC();
     
-    gcc.setFG(bgColor);
+    gcc.setFG(actWin->ci->pix(bgColor));
     XFillRectangle(dis, drw, gc, x, y, w, h);
     
     return 1;
@@ -422,7 +421,7 @@ void edmStripClass::edit_update(Widget w, XtPointer client,XtPointer call)
     for (size_t i=0; i<num_pvs; ++i)
     {
         me->pv_name[i].setRaw(me->buf_pv_name[i]);
-        me->pv_color[i].setColor(me->buf_pv_color[i], me->actWin->ci);
+        me->pv_color[i].setColorIndex(me->buf_pv_color[i], me->actWin->ci);
         me->use_pv_time[i] = me->buf_use_pv_time[i] != 0;
     }
     me->seconds = me->buf_seconds;
@@ -489,13 +488,13 @@ void edmStripClass::changeDisplayParams(unsigned int flag,
                                              int _ctlAlignment,
                                              char *_btnFontTag,
                                              int _btnAlignment,
-                                             unsigned int _textFgColor,
-                                             unsigned int _fg1Color,
-                                             unsigned int _fg2Color,
-                                             unsigned int _offsetColor,
-                                             unsigned int _bgColor,
-                                             unsigned int _topShadowColor,
-                                             unsigned int _botShadowColor)
+                                             int _textFgColor,
+                                             int _fg1Color,
+                                             int _fg2Color,
+                                             int _offsetColor,
+                                             int _bgColor,
+                                             int _topShadowColor,
+                                             int _botShadowColor)
 {
     if (flag & ACTGRF_BGCOLOR_MASK)
         bgColor = _bgColor;
@@ -612,11 +611,14 @@ int edmStripClass::activate(int pass, void *ptr)
                 return 0;
             }
             XtMapWidget(plot_widget);
-            color = SciPlotStoreAllocatedColor(plot_widget, bgColor);
+            color = SciPlotStoreAllocatedColor(plot_widget,
+             actWin->ci->pix(bgColor));
             SciPlotSetBackgroundColor(plot_widget, color);
-            color = SciPlotStoreAllocatedColor(plot_widget, textColor);
+            color = SciPlotStoreAllocatedColor(plot_widget,
+             actWin->ci->pix(textColor));
             SciPlotSetTextColor(plot_widget, color);
-            color = SciPlotStoreAllocatedColor(plot_widget, fgColor);
+            color = SciPlotStoreAllocatedColor(plot_widget,
+             actWin->ci->pix(fgColor));
             SciPlotSetForegroundColor(plot_widget, color);
 
             xlist = (double *)calloc(strip_data->getBucketCount()*3,
@@ -808,7 +810,7 @@ int edmStripClass::drawActive()
     int x0=0, y0=0;
     
     // Background fill?
-    XSetForeground(dis, gc, bgColor);
+    XSetForeground(dis, gc, actWin->ci->pix(bgColor));
     XFillRectangle(dis, drw, gc, x0, y0, w, h);
     
     unsigned int lw;

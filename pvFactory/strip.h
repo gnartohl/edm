@@ -49,13 +49,13 @@ public:
                              int ctlAlignment,
                              char *btnFontTag,
                              int btnAlignment,
-                             unsigned int textFgColor,
-                             unsigned int fg1Color,
-                             unsigned int fg2Color,
-                             unsigned int offsetColor,
-                             unsigned int bgColor,
-                             unsigned int topShadowColor,
-                             unsigned int botShadowColor);
+                             int textFgColor,
+                             int fg1Color,
+                             int fg2Color,
+                             int offsetColor,
+                             int bgColor,
+                             int topShadowColor,
+                             int botShadowColor);
     void changePvNames(int flag,
                        int numCtlPvs,
                        char *ctlPvs[],
@@ -91,7 +91,7 @@ private:
     bool use_pv_time[num_pvs];
     double seconds;
     efInt line_width;
-    unsigned int bgColor, textColor, fgColor;
+    int bgColor, textColor, fgColor;
     
     char font_tag[63+1];
     int alignment;
@@ -102,12 +102,12 @@ private:
     int editCreate();
     int bufX, bufY, bufW, bufH;
     char buf_pv_name[num_pvs][39+1];
-    unsigned int buf_pv_color[num_pvs];
+    int buf_pv_color[num_pvs];
     colorButtonClass pv_color_cb[num_pvs];
     int buf_use_pv_time[num_pvs];
     double buf_seconds;
     efInt buf_line_width;
-    unsigned int buf_bgColor, buf_textColor, buf_fgColor;
+    int buf_bgColor, buf_textColor, buf_fgColor;
     colorButtonClass bgCb, textCb, fgCb;
 
     fontMenuClass fm;

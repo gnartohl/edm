@@ -47,13 +47,13 @@ public:
                              int ctlAlignment,
                              char *btnFontTag,
                              int btnAlignment,
-                             unsigned int textFgColor,
-                             unsigned int fg1Color,
-                             unsigned int fg2Color,
-                             unsigned int offsetColor,
-                             unsigned int bgColor,
-                             unsigned int topShadowColor,
-                             unsigned int botShadowColor);
+                             int textFgColor,
+                             int fg1Color,
+                             int fg2Color,
+                             int offsetColor,
+                             int bgColor,
+                             int topShadowColor,
+                             int botShadowColor);
 
     void changePvNames(int flag,
                        int numCtlPvs,
@@ -111,10 +111,10 @@ protected:
     char bufPvName[39+1];
     int buf_displayMode;
     int buf_precision;
-    unsigned int bufLineColor;
+    int bufLineColor;
     efInt buf_line_width;
     colorButtonClass lineCb;
-    unsigned int bufFillColor;
+    int bufFillColor;
     colorButtonClass fillCb;
     int bufIsFilled;
 
