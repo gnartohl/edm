@@ -3,22 +3,22 @@ beginScreenProperties
 major 4
 minor 0
 release 0
-x 63
-y 83
+x 70
+y 120
 w 1123
 h 715
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
-fgColor index 14
-bgColor index 3
-textColor index 14
-ctlFgColor1 index 14
-ctlFgColor2 index 27
-ctlBgColor1 index 4
-ctlBgColor2 index 2
-topShadowColor index 1
-botShadowColor index 10
+fgColor rgb 0 0 0
+bgColor rgb 51400 51400 51400
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 49344
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
 endScreenProperties
 
 # (Static Text)
@@ -32,8 +32,8 @@ y 19
 w 62
 h 27
 font "helvetica-medium-r-24.0"
-fgColor index 14
-bgColor index 1
+fgColor rgb 0 0 0
+bgColor rgb 60652 60652 60652
 value {
   "Table"
 }
@@ -51,8 +51,8 @@ y 75
 w 510
 h 32
 font "helvetica-medium-r-14.0"
-fgColor index 14
-bgColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "The table widget monitors a string pv. On change, if the string value is not blank,"
@@ -72,8 +72,8 @@ y 139
 w 341
 h 252
 font "courier-medium-r-18.0"
-fgColor index 14
-bgColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "begin"
@@ -103,8 +103,8 @@ y 596
 w 500
 h 80
 font "helvetica-medium-r-14.0"
-fgColor index 14
-bgColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "The parameters between begin and end are used to parse the remaining data"
@@ -126,8 +126,8 @@ x 551
 y 12
 w 0
 h 692
-lineColor index 14
-fillColor index 4
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
 numPoints 2
 xPoints {
   0 551
@@ -150,8 +150,8 @@ y 16
 w 528
 h 16
 font "helvetica-medium-r-14.0"
-fgColor index 14
-bgColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Consider the following example (note that the separator character is a single TAB):"
@@ -170,8 +170,8 @@ y 52
 w 296
 h 285
 font "courier-medium-r-12.0"
-fgColor index 14
-bgColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "begin"
@@ -207,8 +207,8 @@ x 574
 y 43
 w 310
 h 301
-lineColor index 14
-fillColor index 4
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
 endObjectProperties
 
 # (Static Text)
@@ -222,8 +222,8 @@ y 356
 w 310
 h 16
 font "helvetica-medium-r-14.0"
-fgColor index 14
-bgColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "The following table is produced in execute mode:"
@@ -255,8 +255,8 @@ y 612
 w 55
 h 16
 font "helvetica-medium-r-14.0"
-fgColor index 14
-bgColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Fg Color"
@@ -275,8 +275,8 @@ y 634
 w 55
 h 16
 font "helvetica-medium-r-14.0"
-fgColor index 14
-bgColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Bg Color"
@@ -295,8 +295,8 @@ y 656
 w 111
 h 16
 font "helvetica-medium-r-14.0"
-fgColor index 14
-bgColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Odd Col Bg Color"
@@ -315,8 +315,8 @@ y 679
 w 117
 h 16
 font "helvetica-medium-r-14.0"
-fgColor index 14
-bgColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Even Col Bg Color"
@@ -334,8 +334,8 @@ x 636
 y 399
 w 63
 h 221
-lineColor index 14
-fillColor index 4
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
 arrows "to"
 numPoints 2
 xPoints {
@@ -358,8 +358,8 @@ x 636
 y 569
 w 405
 h 73
-lineColor index 14
-fillColor index 4
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
 arrows "to"
 numPoints 3
 xPoints {
@@ -384,8 +384,8 @@ x 693
 y 500
 w 181
 h 163
-lineColor index 14
-fillColor index 4
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
 arrows "to"
 numPoints 3
 xPoints {
@@ -410,8 +410,8 @@ x 696
 y 526
 w 201
 h 161
-lineColor index 14
-fillColor index 4
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
 arrows "to"
 numPoints 3
 xPoints {
@@ -437,8 +437,8 @@ y 434
 w 487
 h 48
 font "helvetica-medium-r-14.0"
-fgColor index 14
-bgColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "\"\{l|c|r\}numCols\" means a repitition equal to the value numCols of three single"
@@ -459,8 +459,8 @@ y 502
 w 26
 h 48
 font "helvetica-medium-r-14.0"
-fgColor index 14
-bgColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "\"lll\""
@@ -481,8 +481,8 @@ y 559
 w 348
 h 16
 font "helvetica-medium-r-14.0"
-fgColor index 14
-bgColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "where l corresponds to Left, c to Center, and r to Right."
