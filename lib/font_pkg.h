@@ -111,7 +111,16 @@ int fontInfoClass::resolveOneFont (
 
 int fontInfoClass::show ( void );
 
+int fontInfoClass::getFontName (
+  char *fontTag,
+  double rotation,
+  char *name,
+  int len );
+
 XFontStruct *fontInfoClass::getXFontStruct (
+  char *name );
+
+XFontStruct *fontInfoClass::getXNativeFontStruct (
   char *name );
 
 int fontInfoClass::loadFontTag (

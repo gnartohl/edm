@@ -122,6 +122,10 @@ int gcClass::setFontTag (
   char *fontTag,
   fontInfoClass *fi );
 
+int gcClass::setNativeFont (
+  char *fontName,
+  fontInfoClass *fi );
+
 int gcClass::setLineWidth (
   int width );
 

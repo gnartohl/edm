@@ -694,6 +694,155 @@ success:
 
 }
 
+int fontInfoClass::getFontName (
+  char *fontTag,
+  double rotation,
+  char *name,
+  int len )
+{
+
+int stat;
+fontNameListPtr cur;
+double radians = rotation * 0.017453;
+double s, c, pixels;
+int term;
+char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
+
+  stat = avl_get_match( this->fontNameListH, (void *) fontTag,
+   (void **) &cur );
+  if ( !(stat & 1) ) return 0;
+
+  if ( rotation == 0.0 ) {
+    strncpy( name, cur->fullName, len );
+    name[len] = 0;
+    return 1;
+  }
+
+  s = sin(radians);
+  c = cos(radians);
+
+  strncpy( buf, cur->fullName, 127 );
+
+  strncpy( name, "-", len );
+
+  context = NULL;
+  tk = strtok_r( buf, "-", &context );		// foundary
+  strncat( name, tk, len );
+  strncat( name, "-", len );
+
+  tk = strtok_r( NULL, "-", &context );		// name
+  strncat( name, tk, len );
+  strncat( name, "-", len );
+
+  tk = strtok_r( NULL, "-", &context );		// weight
+  strncat( name, tk, len );
+  strncat( name, "-", len );
+
+  tk = strtok_r( NULL, "-", &context );		// slant
+  strncat( name, tk, len );
+  strncat( name, "-", len );
+
+  tk = strtok_r( NULL, "-", &context );		// set width
+  strncat( name, tk, len );
+  strncat( name, "-", len );
+  strncat( name, "-", len );
+
+  tk = strtok_r( NULL, "-", &context );		// pixels
+  strncat( name, "*", len );
+  strncat( name, "-", len );
+
+  strncpy( matrix, "[", 63 );
+
+  pixels = atof( tk );
+
+  if ( c < 0.0 ) {
+    strcpy( sign, "~" );
+  }
+  else {
+    strcpy( sign, "+" );
+  }
+
+  term = (int) ( fabs(c) * pixels );
+  sprintf( tmp, "%s%-d", sign, term );
+  strncat( matrix, tmp, 63 );
+
+  if ( s < 0.0 ) {
+    strcpy( sign, "~" );
+  }
+  else {
+    strcpy( sign, "+" );
+  }
+
+  term = (int) ( fabs(s) * pixels );
+  sprintf( tmp, "%s%-d", sign, term );
+  strncat( matrix, tmp, 63 );
+
+  if ( s < 0.0 ) {
+    strcpy( sign, "+" );
+  }
+  else {
+    strcpy( sign, "~" );
+  }
+
+  term = (int) ( fabs(s) * pixels );
+  sprintf( tmp, "%s%-d", sign, term );
+  strncat( matrix, tmp, 63 );
+
+  if ( c < 0.0 ) {
+    strcpy( sign, "~" );
+  }
+  else {
+    strcpy( sign, "+" );
+  }
+
+  term = (int) ( fabs(c) * pixels );
+  sprintf( tmp, "%s%-d", sign, term );
+  strncat( matrix, tmp, 63 );
+
+  strncat( matrix, "]", 63 );
+
+  strncat( name, matrix, len );
+  strncat( name, "-", len );
+
+  tk = strtok_r( NULL, "-", &context );		// points (discard)
+
+  tk = strtok_r( NULL, "-", &context );		// horz res
+  strncat( name, tk, len );
+  strncat( name, "-", len );
+
+  tk = strtok_r( NULL, "-", &context );		// vert res
+  strncat( name, tk, len );
+  strncat( name, "-", len );
+
+  tk = strtok_r( NULL, "-", &context );		// spacing
+  strncat( name, tk, len );
+  strncat( name, "-", len );
+
+  tk = strtok_r( NULL, "-", &context );		// average width
+  strncat( name, "*", len );
+  strncat( name, "-", len );
+
+  tk = strtok_r( NULL, "-", &context );		// char set
+  strncat( name, tk, len );
+
+  tk = strtok_r( NULL, "-", &context );		// char set
+  if ( tk ) {
+    strncat( name, "-", len );
+    strncat( name, tk, len );
+  }
+
+  tk = strtok_r( NULL, "-", &context );		// char set
+  if ( tk ) {
+    strncat( name, "-", len );
+    strncat( name, tk, len );
+  }
+
+  name[len] = 0;
+
+  return 1;
+
+}
+
 XFontStruct *fontInfoClass::getXFontStruct (
   char *name )
 {
@@ -737,6 +886,36 @@ XmFontListEntry entry;
   }
 
   return cur->fontStruct;
+
+}
+
+XFontStruct *fontInfoClass::getXNativeFontStruct (
+  char *name )
+{
+
+XmFontListEntry entry;
+XFontStruct *fs;
+
+  fs = XLoadQueryFont( this->display, name );
+
+  entry = XmFontListEntryLoad( this->display, name,
+   XmFONT_IS_FONT, name );
+
+  if ( entry ) {
+
+    if ( this->fontListEmpty ) {
+      this->fontList = XmFontListAppendEntry( NULL, entry );
+      this->fontListEmpty = 0;
+    }
+    else {
+      this->fontList = XmFontListAppendEntry( this->fontList, entry );
+    }
+
+    XmFontListEntryFree( &entry );
+
+  }
+
+  return fs;
 
 }
 

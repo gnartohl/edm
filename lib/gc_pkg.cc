@@ -455,6 +455,35 @@ XFontStruct *fs;
 
 }
 
+int gcClass::setNativeFont (
+  char *fontName,
+  fontInfoClass *fi )
+{
+
+XFontStruct *fs;
+
+  if ( !fontName ) return 0;
+
+  if ( fontName[0] != 0 ) {
+    if ( strcmp( fontName, curFontTag ) == 0 ) {
+       return GC_SUCCESS;
+    }
+  }
+
+  fs = fi->getXNativeFontStruct( fontName );
+  if ( !fs ) return GC_NO_FONT;
+
+  XSetFont( display, norm, fs->fid );
+  XSetFont( display, x_or, fs->fid );
+  XSetFont( display, erase, fs->fid );
+  XSetFont( display, invert, fs->fid );
+
+  strncpy( curFontTag, fontName, 127 );
+
+  return GC_SUCCESS;
+
+}
+
 int gcClass::setLineWidth (
   int width )
 {
