@@ -26,7 +26,7 @@
 #include "cadef.h"
 
 #define UDBTC_MAJOR_VERSION 1
-#define UDBTC_MINOR_VERSION 2
+#define UDBTC_MINOR_VERSION 3
 #define UDBTC_RELEASE 0
 
 #ifdef __updownButton_cc

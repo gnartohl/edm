@@ -409,19 +409,24 @@ int index;
   fprintf( f, "%-d\n", h );
 
   index = fgColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   index = onColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   index = offColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   index = topShadowColor;
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   index = botShadowColor;
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   if ( destPvExpString.getRaw() )
     writeStringToFile( f, destPvExpString.getRaw() );
@@ -497,7 +502,30 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   this->initSelectBox(); // call after getting x,y,w,h
 
-  if ( major > 1 ) {
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 1 ) ) ) {
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    fgColor.setColorIndex( index, actWin->ci );
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    onColor.setColorIndex( index, actWin->ci );
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    offColor.setColorIndex( index, actWin->ci );
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    topShadowColor = index;
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    botShadowColor = index;
+
+  }
+  else if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
     fgColor.setColorIndex( index, actWin->ci );

@@ -58,7 +58,7 @@
 #define XYGC_K_FORMAT_EXPONENTIAL 3
 
 #define XYGC_MAJOR_VERSION 1
-#define XYGC_MINOR_VERSION 2
+#define XYGC_MINOR_VERSION 3
 #define XYGC_RELEASE 0
 
 #ifdef __xygraph_cc
@@ -321,9 +321,9 @@ efDouble y2Min, y2Max;
 colorButtonClass plotCb[XYGC_K_MAX_TRACES];
 colorButtonClass fgCb, bgCb, gridCb;
 
-unsigned int fgColor;
-unsigned int bgColor;
-unsigned int gridColor;
+int fgColor;
+int bgColor;
+int gridColor;
 
 int xFormatType;
 efInt xPrecision;

@@ -546,24 +546,30 @@ int index;
   fprintf( f, "%-d\n", h );
 
   index = fgColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", fgColorMode );
 
   index = onColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   index = offColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   index = inconsistentColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   index = topShadowColor;
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   index = botShadowColor;
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   if ( controlPvName.getRaw() )
     writeStringToFile( f, controlPvName.getRaw() );
@@ -627,7 +633,41 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
   fscanf( f, "%d\n", &w ); actWin->incLine();
   fscanf( f, "%d\n", &h ); actWin->incLine();
 
-  if ( major > 1 ) {
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 1 ) ) ) {
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    fgColor.setColorIndex( index, actWin->ci );
+
+    fscanf( f, "%d\n", &fgColorMode ); actWin->incLine();
+
+    if ( fgColorMode == BTC_K_COLORMODE_ALARM )
+      fgColor.setAlarmSensitive();
+    else
+      fgColor.setAlarmInsensitive();
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    onColor.setColorIndex( index, actWin->ci );
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    offColor.setColorIndex( index, actWin->ci );
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    inconsistentColor.setColorIndex( index, actWin->ci );
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    topShadowColor = index;
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    botShadowColor = index;
+
+  }
+  else if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
     fgColor.setColorIndex( index, actWin->ci );

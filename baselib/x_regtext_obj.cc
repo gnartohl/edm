@@ -491,13 +491,13 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  //ef.addTextField( activeXTextClass_str6, 30, bufId, 31 );
+  //ef.addTextField( activeXTextClass_str6, 35, bufId, 31 );
 
-  ef.addTextField( activeXTextClass_str7, 30, &bufX );
-  ef.addTextField( activeXTextClass_str8, 30, &bufY );
-  ef.addTextField( activeXTextClass_str9, 30, &bufW );
-  ef.addTextField( activeXTextClass_str10, 30, &bufH );
-  ef.addTextField( activeXTextClass_str23, 30, bufValue, 255 );
+  ef.addTextField( activeXTextClass_str7, 35, &bufX );
+  ef.addTextField( activeXTextClass_str8, 35, &bufY );
+  ef.addTextField( activeXTextClass_str9, 35, &bufW );
+  ef.addTextField( activeXTextClass_str10, 35, &bufH );
+  ef.addTextField( activeXTextClass_str23, 35, bufValue, 255 );
   ef.addToggle( activeXTextClass_str11, &bufAutoSize );
   ef.addColorButton( activeXTextClass_str13, actWin->ci, &fgCb, &bufFgColor );
   ef.addToggle( activeXTextClass_str14, &bufFgColorMode );
@@ -506,13 +506,13 @@ char title[32], *ptr;
   ef.addToggle( activeXTextClass_str17, &bufBgColorMode );
   ef.addFontMenu( activeXTextClass_str12, actWin->fi, &fm, fontTag );
   fm.setFontAlignment( alignment );
-  ef.addTextField( activeXTextClass_str18, 30, bufAlarmPvName, 39 );
-  ef.addTextField( activeXTextClass_str19, 30, bufVisPvName, 39 );
+  ef.addTextField( activeXTextClass_str18, 35, bufAlarmPvName, 39 );
+  ef.addTextField( activeXTextClass_str19, 35, bufVisPvName, 39 );
   ef.addOption( " ", activeXTextClass_str20, &bufVisInverted );
-  ef.addTextField( activeXTextClass_str21, 30, bufMinVisString, 39 );
-  ef.addTextField( activeXTextClass_str22, 30, bufMaxVisString, 39 );
+  ef.addTextField( activeXTextClass_str21, 35, bufMinVisString, 39 );
+  ef.addTextField( activeXTextClass_str22, 35, bufMaxVisString, 39 );
 //----------------------------------------
-  ef.addTextField( "Reg. Exp.", 30, bufRegExp, 39 );
+  ef.addTextField( "Reg. Exp.", 35, bufRegExp, 39 );
 //----------------------------------------
 
   return 1;
@@ -567,7 +567,27 @@ int stat = 1;
 
   this->initSelectBox(); // call after getting x,y,w,h
 
-  if ( major > 1 ) {
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 0 ) ) ) {
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    fgColor.setColorIndex( index, actWin->ci );
+
+    fscanf( f, "%d\n", &fgColorMode ); actWin->incLine();
+
+    if ( fgColorMode == AXTC_K_COLORMODE_ALARM )
+      fgColor.setAlarmSensitive();
+    else
+      fgColor.setAlarmInsensitive();
+
+    fscanf( f, "%d\n", &useDisplayBg ); actWin->incLine();
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    bgColor.setColorIndex( index, actWin->ci );
+
+  }
+  else if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
     fgColor.setColorIndex( index, actWin->ci );
@@ -955,14 +975,16 @@ int index;
   fprintf( f, "%-d\n", h );
 
   index = fgColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", fgColorMode );
 
   fprintf( f, "%-d\n", useDisplayBg );
 
   index = bgColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", bgColorMode );
 

@@ -43,7 +43,7 @@
 #define XTDC_K_COLORMODE_ALARM 1
 
 #define XTDC_MAJOR_VERSION 2
-#define XTDC_MINOR_VERSION 6
+#define XTDC_MINOR_VERSION 7
 #define XTDC_RELEASE 0
 
 #ifdef __x_text_dsp_obj_cc

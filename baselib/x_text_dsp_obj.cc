@@ -1636,9 +1636,11 @@ int index, stat;
   fprintf( f, "%-d\n", useDisplayBg );
   fprintf( f, "%-d\n", alignment );
   index = fgColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
   index = bgColor;
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
   fprintf( f, "%-d\n", formatType );
   fprintf( f, "%-d\n", colorMode );
   fprintf( f, "%-d\n", editable );
@@ -1741,7 +1743,19 @@ unsigned int pixel;
   fscanf( f, "%d\n", &useDisplayBg ); actWin->incLine();
   fscanf( f, "%d\n", &alignment ); actWin->incLine();
 
-  if ( major > 1 ) {
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 6 ) ) ) {
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    bufFgColor = index;
+    fgColor.setColorIndex( bufFgColor, actWin->ci );
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    bgColor = index;
+
+  }
+  else if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
     bufFgColor = index;

@@ -32,7 +32,7 @@
 #endif
 
 #define MESSAGEBOXC_MAJOR_VERSION 2
-#define MESSAGEBOXC_MINOR_VERSION 1
+#define MESSAGEBOXC_MINOR_VERSION 2
 #define MESSAGEBOXC_RELEASE 0
 
 #ifdef __message_box_cc

@@ -33,7 +33,7 @@
 #include "cvtFast.h"
 
 #define MSLC_MAJOR_VERSION 1
-#define MSLC_MINOR_VERSION 0
+#define MSLC_MINOR_VERSION 1
 #define MSLC_RELEASE 0
 
 #define MSLC_STATE_IDLE 1

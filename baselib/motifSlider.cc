@@ -974,13 +974,21 @@ int index, stat;
   fprintf( f, "%-d\n", h );
 
   index = fgColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
-  index = bgColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
-  fprintf( f, "%-d\n", shadeColor );
-  fprintf( f, "%-d\n", topColor );
-  fprintf( f, "%-d\n", botColor );
+  index = bgColor.pixelIndex();
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
+
+  actWin->ci->writeColorIndex( f, shadeColor );
+  //fprintf( f, "%-d\n", shadeColor );
+
+  actWin->ci->writeColorIndex( f, topColor );
+  //fprintf( f, "%-d\n", topColor );
+
+  actWin->ci->writeColorIndex( f, botColor );
+  //fprintf( f, "%-d\n", botColor );
 
   fprintf( f, "%-g\n", increment );
 
@@ -1039,17 +1047,44 @@ float val;
 
   this->initSelectBox(); // call after getting x,y,w,h
 
-  fscanf( f, "%d\n", &index ); actWin->incLine();
-  fgColor.setColorIndex( index, actWin->ci );
+  if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 0 ) ) ) {
 
-  fscanf( f, "%d\n", &index ); actWin->incLine();
-  bgColor.setColorIndex( index, actWin->ci );
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    fgColor.setColorIndex( index, actWin->ci );
 
-  fscanf( f, "%d\n", &shadeColor ); actWin->incLine();
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    bgColor.setColorIndex( index, actWin->ci );
 
-  fscanf( f, "%d\n", &topColor ); actWin->incLine();
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    shadeColor = index;
 
-  fscanf( f, "%d\n", &botColor ); actWin->incLine();
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    topColor = index;
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    botColor = index;
+
+  }
+  else {
+
+    fscanf( f, "%d\n", &index ); actWin->incLine();
+    fgColor.setColorIndex( index, actWin->ci );
+
+    fscanf( f, "%d\n", &index ); actWin->incLine();
+    bgColor.setColorIndex( index, actWin->ci );
+
+    fscanf( f, "%d\n", &shadeColor ); actWin->incLine();
+
+    fscanf( f, "%d\n", &topColor ); actWin->incLine();
+
+    fscanf( f, "%d\n", &botColor ); actWin->incLine();
+
+  }
 
   fscanf( f, "%g\n", &val ); actWin->incLine();
   increment = (double) val;

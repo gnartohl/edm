@@ -25,7 +25,7 @@
 #include "cadef.h"
 
 #define MSGBTC_MAJOR_VERSION 2
-#define MSGBTC_MINOR_VERSION 1
+#define MSGBTC_MINOR_VERSION 2
 #define MSGBTC_RELEASE 0
 
 #define MSGBTC_K_PUSH 1

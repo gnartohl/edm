@@ -28,7 +28,7 @@
 #include "cadef.h"
 
 #define SLC_MAJOR_VERSION 2
-#define SLC_MINOR_VERSION 1
+#define SLC_MINOR_VERSION 2
 #define SLC_RELEASE 0
 
 #define SLC_STATE_IDLE 1

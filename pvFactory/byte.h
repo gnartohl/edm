@@ -13,7 +13,7 @@
 
 #define BYTE_CLASSNAME "ByteClass"
 #define BYTE_MAJOR 1
-#define BYTE_MINOR 0
+#define BYTE_MINOR 1
 #define BYTE_RELEASE 0
 #define BYTE_COLORMODE_STATIC 0
 #define BYTE_COLORMODE_ALARM 1

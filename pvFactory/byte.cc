@@ -99,9 +99,12 @@ int edmByteClass::save(FILE *f)
     fprintf(f, "%-d\n", w);
     fprintf(f, "%-d\n", h);
 
-    fprintf( f, "%-d\n", lineColor );
-    fprintf( f, "%-d\n", onColor );
-    fprintf( f, "%-d\n", offColor );
+    actWin->ci->writeColorIndex( f, lineColor );
+    actWin->ci->writeColorIndex( f, onColor );
+    actWin->ci->writeColorIndex( f, offColor );
+    //fprintf( f, "%-d\n", lineColor );
+    //fprintf( f, "%-d\n", onColor );
+    //fprintf( f, "%-d\n", offColor );
 
   writeStringToFile(f, (char *)getRawPVName());
 
@@ -132,9 +135,22 @@ int edmByteClass::createFromFile(FILE *f, char *filename,
     fscanf(f, "%d\n", &h); actWin->incLine();
     this->initSelectBox(); // call after getting x,y,w,h
 
-    fscanf( f, "%d\n", &lineColor ); actWin->incLine();
-    fscanf( f, "%d\n", &onColor ); actWin->incLine();
-    fscanf( f, "%d\n", &offColor ); actWin->incLine();
+    if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 0 ) ) )
+    {
+      actWin->ci->readColorIndex( f, &lineColor );
+      actWin->incLine(); actWin->incLine();
+      actWin->ci->readColorIndex( f, &onColor );
+      actWin->incLine(); actWin->incLine();
+      actWin->ci->readColorIndex( f, &offColor );
+      actWin->incLine(); actWin->incLine();
+    }
+    else
+    {
+      fscanf( f, "%d\n", &lineColor ); actWin->incLine();
+      fscanf( f, "%d\n", &onColor ); actWin->incLine();
+      fscanf( f, "%d\n", &offColor ); actWin->incLine();
+    }
+
     if (actWin->ci->isRule(onColor))
     {
        onPixel = actWin->ci->getPixelByIndex(actWin->ci->evalRule(onColor,

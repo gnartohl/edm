@@ -668,16 +668,20 @@ int index;
   fprintf( f, "%-d\n", h );
 
   index = fgColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   index = bgColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   index = topShadowColor;
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   index = botShadowColor;
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   if ( destPvExpString.getRaw() )
     writeStringToFile( f, destPvExpString.getRaw() );
@@ -744,17 +748,40 @@ float fval;
 
   this->initSelectBox(); // call after getting x,y,w,h
 
-  fscanf( f, "%d\n", &index ); actWin->incLine();
-  fgColor.setColorIndex( index, actWin->ci );
+  if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 2 ) ) ) {
 
-  fscanf( f, "%d\n", &index ); actWin->incLine();
-  bgColor.setColorIndex( index, actWin->ci );
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    fgColor.setColorIndex( index, actWin->ci );
 
-  fscanf( f, "%d\n", &index ); actWin->incLine();
-  topShadowColor = index;
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    bgColor.setColorIndex( index, actWin->ci );
 
-  fscanf( f, "%d\n", &index ); actWin->incLine();
-  botShadowColor = index;
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    topShadowColor = index;
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    botShadowColor = index;
+
+  }
+  else {
+
+    fscanf( f, "%d\n", &index ); actWin->incLine();
+    fgColor.setColorIndex( index, actWin->ci );
+
+    fscanf( f, "%d\n", &index ); actWin->incLine();
+    bgColor.setColorIndex( index, actWin->ci );
+
+    fscanf( f, "%d\n", &index ); actWin->incLine();
+    topShadowColor = index;
+
+    fscanf( f, "%d\n", &index ); actWin->incLine();
+    botShadowColor = index;
+
+  }
 
   readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
    actWin->incLine();

@@ -468,31 +468,38 @@ int index;
   fprintf( f, "%-d\n", h );
 
   index = meterColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", meterColorMode );
 
   index = scaleColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", scaleColorMode );
 
   index = labelColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   index = fgColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", fgColorMode );
 
   index = bgColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   index = tsColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   index = bsColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   if ( controlPvExpStr.getRaw() )
     writeStringToFile( f, controlPvExpStr.getRaw() );
@@ -555,7 +562,57 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   this->initSelectBox();
 
-  if ( major > 1 ) {
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 0 ) ) ) {
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    meterColor.setColorIndex( index, actWin->ci );
+
+    fscanf( f, "%d\n", &meterColorMode ); actWin->incLine();
+    if ( meterColorMode == METERC_K_COLORMODE_ALARM )
+      meterColor.setAlarmSensitive();
+    else
+      meterColor.setAlarmInsensitive();
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    scaleColor.setColorIndex( index, actWin->ci );
+
+    fscanf( f, "%d\n", &scaleColorMode ); actWin->incLine();
+    if ( scaleColorMode == METERC_K_COLORMODE_ALARM )
+      scaleColor.setAlarmSensitive();
+    else
+      scaleColor.setAlarmInsensitive();
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    labelColor.setColorIndex( index, actWin->ci );
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    fgColor.setColorIndex( index, actWin->ci );
+
+    fscanf( f, "%d\n", &fgColorMode ); actWin->incLine();
+
+    if ( fgColorMode == METERC_K_COLORMODE_ALARM )
+      fgColor.setAlarmSensitive();
+    else
+      fgColor.setAlarmInsensitive();
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    bgColor.setColorIndex( index, actWin->ci );
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    tsColor.setColorIndex( index, actWin->ci );
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    bsColor.setColorIndex( index, actWin->ci );
+
+  }
+  else if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
     meterColor.setColorIndex( index, actWin->ci );

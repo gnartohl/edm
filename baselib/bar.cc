@@ -593,17 +593,20 @@ int stat, index;
   fprintf( f, "%-d\n", h );
 
   index = barColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", barColorMode );
 
   index = fgColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", fgColorMode );
 
   index = bgColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   if ( controlPvExpStr.getRaw() )
     writeStringToFile( f, controlPvExpStr.getRaw() );
@@ -675,7 +678,36 @@ float fBarOriginX;
 
   this->initSelectBox();
 
-  if ( major > 1 ) {
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 1 ) ) ) {
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    barColor.setColorIndex( index, actWin->ci );
+
+    fscanf( f, "%d\n", &barColorMode ); actWin->incLine();
+
+    if ( barColorMode == BARC_K_COLORMODE_ALARM )
+      barColor.setAlarmSensitive();
+    else
+      barColor.setAlarmInsensitive();
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    fgColor.setColorIndex( index, actWin->ci );
+
+    fscanf( f, "%d\n", &fgColorMode ); actWin->incLine();
+
+    if ( fgColorMode == BARC_K_COLORMODE_ALARM )
+      fgColor.setAlarmSensitive();
+    else
+      fgColor.setAlarmInsensitive();
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    bgColor.setColorIndex( index, actWin->ci );
+
+  }
+  else if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
     barColor.setColorIndex( index, actWin->ci );

@@ -680,9 +680,11 @@ int i, stat = 1;
   else
     writeStringToFile( f, "" );
 
-  fprintf( f, "%-d\n", fgColor );
+  actWin->ci->writeColorIndex( f, fgColor );
+  //fprintf( f, "%-d\n", fgColor );
 
-  fprintf( f, "%-d\n", bgColor );
+  actWin->ci->writeColorIndex( f, bgColor );
+  //fprintf( f, "%-d\n", bgColor );
 
   fprintf( f, "%-d\n", plotStyle );
 
@@ -701,7 +703,8 @@ int i, stat = 1;
       writeStringToFile( f, yPvExpStr[i].getRaw() );
     else
       writeStringToFile( f, "" );
-    fprintf( f, "%-d\n", plotColor[i] ); actWin->incLine();
+    actWin->ci->writeColorIndex( f, plotColor[i] );
+    //fprintf( f, "%-d\n", plotColor[i] );
   }
 
   fprintf( f, "%-d\n", xAxisStyle );
@@ -763,7 +766,8 @@ int i, stat = 1;
 
   // ver 1.2.0
 
-  fprintf( f, "%-d\n", gridColor );
+  actWin->ci->writeColorIndex( f, gridColor );
+  //fprintf( f, "%-d\n", gridColor );
 
   for ( i=0; i<numTraces; i++ ) {
     fprintf( f, "%-d\n", lineThk[i] );
@@ -805,9 +809,22 @@ char str[127+1], traceColor[15+1], onePv[activeGraphicClass::MAX_PV_NAME+1];
   readStringFromFile( str, 127+1, f ); actWin->incLine();
   yLabel.setRaw( str );
 
-  fscanf( f, "%d\n", &fgColor ); actWin->incLine();
+  if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 2 ) ) ) {
 
-  fscanf( f, "%d\n", &bgColor ); actWin->incLine();
+    actWin->ci->readColorIndex( f, &fgColor );
+    actWin->incLine(); actWin->incLine();
+
+    actWin->ci->readColorIndex( f, &bgColor );
+    actWin->incLine(); actWin->incLine();
+
+  }
+  else {
+
+    fscanf( f, "%d\n", &fgColor ); actWin->incLine();
+
+    fscanf( f, "%d\n", &bgColor ); actWin->incLine();
+
+  }
 
   fscanf( f, "%d\n", &plotStyle ); actWin->incLine();
 
@@ -818,13 +835,22 @@ char str[127+1], traceColor[15+1], onePv[activeGraphicClass::MAX_PV_NAME+1];
   fscanf( f, "%d\n", &numTraces ); actWin->incLine();
 
   for ( i=0; i<numTraces; i++ ) {
+
     readStringFromFile( onePv, activeGraphicClass::MAX_PV_NAME+1, f );
      actWin->incLine();
     xPvExpStr[i].setRaw( onePv );
     readStringFromFile( onePv, activeGraphicClass::MAX_PV_NAME+1, f );
      actWin->incLine();
     yPvExpStr[i].setRaw( onePv );
-    fscanf( f, "%d\n", &plotColor[i] ); actWin->incLine();
+
+    if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 2 ) ) ) {
+      actWin->ci->readColorIndex( f, &plotColor[i] );
+      actWin->incLine(); actWin->incLine();
+    }
+    else{
+      fscanf( f, "%d\n", &plotColor[i] ); actWin->incLine();
+    }
+
   }
 
   for ( i=numTraces; i<XYGC_K_MAX_TRACES; i++ ) {
@@ -893,11 +919,17 @@ char str[127+1], traceColor[15+1], onePv[activeGraphicClass::MAX_PV_NAME+1];
 
   if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 1 ) ) ) {
 
-    fscanf( f, "%d\n", &gridColor ); actWin->incLine();
+    if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 2 ) ) ) {
+      actWin->ci->readColorIndex( f, &gridColor );
+      actWin->incLine(); actWin->incLine();
+    }
+    else{
+      fscanf( f, "%d\n", &gridColor ); actWin->incLine();
+    }
 
     for ( i=0; i<numTraces; i++ ) {
-      fscanf( f, "%d\n", &lineThk[i] );
-      fscanf( f, "%d\n", &lineStyle[i] );
+      fscanf( f, "%d\n", &lineThk[i] ); actWin->incLine();
+      fscanf( f, "%d\n", &lineStyle[i] ); actWin->incLine();
     }
 
   }

@@ -180,9 +180,11 @@ int edmTextupdateClass::save(FILE *f)
     fprintf(f, "%-d\n", (int) displayMode);
     fprintf(f, "%-d\n", (int) precision);
     // textcolor, fillcolor
-    fprintf(f, "%-d\n", textColor.getIndex());
+    actWin->ci->writeColorIndex( f, textColor.getIndex() );
+    //fprintf(f, "%-d\n", textColor.getIndex());
     fprintf(f, "%-d\n", textColor.isAlarmSensitive());
-    fprintf(f, "%-d\n", fillColor.getIndex());
+    actWin->ci->writeColorIndex( f, fillColor.getIndex() );
+    //fprintf(f, "%-d\n", fillColor.getIndex());
     writeStringToFile(f, (char *)getRawName(color_pv_name));
     // fill mode, fonts
     fprintf(f, "%-d\n", is_filled);
@@ -229,7 +231,12 @@ int edmTextupdateClass::createFromFile(FILE *f, char *filename,
     }
     // text color. Changed for 2.0.0: Use names
     // Since 5.0.0: back to indices
-    if (major < 2 || major >= 5)
+    if ( major > 5 ) {
+        actWin->ci->readColorIndex( f, &index );
+        actWin->incLine(); actWin->incLine();
+        textColor.setIndex(index);
+    }
+    else if (major < 2 || major <= 5)
     {
         fscanf(f, "%d\n", &index ); actWin->incLine();
         textColor.setIndex(index);
@@ -246,7 +253,12 @@ int edmTextupdateClass::createFromFile(FILE *f, char *filename,
         textColor.setAlarmSensitive(index > 0);
     }
     // fillcolor index & mode
-    if (major < 2 || major >= 5)
+    if ( major > 5 ) {
+        actWin->ci->readColorIndex( f, &index );
+        actWin->incLine(); actWin->incLine();
+        fillColor.setIndex(index);
+    }
+    else if (major < 2 || major <= 5)
     {
         fscanf(f, "%d\n", &index ); actWin->incLine();
         fillColor.setIndex(index);
