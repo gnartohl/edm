@@ -218,7 +218,7 @@ static int getMainCheckPointParams (
   char *checkPointMacros
 ) {
 
-char *cptr, *tk;
+char *cptr, *tk, *buf1;
 char text[1023+1];
 int i;
 
@@ -249,7 +249,8 @@ int i;
     cptr = fgets( text, 1023, f );
     text[1024] = 0;
     if ( !cptr ) return 2; // fail
-    tk = strtok( text, "\n \t" );
+    buf1 = NULL;
+    tk = strtok_r( text, "\n \t", &buf1 );
     if ( i > 0 ) {
       Strncat( checkPointMacros, ",", 1023 );
       checkPointMacros[1023] = 0;
@@ -288,7 +289,7 @@ static int getScreenCheckPointParams (
   char *checkPointMacros
 ) {
 
-char *cptr, *tk;
+char *cptr, *tk, *buf1;
 char text[1023+1];
 int i;
 
@@ -330,7 +331,8 @@ int i;
     cptr = fgets( text, 1023, f );
     text[1024] = 0;
     if ( !cptr ) return 2; // fail
-    tk = strtok( text, "\n \t" );
+    buf1 = NULL;
+    tk = strtok_r( text, "\n \t", &buf1 );
     if ( i > 0 ) {
       Strncat( checkPointMacros, ",", 1023 );
       checkPointMacros[1023] = 0;
@@ -788,7 +790,7 @@ int *portNumPtr = (int *) thread_get_app_data( h );
 
       q_stat_r = REMQHI( (void *) &g_mainFreeQueue, (void **) &node, 0 );
       if ( q_stat_r & 1 ) {
-        strncat( node->msg, &msg[1], 254 );
+        strncpy( node->msg, &msg[1], 254 );
         q_stat_i = INSQTI( (void *) node, (void *) &g_mainActiveQueue, 0 );
         if ( !( q_stat_i & 1 ) ) {
           printf( main_str17 );
@@ -884,7 +886,7 @@ void checkParams (
 char buf[1023+1], mac[1023+1], exp[1023+1];
 int state = SWITCHES;
 int stat, nm=0, n = 1;
-char *envPtr, *tk;
+char *envPtr, *tk, *buf1;
 Display *testDisplay;
 
   strcpy( displayName, "" );
@@ -970,10 +972,11 @@ Display *testDisplay;
             return;
           }
           strncpy( buf, argv[n], 1023 );
-          tk = strtok( buf, "=," );
+	  buf1 = NULL;
+          tk = strtok_r( buf, "=,", &buf1 );
           while ( tk ) {
             strncpy( mac, tk, 1023 );
-            tk = strtok( NULL, "=," );
+            tk = strtok_r( NULL, "=,", &buf1 );
             if ( tk ) {
               strncpy( exp, tk, 1023 );
             }
@@ -982,7 +985,7 @@ Display *testDisplay;
               return;
             }
             nm++;
-            tk = strtok( NULL, "=," );
+            tk = strtok_r( NULL, "=,", &buf1 );
           }
 
           if ( nm == 0 ) {
@@ -1100,7 +1103,7 @@ appListPtr cur, next, appArgsHead, newOne, first;
 processClass proc;
 objBindingClass *obj;
 pvBindingClass *pvObj;
-char *tk;
+char *tk, *buf1;
 MAIN_NODE_PTR node;
 char **argArray, displayName[127+1];
 int appendDisplay;
@@ -1569,13 +1572,14 @@ int primaryServerFlag, numCheckPointMacros;
             strncpy( tmpMsg, node->msg, 255 );
             tmpMsg[255] = 0;
 
-            tk = strtok( tmpMsg, "|" );
+            buf1 = NULL;
+            tk = strtok_r( tmpMsg, "|", &buf1 );
             if ( !tk ) goto parse_error;
 
 	    if ( strcmp( tk, "*OIS*" ) == 0 ) {
 
               needConnect = 1;
-              tk = strtok( NULL, "|" ); // should contain display name
+              tk = strtok_r( NULL, "|", &buf1 ); // should contain display name
 
 	      // make 1st app ctx open/deiconify/raise initial files
 	      // and deiconify/raise main window so things look like
@@ -1597,7 +1601,8 @@ int primaryServerFlag, numCheckPointMacros;
 
             strncpy( tmpMsg, node->msg, 255 );
             tmpMsg[255] = 0;
-            tk = strtok( tmpMsg, "|" );
+            buf1 = NULL;
+            tk = strtok_r( tmpMsg, "|", &buf1 );
             if ( !tk ) goto parse_error;
 
 	    if ( ( strcmp( tk, "*OIS*" ) != 0 ) ||
@@ -1608,17 +1613,19 @@ int primaryServerFlag, numCheckPointMacros;
 	      if ( needConnect ) {
                 strncpy( tmpMsg, node->msg, 255 );
                 tmpMsg[255] = 0;
-                tk = strtok( tmpMsg, "|" ); // discard two
+                buf1 = NULL;
+                tk = strtok_r( tmpMsg, "|", &buf1 ); // discard two
                 if ( !tk ) goto parse_error;
-                tk = strtok( NULL, "|" );
+                tk = strtok_r( NULL, "|", &buf1 );
                 if ( !tk ) goto parse_error;
-                tk = strtok( NULL, "|" );
+                tk = strtok_r( NULL, "|", &buf1 );
                 if ( !tk ) goto parse_error;
 	      }
 	      else {
                 strncpy( tmpMsg, node->msg, 255 );
                 tmpMsg[255] = 0;
-                tk = strtok( tmpMsg, "|" );
+                buf1 = NULL;
+                tk = strtok_r( tmpMsg, "|", &buf1 );
                 if ( !tk ) goto parse_error;
 	      }
 
@@ -1628,7 +1635,7 @@ int primaryServerFlag, numCheckPointMacros;
               argArray = new char*[argc];
 
               for ( i=0; i<argc; i++ ) {
-                tk = strtok( NULL, "|" );
+                tk = strtok_r( NULL, "|", &buf1 );
                 if ( !tk ) goto parse_error;
                 argArray[i] = new char[strlen(tk)+1];
                 strcpy( argArray[i], tk );
