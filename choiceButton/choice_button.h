@@ -193,6 +193,16 @@ pvConnectionClass connection;
 
 int init, opComplete, pvCheckExists, controlValid, readValid;
 
+typedef struct editBufTag {
+// edit buffer
+  char bufControlPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufReadPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufColorPvName[PV_Factory::MAX_PV_NAME+1];
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
+
 int bufX, bufY, bufW, bufH;
 
 short curValue, value, curReadValue, readValue;
@@ -214,10 +224,8 @@ int buttonPressed;
 
 ProcessVariable *controlPvId, *readPvId, *stateStringPvId;
 
-char bufControlPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass controlPvExpStr;
 
-char bufReadPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass readPvExpStr;
 
 int controlExists, readExists, active, activeMode;
@@ -231,7 +239,6 @@ int initialConnection, initialReadConnection, initialVisConnection,
 
 ProcessVariable *visPvId;
 expStringClass visPvExpStr;
-char bufVisPvName[activeGraphicClass::MAX_PV_NAME+1];
 int visExists;
 double visValue, curVisValue, minVis, maxVis;
 char minVisString[39+1], bufMinVisString[39+1];
@@ -241,7 +248,6 @@ int needVisConnectInit, needVisInit, needVisUpdate;
 
 ProcessVariable *colorPvId;
 expStringClass colorPvExpStr;
-char bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
 int colorExists;
 double colorValue, curColorValue;
 int needColorConnectInit, needColorInit, needColorUpdate;
