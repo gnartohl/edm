@@ -1,5 +1,6 @@
 #include"epics_pv_factory.h"
 #include"textupdate.h"
+#include"regTextupdate.h"
 #include"strip.h"
 
 // --------------------------------------------------------
@@ -18,6 +19,7 @@ static int libRecIndex = 0;
 static libRecType exported[] =
 {
     { TEXTUPDATE_CLASSNAME, "Monitors", "Textupdate" },
+    { REGTEXTUPDATE_CLASSNAME, "Monitors", "RegTextupdate" },
     { TEXTENTRY_CLASSNAME, "Controls", "Textentry" },
     { STRIP_CLASSNAME, "Monitors", "Stripchart" }
 };
@@ -55,6 +57,19 @@ extern "C"
     {
         edmTextupdateClass *src = (edmTextupdateClass *) rhs;
         edmTextupdateClass *obj = new edmTextupdateClass(src);
+        return (void *) obj;
+    }
+
+    void *create_RegTextupdateClassPtr (void)
+    {
+        edmRegTextupdateClass *obj = new edmRegTextupdateClass;
+        return (void *) obj;
+    }
+    
+    void *clone_RegTextupdateClassPtr (void *rhs)
+    {
+        edmRegTextupdateClass *src = (edmRegTextupdateClass *) rhs;
+        edmRegTextupdateClass *obj = new edmRegTextupdateClass(src);
         return (void *) obj;
     }
 
