@@ -2320,9 +2320,6 @@ err_return:
 
 #ifdef __epics__
 
-// must fix this to not do ca_pend_io - disable for now
-#if 0
-
   if ( strcmp( ctlPV, "" ) != 0 ) {
 
     stat = ca_search( ctlPV, &ctlPvId );
@@ -2362,8 +2359,6 @@ err_return:
     }
 
   }
-
-#endif
 
 #else
 
