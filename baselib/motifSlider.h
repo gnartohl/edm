@@ -23,7 +23,6 @@
 #include "act_grf.h"
 #include "entry_form.h"
 #include "utility.h"
-#include "keypad.h"
 
 #include "Xm/Scale.h"
 #include "Xm/ScrollBar.h"
@@ -97,21 +96,6 @@ static void selectDrag (
    XEvent *e,
    String *params,
    Cardinal numParams );
-
-static void msloSetCtlKpDoubleValue (
-  Widget w,
-  XtPointer client,
-  XtPointer call );
-
-static void msloSetIncKpDoubleValue (
-  Widget w,
-  XtPointer client,
-  XtPointer call );
-
-static void msloCancelKp (
-  Widget w,
-  XtPointer client,
-  XtPointer call );
 
 static void scrollBarEventHandler (
   Widget w,
@@ -212,21 +196,6 @@ friend void selectDrag (
    XEvent *e,
    String *params,
    Cardinal numParams );
-
-friend void msloSetCtlKpDoubleValue (
-  Widget w,
-  XtPointer client,
-  XtPointer call );
-
-friend void msloSetIncKpDoubleValue (
-  Widget w,
-  XtPointer client,
-  XtPointer call );
-
-friend void msloCancelKp (
-  Widget w,
-  XtPointer client,
-  XtPointer call );
 
 friend void scrollBarEventHandler (
   Widget w,
@@ -372,9 +341,6 @@ efInt bufEfPrecision;
 char bufDisplayFormat[15+1];
 
 int orientation, bufOrientation;
-
-keypadClass kp;
-double kpCtlDouble, kpIncDouble;
 
 double incArray[7];
 int incIndex;

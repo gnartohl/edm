@@ -251,8 +251,7 @@ char strVal[255+1];
 
   XtVaGetValues( w, XmNuserData, &mslo, NULL );
 
-  if ( !mslo->ef.formIsPoppedUp() &&
-       !mslo->kp.isPoppedUp() ) {
+  if ( !mslo->ef.formIsPoppedUp() ) {
 
     be = (XButtonEvent *) e;
 
@@ -337,53 +336,6 @@ XButtonEvent *be = (XButtonEvent *) e;
   XtVaGetValues( w, XmNuserData, &mslo, NULL );
 
   stat = mslo->selectDragValue( mslo->x + be->x, mslo->y + be->y );
-
-}
-
-static void msloSetCtlKpDoubleValue (
-  Widget w,
-  XtPointer client,
-  XtPointer call )
-{
-
-activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
-int stat;
-
-  if ( mslo->controlExists ) {
-    if ( mslo->controlPvId ) {
-      stat = mslo->controlPvId->put( mslo->kpCtlDouble );
-      mslo->actWin->appCtx->proc->lock();
-      mslo->needCtlRefresh = 1;
-      mslo->actWin->addDefExeNode( mslo->aglPtr );
-      mslo->actWin->appCtx->proc->unlock();
-    }
-  }
-
-}
-
-static void msloSetIncKpDoubleValue (
-  Widget w,
-  XtPointer client,
-  XtPointer call )
-{
-
-activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
-
-  mslo->increment = mslo->kpIncDouble;
-  sprintf( mslo->incString, mslo->controlFormat, mslo->increment );
-  mslo->actWin->appCtx->proc->lock();
-  mslo->needErase = 1;
-  mslo->needDraw = 1;
-  mslo->actWin->addDefExeNode( mslo->aglPtr );
-  mslo->actWin->appCtx->proc->unlock();
-
-}
-
-static void msloCancelKp (
-  Widget w,
-  XtPointer client,
-  XtPointer call )
-{
 
 }
 
@@ -1665,6 +1617,8 @@ static void scrollBarEventHandler (
 
 activeMotifSliderClass *mslo;
 
+  *continueToDispatch = True;
+
   mslo = (activeMotifSliderClass *) client;
 
   if ( !mslo->active ) return;
@@ -1699,6 +1653,8 @@ XButtonEvent *be;
 activeMotifSliderClass *mslo;
  int stat;
 char title[32], *ptr, strVal[255+1];
+
+  *continueToDispatch = True;
 
   mslo = (activeMotifSliderClass *) client;
 
@@ -1874,9 +1830,9 @@ int opStat;
 
       oldControlV = 0;
       updateControlTimerActive = 0;
+      updateControlTimer = 0;
       controlAdjusted = 0;
       incrementTimerActive = 0;
-      opComplete = 0;
 
       controlPvConnected = 0;
 
@@ -1977,7 +1933,7 @@ int activeMotifSliderClass::deactivate (
   int pass
 ) {
 
-  activeMode = 0;
+  active = activeMode = 0;
 
   switch ( pass ) {
 
@@ -1985,10 +1941,6 @@ int activeMotifSliderClass::deactivate (
 
     if ( ef.formIsPoppedUp() ) {
       ef.popdown();
-    }
-
-    if ( kp.isPoppedUp() ) {
-      kp.popdown();
     }
 
     if ( unconnectedTimer ) {

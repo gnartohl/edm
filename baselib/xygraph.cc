@@ -5682,7 +5682,7 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
   hx = 0;
   lx = 0;
   if ( xAxis ) {
-    hx = fontHeight + 1;
+    hx = (int) ( (double) fontHeight * 1.4 );
     if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
       lx = xScaleMargin( fontTag, fs, pow(10,curXMin), pow(10,curXMax) ) + 1;
     }
@@ -5938,6 +5938,7 @@ XButtonEvent be;
       ( buttonState & ShiftMask ) &&
       !( buttonState & ControlMask ) ) {
 
+#if 0
     if ( !firstBoxRescale ) {
 
       firstBoxRescale = 1;
@@ -5951,6 +5952,7 @@ XButtonEvent be;
       }
 
     }
+#endif
 
     for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
       if ( numYTraces[yi] > 0 ) {
@@ -6218,8 +6220,8 @@ void xyGraphClass::executeDeferred ( void ) {
 int i, ii, stat, nc, ni, nu, nvu, nru, nr, ne, nd, nrstc, nrst, ntrgc,
  ntrg, nxrescl, nbs, nbrescl, nnl, nol,
  eleSize, scaledX, scaledY, structType, doRescale, anyRescale, size,
- ny1rescl[NUM_Y_AXES];
-double dyValue, dxValue, range, oneMax, oldXMin;
+ ny1rescl[NUM_Y_AXES], num;
+double dyValue, dxValue, range, oneMax, oldXMin, xmin, xmax, ymin[2], ymax[2];
 char format[31+1];
 int yi, yScaleIndex;
 
@@ -7186,6 +7188,73 @@ int yi, yScaleIndex;
 
   }
 
+  if ( nol ) {
+
+    getXMinMax( &xmin, &xmax );
+    getYMinMax( 0, &ymin[0], &ymax[0] );
+    getYMinMax( 1, &ymin[1], &ymax[1] );
+
+    for ( num=0; num<2; num++ ) {
+
+      curXMin = xMin.value();
+      if ( xmin < curXMin ) curXMin = xmin;
+      curXMax = xMax.value();
+      if ( xmax > curXMax ) curXMax = xmax;
+      if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+        curXMin = log10( curXMin );
+        curXMax = log10( curXMax );
+      }
+      else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+        curXMin = log10( curXMin );
+        curXMax = log10( curXMax );
+      }
+
+      for ( i=0; i<numTraces; i++ ) {
+        xFactor[i] =
+         (double) ( plotAreaW ) / ( curXMax - curXMin );
+        xOffset[i] = plotAreaX;
+      }
+
+      for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+
+        curY1Min[yi] = y1Min[yi].value();
+        if ( ymin[yi] < curY1Min[yi] ) curY1Min[yi] = ymin[yi];
+        curY1Max[yi] = y1Max[yi].value();
+        if ( ymax[yi] > curY1Max[yi] ) curY1Max[yi] = ymax[yi];
+        if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+          curY1Min[yi] = log10( curY1Min[yi] );
+          curY1Max[yi] = log10( curY1Max[yi] );
+        }
+
+        for ( i=0; i<numTraces; i++ ) {
+          y1Factor[yi][i] =
+           (double) ( plotAreaH ) / ( curY1Max[yi] - curY1Min[yi] );
+          y1Offset[yi][i] = plotAreaY;
+        }
+
+      }
+    
+      curXNumLabelTicks = xNumLabelIntervals.value();
+      if ( curXNumLabelTicks < 1 ) curXNumLabelTicks = 1;
+      curXMajorsPerLabel = xNumMajorPerLabel.value();
+      curXMinorsPerMajor = xNumMinorPerMajor.value();
+
+      for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+        curY1NumLabelTicks[yi] = y1NumLabelIntervals[yi].value();
+        if ( curY1NumLabelTicks[yi] < 1 ) curY1NumLabelTicks[yi] = 1;
+        curY1MajorsPerLabel[yi] = y1NumMajorPerLabel[yi].value();
+        curY1MinorsPerMajor[yi] = y1NumMinorPerMajor[yi].value();
+      }
+
+      updateDimensions();
+
+    }
+
+    regenBuffer();
+    fullRefresh();
+
+  }
+
   if ( nnl ) {
 
     anyRescale = 0;
@@ -7384,60 +7453,6 @@ int yi, yScaleIndex;
     }
     kpXMinEfDouble.setNull(1);
     kpXMaxEfDouble.setNull(1);
-
-    updateDimensions();
-
-    fullRefresh();
-
-  }
-
-  if ( nol ) {
-
-    curXMin = xMin.value();
-    curXMax = xMax.value();
-    if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-      curXMin = log10( curXMin );
-      curXMax = log10( curXMax );
-    }
-    else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-      curXMin = log10( curXMin );
-      curXMax = log10( curXMax );
-    }
-
-    for ( i=0; i<numTraces; i++ ) {
-      xFactor[i] =
-       (double) ( plotAreaW ) / ( curXMax - curXMin );
-      xOffset[i] = plotAreaX;
-    }
-
-    for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
-
-      curY1Min[yi] = y1Min[yi].value();
-      curY1Max[yi] = y1Max[yi].value();
-      if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-        curY1Min[yi] = log10( curY1Min[yi] );
-        curY1Max[yi] = log10( curY1Max[yi] );
-      }
-
-      for ( i=0; i<numTraces; i++ ) {
-        y1Factor[yi][i] =
-         (double) ( plotAreaH ) / ( curY1Max[yi] - curY1Min[yi] );
-        y1Offset[yi][i] = plotAreaY;
-      }
-
-    }
-    
-    curXNumLabelTicks = xNumLabelIntervals.value();
-    if ( curXNumLabelTicks < 1 ) curXNumLabelTicks = 1;
-    curXMajorsPerLabel = xNumMajorPerLabel.value();
-    curXMinorsPerMajor = xNumMinorPerMajor.value();
-
-    for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
-      curY1NumLabelTicks[yi] = y1NumLabelIntervals[yi].value();
-      if ( curY1NumLabelTicks[yi] < 1 ) curY1NumLabelTicks[yi] = 1;
-      curY1MajorsPerLabel[yi] = y1NumMajorPerLabel[yi].value();
-      curY1MinorsPerMajor[yi] = y1NumMinorPerMajor[yi].value();
-    }
 
     updateDimensions();
 
