@@ -71,6 +71,7 @@ LIBSRCS += dynSymbol.cc
 LIBSRCS += keypad.cc
 LIBSRCS += undo.cc
 LIBSRCS += rules.cc
+LIBSRCS += color_list.cc
 
 include $(TOP)/config/RULES.Host
 
