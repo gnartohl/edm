@@ -114,7 +114,7 @@ void edmTextupdateClass::init(const char *classname)
     name = strdup(classname);
     is_executing = false;
     pv = 0;
-    
+
     color_pv = 0;
     is_filled = true;
     strcpy(fontTag, "");
@@ -368,17 +368,18 @@ int edmTextupdateClass::editCreate()
 
 int edmTextupdateClass::genericEdit() // create Property Dialog
 {
-    char title[80], *ptr;
+    char title[80+1], *ptr;
     // required
     ptr = actWin->obj.getNameFromClass(name);
     if (ptr)
     {
         strncpy(title, ptr, 80);
+        title[80] = 0;
         Strncat(title, " Properties", 80);
     }
     else
         strncpy(title, "Unknown object Properties", 80);
-   
+
     // Copy data member contents into edit buffers
     bufX = x; bufY = y; bufW = w; bufH = h;
     strncpy(bufPvName,      getRawName(pv_name), PV_Factory::MAX_PV_NAME);

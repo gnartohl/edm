@@ -243,12 +243,13 @@ int edmByteClass::editCreate()
 
 int edmByteClass::genericEdit() // create Property Dialog
 {
-    char title[80], *ptr;
+    char title[80+1], *ptr;
     // required
     ptr = actWin->obj.getNameFromClass(name);
     if (ptr)
     {
         strncpy(title, ptr, 80);
+        title[80] = 0;
         Strncat(title, " Properties", 80);
     }
     else
