@@ -54,6 +54,7 @@ Time deltaTime;
          (XtPointer) &pbcb );
       }
       else if ( be->button == Button2 ) {
+        XBell( efo->display, 25 );
         (*efo->applyCb)( efo->pb_apply, efo->pbCallbackPtr,
          (XtPointer) &pbcb );
       }
@@ -86,6 +87,7 @@ Time deltaTime;
       pbcb.event = e;
       pbcb.click_count = 1;
 
+      XBell( efo->display, 25 );
       (*efo->applyCb)( efo->pb_apply, efo->pbCallbackPtr,
        (XtPointer) &pbcb );
 
