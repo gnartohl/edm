@@ -30,7 +30,7 @@
 #endif
 
 #define DSC_MAJOR_VERSION 1
-#define DSC_MINOR_VERSION 2
+#define DSC_MINOR_VERSION 3
 #define DSC_RELEASE 0
 
 #define DYNSYMBOL_K_NUM_STATES 32
@@ -139,7 +139,7 @@ btnActionListPtr btnDownActionHead;
 btnActionListPtr btnUpActionHead;
 btnActionListPtr btnMotionActionHead;
 
-int useOriginalSize;
+int useOriginalSize, useOriginalColors;
 int numStates;
 int index, prevIndex;
 
@@ -156,10 +156,14 @@ double bufStateMinValue[DYNSYMBOL_K_NUM_STATES];
 double bufStateMaxValue[DYNSYMBOL_K_NUM_STATES];
 char bufDynSymbolFileName[127+1], bufControlPvName[39+1],
  bufGateDownPvName[39+1], bufGateUpPvName[39+1], bufColorPvName[39+1];
-int bufNumStates, bufUseOriginalSize, bufUseGate, bufContinuous;
+int bufNumStates, bufUseOriginalSize, bufUseOriginalColors, bufUseGate,
+ bufContinuous;
 double bufRate;
 int bufGateDownValue, bufGateUpValue;
 int initialIndex, bufInitialIndex;
+
+int bufFgColor, bufBgColor;
+colorButtonClass fgCb, bgCb;
 
 entryListBase *pvNamesObj;
 

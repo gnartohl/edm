@@ -29,7 +29,7 @@
 #include "cadef.h"
 
 #define ASC_MAJOR_VERSION 1
-#define ASC_MINOR_VERSION 5
+#define ASC_MINOR_VERSION 6
 #define ASC_RELEASE 0
 
 #define SYMBOL_K_NUM_STATES 32
@@ -141,7 +141,7 @@ btnActionListPtr btnDownActionHead;
 btnActionListPtr btnUpActionHead;
 btnActionListPtr btnMotionActionHead;
 
-int useOriginalSize;
+int useOriginalSize, useOriginalColors;
 int numStates;
 int index, prevIndex;
 
@@ -158,7 +158,10 @@ double bufStateMinValue[SYMBOL_K_NUM_STATES];
 double bufStateMaxValue[SYMBOL_K_NUM_STATES];
 char bufSymbolFileName[127+1], bufControlPvName[SYMBOL_K_MAX_PVS][39+1];
 char bufColorPvName[39+1];
-int bufNumStates, bufUseOriginalSize;
+int bufNumStates, bufUseOriginalSize, bufUseOriginalColors;
+
+int bufFgColor, bufBgColor;
+colorButtonClass fgCb, bgCb;
 
 int binaryTruthTable, bufBinaryTruthTable;
 

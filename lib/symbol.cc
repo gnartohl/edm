@@ -192,6 +192,8 @@ int stat, resizeStat, i, saveW, saveH, saveX, saveY;
 
   aso->useOriginalSize = aso->bufUseOriginalSize;
 
+  aso->useOriginalColors = aso->bufUseOriginalColors;
+
   aso->binaryTruthTable = aso->bufBinaryTruthTable;
 
   aso->orientation = aso->bufOrientation;
@@ -379,6 +381,8 @@ int i;
   btnMotionActionHead->flink = btnMotionActionHead;
   btnMotionActionHead->blink = btnMotionActionHead;
 
+  useOriginalColors = 1;
+
 }
 
 activeSymbolClass::~activeSymbolClass ( void ) {
@@ -527,6 +531,10 @@ int i;
 
   numPvs = source->numPvs;
 
+  useOriginalColors = source->useOriginalColors;
+  fgCb = source->fgCb;
+  bgCb = source->bgCb;
+
 }
 
 int activeSymbolClass::createInteractive (
@@ -547,6 +555,8 @@ int activeSymbolClass::createInteractive (
 
   activeMode = 0;
   index = 0;
+  bufFgColor = actWin->defaultTextFgColor;
+  bufBgColor = actWin->defaultBgColor;
 
   this->editCreate();
 
@@ -598,6 +608,8 @@ char title[32], *ptr;
 
   prevOr = bufOrientation = orientation;
 
+  bufUseOriginalColors = useOriginalColors;
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -612,17 +624,24 @@ char title[32], *ptr;
   ef.addTextField( activeSymbolClass_str14, 27, bufSymbolFileName, 127 );
   ef.addTextField( activeSymbolClass_str29, 27, bufColorPvName, 39 );
 
-  ef.addToggle( activeSymbolClass_str15, &bufUseOriginalSize );
-
-  ef.addOption( "orientation", "Original|Rotate CW|Rotate CCW|Flip V|Flip H",
-   &bufOrientation );
-
-  ef.addToggle( activeSymbolClass_str16, &bufBinaryTruthTable );
-
   ef.addTextField( activeSymbolClass_str17, 27, bufControlPvName[0], 39 );
+
   for ( i=1; i<SYMBOL_K_MAX_PVS; i++ ) {
     ef.addTextField( " ", 27, bufControlPvName[i], 39 );
   }
+
+  ef.addToggle( activeSymbolClass_str16, &bufBinaryTruthTable );
+
+  ef.addOption( activeSymbolClass_str33, activeSymbolClass_str34,
+   &bufOrientation );
+
+  ef.addToggle( activeSymbolClass_str15, &bufUseOriginalSize );
+
+  ef.addToggle( activeSymbolClass_str30, &bufUseOriginalColors );
+
+  ef.addColorButton(activeSymbolClass_str31, actWin->ci, &fgCb, &bufFgColor );
+
+  ef.addColorButton(activeSymbolClass_str32, actWin->ci, &bgCb, &bufBgColor );
 
   for ( i=0; i<SYMBOL_K_NUM_STATES; i++ ) {
     minPtr[i] = &bufStateMinValue[i];
@@ -924,6 +943,11 @@ int i;
   else
     writeStringToFile( f, "" );
 
+  // version 1.6.0
+  fprintf( f, "%-d\n", useOriginalColors );
+  fprintf( f, "%-d\n", bufFgColor );
+  fprintf( f, "%-d\n", bufBgColor );
+
   return 1;
 
 }
@@ -1002,6 +1026,17 @@ float val;
   if ( ( major > 1 ) || ( minor > 4 ) ) {
     readStringFromFile( string, 39, f ); actWin->incLine();
     colorPvExpStr.setRaw( string );
+  }
+
+  if ( ( major > 1 ) || ( minor > 5 ) ) {
+    fscanf( f, "%d\n", &useOriginalColors ); actWin->incLine();
+    fscanf( f, "%d\n", &bufFgColor ); actWin->incLine();
+    fscanf( f, "%d\n", &bufBgColor ); actWin->incLine();
+  }
+  else {
+    useOriginalColors = 1;
+    bufFgColor = actWin->defaultTextFgColor;
+    bufBgColor = actWin->defaultBgColor;
   }
 
   saveW = w;
@@ -1227,8 +1262,13 @@ activeGraphicListPtr cur;
     cur = head->flink;
     while ( cur != head ) {
 
+      if ( !useOriginalColors ) {
+        cur->node->changeDisplayParams(
+         ACTGRF_TEXTFGCOLOR_MASK | ACTGRF_FG1COLOR_MASK | ACTGRF_BGCOLOR_MASK,
+	 "", 0, "", 0, "", 0, bufFgColor, bufFgColor, 0, 0, bufBgColor,
+         0, 0 );
+      }
       cur->node->activate( pass, (void *) cur );
-
       cur = cur->flink;
 
     }

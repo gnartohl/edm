@@ -270,6 +270,8 @@ int stat, resizeStat, saveW, saveH;
 
   dso->useOriginalSize = dso->bufUseOriginalSize;
 
+  dso->useOriginalColors = dso->bufUseOriginalColors;
+
   dso->gateUpPvExpStr.setRaw( dso->bufGateUpPvName );
   dso->gateDownPvExpStr.setRaw( dso->bufGateDownPvName );
   dso->colorPvExpStr.setRaw( dso->bufColorPvName );
@@ -396,6 +398,7 @@ int i;
   continuous = 0;
   rate = 1.0;
   useOriginalSize = 0;
+  useOriginalColors = 1;
 
   for ( i=0; i<DYNSYMBOL_K_NUM_STATES; i++ ) {
     stateMinValue[i] = i;
@@ -559,6 +562,9 @@ int i;
   }
 
   useOriginalSize = source->useOriginalSize;
+  useOriginalColors = source->useOriginalColors;
+  fgCb = source->fgCb;
+  bgCb = source->bgCb;
 
 }
 
@@ -580,6 +586,8 @@ int activeDynSymbolClass::createInteractive (
 
   activeMode = 0;
   index = 0;
+  bufFgColor = actWin->defaultTextFgColor;
+  bufBgColor = actWin->defaultBgColor;
 
   this->editCreate();
 
@@ -624,6 +632,8 @@ char title[32], *ptr;
 
   bufUseOriginalSize = useOriginalSize;
 
+  bufUseOriginalColors = useOriginalColors;
+
   bufUseGate = useGate;
 
   bufGateUpValue = gateUpValue;
@@ -640,6 +650,9 @@ char title[32], *ptr;
     strncpy( bufColorPvName, colorPvExpStr.getRaw(), 39 );
   else
     strncpy( bufColorPvName, "", 39 );
+
+  bufUseOriginalColors = useOriginalColors;
+
 
 //    ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
 //     &actWin->appCtx->entryFormX,
@@ -675,6 +688,14 @@ char title[32], *ptr;
   ef.addTextField( activeDynSymbolClass_str21, 27, &bufRate );
 
   ef.addTextField( activeDynSymbolClass_str22, 27, &bufInitialIndex );
+
+  ef.addToggle( activeDynSymbolClass_str35, &bufUseOriginalColors );
+
+  ef.addColorButton(activeDynSymbolClass_str36, actWin->ci, &fgCb,
+   &bufFgColor );
+
+  ef.addColorButton(activeDynSymbolClass_str37, actWin->ci, &bgCb,
+   &bufBgColor );
 
   return 1;
 
@@ -939,6 +960,11 @@ int activeDynSymbolClass::save (
   else
     writeStringToFile( f, "" );
 
+  // version 1.3.0
+  fprintf( f, "%-d\n", useOriginalColors );
+  fprintf( f, "%-d\n", bufFgColor );
+  fprintf( f, "%-d\n", bufBgColor );
+
   return 1;
 
 }
@@ -1004,6 +1030,17 @@ char string[39+1];
   if ( ( major > 1 ) || ( minor > 1 ) ) {
     readStringFromFile( string, 39, f ); actWin->incLine();
     colorPvExpStr.setRaw( string );
+  }
+
+  if ( ( major > 1 ) || ( minor > 2 ) ) {
+    fscanf( f, "%d\n", &useOriginalColors ); actWin->incLine();
+    fscanf( f, "%d\n", &bufFgColor ); actWin->incLine();
+    fscanf( f, "%d\n", &bufBgColor ); actWin->incLine();
+  }
+  else {
+    useOriginalColors = 1;
+    bufFgColor = actWin->defaultTextFgColor;
+    bufBgColor = actWin->defaultBgColor;
   }
 
   saveW = w;
@@ -1198,8 +1235,13 @@ activeGraphicListPtr cur;
     cur = head->flink;
     while ( cur != head ) {
 
+      if ( !useOriginalColors ) {
+        cur->node->changeDisplayParams(
+         ACTGRF_TEXTFGCOLOR_MASK | ACTGRF_FG1COLOR_MASK | ACTGRF_BGCOLOR_MASK,
+	 "", 0, "", 0, "", 0, bufFgColor, bufFgColor, 0, 0, bufBgColor,
+         0, 0 );
+      }
       cur->node->activate( pass, (void *) cur );
-
       cur = cur->flink;
 
     }

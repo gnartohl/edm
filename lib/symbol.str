@@ -30,5 +30,10 @@
 #define activeSymbolClass_str27 "ca_add_masked_array_event failed\n"
 #define activeSymbolClass_str28 "value"
 #define activeSymbolClass_str29 "Color PV"
+#define activeSymbolClass_str30 "Preserve Original Colors"
+#define activeSymbolClass_str31 "Fg/Line Color"
+#define activeSymbolClass_str32 "Bg/Fill Color"
+#define activeSymbolClass_str33 "Orientation"
+#define activeSymbolClass_str34 "Original|Rotate CW|Rotate CCW|Flip V|Flip H"
 
 #endif
