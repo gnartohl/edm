@@ -289,6 +289,8 @@ int i;
     replaceSymbols[i] = 0;
   }
 
+  numDsps = 0;
+
   fontList = NULL;
   aw = NULL;
   buf = NULL;
@@ -379,6 +381,8 @@ activeGraphicClass *rdo = (activeGraphicClass *) this;
     // strncpy( symbols[i], source->symbols[i], 255 );
     replaceSymbols[i] = source->replaceSymbols[i];
   }
+
+  numDsps = source->numDsps;
 
   buttonLabel.copy( source->buttonLabel );
 
