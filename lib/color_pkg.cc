@@ -1037,7 +1037,7 @@ int *tmp;
 
     case GET_COLOR:
 
-      for( n=0; n<3; n++ ) {
+      for( n=0; n<2; n++ ) {
         cur[n] = new colorCacheType;
         cur[n]->rule = NULL;
         cur[n]->pixel = 0;
@@ -1057,7 +1057,7 @@ int *tmp;
         break;
       }
 
-      for( n=0; n<3; n++ ) {
+      for( n=0; n<2; n++ ) {
         cur[n]->name = new char[strlen(tk)+1];
         strcpy( cur[n]->name, tk );
         cur[n]->index = colorIndex;
@@ -1097,7 +1097,7 @@ int *tmp;
           state = -1;
           break;
         }
-        for( n=0; n<3; n++ ) {
+        for( n=0; n<2; n++ ) {
           val = strtol( tk, &endptr, 0 );
           if ( strcmp( endptr, "" ) != 0 ) {
             parseError( colorInfoClass_str16 );
@@ -1128,7 +1128,7 @@ int *tmp;
       else if ( strcmp( tk, "}" ) != 0 ) {
 
         // cur token must be an rgb value
-        for( n=0; n<3; n++ ) {
+        for( n=0; n<2; n++ ) {
           val = strtol( tk, &endptr, 0 );
           if ( strcmp( endptr, "" ) != 0 ) {
             parseError( colorInfoClass_str16 );
@@ -1154,7 +1154,7 @@ int *tmp;
             state = -1;
             break;
           }
-          for( n=0; n<3; n++ ) {
+          for( n=0; n<2; n++ ) {
             val = strtol( tk, &endptr, 0 );
             if ( strcmp( endptr, "" ) != 0 ) {
               parseError( colorInfoClass_str16 );
