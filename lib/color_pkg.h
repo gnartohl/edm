@@ -24,6 +24,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <string.h>
+#include <time.h>
 #include <sys/time.h>
 #include <Xm/Xm.h>
 #include <Xm/Form.h>

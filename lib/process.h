@@ -24,6 +24,7 @@
 #endif
 
 #ifdef __linux__
+#include <time.h>
 #include <sys/time.h>
 #endif
 
