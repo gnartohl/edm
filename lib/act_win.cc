@@ -20,6 +20,7 @@
 
 #include <signal.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include <setjmp.h>
 
 #include <math.h>
@@ -9365,6 +9366,59 @@ activeWindowClass::activeWindowClass ( void ) {
   noRaise = 0;
 
   noEdit = 0;
+
+  stale = 0;
+  modTime = 0;
+
+}
+
+void activeWindowClass::getModTime (
+  char *oneFileName
+) {
+
+struct stat fileStat;
+int status;
+
+  if ( strcmp( oneFileName, "" ) != 0 ) {
+
+    status = stat( oneFileName, &fileStat );
+
+    modTime = fileStat.st_mtime;
+    stale = 0;
+
+  }
+  else {
+
+    stale = 1; // no file name
+
+  }
+
+}
+
+void activeWindowClass::checkModTime (
+  char *oneFileName
+) {
+
+struct stat fileStat;
+int status;
+
+  if ( strcmp( oneFileName, "" ) != 0 ) {
+
+    status = stat( oneFileName, &fileStat );
+
+    if ( modTime < fileStat.st_mtime ) {
+      stale = 1;
+    }
+    else {
+      stale = 0;
+    }
+
+  }
+  else {
+
+    stale = 0; // new file, not yet saved
+
+  }
 
 }
 

@@ -808,11 +808,22 @@ int noRaise;
 
 int noEdit; // used only to save the no-edit state for checkpointing
 
+time_t modTime; // time of last file modification when window was opened
+int stale; // true if file has been modified since window was opened (or saved)
+
 activeWindowClass::activeWindowClass ( void );
 
 activeWindowClass::~activeWindowClass ( void );
 
 char *activeWindowClass::idName( void );
+
+void activeWindowClass::getModTime (
+  char *oneFileName
+);
+
+void activeWindowClass::checkModTime (
+  char *oneFileName
+);
 
 int activeWindowClass::setProperty (
   char *id,
