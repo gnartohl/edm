@@ -4595,8 +4595,6 @@ double labelInc, lastInc, labelVal, z;
   label_tick_length = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
-  printf( "num_label_ticks = %-d\n", num_label_ticks );
-  printf( "labelInc = %-g\n", labelInc );
 
   lastInc = labelInc * 0.5;
   labelVal = adj_min;
