@@ -14453,8 +14453,8 @@ unsigned int pixel;
    XDisplayWidth( d, DefaultScreen(d) ),
    XDisplayHeight( d, DefaultScreen(d) ) ) ) {
 
-    appCtx->postMessage(
-    "Screen location is out of display bounds - setting location to (50,50)" );
+//    appCtx->postMessage(
+//    "Screen location is out of display bounds - setting location to (50,50)" );
 
     x = y = 50;
 
