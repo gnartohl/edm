@@ -16,6 +16,13 @@ void memTrackReset ( void );
 void showMem ( void );
 void zFunc ( void );
 
+char* zlocXtMalloc ( size_t size, char* _fname, int _line );
+char* zlocXtCalloc ( size_t num, size_t size, char* _fname, int _line );
+void zlocXtFree ( char *obj, char* _fname, int _line );
+char* zlocXtRealloc ( char *oldPtr, size_t size, char* _fname, int _line );
+void* zlocnew ( size_t size, char* _fname, int _line );
+void zlocdelete ( void *obj, char* _fname, int _line );
+
 char* XtMalloc ( size_t size ){
   return zXtMalloc( size );
 }

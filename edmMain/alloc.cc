@@ -10,6 +10,8 @@ typedef struct allocListTag {
   unsigned int addr;
   unsigned int size;
   unsigned int seq;
+  char fname[31+1];
+  int line;
 } allocListType, *allocListPtr;
 
 static int g_seq = 0;
@@ -79,19 +81,21 @@ allocListPtr p1, p2;
 
 void zFunc ( void ) {
 
+int i;
+
+  i = 0;
+
+
 }
 
-
-
-
-
+//=======================================================================
 
 char* zXtMalloc ( size_t size )
 {
 
   int dup, stat;
   allocListPtr cur;
-  char msg[80];
+  char msg[256];
 
   char *ptr;
 
@@ -121,6 +125,8 @@ char* zXtMalloc ( size_t size )
     cur->addr = (unsigned int) ptr;
     cur->size = (unsigned int) size;
     cur->seq = g_seqX++;
+    strncpy( cur->fname, "XtMalloc", 31 );
+    cur->line = 0;
 
     stat = avl_insert_node( g_treeX, (void *) cur, &dup );
     if ( !( stat & 1 ) ) {
@@ -137,12 +143,65 @@ char* zXtMalloc ( size_t size )
 
 }
 
+char* zlocXtMalloc ( size_t size, char* _fname, int _line )
+{
+
+  int dup, stat;
+  allocListPtr cur;
+  char msg[256];
+
+  char *ptr;
+
+  if ( g_init ) {
+    g_init = 0;
+    stat = avl_init_tree( compare_nodes,
+     compare_key, copy_nodes, &g_tree );
+    stat = avl_init_tree( compare_nodes,
+     compare_key, copy_nodes, &g_treeX );
+  }
+
+  ptr = (char *) malloc( size );
+
+  if ( g_memTrackOn ) {
+
+    if ( (size == 12) && ( g_seqX > 0 ) ) { // for diagnostics
+
+      zFunc();
+      sprintf( msg, "zXtMalloc [%-x] [%-d]\n", (int) ptr, (int) size );
+      write( 1, msg, strlen(msg) );
+
+    }
+
+    cur = (allocListPtr) calloc( 1, sizeof(allocListType) );
+    cur->addr = (unsigned int) ptr;
+    cur->size = (unsigned int) size;
+    cur->seq = g_seqX++;
+    strncpy( cur->fname, _fname, 31 );
+    cur->line = _line;
+
+    stat = avl_insert_node( g_treeX, (void *) cur, &dup );
+    if ( !( stat & 1 ) ) {
+      printf( "error [%-d] from avl_insert_node\n", stat );
+      exit(0);
+    }
+    if ( dup ) {
+      printf( "dup addr at [%-x]\n", cur->addr );
+    }
+
+  }
+
+  return ptr;
+
+}
+
+//=======================================================================
+
 char* zXtCalloc ( size_t num, size_t size )
 {
 
   int dup, stat;
   allocListPtr cur;
-  char msg[80];
+  char msg[256];
 
   char *ptr;
 
@@ -172,6 +231,8 @@ char* zXtCalloc ( size_t num, size_t size )
     cur->addr = (unsigned int) ptr;
     cur->size = (unsigned int) size;
     cur->seq = g_seqX++;
+    strncpy( cur->fname, "XtCalloc", 31 );
+    cur->line = 0;
 
     stat = avl_insert_node( g_treeX, (void *) cur, &dup );
     if ( !( stat & 1 ) ) {
@@ -188,12 +249,65 @@ char* zXtCalloc ( size_t num, size_t size )
 
 }
 
+char* zlocXtCalloc ( size_t num, size_t size, char* _fname, int _line )
+{
+
+  int dup, stat;
+  allocListPtr cur;
+  char msg[256];
+
+  char *ptr;
+
+  if ( g_init ) {
+    g_init = 0;
+    stat = avl_init_tree( compare_nodes,
+     compare_key, copy_nodes, &g_tree );
+    stat = avl_init_tree( compare_nodes,
+     compare_key, copy_nodes, &g_treeX );
+  }
+
+  ptr = (char *) calloc( num, size );
+
+  if ( g_memTrackOn ) {
+
+    if ( (size == 12) && ( g_seqX > 200 ) ) { // for diagnostics
+
+      zFunc();
+      sprintf( msg, "zXtCalloc[%-x] [%-d]\n", (int) ptr, (int) size );
+      //write( 1, msg, strlen(msg) );
+
+    }
+
+    cur = (allocListPtr) calloc( 1, sizeof(allocListType) );
+    cur->addr = (unsigned int) ptr;
+    cur->size = (unsigned int) size;
+    cur->seq = g_seqX++;
+    strncpy( cur->fname, _fname, 31 );
+    cur->line = _line;
+
+    stat = avl_insert_node( g_treeX, (void *) cur, &dup );
+    if ( !( stat & 1 ) ) {
+      //printf( "error [%-d] from avl_insert_node\n", stat );
+      exit(0);
+    }
+    if ( dup ) {
+      //printf( "dup addr at [%-x]\n", cur->addr );
+    }
+
+  }
+
+  return ptr;
+
+}
+
+//=======================================================================
+
 void zXtFree ( char *obj )
 {
 
   int stat;
   allocListPtr cur;
-  char msg[80];
+  char msg[256];
 
   //printf( "my XtFree\n" );
 
@@ -217,8 +331,8 @@ void zXtFree ( char *obj )
 
       if ( (cur->size > 170) && (cur->size < 200) ) {
 
-        sprintf( msg, "zXtFree [%-x] [%-d]\n", (int) cur->addr,
-         (int) cur->size );
+        sprintf( msg, "zXtFree [%-x] [%-d] [%s line %-d]\n", (int) cur->addr,
+         (int) cur->size, cur->fname, cur->line );
         //write( 1, msg, strlen(msg) );
 
       }
@@ -246,12 +360,73 @@ void zXtFree ( char *obj )
 
 }
 
+void zlocXtFree ( char *obj, char* _fname, int _line )
+{
+
+  int stat;
+  allocListPtr cur;
+  char msg[256];
+
+   sprintf( msg, "zlocXtFree called in %s line %-d\n", _fname, _line );
+   //write( 1, msg, strlen(msg) );
+
+  if ( g_init ) {
+    g_init = 0;
+    stat = avl_init_tree( compare_nodes,
+     compare_key, copy_nodes, &g_tree );
+    stat = avl_init_tree( compare_nodes,
+     compare_key, copy_nodes, &g_treeX );
+  }
+
+  if ( g_memTrackOn ) {
+
+    stat = avl_get_match( g_treeX, obj, (void **) &cur );
+    if ( !( stat & 1 ) ) {
+      //printf( "error [%-d] from avl_get_match\n", stat );
+      exit(0);
+    }
+
+    if ( cur ) {
+
+      if ( (cur->size > 170) && (cur->size < 200) ) {
+
+        sprintf( msg, "zXtFree [%-x] [%-d] [%s line %-d]\n", (int) cur->addr,
+         (int) cur->size, cur->fname, cur->line );
+        //write( 1, msg, strlen(msg) );
+
+      }
+
+      stat = avl_delete_node( g_treeX, (void **) &cur );
+      if ( !( stat & 1 ) ) {
+        //printf( "error [%-d] from avl_delete_node\n", stat );
+        exit(0);
+      }
+
+      free( cur );
+
+    }
+    else {
+
+      //printf( " (not in list)" );
+
+    }
+
+    //printf( "\n" );
+
+  }
+
+  free( obj );
+
+}
+
+//=======================================================================
+
 char* zXtRealloc ( char *oldPtr, size_t size )
 {
 
   int dup, stat;
   allocListPtr cur;
-  char msg[80];
+  char msg[256];
 
   char *ptr;
 
@@ -277,8 +452,8 @@ char* zXtRealloc ( char *oldPtr, size_t size )
 
       if ( cur ) {
 
-        sprintf( msg, "zXtRealloc free [%-x] [%-d]\n",
-         (int) cur->addr, (int) cur->size );
+        sprintf( msg, "zXtRealloc free [%-x] [%-d] [%s line %-d]\n",
+         (int) cur->addr, (int) cur->size, cur->fname, cur->line );
         //write( 1, msg, strlen(msg) );
 
         stat = avl_delete_node( g_treeX, (void **) &cur );
@@ -306,6 +481,8 @@ char* zXtRealloc ( char *oldPtr, size_t size )
     cur->addr = (unsigned int) ptr;
     cur->size = (unsigned int) size;
     cur->seq = g_seqX++;
+    strncpy( cur->fname, "XtRealloc", 31 );
+    cur->line = 0;
 
     stat = avl_insert_node( g_treeX, (void *) cur, &dup );
     if ( !( stat & 1 ) ) {
@@ -327,12 +504,95 @@ char* zXtRealloc ( char *oldPtr, size_t size )
 
 }
 
+char* zlocXtRealloc ( char *oldPtr, size_t size, char* _fname, int _line )
+{
+
+  int dup, stat;
+  allocListPtr cur;
+  char msg[256];
+
+  char *ptr;
+
+  if ( g_init ) {
+    g_init = 0;
+    stat = avl_init_tree( compare_nodes,
+     compare_key, copy_nodes, &g_tree );
+    stat = avl_init_tree( compare_nodes,
+     compare_key, copy_nodes, &g_treeX );
+  }
+
+  if ( g_memTrackOn ) {
+
+    if ( oldPtr ) {
+
+      stat = avl_get_match( g_treeX, oldPtr, (void **) &cur );
+      if ( !( stat & 1 ) ) {
+        //printf( "error [%-d] from avl_get_match\n", stat );
+        exit(0);
+      }
+
+      if ( cur ) {
+
+        sprintf( msg, "zXtRealloc free [%-x] [%-d] [%s line %-d]\n",
+         (int) cur->addr, (int) cur->size, cur->fname, cur->line );
+        //write( 1, msg, strlen(msg) );
+
+        stat = avl_delete_node( g_treeX, (void **) &cur );
+        if ( !( stat & 1 ) ) {
+          //printf( "error [%-d] from avl_delete_node\n", stat );
+          exit(0);
+        }
+
+        free( cur );
+
+      }
+
+    }
+
+    ptr = (char *) realloc( oldPtr, size );
+
+    if ( (size == 12) && ( g_seqX > 200 ) ) { // for diagnostics
+
+      sprintf( msg, "zXtRealloc[%-x] [%-d]\n", (int) ptr, (int) size );
+      //write( 1, msg, strlen(msg) );
+
+    }
+
+    cur = (allocListPtr) calloc( 1, sizeof(allocListType) );
+    cur->addr = (unsigned int) ptr;
+    cur->size = (unsigned int) size;
+    cur->seq = g_seqX++;
+    strncpy( cur->fname, _fname, 31 );
+    cur->line = _line;
+
+    stat = avl_insert_node( g_treeX, (void *) cur, &dup );
+    if ( !( stat & 1 ) ) {
+      //printf( "error [%-d] from avl_insert_node\n", stat );
+      exit(0);
+    }
+    if ( dup ) {
+      //printf( "dup addr at [%-x]\n", cur->addr );
+    }
+
+  }
+  else {
+
+    ptr = (char *) realloc( oldPtr, size );
+
+  }
+
+  return ptr;
+
+}
+
+//=======================================================================
+
 void* znew ( size_t size )
 {
 
   int dup, stat;
   allocListPtr cur;
-  char msg[80];
+  char msg[256];
 
   void *ptr;
 
@@ -350,18 +610,22 @@ void* znew ( size_t size )
 
   if ( g_memTrackOn ) {
 
-    if ( (size == 12) && ( g_seqX > 200 ) ) { // for diagnostics
+#if 1
+    if ( (size == 1) && ( g_seq > 200 ) ) { // for diagnostics
 
       zFunc();
       sprintf( msg, "[%-x] [%-d]\n", (int) ptr, (int) size );
-      //write( 1, msg, strlen(msg) );
+      write( 1, msg, strlen(msg) );
 
     }
+#endif
 
     cur = (allocListPtr) calloc( 1, sizeof(allocListType) );
     cur->addr = (unsigned int) ptr;
     cur->size = (unsigned int) size;
     cur->seq = g_seq++;
+    strncpy( cur->fname, "new", 31 );
+    cur->line = 0;
 
     stat = avl_insert_node( g_tree, (void *) cur, &dup );
     if ( !( stat & 1 ) ) {
@@ -377,6 +641,61 @@ void* znew ( size_t size )
   return ptr;
 
 }
+
+void* zlocnew ( size_t size, char* _fname, int _line )
+{
+
+  int dup, stat;
+  allocListPtr cur;
+  char msg[256];
+
+  void *ptr;
+
+  if ( g_init ) {
+    g_init = 0;
+    stat = avl_init_tree( compare_nodes,
+     compare_key, copy_nodes, &g_tree );
+    stat = avl_init_tree( compare_nodes,
+     compare_key, copy_nodes, &g_treeX );
+  }
+
+  ptr = malloc( size );
+
+  if ( g_memTrackOn ) {
+
+#if 1
+    if ( (size == 1) && ( g_seq > 200 ) ) { // for diagnostics
+
+      zFunc();
+      sprintf( msg, "[%-x] [%-d]\n", (int) ptr, (int) size );
+      write( 1, msg, strlen(msg) );
+
+    }
+#endif
+
+    cur = (allocListPtr) calloc( 1, sizeof(allocListType) );
+    cur->addr = (unsigned int) ptr;
+    cur->size = (unsigned int) size;
+    cur->seq = g_seq++;
+    strncpy( cur->fname, _fname, 31 );
+    cur->line = _line;
+
+    stat = avl_insert_node( g_tree, (void *) cur, &dup );
+    if ( !( stat & 1 ) ) {
+      //printf( "error [%-d] from avl_insert_node\n", stat );
+      exit(0);
+    }
+    if ( dup ) {
+      //printf( "dup addr at [%-x]\n", cur->addr );
+    }
+
+  }
+
+  return ptr;
+
+}
+
+//=======================================================================
 
 void showMem ( void ) {
 
@@ -407,8 +726,8 @@ void showMem ( void ) {
     n++;
     total += cur->size;
 
-    printf( "%-d: addr = %-x\t\tsize = %-d\n", cur->seq, cur->addr,
-     cur->size );
+    printf( "%-d: addr = %-x\t\tsize = %-d [%s line %-d]\n",
+     cur->seq, cur->addr, cur->size, cur->fname, cur->line );
 
     stat = avl_get_next( g_tree, (void **) &cur );
     if ( !( stat & 1 ) ) {
@@ -441,8 +760,8 @@ void showMem ( void ) {
     n++;
     total += cur->size;
 
-    printf( "%-d: addr = %-x\t\tsize = %-d\n", cur->seq, cur->addr,
-     cur->size );
+    printf( "%-d: addr = %-x\t\tsize = %-d [%s line %-d]\n",
+     cur->seq, cur->addr, cur->size, cur->fname, cur->line );
 
 #if 0
     if ( cur->size < 80 ) {
@@ -474,6 +793,8 @@ void showMem ( void ) {
   }
 
 }
+
+//=======================================================================
 
 void zdelete ( void *obj )
 {
@@ -516,6 +837,52 @@ void zdelete ( void *obj )
   free( obj );
 
 }
+
+void zlocdelete ( void *obj, char* _fname, int _line )
+{
+
+  int stat;
+  allocListPtr cur;
+  char msg[256];
+
+   sprintf( msg, "zlocdelete called in %s line %-d\n", _fname, _line );
+   //write( 1, msg, strlen(msg) );
+
+  if ( g_init ) {
+    g_init = 0;
+    stat = avl_init_tree( compare_nodes,
+     compare_key, copy_nodes, &g_tree );
+    stat = avl_init_tree( compare_nodes,
+     compare_key, copy_nodes, &g_treeX );
+  }
+
+  if ( g_memTrackOn ) {
+
+    stat = avl_get_match( g_tree, obj, (void **) &cur );
+    if ( !( stat & 1 ) ) {
+      //printf( "error [%-d] from avl_get_match\n", stat );
+      exit(0);
+    }
+
+    if ( cur ) {
+
+      stat = avl_delete_node( g_tree, (void **) &cur );
+      if ( !( stat & 1 ) ) {
+        //printf( "error [%-d] from avl_delete_node\n", stat );
+        exit(0);
+      }
+
+      free( cur );
+
+    }
+
+  }
+
+  free( obj );
+
+}
+
+//=======================================================================
 
 void memTrackOn ( void ) {
 
