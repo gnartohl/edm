@@ -28,7 +28,7 @@
 #define BARC_K_COLORMODE_ALARM 1
 
 #define BARC_MAJOR_VERSION 2
-#define BARC_MINOR_VERSION 0
+#define BARC_MINOR_VERSION 1
 #define BARC_RELEASE 0
 
 #define BARC_K_PV_NAME 0
@@ -157,7 +157,7 @@ friend void bar_monitor_read_connect_state (
 friend void bar_monitor_null_connect_state (
   struct connection_handler_args arg );
 
-int horizontal;
+int horizontal, bufHorizontal;
 
 int bufX, bufY, bufW, bufH;
 

@@ -92,10 +92,7 @@ int l;
   baro->h = baro->bufH;
   baro->sboxH = baro->bufH;
 
-  if ( baro->w >= baro->h )
-    baro->horizontal = 1;
-  else
-    baro->horizontal = 0;
+  baro->horizontal = baro->bufHorizontal;
 
   baro->limitsFromDb = baro->bufLimitsFromDb;
   baro->efPrecision = baro->bufEfPrecision;
@@ -621,6 +618,9 @@ int stat, index;
   else
     writeStringToFile( f, "" );
 
+  // version 2.1
+  fprintf( f, "%-d\n", horizontal );
+
   return 1;
 
 }
@@ -647,13 +647,6 @@ float fBarOriginX;
   fscanf( f, "%d\n", &h ); actWin->incLine();
 
   this->initSelectBox();
-
-  if ( w >= h ) {
-    horizontal = 1;
-  }
-  else {
-    horizontal = 0;
-  }
 
   if ( major > 1 ) {
 
@@ -834,6 +827,22 @@ float fBarOriginX;
 
   }
 
+  if ( ( ( major == 2 ) && ( minor > 0 ) ) || major > 2 ) {
+
+   fscanf( f, "%d\n", &horizontal ); actWin->incLine();
+
+  }
+  else {
+    
+    if ( w >= h ) {
+      horizontal = 1;
+    }
+    else {
+      horizontal = 0;
+    }
+
+  }
+
   if ( strcmp( scaleFormat, "GFloat" ) == 0 ) {
     sprintf( fmt, "%%.%-dg", precision );
   }
@@ -928,6 +937,7 @@ char title[32], *ptr;
   bufEfReadMin = efReadMin;
   bufEfReadMax = efReadMax;
   strncpy( bufScaleFormat, scaleFormat, 15 );
+  bufHorizontal = horizontal;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -958,6 +968,10 @@ char title[32], *ptr;
   ef.addTextField( activeBarClass_str28, 30, &bufEfReadMax );
 
   ef.addTextField( activeBarClass_str29, 30, &bufEfBarOriginX );
+
+  ef.addOption( activeBarClass_str44, activeBarClass_str45,
+   &bufHorizontal );
+
   ef.addColorButton( activeBarClass_str30, actWin->ci, &barCb, &bufBarColor );
   ef.addToggle( activeBarClass_str31, &bufBarColorMode );
   ef.addColorButton( activeBarClass_str32, actWin->ci, &fgCb, &bufFgColor );
