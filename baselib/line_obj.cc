@@ -699,6 +699,8 @@ pointPtr cur;
 // object, refresh the screen, and re-select the object to get rid of the
 // select box corners.
 
+  confirmEdit();
+
   if ( this->isSelected() ) {
     this->wasSelected = 1;
     this->eraseSelectBoxCorners();
@@ -765,6 +767,149 @@ pointPtr cur;
   actWin->setCurrentPointObject( this );
 
   lineEditBegin();
+
+  return 1;
+
+}
+
+int activeLineClass::insertPoint (
+  int x,
+  int y )
+{
+
+pointPtr cur, selectedOne;
+int oneX, oneY, oneW, oneH;
+
+  selectedOne = selectPoint( x, y );
+  if ( !selectedOne ) {
+    XBell( actWin->d, 50 );
+    return 1;
+  }
+
+  actWin->drawGc.saveFg();
+  actWin->drawGc.setFG( lineColor.pixelColor() );
+
+  // erase old via xor gc
+
+  actWin->drawGc.setLineStyle( this->lineStyle );
+  actWin->drawGc.setLineWidth( this->lineWidth );
+
+  if ( selectedOne->flink != head ) {
+    XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.xorGC(), selectedOne->x, selectedOne->y,
+     selectedOne->flink->x, selectedOne->flink->y );
+  }
+
+  cur = new pointType;
+
+  if ( selectedOne->flink != head ) {
+    cur->x = ( selectedOne->x + selectedOne->flink->x ) / 2;
+    cur->y = ( selectedOne->y + selectedOne->flink->y ) / 2;
+  }
+  else {
+    cur->x = selectedOne->x + 10;
+    cur->y = selectedOne->y + 10;
+  }
+
+  cur->flink = selectedOne->flink;
+  cur->blink = selectedOne;
+  selectedOne->flink->blink = cur;
+  selectedOne->flink = cur;
+
+  // draw with new inserted
+
+  XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.xorGC(), selectedOne->x, selectedOne->y,
+   selectedOne->flink->x, selectedOne->flink->y );
+
+  oneX = cur->x;
+  oneY = cur->y;
+
+  oneW = 3;
+  oneH = 3;
+
+  actWin->drawGc.setLineStyle( LineSolid );
+  actWin->drawGc.setLineWidth( 1 );
+
+  XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.xorGC(), oneX-oneW/2, oneY-oneH/2, oneW, oneH );
+
+  actWin->drawGc.setLineStyle( this->lineStyle );
+  actWin->drawGc.setLineWidth( this->lineWidth );
+
+  if ( cur->flink != head ) {
+    XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.xorGC(), cur->x, cur->y,
+     cur->flink->x, cur->flink->y );
+  }
+
+  return 1;
+
+}
+
+int activeLineClass::removePoint (
+  int x,
+  int y )
+{
+
+pointPtr cur, selectedOne;
+int oneX, oneY, oneW, oneH;
+
+  selectedOne = selectPoint( x, y );
+  if ( !selectedOne ) {
+    XBell( actWin->d, 50 );
+    return 1;
+  }
+
+  actWin->drawGc.saveFg();
+  actWin->drawGc.setFG( lineColor.pixelColor() );
+
+  // erase old via xor gc
+
+  actWin->drawGc.setLineStyle( this->lineStyle );
+  actWin->drawGc.setLineWidth( this->lineWidth );
+
+  if ( selectedOne->blink != head ) {
+    XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.xorGC(), selectedOne->x, selectedOne->y,
+     selectedOne->blink->x, selectedOne->blink->y );
+  }
+
+  oneX = selectedOne->x;
+  oneY = selectedOne->y;
+
+  oneW = 3;
+  oneH = 3;
+
+  actWin->drawGc.setLineStyle( LineSolid );
+  actWin->drawGc.setLineWidth( 1 );
+
+  XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.xorGC(), oneX-oneW/2, oneY-oneH/2, oneW, oneH );
+
+  actWin->drawGc.setLineStyle( this->lineStyle );
+  actWin->drawGc.setLineWidth( this->lineWidth );
+
+  if ( selectedOne->flink != head ) {
+    XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.xorGC(), selectedOne->x, selectedOne->y,
+     selectedOne->flink->x, selectedOne->flink->y );
+  }
+
+  // unlink
+  selectedOne->blink->flink = selectedOne->flink;
+  selectedOne->flink->blink = selectedOne->blink;
+
+  cur = selectedOne->blink;
+  delete selectedOne;
+
+  // draw with selected removed
+
+  if ( cur->blink != head ) {
+    XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.xorGC(), cur->x, cur->y,
+     cur->flink->x, cur->flink->y );
+  }
 
   return 1;
 
@@ -2630,6 +2775,21 @@ int index, change;
 
 }
 
+int activeLineClass::addUndoEditNode ( 
+  undoClass *undoObj
+) {
+
+int stat;
+undoLineOpClass *ptr;
+
+  ptr = new undoLineOpClass( numPoints, xpoints );
+
+  stat = undoObj->addEditNode( this, ptr );
+
+  return stat;
+
+}
+
 int activeLineClass::addUndoRotateNode ( 
   undoClass *undoObj
 ) {
@@ -2652,6 +2812,57 @@ int stat;
 
   stat = addUndoRotateNode( undoObj );
   return stat;
+
+}
+
+int activeLineClass::undoEdit (
+  undoOpClass *_opPtr )
+{
+
+undoLineOpClass *opPtr = (undoLineOpClass *) _opPtr;
+int i;
+int oneW, oneH, minX, minY, maxX, maxY;
+
+  if ( xpoints ) delete xpoints;
+  numPoints = opPtr->n;
+  xpoints = new XPoint[numPoints+1];
+
+  if ( numPoints > 0 ) {
+    minX = maxX = opPtr->x[0];
+    minY = maxY = opPtr->y[0];
+  }
+  else {
+    minX = x;
+    maxX = x + 1;
+    minY = y;
+    minY = y + 1;
+  }
+
+  for ( i=0; i<numPoints; i++ ) {
+    if ( minX > opPtr->x[i] ) minX = opPtr->x[i];
+    if ( minY > opPtr->y[i] ) minY = opPtr->y[i];
+    if ( maxX < opPtr->x[i] ) maxX = opPtr->x[i];
+    if ( maxY < opPtr->y[i] ) maxY = opPtr->y[i];
+    xpoints[i].x = opPtr->x[i];
+    xpoints[i].y = opPtr->y[i];
+  }
+
+  oneW = maxX - minX;
+  oneH = maxY - minY;
+
+  x = minX;
+  y = minY;
+  w = oneW;
+  h = oneH;
+
+  oldX = x;
+  oldY = y;
+  oldW = w;
+  oldH = h;
+
+  initSelectBox();
+
+  return 1;
 
 }
 

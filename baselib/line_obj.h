@@ -257,6 +257,14 @@ int editCreate ( void );
 
 int editLineSegments ( void );
 
+virtual int activeLineClass::insertPoint (
+  int x,
+  int y );
+
+virtual int activeLineClass::removePoint (
+  int x,
+  int y );
+
 virtual int addPoint (
   int x,
   int y );
@@ -387,9 +395,14 @@ void changePvNames (
 void updateColors (
   double colorValue );
 
+int activeLineClass::addUndoEditNode ( undoClass *undoObj );
+
 int addUndoRotateNode ( undoClass *undoObj );
 
 int addUndoFlipNode ( undoClass *undoObj );
+
+int activeLineClass::undoEdit (
+  undoOpClass *_opPtr );
 
 int undoRotate (
   undoOpClass *opPtr,
