@@ -1,30 +1,30 @@
 3 1 0
-383
-63
+503
+109
 498
 677
 helvetica-medium-r-18.0
 0
 helvetica-medium-r-12.0
 0
-rgb
-0,0,0
-rgb
-50971,52011,50971
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-0,0,48891
-rgb
-46810,47850,46810
-rgb
-61374,61374,61374
-rgb
-27046,27046,27046
-rgb
-55132,56172,55132
+index
+14
+index
+3
+index
+14
+index
+14
+index
+27
+index
+4
+index
+1
+index
+10
+index
+2
 Byte
 0
 0
@@ -43,12 +43,12 @@ activeXTextClass
 25
 51
 27
-rgb
-0,0,0
+index
+14
 0
 0
-rgb
-61374,61374,61374
+index
+1
 0
 <<<empty>>>
 <<<empty>>>
@@ -67,12 +67,12 @@ activeXTextClass
 105
 53
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -91,12 +91,12 @@ activeXTextClass
 124
 128
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -115,12 +115,12 @@ activeXTextClass
 276
 193
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -139,12 +139,12 @@ activeXTextClass
 143
 48
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -163,12 +163,12 @@ activeXTextClass
 174
 217
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -187,12 +187,12 @@ activeXTextClass
 317
 119
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -211,12 +211,12 @@ activeXTextClass
 208
 133
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -235,13 +235,13 @@ cfcf6c8a_dbeb_11d2_8a97_00104b8742df
 80
 185
 266
-helpByteGif.gif
+$(help)helpByteGif.gif
 0
 0
 0
 <<<E~O~D>>>
 activeLineClass
-2 1 0
+2 2 0
 49
 52
 91
@@ -249,12 +249,12 @@ activeLineClass
 2
 49 115
 140 52
-rgb
-0,0,0
+index
+14
 0
 0
-rgb
-46810,47850,46810
+index
+4
 0
 1
 0
@@ -263,6 +263,8 @@ rgb
 0
 <<<empty>>>
 <<<empty>>>
+0
+0
 <<<E~O~D>>>
 activeXTextClass
 2 1 0
@@ -270,12 +272,12 @@ activeXTextClass
 35
 57
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -289,7 +291,7 @@ helvetica-medium-r-14.0
 <<<empty>>>
 <<<E~O~D>>>
 activeLineClass
-2 1 0
+2 2 0
 171
 51
 54
@@ -297,12 +299,12 @@ activeLineClass
 2
 171 116
 225 51
-rgb
-0,0,0
+index
+14
 0
 0
-rgb
-46810,47850,46810
+index
+4
 0
 1
 0
@@ -311,6 +313,8 @@ rgb
 0
 <<<empty>>>
 <<<empty>>>
+0
+0
 <<<E~O~D>>>
 activeXTextClass
 2 1 0
@@ -318,12 +322,12 @@ activeXTextClass
 35
 55
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -342,12 +346,12 @@ activeXTextClass
 35
 65
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -361,19 +365,19 @@ helvetica-medium-r-14.0
 <<<empty>>>
 <<<E~O~D>>>
 activeLineClass
-2 1 0
+2 2 0
 177
 118
 0
 0
 1
 177 118
-rgb
-0,0,0
+index
+14
 0
 0
-rgb
-46810,47850,46810
+index
+4
 0
 1
 0
@@ -382,9 +386,11 @@ rgb
 0
 <<<empty>>>
 <<<empty>>>
+0
+0
 <<<E~O~D>>>
 activeLineClass
-2 1 0
+2 2 0
 177
 53
 140
@@ -392,12 +398,12 @@ activeLineClass
 2
 177 119
 317 53
-rgb
-0,0,0
+index
+14
 0
 0
-rgb
-46810,47850,46810
+index
+4
 0
 1
 0
@@ -406,9 +412,11 @@ rgb
 0
 <<<empty>>>
 <<<empty>>>
+0
+0
 <<<E~O~D>>>
 activeLineClass
-2 1 0
+2 2 0
 145
 175
 84
@@ -416,12 +424,12 @@ activeLineClass
 2
 145 175
 229 179
-rgb
-0,0,0
+index
+14
 0
 0
-rgb
-46810,47850,46810
+index
+4
 0
 1
 0
@@ -430,9 +438,11 @@ rgb
 0
 <<<empty>>>
 <<<empty>>>
+0
+0
 <<<E~O~D>>>
 activeLineClass
-2 1 0
+2 2 0
 196
 202
 51
@@ -440,12 +450,12 @@ activeLineClass
 2
 196 202
 247 212
-rgb
-0,0,0
+index
+14
 0
 0
-rgb
-46810,47850,46810
+index
+4
 0
 1
 0
@@ -454,9 +464,11 @@ rgb
 0
 <<<empty>>>
 <<<empty>>>
+0
+0
 <<<E~O~D>>>
 activeLineClass
-2 1 0
+2 2 0
 112
 213
 135
@@ -464,12 +476,12 @@ activeLineClass
 2
 112 213
 247 242
-rgb
-0,0,0
+index
+14
 0
 0
-rgb
-46810,47850,46810
+index
+4
 0
 1
 0
@@ -478,6 +490,8 @@ rgb
 0
 <<<empty>>>
 <<<empty>>>
+0
+0
 <<<E~O~D>>>
 activeXTextClass
 2 1 0
@@ -485,12 +499,12 @@ activeXTextClass
 236
 133
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -504,7 +518,7 @@ helvetica-medium-r-14.0
 <<<empty>>>
 <<<E~O~D>>>
 activeLineClass
-2 1 0
+2 2 0
 177
 284
 62
@@ -514,12 +528,12 @@ activeLineClass
 239 318
 239 318
 239 318
-rgb
-0,0,0
+index
+14
 0
 0
-rgb
-46810,47850,46810
+index
+4
 0
 1
 0
@@ -528,6 +542,8 @@ rgb
 0
 <<<empty>>>
 <<<empty>>>
+0
+0
 <<<E~O~D>>>
 activeXTextClass
 2 1 0
@@ -535,12 +551,12 @@ activeXTextClass
 338
 113
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -554,7 +570,7 @@ helvetica-medium-r-14.0
 <<<empty>>>
 <<<E~O~D>>>
 activeLineClass
-2 1 0
+2 2 0
 177
 310
 66
@@ -564,12 +580,12 @@ activeLineClass
 242 343
 243 343
 243 343
-rgb
-0,0,0
+index
+14
 0
 0
-rgb
-46810,47850,46810
+index
+4
 0
 1
 0
@@ -578,6 +594,8 @@ rgb
 0
 <<<empty>>>
 <<<empty>>>
+0
+0
 <<<E~O~D>>>
 activeXTextClass
 2 1 0
@@ -585,12 +603,12 @@ activeXTextClass
 441
 0
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -609,12 +627,12 @@ activeXTextClass
 385
 423
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -633,12 +651,12 @@ activeXTextClass
 411
 456
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -657,12 +675,12 @@ activeXTextClass
 436
 343
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -681,12 +699,12 @@ activeXTextClass
 474
 465
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -705,12 +723,12 @@ activeXTextClass
 500
 450
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -729,12 +747,12 @@ activeXTextClass
 526
 339
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -753,12 +771,12 @@ activeXTextClass
 571
 470
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -777,12 +795,12 @@ activeXTextClass
 597
 428
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -801,12 +819,12 @@ activeXTextClass
 623
 255
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
@@ -825,12 +843,12 @@ activeXTextClass
 292
 133
 16
-rgb
-0,0,0
+index
+14
 0
 1
-rgb
-46810,47850,46810
+index
+4
 0
 <<<empty>>>
 <<<empty>>>
