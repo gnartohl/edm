@@ -8,9 +8,9 @@ printDialog {
 
 }
 
-printCommand = "xwd <opt1> | xwdtopnm | pnmdepth 255 | pnmtops <opt2> <opt3> | lpr <opt5>"
+printCommand = "xwd <opt1> | xwdtopnm | pnmdepth 255 <opt4> | pnmtops <opt2> <opt3> | lpr <opt5>"
 
-printToFileCommand = "xwd <opt1> | xwdtopnm <opt4> | pnmdepth 255 | pnmtops <opt2> <opt3> > <file>"
+printToFileCommand = "xwd <opt1> | xwdtopnm | pnmdepth 255 <opt4> | pnmtops <opt2> <opt3> > <file>"
 
 optionDefaults {
 
