@@ -9175,6 +9175,7 @@ activeGraphicClass *ptr;
         awo->highlightedObject = NULL;
         numOut++;
         foundAction = 1;
+        awo->cursor.set( XtWindow(awo->executeWidget), CURSOR_K_DEFAULT );
 
       }
 
