@@ -2176,7 +2176,7 @@ int activeMessageButtonClass::containsMacros ( void ) {
 void activeMessageButtonClass::executeDeferred ( void ) {
 
 int nc, nd, ne, npda, npua, nw, nvc, nvi, nvu, ncc, nci, ncu;
-int stat, index;
+int stat, index, invisColor;
 
   if ( actWin->isIconified ) return;
 
@@ -2272,14 +2272,34 @@ int stat, index;
      &colorEventId, DBE_VALUE );
     if ( stat != ECA_NORMAL ) printf( activeMessageButtonClass_str27 );
 
+    invisColor = 0;
+
     index = actWin->ci->evalRule( onColor.pixelIndex(), colorValue );
+    invisColor |= actWin->ci->isInvisible( index );
     onColor.changeIndex( index, actWin->ci );
 
     index = actWin->ci->evalRule( offColor.pixelIndex(), colorValue );
+    invisColor |= actWin->ci->isInvisible( index );
     offColor.changeIndex( index, actWin->ci );
 
     index = actWin->ci->evalRule( fgColor.pixelIndex(), colorValue );
+    invisColor |= actWin->ci->isInvisible( index );
     fgColor.changeIndex( index, actWin->ci );
+
+    if ( !visExists ) {
+
+      if ( invisColor ) {
+        visibility = 0;
+      }
+      else {
+        visibility = 1;
+      }
+
+      if ( prevVisibility != visibility ) {
+        if ( !visibility ) eraseActive();
+      }
+
+    }
 
     connection.setPvConnected( (void *) colorPvConnection );
 
@@ -2374,14 +2394,36 @@ int stat, index;
 
   if ( ncu ) {
 
+    invisColor = 0;
+
     index = actWin->ci->evalRule( onColor.pixelIndex(), colorValue );
+    invisColor |= actWin->ci->isInvisible( index );
     onColor.changeIndex( index, actWin->ci );
 
     index = actWin->ci->evalRule( offColor.pixelIndex(), colorValue );
+    invisColor |= actWin->ci->isInvisible( index );
     offColor.changeIndex( index, actWin->ci );
 
     index = actWin->ci->evalRule( fgColor.pixelIndex(), colorValue );
+    invisColor |= actWin->ci->isInvisible( index );
     fgColor.changeIndex( index, actWin->ci );
+
+    if ( !visExists ) {
+
+      if ( invisColor ) {
+        visibility = 0;
+      }
+      else {
+        visibility = 1;
+      }
+
+      if ( prevVisibility != visibility ) {
+        if ( !visibility ) eraseActive();
+      }
+
+    }
+
+    stat = smartDrawAllActive();
 
   }
 
