@@ -1200,7 +1200,7 @@ int i, ii, n, stat, nrows, ncols, remainder, dup,
 XColor color;
 Arg arg[20];
 XmString str1, str2;
-colorCachePtr cur1, cur2, cur[2], curSpecial;
+colorCachePtr cur1, cur2, cur[3], curSpecial;
 ruleConditionPtr ruleCond;
 unsigned long bgColor;
 int tmpSize;
