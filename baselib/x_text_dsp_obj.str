@@ -78,5 +78,8 @@
 #define activeXTextDspClass_str75 (char *) "Auto Select Text"
 #define activeXTextDspClass_str76 (char *) "Update PV On Drop"
 #define activeXTextDspClass_str77 (char *) "Use 0x Hex Prefix"
+#define activeXTextDspClass_str78 (char *) "Return"
+#define activeXTextDspClass_str79 (char *) "Full Path|Name & Ext|Name Only"
+#define activeXTextDspClass_str80 (char *) "Convert Date To File Name"
 
 #endif

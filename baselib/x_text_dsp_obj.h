@@ -42,8 +42,12 @@
 #define XTDC_K_COLORMODE_STATIC 0
 #define XTDC_K_COLORMODE_ALARM 1
 
+#define XTDC_K_FILE_FULL_PATH 0
+#define XTDC_K_FILE_NAME_EXT 1
+#define XTDC_K_FILE_NAME 2
+
 #define XTDC_MAJOR_VERSION 2
-#define XTDC_MINOR_VERSION 9
+#define XTDC_MINOR_VERSION 10
 #define XTDC_RELEASE 0
 
 #ifdef __x_text_dsp_obj_cc
@@ -483,6 +487,8 @@ char entryValue[127+1];
 int entryState, editDialogIsActive;
 int isDate, bufIsDate;
 int isFile, bufIsFile;
+int fileComponent, bufFileComponent;
+int dateAsFileName, bufDateAsFileName;
 
 Widget tf_widget;
 int widget_value_changed;

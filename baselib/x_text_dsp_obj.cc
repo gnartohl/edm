@@ -313,8 +313,40 @@ static void xtdoSetCpValue (
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int stat;
+unsigned int i, ii;
+char tmp[127+1];
 
-  axtdo->cp.getDate( axtdo->entryValue, 127 );
+  if ( axtdo->dateAsFileName ) {
+
+    axtdo->cp.getDate( tmp, 127 );
+    tmp[127] = 0;
+
+    for ( i=0, ii=0; i<strlen(tmp)+1; i++ ) {
+
+      if ( tmp[i] == '-' ) {
+        // do nothing
+      }
+      else if ( tmp[i] == ' ' ) {
+        axtdo->entryValue[ii] = '_';
+        ii++;
+      }
+      else if ( tmp[i] == ':' ) {
+        // do nothing
+      }
+      else {
+        axtdo->entryValue[ii] = tmp[i];
+        ii++;
+      }
+
+    }
+
+  }
+  else {
+
+    axtdo->cp.getDate( axtdo->entryValue, 127 );
+
+  }
+
   strncpy( axtdo->curValue, axtdo->entryValue, 39 );
 
   axtdo->editDialogIsActive = 0;
@@ -340,8 +372,50 @@ static void xtdoSetFsValue (
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int stat;
+char tmp[127+1], name[127+1], *tk;
 
-  axtdo->fsel.getSelection( axtdo->entryValue, 127 );
+  if ( axtdo->fileComponent != XTDC_K_FILE_FULL_PATH ) {
+
+    axtdo->fsel.getSelection( tmp, 127 );
+
+    tk = strtok( tmp, "/" );
+    if ( tk ) {
+      strncpy( name, tk, 127 );
+      name[127] = 0;
+    }
+    else {
+      strcpy( name, "" );
+    }
+    while ( tk ) {
+
+      tk = strtok( NULL, "/" );
+      if ( tk ) {
+        strncpy( name, tk, 127 );
+        name[127] = 0;
+      }
+
+    }
+
+    if ( axtdo->fileComponent == XTDC_K_FILE_NAME ) {
+
+      strncpy( tmp, name, 127 );
+      tmp[127] = 0;
+      tk = strtok( tmp, "." );
+      if ( tk ) {
+        strncpy( name, tk, 127 );
+        name[127] = 0;
+      }
+
+    }
+
+    strncpy( axtdo->entryValue, name, 127 );
+
+  }
+  else {
+
+    axtdo->fsel.getSelection( axtdo->entryValue, 127 );
+
+  }
 
   strncpy( axtdo->curValue, axtdo->entryValue, 39 );
 
@@ -1724,6 +1798,10 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   axtdo->useHexPrefix = axtdo->bufUseHexPrefix;
 
+  axtdo->fileComponent = axtdo->bufFileComponent;
+
+  axtdo->dateAsFileName = axtdo->bufDateAsFileName;
+
   strncpy( axtdo->id, axtdo->bufId, 31 );
   axtdo->id[31] = 0;
   axtdo->changeCallbackFlag = axtdo->bufChangeCallbackFlag;
@@ -1835,6 +1913,8 @@ int i;
   useKp = 0;
   isDate = 0;
   isFile = 0;
+  fileComponent = XTDC_K_FILE_FULL_PATH;
+  dateAsFileName = 0;
   numStates = 0;
   entryState = 0;
   for ( i=0; i<MAX_ENUM_STATES; i++ ) {
@@ -1909,6 +1989,10 @@ int i;
   isDate = source->isDate;
 
   isFile = source->isFile;
+
+  fileComponent = source->fileComponent;
+
+  dateAsFileName = source->dateAsFileName;
 
   bgColor = source->bgColor;
 
@@ -2161,6 +2245,10 @@ int index, stat;
 
   // version 2.9
   fprintf( f, "%-d\n", useHexPrefix );
+
+  // version 2.10
+  fprintf( f, "%-d\n", fileComponent );
+  fprintf( f, "%-d\n", dateAsFileName );
 
   return 1;
 
@@ -2446,6 +2534,15 @@ unsigned int pixel;
   }
   else {
     useHexPrefix = 1;
+  }
+
+  if ( ( ( major == 2 ) && ( minor > 9 ) ) || ( major > 2 ) ) {
+    fscanf( f, "%d\n", &fileComponent );
+    fscanf( f, "%d\n", &dateAsFileName );
+  }
+  else {
+    fileComponent = XTDC_K_FILE_FULL_PATH;
+    dateAsFileName = 0;
   }
 
   actWin->fi->loadFontTag( fontTag );
@@ -2796,7 +2893,9 @@ int noedit;
   bufIsWidget = isWidget;
   bufUseKp = useKp;
   bufIsDate = isDate;
+  bufDateAsFileName = dateAsFileName;
   bufIsFile = isFile;
+  bufFileComponent = fileComponent;
   bufLimitsFromDb = limitsFromDb;
   bufChangeValOnLoseFocus = changeValOnLoseFocus;
   bufFastUpdate = fastUpdate;
@@ -2867,13 +2966,18 @@ int noedit;
 
   if ( !noedit ) {
     ef.addToggle( activeXTextDspClass_str70, &bufIsDate );
+    ef.addToggle( activeXTextDspClass_str80, &bufDateAsFileName );
     ef.addToggle( activeXTextDspClass_str71, &bufIsFile );
+    ef.addOption( activeXTextDspClass_str78,
+     activeXTextDspClass_str79, &bufFileComponent );
     ef.addTextField( activeXTextDspClass_str72, 35, bufDefDir, 127 );
     ef.addTextField( activeXTextDspClass_str73, 35, bufPattern, 127 );
   }
   else {
     bufIsDate = isDate = 0;
     bufIsFile = isFile = 0;
+    fileComponent = XTDC_K_FILE_FULL_PATH;
+    dateAsFileName = 0;
   }
 
   ef.addColorButton( activeXTextDspClass_str15, actWin->ci, &fgCb,
