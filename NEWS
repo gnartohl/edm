@@ -1,7 +1,9 @@
-Version 1-10-0
---------------
+Version 1-10-0beta
+------------------
 
 Changes since 1-9-6:
+
+  o All widgets now utilize the pv_factory facility
 
   o The file format is now based on a tag/value scheme; it's not
     yet XML but it is a definite improvement. Reading of old format
