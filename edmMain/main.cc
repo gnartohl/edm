@@ -212,6 +212,7 @@ char procIdName[31+1], *envPtr;
 static int getMainCheckPointParams (
   FILE *f,
   int *server,
+  int *oneInstance,
   char *displayName,
   int *noEdit,
   int *numCheckPointMacros,
@@ -220,9 +221,10 @@ static int getMainCheckPointParams (
 
 char *cptr, *tk, *buf1;
 char text[1023+1];
-int i;
+int i, tmp;
 
   *server = 0;
+  *oneInstance = 0;
   strcpy( displayName, "" );
   *numCheckPointMacros = 0;
   strcpy( checkPointMacros, "" );
@@ -231,7 +233,9 @@ int i;
   text[1024] = 0;
   if ( !cptr ) return 2; // fail
   if ( strcmp( text, "<<<EOD>>>\n" ) == 0 ) return 3; // no more data
-  *server = atol( text );
+  tmp = atol( text );
+  *server = tmp & 0xf;
+  *oneInstance = ( tmp >> 8 );
 
   readStringFromFile( displayName, 127, f );
 
@@ -1115,7 +1119,7 @@ Display *oneDisplay;
 XtAppContext oneAppCtx;
 
 FILE *f = NULL;
-int primaryServerFlag, numCheckPointMacros;
+int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
  char checkPointMacros[1023+1];
 
   g_numClients = 1;
@@ -1133,8 +1137,8 @@ int primaryServerFlag, numCheckPointMacros;
     f = fopen( checkPointFileName, "r" );
     if ( f ) {
 
-      stat = getMainCheckPointParams( f, &primaryServerFlag, displayName,
-       &sessionNoEdit, &numCheckPointMacros, checkPointMacros );
+      stat = getMainCheckPointParams( f, &primaryServerFlag, &oneInstanceFlag,
+       displayName, &sessionNoEdit, &numCheckPointMacros, checkPointMacros );
       if ( !( stat & 1 ) ) { // couldn't read file
         restart = 0;
       }
@@ -1142,12 +1146,22 @@ int primaryServerFlag, numCheckPointMacros;
       if ( primaryServerFlag == 2 ) {
         server = 1;
         appendDisplay = 1;
+        local = 0;
       }
       else {
         server = 0;
+        local = 1;
+      }
+
+      if ( oneInstanceFlag ) {
+        oneInstance = 1;
+        server = 1;
+        appendDisplay = 1;
+        local = 0;
       }
 
       //printf( "primaryServerFlag = %-d\n", primaryServerFlag );
+      //printf( "oneInstanceFlag = %-d\n", oneInstanceFlag );
       //printf( "server = %-d\n", server );
       //printf( "displayName = [%s]\n", displayName );
       //printf( "sessionNoEdit = %-d\n", sessionNoEdit );
@@ -1320,10 +1334,12 @@ int primaryServerFlag, numCheckPointMacros;
   //}
 
   if ( server ) {
-    stat = args->appCtxPtr->startApplication( args->argc, args->argv, 2 );
+    stat = args->appCtxPtr->startApplication( args->argc, args->argv, 2,
+     oneInstance );
   }
   else {
-    stat = args->appCtxPtr->startApplication( args->argc, args->argv, 1 );
+    stat = args->appCtxPtr->startApplication( args->argc, args->argv, 1,
+     oneInstance );
   }
   if ( !( stat & 1 ) ) exit( 0 );
 
@@ -1358,8 +1374,8 @@ int primaryServerFlag, numCheckPointMacros;
     // now, get all client display checkpoint info
     do {
 
-      stat = getMainCheckPointParams( f, &primaryServerFlag, displayName,
-       &sessionNoEdit, &numCheckPointMacros, checkPointMacros );
+      stat = getMainCheckPointParams( f, &primaryServerFlag, &oneInstanceFlag,
+       displayName, &sessionNoEdit, &numCheckPointMacros, checkPointMacros );
       if ( !( stat & 1 ) ) { // couldn't read file
         break;
       }
@@ -1433,7 +1449,8 @@ int primaryServerFlag, numCheckPointMacros;
         args->appCtxPtr = new appContextClass;
         args->appCtxPtr->proc = &proc;
 
-        stat = args->appCtxPtr->startApplication( args->argc, args->argv, 0 );
+        stat = args->appCtxPtr->startApplication( args->argc, args->argv, 0,
+         0 );
 
         if ( stat & 1 ) { // success
           oneAppCtx = args->appCtxPtr->appContext();
@@ -1656,7 +1673,7 @@ int primaryServerFlag, numCheckPointMacros;
               args->appCtxPtr->proc = &proc;
 
               stat = args->appCtxPtr->startApplication( args->argc, args->argv,
-               0 );
+               0, 0 );
 
               if ( stat & 1 ) { // success
                 oneAppCtx = args->appCtxPtr->appContext();
