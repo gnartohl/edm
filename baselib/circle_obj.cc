@@ -1423,6 +1423,32 @@ pvValType pvV;
 
 char *activeCircleClass::firstDragName ( void ) {
 
+#define MAXDRAGNAMES 2
+
+int i;
+int present[MAXDRAGNAMES];
+
+  if ( !blank( alarmPvExpStr.getExpanded() ) ) {
+    present[0] = 1;
+  }
+  else {
+    present[0] = 0;
+  }
+
+  if ( !blank( visPvExpStr.getExpanded() ) ) {
+    present[1] = 1;
+  }
+  else {
+    present[1] = 0;
+  }
+
+  for ( i=0; i<MAXDRAGNAMES; i++ ) {
+    if ( present[i] ) {
+      dragIndex = i;
+      return dragName[dragIndex];
+    }
+  }
+
   dragIndex = 0;
   return dragName[dragIndex];
 
@@ -1443,7 +1469,16 @@ char *activeCircleClass::nextDragName ( void ) {
 char *activeCircleClass::dragValue (
   int i ) {
 
-  switch ( i ) {
+int offset = 0;
+
+  if ( blank( alarmPvExpStr.getExpanded() ) ) {
+    offset++;
+    if ( blank( visPvExpStr.getExpanded() ) ) {
+      offset++;
+    }
+  }
+
+  switch ( i+offset ) {
 
   case 0:
     return alarmPvExpStr.getExpanded();
