@@ -812,6 +812,14 @@ int index;
 
 int activeRectangleClass::drawActive ( void ) {
 
+  if ( !init ) {
+    actWin->executeGc.saveFg();
+    actWin->executeGc.setFG( lineColor.getDisconnected() );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+    actWin->executeGc.restoreFg();
+  }
+
   if ( !init || !activeMode || invisible || !visibility ) return 1;
 
   prevVisibility = visibility;

@@ -196,6 +196,7 @@ activeMeterClass *metero = (activeMeterClass *) ca_puser(arg.chid);
     metero->active = 0;
     metero->meterColor.setDisconnected();
     metero->fgColor.setDisconnected();
+    metero->scaleColor.setDisconnected();
     metero->bufInvalidate();
     metero->needDraw = 1;
     metero->actWin->appCtx->proc->lock();
@@ -1181,9 +1182,17 @@ int activeMeterClass::drawActive ( void ) {
 
 XPoint xpoints[3];
 
- meterTotalAngle = 3.1415926535898 * meterAngle / 180.0;
+  if ( !activeInitFlag ) {
+    actWin->executeGc.saveFg();
+    actWin->executeGc.setFG( meterColor.getDisconnected() );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+    actWin->executeGc.restoreFg();
+  }
 
  if ( !activeMode || !activeInitFlag) return 1;
+
+ meterTotalAngle = 3.1415926535898 * meterAngle / 180.0;
 
  if (scaleLimitsFromDb){
    scaleMin = readMin;
@@ -1749,6 +1758,7 @@ int stat, opStat;
       readExists = 1;
       meterColor.setConnectSensitive();
       fgColor.setConnectSensitive();
+      scaleColor.setConnectSensitive();
     }
 
     break;
@@ -2071,6 +2081,7 @@ int stat, nc, ni, nr, ne, nd;
 
     meterColor.setConnected();
     fgColor.setConnected();
+    scaleColor.setConnected();
 
     active = 1;
     activeInitFlag = 1;

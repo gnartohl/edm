@@ -200,7 +200,8 @@ int controlExists, widgetsCreated, active, activeMode;
 
 Widget radioBox, pb[MAX_ENUM_STATES];
 
-int needConnectInit, needInfoInit, needDraw, needRefresh;
+int needConnectInit, needInfoInit, needDraw, needRefresh,
+ needToEraseUnconnected;
 
 public:
 

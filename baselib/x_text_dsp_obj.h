@@ -429,7 +429,7 @@ Widget tf_widget;
 int widget_value_changed;
 
 int needConnectInit, needInfoInit, needErase, needDraw, needRefresh,
- needUpdate, deferredCount;
+ needUpdate, deferredCount, needToEraseUnconnected;
 
 keypadClass kp;
 int kpInt;

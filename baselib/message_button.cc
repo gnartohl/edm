@@ -1049,6 +1049,14 @@ int tX, tY;
 char string[39+1];
 XRectangle xR = { x, y, w, h };
 
+  if ( !init ) {
+    actWin->executeGc.saveFg();
+    actWin->executeGc.setFG( onColor.getDisconnected() );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+    actWin->executeGc.restoreFg();
+  }
+
   if ( !init || !activeMode || invisible ) return 1;
 
   actWin->executeGc.saveFg();

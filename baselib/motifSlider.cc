@@ -99,8 +99,10 @@ double fvalue;
   stat = mslo->drawActiveControlText();
 
   if ( mslo->controlExists ) {
-    stat = mslo->controlPvId->put( fvalue );
-    //if ( stat != ECA_NORMAL ) printf( activeMotifSliderClass_str59 );
+    if ( mslo->controlPvId ) {
+      stat = mslo->controlPvId->put( fvalue );
+      //if ( stat != ECA_NORMAL ) printf( activeMotifSliderClass_str59 );
+    }
   }
 
   mslo->controlAdjusted = 1;
@@ -155,8 +157,10 @@ double fvalue;
   stat = mslo->drawActiveControlText();
 
   if ( mslo->controlExists ) {
-    stat = mslo->controlPvId->put( fvalue );
-    //if ( stat != ECA_NORMAL ) printf( activeMotifSliderClass_str59 );
+    if ( mslo->controlPvId ) {
+      stat = mslo->controlPvId->put( fvalue );
+      //if ( stat != ECA_NORMAL ) printf( activeMotifSliderClass_str59 );
+    }
   }
 
   mslo->controlAdjusted = 1;
@@ -328,11 +332,13 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
 int stat;
 
   if ( mslo->controlExists ) {
-    stat = mslo->controlPvId->put( mslo->kpCtlDouble );
-    mslo->actWin->appCtx->proc->lock();
-    mslo->needCtlRefresh = 1;
-    mslo->actWin->addDefExeNode( mslo->aglPtr );
-    mslo->actWin->appCtx->proc->unlock();
+    if ( mslo->controlPvId ) {
+      stat = mslo->controlPvId->put( mslo->kpCtlDouble );
+      mslo->actWin->appCtx->proc->lock();
+      mslo->needCtlRefresh = 1;
+      mslo->actWin->addDefExeNode( mslo->aglPtr );
+      mslo->actWin->appCtx->proc->unlock();
+    }
   }
 
 }
@@ -474,11 +480,13 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
 // for EPICS support
 
   if ( mslo->controlExists ) {
-    stat = mslo->controlPvId->put( fvalue );
-    //if ( stat != ECA_NORMAL ) printf( activeMotifSliderClass_str3 );
-    mslo->actWin->appCtx->proc->lock();
-    mslo->actWin->addDefExeNode( mslo->aglPtr );
-    mslo->actWin->appCtx->proc->unlock();
+    if ( mslo->controlPvId ) {
+      stat = mslo->controlPvId->put( fvalue );
+      //if ( stat != ECA_NORMAL ) printf( activeMotifSliderClass_str3 );
+      mslo->actWin->appCtx->proc->lock();
+      mslo->actWin->addDefExeNode( mslo->aglPtr );
+      mslo->actWin->appCtx->proc->unlock();
+    }
   }
 
   mslo->controlAdjusted = 1;
@@ -704,6 +712,7 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) userarg;
     mslo->controlPvConnected = 0;
     mslo->active = 0;
     mslo->fgColor.setDisconnected();
+    mslo->bgColor.setDisconnected();
     mslo->bufInvalidate();
     mslo->needErase = 1;
     mslo->needDraw = 1;
@@ -795,6 +804,7 @@ activeMotifSliderClass::activeMotifSliderClass ( void ) {
   midVertScaleY = 0;
 
   frameWidget = NULL;
+  scaleWidget = NULL;
 
 }
 
@@ -1202,6 +1212,9 @@ int activeMotifSliderClass::erase ( void ) {
 
   if ( deleteRequest ) return 1;
 
+  actWin->executeGc.setLineWidth( 1 );
+  actWin->executeGc.setLineStyle( LineSolid );
+
   XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.eraseGC(), x, y, w, h );
 
@@ -1217,6 +1230,9 @@ int activeMotifSliderClass::eraseActive ( void ) {
   return 1;
 
   if ( !activeMode || !init ) return 1;
+
+  actWin->executeGc.setLineWidth( 1 );
+  actWin->executeGc.setLineStyle( LineSolid );
 
   XDrawRectangle( actWin->d, XtWindow(frameWidget),
    actWin->executeGc.eraseGC(), 0, 0, w, h );
@@ -1260,6 +1276,8 @@ int tX, tY;
   }
 
   actWin->drawGc.saveFg();
+  actWin->executeGc.setLineWidth( 1 );
+  actWin->executeGc.setLineStyle( LineSolid );
 
   actWin->drawGc.setFG( bgColor.pixelColor() );
 
@@ -1422,16 +1440,24 @@ int activeMotifSliderClass::drawActive ( void ) {
 
 int tX, tY;
 
+  if ( !init ) {
+    actWin->executeGc.saveFg();
+    actWin->executeGc.setFG( bgColor.getDisconnected() );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+    actWin->executeGc.restoreFg();
+  }
+
   if ( !activeMode || !init ) return 1;
 
   if ( scrollBarWidget ) {
     XtVaSetValues( scrollBarWidget,
-     XmNforeground, fgColor.getColor(),
+     XmNbackground, bgColor.getColor(),
      NULL );
   }
 
   XtVaSetValues( scaleWidget,
-   XmNforeground, fgColor.getColor(),
+   XmNbackground, bgColor.getColor(),
    NULL );
 
   actWin->executeGc.saveFg();
@@ -1537,13 +1563,15 @@ activeMotifSliderClass *mslo;
   if ( !mslo->active ) return;
 
   if ( e->type == EnterNotify ) {
-    if ( !mslo->controlPvId->have_write_access() ) {
-      mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
-       CURSOR_K_NO );
-    }
-    else {
-      mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
-       CURSOR_K_DEFAULT );
+    if ( mslo->controlPvId ) {
+      if ( !mslo->controlPvId->have_write_access() ) {
+        mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
+         CURSOR_K_NO );
+      }
+      else {
+        mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
+         CURSOR_K_DEFAULT );
+      }
     }
   }
 
@@ -1570,13 +1598,15 @@ char title[32], *ptr, strVal[255+1];
   if ( !mslo->active ) return;
 
   if ( e->type == EnterNotify ) {
-    if ( !mslo->controlPvId->have_write_access() ) {
-      mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
-       CURSOR_K_NO );
-    }
-    else {
-      mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
-       CURSOR_K_DEFAULT );
+    if ( mslo->controlPvId ) {
+      if ( !mslo->controlPvId->have_write_access() ) {
+        mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
+         CURSOR_K_NO );
+      }
+      else {
+        mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
+         CURSOR_K_DEFAULT );
+      }
     }
   }
 
@@ -1601,7 +1631,9 @@ char title[32], *ptr, strVal[255+1];
 
   }
 
-  if ( !mslo->controlPvId->have_write_access() ) return;
+  if ( mslo->controlPvId ) {
+    if ( !mslo->controlPvId->have_write_access() ) return;
+  }
 
   if ( e->type == ButtonPress ) {
 
@@ -1691,28 +1723,7 @@ int activeMotifSliderClass::activate (
   void *ptr )
 {
 
-int i;
 int opStat;
-XtTranslations parsedTrans;
-WidgetList children;
-Cardinal numChildren;
-unsigned char orien, pd;
-
-static char dragTrans[] =
-  "#override None<Btn2Down>: startDrag()\n\
-   Shift<Btn2Down>: dummy()\n\
-   Shift<Btn2Up>: selectDrag()\n\
-   Ctrl<Btn1Down>: dummy()\n\
-   Ctrl<Btn1Up>: dummy()\n\
-   <Btn3Up>: changeParams()\n\
-   <Key>: dummy()";
-
-static XtActionsRec dragActions[] = {
-  { "startDrag", (XtActionProc) drag },
-  { "dummy", (XtActionProc) dummy },
-  { "changeParams", (XtActionProc) changeParams },
-  { "selectDrag", (XtActionProc) selectDrag }
-};
 
   switch ( pass ) {
 
@@ -1730,134 +1741,6 @@ static XtActionsRec dragActions[] = {
       prevScaleV = -1;
       dragIndicator = 0;
       controlPvId = controlLabelPvId = 0;
-
-      frameWidget = XtVaCreateManagedWidget( "",
-       xmDrawingAreaWidgetClass,
-       actWin->executeWidgetId(),
-       XmNx, x,
-       XmNy, y,
-       XmNwidth, w,
-       XmNheight, h,
-       XmNmarginHeight, 0,
-       XmNmarginWidth, 0,
-       XmNresizePolicy, XmRESIZE_NONE,
-       XmNbackground, bgColor.pixelColor(),
-       NULL );
-
-      if ( !frameWidget ) {
-        printf( activeMotifSliderClass_str62 );
-        return 0;
-      }
-
-      XtAddEventHandler( frameWidget,
-       ButtonPressMask|ButtonReleaseMask|ExposureMask|
-       EnterWindowMask|LeaveWindowMask, False,
-       motifSliderEventHandler, (XtPointer) this );
-
-      if ( orientation == MSLC_K_HORIZONTAL ) {
-        scaleX = 1;
-        scaleW = w - 2;
-        scaleY = labelH + limitsH + 1;
-        scaleH = h - scaleY - 2;
-      }
-      else {
-        if ( showLimits || showValue ) {
-          scaleX = (int) ( 0.6 * (double) w );
-          scaleW = w - scaleX - 2;
-          if ( scaleW < 14 ) {
-            scaleW = 14;
-            scaleX = w - scaleW - 2;
-	  }
-	}
-	else {
-          scaleX = 1;
-          scaleW = w - 2;
-	}
-        scaleY = labelH + 1;
-        scaleH = h - scaleY - 2;
-        midVertScaleY = scaleH/2 + scaleY -
-         (int) ( (double) fontHeight * 0.5 );
-      }
-
-      parsedTrans = XtParseTranslationTable( dragTrans );
-      XtAppAddActions( actWin->appCtx->appContext(), dragActions,
-       XtNumber(dragActions) );
-
-      if ( orientation == MSLC_K_HORIZONTAL ) {
-        orien = XmHORIZONTAL;
-        pd = XmMAX_ON_RIGHT;
-      }
-      else {
-        orien = XmVERTICAL;
-        pd = XmMAX_ON_TOP;
-      }
-
-      scaleWidget = XtVaCreateManagedWidget(
-       "", xmScaleWidgetClass,
-       frameWidget,
-       XmNx, scaleX,
-       XmNy, scaleY,
-       XmNwidth, scaleW,
-       XmNheight, scaleH,
-       XmNscaleWidth, scaleW,
-       XmNscaleHeight, scaleH,
-       XmNorientation, orien,
-       XmNprocessingDirection, pd,
-       XmNscaleMultiple, 1,
-       XmNminimum, 0,
-       XmNmaximum, 100000,
-       XmNnavigationType, XmNONE,
-       XmNtraversalOn, False,
-       XmNhighlightOnEnter, True,
-       XmNuserData, this,
-       XmNforeground, fgColor.getColor(),
-       XmNbackground, bgColor.pixelColor(),
-       XmNtopShadowColor, actWin->ci->pix(topColor),
-       XmNbottomShadowColor, actWin->ci->pix(botColor),
-       NULL );
-
-      XtVaGetValues( scaleWidget,
-       XmNnumChildren, &numChildren,
-       XmNchildren, &children,
-       NULL );
-
-      scrollBarWidget = NULL;
-      for ( i=0; i<(int)numChildren; i++ ) {
-        if ( XtClass( children[i] ) == xmScrollBarWidgetClass) {
-          scrollBarWidget = children[i];
-          XtVaSetValues( children[i],
-           //XmNtranslations, parsedTrans,
-           XmNuserData, this,
-           NULL );
-          XtOverrideTranslations( children[i], parsedTrans );
-        }
-      }
-
-      if ( scrollBarWidget ) {
-
-        XtVaSetValues( scrollBarWidget,
-         XmNforeground, fgColor.getColor(),
-         XmNbackground, bgColor.pixelColor(),
-         XmNtroughColor, actWin->ci->pix(shadeColor),
-         XmNtopShadowColor, actWin->ci->pix(topColor),
-         XmNbottomShadowColor, actWin->ci->pix(botColor),
-         XmNinitialDelay, 100,
-         XmNrepeatDelay, 1,
-         NULL );
-
-        XtAddEventHandler( scrollBarWidget,
-         EnterWindowMask|LeaveWindowMask, False,
-         scrollBarEventHandler, (XtPointer) this );
-
-      }
-
-      XtAddCallback( scaleWidget, XmNvalueChangedCallback,
-       msloValueChangeCB, (XtPointer) this );
-
-      XtAddCallback( scaleWidget, XmNdragCallback,
-       msloIndicatorDragCB, (XtPointer) this );
-
-      XtManageChild( frameWidget );
 
       strcpy( controlValue, "" );
       strcpy( incString, "" );
@@ -1885,6 +1768,7 @@ static XtActionsRec dragActions[] = {
       else {
         controlExists = 1;
         fgColor.setConnectSensitive();
+        bgColor.setConnectSensitive();
       }
 
       if ( !controlLabelName.getExpanded() ||
@@ -1997,11 +1881,16 @@ int activeMotifSliderClass::deactivate (
   case 1:
 
     updateControlTimerActive = 0;
-    XtRemoveTimeOut( updateControlTimer );
+    if ( updateControlTimer ) {
+      XtRemoveTimeOut( updateControlTimer );
+      updateControlTimer = 0;
+    }
 
-    XtRemoveEventHandler( frameWidget,
-     ButtonPressMask|ExposureMask|EnterWindowMask|LeaveWindowMask, False,
-     motifSliderEventHandler, (XtPointer) this );
+    if ( frameWidget ) {
+      XtRemoveEventHandler( frameWidget,
+       ButtonPressMask|ExposureMask|EnterWindowMask|LeaveWindowMask, False,
+       motifSliderEventHandler, (XtPointer) this );
+    }
 
 // for EPICS support
 
@@ -2028,8 +1917,14 @@ int activeMotifSliderClass::deactivate (
   case 2:
 
     if ( frameWidget ) {
+      if ( scaleWidget ) {
+        XtUnmapWidget( scaleWidget );
+        XtDestroyWidget( scaleWidget );
+        scaleWidget = NULL;
+      }
       XtUnmapWidget( frameWidget );
       XtDestroyWidget( frameWidget );
+      frameWidget = NULL;
     }
 
     break;
@@ -2196,8 +2091,28 @@ int activeMotifSliderClass::containsMacros ( void ) {
 
 void activeMotifSliderClass::executeDeferred ( void ) {
 
-int stat, ncc, nci, ncr, nclc, ncli, ne, nd;
+int stat, ncc, nci, ncr, nclc, ncli, ne, nd, i;
+unsigned char orien, pd;
 double cv, fv;
+XtTranslations parsedTrans;
+WidgetList children;
+Cardinal numChildren;
+
+static char dragTrans[] =
+  "#override None<Btn2Down>: startDrag()\n\
+   Shift<Btn2Down>: dummy()\n\
+   Shift<Btn2Up>: selectDrag()\n\
+   Ctrl<Btn1Down>: dummy()\n\
+   Ctrl<Btn1Up>: dummy()\n\
+   <Btn3Up>: changeParams()\n\
+   <Key>: dummy()";
+
+static XtActionsRec dragActions[] = {
+  { "startDrag", (XtActionProc) drag },
+  { "dummy", (XtActionProc) dummy },
+  { "changeParams", (XtActionProc) changeParams },
+  { "selectDrag", (XtActionProc) selectDrag }
+};
 
   if ( actWin->isIconified ) return;
 
@@ -2222,6 +2137,133 @@ double cv, fv;
   if ( ncc ) {
 
     controlPvConnected = 1;
+
+    frameWidget = XtVaCreateManagedWidget( "",
+     xmDrawingAreaWidgetClass,
+     actWin->executeWidgetId(),
+     XmNx, x,
+     XmNy, y,
+     XmNwidth, w,
+     XmNheight, h,
+     XmNmarginHeight, 0,
+     XmNmarginWidth, 0,
+     XmNresizePolicy, XmRESIZE_NONE,
+     XmNbackground, bgColor.pixelColor(),
+     NULL );
+
+    if ( frameWidget ) {
+
+      XtAddEventHandler( frameWidget,
+       ButtonPressMask|ButtonReleaseMask|ExposureMask|
+       EnterWindowMask|LeaveWindowMask, False,
+       motifSliderEventHandler, (XtPointer) this );
+
+      if ( orientation == MSLC_K_HORIZONTAL ) {
+        scaleX = 1;
+        scaleW = w - 2;
+        scaleY = labelH + limitsH + 1;
+        scaleH = h - scaleY - 2;
+      }
+      else {
+        if ( showLimits || showValue ) {
+          scaleX = (int) ( 0.6 * (double) w );
+          scaleW = w - scaleX - 2;
+          if ( scaleW < 14 ) {
+            scaleW = 14;
+            scaleX = w - scaleW - 2;
+          }
+        }
+        else {
+          scaleX = 1;
+          scaleW = w - 2;
+        }
+        scaleY = labelH + 1;
+        scaleH = h - scaleY - 2;
+        midVertScaleY = scaleH/2 + scaleY -
+         (int) ( (double) fontHeight * 0.5 );
+      }
+
+      parsedTrans = XtParseTranslationTable( dragTrans );
+      XtAppAddActions( actWin->appCtx->appContext(), dragActions,
+       XtNumber(dragActions) );
+
+      if ( orientation == MSLC_K_HORIZONTAL ) {
+        orien = XmHORIZONTAL;
+        pd = XmMAX_ON_RIGHT;
+      }
+      else {
+        orien = XmVERTICAL;
+        pd = XmMAX_ON_TOP;
+      }
+
+      scaleWidget = XtVaCreateManagedWidget(
+       "", xmScaleWidgetClass,
+       frameWidget,
+       XmNx, scaleX,
+       XmNy, scaleY,
+       XmNwidth, scaleW,
+       XmNheight, scaleH,
+       XmNscaleWidth, scaleW,
+       XmNscaleHeight, scaleH,
+       XmNorientation, orien,
+       XmNprocessingDirection, pd,
+       XmNscaleMultiple, 1,
+       XmNminimum, 0,
+       XmNmaximum, 100000,
+       XmNnavigationType, XmNONE,
+       XmNtraversalOn, False,
+       XmNhighlightOnEnter, True,
+       XmNuserData, this,
+       XmNforeground, fgColor.getColor(),
+       XmNbackground, bgColor.pixelColor(),
+       XmNtopShadowColor, actWin->ci->pix(topColor),
+       XmNbottomShadowColor, actWin->ci->pix(botColor),
+       NULL );
+
+      XtVaGetValues( scaleWidget,
+       XmNnumChildren, &numChildren,
+       XmNchildren, &children,
+       NULL );
+
+      scrollBarWidget = NULL;
+      for ( i=0; i<(int)numChildren; i++ ) {
+        if ( XtClass( children[i] ) == xmScrollBarWidgetClass) {
+          scrollBarWidget = children[i];
+          XtVaSetValues( children[i],
+           //XmNtranslations, parsedTrans,
+           XmNuserData, this,
+           NULL );
+          XtOverrideTranslations( children[i], parsedTrans );
+        }
+      }
+
+      if ( scrollBarWidget ) {
+
+        XtVaSetValues( scrollBarWidget,
+         XmNforeground, fgColor.getColor(),
+         XmNbackground, bgColor.pixelColor(),
+         XmNtroughColor, actWin->ci->pix(shadeColor),
+         XmNtopShadowColor, actWin->ci->pix(topColor),
+         XmNbottomShadowColor, actWin->ci->pix(botColor),
+         XmNinitialDelay, 100,
+         XmNrepeatDelay, 1,
+         NULL );
+
+        XtAddEventHandler( scrollBarWidget,
+         EnterWindowMask|LeaveWindowMask, False,
+         scrollBarEventHandler, (XtPointer) this );
+
+      }
+
+      XtAddCallback( scaleWidget, XmNvalueChangedCallback,
+       msloValueChangeCB, (XtPointer) this );
+
+      XtAddCallback( scaleWidget, XmNdragCallback,
+       msloIndicatorDragCB, (XtPointer) this );
+
+      XtManageChild( frameWidget );
+
+    }
 
   }
 
@@ -2259,6 +2301,7 @@ double cv, fv;
      factor + 0.5 );
 
     fgColor.setConnected();
+    bgColor.setConnected();
 
     bufInvalidate();
 

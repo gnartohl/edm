@@ -879,6 +879,22 @@ int activeMenuButtonClass::drawActive ( void ) {
 Arg args[10];
 int n;
 
+  if ( !connection.pvsConnected() ) {
+    actWin->executeGc.saveFg();
+    actWin->executeGc.setFG( fgColor.getDisconnected() );
+    actWin->executeGc.setFontTag( fontTag, actWin->fi );
+    drawText( actWin->executeWidget, &actWin->executeGc,
+     fs, x, y, XmALIGNMENT_BEGINNING, "?" );
+    actWin->executeGc.restoreFg();
+    needToEraseUnconnected = 1;
+  }
+  else if ( needToEraseUnconnected ) {
+    actWin->executeGc.setFontTag( fontTag, actWin->fi );
+    eraseText( actWin->executeWidget, &actWin->executeGc,
+     fs, x, y, XmALIGNMENT_BEGINNING, "?" );
+    needToEraseUnconnected = 0;
+  }
+
   if ( !activeMode || !widgetsCreated ) return 1;
 
   // set color
@@ -951,6 +967,7 @@ int stat, opStat;
     needConnectInit = needInfoInit = needReadConnectInit = needReadInfoInit =
      needRefresh = needDraw = 0;
     opComplete = 0;
+    needToEraseUnconnected = 0;
 
     controlExists = readExists = 0;
 

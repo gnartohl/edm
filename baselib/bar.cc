@@ -244,6 +244,7 @@ activeBarClass *baro = (activeBarClass *) ca_puser(arg.chid);
       baro->pvNotConnectedMask |= 1; // read pv not connected
       baro->active = 0;
       baro->barColor.setDisconnected();
+      baro->fgColor.setDisconnected();
       baro->bufInvalidate();
       baro->needDraw = 1;
       baro->actWin->addDefExeNode( baro->aglPtr );
@@ -280,6 +281,7 @@ activeBarClass *baro = (activeBarClass *) ca_puser(arg.chid);
       baro->pvNotConnectedMask |= 2; // null pv not connected
       baro->active = 0;
       baro->barColor.setDisconnected();
+      baro->fgColor.setDisconnected();
       baro->bufInvalidate();
       baro->needDraw = 1;
       baro->actWin->addDefExeNode( baro->aglPtr );
@@ -1525,7 +1527,7 @@ int tX, tY;
     XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.normGC(), barAreaX, barY, barAreaW, barH );
 
-    actWin->drawGc.setFG( fgColor.pixelColor() );
+    actWin->drawGc.setFG( fgColor.getColor() );
 
     if ( showScale ) drawScale( actWin->drawWidget, &actWin->drawGc );
 
@@ -1556,7 +1558,7 @@ int tX, tY;
      actWin->drawGc.normGC(), barAreaX, barAreaY-barAreaH,
      barAreaW, barAreaH );
 
-    actWin->drawGc.setFG( fgColor.pixelColor() );
+    actWin->drawGc.setFG( fgColor.getColor() );
 
     if ( showScale ) drawScale( actWin->drawWidget, &actWin->drawGc );
 
@@ -1575,6 +1577,14 @@ int activeBarClass::drawActive ( void ) {
 
 int tX, tY, x0, y0, x1, y1;
 char str[39+1];
+
+  if ( !init ) {
+    actWin->executeGc.saveFg();
+    actWin->executeGc.setFG( bgColor.getDisconnected() );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+    actWin->executeGc.restoreFg();
+  }
 
   if ( !activeMode || !init ) return 1;
 
@@ -1775,7 +1785,7 @@ char str[39+1];
 
   if ( bufInvalid ) { // draw scale, label, etc ...
 
-    actWin->executeGc.setFG( fgColor.pixelColor() );
+    actWin->executeGc.setFG( fgColor.getColor() );
 
     if ( showScale ) {
       drawScale( actWin->executeWidget, &actWin->executeGc );
@@ -1881,6 +1891,7 @@ int stat, opStat;
       readExists = 1;
       pvNotConnectedMask |= 1;
       barColor.setConnectSensitive();
+      fgColor.setConnectSensitive();
     }
 
     if ( !nullPvExpStr.getExpanded() ||
@@ -2952,6 +2963,7 @@ double v;
     active = 1;
     init = 1;
     barColor.setConnected();
+    fgColor.setConnected();
     bufInvalidate();
     eraseActive();
     readV = v;

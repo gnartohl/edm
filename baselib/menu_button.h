@@ -228,7 +228,7 @@ Widget optionMenu, pulldownMenu, curHistoryWidget,
  pb[MAX_ENUM_STATES];
 
 int needConnectInit, needReadConnectInit, needInfoInit,
- needReadInfoInit, needDraw, needRefresh;
+ needReadInfoInit, needDraw, needRefresh, needToEraseUnconnected;
 
 public:
 

@@ -147,7 +147,7 @@ int fontAscent, fontDescent, fontHeight, stringLength, stringWidth,
 int autoSize, bufAutoSize;
 
 int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh,
- needPropertyUpdate;
+ needPropertyUpdate, needToEraseUnconnected;
 
 int curFgColorIndex, curBgColorIndex, curStatus, curSeverity;
 static const int alarmPvConnection = 1;

@@ -2464,6 +2464,22 @@ int activeXTextDspClass::drawActive ( void ) {
 Arg args[10];
 int n;
 
+  if ( !init && !connection.pvsConnected() ) {
+    actWin->executeGc.saveFg();
+    actWin->executeGc.setFG( fgColor.getDisconnected() );
+    actWin->executeGc.setFontTag( fontTag, actWin->fi );
+    drawText( actWin->executeWidget, &actWin->executeGc,
+     fs, x, y, XmALIGNMENT_BEGINNING, "?" );
+    actWin->executeGc.restoreFg();
+    needToEraseUnconnected = 1;
+  }
+  else if ( needToEraseUnconnected ) {
+    actWin->executeGc.setFontTag( fontTag, actWin->fi );
+    eraseText( actWin->executeWidget, &actWin->executeGc,
+     fs, x, y, XmALIGNMENT_BEGINNING, "?" );
+    needToEraseUnconnected = 0;
+  }
+
   if ( !activeMode || !init ) return 1;
 
   if ( !bufInvalid && ( strlen(value) == strlen(bufValue) ) ) {
@@ -2633,10 +2649,9 @@ char callbackName[63+1];
     curSvalValue = 0.0;
     noSval = 1;
     grabUpdate = 0;
-
     pvExistCheck = 0;
     connection.init();
-
+    needToEraseUnconnected = 0;
     pvId = svalPvId = fgPvId = NULL;
 
     break;
@@ -2788,7 +2803,6 @@ char callbackName[63+1];
   case 4:
   case 5:
   case 6:
-
     break;
 
   } // end switch
@@ -3629,6 +3643,16 @@ static XtActionsRec dragActions[] = {
 
     fgColor.setConnected();
     init = 1;
+
+#if 0
+    if ( needToEraseUnconnected ) {
+      actWin->executeGc.setFontTag( fontTag, actWin->fi );
+      stat = eraseText( actWin->executeWidget, &actWin->executeGc,
+       fs, x, y, XmALIGNMENT_BEGINNING, "?" );
+      needToEraseUnconnected = 0;
+    }
+#endif
+
     bufInvalidate();
     eraseActive();
     drawActive();

@@ -220,7 +220,8 @@ int controlExists, widgetsCreated, controlPvConnected, active, activeMode;
 Widget optionMenu, pulldownMenu, curHistoryWidget,
  pb[MMUX_MAX_STATES];
 
-int needConnectInit, needDisconnect, needInfoInit, needUpdate, needDraw;
+int needConnectInit, needDisconnect, needInfoInit, needUpdate, needDraw,
+ needToEraseUnconnected;
 
 public:
 

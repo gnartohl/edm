@@ -976,6 +976,31 @@ int activeXTextClass::drawActive ( void ) {
 XRectangle xR = { x, y, w, h };
 int clipStat;
 
+  if ( !init ) {
+    actWin->executeGc.saveFg();
+    actWin->executeGc.setFG( fgColor.getDisconnected() );
+    if ( strcmp( fontTag, "" ) != 0 ) {
+      actWin->executeGc.setFontTag( fontTag, actWin->fi );
+    }
+    XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), stringX, stringY, fontHeight,
+     value.getExpanded(), stringLength );
+    actWin->executeGc.restoreFg();
+    needToEraseUnconnected = 1;
+  }
+  else if ( needToEraseUnconnected ) {
+    needToEraseUnconnected = 0;
+    if ( strcmp( fontTag, "" ) != 0 ) {
+      actWin->executeGc.setFontTag( fontTag, actWin->fi );
+    }
+    XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.eraseGC(), stringX, stringY, fontHeight,
+     value.getExpanded(), stringLength );
+    actWin->executeGc.restoreFg();
+  }
+
+
+
   if ( !activeMode || !visibility ) return 1;
 
   prevVisibility = visibility;
@@ -1184,6 +1209,7 @@ int activeXTextClass::activate (
 
       needConnectInit = needAlarmUpdate = needVisUpdate = needRefresh =
         needPropertyUpdate = 0;
+      needToEraseUnconnected = 0;
 
       stringLength = strlen( value.getExpanded() );
 

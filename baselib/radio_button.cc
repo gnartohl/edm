@@ -684,6 +684,22 @@ XRectangle xR = { x, y, w, h };
 
 int activeRadioButtonClass::drawActive ( void ) {
 
+  if ( !connection.pvsConnected() ) {
+    actWin->executeGc.saveFg();
+    actWin->executeGc.setFG( fgColor.getDisconnected() );
+    actWin->executeGc.setFontTag( fontTag, actWin->fi );
+    drawText( actWin->executeWidget, &actWin->executeGc,
+     fs, x, y, XmALIGNMENT_BEGINNING, "?" );
+    actWin->executeGc.restoreFg();
+    needToEraseUnconnected = 1;
+  }
+  else if ( needToEraseUnconnected ) {
+    actWin->executeGc.setFontTag( fontTag, actWin->fi );
+    eraseText( actWin->executeWidget, &actWin->executeGc,
+     fs, x, y, XmALIGNMENT_BEGINNING, "?" );
+    needToEraseUnconnected = 0;
+  }
+
   return 1;
 
 }
@@ -743,6 +759,7 @@ int stat, opStat;
 
     aglPtr = ptr;
     needConnectInit = needInfoInit = needRefresh = needDraw = 0;
+    needToEraseUnconnected = 0;
     opComplete = 0;
 
     controlExists = 0;
