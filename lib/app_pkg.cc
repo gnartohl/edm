@@ -97,6 +97,8 @@ static void manageComponents (
 
 typedef int (*REGFUNC)( char **, char **, char ** );
 REGFUNC func;
+typedef char *(*CHARFUNC)( void );
+CHARFUNC cfunc;
 
 int stat, index, comment, fileExists, fileEmpty, doAdd, alreadyExists;
 char *classNamePtr, *typeNamePtr, *textPtr, *error;
@@ -108,6 +110,7 @@ int numToRemove = 0;
 char *envPtr, *tk, *more;
 FILE *f;
 libRecPtr head, tail, cur, prev, next;
+//char *author;
 
   head = new libRecType;
   tail = head;
@@ -252,6 +255,15 @@ libRecPtr head, tail, cur, prev, next;
   }
 
   if ( strcmp( op, global_str8 ) == 0 ) {  // show
+
+    strcpy( line, "author" );
+    cfunc = (CHARFUNC) dlsym( dllHandle, line );
+    if ((error = dlerror()) == NULL)  {
+      printf( "\nAuthor: %s\n", (*cfunc)() );
+    }
+    else {
+      printf( "\nAuthor name not registered\n" );
+    }
 
     printf( "\n" );
 
