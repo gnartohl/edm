@@ -153,7 +153,7 @@ double fvalue;
 int stat, xOfs;
 
   if ( slo->incrementTimerActive ) {
-    if ( slo->incrementTimerValue > 50 ) slo->incrementTimerValue -= 10;
+    if ( slo->incrementTimerValue > 1 ) slo->incrementTimerValue -= 10;
     slo->incrementTimer = XtAppAddTimeOut( slo->actWin->appCtx->appContext(),
      slo->incrementTimerValue, slc_decrement, client );
   }
@@ -223,7 +223,7 @@ double fvalue;
 int stat, xOfs;
 
   if ( slo->incrementTimerActive ) {
-    if ( slo->incrementTimerValue > 50 ) slo->incrementTimerValue -= 10;
+    if ( slo->incrementTimerValue > 1 ) slo->incrementTimerValue -= 10;
     slo->incrementTimer = XtAppAddTimeOut( slo->actWin->appCtx->appContext(),
      slo->incrementTimerValue, slc_increment, client );
   }
@@ -2182,7 +2182,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
               ( be->y > slo->valueAreaH ) ) {
 
         slo->incrementTimerActive = 1;
-        slo->incrementTimerValue = 150;
+        slo->incrementTimerValue = 101;
 
         slo->incrementTimer = XtAppAddTimeOut(
          slo->actWin->appCtx->appContext(), slo->incrementTimerValue,
@@ -2193,7 +2193,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
               ( be->y > slo->valueAreaH ) ) {
 
         slo->incrementTimerActive = 1;
-        slo->incrementTimerValue = 150;
+        slo->incrementTimerValue = 101;
 
         slo->incrementTimer = XtAppAddTimeOut(
          slo->actWin->appCtx->appContext(), slo->incrementTimerValue,
