@@ -26,5 +26,8 @@
 #define activeUpdownButtonClass_str23 (char *) "Add event failure\n"
 #define activeUpdownButtonClass_str24 (char *) "ca_put failure\n"
 #define activeUpdownButtonClass_str25 (char *) "Save/Restore PV"
+#define activeUpdownButtonClass_str26 (char *) "Limits From DB"
+#define activeUpdownButtonClass_str27 (char *) "Min"
+#define activeUpdownButtonClass_str28 (char *) "Max"
 
 #endif

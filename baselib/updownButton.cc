@@ -43,6 +43,7 @@ static void udbtoSetKpDoubleValue (
 {
 
 int stat;
+double v;
 activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
 
   udbto->keyPadOpen = 0;
@@ -60,8 +61,17 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
   }
   else if ( udbto->kpDest == udbto->kpValueDest ) {
     if ( udbto->destExists ) {
+      if ( udbto->kpDouble < udbto->minDv ) {
+        v = udbto->minDv;
+      }
+      else if ( udbto->kpDouble > udbto->maxDv ) {
+        v = udbto->maxDv;
+      }
+      else {
+	v = udbto->kpDouble;
+      }
 #ifdef __epics__
-      stat = ca_put( DBR_DOUBLE, udbto->destPvId, &udbto->kpDouble );
+      stat = ca_put( DBR_DOUBLE, udbto->destPvId, &v );
 #endif
     }
   }
@@ -75,6 +85,7 @@ static void menu_cb (
 {
 
 int stat;
+double v;
 activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
 
   if ( w == udbto->pbCoarse ) {
@@ -138,7 +149,16 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
   else if ( w == udbto->pbRestore ) {
 
     if ( udbto->savePvConnected ) {
-      stat = ca_put( DBR_DOUBLE, udbto->destPvId, &udbto->curSaveV );
+      if ( udbto->curSaveV < udbto->minDv ) {
+        v = udbto->minDv;
+      }
+      else if ( udbto->curSaveV > udbto->maxDv ) {
+        v = udbto->maxDv;
+      }
+      else {
+	v = udbto->curSaveV;
+      }
+      stat = ca_put( DBR_DOUBLE, udbto->destPvId, &v );
     }
     else {
       XBell( udbto->actWin->d, 50 );
@@ -187,6 +207,14 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
   udbto->invisible = udbto->bufInvisible;
 
   udbto->rate = udbto->bufRate;
+
+  udbto->limitsFromDb = udbto->bufLimitsFromDb;
+
+  udbto->efScaleMin = udbto->bufEfScaleMin;
+  udbto->efScaleMax = udbto->bufEfScaleMax;
+
+  udbto->minDv = udbto->scaleMin = udbto->efScaleMin.value();
+  udbto->maxDv = udbto->scaleMax = udbto->efScaleMax.value();
 
   udbto->x = udbto->bufX;
   udbto->sboxX = udbto->bufX;
@@ -310,6 +338,35 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) ca_puser(arg.chid);
 
 }
 
+static void udbt_infoUpdate (
+  struct event_handler_args ast_args )
+{
+
+activeUpdownButtonClass *udbto =
+ (activeUpdownButtonClass *) ca_puser(ast_args.chid);
+struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
+
+  if ( udbto->limitsFromDb || udbto->efScaleMin.isNull() ) {
+    udbto->scaleMin = controlRec.lower_disp_limit;
+  }
+
+  if ( udbto->limitsFromDb || udbto->efScaleMax.isNull() ) {
+    udbto->scaleMax = controlRec.upper_disp_limit;
+  }
+
+  udbto->minDv = udbto->scaleMin;
+
+  udbto->maxDv = udbto->scaleMax;
+
+  udbto->curControlV = controlRec.value;
+
+  udbto->needCtlInfoInit = 1;
+  udbto->actWin->appCtx->proc->lock();
+  udbto->actWin->addDefExeNode( udbto->aglPtr );
+  udbto->actWin->appCtx->proc->unlock();
+
+}
+
 static void udbtc_controlUpdate (
   struct event_handler_args ast_args )
 {
@@ -400,6 +457,13 @@ unsigned int mask;
 
   dval -= udbto->coarse;
 
+  if ( dval < udbto->minDv ) {
+    dval = udbto->minDv;
+  }
+  else if ( dval > udbto->maxDv ) {
+    dval = udbto->maxDv;
+  }
+
   if ( udbto->destExists ) {
 #ifdef __epics__
   stat = ca_put( DBR_DOUBLE, udbto->destPvId, &dval );
@@ -442,6 +506,13 @@ unsigned int mask;
 
   dval += udbto->coarse;
 
+  if ( dval < udbto->minDv ) {
+    dval = udbto->minDv;
+  }
+  else if ( dval > udbto->maxDv ) {
+    dval = udbto->maxDv;
+  }
+
   if ( udbto->destExists ) {
 #ifdef __epics__
   stat = ca_put( DBR_DOUBLE, udbto->destPvId, &dval );
@@ -460,6 +531,11 @@ activeUpdownButtonClass::activeUpdownButtonClass ( void ) {
   invisible = 0;
   rate = 0.1;
   curSaveV = 0.0;
+  scaleMin = 0;
+  scaleMax = 10;
+  limitsFromDb = 1;
+  efScaleMin.setNull(1);
+  efScaleMax.setNull(1);
 
 }
 
@@ -504,6 +580,11 @@ activeGraphicClass *udbto = (activeGraphicClass *) this;
   _3D = source->_3D;
   invisible = source->invisible;
   rate = source->rate;
+  limitsFromDb = source->limitsFromDb;
+  scaleMin = source->scaleMin;
+  scaleMax = source->scaleMax;
+  efScaleMin = source->efScaleMin;
+  efScaleMax = source->efScaleMax;
 
   updateDimensions();
 
@@ -602,6 +683,11 @@ int index;
   else
     writeStringToFile( f, "" );
 
+  // ver 1.2.0
+  fprintf( f, "%-d\n", limitsFromDb );
+  efScaleMin.write( f );
+  efScaleMax.write( f );
+
   return 1;
 
 }
@@ -664,6 +750,25 @@ float fval;
   if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 0 ) ) ) {
     readStringFromFile( oneName, 39, f ); actWin->incLine();
     savePvExpString.setRaw( oneName );
+  }
+
+  if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 1 ) ) ) {
+    fscanf( f, "%d\n", &limitsFromDb ); actWin->incLine();
+    efScaleMin.read( f ); actWin->incLine();
+    efScaleMax.read( f ); actWin->incLine();
+    if ( ( limitsFromDb || efScaleMin.isNull() ) &&
+         ( limitsFromDb || efScaleMax.isNull() ) ) {
+      minDv = scaleMin = 0;
+      maxDv = scaleMax = 10;
+    }
+    else{
+      minDv = scaleMin = efScaleMin.value();
+      maxDv = scaleMax = efScaleMax.value();
+    }
+  }
+  else {
+    scaleMin = 0;
+    scaleMax = 10;
   }
 
   actWin->fi->loadFontTag( fontTag );
@@ -1002,6 +1107,10 @@ char title[32], *ptr;
   bufInvisible = invisible;
   bufRate = rate;
 
+  bufLimitsFromDb = limitsFromDb;
+  bufEfScaleMin = efScaleMin;
+  bufEfScaleMax = efScaleMax;
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -1013,6 +1122,9 @@ char title[32], *ptr;
   ef.addTextField( activeUpdownButtonClass_str6, 30, &bufW );
   ef.addTextField( activeUpdownButtonClass_str7, 30, &bufH );
   ef.addTextField( activeUpdownButtonClass_str8, 30, bufDestPvName, 39 );
+  ef.addToggle( activeUpdownButtonClass_str26, &bufLimitsFromDb );
+  ef.addTextField( activeUpdownButtonClass_str27, 30, &bufEfScaleMin );
+  ef.addTextField( activeUpdownButtonClass_str28, 30, &bufEfScaleMax );
   ef.addTextField( activeUpdownButtonClass_str25, 30, bufSavePvName, 39 );
   ef.addTextField( activeUpdownButtonClass_str9, 30, bufCoarse, 39 );
   ef.addTextField( activeUpdownButtonClass_str10, 30, bufFine, 39 );
@@ -1684,6 +1796,13 @@ double dval;
     dval -= fine;
   }
 
+  if ( dval < minDv ) {
+    dval = minDv;
+  }
+  else if ( dval > maxDv ) {
+    dval = maxDv;
+  }
+
 #ifdef __epics__
   stat = ca_put( DBR_DOUBLE, destPvId, &dval );
 #endif
@@ -1813,13 +1932,14 @@ int activeUpdownButtonClass::containsMacros ( void ) {
 
 void activeUpdownButtonClass::executeDeferred ( void ) {
 
-int nc, nsc, nd, ne, nr, stat;
+int nc, nsc, nci, nd, ne, nr, stat;
 
   if ( actWin->isIconified ) return;
 
   actWin->appCtx->proc->lock();
   nc = needConnectInit; needConnectInit = 0;
   nsc = needSaveConnectInit; needSaveConnectInit = 0;
+  nci = needCtlInfoInit; needCtlInfoInit = 0;
   nd = needDraw; needDraw = 0;
   ne = needErase; needErase = 0;
   nr = needRefresh; needRefresh = 0;
@@ -1834,6 +1954,15 @@ int nc, nsc, nd, ne, nr, stat;
 
     destPvConnected = 1;
     destType = ca_field_type( destPvId );
+
+    stat = ca_get_callback( DBR_GR_DOUBLE, destPvId,
+     udbt_infoUpdate, (void *) this );
+    if ( stat != ECA_NORMAL )
+      printf( activeUpdownButtonClass_str23 );
+
+  }
+
+  if ( nci ) {
 
     stat = ca_add_masked_array_event( destType, 1, destPvId,
      udbtc_controlUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,

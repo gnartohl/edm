@@ -26,7 +26,7 @@
 #include "cadef.h"
 
 #define UDBTC_MAJOR_VERSION 1
-#define UDBTC_MINOR_VERSION 1
+#define UDBTC_MINOR_VERSION 2
 #define UDBTC_RELEASE 0
 
 #ifdef __updownButton_cc
@@ -47,6 +47,9 @@ static void menu_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
+
+static void udbt_infoUpdate (
+ struct event_handler_args ast_args );
 
 static void udbtc_controlUpdate (
   struct event_handler_args ast_args );
@@ -117,6 +120,9 @@ friend void menu_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
+
+friend void udbt_infoUpdate (
+ struct event_handler_args ast_args );
 
 friend void udbtc_controlUpdate (
   struct event_handler_args ast_args );
@@ -211,7 +217,8 @@ int incrementTimerActive, incrementTimerValue;
 XtIntervalId incrementTimer;
 double controlV, curControlV, curSaveV, coarse, fine;
 
-int needConnectInit, needSaveConnectInit, needRefresh, needErase, needDraw;
+int needConnectInit, needSaveConnectInit, needCtlInfoInit, needRefresh,
+ needErase, needDraw;
 
 int widgetsCreated;
 Widget popUpMenu, pullDownMenu, pbCoarse, pbFine, pbRate, pbValue,
@@ -227,6 +234,10 @@ static const int kpCoarseDest = 1;
 static const int kpFineDest = 2;
 static const int kpRateDest = 3;
 static const int kpValueDest = 4;
+
+int limitsFromDb, bufLimitsFromDb;
+double scaleMin, scaleMax, minDv, maxDv;
+efDouble efScaleMin, efScaleMax, bufEfScaleMin, bufEfScaleMax;;
 
 public:
 
