@@ -223,10 +223,10 @@ static int compare_key_by_color (
 
 int i;
 colorCachePtr p;
-unsigned int *oneRgb;
+int *oneRgb;
 
   p = (colorCachePtr) node;
-  oneRgb = (unsigned int *) key;
+  oneRgb = (int *) key;
 
   for ( i=0; i<3; i++ ) {
     if ( oneRgb[i] > p->rgb[i] )
