@@ -817,6 +817,7 @@ static void XtextDspFgUpdate (
 ) {
 
 class activeXTextDspClass *axtdo;
+double val;
 int index;
 
   axtdo = (activeXTextDspClass *) ast_args.usr;
@@ -825,7 +826,8 @@ int index;
 
   if ( axtdo->activeMode ) {
 
-    index = *( (int *) ast_args.dbr );
+    val = *( (double *) ast_args.dbr );
+    index = axtdo->actWin->ci->evalRule( axtdo->fgColor.pixelIndex(), val );
     axtdo->fgColor.changeIndex( index, axtdo->actWin->ci );
     axtdo->bufInvalidate();
     axtdo->needRefresh = 1;
@@ -3198,7 +3200,7 @@ static XtActionsRec dragActions[] = {
 #ifdef __epics__
     if ( fgPvExists ) {
       if ( !fgEventId ) {
-        stat = ca_add_masked_array_event( DBR_LONG, 1, fgPvId,
+        stat = ca_add_masked_array_event( DBR_DOUBLE, 1, fgPvId,
          XtextDspFgUpdate, (void *) this, (float) 0.0, (float) 0.0,
          (float) 0.0, &fgEventId, DBE_VALUE );
         if ( stat != ECA_NORMAL ) {
