@@ -434,7 +434,8 @@ void readStringFromFile (
 {
 
 char *ptr;
-int i, ii, l;
+int i, l;
+unsigned int ii;
 
   ptr = fgets( str, maxChars, f );
   if ( !ptr ) {
@@ -1147,6 +1148,159 @@ char *context, *tk, buf[511+1];
     tk = strtok_r( NULL, ",=", &context );
 
   }
+
+  return 1;
+
+}
+
+int get_scale_params (
+  double min,
+  double max,
+  double *adj_min,
+  double *adj_max,
+  double *label_tick,
+  double *major_tick,
+  double *minor_tick,
+  char *format
+) {
+
+double dmin, dmax, dadj_min, dadj_max, diff, mag, norm, inc;
+
+int imag, inorm;
+
+  dmin = min;
+  dmax = max;
+
+  diff = fabs( dmax - dmin );
+
+  /* printf( "dmin = %-g, dmax = %-g, diff =  %-g\n", dmin, dmax, diff ); */
+
+  if ( diff == 0.0 ) return 0;
+
+  if ( dmin > dmax ) return 0;
+
+  mag = log10( diff );
+  if ( mag >= 0.0 )
+    imag = (int) mag;
+  else {
+    imag = (int) mag - 1;
+  }
+
+  norm = diff * pow(10.0,-1.0*imag);
+  inorm = (int) ceil( norm );
+
+  /* printf( "mag = %-g, imag = %-d\n", mag, imag ); */
+  /* printf( "norm = %-d\n", inorm ); */
+
+  /* adjust min & max */
+
+  inorm = (int) floor( dmin * pow(10.0,-1.0*imag) );
+  dadj_min = (double) inorm * pow(10.0,imag);
+
+  inorm = (int) ceil( dmax * pow(10.0,-1.0*imag) );
+  dadj_max = (double) inorm * pow(10.0,imag);
+
+  diff = fabs( dadj_max - dadj_min );
+
+  if ( diff == 0.0 ) return 0;
+
+  if ( dadj_min > dadj_max ) return 0;
+
+  mag = log10( diff );
+  if ( mag >= 0.0 )
+    imag = (int) mag;
+  else {
+    imag = (int) mag - 1;
+  }
+
+  norm = diff * pow(10.0,-1.0*imag);
+  inorm = (int) ceil( norm );
+
+  /* printf( "mag = %-g, imag = %-d\n", mag, imag ); */
+  /* printf( "norm = %-d\n", inorm ); */
+
+  switch ( inorm ) {
+
+    case 1:
+      inc = 0.2 * pow( 10.0, imag );
+      *label_tick = (float) inc;
+      *major_tick = (float) 0.5 * inc;
+      *minor_tick = (float) 0.1 * inc;
+      break;
+
+    case 2:
+      inc = 0.5 * pow( 10.0, imag );
+      *label_tick = (float) inc;
+      *major_tick = (float) 0.2 * inc;
+      *minor_tick = (float) 0.2 * inc;
+      break;
+
+    case 3:
+      inc = 0.5 * pow( 10.0, imag );
+      *label_tick = (float) inc;
+      *major_tick = (float) 0.2 * inc;
+      *minor_tick = (float) 0.2 * inc;
+      break;
+
+    case 4:
+      inc = 1.0 * pow( 10.0, imag );
+      *label_tick = (float) inc;
+      *major_tick = (float) inc;
+      *minor_tick = (float) 0.1 * inc;
+      break;
+
+    case 5:
+      inc = 1.0 * pow( 10.0, imag );
+      *label_tick = (float) inc;
+      *major_tick = (float) inc;
+      *minor_tick = (float) 0.1 * inc;
+      break;
+
+    case 6:
+      inc = 1.0 * pow( 10.0, imag );
+      *label_tick = (float) inc;
+      *major_tick = (float) inc;
+      *minor_tick = (float) 0.1 * inc;
+      break;
+
+    case 7:
+      dadj_max = dadj_min + ( inorm + 1 ) * pow( 10.0, imag );
+      inc = 2.0 * pow( 10.0, imag );
+      *label_tick = (float) inc;
+      *major_tick = (float) 0.5 * inc;
+      *minor_tick = (float) 0.1 * inc;
+      break;
+
+    case 8:
+      inc = 2.0 * pow( 10.0, imag );
+      *label_tick = (float) inc;
+      *major_tick = (float) 0.5 * inc;
+      *minor_tick = (float) 0.1 * inc;
+      break;
+
+    case 9:
+      dadj_max = dadj_min + ( inorm + 1 ) * pow( 10.0, imag );
+      inc = 2.0 * pow( 10.0, imag );
+      *label_tick = (float) inc;
+      *major_tick = (float) 0.5 * inc;
+      *minor_tick = (float) 0.1 * inc;
+      break;
+
+    case 10:
+      inc = 2.0 * pow( 10.0, imag );
+      *label_tick = (float) inc;
+      *major_tick = (float) 0.5 * inc;
+      *minor_tick = (float) 0.1 * inc;
+      break;
+
+  }
+
+  /* printf( "final: adj min = %-g, adj max = %-g, inc = %-g\n", dadj_min,
+   dadj_max, inc ); */
+
+  *adj_min = (float) dadj_min;
+  *adj_max = (float) dadj_max;
+  strcpy( format, "-g" );
 
   return 1;
 

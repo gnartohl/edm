@@ -90,6 +90,7 @@ typedef struct colorCacheTag {
     int index;
     int position;
     char *name;
+    char *aliasValue;
     rulePtr rule;
 } colorCacheType, *colorCachePtr;
 
@@ -193,6 +194,7 @@ public:
     // index <-> name
     char *colorInfoClass::colorName (int index);
     int colorInfoClass::colorIndexByName (const char *name);
+    int colorInfoClass::colorIndexByAlias (const char *name); // use alias list
 
     // Returns true/false depending on wether
     // this index is rule-based
@@ -279,6 +281,7 @@ private:
     AVL_HANDLE colorCacheByIndexH;
     AVL_HANDLE colorCacheByNameH;
     AVL_HANDLE colorCacheByPosH;
+    AVL_HANDLE colorCacheByAliasH;
 
     Display *display;
     int screen;
@@ -339,6 +342,7 @@ private:
     static const int GET_ALARM_PARAMS = 14;
     static const int GET_MENU_MAP = 15;
     static const int INSERT_COLOR = 16;
+    static const int GET_ALIAS = 17;
 
     int readFile, tokenState, parseIndex, parseLine, tokenFirst, tokenLast,
         tokenNext, gotToken, colorIndex, colorPosition;

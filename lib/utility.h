@@ -189,4 +189,15 @@ int parseLocalSymbolsAndValues (
   int *numFound
 );
 
+int get_scale_params (
+  double min,
+  double max,
+  double *adj_min,
+  double *adj_max,
+  double *label_tick,
+  double *major_tick,
+  double *minor_tick,
+  char *format
+);
+
 #endif

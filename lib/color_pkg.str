@@ -34,6 +34,7 @@
 #define colorInfoClass_str31 (char *) "Expected color index"
 #define colorInfoClass_str32 (char *) "Color index not found"
 #define colorInfoClass_str33 (char *) "Color position empty, index = %-d\n"
+#define colorInfoClass_str34 (char *) "Warning - duplicate alias name: [%s]"
 
 #endif
 

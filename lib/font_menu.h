@@ -150,6 +150,13 @@ Widget fontMenuClass::createFontMenu (
   Widget parent,
   fontInfoClass *fi,
   Arg args[],
+  int numArgs,
+  int includeAlignInfo );
+
+Widget fontMenuClass::createFontMenu (
+  Widget parent,
+  fontInfoClass *fi,
+  Arg args[],
   int numArgs );
 
 int fontMenuClass::destroyFontMenu ( void );

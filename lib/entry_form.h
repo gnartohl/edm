@@ -562,7 +562,20 @@ int entryFormClass::addEmbeddedEf (
   char *buttonLabel,
   entryFormClass **ef );
 
+int entryFormClass::addFontMenuGeneric (
+  int includeAlignInfo,
+  char *label,
+  fontInfoClass *fi,
+  fontMenuClass *fm,
+  char *initFontTag );
+
 int entryFormClass::addFontMenu (
+  char *label,
+  fontInfoClass *fi,
+  fontMenuClass *fm,
+  char *initFontTag );
+
+int entryFormClass::addFontMenuNoAlignInfo (
   char *label,
   fontInfoClass *fi,
   fontMenuClass *fm,
@@ -683,6 +696,10 @@ int entryFormClass::finished (
   XtCallbackProc ok_cb,
   XtCallbackProc apply_cb,
   XtCallbackProc cancel_cb,
+  XtPointer ptr );
+
+int entryFormClass::finished (
+  XtCallbackProc close_cb,
   XtPointer ptr );
 
 int entryFormClass::beginSubForm ( void );

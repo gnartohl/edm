@@ -297,7 +297,8 @@ Widget fontMenuClass::createFontMenu (
   Widget parent,
   fontInfoClass *fi,
   Arg args[],
-  int numArgs )
+  int numArgs,
+  int includeAlignInfo )
 {
 
 familyListPtr curFamily;
@@ -426,81 +427,83 @@ Widget firstSizePb = NULL;
 
   }
 
-  // Alignment
+  if ( includeAlignInfo ) {
 
-  alignPullDown = XmCreatePulldownMenu( form, "", NULL, 0 );
+    // Alignment
 
-  curAlign = new alignOptionListType;
+    alignPullDown = XmCreatePulldownMenu( form, "", NULL, 0 );
 
-  curAlign->fmp = this;
-  curAlign->alignString = new char[2];
-  strcpy( curAlign->alignString, "L" );
-  curAlign->align = (int) XmALIGNMENT_BEGINNING;
+    curAlign = new alignOptionListType;
 
+    curAlign->fmp = this;
+    curAlign->alignString = new char[2];
+    strcpy( curAlign->alignString, "L" );
+    curAlign->align = (int) XmALIGNMENT_BEGINNING;
 
-  str = XmStringCreateLocalized( curAlign->alignString );
-  curAlign->pb = XtVaCreateManagedWidget( "",
-   xmPushButtonWidgetClass, alignPullDown,
-   XmNlabelString, str,
-   NULL );
-  XmStringFree( str );
+    str = XmStringCreateLocalized( curAlign->alignString );
+    curAlign->pb = XtVaCreateManagedWidget( "",
+     xmPushButtonWidgetClass, alignPullDown,
+     XmNlabelString, str,
+     NULL );
+    XmStringFree( str );
 
-  XtAddCallback( curAlign->pb, XmNactivateCallback,
-   setAlign_cb, (XtPointer) curAlign );
-
-
-  alignTail->flink = curAlign;
-  alignTail = curAlign;
-  alignTail->flink = NULL;
-
-  this->alignStr = curAlign->alignString;
-  this->align = curAlign->align;
-
-  curAlign = new alignOptionListType;
-
-  curAlign->fmp = this;
-  curAlign->alignString = new char[2];
-  strcpy( curAlign->alignString, "C" );
-  curAlign->align = (int) XmALIGNMENT_CENTER;
+    XtAddCallback( curAlign->pb, XmNactivateCallback,
+     setAlign_cb, (XtPointer) curAlign );
 
 
-  str = XmStringCreateLocalized( curAlign->alignString );
-  curAlign->pb = XtVaCreateManagedWidget( "",
-   xmPushButtonWidgetClass, alignPullDown,
-   XmNlabelString, str,
-   NULL );
-  XmStringFree( str );
+    alignTail->flink = curAlign;
+    alignTail = curAlign;
+    alignTail->flink = NULL;
 
-  XtAddCallback( curAlign->pb, XmNactivateCallback,
-   setAlign_cb, (XtPointer) curAlign );
+    this->alignStr = curAlign->alignString;
+    this->align = curAlign->align;
 
+    curAlign = new alignOptionListType;
 
-  alignTail->flink = curAlign;
-  alignTail = curAlign;
-  alignTail->flink = NULL;
-
-  curAlign = new alignOptionListType;
-  curAlign->fmp = this;
-  curAlign->alignString = new char[2];
-  strcpy( curAlign->alignString, "R" );
-  curAlign->align = (int) XmALIGNMENT_END;
+    curAlign->fmp = this;
+    curAlign->alignString = new char[2];
+    strcpy( curAlign->alignString, "C" );
+    curAlign->align = (int) XmALIGNMENT_CENTER;
 
 
-  str = XmStringCreateLocalized( curAlign->alignString );
-  curAlign->pb = XtVaCreateManagedWidget( "",
-   xmPushButtonWidgetClass, alignPullDown,
-   XmNlabelString, str,
-   NULL );
-  XmStringFree( str );
+    str = XmStringCreateLocalized( curAlign->alignString );
+    curAlign->pb = XtVaCreateManagedWidget( "",
+     xmPushButtonWidgetClass, alignPullDown,
+     XmNlabelString, str,
+     NULL );
+    XmStringFree( str );
 
-  XtAddCallback( curAlign->pb, XmNactivateCallback,
-   setAlign_cb, (XtPointer) curAlign );
+    XtAddCallback( curAlign->pb, XmNactivateCallback,
+     setAlign_cb, (XtPointer) curAlign );
 
 
-  alignTail->flink = curAlign;
-  alignTail = curAlign;
-  alignTail->flink = NULL;
+    alignTail->flink = curAlign;
+    alignTail = curAlign;
+    alignTail->flink = NULL;
 
+    curAlign = new alignOptionListType;
+    curAlign->fmp = this;
+    curAlign->alignString = new char[2];
+    strcpy( curAlign->alignString, "R" );
+    curAlign->align = (int) XmALIGNMENT_END;
+
+
+    str = XmStringCreateLocalized( curAlign->alignString );
+    curAlign->pb = XtVaCreateManagedWidget( "",
+     xmPushButtonWidgetClass, alignPullDown,
+     XmNlabelString, str,
+     NULL );
+    XmStringFree( str );
+
+    XtAddCallback( curAlign->pb, XmNactivateCallback,
+     setAlign_cb, (XtPointer) curAlign );
+
+
+    alignTail->flink = curAlign;
+    alignTail = curAlign;
+    alignTail->flink = NULL;
+
+  }
 
   // create option menus & toggles
 
@@ -580,22 +583,35 @@ Widget firstSizePb = NULL;
   XtManageChild( italicsToggle );
 
 
+  if ( includeAlignInfo ) {
 
-  n = 0;
-  XtSetArg( locArgs[n], XmNsubMenuId, (XtArgVal) alignPullDown ); n++;
-  XtSetArg( locArgs[n], XmNmenuHistory, (XtArgVal) alignHead->flink->pb ); n++;
-  XtSetArg( locArgs[n], XmNtopAttachment,
-   (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
-  XtSetArg( locArgs[n], XmNtopWidget, (XtArgVal) sizeOption ); n++;
-  XtSetArg( locArgs[n], XmNleftAttachment,
-   (XtArgVal) XmATTACH_WIDGET ); n++;
-  XtSetArg( locArgs[n], XmNleftWidget, (XtArgVal) italicsToggle ); n++;
-  alignOption = XmCreateOptionMenu( form, "", locArgs, n );
+    n = 0;
+    XtSetArg( locArgs[n], XmNsubMenuId, (XtArgVal) alignPullDown ); n++;
+    XtSetArg( locArgs[n], XmNmenuHistory, (XtArgVal) alignHead->flink->pb );
+     n++;
+    XtSetArg( locArgs[n], XmNtopAttachment,
+     (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
+    XtSetArg( locArgs[n], XmNtopWidget, (XtArgVal) sizeOption ); n++;
+    XtSetArg( locArgs[n], XmNleftAttachment,
+     (XtArgVal) XmATTACH_WIDGET ); n++;
+    XtSetArg( locArgs[n], XmNleftWidget, (XtArgVal) italicsToggle ); n++;
+    alignOption = XmCreateOptionMenu( form, "", locArgs, n );
 
-  XtManageChild( alignOption );
+    XtManageChild( alignOption );
 
+  }
 
   return form;
+
+}
+
+Widget fontMenuClass::createFontMenu (
+  Widget parent,
+  fontInfoClass *fi,
+  Arg args[],
+  int numArgs ) {
+
+  return createFontMenu( parent, fi, args, numArgs, 0 );
 
 }
 

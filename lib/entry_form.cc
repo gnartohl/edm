@@ -1262,7 +1262,7 @@ embeddedEfEntry *cur;
     cur->activeW = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
      topForm,
      XmNnavigationType, XmTAB_GROUP,
-     XmNwidth, 25,
+     //XmNwidth, 25,
      XmNheight, 25,
      XmNlabelString, str,
      XmNtopAttachment, XmATTACH_FORM,
@@ -1278,7 +1278,7 @@ embeddedEfEntry *cur;
     cur->activeW = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
      topForm,
      XmNnavigationType, XmTAB_GROUP,
-     XmNwidth, 25,
+     //XmNwidth, 25,
      XmNheight, 25,
      XmNlabelString, str,
      XmNtopAttachment, XmATTACH_WIDGET,
@@ -1322,7 +1322,8 @@ embeddedEfEntry *cur;
 
 }
 
-int entryFormClass::addFontMenu (
+int entryFormClass::addFontMenuGeneric (
+  int includeAlignInfo,
   char *label,
   fontInfoClass *fi,
   fontMenuClass *fm,
@@ -1346,7 +1347,8 @@ fontMenuEntry *cur;
     XtSetArg( args[n], XmNrightAttachment, (XtArgVal) XmATTACH_FORM ); n++;
     XtSetArg( args[n], XmNmarginWidth, (XtArgVal) 0 ); n++;
 
-    cur->activeW = fm->createFontMenu( topForm, fi, args, n );
+    cur->activeW = fm->createFontMenu( topForm, fi, args, n,
+     includeAlignInfo );
     fm->setFontTag( initFontTag );
 
     curW = cur->activeW;
@@ -1358,11 +1360,13 @@ fontMenuEntry *cur;
     n = 0;
     XtSetArg( args[n], XmNtopAttachment, (XtArgVal) XmATTACH_WIDGET ); n++;
     XtSetArg( args[n], XmNtopWidget, (XtArgVal) curW ); n++;
-    XtSetArg( args[n], XmNrightAttachment,
+    XtSetArg( args[n], XmNleftAttachment,
      (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
-    XtSetArg( args[n], XmNrightWidget, (XtArgVal) curRW ); n++;
+    XtSetArg( args[n], XmNleftWidget, (XtArgVal) curRW ); n++;
+    XtSetArg( args[n], XmNmarginWidth, (XtArgVal) 0 ); n++;
 
-    cur->activeW = fm->createFontMenu( topForm, fi, args, n );
+    cur->activeW = fm->createFontMenu( topForm, fi, args, n,
+     includeAlignInfo );
     fm->setFontTag( initFontTag );
 
     curW = cur->activeW;
@@ -1397,6 +1401,28 @@ fontMenuEntry *cur;
   itemTail->flink = NULL;
 
   return 1;
+
+}
+
+int entryFormClass::addFontMenu (
+  char *label,
+  fontInfoClass *fi,
+  fontMenuClass *fm,
+  char *initFontTag )
+{
+
+  return addFontMenuGeneric( 1, label, fi, fm, initFontTag );
+
+}
+
+int entryFormClass::addFontMenuNoAlignInfo (
+  char *label,
+  fontInfoClass *fi,
+  fontMenuClass *fm,
+  char *initFontTag )
+{
+
+  return addFontMenuGeneric( 0, label, fi, fm, initFontTag );
 
 }
 
@@ -2445,6 +2471,7 @@ int i, *destArray, value;
 
 }
 
+#if 1
 int entryFormClass::addColorButton (
   char *label,
   colorInfoClass *ci,
@@ -2459,6 +2486,10 @@ int fN, bN, nbN, tN;
 colorButtonEntry *cur;
 
   cur = new colorButtonEntry;
+
+  if ( curTopParent == topForm ) {
+
+  //printf( "using topForm\n" );
 
   if ( firstItem ) {
 
@@ -2551,12 +2582,6 @@ colorButtonEntry *cur;
 
   }
 
-  if ( firstColorButton ) {
-    firstColorButton = 0;
-    ci->setActiveWidget( cb->widget() );
-    ci->setCurDestination( dest );
-  }
-
   if ( entryTag )
     str = XmStringCreate( label, entryTag );
   else
@@ -2575,6 +2600,136 @@ colorButtonEntry *cur;
 
   XmStringFree( str );
 
+  }
+  else {
+
+  //printf( "using subForm\n" );
+
+  if ( firstSubFormChild ) {
+
+    firstSubFormChild = 0;
+
+    //printf( "first subFrom\n" );
+
+    fN = 0;
+    XtSetArg( fArgs[fN], XmNtopAttachment, (XtArgVal) XmATTACH_FORM ); fN++;
+    XtSetArg( fArgs[fN], XmNleftAttachment, (XtArgVal) XmATTACH_FORM ); fN++;
+
+    bN = 0;
+    XtSetArg( bArgs[bN], XmNnavigationType, XmTAB_GROUP ); bN++;
+    XtSetArg( bArgs[bN], XmNwidth, (XtArgVal) 25 ); bN++;
+    XtSetArg( bArgs[bN], XmNheight, (XtArgVal) 25 ); bN++;
+    XtSetArg( bArgs[bN], XmNbackground, (XtArgVal) ci->pix(*dest) ); bN++;
+    XtSetArg( bArgs[bN], XmNtopAttachment, (XtArgVal) XmATTACH_FORM ); bN++;
+    XtSetArg( bArgs[bN], XmNleftAttachment, (XtArgVal) XmATTACH_FORM ); bN++;
+
+    str1 = XmStringCreateLocalized( "*" );
+
+    if ( ci->isRule(*dest) ) {
+      XtSetArg( bArgs[bN], XmNforeground,
+       (XtArgVal) ci->labelPix(*dest) ); bN++;
+      XtSetArg( bArgs[bN], XmNlabelString, (XtArgVal) str1 ); bN++;
+    }
+
+    str2 = XmStringCreateLocalized( ci->colorName(*dest) );
+
+    nbN = 0;
+    XtSetArg( nbArgs[nbN], XmNnavigationType, XmTAB_GROUP ); nbN++;
+    //XtSetArg( nbArgs[nbN], XmNwidth, (XtArgVal) 130 ); nbN++;
+    XtSetArg( nbArgs[nbN], XmNheight, (XtArgVal) 25 ); nbN++;
+    XtSetArg( nbArgs[nbN], XmNrecomputeSize, (XtArgVal) 1 ); nbN++;
+    XtSetArg( nbArgs[nbN], XmNlabelString, (XtArgVal) str2 ); nbN++;
+
+    tN = 0;
+
+    cb->createWithRule( curTopParent, dest, ci, NULL, fArgs, fN, bArgs, bN,
+     nbArgs, nbN, tArgs, tN );
+
+    XmStringFree( str1 );
+    XmStringFree( str2 );
+
+    prevW = cb->formWidget();
+
+  }
+  else {
+
+    //printf( "not first subFrom\n" );
+
+    fN = 0;
+    XtSetArg( fArgs[fN], XmNtopAttachment,
+     (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); fN++;
+    XtSetArg( fArgs[fN], XmNtopWidget, (XtArgVal) prevW ); fN++;
+    XtSetArg( fArgs[fN], XmNleftAttachment,
+     (XtArgVal) XmATTACH_WIDGET ); fN++;
+    XtSetArg( fArgs[fN], XmNleftWidget, (XtArgVal) prevW ); fN++;
+
+    bN = 0;
+    XtSetArg( bArgs[bN], XmNnavigationType, XmTAB_GROUP ); bN++;
+    XtSetArg( bArgs[bN], XmNwidth, (XtArgVal) 25 ); bN++;
+    XtSetArg( bArgs[bN], XmNheight, (XtArgVal) 25 ); bN++;
+    XtSetArg( bArgs[bN], XmNbackground, (XtArgVal) ci->pix(*dest) ); bN++;
+    XtSetArg( bArgs[bN], XmNtopAttachment, (XtArgVal) XmATTACH_FORM ); bN++;
+    XtSetArg( bArgs[bN], XmNleftAttachment, (XtArgVal) XmATTACH_FORM ); bN++;
+
+    str1 = XmStringCreateLocalized( "*" );
+
+    if ( ci->isRule(*dest) ) {
+      XtSetArg( bArgs[bN], XmNforeground,
+       (XtArgVal) ci->labelPix(*dest) ); bN++;
+      XtSetArg( bArgs[bN], XmNlabelString, (XtArgVal) str1 ); bN++;
+    }
+
+    str2 = XmStringCreateLocalized( ci->colorName(*dest) );
+
+    nbN = 0;
+    XtSetArg( nbArgs[nbN], XmNnavigationType, XmTAB_GROUP ); nbN++;
+    //XtSetArg( nbArgs[nbN], XmNwidth, (XtArgVal) 130 ); nbN++;
+    XtSetArg( nbArgs[nbN], XmNheight, (XtArgVal) 25 ); nbN++;
+    XtSetArg( nbArgs[nbN], XmNrecomputeSize, (XtArgVal) 1 ); nbN++;
+    XtSetArg( nbArgs[nbN], XmNlabelString, (XtArgVal) str2 ); nbN++;
+
+    tN = 0;
+
+    cb->createWithRule( curTopParent, dest, ci, NULL, fArgs, fN, bArgs, bN,
+     nbArgs, nbN, tArgs, tN );
+
+    XmStringFree( str1 );
+    XmStringFree( str2 );
+
+    prevW = cb->formWidget();
+
+  }
+
+#if 0
+  if ( entryTag )
+    str = XmStringCreate( label, entryTag );
+  else
+    str = XmStringCreateLocalized( label );
+
+  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+   curTopParent,
+   XmNlabelString, str,
+   XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+   XmNtopWidget, prevW,
+   XmNrightAttachment, XmATTACH_WIDGET,
+   XmNrightWidget, prevW,
+   XmNmarginTop, 7,
+   XmNfontList, entryFontList,
+   NULL );
+
+  prevW = cur->labelW;
+
+  XmStringFree( str );
+#endif
+
+  }
+
+  if ( firstColorButton ) {
+    firstColorButton = 0;
+    ci->setActiveWidget( cb->widget() );
+    ci->setCurDestination( dest );
+  }
+
   itemTail->flink = cur;
   itemTail = cur;
   itemTail->flink = NULL;
@@ -2582,6 +2737,7 @@ colorButtonEntry *cur;
   return 1;
 
 }
+#endif
 
 #if 0
 int entryFormClass::addColorButton (
@@ -3142,7 +3298,8 @@ widgetListPtr curpb;
     XtSetArg( args[n], XmNtopWidget, (XtArgVal) curW ); n++;
     XtSetArg( args[n], XmNleftAttachment,
      (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
-    XtSetArg( args[n], XmNleftWidget, (XtArgVal) curW ); n++;
+    XtSetArg( args[n], XmNleftWidget, (XtArgVal) curRW ); n++;
+
     cur->activeW = XmCreateOptionMenu( topForm, "", args, n );
 
     curW = cur->activeW;
@@ -3337,7 +3494,7 @@ widgetListPtr curpb;
     XtSetArg( args[n], XmNtopWidget, (XtArgVal) curW ); n++;
     XtSetArg( args[n], XmNleftAttachment,
      (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
-    XtSetArg( args[n], XmNleftWidget, (XtArgVal) curW ); n++;
+    XtSetArg( args[n], XmNleftWidget, (XtArgVal) curRW ); n++;
     cur->activeW = XmCreateOptionMenu( curTopParent, "", args, n );
 
     curW = cur->activeW;
@@ -3536,7 +3693,7 @@ widgetListPtr curpb;
     XtSetArg( args[n], XmNtopWidget, (XtArgVal) curArrayW ); n++;
     XtSetArg( args[n], XmNleftAttachment,
      (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
-    XtSetArg( args[n], XmNleftWidget, (XtArgVal) curArrayW ); n++;
+    XtSetArg( args[n], XmNleftWidget, (XtArgVal) curArrayRW ); n++;
     cur->activeW = XmCreateOptionMenu( arrayForm, "", args, n );
 
     curArrayW = cur->activeW;
@@ -3679,7 +3836,7 @@ widgetListPtr curpb;
     XtSetArg( args[n], XmNtopWidget, (XtArgVal) curArrayW ); n++;
     XtSetArg( args[n], XmNleftAttachment,
      (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
-    XtSetArg( args[n], XmNleftWidget, (XtArgVal) curArrayW ); n++;
+    XtSetArg( args[n], XmNleftWidget, (XtArgVal) curArrayRW ); n++;
     cur->activeW = XmCreateOptionMenu( arrayForm, "", args, n );
 
     curArrayW = cur->activeW;
@@ -4100,6 +4257,72 @@ Widget *children;
   XtAddCallback( pb_ok, XmNactivateCallback, ok_cb, ptr );
 //   XtAddCallback( pb_ok, XmNactivateCallback, popdown_cb, this );
 
+
+  XtManageChild( labelForm );
+  if ( !firstItem ) XtManageChild( topForm );
+  if ( maxItems > 1 ) XtManageChild( controlForm );
+  if ( maxItems > 0 ) XtManageChild( arrayForm );
+  XtManageChild( bottomForm );
+  XtManageChild( pane );
+  XtManageChild( scrollWin );
+
+  // remove pane sashes from tab traversal
+  XtVaGetValues( pane,
+   XmNchildren, &children,
+   XmNnumChildren, &num,
+   NULL );
+
+  while ( num-- > 0 ) {
+    if ( XmIsSash( children[num] ) ) {
+      XtVaSetValues( children[num],
+       XmNtraversalOn, False,
+       NULL );
+    }
+  }
+
+  return 1;
+
+}
+
+int entryFormClass::finished (
+  XtCallbackProc close_cb,
+  XtPointer ptr )
+{
+
+XmString str;
+int num;
+Widget *children;
+
+  okCb = close_cb;
+  applyCb = close_cb;
+  cancelCb = close_cb;
+  pbCallbackPtr = ptr;
+
+  if ( actionTag )
+    str = XmStringCreate( "Close", actionTag );
+  else
+    str = XmStringCreateLocalized( "Close" );
+
+  pb_ok = XtVaCreateManagedWidget( "", xmPushButtonGadgetClass, bottomForm,
+   XmNtopAttachment, XmATTACH_FORM,
+   XmNbottomAttachment, XmATTACH_FORM,
+   XmNrightAttachment, XmATTACH_FORM,
+   XmNshowAsDefault, True,
+   XmNdefaultButtonShadowThickness, 1,
+   XmNlabelString, str,
+   XmNfontList, actionFontList,
+   NULL );
+
+  XmStringFree( str );
+
+  XtAddCallback( pb_ok, XmNactivateCallback, close_cb, ptr );
+
+  Atom wm_delete_window = XmInternAtom( XtDisplay(shell),
+   "WM_DELETE_WINDOW", False );
+
+  XmAddWMProtocolCallback( shell, wm_delete_window, close_cb, ptr );
+
+  XtVaSetValues( shell, XmNdeleteResponse, XmDO_NOTHING, NULL );
 
   XtManageChild( labelForm );
   if ( !firstItem ) XtManageChild( topForm );
@@ -4904,6 +5127,10 @@ int entryFormClass::beginSubForm ( void ) {
 
   }
 
+  XtAddEventHandler( *subForm,
+   KeyPressMask|ButtonPressMask, False,
+   efEventHandler, (XtPointer) this );
+
   curTopParent = *subForm;
 
   firstSubFormChild = 1;
@@ -4939,6 +5166,10 @@ int entryFormClass::beginLeftSubForm ( void ) {
     //curRW = *subForm;
 
   }
+
+  XtAddEventHandler( *subForm,
+   KeyPressMask|ButtonPressMask, False,
+   efEventHandler, (XtPointer) this );
 
   curTopParent = *subForm;
 

@@ -625,6 +625,10 @@ int stat;
   if ( !( stat & 1 ) ) this->colorCacheByIndexH = (AVL_HANDLE) NULL;
 
   stat = avl_init_tree( compare_nodes_by_name,
+   compare_key_by_name, copy_nodes, &(this->colorCacheByAliasH) );
+  if ( !( stat & 1 ) ) this->colorCacheByAliasH = (AVL_HANDLE) NULL;
+
+  stat = avl_init_tree( compare_nodes_by_name,
    compare_key_by_name, copy_nodes, &(this->colorCacheByNameH) );
   if ( !( stat & 1 ) ) this->colorCacheByNameH = (AVL_HANDLE) NULL;
 
@@ -1114,6 +1118,11 @@ char msg[127+1];
       else if ( strcmp( tk, "rule" ) == 0 ) {
 
         state = GET_RULE;
+
+      }
+      else if ( strcmp( tk, "alias" ) == 0 ) {
+
+        state = GET_ALIAS;
 
       }
       else if ( strcmp( tk, "" ) != 0 ) {
@@ -1698,6 +1707,58 @@ char msg[127+1];
       }
 
       state = INSERT_COLOR;
+
+      break;
+
+    case GET_ALIAS:
+
+      cur1 = new colorCacheType;
+
+      stat = getToken( tk ); // alias name
+      if ( stat == FAIL ) {
+        parseError( colorInfoClass_str9 );
+        parseStatus = stat;
+        goto term;
+      }
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( colorInfoClass_str10 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      cur1->name = new char[strlen(tk)+1];
+      strcpy( cur1->name, tk );
+
+      stat = getToken( tk ); // alias value
+      if ( stat == FAIL ) {
+        parseError( colorInfoClass_str9 );
+        parseStatus = stat;
+        goto term;
+      }
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( colorInfoClass_str10 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      cur1->aliasValue = new char[strlen(tk)+1];
+      strcpy( cur1->aliasValue, tk );
+
+      stat = avl_insert_node( this->colorCacheByAliasH, (void *) cur1,
+       &dup );
+      if ( !( stat & 1 ) ) {
+        delete cur1;
+        fclose( f );
+        return stat;
+      }
+
+      if ( dup ) {
+        sprintf( msg, colorInfoClass_str34, cur[0]->name );
+        parseError( msg );
+        delete cur1;
+      }
+
+      state = GET_FIRST_TOKEN;
 
       break;
 
@@ -2591,6 +2652,11 @@ char msg[127+1];
         state = GET_RULE;
 
       }
+      else if ( strcmp( tk, "alias" ) == 0 ) {
+
+        state = GET_ALIAS;
+
+      }
       else if ( strcmp( tk, "" ) != 0 ) {
 
         parseError( colorInfoClass_str12 );
@@ -3207,6 +3273,58 @@ char msg[127+1];
       }
 
       state = INSERT_COLOR;
+
+      break;
+
+    case GET_ALIAS:
+
+      cur1 = new colorCacheType;
+
+      stat = getToken( tk ); // alias name
+      if ( stat == FAIL ) {
+        parseError( colorInfoClass_str9 );
+        parseStatus = stat;
+        goto term;
+      }
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( colorInfoClass_str10 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      cur1->name = new char[strlen(tk)+1];
+      strcpy( cur1->name, tk );
+
+      stat = getToken( tk ); // alias value
+      if ( stat == FAIL ) {
+        parseError( colorInfoClass_str9 );
+        parseStatus = stat;
+        goto term;
+      }
+      if ( strcmp( tk, "" ) == 0 ) {
+        parseError( colorInfoClass_str10 );
+        parseStatus = FAIL;
+        goto term;
+      }
+
+      cur1->aliasValue = new char[strlen(tk)+1];
+      strcpy( cur1->aliasValue, tk );
+
+      stat = avl_insert_node( this->colorCacheByAliasH, (void *) cur1,
+       &dup );
+      if ( !( stat & 1 ) ) {
+        delete cur1;
+        fclose( f );
+        return stat;
+      }
+
+      if ( dup ) {
+        sprintf( msg, colorInfoClass_str34, cur[0]->name );
+        parseError( msg );
+        delete cur1;
+      }
+
+      state = GET_FIRST_TOKEN;
 
       break;
 
@@ -4082,6 +4200,10 @@ restart:
   stat = avl_init_tree( compare_nodes_by_index,
    compare_key_by_index, copy_nodes, &(this->colorCacheByIndexH) );
   if ( !( stat & 1 ) ) this->colorCacheByIndexH = (AVL_HANDLE) NULL;
+
+  stat = avl_init_tree( compare_nodes_by_name,
+   compare_key_by_name, copy_nodes, &(this->colorCacheByAliasH) );
+  if ( !( stat & 1 ) ) this->colorCacheByAliasH = (AVL_HANDLE) NULL;
 
   stat = avl_init_tree( compare_nodes_by_name,
    compare_key_by_name, copy_nodes, &(this->colorCacheByNameH) );
@@ -5100,6 +5222,7 @@ char *colorInfoClass::colorName (
   return colorNames[index];
 
 }
+
 int colorInfoClass::colorIndexByName (
   const char *name )
 {
@@ -5117,6 +5240,35 @@ colorCachePtr cur;
   }
 
   return cur->index;
+
+}
+
+int colorInfoClass::colorIndexByAlias (
+  const char *alias )
+{
+
+int stat;
+colorCachePtr cur1, cur2;
+
+  stat = avl_get_match( this->colorCacheByAliasH, (void *) alias,
+   (void **) &cur1 );
+  if ( !( stat & 1 ) ) {
+    return 0;
+  }
+  if ( !cur1 ) {
+    return 0;
+  }
+
+  stat = avl_get_match( this->colorCacheByNameH, (void *) cur1->aliasValue,
+   (void **) &cur2 );
+  if ( !( stat & 1 ) ) {
+    return 0;
+  }
+  if ( !cur2 ) {
+    return 0;
+  }
+
+  return cur2->index;
 
 }
 
