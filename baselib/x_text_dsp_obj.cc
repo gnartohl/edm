@@ -2615,6 +2615,8 @@ char callbackName[63+1];
     pvExistCheck = 0;
     connection.init();
 
+    pvId = svalPvId = fgPvId = NULL;
+
     break;
 
   case 2:
@@ -2808,25 +2810,31 @@ int stat;
 
   if ( pvExists ) {
 
-    stat = ca_clear_channel( pvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeXTextDspClass_str41 );
+    if ( pvId ) {
+      stat = ca_clear_channel( pvId );
+      pvId = NULL;
+      if ( stat != ECA_NORMAL ) printf( activeXTextDspClass_str41 );
+    }
 
   }
 
   if ( svalPvExists ) {
 
-    stat = ca_clear_channel( svalPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeXTextDspClass_str42 );
+    if ( svalPvId ) {
+      stat = ca_clear_channel( svalPvId );
+      svalPvId = NULL;
+      if ( stat != ECA_NORMAL ) printf( activeXTextDspClass_str42 );
+    }
 
   }
 
   if ( fgPvExists ) {
 
-    stat = ca_clear_channel( fgPvId );
-    if ( stat != ECA_NORMAL )
-      printf( activeXTextDspClass_str43 );
+    if ( fgPvId ) {
+      stat = ca_clear_channel( fgPvId );
+      fgPvId = NULL;
+      if ( stat != ECA_NORMAL ) printf( activeXTextDspClass_str43 );
+    }
 
   }
 
