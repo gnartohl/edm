@@ -11,6 +11,7 @@ private:
 int maxPvs;
 int numPvs;
 int numConnectionsExpected;
+void **id; // dynamic array
 chid *pvId; // dynamic array
 unsigned int *mask; // dynamic array
 unsigned int connectionMask;
@@ -20,6 +21,12 @@ int pvConnectionClass::findPv (
 
 int pvConnectionClass::addPvToList (
   chid Pv );
+
+int pvConnectionClass::findPv (
+  void *Pv );
+
+int pvConnectionClass::addPvToList (
+  void *Pv );
 
 public:
 
@@ -35,6 +42,12 @@ int pvConnectionClass::setPvConnected (
 
 int pvConnectionClass::setPvDisconnected (
   chid Pv );
+
+int pvConnectionClass::setPvConnected (
+  void *Pv );
+
+int pvConnectionClass::setPvDisconnected (
+  void *Pv );
 
 void pvConnectionClass::init ( void );
 

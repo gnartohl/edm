@@ -8,6 +8,7 @@ pvConnectionClass::pvConnectionClass ( void )
   maxPvs = 0;
   numPvs = 0;
   pvId = NULL;
+  id = NULL;
   mask = NULL;
   connectionMask = 0;
   numConnectionsExpected = 0;
@@ -18,6 +19,7 @@ pvConnectionClass::~pvConnectionClass ( void )
 {
 
   if ( pvId ) delete pvId;
+  if ( id ) delete id;
   if ( mask ) delete mask;
 
 }
@@ -55,6 +57,39 @@ int i;
 
 }
 
+int pvConnectionClass::findPv (
+  void *Pv )
+{
+
+  int i;
+
+  for ( i=0; i<numPvs; i++ ) {
+    if ( id[i] == Pv ) return i;
+  }
+
+  return -1;
+
+}
+
+int pvConnectionClass::addPvToList (
+  void *Pv )
+{
+
+int i;
+
+  if ( numPvs == maxPvs ) return -1; // error
+
+  i = findPv( Pv );
+  if ( i != -1 ) return i; // already in list
+
+  i = numPvs;
+  id[i] = Pv;
+  numPvs++;
+
+  return i;
+
+}
+
 int pvConnectionClass::setMaxPvs (
   int _maxPvs )
 {
@@ -65,10 +100,12 @@ int i;
 
   maxPvs = _maxPvs;
   pvId = new chid[maxPvs];
+  id = new (void *)[maxPvs];
   mask = new (unsigned int)[maxPvs];
 
   for ( i=0; i<maxPvs; i++ ) {
     pvId[i] = NULL;
+    id[i] = NULL;
     mask[i] = (unsigned int) pow(2,i);
   }
 
@@ -112,6 +149,42 @@ int i;
 
 }
 
+int pvConnectionClass::setPvConnected (
+  void *Pv )
+{
+
+int i;
+
+  i = findPv( Pv );
+  if ( i == -1 ) {
+    i = addPvToList( Pv );
+    if ( i == -1 ) return 0; // error
+  }
+
+  connectionMask &= ~(mask[i]);
+
+  return 1;
+
+}
+
+int pvConnectionClass::setPvDisconnected (
+  void *Pv )
+{
+
+int i;
+
+  i = findPv( Pv );
+  if ( i == -1 ) {
+    i = addPvToList( Pv );
+    if ( i == -1 ) return 0; // error
+  }
+
+  connectionMask |= mask[i];
+
+  return 1;
+
+}
+
 void pvConnectionClass::init ( void )
 {
 
@@ -123,6 +196,7 @@ int i;
 
   for ( i=0; i<maxPvs; i++ ) {
     pvId[i] = NULL;
+    id[i] = NULL;
   }
 
 }
