@@ -1,11 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include <errno.h>
 #include <time.h>
 #include <sys/time.h>
 #include "sys_types.h"
 #include "avl.h"
+#include "utility.h"
 #include "environment.str"
 
 int debugMode ( void );
@@ -359,22 +361,93 @@ int fileClose (
 
 }
 
-FILE *fileOpen (
+static int checkForHttp (
   char *fullName,
+  char *name
+) {
+
+unsigned int i;
+int stat;
+char buf[255+1], namePart[255+1], postPart[255+1], *tk, *context;
+
+  strncpy( buf, fullName, 255 );
+  buf[255] = 0;
+
+  strcpy( name, "" );
+
+  context = NULL;
+  tk = strtok_r( buf, ":", &context );
+
+  if ( !tk ) return 0;
+
+  for ( i=0; i<strlen(tk); i++ ) {
+    tk[i] = tolower( tk[i] );
+  }
+
+  if ( ( strcmp( tk, "http" ) == 0 ) ||
+       ( strcmp( tk, "HTTP" ) == 0 ) ||
+       ( strcmp( tk, "https" ) == 0 ) ||
+       ( strcmp( tk, "HTTPS" ) == 0 ) 
+     ) {
+
+    stat = getFileName( namePart, fullName, 255 );
+    if ( stat & 1 ) {
+
+      strncpy( name, namePart, 255 );
+      name[255] = 0;
+
+      stat = getFilePostfix( postPart, fullName, 255 );
+      if ( stat & 1 ) Strncat( name, postPart, 255 );
+
+      return 1;
+
+    }
+
+  }
+
+  return 0;
+
+}
+
+static int fileReadable (
+  char *fname )
+{
+
+FILE *f;
+int result;
+
+  f = fopen( fname, "r" );
+  if ( f ) {
+    result = 1;
+    fileClose( f );
+  }
+  else
+    result = 0;
+
+  return result;
+
+}
+
+FILE *fileOpen (
+  char *fullNameBuf,
   char *mode
 ) {
 
-char cmd[255+1], prog[255+1];
+char fullName[255+1], cmd[255+1], prog[255+1];
 char oneExt[32], *oneExtPtr, *filterCmd, *ptr1, *ptr2, *ptr3;
 int gotExt, i, l, startPos, stat;
 
 #ifdef USECURL
 FILE *f;
-char buf[255+1], name[255+1], allPaths[10239+1], *urlList, *tk, *context;
-int gotFile;
+char buf[255+1], name[255+1], allPaths[10239+1], plainName[255+1],
+ *urlList, *tk, *context;
+int gotFile, useHttp;
 char errBuf[CURL_ERROR_SIZE+1];
 CURLcode result;
 #endif
+
+  strncpy( fullName, fullNameBuf, 255 );
+  fullName[255] = 0;
 
   if ( gInitList ) {
     gInitList = 0;
@@ -420,6 +493,9 @@ CURLcode result;
     filterCmd = findFilter( oneExt );
     if ( filterCmd ) {
 
+      // return NULL if local file is not readable
+      if ( !fileReadable( fullName ) ) return NULL;
+
       stat = buildCommand( cmd, 255, prog, 255, filterCmd, fullName );
       if ( stat & 1 ) {
 
@@ -435,7 +511,7 @@ CURLcode result;
 
         gPipeIsOpen = 1;
 
-	if ( debugMode() ) printf( "Filter cmd is [%s]\n", cmd );
+	if ( debugMode() ) printf( "1 Filter cmd is [%s]\n", cmd );
 
         // change extension, if any, to .edl
         ptr1 = ptr2 = strstr( fullName, oneExt );
@@ -472,6 +548,167 @@ CURLcode result;
 #ifdef USECURL
 
   if ( debugMode() ) printf( "Using curl for URL-based access\n" );
+
+
+  // Explicit http access (http:// embedded in name)
+  useHttp = checkForHttp( fullName, plainName );
+  if ( useHttp ) {
+
+    // First find last "/"
+    l = strlen( fullName );
+    startPos = l;
+    for ( i=l; (i>=0) && (fullName[i] != '/'); i-- ) {
+      startPos = i;
+    }
+
+    gotExt = 0;
+    ptr1 = strstr( &fullName[startPos], "." );
+    if ( ptr1 ) {
+      ptr2 = strstr( &ptr1[1], "."  );
+      if ( ptr2 ) {
+        l = strlen( ptr2 );
+        if ( ( l < 25 ) && ( strcmp( ptr2, ".edl" ) == 0 ) ) {
+          oneExtPtr = oneExt;
+          for ( ptr3=ptr1; ptr3<ptr2; ptr3++ ) {
+            *oneExtPtr++ = *ptr3;
+          }
+          *oneExtPtr = 0;
+          gotExt = 1;
+          *ptr2 = 0;
+        }
+      }
+    }
+
+    // First find last "/"
+    l = strlen( plainName );
+    startPos = l;
+    for ( i=l; (i>=0) && (plainName[i] != '/'); i-- ) {
+      startPos = i;
+    }
+
+    gotExt = 0;
+    ptr1 = strstr( &plainName[startPos], "." );
+    if ( ptr1 ) {
+      ptr2 = strstr( &ptr1[1], "."  );
+      if ( ptr2 ) {
+        l = strlen( ptr2 );
+        if ( ( l < 25 ) && ( strcmp( ptr2, ".edl" ) == 0 ) ) {
+          oneExtPtr = oneExt;
+          for ( ptr3=ptr1; ptr3<ptr2; ptr3++ ) {
+            *oneExtPtr++ = *ptr3;
+          }
+          *oneExtPtr = 0;
+          gotExt = 1;
+          *ptr2 = 0;
+        }
+      }
+    }
+
+    if ( g_init ) {
+      g_init = 0;
+      curlH = curl_easy_init();
+      tk = getenv( environment_str8 );
+      if ( tk ) {
+        l = strlen(tk);
+        if ( tk[l-1] != '/' ) {
+  	tmpDir = new char[l+2];
+          strcpy( tmpDir, tk );
+          strcat( tmpDir, "/" );
+        }
+        else {
+          tmpDir = strdup( tk );
+        }
+      }
+      else {
+        tmpDir = strdup( "/tmp/" );
+      }
+    }
+
+    strncpy( buf, tmpDir, 255 );
+    Strncat( buf, plainName, 255 );
+    if ( debugMode() ) printf( "open [%s]\n", buf );
+    f = fopen( buf, "w" );
+    if ( !f ) return NULL;
+
+    strncpy( buf, fullName, 255 );
+
+    if ( debugMode() ) printf( "get [%s]\n", buf );
+
+    curl_easy_setopt( curlH, CURLOPT_URL, buf );
+    curl_easy_setopt( curlH, CURLOPT_FILE, f );
+    curl_easy_setopt( curlH, CURLOPT_ERRORBUFFER, errBuf );
+    curl_easy_setopt( curlH, CURLOPT_FAILONERROR, 1 );
+    curl_easy_setopt( curlH, CURLOPT_SSL_VERIFYPEER, 0 );
+    curl_easy_setopt( curlH, CURLOPT_SSL_VERIFYHOST, 0 );
+    strcpy( errBuf, "" );
+    result = curl_easy_perform( curlH );
+    if ( debugMode() ) printf( "result = %-d, errno = %-d\n",
+     (int) result, errno );
+    if ( debugMode() ) printf( "errBuf = [%s]\n", errBuf );
+
+    fclose( f );
+
+    if ( result ) return NULL;
+
+    strncpy( buf, tmpDir, 255 );
+    Strncat( buf, plainName, 255 );
+
+    if ( gotExt ) {
+
+      filterCmd = findFilter( oneExt );
+      if ( filterCmd ) {
+
+        stat = buildCommand( cmd, 255, prog, 255, filterCmd, buf );
+        if ( stat & 1 ) {
+
+          if ( !filterInstalled( prog ) ) {
+            printf( "Filter %s (%s) is not installed\n", prog, oneExt );
+            return NULL;
+          }
+
+          if ( gPipeIsOpen ) {
+            printf( "Pipe is already open\n" );
+            return NULL;
+          }
+
+          gPipeIsOpen = 1;
+
+          if ( debugMode() ) printf( "2 Filter cmd is [%s]\n", cmd );
+
+          // change extension, if any, to .edl
+          ptr1 = ptr2 = strstr( buf, oneExt );
+          while ( ptr2 ) {
+            ptr2 = strstr( &ptr1[1], oneExt );
+            if ( ptr2 ) {
+              ptr1 = ptr2;
+            }
+          }
+          if ( ptr1 ) {
+            *ptr1 = 0;
+            strcat( plainName, ".edl" );
+          }
+
+          gPipeF = popen( cmd, "r" );
+
+          strncpy( fullName, plainName, 255 );
+          return gPipeF;
+
+        }
+        else {
+
+          return NULL;
+
+        }
+
+      }
+
+    }
+
+    strncpy( fullName, plainName, 255 );
+    f = fopen( buf, "r" );
+    return f;
+
+  }
 
   urlList = getenv( environment_str9 );
   if ( !urlList ) {
@@ -512,6 +749,9 @@ CURLcode result;
       filterCmd = findFilter( oneExt );
       if ( filterCmd ) {
 
+        // return NULL if local file is not readable
+        if ( !fileReadable( fullName ) ) return NULL;
+
         stat = buildCommand( cmd, 255, prog, 255, filterCmd, fullName );
         if ( stat & 1 ) {
 
@@ -527,7 +767,7 @@ CURLcode result;
 
           gPipeIsOpen = 1;
 
-          if ( debugMode() ) printf( "Filter cmd is [%s]\n", cmd );
+          if ( debugMode() ) printf( "3 Filter cmd is [%s]\n", cmd );
 
           // change extension, if any, to .edl
           ptr1 = ptr2 = strstr( fullName, oneExt );
@@ -559,6 +799,31 @@ CURLcode result;
 
     return fopen( fullName, mode );
 
+  }
+
+  // First find last "/"
+  l = strlen( fullName );
+  startPos = l;
+  for ( i=l; (i>=0) && (fullName[i] != '/'); i-- ) {
+    startPos = i;
+  }
+
+  gotExt = 0;
+  ptr1 = strstr( &fullName[startPos], "." );
+  if ( ptr1 ) {
+    ptr2 = strstr( &ptr1[1], "."  );
+    if ( ptr2 ) {
+      l = strlen( ptr2 );
+      if ( ( l < 25 ) && ( strcmp( ptr2, ".edl" ) == 0 ) ) {
+        oneExtPtr = oneExt;
+        for ( ptr3=ptr1; ptr3<ptr2; ptr3++ ) {
+          *oneExtPtr++ = *ptr3;
+        }
+        *oneExtPtr = 0;
+        gotExt = 1;
+        *ptr2 = 0;
+      }
+    }
   }
 
   if ( g_init ) {
@@ -645,6 +910,57 @@ CURLcode result;
 
     strncpy( buf, tmpDir, 255 );
     Strncat( buf, name, 255 );
+
+    if ( gotExt ) {
+
+      filterCmd = findFilter( oneExt );
+      if ( filterCmd ) {
+
+        stat = buildCommand( cmd, 255, prog, 255, filterCmd, buf );
+        if ( stat & 1 ) {
+
+          if ( !filterInstalled( prog ) ) {
+            printf( "Filter %s (%s) is not installed\n", prog, oneExt );
+            return NULL;
+          }
+
+          if ( gPipeIsOpen ) {
+            printf( "Pipe is already open\n" );
+            return NULL;
+          }
+
+          gPipeIsOpen = 1;
+
+          if ( debugMode() ) printf( "4 Filter cmd is [%s]\n", cmd );
+
+          // change extension, if any, to .edl
+          ptr1 = ptr2 = strstr( buf, oneExt );
+          while ( ptr2 ) {
+            ptr2 = strstr( &ptr1[1], oneExt );
+            if ( ptr2 ) {
+              ptr1 = ptr2;
+            }
+          }
+          if ( ptr1 ) {
+            *ptr1 = 0;
+            strcat( fullName, ".edl" );
+          }
+
+          gPipeF = popen( cmd, "r" );
+
+          return gPipeF;
+
+        }
+        else {
+
+          return NULL;
+
+        }
+
+      }
+
+    }
+
     f = fopen( buf, "r" );
 
   }

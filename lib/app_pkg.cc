@@ -33,6 +33,107 @@ typedef struct libRecTag {
 
 static int g_needXtInit = 1;
 
+static int httpPath (
+  char *path
+ ) {
+
+  if ( strstr( path, "http://" ) ) return 1;
+  if ( strstr( path, "HTTP://" ) ) return 1;
+  if ( strstr( path, "https://" ) ) return 1;
+  if ( strstr( path, "HTTPs://" ) ) return 1;
+
+  return 0;
+
+}
+
+static void fixupHttpPart (
+  char *path
+ ) {
+
+char *ptr;
+int more, count = 100;
+
+  do {
+
+    more = 0;
+
+    ptr = strstr( path, "http://" );
+    if ( ptr ) {
+      more = 1;
+      ptr[4] = '|';
+    }
+    else {
+      ptr = strstr( path, "HTTP://" );
+      if ( ptr ) {
+        more = 1;
+        ptr[4] = '|';
+      }
+      else {
+        ptr = strstr( path, "https://" );
+        if ( ptr ) {
+          more = 1;
+          ptr[5] = '|';
+        }
+	else {
+          ptr = strstr( path, "HTTPS://" );
+          if ( ptr ) {
+            more = 1;
+            ptr[5] = '|';
+          }
+	}
+      }
+    }
+
+    count--;
+
+  } while ( more && count );
+
+}
+
+static void undoFixupHttpPart (
+  char *path
+ ) {
+
+char *ptr;
+int more, count = 100;
+
+  do {
+
+    more = 0;
+
+    ptr = strstr( path, "http|//" );
+    if ( ptr ) {
+      more = 1;
+      ptr[4] = ':';
+    }
+    else {
+      ptr = strstr( path, "HTTP|//" );
+      if ( ptr ) {
+        more = 1;
+        ptr[4] = ':';
+      }
+      else {
+        ptr = strstr( path, "https|//" );
+        if ( ptr ) {
+          more = 1;
+          ptr[5] = ':';
+        }
+	else {
+          ptr = strstr( path, "HTTPS|//" );
+          if ( ptr ) {
+            more = 1;
+            ptr[5] = ':';
+          }
+	}
+      }
+    }
+
+    count--;
+
+  } while ( more && count );
+
+}
+
 static int compare_nodes (
   void *node1,
   void *node2
@@ -2265,6 +2366,8 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
     strncpy( buf, envPtr, l );
     buf[l] = 0;
 
+    fixupHttpPart( buf );
+
     numPaths = 0;
     tk = strtok( buf, ":" );
     while ( tk ) {
@@ -2289,10 +2392,7 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
       if ( stat && !useHttp ) {
         snprintf( msg, 127, appContextClass_str119, path );
         perror( msg );
-        //perror( appContextClass_str119 );
-        //printf( appContextClass_str120, path );
       }
-      //getcwd( path, 127 );
 
       chdir( save );
 
@@ -2315,11 +2415,15 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
     strncpy( buf, envPtr, l );
     buf[l] = 0;
 
+    fixupHttpPart( buf );
+
     tk = strtok( buf, ":" );
     for ( i=0; i<numPaths; i++ ) {
 
       strncpy( path, tk, 127 );
       if ( path[strlen(path)-1] == '/' ) path[strlen(path)-1] = 0;
+
+      undoFixupHttpPart( path );
 
       gotIt = getcwd( save, 127 );
       if ( !gotIt ) {
@@ -2327,16 +2431,17 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
         exit(0);
       }
 
-      stat = chdir( path );
-      if ( stat && !useHttp ) {
-        snprintf( msg, 127, appContextClass_str119, path );
-        perror( msg );
-        //perror( appContextClass_str119 );
-        //printf( appContextClass_str120, path );
-      }
-      //getcwd( path, 127 );
+      if ( !httpPath( path ) ) {
 
-      chdir( save );
+        stat = chdir( path );
+        if ( stat && !useHttp ) {
+          snprintf( msg, 127, appContextClass_str119, path );
+          perror( msg );
+        }
+
+        chdir( save );
+
+      }
 
       if ( path[strlen(path)-1] != '/' )
        Strncat( path, "/", 127 );
@@ -4039,7 +4144,7 @@ int appContextClass::startApplication (
 int stat, opStat;
 activeWindowListPtr cur;
 char *name, *envPtr;
-char prefix[127+1], fname[127+1], msg[127+1];
+char prefix[255+1], fname[255+1], msg[127+1];
 fileListPtr curFile;
 expStringClass expStr;
 Atom wm_delete_window;
@@ -4220,8 +4325,8 @@ err_return:
 
   envPtr = getenv(environment_str2); // EDMFILES
   if ( envPtr ) {
-    strncpy( prefix, envPtr, 127 );
-    if ( prefix[strlen(prefix)-1] != '/' ) Strncat( prefix, "/", 127 );
+    strncpy( prefix, envPtr, 255 );
+    if ( prefix[strlen(prefix)-1] != '/' ) Strncat( prefix, "/", 255 );
   }
   else {
     strcpy( prefix, "/etc/edm/" );
@@ -4230,13 +4335,13 @@ err_return:
   envPtr = getenv(environment_str10); // EDMCOLORFILE
   if ( envPtr ) {
 
-    strncpy( fname, envPtr, 127 );
+    strncpy( fname, envPtr, 255 );
 
   }
   else {
 
-    strncpy( fname, prefix, 127 );
-    Strncat( fname, "colors.list", 127 );
+    strncpy( fname, prefix, 255 );
+    Strncat( fname, "colors.list", 255 );
 
   }
 
@@ -4277,13 +4382,13 @@ err_return:
   envPtr = getenv(environment_str11); // EDMFONTFILE
   if ( envPtr ) {
 
-    strncpy( fname, envPtr, 127 );
+    strncpy( fname, envPtr, 255 );
 
   }
   else {
 
-    strncpy( fname, prefix, 127 );
-    Strncat( fname, "fonts.list", 127 );
+    strncpy( fname, prefix, 255 );
+    Strncat( fname, "fonts.list", 255 );
 
   }
 
