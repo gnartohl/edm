@@ -1316,8 +1316,7 @@ activeGraphicListPtr cur;
       notControlPvConnected = 1;
     }
 
-    controlExists = 0;
-
+    controlExists = 1;
     for ( i=0; i<numPvs; i++ ) {
 
 #ifdef __epics__
@@ -1325,11 +1324,9 @@ activeGraphicListPtr cur;
 #endif
 
       if ( !controlPvExpStr[i].getExpanded() ||
-            blank( controlPvExpStr[i].getExpanded() ) ) return 1;
+           blank( controlPvExpStr[i].getExpanded() ) ) controlExists = 0;
 
     }
-
-    controlExists = 1;
 
     if ( blank( colorPvExpStr.getExpanded() ) ) {
       colorExists = 0;
