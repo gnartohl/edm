@@ -3874,7 +3874,7 @@ int activeXTextDspClass::deactivate (
     unconnectedTimer = 0;
   }
 
-  updateBlink( 0 );
+  //updateBlink( 0 );
 
   if ( kp.isPoppedUp() ) {
     kp.popdown();

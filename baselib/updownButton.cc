@@ -2154,7 +2154,7 @@ int activeUpdownButtonClass::deactivate (
     unconnectedTimer = 0;
   }
 
-  updateBlink( 0 );
+  //updateBlink( 0 );
 
   if ( incrementTimerActive ) {
     if ( incrementTimer ) {

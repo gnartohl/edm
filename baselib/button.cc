@@ -548,6 +548,8 @@ activeButtonClass::~activeButtonClass ( void ) {
     unconnectedTimer = 0;
   }
 
+  updateBlink( 0 );
+
 }
 
 int activeButtonClass::createInteractive (
@@ -2261,7 +2263,7 @@ int activeButtonClass::deactivate (
     unconnectedTimer = 0;
   }
 
-  updateBlink( 0 );
+  //updateBlink( 0 );
 
   if ( deactivateCallback ) {
     (*deactivateCallback)( this );

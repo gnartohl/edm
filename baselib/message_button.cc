@@ -2027,7 +2027,7 @@ int activeMessageButtonClass::deactivate (
     unconnectedTimer = 0;
   }
 
-  updateBlink( 0 );
+  //updateBlink( 0 );
 
   if ( destExists ) {
     if ( destPvId ) {

@@ -1648,7 +1648,7 @@ int activeXTextClass::deactivate (
     unconnectedTimer = 0;
   }
 
-  updateBlink( 0 );
+  //updateBlink( 0 );
 
   if ( value.getRaw() )
     stringLength = strlen( value.getRaw() );

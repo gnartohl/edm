@@ -1727,7 +1727,7 @@ int i;
       unconnectedTimer = 0;
     }
 
-    updateBlink( 0 );
+    //updateBlink( 0 );
 
     if ( controlExists ) {
       if ( controlPvId ) {

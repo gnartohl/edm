@@ -34,6 +34,41 @@
 #include "thread.h"
 #include "crc.h"
 
+static void doBlink (
+  void *ptr
+) {
+
+relatedDisplayClass *rdo = (relatedDisplayClass *) ptr;
+
+  if ( !rdo->activeMode ) {
+    if ( rdo->isSelected() ) rdo->drawSelectBoxCorners(); // erase via xor
+    rdo->smartDrawAll();
+    if ( rdo->isSelected() ) rdo->drawSelectBoxCorners();
+  }
+  else {
+    rdo->bufInvalidate();
+    rdo->smartDrawAllActive();
+  }
+
+}
+
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+relatedDisplayClass *rdo = (relatedDisplayClass *) client;
+
+  if ( !rdo->init ) {
+    rdo->needToDrawUnconnected = 1;
+    rdo->needRefresh = 1;
+    rdo->actWin->addDefExeNode( rdo->aglPtr );
+  }
+
+  rdo->unconnectedTimer = 0;
+
+}
+
 static void menu_cb (
   Widget w,
   XtPointer client,
@@ -63,15 +98,84 @@ int i = ptr->index;
 
   if ( pv->is_valid() ) {
 
-    rdo->destConnected[i] = 1;
-    rdo->destType[i] = (int) pv->get_type().type;
+    if ( !rdo->connection.pvsConnected() ) {
+
+      rdo->connection.setPvConnected( (void *) ptr->index );
+      if ( rdo->connection.pvsConnected() ) {
+
+        rdo->actWin->appCtx->proc->lock();
+        rdo->destType[i] = (int) pv->get_type().type;
+	rdo->needConnect = 1;
+        rdo->actWin->addDefExeNode( rdo->aglPtr );
+        rdo->actWin->appCtx->proc->unlock();
+
+      }
+      else {
+
+        rdo->connection.setPvDisconnected( (void *) ptr->index );
+        rdo->actWin->appCtx->proc->lock();
+        rdo->needRefresh = 1;
+        rdo->actWin->addDefExeNode( rdo->aglPtr );
+        rdo->actWin->appCtx->proc->unlock();
+
+      }
+
+    }
+
+  }
+
+}
+
+static void relDsp_monitor_color_connect_state (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+relatedDisplayClass *rdo = (relatedDisplayClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+    if ( !rdo->connection.pvsConnected() ) {
+
+      rdo->connection.setPvConnected( (void *) relatedDisplayClass::NUMPVS );
+      if ( rdo->connection.pvsConnected() ) {
+
+        rdo->actWin->appCtx->proc->lock();
+	rdo->needConnect = 1;
+        rdo->actWin->addDefExeNode( rdo->aglPtr );
+        rdo->actWin->appCtx->proc->unlock();
+
+      }
+
+    }
 
   }
   else {
 
-    rdo->destConnected[i] = 0;
+    rdo->connection.setPvDisconnected( (void *) relatedDisplayClass::NUMPVS );
+    rdo->fgColor.setDisconnected();
+    rdo->bgColor.setDisconnected();
+    rdo->actWin->appCtx->proc->lock();
+    rdo->active = 0;
+    rdo->needRefresh = 1;
+    rdo->actWin->addDefExeNode( rdo->aglPtr );
+    rdo->actWin->appCtx->proc->unlock();
 
   }
+
+}
+
+static void relDsp_color_value_update (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+relatedDisplayClass *rdo = (relatedDisplayClass *) userarg;
+
+  rdo->actWin->appCtx->proc->lock();
+  rdo->needUpdate = 1;
+  rdo->actWin->addDefExeNode( rdo->aglPtr );
+  rdo->actWin->appCtx->proc->unlock();
 
 }
 
@@ -216,6 +320,8 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
     rdo->sourceExpString[i].setRaw( rdo->buf->bufSource[i] );
   }
 
+  rdo->colorPvExpString.setRaw( rdo->buf->bufColorPvName );
+
   rdo->updateDimensions();
 
 }
@@ -315,6 +421,12 @@ int i;
   aw = NULL;
   buf = NULL;
 
+  unconnectedTimer = 0;
+
+  connection.setMaxPvs( NUMPVS + 1 );
+
+  setBlinkFunction( (void *) doBlink );
+
 }
 
 relatedDisplayClass::~relatedDisplayClass ( void ) {
@@ -351,6 +463,13 @@ activeWindowListPtr cur;
     buf = NULL;
   }
 
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
+
+  updateBlink( 0 );
+
 }
 
 // copy constructor
@@ -375,13 +494,9 @@ activeGraphicClass *rdo = (activeGraphicClass *) this;
 
   topShadowColor = source->topShadowColor;
   botShadowColor = source->botShadowColor;
-  topShadowCb = source->topShadowCb;
-  botShadowCb = source->botShadowCb;
 
   fgColor.copy(source->fgColor);
   bgColor.copy(source->bgColor);
-  fgCb = source->fgCb;
-  bgCb = source->bgCb;
 
   invisible = source->invisible;
   ofsX = source->ofsX;
@@ -416,8 +531,16 @@ activeGraphicClass *rdo = (activeGraphicClass *) this;
     sourceExpString[i].copy( source->sourceExpString[i] );
   }
 
+  colorPvExpString.copy( source->colorPvExpString );
+
   aw = NULL;
   buf = NULL;
+
+  unconnectedTimer = 0;
+
+  connection.setMaxPvs( NUMPVS + 1 );
+
+  setBlinkFunction( (void *) doBlink );
 
 }
 
@@ -521,6 +644,7 @@ static int setPosEnum[3] = {
   tag.loadW( "replaceSymbols", replaceSymbols, numDsps, &zero );
   tag.loadW( "propagateMacros", propagateMacros, numDsps, &one );
   tag.loadW( "closeDisplay", closeAction, numDsps, &zero );
+  tag.loadW( "colorPv", &colorPvExpString, emptyStr );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -734,6 +858,7 @@ static int setPosEnum[3] = {
   tag.loadR( "replaceSymbols", maxDsps, replaceSymbols, &n2, &zero );
   tag.loadR( "propagateMacros", maxDsps, propagateMacros, &n2, &one );
   tag.loadR( "closeDisplay", maxDsps, closeAction, &n2, &zero );
+  tag.loadR( "colorPv", &colorPvExpString, emptyStr );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.loadR( "endObjectProperties" );
@@ -1385,7 +1510,9 @@ int relatedDisplayClass::genericEdit ( void ) {
 int i;
 char title[32], *ptr;
 
-  buf = new bufType;
+  if ( !buf ) {
+    buf = new bufType;
+  }
 
   ptr = actWin->obj.getNameFromClass( "relatedDisplayClass" );
   if ( ptr )
@@ -1468,6 +1595,15 @@ char title[32], *ptr;
     else {
       strcpy( buf->bufSource[i], "" );
     }
+  }
+
+  if ( colorPvExpString.getRaw() ) {
+    strncpy( buf->bufColorPvName, colorPvExpString.getRaw(),
+     PV_Factory::MAX_PV_NAME );
+    buf->bufColorPvName[PV_Factory::MAX_PV_NAME] = 0;
+  }
+  else {
+    strcpy( buf->bufColorPvName, "" );
   }
 
   if ( buttonLabel.getRaw() ) {
@@ -1554,6 +1690,9 @@ char title[32], *ptr;
   ef.addToggle( relatedDisplayClass_str29, &buf->bufNoEdit );
   ef.addToggle( relatedDisplayClass_str34, &buf->bufButton3Popup );
 
+  ef.addTextField( "Color PV", 35, buf->bufColorPvName,
+   PV_Factory::MAX_PV_NAME );
+
   for ( i=0; i<NUMPVS; i++ ) {
     ef.addTextField( relatedDisplayClass_str15, 35, buf->bufDestPvName[i],
      PV_Factory::MAX_PV_NAME );
@@ -1612,7 +1751,7 @@ int relatedDisplayClass::erase ( void ) {
 
 int relatedDisplayClass::eraseActive ( void ) {
 
-  if ( !enabled || !activeMode || invisible ) return 1;
+  if ( !enabled || !activeMode || !init || invisible ) return 1;
 
   XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
    actWin->executeGc.eraseGC(), x, y, w, h );
@@ -1628,12 +1767,13 @@ int relatedDisplayClass::draw ( void ) {
 
 int tX, tY;
 XRectangle xR = { x, y, w, h };
+int blink = 0;
 
   if ( deleteRequest ) return 1;
 
   actWin->drawGc.saveFg();
 
-  actWin->drawGc.setFG( bgColor.pixelColor() );
+  actWin->drawGc.setFG( bgColor.pixelIndex(), &blink );
 
   XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
    actWin->drawGc.normGC(), x, y, w, h );
@@ -1689,7 +1829,7 @@ XRectangle xR = { x, y, w, h };
 
     actWin->drawGc.addNormXClipRectangle( xR );
 
-    actWin->drawGc.setFG( fgColor.pixelColor() );
+    actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
     actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
     tX = x + w/2;
@@ -1708,6 +1848,8 @@ XRectangle xR = { x, y, w, h };
 
   actWin->drawGc.restoreFg();
 
+  updateBlink( blink );
+
   return 1;
 
 }
@@ -1717,12 +1859,38 @@ int relatedDisplayClass::drawActive ( void ) {
 int tX, tY;
 char string[39+1];
 XRectangle xR = { x, y, w, h };
+int blink = 0;
 
-  if ( !enabled || !activeMode || invisible ) return 1;
+  if ( !init ) {
+    if ( needToDrawUnconnected ) {
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( fgColor.getDisconnectedIndex(), &blink );
+      actWin->executeGc.setLineWidth( 1 );
+      actWin->executeGc.setLineStyle( LineSolid );
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
+      actWin->executeGc.restoreFg();
+      needToEraseUnconnected = 1;
+      updateBlink( blink );
+    }
+  }
+  else if ( needToEraseUnconnected ) {
+    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineStyle( LineSolid );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.eraseGC(), x, y, w, h );
+    needToEraseUnconnected = 0;
+    if ( invisible ) {
+      eraseActive();
+      smartDrawAllActive();
+    }
+  }
+
+  if ( !enabled || !activeMode || !init || invisible ) return 1;
 
   actWin->executeGc.saveFg();
 
-  actWin->executeGc.setFG( bgColor.getColor() );
+  actWin->executeGc.setFG( bgColor.getIndex(), &blink );
 
   XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
    actWin->executeGc.normGC(), x, y, w, h );
@@ -1787,7 +1955,7 @@ XRectangle xR = { x, y, w, h };
 
     actWin->executeGc.addNormXClipRectangle( xR );
 
-    actWin->executeGc.setFG( fgColor.getColor() );
+    actWin->executeGc.setFG( fgColor.getIndex(), &blink );
     actWin->executeGc.setFontTag( fontTag, actWin->fi );
 
     tX = x + w/2;
@@ -1801,6 +1969,8 @@ XRectangle xR = { x, y, w, h };
   }
 
   actWin->executeGc.restoreFg();
+
+  updateBlink( blink );
 
   return 1;
 
@@ -1819,23 +1989,44 @@ XmString str;
 
   case 1:
 
+    connection.init();
+    needToEraseUnconnected = 0;
+    needToDrawUnconnected = 0;
+    unconnectedTimer = 0;
+    atLeastOneExists = 0;
+    init = 0;
+    active = 0;
+
+  case 2:
+
     aglPtr = ptr;
     aw = NULL;
-    needClose = 0;
+    needClose = needConnect = needUpdate = needRefresh = 0;
+
+    singleOpComplete = 0;
+
+    if ( !colorPvExpString.getExpanded() ||
+     blankOrComment( colorPvExpString.getExpanded() ) ) {
+      colorExists = 0;
+    }
+    else {
+      colorExists = 1;
+      atLeastOneExists = 1;
+      fgColor.setConnectSensitive();
+      bgColor.setConnectSensitive();
+    }
 
     for ( i=0; i<NUMPVS; i++ ) {
 
       opComplete[i] = 0;
 
       if ( !destPvExpString[i].getExpanded() ||
-	 // ( strcmp( destPvExpString[i].getExpanded(), "" ) == 0 ) ) {
-	   blankOrComment( destPvExpString[i].getExpanded() ) ) {
+       blankOrComment( destPvExpString[i].getExpanded() ) ) {
         destExists[i] = 0;
-        destConnected[i] = 1;
       }
       else {
         destExists[i] = 1;
-        destConnected[i] = 0;
+        atLeastOneExists = 1;
       }
 
     }
@@ -1844,9 +2035,45 @@ XmString str;
 
     break;
 
-  case 2:
+  case 3:
 
     opStat = 1;
+
+    if ( !singleOpComplete ) {
+
+      if ( atLeastOneExists ) {
+	init = 0;
+        if ( !unconnectedTimer ) {
+          unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
+           2000, unconnectedTimeout, this );
+        }
+      }
+      else {
+	init = 1; // no pvs to connect
+        active = 1;
+        singleOpComplete = 1;
+      }
+
+      colorPvId = NULL;
+
+      if ( colorExists ) {
+
+        connection.addPv();
+
+        colorPvId = the_PV_Factory->create( colorPvExpString.getExpanded() );
+	if ( colorPvId ) {
+	  colorPvId->add_conn_state_callback(
+           relDsp_monitor_color_connect_state, (void *) this );
+          singleOpComplete = 1;
+	}
+	else {
+          printf( relatedDisplayClass_str27 );
+          opStat = 0;
+        }
+
+      }
+
+    }
 
     for ( i=0; i<NUMPVS; i++ ) {
 
@@ -1891,6 +2118,8 @@ XmString str;
           objAndIndex[i].obj = (void *) this;
           objAndIndex[i].index = i;
 
+          connection.addPv();
+
 	  destPvId[i] = the_PV_Factory->create(
            destPvExpString[i].getExpanded() );
 	  if ( destPvId[i] ) {
@@ -1913,7 +2142,6 @@ XmString str;
 
     break;
 
-  case 3:
   case 4:
   case 5:
   case 6:
@@ -1932,11 +2160,28 @@ int relatedDisplayClass::deactivate (
 
 int i;
 
+  active = 0;
+  activeMode = 0;
+
   if ( pass == 1 ) {
 
-    activeMode = 0;
+    if ( unconnectedTimer ) {
+      XtRemoveTimeOut( unconnectedTimer );
+      unconnectedTimer = 0;
+    }
 
     XtDestroyWidget( popUpMenu );
+
+    if ( colorExists ) {
+      if ( colorPvId ) {
+        colorPvId->remove_conn_state_callback(
+         relDsp_monitor_color_connect_state, (void *) this );
+        colorPvId->remove_value_callback(
+         relDsp_color_value_update, (void *) this );
+	colorPvId->release();
+	colorPvId = NULL;
+      }
+    }
 
     for ( i=0; i<NUMPVS; i++ ) {
 
@@ -1952,8 +2197,6 @@ int i;
     }
 
   }
-
-
 
   return 1;
 
@@ -1983,6 +2226,8 @@ int relatedDisplayClass::expand1st (
 
 int i;
 
+  colorPvExpString.expand1st( numMacros, macros, expansions );
+
   for ( i=0; i<NUMPVS; i++ ) {
     destPvExpString[i].expand1st( numMacros, macros, expansions );
     sourceExpString[i].expand1st( numMacros, macros, expansions );
@@ -2008,6 +2253,8 @@ int relatedDisplayClass::expand2nd (
 
 int i;
 
+  colorPvExpString.expand2nd( numMacros, macros, expansions );
+
   for ( i=0; i<NUMPVS; i++ ) {
     destPvExpString[i].expand2nd( numMacros, macros, expansions );
     sourceExpString[i].expand2nd( numMacros, macros, expansions );
@@ -2028,6 +2275,8 @@ int i;
 int relatedDisplayClass::containsMacros ( void ) {
 
 int i;
+
+  if ( colorPvExpString.containsPrimaryMacros() ) return 1;
 
   for ( i=0; i<NUMPVS; i++ ) {
     if ( destPvExpString[i].containsPrimaryMacros() ) return 1;
@@ -2152,7 +2401,7 @@ int numNewMacros, max, numFound;
   // set all existing pvs
   for ( i=0; i<NUMPVS; i++ ) {
 
-    if ( destExists[i] && destConnected[i] ) {
+    if ( destExists[i] && connection.pvsConnected() ) {
 
       switch ( destType[i] ) {
 
@@ -2657,13 +2906,51 @@ void relatedDisplayClass::changeDisplayParams (
 
 void relatedDisplayClass::executeDeferred ( void ) {
 
-int nc, okToClose;
+int nc, ncon, nu, nr, okToClose, colorIndex;
 activeWindowListPtr cur;
 
   actWin->appCtx->proc->lock();
   nc = needClose; needClose = 0;
+  ncon = needConnect; needConnect = 0;
+  nu = needUpdate; needUpdate = 0;
+  nr = needRefresh; needRefresh = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
+
+  if ( ncon ) {
+
+    init = 1;
+    active = 1;
+
+    fgColor.setConnected();
+    bgColor.setConnected();
+
+    if ( colorPvId ) {
+      colorPvId->add_value_callback( relDsp_color_value_update,
+       (void *) this );
+    }
+
+  }
+
+  if ( nu ) {
+
+    colorIndex = actWin->ci->evalRule( fgColor.pixelIndex(),
+     colorPvId->get_double() );
+    fgColor.changeIndex( colorIndex, actWin->ci );
+
+    colorIndex = actWin->ci->evalRule( bgColor.pixelIndex(),
+     colorPvId->get_double() );
+    bgColor.changeIndex( colorIndex, actWin->ci );
+
+    smartDrawAllActive();
+
+  }
+
+  if ( nr ) {
+
+    smartDrawAllActive();
+
+  }
 
   if ( nc ) {
 

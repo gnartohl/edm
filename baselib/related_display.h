@@ -42,12 +42,28 @@ typedef struct objAndIndexTag {
 
 #include "related_display.str"
 
+static void doBlink (
+  void *ptr
+);
+
+static void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void menu_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
 
 static void relDsp_monitor_dest_connect_state (
+  ProcessVariable *pv,
+  void *userarg );
+
+static void relDsp_monitor_color_connect_state (
+  ProcessVariable *pv,
+  void *userarg );
+
+static void relDsp_color_value_update (
   ProcessVariable *pv,
   void *userarg );
 
@@ -92,12 +108,28 @@ static const int maxDsps = 20;
 
 private:
 
+friend void doBlink (
+  void *ptr
+);
+
+friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 friend void menu_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
 
 friend void relDsp_monitor_dest_connect_state (
+  ProcessVariable *pv,
+  void *userarg );
+
+friend void relDsp_monitor_color_connect_state (
+  ProcessVariable *pv,
+  void *userarg );
+
+friend void relDsp_color_value_update (
   ProcessVariable *pv,
   void *userarg );
 
@@ -174,6 +206,7 @@ typedef struct bufTag {
   char bufButtonLabel[127+1];;
   char bufLabel[maxDsps][127+1];;
   char bufFontTag[63+1];;
+  char bufColorPvName[PV_Factory::MAX_PV_NAME+1];
   char bufDestPvName[NUMPVS][PV_Factory::MAX_PV_NAME+1];
   char bufSource[NUMPVS][39+1];
   int bufOfsX;
@@ -181,17 +214,20 @@ typedef struct bufTag {
   int bufButton3Popup;
 } bufType, *bufPtr;
 
+colorButtonClass fgCb, bgCb, topShadowCb, botShadowCb;
+
 int numDsps, dspIndex;
 
 bufPtr buf;
 
 activeWindowClass *aw;
-int useFocus, needClose, button3Popup;
+int useFocus, needClose, button3Popup, needConnect, needUpdate, needRefresh;
+int needToDrawUnconnected, needToEraseUnconnected;
+int unconnectedTimer;
 
 int topShadowColor;
 int botShadowColor;
 pvColorClass fgColor, bgColor;
-colorButtonClass fgCb, bgCb, topShadowCb, botShadowCb;
 int invisible, noEdit;
 
 int closeAction[maxDsps];
@@ -217,19 +253,23 @@ XmFontList fontList;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
-ProcessVariable *destPvId[NUMPVS];
+ProcessVariable *colorPvId, *destPvId[NUMPVS];
 int initialConnection[NUMPVS];
 
 objAndIndexType objAndIndex[NUMPVS];
 
-int opComplete[NUMPVS], destExists[NUMPVS], destConnected[NUMPVS],
- destType[NUMPVS];
+int opComplete[NUMPVS], singleOpComplete, colorExists, destExists[NUMPVS],
+ atLeastOneExists, destType[NUMPVS];
+
+pvConnectionClass connection;
+
+expStringClass colorPvExpString;
 
 expStringClass destPvExpString[NUMPVS];
 
 expStringClass sourceExpString[NUMPVS];
 
-int activeMode;
+int activeMode, active, init;
 
 Widget popUpMenu, pullDownMenu, pb[maxDsps];
 
