@@ -34,22 +34,22 @@ lib114135a4-6f6c-11d3-95bc-00104b8742df.a : $(OBJS)
 util.fac : $(MESSAGES)
 	$(BLDMSG) util_mes.list util
 
-ipncl_pkg.o : ./net/linux/ipncl_pkg.c $(INCLUDES)
+ipncl_pkg.o : ./net/linux/ipncl_pkg.c
 	$(compile) -c ./net/linux/ipncl_pkg.c -o $@
 
-ipnsv_pkg.o : ./net/linux/ipnsv_pkg.c $(INCLUDES)
+ipnsv_pkg.o : ./net/linux/ipnsv_pkg.c
 	$(compile) -c ./net/linux/ipnsv_pkg.c -o $@
 
-sys_pkg.o : ./sys/linux/sys_pkg.c $(INCLUDES)
+sys_pkg.o : ./sys/linux/sys_pkg.c
 	$(compile) -c ./sys/linux/sys_pkg.c -o $@
 
-os_pkg.o : ./sys/linux/os_pkg.c $(INCLUDES)
+os_pkg.o : ./sys/linux/os_pkg.c
 	$(compile) -c ./sys/linux/os_pkg.c -o $@
 
-msg_pkg.o : ./msg/msg_pkg.c $(INCLUDES)
+msg_pkg.o : ./msg/msg_pkg.c
 	$(compile) -c ./msg/msg_pkg.c -o $@
 
-thread_pkg.o : ./thread/linux/thread_pkg.c $(INCLUDES)
+thread_pkg.o : ./thread/linux/thread_pkg.c
 	$(compile) -c ./thread/linux/thread_pkg.c -o $@
 
 client_iprpc_pkg.o : ./iprpc/osf/client_iprpc_pkg.c
