@@ -139,6 +139,20 @@ double fvalue;
 
   XmScaleSetValue( w, mslo->controlX );
 
+  mslo->oldControlV = mslo->oneControlV;
+
+  mslo->eraseActiveControlText();
+
+  mslo->actWin->appCtx->proc->lock();
+  mslo->controlV = mslo->oneControlV = mslo->curControlV;
+  mslo->actWin->appCtx->proc->unlock();
+
+  mslo->controlV = fvalue;
+
+  sprintf( mslo->controlValue, mslo->controlFormat, mslo->controlV );
+
+  stat = mslo->drawActiveControlText();
+
   if ( mslo->controlExists ) {
 #ifdef __epics__
     stat = ca_put( DBR_DOUBLE, mslo->controlPvId, &fvalue );
