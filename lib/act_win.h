@@ -111,6 +111,7 @@
 #define AWC_POPUP_FLIP_V 147
 #define AWC_POPUP_HELP 148
 #define AWC_POPUP_SELECT_ALL 149
+#define AWC_POPUP_SELECT_SCHEME_SET 150
 
 #define AWC_NONE_SELECTED 1
 #define AWC_ONE_SELECTED 2
@@ -249,6 +250,11 @@ static void awc_WMExit_cb (
   XtPointer client,
   XtPointer call );
 
+static void selectScheme_cb (
+   Widget w,
+  XtPointer client,
+  XtPointer call );
+
 static void b1ReleaseOneSelect_cb (
    Widget w,
   XtPointer client,
@@ -368,6 +374,7 @@ typedef struct objNameListTag {
   struct objNameListTag *blink;
   Widget w;
   char *objName;
+  char *objType;
 } objNameListType, *objNameListPtr;
 
 typedef struct commentLinesTag {
@@ -378,6 +385,8 @@ typedef struct commentLinesTag {
 class activeWindowClass {
 
 public:
+
+char curSchemeSet[63+1];
 
 char startSignature[15+1];
 
@@ -406,9 +415,6 @@ int changeSinceAutoSave, doAutoSave;
 char autosaveName[255+1];
 
 int doClose;
-
-char dataFilePrefix[127+1];
-char userDataFilePrefix[127+1];
 
 widgetAndPointerType wpFileSelect, wpSchemeSelect;
 
@@ -523,6 +529,11 @@ friend void awc_save_cancel (
   XtPointer call );
 
 friend void awc_WMExit_cb (
+   Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void selectScheme_cb (
    Widget w,
   XtPointer client,
   XtPointer call );
@@ -652,7 +663,7 @@ Widget b1OneSelectPopup, b1ManySelectPopup, b1NoneSelectPopup,
  b2ExecutePopup, chPd, grPd, grCb, mnPd, mnCb, ctlPd, ctlCb, alignPd, alignCb,
  centerPd, centerCb, distributePd, distributeCb, sizePd, sizeCb, orientPd1,
  orientPdM, orientCb1, orientCbM, editPd1, editPdM, editCb1, editCbM,
- dragPopup, undoPb1, undoPb2, undoPb3;
+ dragPopup, undoPb1, undoPb2, undoPb3, setSchemePd, setSchemeCb;
 
 int state;
 int savedState;
@@ -1113,18 +1124,6 @@ int activeWindowClass::remDefExeNode (
 void activeWindowClass::processObjects ( void );
 
 /* new new new */
-
-void activeWindowClass::expandFileName (
-  char *expandedName,
-  char *inName,
-  char *ext,
-  int maxSize );
-
-void activeWindowClass::expandUserFileName (
-  char *expandedName,
-  char *inName,
-  char *ext,
-  int maxSize );
 
 void activeWindowClass::storeFileName (
   char *inName );

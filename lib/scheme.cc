@@ -17,6 +17,7 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "scheme.h"
+#include "app_pkg.h"
 
 displaySchemeClass::displaySchemeClass ( void )
 {
@@ -41,42 +42,53 @@ displaySchemeClass::displaySchemeClass ( void )
   defBtnAlignment = XmALIGNMENT_BEGINNING;
   strcpy( defPvType, "" );
 
+  appCtx = NULL;
 }
 
 displaySchemeClass::~displaySchemeClass ( void ) { }
+
+void displaySchemeClass::setAppCtx (
+  appContextClass *_appCtx )
+{
+
+  appCtx = _appCtx;
+
+}
 
 int displaySchemeClass::loadDefault (
   colorInfoClass *ci )
 {
 
-char *envPtr;
-char fileName[127+1], buf[127+1], *tk;
+char buf[127+1];
 FILE *f;
-int r, g, b;
+int i, r, g, b;
 int major, minor, release;
 unsigned int pixel;
 
-  envPtr = getenv( environment_str5 );
-  if ( envPtr ) {
-    strncpy( buf, envPtr, 127 );
-    tk = strtok( buf, ":" );
-    if ( tk ) {
-      strncpy( fileName, tk, 127 );
-      if ( fileName[strlen(fileName)-1] != '/' )
-       strncat( fileName, "/", 127 );
-    }
-    else {
-      strcpy( fileName, "" );
-    }
+  if ( appCtx ) {
+
+    i = 0;
+    do {
+
+      appCtx->expandFileName( i, buf, "default", ".scheme", 127 );
+
+      if ( strcmp( buf, "" ) != 0 ) {
+        f = fopen( buf, "r" );
+      }
+
+      i++;
+
+    } while ( ( i < appCtx->numPaths ) && !f );
+
+    if ( !f ) return 0;
+
   }
   else {
-    strcpy( fileName, "" );
+
+    f = fopen( "./default.scheme", "r" );
+    if ( !f ) return 0;
+
   }
-
-  strncat( fileName, "default.scheme", 127 );
-
-  f = fopen( fileName, "r" );
-  if ( !f ) return 0;
 
   fscanf( f, "%d %d %d\n", &major, &minor, &release );
 

@@ -361,8 +361,8 @@ Atom wm_delete_window;
     n = 0;
     XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
-    if ( strcmp( awo->dataFilePrefix, "" ) != 0 ) {
-      xmStr2 = XmStringCreateLocalized( awo->dataFilePrefix );
+    if ( strcmp( awo->appCtx->curPath, "" ) != 0 ) {
+      xmStr2 = XmStringCreateLocalized( awo->appCtx->curPath );
       XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
     }
 
@@ -1146,6 +1146,32 @@ activeWindowClass *awo = (activeWindowClass *) client;
 
 }
 
+static void selectScheme_cb (
+   Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeWindowClass *awo;
+popupBlockPtr block;
+char *item;
+
+  block = (popupBlockPtr) client;
+  item = (char *) block->ptr;
+  awo = (activeWindowClass *) block->awo;
+
+  if ( item ) {
+    //printf( "selectScheme_cb, item = [%s]\n", item );
+    strncpy( awo->curSchemeSet, item, 63 );
+  }
+  else {
+    strncpy( awo->curSchemeSet, "", 63 );
+    awo->appCtx->displayScheme.loadDefault( &awo->appCtx->ci );
+    awo->setDisplayScheme( &awo->appCtx->displayScheme );
+  }
+
+}
+
 static void b1ReleaseOneSelect_cb (
    Widget w,
   XtPointer client,
@@ -1239,8 +1265,8 @@ Atom wm_delete_window;
       n = 0;
       XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
-      if ( strcmp( awo->dataFilePrefix, "" ) != 0 ) {
-        xmStr2 = XmStringCreateLocalized( awo->dataFilePrefix );
+      if ( strcmp( awo->appCtx->curPath, "" ) != 0 ) {
+        xmStr2 = XmStringCreateLocalized( awo->appCtx->curPath );
         XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
       }
 
@@ -1290,8 +1316,8 @@ Atom wm_delete_window;
       n = 0;
       XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
-      if ( strcmp( awo->userDataFilePrefix, "" ) != 0 ) {
-        xmStr2 = XmStringCreateLocalized( awo->userDataFilePrefix );
+      if ( strcmp( awo->appCtx->curPath, "" ) != 0 ) {
+        xmStr2 = XmStringCreateLocalized( awo->appCtx->curPath );
         XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
       }
 
@@ -2454,8 +2480,8 @@ Atom wm_delete_window;
       n = 0;
       XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
-      if ( strcmp( awo->dataFilePrefix, "" ) != 0 ) {
-        xmStr2 = XmStringCreateLocalized( awo->dataFilePrefix );
+      if ( strcmp( awo->appCtx->colorPath, "" ) != 0 ) {
+        xmStr2 = XmStringCreateLocalized( awo->appCtx->colorPath );
         XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
       }
 
@@ -2506,8 +2532,8 @@ Atom wm_delete_window;
       n = 0;
       XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
-      if ( strcmp( awo->dataFilePrefix, "" ) != 0 ) {
-        xmStr2 = XmStringCreateLocalized( awo->dataFilePrefix );
+      if ( strcmp( awo->appCtx->colorPath, "" ) != 0 ) {
+        xmStr2 = XmStringCreateLocalized( awo->appCtx->colorPath );
         XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
       }
 
@@ -2558,8 +2584,8 @@ Atom wm_delete_window;
       n = 0;
       XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
-      if ( strcmp( awo->userDataFilePrefix, "" ) != 0 ) {
-        xmStr2 = XmStringCreateLocalized( awo->userDataFilePrefix );
+      if ( strcmp( awo->appCtx->curPath, "" ) != 0 ) {
+        xmStr2 = XmStringCreateLocalized( awo->appCtx->curPath );
         XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
       }
 
@@ -2611,8 +2637,8 @@ Atom wm_delete_window;
         n = 0;
         XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
-        if ( strcmp( awo->userDataFilePrefix, "" ) != 0 ) {
-          xmStr2 = XmStringCreateLocalized( awo->userDataFilePrefix );
+        if ( strcmp( awo->appCtx->curPath, "" ) != 0 ) {
+          xmStr2 = XmStringCreateLocalized( awo->appCtx->curPath );
           XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
         }
 
@@ -2669,8 +2695,8 @@ Atom wm_delete_window;
       n = 0;
       XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
-      if ( strcmp( awo->dataFilePrefix, "" ) != 0 ) {
-        xmStr2 = XmStringCreateLocalized( awo->dataFilePrefix );
+      if ( strcmp( awo->appCtx->curPath, "" ) != 0 ) {
+        xmStr2 = XmStringCreateLocalized( awo->appCtx->curPath );
         XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
       }
 
@@ -2720,8 +2746,8 @@ Atom wm_delete_window;
       n = 0;
       XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
-      if ( strcmp( awo->userDataFilePrefix, "" ) != 0 ) {
-        xmStr2 = XmStringCreateLocalized( awo->userDataFilePrefix );
+      if ( strcmp( awo->appCtx->curPath, "" ) != 0 ) {
+        xmStr2 = XmStringCreateLocalized( awo->appCtx->curPath );
         XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
       }
 
@@ -4702,6 +4728,7 @@ activeWindowClass *awo;
 objNameListPtr curObjNameNode;
 activeGraphicListPtr cur;
 int stat;
+char schemeFile[255+1];
 
   // find object name
 
@@ -4710,6 +4737,23 @@ int stat;
   curObjNameNode = awo->objNameHead->flink;
   while ( curObjNameNode != awo->objNameHead ) {
     if ( curObjNameNode->w == w ) {
+
+      awo->appCtx->getScheme( awo->curSchemeSet, curObjNameNode->objName,
+       curObjNameNode->objType, schemeFile, 255 );
+      if ( strcmp( schemeFile, "" ) != 0 ) {
+        //printf( "load new scheme [%s]\n", schemeFile );
+        if ( strcmp( schemeFile, "default" ) == 0 ) {
+          awo->appCtx->displayScheme.loadDefault( &awo->appCtx->ci );
+          awo->setDisplayScheme( &awo->appCtx->displayScheme );
+        }
+	else {
+          stat = awo->loadScheme( schemeFile );
+          if ( !( stat & 1 ) ) {
+            awo->appCtx->displayScheme.loadDefault( &awo->appCtx->ci );
+            awo->setDisplayScheme( &awo->appCtx->displayScheme );
+          }
+	}
+      }
 
       // create object
 
@@ -8707,9 +8751,6 @@ done:
 
 activeWindowClass::activeWindowClass ( void ) {
 
-int stat;
-char *envPtr, *gotIt, buf[127+1], save[127+1], *tk;
-
   strcpy( startSignature, "edmActiveWindow" );
   strcpy( endSignature, "wodniWevitcAmde" );
 
@@ -8796,80 +8837,6 @@ char *envPtr, *gotIt, buf[127+1], save[127+1], *tk;
   pollHead->flink = pollHead;
   pollHead->blink = pollHead;
 
-  envPtr = getenv( environment_str1 );
-  if ( envPtr ) {
-
-    strncpy( buf, envPtr, 127 );
-
-    tk = strtok( buf, ":" );
-    if ( tk ) {
-      strncpy( dataFilePrefix, tk, 127 );
-    }
-    else {
-      strcpy( dataFilePrefix, "./" );
-    }
-
-    tk = strtok( NULL, ":" );
-    if ( tk ) {
-      strncpy( userDataFilePrefix, tk, 127 );
-    }
-    else {
-      strcpy( userDataFilePrefix, "./" );
-    }
-
-    if ( dataFilePrefix[strlen(dataFilePrefix)-1] == '/' )
-     dataFilePrefix[strlen(dataFilePrefix)-1] = 0;
-
-    gotIt = getcwd( save, 127 );
-    if ( !gotIt ) {
-      printf( activeWindowClass_str80, __LINE__, __FILE__ );
-      exit(0);
-    }
-
-    strncpy( buf, dataFilePrefix, 127 );
-    stat = chdir( buf );
-    if ( stat ) {
-      perror( activeWindowClass_str81 );
-      printf( activeWindowClass_str82 );
-    }
-    getcwd( dataFilePrefix, 127 );
-
-    chdir( save );
-
-    if ( userDataFilePrefix[strlen(userDataFilePrefix)-1] == '/' )
-     userDataFilePrefix[strlen(userDataFilePrefix)-1] = 0;
-
-    gotIt = getcwd( save, 127 );
-    if ( !gotIt ) {
-      printf( activeWindowClass_str80, __LINE__, __FILE__ );
-      exit(0);
-    }
-
-    strncpy( buf, userDataFilePrefix, 127 );
-    stat = chdir( buf );
-    if ( stat ) {
-      perror( activeWindowClass_str81 );
-      printf( activeWindowClass_str82 );
-    }
-    getcwd( userDataFilePrefix, 127 );
-
-    chdir( save );
-
-  }
-  else {
-
-    getcwd( dataFilePrefix, 127 );
-
-    getcwd( userDataFilePrefix, 127 );
-
-  }
-
-  if ( dataFilePrefix[strlen(dataFilePrefix)-1] != '/' )
-   strncat( dataFilePrefix, "/", 127 );
-
-  if ( userDataFilePrefix[strlen(userDataFilePrefix)-1] != '/' )
-   strncat( userDataFilePrefix, "/", 127 );
-
   strcpy( id, "" );
   strcpy( title, "" );
   strcpy( autosaveName, "" );
@@ -8878,6 +8845,8 @@ char *envPtr, *gotIt, buf[127+1], save[127+1], *tk;
 
   activateCallbackFlag = deactivateCallbackFlag = 0;
 
+  setSchemePd = NULL;
+  setSchemeCb = NULL;
   chPd = NULL;
   grPd = NULL;
   grCb = NULL;
@@ -8943,6 +8912,8 @@ char *envPtr, *gotIt, buf[127+1], save[127+1], *tk;
 
   msgDialogCreated = 0;
   msgDialogPoppedUp = 0;
+
+  strcpy( curSchemeSet, "" );
 
 }
 
@@ -9069,6 +9040,7 @@ commentLinesPtr commentCur, commentNext;
     XtRemoveCallback( curObjName->w, XmNactivateCallback, createPopup_cb,
      (XtPointer) this );
     XtDestroyWidget( curObjName->w );
+    delete curObjName->objType;
     delete curObjName;
     curObjName = nextObjName;
   }
@@ -9103,6 +9075,8 @@ commentLinesPtr commentCur, commentNext;
      drawWinEventHandler, (XtPointer) this );
   }
 
+  if ( setSchemePd ) XtDestroyWidget( setSchemePd );
+  if ( setSchemeCb ) XtDestroyWidget( setSchemeCb );
   if ( chPd ) XtDestroyWidget( chPd );
   if ( grPd ) XtDestroyWidget( grPd );
   if ( grCb ) XtDestroyWidget( grCb );
@@ -9327,7 +9301,7 @@ double newX, newY, newW, newH;
     newH =
      (int) ( (double) cur->node->getH() * yScaleFactor + 0.5 );
 
-    cur->node->resizeAbs( newX, newY, newW, newH );
+    cur->node->resizeAbs( (int) newX, (int) newY, (int) newW, (int) newH );
 
     cur->node->snapSizeToGrid();
 
@@ -9751,6 +9725,8 @@ Atom wm_delete_window;
     curObjNameNode = new objNameListType;
     curObjNameNode->w = pb;
     curObjNameNode->objName = oneObjName;
+    curObjNameNode->objType = new char[strlen(global_str3)+1];
+    strcpy( curObjNameNode->objType, global_str3 );
 
     curObjNameNode->blink = objNameHead->blink;
     objNameHead->blink->flink = curObjNameNode;
@@ -9795,6 +9771,8 @@ Atom wm_delete_window;
     curObjNameNode = new objNameListType;
     curObjNameNode->w = pb;
     curObjNameNode->objName = oneObjName;
+    curObjNameNode->objType = new char[strlen(global_str2)+1];
+    strcpy( curObjNameNode->objType, global_str2 );
 
     curObjNameNode->blink = objNameHead->blink;
     objNameHead->blink->flink = curObjNameNode;
@@ -9839,6 +9817,8 @@ Atom wm_delete_window;
     curObjNameNode = new objNameListType;
     curObjNameNode->w = pb;
     curObjNameNode->objName = oneObjName;
+    curObjNameNode->objType = new char[strlen(global_str5)+1];
+    strcpy( curObjNameNode->objType, global_str5 );
 
     curObjNameNode->blink = objNameHead->blink;
     objNameHead->blink->flink = curObjNameNode;
@@ -9876,6 +9856,73 @@ Atom wm_delete_window;
 
   XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
    (XtPointer) &curBlockListNode->block );
+
+
+  setSchemePd = NULL;
+  if ( appCtx->numSchemeSets ) {
+
+    setSchemePd = XmCreatePulldownMenu( b2NoneSelectPopup, "", NULL, 0 );
+
+    str = XmStringCreateLocalized( activeWindowClass_str186 );
+
+    setSchemeCb = XtVaCreateManagedWidget( "Select Scheme Set",
+     xmCascadeButtonWidgetClass,
+     b2NoneSelectPopup,
+     XmNlabelString, str,
+     XmNsubMenuId, setSchemePd,
+     NULL );
+
+    XmStringFree( str );
+
+    str = XmStringCreateLocalized( "None" );
+
+    pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+     setSchemePd,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    curBlockListNode = new popupBlockListType;
+    curBlockListNode->block.w = pb;
+    curBlockListNode->block.ptr = (void *) NULL;
+    curBlockListNode->block.awo = this;
+
+    curBlockListNode->blink = popupBlockHead->blink;
+    popupBlockHead->blink->flink = curBlockListNode;
+    popupBlockHead->blink = curBlockListNode;
+    curBlockListNode->flink = popupBlockHead;
+
+    XtAddCallback( pb, XmNactivateCallback, selectScheme_cb,
+     (XtPointer) &curBlockListNode->block );
+
+    for ( i=0; i<appCtx->numSchemeSets; i++ ) {
+
+      str = XmStringCreateLocalized( appCtx->schemeSetList[i] );
+
+      pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+       setSchemePd,
+       XmNlabelString, str,
+       NULL );
+
+      XmStringFree( str );
+
+      curBlockListNode = new popupBlockListType;
+      curBlockListNode->block.w = pb;
+      curBlockListNode->block.ptr = (void *) appCtx->schemeSetList[i];
+      curBlockListNode->block.awo = this;
+
+      curBlockListNode->blink = popupBlockHead->blink;
+      popupBlockHead->blink->flink = curBlockListNode;
+      popupBlockHead->blink = curBlockListNode;
+      curBlockListNode->flink = popupBlockHead;
+
+      XtAddCallback( pb, XmNactivateCallback, selectScheme_cb,
+       (XtPointer) &curBlockListNode->block );
+
+    }
+
+  }
 
 
   str = XmStringCreateLocalized( activeWindowClass_str93 );
@@ -10062,6 +10109,7 @@ Atom wm_delete_window;
     (XtPointer) &curBlockListNode->block );
 
 
+#if 0
    str = XmStringCreateLocalized( activeWindowClass_str99 );
 
    pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
@@ -10083,7 +10131,7 @@ Atom wm_delete_window;
 
    XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
     (XtPointer) &curBlockListNode->block );
-
+#endif
 
   str = XmStringCreateLocalized( activeWindowClass_str100 );
 
@@ -11595,6 +11643,7 @@ Atom wm_delete_window;
    (XtPointer) &curBlockListNode->block );
 
 
+#if 0
   str = XmStringCreateLocalized( activeWindowClass_str147 );
 
   pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
@@ -11616,6 +11665,7 @@ Atom wm_delete_window;
 
   XtAddCallback( pb, XmNactivateCallback, b2ReleaseExecute_cb,
    (XtPointer) &curBlockListNode->block );
+#endif
 
 
   if ( closeAllowed ) {
@@ -11856,7 +11906,7 @@ int stat;
     strncpy( oneFileName, fName, 255 );
   }
   else {
-    strncpy( oneFileName, dataFilePrefix, 255 );
+    strncpy( oneFileName, appCtx->colorPath, 255 );
     strncat( oneFileName, fName, 255 );
   }
 
@@ -11949,7 +11999,7 @@ int stat;
     strncpy( oneFileName, fName, 255 );
   }
   else {
-    strncpy( oneFileName, dataFilePrefix, 255 );
+    strncpy( oneFileName, appCtx->colorPath, 255 );
     strncat( oneFileName, fName, 255 );
   }
 
@@ -12060,7 +12110,7 @@ int stat;
     strncpy( oneFileName, fName, 255 );
   }
   else {
-    strncpy( oneFileName, userDataFilePrefix, 255 );
+    strncpy( oneFileName, appCtx->curPath, 255 );
     strncat( oneFileName, fName, 255 );
   }
 
@@ -14731,7 +14781,7 @@ int result;
     strncpy( oneFileName, fName, 255 );
   }
   else {
-    strncpy( oneFileName, userDataFilePrefix, 255 );
+    strncpy( oneFileName, appCtx->curPath, 255 );
     strncat( oneFileName, fName, 255 );
   }
 
@@ -15106,68 +15156,6 @@ activeGraphicListPtr cur;
 
 }
 
-void activeWindowClass::expandFileName (
-  char *expandedName,
-  char *inName,
-  char *ext,
-  int maxSize )
-{
-
-char *gotOne;
-
-    gotOne = strstr( inName, "/" );
-
-  if ( gotOne ) {
-    strncpy( expandedName, inName, maxSize );
-  }
-  else {
-    strncpy( expandedName, dataFilePrefix, maxSize );
-    strncat( expandedName, inName, maxSize );
-  }
-
-  if ( strlen(expandedName) > strlen(ext) ) {
-    if ( strcmp( &expandedName[strlen(expandedName)-strlen(ext)], ext )
-     != 0 ) {
-      strncat( expandedName, ext, maxSize );
-    }
-  }
-  else {
-    strncat( expandedName, ext, maxSize );
-  }
-
-}
-
-void activeWindowClass::expandUserFileName (
-  char *expandedName,
-  char *inName,
-  char *ext,
-  int maxSize )
-{
-
-char *gotOne;
-
-  gotOne = strstr( inName, "/" );
-
-  if ( gotOne ) {
-    strncpy( expandedName, inName, maxSize );
-  }
-  else {
-    strncpy( expandedName, userDataFilePrefix, maxSize );
-    strncat( expandedName, inName, maxSize );
-  }
-
-  if ( strlen(expandedName) > strlen(ext) ) {
-    if ( strcmp( &expandedName[strlen(expandedName)-strlen(ext)], ext )
-     != 0 ) {
-      strncat( expandedName, ext, maxSize );
-    }
-  }
-  else {
-    strncat( expandedName, ext, maxSize );
-  }
-
-}
-
 void activeWindowClass::storeFileName (
   char *inName )
 {
@@ -15186,29 +15174,23 @@ FILE *activeWindowClass::openAny (
 
 char buf[255+1];
 FILE *f;
+int i;
 
-  this->expandUserFileName( buf, name, ".edl", 255 );
+  for ( i=0; i<appCtx->numPaths; i++ ) {
 
-  f = fopen( buf, mode );
-  if ( !f ) {
+    appCtx->expandFileName( i, buf, name, ".edl", 255 );
 
-    if ( strcmp( dataFilePrefix, "" ) != 0 ) {
-      this->expandFileName( buf, name, ".edl", 255 );
-    }
-    else {
-      return NULL;
-    }
-
-    f = fopen( buf, mode );
-    if ( !f ) {
-
-      return NULL;
-
+    if ( strcmp( buf, "" ) != 0 ) {
+      f = fopen( buf, mode );
+      if ( f ) {
+        strncpy( fileName, buf, 255 ); // update fileName
+        return f;
+      }
     }
 
   }
 
-  return f;
+  return NULL;
 
 }
 
@@ -15219,29 +15201,22 @@ FILE *activeWindowClass::openExchangeFile (
 
 char buf[255+1];
 FILE *f;
+int i;
 
-  this->expandUserFileName( buf, name, ".xch", 255 );
+  for ( i=0; i<appCtx->numPaths; i++ ) {
 
-  f = fopen( buf, mode );
-  if ( !f ) {
-
-    if ( strcmp( dataFilePrefix, "" ) != 0 ) {
-      this->expandFileName( buf, name, ".xch", 255 );
-    }
-    else {
-      return NULL;
-    }
-
-    f = fopen( buf, mode );
-    if ( !f ) {
-
-      return NULL;
-
+    appCtx->expandFileName( i, buf, name, ".xch", 255 );
+    if ( strcmp( buf, "" ) != 0 ) {
+      f = fopen( buf, mode );
+      if ( f ) {
+        strncpy( fileName, buf, 255 ); // update fileName
+        return f;
+      }
     }
 
   }
 
-  return f;
+  return NULL;
 
 }
 
@@ -15530,19 +15505,13 @@ int i, len, iIn, iOut, p0, p1, more, state, winid;
 	}
         else if ( strcmp( param, "<PROJDIR>" ) == 0 ) {
           bufOut[iOut] = 0;
-          strncat( bufOut, dataFilePrefix, max );
-          iOut = strlen( bufOut );
-          if ( iOut >= max ) iOut = max - 1;
-	}
-        else if ( strcmp( param, "<USERDIR>" ) == 0 ) {
-          bufOut[iOut] = 0;
-          strncat( bufOut, userDataFilePrefix, max );
+          strncat( bufOut, appCtx->dataFilePrefix[0], max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
 	}
         else if ( strcmp( param, "<HELPDIR>" ) == 0 ) {
           bufOut[iOut] = 0;
-          envPtr = getenv( "EDMHELPFILES" );
+          envPtr = getenv( environment_str5 );
           if ( envPtr ) {
             strncat( bufOut, envPtr, max );
             iOut = strlen( bufOut );
@@ -15815,7 +15784,7 @@ char *sysMacros[] = {
     cur = cur->flink;
   }
 
-  envPtr = getenv( "EDMHELPFILES" );
+  envPtr = getenv( environment_str5 );
   if ( envPtr ) {
 
     strncpy( buf, envPtr, 255 );

@@ -31,6 +31,63 @@ typedef struct libRecTag {
   char *text;
 } libRecType, *libRecPtr;
 
+static int compare_nodes (
+  void *node1,
+  void *node2
+) {
+
+schemeListPtr p1, p2;
+
+  p1 = (schemeListPtr) node1;
+  p2 = (schemeListPtr) node2;
+
+  return strcmp( p1->objName, p2->objName );
+
+}
+
+static int compare_key (
+  void *key,
+  void *node
+) {
+
+schemeListPtr p;
+char *oneIndex;
+
+  p = (schemeListPtr) node;
+  oneIndex = (char *) key;
+
+  return strcmp( oneIndex, p->objName );
+
+}
+
+static int copy_nodes (
+  void *node1,
+  void *node2
+) {
+
+schemeListPtr p1, p2;
+
+  p1 = (schemeListPtr) node1;
+  p2 = (schemeListPtr) node2;
+
+  *p1 = *p2;
+
+  // give p1 a copy of the object name
+  if ( p2->objName ) {
+    p1->objName = new char[ strlen(p2->objName) + 1 ];
+    strcpy( p1->objName, p2->objName );
+  }
+
+  // give p1 a copy of the file name
+  if ( p2->fileName ) {
+    p1->fileName = new char[ strlen(p2->fileName) + 1 ];
+    strcpy( p1->fileName, p2->fileName );
+  }
+
+  return 1;
+
+}
+
 static void manageComponents (
   char *op,
   char *libFile )
@@ -824,6 +881,22 @@ activeWindowListPtr cur;
 
 #endif
 
+void setPath_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+callbackBlockPtr cbPtr = (callbackBlockPtr) client;
+char *item = (char *) cbPtr->ptr;
+appContextClass *apco = (appContextClass *) cbPtr->apco;
+
+  //printf( "setPath_cb, item = [%s]\n", item );
+
+  strncpy( apco->curPath, item, 127 );
+
+}
+
 void app_fileSelectOk_cb (
   Widget w,
   XtPointer client,
@@ -1027,24 +1100,9 @@ appContextClass *apco = (appContextClass *) client;
 int n;
 Arg args[10];
 XmString xmStr1, xmStr2;
-char *envPtr, buf[127+1], prefix[127+1], *tk;
+char prefix[127+1];
 
-  envPtr = getenv( environment_str1 );
-  if ( envPtr ) {
-    strncpy( buf, envPtr, 127 );
-    tk = strtok( buf, ":" );
-    if ( tk ) {
-      strncpy( prefix, tk, 127 );
-      if ( prefix[strlen(prefix)-1] != '/' )
-       strncat( prefix, "/", 127 );
-    }
-    else {
-      strcpy( prefix, "./" );
-    }
-  }
-  else {
-    strcpy( prefix, "./" );
-  }
+  strncpy( prefix, apco->curPath, 127 );
 
   n = 0;
 
@@ -1078,30 +1136,9 @@ appContextClass *apco = (appContextClass *) client;
 int n;
 Arg args[10];
 XmString xmStr1, xmStr2;
-char *envPtr, buf[127+1], prefix[127+1], *tk;
+char prefix[127+1];
 
-  envPtr = getenv( environment_str1 );
-  if ( envPtr ) {
-    strncpy( buf, envPtr, 127 );
-    tk = strtok( buf, ":" );
-    if ( tk ) {
-      tk = strtok( NULL, ":" );
-      if ( tk ) {
-        strncpy( prefix, tk, 127 );
-        if ( prefix[strlen(prefix)-1] != '/' )
-         strncat( prefix, "/", 127 );
-      }
-      else {
-        strcpy( prefix, "./" );
-      }
-    }
-    else {
-      strcpy( prefix, "./" );
-    }
-  }
-  else {
-    strcpy( prefix, "./" );
-  }
+  strncpy( prefix, apco->curPath, 127 );
 
   n = 0;
 
@@ -1135,24 +1172,9 @@ appContextClass *apco = (appContextClass *) client;
 int n;
 Arg args[10];
 XmString xmStr1, xmStr2;
-char *envPtr, buf[127+1], prefix[127+1], *tk;
+char prefix[127+1];
 
-  envPtr = getenv( environment_str1 );
-  if ( envPtr ) {
-    strncpy( buf, envPtr, 127 );
-    tk = strtok( buf, ":" );
-    if ( tk ) {
-      strncpy( prefix, tk, 127 );
-      if ( prefix[strlen(prefix)-1] != '/' )
-       strncat( prefix, "/", 127 );
-    }
-    else {
-      strcpy( prefix, "./" );
-    }
-  }
-  else {
-    strcpy( prefix, "./" );
-  }
+  strncpy( prefix, apco->curPath, 127 );
 
   n = 0;
 
@@ -1373,7 +1395,7 @@ char *sysMacros[] = {
     cur = cur->flink;
   }
 
-  envPtr = getenv( "EDMHELPFILES" );
+  envPtr = getenv( environment_str5 );
   if ( envPtr ) {
 
     strncpy( buf, envPtr, 255 );
@@ -1481,16 +1503,28 @@ appContextClass::appContextClass (
 
   viewXy = 0;
 
+  getFilePaths();
+  strncpy( curPath, dataFilePrefix[0], 127 );
+
+  buildSchemeList();
+
+  // sentinel node
+  callbackBlockHead = new callbackBlockType;
+  callbackBlockTail = callbackBlockHead;
+  callbackBlockTail->flink = NULL;
+
 }
 
 appContextClass::~appContextClass (
   void )
 {
 
+int i;
 activeWindowListPtr cur, next;
 activeGraphicListPtr curCut, nextCut;
 macroListPtr curMacro, nextMacro;
 fileListPtr curFile, nextFile;
+callbackBlockPtr curCbBlock, nextCbBlock;
 
   ci.closeColorWindow();
 
@@ -1537,7 +1571,6 @@ fileListPtr curFile, nextFile;
     delete cur;
     cur = next;
   }
-  //  processAllEventsWithSync( app, display );
   processAllEvents( app, display );
   delete head;
 
@@ -1565,16 +1598,520 @@ fileListPtr curFile, nextFile;
 
   XtDestroyWidget( mainWin );
 
-  //  processAllEventsWithSync( app, display );
   processAllEvents( app, display );
 
   XtDestroyWidget( appTop );
 
-  //  processAllEventsWithSync( app, display );
   processAllEvents( app, display );
+
+  if ( dataFilePrefix ) {
+    for ( i=0; i<numPaths; i++ ) {
+      delete dataFilePrefix[i];
+      dataFilePrefix[i] = NULL;
+    }
+    delete dataFilePrefix;
+    dataFilePrefix = NULL;
+  }
+
+  destroySchemeList();
+
+  curCbBlock = callbackBlockHead->flink;
+  while ( curCbBlock ) {
+    nextCbBlock = curCbBlock->flink;
+    delete curCbBlock;
+    curCbBlock = nextCbBlock;
+  }
+  delete callbackBlockHead;
+
+}
+
+void appContextClass::getFilePaths ( void ) {
+
+int i, stat;
+char *envPtr, *gotIt, buf[1270+1], save[127+1], path[127+1], *tk;
+
+  // EDMFILES
+  envPtr = getenv( environment_str2 );
+  if ( envPtr ) {
+
+    strncpy( buf, envPtr, 1270 );
+
+    tk = strtok( buf, ":" );
+    if ( tk ) {
+
+      strncpy( colorPath, tk, 127 );
+      if ( path[strlen(colorPath)-1] != '/' ) strncat( colorPath, "/", 127 );
+
+    }
+    else {
+
+      strncpy( colorPath, "./", 127 );
+
+    }
+
+  }
+  else {
+
+    strncpy( colorPath, "./", 127 );
+
+  }
+
+  // EDMDATAFILES
+
+  envPtr = getenv( environment_str1 );
+  if ( envPtr ) {
+
+    // count number of search paths
+    strncpy( buf, envPtr, 1270 );
+
+    numPaths = 0;
+    tk = strtok( buf, ":" );
+    while ( tk ) {
+
+      numPaths++;
+
+      tk = strtok( NULL, ":" );
+
+    }
+
+    if ( numPaths == 0 ) {
+
+      strcpy( path, "." );
+
+      gotIt = getcwd( save, 127 );
+      if ( !gotIt ) {
+        printf( appContextClass_str118, __LINE__, __FILE__ );
+        exit(0);
+      }
+
+      stat = chdir( path );
+      if ( stat ) {
+        perror( appContextClass_str119 );
+        printf( appContextClass_str120 );
+      }
+      getcwd( path, 127 );
+
+      chdir( save );
+
+      if ( path[strlen(path)-1] != '/' )
+       strncat( path, "/", 127 );
+
+      numPaths = 1;
+      dataFilePrefix = new (char *)[1];
+      dataFilePrefix[0] = new char[strlen(path)+1];
+      strcpy( dataFilePrefix[0], path );
+
+      return;
+
+    }
+
+    dataFilePrefix = new (char *)[numPaths];
+
+    strncpy( buf, envPtr, 1270 );
+    tk = strtok( buf, ":" );
+    for ( i=0; i<numPaths; i++ ) {
+
+      strncpy( path, tk, 127 );
+      if ( path[strlen(path)-1] == '/' ) path[strlen(path)-1] = 0;
+
+      gotIt = getcwd( save, 127 );
+      if ( !gotIt ) {
+        printf( appContextClass_str118, __LINE__, __FILE__ );
+        exit(0);
+      }
+
+      stat = chdir( path );
+      if ( stat ) {
+        perror( appContextClass_str119 );
+        printf( appContextClass_str120 );
+      }
+      getcwd( path, 127 );
+
+      chdir( save );
+
+      if ( path[strlen(path)-1] != '/' )
+       strncat( path, "/", 127 );
+
+      dataFilePrefix[i] = new char[strlen(path)+1];
+      strcpy( dataFilePrefix[i], path );
+
+      tk = strtok( NULL, ":" );
+
+    }
+
+  }
+  else {
+
+    getcwd( path, 127 );
+
+    if ( path[strlen(path)-1] != '/' )
+     strncat( path, "/", 127 );
+
+    numPaths = 1;
+
+    dataFilePrefix = new (char *)[1];
+    dataFilePrefix[0] = new char[strlen(path)+1];
+    strcpy( dataFilePrefix[0], path );
+
+  }
 
 }
 
+
+void appContextClass::expandFileName (
+  int index,
+  char *expandedName,
+  char *inName,
+  char *ext,
+  int maxSize )
+{
+
+char *gotOne;
+
+  if ( index >= numPaths ) {
+    strcpy( expandedName, "" );
+    return;
+  }
+
+  gotOne = strstr( inName, "/" );
+
+  if ( gotOne ) {
+    strncpy( expandedName, inName, maxSize );
+  }
+  else {
+    strncpy( expandedName, dataFilePrefix[index], maxSize );
+    strncat( expandedName, inName, maxSize );
+  }
+
+  if ( strlen(expandedName) > strlen(ext) ) {
+    if ( strcmp( &expandedName[strlen(expandedName)-strlen(ext)], ext )
+     != 0 ) {
+      strncat( expandedName, ext, maxSize );
+    }
+  }
+  else {
+    strncat( expandedName, ext, maxSize );
+  }
+
+}
+
+#define GETTING_SET_NAME 1
+#define GETTING_LIST 2
+void appContextClass::buildSchemeList ( void )
+{
+
+char *envPtr, *ptr;
+char prefix[127+1], fName[127+1], buf[255+1], oName[127+1], sName[63+1],
+ line[255+1], *tk;
+schemeListPtr cur, curSet;
+FILE *f;
+int stat, dup, state, i;
+
+  numSchemeSets = 0;
+  schemeListExists = 0;
+  schemeList = (AVL_HANDLE) NULL;
+  schemeSet = (AVL_HANDLE) NULL;
+
+  //printf( "build scheme list\n" );
+  stat = avl_init_tree( compare_nodes, compare_key, copy_nodes,
+   &(this->schemeList) );
+  if ( !( stat & 1 ) ) return;
+
+  stat = avl_init_tree( compare_nodes, compare_key, copy_nodes,
+   &(this->schemeSet) );
+  if ( !( stat & 1 ) ) return;
+
+  // open scheme list file and build tree
+  envPtr = getenv(environment_str2);
+  if ( envPtr ) {
+    strncpy( prefix, envPtr, 127 );
+    if ( prefix[strlen(prefix)-1] != '/' ) strncat( prefix, "/", 127 );
+  }
+  else {
+    strcpy( prefix, "/etc/" );
+  }
+
+  strncpy( fName, prefix, 127 );
+  strncat( fName, "schemes.list", 127 );
+
+  f = fopen( fName, "r" );
+  if ( !f ) {
+    return;
+  }
+
+  state = GETTING_SET_NAME;
+
+  while ( 1 ) {
+
+    switch ( state ) {
+
+    case GETTING_SET_NAME:
+
+      //printf( "GETTING_SET_NAME\n" );
+
+      ptr = fgets ( line, 255, f );
+      if ( !ptr ) {
+        fclose( f );
+        schemeListExists = 1;
+        goto done;
+        return;
+      }
+
+      tk = strtok( line, " \t\n" );
+      if ( tk ) {
+
+        strncpy( sName, tk, 63 );
+
+        tk = strtok( NULL, " \t\n" );
+        if ( tk ) {
+
+          if ( strcmp( tk, "{" ) != 0 ) {
+            printf( "syntax err\n" );
+            fclose( f );
+            return;
+          }
+
+	}
+	else {
+          printf( "syntax err\n" );
+          fclose( f );
+          return;
+        }
+
+      }
+      else {
+        printf( "syntax err\n" );
+        fclose( f );
+        return;
+      }
+
+      curSet = new schemeListType;
+      curSet->objName = new char[strlen(sName)+1];
+      strcpy( curSet->objName, sName );
+      stat = avl_insert_node( this->schemeSet, (void *) curSet, &dup );
+      if ( !( stat & 1 ) ) {
+        fclose( f );
+        return;
+      }
+      if ( dup ) {
+        printf( "dups\n" );
+      }
+      else {
+        numSchemeSets++;
+      }
+
+      state = GETTING_LIST;
+
+      break;
+
+    case GETTING_LIST:
+
+      //printf( "GETTING_LIST\n" );
+
+      ptr = fgets ( line, 255, f );
+      if ( !ptr ) {
+        printf( "syntax err\n" );
+        fclose( f );
+        return;
+      }
+
+      tk = strtok( line, " \t\n" );
+      if ( tk ) {
+
+        if ( strcmp( tk, "}" ) == 0 ) {
+          state = GETTING_SET_NAME;
+          break;
+	}
+
+        strncpy( oName, tk, 127 );
+
+        tk = strtok( NULL, " \t\n" );
+        if ( tk ) {
+
+          strncpy( fName, tk, 127 );
+
+          cur = new schemeListType;
+          if ( !cur ) {
+            fclose( f );
+            return;
+          }
+
+          strncpy( buf, sName, 255 );
+          strncat( buf, "-", 255 );
+          strncat( buf, oName, 255 );
+
+          cur->objName = new char[strlen(buf)+1];
+          strcpy( cur->objName, buf );
+
+          cur->fileName = new char[strlen(fName)+1];
+          strcpy( cur->fileName, fName );
+
+          stat = avl_insert_node( this->schemeList, (void *) cur, &dup );
+          if ( !( stat & 1 ) ) {
+            fclose( f );
+            return;
+          }
+          if ( dup ) {
+            printf( "dups\n" );
+          }
+
+        }
+        else {
+          printf( "syntax err\n" );
+          fclose( f );
+          return;
+        }
+
+      }
+      else {
+        printf( "syntax err\n" );
+        fclose( f );
+        return;
+      }
+
+      break;
+
+    }
+
+  }
+
+done:
+
+  //printf( "numSchemeSets = %-d\n", numSchemeSets );
+
+  stat = avl_get_first( schemeSet, (void **) &curSet );
+  if ( !( stat & 1 ) ) {
+    return;
+  }
+
+  schemeSetList = new (char *)[numSchemeSets];
+  i = 0;
+  while ( curSet ) {
+
+    //printf( "curSet->objName = [%s]\n", curSet->objName );
+
+    schemeSetList[i] = new char[strlen(curSet->objName)+1];
+    strcpy( schemeSetList[i], curSet->objName );
+
+    stat = avl_get_next( schemeSet, (void **) &curSet );
+    if ( !( stat & 1 ) ) {
+      return;
+    }
+
+    i++;
+
+  }
+
+}
+
+void appContextClass::destroySchemeList ( void )
+{
+
+int stat, i;
+schemeListPtr cur;
+
+  if ( schemeSetList ) {
+    for ( i=0; i<numSchemeSets; i++ ) {
+      delete schemeSetList[i];
+    }
+    delete schemeSetList;
+  }
+
+  if ( !schemeList ) return;
+
+  stat = avl_get_first( schemeList, (void **) &cur );
+  if ( !( stat & 1 ) ) {
+    return;
+  }
+
+  while ( cur ) {
+
+    stat = avl_delete_node( schemeList, (void **) &cur );
+    delete cur->objName;
+    delete cur->fileName;
+    delete cur;
+
+    stat = avl_get_first( schemeList, (void **) &cur );
+    if ( !( stat & 1 ) ) {
+      return;
+    }
+
+  }
+
+  //printf( "need avl delete tree\n" );
+  //delete schemeList;
+
+  if ( !schemeSet ) return;
+
+  stat = avl_get_first( schemeSet, (void **) &cur );
+  if ( !( stat & 1 ) ) {
+    return;
+  }
+
+  while ( cur ) {
+
+    stat = avl_delete_node( schemeSet, (void **) &cur );
+    delete cur->objName;
+    delete cur;
+
+    stat = avl_get_first( schemeSet, (void **) &cur );
+    if ( !( stat & 1 ) ) {
+      return;
+    }
+
+  }
+
+  //printf( "need avl delete tree\n" );
+  //delete schemeSet;
+
+}
+
+void appContextClass::getScheme (
+  char *schemeSetName,
+  char *objName,
+  char *objType,
+  char *schemeFileName,
+  int maxLen )
+{
+
+int stat;
+schemeListPtr cur;
+char buf[255+1];
+
+  if ( !schemeListExists ) {
+    strcpy( schemeFileName, "" );
+    return;
+  }
+
+  if ( strcmp( schemeSetName, "" ) == 0 ) {
+    strcpy( schemeFileName, "" );
+    return;
+  }
+
+  strncpy( buf, schemeSetName, 255 );
+  strncat( buf, "-", 255 );
+  strncat( buf, objType, 255 );
+  strncat( buf, "-", 255 );
+  strncat( buf, objName, 255 );
+
+  //printf( "get scheme file for %s\n", buf );
+
+  stat = avl_get_match( this->schemeList, (void *) buf,
+   (void **) &cur );
+  if ( !( stat & 1 ) ) {
+    strcpy( schemeFileName, "" );
+    return;
+  }
+
+  if ( cur ) {
+    strncpy( schemeFileName, cur->fileName, maxLen );
+  }
+  else {
+    strncpy( schemeFileName, "default", maxLen );
+  }
+
+}
+
 int appContextClass::initDeferredExecutionQueue ( void )
 {
 
@@ -1868,6 +2405,8 @@ void appContextClass::createMainWindow ( void )
 {
 
 XmString menuStr, str;
+callbackBlockPtr curBlock;
+int i;
 
   mainWin = XtVaCreateManagedWidget( "", xmMainWindowWidgetClass,
    appTop,
@@ -1911,6 +2450,7 @@ XmString menuStr, str;
   XtAddCallback( newB, XmNactivateCallback, open_cb,
    (XtPointer) this );
 
+#if 0
   str = XmStringCreateLocalized( appContextClass_str38 );
   newB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
    filePullDown,
@@ -1919,6 +2459,7 @@ XmString menuStr, str;
   XmStringFree( str );
   XtAddCallback( newB, XmNactivateCallback, open_user_cb,
    (XtPointer) this );
+#endif
 
   str = XmStringCreateLocalized( appContextClass_str39 );
   newB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
@@ -1994,6 +2535,54 @@ XmString menuStr, str;
   XmStringFree( str );
   XtAddCallback( viewXyB, XmNactivateCallback, view_xy_cb,
    (XtPointer) this );
+
+
+
+
+  pathPullDown = XmCreatePulldownMenu( menuBar, "", NULL, 0 );
+
+  menuStr = XmStringCreateLocalized( appContextClass_str121 );
+  pathCascade = XtVaCreateManagedWidget( "", xmCascadeButtonWidgetClass,
+   menuBar,
+   XmNlabelString, menuStr,
+   XmNmnemonic, 'v',
+   XmNsubMenuId, pathPullDown,
+   NULL );
+  XmStringFree( menuStr );
+
+  for ( i=0; i<numPaths; i++ ) {
+
+    curBlock = new callbackBlockType;
+    curBlock->ptr = (void *) dataFilePrefix[i];
+    curBlock->apco = this;
+
+    callbackBlockTail->flink = curBlock;
+    callbackBlockTail = curBlock;
+    callbackBlockTail->flink = NULL;
+
+    str = XmStringCreateLocalized( dataFilePrefix[i] );
+    msgB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+     pathPullDown,
+     XmNlabelString, str,
+     NULL );
+    XmStringFree( str );
+    XtAddCallback( msgB, XmNactivateCallback, setPath_cb,
+     (XtPointer) curBlock );
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   helpPullDown = XmCreatePulldownMenu( menuBar, "", NULL, 0 );
 
@@ -2375,6 +2964,8 @@ static void displayParamInfo ( void ) {
 
   printf( global_str46 );
   printf( global_str47 );
+  printf( "\n" );
+  printf( global_str75 );
   printf( "\n" );
   printf( global_str48 );
   printf( "\n" );
@@ -2793,7 +3384,7 @@ err_return:
     }
 
   }
- 
+
   this->createMainWindow();
 
   clipbdInit( appTop );
@@ -2866,6 +3457,7 @@ err_return:
     return 0; // error
   }
 
+  displayScheme.setAppCtx( this );
   displayScheme.loadDefault( &ci );
 
   curFile = fileHead->flink;
@@ -3024,7 +3616,6 @@ char msg[127+1];
       cur = cur->flink;
     }
 
-    //    processAllEventsWithSync( app, display );
     processAllEvents( app, display );
 
     nodeCount = iconNodeCount = actionCount = iconActionCount = 0;
@@ -3058,7 +3649,6 @@ char msg[127+1];
       cur = cur->flink;
     }
 
-    //    processAllEventsWithSync( app, display );
     processAllEvents( app, display );
 
     /* if all windows have been activated then iconify main window */

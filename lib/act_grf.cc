@@ -2662,8 +2662,7 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
 
 int activeGraphicClass::startDrag (
   int x,
-  int y )
-{
+  int y ) {
 
 Atom expList[1];
 int n;
@@ -2683,10 +2682,10 @@ XMotionEvent dragEvent;
   XtSetArg( args[n], XmNclientData, this ); n++;
     
   memset( (char *) &dragEvent, 0, sizeof(dragEvent) );
-  dragEvent.x = x;
-  dragEvent.y = y;
-  dragEvent.x_root = actWin->x + x;
-  dragEvent.y_root = actWin->y + y;
+  dragEvent.x = (short) x;
+  dragEvent.y = (short) y;
+  dragEvent.x_root = (short) actWin->x + x;
+  dragEvent.y_root = (short) actWin->y + y;
   dragEvent.type = MotionNotify;
 
   dc = XmDragStart( actWin->executeWidget, (XEvent *) &dragEvent,

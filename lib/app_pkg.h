@@ -42,9 +42,22 @@
 #include "process.h"
 
 #include "thread.h"
+#include "avl.h"
 
 #include "app_pkg.str"
 #include "environment.str"
+
+typedef struct callbackBlockTag {
+  struct callbackBlockTag *flink;
+  void *ptr;
+  class appContextClass *apco;
+} callbackBlockType, *callbackBlockPtr;
+
+typedef struct schemeListTag {
+  AVL_FIELDS(schemeListTag)
+  char *objName;
+  char *fileName;
+} schemeListType, *schemeListPtr;
 
 typedef struct appDefExe_node_tag { /* locked queue node */
   void *flink;
@@ -106,6 +119,11 @@ typedef struct fileListTag {
 class appContextClass {
 
 private:
+
+friend void setPath_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 friend void continue_cb (
   Widget w,
@@ -181,19 +199,22 @@ friend void app_importSelectOk_cb (
 
 friend class activeWindowClass;
 
+callbackBlockPtr callbackBlockHead, callbackBlockTail;
+
+AVL_HANDLE schemeList, schemeSet;
+int schemeListExists;
+
 APPDEFEXE_QUE_TYPE appDefExeFreeQueue, appDefExeActiveQueue,
  appDefExeActiveNextQueue;
 APPDEFEXE_NODE_TYPE appDefExeNodes[APPDEFEXE_QUEUE_SIZE+1];
 
 Widget appTop, fileSelectBox, importSelectBox, mainWin, menuBar, filePullDown,
  fileCascade, newB, openB, exitB, viewPullDown, viewCascade, msgB, pvB,
- mainDrawingArea, helpPullDown, helpCascade;
+ mainDrawingArea, pathPullDown, pathCascade, helpPullDown, helpCascade;
 XtAppContext app;
 Display *display;
 char displayName[31+1];
 XEvent event;
-
-displaySchemeClass displayScheme;
 
 scrolledTextClass msgBox;
 scrolledListClass pvList;
@@ -237,6 +258,16 @@ msgDialogClass msgDialog;
 
 public:
 
+int numSchemeSets;
+char **schemeSetList;
+displaySchemeClass displayScheme;
+
+int numPaths;
+char **dataFilePrefix;
+char curPath[127+1];
+
+char colorPath[127+1];
+
 int viewXy;
 Widget viewXyB;
 
@@ -272,6 +303,26 @@ appContextClass::appContextClass (
 
 appContextClass::~appContextClass (
   void );
+
+void appContextClass::getFilePaths ( void );
+
+void appContextClass::expandFileName (
+  int index,
+  char *expandedName,
+  char *inName,
+  char *ext,
+  int maxSize );
+
+void appContextClass::buildSchemeList ( void );
+
+void appContextClass::destroySchemeList ( void );
+
+void appContextClass::getScheme (
+  char *schemeSetName,
+  char *objName,
+  char *objType,
+  char *schemeFileName,
+  int maxLen );
 
 int appContextClass::setProperty (
   char *winId,

@@ -68,5 +68,9 @@
 #define appContextClass_str115 "On-line"
 #define appContextClass_str116 "About"
 #define appContextClass_str117 "Loading fonts..."
+#define appContextClass_str118 "cannot get current directory - abort @ line %-d in %s\n"
+#define appContextClass_str119 "Bad data file location"
+#define appContextClass_str120 "Using current directory\n"
+#define appContextClass_str121 "Path"
 
 #endif

@@ -24,6 +24,8 @@
 #include <string.h>
 #include <X11/Xlib.h>
 
+class appContextClass;
+
 #include "color_pkg.h"
 #include "utility.h"
 
@@ -37,6 +39,8 @@
 class displaySchemeClass {
 
 private:
+
+appContextClass *appCtx;
 
 int schemeLoaded;
 
@@ -53,6 +57,9 @@ public:
 displaySchemeClass::displaySchemeClass ( void );
 
 displaySchemeClass::~displaySchemeClass ( void );
+
+void displaySchemeClass::setAppCtx (
+  appContextClass *_appCtx );
 
 int displaySchemeClass::loadDefault (
   colorInfoClass *ci );

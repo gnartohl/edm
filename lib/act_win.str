@@ -80,9 +80,9 @@
 #define activeWindowClass_str77 "Enable"
 #define activeWindowClass_str78 "Alarm"
 #define activeWindowClass_str79 "Enable"
-#define activeWindowClass_str80 "cannot get current directory - abort @ line %-d in %s\n"
-#define activeWindowClass_str81 "Bad data file location"
-#define activeWindowClass_str82 "Using current directory\n"
+//#define activeWindowClass_str80 ""
+//#define activeWindowClass_str81 ""
+//#define activeWindowClass_str82 ""
 #define activeWindowClass_str83 "No Title"
 #define activeWindowClass_str84 "No"
 #define activeWindowClass_str85 "cm"
@@ -182,5 +182,6 @@
 #define activeWindowClass_str183 "Default Text Font"
 #define activeWindowClass_str184 "Help"
 #define activeWindowClass_str185 "Select All"
+#define activeWindowClass_str186 "Select Scheme Set"
 
 #endif
