@@ -79,6 +79,11 @@ static void rdc_edit_cancel_delete (
 
 class relatedDisplayClass : public activeGraphicClass {
 
+public:
+
+static const int NUMPVS = 4;
+static const int maxDsps = 20;
+
 private:
 
 friend void menu_cb (
@@ -138,9 +143,6 @@ friend void rdc_edit_cancel_delete (
   Widget w,
   XtPointer client,
   XtPointer call );
-
-static const int NUMPVS = 4;
-static const int maxDsps = 20;
 
 typedef struct bufTag {
   int bufUseFocus;

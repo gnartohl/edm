@@ -45,6 +45,11 @@ static void shellCmdThread (
   THREAD_HANDLE h );
 #endif
 
+#ifdef HP_UX
+static void *shellCmdThread (
+  THREAD_HANDLE h );
+#endif
+
 static void menu_cb (
   Widget w,
   XtPointer client,
@@ -102,6 +107,10 @@ static void shcmdc_edit_cancel_delete (
 #endif
 
 class shellCmdClass : public activeGraphicClass {
+
+public:
+
+static const int maxCmds = 20;
 
 private:
 
@@ -173,8 +182,6 @@ friend void shcmdc_edit_cancel_delete (
   Widget w,
   XtPointer client,
   XtPointer call );
-
-static const int maxCmds = 20;
 
 typedef struct bufTag {
   int bufX;

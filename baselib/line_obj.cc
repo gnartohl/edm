@@ -70,7 +70,7 @@ int n;
 int *x;
 int *y;
 
-undoLineOpClass::undoLineOpClass ()
+undoLineOpClass ()
 {
 
   printf( "undoLineOpClass::undoLineOpClass\n" );
@@ -78,7 +78,7 @@ undoLineOpClass::undoLineOpClass ()
 
 }
 
-undoLineOpClass::undoLineOpClass (
+undoLineOpClass (
   int _n,
   XPoint *_xpoints
 ) {
@@ -96,7 +96,7 @@ int i;
 
 }
 
-undoLineOpClass::~undoLineOpClass ()
+~undoLineOpClass ()
 {
 
   delete x;

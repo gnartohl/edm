@@ -46,7 +46,7 @@
 #endif
 #endif
 
-#if BASE_VERSION > 3
+#if EPICS_VERSION > 3
 #include "epicsTime.h"
 #define osiTime epicsTime
 #endif
@@ -910,9 +910,9 @@ void initPlotInfo (
 );
 
 void addPoint (
-  double x,
-  short x,
-  short y,
+  double oneX,
+  short scaledX,
+  short scaledY,
   int trace
 );
 

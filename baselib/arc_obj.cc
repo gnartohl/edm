@@ -68,14 +68,14 @@ public:
 
 double angle;
 
-undoArcOpClass::undoArcOpClass ()
+undoArcOpClass ()
 {
 
   printf( "undoArcOpClass::undoArcOpClass\n" );
 
 }
 
-undoArcOpClass::undoArcOpClass (
+undoArcOpClass (
   double _angle
 ) {
 
@@ -83,7 +83,7 @@ undoArcOpClass::undoArcOpClass (
 
 }
 
-undoArcOpClass::~undoArcOpClass ()
+~undoArcOpClass ()
 {
 
 }

@@ -48,6 +48,12 @@ static void shellCmdThread (
 {
 #endif
 
+#ifdef HP_UX
+static void *shellCmdThread (
+  THREAD_HANDLE h );
+{
+#endif
+
 int stat;
 threadParamBlockPtr threadParamBlock =
  (threadParamBlockPtr) thread_get_app_data( h );

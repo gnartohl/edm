@@ -3473,8 +3473,6 @@ int i, yi;
   eBuf->bufW = w;
   eBuf->bufH = h;
 
-  eBuf->bufPlotStyle = plotStyle;
-
   eBuf->bufPlotMode = plotMode;
 
   eBuf->bufBorder = border;
@@ -5712,7 +5710,7 @@ struct tm *ts;
         {
 
           osiTime base( (const unsigned long) ( curSec ),
-          (const unsigned long) curNsec );
+           (const unsigned long) curNsec );
           osiTime cur( (double) dxValue );
           osiTime total = base + cur;
 
@@ -7172,7 +7170,7 @@ int i;
 }
 
 void xyGraphClass::addPoint (
-  double x,
+  double oneX,
   short scaledX,
   short scaledY,
   int trace
@@ -7212,7 +7210,7 @@ int i;
 
     if ( plotInfo[trace][scaledX].n == 0 ) {
 
-      plotInfo[trace][scaledX].firstDX = x;
+      plotInfo[trace][scaledX].firstDX = oneX;
       plotInfo[trace][scaledX].firstX = scaledX;
       plotInfo[trace][scaledX].firstY = scaledY;
       plotInfo[trace][scaledX].n = 1;
@@ -7229,20 +7227,20 @@ int i;
         plotInfo[trace][scaledX].maxY = scaledY;
       }
 
-      if ( x < plotInfo[trace][scaledX].firstDX ) {
+      if ( oneX < plotInfo[trace][scaledX].firstDX ) {
 
         plotInfo[trace][scaledX].lastDX = plotInfo[trace][scaledX].firstDX;
         plotInfo[trace][scaledX].lastX = plotInfo[trace][scaledX].firstX;
         plotInfo[trace][scaledX].lastY = plotInfo[trace][scaledX].firstY;
 
-        plotInfo[trace][scaledX].firstDX = x;
+        plotInfo[trace][scaledX].firstDX = oneX;
         plotInfo[trace][scaledX].firstX = scaledX;
         plotInfo[trace][scaledX].firstY = scaledY;
 
       }
       else {
 
-        plotInfo[trace][scaledX].lastDX = x;
+        plotInfo[trace][scaledX].lastDX = oneX;
         plotInfo[trace][scaledX].lastX = scaledX;
         plotInfo[trace][scaledX].lastY = scaledY;
 
@@ -7260,13 +7258,13 @@ int i;
         plotInfo[trace][scaledX].maxY = scaledY;
       }
 
-      if ( x < plotInfo[trace][scaledX].firstDX ) {
-        plotInfo[trace][scaledX].firstDX = x;
+      if ( oneX < plotInfo[trace][scaledX].firstDX ) {
+        plotInfo[trace][scaledX].firstDX = oneX;
         plotInfo[trace][scaledX].firstX = scaledX;
         plotInfo[trace][scaledX].firstY = scaledY;
       }
-      else if ( x >= plotInfo[trace][scaledX].lastDX ) {
-        plotInfo[trace][scaledX].lastDX = x;
+      else if ( oneX >= plotInfo[trace][scaledX].lastDX ) {
+        plotInfo[trace][scaledX].lastDX = oneX;
         plotInfo[trace][scaledX].lastX = scaledX;
         plotInfo[trace][scaledX].lastY = scaledY;
       }
@@ -7583,7 +7581,7 @@ void xyGraphClass::drawXScale ( void ) {
         time_t t;
 
         osiTime base( (const unsigned long) ( curSec ),
-        (const unsigned long) curNsec );
+         (const unsigned long) curNsec );
 
         t = base.getSec() + timeOffset;
 
