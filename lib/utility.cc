@@ -1025,6 +1025,100 @@ void XDrawStrings (
   int len )
 {
 
+int i, start, l, strL;
+
+  i = start = l = 0;
+  strL = strlen( str );
+
+  while ( i < strL ) {
+
+    if ( str[i] == 1 ) {
+
+      if ( l ) {
+        XDrawString( d, w, gc, x, y, &str[start], l );
+        l = 0;
+      }
+
+      start = i+1;
+      y += h;
+
+    }
+    else {
+
+      l++;
+
+    }
+
+    i++;
+
+  }
+
+  if ( l ) {
+    XDrawString( d, w, gc, x, y, &str[start], l );
+  }
+
+}
+
+void XDrawImageStrings (
+  Display *d,
+  Window w,
+  GC gc,
+  int x,
+  int y,
+  int h,
+  char *str,
+  int len )
+{
+
+int i, start, l, strL;
+
+  i = start = l = 0;
+  strL = strlen( str );
+
+  while ( i < strL ) {
+
+    if ( str[i] == 1 ) {
+
+      if ( l ) {
+        XDrawImageString( d, w, gc, x, y, &str[start], l );
+        l = 0;
+      }
+
+      start = i+1;
+      y += h;
+
+    }
+    else {
+
+      l++;
+
+    }
+
+    i++;
+
+  }
+
+  if ( l ) {
+    XDrawImageString( d, w, gc, x, y, &str[start], l );
+  }
+
+}
+
+#if 0
+
+// these routines consider an ascii 1 to mean new line
+
+void XDrawStrings (
+  Display *d,
+  Window w,
+  GC gc,
+  int x,
+  int y,
+  int h,
+  char *str,
+  int len )
+{
+
 char buf[255+1], *tk, *context;
 
   strncpy( buf, str, 255 );
@@ -1071,6 +1165,8 @@ char buf[255+1], *tk, *context;
   }
 
 }
+
+#endif
 
 int countSymbolsAndValues (
   char *string,
