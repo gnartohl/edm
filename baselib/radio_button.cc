@@ -1035,7 +1035,7 @@ void activeRadioButtonClass::executeDeferred ( void ) {
 short value;
 int stat, i, nc, ni, nr, nd, notify;
 XmString str;
-Arg args[15];
+Arg args[20];
 int n;
 XtTranslations parsedTrans;
 char tmp[MAX_ENUM_STRING_SIZE+10];
@@ -1099,6 +1099,8 @@ static XtActionsRec dragActions[] = {
      XmNheight, h,
      XmNbackground, (XtArgVal) bgColor.getColor(),
      XmNforeground, (XtArgVal) fgColor.getColor(),
+     XmNmarginHeight, 0,
+     XmNmarginWidth, 0,
      NULL );
 
     parsedTrans = XtParseTranslationTable( dragTrans );
@@ -1116,6 +1118,10 @@ static XtActionsRec dragActions[] = {
     XtSetArg( args[n], XmNnavigationType, XmNONE ); n++;
     XtSetArg( args[n], XmNtraversalOn, False ); n++;
     XtSetArg( args[n], XmNuserData, this ); n++;
+    XtSetArg( args[n], XmNmarginHeight, 0 ); n++;
+    XtSetArg( args[n], XmNmarginWidth, 0 ); n++;
+    XtSetArg( args[n], XmNspacing, 0 ); n++;
+    XtSetArg( args[n], XmNentryBorder, 0 ); n++;
 
     radioBox = XmCreateRadioBox( bulBrd,
      "", args, n );
@@ -1139,6 +1145,7 @@ static XtActionsRec dragActions[] = {
        XmNindicatorOn, XmINDICATOR_CHECK_BOX,
        XmNtranslations, parsedTrans,
        XmNuserData, this,
+       XmNspacing, 0,
        NULL );
 
       if ( controlExists ) {
