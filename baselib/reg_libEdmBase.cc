@@ -44,6 +44,7 @@ static libRecType libRec[] = {
   { "activeMotifSliderClass", global_str5, reg_str22 },
   { "activeButtonClass", global_str5, reg_str14 },
   { "activeMenuButtonClass", global_str5, reg_str15 },
+  { "activeRadioButtonClass", global_str5, reg_str23 },
   { "activeMessageButtonClass", global_str5, reg_str16 },
   { "activeUpdownButtonClass", global_str5, reg_str21 },
   { "activeExitButtonClass", global_str5, reg_str17 },
