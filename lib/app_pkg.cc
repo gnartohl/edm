@@ -2498,7 +2498,37 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
   if ( buf ) delete[] buf;
 
 }
+
+static int containsHttp (
+  char *fullName
+) {
 
+unsigned int i;
+char buf[255+1], *tk, *context;
+
+  strncpy( buf, fullName, 255 );
+  buf[255] = 0;
+
+  context = NULL;
+  tk = strtok_r( buf, ":", &context );
+
+  if ( !tk ) return 0;
+
+  for ( i=0; i<strlen(tk); i++ ) {
+    tk[i] = tolower( tk[i] );
+  }
+
+  if ( ( strcmp( tk, "http" ) == 0 ) ||
+       ( strcmp( tk, "https" ) == 0 )
+     ) {
+
+    return 1;
+
+  }
+
+  return 0;
+
+}
 
 void appContextClass::expandFileName (
   int index,
@@ -2516,34 +2546,43 @@ int state, noPrefix;
     return;
   }
 
-  // ^/ means use current directory, don't use search path
+  if ( containsHttp(inName) ) {
 
-  noPrefix = 0;
-  state = 1;
-  for ( i=0; ( i<strlen(inName) ) && state; i++ ) {
+    noPrefix = 1;
 
-    switch ( state ) {
+  }
+  else {
 
-    case 1: // looking for / or ^
-      if ( inName[i] == '/' ) {
-        noPrefix = 1;
-	state = 0; // exit
-      }
-      else if ( inName[i] == '^' ) {
-	state = 2;
-      }
-      else if ( inName[i] != ' ' ) {
+    // ^/ means use current directory, don't use search path
+
+    noPrefix = 0;
+    state = 1;
+    for ( i=0; ( i<strlen(inName) ) && state; i++ ) {
+
+      switch ( state ) {
+
+      case 1: // looking for / or ^
+        if ( inName[i] == '/' ) {
+          noPrefix = 1;
+          state = 0; // exit
+        }
+        else if ( inName[i] == '^' ) {
+          state = 2;
+        }
+        else if ( inName[i] != ' ' ) {
+          state = 0; // exit
+        }
+        break;
+
+      case 2: // looking for / part of ^/
+        if ( inName[i] == '/' ) {
+          noPrefix = 1;
+          inName[i-1] = '.';
+        }
         state = 0; // exit
-      }
-      break;
+        break;
 
-    case 2: // looking for / part of ^/
-      if ( inName[i] == '/' ) {
-        noPrefix = 1;
-        inName[i-1] = '.';
       }
-      state = 0; // exit
-      break;
 
     }
 
@@ -2584,34 +2623,43 @@ int state, noPrefix;
     return;
   }
 
-  // ^/ means use current directory, don't use search path
+  if ( containsHttp(inName) ) {
 
-  noPrefix = 0;
-  state = 1;
-  for ( i=0; ( i<strlen(inName) ) && state; i++ ) {
+    noPrefix = 1;
 
-    switch ( state ) {
+  }
+  else {
 
-    case 1: // looking for / or ^
-      if ( inName[i] == '/' ) {
-        noPrefix = 1;
-	state = 0; // exit
-      }
-      else if ( inName[i] == '^' ) {
-	state = 2;
-      }
-      else if ( inName[i] != ' ' ) {
+    // ^/ means use current directory, don't use search path
+
+    noPrefix = 0;
+    state = 1;
+    for ( i=0; ( i<strlen(inName) ) && state; i++ ) {
+
+      switch ( state ) {
+
+      case 1: // looking for / or ^
+        if ( inName[i] == '/' ) {
+          noPrefix = 1;
+          state = 0; // exit
+        }
+        else if ( inName[i] == '^' ) {
+          state = 2;
+        }
+        else if ( inName[i] != ' ' ) {
+          state = 0; // exit
+        }
+        break;
+
+      case 2: // looking for / part of ^/
+        if ( inName[i] == '/' ) {
+          noPrefix = 1;
+          inName[i-1] = '.';
+        }
         state = 0; // exit
-      }
-      break;
+        break;
 
-    case 2: // looking for / part of ^/
-      if ( inName[i] == '/' ) {
-        noPrefix = 1;
-        inName[i-1] = '.';
       }
-      state = 0; // exit
-      break;
 
     }
 
