@@ -537,6 +537,34 @@ activeGraphicListPtr cur;
 
 }
 
+int activeGraphicClass::isInside (
+  int x0,
+  int y0 )
+{
+
+int xx0, yy0, xx1, yy1;
+
+  xx0 = this->x;
+  xx1 = this->x + this->w;
+  yy0 = this->y;
+  yy1 = this->y + this->h;
+
+  if ( ( x0 > xx0 ) &&
+       ( x0 < xx1 ) &&
+       ( y0 > yy0 ) &&
+       ( y0 < yy1 ) ) {
+
+    return 1;
+
+  }
+  else {
+
+    return 0;
+
+  }
+
+}
+
 int activeGraphicClass::intersects (
   int x0,
   int y0,

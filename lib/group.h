@@ -81,6 +81,10 @@ int drawActive ( void );
 
 int eraseActive ( void );
 
+int isInside (
+  int x0,
+  int y0 );
+
 int doSmartDrawAllActive ( void );
 
 int drawActiveIfIntersects (

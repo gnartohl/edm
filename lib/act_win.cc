@@ -9116,10 +9116,7 @@ activeGraphicListPtr cur;
     curBtn = awo->btnFocusActionHead->flink;
     while ( curBtn != awo->btnFocusActionHead ) {
 
-      if ( ( me->x > curBtn->node->getX0() ) &&
-           ( me->x < curBtn->node->getX1() ) &&
-           ( me->y > curBtn->node->getY0() ) &&
-           ( me->y < curBtn->node->getY1() ) ) {
+      if ( curBtn->node->isInside( me->x, me->y ) ) {
 
         if ( curBtn->in != 1 ) {
           curBtn->in = 1;

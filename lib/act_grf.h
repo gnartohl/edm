@@ -629,6 +629,10 @@ virtual int drawActive (
 
 virtual int drawAllActive ( void );
 
+virtual int isInside (
+  int x0,
+  int y0 );
+
 virtual int intersects (
   int x0,
   int y0,

@@ -577,6 +577,28 @@ activeGraphicListPtr cur;
 
 }
 
+int activeGroupClass::isInside (
+  int _x,
+  int _y )
+{
+
+btnActionListPtr curBtn;
+
+  curBtn = btnDownActionHead->flink;
+  while ( curBtn != btnDownActionHead ) {
+
+    if ( curBtn->node->isInside( _x, _y ) ) {
+      return 1;
+    }
+
+    curBtn = curBtn->flink;
+
+  }
+
+  return 0;
+
+}
+
 int activeGroupClass::doSmartDrawAllActive ( void ) {
 
 activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
@@ -857,9 +879,9 @@ btnActionListPtr curBtn;
          ( y > curBtn->node->getY0() ) &&
          ( y < curBtn->node->getY1() ) ) {
 
-        curBtn->node->btnDown( x, y, buttonState, buttonNumber, action );
+      curBtn->node->btnDown( x, y, buttonState, buttonNumber, action );
 
-      }
+    }
 
     curBtn = curBtn->flink;
 
@@ -885,9 +907,9 @@ btnActionListPtr curBtn;
          ( y > curBtn->node->getY0() ) &&
          ( y < curBtn->node->getY1() ) ) {
 
-        curBtn->node->btnUp( x, y, buttonState, buttonNumber, action );
+      curBtn->node->btnUp( x, y, buttonState, buttonNumber, action );
 
-      }
+    }
 
     curBtn = curBtn->flink;
 
@@ -912,9 +934,9 @@ btnActionListPtr curBtn;
          ( y > curBtn->node->getY0() ) &&
          ( y < curBtn->node->getY1() ) ) {
 
-        curBtn->node->btnDrag( x, y, buttonState, buttonNumber );
+      curBtn->node->btnDrag( x, y, buttonState, buttonNumber );
 
-      }
+    }
 
     curBtn = curBtn->flink;
 
@@ -938,12 +960,12 @@ btnActionListPtr curBtn;
          ( _y > curBtn->node->getY0() ) &&
          ( _y < curBtn->node->getY1() ) ) {
 
-        if ( curBtn->in != 1 ) {
-          curBtn->in = 1;
-          curBtn->node->pointerIn( _x, _y, buttonState );
-	}
-
+      if ( curBtn->in != 1 ) {
+        curBtn->in = 1;
+        curBtn->node->pointerIn( _x, _y, buttonState );
       }
+
+    }
 
     curBtn = curBtn->flink;
 
@@ -967,12 +989,12 @@ btnActionListPtr curBtn;
          ( _y <= curBtn->node->getY0() ) ||
          ( _y >= curBtn->node->getY1() ) ) {
 
-        if ( curBtn->in == 1 ) {
-          curBtn->in = 0;
-          curBtn->node->pointerOut( _x, _y, buttonState );
-	}
-
+      if ( curBtn->in == 1 ) {
+        curBtn->in = 0;
+        curBtn->node->pointerOut( _x, _y, buttonState );
       }
+
+    }
 
     curBtn = curBtn->flink;
 
