@@ -365,19 +365,19 @@ int edmTextupdateClass::genericEdit() // create Property Dialog
               title, NULL, NULL, NULL);
 
     // add dialog box entry fields
-    ef.addTextField("X", 30, &bufX);
-    ef.addTextField("Y", 30, &bufY);
-    ef.addTextField("Width", 30, &bufW);
-    ef.addTextField("Height", 30, &bufH);
-    ef.addTextField("PV", 30, bufPvName, PV_Factory::MAX_PV_NAME);
+    ef.addTextField("X", 35, &bufX);
+    ef.addTextField("Y", 35, &bufY);
+    ef.addTextField("Width", 35, &bufW);
+    ef.addTextField("Height", 35, &bufH);
+    ef.addTextField("PV", 35, bufPvName, PV_Factory::MAX_PV_NAME);
     ef.addOption("Mode", "default|decimal|hex|engineer|exp", &buf_displayMode);
-    ef.addTextField("Precision", 30, &buf_precision);
-    ef.addTextField("Line Width", 30, &buf_line_width);
+    ef.addTextField("Precision", 35, &buf_precision);
+    ef.addTextField("Line Width", 35, &buf_line_width);
     ef.addColorButton("Fg Color", actWin->ci, &textCb, &bufTextColor);
     ef.addToggle("Alarm Sensitive", &buf_alarm_sensitive);
     ef.addToggle("Filled?", &bufIsFilled);
     ef.addColorButton("Bg Color", actWin->ci, &fillCb, &bufFillColor);
-    ef.addTextField("Color PV", 30, bufColorPvName, PV_Factory::MAX_PV_NAME);
+    ef.addTextField("Color PV", 35, bufColorPvName, PV_Factory::MAX_PV_NAME);
     ef.addFontMenu("Font", actWin->fi, &fm, fontTag );
     fm.setFontAlignment(alignment);
 
