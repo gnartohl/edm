@@ -15,7 +15,7 @@ USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xe
 
 # Add Debugging
 USR_LDFLAGS += -g
-USR_LDFLAGS += -L$(INSTALL_LIB) -L$(IMAGELIB)
+USR_LDFLAGS += -L$(INSTALL_LIB)
 
 LIBRARY = 7e1b4e6f-239d-4650-95e6-a040d41ba633
 
