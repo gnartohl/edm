@@ -1019,7 +1019,12 @@ float fBarOriginX;
     fscanf( f, "%d\n", &minorTicks ); actWin->incLine();
 
     // majorTicks now means majors per label
-    majorTicks /= labelTicks;
+    if ( labelTicks ) {
+      majorTicks /= labelTicks;
+    }
+    else {
+      majorTicks = 0;
+    }
 
     fscanf( f, "%d\n", &border ); actWin->incLine();
 
