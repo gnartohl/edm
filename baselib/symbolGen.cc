@@ -621,7 +621,7 @@ FILE *f;
 
   if ( strcmp( symbolFileName, "" ) == 0 ) return 0;
 
-  f = actWin->openAny( symbolFileName, "r" );
+  f = actWin->openAnySymFile( symbolFileName, "r" );
   if ( !f ) {
     // numStates = 0;
     return 0;
