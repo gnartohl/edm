@@ -10199,6 +10199,7 @@ char tmp[10];
   this->macros = new char *[actualNumMacros];
   this->expansions = new char *[actualNumMacros];
 
+  crc = 0;
   for ( i=0; i<_numMacros; i++ ) {
 
     l = strlen(_macros[i]) + 1;
