@@ -16732,7 +16732,7 @@ Widget pb;
   XtAddCallback( pb, XmNactivateCallback, dragMenuCb,
    (XtPointer) &dragPopupBlock[dragItemIndex] );
 
-  if ( dragItemIndex < 9 ) dragItemIndex++;
+  if ( dragItemIndex < MAX_DRAG_ITEMS-1 ) dragItemIndex++;
 
 }
 

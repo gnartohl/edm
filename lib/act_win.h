@@ -396,8 +396,9 @@ char curSchemeSet[63+1];
 
 char startSignature[15+1];
 
+static const int MAX_DRAG_ITEMS = 30;
 int dragItemIndex;
-dragPopupBlockType dragPopupBlock[10];
+dragPopupBlockType dragPopupBlock[MAX_DRAG_ITEMS];
 
 int major, minor, release, fileLineNumber;
 
