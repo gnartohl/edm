@@ -284,8 +284,6 @@ int getMacros (
   char ***macro,
   char ***expansion );
 
-int createWidgets ( void );
-
 int activate ( int pass, void *ptr );
 
 int deactivate ( int pass );

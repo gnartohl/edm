@@ -2993,12 +2993,6 @@ int adjH = h - 4;
 
 }
 
-int activeSliderClass::createWidgets ( void ) {
-
-  return 1;
-
-}
-
 int activeSliderClass::expand1st (
   int numMacros,
   char *macros[],
