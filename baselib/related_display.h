@@ -137,7 +137,8 @@ char symbols[255+1];
 int replaceSymbols, bufReplaceSymbols; // else append
 
 char bufLabel[127+1];
-char label[127+1];
+expStringClass label;
+//char label[127+1];
 
 #define NUMPVS 4
 

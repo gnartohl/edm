@@ -106,7 +106,8 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
 
   strncpy( rdo->displayFileName, rdo->bufDisplayFileName, 127 );
 
-  strncpy( rdo->label, rdo->bufLabel, 127 );
+  rdo->label.setRaw( rdo->bufLabel );
+  //strncpy( rdo->label, rdo->bufLabel, 127 );
 
   rdo->symbolsExpStr.setRaw( rdo->bufSymbols );
   //  strncpy( rdo->symbols, rdo->bufSymbols, 255 );
@@ -185,8 +186,8 @@ relatedDisplayClass::relatedDisplayClass ( void ) {
 
   activeMode = 0;
   strcpy( displayFileName, "" );
-  strcpy( label, "" );
-  //  strcpy( symbols, "" );
+  // strcpy( label, "" );
+  // strcpy( symbols, "" );
   invisible = 0;
   closeAction = 0;
   useFocus = 0;
@@ -279,11 +280,11 @@ activeGraphicClass *rdo = (activeGraphicClass *) this;
 
   strncpy( displayFileName, source->displayFileName, 127 );
 
-  strncpy( label, source->label, 127 );
+  label.copy( source->label );
+  // strncpy( label, source->label, 127 );
 
   symbolsExpStr.copy( source->symbolsExpStr );
-
-  //  strncpy( symbols, source->symbols, 255 );
+  // strncpy( symbols, source->symbols, 255 );
 
   replaceSymbols = source->replaceSymbols;
 
@@ -363,10 +364,15 @@ int i, index;
   else
     writeStringToFile( f, "" );
 
-  if ( label )
-    writeStringToFile( f, label );
+  if ( label.getRaw() )
+    writeStringToFile( f, label.getRaw() );
   else
     writeStringToFile( f, "" );
+
+  //if ( label )
+  //  writeStringToFile( f, label );
+  //else
+  //  writeStringToFile( f, "" );
 
   writeStringToFile( f, fontTag );
 
@@ -500,7 +506,8 @@ char onePvName[127+1];
   strncpy( displayFileName, oneName, 127 );
 
   readStringFromFile( oneName, 127, f ); actWin->incLine();
-  strncpy( label, oneName, 127 );
+  label.setRaw( oneName );
+  //strncpy( label, oneName, 127 );
 
   readStringFromFile( fontTag, 63, f ); actWin->incLine();
 
@@ -821,7 +828,8 @@ char *tk, *gotData, *context, buf[255+1];
           return 0;
         }
 
-        strncpy( label, tk, 127 );
+        label.setRaw( tk );
+        // strncpy( label, tk, 127 );
 
       }
 
@@ -883,10 +891,15 @@ char title[32], *ptr;
   else
     strncpy( bufDisplayFileName, "", 127 );
 
-  if ( label )
-    strncpy( bufLabel, label, 127 );
+  if ( label.getRaw() )
+    strncpy( bufLabel, label.getRaw(), 127 );
   else
     strncpy( bufLabel, "", 127 );
+
+  //if ( label )
+  //  strncpy( bufLabel, label, 127 );
+  //else
+  //  strncpy( bufLabel, "", 127 );
 
   bufInvisible = invisible;
 
@@ -1099,7 +1112,7 @@ XRectangle xR = { x, y, w, h };
     tY = y + h/2 - fontAscent/2;
 
     drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
-     XmALIGNMENT_CENTER, label );
+     XmALIGNMENT_CENTER, label.getRaw() );
 
     actWin->drawGc.removeNormXClipRectangle();
 
@@ -1129,7 +1142,7 @@ XRectangle xR = { x, y, w, h };
   XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
    actWin->executeGc.normGC(), x, y, w, h );
 
-    strncpy( string, label, MAX_ENUM_STRING_SIZE );
+    strncpy( string, label.getExpanded(), MAX_ENUM_STRING_SIZE );
 
     actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 
@@ -1354,6 +1367,8 @@ int i;
 
   symbolsExpStr.expand1st( numMacros, macros, expansions );
 
+  label.expand1st( numMacros, macros, expansions );
+
   return 1;
 
 }
@@ -1373,6 +1388,8 @@ int i;
 
   symbolsExpStr.expand2nd( numMacros, macros, expansions );
 
+  label.expand2nd( numMacros, macros, expansions );
+
   return 1;
 
 }
@@ -1387,6 +1404,8 @@ int i;
   }
 
   if ( symbolsExpStr.containsPrimaryMacros() ) return 1;
+
+  if ( label.containsPrimaryMacros() ) return 1;
 
   return 0;
 
