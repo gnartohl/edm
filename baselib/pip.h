@@ -92,6 +92,13 @@ static void pip_monitor_menu_connect_state (
 
 class activePipClass : public activeGraphicClass {
 
+public:
+
+static const int maxDsps = 20;
+static const int displayFromPV = 0;
+static const int displayFromForm = 1;
+static const int displayFromMenu = 2;
+
 private:
 
 friend void menu_cb (
@@ -148,11 +155,6 @@ friend void pip_menuUpdate (
 friend void pip_monitor_menu_connect_state (
   ProcessVariable *pv,
   void *userarg );
-
-static const int maxDsps = 20;
-static const int displayFromPV = 0;
-static const int displayFromForm = 1;
-static const int displayFromMenu = 2;
 
 typedef struct bufTag {
   int bufX;
