@@ -13,6 +13,31 @@
 #include "sys_types.h"
 #include "thread.h"
 
+char *Strncat(
+  char *dest,
+  char *src,
+  int max ) {
+
+  // max must be >= 0 and no more than stringsize - 1
+  //
+  // for char string[10];       max must be <= 9
+
+int l, newMax;
+char *s;
+
+  l = strlen( dest );
+  newMax = max - l;
+  if ( newMax < 0 ) {
+    dest[max] = 0;
+    return dest;
+  }
+
+  s = strncat( dest, src, newMax );
+  dest[max] = 0;
+
+  return s;
+
+}
 
 void sys_wait_seconds (
   float *seconds

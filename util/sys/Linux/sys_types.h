@@ -55,6 +55,11 @@ extern "C" {
 * function prototypes
 */
 
+char *Strncat(
+  char *dest,
+  char *src,
+  int max );
+
 int sys_iniq (
   void *queue
 );
