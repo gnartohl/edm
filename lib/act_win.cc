@@ -14255,7 +14255,8 @@ int n = 0;
     cur = cur->flink;
   }
 
-  if ( ( n < 1 ) || ( n > 10 ) ) {
+#if 0
+  if ( ( n < 1 ) || ( n > 100 ) ) {
 
     cur = head->flink;
     while ( cur != head ) {
@@ -14278,6 +14279,15 @@ int n = 0;
       cur = cur->flink;
     }
 
+  }
+#endif
+
+  cur = head->flink;
+  while ( cur != head ) {
+    if ( cur->node->smartDrawCount() ) {
+      cur->node->doSmartDrawAllActive();
+    }
+    cur = cur->flink;
   }
 
   return 1;
