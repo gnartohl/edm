@@ -4,15 +4,32 @@
 #ifndef __archivePlot_h
 #define __archivePlot_h 1
 
-#include "BinArchive.h"
-#include "ArchiveException.h"
-//#include "ArchiveI.h"
-
 #include <time.h>
 #include <sys/time.h>
 #include "sys_types.h"
 
+#ifdef OLDARCHIVER
+
+#include "BinArchive.h"
+#include "ArchiveException.h"
+//#include "ArchiveI.h"
+
 #include "osiTime.h"
+
+#else
+
+// Base
+#include <epicsVersion.h>
+// Tools
+#include <AutoPtr.h>
+#include <BinaryTree.h>
+#include <RegularExpression.h>
+#include <epicsTimeHelper.h>
+#include <ArgParser.h>
+// Storage
+#include <SpreadsheetReader.h>
+
+#endif
 
 #include "act_grf.h"
 #include "entry_form.h"
@@ -161,7 +178,7 @@ pvColorClass bgColor;
 char archiveName[39+1];
 
 SYS_TIME_TYPE sysTime;
-osiTime start, end;
+time_t start_time_t, end_time_t;
 
 expStringClass xMinPvExpStr, xMaxPvExpStr, xModePvExpStr,
  yMinPvExpStr, yMaxPvExpStr, yModePvExpStr,

@@ -1,0 +1,7 @@
+#ifndef __reg_archivePlot_str
+#define __reg_archivePlot_str 1
+
+#define reg_str1 (const char *) "Archive Plot"
+#define reg_str2 (const char *) "Scale"
+
+#endif

@@ -240,11 +240,7 @@ int stat;
 
     {
       if ( stat & 1 ) {
-        osiTime oTime( sysTime.cal_time, 0 );
-        /* oTime.show( (unsigned) 1 ); */
-        arplo->start = oTime;
-        /* arplo->start.show( (unsigned) 1 ); */
-        /* printf( "\n" ); */
+        arplo->start_time_t = sysTime.cal_time;
       }
     }
 
@@ -256,11 +252,7 @@ int stat;
 
     {
       if ( stat & 1 ) {
-        osiTime oTime( sysTime.cal_time, 0 );
-        /* oTime.show( (unsigned) 1 ); */
-        arplo->end = oTime;
-        /* arplo->end.show( (unsigned) 1 ); */
-        /* printf( "\n" ); */
+        arplo->end_time_t = sysTime.cal_time;
       }
     }
 
@@ -2421,6 +2413,9 @@ int n;
 
 }
 
+
+#ifdef OLDARCHIVER
+
 int archivePlotClass::readArchive ( void ) {
 
 int n;
@@ -2428,6 +2423,8 @@ bool result;
 double tt0, val;
 char msg[80];
 ValueIterator values;
+osiTime start( start_time_t, 0 );
+osiTime end( end_time_t, 0 );
 
   // printf( "readArchive\n" );
   // printf( "archive is [%s]\n", archiveName );
@@ -2631,22 +2628,227 @@ ValueIterator values;
 
   return 1;
 
+  }
+  catch (const ArchiveException &e) {
+
+    if ( msgDialogPoppedUp ) {
+      msgDialog.popdown();
+      msgDialogPoppedUp = 0;
+    }
+
+    numPoints = 0;
+    sprintf( msg, "%s\n", e.what() );
+    actWin->appCtx->postMessage( msg );
+    return 0;
+
+  }
+
 }
-catch (const ArchiveException &e) {
+
+#else
+
+int readValues (
+  IndexFile &indexf,
+  stdVector<stdString> names,
+  epicsTime *start,
+  epicsTime *end,
+  ReaderFactory::How how,
+  double delta,
+  int max,
+  double *x,
+  double *y,
+  int *n,
+  DbrType *yType,
+  int *truncated
+) {
+
+SpreadsheetReader sheet(indexf, how, delta);
+bool ok = sheet.find(names, start);
+const RawValue::Data *value;
+double dVal;
+bool status;
+epicsTimeStamp stamp;
+
+  *n = 0;
+  *yType = 0;
+  *truncated = 0;
+
+  if ( !sheet.getChannelFound(0) ) {
+    fprintf(stderr, "Warning: channel '%s' not in archive\n",
+     names[0].c_str());
+    return 0;
+  }
+
+  if ( ok ) { // got at least one value
+    *yType = sheet.getType(0);
+  }
+
+  while ( ok && ( *n < max-1 ) ) {
+
+    if ( end && sheet.getTime() >= *end ) break;
+
+    stamp = sheet.getTime();
+
+    value = sheet.getValue(0);
+    if ( value ) {
+
+      if ( !RawValue::isInfo(value) ) {
+
+        status = RawValue::getDouble(
+         sheet.getType(0), sheet.getCount(0),
+         value, dVal, 0 );
+
+        x[*n] = (double) stamp.secPastEpoch + stamp.nsec/1e9;
+	y[*n] = dVal;
+	(*n)++;
+
+      }
+
+    }
+
+    ok = sheet.next();
+
+  }
+
+  if ( *n >= max-1 ) {
+    *n = max-1;
+    *truncated = 1;
+  }
+
+  return 1;
+
+}
+
+
+int archivePlotClass::readArchive ( void ) {
+
+int i, n, truncated;
+bool result;
+double val;
+char msg[80];
+stdVector<stdString> names;
+ReaderFactory::How how = ReaderFactory::Raw;
+IndexFile indexf(50);
+double delta = 0.0;
+epicsTimeStamp stamp;
+
+  // printf( "readArchive\n" );
+  // printf( "archive is [%s]\n", archiveName );
+
+  epicsTimeFromTime_t( &stamp, start_time_t );
+  //printf( "start = %-d\n", stamp.secPastEpoch );
+  epicsTime tStart( stamp );
+
+  epicsTimeFromTime_t( &stamp, end_time_t );
+  //printf( "start = %-d\n", stamp.secPastEpoch );
+  epicsTime tEnd( stamp );
+
+  //try {
+
+    if ( !indexf.open( archiveName ) ) return 0;
+
+    names.push_back( (const stdString) file );
+
+    if ( msgDialogPoppedUp ) {
+      msgDialog.popdown();
+    }
+    msgDialog.popup( "Reading Archive...", actWin->x+x+w/2, actWin->y+y+h/2 );
+    msgDialogPoppedUp = 1;
+
+    result = readValues( indexf, names, &tStart, &tEnd, how, delta,
+     maxDataPoints, xarray, yarray, &n, &yType, &truncated );
+
+    if ( !result ) {
+      indexf.close();
+      return 0;
+    }
+
+    if ( truncated ) {
+      sprintf( msg, "Array size exceeded (%-d points), data set truncated",
+       maxDataPoints );
+      actWin->appCtx->postMessage( msg );
+    }
+
+
+    xarray[0] = xarray[0] / 3600.0;
+    xMin = xMax = xarray[0];
+
+    if ( yMode == modeLog ) {
+      val = yarray[0];
+      if ( val <= 0 ) val = 1;
+      yarray[0] = log10( val );
+    }
+    yMin = yMax = yarray[0];
+
+    for ( i=1; i<n; i++ ) {
+
+      //printf( "%16.11lg     %16.11lg\n", xarray[i], yarray[i] );
+
+      xarray[i] = xarray[i] / 3600.0;
+      if ( xarray[i] > xMax ) xMax = xarray[i];
+      if ( xarray[i] < xMin ) xMin = xarray[i];
+
+      if ( yMode == modeLog ) {
+        val = yarray[i];
+        if ( val <= 0 ) val = 1;
+        yarray[i] = log10( val );
+      }
+
+      if ( yarray[i] > yMax ) yMax = yarray[i];
+      if ( yarray[i] < yMin ) yMin = yarray[i];
+
+    }
+
+  //}
+  //catch (const ArchiveException &e) {
+
+  //  if ( msgDialogPoppedUp ) {
+  //    msgDialog.popdown();
+  //    msgDialogPoppedUp = 0;
+  //  }
+
+  //  numPoints = 0;
+  //  sprintf( msg, "%s\n", e.what() );
+  //  actWin->appCtx->postMessage( msg );
+  //  return 0;
+
+  //}
+
+  numPoints = n;
+
+  //printf( "numPoints = %-d\n", numPoints );
+
+  if ( xMax <= xMin ) xMax = xMin + 1.0;
+  if ( yMax <= yMin ) yMax = yMin + 1.0;
+
+  saveIndex = 0;
+  saveXMin[saveIndex] = xMin;
+  saveXMax[saveIndex] = xMax;
+  saveYMin[saveIndex] = yMin;
+  saveYMax[saveIndex] = yMax;
 
   if ( msgDialogPoppedUp ) {
     msgDialog.popdown();
     msgDialogPoppedUp = 0;
   }
 
-  numPoints = 0;
-  sprintf( msg, "%s\n", e.what() );
-  actWin->appCtx->postMessage( msg );
-  return 0;
+  if ( numPoints == 0 ) {
+    sprintf( msg, "No data time for specified date range" );
+    actWin->appCtx->postMessage( msg );
+  }
+  else if ( numPoints == 1 ) {
+    sprintf( msg, "Only one data point for specified date range" );
+    actWin->appCtx->postMessage( msg );
+  }
+
+  indexf.close();
+
+  return 1;
 
 }
 
-}
+#endif
+
 
 void archivePlotClass::rescale ( void ) {
 

@@ -1,0 +1,61 @@
+# -*- makefile -*-
+
+TOP = ../../../..
+include $(TOP)/config/CONFIG_EXTENSIONS
+STATIC_BUILD=NO
+SHARED_LIBRARIES=YES
+
+USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+# Add Debugging
+USR_CXXFLAGS_Linux += -g -O0
+
+  
+USR_LIBS_Linux = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl
+
+  USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+  USR_LIBS_solaris = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt
+
+  USR_CXXFLAGS_hpux11_11_mt += +W652 -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
+  USR_LIBS_hpux11_11_mt = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread 
+
+USR_LDFLAGS += -L$(INSTALL_LIB) -L$(INSTALL_BIN)
+
+# Add debugging
+#USR_LDFLAGS += -g
+
+
+LIBRARY = ArchivePlot
+
+PROD_LIBS += Storage Tools ca Com
+
+USR_INCLUDES = -I../ -I../../util -I../../pvlib -I../../lib
+USR_INCLUDES += -I$(TOP)/src/ChannelArchiver/Tools
+USR_INCLUDES += -I$(TOP)/src/ChannelArchiver/Storage
+USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
+
+Xm_DIR = $(MOTIF_LIB)
+Xt_DIR = $(X11_LIB)
+X11_DIR = $(X11_LIB)
+Xmu_DIR = $(X11_LIB)
+# ELW added following two lines for 
+# Red Hat 7.0 LINUX 
+Xp_DIR = $(X11_LIB)
+Xext = $(X11)/lib
+#
+XlibGUI_DIR = $(X11_LIB)
+XmStatic_DIR = $(MOTIF_LIB)
+XmStatXt_DIR = $(MOTIF_LIB)
+HCLXt_DIR = $(X11_LIB)
+Xlib_DIR = $(X11_LIB)
+HCLXmu_DIR = $(X11_LIB)
+
+LIBSRCS += archivePlot.cc
+LIBSRCS += scale.cc
+LIBSRCS += reg_archivePlot.cc
+
+include $(TOP)/config/RULES.Host
+
+G++_NORMAL = $(G++)
+G++_STRICT = $(G++)
+
+

@@ -1,0 +1,23 @@
+#ifndef __scale_str
+#define __scale_str 1
+
+#define scale_str1 (char *) ""
+#define scale_str2 (char *) "Unknown object"
+#define scale_str3 (char *) "Properties"
+#define scale_str4 (char *) "X"
+#define scale_str5 (char *) "Y"
+#define scale_str6 (char *) "Width"
+#define scale_str7 (char *) "Height"
+#define scale_str8 (char *) "Min PV"
+#define scale_str9 (char *) "Max PV"
+#define scale_str10 (char *) "Color PV"
+#define scale_str11 (char *) "Mode PV"
+#define scale_str12 (char *) "Label PV"
+#define scale_str13 (char *) "Update PV"
+#define scale_str14 (char *) "Color"
+#define scale_str15 (char *) "Font"
+#define scale_str16 (char *) "Scale ID"
+
+#endif
+
+
