@@ -1105,8 +1105,13 @@ char title[32], *ptr;
     }
   }
 
-  strncpy( buf->bufButtonLabel, buttonLabel.getRaw(), 127 );
-
+  if ( buttonLabel.getRaw() ) {
+    strncpy( buf->bufButtonLabel, buttonLabel.getRaw(), 127 );
+    buf->bufButtonLabel[127] = 0;
+  }
+  else {
+    strncpy( buf->bufButtonLabel, "", 127 );
+  }
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
