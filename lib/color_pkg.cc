@@ -6154,6 +6154,12 @@ int colorInfoClass::writeColorIndex (
 int r, g, b;
 unsigned int pixel;
 
+  if ( ( index < 0 ) || ( index >= max_colors+num_blinking_colors ) ) {
+    printf( "colorInfoClass::writeColorIndex - bad index encountered [%-d]\n",
+     index );
+    index = getSpecialIndex( COLORINFO_K_INVALID );
+  }
+
   if ( useIndexFlag ) {
 
     writeStringToFile( f, "index" );
@@ -6186,19 +6192,21 @@ char colorMode[10+1];
   if ( strcmp( colorMode, "rgb" ) != 0 ) {
 
     fscanf( f, "%d\n", index );
-    if ( ( *index < 0 ) || ( *index >= max_colors+num_blinking_colors ) ) {
-      printf( "colorInfoClass::readColorIndex - bad index encountered [%-d]\n",
-       *index );
-      *index = getSpecialIndex( COLORINFO_K_INVALID );
-    }
 
   }
   else {
 
     fscanf( f, "%d,%d,%d\n", &r, &g, &b );
     setRGB( r, g, b, &pixel );
+    *index = -1;
     *index = pixIndex( pixel );
 
+  }
+
+  if ( ( *index < 0 ) || ( *index >= max_colors+num_blinking_colors ) ) {
+    printf( "colorInfoClass::readColorIndex - bad index encountered [%-d]\n",
+     *index );
+    *index = getSpecialIndex( COLORINFO_K_INVALID );
   }
 
   return 1;
