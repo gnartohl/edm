@@ -5,6 +5,8 @@ include ../make.setup
 LIBNAME = $(ODIR)/libPV.so
 OBJS    = $(ODIR)/pv_factory.o
 OBJS   += $(ODIR)/epics_pv_factory.o
+OBJS   += $(ODIR)/postfix.o
+OBJS   += $(ODIR)/calc_pv_factory.o
 OBJS   += $(ODIR)/textupdate.o
 OBJS   += $(ODIR)/SciPlot.o
 OBJS   += $(ODIR)/strip_data.o
@@ -21,7 +23,9 @@ $(LIBNAME): $(OBJS)
 # Dependencies
 $(ODIR)/pv_factory.o: pv_factory.cc pv_factory.h
 
-$(ODIR)/epics_pv_factory.o: epics_pv_factory.cc epics_pv_factory.h
+$(ODIR)/epics_pv_factory.o: epics_pv_factory.cc epics_pv_factory.h hashtable.h
+
+$(ODIR)/calc_pv_factory.o: calc_pv_factory.cc calc_pv_factory.h hashtable.h
 
 $(ODIR)/textupdate.o: textupdate.cc
 

@@ -1,0 +1,292 @@
+3 0 1
+669
+165
+546
+452
+helvetica-medium-r-18.0
+0
+helvetica-medium-r-12.0
+0
+0
+23
+0
+0
+36
+20
+2
+0
+21
+<<<empty>>>
+0
+0
+10
+0
+<<<empty>>>
+<<<empty>>>
+0
+0
+helvetica-medium-r-14.0
+0
+EOD
+TextupdateClass
+1 1 0
+32
+93
+255
+28
+EPICS\jane
+0
+0
+0
+2
+1
+helvetica-medium-i-18.0
+1
+135650656 1080014445
+EOD
+TextupdateClass
+1 1 0
+32
+134
+255
+28
+jane
+0
+0
+0
+1
+1
+helvetica-bold-r-18.0
+2
+0 0
+EOD
+TextupdateClass
+1 1 0
+32
+269
+255
+28
+jane
+0
+0
+0
+1
+1
+helvetica-medium-r-18.0
+0
+0 0
+EOD
+TextupdateClass
+1 1 0
+182
+228
+108
+28
+janet
+0
+0
+0
+20
+0
+helvetica-medium-r-12.0
+0
+135660728 1080014445
+EOD
+TextupdateClass
+1 1 0
+30
+178
+254
+32
+fred
+0
+0
+0
+1
+1
+times-medium-r-24.0
+2
+135662000 1080014445
+EOD
+TextupdateClass
+1 1 0
+32
+402
+126
+28
+CALC\random
+0
+0
+0
+1
+1
+helvetica-medium-r-18.0
+0
+135663272 1080014445
+EOD
+TextupdateClass
+1 1 0
+32
+361
+255
+28
+janet
+0
+0
+0
+1
+1
+helvetica-medium-r-18.0
+0
+2 0
+EOD
+TextupdateClass
+1 1 0
+32
+309
+254
+32
+fred
+0
+0
+0
+1
+1
+helvetica-medium-r-18.0
+1
+1 0
+EOD
+activeXTextClass
+2 0 0
+32
+9
+453
+27
+35
+0
+1
+20
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+PVs from EPICS Base's "excas"
+helvetica-medium-r-24.0
+0
+1
+<<<empty>>>
+EOD
+TextupdateClass
+1 1 0
+32
+41
+253
+45
+EPICS\fred
+0
+0
+0
+20
+1
+helvetica-medium-r-18.0
+0
+5 0
+EOD
+TextupdateClass
+1 1 0
+32
+228
+108
+28
+janet
+0
+0
+0
+20
+0
+helvetica-medium-r-12.0
+0
+135660728 1080014445
+EOD
+TextentryClass
+1 1 0
+326
+39
+157
+38
+fred
+0
+0
+0
+20
+1
+helvetica-medium-r-12.0
+0
+0 1
+EOD
+TextentryClass
+1 1 0
+326
+102
+157
+38
+fred
+0
+0
+0
+20
+1
+helvetica-bold-r-14.0
+2
+0 1
+EOD
+TextentryClass
+1 1 0
+326
+165
+157
+38
+fred
+0
+0
+4
+34
+1
+helvetica-medium-r-12.0
+0
+0 1
+EOD
+TextentryClass
+1 1 0
+326
+228
+157
+38
+fred
+0
+0
+0
+20
+1
+helvetica-medium-r-12.0
+0
+0 1
+EOD
+TextupdateClass
+1 1 0
+167
+402
+126
+28
+CALC\sum(fred,jane)
+0
+0
+0
+1
+1
+helvetica-medium-r-18.0
+0
+135663272 1080014445
+EOD

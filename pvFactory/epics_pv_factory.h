@@ -13,6 +13,8 @@
 class EPICS_PV_Factory : public PV_Factory
 {
 public:
+    EPICS_PV_Factory();
+    ~EPICS_PV_Factory();
     ProcessVariable *create(const char *PV_name);
 private:
     friend class EPICS_ProcessVariable;

@@ -37,6 +37,16 @@ typedef Hashtable<HashTableItem,
                   HashTableSize> PVHash;
 static PVHash processvariables;
 
+EPICS_PV_Factory::EPICS_PV_Factory()
+{
+    fprintf(stderr, "EPICS_PV_Factory created\n");
+}
+
+EPICS_PV_Factory::~EPICS_PV_Factory()
+{
+    fprintf(stderr, "EPICS_PV_Factory deleted\n");
+}
+
 ProcessVariable *EPICS_PV_Factory::create(const char *PV_name)
 {
     EPICS_ProcessVariable *pv;
@@ -329,7 +339,6 @@ static ProcessVariable::Type double_type =
    
 const ProcessVariable::Type &PVValueDouble::get_type() const
 {   return double_type; }
-
 
 short PVValueDouble::get_DBR() const
 {   return DBF_DOUBLE; }

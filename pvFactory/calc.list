@@ -1,0 +1,36 @@
+CALC1 -*- shell-script -*-
+
+# Example definition file for the CALC ProcessVariable
+#
+# First line is magic and provides version number
+# as well as EMACS mode with is not necessary
+# but makes for cool coloring (by definition)
+#
+# Empty lines and comments beginning with '#' are ignored
+#
+# Syntax:
+#
+# <name>
+# <implementation>
+#
+# Name is used to refer to a CALC PV ala "CALC\name"
+# or "CALC\name(argA, argB, argC, ...).
+#
+# Implementation is in EPICS CALC record syntax,
+# with A, B, C, ... being variable names for the arguments.
+#
+# kasemir@vla.com
+
+# Formula to create random number:
+random
+# Implementation:
+RNDM
+
+# Another one:
+sum   
+# Implementation:
+A+B
+
+
+
+

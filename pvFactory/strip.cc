@@ -12,9 +12,6 @@
 #include <X11/cursorfont.h>
 #endif
 
-// This is the EPICS specific line right now:
-static PV_Factory *pv_factory = new EPICS_PV_Factory();
-
 edmStripClass::edmStripClass()
 {
     name = strdup(STRIP_CLASSNAME);
@@ -694,7 +691,7 @@ int edmStripClass::activate(int pass, void *ptr)
                            i, pv[i]->get_name());
                 if (is_pvname_valid[i])
                 {
-                    pv[i] = pv_factory->create(PVName(i, true));
+                    pv[i] = the_PV_Factory->create(PVName(i, true));
                     if (pv[i])
                     {
                         pv[i]->add_status_callback(pv_status_callback, this);

@@ -11,23 +11,29 @@
 #include"hashtable.h"
 #include"dl_list.h"
 
-// All in here are virtual base classes.
-//
-// See epics_pv_factory for an example implementation
-// that uses EPICS ChannelAccess process variables.
-
 // PV_Factory: Factory for ProcessVariables.
 // When e.g. a widget asks for PV by name for the first time,
 // a new PV will be created. Next time,
 // an existing one will be returned.
 //
+// The actual PV_Factory that creates the ProcessVariable
+// might be EPICS_PV_Factory or CALC_PV_Factory or ...
+//
+// See epics_pv_factory for an example implementation
+// that uses EPICS ChannelAccess process variables.
 class PV_Factory
 {
 public:
+    PV_Factory();
     virtual ~PV_Factory();
     // Result is referenced once, release when no longer needed.
-    virtual class ProcessVariable *create(const char *PV_name) = 0;
+    virtual class ProcessVariable *create(const char *PV_name);
 };
+
+// All ProcessVariables are to be created
+// by calls to this central PV_Factory:
+// (Which is for now created in pv_factory.cc)
+extern PV_Factory *the_PV_Factory;
 
 // ProcessVariable:
 // Created via PV_Factory, reference-counted.
@@ -37,6 +43,14 @@ public:
 // * subscription to native-typed(!) value of the channel.
 // User can query the current state, value, control/display info
 // and add/remove callbacks if interested.
+
+// status and severity for now match the EPICS model
+// as defined in base/include/alarm.h:
+#ifndef INVALID_ALARM
+#define INVALID_ALARM		0x3
+#define	UDF_ALARM		17
+#endif
+
 class ProcessVariable
 {
 public:
@@ -68,7 +82,7 @@ public:
         // special            : no clue
         size_t size;
         // Human-readable description. Examples:
-        // "real:<size>"
+        // "real:64"  for double
         // "integer:<size>"
         // "enumerated:<size>"
         // "text:<size>"
@@ -83,14 +97,14 @@ public:
     // -- Don't call when is_valid() returns false!!
     // -- Undefined for get_type().type == text or special
     virtual double      get_double() const = 0;
-    virtual int         get_int() const = 0;
+    virtual int         get_int() const;
     // writes strbuf, formatted according to precision etc.
     // returns actual strlen
     // Should always work for all types!
-    virtual size_t      get_string(char *strbuf, size_t buflen) const = 0;
+    virtual size_t      get_string(char *strbuf, size_t buflen) const;
     // Get number and (if > 0) strings for enumerated value
-    virtual size_t      get_enum_count() const = 0;
-    virtual const char *get_enum(size_t i) const = 0;
+    virtual size_t      get_enum_count() const;
+    virtual const char *get_enum(size_t i) const;
     // Time: support for seconds in ANSI time_t format (since 1970 UTC)
     // as well as nano second extension
 	virtual time_t get_time_t() const = 0;
@@ -99,7 +113,7 @@ public:
     virtual short       get_status() const = 0;
     virtual short       get_severity() const = 0;
     virtual short       get_precision() const = 0;
-    virtual const char *get_units() const = 0;
+    virtual const char *get_units() const;
     virtual double      get_upper_disp_limit() const = 0;
     virtual double      get_lower_disp_limit() const = 0;
     virtual double      get_upper_alarm_limit() const = 0;

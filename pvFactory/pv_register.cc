@@ -17,7 +17,6 @@ static int libRecIndex = 0;
 
 static libRecType exported[] =
 {
-    // { "EPICS_PV_Factory", "PV_Factory", "EPICS" },
     { TEXTUPDATE_CLASSNAME, "Monitors", "Textupdate" },
     { TEXTENTRY_CLASSNAME, "Controls", "Textentry" },
     { STRIP_CLASSNAME, "Monitors", "Stripchart" }
@@ -44,18 +43,6 @@ extern "C"
         *text      = exported[libRecIndex].text;
         libRecIndex++;
         return 0;
-    }
-
-    void *create_EPICS_PV_FactoryClassPtr (void)
-    {
-        EPICS_PV_Factory *obj = new EPICS_PV_Factory();
-        return (void *) obj;
-    }
-    
-    void *clone_EPICS_PV_FactoryClassPtr (void *rhs)
-    {
-        EPICS_PV_Factory *obj = new EPICS_PV_Factory();
-        return (void *) obj;
     }
 
     void *create_TextupdateClassPtr (void)

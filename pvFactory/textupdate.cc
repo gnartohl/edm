@@ -9,9 +9,6 @@
 #include "epics_pv_factory.h"
 #include "cvtFast.h"
 
-// This is the EPICS specific line right now:
-static PV_Factory *pv_factory = new EPICS_PV_Factory();
-
 edmTextupdateClass::edmTextupdateClass()
 {
     init(TEXTUPDATE_CLASSNAME);
@@ -266,9 +263,9 @@ int edmTextupdateClass::genericEdit() // create Property Dialog
     ef.addOption("Mode", "default|decimal|hex", &buf_displayMode);
     ef.addTextField("Precision", 25, &buf_precision);
     ef.addTextField("Line Width", 25, &buf_line_width);
-    ef.addColorButton("Line Color", actWin->ci, &lineCb, &bufLineColor);
+    ef.addColorButton("Fg Color", actWin->ci, &lineCb, &bufLineColor);
     ef.addToggle("Filled?", &bufIsFilled);
-    ef.addColorButton("Fill Color", actWin->ci, &fillCb, &bufFillColor);
+    ef.addColorButton("Bg Color", actWin->ci, &fillCb, &bufFillColor);
     ef.addFontMenu("Font", actWin->fi, &fm, fontTag );
     fm.setFontAlignment(alignment);
 
@@ -551,7 +548,7 @@ int edmTextupdateClass::activate(int pass, void *ptr)
                 printf("textupdate::activate: pv already set!\n");
             if (is_pvname_valid)
             {
-                pv = pv_factory->create(getExpandedPVName());
+                pv = the_PV_Factory->create(getExpandedPVName());
                 if (pv)
                 {
                     pv->add_status_callback(pv_status_callback, this);
@@ -729,7 +726,14 @@ int edmTextentryClass::activate(int pass, void *ptr)
                                              XtNwidth, (XtArgVal)w,
                                              XmNforeground, (XtArgVal)
                                                  lineColor.pixelColor(),
+                                             XmNbackground, (XtArgVal)
+                                                 fillColor.pixelColor(),
                                              XmNfontList, (XtArgVal)fonts,
+                                             // next 2 seem to have no effect:
+                                             XmNentryAlignment,
+                                                 (XtArgVal)alignment,
+                                             XmNalignment,
+                                                 (XtArgVal)alignment,
                                              NULL);
             /* add the callbacks for update */
             XtAddCallback(widget,XmNactivateCallback,
@@ -750,7 +754,7 @@ int edmTextentryClass::activate(int pass, void *ptr)
                 printf("textentry::activate: pv already set!\n");
             if (is_pvname_valid)
             {
-                pv = pv_factory->create(getExpandedPVName());
+                pv = the_PV_Factory->create(getExpandedPVName());
                 if (pv)
                 {
                     pv->add_status_callback(pv_status_callback, this);
