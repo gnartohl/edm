@@ -14790,7 +14790,6 @@ int numComments = 0, moreComments = 1, checkForRev = 1,
 
   haveComments = 0;
   strcpy( fileNameAndRev, fileName );
-  strcpy( fileRev, "" );
 
   do {
 
