@@ -3339,11 +3339,11 @@ static int xAxisStyleEnum[4] = {
 };
 
 int yAxisStyleLinear = 0;
-static char *yAxisStyleEnumStr[4] = {
+static char *yAxisStyleEnumStr[2] = {
   "linear",
   "log10"
 };
-static int yAxisStyleEnum[4] = {
+static int yAxisStyleEnum[2] = {
   0,
   1
 };
@@ -3450,7 +3450,7 @@ static int resetModeEnum[2] = {
 
   tag.loadW( "# Y axis properties" );
   tag.loadBoolW( "showYAxis", &y1Axis[0], &zero );
-  tag.loadW( "yAxisStyle", 4, yAxisStyleEnumStr, yAxisStyleEnum,
+  tag.loadW( "yAxisStyle", 2, yAxisStyleEnumStr, yAxisStyleEnum,
    &y1AxisStyle[0], &yAxisStyleLinear );
   tag.loadW( "yAxisSrc", 3, axisSrcEnumStr, axisSrcEnum, &y1AxisSource[0],
    &axisSrcFromPv );
@@ -3468,7 +3468,7 @@ static int resetModeEnum[2] = {
 
   tag.loadW( "# Y2 axis properties" );
   tag.loadBoolW( "showY2Axis", &y1Axis[1], &zero );
-  tag.loadW( "y2AxisStyle", 4, yAxisStyleEnumStr, yAxisStyleEnum,
+  tag.loadW( "y2AxisStyle", 2, yAxisStyleEnumStr, yAxisStyleEnum,
    &y1AxisStyle[1], &yAxisStyleLinear );
   tag.loadW( "y2AxisSrc", 3, axisSrcEnumStr, axisSrcEnum, &y1AxisSource[1],
    &axisSrcFromPv );
@@ -3753,11 +3753,11 @@ static int xAxisStyleEnum[4] = {
 };
 
 int yAxisStyleLinear = 0;
-static char *yAxisStyleEnumStr[4] = {
+static char *yAxisStyleEnumStr[2] = {
   "linear",
   "log10"
 };
-static int yAxisStyleEnum[4] = {
+static int yAxisStyleEnum[2] = {
   0,
   1
 };
@@ -3863,7 +3863,7 @@ static int resetModeEnum[2] = {
 
   //tag.loadR( "# Y axis properties" );
   tag.loadR( "showYAxis", &y1Axis[0], &zero );
-  tag.loadR( "yAxisStyle", 4, yAxisStyleEnumStr, yAxisStyleEnum,
+  tag.loadR( "yAxisStyle", 2, yAxisStyleEnumStr, yAxisStyleEnum,
    &y1AxisStyle[0], &yAxisStyleLinear );
   tag.loadR( "yAxisSrc", 3, axisSrcEnumStr, axisSrcEnum, &y1AxisSource[0],
    &axisSrcFromPv );
@@ -3881,7 +3881,7 @@ static int resetModeEnum[2] = {
 
   //tag.loadR( "# Y2 axis properties" );
   tag.loadR( "showY2Axis", &y1Axis[1], &zero );
-  tag.loadR( "y2AxisStyle", 4, yAxisStyleEnumStr, yAxisStyleEnum,
+  tag.loadR( "y2AxisStyle", 2, yAxisStyleEnumStr, yAxisStyleEnum,
    &y1AxisStyle[1], &yAxisStyleLinear );
   tag.loadR( "y2AxisSrc", 3, axisSrcEnumStr, axisSrcEnum, &y1AxisSource[1],
    &axisSrcFromPv );
