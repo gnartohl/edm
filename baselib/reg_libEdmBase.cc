@@ -41,6 +41,7 @@ static libRecType libRec[] = {
   //  { "xyGraphClass", global_str2, "X-Y Graph" },
   { "activeXTextDspClass", global_str5, reg_str12 },
   { "activeSliderClass", global_str5, reg_str13 },
+  { "activeMotifSliderClass", global_str5, reg_str22 },
   { "activeButtonClass", global_str5, reg_str14 },
   { "activeMenuButtonClass", global_str5, reg_str15 },
   { "activeMessageButtonClass", global_str5, reg_str16 },
