@@ -556,6 +556,29 @@ keypadClass::keypadClass () {
   hex = 0;
   MAXCHARS = 14;
 
+  pb0 = NULL;
+  pb1 = NULL;
+  pb2 = NULL;
+  pb3 = NULL;
+  pb4 = NULL;
+  pb5 = NULL;
+  pb6 = NULL;
+  pb7 = NULL;
+  pb8 = NULL;
+  pb9 = NULL;
+  pbPoint = NULL;
+  pbSign = NULL;
+  pbOK = NULL;
+  pbApply = NULL;
+  pbCancel = NULL;
+  pbBksp = NULL;
+  pba = NULL;
+  pbb = NULL;
+  pbc = NULL;
+  pbd = NULL;
+  pbe = NULL;
+  pbf = NULL;
+
 }
 
 keypadClass::~keypadClass ( void ) {
