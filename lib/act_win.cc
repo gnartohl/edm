@@ -611,6 +611,10 @@ int stat, success;
   strncpy( awo->allSelectedBtnFontTag, awo->defaultBtnFm.currentFontTag(),
    63 );
 
+  awo->allSelectedAlignment = awo->defaultFm.currentFontAlignment();
+  awo->allSelectedCtlAlignment = awo->defaultCtlFm.currentFontAlignment();
+  awo->allSelectedBtnAlignment = awo->defaultBtnFm.currentFontAlignment();
+
   curSel = awo->selectedHead->selFlink;
   while ( curSel != awo->selectedHead ) {
 
