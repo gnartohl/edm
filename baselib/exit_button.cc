@@ -120,10 +120,10 @@ static void ebtc_edit_cancel_delete (
 
 activeExitButtonClass *ebto = (activeExitButtonClass *) client;
 
-  ebto->erase();
-  ebto->deleteRequest = 1;
   ebto->ef.popdown();
   ebto->operationCancel();
+  ebto->erase();
+  ebto->deleteRequest = 1;
   ebto->drawAll();
 
 }

@@ -316,10 +316,10 @@ static void mmuxc_edit_cancel_delete (
 
 menuMuxClass *mmuxo = (menuMuxClass *) client;
 
-  mmuxo->erase();
-  mmuxo->deleteRequest = 1;
   mmuxo->ef.popdown();
   mmuxo->operationCancel();
+  mmuxo->erase();
+  mmuxo->deleteRequest = 1;
   mmuxo->drawAll();
 
 }

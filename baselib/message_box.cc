@@ -165,10 +165,10 @@ static void messageboxc_edit_cancel_delete (
 
 activeMessageBoxClass *messageboxo = (activeMessageBoxClass *) client;
 
-  messageboxo->erase();
-  messageboxo->deleteRequest = 1;
   messageboxo->ef.popdown();
   messageboxo->operationCancel();
+  messageboxo->erase();
+  messageboxo->deleteRequest = 1;
   messageboxo->drawAll();
 
 }

@@ -386,10 +386,10 @@ void alc_edit_cancel_delete (
 
 activeLineClass *alo = (activeLineClass *) client;
 
-  alo->erase();
-  alo->deleteRequest = 1;
   alo->ef.popdown();
   alo->operationCancel();
+  alo->erase();
+  alo->deleteRequest = 1;
   alo->drawAll();
 
 }

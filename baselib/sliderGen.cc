@@ -485,10 +485,10 @@ static void slc_edit_cancel_delete (
 
 activeSliderClass *slo = (activeSliderClass *) client;
 
-  slo->erase();
-  slo->deleteRequest = 1;
   slo->ef.popdown();
   slo->operationCancel();
+  slo->erase();
+  slo->deleteRequest = 1;
   slo->drawAll();
 
 }

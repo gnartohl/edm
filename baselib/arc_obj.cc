@@ -270,10 +270,10 @@ static void aac_edit_cancel_delete (
 
 activeArcClass *aao = (activeArcClass *) client;
 
-  aao->erase();
-  aao->deleteRequest = 1;
   aao->ef.popdown();
   aao->operationCancel();
+  aao->erase();
+  aao->deleteRequest = 1;
   aao->drawAll();
 
 }

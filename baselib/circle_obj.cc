@@ -252,10 +252,10 @@ static void acc_edit_cancel_delete (
 
 activeCircleClass *aco = (activeCircleClass *) client;
 
-  aco->erase();
-  aco->deleteRequest = 1;
   aco->ef.popdown();
   aco->operationCancel();
+  aco->erase();
+  aco->deleteRequest = 1;
   aco->drawAll();
 
 }

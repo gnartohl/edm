@@ -164,10 +164,10 @@ static void btc_edit_cancel_delete (
 
 activeButtonClass *bto = (activeButtonClass *) client;
 
-  bto->erase();
-  bto->deleteRequest = 1;
   bto->ef.popdown();
   bto->operationCancel();
+  bto->erase();
+  bto->deleteRequest = 1;
   bto->drawAll();
 
 }

@@ -246,10 +246,10 @@ void arc_edit_cancel_delete (
 
 activeRectangleClass *aro = (activeRectangleClass *) client;
 
-  aro->erase();
-  aro->deleteRequest = 1;
   aro->ef.popdown();
   aro->operationCancel();
+  aro->erase();
+  aro->deleteRequest = 1;
   aro->drawAll();
 
 }

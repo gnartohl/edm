@@ -221,10 +221,10 @@ static void barc_edit_cancel_delete (
 
 activeBarClass *baro = (activeBarClass *) client;
 
-  baro->erase();
-  baro->deleteRequest = 1;
   baro->ef.popdown();
   baro->operationCancel();
+  baro->erase();
+  baro->deleteRequest = 1;
   baro->drawAll();
 
 }

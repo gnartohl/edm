@@ -966,10 +966,10 @@ static void axtdc_edit_cancel_delete (
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
-  axtdo->erase();
-  axtdo->deleteRequest = 1;
   axtdo->ef.popdown();
   axtdo->operationCancel();
+  axtdo->erase();
+  axtdo->deleteRequest = 1;
   axtdo->drawAll();
 
 }

@@ -284,10 +284,10 @@ void arc_edit_cancel_delete (
 
 expRectClass *aro = (expRectClass *) client;
 
-  aro->erase();
-  aro->deleteRequest = 1;
   aro->ef.popdown();
   aro->operationCancel();
+  aro->erase();
+  aro->deleteRequest = 1;
   aro->drawAll();
 
 }

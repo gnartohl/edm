@@ -226,10 +226,10 @@ static void axygc_edit_cancel_delete (
 
 xyGraphClass *axygo = (xyGraphClass *) client;
 
-  axygo->erase();
-  axygo->deleteRequest = 1;
   axygo->ef.popdown();
   axygo->operationCancel();
+  axygo->erase();
+  axygo->deleteRequest = 1;
   axygo->drawAll();
 
 }

@@ -139,10 +139,10 @@ static void msgbtc_edit_cancel_delete (
 
 activeMessageButtonClass *msgbto = (activeMessageButtonClass *) client;
 
-  msgbto->erase();
-  msgbto->deleteRequest = 1;
   msgbto->ef.popdown();
   msgbto->operationCancel();
+  msgbto->erase();
+  msgbto->deleteRequest = 1;
   msgbto->drawAll();
 
 }

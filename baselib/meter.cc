@@ -166,10 +166,10 @@ static void meterc_edit_cancel_delete (
 
 activeMeterClass *metero = (activeMeterClass *) client;
 
-  metero->erase();
-  metero->deleteRequest = 1;
   metero->ef.popdown();
   metero->operationCancel();
+  metero->erase();
+  metero->deleteRequest = 1;
   metero->drawAll();
 
 }

@@ -367,10 +367,10 @@ static void mbtc_edit_cancel_delete (
 
 activeMenuButtonClass *mbto = (activeMenuButtonClass *) client;
 
-  mbto->erase();
-  mbto->deleteRequest = 1;
   mbto->ef.popdown();
   mbto->operationCancel();
+  mbto->erase();
+  mbto->deleteRequest = 1;
   mbto->drawAll();
 
 }

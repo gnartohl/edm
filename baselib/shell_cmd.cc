@@ -245,10 +245,10 @@ static void shcmdc_edit_cancel_delete (
 
 shellCmdClass *shcmdo = (shellCmdClass *) client;
 
-  shcmdo->erase();
-  shcmdo->deleteRequest = 1;
   shcmdo->ef.popdown();
   shcmdo->operationCancel();
+  shcmdo->erase();
+  shcmdo->deleteRequest = 1;
   shcmdo->drawAll();
 
 }

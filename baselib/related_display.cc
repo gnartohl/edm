@@ -244,14 +244,14 @@ static void rdc_edit_cancel_delete (
 
 relatedDisplayClass *rdo = (relatedDisplayClass *) client;
 
-  rdo->erase();
-  rdo->deleteRequest = 1;
-  rdo->ef.popdown();
-  rdo->operationCancel();
-  rdo->drawAll();
-
   delete rdo->buf;
   rdo->buf = NULL;
+
+  rdo->ef.popdown();
+  rdo->operationCancel();
+  rdo->erase();
+  rdo->deleteRequest = 1;
+  rdo->drawAll();
 
 }
 

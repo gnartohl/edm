@@ -320,10 +320,10 @@ static void axtc_edit_cancel_delete (
 
 activeXTextClass *axto = (activeXTextClass *) client;
 
-  axto->erase();
-  axto->deleteRequest = 1;
   axto->ef.popdown();
   axto->operationCancel();
+  axto->erase();
+  axto->deleteRequest = 1;
   axto->drawAll();
 
 }
