@@ -26,9 +26,18 @@ class PV_Factory
 public:
     PV_Factory();
     virtual ~PV_Factory();
+
+    enum { MAX_PV_NAME=100 };
+    
     // Result is referenced once, call release() when no longer needed.
     virtual class ProcessVariable *create(const char *PV_name);
 };
+
+// If you have to use fixed-length strings, use
+// char name[PV_Factory::MAX_PV_NAME];
+//
+// The enum hack is from Meyer's "Effective C++" book,
+// it's more portable than "static const int".
 
 // All ProcessVariables are to be created
 // by calls to this central PV_Factory:
