@@ -1,6 +1,11 @@
 #ifndef __thread_priv_h
 #define __thread_priv_h 1
 
+/* The following is needed due to the change
+   in RH 7.1 to /usr/include/sys/time.h
+*/
+#define __USE_GNU
+
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
