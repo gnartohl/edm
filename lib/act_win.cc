@@ -12682,6 +12682,12 @@ void activeWindowClass::setChanged ( void ) {
 //char str[31+1];
 //int stat;
 
+  if ( noEdit ) {
+    change = 0;
+    changeSinceAutoSave = 0;
+    return;
+  }
+
   change = 1;
 
   if ( !changeSinceAutoSave ) {
