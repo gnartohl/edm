@@ -334,7 +334,7 @@ struct hostent *hostEntry;
 
   port_num = htons( port_num );
 
-  bzero( (char *) &s, sizeof(s) );
+  memset( (char *) &s, 0, sizeof(s) );
   s.sin_family = AF_INET;
   s.sin_addr.s_addr = ip_addr;
   s.sin_port = port_num;

@@ -359,8 +359,6 @@ int fileClose (
 
 }
 
-void _edmDebug ( void );
-
 FILE *fileOpen (
   char *fullName,
   char *mode
@@ -377,8 +375,6 @@ int gotFile;
 char errBuf[CURL_ERROR_SIZE+1];
 CURLcode result;
 #endif
-
-  _edmDebug();
 
   if ( gInitList ) {
     gInitList = 0;

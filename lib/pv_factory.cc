@@ -319,14 +319,11 @@ void ProcessVariable::add_conn_state_callback(PVCallback func, void *userarg)
         (*func)(this, userarg);
 }
 
-void _edmDebug( void );
-
 void ProcessVariable::set_node_name( const char *_nodeName ) {
 
   char *theName;
   NodeNameInfo info;
   info.nodeName = (char *) _nodeName;
-  _edmDebug();
   NodeNameInfoHash::iterator entry = nodeNames.find(&info);
   if (entry == nodeNames.end()) {
     NodeNameInfo *pinfo = new NodeNameInfo;

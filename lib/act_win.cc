@@ -31,6 +31,9 @@
 #include "crc.h"
 
 #include "remFileOpen.h"
+
+static int gFastRefresh = -1;
+
 
 void _edmDebug ( void ) {
 
@@ -15164,39 +15167,41 @@ int activeWindowClass::smartDrawAllActive ( void ) {
 
 activeGraphicListPtr cur;
 int n = 0;
+char *envPtr;
 
-  cur = head->flink;
-  while ( cur != head ) {
-    n += cur->node->smartDrawCount();
-    cur = cur->flink;
+  if ( gFastRefresh == -1 ) {
+    envPtr = getenv( "EDMFASTREFRESH" );
+    if ( envPtr ) {
+      gFastRefresh = 1;
+    }
+    else {
+      gFastRefresh = 0;
+    }
   }
 
-#if 0
-  if ( ( n < 1 ) || ( n > 100 ) ) {
+  if ( gFastRefresh ) {
 
     cur = head->flink;
     while ( cur != head ) {
-      if ( cur->node->smartDrawCount() ) {
-        cur->node->resetSmartDrawCount();
-      }
-      cur->node->bufInvalidate();
-      cur->node->drawActive();
+      n += cur->node->smartDrawCount();
       cur = cur->flink;
     }
 
-  }
-  else {
+    if ( ( n < 1 ) || ( n > 1000 ) ) {
 
-    cur = head->flink;
-    while ( cur != head ) {
-      if ( cur->node->smartDrawCount() ) {
-        cur->node->doSmartDrawAllActive();
+      cur = head->flink;
+      while ( cur != head ) {
+        if ( cur->node->smartDrawCount() ) {
+          cur->node->resetSmartDrawCount();
+        }
+        cur = cur->flink;
       }
-      cur = cur->flink;
+      requestActiveRefresh();
+      return 1;
+
     }
 
   }
-#endif
 
   cur = head->flink;
   while ( cur != head ) {

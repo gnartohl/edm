@@ -95,6 +95,7 @@ private:
     int pv_color[num_pvs];
     bool use_pv_time[num_pvs];
     double seconds;
+    int update_ms;
     efInt line_width;
     int bgColor, textColor, fgColor;
     
@@ -116,6 +117,7 @@ private:
     colorButtonClass pv_color_cb[num_pvs];
     int buf_use_pv_time[num_pvs];
     double buf_seconds;
+    int buf_update_ms;
     efInt buf_line_width;
     int buf_bgColor, buf_textColor, buf_fgColor;
     colorButtonClass bgCb, textCb, fgCb;

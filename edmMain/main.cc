@@ -598,7 +598,7 @@ int value, n, nIn, nOut;
 
     port_num = htons( port_num );
 
-    bzero( (char *) &s, sizeof(s) );
+    memset( (char *) &s, 0, sizeof(s) );
     s.sin_family = AF_INET;
     s.sin_addr.s_addr = ip_addr;
     s.sin_port = port_num;
@@ -675,7 +675,7 @@ nextHost:
 
   port_num = htons( port_num );
 
-  bzero( (char *) &s, sizeof(s) );
+  memset( (char *) &s, 0, sizeof(s) );
   s.sin_family = AF_INET;
   s.sin_addr.s_addr = ip_addr;
   s.sin_port = port_num;
@@ -1026,7 +1026,7 @@ int *portNumPtr = (int *) thread_get_app_data( h );
 
     port_num = htons( port_num );
 
-    bzero( (char *) &s, sizeof(s) );
+    memset( (char *) &s, 0, sizeof(s) );
     s.sin_family = AF_INET;
     s.sin_addr.s_addr = htonl(INADDR_ANY);
     s.sin_port = port_num;

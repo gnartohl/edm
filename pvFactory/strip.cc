@@ -25,6 +25,7 @@ edmStripClass::edmStripClass()
 #endif
     }
     seconds = 60.0;
+    update_ms = 1000;
     strcpy(font_tag, "");
     fs = 0;
     alignment = XmALIGNMENT_BEGINNING;
@@ -58,6 +59,7 @@ edmStripClass::edmStripClass(const edmStripClass *rhs)
 #endif
     }
     seconds = rhs->seconds;
+    update_ms = rhs->update_ms;
     line_width = rhs->line_width;
     bgColor = rhs->bgColor;
     textColor = rhs->textColor;
@@ -167,6 +169,8 @@ int edmStripClass::save(FILE *f)
     tag.loadW( "font", font_tag );
     tag.loadW( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
 
+    tag.loadW( "updateMs", &update_ms );
+
     tag.loadW( "endObjectProperties" );
     tag.loadW( "" );
     
@@ -218,6 +222,7 @@ int edmStripClass::createFromFile(FILE *f, char *filename,
     tagClass tag;
 
     int zero = 0;
+    int hundred = 100;
     double dzero = 0;
     char *emptyStr = "";
 
@@ -270,6 +275,8 @@ int edmStripClass::createFromFile(FILE *f, char *filename,
     tag.loadR( "textColor", actWin->ci, &textColor );
     tag.loadR( "font", 63, font_tag );
     tag.loadR( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
+
+    tag.loadR( "updateMs", &update_ms, &hundred );
 
     tag.loadR( "endObjectProperties" );
 
@@ -396,6 +403,8 @@ int edmStripClass::old_createFromFile(FILE *f, char *filename,
     fs = actWin->fi->getXFontStruct(font_tag);
     updateFont(font_tag, &fs,
                &fontAscent, &fontDescent, &fontHeight);
+
+    update_ms = 100;
     
     return 1;
 }
@@ -487,6 +496,7 @@ int edmStripClass::genericEdit() // create Property Dialog
         buf_use_pv_time[i] = use_pv_time[i] ? 1 : 0;
     }
     buf_seconds = seconds;
+    buf_update_ms = update_ms;
     buf_line_width = line_width;
     buf_bgColor = bgColor;
     buf_textColor = textColor;
@@ -514,6 +524,7 @@ int edmStripClass::genericEdit() // create Property Dialog
         ef.endSubForm();
     }
     ef.addTextField("Period [s]", 35, &buf_seconds);
+    ef.addTextField("Update Rate [ms]", 35, &buf_update_ms );
     ef.addTextField("Line Width", 35, &buf_line_width);
     ef.addColorButton("Background", actWin->ci,
                       &bgCb, &buf_bgColor);
@@ -617,6 +628,7 @@ void edmStripClass::edit_update(Widget w, XtPointer client,XtPointer call)
         me->use_pv_time[i] = me->buf_use_pv_time[i] != 0;
     }
     me->seconds = me->buf_seconds;
+    me->update_ms = me->buf_update_ms;
     me->line_width = me->buf_line_width;
     me->bgColor = me->buf_bgColor;
     me->textColor = me->buf_textColor;
@@ -895,7 +907,7 @@ int edmStripClass::activate(int pass, void *ptr)
             break;
         case 3: // start scrolling
             timer = XtAppAddTimeOut(actWin->appCtx->appContext(),
-                                    (unsigned long)(1000),
+                                    (unsigned long) update_ms,
                                     timer_callback,
                                     this);
             break;
@@ -1145,6 +1157,7 @@ void edmStripClass::timer_callback(XtPointer call, XtIntervalId *id)
     double extra_secs = me->seconds/20.0;
     long extra_s = (long)extra_secs;
     long extra_u = (long)((extra_secs - extra_s)*1e6);
+
     t.tv_sec += extra_s;
     t.tv_usec += extra_u;
     if (t.tv_usec > 1000000)
@@ -1161,7 +1174,7 @@ void edmStripClass::timer_callback(XtPointer call, XtIntervalId *id)
     me->actWin->appCtx->proc->unlock();
     // schedule next scoll
     me->timer = XtAppAddTimeOut(me->actWin->appCtx->appContext(),
-                                (unsigned long)(100),
+                                (unsigned long) me->update_ms,
                                 timer_callback,
                                 me);
 }

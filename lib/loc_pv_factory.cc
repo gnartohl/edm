@@ -237,14 +237,14 @@ LOC_ProcessVariable::LOC_ProcessVariable(const char *_name)
     status = UDF_ALARM;
     severity = INVALID_ALARM;
     precision = 4;
-    upper_disp_limit = DBL_MAX;
-    lower_disp_limit = -DBL_MAX;
+    upper_disp_limit = 100.0;
+    lower_disp_limit = -100.0;
     upper_alarm_limit = DBL_MAX;
     lower_alarm_limit = -DBL_MAX;
     upper_warning_limit = DBL_MAX;
     lower_warning_limit = -DBL_MAX;
-    upper_ctrl_limit = DBL_MAX;
-    lower_ctrl_limit = -DBL_MAX;
+    upper_ctrl_limit = 100.0;
+    lower_ctrl_limit = -100.0;
     is_connected = true;
     have_ctrlinfo = true;
     strcpy( buf, "" );
