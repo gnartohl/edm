@@ -1,0 +1,22 @@
+#ifndef __pip_str
+#define __pip_str 1
+
+#define activePipClass_str4 (char *) "Unknown object"
+#define activePipClass_str5 (char *) " Properties"
+#define activePipClass_str6 (char *) "X"
+#define activePipClass_str7 (char *) "Y"
+#define activePipClass_str8 (char *) "Width"
+#define activePipClass_str9 (char *) "Height"
+#define activePipClass_str11 (char *) "PV"
+#define activePipClass_str12 (char *) "Display File Name"
+#define activePipClass_str16 (char *) "Fg Color"
+#define activePipClass_str18 (char *) "Bg Color"
+#define activePipClass_str19 (char *) "Top Shadow Color"
+#define activePipClass_str20 (char *) "Bot Shadow Color"
+#define activePipClass_str22 (char *) "error from ca_search\n"
+#define activePipClass_str23 (char *) "ca_clear_channel failure\n"
+#define activePipClass_str24 (char *) "frameWidget create failed\n"
+#define activePipClass_str25 (char *) "ca_add_masked_array_event failed\n"
+#define activePipClass_str26 (char *) "Embedded display not opened - possible mutual recursion"
+
+#endif
