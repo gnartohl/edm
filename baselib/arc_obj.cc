@@ -1465,6 +1465,54 @@ void activeArcClass::changePvNames (
 
 }
 
+void activeArcClass::updateColors (
+  double colorValue )
+{
+
+int index, change;
+
+  index = actWin->ci->evalRule( lineColor.pixelIndex(), colorValue );
+
+  if ( curLineColorIndex != index ) {
+    curLineColorIndex = index;
+    change = 1;
+  }
+
+  index = actWin->ci->evalRule( fillColor.pixelIndex(), colorValue );
+
+  if ( curFillColorIndex != index ) {
+    curFillColorIndex = index;
+    change = 1;
+  }
+
+  if ( change ) {
+
+    if ( actWin->ci->isInvisible( curLineColorIndex ) ) {
+      lineVisibility = 0;
+    }
+    else {
+      lineVisibility = 1;
+    }
+
+    if ( actWin->ci->isInvisible( curFillColorIndex ) ) {
+      fillVisibility = 0;
+    }
+    else {
+      fillVisibility = 1;
+    }
+
+    lineColor.changeIndex( curLineColorIndex, actWin->ci );
+    fillColor.changeIndex( curFillColorIndex, actWin->ci );
+    if ( ( prevLineVisibility != lineVisibility ) ||
+         ( prevFillVisibility != fillVisibility ) ) {
+      prevLineVisibility = lineVisibility;
+      prevFillVisibility = fillVisibility;
+    }
+
+  }
+
+}
+
 int activeArcClass::rotate (
   int xOrigin,
   int yOrigin,

@@ -285,6 +285,9 @@ void activeArcClass::changePvNames (
   int numAlarmPvs,
   char *alarmPvs[] );
 
+void activeArcClass::updateColors (
+  double colorValue );
+
 int activeArcClass::rotate (
   int xOrigin,
   int yOrigin,

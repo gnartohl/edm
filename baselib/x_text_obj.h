@@ -292,6 +292,9 @@ void activeXTextClass::changePvNames (
   int numAlarmPvs,
   char *alarmPvs[] );
 
+void activeXTextClass::updateColors (
+  double colorValue );
+
 };
 
 #ifdef __cplusplus

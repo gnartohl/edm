@@ -359,6 +359,9 @@ void activeLineClass::changePvNames (
   int numAlarmPvs,
   char *alarmPvs[] );
 
+void activeLineClass::updateColors (
+  double colorValue );
+
 int activeLineClass::addUndoRotateNode ( undoClass *undoObj );
 
 int activeLineClass::addUndoFlipNode ( undoClass *undoObj );

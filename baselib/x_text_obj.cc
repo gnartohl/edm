@@ -1760,6 +1760,68 @@ void activeXTextClass::changePvNames (
 
 }
 
+void activeXTextClass::updateColors (
+  double colorValue )
+{
+
+int index, change;
+
+  change = 0;
+
+  if ( curStatus != alarmPvId->get_status() ) {
+    curStatus = alarmPvId->get_status();
+    change = 1;
+  }
+
+  if ( curSeverity != alarmPvId->get_severity() ) {
+    curSeverity = alarmPvId->get_severity();
+    change = 1;
+  }
+
+  index = actWin->ci->evalRule( fgColor.pixelIndex(),
+   alarmPvId->get_double() );
+
+  if ( curFgColorIndex != index ) {
+    curFgColorIndex = index;
+    change = 1;
+  }
+
+  index = actWin->ci->evalRule( bgColor.pixelIndex(),
+   alarmPvId->get_double() );
+
+  if ( curBgColorIndex != index ) {
+    curBgColorIndex = index;
+    change = 1;
+  }
+
+  if ( change ) {
+
+    if ( actWin->ci->isInvisible( curFgColorIndex ) ) {
+      fgVisibility = 0;
+    }
+    else {
+      fgVisibility = 1;
+    }
+
+    if ( actWin->ci->isInvisible( curBgColorIndex ) ) {
+      bgVisibility = 0;
+    }
+    else {
+      bgVisibility = 1;
+    }
+
+    fgColor.changeIndex( curFgColorIndex, actWin->ci );
+    bgColor.changeIndex( curBgColorIndex, actWin->ci );
+    if ( ( prevFgVisibility != fgVisibility ) ||
+       ( prevBgVisibility != bgVisibility ) ) {
+      prevFgVisibility = fgVisibility;
+      prevBgVisibility = bgVisibility;
+    }
+
+  }
+
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif

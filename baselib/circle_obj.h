@@ -278,6 +278,9 @@ void activeCircleClass::changePvNames (
   int numAlarmPvs,
   char *alarmPvs[] );
 
+void activeCircleClass::updateColors (
+  double colorValue );
+
 };
 
 #ifdef __cplusplus

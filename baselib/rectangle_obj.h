@@ -288,6 +288,9 @@ void activeRectangleClass::changePvNames (
   int numAlarmPvs,
   char *alarmPvs[] );
 
+void activeRectangleClass::updateColors (
+  double colorValue );
+
 };
 
 #ifdef __cplusplus
