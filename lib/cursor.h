@@ -25,6 +25,7 @@
 #define CURSOR_K_CROSSHAIR 2
 #define CURSOR_K_TINYCROSSHAIR 3
 #define CURSOR_K_WAIT 4
+#define CURSOR_K_NO 5
 
 class cursorClass {
 
@@ -42,7 +43,10 @@ XColor tinyCrossHairShapeColor, tinyCrossHairMaskColor;
 Pixmap waitShape, waitMask;
 XColor waitShapeColor, waitMaskColor;
 
-Cursor curCursor, crossHair, tinyCrossHair, wait;
+Pixmap noShape, noMask;
+XColor noShapeColor, noMaskColor;
+
+Cursor curCursor, crossHair, tinyCrossHair, wait, no;
 
 public:
 

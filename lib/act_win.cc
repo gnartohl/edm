@@ -8359,6 +8359,7 @@ activeGraphicListPtr cur;
     }
     else if ( numOut ) {
       awo->showActive = 0;
+      awo->cursor.set( XtWindow(awo->executeWidget), CURSOR_K_DEFAULT );
     }
 
     if ( !foundAction ) {
