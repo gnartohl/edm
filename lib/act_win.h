@@ -842,6 +842,8 @@ Widget *widgetToDeallocate;
 
 int loadFailure;
 
+int btnDownX, btnDownY;
+
 activeWindowClass ( void );
 
 ~activeWindowClass ( void );
