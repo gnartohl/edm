@@ -37,6 +37,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
   axtdo->actWin->addDefExeNode( axtdo->aglPtr );
   axtdo->actWin->appCtx->proc->unlock();
 
+  axtdo->grabUpdate = 0;
+
 }
 
 static void xtdoCancelStr (
@@ -162,6 +164,18 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
 }
 
+static void xtdoGrabUpdate (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
+
+  axtdo->grabUpdate = 1;
+
+}
+
 static void xtdoSetSelection (
   Widget w,
   XtPointer client,
@@ -225,6 +239,8 @@ char *buf;
 
   XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
 
+  axtdo->grabUpdate = 0;
+
 }
 
 static void xtdoTextFieldToStringLF (
@@ -270,6 +286,8 @@ int n;
 
   XmTextSetInsertionPosition( axtdo->tf_widget, l );
 
+  axtdo->grabUpdate = 0;
+
 }
 
 static void xtdoTextFieldToIntA (
@@ -308,6 +326,8 @@ char *buf;
     XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
 
   }
+
+  axtdo->grabUpdate = 0;
 
 }
 
@@ -357,6 +377,8 @@ int n;
 
   XmTextSetInsertionPosition( axtdo->tf_widget, l );
 
+  axtdo->grabUpdate = 0;
+
 }
 
 static void xtdoTextFieldToDoubleA (
@@ -396,6 +418,8 @@ char *buf;
     XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
 
   }
+
+  axtdo->grabUpdate = 0;
 
 }
 
@@ -445,6 +469,8 @@ int n;
   XtSetValues( axtdo->tf_widget, args, n );
 
   XmTextSetInsertionPosition( axtdo->tf_widget, l );
+
+  axtdo->grabUpdate = 0;
 
 }
 
@@ -2424,15 +2450,19 @@ int n;
 
     if ( tf_widget ) {
 
-      if ( bufInvalid ) {
-        bufInvalid = 0;
-        n = 0;
-        XtSetArg( args[n], XmNvalue, (XtArgVal) value ); n++;
-        XtSetArg( args[n], XmNforeground, fgColor.getColor() ); n++;
-        XtSetValues( tf_widget, args, n );
-      }
-      else {
-        XmTextFieldSetString( tf_widget, value );
+      if ( !grabUpdate ) {
+
+        if ( bufInvalid ) {
+          bufInvalid = 0;
+          n = 0;
+          XtSetArg( args[n], XmNvalue, (XtArgVal) value ); n++;
+          XtSetArg( args[n], XmNforeground, fgColor.getColor() ); n++;
+          XtSetValues( tf_widget, args, n );
+        }
+        else {
+          XmTextFieldSetString( tf_widget, value );
+        }
+
       }
 
     }
@@ -2578,6 +2608,7 @@ char callbackName[63+1];
     curDoubleValue = 0.0;
     curSvalValue = 0.0;
     noSval = 1;
+    grabUpdate = 0;
 
     pvExistCheck = 0;
     connection.init();
@@ -3490,6 +3521,9 @@ static XtActionsRec dragActions[] = {
 
         XtAddCallback( tf_widget, XmNfocusCallback,
          xtdoSetSelection, this );
+
+        XtAddCallback( tf_widget, XmNmotionVerifyCallback,
+         xtdoGrabUpdate, this );
 
         XtAddCallback( tf_widget, XmNvalueChangedCallback,
          xtdoSetValueChanged, this );

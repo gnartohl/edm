@@ -190,6 +190,11 @@ static void xtdoTextFieldToDoubleLF (
   XtPointer client,
   XtPointer call );
 
+static void xtdoGrabUpdate (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 static void xtdoSetSelection (
   Widget w,
   XtPointer client,
@@ -341,6 +346,11 @@ friend void xtdoTextFieldToDoubleLF (
   XtPointer client,
   XtPointer call );
 
+friend void xtdoGrabUpdate (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 friend void xtdoSetSelection (
   Widget w,
   XtPointer client,
@@ -424,6 +434,8 @@ double kpDouble;
 int useKp, bufUseKp;
 calpadClass cp;
 fselectClass fsel;
+
+int grabUpdate;
 
 public:
 
