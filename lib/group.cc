@@ -1488,10 +1488,10 @@ btnActionListPtr curBtn;
   curBtn = btnUpActionHead->flink;
   while ( curBtn != btnUpActionHead ) {
 
-    if ( ( be->x > curBtn->node->getX0() ) &&
-         ( be->x < curBtn->node->getX1() ) &&
-         ( be->y > curBtn->node->getY0() ) &&
-         ( be->y < curBtn->node->getY1() ) ) {
+    if ( ( x > curBtn->node->getX0() ) &&
+         ( x < curBtn->node->getX1() ) &&
+         ( y > curBtn->node->getY0() ) &&
+         ( y < curBtn->node->getY1() ) ) {
 
       curBtn->node->btnUp( be, x, y, buttonState, buttonNumber, action );
 

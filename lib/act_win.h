@@ -840,6 +840,8 @@ activeWindowClass *parent;
 int isEmbedded, embeddedX, embeddedY, embeddedW, embeddedH;
 Widget *widgetToDeallocate;
 
+int btnDownX, btnDownY;
+
 int loadFailure;
 
 activeWindowClass ( void );

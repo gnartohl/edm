@@ -9015,6 +9015,8 @@ int rootX, rootY, winX, winY;
           if ( curBtn->pressed == 0 ) curBtn->pressed = 1;
           curBtn->node->btnDown( be, winX, winY, be->state, be->button,
            &action );
+	  awo->btnDownX = be->x;
+	  awo->btnDownY = be->y;
 
           if ( action == 1 ) { /* close window */
             awo->returnToEdit( 1 );
@@ -9156,8 +9158,8 @@ int rootX, rootY, winX, winY;
         if ( curBtn->pressed == 1 ) {
           foundAction = 1;
           curBtn->pressed = 0;
-          curBtn->node->btnUp( be, winX, winY, be->state, be->button,
-           &action );
+          curBtn->node->btnUp( be, awo->btnDownX, awo->btnDownY, be->state,
+           be->button, &action );
           if ( action == 1 ) { /* close window */
             awo->returnToEdit( 1 );
             goto done;
@@ -9659,6 +9661,8 @@ activeWindowClass::activeWindowClass ( void ) {
   haveComments = 0;
   strcpy( fileNameAndRev, "" );
   strcpy( fileRev, "" );
+
+  btnDownX = btnDownY = 0;
 
   mode = AWC_EDIT;
 
@@ -14179,6 +14183,7 @@ char callbackName[63+1];
     the_PV_Factory->set_default_pv_type( defaultPvType );
   }
 
+  btnDownX = btnDownY = 0;
   highlightedObject = NULL;
 
   if ( activateCallbackFlag ) {
@@ -14398,6 +14403,7 @@ char **muxMacro, **muxExpansion;
 
   if ( mode == AWC_EXECUTE ) return 1;
 
+  btnDownX = btnDownY = 0;
   highlightedObject = NULL;
 
   isIconified = False;
