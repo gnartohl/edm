@@ -32,6 +32,12 @@
 
 int debugMode ( void );
 
+char *expandEnvVars (
+  char *inStr,
+  int maxOut,
+  char *outStr
+);
+
 int blank (
   char *string );
 

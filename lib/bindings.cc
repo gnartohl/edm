@@ -19,12 +19,14 @@
 #define __bindings_c 1
 #include "bindings.h"
 #include "thread.h"
+#include "utility.h"
 
 objBindingClass::objBindingClass ( void ) {
 
 int needToOpenDll, i, index, comment;
 char *more, *envPtr, *tk, *tk1, *c1, *c2, *c3, *error;
-char prefix[127+1], fname[127+1], line[255+1], buf[255+1], buf1[255];
+char prefix[127+1], fname[127+1], line[255+1], buf[255+1], buf1[255+1],
+ rawLine[255+1];
 FILE *f;
 
 //   printf( "objBindingClass::objBindingClass\n" );
@@ -109,8 +111,10 @@ FILE *f;
     index = 0;
     do {
 
-      more = fgets( line, 255, f );
+      more = fgets( rawLine, 255, f );
       if ( more ) {
+
+        expandEnvVars( rawLine, 255, line );
 
         strncpy( buf, line, 255 );
 

@@ -38,6 +38,134 @@ char *envPtr;
 
 }
 
+char *expandEnvVars (
+  char *inStr,
+  int maxOut,
+  char *outStr
+) {
+
+  // expands all environment vars of the form $(envVar) found in inStr
+  // and sends the expanded string to outStr
+
+int i, ii, iii, inL, state;
+char *ptr, buf[maxOut+1];
+
+static const int DONE = -1;
+static const int FINDING_DOLLAR = 1;
+static const int FINDING_LEFT_PAREN = 2;
+static const int FINDING_RIGHT_PAREN = 3;
+
+  if ( !inStr || !outStr || ( maxOut < 1 ) ) return NULL;
+
+  inL = strlen( inStr );
+  if ( inL < 1 ) return NULL;
+
+  state = FINDING_DOLLAR;
+  strcpy( outStr, "" );
+  i = ii = 0;
+  while ( state != DONE ) {
+
+    switch ( state ) {
+
+    case FINDING_DOLLAR:
+
+      if ( i >= inL ) {
+        state = DONE;
+        break;
+      }
+
+      if ( inStr[i] == '\n' ) {
+        state = DONE;
+      }
+      else if ( inStr[i] == '$' ) {
+        state = FINDING_LEFT_PAREN;
+      }
+      else {
+        if ( ii >= maxOut ) goto limitErr; // out string too big
+        outStr[ii] = inStr[i];
+        ii++;
+      }
+
+      break;
+
+    case FINDING_LEFT_PAREN:
+
+      if ( i >= inL ) goto syntaxErr; // never found '(' after '$'
+      if ( inStr[i] == '\n' ) goto syntaxErr; // never found '(' after '$'
+      if ( inStr[i] != '(' ) goto syntaxErr; // char after '$' was not '('
+      strcpy( buf, "" );
+      iii = 0;
+      state = FINDING_RIGHT_PAREN;
+
+      break;
+
+    case FINDING_RIGHT_PAREN:
+
+      if ( i >= inL ) goto syntaxErr; // never found ')'
+      if ( inStr[i] == '\n' ) goto syntaxErr; // never found ')'
+
+      if ( inStr[i] == ')' ) {
+
+	// add terminating 0
+        if ( iii >= maxOut ) goto syntaxErr; // env var value too big
+        buf[iii] = 0;
+
+        // translate and output env var value using buf
+
+        if ( !blank( buf ) ) {
+
+          ptr = getenv( buf );
+          if ( ptr ) {
+
+            for ( iii=0; iii<(int) strlen(ptr); iii++ ) {
+              if ( ii > maxOut ) goto limitErr;
+              outStr[ii] = ptr[iii];
+              ii++;
+	    }
+
+	  }
+
+	}
+
+        state = FINDING_DOLLAR;
+
+      }
+      else {
+
+        if ( iii >= maxOut ) goto syntaxErr; // env var value too big
+        buf[iii] = inStr[i];
+        iii++;
+
+      }
+
+      break;
+
+    }
+
+    i++;
+
+  }
+
+// normalReturn
+
+  // add terminating 0
+  if ( ii > maxOut ) goto limitErr;
+  outStr[ii] = 0;
+
+  return outStr;
+
+syntaxErr:
+
+  printf( "Syntax error in env var reference\n" );
+  return NULL;
+
+limitErr:
+
+  printf( "Parameter size limit exceeded in env var reference\n" );
+  return NULL;
+
+}
+
 int blank (
   char *string )
 {

@@ -23,6 +23,7 @@
 
 #include "pvBindings.h"
 #include "thread.h"
+#include "utility.h"
 
 //  contents of file edmPvObjects
 
@@ -38,7 +39,7 @@ pvBindingClass::pvBindingClass ( void ) {
 
 int needToOpenDll, i, index, comment;
 char *more, *envPtr, *tk, *error;
-char prefix[127+1], fname[127+1], line[255+1], buf[255+1];
+char prefix[127+1], fname[127+1], line[255+1], buf[255+1], rawLine[255+1];
 FILE *f;
 
 //   printf( "pvBindingClass::pvBindingClass\n" );
@@ -108,8 +109,10 @@ FILE *f;
     index = 0;
     do {
 
-      more = fgets( line, 255, f );
+      more = fgets( rawLine, 255, f );
       if ( more ) {
+
+        expandEnvVars( rawLine, 255, line );
 
         strncpy( buf, line, 255 );
 
