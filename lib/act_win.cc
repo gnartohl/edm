@@ -4745,21 +4745,21 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode;
        &awo->appCtx->entryFormH, &awo->appCtx->largestH,
        activeWindowClass_str69, NULL, NULL, NULL );
 
-      awo->ef.addTextField( activeWindowClass_str70, 30, awo->allSelectedCtlPvName[0], 127 );
+      awo->ef.addTextField( activeWindowClass_str70, 30, awo->allSelectedCtlPvName[0], 100 );
       awo->ef.addToggle( activeWindowClass_str71, &awo->allSelectedCtlPvNameFlag );
 
       awo->ef.addTextField( activeWindowClass_str72, 30, awo->allSelectedReadbackPvName[0],
-       127 );
+       100 );
       awo->ef.addToggle( activeWindowClass_str73, &awo->allSelectedReadbackPvNameFlag );
 
-      awo->ef.addTextField( activeWindowClass_str74, 30, awo->allSelectedNullPvName[0], 127 );
+      awo->ef.addTextField( activeWindowClass_str74, 30, awo->allSelectedNullPvName[0], 100 );
       awo->ef.addToggle( activeWindowClass_str75, &awo->allSelectedNullPvNameFlag );
 
       awo->ef.addTextField( activeWindowClass_str76, 30, awo->allSelectedVisPvName[0],
-       127 );
+       100 );
       awo->ef.addToggle( activeWindowClass_str77, &awo->allSelectedVisPvNameFlag );
 
-      awo->ef.addTextField( activeWindowClass_str78, 30, awo->allSelectedAlarmPvName[0], 127 );
+      awo->ef.addTextField( activeWindowClass_str78, 30, awo->allSelectedAlarmPvName[0], 100 );
       awo->ef.addToggle( activeWindowClass_str79, &awo->allSelectedAlarmPvNameFlag );
 
       awo->ef.finished( awc_change_pv_edit_ok, awc_change_pv_edit_apply,
@@ -13811,7 +13811,7 @@ int numComments = 0, moreComments = 1;
 
   do {
 
-    readStringFromFile( oneLine, 255, f ); incLine();
+    readStringFromFile( oneLine, 255+1, f ); incLine();
 
     strcpy( buf, oneLine );
 
@@ -13857,7 +13857,7 @@ int moreComments = 1;
   do {
 
     // don't inc line here
-    readStringFromFile( oneLine, 255, f );
+    readStringFromFile( oneLine, 255+1, f );
 
     strcpy( buf, oneLine );
 
@@ -13910,7 +13910,7 @@ unsigned int pixel;
    XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
    XtSetValues( top, args, n );
 
-   readStringFromFile( defaultFontTag, 63, f ); incLine();
+   readStringFromFile( defaultFontTag, 63+1, f ); incLine();
 
   if ( strcmp( defaultFontTag, "" ) != 0 ) {
     stat = defaultFm.setFontTag( defaultFontTag );
@@ -13924,7 +13924,7 @@ unsigned int pixel;
 
   if ( ( major > 1 ) || ( minor > 2 ) ) {
 
-    readStringFromFile( defaultCtlFontTag, 63, f ); incLine();
+    readStringFromFile( defaultCtlFontTag, 63+1, f ); incLine();
 
     if ( strcmp( defaultCtlFontTag, "" ) != 0 ) {
       stat = defaultCtlFm.setFontTag( defaultCtlFontTag );
@@ -14081,7 +14081,7 @@ unsigned int pixel;
   }
 
   if ( ( major > 1 ) || ( minor > 1 ) ) {
-    readStringFromFile( title, 127, f ); incLine();
+    readStringFromFile( title, 127+1, f ); incLine();
   }
   else {
     strcpy( title, "" );
@@ -14119,14 +14119,14 @@ unsigned int pixel;
   }
 
   if ( ( major > 1 ) || ( minor > 5 ) ) {
-    readStringFromFile( defaultPvType, 15, f ); incLine();
+    readStringFromFile( defaultPvType, 15+1, f ); incLine();
   }
   else {
     strcpy( defaultPvType, "epics" );
   }
 
   if ( ( major > 1 ) || ( minor > 6 ) ) {
-    readStringFromFile( this->id, 31, f ); incLine();
+    readStringFromFile( this->id, 31+1, f ); incLine();
     fscanf( f, "%d\n", &this->activateCallbackFlag ); incLine();
     fscanf( f, "%d\n", &this->deactivateCallbackFlag ); incLine();
   }
@@ -14140,7 +14140,7 @@ unsigned int pixel;
        ( ( major == 2 ) && ( minor > 0 ) ) ||
        ( ( major == 2 ) && ( minor == 0 ) && ( release > 0 ) ) ) {
 
-    readStringFromFile( defaultBtnFontTag, 63, f ); incLine();
+    readStringFromFile( defaultBtnFontTag, 63+1, f ); incLine();
 
     if ( strcmp( defaultBtnFontTag, "" ) != 0 ) {
       stat = defaultBtnFm.setFontTag( defaultBtnFontTag );
@@ -14211,7 +14211,7 @@ unsigned int pixel;
    XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
    XtSetValues( top, args, n );
 
-   readStringFromFile( defaultFontTag, 63, f ); incLine();
+   readStringFromFile( defaultFontTag, 63+1, f ); incLine();
 
   if ( strcmp( defaultFontTag, "" ) != 0 ) {
     stat = defaultFm.setFontTag( defaultFontTag );
@@ -14225,7 +14225,7 @@ unsigned int pixel;
 
   if ( ( major > 1 ) || ( minor > 2 ) ) {
 
-    readStringFromFile( defaultCtlFontTag, 63, f ); incLine();
+    readStringFromFile( defaultCtlFontTag, 63+1, f ); incLine();
 
     if ( strcmp( defaultCtlFontTag, "" ) != 0 ) {
       stat = defaultCtlFm.setFontTag( defaultCtlFontTag );
@@ -14382,7 +14382,7 @@ unsigned int pixel;
   }
 
   if ( ( major > 1 ) || ( minor > 1 ) ) {
-    readStringFromFile( title, 127, f ); incLine();
+    readStringFromFile( title, 127+1, f ); incLine();
   }
   else {
     strcpy( title, "" );
@@ -14420,14 +14420,14 @@ unsigned int pixel;
   }
 
   if ( ( major > 1 ) || ( minor > 5 ) ) {
-    readStringFromFile( defaultPvType, 15, f ); incLine();
+    readStringFromFile( defaultPvType, 15+1, f ); incLine();
   }
   else {
     strcpy( defaultPvType, "epics" );
   }
 
   if ( ( major > 1 ) || ( minor > 6 ) ) {
-    readStringFromFile( this->id, 31, f ); incLine();
+    readStringFromFile( this->id, 31+1, f ); incLine();
     fscanf( f, "%d\n", &this->activateCallbackFlag ); incLine();
     fscanf( f, "%d\n", &this->deactivateCallbackFlag ); incLine();
   }
@@ -14441,7 +14441,7 @@ unsigned int pixel;
        ( ( major == 2 ) && ( minor > 0 ) ) ||
        ( ( major == 2 ) && ( minor == 0 ) && ( release > 0 ) ) ) {
 
-    readStringFromFile( defaultBtnFontTag, 63, f ); incLine();
+    readStringFromFile( defaultBtnFontTag, 63+1, f ); incLine();
 
     if ( strcmp( defaultBtnFontTag, "" ) != 0 ) {
       stat = defaultBtnFm.setFontTag( defaultBtnFontTag );
@@ -14690,12 +14690,12 @@ char s[127+1];
   fscanf( f, "%d\n", &i );
   fscanf( f, "%d\n", &i );
 
-  readStringFromFile( s, 63, f );
+  readStringFromFile( s, 63+1, f );
 
   fscanf( f, "%d\n",&i );
 
   if ( ( *_major > 1 ) || ( *_minor > 2 ) ) {
-    readStringFromFile( s, 63, f );
+    readStringFromFile( s, 63+1, f );
     fscanf( f, "%d\n",&i );
   }
 
@@ -14747,7 +14747,7 @@ char s[127+1];
   }
 
   if ( ( *_major > 1 ) || ( *_minor > 1 ) ) {
-    readStringFromFile( s, 127, f );
+    readStringFromFile( s, 127+1, f );
   }
 
   if ( ( *_major > 1 ) || ( *_minor > 4 ) ) {
@@ -14763,11 +14763,11 @@ char s[127+1];
   }
 
   if ( ( *_major > 1 ) || ( *_minor > 5 ) ) {
-    readStringFromFile( s, 15, f );
+    readStringFromFile( s, 15+1, f );
   }
 
   if ( ( *_major > 1 ) || ( *_minor > 6 ) ) {
-    readStringFromFile( s, 31, f );
+    readStringFromFile( s, 31+1, f );
     fscanf( f, "%d\n", &i );
     fscanf( f, "%d\n", &i );
   }
@@ -14776,7 +14776,7 @@ char s[127+1];
        ( ( major == 2 ) && ( minor > 0 ) ) ||
        ( ( major == 2 ) && ( minor == 0 ) && ( release > 0 ) ) ) {
 
-    readStringFromFile( s, 63, f );
+    readStringFromFile( s, 63+1, f );
 
     fscanf( f, "%d\n", &i );
 

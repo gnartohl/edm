@@ -154,8 +154,11 @@ int bufH;
 
 double bufStateMinValue[DYNSYMBOL_K_NUM_STATES];
 double bufStateMaxValue[DYNSYMBOL_K_NUM_STATES];
-char bufDynSymbolFileName[127+1], bufControlPvName[39+1],
- bufGateDownPvName[39+1], bufGateUpPvName[39+1], bufColorPvName[39+1];
+char bufDynSymbolFileName[127+1],
+ bufControlPvName[activeGraphicClass::MAX_PV_NAME+1],
+ bufGateDownPvName[activeGraphicClass::MAX_PV_NAME+1],
+ bufGateUpPvName[activeGraphicClass::MAX_PV_NAME+1],
+ bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
 int bufNumStates, bufUseOriginalSize, bufUseOriginalColors, bufUseGate,
  bufContinuous;
 double bufRate;

@@ -156,8 +156,9 @@ int bufH;
 
 double bufStateMinValue[SYMBOL_K_NUM_STATES];
 double bufStateMaxValue[SYMBOL_K_NUM_STATES];
-char bufSymbolFileName[127+1], bufControlPvName[SYMBOL_K_MAX_PVS][39+1];
-char bufColorPvName[39+1];
+char bufSymbolFileName[127+1],
+ bufControlPvName[SYMBOL_K_MAX_PVS][activeGraphicClass::MAX_PV_NAME+1],
+ bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
 int bufNumStates, bufUseOriginalSize, bufUseOriginalColors;
 
 int bufFgColor, bufBgColor;

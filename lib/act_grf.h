@@ -93,6 +93,8 @@ class activeGraphicClass {
 
 protected:
 
+static const int MAX_PV_NAME = 100;
+
 friend void dragFin (
   Widget w,
   XtPointer clientData,

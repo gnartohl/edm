@@ -589,15 +589,17 @@ char title[32], *ptr;
   strncpy( bufSymbolFileName, symbolFileName, 127 );
 
   if ( colorPvExpStr.getRaw() )
-    strncpy( bufColorPvName, colorPvExpStr.getRaw(), 39 );
+    strncpy( bufColorPvName, colorPvExpStr.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufColorPvName, "", 39 );
+    strcpy( bufColorPvName, "" );
 
   for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
     if ( controlPvExpStr[i].getRaw() )
-      strncpy( bufControlPvName[i], controlPvExpStr[i].getRaw(), 39 );
+      strncpy( bufControlPvName[i], controlPvExpStr[i].getRaw(),
+       activeGraphicClass::MAX_PV_NAME );
     else
-      strncpy( bufControlPvName[i], "", 39 );
+      strcpy( bufControlPvName[i], "" );
   }
 
   for ( i=0; i<SYMBOL_K_NUM_STATES; i++ ) {
@@ -620,17 +622,20 @@ char title[32], *ptr;
    title, SYMBOL_K_NUM_STATES, numStates,
    symbolSetItem, (void *) this, NULL, NULL, NULL );
 
-  //ef.addTextField( activeSymbolClass_str11, 27, bufId, 31 );
+  //ef.addTextField( activeSymbolClass_str11, 30, bufId, 31 );
 
-  ef.addTextField( activeSymbolClass_str12, 27, &bufX );
-  ef.addTextField( activeSymbolClass_str13, 27, &bufY );
-  ef.addTextField( activeSymbolClass_str14, 27, bufSymbolFileName, 127 );
-  ef.addTextField( activeSymbolClass_str29, 27, bufColorPvName, 39 );
+  ef.addTextField( activeSymbolClass_str12, 30, &bufX );
+  ef.addTextField( activeSymbolClass_str13, 30, &bufY );
+  ef.addTextField( activeSymbolClass_str14, 30, bufSymbolFileName, 127 );
+  ef.addTextField( activeSymbolClass_str29, 30, bufColorPvName,
+   activeGraphicClass::MAX_PV_NAME );
 
-  ef.addTextField( activeSymbolClass_str17, 27, bufControlPvName[0], 39 );
+  ef.addTextField( activeSymbolClass_str17, 30, bufControlPvName[0],
+   activeGraphicClass::MAX_PV_NAME );
 
   for ( i=1; i<SYMBOL_K_MAX_PVS; i++ ) {
-    ef.addTextField( " ", 27, bufControlPvName[i], 39 );
+    ef.addTextField( " ", 30, bufControlPvName[i],
+     activeGraphicClass::MAX_PV_NAME );
   }
 
   ef.addToggle( activeSymbolClass_str16, &bufBinaryTruthTable );
@@ -651,8 +656,8 @@ char title[32], *ptr;
     maxPtr[i] = &bufStateMaxValue[i];
   }
 
-  ef.addTextFieldArray( activeSymbolClass_str18, 27, bufStateMinValue, &elsvMin );
-  ef.addTextFieldArray( activeSymbolClass_str19, 27, bufStateMaxValue, &elsvMax );
+  ef.addTextFieldArray( activeSymbolClass_str18, 30, bufStateMinValue, &elsvMin );
+  ef.addTextFieldArray( activeSymbolClass_str19, 30, bufStateMaxValue, &elsvMax );
 
   return 1;
 
@@ -970,7 +975,7 @@ int activeSymbolClass::createFromFile (
 
 int stat, resizeStat, i, saveW, saveH;
 int major, minor, release;
-char string[39+1];
+char string[activeGraphicClass::MAX_PV_NAME+1];
 float val;
 
   this->actWin = _actWin;
@@ -984,7 +989,7 @@ float val;
 
   this->initSelectBox();
 
-  readStringFromFile( symbolFileName, 127, f ); actWin->incLine();
+  readStringFromFile( symbolFileName, 127+1, f ); actWin->incLine();
 
   if ( ( major > 1 ) || ( minor > 1 ) ) {
     fscanf( f, "%d\n", &binaryTruthTable ); actWin->incLine();
@@ -996,7 +1001,8 @@ float val;
   }
 
   for ( i=0; i<numPvs; i++ ) {
-    readStringFromFile( string, 39, f ); actWin->incLine();
+    readStringFromFile( string, activeGraphicClass::MAX_PV_NAME+1, f );
+     actWin->incLine();
     controlPvExpStr[i].setRaw( string );
   }
 
@@ -1020,7 +1026,7 @@ float val;
   }
 
   if ( ( major > 1 ) || ( minor > 2 ) ) {
-    readStringFromFile( this->id, 31, f ); actWin->incLine();
+    readStringFromFile( this->id, 31+1, f ); actWin->incLine();
   }
   else {
     strcpy( this->id, "" );
@@ -1034,7 +1040,8 @@ float val;
   }
 
   if ( ( major > 1 ) || ( minor > 4 ) ) {
-    readStringFromFile( string, 39, f ); actWin->incLine();
+    readStringFromFile( string, activeGraphicClass::MAX_PV_NAME+1, f );
+     actWin->incLine();
     colorPvExpStr.setRaw( string );
   }
 

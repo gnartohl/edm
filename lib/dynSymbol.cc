@@ -623,19 +623,22 @@ char title[32], *ptr;
   strncpy( bufDynSymbolFileName, dynSymbolFileName, 127 );
 
 //    if ( controlPvExpStr.getRaw() )
-//      strncpy( bufControlPvName, controlPvExpStr.getRaw(), 39 );
+//      strncpy( bufControlPvName, controlPvExpStr.getRaw(),
+//       activeGraphicClass::MAX_PV_NAME );
 //    else
-//      strncpy( bufControlPvName, "", 39 );
+//      strcpy( bufControlPvName, "" );
 
   if ( gateUpPvExpStr.getRaw() )
-    strncpy( bufGateUpPvName, gateUpPvExpStr.getRaw(), 39 );
+    strncpy( bufGateUpPvName, gateUpPvExpStr.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufGateUpPvName, "", 39 );
+    strcpy( bufGateUpPvName, "" );
 
   if ( gateDownPvExpStr.getRaw() )
-    strncpy( bufGateDownPvName, gateDownPvExpStr.getRaw(), 39 );
+    strncpy( bufGateDownPvName, gateDownPvExpStr.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufGateDownPvName, "", 39 );
+    strcpy( bufGateDownPvName, "" );
 
   bufUseOriginalSize = useOriginalSize;
 
@@ -654,9 +657,10 @@ char title[32], *ptr;
   bufInitialIndex = initialIndex;
 
   if ( colorPvExpStr.getRaw() )
-    strncpy( bufColorPvName, colorPvExpStr.getRaw(), 39 );
+    strncpy( bufColorPvName, colorPvExpStr.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufColorPvName, "", 39 );
+    strcpy( bufColorPvName, "" );
 
   bufUseOriginalColors = useOriginalColors;
 
@@ -679,13 +683,16 @@ char title[32], *ptr;
   ef.addTextField( activeDynSymbolClass_str8, 27, &bufX );
   ef.addTextField( activeDynSymbolClass_str9, 27, &bufY );
   ef.addTextField( activeDynSymbolClass_str10, 27, bufDynSymbolFileName, 127 );
-  ef.addTextField( activeDynSymbolClass_str34, 27, bufColorPvName, 39 );
+  ef.addTextField( activeDynSymbolClass_str34, 27, bufColorPvName,
+   activeGraphicClass::MAX_PV_NAME );
 
   ef.addToggle( activeDynSymbolClass_str13, &bufUseGate );
-  ef.addTextField( activeDynSymbolClass_str14, 27, bufGateUpPvName, 39 );
+  ef.addTextField( activeDynSymbolClass_str14, 27, bufGateUpPvName,
+   activeGraphicClass::MAX_PV_NAME );
   ef.addOption( activeDynSymbolClass_str15, activeDynSymbolClass_str16,
    &bufGateUpValue );
-  ef.addTextField( activeDynSymbolClass_str17, 27, bufGateDownPvName, 39 );
+  ef.addTextField( activeDynSymbolClass_str17, 27, bufGateDownPvName,
+   activeGraphicClass::MAX_PV_NAME );
   ef.addOption( activeDynSymbolClass_str18, activeDynSymbolClass_str19,
    &bufGateDownValue );
 
@@ -991,7 +998,7 @@ int activeDynSymbolClass::createFromFile (
 
 int stat, resizeStat, saveW, saveH;
 int major, minor, release;
-char string[39+1];
+char string[activeGraphicClass::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -1004,15 +1011,18 @@ char string[39+1];
 
   this->initSelectBox();
 
-  readStringFromFile( dynSymbolFileName, 127, f ); actWin->incLine();
+  readStringFromFile( dynSymbolFileName, 127+1, f ); actWin->incLine();
 
-//    readStringFromFile( string, 39, f ); actWin->incLine();
+//    readStringFromFile( string, activeGraphicClass::MAX_PV_NAME+1, f );
+//    actWin->incLine();
 //    controlPvExpStr.setRaw( string );
 
-  readStringFromFile( string, 39, f ); actWin->incLine();
+  readStringFromFile( string, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   gateUpPvExpStr.setRaw( string );
 
-  readStringFromFile( string, 39, f ); actWin->incLine();
+  readStringFromFile( string, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   gateDownPvExpStr.setRaw( string );
 
   fscanf( f, "%d\n", &useGate ); actWin->incLine();
@@ -1033,7 +1043,7 @@ char string[39+1];
   fscanf( f, "%d\n", &useOriginalSize ); actWin->incLine();
 
   if ( ( major > 1 ) || ( minor > 0 ) ) {
-    readStringFromFile( this->id, 31, f ); actWin->incLine();
+    readStringFromFile( this->id, 31+1, f ); actWin->incLine();
     fscanf( f, "%d\n", &initialIndex ); actWin->incLine();
   }
   else {
@@ -1042,7 +1052,8 @@ char string[39+1];
   }
 
   if ( ( major > 1 ) || ( minor > 1 ) ) {
-    readStringFromFile( string, 39, f ); actWin->incLine();
+    readStringFromFile( string, activeGraphicClass::MAX_PV_NAME+1, f );
+     actWin->incLine();
     colorPvExpStr.setRaw( string );
   }
 

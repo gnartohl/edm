@@ -427,6 +427,7 @@ int stat;
 
 }
 
+#if 0
 void readStringFromFile (
   char *str,
   int maxChars,
@@ -444,6 +445,7 @@ unsigned int ii;
   }
 
   l = strlen(str);
+
   if ( l > maxChars ) l = maxChars;
   if ( l < 1 ) l = 1;
   str[l-1] = 0;
@@ -471,6 +473,58 @@ unsigned int ii;
   }
 
 }
+#endif
+
+#if 1
+void readStringFromFile (
+  char *str,
+  int maxChars,
+  FILE *f )
+{
+
+char *ptr;
+int l, max;
+char buf[1023+1];
+
+  if ( maxChars < 1 ) return;
+
+  if ( maxChars > 1023 )
+    max = 1023;
+  else
+    max = maxChars;
+
+  ptr = fgets( buf, 1023, f );
+  if ( !ptr ) {
+    strcpy( str, "" );
+    return;
+  }
+  buf[1023] = 0;
+
+  l = strlen(buf);
+
+  buf[l-1] = 0;
+  if ( l > max ) l = max;
+
+  if ( strcmp( buf, "<<<empty>>>" ) == 0 ) {
+
+    strcpy( str, "" );
+
+  }
+  else if ( strncmp( buf, "<<<blank>>>", 11 ) == 0 ) {
+
+    strncpy( str, &buf[11], l-11 );
+    str[max-1] = 0;
+
+  }
+  else {
+
+    strncpy( str, buf, max );
+    str[max-1] = 0;
+
+  }
+
+}
+#endif
 
 int drawText (
   Widget widget,
