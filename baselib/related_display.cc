@@ -1111,8 +1111,12 @@ XRectangle xR = { x, y, w, h };
     tX = x + w/2;
     tY = y + h/2 - fontAscent/2;
 
-    drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
-     XmALIGNMENT_CENTER, label.getRaw() );
+    if ( label.getRaw() )
+      drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
+       XmALIGNMENT_CENTER, label.getRaw() );
+    else
+      drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
+       XmALIGNMENT_CENTER, "" );
 
     actWin->drawGc.removeNormXClipRectangle();
 
@@ -1142,7 +1146,10 @@ XRectangle xR = { x, y, w, h };
   XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
    actWin->executeGc.normGC(), x, y, w, h );
 
-  strncpy( string, label.getExpanded(), 39 );
+  if ( label.getExpanded() )
+    strncpy( string, label.getExpanded(), 39 );
+  else
+    strncpy( string, "", 39 );
 
   actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 

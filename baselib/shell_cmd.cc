@@ -935,8 +935,12 @@ XRectangle xR = { x, y, w, h };
     tX = x + w/2;
     tY = y + h/2 - fontAscent/2;
 
-    drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
-     XmALIGNMENT_CENTER, label.getRaw() );
+    if ( label.getRaw() )
+      drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
+       XmALIGNMENT_CENTER, label.getRaw() );
+    else
+      drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
+       XmALIGNMENT_CENTER, "" );
 
     // drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
     //  XmALIGNMENT_CENTER, label );
@@ -969,56 +973,60 @@ XRectangle xR = { x, y, w, h };
   XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
    actWin->executeGc.normGC(), x, y, w, h );
 
+  if ( label.getExpanded() )
     strncpy( string, label.getExpanded(), 39 );
-    // strncpy( string, label, 39 );
+  else
+    strncpy( string, "", 39 );
 
-    actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
+  // strncpy( string, label, 39 );
 
-    XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x, y, x+w, y );
+  actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 
-    XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x, y, x, y+h );
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x, y, x+w, y );
 
-    actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x, y, x, y+h );
 
-    XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x, y+h, x+w, y+h );
+  actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
 
-    XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x+w, y, x+w, y+h );
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x, y+h, x+w, y+h );
 
-    // top
-    actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+w, y, x+w, y+h );
 
-    XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x+1, y+1, x+w-1, y+1 );
+  // top
+  actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
 
-    XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x+2, y+2, x+w-2, y+2 );
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+1, y+1, x+w-1, y+1 );
 
-    // left
-    XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x+1, y+1, x+1, y+h-1 );
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+2, y+2, x+w-2, y+2 );
 
-    XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x+2, y+2, x+2, y+h-2 );
+  // left
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+1, y+1, x+1, y+h-1 );
 
-    // bottom
-    actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+2, y+2, x+2, y+h-2 );
 
-    XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x+1, y+h-1, x+w-1, y+h-1 );
+  // bottom
+  actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 
-    XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x+2, y+h-2, x+w-2, y+h-2 );
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+1, y+h-1, x+w-1, y+h-1 );
 
-    // right
-    XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x+w-1, y+1, x+w-1, y+h-1 );
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+2, y+h-2, x+w-2, y+h-2 );
 
-    XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x+w-2, y+2, x+w-2, y+h-2 );
+  // right
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+w-1, y+1, x+w-1, y+h-1 );
+
+  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x+w-2, y+2, x+w-2, y+h-2 );
 
   if ( fs ) {
 

@@ -53,8 +53,10 @@ activeMessageButtonClass *msgbto = (activeMessageButtonClass *) client;
 //    strncpy( msgbto->sourcePressPvName, msgbto->bufSourcePressPvName, 39 );
 //    strncpy( msgbto->sourceReleasePvName, msgbto->bufSourceReleasePvName, 39 );
 
-  strncpy( msgbto->onLabel, msgbto->bufOnLabel, MAX_ENUM_STRING_SIZE );
-  strncpy( msgbto->offLabel, msgbto->bufOffLabel, MAX_ENUM_STRING_SIZE );
+  msgbto->onLabel.setRaw( msgbto->bufOnLabel );
+  msgbto->offLabel.setRaw( msgbto->bufOffLabel );
+  // strncpy( msgbto->onLabel, msgbto->bufOnLabel, MAX_ENUM_STRING_SIZE );
+  // strncpy( msgbto->offLabel, msgbto->bufOffLabel, MAX_ENUM_STRING_SIZE );
 
   strncpy( msgbto->fontTag, msgbto->fm.currentFontTag(), 63 );
   msgbto->actWin->fi->loadFontTag( msgbto->fontTag );
@@ -178,11 +180,10 @@ activeMessageButtonClass::activeMessageButtonClass ( void ) {
   strcpy( name, "activeMessageButtonClass" );
   buttonPressed = 0;
 
-//    strcpy( sourcePressPvName, "" );
-//    strcpy( sourceReleasePvName, "" );
-
-  strcpy( onLabel, "" );
-  strcpy( offLabel, "" );
+  // strcpy( sourcePressPvName, "" );
+  // strcpy( sourceReleasePvName, "" );
+  // strcpy( onLabel, "" );
+  // strcpy( offLabel, "" );
   toggle = 0;
   pressAction = 0;
   releaseAction = 0;
@@ -225,11 +226,13 @@ activeGraphicClass *msgbto = (activeGraphicClass *) this;
   sourcePressPvExpString.copy( source->sourcePressPvExpString );
   sourceReleasePvExpString.copy( source->sourceReleasePvExpString );
 
-//    strncpy( sourcePressPvName, source->sourcePressPvName, 39 );
-//    strncpy( sourceReleasePvName, source->sourceReleasePvName, 39 );
+  // strncpy( sourcePressPvName, source->sourcePressPvName, 39 );
+  // strncpy( sourceReleasePvName, source->sourceReleasePvName, 39 );
 
-  strncpy( onLabel, source->onLabel, MAX_ENUM_STRING_SIZE );
-  strncpy( offLabel, source->offLabel, MAX_ENUM_STRING_SIZE );
+  onLabel.copy( source->onLabel );
+  offLabel.copy( source->offLabel );
+  // strncpy( onLabel, source->onLabel, MAX_ENUM_STRING_SIZE );
+  // strncpy( offLabel, source->offLabel, MAX_ENUM_STRING_SIZE );
 
   toggle = source->toggle;
   pressAction = source->pressAction;
@@ -267,8 +270,8 @@ int activeMessageButtonClass::createInteractive (
 
   updateDimensions();
 
-  strcpy( onLabel, "" );
-  strcpy( offLabel, "" );
+  // strcpy( onLabel, "" );
+  // strcpy( offLabel, "" );
 
   toggle = 0;
   pressAction = 0;
@@ -328,12 +331,22 @@ int index;
   else
     writeStringToFile( f, "" );
 
-//    writeStringToFile( f, sourcePressPvName );
-//    writeStringToFile( f, sourceReleasePvName );
+  // writeStringToFile( f, sourcePressPvName );
+  // writeStringToFile( f, sourceReleasePvName );
 
-  writeStringToFile( f, onLabel );
+  if ( onLabel.getRaw() )
+    writeStringToFile( f, onLabel.getRaw() );
+  else
+    writeStringToFile( f, "" );
 
-  writeStringToFile( f, offLabel );
+  // writeStringToFile( f, onLabel );
+
+  if ( offLabel.getRaw() )
+    writeStringToFile( f, offLabel.getRaw() );
+  else
+    writeStringToFile( f, "" );
+
+  // writeStringToFile( f, offLabel );
 
   fprintf( f, "%-d\n", toggle );
 
@@ -452,9 +465,13 @@ char oneName[39+1];
   readStringFromFile( oneName, 39, f ); actWin->incLine();
   sourceReleasePvExpString.setRaw( oneName );
 
-  readStringFromFile( onLabel, MAX_ENUM_STRING_SIZE, f ); actWin->incLine();
+  readStringFromFile( oneName, MAX_ENUM_STRING_SIZE, f ); actWin->incLine();
+  onLabel.setRaw( oneName );
+  //readStringFromFile( onLabel, MAX_ENUM_STRING_SIZE, f ); actWin->incLine();
 
-  readStringFromFile( offLabel, MAX_ENUM_STRING_SIZE, f ); actWin->incLine();
+  readStringFromFile( oneName, MAX_ENUM_STRING_SIZE, f ); actWin->incLine();
+  offLabel.setRaw( oneName );
+  //readStringFromFile( offLabel, MAX_ENUM_STRING_SIZE, f ); actWin->incLine();
 
   fscanf( f, "%d\n", &toggle ); actWin->incLine();
 
@@ -508,8 +525,10 @@ char *tk, *gotData, *context, buf[255+1];
   botShadowColor = actWin->defaultBotShadowColor;
   strcpy( fontTag, actWin->defaultBtnFontTag );
 
-  strcpy( onLabel, "" );
-  strcpy( offLabel, "" );
+  onLabel.setRaw( "" );
+  // strcpy( onLabel, "" );
+  offLabel.setRaw( "" );
+  // strcpy( offLabel, "" );
 
   // continue until tag is <eod>
 
@@ -717,8 +736,9 @@ char *tk, *gotData, *context, buf[255+1];
 
         tk = strtok_r( NULL, "\"\n \t", &context );
         if ( tk ) {
-          strncpy( onLabel, tk, MAX_ENUM_STRING_SIZE );
-          onLabel[MAX_ENUM_STRING_SIZE] = 0;
+          onLabel.setRaw( tk );
+          // strncpy( onLabel, tk, MAX_ENUM_STRING_SIZE );
+          // onLabel[MAX_ENUM_STRING_SIZE] = 0;
 	}
 
       }
@@ -727,8 +747,9 @@ char *tk, *gotData, *context, buf[255+1];
 
         tk = strtok_r( NULL, "\"\n \t", &context );
         if ( tk ) {
-          strncpy( offLabel, tk, MAX_ENUM_STRING_SIZE );
-          offLabel[MAX_ENUM_STRING_SIZE] = 0;
+          offLabel.setRaw( tk );
+          // strncpy( offLabel, tk, MAX_ENUM_STRING_SIZE );
+          // offLabel[MAX_ENUM_STRING_SIZE] = 0;
 	}
 
       }
@@ -800,11 +821,22 @@ char title[32], *ptr;
   else
     strncpy( bufSourceReleasePvName, "", 39 );
 
-//    strncpy( bufSourcePressPvName, sourcePressPvName, 39 );
-//    strncpy( bufSourceReleasePvName, sourceReleasePvName, 39 );
+  // strncpy( bufSourcePressPvName, sourcePressPvName, 39 );
+  // strncpy( bufSourceReleasePvName, sourceReleasePvName, 39 );
 
-  strncpy( bufOnLabel, onLabel, MAX_ENUM_STRING_SIZE );
-  strncpy( bufOffLabel, offLabel, MAX_ENUM_STRING_SIZE );
+  if ( onLabel.getRaw() )
+    strncpy( bufOnLabel, onLabel.getRaw(), MAX_ENUM_STRING_SIZE );
+  else
+    strncpy( bufOnLabel, "", MAX_ENUM_STRING_SIZE );
+
+  // strncpy( bufOnLabel, onLabel, MAX_ENUM_STRING_SIZE );
+
+  if ( offLabel.getRaw() )
+    strncpy( bufOffLabel, offLabel.getRaw(), MAX_ENUM_STRING_SIZE );
+  else
+    strncpy( bufOffLabel, "", MAX_ENUM_STRING_SIZE );
+
+  // strncpy( bufOffLabel, offLabel, MAX_ENUM_STRING_SIZE );
 
   bufToggle = toggle;
   bufPressAction = pressAction;
@@ -976,8 +1008,15 @@ XRectangle xR = { x, y, w, h };
     tX = x + w/2;
     tY = y + h/2 - fontAscent/2;
 
-    drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
-     XmALIGNMENT_CENTER, onLabel );
+    if ( onLabel.getRaw() )
+      drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
+       XmALIGNMENT_CENTER, onLabel.getRaw() );
+    else
+      drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
+       XmALIGNMENT_CENTER, "" );
+
+    // drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
+    //  XmALIGNMENT_CENTER, onLabel );
 
     actWin->drawGc.removeNormXClipRectangle();
 
@@ -1018,7 +1057,12 @@ XRectangle xR = { x, y, w, h };
 
   if ( !buttonPressed ) {
 
-    strncpy( string, offLabel, MAX_ENUM_STRING_SIZE );
+    if ( offLabel.getExpanded() )
+      strncpy( string, offLabel.getExpanded(), MAX_ENUM_STRING_SIZE );
+    else
+      strncpy( string, "", MAX_ENUM_STRING_SIZE );
+
+    // strncpy( string, offLabel, MAX_ENUM_STRING_SIZE );
 
     if ( _3D ) {
 
@@ -1075,7 +1119,12 @@ XRectangle xR = { x, y, w, h };
   }
   else {
 
-    strncpy( string, onLabel, MAX_ENUM_STRING_SIZE );
+    if ( onLabel.getExpanded() )
+      strncpy( string, onLabel.getExpanded(), MAX_ENUM_STRING_SIZE );
+    else
+      strncpy( string, "", MAX_ENUM_STRING_SIZE );
+
+    // strncpy( string, onLabel, MAX_ENUM_STRING_SIZE );
 
     if ( _3D ) {
 
@@ -1407,13 +1456,20 @@ int activeMessageButtonClass::expand1st (
   char *expansions[] )
 {
 
-int stat;
+int stat, retStat = 1;
 
   stat = destPvExpString.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = sourcePressPvExpString.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = sourceReleasePvExpString.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+  stat = onLabel.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+  stat = offLabel.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
-  return stat;
+  return retStat;
 
 }
 
@@ -1423,11 +1479,18 @@ int activeMessageButtonClass::expand2nd (
   char *expansions[] )
 {
 
-int stat;
+int stat, retStat = 1;
 
   stat = destPvExpString.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = sourcePressPvExpString.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = sourceReleasePvExpString.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+  stat = onLabel.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+  stat = offLabel.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
   return stat;
 
@@ -1435,13 +1498,17 @@ int stat;
 
 int activeMessageButtonClass::containsMacros ( void ) {
 
-int stat;
+  if ( destPvExpString.containsPrimaryMacros() ) return 1;
 
-  stat = destPvExpString.containsPrimaryMacros();
-  stat = sourcePressPvExpString.containsPrimaryMacros();
-  stat = sourceReleasePvExpString.containsPrimaryMacros();
+  if ( sourcePressPvExpString.containsPrimaryMacros() ) return 1;
 
-  return stat;
+  if ( sourceReleasePvExpString.containsPrimaryMacros() ) return 1;
+
+  if ( onLabel.containsPrimaryMacros() ) return 1;
+
+  if ( offLabel.containsPrimaryMacros() ) return 1;
+
+  return 0;
 
 }
 

@@ -143,8 +143,11 @@ pvColorClass fgColor, onColor, offColor;
 int topShadowColor, bufTopShadowColor;
 int botShadowColor, bufBotShadowColor;
 colorButtonClass fgCb, onCb, offCb, topShadowCb, botShadowCb;
-char onLabel[MAX_ENUM_STRING_SIZE+1], bufOnLabel[MAX_ENUM_STRING_SIZE+1];
-char offLabel[MAX_ENUM_STRING_SIZE+1], bufOffLabel[MAX_ENUM_STRING_SIZE+1];
+expStringClass onLabel, offLabel;
+char bufOnLabel[MAX_ENUM_STRING_SIZE+1];
+char bufOffLabel[MAX_ENUM_STRING_SIZE+1];
+// char onLabel[MAX_ENUM_STRING_SIZE+1], bufOnLabel[MAX_ENUM_STRING_SIZE+1];
+// char offLabel[MAX_ENUM_STRING_SIZE+1], bufOffLabel[MAX_ENUM_STRING_SIZE+1];
 int buttonType, bufButtonType, _3D, buf3D, invisible, bufInvisible,
  toggle, bufToggle, pressAction, bufPressAction,
  releaseAction, bufReleaseAction;
