@@ -551,6 +551,8 @@ int i;
   useGate = source->useGate;
   continuous = source->continuous;
   rate = source->rate;
+  gateUpValue = source->gateUpValue;
+  gateDownValue = source->gateDownValue;
 
   strncpy( dynSymbolFileName, source->dynSymbolFileName, 127 );
 
@@ -565,6 +567,9 @@ int i;
   useOriginalColors = source->useOriginalColors;
   fgCb = source->fgCb;
   bgCb = source->bgCb;
+  bufFgColor = source->bufFgColor;
+  bufBgColor = source->bufBgColor;
+  colorPvExpStr.setRaw( source->colorPvExpStr.rawString );
 
 }
 

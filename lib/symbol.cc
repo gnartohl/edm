@@ -534,6 +534,9 @@ int i;
   useOriginalColors = source->useOriginalColors;
   fgCb = source->fgCb;
   bgCb = source->bgCb;
+  bufFgColor = source->bufFgColor;
+  bufBgColor = source->bufBgColor;
+  colorPvExpStr.setRaw( source->colorPvExpStr.rawString );
 
 }
 
