@@ -1285,14 +1285,19 @@ int ii;
       for ( ii=0; ii<(int)numChildren; ii++ ) {
 
         if ( XtClass( children[ii] ) == xmCascadeButtonGadgetClass ) {
-
           XtVaSetValues( children[ii],
 	   XmNbackground, (XtArgVal) bgColor.getColor(),
 	   XmNtopShadowColor, actWin->ci->pix(topShadowColor),
            XmNbottomShadowColor, actWin->ci->pix(botShadowColor),
 	   NULL );
-
         }
+	else {
+          XtVaSetValues( children[ii],
+	   XmNbackground, (XtArgVal) actWin->executeGc.getBaseBG(),
+	   XmNtopShadowColor, (XtArgVal) actWin->executeGc.getBaseBG(),
+           XmNbottomShadowColor, (XtArgVal) actWin->executeGc.getBaseBG(),
+	   NULL );
+	}
 
       }
 
