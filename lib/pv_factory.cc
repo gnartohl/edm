@@ -167,8 +167,11 @@ void ProcessVariable::remove_conn_state_callback(PVCallback func, void *userarg)
     info.func = func;
     info.userarg = userarg;
     PVCallbackInfoHash::iterator entry = conn_state_callbacks.find(&info);
-    if (entry != conn_state_callbacks.end())
+    if (entry != conn_state_callbacks.end()) {
+        PVCallbackInfo *p_item = *entry;
         conn_state_callbacks.erase(entry);
+        delete p_item;
+    }
 }
 
 void ProcessVariable::add_value_callback(PVCallback func, void *userarg)
@@ -191,8 +194,11 @@ void ProcessVariable::remove_value_callback(PVCallback func, void *userarg)
     info.func = func;
     info.userarg = userarg;
     PVCallbackInfoHash::iterator entry = value_callbacks.find(&info);
-    if (entry != value_callbacks.end())
+    if (entry != value_callbacks.end()) {
+        PVCallbackInfo *p_item = *entry;
         value_callbacks.erase(entry);
+        delete p_item;
+    }
 }
 
 void ProcessVariable::do_conn_state_callbacks()
