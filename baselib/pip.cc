@@ -605,6 +605,13 @@ activeWindowListPtr cur;
     active = 0;
     activeMode = 0;
 
+    if ( aw ) {
+      if ( aw->loadFailure ) {
+        aw = NULL;
+        frameWidget = NULL;
+      }
+    }
+
     if ( frameWidget ) {
       if ( *frameWidget ) XtUnmapWidget( *frameWidget );
     }
@@ -615,10 +622,11 @@ activeWindowListPtr cur;
       // make sure the window was successfully opened
       cur = actWin->appCtx->head->flink;
       while ( cur != actWin->appCtx->head ) {
+
         if ( &cur->node == aw ) {
           okToClose = 1;
           break;
-        }
+	}
         cur = cur->flink;
       }
 
@@ -751,6 +759,9 @@ int status;
       if ( fileExists ) {
         needFileOpen = 1;
         actWin->addDefExeNode( aglPtr );
+      }
+      else {
+        activateIsComplete = 1;
       }
 
 #ifdef __epics__
@@ -1015,7 +1026,7 @@ activeWindowListPtr cur;
 
         if ( !aw ) {
 
-          //printf( "Open file %s\n", readV );
+          //printf( "1) Open file %s\n", readV );
 
           strncpy( curFileName, readV, 127 );
           curFileName[127] = 0;
@@ -1060,7 +1071,7 @@ activeWindowListPtr cur;
 
   if ( nfo && fileExists ) {
 
-    //printf( "Open file %s\n", fileNameExpStr.getExpanded() );
+    //printf( "2) Open file %s\n", fileNameExpStr.getExpanded() );
 
     strncpy( curFileName, fileNameExpStr.getExpanded(), 127 );
     curFileName[127] = 0;
@@ -1175,10 +1186,16 @@ int activePipClass::activateComplete ( void ) {
 
 int flag;
 
+  if ( aw ) {
+    if ( aw->loadFailure ) {
+      activateIsComplete = 1;
+    }
+  }
+
   if ( !activateIsComplete ) return 0;
 
   if ( aw ) {
-    if ( aw->isExecuteMode() ) {
+    if ( aw->isExecuteMode() || aw->loadFailure ) {
       flag = aw->okToDeactivate();
     }
     else {
