@@ -200,7 +200,11 @@ unsigned int pixel;
     readStringFromFile( defPvType, 15, f );
   }
   else {
-    strcpy( defPvType, "epics" );
+    strcpy( defPvType, "" );
+  }
+
+  if ( strcmp( defPvType, "epics" ) == 0 ) {
+    strcpy( defPvType, "EPICS" );
   }
 
   if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 2 ) ) ) {
@@ -353,7 +357,11 @@ unsigned int pixel;
     readStringFromFile( defPvType, 15, f );
   }
   else {
-    strcpy( defPvType, "epics" );
+    strcpy( defPvType, "" );
+  }
+
+  if ( strcmp( defPvType, "epics" ) == 0 ) {
+    strcpy( defPvType, "EPICS" );
   }
 
   if ( ( major > 1 ) || ( (major == 1 ) && ( minor > 2 ) ) ) {

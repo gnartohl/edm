@@ -10594,7 +10594,7 @@ Arg args[3];
 //===================================================================
 
   n = 0;
-  XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+  XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
   b1OneSelectPopup = XmCreatePopupMenu( top, "", args, n );
 
   chPd = XmCreatePulldownMenu( b1OneSelectPopup, "", NULL, 0 );
@@ -10646,7 +10646,7 @@ Arg args[3];
 //===================================================================
 
   n = 0;
-  XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+  XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
   b1NoneSelectPopup = XmCreatePopupMenu( top, "", args, n );
 
   grPd = XmCreatePulldownMenu( b1NoneSelectPopup, "", NULL, 0 );
@@ -10790,7 +10790,7 @@ Arg args[3];
 //===================================================================
 
   n = 0;
-  XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+  XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
   b2NoneSelectPopup = XmCreatePopupMenu( top, "", args, n );
 
   str = XmStringCreateLocalized( activeWindowClass_str92 );
@@ -11328,7 +11328,7 @@ Arg args[3];
 //===================================================================
 
   n = 0;
-  XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+  XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
   b2OneSelectPopup = XmCreatePopupMenu( top, "", args, n );
 
   str = XmStringCreateLocalized( activeWindowClass_str106 );
@@ -11840,7 +11840,7 @@ Arg args[3];
 //===================================================================
  
   n = 0;
-  XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+  XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
   b2ManySelectPopup = XmCreatePopupMenu( top, "", args, n );
 
   str = XmStringCreateLocalized( activeWindowClass_str115 );
@@ -12692,7 +12692,7 @@ Arg args[3];
 //===================================================================
 
   n = 0;
-  XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+  XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
   b2ExecutePopup = XmCreatePopupMenu( top, "", args, n );
 
   if ( !noEdit && closeAllowed ) {
@@ -15319,6 +15319,10 @@ static int alignEnum[3] = {
     appCtx->postMessage( tag.errMsg() );
   }
 
+  if ( strcmp( defaultPvType, "epics" ) == 0 ) {
+    strcpy( defaultPvType, "EPICS" );
+  }
+
   if ( setPosition ) {
     x = _x;
     y = _y;
@@ -15753,7 +15757,11 @@ unsigned int pixel;
     readStringFromFile( defaultPvType, 15+1, f ); incLine();
   }
   else {
-    strcpy( defaultPvType, "epics" );
+    strcpy( defaultPvType, "" );
+  }
+
+  if ( strcmp( defaultPvType, "epics" ) == 0 ) {
+    strcpy( defaultPvType, "EPICS" );
   }
 
   if ( ( major > 1 ) || ( minor > 6 ) ) {
@@ -17290,7 +17298,7 @@ Widget labelW, sepW;
   }
 
   n = 0;
-  XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+  XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
   dragPopup = XmCreatePopupMenu( top, "", args, n );
 
   str = XmStringCreateLocalized( label );
@@ -17321,7 +17329,7 @@ int n;
   }
 
   n = 0;
-  XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
+  XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
   dragPopup = XmCreatePopupMenu( top, "", args, n );
 
   dragItemIndex = 0;
