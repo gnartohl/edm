@@ -5613,6 +5613,8 @@ int yi = 0;
 
     doingBoxRescale = 0;
 
+    if ( ( oldRescaleBoxW < 5 ) || ( oldRescaleBoxH < 5 ) ) return;
+
     rescaleBoxX1 = pmX;
 
     dx0 = ( rescaleBoxX0 - xOffset[0] ) / xFactor[0] + curXMin;
