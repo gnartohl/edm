@@ -1999,6 +1999,11 @@ int stat;
     stat = ca_put( DBR_SHORT, destPvId, &destV.s );
     break;
 
+  case DBR_CHAR:
+    destV.str[0] = (char) atol( sourceReleasePvExpString.getExpanded() );
+    stat = ca_put( DBR_CHAR, destPvId, &destV.str[0] );
+    break;
+
   case DBR_STRING:
     strncpy( destV.str, sourceReleasePvExpString.getExpanded(), 39 );
     stat = ca_put( DBR_STRING, destPvId, &destV.str );
@@ -2097,6 +2102,11 @@ char labelValue[39+1];
   case DBR_SHORT:
     destV.s = (short) atol( labelValue );
     stat = ca_put( DBR_SHORT, destPvId, &destV.s );
+    break;
+
+  case DBR_CHAR:
+    destV.str[0] = (char) atol( labelValue );
+    stat = ca_put( DBR_CHAR, destPvId, &destV.str[0] );
     break;
 
   case DBR_STRING:
