@@ -3,6 +3,7 @@
 TOP = ../../../..
 include $(TOP)/config/CONFIG_EXTENSIONS
 STATIC_BUILD=NO
+SHARED_LIBRARIES=YES
 
 ifeq ($(HOST_ARCH),Linux)
   USR_CXXFLAGS += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
