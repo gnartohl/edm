@@ -25,7 +25,7 @@
 #include "cadef.h"
 
 #define MSGBTC_MAJOR_VERSION 2
-#define MSGBTC_MINOR_VERSION 2
+#define MSGBTC_MINOR_VERSION 3
 #define MSGBTC_RELEASE 0
 
 #define MSGBTC_K_PUSH 1
@@ -100,6 +100,15 @@ static void msgbt_monitor_sourceRelease_connect_state (
 static void msgbt_monitor_dest_connect_state (
   struct connection_handler_args arg );
 
+static void msgbt_monitor_vis_connect_state (
+  struct connection_handler_args arg );
+
+static void msgbt_visInfoUpdate (
+  struct event_handler_args ast_args );
+
+static void msgbt_visUpdate (
+  struct event_handler_args ast_args );
+
 #endif
 
 class activeMessageButtonClass : public activeGraphicClass {
@@ -167,6 +176,15 @@ friend void msgbt_monitor_sourceRelease_connect_state (
 friend void msgbt_monitor_dest_connect_state (
   struct connection_handler_args arg );
 
+friend void msgbt_monitor_vis_connect_state (
+  struct connection_handler_args arg );
+
+friend void msgbt_visInfoUpdate (
+  struct event_handler_args ast_args );
+
+friend void msgbt_visUpdate (
+  struct event_handler_args ast_args );
+
 int opComplete;
 
 int minW;
@@ -205,6 +223,21 @@ char bufSourcePressPvName[39+1];
 expStringClass sourceReleasePvExpString;
 char bufSourceReleasePvName[39+1];
 
+//-------------------------------------------------------
+chid visPvId;
+evid visEventId;
+expStringClass visPvExpString;
+char bufVisPvName[activeGraphicClass::MAX_PV_NAME+1];
+int visExists;
+double visValue, curVisValue, minVis, maxVis;
+char minVisString[39+1], bufMinVisString[39+1];
+char maxVisString[39+1], bufMaxVisString[39+1];
+int prevVisibility, visibility, visInverted, bufVisInverted;
+static const int destPvConnection = 1;
+static const int visPvConnection = 2;
+pvConnectionClass connection;
+//-------------------------------------------------------
+
 pvValType sourcePressV, sourceReleaseV, destV;
 
 int destExists, sourcePressExists, sourceReleaseExists, buttonPressed;
@@ -213,7 +246,7 @@ int sourcePressPvConnected, sourceReleasePvConnected, destPvConnected,
  active, activeMode, init;
 
 int needConnectInit, needErase, needDraw, needToEraseUnconnected,
- needToDrawUnconnected;
+ needToDrawUnconnected, needVisConnectInit, needVisInit, needVisUpdate;
 int unconnectedTimer;
 
 char pw[31+1];

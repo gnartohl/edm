@@ -27,9 +27,9 @@
 #define activeMessageButtonClass_str24 (char *) "Bottom Shadow"
 #define activeMessageButtonClass_str25 (char *) "error from ca_search\n"
 #define activeMessageButtonClass_str26 (char *) "ca_clear_event failure\n"
-#define activeMessageButtonClass_str27 (char *) "ca_clear_event failure\n"
-#define activeMessageButtonClass_str28 (char *) "ca_clear_channel failure\n"
-#define activeMessageButtonClass_str29 (char *) "ca_clear_channel failure\n"
-#define activeMessageButtonClass_str30 (char *) "ca_clear_channel failure\n"
-
+#define activeMessageButtonClass_str27 (char *) "ca_add_event failure\n"
+#define activeMessageButtonClass_str28 (char *) "Visibility PV"
+#define activeMessageButtonClass_str29 (char *) "Not Visible if|Visible if"
+#define activeMessageButtonClass_str30 (char *) ">="
+#define activeMessageButtonClass_str31 (char *) "and <"
 #endif
