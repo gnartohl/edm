@@ -1988,6 +1988,9 @@ appContextClass::appContextClass (
 
   thread_unlock( actionsLock );
 
+  ddgc = NULL;
+  ddFixedFont = NULL;
+
 }
 
 appContextClass::~appContextClass (
@@ -2089,6 +2092,16 @@ actionsPtr curAct, nextAct;
   }
   thread_unlock( actionsLock );
   thread_destroy_lock_handle( actionsLock );
+
+  if ( ddgc ) {
+    XFreeGC( display, ddgc );
+    ddgc = NULL;
+  }
+
+  if ( ddFixedFont ) {
+    XFreeFont( display, ddFixedFont );
+    ddFixedFont = NULL;
+  }
 
 }
 
@@ -4548,13 +4561,7 @@ char *macTk, *macBuf, macTmp[255+1];
   tk = strtok_r( NULL, "|", &buf1 );
   while ( tk ) {
 
-    //printf( "state = %-d\n", state );
-    //if ( tk ) {
-    //  printf( "tk = [%s]\n", tk );
-    //}
-    //else {
-    //  printf( "tk is null\n" );
-    //}
+    //printf( "tk = [%s], state = %-d\n", tk, state );
 
     if ( state == GETTING_INITIAL ) {
 

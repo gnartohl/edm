@@ -364,6 +364,9 @@ edmPrintClass epc;
 
 clipBdClass clipBd;
 
+GC ddgc; // for drag and drop
+XFontStruct *ddFixedFont; // for drag and drop
+
 appContextClass (
   void );
 
