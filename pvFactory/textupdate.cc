@@ -1009,10 +1009,10 @@ int edmTextentryClass::activate(int pass, void *ptr)
 	    if ( g_transInit ) {
 	      g_transInit = 0;
               g_parsedTrans = XtParseTranslationTable(g_dragTrans);
-              XtAppAddActions(actWin->appCtx->appContext(), g_dragActions,
-                              XtNumber(g_dragActions));
 	    }
-            
+            actWin->appCtx->addActions( g_dragActions,
+					XtNumber(g_dragActions) );
+
             widget = XtVaCreateManagedWidget("TextEntry",
                                              xmTextFieldWidgetClass,
                                              actWin->executeWidgetId(),

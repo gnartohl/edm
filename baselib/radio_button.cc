@@ -1163,9 +1163,8 @@ char msg[79+1];
     if ( g_transInit ) {
       g_transInit = 0;
       g_parsedTrans = XtParseTranslationTable( g_dragTrans );
-      XtAppAddActions( actWin->appCtx->appContext(), g_dragActions,
-       XtNumber(g_dragActions) );
     }
+    actWin->appCtx->addActions( g_dragActions, XtNumber(g_dragActions) );
 
     n = 0;
     XtSetArg( args[n], XmNx, (XtArgVal) 0 ); n++;

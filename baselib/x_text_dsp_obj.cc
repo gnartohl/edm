@@ -4584,9 +4584,8 @@ Atom importList[2];
       if ( g_transInit ) {
         g_transInit = 0;
         g_parsedTrans = XtParseTranslationTable( g_dragTrans );
-        XtAppAddActions( actWin->appCtx->appContext(), g_dragActions,
-         XtNumber(g_dragActions) );
       }
+      actWin->appCtx->addActions( g_dragActions, XtNumber(g_dragActions) );
 
       if ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) ) {
         pixel = fgColor.pixelColor();
