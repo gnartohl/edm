@@ -1,609 +1,559 @@
-3 1 0
-318
-131
-841
-786
-helvetica-medium-r-18.0
-0
-helvetica-medium-r-12.0
-0
-rgb
-0,0,0
-rgb
-50971,52011,50971
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-0,0,48891
-rgb
-46810,47850,46810
-rgb
-61374,61374,61374
-rgb
-27046,27046,27046
-rgb
-55132,56172,55132
-Help - Create
-0
-0
-10
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-1 2 0
-87
-233
-76
-67
-$(help)helpCreate-Types
-0
-0
-0
-<<<E~O~D>>>
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-1 2 0
-156
-241
-108
-214
-$(help)helpCreate-Items
-0
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-0
-0
-842
-35
-rgb
-55132,56172,55132
-0
-1
-rgb
-55132,56172,55132
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-19
-165
-65
-65
-rgb
-0,0,0
-0
-0
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeCircleClass
-2 1 0
-757
-419
-65
-65
-rgb
-0,0,0
-0
-0
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-280
-340
-60
-40
-8
-280 350
-320 350
-320 340
-340 360
-320 380
-320 370
-280 370
-280 350
-rgb
-0,0,0
-0
-1
-rgb
-0,0,0
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-679
-431
-60
-40
-8
-679 441
-719 441
-719 431
-739 451
-719 471
-719 461
-679 461
-679 441
-rgb
-0,0,0
-0
-1
-rgb
-0,0,0
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-10
-98
-115
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1) Left B Drag box
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-10
-128
-300
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-2) Release Left B (box disappears at this point)
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-100
-180
-127
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-3) Choose category
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-699
-625
-48
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-6) Click
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-386
-129
-132
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-5) Specify properties
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-754
-386
-71
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Final result
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-750
-625
-22
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-OK
-helvetica-bold-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-286
-5
-268
-27
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Create Object Example
-helvetica-bold-r-24.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-31
-236
-50
-50
-10
-51 256
-61 256
-61 246
-81 266
-61 286
-61 276
-31 276
-31 236
-51 236
-51 256
-rgb
-0,0,0
-0
-1
-rgb
-0,0,0
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeExitButtonClass
-2 1 0
-6
-756
-59
-24
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-1
-0
-helvetica-medium-r-12.0
-Close
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-221
-208
-110
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-4) Choose object
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-99
-303
-50
-50
-10
-119 323
-129 323
-129 313
-149 333
-129 353
-129 343
-99 343
-99 303
-119 303
-119 323
-rgb
-0,0,0
-0
-1
-rgb
-0,0,0
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-523
-125
-101
-24
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpSetColors
-<<<empty>>>
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-e.g. set colors
-1
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-121
-199
-22
-36
-2
-143 199
-121 235
-rgb
-0,0,0
-0
-0
-rgb
-46810,47850,46810
-0
-2
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-253
-227
-27
-63
-2
-280 227
-253 290
-rgb
-0,0,0
-0
-0
-rgb
-46810,47850,46810
-0
-2
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-523
-642
-208
-70
-2
-523 712
-731 642
-rgb
-0,0,0
-0
-0
-rgb
-46810,47850,46810
-0
-2
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-1 2 0
-360
-166
-304
-592
-$(help)helpCreate-Props
-0
-0
-0
-<<<E~O~D>>>
+4 0 0
+beginScreenProperties
+major 4
+minor 0
+release 0
+x 394
+y 39
+w 841
+h 786
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 51400 51400 51400
+textColor rgb 0 0 65535
+ctlFgColor1 rgb 0 0 57568
+ctlFgColor2 rgb 0 0 49344
+ctlBgColor1 rgb 0 0 41120
+ctlBgColor2 rgb 0 0 32896
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+title "Help - Create"
+endScreenProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 360
+y 166
+w 304
+h 592
+file "$(help)helpCreate-Props"
+endObjectProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 87
+y 233
+w 76
+h 67
+file "$(help)helpCreate-Types"
+endObjectProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 156
+y 241
+w 108
+h 214
+file "$(help)helpCreate-Items"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 0
+w 842
+h 35
+lineColor rgb 56026 56026 56026
+fill
+fillColor rgb 56026 56026 56026
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 19
+y 165
+w 65
+h 65
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+endObjectProperties
+
+# (Circle)
+object activeCircleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 757
+y 419
+w 65
+h 65
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 280
+y 340
+w 60
+h 40
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+numPoints 8
+xPoints {
+  0 280
+  1 320
+  2 320
+  3 340
+  4 320
+  5 320
+  6 280
+  7 280
+}
+yPoints {
+  0 350
+  1 350
+  2 340
+  3 360
+  4 380
+  5 370
+  6 370
+  7 350
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 679
+y 431
+w 60
+h 40
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+numPoints 8
+xPoints {
+  0 679
+  1 719
+  2 719
+  3 739
+  4 719
+  5 719
+  6 679
+  7 679
+}
+yPoints {
+  0 441
+  1 441
+  2 431
+  3 451
+  4 471
+  5 461
+  6 461
+  7 441
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 10
+y 98
+w 115
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "1) Left B Drag box"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 10
+y 128
+w 300
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "2) Release Left B (box disappears at this point)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 100
+y 180
+w 127
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "3) Choose category"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 699
+y 625
+w 48
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "6) Click"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 386
+y 129
+w 132
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "5) Specify properties"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 754
+y 386
+w 71
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Final result"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 750
+y 625
+w 22
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "OK"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 286
+y 5
+w 268
+h 27
+font "helvetica-bold-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Create Object Example"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 31
+y 236
+w 50
+h 50
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+numPoints 10
+xPoints {
+  0 51
+  1 61
+  2 61
+  3 81
+  4 61
+  5 61
+  6 31
+  7 31
+  8 51
+  9 51
+}
+yPoints {
+  0 256
+  1 256
+  2 246
+  3 266
+  4 286
+  5 276
+  6 276
+  7 236
+  8 236
+  9 256
+}
+endObjectProperties
+
+# (Exit Button)
+object activeExitButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 6
+y 756
+w 59
+h 24
+fgColor rgb 0 0 0
+bgColor rgb 44718 44718 44718
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+label "Close"
+font "helvetica-medium-r-12.0"
+3d
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 221
+y 208
+w 110
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "4) Choose object"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 99
+y 303
+w 50
+h 50
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+numPoints 10
+xPoints {
+  0 119
+  1 129
+  2 129
+  3 149
+  4 129
+  5 129
+  6 99
+  7 99
+  8 119
+  9 119
+}
+yPoints {
+  0 323
+  1 323
+  2 313
+  3 333
+  4 353
+  5 343
+  6 343
+  7 303
+  8 303
+  9 323
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 523
+y 125
+w 101
+h 24
+fgColor rgb 0 0 0
+bgColor rgb 44718 44718 44718
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "e.g. set colors"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpSetColors"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 121
+y 199
+w 22
+h 36
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+lineWidth 2
+arrows "to"
+numPoints 2
+xPoints {
+  0 143
+  1 121
+}
+yPoints {
+  0 199
+  1 235
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 253
+y 227
+w 27
+h 63
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+lineWidth 2
+arrows "to"
+numPoints 2
+xPoints {
+  0 280
+  1 253
+}
+yPoints {
+  0 227
+  1 290
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 523
+y 649
+w 208
+h 70
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+lineWidth 2
+arrows "from"
+numPoints 2
+xPoints {
+  0 523
+  1 731
+}
+yPoints {
+  0 719
+  1 649
+}
+endObjectProperties
+
