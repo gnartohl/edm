@@ -3,6 +3,7 @@
 // kasemir@lanl.gov
 
 #include<stdio.h>
+#include<stdlib.h>
 #include<float.h>
 
 #include<alarm.h>
@@ -136,6 +137,9 @@ void EPICS_ProcessVariable::ca_connect_callback(
         {
             switch (ca_field_type(arg.chid))
             {   // TODO: Implement more types
+                case DBF_STRING:
+                    me->value = new PVValueString();
+                    break;
                 case DBF_ENUM:
                     me->value = new PVValueEnum();
                     break;
@@ -438,3 +442,60 @@ void PVValueEnum::read_value(const void *buf)
     severity = val->severity;
     value = val->value;
 }
+
+// ---------------------- PVValueString -----------------------------
+
+PVValueString::PVValueString()
+{
+    value[0] = '\0';
+}
+
+static ProcessVariable::Type string_type =
+{
+    ProcessVariable::Type::text,
+    0,
+    "text:0"
+};
+   
+const ProcessVariable::Type &PVValueString::get_type() const
+{   return string_type; }
+
+short PVValueString::get_DBR() const
+{   return DBR_STRING; }
+
+double PVValueString::get_double() const
+{   return atof(value); }
+
+int PVValueString::get_int() const
+{   return atoi(value); }
+
+size_t PVValueString::get_string(char *strbuf, size_t buflen) const
+{
+    size_t len = strlen(value);
+    if (buflen <= len)
+        len = buflen-1;
+    strncpy(strbuf, value, len);
+    strbuf[len] = '\0';
+    
+    return len;
+};
+
+void PVValueString::read_ctrlinfo(const void *buf)
+{
+    const struct dbr_sts_string *val = (const dbr_sts_string *)buf;
+    status = val->status;
+    severity = val->severity;
+    strcpy(value, val->value);
+}
+    
+void PVValueString::read_value(const void *buf)
+{
+    const struct dbr_time_string *val = (const dbr_time_string *)buf;
+    time = val->stamp.secPastEpoch + epochSecPast1970;
+    nano = val->stamp.nsec;
+    status = val->status;
+    severity = val->severity;
+    strcpy(value, val->value);
+}
+
+

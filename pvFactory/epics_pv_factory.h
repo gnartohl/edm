@@ -155,4 +155,20 @@ private:
     char   strs[MAX_ENUM_STATES][MAX_ENUM_STRING_SIZE];
 };
 
+class PVValueString : public PVValue
+{
+public:
+    PVValueString();
+    virtual const ProcessVariable::Type &get_type() const;
+    virtual short       get_DBR() const;
+    virtual double      get_double() const;
+    virtual int         get_int() const;
+    virtual size_t      get_string(char *strbuf, size_t buflen) const;
+    
+    virtual void read_ctrlinfo(const void *buf);
+    virtual void read_value(const void *buf);
+private:
+    dbr_string_t value;
+};
+
 #endif

@@ -856,8 +856,16 @@ void edmTextentryClass::text_entered_callback(Widget w,
         switch (me->displayMode)
         {
             case dm_default:
-                num = strtod(text, 0);
-                me->pv->put(num);
+                if (me->pv->get_type().type <
+                    ProcessVariable::Type::enumerated)
+                {
+                    num = strtod(text, 0);
+                    me->pv->put(num);
+                }
+                else
+                {
+                    me->pv->put(text);
+                }
                 break;
             case dm_hex:
                 hexnum = strtol(text, 0, 16);
