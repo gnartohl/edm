@@ -3986,6 +3986,7 @@ err_return:
   if ( strcmp( ctlPV, "" ) != 0 ) {
 
     initialConnection = 1;
+    the_PV_Factory->clear_default_pv_type();
     ctlPvId = the_PV_Factory->create( ctlPV );
     if ( ctlPvId ) {
       ctlPvId->add_conn_state_callback( ctlPvMonitorConnection, this );

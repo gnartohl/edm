@@ -64,11 +64,33 @@ static void remove_pv_factories()
 
 PV_Factory::PV_Factory()
 {
+    strcpy( default_pv_type, "" );
     atexit(remove_pv_factories);
 }
 
 PV_Factory::~PV_Factory()
 {
+
+}
+
+void PV_Factory::set_default_pv_type (
+  const char *pv_type )
+{
+
+  strncpy( default_pv_type, pv_type, 31 );
+  default_pv_type[31] = 0;
+
+  //printf( "setting default pv type to [%s]\n", pv_type );
+
+}
+
+void PV_Factory::clear_default_pv_type ( void )
+{
+
+  //printf( "clearing default pv type\n" );
+
+  strcpy( default_pv_type, "" );
+
 }
 
 class ProcessVariable *PV_Factory::create(const char *PV_name)
@@ -91,6 +113,28 @@ class ProcessVariable *pv;
   else if (strchr(PV_name, '\\')) {
     fprintf(stderr, "Unknown PV Factory for PV '%s'\n", PV_name);
     return 0;
+  }
+
+  if ( strcmp( default_pv_type, "" ) ) {
+
+    if (strncmp(default_pv_type, "EPICS", 6)== 0) {
+      pv = epics_pv_factory->create(PV_name);
+      return pv;
+    }
+    else if (strncmp(default_pv_type, "CALC", 5)==0) {
+      pv = calc_pv_factory->create(PV_name);
+      return pv;
+    }
+    else if (strncmp(default_pv_type, "LOC", 4)==0) {
+      pv = loc_pv_factory->create(PV_name);
+      return pv;
+    }
+    else {
+      fprintf(stderr, "Unknown PV Factory for PV '%s\\%s'\n",
+       default_pv_type, PV_name);
+      return 0;
+    }
+
   }
     
   pv = epics_pv_factory->create(PV_name);
@@ -120,6 +164,28 @@ class ProcessVariable *pv;
   else if (strchr(PV_name, '\\')) {
     fprintf(stderr, "Unknown PV Factory for PV '%s'\n", PV_name);
     return 0;
+  }
+    
+  if ( strcmp( default_pv_type, "" ) ) {
+
+    if (strncmp(default_pv_type, "EPICS", 6)== 0) {
+      pv = epics_pv_factory->create(PV_name);
+      return pv;
+    }
+    else if (strncmp(default_pv_type, "CALC", 5)==0) {
+      pv = calc_pv_factory->create(PV_name);
+      return pv;
+    }
+    else if (strncmp(default_pv_type, "LOC", 4)==0) {
+      pv = loc_pv_factory->create(PV_name);
+      return pv;
+    }
+    else {
+      fprintf(stderr, "Unknown PV Factory for PV '%s\\%s'\n",
+       default_pv_type, PV_name);
+      return 0;
+    }
+
   }
     
   pv = epics_pv_factory->create(PV_name);

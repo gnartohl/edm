@@ -24,7 +24,7 @@
 #define activeWindowClass_str21 (char *) "Width"
 #define activeWindowClass_str22 (char *) "Height"
 #define activeWindowClass_str23 (char *) "Title"
-#define activeWindowClass_str24 (char *) "PV Type"
+#define activeWindowClass_str24 (char *) "Default PV Type"
 #define activeWindowClass_str25 (char *) "Display Fg"
 #define activeWindowClass_str26 (char *) "Display Bg"
 #define activeWindowClass_str27 (char *) "Show Grid (G/g)"

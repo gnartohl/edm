@@ -14172,6 +14172,13 @@ int numMuxMacros;
 char **muxMacro, **muxExpansion;
 char callbackName[63+1];
 
+  if ( blank(defaultPvType) ) {
+    the_PV_Factory->clear_default_pv_type();
+  }
+  else {
+    the_PV_Factory->set_default_pv_type( defaultPvType );
+  }
+
   highlightedObject = NULL;
 
   if ( activateCallbackFlag ) {
@@ -14381,6 +14388,13 @@ activeGraphicListPtr cur, cur1;
 
 int numMuxMacros;
 char **muxMacro, **muxExpansion;
+
+  if ( blank(defaultPvType) ) {
+    the_PV_Factory->clear_default_pv_type();
+  }
+  else {
+    the_PV_Factory->set_default_pv_type( defaultPvType );
+  }
 
   if ( mode == AWC_EXECUTE ) return 1;
 

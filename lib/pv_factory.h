@@ -30,12 +30,18 @@ public:
     PV_Factory();
     virtual ~PV_Factory();
 
+    void set_default_pv_type ( const char * );
+
+    void clear_default_pv_type ( void );
+
     enum { MAX_PV_NAME=100 };
     
     // Result is referenced once, call release() when no longer needed.
     virtual class ProcessVariable *create(const char *PV_name);
     virtual class ProcessVariable *createWithInitialCallbacks (
       const char *PV_name );
+
+    char default_pv_type[31+1];
 
 };
 
