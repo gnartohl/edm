@@ -78,6 +78,7 @@ LIBSRCS += pv_factory.cc
 LIBSRCS += edmPrint.cc
 LIBSRCS += tag_pkg.cc
 LIBSRCS += remFileOpen.cc
+LIBSRCS += tableObj.cc
 
 include $(TOP)/config/RULES.Host
 
