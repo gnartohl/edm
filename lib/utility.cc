@@ -27,7 +27,7 @@ char *envPtr;
 
   envPtr = getenv( "EDMDEBUGMODE" );
   if ( envPtr ) {
-    return 1;
+    return atol(envPtr);
   }
   else {
     return 0;

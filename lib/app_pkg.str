@@ -88,5 +88,6 @@
 #define appContextClass_str135 (char *) "Disable image rendering"
 #define appContextClass_str136 (char *) "Checkpoint PID"
 #define appContextClass_str137 (char *) "Continue Shutdown"
+#define appContextClass_str138 (char *) "Print Complete"
 
 #endif

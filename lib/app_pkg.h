@@ -33,13 +33,13 @@
 #include "scrolled_text.h"
 #include "scrolled_list.h"
 #include "msg_dialog.h"
-
 #include "act_win.h"
 #include "act_grf.h"
 #include "bindings.h"
 #include "ulBindings.h"
 #include "scheme.h"
 #include "process.h"
+#include "edmPrint.h"
 
 #include "thread.h"
 #include "avl.h"
@@ -338,6 +338,8 @@ int primaryServer;
 FILE *shutdownFilePtr;
 
 int reloadFlag;
+
+edmPrintClass epc;
 
 appContextClass (
   void );

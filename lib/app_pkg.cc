@@ -2152,7 +2152,9 @@ char *envPtr, *gotIt, buf[1270+1], save[127+1], path[127+1], *tk;
     if ( tk ) {
 
       strncpy( colorPath, tk, 127 );
-      if ( path[strlen(colorPath)-1] != '/' ) Strncat( colorPath, "/", 127 );
+      if ( colorPath[strlen(colorPath)-1] != '/' ) {
+        Strncat( colorPath, "/", 127 );
+      }
 
     }
     else {
@@ -4371,10 +4373,28 @@ activeWindowListPtr cur;
 
 void appContextClass::applicationLoop ( void ) {
 
+static int msgCount = 0;
 int stat, nodeCount, actionCount, iconNodeCount,
  iconActionCount, n;
 activeWindowListPtr cur, next;
 char msg[127+1];
+
+  if ( epc.printEvent() ) {
+    if ( epc.printCmdReady() ) {
+      epc.doPrint();
+    }
+    if ( epc.printFinished() ) {
+      postNote( appContextClass_str138 );
+      msgCount = 20;
+    }
+  }
+
+  if ( msgCount > 0 ) {
+    if ( msgCount == 1 ) {
+      closeNote();
+    }
+    msgCount--;
+  }
 
   if ( reloadFlag == 2 ) {
     refreshAll();

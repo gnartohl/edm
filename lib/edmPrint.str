@@ -1,0 +1,6 @@
+#ifndef __edmPrint_str
+#define __edmPrint_str 1
+
+#define edmPrint_str1 (char *) "Cannot open print definition file"
+
+#endif

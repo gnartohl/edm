@@ -11,6 +11,7 @@
 #define environment_str4 (char *) "EDMPVOBJECTS"
 #define environment_str5 (char *) "EDMHELPFILES"
 #define environment_str6 (char *) "EDMUSERLIB"
+#define environment_str7 (char *) "EDMPRINTDEF"
 
 #define global_str1 (char *) "Symbol"
 #define global_str2 (char *) "Monitors"

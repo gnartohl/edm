@@ -1311,7 +1311,7 @@ static void b2ReleaseExecute_cb (
 activeWindowClass *awo;
 popupBlockPtr block;
 long item;
-int n;
+int n, stat;
 Arg args[10];
 XmString xmStr1, xmStr2;
 Atom wm_delete_window;
@@ -1325,6 +1325,18 @@ Atom wm_delete_window;
     case AWC_POPUP_FINDTOP:
 
       awo->appCtx->findTop();  // raise edm main window
+      break;
+
+    case AWC_POPUP_PRINT:
+
+      XRaiseWindow( awo->d, XtWindow(awo->top) );
+
+      processAllEvents( awo->appCtx->appContext(), awo->d );
+      
+      stat = awo->appCtx->epc.printDialog( awo->topWidgetId(),
+       awo->appCtx->ci.getColorMap(),
+       awo->b2PressXRoot, awo->b2PressYRoot );
+
       break;
 
     case AWC_POPUP_REFRESH:
@@ -2520,6 +2532,18 @@ Atom wm_delete_window;
 
       stat = undo( awo );
       if ( !( stat & 1 ) ) XBell( awo->d, 50 );
+      break;
+
+    case AWC_POPUP_PRINT:
+
+      XRaiseWindow( awo->d, XtWindow(awo->top) );
+
+      processAllEvents( awo->appCtx->appContext(), awo->d );
+      
+      stat = awo->appCtx->epc.printDialog( awo->topWidgetId(),
+       awo->appCtx->ci.getColorMap(),
+       awo->b2PressXRoot, awo->b2PressYRoot );
+
       break;
 
     case AWC_POPUP_REFRESH:
@@ -9031,6 +9055,11 @@ activeGraphicClass *ptr;
 
 //========== B2 Release ===================================
 
+          awo->b2PressX = be->x;
+          awo->b2PressY = be->y;
+          awo->b2PressXRoot = be->x_root;
+          awo->b2PressYRoot = be->y_root;
+
           XmMenuPosition( awo->b2ExecutePopup, be );
           XtManageChild( awo->b2ExecutePopup );
 
@@ -10887,6 +10916,33 @@ Arg args[3];
    (XtPointer) &curBlockListNode->block );
 
 
+  str = XmStringCreateLocalized( activeWindowClass_str192 );
+
+  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   b2NoneSelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  if ( !appCtx->epc.printStatusOK() ) {
+    XtVaSetValues( pb, XmNsensitive, 0, NULL );
+  }
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_PRINT;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
+
   str = XmStringCreateLocalized( activeWindowClass_str105 );
 
   pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
@@ -12393,6 +12449,33 @@ Arg args[3];
   curBlockListNode = new popupBlockListType;
   curBlockListNode->block.w = pb;
   curBlockListNode->block.ptr = (void *) AWC_POPUP_FINDTOP;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseExecute_cb,
+   (XtPointer) &curBlockListNode->block );
+
+
+  str = XmStringCreateLocalized( activeWindowClass_str192 );
+
+  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   b2ExecutePopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  if ( !appCtx->epc.printStatusOK() ) {
+    XtVaSetValues( pb, XmNsensitive, 0, NULL );
+  }
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_PRINT;
   curBlockListNode->block.awo = this;
 
   curBlockListNode->blink = popupBlockHead->blink;
