@@ -37,6 +37,31 @@ static XtActionsRec g_dragActions[] = {
   { "selectDrag", (XtActionProc) selectDrag }
 };
 
+static int stringPut (
+  chid id,
+  int size,
+  char *string
+) {
+
+int stat;
+
+  if ( size == 1 ) {
+
+    string[39] = 0;
+
+    stat = ca_put( DBR_STRING, id, string );
+
+  }
+  else {
+
+    stat = ca_array_put( DBR_CHAR, strlen(string)+1, id, string );
+
+  }
+
+  return stat;
+
+}
+
 static void dropTransferProc (
   Widget w,
   XtPointer clientData,
@@ -51,7 +76,7 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) clientData;
 char *str = (char *) value;
 int stat, ivalue, doPut;
 double dvalue;
-char string[39+1], tmp[127+1];
+char string[XTDC_K_MAX+1], tmp[XTDC_K_MAX+1];
 
   if ( !axtdo ) return;
 
@@ -134,8 +159,8 @@ char string[39+1], tmp[127+1];
           }
 	}
 	else {
-          strncpy( tmp, str, 127 );
-          tmp[127] = 0;
+          strncpy( tmp, str, XTDC_K_MAX );
+          tmp[XTDC_K_MAX] = 0;
 	}
         if ( isLegalInteger(tmp) ) {
           ivalue = strtol( tmp, NULL, 0 );
@@ -155,11 +180,12 @@ char string[39+1], tmp[127+1];
         break;
 
       case DBR_STRING:
-        strncpy( string, str, 39 );
-        string[39] = 0;
+        strncpy( string, str, XTDC_K_MAX );
+        string[XTDC_K_MAX] = 0;
         if ( axtdo->pvExists ) {
 #ifdef __epics__
-          stat = ca_put( DBR_STRING, axtdo->pvId, &string );
+	  stat = stringPut( axtdo->pvId, axtdo->pvCount, string );
+          //stat = ca_put( DBR_STRING, axtdo->pvId, string );
 #endif
         }
         else {
@@ -314,12 +340,12 @@ static void xtdoSetCpValue (
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int stat;
 unsigned int i, ii;
-char tmp[127+1];
+char tmp[XTDC_K_MAX+1];
 
   if ( axtdo->dateAsFileName ) {
 
-    axtdo->cp.getDate( tmp, 127 );
-    tmp[127] = 0;
+    axtdo->cp.getDate( tmp, XTDC_K_MAX );
+    tmp[XTDC_K_MAX] = 0;
 
     for ( i=0, ii=0; i<strlen(tmp)+1; i++ ) {
 
@@ -343,17 +369,19 @@ char tmp[127+1];
   }
   else {
 
-    axtdo->cp.getDate( axtdo->entryValue, 127 );
+    axtdo->cp.getDate( axtdo->entryValue, XTDC_K_MAX );
 
   }
 
-  strncpy( axtdo->curValue, axtdo->entryValue, 39 );
+  strncpy( axtdo->curValue, axtdo->entryValue, XTDC_K_MAX );
+  axtdo->curValue[XTDC_K_MAX] = 0;
 
   axtdo->editDialogIsActive = 0;
 
   if ( axtdo->pvExists ) {
 #ifdef __epics__
-    stat = ca_put( DBR_STRING, axtdo->pvId, &axtdo->curValue );
+    stat = stringPut( axtdo->pvId, axtdo->pvCount, (char *) &axtdo->curValue );
+    //stat = ca_put( DBR_STRING, axtdo->pvId, &axtdo->curValue );
 #endif
   }
 
@@ -372,16 +400,16 @@ static void xtdoSetFsValue (
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int stat;
-char tmp[127+1], name[127+1], *tk;
+char tmp[XTDC_K_MAX+1], name[XTDC_K_MAX+1], *tk;
 
   if ( axtdo->fileComponent != XTDC_K_FILE_FULL_PATH ) {
 
-    axtdo->fsel.getSelection( tmp, 127 );
+    axtdo->fsel.getSelection( tmp, XTDC_K_MAX );
 
     tk = strtok( tmp, "/" );
     if ( tk ) {
-      strncpy( name, tk, 127 );
-      name[127] = 0;
+      strncpy( name, tk, XTDC_K_MAX );
+      name[XTDC_K_MAX] = 0;
     }
     else {
       strcpy( name, "" );
@@ -390,40 +418,42 @@ char tmp[127+1], name[127+1], *tk;
 
       tk = strtok( NULL, "/" );
       if ( tk ) {
-        strncpy( name, tk, 127 );
-        name[127] = 0;
+        strncpy( name, tk, XTDC_K_MAX );
+        name[XTDC_K_MAX] = 0;
       }
 
     }
 
     if ( axtdo->fileComponent == XTDC_K_FILE_NAME ) {
 
-      strncpy( tmp, name, 127 );
-      tmp[127] = 0;
+      strncpy( tmp, name, XTDC_K_MAX );
+      tmp[XTDC_K_MAX] = 0;
       tk = strtok( tmp, "." );
       if ( tk ) {
-        strncpy( name, tk, 127 );
-        name[127] = 0;
+        strncpy( name, tk, XTDC_K_MAX );
+        name[XTDC_K_MAX] = 0;
       }
 
     }
 
-    strncpy( axtdo->entryValue, name, 127 );
+    strncpy( axtdo->entryValue, name, XTDC_K_MAX );
 
   }
   else {
 
-    axtdo->fsel.getSelection( axtdo->entryValue, 127 );
+    axtdo->fsel.getSelection( axtdo->entryValue, XTDC_K_MAX );
 
   }
 
-  strncpy( axtdo->curValue, axtdo->entryValue, 39 );
+  strncpy( axtdo->curValue, axtdo->entryValue, XTDC_K_MAX );
+  axtdo->curValue[XTDC_K_MAX] = 0;
 
   axtdo->editDialogIsActive = 0;
 
   if ( axtdo->pvExists ) {
 #ifdef __epics__
-    stat = ca_put( DBR_STRING, axtdo->pvId, &axtdo->curValue );
+    stat = stringPut( axtdo->pvId, axtdo->pvCount, (char *) &axtdo->curValue );
+    //stat = ca_put( DBR_STRING, axtdo->pvId, &axtdo->curValue );
 #endif
   }
 
@@ -551,21 +581,22 @@ static void xtdoTextFieldToStringA (
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int stat;
-char string[39+1];
+char string[XTDC_K_MAX+1];
 char *buf;
 
   buf = XmTextGetString( axtdo->tf_widget );
-  strncpy( axtdo->entryValue, buf, 39 );
-  axtdo->entryValue[39] = 0;
+  strncpy( axtdo->entryValue, buf, XTDC_K_MAX );
+  axtdo->entryValue[XTDC_K_MAX] = 0;
   XtFree( buf );
 
-  strncpy( axtdo->curValue, axtdo->entryValue, 39 );
-  axtdo->curValue[39] = 0;
-  strncpy( string, axtdo->entryValue, 39 );
-  string[39] = 0;
+  strncpy( axtdo->curValue, axtdo->entryValue, XTDC_K_MAX );
+  axtdo->curValue[XTDC_K_MAX] = 0;
+  strncpy( string, axtdo->entryValue, XTDC_K_MAX );
+  string[XTDC_K_MAX] = 0;
   if ( axtdo->pvExists ) {
 #ifdef __epics__
-    stat = ca_put( DBR_STRING, axtdo->pvId, &string );
+    stat = stringPut( axtdo->pvId, axtdo->pvCount, string );
+    //stat = ca_put( DBR_STRING, axtdo->pvId, string );
 #endif
   }
   else {
@@ -589,7 +620,7 @@ static void xtdoTextFieldToStringLF (
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int stat;
-char string[39+1];
+char string[XTDC_K_MAX+1];
 char *buf;
 Arg args[10];
 int n;
@@ -605,17 +636,18 @@ int n;
   if ( !axtdo->widget_value_changed ) return;
  
   buf = XmTextGetString( axtdo->tf_widget );
-  strncpy( axtdo->entryValue, buf, 39 );
-  axtdo->entryValue[39] = 0;
+  strncpy( axtdo->entryValue, buf, XTDC_K_MAX );
+  axtdo->entryValue[XTDC_K_MAX] = 0;
   XtFree( buf );
 
-  strncpy( axtdo->curValue, axtdo->entryValue, 39 );
-  axtdo->curValue[39] = 0;
-  strncpy( string, axtdo->entryValue, 39 );
-  string[39] = 0;
+  strncpy( axtdo->curValue, axtdo->entryValue, XTDC_K_MAX );
+  axtdo->curValue[XTDC_K_MAX] = 0;
+  strncpy( string, axtdo->entryValue, XTDC_K_MAX );
+  string[XTDC_K_MAX] = 0;
   if ( axtdo->pvExists ) {
 #ifdef __epics__
-    stat = ca_put( DBR_STRING, axtdo->pvId, &string );
+    stat = stringPut( axtdo->pvId, axtdo->pvCount, string );
+    //stat = ca_put( DBR_STRING, axtdo->pvId, string );
 #endif
   }
   else {
@@ -635,11 +667,11 @@ static void xtdoTextFieldToIntA (
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int ivalue, stat;
-char *buf, tmp[127+1];
+char *buf, tmp[XTDC_K_MAX+1];
 
   buf = XmTextGetString( axtdo->tf_widget );
-  strncpy( axtdo->entryValue, buf, 39 );
-  axtdo->entryValue[39] = 0;
+  strncpy( axtdo->entryValue, buf, XTDC_K_MAX );
+  axtdo->entryValue[XTDC_K_MAX] = 0;
   XtFree( buf );
 
   if ( axtdo->formatType == XTDC_K_FORMAT_HEX ) {
@@ -661,14 +693,14 @@ char *buf, tmp[127+1];
     }
   }
   else {
-    strncpy( tmp, axtdo->entryValue, 127 );
-    tmp[127] = 0;
+    strncpy( tmp, axtdo->entryValue, XTDC_K_MAX );
+    tmp[XTDC_K_MAX] = 0;
   }
 
   if ( isLegalInteger(tmp) ) {
 
-    strncpy( axtdo->curValue, tmp, 39 );
-    axtdo->curValue[39] = 0;
+    strncpy( axtdo->curValue, tmp, XTDC_K_MAX );
+    axtdo->curValue[XTDC_K_MAX] = 0;
 
     ivalue = strtol( tmp, NULL, 0 );
     if ( axtdo->pvExists ) {
@@ -702,7 +734,7 @@ int ivalue, stat;
 char *buf;
 Arg args[10];
 int n;
-char tmp[127+1];
+char tmp[XTDC_K_MAX+1];
 
   n = 0;
   XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
@@ -715,8 +747,8 @@ char tmp[127+1];
   if ( !axtdo->widget_value_changed ) return;
 
   buf = XmTextGetString( axtdo->tf_widget );
-  strncpy( axtdo->entryValue, buf, 39 );
-  axtdo->entryValue[39] = 0;
+  strncpy( axtdo->entryValue, buf, XTDC_K_MAX );
+  axtdo->entryValue[XTDC_K_MAX] = 0;
   XtFree( buf );
 
   if ( axtdo->formatType == XTDC_K_FORMAT_HEX ) {
@@ -738,14 +770,14 @@ char tmp[127+1];
     }
   }
   else {
-    strncpy( tmp, axtdo->entryValue, 127 );
-    tmp[127] = 0;
+    strncpy( tmp, axtdo->entryValue, XTDC_K_MAX );
+    tmp[XTDC_K_MAX] = 0;
   }
 
   if ( isLegalInteger(tmp) ) {
 
-    strncpy( axtdo->curValue, tmp, 39 );
-    axtdo->curValue[39] = 0;
+    strncpy( axtdo->curValue, tmp, XTDC_K_MAX );
+    axtdo->curValue[XTDC_K_MAX] = 0;
 
     ivalue = strtol( tmp, NULL, 0 );
     if ( axtdo->pvExists ) {
@@ -773,11 +805,11 @@ static void xtdoTextFieldToDoubleA (
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int stat, ivalue, doPut;
 double dvalue;
-char *buf, tmp[127+1];
+char *buf, tmp[XTDC_K_MAX+1];
 
   buf = XmTextGetString( axtdo->tf_widget );
-  strncpy( axtdo->entryValue, buf, 39 );
-  axtdo->entryValue[39] = 0;
+  strncpy( axtdo->entryValue, buf, XTDC_K_MAX );
+  axtdo->entryValue[XTDC_K_MAX] = 0;
   XtFree( buf );
 
   doPut = 0;
@@ -810,8 +842,8 @@ char *buf, tmp[127+1];
   }
   else {
 
-    strncpy( tmp, axtdo->entryValue, 39 );
-    tmp[39] = 0;
+    strncpy( tmp, axtdo->entryValue, XTDC_K_MAX );
+    tmp[XTDC_K_MAX] = 0;
 
     if ( isLegalFloat(tmp) ) {
       doPut = 1;
@@ -822,8 +854,8 @@ char *buf, tmp[127+1];
 
   if ( doPut ) {
 
-    strncpy( axtdo->curValue, tmp, 39 );
-    axtdo->curValue[39] = 0;
+    strncpy( axtdo->curValue, tmp, XTDC_K_MAX );
+    axtdo->curValue[XTDC_K_MAX] = 0;
 
     if ( axtdo->pvExists ) {
 #ifdef __epics__
@@ -854,7 +886,7 @@ static void xtdoTextFieldToDoubleLF (
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int stat, ivalue, doPut;
 double dvalue;
-char *buf, tmp[127+1];
+char *buf, tmp[XTDC_K_MAX+1];
 Arg args[10];
 int n;
 
@@ -869,8 +901,8 @@ int n;
   if ( !axtdo->widget_value_changed ) return;
 
   buf = XmTextGetString( axtdo->tf_widget );
-  strncpy( axtdo->entryValue, buf, 39 );
-  axtdo->entryValue[39] = 0;
+  strncpy( axtdo->entryValue, buf, XTDC_K_MAX );
+  axtdo->entryValue[XTDC_K_MAX] = 0;
   XtFree( buf );
 
   doPut = 0;
@@ -903,8 +935,8 @@ int n;
   }
   else {
 
-    strncpy( tmp, axtdo->entryValue, 39 );
-    tmp[39] = 0;
+    strncpy( tmp, axtdo->entryValue, XTDC_K_MAX );
+    tmp[XTDC_K_MAX] = 0;
 
     if ( isLegalFloat(tmp) ) {
       doPut = 1;
@@ -915,8 +947,8 @@ int n;
 
   if ( doPut ) {
 
-    strncpy( axtdo->curValue, tmp, 39 );
-    axtdo->curValue[39] = 0;
+    strncpy( axtdo->curValue, tmp, XTDC_K_MAX );
+    axtdo->curValue[XTDC_K_MAX] = 0;
 
     if ( axtdo->pvExists ) {
 #ifdef __epics__
@@ -949,6 +981,16 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) ca_puser(arg.chid);
     if ( arg.op == CA_OP_CONN_UP ) {
 
       axtdo->pvType = (int) ca_field_type( axtdo->pvId );
+      axtdo->pvCount = (int) ca_element_count( axtdo->pvId );
+
+      if ( axtdo->pvType == DBR_CHAR ) {
+        if ( axtdo->pvCount == 1 ) {
+          axtdo->pvType = DBR_LONG;
+	}
+        else {
+          axtdo->pvType = DBR_STRING;
+	}
+      }
 
       // if format is hex, force double/float type to long
       if ( axtdo->formatType == XTDC_K_FORMAT_HEX ) {
@@ -994,6 +1036,16 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) ca_puser(arg.chid);
     if ( arg.op == CA_OP_CONN_UP ) {
 
       axtdo->svalPvType = (int) ca_field_type( axtdo->svalPvId );
+      axtdo->svalPvCount = (int) ca_element_count( axtdo->pvId );
+
+      if ( axtdo->svalPvType == DBR_CHAR ) {
+        if ( axtdo->svalPvCount == 1 ) {
+          axtdo->svalPvType = DBR_LONG;
+	}
+        else {
+          axtdo->svalPvType = DBR_STRING;
+	}
+      }
 
       axtdo->connection.setPvConnected( axtdo->svalPvId );
 
@@ -1058,7 +1110,7 @@ static void XtextDspUpdate (
 ) {
 
 class activeXTextDspClass *axtdo;
-int ivalue;
+int ivalue, n, i;
 short svalue;
 
   axtdo = (activeXTextDspClass *) ast_args.usr;
@@ -1070,8 +1122,24 @@ short svalue;
     switch ( axtdo->pvType ) {
 
     case DBR_STRING:
-      strncpy( axtdo->curValue, (char *) ast_args.dbr, 127 );
-      axtdo->curValue[127] = 0;
+
+      if ( axtdo->pvCount == 1 ) {
+
+        strncpy( axtdo->curValue, (char *) ast_args.dbr, XTDC_K_MAX );
+        axtdo->curValue[XTDC_K_MAX] = 0;
+
+      }
+      else {
+
+	n = axtdo->pvCount;
+	if ( n > XTDC_K_MAX ) n = XTDC_K_MAX;
+	for ( i=0; i<n; i++ ) {
+	  ( (char *) axtdo->curValue )[i] = ( (char *) ast_args.dbr )[i];
+	}
+	( (char *) axtdo->curValue )[i] = 0;
+
+      }
+
       break;
 
     case DBR_FLOAT:
@@ -1147,8 +1215,8 @@ short svalue;
     case DBR_ENUM:
       svalue = *( (short *) ast_args.dbr );
       if ( ( svalue >= 0 ) && ( svalue < axtdo->numStates ) ) {
-        strncpy( axtdo->curValue, axtdo->stateString[svalue], 127 );
-	axtdo->curValue[127] = 0;
+        strncpy( axtdo->curValue, axtdo->stateString[svalue], XTDC_K_MAX );
+	axtdo->curValue[XTDC_K_MAX] = 0;
         axtdo->entryState = (int) svalue;
       }
       else {
@@ -1165,8 +1233,8 @@ short svalue;
 
     if ( !blank( axtdo->curValue ) ) {
       if ( axtdo->showUnits && !blank( axtdo->units ) ) {
-        Strncat( axtdo->curValue, " ", 127 );
-        Strncat( axtdo->curValue, axtdo->units, 127 );
+        Strncat( axtdo->curValue, " ", XTDC_K_MAX );
+        Strncat( axtdo->curValue, axtdo->units, XTDC_K_MAX );
       }
     }
 
@@ -1335,8 +1403,8 @@ short svalue;
     stringStatusRec = *( (struct dbr_sts_string *) ast_args.dbr );
     axtdo->fgColor.setStatus( stringStatusRec.status,
      stringStatusRec.severity );
-    strncpy( axtdo->curValue, stringStatusRec.value, 127 );
-    axtdo->curValue[127] = 0;
+    strncpy( axtdo->curValue, stringStatusRec.value, XTDC_K_MAX );
+    axtdo->curValue[XTDC_K_MAX] = 0;
     break;
 
   case DBR_FLOAT:
@@ -1370,14 +1438,13 @@ short svalue;
     axtdo->fgColor.setStatus( enumStatusRec.status, enumStatusRec.severity );
     svalue = enumStatusRec.value;
     if ( ( svalue >= 0 ) && ( svalue < axtdo->numStates ) ) {
-      strncpy( axtdo->curValue, axtdo->stateString[svalue], 127 );
-      axtdo->curValue[127] = 0;
+      strncpy( axtdo->curValue, axtdo->stateString[svalue], XTDC_K_MAX );
+      axtdo->curValue[XTDC_K_MAX] = 0;
       axtdo->entryState = (int) svalue;
     }
     else {
       strcpy( axtdo->curValue, "" );
     }
-
     break;
 
   default:
@@ -1388,8 +1455,8 @@ short svalue;
 
   if ( !blank( axtdo->curValue ) ) {
     if ( axtdo->showUnits && !blank( axtdo->units ) ) {
-      Strncat( axtdo->curValue, " ", 127 );
-      Strncat( axtdo->curValue, axtdo->units, 127 );
+      Strncat( axtdo->curValue, " ", XTDC_K_MAX );
+      Strncat( axtdo->curValue, axtdo->units, XTDC_K_MAX );
     }
   }
 
@@ -1422,12 +1489,26 @@ struct dbr_gr_enum enumInfoRec;
 
   case DBR_STRING:
 
-    stringInfoRec = *( (dbr_sts_string *) ast_args.dbr );
+    if ( axtdo->pvCount == 1 ) {
 
-    strcpy( axtdo->units, "" );
-    axtdo->showUnits = 0;
+      stringInfoRec = *( (dbr_sts_string *) ast_args.dbr );
 
-    axtdo->fgColor.setStatus( stringInfoRec.status, stringInfoRec.severity );
+      strcpy( axtdo->units, "" );
+      axtdo->showUnits = 0;
+
+      axtdo->fgColor.setStatus( stringInfoRec.status, stringInfoRec.severity );
+
+    }
+    else {
+
+      n = axtdo->pvCount;
+      if ( n > XTDC_K_MAX ) n = XTDC_K_MAX;
+      for ( i=0; i<n; i++ ) {
+        ( (char *) axtdo->curValue )[i] = ( (char *) ast_args.dbr )[i];
+      }
+      ( (char *) axtdo->curValue )[i] = 0;
+
+    }
 
     break;
 
@@ -1524,16 +1605,16 @@ struct dbr_gr_enum enumInfoRec;
 
     svalue = enumInfoRec.value;
     if ( ( svalue >= 0 ) && ( svalue < axtdo->numStates ) ) {
-      strncpy( axtdo->value, axtdo->stateString[svalue], 127 );
-      axtdo->value[127] = 0;
+      strncpy( axtdo->value, axtdo->stateString[svalue], XTDC_K_MAX );
+      axtdo->value[XTDC_K_MAX] = 0;
       axtdo->entryState = (int) svalue;
     }
     else {
       strcpy( axtdo->value, "" );
     }
 
-    strncpy( axtdo->curValue, axtdo->value, 127 );
-    axtdo->curValue[127] = 0;
+    strncpy( axtdo->curValue, axtdo->value, XTDC_K_MAX );
+    axtdo->curValue[XTDC_K_MAX] = 0;
 
     axtdo->isWidget = 0;
 
@@ -1566,10 +1647,10 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 double dvalue;
 int ivalue, stat, doPut;
 short svalue;
-char string[39+1], tmp[127+1];
+char string[XTDC_K_MAX+1], tmp[XTDC_K_MAX+1];
 
-  strncpy( axtdo->curValue, axtdo->entryValue, 39 );
-  axtdo->curValue[39] = 0;
+  strncpy( axtdo->curValue, axtdo->entryValue, XTDC_K_MAX );
+  axtdo->curValue[XTDC_K_MAX] = 0;
 
   switch ( axtdo->pvType ) {
 
@@ -1651,8 +1732,8 @@ char string[39+1], tmp[127+1];
       }
     }
     else {
-      strncpy( tmp, axtdo->entryValue, 127 );
-      tmp[127] = 0;
+      strncpy( tmp, axtdo->entryValue, XTDC_K_MAX );
+      tmp[XTDC_K_MAX] = 0;
     }
 
     if ( isLegalInteger(tmp) ) {
@@ -1673,11 +1754,12 @@ char string[39+1], tmp[127+1];
     break;
 
   case DBR_STRING:
-    strncpy( string, axtdo->entryValue, 39 );
-    string[39] = 0;
+    strncpy( string, axtdo->entryValue, XTDC_K_MAX );
+    string[XTDC_K_MAX] = 0;
     if ( axtdo->pvExists ) {
 #ifdef __epics__
-      stat = ca_put( DBR_STRING, axtdo->pvId, &string );
+      stat = stringPut( axtdo->pvId, axtdo->pvCount, string );
+      //stat = ca_put( DBR_STRING, axtdo->pvId, string );
 #endif
     }
     else {
@@ -1839,6 +1921,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
     axtdo->showUnits = 0;
   }
 
+  axtdo->useAlarmBorder = axtdo->bufUseAlarmBorder;
+
   strncpy( axtdo->id, axtdo->bufId, 31 );
   axtdo->id[31] = 0;
   axtdo->changeCallbackFlag = axtdo->bufChangeCallbackFlag;
@@ -1984,6 +2068,11 @@ int i;
   showUnits = 0;
   strcpy( units, "" );
 
+  useAlarmBorder = 0;
+
+  prevAlarmSeverity = 0;
+  pvCount = svalPvCount = 1;
+
   connection.setMaxPvs( 3 );
 
   unconnectedTimer = 0;
@@ -2049,8 +2138,8 @@ int i;
   bgCb = source->bgCb;
   svalCb = source->svalCb;
 
-  strncpy( value, source->value, 127 );
-  value[127] = 0;
+  strncpy( value, source->value, XTDC_K_MAX );
+  value[XTDC_K_MAX] = 0;
 
   alignment = source->alignment;
 
@@ -2098,6 +2187,11 @@ int i;
   deactivateCallback = NULL;
 
   nullDetectMode = source->nullDetectMode;
+
+  useAlarmBorder = source->useAlarmBorder;
+
+  prevAlarmSeverity = 0;
+  pvCount = svalPvCount = 1;
 
   connection.setMaxPvs( 3 );
 
@@ -2296,6 +2390,9 @@ int index, stat;
   // version 2.11
   fprintf( f, "%-d\n", showUnits );
 
+  // version 2.12
+  fprintf( f, "%-d\n", useAlarmBorder );
+
   return 1;
 
 }
@@ -2309,7 +2406,7 @@ int activeXTextDspClass::createFromFile (
 int r, g, b, index;
 int major, minor, release;
 int stat = 1;
-char oneName[127+1], onePv[activeGraphicClass::MAX_PV_NAME+1];
+char oneName[XTDC_K_MAX+1], onePv[activeGraphicClass::MAX_PV_NAME+1];
 unsigned int pixel;
 
   this->actWin = _actWin;
@@ -2540,10 +2637,10 @@ unsigned int pixel;
     fscanf( f, "%d\n", &isDate );
     fscanf( f, "%d\n", &isFile );
 
-    readStringFromFile( oneName, 127+1, f ); actWin->incLine();
+    readStringFromFile( oneName, XTDC_K_MAX+1, f ); actWin->incLine();
     defDir.setRaw( oneName );
 
-    readStringFromFile( oneName, 127+1, f ); actWin->incLine();
+    readStringFromFile( oneName, XTDC_K_MAX+1, f ); actWin->incLine();
     pattern.setRaw( oneName );
 
   }
@@ -2600,6 +2697,13 @@ unsigned int pixel;
 
   if ( editable ) {
     showUnits = 0;
+  }
+
+  if ( ( ( major == 2 ) && ( minor > 11 ) ) || ( major > 2 ) ) {
+    fscanf( f, "%d\n", &useAlarmBorder );
+  }
+  else {
+    useAlarmBorder = 0;
   }
 
   actWin->fi->loadFontTag( fontTag );
@@ -2748,7 +2852,7 @@ unsigned int pixel;
         }
 
         strncpy( pvName, tk, 28 );
-	pvName[28] = 0;
+        pvName[28] = 0;
 
       }
             
@@ -2903,8 +3007,8 @@ int noedit;
   bufAutoHeight = autoHeight;
   bufFormatType = formatType;
   bufColorMode = colorMode;
-  strncpy( bufValue, value, 127 );
-  bufValue[127] = 0;
+  strncpy( bufValue, value, XTDC_K_MAX );
+  bufValue[XTDC_K_MAX] = 0;
   strncpy( bufPvName, pvName, activeGraphicClass::MAX_PV_NAME );
   bufPvName[activeGraphicClass::MAX_PV_NAME] = 0;
 
@@ -2927,16 +3031,16 @@ int noedit;
   }
 
   if ( defDir.getRaw() ) {
-    strncpy( bufDefDir, defDir.getRaw(), 127 );
-    bufDefDir[127] = 0;
+    strncpy( bufDefDir, defDir.getRaw(), XTDC_K_MAX );
+    bufDefDir[XTDC_K_MAX] = 0;
   }
   else {
     strcpy( bufDefDir, "" );
   }
 
   if ( pattern.getRaw() ) {
-    strncpy( bufPattern, pattern.getRaw(), 127 );
-    bufPattern[127] = 0;
+    strncpy( bufPattern, pattern.getRaw(), XTDC_K_MAX );
+    bufPattern[XTDC_K_MAX] = 0;
   }
   else {
     strcpy( bufPattern, "" );
@@ -2964,6 +3068,7 @@ int noedit;
   bufUpdatePvOnDrop = updatePvOnDrop;
   bufUseHexPrefix = useHexPrefix;
   bufShowUnits = showUnits;
+  bufUseAlarmBorder = useAlarmBorder;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -3028,8 +3133,8 @@ int noedit;
     ef.addToggle( activeXTextDspClass_str71, &bufIsFile );
     ef.addOption( activeXTextDspClass_str78,
      activeXTextDspClass_str79, &bufFileComponent );
-    ef.addTextField( activeXTextDspClass_str72, 35, bufDefDir, 127 );
-    ef.addTextField( activeXTextDspClass_str73, 35, bufPattern, 127 );
+    ef.addTextField( activeXTextDspClass_str72, 35, bufDefDir, XTDC_K_MAX );
+    ef.addTextField( activeXTextDspClass_str73, 35, bufPattern, XTDC_K_MAX );
   }
   else {
     bufIsDate = isDate = 0;
@@ -3041,6 +3146,7 @@ int noedit;
   ef.addColorButton( activeXTextDspClass_str15, actWin->ci, &fgCb,
    &bufFgColor );
   ef.addToggle( activeXTextDspClass_str14, &bufColorMode );
+  ef.addToggle( activeXTextDspClass_str82, &bufUseAlarmBorder );
   ef.addColorButton( activeXTextDspClass_str16, actWin->ci, &bgCb,
    &bufBgColor );
   ef.addToggle( activeXTextDspClass_str17, &bufUseDisplayBg );
@@ -3136,6 +3242,30 @@ int len;
   }
 
   len = strlen(bufValue);
+
+  if ( bufInvalid ) {
+
+    if ( colorMode == XTDC_K_COLORMODE_ALARM ) {
+
+      if ( fgColor.getSeverity() != prevAlarmSeverity ) {
+
+        if ( useAlarmBorder ) {
+
+          actWin->executeGc.setLineWidth( 2 );
+          actWin->executeGc.setLineStyle( LineSolid );
+
+          XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+           actWin->executeGc.eraseGC(), x, y, w, h );
+
+          actWin->executeGc.setLineWidth( 1 );
+
+        }
+
+      }
+
+    }
+
+  }
 
   if ( useDisplayBg ) {
 
@@ -3239,7 +3369,7 @@ int blink = 0;
       actWin->executeGc.saveFg();
       //actWin->executeGc.setFG( fgColor.getDisconnected() );
       actWin->executeGc.setFG( fgColor.getDisconnectedIndex(), &blink );
-      actWin->executeGc.setLineWidth( 1 );
+      actWin->executeGc.setLineWidth( 2 );
       actWin->executeGc.setLineStyle( LineSolid );
       XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
@@ -3249,7 +3379,7 @@ int blink = 0;
     }
   }
   else if ( needToEraseUnconnected ) {
-    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineWidth( 2 );
     actWin->executeGc.setLineStyle( LineSolid );
     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
@@ -3269,10 +3399,26 @@ int blink = 0;
       if ( !grabUpdate || updatePvOnDrop ) {
 
         if ( bufInvalid ) {
-          bufInvalid = 0;
           n = 0;
           XtSetArg( args[n], XmNvalue, (XtArgVal) value ); n++;
-          XtSetArg( args[n], XmNforeground, fgColor.getColor() ); n++;
+          if ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) ) {
+            XtSetArg( args[n], XmNforeground, fgColor.pixelColor() );
+          }
+          else {
+            XtSetArg( args[n], XmNforeground, fgColor.getColor() ); n++;
+          }
+          if ( colorMode == XTDC_K_COLORMODE_ALARM ) {
+            if ( fgColor.getSeverity() != prevAlarmSeverity ) {
+              if ( fgColor.getSeverity() && useAlarmBorder ) {
+                XtSetArg( args[n], XmNborderWidth, (XtArgVal) 2 ); n++;
+                XtSetArg( args[n], XmNborderColor, fgColor.getColor() );
+                 n++;
+              }
+              else {
+                XtSetArg( args[n], XmNborderWidth, (XtArgVal) 0 ); n++;
+              }
+            }
+          }
           XtSetValues( tf_widget, args, n );
         }
         else {
@@ -3283,11 +3429,20 @@ int blink = 0;
 
     }
 
-    strncpy( entryValue, value, 127 );
-    entryValue[127] = 0;
+    strncpy( entryValue, value, XTDC_K_MAX );
+    entryValue[XTDC_K_MAX] = 0;
 
-    strncpy( bufValue, value, 127 );
-    bufValue[127] = 0;
+    strncpy( bufValue, value, XTDC_K_MAX );
+    bufValue[XTDC_K_MAX] = 0;
+
+
+    if ( bufInvalid ) {
+      bufInvalid = 0;
+    }
+
+    if ( fgColor.getSeverity() != prevAlarmSeverity ) {
+      prevAlarmSeverity = fgColor.getSeverity();
+    }
 
     return 1;
 
@@ -3304,7 +3459,13 @@ int blink = 0;
 
   if ( useDisplayBg ) {
 
-    actWin->executeGc.setFG( fgColor.getIndex(), &blink );
+    if ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) ) {
+      actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
+    }
+    else {
+      actWin->executeGc.setFG( fgColor.getIndex(), &blink );
+    }
+
     actWin->executeGc.setBG( actWin->ci->pix(bgColor) );
 
     XDrawString( actWin->d, XtWindow(actWin->executeWidget),
@@ -3322,7 +3483,13 @@ int blink = 0;
     XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
      actWin->executeGc.normGC(), x, y, w, h );
 
-    actWin->executeGc.setFG( fgColor.getIndex(), &blink );
+    if ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) ) {
+      actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
+    }
+    else {
+      actWin->executeGc.setFG( fgColor.getIndex(), &blink );
+    }
+
     actWin->executeGc.setBG( actWin->ci->pix(bgColor) );
 
     XDrawImageString( actWin->d, XtWindow(actWin->executeWidget),
@@ -3331,14 +3498,38 @@ int blink = 0;
 
   }
 
+  if ( colorMode == XTDC_K_COLORMODE_ALARM ) {
+
+    if ( fgColor.getSeverity() && useAlarmBorder ) {
+
+      actWin->executeGc.setFG( fgColor.getIndex(), &blink );
+      actWin->executeGc.setLineWidth( 2 );
+      actWin->executeGc.setLineStyle( LineSolid );
+
+      XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
+
+      actWin->executeGc.setLineWidth( 1 );
+
+    }
+
+  }
+
   actWin->executeGc.restoreFg();
   actWin->executeGc.restoreBg();
 
-  strncpy( bufValue, value, 127 );
-  bufValue[127] = 0;
-  bufInvalid = 0;
+  strncpy( bufValue, value, XTDC_K_MAX );
+  bufValue[XTDC_K_MAX] = 0;
 
   updateBlink( blink );
+
+  if ( bufInvalid ) {
+    bufInvalid = 0;
+  }
+
+  if ( fgColor.getSeverity() != prevAlarmSeverity ) {
+    prevAlarmSeverity = fgColor.getSeverity();
+  }
 
   return 1;
 
@@ -3443,6 +3634,8 @@ char callbackName[63+1];
     pvExistCheck = 0;
     connection.init();
     pvId = svalPvId = fgPvId = NULL;
+    prevAlarmSeverity = 0;
+    pvCount = svalPvCount = 1;
 
     break;
 
@@ -3465,10 +3658,10 @@ char callbackName[63+1];
           if ( strcmp( pvExpStr.getExpanded(), "" ) != 0 ) {
             pvExists = 1;
             connection.addPv(); // must do this only once per pv
-  	}
-  	else {
+          }
+          else {
             pvExists = 0;
-  	}
+          }
         }
         else {
           pvExists = 0;
@@ -3478,10 +3671,10 @@ char callbackName[63+1];
           if ( strcmp( svalPvExpStr.getExpanded(), "" ) != 0 ) {
             svalPvExists = 1;
             connection.addPv(); // must do this only once per pv
-  	}
-  	else {
+          }
+          else {
             svalPvExists = 0;
-  	}
+          }
         }
         else {
           svalPvExists = 0;
@@ -3491,10 +3684,10 @@ char callbackName[63+1];
           if ( strcmp( fgPvExpStr.getExpanded(), "" ) != 0 ) {
             fgPvExists = 1;
             connection.addPv(); // must do this only once per pv
-  	}
-  	else {
+          }
+          else {
             fgPvExists = 0;
-  	}
+          }
         }
         else {
           fgPvExists = 0;
@@ -3738,7 +3931,7 @@ void activeXTextDspClass::btnDown (
   int buttonNumber )
 {
 
-char selectString[127+1], bufDir[127+1], bufPat[127+1];
+char selectString[XTDC_K_MAX+1], bufDir[XTDC_K_MAX+1], bufPat[XTDC_K_MAX+1];
 int i;
 
   if ( !editable || isWidget || !ca_write_access( pvId ) ) return;
@@ -3792,16 +3985,16 @@ int i;
       if ( isFile ) {
 
         if ( defDir.getExpanded() ) {
-          strncpy( bufDir, defDir.getExpanded(), 127 );
-          bufDir[127] = 0;
+          strncpy( bufDir, defDir.getExpanded(), XTDC_K_MAX );
+          bufDir[XTDC_K_MAX] = 0;
 	}
         else {
           strcpy( bufDir, "" );
 	}
 
         if ( pattern.getExpanded() ) {
-          strncpy( bufPat, pattern.getExpanded(), 127 );
-          bufPat[127] = 0;
+          strncpy( bufPat, pattern.getExpanded(), XTDC_K_MAX );
+          bufPat[XTDC_K_MAX] = 0;
 	}
         else {
           strcpy( bufPat, "" );
@@ -3818,7 +4011,7 @@ int i;
       }
       else if ( isDate ) {
 
-        cp.create( actWin->top, teX, teY, entryValue, 127,
+        cp.create( actWin->top, teX, teY, entryValue, XTDC_K_MAX,
          (void *) this,
          (XtCallbackProc) xtdoSetCpValue,
          (XtCallbackProc) xtdoCancelStr );
@@ -3832,8 +4025,8 @@ int i;
 
   }
 
-  strncpy( entryValue, value, 127 );
-  entryValue[127] = 0;
+  strncpy( entryValue, value, XTDC_K_MAX );
+  entryValue[XTDC_K_MAX] = 0;
 
   textEntry.create( actWin->top, &teX, &teY, &teW, &teH, &teLargestH, "",
   NULL, NULL, NULL );
@@ -3841,16 +4034,17 @@ int i;
 #ifdef __epics__
 
   if ( pvType != DBR_ENUM ) {
-    textEntry.addTextField( activeXTextDspClass_str44, 25, entryValue, 127 );
+    textEntry.addTextField( activeXTextDspClass_str44, 25, entryValue,
+     XTDC_K_MAX );
   }
   else {
     strcpy( selectString, "" );
     for ( i=0; i<numStates; i++ ) {
-      Strncat( selectString, stateString[i], 127 );
-      selectString[127] = 0;
+      Strncat( selectString, stateString[i], XTDC_K_MAX );
+      selectString[XTDC_K_MAX] = 0;
       if ( i != numStates-1 ) {
-        Strncat( selectString, "|", 127 );
-        selectString[127] = 0;
+        Strncat( selectString, "|", XTDC_K_MAX );
+        selectString[XTDC_K_MAX] = 0;
       }
     }
     textEntry.addOption( activeXTextDspClass_str45, selectString, &entryState );
@@ -3959,7 +4153,7 @@ void activeXTextDspClass::executeDeferred ( void ) {
 int n, stat, numCols, width, csrPos;
 int nc, ni, nu, nr, nd, ne;
 Arg args[10];
-unsigned int bg;
+unsigned int bg, pixel;
 XmFontList textFontList = NULL;
 Cardinal numImportTargets;
 Atom importList[2];
@@ -3986,8 +4180,8 @@ Atom importList[2];
   nu = needUpdate; needUpdate = 0;
   nd = needDraw; needDraw = 0;
   ne = needErase; needErase = 0;
-  strncpy( value, curValue, 127 );
-  value[127] = 0;
+  strncpy( value, curValue, XTDC_K_MAX );
+  value[XTDC_K_MAX] = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
@@ -4001,10 +4195,23 @@ Atom importList[2];
 
     case DBR_STRING:
 
-      stat = ca_get_callback( DBR_GR_STRING, pvId,
-       XtextDspInfoUpdate, (void *) this );
-      if ( stat != ECA_NORMAL ) {
-        printf( activeXTextDspClass_str46 );
+      if ( pvCount == 1 ) {
+
+        stat = ca_get_callback( DBR_GR_STRING, pvId,
+         XtextDspInfoUpdate, (void *) this );
+        if ( stat != ECA_NORMAL ) {
+          printf( activeXTextDspClass_str46 );
+        }
+
+      }
+      else {
+
+        stat = ca_array_get_callback( DBR_CHAR, pvCount, pvId,
+         XtextDspInfoUpdate, (void *) this );
+        if ( stat != ECA_NORMAL ) {
+          printf( activeXTextDspClass_str46 );
+        }
+
       }
 
       break;
@@ -4072,22 +4279,45 @@ Atom importList[2];
 
 #ifdef __epics__
       if ( !eventId ) {
-        stat = ca_add_masked_array_event( DBR_STRING, 1, pvId,
-         XtextDspUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-         &eventId, DBE_VALUE );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeXTextDspClass_str51 );
+
+        if ( pvCount == 1 ) {
+
+          stat = ca_add_masked_array_event( DBR_STRING, 1, pvId,
+           XtextDspUpdate, (void *) this, (float) 0.0, (float) 0.0,
+           (float) 0.0, &eventId, DBE_VALUE );
+          if ( stat != ECA_NORMAL ) {
+            printf( activeXTextDspClass_str51 );
+          }
+
         }
+        else {
+
+          stat = ca_add_masked_array_event( DBR_CHAR, pvCount, pvId,
+           XtextDspUpdate, (void *) this, (float) 0.0, (float) 0.0,
+           (float) 0.0, &eventId, DBE_VALUE );
+          if ( stat != ECA_NORMAL ) {
+            printf( activeXTextDspClass_str51 );
+          }
+
+        }
+
       }
 
       if ( !alarmEventId ) {
-        stat = ca_add_masked_array_event( DBR_STS_STRING, 1, pvId,
-         XtextAlarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-         (float) 0.0, &alarmEventId, DBE_ALARM );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeXTextDspClass_str52 );
-        }
+
+        if ( pvCount == 1 ) {
+
+          stat = ca_add_masked_array_event( DBR_STS_STRING, 1, pvId,
+           XtextAlarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
+           (float) 0.0, &alarmEventId, DBE_ALARM );
+          if ( stat != ECA_NORMAL ) {
+            printf( activeXTextDspClass_str52 );
+          }
+
+	}
+
       }
+
 
 #endif
 
@@ -4315,6 +4545,7 @@ Atom importList[2];
     else {
 
       pvType = DBR_STRING;
+      pvCount = 1;
       sprintf( format, "%%s" );
 
     }
@@ -4337,8 +4568,8 @@ Atom importList[2];
         numCols = 6;
       }
 
-      strncpy( entryValue, value, 39 );
-      entryValue[39] = 0;
+      strncpy( entryValue, value, XTDC_K_MAX );
+      entryValue[XTDC_K_MAX] = 0;
       csrPos = strlen(entryValue);
 
       widget_value_changed = 0;
@@ -4357,17 +4588,24 @@ Atom importList[2];
          XtNumber(g_dragActions) );
       }
 
+      if ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) ) {
+        pixel = fgColor.pixelColor();
+      }
+      else {
+        pixel = fgColor.getColor();
+      }
+
       tf_widget = XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
        actWin->executeWidget,
        XmNx, x,
        XmNy, y-3,
-       XmNforeground, fgColor.getColor(),
+       XmNforeground, pixel,
        XmNbackground, bg,
        XmNhighlightThickness, 0,
        XmNwidth, w,
        //XmNcolumns, (short) numCols,
        XmNvalue, entryValue,
-       XmNmaxLength, (short) 39,
+       XmNmaxLength, (short) XTDC_K_MAX,
        XmNpendingDelete, True,
        XmNmarginHeight, 0,
        XmNfontList, textFontList,

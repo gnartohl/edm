@@ -32,6 +32,9 @@
 
 #include "cadef.h"
 
+// max size of char array
+#define XTDC_K_MAX 255
+
 #define XTDC_K_FORMAT_NATURAL 0
 #define XTDC_K_FORMAT_FLOAT 1
 #define XTDC_K_FORMAT_EXPONENTIAL 2
@@ -47,7 +50,7 @@
 #define XTDC_K_FILE_NAME 2
 
 #define XTDC_MAJOR_VERSION 2
-#define XTDC_MINOR_VERSION 11
+#define XTDC_MINOR_VERSION 12
 #define XTDC_RELEASE 0
 
 #ifdef __x_text_dsp_obj_cc
@@ -426,12 +429,12 @@ pvConnectionClass connection;
 int bufX, bufY, bufW, bufH;
 
 int numDecimals, bufNumDecimals, formatType, bufFormatType, colorMode,
- bufColorMode, pvType, svalPvType, noSval;
+ bufColorMode, pvType, pvCount, svalPvType, noSval, svalPvCount;
 char format[15+1];
 int opComplete, pvExistCheck, activeMode, init, noSvalYet;
 int smartRefresh, bufSmartRefresh;
 double dvalue, curDoubleValue, curSvalValue;
-char curValue[127+1], value[127+1], bufValue[127+1];
+char curValue[XTDC_K_MAX+1], value[XTDC_K_MAX+1], bufValue[XTDC_K_MAX+1];
 fontMenuClass fm;
 char fontTag[63+1], bufFontTag[63+1];
 int useDisplayBg, bufUseDisplayBg, alignment, autoHeight, bufAutoHeight;
@@ -472,7 +475,7 @@ char pvName[activeGraphicClass::MAX_PV_NAME+1],
  bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
 
 expStringClass defDir, pattern;
-char bufDefDir[127+1], bufPattern[127+1];
+char bufDefDir[XTDC_K_MAX+1], bufPattern[XTDC_K_MAX+1];
 
 char *stateString[MAX_ENUM_STATES]; // allocated at run-time
 int numStates;
@@ -483,7 +486,7 @@ int isWidget, bufIsWidget;
 int editable, bufEditable;
 entryFormClass textEntry;
 int teX, teY, teW, teH, teLargestH;
-char entryValue[127+1];
+char entryValue[XTDC_K_MAX+1];
 int entryState, editDialogIsActive;
 int isDate, bufIsDate;
 int isFile, bufIsFile;
@@ -508,6 +511,10 @@ int grabUpdate;
 
 int showUnits, bufShowUnits;
 char units[MAX_UNITS_SIZE+1];
+
+short prevAlarmSeverity;
+
+int useAlarmBorder, bufUseAlarmBorder;
 
 public:
 
