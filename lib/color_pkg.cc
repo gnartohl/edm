@@ -6172,6 +6172,11 @@ char colorMode[10+1];
   if ( strcmp( colorMode, "rgb" ) != 0 ) {
 
     fscanf( f, "%d\n", index );
+    if ( ( *index < 0 ) || ( *index >= max_colors+num_blinking_colors ) ) {
+      printf( "colorInfoClass::readColorIndex - bad index encountered [%-d]\n",
+       *index );
+      *index = 0;
+    }
 
   }
   else {
@@ -6195,6 +6200,10 @@ void colorInfoClass::usePrivColorMap ( void ) {
 int colorInfoClass::blinking (
   int index
 ) {
+
+  if ( ( index < 0 ) || ( index >= max_colors+num_blinking_colors ) ) {
+    return 0;
+  }
 
   return (int) ( colors[index] != blinkingColors[index] );
 
