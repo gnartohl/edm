@@ -1,12 +1,26 @@
 # Setup edm variables so that it uses shared libs and config files
 # from this source tree.
 #
+# This is meant to get you started, this is not the ultimate EDM
+# setup tool.
+#
 # edm has to be built before this is run
+#
+# "source" this from any shell (other than csh) and hopefully
+# you can then run EDM as "$EDM".
+#
+# If that works, checkout the result of
+#
+# "set | grep EDM"
+#
+# and try to understand what all the EDM-related variables
+# mean. Include them in your login script or /etc/profile or ...
+#
 
 #HOST_ARCH=Linux
 if [ x$EPICS = x ]
 then
-    EPICS=/cs/epics/R3.13.3/base
+    EPICS=/cs/epics/R3.13.5/base
 fi
 
 export EDMBASE=`(cd ..;pwd)`
