@@ -90,10 +90,13 @@ CURLcode result;
 #endif
 
 #ifndef USECURL
- return fopen( fullName, mode );
+  if ( debugMode() ) printf( "Using local access only\n" );
+  return fopen( fullName, mode );
 #endif
 
 #ifdef USECURL
+
+  if ( debugMode() ) printf( "Using curl for URL-based access\n" );
 
   urlList = getenv( environment_str9 );
   if ( !urlList ) return fopen( fullName, mode );
