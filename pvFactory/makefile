@@ -22,8 +22,8 @@ buildInstall: $(ODIR) all
 
 $(LIBNAME): $(OBJS)
 	$(SL_LINK) -o $(LIBNAME) $(OBJS) $(SL_FLAGS)
-	-cp $(LIBNAME) /home/csg/devel/ADE/R3.13.3/support/extensions/1-1/lib/$(HOST_ARCH)
-
+#	cp $(LIBNAME) $(EPICS_EXTENSIONS)/lib/$(HOST_ARCH)
+	cp $(LIBNAME) /home/csg/devel/ADE/R3.13.3/support/extensions/1-1/lib/solaris
 # Dependencies
 $(ODIR)/pv_factory.o: pv_factory.cc pv_factory.h
 
