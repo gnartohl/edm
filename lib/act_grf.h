@@ -785,8 +785,6 @@ virtual int getMacros (
 
 virtual int isMux ( void ) { return 0; }
 
-virtual int createWidgets ( void );
-
 void updateFont (
   char *string,
   char *fontTag,

@@ -2290,12 +2290,6 @@ int activeGraphicClass::getButtonActionRequest (
 
 }
 
-int activeGraphicClass::createWidgets ( void ) {
-
-  return 1;
-
-}
-
 void activeGraphicClass::updateFont (
   char *string,
   char *fontTag,

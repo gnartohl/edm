@@ -13539,24 +13539,6 @@ int needDelete = 0;
 
 }
 
-int activeWindowClass::createWidgets ( void ) {
-
-int stat;
-activeGraphicListPtr cur;
-
-  cur = head->flink;
-  while ( cur != head ) {
-
-    stat = cur->node->createWidgets();
-
-    cur = cur->flink;
-
-  }
-
-  return 1;
-
-}
-
 int activeWindowClass::executeMux ( void ) {
 
 int pass, opStat, stat, nTries, btnUp, btnDown, btnDrag, btnFocus;

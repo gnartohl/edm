@@ -4453,15 +4453,6 @@ char msg[127+1];
       cur = cur->flink;
     }
 
-    cur = head->flink;
-    while ( cur != head ) {
-      if ( ( cur->requestActivate == 2 ) && !cur->requestDelete ) {
-        cur->node.createWidgets();
-        cur->requestActivate = 3;
-      }
-      cur = cur->flink;
-    }
-
     processAllEvents( app, display );
 
     nodeCount = iconNodeCount = actionCount = iconActionCount = 0;
@@ -4474,7 +4465,7 @@ char msg[127+1];
         iconActionCount++;
       }
       if ( !cur->requestDelete ) {
-        if ( cur->requestActivate == 3 ) {
+        if ( cur->requestActivate == 2 ) {
           cur->requestActivate = 0;
           cur->node.execute();
 

@@ -1110,8 +1110,6 @@ int discardWinLoadData (
   int *_minor,
   int *_release );
 
-int createWidgets ( void );
-
 void setNoRefresh ( void ) {
   noRefresh = 1;
 }
