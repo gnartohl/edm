@@ -888,6 +888,7 @@ activeGraphicClass *mslo = (activeGraphicClass *) this;
   orientation = source->orientation;
 
   frameWidget = NULL;
+  scaleWidget = NULL;
 
 }
 
@@ -2187,130 +2188,134 @@ static XtActionsRec dragActions[] = {
 
     controlPvConnected = 1;
 
-    frameWidget = XtVaCreateManagedWidget( "",
-     xmDrawingAreaWidgetClass,
-     actWin->executeWidgetId(),
-     XmNx, x,
-     XmNy, y,
-     XmNwidth, w,
-     XmNheight, h,
-     XmNmarginHeight, 0,
-     XmNmarginWidth, 0,
-     XmNresizePolicy, XmRESIZE_NONE,
-     XmNbackground, bgColor.pixelColor(),
-     NULL );
+    if ( !frameWidget ) {
 
-    if ( frameWidget ) {
+      frameWidget = XtVaCreateManagedWidget( "",
+       xmDrawingAreaWidgetClass,
+       actWin->executeWidgetId(),
+       XmNx, x,
+       XmNy, y,
+       XmNwidth, w,
+       XmNheight, h,
+       XmNmarginHeight, 0,
+       XmNmarginWidth, 0,
+       XmNresizePolicy, XmRESIZE_NONE,
+       XmNbackground, bgColor.pixelColor(),
+       NULL );
 
-      XtAddEventHandler( frameWidget,
-       ButtonPressMask|ButtonReleaseMask|ExposureMask|
-       EnterWindowMask|LeaveWindowMask, False,
-       motifSliderEventHandler, (XtPointer) this );
+      if ( frameWidget ) {
 
-      if ( orientation == MSLC_K_HORIZONTAL ) {
-        scaleX = 1;
-        scaleW = w - 2;
-        scaleY = labelH + limitsH + 1;
-        scaleH = h - scaleY - 2;
-      }
-      else {
-        if ( showLimits || showValue ) {
-          scaleX = (int) ( 0.6 * (double) w );
-          scaleW = w - scaleX - 2;
-          if ( scaleW < 14 ) {
-            scaleW = 14;
-            scaleX = w - scaleW - 2;
-          }
-        }
-        else {
+        XtAddEventHandler( frameWidget,
+         ButtonPressMask|ButtonReleaseMask|ExposureMask|
+         EnterWindowMask|LeaveWindowMask, False,
+         motifSliderEventHandler, (XtPointer) this );
+
+        if ( orientation == MSLC_K_HORIZONTAL ) {
           scaleX = 1;
           scaleW = w - 2;
+          scaleY = labelH + limitsH + 1;
+          scaleH = h - scaleY - 2;
         }
-        scaleY = labelH + 1;
-        scaleH = h - scaleY - 2;
-        midVertScaleY = scaleH/2 + scaleY -
-         (int) ( (double) fontHeight * 0.5 );
-      }
-
-      parsedTrans = XtParseTranslationTable( dragTrans );
-      XtAppAddActions( actWin->appCtx->appContext(), dragActions,
-       XtNumber(dragActions) );
-
-      if ( orientation == MSLC_K_HORIZONTAL ) {
-        orien = XmHORIZONTAL;
-        pd = XmMAX_ON_RIGHT;
-      }
-      else {
-        orien = XmVERTICAL;
-        pd = XmMAX_ON_TOP;
-      }
-
-      scaleWidget = XtVaCreateManagedWidget(
-       "", xmScaleWidgetClass,
-       frameWidget,
-       XmNx, scaleX,
-       XmNy, scaleY,
-       XmNwidth, scaleW,
-       XmNheight, scaleH,
-       XmNscaleWidth, scaleW,
-       XmNscaleHeight, scaleH,
-       XmNorientation, orien,
-       XmNprocessingDirection, pd,
-       XmNscaleMultiple, 1,
-       XmNminimum, 0,
-       XmNmaximum, 100000,
-       XmNnavigationType, XmNONE,
-       XmNtraversalOn, False,
-       XmNhighlightOnEnter, True,
-       XmNuserData, this,
-       XmNforeground, fgColor.getColor(),
-       XmNbackground, bgColor.pixelColor(),
-       XmNtopShadowColor, actWin->ci->pix(topColor),
-       XmNbottomShadowColor, actWin->ci->pix(botColor),
-       NULL );
-
-      XtVaGetValues( scaleWidget,
-       XmNnumChildren, &numChildren,
-       XmNchildren, &children,
-       NULL );
-
-      scrollBarWidget = NULL;
-      for ( i=0; i<(int)numChildren; i++ ) {
-        if ( XtClass( children[i] ) == xmScrollBarWidgetClass) {
-          scrollBarWidget = children[i];
-          XtVaSetValues( children[i],
-           //XmNtranslations, parsedTrans,
-           XmNuserData, this,
-           NULL );
-          XtOverrideTranslations( children[i], parsedTrans );
+        else {
+          if ( showLimits || showValue ) {
+            scaleX = (int) ( 0.6 * (double) w );
+            scaleW = w - scaleX - 2;
+            if ( scaleW < 14 ) {
+              scaleW = 14;
+              scaleX = w - scaleW - 2;
+            }
+          }
+          else {
+            scaleX = 1;
+            scaleW = w - 2;
+          }
+          scaleY = labelH + 1;
+          scaleH = h - scaleY - 2;
+          midVertScaleY = scaleH/2 + scaleY -
+           (int) ( (double) fontHeight * 0.5 );
         }
-      }
 
-      if ( scrollBarWidget ) {
+        parsedTrans = XtParseTranslationTable( dragTrans );
+        XtAppAddActions( actWin->appCtx->appContext(), dragActions,
+         XtNumber(dragActions) );
 
-        XtVaSetValues( scrollBarWidget,
+        if ( orientation == MSLC_K_HORIZONTAL ) {
+          orien = XmHORIZONTAL;
+          pd = XmMAX_ON_RIGHT;
+        }
+        else {
+          orien = XmVERTICAL;
+          pd = XmMAX_ON_TOP;
+        }
+
+        scaleWidget = XtVaCreateManagedWidget(
+         "", xmScaleWidgetClass,
+         frameWidget,
+         XmNx, scaleX,
+         XmNy, scaleY,
+         XmNwidth, scaleW,
+         XmNheight, scaleH,
+         XmNscaleWidth, scaleW,
+         XmNscaleHeight, scaleH,
+         XmNorientation, orien,
+         XmNprocessingDirection, pd,
+         XmNscaleMultiple, 1,
+         XmNminimum, 0,
+         XmNmaximum, 100000,
+         XmNnavigationType, XmNONE,
+         XmNtraversalOn, False,
+         XmNhighlightOnEnter, True,
+         XmNuserData, this,
          XmNforeground, fgColor.getColor(),
          XmNbackground, bgColor.pixelColor(),
-         XmNtroughColor, actWin->ci->pix(shadeColor),
          XmNtopShadowColor, actWin->ci->pix(topColor),
          XmNbottomShadowColor, actWin->ci->pix(botColor),
-         XmNinitialDelay, 100,
-         XmNrepeatDelay, 1,
          NULL );
 
-        XtAddEventHandler( scrollBarWidget,
-         EnterWindowMask|LeaveWindowMask, False,
-         scrollBarEventHandler, (XtPointer) this );
+        XtVaGetValues( scaleWidget,
+         XmNnumChildren, &numChildren,
+         XmNchildren, &children,
+         NULL );
+
+        scrollBarWidget = NULL;
+        for ( i=0; i<(int)numChildren; i++ ) {
+          if ( XtClass( children[i] ) == xmScrollBarWidgetClass) {
+            scrollBarWidget = children[i];
+            XtVaSetValues( children[i],
+             //XmNtranslations, parsedTrans,
+             XmNuserData, this,
+             NULL );
+            XtOverrideTranslations( children[i], parsedTrans );
+          }
+        }
+
+        if ( scrollBarWidget ) {
+
+          XtVaSetValues( scrollBarWidget,
+           XmNforeground, fgColor.getColor(),
+           XmNbackground, bgColor.pixelColor(),
+           XmNtroughColor, actWin->ci->pix(shadeColor),
+           XmNtopShadowColor, actWin->ci->pix(topColor),
+           XmNbottomShadowColor, actWin->ci->pix(botColor),
+           XmNinitialDelay, 100,
+           XmNrepeatDelay, 1,
+           NULL );
+
+          XtAddEventHandler( scrollBarWidget,
+           EnterWindowMask|LeaveWindowMask, False,
+           scrollBarEventHandler, (XtPointer) this );
+
+        }
+
+        XtAddCallback( scaleWidget, XmNvalueChangedCallback,
+         msloValueChangeCB, (XtPointer) this );
+
+        XtAddCallback( scaleWidget, XmNdragCallback,
+         msloIndicatorDragCB, (XtPointer) this );
+
+        XtManageChild( frameWidget );
 
       }
-
-      XtAddCallback( scaleWidget, XmNvalueChangedCallback,
-       msloValueChangeCB, (XtPointer) this );
-
-      XtAddCallback( scaleWidget, XmNdragCallback,
-       msloIndicatorDragCB, (XtPointer) this );
-
-      XtManageChild( frameWidget );
 
     }
 
