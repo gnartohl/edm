@@ -389,17 +389,13 @@ double fv;
   mslo->updateControlTimerActive = 0;
   mslo->updateControlTimer = 0;
 
-  //if ( mslo->updateControlTimerActive ) {
-  //  mslo->updateControlTimer = appAddTimeOut(
-  //   mslo->actWin->appCtx->appContext(),
-  //   mslo->updateControlTimerValue, mslc_updateControl, client );
-  //}
-  //else {
-  //  mslo->updateControlTimer = 0;
-  //  return;
-  //}
-
-  if ( !mslo->active || !mslo->init ) return;
+  if ( !mslo->active || !mslo->init ) {
+    mslo->updateControlTimerActive = 1;
+    mslo->updateControlTimer = appAddTimeOut(
+     mslo->actWin->appCtx->appContext(),
+     500, mslc_updateControl, client );
+    return;
+  }
 
   mslo->oldControlV = mslo->oneControlV;
 
