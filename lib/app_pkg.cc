@@ -1856,6 +1856,10 @@ XmString menuStr, str;
   // mainWin,
   // NULL );
 
+  XtVaSetValues( menuBar,
+   XmNmenuHelpWidget, helpCascade,
+   0 );
+
   XtManageChild( menuBar );
 
   msgDialog.createWithOffset( appTop );
