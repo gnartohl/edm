@@ -171,6 +171,7 @@ activeMessageButtonClass *msgbto = (activeMessageButtonClass *) client;
       msgbto->usePassword = 0;
     }
     else if ( strcmp( msgbto->pw, "*" ) == 0 ) {
+      strcpy( msgbto->pw, "" );
       msgbto->usePassword = 0;
     }
     else {
@@ -180,6 +181,7 @@ activeMessageButtonClass *msgbto = (activeMessageButtonClass *) client;
   else {
     strcpy( msgbto->pw, msgbto->bufPw2 );
     if ( strcmp( msgbto->pw, "*" ) == 0 ) {
+      strcpy( msgbto->pw, "" );
       msgbto->usePassword = 0;
     }
     else {
