@@ -40,6 +40,7 @@
 #include "scheme.h"
 #include "process.h"
 #include "edmPrint.h"
+#include "clipbd.h"
 
 #include "thread.h"
 #include "avl.h"
@@ -117,6 +118,12 @@ typedef struct fileListTag {
   struct fileListTag *blink;
   char *file;
 } fileListType, *fileListPtr;
+
+// The following structure is for adding actions to an X application context
+typedef struct actionsTag {
+  void *key; // any unique address
+  struct actionsTag *flink;
+} actionsType, *actionsPtr;
 
 class appContextClass {
 
@@ -284,6 +291,9 @@ int local;
 
 msgDialogClass msgDialog;
 
+THREAD_LOCK_HANDLE actionsLock;
+actionsPtr actHead, actTail;
+
 public:
 
 char displayName[127+1];
@@ -341,6 +351,8 @@ FILE *shutdownFilePtr;
 int reloadFlag;
 
 edmPrintClass epc;
+
+clipBdClass clipBd;
 
 appContextClass (
   void );
@@ -494,6 +506,8 @@ int startApplication (
   char **argv,
   int _primaryServer );
 
+void openInitialFiles ( void );
+
 int addActWin (
   char *name,
   int x,
@@ -564,7 +578,12 @@ int openCheckPointScreen (
   char *checkPointMacros
 );
 
-int appContextClass::okToExit ( void );
+int okToExit ( void );
+
+void addActions (
+  XtActionsRec *actions, // actions must be a unique static address
+  Cardinal n
+);
 
 };
 

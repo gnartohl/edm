@@ -3037,10 +3037,10 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
     }
   }
 
-  clipbdStart();
-  clipbdAdd(tmpStr);
+  agc->actWin->appCtx->clipBd.clipbdStart();
+  agc->actWin->appCtx->clipBd.clipbdAdd(tmpStr);
   textWidth = XTextWidth(fixedFont, tmpStr, strlen(tmpStr));
-  clipbdHold();
+  agc->actWin->appCtx->clipBd.clipbdHold();
 
   maxWidth = X_SHIFT + (textWidth + MARGIN);
   maxHeight = fontHeight + 2 * MARGIN;

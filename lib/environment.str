@@ -2,7 +2,7 @@
 #define __environment_str 1
 
 
-// global_str88 is last
+// global_str90 is last
 
 
 #define environment_str1 (char *) "EDMDATAFILES"
@@ -45,13 +45,14 @@
 #define global_str76 (char *) "-color"
 #define global_str79 (char *) "-cmap"
 #define global_str86 (char *) "-restart"
+#define global_str89 (char *) "-one"
 
 // help text (some content must agree with command line options)
 #define global_str24 (char *) "EXECUTION\n"
 #define global_str25 (char *) "edm [-x] [-noedit] [-m <\"m1=string1,m2=string2,...\">]\n"
 #define global_str26 (char *) "  [-display <display name>] [-pv <pv class> -ctl <control pv name>]\n"
 #define global_str27 (char *) "  [-display <display name>] [-ctl <control pv name>] [-color rgb or index]\n"
-#define global_str28 (char *) "  [-server] [-port <port #>] [-local] [<display-file1 display-file2 ...>]\n\n"
+#define global_str28 (char *) "  [-server] [-port <port #>] [-local] [-one] [<display-file1 display-file2 ...>]\n\n"
 #define global_str29 (char *) "  -x       Open all displays in execute rather than edit mode\n\n"
 #define global_str30 (char *) "  -noedit  Remove capability to put display in edit mode, used\n"
 #define global_str31 (char *) "           with -x to produce execute only operation\n\n"
@@ -102,6 +103,8 @@
 
 #define global_str60 (char *) "  -local   Do not communicate with the display\n"
 #define global_str61 (char *) "           file server (default)\n\n"
+
+#define global_str90 (char *) "  -one     Allow only one edm instance\n\n"
 
 #define global_str62 (char *) "PV Class"
 

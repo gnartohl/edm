@@ -19,7 +19,7 @@
 #include "app_pkg.h"
 
 #include "thread.h"
-#include "clipbd.h"
+#include "crc.h"
 #include "edm.version"
 #include <unistd.h>
 
@@ -1949,6 +1949,17 @@ appContextClass::appContextClass (
   callbackBlockTail = callbackBlockHead;
   callbackBlockTail->flink = NULL;
 
+  thread_create_lock_handle( &actionsLock );
+
+  thread_lock( actionsLock );
+
+  // sentinel node
+  actHead = new actionsType;
+  actTail = actHead;
+  actTail->flink = NULL;
+
+  thread_unlock( actionsLock );
+
 }
 
 appContextClass::~appContextClass (
@@ -1961,6 +1972,7 @@ activeGraphicListPtr curCut, nextCut;
 macroListPtr curMacro, nextMacro;
 fileListPtr curFile, nextFile;
 callbackBlockPtr curCbBlock, nextCbBlock;
+actionsPtr curAct, nextAct;
 
   if ( saveContextOnExit ) {
     //fprintf( shutdownFilePtr, "appCtx {\n" );
@@ -2135,6 +2147,18 @@ callbackBlockPtr curCbBlock, nextCbBlock;
     curCbBlock = nextCbBlock;
   }
   delete callbackBlockHead;
+
+  // delete actions list
+
+  thread_lock( actionsLock );
+  curAct = actHead->flink;
+  while ( curAct ) {
+    nextAct = curAct->flink;
+    delete curAct;
+    curAct = nextAct;
+  }
+  thread_unlock( actionsLock );
+  thread_destroy_lock_handle( actionsLock );
 
   //if ( saveContextOnExit ) {
   //  fprintf( shutdownFilePtr, "}\n" );
@@ -3273,19 +3297,6 @@ int i;
 
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
   helpPullDown = XmCreatePulldownMenu( menuBar, "", NULL, 0 );
 
   menuStr = XmStringCreateLocalized( appContextClass_str114 );
@@ -3710,6 +3721,8 @@ static void displayParamInfo ( void ) {
   printf( global_str60 );
   printf( global_str61 );
 
+  printf( global_str90 );
+
   printf( global_str38 );
 
   printf( global_str39 );
@@ -3865,6 +3878,8 @@ fileListPtr curFile;
           local = 1;
         }
         else if ( strcmp( argv[n], global_str10 ) == 0 ) {
+        }
+        else if ( strcmp( argv[n], global_str89 ) == 0 ) {
         }
         else if ( strcmp( argv[n], global_str86 ) == 0 ) {
           n++; // just ignore, not used here
@@ -4230,7 +4245,7 @@ err_return:
 
   this->createMainWindow();
 
-  clipbdInit( appTop );
+  clipBd.clipbdInit( appTop );
 
   XtRealizeWidget( appTop );
 
@@ -4389,6 +4404,99 @@ err_return:
   if ( !iconified ) XtMapWidget( appTop );
 
   return 1;
+
+}
+
+void appContextClass::openInitialFiles ( void ) {
+
+fileListPtr curFile;
+activeWindowListPtr cur;
+int i, doOpen;
+unsigned int crc;
+char tmpName[131+1];
+
+  curFile = fileHead->flink;
+  while ( curFile != fileHead ) {
+
+    //printf( "[%s]\n", curFile->file );
+
+    doOpen = 1;
+    cur = head->flink;
+    while ( cur != head ) {
+
+      crc = 0;
+      for ( i=0; i<numMacros; i++ ) {
+        crc = updateCRC( crc, macros[i], strlen(macros[i]) );
+        crc = updateCRC( crc, expansions[i], strlen(expansions[i]) );
+      }
+
+      getFileName( tmpName, curFile->file, 131 );
+      tmpName[131] = 0;
+
+      //printf( "crc = %-ud\n", crc );
+      //printf( "cur->node.crc = %-ud\n", cur->node.crc );
+      //printf( "curFile->file = %s\n", tmpName );
+      //printf( "cur->node.displayName = %s\n", cur->node.displayName );
+      //printf( "cur->node.isEmbedded = %-d\n", cur->node.isEmbedded );
+
+      if ( ( strcmp( tmpName, cur->node.displayName ) == 0 ) &&
+           ( crc == cur->node.crc ) && !cur->node.isEmbedded ) {
+
+	doOpen = 0; // display is already open, just raise/deiconify it
+
+        XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+        XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+
+	break;
+
+      }
+
+      cur = cur->flink;
+
+    }
+
+    if ( doOpen ) {
+
+      //printf( "Do open\n" );
+
+      cur = new activeWindowListType;
+      cur->requestDelete = 0;
+      cur->requestActivate = 0;
+      cur->requestActivateClear = 0;
+      cur->requestReactivate = 0;
+      cur->requestOpen = 0;
+      cur->requestPosition = 0;
+      cur->requestCascade = 0;
+      cur->requestImport = 0;
+      cur->requestRefresh = 0;
+      cur->requestActiveRedraw = 0;
+      cur->requestIconize = 0;
+
+      cur->blink = head->blink;
+      head->blink->flink = cur;
+      head->blink = cur;
+      cur->flink = head;
+
+      cur->node.create( this, NULL, 0, 0, 0, 0, numMacros, macros,
+       expansions );
+      cur->node.realize();
+      cur->node.setGraphicEnvironment( &ci, &fi );
+
+      cur->node.storeFileName( curFile->file );
+
+      cur->requestOpen = 1;
+      requestFlag++;
+
+      if ( executeOnOpen ) {
+        cur->requestActivate = 1;
+        requestFlag++;
+      }
+
+    }
+
+    curFile = curFile->flink;
+
+  }
 
 }
 
@@ -5127,5 +5235,41 @@ activeWindowListPtr cur;
   }
 
   return 1;
+
+}
+
+void appContextClass::addActions (
+  XtActionsRec *actions, // actions must be a unique static address
+  Cardinal n
+) {
+
+actionsPtr curAct;
+
+  thread_lock( actionsLock );
+
+  // see if actions have already been added
+  curAct = actHead->flink;
+  while ( curAct ) {
+    if ( curAct->key == (void *) actions ) {
+      thread_unlock( actionsLock );
+      return; // actions have already been added for this app context
+    }
+    curAct = curAct->flink;
+  }
+
+  // actions have not yet been added
+
+  // alloc node
+  curAct = new actionsType;
+  curAct->key = (void *) actions;
+
+  // add to list
+  actTail->flink = curAct;
+  actTail = curAct;
+  actTail->flink = NULL;
+
+  XtAppAddActions( app, actions, n );
+
+  thread_unlock( actionsLock );
 
 }
