@@ -76,6 +76,7 @@ LIBSRCS += loc_pv_factory.cc
 LIBSRCS += calc_pv_factory.cc
 LIBSRCS += epics_pv_factory.cc
 LIBSRCS += pv_factory.cc
+LIBSRCS += edmPrint.cc
 
 include $(TOP)/config/RULES.Host
 
