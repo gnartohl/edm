@@ -2,8 +2,16 @@
 # Make settings
 
 # Configure this:
-FOR_WHAT=RH7_SNS_LANL
-#FOR_WHAT=your_system
+ifeq ($(HOSTNAME), bogart)
+	FOR_WHAT=RH7_SNS_LANL
+endif
+ifeq ($(HOSTNAME), xyz)
+	FOR_WHAT=RH7_SNS_ORNL
+endif
+
+ifndef FOR_WHAT
+	FOR_WHAT=your_system
+endif
 
 # Settings for RedHat7 @ SNS/LANL
 ifeq ($(FOR_WHAT), RH7_SNS_LANL)
