@@ -991,6 +991,8 @@ int edmTextentryClass::activate(int pass, void *ptr)
                                              XmNtranslations, parsedTrans,
                                              XmNuserData,
                                                  this,// obj accessible to d&d
+                                             XmNhighlightThickness,
+                                                 (XtArgVal) 5,
                                              NULL);
             // callback: text entered ==> send it to the PV
             XtAddCallback(widget, XmNactivateCallback,
