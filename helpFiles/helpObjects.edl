@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 0
-x 83
-y 260
+x 91
+y 300
 w 454
 h 424
 font "helvetica-medium-r-18.0"
@@ -715,10 +715,7 @@ buttonLabel "X-Y Graph"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "$(help)helpXYGraph"
-}
-setPosition {
-  0 "button"
+  0 "$(help)helpXyGraph"
 }
 endObjectProperties
 
