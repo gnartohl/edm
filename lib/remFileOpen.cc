@@ -10,6 +10,14 @@
 #include "utility.h"
 #include "environment.str"
 
+#ifdef USECURL
+#include <sys/types.h>
+#include <sys/stat.h>
+static int gGetUserUmask = 1;
+static int gUseUmask = 0;
+static mode_t gUmask = 0;
+#endif
+
 int debugMode ( void );
 
 typedef struct nameListTag {
@@ -79,7 +87,7 @@ nameListPtr cur;
   stat = avl_init_tree( compare_nodes,
    compare_key, copy_node, &gFilterH );
 
-  ptr = getenv( "EDMFILTERS" );
+  ptr = getenv( environment_str12 );
   if ( !ptr ) return;
 
   strncpy( file, ptr, 255 );
@@ -444,6 +452,7 @@ char buf[255+1], name[255+1], allPaths[10239+1], plainName[255+1],
 int gotFile, useHttp;
 char errBuf[CURL_ERROR_SIZE+1];
 CURLcode result;
+mode_t curMode, newMode;
 #endif
 
   strncpy( fullName, fullNameBuf, 255 );
@@ -549,6 +558,16 @@ CURLcode result;
 
   if ( debugMode() ) printf( "Using curl for URL-based access\n" );
 
+  if ( gGetUserUmask ) {
+    gGetUserUmask = 0;
+    tk = getenv( environment_str13 );
+    if ( tk ) {
+      gUseUmask = 1;
+      context = NULL;
+      gUmask = (mode_t) strtol( tk, &context, 0 );
+      if ( debugMode() ) printf( "Temp dir umask = 0%-o\n", (int) gUmask );
+    }
+  }
 
   // Explicit http access (http:// embedded in name)
   useHttp = checkForHttp( fullName, plainName );
@@ -627,7 +646,14 @@ CURLcode result;
     strncpy( buf, tmpDir, 255 );
     Strncat( buf, plainName, 255 );
     if ( debugMode() ) printf( "open [%s]\n", buf );
+    if ( gUseUmask ) {
+      newMode = gUmask;
+      curMode = umask( newMode );
+    }
     f = fopen( buf, "w" );
+    if ( gUseUmask ) {
+      umask( curMode );
+    }
     if ( !f ) return NULL;
 
     strncpy( buf, fullName, 255 );
@@ -876,7 +902,14 @@ CURLcode result;
       strncpy( buf, tmpDir, 255 );
       Strncat( buf, name, 255 );
       if ( debugMode() ) printf( "open [%s]\n", buf );
+      if ( gUseUmask ) {
+        newMode = gUmask;
+        curMode = umask( newMode );
+      }
       f = fopen( buf, "w" );
+      if ( gUseUmask ) {
+        umask( curMode );
+      }
       if ( !f ) return NULL;
 
       strcpy( buf, tk );
