@@ -291,18 +291,12 @@ void edmTextupdateClass::redraw_text(Display *dis,
 {
     int fg_pixel;
     
-    printf("textcolor: %d = '%s', %s\n",
-           textColor,
-           actWin->ci->colorName(textColor),
-           (const char *)(actWin->ci->isRule(textColor) ? "RULE" : "no rule")
-           );
-
     if (actWin->ci->isRule(textColor))
-        fg_pixel = actWin->ci->getPixelByIndex(
-            actWin->ci->evalRule(textColor, value));
+        fg_pixel = actWin->ci->getPixelByIndex(actWin->ci->evalRule(textColor,
+                                                                    value));
     else
         fg_pixel = actWin->ci->getPixelByIndex(textColor);
-
+    
     // Background fill?
     if (is_filled)
     {
