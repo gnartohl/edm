@@ -1869,6 +1869,11 @@ int i, l, stat;
 char name[127+1], symbolsWithSubs[255+1];
 pvValType destV;
 unsigned int crc;
+char *tk, *context, buf[255+1], *fileTk, *fileContext, fileBuf[255+1],
+ *result, msg[79+1];
+FILE *f;
+expStringClass symbolsFromFile;
+int gotSymbolsFromFile;
 
 int useSmallArrays, symbolCount, maxSymbolLength, focus;
 
@@ -1884,9 +1889,78 @@ int numNewMacros, max, numFound;
     focus = 0;
   }
 
-  // do special substitutions
-  actWin->substituteSpecial( 255, symbolsExpStr[index].getExpanded(),
-   symbolsWithSubs );
+  // allow the syntax: @filename s1=v1,s2=v2,...
+  // which means read symbols from file and append list
+  gotSymbolsFromFile = 0;
+  strncpy( buf, symbolsExpStr[index].getExpanded(), 255 );
+  buf[255] = 0;
+  context = NULL;
+  tk = strtok_r( buf, " \t\n", &context );
+  if ( tk ) {
+    if ( tk[0] == '@' ) {
+      if ( tk[1] ) {
+        f = actWin->openAnyGenericFile( &tk[1], "r", name, 127 );
+	if ( !f ) {
+          snprintf( msg, 79, relatedDisplayClass_str44, &tk[1] );
+	  msg[79] = 0;
+          actWin->appCtx->postMessage( msg );
+          symbolsFromFile.setRaw( "" );
+	}
+	else {
+	  result = fgets( fileBuf, 255, f );
+	  if ( result ) {
+            fileContext = NULL;
+            fileTk = strtok_r( fileBuf, "\n", &fileContext );
+            if ( fileTk ) {
+              symbolsFromFile.setRaw( fileTk );
+	    }
+	    else {
+              snprintf( msg, 79, relatedDisplayClass_str45, name );
+              msg[79] = 0;
+              actWin->appCtx->postMessage( msg );
+              symbolsFromFile.setRaw( "" );
+	    }
+	  }
+	  else {
+            if ( errno ) {
+              snprintf( msg, 79, relatedDisplayClass_str46, name );
+	    }
+	    else {
+              snprintf( msg, 79, relatedDisplayClass_str45, name );
+	    }
+            msg[79] = 0;
+            actWin->appCtx->postMessage( msg );
+            symbolsFromFile.setRaw( "" );
+	  }
+	  fclose( f );
+	}
+      }
+      // append inline list to file contents
+      tk = strtok_r( NULL, "\n", &context );
+      if ( tk ) {
+        strncpy( fileBuf, symbolsFromFile.getRaw(), 255 );
+        fileBuf[255] = 0;
+        if ( blank(fileBuf) ) {
+          strcpy( fileBuf, "" );
+	}
+        else {
+          Strncat( fileBuf, ",", 255 );
+	}
+	Strncat( fileBuf, tk, 255 );
+        symbolsFromFile.setRaw( fileBuf );
+      }
+      // do special substitutions
+      actWin->substituteSpecial( 255, symbolsFromFile.getExpanded(),
+       symbolsWithSubs );
+      gotSymbolsFromFile = 1;
+    }
+  }
+
+  if ( !gotSymbolsFromFile ) {
+    // do special substitutions
+    actWin->substituteSpecial( 255, symbolsExpStr[index].getExpanded(),
+     symbolsWithSubs );
+  }
 
   // set all existing pvs
   for ( i=0; i<NUMPVS; i++ ) {

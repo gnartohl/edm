@@ -44,5 +44,8 @@
 #define relatedDisplayClass_str41 (char *) "  Mode"
 #define relatedDisplayClass_str42 (char *) "Propagate  "
 #define relatedDisplayClass_str43 (char *) "Dups Allowed  "
+#define relatedDisplayClass_str44 (char *) "Macro definition file open failure: [%s]"
+#define relatedDisplayClass_str45 (char *) "Macro definition file is empty: [%s]"
+#define relatedDisplayClass_str46 (char *) "Macro definition file read failure: [%s]"
 
 #endif

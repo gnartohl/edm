@@ -2445,6 +2445,32 @@ char *gotOne;
 
 }
 
+void appContextClass::expandFileName (
+  int index,
+  char *expandedName,
+  char *inName,
+  int maxSize )
+{
+
+char *gotOne;
+
+  if ( index >= numPaths ) {
+    strcpy( expandedName, "" );
+    return;
+  }
+
+  gotOne = strstr( inName, "/" );
+
+  if ( gotOne ) {
+    strncpy( expandedName, inName, maxSize );
+  }
+  else {
+    strncpy( expandedName, dataFilePrefix[index], maxSize );
+    Strncat( expandedName, inName, maxSize );
+  }
+
+}
+
 #define GETTING_SET_NAME 1
 #define GETTING_LIST 2
 void appContextClass::buildSchemeList ( void )
