@@ -29,7 +29,7 @@
 
 #define ALC_MAJOR_VERSION 4
 #define ALC_MINOR_VERSION 0
-#define ALC_RELEASE 0
+#define ALC_RELEASE 1
 
 #ifdef __line_obj_cc
 

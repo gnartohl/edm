@@ -10026,6 +10026,12 @@ activeWindowClass::activeWindowClass ( void ) {
   commentTail = commentHead;
   commentTail->flink = NULL;
 
+  pvDefHead = new pvDefType;
+  pvDefHead->def = NULL;
+  pvDefTail = pvDefHead;
+  pvDefTail->flink = NULL;
+  forceLocalPvs = 0;
+
   internalRelatedDisplay = NULL;
 
   head = new activeGraphicListType;
@@ -10299,6 +10305,7 @@ popupBlockListPtr curPopupBlock, nextPopupBlock;
 activeGraphicListPtr curCut, nextCut, cur, next;
 objNameListPtr curObjName, nextObjName;
 commentLinesPtr commentCur, commentNext;
+pvDefPtr pvDefCur, pvDefNext;
 
   if ( dragPopup ) {
     XtDestroyWidget( dragPopup );
@@ -10324,6 +10331,17 @@ commentLinesPtr commentCur, commentNext;
   commentTail = commentHead;
   commentTail->flink = NULL;
   delete commentHead;
+
+  pvDefCur = pvDefHead->flink;
+  while ( pvDefCur ) {
+    pvDefNext = pvDefCur->flink;
+    if ( pvDefCur->def ) delete[] pvDefCur->def;
+    delete pvDefCur;
+    pvDefCur = pvDefNext;
+  }
+  pvDefTail = pvDefHead;
+  pvDefTail->flink = NULL;
+  delete pvDefHead;
 
   if ( ef.formIsPoppedUp() ) ef.popdown();
 
@@ -14374,10 +14392,12 @@ int activeWindowClass::loadGeneric (
 
 FILE *f;
 activeGraphicListPtr cur, next;
-char *gotOne, name[63+1], tagName[255+1], objName[63+1], val[4095+1];
+char *gotOne, name[63+1], tagName[255+1], objName[63+1], val[4095+1],
+ defName[255+1];
 int stat, l;
 char msg[79+1];
 Widget clipWidget, hsbWidget, vsbWidget;
+pvDefPtr pvDefCur;
 
 int isCompound;
 tagClass tag;
@@ -14543,9 +14563,12 @@ tagClass tag;
     }
 
 
+
     // read file and process each "object" tag
     tag.init();
     tag.loadR( "object", 63, objName );
+    tag.loadR( "pvdef", 255, defName );
+    tag.loadR( "forceLocalPvs" );
 
     gotOne = tag.getName( tagName, 255, f );
 
@@ -14609,6 +14632,30 @@ tagClass tag;
         }
 
         // ===================================
+
+        gotOne = tag.getName( tagName, 255, f );
+
+      }
+      else if ( strcmp( tagName, "pvdef" ) == 0 ) {
+
+        tag.getValue( val, 4095, f, &isCompound );
+        tag.decode( tagName, val, isCompound );
+
+	//printf( "pv = [%s]\n", defName );
+        pvDefCur = new pvDefType;
+        pvDefCur->def = new char[strlen(defName)+1];
+        strcpy( pvDefCur->def, defName );
+        pvDefTail->flink = pvDefCur;
+        pvDefTail = pvDefCur;
+        pvDefTail->flink = NULL;
+
+        gotOne = tag.getName( tagName, 255, f );
+
+      }
+      else if ( strcmp( tagName, "forceLocalPvs" ) == 0 ) {
+
+	forceLocalPvs = 1;
+	//printf( "force local pvs\n" );
 
         gotOne = tag.getName( tagName, 255, f );
 
@@ -15078,12 +15125,25 @@ btnActionListPtr curBtn;
 int numMuxMacros;
 char **muxMacro, **muxExpansion;
 char callbackName[63+1];
+pvDefPtr pvDefCur;
+
+  // process local pv definitions
+  pvDefCur = pvDefHead->flink;
+  while ( pvDefCur ) {
+    //printf( "execute - create pv = [%s]\n", pvDefCur->def );
+    pvDefCur->id = the_PV_Factory->create( pvDefCur->def );
+    pvDefCur = pvDefCur->flink;
+  }
 
   if ( blank(defaultPvType) ) {
     the_PV_Factory->clear_default_pv_type();
   }
   else {
     the_PV_Factory->set_default_pv_type( defaultPvType );
+  }
+
+  if ( forceLocalPvs ) {
+    the_PV_Factory->set_default_pv_type( "LOC" );
   }
 
   btnDownX = btnDownY = 0;
@@ -15293,15 +15353,27 @@ int activeWindowClass::reexecute ( void ) { // for multiplexor
 
 int pass, opStat, stat, nTries, cnt, numSubObjects;
 activeGraphicListPtr cur, cur1;
+pvDefPtr pvDefCur;
 
 int numMuxMacros;
 char **muxMacro, **muxExpansion;
+
+  // process local pv definitions
+  pvDefCur = pvDefHead->flink;
+  while ( pvDefCur ) {
+    //printf( "reexecute - create pv = [%s]\n", pvDefCur->def );
+    pvDefCur = pvDefCur->flink;
+  }
 
   if ( blank(defaultPvType) ) {
     the_PV_Factory->clear_default_pv_type();
   }
   else {
     the_PV_Factory->set_default_pv_type( defaultPvType );
+  }
+
+  if ( forceLocalPvs ) {
+    the_PV_Factory->set_default_pv_type( "LOC" );
   }
 
   if ( mode == AWC_EXECUTE ) return 1;
@@ -15415,10 +15487,19 @@ Window root, child;
 int rootX, rootY, winX, winY, pass, cnt, numSubObjects;
 unsigned int mask;
 char callbackName[63+1];
+pvDefPtr pvDefCur;
 
   if ( !okToDeactivate() ) {
     appCtx->postMessage( activeWindowClass_str193 );
     return 0;
+  }
+
+  // process local pv definitions
+  pvDefCur = pvDefHead->flink;
+  while ( pvDefCur ) {
+    //printf( "returnToEdit - release pv = [%s]\n", pvDefCur->def );
+    pvDefCur->id->release();
+    pvDefCur = pvDefCur->flink;
   }
 
   mode = AWC_EDIT;
@@ -17957,7 +18038,7 @@ int i;
       //f = fopen( buf, mode );
       f = fileOpen( buf, mode );
       if ( f ) {
-        strncpy( fileName, buf, 255 ); // update fileName
+        storeFileName( buf ); // update fileName
         return f;
       }
     }
@@ -18011,7 +18092,7 @@ int i;
       //f = fopen( buf, mode );
       f = fileOpen( buf, mode );
       if ( f ) {
-        strncpy( fileName, buf, 255 ); // update fileName
+        storeFileName( buf ); // update fileName
         return f;
       }
     }
@@ -18325,6 +18406,30 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar;
           sprintf( param, "%-d", winid );
           bufOut[iOut] = 0;
           Strncat( bufOut, param, max );
+          iOut = strlen( bufOut );
+          if ( iOut >= max ) iOut = max - 1;
+	}
+        else if ( strcmp( param, "<FILESPEC>" ) == 0 ) {
+          bufOut[iOut] = 0;
+          Strncat( bufOut, fileName, max );
+          iOut = strlen( bufOut );
+          if ( iOut >= max ) iOut = max - 1;
+	}
+        else if ( strcmp( param, "<FILEPREFIX>" ) == 0 ) {
+          bufOut[iOut] = 0;
+          Strncat( bufOut, prefix, max );
+          iOut = strlen( bufOut );
+          if ( iOut >= max ) iOut = max - 1;
+	}
+        else if ( strcmp( param, "<FILENAME>" ) == 0 ) {
+          bufOut[iOut] = 0;
+          Strncat( bufOut, displayName, max );
+          iOut = strlen( bufOut );
+          if ( iOut >= max ) iOut = max - 1;
+	}
+        else if ( strcmp( param, "<FILEPOSTFIX>" ) == 0 ) {
+          bufOut[iOut] = 0;
+          Strncat( bufOut, postfix, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
 	}
@@ -18729,6 +18834,7 @@ void activeWindowClass::reloadSelf ( void ) {
 
 activeGraphicListPtr curCut, nextCut, cur, next;
 commentLinesPtr commentCur, commentNext;
+pvDefPtr pvDefCur, pvDefNext;
 
   if ( mode == AWC_EXECUTE ) {
     clearActive();
@@ -18813,6 +18919,17 @@ commentLinesPtr commentCur, commentNext;
   }
   commentTail = commentHead;
   commentTail->flink = NULL;
+
+  pvDefCur = pvDefHead->flink;
+  while ( pvDefCur ) {
+    pvDefNext = pvDefCur->flink;
+    if ( pvDefCur->def ) delete[] pvDefCur->def;
+    delete pvDefCur;
+    pvDefCur = pvDefNext;
+  }
+  pvDefTail = pvDefHead;
+  pvDefTail->flink = NULL;
+  delete pvDefHead;
 
   // empty main list
   cur = head->flink;

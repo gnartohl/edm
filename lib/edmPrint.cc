@@ -3,6 +3,7 @@
 #include "edmPrint.str"
 #include "environment.str"
 #include "edmPrint.h"
+#include "expString.h"
 
 static char * const g_nullString = "";
 
@@ -637,7 +638,7 @@ THREAD_HANDLE thread;
     fileDefError = 1;
     event++;
 
-    printf( "[%s]\n", errMsg );
+    printf( "%s\n", errMsg );
 
   }
 
@@ -855,7 +856,7 @@ int edmPrintClass::parsePrintDefinition ( void ) {
 #define GET_TEXT_DEFAULT 71
 #define GET_TEXT_VALUE 72
 
-int state, index, caseIndex, op;
+int state, index, caseIndex, op, i, ii;
 char *tk, tmp[31+1];
 
   if ( !( status & 1 ) ) return status;
@@ -1669,6 +1670,67 @@ char *tk, tmp[31+1];
     status = FAILURE;
     return status;
   }
+
+  // -------------------------------------------------------------------
+  // Allow the environment variable EDMPRINTER to appear in all action values
+  // and also in menu choices
+
+  {
+
+    expStringClass es;
+    int numMacros = 1;
+    char *macros[1];
+    char *expansions[1];
+
+    char *ep = getenv( "EDMPRINTER" );
+
+    if ( ep ) {
+
+      macros[0] = new char[strlen("EDMPRINTER")+1];
+      strcpy( macros[0], "EDMPRINTER" );
+      expansions[0] = new char[strlen(ep)+1];
+      strcpy( expansions[0], ep );
+
+      for ( i=0; i<numFields; i++ ) {
+
+	// menu choices
+	if ( fieldType[i] == FIELD_TYPE_MENU ) {
+	  es.setRaw( menu[i] );
+          if ( es.containsPrimaryMacros() ) {
+	    es.expand1st( numMacros, macros, expansions );
+	    if ( !blank( es.getExpanded() ) ) {
+              delete menu[i];
+	      menu[i] = new char[strlen(es.getExpanded())+1];
+	      strcpy( menu[i], es.getExpanded() );
+	    }
+	  }
+	}
+
+	// action values
+        for ( ii=0; ii<numActions[i]; ii++ ) {
+
+	  es.setRaw( action[i][ii] );
+          if ( es.containsPrimaryMacros() ) {
+	    es.expand1st( numMacros, macros, expansions );
+	    if ( !blank( es.getExpanded() ) ) {
+              delete action[i][ii];
+	      action[i][ii] = new char[strlen(es.getExpanded())+1];
+	      strcpy( action[i][ii], es.getExpanded() );
+	    }
+	  }
+
+        }
+
+      }
+
+      delete macros[0];
+      delete expansions[0];
+
+    }
+
+  }
+
+  // -------------------------------------------------------------------
 
   return SUCCESS;
 

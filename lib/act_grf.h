@@ -104,7 +104,7 @@ protected:
 // will help avoid base class poisoning run-time issues for libraries built
 // at one site and utilized at another.
 //
-static const int MAJOR_VERSION = 1;
+static const int MAJOR_VERSION = 2;
 static const int MINOR_VERSION = 0;
 
 friend void dragFin (

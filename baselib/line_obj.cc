@@ -1242,9 +1242,11 @@ int n, oneX, oneY, oneW, oneH, minX, minY, maxX, maxY;
   // extent
   minX = minY = 0x7fffffff;
   maxX = maxY = -1;
+  n = 0;
   cur = head->flink;
   while ( cur != head ) {
 
+    n++;
     numPoints++;
     oneX = cur->x;
     oneY = cur->y;
@@ -1273,14 +1275,27 @@ int n, oneX, oneY, oneW, oneH, minX, minY, maxX, maxY;
 
   }
 
-  // set select box size
-  oneW = maxX - minX;
-  oneH = maxY - minY;
+  if ( n ) {
 
-  x = minX;
-  y = minY;
-  w = oneW;
-  h = oneH;
+    // set select box size
+    oneW = maxX - minX;
+    oneH = maxY - minY;
+
+    x = minX;
+    y = minY;
+    w = oneW;
+    h = oneH;
+
+  }
+  else {
+
+    // set select box size
+    oneW = 2;
+    oneH = 2;
+    w = oneW;
+    h = oneH;
+
+  }
 
   oldX = x;
   oldY = y;

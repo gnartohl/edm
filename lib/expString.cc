@@ -225,12 +225,12 @@ char *subStr;
   rawStringLen = strlen(rawString);
 
   numPossibleSymbols1 = 0;
-  subStr = strstr( rawString, "$" );
+  subStr = strstr( rawString, "$(" );
   while ( subStr ) {
     numPossibleSymbols1++;
     numPossibleSymbols2++;
     subStr++;
-    subStr = strstr( subStr, "$" );
+    subStr = strstr( subStr, "$(" );
   }
 
     return EXPSTR_SUCCESS;
@@ -458,11 +458,37 @@ int state, foundOne, i, ii, nOut, nIn, nMacro, outStrLen;
 
     // ====================================================================
 
+//    case STATE_FIND_LEFT_PAREN:
+//
+//      if ( nIn >= inStringLen ) {
+//
+//        return EXPSTR_SYNTAX;
+//
+//      }
+//      else if ( inString[nIn] == '(' ) {
+//
+//        state = STATE_FIND_NON_WHITE;
+//
+//      }
+//      else if ( ( inString[nIn] != ' ' ) || ( inString[nIn] != '\t' ) ) {
+//
+//        return EXPSTR_SYNTAX;
+//
+//      }
+//
+//      break;
+
+    // ====================================================================
+
     case STATE_FIND_LEFT_PAREN:
 
       if ( nIn >= inStringLen ) {
 
-        return EXPSTR_SYNTAX;
+        if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
+        buf[nOut] = '$';
+        nOut++;
+
+	state = STATE_DONE;
 
       }
       else if ( inString[nIn] == '(' ) {
@@ -470,9 +496,17 @@ int state, foundOne, i, ii, nOut, nIn, nMacro, outStrLen;
         state = STATE_FIND_NON_WHITE;
 
       }
-      else if ( ( inString[nIn] != ' ' ) || ( inString[nIn] != '\t' ) ) {
+      else {
 
-        return EXPSTR_SYNTAX;
+        if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
+        buf[nOut] = '$';
+        nOut++;
+
+        if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
+        buf[nOut] = inString[nIn];
+        nOut++;
+
+        state = STATE_COPY_OUT;
 
       }
 

@@ -410,6 +410,12 @@ typedef struct commentLinesTag {
   char *line;
 } commentLinesType, *commentLinesPtr;
 
+typedef struct pvDefTag {
+  struct pvDefTag *flink;
+  char *def;
+  ProcessVariable *id;
+} pvDefType, *pvDefPtr;
+
 class activeWindowClass {
 
 public:
@@ -429,6 +435,8 @@ int major, minor, release, fileLineNumber;
 int buttonPressX, buttonPressY;
 
 commentLinesPtr commentHead, commentTail;
+pvDefPtr pvDefHead, pvDefTail;
+int forceLocalPvs;
 
 int showActive;
 unsigned int crc; // crc of all symbols/values
