@@ -324,7 +324,7 @@ int activeGifClass::editCreate ( void )
 void activeGifClass::checkGifFileTime ( void )
 {
 
-int status;
+int status, i;
 char name[127+1];
 struct stat statBuf;
 expStringClass expStr;
@@ -334,15 +334,16 @@ expStringClass expStr;
   expStr.setRaw( name );
   expStr.expand1st( actWin->numMacros, actWin->macros, actWin->expansions );
 
-  this->actWin->expandUserFileName( name, expStr.getExpanded(), ".gif", 127 );
-  status = stat( name, &statBuf );
-  if ( status ) {
-    this->actWin->expandFileName( name, expStr.getExpanded(), ".gif", 127 );
+  i = 0;
+  do {
+    this->actWin->appCtx->expandFileName( i, name, expStr.getExpanded(),
+     ".gif", 127 );
     status = stat( name, &statBuf );
-    if ( status ) {
-      fileModTime = 0;
-      return;
-    }
+    i++;
+  } while ( ( i < actWin->appCtx->numPaths ) && status );
+  if ( status ) {
+    fileModTime = 0;
+    return;
   }
 
   fileModTime = statBuf.st_mtime;
@@ -374,14 +375,15 @@ expStringClass expStr;
   expStr.setRaw( name );
   expStr.expand1st( actWin->numMacros, actWin->macros, actWin->expansions );
 
-  this->actWin->expandUserFileName( name, expStr.getExpanded(), ".gif", 127 );
-  gif = DGifOpenFileName( name );
-  if ( !gif ) {
-    this->actWin->expandFileName( name, expStr.getExpanded(), ".gif", 127 );
+  i = 0;
+  do {
+    this->actWin->appCtx->expandFileName( i, name, expStr.getExpanded(),
+     ".gif", 127 );
     gif = DGifOpenFileName( name );
-    if ( !gif ) {
-      goto error_return;
-    }
+    i++;
+  } while ( ( i < actWin->appCtx->numPaths ) && !gif );
+  if ( !gif ) {
+    goto error_return;
   }
   fileOpened = 1;
 

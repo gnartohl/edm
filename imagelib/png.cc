@@ -687,7 +687,7 @@ int activePngClass::editCreate ( void )
 void activePngClass::checkPngFileTime ( void )
 {
 
-int status;
+int status, i;
 char name[127+1];
 struct stat statBuf;
 expStringClass expStr;
@@ -697,15 +697,16 @@ expStringClass expStr;
   expStr.setRaw( name );
   expStr.expand1st( actWin->numMacros, actWin->macros, actWin->expansions );
 
-  this->actWin->expandUserFileName( name, expStr.getExpanded(), ".png", 127 );
-  status = stat( name, &statBuf );
-  if ( status ) {
-    this->actWin->expandFileName( name, expStr.getExpanded(), ".png", 127 );
+  i = 0;
+  do {
+    this->actWin->appCtx->expandFileName( i, name, expStr.getExpanded(),
+     ".png", 127 );
     status = stat( name, &statBuf );
-    if ( status ) {
-      fileModTime = 0;
-      return;
-    }
+    i++;
+  } while ( ( i < actWin->appCtx->numPaths ) && status );
+  if ( status ) {
+    fileModTime = 0;
+    return;
   }
 
   fileModTime = statBuf.st_mtime;
@@ -716,7 +717,7 @@ int activePngClass::readPngFile ( void )
 {
 
 unsigned char r, g, b;
-int iw, extra, status, useBaseBG;
+int i, iw, extra, status, useBaseBG;
 int screen_num, row, col, depth;
 Visual *visual;
 char name[127+1];
@@ -744,14 +745,15 @@ expStringClass expStr;
   default_display_exponent = LUT_exponent * CRT_exponent;
   display_exponent = default_display_exponent;
 
-  this->actWin->expandUserFileName( name, expStr.getExpanded(), ".png", 127 );
-  fp = fopen( name, "rb" );
-  if ( !fp ) {
-    this->actWin->expandFileName( name, expStr.getExpanded(), ".png", 127 );
+  i = 0;
+  do {
+    this->actWin->appCtx->expandFileName( i, name, expStr.getExpanded(),
+     ".png", 127 );
     fp = fopen( name, "rb" );
-    if ( !fp ) {
-      goto error_return;
-    }
+    i++;
+  } while ( ( i < actWin->appCtx->numPaths ) && !fp );
+  if ( !fp ) {
+    return 0;
   }
   fileOpened = 1;
 
