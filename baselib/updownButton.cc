@@ -1466,7 +1466,8 @@ XmString str;
 
   case 1:
 
-    needConnectInit = needErase = needDraw = needRefresh = 0;
+    needConnectInit = needSaveConnectInit = needCtlInfoInit = 
+     needRefresh = needErase = needDraw = 0;
     init = 0;
     aglPtr = ptr;
     opComplete = 0;
