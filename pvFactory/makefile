@@ -11,6 +11,7 @@ OBJS   += $(ODIR)/SciPlot.o
 OBJS   += $(ODIR)/strip_data.o
 OBJS   += $(ODIR)/strip.o
 OBJS   += $(ODIR)/regTextupdate.o
+OBJS   += $(ODIR)/byte.o
 OBJS   += $(ODIR)/pv_register.o
 
 all: 	$(LIBNAME)
@@ -32,6 +33,8 @@ $(ODIR)/strip_data.o: strip_data.cc strip_data.h
 $(ODIR)/strip.o: strip.cc strip.h strip_data.h
 
 $(ODIR)/regTextupdate.o: regTextupdate.cc
+
+$(ODIR)/byte.o: byte.cc byte.h
 
 $(ODIR)/pv_register.o: pv_register.cc
 

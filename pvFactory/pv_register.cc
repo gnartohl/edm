@@ -2,6 +2,7 @@
 #include"textupdate.h"
 #include"regTextupdate.h"
 #include"strip.h"
+#include"byte.h"
 
 // --------------------------------------------------------
 // Registration
@@ -21,7 +22,8 @@ static libRecType exported[] =
     { TEXTUPDATE_CLASSNAME, "Monitors", "Textupdate" },
     { REGTEXTUPDATE_CLASSNAME, "Monitors", "RegTextupdate" },
     { TEXTENTRY_CLASSNAME, "Controls", "Textentry" },
-    { STRIP_CLASSNAME, "Monitors", "Stripchart" }
+    { STRIP_CLASSNAME, "Monitors", "Stripchart" },
+    { BYTE_CLASSNAME, "Monitors", "Byte" }
 };
 
 extern "C"
@@ -98,6 +100,20 @@ extern "C"
         edmStripClass *obj = new edmStripClass(src);
         return (void *) obj;
     }
+
+    void *create_ByteClassPtr (void)
+    {
+        edmByteClass *obj = new edmByteClass;
+        return (void *) obj;
+    }
+
+    void *clone_ByteClassPtr (void *rhs)
+    {
+        edmByteClass *src = (edmByteClass *) rhs;
+        edmByteClass *obj = new edmByteClass(src);
+        return (void *) obj;
+    }
+
     
 } // extern "C"
 
