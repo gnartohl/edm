@@ -1,0 +1,35 @@
+-*- outline -*-
+
+* pv_factory
+Base class for a process-variable factory.
+Handles connection, subscription, retrieval
+of meta information.
+
+In principle, the actual implementation should
+be in a shared library and loaded on demand,
+maybe user can even select the implementation
+when configuring the widget (Epics, Vsystem, ...).
+Currently this is not possible, widgets hard-link the
+implementation.
+
+* epics_pv_factory
+Implementaion for EPICS/ChannelAccess
+
+* Widget: Monitors/Textupdate
+(in textupdate.*)
+Simple text update widget.
+
+* Widget: Controls/Textentry
+(in textupdate.*)
+Simple text entry widget.
+
+* Widget: Monitors/Stripchart
+(in SciPlot.* lin_interpol.h strip*)
+Strip-chart based on SciPlot.
+
+Experiemental "CA Time" option:
+When checked, the time stamp from the IOC is used.
+If the IOC's time is out of sync with the host,
+you see nothing!
+Otherwise you can see that e.g. the IOC is x seconds
+behind the host.
