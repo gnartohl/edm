@@ -1643,7 +1643,7 @@ int num;
       if ( *numSubObjects >= activeWindowClass::NUM_PER_PENDIO ) {
         ca_pend_io( 5.0 );
         ca_pend_event( 0.01 );
-        processAllEvents( actWin->appCtx->appContext(), actWin->d );
+        //processAllEvents( actWin->appCtx->appContext(), actWin->d );
         *numSubObjects = 0;
       }
 
@@ -1815,7 +1815,7 @@ int num;
       if ( *numSubObjects >= activeWindowClass::NUM_PER_PENDIO ) {
         ca_pend_io( 5.0 );
         ca_pend_event( 0.01 );
-        processAllEvents( actWin->appCtx->appContext(), actWin->d );
+        //processAllEvents( actWin->appCtx->appContext(), actWin->d );
         *numSubObjects = 0;
       }
 
