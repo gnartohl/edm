@@ -2135,6 +2135,14 @@ XButtonEvent be;
 
   *action = 0;
 
+  if ( incrementTimerActive ) {
+    if ( incrementTimer ) {
+      XtRemoveTimeOut( incrementTimer );
+      incrementTimer = 0;
+    }
+    incrementTimerActive = 0;
+  }
+
   if ( !init || !visibility ) return;
 
   if ( !ca_write_access( destPvId ) ) return;
@@ -2151,14 +2159,6 @@ XButtonEvent be;
   if ( !buttonPressed ) return;
 
   if ( keyPadOpen ) return;
-
-  if ( incrementTimerActive ) {
-    if ( incrementTimer ) {
-      XtRemoveTimeOut( incrementTimer );
-      incrementTimer = 0;
-    }
-    incrementTimerActive = 0;
-  }
 
   buttonPressed = 0;
 
@@ -2231,6 +2231,9 @@ double dval;
     incrementTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
      500, udbtc_decrement, this );
     incrementTimerActive = 1;
+  }
+  else {
+    incrementTimerActive = 0;
   }
 
 #endif
