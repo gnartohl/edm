@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <math.h>
 
 #include <X11/Xlib.h>
 #include <Xm/Xm.h>
@@ -311,7 +312,9 @@ void drawXLinearTimeScale (
   int y,
   int scaleLen,
   time_t absolute_min,
-  double numSeconds,
+  double adj_min,
+  double adj_max,
+  int time_format,
   int num_label_ticks,
   int majors_per_label,
   int minors_per_major,
@@ -480,7 +483,65 @@ void drawYLinearScale (
   int erase
 );
 
+void drawY2LinearScale (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  int drawScale,
+  int x,
+  int y,
+  int scaleHeight,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  int majors_per_label,
+  int minors_per_major,
+  unsigned int scaleColor,
+  unsigned int bgColor,
+  int labelGrid,
+  int majorGrid,
+  int minorGrid,
+  int gridLen,
+  unsigned int gridColor,
+  fontInfoClass *fi,
+  char *fontTag,
+  XFontStruct *fs,
+  int annotateScale,
+  int xminConstrained,
+  int xmaxConstrained,
+  int erase
+);
+
 void drawYLog10Scale (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  int drawScale,
+  int x,
+  int y,
+  int scaleHeight,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  int majors_per_label,
+  int minors_per_major,
+  unsigned int scaleColor,
+  unsigned int bgColor,
+  int labelGrid,
+  int majorGrid,
+  int minorGrid,
+  int gridLen,
+  unsigned int gridColor,
+  fontInfoClass *fi,
+  char *fontTag,
+  XFontStruct *fs,
+  int annotateScale,
+  int xminConstrained,
+  int xmaxConstrained,
+  int erase
+);
+
+void drawY2Log10Scale (
   Display *d,
   Window win,
   gcClass *gc,
@@ -540,7 +601,45 @@ void getYLimitCoords (
   int *yMaxY1
 );
 
+void getY2LimitCoords (
+  int x,
+  int y,
+  int scaleLen,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  char *fontTag,
+  XFontStruct *fs,
+  int *yMinX0,
+  int *yMinX1,
+  int *yMinY0,
+  int *yMinY1,
+  int *yMaxX0,
+  int *yMaxX1,
+  int *yMaxY0,
+  int *yMaxY1
+);
+
 void getYLog10LimitCoords (
+  int x,
+  int y,
+  int scaleLen,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  char *fontTag,
+  XFontStruct *fs,
+  int *yMinX0,
+  int *yMinX1,
+  int *yMinY0,
+  int *yMinY1,
+  int *yMaxX0,
+  int *yMaxX1,
+  int *yMaxY0,
+  int *yMaxY1
+);
+
+void getY2Log10LimitCoords (
   int x,
   int y,
   int scaleLen,
