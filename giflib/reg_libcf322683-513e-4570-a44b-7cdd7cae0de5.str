@@ -1,0 +1,6 @@
+#ifndef __reg_libcf322683_513e_4570_a44b_7cdd7cae0de5_str
+#define __reg_libcf322683_513e_4570_a44b_7cdd7cae0de5_str 1
+
+#define reg_str1 (char *) "GIF Image"
+
+#endif

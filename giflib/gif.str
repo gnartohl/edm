@@ -1,0 +1,14 @@
+#ifndef __gif_str
+#define __gif_str 1
+
+#define activeGifClass_str1 (char *) "Cannot read gif file"
+#define activeGifClass_str2 (char *) "Unknown object"
+#define activeGifClass_str3 (char *) " Properties"
+#define activeGifClass_str4 (char *) "X"
+#define activeGifClass_str5 (char *) "Y"
+#define activeGifClass_str6 (char *) "GIF File"
+#define activeGifClass_str7 (char *) "Refresh Rate (ms)"
+#define activeGifClass_str8 (char *) "Uniform Size"
+#define activeGifClass_str9 (char *) "Fast Erase"
+
+#endif
