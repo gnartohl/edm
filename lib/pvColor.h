@@ -148,6 +148,10 @@ void setRuleIndex (
   int color,
   colorInfoClass *ci );
 
+int getStatus ( void );
+
+int getSeverity ( void );
+
 };
 
 #endif

@@ -590,3 +590,17 @@ void pvColorClass::setRuleIndex (
   _changeColor( rulePixel, ci );
 
 }
+
+int pvColorClass::getStatus ( void ) {
+
+  if ( !connected ) return -1;
+  return this->status;
+
+}
+
+int pvColorClass::getSeverity ( void ) {
+
+  if ( !connected ) return -1;
+  return this->severity;
+
+}
