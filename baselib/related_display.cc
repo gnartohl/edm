@@ -2031,7 +2031,7 @@ int numNewMacros, max, numFound;
   if ( !allowDups[index] ) {
     cur = actWin->appCtx->head->flink;
     while ( cur != actWin->appCtx->head ) {
-      if ( ( strcmp( name, cur->node.name ) == 0 ) &&
+      if ( ( strcmp( name, cur->node.displayName ) == 0 ) &&
            ( crc == cur->node.crc ) ) {
         // deiconify
         XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
