@@ -93,8 +93,6 @@ class activeGraphicClass {
 
 protected:
 
-static const int MAX_PV_NAME = 100;
-
 friend void dragFin (
   Widget w,
   XtPointer clientData,
@@ -139,6 +137,8 @@ static const int MONITORS = 2;
 static const int CONTROLS = 3;
 
 public:
+
+static const int MAX_PV_NAME = 100;
 
 activeWindowClass *actWin;
 void *aglPtr; // will hold the activeGraphicListPtr container
