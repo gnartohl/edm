@@ -1600,8 +1600,6 @@ int numLocaleFailures = 0;
   appArgsHead->flink = appArgsHead;
   appArgsHead->blink = appArgsHead;
 
-  XtSetLanguageProc( NULL, NULL, NULL );
-
   XSetErrorHandler( xErrorHandler );
 
   stat = thread_init();

@@ -1379,8 +1379,6 @@ double dest1, old1;
 XEvent Xev;
 int result, isXEvent, argc;
 
-  XtSetLanguageProc( NULL, NULL, NULL );
-
   argc = 0;
   appTop = XtVaAppInitialize( &app, "edm", NULL, 0, &argc,
    NULL, NULL, XmNiconic, False, NULL );

@@ -4238,7 +4238,6 @@ err_return:
     if ( g_needXtInit ) {
       g_needXtInit = 0;
       XtToolkitInitialize();
-      XtSetLanguageProc( NULL, NULL, NULL );
     }
 
     app = XtCreateApplicationContext();
