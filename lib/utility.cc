@@ -1101,14 +1101,18 @@ int textBoundaries (
   int *x1,
   int *y1 ) {
 
-int stringLength, stringWidth, stringX;
+int stringLength, stringWidth, stringX, asc, dsc;
 
   stringLength = strlen( value );
 
   if ( fs ) {
+    asc = fs->ascent;
+    dsc = fs->descent;
     stringWidth = XTextWidth( fs, value, stringLength );
   }
   else {
+    asc = 10;
+    dsc = 5;
     stringWidth = 0;
   }
 
@@ -1123,7 +1127,7 @@ int stringLength, stringWidth, stringX;
     stringX = _x - stringWidth;
 
   *y0 = _y;
-  *y1 = _y + fs->ascent + fs->descent;
+  *y1 = _y + asc + dsc;
   *x0 = stringX;
   *x1 = stringX + stringWidth;
 
@@ -2419,12 +2423,29 @@ int xScaleMargin (
 
 int stat, scaleOfs, l;
 char buf[31+1];
+int stringWidth;
 
   stat = formatString( adj_min, buf, 31 );
-  scaleOfs = XTextWidth( fs, buf, strlen(buf) );
+
+  if ( fs ) {
+    stringWidth = XTextWidth( fs, buf, strlen(buf) );
+  }
+  else {
+    stringWidth = 0;
+  }
+
+  scaleOfs = stringWidth;
 
   stat = formatString( adj_max, buf, 31 );
-  l = XTextWidth( fs, buf, strlen(buf) );
+
+  if ( fs ) {
+    stringWidth = XTextWidth( fs, buf, strlen(buf) );
+  }
+  else {
+    stringWidth = 0;
+  }
+
+  l = stringWidth;
   if ( l > scaleOfs ) scaleOfs = l;
 
   scaleOfs = scaleOfs / 2 + 6;
@@ -2460,9 +2481,18 @@ int xTimeScaleMargin (
 
 int scaleOfs;
 char buf[31+1];
+int stringWidth;
 
   strcpy( buf, "00:00:00" );
-  scaleOfs = XTextWidth( fs, buf, strlen(buf) );
+
+  if ( fs ) {
+    stringWidth = XTextWidth( fs, buf, strlen(buf) );
+  }
+  else {
+    stringWidth = 0;
+  }
+
+  scaleOfs = stringWidth;
 
   scaleOfs = scaleOfs / 2 + 6;
 
@@ -3470,7 +3500,12 @@ char buf[31+1];
       formatString( labelVal, buf, 31 );
     }
 
-    stringWidth = XTextWidth( fs, buf, strlen(buf) );
+    if ( fs ) {
+      stringWidth = XTextWidth( fs, buf, strlen(buf) );
+    }
+    else {
+      stringWidth = 0;
+    }
 
     if ( count == 0 ) {
       *xMinX0 = (int) ( x0 - stringWidth * 0.5 );
@@ -3547,7 +3582,12 @@ char buf[31+1];
 
     formatString( pow(10,labelVal), buf, 31 );
 
-    stringWidth = XTextWidth( fs, buf, strlen(buf) );
+    if ( fs ) {
+      stringWidth = XTextWidth( fs, buf, strlen(buf) );
+    }
+    else {
+      stringWidth = 0;
+    }
 
     if ( count == 0 ) {
       *xMinX0 = (int) ( x0 - stringWidth * 0.5 );
@@ -4854,7 +4894,12 @@ double labelInc, lastInc, labelVal, z;
     else {
       formatString( labelVal, buf, 31 );
     }
-    l = XTextWidth( fs, buf, strlen(buf) );
+    if ( fs ) {
+      l = XTextWidth( fs, buf, strlen(buf) );
+    }
+    else {
+      l = 0;
+    }
     if ( l > scaleWidth ) scaleWidth = l;
 
     labelVal += labelInc;
@@ -4905,7 +4950,12 @@ double labelInc, lastInc, labelVal, z, log10Val;
     else {
       formatString( log10Val, buf, 31 );
     }
-    l = XTextWidth( fs, buf, strlen(buf) );
+    if ( fs ) {
+      l = XTextWidth( fs, buf, strlen(buf) );
+    }
+    else {
+      l = 0;
+    }
     if ( l > scaleWidth ) scaleWidth = l;
 
     labelVal += labelInc;
@@ -4994,7 +5044,12 @@ char buf[31+1];
       formatString( labelVal, buf, 31 );
     }
 
-    stringWidth = XTextWidth( fs, buf, strlen(buf) );
+    if ( fs ) {
+      stringWidth = XTextWidth( fs, buf, strlen(buf) );
+    }
+    else {
+      stringWidth = 0;
+    }
 
     if ( count == 0 ) {
       *yMinX0 = x0 - stringWidth;
@@ -5081,7 +5136,12 @@ char buf[31+1];
       formatString( labelVal, buf, 31 );
     }
 
-    stringWidth = XTextWidth( fs, buf, strlen(buf) );
+    if ( fs ) {
+      stringWidth = XTextWidth( fs, buf, strlen(buf) );
+    }
+    else {
+      stringWidth = 0;
+    }
 
     if ( count == 0 ) {
       *yMinX0 = x0;
@@ -5162,7 +5222,12 @@ char buf[31+1];
 
     formatString( pow(10,labelVal), buf, 31 );
 
-    stringWidth = XTextWidth( fs, buf, strlen(buf) );
+    if ( fs ) {
+      stringWidth = XTextWidth( fs, buf, strlen(buf) );
+    }
+    else {
+      stringWidth = 0;
+    }
 
     if ( count == 0 ) {
       *yMinX0 = x0 - stringWidth;
@@ -5243,7 +5308,12 @@ char buf[31+1];
 
     formatString( pow(10,labelVal), buf, 31 );
 
-    stringWidth = XTextWidth( fs, buf, strlen(buf) );
+    if ( fs ) {
+      stringWidth = XTextWidth( fs, buf, strlen(buf) );
+    }
+    else {
+      stringWidth = 0;
+    }
 
     if ( count == 0 ) {
       *yMinX0 = x0;
