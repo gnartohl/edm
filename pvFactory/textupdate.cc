@@ -1077,6 +1077,8 @@ void edmTextentryClass::text_edit_callback(Widget w,
                 XtAddCallback(w, XmNlosingFocusCallback,
                               (XtCallbackProc)text_noedit_callback, me);
                 me->editing = true;
+                XSetInputFocus( me->actWin->display(), XtWindow(w),
+				RevertToNone, CurrentTime );
                 break;
             case XtCallbackHasSome:
                 break;
