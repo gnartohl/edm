@@ -5,6 +5,8 @@
 #include "sys_types.h"
 #include "environment.str"
 
+int debugMode ( void );
+
 #ifdef USECURL
 
 #include <curl/curl.h>
@@ -12,8 +14,6 @@
 static int g_init = 1;
 static CURL *curlH;
 static char *tmpDir = NULL;
-
-int debugMode ( void );
 
 static int getFileNameAndExt (
   char *name,
