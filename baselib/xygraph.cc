@@ -5494,7 +5494,7 @@ XRectangle xR = { plotAreaX+1, plotAreaY, plotAreaW-2, plotAreaH };
 
       if ( plotStyle[i] == XYGC_K_PLOT_STYLE_POINT ) {
 
-        if ( curNpts[i] > 1 ) {
+        if ( curNpts[i] > 0 ) {
 
           if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_NONE ) {
 
@@ -5524,7 +5524,7 @@ XRectangle xR = { plotAreaX+1, plotAreaY, plotAreaW-2, plotAreaH };
       }
       else{
 
-        if ( curNpts[i] > 1 ) {
+        if ( curNpts[i] > 0 ) {
 
 	  if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_CIRCLE ) {
             drawCircles( i, plotBuf[i], curNpts[i] );
@@ -5539,9 +5539,13 @@ XRectangle xR = { plotAreaX+1, plotAreaY, plotAreaW-2, plotAreaH };
           actWin->executeGc.setLineWidth( lineThk[i] );
           actWin->executeGc.setLineStyle( lineStyle[i] );
 
-          XDrawLines( actWin->d, pixmap,
-           actWin->executeGc.normGC(), plotBuf[i], curNpts[i],
-           CoordModeOrigin );
+          if ( curNpts[i] > 1 ) {
+
+            XDrawLines( actWin->d, pixmap,
+             actWin->executeGc.normGC(), plotBuf[i], curNpts[i],
+             CoordModeOrigin );
+
+	  }
 
         }
 
@@ -5602,7 +5606,7 @@ int npts;
 
       npts = fillPlotArray( i );
 
-      if ( npts > 1 ) {
+      if ( npts > 0 ) {
 
         if ( plotStyle[i] == XYGC_K_PLOT_STYLE_POINT ) {
 
@@ -5644,12 +5648,16 @@ int npts;
             drawDiamonds( i, plotBuf[i], npts );
 	  }
 
-          actWin->executeGc.setLineWidth( lineThk[i] );
-          actWin->executeGc.setLineStyle( lineStyle[i] );
+          if ( npts > 1 ) {
 
-          XDrawLines( actWin->d, pixmap,
-           actWin->executeGc.normGC(), plotBuf[i], npts,
-           CoordModeOrigin );
+            actWin->executeGc.setLineWidth( lineThk[i] );
+            actWin->executeGc.setLineStyle( lineStyle[i] );
+
+            XDrawLines( actWin->d, pixmap,
+             actWin->executeGc.normGC(), plotBuf[i], npts,
+             CoordModeOrigin );
+
+	  }
 
           curNpts[i] = npts;
 
@@ -5662,7 +5670,7 @@ int npts;
 
       npts = fillPlotArray( i );
 
-      if ( npts > 1 ) {
+      if ( npts > 0 ) {
 
         if ( plotStyle[i] == XYGC_K_PLOT_STYLE_POINT ) {
 
@@ -5704,12 +5712,16 @@ int npts;
             drawDiamonds( i, plotBuf[i], npts );
 	  }
 
-          actWin->executeGc.setLineWidth( lineThk[i] );
-          actWin->executeGc.setLineStyle( lineStyle[i] );
+          if ( npts > 1 ) {
 
-          XDrawLines( actWin->d, pixmap,
-           actWin->executeGc.normGC(), plotBuf[i], npts,
-           CoordModeOrigin );
+            actWin->executeGc.setLineWidth( lineThk[i] );
+            actWin->executeGc.setLineStyle( lineStyle[i] );
+
+            XDrawLines( actWin->d, pixmap,
+             actWin->executeGc.normGC(), plotBuf[i], npts,
+             CoordModeOrigin );
+
+	  }
 
           curNpts[i] = npts;
 
