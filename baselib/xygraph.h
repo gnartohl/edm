@@ -344,14 +344,14 @@ typedef struct editBufTag {
   int bufPlotSymbolType[XYGC_K_MAX_TRACES];
   int bufPlotUpdateMode[XYGC_K_MAX_TRACES];
   int bufPlotColor[XYGC_K_MAX_TRACES];
-  char bufXPvName[XYGC_K_MAX_TRACES][activeGraphicClass::MAX_PV_NAME+1];
-  char bufYPvName[XYGC_K_MAX_TRACES][activeGraphicClass::MAX_PV_NAME+1];
+  char bufXPvName[XYGC_K_MAX_TRACES][PV_Factory::MAX_PV_NAME+1];
+  char bufYPvName[XYGC_K_MAX_TRACES][PV_Factory::MAX_PV_NAME+1];
   int bufXSigned[XYGC_K_MAX_TRACES];
   int bufYSigned[XYGC_K_MAX_TRACES];
   int bufLineThk[XYGC_K_MAX_TRACES];
   int bufLineStyle[XYGC_K_MAX_TRACES];
-  char bufTrigPvName[activeGraphicClass::MAX_PV_NAME+1];
-  char bufResetPvName[activeGraphicClass::MAX_PV_NAME+1];
+  char bufTrigPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufResetPvName[PV_Factory::MAX_PV_NAME+1];
   int bufOpMode[XYGC_K_MAX_TRACES];
   int bufY2Scale[XYGC_K_MAX_TRACES];
   int bufCount;

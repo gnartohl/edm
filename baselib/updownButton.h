@@ -227,21 +227,50 @@ int opComplete;
 int minW;
 int minH;
 
-int bufX, bufY, bufW, bufH;
+typedef struct editBufTag {
+// edit buffer
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  int bufFgColor;
+  int bufBgColor;
+  int bufTopShadowColor;
+  int bufBotShadowColor;
+  int buf3D;
+  int bufInvisible;
+  double bufRate;
+  int bufLimitsFromDb;
+  efDouble bufEfScaleMin;
+  efDouble bufEfScaleMax;
+  int bufVisInverted;
+  colorButtonClass fgCb;
+  colorButtonClass bgCb;
+  colorButtonClass topShadowCb;
+  colorButtonClass botShadowCb;
+  char bufLabel[39+1];
+  char bufDestPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufSavePvName[PV_Factory::MAX_PV_NAME+1];
+  char bufFine[39+1];
+  char bufCoarse[39+1];
+  char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufMinVisString[39+1];
+  char bufMaxVisString[39+1];
+  char bufColorPvName[PV_Factory::MAX_PV_NAME+1];
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
 
 int destType, saveType;
 
-int bufFgColor, bufBgColor;
 pvColorClass fgColor, bgColor;
-int topShadowColor, bufTopShadowColor;
-int botShadowColor, bufBotShadowColor;
-colorButtonClass fgCb, bgCb, topShadowCb, botShadowCb;
+int topShadowColor;
+int botShadowColor;
 expStringClass label;
-char bufLabel[39+1];
-int _3D, buf3D, invisible, bufInvisible;
+int _3D, invisible;
 
 fontMenuClass fm;
-char fontTag[63+1], bufFontTag[63+1];
+char fontTag[63+1];
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
@@ -254,18 +283,14 @@ pvConnectionClass connection;
 ProcessVariable *destPvId, *savePvId;
 
 expStringClass destPvExpString;
-char bufDestPvName[activeGraphicClass::MAX_PV_NAME+1];
 
 expStringClass savePvExpString;
-char bufSavePvName[activeGraphicClass::MAX_PV_NAME+1];
 
 expStringClass fineExpString;
-char bufFine[39+1];
 
 expStringClass coarseExpString;
-char bufCoarse[39+1];
 
-double rate, bufRate;
+double rate;
 
 int destExists, saveExists, buttonPressed;
 
@@ -296,23 +321,21 @@ static const int kpFineDest = 2;
 static const int kpRateDest = 3;
 static const int kpValueDest = 4;
 
-int limitsFromDb, bufLimitsFromDb;
+int limitsFromDb;
 double scaleMin, scaleMax, minDv, maxDv;
-efDouble efScaleMin, efScaleMax, bufEfScaleMin, bufEfScaleMax;
+efDouble efScaleMin, efScaleMax;
 
 ProcessVariable *visPvId;
 expStringClass visPvExpString;
-char bufVisPvName[activeGraphicClass::MAX_PV_NAME+1];
 int visExists;
 double visValue, curVisValue, minVis, maxVis;
-char minVisString[39+1], bufMinVisString[39+1];
-char maxVisString[39+1], bufMaxVisString[39+1];
-int prevVisibility, visibility, visInverted, bufVisInverted;
+char minVisString[39+1];
+char maxVisString[39+1];
+int prevVisibility, visibility, visInverted;
 int needVisConnectInit, needVisInit, needVisUpdate;
 
 ProcessVariable *colorPvId;
 expStringClass colorPvExpString;
-char bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
 int colorExists;
 double colorValue, curColorValue;
 int needColorConnectInit, needColorInit, needColorUpdate;

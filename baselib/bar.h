@@ -148,6 +148,15 @@ friend void bar_monitor_null_connect_state (
 
 int horizontal, bufHorizontal;
 
+typedef struct editBufTag {
+// edit buffer
+  char bufControlPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufReadPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufNullPvName[PV_Factory::MAX_PV_NAME+1];
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
+
 int bufX, bufY, bufW, bufH;
 
 int opComplete;
@@ -172,9 +181,6 @@ int initialReadConnection, initialNullConnection;
 int oldStat, oldSev;
 
 expStringClass controlPvExpStr, readPvExpStr, nullPvExpStr;
-char bufControlPvName[activeGraphicClass::MAX_PV_NAME+1];
-char bufReadPvName[activeGraphicClass::MAX_PV_NAME+1];
-char bufNullPvName[activeGraphicClass::MAX_PV_NAME+1];
 
 unsigned char pvNotConnectedMask;
 

@@ -190,7 +190,42 @@ int opComplete;
 int minW;
 int minH;
 
-int bufX, bufY, bufW, bufH;
+typedef struct editBufTag {
+// edit buffer
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  int bufFgColorMode;
+  int bufFgColor;
+  int bufOnColor;
+  int bufOffColor;
+  int bufTopShadowColor;
+  int bufBotShadowColor;
+  int bufInconsistentColor;
+  colorButtonClass fgCb;
+  colorButtonClass onCb;
+  colorButtonClass offCb;
+  colorButtonClass topShadowCb;
+  colorButtonClass botShadowCb;
+  colorButtonClass inconsistentCb;
+  int bufDownCallbackFlag;
+  int bufUpCallbackFlag;
+  int bufActivateCallbackFlag;
+  int bufDeactivateCallbackFlag;
+  int bufVisInverted;
+  char bufOnLabel[MAX_ENUM_STRING_SIZE+1];
+  char bufOffLabel[MAX_ENUM_STRING_SIZE+1];
+  char bufFontTag[63+1];
+  char controlBufPvName[PV_Factory::MAX_PV_NAME+1];
+  char readBufPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufMinVisString[39+1];
+  char bufMaxVisString[39+1];
+  char bufColorPvName[PV_Factory::MAX_PV_NAME+1];
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
 
 short controlV, curControlV, readV, curReadV;
 
@@ -199,15 +234,12 @@ int needReadConnectInit, needReadInfoInit, needReadRefresh;
 int needErase, needDraw, needToDrawUnconnected, needToEraseUnconnected;
 int unconnectedTimer;
 
-int fgColorMode, bufFgColorMode;
-int bufFgColor, bufOnColor, bufOffColor;
+int fgColorMode;
 pvColorClass fgColor, inconsistentColor, onColor, offColor;
-int topShadowColor, bufTopShadowColor;
-int botShadowColor, bufBotShadowColor;
-int bufInconsistentColor;
-colorButtonClass fgCb, onCb, offCb, topShadowCb, botShadowCb, inconsistentCb;
-char onLabel[MAX_ENUM_STRING_SIZE+1], bufOnLabel[MAX_ENUM_STRING_SIZE+1];
-char offLabel[MAX_ENUM_STRING_SIZE+1], bufOffLabel[MAX_ENUM_STRING_SIZE+1];
+int topShadowColor;
+int botShadowColor;
+char onLabel[MAX_ENUM_STRING_SIZE+1];
+char offLabel[MAX_ENUM_STRING_SIZE+1];
 char _3DString[7+1], invisibleString[7+1];
 int labelType, buttonType, _3D, invisible;
 char labelTypeString[15+1];
@@ -216,11 +248,9 @@ char buttonTypeStr[7+1];
 VPFUNC downCallback, upCallback, activateCallback, deactivateCallback;
 int downCallbackFlag, upCallbackFlag, activateCallbackFlag,
  deactivateCallbackFlag, anyCallbackFlag;
-int bufDownCallbackFlag, bufUpCallbackFlag, bufActivateCallbackFlag,
- bufDeactivateCallbackFlag;
 
 fontMenuClass fm;
-char fontTag[63+1], bufFontTag[63+1];
+char fontTag[63+1];
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
@@ -233,8 +263,6 @@ pvConnectionClass connection;
 
 ProcessVariable *controlPvId, *readPvId, *stateStringPvId;
 
-char controlBufPvName[activeGraphicClass::MAX_PV_NAME+1];
-char readBufPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass controlPvName, readPvName;
 
 int controlExists, readExists, toggle;
@@ -244,19 +272,17 @@ int controlPvConnected, readPvConnected, init, active, activeMode,
 
 ProcessVariable *visPvId;
 expStringClass visPvExpString;
-char bufVisPvName[activeGraphicClass::MAX_PV_NAME+1];
 int visExists;
 double visValue, curVisValue, minVis, maxVis;
-char minVisString[39+1], bufMinVisString[39+1];
-char maxVisString[39+1], bufMaxVisString[39+1];
-int prevVisibility, visibility, visInverted, bufVisInverted;
+char minVisString[39+1];
+char maxVisString[39+1];
+int prevVisibility, visibility, visInverted;
 int needVisConnectInit, needVisInit, needVisUpdate;
 int initialConnection, initialReadConnection, initialVisConnection,
  initialColorConnection;
 
 ProcessVariable *colorPvId;
 expStringClass colorPvExpString;
-char bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
 int colorExists;
 double colorValue, curColorValue;
 int needColorConnectInit, needColorInit, needColorUpdate;

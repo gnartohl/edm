@@ -236,7 +236,7 @@ activeRadioButtonClass *rbto = (activeRadioButtonClass *) client;
   rbto->h = rbto->bufH;
   rbto->sboxH = rbto->bufH;
 
-  rbto->controlPvExpStr.setRaw( rbto->bufControlPvName );
+  rbto->controlPvExpStr.setRaw( rbto->eBuf->bufControlPvName );
 
   rbto->updateDimensions();
 
@@ -322,11 +322,15 @@ int i;
 
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
 }
 
 activeRadioButtonClass::~activeRadioButtonClass ( void ) {
 
   if ( name ) delete[] name;
+
+  if ( eBuf ) delete eBuf;
 
   if ( fontList ) XmFontListFree( fontList );
 
@@ -365,15 +369,9 @@ activeGraphicClass *rbto = (activeGraphicClass *) this;
   topShadowColor = source->topShadowColor;
   botShadowColor = source->botShadowColor;
   selectColor = source->selectColor;
-  buttonCb = source->buttonCb;
-  topShadowCb = source->topShadowCb;
-  botShadowCb = source->botShadowCb;
-  selectCb = source->selectCb;
 
   fgColor.copy(source->fgColor);
   bgColor.copy(source->bgColor);
-  fgCb = source->fgCb;
-  bgCb = source->bgCb;
 
   fgColorMode = source->fgColorMode;
   bgColorMode = source->bgColorMode;
@@ -387,6 +385,8 @@ activeGraphicClass *rbto = (activeGraphicClass *) this;
   connection.setMaxPvs( 1 );
 
   unconnectedTimer = 0;
+
+  eBuf = NULL;
 
 }
 
@@ -606,7 +606,7 @@ int activeRadioButtonClass::old_createFromFile (
 
 int index;
 int major, minor, release;
-char oneName[activeGraphicClass::MAX_PV_NAME+1];
+char oneName[PV_Factory::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -694,7 +694,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   }
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   controlPvExpStr.setRaw( oneName );
 
@@ -725,6 +725,10 @@ int activeRadioButtonClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   ptr = actWin->obj.getNameFromClass( "activeRadioButtonClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -738,8 +742,6 @@ char title[32], *ptr;
   bufW = w;
   bufH = h;
 
-  strncpy( bufFontTag, fontTag, 63 );
-
   bufButtonColor = buttonColor;
   bufTopShadowColor = topShadowColor;
   bufBotShadowColor = botShadowColor;
@@ -752,10 +754,10 @@ char title[32], *ptr;
   bufBgColorMode = bgColorMode;
 
   if ( controlPvExpStr.getRaw() )
-    strncpy( bufControlPvName, controlPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufControlPvName, controlPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufControlPvName, "" );
+    strcpy( eBuf->bufControlPvName, "" );
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -767,27 +769,27 @@ char title[32], *ptr;
   ef.addTextField( activeRadioButtonClass_str5, 35, &bufY );
   ef.addTextField( activeRadioButtonClass_str6, 35, &bufW );
   ef.addTextField( activeRadioButtonClass_str7, 35, &bufH );
-  ef.addTextField( activeRadioButtonClass_str17, 35, bufControlPvName,
-   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeRadioButtonClass_str17, 35, eBuf->bufControlPvName,
+   PV_Factory::MAX_PV_NAME );
 
-  ef.addColorButton( activeRadioButtonClass_str8, actWin->ci, &fgCb,
-   &bufFgColor );
+  ef.addColorButton( activeRadioButtonClass_str8, actWin->ci,
+   &eBuf->fgCb, &bufFgColor );
   ef.addToggle( activeRadioButtonClass_str10, &bufFgColorMode );
 
-  ef.addColorButton( activeRadioButtonClass_str11, actWin->ci, &bgCb,
-   &bufBgColor );
+  ef.addColorButton( activeRadioButtonClass_str11, actWin->ci,
+   &eBuf->bgCb, &bufBgColor );
 
-  ef.addColorButton( activeRadioButtonClass_str28, actWin->ci, &buttonCb,
-   &bufButtonColor );
+  ef.addColorButton( activeRadioButtonClass_str28, actWin->ci,
+   &eBuf->buttonCb, &bufButtonColor );
 
-  ef.addColorButton( activeRadioButtonClass_str29, actWin->ci, &selectCb,
-   &bufSelectColor );
+  ef.addColorButton( activeRadioButtonClass_str29, actWin->ci,
+   &eBuf->selectCb, &bufSelectColor );
 
-  ef.addColorButton( activeRadioButtonClass_str14, actWin->ci, &topShadowCb,
-   &bufTopShadowColor );
+  ef.addColorButton( activeRadioButtonClass_str14, actWin->ci,
+   &eBuf->topShadowCb, &bufTopShadowColor );
 
-  ef.addColorButton( activeRadioButtonClass_str15, actWin->ci, &botShadowCb,
-   &bufBotShadowColor );
+  ef.addColorButton( activeRadioButtonClass_str15, actWin->ci,
+   &eBuf->botShadowCb, &bufBotShadowColor );
 
   ef.addFontMenu( activeRadioButtonClass_str16, actWin->fi, &fm, fontTag );
 
@@ -993,7 +995,8 @@ int opStat;
 
         pvCheckExists = 1;
 
-        if ( strcmp( controlPvExpStr.getRaw(), "" ) != 0 ) {
+        //if ( strcmp( controlPvExpStr.getExpanded(), "" ) != 0 ) {
+	if ( !blankOrComment( controlPvExpStr.getExpanded() ) ) {
           controlExists = 1;
           connection.addPv(); // must do this only once per pv
 	}

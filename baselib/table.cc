@@ -38,24 +38,24 @@ activeTableClass *tableo = (activeTableClass *) client;
   tableo->erase();
 
   tableo->fgColor.setColorIndex(
-   tableo->bufFgColor, tableo->actWin->ci );
+   tableo->eBuf->bufFgColor, tableo->actWin->ci );
 
   tableo->bgColor.setColorIndex(
-   tableo->bufBgColor, tableo->actWin->ci );
+   tableo->eBuf->bufBgColor, tableo->actWin->ci );
 
   tableo->oddBgColor.setColorIndex(
-   tableo->bufOddBgColor, tableo->actWin->ci );
+   tableo->eBuf->bufOddBgColor, tableo->actWin->ci );
 
   tableo->evenBgColor.setColorIndex(
-   tableo->bufEvenBgColor, tableo->actWin->ci );
+   tableo->eBuf->bufEvenBgColor, tableo->actWin->ci );
 
   tableo->topShadowColor.setColorIndex(
-   tableo->bufTopShadowColor, tableo->actWin->ci );
+   tableo->eBuf->bufTopShadowColor, tableo->actWin->ci );
 
   tableo->botShadowColor.setColorIndex(
-   tableo->bufBotShadowColor, tableo->actWin->ci );
+   tableo->eBuf->bufBotShadowColor, tableo->actWin->ci );
 
-  tableo->readPvExpStr.setRaw( tableo->bufReadPvName );
+  tableo->readPvExpStr.setRaw( tableo->eBuf->bufReadPvName );
 
   strncpy( tableo->fontTag, tableo->fm.currentFontTag(), 63 );
   tableo->fontTag[63] = 0;
@@ -65,17 +65,17 @@ activeTableClass *tableo = (activeTableClass *) client;
   tableo->actWin->drawGc.setFontTag(
    tableo->fontTag, tableo->actWin->fi );
 
-  tableo->x = tableo->bufX;
-  tableo->sboxX = tableo->bufX;
+  tableo->x = tableo->eBuf->bufX;
+  tableo->sboxX = tableo->eBuf->bufX;
 
-  tableo->y = tableo->bufY;
-  tableo->sboxY = tableo->bufY;
+  tableo->y = tableo->eBuf->bufY;
+  tableo->sboxY = tableo->eBuf->bufY;
 
-  tableo->w = tableo->bufW;
-  tableo->sboxW = tableo->bufW;
+  tableo->w = tableo->eBuf->bufW;
+  tableo->sboxW = tableo->eBuf->bufW;
 
-  tableo->h = tableo->bufH;
-  tableo->sboxH = tableo->bufH;
+  tableo->h = tableo->eBuf->bufH;
+  tableo->sboxH = tableo->eBuf->bufH;
 
   if ( tableo->h < 10 ) {
     tableo->h = 10;
@@ -205,6 +205,7 @@ activeTableClass::activeTableClass ( void ) {
   strcpy( fontTag, "" );
   fs = NULL;
   activeMode = 0;
+  eBuf = NULL;
 
 }
 
@@ -218,13 +219,6 @@ activeGraphicClass *tableo = (activeGraphicClass *) this;
 
   name = new char[strlen("activeTableClass")+1];
   strcpy( name, "activeTableClass" );
-
-  fgCb = source->fgCb;
-  bgCb = source->bgCb;
-  oddBgCb = source->oddBgCb;
-  evenBgCb = source->evenBgCb;
-  topCb = source->topCb;
-  botCb = source->botCb;
 
   strncpy( fontTag, source->fontTag, 63 );
   fontTag[63] = 0;
@@ -241,12 +235,15 @@ activeGraphicClass *tableo = (activeGraphicClass *) this;
 
   activeMode = 0;
 
+  eBuf = NULL;
+
 }
 
 activeTableClass::~activeTableClass ( void ) {
 
   if ( name ) delete[] name;
 
+  if ( eBuf ) delete eBuf;
 
 }
 
@@ -449,7 +446,7 @@ int activeTableClass::old_createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[activeGraphicClass::MAX_PV_NAME+1];
+char oneName[PV_Factory::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -548,7 +545,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   }
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
   readPvExpStr.setRaw( oneName );
 
   readStringFromFile( fontTag, 63+1, f );
@@ -564,6 +561,10 @@ int activeTableClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   ptr = actWin->obj.getNameFromClass( "activeTableClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -572,25 +573,23 @@ char title[32], *ptr;
 
   Strncat( title, activeTableClass_str5, 31 );
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
+  eBuf->bufX = x;
+  eBuf->bufY = y;
+  eBuf->bufW = w;
+  eBuf->bufH = h;
 
-  bufFgColor = fgColor.pixelIndex();
-  bufBgColor = bgColor.pixelIndex();
-  bufOddBgColor = oddBgColor.pixelIndex();
-  bufEvenBgColor = evenBgColor.pixelIndex();
-  bufTopShadowColor = topShadowColor.pixelIndex();
-  bufBotShadowColor = botShadowColor.pixelIndex();
-
-  strncpy( bufFontTag, fontTag, 63 );
+  eBuf->bufFgColor = fgColor.pixelIndex();
+  eBuf->bufBgColor = bgColor.pixelIndex();
+  eBuf->bufOddBgColor = oddBgColor.pixelIndex();
+  eBuf->bufEvenBgColor = evenBgColor.pixelIndex();
+  eBuf->bufTopShadowColor = topShadowColor.pixelIndex();
+  eBuf->bufBotShadowColor = botShadowColor.pixelIndex();
 
   if ( readPvExpStr.getRaw() )
-    strncpy( bufReadPvName, readPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufReadPvName, readPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufReadPvName, "" );
+    strcpy( eBuf->bufReadPvName, "" );
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -598,20 +597,20 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeTableClass_str6, 35, &bufX );
-  ef.addTextField( activeTableClass_str7, 35, &bufY );
-  ef.addTextField( activeTableClass_str8, 35, &bufW );
-  ef.addTextField( activeTableClass_str9, 35, &bufH );
-  ef.addTextField( activeTableClass_str11, 35, bufReadPvName,
-   activeGraphicClass::MAX_PV_NAME );
-  ef.addColorButton( activeTableClass_str16, actWin->ci, &fgCb, &bufFgColor );
-  ef.addColorButton( activeTableClass_str17, actWin->ci, &bgCb, &bufBgColor );
-  ef.addColorButton( activeTableClass_str18, actWin->ci, &oddBgCb, &bufOddBgColor );
-  ef.addColorButton( activeTableClass_str25, actWin->ci, &evenBgCb, &bufEvenBgColor );
-  ef.addColorButton( activeTableClass_str19, actWin->ci, &topCb,
-   &bufTopShadowColor );
-  ef.addColorButton( activeTableClass_str20, actWin->ci, &botCb,
-   &bufBotShadowColor );
+  ef.addTextField( activeTableClass_str6, 35, &eBuf->bufX );
+  ef.addTextField( activeTableClass_str7, 35, &eBuf->bufY );
+  ef.addTextField( activeTableClass_str8, 35, &eBuf->bufW );
+  ef.addTextField( activeTableClass_str9, 35, &eBuf->bufH );
+  ef.addTextField( activeTableClass_str11, 35, eBuf->bufReadPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addColorButton( activeTableClass_str16, actWin->ci, &eBuf->fgCb, &eBuf->bufFgColor );
+  ef.addColorButton( activeTableClass_str17, actWin->ci, &eBuf->bgCb, &eBuf->bufBgColor );
+  ef.addColorButton( activeTableClass_str18, actWin->ci, &eBuf->oddBgCb, &eBuf->bufOddBgColor );
+  ef.addColorButton( activeTableClass_str25, actWin->ci, &eBuf->evenBgCb, &eBuf->bufEvenBgColor );
+  ef.addColorButton( activeTableClass_str19, actWin->ci, &eBuf->topCb,
+   &eBuf->bufTopShadowColor );
+  ef.addColorButton( activeTableClass_str20, actWin->ci, &eBuf->botCb,
+   &eBuf->bufBotShadowColor );
   ef.addFontMenu( activeTableClass_str15, actWin->fi, &fm, fontTag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
@@ -721,7 +720,8 @@ int opStat;
       strcpy( curReadV, "" );
 
       if ( !readPvExpStr.getExpanded() ||
-         ( strcmp( readPvExpStr.getExpanded(), "" ) == 0 ) ) {
+	// ( strcmp( readPvExpStr.getExpanded(), "" ) == 0 ) ) {
+        blankOrComment( readPvExpStr.getExpanded() ) ) {
         readExists = 0;
       }
       else {

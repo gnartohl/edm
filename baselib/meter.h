@@ -127,9 +127,52 @@ friend void meter_monitor_read_connect_state (
   ProcessVariable *pv,
   void *userarg );
 
-int bufX, bufY, bufW, bufH;
+typedef struct editBufTag {
+// edit buffer
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  int bufScaleLimitsFromDb;
+  int bufMeterColorMode;
+  int bufFgColorMode;
+  int bufScaleColorMode;
+  int bufLabelIntervals;
+  int bufMajorIntervals;
+  int bufMinorIntervals;
+  int bufMeterColor;
+  int bufFgColor;
+  int bufBgColor;
+  int bufLabelColor;
+  int bufScaleColor;
+  int bufTsColor;
+  int bufBsColor;
+  int bufLabelType;
+  double bufMeterAngle;
+  int bufScalePrecision;
+  double bufScaleMin;
+  double bufScaleMax;
+  int bufNeedleType;
+  int bufShadowMode;
+  int bufShowScale;
+  int bufUseDisplayBg;
+  colorButtonClass meterCb;
+  colorButtonClass fgCb;
+  colorButtonClass bgCb;
+  colorButtonClass tsCb;
+  colorButtonClass bsCb;
+  colorButtonClass labelCb;
+  colorButtonClass scaleCb;
+  char bufScaleFormat[15+1];
+  char bufLabel[39+1];
+  char bufLiteralLabel[39+1];
+  char bufControlPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufReadPvName[PV_Factory::MAX_PV_NAME+1];
+} editBufType, *editBufPtr;
 
-int bufScaleLimitsFromDb, scaleLimitsFromDb;
+editBufPtr eBuf;
+
+int scaleLimitsFromDb;
 
 int opComplete;
 
@@ -156,8 +199,6 @@ int initialReadConnection;
 int oldStat, oldSev;
 
 expStringClass controlPvExpStr, readPvExpStr;
-char bufControlPvName[activeGraphicClass::MAX_PV_NAME+1];
-char bufReadPvName[activeGraphicClass::MAX_PV_NAME+1];
 
 int controlExists, readExists;
 
@@ -166,32 +207,21 @@ int controlPvConnected, readPvConnected, active, activeMode, activeInitFlag;
 int meterColorMode, fgColorMode, scaleColorMode;
 pvColorClass meterColor, fgColor, bgColor;
 pvColorClass tsColor, bsColor, labelColor, scaleColor;
-colorButtonClass meterCb, fgCb, bgCb, tsCb, bsCb, labelCb, scaleCb;
 char label[39+1];
 int labelType;
 int drawStaticFlag;
 int showScale;
 int useDisplayBg;
 
-int bufMeterColorMode, bufFgColorMode, bufScaleColorMode;
-int bufLabelIntervals, bufMajorIntervals, bufMinorIntervals;
 int labelIntervals, majorIntervals, minorIntervals;
-int bufMeterColor, bufFgColor, bufBgColor;
-int bufLabelColor, bufScaleColor;
-int bufTsColor,bufBsColor;
-char bufLabel[39+1];
-char bufLiteralLabel[39+1],literalLabel[39+1];
-int bufLabelType;
-double bufMeterAngle, meterAngle;
-char scaleFormat[15+1], bufScaleFormat[15+1];
-int bufScalePrecision, scalePrecision;
-double  bufScaleMin, scaleMin;
-double  bufScaleMax, scaleMax;
-int bufNeedleType,needleType;
-int bufShadowMode,shadowMode;
-int bufShowScale;
-int bufUseDisplayBg;
-char bufScaleFontTag[63+1],bufLabelFontTag[63+1];
+char literalLabel[39+1];
+double meterAngle;
+char scaleFormat[15+1];
+int scalePrecision;
+double scaleMin;
+double scaleMax;
+int needleType;
+int shadowMode;
 
 int needErase, needDraw, needConnectInit, needRefresh, needInfoInit;
 int needToDrawUnconnected, needToEraseUnconnected;

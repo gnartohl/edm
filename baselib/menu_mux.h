@@ -183,16 +183,37 @@ friend void mmuxSetItem (
 
 int opComplete, firstEvent;
 
-int bufX, bufY, bufW, bufH;
+typedef struct editBufTag {
+// edit buffer
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  int bufTopShadowColor;
+  int bufBotShadowColor;
+  int bufFgColor;
+  int bufBgColor;
+  int bufFgColorMode;
+  int bufBgColorMode;
+  char bufTag[MMUX_MAX_STATES][MMUX_MAX_STRING_SIZE+1];
+  char bufM[MMUX_MAX_STATES][MMUX_MAX_ENTRIES][MMUX_MAX_STRING_SIZE+1];
+  char bufE[MMUX_MAX_STATES][MMUX_MAX_ENTRIES][MMUX_MAX_STRING_SIZE+1];
+  char bufInitialState[30+1];
+  char bufControlPvName[PV_Factory::MAX_PV_NAME+1];
+  colorButtonClass fgCb;
+  colorButtonClass bgCb;
+  colorButtonClass topShadowCb;
+  colorButtonClass botShadowCb;
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
 
 int controlV, curControlV;
 
-int topShadowColor, bufTopShadowColor;
-int botShadowColor, bufBotShadowColor;
-int bufFgColor, bufBgColor;
+int topShadowColor;
+int botShadowColor;
 pvColorClass fgColor, bgColor;
-colorButtonClass fgCb, bgCb, topShadowCb, botShadowCb;
-int fgColorMode, bgColorMode, bufFgColorMode, bufBgColorMode;
+int fgColorMode, bgColorMode;
 
 char *stateString[MMUX_MAX_STATES]; // allocated at run-time
 int numStates;
@@ -203,10 +224,6 @@ char tag[MMUX_MAX_STATES][MMUX_MAX_STRING_SIZE+1],
  m[MMUX_MAX_STATES][MMUX_MAX_ENTRIES][MMUX_MAX_STRING_SIZE+1],
  e[MMUX_MAX_STATES][MMUX_MAX_ENTRIES][MMUX_MAX_STRING_SIZE+1];
 
-char bufTag[MMUX_MAX_STATES][MMUX_MAX_STRING_SIZE+1],
- bufM[MMUX_MAX_STATES][MMUX_MAX_ENTRIES][MMUX_MAX_STRING_SIZE+1],
- bufE[MMUX_MAX_STATES][MMUX_MAX_ENTRIES][MMUX_MAX_STRING_SIZE+1];
-
 char *tagPtr[MMUX_MAX_STATES], *mPtr[MMUX_MAX_ENTRIES][MMUX_MAX_STATES],
  *ePtr[MMUX_MAX_ENTRIES][MMUX_MAX_STATES];
 
@@ -214,17 +231,15 @@ char **mac, **exp;
 int numItems, numMac;
 
 fontMenuClass fm;
-char fontTag[63+1], bufFontTag[63+1];
+char fontTag[63+1];
 XmFontList fontList;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
 ProcessVariable *controlPvId;
 
-char bufControlPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass controlPvExpStr;
 
-char bufInitialState[30+1];
 expStringClass initialStateExpStr;
 
 int controlExists, widgetsCreated, controlPvConnected, active, activeMode;

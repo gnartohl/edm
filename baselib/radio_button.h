@@ -199,6 +199,19 @@ pvConnectionClass connection;
 
 int opComplete, pvCheckExists;
 
+typedef struct editBufTag {
+// edit buffer
+  char bufControlPvName[PV_Factory::MAX_PV_NAME+1];
+  colorButtonClass fgCb;
+  colorButtonClass bgCb;
+  colorButtonClass buttonCb;
+  colorButtonClass topShadowCb;
+  colorButtonClass botShadowCb;
+  colorButtonClass selectCb;
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
+
 int bufX, bufY, bufW, bufH;
 
 short curValue;
@@ -209,21 +222,19 @@ int botShadowColor, bufBotShadowColor;
 int selectColor, bufSelectColor;
 int bufFgColor, bufBgColor;
 pvColorClass fgColor, bgColor;
-colorButtonClass fgCb, bgCb, buttonCb, topShadowCb, botShadowCb, selectCb;
 int fgColorMode, bgColorMode, bufFgColorMode, bufBgColorMode;
 
 char *stateString[MAX_ENUM_STATES]; // allocated at run-time
 int numStates;
 
 fontMenuClass fm;
-char fontTag[63+1], bufFontTag[63+1];
+char fontTag[63+1];
 XmFontList fontList;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
 ProcessVariable *controlPvId;
 
-char bufControlPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass controlPvExpStr;
 
 int controlExists, widgetsCreated, active, activeMode;

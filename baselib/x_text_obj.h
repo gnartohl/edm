@@ -28,7 +28,7 @@
 #define AXTC_K_COLORMODE_ALARM 1
 
 #define AXTC_MAJOR_VERSION 4
-#define AXTC_MINOR_VERSION 0
+#define AXTC_MINOR_VERSION 1
 #define AXTC_RELEASE 0
 
 #ifdef __x_text_obj_cc
@@ -114,28 +114,44 @@ friend void axtc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-int bufX, bufY, bufW, bufH;
+typedef struct editBufTag {
+// edit buffer
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  int bufFgColor;
+  colorButtonClass fgCb;
+  int bufFgColorMode;
+  int bufBgColor;
+  colorButtonClass bgCb;
+  int bufBgColorMode;
+  char bufMinVisString[39+1];
+  char bufMaxVisString[39+1];
+  int bufVisInverted;
+  char bufAlarmPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufFontTag[63+1];
+  int bufUseDisplayBg;
+  int bufAutoSize;
+  int bufBorder;
+  int bufLineThk;
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
 
 pvColorClass fgColor;
-int bufFgColor;
-colorButtonClass fgCb;
-
 int fgColorMode;
-int bufFgColorMode;
 
 pvColorClass bgColor;
-int bufBgColor;
-colorButtonClass bgCb;
-
 int bgColorMode;
-int bufBgColorMode;
 
 int pvType;
 pvValType pvValue, minVis, maxVis;
-char minVisString[39+1], bufMinVisString[39+1];
-char maxVisString[39+1], bufMaxVisString[39+1];
+char minVisString[39+1];
+char maxVisString[39+1];
 
-int prevVisibility, visibility, visInverted, bufVisInverted;
+int prevVisibility, visibility, visInverted;
 int fgVisibility, prevFgVisibility;
 int bgVisibility, prevBgVisibility;
 
@@ -143,10 +159,8 @@ ProcessVariable *alarmPvId;
 ProcessVariable *visPvId;
 
 expStringClass alarmPvExpStr;
-char bufAlarmPvName[PV_Factory::MAX_PV_NAME+1];
 
 expStringClass visPvExpStr;
-char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
 
 int alarmPvExists, visPvExists;
 int activeMode, init, opComplete;
@@ -155,12 +169,14 @@ expStringClass value;
 char *bufValue;
 
 fontMenuClass fm;
-char fontTag[63+1], bufFontTag[63+1];
-int useDisplayBg, bufUseDisplayBg, alignment;
+char fontTag[63+1];
+int useDisplayBg, alignment;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight, stringLength, stringWidth,
  stringY, stringX, stringBoxWidth, stringBoxHeight;
-int autoSize, bufAutoSize;
+int autoSize;
+int border;
+int lineThk;
 
 int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh,
  needPropertyUpdate, needToDrawUnconnected, needToEraseUnconnected;

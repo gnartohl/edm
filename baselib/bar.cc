@@ -72,9 +72,9 @@ int l;
 
   baro->bgColor.setColorIndex( baro->bufBgColor, baro->actWin->ci );
 
-  baro->controlPvExpStr.setRaw( baro->bufControlPvName );
-  baro->readPvExpStr.setRaw( baro->bufReadPvName );
-  baro->nullPvExpStr.setRaw( baro->bufNullPvName );
+  baro->controlPvExpStr.setRaw( baro->eBuf->bufControlPvName );
+  baro->readPvExpStr.setRaw( baro->eBuf->bufReadPvName );
+  baro->nullPvExpStr.setRaw( baro->eBuf->bufNullPvName );
 
   strncpy( baro->label, baro->bufLabel, 39 );
 
@@ -399,6 +399,7 @@ activeBarClass::activeBarClass ( void ) {
   strcpy( scaleFormat, "FFloat" );
   precision = 0;
   unconnectedTimer = 0;
+  eBuf = NULL;
 
 }
 
@@ -464,6 +465,8 @@ activeGraphicClass *baro = (activeGraphicClass *) this;
 
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
   updateDimensions();
 
 }
@@ -473,6 +476,8 @@ activeBarClass::~activeBarClass ( void ) {
 /*   printf( "In activeBarClass::~activeBarClass\n" ); */
 
   if ( name ) delete[] name;
+
+  if ( eBuf ) delete eBuf;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -848,7 +853,7 @@ int activeBarClass::old_createFromFile (
 int r, g, b, discard, l, stat, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[activeGraphicClass::MAX_PV_NAME+1], fmt[31+1], str[31+1];
+char oneName[PV_Factory::MAX_PV_NAME+1], fmt[31+1], str[31+1];
 float fBarOriginX;
 
   this->actWin = _actWin;
@@ -972,11 +977,11 @@ float fBarOriginX;
 
   bgColor.setAlarmInsensitive();
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   controlPvExpStr.setRaw( oneName );
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   readPvExpStr.setRaw( oneName );
 
@@ -1075,7 +1080,7 @@ float fBarOriginX;
 
   if ( ( major > 1 ) || ( minor > 5 ) ) {
 
-    readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+    readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
      actWin->incLine();
     nullPvExpStr.setRaw( oneName );
 
@@ -1135,6 +1140,10 @@ int activeBarClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   if ( horizontal )
     strcpy( title, activeBarClass_str3 );
   else
@@ -1164,19 +1173,19 @@ char title[32], *ptr;
   strncpy( bufFontTag, fontTag, 63 );
 
   if ( readPvExpStr.getRaw() )
-    strncpy( bufReadPvName, readPvExpStr.getRaw(), activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufReadPvName, readPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufReadPvName, "" );
+    strcpy( eBuf->bufReadPvName, "" );
 
   if ( controlPvExpStr.getRaw() )
-    strncpy( bufControlPvName, controlPvExpStr.getRaw(), activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufControlPvName, controlPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufControlPvName, "" );
+    strcpy( eBuf->bufControlPvName, "" );
 
   if ( nullPvExpStr.getRaw() )
-    strncpy( bufNullPvName, nullPvExpStr.getRaw(), activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufNullPvName, nullPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufNullPvName, "" );
+    strcpy( eBuf->bufNullPvName, "" );
 
   strncpy( bufLabel, label, 39 );
 
@@ -1208,9 +1217,9 @@ char title[32], *ptr;
   ef.addTextField( activeBarClass_str8, 35, &bufY );
   ef.addTextField( activeBarClass_str9, 35, &bufW );
   ef.addTextField( activeBarClass_str10, 35, &bufH );
-//   ef.addTextField( activeBarClass_str11, 35, bufControlPvName, activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeBarClass_str12, 35, bufReadPvName, activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeBarClass_str13, 35, bufNullPvName, activeGraphicClass::MAX_PV_NAME );
+//   ef.addTextField( activeBarClass_str11, 35, eBuf->bufControlPvName, PV_Factory::MAX_PV_NAME );
+  ef.addTextField( activeBarClass_str12, 35, eBuf->bufReadPvName, PV_Factory::MAX_PV_NAME );
+  ef.addTextField( activeBarClass_str13, 35, eBuf->bufNullPvName, PV_Factory::MAX_PV_NAME );
   ef.addOption( activeBarClass_str14, activeBarClass_str15, &bufLabelType );
   ef.addTextField( activeBarClass_str16, 35, bufLabel, 39 );
   ef.addToggle( activeBarClass_str18, &bufBorder );
@@ -2184,7 +2193,8 @@ int opStat;
     activeMode = 1;
 
     if ( !readPvExpStr.getExpanded() ||
-       ( strcmp( readPvExpStr.getExpanded(), "" ) == 0 ) ) {
+       // ( strcmp( readPvExpStr.getExpanded(), "" ) == 0 ) ) {
+       blankOrComment( readPvExpStr.getExpanded() ) ) {
       readExists = 0;
     }
     else {
@@ -2195,7 +2205,8 @@ int opStat;
     }
 
     if ( !nullPvExpStr.getExpanded() ||
-       ( strcmp( nullPvExpStr.getExpanded(), "" ) == 0 ) ) {
+       // ( strcmp( nullPvExpStr.getExpanded(), "" ) == 0 ) ) {
+       blankOrComment( nullPvExpStr.getExpanded() ) ) {
       nullExists = 0;
     }
     else {

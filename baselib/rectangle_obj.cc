@@ -68,54 +68,54 @@ activeRectangleClass *aro = (activeRectangleClass *) client;
   aro->eraseSelectBoxCorners();
   aro->erase();
 
-  aro->lineColorMode = aro->bufLineColorMode;
+  aro->lineColorMode = aro->eBuf->bufLineColorMode;
   if ( aro->lineColorMode == ARC_K_COLORMODE_ALARM )
     aro->lineColor.setAlarmSensitive();
   else
     aro->lineColor.setAlarmInsensitive();
-  aro->lineColor.setColorIndex( aro->bufLineColor, aro->actWin->ci );
+  aro->lineColor.setColorIndex( aro->eBuf->bufLineColor, aro->actWin->ci );
 
-  aro->fill = aro->bufFill;
+  aro->fill = aro->eBuf->bufFill;
 
-  aro->fillColorMode = aro->bufFillColorMode;
+  aro->fillColorMode = aro->eBuf->bufFillColorMode;
   if ( aro->fillColorMode == ARC_K_COLORMODE_ALARM )
     aro->fillColor.setAlarmSensitive();
   else
     aro->fillColor.setAlarmInsensitive();
-  aro->fillColor.setColorIndex( aro->bufFillColor, aro->actWin->ci );
+  aro->fillColor.setColorIndex( aro->eBuf->bufFillColor, aro->actWin->ci );
 
-  aro->lineWidth = aro->bufLineWidth;
+  aro->lineWidth = aro->eBuf->bufLineWidth;
 
-  if ( aro->bufLineStyle == 0 )
+  if ( aro->eBuf->bufLineStyle == 0 )
     aro->lineStyle = LineSolid;
-  else if ( aro->bufLineStyle == 1 )
+  else if ( aro->eBuf->bufLineStyle == 1 )
     aro->lineStyle = LineOnOffDash;
 
-  aro->alarmPvExpStr.setRaw( aro->bufAlarmPvName );
+  aro->alarmPvExpStr.setRaw( aro->eBuf->bufAlarmPvName );
 
-  aro->visPvExpStr.setRaw( aro->bufVisPvName );
+  aro->visPvExpStr.setRaw( aro->eBuf->bufVisPvName );
 
-  if ( aro->bufVisInverted )
+  if ( aro->eBuf->bufVisInverted )
     aro->visInverted = 0;
   else
     aro->visInverted = 1;
 
-  strncpy( aro->minVisString, aro->bufMinVisString, 39 );
-  strncpy( aro->maxVisString, aro->bufMaxVisString, 39 );
+  strncpy( aro->minVisString, aro->eBuf->bufMinVisString, 39 );
+  strncpy( aro->maxVisString, aro->eBuf->bufMaxVisString, 39 );
 
-  aro->invisible = aro->bufInvisible;
+  aro->invisible = aro->eBuf->bufInvisible;
 
-  aro->x = aro->bufX;
-  aro->sboxX = aro->bufX;
+  aro->x = aro->eBuf->bufX;
+  aro->sboxX = aro->eBuf->bufX;
 
-  aro->y = aro->bufY;
-  aro->sboxY = aro->bufY;
+  aro->y = aro->eBuf->bufY;
+  aro->sboxY = aro->eBuf->bufY;
 
-  aro->w = aro->bufW;
-  aro->sboxW = aro->bufW;
+  aro->w = aro->eBuf->bufW;
+  aro->sboxW = aro->eBuf->bufW;
 
-  aro->h = aro->bufH;
-  aro->sboxH = aro->bufH;
+  aro->h = aro->eBuf->bufH;
+  aro->sboxH = aro->eBuf->bufH;
 
 }
 
@@ -302,6 +302,7 @@ activeRectangleClass::activeRectangleClass ( void ) {
   strcpy( maxVisString, "" );
   connection.setMaxPvs( 2 );
   unconnectedTimer = 0;
+  eBuf = NULL;
   setBlinkFunction( (void *) doBlink );
 
 }
@@ -319,8 +320,6 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   lineColor.copy(source->lineColor);
   fillColor.copy(source->fillColor);
-  lineCb = source->lineCb;
-  fillCb = source->fillCb;
   fill = source->fill;
   lineColorMode = source->lineColorMode;
   fillColorMode = source->fillColorMode;
@@ -343,6 +342,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
   setBlinkFunction( (void *) doBlink );
 
 }
@@ -350,6 +351,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 activeRectangleClass::~activeRectangleClass ( void ) {
 
   if ( name ) delete[] name;
+
+  if ( eBuf ) delete eBuf;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -390,6 +393,10 @@ int activeRectangleClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   ptr = actWin->obj.getNameFromClass( "activeRectangleClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -398,40 +405,40 @@ char title[32], *ptr;
 
   Strncat( title, activeRectangleClass_str5, 31 );
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
+  eBuf->bufX = x;
+  eBuf->bufY = y;
+  eBuf->bufW = w;
+  eBuf->bufH = h;
 
-  bufLineColor = lineColor.pixelIndex();
-  bufLineColorMode = lineColorMode;
+  eBuf->bufLineColor = lineColor.pixelIndex();
+  eBuf->bufLineColorMode = lineColorMode;
 
-  bufFillColor = fillColor.pixelIndex();
-  bufFillColorMode = fillColorMode;
+  eBuf->bufFillColor = fillColor.pixelIndex();
+  eBuf->bufFillColorMode = fillColorMode;
 
-  bufFill = fill;
-  bufLineWidth = lineWidth;
-  bufLineStyle = lineStyle;
+  eBuf->bufFill = fill;
+  eBuf->bufLineWidth = lineWidth;
+  eBuf->bufLineStyle = lineStyle;
 
   if ( alarmPvExpStr.getRaw() )
-    strncpy( bufAlarmPvName, alarmPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+    strncpy( eBuf->bufAlarmPvName, alarmPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufAlarmPvName, "" );
+    strcpy( eBuf->bufAlarmPvName, "" );
 
   if ( visPvExpStr.getRaw() )
-    strncpy( bufVisPvName, visPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+    strncpy( eBuf->bufVisPvName, visPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufVisPvName, "" );
+    strcpy( eBuf->bufVisPvName, "" );
 
   if ( visInverted )
-    bufVisInverted = 0;
+    eBuf->bufVisInverted = 0;
   else
-    bufVisInverted = 1;
+    eBuf->bufVisInverted = 1;
 
-  bufInvisible = invisible;
+  eBuf->bufInvisible = invisible;
 
-  strncpy( bufMinVisString, minVisString, 39 );
-  strncpy( bufMaxVisString, maxVisString, 39 );
+  strncpy( eBuf->bufMinVisString, minVisString, 39 );
+  strncpy( eBuf->bufMaxVisString, maxVisString, 39 );
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -439,29 +446,29 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeRectangleClass_str6, 30, &bufX );
-  ef.addTextField( activeRectangleClass_str7, 30, &bufY );
-  ef.addTextField( activeRectangleClass_str8, 30, &bufW );
-  ef.addTextField( activeRectangleClass_str9, 30, &bufH );
+  ef.addTextField( activeRectangleClass_str6, 30, &eBuf->bufX );
+  ef.addTextField( activeRectangleClass_str7, 30, &eBuf->bufY );
+  ef.addTextField( activeRectangleClass_str8, 30, &eBuf->bufW );
+  ef.addTextField( activeRectangleClass_str9, 30, &eBuf->bufH );
   ef.addOption( activeRectangleClass_str10, activeRectangleClass_str11,
-   &bufLineWidth );
+   &eBuf->bufLineWidth );
   ef.addOption( activeRectangleClass_str12, activeRectangleClass_str13,
-   &bufLineStyle );
-  ef.addColorButton( activeRectangleClass_str14, actWin->ci, &lineCb,
-   &bufLineColor );
-  ef.addToggle( activeRectangleClass_str15, &bufLineColorMode );
-  ef.addToggle( activeRectangleClass_str16, &bufFill );
-  ef.addColorButton( activeRectangleClass_str17, actWin->ci, &fillCb,
-   &bufFillColor );
-  ef.addToggle( activeRectangleClass_str18, &bufFillColorMode );
-  ef.addToggle( activeRectangleClass_str19, &bufInvisible );
-  ef.addTextField( activeRectangleClass_str20, 30, bufAlarmPvName,
+   &eBuf->bufLineStyle );
+  ef.addColorButton( activeRectangleClass_str14, actWin->ci, &eBuf->lineCb,
+   &eBuf->bufLineColor );
+  ef.addToggle( activeRectangleClass_str15, &eBuf->bufLineColorMode );
+  ef.addToggle( activeRectangleClass_str16, &eBuf->bufFill );
+  ef.addColorButton( activeRectangleClass_str17, actWin->ci, &eBuf->fillCb,
+   &eBuf->bufFillColor );
+  ef.addToggle( activeRectangleClass_str18, &eBuf->bufFillColorMode );
+  ef.addToggle( activeRectangleClass_str19, &eBuf->bufInvisible );
+  ef.addTextField( activeRectangleClass_str20, 30, eBuf->bufAlarmPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addTextField( activeRectangleClass_str21, 30, bufVisPvName,
+  ef.addTextField( activeRectangleClass_str21, 30, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addOption( " ", activeRectangleClass_str22, &bufVisInverted );
-  ef.addTextField( activeRectangleClass_str23, 30, bufMinVisString, 39 );
-  ef.addTextField( activeRectangleClass_str24, 30, bufMaxVisString, 39 );
+  ef.addOption( " ", activeRectangleClass_str22, &eBuf->bufVisInverted );
+  ef.addTextField( activeRectangleClass_str23, 30, eBuf->bufMinVisString, 39 );
+  ef.addTextField( activeRectangleClass_str24, 30, eBuf->bufMaxVisString, 39 );
 
   return 1;
 
@@ -1239,7 +1246,8 @@ int activeRectangleClass::activate (
       init = 1; // this stays true if there are no pvs
 
       if ( !alarmPvExpStr.getExpanded() ||
-           ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           // ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           blankOrComment( alarmPvExpStr.getExpanded() ) ) {
         alarmPvExists = 0;
         lineVisibility = fillVisibility = 1;
       }
@@ -1252,7 +1260,8 @@ int activeRectangleClass::activate (
       }
 
       if ( !visPvExpStr.getExpanded() ||
-           ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           // ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           blankOrComment( visPvExpStr.getExpanded() ) ) {
         visPvExists = 0;
         visibility = 1;
       }

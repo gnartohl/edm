@@ -290,6 +290,14 @@ int opComplete;
 int minW;
 int minH;
 
+typedef struct editBufTag {
+// edit buffer
+  char controlBufPvName[PV_Factory::MAX_PV_NAME+1];
+  char controlBufLabelName[PV_Factory::MAX_PV_NAME+1];
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
+
 int bufX, bufY, bufW, bufH;
 
 Widget frameWidget, motifSliderWidget, scaleWidget, scrollBarWidget;
@@ -329,9 +337,7 @@ ProcessVariable *controlPvId, *controlLabelPvId;
 
 expStringClass controlPvName, controlLabelName;
 
-char controlBufPvName[PV_Factory::MAX_PV_NAME+1];
 char controlLabel[PV_Factory::MAX_PV_NAME+1];
-char controlBufLabelName[PV_Factory::MAX_PV_NAME+1];
 int formatType, bufFormatType;
 char controlFormat[15+1];
 

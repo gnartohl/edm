@@ -119,56 +119,56 @@ activeLineClass *alo = (activeLineClass *) client;
   alo->eraseSelectBoxCorners();
   alo->erase();
 
-  alo->lineColorMode = alo->bufLineColorMode;
+  alo->lineColorMode = alo->eBuf->bufLineColorMode;
   if ( alo->lineColorMode == ALC_K_COLORMODE_ALARM )
     alo->lineColor.setAlarmSensitive();
   else
     alo->lineColor.setAlarmInsensitive();
-  alo->lineColor.setColorIndex( alo->bufLineColor, alo->actWin->ci );
+  alo->lineColor.setColorIndex( alo->eBuf->bufLineColor, alo->actWin->ci );
 
-  alo->fill = alo->bufFill;
+  alo->fill = alo->eBuf->bufFill;
 
-  alo->fillColorMode = alo->bufFillColorMode;
+  alo->fillColorMode = alo->eBuf->bufFillColorMode;
   if ( alo->fillColorMode == ALC_K_COLORMODE_ALARM )
     alo->fillColor.setAlarmSensitive();
   else
     alo->fillColor.setAlarmInsensitive();
-  alo->fillColor.setColorIndex( alo->bufFillColor, alo->actWin->ci );
+  alo->fillColor.setColorIndex( alo->eBuf->bufFillColor, alo->actWin->ci );
 
-  alo->lineWidth = alo->bufLineWidth;
+  alo->lineWidth = alo->eBuf->bufLineWidth;
 
-  if ( alo->bufLineStyle == 0 )
+  if ( alo->eBuf->bufLineStyle == 0 )
     alo->lineStyle = LineSolid;
-  else if ( alo->bufLineStyle == 1 )
+  else if ( alo->eBuf->bufLineStyle == 1 )
     alo->lineStyle = LineOnOffDash;
 
-  alo->alarmPvExpStr.setRaw( alo->bufAlarmPvName );
+  alo->alarmPvExpStr.setRaw( alo->eBuf->bufAlarmPvName );
 
-  alo->visPvExpStr.setRaw( alo->bufVisPvName );
+  alo->visPvExpStr.setRaw( alo->eBuf->bufVisPvName );
 
-  if ( alo->bufVisInverted )
+  if ( alo->eBuf->bufVisInverted )
     alo->visInverted = 0;
   else
     alo->visInverted = 1;
 
-  strncpy( alo->minVisString, alo->bufMinVisString, 39 );
-  strncpy( alo->maxVisString, alo->bufMaxVisString, 39 );
+  strncpy( alo->minVisString, alo->eBuf->bufMinVisString, 39 );
+  strncpy( alo->maxVisString, alo->eBuf->bufMaxVisString, 39 );
 
-  alo->closePolygon = alo->bufClosePolygon;
+  alo->closePolygon = alo->eBuf->bufClosePolygon;
 
-  alo->arrows = alo->bufArrows;
+  alo->arrows = alo->eBuf->bufArrows;
 
-  alo->x = alo->bufX;
-  alo->sboxX = alo->bufX;
+  alo->x = alo->eBuf->bufX;
+  alo->sboxX = alo->eBuf->bufX;
 
-  alo->y = alo->bufY;
-  alo->sboxY = alo->bufY;
+  alo->y = alo->eBuf->bufY;
+  alo->sboxY = alo->eBuf->bufY;
 
-  alo->w = alo->bufW;
-  alo->sboxW = alo->bufW;
+  alo->w = alo->eBuf->bufW;
+  alo->sboxW = alo->eBuf->bufW;
 
-  alo->h = alo->bufH;
-  alo->sboxH = alo->bufH;
+  alo->h = alo->eBuf->bufH;
+  alo->sboxH = alo->eBuf->bufH;
 
   alo->updateDimensions();
 
@@ -454,6 +454,8 @@ activeLineClass::activeLineClass ( void ) {
 
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
   setBlinkFunction( (void *) doBlink );
 
 }
@@ -461,6 +463,7 @@ activeLineClass::activeLineClass ( void ) {
 activeLineClass::~activeLineClass ( void ) {
 
   if ( name ) delete[] name;
+  if ( eBuf ) delete eBuf;
   if ( head ) delete head;
   if ( xpoints ) delete[] xpoints;
 
@@ -493,13 +496,11 @@ int i;
   strcpy( name, "activeLineClass" );
 
   lineColor.copy(source->lineColor);
-  lineCb = source->lineCb;
   lineColorMode = source->lineColorMode;
 
   fill = source->fill;
 
   fillColor.copy(source->fillColor);
-  fillCb = source->fillCb;
   fillColorMode = source->fillColorMode;
 
   visInverted = source->visInverted;
@@ -539,6 +540,8 @@ int i;
   connection.setMaxPvs( 2 );
 
   unconnectedTimer = 0;
+
+  eBuf = NULL;
 
   setBlinkFunction( (void *) doBlink );
 
@@ -580,6 +583,10 @@ int activeLineClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   ptr = actWin->obj.getNameFromClass( "activeLineClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -588,46 +595,46 @@ char title[32], *ptr;
 
   Strncat( title, activeLineClass_str5, 31 );
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
+  eBuf->bufX = x;
+  eBuf->bufY = y;
+  eBuf->bufW = w;
+  eBuf->bufH = h;
 
-  bufLineColor = lineColor.pixelIndex();
-  bufLineColorMode = lineColorMode;
+  eBuf->bufLineColor = lineColor.pixelIndex();
+  eBuf->bufLineColorMode = lineColorMode;
 
-  bufFill = fill;
+  eBuf->bufFill = fill;
 
-  bufFillColor = fillColor.pixelIndex();
-  bufFillColorMode = fillColorMode;
+  eBuf->bufFillColor = fillColor.pixelIndex();
+  eBuf->bufFillColorMode = fillColorMode;
 
-  bufLineWidth = lineWidth;
+  eBuf->bufLineWidth = lineWidth;
 
   if ( lineStyle == LineSolid )
-    bufLineStyle = 0;
+    eBuf->bufLineStyle = 0;
   else if ( lineStyle == LineOnOffDash )
-    bufLineStyle = 1;
+    eBuf->bufLineStyle = 1;
 
   if ( alarmPvExpStr.getRaw() )
-    strncpy( bufAlarmPvName, alarmPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+    strncpy( eBuf->bufAlarmPvName, alarmPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufAlarmPvName, "" );
+    strcpy( eBuf->bufAlarmPvName, "" );
 
   if ( visPvExpStr.getRaw() )
-    strncpy( bufVisPvName, visPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+    strncpy( eBuf->bufVisPvName, visPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufVisPvName, "" );
+    strcpy( eBuf->bufVisPvName, "" );
 
   if ( visInverted )
-    bufVisInverted = 0;
+    eBuf->bufVisInverted = 0;
   else
-    bufVisInverted = 1;
+    eBuf->bufVisInverted = 1;
 
-  strncpy( bufMinVisString, minVisString, 39 );
-  strncpy( bufMaxVisString, maxVisString, 39 );
+  strncpy( eBuf->bufMinVisString, minVisString, 39 );
+  strncpy( eBuf->bufMaxVisString, maxVisString, 39 );
 
-  bufArrows = arrows;
-  bufClosePolygon = closePolygon;
+  eBuf->bufArrows = arrows;
+  eBuf->bufClosePolygon = closePolygon;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -635,28 +642,28 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeLineClass_str6, 30, &bufX );
-  ef.addTextField( activeLineClass_str7, 30, &bufY );
-  ef.addTextField( activeLineClass_str8, 30, &bufW );
-  ef.addTextField( activeLineClass_str9, 30, &bufH );
-  ef.addOption( activeLineClass_str10, activeLineClass_str11, &bufLineWidth );
-  ef.addOption( activeLineClass_str12, activeLineClass_str13, &bufLineStyle );
-  ef.addOption( activeLineClass_str34, activeLineClass_str35, &bufArrows );
-  ef.addToggle( activeLineClass_str33, &bufClosePolygon );
-  ef.addColorButton( activeLineClass_str14, actWin->ci, &lineCb,
-   &bufLineColor );
-  ef.addToggle( activeLineClass_str15, &bufLineColorMode );
-  ef.addToggle( activeLineClass_str16, &bufFill );
-  ef.addColorButton( activeLineClass_str17, actWin->ci, &fillCb,
-   &bufFillColor );
-  ef.addToggle( activeLineClass_str18, &bufFillColorMode );
-  ef.addTextField( activeLineClass_str19, 30, bufAlarmPvName,
+  ef.addTextField( activeLineClass_str6, 30, &eBuf->bufX );
+  ef.addTextField( activeLineClass_str7, 30, &eBuf->bufY );
+  ef.addTextField( activeLineClass_str8, 30, &eBuf->bufW );
+  ef.addTextField( activeLineClass_str9, 30, &eBuf->bufH );
+  ef.addOption( activeLineClass_str10, activeLineClass_str11, &eBuf->bufLineWidth );
+  ef.addOption( activeLineClass_str12, activeLineClass_str13, &eBuf->bufLineStyle );
+  ef.addOption( activeLineClass_str34, activeLineClass_str35, &eBuf->bufArrows );
+  ef.addToggle( activeLineClass_str33, &eBuf->bufClosePolygon );
+  ef.addColorButton( activeLineClass_str14, actWin->ci, &eBuf->lineCb,
+   &eBuf->bufLineColor );
+  ef.addToggle( activeLineClass_str15, &eBuf->bufLineColorMode );
+  ef.addToggle( activeLineClass_str16, &eBuf->bufFill );
+  ef.addColorButton( activeLineClass_str17, actWin->ci, &eBuf->fillCb,
+   &eBuf->bufFillColor );
+  ef.addToggle( activeLineClass_str18, &eBuf->bufFillColorMode );
+  ef.addTextField( activeLineClass_str19, 30, eBuf->bufAlarmPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addTextField( activeLineClass_str20, 30, bufVisPvName,
+  ef.addTextField( activeLineClass_str20, 30, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addOption( " ", activeLineClass_str22, &bufVisInverted );
-  ef.addTextField( activeLineClass_str23, 30, bufMinVisString, 39 );
-  ef.addTextField( activeLineClass_str24, 30, bufMaxVisString, 39 );
+  ef.addOption( " ", activeLineClass_str22, &eBuf->bufVisInverted );
+  ef.addTextField( activeLineClass_str23, 30, eBuf->bufMinVisString, 39 );
+  ef.addTextField( activeLineClass_str24, 30, eBuf->bufMaxVisString, 39 );
 
   return 1;
 
@@ -2107,7 +2114,8 @@ int activeLineClass::activate (
       init = 1; // this stays true if there are no pvs
 
       if ( !alarmPvExpStr.getExpanded() ||
-           ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           // ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           blankOrComment( alarmPvExpStr.getExpanded() ) ) {
         alarmPvExists = 0;
         lineVisibility = fillVisibility = 1;
       }
@@ -2120,7 +2128,8 @@ int activeLineClass::activate (
       }
 
       if ( !visPvExpStr.getExpanded() ||
-           ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           // ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           blankOrComment( visPvExpStr.getExpanded() ) ) {
         visPvExists = 0;
         visibility = 1;
       }

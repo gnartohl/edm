@@ -174,8 +174,8 @@ typedef struct bufTag {
   int bufTopShadowColor;
   int bufBotShadowColor;
   int bufDisplaySource; // string pv, filename, or menu
-  char bufReadPvName[activeGraphicClass::MAX_PV_NAME+1];
-  char bufLabelPvName[activeGraphicClass::MAX_PV_NAME+1];
+  char bufReadPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufLabelPvName[PV_Factory::MAX_PV_NAME+1];
   char bufFileName[127+1];
   int bufPropagateMacros[maxDsps];
   char bufDisplayFileName[maxDsps][127+1];
@@ -223,8 +223,8 @@ ProcessVariable *readPvId, *labelPvId;
 int displaySource;
 
 expStringClass readPvExpStr, labelPvExpStr, fileNameExpStr;
-char bufReadPvName[activeGraphicClass::MAX_PV_NAME+1];
-char bufLabelPvName[activeGraphicClass::MAX_PV_NAME+1];
+char bufReadPvName[PV_Factory::MAX_PV_NAME+1];
+char bufLabelPvName[PV_Factory::MAX_PV_NAME+1];
 char bufFileName[127+1];
 
 int readExists, labelExists, fileExists;

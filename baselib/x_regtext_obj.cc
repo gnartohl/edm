@@ -346,7 +346,6 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   autoSize = source->autoSize;
 
   strncpy( fontTag, source->fontTag, 63 );
-  strncpy( bufFontTag, source->bufFontTag, 63 );
 
   fs = actWin->fi->getXFontStruct( fontTag );
 
@@ -367,7 +366,7 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   connection.setMaxPvs( 2 );
 //-------------------------------------
   strncpy( regExpStr, source->regExpStr, 39 );
-  strncpy( bufRegExp, source->bufRegExp, 63 );
+  strncpy( bufRegExp, source->bufRegExp, 39 );
 //-------------------------------------
 
 }
@@ -449,14 +448,14 @@ char title[32], *ptr;
   bufBgColorMode = bgColorMode;
 
   if ( alarmPvExpStr.getRaw() )
-    strncpy( bufAlarmPvName, alarmPvExpStr.getRaw(), 39 );
+    strncpy( bufAlarmPvName, alarmPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strncpy( bufAlarmPvName, "", 39 );
+    strcpy( bufAlarmPvName, "" );
 
   if ( visPvExpStr.getRaw() )
-    strncpy( bufVisPvName, visPvExpStr.getRaw(), 39 );
+    strncpy( bufVisPvName, visPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strncpy( bufVisPvName, "", 39 );
+    strcpy( bufVisPvName, "" );
 
   if ( visInverted )
     bufVisInverted = 0;
@@ -466,7 +465,6 @@ char title[32], *ptr;
   strncpy( bufMinVisString, minVisString, 39 );
   strncpy( bufMaxVisString, maxVisString, 39 );
 
-  strncpy( bufFontTag, fontTag, 63 );
   bufUseDisplayBg = useDisplayBg;
   bufAutoSize = autoSize;
 
@@ -505,8 +503,10 @@ char title[32], *ptr;
   ef.addToggle( activeXTextClass_str17, &bufBgColorMode );
   ef.addFontMenu( activeXTextClass_str12, actWin->fi, &fm, fontTag );
   fm.setFontAlignment( alignment );
-  ef.addTextField( activeXTextClass_str18, 35, bufAlarmPvName, 39 );
-  ef.addTextField( activeXTextClass_str19, 35, bufVisPvName, 39 );
+  ef.addTextField( activeXTextClass_str18, 35, bufAlarmPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addTextField( activeXTextClass_str19, 35, bufVisPvName,
+   PV_Factory::MAX_PV_NAME );
   ef.addOption( " ", activeXTextClass_str20, &bufVisInverted );
   ef.addTextField( activeXTextClass_str21, 35, bufMinVisString, 39 );
   ef.addTextField( activeXTextClass_str22, 35, bufMaxVisString, 39 );
@@ -663,7 +663,7 @@ int activeXRegTextClass::old_createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneValue[255+1];
+char oneValue[PV_Factory::MAX_PV_NAME+1];
 int stat = 1;
 
 //  printf("RegText old_createFromFile\n");
@@ -762,10 +762,10 @@ int stat = 1;
   else
     bgColor.setAlarmInsensitive();
 
-  readStringFromFile( oneValue, 39, f ); actWin->incLine();
+  readStringFromFile( oneValue, PV_Factory::MAX_PV_NAME, f ); actWin->incLine();
   alarmPvExpStr.setRaw( oneValue );
 
-  readStringFromFile( oneValue, 39, f ); actWin->incLine();
+  readStringFromFile( oneValue, PV_Factory::MAX_PV_NAME, f ); actWin->incLine();
   visPvExpStr.setRaw( oneValue );
 
   fscanf( f, "%d\n", &visInverted ); actWin->incLine();
@@ -828,7 +828,7 @@ int stat = 1;
 
 //---------------------------------------------
   // read regular expression from file
-  readStringFromFile(regExpStr, 39, f);     
+  readStringFromFile(regExpStr, 39, f);  
   actWin->incLine();
 //---------------------------------------------
 
@@ -1526,7 +1526,8 @@ int activeXRegTextClass::activate (
       init = 1; // this stays true if there are no pvs
 
       if ( !alarmPvExpStr.getExpanded() ||
-           ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+         // ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+         blankOrComment( alarmPvExpStr.getExpanded() ) ) {
         alarmPvExists = 0;
         fgVisibility = bgVisibility = 1;
       }
@@ -1539,7 +1540,8 @@ int activeXRegTextClass::activate (
       }
 
       if ( !visPvExpStr.getExpanded() ||
-           ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+         // ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+         blankOrComment( visPvExpStr.getExpanded() ) ) {
         visPvExists = 0;
         visibility = 1;
       }

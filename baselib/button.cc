@@ -73,29 +73,29 @@ activeButtonClass *bto = (activeButtonClass *) client;
   bto->eraseSelectBoxCorners();
   bto->erase();
 
-  bto->fgColorMode = bto->bufFgColorMode;
+  bto->fgColorMode = bto->eBuf->bufFgColorMode;
   if ( bto->fgColorMode == BTC_K_COLORMODE_ALARM )
     bto->fgColor.setAlarmSensitive();
   else
     bto->fgColor.setAlarmInsensitive();
-  bto->fgColor.setColorIndex( bto->bufFgColor, bto->actWin->ci );
+  bto->fgColor.setColorIndex( bto->eBuf->bufFgColor, bto->actWin->ci );
 
-  bto->onColor.setColorIndex( bto->bufOnColor, bto->actWin->ci );
+  bto->onColor.setColorIndex( bto->eBuf->bufOnColor, bto->actWin->ci );
 
-  bto->offColor.setColorIndex( bto->bufOffColor, bto->actWin->ci );
+  bto->offColor.setColorIndex( bto->eBuf->bufOffColor, bto->actWin->ci );
 
-  bto->inconsistentColor.setColorIndex( bto->bufInconsistentColor,
+  bto->inconsistentColor.setColorIndex( bto->eBuf->bufInconsistentColor,
    bto->actWin->ci );
 
-  bto->topShadowColor = bto->bufTopShadowColor;
-  bto->botShadowColor = bto->bufBotShadowColor;
+  bto->topShadowColor = bto->eBuf->bufTopShadowColor;
+  bto->botShadowColor = bto->eBuf->bufBotShadowColor;
 
   
-  bto->controlPvName.setRaw( bto->controlBufPvName );
-  bto->readPvName.setRaw( bto->readBufPvName );
+  bto->controlPvName.setRaw( bto->eBuf->controlBufPvName );
+  bto->readPvName.setRaw( bto->eBuf->readBufPvName );
 
-  strncpy( bto->onLabel, bto->bufOnLabel, MAX_ENUM_STRING_SIZE );
-  strncpy( bto->offLabel, bto->bufOffLabel, MAX_ENUM_STRING_SIZE );
+  strncpy( bto->onLabel, bto->eBuf->bufOnLabel, MAX_ENUM_STRING_SIZE );
+  strncpy( bto->offLabel, bto->eBuf->bufOffLabel, MAX_ENUM_STRING_SIZE );
 
   if ( strcmp( bto->labelTypeString, activeButtonClass_str3 ) == 0 )
     bto->labelType = BTC_K_PV_STATE;
@@ -126,35 +126,35 @@ activeButtonClass *bto = (activeButtonClass *) client;
     bto->invisible = 0;
 
   strncpy( bto->id, bto->bufId, 31 );
-  bto->downCallbackFlag = bto->bufDownCallbackFlag;
-  bto->upCallbackFlag = bto->bufUpCallbackFlag;
-  bto->activateCallbackFlag = bto->bufActivateCallbackFlag;
-  bto->deactivateCallbackFlag = bto->bufDeactivateCallbackFlag;
+  bto->downCallbackFlag = bto->eBuf->bufDownCallbackFlag;
+  bto->upCallbackFlag = bto->eBuf->bufUpCallbackFlag;
+  bto->activateCallbackFlag = bto->eBuf->bufActivateCallbackFlag;
+  bto->deactivateCallbackFlag = bto->eBuf->bufDeactivateCallbackFlag;
   bto->anyCallbackFlag = bto->downCallbackFlag || bto->upCallbackFlag ||
    bto->activateCallbackFlag || bto->deactivateCallbackFlag;
 
-  bto->visPvExpString.setRaw( bto->bufVisPvName );
-  strncpy( bto->minVisString, bto->bufMinVisString, 39 );
-  strncpy( bto->maxVisString, bto->bufMaxVisString, 39 );
+  bto->visPvExpString.setRaw( bto->eBuf->bufVisPvName );
+  strncpy( bto->minVisString, bto->eBuf->bufMinVisString, 39 );
+  strncpy( bto->maxVisString, bto->eBuf->bufMaxVisString, 39 );
 
-  if ( bto->bufVisInverted )
+  if ( bto->eBuf->bufVisInverted )
     bto->visInverted = 0;
   else
     bto->visInverted = 1;
 
-  bto->colorPvExpString.setRaw( bto->bufColorPvName );
+  bto->colorPvExpString.setRaw( bto->eBuf->bufColorPvName );
 
-  bto->x = bto->bufX;
-  bto->sboxX = bto->bufX;
+  bto->x = bto->eBuf->bufX;
+  bto->sboxX = bto->eBuf->bufX;
 
-  bto->y = bto->bufY;
-  bto->sboxY = bto->bufY;
+  bto->y = bto->eBuf->bufY;
+  bto->sboxY = bto->eBuf->bufY;
 
-  bto->w = bto->bufW;
-  bto->sboxW = bto->bufW;
+  bto->w = bto->eBuf->bufW;
+  bto->sboxW = bto->eBuf->bufW;
 
-  bto->h = bto->bufH;
-  bto->sboxH = bto->bufH;
+  bto->h = bto->eBuf->bufH;
+  bto->sboxH = bto->eBuf->bufH;
 
   bto->updateDimensions();
 
@@ -453,6 +453,8 @@ activeButtonClass::activeButtonClass ( void ) {
 
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
   setBlinkFunction( (void *) doBlink );
 
 }
@@ -482,13 +484,6 @@ activeGraphicClass *bto = (activeGraphicClass *) this;
   upCallback = NULL;
   activateCallback = NULL;
   deactivateCallback = NULL;
-
-  fgCb = source->fgCb;
-  onCb = source->onCb;
-  offCb = source->offCb;
-  inconsistentCb = source->inconsistentCb;
-  topShadowCb = source->topShadowCb;
-  botShadowCb = source->botShadowCb;
 
   strncpy( fontTag, source->fontTag, 63 );
 
@@ -536,6 +531,8 @@ activeGraphicClass *bto = (activeGraphicClass *) this;
 
   updateDimensions();
 
+  eBuf = NULL;
+
   setBlinkFunction( (void *) doBlink );
 
 }
@@ -543,6 +540,8 @@ activeGraphicClass *bto = (activeGraphicClass *) this;
 activeButtonClass::~activeButtonClass ( void ) {
 
   if ( name ) delete[] name;
+
+  if ( eBuf ) delete eBuf;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -939,7 +938,7 @@ int activeButtonClass::old_createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[activeGraphicClass::MAX_PV_NAME+1];
+char oneName[PV_Factory::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -1088,12 +1087,12 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   }
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
 
   controlPvName.setRaw( oneName );
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   readPvName.setRaw( oneName );
 
@@ -1143,7 +1142,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 2 ) ) ) {
 
-    readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+    readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
      actWin->incLine();
     visPvExpString.setRaw( oneName );
 
@@ -1157,7 +1156,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 3 ) ) ) {
 
-    readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+    readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
      actWin->incLine();
     colorPvExpString.setRaw( oneName );
 
@@ -1440,6 +1439,10 @@ int activeButtonClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   ptr = actWin->obj.getNameFromClass( "activeButtonClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -1450,55 +1453,55 @@ char title[32], *ptr;
 
   strncpy( bufId, id, 31 );
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
+  eBuf->bufX = x;
+  eBuf->bufY = y;
+  eBuf->bufW = w;
+  eBuf->bufH = h;
 
-  bufFgColor = fgColor.pixelIndex();
-  bufFgColorMode = fgColorMode;
+  eBuf->bufFgColor = fgColor.pixelIndex();
+  eBuf->bufFgColorMode = fgColorMode;
 
-  bufOnColor = onColor.pixelIndex();
+  eBuf->bufOnColor = onColor.pixelIndex();
 
-  bufOffColor = offColor.pixelIndex();
+  eBuf->bufOffColor = offColor.pixelIndex();
 
-  bufInconsistentColor = inconsistentColor.pixelIndex();
+  eBuf->bufInconsistentColor = inconsistentColor.pixelIndex();
 
-  bufTopShadowColor = topShadowColor;
-  bufBotShadowColor = botShadowColor;
-  strncpy( bufFontTag, fontTag, 63 );
+  eBuf->bufTopShadowColor = topShadowColor;
+  eBuf->bufBotShadowColor = botShadowColor;
+  strncpy( eBuf->bufFontTag, fontTag, 63 );
 
   if ( controlPvName.getRaw() )
-    strncpy( controlBufPvName, controlPvName.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->controlBufPvName, controlPvName.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( controlBufPvName, "" );
+    strcpy( eBuf->controlBufPvName, "" );
 
   if ( readPvName.getRaw() )
-    strncpy( readBufPvName, readPvName.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->readBufPvName, readPvName.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( readBufPvName, "" );
+    strcpy( eBuf->readBufPvName, "" );
 
   if ( visPvExpString.getRaw() )
-    strncpy( bufVisPvName, visPvExpString.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufVisPvName, visPvExpString.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufVisPvName, "" );
+    strcpy( eBuf->bufVisPvName, "" );
 
   if ( colorPvExpString.getRaw() )
-    strncpy( bufColorPvName, colorPvExpString.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufColorPvName, colorPvExpString.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufColorPvName, "" );
+    strcpy( eBuf->bufColorPvName, "" );
 
-  strncpy( bufOnLabel, onLabel, MAX_ENUM_STRING_SIZE );
-  strncpy( bufOffLabel, offLabel, MAX_ENUM_STRING_SIZE );
+  strncpy( eBuf->bufOnLabel, onLabel, MAX_ENUM_STRING_SIZE );
+  strncpy( eBuf->bufOffLabel, offLabel, MAX_ENUM_STRING_SIZE );
 
-  bufDownCallbackFlag = downCallbackFlag;
-  bufUpCallbackFlag = upCallbackFlag;
-  bufActivateCallbackFlag = activateCallbackFlag;
-  bufDeactivateCallbackFlag = deactivateCallbackFlag;
+  eBuf->bufDownCallbackFlag = downCallbackFlag;
+  eBuf->bufUpCallbackFlag = upCallbackFlag;
+  eBuf->bufActivateCallbackFlag = activateCallbackFlag;
+  eBuf->bufDeactivateCallbackFlag = deactivateCallbackFlag;
 
   if ( labelType == BTC_K_PV_STATE )
     strcpy( labelTypeString, activeButtonClass_str9 );
@@ -1521,12 +1524,12 @@ char title[32], *ptr;
     strcpy( invisibleString, activeButtonClass_str16 );
 
   if ( visInverted )
-    bufVisInverted = 0;
+    eBuf->bufVisInverted = 0;
   else
-    bufVisInverted = 1;
+    eBuf->bufVisInverted = 1;
 
-  strncpy( bufMinVisString, minVisString, 39 );
-  strncpy( bufMaxVisString, maxVisString, 39 );
+  strncpy( eBuf->bufMinVisString, minVisString, 39 );
+  strncpy( eBuf->bufMaxVisString, maxVisString, 39 );
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -1535,14 +1538,14 @@ char title[32], *ptr;
    title, NULL, NULL, NULL );
 
   //ef.addTextField( activeButtonClass_str17, 35, bufId, 31 );
-  ef.addTextField( activeButtonClass_str18, 35, &bufX );
-  ef.addTextField( activeButtonClass_str19, 35, &bufY );
-  ef.addTextField( activeButtonClass_str20, 35, &bufW );
-  ef.addTextField( activeButtonClass_str21, 35, &bufH );
-  ef.addTextField( activeButtonClass_str22, 35, controlBufPvName,
-   activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeButtonClass_str23, 35, readBufPvName,
-   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeButtonClass_str18, 35, &eBuf->bufX );
+  ef.addTextField( activeButtonClass_str19, 35, &eBuf->bufY );
+  ef.addTextField( activeButtonClass_str20, 35, &eBuf->bufW );
+  ef.addTextField( activeButtonClass_str21, 35, &eBuf->bufH );
+  ef.addTextField( activeButtonClass_str22, 35, eBuf->controlBufPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addTextField( activeButtonClass_str23, 35, eBuf->readBufPvName,
+   PV_Factory::MAX_PV_NAME );
   ef.addOption( activeButtonClass_str24, activeButtonClass_str25,
    buttonTypeStr, 7 );
   ef.addOption( activeButtonClass_str26, activeButtonClass_str27, _3DString,
@@ -1551,40 +1554,40 @@ char title[32], *ptr;
    invisibleString, 7 );
   ef.addOption( activeButtonClass_str30, activeButtonClass_str31,
    labelTypeString, 15 );
-  ef.addTextField( activeButtonClass_str32, 35, bufOnLabel,
+  ef.addTextField( activeButtonClass_str32, 35, eBuf->bufOnLabel,
    MAX_ENUM_STRING_SIZE );
-  ef.addTextField( activeButtonClass_str33, 35, bufOffLabel,
+  ef.addTextField( activeButtonClass_str33, 35, eBuf->bufOffLabel,
    MAX_ENUM_STRING_SIZE );
 
-  //ef.addToggle( activeButtonClass_str34, &bufActivateCallbackFlag );
-  //ef.addToggle( activeButtonClass_str35, &bufDeactivateCallbackFlag );
-  //ef.addToggle( activeButtonClass_str36, &bufDownCallbackFlag );
-  //ef.addToggle( activeButtonClass_str37, &bufUpCallbackFlag );
+  //ef.addToggle( activeButtonClass_str34, &eBuf->bufActivateCallbackFlag );
+  //ef.addToggle( activeButtonClass_str35, &eBuf->bufDeactivateCallbackFlag );
+  //ef.addToggle( activeButtonClass_str36, &eBuf->bufDownCallbackFlag );
+  //ef.addToggle( activeButtonClass_str37, &eBuf->bufUpCallbackFlag );
 
-  ef.addColorButton( activeButtonClass_str39, actWin->ci, &fgCb, &bufFgColor );
-  ef.addToggle( activeButtonClass_str41, &bufFgColorMode );
-  ef.addColorButton( activeButtonClass_str42, actWin->ci, &onCb, &bufOnColor );
-  ef.addColorButton( activeButtonClass_str43, actWin->ci, &offCb,
-   &bufOffColor );
+  ef.addColorButton( activeButtonClass_str39, actWin->ci, &eBuf->fgCb, &eBuf->bufFgColor );
+  ef.addToggle( activeButtonClass_str41, &eBuf->bufFgColorMode );
+  ef.addColorButton( activeButtonClass_str42, actWin->ci, &eBuf->onCb, &eBuf->bufOnColor );
+  ef.addColorButton( activeButtonClass_str43, actWin->ci, &eBuf->offCb,
+   &eBuf->bufOffColor );
   ef.addColorButton( activeButtonClass_str44, actWin->ci,
-   &inconsistentCb, &bufInconsistentColor );
-  ef.addColorButton( activeButtonClass_str45, actWin->ci, &topShadowCb,
-   &bufTopShadowColor );
-  ef.addColorButton( activeButtonClass_str46, actWin->ci, &botShadowCb,
-   &bufBotShadowColor );
+   &eBuf->inconsistentCb, &eBuf->bufInconsistentColor );
+  ef.addColorButton( activeButtonClass_str45, actWin->ci, &eBuf->topShadowCb,
+   &eBuf->bufTopShadowColor );
+  ef.addColorButton( activeButtonClass_str46, actWin->ci, &eBuf->botShadowCb,
+   &eBuf->bufBotShadowColor );
 
   ef.addFontMenu( activeButtonClass_str38, actWin->fi, &fm, fontTag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 
-  ef.addTextField( activeButtonClass_str62, 30, bufColorPvName,
-   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeButtonClass_str62, 30, eBuf->bufColorPvName,
+   PV_Factory::MAX_PV_NAME );
 
-  ef.addTextField( activeButtonClass_str58, 30, bufVisPvName,
-   activeGraphicClass::MAX_PV_NAME );
-  ef.addOption( " ", activeButtonClass_str59, &bufVisInverted );
-  ef.addTextField( activeButtonClass_str60, 30, bufMinVisString, 39 );
-  ef.addTextField( activeButtonClass_str61, 30, bufMaxVisString, 39 );
+  ef.addTextField( activeButtonClass_str58, 30, eBuf->bufVisPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addOption( " ", activeButtonClass_str59, &eBuf->bufVisInverted );
+  ef.addTextField( activeButtonClass_str60, 30, eBuf->bufMinVisString, 39 );
+  ef.addTextField( activeButtonClass_str61, 30, eBuf->bufMaxVisString, 39 );
 
   return 1;
 
@@ -2073,7 +2076,8 @@ char callbackName[63+1];
       activeMode = 1;
 
       if ( !controlPvName.getExpanded() ||
-         ( strcmp( controlPvName.getExpanded(), "" ) == 0 ) ) {
+	 //( strcmp( controlPvName.getExpanded(), "" ) == 0 ) ) {
+        blankOrComment( controlPvName.getExpanded() ) ) {
         controlExists = 0;
       }
       else {
@@ -2082,7 +2086,8 @@ char callbackName[63+1];
       }
 
       if ( !readPvName.getExpanded() ||
-         ( strcmp( readPvName.getExpanded(), "" ) == 0 ) ) {
+	// ( strcmp( readPvName.getExpanded(), "" ) == 0 ) ) {
+        blankOrComment( readPvName.getExpanded() ) ) {
         readExists = 0;
       }
       else {
@@ -2091,7 +2096,8 @@ char callbackName[63+1];
       }
 
       if ( !visPvExpString.getExpanded() ||
-         ( strcmp( visPvExpString.getExpanded(), "" ) == 0 ) ) {
+	// ( strcmp( visPvExpString.getExpanded(), "" ) == 0 ) ) {
+        blankOrComment( visPvExpString.getExpanded() ) ) {
         visExists = 0;
         visibility = 1;
       }
@@ -2101,7 +2107,8 @@ char callbackName[63+1];
       }
 
       if ( !colorPvExpString.getExpanded() ||
-         ( strcmp( colorPvExpString.getExpanded(), "" ) == 0 ) ) {
+	 // ( strcmp( colorPvExpString.getExpanded(), "" ) == 0 ) ) {
+         blankOrComment( colorPvExpString.getExpanded() ) ) {
         colorExists = 0;
       }
       else {

@@ -105,7 +105,28 @@ friend void table_monitor_read_connect_state (
   ProcessVariable *pv,
   void *userarg );
 
-int bufX, bufY, bufW, bufH;
+typedef struct editBufTag {
+// edit buffer
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  int bufFgColor;
+  int bufBgColor;
+  int bufOddBgColor;
+  int bufEvenBgColor;
+  int bufTopShadowColor;
+  int bufBotShadowColor;
+  colorButtonClass fgCb;
+  colorButtonClass bgCb;
+  colorButtonClass oddBgCb;
+  colorButtonClass evenBgCb;
+  colorButtonClass topCb;
+  colorButtonClass botCb;
+  char bufReadPvName[PV_Factory::MAX_PV_NAME+1];
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
 
 int opComplete;
 
@@ -124,18 +145,12 @@ ProcessVariable *readPvId;
 int initialReadConnection;
 
 expStringClass readPvExpStr;
-char bufReadPvName[activeGraphicClass::MAX_PV_NAME+1];
 
 int readExists;
 
 int readPvConnected, firstReadUpdate, init, active, activeMode;
 
 pvColorClass fgColor, bgColor, oddBgColor, evenBgColor, topShadowColor, botShadowColor;
-colorButtonClass fgCb, bgCb, oddBgCb, evenBgCb, topCb, botCb;
-
-int bufFgColor, bufBgColor, bufOddBgColor, bufEvenBgColor, bufTopShadowColor,
- bufBotShadowColor;
-char bufFontTag[63+1];
 
 int needConnectInit, needUpdate, needDraw;
 

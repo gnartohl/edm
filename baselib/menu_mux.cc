@@ -73,11 +73,11 @@ entryFormClass *ef = (entryFormClass *) dsc->ef;
 menuMuxClass *mmo = (menuMuxClass *) dsc->obj;
 int i;
 
-  mmo->elbt->setValue( mmo->bufTag[ef->index] );
+  mmo->elbt->setValue( mmo->eBuf->bufTag[ef->index] );
 
   for ( i=0; i<MMUX_MAX_ENTRIES; i++ ) {
-    mmo->elbm[i]->setValue( mmo->bufM[ef->index][i] );
-    mmo->elbe[i]->setValue( mmo->bufE[ef->index][i] );
+    mmo->elbm[i]->setValue( mmo->eBuf->bufM[ef->index][i] );
+    mmo->elbe[i]->setValue( mmo->eBuf->bufE[ef->index][i] );
   }
 
 }
@@ -219,41 +219,41 @@ int i, ii;
   mmuxo->actWin->fi->getTextFontList( mmuxo->fontTag, &mmuxo->fontList );
   mmuxo->fs = mmuxo->actWin->fi->getXFontStruct( mmuxo->fontTag );
 
-  mmuxo->topShadowColor = mmuxo->bufTopShadowColor;
-  mmuxo->botShadowColor = mmuxo->bufBotShadowColor;
+  mmuxo->topShadowColor = mmuxo->eBuf->bufTopShadowColor;
+  mmuxo->botShadowColor = mmuxo->eBuf->bufBotShadowColor;
 
-  mmuxo->fgColorMode = mmuxo->bufFgColorMode;
+  mmuxo->fgColorMode = mmuxo->eBuf->bufFgColorMode;
   if ( mmuxo->fgColorMode == MMUXC_K_COLORMODE_ALARM )
     mmuxo->fgColor.setAlarmSensitive();
   else
     mmuxo->fgColor.setAlarmInsensitive();
-  mmuxo->fgColor.setColorIndex( mmuxo->bufFgColor, mmuxo->actWin->ci );
+  mmuxo->fgColor.setColorIndex( mmuxo->eBuf->bufFgColor, mmuxo->actWin->ci );
 
-  mmuxo->bgColorMode = mmuxo->bufBgColorMode;
+  mmuxo->bgColorMode = mmuxo->eBuf->bufBgColorMode;
   if ( mmuxo->bgColorMode == MMUXC_K_COLORMODE_ALARM )
     mmuxo->bgColor.setAlarmSensitive();
   else
     mmuxo->bgColor.setAlarmInsensitive();
-  mmuxo->bgColor.setColorIndex( mmuxo->bufBgColor, mmuxo->actWin->ci );
+  mmuxo->bgColor.setColorIndex( mmuxo->eBuf->bufBgColor, mmuxo->actWin->ci );
 
-  mmuxo->x = mmuxo->bufX;
-  mmuxo->sboxX = mmuxo->bufX;
+  mmuxo->x = mmuxo->eBuf->bufX;
+  mmuxo->sboxX = mmuxo->eBuf->bufX;
 
-  mmuxo->y = mmuxo->bufY;
-  mmuxo->sboxY = mmuxo->bufY;
+  mmuxo->y = mmuxo->eBuf->bufY;
+  mmuxo->sboxY = mmuxo->eBuf->bufY;
 
-  mmuxo->w = mmuxo->bufW;
-  mmuxo->sboxW = mmuxo->bufW;
+  mmuxo->w = mmuxo->eBuf->bufW;
+  mmuxo->sboxW = mmuxo->eBuf->bufW;
 
-  mmuxo->h = mmuxo->bufH;
-  mmuxo->sboxH = mmuxo->bufH;
+  mmuxo->h = mmuxo->eBuf->bufH;
+  mmuxo->sboxH = mmuxo->eBuf->bufH;
 
-  mmuxo->controlPvExpStr.setRaw( mmuxo->bufControlPvName );
+  mmuxo->controlPvExpStr.setRaw( mmuxo->eBuf->bufControlPvName );
 
-  mmuxo->initialStateExpStr.setRaw( mmuxo->bufInitialState );
+  mmuxo->initialStateExpStr.setRaw( mmuxo->eBuf->bufInitialState );
 
   for ( i=0; i<MMUX_MAX_STATES; i++ ) {
-    strncpy( mmuxo->tag[i], mmuxo->bufTag[i], MMUX_MAX_STRING_SIZE+1 );
+    strncpy( mmuxo->tag[i], mmuxo->eBuf->bufTag[i], MMUX_MAX_STRING_SIZE+1 );
     if ( strlen(mmuxo->tag[i]) == 0 ) {
       strcpy( mmuxo->tag[i], "?" );
     }
@@ -261,8 +261,8 @@ int i, ii;
 
   for ( i=0; i<MMUX_MAX_STATES; i++ ) {
     for ( ii=0; ii<MMUX_MAX_ENTRIES; ii++ ) {
-      strncpy( mmuxo->m[i][ii], mmuxo->bufM[i][ii], MMUX_MAX_STRING_SIZE+1 );
-      strncpy( mmuxo->e[i][ii], mmuxo->bufE[i][ii], MMUX_MAX_STRING_SIZE+1 );
+      strncpy( mmuxo->m[i][ii], mmuxo->eBuf->bufM[i][ii], MMUX_MAX_STRING_SIZE+1 );
+      strncpy( mmuxo->e[i][ii], mmuxo->eBuf->bufE[i][ii], MMUX_MAX_STRING_SIZE+1 );
     }
   }
 
@@ -366,6 +366,8 @@ int i, ii;
   fontList = NULL;
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
   setBlinkFunction( (void *) doBlink );
 
 }
@@ -413,13 +415,9 @@ activeGraphicClass *mmuxo = (activeGraphicClass *) this;
 
   topShadowColor = source->topShadowColor;
   botShadowColor = source->botShadowColor;
-  topShadowCb = source->topShadowCb;
-  botShadowCb = source->botShadowCb;
 
   fgColor.copy(source->fgColor);
   bgColor.copy(source->bgColor);
-  fgCb = source->fgCb;
-  bgCb = source->bgCb;
 
   fgColorMode = source->fgColorMode;
   bgColorMode = source->bgColorMode;
@@ -433,6 +431,8 @@ activeGraphicClass *mmuxo = (activeGraphicClass *) this;
   activeMode = 0;
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
   setBlinkFunction( (void *) doBlink );
 
 }
@@ -442,6 +442,8 @@ menuMuxClass::~menuMuxClass ( void ) {
 int i;
 
   if ( name ) delete[] name;
+
+  if ( eBuf ) delete eBuf;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -743,7 +745,7 @@ int menuMuxClass::old_createFromFile (
 int r, g, b, i, ii, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[activeGraphicClass::MAX_PV_NAME+1];
+char oneName[PV_Factory::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -879,7 +881,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   }
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   controlPvExpStr.setRaw( oneName );
 
@@ -939,6 +941,10 @@ int menuMuxClass::genericEdit ( void ) {
 int i, ii;
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   ptr = actWin->obj.getNameFromClass( "menuMuxClass" );
   if ( ptr )
     strncpy( title, ptr, 31+1 );
@@ -947,42 +953,40 @@ char title[32], *ptr;
 
   Strncat( title, menuMuxClass_str3, 31+1 );
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
+  eBuf->bufX = x;
+  eBuf->bufY = y;
+  eBuf->bufW = w;
+  eBuf->bufH = h;
 
-  strncpy( bufFontTag, fontTag, 63+1 );
+  eBuf->bufTopShadowColor = topShadowColor;
+  eBuf->bufBotShadowColor = botShadowColor;
 
-  bufTopShadowColor = topShadowColor;
-  bufBotShadowColor = botShadowColor;
+  eBuf->bufFgColor = fgColor.pixelIndex();
+  eBuf->bufFgColorMode = fgColorMode;
 
-  bufFgColor = fgColor.pixelIndex();
-  bufFgColorMode = fgColorMode;
-
-  bufBgColor = bgColor.pixelIndex();
-  bufBgColorMode = bgColorMode;
+  eBuf->bufBgColor = bgColor.pixelIndex();
+  eBuf->bufBgColorMode = bgColorMode;
 
   if ( controlPvExpStr.getRaw() )
-    strncpy( bufControlPvName, controlPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufControlPvName, controlPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufControlPvName, "" );
+    strcpy( eBuf->bufControlPvName, "" );
 
   for ( i=0; i<MMUX_MAX_STATES; i++ ) {
-    strncpy( bufTag[i], tag[i], MMUX_MAX_STRING_SIZE+1 );
+    strncpy( eBuf->bufTag[i], tag[i], MMUX_MAX_STRING_SIZE+1 );
   }
   for ( i=0; i<MMUX_MAX_STATES; i++ ) {
     for ( ii=0; ii<MMUX_MAX_ENTRIES; ii++ ) {
-      strncpy( bufM[i][ii], m[i][ii], MMUX_MAX_STRING_SIZE+1 );
-      strncpy( bufE[i][ii], e[i][ii], MMUX_MAX_STRING_SIZE+1 );
+      strncpy( eBuf->bufM[i][ii], m[i][ii], MMUX_MAX_STRING_SIZE+1 );
+      strncpy( eBuf->bufE[i][ii], e[i][ii], MMUX_MAX_STRING_SIZE+1 );
     }
   }
 
   if ( initialStateExpStr.getRaw() )
-    strncpy( bufInitialState, initialStateExpStr.getRaw(), 15+1 );
+    strncpy( eBuf->bufInitialState, initialStateExpStr.getRaw(), 15+1 );
   else
-    strncpy( bufInitialState, "0", 15+1 );
+    strncpy( eBuf->bufInitialState, "0", 15+1 );
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -991,34 +995,34 @@ char title[32], *ptr;
    title, MMUX_MAX_STATES, numItems,
    mmuxSetItem, (void *) this, NULL, NULL, NULL );
 
-  ef.addTextField( menuMuxClass_str4, 35, &bufX );
-  ef.addTextField( menuMuxClass_str5, 35, &bufY );
-  ef.addTextField( menuMuxClass_str6, 35, &bufW );
-  ef.addTextField( menuMuxClass_str7, 35, &bufH );
-  ef.addTextField( menuMuxClass_str17, 35, bufControlPvName,
-   activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( menuMuxClass_str18, 35, bufInitialState, 30 );
+  ef.addTextField( menuMuxClass_str4, 35, &eBuf->bufX );
+  ef.addTextField( menuMuxClass_str5, 35, &eBuf->bufY );
+  ef.addTextField( menuMuxClass_str6, 35, &eBuf->bufW );
+  ef.addTextField( menuMuxClass_str7, 35, &eBuf->bufH );
+  ef.addTextField( menuMuxClass_str17, 35, eBuf->bufControlPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addTextField( menuMuxClass_str18, 35, eBuf->bufInitialState, 30 );
 
-  ef.addColorButton( menuMuxClass_str8, actWin->ci, &fgCb, &bufFgColor );
-  ef.addToggle( menuMuxClass_str10, &bufFgColorMode );
-  ef.addColorButton( menuMuxClass_str11, actWin->ci, &bgCb, &bufBgColor );
-  ef.addColorButton( menuMuxClass_str14, actWin->ci, &topShadowCb,
-   &bufTopShadowColor );
-  ef.addColorButton( menuMuxClass_str15, actWin->ci, &botShadowCb,
-   &bufBotShadowColor );
+  ef.addColorButton( menuMuxClass_str8, actWin->ci, &eBuf->fgCb, &eBuf->bufFgColor );
+  ef.addToggle( menuMuxClass_str10, &eBuf->bufFgColorMode );
+  ef.addColorButton( menuMuxClass_str11, actWin->ci, &eBuf->bgCb, &eBuf->bufBgColor );
+  ef.addColorButton( menuMuxClass_str14, actWin->ci, &eBuf->topShadowCb,
+   &eBuf->bufTopShadowColor );
+  ef.addColorButton( menuMuxClass_str15, actWin->ci, &eBuf->botShadowCb,
+   &eBuf->bufBotShadowColor );
 
   ef.addFontMenu( menuMuxClass_str16, actWin->fi, &fm, fontTag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 
   for ( i=0; i<MMUX_MAX_STATES; i++ ) {
-    tagPtr[i] = (char *) &bufTag[i];
+    tagPtr[i] = (char *) &eBuf->bufTag[i];
   }
 
   for ( i=0; i<MMUX_MAX_STATES; i++ ) {
     for ( ii=0; ii<MMUX_MAX_ENTRIES; ii++ ) {
-      mPtr[ii][i] = (char *) &bufM[i][ii];
-      ePtr[ii][i] = (char *) &bufE[i][ii];
+      mPtr[ii][i] = (char *) &eBuf->bufM[i][ii];
+      ePtr[ii][i] = (char *) &eBuf->bufE[i][ii];
     }
   }
 
@@ -1471,7 +1475,8 @@ int opStat;
 
       popUpMenu = (Widget) NULL;
 
-      if ( strcmp( controlPvExpStr.getRaw(), "" ) != 0 )
+      // if ( strcmp( controlPvExpStr.getExpanded(), "" ) != 0 )
+      if ( !blankOrComment( controlPvExpStr.getExpanded() ) )
         controlExists = 1;
       else
         controlExists = 0;

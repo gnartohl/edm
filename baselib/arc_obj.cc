@@ -100,42 +100,42 @@ activeArcClass *aao = (activeArcClass *) client;
   aao->eraseSelectBoxCorners();
   aao->erase();
 
-  aao->fill = aao->bufFill;
+  aao->fill = aao->eBuf->bufFill;
 
-  aao->lineColorMode = aao->bufLineColorMode;
+  aao->lineColorMode = aao->eBuf->bufLineColorMode;
   if ( aao->lineColorMode == AAC_K_COLORMODE_ALARM )
     aao->lineColor.setAlarmSensitive();
   else
     aao->lineColor.setAlarmInsensitive();
-  aao->lineColor.setColorIndex( aao->bufLineColor, aao->actWin->ci );
+  aao->lineColor.setColorIndex( aao->eBuf->bufLineColor, aao->actWin->ci );
 
-  aao->fillColorMode = aao->bufFillColorMode;
+  aao->fillColorMode = aao->eBuf->bufFillColorMode;
   if ( aao->fillColorMode == AAC_K_COLORMODE_ALARM )
     aao->fillColor.setAlarmSensitive();
   else
     aao->fillColor.setAlarmInsensitive();
-  aao->fillColor.setColorIndex( aao->bufFillColor, aao->actWin->ci );
+  aao->fillColor.setColorIndex( aao->eBuf->bufFillColor, aao->actWin->ci );
 
-  aao->lineWidth = aao->bufLineWidth;
+  aao->lineWidth = aao->eBuf->bufLineWidth;
 
-  if ( aao->bufLineStyle == 0 )
+  if ( aao->eBuf->bufLineStyle == 0 )
     aao->lineStyle = LineSolid;
-  else if ( aao->bufLineStyle == 1 )
+  else if ( aao->eBuf->bufLineStyle == 1 )
     aao->lineStyle = LineOnOffDash;
 
-  aao->alarmPvExpStr.setRaw( aao->bufAlarmPvName );
+  aao->alarmPvExpStr.setRaw( aao->eBuf->bufAlarmPvName );
 
-  aao->visPvExpStr.setRaw( aao->bufVisPvName );
+  aao->visPvExpStr.setRaw( aao->eBuf->bufVisPvName );
 
-  if ( aao->bufVisInverted )
+  if ( aao->eBuf->bufVisInverted )
     aao->visInverted = 0;
   else
     aao->visInverted = 1;
 
-  strncpy( aao->minVisString, aao->bufMinVisString, 39 );
-  strncpy( aao->maxVisString, aao->bufMaxVisString, 39 );
+  strncpy( aao->minVisString, aao->eBuf->bufMinVisString, 39 );
+  strncpy( aao->maxVisString, aao->eBuf->bufMaxVisString, 39 );
 
-  aao->efStartAngle = aao->bufEfStartAngle;
+  aao->efStartAngle = aao->eBuf->bufEfStartAngle;
   if ( aao->efStartAngle.isNull() ) {
     aao->startAngle = 0;
   }
@@ -143,7 +143,7 @@ activeArcClass *aao = (activeArcClass *) client;
     aao->startAngle = (int) ( aao->efStartAngle.value() * 64.0 +0.5 );
   }
 
-  aao->efTotalAngle = aao->bufEfTotalAngle;
+  aao->efTotalAngle = aao->eBuf->bufEfTotalAngle;
   if ( aao->efTotalAngle.isNull() ) {
     aao->totalAngle = 180 * 64;
   }
@@ -151,19 +151,19 @@ activeArcClass *aao = (activeArcClass *) client;
     aao->totalAngle = (int) ( aao->efTotalAngle.value() * 64.0 +0.5 );
   }
 
-  aao->fillMode = aao->bufFillMode;
+  aao->fillMode = aao->eBuf->bufFillMode;
 
-  aao->x = aao->bufX;
-  aao->sboxX = aao->bufX;
+  aao->x = aao->eBuf->bufX;
+  aao->sboxX = aao->eBuf->bufX;
 
-  aao->y = aao->bufY;
-  aao->sboxY = aao->bufY;
+  aao->y = aao->eBuf->bufY;
+  aao->sboxY = aao->eBuf->bufY;
 
-  aao->w = aao->bufW;
-  aao->sboxW = aao->bufW;
+  aao->w = aao->eBuf->bufW;
+  aao->sboxW = aao->eBuf->bufW;
 
-  aao->h = aao->bufH;
-  aao->sboxH = aao->bufH;
+  aao->h = aao->eBuf->bufH;
+  aao->sboxH = aao->eBuf->bufH;
 
 }
 
@@ -357,6 +357,7 @@ activeArcClass::activeArcClass ( void ) {
   connection.setMaxPvs( 2 );
   unconnectedTimer = 0;
   setBlinkFunction( (void *) doBlink );
+  eBuf = NULL;
 
 }
 
@@ -373,8 +374,6 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   lineColor.copy(source->lineColor);
   fillColor.copy(source->fillColor);
-  lineCb = source->lineCb;
-  fillCb = source->fillCb;
   fill = source->fill;
   lineColorMode = source->lineColorMode;
   fillColorMode = source->fillColorMode;
@@ -416,6 +415,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
   setBlinkFunction( (void *) doBlink );
 
 }
@@ -423,6 +424,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 activeArcClass::~activeArcClass ( void ) {
 
   if ( name ) delete[] name;
+
+  if ( eBuf ) delete eBuf;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -463,6 +466,10 @@ int activeArcClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   ptr = actWin->obj.getNameFromClass( "activeArcClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -471,44 +478,44 @@ char title[32], *ptr;
 
   Strncat( title, activeArcClass_str5, 31 );
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
+  eBuf->bufX = x;
+  eBuf->bufY = y;
+  eBuf->bufW = w;
+  eBuf->bufH = h;
 
-  bufLineColor = lineColor.pixelIndex();
-  bufLineColorMode = lineColorMode;
+  eBuf->bufLineColor = lineColor.pixelIndex();
+  eBuf->bufLineColorMode = lineColorMode;
 
-  bufFillColor = fillColor.pixelIndex();
-  bufFillColorMode = fillColorMode;
+  eBuf->bufFillColor = fillColor.pixelIndex();
+  eBuf->bufFillColorMode = fillColorMode;
 
-  bufFill = fill;
-  bufLineWidth = lineWidth;
-  bufLineStyle = lineStyle;
+  eBuf->bufFill = fill;
+  eBuf->bufLineWidth = lineWidth;
+  eBuf->bufLineStyle = lineStyle;
 
   if ( alarmPvExpStr.getRaw() )
-    strncpy( bufAlarmPvName, alarmPvExpStr.getRaw(),
+    strncpy( eBuf->bufAlarmPvName, alarmPvExpStr.getRaw(),
      PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufAlarmPvName, "" );
+    strcpy( eBuf->bufAlarmPvName, "" );
 
   if ( visPvExpStr.getRaw() )
-    strncpy( bufVisPvName, visPvExpStr.getRaw(),
+    strncpy( eBuf->bufVisPvName, visPvExpStr.getRaw(),
      PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufVisPvName, "" );
+    strcpy( eBuf->bufVisPvName, "" );
 
   if ( visInverted )
-    bufVisInverted = 0;
+    eBuf->bufVisInverted = 0;
   else
-    bufVisInverted = 1;
+    eBuf->bufVisInverted = 1;
 
-  strncpy( bufMinVisString, minVisString, 39 );
-  strncpy( bufMaxVisString, maxVisString, 39 );
+  strncpy( eBuf->bufMinVisString, minVisString, 39 );
+  strncpy( eBuf->bufMaxVisString, maxVisString, 39 );
 
-  bufEfStartAngle = efStartAngle;
-  bufEfTotalAngle = efTotalAngle;
-  bufFillMode = fillMode;
+  eBuf->bufEfStartAngle = efStartAngle;
+  eBuf->bufEfTotalAngle = efTotalAngle;
+  eBuf->bufFillMode = fillMode;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -516,27 +523,27 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeArcClass_str6, 30, &bufX );
-  ef.addTextField( activeArcClass_str7, 30, &bufY );
-  ef.addTextField( activeArcClass_str8, 30, &bufW );
-  ef.addTextField( activeArcClass_str9, 30, &bufH );
-  ef.addTextField( activeArcClass_str10, 30, &bufEfStartAngle );
-  ef.addTextField( activeArcClass_str11, 30, &bufEfTotalAngle );
-  ef.addOption( activeArcClass_str12, activeArcClass_str13, &bufLineWidth );
-  ef.addOption( activeArcClass_str14, activeArcClass_str15, &bufLineStyle );
-  ef.addColorButton( activeArcClass_str16, actWin->ci, &lineCb, &bufLineColor );
-  ef.addToggle( activeArcClass_str17, &bufLineColorMode );
-  ef.addToggle( activeArcClass_str18, &bufFill );
-  ef.addOption( activeArcClass_str19, activeArcClass_str20, &bufFillMode );
-  ef.addColorButton( activeArcClass_str21, actWin->ci, &fillCb, &bufFillColor );
-  ef.addToggle( activeArcClass_str22, &bufFillColorMode );
-  ef.addTextField( activeArcClass_str23, 30, bufAlarmPvName,
+  ef.addTextField( activeArcClass_str6, 30, &eBuf->bufX );
+  ef.addTextField( activeArcClass_str7, 30, &eBuf->bufY );
+  ef.addTextField( activeArcClass_str8, 30, &eBuf->bufW );
+  ef.addTextField( activeArcClass_str9, 30, &eBuf->bufH );
+  ef.addTextField( activeArcClass_str10, 30, &eBuf->bufEfStartAngle );
+  ef.addTextField( activeArcClass_str11, 30, &eBuf->bufEfTotalAngle );
+  ef.addOption( activeArcClass_str12, activeArcClass_str13, &eBuf->bufLineWidth );
+  ef.addOption( activeArcClass_str14, activeArcClass_str15, &eBuf->bufLineStyle );
+  ef.addColorButton( activeArcClass_str16, actWin->ci, &eBuf->lineCb, &eBuf->bufLineColor );
+  ef.addToggle( activeArcClass_str17, &eBuf->bufLineColorMode );
+  ef.addToggle( activeArcClass_str18, &eBuf->bufFill );
+  ef.addOption( activeArcClass_str19, activeArcClass_str20, &eBuf->bufFillMode );
+  ef.addColorButton( activeArcClass_str21, actWin->ci, &eBuf->fillCb, &eBuf->bufFillColor );
+  ef.addToggle( activeArcClass_str22, &eBuf->bufFillColorMode );
+  ef.addTextField( activeArcClass_str23, 30, eBuf->bufAlarmPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addTextField( activeArcClass_str24, 30, bufVisPvName,
+  ef.addTextField( activeArcClass_str24, 30, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addOption( " ", activeArcClass_str25, &bufVisInverted );
-  ef.addTextField( activeArcClass_str26, 30, bufMinVisString, 39 );
-  ef.addTextField( activeArcClass_str27, 30, bufMaxVisString, 39 );
+  ef.addOption( " ", activeArcClass_str25, &eBuf->bufVisInverted );
+  ef.addTextField( activeArcClass_str26, 30, eBuf->bufMinVisString, 39 );
+  ef.addTextField( activeArcClass_str27, 30, eBuf->bufMaxVisString, 39 );
 
   return 1;
 
@@ -1363,7 +1370,8 @@ int activeArcClass::activate (
       init = 1; // this stays true if there are no pvs
 
       if ( !alarmPvExpStr.getExpanded() ||
-           ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           // ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           blankOrComment( alarmPvExpStr.getExpanded() ) ) {
         alarmPvExists = 0;
         lineVisibility = fillVisibility = 1;
       }
@@ -1376,7 +1384,8 @@ int activeArcClass::activate (
       }
 
       if ( !visPvExpStr.getExpanded() ||
-           ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           // ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           blankOrComment( visPvExpStr.getExpanded() ) ) {
         visPvExists = 0;
         visibility = 1;
       }

@@ -111,51 +111,46 @@ activeMessageButtonClass *msgbto = (activeMessageButtonClass *) client;
   msgbto->eraseSelectBoxCorners();
   msgbto->erase();
 
-  msgbto->fgColor.setColorIndex( msgbto->bufFgColor, msgbto->actWin->ci );
+  msgbto->fgColor.setColorIndex( msgbto->eBuf->bufFgColor, msgbto->actWin->ci );
 
-  msgbto->onColor.setColorIndex( msgbto->bufOnColor, msgbto->actWin->ci );
+  msgbto->onColor.setColorIndex( msgbto->eBuf->bufOnColor, msgbto->actWin->ci );
 
-  msgbto->offColor.setColorIndex( msgbto->bufOffColor, msgbto->actWin->ci );
+  msgbto->offColor.setColorIndex( msgbto->eBuf->bufOffColor, msgbto->actWin->ci );
 
-  msgbto->topShadowColor = msgbto->bufTopShadowColor;
-  msgbto->botShadowColor = msgbto->bufBotShadowColor;
+  msgbto->topShadowColor = msgbto->eBuf->bufTopShadowColor;
+  msgbto->botShadowColor = msgbto->eBuf->bufBotShadowColor;
 
-  msgbto->destPvExpString.setRaw( msgbto->bufDestPvName );
-  msgbto->sourcePressPvExpString.setRaw( msgbto->bufSourcePressPvName );
-  msgbto->sourceReleasePvExpString.setRaw( msgbto->bufSourceReleasePvName );
+  msgbto->destPvExpString.setRaw( msgbto->eBuf->bufDestPvName );
+  msgbto->sourcePressPvExpString.setRaw( msgbto->eBuf->bufSourcePressPvName );
+  msgbto->sourceReleasePvExpString.setRaw( msgbto->eBuf->bufSourceReleasePvName );
 
-//    strncpy( msgbto->sourcePressPvName, msgbto->bufSourcePressPvName, 39 );
-//    strncpy( msgbto->sourceReleasePvName, msgbto->bufSourceReleasePvName, 39 );
-
-  msgbto->onLabel.setRaw( msgbto->bufOnLabel );
-  msgbto->offLabel.setRaw( msgbto->bufOffLabel );
-  // strncpy( msgbto->onLabel, msgbto->bufOnLabel, MAX_ENUM_STRING_SIZE );
-  // strncpy( msgbto->offLabel, msgbto->bufOffLabel, MAX_ENUM_STRING_SIZE );
+  msgbto->onLabel.setRaw( msgbto->eBuf->bufOnLabel );
+  msgbto->offLabel.setRaw( msgbto->eBuf->bufOffLabel );
 
   strncpy( msgbto->fontTag, msgbto->fm.currentFontTag(), 63 );
   msgbto->actWin->fi->loadFontTag( msgbto->fontTag );
   msgbto->fs = msgbto->actWin->fi->getXFontStruct( msgbto->fontTag );
 
-  msgbto->toggle = msgbto->bufToggle;
+  msgbto->toggle = msgbto->eBuf->bufToggle;
 
-  msgbto->pressAction = msgbto->bufPressAction;
-  msgbto->releaseAction = msgbto->bufReleaseAction;
+  msgbto->pressAction = msgbto->eBuf->bufPressAction;
+  msgbto->releaseAction = msgbto->eBuf->bufReleaseAction;
 
-  msgbto->_3D = msgbto->buf3D;
+  msgbto->_3D = msgbto->eBuf->buf3D;
 
-  msgbto->invisible = msgbto->bufInvisible;
+  msgbto->invisible = msgbto->eBuf->bufInvisible;
 
-  msgbto->x = msgbto->bufX;
-  msgbto->sboxX = msgbto->bufX;
+  msgbto->x = msgbto->eBuf->bufX;
+  msgbto->sboxX = msgbto->eBuf->bufX;
 
-  msgbto->y = msgbto->bufY;
-  msgbto->sboxY = msgbto->bufY;
+  msgbto->y = msgbto->eBuf->bufY;
+  msgbto->sboxY = msgbto->eBuf->bufY;
 
-  msgbto->w = msgbto->bufW;
-  msgbto->sboxW = msgbto->bufW;
+  msgbto->w = msgbto->eBuf->bufW;
+  msgbto->sboxW = msgbto->eBuf->bufW;
 
-  msgbto->h = msgbto->bufH;
-  msgbto->sboxH = msgbto->bufH;
+  msgbto->h = msgbto->eBuf->bufH;
+  msgbto->sboxH = msgbto->eBuf->bufH;
 
   if ( blank(msgbto->bufPw1) || blank(msgbto->bufPw2) ) {
     if ( blank(msgbto->pw) ) {
@@ -189,20 +184,20 @@ activeMessageButtonClass *msgbto = (activeMessageButtonClass *) client;
     }
   }
 
-  msgbto->lock = msgbto->bufLock;
+  msgbto->lock = msgbto->eBuf->bufLock;
 
-  msgbto->visPvExpString.setRaw( msgbto->bufVisPvName );
-  strncpy( msgbto->minVisString, msgbto->bufMinVisString, 39 );
-  strncpy( msgbto->maxVisString, msgbto->bufMaxVisString, 39 );
+  msgbto->visPvExpString.setRaw( msgbto->eBuf->bufVisPvName );
+  strncpy( msgbto->minVisString, msgbto->eBuf->bufMinVisString, 39 );
+  strncpy( msgbto->maxVisString, msgbto->eBuf->bufMaxVisString, 39 );
 
-  if ( msgbto->bufVisInverted )
+  if ( msgbto->eBuf->bufVisInverted )
     msgbto->visInverted = 0;
   else
     msgbto->visInverted = 1;
 
-  msgbto->useEnumNumeric = msgbto->bufUseEnumNumeric;
+  msgbto->useEnumNumeric = msgbto->eBuf->bufUseEnumNumeric;
 
-  msgbto->colorPvExpString.setRaw( msgbto->bufColorPvName );
+  msgbto->colorPvExpString.setRaw( msgbto->eBuf->bufColorPvName );
 
   msgbto->updateDimensions();
 
@@ -408,6 +403,7 @@ activeMessageButtonClass::activeMessageButtonClass ( void ) {
   connection.setMaxPvs( 3 );
   useEnumNumeric = 0;
   activeMode = 0;
+  eBuf = NULL;
 
   setBlinkFunction( (void *) doBlink );
 
@@ -477,6 +473,8 @@ activeGraphicClass *msgbto = (activeGraphicClass *) this;
 
   activeMode = 0;
 
+  eBuf = NULL;
+
   connection.setMaxPvs( 3 );
 
   setBlinkFunction( (void *) doBlink );
@@ -488,6 +486,8 @@ activeGraphicClass *msgbto = (activeGraphicClass *) this;
 activeMessageButtonClass::~activeMessageButtonClass ( void ) {
 
   if ( name ) delete[] name;
+
+  if ( eBuf ) delete eBuf;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -798,7 +798,7 @@ int activeMessageButtonClass::old_createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[activeGraphicClass::MAX_PV_NAME+1];
+char oneName[PV_Factory::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -909,7 +909,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   }
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   destPvExpString.setRaw( oneName );
 
@@ -968,7 +968,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 2 ) ) ) {
 
-    readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+    readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
      actWin->incLine();
     visPvExpString.setRaw( oneName );
 
@@ -982,7 +982,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 3 ) ) ) {
 
-    readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+    readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
      actWin->incLine();
     colorPvExpString.setRaw( oneName );
 
@@ -1013,6 +1013,7 @@ int activeMessageButtonClass::importFromXchFile (
 int fgR, fgG, fgB, bgR, bgG, bgB, more, index;
 unsigned int pixel;
 char *tk, *gotData, *context, buf[255+1];
+char tmpDestPvName[39+1], tmpSourcePressPvName[39+1];
 
   fgR = 0xffff;
   fgG = 0xffff;
@@ -1220,9 +1221,9 @@ char *tk, *gotData, *context, buf[255+1];
 
         tk = strtok_r( NULL, "\"\n \t", &context );
         if ( tk ) {
-          strncpy( bufSourcePressPvName, tk, 39 );
-          bufSourcePressPvName[39] = 0;
-          sourcePressPvExpString.setRaw( bufSourcePressPvName );
+          strncpy( tmpSourcePressPvName, tk, 39 );
+          tmpSourcePressPvName[39] = 0;
+          sourcePressPvExpString.setRaw( tmpSourcePressPvName );
 	}
 
       }
@@ -1231,9 +1232,9 @@ char *tk, *gotData, *context, buf[255+1];
 
         tk = strtok_r( NULL, "\"\n \t", &context );
         if ( tk ) {
-          strncpy( bufDestPvName, tk, activeGraphicClass::MAX_PV_NAME );
-          bufDestPvName[activeGraphicClass::MAX_PV_NAME] = 0;
-          destPvExpString.setRaw( bufDestPvName );
+          strncpy( tmpDestPvName, tk, PV_Factory::MAX_PV_NAME );
+          tmpDestPvName[PV_Factory::MAX_PV_NAME] = 0;
+          destPvExpString.setRaw( tmpDestPvName );
 	}
 
       }
@@ -1289,6 +1290,10 @@ int activeMessageButtonClass::genericEdit ( void ) {
 
 char title[32], *ptr, *envPtr, saveLock;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   envPtr = getenv( "EDMSUPERVISORMODE" );
   if ( envPtr ) {
     if ( strcmp( envPtr, "TRUE" ) == 0 ) {
@@ -1308,93 +1313,85 @@ char title[32], *ptr, *envPtr, saveLock;
 
   Strncat( title, activeMessageButtonClass_str3, 31 );
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
+  eBuf->bufX = x;
+  eBuf->bufY = y;
+  eBuf->bufW = w;
+  eBuf->bufH = h;
 
-  bufFgColor = fgColor.pixelIndex();
+  eBuf->bufFgColor = fgColor.pixelIndex();
 
-  bufOnColor = onColor.pixelIndex();
+  eBuf->bufOnColor = onColor.pixelIndex();
 
-  bufOffColor = offColor.pixelIndex();
+  eBuf->bufOffColor = offColor.pixelIndex();
 
-  bufTopShadowColor = topShadowColor;
-  bufBotShadowColor = botShadowColor;
-  strncpy( bufFontTag, fontTag, 63 );
+  eBuf->bufTopShadowColor = topShadowColor;
+  eBuf->bufBotShadowColor = botShadowColor;
 
   if ( destPvExpString.getRaw() )
-    strncpy( bufDestPvName, destPvExpString.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufDestPvName, destPvExpString.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufDestPvName, "" );
+    strcpy( eBuf->bufDestPvName, "" );
 
   if ( sourcePressPvExpString.getRaw() )
-    strncpy( bufSourcePressPvName, sourcePressPvExpString.getRaw(), 39 );
+    strncpy( eBuf->bufSourcePressPvName, sourcePressPvExpString.getRaw(), 39 );
   else
-    strncpy( bufSourcePressPvName, "", 39 );
+    strncpy( eBuf->bufSourcePressPvName, "", 39 );
 
   if ( sourceReleasePvExpString.getRaw() )
-    strncpy( bufSourceReleasePvName, sourceReleasePvExpString.getRaw(), 39 );
+    strncpy( eBuf->bufSourceReleasePvName, sourceReleasePvExpString.getRaw(), 39 );
   else
-    strncpy( bufSourceReleasePvName, "", 39 );
-
-  // strncpy( bufSourcePressPvName, sourcePressPvName, 39 );
-  // strncpy( bufSourceReleasePvName, sourceReleasePvName, 39 );
+    strncpy( eBuf->bufSourceReleasePvName, "", 39 );
 
   if ( onLabel.getRaw() )
-    strncpy( bufOnLabel, onLabel.getRaw(), MAX_ENUM_STRING_SIZE );
+    strncpy( eBuf->bufOnLabel, onLabel.getRaw(), MAX_ENUM_STRING_SIZE );
   else
-    strncpy( bufOnLabel, "", MAX_ENUM_STRING_SIZE );
-
-  // strncpy( bufOnLabel, onLabel, MAX_ENUM_STRING_SIZE );
+    strncpy( eBuf->bufOnLabel, "", MAX_ENUM_STRING_SIZE );
 
   if ( offLabel.getRaw() )
-    strncpy( bufOffLabel, offLabel.getRaw(), MAX_ENUM_STRING_SIZE );
+    strncpy( eBuf->bufOffLabel, offLabel.getRaw(), MAX_ENUM_STRING_SIZE );
   else
-    strncpy( bufOffLabel, "", MAX_ENUM_STRING_SIZE );
-
-  // strncpy( bufOffLabel, offLabel, MAX_ENUM_STRING_SIZE );
+    strncpy( eBuf->bufOffLabel, "", MAX_ENUM_STRING_SIZE );
 
   if ( visPvExpString.getRaw() )
-    strncpy( bufVisPvName, visPvExpString.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufVisPvName, visPvExpString.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufVisPvName, "" );
+    strcpy( eBuf->bufVisPvName, "" );
 
   if ( colorPvExpString.getRaw() )
-    strncpy( bufColorPvName, colorPvExpString.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufColorPvName, colorPvExpString.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufColorPvName, "" );
+    strcpy( eBuf->bufColorPvName, "" );
 
-  bufToggle = toggle;
-  bufPressAction = pressAction;
-  bufReleaseAction = releaseAction;
-  buf3D = _3D;
-  bufInvisible = invisible;
+  eBuf->bufToggle = toggle;
+  eBuf->bufPressAction = pressAction;
+  eBuf->bufReleaseAction = releaseAction;
+  eBuf->buf3D = _3D;
+  eBuf->bufInvisible = invisible;
 
   strcpy( bufPw1, "" );
   strcpy( bufPw2, "" );
 
   if ( envPtr ) {
     if ( strcmp( envPtr, "TRUE" ) == 0 ) {
-      bufLock = saveLock;
+      eBuf->bufLock = saveLock;
     }
   }
   else {
-    bufLock = lock;
+    eBuf->bufLock = lock;
   }
 
   if ( visInverted )
-    bufVisInverted = 0;
+    eBuf->bufVisInverted = 0;
   else
-    bufVisInverted = 1;
+    eBuf->bufVisInverted = 1;
 
-  strncpy( bufMinVisString, minVisString, 39 );
-  strncpy( bufMaxVisString, maxVisString, 39 );
+  strncpy( eBuf->bufMinVisString, minVisString, 39 );
+  strncpy( eBuf->bufMaxVisString, maxVisString, 39 );
 
-  bufUseEnumNumeric = useEnumNumeric;
+  eBuf->bufUseEnumNumeric = useEnumNumeric;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -1402,57 +1399,57 @@ char title[32], *ptr, *envPtr, saveLock;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeMessageButtonClass_str4, 35, &bufX );
-  ef.addTextField( activeMessageButtonClass_str5, 35, &bufY );
-  ef.addTextField( activeMessageButtonClass_str6, 35, &bufW );
-  ef.addTextField( activeMessageButtonClass_str7, 35, &bufH );
+  ef.addTextField( activeMessageButtonClass_str4, 35, &eBuf->bufX );
+  ef.addTextField( activeMessageButtonClass_str5, 35, &eBuf->bufY );
+  ef.addTextField( activeMessageButtonClass_str6, 35, &eBuf->bufW );
+  ef.addTextField( activeMessageButtonClass_str7, 35, &eBuf->bufH );
 
   if ( !lock ) {
-    ef.addTextField( activeMessageButtonClass_str18, 35, bufDestPvName,
-     activeGraphicClass::MAX_PV_NAME );
+    ef.addTextField( activeMessageButtonClass_str18, 35, eBuf->bufDestPvName,
+     PV_Factory::MAX_PV_NAME );
   }
   else {
-    ef.addLockedField( activeMessageButtonClass_str18, 35, bufDestPvName,
-     activeGraphicClass::MAX_PV_NAME );
+    ef.addLockedField( activeMessageButtonClass_str18, 35, eBuf->bufDestPvName,
+     PV_Factory::MAX_PV_NAME );
   }
 
   ef.addOption( activeMessageButtonClass_str8, activeMessageButtonClass_str9,
-   &bufToggle );
-  ef.addToggle( activeMessageButtonClass_str10, &buf3D );
-  ef.addToggle( activeMessageButtonClass_str11, &bufInvisible );
-  ef.addToggle( activeMessageButtonClass_str12, &bufPressAction );
-  ef.addToggle( activeMessageButtonClass_str13, &bufReleaseAction );
-  ef.addToggle( activeMessageButtonClass_str35, &bufUseEnumNumeric );
+   &eBuf->bufToggle );
+  ef.addToggle( activeMessageButtonClass_str10, &eBuf->buf3D );
+  ef.addToggle( activeMessageButtonClass_str11, &eBuf->bufInvisible );
+  ef.addToggle( activeMessageButtonClass_str12, &eBuf->bufPressAction );
+  ef.addToggle( activeMessageButtonClass_str13, &eBuf->bufReleaseAction );
+  ef.addToggle( activeMessageButtonClass_str35, &eBuf->bufUseEnumNumeric );
 
-  ef.addTextField( activeMessageButtonClass_str14, 35, bufOnLabel,
+  ef.addTextField( activeMessageButtonClass_str14, 35, eBuf->bufOnLabel,
    MAX_ENUM_STRING_SIZE );
 
   if ( !lock ) {
-    ef.addTextField( activeMessageButtonClass_str16, 35, bufSourcePressPvName,
+    ef.addTextField( activeMessageButtonClass_str16, 35, eBuf->bufSourcePressPvName,
      39 );
   }
   else {
     ef.addLockedField( activeMessageButtonClass_str16, 35,
-     bufSourcePressPvName, 39 );
+     eBuf->bufSourcePressPvName, 39 );
   }
 
-  ef.addTextField( activeMessageButtonClass_str15, 35, bufOffLabel,
+  ef.addTextField( activeMessageButtonClass_str15, 35, eBuf->bufOffLabel,
    MAX_ENUM_STRING_SIZE );
 
   if ( !lock ) {
 
     ef.addTextField( activeMessageButtonClass_str17, 35,
-     bufSourceReleasePvName, 39 );
+     eBuf->bufSourceReleasePvName, 39 );
 
     ef.addPasswordField( activeMessageButtonClass_str36, 35, bufPw1, 31 );
     ef.addPasswordField( activeMessageButtonClass_str37, 35, bufPw2, 31 );
-    ef.addToggle( activeMessageButtonClass_str38, &bufLock );
+    ef.addToggle( activeMessageButtonClass_str38, &eBuf->bufLock );
 
   }
   else {
 
     ef.addLockedField( activeMessageButtonClass_str17, 35,
-     bufSourceReleasePvName, 39 );
+     eBuf->bufSourceReleasePvName, 39 );
 
     ef.addLockedField( activeMessageButtonClass_str36, 35, bufPw1, 31 );
     ef.addLockedField( activeMessageButtonClass_str37, 35, bufPw2, 31 );
@@ -1460,32 +1457,32 @@ char title[32], *ptr, *envPtr, saveLock;
   }
 
   ef.addColorButton( activeMessageButtonClass_str20, actWin->ci, &fgCb,
-   &bufFgColor );
+   &eBuf->bufFgColor );
 
   ef.addColorButton( activeMessageButtonClass_str21, actWin->ci, &onCb,
-   &bufOnColor );
+   &eBuf->bufOnColor );
 
   ef.addColorButton( activeMessageButtonClass_str22, actWin->ci, &offCb,
-   &bufOffColor );
+   &eBuf->bufOffColor );
 
   ef.addColorButton( activeMessageButtonClass_str23, actWin->ci, &topShadowCb,
-   &bufTopShadowColor );
+   &eBuf->bufTopShadowColor );
 
   ef.addColorButton( activeMessageButtonClass_str24, actWin->ci, &botShadowCb,
-    &bufBotShadowColor );
+    &eBuf->bufBotShadowColor );
 
   ef.addFontMenu( activeMessageButtonClass_str19, actWin->fi, &fm, fontTag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 
-  ef.addTextField( activeMessageButtonClass_str32, 30, bufColorPvName,
-   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeMessageButtonClass_str32, 30, eBuf->bufColorPvName,
+   PV_Factory::MAX_PV_NAME );
 
-  ef.addTextField( activeMessageButtonClass_str28, 30, bufVisPvName,
-   activeGraphicClass::MAX_PV_NAME );
-  ef.addOption( " ", activeMessageButtonClass_str29, &bufVisInverted );
-  ef.addTextField( activeMessageButtonClass_str30, 30, bufMinVisString, 39 );
-  ef.addTextField( activeMessageButtonClass_str31, 30, bufMaxVisString, 39 );
+  ef.addTextField( activeMessageButtonClass_str28, 30, eBuf->bufVisPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addOption( " ", activeMessageButtonClass_str29, &eBuf->bufVisInverted );
+  ef.addTextField( activeMessageButtonClass_str30, 30, eBuf->bufMinVisString, 39 );
+  ef.addTextField( activeMessageButtonClass_str31, 30, eBuf->bufMaxVisString, 39 );
 
   if ( envPtr ) {
     if ( strcmp( envPtr, "TRUE" ) == 0 ) {
@@ -1857,7 +1854,7 @@ int activeMessageButtonClass::activate (
 {
 
 int opStat, i, l;
-char tmpPvName[activeGraphicClass::MAX_PV_NAME+1];
+char tmpPvName[PV_Factory::MAX_PV_NAME+1];
 
   switch ( pass ) {
 
@@ -1901,7 +1898,8 @@ char tmpPvName[activeGraphicClass::MAX_PV_NAME+1];
       }
 
       if ( !destPvExpString.getExpanded() ||
-         ( strcmp( destPvExpString.getExpanded(), "" ) == 0 ) ) {
+	 // ( strcmp( destPvExpString.getExpanded(), "" ) == 0 ) ) {
+         blankOrComment( destPvExpString.getExpanded() ) ) {
         destExists = 0;
       }
       else {
@@ -1910,7 +1908,8 @@ char tmpPvName[activeGraphicClass::MAX_PV_NAME+1];
       }
 
       if ( !visPvExpString.getExpanded() ||
-         ( strcmp( visPvExpString.getExpanded(), "" ) == 0 ) ) {
+        // ( strcmp( visPvExpString.getExpanded(), "" ) == 0 ) ) {
+         blankOrComment( visPvExpString.getExpanded() ) ) {
         visExists = 0;
         visibility = 1;
       }
@@ -1920,7 +1919,8 @@ char tmpPvName[activeGraphicClass::MAX_PV_NAME+1];
       }
 
       if ( !colorPvExpString.getExpanded() ||
-         ( strcmp( colorPvExpString.getExpanded(), "" ) == 0 ) ) {
+        // ( strcmp( colorPvExpString.getExpanded(), "" ) == 0 ) ) {
+         blankOrComment( colorPvExpString.getExpanded() ) ) {
         colorExists = 0;
       }
       else {
@@ -1935,7 +1935,7 @@ char tmpPvName[activeGraphicClass::MAX_PV_NAME+1];
       if ( destExists ) {
 
         strncpy( tmpPvName, destPvExpString.getExpanded(),
-         activeGraphicClass::MAX_PV_NAME );
+         PV_Factory::MAX_PV_NAME );
 
         l = strlen(tmpPvName);
         if ( l > 5 ) {

@@ -287,11 +287,51 @@ int opComplete;
 int minW;
 int minH;
 
-int bufX, bufY, bufW, bufH;
+typedef struct editBufTag {
+// edit buffer
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  double bufControlV;
+  double bufIncrement;
+  double bufAccelMultiplier;
+  int bufBgColorMode;
+  int bufControlColorMode;
+  int bufReadColorMode;
+  int bufBgColor;
+  int bufFgColor;
+  int bufShadeColor;
+  int bufControlColor;
+  int bufReadColor;
+  colorButtonClass fgCb;
+  colorButtonClass bgCb;
+  colorButtonClass shadeCb;
+  colorButtonClass controlCb;
+  colorButtonClass readCb;
+  int bufControlX;
+  int bufReadX;
+  char bufFontTag[63+1];
+  char controlBufPvName[PV_Factory::MAX_PV_NAME+1];
+  char readBufPvName[PV_Factory::MAX_PV_NAME+1];
+  char savedValueBufPvName[PV_Factory::MAX_PV_NAME+1];
+  char controlBufLabelName[PV_Factory::MAX_PV_NAME+1];
+  char readBufLabelName[PV_Factory::MAX_PV_NAME+1];
+  int bufFormatType;
+  int bufChangeCallbackFlag;
+  int bufActivateCallbackFlag;
+  int bufDeactivateCallbackFlag;
+  int bufLimitsFromDb;
+  efDouble bufEfScaleMin;
+  efDouble bufEfScaleMax;
+  efInt bufEfPrecision;
+  char bufDisplayFormat[15+1];
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
 
 Widget frameWidget, sliderWidget;
 
-double bufControlV, bufIncrement, bufAccelMultiplier;
 int valueFormX, valueFormY, valueFormW, valueFormH, valueFormMaxH;
 
 double minFv, maxFv, factor, controlV, readV, savedV, newSavedV, oldControlV;
@@ -302,26 +342,20 @@ double curControlV, curReadV;
 double increment, accelMultiplier;
 int controlState, compute_initial_increment, autoSetSavedV;
 
-int bgColorMode, bufBgColorMode;
-int controlColorMode, bufControlColorMode;
-int readColorMode, bufReadColorMode;
+int bgColorMode;
+int controlColorMode;
+int readColorMode;
 pvColorClass bgColor, fgColor, shadeColor, controlColor,
  readColor;
-int bufBgColor;
-int bufFgColor;
-int bufShadeColor;
-int bufControlColor;
-int bufReadColor;
-colorButtonClass fgCb, bgCb, shadeCb, controlCb, readCb;
 char controlValue[14+1], readValue[14+1];
 char minValue[14+1], maxValue[14+1];
 char incString[31+1];
-int controlX, bufControlX, controlY, readX, bufReadX, readY,
+int controlX, controlY, readX, readY,
  arcStart, arcStop, controlW, controlH, readH, valueAreaH, controlAreaW,
  controlAreaH, labelAreaH, savedX;
 
 fontMenuClass fm;
-char fontTag[63+1], bufFontTag[63+1];
+char fontTag[63+1];
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
@@ -331,14 +365,9 @@ ProcessVariable *controlPvId, *controlLabelPvId, *readPvId, *readLabelPvId,
 expStringClass controlPvName, readPvName, savedValuePvName, controlLabelName,
  readLabelName;
 
-char controlBufPvName[activeGraphicClass::MAX_PV_NAME+1];
-char readBufPvName[activeGraphicClass::MAX_PV_NAME+1];
-char savedValueBufPvName[activeGraphicClass::MAX_PV_NAME+1];
-char controlLabel[activeGraphicClass::MAX_PV_NAME+1];
-char controlBufLabelName[activeGraphicClass::MAX_PV_NAME+1];
-char readLabel[activeGraphicClass::MAX_PV_NAME+1];
-char readBufLabelName[activeGraphicClass::MAX_PV_NAME+1];
-int formatType, bufFormatType;
+char controlLabel[PV_Factory::MAX_PV_NAME+1];
+char readLabel[PV_Factory::MAX_PV_NAME+1];
+int formatType;
 char controlFormat[15+1], readFormat[15+1];
 
 int controlExists, controlLabelExists, readExists, readLabelExists,
@@ -366,7 +395,6 @@ int initialConnection, initialReadConnection, initialSavedValueConnection;
 VPFUNC changeCallback, activateCallback, deactivateCallback;
 int changeCallbackFlag, activateCallbackFlag, deactivateCallbackFlag,
  anyCallbackFlag;
-int bufChangeCallbackFlag, bufActivateCallbackFlag, bufDeactivateCallbackFlag;
 
 char displayFormat[15+1];
 int limitsFromDb;
@@ -374,11 +402,6 @@ double scaleMin, scaleMax;
 efDouble efScaleMin, efScaleMax;
 int precision;
 efInt efPrecision;
-
-int bufLimitsFromDb;
-efDouble bufEfScaleMin, bufEfScaleMax;
-efInt bufEfPrecision;
-char bufDisplayFormat[15+1];
 
 keypadClass kp;
 double kpCtlDouble, kpIncDouble;
@@ -399,6 +422,7 @@ activeSliderClass
 ~activeSliderClass ( void ) {
 
   if ( name ) delete[] name;
+  if ( eBuf ) delete eBuf;
 
 }
 

@@ -337,7 +337,7 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) client;
   mbto->inconsistentColor.setColorIndex( mbto->bufInconsistentColor,
    mbto->actWin->ci );
 
-  mbto->visPvExpStr.setRaw( mbto->bufVisPvName );
+  mbto->visPvExpStr.setRaw( mbto->eBuf->bufVisPvName );
   strncpy( mbto->minVisString, mbto->bufMinVisString, 39 );
   strncpy( mbto->maxVisString, mbto->bufMaxVisString, 39 );
 
@@ -346,7 +346,7 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) client;
   else
     mbto->visInverted = 1;
 
-  mbto->colorPvExpStr.setRaw( mbto->bufColorPvName );
+  mbto->colorPvExpStr.setRaw( mbto->eBuf->bufColorPvName );
 
   mbto->x = mbto->bufX;
   mbto->sboxX = mbto->bufX;
@@ -360,9 +360,9 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) client;
   mbto->h = mbto->bufH;
   mbto->sboxH = mbto->bufH;
 
-  mbto->controlPvExpStr.setRaw( mbto->bufControlPvName );
+  mbto->controlPvExpStr.setRaw( mbto->eBuf->bufControlPvName );
 
-  mbto->readPvExpStr.setRaw( mbto->bufReadPvName );
+  mbto->readPvExpStr.setRaw( mbto->eBuf->bufReadPvName );
 
   mbto->updateDimensions();
 
@@ -453,6 +453,8 @@ int i;
   strcpy( minVisString, "" );
   strcpy( maxVisString, "" );
 
+  eBuf = NULL;
+
   setBlinkFunction( (void *) doBlink );
 
 }
@@ -460,6 +462,7 @@ int i;
 activeMenuButtonClass::~activeMenuButtonClass ( void ) {
 
   if ( name ) delete[] name;
+  if ( eBuf ) delete eBuf;
   if ( fontList ) XmFontListFree( fontList );
 
   if ( unconnectedTimer ) {
@@ -528,6 +531,8 @@ int i;
   visInverted = source->visInverted;
   strncpy( minVisString, source->minVisString, 39 );
   strncpy( maxVisString, source->maxVisString, 39 );
+
+  eBuf = NULL;
 
   setBlinkFunction( (void *) doBlink );
 
@@ -776,7 +781,7 @@ int activeMenuButtonClass::old_createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[activeGraphicClass::MAX_PV_NAME+1];
+char oneName[PV_Factory::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -921,14 +926,14 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   }
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   controlPvExpStr.setRaw( oneName );
 
   readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
   if ( ( major > 1 ) || ( minor > 2 ) ) {
-    readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+    readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
      actWin->incLine();
     readPvExpStr.setRaw( oneName );
   }
@@ -952,7 +957,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 2 ) ) ) {
 
-    readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+    readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
      actWin->incLine();
     visPvExpStr.setRaw( oneName );
 
@@ -966,7 +971,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 3 ) ) ) {
 
-    readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+    readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
      actWin->incLine();
     colorPvExpStr.setRaw( oneName );
 
@@ -981,6 +986,10 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 int activeMenuButtonClass::genericEdit ( void ) {
 
 char title[32], *ptr;
+
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
 
   ptr = actWin->obj.getNameFromClass( "activeMenuButtonClass" );
   if ( ptr )
@@ -1009,22 +1018,22 @@ char title[32], *ptr;
   bufInconsistentColor = inconsistentColor.pixelIndex();
 
   if ( controlPvExpStr.getRaw() )
-    strncpy( bufControlPvName, controlPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufControlPvName, controlPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufControlPvName, "" );
+    strcpy( eBuf->bufControlPvName, "" );
 
   if ( readPvExpStr.getRaw() )
-    strncpy( bufReadPvName, readPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufReadPvName, readPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufReadPvName, "" );
+    strcpy( eBuf->bufReadPvName, "" );
 
   if ( visPvExpStr.getRaw() )
-    strncpy( bufVisPvName, visPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufVisPvName, visPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufVisPvName, "" );
+    strcpy( eBuf->bufVisPvName, "" );
 
   if ( visInverted )
     bufVisInverted = 0;
@@ -1032,10 +1041,10 @@ char title[32], *ptr;
     bufVisInverted = 1;
 
   if ( colorPvExpStr.getRaw() )
-    strncpy( bufColorPvName, colorPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufColorPvName, colorPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufColorPvName, "" );
+    strcpy( eBuf->bufColorPvName, "" );
 
   strncpy( bufMinVisString, minVisString, 39 );
   strncpy( bufMaxVisString, maxVisString, 39 );
@@ -1050,10 +1059,10 @@ char title[32], *ptr;
   ef.addTextField( activeMenuButtonClass_str5, 35, &bufY );
   ef.addTextField( activeMenuButtonClass_str6, 35, &bufW );
   ef.addTextField( activeMenuButtonClass_str7, 35, &bufH );
-  ef.addTextField( activeMenuButtonClass_str17, 35, bufControlPvName,
-   activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeMenuButtonClass_str18, 35, bufReadPvName,
-   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeMenuButtonClass_str17, 35, eBuf->bufControlPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addTextField( activeMenuButtonClass_str18, 35, eBuf->bufReadPvName,
+   PV_Factory::MAX_PV_NAME );
 
   ef.addColorButton( activeMenuButtonClass_str8, actWin->ci, &fgCb,
    &bufFgColor );
@@ -1075,14 +1084,14 @@ char title[32], *ptr;
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 
-  ef.addTextField( activeMenuButtonClass_str34, 30, bufColorPvName,
-   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeMenuButtonClass_str34, 35, eBuf->bufColorPvName,
+   PV_Factory::MAX_PV_NAME );
 
-  ef.addTextField( activeMenuButtonClass_str30, 30, bufVisPvName,
-   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeMenuButtonClass_str30, 35, eBuf->bufVisPvName,
+   PV_Factory::MAX_PV_NAME );
   ef.addOption( " ", activeMenuButtonClass_str31, &bufVisInverted );
-  ef.addTextField( activeMenuButtonClass_str32, 30, bufMinVisString, 39 );
-  ef.addTextField( activeMenuButtonClass_str33, 30, bufMaxVisString, 39 );
+  ef.addTextField( activeMenuButtonClass_str32, 35, bufMinVisString, 39 );
+  ef.addTextField( activeMenuButtonClass_str33, 35, bufMaxVisString, 39 );
 
   return 1;
 
@@ -1570,7 +1579,8 @@ int opStat;
 
         pvCheckExists = 1;
 
-        if ( strcmp( controlPvExpStr.getRaw(), "" ) != 0 ) {
+        // if ( strcmp( controlPvExpStr.getExpanded(), "" ) != 0 ) {
+	if ( !blankOrComment( controlPvExpStr.getExpanded() ) ) {
           controlExists = 1;
           connection.addPv(); // must do this only once per pv
 	}
@@ -1578,7 +1588,8 @@ int opStat;
           controlExists = 0;
 	}
 
-        if ( strcmp( readPvExpStr.getRaw(), "" ) != 0 ) {
+        // if ( strcmp( readPvExpStr.getExpanded(), "" ) != 0 ) {
+	if ( !blankOrComment( readPvExpStr.getExpanded() ) ) {
           readExists = 1;
           connection.addPv(); // must do this only once per pv
 	}
@@ -1586,7 +1597,8 @@ int opStat;
           readExists = 0;
 	}
 
-        if ( strcmp( visPvExpStr.getRaw(), "" ) != 0 ) {
+        // if ( strcmp( visPvExpStr.getExpanded(), "" ) != 0 ) {
+	if ( !blankOrComment( visPvExpStr.getExpanded() ) ) {
           visExists = 1;
           connection.addPv(); // must do this only once per pv
         }
@@ -1595,7 +1607,8 @@ int opStat;
           visibility = 1;
         }
 
-        if ( strcmp( colorPvExpStr.getRaw(), "" ) != 0 ) {
+        // if ( strcmp( colorPvExpStr.getExpanded(), "" ) != 0 ) {
+	if ( !blankOrComment( colorPvExpStr.getExpanded() ) ) {
           colorExists = 1;
           connection.addPv(); // must do this only once per pv
         }

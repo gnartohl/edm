@@ -113,31 +113,49 @@ friend void aac_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-int bufX, bufY, bufW, bufH;
+typedef struct editBufTag {
+// edit buffer
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  int bufLineColor;
+  colorButtonClass lineCb;
+  int bufLineColorMode;
+  int bufFill;
+  int bufFillColor;
+  colorButtonClass fillCb;
+  int bufFillColorMode;
+  char bufMinVisString[39+1];
+  char bufMaxVisString[39+1];
+  int bufVisInverted;
+  char bufAlarmPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
+  int bufLineWidth;
+  int bufLineStyle;
+  efDouble bufEfStartAngle;
+  efDouble bufEfTotalAngle;
+  int bufFillMode;
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
 
 pvColorClass lineColor;
-int bufLineColor;
-colorButtonClass lineCb;
 
 int lineColorMode;
-int bufLineColorMode;
 
 int fill;
-int bufFill;
 
 pvColorClass fillColor;
-int bufFillColor;
-colorButtonClass fillCb;
 
 int fillColorMode;
-int bufFillColorMode;
 
 int pvType;
 pvValType pvValue, minVis, maxVis;
-char minVisString[39+1], bufMinVisString[39+1];
-char maxVisString[39+1], bufMaxVisString[39+1];
+char minVisString[39+1];
+char maxVisString[39+1];
 
-int prevVisibility, visibility, visInverted, bufVisInverted;
+int prevVisibility, visibility, visInverted;
 int lineVisibility, prevLineVisibility;
 int fillVisibility, prevFillVisibility;
 
@@ -145,16 +163,14 @@ ProcessVariable *alarmPvId;
 ProcessVariable *visPvId;
 
 expStringClass alarmPvExpStr;
-char bufAlarmPvName[PV_Factory::MAX_PV_NAME+1];
 
 expStringClass visPvExpStr;
-char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
 
 int alarmPvExists, visPvExists;
 int activeMode, init, opComplete;
 
-int lineWidth, bufLineWidth;
-int lineStyle, bufLineStyle;
+int lineWidth;
+int lineStyle;
 
 int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh;
 int needToDrawUnconnected, needToEraseUnconnected;
@@ -167,9 +183,8 @@ pvConnectionClass connection;
 
 int startAngle, totalAngle;
 efDouble efStartAngle, efTotalAngle;
-efDouble bufEfStartAngle, bufEfTotalAngle;
 
-int fillMode, bufFillMode;
+int fillMode;
 
 public:
 

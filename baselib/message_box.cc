@@ -82,7 +82,7 @@ activeMessageBoxClass *messageboxo = (activeMessageBoxClass *) client;
   messageboxo->botShadowColor.setColorIndex(
    messageboxo->bufBotShadowColor, messageboxo->actWin->ci );
 
-  messageboxo->readPvExpStr.setRaw( messageboxo->bufReadPvName );
+  messageboxo->readPvExpStr.setRaw( messageboxo->eBuf->bufReadPvName );
 
   strncpy( messageboxo->fontTag, messageboxo->fm.currentFontTag(), 63 );
   messageboxo->actWin->fi->loadFontTag( messageboxo->fontTag );
@@ -97,7 +97,7 @@ activeMessageBoxClass *messageboxo = (activeMessageBoxClass *) client;
 
   messageboxo->fileIsReadOnly = messageboxo->bufFileIsReadOnly;
 
-  strncpy( messageboxo->logFileName, messageboxo->bufLogFileName, 127 );
+  strncpy( messageboxo->logFileName, messageboxo->eBuf->bufLogFileName, 127 );
   messageboxo->flushTimerValue = messageboxo->bufFlushTimerValue;
   if ( messageboxo->flushTimerValue < 5 ) messageboxo->flushTimerValue = 5;
 
@@ -244,6 +244,7 @@ activeMessageBoxClass::activeMessageBoxClass ( void ) {
   strcpy( logFileName, "" );
   flushTimerValue = 600;
   logFileOpen = 0;
+  eBuf = NULL;
 
 }
 
@@ -285,6 +286,8 @@ activeGraphicClass *messageboxo = (activeGraphicClass *) this;
   fileIsReadOnly = source->fileIsReadOnly;
   strncpy( logFileName, source->logFileName, 127 );
   flushTimerValue = source->flushTimerValue;
+
+  eBuf = NULL;
 
 }
 
@@ -557,7 +560,7 @@ int activeMessageBoxClass::old_createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[activeGraphicClass::MAX_PV_NAME+1];
+char oneName[PV_Factory::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -644,7 +647,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   }
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
   readPvExpStr.setRaw( oneName );
 
   readStringFromFile( fontTag, 63+1, f );
@@ -677,6 +680,10 @@ int activeMessageBoxClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   ptr = actWin->obj.getNameFromClass( "activeMessageBoxClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -696,19 +703,17 @@ char title[32], *ptr;
   bufTopShadowColor = topShadowColor.pixelIndex();
   bufBotShadowColor = botShadowColor.pixelIndex();
 
-  strncpy( bufFontTag, fontTag, 63 );
-
   if ( readPvExpStr.getRaw() )
-    strncpy( bufReadPvName, readPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufReadPvName, readPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufReadPvName, "" );
+    strcpy( eBuf->bufReadPvName, "" );
 
   bufSize = size;
   bufFileSize = fileSize;
   bufFileIsReadOnly = fileIsReadOnly;
   bufFlushTimerValue = flushTimerValue;
-  strncpy( bufLogFileName, logFileName, 127 );
+  strncpy( eBuf->bufLogFileName, logFileName, 127 );
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -721,9 +726,9 @@ char title[32], *ptr;
   ef.addTextField( activeMessageBoxClass_str8, 35, &bufW );
   ef.addTextField( activeMessageBoxClass_str9, 35, &bufH );
   ef.addTextField( activeMessageBoxClass_str10, 35, &bufSize );
-  ef.addTextField( activeMessageBoxClass_str11, 35, bufReadPvName,
-   activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeMessageBoxClass_str12, 35, bufLogFileName, 127 );
+  ef.addTextField( activeMessageBoxClass_str11, 35, eBuf->bufReadPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addTextField( activeMessageBoxClass_str12, 35, eBuf->bufLogFileName, 127 );
   ef.addToggle( activeMessageBoxClass_str26, &bufFileIsReadOnly );
   ef.addTextField( activeMessageBoxClass_str13, 35, &bufFileSize );
   ef.addTextField( activeMessageBoxClass_str14, 35, &bufFlushTimerValue );
@@ -962,7 +967,8 @@ struct stat fileStat;
       strcpy( curReadV, "" );
 
       if ( !readPvExpStr.getExpanded() ||
-         ( strcmp( readPvExpStr.getExpanded(), "" ) == 0 ) ) {
+	 // ( strcmp( readPvExpStr.getExpanded(), "" ) == 0 ) ) {
+         blankOrComment( readPvExpStr.getExpanded() ) ) {
         readExists = 0;
       }
       else {

@@ -119,6 +119,14 @@ friend void messagebox_monitor_read_connect_state (
   ProcessVariable *pv,
   void *userarg );
 
+typedef struct editBufTag {
+// edit buffer
+  char bufReadPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufLogFileName[127+1];
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
+
 int bufX, bufY, bufW, bufH;
 
 int opComplete;
@@ -146,8 +154,6 @@ ProcessVariable *readPvId;
 int initialReadConnection;
 
 expStringClass readPvExpStr;
-char bufReadPvName[activeGraphicClass::MAX_PV_NAME+1];
-char bufLogFileName[127+1];
 int bufFileSize;
 
 int fileIsReadOnly, bufFileIsReadOnly;
@@ -161,7 +167,6 @@ colorButtonClass fgCb, bgCb, bg2Cb, topCb, botCb;
 int size, bufSize;
 int bufFgColor, bufBgColor, bufBg2Color, bufTopShadowColor,
  bufBotShadowColor;
-char bufFontTag[63+1];
 
 XtIntervalId flushTimer;
 int flushTimerValue, bufFlushTimerValue;
@@ -178,6 +183,8 @@ activeMessageBoxClass
 ~activeMessageBoxClass ( void ) {
 
   if ( name ) delete[] name;
+
+  if ( eBuf ) delete eBuf;
 
 }
 

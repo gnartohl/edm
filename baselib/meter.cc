@@ -55,58 +55,58 @@ activeMeterClass *metero = (activeMeterClass *) client;
   metero->eraseSelectBoxCorners();
   metero->erase();
 
-  metero->fgColorMode = metero->bufFgColorMode;
+  metero->fgColorMode = metero->eBuf->bufFgColorMode;
   if ( metero->fgColorMode == METERC_K_COLORMODE_ALARM )
     metero->fgColor.setAlarmSensitive();
   else
     metero->fgColor.setAlarmInsensitive();
-  metero->fgColor.setColorIndex( metero->bufFgColor, metero->actWin->ci );
+  metero->fgColor.setColorIndex( metero->eBuf->bufFgColor, metero->actWin->ci );
 
-  metero->meterColorMode = metero->bufMeterColorMode;
+  metero->meterColorMode = metero->eBuf->bufMeterColorMode;
   if ( metero->meterColorMode == METERC_K_COLORMODE_ALARM )
     metero->meterColor.setAlarmSensitive();
   else
     metero->meterColor.setAlarmInsensitive();
-  metero->meterColor.setColorIndex( metero->bufMeterColor, metero->actWin->ci );
+  metero->meterColor.setColorIndex( metero->eBuf->bufMeterColor, metero->actWin->ci );
 
-  metero->scaleColorMode = metero->bufScaleColorMode;
+  metero->scaleColorMode = metero->eBuf->bufScaleColorMode;
   if ( metero->scaleColorMode == METERC_K_COLORMODE_ALARM )
     metero->scaleColor.setAlarmSensitive();
   else
     metero->scaleColor.setAlarmInsensitive();
-  metero->scaleColor.setColorIndex( metero->bufScaleColor, metero->actWin->ci );
+  metero->scaleColor.setColorIndex( metero->eBuf->bufScaleColor, metero->actWin->ci );
 
-  metero->shadowMode = metero->bufShadowMode;
+  metero->shadowMode = metero->eBuf->bufShadowMode;
 
-  metero->meterAngle = metero->bufMeterAngle;
+  metero->meterAngle = metero->eBuf->bufMeterAngle;
 
-  metero->scaleLimitsFromDb = metero->bufScaleLimitsFromDb;
-  metero->scaleMin   = metero->bufScaleMin;
-  metero->scaleMax   = metero->bufScaleMax;
-  strncpy( metero->scaleFormat, metero->bufScaleFormat, 15 );
-  metero->scalePrecision = metero->bufScalePrecision;
+  metero->scaleLimitsFromDb = metero->eBuf->bufScaleLimitsFromDb;
+  metero->scaleMin   = metero->eBuf->bufScaleMin;
+  metero->scaleMax   = metero->eBuf->bufScaleMax;
+  strncpy( metero->scaleFormat, metero->eBuf->bufScaleFormat, 15 );
+  metero->scalePrecision = metero->eBuf->bufScalePrecision;
 
-  metero->needleType = metero->bufNeedleType;
+  metero->needleType = metero->eBuf->bufNeedleType;
 
-  metero->labelIntervals = metero->bufLabelIntervals;
-  metero->majorIntervals = metero->bufMajorIntervals;
-  metero->minorIntervals = metero->bufMinorIntervals;
+  metero->labelIntervals = metero->eBuf->bufLabelIntervals;
+  metero->majorIntervals = metero->eBuf->bufMajorIntervals;
+  metero->minorIntervals = metero->eBuf->bufMinorIntervals;
 
-  metero->bgColor.setColorIndex( metero->bufBgColor, metero->actWin->ci );
+  metero->bgColor.setColorIndex( metero->eBuf->bufBgColor, metero->actWin->ci );
 
-  metero->tsColor.setColorIndex( metero->bufTsColor, metero->actWin->ci );
-  metero->bsColor.setColorIndex( metero->bufBsColor, metero->actWin->ci );
+  metero->tsColor.setColorIndex( metero->eBuf->bufTsColor, metero->actWin->ci );
+  metero->bsColor.setColorIndex( metero->eBuf->bufBsColor, metero->actWin->ci );
 
-  metero->scaleColor.setColorIndex( metero->bufScaleColor, metero->actWin->ci );
-  metero->labelColor.setColorIndex( metero->bufLabelColor, metero->actWin->ci );
+  metero->scaleColor.setColorIndex( metero->eBuf->bufScaleColor, metero->actWin->ci );
+  metero->labelColor.setColorIndex( metero->eBuf->bufLabelColor, metero->actWin->ci );
 
-  metero->controlPvExpStr.setRaw( metero->bufControlPvName );
-  metero->readPvExpStr.setRaw( metero->bufReadPvName );
+  metero->controlPvExpStr.setRaw( metero->eBuf->bufControlPvName );
+  metero->readPvExpStr.setRaw( metero->eBuf->bufReadPvName );
 
-  strncpy( metero->label, metero->bufLabel, 39 );
-  strncpy( metero->literalLabel, metero->bufLiteralLabel, 39 );
+  strncpy( metero->label, metero->eBuf->bufLabel, 39 );
+  strncpy( metero->literalLabel, metero->eBuf->bufLiteralLabel, 39 );
 
-  metero->labelType = metero->bufLabelType;
+  metero->labelType = metero->eBuf->bufLabelType;
 
   strncpy( metero->scaleFontTag, metero->scaleFm.currentFontTag(), 63 );
 
@@ -118,19 +118,19 @@ activeMeterClass *metero = (activeMeterClass *) client;
   metero->actWin->fi->loadFontTag( metero->labelFontTag );
   metero->labelFs = metero->actWin->fi->getXFontStruct( metero->labelFontTag );
 
-  metero->showScale = metero->bufShowScale;
+  metero->showScale = metero->eBuf->bufShowScale;
 
-  metero->x = metero->bufX;
-  metero->sboxX = metero->bufX;
+  metero->x = metero->eBuf->bufX;
+  metero->sboxX = metero->eBuf->bufX;
 
-  metero->y = metero->bufY;
-  metero->sboxY = metero->bufY;
+  metero->y = metero->eBuf->bufY;
+  metero->sboxY = metero->eBuf->bufY;
 
-  metero->w = metero->bufW;
-  metero->sboxW = metero->bufW;
+  metero->w = metero->eBuf->bufW;
+  metero->sboxW = metero->eBuf->bufW;
 
-  metero->h = metero->bufH;
-  metero->sboxH = metero->bufH;
+  metero->h = metero->eBuf->bufH;
+  metero->sboxH = metero->eBuf->bufH;
 
   metero->updateDimensions();
 
@@ -292,6 +292,8 @@ activeMeterClass::activeMeterClass ( void ) {
   readMin = scaleMin;
   readMax = scaleMax;
 
+  eBuf = NULL;
+
   unconnectedTimer = 0;
 
 }
@@ -306,14 +308,6 @@ activeGraphicClass *metero = (activeGraphicClass *) this;
 
   name = new char[strlen("activeMeterClass")+1];
   strcpy( name, "activeMeterClass" );
-
-  meterCb = source->meterCb;
-  fgCb = source->fgCb;
-  bgCb = source->bgCb;
-  tsCb = source->tsCb;
-  bsCb = source->bsCb;
-  scaleCb = source->scaleCb;
-  labelCb = source->labelCb;
 
   strncpy( scaleFontTag, source->scaleFontTag, 63 );
   scaleFs = actWin->fi->getXFontStruct( scaleFontTag );
@@ -364,6 +358,8 @@ activeGraphicClass *metero = (activeGraphicClass *) this;
 
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
   updateDimensions();
 
 }
@@ -371,6 +367,8 @@ activeGraphicClass *metero = (activeGraphicClass *) this;
 activeMeterClass::~activeMeterClass ( void ) {
 
   if ( name ) delete[] name;
+
+  if ( eBuf ) delete eBuf;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -717,7 +715,7 @@ int activeMeterClass::old_createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[activeGraphicClass::MAX_PV_NAME+1];
+char oneName[PV_Factory::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -888,11 +886,11 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   bgColor.setAlarmInsensitive();
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   controlPvExpStr.setRaw( oneName );
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   readPvExpStr.setRaw( oneName );
 
@@ -969,6 +967,10 @@ int activeMeterClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   ptr = actWin->obj.getNameFromClass( "activeMeterClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -977,59 +979,56 @@ char title[32], *ptr;
 
   Strncat( title, activeMeterClass_str3, 31 );
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
+  eBuf->bufX = x;
+  eBuf->bufY = y;
+  eBuf->bufW = w;
+  eBuf->bufH = h;
 
-  bufMeterColor = meterColor.pixelIndex();
-  bufMeterColorMode = meterColorMode;
-  bufScaleColorMode = scaleColorMode;
+  eBuf->bufMeterColor = meterColor.pixelIndex();
+  eBuf->bufMeterColorMode = meterColorMode;
+  eBuf->bufScaleColorMode = scaleColorMode;
 
-  bufLabelIntervals = labelIntervals;
-  bufMajorIntervals = majorIntervals;
-  bufMinorIntervals = minorIntervals;
+  eBuf->bufLabelIntervals = labelIntervals;
+  eBuf->bufMajorIntervals = majorIntervals;
+  eBuf->bufMinorIntervals = minorIntervals;
 
-  bufFgColor = fgColor.pixelIndex();
-  bufFgColorMode = fgColorMode;
+  eBuf->bufFgColor = fgColor.pixelIndex();
+  eBuf->bufFgColorMode = fgColorMode;
   
-  bufShadowMode = shadowMode;
-  bufTsColor = tsColor.pixelIndex();
-  bufBsColor = bsColor.pixelIndex();
+  eBuf->bufShadowMode = shadowMode;
+  eBuf->bufTsColor = tsColor.pixelIndex();
+  eBuf->bufBsColor = bsColor.pixelIndex();
 
-  bufScaleColor = scaleColor.pixelIndex();
-  bufLabelColor = labelColor.pixelIndex();
+  eBuf->bufScaleColor = scaleColor.pixelIndex();
+  eBuf->bufLabelColor = labelColor.pixelIndex();
 
-  bufBgColor = bgColor.pixelIndex();
-
-  strncpy( bufScaleFontTag, scaleFontTag, 63 );
-  strncpy( bufLabelFontTag, labelFontTag, 63 );
+  eBuf->bufBgColor = bgColor.pixelIndex();
 
   if ( readPvExpStr.getRaw() )
-    strncpy( bufReadPvName, readPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufReadPvName, readPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufReadPvName, "" );
+    strcpy( eBuf->bufReadPvName, "" );
 
   if ( controlPvExpStr.getRaw() )
-    strncpy( bufControlPvName, controlPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufControlPvName, controlPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufControlPvName, "" );
+    strcpy( eBuf->bufControlPvName, "" );
 
-  strncpy( bufLabel, label, 39 );
-  strncpy( bufLiteralLabel, literalLabel, 39);
+  strncpy( eBuf->bufLabel, label, 39 );
+  strncpy( eBuf->bufLiteralLabel, literalLabel, 39);
 
-  bufLabelType = labelType;
-  bufScaleLimitsFromDb = scaleLimitsFromDb;
-  bufMeterAngle = meterAngle;
-  bufNeedleType = needleType;
-  bufScalePrecision = scalePrecision;
-  bufScaleMin = scaleMin;
-  bufScaleMax = scaleMax;
-  bufShowScale = showScale;
-  bufUseDisplayBg = useDisplayBg;
-  strncpy( bufScaleFormat, scaleFormat, 15 );
+  eBuf->bufLabelType = labelType;
+  eBuf->bufScaleLimitsFromDb = scaleLimitsFromDb;
+  eBuf->bufMeterAngle = meterAngle;
+  eBuf->bufNeedleType = needleType;
+  eBuf->bufScalePrecision = scalePrecision;
+  eBuf->bufScaleMin = scaleMin;
+  eBuf->bufScaleMax = scaleMax;
+  eBuf->bufShowScale = showScale;
+  eBuf->bufUseDisplayBg = useDisplayBg;
+  strncpy( eBuf->bufScaleFormat, scaleFormat, 15 );
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -1037,39 +1036,39 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeMeterClass_str4, 35, &bufX );
-  ef.addTextField( activeMeterClass_str5, 35, &bufY );
-  ef.addTextField( activeMeterClass_str6, 35, &bufW );
-  ef.addTextField( activeMeterClass_str7, 35, &bufH );
-  //   ef.addTextField( activeMeterClass_str8, 35, bufControlPvName,
-  //    activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeMeterClass_str9, 35, bufReadPvName,
-   activeGraphicClass::MAX_PV_NAME );
-  ef.addOption( activeMeterClass_str10, activeMeterClass_str11, &bufLabelType );
-  ef.addTextField( activeMeterClass_str12, 35, bufLiteralLabel, 39 );
-  ef.addColorButton( activeMeterClass_str14, actWin->ci,&labelCb,&bufLabelColor);
-  ef.addTextField(activeMeterClass_str15, 35, &bufMeterAngle);
-  ef.addToggle( activeMeterClass_str16, &bufShowScale );
+  ef.addTextField( activeMeterClass_str4, 35, &eBuf->bufX );
+  ef.addTextField( activeMeterClass_str5, 35, &eBuf->bufY );
+  ef.addTextField( activeMeterClass_str6, 35, &eBuf->bufW );
+  ef.addTextField( activeMeterClass_str7, 35, &eBuf->bufH );
+  //   ef.addTextField( activeMeterClass_str8, 35, eBuf->bufControlPvName,
+  //    PV_Factory::MAX_PV_NAME );
+  ef.addTextField( activeMeterClass_str9, 35, eBuf->bufReadPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addOption( activeMeterClass_str10, activeMeterClass_str11, &eBuf->bufLabelType );
+  ef.addTextField( activeMeterClass_str12, 35, eBuf->bufLiteralLabel, 39 );
+  ef.addColorButton( activeMeterClass_str14, actWin->ci,&eBuf->labelCb,&eBuf->bufLabelColor);
+  ef.addTextField(activeMeterClass_str15, 35, &eBuf->bufMeterAngle);
+  ef.addToggle( activeMeterClass_str16, &eBuf->bufShowScale );
   ef.addOption( activeMeterClass_str17, activeMeterClass_str43,
-   bufScaleFormat, 15 );
-  ef.addTextField( activeMeterClass_str19, 35, &bufScalePrecision);
-  ef.addToggle( activeMeterClass_str20, &bufScaleLimitsFromDb );
-  ef.addTextField(activeMeterClass_str21, 35, &bufScaleMin);
-  ef.addTextField(activeMeterClass_str22, 35, &bufScaleMax);
-  ef.addColorButton( activeMeterClass_str24, actWin->ci,&scaleCb,&bufScaleColor);
-  ef.addToggle( activeMeterClass_str25, &bufScaleColorMode );
-  ef.addTextField(activeMeterClass_str44, 35, &bufLabelIntervals);
-  ef.addTextField(activeMeterClass_str26, 35, &bufMajorIntervals);
-  ef.addTextField(activeMeterClass_str27, 35, &bufMinorIntervals);
-  ef.addToggle(activeMeterClass_str28, &bufNeedleType);  
-  ef.addColorButton( activeMeterClass_str29, actWin->ci, &fgCb, &bufFgColor );
-  ef.addToggle( activeMeterClass_str30, &bufFgColorMode );
-  ef.addColorButton( activeMeterClass_str31, actWin->ci, &meterCb, &bufMeterColor );
-  ef.addToggle( activeMeterClass_str32, &bufMeterColorMode );
-  ef.addColorButton( activeMeterClass_str33, actWin->ci, &bgCb, &bufBgColor );
-  ef.addToggle(activeMeterClass_str34,&bufShadowMode);
-  ef.addColorButton(activeMeterClass_str35,actWin->ci, &tsCb,&bufTsColor);
-  ef.addColorButton(activeMeterClass_str36,actWin->ci,&bsCb,&bufBsColor);
+   eBuf->bufScaleFormat, 15 );
+  ef.addTextField( activeMeterClass_str19, 35, &eBuf->bufScalePrecision);
+  ef.addToggle( activeMeterClass_str20, &eBuf->bufScaleLimitsFromDb );
+  ef.addTextField(activeMeterClass_str21, 35, &eBuf->bufScaleMin);
+  ef.addTextField(activeMeterClass_str22, 35, &eBuf->bufScaleMax);
+  ef.addColorButton( activeMeterClass_str24, actWin->ci,&eBuf->scaleCb,&eBuf->bufScaleColor);
+  ef.addToggle( activeMeterClass_str25, &eBuf->bufScaleColorMode );
+  ef.addTextField(activeMeterClass_str44, 35, &eBuf->bufLabelIntervals);
+  ef.addTextField(activeMeterClass_str26, 35, &eBuf->bufMajorIntervals);
+  ef.addTextField(activeMeterClass_str27, 35, &eBuf->bufMinorIntervals);
+  ef.addToggle(activeMeterClass_str28, &eBuf->bufNeedleType);  
+  ef.addColorButton( activeMeterClass_str29, actWin->ci, &eBuf->fgCb, &eBuf->bufFgColor );
+  ef.addToggle( activeMeterClass_str30, &eBuf->bufFgColorMode );
+  ef.addColorButton( activeMeterClass_str31, actWin->ci, &eBuf->meterCb, &eBuf->bufMeterColor );
+  ef.addToggle( activeMeterClass_str32, &eBuf->bufMeterColorMode );
+  ef.addColorButton( activeMeterClass_str33, actWin->ci, &eBuf->bgCb, &eBuf->bufBgColor );
+  ef.addToggle(activeMeterClass_str34,&eBuf->bufShadowMode);
+  ef.addColorButton(activeMeterClass_str35,actWin->ci, &eBuf->tsCb,&eBuf->bufTsColor);
+  ef.addColorButton(activeMeterClass_str36,actWin->ci,&eBuf->bsCb,&eBuf->bufBsColor);
 
   ef.addFontMenu( activeMeterClass_str13, actWin->fi, &labelFm, labelFontTag );
   ef.addFontMenu( activeMeterClass_str23, actWin->fi, &scaleFm, scaleFontTag );
@@ -2040,7 +2039,8 @@ int opStat;
     activeMode = 1;
 
     if ( !controlPvExpStr.getExpanded() ||
-       ( strcmp( controlPvExpStr.getExpanded(), "" ) == 0 ) ) {
+      // ( strcmp( controlPvExpStr.getExpanded(), "" ) == 0 ) ) {
+      blankOrComment( controlPvExpStr.getExpanded() ) ) {
       controlExists = 0;
     }
     else {
@@ -2048,7 +2048,8 @@ int opStat;
     }
 
     if ( !readPvExpStr.getExpanded() ||
-       ( strcmp( readPvExpStr.getExpanded(), "" ) == 0 ) ) {
+      // ( strcmp( readPvExpStr.getExpanded(), "" ) == 0 ) ) {
+      blankOrComment( readPvExpStr.getExpanded() ) ) {
       readExists = 0;
     }
     else {

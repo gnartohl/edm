@@ -783,7 +783,7 @@ int i, numPvs, r, g, b, index, more, md;
 int major, minor, release;
 unsigned int pixel;
 char oneName[255+1];
-char onePvName[activeGraphicClass::MAX_PV_NAME+1];
+char onePvName[PV_Factory::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -914,7 +914,7 @@ char onePvName[activeGraphicClass::MAX_PV_NAME+1];
     fscanf( f, "%d\n", &numPvs ); actWin->incLine();
     for ( i=0; i<numPvs; i++ ) {
       if ( i >= NUMPVS ) i = NUMPVS - 1;
-      readStringFromFile( onePvName, activeGraphicClass::MAX_PV_NAME+1, f );
+      readStringFromFile( onePvName, PV_Factory::MAX_PV_NAME+1, f );
        actWin->incLine();
       destPvExpString[i].setRaw( onePvName );
       readStringFromFile( onePvName, 39+1, f ); actWin->incLine();
@@ -1455,8 +1455,8 @@ char title[32], *ptr;
   for ( i=0; i<NUMPVS; i++ ) {
     if ( destPvExpString[i].getRaw() ) {
       strncpy( buf->bufDestPvName[i], destPvExpString[i].getRaw(),
-       activeGraphicClass::MAX_PV_NAME );
-      buf->bufDestPvName[i][activeGraphicClass::MAX_PV_NAME] = 0;
+       PV_Factory::MAX_PV_NAME );
+      buf->bufDestPvName[i][PV_Factory::MAX_PV_NAME] = 0;
     }
     else {
       strcpy( buf->bufDestPvName[i], "" );
@@ -1556,7 +1556,7 @@ char title[32], *ptr;
 
   for ( i=0; i<NUMPVS; i++ ) {
     ef.addTextField( relatedDisplayClass_str15, 35, buf->bufDestPvName[i],
-     activeGraphicClass::MAX_PV_NAME );
+     PV_Factory::MAX_PV_NAME );
     ef.addTextField( relatedDisplayClass_str16, 35, buf->bufSource[i], 39 );
   }
 
@@ -1828,7 +1828,8 @@ XmString str;
       opComplete[i] = 0;
 
       if ( !destPvExpString[i].getExpanded() ||
-         ( strcmp( destPvExpString[i].getExpanded(), "" ) == 0 ) ) {
+	 // ( strcmp( destPvExpString[i].getExpanded(), "" ) == 0 ) ) {
+	   blankOrComment( destPvExpString[i].getExpanded() ) ) {
         destExists[i] = 0;
         destConnected[i] = 1;
       }

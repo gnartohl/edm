@@ -72,52 +72,52 @@ activeCircleClass *aco = (activeCircleClass *) client;
   aco->eraseSelectBoxCorners();
   aco->erase();
 
-  aco->fill = aco->bufFill;
+  aco->fill = aco->eBuf->bufFill;
 
-  aco->lineColorMode = aco->bufLineColorMode;
+  aco->lineColorMode = aco->eBuf->bufLineColorMode;
   if ( aco->lineColorMode == ACC_K_COLORMODE_ALARM )
     aco->lineColor.setAlarmSensitive();
   else
     aco->lineColor.setAlarmInsensitive();
-  aco->lineColor.setColorIndex( aco->bufLineColor, aco->actWin->ci );
+  aco->lineColor.setColorIndex( aco->eBuf->bufLineColor, aco->actWin->ci );
 
-  aco->fillColorMode = aco->bufFillColorMode;
+  aco->fillColorMode = aco->eBuf->bufFillColorMode;
   if ( aco->fillColorMode == ACC_K_COLORMODE_ALARM )
     aco->fillColor.setAlarmSensitive();
   else
     aco->fillColor.setAlarmInsensitive();
-  aco->fillColor.setColorIndex( aco->bufFillColor, aco->actWin->ci );
+  aco->fillColor.setColorIndex( aco->eBuf->bufFillColor, aco->actWin->ci );
 
-  aco->lineWidth = aco->bufLineWidth;
+  aco->lineWidth = aco->eBuf->bufLineWidth;
 
-  if ( aco->bufLineStyle == 0 )
+  if ( aco->eBuf->bufLineStyle == 0 )
     aco->lineStyle = LineSolid;
-  else if ( aco->bufLineStyle == 1 )
+  else if ( aco->eBuf->bufLineStyle == 1 )
     aco->lineStyle = LineOnOffDash;
 
-  aco->alarmPvExpStr.setRaw( aco->bufAlarmPvName );
+  aco->alarmPvExpStr.setRaw( aco->eBuf->bufAlarmPvName );
 
-  aco->visPvExpStr.setRaw( aco->bufVisPvName );
+  aco->visPvExpStr.setRaw( aco->eBuf->bufVisPvName );
 
-  if ( aco->bufVisInverted )
+  if ( aco->eBuf->bufVisInverted )
     aco->visInverted = 0;
   else
     aco->visInverted = 1;
 
-  strncpy( aco->minVisString, aco->bufMinVisString, 39 );
-  strncpy( aco->maxVisString, aco->bufMaxVisString, 39 );
+  strncpy( aco->minVisString, aco->eBuf->bufMinVisString, 39 );
+  strncpy( aco->maxVisString, aco->eBuf->bufMaxVisString, 39 );
 
-  aco->x = aco->bufX;
-  aco->sboxX = aco->bufX;
+  aco->x = aco->eBuf->bufX;
+  aco->sboxX = aco->eBuf->bufX;
 
-  aco->y = aco->bufY;
-  aco->sboxY = aco->bufY;
+  aco->y = aco->eBuf->bufY;
+  aco->sboxY = aco->eBuf->bufY;
 
-  aco->w = aco->bufW;
-  aco->sboxW = aco->bufW;
+  aco->w = aco->eBuf->bufW;
+  aco->sboxW = aco->eBuf->bufW;
 
-  aco->h = aco->bufH;
-  aco->sboxH = aco->bufH;
+  aco->h = aco->eBuf->bufH;
+  aco->sboxH = aco->eBuf->bufH;
 
 }
 
@@ -305,6 +305,7 @@ activeCircleClass::activeCircleClass ( void ) {
   strcpy( maxVisString, "" );
   connection.setMaxPvs( 2 );
   unconnectedTimer = 0;
+  eBuf = NULL;
   setBlinkFunction( (void *) doBlink );
 
 }
@@ -322,8 +323,6 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   lineColor.copy(source->lineColor);
   fillColor.copy(source->fillColor);
-  lineCb = source->lineCb;
-  fillCb = source->fillCb;
   fill = source->fill;
   lineColorMode = source->lineColorMode;
   fillColorMode = source->fillColorMode;
@@ -347,6 +346,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
   setBlinkFunction( (void *) doBlink );
 
 }
@@ -354,6 +355,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 activeCircleClass::~activeCircleClass ( void ) {
 
   if ( name ) delete[] name;
+
+  if ( eBuf ) delete eBuf;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -394,6 +397,10 @@ int activeCircleClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   ptr = actWin->obj.getNameFromClass( "activeCircleClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -402,38 +409,38 @@ char title[32], *ptr;
 
   Strncat( title, activeCircleClass_str5, 31 );
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
+  eBuf->bufX = x;
+  eBuf->bufY = y;
+  eBuf->bufW = w;
+  eBuf->bufH = h;
 
-  bufLineColor = lineColor.pixelIndex();
-  bufLineColorMode = lineColorMode;
+  eBuf->bufLineColor = lineColor.pixelIndex();
+  eBuf->bufLineColorMode = lineColorMode;
 
-  bufFillColor = fillColor.pixelIndex();
-  bufFillColorMode = fillColorMode;
+  eBuf->bufFillColor = fillColor.pixelIndex();
+  eBuf->bufFillColorMode = fillColorMode;
 
-  bufFill = fill;
-  bufLineWidth = lineWidth;
-  bufLineStyle = lineStyle;
+  eBuf->bufFill = fill;
+  eBuf->bufLineWidth = lineWidth;
+  eBuf->bufLineStyle = lineStyle;
 
   if ( alarmPvExpStr.getRaw() )
-    strncpy( bufAlarmPvName, alarmPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+    strncpy( eBuf->bufAlarmPvName, alarmPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufAlarmPvName, "" );
+    strcpy( eBuf->bufAlarmPvName, "" );
 
   if ( visPvExpStr.getRaw() )
-    strncpy( bufVisPvName, visPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+    strncpy( eBuf->bufVisPvName, visPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufVisPvName, "" );
+    strcpy( eBuf->bufVisPvName, "" );
 
   if ( visInverted )
-    bufVisInverted = 0;
+    eBuf->bufVisInverted = 0;
   else
-    bufVisInverted = 1;
+    eBuf->bufVisInverted = 1;
 
-  strncpy( bufMinVisString, minVisString, 39 );
-  strncpy( bufMaxVisString, maxVisString, 39 );
+  strncpy( eBuf->bufMinVisString, minVisString, 39 );
+  strncpy( eBuf->bufMaxVisString, maxVisString, 39 );
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -441,24 +448,24 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeCircleClass_str6, 30, &bufX );
-  ef.addTextField( activeCircleClass_str7, 30, &bufY );
-  ef.addTextField( activeCircleClass_str8, 30, &bufW );
-  ef.addTextField( activeCircleClass_str9, 30, &bufH );
-  ef.addOption( activeCircleClass_str10, activeCircleClass_str11, &bufLineWidth );
-  ef.addOption( activeCircleClass_str12, activeCircleClass_str13, &bufLineStyle );
-  ef.addColorButton( activeCircleClass_str14, actWin->ci, &lineCb, &bufLineColor );
-  ef.addToggle( activeCircleClass_str15, &bufLineColorMode );
-  ef.addToggle( activeCircleClass_str16, &bufFill );
-  ef.addColorButton( activeCircleClass_str17, actWin->ci, &fillCb, &bufFillColor );
-  ef.addToggle( activeCircleClass_str18, &bufFillColorMode );
-  ef.addTextField( activeCircleClass_str19, 30, bufAlarmPvName,
+  ef.addTextField( activeCircleClass_str6, 30, &eBuf->bufX );
+  ef.addTextField( activeCircleClass_str7, 30, &eBuf->bufY );
+  ef.addTextField( activeCircleClass_str8, 30, &eBuf->bufW );
+  ef.addTextField( activeCircleClass_str9, 30, &eBuf->bufH );
+  ef.addOption( activeCircleClass_str10, activeCircleClass_str11, &eBuf->bufLineWidth );
+  ef.addOption( activeCircleClass_str12, activeCircleClass_str13, &eBuf->bufLineStyle );
+  ef.addColorButton( activeCircleClass_str14, actWin->ci, &eBuf->lineCb, &eBuf->bufLineColor );
+  ef.addToggle( activeCircleClass_str15, &eBuf->bufLineColorMode );
+  ef.addToggle( activeCircleClass_str16, &eBuf->bufFill );
+  ef.addColorButton( activeCircleClass_str17, actWin->ci, &eBuf->fillCb, &eBuf->bufFillColor );
+  ef.addToggle( activeCircleClass_str18, &eBuf->bufFillColorMode );
+  ef.addTextField( activeCircleClass_str19, 30, eBuf->bufAlarmPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addTextField( activeCircleClass_str20, 30, bufVisPvName,
+  ef.addTextField( activeCircleClass_str20, 30, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addOption( " ", activeCircleClass_str21, &bufVisInverted );
-  ef.addTextField( activeCircleClass_str22, 30, bufMinVisString, 39 );
-  ef.addTextField( activeCircleClass_str23, 30, bufMaxVisString, 39 );
+  ef.addOption( " ", activeCircleClass_str21, &eBuf->bufVisInverted );
+  ef.addTextField( activeCircleClass_str22, 30, eBuf->bufMinVisString, 39 );
+  ef.addTextField( activeCircleClass_str23, 30, eBuf->bufMaxVisString, 39 );
 
   return 1;
 
@@ -1230,7 +1237,8 @@ int activeCircleClass::activate (
       init = 1; // this stays true if there are no pvs
 
       if ( !alarmPvExpStr.getExpanded() ||
-           ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           // ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           blankOrComment( alarmPvExpStr.getExpanded() ) ) {
         alarmPvExists = 0;
         lineVisibility = fillVisibility = 1;
       }
@@ -1243,7 +1251,8 @@ int activeCircleClass::activate (
       }
 
       if ( !visPvExpStr.getExpanded() ||
-           ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           // ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           blankOrComment( visPvExpStr.getExpanded() ) ) {
         visPvExists = 0;
         visibility = 1;
       }

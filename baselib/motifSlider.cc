@@ -570,9 +570,9 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
   mslo->increment = mslo->bufIncrement;
   sprintf( mslo->incString, mslo->controlFormat, mslo->increment );
 
-  mslo->controlPvName.setRaw( mslo->controlBufPvName );
+  mslo->controlPvName.setRaw( mslo->eBuf->controlBufPvName );
 
-  mslo->controlLabelName.setRaw( mslo->controlBufLabelName );
+  mslo->controlLabelName.setRaw( mslo->eBuf->controlBufLabelName );
 
   mslo->controlLabelType = mslo->bufControlLabelType;
 
@@ -848,6 +848,8 @@ activeMotifSliderClass::activeMotifSliderClass ( void ) {
 
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
 }
 
 // copy constructor
@@ -919,11 +921,15 @@ activeGraphicClass *mslo = (activeGraphicClass *) this;
 
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
 }
 
 activeMotifSliderClass::~activeMotifSliderClass ( void ) {
 
   if ( name ) delete[] name;
+
+  if ( eBuf ) delete eBuf;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -1417,6 +1423,10 @@ int activeMotifSliderClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   ptr = actWin->obj.getNameFromClass( "activeMotifSliderClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -1445,16 +1455,16 @@ char title[32], *ptr;
   bufOrientation = orientation;
 
   if ( controlPvName.getRaw() )
-    strncpy( controlBufPvName, controlPvName.getRaw(),
+    strncpy( eBuf->controlBufPvName, controlPvName.getRaw(),
      PV_Factory::MAX_PV_NAME );
   else
-    strcpy( controlBufPvName, "" );
+    strcpy( eBuf->controlBufPvName, "" );
 
   if ( controlLabelName.getRaw() )
-    strncpy( controlBufLabelName, controlLabelName.getRaw(),
+    strncpy( eBuf->controlBufLabelName, controlLabelName.getRaw(),
      PV_Factory::MAX_PV_NAME );
   else
-    strcpy( controlBufLabelName, "" );
+    strcpy( eBuf->controlBufLabelName, "" );
 
   bufControlLabelType = controlLabelType;
 
@@ -1476,10 +1486,10 @@ char title[32], *ptr;
   ef.addTextField( activeMotifSliderClass_str21, 35, &bufW );
   ef.addTextField( activeMotifSliderClass_str22, 35, &bufH );
 
-  ef.addTextField( activeMotifSliderClass_str36, 35, controlBufPvName,
+  ef.addTextField( activeMotifSliderClass_str36, 35, eBuf->controlBufPvName,
    PV_Factory::MAX_PV_NAME );
 
-  ef.addTextField( activeMotifSliderClass_str37, 35, controlBufLabelName,
+  ef.addTextField( activeMotifSliderClass_str37, 35, eBuf->controlBufLabelName,
    PV_Factory::MAX_PV_NAME );
   ef.addOption( activeMotifSliderClass_str38, activeMotifSliderClass_str39,
    &bufControlLabelType );
@@ -2265,7 +2275,8 @@ int opStat;
       controlPvConnected = 0;
 
       if ( !controlPvName.getExpanded() ||
-         ( strcmp( controlPvName.getExpanded(), "" ) == 0 ) ) {
+         // ( strcmp( controlPvName.getExpanded(), "" ) == 0 ) ) {
+        blankOrComment( controlPvName.getExpanded() ) ) {
         controlExists = 0;
       }
       else {
@@ -2275,7 +2286,8 @@ int opStat;
       }
 
       if ( !controlLabelName.getExpanded() ||
-         ( strcmp( controlLabelName.getExpanded(), "" ) == 0 ) ) {
+         // ( strcmp( controlLabelName.getExpanded(), "" ) == 0 ) ) {
+        blankOrComment( controlLabelName.getExpanded() ) ) {
         controlLabelExists = 0;
       }
       else {

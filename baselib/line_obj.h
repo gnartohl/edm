@@ -129,7 +129,34 @@ friend void alc_edit_cancel_delete (
 
 int wasSelected;
 
-int bufX, bufY, bufW, bufH;
+typedef struct editBufTag {
+// edit buffer
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  int bufLineColor;
+  colorButtonClass lineCb;
+  int bufLineColorMode;
+  int bufFill;
+  int bufFillColor;
+  colorButtonClass fillCb;
+  int bufFillColorMode;
+  int bufCapStyle;
+  int bufJoinStyle;
+  int bufLineStyle;
+  int bufLineWidth;
+  char bufMinVisString[39+1];
+  char bufMaxVisString[39+1];
+  int bufVisInverted;
+  char bufAlarmPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
+  int bufClosePolygon;
+  int bufArrows;
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
+
 int oldX, oldY, oldW, oldH;
 
 pointPtr head;
@@ -137,34 +164,23 @@ int numPoints;
 XPoint *xpoints;
 
 pvColorClass lineColor;
-int bufLineColor;
-colorButtonClass lineCb;
 
 int lineColorMode;
-int bufLineColorMode;
 
 int fill;
-int bufFill;
 
 pvColorClass fillColor;
-int bufFillColor;
-colorButtonClass fillCb;
 
 int fillColorMode;
-int bufFillColorMode;
-
-int closedPolygon;
-int bufClosedPolygon;
 
 int capStyle, joinStyle, lineStyle, lineWidth;
-int bufCapStyle, bufJoinStyle, bufLineStyle, bufLineWidth;
 
 int pvType;
 pvValType pvValue, minVis, maxVis;
-char minVisString[39+1], bufMinVisString[39+1];
-char maxVisString[39+1], bufMaxVisString[39+1];
+char minVisString[39+1];
+char maxVisString[39+1];
 
-int prevVisibility, visibility, visInverted, bufVisInverted;
+int prevVisibility, visibility, visInverted;
 int lineVisibility, prevLineVisibility;
 int fillVisibility, prevFillVisibility;
 
@@ -172,10 +188,8 @@ ProcessVariable *alarmPvId;
 ProcessVariable *visPvId;
 
 expStringClass alarmPvExpStr;
-char bufAlarmPvName[PV_Factory::MAX_PV_NAME+1];
 
 expStringClass visPvExpStr;
-char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
 
 int alarmPvExists, visPvExists;
 int activeMode, init, opComplete;
@@ -189,8 +203,8 @@ static const int alarmPvConnection = 1;
 static const int visPvConnection = 2;
 pvConnectionClass connection;
 
-int closePolygon, bufClosePolygon;
-int arrows, bufArrows;
+int closePolygon;
+int arrows;
 
 static const int ARROW_NONE = 0;
 static const int ARROW_FROM = 1;

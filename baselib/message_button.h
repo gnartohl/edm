@@ -189,26 +189,53 @@ int opComplete;
 int minW;
 int minH;
 
-int bufX, bufY, bufW, bufH;
+typedef struct editBufTag {
+// edit buffer
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  int bufFgColor;
+  int bufOnColor;
+  int bufOffColor;
+  int bufTopShadowColor;
+  int bufBotShadowColor;
+  int bufButtonType;
+  int buf3D;
+  int bufInvisible;
+  int bufToggle;
+  int bufPressAction;
+  int bufReleaseAction;
+  char bufMinVisString[39+1];
+  char bufMaxVisString[39+1];
+  int bufVisInverted;
+  int bufLock;
+  int bufUseEnumNumeric;
+  char bufDestPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufSourcePressPvName[39+1];
+  char bufSourceReleasePvName[39+1];
+  char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufColorPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufOnLabel[MAX_ENUM_STRING_SIZE+1];
+  char bufOffLabel[MAX_ENUM_STRING_SIZE+1];
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
+
+char bufPw1[31+1];
+char bufPw2[31+1];
 
 int sourcePressType, sourceReleaseType, destType;
 
-int bufFgColor, bufOnColor, bufOffColor;
 pvColorClass fgColor, onColor, offColor;
-int topShadowColor, bufTopShadowColor;
-int botShadowColor, bufBotShadowColor;
+int topShadowColor;
+int botShadowColor;
 colorButtonClass fgCb, onCb, offCb, topShadowCb, botShadowCb;
 expStringClass onLabel, offLabel;
-char bufOnLabel[MAX_ENUM_STRING_SIZE+1];
-char bufOffLabel[MAX_ENUM_STRING_SIZE+1];
-// char onLabel[MAX_ENUM_STRING_SIZE+1], bufOnLabel[MAX_ENUM_STRING_SIZE+1];
-// char offLabel[MAX_ENUM_STRING_SIZE+1], bufOffLabel[MAX_ENUM_STRING_SIZE+1];
-int buttonType, bufButtonType, _3D, buf3D, invisible, bufInvisible,
- toggle, bufToggle, pressAction, bufPressAction,
- releaseAction, bufReleaseAction;
+int buttonType, _3D, invisible, toggle, pressAction, releaseAction;
 
 fontMenuClass fm;
-char fontTag[63+1], bufFontTag[63+1];
+char fontTag[63+1];
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
@@ -217,11 +244,8 @@ ProcessVariable *sourcePressPvId, *sourceReleasePvId, *destPvId;
 int destIsAckS;
 
 expStringClass destPvExpString;
-char bufDestPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass sourcePressPvExpString;
-char bufSourcePressPvName[39+1];
 expStringClass sourceReleasePvExpString;
-char bufSourceReleasePvName[39+1];
 
 //-------------------------------------------------------
 static const int destPvConnection = 1;
@@ -233,12 +257,11 @@ pvConnectionClass connection;
 //-------------------------------------------------------
 ProcessVariable *visPvId;
 expStringClass visPvExpString;
-char bufVisPvName[activeGraphicClass::MAX_PV_NAME+1];
 int visExists;
 double visValue, curVisValue, minVis, maxVis;
-char minVisString[39+1], bufMinVisString[39+1];
-char maxVisString[39+1], bufMaxVisString[39+1];
-int prevVisibility, visibility, visInverted, bufVisInverted;
+char minVisString[39+1];
+char maxVisString[39+1];
+int prevVisibility, visibility, visInverted;
 int needVisConnectInit, needVisInit, needVisUpdate;
 int initialVisConnection, initialColorConnection;
 //-------------------------------------------------------
@@ -246,7 +269,6 @@ int initialVisConnection, initialColorConnection;
 //-------------------------------------------------------
 ProcessVariable *colorPvId;
 expStringClass colorPvExpString;
-char bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
 int colorExists;
 double colorValue, curColorValue;
 int needColorConnectInit, needColorInit, needColorUpdate;
@@ -264,13 +286,11 @@ int needConnectInit, needErase, needDraw, needToEraseUnconnected,
 int unconnectedTimer;
 
 char pw[31+1];
-char bufPw1[31+1];
-char bufPw2[31+1];
 int usePassword;
 
-int lock, bufLock;
+int lock;
 
-int useEnumNumeric, bufUseEnumNumeric;
+int useEnumNumeric;
 
 int numStates;
 

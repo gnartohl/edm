@@ -687,7 +687,7 @@ int activePipClass::old_createFromFile (
 
 int index;
 int major, minor, release;
-char oneName[activeGraphicClass::MAX_PV_NAME+1];
+char oneName[PV_Factory::MAX_PV_NAME+1];
 char oneFileName[127+1];
 
   this->actWin = _actWin;
@@ -721,7 +721,7 @@ char oneFileName[127+1];
   actWin->incLine(); actWin->incLine();
   botShadowColor.setColorIndex( index, actWin->ci );
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
   readPvExpStr.setRaw( oneName );
 
   readStringFromFile( oneFileName, 127, f );
@@ -758,13 +758,13 @@ int i;
 
   if ( readPvExpStr.getRaw() )
     strncpy( buf->bufReadPvName, readPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+     PV_Factory::MAX_PV_NAME );
   else
     strcpy( buf->bufReadPvName, "" );
 
   if ( labelPvExpStr.getRaw() )
     strncpy( buf->bufLabelPvName, labelPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+     PV_Factory::MAX_PV_NAME );
   else
     strcpy( buf->bufLabelPvName, "" );
 
@@ -817,9 +817,9 @@ int i;
   ef.addOption( "Display Source", "String PV|Form|Menu",
    &buf->bufDisplaySource );
   ef.addTextField( activePipClass_str11, 35, buf->bufReadPvName,
-   activeGraphicClass::MAX_PV_NAME );
+   PV_Factory::MAX_PV_NAME );
   ef.addTextField( "Label PV", 35, buf->bufLabelPvName,
-   activeGraphicClass::MAX_PV_NAME );
+   PV_Factory::MAX_PV_NAME );
   ef.addTextField( activePipClass_str12, 35, buf->bufFileName, 127 );
   ef.addToggle( "Center", &buf->bufCenter );
   ef.addToggle( "Set Size", &buf->bufSetSize );
@@ -1015,7 +1015,7 @@ XmString str;
       activeMode = 1;
 
       if ( !readPvExpStr.getExpanded() ||
-            blank( readPvExpStr.getExpanded() ) ) {
+            blankOrComment( readPvExpStr.getExpanded() ) ) {
         readExists = 0;
       }
       else {
@@ -1024,7 +1024,7 @@ XmString str;
       }
 
       if ( !labelPvExpStr.getExpanded() ||
-            blank( labelPvExpStr.getExpanded() ) ) {
+            blankOrComment( labelPvExpStr.getExpanded() ) ) {
         labelExists = 0;
       }
       else {
@@ -1379,7 +1379,7 @@ XmString str;
       activeMode = 1;
 
       if ( !readPvExpStr.getExpanded() ||
-            blank( readPvExpStr.getExpanded() ) ) {
+            blankOrComment( readPvExpStr.getExpanded() ) ) {
         readExists = 0;
       }
       else {
@@ -1388,7 +1388,7 @@ XmString str;
       }
 
       if ( !labelPvExpStr.getExpanded() ||
-            blank( labelPvExpStr.getExpanded() ) ) {
+            blankOrComment( labelPvExpStr.getExpanded() ) ) {
         labelExists = 0;
       }
       else {

@@ -1535,21 +1535,21 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
   axtdo->eraseSelectBoxCorners();
   axtdo->erase();
 
-  strncpy( axtdo->value, axtdo->bufPvName, 39 );
+  strncpy( axtdo->value, axtdo->eBuf->bufPvName, 39 );
   axtdo->value[39] = 0;
-  strncpy( axtdo->curValue, axtdo->bufPvName, 39 );
+  strncpy( axtdo->curValue, axtdo->eBuf->bufPvName, 39 );
   axtdo->curValue[39] = 0;
 
-  strncpy( axtdo->pvName, axtdo->bufPvName, activeGraphicClass::MAX_PV_NAME );
-  axtdo->pvName[activeGraphicClass::MAX_PV_NAME] = 0;
+  strncpy( axtdo->pvName, axtdo->eBuf->bufPvName, PV_Factory::MAX_PV_NAME );
+  axtdo->pvName[PV_Factory::MAX_PV_NAME] = 0;
   axtdo->pvExpStr.setRaw( axtdo->pvName );
 
-  axtdo->svalPvExpStr.setRaw( axtdo->bufSvalPvName );
+  axtdo->svalPvExpStr.setRaw( axtdo->eBuf->bufSvalPvName );
 
-  axtdo->fgPvExpStr.setRaw( axtdo->bufColorPvName );
+  axtdo->fgPvExpStr.setRaw( axtdo->eBuf->bufColorPvName );
 
-  axtdo->defDir.setRaw( axtdo->bufDefDir );
-  axtdo->pattern.setRaw( axtdo->bufPattern );
+  axtdo->defDir.setRaw( axtdo->eBuf->bufDefDir );
+  axtdo->pattern.setRaw( axtdo->eBuf->bufPattern );
 
   strncpy( axtdo->fontTag, axtdo->fm.currentFontTag(), 63 );
   axtdo->fontTag[63] = 0;
@@ -1564,19 +1564,19 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
    &axtdo->fontAscent, &axtdo->fontDescent, &axtdo->fontHeight,
    &axtdo->stringWidth );
 
-  axtdo->useDisplayBg = axtdo->bufUseDisplayBg;
+  axtdo->useDisplayBg = axtdo->eBuf->bufUseDisplayBg;
 
-  axtdo->autoHeight = axtdo->bufAutoHeight;
+  axtdo->autoHeight = axtdo->eBuf->bufAutoHeight;
 
-  axtdo->formatType = axtdo->bufFormatType;
+  axtdo->formatType = axtdo->eBuf->bufFormatType;
 
-  axtdo->limitsFromDb = axtdo->bufLimitsFromDb;
+  axtdo->limitsFromDb = axtdo->eBuf->bufLimitsFromDb;
 
-  axtdo->changeValOnLoseFocus = axtdo->bufChangeValOnLoseFocus;
+  axtdo->changeValOnLoseFocus = axtdo->eBuf->bufChangeValOnLoseFocus;
 
-  axtdo->fastUpdate = axtdo->bufFastUpdate;
+  axtdo->fastUpdate = axtdo->eBuf->bufFastUpdate;
 
-  axtdo->efPrecision = axtdo->bufEfPrecision;
+  axtdo->efPrecision = axtdo->eBuf->bufEfPrecision;
 
   if ( axtdo->efPrecision.isNull() )
     axtdo->precision = 2;
@@ -1585,67 +1585,67 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   axtdo->fgColor.setConnectSensitive();
 
-  axtdo->colorMode = axtdo->bufColorMode;
+  axtdo->colorMode = axtdo->eBuf->bufColorMode;
 
-  axtdo->editable = axtdo->bufEditable;
+  axtdo->editable = axtdo->eBuf->bufEditable;
 
-  axtdo->isWidget = axtdo->bufIsWidget;
+  axtdo->isWidget = axtdo->eBuf->bufIsWidget;
 
-  axtdo->isDate = axtdo->bufIsDate;
+  axtdo->isDate = axtdo->eBuf->bufIsDate;
 
-  axtdo->isFile = axtdo->bufIsFile;
+  axtdo->isFile = axtdo->eBuf->bufIsFile;
 
-  axtdo->useKp = axtdo->bufUseKp;
+  axtdo->useKp = axtdo->eBuf->bufUseKp;
 
   if ( axtdo->colorMode == XTDC_K_COLORMODE_ALARM )
     axtdo->fgColor.setAlarmSensitive();
   else
     axtdo->fgColor.setAlarmInsensitive();
 
-  axtdo->fgColor.setColorIndex( axtdo->bufFgColor, axtdo->actWin->ci );
-  axtdo->fgColor.setNullIndex ( axtdo->bufSvalColor, axtdo->actWin->ci );
-  axtdo->bgColor = axtdo->bufBgColor;
+  axtdo->fgColor.setColorIndex( axtdo->eBuf->bufFgColor, axtdo->actWin->ci );
+  axtdo->fgColor.setNullIndex ( axtdo->eBuf->bufSvalColor, axtdo->actWin->ci );
+  axtdo->bgColor = axtdo->eBuf->bufBgColor;
 
-  axtdo->nullDetectMode = axtdo->bufNullDetectMode;
+  axtdo->nullDetectMode = axtdo->eBuf->bufNullDetectMode;
 
-  axtdo->smartRefresh = axtdo->bufSmartRefresh;
+  axtdo->smartRefresh = axtdo->eBuf->bufSmartRefresh;
 
-  axtdo->autoSelect = axtdo->bufAutoSelect;
+  axtdo->autoSelect = axtdo->eBuf->bufAutoSelect;
 
-  axtdo->updatePvOnDrop = axtdo->bufUpdatePvOnDrop;
+  axtdo->updatePvOnDrop = axtdo->eBuf->bufUpdatePvOnDrop;
 
-  axtdo->useHexPrefix = axtdo->bufUseHexPrefix;
+  axtdo->useHexPrefix = axtdo->eBuf->bufUseHexPrefix;
 
-  axtdo->fileComponent = axtdo->bufFileComponent;
+  axtdo->fileComponent = axtdo->eBuf->bufFileComponent;
 
-  axtdo->dateAsFileName = axtdo->bufDateAsFileName;
+  axtdo->dateAsFileName = axtdo->eBuf->bufDateAsFileName;
 
-  axtdo->showUnits = axtdo->bufShowUnits;
+  axtdo->showUnits = axtdo->eBuf->bufShowUnits;
   if ( axtdo->editable ) {
     axtdo->showUnits = 0;
   }
 
-  axtdo->useAlarmBorder = axtdo->bufUseAlarmBorder;
+  axtdo->useAlarmBorder = axtdo->eBuf->bufUseAlarmBorder;
 
   strncpy( axtdo->id, axtdo->bufId, 31 );
   axtdo->id[31] = 0;
-  axtdo->changeCallbackFlag = axtdo->bufChangeCallbackFlag;
-  axtdo->activateCallbackFlag = axtdo->bufActivateCallbackFlag;
-  axtdo->deactivateCallbackFlag = axtdo->bufDeactivateCallbackFlag;
+  axtdo->changeCallbackFlag = axtdo->eBuf->bufChangeCallbackFlag;
+  axtdo->activateCallbackFlag = axtdo->eBuf->bufActivateCallbackFlag;
+  axtdo->deactivateCallbackFlag = axtdo->eBuf->bufDeactivateCallbackFlag;
   axtdo->anyCallbackFlag = axtdo->changeCallbackFlag ||
    axtdo->activateCallbackFlag || axtdo->deactivateCallbackFlag;
 
-  axtdo->x = axtdo->bufX;
-  axtdo->sboxX = axtdo->bufX;
+  axtdo->x = axtdo->eBuf->bufX;
+  axtdo->sboxX = axtdo->eBuf->bufX;
 
-  axtdo->y = axtdo->bufY;
-  axtdo->sboxY = axtdo->bufY;
+  axtdo->y = axtdo->eBuf->bufY;
+  axtdo->sboxY = axtdo->eBuf->bufY;
 
-  axtdo->w = axtdo->bufW;
-  axtdo->sboxW = axtdo->bufW;
+  axtdo->w = axtdo->eBuf->bufW;
+  axtdo->sboxW = axtdo->eBuf->bufW;
 
-  axtdo->h = axtdo->bufH;
-  axtdo->sboxH = axtdo->bufH;
+  axtdo->h = axtdo->eBuf->bufH;
+  axtdo->sboxH = axtdo->eBuf->bufH;
 
   axtdo->updateDimensions();
 
@@ -1776,6 +1776,8 @@ activeXTextDspClass::activeXTextDspClass ( void ) {
 
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
   setBlinkFunction( (void *) doBlink );
 
 }
@@ -1824,14 +1826,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   strncpy( fontTag, source->fontTag, 63 );
   fontTag[63] = 0;
-  strncpy( bufFontTag, source->bufFontTag, 63 );
-  bufFontTag[63] = 0;
 
   fs = actWin->fi->getXFontStruct( fontTag );
-
-  fgCb = source->fgCb;
-  bgCb = source->bgCb;
-  svalCb = source->svalCb;
 
   strncpy( value, source->value, XTDC_K_MAX );
   value[XTDC_K_MAX] = 0;
@@ -1846,8 +1842,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   stringY = source->stringY;
   stringX = source->stringX;
 
-  strncpy( pvName, source->pvName, activeGraphicClass::MAX_PV_NAME );
-  pvName[activeGraphicClass::MAX_PV_NAME] = 0;
+  strncpy( pvName, source->pvName, PV_Factory::MAX_PV_NAME );
+  pvName[PV_Factory::MAX_PV_NAME] = 0;
 
   pvExpStr.copy( source->pvExpStr );
   svalPvExpStr.copy( source->svalPvExpStr );
@@ -1892,6 +1888,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
   setBlinkFunction( (void *) doBlink );
 
 }
@@ -1899,6 +1897,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 activeXTextDspClass::~activeXTextDspClass ( void ) {
 
   if ( name ) delete[] name;
+
+  if ( eBuf ) delete eBuf;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -2384,8 +2384,8 @@ static int objTypeEnum[4] = {
   else
     fgColor.setAlarmInsensitive();
 
-  strncpy( pvName, pvExpStr.getRaw(), activeGraphicClass::MAX_PV_NAME );
-  pvName[activeGraphicClass::MAX_PV_NAME] = 0;
+  strncpy( pvName, pvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+  pvName[PV_Factory::MAX_PV_NAME] = 0;
   strncpy( value, pvName, 39 );
   value[39] = 0;
 
@@ -2421,8 +2421,9 @@ int activeXTextDspClass::old_createFromFile (
 int r, g, b, index;
 int major, minor, release;
 int stat = 1;
-char oneName[XTDC_K_MAX+1], onePv[activeGraphicClass::MAX_PV_NAME+1];
+char oneName[XTDC_K_MAX+1], onePv[PV_Factory::MAX_PV_NAME+1];
 unsigned int pixel;
+int tmpFgColor, tmpSvalColor;
 
   this->actWin = _actWin;
 
@@ -2440,7 +2441,7 @@ unsigned int pixel;
 
   this->initSelectBox();
 
-  readStringFromFile( pvName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( pvName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   pvExpStr.setRaw( pvName );
 
@@ -2452,8 +2453,8 @@ unsigned int pixel;
 
     actWin->ci->readColorIndex( f, &index );
     actWin->incLine(); actWin->incLine();
-    bufFgColor = index;
-    fgColor.setColorIndex( bufFgColor, actWin->ci );
+    tmpFgColor = index;
+    fgColor.setColorIndex( tmpFgColor, actWin->ci );
 
     actWin->ci->readColorIndex( f, &index );
     actWin->incLine(); actWin->incLine();
@@ -2463,8 +2464,8 @@ unsigned int pixel;
   else if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    bufFgColor = index;
-    fgColor.setColorIndex( bufFgColor, actWin->ci );
+    tmpFgColor = index;
+    fgColor.setColorIndex( tmpFgColor, actWin->ci );
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
     bgColor = index;
@@ -2479,8 +2480,8 @@ unsigned int pixel;
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    bufFgColor = actWin->ci->pixIndex( pixel );
-    fgColor.setColorIndex( bufFgColor, actWin->ci );
+    tmpFgColor = actWin->ci->pixIndex( pixel );
+    fgColor.setColorIndex( tmpFgColor, actWin->ci );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     if ( ( major < 2 ) && ( minor < 2 ) ) {
@@ -2551,23 +2552,23 @@ unsigned int pixel;
 
   if ( ( major > 1 ) || ( minor > 5 ) ) {
 
-    readStringFromFile( onePv, activeGraphicClass::MAX_PV_NAME+1, f );
+    readStringFromFile( onePv, PV_Factory::MAX_PV_NAME+1, f );
      actWin->incLine();
     svalPvExpStr.setRaw( onePv );
 
     if ( major > 1 ) {
 
       fscanf( f, "%d\n", &index ); actWin->incLine();
-      bufSvalColor = index;
-      fgColor.setNullIndex( bufSvalColor, actWin->ci );
+      tmpSvalColor = index;
+      fgColor.setNullIndex( tmpSvalColor, actWin->ci );
 
     }
     else {
 
       fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
       actWin->ci->setRGB( r, g, b, &pixel );
-      bufSvalColor = actWin->ci->pixIndex( pixel );
-      fgColor.setNullIndex( bufSvalColor, actWin->ci );
+      tmpSvalColor = actWin->ci->pixIndex( pixel );
+      fgColor.setNullIndex( tmpSvalColor, actWin->ci );
 
     }
 
@@ -2575,7 +2576,7 @@ unsigned int pixel;
   else {
 
     svalPvExpStr.setRaw( "" );
-    bufSvalColor = bufFgColor;
+    tmpSvalColor = tmpFgColor;
 
   }
 
@@ -2592,7 +2593,7 @@ unsigned int pixel;
 
   if ( ( major > 1 ) || ( minor > 7 ) ) {
 
-    readStringFromFile( onePv, activeGraphicClass::MAX_PV_NAME+1, f );
+    readStringFromFile( onePv, PV_Factory::MAX_PV_NAME+1, f );
      actWin->incLine();
     fgPvExpStr.setRaw( onePv );
 
@@ -2754,6 +2755,7 @@ int r, g, b, more;
 int stat = 1;
 char *tk, *gotData, *context, buf[255+1];
 unsigned int pixel;
+int tmpFgColor;
 
   r = 0xffff;
   g = 0xffff;
@@ -2937,8 +2939,8 @@ unsigned int pixel;
   } while ( more );
 
   actWin->ci->setRGB( r, g, b, &pixel );
-  bufFgColor = actWin->ci->pixIndex( pixel );
-  fgColor.setColorIndex( bufFgColor, actWin->ci );
+  tmpFgColor = actWin->ci->pixIndex( pixel );
+  fgColor.setColorIndex( tmpFgColor, actWin->ci );
 
   limitsFromDb = 1;
   changeValOnLoseFocus = 0;
@@ -2985,6 +2987,10 @@ int activeXTextDspClass::genericEdit ( void ) {
 char title[32], *ptr;
 int noedit;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   strcpy( title, "activeXTextDspClass" );
   if ( strcmp( this->getCreateParam(), "noedit" ) == 0 ) {
     noedit = 1;
@@ -3010,80 +3016,80 @@ int noedit;
   strncpy( bufId, id, 31 );
   bufId[31] = 0;
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
-  bufFgColor = fgColor.pixelIndex();
-  bufBgColor = bgColor;
-  strncpy( bufFontTag, fontTag, 63 );
-  bufFontTag[63] = 0;
-  bufUseDisplayBg = useDisplayBg;
-  bufAutoHeight = autoHeight;
-  bufFormatType = formatType;
-  bufColorMode = colorMode;
-  strncpy( bufValue, value, XTDC_K_MAX );
-  bufValue[XTDC_K_MAX] = 0;
-  strncpy( bufPvName, pvName, activeGraphicClass::MAX_PV_NAME );
-  bufPvName[activeGraphicClass::MAX_PV_NAME] = 0;
+  eBuf->bufX = x;
+  eBuf->bufY = y;
+  eBuf->bufW = w;
+  eBuf->bufH = h;
+  eBuf->bufFgColor = fgColor.pixelIndex();
+  eBuf->bufBgColor = bgColor;
+  strncpy( eBuf->bufFontTag, fontTag, 63 );
+  eBuf->bufFontTag[63] = 0;
+  eBuf->bufUseDisplayBg = useDisplayBg;
+  eBuf->bufAutoHeight = autoHeight;
+  eBuf->bufFormatType = formatType;
+  eBuf->bufColorMode = colorMode;
+  strncpy( bfrValue, value, XTDC_K_MAX );
+  bfrValue[XTDC_K_MAX] = 0;
+  strncpy( eBuf->bufPvName, pvName, PV_Factory::MAX_PV_NAME );
+  eBuf->bufPvName[PV_Factory::MAX_PV_NAME] = 0;
 
   if ( fgPvExpStr.getRaw() ) {
-    strncpy( bufColorPvName, fgPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
-    bufColorPvName[activeGraphicClass::MAX_PV_NAME] = 0;
+    strncpy( eBuf->bufColorPvName, fgPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
+    eBuf->bufColorPvName[PV_Factory::MAX_PV_NAME] = 0;
   }
   else {
-    strcpy( bufColorPvName, "" );
+    strcpy( eBuf->bufColorPvName, "" );
   }
 
   if ( svalPvExpStr.getRaw() ) {
-    strncpy( bufSvalPvName, svalPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
-    bufSvalPvName[activeGraphicClass::MAX_PV_NAME] = 0;
+    strncpy( eBuf->bufSvalPvName, svalPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
+    eBuf->bufSvalPvName[PV_Factory::MAX_PV_NAME] = 0;
   }
   else {
-    strcpy( bufSvalPvName, "" );
+    strcpy( eBuf->bufSvalPvName, "" );
   }
 
   if ( defDir.getRaw() ) {
-    strncpy( bufDefDir, defDir.getRaw(), XTDC_K_MAX );
-    bufDefDir[XTDC_K_MAX] = 0;
+    strncpy( eBuf->bufDefDir, defDir.getRaw(), XTDC_K_MAX );
+    eBuf->bufDefDir[XTDC_K_MAX] = 0;
   }
   else {
-    strcpy( bufDefDir, "" );
+    strcpy( eBuf->bufDefDir, "" );
   }
 
   if ( pattern.getRaw() ) {
-    strncpy( bufPattern, pattern.getRaw(), XTDC_K_MAX );
-    bufPattern[XTDC_K_MAX] = 0;
+    strncpy( eBuf->bufPattern, pattern.getRaw(), XTDC_K_MAX );
+    eBuf->bufPattern[XTDC_K_MAX] = 0;
   }
   else {
-    strcpy( bufPattern, "" );
+    strcpy( eBuf->bufPattern, "" );
   }
 
-  bufSvalColor = fgColor.nullIndex();
-  bufNullDetectMode = nullDetectMode;
+  eBuf->bufSvalColor = fgColor.nullIndex();
+  eBuf->bufNullDetectMode = nullDetectMode;
 
-  bufEditable = editable;
-  bufSmartRefresh = smartRefresh;
-  bufIsWidget = isWidget;
-  bufUseKp = useKp;
-  bufIsDate = isDate;
-  bufDateAsFileName = dateAsFileName;
-  bufIsFile = isFile;
-  bufFileComponent = fileComponent;
-  bufLimitsFromDb = limitsFromDb;
-  bufChangeValOnLoseFocus = changeValOnLoseFocus;
-  bufFastUpdate = fastUpdate;
-  bufEfPrecision = efPrecision;
-  bufChangeCallbackFlag = changeCallbackFlag;
-  bufActivateCallbackFlag = activateCallbackFlag;
-  bufDeactivateCallbackFlag = deactivateCallbackFlag;
-  bufAutoSelect = autoSelect;
-  bufUpdatePvOnDrop = updatePvOnDrop;
-  bufUseHexPrefix = useHexPrefix;
-  bufShowUnits = showUnits;
-  bufUseAlarmBorder = useAlarmBorder;
+  eBuf->bufEditable = editable;
+  eBuf->bufSmartRefresh = smartRefresh;
+  eBuf->bufIsWidget = isWidget;
+  eBuf->bufUseKp = useKp;
+  eBuf->bufIsDate = isDate;
+  eBuf->bufDateAsFileName = dateAsFileName;
+  eBuf->bufIsFile = isFile;
+  eBuf->bufFileComponent = fileComponent;
+  eBuf->bufLimitsFromDb = limitsFromDb;
+  eBuf->bufChangeValOnLoseFocus = changeValOnLoseFocus;
+  eBuf->bufFastUpdate = fastUpdate;
+  eBuf->bufEfPrecision = efPrecision;
+  eBuf->bufChangeCallbackFlag = changeCallbackFlag;
+  eBuf->bufActivateCallbackFlag = activateCallbackFlag;
+  eBuf->bufDeactivateCallbackFlag = deactivateCallbackFlag;
+  eBuf->bufAutoSelect = autoSelect;
+  eBuf->bufUpdatePvOnDrop = updatePvOnDrop;
+  eBuf->bufUseHexPrefix = useHexPrefix;
+  eBuf->bufShowUnits = showUnits;
+  eBuf->bufUseAlarmBorder = useAlarmBorder;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -3092,87 +3098,87 @@ int noedit;
    title, NULL, NULL, NULL );
 
   //ef.addTextField( activeXTextDspClass_str6, 35, bufId, 31 );
-  ef.addTextField( activeXTextDspClass_str7, 35, &bufX );
-  ef.addTextField( activeXTextDspClass_str8, 35, &bufY );
-  ef.addTextField( activeXTextDspClass_str9, 35, &bufW );
-  ef.addTextField( activeXTextDspClass_str10, 35, &bufH );
-  ef.addTextField( activeXTextDspClass_str22, 35, bufPvName,
-   activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeXTextDspClass_str74, 35, bufColorPvName,
-   activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeXTextDspClass_str25, 35, bufSvalPvName,
-   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeXTextDspClass_str7, 35, &eBuf->bufX );
+  ef.addTextField( activeXTextDspClass_str8, 35, &eBuf->bufY );
+  ef.addTextField( activeXTextDspClass_str9, 35, &eBuf->bufW );
+  ef.addTextField( activeXTextDspClass_str10, 35, &eBuf->bufH );
+  ef.addTextField( activeXTextDspClass_str22, 35, eBuf->bufPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addTextField( activeXTextDspClass_str74, 35, eBuf->bufColorPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addTextField( activeXTextDspClass_str25, 35, eBuf->bufSvalPvName,
+   PV_Factory::MAX_PV_NAME );
   ef.addOption( activeXTextDspClass_str23, activeXTextDspClass_str24,
-   &bufNullDetectMode );
+   &eBuf->bufNullDetectMode );
   ef.addOption( activeXTextDspClass_str18,
-   activeXTextDspClass_str19, &bufFormatType );
-  ef.addToggle( activeXTextDspClass_str77, &bufUseHexPrefix );
-  ef.addToggle( activeXTextDspClass_str20, &bufLimitsFromDb );
-  ef.addTextField( activeXTextDspClass_str21, 35, &bufEfPrecision );
-  ef.addToggle( activeXTextDspClass_str81, &bufShowUnits );
-  ef.addToggle( activeXTextDspClass_str11, &bufAutoHeight );
+   activeXTextDspClass_str19, &eBuf->bufFormatType );
+  ef.addToggle( activeXTextDspClass_str77, &eBuf->bufUseHexPrefix );
+  ef.addToggle( activeXTextDspClass_str20, &eBuf->bufLimitsFromDb );
+  ef.addTextField( activeXTextDspClass_str21, 35, &eBuf->bufEfPrecision );
+  ef.addToggle( activeXTextDspClass_str81, &eBuf->bufShowUnits );
+  ef.addToggle( activeXTextDspClass_str11, &eBuf->bufAutoHeight );
 
   if ( !noedit ) {
-    ef.addToggle( activeXTextDspClass_str27, &bufEditable );
+    ef.addToggle( activeXTextDspClass_str27, &eBuf->bufEditable );
   }
   else {
-    bufEditable = editable = 0;
+    eBuf->bufEditable = editable = 0;
   }
 
   if ( !noedit ) {
-    ef.addToggle( activeXTextDspClass_str67, &bufUseKp );
+    ef.addToggle( activeXTextDspClass_str67, &eBuf->bufUseKp );
   }
   else {
-    bufUseKp = useKp = 0;
+    eBuf->bufUseKp = useKp = 0;
   }
 
-  ef.addToggle( activeXTextDspClass_str28, &bufSmartRefresh );
-  ef.addToggle( activeXTextDspClass_str29, &bufIsWidget );
+  ef.addToggle( activeXTextDspClass_str28, &eBuf->bufSmartRefresh );
+  ef.addToggle( activeXTextDspClass_str29, &eBuf->bufIsWidget );
 
   if ( !noedit ) {
-    ef.addToggle( activeXTextDspClass_str68, &bufChangeValOnLoseFocus );
-    ef.addToggle( activeXTextDspClass_str75, &bufAutoSelect );
-    ef.addToggle( activeXTextDspClass_str76, &bufUpdatePvOnDrop );
+    ef.addToggle( activeXTextDspClass_str68, &eBuf->bufChangeValOnLoseFocus );
+    ef.addToggle( activeXTextDspClass_str75, &eBuf->bufAutoSelect );
+    ef.addToggle( activeXTextDspClass_str76, &eBuf->bufUpdatePvOnDrop );
   }
   else {
-    bufChangeValOnLoseFocus = changeValOnLoseFocus = 0;
-    bufAutoSelect = autoSelect = 0;
-    bufUpdatePvOnDrop = updatePvOnDrop = 0;
+    eBuf->bufChangeValOnLoseFocus = changeValOnLoseFocus = 0;
+    eBuf->bufAutoSelect = autoSelect = 0;
+    eBuf->bufUpdatePvOnDrop = updatePvOnDrop = 0;
   }
 
-  ef.addToggle( activeXTextDspClass_str69, &bufFastUpdate );
+  ef.addToggle( activeXTextDspClass_str69, &eBuf->bufFastUpdate );
 
   if ( !noedit ) {
-    ef.addToggle( activeXTextDspClass_str70, &bufIsDate );
-    ef.addToggle( activeXTextDspClass_str80, &bufDateAsFileName );
-    ef.addToggle( activeXTextDspClass_str71, &bufIsFile );
+    ef.addToggle( activeXTextDspClass_str70, &eBuf->bufIsDate );
+    ef.addToggle( activeXTextDspClass_str80, &eBuf->bufDateAsFileName );
+    ef.addToggle( activeXTextDspClass_str71, &eBuf->bufIsFile );
     ef.addOption( activeXTextDspClass_str78,
-     activeXTextDspClass_str79, &bufFileComponent );
-    ef.addTextField( activeXTextDspClass_str72, 35, bufDefDir, XTDC_K_MAX );
-    ef.addTextField( activeXTextDspClass_str73, 35, bufPattern, XTDC_K_MAX );
+     activeXTextDspClass_str79, &eBuf->bufFileComponent );
+    ef.addTextField( activeXTextDspClass_str72, 35, eBuf->bufDefDir, XTDC_K_MAX );
+    ef.addTextField( activeXTextDspClass_str73, 35, eBuf->bufPattern, XTDC_K_MAX );
   }
   else {
-    bufIsDate = isDate = 0;
-    bufIsFile = isFile = 0;
+    eBuf->bufIsDate = isDate = 0;
+    eBuf->bufIsFile = isFile = 0;
     fileComponent = XTDC_K_FILE_FULL_PATH;
     dateAsFileName = 0;
   }
 
-  ef.addColorButton( activeXTextDspClass_str15, actWin->ci, &fgCb,
-   &bufFgColor );
-  ef.addToggle( activeXTextDspClass_str14, &bufColorMode );
-  ef.addToggle( activeXTextDspClass_str82, &bufUseAlarmBorder );
-  ef.addColorButton( activeXTextDspClass_str16, actWin->ci, &bgCb,
-   &bufBgColor );
-  ef.addToggle( activeXTextDspClass_str17, &bufUseDisplayBg );
-  ef.addColorButton( activeXTextDspClass_str26, actWin->ci, &svalCb,
-   &bufSvalColor );
-  ef.addFontMenu( activeXTextDspClass_str12, actWin->fi, &fm, fontTag );
+  ef.addColorButton( activeXTextDspClass_str15, actWin->ci, &eBuf->fgCb,
+   &eBuf->bufFgColor );
+  ef.addToggle( activeXTextDspClass_str14, &eBuf->bufColorMode );
+  ef.addToggle( activeXTextDspClass_str82, &eBuf->bufUseAlarmBorder );
+  ef.addColorButton( activeXTextDspClass_str16, actWin->ci, &eBuf->bgCb,
+   &eBuf->bufBgColor );
+  ef.addToggle( activeXTextDspClass_str17, &eBuf->bufUseDisplayBg );
+  ef.addColorButton( activeXTextDspClass_str26, actWin->ci, &eBuf->svalCb,
+   &eBuf->bufSvalColor );
+  ef.addFontMenu( activeXTextDspClass_str12, actWin->fi, &fm, eBuf->bufFontTag );
   fm.setFontAlignment( alignment );
 
-  //ef.addToggle( activeXTextDspClass_str30, &bufActivateCallbackFlag );
-  //ef.addToggle( activeXTextDspClass_str31, &bufDeactivateCallbackFlag );
-  //ef.addToggle( activeXTextDspClass_str32, &bufChangeCallbackFlag );
+  //ef.addToggle( activeXTextDspClass_str30, &eBuf->bufActivateCallbackFlag );
+  //ef.addToggle( activeXTextDspClass_str31, &eBuf->bufDeactivateCallbackFlag );
+  //ef.addToggle( activeXTextDspClass_str32, &eBuf->bufChangeCallbackFlag );
 
   return 1;
 
@@ -3248,15 +3254,15 @@ int len;
 
   if ( isWidget ) return 1;
 
-  if ( !bufInvalid && ( strlen(value) == strlen(bufValue) ) ) {
-    if ( strcmp( value, bufValue ) == 0 ) return 1;
+  if ( !bufInvalid && ( strlen(value) == strlen(bfrValue) ) ) {
+    if ( strcmp( value, bfrValue ) == 0 ) return 1;
   }
 
   if ( strcmp( fontTag, "" ) != 0 ) {
     actWin->executeGc.setFontTag( fontTag, actWin->fi );
   }
 
-  len = strlen(bufValue);
+  len = strlen(bfrValue);
 
   if ( bufInvalid ) {
 
@@ -3309,7 +3315,7 @@ int len;
 
     XDrawString( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.eraseGC(), stringX, stringY,
-     bufValue, len );
+     bfrValue, len );
 
   }
   else {
@@ -3339,7 +3345,7 @@ int len;
 
       XDrawImageString( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), stringX, stringY,
-       bufValue, len );
+       bfrValue, len );
 
     }
 
@@ -3439,8 +3445,8 @@ int blink = 0;
 
   if ( !enabled || !activeMode || !init ) return 1;
 
-  if ( !bufInvalid && ( strlen(value) == strlen(bufValue) ) ) {
-    if ( strcmp( value, bufValue ) == 0 ) return 1;
+  if ( !bufInvalid && ( strlen(value) == strlen(bfrValue) ) ) {
+    if ( strcmp( value, bfrValue ) == 0 ) return 1;
   }
 
   if ( isWidget ) {
@@ -3483,8 +3489,8 @@ int blink = 0;
     strncpy( entryValue, value, XTDC_K_MAX );
     entryValue[XTDC_K_MAX] = 0;
 
-    strncpy( bufValue, value, XTDC_K_MAX );
-    bufValue[XTDC_K_MAX] = 0;
+    strncpy( bfrValue, value, XTDC_K_MAX );
+    bfrValue[XTDC_K_MAX] = 0;
 
     if ( bufInvalid ) {
       bufInvalid = 0;
@@ -3568,8 +3574,8 @@ int blink = 0;
   actWin->executeGc.restoreFg();
   actWin->executeGc.restoreBg();
 
-  strncpy( bufValue, value, XTDC_K_MAX );
-  bufValue[XTDC_K_MAX] = 0;
+  strncpy( bfrValue, value, XTDC_K_MAX );
+  bfrValue[XTDC_K_MAX] = 0;
 
   updateBlink( blink );
 
@@ -3677,7 +3683,7 @@ char callbackName[63+1];
       aglPtr = ptr;
       strcpy( curValue, "" );
       strcpy( value, "" );
-      strcpy( bufValue, "" );
+      strcpy( bfrValue, "" );
       updateDimensions();
       tf_widget = NULL;
       numStates = 0; // for enum type
@@ -3710,7 +3716,8 @@ char callbackName[63+1];
         pvExistCheck = 1;
 
         if ( pvExpStr.getExpanded() ) {
-          if ( strcmp( pvExpStr.getExpanded(), "" ) != 0 ) {
+	  //if ( strcmp( pvExpStr.getExpanded(), "" ) != 0 ) {
+          if ( !blankOrComment( pvExpStr.getExpanded() ) ) {
             pvExists = 1;
             connection.addPv(); // must do this only once per pv
           }
@@ -3723,7 +3730,8 @@ char callbackName[63+1];
         }
 
         if ( svalPvExpStr.getExpanded() ) {
-          if ( strcmp( svalPvExpStr.getExpanded(), "" ) != 0 ) {
+	  //if ( strcmp( svalPvExpStr.getExpanded(), "" ) != 0 ) {
+          if ( !blankOrComment( svalPvExpStr.getExpanded() ) ) {
             svalPvExists = 1;
             connection.addPv(); // must do this only once per pv
           }
@@ -3736,7 +3744,8 @@ char callbackName[63+1];
         }
 
         if ( fgPvExpStr.getExpanded() ) {
-          if ( strcmp( fgPvExpStr.getExpanded(), "" ) != 0 ) {
+          //if ( strcmp( fgPvExpStr.getExpanded(), "" ) != 0 ) {
+          if ( !blankOrComment( fgPvExpStr.getExpanded() ) ) {
             fgPvExists = 1;
             connection.addPv(); // must do this only once per pv
           }
@@ -3989,7 +3998,7 @@ void activeXTextDspClass::btnDown (
   int *action )
 {
 
-char selectString[XTDC_K_MAX+1], bufDir[XTDC_K_MAX+1], bufPat[XTDC_K_MAX+1];
+char selectString[XTDC_K_MAX+1], tmpDir[XTDC_K_MAX+1], tmpPat[XTDC_K_MAX+1];
 int i;
 
   *action = 0;
@@ -4048,23 +4057,23 @@ int i;
       if ( isFile ) {
 
         if ( defDir.getExpanded() ) {
-          strncpy( bufDir, defDir.getExpanded(), XTDC_K_MAX );
-          bufDir[XTDC_K_MAX] = 0;
+          strncpy( tmpDir, defDir.getExpanded(), XTDC_K_MAX );
+          tmpDir[XTDC_K_MAX] = 0;
 	}
         else {
-          strcpy( bufDir, "" );
+          strcpy( tmpDir, "" );
 	}
 
         if ( pattern.getExpanded() ) {
-          strncpy( bufPat, pattern.getExpanded(), XTDC_K_MAX );
-          bufPat[XTDC_K_MAX] = 0;
+          strncpy( tmpPat, pattern.getExpanded(), XTDC_K_MAX );
+          tmpPat[XTDC_K_MAX] = 0;
 	}
         else {
-          strcpy( bufPat, "" );
+          strcpy( tmpPat, "" );
 	}
 
         fsel.create( actWin->top, teX, teY,
-         bufDir, bufPat,
+         tmpDir, tmpPat,
          (void *) this,
          (XtCallbackProc) xtdoSetFsValue,
          (XtCallbackProc) xtdoCancelStr );
@@ -4913,8 +4922,8 @@ int changed = 0;
         strncpy( curValue, ctlPvs[0], 39 );
         curValue[39] = 0;
 
-        strncpy( pvName, ctlPvs[0], activeGraphicClass::MAX_PV_NAME );
-        pvName[activeGraphicClass::MAX_PV_NAME] = 0;
+        strncpy( pvName, ctlPvs[0], PV_Factory::MAX_PV_NAME );
+        pvName[PV_Factory::MAX_PV_NAME] = 0;
         pvExpStr.setRaw( pvName );
 
       }
@@ -4935,8 +4944,8 @@ int changed = 0;
         strncpy( curValue, readbackPvs[0], 39 );
         curValue[39] = 0;
 
-        strncpy( pvName, readbackPvs[0], activeGraphicClass::MAX_PV_NAME );
-        pvName[activeGraphicClass::MAX_PV_NAME] = 0;
+        strncpy( pvName, readbackPvs[0], PV_Factory::MAX_PV_NAME );
+        pvName[PV_Factory::MAX_PV_NAME] = 0;
         pvExpStr.setRaw( pvName );
 
       }

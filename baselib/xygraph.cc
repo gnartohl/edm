@@ -2610,8 +2610,8 @@ int i, yi;
       axygo->lineStyle[i] = LineOnOffDash;
     }
 
-    if ( ( !blank( axygo->eBuf->bufXPvName[i] ) ) &&
-         ( !blank( axygo->eBuf->bufYPvName[i] ) ) ) {
+    if ( ( !blankOrComment( axygo->eBuf->bufXPvName[i] ) ) &&
+         ( !blankOrComment( axygo->eBuf->bufYPvName[i] ) ) ) {
 
       (axygo->numTraces)++;
       axygo->xPvExpStr[i].setRaw( axygo->eBuf->bufXPvName[i] );
@@ -2619,7 +2619,7 @@ int i, yi;
       axygo->traceType[i] = XYGC_K_TRACE_XY;
 
     }
-    else if ( !blank( axygo->eBuf->bufYPvName[i] ) ) {
+    else if ( !blankOrComment( axygo->eBuf->bufYPvName[i] ) ) {
 
       (axygo->numTraces)++;
       axygo->xPvExpStr[i].setRaw( "" );
@@ -3950,11 +3950,11 @@ static int resetModeEnum[2] = {
 
   for ( i=0; i<numTraces; i++ ) {
 
-    if ( ( !blank( xPvExpStr[i].getRaw() ) ) &&
-         ( !blank( yPvExpStr[i].getRaw() ) ) ) {
+    if ( ( !blankOrComment( xPvExpStr[i].getRaw() ) ) &&
+         ( !blankOrComment( yPvExpStr[i].getRaw() ) ) ) {
       traceType[i] = XYGC_K_TRACE_XY;
     }
-    else if ( !blank( yPvExpStr[i].getRaw() ) ) {
+    else if ( !blankOrComment( yPvExpStr[i].getRaw() ) ) {
       traceType[i] = XYGC_K_TRACE_CHRONOLOGICAL;
     }
     else {
@@ -4029,7 +4029,7 @@ int xyGraphClass::old_createFromFile (
 int i, yi;
 int major, minor, release;
 int stat = 1;
-char str[127+1], traceColor[15+1], onePv[activeGraphicClass::MAX_PV_NAME+1];
+char str[127+1], traceColor[15+1], onePv[PV_Factory::MAX_PV_NAME+1];
 efDouble dummy;
 
   this->actWin = _actWin;
@@ -4086,11 +4086,11 @@ efDouble dummy;
     stat = y1Max[yi].read( f ); actWin->incLine();
   }
 
-  readStringFromFile( onePv, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( onePv, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   trigPvExpStr.setRaw( onePv );
 
-  readStringFromFile( onePv, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( onePv, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   resetPvExpStr.setRaw( onePv );
 
@@ -4125,19 +4125,19 @@ efDouble dummy;
 
   for ( i=0; i<numTraces; i++ ) {
 
-    readStringFromFile( onePv, activeGraphicClass::MAX_PV_NAME+1, f );
+    readStringFromFile( onePv, PV_Factory::MAX_PV_NAME+1, f );
      actWin->incLine();
     xPvExpStr[i].setRaw( onePv );
 
-    readStringFromFile( onePv, activeGraphicClass::MAX_PV_NAME+1, f );
+    readStringFromFile( onePv, PV_Factory::MAX_PV_NAME+1, f );
      actWin->incLine();
     yPvExpStr[i].setRaw( onePv );
 
-    if ( ( !blank( xPvExpStr[i].getRaw() ) ) &&
-         ( !blank( yPvExpStr[i].getRaw() ) ) ) {
+    if ( ( !blankOrComment( xPvExpStr[i].getRaw() ) ) &&
+         ( !blankOrComment( yPvExpStr[i].getRaw() ) ) ) {
       traceType[i] = XYGC_K_TRACE_XY;
     }
-    else if ( !blank( yPvExpStr[i].getRaw() ) ) {
+    else if ( !blankOrComment( yPvExpStr[i].getRaw() ) ) {
       traceType[i] = XYGC_K_TRACE_CHRONOLOGICAL;
     }
     else {
@@ -4306,9 +4306,9 @@ int i, yi;
   eBuf->bufBgColor = bgColor;
   eBuf->bufGridColor = gridColor;
   strncpy( eBuf->bufTrigPvName, trigPvExpStr.getRaw(),
-   activeGraphicClass::MAX_PV_NAME );
+   PV_Factory::MAX_PV_NAME );
   strncpy( eBuf->bufResetPvName, resetPvExpStr.getRaw(),
-   activeGraphicClass::MAX_PV_NAME );
+   PV_Factory::MAX_PV_NAME );
   eBuf->bufResetMode = resetMode;
 
   eBuf->bufXNumLabelIntervals = xNumLabelIntervals;
@@ -4364,9 +4364,9 @@ int i, yi;
 
     for ( i=0; i<numTraces; i++ ) {
       strncpy( eBuf->bufXPvName[i], xPvExpStr[i].getRaw(),
-       activeGraphicClass::MAX_PV_NAME );
+       PV_Factory::MAX_PV_NAME );
       strncpy( eBuf->bufYPvName[i], yPvExpStr[i].getRaw(),
-       activeGraphicClass::MAX_PV_NAME );
+       PV_Factory::MAX_PV_NAME );
       eBuf->bufPlotStyle[i] = plotStyle[i];
       eBuf->bufPlotSymbolType[i] = plotSymbolType[i];
       eBuf->bufPlotUpdateMode[i] = plotUpdateMode[i];
@@ -4401,12 +4401,12 @@ int i, yi;
     i = 0;
     efTrace->beginSubForm();
     efTrace->addTextField( "X ", 20, eBuf->bufXPvName[i],
-     activeGraphicClass::MAX_PV_NAME );
+     PV_Factory::MAX_PV_NAME );
     efTrace->addLabel( "  S " );
     efTrace->addToggle( " ", &eBuf->bufXSigned[i] );
     efTrace->addLabel( "Y " );
     efTrace->addTextField( "", 20, eBuf->bufYPvName[i],
-     activeGraphicClass::MAX_PV_NAME );
+     PV_Factory::MAX_PV_NAME );
     efTrace->addLabel( "  S " );
     efTrace->addToggle( " ", &eBuf->bufYSigned[i] );
     efTrace->addOption( "", "scope|plot", &eBuf->bufOpMode[i] );
@@ -4433,12 +4433,12 @@ int i, yi;
 
       efTrace->beginLeftSubForm();
       efTrace->addTextField( "X ", 20, eBuf->bufXPvName[i],
-       activeGraphicClass::MAX_PV_NAME );
+       PV_Factory::MAX_PV_NAME );
       efTrace->addLabel( "  S " );
       efTrace->addToggle( " ", &eBuf->bufXSigned[i] );
       efTrace->addLabel( "Y " );
       efTrace->addTextField( "", 20, eBuf->bufYPvName[i],
-       activeGraphicClass::MAX_PV_NAME );
+       PV_Factory::MAX_PV_NAME );
       efTrace->addLabel( "  S " );
       efTrace->addToggle( " ", &eBuf->bufYSigned[i] );
       efTrace->addOption( "", "scope|plot", &eBuf->bufOpMode[i] );
@@ -4607,9 +4607,9 @@ int i, yi;
     efAxis->finished( axygc_edit_ok_axis, this );
 
   ef.addTextField( "Trigger PV", 35, eBuf->bufTrigPvName,
-   activeGraphicClass::MAX_PV_NAME );
+   PV_Factory::MAX_PV_NAME );
   ef.addTextField( "Reset PV", 35, eBuf->bufResetPvName,
-   activeGraphicClass::MAX_PV_NAME );
+   PV_Factory::MAX_PV_NAME );
   ef.addOption( "Reset Mode", "if not zero|if zero", &eBuf->bufResetMode );
   ef.addFontMenuNoAlignInfo( "Font", actWin->fi, &fm, fontTag );
 
@@ -6182,7 +6182,7 @@ XmString str;
       resetPv = NULL;
       initialResetConnection = 1;
 
-      if ( !blank( resetPvExpStr.getExpanded() ) ) {
+      if ( !blankOrComment( resetPvExpStr.getExpanded() ) ) {
         resetPvExists = 1;
         resetPv = the_PV_Factory->create( resetPvExpStr.getExpanded() );
 	if ( resetPv ) {
@@ -6200,7 +6200,7 @@ XmString str;
       trigPv = NULL;
       initialTrigConnection = 1;
 
-      if ( !blank( trigPvExpStr.getExpanded() ) ) {
+      if ( !blankOrComment( trigPvExpStr.getExpanded() ) ) {
         trigPvExists = 1;
         trigPv = the_PV_Factory->create( trigPvExpStr.getExpanded() );
 	if ( trigPv ) {
@@ -6263,7 +6263,7 @@ XmString str;
 
       for ( i=0; i<numTraces; i++ ) {
 
-        if ( !blank( yPvExpStr[i].getExpanded() ) ) {
+        if ( !blankOrComment( yPvExpStr[i].getExpanded() ) ) {
 
           if ( traceType[i] == XYGC_K_TRACE_XY ) {
 
@@ -6282,7 +6282,7 @@ XmString str;
                yPvExpStr[i].getExpanded() );
             }
 
-            if ( !blank( xPvExpStr[i].getExpanded() ) ) {
+            if ( !blankOrComment( xPvExpStr[i].getExpanded() ) ) {
 
               xcArgRec[i].objPtr = (void *) this;
               xcArgRec[i].index = i;

@@ -74,31 +74,31 @@ activeXTextClass *axto = (activeXTextClass *) client;
 
   strncpy( axto->id, axto->bufId, 31 );
 
-  axto->fgColorMode = axto->bufFgColorMode;
+  axto->fgColorMode = axto->eBuf->bufFgColorMode;
   if ( axto->fgColorMode == AXTC_K_COLORMODE_ALARM )
     axto->fgColor.setAlarmSensitive();
   else
     axto->fgColor.setAlarmInsensitive();
-  axto->fgColor.setColorIndex( axto->bufFgColor, axto->actWin->ci );
+  axto->fgColor.setColorIndex( axto->eBuf->bufFgColor, axto->actWin->ci );
 
-  axto->bgColorMode = axto->bufBgColorMode;
+  axto->bgColorMode = axto->eBuf->bufBgColorMode;
   if ( axto->bgColorMode == AXTC_K_COLORMODE_ALARM )
     axto->bgColor.setAlarmSensitive();
   else
     axto->bgColor.setAlarmInsensitive();
-  axto->bgColor.setColorIndex( axto->bufBgColor, axto->actWin->ci );
+  axto->bgColor.setColorIndex( axto->eBuf->bufBgColor, axto->actWin->ci );
 
-  axto->alarmPvExpStr.setRaw( axto->bufAlarmPvName );
+  axto->alarmPvExpStr.setRaw( axto->eBuf->bufAlarmPvName );
 
-  axto->visPvExpStr.setRaw( axto->bufVisPvName );
+  axto->visPvExpStr.setRaw( axto->eBuf->bufVisPvName );
 
-  if ( axto->bufVisInverted )
+  if ( axto->eBuf->bufVisInverted )
     axto->visInverted = 0;
   else
     axto->visInverted = 1;
 
-  strncpy( axto->minVisString, axto->bufMinVisString, 39 );
-  strncpy( axto->maxVisString, axto->bufMaxVisString, 39 );
+  strncpy( axto->minVisString, axto->eBuf->bufMinVisString, 39 );
+  strncpy( axto->maxVisString, axto->eBuf->bufMaxVisString, 39 );
 
   if ( axto->bufValue ) {
     axto->value.setRaw( axto->bufValue );
@@ -116,21 +116,24 @@ activeXTextClass *axto = (activeXTextClass *) client;
    &axto->fontAscent, &axto->fontDescent, &axto->fontHeight,
    &axto->stringWidth );
 
-  axto->useDisplayBg = axto->bufUseDisplayBg;
+  axto->useDisplayBg = axto->eBuf->bufUseDisplayBg;
 
-  axto->autoSize = axto->bufAutoSize;
+  axto->autoSize = axto->eBuf->bufAutoSize;
 
-  axto->x = axto->bufX;
-  axto->sboxX = axto->bufX;
+  axto->border = axto->eBuf->bufBorder;
+  axto->lineThk = axto->eBuf->bufLineThk;
 
-  axto->y = axto->bufY;
-  axto->sboxY = axto->bufY;
+  axto->x = axto->eBuf->bufX;
+  axto->sboxX = axto->eBuf->bufX;
 
-  axto->w = axto->bufW;
-  axto->sboxW = axto->bufW;
+  axto->y = axto->eBuf->bufY;
+  axto->sboxY = axto->eBuf->bufY;
 
-  axto->h = axto->bufH;
-  axto->sboxH = axto->bufH;
+  axto->w = axto->eBuf->bufW;
+  axto->sboxW = axto->eBuf->bufW;
+
+  axto->h = axto->eBuf->bufH;
+  axto->sboxH = axto->eBuf->bufH;
 
   axto->alignment = axto->fm.currentFontAlignment();
 
@@ -353,7 +356,10 @@ activeXTextClass::activeXTextClass ( void ) {
   connection.setMaxPvs( 2 );
   unconnectedTimer = 0;
   setBlinkFunction( (void *) doBlink );
+  border = 0;
+  lineThk = 1;
   bufValue = NULL;
+  eBuf = NULL;
 
 }
 
@@ -370,8 +376,6 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   fgColor.copy(source->fgColor);
   bgColor.copy(source->bgColor);
-  fgCb = source->fgCb;
-  bgCb = source->bgCb;
   fgColorMode = source->fgColorMode;
   bgColorMode = source->bgColorMode;
   visInverted = source->visInverted;
@@ -393,8 +397,10 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   autoSize = source->autoSize;
 
+  border = source->border;
+  lineThk = source->lineThk;
+
   strncpy( fontTag, source->fontTag, 63 );
-  strncpy( bufFontTag, source->bufFontTag, 63 );
 
   fs = actWin->fi->getXFontStruct( fontTag );
 
@@ -411,11 +417,13 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   stringX = source->stringX;
   stringBoxWidth = source->stringBoxWidth;
   stringBoxHeight = source->stringBoxHeight;
-  bufValue = NULL;
 
   connection.setMaxPvs( 2 );
 
   unconnectedTimer = 0;
+
+  bufValue = NULL;
+  eBuf = NULL;
 
   setBlinkFunction( (void *) doBlink );
 
@@ -426,6 +434,8 @@ activeXTextClass::~activeXTextClass ( void ) {
   if ( name ) delete[] name;
 
   if ( bufValue ) delete[] bufValue;
+
+  if ( eBuf ) delete eBuf;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -458,6 +468,8 @@ int stat = 1;
 
   useDisplayBg = 1;
   autoSize = 1;
+  border = 0;
+  lineThk = 1;
 
   strcpy( fontTag, actWin->defaultFontTag );
 
@@ -491,6 +503,10 @@ int activeXTextClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   if ( !bufValue ) {
     bufValue = new char[activeXTextClass::MAX_TEXT_LEN+1];
   }
@@ -505,38 +521,40 @@ char title[32], *ptr;
 
   strncpy( bufId, id, 31 );
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
+  eBuf->bufX = x;
+  eBuf->bufY = y;
+  eBuf->bufW = w;
+  eBuf->bufH = h;
 
-  bufFgColor = fgColor.pixelIndex();
-  bufFgColorMode = fgColorMode;
+  eBuf->bufFgColor = fgColor.pixelIndex();
+  eBuf->bufFgColorMode = fgColorMode;
 
-  bufBgColor = bgColor.pixelIndex();
-  bufBgColorMode = bgColorMode;
+  eBuf->bufBgColor = bgColor.pixelIndex();
+  eBuf->bufBgColorMode = bgColorMode;
 
   if ( alarmPvExpStr.getRaw() )
-    strncpy( bufAlarmPvName, alarmPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+    strncpy( eBuf->bufAlarmPvName, alarmPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufAlarmPvName, "" );
+    strcpy( eBuf->bufAlarmPvName, "" );
 
   if ( visPvExpStr.getRaw() )
-    strncpy( bufVisPvName, visPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+    strncpy( eBuf->bufVisPvName, visPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufVisPvName, "" );
+    strcpy( eBuf->bufVisPvName, "" );
 
   if ( visInverted )
-    bufVisInverted = 0;
+    eBuf->bufVisInverted = 0;
   else
-    bufVisInverted = 1;
+    eBuf->bufVisInverted = 1;
 
-  strncpy( bufMinVisString, minVisString, 39 );
-  strncpy( bufMaxVisString, maxVisString, 39 );
+  strncpy( eBuf->bufMinVisString, minVisString, 39 );
+  strncpy( eBuf->bufMaxVisString, maxVisString, 39 );
 
-  strncpy( bufFontTag, fontTag, 63 );
-  bufUseDisplayBg = useDisplayBg;
-  bufAutoSize = autoSize;
+  strncpy( eBuf->bufFontTag, fontTag, 63 );
+  eBuf->bufUseDisplayBg = useDisplayBg;
+  eBuf->bufAutoSize = autoSize;
+  eBuf->bufBorder = border;
+  eBuf->bufLineThk = lineThk;
 
   if ( value.getRaw() )
     strncpy( bufValue, value.getRaw(), activeXTextClass::MAX_TEXT_LEN );
@@ -551,31 +569,34 @@ char title[32], *ptr;
 
   //ef.addTextField( activeXTextClass_str6, 35, bufId, 31 );
 
-  ef.addTextField( activeXTextClass_str7, 35, &bufX );
-  ef.addTextField( activeXTextClass_str8, 35, &bufY );
-  ef.addTextField( activeXTextClass_str9, 35, &bufW );
-  ef.addTextField( activeXTextClass_str10, 35, &bufH );
+  ef.addTextField( activeXTextClass_str7, 35, &eBuf->bufX );
+  ef.addTextField( activeXTextClass_str8, 35, &eBuf->bufY );
+  ef.addTextField( activeXTextClass_str9, 35, &eBuf->bufW );
+  ef.addTextField( activeXTextClass_str10, 35, &eBuf->bufH );
 
   ef.addTextBox( activeXTextClass_str23, 32, 10, bufValue,
    activeXTextClass::MAX_TEXT_LEN );
 
   //ef.addTextField( activeXTextClass_str23, 35, bufValue, 255 );
 
-  ef.addToggle( activeXTextClass_str11, &bufAutoSize );
-  ef.addColorButton( activeXTextClass_str13, actWin->ci, &fgCb, &bufFgColor );
-  ef.addToggle( activeXTextClass_str14, &bufFgColorMode );
-  ef.addToggle( activeXTextClass_str15, &bufUseDisplayBg );
-  ef.addColorButton( activeXTextClass_str16, actWin->ci, &bgCb, &bufBgColor );
-  ef.addToggle( activeXTextClass_str17, &bufBgColorMode );
+  ef.addToggle( activeXTextClass_str11, &eBuf->bufAutoSize );
+  ef.addToggle( activeXTextClass_str26, &eBuf->bufBorder );
+  ef.addOption( activeXTextClass_str27, activeXTextClass_str28,
+   &eBuf->bufLineThk );
+  ef.addColorButton( activeXTextClass_str13, actWin->ci, &eBuf->fgCb, &eBuf->bufFgColor );
+  ef.addToggle( activeXTextClass_str14, &eBuf->bufFgColorMode );
+  ef.addToggle( activeXTextClass_str15, &eBuf->bufUseDisplayBg );
+  ef.addColorButton( activeXTextClass_str16, actWin->ci, &eBuf->bgCb, &eBuf->bufBgColor );
+  ef.addToggle( activeXTextClass_str17, &eBuf->bufBgColorMode );
   ef.addFontMenu( activeXTextClass_str12, actWin->fi, &fm, fontTag );
   fm.setFontAlignment( alignment );
-  ef.addTextField( activeXTextClass_str18, 35, bufAlarmPvName,
+  ef.addTextField( activeXTextClass_str18, 35, eBuf->bufAlarmPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addTextField( activeXTextClass_str19, 35, bufVisPvName,
+  ef.addTextField( activeXTextClass_str19, 35, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addOption( " ", activeXTextClass_str20, &bufVisInverted );
-  ef.addTextField( activeXTextClass_str21, 35, bufMinVisString, 39 );
-  ef.addTextField( activeXTextClass_str22, 35, bufMaxVisString, 39 );
+  ef.addOption( " ", activeXTextClass_str20, &eBuf->bufVisInverted );
+  ef.addTextField( activeXTextClass_str21, 35, eBuf->bufMinVisString, 39 );
+  ef.addTextField( activeXTextClass_str22, 35, eBuf->bufMaxVisString, 39 );
 
   return 1;
 
@@ -615,6 +636,7 @@ int major, minor, release, stat;
 tagClass tag;
 
 int zero = 0;
+int one = 1;
 char *emptyStr = "";
 
 int left = XmALIGNMENT_BEGINNING;
@@ -654,6 +676,8 @@ static int alignEnum[3] = {
   tag.loadR( "visMax", 39, maxVisString, emptyStr );
   tag.loadR( "value", &value, emptyStr );
   tag.loadR( "autoSize", &autoSize, &zero );
+  tag.loadR( "border", &border, &zero );
+  tag.loadR( "lineWidth", &lineThk, &one );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.readTags( f, "endObjectProperties" );
@@ -1150,6 +1174,7 @@ int stat, major, minor, release;
 tagClass tag;
 
 int zero = 0;
+int one = 1;
 char *emptyStr = "";
 
 int left = XmALIGNMENT_BEGINNING;
@@ -1191,6 +1216,8 @@ static int alignEnum[3] = {
   tag.loadW( "visMax", maxVisString, emptyStr );
   tag.loadComplexW( "value", &value, emptyStr );
   tag.loadBoolW( "autoSize", &autoSize, &zero );
+  tag.loadBoolW( "border", &border, &zero );
+  tag.loadW( "lineWidth", &lineThk, &one );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -1281,6 +1308,14 @@ int blink = 0;
 
     }
 
+    if ( border ) {
+      actWin->executeGc.setFG( fgColor.getIndex(), &blink );
+      actWin->executeGc.setLineWidth( lineThk );
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x+lineThk/2, y+lineThk/2, w-lineThk, h-lineThk );
+      actWin->executeGc.setLineWidth( 1 );
+    }
+
     if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
 
     actWin->executeGc.restoreFg();
@@ -1326,6 +1361,13 @@ XRectangle xR = { x, y, w, h };
      actWin->executeGc.eraseGC(), x, stringY, w,
      value.getExpanded(), stringLength, &fs, alignment );
 
+  }
+
+  if ( border ) {
+    actWin->executeGc.setLineWidth( lineThk );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.eraseGC(), x+lineThk/2, y+lineThk/2, w-lineThk, h-lineThk );
+    actWin->executeGc.setLineWidth( 1 );
   }
 
   actWin->executeGc.removeEraseXClipRectangle();
@@ -1397,6 +1439,13 @@ XRectangle xR = { x, y, w, h };
 
       }
 
+    }
+
+    if ( border ) {
+      actWin->executeGc.setLineWidth( lineThk );
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.eraseGC(), x+lineThk/2, y+lineThk/2, w-lineThk, h-lineThk );
+      actWin->executeGc.setLineWidth( 1 );
     }
 
     actWin->executeGc.restoreFg();
@@ -1521,7 +1570,8 @@ int activeXTextClass::activate (
       init = 1; // this stays true if there are no pvs
 
       if ( !alarmPvExpStr.getExpanded() ||
-           ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           // ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           blankOrComment( alarmPvExpStr.getExpanded() ) ) {
         alarmPvExists = 0;
         fgVisibility = bgVisibility = 1;
       }
@@ -1534,7 +1584,8 @@ int activeXTextClass::activate (
       }
 
       if ( !visPvExpStr.getExpanded() ||
-           ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           //( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           blankOrComment( visPvExpStr.getExpanded() ) ) {
         visPvExists = 0;
         visibility = 1;
       }
@@ -1696,6 +1747,14 @@ int blink = 0;
 
   }
 
+  if ( border ) {
+    actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
+    actWin->drawGc.setLineWidth( lineThk );
+    XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.normGC(), x+lineThk/2, y+lineThk/2, w-lineThk, h-lineThk );
+    actWin->drawGc.setLineWidth( 1 );
+  }
+
   if ( clipStat & 1 )
     actWin->drawGc.removeNormXClipRectangle();
   //else
@@ -1746,6 +1805,13 @@ XRectangle xR = { x, y, w, h };
        value.getRaw(), stringLength, &fs, alignment );
     }
 
+  }
+
+  if ( border ) {
+    actWin->drawGc.setLineWidth( lineThk );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->drawGc.eraseGC(), x+lineThk/2, y+lineThk/2, w-lineThk, h-lineThk );
+    actWin->drawGc.setLineWidth( 1 );
   }
 
   actWin->drawGc.removeEraseXClipRectangle();

@@ -313,7 +313,7 @@ int stat;
 double fvalue;
 activeSliderClass *slo = (activeSliderClass *) client;
 
-  fvalue = (double) slo->bufControlV;
+  fvalue = (double) slo->eBuf->bufControlV;
 
   if ( slo->positive ) {
     if ( fvalue < slo->minFv ) fvalue = slo->minFv;
@@ -326,10 +326,10 @@ activeSliderClass *slo = (activeSliderClass *) client;
 
   slo->controlV = fvalue;
 
-  slo->increment = slo->bufIncrement;
+  slo->increment = slo->eBuf->bufIncrement;
   sprintf( slo->incString, slo->controlFormat, slo->increment );
 
-  slo->accelMultiplier = slo->bufAccelMultiplier;
+  slo->accelMultiplier = slo->eBuf->bufAccelMultiplier;
 
   slo->actWin->appCtx->proc->lock();
   slo->curControlV = slo->controlV;
@@ -369,6 +369,12 @@ static void slc_value_ok (
 activeSliderClass *slo = (activeSliderClass *) client;
 
   slc_value_apply ( w, client, call );
+
+  if ( slo->eBuf ) {
+    delete slo->eBuf;
+    slo->eBuf = NULL;
+  }
+
   slo->ef.popdown();
 
 }
@@ -380,6 +386,11 @@ static void slc_value_cancel (
 {
 
 activeSliderClass *slo = (activeSliderClass *) client;
+
+  if ( slo->eBuf ) {
+    delete slo->eBuf;
+    slo->eBuf = NULL;
+  }
 
   slo->ef.popdown();
 
@@ -398,40 +409,40 @@ activeSliderClass *slo = (activeSliderClass *) client;
   slo->eraseSelectBoxCorners();
   slo->erase();
 
-  slo->fgColor.setColorIndex( slo->bufFgColor, slo->actWin->ci );
-  slo->bgColor.setColorIndex( slo->bufBgColor, slo->actWin->ci );
-  slo->shadeColor.setColorIndex( slo->bufShadeColor, slo->actWin->ci );
-  slo->controlColor.setColorIndex( slo->bufControlColor, slo->actWin->ci );
-  slo->readColor.setColorIndex( slo->bufReadColor, slo->actWin->ci );
+  slo->fgColor.setColorIndex( slo->eBuf->bufFgColor, slo->actWin->ci );
+  slo->bgColor.setColorIndex( slo->eBuf->bufBgColor, slo->actWin->ci );
+  slo->shadeColor.setColorIndex( slo->eBuf->bufShadeColor, slo->actWin->ci );
+  slo->controlColor.setColorIndex( slo->eBuf->bufControlColor, slo->actWin->ci );
+  slo->readColor.setColorIndex( slo->eBuf->bufReadColor, slo->actWin->ci );
 
-  slo->bgColorMode = slo->bufBgColorMode;
+  slo->bgColorMode = slo->eBuf->bufBgColorMode;
   if ( slo->bgColorMode == SLC_K_COLORMODE_ALARM )
     slo->bgColor.setAlarmSensitive();
   else
     slo->bgColor.setAlarmInsensitive();
 
-  slo->controlColorMode = slo->bufControlColorMode;
+  slo->controlColorMode = slo->eBuf->bufControlColorMode;
   if ( slo->controlColorMode == SLC_K_COLORMODE_ALARM )
     slo->controlColor.setAlarmSensitive();
   else
     slo->controlColor.setAlarmInsensitive();
 
-  slo->readColorMode = slo->bufReadColorMode;
+  slo->readColorMode = slo->eBuf->bufReadColorMode;
   if ( slo->readColorMode == SLC_K_COLORMODE_ALARM )
     slo->readColor.setAlarmSensitive();
   else
     slo->readColor.setAlarmInsensitive();
 
-  slo->increment = slo->bufIncrement;
+  slo->increment = slo->eBuf->bufIncrement;
   sprintf( slo->incString, slo->controlFormat, slo->increment );
 
-  slo->accelMultiplier = slo->bufAccelMultiplier;
+  slo->accelMultiplier = slo->eBuf->bufAccelMultiplier;
 
-  slo->controlPvName.setRaw( slo->controlBufPvName );
-  slo->readPvName.setRaw( slo->readBufPvName );
-  slo->savedValuePvName.setRaw( slo->savedValueBufPvName );
+  slo->controlPvName.setRaw( slo->eBuf->controlBufPvName );
+  slo->readPvName.setRaw( slo->eBuf->readBufPvName );
+  slo->savedValuePvName.setRaw( slo->eBuf->savedValueBufPvName );
 
-  slo->controlLabelName.setRaw( slo->controlBufLabelName );
+  slo->controlLabelName.setRaw( slo->eBuf->controlBufLabelName );
   if ( strcmp( slo->controlLabelTypeStr, activeSliderClass_str4 ) == 0 )
     slo->controlLabelType = SLC_K_LABEL;
   else if ( strcmp( slo->controlLabelTypeStr, activeSliderClass_str5 ) == 0 )
@@ -439,7 +450,7 @@ activeSliderClass *slo = (activeSliderClass *) client;
   else
     slo->controlLabelType = SLC_K_LITERAL;
 
-  slo->readLabelName.setRaw( slo->readBufLabelName );
+  slo->readLabelName.setRaw( slo->eBuf->readBufLabelName );
   if ( strcmp( slo->readLabelTypeStr, activeSliderClass_str6 ) == 0 )
     slo->readLabelType = SLC_K_LABEL;
   else if ( strcmp( slo->readLabelTypeStr, activeSliderClass_str7 ) == 0 )
@@ -447,14 +458,14 @@ activeSliderClass *slo = (activeSliderClass *) client;
   else
     slo->readLabelType = SLC_K_LITERAL;
 
-  //  slo->formatType = slo->bufFormatType;
+  //  slo->formatType = slo->eBuf->bufFormatType;
 
-  strncpy( slo->displayFormat, slo->bufDisplayFormat, 15 );
+  strncpy( slo->displayFormat, slo->eBuf->bufDisplayFormat, 15 );
 
-  slo->limitsFromDb = slo->bufLimitsFromDb;
-  slo->efPrecision = slo->bufEfPrecision;
-  slo->efScaleMin = slo->bufEfScaleMin;
-  slo->efScaleMax = slo->bufEfScaleMax;
+  slo->limitsFromDb = slo->eBuf->bufLimitsFromDb;
+  slo->efPrecision = slo->eBuf->bufEfPrecision;
+  slo->efScaleMin = slo->eBuf->bufEfScaleMin;
+  slo->efScaleMax = slo->eBuf->bufEfScaleMax;
 
   slo->minFv = slo->scaleMin = slo->efScaleMin.value();
   slo->maxFv = slo->scaleMax = slo->efScaleMax.value();
@@ -469,27 +480,27 @@ activeSliderClass *slo = (activeSliderClass *) client;
   slo->fs = slo->actWin->fi->getXFontStruct( slo->fontTag );
 
   strncpy( slo->id, slo->bufId, 31 );
-  slo->changeCallbackFlag = slo->bufChangeCallbackFlag;
-  slo->activateCallbackFlag = slo->bufActivateCallbackFlag;
-  slo->deactivateCallbackFlag = slo->bufDeactivateCallbackFlag;
+  slo->changeCallbackFlag = slo->eBuf->bufChangeCallbackFlag;
+  slo->activateCallbackFlag = slo->eBuf->bufActivateCallbackFlag;
+  slo->deactivateCallbackFlag = slo->eBuf->bufDeactivateCallbackFlag;
   slo->anyCallbackFlag = slo->changeCallbackFlag ||
    slo->activateCallbackFlag || slo->deactivateCallbackFlag;
 
-  slo->x = slo->bufX;
-  slo->sboxX = slo->bufX;
+  slo->x = slo->eBuf->bufX;
+  slo->sboxX = slo->eBuf->bufX;
 
-  slo->y = slo->bufY;
-  slo->sboxY = slo->bufY;
+  slo->y = slo->eBuf->bufY;
+  slo->sboxY = slo->eBuf->bufY;
 
-  if ( slo->bufW < slo->minW ) slo->bufW = slo->minW;
+  if ( slo->eBuf->bufW < slo->minW ) slo->eBuf->bufW = slo->minW;
 
-  slo->w = slo->bufW;
-  slo->sboxW = slo->bufW;
+  slo->w = slo->eBuf->bufW;
+  slo->sboxW = slo->eBuf->bufW;
 
-  if ( slo->bufH < slo->minH ) slo->bufH = slo->minH;
+  if ( slo->eBuf->bufH < slo->minH ) slo->eBuf->bufH = slo->minH;
 
-  slo->h = slo->bufH;
-  slo->sboxH = slo->bufH;
+  slo->h = slo->eBuf->bufH;
+  slo->sboxH = slo->eBuf->bufH;
 
   slo->updateDimensions();
 
@@ -508,6 +519,7 @@ static void slc_edit_apply (
 activeSliderClass *slo = (activeSliderClass *) client;
 
   slc_edit_update ( w, client, call );
+
   slo->refresh( slo );
 
 }
@@ -521,6 +533,12 @@ static void slc_edit_ok (
 activeSliderClass *slo = (activeSliderClass *) client;
 
   slc_edit_update ( w, client, call );
+
+  if ( slo->eBuf ) {
+    delete slo->eBuf;
+    slo->eBuf = NULL;
+  }
+
   slo->ef.popdown();
   slo->operationComplete();
 
@@ -534,6 +552,11 @@ static void slc_edit_cancel (
 
 activeSliderClass *slo = (activeSliderClass *) client;
 
+  if ( slo->eBuf ) {
+    delete slo->eBuf;
+    slo->eBuf = NULL;
+  }
+
   slo->ef.popdown();
   slo->operationCancel();
 
@@ -546,6 +569,11 @@ static void slc_edit_cancel_delete (
 {
 
 activeSliderClass *slo = (activeSliderClass *) client;
+
+  if ( slo->eBuf ) {
+    delete slo->eBuf;
+    slo->eBuf = NULL;
+  }
 
   slo->ef.popdown();
   slo->operationCancel();
@@ -775,6 +803,8 @@ activeSliderClass::activeSliderClass ( void ) {
 
   frameWidget = NULL;
 
+  eBuf = NULL;
+
 }
 
 // copy constructor
@@ -800,12 +830,6 @@ activeGraphicClass *slo = (activeGraphicClass *) this;
   bgColorMode = source->bgColorMode;
   controlColorMode = source->controlColorMode;
   readColorMode = source->readColorMode;
-
-  fgCb = source->fgCb;
-  bgCb = source->bgCb;
-  shadeCb = source->shadeCb;
-  controlCb = source->controlCb;
-  readCb = source->readCb;
 
   controlPvName.copy( source->controlPvName );
   readPvName.copy( source->readPvName );
@@ -866,6 +890,8 @@ activeGraphicClass *slo = (activeGraphicClass *) this;
   strncpy( displayFormat, source->displayFormat, 15 );
 
   frameWidget = NULL;
+
+  eBuf = NULL;
 
 }
 
@@ -1366,7 +1392,7 @@ int activeSliderClass::old_createFromFile (
 int r, g, b, xOfs, stat, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[activeGraphicClass::MAX_PV_NAME+1];
+char oneName[PV_Factory::MAX_PV_NAME+1];
 float val;
 
   actWin = _actWin;
@@ -1483,25 +1509,25 @@ float val;
   fscanf( f, "%g\n", &val ); actWin->incLine();
   increment = (double) val;
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   controlPvName.setRaw( oneName );
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   readPvName.setRaw( oneName );
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   savedValuePvName.setRaw( oneName );
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   controlLabelName.setRaw( oneName );
 
   fscanf( f, "%d\n", &controlLabelType ); actWin->incLine();
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   readLabelName.setRaw( oneName );
 
@@ -1626,6 +1652,10 @@ int activeSliderClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   ptr = actWin->obj.getNameFromClass( "activeSliderClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -1636,55 +1666,55 @@ char title[32], *ptr;
 
   strncpy( bufId, id, 31 );
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
-  bufFgColor = fgColor.pixelIndex();
-  bufBgColor = bgColor.pixelIndex();
-  bufShadeColor = shadeColor.pixelIndex();
-  bufControlColor = controlColor.pixelIndex();
-  bufReadColor = readColor.pixelIndex();
-  bufBgColorMode = bgColorMode;
-  bufControlColorMode = controlColorMode;
-  bufReadColorMode = readColorMode;
-  bufIncrement = increment;
-  bufAccelMultiplier = accelMultiplier;
-  strncpy( bufFontTag, fontTag, 63 );
+  eBuf->bufX = x;
+  eBuf->bufY = y;
+  eBuf->bufW = w;
+  eBuf->bufH = h;
+  eBuf->bufFgColor = fgColor.pixelIndex();
+  eBuf->bufBgColor = bgColor.pixelIndex();
+  eBuf->bufShadeColor = shadeColor.pixelIndex();
+  eBuf->bufControlColor = controlColor.pixelIndex();
+  eBuf->bufReadColor = readColor.pixelIndex();
+  eBuf->bufBgColorMode = bgColorMode;
+  eBuf->bufControlColorMode = controlColorMode;
+  eBuf->bufReadColorMode = readColorMode;
+  eBuf->bufIncrement = increment;
+  eBuf->bufAccelMultiplier = accelMultiplier;
+  strncpy( eBuf->bufFontTag, fontTag, 63 );
 
-  bufChangeCallbackFlag = changeCallbackFlag;
-  bufActivateCallbackFlag = activateCallbackFlag;
-  bufDeactivateCallbackFlag = deactivateCallbackFlag;
+  eBuf->bufChangeCallbackFlag = changeCallbackFlag;
+  eBuf->bufActivateCallbackFlag = activateCallbackFlag;
+  eBuf->bufDeactivateCallbackFlag = deactivateCallbackFlag;
 
   if ( controlPvName.getRaw() )
-    strncpy( controlBufPvName, controlPvName.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->controlBufPvName, controlPvName.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strncpy( controlBufPvName, "", 39 );
+    strncpy( eBuf->controlBufPvName, "", 39 );
 
   if ( readPvName.getRaw() )
-    strncpy( readBufPvName, readPvName.getRaw(),
-    activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->readBufPvName, readPvName.getRaw(),
+    PV_Factory::MAX_PV_NAME );
   else
-    strncpy( readBufPvName, "", 39 );
+    strncpy( eBuf->readBufPvName, "", 39 );
 
   if ( savedValuePvName.getRaw() )
-    strncpy( savedValueBufPvName, savedValuePvName.getRaw(),
-    activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->savedValueBufPvName, savedValuePvName.getRaw(),
+    PV_Factory::MAX_PV_NAME );
   else
-    strncpy( savedValueBufPvName, "", 39 );
+    strncpy( eBuf->savedValueBufPvName, "", 39 );
 
   if ( controlLabelName.getRaw() )
-    strncpy( controlBufLabelName, controlLabelName.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->controlBufLabelName, controlLabelName.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strncpy( controlBufLabelName, "", 39 );
+    strncpy( eBuf->controlBufLabelName, "", 39 );
 
   if ( readLabelName.getRaw() )
-    strncpy( readBufLabelName, readLabelName.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->readBufLabelName, readLabelName.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strncpy( readBufLabelName, "", 39 );
+    strncpy( eBuf->readBufLabelName, "", 39 );
 
   if ( controlLabelType == SLC_K_LITERAL )
     strcpy( controlLabelTypeStr, activeSliderClass_str12 );
@@ -1700,11 +1730,11 @@ char title[32], *ptr;
   else if ( readLabelType == SLC_K_PV_NAME )
     strcpy( readLabelTypeStr, activeSliderClass_str17 );
 
-  bufLimitsFromDb = limitsFromDb;
-  bufEfPrecision = efPrecision;
-  bufEfScaleMin = efScaleMin;
-  bufEfScaleMax = efScaleMax;
-  strncpy( bufDisplayFormat, displayFormat, 15 );
+  eBuf->bufLimitsFromDb = limitsFromDb;
+  eBuf->bufEfPrecision = efPrecision;
+  eBuf->bufEfScaleMin = efScaleMin;
+  eBuf->bufEfScaleMax = efScaleMax;
+  strncpy( eBuf->bufDisplayFormat, displayFormat, 15 );
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -1713,55 +1743,55 @@ char title[32], *ptr;
    title, NULL, NULL, NULL );
 
   //ef.addTextField( activeSliderClass_str18, 35, bufId, 31 );
-  ef.addTextField( activeSliderClass_str19, 35, &bufX );
-  ef.addTextField( activeSliderClass_str20, 35, &bufY );
-  ef.addTextField( activeSliderClass_str21, 35, &bufW );
-  ef.addTextField( activeSliderClass_str22, 35, &bufH );
+  ef.addTextField( activeSliderClass_str19, 35, &eBuf->bufX );
+  ef.addTextField( activeSliderClass_str20, 35, &eBuf->bufY );
+  ef.addTextField( activeSliderClass_str21, 35, &eBuf->bufW );
+  ef.addTextField( activeSliderClass_str22, 35, &eBuf->bufH );
 
-  ef.addTextField( activeSliderClass_str36, 35, controlBufPvName,
-   activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeSliderClass_str42, 35, readBufPvName,
-   activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeSliderClass_str48, 35, savedValueBufPvName,
-   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeSliderClass_str36, 35, eBuf->controlBufPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addTextField( activeSliderClass_str42, 35, eBuf->readBufPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addTextField( activeSliderClass_str48, 35, eBuf->savedValueBufPvName,
+   PV_Factory::MAX_PV_NAME );
 
-  ef.addTextField( activeSliderClass_str37, 35, controlBufLabelName,
-   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeSliderClass_str37, 35, eBuf->controlBufLabelName,
+   PV_Factory::MAX_PV_NAME );
   ef.addOption( activeSliderClass_str38, activeSliderClass_str39,
    controlLabelTypeStr, 15 );
 
-  ef.addTextField( activeSliderClass_str43, 35, readBufLabelName,
-   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeSliderClass_str43, 35, eBuf->readBufLabelName,
+   PV_Factory::MAX_PV_NAME );
   ef.addOption( activeSliderClass_str44, activeSliderClass_str45,
    readLabelTypeStr, 15 );
 
-  ef.addTextField( activeSliderClass_str28, 35, &bufIncrement );
+  ef.addTextField( activeSliderClass_str28, 35, &eBuf->bufIncrement );
 
-  ef.addTextField( activeSliderClass_str86, 35, &bufAccelMultiplier );
+  ef.addTextField( activeSliderClass_str86, 35, &eBuf->bufAccelMultiplier );
 
-  ef.addToggle( activeSliderClass_str29, &bufLimitsFromDb );
+  ef.addToggle( activeSliderClass_str29, &eBuf->bufLimitsFromDb );
   ef.addOption( activeSliderClass_str30, activeSliderClass_str35,
-   bufDisplayFormat, 15 );
-  ef.addTextField( activeSliderClass_str31, 35, &bufEfPrecision );
-  ef.addTextField( activeSliderClass_str32, 35, &bufEfScaleMin );
-  ef.addTextField( activeSliderClass_str33, 35, &bufEfScaleMax );
+   eBuf->bufDisplayFormat, 15 );
+  ef.addTextField( activeSliderClass_str31, 35, &eBuf->bufEfPrecision );
+  ef.addTextField( activeSliderClass_str32, 35, &eBuf->bufEfScaleMin );
+  ef.addTextField( activeSliderClass_str33, 35, &eBuf->bufEfScaleMax );
 
-  ef.addColorButton( activeSliderClass_str24, actWin->ci, &fgCb, &bufFgColor );
-  ef.addColorButton( activeSliderClass_str26, actWin->ci, &bgCb, &bufBgColor );
-  ef.addToggle( activeSliderClass_str25, &bufBgColorMode );
-  ef.addColorButton( activeSliderClass_str27, actWin->ci, &shadeCb, &bufShadeColor );
-  ef.addColorButton( activeSliderClass_str40, actWin->ci, &controlCb,
-   &bufControlColor );
-  ef.addToggle( activeSliderClass_str41, &bufControlColorMode );
-  ef.addColorButton( activeSliderClass_str46, actWin->ci, &readCb,
-   &bufReadColor );
-  ef.addToggle( activeSliderClass_str47, &bufReadColorMode );
+  ef.addColorButton( activeSliderClass_str24, actWin->ci, &eBuf->fgCb, &eBuf->bufFgColor );
+  ef.addColorButton( activeSliderClass_str26, actWin->ci, &eBuf->bgCb, &eBuf->bufBgColor );
+  ef.addToggle( activeSliderClass_str25, &eBuf->bufBgColorMode );
+  ef.addColorButton( activeSliderClass_str27, actWin->ci, &eBuf->shadeCb, &eBuf->bufShadeColor );
+  ef.addColorButton( activeSliderClass_str40, actWin->ci, &eBuf->controlCb,
+   &eBuf->bufControlColor );
+  ef.addToggle( activeSliderClass_str41, &eBuf->bufControlColorMode );
+  ef.addColorButton( activeSliderClass_str46, actWin->ci, &eBuf->readCb,
+   &eBuf->bufReadColor );
+  ef.addToggle( activeSliderClass_str47, &eBuf->bufReadColorMode );
 
   ef.addFontMenu( activeSliderClass_str23, actWin->fi, &fm, fontTag );
 
-  //ef.addToggle( activeSliderClass_str49, &bufActivateCallbackFlag );
-  //ef.addToggle( activeSliderClass_str50, &bufDeactivateCallbackFlag );
-  //ef.addToggle( activeSliderClass_str51, &bufChangeCallbackFlag );
+  //ef.addToggle( activeSliderClass_str49, &eBuf->bufActivateCallbackFlag );
+  //ef.addToggle( activeSliderClass_str50, &eBuf->bufDeactivateCallbackFlag );
+  //ef.addToggle( activeSliderClass_str51, &eBuf->bufChangeCallbackFlag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 
@@ -2617,9 +2647,13 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         }
 	else {
 
-          slo->bufIncrement = slo->increment;
-          slo->bufAccelMultiplier = slo->accelMultiplier;
-          slo->bufControlV = slo->controlV;
+          if ( !slo->eBuf ) {
+            slo->eBuf = new activeSliderClass::editBufType;
+          }
+
+          slo->eBuf->bufIncrement = slo->increment;
+          slo->eBuf->bufAccelMultiplier = slo->accelMultiplier;
+          slo->eBuf->bufControlV = slo->controlV;
           slo->valueFormX = be->x_root;
           slo->valueFormY = be->y_root;
           slo->valueFormW = 0;
@@ -2633,11 +2667,11 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
            title, NULL, NULL, NULL );
 
           slo->ef.addTextField( activeSliderClass_str57, 14,
-           &slo->bufControlV );
+           &slo->eBuf->bufControlV );
           slo->ef.addTextField( activeSliderClass_str58, 14,
-           &slo->bufIncrement );
+           &slo->eBuf->bufIncrement );
           slo->ef.addTextField( activeSliderClass_str86, 14,
-           &slo->bufAccelMultiplier );
+           &slo->eBuf->bufAccelMultiplier );
           slo->ef.finished( slc_value_ok, slc_value_apply, slc_value_cancel,
            slo );
           slo->ef.popup();
@@ -3158,7 +3192,8 @@ char callbackName[63+1];
       fgColor.setConnectSensitive();
 
       if ( !controlPvName.getExpanded() ||
-         ( strcmp( controlPvName.getExpanded(), "" ) == 0 ) ) {
+	 // ( strcmp( controlPvName.getExpanded(), "" ) == 0 ) ) {
+         blankOrComment( controlPvName.getExpanded() ) ) {
         controlExists = 0;
       }
       else {
@@ -3167,7 +3202,8 @@ char callbackName[63+1];
       }
 
       if ( !readPvName.getExpanded() ||
-         ( strcmp( readPvName.getExpanded(), "" ) == 0 ) ) {
+	 // ( strcmp( readPvName.getExpanded(), "" ) == 0 ) ) {
+         blankOrComment( readPvName.getExpanded() ) ) {
         readExists = 0;
       }
       else {
@@ -3176,7 +3212,8 @@ char callbackName[63+1];
       }
 
       if ( !savedValuePvName.getExpanded() ||
-         ( strcmp( savedValuePvName.getExpanded(), "" ) == 0 ) ) {
+	 // ( strcmp( savedValuePvName.getExpanded(), "" ) == 0 ) ) {
+         blankOrComment( savedValuePvName.getExpanded() ) ) {
         savedValueExists = 0;
       }
       else {
@@ -3194,11 +3231,11 @@ char callbackName[63+1];
       if ( controlLabelType == SLC_K_PV_NAME ) {
         controlLabelExists = 1;
         strncpy( controlLabel, controlPvName.getExpanded(),
-         activeGraphicClass::MAX_PV_NAME );
+         PV_Factory::MAX_PV_NAME );
       }
       else {
         strncpy( controlLabel, controlLabelName.getExpanded(),
-         activeGraphicClass::MAX_PV_NAME );
+         PV_Factory::MAX_PV_NAME );
       }
 
       if ( !readLabelName.getExpanded() ||
@@ -3212,11 +3249,11 @@ char callbackName[63+1];
       if ( readLabelType == SLC_K_PV_NAME ) {
         readLabelExists = 1;
         strncpy( readLabel, readPvName.getExpanded(),
-         activeGraphicClass::MAX_PV_NAME );
+         PV_Factory::MAX_PV_NAME );
       }
       else {
         strncpy( readLabel, readLabelName.getExpanded(),
-         activeGraphicClass::MAX_PV_NAME );
+         PV_Factory::MAX_PV_NAME );
       }
 
       if ( controlExists ) {

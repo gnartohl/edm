@@ -442,29 +442,74 @@ static const int svalPvConnection = 2;
 static const int fgPvConnection = 3;
 pvConnectionClass connection;
 
-int bufX, bufY, bufW, bufH;
+typedef struct editBufTag {
+// edit buffer
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  int bufNumDecimals;
+  int bufFormatType;
+  int bufColorMode;
+  int bufSmartRefresh;
+  char bufFontTag[63+1];
+  int bufUseDisplayBg;
+  int bufAutoHeight;
+  int bufLimitsFromDb;
+  int bufChangeValOnLoseFocus;
+  int bufFastUpdate;
+  int bufAutoSelect;
+  int bufUpdatePvOnDrop;
+  int bufUseHexPrefix;
+  efInt bufEfPrecision;
+  int bufBgColor;
+  int bufFgColor;
+  int bufSvalColor;
+  colorButtonClass fgCb;
+  colorButtonClass bgCb;
+  colorButtonClass svalCb;
+  int bufChangeCallbackFlag;
+  int bufActivateCallbackFlag;
+  int bufDeactivateCallbackFlag;
+  int bufNullDetectMode;
+  char bufPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufSvalPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufColorPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufDefDir[XTDC_K_MAX+1];
+  char bufPattern[XTDC_K_MAX+1];
+  int bufIsWidget;
+  int bufEditable;
+  int bufIsDate;
+  int bufIsFile;
+  int bufFileComponent;
+  int bufDateAsFileName;
+  int bufUseKp;
+  int bufShowUnits;
+  int bufUseAlarmBorder;
+} editBufType, *editBufPtr;
 
-int numDecimals, bufNumDecimals, formatType, bufFormatType, colorMode,
- bufColorMode, pvType, pvCount, svalPvType, noSval, svalPvCount;
+editBufPtr eBuf;
+
+int numDecimals, formatType, colorMode,
+ pvType, pvCount, svalPvType, noSval, svalPvCount;
 char format[15+1];
 int opComplete, pvExistCheck, activeMode, init, noSvalYet;
-int smartRefresh, bufSmartRefresh;
+int smartRefresh;
 double dvalue, curDoubleValue, curSvalValue;
-char curValue[XTDC_K_MAX+1], value[XTDC_K_MAX+1], bufValue[XTDC_K_MAX+1];
+char curValue[XTDC_K_MAX+1], value[XTDC_K_MAX+1], bfrValue[XTDC_K_MAX+1];
 fontMenuClass fm;
-char fontTag[63+1], bufFontTag[63+1];
-int useDisplayBg, bufUseDisplayBg, alignment, autoHeight, bufAutoHeight;
-int limitsFromDb, bufLimitsFromDb;
-int changeValOnLoseFocus, bufChangeValOnLoseFocus;
-int fastUpdate, bufFastUpdate;
-int autoSelect, bufAutoSelect;
-int updatePvOnDrop, bufUpdatePvOnDrop;
-int useHexPrefix, bufUseHexPrefix;
+char fontTag[63+1];
+int useDisplayBg, alignment, autoHeight;
+int limitsFromDb;
+int changeValOnLoseFocus;
+int fastUpdate;
+int autoSelect;
+int updatePvOnDrop;
+int useHexPrefix;
 int precision;
-efInt efPrecision, bufEfPrecision;
-int bgColor, bufBgColor;
+efInt efPrecision;
+int bgColor;
 pvColorClass fgColor;
-int bufFgColor, bufSvalColor;
 colorButtonClass fgCb, bgCb, svalCb;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight, stringLength, stringWidth,
@@ -473,37 +518,32 @@ int fontAscent, fontDescent, fontHeight, stringLength, stringWidth,
 VPFUNC changeCallback, activateCallback, deactivateCallback;
 int changeCallbackFlag, activateCallbackFlag, deactivateCallbackFlag,
  anyCallbackFlag;
-int bufChangeCallbackFlag, bufActivateCallbackFlag, bufDeactivateCallbackFlag;
 
 int pvExists, svalPvExists, fgPvExists;
 
 // nullDetectMode: 0=null when saved value pv equals cur vale
 //                 1=null when saved value pv is 0
-int nullDetectMode, bufNullDetectMode;
+int nullDetectMode;
 
 ProcessVariable *pvId, *svalPvId, *fgPvId;
 
 expStringClass pvExpStr, svalPvExpStr, fgPvExpStr;
-char pvName[activeGraphicClass::MAX_PV_NAME+1],
- bufPvName[activeGraphicClass::MAX_PV_NAME+1],
- bufSvalPvName[activeGraphicClass::MAX_PV_NAME+1],
- bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
+char pvName[PV_Factory::MAX_PV_NAME+1];
 
 expStringClass defDir, pattern;
-char bufDefDir[XTDC_K_MAX+1], bufPattern[XTDC_K_MAX+1];
 
 int numStates;
 
-int isWidget, bufIsWidget;
-int editable, bufEditable;
+int isWidget;
+int editable;
 entryFormClass textEntry;
 int teX, teY, teW, teH, teLargestH;
 char entryValue[XTDC_K_MAX+1];
 int entryState, editDialogIsActive;
-int isDate, bufIsDate;
-int isFile, bufIsFile;
-int fileComponent, bufFileComponent;
-int dateAsFileName, bufDateAsFileName;
+int isDate;
+int isFile;
+int fileComponent;
+int dateAsFileName;
 
 Widget tf_widget;
 int widget_value_changed;
@@ -516,18 +556,18 @@ int unconnectedTimer;
 keypadClass kp;
 int kpInt;
 double kpDouble;
-int useKp, bufUseKp;
+int useKp;
 calpadClass cp;
 fselectClass fsel;
 
 int grabUpdate;
 
-int showUnits, bufShowUnits;
+int showUnits;
 char units[MAX_UNITS_SIZE+1];
 
 short prevAlarmSeverity;
 
-int useAlarmBorder, bufUseAlarmBorder;
+int useAlarmBorder;
 
 int oldStat, oldSev;
 

@@ -104,10 +104,10 @@ ProcessVariable *alarmPvId;
 ProcessVariable *visPvId;
 
 expStringClass alarmPvExpStr;
-char bufAlarmPvName[39+1];
+char bufAlarmPvName[PV_Factory::MAX_PV_NAME+1];
 
 expStringClass visPvExpStr;
-char bufVisPvName[39+1];
+char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
 
 int alarmPvExists, visPvExists;
 int activeMode, init, opComplete;
@@ -116,7 +116,7 @@ expStringClass value;
 char bufValue[255+1];
 
 fontMenuClass fm;
-char fontTag[63+1], bufFontTag[63+1];
+char fontTag[63+1];
 int useDisplayBg, bufUseDisplayBg, alignment;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight, stringLength, stringWidth,

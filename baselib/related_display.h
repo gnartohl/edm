@@ -174,7 +174,7 @@ typedef struct bufTag {
   char bufButtonLabel[127+1];;
   char bufLabel[maxDsps][127+1];;
   char bufFontTag[63+1];;
-  char bufDestPvName[NUMPVS][activeGraphicClass::MAX_PV_NAME+1];
+  char bufDestPvName[NUMPVS][PV_Factory::MAX_PV_NAME+1];
   char bufSource[NUMPVS][39+1];
   int bufOfsX;
   int bufOfsY;
