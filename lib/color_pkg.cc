@@ -18,6 +18,7 @@
 
 #include <math.h>
 #include "color_pkg.h"
+#include "color_button.h"
 #include "utility.h"
 #include "thread.h"
 
@@ -59,15 +60,11 @@ void colorFormEventHandler (
 
 XExposeEvent *expe;
 XButtonEvent *be;
-Widget curw;
 colorInfoClass *cio;
-int x, y, i, r, c, ncols, nrows, remainder, index;
-Arg arg[10];
-int n;
-unsigned int fg, bg;
+int x, y, i, r, c, ncols, nrows, remainder;
+unsigned int bg;
 int *dest;
 int red, green, blue;
-XmString str;
 
   cio = (colorInfoClass *) client;
 
@@ -155,10 +152,13 @@ XmString str;
 
     cio->setCurIndex( i );
 
+    if ( cio->curCb ) cio->curCb->setIndex( i );
+
     bg = cio->colors[i];
 
     cio->change = 1;
 
+#if 0
     curw = cio->getActiveWidget();
 
     if ( curw ) {
@@ -184,6 +184,10 @@ XmString str;
       XmStringFree( str );
 
     }
+#endif
+
+    XmListSelectPos( cio->colorList.listWidget(), i+1, FALSE );
+    XmListSetBottomPos( cio->colorList.listWidget(), i+1 );
 
     dest = cio->getCurDestination();
     if ( dest ) {
@@ -413,6 +417,7 @@ int stat;
   activeWidget = NULL;
   nameWidget = NULL;
   curDestination = NULL;
+  curCb = NULL;
   colorWindowIsOpen = 0;
 
   stat = avl_init_tree( compare_nodes_by_color,
@@ -1611,7 +1616,6 @@ XmString str1, str2;
 colorCachePtr cur, curSpecial;
 int rgb[3], red, green, blue;
 unsigned long plane_masks[1], bgColor;
-int major, minor, release;
 
   if ( !this->colorCacheByIndexH ) return 0;
 
@@ -1637,7 +1641,7 @@ int major, minor, release;
 
   if ( major == 3 ) {
     stat = ver3InitFromFile( f, app, d, top, fileName );
-    if ( stat == 0 ) exit(0);
+    colorList.create( max_colors, top, 20, this );
     return stat;
   }
 
@@ -2137,6 +2141,8 @@ firstTry:
      doColorBlink, this );
   }
 
+  colorList.create( max_colors+num_blinking_colors, top, 20, this );
+
   return 1;
 
 }
@@ -2177,6 +2183,18 @@ void colorInfoClass::setCurDestination( int *ptr ) {
 int *colorInfoClass::getCurDestination( void ) {
 
   return curDestination;
+
+}
+
+void colorInfoClass::setCurCb( colorButtonClass *cb ) {
+
+  curCb = cb;
+
+}
+
+colorButtonClass *colorInfoClass::getCurCb( void ) {
+
+  return curCb;
 
 }
 
@@ -2447,9 +2465,9 @@ int x, y, i, r, c, ncols, nrows, remainder;
   else if ( index < 0 ) {
     curIndex = 0;
   }
-  else {curIndex = index;
+  else {
+    curIndex = index;
   }
-    
 
   XDrawRectangle( display, XtWindow(form), gc.eraseGC(), curX-2, curY-2,
    23, 23 );
@@ -2635,3 +2653,48 @@ int colorInfoClass::isRule (
   return 0;
 
 }
+
+char *colorInfoClass::firstColor (
+  colorCachePtr node ) {
+
+int stat;
+
+  stat = avl_get_first( this->colorCacheByIndexH, (void **) &node );
+  if ( !( stat & 1 ) ) {
+    return NULL;
+  }
+
+  if ( node ) {
+    return node->name;
+  }
+  else {
+    return NULL;
+  }
+
+}
+
+char *colorInfoClass::nextColor (
+  colorCachePtr node ) {
+
+int stat;
+
+  stat = avl_get_next( this->colorCacheByIndexH, (void **) &node );
+  if ( !( stat & 1 ) ) {
+    return NULL;
+  }
+
+  if ( node ) {
+    return node->name;
+  }
+  else {
+    return NULL;
+  }
+
+}
+
+int colorInfoClass::majorVersion ( void ) {
+
+  return major;
+
+}
+

@@ -1,3 +1,5 @@
+#define __scrolled_list_cc
+
 //  edm - extensible display manager
 
 //  Copyright (C) 1999 John W. Sinclair
@@ -45,7 +47,7 @@ unsigned int i;
 
 }
 
-void setUpper (
+static void setUpper (
   Widget w,
   XtPointer client,
   XtPointer call )
@@ -69,7 +71,7 @@ Arg args[3];
 
 }
 
-void setLower (
+static void setLower (
   Widget w,
   XtPointer client,
   XtPointer call )
@@ -93,7 +95,7 @@ Arg args[3];
 
 }
 
-void setFileDoFilter (
+static void setFileDoFilter (
   Widget w,
   XtPointer client,
   XtPointer call )
@@ -113,7 +115,7 @@ char *buf;
 
 }
 
-void setPrefix (
+static void setPrefix (
   Widget w,
   XtPointer client,
   XtPointer call )
@@ -128,7 +130,7 @@ char *buf;
 
 }
 
-void doFilter (
+static void doFilter (
   Widget w,
   XtPointer client,
   XtPointer call )
@@ -149,7 +151,7 @@ char *buf;
 
 }
 
-void slc_select (
+static void slc_select (
   Widget w,
   XtPointer client,
   XtPointer call )
@@ -179,7 +181,7 @@ char buf[63+1];
 
 }
 
-void slc_dismiss (
+static void slc_dismiss (
   Widget w,
   XtPointer client,
   XtPointer call )

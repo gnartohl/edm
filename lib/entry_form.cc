@@ -2407,6 +2407,149 @@ int i, *destArray, value;
 
 }
 
+void _edmDebug( void );
+
+int entryFormClass::addColorButton (
+  char *label,
+  colorInfoClass *ci,
+  colorButtonClass *cb,
+  int *dest )
+{
+
+XmString str, str1, str2;
+Arg fArgs[15], bArgs[15], nbArgs[15], tArgs[15];
+int fN, bN, nbN, tN;
+
+colorButtonEntry *cur;
+
+ _edmDebug();
+
+  cur = new colorButtonEntry;
+
+  if ( firstItem ) {
+
+    firstItem = 0;
+
+    fN = 0;
+    XtSetArg( fArgs[fN], XmNtopAttachment, (XtArgVal) XmATTACH_FORM ); fN++;
+    XtSetArg( fArgs[fN], XmNrightAttachment, (XtArgVal) XmATTACH_FORM ); fN++;
+
+    bN = 0;
+    XtSetArg( bArgs[bN], XmNnavigationType, XmTAB_GROUP ); bN++;
+    XtSetArg( bArgs[bN], XmNwidth, (XtArgVal) 25 ); bN++;
+    XtSetArg( bArgs[bN], XmNheight, (XtArgVal) 25 ); bN++;
+    XtSetArg( bArgs[bN], XmNbackground, (XtArgVal) ci->pix(*dest) ); bN++;
+    XtSetArg( bArgs[bN], XmNtopAttachment, (XtArgVal) XmATTACH_FORM ); bN++;
+    XtSetArg( bArgs[bN], XmNleftAttachment, (XtArgVal) XmATTACH_FORM ); bN++;
+
+    str1 = XmStringCreateLocalized( "*" );
+
+    if ( ci->isRule(*dest) ) {
+      XtSetArg( bArgs[bN], XmNforeground,
+       (XtArgVal) ci->labelPix(*dest) ); bN++;
+      XtSetArg( bArgs[bN], XmNlabelString, (XtArgVal) str1 ); bN++;
+    }
+
+    str2 = XmStringCreateLocalized( ci->colorName(*dest) );
+
+    nbN = 0;
+    XtSetArg( nbArgs[nbN], XmNnavigationType, XmTAB_GROUP ); nbN++;
+    //XtSetArg( nbArgs[nbN], XmNwidth, (XtArgVal) 130 ); nbN++;
+    XtSetArg( nbArgs[nbN], XmNheight, (XtArgVal) 25 ); nbN++;
+    XtSetArg( nbArgs[nbN], XmNrecomputeSize, (XtArgVal) 1 ); nbN++;
+    XtSetArg( nbArgs[nbN], XmNlabelString, (XtArgVal) str2 ); nbN++;
+
+    tN = 0;
+
+    cb->createWithRule( topForm, dest, ci, NULL, fArgs, fN, bArgs, bN,
+     nbArgs, nbN, tArgs, tN );
+
+    XmStringFree( str1 );
+    XmStringFree( str2 );
+
+    curW = cb->formWidget();
+    curRW = cb->formWidget();
+
+  }
+  else {
+
+    fN = 0;
+    XtSetArg( fArgs[fN], XmNtopAttachment, (XtArgVal) XmATTACH_WIDGET ); fN++;
+    XtSetArg( fArgs[fN], XmNtopWidget, (XtArgVal) curW ); fN++;
+    XtSetArg( fArgs[fN], XmNleftAttachment,
+     (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); fN++;
+    XtSetArg( fArgs[fN], XmNleftWidget, (XtArgVal) curW ); fN++;
+
+    bN = 0;
+    XtSetArg( bArgs[bN], XmNnavigationType, XmTAB_GROUP ); bN++;
+    XtSetArg( bArgs[bN], XmNwidth, (XtArgVal) 25 ); bN++;
+    XtSetArg( bArgs[bN], XmNheight, (XtArgVal) 25 ); bN++;
+    XtSetArg( bArgs[bN], XmNbackground, (XtArgVal) ci->pix(*dest) ); bN++;
+    XtSetArg( bArgs[bN], XmNtopAttachment, (XtArgVal) XmATTACH_FORM ); bN++;
+    XtSetArg( bArgs[bN], XmNleftAttachment, (XtArgVal) XmATTACH_FORM ); bN++;
+
+    str1 = XmStringCreateLocalized( "*" );
+
+    if ( ci->isRule(*dest) ) {
+      XtSetArg( bArgs[bN], XmNforeground,
+       (XtArgVal) ci->labelPix(*dest) ); bN++;
+      XtSetArg( bArgs[bN], XmNlabelString, (XtArgVal) str1 ); bN++;
+    }
+
+    str2 = XmStringCreateLocalized( ci->colorName(*dest) );
+
+    nbN = 0;
+    XtSetArg( nbArgs[nbN], XmNnavigationType, XmTAB_GROUP ); nbN++;
+    //XtSetArg( nbArgs[nbN], XmNwidth, (XtArgVal) 130 ); nbN++;
+    XtSetArg( nbArgs[nbN], XmNheight, (XtArgVal) 25 ); nbN++;
+    XtSetArg( nbArgs[nbN], XmNrecomputeSize, (XtArgVal) 1 ); nbN++;
+    XtSetArg( nbArgs[nbN], XmNlabelString, (XtArgVal) str2 ); nbN++;
+
+    tN = 0;
+
+    cb->createWithRule( topForm, dest, ci, NULL, fArgs, fN, bArgs, bN,
+     nbArgs, nbN, tArgs, tN );
+
+    XmStringFree( str1 );
+    XmStringFree( str2 );
+
+    curW = cb->formWidget();
+
+  }
+
+  if ( firstColorButton ) {
+    firstColorButton = 0;
+    ci->setActiveWidget( cb->widget() );
+    ci->setCurDestination( dest );
+  }
+
+  if ( entryTag )
+    str = XmStringCreate( label, entryTag );
+  else
+    str = XmStringCreateLocalized( label );
+
+  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+   topForm,
+   XmNlabelString, str,
+   XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+   XmNtopWidget, curW,
+   XmNrightAttachment, XmATTACH_WIDGET,
+   XmNrightWidget, curW,
+   XmNmarginTop, 7,
+   XmNfontList, entryFontList,
+   NULL );
+
+  XmStringFree( str );
+
+  itemTail->flink = cur;
+  itemTail = cur;
+  itemTail->flink = NULL;
+
+  return 1;
+
+}
+
+#if 0
 int entryFormClass::addColorButton (
   char *label,
   colorInfoClass *ci,
@@ -2563,6 +2706,7 @@ colorButtonEntry *cur;
   return 1;
 
 }
+#endif
 
 int entryFormClass::addColorButtonWithText (
   char *label,
@@ -2743,7 +2887,7 @@ textEntry *te;
 
     nbN = 0;
     XtSetArg( nbArgs[nbN], XmNnavigationType, XmTAB_GROUP ); nbN++;
-    XtSetArg( nbArgs[nbN], XmNwidth, (XtArgVal) 130 ); nbN++;
+    //XtSetArg( nbArgs[nbN], XmNwidth, (XtArgVal) 130 ); nbN++;
     XtSetArg( nbArgs[nbN], XmNheight, (XtArgVal) 25 ); nbN++;
     XtSetArg( nbArgs[nbN], XmNrecomputeSize, (XtArgVal) 1 ); nbN++;
     XtSetArg( nbArgs[nbN], XmNlabelString, (XtArgVal) str2 ); nbN++;
@@ -2802,7 +2946,7 @@ textEntry *te;
 
     nbN = 0;
     XtSetArg( nbArgs[nbN], XmNnavigationType, XmTAB_GROUP ); nbN++;
-    XtSetArg( nbArgs[nbN], XmNwidth, (XtArgVal) 130 ); nbN++;
+    //XtSetArg( nbArgs[nbN], XmNwidth, (XtArgVal) 130 ); nbN++;
     XtSetArg( nbArgs[nbN], XmNheight, (XtArgVal) 25 ); nbN++;
     XtSetArg( nbArgs[nbN], XmNrecomputeSize, (XtArgVal) 1 ); nbN++;
     XtSetArg( nbArgs[nbN], XmNlabelString, (XtArgVal) str2 ); nbN++;

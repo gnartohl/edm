@@ -151,7 +151,7 @@ edmBoxClass *ebo = (edmBoxClass *) client;
     ebo->lineColor.setAlarmSensitive();
   else
     ebo->lineColor.setAlarmInsensitive();
-  ebo->lineColor.setColor( ebo->bufLineColor, ebo->actWin->ci );
+  ebo->lineColor.setColorIndex( ebo->bufLineColor, ebo->actWin->ci );
 
   ebo->fill = ebo->bufFill;
 
@@ -160,7 +160,7 @@ edmBoxClass *ebo = (edmBoxClass *) client;
     ebo->fillColor.setAlarmSensitive();
   else
     ebo->fillColor.setAlarmInsensitive();
-  ebo->fillColor.setColor( ebo->bufFillColor, ebo->actWin->ci );
+  ebo->fillColor.setColorIndex( ebo->bufFillColor, ebo->actWin->ci );
 
   ebo->lineWidth = ebo->bufLineWidth;
 
@@ -403,8 +403,8 @@ int edmBoxClass::createInteractive (
   w = _w;
   h = _h;
 
-  lineColor.setColor( actWin->defaultFg1Color, actWin->ci );
-  fillColor.setColor( actWin->defaultBgColor, actWin->ci );
+  lineColor.setColorIndex( actWin->defaultFg1Color, actWin->ci );
+  fillColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
   strcpy( fontTag, actWin->defaultCtlFontTag );
   alignment = actWin->defaultCtlAlignment;
 
@@ -450,10 +450,10 @@ char title[32], *ptr;
   bufW = w;
   bufH = h;
 
-  bufLineColor = lineColor.pixelColor();
+  bufLineColor = lineColor.pixelIndex();
   bufLineColorMode = lineColorMode;
 
-  bufFillColor = fillColor.pixelColor();
+  bufFillColor = fillColor.pixelIndex();
   bufFillColorMode = fillColorMode;
 
   bufFill = fill;
@@ -550,8 +550,7 @@ char oneName[39+1];
   if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    lineColor.setColor( pixel, actWin->ci );
+    lineColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
 
@@ -563,15 +562,15 @@ char oneName[39+1];
     fscanf( f, "%d\n", &fill ); actWin->incLine();
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &pixel );
-    fillColor.setColor( pixel, actWin->ci );
+    fillColor.setColorIndex( index, actWin->ci );
 
   }
   else {
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     actWin->ci->setRGB( r, g, b, &pixel );
-    lineColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    lineColor.setColorIndex( index, actWin->ci );
 
     fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
 
@@ -584,7 +583,8 @@ char oneName[39+1];
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
     actWin->ci->setRGB( r, g, b, &pixel );
-    fillColor.setColor( pixel, actWin->ci );
+    index = actWin->ci->pixIndex( pixel );
+    fillColor.setColorIndex( index, actWin->ci );
 
   }
 
@@ -687,14 +687,14 @@ int index, stat;
   fprintf( f, "%-d\n", w );
   fprintf( f, "%-d\n", h );
 
-  actWin->ci->getIndex( lineColor.pixelColor(), &index );
+  index = lineColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", lineColorMode );
 
   fprintf( f, "%-d\n", fill );
 
-  actWin->ci->getIndex( fillColor.pixelColor(), &index );
+  index = fillColor.pixelIndex();
   fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", fillColorMode );
@@ -1387,20 +1387,20 @@ void edmBoxClass::changeDisplayParams (
   int _ctlAlignment,
   char *_btnFontTag,
   int _btnAlignment,
-  unsigned int _textFgColor,
-  unsigned int _fg1Color,
-  unsigned int _fg2Color,
-  unsigned int _offsetColor,
-  unsigned int _bgColor,
-  unsigned int _topShadowColor,
-  unsigned int _botShadowColor )
+  int _textFgColor,
+  int _fg1Color,
+  int _fg2Color,
+  int _offsetColor,
+  int _bgColor,
+  int _topShadowColor,
+  int _botShadowColor )
 {
 
   if ( _flag & ACTGRF_FG1COLOR_MASK )
-    lineColor.setColor( _fg1Color, actWin->ci );
+    lineColor.setColorIndex( _fg1Color, actWin->ci );
 
   if ( _flag & ACTGRF_BGCOLOR_MASK )
-    fillColor.setColor( _bgColor, actWin->ci );
+    fillColor.setColorIndex( _bgColor, actWin->ci );
 
   if ( _flag & ACTGRF_CTLFONTTAG_MASK ) {
 

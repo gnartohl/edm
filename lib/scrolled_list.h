@@ -37,12 +37,51 @@
 #include <Xm/List.h>
 #include <Xm/Protocols.h>
 
+#ifdef __scrolled_list_cc
+
 #include "scrolled_list.str"
 
 typedef struct ItemListTag {
   struct ItemListTag *flink;
   char *item;
 } ItemListType, *ItemListPtr;
+
+static void setUpper (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void setLower (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void setFileDoFilter (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void setPrefix (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void doFilter (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void slc_select (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void slc_dismiss (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+#endif
 
 class scrolledListClass {
 
@@ -79,11 +118,6 @@ friend void slc_select (
   XtPointer call );
 
 friend void slc_dismiss (
-  Widget w,
-  XtPointer client,
-  XtPointer call );
-
-friend void slc_clear (
   Widget w,
   XtPointer client,
   XtPointer call );

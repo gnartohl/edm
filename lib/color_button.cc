@@ -1,3 +1,5 @@
+#define __color_button_cc 1
+
 //  edm - extensible display manager
 
 //  Copyright (C) 1999 John W. Sinclair
@@ -34,6 +36,7 @@ colorInfoClass *ci;
   ci->setActiveWidget( NULL );
   ci->setNameWidget( NULL );
   ci->setCurDestination( NULL );
+  ci->setCurCb( NULL );
 
 }
 
@@ -120,13 +123,52 @@ int curIndex;
 
   stat = ci->setCurIndex( curIndex );
 
-  stat = ci->setActiveWidget( w );
+  stat = ci->setActiveWidget( cb->widget() );
 
   ci->setNameWidget( cb->nameWidget() );
 
   ci->setCurDestination( cb->destination() );
 
+  ci->setCurCb( cb );
+
+  XmListSelectPos( ci->colorList.listWidget(), curIndex+1, FALSE );
+  XmListSetBottomPos( ci->colorList.listWidget(), curIndex+1 );
+
   ci->openColorWindow();
+
+}
+
+static void nameSetActive_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+colorInfoClass *ci;
+colorButtonClass *cb;
+int stat;
+int curIndex;
+
+  cb = (colorButtonClass *) client;
+
+  curIndex = cb->getIndex();
+
+  ci = cb->colorInfo();
+
+  stat = ci->setCurIndex( curIndex );
+
+  stat = ci->setActiveWidget( cb->widget() );
+
+  ci->setNameWidget( cb->nameWidget() );
+
+  ci->setCurDestination( cb->destination() );
+
+  ci->setCurCb( cb );
+
+  XmListSelectPos( ci->colorList.listWidget(), curIndex+1, FALSE );
+  XmListSetBottomPos( ci->colorList.listWidget(), curIndex+1 );
+
+  ci->colorList.popup();
 
 }
 
@@ -244,17 +286,27 @@ Widget colorButtonClass::createWithRule(
   pb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, form,
     bArgs, bNum_args );
 
-  XtSetArg( nbArgs[nbNum_args], XmNtopAttachment,
-   (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); nbNum_args++;
-  XtSetArg( nbArgs[nbNum_args], XmNtopWidget, (XtArgVal) pb ); nbNum_args++;
-  XtSetArg( nbArgs[tNum_args], XmNleftOffset, (XtArgVal) 10 ); nbNum_args++;
-  XtSetArg( nbArgs[nbNum_args], XmNleftAttachment,
-   (XtArgVal) XmATTACH_WIDGET ); nbNum_args++;
-  XtSetArg( nbArgs[nbNum_args], XmNleftWidget,
-   (XtArgVal) pb ); nbNum_args++;
+  XtAddCallback( pb, XmNactivateCallback, setActive_cb, (XtPointer) this );
+  XtAddCallback( pb, XmNdestroyCallback, destroy_cb, (XtPointer) this->ci );
 
-  namePb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, form,
-    nbArgs, nbNum_args );
+  if ( ci->majorVersion() >= 3 ) {
+
+    XtSetArg( nbArgs[nbNum_args], XmNtopAttachment,
+     (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); nbNum_args++;
+    XtSetArg( nbArgs[nbNum_args], XmNtopWidget, (XtArgVal) pb ); nbNum_args++;
+    XtSetArg( nbArgs[nbNum_args], XmNleftOffset, (XtArgVal) 10 ); nbNum_args++;
+    XtSetArg( nbArgs[nbNum_args], XmNleftAttachment,
+     (XtArgVal) XmATTACH_WIDGET ); nbNum_args++;
+    XtSetArg( nbArgs[nbNum_args], XmNleftWidget,
+     (XtArgVal) pb ); nbNum_args++;
+
+    namePb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, form,
+      nbArgs, nbNum_args );
+
+    XtAddCallback( namePb, XmNactivateCallback, nameSetActive_cb,
+     (XtPointer) this );
+
+  }
 
   if ( pvName ) {
 
@@ -275,9 +327,6 @@ Widget colorButtonClass::createWithRule(
   destPtr = dest;
 
   curIndex = *dest;
-
-  XtAddCallback( pb, XmNactivateCallback, setActive_cb, (XtPointer) this );
-  XtAddCallback( pb, XmNdestroyCallback, destroy_cb, (XtPointer) this->ci );
 
   return form;
 
@@ -360,12 +409,25 @@ int colorButtonClass::setIndex (
 
 Arg arg[10];
 int n;
+unsigned int fg, bg;
+XmString str;
 
   curIndex = i;
+  bg = ci->pix(i);
+  fg = ci->labelPix(i);
 
   n = 0;
-  XtSetArg( arg[n], XmNbackground, (XtArgVal) ci->pix(i) ); n++;
+  XtSetArg( arg[n], XmNbackground, (XtArgVal) bg ); n++;
+  XtSetArg( arg[n], XmNforeground, (XtArgVal) fg ); n++;
   XtSetValues( pb, arg, n );
+
+  if ( namePb ) {
+    str = XmStringCreateLocalized( ci->colorName(i) );
+    n = 0;
+    XtSetArg( arg[n], XmNlabelString, (XtArgVal) str ); n++;
+    XtSetValues( namePb, arg, n );
+    XmStringFree( str );
+  }
 
   return COLORBUTTON_SUCCESS;
 

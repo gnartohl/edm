@@ -43,9 +43,23 @@
 #define COLORBUTTON_SUCCESS 1
 #define COLORBUTTON_FAIL 102
 
+#ifdef __color_button_cc
+
+static void nameSetActive_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+#endif
+
 class colorButtonClass {
 
 private:
+
+friend void nameSetActive_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 Widget form, pb, namePb, tf;
 int *destPtr;

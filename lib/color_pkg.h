@@ -38,6 +38,7 @@
 #include "thread.h"
 #include "gc_pkg.h"
 #include "color_pkg.str"
+#include "color_list.h"
 
 #define COLORINFO_SUCCESS 1
 #define COLORINFO_EMPTY 100
@@ -85,6 +86,9 @@ typedef struct colorCacheTag {
   rulePtr rule;
 } colorCacheType, *colorCachePtr;
 
+class colorListClass;
+class colorButtonClass;
+
 class colorInfoClass {
 
 private:
@@ -100,6 +104,8 @@ friend void colorFormEventHandler (
   Boolean *continueToDispatch );
 
 friend class colorButtonClass;
+
+int major, minor, release;
 
 int max_colors, num_blinking_colors, num_color_cols, usingPrivateColorMap;
 
@@ -172,6 +178,9 @@ public:
 static const int SUCCESS = 1;
 static const int FAIL = 0;
 
+colorListClass colorList;
+colorButtonClass *curCb;
+
 int change;
 
 int colorWindowIsOpen;
@@ -209,6 +218,10 @@ unsigned int colorInfoClass::getFg( void );
 void colorInfoClass::setCurDestination( int *ptr );
 
 int *colorInfoClass::getCurDestination( void );
+
+void colorInfoClass::setCurCb( colorButtonClass *cb );
+
+colorButtonClass *colorInfoClass::getCurCb( void );
 
 int colorInfoClass::setActiveWidget( Widget w );
 
@@ -286,6 +299,14 @@ char *colorInfoClass::colorName (
 
 int colorInfoClass::isRule (
   int index );
+
+char *colorInfoClass::firstColor (
+  colorCachePtr node );
+
+char *colorInfoClass::nextColor (
+  colorCachePtr node );
+
+int colorInfoClass::majorVersion ( void );
 
 };
 
