@@ -777,7 +777,7 @@ char **macros;
 char **expansions;
 
 char fileName[255+1];
-char prefix[127+1], name[127+1], postfix[127+1];
+char prefix[127+1], displayName[127+1], postfix[127+1];
 expStringClass expStrTitle;
 
 colorInfoClass *ci;

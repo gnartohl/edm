@@ -754,7 +754,7 @@ activeWindowListPtr cur;
 
   cur = apco->head->flink;
   while ( cur != apco->head ) {
-    if ( strcmp( name, cur->node.name ) == 0 ) {
+    if ( strcmp( name, cur->node.displayName ) == 0 ) {
       // deiconify
       XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
       // raise
@@ -829,7 +829,7 @@ activeWindowListPtr cur;
 
   cur = apco->head->flink;
   while ( cur != apco->head ) {
-    if ( strcmp( name, cur->node.name ) == 0 ) {
+    if ( strcmp( name, cur->node.displayName ) == 0 ) {
       // deiconify
       XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
       // raise
@@ -1314,11 +1314,11 @@ activeWindowListPtr cur;
 
   cur = apco->head->flink;
   while ( cur != apco->head ) {
-    if ( blank( cur->node.name ) ) {
+    if ( blank( cur->node.displayName ) ) {
       apco->postMessage( appContextClass_str27 );
     }
     else {
-      apco->postMessage( cur->node.name );
+      apco->postMessage( cur->node.displayName );
     }
     nodeCount++;
     cur = cur->flink;
@@ -1385,7 +1385,7 @@ char *sysMacros[] = {
   // is help file already open?
   cur = apco->head->flink;
   while ( cur != apco->head ) {
-    if ( strcmp( fName, cur->node.name ) == 0 ) {
+    if ( strcmp( fName, cur->node.displayName ) == 0 ) {
       // deiconify
       XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
       // raise

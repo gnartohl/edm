@@ -12147,6 +12147,7 @@ int activeWindowClass::save (
 
 int stat;
 
+  storeFileName( fName );
   stat = genericSave( fName, 1, 1, 1 );
 
   return stat;
@@ -12317,7 +12318,7 @@ Arg args[5];
     curWin = appCtx->head->flink;
     while ( curWin != appCtx->head ) {
       if ( this != &curWin->node ) {
-        if ( strcmp( this->name, curWin->node.name ) == 0 ) {
+        if ( strcmp( this->displayName, curWin->node.displayName ) == 0 ) {
           if ( ( x == curWin->node.x ) && ( y == curWin->node.y ) ) {
             x += 20;
             if ( x > maxX ) x = 20;
@@ -12465,7 +12466,7 @@ Arg args[5];
     curWin = appCtx->head->flink;
     while ( curWin != appCtx->head ) {
       if ( this != &curWin->node ) {
-        if ( strcmp( this->name, curWin->node.name ) == 0 ) {
+        if ( strcmp( this->displayName, curWin->node.displayName ) == 0 ) {
           if ( ( x == curWin->node.x ) && ( y == curWin->node.y ) ) {
             x += 20;
             if ( x > maxX ) x = 20;
@@ -15247,7 +15248,7 @@ void activeWindowClass::storeFileName (
 {
 
   strncpy( fileName, inName, 255 );
-  getFileName( name, inName, 127 );
+  getFileName( displayName, inName, 127 );
   getFilePrefix( prefix, inName, 127 );
   getFilePostfix( postfix, inName, 127 );
 
@@ -15886,7 +15887,7 @@ char *sysMacros[] = {
   // is help file already open?
   cur = appCtx->head->flink;
   while ( cur != appCtx->head ) {
-    if ( strcmp( fName, cur->node.name ) == 0 ) {
+    if ( strcmp( fName, cur->node.displayName ) == 0 ) {
       // deiconify
       XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
       // raise
