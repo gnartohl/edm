@@ -32,9 +32,21 @@ static void sloSetCtlKpDoubleValue (
 
 activeSliderClass *slo = (activeSliderClass *) client;
 int stat;
+double dvalue;
+
+  dvalue = slo->kpCtlDouble;
+
+  if ( slo->positive ) {
+    if ( dvalue < slo->minFv ) dvalue = slo->minFv;
+    if ( dvalue > slo->maxFv ) dvalue = slo->maxFv;
+  }
+  else {
+    if ( dvalue > slo->minFv ) dvalue = slo->minFv;
+    if ( dvalue < slo->maxFv ) dvalue = slo->maxFv;
+  }
 
   if ( slo->controlExists ) {
-    stat = ca_put( DBR_DOUBLE, slo->controlPvId, &slo->kpCtlDouble );
+    stat = ca_put( DBR_DOUBLE, slo->controlPvId, &dvalue );
     slo->actWin->appCtx->proc->lock();
     slo->needCtlRefresh = 1;
     slo->actWin->addDefExeNode( slo->aglPtr );
