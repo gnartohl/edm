@@ -757,67 +757,82 @@ struct stat fileStat;
 
   case 1:
 
-    curFileSize = 0;
+    opComplete = 0;
 
-    if ( strcmp( logFileName, "" ) != 0 ) {
+    break;
 
-      status = stat( logFileName, &fileStat );
-      if ( status == 0 ) {
-        thisFileSize = fileStat.st_size;
-      }
-      else {
-        thisFileSize = 0;
-      }
+  case 2:
 
-      logFileExists = 1;
+    if ( !opComplete ) {
 
-      if ( thisFileSize ) {
+      curFileSize = 0;
 
-        if ( thisFileSize > size )
-          discard = thisFileSize - size;
-        else
-          discard = 0;
+      if ( strcmp( logFileName, "" ) != 0 ) {
 
-        logFile = fopen( logFileName, "r" );
-        if ( logFile ) {
-          do {
-            gotSome = fgets( line, 255, logFile );
-            if ( gotSome ) {
-              l = strlen( line );
-              curFileSize += l;
-              if ( discard > 0 ) {
-                discard -= l;
-              }
-              else {
-                scrolledText.addText( line );
-              }
-            }
-          } while ( gotSome );
-          fclose( logFile );
-        }
-
-      }
-
-      logFileOpen = 0;
-
-      if ( !fileIsReadOnly ) {
-
-        logFile = fopen( logFileName, "a" );
-        if ( !logFile ) {
-          logFileExists = 0;
-          logFileOpen = 0;
+        status = stat( logFileName, &fileStat );
+        if ( status == 0 ) {
+          thisFileSize = fileStat.st_size;
         }
         else {
-          logFileOpen = 1;
+          thisFileSize = 0;
         }
 
-        if ( logFileOpen ) {
-          status = lockFile( logFile );
-          if ( !( status & 1 ) ) {
+        logFileExists = 1;
+
+        if ( thisFileSize ) {
+
+          if ( thisFileSize > size )
+            discard = thisFileSize - size;
+          else
+            discard = 0;
+
+          logFile = fopen( logFileName, "r" );
+          if ( logFile ) {
+            do {
+              gotSome = fgets( line, 255, logFile );
+              if ( gotSome ) {
+                l = strlen( line );
+                curFileSize += l;
+                if ( discard > 0 ) {
+                  discard -= l;
+                }
+                else {
+                  scrolledText.addText( line );
+                }
+              }
+            } while ( gotSome );
             fclose( logFile );
+          }
+
+        }
+
+        logFileOpen = 0;
+
+        if ( !fileIsReadOnly ) {
+
+          logFile = fopen( logFileName, "a" );
+          if ( !logFile ) {
             logFileExists = 0;
             logFileOpen = 0;
           }
+          else {
+            logFileOpen = 1;
+          }
+
+          if ( logFileOpen ) {
+            status = lockFile( logFile );
+            if ( !( status & 1 ) ) {
+              fclose( logFile );
+              logFileExists = 0;
+              logFileOpen = 0;
+            }
+          }
+
+        }
+        else {
+
+          logFileExists = 0;
+
         }
 
       }
@@ -827,40 +842,28 @@ struct stat fileStat;
 
       }
 
-    }
-    else {
-
-      logFileExists = 0;
-
-    }
-
-    aglPtr = ptr;
-    needConnectInit = needUpdate = needDraw = 0;
-    opComplete = 0;
+      aglPtr = ptr;
+      needConnectInit = needUpdate = needDraw = 0;
 
 #ifdef __epics__
-    readEventId = 0;
+      readEventId = 0;
 #endif
 
-    firstReadUpdate = 1;
+      firstReadUpdate = 1;
 
-    readPvConnected = active = init = 0;
-    activeMode = 1;
+      readPvConnected = active = init = 0;
+      activeMode = 1;
 
-    if ( !readPvExpStr.getExpanded() ||
-       ( strcmp( readPvExpStr.getExpanded(), "" ) == 0 ) ) {
-      readExists = 0;
-    }
-    else {
-      readExists = 1;
-      fgColor.setConnectSensitive();
-    }
+      if ( !readPvExpStr.getExpanded() ||
+         ( strcmp( readPvExpStr.getExpanded(), "" ) == 0 ) ) {
+        readExists = 0;
+      }
+      else {
+        readExists = 1;
+        fgColor.setConnectSensitive();
+      }
 
-    break;
-
-  case 2:
-
-    if ( !opComplete ) {
+      frameWidget = NULL;
 
       opStat = 1;
 
@@ -951,7 +954,10 @@ int stat;
   }
   else if ( pass == 2 ) {
 
-  XtDestroyWidget( frameWidget );
+  if ( frameWidget ) {
+    XtDestroyWidget( frameWidget );
+    frameWidget = NULL;
+  }
   scrolledText.destroyEmbedded();
 
   }

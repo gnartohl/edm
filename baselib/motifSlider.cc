@@ -2581,6 +2581,12 @@ void activeMotifSliderClass::changeDisplayParams (
   if ( _flag & ACTGRF_OFFSETCOLOR_MASK )
     shadeColor = _offsetColor;
 
+  if ( _flag & ACTGRF_TOPSHADOWCOLOR_MASK )
+    topColor = _topShadowColor;
+
+  if ( _flag & ACTGRF_BOTSHADOWCOLOR_MASK )
+    botColor = _botShadowColor;
+
   if ( _flag & ACTGRF_CTLFONTTAG_MASK ) {
 
     strcpy( fontTag, _ctlFontTag );
