@@ -625,12 +625,12 @@ void fontMenuClass::show( void ) {
 char *fontMenuClass::currentFontTag ( void ) {
 
   strncpy( fontTagStr, this->familyStr, 127 );
-  strncat( fontTagStr, "-", 127 );
-  strncat( fontTagStr, this->boldStr, 127 );
-  strncat( fontTagStr, "-", 127 );
-  strncat( fontTagStr, this->italicsStr, 127 );
-  strncat( fontTagStr, "-", 127 );
-  strncat( fontTagStr, this->sizeStr, 127 );
+  Strncat( fontTagStr, "-", 127 );
+  Strncat( fontTagStr, this->boldStr, 127 );
+  Strncat( fontTagStr, "-", 127 );
+  Strncat( fontTagStr, this->italicsStr, 127 );
+  Strncat( fontTagStr, "-", 127 );
+  Strncat( fontTagStr, this->sizeStr, 127 );
 
   return fontTagStr;
 

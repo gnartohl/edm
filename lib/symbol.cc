@@ -824,7 +824,7 @@ char title[32], *ptr;
   else
     strncpy( title, activeSymbolClass_str9, 31 );
 
-  strncat( title, activeSymbolClass_str10, 31 );
+  Strncat( title, activeSymbolClass_str10, 31 );
 
   strncpy( bufId, id, 31 );
 

@@ -234,22 +234,22 @@ activeWindowClass *awo = (activeWindowClass *) client;
   if ( envPtr ) {
     strncpy( awo->autosaveName, envPtr, 255 );
     if ( envPtr[strlen(envPtr)] != '/' ) {
-      strncat( awo->autosaveName, "/", 255 );
+      Strncat( awo->autosaveName, "/", 255 );
     }
   }
   else {
     strncpy( awo->autosaveName, "/tmp/", 255 );
   }
 
-  strncat( awo->autosaveName, activeWindowClass_str1, 255 );
+  Strncat( awo->autosaveName, activeWindowClass_str1, 255 );
 
   if ( strcmp( awo->fileName, "" ) != 0 ) {
     extractName( awo->fileName, name );
-    strncat( awo->autosaveName, "_", 255 );
-    strncat( awo->autosaveName, name, 255 );
+    Strncat( awo->autosaveName, "_", 255 );
+    Strncat( awo->autosaveName, name, 255 );
   }
 
-  strncat( awo->autosaveName, "_XXXXXX", 255 );
+  Strncat( awo->autosaveName, "_XXXXXX", 255 );
 
   mkstemp( awo->autosaveName );
 
@@ -12553,16 +12553,16 @@ int stat;
   }
   else {
     strncpy( oneFileName, appCtx->colorPath, 255 );
-    strncat( oneFileName, fName, 255 );
+    Strncat( oneFileName, fName, 255 );
   }
 
   if ( strlen(oneFileName) > strlen(".scheme") ) {
     if ( strcmp( &oneFileName[strlen(oneFileName)-strlen(".scheme")], ".scheme" ) != 0 ) {
-      strncat( oneFileName, ".scheme", 255 );
+      Strncat( oneFileName, ".scheme", 255 );
     }
   }
   else {
-    strncat( oneFileName, ".scheme", 255 );
+    Strncat( oneFileName, ".scheme", 255 );
   }
 
   stat = scheme.load( ci, oneFileName );
@@ -12665,16 +12665,16 @@ int stat;
   }
   else {
     strncpy( oneFileName, appCtx->colorPath, 255 );
-    strncat( oneFileName, fName, 255 );
+    Strncat( oneFileName, fName, 255 );
   }
 
   if ( strlen(oneFileName) > strlen(".scheme") ) {
     if ( strcmp( &oneFileName[strlen(oneFileName)-strlen(".scheme")], ".scheme" ) != 0 ) {
-      strncat( oneFileName, ".scheme", 255 );
+      Strncat( oneFileName, ".scheme", 255 );
     }
   }
   else {
-    strncat( oneFileName, ".scheme", 255 );
+    Strncat( oneFileName, ".scheme", 255 );
   }
 
   scheme.setPvType( defaultPvType );
@@ -12708,7 +12708,7 @@ int stat;
 char tmp[511+1];
 
   strncpy( tmp, fname, 510 ); // leave room for ~
-  strncat( tmp, "~", 511 );
+  Strncat( tmp, "~", 511 );
 
   if ( fileExists( tmp ) ) {
     stat = unlink( tmp );
@@ -12777,7 +12777,7 @@ int stat;
   }
   else {
     strncpy( oneFileName, appCtx->curPath, 255 );
-    strncat( oneFileName, fName, 255 );
+    Strncat( oneFileName, fName, 255 );
   }
 
   if ( appendExtensionFlag ) {
@@ -12786,11 +12786,11 @@ int stat;
       if (
        strcmp( &oneFileName[strlen(oneFileName)-strlen(".edl")], ".edl" ) !=
        0 ) {
-        strncat( oneFileName, ".edl", 255 );
+        Strncat( oneFileName, ".edl", 255 );
       }
     }
     else {
-      strncat( oneFileName, ".edl", 255 );
+      Strncat( oneFileName, ".edl", 255 );
     }
 
   }
@@ -13737,7 +13737,7 @@ char callbackName[63+1];
 
   if ( activateCallbackFlag ) {
     strncpy( callbackName, id, 63 );
-    strncat( callbackName, "Activate", 63 );
+    Strncat( callbackName, "Activate", 63 );
     activateCallback = appCtx->userLibObject.getFunc( callbackName );
     if ( activateCallback ) {
       (*activateCallback)( this );
@@ -14177,7 +14177,7 @@ char callbackName[63+1];
 
       if ( deactivateCallbackFlag ) {
         strncpy( callbackName, id, 63 );
-        strncat( callbackName, "Deactivate", 63 );
+        Strncat( callbackName, "Deactivate", 63 );
         deactivateCallback = appCtx->userLibObject.getFunc(
          callbackName );
         if ( deactivateCallback ) {
@@ -14208,7 +14208,7 @@ char callbackName[63+1];
 
   if ( deactivateCallbackFlag ) {
     strncpy( callbackName, id, 63 );
-    strncat( callbackName, "Deactivate", 63 );
+    Strncat( callbackName, "Deactivate", 63 );
     deactivateCallback = appCtx->userLibObject.getFunc(
      callbackName );
     if ( deactivateCallback ) {
@@ -15707,17 +15707,17 @@ int result;
   }
   else {
     strncpy( oneFileName, appCtx->curPath, 255 );
-    strncat( oneFileName, fName, 255 );
+    Strncat( oneFileName, fName, 255 );
   }
 
   if ( strlen(oneFileName) > strlen(".edl") ) {
     if ( strcmp( &oneFileName[strlen(oneFileName)-strlen(".edl")], ".edl" ) !=
       0 ) {
-      strncat( oneFileName, ".edl", 255 );
+      Strncat( oneFileName, ".edl", 255 );
     }
   }
   else {
-    strncat( oneFileName, ".edl", 255 );
+    Strncat( oneFileName, ".edl", 255 );
   }
 
   f = fopen( oneFileName, "r" );
@@ -16275,22 +16275,22 @@ void activeWindowClass::executeFromDeferredQueue( void )
     if ( envPtr ) {
       strncpy( autosaveName, envPtr, 255 );
       if ( envPtr[strlen(envPtr)] != '/' ) {
-        strncat( autosaveName, "/", 255 );
+        Strncat( autosaveName, "/", 255 );
       }
     }
     else {
       strncpy( autosaveName, "/tmp/", 255 );
     }
 
-    strncat( autosaveName, activeWindowClass_str1, 255 );
+    Strncat( autosaveName, activeWindowClass_str1, 255 );
 
     if ( strcmp( fileName, "" ) != 0 ) {
       extractName( fileName, name );
-      strncat( autosaveName, "_", 255 );
-      strncat( autosaveName, name, 255 );
+      Strncat( autosaveName, "_", 255 );
+      Strncat( autosaveName, name, 255 );
     }
 
-    strncat( autosaveName, "_XXXXXX", 255 );
+    Strncat( autosaveName, "_XXXXXX", 255 );
 
     mkstemp( autosaveName );
 
@@ -16528,7 +16528,7 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar;
           winid = (int) XtWindow( this->top );
           sprintf( param, "%-d", winid );
           bufOut[iOut] = 0;
-          strncat( bufOut, param, max );
+          Strncat( bufOut, param, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
 	}
@@ -16536,21 +16536,21 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar;
           bufOut[iOut] = 0;
           if ( expStrTitle.getExpanded() ) {
             if ( !blank( expStrTitle.getExpanded() ) ) {
-              strncat( bufOut, expStrTitle.getExpanded(), max );
+              Strncat( bufOut, expStrTitle.getExpanded(), max );
 	    }
 	    else {
-              strncat( bufOut, activeWindowClass_str83, max );
+              Strncat( bufOut, activeWindowClass_str83, max );
 	    }
 	  }
           else {
-            strncat( bufOut, activeWindowClass_str83, max );
+            Strncat( bufOut, activeWindowClass_str83, max );
 	  }
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
 	}
         else if ( strcmp( param, "<PROJDIR>" ) == 0 ) {
           bufOut[iOut] = 0;
-          strncat( bufOut, appCtx->dataFilePrefix[0], max );
+          Strncat( bufOut, appCtx->dataFilePrefix[0], max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
 	}
@@ -16558,7 +16558,7 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar;
           bufOut[iOut] = 0;
           envPtr = getenv( environment_str5 );
           if ( envPtr ) {
-            strncat( bufOut, envPtr, max );
+            Strncat( bufOut, envPtr, max );
             iOut = strlen( bufOut );
             if ( iOut >= max ) iOut = max - 1;
 	  }
@@ -16566,7 +16566,7 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar;
         else if ( strcmp( param, "<DSPNAME>" ) == 0 ) {
           bufOut[iOut] = 0;
           strncpy( dspName, XDisplayName(""), 127 );
-          strncat( bufOut, dspName, max );
+          Strncat( bufOut, dspName, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
 	}
@@ -16576,7 +16576,7 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar;
           for ( i=0; i<(int) strlen(dspName); i++ ) {
             if ( dspName[i] == '.' ) dspName[i] = '-';
 	  }
-          strncat( bufOut, dspName, max );
+          Strncat( bufOut, dspName, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
 	}
@@ -16594,7 +16594,7 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar;
               envPtr = getenv( &tmp[5] );
               if ( envPtr ) {
                 bufOut[iOut] = 0;
-                strncat( bufOut, envPtr, max );
+                Strncat( bufOut, envPtr, max );
                 iOut = strlen( bufOut );
                 if ( iOut >= max ) iOut = max - 1;
 	      }
@@ -16616,7 +16616,7 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar;
           if ( !isEnvVar ) {
 
             bufOut[iOut] = 0;
-            strncat( bufOut, param, max );
+            Strncat( bufOut, param, max );
             iOut = strlen( bufOut );
             if ( iOut >= max ) iOut = max - 1;
 
@@ -16893,7 +16893,7 @@ char *sysMacros[] = {
     strncpy( buf, envPtr, 255 );
 
     if ( buf[strlen(buf)-1] != '/' ) {
-      strncat( buf, "/", 255 );
+      Strncat( buf, "/", 255 );
     }
 
   }
@@ -16915,8 +16915,8 @@ char *sysMacros[] = {
 
   // ============
 
-  strncat( buf, fName, 255 );
-  strncat( buf, ".edl", 255 );
+  Strncat( buf, fName, 255 );
+  Strncat( buf, ".edl", 255 );
 
   cur = new activeWindowListType;
   appCtx->addActiveWindow( cur );

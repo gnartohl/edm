@@ -165,7 +165,7 @@ char buf[63+1];
   XmStringGetLtoR( cbs->item, XmFONTLIST_DEFAULT_TAG, &item );
 
   strncpy( buf, slo->prefixString, 63 );
-  strncat( buf, item, 63 );
+  Strncat( buf, item, 63 );
 
   if ( slo->lower )
     cvtToLower( buf );

@@ -439,7 +439,7 @@ char tmp[255+1];
       char buf[300+1];
 
       strcpy( buf, "<<<blank>>>" );
-      strncat( buf, str, 300 );
+      Strncat( buf, str, 300 );
       for ( i=0, j=0; i<(int)strlen(buf); i++ ) {
         if ( buf[i] == 10 ) {
 	  tmp[j] = 0;
@@ -1065,17 +1065,17 @@ char *gotOne;
   }
   else {
     strncpy( expandedName, prefix, maxSize );
-    strncat( expandedName, inName, maxSize );
+    Strncat( expandedName, inName, maxSize );
   }
 
   if ( strlen(expandedName) > strlen(postfix) ) {
     if ( strcmp( &expandedName[strlen(expandedName)-strlen(postfix)], postfix )
      != 0 ) {
-      strncat( expandedName, postfix, maxSize );
+      Strncat( expandedName, postfix, maxSize );
     }
   }
   else {
-    strncat( expandedName, postfix, maxSize );
+    Strncat( expandedName, postfix, maxSize );
   }
 
 }

@@ -52,14 +52,14 @@ FILE *f;
     envPtr = getenv(environment_str4);
     if ( envPtr ) {
       strncpy( prefix, envPtr, 127 );
-      if ( prefix[strlen(prefix)-1] != '/' ) strncat( prefix, "/", 127 );
+      if ( prefix[strlen(prefix)-1] != '/' ) Strncat( prefix, "/", 127 );
     }
     else {
       strcpy( prefix, "/etc/edm/" );
     }
 
     strncpy( fname, prefix, 127 );
-    strncat( fname, "edmPvObjects", 127 );
+    Strncat( fname, "edmPvObjects", 127 );
 
     f = fopen( fname, "r" );
     if ( !f ) {
@@ -158,10 +158,10 @@ FILE *f;
             strcpy( names[index], tk );
 
             if ( strcmp( pvOptionMenuList, "" ) == 0 )
-              strncat( pvOptionMenuList, tk, 255 );
+              Strncat( pvOptionMenuList, tk, 255 );
             else {
-              strncat( pvOptionMenuList, "|", 255 );
-              strncat( pvOptionMenuList, tk, 255 );
+              Strncat( pvOptionMenuList, "|", 255 );
+              Strncat( pvOptionMenuList, tk, 255 );
 	    }
 
           }
@@ -268,8 +268,8 @@ char name[127+1], *error;
     if ( strcmp( oneClassName, classNames[i] ) == 0 ) {
 
       strcpy( name, "create_" );
-      strncat( name, classNames[i], 127 );
-      strncat( name, "Ptr", 127 );
+      Strncat( name, classNames[i], 127 );
+      Strncat( name, "Ptr", 127 );
 
       // printf( "func name = [%s]\n", name );
 
@@ -311,8 +311,8 @@ char name[127+1], *error;
     if ( strcmp( oneClassName, classNames[i] ) == 0 ) {
 
       strcpy( name, "clone_" );
-      strncat( name, classNames[i], 127 );
-      strncat( name, "Ptr", 127 );
+      Strncat( name, classNames[i], 127 );
+      Strncat( name, "Ptr", 127 );
 
       func = (VPFUNC) dlsym( dllHandle[i], name );
       if ((error = dlerror()) != NULL)  {

@@ -118,10 +118,10 @@ char *tk, spec[127+1], rest[127+1], foundry[63+1], family[63+1], weight[31+1],
   strncpy( rest, tk, 127 );
 
   strncpy( newFont, "-", 127 );
-  strncat( newFont, foundry, 127 );
-  strncat( newFont, "-", 127 );
-  strncat( newFont, "*-", 127 );
-  strncat( newFont, rest, 127 );
+  Strncat( newFont, foundry, 127 );
+  Strncat( newFont, "-", 127 );
+  Strncat( newFont, "*-", 127 );
+  Strncat( newFont, rest, 127 );
 
   //  printf( "new font is %s\n", newFont );
 
@@ -139,11 +139,11 @@ char *tk, spec[127+1], rest[127+1], foundry[63+1], family[63+1], weight[31+1],
   strncpy( rest, tk, 127 );
 
   strncpy( newFont, "-", 127 );
-  strncat( newFont, foundry, 127 );
-  strncat( newFont, "-", 127 );
-  strncat( newFont, "*-", 127 );
-  strncat( newFont, "*-", 127 );
-  strncat( newFont, rest, 127 );
+  Strncat( newFont, foundry, 127 );
+  Strncat( newFont, "-", 127 );
+  Strncat( newFont, "*-", 127 );
+  Strncat( newFont, "*-", 127 );
+  Strncat( newFont, rest, 127 );
 
 //   printf( "new font is %s\n", newFont );
 
@@ -161,12 +161,12 @@ char *tk, spec[127+1], rest[127+1], foundry[63+1], family[63+1], weight[31+1],
   strncpy( rest, tk, 127 );
 
   strncpy( newFont, "-", 127 );
-  strncat( newFont, foundry, 127 );
-  strncat( newFont, "-", 127 );
-  strncat( newFont, "*-", 127 );
-  strncat( newFont, "*-", 127 );
-  strncat( newFont, "*-", 127 );
-  strncat( newFont, rest, 127 );
+  Strncat( newFont, foundry, 127 );
+  Strncat( newFont, "-", 127 );
+  Strncat( newFont, "*-", 127 );
+  Strncat( newFont, "*-", 127 );
+  Strncat( newFont, "*-", 127 );
+  Strncat( newFont, rest, 127 );
 
 //   printf( "new font is %s\n", newFont );
 
@@ -188,16 +188,16 @@ char *tk, spec[127+1], rest[127+1], foundry[63+1], family[63+1], weight[31+1],
   strncpy( rest, tk, 127 );
 
   strncpy( newFont, "-", 127 );
-  strncat( newFont, foundry, 127 );
-  strncat( newFont, "-", 127 );
-  strncat( newFont, "*-", 127 );
-  strncat( newFont, "*-", 127 );
-  strncat( newFont, "*-", 127 );
-  strncat( newFont, ftype, 127 );
-  strncat( newFont, "--", 127 );
-  strncat( newFont, size, 127 );
-  strncat( newFont, "-", 127 );
-  strncat( newFont, "*-*-*-*-*-*-*", 127 );
+  Strncat( newFont, foundry, 127 );
+  Strncat( newFont, "-", 127 );
+  Strncat( newFont, "*-", 127 );
+  Strncat( newFont, "*-", 127 );
+  Strncat( newFont, "*-", 127 );
+  Strncat( newFont, ftype, 127 );
+  Strncat( newFont, "--", 127 );
+  Strncat( newFont, size, 127 );
+  Strncat( newFont, "-", 127 );
+  Strncat( newFont, "*-*-*-*-*-*-*", 127 );
 
 //   printf( "new font is %s\n", newFont );
 
@@ -205,8 +205,8 @@ char *tk, spec[127+1], rest[127+1], foundry[63+1], family[63+1], weight[31+1],
   if ( *n == 1 ) return list;
 
   strncpy( newFont, "-", 127 );
-  strncat( newFont, foundry, 127 );
-  strncat( newFont, "-*-*-*-*--*-*-*-*-*-*-*-*", 127 );
+  Strncat( newFont, foundry, 127 );
+  Strncat( newFont, "-*-*-*-*--*-*-*-*-*-*-*-*", 127 );
 
 //   printf( "new font is %s\n", newFont );
 
@@ -283,12 +283,12 @@ char *tk, spec[127+1], name[127+1], family[63+1], weight[31+1],
   sprintf( size, "%-.1f", fsize );
 
   strncpy( name, family, 127 );
-  strncat( name, "-", 127 );
-  strncat( name, weight, 127 );
-  strncat( name, "-", 127 );
-  strncat( name, slant, 127 );
-  strncat( name, "-", 127 );
-  strncat( name, size, 127 );
+  Strncat( name, "-", 127 );
+  Strncat( name, weight, 127 );
+  Strncat( name, "-", 127 );
+  Strncat( name, slant, 127 );
+  Strncat( name, "-", 127 );
+  Strncat( name, size, 127 );
 
   ptr->isScalable = (char) isScalable;
 
@@ -365,12 +365,12 @@ char *tk, spec[127+1], name[127+1], family[63+1], weight[31+1],
   sprintf( size, "%-.1f", fsize );
 
   strncpy( name, family, 127 );
-  strncat( name, "-", 127 );
-  strncat( name, weight, 127 );
-  strncat( name, "-", 127 );
-  strncat( name, slant, 127 );
-  strncat( name, "-", 127 );
-  strncat( name, size, 127 );
+  Strncat( name, "-", 127 );
+  Strncat( name, weight, 127 );
+  Strncat( name, "-", 127 );
+  Strncat( name, slant, 127 );
+  Strncat( name, "-", 127 );
+  Strncat( name, size, 127 );
 
   ptr->isScalable = (char) isScalable;
 
@@ -620,19 +620,19 @@ int dup;
   // build the font spec first with i then with o
 
   strncpy( spec, "-*-", 127 ); // don't care about foundry
-  strncat( spec, family, 127 );
-  strncat( spec, "-", 127 );
-  strncat( spec, weight, 127 );
-  strncat( spec, "-", 127 );
+  Strncat( spec, family, 127 );
+  Strncat( spec, "-", 127 );
+  Strncat( spec, weight, 127 );
+  Strncat( spec, "-", 127 );
   slantLoc = strlen(spec);
-  strncat( spec, "?", 127 ); // will hold slant
-  strncat( spec, "-", 127 );
-  strncat( spec, "normal", 127 );
-  strncat( spec, "--", 127 );
-  strncat( spec, pixels, 127 );
-  strncat( spec, "-", 127 );
-  strncat( spec, size, 127 );
-  strncat( spec, "-*-*-*-*-*-*", 127 );
+  Strncat( spec, "?", 127 ); // will hold slant
+  Strncat( spec, "-", 127 );
+  Strncat( spec, "normal", 127 );
+  Strncat( spec, "--", 127 );
+  Strncat( spec, pixels, 127 );
+  Strncat( spec, "-", 127 );
+  Strncat( spec, size, 127 );
+  Strncat( spec, "-*-*-*-*-*-*", 127 );
 
   cur = new fontNameListType;
 
@@ -730,29 +730,29 @@ char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
 
   context = NULL;
   tk = strtok_r( buf, "-", &context );		// foundary
-  strncat( name, tk, len );
-  strncat( name, "-", len );
+  Strncat( name, tk, len );
+  Strncat( name, "-", len );
 
   tk = strtok_r( NULL, "-", &context );		// name
-  strncat( name, tk, len );
-  strncat( name, "-", len );
+  Strncat( name, tk, len );
+  Strncat( name, "-", len );
 
   tk = strtok_r( NULL, "-", &context );		// weight
-  strncat( name, tk, len );
-  strncat( name, "-", len );
+  Strncat( name, tk, len );
+  Strncat( name, "-", len );
 
   tk = strtok_r( NULL, "-", &context );		// slant
-  strncat( name, tk, len );
-  strncat( name, "-", len );
+  Strncat( name, tk, len );
+  Strncat( name, "-", len );
 
   tk = strtok_r( NULL, "-", &context );		// set width
-  strncat( name, tk, len );
-  strncat( name, "-", len );
-  strncat( name, "-", len );
+  Strncat( name, tk, len );
+  Strncat( name, "-", len );
+  Strncat( name, "-", len );
 
   tk = strtok_r( NULL, "-", &context );		// pixels
-  strncat( name, "*", len );
-  strncat( name, "-", len );
+  Strncat( name, "*", len );
+  Strncat( name, "-", len );
 
   strncpy( matrix, "[", 63 );
 
@@ -767,7 +767,7 @@ char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
 
   term = (int) ( fabs(c) * pixels );
   sprintf( tmp, "%s%-d", sign, term );
-  strncat( matrix, tmp, 63 );
+  Strncat( matrix, tmp, 63 );
 
   if ( s < 0.0 ) {
     strcpy( sign, "~" );
@@ -778,7 +778,7 @@ char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
 
   term = (int) ( fabs(s) * pixels );
   sprintf( tmp, "%s%-d", sign, term );
-  strncat( matrix, tmp, 63 );
+  Strncat( matrix, tmp, 63 );
 
   if ( s < 0.0 ) {
     strcpy( sign, "+" );
@@ -789,7 +789,7 @@ char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
 
   term = (int) ( fabs(s) * pixels );
   sprintf( tmp, "%s%-d", sign, term );
-  strncat( matrix, tmp, 63 );
+  Strncat( matrix, tmp, 63 );
 
   if ( c < 0.0 ) {
     strcpy( sign, "~" );
@@ -800,44 +800,44 @@ char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
 
   term = (int) ( fabs(c) * pixels );
   sprintf( tmp, "%s%-d", sign, term );
-  strncat( matrix, tmp, 63 );
+  Strncat( matrix, tmp, 63 );
 
-  strncat( matrix, "]", 63 );
+  Strncat( matrix, "]", 63 );
 
-  strncat( name, matrix, len );
-  strncat( name, "-", len );
+  Strncat( name, matrix, len );
+  Strncat( name, "-", len );
 
   tk = strtok_r( NULL, "-", &context );		// points (discard)
 
   tk = strtok_r( NULL, "-", &context );		// horz res
-  strncat( name, tk, len );
-  strncat( name, "-", len );
+  Strncat( name, tk, len );
+  Strncat( name, "-", len );
 
   tk = strtok_r( NULL, "-", &context );		// vert res
-  strncat( name, tk, len );
-  strncat( name, "-", len );
+  Strncat( name, tk, len );
+  Strncat( name, "-", len );
 
   tk = strtok_r( NULL, "-", &context );		// spacing
-  strncat( name, tk, len );
-  strncat( name, "-", len );
+  Strncat( name, tk, len );
+  Strncat( name, "-", len );
 
   tk = strtok_r( NULL, "-", &context );		// average width
-  strncat( name, "*", len );
-  strncat( name, "-", len );
+  Strncat( name, "*", len );
+  Strncat( name, "-", len );
 
   tk = strtok_r( NULL, "-", &context );		// char set
-  strncat( name, tk, len );
+  Strncat( name, tk, len );
 
   tk = strtok_r( NULL, "-", &context );		// char set
   if ( tk ) {
-    strncat( name, "-", len );
-    strncat( name, tk, len );
+    Strncat( name, "-", len );
+    Strncat( name, tk, len );
   }
 
   tk = strtok_r( NULL, "-", &context );		// char set
   if ( tk ) {
-    strncat( name, "-", len );
-    strncat( name, tk, len );
+    Strncat( name, "-", len );
+    Strncat( name, tk, len );
   }
 
   name[len] = 0;

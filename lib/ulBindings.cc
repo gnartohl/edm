@@ -54,14 +54,14 @@ int stat;
   envPtr = getenv(environment_str6);
   if ( envPtr ) {
     strncpy( prefix, envPtr, 127 );
-    if ( prefix[strlen(prefix)-1] != '/' ) strncat( prefix, "/", 127 );
+    if ( prefix[strlen(prefix)-1] != '/' ) Strncat( prefix, "/", 127 );
   }
   else {
     strcpy( prefix, "" );
   }
 
   strncpy( dllName, prefix, 127 );
-  strncat( dllName, libName, 127 );
+  Strncat( dllName, libName, 127 );
 
   dllHandle = dlopen( dllName, RTLD_LAZY );
   if ((error = dlerror()) != NULL)  {

@@ -776,7 +776,7 @@ char title[32], *ptr;
   else
     strncpy( title, activeDynSymbolClass_str5, 31 );
 
-  strncat( title, activeDynSymbolClass_str6, 31 );
+  Strncat( title, activeDynSymbolClass_str6, 31 );
 
   strncpy( bufId, id, 31 );
 

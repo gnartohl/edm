@@ -214,57 +214,57 @@ keypadClass *kp = (keypadClass *) client;
     case keypadClass::NODECPOINT:
 
       if ( w == kp->pb0 ) {
-        strncat( &kp->buf[1], "0", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "0", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb1 ) {
-        strncat( &kp->buf[1], "1", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "1", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb2 ) {
-        strncat( &kp->buf[1], "2", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "2", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb3 ) {
-        strncat( &kp->buf[1], "3", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "3", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb4 ) {
-        strncat( &kp->buf[1], "4", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "4", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb5 ) {
-        strncat( &kp->buf[1], "5", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "5", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb6 ) {
-        strncat( &kp->buf[1], "6", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "6", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb7 ) {
-        strncat( &kp->buf[1], "7", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "7", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb8 ) {
-        strncat( &kp->buf[1], "8", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "8", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb9 ) {
-        strncat( &kp->buf[1], "9", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "9", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pbPoint ) {
-        strncat( &kp->buf[1], ".", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], ".", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
         kp->state = keypadClass::DECPOINT;
@@ -295,52 +295,52 @@ keypadClass *kp = (keypadClass *) client;
     case keypadClass::DECPOINT:
 
       if ( w == kp->pb0 ) {
-        strncat( &kp->buf[1], "0", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "0", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb1 ) {
-        strncat( &kp->buf[1], "1", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "1", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb2 ) {
-        strncat( &kp->buf[1], "2", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "2", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb3 ) {
-        strncat( &kp->buf[1], "3", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "3", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb4 ) {
-        strncat( &kp->buf[1], "4", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "4", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb5 ) {
-        strncat( &kp->buf[1], "5", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "5", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb6 ) {
-        strncat( &kp->buf[1], "6", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "6", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb7 ) {
-        strncat( &kp->buf[1], "7", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "7", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb8 ) {
-        strncat( &kp->buf[1], "8", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "8", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }
       else if ( w == kp->pb9 ) {
-        strncat( &kp->buf[1], "9", keypadClass::MAXCHARS-1 );
+        Strncat( &kp->buf[1], "9", keypadClass::MAXCHARS-1 );
         kp->buf[keypadClass::MAXCHARS] = 0;
         kp->count++;
       }

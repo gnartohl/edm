@@ -1440,7 +1440,7 @@ XmTextVerifyCallbackStruct *xmv;
   teo = (class textEntry *) client;
 
   xmv = (XmTextVerifyCallbackStruct *) call;
-  strncat( teo->charDest, xmv->text->ptr, teo->maxLen );
+  Strncat( teo->charDest, xmv->text->ptr, teo->maxLen );
   xmv->doit = False;
 
 }

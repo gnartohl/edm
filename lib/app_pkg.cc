@@ -116,14 +116,14 @@ libRecPtr head, tail, cur, prev, next;
   envPtr = getenv(environment_str3);
   if ( envPtr ) {
     strncpy( prefix, envPtr, 255 );
-    if ( prefix[strlen(prefix)-1] != '/' ) strncat( prefix, "/", 255 );
+    if ( prefix[strlen(prefix)-1] != '/' ) Strncat( prefix, "/", 255 );
   }
   else {
     strcpy( prefix, "/etc/edm/" );
   }
 
   strncpy( fileName, prefix, 255 );
-  strncat( fileName, "edmObjects", 255 );
+  Strncat( fileName, "edmObjects", 255 );
 
   f = fopen( fileName, "r" );
   if ( f ) {
@@ -273,7 +273,7 @@ libRecPtr head, tail, cur, prev, next;
 
     if ( !stat ) {
       strncpy( line, appContextClass_str10, 255 );
-      strncat( line, appContextClass_str11, 255 );
+      Strncat( line, appContextClass_str11, 255 );
       printf( "%s\n\n", line );
     }
 
@@ -285,14 +285,14 @@ libRecPtr head, tail, cur, prev, next;
         index = 42;
       else
         index = strlen(line) + 5;
-      strncat( line, "                                        ", 255 );
+      Strncat( line, "                                        ", 255 );
       strncpy( &line[index], typeNamePtr, 255 );
 
       if ( strlen(line) < 50 )
         index = 55;
       else
         index = strlen(line) + 5;
-      strncat( line, "                                        ", 255 );
+      Strncat( line, "                                        ", 255 );
       strncpy( &line[index], textPtr, 255 );
 
       printf( "%s\n", line );
@@ -389,7 +389,7 @@ libRecPtr head, tail, cur, prev, next;
     printf( "\n" );
 
     strncpy( line, fileName, 255 );
-    strncat( line, "~", 255 );
+    Strncat( line, "~", 255 );
 
     if ( fileExists ) {
 
@@ -492,7 +492,7 @@ libRecPtr head, tail, cur, prev, next;
     printf( "\n" );
 
     strncpy( line, fileName, 255 );
-    strncat( line, "~", 255 );
+    Strncat( line, "~", 255 );
 
     if ( fileExists ) {
 
@@ -563,14 +563,14 @@ libRecPtr head, tail, cur, prev, next;
   envPtr = getenv(environment_str3);
   if ( envPtr ) {
     strncpy( prefix, envPtr, 255 );
-    if ( prefix[strlen(prefix)-1] != '/' ) strncat( prefix, "/", 255 );
+    if ( prefix[strlen(prefix)-1] != '/' ) Strncat( prefix, "/", 255 );
   }
   else {
     strcpy( prefix, "/etc/edm/" );
   }
 
   strncpy( fileName, prefix, 255 );
-  strncat( fileName, "edmPvObjects", 255 );
+  Strncat( fileName, "edmPvObjects", 255 );
 
   f = fopen( fileName, "r" );
   if ( f ) {
@@ -712,7 +712,7 @@ libRecPtr head, tail, cur, prev, next;
 
     if ( !stat ) {
       strncpy( line, appContextClass_str110, 255 );
-      strncat( line, appContextClass_str111, 255 );
+      Strncat( line, appContextClass_str111, 255 );
       printf( "%s\n\n", line );
     }
 
@@ -724,7 +724,7 @@ libRecPtr head, tail, cur, prev, next;
         index = 45;
       else
         index = strlen(line) + 5;
-      strncat( line, "                                        ", 255 );
+      Strncat( line, "                                        ", 255 );
       strncpy( &line[index], textPtr, 255 );
 
       printf( "%s\n", line );
@@ -818,7 +818,7 @@ libRecPtr head, tail, cur, prev, next;
     printf( "\n" );
 
     strncpy( line, fileName, 255 );
-    strncat( line, "~", 255 );
+    Strncat( line, "~", 255 );
 
     if ( fileExists ) {
 
@@ -921,7 +921,7 @@ libRecPtr head, tail, cur, prev, next;
     printf( "\n" );
 
     strncpy( line, fileName, 255 );
-    strncat( line, "~", 255 );
+    Strncat( line, "~", 255 );
 
     if ( fileExists ) {
 
@@ -1792,7 +1792,7 @@ char *sysMacros[] = {
     strncpy( buf, envPtr, 255 );
 
     if ( buf[strlen(buf)-1] != '/' ) {
-      strncat( buf, "/", 255 );
+      Strncat( buf, "/", 255 );
     }
 
   }
@@ -1814,8 +1814,8 @@ char *sysMacros[] = {
 
   // ============
 
-  strncat( buf, fName, 255 );
-  strncat( buf, ".edl", 255 );
+  Strncat( buf, fName, 255 );
+  Strncat( buf, ".edl", 255 );
 
   cur = new activeWindowListType;
   cur->requestDelete = 0;
@@ -2152,7 +2152,7 @@ char *envPtr, *gotIt, buf[1270+1], save[127+1], path[127+1], *tk;
     if ( tk ) {
 
       strncpy( colorPath, tk, 127 );
-      if ( path[strlen(colorPath)-1] != '/' ) strncat( colorPath, "/", 127 );
+      if ( path[strlen(colorPath)-1] != '/' ) Strncat( colorPath, "/", 127 );
 
     }
     else {
@@ -2206,7 +2206,7 @@ char *envPtr, *gotIt, buf[1270+1], save[127+1], path[127+1], *tk;
       chdir( save );
 
       if ( path[strlen(path)-1] != '/' )
-       strncat( path, "/", 127 );
+       Strncat( path, "/", 127 );
 
       numPaths = 1;
       dataFilePrefix = new char *[1];
@@ -2242,7 +2242,7 @@ char *envPtr, *gotIt, buf[1270+1], save[127+1], path[127+1], *tk;
       chdir( save );
 
       if ( path[strlen(path)-1] != '/' )
-       strncat( path, "/", 127 );
+       Strncat( path, "/", 127 );
 
       dataFilePrefix[i] = new char[strlen(path)+1];
       strcpy( dataFilePrefix[i], path );
@@ -2257,7 +2257,7 @@ char *envPtr, *gotIt, buf[1270+1], save[127+1], path[127+1], *tk;
     getcwd( path, 127 );
 
     if ( path[strlen(path)-1] != '/' )
-     strncat( path, "/", 127 );
+     Strncat( path, "/", 127 );
 
     numPaths = 1;
 
@@ -2292,17 +2292,17 @@ char *gotOne;
   }
   else {
     strncpy( expandedName, dataFilePrefix[index], maxSize );
-    strncat( expandedName, inName, maxSize );
+    Strncat( expandedName, inName, maxSize );
   }
 
   if ( strlen(expandedName) > strlen(ext) ) {
     if ( strcmp( &expandedName[strlen(expandedName)-strlen(ext)], ext )
      != 0 ) {
-      strncat( expandedName, ext, maxSize );
+      Strncat( expandedName, ext, maxSize );
     }
   }
   else {
-    strncat( expandedName, ext, maxSize );
+    Strncat( expandedName, ext, maxSize );
   }
 
 }
@@ -2345,14 +2345,14 @@ int stat, dup, state, i;
   envPtr = getenv(environment_str2);
   if ( envPtr ) {
     strncpy( prefix, envPtr, 127 );
-    if ( prefix[strlen(prefix)-1] != '/' ) strncat( prefix, "/", 127 );
+    if ( prefix[strlen(prefix)-1] != '/' ) Strncat( prefix, "/", 127 );
   }
   else {
     strcpy( prefix, "/etc/edm/" );
   }
 
   strncpy( fName, prefix, 127 );
-  strncat( fName, "schemes.list", 127 );
+  Strncat( fName, "schemes.list", 127 );
 
   f = fopen( fName, "r" );
   if ( !f ) {
@@ -2478,8 +2478,8 @@ int stat, dup, state, i;
           }
 
           strncpy( buf, sName, 255 );
-          strncat( buf, "-", 255 );
-          strncat( buf, oName, 255 );
+          Strncat( buf, "-", 255 );
+          Strncat( buf, oName, 255 );
 
           cur->objName = new char[strlen(buf)+1];
           strcpy( cur->objName, buf );
@@ -2636,10 +2636,10 @@ char buf[255+1];
   }
 
   strncpy( buf, schemeSetName, 255 );
-  strncat( buf, "-", 255 );
-  strncat( buf, objType, 255 );
-  strncat( buf, "-", 255 );
-  strncat( buf, objName, 255 );
+  Strncat( buf, "-", 255 );
+  Strncat( buf, objType, 255 );
+  Strncat( buf, "-", 255 );
+  Strncat( buf, objName, 255 );
 
   stat = avl_get_match( this->schemeList, (void *) buf,
    (void **) &cur );
@@ -2679,10 +2679,10 @@ char buf[255+1];
   }
 
   strncpy( buf, schemeSetName, 255 );
-  strncat( buf, "-", 255 );
-  strncat( buf, objType, 255 );
-  strncat( buf, "-", 255 );
-  strncat( buf, objName, 255 );
+  Strncat( buf, "-", 255 );
+  Strncat( buf, objType, 255 );
+  Strncat( buf, "-", 255 );
+  Strncat( buf, objName, 255 );
 
   //printf( "get scheme file for %s\n", buf );
 
@@ -4165,7 +4165,7 @@ err_return:
   display = XtDisplay( appTop );
 
   strcpy( title, "edm " );
-  strncat( title, VERSION, 31 );
+  Strncat( title, VERSION, 31 );
   pTitle = title;
   XStringListToTextProperty( &pTitle, 1, &xtext );
   XSetWMName( display, XtWindow(appTop), &xtext );
@@ -4215,14 +4215,14 @@ err_return:
   envPtr = getenv(environment_str2);
   if ( envPtr ) {
     strncpy( prefix, envPtr, 127 );
-    if ( prefix[strlen(prefix)-1] != '/' ) strncat( prefix, "/", 127 );
+    if ( prefix[strlen(prefix)-1] != '/' ) Strncat( prefix, "/", 127 );
   }
   else {
     strcpy( prefix, "/etc/edm/" );
   }
 
   strncpy( fname, prefix, 127 );
-  strncat( fname, "colors.list", 127 );
+  Strncat( fname, "colors.list", 127 );
 
   if ( privColorMap ) {
     ci.usePrivColorMap();
@@ -4259,7 +4259,7 @@ err_return:
   processAllEvents( app, display );
 
   strncpy( fname, prefix, 127 );
-  strncat( fname, "fonts.list", 127 );
+  Strncat( fname, "fonts.list", 127 );
   opStat = fi.initFromFile( app, display, fname );
 
   closeNote();

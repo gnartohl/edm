@@ -36,14 +36,14 @@ FILE *f;
     envPtr = getenv(environment_str3);
     if ( envPtr ) {
       strncpy( prefix, envPtr, 127 );
-      if ( prefix[strlen(prefix)-1] != '/' ) strncat( prefix, "/", 127 );
+      if ( prefix[strlen(prefix)-1] != '/' ) Strncat( prefix, "/", 127 );
     }
     else {
       strcpy( prefix, "/etc/edm/" );
     }
 
     strncpy( fname, prefix, 127 );
-    strncat( fname, "edmObjects", 127 );
+    Strncat( fname, "edmObjects", 127 );
 
     f = fopen( fname, "r" );
     if ( !f ) {
@@ -465,9 +465,9 @@ char name[127+1], *error, buf[127+1], *tk;
       tk = strtok( buf, ":" );
 
       strcpy( name, "create_" );
-      //strncat( name, classNames[i], 127 );
-      strncat( name, tk, 127 );
-      strncat( name, "Ptr", 127 );
+      //Strncat( name, classNames[i], 127 );
+      Strncat( name, tk, 127 );
+      Strncat( name, "Ptr", 127 );
 
 //        printf( "func name = [%s]\n", name );
 
@@ -640,9 +640,9 @@ char name[127+1], *error, buf[127+1], *tk;
       tk = strtok( buf, ":" );
 
       strcpy( name, "clone_" );
-      //strncat( name, classNames[i], 127 );
-      strncat( name, tk, 127 );
-      strncat( name, "Ptr", 127 );
+      //Strncat( name, classNames[i], 127 );
+      Strncat( name, tk, 127 );
+      Strncat( name, "Ptr", 127 );
 
       func = (VPFUNC) dlsym( dllHandle[i], name );
       if ((error = dlerror()) != NULL)  {
