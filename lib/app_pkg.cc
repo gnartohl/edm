@@ -1693,7 +1693,7 @@ XmString menuStr, str;
 
   XtManageChild( menuBar );
 
-  msgDialog.create( appTop );
+  msgDialog.createWithDecorations( appTop );
 
 }
 
@@ -2431,12 +2431,17 @@ err_return:
 
     if ( executeOnOpen ) {
       appTop = XtVaAppInitialize( &app, "edm", NULL, 0, &argCount,
-       args, NULL, XmNiconic, True, NULL );
+       args, NULL,
+       XmNiconic, True,
+       NULL );
       iconified = 1;
     }
     else {
       appTop = XtVaAppInitialize( &app, "edm", NULL, 0, &argCount,
-       args, NULL, XmNiconic, False, NULL );
+       args, NULL,
+       XmNiconic, False,
+       XmNmappedWhenManaged, False,
+       NULL );
       iconified = 0;
     }
 
@@ -2551,6 +2556,8 @@ err_return:
   }
 
   iconTestCount = 0;
+
+  XtMapWidget( appTop );
 
   return 1;
 

@@ -56,6 +56,9 @@ int msgDialogClass::destroy ( void );
 int msgDialogClass::create (
   Widget top );
 
+int msgDialogClass::createWithDecorations (
+  Widget top );
+
 int msgDialogClass::popup (
   char *text,
   int _x,

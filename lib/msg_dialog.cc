@@ -81,6 +81,45 @@ XmString str;
 
 }
 
+int msgDialogClass::createWithDecorations (
+  Widget top )
+{
+
+XmString str;
+
+  display = XtDisplay( top );
+
+  shell = XtVaCreatePopupShell( "", xmDialogShellWidgetClass,
+   top,
+   XmNmappedWhenManaged, False,
+   NULL );
+
+  labelForm = XtVaCreateWidget( "", xmFormWidgetClass, shell, NULL );
+
+  str = XmStringCreateLocalized( "  " );
+
+  label = XtVaCreateWidget( "", xmLabelWidgetClass,
+   labelForm,
+   XmNlabelString, str,
+   XmNtopAttachment, XmATTACH_FORM,
+   XmNrightAttachment, XmATTACH_FORM,
+   XmNleftAttachment, XmATTACH_FORM,
+   XmNbottomAttachment, XmATTACH_FORM,
+   XmNleftOffset, 20,
+   XmNrightOffset, 20,
+   XmNtopOffset, 20,
+   XmNbottomOffset, 20,
+   NULL );
+
+  XmStringFree( str );
+
+  XtManageChild( label );
+  XtManageChild( labelForm );
+
+  return 1;
+
+}
+
 int msgDialogClass::popup (
   char *text,
   int _x,
