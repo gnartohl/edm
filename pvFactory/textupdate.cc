@@ -450,10 +450,10 @@ void edmTextupdateClass::edit_cancel_delete(Widget w, XtPointer client,
 {
     edmTextupdateClass *me = (edmTextupdateClass *) client;
     // all lines required
-    me->erase();
-    me->deleteRequest = 1;
     me->ef.popdown();
     me->operationCancel();
+    me->erase();
+    me->deleteRequest = 1;
     me->drawAll();
 }
 
