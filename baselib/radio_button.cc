@@ -36,17 +36,24 @@ static void putValue (
 
 activeRadioButtonClass *rbto = (activeRadioButtonClass *) client;
 int i, stat;
-short value;
 
   for ( i=0; i<rbto->numStates; i++ ) {
 
     if ( w == rbto->pb[i] ) {
-      value = (short) i;
-      stat = ca_put( DBR_ENUM, rbto->controlPvId, &value );
+      rbto->curValue = i;
+      stat = ca_put( DBR_ENUM, rbto->controlPvId, &rbto->curValue );
       break;
     }
 
   }
+
+#if 0
+  rbto->actWin->appCtx->proc->lock();
+  rbto->needRefresh = 1;
+  rbto->needDraw = 1;
+  rbto->actWin->addDefExeNode( rbto->aglPtr );
+  rbto->actWin->appCtx->proc->unlock();
+#endif
 
 }
 
@@ -70,6 +77,7 @@ activeRadioButtonClass *rbto = (activeRadioButtonClass *) ca_puser(arg.chid);
 
     rbto->connection.setPvDisconnected( rbto->controlPvId );
     rbto->fgColor.setDisconnected();
+    rbto->needRefresh = 1;
     rbto->needDraw = 1;
     rbto->active = 0;
 
@@ -129,112 +137,6 @@ activeRadioButtonClass *rbto = (activeRadioButtonClass *) ast_args.usr;
 }
 
 static void rbt_alarmUpdate (
-  struct event_handler_args ast_args )
-{
-
-activeRadioButtonClass *rbto = (activeRadioButtonClass *) ast_args.usr;
-struct dbr_sts_enum statusRec;
-
-  if ( !rbto->readExists ) {
-
-    statusRec = *( (struct dbr_sts_enum *) ast_args.dbr );
-
-    rbto->fgColor.setStatus( statusRec.status, statusRec.severity );
-    rbto->bgColor.setStatus( statusRec.status, statusRec.severity );
-
-    rbto->needDraw = 1;
-    rbto->actWin->appCtx->proc->lock();
-    rbto->actWin->addDefExeNode( rbto->aglPtr );
-    rbto->actWin->appCtx->proc->unlock();
-
-  }
-
-}
-
-static void rbt_monitor_read_connect_state (
-  struct connection_handler_args arg )
-{
-
-activeRadioButtonClass *rbto = (activeRadioButtonClass *) ca_puser(arg.chid);
-
-  if ( arg.op == CA_OP_CONN_UP ) {
-
-    rbto->connection.setPvConnected( rbto->readPvId );
-    rbto->needReadConnectInit = 1;
-
-    if ( rbto->connection.pvsConnected() ) {
-      rbto->fgColor.setConnected();
-    }
-
-  }
-  else {
-
-    rbto->connection.setPvDisconnected( rbto->readPvId );
-    rbto->fgColor.setDisconnected();
-    rbto->needDraw = 1;
-    rbto->active = 0;
-
-  }
-
-  rbto->actWin->appCtx->proc->lock();
-  rbto->actWin->addDefExeNode( rbto->aglPtr );
-  rbto->actWin->appCtx->proc->unlock();
-
-}
-
-static void rbt_readInfoUpdate (
-  struct event_handler_args ast_args )
-{
-
-int i;
-activeRadioButtonClass *rbto = (activeRadioButtonClass *) ast_args.usr;
-struct dbr_gr_enum enumRec;
-
-  enumRec = *( (struct dbr_gr_enum *) ast_args.dbr );
-
-  if ( !rbto->controlExists ) {
-
-  rbto->numStates = enumRec.no_str;
-
-    for ( i=0; i<rbto->numStates; i++ ) {
-
-      if ( rbto->stateString[i] == NULL ) {
-        rbto->stateString[i] = new char[MAX_ENUM_STRING_SIZE+1];
-      }
-
-      strncpy( rbto->stateString[i], enumRec.strs[i],
-       MAX_ENUM_STRING_SIZE );
-
-    }
-
-  }
-
-  rbto->curValue = enumRec.value;
-
-  rbto->needReadInfoInit = 1;
-  rbto->actWin->appCtx->proc->lock();
-  rbto->actWin->addDefExeNode( rbto->aglPtr );
-  rbto->actWin->appCtx->proc->unlock();
-
-}
-
-static void rbt_readUpdate (
-  struct event_handler_args ast_args )
-{
-
-activeRadioButtonClass *rbto = (activeRadioButtonClass *) ast_args.usr;
-
-  rbto->curValue = *( (short *) ast_args.dbr );
-
-  rbto->needRefresh = 1;
-  rbto->needDraw = 1;
-  rbto->actWin->appCtx->proc->lock();
-  rbto->actWin->addDefExeNode( rbto->aglPtr );
-  rbto->actWin->appCtx->proc->unlock();
-
-}
-
-static void rbt_readAlarmUpdate (
   struct event_handler_args ast_args )
 {
 
@@ -305,8 +207,6 @@ activeRadioButtonClass *rbto = (activeRadioButtonClass *) client;
   rbto->sboxH = rbto->bufH;
 
   rbto->controlPvExpStr.setRaw( rbto->bufControlPvName );
-
-  rbto->readPvExpStr.setRaw( rbto->bufReadPvName );
 
   rbto->updateDimensions();
 
@@ -445,13 +345,12 @@ activeGraphicClass *rbto = (activeGraphicClass *) this;
   bgColorMode = source->bgColorMode;
 
   controlPvExpStr.setRaw( source->controlPvExpStr.rawString );
-  readPvExpStr.setRaw( source->readPvExpStr.rawString );
 
   widgetsCreated = 0;
   active = 0;
   activeMode = 0;
 
-  connection.setMaxPvs( 2 );
+  connection.setMaxPvs( 1 );
 
 }
 
@@ -530,11 +429,6 @@ int index;
 
   writeStringToFile( f, fontTag );
 
-  if ( readPvExpStr.getRaw() )
-    writeStringToFile( f, readPvExpStr.getRaw() );
-  else
-    writeStringToFile( f, "" );
-
   return 1;
 
 }
@@ -594,14 +488,6 @@ char oneName[39+1];
 
   readStringFromFile( fontTag, 63, f ); actWin->incLine();
 
-  if ( ( major > 1 ) || ( minor > 2 ) ) {
-    readStringFromFile( oneName, 39, f ); actWin->incLine();
-    readPvExpStr.setRaw( oneName );
-  }
-  else {
-    readPvExpStr.setRaw( "" );
-  }
-
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
@@ -648,11 +534,6 @@ char title[32], *ptr;
   else
     strncpy( bufControlPvName, "", 39 );
 
-  if ( readPvExpStr.getRaw() )
-    strncpy( bufReadPvName, readPvExpStr.getRaw(), 39 );
-  else
-    strncpy( bufReadPvName, "", 39 );
-
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -664,7 +545,6 @@ char title[32], *ptr;
   ef.addTextField( activeRadioButtonClass_str6, 30, &bufW );
   ef.addTextField( activeRadioButtonClass_str7, 30, &bufH );
   ef.addTextField( activeRadioButtonClass_str17, 30, bufControlPvName, 39 );
-  ef.addTextField( activeRadioButtonClass_str18, 30, bufReadPvName, 39 );
 
   ef.addColorButton( activeRadioButtonClass_str8, actWin->ci, &fgCb,
    &bufFgColor );
@@ -786,7 +666,6 @@ int activeRadioButtonClass::expand1st (
 int stat;
 
   stat = controlPvExpStr.expand1st( numMacros, macros, expansions );
-  stat = readPvExpStr.expand1st( numMacros, macros, expansions );
 
   return stat;
 
@@ -801,7 +680,6 @@ int activeRadioButtonClass::expand2nd (
 int stat;
 
   stat = controlPvExpStr.expand2nd( numMacros, macros, expansions );
-  stat = readPvExpStr.expand2nd( numMacros, macros, expansions );
 
   return stat;
 
@@ -810,8 +688,6 @@ int stat;
 int activeRadioButtonClass::containsMacros ( void ) {
 
   if ( controlPvExpStr.containsPrimaryMacros() ) return 1;
-
-  if ( readPvExpStr.containsPrimaryMacros() ) return 1;
 
   return 0;
 
@@ -835,22 +711,22 @@ int stat, opStat;
   case 1:
 
     aglPtr = ptr;
-    needConnectInit = needInfoInit = needReadConnectInit = needReadInfoInit =
-     needRefresh = needDraw = 0;
+    needConnectInit = needInfoInit = needRefresh = needDraw = 0;
     opComplete = 0;
 
-    controlExists = readExists = 0;
+    controlExists = 0;
 
     pvCheckExists = 0;
     connection.init();
 
 #ifdef __epics__
-    alarmEventId = controlEventId = readAlarmEventId = readEventId = 0;
+    alarmEventId = controlEventId = 0;
 #endif
 
     active = 0;
     activeMode = 1;
     numStates = 0;
+    curValue = 0;
 
     radioBox = (Widget) NULL;
 
@@ -872,14 +748,6 @@ int stat, opStat;
           controlExists = 0;
 	}
 
-        if ( strcmp( readPvExpStr.getRaw(), "" ) != 0 ) {
-          readExists = 1;
-          connection.addPv(); // must do this only once per pv
-	}
-        else {
-          readExists = 0;
-	}
-
       }
 
       opStat = 1;
@@ -892,16 +760,6 @@ int stat, opStat;
         if ( stat != ECA_NORMAL ) {
           printf( activeRadioButtonClass_str20,
            controlPvExpStr.getExpanded() );
-          opStat = 0;
-        }
-      }
-
-      if ( readExists ) {
-        stat = ca_search_and_connect( readPvExpStr.getExpanded(),
-         &readPvId, rbt_monitor_read_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeRadioButtonClass_str21,
-           readPvExpStr.getExpanded() );
           opStat = 0;
         }
       }
@@ -944,16 +802,10 @@ int stat, i;
 
 #ifdef __epics__
 
-    if ( controlExists && !readExists ) {
+    if ( controlExists ) {
       stat = ca_clear_channel( controlPvId );
       if ( stat != ECA_NORMAL )
         printf( activeRadioButtonClass_str22 );
-    }
-
-    if ( readExists ) {
-      stat = ca_clear_channel( readPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeRadioButtonClass_str23 );
     }
 
 #endif
@@ -1046,13 +898,12 @@ XButtonEvent *be = (XButtonEvent *) e;
 
 void activeRadioButtonClass::executeDeferred ( void ) {
 
-short v;
-int stat, i, nc, nrc, ni, nri, nr, nd;
+short value;
+int stat, i, nc, ni, nr, nd, notify;
 XmString str;
 Arg args[15];
 int n;
 XtTranslations parsedTrans;
-Widget widget;
 
 static char dragTrans[] =
   "#override\n\
@@ -1072,12 +923,10 @@ static XtActionsRec dragActions[] = {
 
   actWin->appCtx->proc->lock();
   nc = needConnectInit; needConnectInit = 0;
-  nrc = needReadConnectInit; needReadConnectInit = 0;
   ni = needInfoInit; needInfoInit = 0;
-  nri = needReadInfoInit; needReadInfoInit = 0;
   nr = needRefresh; needRefresh = 0;
   nd = needDraw; needDraw = 0;
-  v = curValue;
+  value = curValue;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
@@ -1094,16 +943,7 @@ static XtActionsRec dragActions[] = {
 
   }
 
-  if ( nrc ) {
-
-    stat = ca_get_callback( DBR_GR_ENUM, readPvId,
-     rbt_readInfoUpdate, (void *) this );
-
-  }
-
   if ( ni ) {
-
-    value = v;
 
     if ( widgetsCreated ) {
       if ( radioBox ) {
@@ -1121,6 +961,8 @@ static XtActionsRec dragActions[] = {
     XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
     XtSetArg( args[n], XmNbackground, (XtArgVal) bgColor.getColor() ); n++;
     XtSetArg( args[n], XmNforeground, (XtArgVal) fgColor.getColor() ); n++;
+    XtSetArg( args[n], XmNtranslations, parsedTrans ); n++;
+    XtSetArg( args[n], XmNuserData, this ); n++;
 
     radioBox = XmCreateRadioBox( actWin->executeWidgetId(),
      "", args, n );
@@ -1133,21 +975,31 @@ static XtActionsRec dragActions[] = {
        radioBox,
        XmNlabelString, str,
        XmNfontList, fontList,
-       XmNbackground, (XtArgVal) actWin->ci->pix(buttonColor),
+       XmNforeground, (XtArgVal) fgColor.getColor(),
+       XmNbackground, (XtArgVal) bgColor.getColor(),
+       XmNselectColor, (XtArgVal) actWin->ci->pix(buttonColor),
+       XmNunselectColor, (XtArgVal) actWin->ci->pix(buttonColor),
        XmNtopShadowColor, (XtArgVal) actWin->ci->pix(topShadowColor),
        XmNbottomShadowColor, (XtArgVal) actWin->ci->pix(botShadowColor),
        XmNhighlightOnEnter, False,
+       XmNindicatorType, XmN_OF_MANY,
+       XmNindicatorOn, XmINDICATOR_CHECK_BOX,
+       XmNtranslations, parsedTrans,
+       XmNuserData, this,
        NULL );
 
       if ( controlExists ) {
         if ( ca_write_access(controlPvId) ) {
+          n = 0;
           XtSetArg( args[n], XmNsensitive, True ); n++;
 	}
 	else {
+          n = 0;
           XtSetArg( args[n], XmNsensitive, False ); n++;
 	}
       }
       else {
+        n = 0;
         XtSetArg( args[n], XmNsensitive, False ); n++;
       }
 
@@ -1164,32 +1016,34 @@ static XtActionsRec dragActions[] = {
     XtAppAddActions( actWin->appCtx->appContext(), dragActions,
      XtNumber(dragActions) );
 
+#if 0
+    XtAddEventHandler( radioBox,
+     ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask,
+     False, radioBoxEventHandler, (XtPointer) this );
+#endif
+
     XtManageChild( radioBox );
 
     widgetsCreated = 1;
 
-    if ( !readExists ) {
+    if ( !controlEventId ) {
 
-      if ( !controlEventId ) {
-
-        stat = ca_add_masked_array_event( DBR_ENUM, 1, controlPvId,
-         rbt_controlUpdate, (void *) this, (float) 0.0, (float) 0.0,
-         (float) 0.0, &controlEventId, DBE_VALUE );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeRadioButtonClass_str24 );
-        }
-
+      stat = ca_add_masked_array_event( DBR_ENUM, 1, controlPvId,
+       rbt_controlUpdate, (void *) this, (float) 0.0, (float) 0.0,
+       (float) 0.0, &controlEventId, DBE_VALUE );
+      if ( stat != ECA_NORMAL ) {
+        printf( activeRadioButtonClass_str24 );
       }
 
-      if ( !alarmEventId ) {
+    }
 
-        stat = ca_add_masked_array_event( DBR_STS_ENUM, 1, controlPvId,
-         rbt_alarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-         (float) 0.0, &alarmEventId, DBE_ALARM );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeRadioButtonClass_str25 );
-        }
+    if ( !alarmEventId ) {
 
+      stat = ca_add_masked_array_event( DBR_STS_ENUM, 1, controlPvId,
+       rbt_alarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
+       (float) 0.0, &alarmEventId, DBE_ALARM );
+      if ( stat != ECA_NORMAL ) {
+        printf( activeRadioButtonClass_str25 );
       }
 
     }
@@ -1205,95 +1059,7 @@ static XtActionsRec dragActions[] = {
 
     drawActive();
 
-  }
-
-  if ( nri ) {
-
-    value = v;
-
-    if ( !controlExists ) {
-
-      if ( widgetsCreated ) {
-        if ( radioBox ) {
-          XtUnmapWidget( radioBox );
-          XtDestroyWidget( radioBox );
-          radioBox = NULL;
-        }
-        widgetsCreated = 0;
-      }
-
-      n = 0;
-      XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
-      XtSetArg( args[n], XmNy, (XtArgVal) y ); n++;
-      XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
-      XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
-      XtSetArg( args[n], XmNbackground, (XtArgVal) bgColor.getColor() ); n++;
-      XtSetArg( args[n], XmNforeground, (XtArgVal) fgColor.getColor() ); n++;
-
-      radioBox = XmCreateRadioBox( actWin->executeWidgetId(),
-       "", args, n );
-    
-      for ( i=0; i<numStates; i++ ) {
-
-        str = XmStringCreate( stateString[i], fontTag );
-
-        pb[i] = XtVaCreateManagedWidget( "", xmToggleButtonWidgetClass,
-         radioBox,
-         XmNlabelString, str,
-         XmNfontList, fontList,
-         XmNbackground, (XtArgVal) actWin->ci->pix(buttonColor),
-         XmNtopShadowColor, (XtArgVal) actWin->ci->pix(topShadowColor),
-         XmNbottomShadowColor, (XtArgVal) actWin->ci->pix(botShadowColor),
-	 XmNhighlightOnEnter, False,
-         XmNsensitive, False,
-         NULL );
-
-        XmStringFree( str );
-
-      }
-
-      XtManageChild( radioBox );
-
-      widgetsCreated = 1;
-
-    }
-
-    if ( !readEventId ) {
-
-      stat = ca_add_masked_array_event( DBR_ENUM, 1, readPvId,
-       rbt_readUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &readEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL ) {
-        printf( activeRadioButtonClass_str26 );
-      }
-
-    }
-
-    if ( !readAlarmEventId ) {
-
-      stat = ca_add_masked_array_event( DBR_STS_ENUM, 1, readPvId,
-       rbt_readAlarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &readAlarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL ) {
-        printf( activeRadioButtonClass_str27 );
-      }
-
-    }
-
-    if ( !controlExists ) {
-
-      active = 1;
-
-      for ( i=0; i<numStates; i++ ) {
-        if ( i == value )
-          XmToggleButtonSetState( pb[i], (XtArgVal) True, (XtArgVal) True );
-        else
-          XmToggleButtonSetState( pb[i], (XtArgVal) False, (XtArgVal) True );
-      }
-
-      drawActive();
-
-    }
+    nr = 1;
 
   }
 
@@ -1303,17 +1069,17 @@ static XtActionsRec dragActions[] = {
 
   if ( nr ) {
 
-    value = v;
+    notify = False;
 
     for ( i=0; i<numStates; i++ ) {
       if ( i == value ) {
-        XmToggleButtonSetState( pb[i], (XtArgVal) True, (XtArgVal) True );
+        XmToggleButtonSetState( pb[i], (XtArgVal) True, (XtArgVal) notify );
         n = 0;
         XtSetArg( args[n], XmNforeground, fgColor.getColor() ); n++;
         XtSetValues( pb[i], args, n );
       }
       else {
-        XmToggleButtonSetState( pb[i], (XtArgVal) False, (XtArgVal) True );
+        XmToggleButtonSetState( pb[i], (XtArgVal) False, (XtArgVal) notify );
         n = 0;
         XtSetArg( args[n], XmNforeground, fgColor.pixelColor() ); n++;
         XtSetValues( pb[i], args, n );

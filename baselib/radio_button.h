@@ -58,9 +58,6 @@ static void selectDrag (
 static void rbt_infoUpdate (
   struct event_handler_args ast_args );
 
-static void rbt_readInfoUpdate (
-  struct event_handler_args ast_args );
-
 static void putValue (
   Widget w,
   XtPointer client,
@@ -100,15 +97,6 @@ static void rbt_alarmUpdate (
 static void rbt_monitor_control_connect_state (
   struct connection_handler_args arg );
 
-static void rbt_readUpdate (
-  struct event_handler_args ast_args );
-
-static void rbt_readAlarmUpdate (
-  struct event_handler_args ast_args );
-
-static void rbt_monitor_read_connect_state (
-  struct connection_handler_args arg );
-
 #endif
 
 class activeRadioButtonClass : public activeGraphicClass {
@@ -122,9 +110,6 @@ friend void selectDrag (
    Cardinal numParams );
 
 friend void rbt_infoUpdate (
-  struct event_handler_args ast_args );
-
-friend void rbt_readInfoUpdate (
   struct event_handler_args ast_args );
 
 friend void putValue (
@@ -166,22 +151,13 @@ friend void rbt_alarmUpdate (
 friend void rbt_monitor_control_connect_state (
   struct connection_handler_args arg );
 
-friend void rbt_readUpdate (
-  struct event_handler_args ast_args );
-
-friend void rbt_readAlarmUpdate (
-  struct event_handler_args ast_args );
-
-friend void rbt_monitor_read_connect_state (
-  struct connection_handler_args arg );
-
 pvConnectionClass connection;
 
 int opComplete, pvCheckExists;
 
 int bufX, bufY, bufW, bufH;
 
-short curValue, value;
+short curValue;
 
 int buttonColor, bufButtonColor;
 int topShadowColor, bufTopShadowColor;
@@ -201,22 +177,18 @@ XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
 #ifdef __epics__
-chid controlPvId, readPvId;
-evid alarmEventId, controlEventId, readAlarmEventId, readEventId;
+chid controlPvId;
+evid alarmEventId, controlEventId;
 #endif
 
 char bufControlPvName[39+1];
 expStringClass controlPvExpStr;
 
-char bufReadPvName[39+1];
-expStringClass readPvExpStr;
-
-int controlExists, readExists, widgetsCreated, active, activeMode;
+int controlExists, widgetsCreated, active, activeMode;
 
 Widget radioBox, pb[MAX_ENUM_STATES];
 
-int needConnectInit, needReadConnectInit, needInfoInit,
- needReadInfoInit, needDraw, needRefresh;
+int needConnectInit, needInfoInit, needDraw, needRefresh;
 
 public:
 
