@@ -4501,6 +4501,13 @@ err_return:
 
 }
 
+#define GETTING_INITIAL 1
+#define GETTING_1ST_MACRO 2
+#define GETTING_MACROS 3
+#define GETTING_FILES 4
+
+#define MAX_LOC_MACROS 20
+
 void appContextClass::openFiles (
 char *list
 ) {
@@ -4509,8 +4516,12 @@ activeWindowListPtr cur;
 int i, doOpen;
 unsigned int crc;
 char *tk, *buf1, tmpMsg[255+1];
+int locNumMacros;
+char *locMacros[MAX_LOC_MACROS], *locExpansions[MAX_LOC_MACROS];
+int state;
+char *macTk, *macBuf, macTmp[255+1];
 
-  //printf( "[%s]\n", list );
+  //printf( "list = [%s]\n", list );
 
   buf1 = NULL;
   strncpy( tmpMsg, list, 255 );
@@ -4521,77 +4532,165 @@ char *tk, *buf1, tmpMsg[255+1];
   tk = strtok_r( NULL, "|", &buf1 );
   tk = strtok_r( NULL, "|", &buf1 );
   tk = strtok_r( NULL, "|", &buf1 );
-  tk = strtok_r( NULL, "|", &buf1 );
 
+  locNumMacros = 0;
+  state = GETTING_INITIAL;
   tk = strtok_r( NULL, "|", &buf1 );
   while ( tk ) {
 
-    // printf( "%s\n", tk );
+    //printf( "tk = [%s], state = %-d\n", tk, state );
 
-    doOpen = 1;
-    cur = head->flink;
-    while ( cur != head ) {
+    if ( state == GETTING_INITIAL ) {
 
-      crc = 0;
-      for ( i=0; i<numMacros; i++ ) {
-        crc = updateCRC( crc, macros[i], strlen(macros[i]) );
-        crc = updateCRC( crc, expansions[i], strlen(expansions[i]) );
-      }
+      if ( strcmp( tk, global_str91 ) == 0 ) {
 
-      if ( ( strcmp( tk, cur->node.displayName ) == 0 ) &&
-           ( crc == cur->node.crc ) && !cur->node.isEmbedded ) {
-
-	doOpen = 0; // display is already open, just raise/deiconify it
-
-        XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
-        XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
-
-	break;
+        tk = strtok_r( NULL, "|", &buf1 );
 
       }
+      else if ( strcmp( tk, global_str19 ) == 0 ) {
 
-      cur = cur->flink;
+        state = GETTING_1ST_MACRO;
+        tk = strtok_r( NULL, "|", &buf1 );
+
+      }
+      else {
+
+        state = GETTING_FILES;
+        tk = strtok_r( NULL, "|", &buf1 );
+
+      }
 
     }
 
-    if ( doOpen ) {
+    if ( state == GETTING_FILES ) {
 
-      //printf( "Do open\n" );
+      //printf( "Getting files\n" );
 
-      cur = new activeWindowListType;
-      cur->requestDelete = 0;
-      cur->requestActivate = 0;
-      cur->requestActivateClear = 0;
-      cur->requestReactivate = 0;
-      cur->requestOpen = 0;
-      cur->requestPosition = 0;
-      cur->requestCascade = 0;
-      cur->requestImport = 0;
-      cur->requestRefresh = 0;
-      cur->requestActiveRedraw = 0;
-      cur->requestIconize = 0;
+      //for ( i=0; i<locNumMacros; i++ ) {
+      //  printf( "%s[%-d] = %s\n", locMacros[i], i, locExpansions[i] );
+      //}
 
-      cur->blink = head->blink;
-      head->blink->flink = cur;
-      head->blink = cur;
-      cur->flink = head;
+      if ( strcmp( tk, global_str91 ) != 0 ) {
 
-      cur->node.create( this, NULL, 0, 0, 0, 0, numMacros, macros,
-       expansions );
-      cur->node.realize();
-      cur->node.setGraphicEnvironment( &ci, &fi );
+        doOpen = 1;
+        cur = head->flink;
+        while ( cur != head ) {
 
-      cur->node.storeFileName( tk );
+          crc = 0;
+          for ( i=0; i<locNumMacros; i++ ) {
+            crc = updateCRC( crc, locMacros[i], strlen(locMacros[i]) );
+            crc = updateCRC( crc, locExpansions[i], strlen(locExpansions[i]) );
+          }
 
-      cur->requestOpen = 1;
-      requestFlag++;
+          if ( ( strcmp( tk, cur->node.displayName ) == 0 ) &&
+               ( crc == cur->node.crc ) && !cur->node.isEmbedded ) {
 
-      cur->requestActivate = 1;
-      requestFlag++;
+            doOpen = 0; // display is already open, just raise/deiconify it
+
+            XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+            XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+
+            break;
+
+          }
+
+          cur = cur->flink;
+
+        }
+
+        if ( doOpen ) {
+
+          //printf( "Do open\n" );
+
+          cur = new activeWindowListType;
+          cur->requestDelete = 0;
+          cur->requestActivate = 0;
+          cur->requestActivateClear = 0;
+          cur->requestReactivate = 0;
+          cur->requestOpen = 0;
+          cur->requestPosition = 0;
+          cur->requestCascade = 0;
+          cur->requestImport = 0;
+          cur->requestRefresh = 0;
+          cur->requestActiveRedraw = 0;
+          cur->requestIconize = 0;
+
+          cur->blink = head->blink;
+          head->blink->flink = cur;
+          head->blink = cur;
+          cur->flink = head;
+
+          cur->node.create( this, NULL, 0, 0, 0, 0, locNumMacros, locMacros,
+           locExpansions );
+          cur->node.realize();
+          cur->node.setGraphicEnvironment( &ci, &fi );
+
+          cur->node.storeFileName( tk );
+
+          cur->requestOpen = 1;
+          requestFlag++;
+
+          cur->requestActivate = 1;
+          requestFlag++;
+
+        }
+
+      }
+
+      tk = strtok_r( NULL, "|", &buf1 );
 
     }
 
-    tk = strtok_r( NULL, "|", &buf1 );
+    if ( state == GETTING_1ST_MACRO ) {
+
+      macBuf = NULL;
+      strcpy( macTmp, tk );
+      //printf( "getting 1st macro, macTmp = [%s]\n", macTmp );
+      macTk = strtok_r( macTmp, "=,", &macBuf );
+      if ( macTk ) {
+        //printf( "getting 1st macro, sym = [%s]\n", macTk );
+        locMacros[0] = macTk;
+      }
+
+      macTk = strtok_r( NULL, "=,", &macBuf );
+      if ( macTk ) {
+        //printf( "getting 1st macro, val = [%s]\n", macTk );
+        locExpansions[0] = macTk;
+        locNumMacros = 1;
+        state = GETTING_MACROS;
+      }
+      else {
+        locNumMacros = 0;
+        state = GETTING_FILES;
+        tk = strtok_r( NULL, "|", &buf1 );
+      }
+
+    }
+
+    if ( state == GETTING_MACROS ) {
+
+      macTk = strtok_r( NULL, "=,", &macBuf );
+      if ( macTk ) {
+        if ( locNumMacros >= MAX_LOC_MACROS ) {
+          postMessage( appContextClass_str142 );
+	  return;
+	}
+        //printf( "getting macros, sym = [%s]\n", macTk );
+        locMacros[locNumMacros] = macTk;
+      }
+      
+      macTk = strtok_r( NULL, "=,", &macBuf );
+      if ( macTk ) {
+        //printf( "getting macros, val = [%s]\n", macTk );
+        locExpansions[locNumMacros] = macTk;
+        locNumMacros++;
+      }
+      else {
+        state = GETTING_FILES;
+        tk = strtok_r( NULL, "|", &buf1 );
+      }
+      
+    }
 
   }
 

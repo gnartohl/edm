@@ -92,5 +92,6 @@
 #define appContextClass_str139 (char *) "Print Error"
 #define appContextClass_str140 (char *) "newFile"
 #define appContextClass_str141 (char *) "Font Mappings"
+#define appContextClass_str142 (char *) "Too many macros"
 
 #endif
