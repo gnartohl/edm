@@ -203,7 +203,7 @@ char buffer[255+1];
 
   if ( shcmdo->numCmds != 1 ) return;
 
-  if ( !blank( shcmdo->requiredHostName ) ) {
+  if ( !blank( shcmdo->requiredHostName ) && !blank( shcmdo->hostName ) ) {
     if ( strcmp( shcmdo->requiredHostName, shcmdo->hostName ) != 0 ) {
       sprintf( buffer, shellCmdClass_str31, shcmdo->requiredHostName );
       shcmdo->actWin->appCtx->postMessage( buffer );
@@ -1541,6 +1541,7 @@ XmString str;
       opComplete = 1;
 
       hostName = getenv( "HOSTNAME" );
+      if ( !hostName ) hostName = nullHost;
 
       if ( numCmds == 1 ) {
         cmdIndex = 0;
@@ -1722,7 +1723,7 @@ int stat;
 threadParamBlockPtr threadParamBlock;
 char buffer[255+1];
 
-  if ( !blank( requiredHostName ) ) {
+  if ( !blank( requiredHostName ) && !blank( hostName ) ) {
     if ( strcmp( requiredHostName, hostName ) != 0 ) {
       sprintf( buffer, shellCmdClass_str32, requiredHostName, hostName );
       actWin->appCtx->postMessage( buffer );
