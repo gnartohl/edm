@@ -211,13 +211,17 @@ activeCircleClass *aco = (activeCircleClass *) userarg;
 
   if ( !aco->connection.pvsConnected() ) {
 
-    aco->connection.setPvConnected( (void *) alarmPvConnection );
+    if ( pv->is_valid() ) {
 
-    if ( aco->connection.pvsConnected() ) {
-      aco->actWin->appCtx->proc->lock();
-      aco->needConnectInit = 1;
-      aco->actWin->addDefExeNode( aco->aglPtr );
-      aco->actWin->appCtx->proc->unlock();
+      aco->connection.setPvConnected( (void *) alarmPvConnection );
+
+      if ( aco->connection.pvsConnected() ) {
+        aco->actWin->appCtx->proc->lock();
+        aco->needConnectInit = 1;
+        aco->actWin->addDefExeNode( aco->aglPtr );
+        aco->actWin->appCtx->proc->unlock();
+      }
+
     }
 
   }
@@ -266,13 +270,17 @@ activeCircleClass *aco = (activeCircleClass *) userarg;
 
   if ( !aco->connection.pvsConnected() ) {
 
-    aco->connection.setPvConnected( (void *) visPvConnection );
+    if ( pv->is_valid() ) {
 
-    if ( aco->connection.pvsConnected() ) {
-      aco->actWin->appCtx->proc->lock();
-      aco->needConnectInit = 1;
-      aco->actWin->addDefExeNode( aco->aglPtr );
-      aco->actWin->appCtx->proc->unlock();
+      aco->connection.setPvConnected( (void *) visPvConnection );
+
+      if ( aco->connection.pvsConnected() ) {
+        aco->actWin->appCtx->proc->lock();
+        aco->needConnectInit = 1;
+        aco->actWin->addDefExeNode( aco->aglPtr );
+        aco->actWin->appCtx->proc->unlock();
+      }
+
     }
 
   }

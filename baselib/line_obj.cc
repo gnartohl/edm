@@ -348,13 +348,17 @@ activeLineClass *alo = (activeLineClass *) userarg;
 
   if ( !alo->connection.pvsConnected() ) {
 
-    alo->connection.setPvConnected( (void *) alarmPvConnection );
+    if ( pv->is_valid() ) {
 
-    if ( alo->connection.pvsConnected() ) {
-      alo->actWin->appCtx->proc->lock();
-      alo->needConnectInit = 1;
-      alo->actWin->addDefExeNode( alo->aglPtr );
-      alo->actWin->appCtx->proc->unlock();
+      alo->connection.setPvConnected( (void *) alarmPvConnection );
+
+      if ( alo->connection.pvsConnected() ) {
+        alo->actWin->appCtx->proc->lock();
+        alo->needConnectInit = 1;
+        alo->actWin->addDefExeNode( alo->aglPtr );
+        alo->actWin->appCtx->proc->unlock();
+      }
+
     }
 
   }
@@ -403,13 +407,17 @@ activeLineClass *alo = (activeLineClass *) userarg;
 
   if ( !alo->connection.pvsConnected() ) {
 
-    alo->connection.setPvConnected( (void *) visPvConnection );
+    if ( pv->is_valid() ) {
 
-    if ( alo->connection.pvsConnected() ) {
-      alo->actWin->appCtx->proc->lock();
-      alo->needConnectInit = 1;
-      alo->actWin->addDefExeNode( alo->aglPtr );
-      alo->actWin->appCtx->proc->unlock();
+      alo->connection.setPvConnected( (void *) visPvConnection );
+
+      if ( alo->connection.pvsConnected() ) {
+        alo->actWin->appCtx->proc->lock();
+        alo->needConnectInit = 1;
+        alo->actWin->addDefExeNode( alo->aglPtr );
+        alo->actWin->appCtx->proc->unlock();
+      }
+
     }
 
   }
