@@ -989,8 +989,8 @@ void initPlotInfo (
 
 void addPoint (
   double oneX,
-  short scaledX,
-  short scaledY,
+  double scaledX,
+  double scaledY,
   int trace
 );
 

@@ -1057,7 +1057,7 @@ xyGraphClass *xyo = (xyGraphClass *) ca_puser(arg.chid);
 int i, ii, yi;
 char *xArray, *yArray;
 double dxValue, dyValue;
-short scaledX, scaledY;
+double scaledX, scaledY;
 
   xyo->actWin->appCtx->proc->lock();
 
@@ -1168,8 +1168,8 @@ short scaledX, scaledY;
             }
           }
 
-          scaledY = (short) xyo->plotAreaH -
-           (short) rint( ( dyValue - xyo->curY1Min[yi] ) *
+          scaledY = xyo->plotAreaH -
+           rint( ( dyValue - xyo->curY1Min[yi] ) *
            xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
 
           switch ( xyo->xPvType[i] ) {
@@ -1240,7 +1240,7 @@ short scaledX, scaledY;
             }
           }
 
-          scaledX = (short) rint( ( dxValue - xyo->curXMin ) *
+          scaledX = rint( ( dxValue - xyo->curXMin ) *
            xyo->xFactor[i] + xyo->xOffset[i] );
 
           xyo->addPoint( dxValue, scaledX, scaledY, i );
@@ -1328,11 +1328,11 @@ short scaledX, scaledY;
               }
             }
 
-            scaledY = (short) xyo->plotAreaH -
-             (short) rint( ( dyValue - xyo->curY1Min[yi] ) *
+            scaledY = xyo->plotAreaH -
+             rint( ( dyValue - xyo->curY1Min[yi] ) *
              xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
 
-            scaledX = (short) rint( ( dxValue - xyo->curXMin ) *
+            scaledX = rint( ( dxValue - xyo->curXMin ) *
              xyo->xFactor[i] + xyo->xOffset[i] );
 
             xyo->addPoint( dxValue, scaledX, scaledY, i );
@@ -1451,7 +1451,7 @@ int i =  ptr->index;
 int ii, yi;
 char *xArray, *yArray;
 double dxValue, dyValue;
-short scaledX, scaledY;
+double scaledX, scaledY;
 
   if ( !xyo->activeMode ) return;
 
@@ -1636,8 +1636,8 @@ short scaledX, scaledY;
           }
         }
 
-        scaledY = (short) xyo->plotAreaH -
-         (short) rint( ( dyValue - xyo->curY1Min[yi] ) *
+        scaledY = xyo->plotAreaH -
+         rint( ( dyValue - xyo->curY1Min[yi] ) *
          xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
 
         switch ( xyo->xPvType[i] ) {
@@ -1708,7 +1708,7 @@ short scaledX, scaledY;
           }
         }
 
-        scaledX = (short) rint( ( dxValue - xyo->curXMin ) *
+        scaledX = rint( ( dxValue - xyo->curXMin ) *
          xyo->xFactor[i] + xyo->xOffset[i] );
 
         xyo->addPoint( dxValue, scaledX, scaledY, i );
@@ -1835,7 +1835,7 @@ xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 int ii, i =  ptr->index;
 char *xArray, *yArray;
 double dxValue, dyValue;
-short scaledX, scaledY;
+double scaledX, scaledY;
 int yi;
 
   if ( !xyo->activeMode ) return;
@@ -2024,8 +2024,8 @@ int yi;
           }
         }
 
-        scaledY = (short) xyo->plotAreaH -
-         (short) rint( ( dyValue - xyo->curY1Min[yi] ) *
+        scaledY = xyo->plotAreaH -
+         rint( ( dyValue - xyo->curY1Min[yi] ) *
          xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
 
         switch ( xyo->xPvType[i] ) {
@@ -2096,7 +2096,7 @@ int yi;
 	  }
 	}
 
-        scaledX = (short) rint( ( dxValue - xyo->curXMin ) *
+        scaledX = rint( ( dxValue - xyo->curXMin ) *
          xyo->xFactor[i] + xyo->xOffset[i] );
 
         xyo->addPoint( dxValue, scaledX, scaledY, i );
@@ -2156,7 +2156,7 @@ xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 int ii, yi, i =  ptr->index;
 int sec, nsec;
 double dxValue, dyValue;
-short scaledX, scaledY;
+double scaledX, scaledY;
 //struct timespec ts;
 struct dbr_time_float *dbrFltPtr;
 struct dbr_time_double *dbrDblPtr;
@@ -2433,11 +2433,11 @@ struct dbr_time_enum *dbrEnumPtr;
           }
         }
 
-        scaledY = (short) xyo->plotAreaH -
-         (short) rint( ( dyValue - xyo->curY1Min[yi] ) *
+        scaledY = xyo->plotAreaH -
+         rint( ( dyValue - xyo->curY1Min[yi] ) *
          xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
 
-        scaledX = (short) rint( ( dxValue - xyo->curXMin ) *
+        scaledX = rint( ( dxValue - xyo->curXMin ) *
          xyo->xFactor[i] + xyo->xOffset[i] );
 
         xyo->addPoint( dxValue, scaledX, scaledY, i );
@@ -4025,7 +4025,7 @@ void xyGraphClass::regenBuffer ( void ) {
 
 int i, ii, yi;
 double dxValue, dyValue;
-short scaledX, scaledY;
+double scaledX, scaledY;
 
   for ( i=0; i<numTraces; i++ ) {
 
@@ -4086,8 +4086,8 @@ short scaledX, scaledY;
         if ( dyValue > 0 ) dyValue = log10( dyValue );
       }
 
-      scaledY = (short) plotAreaH -
-       (short) rint( ( dyValue - curY1Min[yi] ) *
+      scaledY = plotAreaH -
+       rint( ( dyValue - curY1Min[yi] ) *
        y1Factor[yi][i] - y1Offset[yi][i] );
   
       switch ( xPvType[i] ) {
@@ -4141,7 +4141,7 @@ short scaledX, scaledY;
         if ( dxValue > 0 ) dxValue = log10( dxValue );
       }
 
-      scaledX = (short) rint( ( dxValue - curXMin ) *
+      scaledX = rint( ( dxValue - curXMin ) *
        xFactor[i] + xOffset[i] );
 
       addPoint( dxValue, scaledX, scaledY, i );
@@ -4166,7 +4166,7 @@ void xyGraphClass::genChronoVector (
 
 int ii, iii, yi, needRescale;
 double dxValue, dyValue;
-short scaledX, scaledY;
+double scaledX, scaledY;
 char format[31+1];
 
   *rescale = needRescale = 0;
@@ -4227,8 +4227,8 @@ char format[31+1];
       if ( dyValue > 0 ) dyValue = log10( dyValue );
     }
 
-    scaledY = (short) plotAreaH -
-     (short) rint( ( dyValue - curY1Min[yi] ) *
+    scaledY = plotAreaH -
+     rint( ( dyValue - curY1Min[yi] ) *
      y1Factor[yi][i] - y1Offset[yi][i] );
   
     switch ( xPvType[i] ) {
@@ -4282,7 +4282,7 @@ char format[31+1];
       if ( dxValue > 0 ) dxValue = log10( dxValue );
     }
 
-    scaledX = (short) rint( ( dxValue - curXMin ) *
+    scaledX = rint( ( dxValue - curXMin ) *
      xFactor[i] + xOffset[i] );
 
     addPoint( dxValue, scaledX, scaledY, i );
@@ -4377,7 +4377,7 @@ void xyGraphClass::genXyVector (
 
 int ii, iii, yi, needRescale, n;
 double dxValue, dyValue;
-short scaledX, scaledY;
+double scaledX, scaledY;
 char format[31+1];
 
   *rescale = needRescale = 0;
@@ -4441,8 +4441,8 @@ char format[31+1];
       if ( dyValue > 0 ) dyValue = log10( dyValue );
     }
 
-    scaledY = (short) plotAreaH -
-     (short) rint( ( dyValue - curY1Min[yi] ) *
+    scaledY = plotAreaH -
+     rint( ( dyValue - curY1Min[yi] ) *
      y1Factor[yi][i] - y1Offset[yi][i] );
   
     switch ( xPvType[i] ) {
@@ -4496,7 +4496,7 @@ char format[31+1];
       if ( dxValue > 0 ) dxValue = log10( dxValue );
     }
 
-    scaledX = (short) rint( ( dxValue - curXMin ) *
+    scaledX = rint( ( dxValue - curXMin ) *
      xFactor[i] + xOffset[i] );
 
     addPoint( dxValue, scaledX, scaledY, i );
@@ -5383,7 +5383,7 @@ XmString str;
       screen_num = DefaultScreen( actWin->display() );
       depth = DefaultDepth( actWin->display(), screen_num );
       pixmap = XCreatePixmap( actWin->display(),
-       XtWindow(actWin->executeWidget), w+1, h+1, depth );
+       XtWindow(actWin->executeWidget), w+2, h+2, depth );
 
       // clear pixmap
       actWin->executeGc.saveFg();
@@ -6284,9 +6284,10 @@ void xyGraphClass::executeDeferred ( void ) {
 
 int i, ii, stat, nc, ni, nu, nvu, nru, nr, ne, nd, nrstc, nrst, ntrgc,
  ntrg, nxrescl, nbs, nbrescl, nnl, nol,
- eleSize, scaledX, scaledY, structType, doRescale, anyRescale, size,
+ eleSize, structType, doRescale, anyRescale, size,
  ny1rescl[NUM_Y_AXES], num;
-double dyValue, dxValue, range, oneMax, oldXMin, xmin, xmax, ymin[2], ymax[2];
+double dyValue, dxValue, range, oneMax, oldXMin, xmin, xmax, ymin[2], ymax[2],
+ scaledX, scaledY;
 char format[31+1];
 int yi, yScaleIndex;
 
@@ -6935,8 +6936,8 @@ int yi, yScaleIndex;
                 if ( dyValue > 0 ) dyValue = log10( dyValue );
               }
 
-              scaledY = (short) plotAreaH -
-               (short) rint( ( dyValue - curY1Min[yi] ) *
+              scaledY = plotAreaH -
+               rint( ( dyValue - curY1Min[yi] ) *
                y1Factor[yi][i] - y1Offset[yi][i] );
 
               switch ( xPvType[i] ) {
@@ -6990,7 +6991,7 @@ int yi, yScaleIndex;
                 if ( dxValue > 0 ) dxValue = log10( dxValue );
               }
 
-              scaledX = (short) rint( ( dxValue - curXMin ) *
+              scaledX = rint( ( dxValue - curXMin ) *
                xFactor[i] + xOffset[i] );
 
               addPoint( dxValue, scaledX, scaledY, i );
@@ -7548,14 +7549,23 @@ int i;
 
 void xyGraphClass::addPoint (
   double oneX,
-  short scaledX,
-  short scaledY,
+  double dScaledX,
+  double dScaledY,
   int trace
 ) {
 
 int i;
+short scaledX, scaledY;
 
   if ( !plotInfo[trace] ) return;
+
+  if ( ( dScaledX > 32767 ) ||
+       ( dScaledX < -32768 ) ||
+       ( dScaledY > 32767 ) ||
+       ( dScaledY < -32767 ) ) return;
+
+  scaledX = (short) dScaledX;
+  scaledY = (short) dScaledY;
 
   if ( opMode[trace] == XYGC_K_SCOPE_MODE ) {
 
