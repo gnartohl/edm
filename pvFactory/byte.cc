@@ -639,13 +639,6 @@ inline void edmByteClass::innerDrawFull(int value, int i, int mask,
 
 int edmByteClass::drawActive()
 {
-    bufInvalidate();
-    drawActivePrivate();
-    return (1);
-}
-
-int edmByteClass::drawActivePrivate()
-{
    if (is_executing)
    {
       if (valuePvId->is_valid())
@@ -862,7 +855,7 @@ void edmByteClass::executeDeferred()
     if (is_executing)
     {
        if (!actWin->isIconified)
-           drawActivePrivate();
+           drawActive();
 
        actWin->appCtx->proc->lock();
        actWin->remDefExeNode(aglPtr);

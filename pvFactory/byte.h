@@ -24,8 +24,7 @@ public:
     edmByteClass();
     edmByteClass(edmByteClass *rhs);
     virtual ~edmByteClass();
-    //void bufInvalidate(void) { bufInvalid++; };
-    void bufInvalidate(void) { bufInvalid = 1; };
+    void bufInvalidate(void) { bufInvalid++; };
     char *objName();
     const char *getRawPVName();
     const char *getExpandedPVName();
@@ -98,15 +97,13 @@ public:
 protected:
 
     void clone(const edmByteClass *rhs, const char *classname);
-    int drawActivePrivate();
     int drawActiveFull();
     int drawActiveBits();
     inline void innerDrawFull(int value, int i, int mask, 
                                      int &previous, int &lastseg);
     inline void innerDrawBits(int value, int i, int mask);
 
-    //void bufValidate() { if (bufInvalid > 0) bufInvalid--; };
-    void bufValidate() { bufInvalid = 0; };
+    void bufValidate() { if (bufInvalid > 0) bufInvalid--; };
     bool is_executing;          // edit or execute mode? (was activeMode?)
     bool is_pvname_valid;       
     ProcessVariable *valuePvId;        // ChannelAccess, PV
