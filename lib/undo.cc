@@ -587,22 +587,22 @@ void undoClass::flush ( void )
 int i;
 undoListPtr cur;
 
+ if ( head == tail ) return; // empty list
+
   // update undo button text and sensitivity
-  if ( head != tail ) {
-    cur = undoList[tail].head->flink;
-    if ( strcmp( undoButtonText[tail], "" ) != 0 ) {
-      cur->node->actGrfAddr->setUndoText( NULL );
-    }
-    cur = undoList[tail].head->flink;
-    while ( cur ) {
-      cur->node->actGrfAddr->flushUndo();
-      cur = cur->flink;
-    }
+  cur = undoList[tail].head->flink;
+  if ( strcmp( undoButtonText[tail], "" ) != 0 ) {
+    cur->node->actGrfAddr->setUndoText( NULL );
+  }
+  cur = undoList[tail].head->flink;
+  while ( cur ) {
+    cur->node->actGrfAddr->flushUndo();
+    cur = cur->flink;
   }
 
   i = head;
 
-  while ( i <= tail ) {
+  while ( i != tail ) {
 
     // delete all nodes in list
     deleteNodes( i );
@@ -611,6 +611,8 @@ undoListPtr cur;
     if ( i >= max ) i = 0;
 
   }
+
+  deleteNodes( tail );
 
   head = tail = 0;
 
