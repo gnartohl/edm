@@ -2443,7 +2443,7 @@ int stat, index, invisColor;
 
   if ( nci ) {
 
-    stat = ca_add_masked_array_event( destType, 1, destPvId,
+    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, destPvId,
      udbtc_controlUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
      &destEventId, DBE_VALUE );
     if ( stat != ECA_NORMAL )
@@ -2462,7 +2462,7 @@ int stat, index, invisColor;
     savePvConnected = 1;
     saveType = ca_field_type( savePvId );
 
-    stat = ca_add_masked_array_event( saveType, 1, savePvId,
+    stat = ca_add_masked_array_event( DBR_DOUBLE, 1, savePvId,
      udbtc_saveUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
      &saveEventId, DBE_VALUE );
     if ( stat != ECA_NORMAL )
