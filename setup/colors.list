@@ -1,103 +1,176 @@
-2 0 0
-80 8 11
-0 0 0 black
-65535 65535 65535 white
-61423 61423 61423 lt grey
-61423 61423 53713 lt wheat
-65535 0 0 red
-0 65535 0 green
-0 0 65535 blue
-65535 65535 0 yellow
-65535 32639 0 orange
-8995 36494 8995 forest
-0 43947 59624 DEC blue
-44461 60138 60138 turquoise
-65535 56540 40606 lt tan
-35980 0 47288 Vista 1
-65535 0 37265 Vista 2
-65535 41377 51914 Vista 3
-19532 19532 19532 grey8
-24929 24929 24929 grey7
-30583 30583 30583 grey6
-35466 35466 35466 grey5
-41120 41120 41120 grey4
-46517 46517 46517 grey3
-52171 52171 52171 grey2
-56797 56797 56797 grey1
-49087 55512 55512 lt blue
-36751 48316 36751 pale green
-60138 60138 44461 med gold
-65535 65535 39321 lt yellow
-55512 55512 49087 wheat
-65535 29555 47288 lt pink
-61423 56797 62708 lavender
-55512 49087 55512 thistle
-12079 12079 20303 midnight
-16962 16962 28527 cornflower
-8995 8995 36494 navy
-12850 12850 52428 med blue
-8995 27499 36494 steel
-36751 36751 48316 lt steel
-12850 39321 52428 sky blue
-28784 37779 56283 dk turquoise
-0 32639 65535 slate
-0 65535 65535 cyan
-28784 56283 56283 med turquoise
-24415 40863 40863 cadet blue
-28784 56283 37779 aqua
-12850 52428 39321 med aqua
-40863 40863 24415 khaki
-8995 36494 27499 sea green
-16962 28527 16962 med seagreen
-20303 20303 12079 dk olive
-12079 20303 12079 dk green
-27499 36494 8995 med forest
-12850 52428 12850 lime green
-53713 65535 53713 spring green
-39321 52428 12850 yellow green
-37779 56283 28784 green yellow
-56283 56283 28784 goldenrod
-65535 59110 0 dk yellow
-65535 65535 32896 orange4
-65535 59110 26214 orange3
-65535 52428 19532 orange2
-65535 46003 13107 coral
-52428 32639 12850 gold
-42662 22873 22873 brown
-56283 37779 28784 tan
-62708 42148 24672 sandy brown
-52428 12850 12850 dk orange
-59624 4369 14906 dk red
-36494 8995 8995 firebrick
-65535 0 51914 pink
-52428 12850 39321 violet red
-65535 0 65535 magenta
-56283 28784 37779 med violetred
-56283 28784 56283 orchid
-60138 44461 60138 plum
-40863 24415 40863 blue violet
-36494 8995 27499 maroon
-37779 28784 56283 med orchid
-27499 8995 36494 dk slate
-32639 0 65535 med slate
-61423 0 0		blinking on
-39321 0 0		blinking off
-39577 0 0		blinking on
-61679 0 0		blinking off
-0 61423 0		blinking on
-0 39321 0		blinking off
-0 39577 0		blinking on
-0 61679 0		blinking off
-61423 61423 0		blinking on
-39321 39321 0		blinking off
-39577 39577 0		blinking on
-61679 61679 0		blinking off
-0 0 61423		blinking on
-0 0 30583		blinking off
-0 0 30839		blinking on
-0 0 61679		blinking off
-52171 52171 52171	disconnected
-60138 60138 44461	invalid
-65535 65535 0		minor
-65535 0 0		major
--1 -1 -1
+3 0 0
+
+max=0x10000
+columns=5
+
+static "Disconn/Invalid"  { 65535 65535 65535 }    #0 white
+static "grey-1"           { 60652 60652 60652 }    #
+static "grey-2"           { 56026 56026 56026 }    #
+static "GLOBAL canvas"    { 51400 51400 51400 }    #
+static "grey-4"           { 48059 48059 48059 }    #
+static "Wid-alt/Anno-sec" { 44718 44718 44718 }    #5
+static "GLOBAL title"     { 40606 40606 40606 }    #
+static "grey-7"           { 37265 37265 37265 }    #
+static "grey-8"           { 34181 34181 34181 }    #
+static "GLOBAL help"      { 30840 30840 30840 }    #
+static "Wid-bg/Anno-pri"  { 26985 26985 26985 }    #10
+static "grey-11"          { 23130 23130 23130 }    #
+static "grey-12"          { 17990 17990 17990 }    #
+static "grey-13"          { 11565 11565 11565 }    #
+static "black-14"         {     0     0     0 }    #
+static "Monitor: NORMAL"  {     0 65535     0 }    #15 green
+static "green-16"         {     0 57568     0 }    #
+static "Monitor: alt"     {     0 49344     0 }    #
+static "green-18"         {     0 41120     0 }    #
+static "green-19"         {     0 32896     0 }    #
+static "Monitor: MAJOR"   { 65535     0     0 }    #20 red
+static "red-21"           { 57568     0     0 }    #
+static "Mon: MAJOR/unack" { 49344     0     0 }    #
+static "red-23"           { 41120     0     0 }    #
+static "red-24"           { 32896     0     0 }    #
+static "Controller"       {     0     0 65535 }    #25 blue
+static "blue-26"          {     0     0 57568 }    #
+static "blue-27"          {     0     0 49344 }    #
+static "blue-28"          {     0     0 41120 }    #
+static "blue-29"          {     0     0 32896 }    #
+static "Controller/alt"   {     0 65535 65535 }    #30 cyan
+static "cyan-31"          {     0 57568 57568 }    #
+static "cyan-32"          {     0 49344 49344 }    #
+static "cyan-33"          {     0 41120 41120 }    #
+static "cyan-34"          {     0 32896 32896 }    #
+static "Monitor: MINOR"   { 65535 65535     0 }    #35 yellow
+static "yellow-36"        { 57568 57568     0 }    #
+static "Mon: MINOR/unack" { 49344 49344     0 }    #
+static "yellow-38"        { 41120 41120     0 }    #
+static "yellow-39"        { 32896 32896     0 }    #
+static "Shell/reldsp-alt" { 65535 45232 24672 }    #40 orange
+static "orange-41"        { 57568 39578 21588 }    #
+static "orange-42"        { 49344 33924 18504 }    #
+static "brown-43"         { 41120 28270 15420 }    #
+static "Related display"  { 32896 22616 12336 }    # brown
+static "Exit/Quit/Kill"   { 65535     0 65535 }    #45 purple
+static "purple-46"        { 49344     0 49344 }    #
+static "purple-47"        { 32896     0 32896 }    #
+static "48"               {     0     0     0 }    #
+static "49"               {     0     0     0 }    #
+static "LINAC canvas"     { 52736 56320 52480 }    #50
+static "LINAC title"      { 47360 50688 47104 }    #
+static "LINAC help"       { 42496 45568 42240 }    #
+static "VAC title"        { 57600 63488 45312 }    #
+static "VAC help"         { 51712 57088 40704 }    #
+static "FE canvas"        { 62708 56026 43176 }    #55
+static "FE title"         { 47031 42148 32382 }    #
+static "FE help"          { 31354 28013 21588 }    #
+static "COOL title"       { 46336 63744 55040 }    #
+static "COOL help"        { 41472 57344 49408 }    #
+static "RING canvas"      { 49664 55808 55552 }    #60
+static "RING title"       { 44544 50176 49920 }    #
+static "RING help"        { 39936 45056 44800 }    #
+static "CRYO title"       { 45056 55808 63744 }    #
+static "CRYO help"        { 40448 50176 57344 }    #
+static "TARGET canvas"    { 52480 51712 56576 }    #65
+static "TARGET title"     { 47104 46336 50688 }    #
+static "TARGET help"      { 42240 41472 45568 }    #
+static "RF title"         { 56832 50176 64256 }    #
+static "RF help"          { 50944 45045 57600 }    #
+static "CF canvas"        { 56576 51712 56576 }    #70
+static "CF title"         { 50688 46336 50688 }    #
+static "CF help"          { 45568 41472 45568 }    #
+static "UNSS title"       { 64256 60176 60416 }    #
+static "UNSS help"        { 57600 45056 54272 }    #
+static "UNMS canvas"      { 65535 38550 43176 }    #75
+static "UNMS title"       { 49344 29041 32382 }    #
+static "UNMS help"        { 32896 19275 21588 }    #
+static "78"               {     0     0     0 }    #
+static "79"               {     0     0     0 }    #
+
+menumap { 
+ "Disconn/Invalid"
+ "Wid-bg/Anno-pri"
+ "Wid-alt/Anno-sec"
+ "Monitor: MAJOR"
+ "Mon: MAJOR/unack"
+ "Monitor: MINOR"
+ "Mon: MINOR/unack"
+ "Monitor: NORMAL"
+ "Monitor: alt"
+ "Controller"
+ "Controller/alt"
+ "Related display"
+ "Shell/reldsp-alt"
+ "Exit/Quit/Kill"
+ "GLOBAL canvas"
+ "GLOBAL title"
+ "GLOBAL help"
+ "FE canvas"
+ "FE title"
+ "FE help"
+ "LINAC canvas"
+ "LINAC title"
+ "LINAC help"
+ "RING canvas"
+ "RING title"
+ "RING help"
+ "TARGET canvas"
+ "TARGET title"
+ "TARGET help"
+ "CF canvas"
+ "CF title"
+ "CF help"
+ "UNMS canvas"
+ "UNMS title"
+ "UNMS help"
+ "VAC title"
+ "VAC help"
+ "COOL title"
+ "COOL help"
+ "CRYO title"
+ "CRYO help"
+ "RF title"
+ "RF help"
+ "UNSS title"
+ "UNSS help"
+ "grey-1"
+ "grey-2"
+ "grey-4"
+ "grey-7"
+ "grey-8"
+ "grey-11"
+ "grey-12"
+ "grey-13"
+ "black-14"
+ "green-16"
+ "green-18"
+ "green-19"
+ "red-21"
+ "red-23"
+ "red-24"
+ "blue-26"
+ "blue-27"
+ "blue-28"
+ "blue-29"
+ "cyan-31"
+ "cyan-32"
+ "cyan-33"
+ "cyan-34"
+ "yellow-36"
+ "yellow-38"
+ "yellow-39"
+ "orange-41"
+ "orange-42"
+ "brown-43"
+ "purple-46"
+ "purple-47"
+ "48"
+ "49"
+ "78"
+ "79"
+ }
+
+alarm { 
+  disconnected : "Disconn/Invalid"
+  invalid      : "Disconn/Invalid"
+  minor        : "Monitor: MINOR"
+  major        : "Monitor: MAJOR"
+  noalarm      : "Monitor: NORMAL"
+ }
