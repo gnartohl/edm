@@ -14496,7 +14496,7 @@ unsigned int pixel;
       b *= 256;
     }
     ci->setRGB( r, g, b, &pixel );
-    stat = ci->getIndex( pixel, &fgColor );
+    fgColor = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -14505,7 +14505,7 @@ unsigned int pixel;
       b *= 256;
     }
     ci->setRGB( r, g, b, &pixel );
-    stat = ci->getIndex( pixel, &bgColor );
+    bgColor = ci->pixIndex( pixel );
 
     drawGc.setBaseBG( ci->pix(bgColor) );
 
@@ -14522,7 +14522,7 @@ unsigned int pixel;
       ci->setRGB( r, g, b, &pixel );
     }
 
-    stat = ci->getIndex( pixel, &defaultTextFgColor );
+    defaultTextFgColor = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -14531,7 +14531,7 @@ unsigned int pixel;
       b *= 256;
     }
     ci->setRGB( r, g, b, &pixel );
-    stat = ci->getIndex( pixel, &defaultFg1Color );
+    defaultFg1Color = ci->pixIndex( pixel );
 
     if ( ( major > 1 ) || ( minor > 2 ) ) {
       fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
@@ -14546,7 +14546,7 @@ unsigned int pixel;
       ci->setRGB( r, g, b, &pixel );
     }
 
-    stat = ci->getIndex( pixel, &defaultFg2Color );
+    defaultFg2Color = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -14555,7 +14555,7 @@ unsigned int pixel;
       b *= 256;
     }
     ci->setRGB( r, g, b, &pixel );
-    stat = ci->getIndex( pixel, &defaultBgColor );
+    defaultBgColor = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -14564,7 +14564,7 @@ unsigned int pixel;
       b *= 256;
     }
     ci->setRGB( r, g, b, &pixel );
-    stat = ci->getIndex( pixel, &defaultTopShadowColor );
+    defaultTopShadowColor = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -14573,7 +14573,7 @@ unsigned int pixel;
       b *= 256;
     }
     ci->setRGB( r, g, b, &pixel );
-    stat = ci->getIndex( pixel, &defaultBotShadowColor );
+    defaultBotShadowColor = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -14582,7 +14582,7 @@ unsigned int pixel;
       b *= 256;
     }
     ci->setRGB( r, g, b, &pixel );
-    stat = ci->getIndex( pixel, &defaultOffsetColor );
+    defaultOffsetColor = ci->pixIndex( pixel );
 
   }
 
@@ -14838,7 +14838,7 @@ unsigned int pixel;
       b *= 256;
     }
     ci->setRGB( r, g, b, &pixel );
-    stat = ci->getIndex( pixel, &fgColor );
+    fgColor = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -14847,7 +14847,7 @@ unsigned int pixel;
       b *= 256;
     }
     ci->setRGB( r, g, b, &pixel );
-    stat = ci->getIndex( pixel, &bgColor );
+    bgColor = ci->pixIndex( pixel );
 
     drawGc.setBaseBG( ci->pix(bgColor) );
 
@@ -14859,11 +14859,11 @@ unsigned int pixel;
         b *= 256;
       }
       ci->setRGB( r, g, b, &pixel );
-      stat = ci->getIndex( pixel, &defaultTextFgColor );
+      defaultTextFgColor = ci->pixIndex( pixel );
     }
     else {
       ci->setRGB( r, g, b, &pixel );
-      stat = ci->getIndex( pixel, &defaultTextFgColor );
+      defaultTextFgColor = ci->pixIndex( pixel );
     }
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
@@ -14873,7 +14873,7 @@ unsigned int pixel;
       b *= 256;
     }
     ci->setRGB( r, g, b, &pixel );
-    stat = ci->getIndex( pixel, &defaultFg1Color );
+    defaultFg1Color = ci->pixIndex( pixel );
 
     if ( ( major > 1 ) || ( minor > 2 ) ) {
       fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
@@ -14883,11 +14883,11 @@ unsigned int pixel;
         b *= 256;
       }
       ci->setRGB( r, g, b, &pixel );
-      stat = ci->getIndex( pixel, &defaultFg2Color );
+      defaultFg2Color = ci->pixIndex( pixel );
     }
     else {
       ci->setRGB( r, g, b, &pixel );
-      stat = ci->getIndex( pixel, &defaultFg2Color );
+      defaultFg2Color = ci->pixIndex( pixel );
     }
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
@@ -14897,7 +14897,7 @@ unsigned int pixel;
       b *= 256;
     }
     ci->setRGB( r, g, b, &pixel );
-    stat = ci->getIndex( pixel, &defaultBgColor );
+    defaultBgColor = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -14906,7 +14906,7 @@ unsigned int pixel;
       b *= 256;
     }
     ci->setRGB( r, g, b, &pixel );
-    stat = ci->getIndex( pixel, &defaultTopShadowColor );
+    defaultTopShadowColor = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -14915,7 +14915,7 @@ unsigned int pixel;
       b *= 256;
     }
     ci->setRGB( r, g, b, &pixel );
-    stat = ci->getIndex( pixel, &defaultBotShadowColor );
+    defaultBotShadowColor = ci->pixIndex( pixel );
 
     fscanf( f, "%d %d %d\n", &r, &g, &b ); incLine();
     if ( ( major < 2 ) && ( minor < 4 ) ) {
@@ -14924,7 +14924,7 @@ unsigned int pixel;
       b *= 256;
     }
     ci->setRGB( r, g, b, &pixel );
-    stat = ci->getIndex( pixel, &defaultOffsetColor );
+    defaultOffsetColor = ci->pixIndex( pixel );
 
   }
 
@@ -15025,7 +15025,7 @@ int activeWindowClass::importWin (
 int r, g, b, n;
 Arg args[5];
 char buf[255+1], *gotData;
-int more, stat;
+int more;
 unsigned int pixel;
 
 char *tk, *context;
@@ -15179,7 +15179,7 @@ char *tk, *context;
   } while ( more );
 
   ci->setRGB( r, g, b, &pixel );
-  stat = ci->getIndex( pixel, &bgColor );
+  bgColor = ci->pixIndex( pixel );
 
   n = 0;
   XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
