@@ -396,10 +396,10 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeCircleClass_str6, 25, &bufX );
-  ef.addTextField( activeCircleClass_str7, 25, &bufY );
-  ef.addTextField( activeCircleClass_str8, 25, &bufW );
-  ef.addTextField( activeCircleClass_str9, 25, &bufH );
+  ef.addTextField( activeCircleClass_str6, 30, &bufX );
+  ef.addTextField( activeCircleClass_str7, 30, &bufY );
+  ef.addTextField( activeCircleClass_str8, 30, &bufW );
+  ef.addTextField( activeCircleClass_str9, 30, &bufH );
   ef.addOption( activeCircleClass_str10, activeCircleClass_str11, &bufLineWidth );
   ef.addOption( activeCircleClass_str12, activeCircleClass_str13, &bufLineStyle );
   ef.addColorButton( activeCircleClass_str14, actWin->ci, &lineCb, &bufLineColor );
@@ -407,11 +407,11 @@ char title[32], *ptr;
   ef.addToggle( activeCircleClass_str16, &bufFill );
   ef.addColorButton( activeCircleClass_str17, actWin->ci, &fillCb, &bufFillColor );
   ef.addToggle( activeCircleClass_str18, &bufFillColorMode );
-  ef.addTextField( activeCircleClass_str19, 27, bufAlarmPvName, 39 );
-  ef.addTextField( activeCircleClass_str20, 27, bufVisPvName, 39 );
+  ef.addTextField( activeCircleClass_str19, 30, bufAlarmPvName, 39 );
+  ef.addTextField( activeCircleClass_str20, 30, bufVisPvName, 39 );
   ef.addOption( " ", activeCircleClass_str21, &bufVisInverted );
-  ef.addTextField( activeCircleClass_str22, 27, bufMinVisString, 39 );
-  ef.addTextField( activeCircleClass_str23, 27, bufMaxVisString, 39 );
+  ef.addTextField( activeCircleClass_str22, 30, bufMinVisString, 39 );
+  ef.addTextField( activeCircleClass_str23, 30, bufMaxVisString, 39 );
 
   return 1;
 

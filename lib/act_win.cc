@@ -2784,16 +2784,16 @@ Atom wm_delete_window;
        &awo->appCtx->entryFormH, &awo->appCtx->largestH,
        activeWindowClass_str17, NULL, NULL, NULL );
 
-      awo->ef.addTextField( activeWindowClass_str18, 25, awo->bufId, 31 );
+      awo->ef.addTextField( activeWindowClass_str18, 30, awo->bufId, 31 );
 
-      awo->ef.addTextField( activeWindowClass_str19, 25, &awo->bufX );
-      awo->ef.addTextField( activeWindowClass_str20, 25, &awo->bufY );
-      awo->ef.addTextField( activeWindowClass_str21, 25, &awo->bufW );
-      awo->ef.addTextField( activeWindowClass_str22, 25, &awo->bufH );
+      awo->ef.addTextField( activeWindowClass_str19, 30, &awo->bufX );
+      awo->ef.addTextField( activeWindowClass_str20, 30, &awo->bufY );
+      awo->ef.addTextField( activeWindowClass_str21, 30, &awo->bufW );
+      awo->ef.addTextField( activeWindowClass_str22, 30, &awo->bufH );
 
-      awo->ef.addTextField( activeWindowClass_str23, 25, awo->bufTitle, 127 );
+      awo->ef.addTextField( activeWindowClass_str23, 30, awo->bufTitle, 127 );
 
-      awo->ef.addTextField( activeWindowClass_str24, 25,
+      awo->ef.addTextField( activeWindowClass_str24, 30,
        awo->bufDefaultPvType, 15 );
 
       awo->ef.addColorButton( activeWindowClass_str25, awo->ci, &awo->fgCb,
@@ -2804,7 +2804,7 @@ Atom wm_delete_window;
        awo->bufGridShowStr, 8 );
       awo->ef.addOption( activeWindowClass_str29, activeWindowClass_str28,
        awo->bufGridActiveStr, 8 );
-      awo->ef.addTextField( activeWindowClass_str30, 25,
+      awo->ef.addTextField( activeWindowClass_str30, 30,
        &awo->bufGridSpacing );
       awo->ef.addOption( activeWindowClass_str168, activeWindowClass_str32,
        &awo->bufOrthoMove );
@@ -4377,7 +4377,7 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode;
        &awo->appCtx->entryFormH, &awo->appCtx->largestH,
        activeWindowClass_str44, NULL, NULL, NULL );
 
-      //awo->ef.addTextField( activeWindowClass_str45, 25, awo->bufTitle, 127 );
+      //awo->ef.addTextField( activeWindowClass_str45, 30, awo->bufTitle, 127 );
 
       awo->ef.addFontMenu( activeWindowClass_str46, awo->fi, &awo->defaultFm,
        awo->allSelectedFontTag );
@@ -4457,21 +4457,21 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode;
        &awo->appCtx->entryFormH, &awo->appCtx->largestH,
        activeWindowClass_str69, NULL, NULL, NULL );
 
-      awo->ef.addTextField( activeWindowClass_str70, 25, awo->allSelectedCtlPvName[0], 127 );
+      awo->ef.addTextField( activeWindowClass_str70, 30, awo->allSelectedCtlPvName[0], 127 );
       awo->ef.addToggle( activeWindowClass_str71, &awo->allSelectedCtlPvNameFlag );
 
-      awo->ef.addTextField( activeWindowClass_str72, 25, awo->allSelectedReadbackPvName[0],
+      awo->ef.addTextField( activeWindowClass_str72, 30, awo->allSelectedReadbackPvName[0],
        127 );
       awo->ef.addToggle( activeWindowClass_str73, &awo->allSelectedReadbackPvNameFlag );
 
-      awo->ef.addTextField( activeWindowClass_str74, 25, awo->allSelectedNullPvName[0], 127 );
+      awo->ef.addTextField( activeWindowClass_str74, 30, awo->allSelectedNullPvName[0], 127 );
       awo->ef.addToggle( activeWindowClass_str75, &awo->allSelectedNullPvNameFlag );
 
-      awo->ef.addTextField( activeWindowClass_str76, 25, awo->allSelectedVisPvName[0],
+      awo->ef.addTextField( activeWindowClass_str76, 30, awo->allSelectedVisPvName[0],
        127 );
       awo->ef.addToggle( activeWindowClass_str77, &awo->allSelectedVisPvNameFlag );
 
-      awo->ef.addTextField( activeWindowClass_str78, 25, awo->allSelectedAlarmPvName[0], 127 );
+      awo->ef.addTextField( activeWindowClass_str78, 30, awo->allSelectedAlarmPvName[0], 127 );
       awo->ef.addToggle( activeWindowClass_str79, &awo->allSelectedAlarmPvNameFlag );
 
       awo->ef.finished( awc_change_pv_edit_ok, awc_change_pv_edit_apply,

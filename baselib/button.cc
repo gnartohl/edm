@@ -1086,19 +1086,19 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeButtonClass_str17, 27, bufId, 31 );
-  ef.addTextField( activeButtonClass_str18, 27, &bufX );
-  ef.addTextField( activeButtonClass_str19, 27, &bufY );
-  ef.addTextField( activeButtonClass_str20, 27, &bufW );
-  ef.addTextField( activeButtonClass_str21, 27, &bufH );
-  ef.addTextField( activeButtonClass_str22, 27, controlBufPvName, 39 );
-  ef.addTextField( activeButtonClass_str23, 27, readBufPvName, 39 );
+  ef.addTextField( activeButtonClass_str17, 30, bufId, 31 );
+  ef.addTextField( activeButtonClass_str18, 30, &bufX );
+  ef.addTextField( activeButtonClass_str19, 30, &bufY );
+  ef.addTextField( activeButtonClass_str20, 30, &bufW );
+  ef.addTextField( activeButtonClass_str21, 30, &bufH );
+  ef.addTextField( activeButtonClass_str22, 30, controlBufPvName, 39 );
+  ef.addTextField( activeButtonClass_str23, 30, readBufPvName, 39 );
   ef.addOption( activeButtonClass_str24, activeButtonClass_str25, buttonTypeStr, 7 );
   ef.addOption( activeButtonClass_str26, activeButtonClass_str27, _3DString, 7 );
   ef.addOption( activeButtonClass_str28, activeButtonClass_str29, invisibleString, 7 );
   ef.addOption( activeButtonClass_str30, activeButtonClass_str31, labelTypeString, 15 );
-  ef.addTextField( activeButtonClass_str32, 27, bufOnLabel, MAX_ENUM_STRING_SIZE );
-  ef.addTextField( activeButtonClass_str33, 27, bufOffLabel, MAX_ENUM_STRING_SIZE );
+  ef.addTextField( activeButtonClass_str32, 30, bufOnLabel, MAX_ENUM_STRING_SIZE );
+  ef.addTextField( activeButtonClass_str33, 30, bufOffLabel, MAX_ENUM_STRING_SIZE );
   ef.addToggle( activeButtonClass_str34, &bufActivateCallbackFlag );
   ef.addToggle( activeButtonClass_str35, &bufDeactivateCallbackFlag );
   ef.addToggle( activeButtonClass_str36, &bufDownCallbackFlag );

@@ -441,12 +441,12 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeArcClass_str6, 25, &bufX );
-  ef.addTextField( activeArcClass_str7, 25, &bufY );
-  ef.addTextField( activeArcClass_str8, 25, &bufW );
-  ef.addTextField( activeArcClass_str9, 25, &bufH );
-  ef.addTextField( activeArcClass_str10, 25, &bufEfStartAngle );
-  ef.addTextField( activeArcClass_str11, 25, &bufEfTotalAngle );
+  ef.addTextField( activeArcClass_str6, 30, &bufX );
+  ef.addTextField( activeArcClass_str7, 30, &bufY );
+  ef.addTextField( activeArcClass_str8, 30, &bufW );
+  ef.addTextField( activeArcClass_str9, 30, &bufH );
+  ef.addTextField( activeArcClass_str10, 30, &bufEfStartAngle );
+  ef.addTextField( activeArcClass_str11, 30, &bufEfTotalAngle );
   ef.addOption( activeArcClass_str12, activeArcClass_str13, &bufLineWidth );
   ef.addOption( activeArcClass_str14, activeArcClass_str15, &bufLineStyle );
   ef.addColorButton( activeArcClass_str16, actWin->ci, &lineCb, &bufLineColor );
@@ -455,11 +455,11 @@ char title[32], *ptr;
   ef.addOption( activeArcClass_str19, activeArcClass_str20, &bufFillMode );
   ef.addColorButton( activeArcClass_str21, actWin->ci, &fillCb, &bufFillColor );
   ef.addToggle( activeArcClass_str22, &bufFillColorMode );
-  ef.addTextField( activeArcClass_str23, 27, bufAlarmPvName, 39 );
-  ef.addTextField( activeArcClass_str24, 27, bufVisPvName, 39 );
+  ef.addTextField( activeArcClass_str23, 30, bufAlarmPvName, 39 );
+  ef.addTextField( activeArcClass_str24, 30, bufVisPvName, 39 );
   ef.addOption( " ", activeArcClass_str25, &bufVisInverted );
-  ef.addTextField( activeArcClass_str26, 27, bufMinVisString, 39 );
-  ef.addTextField( activeArcClass_str27, 27, bufMaxVisString, 39 );
+  ef.addTextField( activeArcClass_str26, 30, bufMinVisString, 39 );
+  ef.addTextField( activeArcClass_str27, 30, bufMaxVisString, 39 );
 
   return 1;
 

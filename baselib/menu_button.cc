@@ -729,10 +729,10 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeMenuButtonClass_str4, 27, &bufX );
-  ef.addTextField( activeMenuButtonClass_str5, 27, &bufY );
-  ef.addTextField( activeMenuButtonClass_str6, 27, &bufW );
-  ef.addTextField( activeMenuButtonClass_str7, 27, &bufH );
+  ef.addTextField( activeMenuButtonClass_str4, 30, &bufX );
+  ef.addTextField( activeMenuButtonClass_str5, 30, &bufY );
+  ef.addTextField( activeMenuButtonClass_str6, 30, &bufW );
+  ef.addTextField( activeMenuButtonClass_str7, 30, &bufH );
   ef.addColorButton( activeMenuButtonClass_str8, actWin->ci, &fgCb, &bufFgColor );
   ef.addOption( activeMenuButtonClass_str9, activeMenuButtonClass_str10, &bufFgColorMode );
   ef.addColorButton( activeMenuButtonClass_str11, actWin->ci, &bgCb, &bufBgColor );
@@ -742,8 +742,8 @@ char title[32], *ptr;
   ef.addColorButton( activeMenuButtonClass_str15, actWin->ci, &botShadowCb,
    &bufBotShadowColor );
   ef.addFontMenu( activeMenuButtonClass_str16, actWin->fi, &fm, fontTag );
-  ef.addTextField( activeMenuButtonClass_str17, 27, bufControlPvName, 39 );
-  ef.addTextField( activeMenuButtonClass_str18, 27, bufReadPvName, 39 );
+  ef.addTextField( activeMenuButtonClass_str17, 30, bufControlPvName, 39 );
+  ef.addTextField( activeMenuButtonClass_str18, 30, bufReadPvName, 39 );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 

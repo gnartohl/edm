@@ -939,10 +939,10 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( relatedDisplayClass_str4, 27, &bufX );
-  ef.addTextField( relatedDisplayClass_str5, 27, &bufY );
-  ef.addTextField( relatedDisplayClass_str6, 27, &bufW );
-  ef.addTextField( relatedDisplayClass_str7, 27, &bufH );
+  ef.addTextField( relatedDisplayClass_str4, 30, &bufX );
+  ef.addTextField( relatedDisplayClass_str5, 30, &bufY );
+  ef.addTextField( relatedDisplayClass_str6, 30, &bufW );
+  ef.addTextField( relatedDisplayClass_str7, 30, &bufH );
   ef.addColorButton( relatedDisplayClass_str8, actWin->ci, &fgCb, &bufFgColor );
   ef.addColorButton( relatedDisplayClass_str9, actWin->ci, &bgCb, &bufBgColor );
   ef.addColorButton( relatedDisplayClass_str10, actWin->ci, &topShadowCb,
@@ -950,12 +950,12 @@ char title[32], *ptr;
   ef.addColorButton( relatedDisplayClass_str11, actWin->ci, &botShadowCb,
    &bufBotShadowColor );
   ef.addFontMenu( relatedDisplayClass_str12, actWin->fi, &fm, fontTag );
-  ef.addTextField( relatedDisplayClass_str13, 27, bufLabel, 127 );
-  ef.addTextField( relatedDisplayClass_str14, 27, bufDisplayFileName, 127 );
+  ef.addTextField( relatedDisplayClass_str13, 30, bufLabel, 127 );
+  ef.addTextField( relatedDisplayClass_str14, 30, bufDisplayFileName, 127 );
 
   for ( i=0; i<NUMPVS; i++ ) {
-    ef.addTextField( relatedDisplayClass_str15, 27, bufDestPvName[i], 39 );
-    ef.addTextField( relatedDisplayClass_str16, 27, bufSource[i], 39 );
+    ef.addTextField( relatedDisplayClass_str15, 30, bufDestPvName[i], 39 );
+    ef.addTextField( relatedDisplayClass_str16, 30, bufSource[i], 39 );
   }
 
   ef.addToggle( relatedDisplayClass_str17, &bufUseFocus );
@@ -969,7 +969,7 @@ char title[32], *ptr;
 
   ef.addToggle( relatedDisplayClass_str25, &bufPropagateMacros );
 
-  ef.addTextField( relatedDisplayClass_str26, 27, bufSymbols, 255 );
+  ef.addTextField( relatedDisplayClass_str26, 30, bufSymbols, 255 );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 

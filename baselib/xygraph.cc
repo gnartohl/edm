@@ -604,17 +604,17 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( "ID", 27, bufId, 31 );
-  ef.addTextField( "X", 27, &bufX );
-  ef.addTextField( "Y", 27, &bufY );
-  ef.addTextField( "Width", 27, &bufW );
-  ef.addTextField( "Height", 27, &bufH );
+  ef.addTextField( "ID", 30, bufId, 31 );
+  ef.addTextField( "X", 30, &bufX );
+  ef.addTextField( "Y", 30, &bufY );
+  ef.addTextField( "Width", 30, &bufW );
+  ef.addTextField( "Height", 30, &bufH );
   ef.addFontMenu( "Font", actWin->fi, &fm, fontTag );
   ef.addColorButton( "Fg Color", actWin->ci, &fgCb, &bufFgColor );
   ef.addColorButton( "Bg Color", actWin->ci, &bgCb, &bufBgColor );
   ef.addOption( "Scale Format", "g|f|e", bufFormatType, 1 );
-  ef.addTextField( "Scale Precision", 27, &bufEfPrecision );
-  ef.addTextField( "Ctl PV Name", 27, bufCtlPvName, 39 );
+  ef.addTextField( "Scale Precision", 30, &bufEfPrecision );
+  ef.addTextField( "Ctl PV Name", 30, bufCtlPvName, 39 );
   ef.addToggle( "Activate Callback", &bufActivateCallbackFlag );
   ef.addToggle( "Deactivate Callback", &bufDeactivateCallbackFlag );
 

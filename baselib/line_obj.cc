@@ -583,10 +583,10 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeLineClass_str6, 25, &bufX );
-  ef.addTextField( activeLineClass_str7, 25, &bufY );
-  ef.addTextField( activeLineClass_str8, 25, &bufW );
-  ef.addTextField( activeLineClass_str9, 25, &bufH );
+  ef.addTextField( activeLineClass_str6, 30, &bufX );
+  ef.addTextField( activeLineClass_str7, 30, &bufY );
+  ef.addTextField( activeLineClass_str8, 30, &bufW );
+  ef.addTextField( activeLineClass_str9, 30, &bufH );
   ef.addOption( activeLineClass_str10, activeLineClass_str11, &bufLineWidth );
   ef.addOption( activeLineClass_str12, activeLineClass_str13, &bufLineStyle );
   ef.addColorButton( activeLineClass_str14, actWin->ci, &lineCb, &bufLineColor );
@@ -594,11 +594,11 @@ char title[32], *ptr;
   ef.addToggle( activeLineClass_str16, &bufFill );
   ef.addColorButton( activeLineClass_str17, actWin->ci, &fillCb, &bufFillColor );
   ef.addToggle( activeLineClass_str18, &bufFillColorMode );
-  ef.addTextField( activeLineClass_str19, 27, bufAlarmPvName, 39 );
-  ef.addTextField( activeLineClass_str20, 27, bufVisPvName, 39 );
+  ef.addTextField( activeLineClass_str19, 30, bufAlarmPvName, 39 );
+  ef.addTextField( activeLineClass_str20, 30, bufVisPvName, 39 );
   ef.addOption( " ", activeLineClass_str22, &bufVisInverted );
-  ef.addTextField( activeLineClass_str23, 27, bufMinVisString, 39 );
-  ef.addTextField( activeLineClass_str24, 27, bufMaxVisString, 39 );
+  ef.addTextField( activeLineClass_str23, 30, bufMinVisString, 39 );
+  ef.addTextField( activeLineClass_str24, 30, bufMaxVisString, 39 );
 
   return 1;
 

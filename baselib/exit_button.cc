@@ -388,11 +388,11 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeExitButtonClass_str4, 27, &bufX );
-  ef.addTextField( activeExitButtonClass_str5, 27, &bufY );
-  ef.addTextField( activeExitButtonClass_str6, 27, &bufW );
-  ef.addTextField( activeExitButtonClass_str7, 27, &bufH );
-  ef.addTextField( activeExitButtonClass_str8, 27, bufLabel, 31 );
+  ef.addTextField( activeExitButtonClass_str4, 30, &bufX );
+  ef.addTextField( activeExitButtonClass_str5, 30, &bufY );
+  ef.addTextField( activeExitButtonClass_str6, 30, &bufW );
+  ef.addTextField( activeExitButtonClass_str7, 30, &bufH );
+  ef.addTextField( activeExitButtonClass_str8, 30, bufLabel, 31 );
   ef.addToggle( activeExitButtonClass_str9, &buf3D );
   ef.addToggle( activeExitButtonClass_str10, &bufInvisible );
   ef.addToggle( activeExitButtonClass_str11, &bufIconify );

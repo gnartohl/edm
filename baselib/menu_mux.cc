@@ -765,10 +765,10 @@ char title[32], *ptr;
    title, MMUX_MAX_STATES, numItems,
    mmuxSetItem, (void *) this, NULL, NULL, NULL );
 
-  ef.addTextField( menuMuxClass_str4, 27, &bufX );
-  ef.addTextField( menuMuxClass_str5, 27, &bufY );
-  ef.addTextField( menuMuxClass_str6, 27, &bufW );
-  ef.addTextField( menuMuxClass_str7, 27, &bufH );
+  ef.addTextField( menuMuxClass_str4, 30, &bufX );
+  ef.addTextField( menuMuxClass_str5, 30, &bufY );
+  ef.addTextField( menuMuxClass_str6, 30, &bufW );
+  ef.addTextField( menuMuxClass_str7, 30, &bufH );
   ef.addColorButton( menuMuxClass_str8, actWin->ci, &fgCb, &bufFgColor );
   ef.addOption( menuMuxClass_str9, menuMuxClass_str10, &bufFgColorMode );
   ef.addColorButton( menuMuxClass_str11, actWin->ci, &bgCb, &bufBgColor );
@@ -778,7 +778,7 @@ char title[32], *ptr;
   ef.addColorButton( menuMuxClass_str15, actWin->ci, &botShadowCb,
    &bufBotShadowColor );
   ef.addFontMenu( menuMuxClass_str16, actWin->fi, &fm, fontTag );
-  ef.addTextField( menuMuxClass_str17, 27, bufControlPvName, 39 );
+  ef.addTextField( menuMuxClass_str17, 30, bufControlPvName, 39 );
   ef.addTextField( menuMuxClass_str18, 15, bufInitialState, 15 );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
@@ -794,12 +794,12 @@ char title[32], *ptr;
     }
   }
 
-  ef.addTextFieldArray( menuMuxClass_str19, 25, tagPtr, MMUX_MAX_STRING_SIZE, &elbt );
+  ef.addTextFieldArray( menuMuxClass_str19, 30, tagPtr, MMUX_MAX_STRING_SIZE, &elbt );
 
   for ( i=0; i<MMUX_MAX_ENTRIES; i++ ) {
-    ef.addTextFieldArray( menuMuxClass_str20, 25, mPtr[i], MMUX_MAX_STRING_SIZE,
+    ef.addTextFieldArray( menuMuxClass_str20, 30, mPtr[i], MMUX_MAX_STRING_SIZE,
      &elbm[i] );
-    ef.addTextFieldArray( menuMuxClass_str21, 25, ePtr[i], MMUX_MAX_STRING_SIZE,
+    ef.addTextFieldArray( menuMuxClass_str21, 30, ePtr[i], MMUX_MAX_STRING_SIZE,
      &elbe[i] );
   }
 

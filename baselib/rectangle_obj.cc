@@ -394,10 +394,10 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeRectangleClass_str6, 27, &bufX );
-  ef.addTextField( activeRectangleClass_str7, 27, &bufY );
-  ef.addTextField( activeRectangleClass_str8, 27, &bufW );
-  ef.addTextField( activeRectangleClass_str9, 27, &bufH );
+  ef.addTextField( activeRectangleClass_str6, 30, &bufX );
+  ef.addTextField( activeRectangleClass_str7, 30, &bufY );
+  ef.addTextField( activeRectangleClass_str8, 30, &bufW );
+  ef.addTextField( activeRectangleClass_str9, 30, &bufH );
   ef.addOption( activeRectangleClass_str10, activeRectangleClass_str11, &bufLineWidth );
   ef.addOption( activeRectangleClass_str12, activeRectangleClass_str13, &bufLineStyle );
   ef.addColorButton( activeRectangleClass_str14, actWin->ci, &lineCb, &bufLineColor );
@@ -406,11 +406,11 @@ char title[32], *ptr;
   ef.addColorButton( activeRectangleClass_str17, actWin->ci, &fillCb, &bufFillColor );
   ef.addToggle( activeRectangleClass_str18, &bufFillColorMode );
   ef.addToggle( activeRectangleClass_str19, &bufInvisible );
-  ef.addTextField( activeRectangleClass_str20, 27, bufAlarmPvName, 39 );
-  ef.addTextField( activeRectangleClass_str21, 27, bufVisPvName, 39 );
+  ef.addTextField( activeRectangleClass_str20, 30, bufAlarmPvName, 39 );
+  ef.addTextField( activeRectangleClass_str21, 30, bufVisPvName, 39 );
   ef.addOption( " ", activeRectangleClass_str22, &bufVisInverted );
-  ef.addTextField( activeRectangleClass_str23, 27, bufMinVisString, 39 );
-  ef.addTextField( activeRectangleClass_str24, 27, bufMaxVisString, 39 );
+  ef.addTextField( activeRectangleClass_str23, 30, bufMinVisString, 39 );
+  ef.addTextField( activeRectangleClass_str24, 30, bufMaxVisString, 39 );
 
   return 1;
 

@@ -918,30 +918,30 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeBarClass_str7, 27, &bufX );
-  ef.addTextField( activeBarClass_str8, 27, &bufY );
-  ef.addTextField( activeBarClass_str9, 27, &bufW );
-  ef.addTextField( activeBarClass_str10, 27, &bufH );
-//   ef.addTextField( activeBarClass_str11, 27, bufControlPvName, 39 );
-  ef.addTextField( activeBarClass_str12, 27, bufReadPvName, 39 );
-  ef.addTextField( activeBarClass_str13, 27, bufNullPvName, 39 );
+  ef.addTextField( activeBarClass_str7, 30, &bufX );
+  ef.addTextField( activeBarClass_str8, 30, &bufY );
+  ef.addTextField( activeBarClass_str9, 30, &bufW );
+  ef.addTextField( activeBarClass_str10, 30, &bufH );
+//   ef.addTextField( activeBarClass_str11, 30, bufControlPvName, 39 );
+  ef.addTextField( activeBarClass_str12, 30, bufReadPvName, 39 );
+  ef.addTextField( activeBarClass_str13, 30, bufNullPvName, 39 );
   ef.addOption( activeBarClass_str14, activeBarClass_str15, &bufLabelType );
-  ef.addTextField( activeBarClass_str16, 27, bufLabel, 39 );
+  ef.addTextField( activeBarClass_str16, 30, bufLabel, 39 );
   ef.addFontMenu( activeBarClass_str17, actWin->fi, &fm, fontTag );
   ef.addToggle( activeBarClass_str18, &bufBorder );
   ef.addToggle( activeBarClass_str19, &bufShowScale );
 
-  ef.addTextField( activeBarClass_str20, 27, &bufLabelTicks );
-  ef.addTextField( activeBarClass_str21, 27, &bufMajorTicks );
-  ef.addTextField( activeBarClass_str22, 27, &bufMinorTicks );
+  ef.addTextField( activeBarClass_str20, 30, &bufLabelTicks );
+  ef.addTextField( activeBarClass_str21, 30, &bufMajorTicks );
+  ef.addTextField( activeBarClass_str22, 30, &bufMinorTicks );
 
   ef.addToggle( activeBarClass_str23, &bufLimitsFromDb );
   ef.addOption( activeBarClass_str24, activeBarClass_str25, bufScaleFormat, 2 );
-  ef.addTextField( activeBarClass_str26, 27, &bufEfPrecision );
-  ef.addTextField( activeBarClass_str27, 27, &bufEfReadMin );
-  ef.addTextField( activeBarClass_str28, 27, &bufEfReadMax );
+  ef.addTextField( activeBarClass_str26, 30, &bufEfPrecision );
+  ef.addTextField( activeBarClass_str27, 30, &bufEfReadMin );
+  ef.addTextField( activeBarClass_str28, 30, &bufEfReadMax );
 
-  ef.addTextField( activeBarClass_str29, 27, &bufEfBarOriginX );
+  ef.addTextField( activeBarClass_str29, 30, &bufEfBarOriginX );
   ef.addColorButton( activeBarClass_str30, actWin->ci, &barCb, &bufBarColor );
   ef.addToggle( activeBarClass_str31, &bufBarColorMode );
   ef.addColorButton( activeBarClass_str32, actWin->ci, &fgCb, &bufFgColor );
