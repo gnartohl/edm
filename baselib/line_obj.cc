@@ -2965,6 +2965,9 @@ double ax0, ay0, ax1, ay1, ax2, ay2, theta;
 double len = 14.0;
 double halfLen = 5.0;
 
+  slopeUndef = slopeUndefP = 1;
+  x0 = x1 = y0 = y1 = 0;
+
   if ( numPoints < 2 ) {
     for ( i=0; i<8; i++ ) {
       points[i].x = 0;
