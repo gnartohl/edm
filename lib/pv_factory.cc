@@ -45,17 +45,48 @@ PV_Factory::~PV_Factory()
 
 class ProcessVariable *PV_Factory::create(const char *PV_name)
 {
+
+class ProcessVariable *pv;
+
     if (strncmp(PV_name, "EPICS\\", 6)==0)
-        return epics_pv_factory->create(PV_name+6);
+        pv = epics_pv_factory->create(PV_name+6);
     else if (strncmp(PV_name, "CALC\\", 5)==0)
-        return calc_pv_factory->create(PV_name+5);
+        pv = calc_pv_factory->create(PV_name+5);
     if (strchr(PV_name, '\\'))
     {
         fprintf(stderr, "Unknown PV Factory for PV '%s'\n", PV_name);
         return 0;
     }
     
-    return epics_pv_factory->create(PV_name);
+    pv = epics_pv_factory->create(PV_name);
+
+    pv->clearDoInitialCallback();
+
+    return pv;
+
+}
+
+class ProcessVariable *PV_Factory::createWithInitialCallbacks (
+  const char *PV_name
+) {
+
+class ProcessVariable *pv;
+
+    if (strncmp(PV_name, "EPICS\\", 6)==0)
+        pv = epics_pv_factory->create(PV_name+6);
+    else if (strncmp(PV_name, "CALC\\", 5)==0)
+        pv = calc_pv_factory->create(PV_name+5);
+    if (strchr(PV_name, '\\'))
+    {
+        fprintf(stderr, "Unknown PV Factory for PV '%s'\n", PV_name);
+        return 0;
+    }
+    
+    pv = epics_pv_factory->create(PV_name);
+
+    pv->setDoInitialCallback();
+
+    return pv;
 }
 
 // These two should be static, but then "friend" doesn't work,
@@ -72,6 +103,7 @@ ProcessVariable::ProcessVariable(const char *_name)
 {
     name = strdup(_name);
     refcount = 1;
+    doInitialCallback = false;
 }
 
 ProcessVariable::~ProcessVariable()
@@ -104,6 +136,9 @@ const char *ProcessVariable::get_units() const
 void ProcessVariable::add_conn_state_callback(Callback func, void *userarg)
 {   // TODO: search for existing one?
     conn_state_callbacks.insert(new CallbackInfo(func, userarg));
+    if ( doInitialCallback && is_valid() ) {
+      (*func)(this,userarg);
+    }
 }
 
 void ProcessVariable::remove_conn_state_callback(Callback func, void *userarg)
@@ -118,6 +153,9 @@ void ProcessVariable::add_value_callback(Callback func, void *userarg)
 {
     // TODO: search for existing one?
     value_callbacks.insert(new CallbackInfo(func, userarg));
+    if ( doInitialCallback && is_valid() ) {
+      (*func)(this,userarg);
+    }
 }
 
 void ProcessVariable::remove_value_callback(Callback func, void *userarg)
@@ -152,3 +190,14 @@ bool ProcessVariable::have_write_access() const
 bool ProcessVariable::put(int value)
 {   return put(double(value)); }
 
+void ProcessVariable::setDoInitialCallback() {
+
+  doInitialCallback = true;
+
+}
+
+void ProcessVariable::clearDoInitialCallback() {
+
+  doInitialCallback = false;
+
+}

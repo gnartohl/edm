@@ -31,6 +31,9 @@ public:
     
     // Result is referenced once, call release() when no longer needed.
     virtual class ProcessVariable *create(const char *PV_name);
+    virtual class ProcessVariable *createWithInitialCallbacks (
+      const char *PV_name );
+
 };
 
 // If you have to use fixed-length strings, use
@@ -190,6 +193,9 @@ public:
     virtual bool put(double value) = 0;
     virtual bool put(int value);
     virtual bool put(const char *value) = 0;
+
+    void clearDoInitialCallback();
+    void setDoInitialCallback();
     
 protected:
     // hidden, use PV_Factory::create()/ProcessVariable::release()
@@ -221,6 +227,8 @@ protected:
     CallbackInfoHash conn_state_callbacks;
     void do_value_callbacks();
     void do_conn_state_callbacks();
+
+    bool doInitialCallback;
         
 private:
     char *name;            // PV name
