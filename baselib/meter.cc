@@ -1534,8 +1534,8 @@ if (drawStaticFlag){
      xpoints[5].x = oldMeterNeedleXOrigin;
      xpoints[5].y = oldMeterNeedleYOrigin+1;
 
-    XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), xpoints, 6, Nonconvex, CoordModeOrigin );
+    XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), xpoints, 6, CoordModeOrigin );
 
    }
    
@@ -1590,8 +1590,8 @@ if (drawStaticFlag){
      xpoints[5].x = meterNeedleXorigin;
      xpoints[5].y = meterNeedleYorigin+1;
 
-     XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
-      actWin->executeGc.normGC(), xpoints, 6, Nonconvex, CoordModeOrigin );
+     XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+      actWin->executeGc.normGC(), xpoints, 6, CoordModeOrigin );
 
      actWin->executeGc.setFG( meterColor.getColor() );
 
