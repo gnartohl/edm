@@ -67,29 +67,29 @@ RULEFUNC func;
 
 public:
 
-ruleClass::ruleClass ( void );
+ruleClass ( void );
 
-ruleClass::ruleClass (
+ruleClass (
   void *_userPtr,
   int _ruleId,
   RULECALLBACK _connectFunc,
   RULECALLBACK _userFunc );
 
-ruleClass::~ruleClass( void );
+~ruleClass( void );
 
-void ruleClass::init (
+void init (
   void *_userPtr,
   int _ruleId,
   RULECALLBACK _connectFunc,
   RULECALLBACK _userFunc );
 
-int ruleClass::activate (
+int activate (
   ulBindingClass *ul,
   char *string );
 
-int ruleClass::bookEvents ( void );
+int bookEvents ( void );
 
-int ruleClass::deactivate ( void );
+int deactivate ( void );
 
 };
 

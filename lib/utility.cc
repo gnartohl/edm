@@ -2291,7 +2291,7 @@ int label_tick_height, fontAscent, fontDescent, fontHeight,
 
   label_tick_height = (int) ( 0.8 * (double) ( fontHeight - 2 ) );
 
-  return fontHeight * 2.5 + label_tick_height * 2;
+  return (int) ( fontHeight * 2.5 + label_tick_height * 2 );
 
 }
 
@@ -2302,7 +2302,7 @@ int xTimeScaleMargin (
   double adj_max
 ) {
 
-int stat, scaleOfs, l;
+int scaleOfs;
 char buf[31+1];
 
   strcpy( buf, "00:00:00" );
@@ -2348,7 +2348,7 @@ void drawXLinearTimeScale (
 int count, firstLabel, ii, iii, x0, y0, x1, y1;
 int label_tick_height, major_tick_height, minor_tick_height, first, ifrac;
 double xFactor, xOffset, labelVal, majorInc, majorVal,
- minorInc, minorVal, lastInc, labelInc, seconds, a;
+ minorInc, minorVal, lastInc, labelInc, seconds;
 int fontAscent, fontDescent, fontHeight,
  stringWidth;
 char buf1[31+1], buf2[31+1];

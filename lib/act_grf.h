@@ -152,123 +152,123 @@ int startEdit, editConfirmed;
 
 int deleteRequest; // if true, then wants to be deleted
 
-activeGraphicClass::activeGraphicClass ( void );
+activeGraphicClass ( void );
 
-void activeGraphicClass::clone ( const activeGraphicClass *source );
+void clone ( const activeGraphicClass *source );
 
-virtual activeGraphicClass::~activeGraphicClass ( void );
+virtual ~activeGraphicClass ( void );
 
-virtual void activeGraphicClass::setObjType (
+virtual void setObjType (
   char *strObjType );
 
-virtual void activeGraphicClass::getObjType (
+virtual void getObjType (
   int maxLen,
   char *strObjType );
 
-virtual char *activeGraphicClass::objName ( void ) {
+virtual char *objName ( void ) {
 
   return name;
 
 }
 
-virtual int activeGraphicClass::destroy ( void );
+virtual int destroy ( void );
 
-virtual char *activeGraphicClass::idName( void );
+virtual char *idName( void );
 
 // -----------------
 
-virtual int activeGraphicClass::setProperty (
+virtual int setProperty (
   char *property,
   char *value );
 
-virtual int activeGraphicClass::setProperty (
+virtual int setProperty (
   char *property,
   double *value );
 
-virtual int activeGraphicClass::setProperty (
+virtual int setProperty (
   char *property,
   int *value );
 
-virtual int activeGraphicClass::getProperty (
+virtual int getProperty (
   char *property,
   int bufSize,
   char *value );
 
-virtual int activeGraphicClass::getProperty (
+virtual int getProperty (
   char *property,
   double *value );
 
-virtual int activeGraphicClass::getProperty (
+virtual int getProperty (
   char *property,
   int *value );
 
 // -----------------
 
-virtual int activeGraphicClass::setProperty (
+virtual int setProperty (
   char *itemId,
   char *property,
   char *value );
 
-virtual int activeGraphicClass::setProperty (
+virtual int setProperty (
   char *itemId,
   char *property,
   double *value );
 
-virtual int activeGraphicClass::setProperty (
+virtual int setProperty (
   char *itemId,
   char *property,
   int *value );
 
-virtual int activeGraphicClass::getProperty (
+virtual int getProperty (
   char *itemId,
   char *property,
   int bufSize,
   char *value );
 
-virtual int activeGraphicClass::getProperty (
+virtual int getProperty (
   char *itemId,
   char *property,
   double *value );
 
-virtual int activeGraphicClass::getProperty (
+virtual int getProperty (
   char *itemId,
   char *property,
   int *value );
 
 // -------------------
 
-virtual int activeGraphicClass::setProperty (
+virtual int setProperty (
   char *winId,
   char *itemId,
   char *property,
   char *value );
 
-virtual int activeGraphicClass::setProperty (
+virtual int setProperty (
   char *winId,
   char *itemId,
   char *property,
   double *value );
 
-virtual int activeGraphicClass::setProperty (
+virtual int setProperty (
   char *winId,
   char *itemId,
   char *property,
   int *value );
 
-virtual int activeGraphicClass::getProperty (
+virtual int getProperty (
   char *winId,
   char *itemId,
   char *property,
   int bufSize,
   char *value );
 
-virtual int activeGraphicClass::getProperty (
+virtual int getProperty (
   char *winId,
   char *itemId,
   char *property,
   double *value );
 
-virtual int activeGraphicClass::getProperty (
+virtual int getProperty (
   char *winId,
   char *itemId,
   char *property,
@@ -276,319 +276,319 @@ virtual int activeGraphicClass::getProperty (
 
 // -----------------
 
-virtual int activeGraphicClass::openDisplay (
+virtual int openDisplay (
   char *fileName,
   int setPosition );
 
-virtual void activeGraphicClass::updateDimensions ( void );
+virtual void updateDimensions ( void );
 
-virtual int activeGraphicClass::move (
+virtual int move (
   int x,
   int y );
 
-virtual int activeGraphicClass::moveAbs (
+virtual int moveAbs (
   int x,
   int y );
 
-virtual int activeGraphicClass::moveMidpointAbs (
+virtual int moveMidpointAbs (
   int x,
   int y );
 
-virtual int activeGraphicClass::snapToGrid ( void );
+virtual int snapToGrid ( void );
 
-int activeGraphicClass::snapSizeToGrid ( void );
+int snapSizeToGrid ( void );
 
-virtual int activeGraphicClass::rotate (
+virtual int rotate (
   int xOrigin,
   int yOrigin,
   char direction );
 
-virtual int activeGraphicClass::flip (
+virtual int flip (
   int xOrigin,
   int yOrigin,
   char direction );
 
-virtual int activeGraphicClass::resize (
+virtual int resize (
   int _x,
   int _y,
   int _w,
   int _h );
 
-virtual int activeGraphicClass::resizeAbs (
+virtual int resizeAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-virtual int activeGraphicClass::resizeAbsFromUndo (
+virtual int resizeAbsFromUndo (
   int _x,
   int _y,
   int _w,
   int _h );
 
-virtual int activeGraphicClass::draw ( void );
+virtual int draw ( void );
 
-virtual int activeGraphicClass::draw (
+virtual int draw (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeGraphicClass::drawAll ( void );
+int drawAll ( void );
 
-int activeGraphicClass::clear ( void );
+int clear ( void );
 
-int activeGraphicClass::refresh ( void );
+int refresh ( void );
 
-int activeGraphicClass::refresh (
+int refresh (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeGraphicClass::refresh ( activeGraphicClass *oneNode );
+int refresh ( activeGraphicClass *oneNode );
 
-virtual void activeGraphicClass::initSelectBox ( void );
+virtual void initSelectBox ( void );
 
-virtual int activeGraphicClass::eraseSelectBoxCorners ( void );
+virtual int eraseSelectBoxCorners ( void );
 
-virtual int activeGraphicClass::eraseSelectBox ( void );
+virtual int eraseSelectBox ( void );
 
-virtual int activeGraphicClass::drawSelectBoxCorners ( void );
+virtual int drawSelectBoxCorners ( void );
 
-virtual int activeGraphicClass::drawSelectBox ( void );
+virtual int drawSelectBox ( void );
 
-virtual int activeGraphicClass::getSelectBoxOperation (
+virtual int getSelectBoxOperation (
   int _x,
   int _y );
 
-virtual int activeGraphicClass::moveSelectBox (
+virtual int moveSelectBox (
   int _x,
   int _y );
 
-virtual int activeGraphicClass::moveSelectBoxAbs (
+virtual int moveSelectBoxAbs (
   int _x,
   int _y );
 
-virtual int activeGraphicClass::moveSelectBoxMidpointAbs (
+virtual int moveSelectBoxMidpointAbs (
   int _x,
   int _y );
 
-virtual int activeGraphicClass::checkResizeSelectBox (
+virtual int checkResizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-virtual int activeGraphicClass::checkResizeSelectBoxAbs (
+virtual int checkResizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-virtual int activeGraphicClass::resizeSelectBox (
+virtual int resizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-virtual int activeGraphicClass::resizeSelectBoxAbs (
+virtual int resizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-virtual int activeGraphicClass::resizeSelectBoxAbsFromUndo (
+virtual int resizeSelectBoxAbsFromUndo (
   int _x,
   int _y,
   int _w,
   int _h );
 
-virtual void activeGraphicClass::setSelected ( void );
+virtual void setSelected ( void );
 
-virtual int activeGraphicClass::select (
+virtual int select (
   int x,
   int y );
 
-virtual int activeGraphicClass::selectEnclosed (
+virtual int selectEnclosed (
   int x,
   int y,
   int w,
   int h );
 
-virtual int activeGraphicClass::selectTouching (
+virtual int selectTouching (
   int x,
   int y,
   int w,
   int h );
 
-virtual void activeGraphicClass::deselect ( void );
+virtual void deselect ( void );
 
-virtual int activeGraphicClass::isSelected ( void ) {
+virtual int isSelected ( void ) {
   if ( deleteRequest ) return 0;
   return selected;
 }
 
-virtual int activeGraphicClass::erase ( void );
+virtual int erase ( void );
 
-virtual void activeGraphicClass::bufInvalidate ( void );
+virtual void bufInvalidate ( void );
 
-virtual int activeGraphicClass::activate (
+virtual int activate (
   int pass );
 
-virtual int activeGraphicClass::activate (
+virtual int activate (
   int pass,
   void *ptr );
 
-virtual int activeGraphicClass::reactivate (
+virtual int reactivate (
   int pass );
 
-virtual int activeGraphicClass::reactivate (
+virtual int reactivate (
   int pass,
   void *ptr );
 
-virtual int activeGraphicClass::raise ( void );
+virtual int raise ( void );
 
-virtual int activeGraphicClass::lower ( void );
+virtual int lower ( void );
 
-virtual int activeGraphicClass::createInteractive (
+virtual int createInteractive (
   activeWindowClass *actWin,
   int x,
   int y,
   int w,
   int h );
 
-virtual int activeGraphicClass::createFromFile (
+virtual int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-virtual int activeGraphicClass::importFromXchFile (
+virtual int importFromXchFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-virtual int activeGraphicClass::save (
+virtual int save (
   FILE *fptr );
 
-virtual activeGraphicClass *activeGraphicClass::copy ( void );
+virtual activeGraphicClass *copy ( void );
 
-virtual activeGraphicClass *activeGraphicClass::cut ( void );
+virtual activeGraphicClass *cut ( void );
 
-virtual int activeGraphicClass::paste ( void );
+virtual int paste ( void );
 
-virtual int activeGraphicClass::edit ( void );
+virtual int edit ( void );
 
-virtual int activeGraphicClass::doEdit ( undoClass *_undoObj );
+virtual int doEdit ( undoClass *_undoObj );
 
-void activeGraphicClass::operationComplete ( void );
+void operationComplete ( void );
 
-void activeGraphicClass::operationCancel ( void );
+void operationCancel ( void );
 
 // for multipoint objects
 
-virtual void activeGraphicClass::lineEditBegin ( void );
+virtual void lineEditBegin ( void );
 
-virtual int activeGraphicClass::addPoint (
+virtual int addPoint (
   int x,
   int y );
 
-virtual int activeGraphicClass::removeLastPoint ( void );
+virtual int removeLastPoint ( void );
 
-virtual pointPtr activeGraphicClass::selectPoint (
+virtual pointPtr selectPoint (
   int x,
   int y );
 
-virtual int activeGraphicClass::movePoint (
+virtual int movePoint (
   pointPtr curPoint,
   int x,
   int y );
 
-virtual int activeGraphicClass::lineEditComplete ( void );
+virtual int lineEditComplete ( void );
 
-virtual int activeGraphicClass::lineEditCancel ( void );
+virtual int lineEditCancel ( void );
 
 // end of multipoint functions
 
-virtual void activeGraphicClass::show ( void ) {
+virtual void show ( void ) {
 
 }
 
-virtual int activeGraphicClass::getXOrigin ( void ) {
+virtual int getXOrigin ( void ) {
 
   return xOrigin;
 
 }
 
-virtual int activeGraphicClass::getW ( void ) {
+virtual int getW ( void ) {
 
   return w;
 
 }
 
-virtual int activeGraphicClass::getH ( void ) {
+virtual int getH ( void ) {
 
   return h;
 
 }
 
-virtual void activeGraphicClass::setXOrigin (
+virtual void setXOrigin (
   int value ) {
 
   xOrigin = value;
 
 }
 
-virtual int activeGraphicClass::getX0 ( void ) {
+virtual int getX0 ( void ) {
 
   return x;
 
 }
 
-virtual int activeGraphicClass::getX1 ( void ) {
+virtual int getX1 ( void ) {
 
   return x + w;
 
 }
 
-virtual int activeGraphicClass::getXMid ( void ) {
+virtual int getXMid ( void ) {
 
   return x + w/2;
 
 }
 
-virtual int activeGraphicClass::getYOrigin ( void ) {
+virtual int getYOrigin ( void ) {
 
   return yOrigin;
 
 }
 
-virtual void activeGraphicClass::setYOrigin (
+virtual void setYOrigin (
   int value ) {
 
   yOrigin = value;
 
 }
 
-virtual int activeGraphicClass::getY0 ( void ) {
+virtual int getY0 ( void ) {
 
   return y;
 
 }
 
-virtual int activeGraphicClass::getY1 ( void ) {
+virtual int getY1 ( void ) {
 
   return y + h;
 
 }
 
-virtual int activeGraphicClass::getYMid ( void ) {
+virtual int getYMid ( void ) {
 
   return y + h/2;
 
 }
 
-virtual int activeGraphicClass::setValue ( void *ptr ) {
+virtual int setValue ( void *ptr ) {
 
   return 1;
 
@@ -597,117 +597,117 @@ virtual int activeGraphicClass::setValue ( void *ptr ) {
 // ========================================================
 // active widget functions
 
-virtual int activeGraphicClass::eraseActive ( void );
+virtual int eraseActive ( void );
 
-virtual int activeGraphicClass::eraseUnconditional ( void );
+virtual int eraseUnconditional ( void );
 
-virtual int activeGraphicClass::drawActive ( void );
+virtual int drawActive ( void );
 
-virtual int activeGraphicClass::drawActive (
+virtual int drawActive (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeGraphicClass::drawAllActive ( void );
+int drawAllActive ( void );
 
-int activeGraphicClass::intersects (
+int intersects (
   int x0,
   int y0,
   int x1,
   int y1 );
 
-int activeGraphicClass::smartDrawAllActive ( void );
+int smartDrawAllActive ( void );
 
-int activeGraphicClass::smartDrawAll ( void );
+int smartDrawAll ( void );
 
-int activeGraphicClass::clearActive ( void );
+int clearActive ( void );
 
-int activeGraphicClass::refreshActive ( void );
+int refreshActive ( void );
 
-int activeGraphicClass::refreshActive (
+int refreshActive (
   int _x,
   int _y,
   int _w,
   int _h );
 
-void activeGraphicClass::flushActive ( void );
+void flushActive ( void );
 
-virtual int activeGraphicClass::deactivate ( void );
+virtual int deactivate ( void );
 
-virtual int activeGraphicClass::deactivate (
+virtual int deactivate (
   int pass
 );
 
-virtual int activeGraphicClass::preReactivate ( int pass );
+virtual int preReactivate ( int pass );
 
-virtual int activeGraphicClass::createGroup (
+virtual int createGroup (
   activeWindowClass *actWin );
 
-virtual int activeGraphicClass::ungroup (
+virtual int ungroup (
   void *curListNode );
 
-virtual void activeGraphicClass::adjustCoordinates (
+virtual void adjustCoordinates (
   int _xOrigin,
   int _yOrigin );
 
-virtual int activeGraphicClass::getButtonActionRequest (
+virtual int getButtonActionRequest (
   int *up,
   int *down,
   int *drag );
 
-virtual int activeGraphicClass::getButtonActionRequest (
+virtual int getButtonActionRequest (
   int *up,
   int *down,
   int *drag,
   int *focus );
 
-virtual void activeGraphicClass::btnUp (
+virtual void btnUp (
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
-virtual void activeGraphicClass::btnUp (
+virtual void btnUp (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-virtual void activeGraphicClass::btnDown (
+virtual void btnDown (
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
-virtual void activeGraphicClass::btnDown (
+virtual void btnDown (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-virtual void activeGraphicClass::btnDrag (
+virtual void btnDrag (
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
-virtual void activeGraphicClass::pointerIn (
+virtual void pointerIn (
   int x,
   int y,
   int buttonState );
 
-virtual void activeGraphicClass::pointerOut (
+virtual void pointerOut (
   int x,
   int y,
   int buttonState );
 
-virtual int activeGraphicClass::initDefExeNode (
+virtual int initDefExeNode (
   void *ptr );
 
-virtual int activeGraphicClass::expand1st (
+virtual int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] ) {
@@ -716,7 +716,7 @@ virtual int activeGraphicClass::expand1st (
 
 }
 
-virtual int activeGraphicClass::expand2nd (
+virtual int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] ) {
@@ -725,13 +725,13 @@ virtual int activeGraphicClass::expand2nd (
 
 }
 
-virtual int activeGraphicClass::containsMacros ( void ) {
+virtual int containsMacros ( void ) {
 
   return 0;
 
 }
 
-virtual int activeGraphicClass::getMacros (
+virtual int getMacros (
   int *numMacros,
   char ***macro,
   char ***expansion ) {
@@ -742,11 +742,11 @@ virtual int activeGraphicClass::getMacros (
 
 }
 
-virtual int activeGraphicClass::isMux ( void ) { return 0; }
+virtual int isMux ( void ) { return 0; }
 
-virtual int activeGraphicClass::createWidgets ( void );
+virtual int createWidgets ( void );
 
-void activeGraphicClass::updateFont (
+void updateFont (
   char *string,
   char *fontTag,
   XFontStruct **fs,
@@ -755,85 +755,85 @@ void activeGraphicClass::updateFont (
   int *height,
   int *width );
 
-void activeGraphicClass::updateFont (
+void updateFont (
   char *fontTag,
   XFontStruct **fs,
   int *ascent,
   int *descent,
   int *height );
 
-virtual void activeGraphicClass::updateGroup ( void );
+virtual void updateGroup ( void );
 
 virtual int isInvisible ( void )
 {
   return 0;
 }
 
-virtual void activeGraphicClass::executeDeferred ( void );
+virtual void executeDeferred ( void );
 
-virtual void activeGraphicClass::executeFromDeferredQueue ( void );
+virtual void executeFromDeferredQueue ( void );
 
-virtual void activeGraphicClass::clearNextToEdit ( void );
+virtual void clearNextToEdit ( void );
 
-virtual void activeGraphicClass::setNextToEdit (
+virtual void setNextToEdit (
   activeGraphicClass *ptr
 );
 
-virtual void activeGraphicClass::setNextSelectedToEdit (
+virtual void setNextSelectedToEdit (
   activeGraphicClass *ptr );
 
-virtual void activeGraphicClass::clearNextSelectedToEdit ( void );
+virtual void clearNextSelectedToEdit ( void );
 
-virtual int activeGraphicClass::isInGroup ( void ) {
+virtual int isInGroup ( void ) {
 
   return inGroup;
 
 }
 
-virtual void activeGraphicClass::setInGroup ( void );
+virtual void setInGroup ( void );
 
-virtual void activeGraphicClass::clearInGroup ( void );
+virtual void clearInGroup ( void );
 
-virtual int activeGraphicClass::isMultiPointObject ( void ) {
+virtual int isMultiPointObject ( void ) {
   return 0;
 }
 
-virtual activeGraphicClass *activeGraphicClass::getTail ( void );
+virtual activeGraphicClass *getTail ( void );
 
-virtual void activeGraphicClass::setEditProperties ( void );
+virtual void setEditProperties ( void );
 
-virtual void activeGraphicClass::setEditSegments ( void );
+virtual void setEditSegments ( void );
 
-virtual int activeGraphicClass::editPropertiesSet ( void );
+virtual int editPropertiesSet ( void );
 
-virtual int activeGraphicClass::editSegmentsSet ( void );
+virtual int editSegmentsSet ( void );
 
-virtual int activeGraphicClass::editLineSegments ( void );
+virtual int editLineSegments ( void );
 
-virtual int activeGraphicClass::selectDragValue (
+virtual int selectDragValue (
   int x,
   int y );
 
-virtual int activeGraphicClass::startDrag (
+virtual int startDrag (
   int x,
   int y );
 
 // for motif widgets
-virtual int activeGraphicClass::startDrag (
+virtual int startDrag (
   Widget w,
   XEvent *e );
 
-virtual char *activeGraphicClass::firstDragName ( void );
+virtual char *firstDragName ( void );
 
-virtual char *activeGraphicClass::nextDragName ( void );
+virtual char *nextDragName ( void );
 
-virtual char *activeGraphicClass::dragValue (
+virtual char *dragValue (
   int i );
 
-virtual void activeGraphicClass::setCurrentDragIndex (
+virtual void setCurrentDragIndex (
   int num );
 
-int activeGraphicClass::getCurrentDragIndex ( void );
+int getCurrentDragIndex ( void );
 
 #define ACTGRF_FONTTAG_MASK		1
 #define ACTGRF_ALIGNMENT_MASK		2
@@ -849,7 +849,7 @@ int activeGraphicClass::getCurrentDragIndex ( void );
 #define ACTGRF_BTNFONTTAG_MASK		0x800
 #define ACTGRF_BTNALIGNMENT_MASK	0x1000
 
-virtual void activeGraphicClass::changeDisplayParams (
+virtual void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -871,7 +871,7 @@ virtual void activeGraphicClass::changeDisplayParams (
 #define ACTGRF_VISPVS_MASK		8
 #define ACTGRF_ALARMPVS_MASK		0x10
 
-virtual void activeGraphicClass::changePvNames (
+virtual void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],
@@ -884,88 +884,88 @@ virtual void activeGraphicClass::changePvNames (
   int numAlarmPvs,
   char *alarmPvs[] );
 
-void activeGraphicClass::setUndoText (
+void setUndoText (
   char *string );
 
-virtual void activeGraphicClass::flushUndo ( void );
+virtual void flushUndo ( void );
 
-virtual int activeGraphicClass::addUndoCreateNode ( undoClass *_undoObj );
+virtual int addUndoCreateNode ( undoClass *_undoObj );
 
-virtual int activeGraphicClass::addUndoMoveNode ( undoClass *_undoObj );
+virtual int addUndoMoveNode ( undoClass *_undoObj );
 
-virtual int activeGraphicClass::addUndoResizeNode ( undoClass *_undoObj );
+virtual int addUndoResizeNode ( undoClass *_undoObj );
 
-virtual int activeGraphicClass::addUndoCopyNode ( undoClass *_undoObj );
+virtual int addUndoCopyNode ( undoClass *_undoObj );
 
-virtual int activeGraphicClass::addUndoCutNode ( undoClass *_undoObj );
+virtual int addUndoCutNode ( undoClass *_undoObj );
 
-virtual int activeGraphicClass::addUndoPasteNode ( undoClass *_undoObj );
+virtual int addUndoPasteNode ( undoClass *_undoObj );
 
-virtual int activeGraphicClass::addUndoReorderNode ( undoClass *_undoObj );
+virtual int addUndoReorderNode ( undoClass *_undoObj );
 
-virtual int activeGraphicClass::addUndoEditNode ( undoClass *_undoObj );
+virtual int addUndoEditNode ( undoClass *_undoObj );
 
-virtual int activeGraphicClass::addUndoGroupNode ( undoClass *_undoObj );
+virtual int addUndoGroupNode ( undoClass *_undoObj );
 
-virtual int activeGraphicClass::addUndoRotateNode ( undoClass *_undoObj );
+virtual int addUndoRotateNode ( undoClass *_undoObj );
 
-virtual int activeGraphicClass::addUndoFlipNode ( undoClass *_undoObj );
+virtual int addUndoFlipNode ( undoClass *_undoObj );
 
-virtual int activeGraphicClass::undoCreate (
+virtual int undoCreate (
   undoOpClass *opPtr
 );
 
-virtual int activeGraphicClass::undoMove (
+virtual int undoMove (
   undoOpClass *opPtr,
   int x,
   int y );
 
-virtual int activeGraphicClass::undoResize (
+virtual int undoResize (
   undoOpClass *opPtr,
   int x,
   int y,
   int w,
   int h );
 
-virtual int activeGraphicClass::undoCopy (
+virtual int undoCopy (
   undoOpClass *opPtr
 );
 
-virtual int activeGraphicClass::undoCut (
+virtual int undoCut (
   undoOpClass *opPtr
 );
 
-virtual int activeGraphicClass::undoPaste (
+virtual int undoPaste (
   undoOpClass *opPtr
 );
 
-virtual int activeGraphicClass::undoReorder (
+virtual int undoReorder (
   undoOpClass *opPtr
 );
 
-virtual int activeGraphicClass::undoEdit (
+virtual int undoEdit (
   undoOpClass *opPtr
 );
 
-virtual int activeGraphicClass::undoGroup (
+virtual int undoGroup (
   undoOpClass *opPtr
 );
 
-virtual int activeGraphicClass::undoRotate (
+virtual int undoRotate (
   undoOpClass *opPtr,
   int x,
   int y,
   int w,
   int h );
 
-virtual int activeGraphicClass::undoFlip (
+virtual int undoFlip (
   undoOpClass *opPtr,
   int x,
   int y,
   int w,
   int h );
 
-virtual void activeGraphicClass::updateColors (
+virtual void updateColors (
   double colorValue );
 
 virtual void confirmEdit ( void );
@@ -974,41 +974,41 @@ virtual void beginEdit ( void );
 
 virtual int checkEditStatus ( void );
 
-int activeGraphicClass::blink ( void );
+int blink ( void );
 
-void activeGraphicClass::setBlink ( void );
+void setBlink ( void );
 
-void activeGraphicClass::setNotBlink ( void );
+void setNotBlink ( void );
 
-void *activeGraphicClass::blinkFunction ( void );
+void *blinkFunction ( void );
 
-void activeGraphicClass::setBlinkFunction (
+void setBlinkFunction (
   void *addr
 );
 
-void activeGraphicClass::updateExecuteModeBlink (
+void updateExecuteModeBlink (
   int blinkFlag
 );
 
-void activeGraphicClass::updateEditModeBlink (
+void updateEditModeBlink (
   int blinkFlag
 );
 
-void activeGraphicClass::updateBlink (
+void updateBlink (
   int blinkFlag
 );
 
-void activeGraphicClass::removeBlink ( void );
+void removeBlink ( void );
 
-void activeGraphicClass::disableBlink ( void );
+void disableBlink ( void );
 
-void activeGraphicClass::enableBlink ( void );
+void enableBlink ( void );
 
-void activeGraphicClass::setCreateParam (
+void setCreateParam (
   char *param
 );
 
-char *activeGraphicClass::getCreateParam ( void );
+char *getCreateParam ( void );
 
 };
 

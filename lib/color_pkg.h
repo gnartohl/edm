@@ -169,10 +169,10 @@ public:
 
     int blink;
 
-    colorInfoClass::colorInfoClass ();
-    colorInfoClass::~colorInfoClass ();
+    colorInfoClass ();
+    ~colorInfoClass ();
 
-    int colorInfoClass::colorChanged()
+    int colorChanged()
     {
         int i;
         i = change;
@@ -180,97 +180,97 @@ public:
         return i;
     }
 
-    int colorInfoClass::ver3InitFromFile (FILE *f,
+    int ver3InitFromFile (FILE *f,
                           XtAppContext app,
                           Display *d,
                           Widget top,
                           char *fileName);
 
-    int colorInfoClass::ver4InitFromFile (FILE *f,
+    int ver4InitFromFile (FILE *f,
                           XtAppContext app,
                           Display *d,
                           Widget top,
                           char *fileName);
 
-    int colorInfoClass::initFromFile (XtAppContext app,
+    int initFromFile (XtAppContext app,
                       Display *d,
                       Widget top,
                       char *fileName);
 
-    int colorInfoClass::openColorWindow();
-    int colorInfoClass::closeColorWindow();
+    int openColorWindow();
+    int closeColorWindow();
 
-    unsigned int colorInfoClass::getFg();
+    unsigned int getFg();
 
     // RGB <-> pixel
-    int colorInfoClass::getRGB (unsigned int pixel, int *r, int *g, int *b);
-    int colorInfoClass::setRGB (int r, int g, int b, unsigned int *pixel);
+    int getRGB (unsigned int pixel, int *r, int *g, int *b);
+    int setRGB (int r, int g, int b, unsigned int *pixel);
 
-    Colormap colorInfoClass::getColorMap ();
+    Colormap getColorMap ();
 
     // Highlights active color pallete cell
-    int colorInfoClass::setCurIndex (int index);
+    int setCurIndex (int index);
 
     // index <-> pixel
-    unsigned int colorInfoClass::getPixelByIndex (int index);
-    unsigned int colorInfoClass::getPixelByIndexWithBlink (int index);
-    unsigned int colorInfoClass::pix (int index) 
+    unsigned int getPixelByIndex (int index);
+    unsigned int getPixelByIndexWithBlink (int index);
+    unsigned int pix (int index) 
     {   return  getPixelByIndex (index); }
-    unsigned int colorInfoClass::pixWblink (int index) 
+    unsigned int pixWblink (int index) 
     {   return  getPixelByIndexWithBlink (index); }
-    int colorInfoClass::pixIndex (unsigned int pixel);
+    int pixIndex (unsigned int pixel);
     
     // return reasonable fg for given bg
-    unsigned int colorInfoClass::labelPix (int index);
+    unsigned int labelPix (int index);
 
-    void colorInfoClass::initParseEngine (FILE *f);
+    void initParseEngine (FILE *f);
 
-    void colorInfoClass::parseError (char *msg);
+    void parseError (char *msg);
 
-    int colorInfoClass::getToken (char toke[255+1]);
+    int getToken (char toke[255+1]);
 
     // index <-> name
-    char *colorInfoClass::colorName (int index);
-    int colorInfoClass::colorIndexByName (const char *name);
-    int colorInfoClass::colorIndexByAlias (const char *name); // use alias list
+    char *colorName (int index);
+    int colorIndexByName (const char *name);
+    int colorIndexByAlias (const char *name); // use alias list
 
     // Returns true/false depending on wether
     // this index is rule-based
-    int colorInfoClass::isRule (int index );
+    int isRule (int index );
 
-    char *colorInfoClass::firstColor (colorCachePtr node);
-    char *colorInfoClass::nextColor (colorCachePtr node);
+    char *firstColor (colorCachePtr node);
+    char *nextColor (colorCachePtr node);
 
-    int colorInfoClass::majorVersion ();
+    int majorVersion ();
 
-    int colorInfoClass::menuIndex (int index);
+    int menuIndex (int index);
 
-    int colorInfoClass::menuPosition (int index);
+    int menuPosition (int index);
 
-    int colorInfoClass::menuSize ();
+    int menuSize ();
 
     // IF index refers to a rule-based color (see isRule()),
     // this routine returns the index of the
     // color to use for the given value.
-    int colorInfoClass::evalRule (
+    int evalRule (
       int index,
       double value );
 
-    int colorInfoClass::isInvisible(
+    int isInvisible(
       int index );
 
-    void colorInfoClass::useIndex ( void );
+    void useIndex ( void );
 
-    void colorInfoClass::useRGB ( void );
+    void useRGB ( void );
 
-    int colorInfoClass::colorModeIsRGB ( void );
+    int colorModeIsRGB ( void );
 
-    int colorInfoClass::writeColorIndex (
+    int writeColorIndex (
       FILE *f,
       int index
     );
 
-    int colorInfoClass::readColorIndex (
+    int readColorIndex (
       FILE *f,
       int *index
     );
@@ -279,31 +279,31 @@ public:
 
     // The following functions are for use in color_button.cc and
     // entry_form.cc; they are not intended for general use.
-    void colorInfoClass::setCurDestination(int *ptr);
-    int *colorInfoClass::getCurDestination();
-    void colorInfoClass::setCurCb(colorButtonClass *cb);
-    colorButtonClass *colorInfoClass::getCurCb();
-    int colorInfoClass::setActiveWidget(Widget w);
-    Widget colorInfoClass::getActiveWidget();
-    int colorInfoClass::setNameWidget(Widget w);
-    Widget colorInfoClass::getNameWidget();
+    void setCurDestination(int *ptr);
+    int *getCurDestination();
+    void setCurCb(colorButtonClass *cb);
+    colorButtonClass *getCurCb();
+    int setActiveWidget(Widget w);
+    Widget getActiveWidget();
+    int setNameWidget(Widget w);
+    Widget getNameWidget();
 
     // These functions are used by pvColor.cc and are not intended for
     // general use.
-    int colorInfoClass::getSpecialColor (int index);
-    int colorInfoClass::getSpecialIndex (int index);
+    int getSpecialColor (int index);
+    int getSpecialIndex (int index);
 
     // These functions are used by gc_pkg.cc and are not intended for
     // general use.
-    int colorInfoClass::blinking ( int index );
-    int colorInfoClass::addToBlinkList( void *obj, void *func );
-    int colorInfoClass::removeFromBlinkList( void *obj, void *func );
+    int blinking ( int index );
+    int addToBlinkList( void *obj, void *func );
+    int removeFromBlinkList( void *obj, void *func );
 
     // deprecated functions, for backward compatibility only
-    int colorInfoClass::getIndex (unsigned int pixel, int *index);
-    int colorInfoClass::setIndex (int index, unsigned int *pixel);
-    int colorInfoClass::setCurIndexByPixel (unsigned int pixel);
-    int colorInfoClass::canDiscardPixel (unsigned int pixel);
+    int getIndex (unsigned int pixel, int *index);
+    int setIndex (int index, unsigned int *pixel);
+    int setCurIndexByPixel (unsigned int pixel);
+    int canDiscardPixel (unsigned int pixel);
 
 private:
 

@@ -337,156 +337,156 @@ FILE *shutdownFilePtr;
 
 int reloadFlag;
 
-appContextClass::appContextClass (
+appContextClass (
   void );
 
-appContextClass::~appContextClass (
+~appContextClass (
   void );
 
-void appContextClass::getFilePaths ( void );
+void getFilePaths ( void );
 
-void appContextClass::expandFileName (
+void expandFileName (
   int index,
   char *expandedName,
   char *inName,
   char *ext,
   int maxSize );
 
-void appContextClass::buildSchemeList ( void );
+void buildSchemeList ( void );
 
-void appContextClass::destroySchemeList ( void );
+void destroySchemeList ( void );
 
-void appContextClass::getScheme (
+void getScheme (
   char *schemeSetName,
   char *objName,
   char *objType,
   char *schemeFileName,
   int maxLen );
 
-int appContextClass::schemeExists (
+int schemeExists (
   char *schemeSetName,
   char *objName,
   char *objType );
 
-int appContextClass::setProperty (
+int setProperty (
   char *winId,
   char *id,
   char *property,
   char *value );
 
-int appContextClass::setProperty (
+int setProperty (
   char *winId,
   char *id,
   char *property,
   double *value );
 
-int appContextClass::setProperty (
+int setProperty (
   char *winId,
   char *id,
   char *property,
   int *value );
 
-int appContextClass::getProperty (
+int getProperty (
   char *winId,
   char *id,
   char *property,
   int bufSize,
   char *value );
 
-int appContextClass::getProperty (
+int getProperty (
   char *winId,
   char *id,
   char *property,
   double *value );
 
-int appContextClass::getProperty (
+int getProperty (
   char *winId,
   char *id,
   char *property,
   int *value );
 
-int appContextClass::initDeferredExecutionQueue ( void );
+int initDeferredExecutionQueue ( void );
 
-void appContextClass::removeAllDeferredExecutionQueueNode (
+void removeAllDeferredExecutionQueueNode (
   class activeWindowClass *awo );
 
-void appContextClass::processDeferredExecutionQueue ( void );
+void processDeferredExecutionQueue ( void );
 
-void appContextClass::postDeferredExecutionQueue (
+void postDeferredExecutionQueue (
   class activeGraphicClass *ptr );
 
-void appContextClass::postDeferredExecutionQueue (
+void postDeferredExecutionQueue (
   class activeWindowClass *ptr );
 
-void appContextClass::postDeferredExecutionNextQueue (
+void postDeferredExecutionNextQueue (
   class activeGraphicClass *ptr );
 
-void appContextClass::postDeferredExecutionNextQueue (
+void postDeferredExecutionNextQueue (
   class activeWindowClass *ptr );
 
-Display *appContextClass::getDisplay ( void ) {
+Display *getDisplay ( void ) {
 
   return display;
 
 }
 
-THREAD_HANDLE appContextClass::getThreadHandle ( void ) {
+THREAD_HANDLE getThreadHandle ( void ) {
 
   return threadHandle;
 
 }
 
-void appContextClass::createMainWindow ( void );
+void createMainWindow ( void );
 
-void appContextClass::addActiveWindow (
+void addActiveWindow (
   activeWindowListPtr node );
 
-int appContextClass::refreshActiveWindow (
+int refreshActiveWindow (
   activeWindowClass *activeWindowNode );
 
-int appContextClass::removeActiveWindow (
+int removeActiveWindow (
   activeWindowClass *activeWindowNode );
 
-int appContextClass::openEditActiveWindow (
+int openEditActiveWindow (
   activeWindowClass *activeWindowNode );
 
-int appContextClass::openActivateActiveWindow (
+int openActivateActiveWindow (
   activeWindowClass *activeWindowNode );
 
-int appContextClass::openActivateActiveWindow (
+int openActivateActiveWindow (
   activeWindowClass *activeWindowNode,
   int x,
   int y );
 
-int appContextClass::openActivateIconifiedActiveWindow (
+int openActivateIconifiedActiveWindow (
   activeWindowClass *activeWindowNode,
   int x,
   int y );
 
-int appContextClass::openActivateCascadeActiveWindow (
+int openActivateCascadeActiveWindow (
   activeWindowClass *activeWindowNode );
 
-int appContextClass::openActivateCascadeActiveWindow (
+int openActivateCascadeActiveWindow (
   activeWindowClass *activeWindowNode,
   int x,
   int y );
 
-int appContextClass::activateActiveWindow (
+int activateActiveWindow (
   activeWindowClass *activeWindowNode );
 
-int appContextClass::reactivateActiveWindow (
+int reactivateActiveWindow (
   activeWindowClass *activeWindowNode );
 
-int appContextClass::getParams(
+int getParams(
   int argc,
   char **argv );
 
-int appContextClass::startApplication (
+int startApplication (
   int argc,
   char **argv,
   int _primaryServer );
 
-int appContextClass::addActWin (
+int addActWin (
   char *name,
   int x,
   int y,
@@ -494,59 +494,59 @@ int appContextClass::addActWin (
   char **syms,
   char **exps );
 
-void appContextClass::applicationLoop ( void );
+void applicationLoop ( void );
 
-XtAppContext appContextClass::appContext ( void );
+XtAppContext appContext ( void );
 
-Widget appContextClass::fileSelectBoxWidgetId ( void );
+Widget fileSelectBoxWidgetId ( void );
 
-Widget appContextClass::importSelectBoxWidgetId ( void );
+Widget importSelectBoxWidgetId ( void );
 
-void appContextClass::postMessage (
+void postMessage (
   char *msg );
 
-void appContextClass::raiseMessageWindow ( void );
+void raiseMessageWindow ( void );
 
-void appContextClass::iconifyMainWindow ( void );
+void iconifyMainWindow ( void );
 
-void appContextClass::deiconifyMainWindow ( void );
+void deiconifyMainWindow ( void );
 
-void appContextClass::lock ( void );
+void lock ( void );
 
-void appContextClass::unlock ( void );
+void unlock ( void );
 
-void appContextClass::reopenUserLib ( void );
+void reopenUserLib ( void );
 
-void appContextClass::xSynchronize (
+void xSynchronize (
   int onoff );
 
-void appContextClass::exitProgram ( void );
+void exitProgram ( void );
 
-void appContextClass::findTop ( void );
+void findTop ( void );
 
-void appContextClass::postNote ( 
+void postNote ( 
   char *msg );
 
-void appContextClass::closeNote ( void );
+void closeNote ( void );
 
-int appContextClass::numScreens ( void );
+int numScreens ( void );
 
-void appContextClass::performShutdown (
+void performShutdown (
   FILE *f );
 
-int appContextClass::getShutdownFlag ( void );
+int getShutdownFlag ( void );
 
-void appContextClass::reloadAll ( void );
+void reloadAll ( void );
 
-void appContextClass::refreshAll ( void );
+void refreshAll ( void );
 
-int appContextClass::renderImages ( void );
+int renderImages ( void );
 
-void appContextClass::setRenderImages (
+void setRenderImages (
   int flag
 );
 
-int appContextClass::openCheckPointScreen (
+int openCheckPointScreen (
   char *screenName,
   int x,
   int y,

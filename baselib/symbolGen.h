@@ -193,144 +193,144 @@ friend void asc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-activeSymbolClass::activeSymbolClass ( void );
+activeSymbolClass ( void );
 
-activeSymbolClass::activeSymbolClass
+activeSymbolClass
  ( const activeSymbolClass *source );
 
-activeSymbolClass::~activeSymbolClass ( void );
+~activeSymbolClass ( void );
 
-int activeSymbolClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeSymbolClass::edit ( void );
+int edit ( void );
 
-int activeSymbolClass::editCreate ( void );
+int editCreate ( void );
 
-int activeSymbolClass::readSymbolFile ( void );
+int readSymbolFile ( void );
 
-int activeSymbolClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeSymbolClass::save (
+int save (
   FILE *f );
 
-int activeSymbolClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeSymbolClass::draw ( void );
+int draw ( void );
 
-int activeSymbolClass::erase ( void );
+int erase ( void );
 
-int activeSymbolClass::drawActive ( void );
+int drawActive ( void );
 
-int activeSymbolClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeSymbolClass::activate (
+int activate (
   int pass,
   void *ptr );
 
-int activeSymbolClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-int activeSymbolClass::moveSelectBox (
+int moveSelectBox (
   int _x,
   int _y );
 
-int activeSymbolClass::moveSelectBoxAbs (
+int moveSelectBoxAbs (
   int _x,
   int _y );
 
-int activeSymbolClass::moveSelectBoxMidpointAbs (
+int moveSelectBoxMidpointAbs (
   int _x,
   int _y );
 
-int activeSymbolClass::checkResizeSelectBox (
+int checkResizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeSymbolClass::resizeSelectBox (
+int resizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeSymbolClass::checkResizeSelectBoxAbs (
+int checkResizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeSymbolClass::resizeSelectBoxAbs (
+int resizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeSymbolClass::move (
+int move (
   int x,
   int y );
 
-int activeSymbolClass::moveAbs (
+int moveAbs (
   int x,
   int y );
 
-int activeSymbolClass::moveMidpointAbs (
+int moveMidpointAbs (
   int x,
   int y );
 
-int activeSymbolClass::resize (
+int resize (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeSymbolClass::resizeAbs (
+int resizeAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeSymbolClass::getButtonActionRequest (
+int getButtonActionRequest (
   int *up,
   int *down,
   int *drag );
 
-void activeSymbolClass::btnDown (
+void btnDown (
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
-void activeSymbolClass::btnUp (
+void btnUp (
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
-void activeSymbolClass::updateGroup ( void );
+void updateGroup ( void );
 
-int activeSymbolClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeSymbolClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeSymbolClass::containsMacros ( void );
+int containsMacros ( void );
 
-void activeSymbolClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-int activeSymbolClass::setProperty (
+int setProperty (
   char *prop,
   int *value );
 

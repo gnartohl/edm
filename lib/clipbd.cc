@@ -87,7 +87,7 @@ int remaining=sizeof(clipboard.buffer)-1 - clipboard.index;
 			remaining);
 
 	clipboard.index += strlen(string);
-	if (clipboard.index >= sizeof(clipboard.buffer))
+	if ((unsigned int)clipboard.index >= sizeof(clipboard.buffer))
 		clipboard.index = sizeof(clipboard.buffer) - 1;
 }
 

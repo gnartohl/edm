@@ -89,24 +89,24 @@ int blink;
 
 public:
 
-colorButtonClass::colorButtonClass ( void );
+colorButtonClass ( void );
 
-colorButtonClass::colorButtonClass (
+colorButtonClass (
  const colorButtonClass &source );
 
-colorButtonClass colorButtonClass::operator = (
+colorButtonClass operator = (
   const colorButtonClass &source );
 
-colorButtonClass::~colorButtonClass ( void );
+~colorButtonClass ( void );
 
-Widget colorButtonClass::create (
+Widget create (
   Widget parent,
   int *dest,
   colorInfoClass *ptr,
   Arg args[],
   int num_args );
 
-Widget colorButtonClass::createWithText (
+Widget createWithText (
   Widget parent,
   int *dest,
   colorInfoClass *ptr,
@@ -118,7 +118,7 @@ Widget colorButtonClass::createWithText (
   Arg tArgs[],
   int tNum_args );
 
-Widget colorButtonClass::createWithRule (
+Widget createWithRule (
   Widget parent,
   int *dest,
   colorInfoClass *ptr,
@@ -132,34 +132,34 @@ Widget colorButtonClass::createWithRule (
   Arg tArgs[],
   int tNum_args );
 
-Widget colorButtonClass::widget ( void );
+Widget widget ( void );
 
-Widget colorButtonClass::formWidget ( void );
+Widget formWidget ( void );
 
-Widget colorButtonClass::nameWidget ( void );
+Widget nameWidget ( void );
 
-Widget colorButtonClass::textWidget ( void );
+Widget textWidget ( void );
 
-colorInfoClass *colorButtonClass::colorInfo( void );
+colorInfoClass *colorInfo( void );
 
-int *colorButtonClass::destination( void );
+int *destination( void );
 
-unsigned int colorButtonClass::getPixel ( void );
+unsigned int getPixel ( void );
 
-int colorButtonClass::setPixel (
+int setPixel (
   unsigned int p );
 
-int colorButtonClass::getIndex ( void );
+int getIndex ( void );
 
-int colorButtonClass::setIndex (
+int setIndex (
   int i );
 
-void colorButtonClass::setPv (
+void setPv (
   char *name );
 
-char *colorButtonClass::getPv ( void );
+char *getPv ( void );
 
-int colorButtonClass::PvSize ( void );
+int PvSize ( void );
 
 };
 

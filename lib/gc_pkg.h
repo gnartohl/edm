@@ -64,104 +64,104 @@ colorInfoClass *ci;
 
 public:
 
-gcClass::gcClass ( void );
+gcClass ( void );
 
-gcClass::~gcClass ( void );
+~gcClass ( void );
 
-void gcClass::setCI (
+void setCI (
   colorInfoClass *_ci
 );
 
-int gcClass::create (
+int create (
   Widget top );
 
-void gcClass::clipMinimumArea (
+void clipMinimumArea (
   GC gc,
   XRectangle *xRectArray,
   int num );
 
-int gcClass::addNormXClipRectangle (
+int addNormXClipRectangle (
   XRectangle xR );
 
-int gcClass::removeNormXClipRectangle ( void );
+int removeNormXClipRectangle ( void );
 
-int gcClass::addEraseXClipRectangle (
+int addEraseXClipRectangle (
   XRectangle xR );
 
-int gcClass::removeEraseXClipRectangle ( void );
+int removeEraseXClipRectangle ( void );
 
-int gcClass::addXorXClipRectangle (
+int addXorXClipRectangle (
   XRectangle xR );
 
-int gcClass::removeXorXClipRectangle ( void );
+int removeXorXClipRectangle ( void );
 
-GC gcClass::normGC ( void );
+GC normGC ( void );
 
-GC gcClass::xorGC ( void );
+GC xorGC ( void );
 
-GC gcClass::eraseGC ( void );
+GC eraseGC ( void );
 
-GC gcClass::invertGC ( void );
+GC invertGC ( void );
 
-void gcClass::saveFg ( void );
+void saveFg ( void );
 
-void gcClass::saveBg ( void );
+void saveBg ( void );
 
-void gcClass::saveBaseBg ( void );
+void saveBaseBg ( void );
 
-void gcClass::restoreFg ( void );
+void restoreFg ( void );
 
-void gcClass::restoreBg ( void );
+void restoreBg ( void );
 
-void gcClass::restoreBaseBg ( void );
+void restoreBaseBg ( void );
 
-int gcClass::setFG (
+int setFG (
   unsigned int fg );
 
-int gcClass::setFG (
+int setFG (
   int fgIndex,
   int *blink );
 
-void gcClass::updateBlink (
+void updateBlink (
   activeGraphicClass *ago,
   int blink );
 
-int gcClass::setBG (
+int setBG (
   unsigned int bg );
 
-int gcClass::setBaseBG (
+int setBaseBG (
   unsigned int bg );
 
-unsigned int gcClass::getBaseBG ( void );
+unsigned int getBaseBG ( void );
 
-int gcClass::setFontTag (
+int setFontTag (
   char *fontTag,
   fontInfoClass *fi );
 
-int gcClass::setNativeFont (
+int setNativeFont (
   char *fontName,
   fontInfoClass *fi );
 
-int gcClass::setLineWidth (
+int setLineWidth (
   int width );
 
-int gcClass::setLineStyle (
+int setLineStyle (
   int style );
 
-int gcClass::setLineCapStyle (
+int setLineCapStyle (
   int style );
 
-int gcClass::setLineJoinStyle (
+int setLineJoinStyle (
   int style );
 
-int gcClass::setArcModeChord ( void );
+int setArcModeChord ( void );
 
-int gcClass::setArcModePieSlice ( void );
+int setArcModePieSlice ( void );
 
-int gcClass::setGraphicsExposures (
+int setGraphicsExposures (
   int state );
 
-int gcClass::setFGforGivenBG (
+int setFGforGivenBG (
   unsigned int fgColor,
   unsigned int bgColor );
 

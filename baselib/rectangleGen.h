@@ -143,84 +143,84 @@ int numPvTypes, pvNameIndex;
 
 public:
 
-activeRectangleClass::activeRectangleClass ( void );
+activeRectangleClass ( void );
 
 // copy constructor
-activeRectangleClass::activeRectangleClass
+activeRectangleClass
  ( const activeRectangleClass *source );
 
-activeRectangleClass::~activeRectangleClass ( void ) {
+~activeRectangleClass ( void ) {
 
-/*   printf( "In activeRectangleClass::~activeRectangleClass\n" ); */
+/*   printf( "In ~activeRectangleClass\n" ); */
 
   if ( name ) delete name;
 
 }
 
-char *activeRectangleClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeRectangleClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeRectangleClass::save (
+int save (
   FILE *f );
 
-int activeRectangleClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeRectangleClass::importFromXchFile (
+int importFromXchFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeRectangleClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeRectangleClass::edit ( void );
+int edit ( void );
 
-int activeRectangleClass::editCreate ( void );
+int editCreate ( void );
 
-int activeRectangleClass::draw ( void );
+int draw ( void );
 
-int activeRectangleClass::drawActive ( void );
+int drawActive ( void );
 
-int activeRectangleClass::erase ( void );
+int erase ( void );
 
-int activeRectangleClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeRectangleClass::eraseUnconditional ( void );
+int eraseUnconditional ( void );
 
-int activeRectangleClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeRectangleClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeRectangleClass::containsMacros ( void );
+int containsMacros ( void );
 
-int activeRectangleClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int activeRectangleClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-int activeRectangleClass::isInvisible ( void )
+int isInvisible ( void )
 {
   return invisible;
 }
 
-void activeRectangleClass::executeDeferred ( void );
+void executeDeferred ( void );
 
 };
 

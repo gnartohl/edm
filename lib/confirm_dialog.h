@@ -55,13 +55,13 @@ public:
 
 int x, y;
 
-confirmDialogClass::confirmDialogClass ( void );
+confirmDialogClass ( void );
 
-confirmDialogClass::~confirmDialogClass ( void );
+~confirmDialogClass ( void );
 
-int confirmDialogClass::destroy ( void );
+int destroy ( void );
 
-int confirmDialogClass::create (
+int create (
   Widget top,
   int _x,
   int _y,
@@ -70,18 +70,18 @@ int confirmDialogClass::create (
   fontInfoClass *fi,
   const char *actionFontTag );
 
-int confirmDialogClass::addButton (
+int addButton (
   char *label,
   XtCallbackProc cb,
   void *ptr );
 
-int confirmDialogClass::finished ( void );
+int finished ( void );
 
-int confirmDialogClass::popup ( void );
+int popup ( void );
 
-int confirmDialogClass::popdown ( void );
+int popdown ( void );
 
-Widget confirmDialogClass::top ( void );
+Widget top ( void );
 
 };
 

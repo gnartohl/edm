@@ -29,7 +29,7 @@ static void monitor_connect_state (
 ruleElementPtr rep = (ruleElementPtr) ca_puser(arg.chid);
 ruleClass *rc = (ruleClass *) rep->r;
 int i = rep->i;
-int n, stat;
+int stat;
 
   if ( arg.op == CA_OP_CONN_UP ) {
 
@@ -70,7 +70,7 @@ static void valueUpdate (
 
 ruleElementPtr rep = (ruleElementPtr) ca_puser(arg.chid);
 ruleClass *rc = (ruleClass *) rep->r;
-int result, n, i = rep->i;
+int result, i = rep->i;
 
 // don't consider pv connected until we get a value change callback
 

@@ -127,84 +127,84 @@ int change;
 
 public:
 
-fontMenuClass::fontMenuClass ( void );
+fontMenuClass ( void );
 
-fontMenuClass::fontMenuClass ( const fontMenuClass& source ) {
+fontMenuClass ( const fontMenuClass& source ) {
 
-  printf( "In fontMenuClass::fontMenuClass( const fontMenuClass& source )\n" );
+  printf( "In fontMenuClass( const fontMenuClass& source )\n" );
   // do not let compiler generate default copy constructor
 
 }
 
-fontMenuClass::~fontMenuClass ( void );
+~fontMenuClass ( void );
 
-void fontMenuClass::copy ( const fontMenuClass& source );
+void copy ( const fontMenuClass& source );
 
-int fontMenuClass::fontChanged ( void ) {
+int fontChanged ( void ) {
 int i;
   i = change;
   change = 0;
   return i;
 }
 
-Widget fontMenuClass::createFontMenu (
+Widget createFontMenu (
   Widget parent,
   fontInfoClass *fi,
   Arg args[],
   int numArgs,
   int includeAlignInfo );
 
-Widget fontMenuClass::createFontMenu (
+Widget createFontMenu (
   Widget parent,
   fontInfoClass *fi,
   Arg args[],
   int numArgs );
 
-int fontMenuClass::destroyFontMenu ( void );
+int destroyFontMenu ( void );
 
-char *fontMenuClass::currentFontTag ( void );
+char *currentFontTag ( void );
 
-int fontMenuClass::currentFontAlignment ( void ) {
+int currentFontAlignment ( void ) {
   return align;
 }
 
-void fontMenuClass::show ( void );
+void show ( void );
 
-int fontMenuClass::setFontTag (
+int setFontTag (
   char *string );
 
-int fontMenuClass::setFontAlignment (
+int setFontAlignment (
   int _align );
 
-Widget fontMenuClass::familyWidget ( void )
+Widget familyWidget ( void )
 {
 
   return familyOption;
 
 }
 
-Widget fontMenuClass::sizeWidget ( void )
+Widget sizeWidget ( void )
 {
 
   return sizeOption;
 
 }
 
-Widget fontMenuClass::alignWidget ( void )
+Widget alignWidget ( void )
 {
 
   return alignOption;
 
 }
 
-Widget fontMenuClass::boldWidget ( void )
+Widget boldWidget ( void )
 {
 
   return boldToggle;
 
 }
 
-Widget fontMenuClass::italicsWidget ( void )
+Widget italicsWidget ( void )
 {
 
   return italicsToggle;

@@ -381,118 +381,118 @@ int incIndex;
 
 public:
 
-activeMotifSliderClass::activeMotifSliderClass ( void );
+activeMotifSliderClass ( void );
 
-activeMotifSliderClass::activeMotifSliderClass
+activeMotifSliderClass
  ( const activeMotifSliderClass *source );
 
-activeMotifSliderClass::~activeMotifSliderClass ( void );
+~activeMotifSliderClass ( void );
 
-static void activeMotifSliderClass::controlUpdate (
+static void controlUpdate (
   ProcessVariable *pv,
   void *userarg );
 
-static void activeMotifSliderClass::infoUpdate (
+static void infoUpdate (
   ProcessVariable *pv,
   void *userarg );
 
-static void activeMotifSliderClass::controlLabelUpdate (
+static void controlLabelUpdate (
   ProcessVariable *pv,
   void *userarg );
 
-static void activeMotifSliderClass::monitorControlLabelConnectState (
+static void monitorControlLabelConnectState (
   ProcessVariable *pv,
   void *userarg );
 
-static void activeMotifSliderClass::monitorControlConnectState (
+static void monitorControlConnectState (
   ProcessVariable *pv,
   void *userarg );
 
-char *activeMotifSliderClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeMotifSliderClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeMotifSliderClass::save (
+int save (
   FILE *f );
 
-int activeMotifSliderClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeMotifSliderClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeMotifSliderClass::edit ( void );
+int edit ( void );
 
-int activeMotifSliderClass::editCreate ( void );
+int editCreate ( void );
 
-int activeMotifSliderClass::draw ( void );
+int draw ( void );
 
-int activeMotifSliderClass::erase ( void );
+int erase ( void );
 
-int activeMotifSliderClass::drawActive ( void );
+int drawActive ( void );
 
-int activeMotifSliderClass::eraseActive ( void );
+int eraseActive ( void );
 
-void activeMotifSliderClass::bufInvalidate ( void );
+void bufInvalidate ( void );
 
-int activeMotifSliderClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int activeMotifSliderClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-int activeMotifSliderClass::checkResizeSelectBox (
+int checkResizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeMotifSliderClass::checkResizeSelectBoxAbs (
+int checkResizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-void activeMotifSliderClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-int activeMotifSliderClass::eraseActiveControlText ( void );
+int eraseActiveControlText ( void );
 
-int activeMotifSliderClass::drawActiveControlText ( void );
+int drawActiveControlText ( void );
 
-int activeMotifSliderClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeMotifSliderClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeMotifSliderClass::containsMacros ( void );
+int containsMacros ( void );
 
-void activeMotifSliderClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-int activeMotifSliderClass::getProperty (
+int getProperty (
   char *prop,
   double *_value );
 
-char *activeMotifSliderClass::firstDragName ( void );
+char *firstDragName ( void );
 
-char *activeMotifSliderClass::nextDragName ( void );
+char *nextDragName ( void );
 
-char *activeMotifSliderClass::dragValue (
+char *dragValue (
   int i );
 
-void activeMotifSliderClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -508,7 +508,7 @@ void activeMotifSliderClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void activeMotifSliderClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],

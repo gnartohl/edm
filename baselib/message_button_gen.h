@@ -190,98 +190,98 @@ int numPvTypes, pvNameIndex;
 
 public:
 
-activeMessageButtonClass::activeMessageButtonClass ( void );
+activeMessageButtonClass ( void );
 
-activeMessageButtonClass::activeMessageButtonClass
+activeMessageButtonClass
  ( const activeMessageButtonClass *source );
 
-activeMessageButtonClass::~activeMessageButtonClass ( void ) {
+~activeMessageButtonClass ( void ) {
 
-/*   printf( "In activeMessageButtonClass::~activeMessageButtonClass\n" ); */
+/*   printf( "In ~activeMessageButtonClass\n" ); */
 
   if ( name ) delete name;
 
 }
 
-char *activeMessageButtonClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeMessageButtonClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeMessageButtonClass::save (
+int save (
   FILE *f );
 
-int activeMessageButtonClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeMessageButtonClass::importFromXchFile (
+int importFromXchFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin );
 
-int activeMessageButtonClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeMessageButtonClass::edit ( void );
+int edit ( void );
 
-int activeMessageButtonClass::editCreate ( void );
+int editCreate ( void );
 
-int activeMessageButtonClass::draw ( void );
+int draw ( void );
 
-int activeMessageButtonClass::erase ( void );
+int erase ( void );
 
-int activeMessageButtonClass::drawActive ( void );
+int drawActive ( void );
 
-int activeMessageButtonClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeMessageButtonClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int activeMessageButtonClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void activeMessageButtonClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-void activeMessageButtonClass::btnUp (
+void btnUp (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-void activeMessageButtonClass::btnDown (
+void btnDown (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-int activeMessageButtonClass::getButtonActionRequest (
+int getButtonActionRequest (
   int *up,
   int *down,
   int *drag,
   int *focus );
 
-int activeMessageButtonClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeMessageButtonClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeMessageButtonClass::containsMacros ( void );
+int containsMacros ( void );
 
-void activeMessageButtonClass::executeDeferred ( void );
+void executeDeferred ( void );
 
 };
 

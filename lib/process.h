@@ -44,13 +44,13 @@ SYS_TIME_TYPE tim0, tim1;
 double cycleTimeFactor;
 int halfSecCount;
 
-processClass::processClass ( void );
+processClass ( void );
 
-virtual processClass::~processClass ( void );
+virtual ~processClass ( void );
 
-int processClass::lock ( void );
+int lock ( void );
 
-int processClass::unlock ( void );
+int unlock ( void );
 
 };
 

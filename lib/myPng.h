@@ -174,126 +174,126 @@ friend void apngc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-activePngClass::activePngClass ( void );
+activePngClass ( void );
 
-activePngClass::activePngClass
+activePngClass
  ( const activePngClass *source );
 
-activePngClass::~activePngClass ( void );
+~activePngClass ( void );
 
-int activePngClass::addColorToList (
+int addColorToList (
   int red,
   int green,
   int blue
 );
 
-int activePngClass::discardColorList ( void );
+int discardColorList ( void );
 
-int activePngClass::allocColors ( void );
+int allocColors ( void );
 
-int activePngClass::discardPixels ( void );
+int discardPixels ( void );
 
-int activePngClass::allocOneColor (
+int allocOneColor (
   unsigned short r,
   unsigned short g,
   unsigned short b
 );
 
-void activePngClass::fillPixelArray ( void );
+void fillPixelArray ( void );
 
-unsigned int activePngClass::getPixel (
+unsigned int getPixel (
   unsigned char r,
   unsigned char g,
   unsigned char b
 );
 
-int activePngClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activePngClass::edit ( void );
+int edit ( void );
 
-int activePngClass::editCreate ( void );
+int editCreate ( void );
 
-void activePngClass::checkPngFileTime ( void );
+void checkPngFileTime ( void );
 
-int activePngClass::readPngFile ( void );
+int readPngFile ( void );
 
-int activePngClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activePngClass::save (
+int save (
   FILE *f );
 
-int activePngClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activePngClass::draw ( void );
+int draw ( void );
 
-int activePngClass::draw (
+int draw (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activePngClass::erase ( void );
+int erase ( void );
 
-int activePngClass::drawActive ( void );
+int drawActive ( void );
 
-int activePngClass::drawActive (
+int drawActive (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activePngClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activePngClass::activate (
+int activate (
   int pass,
   void *ptr );
 
-int activePngClass::deactivate (
+int deactivate (
   int pass );
 
-int activePngClass::checkResizeSelectBox (
+int checkResizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activePngClass::checkResizeSelectBoxAbs (
+int checkResizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-void activePngClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-void activePngClass::readpng_version_info ( void );
+void readpng_version_info ( void );
 
-int activePngClass::readpng_init (
+int readpng_init (
   FILE *infile,
   ulg *pWidth,
   ulg *pHeight
 );
 
-int activePngClass::readpng_get_bgcolor (
+int readpng_get_bgcolor (
   uch *bg_red,
   uch *bg_green,
   uch *bg_blue
 );
 
-uch *activePngClass::readpng_get_image (
+uch *readpng_get_image (
   double display_exponent,
   int *pChannels,
   ulg *pRowbytes
 );
 
-void activePngClass::readpng_cleanup (
+void readpng_cleanup (
   int free_image_data
 );
 

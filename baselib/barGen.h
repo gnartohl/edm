@@ -286,128 +286,128 @@ int numPvTypes, pvNameIndex;
 
 public:
 
-activeBarClass::activeBarClass ( void );
+activeBarClass ( void );
 
-activeBarClass::activeBarClass
+activeBarClass
  ( const activeBarClass *source );
 
-activeBarClass::~activeBarClass ( void );
+~activeBarClass ( void );
 
-char *activeBarClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeBarClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeBarClass::save (
+int save (
   FILE *f );
 
-int activeBarClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeBarClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeBarClass::edit ( void );
+int edit ( void );
 
-int activeBarClass::editCreate ( void );
+int editCreate ( void );
 
-int activeBarClass::draw ( void );
+int draw ( void );
 
-int activeBarClass::erase ( void );
+int erase ( void );
 
-int activeBarClass::drawActive ( void );
+int drawActive ( void );
 
-int activeBarClass::drawMarker ( void );
+int drawMarker ( void );
 
-int activeBarClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeBarClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int activeBarClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void activeBarClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-void activeBarClass::bufInvalidate ( void );
+void bufInvalidate ( void );
 
-int activeBarClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeBarClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeBarClass::containsMacros ( void );
+int containsMacros ( void );
 
-void activeBarClass::btnUp (
+void btnUp (
   int x,
   int y,
   int barState,
   int barNumber );
 
-void activeBarClass::btnDown (
+void btnDown (
   int x,
   int y,
   int barState,
   int barNumber );
 
-void activeBarClass::btnDrag (
+void btnDrag (
   int x,
   int y,
   int barState,
   int barNumber );
 
-int activeBarClass::getBarActionRequest (
+int getBarActionRequest (
   int *up,
   int *down,
   int *drag );
 
-int activeBarClass::checkResizeSelectBox (
+int checkResizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeBarClass::checkResizeSelectBoxAbs (
+int checkResizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-void activeBarClass::drawScale (
+void drawScale (
   Widget widget,
   gcClass *gc );
 
-void activeBarClass::drawHorzScale (
+void drawHorzScale (
   Widget widget,
   gcClass *gc );
 
-void activeBarClass::drawVertScale (
+void drawVertScale (
   Widget widget,
   gcClass *gc );
 
-void activeBarClass::updateScaleInfo ( void );
+void updateScaleInfo ( void );
 
-void activeBarClass::updateHorzScaleInfo ( void );
+void updateHorzScaleInfo ( void );
 
-void activeBarClass::updateVertScaleInfo ( void );
+void updateVertScaleInfo ( void );
 
-void activeBarClass::updateBar ( void );
+void updateBar ( void );
 
-void activeBarClass::updateMarker ( void );
+void updateMarker ( void );
 
-void activeBarClass::executeDeferred ( void );
+void executeDeferred ( void );
 
 };
 

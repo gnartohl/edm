@@ -46,202 +46,202 @@ undoClass undoObj;
 
 public:
 
-activeGroupClass::activeGroupClass ( void );
+activeGroupClass ( void );
 
-activeGroupClass::activeGroupClass
+activeGroupClass
  ( const activeGroupClass *source );
 
-activeGroupClass::~activeGroupClass ( void );
+~activeGroupClass ( void );
 
-int activeGroupClass::createGroup (
+int createGroup (
   activeWindowClass *aw_obj );
 
-int activeGroupClass::ungroup (
+int ungroup (
   void *curListNode );
  
-int activeGroupClass::save (
+int save (
   FILE *f );
 
-int activeGroupClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeGroupClass::edit ( void );
+int edit ( void );
 
-void activeGroupClass::beginEdit ( void );
+void beginEdit ( void );
 
-int activeGroupClass::checkEditStatus ( void );
+int checkEditStatus ( void );
 
-int activeGroupClass::draw ( void );
+int draw ( void );
 
-int activeGroupClass::erase ( void );
+int erase ( void );
 
-int activeGroupClass::drawActive ( void );
+int drawActive ( void );
 
-int activeGroupClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeGroupClass::activate (
+int activate (
   int pass,
   void *ptr );
 
-int activeGroupClass::deactivate (
+int deactivate (
   int pass );
 
-int activeGroupClass::preReactivate (
+int preReactivate (
   int pass
 );
 
-int activeGroupClass::moveSelectBox (
+int moveSelectBox (
   int _x,
   int _y );
 
-int activeGroupClass::moveSelectBoxAbs (
+int moveSelectBoxAbs (
   int _x,
   int _y );
 
-int activeGroupClass::moveSelectBoxMidpointAbs (
+int moveSelectBoxMidpointAbs (
   int _x,
   int _y );
 
-int activeGroupClass::checkResizeSelectBoxAbs (
+int checkResizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeGroupClass::resizeSelectBoxAbs (
+int resizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeGroupClass::resizeSelectBoxAbsFromUndo (
+int resizeSelectBoxAbsFromUndo (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeGroupClass::checkResizeSelectBox (
+int checkResizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeGroupClass::resizeSelectBox (
+int resizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeGroupClass::move (
+int move (
   int x,
   int y );
 
-int activeGroupClass::moveAbs (
+int moveAbs (
   int x,
   int y );
 
-int activeGroupClass::moveMidpointAbs (
+int moveMidpointAbs (
   int x,
   int y );
 
-int activeGroupClass::rotate (
+int rotate (
   int xOrigin,
   int yOrigin,
   char direction );
 
-int activeGroupClass::flip (
+int flip (
   int xOrigin,
   int yOrigin,
   char direction );
 
-int activeGroupClass::resize (
+int resize (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeGroupClass::resizeAbs (
+int resizeAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeGroupClass::resizeAbsFromUndo (
+int resizeAbsFromUndo (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeGroupClass::getButtonActionRequest (
+int getButtonActionRequest (
   int *up,
   int *down,
   int *drag );
 
-int activeGroupClass::getButtonActionRequest (
+int getButtonActionRequest (
   int *up,
   int *down,
   int *drag,
   int *focus );
 
-void activeGroupClass::btnDown (
+void btnDown (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-void activeGroupClass::btnUp (
+void btnUp (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-void activeGroupClass::btnDrag (
+void btnDrag (
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
-void activeGroupClass::pointerIn (
+void pointerIn (
   int x,
   int y,
   int buttonState );
 
-void activeGroupClass::pointerOut (
+void pointerOut (
   int x,
   int y,
   int buttonState );
 
-activeGraphicClass *activeGroupClass::getTail ( void );
+activeGraphicClass *getTail ( void );
 
-void activeGroupClass::updateGroup ( void );
+void updateGroup ( void );
 
-int activeGroupClass::initDefExeNode (
+int initDefExeNode (
   void *ptr );
 
-int activeGroupClass::containsMacros ( void );
+int containsMacros ( void );
 
-int activeGroupClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeGroupClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-void activeGroupClass::bufInvalidate ( void );
+void bufInvalidate ( void );
 
-void activeGroupClass::setNextSelectedToEdit (
+void setNextSelectedToEdit (
   activeGraphicClass *ptr );
 
-void activeGroupClass::clearNextSelectedToEdit ( void );
+void clearNextSelectedToEdit ( void );
 
-void activeGroupClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -257,7 +257,7 @@ void activeGroupClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void activeGroupClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],
@@ -270,71 +270,71 @@ void activeGroupClass::changePvNames (
   int numAlarmPvs,
   char *alarmPvs[] );
 
-void activeGroupClass::flushUndo ( void );
+void flushUndo ( void );
 
-int activeGroupClass::addUndoCreateNode ( undoClass *_undoObj );
+int addUndoCreateNode ( undoClass *_undoObj );
 
-int activeGroupClass::addUndoMoveNode ( undoClass *_undoObj );
+int addUndoMoveNode ( undoClass *_undoObj );
 
-int activeGroupClass::addUndoResizeNode ( undoClass *_undoObj );
+int addUndoResizeNode ( undoClass *_undoObj );
 
-int activeGroupClass::addUndoCopyNode ( undoClass *_undoObj );
+int addUndoCopyNode ( undoClass *_undoObj );
 
-int activeGroupClass::addUndoCutNode ( undoClass *_undoObj );
+int addUndoCutNode ( undoClass *_undoObj );
 
-int activeGroupClass::addUndoPasteNode ( undoClass *_undoObj );
+int addUndoPasteNode ( undoClass *_undoObj );
 
-int activeGroupClass::addUndoReorderNode ( undoClass *_undoObj );
+int addUndoReorderNode ( undoClass *_undoObj );
 
-int activeGroupClass::addUndoEditNode ( undoClass *_undoObj );
+int addUndoEditNode ( undoClass *_undoObj );
 
-int activeGroupClass::addUndoGroupNode ( undoClass *_undoObj );
+int addUndoGroupNode ( undoClass *_undoObj );
 
-int activeGroupClass::addUndoRotateNode ( undoClass *_undoObj );
+int addUndoRotateNode ( undoClass *_undoObj );
 
-int activeGroupClass::addUndoFlipNode ( undoClass *_undoObj );
+int addUndoFlipNode ( undoClass *_undoObj );
 
-int activeGroupClass::undoCreate (
+int undoCreate (
   undoOpClass *opPtr );
 
-int activeGroupClass::undoMove (
+int undoMove (
   undoOpClass *opPtr,
   int x,
   int y );
 
-int activeGroupClass::undoResize (
+int undoResize (
   undoOpClass *opPtr,
   int x,
   int y,
   int w,
   int h );
 
-int activeGroupClass::undoCopy (
+int undoCopy (
   undoOpClass *opPtr );
 
-int activeGroupClass::undoCut (
+int undoCut (
   undoOpClass *opPtr );
 
-int activeGroupClass::undoPaste (
+int undoPaste (
   undoOpClass *opPtr );
 
-int activeGroupClass::undoReorder (
+int undoReorder (
   undoOpClass *opPtr );
 
-int activeGroupClass::undoEdit (
+int undoEdit (
   undoOpClass *opPtr );
 
-int activeGroupClass::undoGroup (
+int undoGroup (
   undoOpClass *opPtr );
 
-int activeGroupClass::undoRotate (
+int undoRotate (
   undoOpClass *opPtr,
   int x,
   int y,
   int w,
   int h );
 
-int activeGroupClass::undoFlip (
+int undoFlip (
   undoOpClass *opPtr,
   int x,
   int y,

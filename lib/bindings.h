@@ -84,30 +84,30 @@ int cur_index, max;
 
 public:
 
-objBindingClass::objBindingClass ( void );
+objBindingClass ( void );
 
-objBindingClass::~objBindingClass ( void );
+~objBindingClass ( void );
 
-char *objBindingClass::firstObjName (
+char *firstObjName (
   char *objType );
 
-char *objBindingClass::nextObjName (
+char *nextObjName (
   char *objType );
 
-activeGraphicClass *objBindingClass::createNew (
+activeGraphicClass *createNew (
   char *oneName );
 
-activeGraphicClass *objBindingClass::clone (
+activeGraphicClass *clone (
   char *oneName,
   activeGraphicClass *source );
 
-char *objBindingClass::getOjbName (
+char *getOjbName (
   int i );
 
-char *objBindingClass::getOjbType (
+char *getOjbType (
   int i );
 
-char *objBindingClass::getNameFromClass (
+char *getNameFromClass (
   char *className );
 
 };

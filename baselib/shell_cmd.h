@@ -245,96 +245,96 @@ int posX, posY;
 
 public:
 
-shellCmdClass::shellCmdClass ( void );
+shellCmdClass ( void );
 
-shellCmdClass::shellCmdClass
+shellCmdClass
  ( const shellCmdClass *source );
 
-shellCmdClass::~shellCmdClass ( void );
+~shellCmdClass ( void );
 
-char *shellCmdClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int shellCmdClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int shellCmdClass::save (
+int save (
   FILE *f );
 
-int shellCmdClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int shellCmdClass::importFromXchFile (
+int importFromXchFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin );
 
-int shellCmdClass::genericEdit ( void );
+int genericEdit ( void );
 
-int shellCmdClass::edit ( void );
+int edit ( void );
 
-int shellCmdClass::editCreate ( void );
+int editCreate ( void );
 
-int shellCmdClass::draw ( void );
+int draw ( void );
 
-int shellCmdClass::erase ( void );
+int erase ( void );
 
-int shellCmdClass::drawActive ( void );
+int drawActive ( void );
 
-int shellCmdClass::eraseActive ( void );
+int eraseActive ( void );
 
-int shellCmdClass::activate (
+int activate (
   int pass,
   void *ptr );
 
-int shellCmdClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void shellCmdClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-int shellCmdClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int shellCmdClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int shellCmdClass::containsMacros ( void );
+int containsMacros ( void );
 
-void shellCmdClass::btnUp (
+void btnUp (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-void shellCmdClass::executeCmd ( void );
+void executeCmd ( void );
 
-void shellCmdClass::btnDown (
+void btnDown (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-int shellCmdClass::getButtonActionRequest (
+int getButtonActionRequest (
   int *up,
   int *down,
   int *drag,
   int *focus );
 
-void shellCmdClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -350,7 +350,7 @@ void shellCmdClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void shellCmdClass::executeDeferred ( void );
+void executeDeferred ( void );
 
 
 };

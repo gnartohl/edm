@@ -47,43 +47,43 @@ int cur_index, max;
 
 public:
 
-pvBindingClass::pvBindingClass ( void );
+pvBindingClass ( void );
 
-pvBindingClass::~pvBindingClass ( void );
+~pvBindingClass ( void );
 
-char *pvBindingClass::firstPvName ( void );
+char *firstPvName ( void );
 
-char *pvBindingClass::nextPvName ( void );
+char *nextPvName ( void );
 
-pvClass *pvBindingClass::createNew (
+pvClass *createNew (
   char *oneName );
 
-pvClass *pvBindingClass::clone (
+pvClass *clone (
   char *oneName,
   pvClass *source );
 
-char *pvBindingClass::getPvName (
+char *getPvName (
   int i );
 
-char *pvBindingClass::getPvClassName (
+char *getPvClassName (
   int i );
 
-char *pvBindingClass::getPvType (
+char *getPvType (
   int i );
 
-char *pvBindingClass::getNameFromClass (
+char *getNameFromClass (
   char *className );
 
-char *pvBindingClass::getClassFromName (
+char *getClassFromName (
   char *name );
 
-int pvBindingClass::getClassNum (
+int getClassNum (
   char *className );
 
-int pvBindingClass::getNameNum (
+int getNameNum (
   char *name );
 
-void pvBindingClass::getOptionMenuList (
+void getOptionMenuList (
   char *list,
   int listSize,
   int *num );

@@ -14,11 +14,11 @@ class undoOpClass {
 
 public:
 
-undoOpClass::undoOpClass () {
+undoOpClass () {
 
 }
 
-virtual undoOpClass::~undoOpClass () {
+virtual ~undoOpClass () {
 
 }
 
@@ -36,11 +36,11 @@ int y;
 int w;
 int h;
 
-undoNodeClass::undoNodeClass ();
+undoNodeClass ();
 
-virtual undoNodeClass::~undoNodeClass ();
+virtual ~undoNodeClass ();
 
-virtual int undoNodeClass::undo ( void );
+virtual int undo ( void );
 
 };
 
@@ -50,9 +50,9 @@ class undoCreateNodeClass : public undoNodeClass {
 
 public:
 
-int undoCreateNodeClass::undo ( void );
-undoCreateNodeClass::undoCreateNodeClass ();
-undoCreateNodeClass::~undoCreateNodeClass ();
+int undo ( void );
+undoCreateNodeClass ();
+~undoCreateNodeClass ();
 
 };
 
@@ -60,9 +60,9 @@ class undoMoveNodeClass : public undoNodeClass {
 
 public:
 
-int undoMoveNodeClass::undo ( void );
-undoMoveNodeClass::undoMoveNodeClass ();
-undoMoveNodeClass::~undoMoveNodeClass ();
+int undo ( void );
+undoMoveNodeClass ();
+~undoMoveNodeClass ();
 
 };
 
@@ -70,9 +70,9 @@ class undoResizeNodeClass : public undoNodeClass {
 
 public:
 
-int undoResizeNodeClass::undo ( void );
-undoResizeNodeClass::undoResizeNodeClass ();
-undoResizeNodeClass::~undoResizeNodeClass ();
+int undo ( void );
+undoResizeNodeClass ();
+~undoResizeNodeClass ();
 
 };
 
@@ -80,9 +80,9 @@ class undoCopyNodeClass : public undoNodeClass {
 
 public:
 
-int undoCopyNodeClass::undo ( void );
-undoCopyNodeClass::undoCopyNodeClass ();
-undoCopyNodeClass::~undoCopyNodeClass ();
+int undo ( void );
+undoCopyNodeClass ();
+~undoCopyNodeClass ();
 
 };
 
@@ -90,9 +90,9 @@ class undoCutNodeClass : public undoNodeClass {
 
 public:
 
-int undoCutNodeClass::undo ( void );
-undoCutNodeClass::undoCutNodeClass ();
-undoCutNodeClass::~undoCutNodeClass ();
+int undo ( void );
+undoCutNodeClass ();
+~undoCutNodeClass ();
 
 };
 
@@ -100,9 +100,9 @@ class undoPasteNodeClass : public undoNodeClass {
 
 public:
 
-int undoPasteNodeClass::undo ( void );
-undoPasteNodeClass::undoPasteNodeClass ();
-undoPasteNodeClass::~undoPasteNodeClass ();
+int undo ( void );
+undoPasteNodeClass ();
+~undoPasteNodeClass ();
 
 };
 
@@ -110,9 +110,9 @@ class undoReorderNodeClass : public undoNodeClass {
 
 public:
 
-int undoReorderNodeClass::undo ( void );
-undoReorderNodeClass::undoReorderNodeClass ();
-undoReorderNodeClass::~undoReorderNodeClass ();
+int undo ( void );
+undoReorderNodeClass ();
+~undoReorderNodeClass ();
 
 };
 
@@ -120,9 +120,9 @@ class undoEditNodeClass : public undoNodeClass {
 
 public:
 
-int undoEditNodeClass::undo ( void );
-undoEditNodeClass::undoEditNodeClass ();
-undoEditNodeClass::~undoEditNodeClass ();
+int undo ( void );
+undoEditNodeClass ();
+~undoEditNodeClass ();
 
 };
 
@@ -130,9 +130,9 @@ class undoGroupNodeClass : public undoNodeClass {
 
 public:
 
-int undoGroupNodeClass::undo ( void );
-undoGroupNodeClass::undoGroupNodeClass ();
-undoGroupNodeClass::~undoGroupNodeClass ();
+int undo ( void );
+undoGroupNodeClass ();
+~undoGroupNodeClass ();
 
 };
 
@@ -140,9 +140,9 @@ class undoRotateNodeClass : public undoNodeClass {
 
 public:
 
-int undoRotateNodeClass::undo ( void );
-undoRotateNodeClass::undoRotateNodeClass ();
-undoRotateNodeClass::~undoRotateNodeClass ();
+int undo ( void );
+undoRotateNodeClass ();
+~undoRotateNodeClass ();
 
 };
 
@@ -150,9 +150,9 @@ class undoFlipNodeClass : public undoNodeClass {
 
 public:
 
-int undoFlipNodeClass::undo ( void );
-undoFlipNodeClass::undoFlipNodeClass ();
-undoFlipNodeClass::~undoFlipNodeClass ();
+int undo ( void );
+undoFlipNodeClass ();
+~undoFlipNodeClass ();
 
 };
 
@@ -160,9 +160,9 @@ undoFlipNodeClass::~undoFlipNodeClass ();
 
 //public:
 
-//int undo?NodeClass::undo ( void );
-//undo?NodeClass::undo?NodeClass ();
-//undo?NodeClass::~undo?NodeClass ();
+//int undo?undo ( void );
+//undo?undo?NodeClass ();
+//undo?~undo?NodeClass ();
 
 //};
 
@@ -195,27 +195,27 @@ static const int success = 1;
 static const int noMem = 100;
 //static const = 10;
 
-undoClass::undoClass ();
+undoClass ();
 
-undoClass::~undoClass ();
+~undoClass ();
 
-void undoClass::deleteNodes (
+void deleteNodes (
   int i );
 
-void undoClass::startNewUndoList (
+void startNewUndoList (
   char *undoText );
 
-int undoClass::addCreateNode (
+int addCreateNode (
   activeGraphicClass *actGrfAddr,
   undoOpClass *opPtr );
 
-int undoClass::addMoveNode (
+int addMoveNode (
   activeGraphicClass *actGrfAddr,
   undoOpClass *opPtr,
   int x,
   int y );
 
-int undoClass::addResizeNode (
+int addResizeNode (
   activeGraphicClass *actGrfAddr,
   undoOpClass *opPtr,
   int x,
@@ -223,31 +223,31 @@ int undoClass::addResizeNode (
   int w,
   int h );
 
-int undoClass::addCopyNode (
+int addCopyNode (
   activeGraphicClass *actGrfAddr,
   undoOpClass *opPtr );
 
-int undoClass::addCutNode (
+int addCutNode (
   activeGraphicClass *actGrfAddr,
   undoOpClass *opPtr );
 
-int undoClass::addPasteNode (
+int addPasteNode (
   activeGraphicClass *actGrfAddr,
   undoOpClass *opPtr );
 
-int undoClass::addReorderNode (
+int addReorderNode (
   activeGraphicClass *actGrfAddr,
   undoOpClass *opPtr );
 
-int undoClass::addEditNode (
+int addEditNode (
   activeGraphicClass *actGrfAddr,
   undoOpClass *opPtr );
 
-int undoClass::addGroupNode (
+int addGroupNode (
   activeGraphicClass *actGrfAddr,
   undoOpClass *opPtr );
 
-int undoClass::addRotateNode (
+int addRotateNode (
   activeGraphicClass *actGrfAddr,
   undoOpClass *opPtr,
   int x,
@@ -255,7 +255,7 @@ int undoClass::addRotateNode (
   int w,
   int h );
 
-int undoClass::addFlipNode (
+int addFlipNode (
   activeGraphicClass *actGrfAddr,
   undoOpClass *opPtr,
   int x,
@@ -263,21 +263,21 @@ int undoClass::addFlipNode (
   int w,
   int h );
 
-int undoClass::performUndo ( void );
+int performUndo ( void );
 
-int undoClass::performSubUndo ( void ); // called from group.cc
+int performSubUndo ( void ); // called from group.cc
 
-void undoClass::flush ( void );
+void flush ( void );
 
-void undoClass::show ( void );
+void show ( void );
 
-int undoClass::listEmpty ( void );
+int listEmpty ( void );
 
-void undoClass::discard ( void );
+void discard ( void );
 
-void undoClass::requestFlush ( void );
+void requestFlush ( void );
 
-int undoClass::flushRequested ( void );
+int flushRequested ( void );
 
 };
 

@@ -392,112 +392,112 @@ double kpCtlDouble, kpIncDouble;
 
 public:
 
-activeSliderClass::activeSliderClass ( void );
+activeSliderClass ( void );
 
-activeSliderClass::activeSliderClass
+activeSliderClass
  ( const activeSliderClass *source );
 
-activeSliderClass::~activeSliderClass ( void ) {
+~activeSliderClass ( void ) {
 
   if ( name ) delete name;
 
 }
 
-char *activeSliderClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeSliderClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeSliderClass::save (
+int save (
   FILE *f );
 
-int activeSliderClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeSliderClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeSliderClass::edit ( void );
+int edit ( void );
 
-int activeSliderClass::editCreate ( void );
+int editCreate ( void );
 
-int activeSliderClass::draw ( void );
+int draw ( void );
 
-int activeSliderClass::erase ( void );
+int erase ( void );
 
-int activeSliderClass::drawActive ( void );
+int drawActive ( void );
 
-int activeSliderClass::eraseActive ( void );
+int eraseActive ( void );
 
-void activeSliderClass::bufInvalidate ( void );
+void bufInvalidate ( void );
 
-int activeSliderClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int activeSliderClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-int activeSliderClass::checkResizeSelectBox (
+int checkResizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeSliderClass::checkResizeSelectBoxAbs (
+int checkResizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-void activeSliderClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-int activeSliderClass::eraseActivePointers ( void );
+int eraseActivePointers ( void );
 
-int activeSliderClass::drawActivePointers ( void );
+int drawActivePointers ( void );
 
-int activeSliderClass::eraseActiveControlText ( void );
+int eraseActiveControlText ( void );
 
-int activeSliderClass::drawActiveControlText ( void );
+int drawActiveControlText ( void );
 
-int activeSliderClass::eraseActiveReadText ( void );
+int eraseActiveReadText ( void );
 
-int activeSliderClass::drawActiveReadText ( void );
+int drawActiveReadText ( void );
 
-int activeSliderClass::createWidgets ( void );
+int createWidgets ( void );
 
-int activeSliderClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeSliderClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeSliderClass::containsMacros ( void );
+int containsMacros ( void );
 
-void activeSliderClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-int activeSliderClass::getProperty (
+int getProperty (
   char *prop,
   double *_value );
 
-char *activeSliderClass::firstDragName ( void );
+char *firstDragName ( void );
 
-char *activeSliderClass::nextDragName ( void );
+char *nextDragName ( void );
 
-char *activeSliderClass::dragValue (
+char *dragValue (
   int i );
 
-void activeSliderClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -513,7 +513,7 @@ void activeSliderClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void activeSliderClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],

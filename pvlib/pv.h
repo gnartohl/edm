@@ -76,15 +76,15 @@ public:
 
 char *type;
 
-pvEventClass::pvEventClass ( void );
+pvEventClass ( void );
 
-pvEventClass::pvEventClass ( pvEventClass &source );
+pvEventClass ( pvEventClass &source );
 
-virtual pvEventClass::~pvEventClass ( void );
+virtual ~pvEventClass ( void );
 
-virtual void pvEventClass::clone ( const pvEventClass *source );
+virtual void clone ( const pvEventClass *source );
 
-virtual int pvEventClass::eventAdded ( void );
+virtual int eventAdded ( void );
 
 };
 
@@ -98,158 +98,158 @@ int connected;
 
 public:
 
-pvClass::pvClass ( void );
+pvClass ( void );
 
-pvClass::pvClass ( pvClass &source );
+pvClass ( pvClass &source );
 
-virtual pvClass::~pvClass ( void );
+virtual ~pvClass ( void );
 
-void pvClass::clone ( const pvClass *source );
+void clone ( const pvClass *source );
 
 #ifndef __pv_c
 
-virtual int pvClass::pvrShort ( void );
-virtual int pvClass::pvrLong ( void );
-virtual int pvClass::pvrFloat ( void );
-virtual int pvClass::pvrDouble ( void );
-virtual int pvClass::pvrEnum ( void );
-virtual int pvClass::pvrString ( void );
+virtual int pvrShort ( void );
+virtual int pvrLong ( void );
+virtual int pvrFloat ( void );
+virtual int pvrDouble ( void );
+virtual int pvrEnum ( void );
+virtual int pvrString ( void );
 
-virtual int pvClass::pvrStsShort ( void );
-virtual int pvClass::pvrStsLong ( void );
-virtual int pvClass::pvrStsFloat ( void );
-virtual int pvClass::pvrStsDouble ( void );
-virtual int pvClass::pvrStsEnum ( void );
-virtual int pvClass::pvrStsString ( void );
+virtual int pvrStsShort ( void );
+virtual int pvrStsLong ( void );
+virtual int pvrStsFloat ( void );
+virtual int pvrStsDouble ( void );
+virtual int pvrStsEnum ( void );
+virtual int pvrStsString ( void );
 
-virtual int pvClass::pvrGrShort ( void );
-virtual int pvClass::pvrGrLong ( void );
-virtual int pvClass::pvrGrFloat ( void );
-virtual int pvClass::pvrGrDouble ( void );
-virtual int pvClass::pvrGrEnum ( void );
-virtual int pvClass::pvrGrString ( void );
+virtual int pvrGrShort ( void );
+virtual int pvrGrLong ( void );
+virtual int pvrGrFloat ( void );
+virtual int pvrGrDouble ( void );
+virtual int pvrGrEnum ( void );
+virtual int pvrGrString ( void );
 
-virtual int pvClass::pveValue ( void );
+virtual int pveValue ( void );
 
-virtual int pvClass::pveAlarm ( void );
+virtual int pveAlarm ( void );
 
-virtual int pvClass::pvkOpConnUp ( void );
+virtual int pvkOpConnUp ( void );
 
-virtual int pvClass::pvkOpConnDown ( void );
+virtual int pvkOpConnDown ( void );
 
 #endif
 
 #ifdef __pv_c
 
-virtual int pvClass::pvrShort ( void ) {
+virtual int pvrShort ( void ) {
   return 0;
 }
-virtual int pvClass::pvrLong ( void ) {
+virtual int pvrLong ( void ) {
   return 0;
 }
-virtual int pvClass::pvrFloat ( void ) {
+virtual int pvrFloat ( void ) {
   return 0;
 }
-virtual int pvClass::pvrDouble ( void ) {
+virtual int pvrDouble ( void ) {
   return 0;
 }
-virtual int pvClass::pvrEnum ( void ) {
+virtual int pvrEnum ( void ) {
   return 0;
 }
-virtual int pvClass::pvrString ( void ) {
-  return 0;
-}
-
-virtual int pvClass::pvrStsShort ( void ) {
-  return 0;
-}
-virtual int pvClass::pvrStsLong ( void ) {
-  return 0;
-}
-virtual int pvClass::pvrStsFloat ( void ) {
-  return 0;
-}
-virtual int pvClass::pvrStsDouble ( void ) {
-  return 0;
-}
-virtual int pvClass::pvrStsEnum ( void ) {
-  return 0;
-}
-virtual int pvClass::pvrStsString ( void ) {
+virtual int pvrString ( void ) {
   return 0;
 }
 
-virtual int pvClass::pvrGrShort ( void ) {
+virtual int pvrStsShort ( void ) {
+  return 0;
+}
+virtual int pvrStsLong ( void ) {
+  return 0;
+}
+virtual int pvrStsFloat ( void ) {
+  return 0;
+}
+virtual int pvrStsDouble ( void ) {
+  return 0;
+}
+virtual int pvrStsEnum ( void ) {
+  return 0;
+}
+virtual int pvrStsString ( void ) {
+  return 0;
+}
+
+virtual int pvrGrShort ( void ) {
   return 0;
  }
-virtual int pvClass::pvrGrLong ( void ) {
+virtual int pvrGrLong ( void ) {
   return 0;
 }
-virtual int pvClass::pvrGrFloat ( void ) {
+virtual int pvrGrFloat ( void ) {
   return 0;
 }
-virtual int pvClass::pvrGrDouble ( void ) {
+virtual int pvrGrDouble ( void ) {
   return 0;
 }
-virtual int pvClass::pvrGrEnum ( void ) {
+virtual int pvrGrEnum ( void ) {
   return 0;
 }
-virtual int pvClass::pvrGrString ( void ) {
-  return 0;
-}
-
-virtual int pvClass::pveValue ( void ) {
+virtual int pvrGrString ( void ) {
   return 0;
 }
 
-virtual int pvClass::pveAlarm ( void ) {
+virtual int pveValue ( void ) {
   return 0;
 }
 
-virtual int pvClass::pvkOpConnUp ( void ) {
+virtual int pveAlarm ( void ) {
   return 0;
 }
 
-virtual int pvClass::pvkOpConnDown ( void ) {
+virtual int pvkOpConnUp ( void ) {
+  return 0;
+}
+
+virtual int pvkOpConnDown ( void ) {
   return 0;
 }
 
 #endif
 
-virtual int pvClass::search (
+virtual int search (
   expStringClass *name );
 
-virtual int pvClass::searchAndConnect (
+virtual int searchAndConnect (
   expStringClass *name,
   pvCbFunc callback,
   void *clientData );
 
-virtual int pvClass::createEventId (
+virtual int createEventId (
   pvEventClass **ptr );
 
-virtual int pvClass::destroyEventId (
+virtual int destroyEventId (
   pvEventClass **ptr );
 
-virtual int pvClass::pendIo (
+virtual int pendIo (
   float sec );
 
-virtual int pvClass::pendEvent (
+virtual int pendEvent (
   float sec );
 
-virtual int pvClass::put (
+virtual int put (
   int type,
   void *value );
 
-virtual int pvClass::get (
+virtual int get (
   int type,
   void *value );
 
-virtual int pvClass::getCallback (
+virtual int getCallback (
   int type,
   pvCbFunc callback,
   void *clientData );
 
-virtual int pvClass::addEvent (
+virtual int addEvent (
   int type,
   int numElements,
   pvCbFunc callback,
@@ -257,64 +257,64 @@ virtual int pvClass::addEvent (
   pvEventClass *eventId,
   int eventType );
 
-virtual int pvClass::checkReconnect ( void );
+virtual int checkReconnect ( void );
 
-virtual char *pvClass::getName ( void );
+virtual char *getName ( void );
 
-virtual int pvClass::getType ( void );
+virtual int getType ( void );
 
-virtual int pvClass::getSize ( void );
+virtual int getSize ( void );
 
-virtual int pvClass::maxStringSize ( void );
+virtual int maxStringSize ( void );
 
-virtual int pvClass::enumStringSize ( void );
+virtual int enumStringSize ( void );
 
-virtual int pvClass::pvNameSize ( void );
+virtual int pvNameSize ( void );
 
-virtual int pvClass::clearChannel ( void );
+virtual int clearChannel ( void );
 
-virtual int pvClass::clearEvent (
+virtual int clearEvent (
   pvEventClass *eventId );
 
 // event argument manipulation
 
-virtual void *pvClass::getValue (
+virtual void *getValue (
   void *eventArg );
 
-virtual int pvClass::getType (
+virtual int getType (
   void *eventArg );
 
-virtual int pvClass::getStatus (
+virtual int getStatus (
   void *eventArg );
 
-virtual int pvClass::getSeverity (
+virtual int getSeverity (
   void *eventArg );
 
-virtual int pvClass::getPrecision(
+virtual int getPrecision(
   void *eventArg );
 
-virtual char *pvClass::getStateString(
+virtual char *getStateString(
   void *eventArg, int index );
   
-virtual int pvClass::getNumStates(
+virtual int getNumStates(
   void *eventArg );
 
-virtual void *pvClass::getEventUserData (
+virtual void *getEventUserData (
   void *eventArg );
 
-virtual void *pvClass::getConnectUserData (
+virtual void *getConnectUserData (
   void *connectArg );
 
-virtual int pvClass::getOp (
+virtual int getOp (
   void *connectArg );
 
-virtual double pvClass::getLoOpr (
+virtual double getLoOpr (
   void *connectArg );
 
-virtual double pvClass::getHiOpr (
+virtual double getHiOpr (
   void *connectArg );
 
-virtual int pvClass::pvErrorCode (
+virtual int pvErrorCode (
   int code );
 
 };

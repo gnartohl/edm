@@ -51,27 +51,27 @@ class activeXRegTextClass : public activeGraphicClass {
 
 protected:
 
-static void activeXRegTextClass::edit_ok (
+static void edit_ok (
   Widget w,
   XtPointer client,
   XtPointer call );
 
-static void activeXRegTextClass::edit_update (
+static void edit_update (
   Widget w,
   XtPointer client,
   XtPointer call );
 
-static void activeXRegTextClass::edit_apply (
+static void edit_apply (
   Widget w,
   XtPointer client,
   XtPointer call );
 
-static void activeXRegTextClass::edit_cancel (
+static void edit_cancel (
   Widget w,
   XtPointer client,
   XtPointer call );
 
-static void activeXRegTextClass::edit_cancel_delete (
+static void edit_cancel_delete (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -141,116 +141,116 @@ pvConnectionClass connection;
 
 public:
 
-static void activeXRegTextClass::alarmPvConnectStateCallback (
+static void alarmPvConnectStateCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-static void activeXRegTextClass::alarmPvValueCallback (
+static void alarmPvValueCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-static void activeXRegTextClass::visPvConnectStateCallback (
+static void visPvConnectStateCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-static void activeXRegTextClass::visPvValueCallback (
+static void visPvValueCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-activeXRegTextClass::activeXRegTextClass ( void );
+activeXRegTextClass ( void );
 
-activeXRegTextClass::activeXRegTextClass
+activeXRegTextClass
  ( const activeXRegTextClass *source );
 
-activeXRegTextClass::~activeXRegTextClass ( void ) {
+~activeXRegTextClass ( void ) {
 
   if ( name ) delete name;
 
 }
 
-char *activeXRegTextClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeXRegTextClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeXRegTextClass::save (
+int save (
   FILE *f );
 
-int activeXRegTextClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeXRegTextClass::importFromXchFile (
+int importFromXchFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeXRegTextClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeXRegTextClass::edit ( void );
+int edit ( void );
 
-int activeXRegTextClass::editCreate ( void );
+int editCreate ( void );
 
-int activeXRegTextClass::draw ( void );
+int draw ( void );
 
-int activeXRegTextClass::erase ( void );
+int erase ( void );
 
-int activeXRegTextClass::drawActive ( void );
+int drawActive ( void );
 
-char * activeXRegTextClass::getProcessedText(char *text);
+char * getProcessedText(char *text);
 
-int activeXRegTextClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeXRegTextClass::eraseUnconditional ( void );
+int eraseUnconditional ( void );
 
-int activeXRegTextClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeXRegTextClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeXRegTextClass::containsMacros ( void );
+int containsMacros ( void );
 
-int activeXRegTextClass::activate (
+int activate (
   int pass,
   void *ptr );
 
-int activeXRegTextClass::deactivate (
+int deactivate (
   int pass );
 
-void activeXRegTextClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-void activeXRegTextClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-int activeXRegTextClass::setProperty (
+int setProperty (
   char *prop,
   char *value );
 
-char *activeXRegTextClass::firstDragName ( void );
+char *firstDragName ( void );
 
-char *activeXRegTextClass::nextDragName ( void );
+char *nextDragName ( void );
 
-char *activeXRegTextClass::dragValue (
+char *dragValue (
   int i );
 
-void activeXRegTextClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -266,7 +266,7 @@ void activeXRegTextClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void activeXRegTextClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],
@@ -279,7 +279,7 @@ void activeXRegTextClass::changePvNames (
   int numAlarmPvs,
   char *alarmPvs[] );
 
-void activeXRegTextClass::updateColors (
+void updateColors (
   double colorValue );
 
 };

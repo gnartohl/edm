@@ -168,102 +168,102 @@ pvConnectionClass connection;
 
 public:
 
-static void activeCircleClass::alarmPvConnectStateCallback (
+static void alarmPvConnectStateCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-static void activeCircleClass::alarmPvValueCallback (
+static void alarmPvValueCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-static void activeCircleClass::visPvConnectStateCallback (
+static void visPvConnectStateCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-static void activeCircleClass::visPvValueCallback (
+static void visPvValueCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-activeCircleClass::activeCircleClass ( void );
+activeCircleClass ( void );
 
 // copy constructor
-activeCircleClass::activeCircleClass
+activeCircleClass
 ( const activeCircleClass *source );
 
-activeCircleClass::~activeCircleClass ( void );
+~activeCircleClass ( void );
 
-char *activeCircleClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeCircleClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeCircleClass::createFromFile (
+int createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin );
 
-int activeCircleClass::importFromXchFile (
+int importFromXchFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeCircleClass::save (
+int save (
   FILE *f );
 
-int activeCircleClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeCircleClass::edit ( void );
+int edit ( void );
 
-int activeCircleClass::editCreate ( void );
+int editCreate ( void );
 
-int activeCircleClass::draw ( void );
+int draw ( void );
 
-int activeCircleClass::erase ( void );
+int erase ( void );
 
-int activeCircleClass::drawActive ( void );
+int drawActive ( void );
 
-int activeCircleClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeCircleClass::eraseUnconditional ( void );
+int eraseUnconditional ( void );
 
-int activeCircleClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeCircleClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeCircleClass::containsMacros ( void );
+int containsMacros ( void );
 
-int activeCircleClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int activeCircleClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void activeCircleClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-char *activeCircleClass::firstDragName ( void );
+char *firstDragName ( void );
 
-char *activeCircleClass::nextDragName ( void );
+char *nextDragName ( void );
 
-char *activeCircleClass::dragValue (
+char *dragValue (
   int i );
 
-void activeCircleClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -279,7 +279,7 @@ void activeCircleClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void activeCircleClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],
@@ -292,7 +292,7 @@ void activeCircleClass::changePvNames (
   int numAlarmPvs,
   char *alarmPvs[] );
 
-void activeCircleClass::updateColors (
+void updateColors (
   double colorValue );
 
 };

@@ -84,24 +84,24 @@ int null;
 
 public:
 
-efInt::efInt ( void ) {
+efInt ( void ) {
 
   null = 1;
   val = 0;
 
 }
 
-efInt::~efInt ( void ) { }
+~efInt ( void ) { }
 
-int efInt::value ( void ) { return val; }
+int value ( void ) { return val; }
 
-void efInt::setValue ( int v ) { val = v; null = 0; }
+void setValue ( int v ) { val = v; null = 0; }
 
-int efInt::isNull ( void ) { return null; }
+int isNull ( void ) { return null; }
 
-void efInt::setNull ( int n ) { null = n; }
+void setNull ( int n ) { null = n; }
 
-int efInt::write ( FILE *f ) {
+int write ( FILE *f ) {
 
 int stat, v, n;
 
@@ -116,7 +116,7 @@ int stat, v, n;
 
 }
 
-int efInt::read ( FILE *f ) {
+int read ( FILE *f ) {
 
 int stat, v, n;
 
@@ -142,24 +142,24 @@ int null;
 
 public:
 
-efDouble::efDouble ( void ) {
+efDouble ( void ) {
 
   null = 1;
   val = 0.0;
 
 }
 
-efDouble::~efDouble ( void ) { }
+~efDouble ( void ) { }
 
-double efDouble::value ( void ) { return val; }
+double value ( void ) { return val; }
 
-void efDouble::setValue ( double v ) { val = v; null = 0; }
+void setValue ( double v ) { val = v; null = 0; }
 
-int efDouble::isNull ( void ) { return null; }
+int isNull ( void ) { return null; }
 
-void efDouble::setNull ( int n ) { null = n; }
+void setNull ( int n ) { null = n; }
 
-int efDouble::write ( FILE *f ) {
+int write ( FILE *f ) {
 
 int stat;
 double v, n;
@@ -175,7 +175,7 @@ double v, n;
 
 }
 
-int efDouble::read ( FILE *f ) {
+int read ( FILE *f ) {
 
 int stat;
 double v, n;
@@ -202,15 +202,15 @@ efArrayCallbackDscType arrayDsc;
 entryListBase *flink;
 Widget labelW, activeW;
 
-entryListBase::entryListBase ( void ) { }
+entryListBase ( void ) { }
 
-virtual entryListBase::~entryListBase ( void ) { }
+virtual ~entryListBase ( void ) { }
 
-virtual void entryListBase::setValue ( int value ) { }
+virtual void setValue ( int value ) { }
 
-virtual void entryListBase::setValue ( double value ) { }
+virtual void setValue ( double value ) { }
 
-virtual void entryListBase::setValue ( char *value ) { }
+virtual void setValue ( char *value ) { }
 
 };
 
@@ -221,9 +221,9 @@ public:
 
 Widget *wPtr;
 
-subFormWidget::subFormWidget ( void );
+subFormWidget ( void );
 
-virtual subFormWidget::~subFormWidget ( void );
+virtual ~subFormWidget ( void );
 
 };
 
@@ -232,11 +232,11 @@ class colorButtonEntry : public entryListBase {
 
 public:
 
-colorButtonEntry::colorButtonEntry ( void );
+colorButtonEntry ( void );
 
-virtual colorButtonEntry::~colorButtonEntry ( void );
+virtual ~colorButtonEntry ( void );
 
-void colorButtonEntry::setValue ( int value );
+void setValue ( int value );
 
 };
 
@@ -247,9 +247,9 @@ public:
 
 fontMenuClass *fmo;
 
-fontMenuEntry::fontMenuEntry ( void );
+fontMenuEntry ( void );
 
-virtual fontMenuEntry::~fontMenuEntry ( void );
+virtual ~fontMenuEntry ( void );
 
 };
 
@@ -261,15 +261,15 @@ public:
 char *charDest;
 int maxLen;
 
-textEntry::textEntry ( void );
+textEntry ( void );
 
-virtual textEntry::~textEntry ( void );
+virtual ~textEntry ( void );
 
-void textEntry::setValue ( int value );
+void setValue ( int value );
 
-void textEntry::setValue ( double value );
+void setValue ( double value );
 
-void textEntry::setValue ( char *value );
+void setValue ( char *value );
 
 };
 
@@ -281,13 +281,13 @@ public:
 Widget pd;
 widgetListPtr head, tail;
 
-optionEntry::optionEntry ( void );
+optionEntry ( void );
 
-virtual optionEntry::~optionEntry ( void );
+virtual ~optionEntry ( void );
 
-void optionEntry::setValue ( int value );
+void setValue ( int value );
 
-void optionEntry::setValue ( char *value );
+void setValue ( char *value );
 
 };
 
@@ -300,11 +300,11 @@ int value;
 void *destination;
 efArrayCallbackDscType arrayDsc;
 
-toggleEntry::toggleEntry ( void );
+toggleEntry ( void );
 
-virtual toggleEntry::~toggleEntry ( void );
+virtual ~toggleEntry ( void );
 
-void toggleEntry::setValue ( int value );
+void setValue ( int value );
 
 };
 
@@ -441,17 +441,17 @@ int index, oldIndex, maxItems, numItems;
 
 efWidgetAndPointerType wp;
 
-entryFormClass::entryFormClass ( void );
+entryFormClass ( void );
 
-entryFormClass::~entryFormClass ( void );
+~entryFormClass ( void );
 
-int entryFormClass::destroy ( void );
+int destroy ( void );
 
-void entryFormClass::setMultiPointObjectType ( void );
+void setMultiPointObjectType ( void );
 
-int entryFormClass::objectIsMultiPoint ( void );
+int objectIsMultiPoint ( void );
 
-int entryFormClass::create (
+int create (
   Widget top,
   int *_x,
   int *_y,
@@ -462,7 +462,7 @@ int entryFormClass::create (
   const char *entryFontTag,
   const char *actionFontTag );
 
-int entryFormClass::create (
+int create (
   Widget top,
   Colormap cmap,
   int *_x,
@@ -474,7 +474,7 @@ int entryFormClass::create (
   const char *entryFontTag,
   const char *actionFontTag );
 
-int entryFormClass::create (
+int create (
   Widget top,
   int *_x,
   int *_y,
@@ -486,7 +486,7 @@ int entryFormClass::create (
   const char *entryFontTag,
   const char *actionFontTag );
 
-int entryFormClass::create (
+int create (
   Widget top,
   Colormap cmap,
   int *_x,
@@ -499,7 +499,7 @@ int entryFormClass::create (
   const char *entryFontTag,
   const char *actionFontTag );
 
-int entryFormClass::create (
+int create (
   Widget top,
   int *_x,
   int *_y,
@@ -515,7 +515,7 @@ int entryFormClass::create (
   const char *entryFontTag,
   const char *actionFontTag );
 
-int entryFormClass::create (
+int create (
   Widget top,
   Colormap cmap,
   int *_x,
@@ -532,13 +532,13 @@ int entryFormClass::create (
   const char *entryFontTag,
   const char *actionFontTag );
 
-int entryFormClass::addColorButton (
+int addColorButton (
   char *label,
   colorInfoClass *ci,
   colorButtonClass *cb,
   int *dest );
 
-int entryFormClass::addColorButtonWithText (
+int addColorButtonWithText (
   char *label,
   colorInfoClass *ci,
   colorButtonClass *cb,
@@ -546,7 +546,7 @@ int entryFormClass::addColorButtonWithText (
   int numCols,
   char *pvName );
 
-int entryFormClass::addColorButtonWithRule (
+int addColorButtonWithRule (
   char *label,
   colorInfoClass *ci,
   colorButtonClass *cb,
@@ -554,187 +554,187 @@ int entryFormClass::addColorButtonWithRule (
   int numCols,
   char *pvName );
 
-int entryFormClass::addEmbeddedEf (
+int addEmbeddedEf (
   char *label,
   entryFormClass **ef );
 
-int entryFormClass::addEmbeddedEf (
+int addEmbeddedEf (
   char *label,
   char *buttonLabel,
   entryFormClass **ef );
 
-int entryFormClass::addFontMenuGeneric (
+int addFontMenuGeneric (
   int includeAlignInfo,
   char *label,
   fontInfoClass *fi,
   fontMenuClass *fm,
   char *initFontTag );
 
-int entryFormClass::addFontMenu (
+int addFontMenu (
   char *label,
   fontInfoClass *fi,
   fontMenuClass *fm,
   char *initFontTag );
 
-int entryFormClass::addFontMenuNoAlignInfo (
+int addFontMenuNoAlignInfo (
   char *label,
   fontInfoClass *fi,
   fontMenuClass *fm,
   char *initFontTag );
 
-int entryFormClass::addTextField (
+int addTextField (
   char *label,
   int length,
   int *dest );
 
-int entryFormClass::addTextField (
+int addTextField (
   char *label,
   int length,
   efInt *dest );
 
-int entryFormClass::addTextField (
+int addTextField (
   char *label,
   int length,
   double *dest );
 
-int entryFormClass::addTextField (
+int addTextField (
   char *label,
   int length,
   efDouble *dest );
 
-int entryFormClass::addTextField (
+int addTextField (
   char *label,
   int length,
   char *dest,
   int stringSize );
 
-int entryFormClass::addTextBox (
+int addTextBox (
   char *label,
   int width,
   int height,
   char *dest,
   int stringSize );
 
-int entryFormClass::addPasswordField (
+int addPasswordField (
   char *label,
   int length,
   char *dest,
   int stringSize );
 
-int entryFormClass::addLockedField (
+int addLockedField (
   char *label,
   int length,
   char *dest,
   int stringSize );
 
-int entryFormClass::addOption (
+int addOption (
   char *label,
   char *options,
   char *dest,
   int stringSize );
 
-int entryFormClass::addOption (
+int addOption (
   char *label,
   char *options,
   int *dest );
 
-int entryFormClass::addToggle (
+int addToggle (
   char *label,
   int *dest );
 
-int entryFormClass::addLabel (
+int addLabel (
   char *label );
 
-int entryFormClass::addSeparator ( void );
+int addSeparator ( void );
 
 // arrays
 
-int entryFormClass::addColorButtonArray (
+int addColorButtonArray (
   char *label,
   colorInfoClass *ci,
   colorButtonClass *cb,
   int *dest,
   entryListBase *obj );
 
-int entryFormClass::addFontMenuArray (
+int addFontMenuArray (
   char *label,
   fontInfoClass *fi,
   fontMenuClass *fm,
   char *initFontTag,
   entryListBase *obj );
 
-int entryFormClass::addTextFieldArray (
+int addTextFieldArray (
   char *label,
   int length,
   int *dest,
   entryListBase **obj );
 
-int entryFormClass::addTextFieldArray (
+int addTextFieldArray (
   char *label,
   int length,
   efInt *dest,
   entryListBase **obj );
 
-int entryFormClass::addTextFieldArray (
+int addTextFieldArray (
   char *label,
   int length,
   double *dest,
   entryListBase **obj );
 
-int entryFormClass::addTextFieldArray (
+int addTextFieldArray (
   char *label,
   int length,
   efDouble *dest,
   entryListBase **obj );
 
-int entryFormClass::addTextFieldArray (
+int addTextFieldArray (
   char *label,
   int length,
   char **dest,
   int stringSize,
   entryListBase **obj );
 
-int entryFormClass::addOptionArray (
+int addOptionArray (
   char *label,
   char *options,
   char **dest,
   int stringSize,
   entryListBase **obj );
 
-int entryFormClass::addOptionArray (
+int addOptionArray (
   char *label,
   char *options,
   int *dest,
   entryListBase **obj );
 
-int entryFormClass::addToggleArray (
+int addToggleArray (
   char *label,
   int *dest,
   entryListBase **obj );
 
-int entryFormClass::finished (
+int finished (
   XtCallbackProc ok_cb,
   XtCallbackProc apply_cb,
   XtCallbackProc cancel_cb,
   XtPointer ptr );
 
-int entryFormClass::finished (
+int finished (
   XtCallbackProc close_cb,
   XtPointer ptr );
 
-int entryFormClass::beginSubForm ( void );
+int beginSubForm ( void );
 
-int entryFormClass::beginLeftSubForm ( void );
+int beginLeftSubForm ( void );
 
-int entryFormClass::endSubForm ( void );
+int endSubForm ( void );
 
-int entryFormClass::popup ( void );
+int popup ( void );
 
-int entryFormClass::popdown ( void );
+int popdown ( void );
 
-int entryFormClass::popdownNoDestroy ( void );
+int popdownNoDestroy ( void );
 
-int entryFormClass::formIsPoppedUp ( void );
+int formIsPoppedUp ( void );
 
 };
 
@@ -751,11 +751,11 @@ public:
 
 entryFormClass ef;
 
-embeddedEfEntry::embeddedEfEntry ( void ) {
+embeddedEfEntry ( void ) {
 
 }
 
-virtual embeddedEfEntry::~embeddedEfEntry ( void ) {
+virtual ~embeddedEfEntry ( void ) {
 
   ef.destroy();
 

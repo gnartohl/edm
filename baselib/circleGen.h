@@ -173,77 +173,77 @@ int numPvTypes, pvNameIndex;
 
 public:
 
-activeCircleClass::activeCircleClass ( void );
+activeCircleClass ( void );
 
 // copy constructor
-activeCircleClass::activeCircleClass
+activeCircleClass
 ( const activeCircleClass *source );
 
-activeCircleClass::~activeCircleClass ( void ) {
+~activeCircleClass ( void ) {
 
   if ( name ) delete name;
 
 }
 
-char *activeCircleClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeCircleClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeCircleClass::createFromFile (
+int createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin );
 
-int activeCircleClass::importFromXchFile (
+int importFromXchFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeCircleClass::save (
+int save (
   FILE *f );
 
-int activeCircleClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeCircleClass::edit ( void );
+int edit ( void );
 
-int activeCircleClass::editCreate ( void );
+int editCreate ( void );
 
-int activeCircleClass::draw ( void );
+int draw ( void );
 
-int activeCircleClass::erase ( void );
+int erase ( void );
 
-int activeCircleClass::drawActive ( void );
+int drawActive ( void );
 
-int activeCircleClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeCircleClass::eraseUnconditional ( void );
+int eraseUnconditional ( void );
 
-int activeCircleClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeCircleClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeCircleClass::containsMacros ( void );
+int containsMacros ( void );
 
-int activeCircleClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int activeCircleClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void activeCircleClass::executeDeferred ( void );
+void executeDeferred ( void );
 
 };
 

@@ -173,107 +173,107 @@ pvConnectionClass connection;
 
 public:
 
-static void activeRectangleClass::alarmPvConnectStateCallback (
+static void alarmPvConnectStateCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-static void activeRectangleClass::alarmPvValueCallback (
+static void alarmPvValueCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-static void activeRectangleClass::visPvConnectStateCallback (
+static void visPvConnectStateCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-static void activeRectangleClass::visPvValueCallback (
+static void visPvValueCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-activeRectangleClass::activeRectangleClass ( void );
+activeRectangleClass ( void );
 
 // copy constructor
-activeRectangleClass::activeRectangleClass
+activeRectangleClass
  ( const activeRectangleClass *source );
 
-activeRectangleClass::~activeRectangleClass ( void );
+~activeRectangleClass ( void );
 
-char *activeRectangleClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeRectangleClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeRectangleClass::save (
+int save (
   FILE *f );
 
-int activeRectangleClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeRectangleClass::importFromXchFile (
+int importFromXchFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeRectangleClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeRectangleClass::edit ( void );
+int edit ( void );
 
-int activeRectangleClass::editCreate ( void );
+int editCreate ( void );
 
-int activeRectangleClass::draw ( void );
+int draw ( void );
 
-int activeRectangleClass::drawActive ( void );
+int drawActive ( void );
 
-int activeRectangleClass::erase ( void );
+int erase ( void );
 
-int activeRectangleClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeRectangleClass::eraseUnconditional ( void );
+int eraseUnconditional ( void );
 
-int activeRectangleClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeRectangleClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeRectangleClass::containsMacros ( void );
+int containsMacros ( void );
 
-int activeRectangleClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int activeRectangleClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-int activeRectangleClass::isInvisible ( void )
+int isInvisible ( void )
 {
   return invisible;
 }
 
-void activeRectangleClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-char *activeRectangleClass::firstDragName ( void );
+char *firstDragName ( void );
 
-char *activeRectangleClass::nextDragName ( void );
+char *nextDragName ( void );
 
-char *activeRectangleClass::dragValue (
+char *dragValue (
   int i );
 
-void activeRectangleClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -289,7 +289,7 @@ void activeRectangleClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void activeRectangleClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],
@@ -302,7 +302,7 @@ void activeRectangleClass::changePvNames (
   int numAlarmPvs,
   char *alarmPvs[] );
 
-void activeRectangleClass::updateColors (
+void updateColors (
   double colorValue );
 
 };

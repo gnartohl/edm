@@ -17,7 +17,7 @@ int undefined;
 
 public:
 
-expArgClass::expArgClass ( void )
+expArgClass ( void )
 {
 
   data = (void *) NULL;
@@ -26,32 +26,32 @@ expArgClass::expArgClass ( void )
 
 }
 
-virtual expArgClass::~expArgClass ( void )
+virtual ~expArgClass ( void )
 {
 
 }
 
-virtual int expArgClass::getType ( void )
+virtual int getType ( void )
 {
 
   return type;
 
 }
 
-virtual void expArgClass::setValue (
+virtual void setValue (
   char *string )
 {
 
 }
 
-virtual double expArgClass::getDouble ( void )
+virtual double getDouble ( void )
 {
 
   return 0.0;
 
 }
 
-virtual int expArgClass::areArgsCompatable (
+virtual int areArgsCompatable (
   expArgClass *otherArg )
 {
 
@@ -65,7 +65,7 @@ virtual int expArgClass::areArgsCompatable (
 
 };
 
-virtual int expArgClass::isEqual (
+virtual int isEqual (
   expArgClass *otherArg )
 {
 
@@ -90,7 +90,7 @@ virtual int expArgClass::isEqual (
 
 };
 
-virtual int expArgClass::isNotEqual (
+virtual int isNotEqual (
   expArgClass *otherArg )
 {
 
@@ -115,7 +115,7 @@ virtual int expArgClass::isNotEqual (
 
 };
 
-virtual int expArgClass::isGreaterOrEqual (
+virtual int isGreaterOrEqual (
   expArgClass *otherArg )
 {
 
@@ -140,7 +140,7 @@ virtual int expArgClass::isGreaterOrEqual (
 
 };
 
-virtual int expArgClass::isGreater (
+virtual int isGreater (
   expArgClass *otherArg )
 {
 
@@ -165,7 +165,7 @@ virtual int expArgClass::isGreater (
 
 };
 
-virtual int expArgClass::isLessOrEqual (
+virtual int isLessOrEqual (
   expArgClass *otherArg )
 {
 
@@ -190,7 +190,7 @@ virtual int expArgClass::isLessOrEqual (
 
 };
 
-virtual int expArgClass::isLess (
+virtual int isLess (
   expArgClass *otherArg )
 {
 
@@ -225,7 +225,7 @@ double *privData;
 
 public:
 
-doubleConstClass::doubleConstClass ( void )
+doubleConstClass ( void )
 {
 
   privData = new double;
@@ -236,14 +236,14 @@ doubleConstClass::doubleConstClass ( void )
 
 }
 
-doubleConstClass::~doubleConstClass ( void )
+~doubleConstClass ( void )
 {
 
   if ( privData ) delete privData;
 
 }
 
-double doubleConstClass::getDouble ( void )
+double getDouble ( void )
 {
 
   if ( this->undefined ) return 0.0;
@@ -252,7 +252,7 @@ double doubleConstClass::getDouble ( void )
 
 }
 
-void doubleConstClass::setValue (
+void setValue (
   char *string )
 {
 
@@ -273,7 +273,7 @@ short *privData;
 
 public:
 
-shortConstClass::shortConstClass ( void )
+shortConstClass ( void )
 {
 
   privData = new short;
@@ -284,14 +284,14 @@ shortConstClass::shortConstClass ( void )
 
 }
 
-shortConstClass::~shortConstClass ( void )
+~shortConstClass ( void )
 {
 
   if ( privData ) delete privData;
 
 }
 
-double shortConstClass::getDouble ( void )
+double getDouble ( void )
 {
 
   if ( this->undefined ) return 0.0;
@@ -300,7 +300,7 @@ double shortConstClass::getDouble ( void )
 
 }
 
-void shortConstClass::setValue (
+void setValue (
   char *string )
 {
 
@@ -321,7 +321,7 @@ long *privData;
 
 public:
 
-longConstClass::longConstClass ( void )
+longConstClass ( void )
 {
 
   privData = new long;
@@ -332,14 +332,14 @@ longConstClass::longConstClass ( void )
 
 }
 
-longConstClass::~longConstClass ( void )
+~longConstClass ( void )
 {
 
   if ( privData ) delete privData;
 
 }
 
-double longConstClass::getDouble ( void )
+double getDouble ( void )
 {
 
   if ( this->undefined ) return 0.0;
@@ -348,7 +348,7 @@ double longConstClass::getDouble ( void )
 
 }
 
-void longConstClass::setValue (
+void setValue (
   char *string )
 {
 
@@ -369,7 +369,7 @@ str40 *privData;
 
 public:
 
-str40ConstClass::str40ConstClass ( void )
+str40ConstClass ( void )
 {
 
   privData = new char[40+1];
@@ -380,21 +380,21 @@ str40ConstClass::str40ConstClass ( void )
 
 }
 
-str40ConstClass::~str40ConstClass ( void )
+~str40ConstClass ( void )
 {
 
   if ( privData ) delete privData;
 
 }
 
-int str40ConstClass::getType ( void )
+int getType ( void )
 {
 
   return type;
 
 }
 
-void str40ConstClass::setValue (
+void setValue (
   char *string )
 {
 
@@ -442,7 +442,7 @@ expLineType expLine[MAXEXPLINES];
 
 public:
 
-expressionClass::expressionClass ( void )
+expressionClass ( void )
 {
 
 int i;
@@ -454,14 +454,14 @@ int i;
 
 }
 
-int expressionClass::parse ( void )
+int parse ( void )
 {
 
   return 1;
 
 }
 
-int expressionClass::loadLine (
+int loadLine (
   char *lparen,
   char *left,
   char *compareOp,
@@ -475,23 +475,25 @@ int expressionClass::loadLine (
 
 }
 
-int expressionClass::activate ( void )
+int activate ( void )
 {
 
   return 1;
 
 }
 
-int expressionClass::deactivate ( void )
+int deactivate ( void )
 {
 
   return 1;
 
 }
 
-unsigned long expressionClass::execute ( void )
+unsigned long execute ( void )
 {
 
   return 0;
 
 }
+
+};

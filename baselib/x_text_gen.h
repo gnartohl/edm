@@ -196,85 +196,85 @@ int numPvTypes, pvNameIndex;
 
 public:
 
-activeXTextClass::activeXTextClass ( void );
+activeXTextClass ( void );
 
-activeXTextClass::activeXTextClass
+activeXTextClass
  ( const activeXTextClass *source );
 
-activeXTextClass::~activeXTextClass ( void ) {
+~activeXTextClass ( void ) {
 
-/*   printf( "In activeXTextClass::~activeXTextClass\n" ); */
+/*   printf( "In ~activeXTextClass\n" ); */
 
   if ( name ) delete name;
 
 }
 
-char *activeXTextClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeXTextClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeXTextClass::save (
+int save (
   FILE *f );
 
-int activeXTextClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeXTextClass::importFromXchFile (
+int importFromXchFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeXTextClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeXTextClass::edit ( void );
+int edit ( void );
 
-int activeXTextClass::editCreate ( void );
+int editCreate ( void );
 
-int activeXTextClass::draw ( void );
+int draw ( void );
 
-int activeXTextClass::erase ( void );
+int erase ( void );
 
-int activeXTextClass::drawActive ( void );
+int drawActive ( void );
 
-int activeXTextClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeXTextClass::eraseUnconditional ( void );
+int eraseUnconditional ( void );
 
-int activeXTextClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeXTextClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeXTextClass::containsMacros ( void );
+int containsMacros ( void );
 
-int activeXTextClass::activate (
+int activate (
   int pass,
   void *ptr );
 
-int activeXTextClass::deactivate (
+int deactivate (
   int pass );
 
-void activeXTextClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-void activeXTextClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-int activeXTextClass::setProperty (
+int setProperty (
   char *prop,
   char *value );
 

@@ -175,102 +175,102 @@ int fillMode, bufFillMode;
 
 public:
 
-static void activeArcClass::alarmPvConnectStateCallback (
+static void alarmPvConnectStateCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-static void activeArcClass::alarmPvValueCallback (
+static void alarmPvValueCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-static void activeArcClass::visPvConnectStateCallback (
+static void visPvConnectStateCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-static void activeArcClass::visPvValueCallback (
+static void visPvValueCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-activeArcClass::activeArcClass ( void );
+activeArcClass ( void );
 
 // copy constructor
-activeArcClass::activeArcClass
+activeArcClass
 ( const activeArcClass *source );
 
-activeArcClass::~activeArcClass ( void );
+~activeArcClass ( void );
 
-char *activeArcClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeArcClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeArcClass::createFromFile (
+int createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin );
 
-int activeArcClass::importFromXchFile (
+int importFromXchFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeArcClass::save (
+int save (
   FILE *f );
 
-int activeArcClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeArcClass::edit ( void );
+int edit ( void );
 
-int activeArcClass::editCreate ( void );
+int editCreate ( void );
 
-int activeArcClass::draw ( void );
+int draw ( void );
 
-int activeArcClass::erase ( void );
+int erase ( void );
 
-int activeArcClass::drawActive ( void );
+int drawActive ( void );
 
-int activeArcClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeArcClass::eraseUnconditional ( void );
+int eraseUnconditional ( void );
 
-int activeArcClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeArcClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeArcClass::containsMacros ( void );
+int containsMacros ( void );
 
-int activeArcClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int activeArcClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void activeArcClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-char *activeArcClass::firstDragName ( void );
+char *firstDragName ( void );
 
-char *activeArcClass::nextDragName ( void );
+char *nextDragName ( void );
 
-char *activeArcClass::dragValue (
+char *dragValue (
   int i );
 
-void activeArcClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -286,7 +286,7 @@ void activeArcClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void activeArcClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],
@@ -299,33 +299,33 @@ void activeArcClass::changePvNames (
   int numAlarmPvs,
   char *alarmPvs[] );
 
-void activeArcClass::updateColors (
+void updateColors (
   double colorValue );
 
-int activeArcClass::rotate (
+int rotate (
   int xOrigin,
   int yOrigin,
   char direction ); // '+'=clockwise, '-'=counter clockwise
 
-int activeArcClass::flip (
+int flip (
   int xOrigin,
   int yOrigin,
   char direction ); // 'H' or 'V'
 
-int activeArcClass::addUndoRotateNode ( 
+int addUndoRotateNode ( 
   undoClass *undoObj );
 
-int activeArcClass::addUndoFlipNode (
+int addUndoFlipNode (
   undoClass *undoObj );
 
-int activeArcClass::undoRotate (
+int undoRotate (
   undoOpClass *_opPtr,
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeArcClass::undoFlip (
+int undoFlip (
   undoOpClass *_opPtr,
   int x,
   int y,

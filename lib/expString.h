@@ -64,18 +64,18 @@ public:
 
 char *rawString;
 
-expStringClass::expStringClass ( void );
+expStringClass ( void );
 
-expStringClass::~expStringClass ( void );
+~expStringClass ( void );
 
-void expStringClass::copy ( const expStringClass &source );
+void copy ( const expStringClass &source );
 
-char *expStringClass::getRaw ( void );
+char *getRaw ( void );
 
-int expStringClass::setRaw (
+int setRaw (
   char *str );
 
-int expStringClass::containsPrimaryMacros ( void ) {
+int containsPrimaryMacros ( void ) {
 
   if ( numPossibleSymbols1 )
     return 1;
@@ -84,7 +84,7 @@ int expStringClass::containsPrimaryMacros ( void ) {
 
 }
 
-int expStringClass::containsSecondaryMacros ( void ) {
+int containsSecondaryMacros ( void ) {
 
   if ( numPossibleSymbols2 )
     return 1;
@@ -93,19 +93,19 @@ int expStringClass::containsSecondaryMacros ( void ) {
 
 }
 
-char *expStringClass::getExpanded ( void );
+char *getExpanded ( void );
 
-int expStringClass::expand1st (
+int expand1st (
   int numMacros,
   char *macro[],
   char *expansion[] );
 
-int expStringClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macro[],
   char *expansion[] );
 
-int expStringClass::expandFinal ( void );
+int expandFinal ( void );
 
 void reset ( void );
 

@@ -216,123 +216,123 @@ int numPvTypes, pvNameIndex;
 
 public:
 
-activeLineClass::activeLineClass ( void );
+activeLineClass ( void );
 
-activeLineClass::~activeLineClass ( void );
+~activeLineClass ( void );
 
 // copy constructor
-activeLineClass::activeLineClass
+activeLineClass
 ( const activeLineClass *source );
 
-char *activeLineClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeLineClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeLineClass::createFromFile (
+int createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin );
 
-int activeLineClass::save (
+int save (
   FILE *f );
 
-int activeLineClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeLineClass::edit ( void );
+int edit ( void );
 
-int activeLineClass::editCreate ( void );
+int editCreate ( void );
 
-int activeLineClass::editLineSegments ( void );
+int editLineSegments ( void );
 
-virtual int activeLineClass::addPoint (
+virtual int addPoint (
   int x,
   int y );
 
-virtual int activeLineClass::removeLastPoint ( void );
+virtual int removeLastPoint ( void );
 
-virtual pointPtr activeLineClass::selectPoint (
+virtual pointPtr selectPoint (
   int x,
   int y );
 
-virtual int activeLineClass::movePoint (
+virtual int movePoint (
   pointPtr curPoint,
   int x,
   int y );
 
-int activeLineClass::select (
+int select (
   int x,
   int y );
 
-int activeLineClass::lineEditDone ( void );
+int lineEditDone ( void );
 
-int activeLineClass::lineEditComplete ( void );
+int lineEditComplete ( void );
 
-int activeLineClass::lineEditCancel ( void );
+int lineEditCancel ( void );
 
-int activeLineClass::draw ( void );
+int draw ( void );
 
-int activeLineClass::erase ( void );
+int erase ( void );
 
-int activeLineClass::drawActive ( void );
+int drawActive ( void );
 
-int activeLineClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeLineClass::eraseUnconditional ( void );
+int eraseUnconditional ( void );
 
-int activeLineClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeLineClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeLineClass::containsMacros ( void );
+int containsMacros ( void );
 
-int activeLineClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int activeLineClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void activeLineClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-int activeLineClass::checkResizeSelectBox (
+int checkResizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeLineClass::resizeSelectBox (
+int resizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeLineClass::checkResizeSelectBoxAbs (
+int checkResizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeLineClass::resizeSelectBoxAbs (
+int resizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeLineClass::isMultiPointObject ( void );
+int isMultiPointObject ( void );
 
-void activeLineClass::executeDeferred ( void );
+void executeDeferred ( void );
 
 };
 

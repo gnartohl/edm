@@ -811,91 +811,91 @@ int noEdit; // used only to save the no-edit state for checkpointing
 time_t modTime; // time of last file modification when window was opened
 int stale; // true if file has been modified since window was opened (or saved)
 
-activeWindowClass::activeWindowClass ( void );
+activeWindowClass ( void );
 
-activeWindowClass::~activeWindowClass ( void );
+~activeWindowClass ( void );
 
-char *activeWindowClass::idName( void );
+char *idName( void );
 
-void activeWindowClass::getModTime (
+void getModTime (
   char *oneFileName
 );
 
-void activeWindowClass::checkModTime (
+void checkModTime (
   char *oneFileName
 );
 
-int activeWindowClass::setProperty (
+int setProperty (
   char *id,
   char *property,
   char *value );
 
-int activeWindowClass::setProperty (
+int setProperty (
   char *id,
   char *property,
   double *value );
 
-int activeWindowClass::setProperty (
+int setProperty (
   char *id,
   char *property,
   int *value );
 
-int activeWindowClass::getProperty (
+int getProperty (
   char *id,
   char *property,
   int bufSize,
   char *value );
 
-int activeWindowClass::getProperty (
+int getProperty (
   char *id,
   char *property,
   double *value );
 
-int activeWindowClass::getProperty (
+int getProperty (
   char *id,
   char *property,
   int *value );
 
-void activeWindowClass::updateAllSelectedDisplayInfo ( void );
+void updateAllSelectedDisplayInfo ( void );
 
-void activeWindowClass::setTitle ( void );
+void setTitle ( void );
 
-void activeWindowClass::setTitleUsingTitle ( void );
+void setTitleUsingTitle ( void );
 
-void activeWindowClass::expandTitle (
+void expandTitle (
   int phase,
   int nMac,
   char **mac,
   char **exp
 );
 
-void activeWindowClass::filterPosition (
+void filterPosition (
   int *_x,
   int *_y,
   int oldX,
   int oldY );
 
-int activeWindowClass::drawAfterResize (
+int drawAfterResize (
   activeWindowClass *actWin,
   int deltax,
   int deltay,
   int deltaw,
   int deltah );
 
-int activeWindowClass::drawAfterResizeAbs (
+int drawAfterResizeAbs (
   activeWindowClass *actWin,
   int deltaX,
   double xScaleFactor,
   int deltaY,
   double yScaleFactor );
 
-activeGraphicListPtr activeWindowClass::list ( void ) {
+activeGraphicListPtr list ( void ) {
 
   return head;
 
 }
 
-int activeWindowClass::createAutoPopup (
+int createAutoPopup (
   appContextClass *ctx,
   Widget parent,
   int OneX,
@@ -906,7 +906,7 @@ int activeWindowClass::createAutoPopup (
   char **_macros,
   char **_expansions );
 
-int activeWindowClass::create (
+int create (
   appContextClass *ctx,
   Widget parent,
   int x,
@@ -917,7 +917,7 @@ int activeWindowClass::create (
   char **macros,
   char **expansions );
 
-int activeWindowClass::createNoEdit (
+int createNoEdit (
   appContextClass *ctx,
   Widget parent,
   int x,
@@ -928,7 +928,7 @@ int activeWindowClass::createNoEdit (
   char **macros,
   char **expansions );
 
-int activeWindowClass::genericCreate (
+int genericCreate (
   appContextClass *ctx,
   Widget parent,
   int OneX,
@@ -942,100 +942,100 @@ int activeWindowClass::genericCreate (
   char **_macros,
   char **_expansions );
 
-void activeWindowClass::realize ( void );
+void realize ( void );
 
-int activeWindowClass::setGraphicEnvironment (
+int setGraphicEnvironment (
   colorInfoClass *Oneci,
   fontInfoClass *Onefi );
 
-Display *activeWindowClass::display ( void );
+Display *display ( void );
 
-Widget activeWindowClass::topWidgetId ( void );
+Widget topWidgetId ( void );
 
-Widget activeWindowClass::drawWidgetId ( void );
+Widget drawWidgetId ( void );
 
-Widget activeWindowClass::executeWidgetId ( void );
+Widget executeWidgetId ( void );
 
-int activeWindowClass::changed ( void );
+int changed ( void );
 
-void activeWindowClass::setChanged ( void );
+void setChanged ( void );
 
-void activeWindowClass::setUnchanged ( void );
+void setUnchanged ( void );
 
-int activeWindowClass::genericLoadScheme (
+int genericLoadScheme (
   char *fName,
   int includeDisplayProperties );
 
-int activeWindowClass::loadScheme (
+int loadScheme (
   char *fName );
 
-int activeWindowClass::loadComponentScheme (
+int loadComponentScheme (
   char *fName );
 
-int activeWindowClass::saveScheme (
+int saveScheme (
   char *fileName );
 
-int activeWindowClass::save (
+int save (
   char *fileName );
 
-int activeWindowClass::saveNoChange (
+int saveNoChange (
   char *fileName );
 
-int activeWindowClass::genericSave (
+int genericSave (
   char *fileName,
   int resetChangeFlag,
   int appendExtensionFlag,
   int backupFlag );
 
-int activeWindowClass::loadCascade ( void );
+int loadCascade ( void );
 
-int activeWindowClass::loadCascade (
+int loadCascade (
   int x,
   int y );
 
-int activeWindowClass::load ( void );
+int load ( void );
 
-int activeWindowClass::load (
+int load (
   int x,
   int y );
 
-int activeWindowClass::import ( void );
+int import ( void );
 
-int activeWindowClass::importWin (
+int importWin (
   FILE *f );
 
-int activeWindowClass::refreshGrid ( void );
+int refreshGrid ( void );
 
-int activeWindowClass::clear ( void );
+int clear ( void );
 
-int activeWindowClass::refresh ( void );
+int refresh ( void );
 
-int activeWindowClass::refresh (
+int refresh (
   int _x,
   int _y,
   int _w,
   int _h );
 
-void activeWindowClass::displayGrid ( void );
+void displayGrid ( void );
 
-void activeWindowClass::displayGrid (
+void displayGrid (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeWindowClass::execute ( void );
+int execute ( void );
 
-int activeWindowClass::reexecute ( void );
+int reexecute ( void );
 
-int activeWindowClass::executeMux ( void );
+int executeMux ( void );
 
-int activeWindowClass::returnToEdit (
+int returnToEdit (
   int closeFlag );
 
-int activeWindowClass::preReexecute ( void );
+int preReexecute ( void );
 
-void activeWindowClass::setState (
+void setState (
   int _state )
 {
 
@@ -1043,192 +1043,192 @@ void activeWindowClass::setState (
 
 }
 
-void activeWindowClass::setCurrentPointObject (
+void setCurrentPointObject (
   activeGraphicClass *cur ) {
   currentPointObject = cur;
 }
 
-void activeWindowClass::setCurrentObject (
+void setCurrentObject (
   activeGraphicClass *cur ) {
   currentObject = cur;
 }
 
-void activeWindowClass::lineEditBegin ( void );
+void lineEditBegin ( void );
 
-void activeWindowClass::operationComplete ( void );
+void operationComplete ( void );
 
-int activeWindowClass::clearActive ( void );
+int clearActive ( void );
 
-int activeWindowClass::refreshActive ( void );
+int refreshActive ( void );
 
-int activeWindowClass::refreshActive (
+int refreshActive (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeWindowClass::requestActiveRefresh ( void );
+int requestActiveRefresh ( void );
 
-int activeWindowClass::saveWin (
+int saveWin (
   FILE *fptr );
 
-int activeWindowClass::pushVersion ( void );
+int pushVersion ( void );
 
-int activeWindowClass::popVersion ( void );
+int popVersion ( void );
 
-void activeWindowClass::readCommentsAndVersion (
+void readCommentsAndVersion (
   FILE *f );
 
-void activeWindowClass::discardCommentsAndVersion (
+void discardCommentsAndVersion (
   FILE *f,
   int *_major,
   int *_minor,
   int *_release );
 
-int activeWindowClass::loadWin (
+int loadWin (
   FILE *fptr );
 
-int activeWindowClass::loadWin (
+int loadWin (
   FILE *fptr,
   int x,
   int y );
 
-int activeWindowClass::discardWinLoadData (
+int discardWinLoadData (
   FILE *fptr,
   int *_major,
   int *_minor,
   int *_release );
 
-int activeWindowClass::createWidgets ( void );
+int createWidgets ( void );
 
-void activeWindowClass::setNoRefresh ( void ) {
+void setNoRefresh ( void ) {
   noRefresh = 1;
 }
 
-void activeWindowClass::setRefresh ( void ) {
+void setRefresh ( void ) {
   noRefresh = 0;
 }
 
-int activeWindowClass::isActive ( void ) {
+int isActive ( void ) {
   if ( mode == AWC_EXECUTE )
     return 1;
   else
     return 0;
 }
 
-char *activeWindowClass::curFileName ( void ) {
+char *curFileName ( void ) {
 
   return this->fileName;
 
 }
 
-int activeWindowClass::fileExists (
+int fileExists (
   char *fname );
 
-int activeWindowClass::edlFileExists (
+int edlFileExists (
   char *fname );
 
-int activeWindowClass::renameToBackupFile (
+int renameToBackupFile (
   char *fname );
 
-void activeWindowClass::setDisplayScheme (
+void setDisplayScheme (
   displaySchemeClass *displayScheme );
 
- void activeWindowClass::updateEditSelectionPointers ( void );
+ void updateEditSelectionPointers ( void );
 
-void activeWindowClass::updateMasterSelection ( void );
+void updateMasterSelection ( void );
 
-void activeWindowClass::showSelectionObject ( void );
+void showSelectionObject ( void );
 
-int activeWindowClass::initDefExeNode (
+int initDefExeNode (
   void *node );
 
-int activeWindowClass::addDefExeNode (
+int addDefExeNode (
   void *node );
 
-int activeWindowClass::remDefExeNode (
+int remDefExeNode (
   void *node );
 
-/*  int activeWindowClass::remDefExeNode ( */
+/*  int remDefExeNode ( */
 /*    void **node ); */
 
-void activeWindowClass::processObjects ( void );
+void processObjects ( void );
 
 /* new new new */
 
-void activeWindowClass::storeFileName (
+void storeFileName (
   char *inName );
 
-FILE *activeWindowClass::openAny (
+FILE *openAny (
   char *name,
   char *mode );
 
-FILE *activeWindowClass::openAnySymFile (
+FILE *openAnySymFile (
   char *name,
   char *mode );
 
 /* new new new */
 
-FILE *activeWindowClass::openExchangeFile (
+FILE *openExchangeFile (
   char *name,
   char *mode );
 
-void activeWindowClass::executeFromDeferredQueue( void );
+void executeFromDeferredQueue( void );
 
-int activeWindowClass::readUntilEndOfData (
+int readUntilEndOfData (
   FILE *f );
 
-int activeWindowClass::readUntilEndOfData (
+int readUntilEndOfData (
   FILE *f,
   int _major,
   int _minor,
   int _release );
 
-void activeWindowClass::initLine ( void );
+void initLine ( void );
 
-void activeWindowClass::incLine ( void );
+void incLine ( void );
 
-int activeWindowClass::line ( void );
+int line ( void );
 
-void activeWindowClass::setLine (
+void setLine (
   int _line );
 
-void activeWindowClass::substituteSpecial (
+void substituteSpecial (
   int max,
   char *bufIn,
   char *bufOut );
 
-void activeWindowClass::popupDragBegin ( void );
+void popupDragBegin ( void );
 
-void activeWindowClass::popupDragBegin (
+void popupDragBegin (
   char *label );
 
-void activeWindowClass::popupDragAddItem (
+void popupDragAddItem (
   void *actGrfPtr,
   char *item );
 
-void activeWindowClass::popupDragFinish (
+void popupDragFinish (
   int x,
   int y );
 
-void activeWindowClass::enableBuffering ( void );
+void enableBuffering ( void );
 
-void activeWindowClass::disableBuffering ( void );
+void disableBuffering ( void );
 
-void activeWindowClass::setUndoText (
+void setUndoText (
   char *string );
 
-void activeWindowClass::closeDeferred (
+void closeDeferred (
   int cycles );
 
-int activeWindowClass::checkPoint (
+int checkPoint (
   int primaryServer,
   FILE *fptr );
 
-void activeWindowClass::openExecuteSysFile (
+void openExecuteSysFile (
   char *fName );
 
-void activeWindowClass::reloadSelf ( void );
+void reloadSelf ( void );
 
 char endSignature[15+1];
 

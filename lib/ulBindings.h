@@ -39,17 +39,17 @@ char dllName[127+1];
 
 public:
 
-ulBindingClass::ulBindingClass ( void );
+ulBindingClass ( void );
 
-ulBindingClass::~ulBindingClass ( void );
+~ulBindingClass ( void );
 
-int ulBindingClass::openUserLibrary (
+int openUserLibrary (
   char *libName );
 
-VPFUNC ulBindingClass::getFunc (
+VPFUNC getFunc (
   char *funcName );
 
-RULEFUNC ulBindingClass::getRuleFunc (
+RULEFUNC getRuleFunc (
   char *funcName );
 
 };

@@ -290,103 +290,103 @@ int needColorConnectInit, needColorInit, needColorUpdate;
 
 public:
 
-activeMenuButtonClass::activeMenuButtonClass ( void );
+activeMenuButtonClass ( void );
 
-activeMenuButtonClass::~activeMenuButtonClass ( void );
+~activeMenuButtonClass ( void );
 
-activeMenuButtonClass::activeMenuButtonClass
+activeMenuButtonClass
  ( const activeMenuButtonClass *source );
 
-char *activeMenuButtonClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeMenuButtonClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeMenuButtonClass::save (
+int save (
   FILE *f );
 
-int activeMenuButtonClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeMenuButtonClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeMenuButtonClass::edit ( void );
+int edit ( void );
 
-int activeMenuButtonClass::editCreate ( void );
+int editCreate ( void );
 
-int activeMenuButtonClass::draw ( void );
+int draw ( void );
 
-int activeMenuButtonClass::erase ( void );
+int erase ( void );
 
-int activeMenuButtonClass::drawActive ( void );
+int drawActive ( void );
 
-int activeMenuButtonClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeMenuButtonClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeMenuButtonClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeMenuButtonClass::containsMacros ( void );
+int containsMacros ( void );
 
-int activeMenuButtonClass::createWidgets ( void );
+int createWidgets ( void );
 
-int activeMenuButtonClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int activeMenuButtonClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void activeMenuButtonClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-void activeMenuButtonClass::btnUp (
+void btnUp (
   int _x,
   int _y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-void activeMenuButtonClass::btnDown (
+void btnDown (
   int _x,
   int _y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-void activeMenuButtonClass::pointerIn (
+void pointerIn (
   int _x,
   int _y,
   int buttonState );
 
-int activeMenuButtonClass::getButtonActionRequest (
+int getButtonActionRequest (
   int *up,
   int *down,
   int *drag,
   int *focus );
 
-void activeMenuButtonClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-char *activeMenuButtonClass::firstDragName ( void );
+char *firstDragName ( void );
 
-char *activeMenuButtonClass::nextDragName ( void );
+char *nextDragName ( void );
 
-char *activeMenuButtonClass::dragValue (
+char *dragValue (
   int i );
 
-void activeMenuButtonClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -402,7 +402,7 @@ void activeMenuButtonClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void activeMenuButtonClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],

@@ -961,7 +961,7 @@ extern int main (
 
 int i, j, stat, numAppsRemaining, exitProg, shutdown, q_stat_r, q_stat_i,
  local, server, portNum, restart, n, x, y, icon, sessionNoEdit, screenNoEdit;
-THREAD_HANDLE delayH, serverH, caPendH;
+THREAD_HANDLE delayH, serverH; //, caPendH;
 argsPtr args;
 appListPtr cur, next, appArgsHead, newOne;
 processClass proc;

@@ -69,82 +69,82 @@ short severity;
 
 public:
 
-pvColorClass::pvColorClass( void );
+pvColorClass( void );
 
-void pvColorClass::copy( const pvColorClass &source );
+void copy( const pvColorClass &source );
 
-void pvColorClass::setStatus (
+void setStatus (
   short stat,
   short sev );
 
-void pvColorClass::setConnected ( void );
+void setConnected ( void );
 
-void pvColorClass::setDisconnected ( void );
+void setDisconnected ( void );
 
-unsigned int pvColorClass::getColor( void ) const;
+unsigned int getColor( void ) const;
 
-int pvColorClass::getDisconnectedIndex( void ) const;
+int getDisconnectedIndex( void ) const;
 
-unsigned int pvColorClass::getDisconnected( void ) const;
+unsigned int getDisconnected( void ) const;
 
-int pvColorClass::getIndex ( void ) const;
+int getIndex ( void ) const;
 
-unsigned int pvColorClass::pixelColor( void ) const;
+unsigned int pixelColor( void ) const;
 
-int pvColorClass::pixelIndex ( void ) const;
+int pixelIndex ( void ) const;
 
-void pvColorClass::_changeColor (
+void _changeColor (
   unsigned int color,
   colorInfoClass *ci );
 
-void pvColorClass::changeColor (
+void changeColor (
   unsigned int color,
   colorInfoClass *ci );
 
-void pvColorClass::changeIndex (
+void changeIndex (
   int color,
   colorInfoClass *ci );
 
-void pvColorClass::setColor (
+void setColor (
   unsigned int color,
   colorInfoClass *ci );
 
-void pvColorClass::setColorIndex (
+void setColorIndex (
   int color,
   colorInfoClass *ci );
 
-void pvColorClass::setAlarmSensitive ( void );
+void setAlarmSensitive ( void );
 
-void pvColorClass::setAlarmInsensitive ( void );
+void setAlarmInsensitive ( void );
 
-void pvColorClass::setConnectSensitive ( void );
+void setConnectSensitive ( void );
 
-void pvColorClass::setConnectInsensitive ( void );
+void setConnectInsensitive ( void );
 
-void pvColorClass::setNull ( void );
+void setNull ( void );
 
-void pvColorClass::setNotNull ( void );
+void setNotNull ( void );
 
-void pvColorClass::setNullColor (
+void setNullColor (
   unsigned int color );
 
-void pvColorClass::setNullIndex (
+void setNullIndex (
   int color,
   colorInfoClass *ci );
 
-unsigned int pvColorClass::nullColor ( void );
+unsigned int nullColor ( void );
 
-int pvColorClass::nullIndex ( void );
+int nullIndex ( void );
 
-void pvColorClass::setRuleMode ( void );
+void setRuleMode ( void );
 
-void pvColorClass::setNotRuleMode ( void );
+void setNotRuleMode ( void );
 
-void pvColorClass::setRuleColor (
+void setRuleColor (
   unsigned int color,
   colorInfoClass *ci );
 
-void pvColorClass::setRuleIndex (
+void setRuleIndex (
   int color,
   colorInfoClass *ci );
 

@@ -137,78 +137,78 @@ friend void agifc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-activeGifClass::activeGifClass ( void );
+activeGifClass ( void );
 
-activeGifClass::activeGifClass
+activeGifClass
  ( const activeGifClass *source );
 
-activeGifClass::~activeGifClass ( void );
+~activeGifClass ( void );
 
-int activeGifClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeGifClass::edit ( void );
+int edit ( void );
 
-int activeGifClass::editCreate ( void );
+int editCreate ( void );
 
-void activeGifClass::checkGifFileTime ( void );
+void checkGifFileTime ( void );
 
-int activeGifClass::readGifFile ( void );
+int readGifFile ( void );
 
-int activeGifClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeGifClass::save (
+int save (
   FILE *f );
 
-int activeGifClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeGifClass::draw ( void );
+int draw ( void );
 
-int activeGifClass::draw (
+int draw (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeGifClass::erase ( void );
+int erase ( void );
 
-int activeGifClass::drawActive ( void );
+int drawActive ( void );
 
-int activeGifClass::drawActive (
+int drawActive (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeGifClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeGifClass::activate (
+int activate (
   int pass,
   void *ptr );
 
-int activeGifClass::deactivate (
+int deactivate (
   int pass );
 
-int activeGifClass::checkResizeSelectBox (
+int checkResizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeGifClass::checkResizeSelectBoxAbs (
+int checkResizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-void activeGifClass::executeDeferred ( void );
+void executeDeferred ( void );
 
 };
 

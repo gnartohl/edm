@@ -321,106 +321,106 @@ int needColorConnectInit, needColorInit, needColorUpdate;
 
 public:
 
-activeUpdownButtonClass::activeUpdownButtonClass ( void );
+activeUpdownButtonClass ( void );
 
-activeUpdownButtonClass::activeUpdownButtonClass
+activeUpdownButtonClass
  ( const activeUpdownButtonClass *source );
 
-activeUpdownButtonClass::~activeUpdownButtonClass ( void );
+~activeUpdownButtonClass ( void );
 
-char *activeUpdownButtonClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeUpdownButtonClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeUpdownButtonClass::save (
+int save (
   FILE *f );
 
-int activeUpdownButtonClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeUpdownButtonClass::importFromXchFile (
+int importFromXchFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin );
 
-int activeUpdownButtonClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeUpdownButtonClass::edit ( void );
+int edit ( void );
 
-int activeUpdownButtonClass::editCreate ( void );
+int editCreate ( void );
 
-int activeUpdownButtonClass::draw ( void );
+int draw ( void );
 
-int activeUpdownButtonClass::erase ( void );
+int erase ( void );
 
-int activeUpdownButtonClass::drawActive ( void );
+int drawActive ( void );
 
-int activeUpdownButtonClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeUpdownButtonClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int activeUpdownButtonClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void activeUpdownButtonClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-void activeUpdownButtonClass::btnUp (
+void btnUp (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-void activeUpdownButtonClass::btnDown (
+void btnDown (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-void activeUpdownButtonClass::pointerIn (
+void pointerIn (
   int _x,
   int _y,
   int buttonState );
 
-int activeUpdownButtonClass::getButtonActionRequest (
+int getButtonActionRequest (
   int *up,
   int *down,
   int *drag,
   int *focus );
 
-int activeUpdownButtonClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeUpdownButtonClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeUpdownButtonClass::containsMacros ( void );
+int containsMacros ( void );
 
-void activeUpdownButtonClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-char *activeUpdownButtonClass::firstDragName ( void );
+char *firstDragName ( void );
 
-char *activeUpdownButtonClass::nextDragName ( void );
+char *nextDragName ( void );
 
-char *activeUpdownButtonClass::dragValue (
+char *dragValue (
   int i );
 
-void activeUpdownButtonClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -436,7 +436,7 @@ void activeUpdownButtonClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void activeUpdownButtonClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],

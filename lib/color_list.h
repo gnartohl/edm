@@ -102,52 +102,52 @@ void **items; // dynamic array
 
 public:
 
-colorListClass::colorListClass ( void );
+colorListClass ( void );
 
-colorListClass::~colorListClass ( void );
+~colorListClass ( void );
 
-int colorListClass::destroy ( void );
+int destroy ( void );
 
-int colorListClass::create (
+int create (
 			    int _numColors,
   Widget top,
   int numVisItems,
   colorInfoClass *_ci );
 
-void colorListClass::setFile (
+void setFile (
   char *name );
 
-void colorListClass::setFilterString (
+void setFilterString (
   char *filterString );
 
-void colorListClass::addItem (
+void addItem (
   char *item );
 
-void colorListClass::addComplete ( void );
+void addComplete ( void );
 
-void colorListClass::filterList ( void );
+void filterList ( void );
 
-void colorListClass::clear ( void );
+void clear ( void );
 
-int colorListClass::popup ( void );
+int popup ( void );
 
-int colorListClass::popdown ( void );
+int popdown ( void );
 
-Widget colorListClass::top ( void );
+Widget top ( void );
 
-Widget colorListClass::topRowCol ( void );
+Widget topRowCol ( void );
 
-Widget colorListClass::botForm ( void );
+Widget botForm ( void );
 
-Widget colorListClass::paneWidget ( void );
+Widget paneWidget ( void );
 
-Widget colorListClass::listWidget ( void );
+Widget listWidget ( void );
 
-Widget colorListClass::dismissPbWidget ( void );
+Widget dismissPbWidget ( void );
 
-Widget colorListClass::HorzScrollWidget ( void );
+Widget HorzScrollWidget ( void );
 
-int colorListClass::match (
+int match (
   char *pattern,
   char *string );
 

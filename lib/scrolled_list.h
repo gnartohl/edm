@@ -134,48 +134,48 @@ ItemListPtr head, tail;
 
 public:
 
-scrolledListClass::scrolledListClass ( void );
+scrolledListClass ( void );
 
-scrolledListClass::~scrolledListClass ( void );
+~scrolledListClass ( void );
 
-int scrolledListClass::destroy ( void );
+int destroy ( void );
 
-int scrolledListClass::create (
+int create (
   Widget top,
   int numVisItems );
 
-void scrolledListClass::setFile (
+void setFile (
   char *name );
 
-void scrolledListClass::setFilterString (
+void setFilterString (
   char *filterString );
 
-void scrolledListClass::addItem (
+void addItem (
   char *item );
 
-void scrolledListClass::addComplete ( void );
+void addComplete ( void );
 
-void scrolledListClass::filterList ( void );
+void filterList ( void );
 
-void scrolledListClass::clear ( void );
+void clear ( void );
 
-int scrolledListClass::popup ( void );
+int popup ( void );
 
-int scrolledListClass::popdown ( void );
+int popdown ( void );
 
-Widget scrolledListClass::top ( void );
+Widget top ( void );
 
-Widget scrolledListClass::topRowCol ( void );
+Widget topRowCol ( void );
 
-Widget scrolledListClass::botForm ( void );
+Widget botForm ( void );
 
-Widget scrolledListClass::paneWidget ( void );
+Widget paneWidget ( void );
 
-Widget scrolledListClass::dismissPbWidget ( void );
+Widget dismissPbWidget ( void );
 
-Widget scrolledListClass::HorzScrollWidget ( void );
+Widget HorzScrollWidget ( void );
 
-int scrolledListClass::match (
+int match (
   char *pattern,
   char *string );
 

@@ -234,78 +234,78 @@ int unconnectedTimer;
 
 public:
 
-menuMuxClass::menuMuxClass ( void );
+menuMuxClass ( void );
 
-menuMuxClass::menuMuxClass
+menuMuxClass
  ( const menuMuxClass *source );
 
-menuMuxClass::~menuMuxClass ( void );
+~menuMuxClass ( void );
 
-char *menuMuxClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int menuMuxClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int menuMuxClass::save (
+int save (
   FILE *f );
 
-int menuMuxClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int menuMuxClass::genericEdit ( void );
+int genericEdit ( void );
 
-int menuMuxClass::edit ( void );
+int edit ( void );
 
-int menuMuxClass::editCreate ( void );
+int editCreate ( void );
 
-int menuMuxClass::draw ( void );
+int draw ( void );
 
-int menuMuxClass::erase ( void );
+int erase ( void );
 
-int menuMuxClass::drawActive ( void );
+int drawActive ( void );
 
-int menuMuxClass::eraseActive ( void );
+int eraseActive ( void );
 
-int menuMuxClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int menuMuxClass::getMacros (
+int getMacros (
   int *numMacros,
   char ***macro,
   char ***expansion );
 
-int menuMuxClass::createWidgets ( void );
+int createWidgets ( void );
 
-int menuMuxClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int menuMuxClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void menuMuxClass::updateDimensions ( void );
+void updateDimensions ( void );
 
 int isMux ( void ) { return 1; }
 
-void menuMuxClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-char *menuMuxClass::firstDragName ( void );
+char *firstDragName ( void );
 
-char *menuMuxClass::nextDragName ( void );
+char *nextDragName ( void );
 
-char *menuMuxClass::dragValue (
+char *dragValue (
   int i );
 
-void menuMuxClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -321,7 +321,7 @@ void menuMuxClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void menuMuxClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],

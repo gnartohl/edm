@@ -211,113 +211,113 @@ int unconnectedTimer;
 
 public:
 
-activeMeterClass::activeMeterClass ( void );
+activeMeterClass ( void );
 
-activeMeterClass::activeMeterClass
+activeMeterClass
  ( const activeMeterClass *source );
 
-activeMeterClass::~activeMeterClass ( void );
+~activeMeterClass ( void );
 
-char *activeMeterClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeMeterClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeMeterClass::save (
+int save (
   FILE *f );
 
-int activeMeterClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeMeterClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeMeterClass::edit ( void );
+int edit ( void );
 
-int activeMeterClass::editCreate ( void );
+int editCreate ( void );
 
-int activeMeterClass::draw ( void );
+int draw ( void );
 
-int activeMeterClass::erase ( void );
+int erase ( void );
 
-int activeMeterClass::drawActive ( void );
+int drawActive ( void );
 
-int activeMeterClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeMeterClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int activeMeterClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void activeMeterClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-void activeMeterClass::bufInvalidate ( void );
+void bufInvalidate ( void );
 
-int activeMeterClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeMeterClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeMeterClass::containsMacros ( void );
+int containsMacros ( void );
 
-void activeMeterClass::btnUp (
+void btnUp (
   int x,
   int y,
   int meterState,
   int meterNumber );
 
-void activeMeterClass::btnDown (
+void btnDown (
   int x,
   int y,
   int meterState,
   int meterNumber );
 
-void activeMeterClass::btnDrag (
+void btnDrag (
   int x,
   int y,
   int meterState,
   int meterNumber );
 
-int activeMeterClass::getMeterActionRequest (
+int getMeterActionRequest (
   int *up,
   int *down,
   int *drag );
 
-int activeMeterClass::checkResizeSelectBox (
+int checkResizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeMeterClass::checkResizeSelectBoxAbs (
+int checkResizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-void activeMeterClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-char *activeMeterClass::firstDragName ( void );
+char *firstDragName ( void );
 
-char *activeMeterClass::nextDragName ( void );
+char *nextDragName ( void );
 
-char *activeMeterClass::dragValue (
+char *dragValue (
   int i );
 
-void activeMeterClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -333,7 +333,7 @@ void activeMeterClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void activeMeterClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],

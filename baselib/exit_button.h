@@ -105,81 +105,81 @@ int fontAscent, fontDescent, fontHeight;
 
 public:
 
-activeExitButtonClass::activeExitButtonClass ( void );
+activeExitButtonClass ( void );
 
-activeExitButtonClass::activeExitButtonClass
+activeExitButtonClass
  ( const activeExitButtonClass *source );
 
-activeExitButtonClass::~activeExitButtonClass ( void ) {
+~activeExitButtonClass ( void ) {
 
   if ( name ) delete name;
 
 }
 
-char *activeExitButtonClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeExitButtonClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeExitButtonClass::save (
+int save (
   FILE *f );
 
-int activeExitButtonClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeExitButtonClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeExitButtonClass::edit ( void );
+int edit ( void );
 
-int activeExitButtonClass::editCreate ( void );
+int editCreate ( void );
 
-int activeExitButtonClass::draw ( void );
+int draw ( void );
 
-int activeExitButtonClass::erase ( void );
+int erase ( void );
 
-int activeExitButtonClass::drawActive ( void );
+int drawActive ( void );
 
-int activeExitButtonClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeExitButtonClass::activate (
+int activate (
   int pass,
   void *ptr );
 
-int activeExitButtonClass::deactivate ( void );
+int deactivate ( void );
 
-void activeExitButtonClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-void activeExitButtonClass::btnUp (
+void btnUp (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-void activeExitButtonClass::btnDown (
+void btnDown (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-int activeExitButtonClass::getButtonActionRequest (
+int getButtonActionRequest (
   int *up,
   int *down,
   int *drag,
   int *focus );
 
-void activeExitButtonClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,

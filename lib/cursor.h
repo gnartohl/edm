@@ -50,20 +50,20 @@ Cursor curCursor, crossHair, tinyCrossHair, wait, no;
 
 public:
 
-cursorClass::cursorClass ( void );
+cursorClass ( void );
 
-cursorClass::~cursorClass ( void );
+~cursorClass ( void );
 
-void cursorClass::create (
+void create (
   Display *dsp,
   Window rootWin,
   Colormap cmap );
 
-int cursorClass::set (
+int set (
   Window win,
   int cursorId );
 
-int cursorClass::setColor (
+int setColor (
   unsigned int fg,
   unsigned int bg );
 

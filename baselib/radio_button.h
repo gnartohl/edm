@@ -214,78 +214,78 @@ int unconnectedTimer;
 
 public:
 
-activeRadioButtonClass::activeRadioButtonClass ( void );
+activeRadioButtonClass ( void );
 
-activeRadioButtonClass::~activeRadioButtonClass ( void );
+~activeRadioButtonClass ( void );
 
-activeRadioButtonClass::activeRadioButtonClass
+activeRadioButtonClass
  ( const activeRadioButtonClass *source );
 
-char *activeRadioButtonClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeRadioButtonClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeRadioButtonClass::save (
+int save (
   FILE *f );
 
-int activeRadioButtonClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeRadioButtonClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeRadioButtonClass::edit ( void );
+int edit ( void );
 
-int activeRadioButtonClass::editCreate ( void );
+int editCreate ( void );
 
-int activeRadioButtonClass::draw ( void );
+int draw ( void );
 
-int activeRadioButtonClass::erase ( void );
+int erase ( void );
 
-int activeRadioButtonClass::drawActive ( void );
+int drawActive ( void );
 
-int activeRadioButtonClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeRadioButtonClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeRadioButtonClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeRadioButtonClass::containsMacros ( void );
+int containsMacros ( void );
 
-int activeRadioButtonClass::createWidgets ( void );
+int createWidgets ( void );
 
-int activeRadioButtonClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int activeRadioButtonClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void activeRadioButtonClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-void activeRadioButtonClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-char *activeRadioButtonClass::firstDragName ( void );
+char *firstDragName ( void );
 
-char *activeRadioButtonClass::nextDragName ( void );
+char *nextDragName ( void );
 
-char *activeRadioButtonClass::dragValue (
+char *dragValue (
   int i );
 
-void activeRadioButtonClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -301,7 +301,7 @@ void activeRadioButtonClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void activeRadioButtonClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],

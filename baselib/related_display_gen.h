@@ -166,88 +166,88 @@ int numPvTypes, pvNameIndex;
 
 public:
 
-relatedDisplayClass::relatedDisplayClass ( void );
+relatedDisplayClass ( void );
 
-relatedDisplayClass::relatedDisplayClass
+relatedDisplayClass
  ( const relatedDisplayClass *source );
 
-relatedDisplayClass::~relatedDisplayClass ( void );
+~relatedDisplayClass ( void );
 
-char *relatedDisplayClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int relatedDisplayClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int relatedDisplayClass::save (
+int save (
   FILE *f );
 
-int relatedDisplayClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int relatedDisplayClass::importFromXchFile (
+int importFromXchFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin );
 
-int relatedDisplayClass::genericEdit ( void );
+int genericEdit ( void );
 
-int relatedDisplayClass::edit ( void );
+int edit ( void );
 
-int relatedDisplayClass::editCreate ( void );
+int editCreate ( void );
 
-int relatedDisplayClass::draw ( void );
+int draw ( void );
 
-int relatedDisplayClass::erase ( void );
+int erase ( void );
 
-int relatedDisplayClass::drawActive ( void );
+int drawActive ( void );
 
-int relatedDisplayClass::eraseActive ( void );
+int eraseActive ( void );
 
-int relatedDisplayClass::activate (
+int activate (
   int pass,
   void *ptr );
 
-int relatedDisplayClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void relatedDisplayClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-int relatedDisplayClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int relatedDisplayClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int relatedDisplayClass::containsMacros ( void );
+int containsMacros ( void );
 
-void relatedDisplayClass::btnUp (
+void btnUp (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-void relatedDisplayClass::btnDown (
+void btnDown (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-int relatedDisplayClass::getButtonActionRequest (
+int getButtonActionRequest (
   int *up,
   int *down,
   int *drag,

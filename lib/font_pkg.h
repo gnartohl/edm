@@ -92,54 +92,54 @@ char defFontTag[127+1], defSiteFontTag[127+1];
 
 public:
 
-fontInfoClass::fontInfoClass ( void );   // constructor
+fontInfoClass ( void );   // constructor
 
-fontInfoClass::~fontInfoClass ( void );   // destructor
+~fontInfoClass ( void );   // destructor
 
-char *fontInfoClass::defaultSiteFont ( void ) { return defSiteFontTag; }
+char *defaultSiteFont ( void ) { return defSiteFontTag; }
 
-char *fontInfoClass::defaultFont ( void ) { return defFontTag; }
+char *defaultFont ( void ) { return defFontTag; }
 
-int fontInfoClass::addFont (
+int addFont (
   char *name );
 
-int fontInfoClass::initFromFile (
+int initFromFile (
   XtAppContext app,
   Display *d,
   char *fileName );
 
-int fontInfoClass::resolveFont (
+int resolveFont (
   char *fontSpec,
   fontNameListPtr ptr );
 
-int fontInfoClass::resolveOneFont (
+int resolveOneFont (
   char *fontSpec,
   fontNameListPtr ptr );
 
-int fontInfoClass::show ( void );
+int show ( void );
 
-int fontInfoClass::getFontName (
+int getFontName (
   char *fontTag,
   double rotation,
   char *name,
   int len );
 
-XFontStruct *fontInfoClass::getXFontStruct (
+XFontStruct *getXFontStruct (
   char *name );
 
-XFontStruct *fontInfoClass::getXNativeFontStruct (
+XFontStruct *getXNativeFontStruct (
   char *name );
 
-int fontInfoClass::loadFontTag (
+int loadFontTag (
   char *name );
 
-XmFontList fontInfoClass::getXmFontList ( void );
+XmFontList getXmFontList ( void );
 
-int fontInfoClass::getTextFontList (
+int getTextFontList (
   char *name,
   XmFontList *fontList );
 
-int fontInfoClass::appendSizeMenu(
+int appendSizeMenu(
   char *family,
   int size,
   float fsize );

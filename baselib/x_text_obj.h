@@ -81,7 +81,7 @@ class activeXTextClass : public activeGraphicClass {
 
 private:
 
-static const int activeXTextClass::MAX_TEXT_LEN = 4000;
+static const int MAX_TEXT_LEN = 4000;
 
 friend void doBlink (
   void *ptr
@@ -175,110 +175,110 @@ pvConnectionClass connection;
 
 public:
 
-static void activeXTextClass::alarmPvConnectStateCallback (
+static void alarmPvConnectStateCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-static void activeXTextClass::alarmPvValueCallback (
+static void alarmPvValueCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-static void activeXTextClass::visPvConnectStateCallback (
+static void visPvConnectStateCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-static void activeXTextClass::visPvValueCallback (
+static void visPvValueCallback (
   ProcessVariable *pv,
   void *userarg
 );
 
-activeXTextClass::activeXTextClass ( void );
+activeXTextClass ( void );
 
-activeXTextClass::activeXTextClass
+activeXTextClass
  ( const activeXTextClass *source );
 
-activeXTextClass::~activeXTextClass ( void );
+~activeXTextClass ( void );
 
-char *activeXTextClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeXTextClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeXTextClass::save (
+int save (
   FILE *f );
 
-int activeXTextClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeXTextClass::importFromXchFile (
+int importFromXchFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeXTextClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeXTextClass::edit ( void );
+int edit ( void );
 
-int activeXTextClass::editCreate ( void );
+int editCreate ( void );
 
-int activeXTextClass::draw ( void );
+int draw ( void );
 
-int activeXTextClass::erase ( void );
+int erase ( void );
 
-int activeXTextClass::drawActive ( void );
+int drawActive ( void );
 
-int activeXTextClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeXTextClass::eraseUnconditional ( void );
+int eraseUnconditional ( void );
 
-int activeXTextClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeXTextClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeXTextClass::containsMacros ( void );
+int containsMacros ( void );
 
-int activeXTextClass::activate (
+int activate (
   int pass,
   void *ptr );
 
-int activeXTextClass::deactivate (
+int deactivate (
   int pass );
 
-void activeXTextClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-void activeXTextClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-int activeXTextClass::setProperty (
+int setProperty (
   char *prop,
   char *value );
 
-char *activeXTextClass::firstDragName ( void );
+char *firstDragName ( void );
 
-char *activeXTextClass::nextDragName ( void );
+char *nextDragName ( void );
 
-char *activeXTextClass::dragValue (
+char *dragValue (
   int i );
 
-void activeXTextClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -294,7 +294,7 @@ void activeXTextClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void activeXTextClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],
@@ -307,7 +307,7 @@ void activeXTextClass::changePvNames (
   int numAlarmPvs,
   char *alarmPvs[] );
 
-void activeXTextClass::updateColors (
+void updateColors (
   double colorValue );
 
 };

@@ -231,155 +231,155 @@ friend void dsc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-activeDynSymbolClass::activeDynSymbolClass ( void );
+activeDynSymbolClass ( void );
 
-activeDynSymbolClass::activeDynSymbolClass
+activeDynSymbolClass
  ( const activeDynSymbolClass *source );
 
-activeDynSymbolClass::~activeDynSymbolClass ( void );
+~activeDynSymbolClass ( void );
 
-int activeDynSymbolClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeDynSymbolClass::edit ( void );
+int edit ( void );
 
-int activeDynSymbolClass::editCreate ( void );
+int editCreate ( void );
 
-int activeDynSymbolClass::readDynSymbolFile ( void );
+int readDynSymbolFile ( void );
 
-int activeDynSymbolClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeDynSymbolClass::save (
+int save (
   FILE *f );
 
-int activeDynSymbolClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeDynSymbolClass::draw ( void );
+int draw ( void );
 
-int activeDynSymbolClass::erase ( void );
+int erase ( void );
 
-int activeDynSymbolClass::drawActive ( void );
+int drawActive ( void );
 
-int activeDynSymbolClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeDynSymbolClass::activate (
+int activate (
   int pass,
   void *ptr );
 
-int activeDynSymbolClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-int activeDynSymbolClass::moveSelectBox (
+int moveSelectBox (
   int _x,
   int _y );
 
-int activeDynSymbolClass::moveSelectBoxAbs (
+int moveSelectBoxAbs (
   int _x,
   int _y );
 
-int activeDynSymbolClass::moveSelectBoxMidpointAbs (
+int moveSelectBoxMidpointAbs (
   int _x,
   int _y );
 
-int activeDynSymbolClass::checkResizeSelectBox (
+int checkResizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeDynSymbolClass::resizeSelectBox (
+int resizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeDynSymbolClass::checkResizeSelectBoxAbs (
+int checkResizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeDynSymbolClass::resizeSelectBoxAbs (
+int resizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeDynSymbolClass::move (
+int move (
   int x,
   int y );
 
-int activeDynSymbolClass::moveAbs (
+int moveAbs (
   int x,
   int y );
 
-int activeDynSymbolClass::moveMidpointAbs (
+int moveMidpointAbs (
   int x,
   int y );
 
-int activeDynSymbolClass::resize (
+int resize (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeDynSymbolClass::resizeAbs (
+int resizeAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeDynSymbolClass::getButtonActionRequest (
+int getButtonActionRequest (
   int *up,
   int *down,
   int *drag );
 
-void activeDynSymbolClass::btnDown (
+void btnDown (
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
-void activeDynSymbolClass::btnUp (
+void btnUp (
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
-void activeDynSymbolClass::updateGroup ( void );
+void updateGroup ( void );
 
-int activeDynSymbolClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeDynSymbolClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeDynSymbolClass::containsMacros ( void );
+int containsMacros ( void );
 
-void activeDynSymbolClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-int activeDynSymbolClass::setProperty (
+int setProperty (
   char *prop,
   char *value );
 
-char *activeDynSymbolClass::firstDragName ( void );
+char *firstDragName ( void );
 
-char *activeDynSymbolClass::nextDragName ( void );
+char *nextDragName ( void );
 
-char *activeDynSymbolClass::dragValue (
+char *dragValue (
   int i );
 
-void activeDynSymbolClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],
@@ -392,84 +392,84 @@ void activeDynSymbolClass::changePvNames (
   int numAlarmPvs,
   char *alarmPvs[] );
 
-void activeDynSymbolClass::updateColors (
+void updateColors (
   double colorValue );
 
-int activeDynSymbolClass::rotate (
+int rotate (
   int xOrigin,
   int yOrigin,
   char direction ); // '+'=clockwise, '-'=counter clockwise
 
-int activeDynSymbolClass::flip (
+int flip (
   int xOrigin,
   int yOrigin,
   char direction );
 
-void activeDynSymbolClass::flushUndo ( void );
+void flushUndo ( void );
 
-int activeDynSymbolClass::addUndoCreateNode ( undoClass *_undoObj );
+int addUndoCreateNode ( undoClass *_undoObj );
 
-int activeDynSymbolClass::addUndoMoveNode ( undoClass *_undoObj );
+int addUndoMoveNode ( undoClass *_undoObj );
 
-int activeDynSymbolClass::addUndoResizeNode ( undoClass *_undoObj );
+int addUndoResizeNode ( undoClass *_undoObj );
 
-int activeDynSymbolClass::addUndoCopyNode ( undoClass *_undoObj );
+int addUndoCopyNode ( undoClass *_undoObj );
 
-int activeDynSymbolClass::addUndoCutNode ( undoClass *_undoObj );
+int addUndoCutNode ( undoClass *_undoObj );
 
-int activeDynSymbolClass::addUndoPasteNode ( undoClass *_undoObj );
+int addUndoPasteNode ( undoClass *_undoObj );
 
-int activeDynSymbolClass::addUndoReorderNode ( undoClass *_undoObj );
+int addUndoReorderNode ( undoClass *_undoObj );
 
-int activeDynSymbolClass::addUndoEditNode ( undoClass *_undoObj );
+int addUndoEditNode ( undoClass *_undoObj );
 
-int activeDynSymbolClass::addUndoGroupNode ( undoClass *_undoObj );
+int addUndoGroupNode ( undoClass *_undoObj );
 
-int activeDynSymbolClass::addUndoRotateNode ( undoClass *_undoObj );
+int addUndoRotateNode ( undoClass *_undoObj );
 
-int activeDynSymbolClass::addUndoFlipNode ( undoClass *_undoObj );
+int addUndoFlipNode ( undoClass *_undoObj );
 
-int activeDynSymbolClass::undoCreate (
+int undoCreate (
   undoOpClass *opPtr );
 
-int activeDynSymbolClass::undoMove (
+int undoMove (
   undoOpClass *opPtr,
   int x,
   int y );
 
-int activeDynSymbolClass::undoResize (
+int undoResize (
   undoOpClass *opPtr,
   int x,
   int y,
   int w,
   int h );
 
-int activeDynSymbolClass::undoCopy (
+int undoCopy (
   undoOpClass *opPtr );
 
-int activeDynSymbolClass::undoCut (
+int undoCut (
   undoOpClass *opPtr );
 
-int activeDynSymbolClass::undoPaste (
+int undoPaste (
   undoOpClass *opPtr );
 
-int activeDynSymbolClass::undoReorder (
+int undoReorder (
   undoOpClass *opPtr );
 
-int activeDynSymbolClass::undoEdit (
+int undoEdit (
   undoOpClass *opPtr );
 
-int activeDynSymbolClass::undoGroup (
+int undoGroup (
   undoOpClass *opPtr );
 
-int activeDynSymbolClass::undoRotate (
+int undoRotate (
   undoOpClass *opPtr,
   int x,
   int y,
   int w,
   int h );
 
-int activeDynSymbolClass::undoFlip (
+int undoFlip (
   undoOpClass *opPtr,
   int x,
   int y,

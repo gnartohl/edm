@@ -139,46 +139,46 @@ int numDays[12];
 
 public:
 
-calpadClass::calpadClass ();
+calpadClass ();
 
-calpadClass::~calpadClass ( void );
+~calpadClass ( void );
 
-void calpadClass::popup ( void );
+void popup ( void );
 
-void calpadClass::popdown ( void );
+void popdown ( void );
 
-int calpadClass::isPoppedUp ( void );
+int isPoppedUp ( void );
 
-int calpadClass::setMonthDayYear ( void );
+int setMonthDayYear ( void );
 
-int calpadClass::setDay (
+int setDay (
   int day );
 
-int calpadClass::setMonth (
+int setMonth (
   char *mon );
 
-int calpadClass::setMonth (
+int setMonth (
   int mon );
 
-int calpadClass::setYear (
+int setYear (
   int yr );
 
-int calpadClass::setHour (
+int setHour (
   int h );
 
-int calpadClass::setMin (
+int setMin (
   int m );
 
-int calpadClass::setSec (
+int setSec (
   int s );
 
-int calpadClass::setNanosec (
+int setNanosec (
   int ns );
 
-int calpadClass::setDate (
+int setDate (
   char *str );
 
-int calpadClass::create (
+int create (
   Widget top,
   int _x,
   int _y,
@@ -188,7 +188,7 @@ int calpadClass::create (
   XtCallbackProc _okFunc,
   XtCallbackProc _cancelFunc );
 
-char *calpadClass::getDate (
+char *getDate (
   char *dateString,
   int maxLen );
 

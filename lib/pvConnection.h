@@ -16,44 +16,44 @@ chid *pvId; // dynamic array
 unsigned int *mask; // dynamic array
 unsigned int connectionMask;
 
-int pvConnectionClass::findPv (
+int findPv (
   chid Pv );
 
-int pvConnectionClass::addPvToList (
+int addPvToList (
   chid Pv );
 
-int pvConnectionClass::findPv (
+int findPv (
   void *Pv );
 
-int pvConnectionClass::addPvToList (
+int addPvToList (
   void *Pv );
 
 public:
 
-pvConnectionClass::pvConnectionClass ( void );
+pvConnectionClass ( void );
 
-pvConnectionClass::~pvConnectionClass ( void );
+~pvConnectionClass ( void );
 
-int pvConnectionClass::setMaxPvs (
+int setMaxPvs (
   int _maxPvs );
 
-int pvConnectionClass::setPvConnected (
+int setPvConnected (
   chid Pv );
 
-int pvConnectionClass::setPvDisconnected (
+int setPvDisconnected (
   chid Pv );
 
-int pvConnectionClass::setPvConnected (
+int setPvConnected (
   void *Pv );
 
-int pvConnectionClass::setPvDisconnected (
+int setPvDisconnected (
   void *Pv );
 
-void pvConnectionClass::init ( void );
+void init ( void );
 
-int pvConnectionClass::addPv ( void );
+int addPv ( void );
 
-int pvConnectionClass::pvsConnected ( void );
+int pvsConnected ( void );
 
 };
 

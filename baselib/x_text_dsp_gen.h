@@ -347,91 +347,91 @@ int numPvTypes, pvNameIndex;
 
 public:
 
-activeXTextDspClass::activeXTextDspClass ( void );
+activeXTextDspClass ( void );
 
-activeXTextDspClass::activeXTextDspClass
+activeXTextDspClass
  ( const activeXTextDspClass *source );
 
-activeXTextDspClass::~activeXTextDspClass ( void );
+~activeXTextDspClass ( void );
 
-char *activeXTextDspClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeXTextDspClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeXTextDspClass::createFromFile (
+int createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin );
 
-int activeXTextDspClass::importFromXchFile (
+int importFromXchFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin );
 
-int activeXTextDspClass::save (
+int save (
   FILE *f );
 
-int activeXTextDspClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeXTextDspClass::edit ( void );
+int edit ( void );
 
-int activeXTextDspClass::editCreate ( void );
+int editCreate ( void );
 
-int activeXTextDspClass::draw ( void );
+int draw ( void );
 
-int activeXTextDspClass::erase ( void );
+int erase ( void );
 
-int activeXTextDspClass::drawActive ( void );
+int drawActive ( void );
 
-int activeXTextDspClass::eraseActive ( void );
+int eraseActive ( void );
 
-void activeXTextDspClass::show ( void );
+void show ( void );
 
-void activeXTextDspClass::bufInvalidate ( void );
+void bufInvalidate ( void );
 
-int activeXTextDspClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeXTextDspClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeXTextDspClass::containsMacros ( void );
+int containsMacros ( void );
 
-int activeXTextDspClass::activate (
+int activate (
   int pass,
   void *ptr );
 
-int activeXTextDspClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void activeXTextDspClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-void activeXTextDspClass::btnDown (
+void btnDown (
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
-int activeXTextDspClass::getButtonActionRequest (
+int getButtonActionRequest (
   int *up,
   int *down,
   int *drag );
 
-void activeXTextDspClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-int activeXTextDspClass::getProperty (
+int getProperty (
   char *prop,
   int bufSize,
   char *value );

@@ -1453,7 +1453,6 @@ void TextBoxToString (
 
 class textEntry *teo;
 char *buf;
-int i;
 
   teo = (class textEntry *) client;
 

@@ -173,87 +173,87 @@ int needConnectInit, needUpdate, needDraw;
 
 public:
 
-activeMessageBoxClass::activeMessageBoxClass ( void );
+activeMessageBoxClass ( void );
 
-activeMessageBoxClass::activeMessageBoxClass
+activeMessageBoxClass
  ( const activeMessageBoxClass *source );
 
-activeMessageBoxClass::~activeMessageBoxClass ( void ) {
+~activeMessageBoxClass ( void ) {
 
   if ( name ) delete name;
 
 }
 
-char *activeMessageBoxClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeMessageBoxClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeMessageBoxClass::save (
+int save (
   FILE *f );
 
-int activeMessageBoxClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeMessageBoxClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeMessageBoxClass::edit ( void );
+int edit ( void );
 
-int activeMessageBoxClass::editCreate ( void );
+int editCreate ( void );
 
-int activeMessageBoxClass::draw ( void );
+int draw ( void );
 
-int activeMessageBoxClass::erase ( void );
+int erase ( void );
 
-int activeMessageBoxClass::drawActive ( void );
+int drawActive ( void );
 
-int activeMessageBoxClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeMessageBoxClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int activeMessageBoxClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-int activeMessageBoxClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeMessageBoxClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeMessageBoxClass::containsMacros ( void );
+int containsMacros ( void );
 
-int activeMessageBoxClass::createWidgets ( void );
+int createWidgets ( void );
 
-int activeMessageBoxClass::checkResizeSelectBox (
+int checkResizeSelectBox (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeMessageBoxClass::checkResizeSelectBoxAbs (
+int checkResizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
   int _h );
 
-int activeMessageBoxClass::rotateLogFile ( void );
+int rotateLogFile ( void );
 
-void activeMessageBoxClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-void activeMessageBoxClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -269,7 +269,7 @@ void activeMessageBoxClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void activeMessageBoxClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],

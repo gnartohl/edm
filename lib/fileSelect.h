@@ -53,23 +53,23 @@ void (*cancelFunc)(Widget,XtPointer,XtPointer);
 
 public:
 
-fselectClass::fselectClass ();
+fselectClass ();
 
-fselectClass::~fselectClass ( void );
+~fselectClass ( void );
 
-void fselectClass::popup ( void );
+void popup ( void );
 
-void fselectClass::popdown ( void );
+void popdown ( void );
 
-int fselectClass::isPoppedUp ( void );
+int isPoppedUp ( void );
 
-int fselectClass::setDefDir (
+int setDefDir (
   char *str );
 
-int fselectClass::setPattern (
+int setPattern (
   char *str );
 
-int fselectClass::create (
+int create (
   Widget top,
   int _x,
   int _y,
@@ -79,7 +79,7 @@ int fselectClass::create (
   XtCallbackProc _okFunc,
   XtCallbackProc _cancelFunc );
 
-char *fselectClass::getSelection (
+char *getSelection (
   char *str,
   int maxLen );
 

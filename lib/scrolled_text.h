@@ -80,15 +80,15 @@ public:
 
 int x, y;
 
-scrolledTextClass::scrolledTextClass ( void );
+scrolledTextClass ( void );
 
-scrolledTextClass::~scrolledTextClass ( void );
+~scrolledTextClass ( void );
 
-int scrolledTextClass::destroy ( void );
+int destroy ( void );
 
-int scrolledTextClass::destroyEmbedded ( void );
+int destroyEmbedded ( void );
 
-int scrolledTextClass::create (
+int create (
   Widget top,
   int _x,
   int _y,
@@ -96,7 +96,7 @@ int scrolledTextClass::create (
   fontInfoClass *fi,
   const char *textFontTag );
 
-int scrolledTextClass::createEmbedded (
+int createEmbedded (
   Widget top,
   int _x,
   int _y,
@@ -106,7 +106,7 @@ int scrolledTextClass::createEmbedded (
   fontInfoClass *fi,
   const char *textFontTag );
 
-int scrolledTextClass::createEmbeddedWH (
+int createEmbeddedWH (
   Widget top,
   int _x,
   int _y,
@@ -117,7 +117,7 @@ int scrolledTextClass::createEmbeddedWH (
   const char *textFontTag,
   int provideClearButton );
 
-int scrolledTextClass::createEmbeddedWH (
+int createEmbeddedWH (
   Widget top,
   int _x,
   int _y,
@@ -127,35 +127,35 @@ int scrolledTextClass::createEmbeddedWH (
   fontInfoClass *fi,
   const char *textFontTag );
 
-int scrolledTextClass::addTextNoNL (
+int addTextNoNL (
   char *text );
 
-int scrolledTextClass::addText (
+int addText (
   char *text );
 
-int scrolledTextClass::popup ( void );
+int popup ( void );
 
-int scrolledTextClass::popdown ( void );
+int popdown ( void );
 
-void scrolledTextClass::raise ( void );
+void raise ( void );
 
-Widget scrolledTextClass::top ( void );
+Widget top ( void );
 
-Widget scrolledTextClass::textWidget ( void );
+Widget textWidget ( void );
 
-Widget scrolledTextClass::paneWidget ( void );
+Widget paneWidget ( void );
 
-Widget scrolledTextClass::formWidget ( void );
+Widget formWidget ( void );
 
-Widget scrolledTextClass::clearPbWidget ( void );
+Widget clearPbWidget ( void );
 
-Widget scrolledTextClass::HorzScrollWidget ( void );
+Widget HorzScrollWidget ( void );
 
-Widget scrolledTextClass::VertScrollWidget ( void );
+Widget VertScrollWidget ( void );
 
-int scrolledTextClass::autoOpen ( void );
+int autoOpen ( void );
 
-int scrolledTextClass::autoRaise ( void );
+int autoRaise ( void );
 
 };
 

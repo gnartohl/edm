@@ -42,15 +42,15 @@ public:
 evid evId;
 eventArgListPtr head, tail;
 
-epicsPvEventClass::epicsPvEventClass ( void );
+epicsPvEventClass ( void );
 
-epicsPvEventClass::epicsPvEventClass ( epicsPvEventClass &source );
+epicsPvEventClass ( epicsPvEventClass &source );
 
-epicsPvEventClass::~epicsPvEventClass ( void );
+~epicsPvEventClass ( void );
 
-void epicsPvEventClass::clone ( const epicsPvEventClass *source );
+void clone ( const epicsPvEventClass *source );
 
-int epicsPvEventClass::eventAdded ( void );
+int eventAdded ( void );
 
 };
 
@@ -70,158 +70,158 @@ __epicsPvEvArgType eventArg;
 eventListPtr eventHead, eventTail;
 char dummy[4];
 
-epicsPvClass::epicsPvClass ( void );
+epicsPvClass ( void );
 
-epicsPvClass::epicsPvClass ( epicsPvClass &source );
+epicsPvClass ( epicsPvClass &source );
 
-epicsPvClass::~epicsPvClass ( void );
+~epicsPvClass ( void );
 
-void epicsPvClass::clone ( const epicsPvClass *source );
+void clone ( const epicsPvClass *source );
 
 #ifndef __epicsPv_c
 
-int epicsPvClass::pvrShort ( void );
-int epicsPvClass::pvrLong ( void );
-int epicsPvClass::pvrFloat ( void );
-int epicsPvClass::pvrDouble ( void );
-int epicsPvClass::pvrEnum ( void );
-int epicsPvClass::pvrString ( void );
+int pvrShort ( void );
+int pvrLong ( void );
+int pvrFloat ( void );
+int pvrDouble ( void );
+int pvrEnum ( void );
+int pvrString ( void );
 
-int epicsPvClass::pvrStsShort ( void );
-int epicsPvClass::pvrStsLong ( void );
-int epicsPvClass::pvrStsFloat ( void );
-int epicsPvClass::pvrStsDouble ( void );
-int epicsPvClass::pvrStsEnum ( void );
-int epicsPvClass::pvrStsString ( void );
+int pvrStsShort ( void );
+int pvrStsLong ( void );
+int pvrStsFloat ( void );
+int pvrStsDouble ( void );
+int pvrStsEnum ( void );
+int pvrStsString ( void );
 
-int epicsPvClass::pvrGrShort ( void );
-int epicsPvClass::pvrGrLong ( void );
-int epicsPvClass::pvrGrFloat ( void );
-int epicsPvClass::pvrGrDouble ( void );
-int epicsPvClass::pvrGrEnum ( void );
-int epicsPvClass::pvrGrString ( void );
+int pvrGrShort ( void );
+int pvrGrLong ( void );
+int pvrGrFloat ( void );
+int pvrGrDouble ( void );
+int pvrGrEnum ( void );
+int pvrGrString ( void );
 
-int epicsPvClass::pveValue ( void );
+int pveValue ( void );
 
-int epicsPvClass::pveAlarm ( void );
+int pveAlarm ( void );
 
-int epicsPvClass::pvkOpConnUp ( void );
+int pvkOpConnUp ( void );
 
-int epicsPvClass::pvkOpConnDown ( void );
+int pvkOpConnDown ( void );
 
 #endif
 
 #ifdef __epicsPv_c
 
-int epicsPvClass::pvrShort ( void ) {
+int pvrShort ( void ) {
   return DBR_SHORT;
 }
-int epicsPvClass::pvrLong ( void ) {
+int pvrLong ( void ) {
   return DBR_LONG;
 }
-int epicsPvClass::pvrFloat ( void ) {
+int pvrFloat ( void ) {
   return DBR_FLOAT;
 }
-int epicsPvClass::pvrDouble ( void ) {
+int pvrDouble ( void ) {
   return DBR_DOUBLE;
 }
-int epicsPvClass::pvrEnum ( void ) {
+int pvrEnum ( void ) {
   return DBR_ENUM;
 }
-int epicsPvClass::pvrString ( void ) {
+int pvrString ( void ) {
   return DBR_STRING;
 }
 
-int epicsPvClass::pvrStsShort ( void ) {
+int pvrStsShort ( void ) {
   return DBR_STS_SHORT;
 }
-int epicsPvClass::pvrStsLong ( void ) {
+int pvrStsLong ( void ) {
   return DBR_STS_LONG;
 }
-int epicsPvClass::pvrStsFloat ( void ) {
+int pvrStsFloat ( void ) {
   return DBR_STS_FLOAT;
 }
-int epicsPvClass::pvrStsDouble ( void ) {
+int pvrStsDouble ( void ) {
   return DBR_STS_DOUBLE;
 }
-int epicsPvClass::pvrStsEnum ( void ) {
+int pvrStsEnum ( void ) {
   return DBR_STS_ENUM;
 }
-int epicsPvClass::pvrStsString ( void ) {
+int pvrStsString ( void ) {
   return DBR_STS_STRING;
 }
 
-int epicsPvClass::pvrGrShort ( void ) {
+int pvrGrShort ( void ) {
   return DBR_GR_SHORT;
 }
-int epicsPvClass::pvrGrLong ( void ) {
+int pvrGrLong ( void ) {
   return DBR_GR_LONG;
 }
-int epicsPvClass::pvrGrFloat ( void ) {
+int pvrGrFloat ( void ) {
   return DBR_GR_FLOAT;
 }
-int epicsPvClass::pvrGrDouble ( void ) {
+int pvrGrDouble ( void ) {
   return DBR_GR_DOUBLE;
 }
-int epicsPvClass::pvrGrEnum ( void ) {
+int pvrGrEnum ( void ) {
   return DBR_GR_ENUM;
 }
-int epicsPvClass::pvrGrString ( void ) {
+int pvrGrString ( void ) {
   return DBR_GR_STRING;
 }
 
-int epicsPvClass::pveValue ( void ) {
+int pveValue ( void ) {
   return DBE_VALUE;
 }
 
-int epicsPvClass::pveAlarm ( void ) {
+int pveAlarm ( void ) {
   return DBE_ALARM;
 }
 
-int epicsPvClass::pvkOpConnUp ( void ) {
+int pvkOpConnUp ( void ) {
   return CA_OP_CONN_UP;
 }
 
-int epicsPvClass::pvkOpConnDown ( void ) {
+int pvkOpConnDown ( void ) {
   return CA_OP_CONN_DOWN;
 }
 
 #endif
 
-int epicsPvClass::search (
+int search (
   expStringClass *name );
 
-int epicsPvClass::searchAndConnect (
+int searchAndConnect (
   expStringClass *name,
   pvCbFunc callback,
   void *clientData );
 
-int epicsPvClass::createEventId (
+int createEventId (
   pvEventClass **ptr );
 
-int epicsPvClass::destroyEventId (
+int destroyEventId (
   pvEventClass **ptr );
 
-int epicsPvClass::pendIo (
+int pendIo (
   float sec );
 
-int epicsPvClass::pendEvent (
+int pendEvent (
   float sec );
 
-int epicsPvClass::put (
+int put (
   int type,
   void *value );
 
-int epicsPvClass::get (
+int get (
   int type,
   void *value );
 
-int epicsPvClass::getCallback (
+int getCallback (
   int type,
   pvCbFunc callback,
   void *clientData );
 
-int epicsPvClass::addEvent (
+int addEvent (
   int type,
   int numElements,
   pvCbFunc callback,
@@ -229,66 +229,66 @@ int epicsPvClass::addEvent (
   pvEventClass *eventId,
   int eventType );
 
-int epicsPvClass::checkReconnect ( void );
+int checkReconnect ( void );
 
-char *epicsPvClass::getName ( void );
+char *getName ( void );
 
-int epicsPvClass::getType ( void );
+int getType ( void );
 
-int epicsPvClass::getSize ( void );
+int getSize ( void );
 
-int epicsPvClass::maxStringSize ( void );
+int maxStringSize ( void );
 
-int epicsPvClass::enumStringSize ( void );
+int enumStringSize ( void );
 
-int epicsPvClass::pvNameSize ( void );
+int pvNameSize ( void );
 
-int epicsPvClass::clearChannel ( void );
+int clearChannel ( void );
 
-int epicsPvClass::clearEvent (
+int clearEvent (
   pvEventClass *eventId );
 
 // event argument manipulation
 
-void *epicsPvClass::getValue (
+void *getValue (
   void *eventArg );
 
-int epicsPvClass::getType (
+int getType (
   void *eventArg );
 
-int epicsPvClass::getStatus (
+int getStatus (
   void *eventArg );
 
-int epicsPvClass::getSeverity (
+int getSeverity (
   void *eventArg );
 
-int epicsPvClass::getPrecision(
+int getPrecision(
   void *eventArg );
 
-char *epicsPvClass::getStateString(
+char *getStateString(
   void *eventArg, int index );
 
-int epicsPvClass::getNumStates(
+int getNumStates(
   void *eventArg );
 
-void *epicsPvClass::getEventUserData (
+void *getEventUserData (
   void *eventArg );
 
 // connection argument manipulation
 
-void *epicsPvClass::getConnectUserData (
+void *getConnectUserData (
   void *connectArg );
 
-int epicsPvClass::getOp (
+int getOp (
   void *connectArg );
 
-double epicsPvClass::getLoOpr (
+double getLoOpr (
   void *eventArg );
 
-double epicsPvClass::getHiOpr (
+double getHiOpr (
   void *eventArg );
 
-int epicsPvClass::pvErrorCode (
+int pvErrorCode (
   int code );
 
 };

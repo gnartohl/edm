@@ -48,26 +48,26 @@ int x, y, winOpen;
 
 public:
 
-msgDialogClass::msgDialogClass ( void );
+msgDialogClass ( void );
 
-msgDialogClass::~msgDialogClass ( void );
+~msgDialogClass ( void );
 
-int msgDialogClass::destroy ( void );
+int destroy ( void );
 
-int msgDialogClass::create (
+int create (
   Widget top );
 
-int msgDialogClass::createWithOffset (
+int createWithOffset (
   Widget top );
 
-int msgDialogClass::popup (
+int popup (
   char *text,
   int _x,
   int _y );
 
-int msgDialogClass::popdown ( void );
+int popdown ( void );
 
-Widget msgDialogClass::top ( void );
+Widget top ( void );
 
 };
 

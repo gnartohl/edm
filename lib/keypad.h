@@ -96,17 +96,17 @@ void (*cancelFunc)(Widget,XtPointer,XtPointer);
 
 public:
 
-keypadClass::keypadClass ();
+keypadClass ();
 
-keypadClass::~keypadClass ( void );
+~keypadClass ( void );
 
-void keypadClass::popup ( void );
+void popup ( void );
 
-void keypadClass::popdown ( void );
+void popdown ( void );
 
-int keypadClass::isPoppedUp ( void );
+int isPoppedUp ( void );
 
-int keypadClass::create (
+int create (
   Widget top,
   //Colormap cmap,
   int _x,
@@ -121,7 +121,7 @@ int keypadClass::create (
   XtCallbackProc _okFunc,
   XtCallbackProc _cancelFunc );
 
-int keypadClass::create (
+int create (
   Widget top,
   //Colormap cmap,
   int _x,
@@ -135,7 +135,7 @@ int keypadClass::create (
   XtCallbackProc _okFunc,
   XtCallbackProc _cancelFunc );
 
-int keypadClass::create (
+int create (
   Widget top,
   //Colormap cmap,
   int _x,

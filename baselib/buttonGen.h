@@ -236,98 +236,98 @@ int numPvTypes, pvNameIndex;
 
 public:
 
-activeButtonClass::activeButtonClass ( void );
+activeButtonClass ( void );
 
-activeButtonClass::activeButtonClass
+activeButtonClass
  ( const activeButtonClass *source );
 
-activeButtonClass::~activeButtonClass ( void ) {
+~activeButtonClass ( void ) {
 
-/*   printf( "In activeButtonClass::~activeButtonClass\n" ); */
+/*   printf( "In ~activeButtonClass\n" ); */
 
   if ( name ) delete name;
 
 }
 
-char *activeButtonClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int activeButtonClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int activeButtonClass::save (
+int save (
   FILE *f );
 
-int activeButtonClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeButtonClass::importFromXchFile (
+int importFromXchFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int activeButtonClass::genericEdit ( void );
+int genericEdit ( void );
 
-int activeButtonClass::edit ( void );
+int edit ( void );
 
-int activeButtonClass::editCreate ( void );
+int editCreate ( void );
 
-int activeButtonClass::draw ( void );
+int draw ( void );
 
-int activeButtonClass::erase ( void );
+int erase ( void );
 
-int activeButtonClass::drawActive ( void );
+int drawActive ( void );
 
-int activeButtonClass::eraseActive ( void );
+int eraseActive ( void );
 
-int activeButtonClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int activeButtonClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-void activeButtonClass::updateDimensions ( void );
+void updateDimensions ( void );
 
-void activeButtonClass::btnUp (
+void btnUp (
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
-void activeButtonClass::btnDown (
+void btnDown (
   int x,
   int y,
   int buttonState,
   int buttonNumber );
 
-int activeButtonClass::getButtonActionRequest (
+int getButtonActionRequest (
   int *up,
   int *down,
   int *drag,
   int *focus );
 
-int activeButtonClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeButtonClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int activeButtonClass::containsMacros ( void );
+int containsMacros ( void );
 
-void activeButtonClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-int activeButtonClass::setProperty (
+int setProperty (
   char *prop,
   int *value );
 

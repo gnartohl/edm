@@ -54,180 +54,180 @@ char defFontTag[127+1], defCtlFontTag[127+1], defBtnFontTag[127+1],
 
 public:
 
-displaySchemeClass::displaySchemeClass ( void );
+displaySchemeClass ( void );
 
-displaySchemeClass::~displaySchemeClass ( void );
+~displaySchemeClass ( void );
 
-void displaySchemeClass::setAppCtx (
+void setAppCtx (
   appContextClass *_appCtx );
 
-int displaySchemeClass::loadDefault (
+int loadDefault (
   colorInfoClass *ci );
 
-int displaySchemeClass::load (
+int load (
   colorInfoClass *ci,
   char *fileName );
 
-int displaySchemeClass::save (
+int save (
   colorInfoClass *ci,
   char *fileName );
 
-int displaySchemeClass::getFg ( void )
+int getFg ( void )
 {
   return fg;
 }
 
-int displaySchemeClass::getBg ( void )
+int getBg ( void )
 {
   return bg;
 }
 
-int displaySchemeClass::getDefTextFg ( void )
+int getDefTextFg ( void )
 {
   return defaultTextFg;
 }
 
-int displaySchemeClass::getDefFg1 ( void )
+int getDefFg1 ( void )
 {
   return defaultFg1;
 }
 
-int displaySchemeClass::getDefFg2 ( void )
+int getDefFg2 ( void )
 {
   return defaultFg2;
 }
 
-int displaySchemeClass::getDefBg ( void )
+int getDefBg ( void )
 {
   return defaultBg;
 }
 
-int displaySchemeClass::getOffset ( void )
+int getOffset ( void )
 {
   return offset;
 }
 
-int displaySchemeClass::getTopShadow ( void )
+int getTopShadow ( void )
 {
   return topShadow;
 }
 
-int displaySchemeClass::getBotShadow ( void )
+int getBotShadow ( void )
 {
   return botShadow;
 }
 
-char *displaySchemeClass::getFont ( void )
+char *getFont ( void )
 {
   return defFontTag;
 }
 
-int displaySchemeClass::getAlignment ( void )
+int getAlignment ( void )
 {
   return defAlignment;
 }
 
-char *displaySchemeClass::getCtlFont ( void )
+char *getCtlFont ( void )
 {
   return defCtlFontTag;
 }
 
-int displaySchemeClass::getCtlAlignment ( void )
+int getCtlAlignment ( void )
 {
   return defCtlAlignment;
 }
 
-char *displaySchemeClass::getBtnFont ( void )
+char *getBtnFont ( void )
 {
   return defBtnFontTag;
 }
 
-int displaySchemeClass::getBtnAlignment ( void )
+int getBtnAlignment ( void )
 {
   return defBtnAlignment;
 }
 
-char *displaySchemeClass::getPvType ( void )
+char *getPvType ( void )
 {
   return defPvType;
 }
 
-void displaySchemeClass::setFg ( int color )
+void setFg ( int color )
 {
   fg = color;
 }
 
-void displaySchemeClass::setBg ( int color )
+void setBg ( int color )
 {
   bg = color;
 }
 
-void displaySchemeClass::setDefTextFg ( int color )
+void setDefTextFg ( int color )
 {
   defaultTextFg = color;
 }
 
-void displaySchemeClass::setDefFg1 ( int color )
+void setDefFg1 ( int color )
 {
   defaultFg1 = color;
 }
 
-void displaySchemeClass::setDefFg2 ( int color )
+void setDefFg2 ( int color )
 {
   defaultFg2 = color;
 }
 
-void displaySchemeClass::setDefBg ( int color )
+void setDefBg ( int color )
 {
   defaultBg = color;
 }
 
-void displaySchemeClass::setOffset ( int color )
+void setOffset ( int color )
 {
   offset = color;
 }
 
-void displaySchemeClass::setTopShadow ( int color )
+void setTopShadow ( int color )
 {
   topShadow = color;
 }
 
-void displaySchemeClass::setBotShadow ( int color )
+void setBotShadow ( int color )
 {
   botShadow = color;
 }
 
-void displaySchemeClass::setFont ( char *font )
+void setFont ( char *font )
 {
   strncpy( defFontTag, font, 127 );
 }
 
-void displaySchemeClass::setCtlFont ( char *font )
+void setCtlFont ( char *font )
 {
   strncpy( defCtlFontTag, font, 127 );
 }
 
-void displaySchemeClass::setBtnFont ( char *font )
+void setBtnFont ( char *font )
 {
   strncpy( defBtnFontTag, font, 127 );
 }
 
-void displaySchemeClass::setAlignment ( int alignment )
+void setAlignment ( int alignment )
 {
   defAlignment = alignment;
 }
 
-void displaySchemeClass::setCtlAlignment ( int alignment )
+void setCtlAlignment ( int alignment )
 {
   defCtlAlignment = alignment;
 }
 
-void displaySchemeClass::setBtnAlignment ( int alignment )
+void setBtnAlignment ( int alignment )
 {
   defBtnAlignment = alignment;
 }
 
-void displaySchemeClass::setPvType ( char *pvType )
+void setPvType ( char *pvType )
 {
   strncpy( defPvType, pvType, 15 );
 }

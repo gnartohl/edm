@@ -201,92 +201,92 @@ int useBgRule;
 
 public:
 
-expRectClass::expRectClass ( void );
+expRectClass ( void );
 
 // copy constructor
-expRectClass::expRectClass
+expRectClass
  ( const expRectClass *source );
 
-expRectClass::~expRectClass ( void ) {
+~expRectClass ( void ) {
 
   if ( name ) delete name;
   delete bgRule; bgRule = NULL;
 
 }
 
-char *expRectClass::objName ( void ) {
+char *objName ( void ) {
 
   return name;
 
 }
 
-int expRectClass::createInteractive (
+int createInteractive (
   activeWindowClass *aw_obj,
   int x,
   int y,
   int w,
   int h );
 
-int expRectClass::save (
+int save (
   FILE *f );
 
-int expRectClass::createFromFile (
+int createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int expRectClass::importFromXchFile (
+int importFromXchFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
 
-int expRectClass::genericEdit ( void );
+int genericEdit ( void );
 
-int expRectClass::edit ( void );
+int edit ( void );
 
-int expRectClass::editCreate ( void );
+int editCreate ( void );
 
-int expRectClass::draw ( void );
+int draw ( void );
 
-int expRectClass::drawActive ( void );
+int drawActive ( void );
 
-int expRectClass::erase ( void );
+int erase ( void );
 
-int expRectClass::eraseActive ( void );
+int eraseActive ( void );
 
-int expRectClass::eraseUnconditional ( void );
+int eraseUnconditional ( void );
 
-int expRectClass::expand1st (
+int expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int expRectClass::expand2nd (
+int expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] );
 
-int expRectClass::containsMacros ( void );
+int containsMacros ( void );
 
-int expRectClass::activate ( int pass, void *ptr );
+int activate ( int pass, void *ptr );
 
-int expRectClass::deactivate ( int pass );
+int deactivate ( int pass );
 
-int expRectClass::isInvisible ( void )
+int isInvisible ( void )
 {
   return invisible;
 }
 
-void expRectClass::executeDeferred ( void );
+void executeDeferred ( void );
 
-char *expRectClass::firstDragName ( void );
+char *firstDragName ( void );
 
-char *expRectClass::nextDragName ( void );
+char *nextDragName ( void );
 
-char *expRectClass::dragValue (
+char *dragValue (
   int i );
 
-void expRectClass::changeDisplayParams (
+void changeDisplayParams (
   unsigned int flag,
   char *fontTag,
   int alignment,
@@ -302,7 +302,7 @@ void expRectClass::changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
-void expRectClass::changePvNames (
+void changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],
