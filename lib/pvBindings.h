@@ -24,6 +24,16 @@
 #include <dlfcn.h>
 
 #include "pv.h"
+
+#ifdef __osf__
+#include <sys/time.h>
+#endif
+
+#ifdef __linux__
+#include <time.h>
+#include <sys/time.h>
+#endif
+
 #include "sys_types.h"
 
 #ifdef __pv_bindings_c
