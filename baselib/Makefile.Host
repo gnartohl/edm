@@ -68,6 +68,7 @@ LIBSRCS += motifSlider.cc
 LIBSRCS += radio_button.cc
 LIBSRCS += xygraph.cc
 LIBSRCS += pip.cc
+LIBSRCS += pv_inspector.cc
 
 include $(TOP)/config/RULES.Host
 
