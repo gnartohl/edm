@@ -1235,6 +1235,10 @@ int activeXTextClass::activate (
       if ( alarmPvExists ) {
         alarmPvId = pv_factory->create( alarmPvExpStr.getExpanded() );
         if ( alarmPvId ) {
+          if ( alarmPvId->is_valid() ) {
+            alarmPvConnectStateCallback( alarmPvId, this );
+            alarmPvValueCallback( alarmPvId, this );
+	  }
           alarmPvId->add_conn_state_callback( alarmPvConnectStateCallback,
            this );
           alarmPvId->add_value_callback( alarmPvValueCallback, this );
@@ -1244,6 +1248,10 @@ int activeXTextClass::activate (
       if ( visPvExists ) {
         visPvId = pv_factory->create( visPvExpStr.getExpanded() );
         if ( visPvId ) {
+          if ( visPvId->is_valid() ) {
+            visPvConnectStateCallback( visPvId, this );
+            visPvValueCallback( visPvId, this );
+          }
           visPvId->add_conn_state_callback( visPvConnectStateCallback, this );
           visPvId->add_value_callback( visPvValueCallback, this );
 	}
