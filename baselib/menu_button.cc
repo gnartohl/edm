@@ -122,6 +122,10 @@ static void mbt_infoUpdate (
   struct event_handler_args ast_args )
 {
 
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
+
 int i;
 activeMenuButtonClass *mbto = (activeMenuButtonClass *) ast_args.usr;
 struct dbr_gr_enum enumRec;
@@ -225,6 +229,10 @@ static void mbt_readInfoUpdate (
   struct event_handler_args ast_args )
 {
 
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
+
 int i;
 activeMenuButtonClass *mbto = (activeMenuButtonClass *) ast_args.usr;
 struct dbr_gr_enum enumRec;
@@ -323,6 +331,10 @@ static void mbt_visInfoUpdate (
   struct event_handler_args arg )
 {
 
+  if ( arg.status == ECA_DISCONN ) {
+    return;
+  }
+
 activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
 
 struct dbr_gr_double controlRec = *( (dbr_gr_double *) arg.dbr );
@@ -380,6 +392,10 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) ca_puser(arg.chid);
 static void mbt_colorInfoUpdate (
   struct event_handler_args ast_args )
 {
+
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
 
 activeMenuButtonClass *mbto = (activeMenuButtonClass *) ast_args.usr;
 

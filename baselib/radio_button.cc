@@ -138,6 +138,10 @@ static void rbt_infoUpdate (
   struct event_handler_args ast_args )
 {
 
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
+
 int i;
 activeRadioButtonClass *rbto = (activeRadioButtonClass *) ast_args.usr;
 struct dbr_gr_enum enumRec;

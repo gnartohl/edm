@@ -228,6 +228,10 @@ static void meter_infoUpdate (
   struct event_handler_args ast_args )
 {
 
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
+
 activeMeterClass *metero = (activeMeterClass *) ast_args.usr;
 struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
 

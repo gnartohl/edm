@@ -657,6 +657,10 @@ static void sl_controlLabelUpdate (
   struct event_handler_args ast_args )
 {
 
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
+
 activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
 
   strncpy( slo->controlLabel, (char *) ast_args.dbr, 39 );
@@ -689,6 +693,10 @@ static void sl_readLabelUpdate (
   struct event_handler_args ast_args )
 {
 
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
+
 activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
 
   strncpy( slo->readLabel, (char *) ast_args.dbr, 39 );
@@ -703,6 +711,10 @@ activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
 static void sl_readInfoUpdate (
   struct event_handler_args ast_args )
 {
+
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
 
 activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
 struct dbr_gr_double readRec = *( (dbr_gr_double *) ast_args.dbr );
@@ -735,6 +747,10 @@ int prec;
 static void sl_infoUpdate (
   struct event_handler_args ast_args )
 {
+
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
 
 activeSliderClass *slo = (activeSliderClass *) ast_args.usr;
 struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );

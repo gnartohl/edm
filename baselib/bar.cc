@@ -315,6 +315,10 @@ static void bar_infoUpdate (
   struct event_handler_args ast_args )
 {
 
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
+
 activeBarClass *baro = (activeBarClass *) ast_args.usr;
 struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
 

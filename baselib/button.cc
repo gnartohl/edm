@@ -252,6 +252,10 @@ static void bt_controlInfoUpdate (
   struct event_handler_args ast_args )
 {
 
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
+
 activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
 struct dbr_gr_enum controlRec = *( (dbr_gr_enum *) ast_args.dbr );
 
@@ -334,6 +338,10 @@ activeButtonClass *bto = (activeButtonClass *) ca_puser(arg.chid);
 static void bt_readInfoUpdate (
   struct event_handler_args ast_args )
 {
+
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
 
 activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
 struct dbr_gr_enum readRec = *( (dbr_gr_enum *) ast_args.dbr );
@@ -428,6 +436,10 @@ static void bt_visInfoUpdate (
   struct event_handler_args ast_args )
 {
 
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
+
 activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
 
 struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
@@ -486,6 +498,10 @@ activeButtonClass *bto = (activeButtonClass *) ca_puser(arg.chid);
 static void bt_colorInfoUpdate (
   struct event_handler_args ast_args )
 {
+
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
 
 activeButtonClass *bto = (activeButtonClass *) ast_args.usr;
 

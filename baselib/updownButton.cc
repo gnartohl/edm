@@ -389,6 +389,10 @@ static void udbt_infoUpdate (
   struct event_handler_args ast_args )
 {
 
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
+
 activeUpdownButtonClass *udbto =
  (activeUpdownButtonClass *) ca_puser(ast_args.chid);
 struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
@@ -499,6 +503,10 @@ static void udbtc_visInfoUpdate (
   struct event_handler_args ast_args )
 {
 
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
+
 activeUpdownButtonClass *udbto =
  (activeUpdownButtonClass *) ast_args.usr;
 
@@ -559,6 +567,10 @@ activeUpdownButtonClass *udbto =
 static void udbt_colorInfoUpdate (
   struct event_handler_args ast_args )
 {
+
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
 
 activeUpdownButtonClass *udbto =
  (activeUpdownButtonClass *) ast_args.usr;

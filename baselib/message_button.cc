@@ -326,6 +326,10 @@ static void msgbt_destInfoUpdate (
   struct event_handler_args ast_args )
 {
 
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
+
 int i;
 activeMessageButtonClass *msgbto =
  (activeMessageButtonClass *) ast_args.usr;
@@ -350,6 +354,10 @@ struct dbr_gr_enum enumRec;
 static void msgbt_visInfoUpdate (
   struct event_handler_args ast_args )
 {
+
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
 
 activeMessageButtonClass *msgbto =
  (activeMessageButtonClass *) ast_args.usr;
@@ -412,6 +420,10 @@ activeMessageButtonClass *msgbto =
 static void msgbt_colorInfoUpdate (
   struct event_handler_args ast_args )
 {
+
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
 
 activeMessageButtonClass *msgbto =
  (activeMessageButtonClass *) ast_args.usr;

@@ -1259,6 +1259,10 @@ static void xInfoUpdate (
   struct event_handler_args arg )
 {
 
+  if ( arg.status == ECA_DISCONN ) {
+    return;
+  }
+
 objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
 xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 struct dbr_gr_double grRec = *( (dbr_gr_double *) arg.dbr );
@@ -1639,6 +1643,10 @@ xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 static void yInfoUpdate (
   struct event_handler_args arg )
 {
+
+  if ( arg.status == ECA_DISCONN ) {
+    return;
+  }
 
 objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
 xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;

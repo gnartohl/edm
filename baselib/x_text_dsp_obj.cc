@@ -997,6 +997,10 @@ struct dbr_gr_short shortInfoRec;
 struct dbr_gr_long longInfoRec;
 struct dbr_gr_enum enumInfoRec;
 
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
+
   switch ( axtdo->pvType ) {
 
   case DBR_STRING:
