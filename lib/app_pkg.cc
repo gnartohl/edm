@@ -5092,7 +5092,7 @@ void appContextClass::exitProgram ( void ) {
 
 void appContextClass::findTop ( void ) {
 
-  XUnmapWindow( display, XtWindow(appTop) );
+  //XUnmapWindow( display, XtWindow(appTop) );
   XMapWindow( display, XtWindow(appTop) );
   XRaiseWindow( display, XtWindow(appTop) );
 
