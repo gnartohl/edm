@@ -76,7 +76,24 @@ double fvalue;
 
   mslo->prevScaleV = v;
 
+  mslo->controlX = (int) ( ( fvalue - mslo->minFv ) /
+   mslo->factor + 0.5 );
+
+  XmScaleSetValue( w, mslo->controlX );
+
+  mslo->oldControlV = mslo->oneControlV;
+
+  mslo->eraseActiveControlText();
+
+  mslo->actWin->appCtx->proc->lock();
+  mslo->controlV = mslo->oneControlV = mslo->curControlV;
+  mslo->actWin->appCtx->proc->unlock();
+
   mslo->controlV = fvalue;
+
+  sprintf( mslo->controlValue, mslo->controlFormat, mslo->controlV );
+
+  stat = mslo->drawActiveControlText();
 
   if ( mslo->controlExists ) {
 #ifdef __epics__
@@ -84,6 +101,8 @@ double fvalue;
     if ( stat != ECA_NORMAL ) printf( activeMotifSliderClass_str59 );
 #endif
   }
+
+  mslo->controlAdjusted = 1;
 
 }
 
@@ -127,6 +146,60 @@ double fvalue;
 #endif
   }
 
+  mslo->controlAdjusted = 1;
+
+}
+
+static void calcIncRange (
+  double minV,
+  double maxV,
+  char *strVal,
+  double *incArray
+) {
+
+double max, lmin, lmax;
+int i, j, start, end;
+char tmpStr[255+1];
+
+    if ( minV == 0 ) {
+      lmin = 0;
+    }
+    else {
+      lmin = rint( log10( fabs( minV ) ) );
+    }
+
+    if ( maxV == 0 ) {
+      lmax = 0;
+    }
+    else {
+      lmax = rint( log10( fabs( maxV ) ) );
+    }
+
+    max = 0;
+    if ( lmin != 0 ) max = lmin;
+    if ( lmax != 0 ) max = lmax;
+
+    if ( lmin != 0 ) {
+      if ( lmin > max ) max = lmin;
+    }
+
+    if ( lmax != 0 ) {
+      if ( lmax > max ) max = lmax;
+    }
+
+    start = (int) max - 1;
+    end = start - 5;
+    strcpy( strVal, "---|" );
+    incArray[0] = 0;
+    for ( i=1,j=start; i<6; i++,j-- ) {
+      sprintf( tmpStr, "10^%-d|", j );
+      strncat( strVal, tmpStr, 255 );
+      incArray[i] = pow( 10, (double) j );
+    }
+    sprintf( tmpStr, "10^%-d", end );
+    strncat( strVal, tmpStr, 255 );
+    incArray[6] = pow( 10, (double) j );
+
 }
 
 static void changeParams (
@@ -139,6 +212,7 @@ static void changeParams (
 activeMotifSliderClass *mslo;
 XButtonEvent *be;
 char title[32], *ptr;
+char strVal[255+1];
 
   XtVaGetValues( w, XmNuserData, &mslo, NULL );
 
@@ -171,8 +245,14 @@ char title[32], *ptr;
 
     mslo->ef.addTextField( activeMotifSliderClass_str57, 14,
      &mslo->bufControlV );
+
     mslo->ef.addTextField( activeMotifSliderClass_str58, 14,
      &mslo->bufIncrement );
+
+    calcIncRange( mslo->efScaleMin.value(), mslo->efScaleMax.value(),
+     strVal, mslo->incArray );
+    mslo->incIndex = 0;
+    mslo->ef.addOption( "Increment", strVal, &mslo->incIndex );
 
     mslo->ef.finished( mslc_value_ok, mslc_value_apply, mslc_value_cancel,
      mslo );
@@ -363,6 +443,11 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
   mslo->controlV = fvalue;
 
   mslo->increment = mslo->bufIncrement;
+
+  if ( ( mslo->incIndex > 0 ) && ( mslo->incIndex < 7 ) ) {
+    mslo->increment = mslo->incArray[mslo->incIndex];
+  }
+
   sprintf( mslo->incString, mslo->controlFormat, mslo->increment );
 
   mslo->actWin->appCtx->proc->lock();
@@ -1469,7 +1554,7 @@ static void motifSliderEventHandler (
 XButtonEvent *be;
 activeMotifSliderClass *mslo;
  int stat;
-char title[32], *ptr;
+char title[32], *ptr, strVal[255+1];
 
   mslo = (activeMotifSliderClass *) client;
 
@@ -1547,8 +1632,15 @@ char title[32], *ptr;
 
       mslo->ef.addTextField( activeMotifSliderClass_str57, 14,
        &mslo->bufControlV );
+
       mslo->ef.addTextField( activeMotifSliderClass_str58, 14,
        &mslo->bufIncrement );
+
+      calcIncRange( mslo->efScaleMin.value(), mslo->efScaleMax.value(),
+       strVal, mslo->incArray );
+      mslo->incIndex = 0;
+      mslo->ef.addOption( "Increment", strVal, &mslo->incIndex );
+
       mslo->ef.finished( mslc_value_ok, mslc_value_apply, mslc_value_cancel,
        mslo );
       mslo->ef.popup();
@@ -1702,7 +1794,7 @@ static XtActionsRec dragActions[] = {
        XmNprocessingDirection, pd,
        XmNscaleMultiple, 1,
        XmNminimum, 0,
-       XmNmaximum, 1000,
+       XmNmaximum, 100000,
        XmNnavigationType, XmNONE,
        XmNtraversalOn, False,
        XmNhighlightOnEnter, True,
@@ -1738,6 +1830,8 @@ static XtActionsRec dragActions[] = {
          XmNtroughColor, actWin->ci->pix(shadeColor),
          XmNtopShadowColor, actWin->ci->pix(topColor),
          XmNbottomShadowColor, actWin->ci->pix(botColor),
+         XmNinitialDelay, 100,
+         XmNrepeatDelay, 1,
          NULL );
 
         XtAddEventHandler( scrollBarWidget,
@@ -2025,7 +2119,7 @@ void activeMotifSliderClass::updateDimensions ( void )
   maxFv = 10.0;
   positive = 1;
 
-  factor = ( maxFv - minFv ) / 1000;
+  factor = ( maxFv - minFv ) / 100000;
   if ( factor == 0.0 ) factor = 1.0;
 
   midVertScaleY = scaleH/2 + scaleY - (int) ( (double) fontHeight * 0.5 );
@@ -2139,7 +2233,7 @@ double cv, fv;
 
     sprintf( controlValue, controlFormat, controlV );
 
-    factor = ( maxFv - minFv ) / 1000;
+    factor = ( maxFv - minFv ) / 100000;
     if ( factor == 0.0 ) factor = 1.0;
 
     controlX = (int) ( ( controlV - minFv ) /

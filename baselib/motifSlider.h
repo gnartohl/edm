@@ -375,7 +375,7 @@ int controlPvConnected, bufInvalid, active, activeMode, init;
 int positive;
 
 int needCtlConnectInit, needCtlInfoInit, needCtlRefresh;
-int needCtlLabelConnectInit, needCtlLabelInfoInit;
+int needCtlLabelConnectInit, needCtlLabelInfoInit, needCtlUpdate;
 int needErase, needDraw;
 
 char displayFormat[15+1];
@@ -394,6 +394,9 @@ int orientation, bufOrientation;
 
 keypadClass kp;
 double kpCtlDouble, kpIncDouble;
+
+double incArray[7];
+int incIndex;
 
 public:
 
