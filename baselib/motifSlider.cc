@@ -32,10 +32,14 @@ static char g_dragTrans[] =
    Ctrl~Shift<Btn2Down>: pvInfo()\n\
    Shift<Btn2Down>: dummy()\n\
    Shift~Ctrl<Btn2Up>: selectDrag()\n\
+   <Btn3Up>: changeParams()";
+
+#if 0
+
    Ctrl<Btn1Down>: dummy()\n\
    Ctrl<Btn1Up>: dummy()\n\
-   <Btn3Up>: changeParams()\n\
-   <Key>: dummy()";
+
+#endif
 
 static XtActionsRec g_dragActions[] = {
   { "startDrag", (XtActionProc) drag },
@@ -1912,6 +1916,13 @@ static void scrollBarEventHandler (
 
 activeMotifSliderClass *mslo;
 XButtonEvent *be;
+XKeyEvent *ke;
+KeySym key;
+char keyBuf[20];
+const int keyBufSize = 20;
+XComposeStatus compose;
+int charCount, stat, v;
+double mult, fvalue;
 
   *continueToDispatch = True;
 
@@ -1929,6 +1940,7 @@ XButtonEvent *be;
       else {
         mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
          CURSOR_K_DEFAULT );
+        XmProcessTraversal( mslo->scaleWidget, XmTRAVERSE_CURRENT );
       }
     }
 
@@ -1937,11 +1949,125 @@ XButtonEvent *be;
 
     mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
      CURSOR_K_DEFAULT );
+    XmProcessTraversal( mslo->actWin->executeWidget, XmTRAVERSE_CURRENT );
 
   }
   else if ( e->type == ButtonPress ) {
 
     be = (XButtonEvent *) e;
+
+    if ( be->state & ControlMask ) {
+      mult = 10.0;
+    }
+    else {
+      mult = 1.0;
+    }
+
+    switch ( be->button ) {
+
+//========== B4 Press ========================================
+
+    case Button4:
+
+      XmScaleGetValue( mslo->scaleWidget, &v );
+
+      if ( mslo->positive ) {
+        fvalue = mslo->controlV + mslo->increment * mult;
+        if ( fvalue < mslo->minFv ) fvalue = mslo->minFv;
+        if ( fvalue > mslo->maxFv ) fvalue = mslo->maxFv;
+      }
+      else {
+        fvalue = mslo->controlV - mslo->increment * mult;
+        if ( fvalue > mslo->minFv ) fvalue = mslo->minFv;
+        if ( fvalue < mslo->maxFv ) fvalue = mslo->maxFv;
+      }
+
+      mslo->prevScaleV = v;
+
+      mslo->controlX = (int) ( ( fvalue - mslo->minFv ) /
+       mslo->factor + 0.5 );
+
+      XmScaleSetValue( mslo->scaleWidget, mslo->controlX );
+
+      mslo->oldControlV = mslo->oneControlV;
+
+      mslo->eraseActiveControlText();
+
+      mslo->actWin->appCtx->proc->lock();
+      mslo->controlV = mslo->oneControlV = mslo->curControlV;
+      mslo->actWin->appCtx->proc->unlock();
+
+      mslo->controlV = fvalue;
+
+      sprintf( mslo->controlValue, mslo->controlFormat, mslo->controlV );
+
+      stat = mslo->drawActiveControlText();
+
+      if ( mslo->controlExists ) {
+        if ( mslo->controlPvId ) {
+          stat = mslo->controlPvId->put( fvalue );
+          if ( !stat ) printf( activeMotifSliderClass_str59 );
+        }
+      }
+
+      mslo->controlAdjusted = 1;
+
+      break;
+
+//========== B4 Press ========================================
+
+//========== B5 Press ========================================
+
+    case Button5:
+
+      XmScaleGetValue( mslo->scaleWidget, &v );
+
+      if ( mslo->positive ) {
+        fvalue = mslo->controlV - mslo->increment * mult;
+        if ( fvalue < mslo->minFv ) fvalue = mslo->minFv;
+        if ( fvalue > mslo->maxFv ) fvalue = mslo->maxFv;
+      }
+      else {
+        fvalue = mslo->controlV + mslo->increment * mult;
+        if ( fvalue > mslo->minFv ) fvalue = mslo->minFv;
+        if ( fvalue < mslo->maxFv ) fvalue = mslo->maxFv;
+      }
+
+      mslo->prevScaleV = v;
+
+      mslo->controlX = (int) ( ( fvalue - mslo->minFv ) /
+       mslo->factor + 0.5 );
+
+      XmScaleSetValue( mslo->scaleWidget, mslo->controlX );
+
+      mslo->oldControlV = mslo->oneControlV;
+
+      mslo->eraseActiveControlText();
+
+      mslo->actWin->appCtx->proc->lock();
+      mslo->controlV = mslo->oneControlV = mslo->curControlV;
+      mslo->actWin->appCtx->proc->unlock();
+
+      mslo->controlV = fvalue;
+
+      sprintf( mslo->controlValue, mslo->controlFormat, mslo->controlV );
+
+      stat = mslo->drawActiveControlText();
+
+      if ( mslo->controlExists ) {
+        if ( mslo->controlPvId ) {
+          stat = mslo->controlPvId->put( fvalue );
+          if ( !stat ) printf( activeMotifSliderClass_str59 );
+        }
+      }
+
+      mslo->controlAdjusted = 1;
+
+      break;
+
+//========== B5 Press ========================================
+
+    }
 
     mslo->buttonPressed = 1;
 
@@ -1960,6 +2086,88 @@ XButtonEvent *be;
     }
 
   }
+  else if ( e->type == KeyPress ) {
+
+    ke = (XKeyEvent *) e;
+
+    charCount = XLookupString( ke, keyBuf, keyBufSize, &key, &compose );
+
+    if ( ke->state & ControlMask ) {
+      mult = 10.0;
+    }
+    else {
+      mult = 1.0;
+    }
+
+    if ( ( key == XK_Left ) ||
+         ( key == XK_Right ) ) {
+
+      *continueToDispatch = False;
+
+      XmScaleGetValue( mslo->scaleWidget, &v );
+
+      if ( key == XK_Left ) {
+
+        if ( mslo->positive ) {
+          fvalue = mslo->controlV - mslo->increment * mult;
+          if ( fvalue < mslo->minFv ) fvalue = mslo->minFv;
+          if ( fvalue > mslo->maxFv ) fvalue = mslo->maxFv;
+        }
+        else {
+          fvalue = mslo->controlV + mslo->increment * mult;
+          if ( fvalue > mslo->minFv ) fvalue = mslo->minFv;
+          if ( fvalue < mslo->maxFv ) fvalue = mslo->maxFv;
+        }
+
+      }
+      else { // key == XK_Right
+
+        if ( mslo->positive ) {
+          fvalue = mslo->controlV + mslo->increment * mult;
+          if ( fvalue < mslo->minFv ) fvalue = mslo->minFv;
+          if ( fvalue > mslo->maxFv ) fvalue = mslo->maxFv;
+        }
+        else {
+          fvalue = mslo->controlV - mslo->increment * mult;
+          if ( fvalue > mslo->minFv ) fvalue = mslo->minFv;
+          if ( fvalue < mslo->maxFv ) fvalue = mslo->maxFv;
+        }
+
+      }
+
+      mslo->prevScaleV = v;
+
+      mslo->controlX = (int) ( ( fvalue - mslo->minFv ) /
+       mslo->factor + 0.5 );
+
+      XmScaleSetValue( mslo->scaleWidget, mslo->controlX );
+
+      mslo->oldControlV = mslo->oneControlV;
+
+      mslo->eraseActiveControlText();
+
+      mslo->actWin->appCtx->proc->lock();
+      mslo->controlV = mslo->oneControlV = mslo->curControlV;
+      mslo->actWin->appCtx->proc->unlock();
+
+      mslo->controlV = fvalue;
+
+      sprintf( mslo->controlValue, mslo->controlFormat, mslo->controlV );
+
+      stat = mslo->drawActiveControlText();
+
+      if ( mslo->controlExists ) {
+        if ( mslo->controlPvId ) {
+          stat = mslo->controlPvId->put( fvalue );
+          if ( !stat ) printf( activeMotifSliderClass_str59 );
+        }
+      }
+
+      mslo->controlAdjusted = 1;
+
+    }
+
+  }
 
 }
 
@@ -1974,7 +2182,7 @@ activeMotifSliderClass *mslo;
  int stat;
 char title[32], *ptr, strVal[255+1];
 int v;
-double fvalue;
+double fvalue, mult;
 
   *continueToDispatch = True;
 
@@ -2027,6 +2235,13 @@ double fvalue;
 
     be = (XButtonEvent *) e;
 
+    if ( be->state & ControlMask ) {
+      mult = 10.0;
+    }
+    else {
+      mult = 1.0;
+    }
+
     switch ( be->button ) {
 
 //========== B2 Press ========================================
@@ -2049,35 +2264,39 @@ double fvalue;
 
     case Button3:
 
-      mslo->bufIncrement = mslo->increment;
-      mslo->bufControlV = mslo->controlV;
-      mslo->valueFormX = be->x_root;
-      mslo->valueFormY = be->y_root;
-      mslo->valueFormW = 0;
-      mslo->valueFormH = 0;
-      mslo->valueFormMaxH = 600;
+      if ( !mslo->ef.formIsPoppedUp() ) {
 
-      mslo->ef.create( mslo->actWin->top,
-       mslo->actWin->appCtx->ci.getColorMap(),
-       &mslo->valueFormX, &mslo->valueFormY,
-       &mslo->valueFormW, &mslo->valueFormH, &mslo->valueFormMaxH,
-       title, NULL, NULL, NULL );
+        mslo->bufIncrement = mslo->increment;
+        mslo->bufControlV = mslo->controlV;
+        mslo->valueFormX = be->x_root;
+        mslo->valueFormY = be->y_root;
+        mslo->valueFormW = 0;
+        mslo->valueFormH = 0;
+        mslo->valueFormMaxH = 600;
 
-      mslo->ef.addTextField( activeMotifSliderClass_str57, 20,
-       &mslo->bufControlV );
+        mslo->ef.create( mslo->actWin->top,
+         mslo->actWin->appCtx->ci.getColorMap(),
+         &mslo->valueFormX, &mslo->valueFormY,
+         &mslo->valueFormW, &mslo->valueFormH, &mslo->valueFormMaxH,
+         title, NULL, NULL, NULL );
 
-      mslo->ef.addTextField( activeMotifSliderClass_str58, 20,
-       &mslo->bufIncrement );
+        mslo->ef.addTextField( activeMotifSliderClass_str57, 20,
+         &mslo->bufControlV );
 
-      calcIncRange( mslo->efScaleMin.value(), mslo->efScaleMax.value(),
-       strVal, mslo->incArray );
-      mslo->incIndex = 0;
-      mslo->ef.addOption( activeMotifSliderClass_str58, strVal,
-       &mslo->incIndex );
+        mslo->ef.addTextField( activeMotifSliderClass_str58, 20,
+         &mslo->bufIncrement );
 
-      mslo->ef.finished( mslc_value_ok, mslc_value_apply, mslc_value_cancel,
-       mslo );
-      mslo->ef.popup();
+        calcIncRange( mslo->efScaleMin.value(), mslo->efScaleMax.value(),
+         strVal, mslo->incArray );
+        mslo->incIndex = 0;
+        mslo->ef.addOption( activeMotifSliderClass_str58, strVal,
+         &mslo->incIndex );
+
+        mslo->ef.finished( mslc_value_ok, mslc_value_apply, mslc_value_cancel,
+         mslo );
+        mslo->ef.popup();
+
+      }
 
       break;
 
@@ -2090,12 +2309,12 @@ double fvalue;
       XmScaleGetValue( mslo->scaleWidget, &v );
 
       if ( mslo->positive ) {
-        fvalue = mslo->controlV + mslo->increment;
+        fvalue = mslo->controlV + mslo->increment * mult;
         if ( fvalue < mslo->minFv ) fvalue = mslo->minFv;
         if ( fvalue > mslo->maxFv ) fvalue = mslo->maxFv;
       }
       else {
-        fvalue = mslo->controlV - mslo->increment;
+        fvalue = mslo->controlV - mslo->increment * mult;
         if ( fvalue > mslo->minFv ) fvalue = mslo->minFv;
         if ( fvalue < mslo->maxFv ) fvalue = mslo->maxFv;
       }
@@ -2141,12 +2360,12 @@ double fvalue;
       XmScaleGetValue( mslo->scaleWidget, &v );
 
       if ( mslo->positive ) {
-        fvalue = mslo->controlV - mslo->increment;
+        fvalue = mslo->controlV - mslo->increment * mult;
         if ( fvalue < mslo->minFv ) fvalue = mslo->minFv;
         if ( fvalue > mslo->maxFv ) fvalue = mslo->maxFv;
       }
       else {
-        fvalue = mslo->controlV + mslo->increment;
+        fvalue = mslo->controlV + mslo->increment * mult;
         if ( fvalue > mslo->minFv ) fvalue = mslo->minFv;
         if ( fvalue < mslo->maxFv ) fvalue = mslo->maxFv;
       }
@@ -2422,7 +2641,7 @@ int activeMotifSliderClass::deactivate (
 
     if ( scrollBarWidget ) {
       XtRemoveEventHandler( scrollBarWidget,
-       EnterWindowMask|LeaveWindowMask, False,
+       KeyPressMask|ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask, False,
        scrollBarEventHandler, (XtPointer) this );
     }
 
@@ -2720,8 +2939,8 @@ Cardinal numChildren;
          XmNscaleMultiple, 1,
          XmNminimum, 0,
          XmNmaximum, 100000,
-         XmNnavigationType, XmNONE,
-         XmNtraversalOn, False,
+         //XmNnavigationType, XmEXCLUSIVE_TAB_GROUP,
+         //XmNtraversalOn, False,
          XmNhighlightOnEnter, True,
          XmNuserData, this,
          XmNforeground, fgColor.getColor(),
@@ -2759,7 +2978,7 @@ Cardinal numChildren;
            NULL );
 
           XtAddEventHandler( scrollBarWidget,
-           ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask,
+           KeyPressMask|ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask,
            False, scrollBarEventHandler, (XtPointer) this );
 
         }
@@ -3052,7 +3271,6 @@ void activeMotifSliderClass::map ( void ) {
 
   if ( frameWidget ) {
     if ( !isMapped ) {
-      //printf( "map\n" );
       XtMapWidget( frameWidget );
       isMapped = 1;
     }
@@ -3074,7 +3292,6 @@ void activeMotifSliderClass::unmap ( void ) {
 
   if ( frameWidget ) {
     if ( isMapped ) {
-      //printf( "unmap\n" );
       XtUnmapWidget( frameWidget );
       isMapped = 0;
     }

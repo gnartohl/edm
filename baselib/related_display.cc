@@ -2488,6 +2488,8 @@ char *newMacros[100];
 char *newValues[100];
 int numNewMacros, max, numFound;
 
+char prefix[127+1];
+
   focus = useFocus;
   if ( numDsps > 1 ) {
     focus = 0;
@@ -2738,6 +2740,7 @@ int numNewMacros, max, numFound;
   }
 
   stat = getFileName( name, displayFileName[index].getExpanded(), 127 );
+  stat = getFilePrefix( prefix, displayFileName[index].getExpanded(), 127 );
 
   // calc crc
 
@@ -2751,6 +2754,7 @@ int numNewMacros, max, numFound;
     cur = actWin->appCtx->head->flink;
     while ( cur != actWin->appCtx->head ) {
       if ( ( strcmp( name, cur->node.displayName ) == 0 ) &&
+           ( strcmp( prefix, cur->node.prefix ) == 0 ) &&
            ( crc == cur->node.crc ) && !cur->node.isEmbedded ) {
         // display is already open; don't open another instance
 	// move (maybe)

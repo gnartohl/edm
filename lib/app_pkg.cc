@@ -4372,6 +4372,8 @@ int locNumMacros;
 char *locMacros[MAX_LOC_MACROS], *locExpansions[MAX_LOC_MACROS];
 int state;
 char *macTk, *macBuf, macTmp[255+1];
+int stat;
+char name[127+1], prefix[127+1];
 
   //printf( "list = [%s]\n", list );
 
@@ -4444,7 +4446,11 @@ char *macTk, *macBuf, macTmp[255+1];
             crc = updateCRC( crc, locExpansions[i], strlen(locExpansions[i]) );
           }
 
-          if ( ( strcmp( tk, cur->node.displayName ) == 0 ) &&
+          stat = getFileName( name, tk, 127 );
+          stat = getFilePrefix( prefix, tk, 127 );
+
+          if ( ( strcmp( name, cur->node.displayName ) == 0 ) &&
+               ( strcmp( prefix, cur->node.prefix ) == 0 ) &&
                ( crc == cur->node.crc ) && !cur->node.isEmbedded ) {
 
             doOpen = 0; // display is already open, just raise/deiconify it
@@ -4567,7 +4573,7 @@ fileListPtr curFile;
 activeWindowListPtr cur;
 int i, doOpen;
 unsigned int crc;
-char tmpName[131+1];
+char tmpName[127+1], prefix[127+1];
 
   curFile = fileHead->flink;
   while ( curFile != fileHead ) {
@@ -4584,8 +4590,8 @@ char tmpName[131+1];
         crc = updateCRC( crc, expansions[i], strlen(expansions[i]) );
       }
 
-      getFileName( tmpName, curFile->file, 131 );
-      tmpName[131] = 0;
+      getFileName( tmpName, curFile->file, 127 );
+      getFilePrefix( prefix, curFile->file, 127 );
 
       //printf( "crc = %-ud\n", crc );
       //printf( "cur->node.crc = %-ud\n", cur->node.crc );
@@ -4594,6 +4600,7 @@ char tmpName[131+1];
       //printf( "cur->node.isEmbedded = %-d\n", cur->node.isEmbedded );
 
       if ( ( strcmp( tmpName, cur->node.displayName ) == 0 ) &&
+           ( strcmp( prefix, cur->node.prefix ) == 0 ) &&
            ( crc == cur->node.crc ) && !cur->node.isEmbedded ) {
 
 	doOpen = 0; // display is already open, just raise/deiconify it

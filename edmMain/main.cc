@@ -34,6 +34,8 @@
 #include <netinet/tcp.h>
 #define FD_TABLE_SIZE getdtablesize()
 
+#include <X11/Xlib.h>
+#include <X11/Xlocale.h>
 #include <Xm/Xm.h>
 #include <Xm/MainW.h>
 #include <Xm/BulletinB.h>
@@ -1446,6 +1448,50 @@ int doXSync = 0;
 
 appListPtr primary;
 int primaryServerWantsExit;
+
+int numLocaleFailures = 0;
+
+  do {
+
+    if ( numLocaleFailures == 0 ) {
+
+      if ( setlocale( LC_ALL, "C" ) == NULL ) {
+        if ( setlocale( LC_ALL, "" ) == NULL ) {
+          printf( "Cannot set locale - abort\n" );
+          exit(1);
+        }
+      }
+
+    }
+    else if ( numLocaleFailures == 1 ) {
+
+      if ( setlocale( LC_ALL, "C" ) == NULL ) {
+        printf( "Cannot set locale - abort\n" );
+        exit(1);
+      }
+
+    }
+
+    if ( !XSupportsLocale() ) {
+      numLocaleFailures++;
+      if ( numLocaleFailures > 1 ) {
+        printf( "X does not support locale \"%s\" - abort\n",
+         setlocale( LC_ALL, NULL ) );
+        exit(1);
+      }
+    }
+    else {
+      numLocaleFailures = 0;
+    }
+
+  } while ( numLocaleFailures );
+
+  if ( XSetLocaleModifiers( "" ) == NULL ) {
+    printf( "Cannot set locale modifiers - abort\n" );
+    exit(1);
+  }
+
+  // printf( "locale is \"%s\"\n", setlocale( LC_ALL, NULL ) );
 
   envPtr = getenv( "EDMXSYNC" );
   if ( envPtr ) doXSync = 1;

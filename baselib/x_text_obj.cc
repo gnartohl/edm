@@ -1549,12 +1549,24 @@ int activeXTextClass::activate (
          2000, unconnectedTimeout, this );
       }
 
-      stringLength = strlen( value.getExpanded() );
+      if ( value.getExpanded() ) {
+        stringLength = strlen( value.getExpanded() );
+      } 
+      else {
+        stringLength = strlen( value.getRaw() );
+      }
 
       updateFont( value.getExpanded(), fontTag, &fs, &fontAscent, &fontDescent,
        &fontHeight, &stringWidth );
 
+      activeMode = 1; // this must appear before the call to updateDimensions
+
       updateDimensions();
+
+      if ( autoSize && fs ) {
+        sboxW = w = stringBoxWidth;
+        sboxH = h = stringBoxHeight;
+      }
 
       stringY = y + fontAscent + h/2 - stringBoxHeight/2;
 
@@ -1569,7 +1581,6 @@ int activeXTextClass::activate (
 
       alarmPvId = visPvId = 0;
 
-      activeMode = 1;
       pvType = -1;
 
       init = 1; // this stays true if there are no pvs
@@ -1828,8 +1839,20 @@ XRectangle xR = { x, y, w, h };
 void activeXTextClass::updateDimensions ( void )
 {
 
-  getStringBoxSize( value.getRaw(), stringLength, &fs, alignment,
-   &stringBoxWidth, &stringBoxHeight );
+  if ( activeMode ) {
+    if ( value.getExpanded() ) {
+      getStringBoxSize( value.getExpanded(), stringLength, &fs, alignment,
+       &stringBoxWidth, &stringBoxHeight );
+    }
+    else {
+      getStringBoxSize( value.getRaw(), stringLength, &fs, alignment,
+       &stringBoxWidth, &stringBoxHeight );
+    }
+  }
+  else {
+    getStringBoxSize( value.getRaw(), stringLength, &fs, alignment,
+     &stringBoxWidth, &stringBoxHeight );
+  }
 
   stringY = y + fontAscent + h/2 - stringBoxHeight/2;
 
