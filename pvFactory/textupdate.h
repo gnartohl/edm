@@ -4,6 +4,7 @@
 // kasemir@lanl.gov
 //
 // Changes:
+// 4.0.0  Added "Alarm Sensitive" to text color
 // 3.0.0  Added colorPv for color rules
 // 2.0.0  Use color name, fall back to index
 // 1.1.0  Added displayMode & precision
@@ -17,7 +18,7 @@
 
 #define TEXTUPDATE_CLASSNAME "TextupdateClass"
 #define TEXTENTRY_CLASSNAME  "TextentryClass"
-#define TEXT_MAJOR 3
+#define TEXT_MAJOR 4
 #define TEXT_MINOR 0
 #define TEXT_RELEASE 0
 
@@ -102,8 +103,9 @@ protected:
     typedef enum { dm_default, dm_decimal, dm_hex } DisplayMode;
     DisplayMode displayMode;
     int precision;
-    
+
     int textColor;
+    int alarm_sensitive;
     efInt line_width;
     int fillColor;
     int is_filled;
@@ -122,6 +124,7 @@ protected:
     int buf_displayMode;
     int buf_precision;
     int bufTextColor;
+    int buf_alarm_sensitive;
     efInt buf_line_width;
     colorButtonClass textCb;
     int bufFillColor;
@@ -131,7 +134,8 @@ protected:
     // Get text & color value.
     // len has to be initialized with the text buffer size.
     // Returns 1 if PV is valid
-    bool get_current_values(char *text, size_t &len, double &color_value);
+    bool get_current_values(char *text, size_t &len,
+                            double &color_value, short &severity);
 
     void redraw_text(Display *dis,
                      Drawable drw,
@@ -139,7 +143,8 @@ protected:
                      GC gc,
                      const char *text,
                      size_t len,
-                     double value);
+                     double value,
+                     short severity);
     void remove_text(Display *dis,
                      Drawable drw,
                      gcClass &gcc,

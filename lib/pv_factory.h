@@ -75,7 +75,10 @@ extern PV_Factory *the_PV_Factory;
 // status and severity for now match the EPICS model
 // as defined in base/include/alarm.h:
 #ifndef INVALID_ALARM
-#define INVALID_ALARM		0x3
+#define NO_ALARM		0x0
+#define	MINOR_ALARM		0x1
+#define	MAJOR_ALARM		0x2
+#define INVALID_ALARM	0x3
 #define	UDF_ALARM		17
 #endif
 
@@ -147,6 +150,7 @@ public:
 	virtual unsigned long get_nano() const = 0;
     // Status info, various limits
     virtual short       get_status() const = 0;
+    // Severity is NO_ALARM, MINOR_ALARM, MAJOR_ALARM or INVALID_ALARM
     virtual short       get_severity() const = 0;
     virtual short       get_precision() const = 0;
     virtual const char *get_units() const;

@@ -184,7 +184,9 @@ int edmRegTextupdateClass::drawActive()
     double color_value;
     char text[80];
     size_t len = 80;
-    if (get_current_values(text, len, color_value) &&
+    short severity;
+    
+    if (get_current_values(text, len, color_value, severity) &&
         re_valid)
     {
         regmatch_t pmatch[2];
@@ -214,7 +216,7 @@ int edmRegTextupdateClass::drawActive()
                 XtWindow(actWin->executeWidget),
                 actWin->executeGc,
                 actWin->executeGc.normGC(),
-                text, len, color_value);
+                text, len, color_value, severity);
    
     actWin->executeGc.restoreFg();
     return 1;
