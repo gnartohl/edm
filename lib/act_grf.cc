@@ -2578,7 +2578,7 @@ char *firstName, *nextName;
 
 }
 
-Widget mkDragIcon( Widget w, char *lbl )
+Widget mkDragIcon( Widget w, activeGraphicClass *agc )
 {
   Arg             args[8];
   Cardinal        n;
@@ -2589,6 +2589,7 @@ Widget mkDragIcon( Widget w, char *lbl )
   XButtonEvent  * xbutton;
   XGCValues       gcValues;
   unsigned long   gcValueMask;
+  char *firstName, *nextName;
 
   Display *display = XtDisplay(w);
   int screenNum = DefaultScreen(display);
@@ -2596,10 +2597,6 @@ Widget mkDragIcon( Widget w, char *lbl )
   Pixmap sourcePixmap = (Pixmap)NULL;
   static GC gc = NULL;
   static XFontStruct * fixedFont = NULL;
-
-  clipbdStart();
-  clipbdAdd(lbl);
-  clipbdHold();
 
   if (fixedFont == NULL)
      fixedFont = XLoadQueryFont( display, "fixed" );
@@ -2611,9 +2608,33 @@ Widget mkDragIcon( Widget w, char *lbl )
   fg = WhitePixel(display,screenNum);
 
   fontHeight = fixedFont->ascent + fixedFont->descent;
-  textWidth = XTextWidth(fixedFont, lbl, strlen(lbl));
+
+  char *str;
+  int idx = 0;
+  firstName = agc->firstDragName();
+  if (firstName) {
+     printf("firstDragName = '%s', value[%d] = '%s', currDragIdx = %d\n",
+	    firstName, idx, agc->dragValue(idx), agc->getCurrentDragIndex());
+     clipbdStart();
+     clipbdAdd(agc->dragValue(idx));
+     nextName = agc->nextDragName();
+     str = agc->dragValue(idx);
+     if (!str) str = "";
+     textWidth = XTextWidth(fixedFont, str, strlen(str));
+     
+     while (nextName) {
+	str = agc->dragValue(++idx);
+	if (!str) str = "";
+	printf("nextDragName = '%s', value[%d] = '%s'\n", nextName, idx, str);
+	clipbdAdd("\n");
+	clipbdAdd(str);
+	int tw = XTextWidth(fixedFont, str, strlen(str));
+	textWidth = max(tw, textWidth);
+     }
+     clipbdHold();
+  }
   maxWidth = X_SHIFT + (textWidth + MARGIN);
-  maxHeight = fontHeight + 2*MARGIN;
+  maxHeight = fontHeight * (idx+1) + 2*MARGIN;
   
   sourcePixmap = XCreatePixmap(display,
 			       RootWindow(display, screenNum),
@@ -2634,9 +2655,15 @@ Widget mkDragIcon( Widget w, char *lbl )
   XFillRectangle(display,sourcePixmap,gc,0,0,maxWidth,maxHeight);
 
   XSetForeground(display,gc,fg);
-  XDrawString( display, sourcePixmap, gc, 
-	       X_SHIFT, fixedFont->ascent + MARGIN, 
-	       lbl, strlen(lbl) );
+
+  for (int i = 0; i <= idx; i++) {
+     str = agc->dragValue(idx);
+     if (!str) str = "";
+     printf("drawing[%d] '%s'\n", i, str);
+     XDrawString( display, sourcePixmap, gc, 
+		  X_SHIFT, fixedFont->ascent + MARGIN + i * fontHeight, 
+		  str, strlen(str) );
+  }
   
   n = 0;
   XtSetArg(args[n],XmNpixmap,sourcePixmap); n++;
@@ -2656,12 +2683,9 @@ int n;
 Arg args[10];
 XMotionEvent dragEvent;
 char *firstName;
-Widget icon;
 
-  firstName = firstDragName(); 
-  if ( firstName ) {
-     icon = mkDragIcon(actWin->executeWidget, dragValue(currentDragIndex));
-  }
+  Widget icon = mkDragIcon(actWin->executeWidget, this);
+ 
 
   expList[0] = XA_STRING;
   n = 0;
@@ -2693,13 +2717,9 @@ Atom expList[1];
 int n;
 Arg args[10];
 char *firstName;
-Widget icon;
 
-  firstName = firstDragName(); 
-  if ( firstName ) {
-     icon = mkDragIcon(w, dragValue(currentDragIndex));
-  }
-
+  Widget icon = mkDragIcon(w, this);
+ 
   expList[0] = XA_STRING;
   n = 0;
   XtSetArg( args[n], XmNexportTargets, expList ); n++;

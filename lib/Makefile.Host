@@ -5,7 +5,7 @@ SHARED_LIBRARIES=YES
 
 ifeq ($(HOST_ARCH),Linux)
 
-  USR_CXXFLAGS += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+  USR_CXXFLAGS += -g -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
 
   USR_LIBS_DEFAULT = Xm Xt Xp Xtst X11 pthread dl
 
