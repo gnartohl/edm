@@ -61,25 +61,15 @@ int displaySchemeClass::loadDefault (
 
 char buf[127+1];
 FILE *f;
-int i, r, g, b;
+int r, g, b;
 int major, minor, release;
 unsigned int pixel;
 
   if ( appCtx ) {
 
-    i = 0;
-    do {
-
-      appCtx->expandFileName( i, buf, "default", ".scheme", 127 );
-
-      if ( strcmp( buf, "" ) != 0 ) {
-        f = fopen( buf, "r" );
-      }
-
-      i++;
-
-    } while ( ( i < appCtx->numPaths ) && !f );
-
+    strncpy( buf, appCtx->colorPath, 127 );
+    strncat( buf, "default.scheme", 127 );
+    f = fopen( buf, "r" );
     if ( !f ) return 0;
 
   }
