@@ -37,7 +37,7 @@ typedef struct objAndIndexTag {
 
 #include "related_display.str"
 
-static void test_cb (
+static void menu_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -96,7 +96,7 @@ class relatedDisplayClass : public activeGraphicClass {
 
 private:
 
-friend void test_cb (
+friend void menu_cb (
   Widget w,
   XtPointer client,
   XtPointer call );

@@ -28,7 +28,7 @@
 #include "thread.h"
 #include "crc.h"
 
-static void test_cb (
+static void menu_cb (
   Widget w,
   XtPointer client,
   XtPointer call )
@@ -1493,7 +1493,7 @@ XmString str;
              NULL );
             XmStringFree( str );
 
-            XtAddCallback( pb[ii], XmNactivateCallback, test_cb,
+            XtAddCallback( pb[ii], XmNactivateCallback, menu_cb,
              (XtPointer) this );
 
 	  }
