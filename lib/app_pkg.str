@@ -1,9 +1,9 @@
 #ifndef __app_pkg_str
 #define __app_pkg_str 1
 
-#define appContextClass_str1 (char *) "\n\nEdm object file is %s\n"
-#define appContextClass_str2 (char *) "No objects in file - %s\n"
-#define appContextClass_str3 (char *) "Object definition syntax error\n"
+#define appContextClass_str1 (char *) "\n\nEdm component file is %s\n"
+#define appContextClass_str2 (char *) "No components were found in file %s\n"
+#define appContextClass_str3 (char *) "Component definition syntax error\n"
 #define appContextClass_str4 (char *) "Number of items does not match contents in %s\n"
 #define appContextClass_str5 (char *) "\nComponent libray name must include absolute directory path\n"
 #define appContextClass_str6 (char *) "(e.g. /usr/lib/components.so)\n"
@@ -11,12 +11,12 @@
 #define appContextClass_str9 (char *) "Incomplete edm component library\n"
 #define appContextClass_str10 (char *) "Component                                 "
 #define appContextClass_str11 (char *) "Menu Type    Menu Text"
-#define appContextClass_str13 (char *) "\n\nCreating new Edm object file: %s\n"
+#define appContextClass_str13 (char *) "\n\nCreating new Edm component file: %s\n"
 #define appContextClass_str14 (char *) "Library contains no edm components\n"
 #define appContextClass_str15 (char *) "Class name already exists: %s\n"
 #define appContextClass_str16 (char *) "Adding component: %s, menu type: %s, menu text: %s\n"
-#define appContextClass_str17 (char *) "No edm compatable components could be found in %s\n"
-#define appContextClass_str18 (char *) "Moving current edm object file to %s\n"
+#define appContextClass_str17 (char *) "No edm compatable components were found in %s\n"
+#define appContextClass_str18 (char *) "Moving current edm component file to %s\n"
 #define appContextClass_str19 (char *) "rename:"
 #define appContextClass_str20 (char *) "\nThe new component has been successfully added\n"
 #define appContextClass_str21 (char *) "\nThe new components have been successfully added\n"
@@ -72,5 +72,13 @@
 #define appContextClass_str119 (char *) "Bad data file location"
 #define appContextClass_str120 (char *) "Using current directory\n"
 #define appContextClass_str121 (char *) "Path"
+#define appContextClass_str122 (char *) "No new components were found in %s\n"
+#define appContextClass_str123 (char *) "Remove operation aborted\n"
+#define appContextClass_str124 (char *) "Removing component: %s\n"
+#define appContextClass_str125 (char *) "No components were removed from file %s\n"
+#define appContextClass_str126 (char *) "Component was successfully removed\n"
+#define appContextClass_str127 (char *) "Components were successfully removed\n"
+#define appContextClass_str128 (char *) "File is empty\n"
+#define appContextClass_str129 (char *) 
 
 #endif

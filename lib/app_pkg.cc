@@ -96,15 +96,16 @@ static void manageComponents (
 typedef int (*REGFUNC)( char **, char **, char ** );
 REGFUNC func;
 
-int stat, index, comment, fileExists, fileEmpty;
+int stat, index, comment, fileExists, fileEmpty, doAdd, alreadyExists;
 char *classNamePtr, *typeNamePtr, *textPtr, *error;
 void *dllHandle;
 char fileName[255+1], prefix[255+1], line[255+1], buf[255+1];
 int numComponents = 0;
 int numToAdd = 0;
+int numToRemove = 0;
 char *envPtr, *tk, *more;
 FILE *f;
-libRecPtr head, tail, cur;
+libRecPtr head, tail, cur, prev, next;
 
   head = new libRecType;
   tail = head;
@@ -138,7 +139,8 @@ libRecPtr head, tail, cur;
       numComponents = atol( tk );
       if ( numComponents <= 0 ) {
         printf( appContextClass_str2, fileName );
-        return;
+        fileEmpty = 1;
+        fclose( f );
       }
     }
     else {
@@ -247,7 +249,7 @@ libRecPtr head, tail, cur;
     return;
   }
 
-  if ( strcmp( op, global_str8 ) == 0 ) {
+  if ( strcmp( op, global_str8 ) == 0 ) {  // show
 
     printf( "\n" );
 
@@ -300,7 +302,7 @@ libRecPtr head, tail, cur;
     printf( "\n\n" );
 
   }
-  else if ( strcmp( op, global_str6 ) == 0 ) {
+  else if ( strcmp( op, global_str6 ) == 0 ) {  // add
 
     if ( !fileExists ) {
       printf( appContextClass_str13, fileName );
@@ -325,45 +327,60 @@ libRecPtr head, tail, cur;
     }
 
     numToAdd = 0;
+    alreadyExists = 0;
     while ( !stat ) {
+
+      doAdd = 1;
 
       cur = head->flink;
       while ( cur ) {
         if ( strcmp( classNamePtr, cur->className ) == 0 ) {
           printf( appContextClass_str15, classNamePtr );
-          return;
+          doAdd = 0;
+          alreadyExists = 1;
+          break;
 	}
         cur = cur->flink;
       }
 
-      numToAdd++;
+      if ( doAdd ) {
 
-      printf( appContextClass_str16,
-       classNamePtr, typeNamePtr, textPtr );
+        numToAdd++;
 
-      cur = new libRecType;
-      tail->flink = cur;
-      tail = cur;
-      tail->flink = NULL;
+        printf( appContextClass_str16,
+         classNamePtr, typeNamePtr, textPtr );
 
-      cur->className = new (char)[strlen(classNamePtr)+1];
-      strcpy( cur->className, classNamePtr );
-      cur->fileName = new (char)[strlen(libFile)+1];
-      strcpy( cur->fileName, libFile );
-      cur->typeName = new (char)[strlen(typeNamePtr)+1];
-      strcpy( cur->typeName, typeNamePtr );
-      cur->text = new (char)[strlen(textPtr)+1];
-      strcpy( cur->text, textPtr );
+        cur = new libRecType;
+        tail->flink = cur;
+        tail = cur;
+        tail->flink = NULL;
 
-      numComponents++;
+        cur->className = new (char)[strlen(classNamePtr)+1];
+        strcpy( cur->className, classNamePtr );
+        cur->fileName = new (char)[strlen(libFile)+1];
+        strcpy( cur->fileName, libFile );
+        cur->typeName = new (char)[strlen(typeNamePtr)+1];
+        strcpy( cur->typeName, typeNamePtr );
+        cur->text = new (char)[strlen(textPtr)+1];
+        strcpy( cur->text, textPtr );
+
+        numComponents++;
+
+      }
 
       stat = (*func)( &classNamePtr, &typeNamePtr, &textPtr );
 
     }
 
     if ( numToAdd == 0 ) {
-      printf(
-       appContextClass_str17, fileName );
+      printf( "\n" );
+      if ( alreadyExists ) {
+        printf( appContextClass_str122, fileName );
+      }
+      else {
+        printf(
+         appContextClass_str17, fileName );
+      }
       return;
     }
 
@@ -408,11 +425,111 @@ libRecPtr head, tail, cur;
       printf( appContextClass_str21 );
 
   }
-  else if ( strcmp( op, global_str7 ) == 0 ) {
+  else if ( strcmp( op, global_str7 ) == 0 ) {  // remove
+
+    if ( !fileExists ) {
+      printf( appContextClass_str123 );
+      return;
+    }
 
     printf( "\n" );
 
-    printf( appContextClass_str23 );
+    strcpy( line, "firstRegRecord" );
+    func = (REGFUNC) dlsym( dllHandle, line );
+    if ((error = dlerror()) != NULL)  {
+      fputs( appContextClass_str14, stderr );
+      return;
+    }
+
+    stat = (*func)( &classNamePtr, &typeNamePtr, &textPtr );
+
+    strcpy( line, "nextRegRecord" );
+    func = (REGFUNC) dlsym( dllHandle, line );
+    if ((error = dlerror()) != NULL)  {
+      fputs( appContextClass_str9, stderr );
+      return;
+    }
+
+    numToRemove = 0;
+    while ( !stat ) {
+
+      cur = head->flink;
+      prev = head;
+      while ( cur ) {
+        next = cur->flink;
+        if ( strcmp( classNamePtr, cur->className ) == 0 ) {
+          printf( appContextClass_str124, classNamePtr );
+          numToRemove++;
+          prev->flink = next;
+          delete cur;
+          break;
+	}
+        else {
+          prev = cur;
+	}
+        cur = next;
+      }
+
+      stat = (*func)( &classNamePtr, &typeNamePtr, &textPtr );
+
+    }
+
+    if ( numToRemove == 0 ) {
+      printf( appContextClass_str125, fileName );
+      return;
+    }
+
+    // count remaining components
+    numComponents = 0;
+    cur = head->flink;
+    while ( cur ) {
+      numComponents++;
+      cur = cur->flink;
+    }
+
+    printf( "\n" );
+
+    strncpy( line, fileName, 255 );
+    strncat( line, "~", 255 );
+
+    if ( fileExists ) {
+
+      stat = unlink( line );
+
+      printf( appContextClass_str18, line );
+      stat = rename( fileName, line );
+      if ( stat ) {
+        perror( appContextClass_str19 );
+        return;
+      }
+
+    }
+
+    f = fopen( fileName, "w" );
+    if ( f ) {
+
+      fprintf( f, "%-d\n", numComponents );
+      cur = head->flink;
+      while ( cur ) {
+        fprintf( f, "%s %s %s %s\n", cur->className, cur->fileName,
+         cur->typeName, cur->text );
+        cur = cur->flink;
+      }
+
+    }
+    else {
+      perror( fileName );
+      return;
+    }
+
+    if ( numToRemove == 1 )
+      printf( appContextClass_str126 );
+    else if ( numToRemove > 1 )
+      printf( appContextClass_str127 );
+
+    if ( numComponents == 0 ) {
+      printf( appContextClass_str128 );
+    }
 
   }
 
@@ -426,15 +543,16 @@ static void managePvComponents (
 typedef int (*PVREGFUNC)( char **, char ** );
 PVREGFUNC func;
 
-int stat, index, comment, fileExists, fileEmpty;
+int stat, index, comment, fileExists, fileEmpty, doAdd, alreadyExists;
 char *classNamePtr, *textPtr, *error;
 void *dllHandle;
 char fileName[255+1], prefix[255+1], line[255+1], buf[255+1];
 int numComponents = 0;
 int numToAdd = 0;
+int numToRemove = 0;
 char *envPtr, *tk, *more;
 FILE *f;
-libRecPtr head, tail, cur;
+libRecPtr head, tail, cur, prev, next;
 
   head = new libRecType;
   tail = head;
@@ -468,7 +586,8 @@ libRecPtr head, tail, cur;
       numComponents = atol( tk );
       if ( numComponents <= 0 ) {
         printf( appContextClass_str2, fileName );
-        return;
+        fileEmpty = 1;
+        fclose( f );
       }
     }
     else {
@@ -569,7 +688,7 @@ libRecPtr head, tail, cur;
     return;
   }
 
-  if ( strcmp( op, global_str65 ) == 0 ) {
+  if ( strcmp( op, global_str65 ) == 0 ) {  // showpv
 
     printf( "\n" );
 
@@ -616,7 +735,7 @@ libRecPtr head, tail, cur;
     printf( "\n\n" );
 
   }
-  else if ( strcmp( op, global_str63 ) == 0 ) {
+  else if ( strcmp( op, global_str63 ) == 0 ) {  // addpv
 
     if ( !fileExists ) {
       printf( appContextClass_str13, fileName );
@@ -641,42 +760,54 @@ libRecPtr head, tail, cur;
     }
 
     numToAdd = 0;
+    alreadyExists = 0;
     while ( !stat ) {
 
       cur = head->flink;
       while ( cur ) {
         if ( strcmp( classNamePtr, cur->className ) == 0 ) {
           printf( appContextClass_str15, classNamePtr );
-          return;
+          doAdd = 0;
+          alreadyExists = 1;
 	}
         cur = cur->flink;
       }
 
-      numToAdd++;
+      if ( doAdd ) {
 
-      printf( appContextClass_str109, classNamePtr, textPtr );
+        numToAdd++;
 
-      cur = new libRecType;
-      tail->flink = cur;
-      tail = cur;
-      tail->flink = NULL;
+        printf( appContextClass_str109, classNamePtr, textPtr );
 
-      cur->className = new (char)[strlen(classNamePtr)+1];
-      strcpy( cur->className, classNamePtr );
-      cur->fileName = new (char)[strlen(libFile)+1];
-      strcpy( cur->fileName, libFile );
-      cur->text = new (char)[strlen(textPtr)+1];
-      strcpy( cur->text, textPtr );
+        cur = new libRecType;
+        tail->flink = cur;
+        tail = cur;
+        tail->flink = NULL;
 
-      numComponents++;
+        cur->className = new (char)[strlen(classNamePtr)+1];
+        strcpy( cur->className, classNamePtr );
+        cur->fileName = new (char)[strlen(libFile)+1];
+        strcpy( cur->fileName, libFile );
+        cur->text = new (char)[strlen(textPtr)+1];
+        strcpy( cur->text, textPtr );
+
+        numComponents++;
+
+      }
 
       stat = (*func)( &classNamePtr, &textPtr );
 
     }
 
     if ( numToAdd == 0 ) {
-      printf(
-       appContextClass_str17, fileName );
+      printf( "\n" );
+      if ( alreadyExists ) {
+        printf( appContextClass_str122, fileName );
+      }
+      else {
+        printf(
+         appContextClass_str17, fileName );
+      }
       return;
     }
 
@@ -721,11 +852,111 @@ libRecPtr head, tail, cur;
       printf( appContextClass_str21 );
 
   }
-  else if ( strcmp( op, global_str64 ) == 0 ) {
+  else if ( strcmp( op, global_str64 ) == 0 ) {  // removepv
+
+    if ( !fileExists ) {
+      printf( appContextClass_str123 );
+      return;
+    }
 
     printf( "\n" );
 
-    printf( appContextClass_str23 );
+    strcpy( line, "firstPvRegRecord" );
+    func = (PVREGFUNC) dlsym( dllHandle, line );
+    if ((error = dlerror()) != NULL)  {
+      fputs( appContextClass_str14, stderr );
+      return;
+    }
+
+    stat = (*func)( &classNamePtr, &textPtr );
+
+    strcpy( line, "nextPvRegRecord" );
+    func = (PVREGFUNC) dlsym( dllHandle, line );
+    if ((error = dlerror()) != NULL)  {
+      fputs( appContextClass_str9, stderr );
+      return;
+    }
+
+    numToRemove = 0;
+    while ( !stat ) {
+
+      cur = head->flink;
+      prev = head;
+      while ( cur ) {
+        next = cur->flink;
+        if ( strcmp( classNamePtr, cur->className ) == 0 ) {
+          printf( appContextClass_str124, classNamePtr );
+          numToRemove++;
+          prev->flink = next;
+          delete cur;
+          break;
+	}
+        else {
+          prev = cur;
+	}
+        cur = next;
+      }
+
+      stat = (*func)( &classNamePtr, &textPtr );
+
+    }
+
+    if ( numToRemove == 0 ) {
+      printf( appContextClass_str125, fileName );
+      return;
+    }
+
+    // count remaining components
+    numComponents = 0;
+    cur = head->flink;
+    while ( cur ) {
+      numComponents++;
+      cur = cur->flink;
+    }
+
+    printf( "\n" );
+
+    strncpy( line, fileName, 255 );
+    strncat( line, "~", 255 );
+
+    if ( fileExists ) {
+
+      stat = unlink( line );
+
+      printf( appContextClass_str18, line );
+      stat = rename( fileName, line );
+      if ( stat ) {
+        perror( appContextClass_str19 );
+        return;
+      }
+
+    }
+
+    f = fopen( fileName, "w" );
+    if ( f ) {
+
+      fprintf( f, "%-d\n", numComponents );
+      cur = head->flink;
+      while ( cur ) {
+        fprintf( f, "%s %s %s\n", cur->className, cur->fileName,
+         cur->text );
+        cur = cur->flink;
+      }
+
+    }
+    else {
+      perror( fileName );
+      return;
+    }
+
+    if ( numToRemove == 1 )
+      printf( appContextClass_str126 );
+    else if ( numToRemove > 1 )
+      printf( appContextClass_str127 );
+
+    if ( numComponents == 0 ) {
+      printf( appContextClass_str128 );
+    }
 
   }
 
