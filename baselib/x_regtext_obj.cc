@@ -210,13 +210,17 @@ activeXRegTextClass *axrto = (activeXRegTextClass *) userarg;
 
   if ( !axrto->connection.pvsConnected() ) {
 
-    axrto->connection.setPvConnected( (void *) alarmPvConnection );
+    if ( pv->is_valid() ) {
 
-    if ( axrto->connection.pvsConnected() ) {
-      axrto->actWin->appCtx->proc->lock();
-      axrto->needConnectInit = 1;
-      axrto->actWin->addDefExeNode( axrto->aglPtr );
-      axrto->actWin->appCtx->proc->unlock();
+      axrto->connection.setPvConnected( (void *) alarmPvConnection );
+
+      if ( axrto->connection.pvsConnected() ) {
+        axrto->actWin->appCtx->proc->lock();
+        axrto->needConnectInit = 1;
+        axrto->actWin->addDefExeNode( axrto->aglPtr );
+        axrto->actWin->appCtx->proc->unlock();
+      }
+
     }
 
   }
@@ -265,13 +269,17 @@ activeXRegTextClass *axrto = (activeXRegTextClass *) userarg;
 
   if ( !axrto->connection.pvsConnected() ) {
 
-    axrto->connection.setPvConnected( (void *) visPvConnection );
+    if ( pv->is_valid() ) {
 
-    if ( axrto->connection.pvsConnected() ) {
-      axrto->actWin->appCtx->proc->lock();
-      axrto->needConnectInit = 1;
-      axrto->actWin->addDefExeNode( axrto->aglPtr );
-      axrto->actWin->appCtx->proc->unlock();
+      axrto->connection.setPvConnected( (void *) visPvConnection );
+
+      if ( axrto->connection.pvsConnected() ) {
+        axrto->actWin->appCtx->proc->lock();
+        axrto->needConnectInit = 1;
+        axrto->actWin->addDefExeNode( axrto->aglPtr );
+        axrto->actWin->appCtx->proc->unlock();
+      }
+
     }
 
   }

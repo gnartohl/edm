@@ -262,13 +262,17 @@ activeXTextClass *axto = (activeXTextClass *) userarg;
 
   if ( !axto->connection.pvsConnected() ) {
 
-    axto->connection.setPvConnected( (void *) alarmPvConnection );
+    if ( pv->is_valid() ) {
 
-    if ( axto->connection.pvsConnected() ) {
-      axto->actWin->appCtx->proc->lock();
-      axto->needConnectInit = 1;
-      axto->actWin->addDefExeNode( axto->aglPtr );
-      axto->actWin->appCtx->proc->unlock();
+      axto->connection.setPvConnected( (void *) alarmPvConnection );
+
+      if ( axto->connection.pvsConnected() ) {
+        axto->actWin->appCtx->proc->lock();
+        axto->needConnectInit = 1;
+        axto->actWin->addDefExeNode( axto->aglPtr );
+        axto->actWin->appCtx->proc->unlock();
+      }
+
     }
 
   }
@@ -317,13 +321,17 @@ activeXTextClass *axto = (activeXTextClass *) userarg;
 
   if ( !axto->connection.pvsConnected() ) {
 
-    axto->connection.setPvConnected( (void *) visPvConnection );
+    if ( pv->is_valid() ) {
 
-    if ( axto->connection.pvsConnected() ) {
-      axto->actWin->appCtx->proc->lock();
-      axto->needConnectInit = 1;
-      axto->actWin->addDefExeNode( axto->aglPtr );
-      axto->actWin->appCtx->proc->unlock();
+      axto->connection.setPvConnected( (void *) visPvConnection );
+
+      if ( axto->connection.pvsConnected() ) {
+        axto->actWin->appCtx->proc->lock();
+        axto->needConnectInit = 1;
+        axto->actWin->addDefExeNode( axto->aglPtr );
+        axto->actWin->appCtx->proc->unlock();
+      }
+
     }
 
   }

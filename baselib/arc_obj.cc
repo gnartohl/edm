@@ -257,13 +257,17 @@ activeArcClass *aao = (activeArcClass *) userarg;
 
   if ( !aao->connection.pvsConnected() ) {
 
-    aao->connection.setPvConnected( (void *) alarmPvConnection );
+    if ( pv->is_valid() ) {
 
-    if ( aao->connection.pvsConnected() ) {
-      aao->actWin->appCtx->proc->lock();
-      aao->needConnectInit = 1;
-      aao->actWin->addDefExeNode( aao->aglPtr );
-      aao->actWin->appCtx->proc->unlock();
+      aao->connection.setPvConnected( (void *) alarmPvConnection );
+
+      if ( aao->connection.pvsConnected() ) {
+        aao->actWin->appCtx->proc->lock();
+        aao->needConnectInit = 1;
+        aao->actWin->addDefExeNode( aao->aglPtr );
+        aao->actWin->appCtx->proc->unlock();
+      }
+
     }
 
   }
@@ -312,13 +316,17 @@ activeArcClass *aao = (activeArcClass *) userarg;
 
   if ( !aao->connection.pvsConnected() ) {
 
-    aao->connection.setPvConnected( (void *) visPvConnection );
+    if ( pv->is_valid() ) {
 
-    if ( aao->connection.pvsConnected() ) {
-      aao->actWin->appCtx->proc->lock();
-      aao->needConnectInit = 1;
-      aao->actWin->addDefExeNode( aao->aglPtr );
-      aao->actWin->appCtx->proc->unlock();
+      aao->connection.setPvConnected( (void *) visPvConnection );
+
+      if ( aao->connection.pvsConnected() ) {
+        aao->actWin->appCtx->proc->lock();
+        aao->needConnectInit = 1;
+        aao->actWin->addDefExeNode( aao->aglPtr );
+        aao->actWin->appCtx->proc->unlock();
+      }
+
     }
 
   }

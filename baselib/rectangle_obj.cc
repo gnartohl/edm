@@ -209,13 +209,17 @@ activeRectangleClass *aro = (activeRectangleClass *) userarg;
 
   if ( !aro->connection.pvsConnected() ) {
 
-    aro->connection.setPvConnected( (void *) alarmPvConnection );
+    if ( pv->is_valid() ) {
 
-    if ( aro->connection.pvsConnected() ) {
-      aro->actWin->appCtx->proc->lock();
-      aro->needConnectInit = 1;
-      aro->actWin->addDefExeNode( aro->aglPtr );
-      aro->actWin->appCtx->proc->unlock();
+      aro->connection.setPvConnected( (void *) alarmPvConnection );
+
+      if ( aro->connection.pvsConnected() ) {
+        aro->actWin->appCtx->proc->lock();
+        aro->needConnectInit = 1;
+        aro->actWin->addDefExeNode( aro->aglPtr );
+        aro->actWin->appCtx->proc->unlock();
+      }
+
     }
 
   }
@@ -264,13 +268,17 @@ activeRectangleClass *aro = (activeRectangleClass *) userarg;
 
   if ( !aro->connection.pvsConnected() ) {
 
-    aro->connection.setPvConnected( (void *) visPvConnection );
+    if ( pv->is_valid() ) {
 
-    if ( aro->connection.pvsConnected() ) {
-      aro->actWin->appCtx->proc->lock();
-      aro->needConnectInit = 1;
-      aro->actWin->addDefExeNode( aro->aglPtr );
-      aro->actWin->appCtx->proc->unlock();
+      aro->connection.setPvConnected( (void *) visPvConnection );
+
+      if ( aro->connection.pvsConnected() ) {
+        aro->actWin->appCtx->proc->lock();
+        aro->needConnectInit = 1;
+        aro->actWin->addDefExeNode( aro->aglPtr );
+        aro->actWin->appCtx->proc->unlock();
+      }
+
     }
 
   }
