@@ -99,6 +99,14 @@ class activeGraphicClass {
 
 protected:
 
+// Change major version whenever this or any dependent class changes in an
+// incompatible manner with respect to a derived edm widget class. This
+// will help avoid base class poisoning run-time issues for libraries built
+// at one site and utilized at another.
+//
+static const int MAJOR_VERSION = 1;
+static const int MINOR_VERSION = 0;
+
 friend void dragFin (
   Widget w,
   XtPointer clientData,
@@ -178,6 +186,15 @@ activeGraphicClass ( void );
 void clone ( const activeGraphicClass *source );
 
 virtual ~activeGraphicClass ( void );
+
+int baseMajorVersion ( void );
+
+int baseMinorVersion ( void );
+
+void checkBaseClassVersion (
+  int ver,
+  char *file
+);
 
 virtual void setObjType (
   char *strObjType );

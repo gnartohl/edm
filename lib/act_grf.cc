@@ -126,6 +126,30 @@ activeGraphicClass::~activeGraphicClass ( void ) {
 
 }
 
+int activeGraphicClass::baseMajorVersion ( void ) {
+
+   return MAJOR_VERSION;
+
+}
+
+int activeGraphicClass::baseMinorVersion ( void ) {
+
+   return MINOR_VERSION;
+
+}
+
+void activeGraphicClass::checkBaseClassVersion (
+  int ver,
+  char *file
+) {
+
+  if ( baseMajorVersion() != ver ) {
+    printf( "Incompatible base class version - %s\n", file );
+    exit(-1);
+  }
+
+}
+
 void activeGraphicClass::setObjType (
   char *strObjType ) {
 

@@ -195,7 +195,8 @@ char string[XTDC_K_MAX+1], tmp[XTDC_K_MAX+1];
         if ( doPut ) {
 
           if ( axtdo->pvExists ) {
-	    axtdo->pvId->put( dvalue );
+	    //axtdo->pvId->put( dvalue );
+            axtdo->putValueWithClip( dvalue );
           }
           else {
             axtdo->needUpdate = 1;
@@ -236,7 +237,8 @@ char string[XTDC_K_MAX+1], tmp[XTDC_K_MAX+1];
         if ( isLegalInteger(tmp) ) {
           ivalue = strtol( tmp, NULL, 0 );
           if ( axtdo->pvExists ) {
-	    axtdo->pvId->put( ivalue );
+	    //axtdo->pvId->put( ivalue );
+            axtdo->putValueWithClip( ivalue );
           }
           else {
             axtdo->needUpdate = 1;
@@ -546,7 +548,8 @@ static void xtdoSetKpDoubleValue (
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   axtdo->editDialogIsActive = 0;
-  axtdo->pvId->put( axtdo->kpDouble );
+  //axtdo->pvId->put( axtdo->kpDouble );
+  axtdo->putValueWithClip( axtdo->kpDouble );
 
 }
 
@@ -559,7 +562,8 @@ static void xtdoSetKpIntValue (
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   axtdo->editDialogIsActive = 0;
-  axtdo->pvId->put( axtdo->kpInt );
+  //axtdo->pvId->put( axtdo->kpInt );
+  axtdo->putValueWithClip( axtdo->kpInt );
 
 }
 
@@ -761,7 +765,9 @@ char *buf, tmp[XTDC_K_MAX+1];
 
     ivalue = strtol( tmp, NULL, 0 );
     if ( axtdo->pvExists ) {
-      axtdo->pvId->put( ivalue );
+      //axtdo->pvId->put( ivalue );
+      axtdo->putValueWithClip( ivalue );
+
     }
     else {
       axtdo->needUpdate = 1;
@@ -836,7 +842,8 @@ char tmp[XTDC_K_MAX+1];
 
     ivalue = strtol( tmp, NULL, 0 );
     if ( axtdo->pvExists ) {
-      axtdo->pvId->put( ivalue );
+      //axtdo->pvId->put( ivalue );
+      axtdo->putValueWithClip( ivalue );
     }
     else {
       axtdo->needUpdate = 1;
@@ -911,7 +918,8 @@ char *buf, tmp[XTDC_K_MAX+1];
     axtdo->curValue[XTDC_K_MAX] = 0;
 
     if ( axtdo->pvExists ) {
-      axtdo->pvId->put( dvalue );
+      //axtdo->pvId->put( dvalue );
+      axtdo->putValueWithClip( dvalue );
     }
     else {
       axtdo->needUpdate = 1;
@@ -1002,7 +1010,8 @@ int n;
     axtdo->curValue[XTDC_K_MAX] = 0;
 
     if ( axtdo->pvExists ) {
-      axtdo->pvId->put( dvalue );
+      //axtdo->pvId->put( dvalue );
+      axtdo->putValueWithClip( dvalue );
     }
     else {
       axtdo->needUpdate = 1;
@@ -1485,7 +1494,8 @@ char string[XTDC_K_MAX+1], tmp[XTDC_K_MAX+1];
 
     if ( doPut ) {
       if ( axtdo->pvExists ) {
-        axtdo->pvId->put( dvalue );
+        //axtdo->pvId->put( dvalue );
+        axtdo->putValueWithClip( dvalue );
       }
       else {
         axtdo->needUpdate = 1;
@@ -1526,7 +1536,8 @@ char string[XTDC_K_MAX+1], tmp[XTDC_K_MAX+1];
     if ( isLegalInteger(tmp) ) {
       ivalue = strtol( tmp, NULL, 0 );
       if ( axtdo->pvExists ) {
-        axtdo->pvId->put( ivalue );
+        //axtdo->pvId->put( ivalue );
+        axtdo->putValueWithClip( ivalue );
       }
       else {
         axtdo->needUpdate = 1;
@@ -1660,6 +1671,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
     axtdo->precision = 2;
   else
     axtdo->precision = axtdo->efPrecision.value();
+
+  axtdo->clipToDspLimits = axtdo->eBuf->bufClipToDspLimits;
 
   axtdo->fgColor.setConnectSensitive();
 
@@ -1831,6 +1844,9 @@ activeXTextDspClass::activeXTextDspClass ( void ) {
   efPrecision.setNull(1);
   precision = 3;
 
+  clipToDspLimits = 0;
+  upperLim = lowerLim = 0.0;
+
   activeMode = 0;
 
   strcpy( id, "" );
@@ -1945,6 +1961,9 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   fastUpdate = source->fastUpdate;
   precision = source->precision;
   efPrecision = source->efPrecision;
+  clipToDspLimits = source->clipToDspLimits;
+  upperLim = source->upperLim;
+  lowerLim = source->lowerLim;
 
   showUnits = source->showUnits;
   strcpy( units, "" );
@@ -1995,6 +2014,44 @@ activeXTextDspClass::~activeXTextDspClass ( void ) {
   }
 
   updateBlink( 0 );
+
+}
+
+void activeXTextDspClass::putValueWithClip (
+  double val
+) {
+
+  if ( clipToDspLimits ) {
+
+    if ( ( val >= lowerLim ) && ( val <= upperLim ) ) {
+      pvId->put( val );
+    }
+
+  }
+  else {
+
+    pvId->put( val );
+
+  }
+
+}
+
+void activeXTextDspClass::putValueWithClip (
+  int val
+) {
+
+  if ( clipToDspLimits ) {
+
+    if ( ( val >= (int) lowerLim ) && ( val <= (int) upperLim ) ) {
+      pvId->put( val );
+    }
+
+  }
+  else {
+
+    pvId->put( val );
+
+  }
 
 }
 
@@ -2209,6 +2266,7 @@ static int objTypeEnum[4] = {
   tag.loadBoolW( "inputFocusUpdates", &inputFocusUpdatesAllowed, &zero );
   tag.loadW( "objType", 4, objTypeEnumStr, objTypeEnum, &objType,
    &objTypeUnknown );
+  tag.loadBoolW( "clipToDspLimits", &clipToDspLimits, &zero );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -2459,6 +2517,7 @@ static int objTypeEnum[4] = {
   tag.loadR( "inputFocusUpdates", &inputFocusUpdatesAllowed, &zero );
   tag.loadR( "objType", 4, objTypeEnumStr, objTypeEnum, &objType,
    &objTypeUnknown );
+  tag.loadR( "clipToDspLimits", &clipToDspLimits, &zero );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.readTags( f, "endObjectProperties" );
@@ -3072,6 +3131,8 @@ int tmpFgColor;
   fastUpdate = 0;
   precision = 3;
   efPrecision.setValue( 3 );
+  clipToDspLimits = 0;
+  upperLim = lowerLim = 0.0;
 
   fgColor.setAlarmInsensitive();
 
@@ -3207,6 +3268,7 @@ int noedit;
   eBuf->bufChangeValOnLoseFocus = changeValOnLoseFocus;
   eBuf->bufFastUpdate = fastUpdate;
   eBuf->bufEfPrecision = efPrecision;
+  eBuf->bufClipToDspLimits = clipToDspLimits;
   eBuf->bufChangeCallbackFlag = changeCallbackFlag;
   eBuf->bufActivateCallbackFlag = activateCallbackFlag;
   eBuf->bufDeactivateCallbackFlag = deactivateCallbackFlag;
@@ -3241,6 +3303,7 @@ int noedit;
   ef.addToggle( activeXTextDspClass_str77, &eBuf->bufUseHexPrefix );
   ef.addToggle( activeXTextDspClass_str20, &eBuf->bufLimitsFromDb );
   ef.addTextField( activeXTextDspClass_str21, 35, &eBuf->bufEfPrecision );
+  ef.addToggle( activeXTextDspClass_str84, &eBuf->bufClipToDspLimits );
   ef.addToggle( activeXTextDspClass_str81, &eBuf->bufShowUnits );
   ef.addToggle( activeXTextDspClass_str11, &eBuf->bufAutoHeight );
 
@@ -4136,7 +4199,20 @@ int i;
 
   if ( buttonNumber != 1 ) return;
 
-  if ( editDialogIsActive ) return;
+  if ( editDialogIsActive ) {
+
+    if ( useKp ) {
+
+      if ( kp.isPoppedUp() ) {
+        kp.popdown();
+        editDialogIsActive = 0;
+      }
+
+    }
+
+    return;
+
+  }
 
   teX = be->x_root;
   teY = be->y_root;
@@ -4416,6 +4492,15 @@ Atom importList[2];
         precision = pvId->get_precision();
       }
 
+      if ( clipToDspLimits ) {
+	upperLim = pvId->get_upper_disp_limit();
+        lowerLim = pvId->get_lower_disp_limit();
+      }
+      else {
+	upperLim = 0.0;
+        lowerLim = 0.0;
+      }
+
       fgColor.setStatus( pvId->get_status(), pvId->get_severity() );
 
       isDate = 0;
@@ -4432,6 +4517,15 @@ Atom importList[2];
 
       if ( limitsFromDb || efPrecision.isNull() ) {
         precision = pvId->get_precision();
+      }
+
+      if ( clipToDspLimits ) {
+	upperLim = (double) pvId->get_upper_disp_limit();
+        lowerLim = (double) pvId->get_lower_disp_limit();
+      }
+      else {
+	upperLim = 0.0;
+        lowerLim = 0.0;
       }
 
       fgColor.setStatus( pvId->get_status(), pvId->get_severity() );

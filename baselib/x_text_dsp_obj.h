@@ -51,7 +51,7 @@
 #define XTDC_K_FILE_NAME 2
 
 #define XTDC_MAJOR_VERSION 4
-#define XTDC_MINOR_VERSION 0
+#define XTDC_MINOR_VERSION 1
 #define XTDC_RELEASE 0
 
 #ifdef __x_text_dsp_obj_cc
@@ -474,6 +474,7 @@ typedef struct editBufTag {
   int bufUpdatePvOnDrop;
   int bufUseHexPrefix;
   efInt bufEfPrecision;
+  int bufClipToDspLimits;
   int bufBgColor;
   int bufFgColor;
   int bufSvalColor;
@@ -521,6 +522,8 @@ int updatePvOnDrop;
 int useHexPrefix;
 int precision;
 efInt efPrecision;
+int clipToDspLimits;
+double upperLim, lowerLim;
 int bgColor;
 pvColorClass fgColor;
 colorButtonClass fgCb, bgCb, svalCb;
@@ -603,7 +606,15 @@ char *objName ( void ) {
 
 }
 
- int minStringSize( void );
+void putValueWithClip (
+  double val
+);
+
+void putValueWithClip (
+  int val
+);
+
+int minStringSize( void );
 
 int createInteractive (
   activeWindowClass *aw_obj,
