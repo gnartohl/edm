@@ -646,6 +646,8 @@ int stat;
 
   invisibleIndex = -1;
 
+  useIndexFlag = 1;
+
 }
 
 colorInfoClass::~colorInfoClass ( void ) {
@@ -2524,13 +2526,15 @@ int colorInfoClass::ver4InitFromFile (
   char *fileName )
 {
 
+#define curMax 4
+
 char tk[MAX_LINE_SIZE+1], *endptr;
 int i, ii, n, stat, nrows, ncols, remainder, dup,
  parseStatus, state, colorMult, val, index, maxSpecial, firstCond;
 XColor color;
 Arg arg[20];
 XmString str1, str2;
-colorCachePtr cur1, cur2, cur3, cur[3], curSpecial;
+colorCachePtr cur1, cur2, cur3, cur4, cur[curMax], curSpecial;
 ruleConditionPtr ruleCond;
 unsigned long bgColor;
 int tmpSize;
@@ -2744,7 +2748,7 @@ char msg[127+1];
 
     case GET_RULE:
 
-      for( n=0; n<3; n++ ) {
+      for( n=0; n<curMax; n++ ) {
         cur[n] = new colorCacheType;
         cur[n]->rule = new ruleType;
         cur[n]->pixel = 0;
@@ -2752,6 +2756,9 @@ char msg[127+1];
         cur[n]->rule->ruleHead = new ruleConditionType; // sentinel
         cur[n]->rule->ruleTail = cur[n]->rule->ruleHead;
         cur[n]->rule->ruleTail->flink = NULL;
+        cur[n]->rgb[0] = 0;
+        cur[n]->rgb[1] = 0;
+        cur[n]->rgb[2] = 0;
       }
 
       stat = getToken( tk ); // color index
@@ -2784,7 +2791,7 @@ char msg[127+1];
         goto term;
       }
 
-      for( n=0; n<3; n++ ) {
+      for( n=0; n<curMax; n++ ) {
         cur[n]->name = new char[strlen(tk)+1];
         strcpy( cur[n]->name, tk );
         cur[n]->index = colorIndex;
@@ -3095,7 +3102,7 @@ char msg[127+1];
       }
 
       // link into condition list
-      for( n=0; n<3; n++ ) {
+      for( n=0; n<curMax; n++ ) {
         cur[n]->rule->ruleTail->flink = ruleCond;
         cur[n]->rule->ruleTail = ruleCond;
         cur[n]->rule->ruleTail->flink = NULL;
@@ -3106,7 +3113,7 @@ char msg[127+1];
 
     case GET_COLOR:
 
-      for( n=0; n<3; n++ ) {
+      for( n=0; n<curMax; n++ ) {
         cur[n] = new colorCacheType;
         cur[n]->rule = NULL;
         cur[n]->pixel = 0;
@@ -3143,7 +3150,7 @@ char msg[127+1];
         goto term;
       }
 
-      for( n=0; n<3; n++ ) {
+      for( n=0; n<curMax; n++ ) {
         cur[n]->name = new char[strlen(tk)+1];
         strcpy( cur[n]->name, tk );
         cur[n]->index = colorIndex;
@@ -3187,7 +3194,7 @@ char msg[127+1];
           parseStatus = FAIL;
           goto term;
         }
-        for( n=0; n<3; n++ ) {
+        for( n=0; n<curMax; n++ ) {
           val = strtol( tk, &endptr, 0 );
           if ( strcmp( endptr, "" ) != 0 ) {
             parseError( colorInfoClass_str16 );
@@ -3217,7 +3224,7 @@ char msg[127+1];
       else if ( strcmp( tk, "}" ) != 0 ) {
 
         // cur token must be an rgb value
-        for( n=0; n<3; n++ ) {
+        for( n=0; n<curMax; n++ ) {
           val = strtol( tk, &endptr, 0 );
           if ( strcmp( endptr, "" ) != 0 ) {
             parseError( colorInfoClass_str16 );
@@ -3241,7 +3248,7 @@ char msg[127+1];
             parseStatus = FAIL;
             goto term;
           }
-          for( n=0; n<3; n++ ) {
+          for( n=0; n<curMax; n++ ) {
             val = strtol( tk, &endptr, 0 );
             if ( strcmp( endptr, "" ) != 0 ) {
               parseError( colorInfoClass_str16 );
@@ -3373,6 +3380,22 @@ char msg[127+1];
         parseStatus = FAIL;
         goto term;
       }
+
+      //===============================
+
+      stat = avl_insert_node( this->colorCacheByColorH, (void *) cur[3],
+       &dup );
+      if ( !( stat & 1 ) ) {
+        delete cur[3];
+        fclose( f );
+        return stat;
+      }
+
+      if ( dup ) { // in this case, some duplicates are expected
+        delete cur[3];
+      }
+
+      //===============================
 
       if ( colorIndex+1 > max_colors ) max_colors = colorIndex+1;
 
@@ -3829,6 +3852,28 @@ term:
       }
       // --------------------------------------------------------------
 
+      // --------------------------------------------------------------
+      // update tree sorted by index
+      stat = avl_get_match( this->colorCacheByIndexH,
+       (void *) &cur1->index,
+       (void **) &cur3 );
+      if ( cur3 ) {
+        cur3->pixel = cur1->pixel;
+        cur3->blinkPixel = cur1->blinkPixel;
+      }
+      // --------------------------------------------------------------
+
+      // --------------------------------------------------------------
+      // update tree sorted by color
+      stat = avl_get_match( this->colorCacheByColorH,
+       (void *) &cur1->rgb,
+       (void **) &cur4 );
+      if ( cur4 ) {
+        cur4->pixel = cur1->pixel;
+        cur4->blinkPixel = cur1->blinkPixel;
+      }
+      // --------------------------------------------------------------
+
     }
 
     stat = avl_get_next( this->colorCacheByPosH, (void **) &cur1 );
@@ -4131,7 +4176,7 @@ int colorInfoClass::initFromFile (
   char *fileName )
 {
 
-char line[127+1], *ptr, *tk, *junk;
+char line[127+1], *ptr, *tk, *junk, *envPtr;
 int i, index, iOn, iOff, n, stat, nrows, ncols, remainder, dup, nSpecial;
 FILE *f;
 XColor color;
@@ -4142,6 +4187,16 @@ int rgb[3], red, green, blue;
 unsigned long plane_masks[1], bgColor;
 
   if ( !this->colorCacheByIndexH ) return 0;
+
+  envPtr = getenv( "EDMCOLORMODE" );
+  if ( envPtr ) {
+    if ( strcmp( envPtr, "rgb" ) == 0 ) {
+      useRGB();
+    }
+    else if ( strcmp( envPtr, "RGB" ) == 0 ) {
+      useRGB();
+    }
+  }
 
   appCtx = app;
   display = d;
@@ -4916,31 +4971,45 @@ int colorInfoClass::setRGB (
 
 int stat;
 colorCachePtr cur;
-int diff, bestPixel, bestR, bestG, bestB, min;
+int diff, bestR, bestG, bestB, min, foundOne;
+unsigned int bestPixel;
 
-  bestPixel = -1;
+  foundOne = 0;
   bestR = 0;
   bestG = 0;
   bestB = 0;
 
-  stat = avl_get_first( this->colorCacheByIndexH, (void **) &cur );
+  stat = avl_get_first( this->colorCacheByColorH, (void **) &cur );
   if ( !( stat & 1 ) ) return COLORINFO_FAIL;
 
   if ( cur ) {
-
+    foundOne = 1;
     min = abs( r - cur->rgb[0] ) + abs( g - cur->rgb[1] ) +
           abs( b - cur->rgb[2] );
+    if ( min == 0 ) {
+      *pixel = cur->pixel;
+      return COLORINFO_SUCCESS;
+    }
     bestPixel = cur->pixel;
     bestR = cur->rgb[0];
     bestG = cur->rgb[1];
     bestB = cur->rgb[2];
   }
 
+  stat = avl_get_next( this->colorCacheByColorH, (void **) &cur );
+  if ( !( stat & 1 ) ) return COLORINFO_FAIL;
+
   while ( cur ) {
+
+    foundOne = 1;
 
     diff = abs( r - cur->rgb[0] ) + abs( g - cur->rgb[1] ) +
           abs( b - cur->rgb[2] );
     if ( diff < min ) {
+      if ( diff == 0 ) {
+        *pixel = cur->pixel;
+        return COLORINFO_SUCCESS;
+      }
       min = diff;
       bestPixel = cur->pixel;
       bestR = cur->rgb[0];
@@ -4948,14 +5017,14 @@ int diff, bestPixel, bestR, bestG, bestB, min;
       bestB = cur->rgb[2];
     }
 
-    stat = avl_get_next( this->colorCacheByIndexH, (void **) &cur );
+    stat = avl_get_next( this->colorCacheByColorH, (void **) &cur );
     if ( !( stat & 1 ) ) return COLORINFO_FAIL;
 
   }
 
-  if ( bestPixel == -1 ) return COLORINFO_FAIL;
+  if ( !foundOne ) return COLORINFO_FAIL;
 
-  *pixel = (unsigned int) bestPixel;
+  *pixel = bestPixel;
 
   return COLORINFO_SUCCESS;
 
@@ -5458,3 +5527,81 @@ int colorInfoClass::isInvisible(
   return ( index == invisibleIndex );
 
 }
+
+void colorInfoClass::useIndex ( void ) {
+
+  useIndexFlag = 1;
+
+}
+
+void colorInfoClass::useRGB ( void ) {
+
+  useIndexFlag = 0;
+
+}
+
+int colorInfoClass::colorModeIsRGB ( void ) {
+
+  if ( useIndexFlag ) {
+    return 0;
+  }
+  else {
+    return 1;
+  }
+
+}
+
+int colorInfoClass::writeColorIndex (
+  FILE *f,
+  int index
+) {
+
+int r, g, b;
+unsigned int pixel;
+
+  if ( useIndexFlag ) {
+
+    writeStringToFile( f, "index" );
+    fprintf( f, "%-d\n", index );
+
+  }
+  else {
+
+    writeStringToFile( f, "rgb" );
+    pixel = pix( index );
+    getRGB( pixel, &r, &g, &b );
+    fprintf( f, "%-d,%-d,%-d\n", r, g, b );
+
+  }
+
+  return 1;
+
+}
+
+int colorInfoClass::readColorIndex (
+  FILE *f,
+  int *index
+) {
+
+int r, g, b;
+unsigned int pixel;
+char colorMode[10+1];
+
+  readStringFromFile( colorMode, 10, f );
+  if ( strcmp( colorMode, "rgb" ) != 0 ) {
+
+    fscanf( f, "%d\n", index );
+
+  }
+  else {
+
+    fscanf( f, "%d,%d,%d\n", &r, &g, &b );
+    setRGB( r, g, b, &pixel );
+    *index = pixIndex( pixel );
+
+  }
+
+  return 1;
+
+}
+

@@ -55,7 +55,7 @@ FILE *f;
       if ( prefix[strlen(prefix)-1] != '/' ) strncat( prefix, "/", 127 );
     }
     else {
-      strcpy( prefix, "/etc/" );
+      strcpy( prefix, "/etc/edm/" );
     }
 
     strncpy( fname, prefix, 127 );

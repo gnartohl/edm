@@ -150,7 +150,11 @@ undoEditNodeClass::~undoEditNodeClass () {
 
 int undoEditNodeClass::undo ( void ) {
 
-  return undoClass::success;
+int stat;
+
+  stat = actGrfAddr->undoEdit( opPtr );
+
+  return stat;
 
 }
 
@@ -211,6 +215,8 @@ undoClass::undoClass () {
 int i;
 
   head = tail = 0;
+
+  wantFlush = 0;
 
   // init
   for ( i=0; i<undoClass::max; i++ ) {
@@ -409,6 +415,28 @@ int undoClass::addEditNode (
   undoOpClass *_opPtr
 ) {
 
+undoNodeClass *node;
+undoListPtr cur;
+
+  node = new undoEditNodeClass;
+  if ( !node ) return undoClass::noMem;
+
+  node->actGrfAddr = _actGrfAddr;
+  node->actGrfCopyAddr = NULL;
+  node->opPtr = _opPtr;
+
+  if ( strcmp( undoButtonText[tail], "" ) != 0 ) {
+    node->actGrfAddr->setUndoText( undoButtonText[tail] );
+  }
+
+  cur = (undoListPtr) new undoListType;
+  if ( !cur ) return undoClass::noMem;
+
+  cur->node = node;
+  undoList[tail].tail->flink = cur;
+  undoList[tail].tail = cur;
+  undoList[tail].tail->flink = NULL;
+
   return 1;
 
 }
@@ -591,6 +619,8 @@ void undoClass::flush ( void )
 int i;
 undoListPtr cur;
 
+  wantFlush = 0;
+
   if ( head == tail ) return; // empty list
 
   // update undo button text and sensitivity
@@ -648,7 +678,7 @@ undoListPtr cur;
 void undoClass::show( void ) {
 
 undoListPtr cur;
-int stat;
+activeGraphicClass *gPtr;
 
   if ( tail == head ) {
     return;
@@ -658,7 +688,69 @@ int stat;
   cur = undoList[tail].head->flink;
 
   while ( cur ) {
+    gPtr = cur->node->actGrfAddr;
+    printf( "obj = %s, edit = %-d\n", gPtr->objName(),
+     gPtr->checkEditStatus() );
     cur = cur->flink;
   }
+
+}
+
+int undoClass::listEmpty ( void ) {
+
+undoListPtr cur;
+activeGraphicClass *gPtr;
+
+  if ( tail == head ) {
+    return 1; // empty
+  }
+
+  // process all nodes in list
+  cur = undoList[tail].head->flink;
+  if ( !cur ) return 1; // empty
+
+  while ( cur ) {
+    gPtr = cur->node->actGrfAddr;
+    if ( gPtr->checkEditStatus() ) return 0; // not empty
+    cur = cur->flink;
+  }
+
+  return 1; // empty
+
+}
+
+void undoClass::discard ( void ) {
+
+undoListPtr cur;
+
+  if ( tail == head ) {
+    return;
+  }
+
+  // do this in case undo list will become empty
+  cur = undoList[tail].head->flink;
+  if ( cur ) cur->node->actGrfAddr->setUndoText( NULL );
+
+  deleteNodes( tail );
+
+  tail--;
+  if ( tail < 0 ) tail = undoClass::max-1;
+
+  if ( tail != head ) { // undo list did not become empty
+    cur = undoList[tail].head->flink;
+    if ( cur ) cur->node->actGrfAddr->setUndoText( undoButtonText[tail] );
+  }
+
+}
+
+void undoClass::requestFlush ( void ) {
+
+  wantFlush = 1;
+
+}
+
+int undoClass::flushRequested ( void ) {
+
+  return wantFlush;
 
 }

@@ -79,6 +79,7 @@
 #define appContextClass_str126 (char *) "Component was successfully removed\n"
 #define appContextClass_str127 (char *) "Components were successfully removed\n"
 #define appContextClass_str128 (char *) "File is empty\n"
-#define appContextClass_str129 (char *) 
+#define appContextClass_str129 (char *) "Color mode is RGB! Edm should not normally be run in this manner."
+#define appContextClass_str130 (char *) "(unset EDMCOLORMODE disables this)"
 
 #endif

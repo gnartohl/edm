@@ -23,7 +23,7 @@
 #include "entry_form.h"
 
 #define EBTC_MAJOR_VERSION 2
-#define EBTC_MINOR_VERSION 0
+#define EBTC_MINOR_VERSION 1
 #define EBTC_RELEASE 0
 
 #ifdef __exit_button_cc

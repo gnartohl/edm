@@ -35,5 +35,8 @@
 #define activeSymbolClass_str32 (char *) "Bg/Fill Color"
 #define activeSymbolClass_str33 (char *) "Orientation"
 #define activeSymbolClass_str34 (char *) "Original|Rotate CW|Rotate CCW|Flip V|Flip H"
+#define activeSymbolClass_str35 (char *) "Symbol rotate --> No-op"
+#define activeSymbolClass_str36 (char *) "Symbol flip --> No-op"
+#define activeSymbolClass_str37 (char *) "Use display orientation instead (edit)"
 
 #endif

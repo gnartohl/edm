@@ -29,7 +29,7 @@
 #define ACC_K_COLORMODE_ALARM 1
 
 #define ACC_MAJOR_VERSION 2
-#define ACC_MINOR_VERSION 0
+#define ACC_MINOR_VERSION 1
 #define ACC_RELEASE 0
 
 #ifdef __circle_obj_cc

@@ -116,6 +116,8 @@ class activeSymbolClass : public activeGraphicClass {
 
 private:
 
+friend class undoSymbolOpClass;
+
 objPlusIndexType argRec[SYMBOL_K_MAX_PVS];
 
 void *voidHead[SYMBOL_K_NUM_STATES]; // cast to activeGraphicListPtr
@@ -165,7 +167,7 @@ char bufSymbolFileName[127+1],
  bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
 int bufNumStates, bufUseOriginalSize, bufUseOriginalColors;
 
-int bufFgColor, bufBgColor;
+int fgColor, bgColor, bufFgColor, bufBgColor;
 colorButtonClass fgCb, bgCb;
 
 int binaryTruthTable, bufBinaryTruthTable;
@@ -177,11 +179,11 @@ int needErase, needDraw, needConnectInit, needConnect[SYMBOL_K_MAX_PVS],
  needToEraseUnconnected;
 int unconnectedTimer;
 
-undoClass undoObj;
-
 int orientation, bufOrientation, prevOr;
 
 public:
+
+undoClass undoObj;
 
 friend void symUnconnectedTimeout (
   XtPointer client,
@@ -408,6 +410,16 @@ int activeSymbolClass::rotate (
   char direction ); // '+'=clockwise, '-'=counter clockwise
 
 int activeSymbolClass::flip (
+  int xOrigin,
+  int yOrigin,
+  char direction );
+
+int activeSymbolClass::rotateInternal (
+  int xOrigin,
+  int yOrigin,
+  char direction ); // '+'=clockwise, '-'=counter clockwise
+
+int activeSymbolClass::flipInternal (
   int xOrigin,
   int yOrigin,
   char direction );

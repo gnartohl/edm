@@ -56,8 +56,8 @@
 #include "avl.h"
 
 #define AWC_MAJOR_VERSION 3
-#define AWC_MINOR_VERSION 0
-#define AWC_RELEASE 1
+#define AWC_MINOR_VERSION 1
+#define AWC_RELEASE 0
 
 #define AWC_EDIT 1
 #define AWC_EXECUTE 2

@@ -222,6 +222,22 @@ public:
     int colorInfoClass::isInvisible(
       int index );
 
+    void colorInfoClass::useIndex ( void );
+
+    void colorInfoClass::useRGB ( void );
+
+    int colorInfoClass::colorModeIsRGB ( void );
+
+    int colorInfoClass::writeColorIndex (
+      FILE *f,
+      int index
+    );
+
+    int colorInfoClass::readColorIndex (
+      FILE *f,
+      int *index
+    );
+
     // The following functions are for use in color_button.cc and
     // entry_form.cc; they are not intended for general use.
     void colorInfoClass::setCurDestination(int *ptr);
@@ -360,6 +376,8 @@ private:
     showNameBlockType showNameBlock;
 
     int invisibleIndex;
+
+    int useIndexFlag;
 
 };
 

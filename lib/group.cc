@@ -494,9 +494,42 @@ activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
 activeGraphicListPtr cur;
 
   cur = head->flink;
-  if ( cur ) cur->node->doEdit();
+  if ( cur ) {
+    addUndoEditNode( curUndoObj );
+    cur->node->doEdit( &undoObj );
+  }
 
   return 1;
+
+}
+
+void activeGroupClass::beginEdit ( void ) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  cur = head->flink;
+  while ( cur != head ) {
+    cur->node->beginEdit();
+    cur = cur->flink;
+  }
+
+}
+
+int activeGroupClass::checkEditStatus ( void ) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  cur = head->flink;
+  while ( cur != head ) {
+    if ( cur->node->checkEditStatus() ) {
+      return 1;
+    }
+    cur = cur->flink;
+  }
+
+  return 0;
 
 }
 
@@ -2057,25 +2090,11 @@ int activeGroupClass::addUndoEditNode (
 {
 
 int stat;
-activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
-activeGraphicListPtr cur;
-
- return 1;
 
   stat = _undoObj->addEditNode( this, NULL );
   if ( !( stat & 1 ) ) return stat;
 
   undoObj.startNewUndoList( "" );
-
-  cur = head->flink;
-  while( cur != head ) {
-
-    stat = cur->node->addUndoEditNode( &(this->undoObj) );
-    if ( !( stat & 1 ) ) return stat;
-
-    cur = cur->flink;
-
-  }
 
   return 1;
 
@@ -2245,6 +2264,11 @@ int activeGroupClass::undoReorder (
 int activeGroupClass::undoEdit (
   undoOpClass *opPtr
 ) {
+
+int stat;
+
+  stat = undoObj.performSubUndo();
+  if ( !( stat & 1 ) ) XBell( actWin->d, 50 );
 
   return 1;
 

@@ -117,7 +117,7 @@ libRecPtr head, tail, cur, prev, next;
     if ( prefix[strlen(prefix)-1] != '/' ) strncat( prefix, "/", 255 );
   }
   else {
-    strcpy( prefix, "/etc/" );
+    strcpy( prefix, "/etc/edm/" );
   }
 
   strncpy( fileName, prefix, 255 );
@@ -564,7 +564,7 @@ libRecPtr head, tail, cur, prev, next;
     if ( prefix[strlen(prefix)-1] != '/' ) strncat( prefix, "/", 255 );
   }
   else {
-    strcpy( prefix, "/etc/" );
+    strcpy( prefix, "/etc/edm/" );
   }
 
   strncpy( fileName, prefix, 255 );
@@ -1640,7 +1640,7 @@ char *sysMacros[] = {
   }
   else {
 
-    strcpy( buf, "/etc/" );
+    strcpy( buf, "/etc/edm/" );
 
   }
 
@@ -2069,7 +2069,7 @@ int stat, dup, state, i;
     if ( prefix[strlen(prefix)-1] != '/' ) strncat( prefix, "/", 127 );
   }
   else {
-    strcpy( prefix, "/etc/" );
+    strcpy( prefix, "/etc/edm/" );
   }
 
   strncpy( fName, prefix, 127 );
@@ -3241,6 +3241,7 @@ static void displayParamInfo ( void ) {
   printf( global_str35 );
   printf( global_str36 );
   printf( global_str37 );
+  printf( global_str77 );
 
   printf( global_str57 );
   printf( global_str58 );
@@ -3315,6 +3316,7 @@ fileListPtr curFile;
 #endif
 
   strcpy( displayName, "" );
+  strcpy( colormode, "" );
   local = 0;
 
   // check first for component management commands
@@ -3453,6 +3455,11 @@ fileListPtr curFile;
         else if ( strcmp( argv[n], global_str73 ) == 0 ) {
           n++; // just ignore, not used here
           if ( n >= argc ) return 2;
+        }
+        else if ( strcmp( argv[n], global_str76 ) == 0 ) {
+          n++;
+          if ( n >= argc ) return 2;
+          strncpy( colormode, argv[n], 7 ); // index (default) or rgb
         }
 
 #ifdef GENERIC_PV
@@ -3747,12 +3754,24 @@ err_return:
     if ( prefix[strlen(prefix)-1] != '/' ) strncat( prefix, "/", 127 );
   }
   else {
-    strcpy( prefix, "/etc/" );
+    strcpy( prefix, "/etc/edm/" );
   }
 
   strncpy( fname, prefix, 127 );
   strncat( fname, "colors.list", 127 );
   opStat = ci.initFromFile( app, display, appTop, fname );
+
+  if ( strcmp( colormode, "rgb" ) == 0 ) {
+    ci.useRGB();
+  }
+  else if ( strcmp( colormode, "RGB" ) == 0 ) {
+    ci.useRGB();
+  }
+
+  if ( ci.colorModeIsRGB() ) {
+    postMessage( appContextClass_str129 );
+    postMessage( appContextClass_str130 );
+  }
 
   if ( !( opStat & 1 ) ) {
     printf( appContextClass_str106 );

@@ -1268,13 +1268,15 @@ int item;
       awo->cursor.setColor( awo->ci->pix(awo->fgColor),
        awo->ci->pix(awo->bgColor) );
       awo->currentPointObject->setEditProperties();
-      awo->currentPointObject->doEdit();
+      awo->undoObj.startNewUndoList( activeWindowClass_str189 );
+      awo->currentPointObject->doEdit( &(awo->undoObj) );
       break;
 
     case AWC_POPUP_EDIT_LINE_SEG:
       awo->state = awo->savedState;
       awo->currentPointObject->setEditSegments();
-      awo->currentPointObject->doEdit();
+      awo->undoObj.startNewUndoList( activeWindowClass_str189 );
+      awo->currentPointObject->doEdit( &(awo->undoObj) );
       break;
 
   }
@@ -2528,7 +2530,8 @@ Atom wm_delete_window;
           awo->savedState = awo->state;
           awo->state = AWC_EDITING;
           awo->currentEf = NULL;
-          cur1->node->doEdit();
+          awo->undoObj.startNewUndoList( activeWindowClass_str189 );
+          cur1->node->doEdit( &(awo->undoObj) );
 
           break;
 
@@ -5921,7 +5924,8 @@ unsigned int mask;
                   awo->cursor.set( XtWindow(awo->drawWidget), CURSOR_K_WAIT );
                   awo->cursor.setColor( awo->ci->pix(awo->fgColor),
                    awo->ci->pix(awo->bgColor) );
-                  editNode->node->doEdit();
+                  awo->undoObj.startNewUndoList( activeWindowClass_str189 );
+                  editNode->node->doEdit( &(awo->undoObj) );
                 }
 
               }
@@ -6675,7 +6679,8 @@ unsigned int mask;
                      CURSOR_K_WAIT );
                     awo->cursor.setColor( awo->ci->pix(awo->fgColor),
                      awo->ci->pix(awo->bgColor) );
-                    cur->node->doEdit();
+                    awo->undoObj.startNewUndoList( activeWindowClass_str189 );
+                    cur->node->doEdit( &(awo->undoObj) );
                     operationPerformed = 1;
                     break; // out of while loop
 
@@ -6797,7 +6802,8 @@ unsigned int mask;
                    awo->ci->pix(awo->bgColor) );
                   // next line is for multiline objects
                   awo->selectedHead->selFlink->node->setEditProperties();
-                  awo->selectedHead->selFlink->node->doEdit();
+                  awo->undoObj.startNewUndoList( activeWindowClass_str189 );
+                  awo->selectedHead->selFlink->node->doEdit( &(awo->undoObj) );
                   if ( awo->selectedHead->selFlink->node->isMultiPointObject()
                   ) {
                     awo->currentPointObject =
@@ -13800,7 +13806,7 @@ int r, g, b;
 
 #endif
 
-#if 1
+#if 0
 
   // major version >= 3
 
@@ -13822,6 +13828,31 @@ int r, g, b;
   fprintf( f, "%-d\n", index );
   index = defaultOffsetColor;
   fprintf( f, "%-d\n", index );
+
+#endif
+
+#if 1
+
+  // version >= 3.1.0
+
+  index = fgColor;
+  ci->writeColorIndex( f, index );
+  index = bgColor;
+  ci->writeColorIndex( f, index );
+  index = defaultTextFgColor;
+  ci->writeColorIndex( f, index );
+  index = defaultFg1Color;
+  ci->writeColorIndex( f, index );
+  index = defaultFg2Color;
+  ci->writeColorIndex( f, index );
+  index = defaultBgColor;
+  ci->writeColorIndex( f, index );
+  index = defaultTopShadowColor;
+  ci->writeColorIndex( f, index );
+  index = defaultBotShadowColor;
+  ci->writeColorIndex( f, index );
+  index = defaultOffsetColor;
+  ci->writeColorIndex( f, index );
 
 #endif
 
@@ -13997,7 +14028,48 @@ unsigned int pixel;
 
   }
 
-  if ( major >= 3 ) {
+  if ( ( major > 3 ) || ( ( major == 3 ) && ( minor > 0 ) ) ) {
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    fgColor = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    bgColor = index;
+
+    drawGc.setBaseBG( ci->pix(bgColor) );
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultTextFgColor = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultFg1Color = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultFg2Color = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultBgColor = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultTopShadowColor = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultBotShadowColor = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultOffsetColor = index;
+
+  }
+  else if ( ( major == 3 ) && ( minor == 0 ) ) {
 
     fscanf( f, "%d\n", &index ); incLine();
     fgColor = index;
@@ -14298,7 +14370,48 @@ unsigned int pixel;
 
   }
 
-  if ( major >= 3 ) {
+  if ( ( major > 3 ) || ( ( major == 3 ) && ( minor > 0 ) ) ) {
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    fgColor = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    bgColor = index;
+
+    drawGc.setBaseBG( ci->pix(bgColor) );
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultTextFgColor = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultFg1Color = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultFg2Color = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultBgColor = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultTopShadowColor = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultBotShadowColor = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultOffsetColor = index;
+
+  }
+  else if ( ( major == 3 ) && ( minor == 0 ) ) {
 
     fscanf( f, "%d\n", &index ); incLine();
     fgColor = index;
@@ -14747,7 +14860,48 @@ char s[127+1];
     fscanf( f, "%d\n",&i );
   }
 
-  if ( major >= 3 ) {
+  if ( ( major > 3 ) || ( ( major == 3 ) && ( minor > 0 ) ) ) {
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    fgColor = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    bgColor = index;
+
+    drawGc.setBaseBG( ci->pix(bgColor) );
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultTextFgColor = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultFg1Color = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultFg2Color = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultBgColor = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultTopShadowColor = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultBotShadowColor = index;
+
+    ci->readColorIndex( f, &index );
+    incLine(); incLine();
+    defaultOffsetColor = index;
+
+  }
+  else if ( ( major == 3 ) && ( minor == 0 ) ) {
 
     fscanf( f, "%d\n", &index ); incLine();
 
@@ -14953,6 +15107,13 @@ void activeWindowClass::lineEditBegin ( void )
 
 void activeWindowClass::operationComplete ( void )
 {
+
+  if ( state == AWC_EDITING ) {
+
+    if ( undoObj.listEmpty() ) {
+      undoObj.discard();
+    }
+  }
 
   cursor.set( XtWindow(drawWidget), CURSOR_K_CROSSHAIR );
   cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );
@@ -16022,7 +16183,7 @@ char *sysMacros[] = {
   }
   else {
 
-    strcpy( buf, "/etc/" );
+    strcpy( buf, "/etc/edm/" );
 
   }
 

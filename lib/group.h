@@ -69,6 +69,10 @@ int activeGroupClass::createFromFile (
 
 int activeGroupClass::edit ( void );
 
+void activeGroupClass::beginEdit ( void );
+
+int activeGroupClass::checkEditStatus ( void );
+
 int activeGroupClass::draw ( void );
 
 int activeGroupClass::erase ( void );

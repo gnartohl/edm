@@ -73,6 +73,8 @@ void activeGraphicClass::clone ( const activeGraphicClass *source ) {
   selected = 0;
   deleteRequest = 0;
   currentDragIndex = 0;
+  curUndoObj = NULL;
+  startEdit = 0;
 
 }
 
@@ -1746,10 +1748,16 @@ int activeGraphicClass::paste ( void ) {
 
 }
 
-int activeGraphicClass::doEdit ( void ) {
+int activeGraphicClass::doEdit (
+  undoClass *_undoObj
+) {
 
 activeGraphicListPtr cur;
 int stat, isGroup;
+
+  curUndoObj = _undoObj;
+  startEdit = 1;
+  beginEdit();
 
   if ( strcmp( objName(), "activeGroupClass" ) == 0 )
     isGroup = 1;
@@ -1816,14 +1824,16 @@ void activeGraphicClass::operationComplete ( void )
   this->actWin->refresh();
 
   if ( nextToEdit ) {
-    nextToEdit->doEdit();
+    nextToEdit->doEdit( curUndoObj );
   }
   else if ( nextSelectedToEdit ) {
-    nextSelectedToEdit->doEdit();
+    nextSelectedToEdit->doEdit( curUndoObj );
   }
   else {
     this->actWin->operationComplete();
   }
+
+  curUndoObj = NULL;
 
 }
 
@@ -1836,6 +1846,8 @@ void activeGraphicClass::operationCancel ( void )
   }
   this->actWin->refresh();
   this->actWin->operationComplete();
+
+  curUndoObj = NULL;
 
 }
 
@@ -1883,11 +1895,19 @@ int activeGraphicClass::movePoint (
 
 int activeGraphicClass::lineEditComplete ( void ) {
 
+  printf( "lineEditComplete\n" );
+
+  curUndoObj = NULL;
+
   return 1;
 
 }
 
 int activeGraphicClass::lineEditCancel ( void ) {
+
+  printf( "lineEditCancel\n" );
+
+  curUndoObj = NULL;
 
   return 1;
 
@@ -2937,8 +2957,35 @@ int activeGraphicClass::addUndoEditNode ( undoClass *undoObj ) {
 
 int stat;
 
+  printf( "Generic addUndoEditNode\n" );
+
   stat = undoObj->addEditNode( this, NULL );
   return stat;
+
+}
+
+void activeGraphicClass::confirmEdit ( void ) {
+
+  if ( startEdit ) {
+    startEdit = 0;
+    if ( curUndoObj ) {
+      addUndoEditNode( curUndoObj );
+    }
+  }
+
+  editConfirmed = 1;
+
+}
+
+void activeGraphicClass::beginEdit ( void ) {
+
+  editConfirmed = 0;
+
+}
+
+int activeGraphicClass::checkEditStatus ( void ) {
+
+  return editConfirmed;
 
 }
 

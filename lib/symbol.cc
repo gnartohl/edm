@@ -18,6 +18,8 @@
 
 #define __symbol_cc 1
 
+class undoSymbolOpClass;
+
 #include "symbol.h"
 #include "app_pkg.h"
 #include "act_win.h"
@@ -25,6 +27,131 @@
 #include "thread.h"
 
 #ifdef __epics__
+
+class undoSymbolOpClass : public undoOpClass {
+
+public:
+
+activeSymbolClass *aso;
+
+undoSymbolOpClass::undoSymbolOpClass ()
+{
+
+  printf( "undoSymbolOpClass::undoSymbolOpClass\n" );
+  aso = NULL;
+
+}
+
+undoSymbolOpClass::undoSymbolOpClass (
+  activeSymbolClass *_aso
+) {
+
+int i;
+activeGraphicListPtr head, cur, next, sourceHead, curSource;
+
+  // printf( "undoSymbolOpClass::undoSymbolOpClass\n" );
+
+  // copy display list and editable attributes from current symbol
+  aso = new activeSymbolClass;
+
+  // copy base class info
+  aso->x = _aso->x;
+  aso->y = _aso->y;
+  aso->w = _aso->w;
+  aso->h = _aso->h;
+  aso->sboxX = _aso->sboxX;
+  aso->sboxY = _aso->sboxY;
+  aso->sboxW = _aso->sboxW;
+  aso->sboxH = _aso->sboxH;
+  aso->orientation = _aso->orientation;
+  aso->nextToEdit = _aso->nextToEdit;
+  aso->nextSelectedToEdit = NULL;
+  aso->inGroup = _aso->inGroup;
+
+  // steal current symbol obj list - we don't want a copy,
+  // we want the current information without changing the
+  // value of pointers. These pointers are referenced in the
+  // symbol's undo object used to undo its children.
+  for ( i=0; i<SYMBOL_K_NUM_STATES; i++ ) {
+
+    head = new activeGraphicListType;
+    head->flink = head;
+    head->blink = head;
+
+    sourceHead = (activeGraphicListPtr) _aso->voidHead[i];
+    curSource = sourceHead->flink;
+    while ( curSource != sourceHead ) {
+
+      next = curSource->flink;
+
+      cur = curSource;
+
+      cur->blink = head->blink;
+      head->blink->flink = cur;
+      head->blink = cur;
+      cur->flink = head;
+
+      curSource = next;
+
+    }
+
+    aso->voidHead[i] = (void *) head;
+
+  }
+
+  // make current symbol obj list empty (because we stold all
+  // the information above); when the edit operation proceeds and
+  // the display list is destroyed and recreated from the current
+  // contents of the symbol file, we don't want the current image
+  // list destroyed.
+  for ( i=0; i<SYMBOL_K_NUM_STATES; i++ ) {
+    sourceHead = (activeGraphicListPtr) _aso->voidHead[i];
+    sourceHead->flink = sourceHead;
+    sourceHead->blink = sourceHead;
+  }
+
+  aso->index = 0;
+  for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
+    aso->controlVals[i] = 0.0;
+    aso->controlPvExpStr[i].setRaw( _aso->controlPvExpStr[i].rawString );
+  }
+
+  strncpy( aso->symbolFileName, _aso->symbolFileName, 127 );
+
+  aso->numStates = _aso->numStates;
+  for ( i=0; i<_aso->numStates; i++ ) {
+    aso->stateMinValue[i] = _aso->stateMinValue[i];
+    aso->stateMaxValue[i] = _aso->stateMaxValue[i];
+  }
+
+  aso->useOriginalSize = _aso->useOriginalSize;
+
+  aso->binaryTruthTable = _aso->binaryTruthTable;
+
+  aso->orientation = _aso->orientation;
+
+  aso->numPvs = _aso->numPvs;
+
+  aso->useOriginalColors = _aso->useOriginalColors;
+  aso->fgCb = _aso->fgCb;
+  aso->bgCb = _aso->bgCb;
+  aso->fgColor = _aso->fgColor;
+  aso->bgColor = _aso->bgColor;
+  aso->colorPvExpStr.setRaw( _aso->colorPvExpStr.rawString );
+
+}
+
+undoSymbolOpClass::~undoSymbolOpClass ()
+{
+
+  if ( aso ) {
+    delete aso;
+    aso = NULL;
+  }
+
+}
+
+};
 
 static void symUnconnectedTimeout (
   XtPointer client,
@@ -184,6 +311,13 @@ int stat, resizeStat, i, saveW, saveH, saveX, saveY;
   aso->eraseSelectBoxCorners();
   aso->erase();
 
+// =============================================
+
+// New requirement for edit undo
+  aso->confirmEdit();
+
+// =============================================
+
   strncpy( aso->id, aso->bufId, 31 );
 
   aso->x = aso->bufX;
@@ -210,6 +344,9 @@ int stat, resizeStat, i, saveW, saveH, saveX, saveY;
   aso->useOriginalSize = aso->bufUseOriginalSize;
 
   aso->useOriginalColors = aso->bufUseOriginalColors;
+
+  aso->fgColor = aso->bufFgColor;
+  aso->bgColor = aso->bufBgColor;
 
   aso->binaryTruthTable = aso->bufBinaryTruthTable;
 
@@ -259,28 +396,28 @@ int stat, resizeStat, i, saveW, saveH, saveX, saveY;
     switch ( aso->orientation ) {
 
     case OR_CW:
-      aso->rotate( aso->getXMid(), aso->getYMid(), '+' );
+      aso->rotateInternal( aso->getXMid(), aso->getYMid(), '+' );
       aso->moveAbs( saveX, saveY );
       aso->resizeSelectBoxAbsFromUndo( aso->getX0(), aso->getY0(),
        aso->getW(), aso->getH() );
       break;
 
     case OR_CCW:
-      aso->rotate( aso->getXMid(), aso->getYMid(), '-' );
+      aso->rotateInternal( aso->getXMid(), aso->getYMid(), '-' );
       aso->moveAbs( saveX, saveY );
       aso->resizeSelectBoxAbsFromUndo( aso->getX0(), aso->getY0(),
        aso->getW(), aso->getH() );
       break;
 
     case OR_V:
-      aso->flip( aso->getXMid(), aso->getYMid(), 'V' );
+      aso->flipInternal( aso->getXMid(), aso->getYMid(), 'V' );
       aso->moveAbs( saveX, saveY );
       aso->resizeSelectBoxAbsFromUndo( aso->getX0(), aso->getY0(),
        aso->getW(), aso->getH() );
       break;
 
     case OR_H:
-      aso->flip( aso->getXMid(), aso->getYMid(), 'H' );
+      aso->flipInternal( aso->getXMid(), aso->getYMid(), 'H' );
       aso->moveAbs( saveX, saveY );
       aso->resizeSelectBoxAbsFromUndo( aso->getX0(), aso->getY0(),
        aso->getW(), aso->getH() );
@@ -557,8 +694,8 @@ int i;
   useOriginalColors = source->useOriginalColors;
   fgCb = source->fgCb;
   bgCb = source->bgCb;
-  bufFgColor = source->bufFgColor;
-  bufBgColor = source->bufBgColor;
+  fgColor = source->fgColor;
+  bgColor = source->bgColor;
   colorPvExpStr.setRaw( source->colorPvExpStr.rawString );
 
   unconnectedTimer = 0;
@@ -583,8 +720,8 @@ int activeSymbolClass::createInteractive (
 
   activeMode = 0;
   index = 0;
-  bufFgColor = actWin->defaultTextFgColor;
-  bufBgColor = actWin->defaultBgColor;
+  fgColor = actWin->defaultTextFgColor;
+  bgColor = actWin->defaultBgColor;
 
   this->editCreate();
 
@@ -639,6 +776,9 @@ char title[32], *ptr;
   prevOr = bufOrientation = orientation;
 
   bufUseOriginalColors = useOriginalColors;
+
+  bufFgColor = fgColor;
+  bufBgColor = bgColor;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -911,13 +1051,13 @@ int i;
   switch ( orientation ) {
 
   case OR_CW:
-    rotate( getXMid(), getYMid(), '-' );
+    rotateInternal( getXMid(), getYMid(), '-' );
     resizeSelectBoxAbsFromUndo( getX0(), getY0(),
      getW(), getH() );
     break;
 
   case OR_CCW:
-    rotate( getXMid(), getYMid(), '+' );
+    rotateInternal( getXMid(), getYMid(), '+' );
     resizeSelectBoxAbsFromUndo( getX0(), getY0(),
      getW(), getH() );
     break;
@@ -964,13 +1104,13 @@ int i;
   switch ( orientation ) {
 
   case OR_CW:
-    rotate( getXMid(), getYMid(), '+' );
+    rotateInternal( getXMid(), getYMid(), '+' );
     resizeSelectBoxAbsFromUndo( getX0(), getY0(),
      getW(), getH() );
     break;
 
   case OR_CCW:
-    rotate( getXMid(), getYMid(), '-' );
+    rotateInternal( getXMid(), getYMid(), '-' );
     resizeSelectBoxAbsFromUndo( getX0(), getY0(),
      getW(), getH() );
     break;
@@ -985,8 +1125,8 @@ int i;
 
   // version 1.6.0
   fprintf( f, "%-d\n", useOriginalColors );
-  fprintf( f, "%-d\n", bufFgColor );
-  fprintf( f, "%-d\n", bufBgColor );
+  fprintf( f, "%-d\n", fgColor );
+  fprintf( f, "%-d\n", bgColor );
 
   return 1;
 
@@ -1072,13 +1212,13 @@ float val;
 
   if ( ( major > 1 ) || ( minor > 5 ) ) {
     fscanf( f, "%d\n", &useOriginalColors ); actWin->incLine();
-    fscanf( f, "%d\n", &bufFgColor ); actWin->incLine();
-    fscanf( f, "%d\n", &bufBgColor ); actWin->incLine();
+    fscanf( f, "%d\n", &fgColor ); actWin->incLine();
+    fscanf( f, "%d\n", &bgColor ); actWin->incLine();
   }
   else {
     useOriginalColors = 1;
-    bufFgColor = actWin->defaultTextFgColor;
-    bufBgColor = actWin->defaultBgColor;
+    fgColor = actWin->defaultTextFgColor;
+    bgColor = actWin->defaultBgColor;
   }
 
   saveW = w;
@@ -1106,25 +1246,25 @@ float val;
     switch ( orientation ) {
 
     case OR_CW:
-      rotate( getXMid(), getYMid(), '+' );
+      rotateInternal( getXMid(), getYMid(), '+' );
       resizeSelectBoxAbsFromUndo( getX0(), getY0(),
        getW(), getH() );
       break;
 
     case OR_CCW:
-      rotate( getXMid(), getYMid(), '-' );
+      rotateInternal( getXMid(), getYMid(), '-' );
       resizeSelectBoxAbsFromUndo( getX0(), getY0(),
        getW(), getH() );
       break;
 
     case OR_V:
-      flip( getXMid(), getYMid(), 'V' );
+      flipInternal( getXMid(), getYMid(), 'V' );
       resizeSelectBoxAbsFromUndo( getX0(), getY0(),
        getW(), getH() );
       break;
 
     case OR_H:
-      flip( getXMid(), getYMid(), 'H' );
+      flipInternal( getXMid(), getYMid(), 'H' );
       resizeSelectBoxAbsFromUndo( getX0(), getY0(),
        getW(), getH() );
       break;
@@ -1200,8 +1340,23 @@ int activeSymbolClass::draw ( void ) {
 
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
+int i;
 
   if ( activeMode || deleteRequest ) return 1;
+
+  for ( i=0; i<numStates; i++ ) {
+    head = (activeGraphicListPtr) voidHead[i];
+    cur = head->flink;
+    while ( cur != head ) {
+      if ( !useOriginalColors ) {
+        cur->node->changeDisplayParams(
+         ACTGRF_TEXTFGCOLOR_MASK | ACTGRF_FG1COLOR_MASK | ACTGRF_BGCOLOR_MASK,
+	 "", 0, "", 0, "", 0, fgColor, fgColor, 0, 0, bgColor,
+         0, 0 );
+      }
+      cur = cur->flink;
+    }
+  }
 
   actWin->drawGc.saveFg();
   actWin->drawGc.setFG( BlackPixel( actWin->d, DefaultScreen(actWin->d) ) );
@@ -1325,7 +1480,7 @@ activeGraphicListPtr cur;
       if ( !useOriginalColors ) {
         cur->node->changeDisplayParams(
          ACTGRF_TEXTFGCOLOR_MASK | ACTGRF_FG1COLOR_MASK | ACTGRF_BGCOLOR_MASK,
-	 "", 0, "", 0, "", 0, bufFgColor, bufFgColor, 0, 0, bufBgColor,
+	 "", 0, "", 0, "", 0, fgColor, fgColor, 0, 0, bgColor,
          0, 0 );
       }
       cur->node->activate( pass, (void *) cur );
@@ -2020,6 +2175,18 @@ int activeSymbolClass::rotate (
   char direction )
 {
 
+  actWin->appCtx->postMessage( activeSymbolClass_str35 );
+  actWin->appCtx->postMessage( activeSymbolClass_str37 );
+  return 1;
+
+}
+
+int activeSymbolClass::rotateInternal (
+  int xOrigin,
+  int yOrigin,
+  char direction )
+{
+
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
 int i;
@@ -2053,6 +2220,18 @@ int i;
 }
 
 int activeSymbolClass::flip (
+  int xOrigin,
+  int yOrigin,
+  char direction )
+{
+
+  actWin->appCtx->postMessage( activeSymbolClass_str36 );
+  actWin->appCtx->postMessage( activeSymbolClass_str37 );
+  return 1;
+
+}
+
+int activeSymbolClass::flipInternal (
   int xOrigin,
   int yOrigin,
   char direction )
@@ -2861,32 +3040,12 @@ int activeSymbolClass::addUndoEditNode (
 {
 
 int stat;
-activeGraphicListPtr head;
-activeGraphicListPtr cur;
-int i;
+undoSymbolOpClass *undoSymbolOpPtr;
 
- return 1;
+  undoSymbolOpPtr = new undoSymbolOpClass( this );
 
-  stat = _undoObj->addEditNode( this, NULL );
+  stat = _undoObj->addEditNode( this, undoSymbolOpPtr );
   if ( !( stat & 1 ) ) return stat;
-
-  undoObj.startNewUndoList( "" );
-
-  for ( i=0; i<numStates; i++ ) {
-
-    head = (activeGraphicListPtr) voidHead[i];
-
-    cur = head->flink;
-    while( cur != head ) {
-
-      stat = cur->node->addUndoEditNode( &(this->undoObj) );
-      if ( !( stat & 1 ) ) return stat;
-
-      cur = cur->flink;
-
-    }
-
-  }
 
   return 1;
 
@@ -3077,6 +3236,120 @@ int activeSymbolClass::undoReorder (
 int activeSymbolClass::undoEdit (
   undoOpClass *opPtr
 ) {
+
+undoSymbolOpClass *ptr = (undoSymbolOpClass *) opPtr;
+activeGraphicListPtr head, cur, next, curSource, sourceHead;
+int i;
+
+// ============================================================
+
+  // delete current image list, saved image list from opPtr (from undo object)
+  // will be restored to symbol object
+
+  for ( i=0; i<SYMBOL_K_NUM_STATES; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while ( cur != head ) {
+      next = cur->flink;
+      delete cur->node;
+      delete cur;
+      cur = next;
+    }
+    head->flink = NULL;
+    head->blink = NULL;
+    delete head;
+
+  }
+
+// ============================================================
+
+  // copy base class info
+  x = ptr->aso->x;
+  y = ptr->aso->y;
+  w = ptr->aso->w;
+  h = ptr->aso->h;
+  sboxX = ptr->aso->sboxX;
+  sboxY = ptr->aso->sboxY;
+  sboxW = ptr->aso->sboxW;
+  sboxH = ptr->aso->sboxH;
+  orientation = ptr->aso->orientation;
+  nextToEdit = ptr->aso->nextToEdit;
+  nextSelectedToEdit = NULL;
+  inGroup = ptr->aso->inGroup;
+
+// ============================================================
+
+  // restore saved symbol image list
+  for ( i=0; i<SYMBOL_K_NUM_STATES; i++ ) {
+
+    head = new activeGraphicListType;
+    head->flink = head;
+    head->blink = head;
+
+    sourceHead = (activeGraphicListPtr) ptr->aso->voidHead[i];
+    curSource = sourceHead->flink;
+    while ( curSource != sourceHead ) {
+
+      next = curSource->flink;
+
+      cur = curSource;
+
+      cur->blink = head->blink;
+      head->blink->flink = cur;
+      head->blink = cur;
+      cur->flink = head;
+
+      curSource = next;
+
+    }
+
+    voidHead[i] = (void *) head;
+
+  }
+
+  // make saved symbol image list empty (when saved
+  // object is deleted, we don't want image list to
+  // be deleted (which has been restored to current symbol object)
+  for ( i=0; i<SYMBOL_K_NUM_STATES; i++ ) {
+    sourceHead = (activeGraphicListPtr) ptr->aso->voidHead[i];
+    sourceHead->flink = sourceHead;
+    sourceHead->blink = sourceHead;
+  }
+
+// ============================================================
+
+  index = 0;
+  for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
+    controlVals[i] = 0.0;
+    controlPvExpStr[i].setRaw( ptr->aso->controlPvExpStr[i].rawString );
+  }
+
+  // restore remaining attributes
+
+  strncpy( symbolFileName, ptr->aso->symbolFileName, 127 );
+
+  numStates = ptr->aso->numStates;
+  for ( i=0; i<numStates; i++ ) {
+    stateMinValue[i] = ptr->aso->stateMinValue[i];
+    stateMaxValue[i] = ptr->aso->stateMaxValue[i];
+  }
+
+  useOriginalSize = ptr->aso->useOriginalSize;
+
+  binaryTruthTable = ptr->aso->binaryTruthTable;
+
+  orientation = ptr->aso->orientation;
+
+  numPvs = ptr->aso->numPvs;
+
+  useOriginalColors = ptr->aso->useOriginalColors;
+  fgCb = ptr->aso->fgCb;
+  bgCb = ptr->aso->bgCb;
+  fgColor = ptr->aso->fgColor;
+  bgColor = ptr->aso->bgColor;
+  colorPvExpStr.setRaw( ptr->aso->colorPvExpStr.rawString );
 
   return 1;
 

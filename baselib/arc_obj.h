@@ -30,7 +30,7 @@
 #define AAC_K_COLORMODE_ALARM 1
 
 #define AAC_MAJOR_VERSION 2
-#define AAC_MINOR_VERSION 0
+#define AAC_MINOR_VERSION 1
 #define AAC_RELEASE 0
 
 #ifdef __arc_obj_cc

@@ -23,7 +23,7 @@
 #include "entry_form.h"
 
 #define SHCMDC_MAJOR_VERSION 2
-#define SHCMDC_MINOR_VERSION 2
+#define SHCMDC_MINOR_VERSION 3
 #define SHCMDC_RELEASE 0
 
 #ifdef __shell_cmd_cc

@@ -142,6 +142,8 @@ static const int MAX_PV_NAME = 100;
 
 activeWindowClass *actWin;
 void *aglPtr; // will hold the activeGraphicListPtr container
+undoClass *curUndoObj;
+int startEdit, editConfirmed;
 
 int deleteRequest; // if true, then wants to be deleted
 
@@ -472,7 +474,7 @@ virtual int activeGraphicClass::paste ( void );
 
 virtual int activeGraphicClass::edit ( void );
 
-virtual int activeGraphicClass::doEdit ( void );
+virtual int activeGraphicClass::doEdit ( undoClass *_undoObj );
 
 void activeGraphicClass::operationComplete ( void );
 
@@ -960,6 +962,12 @@ virtual int activeGraphicClass::undoFlip (
 
 virtual void activeGraphicClass::updateColors (
   double colorValue );
+
+virtual void confirmEdit ( void );
+
+virtual void beginEdit ( void );
+
+virtual int checkEditStatus ( void );
 
 };
 

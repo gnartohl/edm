@@ -29,7 +29,7 @@
 #define AXTC_K_COLORMODE_ALARM 1
 
 #define AXTC_MAJOR_VERSION 2
-#define AXTC_MINOR_VERSION 0
+#define AXTC_MINOR_VERSION 1
 #define AXTC_RELEASE 0
 
 #ifdef __x_text_obj_cc

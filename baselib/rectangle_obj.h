@@ -32,7 +32,7 @@
 #define ARC_K_COLORMODE_ALARM 1
 
 #define ARC_MAJOR_VERSION 2
-#define ARC_MINOR_VERSION 0
+#define ARC_MINOR_VERSION 1
 #define ARC_RELEASE 0
 
 #ifdef __rectangle_obj_cc

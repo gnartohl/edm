@@ -29,7 +29,7 @@
 #define ALC_K_COLORMODE_ALARM 1
 
 #define ALC_MAJOR_VERSION 2
-#define ALC_MINOR_VERSION 0
+#define ALC_MINOR_VERSION 1
 #define ALC_RELEASE 0
 
 #ifdef __line_obj_cc

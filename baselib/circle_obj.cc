@@ -487,7 +487,27 @@ char oneName[PV_Factory::MAX_PV_NAME+1];
 
   this->initSelectBox(); // call after getting x,y,w,h
 
-  if ( major > 1 ) {
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 0 ) ) ) {
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    lineColor.setColorIndex( index, actWin->ci );
+
+    fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
+
+    if ( lineColorMode == ACC_K_COLORMODE_ALARM )
+      lineColor.setAlarmSensitive();
+    else
+      lineColor.setAlarmInsensitive();
+
+    fscanf( f, "%d\n", &fill ); actWin->incLine();
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    fillColor.setColorIndex( index, actWin->ci );
+
+  }
+  else if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
     lineColor.setColorIndex( index, actWin->ci );
@@ -801,14 +821,16 @@ int index;
   fprintf( f, "%-d\n", h );
 
   index = lineColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", lineColorMode );
 
   fprintf( f, "%-d\n", fill );
 
   index = fillColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", fillColorMode );
 
