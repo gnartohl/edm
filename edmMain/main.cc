@@ -783,6 +783,9 @@ char checkPointFileName[255+1], procIdName[31+1], *envPtr;
 FILE *f;
 pid_t procId;
 
+Display *oneDisplay;
+XtAppContext oneAppCtx;
+
   numClients = 1;
 
   checkParams( argc, argv, &local, &server, &appendDisplay, displayName,
@@ -942,16 +945,19 @@ pid_t procId;
       }
 
       if ( cur->appArgs->appCtxPtr->exitFlag ) {
+
         cur->blink->flink = cur->flink;
         cur->flink->blink = cur->blink;
 
+        oneAppCtx = cur->appArgs->appCtxPtr->appContext();
+	oneDisplay = cur->appArgs->appCtxPtr->getDisplay();
         delete cur->appArgs->appCtxPtr;
+        XtCloseDisplay( oneDisplay );
+        XtDestroyApplicationContext( oneAppCtx );
         for ( i=0; i<cur->appArgs->argc; i++ ) delete cur->appArgs->argv[i];
         delete cur->appArgs->argv;
 
-#if 0
         delete cur;
-#endif
 
         stat = thread_lock_master( serverH );
         numClients--;

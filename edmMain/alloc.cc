@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include "avl.h"
 
@@ -107,11 +109,11 @@ char* zXtMalloc ( size_t size )
 
   if ( g_memTrackOn ) {
 
-    if ( (size > 170) && (size < 200) ) { // for diagnostics
+    if ( (size == 12) && ( g_seqX > 0 ) ) { // for diagnostics
 
       zFunc();
       sprintf( msg, "zXtMalloc [%-x] [%-d]\n", (int) ptr, (int) size );
-      //write( 1, msg, strlen(msg) );
+      write( 1, msg, strlen(msg) );
 
     }
 
@@ -158,7 +160,7 @@ char* zXtCalloc ( size_t num, size_t size )
 
   if ( g_memTrackOn ) {
 
-    if ( (size > 170) && (size < 200) ) { // for diagnostics
+    if ( (size == 12) && ( g_seqX > 200 ) ) { // for diagnostics
 
       zFunc();
       sprintf( msg, "zXtCalloc[%-x] [%-d]\n", (int) ptr, (int) size );
@@ -293,7 +295,7 @@ char* zXtRealloc ( char *oldPtr, size_t size )
 
     ptr = (char *) realloc( oldPtr, size );
 
-    if ( (size > 170) && (size < 200) ) {
+    if ( (size == 12) && ( g_seqX > 200 ) ) { // for diagnostics
 
       sprintf( msg, "zXtRealloc[%-x] [%-d]\n", (int) ptr, (int) size );
       //write( 1, msg, strlen(msg) );
@@ -325,13 +327,6 @@ char* zXtRealloc ( char *oldPtr, size_t size )
 
 }
 
-
-
-
-
-
-
-
 void* znew ( size_t size )
 {
 
@@ -355,7 +350,7 @@ void* znew ( size_t size )
 
   if ( g_memTrackOn ) {
 
-    if ( ( g_seq == 240 ) && ( size == 0xffffffff ) ) {
+    if ( (size == 12) && ( g_seqX > 200 ) ) { // for diagnostics
 
       zFunc();
       sprintf( msg, "[%-x] [%-d]\n", (int) ptr, (int) size );
@@ -412,8 +407,8 @@ void showMem ( void ) {
     n++;
     total += cur->size;
 
-    //printf( "%-d: addr = %-x\t\tsize = %-d\n", cur->seq, cur->addr,
-    // cur->size );
+    printf( "%-d: addr = %-x\t\tsize = %-d\n", cur->seq, cur->addr,
+     cur->size );
 
     stat = avl_get_next( g_tree, (void **) &cur );
     if ( !( stat & 1 ) ) {
@@ -446,8 +441,8 @@ void showMem ( void ) {
     n++;
     total += cur->size;
 
-    //printf( "%-d: addr = %-x\t\tsize = %-d\n", cur->seq, cur->addr,
-    // cur->size );
+    printf( "%-d: addr = %-x\t\tsize = %-d\n", cur->seq, cur->addr,
+     cur->size );
 
 #if 0
     if ( cur->size < 80 ) {
