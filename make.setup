@@ -31,6 +31,10 @@ ifeq ($(HOSTNAME), sns-lap1)
 	FOR_WHAT=RH71_SNS_LAPTOP
 endif
 
+ifeq ($(HOSTNAME), localhost.localdomain)
+	FOR_WHAT=RH71_SNS_LAPTOP
+endif
+
 ifeq ($(HOSTNAME), ics-dev2-local)
 	FOR_WHAT=RH7_SNS_SvT
 endif
@@ -141,7 +145,7 @@ ifeq ($(FOR_WHAT), RH7_SNS_LBNL)
 endif
 
 ifeq ($(FOR_WHAT), RH71_SNS_LAPTOP)
-	EPICS=/ops/epics/supTop/base/R3.13.3
+	EPICS=/ade/epics/supTop/base/R3.13.5
 	CC=gcc
 	CXX=g++
 	CFLAGS=-g -Wall -O0 -DMOTIF 
