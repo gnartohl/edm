@@ -2295,7 +2295,7 @@ char *envPtr, *gotIt, buf[1270+1], save[127+1], path[127+1], *tk;
       stat = chdir( path );
       if ( stat ) {
         perror( appContextClass_str119 );
-        printf( appContextClass_str120 );
+        printf( appContextClass_str120, path );
       }
       getcwd( path, 127 );
 
@@ -2331,7 +2331,7 @@ char *envPtr, *gotIt, buf[1270+1], save[127+1], path[127+1], *tk;
       stat = chdir( path );
       if ( stat ) {
         perror( appContextClass_str119 );
-        printf( appContextClass_str120 );
+        printf( appContextClass_str120, path );
       }
       getcwd( path, 127 );
 

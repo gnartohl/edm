@@ -70,7 +70,7 @@
 #define appContextClass_str117 (char *) "Loading fonts..."
 #define appContextClass_str118 (char *) "cannot get current directory - abort @ line %-d in %s\n"
 #define appContextClass_str119 (char *) "Bad data file location"
-#define appContextClass_str120 (char *) "Using current directory\n"
+#define appContextClass_str120 (char *) "Using current directory instead of %s\n"
 #define appContextClass_str121 (char *) "Path"
 #define appContextClass_str122 (char *) "No new components were found in %s\n"
 #define appContextClass_str123 (char *) "Remove operation aborted\n"
