@@ -189,14 +189,13 @@ activeSymbolClass *aso = (activeSymbolClass *) ptr->objPtr;
 
     aso->notControlPvConnected &= ptr->clrMask;
 
-
   }
   else {
 
     aso->notControlPvConnected |= ptr->setMask;
     aso->active = 0;
     aso->bufInvalidate();
-    aso->needDraw = 1;
+    aso->needRefresh = 1;
 
   }
 
@@ -242,7 +241,7 @@ activeSymbolClass *aso = (activeSymbolClass *) ptr->objPtr;
 unsigned int uiVal;
 int i;
 
-  if ( aso->active ) {
+  if ( aso->activeMode ) {
 
     if ( aso->binaryTruthTable ) {
 
@@ -258,9 +257,9 @@ int i;
 
       if ( aso->numPvs == 1 ) {
 
-        if ( ( aso->andMask[ptr->index] != 0 ) ||
-             ( aso->xorMask[ptr->index] != 0 ) ||
-             ( aso->shiftCount[ptr->index] != 0 ) ) {
+        if ( ( aso->andMask[ptr->index] == 0 ) &&
+             ( aso->xorMask[ptr->index] == 0 ) &&
+             ( aso->shiftCount[ptr->index] == 0 ) ) {
 
           aso->curControlV = *( (double *) ast_args.dbr );
 
@@ -336,7 +335,7 @@ static void symbol_colorUpdate (
 
 activeSymbolClass *aso = (activeSymbolClass *) ca_puser(ast_args.chid);
 
-  if ( aso->active ) {
+  if ( aso->activeMode ) {
 
     aso->curColorV = *( (double *) ast_args.dbr );
 
@@ -2824,6 +2823,10 @@ int stat, i, nci, nc[SYMBOL_K_MAX_PVS], nr, ne, nd, ncolori, ncr;
 
       }
 
+    }
+
+    if ( !active ) {
+      index = 0;
     }
 
     if ( index != prevIndex ) {
