@@ -1,193 +1,244 @@
-3 1 0
-331
-103
-772
-458
-helvetica-medium-r-12.0
-0
-helvetica-medium-r-12.0
-0
-rgb
-0,0,0
-rgb
-46810,47850,46810
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-rgb
-34327,34327,34327
-Help - File
-0
-0
-10
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-33
-29
-84
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Create new file
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-1 2 0
-32
-62
-139
-190
-$(help)helpFile-MainWin
-0
-0
-0
-<<<E~O~D>>>
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-1 2 0
-42
-112
-150
-130
-$(help)helpFile-New
-0
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-226
-29
-97
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Open existing file
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-1 2 0
-227
-62
-139
-190
-$(help)helpFile-MainWin
-0
-0
-0
-<<<E~O~D>>>
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-1 2 0
-238
-112
-150
-130
-$(help)helpFile-Open
-0
-0
-0
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-400
-140
-40
-40
-8
-400 150
-420 150
-420 140
-440 160
-420 180
-420 170
-400 170
-400 150
-rgb
-0,0,0
-0
-1
-rgb
-0,0,0
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-1 2 0
-453
-31
-286
-400
-$(help)helpFile-FileSelect
-0
-0
-0
-<<<E~O~D>>>
-activeExitButtonClass
-2 1 0
-11
-424
-59
-24
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-1
-0
-helvetica-medium-r-12.0
-Close
-0
-0
-<<<E~O~D>>>
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 21
+y 222
+w 771
+h 478
+font "helvetica-medium-r-12.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor index 14
+bgColor index 4
+textColor index 14
+ctlFgColor1 index 14
+ctlFgColor2 index 14
+ctlBgColor1 index 5
+ctlBgColor2 index 8
+topShadowColor index 1
+botShadowColor index 11
+title "Help - File"
+endScreenProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 35
+y 270
+w 354
+h 154
+lineColor index 14
+fillColor index 5
+lineWidth 2
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 33
+y 29
+w 84
+h 14
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "Create new file"
+}
+autoSize
+endObjectProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 32
+y 62
+w 139
+h 190
+file "$(help)helpFile-MainWin"
+endObjectProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 42
+y 112
+w 150
+h 130
+file "$(help)helpFile-New"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 226
+y 29
+w 97
+h 14
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "Open existing file"
+}
+autoSize
+endObjectProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 227
+y 62
+w 139
+h 190
+file "$(help)helpFile-MainWin"
+endObjectProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 238
+y 112
+w 150
+h 130
+file "$(help)helpFile-Open"
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 400
+y 140
+w 40
+h 40
+lineColor index 14
+fill
+fillColor index 14
+numPoints 8
+xPoints {
+  0 400
+  1 420
+  2 420
+  3 440
+  4 420
+  5 420
+  6 400
+  7 400
+}
+yPoints {
+  0 150
+  1 150
+  2 140
+  3 160
+  4 180
+  5 170
+  6 170
+  7 150
+}
+endObjectProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 453
+y 31
+w 286
+h 400
+file "$(help)helpFile-FileSelect"
+endObjectProperties
+
+# (Exit Button)
+object activeExitButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 11
+y 441
+w 59
+h 24
+fgColor index 14
+bgColor index 5
+topShadowColor index 1
+botShadowColor index 11
+label "Close"
+font "helvetica-medium-r-12.0"
+3d
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 53
+y 284
+w 49
+h 14
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "Save file"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 68
+y 311
+w 290
+h 96
+font "helvetica-medium-r-14.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "Saving a file is not done from the main"
+  "window. It is done by clicking the middle"
+  "button on the screen to be saved. The middle"
+  "button menu is context sensitive, so make"
+  "sure that no objects are selected when you"
+  "wish to perform this action."
+}
+autoSize
+endObjectProperties
+
