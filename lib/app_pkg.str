@@ -59,5 +59,9 @@
 #define appContextClass_str106 "Color init failed - abort\n"
 #define appContextClass_str107 "Font init failed - abort\n"
 #define appContextClass_str108 "Error loading file: %s\n"
+#define appContextClass_str109 "Adding PV component: %s, Name: %s\n"
+
+#define appContextClass_str110 "PV Component                                 "
+#define appContextClass_str111 "Name"
 
 #endif

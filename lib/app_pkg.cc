@@ -100,9 +100,6 @@ libRecPtr head, tail, cur;
         if ( more ) {
 
           cur = new libRecType;
-          tail->flink = cur;
-          tail = cur;
-          tail->flink = NULL;
 
           strncpy( buf, line, 255 );
 
@@ -117,6 +114,10 @@ libRecPtr head, tail, cur;
           }
 
           if ( !comment ) { /* not an empty line or comment */
+
+            tail->flink = cur;
+            tail = cur;
+            tail->flink = NULL;
 
             tk = strtok( line, " \t\n" );
             if ( !tk ) {
@@ -351,7 +352,324 @@ libRecPtr head, tail, cur;
       printf( appContextClass_str21 );
 
   }
-  else if ( strcmp( op, global_str8 ) == 0 ) {
+  else if ( strcmp( op, global_str7 ) == 0 ) {
+
+    printf( "\n" );
+
+    printf( appContextClass_str23 );
+
+  }
+
+}
+
+static void managePvComponents (
+  char *op,
+  char *libFile )
+{
+
+typedef int (*PVREGFUNC)( char **, char ** );
+PVREGFUNC func;
+
+int stat, index, comment, fileExists, fileEmpty;
+char *classNamePtr, *textPtr, *error;
+void *dllHandle;
+char fileName[255+1], prefix[255+1], line[255+1], buf[255+1];
+int numComponents = 0;
+int numToAdd = 0;
+char *envPtr, *tk, *more;
+FILE *f;
+libRecPtr head, tail, cur;
+
+  head = new libRecType;
+  tail = head;
+  tail->flink = NULL;
+
+  envPtr = getenv(environment_str3);
+  if ( envPtr ) {
+    strncpy( prefix, envPtr, 255 );
+    if ( prefix[strlen(prefix)-1] != '/' ) strncat( prefix, "/", 255 );
+  }
+  else {
+    strcpy( prefix, "/etc/" );
+  }
+
+  strncpy( fileName, prefix, 255 );
+  strncat( fileName, "edmPvObjects", 255 );
+
+  _edmDebug();
+
+  f = fopen( fileName, "r" );
+  if ( f ) {
+
+    printf( appContextClass_str1, fileName );
+
+    fileExists = 1;
+    fileEmpty = 0;
+
+    // read in existing components
+
+    more = fgets( line, 255, f );
+    if ( more ) {
+      tk = strtok( line, "\n" );
+      numComponents = atol( tk );
+      if ( numComponents <= 0 ) {
+	printf( "3\n" );
+        printf( appContextClass_str2, fileName );
+        return;
+      }
+    }
+    else {
+      printf( "4\n" );
+      printf( appContextClass_str2, fileName );
+      fileEmpty = 1;
+      fclose( f );
+    }
+
+    if ( !fileEmpty ) {
+
+      index = 0;
+      do {
+
+        more = fgets( line, 255, f );
+        if ( more ) {
+
+          cur = new libRecType;
+
+          strncpy( buf, line, 255 );
+
+          comment = 0;
+          tk = strtok( buf, " \t\n" );
+
+          if ( !tk ) {
+            comment = 1;
+          }
+          else if ( tk[0] == '#' ) {
+            comment = 1;
+          }
+
+          if ( !comment ) { /* not an empty line or comment */
+
+            tail->flink = cur;
+            tail = cur;
+            tail->flink = NULL;
+
+            tk = strtok( line, " \t\n" );
+            if ( !tk ) {
+              printf( appContextClass_str3 );
+              return;
+            }
+            cur->className = new char[strlen(tk)+1];
+            strcpy( cur->className, tk );
+
+            tk = strtok( NULL, " \t\n" );
+            if ( !tk ) {
+              printf( appContextClass_str3 );
+              return;
+            }
+            cur->fileName = new char[strlen(tk)+1];
+            strcpy( cur->fileName, tk );
+
+            tk = strtok( NULL, "\n" );
+            if ( !tk ) {
+              printf( appContextClass_str3 );
+              return;
+            }
+            cur->text = new char[strlen(tk)+1];
+            strcpy( cur->text, tk );
+
+            index++;
+
+          }
+
+        }
+
+      } while ( more );
+
+      fclose( f );
+
+      if ( index != numComponents ) {
+        printf( appContextClass_str4, fileName );
+        return;
+      }
+
+    }
+    else {
+
+      fileExists = 0; // file was empty so behave as if file does not exist
+
+    }
+
+  }
+  else {
+    fileExists = 0;
+  }
+
+  if ( libFile[0] != '/' ) {
+    printf( appContextClass_str5 );
+    printf( appContextClass_str6 );
+    return;
+  }
+
+  dllHandle = dlopen( libFile, RTLD_LAZY );
+  if ((error = dlerror()) != NULL)  {
+    fputs(error, stderr);
+    fputs( "\n", stderr );
+    return;
+  }
+
+  if ( strcmp( op, global_str65 ) == 0 ) {
+
+    printf( "\n" );
+
+    strcpy( line, "firstPvRegRecord" );
+    func = (PVREGFUNC) dlsym( dllHandle, line );
+    if ((error = dlerror()) != NULL)  {
+      fputs( appContextClass_str8, stderr );
+      return;
+    }
+
+    stat = (*func)( &classNamePtr, &textPtr );
+
+    strcpy( line, "nextPvRegRecord" );
+    func = (PVREGFUNC) dlsym( dllHandle, line );
+    if ((error = dlerror()) != NULL)  {
+      fputs( appContextClass_str9, stderr );
+      return;
+    }
+
+    if ( !stat ) {
+      strncpy( line, appContextClass_str110, 255 );
+      strncat( line, appContextClass_str111, 255 );
+      printf( "%s\n\n", line );
+    }
+
+    while ( !stat ) {
+
+      strncpy( line, classNamePtr, 255 );
+
+      if ( strlen(line) < 45 )
+        index = 45;
+      else
+        index = strlen(line) + 5;
+      strncat( line, "                                        ", 255 );
+      strncpy( &line[index], textPtr, 255 );
+
+      printf( "%s\n", line );
+
+      // get next
+      stat = (*func)( &classNamePtr, &textPtr );
+
+    }
+
+    printf( "\n\n" );
+
+  }
+  else if ( strcmp( op, global_str63 ) == 0 ) {
+
+    if ( !fileExists ) {
+      printf( appContextClass_str13, fileName );
+    }
+
+    printf( "\n" );
+
+    strcpy( line, "firstPvRegRecord" );
+    func = (PVREGFUNC) dlsym( dllHandle, line );
+    if ((error = dlerror()) != NULL)  {
+      fputs( appContextClass_str14, stderr );
+      return;
+    }
+
+    stat = (*func)( &classNamePtr, &textPtr );
+
+    strcpy( line, "nextPvRegRecord" );
+    func = (PVREGFUNC) dlsym( dllHandle, line );
+    if ((error = dlerror()) != NULL)  {
+      fputs( appContextClass_str9, stderr );
+      return;
+    }
+
+    numToAdd = 0;
+    while ( !stat ) {
+
+      cur = head->flink;
+      while ( cur ) {
+        if ( strcmp( classNamePtr, cur->className ) == 0 ) {
+          printf( appContextClass_str15, classNamePtr );
+          return;
+	}
+        cur = cur->flink;
+      }
+
+      numToAdd++;
+
+      printf( appContextClass_str109, classNamePtr, textPtr );
+
+      cur = new libRecType;
+      tail->flink = cur;
+      tail = cur;
+      tail->flink = NULL;
+
+      cur->className = new (char)[strlen(classNamePtr)+1];
+      strcpy( cur->className, classNamePtr );
+      cur->fileName = new (char)[strlen(libFile)+1];
+      strcpy( cur->fileName, libFile );
+      cur->text = new (char)[strlen(textPtr)+1];
+      strcpy( cur->text, textPtr );
+
+      numComponents++;
+
+      stat = (*func)( &classNamePtr, &textPtr );
+
+    }
+
+    if ( numToAdd == 0 ) {
+      printf(
+       appContextClass_str17, fileName );
+      return;
+    }
+
+    printf( "\n" );
+
+    strncpy( line, fileName, 255 );
+    strncat( line, "~", 255 );
+
+    if ( fileExists ) {
+
+      stat = unlink( line );
+
+      printf( appContextClass_str18, line );
+      stat = rename( fileName, line );
+      if ( stat ) {
+        perror( appContextClass_str19 );
+        return;
+      }
+
+    }
+
+    f = fopen( fileName, "w" );
+    if ( f ) {
+
+      fprintf( f, "%-d\n", numComponents );
+      cur = head->flink;
+      while ( cur ) {
+        fprintf( f, "%s %s %s\n", cur->className, cur->fileName,
+         cur->text );
+        cur = cur->flink;
+      }
+
+    }
+    else {
+      perror( fileName );
+      return;
+    }
+
+    if ( numToAdd == 1 )
+      printf( appContextClass_str20 );
+    else if ( numToAdd > 1 )
+      printf( appContextClass_str21 );
+
+  }
+  else if ( strcmp( op, global_str64 ) == 0 ) {
 
     printf( "\n" );
 
@@ -1751,6 +2069,23 @@ fileListPtr curFile;
         exit(0);
       }
       manageComponents( argv[1], argv[2] );
+      printf( "\n\n" );
+      exit(0);
+    }
+
+  }
+
+  if ( argc > 1 ) {
+
+    if ( ( strcmp( argv[1], global_str63 ) == 0 ) ||
+         ( strcmp( argv[1], global_str64 ) == 0 ) ||
+         ( strcmp( argv[1], global_str65 ) == 0 ) ) {
+      if ( argc < 3 ) {
+        printf( appContextClass_str77 );
+        displayParamInfo();
+        exit(0);
+      }
+      managePvComponents( argv[1], argv[2] );
       printf( "\n\n" );
       exit(0);
     }

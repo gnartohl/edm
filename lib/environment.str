@@ -53,13 +53,6 @@
 #define global_str36 "             a display file name to this string causes edm\n"
 #define global_str37 "             to open the display in execute mode\n\n"
 
-#define global_str57 "    -server  Communicate with or become a\n"
-#define global_str58 "             display file server which can\n"
-#define global_str59 "             manage multiple displays\n\n"
-
-#define global_str60 "    -local   Do not communicate with the display\n"
-#define global_str61 "             file server (default)\n\n"
-
 #define global_str38 "    -ul      Takes name of user written shareable library\n\n"
 #define global_str39 "COMPONENT MANAGEMENT\n\n"
 #define global_str40 "edm (-add|-remove|-show) <component library file pathname>\n\n"
@@ -80,5 +73,18 @@
 
 #define global_str55 " (-h displays help)\n"
 #define global_str56 "-display|"
+
+#define global_str57 "    -server  Communicate with or become a\n"
+#define global_str58 "             display file server which can\n"
+#define global_str59 "             manage multiple displays\n\n"
+
+#define global_str60 "    -local   Do not communicate with the display\n"
+#define global_str61 "             file server (default)\n\n"
+
+#define global_str62 "PV Class"
+
+#define global_str63 "-addpv"
+#define global_str64 "-removepv"
+#define global_str65 "-showpv"
 
 #endif
