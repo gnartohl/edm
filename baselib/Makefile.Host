@@ -61,7 +61,7 @@ LIBSRCS += updownButton.cc
 LIBSRCS += reg_libEdmBase.cc
 LIBSRCS += motifSlider.cc
 LIBSRCS += radio_button.cc
-
+LIBSRCS += xygraph.cc
 LIBSRCS += expRect.cc
 
 include $(TOP)/config/RULES.Host
