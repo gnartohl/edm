@@ -1315,8 +1315,11 @@ void new_cb (
   XtPointer call )
 {
 
+static int oneFileNum = 1;
+
 appContextClass *apco = (appContextClass *) client;
 activeWindowListPtr cur, next;
+char oneFileName[127+1];
 
   // traverse list and delete nodes so marked
   cur = apco->head->flink;
@@ -1355,6 +1358,16 @@ activeWindowListPtr cur, next;
   cur->node.realize();
   cur->node.setGraphicEnvironment( &apco->ci, &apco->fi );
   cur->node.setDisplayScheme( &apco->displayScheme );
+
+  sprintf( oneFileName, "%s%-d", appContextClass_str140, oneFileNum );
+
+  cur->node.storeFileName( oneFileName );
+
+  if ( oneFileNum > 0xfffffff )
+    oneFileNum = 1;
+  else
+    oneFileNum++;
+
   XtMapWidget( XtParent( cur->node.drawWidgetId() ) );
 
   cur->blink = apco->head->blink;

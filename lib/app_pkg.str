@@ -90,5 +90,6 @@
 #define appContextClass_str137 (char *) "Continue Shutdown"
 #define appContextClass_str138 (char *) "Print Complete"
 #define appContextClass_str139 (char *) "Print Error"
+#define appContextClass_str140 (char *) "newFile"
 
 #endif
