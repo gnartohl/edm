@@ -104,7 +104,12 @@ private:
     int genericEdit();
     int editCreate();
     int bufX, bufY, bufW, bufH;
-    char buf_pv_name[num_pvs][39+1];
+    // ***** SJS Modification 04/04/2003 *****
+    // ***** Replace *****
+    // char buf_pv_name[num_pvs][39+1];
+    // ***** by *****
+    char buf_pv_name[num_pvs][PV_Factory::MAX_PV_NAME + 1];
+    // ***** End of modification *****
     int buf_pv_color[num_pvs];
     colorButtonClass pv_color_cb[num_pvs];
     int buf_use_pv_time[num_pvs];
