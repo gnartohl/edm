@@ -628,7 +628,7 @@ int xx0, yy0, xx1, yy1;
 int activeGraphicClass::smartDrawAll ( void ) {
 
 activeGraphicListPtr cur;
-int x0, x1, y0, y1;
+int normClipStat, xorClipStat, eraseClipStat, x0, x1, y0, y1;
 XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
 
 //  actWin->appCtx->proc->lock();
@@ -641,7 +641,9 @@ XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
   this->bufInvalidate();
   this->erase();
 
-  actWin->drawGc.addNormXClipRectangle( xR );
+  normClipStat = actWin->drawGc.addNormXClipRectangle( xR );
+  xorClipStat = actWin->drawGc.addXorXClipRectangle( xR );
+  eraseClipStat = actWin->drawGc.addEraseXClipRectangle( xR );
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
@@ -652,7 +654,9 @@ XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
     cur = cur->flink;
   }
 
-  actWin->drawGc.removeNormXClipRectangle();
+  if ( normClipStat & 1 ) actWin->drawGc.removeNormXClipRectangle();
+  if ( xorClipStat & 1 ) actWin->drawGc.removeXorXClipRectangle();
+  if ( eraseClipStat & 1 ) actWin->drawGc.removeEraseXClipRectangle();
 
   //  actWin->appCtx->proc->unlock();
 
@@ -677,6 +681,8 @@ XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
   this->eraseActive();
 
   actWin->executeGc.addNormXClipRectangle( xR );
+  actWin->executeGc.addXorXClipRectangle( xR );
+  actWin->executeGc.addEraseXClipRectangle( xR );
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
@@ -691,6 +697,8 @@ XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
   }
 
   actWin->executeGc.removeNormXClipRectangle();
+  actWin->executeGc.removeXorXClipRectangle();
+  actWin->executeGc.removeEraseXClipRectangle();
 
   //  actWin->appCtx->proc->unlock();
 
@@ -722,7 +730,8 @@ int activeGraphicClass::refresh (
 {
 
 activeGraphicListPtr cur, next;
-int clipStat, x0, x1, y0, y1, x0sb, x1sb, y0sb, y1sb, needDelete;
+int normClipStat, xorClipStat, eraseClipStat, x0, x1, y0, y1, x0sb, x1sb,
+ y0sb, y1sb, needDelete;
 XRectangle xR = { _x, _y, _w, _h };
 
   needDelete = 0;
@@ -769,7 +778,9 @@ XRectangle xR = { _x, _y, _w, _h };
 
   }
 
-  clipStat = actWin->drawGc.addNormXClipRectangle( xR );
+  normClipStat = actWin->drawGc.addNormXClipRectangle( xR );
+  xorClipStat = actWin->drawGc.addXorXClipRectangle( xR );
+  eraseClipStat = actWin->drawGc.addEraseXClipRectangle( xR );
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
@@ -782,8 +793,9 @@ XRectangle xR = { _x, _y, _w, _h };
     cur = cur->flink;
   }
 
-  if ( clipStat & 1 )
-    actWin->drawGc.removeNormXClipRectangle();
+  if ( normClipStat & 1 ) actWin->drawGc.removeNormXClipRectangle();
+  if ( xorClipStat & 1 ) actWin->drawGc.removeXorXClipRectangle();
+  if ( eraseClipStat & 1 ) actWin->drawGc.removeEraseXClipRectangle();
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
@@ -927,7 +939,7 @@ int activeGraphicClass::refreshActive (
 {
 
 activeGraphicListPtr cur;
-int clipStat, x0, x1, y0, y1;
+int normClipStat, xorClipStat, eraseClipStat, x0, x1, y0, y1;
 XRectangle xR = { _x, _y, _w, _h };
 
   x0 = _x;
@@ -940,10 +952,14 @@ XRectangle xR = { _x, _y, _w, _h };
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
     if ( cur->node->intersects( x0, y0, x1, y1 ) ) {
-      clipStat = actWin->executeGc.addNormXClipRectangle( xR );
+      normClipStat = actWin->executeGc.addNormXClipRectangle( xR );
+      xorClipStat = actWin->executeGc.addXorXClipRectangle( xR );
+      eraseClipStat = actWin->executeGc.addEraseXClipRectangle( xR );
       cur->node->bufInvalidate();
       cur->node->drawActive( x0, y0, x1, y1 );
-      if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
+      if ( normClipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
+      if ( xorClipStat & 1 ) actWin->executeGc.removeXorXClipRectangle();
+      if ( eraseClipStat & 1 ) actWin->executeGc.removeEraseXClipRectangle();
     }
     cur = cur->flink;
   }
