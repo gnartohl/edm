@@ -12,13 +12,16 @@ SRCS = ../net/linux/ipncl_pkg.c ../net/linux/ipnsv_pkg.c \
 OBJS = ipncl_pkg.o ipnsv_pkg.o sys_pkg.o os_pkg.o msg_pkg.o thread_pkg.o\
  server_iprpc_pkg.o client_iprpc_pkg.o ipnis_pkg.o avl.o crc.o
 
-INCLUDES = os.h os_objs.h sys_types.h os_priv.h ipncl.h ipncl_priv.h \
- ipnsv.h ipnsv_priv.h ipport.h ipport_priv.h msg.h msg_priv.h \
- ipncl.msh ipnsv.msh msg.msh ipnis.msh os.msh unix.msh thread.h thread_priv.h \
- client_iprpc.h iprpc_priv.h server_iprpc_priv.h client_iprpc_priv.h \
- server_iprpc.h iprpc.h ipnis.h ipnis_priv.h avl.h avl_priv.h crc.h
+INCLUDES = ../os.h ../os_objs.h ../sys_types.h ../os_priv.h ../ipncl.h \
+ ../ipncl_priv.h ../ipnsv.h ../ipnsv_priv.h ../ipport.h ../ipport_priv.h \
+ ../msg.h ../msg_priv.h ../ipncl.msh ../ipnsv.msh ../msg.msh ../ipnis.msh \
+ ../os.msh ../unix.msh ../thread.h ../thread_priv.h ../client_iprpc.h \
+ ../iprpc_priv.h ../server_iprpc_priv.h ../client_iprpc_priv.h \
+ ../server_iprpc.h ../iprpc.h ../ipnis.h ../ipnis_priv.h ../avl.h \
+ ../avl_priv.h ../crc.h
 
-util : lib114135a4-6f6c-11d3-95bc-00104b8742df.so \
+util : $(INCLUDES) \
+	lib114135a4-6f6c-11d3-95bc-00104b8742df.so \
 	lib114135a4-6f6c-11d3-95bc-00104b8742df.a
 	@echo "done"
 
@@ -61,79 +64,79 @@ avl.o : ../avl/avl.c
 crc.o : ../crc/crc.c
 	$(compile) -c ../crc/crc.c -o $@
 
-os.h : ../sys/linux/os.h
+../os.h : ../sys/linux/os.h
 	cp ../sys/linux/os.h ../
 
-os_objs.h : ../sys/linux/os_objs.h
+../os_objs.h : ../sys/linux/os_objs.h
 	cp ../sys/linux/os_objs.h ../
 
-sys_types.h : ../sys/linux/sys_types.h
+../sys_types.h : ../sys/linux/sys_types.h
 	cp ../sys/linux/sys_types.h ../
 
-os_priv.h : ../sys/linux/os_priv.h
+../os_priv.h : ../sys/linux/os_priv.h
 	cp ../sys/linux/os_priv.h ../
 
-ipncl.h : ../net/linux/ipncl.h
+../ipncl.h : ../net/linux/ipncl.h
 	cp ../net/linux/ipncl.h ../
 
-ipncl_priv.h : ../net/linux/ipncl_priv.h
+../ipncl_priv.h : ../net/linux/ipncl_priv.h
 	cp ../net/linux/ipncl_priv.h ../
 
-ipnsv.h : ../net/linux/ipnsv.h
+../ipnsv.h : ../net/linux/ipnsv.h
 	cp ../net/linux/ipnsv.h ../
 
-ipnsv_priv.h : ../net/linux/ipnsv_priv.h
+../ipnsv_priv.h : ../net/linux/ipnsv_priv.h
 	cp ../net/linux/ipnsv_priv.h ../
 
-ipport.h : ../net/linux/ipport.h
+../ipport.h : ../net/linux/ipport.h
 	cp ../net/linux/ipport.h ../
 
-ipport_priv.h : ../net/linux/ipport_priv.h
+../ipport_priv.h : ../net/linux/ipport_priv.h
 	cp ../net/linux/ipport_priv.h ../
 
-msg.h : ../msg/msg.h
+../msg.h : ../msg/msg.h
 	cp ../msg/msg.h ../
 
-msg_priv.h : ../msg/msg_priv.h
+../msg_priv.h : ../msg/msg_priv.h
 	cp ../msg/msg_priv.h ../
 
-thread.h : ../thread/linux/thread.h
+../thread.h : ../thread/linux/thread.h
 	cp ../thread/linux/thread.h ../
 
-thread_priv.h : ../thread/linux/thread_priv.h
+../thread_priv.h : ../thread/linux/thread_priv.h
 	cp ../thread/linux/thread_priv.h ../
 
-client_iprpc.h : ../iprpc/osf/client_iprpc.h
+../client_iprpc.h : ../iprpc/osf/client_iprpc.h
 	cp ../iprpc/osf/client_iprpc.h ../
 
-iprpc.h : ../iprpc/osf/iprpc.h
+../iprpc.h : ../iprpc/osf/iprpc.h
 	cp ../iprpc/osf/iprpc.h ../
 
-iprpc_priv.h : ../iprpc/osf/iprpc_priv.h
+../iprpc_priv.h : ../iprpc/osf/iprpc_priv.h
 	cp ../iprpc/osf/iprpc_priv.h ../
 
-server_iprpc_priv.h : ../iprpc/osf/server_iprpc_priv.h
+../server_iprpc_priv.h : ../iprpc/osf/server_iprpc_priv.h
 	cp ../iprpc/osf/server_iprpc_priv.h ../
 
-client_iprpc_priv.h : ../iprpc/osf/client_iprpc_priv.h
+../client_iprpc_priv.h : ../iprpc/osf/client_iprpc_priv.h
 	cp ../iprpc/osf/client_iprpc_priv.h ../
 
-server_iprpc.h : ../iprpc/osf/server_iprpc.h
+../server_iprpc.h : ../iprpc/osf/server_iprpc.h
 	cp ../iprpc/osf/server_iprpc.h ../
 
-ipnis.h : ../net/linux/ipnis.h
+../ipnis.h : ../net/linux/ipnis.h
 	cp ../net/linux/ipnis.h ../
 
-ipnis_priv.h : ../net/linux/ipnis_priv.h
+../ipnis_priv.h : ../net/linux/ipnis_priv.h
 	cp ../net/linux/ipnis_priv.h ../
 
-avl.h : ../avl/avl.h
+../avl.h : ../avl/avl.h
 	cp ../avl/avl.h ../
 
-avl_priv.h : ../avl/avl_priv.h
+../avl_priv.h : ../avl/avl_priv.h
 	cp ../avl/avl_priv.h ../
 
-crc.h : ../crc/crc.h
+../crc.h : ../crc/crc.h
 	cp ../crc/crc.h ../
 
 depend :
