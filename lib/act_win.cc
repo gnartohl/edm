@@ -3499,10 +3499,12 @@ activeWindowClass *awo;
 popupBlockPtr block;
 int i, deltaX, deltaY, leftmost, rightmost, topmost, botmost, n,
  curY0, curY1, curX0, curX1, minY, maxY, minX, maxX, midX, midY,
- stat, num_selected, width, height;
+ stat, num_selected, width, height, maxRows, nRows, nCols, listEmpty,
+ leftX, rightX, topY, bottomY, incX, incY, curMidX, curMidY;
 long item;
 double space, totalSpace, dY0, dX0, resid;
-activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode;
+activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
+ twoDimHead1, twoDimHead2, next;
 
   block = (popupBlockPtr) client;
   item = (long) block->ptr;
@@ -4685,6 +4687,312 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode;
       awo->refresh();
 
       break;
+
+
+    case AWC_POPUP_DISTRIBUTE_MIDPT_BOTH:
+
+      awo->undoObj.startNewUndoList( activeWindowClass_str174 );
+      cur = awo->selectedHead->selFlink;
+      while ( cur != awo->selectedHead ) {
+        stat = cur->node->addUndoMoveNode( &(awo->undoObj) );
+        cur = cur->selFlink;
+      }
+
+      awo->setChanged();
+
+      // init 2 lists
+
+      twoDimHead1 = new activeGraphicListType;
+      twoDimHead1->flink = twoDimHead1;
+      twoDimHead1->blink = twoDimHead1;
+
+      twoDimHead2 = new activeGraphicListType;
+      twoDimHead2->flink = twoDimHead2;
+      twoDimHead2->blink = twoDimHead2;
+
+      // count nodes as n and find geometrical extent
+      n = 0;
+      curSel = awo->selectedHead->selFlink;
+      minX = curSel->node->getX0();
+      maxX = curSel->node->getX1();
+      minY = curSel->node->getY0();
+      maxY = curSel->node->getY1();
+      leftX = curSel->node->getXMid();
+      rightX = curSel->node->getXMid();
+      topY = curSel->node->getYMid();
+      bottomY = curSel->node->getYMid();
+      while ( curSel != awo->selectedHead ) {
+
+        if ( curSel->node->getX0() < minX ) {
+          minX = curSel->node->getX0();
+          leftX = curSel->node->getXMid();
+	}
+        if ( curSel->node->getX1() > maxX ) {
+          maxX = curSel->node->getX1();
+          rightX = curSel->node->getXMid();
+	}
+        if ( curSel->node->getY0() < minY ) {
+          minY = curSel->node->getY0();
+          topY = curSel->node->getYMid();
+	}
+        if ( curSel->node->getY1() > maxY ) {
+          maxY = curSel->node->getY1();
+          bottomY = curSel->node->getYMid();
+	}
+
+        n++;
+
+        cur = new activeGraphicListType;
+        cur->node = curSel->node;
+        // insert at tail
+        cur->blink = twoDimHead1->blink;
+        twoDimHead1->blink->flink = cur;
+        twoDimHead1->blink = cur;
+        cur->flink = twoDimHead1;
+
+        curSel = curSel->selFlink;
+
+      }
+
+      // debug
+      //width = maxX - minX;
+      //height = maxY - minY;
+      //awo->drawGc.saveFg();
+      //awo->drawGc.setFG( BlackPixel( awo->d, DefaultScreen(awo->d) ) );
+      //XDrawRectangle( awo->d, XtWindow(awo->drawWidget),
+      // awo->drawGc.normGC(), minX, minY, width, height );
+
+      // debug
+      //cur = twoDimHead1->flink;
+      //while ( cur != twoDimHead1 ) {
+      //  printf( "x=%-d, y=%-d\n", cur->node->getX0(),
+      //   cur->node->getY0() );
+      //  cur = cur->flink;
+      //}
+
+      // find num rows, cols
+      nCols = maxRows = 0;
+      cur = twoDimHead1->flink;
+      listEmpty = 0;
+
+      while ( !listEmpty ) {
+
+        // find left most
+        cur = twoDimHead1->flink;
+        if (  cur != twoDimHead1 ) {
+          minX = cur->node->getX0();
+          midX = cur->node->getXMid();
+        }
+        cur = cur->flink;
+        while ( cur != twoDimHead1 ) {
+          if (  cur->node->getX0() <  minX ) {
+            minX = cur->node->getX0();
+            midX = cur->node->getXMid();
+	  }
+          cur = cur->flink;
+        }
+
+        nCols++;
+        nRows = 0;
+        // now find all nodes for this column; a node is in this
+        // column if [X0,X1] contains midX from above; count the
+        // rows and update max rows
+        cur = twoDimHead1->flink;
+        while (  cur != twoDimHead1 ) {
+          next = cur->flink;
+          if ( ( cur->node->getX0() <= midX ) &&
+               ( cur->node->getX1() >= midX ) ) {
+            nRows++;
+            // remove node from cur list
+            cur->blink->flink = cur->flink;
+            cur->flink->blink = cur->blink;
+            // insert this node to other list
+            cur->blink = twoDimHead2->blink;
+            twoDimHead2->blink->flink = cur;
+            twoDimHead2->blink = cur;
+            cur->flink = twoDimHead2;
+	  }
+          cur = next;
+	}
+        if ( nRows > maxRows ) maxRows = nRows;
+
+        // are there more rows on current list?
+        listEmpty = ( twoDimHead1->flink == twoDimHead1 );
+
+      }
+
+      //printf( "num cols = %-d, max rows = %-d\n", nCols, maxRows );
+
+      if ( nCols > 1 ) {
+        incX = ( rightX - leftX ) / ( nCols - 1 );
+      }
+      else {
+        incX = 1;
+      }
+
+      if ( maxRows > 1 ) {
+        incY = ( bottomY - topY ) / ( maxRows - 1 );
+      }
+      else {
+        incY = 1;
+      }
+
+      //printf( "incX = %-d, incY = %-d\n", incX, incY );
+
+      // if necessary, reallocate work array
+      if ( maxRows > awo->list_array_size ) {
+        delete awo->list_array;
+        awo->list_array_size = maxRows;
+        awo->list_array = new activeGraphicListType[maxRows];
+        awo->list_array->defExeFlink = NULL;
+        awo->list_array->defExeBlink = NULL;
+      }
+
+      // now, pull out each column, sort and then adjust node position
+      // (note that all nodes have been moved to the 2nd list)
+
+      curMidX = leftX;
+      nCols = 0;
+      cur = twoDimHead2->flink;
+      listEmpty = 0;
+
+      while ( !listEmpty ) {
+
+        // find left most
+        cur = twoDimHead2->flink;
+        if (  cur != twoDimHead2 ) {
+          minX = cur->node->getX0();
+          midX = cur->node->getXMid();
+        }
+        cur = cur->flink;
+        while ( cur != twoDimHead2 ) {
+          if (  cur->node->getX0() <  minX ) {
+            minX = cur->node->getX0();
+            midX = cur->node->getXMid();
+	  }
+          cur = cur->flink;
+        }
+
+        nRows = 0;
+        // now find all nodes for this column; a node is in this
+        // column if [X0,X1] contains midX from above;
+        cur = twoDimHead2->flink;
+        while (  cur != twoDimHead2 ) {
+
+          next = cur->flink;
+
+          if ( ( cur->node->getX0() <= midX ) &&
+               ( cur->node->getX1() >= midX ) ) {
+
+            // adjust x postion
+            cur->node->moveMidpointAbs( curMidX, cur->node->getYMid() );
+            cur->node->moveSelectBoxMidpointAbs(
+             curMidX, cur->node->getYMid() );
+
+            awo->list_array[nRows] = *cur;
+
+            // remove node from cur list
+            cur->blink->flink = cur->flink;
+            cur->flink->blink = cur->blink;
+            // insert this node to other list
+            cur->blink = twoDimHead1->blink;
+            twoDimHead1->blink->flink = cur;
+            twoDimHead1->blink = cur;
+            cur->flink = twoDimHead1;
+
+            nRows++;
+
+	  }
+
+          cur = next;
+
+	}
+
+        // sort the array and adjust y postion
+        qsort( (void *) awo->list_array, nRows,
+         sizeof( activeGraphicListType ), qsort_compare_y_func );
+
+        curMidY = topY;
+        for ( i=0; i<nRows; i++ ) {
+          awo->list_array[i].node->moveMidpointAbs(
+           awo->list_array[i].node->getXMid(), curMidY );
+          awo->list_array[i].node->moveSelectBoxMidpointAbs(
+           awo->list_array[i].node->getXMid(), curMidY );
+          curMidY += incY;
+	}
+
+        nCols++;
+        curMidX += incX;
+
+        // are there more rows on current list?
+        listEmpty = ( twoDimHead2->flink == twoDimHead2 );
+
+      }
+
+      // Discard head and list nodes
+      // (note that all nodes have been moved back to the 1st list)
+      cur = twoDimHead1->flink;
+      while (  cur != twoDimHead1 ) {
+        next = cur->flink;
+        delete cur;
+        cur = next;
+      }
+      delete twoDimHead1;
+      delete twoDimHead2;
+
+      // finally, update the display
+      awo->clear();
+      awo->refresh();
+
+      break;
+
+
+
+
+
+      i = 0;
+      curSel = awo->selectedHead->selFlink;
+      while ( curSel != awo->selectedHead ) {
+
+        if ( i < n ) {
+          awo->list_array[i] = *curSel;
+          i++;
+        }
+
+        curSel = curSel->selFlink;
+
+      }
+
+      qsort( (void *) awo->list_array, n,
+       sizeof( activeGraphicListType ), qsort_compare_x_func );
+
+      if ( n >= 2 ) {
+        space = ( (double) maxX - (double) minX ) / ( (double) n - 1 );
+      }
+      else {
+        space = 0;
+      }
+
+      curX1 = (awo->list_array[0]).node->getXMid();
+
+      for ( i=1; i<n-1; i++ ) {
+
+        curY0 = (awo->list_array[i]).node->getYMid();
+        dX0 = (double) curX1 + space * (double) i;
+        curX0 = (int) rint(dX0);
+
+        (awo->list_array[i]).node->moveMidpointAbs( curX0, curY0 );
+        (awo->list_array[i]).node->moveSelectBoxMidpointAbs( curX0, curY0 );
+
+      }
+
+      awo->clear();
+      awo->refresh();
+
+      break;
+
+//???????????????????????????????????
+
 
     case AWC_POPUP_CHANGE_DSP_PARAMS:
 
@@ -11521,7 +11829,6 @@ Atom wm_delete_window;
    (XtPointer) &curBlockListNode->block );
 
 
-
   str = XmStringCreateLocalized( activeWindowClass_str139 );
 
   pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
@@ -11544,6 +11851,31 @@ Atom wm_delete_window;
 
   XtAddCallback( pb, XmNactivateCallback, b2ReleaseManySelect_cb,
    (XtPointer) &curBlockListNode->block );
+
+
+  str = XmStringCreateLocalized( activeWindowClass_str190 );
+
+  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   distributePd,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr =
+   (void *) AWC_POPUP_DISTRIBUTE_MIDPT_BOTH;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseManySelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
 
 
   editPdM = XmCreatePulldownMenu( b2ManySelectPopup, "", NULL, 0 );

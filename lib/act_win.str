@@ -186,5 +186,6 @@
 #define activeWindowClass_str187 (char *) "Load Component Scheme"
 #define activeWindowClass_str188 (char *) "Scheme file save failure: %s\n"
 #define activeWindowClass_str189 (char *) "Undo Edit (z)"
+#define activeWindowClass_str190 (char *) "2-D"
 
 #endif
