@@ -5521,7 +5521,7 @@ unsigned int mask;
                     cur->selBlink->selFlink = cur->selFlink;
 		  }
 		  else {
-                    printf( "%s at x=%-d, y=%-d : selBlink is null (2)\n",
+                    printf( "%s at x=%-d, y=%-d : selBlink is null (1)\n",
 		     cur->node->objName(), cur->node->getX0(),
 		     cur->node->getY0() );
 		  }
@@ -5781,7 +5781,7 @@ unsigned int mask;
                       cur->selFlink->selBlink = cur->selBlink;
 		    }
 		    else {
-                      printf( "%s at x=%-d, y=%-d : selFlink is null (3)\n",
+                      printf( "%s at x=%-d, y=%-d : selFlink is null (4)\n",
 		       cur->node->objName(), cur->node->getX0(),
 		       cur->node->getY0() );
 		    }
@@ -5889,7 +5889,7 @@ unsigned int mask;
                     cur->selBlink->selFlink = cur->selFlink;
 		  }
 		  else {
-                    printf( "%s at x=%-d, y=%-d : selBlink is null (4)\n",
+                    printf( "%s at x=%-d, y=%-d : selBlink is null (5)\n",
 		     cur->node->objName(), cur->node->getX0(),
 		     cur->node->getY0() );
 		  }
@@ -5897,7 +5897,7 @@ unsigned int mask;
                     cur->selFlink->selBlink = cur->selBlink;
 		  }
 		  else {
-                    printf( "%s at x=%-d, y=%-d : selFlink is null (4)\n",
+                    printf( "%s at x=%-d, y=%-d : selFlink is null (6)\n",
 		     cur->node->objName(), cur->node->getX0(),
 		     cur->node->getY0() );
 		  }
@@ -6383,7 +6383,7 @@ unsigned int mask;
                       cur->selBlink->selFlink = cur->selFlink;
 		    }
 		    else {
-                      printf( "%s at x=%-d, y=%-d : selBlink is null (5)\n",
+                      printf( "%s at x=%-d, y=%-d : selBlink is null (7)\n",
 		       cur->node->objName(), cur->node->getX0(),
 		       cur->node->getY0() );
 		    }
@@ -6391,7 +6391,7 @@ unsigned int mask;
                       cur->selFlink->selBlink = cur->selBlink;
 		    }
 		    else {
-                      printf( "%s at x=%-d, y=%-d : selFlink is null (5)\n",
+                      printf( "%s at x=%-d, y=%-d : selFlink is null (8)\n",
 		       cur->node->objName(), cur->node->getX0(),
 		       cur->node->getY0() );
 		    }
@@ -6687,21 +6687,43 @@ unsigned int mask;
                     if ( !wasSelected ) {
                       if ( gotSelection ) {
                         num_selected++;
-                        if ( !wasSelected ) {
-                          cur->node->drawSelectBoxCorners();
-                          cur->selBlink = awo->selectedHead->selBlink;
-                          awo->selectedHead->selBlink->selFlink = cur;
-                          awo->selectedHead->selBlink = cur;
-                          cur->selFlink = awo->selectedHead;
-                        }
+                        cur->node->drawSelectBoxCorners();
+                        cur->selBlink = awo->selectedHead->selBlink;
+                        awo->selectedHead->selBlink->selFlink = cur;
+                        awo->selectedHead->selBlink = cur;
+                        cur->selFlink = awo->selectedHead;
                       }
                     }
                     else {
-                      num_selected++;
+                      if ( gotSelection ) {
+                        cur->node->drawSelectBoxCorners(); // erase via xor gc
+                        cur->node->deselect();
+		        // unlink
+                        if ( cur->selBlink ) {
+                          cur->selBlink->selFlink = cur->selFlink;
+		        }
+		        else {
+                          printf(
+                           "%s at x=%-d, y=%-d : selBlink is null (9)\n",
+		           cur->node->objName(), cur->node->getX0(),
+		           cur->node->getY0() );
+		        }
+                        if ( cur->selFlink ) {
+                          cur->selFlink->selBlink = cur->selBlink;
+		        }
+		        else {
+                          printf(
+                           "%s at x=%-d, y=%-d : selFlink is null (A)\n",
+		           cur->node->objName(), cur->node->getX0(),
+		           cur->node->getY0() );
+		        }
+                      }
+		      else {
+                        num_selected++;
+		      }
                     }
 
                   }
-
                   else {
 
                     wasSelected = cur->node->isSelected();
@@ -6710,17 +6732,40 @@ unsigned int mask;
                     if ( !wasSelected ) {
                       if ( gotSelection ) {
                         num_selected++;
-                        if ( !wasSelected ) {
-                          cur->node->drawSelectBoxCorners();
-                          cur->selBlink = awo->selectedHead->selBlink;
-                          awo->selectedHead->selBlink->selFlink = cur;
-                          awo->selectedHead->selBlink = cur;
-                          cur->selFlink = awo->selectedHead;
-                        }
+                        cur->node->drawSelectBoxCorners();
+                        cur->selBlink = awo->selectedHead->selBlink;
+                        awo->selectedHead->selBlink->selFlink = cur;
+                        awo->selectedHead->selBlink = cur;
+                        cur->selFlink = awo->selectedHead;
                       }
                     }
                     else {
-                      num_selected++;
+                      if ( gotSelection ) {
+                        cur->node->drawSelectBoxCorners(); // erase via xor gc
+                        cur->node->deselect();
+		        // unlink
+                        if ( cur->selBlink ) {
+                          cur->selBlink->selFlink = cur->selFlink;
+		        }
+		        else {
+                          printf(
+                           "%s at x=%-d, y=%-d : selBlink is null (B)\n",
+		           cur->node->objName(), cur->node->getX0(),
+		           cur->node->getY0() );
+		        }
+                        if ( cur->selFlink ) {
+                          cur->selFlink->selBlink = cur->selBlink;
+		        }
+		        else {
+                          printf(
+                           "%s at x=%-d, y=%-d : selFlink is null (C)\n",
+		           cur->node->objName(), cur->node->getX0(),
+		           cur->node->getY0() );
+		        }
+                      }
+		      else {
+                        num_selected++;
+		      }
                     }
 
                   }
