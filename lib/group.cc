@@ -1793,11 +1793,9 @@ int isGroup;
     else
       if ( !cur->node->isInGroup() ) cur->node->clearNextToEdit();
 
-    if ( isGroup ) {
-      depth++;
-      cur->node->updateGroup(); // invoke recursively
-      depth--;
-    }
+    depth++;
+    cur->node->updateGroup(); // invoke recursively
+    depth--;
 
     cur = next;
 
