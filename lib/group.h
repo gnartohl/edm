@@ -28,6 +28,8 @@
 // the following defines btnActionListType & btnActionListPtr
 #include "btnActionListType.h"
 
+static char *dragName = "?";
+
 #ifdef __epics__
 #include "cadef.h"
 #endif
@@ -340,6 +342,15 @@ int undoFlip (
   int y,
   int w,
   int h );
+
+int startDrag (
+  int x,
+  int y
+);
+
+char *dragValue (
+  int i
+);
 
 };
 

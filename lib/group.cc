@@ -2321,3 +2321,43 @@ int stat;
   return 1;
 
 }
+
+int activeGroupClass::startDrag (
+  int x,
+  int y )
+{
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  cur = head->blink;
+  while ( cur != head ) {
+
+    if ( ( x > cur->node->getX0() ) &&
+         ( x < cur->node->getX1() ) &&
+         ( y > cur->node->getY0() ) &&
+         ( y < cur->node->getY1() ) ) {
+
+      // only the highest object may participate
+      if ( cur->node->dragValue( cur->node->getCurrentDragIndex() ) ) {
+        cur->node->startDrag( x, y );
+      }
+      break; // out of while loop
+
+    }
+
+    cur = cur->blink;
+
+  }
+
+  return 1;
+
+}
+
+char *activeGroupClass::dragValue (
+  int i )
+{
+
+  return dragName;
+
+}
