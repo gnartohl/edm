@@ -2658,7 +2658,7 @@ int blink = 0;
     actWin->executeGc.setLineWidth( 1 );
     actWin->executeGc.setLineStyle( LineSolid );
     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), x, y, w, h );
+     actWin->executeGc.eraseGC(), x, y, w, h );
     needToEraseUnconnected = 0;
   }
 
