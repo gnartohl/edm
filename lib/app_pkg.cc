@@ -2323,6 +2323,7 @@ int stat, dup, state, i;
   schemeListExists = 0;
   schemeList = (AVL_HANDLE) NULL;
   schemeSet = (AVL_HANDLE) NULL;
+  schemeSetList = (char **) NULL;
 
   //printf( "build scheme list\n" );
   stat = avl_init_tree( compare_nodes, compare_key, copy_nodes,

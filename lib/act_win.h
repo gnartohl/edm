@@ -813,6 +813,8 @@ int noRaise;
 
 int noEdit; // used only to save the no-edit state for checkpointing
 
+int closeAllowed;
+
 time_t modTime; // time of last file modification when window was opened
 int stale; // true if file has been modified since window was opened (or saved)
 

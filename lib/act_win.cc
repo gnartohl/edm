@@ -9460,6 +9460,7 @@ activeWindowClass::activeWindowClass ( void ) {
   noRaise = 0;
 
   noEdit = 0;
+  closeAllowed = 0;
 
   stale = 0;
   modTime = 0;
@@ -10069,19 +10070,12 @@ int activeWindowClass::genericCreate (
   int OneH,
   int windowDecorations,
   int _noEdit,
-  int closeAllowed,
+  int _closeAllowed,
   int _numMacros,
   char **_macros,
   char **_expansions ) {
 
-XmString str;
-Widget pb;
-objNameListPtr curObjNameNode;
-char *oneObjName, *menuName;
-popupBlockListPtr curBlockListNode;
-int i, l, n, wPix, bPix;
-Arg args[3];
-unsigned int crc = 0;
+int i, l, wPix, bPix;
 Atom wm_delete_window;
 char tmp[10];
 
@@ -10097,6 +10091,7 @@ char tmp[10];
   exit_after_save = 0;
 
   noEdit = _noEdit;
+  closeAllowed = _closeAllowed;
 
   this->numMacros = _numMacros;
 
@@ -10248,6 +10243,25 @@ char tmp[10];
    KeyPressMask|ButtonPressMask|ButtonReleaseMask|Button1MotionMask|
     Button2MotionMask|Button3MotionMask|ExposureMask, False,
    drawWinEventHandler, (XtPointer) this );
+
+  return 1;
+
+}
+
+void activeWindowClass::realize ( void ) {
+
+XmString str;
+Widget pb;
+objNameListPtr curObjNameNode;
+char *oneObjName, *menuName;
+popupBlockListPtr curBlockListNode;
+int i, n;
+Arg args[3];
+
+  XtRealizeWidget( top );
+  XSetWindowColormap( d, XtWindow(top), appCtx->ci.getColorMap() );
+  XtMapWidget( drawWidget );
+  setTitle();
 
   // create drawing popup menus
 
@@ -12235,7 +12249,7 @@ char tmp[10];
   XtSetArg( args[n], XmNmenuPost, (XtArgVal) "<Btn5Down>;" ); n++;
   b2ExecutePopup = XmCreatePopupMenu( top, "", args, n );
 
-  if ( !_noEdit && closeAllowed ) {
+  if ( !noEdit && closeAllowed ) {
 
     str = XmStringCreateLocalized( activeWindowClass_str145 );
 
@@ -12431,17 +12445,6 @@ char tmp[10];
 
 
 //===================================================================
-
-  return 1;
-
-}
-
-void activeWindowClass::realize ( void ) {
-
-  XtRealizeWidget( top );
-  XSetWindowColormap( d, XtWindow(top), appCtx->ci.getColorMap() );
-  XtMapWidget( drawWidget );
-  setTitle();
 
 }
 
