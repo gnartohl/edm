@@ -1,0 +1,59 @@
+<html>
+<head>
+<base>
+<title>RegTextupdate</title>
+<link REL="STYLESHEET" HREF="style.css">
+</head>
+
+<body bgcolor=#D0D0D0>
+
+<h1>RegTextupdate</h1>
+
+Based on the <a href="textupdate.htm">textupdate widget</a>,
+this widget displays the value of a PV <U>after</U> filtering it
+with a regular expression.<br>
+
+<h2>Properties</h2>
+Most of the configuration values are inherited from the
+<a href="textupdate.htm">textupdate widget</a>
+
+<UL>
+<LI><B>Reg.Exp:</B><br>
+    The widget reads the current value of the PV as a string
+    and then applies this regular expression. The expression must
+    have submatches, defined as braces, and the result of the
+    submatch is then displayed.<br>
+
+    Examples:
+    <pre>
+       (\+?\-?[.0-9]+)
+       - cuts a number out of a string
+
+       [.0-9]+ (.*)
+       - cuts the text following a number and a space from the string
+
+       SNS Name examples:
+
+       The SNS PV names have three subsections, separated by colons.
+       If you pass the PV name as a macro $(PV) into an edm display,
+       you can use "$(PV).NAME" to read the PV name via ChannelAccess.
+
+       The following regular expressions will then extract the portions:
+
+       ([^:]+)
+       - extracts the system/subsystem from a standard SNS name.
+
+       [^:]+:([^:]+)
+       - extracts the device name portion of a standard SNS name.
+
+       [^:]+:[^:]+:(.+)
+       - signal name
+     </pre>
+</UL>
+
+<hr>
+<address>
+<a HREF="mailto:pamgurd@sns.gov">pamgurd@sns.gov</a></p>
+</address>
+</body>
+</html>

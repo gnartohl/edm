@@ -1,0 +1,138 @@
+<head>
+<base>
+<title>CALC PV</title>
+<link REL="STYLESHEET" HREF="style.css">
+</head>
+
+<body bgcolor=#E0E0E0>
+
+<h1>CALC PV</h1>
+
+This type of <a href="pv.htm">ProcessVariable</a> is based on a
+calculation.
+
+<h2>Syntax</h2>
+
+<pre>
+     CALC\name(argA, argB, argC, ...)
+</pre>
+
+<UL>
+<LI><B>CALC\</B><br>
+    Selects this type of PV.
+<LI><B>name</B><br>
+    The name of the calculation to use. This name
+    has to be defined in the configuration file.
+<LI><B>argA, ...</B><br>
+    Zero or more arguments can follow
+    (currently limited to 12).
+    Each argument is either a constant number or another PV,
+    including CALC PVs.
+</UL>
+
+<h2>Operation</h2>
+
+Whenever one of the argument PVs changes, the CALC PV is
+re-evaluated and the widget that uses the CALC PV will receive
+a value callback.<br>
+
+Example:
+<pre>
+ CALC\sum(fred, jane)
+</pre>
+will execute the definition of "sum" whenever "fred" or "jane"
+change. The values of "fred" and "jane" are passed as "A" and "B" into
+the formula for "sum".
+The time stamp of the result is the most recent of the PVs'.
+If no time stamp is available from any of the arguments,
+the current host time is used.
+
+Status/severity are maximized, i.e. if fred is in ??/MINOR and jane in
+READ/INVALID, the result will be READ/INVALID.
+
+The remaining PV properties (display limits, ...)
+are currently undefined for a CALC PV,
+the plan is to add configuration parameters
+that will become part of this file.
+
+Another Example:
+<pre>
+ CALC\sum(fred, CALC\sum(jane,2))
+</pre>
+
+
+<h2>Configuration file</h2>
+
+The configuration file has to be called "calc.list"
+and has to be 
+<ol>
+<li> in the current directory
+<li> accessible as $EDMFILES/calc.list
+</ol>
+
+The first line has to be "CALC1".<br>
+
+The configuration file contains calculation names followed by a
+formula to implement the calculation.
+
+This is an example file:
+<pre>
+CALC1 -*- shell-script -*-
+
+# Example definition file for the CALC ProcessVariable
+#
+# First line "CALC1 ..." is magic and provides version number
+# as well as EMACS mode with is not necessary
+# but makes for - by definition - cool coloring
+# when this file is edited in emacs.
+
+# Empty lines and comments like these,
+# beginning with '#', are ignored.
+#
+# Syntax for the rest of the file:
+#
+# &lt;name&gt;
+# &lt;implementation&gt;
+#
+# The name is used to refer to a CALC PV aa "CALC\name"
+# or "CALC\name(argA, argB, argC, ...).
+#
+# Implementation is in EPICS CALC record syntax,
+# with A, B, C, ... being variable names for the arguments.
+#
+#
+# Note: arguments are not checked!
+# If e.g. CALC\sum(a,b) requires two arguments,
+# nonone cares if you provide 0, 2 or 5 arguments instead of 2.
+# See the random example below on why this is a feature.
+
+# Example: CALC\sum(x, y) will summarize the arguments
+sum   
+# Implementation:
+A+B
+
+# Example: CALC\F2C(t)
+# transforms given Fahrenheit-Temperature into much more
+# meaningful Deg. C
+F2C
+# Implementation:
+(A-32)*5/9
+
+# Formula to create random number.
+# This one does not need arguments.
+# With no PV input, this one will never update!
+# Possible circumvention: Provide a PV just to
+# trigger recalculation, e.g. use
+#    "CALC\random(some_1Hz_PV)"
+# to see changes at ~1Hz.
+random
+# Implementation:
+RNDM
+</pre>
+
+<hr>
+<address>
+<a HREF="mailto:kasemir@lanl.gov"> kasemir@lanl.gov</a>
+</address>
+</body>
+</html>

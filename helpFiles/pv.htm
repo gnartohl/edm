@@ -1,0 +1,59 @@
+<head>
+<base>
+<title>PV</title>
+<link REL="STYLESHEET" HREF="style.css">
+</head>
+
+<body bgcolor=#E0E0E0>
+
+<h1>ProcessVariables</h1>
+
+<font color=red>
+Note: Not all widgets might support the full
+syntax as described in here. For those you can only
+provide a PV name</font><br>
+
+Most widgets can react to ProcessVariables (PVs):
+They usually display the current value of the PV as a
+text, number or e.g. as a meter.
+Even seemingly static elements like lines can change their
+color based on the value of a PV.<br>
+
+<h2>Syntax</h2>
+
+EDM has the option of supporting several types of PVs.
+When simply providing a PV name, the default type of PV
+is used (usually EPICS). Otherwise, the type of PV is
+selected via a prefix:
+
+<pre>
+     name
+     EPICS\name
+     CALC\name(argA, argB, argC, ...)
+     XYZ\name
+</pre>
+
+<UL>
+<LI><B>name</B><br>
+    The name of the PV, for example an EPICS channel name like
+    "fred" (served by excas, the Example ChannelAccess server)
+    or "sys_subsys:device:signal" for SNS names.
+<LI><B>EPICS\</B><br>
+    Forces "name" to be an EPICS channel name (might be the default).
+<LI><B>CALC\</B><br>
+    Forces "name" to be a <a href="calcpv.htm">CALC PV.</a>
+<LI><B>XYZ\</B><br>
+    Forces "name" to be of type XYZ (not implemented).
+</UL>
+
+<h2>API</h2>
+
+If you want to implement a new widget, please refer to 
+the header file edm/lib/pv_factory.h.
+
+<hr>
+<address>
+<a HREF="mailto:kasemir@lanl.gov"> kasemir@lanl.gov</a>
+</address>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<head>
+<base>
+<title>Textupdate</title>
+<link REL="STYLESHEET" HREF="style.css">
+</head>
+
+<body bgcolor=#E0E0E0>
+
+<h1>Textupdate</h1>
+This widgets reads a PV and displays the result as a string.<br>
+  
+Per default, it uses the configuration parameters of the PV
+(display precision, units) to format the string.
+
+<h2>Properties</h2>
+
+<UL>
+<LI><B>PV:</B><br>
+    The PV that this widget displays
+<LI><B>Mode:</B><br>
+    In <I>default</I> mode, the precision of the PV
+    (e.g.PREC in EPICS DB) is used.
+    In <I>decimal</I> mode, a separate precision can be configured.
+    In <I>hex</I> mode, the number is displayed in hexadecimal notation.
+<LI><B>Precision:</B><br>
+    See <I>decimal</I> mode.
+<LI><B>Line Width:</B><br>
+    If defined, a box with this line width will surround the widget.
+<LI><B>Fg Color:</B><br>
+    The foreground = text color. This color can be based on a color
+    rule! For a color value, the PV us used.
+<LI><B>Bg Color:</B><br>
+    The background color, only used when <I>filled</I> is checked.
+<LI><B>Color PV:</B><br>
+    <I>IF</I> the foreground color is rule-based, a color PV
+    can be specified to determine the color value.
+    Per default, the primary PV is used.
+<LI><B>Font:</B><br>
+    The font.
+</UL>
+
+The <a href="textentry.htm">Textentry</a>
+and <a href="regtextupdate.htm">RegTextupdate</a> widgets
+are based on this widget.
+
+<hr>
+<address>
+<a HREF="mailto:kasemir@lanl.gov"> kasemir@lanl.gov</a>
+</address>
+</body>
+</html>

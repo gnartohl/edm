@@ -152,7 +152,7 @@ shellCmdClass
 5
 1
 11
-netscape
+netscape $(help)/index.htm
 html
 helvetica-medium-r-12.0
 0

@@ -1,0 +1,38 @@
+<html>
+<head>
+<base>
+<title>Textentry</title>
+<link REL="STYLESHEET" HREF="style.css">
+</head>
+
+<body bgcolor=#E0E0E0>
+<h1>Textentry</h1>
+Based on the <a href="textupdate.htm">textupdate widget</a>,
+this widget displays the value of a PV and allows to enter new
+values.<br>
+
+<h2>Properties</h2>
+All properties are inherited from the
+<a href="textupdate.htm">textupdate widget</a>
+
+<H2>Detail on Behaviour</H2>
+There is a <I>update</I> and <I>edit</I> mode.
+In update mode, new values of the PV are displayed. But if
+the PV is constantly changing, it is hard to enter a new
+value because the new value will always overwrite
+what you just entered.
+Therefore the widget will switch to edit mode, i.e. "freeze"
+after the cursor is moved inside the widget.
+This means you get into edit mode as soon as you enter anything, use
+the cursor keys or click the mouse inside the textentry widget.
+Now you can edit the content undisturbed, until you either leave the
+widget by selecting another widget, in which case all entries are
+lost and replaced by the current value of the PV, or you press
+ENTER, in which case the entered value is sent to the PV.
+
+<hr>
+<address>
+<a HREF="mailto:kasemir@lanl.gov">kasemir@lanl.gov</a>
+</address>
+</body>
+</html>
