@@ -26,8 +26,6 @@
 #include "pv_factory.h"
 #include "cvtFast.h"
 
-#define MAX_ENUM_STRING_SIZE 16
-
 #define BTC_K_COLORMODE_STATIC 0
 #define BTC_K_COLORMODE_ALARM 1
 

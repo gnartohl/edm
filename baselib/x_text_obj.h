@@ -223,7 +223,7 @@ int createFromFile (
   char *name,
   activeWindowClass *actWin );
 
-int activeXTextClass::old_createFromFile (
+int old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin );

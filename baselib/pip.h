@@ -317,7 +317,7 @@ int checkResizeSelectBoxAbs (
   int _w,
   int _h );
 
-void activePipClass::openEmbeddedByIndex (
+void openEmbeddedByIndex (
   int index );
 
 void executeDeferred ( void );
@@ -355,9 +355,9 @@ int isWindowContainer ( void );
 
 int activateComplete ( void );
 
-void activePipClass::map ( void );
+void map ( void );
 
-void activePipClass::unmap ( void );
+void unmap ( void );
 
 };
 
