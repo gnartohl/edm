@@ -225,8 +225,14 @@ void EPICS_ProcessVariable::ca_ctrlinfo_callback(
 void EPICS_ProcessVariable::ca_value_callback(struct event_handler_args args)
 {
     EPICS_ProcessVariable *me = (EPICS_ProcessVariable *)args.usr;
-    me->value->read_value(args.dbr);
-    me->do_value_callbacks();
+    if (args.status == ECA_NORMAL  &&  args.dbr)
+    {
+        me->value->read_value(args.dbr);
+        me->do_value_callbacks();
+    }
+    else
+        fprintf(stderr, "CA value callback('%s'): No data, CA status %s\n",
+                me->get_name(), ca_message(args.status));
 }
 
 bool EPICS_ProcessVariable::is_valid() const
@@ -496,7 +502,7 @@ PVValueInt::PVValueInt(EPICS_ProcessVariable *epv)
     specific_type = i_type;
 }
 
-PVValueInt::PVValueInt(EPICS_ProcessVariable *epv, char* typeInfo)
+PVValueInt::PVValueInt(EPICS_ProcessVariable *epv, const char* typeInfo)
         : PVValue(epv)
 {
     value = new int[epv->get_dimension()];
@@ -592,7 +598,7 @@ PVValueDouble::PVValueDouble(EPICS_ProcessVariable *epv)
     specific_type = d_type;
 }
 
-PVValueDouble::PVValueDouble(EPICS_ProcessVariable *epv, char* typeInfo)
+PVValueDouble::PVValueDouble(EPICS_ProcessVariable *epv, const char* typeInfo)
         : PVValue(epv)
 {
     value = new double[epv->get_dimension()];

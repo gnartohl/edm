@@ -132,7 +132,7 @@ class PVValueInt : public PVValue
 {
 public:
     PVValueInt(EPICS_ProcessVariable *epv);
-    PVValueInt(EPICS_ProcessVariable *epv, char* typeInfo);
+    PVValueInt(EPICS_ProcessVariable *epv, const char* typeInfo);
     ~PVValueInt();
     const ProcessVariable::Type &get_type() const;
     short       get_DBR() const;
@@ -150,7 +150,7 @@ class PVValueDouble : public PVValue
 {
 public:
     PVValueDouble(EPICS_ProcessVariable *epv);
-    PVValueDouble(EPICS_ProcessVariable *epv, char* typeInfo);
+    PVValueDouble(EPICS_ProcessVariable *epv, const char* typeInfo);
     ~PVValueDouble();
     const ProcessVariable::Type &get_type() const;
     short       get_DBR() const;
