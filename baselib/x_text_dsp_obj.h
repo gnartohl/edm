@@ -43,7 +43,7 @@
 #define XTDC_K_COLORMODE_ALARM 1
 
 #define XTDC_MAJOR_VERSION 2
-#define XTDC_MINOR_VERSION 5
+#define XTDC_MINOR_VERSION 6
 #define XTDC_RELEASE 0
 
 #ifdef __x_text_dsp_obj_cc
@@ -386,6 +386,7 @@ int useDisplayBg, bufUseDisplayBg, alignment, autoHeight, bufAutoHeight;
 int limitsFromDb, bufLimitsFromDb;
 int changeValOnLoseFocus, bufChangeValOnLoseFocus;
 int fastUpdate, bufFastUpdate;
+int autoSelect, bufAutoSelect;
 int precision;
 efInt efPrecision, bufEfPrecision;
 int bgColor, bufBgColor;

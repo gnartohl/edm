@@ -227,8 +227,10 @@ int n;
   XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) True ); n++;
   XtSetValues( axtdo->tf_widget, args, n );
 
-  XmTextSetSelection( axtdo->tf_widget, 0, l,
-  XtLastTimestampProcessed( axtdo->actWin->display() ) );
+  if ( axtdo->autoSelect ) {
+    XmTextSetSelection( axtdo->tf_widget, 0, l,
+    XtLastTimestampProcessed( axtdo->actWin->display() ) );
+  }
 
   XmTextSetInsertionPosition( axtdo->tf_widget, l );
 
@@ -1296,6 +1298,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   axtdo->smartRefresh = axtdo->bufSmartRefresh;
 
+  axtdo->autoSelect = axtdo->bufAutoSelect;
+
   strncpy( axtdo->id, axtdo->bufId, 31 );
   axtdo->id[31] = 0;
   axtdo->changeCallbackFlag = axtdo->bufChangeCallbackFlag;
@@ -1699,6 +1703,9 @@ int index, stat;
   // version 2.5
   fprintf( f, "%-d\n", objType );
 
+  // version 2.6
+  fprintf( f, "%-d\n", autoSelect );
+
   return 1;
 
 }
@@ -1945,6 +1952,13 @@ unsigned int pixel;
   }
   else {
     objType = -1;
+  }
+
+  if ( ( ( major == 2 ) && ( minor > 5 ) ) || ( major > 2 ) ) {
+    fscanf( f, "%d\n", &autoSelect );
+  }
+  else {
+    autoSelect = 0;
   }
 
   actWin->fi->loadFontTag( fontTag );
@@ -2293,6 +2307,7 @@ char title[32], *ptr;
   bufChangeCallbackFlag = changeCallbackFlag;
   bufActivateCallbackFlag = activateCallbackFlag;
   bufDeactivateCallbackFlag = deactivateCallbackFlag;
+  bufAutoSelect = autoSelect;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -2324,6 +2339,8 @@ char title[32], *ptr;
   ef.addToggle( activeXTextDspClass_str28, &bufSmartRefresh );
   ef.addToggle( activeXTextDspClass_str29, &bufIsWidget );
   ef.addToggle( activeXTextDspClass_str68, &bufChangeValOnLoseFocus );
+  ef.addToggle( activeXTextDspClass_str75, &bufAutoSelect );
+
   ef.addToggle( activeXTextDspClass_str69, &bufFastUpdate );
   ef.addToggle( activeXTextDspClass_str70, &bufIsDate );
   ef.addToggle( activeXTextDspClass_str71, &bufIsFile );

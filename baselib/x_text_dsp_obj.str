@@ -75,5 +75,6 @@
 #define activeXTextDspClass_str72 (char *) "Default Dir"
 #define activeXTextDspClass_str73 (char *) "Pattern"
 #define activeXTextDspClass_str74 (char *) "Color PV"
+#define activeXTextDspClass_str75 (char *) "Auto Select Text"
 
 #endif
