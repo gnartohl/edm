@@ -3242,6 +3242,7 @@ static void displayParamInfo ( void ) {
   printf( global_str36 );
   printf( global_str37 );
   printf( global_str77 );
+  printf( global_str78 );
 
   printf( global_str57 );
   printf( global_str58 );
@@ -3318,6 +3319,7 @@ fileListPtr curFile;
   strcpy( displayName, "" );
   strcpy( colormode, "" );
   local = 0;
+  privColorMap = 0;
 
   // check first for component management commands
   if ( argc > 1 ) {
@@ -3460,6 +3462,9 @@ fileListPtr curFile;
           n++;
           if ( n >= argc ) return 2;
           strncpy( colormode, argv[n], 7 ); // index (default) or rgb
+        }
+        else if ( strcmp( argv[n], global_str79 ) == 0 ) { // private colormap
+          privColorMap = 1;
         }
 
 #ifdef GENERIC_PV
@@ -3759,6 +3764,11 @@ err_return:
 
   strncpy( fname, prefix, 127 );
   strncat( fname, "colors.list", 127 );
+
+  if ( privColorMap ) {
+    ci.usePrivColorMap();
+  }
+
   opStat = ci.initFromFile( app, display, appTop, fname );
 
   if ( strcmp( colormode, "rgb" ) == 0 ) {

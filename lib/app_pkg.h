@@ -215,6 +215,7 @@ XtAppContext app;
 Display *display;
 char displayName[31+1];
 char colormode[7+1]; // index (default) or rgb
+int privColorMap;
 XEvent event;
 
 scrolledTextClass msgBox;

@@ -648,6 +648,8 @@ int stat;
 
   useIndexFlag = 1;
 
+  usePrivColorMapFlag = 0;
+
 }
 
 colorInfoClass::~colorInfoClass ( void ) {
@@ -4344,7 +4346,7 @@ firstTry:
       }
       else {
 
-        if ( !usingPrivateColorMap ) {
+        if ( !usingPrivateColorMap && usePrivColorMapFlag ) {
           usingPrivateColorMap = 1;
 	  cmap = XCopyColormapAndFree( display, cmap );
 	  XSetWindowColormap( display, XtWindow(top), cmap );
@@ -4632,7 +4634,7 @@ firstTry:
   }
   else {
 
-    if ( !usingPrivateColorMap ) {
+    if ( !usingPrivateColorMap && usePrivColorMapFlag ) {
       usingPrivateColorMap = 1;
       cmap = XCopyColormapAndFree( display, cmap );
       XSetWindowColormap( display, XtWindow(top), cmap );
@@ -5605,3 +5607,8 @@ char colorMode[10+1];
 
 }
 
+void colorInfoClass::usePrivColorMap ( void ) {
+
+  usePrivColorMapFlag = 1;
+
+}

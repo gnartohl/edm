@@ -238,6 +238,8 @@ public:
       int *index
     );
 
+    void usePrivColorMap ( void );
+
     // The following functions are for use in color_button.cc and
     // entry_form.cc; they are not intended for general use.
     void colorInfoClass::setCurDestination(int *ptr);
@@ -378,6 +380,8 @@ private:
     int invisibleIndex;
 
     int useIndexFlag;
+
+    int usePrivColorMapFlag;
 
 };
 
