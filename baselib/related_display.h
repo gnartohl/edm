@@ -25,8 +25,8 @@
 #include "cadef.h"
 
 #define RDC_MAJOR_VERSION 2
-#define RDC_MINOR_VERSION 0
-#define RDC_RELEASE 1
+#define RDC_MINOR_VERSION 2
+#define RDC_RELEASE 0
 
 typedef struct objAndIndexTag {
   void *obj;
@@ -37,8 +37,33 @@ typedef struct objAndIndexTag {
 
 #include "related_display.str"
 
+static void test_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 static void relDsp_monitor_dest_connect_state (
   struct connection_handler_args arg );
+
+static void rdc_edit_ok1 (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void rdc_edit_update1 (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void rdc_edit_apply1 (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void rdc_edit_cancel1 (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 static void rdc_edit_ok (
   Widget w,
@@ -71,10 +96,35 @@ class relatedDisplayClass : public activeGraphicClass {
 
 private:
 
+friend void test_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 friend void relDsp_monitor_dest_connect_state (
   struct connection_handler_args arg );
 
 friend void openDisplay (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void rdc_edit_ok1 (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void rdc_edit_update1 (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void rdc_edit_apply1 (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void rdc_edit_cancel1 (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -104,44 +154,70 @@ friend void rdc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
+static const int NUMPVS = 4;
+static const int maxDsps = 8;
+
+typedef struct bufTag {
+  int bufUseFocus;
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  int bufTopShadowColor;
+  int bufBotShadowColor;
+  int bufFgColor;
+  int bufBgColor;
+  int bufInvisible;
+  int bufCloseAction[maxDsps];
+  int bufSetPostion[maxDsps];
+  int bufAllowDups[maxDsps];
+  int bufCascade[maxDsps];
+  int bufPropagateMacros[maxDsps];
+  char bufDisplayFileName[maxDsps][127+1];;
+  char bufSymbols[maxDsps][255+1];;
+  int bufReplaceSymbols[maxDsps];
+  char bufButtonLabel[127+1];;
+  char bufLabel[maxDsps][127+1];;
+  char bufFontTag[63+1];;
+  char bufDestPvName[NUMPVS][39+1];
+  char bufSource[NUMPVS][39+1];
+} bufType, *bufPtr;
+
+int numDsps, dspIndex;
+
+bufPtr buf;
+
 activeWindowClass *aw;
-int useFocus, bufUseFocus, needClose;
+int useFocus, needClose;
 
-int bufX, bufY, bufW, bufH;
-
-int topShadowColor, bufTopShadowColor;
-int botShadowColor, bufBotShadowColor;
-int bufFgColor, bufBgColor;
+int topShadowColor;
+int botShadowColor;
 pvColorClass fgColor, bgColor;
 colorButtonClass fgCb, bgCb, topShadowCb, botShadowCb;
-int invisible, bufInvisible;
-int closeAction, bufCloseAction;
-int setPostion, bufSetPostion;
-int allowDups, bufAllowDups;
-int cascade, bufCascade;
-int propagateMacros, bufPropagateMacros;
+int invisible;
+
+int closeAction[maxDsps];
+int setPostion[maxDsps];
+int allowDups[maxDsps];
+int cascade[maxDsps];
+int propagateMacros[maxDsps];
+
+expStringClass displayFileName[maxDsps];
+
+expStringClass symbolsExpStr[maxDsps];
+char symbols[maxDsps][255+1];
+
+int replaceSymbols[maxDsps]; // else append
+
+expStringClass buttonLabel;
+
+expStringClass label[maxDsps];
 
 fontMenuClass fm;
-char fontTag[63+1], bufFontTag[63+1];
+char fontTag[63+1];
 XmFontList fontList;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
-
-char bufDisplayFileName[127+1];
-expStringClass displayFileName;
-//char displayFileName[127+1];
-
-expStringClass symbolsExpStr;
-char bufSymbols[255+1];
-char symbols[255+1];
-
-int replaceSymbols, bufReplaceSymbols; // else append
-
-char bufLabel[127+1];
-expStringClass label;
-//char label[127+1];
-
-#define NUMPVS 4
 
 chid destPvId[NUMPVS];
 
@@ -151,12 +227,16 @@ int opComplete[NUMPVS], destExists[NUMPVS], destConnected[NUMPVS],
  destType[NUMPVS];
 
 expStringClass destPvExpString[NUMPVS];
-char bufDestPvName[NUMPVS][39+1];
 
 expStringClass sourceExpString[NUMPVS];
-char bufSource[NUMPVS][39+1];
 
 int activeMode;
+
+Widget popUpMenu, pullDownMenu, pb[maxDsps];
+
+entryFormClass *ef1;
+
+int posX, posY;
 
 public:
 
@@ -227,12 +307,16 @@ int relatedDisplayClass::expand2nd (
 
 int relatedDisplayClass::containsMacros ( void );
 
+
 void relatedDisplayClass::btnUp (
   int x,
   int y,
   int buttonState,
   int buttonNumber,
   int *action );
+
+void relatedDisplayClass::popupDisplay (
+  int index );
 
 void relatedDisplayClass::btnDown (
   int x,
