@@ -416,7 +416,7 @@ const int * PVValueInt::get_int_array() const
 
 void PVValueInt::read_ctrlinfo(const void *buf)
 {
-    const  dbr_ctrl_int *val = (const dbr_ctrl_int *)buf;
+    const  dbr_ctrl_long *val = (const dbr_ctrl_long *)buf;
     status = val->status;
     severity = val->severity;
     precision = 0;
