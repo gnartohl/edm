@@ -1494,6 +1494,18 @@ appContextClass *apco = (appContextClass *) client;
 
 }
 
+void reload_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+appContextClass *apco = (appContextClass *) client;
+
+  apco->reloadFlag = 1;
+
+}
+
 void view_pvList_cb (
   Widget w,
   XtPointer client,
@@ -1702,6 +1714,7 @@ appContextClass::appContextClass (
   isActive = 0;
   exitFlag = 0;
   shutdownFlag = 0;
+  reloadFlag = 0;
   saveContextOnExit = 0;
   primaryServer = 0;
   executeOnOpen = 0;
@@ -1888,6 +1901,62 @@ callbackBlockPtr curCbBlock, nextCbBlock;
 
   if ( saveContextOnExit ) {
     fprintf( shutdownFilePtr, "}\n" );
+  }
+
+}
+
+void appContextClass::reloadAll ( void )
+{
+
+activeWindowListPtr cur;
+
+  requestFlag = 1;
+
+  // walk activeWindowList and reload
+  cur = head->flink;
+  while ( cur != head ) {
+    if ( !cur->requestDelete ) {
+      cur->requestActivate = 0;
+      cur->requestReactivate = 0;
+      cur->requestOpen = 1;
+      cur->requestPosition = 1;
+      cur->requestCascade = 0;
+      cur->requestImport = 0;
+      cur->requestRefresh = 0;
+      cur->x = cur->node.x;
+      cur->y = cur->node.y;
+      if ( cur->node.mode == AWC_EXECUTE ) {
+        cur->node.returnToEdit( 0 );
+        cur->node.noRaise = 1;
+        processAllEvents( app, display );
+        cur->requestActivate = 1;
+      }
+      cur->node.reloadSelf();
+    }
+    cur = cur->flink;
+  }
+  processAllEvents( app, display );
+
+}
+
+void appContextClass::refreshAll ( void )
+{
+
+activeWindowListPtr cur;
+
+  // walk activeWindowList and request refresh
+  cur = head->flink;
+  while ( cur != head ) {
+    if ( !cur->requestDelete ) {
+      if ( cur->node.mode == AWC_EXECUTE ) {
+        cur->node.refreshActive();
+      }
+      else {
+        cur->node.refresh();
+      }
+    }
+    cur = cur->flink;
+    processAllEvents( app, display );
   }
 
 }
@@ -2821,6 +2890,15 @@ int i;
    NULL );
   XmStringFree( str );
   XtAddCallback( newB, XmNactivateCallback, refreshUserLib_cb,
+   (XtPointer) this );
+
+  str = XmStringCreateLocalized( "Reload All" );
+  newB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   filePullDown,
+   XmNlabelString, str,
+   NULL );
+  XmStringFree( str );
+  XtAddCallback( newB, XmNactivateCallback, reload_cb,
    (XtPointer) this );
 
   str = XmStringCreateLocalized( appContextClass_str41 );
@@ -3987,6 +4065,15 @@ int stat, nodeCount, actionCount, iconNodeCount,
 activeWindowListPtr cur, next;
 char msg[127+1];
 
+  if ( reloadFlag == 2 ) {
+    refreshAll();
+    reloadFlag = 0;
+  }
+  else if ( reloadFlag == 1 ) {
+    reloadAll();
+    reloadFlag = 2;
+  }
+
   if ( requestFlag ) {
 
     cur = head->flink;
@@ -4052,7 +4139,10 @@ char msg[127+1];
             stat = cur->node.load();
           }
         }
-        XtMapWidget( XtParent( cur->node.drawWidgetId() ) );
+        if ( !reloadFlag ) {
+          XtMapWidget( XtParent( cur->node.drawWidgetId() ) );
+	}
+
         if ( !( stat & 1 ) ) {
           sprintf( msg, appContextClass_str108, cur->node.fileName );
           postMessage( msg );

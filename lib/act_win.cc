@@ -9351,6 +9351,8 @@ activeWindowClass::activeWindowClass ( void ) {
 
   strcpy( curSchemeSet, "" );
 
+  noRaise = 0;
+
 }
 
 int activeWindowClass::pushVersion ( void ) {
@@ -13571,8 +13573,6 @@ char callbackName[63+1];
 
   this->clear();
 
-  isIconified = False;
-
   showActive = 0;
 
   appCtx->proc->lock();
@@ -13742,7 +13742,13 @@ char callbackName[63+1];
 
   }
 
-  XRaiseWindow( d, XtWindow(top) );
+  if ( noRaise ) {
+    noRaise = 0;
+  }
+  else {
+    XRaiseWindow( d, XtWindow(top) );
+    isIconified = False;
+  }
 
   setTitle();
 
@@ -16603,3 +16609,107 @@ char *sysMacros[] = {
   appCtx->openActivateActiveWindow( &cur->node );
 
 }
+
+void activeWindowClass::reloadSelf ( void ) {
+
+activeGraphicListPtr curCut, nextCut, cur, next;
+commentLinesPtr commentCur, commentNext;
+
+  if ( mode == AWC_EXECUTE ) {
+    clearActive();
+  }
+  else {
+    clear();
+  }
+
+  if ( ef.formIsPoppedUp() ) ef.popdown();
+
+  if ( autosaveTimer ) {
+    XtRemoveTimeOut( autosaveTimer );
+    autosaveTimer = 0;
+  }
+  if ( restoreTimer ) {
+    XtRemoveTimeOut( restoreTimer );
+    restoreTimer = 0;
+  }
+
+  // init some items
+
+  autosaveTimer = 0;
+  doAutoSave = 0;
+  doClose = 0;
+  restoreTimer = 0;
+  change = 0;
+  changeSinceAutoSave = 0;
+  exit_after_save = 0;
+  state = AWC_NONE_SELECTED;
+  updateMasterSelection();
+  currentEf = NULL;
+  oldx = -1;
+  oldy = -1;
+  useFirstSelectedAsReference = 0;
+  gridActive = 0;
+  gridShow = 0;
+  strcpy( id, "" );
+  strcpy( title, "" );
+  strcpy( autosaveName, "" );
+  showName = 0;
+
+  defExeHead->defExeFlink = defExeHead;
+  defExeHead->defExeBlink = defExeHead;
+
+  enterActionHead->flink = enterActionHead;
+  enterActionHead->blink = enterActionHead;
+
+  btnDownActionHead->flink = btnDownActionHead;
+  btnDownActionHead->blink = btnDownActionHead;
+
+  btnUpActionHead->flink = btnUpActionHead;
+  btnUpActionHead->blink = btnUpActionHead;
+
+  btnMotionActionHead->flink = btnMotionActionHead;
+  btnMotionActionHead->blink = btnMotionActionHead;
+
+  btnFocusActionHead->flink = btnFocusActionHead;
+  btnFocusActionHead->blink = btnFocusActionHead;
+
+  // empty cut list
+  curCut = cutHead->flink;
+  while ( curCut != cutHead ) {
+    nextCut = curCut->flink;
+    delete curCut->node;
+    delete curCut;
+    curCut = nextCut;
+  }
+  cutHead->flink = cutHead;
+  cutHead->blink = cutHead;
+
+  // delete those things created when the file is loaded
+
+  commentCur = commentHead->flink;
+  while ( commentCur ) {
+    commentNext = commentCur->flink;
+    if ( commentCur->line ) delete commentCur->line;
+    delete commentCur;
+    commentCur = commentNext;
+  }
+  commentTail = commentHead;
+  commentTail->flink = NULL;
+
+  // empty main list
+  cur = head->flink;
+  while ( cur != head ) {
+    next = cur->flink;
+    delete cur->node;
+    delete cur;
+    cur = next;
+  }
+  head->flink = head;
+  head->blink = head;
+
+  selectedHead->selFlink = selectedHead;
+  selectedHead->selBlink = selectedHead;
+
+}
+
+

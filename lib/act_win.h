@@ -803,6 +803,8 @@ undoClass undoObj;
 
 Time buttonClickTime, deltaTime;
 
+int noRaise;
+
 activeWindowClass::activeWindowClass ( void );
 
 activeWindowClass::~activeWindowClass ( void );
@@ -1211,6 +1213,8 @@ int activeWindowClass::checkPoint (
 
 void activeWindowClass::openExecuteSysFile (
   char *fName );
+
+void activeWindowClass::reloadSelf ( void );
 
 char endSignature[15+1];
 

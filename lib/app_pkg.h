@@ -304,6 +304,8 @@ int saveContextOnExit;
 int primaryServer;
 FILE *shutdownFilePtr;
 
+int reloadFlag;
+
 appContextClass::appContextClass (
   void );
 
@@ -497,6 +499,10 @@ void appContextClass::performShutdown (
   FILE *f );
 
 int appContextClass::getShutdownFlag ( void );
+
+void appContextClass::reloadAll ( void );
+
+void appContextClass::refreshAll ( void );
 
 };
 
