@@ -1,0 +1,20 @@
+TOP = ../../../..
+include $(TOP)/config/CONFIG_EXTENSIONS
+
+STATIC_BUILD=NO
+SHARED_LIBRARIES=YES
+
+LIBRARY = PV
+
+USR_INCLUDES += -I../../lib -I../../util -I../../pvlib
+
+LIBSRCS   += textupdate.cc
+LIBSRCS   += SciPlot.cc
+LIBSRCS   += strip_data.cc
+LIBSRCS   += strip.cc
+LIBSRCS   += regTextupdate.cc
+LIBSRCS   += byte.cc
+LIBSRCS   += pv_register.cc
+
+include $(TOP)/config/RULES.Host
+
