@@ -2188,6 +2188,8 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
            ( be->y > slo->valueAreaH ) &&
            ( be->y < slo->valueAreaH + slo->controlAreaH ) ) {
 
+        /* dragging pointer */
+
         slo->xRef = be->x;
 
         slo->controlState = SLC_STATE_MOVING;
@@ -2196,22 +2198,26 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
       else if ( ( be->x > slo->controlX + slo->controlAreaH/2 ) &&
               ( be->y > slo->valueAreaH ) ) {
 
+        /* auto inc */
+
         slo->incrementTimerActive = 1;
         slo->incrementTimerValue = 101;
 
         slo->incrementTimer = XtAppAddTimeOut(
-         slo->actWin->appCtx->appContext(), slo->incrementTimerValue,
+         slo->actWin->appCtx->appContext(), 300,
          slc_increment, (void *) slo );
 
       }
       else if ( ( be->x < slo->controlX + slo->controlAreaH/2 ) &&
               ( be->y > slo->valueAreaH ) ) {
 
+        /* auto dec */
+
         slo->incrementTimerActive = 1;
         slo->incrementTimerValue = 101;
 
         slo->incrementTimer = XtAppAddTimeOut(
-         slo->actWin->appCtx->appContext(), slo->incrementTimerValue,
+         slo->actWin->appCtx->appContext(), 300,
          slc_decrement, (void *) slo );
 
       }
