@@ -125,7 +125,7 @@ activeGraphicListPtr cur;
   ago->ef.popdown();
 
   cur = head->flink;
-  if ( cur ) {
+  if ( cur && ( cur != head ) ) {
     cur->node->doEdit( &ago->undoObj );
   }
   else {
@@ -490,7 +490,7 @@ activeGraphicClass *tailNode;
       cur->node->setNextToEdit( next->node );
       if ( isGroup ) {
         tailNode = cur->node->getTail();
-        tailNode->setNextToEdit( next->node );
+        if ( tailNode ) tailNode->setNextToEdit( next->node );
       }
     }
     else
@@ -539,7 +539,7 @@ activeGraphicClass *tailNode;
 
     if ( isGroup ) {
       tailNode = cur->node->getTail();
-      tailNode->clearNextToEdit();
+      if ( tailNode ) tailNode->clearNextToEdit();
     }
 
     // unlink from group
@@ -845,13 +845,20 @@ char *emptyStr = "";
       cur->node->setNextToEdit( next->node );
       if ( isGroup ) {
         tailNode = cur->node->getTail();
-        tailNode->setNextToEdit( next->node );
+        if ( tailNode ) tailNode->setNextToEdit( next->node );
       }
     }
     else
       cur->node->clearNextToEdit();
 
     cur = next;
+
+  }
+
+  if ( head->flink == head ) { // we're done with tagName so use it as a
+                               // message buffer to indicate empty group
+    snprintf( tagName, 255, activeGroupClass_str3, x, y );
+    actWin->appCtx->postMessage( tagName );
 
   }
 
@@ -1005,7 +1012,7 @@ char oneName[PV_Factory::MAX_PV_NAME+1];
       cur->node->setNextToEdit( next->node );
       if ( isGroup ) {
         tailNode = cur->node->getTail();
-        tailNode->setNextToEdit( next->node );
+        if ( tailNode ) tailNode->setNextToEdit( next->node );
       }
     }
     else
@@ -1049,7 +1056,7 @@ activeGraphicListPtr cur;
   }
 
   cur = head->flink;
-  if ( cur ) {
+  if ( cur && ( cur != head ) ) {
     addUndoEditNode( curUndoObj );
   }
 
@@ -2620,7 +2627,7 @@ activeGraphicClass *tailNode;
 int isGroup;
 
   cur = head->blink;
-  if ( !cur ) return NULL;
+  if ( !cur || ( cur == head ) ) return NULL;
 
   if ( strcmp( cur->node->objName(), "activeGroupClass" ) == 0 )
     isGroup = 1;
@@ -2663,7 +2670,7 @@ int isGroup;
       cur->node->setNextToEdit( next->node );
       if ( isGroup ) {
         tailNode = cur->node->getTail();
-        tailNode->setNextToEdit( next->node );
+        if ( tailNode ) tailNode->setNextToEdit( next->node );
       }
     }
     else

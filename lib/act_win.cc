@@ -5773,9 +5773,11 @@ unsigned int mask;
   awo->oldState = awo->state;
 
   if ( e->type != MotionNotify ) {
-    if ( awo->msgDialogPoppedUp ) {
-      awo->msgDialog.popdown();
-      awo->msgDialogPoppedUp = 0;
+    if ( !awo->appCtx->viewXy || ( e->type != Expose ) ) {
+      if ( awo->msgDialogPoppedUp ) {
+        awo->msgDialog.popdown();
+        awo->msgDialogPoppedUp = 0;
+      }
     }
   }
 

@@ -3,5 +3,6 @@
 
 #define activeGroupClass_str1 (char *) "Insufficient virtual memory - abort\n"
 #define activeGroupClass_str2 (char *) "Multiplexor in group - behavior is undefined"
+#define activeGroupClass_str3 (char *) "Group at x=%-d, y=%-d is empty"
 
 #endif
