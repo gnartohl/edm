@@ -27,5 +27,6 @@
 #define main_str44 (char *) "Error from ipnsv_send_msg\n"
 #define main_str45 (char *) "Exit command ignored - some window is not ready"
 #define main_str46 (char *) "No server found - abort\n"
+#define main_str47 (char *) "Primary session cannot exit with other sessions active"
 
 #endif

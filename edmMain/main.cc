@@ -1168,6 +1168,9 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
 char *envPtr;
 int doXSync = 0;
 
+appListPtr primary;
+int primaryServerWantsExit;
+
   envPtr = getenv( "EDMXSYNC" );
   if ( envPtr ) doXSync = 1;
 
@@ -1560,6 +1563,7 @@ int doXSync = 0;
   stat = thread_init_timer( delayH, 0.1 );
   exitProg = 0;
   shutdown = 0;
+  primaryServerWantsExit = 0;
 
   while ( !exitProg ) {
 
@@ -1620,18 +1624,22 @@ int doXSync = 0;
       if ( cur->appArgs->appCtxPtr->exitFlag &&
            !cur->appArgs->appCtxPtr->objDelFlag ) {
 
-        cur->appArgs->appCtxPtr->closeDownAppCtx();
-
         cur->appArgs->appCtxPtr->objDelFlag = 5;
 
-	// blank display name
-	strcpy( cur->appArgs->appCtxPtr->displayName, "" );
-
-        stat = thread_lock_master( serverH );
-        g_numClients--;
-        stat = thread_unlock_master( serverH );
-
         numAppsRemaining++;
+
+        if ( cur->appArgs->appCtxPtr->primaryServer != 2 ) {
+  
+          cur->appArgs->appCtxPtr->closeDownAppCtx();
+
+	  // blank display name
+	  strcpy( cur->appArgs->appCtxPtr->displayName, "" );
+
+          stat = thread_lock_master( serverH );
+          g_numClients--;
+          stat = thread_unlock_master( serverH );
+
+        }
 
       }
       else if ( cur->appArgs->appCtxPtr->exitFlag &&
@@ -1647,26 +1655,38 @@ int doXSync = 0;
       else if ( cur->appArgs->appCtxPtr->exitFlag &&
        cur->appArgs->appCtxPtr->objDelFlag == 1 ) {
 
-        //printf( "delete\n" );
+	if ( cur->appArgs->appCtxPtr->primaryServer == 2 ) {
 
-        // unlink and delete
-        cur->blink->flink = cur->flink;
-        cur->flink->blink = cur->blink;
+          primaryServerWantsExit = 1;
+          primary = cur;
+          numAppsRemaining++;
 
-        oneAppCtx = cur->appArgs->appCtxPtr->appContext();
-        oneDisplay = cur->appArgs->appCtxPtr->getDisplay();
-        delete cur->appArgs->appCtxPtr;
-        for ( i=0; i<cur->appArgs->argc; i++ ) delete[] cur->appArgs->argv[i];
-        delete[] cur->appArgs->argv;
-        delete cur->appArgs;
+	}
+	else {
 
-        delete cur;
+          //printf( "delete\n" );
 
-        // Can't execute the next two lines; program crashes. Have to live
-        // with memory leak. This only applies to the case where one server
-        // is managing multiple app ctx's / displays.
-        //XtCloseDisplay( oneDisplay );
-        //XtDestroyApplicationContext( oneAppCtx );
+          // unlink and delete
+          cur->blink->flink = cur->flink;
+          cur->flink->blink = cur->blink;
+
+          oneAppCtx = cur->appArgs->appCtxPtr->appContext();
+          oneDisplay = cur->appArgs->appCtxPtr->getDisplay();
+          delete cur->appArgs->appCtxPtr;
+          for ( i=0; i<cur->appArgs->argc; i++ )
+            delete[] cur->appArgs->argv[i];
+          delete[] cur->appArgs->argv;
+          delete cur->appArgs;
+
+          delete cur;
+
+          // Can't execute the next two lines; program crashes. Have to live
+          // with memory leak. This only applies to the case where one server
+          // is managing multiple app ctx's / displays.
+          //XtCloseDisplay( oneDisplay );
+          //XtDestroyApplicationContext( oneAppCtx );
+
+	}
 
       }
       else if ( shutdown ) {
@@ -1827,6 +1847,50 @@ parse_error:
           stat = thread_unlock_master( serverH );
 
         } while ( q_stat_r & 1 );
+
+      }
+
+    }
+
+    // See if primary server should exit
+    if ( primaryServerWantsExit ) {
+
+      if ( numAppsRemaining == 1 ) {
+
+        cur = primary;
+
+        cur->appArgs->appCtxPtr->closeDownAppCtx();
+
+	// blank display name
+	strcpy( cur->appArgs->appCtxPtr->displayName, "" );
+
+        stat = thread_lock_master( serverH );
+        g_numClients--;
+        stat = thread_unlock_master( serverH );
+
+        // unlink and delete
+        cur->blink->flink = cur->flink;
+        cur->flink->blink = cur->blink;
+
+        oneAppCtx = cur->appArgs->appCtxPtr->appContext();
+        oneDisplay = cur->appArgs->appCtxPtr->getDisplay();
+        delete cur->appArgs->appCtxPtr;
+        for ( i=0; i<cur->appArgs->argc; i++ )
+          delete[] cur->appArgs->argv[i];
+        delete[] cur->appArgs->argv;
+        delete cur->appArgs;
+
+        delete cur;
+
+        numAppsRemaining = 0;
+
+      }
+      else {
+
+        cur = primary;
+        cur->appArgs->appCtxPtr->postMessage( main_str47 );
+        cur->appArgs->appCtxPtr->exitFlag = 0;
+        primaryServerWantsExit = 0;
 
       }
 

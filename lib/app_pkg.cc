@@ -1853,6 +1853,7 @@ appContextClass::appContextClass (
   requestFlag = 0;
   iconified = 0;
   usingControlPV = 0;
+  ctlPvId = NULL;
   renderImagesFlag = 1;
   exitOnLastClose = 0;
   atLeastOneOpen = 0;
@@ -1926,6 +1927,16 @@ macroListPtr curMacro, nextMacro;
 fileListPtr curFile, nextFile;
 callbackBlockPtr curCbBlock, nextCbBlock;
 actionsPtr curAct, nextAct;
+
+  if ( usingControlPV ) {
+    if ( ctlPvId ) {
+      ctlPvId->remove_conn_state_callback( ctlPvMonitorConnection, this );
+      ctlPvId->remove_value_callback( ctlPvUpdate, this );
+      ctlPvId->release();
+      ctlPvId = NULL;
+      usingControlPV = 0;
+    }
+  }
 
   // empty cut list
   curCut = cutHead1->flink;
