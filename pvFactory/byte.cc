@@ -7,7 +7,7 @@
 #include "byte.h"
 #include "app_pkg.h"
 #include "act_win.h"
-#include "epics_pv_factory.h"
+#include "pv_factory.h"
 #include "cvtFast.h"
 
 
