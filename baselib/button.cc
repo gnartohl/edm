@@ -744,8 +744,6 @@ char oneName[39+1];
     objType = -1;
   }
 
-  printf( "button - objType = %-d\n", objType );
-
   this->initSelectBox();
 
   actWin->fi->loadFontTag( fontTag );

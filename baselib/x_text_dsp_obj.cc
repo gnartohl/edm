@@ -1909,8 +1909,6 @@ unsigned int pixel;
     objType = -1;
   }
 
-  printf( "x_text_dsp_obj - objType = %-d\n", objType );
-
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
