@@ -28,8 +28,6 @@
 // the following defines btnActionListType & btnActionListPtr
 #include "btnActionListType.h"
 
-static char *dragName = "?";
-
 #ifdef __epics__
 #include "cadef.h"
 #endif

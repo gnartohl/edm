@@ -22,6 +22,8 @@
 
 #include "thread.h"
 
+static char *groupDragName = "?";
+
 activeGroupClass::activeGroupClass ( void ) {
 
 activeGraphicListPtr head;
@@ -2407,6 +2409,6 @@ char *activeGroupClass::dragValue (
   int i )
 {
 
-  return dragName;
+  return groupDragName;
 
 }
