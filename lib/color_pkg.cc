@@ -266,7 +266,8 @@ colorCachePtr cur;
             i = 0;
           }
           else {
-            i = cur->index;
+            //i = cur->index;
+            i = pos;
 	  }
 
           drawSimpleButton( &cio->simpleColorButtons[i] );
@@ -313,7 +314,8 @@ colorCachePtr cur;
             i = 0;
           }
           else {
-            i = cur->index;
+            //i = cur->index;
+            i = pos;
 	  }
 
           drawSimpleButton( &cio->simpleColorButtons[i] );
@@ -2740,13 +2742,26 @@ term:
       x = c*5 + c*20 + 5;
       y = r*5 + r*20 + 5;
 
+      stat = avl_get_match( this->colorCacheByPosH,
+       (void *) &pos, (void **) &cur1 );
+      if ( stat & 1 ) {
+        if ( cur1 ) {
+          simpleColorButtons[pos].colorIndex = cur1->index;
+        }
+        else {
+          simpleColorButtons[pos].colorIndex = 0;
+        }
+      }
+      else {
+        simpleColorButtons[pos].colorIndex = 0;
+      }
+
       simpleColorButtons[pos].wgt = form;
       simpleColorButtons[pos].cio = this;
       simpleColorButtons[pos].x = x;
       simpleColorButtons[pos].y = y;
       simpleColorButtons[pos].w = 23;
       simpleColorButtons[pos].h = 23;
-      simpleColorButtons[pos].colorIndex = pos;
       simpleColorButtons[pos].blink = 0;
 
       pos++;
@@ -2764,13 +2779,26 @@ term:
       x = c*5 + c*20 + 5;
       y = r*5 + r*20 + 5;
 
+      stat = avl_get_match( this->colorCacheByPosH,
+       (void *) &pos, (void **) &cur1 );
+      if ( stat & 1 ) {
+        if ( cur1 ) {
+          simpleColorButtons[pos].colorIndex = cur1->index;
+        }
+        else {
+          simpleColorButtons[pos].colorIndex = 0;
+        }
+      }
+      else {
+        simpleColorButtons[pos].colorIndex = 0;
+      }
+
       simpleColorButtons[pos].wgt = form;
       simpleColorButtons[pos].cio = this;
       simpleColorButtons[pos].x = x;
       simpleColorButtons[pos].y = y;
       simpleColorButtons[pos].w = 23;
       simpleColorButtons[pos].h = 23;
-      simpleColorButtons[pos].colorIndex = pos;
       simpleColorButtons[pos].blink = 0;
 
       pos++;
@@ -4511,13 +4539,26 @@ term:
       x = c*5 + c*20 + 5;
       y = r*5 + r*20 + 5;
 
+      stat = avl_get_match( this->colorCacheByPosH,
+       (void *) &pos, (void **) &cur1 );
+      if ( stat & 1 ) {
+        if ( cur1 ) {
+          simpleColorButtons[pos].colorIndex = cur1->index;
+        }
+        else {
+          simpleColorButtons[pos].colorIndex = 0;
+        }
+      }
+      else {
+        simpleColorButtons[pos].colorIndex = 0;
+      }
+
       simpleColorButtons[pos].wgt = form;
       simpleColorButtons[pos].cio = this;
       simpleColorButtons[pos].x = x;
       simpleColorButtons[pos].y = y;
       simpleColorButtons[pos].w = 23;
       simpleColorButtons[pos].h = 23;
-      simpleColorButtons[pos].colorIndex = pos;
       simpleColorButtons[pos].blink = 0;
 
       pos++;
@@ -4535,13 +4576,26 @@ term:
       x = c*5 + c*20 + 5;
       y = r*5 + r*20 + 5;
 
+      stat = avl_get_match( this->colorCacheByPosH,
+       (void *) &pos, (void **) &cur1 );
+      if ( stat & 1 ) {
+        if ( cur1 ) {
+          simpleColorButtons[pos].colorIndex = cur1->index;
+        }
+        else {
+          simpleColorButtons[pos].colorIndex = 0;
+        }
+      }
+      else {
+        simpleColorButtons[pos].colorIndex = 0;
+      }
+
       simpleColorButtons[pos].wgt = form;
       simpleColorButtons[pos].cio = this;
       simpleColorButtons[pos].x = x;
       simpleColorButtons[pos].y = y;
       simpleColorButtons[pos].w = 23;
       simpleColorButtons[pos].h = 23;
-      simpleColorButtons[pos].colorIndex = pos;
       simpleColorButtons[pos].blink = 0;
 
       pos++;
@@ -5245,13 +5299,26 @@ firstTry:
       x = c*5 + c*20 + 5;
       y = r*5 + r*20 + 5;
 
+      stat = avl_get_match( this->colorCacheByPosH,
+       (void *) &pos, (void **) &cur );
+      if ( stat & 1 ) {
+        if ( cur ) {
+          simpleColorButtons[pos].colorIndex = cur->index;
+        }
+        else {
+          simpleColorButtons[pos].colorIndex = 0;
+        }
+      }
+      else {
+        simpleColorButtons[pos].colorIndex = 0;
+      }
+
       simpleColorButtons[pos].wgt = form;
       simpleColorButtons[pos].cio = this;
       simpleColorButtons[pos].x = x;
       simpleColorButtons[pos].y = y;
       simpleColorButtons[pos].w = 23;
       simpleColorButtons[pos].h = 23;
-      simpleColorButtons[pos].colorIndex = pos;
       simpleColorButtons[pos].blink = 0;
 
       pos++;
@@ -5269,13 +5336,26 @@ firstTry:
       x = c*5 + c*20 + 5;
       y = r*5 + r*20 + 5;
 
+      stat = avl_get_match( this->colorCacheByPosH,
+       (void *) &pos, (void **) &cur );
+      if ( stat & 1 ) {
+        if ( cur ) {
+          simpleColorButtons[pos].colorIndex = cur->index;
+        }
+        else {
+          simpleColorButtons[pos].colorIndex = 0;
+        }
+      }
+      else {
+        simpleColorButtons[pos].colorIndex = 0;
+      }
+
       simpleColorButtons[pos].wgt = form;
       simpleColorButtons[pos].cio = this;
       simpleColorButtons[pos].x = x;
       simpleColorButtons[pos].y = y;
       simpleColorButtons[pos].w = 23;
       simpleColorButtons[pos].h = 23;
-      simpleColorButtons[pos].colorIndex = pos;
       simpleColorButtons[pos].blink = 0;
 
       pos++;
