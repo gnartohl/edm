@@ -398,8 +398,10 @@ int bufActivateCallbackFlag, bufDeactivateCallbackFlag;
 Boolean isIconified;
 
 XtIntervalId autosaveTimer, restoreTimer;
-int changeSinceAutoSave;
+int changeSinceAutoSave, doAutoSave;
 char autosaveName[255+1];
+
+int doClose;
 
 char dataFilePrefix[127+1];
 char userDataFilePrefix[127+1];

@@ -148,6 +148,10 @@ activeWindowClass *awo = (activeWindowClass *) client;
 int stat;
 char name[255+1], oldName[255+1];
 
+  awo->doAutoSave = 1;
+  awo->appCtx->postDeferredExecutionQueue( awo );
+  return;
+
   awo->autosaveTimer = 0;
 
   if ( !awo->changeSinceAutoSave ) return;
@@ -1053,6 +1057,7 @@ static void awc_WMExit_cb (
 {
 activeWindowClass *awo = (activeWindowClass *) client;
 
+  awo->doClose = 1;
   awo->appCtx->postDeferredExecutionQueue( awo );
 
 }
@@ -8531,6 +8536,8 @@ char *envPtr, *gotIt, buf[127+1], save[127+1], *tk;
   masterSelectX0 = masterSelectY0 = masterSelectX1 = masterSelectY1 = 0;
   isIconified = False;
   autosaveTimer = 0;
+  doAutoSave = 0;
+  doClose = 0;
   restoreTimer = 0;
 
   commentHead = new commentLinesType;
@@ -9268,6 +9275,8 @@ Atom wm_delete_window;
   appCtx = ctx;
 
   autosaveTimer = 0;
+  doAutoSave = 0;
+  doClose = 0;
   restoreTimer = 0;
 
   change = 0;
@@ -11502,7 +11511,7 @@ void activeWindowClass::setChanged ( void ) {
     changeSinceAutoSave = 1;
     autosaveTimer = XtAppAddTimeOut( appCtx->appContext(),
      300000, acw_autosave, this );
-    //10000, acw_autosave, this );
+    // 10000, acw_autosave, this );
   }
 
 }
@@ -14919,56 +14928,114 @@ FILE *f;
 void activeWindowClass::executeFromDeferredQueue( void )
 {
 
-  if ( mode != AWC_EDIT ) {
+  if ( doAutoSave ) {
 
-    if ( waiting == 0 ) {
-      returnToEdit( 1 );
+    int stat;
+    char name[255+1], oldName[255+1];
+
+    doAutoSave = 0;
+
+    autosaveTimer = 0;
+
+    if ( !changeSinceAutoSave ) return;
+
+    changeSinceAutoSave = 0;
+
+    strncpy( oldName, autosaveName, 255 );
+    oldName[255] = 0;
+
+    strncpy( autosaveName, activeWindowClass_str1, 255 );
+
+    if ( strcmp( fileName, "" ) != 0 ) {
+      extractName( fileName, name );
+      strncat( autosaveName, "_", 255 );
+      strncat( autosaveName, name, 255 );
     }
-    else if ( waiting < 0 ) { // wait, don't close
-      appCtx->postDeferredExecutionQueue( this );
+
+    strncat( autosaveName, "_XXXXXX", 255 );
+
+    mkstemp( autosaveName );
+
+    saveNoChange( autosaveName );
+
+    if ( mode != AWC_EXECUTE ) {
+
+      strcpy( restoreTitle, title );
+      strcpy( title, activeWindowClass_str2 );
+      expStrTitle.setRaw( title );
+      setTitleUsingTitle();
+      XFlush( d );
+
+      restoreTimer = XtAppAddTimeOut( appCtx->appContext(),
+       3000, acw_restoreTitle, this );
+
     }
-    else {                    // close after n cycles
-      waiting--;
-      appCtx->postDeferredExecutionQueue( this );
+
+    // now delete previous autosave file
+    if ( strcmp( oldName, "" ) != 0 ) {
+      stat = unlink( oldName );
     }
 
   }
-  else {
 
-    if ( change ) {
 
-      savedState = state;
-      state = AWC_WAITING;
+  if ( doClose ) {
 
-      confirm.create( top, x, y, 3,
-       activeWindowClass_str161, NULL, NULL );
-      confirm.addButton( activeWindowClass_str163, awc_continue_cb,
-       (void *) this );
-      confirm.addButton( activeWindowClass_str165, awc_abort_cb,
-       (void *) this );
-      confirm.addButton( activeWindowClass_str166, awc_save_and_exit_cb,
-       (void *) this );
-      confirm.finished();
-      confirm.popup();
-      XSetWindowColormap( d, XtWindow(confirm.top()),
-       appCtx->ci.getColorMap() );
+    if ( mode != AWC_EDIT ) {
+
+      if ( waiting == 0 ) {
+        doClose = 0;
+        returnToEdit( 1 );
+      }
+      else if ( waiting < 0 ) { // wait, don't close
+        appCtx->postDeferredExecutionQueue( this );
+      }
+      else {                    // close after n cycles
+        waiting--;
+        appCtx->postDeferredExecutionQueue( this );
+      }
 
     }
     else {
 
-      if ( autosaveTimer ) {
-        XtRemoveTimeOut( autosaveTimer );
-        autosaveTimer = 0;
-      }
-      if ( restoreTimer ) {
-        XtRemoveTimeOut( restoreTimer );
-        restoreTimer = 0;
-      }
+      doClose = 0;
 
-      //mark active window for delege
-      appCtx->removeActiveWindow( this );
+      if ( change ) {
 
-      XtUnmanageChild( drawWidget );
+        savedState = state;
+        state = AWC_WAITING;
+
+        confirm.create( top, x, y, 3,
+         activeWindowClass_str161, NULL, NULL );
+        confirm.addButton( activeWindowClass_str163, awc_continue_cb,
+         (void *) this );
+        confirm.addButton( activeWindowClass_str165, awc_abort_cb,
+         (void *) this );
+        confirm.addButton( activeWindowClass_str166, awc_save_and_exit_cb,
+         (void *) this );
+        confirm.finished();
+        confirm.popup();
+        XSetWindowColormap( d, XtWindow(confirm.top()),
+         appCtx->ci.getColorMap() );
+
+      }
+      else {
+
+        if ( autosaveTimer ) {
+          XtRemoveTimeOut( autosaveTimer );
+          autosaveTimer = 0;
+        }
+        if ( restoreTimer ) {
+          XtRemoveTimeOut( restoreTimer );
+          restoreTimer = 0;
+        }
+
+        //mark active window for delege
+        appCtx->removeActiveWindow( this );
+
+        XtUnmanageChild( drawWidget );
+
+      }
 
     }
 
@@ -15345,6 +15412,7 @@ void activeWindowClass::closeDeferred (
 {
 
   waiting = 2;
+  doClose = 1;
   appCtx->postDeferredExecutionQueue( this );
 
 }
