@@ -87,4 +87,12 @@
 #define global_str64 "-removepv"
 #define global_str65 "-showpv"
 
+#define global_str66 "PV COMPONENT MANAGEMENT\n\n"
+#define global_str67 "edm (-addpv|-removepv|-showpv) <pv component library file pathname>\n\n"
+#define global_str68 "    -addpv     Add all library components to edmPvObjects\n\n"
+#define global_str69 "    -removepv  Remove all library components from edmPvObjects\n\n"
+#define global_str70 "    -showpv    Show all components in specified library\n"
+#define global_str71 "\n"
+#define global_str72 "               e.g. edm -addpv /usr/lib/someEdmPvComponents.so\n\n"
+
 #endif

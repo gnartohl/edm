@@ -2015,6 +2015,16 @@ static void displayParamInfo ( void ) {
   printf( global_str44 );
   printf( global_str45 );
 
+  printf( global_str66 );
+
+  printf( global_str67 );
+
+  printf( global_str68 );
+  printf( global_str69 );
+  printf( global_str70 );
+  printf( global_str71 );
+  printf( global_str72 );
+
   printf( global_str46 );
   printf( global_str47 );
   printf( "\n" );
