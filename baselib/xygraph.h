@@ -43,7 +43,7 @@
 #include "epics_pv_factory.h"
 #include "cvtFast.h"
 
-#define XYGC_K_MAX_TRACES 10
+#define XYGC_K_MAX_TRACES 14
 
 // scaling options
 #define XYGC_K_FROM_PV 0
@@ -131,7 +131,15 @@ static char *dragName[] = {
   xyGraphClass_str19,
   xyGraphClass_str20,
   xyGraphClass_str21,
-  xyGraphClass_str22
+  xyGraphClass_str22,
+  xyGraphClass_str23,
+  xyGraphClass_str24,
+  xyGraphClass_str25,
+  xyGraphClass_str26,
+  xyGraphClass_str27,
+  xyGraphClass_str28,
+  xyGraphClass_str29,
+  xyGraphClass_str30
 };
 
 static void updateTimerAction (
