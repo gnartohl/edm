@@ -114,6 +114,7 @@
 #define AWC_POPUP_SELECT_SCHEME_SET 150
 #define AWC_POPUP_DISTRIBUTE_MIDPT_BOTH 151
 #define AWC_POPUP_PRINT 152
+#define AWC_POPUP_SAVE_TO_PATH 155
 
 #define AWC_NONE_SELECTED 1
 #define AWC_ONE_SELECTED 2
@@ -789,7 +790,7 @@ char **macros;
 char **expansions;
 
 int haveComments;
-char fileName[255+1], fileNameAndRev[287+1];
+char fileName[255+1], fileRev[31+1], fileNameAndRev[287+1], newPath[255+1];
 char prefix[127+1], displayName[127+1], postfix[127+1];
 expStringClass expStrTitle;
 

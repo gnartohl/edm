@@ -2835,6 +2835,32 @@ Atom wm_delete_window;
 
       break;
 
+    case AWC_POPUP_SAVE_TO_PATH:
+
+      {
+        char name[255+1], saveMsg[255+1];
+        awo->savedState = awo->state;
+        awo->state = AWC_WAITING;
+        extractName( awo->fileName, name );
+	strncpy( awo->newPath, awo->appCtx->curPath, 255 );
+        awo->newPath[255] = 0;
+        Strncat( awo->newPath, name, 255 );
+        Strncat( awo->newPath, ".edl", 255 );
+        strcpy( saveMsg, activeWindowClass_str197 );
+        Strncat( saveMsg, awo->newPath, 255 );
+        Strncat( saveMsg, "?", 255 );
+        awo->confirm1.create( awo->top, awo->b2PressXRoot, awo->b2PressYRoot,
+         2, saveMsg, NULL, NULL );
+        awo->confirm1.addButton( activeWindowClass_str5, awc_dont_save_cb,
+         (void *) awo );
+        awo->confirm1.addButton( activeWindowClass_str3,
+         awc_do_save_new_path_cb, (void *) awo );
+        awo->confirm1.finished();
+        awo->confirm1.popup();
+      }
+
+      break;
+
     case AWC_POPUP_OPEN:
 
       awo->savedState = awo->state;
@@ -9491,6 +9517,7 @@ activeWindowClass::activeWindowClass ( void ) {
 
   haveComments = 0;
   strcpy( fileNameAndRev, "" );
+  strcpy( fileRev, "" );
 
   mode = AWC_EDIT;
 
@@ -9814,6 +9841,14 @@ XTextProperty xtext;
 char *cptr;
 char *none = activeWindowClass_str83;
 
+  strncpy( fileNameAndRev, fileName, 255 );
+  fileNameAndRev[255] = 0;
+  if ( !blank(fileRev) ) {
+    Strncat( fileNameAndRev, " (", 287 );
+    Strncat( fileNameAndRev, fileRev, 287 );
+    Strncat( fileNameAndRev, ")", 287 );
+  }
+
   if ( showName || ( mode == AWC_EDIT ) ) {
 
     if ( strcmp( fileName, "" ) == 0 ) {
@@ -9861,6 +9896,14 @@ void activeWindowClass::setTitleUsingTitle ( void ) {
 XTextProperty xtext;
 char *cptr;
 char *none = activeWindowClass_str83;
+
+  strncpy( fileNameAndRev, fileName, 255 );
+  fileNameAndRev[255] = 0;
+  if ( !blank(fileRev) ) {
+    Strncat( fileNameAndRev, " (", 287 );
+    Strncat( fileNameAndRev, fileRev, 287 );
+    Strncat( fileNameAndRev, ")", 287 );
+  }
 
   if (  !expStrTitle.getExpanded() ) {
     if ( strcmp( fileName, "" ) == 0 ) {
@@ -10677,6 +10720,29 @@ Arg args[3];
   curBlockListNode = new popupBlockListType;
   curBlockListNode->block.w = pb;
   curBlockListNode->block.ptr = (void *) AWC_POPUP_SAVE;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
+
+  str = XmStringCreateLocalized( activeWindowClass_str196 );
+
+  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   b2NoneSelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_SAVE_TO_PATH;
   curBlockListNode->block.awo = this;
 
   curBlockListNode->blink = popupBlockHead->blink;
@@ -14724,6 +14790,7 @@ int numComments = 0, moreComments = 1, checkForRev = 1,
 
   haveComments = 0;
   strcpy( fileNameAndRev, fileName );
+  strcpy( fileRev, "" );
 
   do {
 
@@ -14779,6 +14846,8 @@ int numComments = 0, moreComments = 1, checkForRev = 1,
                   Strncat( fileNameAndRev, " (", 287 );
                   Strncat( fileNameAndRev, tk, 287 );
                   Strncat( fileNameAndRev, ")", 287 );
+                  strncpy( fileRev, tk, 31 );
+                  fileRev[31] = 0;
 	        }
 
               }
