@@ -4958,7 +4958,7 @@ char msg[127+1];
   }
 
   stat = pend_io( 10.0 );
-  pend_event( 0.00001 );
+  //pend_event( 0.00001 );
 
   processAllEvents( app, display );
 

@@ -84,7 +84,7 @@ typedef struct main_que_tag { /* locked queue header */
 #define QUEWASEMP SYS_QUEWASEMP
 #define ONEENTQUE SYS_ONEENTQUE
 
-#define MAIN_QUEUE_SIZE 10
+#define MAIN_QUEUE_SIZE 200
 
 #define DONE -1
 #define SWITCHES 1
@@ -2168,7 +2168,7 @@ parse_error:
 
     if ( !numAppsRemaining ) exitProg = 1;
 
-    pend_event( 0.1 );
+    pend_event( 0.05 );
     //stat = thread_wait_for_timer( delayH );
     //stat = thread_init_timer( delayH, 0.1 );
 
