@@ -2850,6 +2850,8 @@ double v;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
+  if ( !activeMode ) return;
+
 //----------------------------------------------------------------------------
 
 #ifdef __epics__

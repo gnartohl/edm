@@ -1950,6 +1950,8 @@ int nc, nsc, nci, nd, ne, nr, stat;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
+  if ( !activeMode ) return;
+
 //----------------------------------------------------------------------------
 
 #ifdef __epics__

@@ -1224,6 +1224,8 @@ pvValType pvV;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
+  if ( !activeMode ) return;
+
   if ( nc ) {
 
     minVis.d = (double) atof( minVisString );

@@ -2201,6 +2201,8 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd, ncolori, ncr;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
+  if ( !activeMode ) return;
+
 //----------------------------------------------------------------------------
 
 #ifdef __epics__

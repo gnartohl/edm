@@ -2310,6 +2310,8 @@ int stat, i, nci, nc[SYMBOL_K_MAX_PVS], nr, ne, nd, ncolori, ncr;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
+  if ( !activeMode ) return;
+
 //----------------------------------------------------------------------------
 
 #ifdef __epics__

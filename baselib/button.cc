@@ -1876,6 +1876,8 @@ char msg[79+1];
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
+  if ( !activeMode ) return;
+
 #ifdef __epics__
 
   if ( ncc ) {

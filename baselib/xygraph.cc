@@ -971,11 +971,13 @@ int pc[XYGC_K_MAX_PLOTS], pi[XYGC_K_MAX_PLOTS];
   for ( i=0; i<XYGC_K_MAX_PLOTS; i++ ) {
     pc[i] = needPlotConnect[i];
     pi[i] = needPlotInfo[i];
-
+  }
   ncc = needCtlConnectInit; needCtlConnectInit = 0;
   nr = needRefresh; needRefresh = 0;
   nu = needUpdate; needUpdate = 0;
   actWin->appCtx->proc->unlock();
+
+  if ( !activeMode ) return;
 
   if ( npc ) {
 

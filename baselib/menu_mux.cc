@@ -1027,6 +1027,7 @@ int stat, opStat;
     widgetsCreated = 0;
     opComplete = 0;
     firstEvent = 1;
+    controlV = 0;
 
 #ifdef __epics__
     alarmEventId = controlEventId = 0;
@@ -1233,6 +1234,8 @@ static XtActionsRec dragActions[] = {
   v = curControlV;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
+
+  if ( !activeMode ) return;
 
 //----------------------------------------------------------------------------
 
