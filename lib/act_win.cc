@@ -14427,11 +14427,25 @@ tagClass tag;
 
         }
         else {
-          fileClose( f );
-          sprintf( msg, activeWindowClass_str158, line(),
+
+          //fileClose( f );
+
+	  // Discard all content up to "endObjectProperties"
+
+          sprintf( msg, activeWindowClass_str158, tag.line(),
            objName );
           appCtx->postMessage( msg );
-          return 0;
+
+          tag.init();
+          tag.loadR( "endObjectProperties", 63, objName );
+          stat = tag.readTags( f, "endObjectProperties" );
+
+	  // Start looking for "object" again
+          tag.init();
+          tag.loadR( "object", 63, objName );
+
+          //return 0;
+
         }
 
         // ===================================
