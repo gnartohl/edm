@@ -14,7 +14,7 @@
 edmByteClass::edmByteClass() : activeGraphicClass(), init(0), 
   is_executing(false), is_pvname_valid(false), valuePvId(0), bufInvalid(true),
   lastval(0), theDir(BIGENDIAN),  nobt(16),shft(0), lineWidth(1), 
-  lineStyle(LineSolid), outlineOK(false)
+  lineStyle(LineSolid), theOutline(0)
 {
    name = strdup(BYTE_CLASSNAME);
 }
@@ -50,7 +50,7 @@ void edmByteClass::clone(const edmByteClass *rhs,
     nobt = rhs->nobt;
     shft = rhs->shft;
     theDir = rhs->theDir;
-    outlineOK = false;
+    theOutline = 0;
 }
 
 edmByteClass::~edmByteClass()
@@ -155,10 +155,12 @@ int edmByteClass::createFromFile(FILE *f, char *filename,
   fscanf( f, "%d\n", &lineStyle ); actWin->incLine();
 
   fscanf( f, "%d\n", &temp ); actWin->incLine();
+  temp = (temp < 0)?0:((temp > 1)?1:temp);
   theDir = (bdir)temp;
-
-  fscanf( f, "%d\n", &nobt ); actWin->incLine();
-  fscanf( f, "%d\n", &shft ); actWin->incLine();
+  fscanf( f, "%d\n", &temp ); actWin->incLine();
+  nobt = (temp < 1)?1:((temp > 16)?16:temp);
+  fscanf( f, "%d\n", &temp ); actWin->incLine();
+  shft = (temp < 0)?0:((temp > 15)?15:temp);
   
   makeOutline();
 
@@ -185,7 +187,7 @@ int edmByteClass::createInteractive(activeWindowClass *aw_obj,
     lineColor = actWin->fgColor;
     lineWidth = 1;
     lineStyle = 0;
-    outlineOK = false;
+    theOutline = 0;
 
     // initialize and draw some kind of default image for the user
     draw();
@@ -281,11 +283,11 @@ int edmByteClass::makeOutline()
 {
    float bitLen;
 
-   outlineOK = false;
-
-   if (nobt < 1) return 1;
+   delete[] theOutline;
 
    theOutline = new XSegment[(nobt + 3) * 2];
+
+   if (!theOutline) return 0;
 
    if (w > h)	// horizontal
    {
@@ -326,8 +328,6 @@ int edmByteClass::makeOutline()
       theOutline[nobt + 2].y2 = y + h;
    }
    
-   outlineOK = true;
-
    return 1;
 }
 
@@ -350,7 +350,7 @@ int edmByteClass::draw()  // render the edit-mode image
 
     makeOutline();
 
-    if (outlineOK)
+    if (theOutline)
     {
        XDrawSegments(actWin->d, XtWindow(actWin->drawWidget),
           actWin->drawGc.normGC(), theOutline, nobt + 3);
@@ -445,8 +445,8 @@ void edmByteClass::edit_update(Widget w, XtPointer client,XtPointer call)
     me->pv_exp_str.setRaw( me->bufPvName );
 
     me->theDir = me->bufTheDir;
-    me->nobt = me->bufNobt;
-    me->shft = me->bufShft;
+    me->nobt = (me->bufNobt < 1)?1:((me->bufNobt > 16)?16:me->bufNobt);
+    me->shft = (me->bufShft < 0)?0:((me->bufShft > 15)?15:me->bufShft);
 
     me->x = me->bufX;
     me->sboxX = me->bufX;
@@ -710,12 +710,14 @@ int edmByteClass::drawActiveBits()
 
   actWin->executeGc.saveFg();
 
-  if (!outlineOK)
+  if (!theOutline)
   {
-     // old code
      actWin->executeGc.setFG(offPixel);
      XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
+     actWin->executeGc.setFG( actWin->ci->getPixelByIndex(lineColor) );
+     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
   }
   else if (valuePvId && valuePvId->is_valid())
   {
@@ -743,12 +745,6 @@ int edmByteClass::drawActiveBits()
      lastval = value;
   }
  
-  if (!outlineOK)
-  {
-     XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-       actWin->executeGc.normGC(), x, y, w, h );
-  }
-  
   actWin->executeGc.setLineWidth( 1 );
   actWin->executeGc.setLineStyle( LineSolid );
 
@@ -764,9 +760,8 @@ int edmByteClass::drawActiveFull()
 
   actWin->executeGc.saveFg();
 
-  if (!outlineOK)
+  if (!theOutline)
   {
-     // old code
      actWin->executeGc.setFG(offPixel);
      XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
@@ -806,7 +801,7 @@ int edmByteClass::drawActiveFull()
   actWin->executeGc.setLineWidth( lineWidth );
   actWin->executeGc.setLineStyle( lineStyle );
 
-  if (!outlineOK)
+  if (!theOutline)
   {
      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );

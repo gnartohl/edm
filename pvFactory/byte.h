@@ -135,7 +135,6 @@ protected:
     int lineWidth, bufLineWidth;
     int lineStyle, bufLineStyle;
 
-    bool outlineOK;
     XSegment *theOutline;
 
     char bufPvName[39+1];
