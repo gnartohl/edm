@@ -1413,14 +1413,12 @@ char msg[127+1];
         goto term;
       }
       else if ( strcmp( tk, "&&" ) == 0 ) {
-	printf( "joining func = and\n" );
         ruleCond->resultName = NULL;
         ruleCond->joiningFunc = thisAnd;
         ruleCond->result = 0; // we will map above name to an index
                               // later and store the index here
       }
       else if ( strcmp( tk, "||" ) == 0 ) {
-	printf( "joining func = or\n" );
         ruleCond->resultName = NULL;
         ruleCond->joiningFunc = thisOr;
         ruleCond->result = 0; // we will map above name to an index
