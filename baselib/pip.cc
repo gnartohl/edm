@@ -137,6 +137,10 @@ int i, more;
 
   pipo->displaySource = pipo->buf->bufDisplaySource;
 
+  pipo->center = pipo->buf->bufCenter;
+  pipo->setSize = pipo->buf->bufSetSize;
+  pipo->sizeOfs = pipo->buf->bufSizeOfs;
+
   pipo->x = pipo->buf->bufX;
   pipo->sboxX = pipo->buf->bufX;
 
@@ -342,8 +346,12 @@ int i;
   strcpy( name, "activePipClass" );
   minW = 50;
   minH = 50;
+  center = 0;
+  setSize = 0;
+  sizeOfs = 5;
   activeMode = 0;
   frameWidget = NULL;
+  clipWidget = NULL;
   aw = NULL;
   strcpy( curFileName, "" );
   displaySource = 0;
@@ -391,7 +399,11 @@ int i;
 
   minW = 50;
   minH = 50;
+  center = source->center;
+  setSize = source->setSize;
+  sizeOfs = source->sizeOfs;
   frameWidget = NULL;
+  clipWidget = NULL;
   aw = NULL;
   strcpy( curFileName, "" );
   displaySource = source->displaySource;
@@ -506,6 +518,9 @@ static int displaySourceEnum[3] = {
   tag.loadW( "filePv", &readPvExpStr, emptyStr );
   tag.loadW( "labelPv", &labelPvExpStr, emptyStr );
   tag.loadW( "file", &fileNameExpStr, emptyStr );
+  tag.loadW( "center", &center, &zero );
+  tag.loadW( "setSize", &setSize, &zero );
+  tag.loadW( "sizeOfs", &sizeOfs, &zero );
   tag.loadW( "numDsps", &numDsps );
   tag.loadW( "displayFileName", displayFileName, numDsps, emptyStr );
   tag.loadW( "menuLabel", label, numDsps, emptyStr );
@@ -608,6 +623,9 @@ static int displaySourceEnum[3] = {
   tag.loadR( "filePv", &readPvExpStr, emptyStr );
   tag.loadR( "labelPv", &labelPvExpStr, emptyStr );
   tag.loadR( "file", &fileNameExpStr, emptyStr );
+  tag.loadR( "center", &center, &zero );
+  tag.loadR( "setSize", &setSize, &zero );
+  tag.loadR( "sizeOfs", &sizeOfs, &zero );
   tag.loadR( "numDsps", &numDsps, &zero );
   tag.loadR( "displayFileName", maxDsps, displayFileName, &n, emptyStr );
   tag.loadR( "menuLabel", maxDsps, label, &n, emptyStr );
@@ -734,6 +752,10 @@ int i;
 
   buf->bufDisplaySource = displaySource;
 
+  buf->bufCenter = center;
+  buf->bufSetSize = setSize;
+  buf->bufSizeOfs = sizeOfs;
+
   for ( i=0; i<maxDsps; i++ ) {
 
     if ( displayFileName[i].getRaw() )
@@ -776,6 +798,10 @@ int i;
   ef.addTextField( "Label PV", 35, buf->bufLabelPvName,
    activeGraphicClass::MAX_PV_NAME );
   ef.addTextField( activePipClass_str12, 35, buf->bufFileName, 127 );
+  ef.addToggle( "Center", &buf->bufCenter );
+  ef.addToggle( "Set Size", &buf->bufSetSize );
+  ef.addTextField( "Size Ofs", 35, &buf->bufSizeOfs );
+
   ef.addEmbeddedEf( "Menu Info", "...", &ef1 );
 
   ef1->create( actWin->top, actWin->appCtx->ci.getColorMap(),
@@ -1510,6 +1536,9 @@ int i;
 
 int activePipClass::createPipWidgets ( void ) {
 
+int n;
+Arg args[2];
+
   frameWidget = new Widget;
   *frameWidget = NULL;
 
@@ -1536,6 +1565,21 @@ int activePipClass::createPipWidgets ( void ) {
     printf( activePipClass_str24 );
     frameWidget = NULL;
     return 0;
+  }
+
+  n = 0;
+  XtSetArg( args[n], XmNclipWindow, &clipWidget ); n++;
+  XtGetValues( *frameWidget, args, n );
+
+  if ( clipWidget ) {
+    XtVaSetValues( clipWidget,
+      XmNtopShadowColor, topShadowColor.pixelColor(),
+      XmNbottomShadowColor, botShadowColor.pixelColor(),
+      XmNborderColor, bgColor.pixelColor(),
+      XmNhighlightColor, bgColor.pixelColor(),
+      XmNforeground, bgColor.pixelColor(),
+      XmNbackground, bgColor.pixelColor(),
+     NULL );
   }
 
   return 1;
@@ -1832,7 +1876,7 @@ int gotSymbolsFromFile;
   actWin->appCtx->addActiveWindow( cur );
 
   cur->node.createEmbedded( actWin->appCtx, frameWidget, 0, 0, w, h,
-   x, y, numNewMacros, newMacros, newValues );
+   x, y, center, setSize, sizeOfs, numNewMacros, newMacros, newValues );
 
   cur->node.realize();
 
@@ -1997,7 +2041,8 @@ XButtonEvent be;
           actWin->appCtx->addActiveWindow( cur );
 
           cur->node.createEmbedded( actWin->appCtx, frameWidget, 0, 0, w, h,
-           x, y, actWin->numMacros, actWin->macros, actWin->expansions );
+           x, y, center, setSize, sizeOfs, actWin->numMacros, actWin->macros,
+           actWin->expansions );
 
           cur->node.realize();
 
@@ -2192,7 +2237,8 @@ XButtonEvent be;
           actWin->appCtx->addActiveWindow( cur );
 
           cur->node.createEmbedded( actWin->appCtx, frameWidget, 0, 0, w, h,
-           x, y, actWin->numMacros, actWin->macros, actWin->expansions );
+           x, y, center, setSize, sizeOfs, actWin->numMacros, actWin->macros,
+           actWin->expansions );
 
           cur->node.realize();
 
@@ -2360,7 +2406,8 @@ XButtonEvent be;
           actWin->appCtx->addActiveWindow( cur );
 
           cur->node.createEmbedded( actWin->appCtx, frameWidget, 0, 0, w, h,
-           x, y, actWin->numMacros, actWin->macros, actWin->expansions );
+           x, y, center, setSize, sizeOfs, actWin->numMacros, actWin->macros,
+           actWin->expansions );
 
           cur->node.realize();
 

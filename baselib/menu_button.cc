@@ -72,12 +72,16 @@ short value;
 
   if ( !mbto->controlPvId->have_write_access() ) return;
 
-  for ( i=0; i<(int)mbto->stateStringPvId->get_enum_count(); i++ ) {
+  if ( mbto->stateStringPvId ) {
 
-    if ( w == mbto->pb[i] ) {
-      value = (short) i;
-      mbto->controlPvId->put( value );
-      break;
+    for ( i=0; i<(int)mbto->stateStringPvId->get_enum_count(); i++ ) {
+
+      if ( w == mbto->pb[i] ) {
+        value = (short) i;
+        mbto->controlPvId->put( value );
+        break;
+      }
+
     }
 
   }
@@ -1418,13 +1422,23 @@ int blink = 0;
     tX = x + w/2 - 10;
     tY = y + h/2 - fontAscent/2;
 
-    if ( ( v >= 0 ) && ( v < (short) stateStringPvId->get_enum_count() ) ) {
-      drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
-       XmALIGNMENT_CENTER, (char *) stateStringPvId->get_enum( v ) );
+    if ( stateStringPvId ) {
+
+      if ( ( v >= 0 ) && ( v < (short) stateStringPvId->get_enum_count() ) ) {
+        drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
+         XmALIGNMENT_CENTER, (char *) stateStringPvId->get_enum( v ) );
+      }
+      else {
+        drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
+         XmALIGNMENT_CENTER, "?" );
+      }
+
     }
     else {
+
       drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
        XmALIGNMENT_CENTER, "?" );
+
     }
 
     actWin->executeGc.removeNormXClipRectangle();
@@ -1524,6 +1538,7 @@ int opStat;
       unconnectedTimer = 0;
       controlValid = readValid = 0;
       controlPvId = readPvId = stateStringPvId = visPvId = colorPvId = NULL;
+      usePvId = 0;
       controlExists = readExists = visExists = colorExists = 0;
       pvCheckExists = 0;
       connection.init();
@@ -1597,7 +1612,7 @@ int opStat;
         if ( controlPvId ) {
 	  controlPvId->add_conn_state_callback(
            mbt_monitor_control_connect_state, this );
-          stateStringPvId = controlPvId;
+          usePvId = activeMenuButtonClass::useControlPvId;
 	}
 	else {
           printf( activeMenuButtonClass_str20,
@@ -1613,7 +1628,7 @@ int opStat;
         if ( readPvId ) {
 	  readPvId->add_conn_state_callback(
            mbt_monitor_read_connect_state, this );
-          if ( !controlExists ) stateStringPvId = readPvId;
+          if ( !controlExists ) usePvId = activeMenuButtonClass::useReadPvId;
 	}
 	else {
           printf( activeMenuButtonClass_str20,
@@ -1932,6 +1947,10 @@ char msg[79+1];
 
     v = curValue = (short) controlPvId->get_int();
 
+    if ( usePvId == activeMenuButtonClass::useControlPvId ) {
+      stateStringPvId = controlPvId;
+    }
+
     ni = 1;
 
   }
@@ -1939,6 +1958,10 @@ char msg[79+1];
   if ( nrc ) {
 
     rV = curReadValue = (short) readPvId->get_int();
+
+    if ( usePvId == activeMenuButtonClass::useReadPvId ) {
+      stateStringPvId = readPvId;
+    }
 
     nri = 1;
 
@@ -1950,8 +1973,10 @@ char msg[79+1];
 
     if ( widgetsCreated ) {
 
-      for ( i=0; i<(int)stateStringPvId->get_enum_count(); i++ ) {
-        XtDestroyWidget( pb[i] );
+      if ( stateStringPvId ) {
+        for ( i=0; i<(int)stateStringPvId->get_enum_count(); i++ ) {
+          XtDestroyWidget( pb[i] );
+        }
       }
       XtDestroyWidget( pullDownMenu );
       XtDestroyWidget( popUpMenu );
@@ -1966,20 +1991,25 @@ char msg[79+1];
 
     pullDownMenu = XmCreatePulldownMenu( popUpMenu, "", NULL, 0 );
 
-    for ( i=0; i<(int)stateStringPvId->get_enum_count(); i++ ) {
+    if ( stateStringPvId ) {
 
-      str = XmStringCreateLocalized( (char *) stateStringPvId->get_enum( i ) );
+      for ( i=0; i<(int)stateStringPvId->get_enum_count(); i++ ) {
 
-      pb[i] = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
-       popUpMenu,
-       XmNlabelString, str,
-				       //XmNfontList, fontList,
-       NULL );
+        str = XmStringCreateLocalized(
+         (char *) stateStringPvId->get_enum( i ) );
 
-      XmStringFree( str );
+        pb[i] = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+         popUpMenu,
+         XmNlabelString, str,
+         //XmNfontList, fontList,
+         NULL );
 
-      XtAddCallback( pb[i], XmNactivateCallback, menu_cb,
-       (XtPointer) this );
+        XmStringFree( str );
+
+        XtAddCallback( pb[i], XmNactivateCallback, menu_cb,
+         (XtPointer) this );
+
+      }
 
     }
 

@@ -9687,6 +9687,8 @@ activeWindowClass::activeWindowClass ( void ) {
   numChildren = 0;
   parent = NULL;
   isEmbedded = 0;
+  embSetSize = 0;
+  embSizeOfs = 0;
   widgetToDeallocate = NULL;
 
   loadFailure = 0;
@@ -10352,6 +10354,9 @@ int activeWindowClass::createEmbedded (
   int OneH,
   int _embeddedX,
   int _embeddedY,
+  int _embCenter,
+  int _embSetSize,
+  int _embSizeOfs,
   int _numMacros,
   char **_macros,
   char **_expansions ) {
@@ -10378,6 +10383,9 @@ int stat;
   embeddedY = _embeddedY;
   embeddedW = w;
   embeddedH = h;
+  embCenter = _embCenter;
+  embSetSize = _embSetSize;
+  embSizeOfs = _embSizeOfs;
 
   return stat;
 
@@ -15271,7 +15279,7 @@ int activeWindowClass::loadWinGeneric (
   // must be likewise changed
 
 int stat, retStat = 1;
-int fileX, fileY, n;
+int fileX, fileY, n, tmpVal;
 Arg args[5];
 
 tagClass tag;
@@ -15384,13 +15392,15 @@ static int alignEnum[3] = {
 
   }
 
-   n = 0;
-   XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
-   XtSetValues( drawWidget, args, n );
-
-   n = 0;
-   XtSetArg( args[n], XmNy, (XtArgVal) y ); n++;
-   XtSetValues( drawWidget, args, n );
+#if 0
+  printf( "embCenter = %-d\n", embCenter );
+  printf( "embSetSize = %-d\n", embSetSize );
+  printf( "embSizeOfs = %-d\n", embSizeOfs );
+  printf( "embeddedW = %-d\n", embeddedW );
+  printf( "embeddedH = %-d\n", embeddedH );
+  printf( "w = %-d\n", w );
+  printf( "h = %-d\n", h );
+#endif
 
    n = 0;
    XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
@@ -15400,17 +15410,77 @@ static int alignEnum[3] = {
    XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
    XtSetValues( drawWidget, args, n );
 
-   if ( !isEmbedded ) {
+  if ( isEmbedded ) {
 
-     n = 0;
-     XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
-     XtSetValues( top, args, n );
+    if ( embCenter && !embSetSize ) {
 
-     n = 0;
-     XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
-     XtSetValues( top, args, n );
+      if ( embeddedH > h ) {
 
-   }
+        tmpVal = y + ( embeddedH - h ) / 2;
+        n = 0;
+        XtSetArg( args[n], XmNy, (XtArgVal) tmpVal ); n++;
+        XtSetValues( drawWidget, args, n );
+
+      }
+
+      if ( embeddedW > w ) {
+
+        tmpVal = x + ( embeddedW - w ) / 2;
+        n = 0;
+        XtSetArg( args[n], XmNx, (XtArgVal) tmpVal ); n++;
+        XtSetValues( drawWidget, args, n );
+
+      }
+
+    }
+
+  }
+  else {
+
+    n = 0;
+    XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
+    XtSetValues( drawWidget, args, n );
+
+    n = 0;
+    XtSetArg( args[n], XmNy, (XtArgVal) y ); n++;
+    XtSetValues( drawWidget, args, n );
+
+  }
+
+  if ( isEmbedded ) {
+
+    if ( embSetSize ) {
+
+      if ( w+embSizeOfs <= embeddedW ) {
+
+         n = 0;
+         XtSetArg( args[n], XmNwidth, (XtArgVal) w+embSizeOfs ); n++;
+         XtSetValues( top, args, n );
+
+      }
+
+      if ( h+embSizeOfs <= embeddedH ) {
+
+         n = 0;
+         XtSetArg( args[n], XmNheight, (XtArgVal) h+embSizeOfs ); n++;
+         XtSetValues( top, args, n );
+
+      }
+
+    }
+
+  }
+  else {
+
+    n = 0;
+    XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+    XtSetValues( top, args, n );
+
+    n = 0;
+    XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+    XtSetValues( top, args, n );
+
+  }
 
   if ( strcmp( defaultFontTag, "" ) != 0 ) {
     stat = defaultFm.setFontTag( defaultFontTag );
@@ -15476,7 +15546,7 @@ int activeWindowClass::old_loadWinGeneric (
   // if this is changed then activeWindowClass::old_discardWinLoadData
   // must be likewise changed
 
-int stat;
+int stat, tmpVal;
 int r, g, b, n, index;
 Arg args[5];
 unsigned int pixel;
@@ -15512,42 +15582,108 @@ unsigned int pixel;
    XDisplayWidth( d, DefaultScreen(d) ),
    XDisplayHeight( d, DefaultScreen(d) ) ) ) {
 
-//    appCtx->postMessage(
-//    "Screen location is out of display bounds - setting location to (50,50)" );
+//  appCtx->postMessage(
+//  "Screen location is out of display bounds - setting location to (50,50)" );
 
     x = y = 50;
 
   }
 
-   n = 0;
-   XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
-   XtSetValues( drawWidget, args, n );
+  n = 0;
+  XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+  XtSetValues( drawWidget, args, n );
 
-   n = 0;
-   XtSetArg( args[n], XmNy, (XtArgVal) y ); n++;
-   XtSetValues( drawWidget, args, n );
+  n = 0;
+  XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+  XtSetValues( drawWidget, args, n );
 
-   n = 0;
-   XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
-   XtSetValues( drawWidget, args, n );
+  if ( isEmbedded ) {
 
-   n = 0;
-   XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
-   XtSetValues( drawWidget, args, n );
+    if ( embCenter ) {
 
-   if ( !isEmbedded ) {
+      if ( embeddedH > h ) {
 
-     n = 0;
-     XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
-     XtSetValues( top, args, n );
+        tmpVal = y + ( embeddedH - h ) / 2;
+        n = 0;
+        XtSetArg( args[n], XmNy, (XtArgVal) tmpVal ); n++;
+        XtSetValues( drawWidget, args, n );
 
-     n = 0;
-     XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
-     XtSetValues( top, args, n );
+      }
 
-   }
+      if ( embeddedW > w ) {
 
-   readStringFromFile( defaultFontTag, 63+1, f ); incLine();
+        tmpVal = x + ( embeddedW - w ) / 2;
+        n = 0;
+        XtSetArg( args[n], XmNx, (XtArgVal) tmpVal ); n++;
+        XtSetValues( drawWidget, args, n );
+
+      }
+
+    }
+    else {
+
+      n = 0;
+      XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
+      XtSetValues( drawWidget, args, n );
+
+      n = 0;
+      XtSetArg( args[n], XmNy, (XtArgVal) y ); n++;
+      XtSetValues( drawWidget, args, n );
+
+    }
+
+  }
+  else {
+
+    n = 0;
+    XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
+    XtSetValues( drawWidget, args, n );
+
+    n = 0;
+    XtSetArg( args[n], XmNy, (XtArgVal) y ); n++;
+    XtSetValues( drawWidget, args, n );
+
+  }
+
+  if ( isEmbedded ) {
+
+    if ( embSetSize ) {
+
+       n = 0;
+       XtSetArg( args[n], XmNwidth, (XtArgVal) w+embSizeOfs ); n++;
+       XtSetValues( top, args, n );
+
+       n = 0;
+       XtSetArg( args[n], XmNheight, (XtArgVal) h+embSizeOfs ); n++;
+       XtSetValues( top, args, n );
+
+    }
+    else {
+
+      n = 0;
+      XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+      XtSetValues( top, args, n );
+
+      n = 0;
+      XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+      XtSetValues( top, args, n );
+
+    }
+
+  }
+  else {
+
+    n = 0;
+    XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+    XtSetValues( top, args, n );
+
+    n = 0;
+    XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+    XtSetValues( top, args, n );
+
+  }
+
+  readStringFromFile( defaultFontTag, 63+1, f ); incLine();
 
   if ( strcmp( defaultFontTag, "" ) != 0 ) {
     stat = defaultFm.setFontTag( defaultFontTag );

@@ -26,7 +26,7 @@
 #include "cvtFast.h"
 
 #define PIPC_MAJOR_VERSION 4
-#define PIPC_MINOR_VERSION 0
+#define PIPC_MINOR_VERSION 1
 #define PIPC_RELEASE 0
 
 #ifdef __pip_cc
@@ -170,24 +170,28 @@ typedef struct bufTag {
   char bufLabelPvName[activeGraphicClass::MAX_PV_NAME+1];
   char bufFileName[127+1];
   int bufPropagateMacros[maxDsps];
-  char bufDisplayFileName[maxDsps][127+1];;
-  char bufSymbols[maxDsps][255+1];;
+  char bufDisplayFileName[maxDsps][127+1];
+  char bufSymbols[maxDsps][255+1];
   int bufReplaceSymbols[maxDsps];
-  char bufLabel[maxDsps][127+1];;
+  char bufLabel[maxDsps][127+1];
+  int bufCenter;
+  int bufSetSize;
+  int bufSizeOfs;
 } bufType, *bufPtr;
 
 int numDsps, dspIndex;
 
 bufPtr buf;
 
-int bufX, bufY, bufW, bufH;
-
 int opComplete;
 
 int minW;
 int minH;
+int center;
+int setSize;
+int sizeOfs;
 
-Widget *frameWidget, popUpMenu, pullDownMenu, pb[maxDsps];
+Widget *frameWidget, clipWidget, popUpMenu, pullDownMenu, pb[maxDsps];
 
 int propagateMacros[maxDsps];
 expStringClass displayFileName[maxDsps];

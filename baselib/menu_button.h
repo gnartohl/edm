@@ -222,6 +222,7 @@ int fontAscent, fontDescent, fontHeight;
 
 int buttonPressed;
 
+int usePvId;
 ProcessVariable *controlPvId, *readPvId, *stateStringPvId;
 
 char bufControlPvName[activeGraphicClass::MAX_PV_NAME+1];
@@ -261,6 +262,9 @@ int needColorConnectInit, needColorInit, needColorUpdate;
 int oldStat, oldSev;
 
 public:
+
+static const int useReadPvId = 1;
+static const int useControlPvId = 2;
 
 activeMenuButtonClass ( void );
 

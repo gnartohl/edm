@@ -837,7 +837,8 @@ activeGraphicClass *highlightedObject;
 int numChildren;
 activeWindowClass *parent;
 
-int isEmbedded, embeddedX, embeddedY, embeddedW, embeddedH;
+int isEmbedded, embeddedX, embeddedY, embeddedW, embeddedH, embSizeOfs,
+ embSetSize, embCenter;
 Widget *widgetToDeallocate;
 
 int btnDownX, btnDownY;
@@ -972,6 +973,9 @@ int createEmbedded (
   int OneH,
   int _embeddedX,
   int _embeddedY,
+  int _embCenter,
+  int _embSetSize,
+  int _embSizeOfs,
   int _numMacros,
   char **_macros,
   char **_expansions );
