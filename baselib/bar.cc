@@ -1602,6 +1602,7 @@ int tX, tY;
 
     if ( strcmp( label, "" ) != 0 ) {
       if ( fs ) {
+        actWin->drawGc.setFontTag( fontTag, actWin->fi );
         tX = barAreaX;
         tY = y + 2;
         if ( border ) tY += 2;
@@ -1630,6 +1631,17 @@ int tX, tY;
 
     XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.normGC(), x, y, w, h );
+
+    if ( strcmp( label, "" ) != 0 ) {
+      if ( fs ) {
+        actWin->drawGc.setFontTag( fontTag, actWin->fi );
+        tX = barAreaX + barAreaW;
+        tY = y + (int) ( .25 * (double) fontHeight );
+        if ( border ) tY += 2;
+        drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
+         XmALIGNMENT_END, label );
+      }
+    }
 
   }
 
@@ -1879,8 +1891,8 @@ char str[39+1];
     if ( horizontal ) {
 
       if ( strcmp( str, "" ) != 0 ) {
-        actWin->executeGc.setFontTag( fontTag, actWin->fi );
         if ( fs ) {
+          actWin->executeGc.setFontTag( fontTag, actWin->fi );
           tX = barAreaX;
           tY = y + 2;
           if ( border ) tY += 2;
@@ -1892,7 +1904,17 @@ char str[39+1];
     }
     else {
 
-      // no label for a vertical bar
+
+      if ( strcmp( str, "" ) != 0 ) {
+        if ( fs ) {
+          actWin->executeGc.setFontTag( fontTag, actWin->fi );
+          tX = barAreaX + barAreaW;
+          tY = y + (int) ( .25 * (double) fontHeight );
+          if ( border ) tY += 2;
+          drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
+           XmALIGNMENT_END, str );
+        }
+      }
 
     }
 
@@ -2177,6 +2199,11 @@ void activeBarClass::updateDimensions ( void )
     minVertW = 5;
     minVertH = 10;
 
+    if ( ( strcmp( label, "" ) != 0 ) ||
+         ( labelType == BARC_K_PV_NAME ) ) {
+      minVertH += fontHeight + 5;
+    }
+
     if ( showScale ) {
       minVertH += fontHeight;
       minVertW += 4 + barStrLen + 10 + (int) rint( 0.5 * fontHeight );
@@ -2204,6 +2231,12 @@ void activeBarClass::updateDimensions ( void )
     barY = barAreaY = y + barAreaH;
     barX = barAreaX = x;
     barW = barAreaW = w;
+
+    if ( ( strcmp( label, "" ) != 0 ) ||
+         ( labelType == BARC_K_PV_NAME ) ) {
+      barAreaH -= (int) ( 1.5 * (double) fontHeight ) - 5;
+      barH = barAreaH;
+    }
 
     if ( showScale ) {
       barH -= ( fontHeight );
