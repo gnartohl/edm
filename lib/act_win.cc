@@ -16397,8 +16397,8 @@ void activeWindowClass::substituteSpecial (
   char *bufOut )
 {
 
-char param[1023+1], dspName[127+1], *envPtr;
-int i, len, iIn, iOut, p0, p1, more, state, winid;
+char param[1023+1], tmp[1023+1], dspName[127+1], *envPtr, *ptr;
+int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar;
 
   state = 1; // copying
 
@@ -16493,6 +16493,49 @@ int i, len, iIn, iOut, p0, p1, more, state, winid;
           strncat( bufOut, dspName, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
+	}
+        else { // maybe an env var
+
+          if ( strncmp( param, "<env:", 5 ) == 0 ) {
+
+            isEnvVar = 1;
+            strncpy( tmp, param, 1023 );
+            tmp[1023] = 0;
+
+            ptr = strstr( tmp, ">" );
+            if ( ptr ) {
+              *ptr = 0;
+              envPtr = getenv( &tmp[5] );
+              if ( envPtr ) {
+                bufOut[iOut] = 0;
+                strncat( bufOut, envPtr, max );
+                iOut = strlen( bufOut );
+                if ( iOut >= max ) iOut = max - 1;
+	      }
+              else {
+                isEnvVar = 0;
+	      }
+	    }
+	    else {
+              isEnvVar = 0;
+	    }
+
+	  }
+	  else {
+
+            isEnvVar = 0;
+
+	  }
+
+          if ( !isEnvVar ) {
+
+            bufOut[iOut] = 0;
+            strncat( bufOut, param, max );
+            iOut = strlen( bufOut );
+            if ( iOut >= max ) iOut = max - 1;
+
+	  }
+
 	}
 
         state = 1; //copying
