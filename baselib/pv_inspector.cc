@@ -1915,8 +1915,7 @@ void pvInspectorClass::popupDisplay (
 {
 
 activeWindowListPtr cur;
-Arg args[10];
-int i, l, stat, newX, newY, n;
+int i, l, stat, newX, newY;
 char name[127+1], nameWithParams[127+1], symbolsWithSubs[255+1];
 unsigned int crc;
 char *tk, *context, buf[255+1], *fileTk, *fileContext, fileBuf[255+1],
@@ -2180,18 +2179,12 @@ char prefix[127+1];
         if ( setPostion[index] == PIC_BUTTON_POS ) {
           newX = actWin->xPos()+posX+ofsX;
 	  newY = actWin->yPos()+posY+ofsY;
-          n = 0;
-          XtSetArg( args[n], XmNx, (XtArgVal) newX ); n++;
-          XtSetArg( args[n], XmNy, (XtArgVal) newY ); n++;
-          XtSetValues( cur->node.drawWidget, args, n );
+          cur->node.move( newX, newY );
         }
         else if ( setPostion[index] == PIC_PARENT_OFS_POS ) {
           newX = actWin->xPos()+ofsX;
 	  newY = actWin->yPos()+ofsY;
-          n = 0;
-          XtSetArg( args[n], XmNx, (XtArgVal) newX ); n++;
-          XtSetArg( args[n], XmNy, (XtArgVal) newY ); n++;
-          XtSetValues( cur->node.drawWidget, args, n );
+          cur->node.move( newX, newY );
         }
         // deiconify
         XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
@@ -2267,6 +2260,8 @@ void pvInspectorClass::btnUp (
   int *action )
 {
 
+int drawWinX, drawWinY;
+
   *action = 0;
 
   if ( !enabled ) return;
@@ -2274,6 +2269,11 @@ void pvInspectorClass::btnUp (
   if ( numDsps < 2 ) return;
 
   if ( buttonNumber != 1 ) return;
+
+  actWin->getDrawWinPos( &drawWinX, &drawWinY );
+
+  _x += (int) drawWinX;
+  _y += (int) drawWinY;
 
   posX = x + _x - be->x;
   posY = y + _y - be->y;
@@ -2292,6 +2292,8 @@ void pvInspectorClass::btnDown (
   int *action )
 {
 
+int drawWinX, drawWinY;
+
   *action = 0;
 
   if ( !enabled ) return;
@@ -2300,7 +2302,12 @@ void pvInspectorClass::btnDown (
 
   if ( numDsps < 1 ) return;
 
-  if ( numDsps == 1 ) {
+  actWin->getDrawWinPos( &drawWinX, &drawWinY );
+
+  _x += (int) drawWinX;
+  _y += (int) drawWinY;
+
+ if ( numDsps == 1 ) {
     posX = x + _x - be->x;
     posY = y + _y - be->y;
     popupDisplay( 0 );
