@@ -380,6 +380,10 @@ colorCachePtr cur;
     delete cur;
     return 0;
   }
+  if ( dup ) {
+    delete cur;
+    return 0;
+  }
 
   return 1;
 
@@ -631,7 +635,7 @@ char title[32], *ptr;
   else
     strncpy( title, activePngClass_str2, 31 );
 
-  strncat( title, activePngClass_str3, 31 );
+  Strncat( title, activePngClass_str3, 31 );
 
   bufX = x;
   bufY = y;
@@ -834,7 +838,7 @@ expStringClass expStr;
       extra = 0;
     }
 
-    xData = new unsigned char[iw*h];
+    xData = (unsigned char*) XtMalloc( iw*h );
     if ( !xData ) {
       goto error_return;
     }
@@ -911,7 +915,7 @@ expStringClass expStr;
       extra = 0;
     }
 
-    xData = new unsigned char[iw*h*2];
+    xData = (unsigned char*) XtMalloc( iw*h*2 );
     if ( !xData ) {
       goto error_return;
     }
@@ -989,7 +993,7 @@ expStringClass expStr;
     iw = w;
     extra = 0;
 
-    xData = new unsigned char[iw*h*4];
+    xData = (unsigned char*) XtMalloc( iw*h*4 );
     if ( !xData ) {
       goto error_return;
     }
