@@ -5365,7 +5365,9 @@ unsigned int mask;
     if ( awo->state == AWC_START_DEFINE_SELECT_REGION ) goto done;
     if ( awo->state == AWC_DEFINE_SELECT_REGION ) goto done;
     if ( awo->state == AWC_EDITING_POINTS ) goto done;
+    if ( awo->state == AWC_CREATING_POINTS ) goto done;
     if ( awo->state == AWC_MOVING_POINT ) goto done;
+    if ( awo->state == AWC_MOVING_CREATE_POINT ) goto done;
     if ( awo->state == AWC_CHOOSING_LINE_OP ) goto done;
     if ( awo->state == AWC_WAITING ) goto done;
 
@@ -6131,7 +6133,8 @@ unsigned int mask;
 
 //========== Shift B1 Press or double click ========================
 
-          if ( awo->state == AWC_EDITING_POINTS ) {
+          if ( ( awo->state == AWC_EDITING_POINTS ) ||
+               ( awo->state == AWC_CREATING_POINTS ) ) {
 
 	    // this is, again, a result of the ugly clash between
 	    // rectangular objects and multi-point objects; this time
@@ -6162,7 +6165,8 @@ unsigned int mask;
 
 //========== B1 Press ===================================
 
-          if ( awo->state == AWC_EDITING_POINTS ) {
+          if ( ( awo->state == AWC_EDITING_POINTS ) ||
+               ( awo->state == AWC_CREATING_POINTS ) ) {
 
             awo->filterPosition( &be->x, &be->y, be->x, be->y );
 
@@ -6351,7 +6355,8 @@ unsigned int mask;
 
 //========== Ctrl B2 Press ===================================
 
-          if ( awo->state == AWC_EDITING_POINTS ) {
+          if ( ( awo->state == AWC_EDITING_POINTS ) ||
+               ( awo->state == AWC_CREATING_POINTS ) ) {
 
             stat = awo->currentPointObject->removeLastPoint();
 
@@ -6375,6 +6380,14 @@ unsigned int mask;
               awo->currentPointObject->selectPoint( be->x, be->y );
 
             if ( awo->currentPoint ) awo->state = AWC_MOVING_POINT;
+
+          }
+	  else if ( awo->state == AWC_CREATING_POINTS ) {
+
+            awo->currentPoint =
+              awo->currentPointObject->selectPoint( be->x, be->y );
+
+            if ( awo->currentPoint ) awo->state = AWC_MOVING_CREATE_POINT;
 
           }
 
@@ -6408,7 +6421,8 @@ unsigned int mask;
 
 //========== Ctrl B3 Press ===================================
 
-          if ( awo->state == AWC_EDITING_POINTS ) {
+          if ( ( awo->state == AWC_EDITING_POINTS ) ||
+               ( awo->state == AWC_CREATING_POINTS ) ) {
 
             //awo->filterPosition( &be->x, &be->y, be->x, be->y );
 
@@ -6423,7 +6437,8 @@ unsigned int mask;
 
 //========== B3 Press ===================================
 
-          if ( awo->state == AWC_EDITING_POINTS ) {
+          if ( ( awo->state == AWC_EDITING_POINTS ) ||
+               ( awo->state == AWC_CREATING_POINTS ) ) {
 
             //awo->filterPosition( &be->x, &be->y, be->x, be->y );
 
@@ -6459,6 +6474,7 @@ unsigned int mask;
           switch ( awo->state ) {
 
             case AWC_EDITING_POINTS:
+            case AWC_CREATING_POINTS:
               break;
 
             case AWC_NONE_SELECTED:
@@ -6747,6 +6763,7 @@ unsigned int mask;
           switch ( awo->state ) {
 
 	    case AWC_EDITING_POINTS:
+            case AWC_CREATING_POINTS:
               break;
 
             case AWC_START_DEFINE_REGION:
@@ -7304,8 +7321,13 @@ unsigned int mask;
               awo->state = AWC_EDITING_POINTS;
               break;
 
-	    case AWC_EDITING_POINTS:
+	    case AWC_MOVING_CREATE_POINT:
 
+              awo->state = AWC_CREATING_POINTS;
+              break;
+
+	    case AWC_EDITING_POINTS:
+            case AWC_CREATING_POINTS:
               break;
 
 	    case AWC_NONE_SELECTED:
@@ -7727,9 +7749,11 @@ unsigned int mask;
         switch ( awo->state ) {
 
 	  case AWC_MOVING_POINT:
+	  case AWC_MOVING_CREATE_POINT:
             break;
 
 	  case AWC_EDITING_POINTS:
+          case AWC_CREATING_POINTS:
             break;
 
           case AWC_NONE_SELECTED:
@@ -8521,12 +8545,14 @@ unsigned int mask;
         switch ( awo->state ) {
 
 	  case AWC_MOVING_POINT:
+	  case AWC_MOVING_CREATE_POINT:
 
             stat = awo->currentPointObject->movePoint( awo->currentPoint,
              me->x, me->y );
             break;
 
 	  case AWC_EDITING_POINTS:
+          case AWC_CREATING_POINTS:
             break;
 
           case AWC_NONE_SELECTED:
@@ -15618,6 +15644,16 @@ void activeWindowClass::lineEditBegin ( void )
   cursor.set( XtWindow(drawWidget), CURSOR_K_TINYCROSSHAIR );
   cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );
   state = AWC_EDITING_POINTS;
+
+}
+
+void activeWindowClass::lineCreateBegin ( void )
+{
+
+  setChanged();
+  cursor.set( XtWindow(drawWidget), CURSOR_K_TINYCROSSHAIR );
+  cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );
+  state = AWC_CREATING_POINTS;
 
 }
 

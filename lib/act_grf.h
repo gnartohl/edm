@@ -489,6 +489,8 @@ void operationCancel ( void );
 
 virtual void lineEditBegin ( void );
 
+virtual void lineCreateBegin ( void );
+
 virtual int addPoint (
   int x,
   int y );

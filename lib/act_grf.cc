@@ -1960,6 +1960,13 @@ void activeGraphicClass::lineEditBegin ( void )
 
 }
 
+void activeGraphicClass::lineCreateBegin ( void )
+{
+
+  this->actWin->lineCreateBegin();
+
+}
+
 int activeGraphicClass::addPoint (
   int x,
   int y )

@@ -135,6 +135,9 @@
 #define AWC_MOVING_POINT 19
 #define AWC_CHOOSING_LINE_OP 20
 #define AWC_WAITING 21
+#define AWC_CREATING_POINTS 22
+#define AWC_MOVING_CREATE_POINT 23
+
 /* #define AWC_ */
 
 // if a call is made to this routine from a sharable library and then
@@ -1054,6 +1057,8 @@ void setCurrentObject (
 }
 
 void lineEditBegin ( void );
+
+void lineCreateBegin ( void );
 
 void operationComplete ( void );
 
