@@ -25,7 +25,7 @@
 #include "cadef.h"
 
 #define RDC_MAJOR_VERSION 2
-#define RDC_MINOR_VERSION 3
+#define RDC_MINOR_VERSION 4
 #define RDC_RELEASE 0
 
 typedef struct objAndIndexTag {
@@ -155,7 +155,7 @@ friend void rdc_edit_cancel_delete (
   XtPointer call );
 
 static const int NUMPVS = 4;
-static const int maxDsps = 8;
+static const int maxDsps = 20;
 
 typedef struct bufTag {
   int bufUseFocus;

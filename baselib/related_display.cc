@@ -86,16 +86,27 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
   rdo->numDsps = 0;
   for ( i=0; i<rdo->maxDsps; i++ ) {
     rdo->displayFileName[i].setRaw( rdo->buf->bufDisplayFileName[i] );
-    if ( blank( rdo->displayFileName[i].getRaw() ) ) break;
-    rdo->closeAction[i] = rdo->buf->bufCloseAction[i];
-    rdo->setPostion[i] = rdo->buf->bufSetPostion[i];
-    rdo->allowDups[i] = rdo->buf->bufAllowDups[i];
-    rdo->cascade[i] = rdo->buf->bufCascade[i];
-    rdo->propagateMacros[i] = rdo->buf->bufPropagateMacros[i];
-    rdo->label[i].setRaw( rdo->buf->bufLabel[i] );
-    rdo->symbolsExpStr[i].setRaw( rdo->buf->bufSymbols[i] );
-    rdo->replaceSymbols[i] = rdo->buf->bufReplaceSymbols[i];
-    (rdo->numDsps)++;
+    if ( blank( rdo->displayFileName[i].getRaw() ) ) {
+      rdo->closeAction[i] = 0;
+      rdo->setPostion[i] = 0;
+      rdo->allowDups[i] = 0;
+      rdo->cascade[i] = 0;
+      rdo->propagateMacros[i] = 1;
+      rdo->label[i].setRaw( "" );
+      rdo->symbolsExpStr[i].setRaw( "" );
+      rdo->replaceSymbols[i] = 0;
+    }
+    else {
+      rdo->closeAction[i] = rdo->buf->bufCloseAction[i];
+      rdo->setPostion[i] = rdo->buf->bufSetPostion[i];
+      rdo->allowDups[i] = rdo->buf->bufAllowDups[i];
+      rdo->cascade[i] = rdo->buf->bufCascade[i];
+      rdo->propagateMacros[i] = rdo->buf->bufPropagateMacros[i];
+      rdo->label[i].setRaw( rdo->buf->bufLabel[i] );
+      rdo->symbolsExpStr[i].setRaw( rdo->buf->bufSymbols[i] );
+      rdo->replaceSymbols[i] = rdo->buf->bufReplaceSymbols[i];
+      (rdo->numDsps)++;
+    }
   }
 
 }
@@ -495,7 +506,9 @@ int i, index;
 
   fprintf( f, "%-d\n", useFocus );
 
-  for ( i=1; i<maxDsps; i++ ) { // for forward compatibility
+  fprintf( f, "%-d\n", numDsps );
+
+  for ( i=1; i<numDsps; i++ ) {
 
     if ( displayFileName[i].getRaw() )
       writeStringToFile( f, displayFileName[i].getRaw() );
@@ -547,7 +560,7 @@ int relatedDisplayClass::createFromFile (
   activeWindowClass *_actWin )
 {
 
-int i, numPvs, r, g, b, index, more;
+int i, numPvs, r, g, b, index, more, md;
 int major, minor, release;
 unsigned int pixel;
 char oneName[255+1];
@@ -713,17 +726,84 @@ char onePvName[127+1];
     useFocus = 0;
   }
 
-  if ( ( major > 2 ) || ( major == 2 ) && ( minor > 0 ) ) {
+  // after v 2.3 read numDsps and then the data
+  if ( ( major < 2 ) || ( major == 2 ) && ( minor < 4 ) ) {
 
-    for ( i=1; i<maxDsps; i++ ) { // for forward compatibility
+    md = 8;
+
+    if ( ( major > 2 ) || ( major == 2 ) && ( minor > 0 ) ) {
+
+      for ( i=1; i<md; i++ ) { // for forward compatibility
+
+        readStringFromFile( oneName, 127, f ); actWin->incLine();
+        displayFileName[i].setRaw( oneName );
+
+        if ( more && !blank(displayFileName[i].getRaw() ) ) {
+          numDsps++;
+        }
+        else {
+          more = 0;
+        }
+
+        readStringFromFile( oneName, 127, f ); actWin->incLine();
+        label[i].setRaw( oneName );
+
+        fscanf( f, "%d\n", &closeAction[i] );
+
+        fscanf( f, "%d\n", &setPostion[i] );
+
+        fscanf( f, "%d\n", &allowDups[i] );
+
+        fscanf( f, "%d\n", &cascade[i] );
+
+        readStringFromFile( oneName, 255, f ); actWin->incLine();
+        symbolsExpStr[i].setRaw( oneName );
+
+        fscanf( f, "%d\n", &replaceSymbols[i] );
+
+        fscanf( f, "%d\n", &propagateMacros[i] );
+
+      }
+
+      for ( i=numDsps; i<maxDsps; i++ ) {
+        closeAction[i] = 0;
+        setPostion[i] = 0;
+        allowDups[i] = 0;
+        cascade[i] = 0;
+        propagateMacros[i] = 1;
+        replaceSymbols[i] = 0;
+        label[i].setRaw( "" );
+        symbolsExpStr[i].setRaw( "" );
+      }
+
+    }
+
+    if ( ( major > 2 ) || ( major == 2 ) && ( minor > 1 ) ) {
+      readStringFromFile( oneName, 127, f ); actWin->incLine();
+      buttonLabel.setRaw( oneName );
+    }
+    else {
+      buttonLabel.setRaw( label[0].getRaw() );
+    }
+
+    if ( ( major > 2 ) || ( major == 2 ) && ( minor > 2 ) ) {
+      fscanf( f, "%d\n", &noEdit ); actWin->incLine();
+    }
+    else {
+      noEdit = 0;
+    }
+
+  }
+  else {
+
+    fscanf( f, "%d\n", &numDsps ); actWin->incLine();
+
+    for ( i=1; i<numDsps; i++ ) {
 
       readStringFromFile( oneName, 127, f ); actWin->incLine();
       displayFileName[i].setRaw( oneName );
 
-      if ( more && !blank(displayFileName[i].getRaw() ) ) {
-        numDsps++;
-      }
-      else {
+      if ( blank(displayFileName[i].getRaw() ) ) {
         more = 0;
       }
 
@@ -747,21 +827,22 @@ char onePvName[127+1];
 
     }
 
-  }
+    for ( i=numDsps; i<maxDsps; i++ ) {
+      closeAction[i] = 0;
+      setPostion[i] = 0;
+      allowDups[i] = 0;
+      cascade[i] = 0;
+      propagateMacros[i] = 1;
+      replaceSymbols[i] = 0;
+      label[i].setRaw( "" );
+      symbolsExpStr[i].setRaw( "" );
+    }
 
-  if ( ( major > 2 ) || ( major == 2 ) && ( minor > 1 ) ) {
     readStringFromFile( oneName, 127, f ); actWin->incLine();
     buttonLabel.setRaw( oneName );
-  }
-  else {
-    buttonLabel.setRaw( label[0].getRaw() );
-  }
 
-  if ( ( major > 2 ) || ( major == 2 ) && ( minor > 2 ) ) {
     fscanf( f, "%d\n", &noEdit ); actWin->incLine();
-  }
-  else {
-    noEdit = 0;
+
   }
 
   actWin->fi->loadFontTag( fontTag );
