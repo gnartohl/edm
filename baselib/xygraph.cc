@@ -174,16 +174,36 @@ double dxValue, minValue;
           dxValue = ( (double *) xyo->xPvData[i] )[ii];
           break;
         case DBR_SHORT:
-          dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+          if ( xyo->xSigned[i] ) {
+            dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+	  }
           break;
         case DBR_CHAR:
-          dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
+          if ( xyo->xSigned[i] ) {
+            dxValue = (double) ( (char *) xyo->xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
+	  }
           break;
         case DBR_LONG:
-          dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
+          if ( xyo->xSigned[i] ) {
+            dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
+	  }
           break;
         case DBR_ENUM:
-          dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+          if ( xyo->xSigned[i] ) {
+            dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+	  }
           break;
         default:
           dxValue = ( (double *) xyo->xPvData[i] )[ii];
@@ -295,16 +315,36 @@ double dxValue, maxValue;
           dxValue = ( (double *) xyo->xPvData[i] )[ii];
           break;
         case DBR_SHORT:
-          dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+          if ( xyo->xSigned[i] ) {
+            dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+	  }
           break;
         case DBR_CHAR:
-          dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
+          if ( xyo->xSigned[i] ) {
+            dxValue = (double) ( (char *) xyo->xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
+	  }
           break;
         case DBR_LONG:
-          dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
+          if ( xyo->xSigned[i] ) {
+            dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
+	  }
           break;
         case DBR_ENUM:
-          dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+          if ( xyo->xSigned[i] ) {
+            dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+	  }
           break;
         default:
           dxValue = ( (double *) xyo->xPvData[i] )[ii];
@@ -468,16 +508,36 @@ double dy1Value, minValue;
           dy1Value = ( (double *) xyo->yPvData[i] )[ii];
           break;
         case DBR_SHORT:
-          dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+          if ( xyo->ySigned[i] ) {
+            dy1Value = (double) ( (short *) xyo->yPvData[i] )[ii];
+	  }
+	  else {
+            dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+	  }
           break;
         case DBR_CHAR:
-          dy1Value = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
+          if ( xyo->ySigned[i] ) {
+            dy1Value = (double) ( (char *) xyo->yPvData[i] )[ii];
+	  }
+	  else {
+            dy1Value = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
+	  }
           break;
         case DBR_LONG:
-          dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
+          if ( xyo->ySigned[i] ) {
+            dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
+	  }
+	  else {
+            dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
+	  }
           break;
         case DBR_ENUM:
-          dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+          if ( xyo->ySigned[i] ) {
+            dy1Value = (double) ( (short *) xyo->yPvData[i] )[ii];
+	  }
+	  else {
+            dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+	  }
           break;
         default:
           dy1Value = ( (double *) xyo->yPvData[i] )[ii];
@@ -577,16 +637,36 @@ double dy1Value, maxValue;
           dy1Value = ( (double *) xyo->yPvData[i] )[ii];
           break;
         case DBR_SHORT:
-          dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+          if ( xyo->ySigned[i] ) {
+            dy1Value = (double) ( (short *) xyo->yPvData[i] )[ii];
+	  }
+	  else {
+            dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+	  }
           break;
         case DBR_CHAR:
-          dy1Value = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
+          if ( xyo->ySigned[i] ) {
+            dy1Value = (double) ( (char *) xyo->yPvData[i] )[ii];
+	  }
+	  else {
+            dy1Value = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
+	  }
           break;
         case DBR_LONG:
-          dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
+          if ( xyo->ySigned[i] ) {
+            dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
+	  }
+	  else {
+            dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
+	  }
           break;
         case DBR_ENUM:
-          dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+          if ( xyo->ySigned[i] ) {
+            dy1Value = (double) ( (short *) xyo->yPvData[i] )[ii];
+	  }
+	  else {
+            dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+	  }
           break;
         default:
           dy1Value = ( (double *) xyo->yPvData[i] )[ii];
@@ -763,19 +843,43 @@ short scaledX, scaledY;
           break;
 
         case DBR_SHORT:
-          ( (short *) xyo->xPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
+          if ( xyo->xSigned[i] ) {
+            ( (short *) xyo->xPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
+	  }
+	  else {
+            ( (unsigned short *) xyo->xPvData[i] )[ii] =
+             ( (unsigned short *) arg.dbr )[ii];
+	  }
           break;
 
         case DBR_CHAR:
-          ( (char *) xyo->xPvData[i] )[ii] = ( (char *) arg.dbr )[ii];
+          if ( xyo->xSigned[i] ) {
+            ( (char *) xyo->xPvData[i] )[ii] = ( (char *) arg.dbr )[ii];
+	  }
+	  else {
+            ( (unsigned char *) xyo->xPvData[i] )[ii] =
+             ( (unsigned char *) arg.dbr )[ii];
+	  }
           break;
 
         case DBR_LONG:
-          ( (long *) xyo->xPvData[i] )[ii] = ( (long *) arg.dbr )[ii];
+          if ( xyo->xSigned[i] ) {
+            ( (long *) xyo->xPvData[i] )[ii] = ( (long *) arg.dbr )[ii];
+	  }
+	  else {
+            ( (unsigned long *) xyo->xPvData[i] )[ii] =
+             ( (unsigned long *) arg.dbr )[ii];
+	  }
           break;
 
         case DBR_ENUM:
-          ( (short *) xyo->xPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
+          if ( xyo->xSigned[i] ) {
+            ( (short *) xyo->xPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
+	  }
+	  else {
+            ( (unsigned short *) xyo->xPvData[i] )[ii] =
+             ( (unsigned short *) arg.dbr )[ii];
+	  }
           break;
 
         default:
@@ -837,16 +941,36 @@ short scaledX, scaledY;
           dyValue = ( (double *) xyo->yPvData[i] )[ii];
           break;
         case DBR_SHORT:
-          dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+          if ( xyo->ySigned[i] ) {
+            dyValue = (double) ( (short *) xyo->yPvData[i] )[ii];
+	  }
+	  else {
+            dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+	  }
           break;
         case DBR_CHAR:
-          dyValue = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
+          if ( xyo->ySigned[i] ) {
+            dyValue = (double) ( (char *) xyo->yPvData[i] )[ii];
+	  }
+	  else {
+            dyValue = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
+	  }
           break;
         case DBR_LONG:
-          dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
+          if ( xyo->ySigned[i] ) {
+            dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
+	  }
+	  else {
+            dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
+	  }
           break;
         case DBR_ENUM:
-          dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+          if ( xyo->ySigned[i] ) {
+            dyValue = (double) ( (short *) xyo->yPvData[i] )[ii];
+	  }
+	  else {
+            dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+	  }
           break;
         default:
           dyValue = ( (double *) xyo->yPvData[i] )[ii];
@@ -886,16 +1010,36 @@ short scaledX, scaledY;
           dxValue = ( (double *) xyo->xPvData[i] )[ii];
           break;
         case DBR_SHORT:
-          dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+          if ( xyo->xSigned[i] ) {
+            dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+	  }
           break;
         case DBR_CHAR:
-          dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
+          if ( xyo->xSigned[i] ) {
+            dxValue = (double) ( (char *) xyo->xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
+	  }
           break;
         case DBR_LONG:
-          dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
+          if ( xyo->xSigned[i] ) {
+            dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
+	  }
           break;
         case DBR_ENUM:
-          dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+          if ( xyo->xSigned[i] ) {
+            dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+	  }
           break;
         default:
           dxValue = ( (double *) xyo->xPvData[i] )[ii];
@@ -1081,19 +1225,43 @@ short scaledX, scaledY;
           break;
 
         case DBR_SHORT:
+          if ( xyo->ySigned[i] ) {
           ( (short *) xyo->yPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
+	  }
+	  else {
+          ( (unsigned short *) xyo->yPvData[i] )[ii] =
+           ( (unsigned short *) arg.dbr )[ii];
+	  }
           break;
 
         case DBR_CHAR:
+          if ( xyo->ySigned[i] ) {
           ( (char *) xyo->yPvData[i] )[ii] = ( (char *) arg.dbr )[ii];
+	  }
+	  else {
+          ( (unsigned char *) xyo->yPvData[i] )[ii] =
+           ( (unsigned char *) arg.dbr )[ii];
+	  }
           break;
 
         case DBR_LONG:
-          ( (long *) xyo->yPvData[i] )[ii] = ( (long *) arg.dbr )[ii];
+          if ( xyo->ySigned[i] ) {
+            ( (long *) xyo->yPvData[i] )[ii] = ( (long *) arg.dbr )[ii];
+	  }
+	  else {
+            ( (unsigned long *) xyo->yPvData[i] )[ii] =
+           ( (unsigned long *) arg.dbr )[ii];
+	  }
           break;
 
         case DBR_ENUM:
+          if ( xyo->ySigned[i] ) {
           ( (short *) xyo->yPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
+	  }
+	  else {
+          ( (unsigned short *) xyo->yPvData[i] )[ii] =
+           ( (unsigned short *) arg.dbr )[ii];
+	  }
           break;
 
         default:
@@ -1155,16 +1323,36 @@ short scaledX, scaledY;
           dyValue = ( (double *) xyo->yPvData[i] )[ii];
           break;
         case DBR_SHORT:
-          dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+          if ( xyo->ySigned[i] ) {
+            dyValue = (double) ( (short *) xyo->yPvData[i] )[ii];
+	  }
+	  else {
+            dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+	  }
           break;
         case DBR_CHAR:
-          dyValue = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
+          if ( xyo->ySigned[i] ) {
+            dyValue = (double) ( (char *) xyo->yPvData[i] )[ii];
+	  }
+	  else {
+            dyValue = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
+	  }
           break;
         case DBR_LONG:
-          dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
+          if ( xyo->ySigned[i] ) {
+            dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
+	  }
+	  else {
+            dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
+	  }
           break;
         case DBR_ENUM:
-          dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+          if ( xyo->ySigned[i] ) {
+            dyValue = (double) ( (short *) xyo->yPvData[i] )[ii];
+	  }
+	  else {
+            dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+	  }
           break;
         default:
           dyValue = ( (double *) xyo->yPvData[i] )[ii];
@@ -1204,16 +1392,36 @@ short scaledX, scaledY;
           dxValue = ( (double *) xyo->xPvData[i] )[ii];
           break;
         case DBR_SHORT:
-          dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+          if ( xyo->xSigned[i] ) {
+            dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+	  }
           break;
         case DBR_CHAR:
-          dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
+          if ( xyo->xSigned[i] ) {
+            dxValue = (double) ( (char *) xyo->xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
+	  }
           break;
         case DBR_LONG:
-          dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
+          if ( xyo->xSigned[i] ) {
+            dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
+	  }
           break;
         case DBR_ENUM:
-          dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+          if ( xyo->xSigned[i] ) {
+            dxValue = (double) ( (short *) xyo->xPvData[i] )[ii];
+	  }
+	  else {
+            dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+	  }
           break;
         default:
           dxValue = ( (double *) xyo->xPvData[i] )[ii];
@@ -1343,19 +1551,43 @@ struct dbr_time_enum *dbrEnumPtr;
           break;
 
         case DBR_SHORT:
-          ( (short *) xyo->yPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
+          if ( xyo->ySigned[i] ) {
+            ( (short *) xyo->yPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
+	  }
+	  else {
+            ( (unsigned short *) xyo->yPvData[i] )[ii] =
+             ( (unsigned short *) arg.dbr )[ii];
+	  }
           break;
 
         case DBR_CHAR:
-          ( (char *) xyo->yPvData[i] )[ii] = ( (char *) arg.dbr )[ii];
+          if ( xyo->ySigned[i] ) {
+            ( (char *) xyo->yPvData[i] )[ii] = ( (char *) arg.dbr )[ii];
+	  }
+	  else {
+            ( (unsigned char *) xyo->yPvData[i] )[ii] =
+             ( (unsigned char *) arg.dbr )[ii];
+	  }
           break;
 
         case DBR_LONG:
-          ( (long *) xyo->yPvData[i] )[ii] = ( (long *) arg.dbr )[ii];
+          if ( xyo->ySigned[i] ) {
+            ( (long *) xyo->yPvData[i] )[ii] = ( (long *) arg.dbr )[ii];
+	  }
+	  else {
+            ( (unsigned long *) xyo->yPvData[i] )[ii] =
+             ( (unsigned long *) arg.dbr )[ii];
+	  }
           break;
 
         case DBR_ENUM:
-          ( (short *) xyo->yPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
+          if ( xyo->ySigned[i] ) {
+            ( (short *) xyo->yPvData[i] )[ii] = ( (short *) arg.dbr )[ii];
+	  }
+	  else {
+            ( (unsigned short *) xyo->yPvData[i] )[ii] =
+             ( (unsigned short *) arg.dbr )[ii];
+	  }
           break;
 
         default:
@@ -1408,7 +1640,12 @@ struct dbr_time_enum *dbrEnumPtr;
 
       case DBR_SHORT:
         dbrShrtPtr = (struct dbr_time_short *) arg.dbr;
-        ( (short *) xyo->yPvData[i] )[ii] = dbrShrtPtr->value;
+        if ( xyo->ySigned[i] ) {
+          ( (short *) xyo->yPvData[i] )[ii] = dbrShrtPtr->value;
+        }
+        else {
+          ( (unsigned short *) xyo->yPvData[i] )[ii] = dbrShrtPtr->value;
+        }
         dyValue = (double) dbrShrtPtr->value;
         sec = dbrShrtPtr->stamp.secPastEpoch;
         nsec = dbrShrtPtr->stamp.nsec;
@@ -1416,7 +1653,12 @@ struct dbr_time_enum *dbrEnumPtr;
 
       case DBR_CHAR:
         dbrChrPtr = (struct dbr_time_char *) arg.dbr;
-        ( (char *) xyo->yPvData[i] )[ii] = dbrChrPtr->value;
+        if ( xyo->ySigned[i] ) {
+          ( (char *) xyo->yPvData[i] )[ii] = dbrChrPtr->value;
+        }
+        else {
+          ( (unsigned char *) xyo->yPvData[i] )[ii] = dbrChrPtr->value;
+        }
         dyValue = (double) dbrChrPtr->value;
         sec = dbrChrPtr->stamp.secPastEpoch;
         nsec = dbrChrPtr->stamp.nsec;
@@ -1424,7 +1666,12 @@ struct dbr_time_enum *dbrEnumPtr;
 
       case DBR_LONG:
         dbrLngPtr = (struct dbr_time_long *) arg.dbr;
-        ( (long *) xyo->yPvData[i] )[ii] = dbrLngPtr->value;
+        if ( xyo->ySigned[i] ) {
+          ( (long *) xyo->yPvData[i] )[ii] = dbrLngPtr->value;
+        }
+        else {
+          ( (unsigned long *) xyo->yPvData[i] )[ii] = dbrLngPtr->value;
+        }
         dyValue = (double) dbrLngPtr->value;
         sec = dbrLngPtr->stamp.secPastEpoch;
         nsec = dbrLngPtr->stamp.nsec;
@@ -1432,7 +1679,12 @@ struct dbr_time_enum *dbrEnumPtr;
 
       case DBR_ENUM:
         dbrEnumPtr = (struct dbr_time_enum *) arg.dbr;
-        ( (short *) xyo->yPvData[i] )[ii] = dbrEnumPtr->value;
+        if ( xyo->ySigned[i] ) {
+          ( (short *) xyo->yPvData[i] )[ii] = dbrEnumPtr->value;
+        }
+        else {
+          ( (unsigned short *) xyo->yPvData[i] )[ii] = dbrEnumPtr->value;
+        }
         dyValue = (double) dbrEnumPtr->value;
         sec = dbrEnumPtr->stamp.secPastEpoch;
         nsec = dbrEnumPtr->stamp.nsec;
@@ -1696,6 +1948,9 @@ int i;
       axygo->traceType[i] = XYGC_K_TRACE_INVALID;
 
     }
+
+    axygo->xSigned[i] = axygo->eBuf->bufXSigned[i];
+    axygo->ySigned[i] = axygo->eBuf->bufYSigned[i];
 
   }
 
@@ -2199,6 +2454,8 @@ char traceColor[15+1];
     plotColor[i] = actWin->ci->colorIndexByAlias( traceColor );
     lineThk[i] = 1;
     lineStyle[i] = LineSolid;
+    xSigned[i] = 0;
+    ySigned[i] = 0;
   }
 
   strcpy( fontTag, actWin->defaultCtlFontTag );
@@ -2340,6 +2597,8 @@ int i, stat = 1;
     fprintf( f, "%-d\n", plotSymbolType[i] );
     fprintf( f, "%-d\n", opMode[i] );
     fprintf( f, "%-d\n", y2Scale[i] );
+    fprintf( f, "%-d\n", xSigned[i] );
+    fprintf( f, "%-d\n", ySigned[i] );
 
   }
 
@@ -2485,6 +2744,15 @@ char str[127+1], traceColor[15+1], onePv[activeGraphicClass::MAX_PV_NAME+1];
     fscanf( f, "%d\n", &plotSymbolType[i] ); actWin->incLine();
     fscanf( f, "%d\n", &opMode[i] ); actWin->incLine();
     fscanf( f, "%d\n", &y2Scale[i] ); actWin->incLine();
+
+    if ( ( ( major == 1 ) && ( minor > 0 ) ) || ( major > 1 ) ) {
+      fscanf( f, "%d\n", &xSigned[i] );
+      fscanf( f, "%d\n", &ySigned[i] );
+    }
+    else {
+      xSigned[i] = 0;
+      ySigned[i] = 0;
+    }
 
     if ( lineStyle[i] == 0 ) {
       lineStyle[i] = LineSolid;
@@ -2709,6 +2977,8 @@ int i;
       }
       eBuf->bufOpMode[i] = opMode[i];
       eBuf->bufY2Scale[i] = y2Scale[i];
+      eBuf->bufXSigned[i] = xSigned[i];
+      eBuf->bufYSigned[i] = ySigned[i];
     }
     for ( i=numTraces; i<XYGC_K_MAX_TRACES; i++ ) {
       strcpy( eBuf->bufXPvName[i], "" );
@@ -2721,26 +2991,32 @@ int i;
       eBuf->bufLineStyle[i] = 0;
       eBuf->bufOpMode[i] = XYGC_K_SCOPE_MODE;
       eBuf->bufY2Scale[i] = 0;
+      eBuf->bufXSigned[i] = 0;
+      eBuf->bufYSigned[i] = 0;
     }
 
     i = 0;
     efTrace->beginSubForm();
     efTrace->addTextField( "X ", 20, eBuf->bufXPvName[i],
      activeGraphicClass::MAX_PV_NAME );
-    efTrace->addLabel( "  Y " );
+    efTrace->addLabel( "  S " );
+    efTrace->addToggle( " ", &eBuf->bufXSigned[i] );
+    efTrace->addLabel( "Y " );
     efTrace->addTextField( "", 20, eBuf->bufYPvName[i],
      activeGraphicClass::MAX_PV_NAME );
+    efTrace->addLabel( "  S " );
+    efTrace->addToggle( " ", &eBuf->bufYSigned[i] );
     efTrace->addOption( "", "scope|plot", &eBuf->bufOpMode[i] );
     efTrace->addLabel( "  Y2" );
-    efTrace->addToggle( "", &eBuf->bufY2Scale[i] );
-    efTrace->addLabel( "  Style" );
+    efTrace->addToggle( " ", &eBuf->bufY2Scale[i] );
+    //efTrace->addLabel( "  Style" );
     efTrace->addOption( "", "line|point|needle", &eBuf->bufPlotStyle[i] );
     efTrace->addLabel( "  Update" );
     efTrace->addOption( "", "X and Y|X or Y|X|Y",
      &eBuf->bufPlotUpdateMode[i] );
     efTrace->addLabel( "  Thk" );
     efTrace->addOption( "", "1|2|3|4|5|6|7|8|9", &eBuf->bufLineThk[i] );
-    efTrace->addLabel( "  Line" );
+    //efTrace->addLabel( "  Line" );
     efTrace->addOption( "", "solid|dash", &eBuf->bufLineStyle[i] );
     efTrace->addLabel( "  Symbol" );
     efTrace->addOption( "", "none|circle|square|diamond",
@@ -2755,20 +3031,24 @@ int i;
       efTrace->beginLeftSubForm();
       efTrace->addTextField( "X ", 20, eBuf->bufXPvName[i],
        activeGraphicClass::MAX_PV_NAME );
-      efTrace->addLabel( "  Y " );
+      efTrace->addLabel( "  S " );
+      efTrace->addToggle( " ", &eBuf->bufXSigned[i] );
+      efTrace->addLabel( "Y " );
       efTrace->addTextField( "", 20, eBuf->bufYPvName[i],
        activeGraphicClass::MAX_PV_NAME );
+      efTrace->addLabel( "  S " );
+      efTrace->addToggle( " ", &eBuf->bufYSigned[i] );
       efTrace->addOption( "", "scope|plot", &eBuf->bufOpMode[i] );
       efTrace->addLabel( "  Y2" );
-      efTrace->addToggle( "", &eBuf->bufY2Scale[i] );
-      efTrace->addLabel( "  Style" );
+      efTrace->addToggle( " ", &eBuf->bufY2Scale[i] );
+      //efTrace->addLabel( "  Style" );
       efTrace->addOption( "", "line|point|needle", &eBuf->bufPlotStyle[i] );
       efTrace->addLabel( "  Update" );
       efTrace->addOption( "", "X and Y|X or Y|X|Y",
        &eBuf->bufPlotUpdateMode[i] );
       efTrace->addLabel( "  Thk" );
       efTrace->addOption( "", "1|2|3|4|5|6|7|8|9", &eBuf->bufLineThk[i] );
-      efTrace->addLabel( "  Line" );
+      //efTrace->addLabel( "  Line" );
       efTrace->addOption( "", "solid|dash", &eBuf->bufLineStyle[i] );
       efTrace->addLabel( "  Symbol" );
       efTrace->addOption( "", "none|circle|square|diamond",
@@ -2812,7 +3092,7 @@ int i;
     efAxis->beginSubForm();
     efAxis->addLabel( "X   " );
     efAxis->addLabel( " Show" );
-    efAxis->addToggle( "", &eBuf->bufXAxis );
+    efAxis->addToggle( " ", &eBuf->bufXAxis );
     efAxis->addLabel( " Style" );
     efAxis->addOption( "", "linear|log10|time|log10(time)|stripchart", &eBuf->bufXAxisStyle );
     efAxis->addLabel( " Range" );
@@ -2833,15 +3113,15 @@ int i;
     efAxis->addLabel( " Label Tick Intervals " );
     efAxis->addTextField( "", 3, &eBuf->bufXNumLabelIntervals );
     efAxis->addLabel( " Grid" );
-    efAxis->addToggle( "", &eBuf->bufXLabelGrid );
+    efAxis->addToggle( " ", &eBuf->bufXLabelGrid );
     efAxis->addLabel( " Majors/Label " );
     efAxis->addTextField( "", 3, &eBuf->bufXNumMajorPerLabel );
     efAxis->addLabel( " Grid" );
-    efAxis->addToggle( "", &eBuf->bufXMajorGrid );
+    efAxis->addToggle( " ", &eBuf->bufXMajorGrid );
     efAxis->addLabel( " Minors/Major " );
     efAxis->addTextField( "", 3, &eBuf->bufXNumMinorPerMajor );
     efAxis->addLabel( " Grid" );
-    efAxis->addToggle( "", &eBuf->bufXMinorGrid );
+    efAxis->addToggle( " ", &eBuf->bufXMinorGrid );
     efAxis->addLabel( " Format" );
     efAxis->addOption( "", "f|g", &eBuf->bufXAnnotationFormat );
     efAxis->addLabel( " Precision " );
@@ -2853,7 +3133,7 @@ int i;
     efAxis->beginLeftSubForm();
     efAxis->addLabel( "Y1  " );
     efAxis->addLabel( " Show" );
-    efAxis->addToggle( "", &eBuf->bufY1Axis );
+    efAxis->addToggle( " ", &eBuf->bufY1Axis );
     efAxis->addLabel( " Style" );
     efAxis->addOption( "", "linear|log10", &eBuf->bufY1AxisStyle );
     efAxis->addLabel( " Range" );
@@ -2870,15 +3150,15 @@ int i;
     efAxis->addLabel( " Label Tick Intervals " );
     efAxis->addTextField( "", 3, &eBuf->bufY1NumLabelIntervals );
     efAxis->addLabel( " Grid" );
-    efAxis->addToggle( "", &eBuf->bufY1LabelGrid );
+    efAxis->addToggle( " ", &eBuf->bufY1LabelGrid );
     efAxis->addLabel( " Majors/Label " );
     efAxis->addTextField( "", 3, &eBuf->bufY1NumMajorPerLabel );
     efAxis->addLabel( " Grid" );
-    efAxis->addToggle( "", &eBuf->bufY1MajorGrid );
+    efAxis->addToggle( " ", &eBuf->bufY1MajorGrid );
     efAxis->addLabel( " Minors/Major " );
     efAxis->addTextField( "", 3, &eBuf->bufY1NumMinorPerMajor );
     efAxis->addLabel( " Grid" );
-    efAxis->addToggle( "", &eBuf->bufY1MinorGrid );
+    efAxis->addToggle( " ", &eBuf->bufY1MinorGrid );
     efAxis->addLabel( " Format" );
     efAxis->addOption( "", "f|g", &eBuf->bufY1AnnotationFormat );
     efAxis->addLabel( " Precision " );
@@ -2890,7 +3170,7 @@ int i;
     efAxis->beginLeftSubForm();
     efAxis->addLabel( "Y2  " );
     efAxis->addLabel( " Show" );
-    efAxis->addToggle( "", &eBuf->bufY2Axis );
+    efAxis->addToggle( " ", &eBuf->bufY2Axis );
     efAxis->addLabel( " Style" );
     efAxis->addOption( "", "linear|log10",
      &eBuf->bufY2AxisStyle );
@@ -2908,15 +3188,15 @@ int i;
     efAxis->addLabel( " Label Tick Intervals " );
     efAxis->addTextField( "", 3, &eBuf->bufY2NumLabelIntervals );
     efAxis->addLabel( " Grid" );
-    efAxis->addToggle( "", &eBuf->bufY2LabelGrid );
+    efAxis->addToggle( " ", &eBuf->bufY2LabelGrid );
     efAxis->addLabel( " Majors/Label " );
     efAxis->addTextField( "", 3, &eBuf->bufY2NumMajorPerLabel );
     efAxis->addLabel( " Grid" );
-    efAxis->addToggle( "", &eBuf->bufY2MajorGrid );
+    efAxis->addToggle( " ", &eBuf->bufY2MajorGrid );
     efAxis->addLabel( " Minors/Major " );
     efAxis->addTextField( "", 3, &eBuf->bufY2NumMinorPerMajor );
     efAxis->addLabel( " Grid" );
-    efAxis->addToggle( "", &eBuf->bufY2MinorGrid );
+    efAxis->addToggle( " ", &eBuf->bufY2MinorGrid );
     efAxis->addLabel( " Format" );
     efAxis->addOption( "", "f|g", &eBuf->bufY2AnnotationFormat );
     efAxis->addLabel( " Precision " );
@@ -2982,16 +3262,36 @@ short scaledX, scaledY;
         dyValue = ( (double *) yPvData[i] )[ii];
         break;
       case DBR_SHORT:
-        dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+        if ( ySigned[i] ) {
+          dyValue = (double) ( (short *) yPvData[i] )[ii];
+	}
+        else {
+          dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+	}
         break;
       case DBR_CHAR:
-        dyValue = (double) ( (unsigned char *) yPvData[i] )[ii];
+        if ( ySigned[i] ) {
+          dyValue = (double) ( (char *) yPvData[i] )[ii];
+	}
+	else {
+          dyValue = (double) ( (unsigned char *) yPvData[i] )[ii];
+	}
         break;
       case DBR_LONG:
-        dyValue = (double) ( (int *) yPvData[i] )[ii];
+          if ( ySigned[i] ) {
+            dyValue = (double) ( (int *) yPvData[i] )[ii];
+	  }
+	  else {
+            dyValue = (double) ( (int *) yPvData[i] )[ii];
+	  }
         break;
       case DBR_ENUM:
-        dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+        if ( ySigned[i] ) {
+          dyValue = (double) ( (short *) yPvData[i] )[ii];
+	}
+	else {
+          dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+	}
         break;
       default:
         dyValue = ( (double *) yPvData[i] )[ii];
@@ -3014,16 +3314,36 @@ short scaledX, scaledY;
         dxValue = ( (double *) xPvData[i] )[ii];
         break;
       case DBR_SHORT:
-        dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+        if ( xSigned[i] ) {
+          dxValue = (double) ( (short *) xPvData[i] )[ii];
+	}
+	else {
+          dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+	}
         break;
       case DBR_CHAR:
-        dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
+        if ( xSigned[i] ) {
+          dxValue = (double) ( (char *) xPvData[i] )[ii];
+	}
+	else {
+          dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
+	}
         break;
       case DBR_LONG:
-        dxValue = (double) ( (int *) xPvData[i] )[ii];
+        if ( xSigned[i] ) {
+          dxValue = (double) ( (int *) xPvData[i] )[ii];
+	}
+	else {
+          dxValue = (double) ( (int *) xPvData[i] )[ii];
+	}
         break;
       case DBR_ENUM:
-        dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+        if ( xSigned[i] ) {
+          dxValue = (double) ( (short *) xPvData[i] )[ii];
+	}
+	else {
+          dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+	}
         break;
       default:
         dxValue = ( (double *) xPvData[i] )[ii];
@@ -3080,16 +3400,36 @@ char format[31+1];
       dyValue = ( (double *) yPvData[i] )[ii];
       break;
     case DBR_SHORT:
-      dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+      if ( ySigned[i] ) {
+        dyValue = (double) ( (short *) yPvData[i] )[ii];
+      }
+      else {
+        dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+      }
       break;
     case DBR_CHAR:
-      dyValue = (double) ( (unsigned char *) yPvData[i] )[ii];
+      if ( ySigned[i] ) {
+        dyValue = (double) ( (char *) yPvData[i] )[ii];
+      }
+      else {
+        dyValue = (double) ( (unsigned char *) yPvData[i] )[ii];
+      }
       break;
     case DBR_LONG:
-      dyValue = (double) ( (int *) yPvData[i] )[ii];
+      if ( ySigned[i] ) {
+        dyValue = (double) ( (int *) yPvData[i] )[ii];
+      }
+      else {
+        dyValue = (double) ( (int *) yPvData[i] )[ii];
+      }
       break;
     case DBR_ENUM:
-      dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+      if ( ySigned[i] ) {
+        dyValue = (double) ( (short *) yPvData[i] )[ii];
+      }
+      else {
+        dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+      }
       break;
     default:
       dyValue = ( (double *) yPvData[i] )[ii];
@@ -3112,16 +3452,36 @@ char format[31+1];
       dxValue = ( (double *) xPvData[i] )[ii];
       break;
     case DBR_SHORT:
-      dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+      if ( xSigned[i] ) {
+        dxValue = (double) ( (short *) xPvData[i] )[ii];
+      }
+      else {
+        dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+      }
       break;
     case DBR_CHAR:
-      dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
+      if ( xSigned[i] ) {
+        dxValue = (double) ( (char *) xPvData[i] )[ii];
+      }
+      else {
+        dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
+      }
       break;
     case DBR_LONG:
-      dxValue = (double) ( (int *) xPvData[i] )[ii];
+      if ( xSigned[i] ) {
+        dxValue = (double) ( (int *) xPvData[i] )[ii];
+      }
+      else {
+        dxValue = (double) ( (int *) xPvData[i] )[ii];
+      }
       break;
     case DBR_ENUM:
-      dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+      if ( xSigned[i] ) {
+        dxValue = (double) ( (short *) xPvData[i] )[ii];
+      }
+      else {
+        dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+      }
       break;
     default:
       dxValue = ( (double *) xPvData[i] )[ii];
@@ -3264,16 +3624,36 @@ char format[31+1];
       dyValue = ( (double *) yPvData[i] )[ii];
       break;
     case DBR_SHORT:
-      dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+      if ( ySigned[i] ) {
+        dyValue = (double) ( (short *) yPvData[i] )[ii];
+      }
+      else {
+        dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+      }
       break;
     case DBR_CHAR:
-      dyValue = (double) ( (unsigned char *) yPvData[i] )[ii];
+      if ( ySigned[i] ) {
+        dyValue = (double) ( (char *) yPvData[i] )[ii];
+      }
+      else {
+        dyValue = (double) ( (unsigned char *) yPvData[i] )[ii];
+      }
       break;
     case DBR_LONG:
-      dyValue = (double) ( (int *) yPvData[i] )[ii];
+      if ( ySigned[i] ) {
+        dyValue = (double) ( (int *) yPvData[i] )[ii];
+      }
+      else {
+        dyValue = (double) ( (int *) yPvData[i] )[ii];
+      }
       break;
     case DBR_ENUM:
-      dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+      if ( ySigned[i] ) {
+        dyValue = (double) ( (short *) yPvData[i] )[ii];
+      }
+      else {
+        dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+      }
       break;
     default:
       dyValue = ( (double *) yPvData[i] )[ii];
@@ -3296,16 +3676,36 @@ char format[31+1];
       dxValue = ( (double *) xPvData[i] )[ii];
       break;
     case DBR_SHORT:
-      dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+      if ( xSigned[i] ) {
+        dxValue = (double) ( (short *) xPvData[i] )[ii];
+      }
+      else {
+        dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+      }
       break;
     case DBR_CHAR:
-      dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
+      if ( xSigned[i] ) {
+        dxValue = (double) ( (char *) xPvData[i] )[ii];
+      }
+      else {
+        dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
+      }
       break;
     case DBR_LONG:
-      dxValue = (double) ( (int *) xPvData[i] )[ii];
+      if ( xSigned[i] ) {
+        dxValue = (double) ( (int *) xPvData[i] )[ii];
+      }
+      else {
+        dxValue = (double) ( (int *) xPvData[i] )[ii];
+      }
       break;
     case DBR_ENUM:
-      dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+      if ( xSigned[i] ) {
+        dxValue = (double) ( (short *) xPvData[i] )[ii];
+      }
+      else {
+        dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+      }
       break;
     default:
       dxValue = ( (double *) xPvData[i] )[ii];
@@ -5135,16 +5535,36 @@ char format[31+1];
               dyValue = ( (double *) yPvData[i] )[ii];
               break;
             case DBR_SHORT:
-              dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+              if ( ySigned[i] ) {
+                dyValue = (double) ( (short *) yPvData[i] )[ii];
+	      }
+              else {
+                dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+              }
               break;
             case DBR_CHAR:
-              dyValue = (double) ( (unsigned char *) yPvData[i] )[ii];
+              if ( ySigned[i] ) {
+                dyValue = (double) ( (char *) yPvData[i] )[ii];
+	      }
+	      else {
+                dyValue = (double) ( (unsigned char *) yPvData[i] )[ii];
+	      }
               break;
             case DBR_LONG:
-              dyValue = (double) ( (int *) yPvData[i] )[ii];
+              if ( ySigned[i] ) {
+                dyValue = (double) ( (int *) yPvData[i] )[ii];
+	      }
+	      else {
+                dyValue = (double) ( (int *) yPvData[i] )[ii];
+	      }
               break;
             case DBR_ENUM:
-              dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+              if ( ySigned[i] ) {
+                dyValue = (double) ( (short *) yPvData[i] )[ii];
+	      }
+	      else {
+                dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+	      }
               break;
             default:
               dyValue = ( (double *) yPvData[i] )[ii];
@@ -5167,16 +5587,36 @@ char format[31+1];
               dxValue = ( (double *) xPvData[i] )[ii];
               break;
             case DBR_SHORT:
-              dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+              if ( xSigned[i] ) {
+                dxValue = (double) ( (short *) xPvData[i] )[ii];
+	      }
+	      else {
+                dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+	      }
               break;
             case DBR_CHAR:
-              dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
+              if ( xSigned[i] ) {
+                dxValue = (double) ( (char *) xPvData[i] )[ii];
+	      }
+	      else {
+                dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
+	      }
               break;
             case DBR_LONG:
-              dxValue = (double) ( (int *) xPvData[i] )[ii];
+              if ( xSigned[i] ) {
+                dxValue = (double) ( (int *) xPvData[i] )[ii];
+	      }
+	      else {
+                dxValue = (double) ( (int *) xPvData[i] )[ii];
+	      }
               break;
             case DBR_ENUM:
-              dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+              if ( xSigned[i] ) {
+                dxValue = (double) ( (short *) xPvData[i] )[ii];
+	      }
+	      else {
+                dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+	      }
               break;
             default:
               dxValue = ( (double *) xPvData[i] )[ii];

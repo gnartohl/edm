@@ -93,7 +93,7 @@
 #define XYGC_K_PLOT_SORTED_X_MODE 1
 
 #define XYGC_MAJOR_VERSION 1
-#define XYGC_MINOR_VERSION 0
+#define XYGC_MINOR_VERSION 1
 #define XYGC_RELEASE 0
 
 #ifdef __xygraph_cc
@@ -227,6 +227,8 @@ typedef struct editBufTag {
   int bufPlotColor[XYGC_K_MAX_TRACES];
   char bufXPvName[XYGC_K_MAX_TRACES][activeGraphicClass::MAX_PV_NAME+1];
   char bufYPvName[XYGC_K_MAX_TRACES][activeGraphicClass::MAX_PV_NAME+1];
+  int bufXSigned[XYGC_K_MAX_TRACES];
+  int bufYSigned[XYGC_K_MAX_TRACES];
   int bufLineThk[XYGC_K_MAX_TRACES];
   int bufLineStyle[XYGC_K_MAX_TRACES];
   char bufTrigPvName[activeGraphicClass::MAX_PV_NAME+1];
@@ -615,6 +617,8 @@ int savedXMinNullState, savedXMaxNullState, savedYMinNullState,
  savedYMaxNullState;
 int rescaleBoxX0, rescaleBoxY0, rescaleBoxX1, rescaleBoxY1,
  oldRescaleBoxW, oldRescaleBoxH;
+
+int xSigned[XYGC_K_MAX_TRACES], ySigned[XYGC_K_MAX_TRACES];
 
 public:
 
