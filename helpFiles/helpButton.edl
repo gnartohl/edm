@@ -1,8 +1,8 @@
 3 1 0
-779
-62
+787
+110
 485
-780
+803
 helvetica-medium-r-18.0
 0
 helvetica-medium-r-12.0
@@ -219,7 +219,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 23
-591
+616
 427
 16
 rgb
@@ -243,7 +243,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 23
-607
+632
 225
 16
 rgb
@@ -267,7 +267,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 23
-639
+664
 389
 16
 rgb
@@ -315,30 +315,6 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 23
-556
-221
-16
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Button is still active when invisible.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-23
 491
 302
 16
@@ -363,7 +339,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 22
-675
+700
 380
 16
 rgb
@@ -387,7 +363,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 22
-693
+718
 324
 16
 rgb
@@ -411,7 +387,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 22
-724
+749
 400
 16
 rgb
@@ -435,7 +411,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 22
-744
+769
 165
 16
 rgb
@@ -451,6 +427,30 @@ rgb
 <<<empty>>>
 <<<empty>>>
 rule or with invisible color.
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+23
+554
+319
+48
+rgb
+0,0,0
+0
+1
+rgb
+46517,46517,46517
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Button is still active when invisible box is checked\nbut is not active when it becomes invisible as the\nresult of a rule evaluation.
 helvetica-medium-r-14.0
 0
 1

@@ -1,8 +1,8 @@
 3 1 0
-157
-90
-453
-565
+137
+106
+463
+595
 helvetica-medium-r-18.0
 0
 helvetica-medium-r-12.0
@@ -39,7 +39,7 @@ helvetica-bold-r-14.0
 <<<E~O~D>>>
 cfcf6c8a_dbeb_11d2_8a97_00104b8742df
 1 2 0
-28
+19
 84
 111
 257
@@ -50,7 +50,7 @@ $(help)helpMenuButtonGif.gif
 <<<E~O~D>>>
 activeXTextClass
 2 1 0
-29
+20
 30
 142
 27
@@ -74,7 +74,7 @@ helvetica-medium-r-24.0
 <<<E~O~D>>>
 activeXTextClass
 2 1 0
-44
+35
 384
 196
 16
@@ -98,7 +98,7 @@ helvetica-medium-r-14.0
 <<<E~O~D>>>
 activeXTextClass
 2 1 0
-44
+35
 400
 204
 16
@@ -122,8 +122,8 @@ helvetica-medium-r-14.0
 <<<E~O~D>>>
 activeXTextClass
 2 1 0
-44
-464
+35
+491
 380
 16
 rgb
@@ -146,8 +146,8 @@ helvetica-medium-r-14.0
 <<<E~O~D>>>
 activeXTextClass
 2 1 0
-44
-482
+35
+509
 324
 16
 rgb
@@ -170,8 +170,8 @@ helvetica-medium-r-14.0
 <<<E~O~D>>>
 activeXTextClass
 2 1 0
-44
-513
+35
+540
 400
 16
 rgb
@@ -194,8 +194,8 @@ helvetica-medium-r-14.0
 <<<E~O~D>>>
 activeXTextClass
 2 1 0
-44
-533
+35
+560
 165
 16
 rgb
@@ -218,7 +218,7 @@ helvetica-medium-r-14.0
 <<<E~O~D>>>
 activeXTextClass
 2 1 0
-44
+35
 350
 302
 16
@@ -242,31 +242,7 @@ helvetica-medium-r-14.0
 <<<E~O~D>>>
 activeXTextClass
 2 1 0
-44
-431
-221
-16
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Button is still active when invisible.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-141
+132
 298
 179
 16
@@ -283,6 +259,30 @@ rgb
 <<<empty>>>
 <<<empty>>>
 Control PV != Readback PV
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+35
+431
+319
+48
+rgb
+0,0,0
+0
+1
+rgb
+46517,46517,46517
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Button is still active when invisible box is checked\nbut is not active when it becomes invisible as the\nresult of a rule evaluation.
 helvetica-medium-r-14.0
 0
 1
