@@ -4919,6 +4919,7 @@ XRectangle xR = { plotAreaX+1, plotAreaY+1, plotAreaW-2, plotAreaH-2 };
 void xyGraphClass::bufInvalidate ( void ) {
 
   bufInvalid = 1;
+  updateDimensions();
 
 }
 
@@ -5382,7 +5383,7 @@ int i, stat;
 
 void xyGraphClass::updateDimensions ( void ) {
 
-int lx, ly1, ly2, bInc, tInc, xlInc, ylInc, yi;
+int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, yi;
 
   fs = actWin->fi->getXFontStruct( fontTag );
   if ( fs ) {
@@ -5400,11 +5401,11 @@ int lx, ly1, ly2, bInc, tInc, xlInc, ylInc, yi;
   yi = 0;
   if ( y1Axis[yi] ) {
     if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-      ly1 = yScaleWidth( fontTag, fs, pow(10,curY1Min[yi]),
-       pow(10,curY1Max[yi]) );
+      ly1 = yScaleWidth( fontTag, fs, curY1Min[yi],
+       curY1Max[yi] ) + 4;
     }
     else {
-      ly1 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi] );
+      ly1 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi] ) + 4;
     }
   }
 
@@ -5412,63 +5413,77 @@ int lx, ly1, ly2, bInc, tInc, xlInc, ylInc, yi;
   yi = 1;
   if ( y1Axis[yi] ) {
     if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-      ly2 = yScaleWidth( fontTag, fs, pow(10,curY1Min[yi]),
-       pow(10,curY1Max[yi]) );
+      ly2 = yScaleWidth( fontTag, fs, curY1Min[yi],
+       curY1Max[yi] ) + 2;
     }
     else {
-      ly2 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi] );
+      ly2 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi] ) + 2;
     }
   }
 
-  if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-    lx = xScaleMargin( fontTag, fs, pow(10,curXMin), pow(10,curXMax) );
+  hx = 0;
+  lx = 0;
+  if ( xAxis ) {
+    hx = fontHeight + 1;
+    if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      lx = xScaleMargin( fontTag, fs, pow(10,curXMin), pow(10,curXMax) ) + 1;
+    }
+    else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+      lx = xScaleMargin( fontTag, fs, curXMin, curXMax ) + 1;
+    }
+    else {
+      lx = xScaleMargin( fontTag, fs, curXMin, curXMax ) + 1;
+    }
   }
-  else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-    lx = xScaleMargin( fontTag, fs, pow(10,curXMin), pow(10,curXMax) );
+
+  if ( y1Axis[0] && !y1Axis[1] ) {
+    ly2 = ly1;
   }
-  else {
-    lx = xScaleMargin( fontTag, fs, curXMin, curXMax );
+
+  if ( !y1Axis[0] && y1Axis[1] ) {
+    ly1 = ly2;
   }
 
   if ( ly1 < lx ) ly1 = lx;
+  if ( ly2 < lx ) ly2 = lx;
 
-  if ( xAxis || y1Axis[0] || y1Axis[1] ) {
+  if ( border )
+    bInc = 1;
+  else
+    bInc = 0;
 
-    plotAreaX = ly1 + fontHeight;
-    plotAreaW = w - plotAreaX - ly1 - ly2;
-
-    plotAreaH = h - xScaleHeight( fontTag, fs ) - 3 * fontHeight;
-    plotAreaY = 2 * fontHeight;
-
-  }
-  else {
-
-    if ( border )
-      bInc = 1;
-    else
-      bInc = 0;
-
-    if ( blank( graphTitle.getExpanded() ) )
+  if ( blank( graphTitle.getExpanded() ) ) {
+    if ( y1Axis[0] || y1Axis[1] ) {
+      tInc = (int) ( fontHeight / 2 ) + 1;
+    }
+    else {
       tInc = 0;
-    else
-      tInc = fontHeight;
-
-    if ( blank( xLabel.getExpanded() ) )
-      xlInc = 0;
-    else
-      xlInc = fontHeight;
-
-    if ( blank( yLabel.getExpanded() ) )
-      ylInc = 0;
-    else
-      ylInc = fontHeight;
-
-    plotAreaX = 0 + bInc + ylInc * 3 / 2;
-    plotAreaW = w - bInc - bInc - ylInc * 3;
-    plotAreaY = 0 + bInc + tInc * 2;
-    plotAreaH = h - bInc - bInc - ( tInc + xlInc ) * 2;
-
+    }
   }
+  else
+    tInc = fontHeight + 1;
+
+  if ( blank( xLabel.getExpanded() ) ) {
+    if ( !xAxis && ( y1Axis[0] || y1Axis[1] ) ) {
+      xlInc = (int) ( fontHeight / 2 ) + 1;
+    }
+    else {
+      xlInc = 0;
+    }
+  }
+  else
+    xlInc = fontHeight + 1;
+
+  if ( blank( yLabel.getExpanded() ) )
+    ylInc = 0;
+  else
+    ylInc = fontHeight + 1;
+
+  plotAreaX = ly1 + bInc + ylInc;
+  plotAreaW = w - bInc - bInc - ylInc - ly1 - ly2;
+  plotAreaY = 0 + bInc + (int) ( 1.5 * tInc );
+  plotAreaH = h - bInc - bInc - (int) ( 1.5 * tInc ) -
+   (int) ( 1.5 * xlInc ) - (int) ( 1.5 * hx );
 
 }
 
