@@ -181,7 +181,7 @@ chid controlPvId;
 evid alarmEventId, controlEventId;
 #endif
 
-char bufControlPvName[39+1];
+char bufControlPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass controlPvExpStr;
 
 int controlExists, widgetsCreated, active, activeMode;

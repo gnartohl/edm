@@ -133,10 +133,10 @@ ProcessVariable *alarmPvId;
 ProcessVariable *visPvId;
 
 expStringClass alarmPvExpStr;
-char bufAlarmPvName[39+1];
+char bufAlarmPvName[PV_Factory::MAX_PV_NAME+1];
 
 expStringClass visPvExpStr;
-char bufVisPvName[39+1];
+char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
 
 int alarmPvExists, visPvExists;
 int activeMode, init, opComplete;

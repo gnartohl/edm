@@ -209,7 +209,7 @@ int fontAscent, fontDescent, fontHeight;
 chid controlPvId;
 evid alarmEventId, controlEventId;
 
-char bufControlPvName[39+1];
+char bufControlPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass controlPvExpStr;
 
 char bufInitialState[30+1];

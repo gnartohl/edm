@@ -373,7 +373,7 @@ int activeMessageButtonClass::createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[39+1];
+char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -456,22 +456,23 @@ char oneName[39+1];
 
   }
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   destPvExpString.setRaw( oneName );
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, 39+1, f ); actWin->incLine();
   sourcePressPvExpString.setRaw( oneName );
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, 39+1, f ); actWin->incLine();
   sourceReleasePvExpString.setRaw( oneName );
 
-  readStringFromFile( oneName, MAX_ENUM_STRING_SIZE, f ); actWin->incLine();
+  readStringFromFile( oneName, MAX_ENUM_STRING_SIZE+1, f ); actWin->incLine();
   onLabel.setRaw( oneName );
-  //readStringFromFile( onLabel, MAX_ENUM_STRING_SIZE, f ); actWin->incLine();
+  //readStringFromFile( onLabel, MAX_ENUM_STRING_SIZE+1, f ); actWin->incLine();
 
-  readStringFromFile( oneName, MAX_ENUM_STRING_SIZE, f ); actWin->incLine();
+  readStringFromFile( oneName, MAX_ENUM_STRING_SIZE+1, f ); actWin->incLine();
   offLabel.setRaw( oneName );
-  //readStringFromFile( offLabel, MAX_ENUM_STRING_SIZE, f ); actWin->incLine();
+  //readStringFromFile( offLabel, MAX_ENUM_STRING_SIZE+1, f ); actWin->incLine();
 
   fscanf( f, "%d\n", &toggle ); actWin->incLine();
 
@@ -488,7 +489,7 @@ char oneName[39+1];
 
   fscanf( f, "%d\n", &invisible ); actWin->incLine();
 
-  readStringFromFile( fontTag, 63, f ); actWin->incLine();
+  readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
   actWin->fi->loadFontTag( fontTag );
   fs = actWin->fi->getXFontStruct( fontTag );
@@ -725,8 +726,8 @@ char *tk, *gotData, *context, buf[255+1];
 
         tk = strtok_r( NULL, "\"\n \t", &context );
         if ( tk ) {
-          strncpy( bufDestPvName, tk, 28 );
-          bufDestPvName[28] = 0;
+          strncpy( bufDestPvName, tk, activeGraphicClass::MAX_PV_NAME );
+          bufDestPvName[activeGraphicClass::MAX_PV_NAME] = 0;
           destPvExpString.setRaw( bufDestPvName );
 	}
 
@@ -807,9 +808,10 @@ char title[32], *ptr;
   strncpy( bufFontTag, fontTag, 63 );
 
   if ( destPvExpString.getRaw() )
-    strncpy( bufDestPvName, destPvExpString.getRaw(), 39 );
+    strncpy( bufDestPvName, destPvExpString.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufDestPvName, "", 39 );
+    strcpy( bufDestPvName, "" );
 
   if ( sourcePressPvExpString.getRaw() )
     strncpy( bufSourcePressPvName, sourcePressPvExpString.getRaw(), 39 );
@@ -855,7 +857,8 @@ char title[32], *ptr;
   ef.addTextField( activeMessageButtonClass_str6, 30, &bufW );
   ef.addTextField( activeMessageButtonClass_str7, 30, &bufH );
 
-  ef.addTextField( activeMessageButtonClass_str18, 30, bufDestPvName, 39 );
+  ef.addTextField( activeMessageButtonClass_str18, 30, bufDestPvName,
+   activeGraphicClass::MAX_PV_NAME );
 
   ef.addOption( activeMessageButtonClass_str8, activeMessageButtonClass_str9, &bufToggle );
   ef.addToggle( activeMessageButtonClass_str10, &buf3D );

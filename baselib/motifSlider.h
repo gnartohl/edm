@@ -331,9 +331,9 @@ ProcessVariable *controlPvId, *controlLabelPvId;
 
 expStringClass controlPvName, controlLabelName;
 
-char controlBufPvName[39+1];
-char controlLabel[39+1];
-char controlBufLabelName[39+1];
+char controlBufPvName[PV_Factory::MAX_PV_NAME+1];
+char controlLabel[PV_Factory::MAX_PV_NAME+1];
+char controlBufLabelName[PV_Factory::MAX_PV_NAME+1];
 int formatType, bufFormatType;
 char controlFormat[15+1];
 

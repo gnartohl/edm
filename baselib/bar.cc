@@ -634,7 +634,7 @@ int activeBarClass::createFromFile (
 int r, g, b, discard, l, stat, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[39+1], fmt[31+1], str[31+1];
+char oneName[activeGraphicClass::MAX_PV_NAME+1], fmt[31+1], str[31+1];
 float fBarOriginX;
 
   this->actWin = _actWin;
@@ -724,13 +724,15 @@ float fBarOriginX;
 
   bgColor.setAlarmInsensitive();
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   controlPvExpStr.setRaw( oneName );
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   readPvExpStr.setRaw( oneName );
 
-  readStringFromFile( label, 39, f ); actWin->incLine();
+  readStringFromFile( label, 39+1, f ); actWin->incLine();
 
   fscanf( f, "%d\n", &labelType ); actWin->incLine();
 
@@ -753,7 +755,7 @@ float fBarOriginX;
 
   }
 
-  readStringFromFile( fontTag, 63, f ); actWin->incLine();
+  readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
   actWin->fi->loadFontTag( fontTag );
   fs = actWin->fi->getXFontStruct( fontTag );
@@ -787,7 +789,7 @@ float fBarOriginX;
 
     efReadMax.read( f ); actWin->incLine();
 
-    readStringFromFile( oneName, 39, f ); actWin->incLine();
+    readStringFromFile( oneName, 39+1, f ); actWin->incLine();
     strncpy( scaleFormat, oneName, 15 );
 
     if ( limitsFromDb || efPrecision.isNull() )
@@ -817,7 +819,8 @@ float fBarOriginX;
 
   if ( ( major > 1 ) || ( minor > 5 ) ) {
 
-    readStringFromFile( oneName, 39, f ); actWin->incLine();
+    readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+     actWin->incLine();
     nullPvExpStr.setRaw( oneName );
 
   }
@@ -905,19 +908,19 @@ char title[32], *ptr;
   strncpy( bufFontTag, fontTag, 63 );
 
   if ( readPvExpStr.getRaw() )
-    strncpy( bufReadPvName, readPvExpStr.getRaw(), 39 );
+    strncpy( bufReadPvName, readPvExpStr.getRaw(), activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufReadPvName, "", 39 );
+    strcpy( bufReadPvName, "" );
 
   if ( controlPvExpStr.getRaw() )
-    strncpy( bufControlPvName, controlPvExpStr.getRaw(), 39 );
+    strncpy( bufControlPvName, controlPvExpStr.getRaw(), activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufControlPvName, "", 39 );
+    strcpy( bufControlPvName, "" );
 
   if ( nullPvExpStr.getRaw() )
-    strncpy( bufNullPvName, nullPvExpStr.getRaw(), 39 );
+    strncpy( bufNullPvName, nullPvExpStr.getRaw(), activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufNullPvName, "", 39 );
+    strcpy( bufNullPvName, "" );
 
   strncpy( bufLabel, label, 39 );
 
@@ -949,9 +952,9 @@ char title[32], *ptr;
   ef.addTextField( activeBarClass_str8, 30, &bufY );
   ef.addTextField( activeBarClass_str9, 30, &bufW );
   ef.addTextField( activeBarClass_str10, 30, &bufH );
-//   ef.addTextField( activeBarClass_str11, 30, bufControlPvName, 39 );
-  ef.addTextField( activeBarClass_str12, 30, bufReadPvName, 39 );
-  ef.addTextField( activeBarClass_str13, 30, bufNullPvName, 39 );
+//   ef.addTextField( activeBarClass_str11, 30, bufControlPvName, activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeBarClass_str12, 30, bufReadPvName, activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeBarClass_str13, 30, bufNullPvName, activeGraphicClass::MAX_PV_NAME );
   ef.addOption( activeBarClass_str14, activeBarClass_str15, &bufLabelType );
   ef.addTextField( activeBarClass_str16, 30, bufLabel, 39 );
   ef.addToggle( activeBarClass_str18, &bufBorder );

@@ -160,8 +160,8 @@ chid controlPvId, readPvId;
 evid readEventId, alarmEventId;
 
 expStringClass controlPvExpStr, readPvExpStr;
-char bufControlPvName[39+1];
-char bufReadPvName[39+1];
+char bufControlPvName[activeGraphicClass::MAX_PV_NAME+1];
+char bufReadPvName[activeGraphicClass::MAX_PV_NAME+1];
 
 int controlExists, readExists;
 

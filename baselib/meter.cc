@@ -509,7 +509,7 @@ int activeMeterClass::createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[39+1];
+char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -625,22 +625,24 @@ char oneName[39+1];
 
   bgColor.setAlarmInsensitive();
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   controlPvExpStr.setRaw( oneName );
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   readPvExpStr.setRaw( oneName );
 
-  readStringFromFile( literalLabel, 39, f ); actWin->incLine();
+  readStringFromFile( literalLabel, 39+1, f ); actWin->incLine();
 
-  readStringFromFile( label, 39, f ); actWin->incLine();
+  readStringFromFile( label, 39+1, f ); actWin->incLine();
 
   fscanf( f, "%d\n", &labelType ); actWin->incLine();
 
   fscanf( f, "%d\n", &showScale ); actWin->incLine();
 
   if ( major > 1 || minor > 1 ) {
-    readStringFromFile( oneName, 39, f ); actWin->incLine();
+    readStringFromFile( oneName, 39+1, f ); actWin->incLine();
     strncpy( scaleFormat, oneName, 15 );
   }
 
@@ -664,13 +666,13 @@ char oneName[39+1];
   fscanf( f, "%lg\n", &scaleMin ); actWin->incLine();
   fscanf( f, "%lg\n", &scaleMax ); actWin->incLine();
 
-  readStringFromFile( labelFontTag, 63, f ); actWin->incLine();
+  readStringFromFile( labelFontTag, 63+1, f ); actWin->incLine();
   actWin->fi->loadFontTag( labelFontTag );
   labelFs = actWin->fi->getXFontStruct( labelFontTag );
   updateFont( labelFontTag, &labelFs, &labelFontAscent, &labelFontDescent, &labelFontHeight );
 
 
-  readStringFromFile( scaleFontTag, 63, f ); actWin->incLine();
+  readStringFromFile( scaleFontTag, 63+1, f ); actWin->incLine();
   actWin->fi->loadFontTag( scaleFontTag );
   scaleFs = actWin->fi->getXFontStruct( scaleFontTag );
   updateFont( scaleFontTag, &scaleFs, &scaleFontAscent, &scaleFontDescent, &scaleFontHeight );
@@ -725,14 +727,16 @@ char title[32], *ptr;
   strncpy( bufLabelFontTag, labelFontTag, 63 );
 
   if ( readPvExpStr.getRaw() )
-    strncpy( bufReadPvName, readPvExpStr.getRaw(), 39 );
+    strncpy( bufReadPvName, readPvExpStr.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufReadPvName, "", 39 );
+    strcpy( bufReadPvName, "" );
 
   if ( controlPvExpStr.getRaw() )
-    strncpy( bufControlPvName, controlPvExpStr.getRaw(), 39 );
+    strncpy( bufControlPvName, controlPvExpStr.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufControlPvName, "", 39 );
+    strcpy( bufControlPvName, "" );
 
   strncpy( bufLabel, label, 39 );
   strncpy( bufLiteralLabel, literalLabel, 39);
@@ -758,8 +762,10 @@ char title[32], *ptr;
   ef.addTextField( activeMeterClass_str5, 30, &bufY );
   ef.addTextField( activeMeterClass_str6, 30, &bufW );
   ef.addTextField( activeMeterClass_str7, 30, &bufH );
-  //   ef.addTextField( activeMeterClass_str8, 30, bufControlPvName, 39 );
-  ef.addTextField( activeMeterClass_str9, 30, bufReadPvName, 39 );
+  //   ef.addTextField( activeMeterClass_str8, 30, bufControlPvName,
+  //    activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeMeterClass_str9, 30, bufReadPvName,
+   activeGraphicClass::MAX_PV_NAME );
   ef.addOption( activeMeterClass_str10, activeMeterClass_str11, &bufLabelType );
   ef.addTextField( activeMeterClass_str12, 30, bufLiteralLabel, 39 );
   ef.addColorButton( activeMeterClass_str14, actWin->ci,&labelCb,&bufLabelColor);

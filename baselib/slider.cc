@@ -1083,7 +1083,7 @@ int activeSliderClass::createFromFile (
 int r, g, b, xOfs, stat, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[39+1];
+char oneName[activeGraphicClass::MAX_PV_NAME+1];
 float val;
 
   actWin = _actWin;
@@ -1172,26 +1172,31 @@ float val;
   fscanf( f, "%g\n", &val ); actWin->incLine();
   increment = (double) val;
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   controlPvName.setRaw( oneName );
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   readPvName.setRaw( oneName );
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   savedValuePvName.setRaw( oneName );
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   controlLabelName.setRaw( oneName );
 
   fscanf( f, "%d\n", &controlLabelType ); actWin->incLine();
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   readLabelName.setRaw( oneName );
 
   fscanf( f, "%d\n", &readLabelType ); actWin->incLine();
 
-  readStringFromFile( fontTag, 63, f ); actWin->incLine();
+  readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
   if ( ( major == 1 ) && ( minor < 4 ) ) {
     fscanf( f, "%d\n", &formatType ); // no longer in use actWin->incLine();
@@ -1208,7 +1213,7 @@ float val;
   }
 
   if ( ( major > 1 ) || ( minor > 2 ) ) {
-    readStringFromFile( this->id, 31, f ); actWin->incLine();
+    readStringFromFile( this->id, 31+1, f ); actWin->incLine();
     fscanf( f, "%d\n", &changeCallbackFlag ); actWin->incLine();
     fscanf( f, "%d\n", &activateCallbackFlag ); actWin->incLine();
     fscanf( f, "%d\n", &deactivateCallbackFlag ); actWin->incLine();
@@ -1233,7 +1238,7 @@ float val;
 
     efScaleMax.read( f ); actWin->incLine();
 
-    readStringFromFile( oneName, 39, f ); actWin->incLine();
+    readStringFromFile( oneName, 39+1, f ); actWin->incLine();
     strncpy( displayFormat, oneName, 15 );
 
     if ( limitsFromDb || efPrecision.isNull() )
@@ -1317,27 +1322,32 @@ char title[32], *ptr;
   bufDeactivateCallbackFlag = deactivateCallbackFlag;
 
   if ( controlPvName.getRaw() )
-    strncpy( controlBufPvName, controlPvName.getRaw(), 39 );
+    strncpy( controlBufPvName, controlPvName.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
     strncpy( controlBufPvName, "", 39 );
 
   if ( readPvName.getRaw() )
-    strncpy( readBufPvName, readPvName.getRaw(), 39 );
+    strncpy( readBufPvName, readPvName.getRaw(),
+    activeGraphicClass::MAX_PV_NAME );
   else
     strncpy( readBufPvName, "", 39 );
 
   if ( savedValuePvName.getRaw() )
-    strncpy( savedValueBufPvName, savedValuePvName.getRaw(), 39 );
+    strncpy( savedValueBufPvName, savedValuePvName.getRaw(),
+    activeGraphicClass::MAX_PV_NAME );
   else
     strncpy( savedValueBufPvName, "", 39 );
 
   if ( controlLabelName.getRaw() )
-    strncpy( controlBufLabelName, controlLabelName.getRaw(), 39 );
+    strncpy( controlBufLabelName, controlLabelName.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
     strncpy( controlBufLabelName, "", 39 );
 
   if ( readLabelName.getRaw() )
-    strncpy( readBufLabelName, readLabelName.getRaw(), 39 );
+    strncpy( readBufLabelName, readLabelName.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
     strncpy( readBufLabelName, "", 39 );
 
@@ -1373,15 +1383,20 @@ char title[32], *ptr;
   ef.addTextField( activeSliderClass_str21, 30, &bufW );
   ef.addTextField( activeSliderClass_str22, 30, &bufH );
 
-  ef.addTextField( activeSliderClass_str36, 30, controlBufPvName, 39 );
-  ef.addTextField( activeSliderClass_str42, 30, readBufPvName, 39 );
-  ef.addTextField( activeSliderClass_str48, 30, savedValueBufPvName, 39 );
+  ef.addTextField( activeSliderClass_str36, 30, controlBufPvName,
+   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeSliderClass_str42, 30, readBufPvName,
+   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeSliderClass_str48, 30, savedValueBufPvName,
+   activeGraphicClass::MAX_PV_NAME );
 
-  ef.addTextField( activeSliderClass_str37, 30, controlBufLabelName, 39 );
+  ef.addTextField( activeSliderClass_str37, 30, controlBufLabelName,
+   activeGraphicClass::MAX_PV_NAME );
   ef.addOption( activeSliderClass_str38, activeSliderClass_str39,
    controlLabelTypeStr, 15 );
 
-  ef.addTextField( activeSliderClass_str43, 30, readBufLabelName, 39 );
+  ef.addTextField( activeSliderClass_str43, 30, readBufLabelName,
+   activeGraphicClass::MAX_PV_NAME );
   ef.addOption( activeSliderClass_str44, activeSliderClass_str45,
    readLabelTypeStr, 15 );
 
@@ -2594,10 +2609,12 @@ char callbackName[63+1];
 
     if ( controlLabelType == SLC_K_PV_NAME ) {
       controlLabelExists = 1;
-      strncpy( controlLabel, controlPvName.getExpanded(), 39 );
+      strncpy( controlLabel, controlPvName.getExpanded(),
+       activeGraphicClass::MAX_PV_NAME );
     }
     else {
-      strncpy( controlLabel, controlLabelName.getExpanded(), 39 );
+      strncpy( controlLabel, controlLabelName.getExpanded(),
+       activeGraphicClass::MAX_PV_NAME );
     }
 
 
@@ -2611,10 +2628,12 @@ char callbackName[63+1];
 
     if ( readLabelType == SLC_K_PV_NAME ) {
       readLabelExists = 1;
-      strncpy( readLabel, readPvName.getExpanded(), 39 );
+      strncpy( readLabel, readPvName.getExpanded(),
+       activeGraphicClass::MAX_PV_NAME );
     }
     else {
-      strncpy( readLabel, readLabelName.getExpanded(), 39 );
+      strncpy( readLabel, readLabelName.getExpanded(),
+       activeGraphicClass::MAX_PV_NAME );
     }
 
     break;

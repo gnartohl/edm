@@ -444,7 +444,7 @@ int activeMessageBoxClass::createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[39+1];
+char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -504,10 +504,10 @@ char oneName[39+1];
 
   }
 
-  readStringFromFile( oneName, 39, f );
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
   readPvExpStr.setRaw( oneName );
 
-  readStringFromFile( fontTag, 63, f );
+  readStringFromFile( fontTag, 63+1, f );
 
   actWin->fi->loadFontTag( fontTag );
   fs = actWin->fi->getXFontStruct( fontTag );
@@ -518,7 +518,7 @@ char oneName[39+1];
 
   fscanf( f, "%d\n", &flushTimerValue );
 
-  readStringFromFile( logFileName, 127, f );
+  readStringFromFile( logFileName, 127+1, f );
 
   if ( ( major > 2 ) || ( ( major == 2 ) && ( minor == 1 ) ) ) {
     fscanf( f, "%d\n", &fileIsReadOnly );
@@ -559,9 +559,10 @@ char title[32], *ptr;
   strncpy( bufFontTag, fontTag, 63 );
 
   if ( readPvExpStr.getRaw() )
-    strncpy( bufReadPvName, readPvExpStr.getRaw(), 39 );
+    strncpy( bufReadPvName, readPvExpStr.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufReadPvName, "", 39 );
+    strcpy( bufReadPvName, "" );
 
   bufSize = size;
   bufFileSize = fileSize;
@@ -580,7 +581,8 @@ char title[32], *ptr;
   ef.addTextField( activeMessageBoxClass_str8, 30, &bufW );
   ef.addTextField( activeMessageBoxClass_str9, 30, &bufH );
   ef.addTextField( activeMessageBoxClass_str10, 30, &bufSize );
-  ef.addTextField( activeMessageBoxClass_str11, 30, bufReadPvName, 39 );
+  ef.addTextField( activeMessageBoxClass_str11, 30, bufReadPvName,
+   activeGraphicClass::MAX_PV_NAME );
   ef.addTextField( activeMessageBoxClass_str12, 30, bufLogFileName, 127 );
   ef.addToggle( activeMessageBoxClass_str26, &bufFileIsReadOnly );
   ef.addTextField( activeMessageBoxClass_str13, 30, &bufFileSize );

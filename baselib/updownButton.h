@@ -196,10 +196,10 @@ chid destPvId, savePvId;
 evid destEventId, saveEventId;
 
 expStringClass destPvExpString;
-char bufDestPvName[39+1];
+char bufDestPvName[activeGraphicClass::MAX_PV_NAME+1];
 
 expStringClass savePvExpString;
-char bufSavePvName[39+1];
+char bufSavePvName[activeGraphicClass::MAX_PV_NAME+1];
 
 expStringClass fineExpString;
 char bufFine[39+1];

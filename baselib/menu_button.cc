@@ -551,7 +551,7 @@ int activeMenuButtonClass::createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[39+1];
+char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -662,13 +662,15 @@ char oneName[39+1];
 
   }
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   controlPvExpStr.setRaw( oneName );
 
-  readStringFromFile( fontTag, 63, f ); actWin->incLine();
+  readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
   if ( ( major > 1 ) || ( minor > 2 ) ) {
-    readStringFromFile( oneName, 39, f ); actWin->incLine();
+    readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+     actWin->incLine();
     readPvExpStr.setRaw( oneName );
   }
   else {
@@ -716,14 +718,16 @@ char title[32], *ptr;
   bufBgColorMode = bgColorMode;
 
   if ( controlPvExpStr.getRaw() )
-    strncpy( bufControlPvName, controlPvExpStr.getRaw(), 39 );
+    strncpy( bufControlPvName, controlPvExpStr.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufControlPvName, "", 39 );
+    strcpy( bufControlPvName, "" );
 
   if ( readPvExpStr.getRaw() )
-    strncpy( bufReadPvName, readPvExpStr.getRaw(), 39 );
+    strncpy( bufReadPvName, readPvExpStr.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufReadPvName, "", 39 );
+    strcpy( bufReadPvName, "" );
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -735,8 +739,10 @@ char title[32], *ptr;
   ef.addTextField( activeMenuButtonClass_str5, 30, &bufY );
   ef.addTextField( activeMenuButtonClass_str6, 30, &bufW );
   ef.addTextField( activeMenuButtonClass_str7, 30, &bufH );
-  ef.addTextField( activeMenuButtonClass_str17, 30, bufControlPvName, 39 );
-  ef.addTextField( activeMenuButtonClass_str18, 30, bufReadPvName, 39 );
+  ef.addTextField( activeMenuButtonClass_str17, 30, bufControlPvName,
+   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeMenuButtonClass_str18, 30, bufReadPvName,
+   activeGraphicClass::MAX_PV_NAME );
 
   ef.addColorButton( activeMenuButtonClass_str8, actWin->ci, &fgCb,
    &bufFgColor );

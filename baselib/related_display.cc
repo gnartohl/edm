@@ -72,32 +72,6 @@ int i = ptr->index;
 
 #endif
 
-#if 0
-
-static void rdc_edit_update1 (
-  Widget w,
-  XtPointer client,
-  XtPointer call )
-{
-
-int i;
-relatedDisplayClass *rdo = (relatedDisplayClass *) client;
-
-  rdo->actWin->setChanged();
-
-}
-
-static void rdc_edit_apply1 (
-  Widget w,
-  XtPointer client,
-  XtPointer call )
-{
-
-  rdc_edit_update1 ( w, client, call );
-
-}
-#endif
-
 static void rdc_edit_ok1 (
   Widget w,
   XtPointer client,
@@ -110,20 +84,6 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
   rdo->ef1->popdownNoDestroy();
 
 }
-
-#if 0
-static void rdc_edit_cancel1 (
-  Widget w,
-  XtPointer client,
-  XtPointer call )
-{
-
-relatedDisplayClass *rdo = (relatedDisplayClass *) client;
-
-  rdo->ef1->popdownNoDestroy();
-
-}
-#endif
 
 static void rdc_edit_update (
 
@@ -611,7 +571,7 @@ int i, numPvs, r, g, b, index, more, md;
 int major, minor, release;
 unsigned int pixel;
 char oneName[255+1];
-char onePvName[127+1];
+char onePvName[activeGraphicClass::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -681,7 +641,7 @@ char onePvName[127+1];
 
   }
 
-  readStringFromFile( oneName, 127, f ); actWin->incLine();
+  readStringFromFile( oneName, 127+1, f ); actWin->incLine();
   displayFileName[0].setRaw( oneName );
 
   if ( blank( displayFileName[0].getRaw() ) ) {
@@ -693,10 +653,10 @@ char onePvName[127+1];
     numDsps = 1;
   }
 
-  readStringFromFile( oneName, 127, f ); actWin->incLine();
+  readStringFromFile( oneName, 127+1, f ); actWin->incLine();
   label[0].setRaw( oneName );
 
-  readStringFromFile( fontTag, 63, f ); actWin->incLine();
+  readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
   if ( ( major > 1 ) || ( minor > 2 ) ) {
     fscanf( f, "%d\n", &invisible ); actWin->incLine();
@@ -718,9 +678,10 @@ char onePvName[127+1];
     fscanf( f, "%d\n", &numPvs ); actWin->incLine();
     for ( i=0; i<numPvs; i++ ) {
       if ( i >= NUMPVS ) i = NUMPVS - 1;
-      readStringFromFile( onePvName, 39, f ); actWin->incLine();
+      readStringFromFile( onePvName, activeGraphicClass::MAX_PV_NAME+1, f );
+       actWin->incLine();
       destPvExpString[i].setRaw( onePvName );
-      readStringFromFile( onePvName, 39, f ); actWin->incLine();
+      readStringFromFile( onePvName, 39+1, f ); actWin->incLine();
       sourceExpString[i].setRaw( onePvName );
     }
     for ( i=numPvs; i<NUMPVS; i++ ) {
@@ -750,7 +711,7 @@ char onePvName[127+1];
   }
 
   if ( ( major > 1 ) || ( minor > 8 ) ) {
-    readStringFromFile( oneName, 255, f ); actWin->incLine();
+    readStringFromFile( oneName, 255+1, f ); actWin->incLine();
     symbolsExpStr[0].setRaw( oneName );
     fscanf( f, "%d\n", &replaceSymbols[0] ); actWin->incLine();
   }
@@ -782,7 +743,7 @@ char onePvName[127+1];
 
       for ( i=1; i<md; i++ ) { // for forward compatibility
 
-        readStringFromFile( oneName, 127, f ); actWin->incLine();
+        readStringFromFile( oneName, 127+1, f ); actWin->incLine();
         displayFileName[i].setRaw( oneName );
 
         if ( more && !blank(displayFileName[i].getRaw() ) ) {
@@ -792,7 +753,7 @@ char onePvName[127+1];
           more = 0;
         }
 
-        readStringFromFile( oneName, 127, f ); actWin->incLine();
+        readStringFromFile( oneName, 127+1, f ); actWin->incLine();
         label[i].setRaw( oneName );
 
         fscanf( f, "%d\n", &closeAction[i] );
@@ -803,7 +764,7 @@ char onePvName[127+1];
 
         fscanf( f, "%d\n", &cascade[i] );
 
-        readStringFromFile( oneName, 255, f ); actWin->incLine();
+        readStringFromFile( oneName, 255+1, f ); actWin->incLine();
         symbolsExpStr[i].setRaw( oneName );
 
         fscanf( f, "%d\n", &replaceSymbols[i] );
@@ -826,7 +787,7 @@ char onePvName[127+1];
     }
 
     if ( ( major > 2 ) || ( major == 2 ) && ( minor > 1 ) ) {
-      readStringFromFile( oneName, 127, f ); actWin->incLine();
+      readStringFromFile( oneName, 127+1, f ); actWin->incLine();
       buttonLabel.setRaw( oneName );
     }
     else {
@@ -847,14 +808,14 @@ char onePvName[127+1];
 
     for ( i=1; i<numDsps; i++ ) {
 
-      readStringFromFile( oneName, 127, f ); actWin->incLine();
+      readStringFromFile( oneName, 127+1, f ); actWin->incLine();
       displayFileName[i].setRaw( oneName );
 
       if ( blank(displayFileName[i].getRaw() ) ) {
         more = 0;
       }
 
-      readStringFromFile( oneName, 127, f ); actWin->incLine();
+      readStringFromFile( oneName, 127+1, f ); actWin->incLine();
       label[i].setRaw( oneName );
 
       fscanf( f, "%d\n", &closeAction[i] );
@@ -865,7 +826,7 @@ char onePvName[127+1];
 
       fscanf( f, "%d\n", &cascade[i] );
 
-      readStringFromFile( oneName, 255, f ); actWin->incLine();
+      readStringFromFile( oneName, 255+1, f ); actWin->incLine();
       symbolsExpStr[i].setRaw( oneName );
 
       fscanf( f, "%d\n", &replaceSymbols[i] );
@@ -885,7 +846,7 @@ char onePvName[127+1];
       symbolsExpStr[i].setRaw( "" );
     }
 
-    readStringFromFile( oneName, 127, f ); actWin->incLine();
+    readStringFromFile( oneName, 127+1, f ); actWin->incLine();
     buttonLabel.setRaw( oneName );
 
     fscanf( f, "%d\n", &noEdit ); actWin->incLine();
@@ -1233,18 +1194,19 @@ char title[32], *ptr;
 
   for ( i=0; i<NUMPVS; i++ ) {
     if ( destPvExpString[i].getRaw() ) {
-      strncpy( buf->bufDestPvName[i], destPvExpString[i].getRaw(), 39 );
-      buf->bufDestPvName[i][39] = 0;
+      strncpy( buf->bufDestPvName[i], destPvExpString[i].getRaw(),
+       activeGraphicClass::MAX_PV_NAME );
+      buf->bufDestPvName[i][activeGraphicClass::MAX_PV_NAME] = 0;
     }
     else {
-      strncpy( buf->bufDestPvName[i], "", 39 );
+      strcpy( buf->bufDestPvName[i], "" );
     }
     if ( sourceExpString[i].getRaw() ) {
       strncpy( buf->bufSource[i], sourceExpString[i].getRaw(), 39 );
       buf->bufSource[i][39] = 0;
     }
     else {
-      strncpy( buf->bufSource[i], "", 39 );
+      strcpy( buf->bufSource[i], "" );
     }
   }
 
@@ -1324,7 +1286,7 @@ char title[32], *ptr;
 
   for ( i=0; i<NUMPVS; i++ ) {
     ef.addTextField( relatedDisplayClass_str15, 30, buf->bufDestPvName[i],
-     39 );
+     activeGraphicClass::MAX_PV_NAME );
     ef.addTextField( relatedDisplayClass_str16, 30, buf->bufSource[i], 39 );
   }
 

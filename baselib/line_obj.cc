@@ -555,14 +555,14 @@ char title[32], *ptr;
     bufLineStyle = 1;
 
   if ( alarmPvExpStr.getRaw() )
-    strncpy( bufAlarmPvName, alarmPvExpStr.getRaw(), 39 );
+    strncpy( bufAlarmPvName, alarmPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strncpy( bufAlarmPvName, "", 39 );
+    strcpy( bufAlarmPvName, "" );
 
   if ( visPvExpStr.getRaw() )
-    strncpy( bufVisPvName, visPvExpStr.getRaw(), 39 );
+    strncpy( bufVisPvName, visPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strncpy( bufVisPvName, "", 39 );
+    strcpy( bufVisPvName, "" );
 
   if ( visInverted )
     bufVisInverted = 0;
@@ -589,8 +589,10 @@ char title[32], *ptr;
   ef.addToggle( activeLineClass_str16, &bufFill );
   ef.addColorButton( activeLineClass_str17, actWin->ci, &fillCb, &bufFillColor );
   ef.addToggle( activeLineClass_str18, &bufFillColorMode );
-  ef.addTextField( activeLineClass_str19, 30, bufAlarmPvName, 39 );
-  ef.addTextField( activeLineClass_str20, 30, bufVisPvName, 39 );
+  ef.addTextField( activeLineClass_str19, 30, bufAlarmPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addTextField( activeLineClass_str20, 30, bufVisPvName,
+   PV_Factory::MAX_PV_NAME );
   ef.addOption( " ", activeLineClass_str22, &bufVisInverted );
   ef.addTextField( activeLineClass_str23, 30, bufMinVisString, 39 );
   ef.addTextField( activeLineClass_str24, 30, bufMaxVisString, 39 );
@@ -1130,7 +1132,7 @@ int activeLineClass::createFromFile (
 int i, r, g, b, oneX, oneY, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[39+1];
+char oneName[PV_Factory::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -1217,17 +1219,19 @@ char oneName[39+1];
   fscanf( f, "%d\n", &lineWidth ); actWin->incLine();
   fscanf( f, "%d\n", &lineStyle ); actWin->incLine();
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
+   actWin->incLine();
   alarmPvExpStr.setRaw( oneName );
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
+   actWin->incLine();
   visPvExpStr.setRaw( oneName );
 
   fscanf( f, "%d\n", &visInverted ); actWin->incLine();
 
   if ( ( major > 1 ) || ( minor > 0 ) ) {
-    readStringFromFile( minVisString, 39, f ); actWin->incLine();
-    readStringFromFile( maxVisString, 39, f ); actWin->incLine();
+    readStringFromFile( minVisString, 39+1, f ); actWin->incLine();
+    readStringFromFile( maxVisString, 39+1, f ); actWin->incLine();
   }
   else {
     strcpy( minVisString, "1" );

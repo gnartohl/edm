@@ -436,14 +436,16 @@ char title[32], *ptr;
   bufLineStyle = lineStyle;
 
   if ( alarmPvExpStr.getRaw() )
-    strncpy( bufAlarmPvName, alarmPvExpStr.getRaw(), 39 );
+    strncpy( bufAlarmPvName, alarmPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strncpy( bufAlarmPvName, "", 39 );
+    strcpy( bufAlarmPvName, "" );
 
   if ( visPvExpStr.getRaw() )
-    strncpy( bufVisPvName, visPvExpStr.getRaw(), 39 );
+    strncpy( bufVisPvName, visPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strncpy( bufVisPvName, "", 39 );
+    strcpy( bufVisPvName, "" );
 
   if ( visInverted )
     bufVisInverted = 0;
@@ -477,8 +479,10 @@ char title[32], *ptr;
   ef.addOption( activeArcClass_str19, activeArcClass_str20, &bufFillMode );
   ef.addColorButton( activeArcClass_str21, actWin->ci, &fillCb, &bufFillColor );
   ef.addToggle( activeArcClass_str22, &bufFillColorMode );
-  ef.addTextField( activeArcClass_str23, 30, bufAlarmPvName, 39 );
-  ef.addTextField( activeArcClass_str24, 30, bufVisPvName, 39 );
+  ef.addTextField( activeArcClass_str23, 30, bufAlarmPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addTextField( activeArcClass_str24, 30, bufVisPvName,
+   PV_Factory::MAX_PV_NAME );
   ef.addOption( " ", activeArcClass_str25, &bufVisInverted );
   ef.addTextField( activeArcClass_str26, 30, bufMinVisString, 39 );
   ef.addTextField( activeArcClass_str27, 30, bufMaxVisString, 39 );
@@ -518,7 +522,7 @@ int activeArcClass::createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[39+1];
+char oneName[PV_Factory::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -579,16 +583,19 @@ char oneName[39+1];
   else
     fillColor.setAlarmInsensitive();
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
+
+   actWin->incLine();
   alarmPvExpStr.setRaw( oneName );
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
+   actWin->incLine();
   visPvExpStr.setRaw( oneName );
 
   fscanf( f, "%d\n", &visInverted ); actWin->incLine();
 
-  readStringFromFile( minVisString, 39, f ); actWin->incLine();
-  readStringFromFile( maxVisString, 39, f ); actWin->incLine();
+  readStringFromFile( minVisString, 39+1, f ); actWin->incLine();
+  readStringFromFile( maxVisString, 39+1, f ); actWin->incLine();
 
   fscanf( f, "%d\n", &lineWidth ); actWin->incLine();
   fscanf( f, "%d\n", &lineStyle ); actWin->incLine();

@@ -1189,8 +1189,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
   strncpy( axtdo->curValue, axtdo->bufPvName, 39 );
   axtdo->curValue[39] = 0;
 
-  strncpy( axtdo->pvName, axtdo->bufPvName, 39 );
-  axtdo->pvName[39] = 0;
+  strncpy( axtdo->pvName, axtdo->bufPvName, activeGraphicClass::MAX_PV_NAME );
+  axtdo->pvName[activeGraphicClass::MAX_PV_NAME] = 0;
   axtdo->pvExpStr.setRaw( axtdo->pvName );
 
   axtdo->svalPvExpStr.setRaw( axtdo->bufSvalPvName );
@@ -1465,8 +1465,8 @@ int i;
   stringY = source->stringY;
   stringX = source->stringX;
 
-  strncpy( pvName, source->pvName, 39 );
-  pvName[39] = 0;
+  strncpy( pvName, source->pvName, activeGraphicClass::MAX_PV_NAME );
+  pvName[activeGraphicClass::MAX_PV_NAME] = 0;
 
   pvExpStr.copy( source->pvExpStr );
   svalPvExpStr.copy( source->svalPvExpStr );
@@ -1677,7 +1677,7 @@ int activeXTextDspClass::createFromFile (
 int r, g, b, index;
 int major, minor, release;
 int stat = 1;
-char oneName[127+1];
+char oneName[127+1], onePv[activeGraphicClass::MAX_PV_NAME+1];
 unsigned int pixel;
 
   this->actWin = _actWin;
@@ -1691,8 +1691,11 @@ unsigned int pixel;
 
   this->initSelectBox();
 
-  readStringFromFile( pvName, 39, f ); actWin->incLine();
-  readStringFromFile( fontTag, 63, f ); actWin->incLine();
+  readStringFromFile( pvName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
+  pvExpStr.setRaw( pvName );
+
+  readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
   fscanf( f, "%d\n", &useDisplayBg ); actWin->incLine();
   fscanf( f, "%d\n", &alignment ); actWin->incLine();
 
@@ -1762,7 +1765,7 @@ unsigned int pixel;
   }
 
   if ( ( major > 1 ) || ( minor > 4 ) ) {
-    readStringFromFile( this->id, 31, f ); actWin->incLine();
+    readStringFromFile( this->id, 31+1, f ); actWin->incLine();
     fscanf( f, "%d\n", &changeCallbackFlag ); actWin->incLine();
     fscanf( f, "%d\n", &activateCallbackFlag ); actWin->incLine();
     fscanf( f, "%d\n", &deactivateCallbackFlag ); actWin->incLine();
@@ -1785,12 +1788,11 @@ unsigned int pixel;
   strncpy( value, pvName, 39 );
   value[39] = 0;
 
-  pvExpStr.setRaw( pvName );
-
   if ( ( major > 1 ) || ( minor > 5 ) ) {
 
-    readStringFromFile( oneName, 39, f ); actWin->incLine();
-    svalPvExpStr.setRaw( oneName );
+    readStringFromFile( onePv, activeGraphicClass::MAX_PV_NAME+1, f );
+     actWin->incLine();
+    svalPvExpStr.setRaw( onePv );
 
     if ( major > 1 ) {
 
@@ -1829,8 +1831,9 @@ unsigned int pixel;
 
   if ( ( major > 1 ) || ( minor > 7 ) ) {
 
-    readStringFromFile( oneName, 39, f ); actWin->incLine();
-    fgPvExpStr.setRaw( oneName );
+    readStringFromFile( onePv, activeGraphicClass::MAX_PV_NAME+1, f );
+     actWin->incLine();
+    fgPvExpStr.setRaw( onePv );
 
   }
   else {
@@ -1888,10 +1891,10 @@ unsigned int pixel;
     fscanf( f, "%d\n", &isDate );
     fscanf( f, "%d\n", &isFile );
 
-    readStringFromFile( oneName, 127, f ); actWin->incLine();
+    readStringFromFile( oneName, 127+1, f ); actWin->incLine();
     defDir.setRaw( oneName );
 
-    readStringFromFile( oneName, 127, f ); actWin->incLine();
+    readStringFromFile( oneName, 127+1, f ); actWin->incLine();
     pattern.setRaw( oneName );
 
   }
@@ -2202,25 +2205,25 @@ char title[32], *ptr;
   bufColorMode = colorMode;
   strncpy( bufValue, value, 127 );
   bufValue[127] = 0;
-  strncpy( bufPvName, pvName, 39 );
-  bufPvName[39] = 0;
+  strncpy( bufPvName, pvName, activeGraphicClass::MAX_PV_NAME );
+  bufPvName[activeGraphicClass::MAX_PV_NAME] = 0;
 
   if ( fgPvExpStr.getRaw() ) {
-    strncpy( bufColorPvName, fgPvExpStr.getRaw(), 39 );
-    bufColorPvName[39] = 0;
+    strncpy( bufColorPvName, fgPvExpStr.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
+    bufColorPvName[activeGraphicClass::MAX_PV_NAME] = 0;
   }
   else {
-    strncpy( bufColorPvName, "", 39 );
-    bufColorPvName[39] = 0;
+    strcpy( bufColorPvName, "" );
   }
 
   if ( svalPvExpStr.getRaw() ) {
-    strncpy( bufSvalPvName, svalPvExpStr.getRaw(), 39 );
-    bufSvalPvName[39] = 0;
+    strncpy( bufSvalPvName, svalPvExpStr.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
+    bufSvalPvName[activeGraphicClass::MAX_PV_NAME] = 0;
   }
   else {
-    strncpy( bufSvalPvName, "", 39 );
-    bufSvalPvName[39] = 0;
+    strcpy( bufSvalPvName, "" );
   }
 
   if ( defDir.getRaw() ) {
@@ -2267,9 +2270,12 @@ char title[32], *ptr;
   ef.addTextField( activeXTextDspClass_str8, 31, &bufY );
   ef.addTextField( activeXTextDspClass_str9, 31, &bufW );
   ef.addTextField( activeXTextDspClass_str10, 31, &bufH );
-  ef.addTextField( activeXTextDspClass_str22, 31, bufPvName, 39 );
-  ef.addTextField( activeXTextDspClass_str74, 31, bufColorPvName, 39 );
-  ef.addTextField( activeXTextDspClass_str25, 31, bufSvalPvName, 39 );
+  ef.addTextField( activeXTextDspClass_str22, 31, bufPvName,
+   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeXTextDspClass_str74, 31, bufColorPvName,
+   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeXTextDspClass_str25, 31, bufSvalPvName,
+   activeGraphicClass::MAX_PV_NAME );
   ef.addOption( activeXTextDspClass_str23, activeXTextDspClass_str24,
    &bufNullDetectMode );
   ef.addOption( activeXTextDspClass_str18,
@@ -3847,8 +3853,8 @@ int changed = 0;
         strncpy( curValue, ctlPvs[0], 39 );
         curValue[39] = 0;
 
-        strncpy( pvName, ctlPvs[0], 39 );
-        pvName[39] = 0;
+        strncpy( pvName, ctlPvs[0], activeGraphicClass::MAX_PV_NAME );
+        pvName[activeGraphicClass::MAX_PV_NAME] = 0;
         pvExpStr.setRaw( pvName );
 
       }
@@ -3869,8 +3875,8 @@ int changed = 0;
         strncpy( curValue, readbackPvs[0], 39 );
         curValue[39] = 0;
 
-        strncpy( pvName, readbackPvs[0], 39 );
-        pvName[39] = 0;
+        strncpy( pvName, readbackPvs[0], activeGraphicClass::MAX_PV_NAME );
+        pvName[activeGraphicClass::MAX_PV_NAME] = 0;
         pvExpStr.setRaw( pvName );
 
       }

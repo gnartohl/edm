@@ -339,13 +339,13 @@ evid controlEventId, readEventId, controlLabelEventId,
 expStringClass controlPvName, readPvName, savedValuePvName, controlLabelName,
  readLabelName;
 
-char controlBufPvName[39+1];
-char readBufPvName[39+1];
-char savedValueBufPvName[39+1];
-char controlLabel[39+1];
-char controlBufLabelName[39+1];
-char readLabel[39+1];
-char readBufLabelName[39+1];
+char controlBufPvName[activeGraphicClass::MAX_PV_NAME+1];
+char readBufPvName[activeGraphicClass::MAX_PV_NAME+1];
+char savedValueBufPvName[activeGraphicClass::MAX_PV_NAME+1];
+char controlLabel[activeGraphicClass::MAX_PV_NAME+1];
+char controlBufLabelName[activeGraphicClass::MAX_PV_NAME+1];
+char readLabel[activeGraphicClass::MAX_PV_NAME+1];
+char readBufLabelName[activeGraphicClass::MAX_PV_NAME+1];
 int formatType, bufFormatType;
 char controlFormat[15+1], readFormat[15+1];
 

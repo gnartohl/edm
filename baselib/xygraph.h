@@ -63,50 +63,23 @@
 
 #ifdef __xygraph_cc
 
-typedef struct editBufTag {
-// edit buffer
-  int bufX;
-  int bufY;
-  int bufW;
-  int bufH;
-  char bufGraphTitle[127+1];
-  char bufXLabel[127+1];
-  char bufYLabel[127+1];
-  int bufPlotStyle;
-  int bufPlotMode;
-  int bufEraseMode;
-  int bufPlotColor[XYGC_K_MAX_TRACES];
-  char bufXPvName[XYGC_K_MAX_TRACES][39+1];
-  char bufYPvName[XYGC_K_MAX_TRACES][39+1];
-  char bufTrigPvName[39+1];
-  char bufErasePvName[39+1];
-  int bufCount;
-  int bufXAxisStyle;
-  int bufXAxisSource;
-  int bufXAxisTimeFormat;
-  efDouble bufXMin;
-  efDouble bufXMax;
-  int bufY1AxisStyle;
-  int bufY1AxisSource;
-  int bufY1AxisTimeFormat;
-  efDouble bufY1Min;
-  efDouble bufY1Max;
-  int bufY2AxisStyle;
-  int bufY2AxisSource;
-  int bufY2AxisTimeFormat;
-  efDouble bufY2Min;
-  efDouble bufY2Max;
-  int bufFgColor;
-  int bufBgColor;
-  int bufFormatType;
-  int bufBorder;
-  int bufXFormatType;
-  efInt bufXPrecision;
-  int bufY1FormatType;
-  efInt bufY1Precision;
-  int bufY2FormatType;
-  efInt bufY2Precision;
-} editBufType, *editBufPtr;
+static void xMonitorConnection (
+  struct connection_handler_args arg );
+
+static void yMonitorConnection (
+  struct connection_handler_args arg );
+
+static void xInfoUpdate (
+  struct event_handler_args arg );
+
+static void yInfoUpdate (
+  struct event_handler_args arg );
+
+static void xValueUpdate (
+  struct event_handler_args arg );
+
+static void yValueUpdate (
+  struct event_handler_args arg );
 
 static void axygc_edit_ok_trace (
   Widget w,
@@ -149,10 +122,73 @@ class xyGraphClass : public activeGraphicClass {
 
 private:
 
+typedef struct editBufTag {
+// edit buffer
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  char bufGraphTitle[127+1];
+  char bufXLabel[127+1];
+  char bufYLabel[127+1];
+  int bufPlotStyle;
+  int bufPlotMode;
+  int bufEraseMode;
+  int bufPlotColor[XYGC_K_MAX_TRACES];
+  char bufXPvName[XYGC_K_MAX_TRACES][activeGraphicClass::MAX_PV_NAME+1];
+  char bufYPvName[XYGC_K_MAX_TRACES][activeGraphicClass::MAX_PV_NAME+1];
+  char bufTrigPvName[activeGraphicClass::MAX_PV_NAME+1];
+  char bufErasePvName[activeGraphicClass::MAX_PV_NAME+1];
+  int bufCount;
+  int bufXAxisStyle;
+  int bufXAxisSource;
+  int bufXAxisTimeFormat;
+  efDouble bufXMin;
+  efDouble bufXMax;
+  int bufY1AxisStyle;
+  int bufY1AxisSource;
+  int bufY1AxisTimeFormat;
+  efDouble bufY1Min;
+  efDouble bufY1Max;
+  int bufY2AxisStyle;
+  int bufY2AxisSource;
+  int bufY2AxisTimeFormat;
+  efDouble bufY2Min;
+  efDouble bufY2Max;
+  int bufFgColor;
+  int bufBgColor;
+  int bufFormatType;
+  int bufBorder;
+  int bufXFormatType;
+  efInt bufXPrecision;
+  int bufY1FormatType;
+  efInt bufY1Precision;
+  int bufY2FormatType;
+  efInt bufY2Precision;
+} editBufType, *editBufPtr;
+
 typedef struct objPlusIndexTag {
   void *objPtr;
   int index;
 } objPlusIndexType, *objPlusIndexPtr;
+
+friend void xMonitorConnection (
+  struct connection_handler_args arg );
+
+friend void yMonitorConnection (
+  struct connection_handler_args arg );
+
+friend void xInfoUpdate (
+  struct event_handler_args arg );
+
+friend void yInfoUpdate (
+  struct event_handler_args arg );
+
+friend void xValueUpdate (
+  struct event_handler_args arg );
+
+friend void yValueUpdate (
+  struct event_handler_args arg );
 
 friend void axygc_edit_ok_trace (
   Widget w,
@@ -199,11 +235,31 @@ int numTraces;
 
 objPlusIndexType argRec[XYGC_K_MAX_TRACES];
 
-ProcessVariable *xPv[XYGC_K_MAX_TRACES], *yPv[XYGC_K_MAX_TRACES];
+//ProcessVariable *xPv[XYGC_K_MAX_TRACES], *yPv[XYGC_K_MAX_TRACES];
+chid xPv[XYGC_K_MAX_TRACES], yPv[XYGC_K_MAX_TRACES];
+evid xEv[XYGC_K_MAX_TRACES], yEv[XYGC_K_MAX_TRACES];
+
 int plotColor[XYGC_K_MAX_TRACES];
 expStringClass xPvExpStr[XYGC_K_MAX_TRACES], yPvExpStr[XYGC_K_MAX_TRACES];
 
-const ProcessVariable::Type pvType[XYGC_K_MAX_TRACES];
+//const ProcessVariable::Type xPvType[XYGC_K_MAX_TRACES];
+//const ProcessVariable::Type yPvType[XYGC_K_MAX_TRACES];
+int xPvType[XYGC_K_MAX_TRACES], yPvType[XYGC_K_MAX_TRACES];
+
+void *xPvData[XYGC_K_MAX_TRACES];
+void *yPvData[XYGC_K_MAX_TRACES];
+double xPvMin[XYGC_K_MAX_TRACES], xPvMax[XYGC_K_MAX_TRACES];
+double yPvMin[XYGC_K_MAX_TRACES], yPvMax[XYGC_K_MAX_TRACES];
+int xPvCount[XYGC_K_MAX_TRACES], yPvCount[XYGC_K_MAX_TRACES];
+int xPvSize[XYGC_K_MAX_TRACES], yPvSize[XYGC_K_MAX_TRACES];
+
+double dbXMin[XYGC_K_MAX_TRACES], dbXMax[XYGC_K_MAX_TRACES];
+int dbXPrec[XYGC_K_MAX_TRACES],
+ xArrayNeedInit[XYGC_K_MAX_TRACES], xArrayNeedUpdate[XYGC_K_MAX_TRACES];
+
+double dbYMin[XYGC_K_MAX_TRACES], dbYMax[XYGC_K_MAX_TRACES];
+int dbYPrec[XYGC_K_MAX_TRACES],
+ yArrayNeedInit[XYGC_K_MAX_TRACES], yArrayNeedUpdate[XYGC_K_MAX_TRACES];
 
 ProcessVariable *trigPv, *erasePv;
 expStringClass trigPvExpStr, erasePvExpStr;
@@ -242,7 +298,7 @@ char fontTag[63+1];
 
 int border;
 
-int opComplete, activeMode, init, bufInvalid;
+int opComplete, active, activeMode, init, bufInvalid;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
@@ -254,7 +310,7 @@ int xPvExists[XYGC_K_MAX_TRACES], yPvExists[XYGC_K_MAX_TRACES],
 
 Widget plotWidget;
 
-int needConnectInit, needErase, needDraw, needRefresh, needUpdate;
+int needConnect, needInit, needRefresh, needUpdate, needErase, needDraw;
 
 entryFormClass *efTrace, *efAxis;
 

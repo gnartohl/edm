@@ -700,7 +700,7 @@ int activeUpdownButtonClass::createFromFile (
 
 int index;
 int major, minor, release;
-char oneName[39+1];
+char oneName[activeGraphicClass::MAX_PV_NAME+1];
 float fval;
 
   this->actWin = _actWin;
@@ -726,16 +726,17 @@ float fval;
   fscanf( f, "%d\n", &index ); actWin->incLine();
   botShadowColor = index;
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   destPvExpString.setRaw( oneName );
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, 39+1, f ); actWin->incLine();
   fineExpString.setRaw( oneName );
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, 39+1, f ); actWin->incLine();
   coarseExpString.setRaw( oneName );
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, 39+1, f ); actWin->incLine();
   label.setRaw( oneName );
 
   fscanf( f, "%d\n", &_3D ); actWin->incLine();
@@ -745,10 +746,11 @@ float fval;
   fscanf( f, "%g\n", &fval ); actWin->incLine();
   rate = (double) fval;
 
-  readStringFromFile( fontTag, 63, f ); actWin->incLine();
+  readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
   if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 0 ) ) ) {
-    readStringFromFile( oneName, 39, f ); actWin->incLine();
+    readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+     actWin->incLine();
     savePvExpString.setRaw( oneName );
   }
 
@@ -1079,14 +1081,16 @@ char title[32], *ptr;
   strncpy( bufFontTag, fontTag, 63 );
 
   if ( destPvExpString.getRaw() )
-    strncpy( bufDestPvName, destPvExpString.getRaw(), 39 );
+    strncpy( bufDestPvName, destPvExpString.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufDestPvName, "", 39 );
+    strcpy( bufDestPvName, "" );
 
   if ( savePvExpString.getRaw() )
-    strncpy( bufSavePvName, savePvExpString.getRaw(), 39 );
+    strncpy( bufSavePvName, savePvExpString.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufSavePvName, "", 39 );
+    strcpy( bufSavePvName, "" );
 
   if ( fineExpString.getRaw() )
     strncpy( bufFine, fineExpString.getRaw(), 39 );
@@ -1121,8 +1125,10 @@ char title[32], *ptr;
   ef.addTextField( activeUpdownButtonClass_str5, 30, &bufY );
   ef.addTextField( activeUpdownButtonClass_str6, 30, &bufW );
   ef.addTextField( activeUpdownButtonClass_str7, 30, &bufH );
-  ef.addTextField( activeUpdownButtonClass_str8, 30, bufDestPvName, 39 );
-  ef.addTextField( activeUpdownButtonClass_str25, 30, bufSavePvName, 39 );
+  ef.addTextField( activeUpdownButtonClass_str8, 30, bufDestPvName,
+   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeUpdownButtonClass_str25, 30, bufSavePvName,
+   activeGraphicClass::MAX_PV_NAME );
 
   ef.addToggle( activeUpdownButtonClass_str26, &bufLimitsFromDb );
   ef.addTextField( activeUpdownButtonClass_str27, 30, &bufEfScaleMin );

@@ -161,7 +161,7 @@ chid sourcePressPvId, sourceReleasePvId, destPvId;
 evid sourcePressEventId, sourceReleaseEventId;
 
 expStringClass destPvExpString;
-char bufDestPvName[39+1];
+char bufDestPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass sourcePressPvExpString;
 char bufSourcePressPvName[39+1];
 expStringClass sourceReleasePvExpString;

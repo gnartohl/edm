@@ -149,7 +149,7 @@ evid readEventId;
 #endif
 
 expStringClass readPvExpStr;
-char bufReadPvName[39+1];
+char bufReadPvName[activeGraphicClass::MAX_PV_NAME+1];
 char bufLogFileName[127+1];
 int bufFileSize;
 

@@ -584,7 +584,7 @@ int activeButtonClass::createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[100+1];
+char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -694,15 +694,18 @@ char oneName[100+1];
 
   }
 
-  readStringFromFile( oneName, 100, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
+
   controlPvName.setRaw( oneName );
 
-  readStringFromFile( oneName, 100, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   readPvName.setRaw( oneName );
 
-  readStringFromFile( onLabel, MAX_ENUM_STRING_SIZE, f ); actWin->incLine();
+  readStringFromFile( onLabel, MAX_ENUM_STRING_SIZE+1, f ); actWin->incLine();
 
-  readStringFromFile( offLabel, MAX_ENUM_STRING_SIZE, f ); actWin->incLine();
+  readStringFromFile( offLabel, MAX_ENUM_STRING_SIZE+1, f ); actWin->incLine();
 
   fscanf( f, "%d\n", &labelType ); actWin->incLine();
 
@@ -717,10 +720,10 @@ char oneName[100+1];
 
   fscanf( f, "%d\n", &invisible ); actWin->incLine();
 
-  readStringFromFile( fontTag, 63, f ); actWin->incLine();
+  readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
   if ( ( major > 1 ) || ( minor > 2 ) ) {
-    readStringFromFile( this->id, 31, f ); actWin->incLine();
+    readStringFromFile( this->id, 31+1, f ); actWin->incLine();
     fscanf( f, "%d\n", &downCallbackFlag ); actWin->incLine();
     fscanf( f, "%d\n", &upCallbackFlag ); actWin->incLine();
     fscanf( f, "%d\n", &activateCallbackFlag ); actWin->incLine();
@@ -1053,14 +1056,16 @@ char title[32], *ptr;
   strncpy( bufFontTag, fontTag, 63 );
 
   if ( controlPvName.getRaw() )
-    strncpy( controlBufPvName, controlPvName.getRaw(), 100 );
+    strncpy( controlBufPvName, controlPvName.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( controlBufPvName, "", 100 );
+    strcpy( controlBufPvName, "" );
 
   if ( readPvName.getRaw() )
-    strncpy( readBufPvName, readPvName.getRaw(), 100 );
+    strncpy( readBufPvName, readPvName.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( readBufPvName, "", 100 );
+    strcpy( readBufPvName, "" );
 
   strncpy( bufOnLabel, onLabel, MAX_ENUM_STRING_SIZE );
   strncpy( bufOffLabel, offLabel, MAX_ENUM_STRING_SIZE );
@@ -1101,14 +1106,22 @@ char title[32], *ptr;
   ef.addTextField( activeButtonClass_str19, 30, &bufY );
   ef.addTextField( activeButtonClass_str20, 30, &bufW );
   ef.addTextField( activeButtonClass_str21, 30, &bufH );
-  ef.addTextField( activeButtonClass_str22, 30, controlBufPvName, 100 );
-  ef.addTextField( activeButtonClass_str23, 30, readBufPvName, 100 );
-  ef.addOption( activeButtonClass_str24, activeButtonClass_str25, buttonTypeStr, 7 );
-  ef.addOption( activeButtonClass_str26, activeButtonClass_str27, _3DString, 7 );
-  ef.addOption( activeButtonClass_str28, activeButtonClass_str29, invisibleString, 7 );
-  ef.addOption( activeButtonClass_str30, activeButtonClass_str31, labelTypeString, 15 );
-  ef.addTextField( activeButtonClass_str32, 30, bufOnLabel, MAX_ENUM_STRING_SIZE );
-  ef.addTextField( activeButtonClass_str33, 30, bufOffLabel, MAX_ENUM_STRING_SIZE );
+  ef.addTextField( activeButtonClass_str22, 30, controlBufPvName,
+   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeButtonClass_str23, 30, readBufPvName,
+   activeGraphicClass::MAX_PV_NAME );
+  ef.addOption( activeButtonClass_str24, activeButtonClass_str25,
+   buttonTypeStr, 7 );
+  ef.addOption( activeButtonClass_str26, activeButtonClass_str27, _3DString,
+   7 );
+  ef.addOption( activeButtonClass_str28, activeButtonClass_str29,
+   invisibleString, 7 );
+  ef.addOption( activeButtonClass_str30, activeButtonClass_str31,
+   labelTypeString, 15 );
+  ef.addTextField( activeButtonClass_str32, 30, bufOnLabel,
+   MAX_ENUM_STRING_SIZE );
+  ef.addTextField( activeButtonClass_str33, 30, bufOffLabel,
+   MAX_ENUM_STRING_SIZE );
 
   //ef.addToggle( activeButtonClass_str34, &bufActivateCallbackFlag );
   //ef.addToggle( activeButtonClass_str35, &bufDeactivateCallbackFlag );

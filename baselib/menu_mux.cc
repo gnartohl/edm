@@ -557,7 +557,7 @@ int menuMuxClass::createFromFile (
 int r, g, b, i, ii, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[39+1];
+char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -655,10 +655,11 @@ char oneName[39+1];
 
   }
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   controlPvExpStr.setRaw( oneName );
 
-  readStringFromFile( fontTag, 63, f ); actWin->incLine();
+  readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
@@ -681,20 +682,20 @@ char oneName[39+1];
   fscanf( f, "%d\n", &numItems ); actWin->incLine();
 
   for ( i=0; i<numItems; i++ ) {
-    readStringFromFile( tag[i], MMUX_MAX_STRING_SIZE, f ); actWin->incLine();
+    readStringFromFile( tag[i], MMUX_MAX_STRING_SIZE+1, f ); actWin->incLine();
   }
 
   for ( i=0; i<numItems; i++ ) {
     for ( ii=0; ii<MMUX_MAX_ENTRIES; ii++ ) {
-      readStringFromFile( m[i][ii], MMUX_MAX_STRING_SIZE, f );
+      readStringFromFile( m[i][ii], MMUX_MAX_STRING_SIZE+1, f );
       actWin->incLine();
-      readStringFromFile( e[i][ii], MMUX_MAX_STRING_SIZE, f );
+      readStringFromFile( e[i][ii], MMUX_MAX_STRING_SIZE+1, f );
       actWin->incLine();
     }
   }
 
   if ( ( major > 1 ) || ( minor > 1 ) ) {
-    readStringFromFile( oneName, 39, f ); actWin->incLine();
+    readStringFromFile( oneName, 39+1, f ); actWin->incLine();
     initialStateExpStr.setRaw( oneName );
   }
   else {
@@ -739,9 +740,10 @@ char title[32], *ptr;
   bufBgColorMode = bgColorMode;
 
   if ( controlPvExpStr.getRaw() )
-    strncpy( bufControlPvName, controlPvExpStr.getRaw(), 39+1 );
+    strncpy( bufControlPvName, controlPvExpStr.getRaw(),
+     activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufControlPvName, "", 39+1 );
+    strcpy( bufControlPvName, "" );
 
   for ( i=0; i<MMUX_MAX_STATES; i++ ) {
     strncpy( bufTag[i], tag[i], MMUX_MAX_STRING_SIZE+1 );
@@ -769,7 +771,8 @@ char title[32], *ptr;
   ef.addTextField( menuMuxClass_str5, 30, &bufY );
   ef.addTextField( menuMuxClass_str6, 30, &bufW );
   ef.addTextField( menuMuxClass_str7, 30, &bufH );
-  ef.addTextField( menuMuxClass_str17, 30, bufControlPvName, 39 );
+  ef.addTextField( menuMuxClass_str17, 30, bufControlPvName,
+   activeGraphicClass::MAX_PV_NAME );
   ef.addTextField( menuMuxClass_str18, 30, bufInitialState, 30 );
 
   ef.addColorButton( menuMuxClass_str8, actWin->ci, &fgCb, &bufFgColor );

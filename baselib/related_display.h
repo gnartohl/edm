@@ -50,21 +50,6 @@ static void rdc_edit_ok1 (
   XtPointer client,
   XtPointer call );
 
-static void rdc_edit_update1 (
-  Widget w,
-  XtPointer client,
-  XtPointer call );
-
-static void rdc_edit_apply1 (
-  Widget w,
-  XtPointer client,
-  XtPointer call );
-
-static void rdc_edit_cancel1 (
-  Widget w,
-  XtPointer client,
-  XtPointer call );
-
 static void rdc_edit_ok (
   Widget w,
   XtPointer client,
@@ -180,7 +165,7 @@ typedef struct bufTag {
   char bufButtonLabel[127+1];;
   char bufLabel[maxDsps][127+1];;
   char bufFontTag[63+1];;
-  char bufDestPvName[NUMPVS][39+1];
+  char bufDestPvName[NUMPVS][activeGraphicClass::MAX_PV_NAME+1];
   char bufSource[NUMPVS][39+1];
 } bufType, *bufPtr;
 

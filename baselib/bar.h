@@ -182,9 +182,9 @@ chid controlPvId, readPvId, nullPvId;
 evid controlEventId, readEventId, nullEventId, alarmEventId;
 
 expStringClass controlPvExpStr, readPvExpStr, nullPvExpStr;
-char bufControlPvName[39+1];
-char bufReadPvName[39+1];
-char bufNullPvName[39+1];
+char bufControlPvName[activeGraphicClass::MAX_PV_NAME+1];
+char bufReadPvName[activeGraphicClass::MAX_PV_NAME+1];
+char bufNullPvName[activeGraphicClass::MAX_PV_NAME+1];
 
 unsigned char pvNotConnectedMask;
 

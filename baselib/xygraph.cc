@@ -23,6 +23,173 @@
 // This is the EPICS specific line right now:
 static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
+static void xMonitorConnection (
+  struct connection_handler_args arg )
+{
+
+objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
+xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
+
+  if ( arg.op == CA_OP_CONN_UP ) {
+
+    if ( !xyo->connection.pvsConnected() ) {
+
+      xyo->connection.setPvConnected( (void *) ptr->index );
+      if ( xyo->connection.pvsConnected() ) {
+
+        printf( "all connected\n" );
+        xyo->actWin->appCtx->proc->lock();
+        xyo->needConnect = 1;
+        xyo->actWin->addDefExeNode( xyo->aglPtr );
+        xyo->actWin->appCtx->proc->unlock();
+
+      }
+
+    }
+
+  }
+  else {
+
+    xyo->connection.setPvDisconnected( (void *) ptr->index );
+    xyo->actWin->appCtx->proc->lock();
+    xyo->active = 0;
+    xyo->bufInvalidate();
+    xyo->needErase = 1;
+    xyo->needDraw = 1;
+    xyo->actWin->addDefExeNode( xyo->aglPtr );
+    xyo->actWin->appCtx->proc->unlock();
+
+
+  }
+
+}
+
+static void xInfoUpdate (
+  struct event_handler_args arg )
+{
+
+objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
+xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
+struct dbr_gr_double grRec = *( (dbr_gr_double *) arg.dbr );
+int i =  ptr->index;
+
+  printf( "xInfoUpdate\n" );
+
+  xyo->dbXMin[i] = grRec.lower_disp_limit;
+  xyo->dbXMax[i] = grRec.upper_disp_limit;
+  xyo->dbXPrec[i] = grRec.precision;
+
+  xyo->actWin->appCtx->proc->lock();
+  xyo->needInit = 1;
+  xyo->xArrayNeedInit[i] = 1;
+  xyo->actWin->addDefExeNode( xyo->aglPtr );
+  xyo->actWin->appCtx->proc->unlock();
+
+}
+
+static void xValueUpdate (
+  struct event_handler_args arg )
+{
+
+objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
+xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
+int i =  ptr->index;
+
+  printf( "xValueUpdate\n" );
+
+  xyo->actWin->appCtx->proc->lock();
+  memcpy( xyo->xPvData[i], arg.dbr, xyo->xPvSize[i] );
+  xyo->needUpdate = 1;
+  xyo->xArrayNeedUpdate[i] = 1;
+  xyo->actWin->addDefExeNode( xyo->aglPtr );
+  xyo->actWin->appCtx->proc->unlock();
+
+}
+
+static void yMonitorConnection (
+  struct connection_handler_args arg )
+{
+
+objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
+xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
+
+  if ( arg.op == CA_OP_CONN_UP ) {
+
+    if ( !xyo->connection.pvsConnected() ) {
+
+      xyo->connection.setPvConnected( (void *) ptr->index );
+
+      if ( xyo->connection.pvsConnected() ) {
+
+        printf( "all connected\n" );
+        xyo->actWin->appCtx->proc->lock();
+        xyo->needConnect = 1;
+        xyo->actWin->addDefExeNode( xyo->aglPtr );
+        xyo->actWin->appCtx->proc->unlock();
+
+      }
+
+    }
+
+  }
+  else {
+
+    xyo->connection.setPvDisconnected( (void *) ptr->index );
+    xyo->actWin->appCtx->proc->lock();
+    xyo->active = 0;
+    xyo->bufInvalidate();
+    xyo->needErase = 1;
+    xyo->needDraw = 1;
+    xyo->actWin->addDefExeNode( xyo->aglPtr );
+    xyo->actWin->appCtx->proc->unlock();
+
+
+  }
+
+}
+
+static void yInfoUpdate (
+  struct event_handler_args arg )
+{
+
+objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
+xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
+struct dbr_gr_double grRec = *( (dbr_gr_double *) arg.dbr );
+int i =  ptr->index;
+
+  printf( "yInfoUpdate\n" );
+
+  xyo->dbYMin[i] = grRec.lower_disp_limit;
+  xyo->dbYMax[i] = grRec.upper_disp_limit;
+  xyo->dbYPrec[i] = grRec.precision;
+
+  xyo->actWin->appCtx->proc->lock();
+  xyo->needInit = 1;
+  xyo->yArrayNeedInit[i] = 1;
+  xyo->actWin->addDefExeNode( xyo->aglPtr );
+  xyo->actWin->appCtx->proc->unlock();
+
+}
+
+static void yValueUpdate (
+  struct event_handler_args arg )
+{
+
+objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(arg.chid);
+xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
+int i =  ptr->index;
+
+  printf( "yValueUpdate, i=%-d, size=%-d\n", i, xyo->yPvSize[i] );
+
+  xyo->actWin->appCtx->proc->lock();
+  memcpy( xyo->yPvData[i], arg.dbr, xyo->yPvSize[i] );
+  xyo->needUpdate = 1;
+  xyo->yArrayNeedUpdate[i] = 1;
+  xyo->actWin->addDefExeNode( xyo->aglPtr );
+  xyo->actWin->appCtx->proc->unlock();
+
+}
+
 static void axygc_edit_ok_trace (
   Widget w,
   XtPointer client,
@@ -238,6 +405,8 @@ int i;
 
   activeMode = 0;
 
+  connection.setMaxPvs( XYGC_K_MAX_TRACES + 2 );
+
   eBuf = NULL;
 
 }
@@ -313,6 +482,8 @@ int i;
   fontDescent = source->fontDescent;
   fontHeight = source->fontHeight;
 
+  connection.setMaxPvs( XYGC_K_MAX_TRACES + 2 );
+
   eBuf = NULL;
 
 }
@@ -355,7 +526,7 @@ xyGraphClass *axygo = (xyGraphClass *) ptr->objPtr;
 
     if ( axygo->connection.pvsConnected() ) {
       axygo->actWin->appCtx->proc->lock();
-      axygo->needConnectInit = 1;
+      axygo->needConnect = 1;
       axygo->actWin->addDefExeNode( axygo->aglPtr );
       axygo->actWin->appCtx->proc->unlock();
     }
@@ -516,7 +687,7 @@ int xyGraphClass::createFromFile (
 int i;
 int major, minor, release;
 int stat = 1;
-char str[127+1], traceColor[15+1];
+char str[127+1], traceColor[15+1], onePv[activeGraphicClass::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -529,13 +700,13 @@ char str[127+1], traceColor[15+1];
 
   this->initSelectBox();
 
-  readStringFromFile( str, 127, f ); actWin->incLine();
+  readStringFromFile( str, 127+1, f ); actWin->incLine();
   graphTitle.setRaw( str );
 
-  readStringFromFile( str, 127, f ); actWin->incLine();
+  readStringFromFile( str, 127+1, f ); actWin->incLine();
   xLabel.setRaw( str );
 
-  readStringFromFile( str, 127, f ); actWin->incLine();
+  readStringFromFile( str, 127+1, f ); actWin->incLine();
   yLabel.setRaw( str );
 
   fscanf( f, "%d\n", &fgColor ); actWin->incLine();
@@ -551,10 +722,12 @@ char str[127+1], traceColor[15+1];
   fscanf( f, "%d\n", &numTraces ); actWin->incLine();
 
   for ( i=0; i<numTraces; i++ ) {
-    readStringFromFile( str, 39, f ); actWin->incLine();
-    xPvExpStr[i].setRaw( str );
-    readStringFromFile( str, 39, f ); actWin->incLine();
-    yPvExpStr[i].setRaw( str );
+    readStringFromFile( onePv, activeGraphicClass::MAX_PV_NAME+1, f );
+     actWin->incLine();
+    xPvExpStr[i].setRaw( onePv );
+    readStringFromFile( onePv, activeGraphicClass::MAX_PV_NAME+1, f );
+     actWin->incLine();
+    yPvExpStr[i].setRaw( onePv );
     fscanf( f, "%d\n", &plotColor[i] ); actWin->incLine();
   }
 
@@ -579,15 +752,17 @@ char str[127+1], traceColor[15+1];
   stat = y2Min.read( f ); actWin->incLine();
   stat = y2Max.read( f ); actWin->incLine();
 
-  readStringFromFile( str, 39, f ); actWin->incLine();
-  trigPvExpStr.setRaw( str );
+  readStringFromFile( onePv, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
+  trigPvExpStr.setRaw( onePv );
 
-  readStringFromFile( str, 39, f ); actWin->incLine();
-  erasePvExpStr.setRaw( str );
+  readStringFromFile( onePv, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
+  erasePvExpStr.setRaw( onePv );
 
   fscanf( f, "%d\n", &eraseMode ); actWin->incLine();
 
-  readStringFromFile( fontTag, 63, f ); actWin->incLine();
+  readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
@@ -665,8 +840,10 @@ int i;
   strncpy( eBuf->bufYLabel, yLabel.getRaw(), 127 );
   eBuf->bufFgColor = fgColor;
   eBuf->bufBgColor = bgColor;
-  strncpy( eBuf->bufTrigPvName, trigPvExpStr.getRaw(), 39 );
-  strncpy( eBuf->bufErasePvName, erasePvExpStr.getRaw(), 39 );
+  strncpy( eBuf->bufTrigPvName, trigPvExpStr.getRaw(),
+   activeGraphicClass::MAX_PV_NAME );
+  strncpy( eBuf->bufErasePvName, erasePvExpStr.getRaw(),
+   activeGraphicClass::MAX_PV_NAME );
   eBuf->bufEraseMode = eraseMode;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
@@ -697,8 +874,10 @@ int i;
      title, NULL, NULL, NULL );
 
     for ( i=0; i<numTraces; i++ ) {
-      strncpy( eBuf->bufXPvName[i], xPvExpStr[i].getRaw(), 39 );
-      strncpy( eBuf->bufYPvName[i], yPvExpStr[i].getRaw(), 39 );
+      strncpy( eBuf->bufXPvName[i], xPvExpStr[i].getRaw(),
+       activeGraphicClass::MAX_PV_NAME );
+      strncpy( eBuf->bufYPvName[i], yPvExpStr[i].getRaw(),
+       activeGraphicClass::MAX_PV_NAME );
       eBuf->bufPlotColor[i] = plotColor[i];
     }
     for ( i=numTraces; i<XYGC_K_MAX_TRACES; i++ ) {
@@ -709,9 +888,11 @@ int i;
 
     i = 0;
     efTrace->beginSubForm();
-    efTrace->addTextField( "X ", 30, eBuf->bufXPvName[i], 39 );
+    efTrace->addTextField( "X ", 30, eBuf->bufXPvName[i],
+     activeGraphicClass::MAX_PV_NAME );
     efTrace->addLabel( "Y " );
-    efTrace->addTextField( "", 30, eBuf->bufYPvName[i], 39 );
+    efTrace->addTextField( "", 30, eBuf->bufYPvName[i],
+     activeGraphicClass::MAX_PV_NAME );
     efTrace->addLabel( " " );
     efTrace->addColorButton( "", actWin->ci, &plotCb[i],
      &eBuf->bufPlotColor[i] );
@@ -720,9 +901,11 @@ int i;
     for ( i=1; i<XYGC_K_MAX_TRACES; i++ ) {
 
       efTrace->beginLeftSubForm();
-      efTrace->addTextField( "X ", 30, eBuf->bufXPvName[i], 39 );
+      efTrace->addTextField( "X ", 30, eBuf->bufXPvName[i],
+       activeGraphicClass::MAX_PV_NAME );
       efTrace->addLabel( "Y " );
-      efTrace->addTextField( "", 30, eBuf->bufYPvName[i], 39 );
+      efTrace->addTextField( "", 30, eBuf->bufYPvName[i],
+       activeGraphicClass::MAX_PV_NAME );
       efTrace->addLabel( " " );
       efTrace->addColorButton( "", actWin->ci, &plotCb[i],
        &eBuf->bufPlotColor[i] );
@@ -801,8 +984,10 @@ int i;
 
     efAxis->finished( axygc_edit_ok_axis, this );
 
-  ef.addTextField( "Trigger Channel", 30, eBuf->bufTrigPvName, 39 );
-  ef.addTextField( "Erase Channel", 30, eBuf->bufErasePvName, 39 );
+  ef.addTextField( "Trigger Channel", 30, eBuf->bufTrigPvName,
+   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( "Erase Channel", 30, eBuf->bufErasePvName,
+   activeGraphicClass::MAX_PV_NAME );
   ef.addOption( "Erase Mode", "if not zero|if zero", &eBuf->bufEraseMode );
   ef.addFontMenuNoAlignInfo( "Font", actWin->fi, &fm, fontTag );
 
@@ -1003,6 +1188,72 @@ int xyGraphClass::activate (
 
 int i, stat;
 
+  printf( "activate\n" );
+
+  switch ( pass ) {
+
+  case 1:
+
+    opComplete = 0;
+    break;
+
+  case 2:
+
+    if ( !opComplete ) {
+
+      opComplete = 1;
+      aglPtr = ptr;
+      connection.init();
+      init = 0;
+      bufInvalid = 1;
+      activeMode = 0;
+      needConnect = needInit = needRefresh = needErase = needDraw = 
+       needUpdate = 0;
+
+      for ( i=0; i<numTraces; i++ ) {
+        xArrayNeedInit[i] = 0;
+        xArrayNeedUpdate[i] = 0;
+        yArrayNeedInit[i] = 0;
+        yArrayNeedUpdate[i] = 0;
+        xPvData[i] = NULL;
+        yPvData[i] = NULL;
+        xPv[i] = NULL;
+        yPv[i] = NULL;
+        xEv[i] = NULL;
+        yEv[i] = NULL;
+      }
+
+      printf( "numTraces = %-d\n", numTraces );
+
+      for ( i=0; i<numTraces; i++ ) {
+
+        argRec[i].objPtr = (void *) this;
+        argRec[i].index = i;
+
+        connection.addPv();
+
+	stat = ca_search_and_connect( yPvExpStr[i].getExpanded(),
+         &yPv[i], yMonitorConnection, &argRec[i] );
+        if ( stat != ECA_NORMAL ) {
+          printf( "ca_search_and_connect failed for [%s]\n",
+           yPvExpStr[i].getExpanded() );
+        }
+
+      }
+
+    }
+
+    break;
+
+  case 3:
+  case 4:
+  case 5:
+  case 6:
+
+    break;
+
+  }
+
   return 1;
 
 }
@@ -1012,6 +1263,36 @@ int xyGraphClass::deactivate (
 ) {
 
 int i, stat;
+
+  switch ( pass ) {
+
+  case 1:
+
+    for ( i=0; i<numTraces; i++ ) {
+
+      if ( xEv[i] ) {
+        stat = ca_clear_channel( xPv[i] );
+        xEv[i] = NULL;
+      }
+
+      if ( yEv[i] ) {
+        stat = ca_clear_channel( yPv[i] );
+        yEv[i] = NULL;
+      }
+
+      if ( xPvData[i] ) {
+        delete (double *) xPvData[i];
+        xPvData[i] = NULL;
+      }
+
+      if ( yPvData[i] ) {
+        delete (double *) yPvData[i];
+        yPvData[i] = NULL;
+      }
+
+    }
+
+  }
 
   return 1;
 
@@ -1065,9 +1346,99 @@ int xyGraphClass::getButtonActionRequest (
 
 void xyGraphClass::executeDeferred ( void ) {
 
+int i, ii, stat, nc, ni, nu, nr, ne, nd;
+
+  if ( actWin->isIconified ) return;
+
+  printf( "executeDeferred\n" );
+
   actWin->appCtx->proc->lock();
+  nc = needConnect; needConnect = 0;
+  ni = needInit; needInit = 0;
+  nu = needUpdate; needUpdate = 0;
+  nr = needRefresh; needRefresh = 0;
+  ne = needErase; needErase = 0;
+  nd = needDraw; needDraw = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
+
+  if ( nc ) {
+
+    printf( "need connect\n" );
+
+    for ( i=0; i<numTraces; i++ ) {
+
+      yPvType[i] = ca_field_type( yPv[i] );
+      yPvCount[i] = ca_element_count( yPv[i] );
+      yPvSize[i] = ca_element_count( yPv[i] ) * sizeof(double);
+
+      argRec[i].objPtr = (void *) this;
+      argRec[i].index = i;
+
+      stat = ca_get_callback( DBR_GR_DOUBLE, yPv[i],
+       yInfoUpdate, (void *) argRec );
+      if ( stat != ECA_NORMAL ) {
+        printf( "error from ca_get_callback\n" );
+      }
+
+    }
+
+  }
+
+  if ( ni ) {
+
+    printf( "need init\n" );
+
+    for ( i=0; i<numTraces; i++ ) {
+
+      if ( yArrayNeedInit[i] ) {
+
+        yArrayNeedInit[i] = 0;
+
+        argRec[i].objPtr = (void *) this;
+        argRec[i].index = i;
+
+        if ( !yPvData[i] ) {
+          printf( "count = %-d\n", yPvCount[i] );
+          yPvData[i] = (void *) new double[yPvCount[i]];
+          for ( ii=0; ii<yPvCount[i]; ii++ ) {
+            ( (double *) yPvData[i])[ii] = 0.0;
+	  }
+        }
+
+        stat = ca_add_array_event( DBR_DOUBLE, yPvCount[i], yPv[i],
+         yValueUpdate, (void *) argRec, 0.0, 0.0, 0.0, &yEv[i] );
+        if ( stat != ECA_NORMAL ) {
+          printf( "error from ca_add_array_event\n" );
+        }
+
+      }
+
+    }
+
+  }
+
+  if ( nu ) {
+
+    printf( "need update\n" );
+
+    for ( i=0; i<numTraces; i++ ) {
+
+      if ( yArrayNeedUpdate[i] ) {
+
+        yArrayNeedUpdate[i] = 0;
+
+        printf( "\n\nupdate y %-d\n", i );
+
+        for ( ii=0; ii<yPvCount[i]; ii++ ) {
+          printf( "%d: %-g\n", ii, ( (double *) yPvData[i])[ii] );
+	}
+
+      }
+
+    }
+
+  }
 
 }
 

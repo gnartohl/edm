@@ -186,8 +186,8 @@ int fontAscent, fontDescent, fontHeight;
 chid controlPvId, readPvId;
 evid infoEventId, controlEventId, readEventId, alarmEventId;
 
-char controlBufPvName[100+1];
-char readBufPvName[100+1];
+char controlBufPvName[activeGraphicClass::MAX_PV_NAME+1];
+char readBufPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass controlPvName, readPvName;
 
 int controlExists, readExists, toggle;

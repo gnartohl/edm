@@ -481,14 +481,14 @@ float val;
 
   }
 
-  readStringFromFile( oneName, 127, f ); actWin->incLine();
+  readStringFromFile( oneName, 127+1, f ); actWin->incLine();
   shellCommand.setRaw( oneName );
 
-  readStringFromFile( oneName, 127, f ); actWin->incLine();
+  readStringFromFile( oneName, 127+1, f ); actWin->incLine();
   label.setRaw( oneName );
   // strncpy( label, oneName, 127 );
 
-  readStringFromFile( fontTag, 63, f ); actWin->incLine();
+  readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
   fscanf( f, "%d\n", &invisible ); actWin->incLine();
   fscanf( f, "%d\n", &closeAction ); actWin->incLine();

@@ -204,10 +204,10 @@ chid controlPvId, readPvId;
 evid alarmEventId, controlEventId, readAlarmEventId, readEventId;
 #endif
 
-char bufControlPvName[39+1];
+char bufControlPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass controlPvExpStr;
 
-char bufReadPvName[39+1];
+char bufReadPvName[activeGraphicClass::MAX_PV_NAME+1];
 expStringClass readPvExpStr;
 
 int controlExists, readExists, widgetsCreated, active, activeMode;
