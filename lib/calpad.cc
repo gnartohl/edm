@@ -907,7 +907,7 @@ int i, result, isXEvent, argc, stat;
   XtSetLanguageProc( NULL, NULL, NULL );
 
   argc = 0;
-  appTop = XtVaAppInitialize( &app, "test", NULL, 0, &argc,
+  appTop = XtVaAppInitialize( &app, "edm", NULL, 0, &argc,
    NULL, NULL, XmNiconic, False, NULL );
 
   mainWin = XtVaCreateManagedWidget( "", xmMainWindowWidgetClass,

@@ -409,7 +409,7 @@ double merit, min, num;
     stat = getHostAddr( chkHost, addr );
     if ( stat ) return;
 
-    stat = ipncl_create_port( 1, 4096, "test", &port );
+    stat = ipncl_create_port( 1, 4096, "edm", &port );
     if ( !( stat & 1 ) ) {
       printf( main_str4 );
       return;
@@ -495,7 +495,7 @@ nextHost:
   stat = getHostAddr( host, addr );
   if ( stat ) return;
 
-  stat = ipncl_create_port( 1, 4096, "test", &port );
+  stat = ipncl_create_port( 1, 4096, "edm", &port );
   if ( !( stat & 1 ) ) {
     printf( main_str4 );
     return;

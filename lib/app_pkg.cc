@@ -4072,14 +4072,14 @@ err_return:
      args );
 
     if ( executeOnOpen ) {
-      appTop = XtVaAppCreateShell( NULL, "test", applicationShellWidgetClass,
+      appTop = XtVaAppCreateShell( NULL, "edm", applicationShellWidgetClass,
        display,
        XmNiconic, True,
        NULL );
       iconified = 1;
     }
     else {
-      appTop = XtVaAppCreateShell( NULL, "test", applicationShellWidgetClass,
+      appTop = XtVaAppCreateShell( NULL, "edm", applicationShellWidgetClass,
        display,
        XmNiconic, False,
        XmNmappedWhenManaged, False,
