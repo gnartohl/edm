@@ -517,6 +517,9 @@ int startApplication (
 
 void openInitialFiles ( void );
 
+void openFiles (
+  char *list );
+
 int addActWin (
   char *name,
   int x,
