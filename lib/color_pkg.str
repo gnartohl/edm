@@ -31,6 +31,9 @@
 #define colorInfoClass_str28 (char *) "Color name referenced in rule not found, offending rule: %s\n"
 #define colorInfoClass_str29 (char *) "Rules may only reference static color names, offending rule: %s\n"
 #define colorInfoClass_str30 (char *) "Rule has no condition statements, offending rule: %s\n"
+#define colorInfoClass_str31 (char *) "Expected color index"
+#define colorInfoClass_str32 (char *) "Color index not found"
+#define colorInfoClass_str33 (char *) "Color position empty, index = %-d\n"
 
 #endif
 

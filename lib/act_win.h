@@ -670,32 +670,32 @@ int masterSelectX0, masterSelectY0, masterSelectX1, masterSelectY1;
 
 int useFirstSelectedAsReference;
 
-int fgColor;
+int fgColor, bufFgColor;
 colorButtonClass fgCb;
 
-int bgColor;
+int bgColor, bufBgColor;
 colorButtonClass bgCb;
 Pixmap bgPixmap;
 
-int defaultTextFgColor;
+int defaultTextFgColor, bufDefaultTextFgColor;
 colorButtonClass defaultTextFgCb;
 
-int defaultFg1Color;
+int defaultFg1Color, bufDefaultFg1Color;
 colorButtonClass defaultFg1Cb;
 
-int defaultFg2Color;
+int defaultFg2Color, bufDefaultFg2Color;
 colorButtonClass defaultFg2Cb;
 
-int defaultBgColor;
+int defaultBgColor, bufDefaultBgColor;
 colorButtonClass defaultBgCb;
 
-int defaultTopShadowColor;
+int defaultTopShadowColor, bufDefaultTopShadowColor;
 colorButtonClass defaultTopShadowCb;
 
-int defaultBotShadowColor;
+int defaultBotShadowColor, bufDefaultBotShadowColor;
 colorButtonClass defaultBotShadowCb;
 
-int defaultOffsetColor;
+int defaultOffsetColor, bufDefaultOffsetColor;
 colorButtonClass defaultOffsetCb;
 
 int allSelectedTextFgColor;

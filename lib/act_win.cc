@@ -175,7 +175,7 @@ static void acw_autosave (
 {
 
 activeWindowClass *awo = (activeWindowClass *) client;
-int stat;
+//int stat;
 //char name[255+1], oldName[255+1];
 //char str[31+1];
 
@@ -471,6 +471,16 @@ Arg args[3];
   awo->defaultAlignment = awo->defaultFm.currentFontAlignment();
   awo->defaultCtlAlignment = awo->defaultCtlFm.currentFontAlignment();
   awo->defaultBtnAlignment = awo->defaultBtnFm.currentFontAlignment();
+
+  awo->fgColor = awo->bufFgColor;
+  awo->bgColor = awo->bufBgColor;
+  awo->defaultTextFgColor = awo->bufDefaultTextFgColor;
+  awo->defaultFg1Color = awo->bufDefaultFg1Color;
+  awo->defaultFg2Color = awo->bufDefaultFg2Color;
+  awo->defaultBgColor = awo->bufDefaultBgColor;
+  awo->defaultTopShadowColor = awo->bufDefaultTopShadowColor;
+  awo->defaultBotShadowColor = awo->bufDefaultBotShadowColor;
+  awo->defaultOffsetColor = awo->bufDefaultOffsetColor;
 
   awo->drawGc.setBaseBG( awo->ci->pix(awo->bgColor) );
 
@@ -2919,6 +2929,16 @@ Atom wm_delete_window;
       awo->bufActivateCallbackFlag = awo->activateCallbackFlag;
       awo->bufDeactivateCallbackFlag = awo->deactivateCallbackFlag;
 
+      awo->bufFgColor = awo->fgColor;
+      awo->bufBgColor = awo->bgColor;
+      awo->bufDefaultTextFgColor = awo->defaultTextFgColor;
+      awo->bufDefaultFg1Color = awo->defaultFg1Color;
+      awo->bufDefaultFg2Color = awo->defaultFg2Color;
+      awo->bufDefaultBgColor = awo->defaultBgColor;
+      awo->bufDefaultTopShadowColor = awo->defaultTopShadowColor;
+      awo->bufDefaultBotShadowColor = awo->defaultBotShadowColor;
+      awo->bufDefaultOffsetColor = awo->defaultOffsetColor;
+
       awo->ef.create( awo->top, awo->appCtx->ci.getColorMap(),
        &awo->appCtx->entryFormX,
        &awo->appCtx->entryFormY, &awo->appCtx->entryFormW,
@@ -2938,9 +2958,9 @@ Atom wm_delete_window;
        awo->bufDefaultPvType, 15 );
 
       awo->ef.addColorButton( activeWindowClass_str25, awo->ci, &awo->fgCb,
-       &awo->fgColor );
+       &awo->bufFgColor );
       awo->ef.addColorButton( activeWindowClass_str26, awo->ci, &awo->bgCb,
-       &awo->bgColor );
+       &awo->bufBgColor );
       awo->ef.addOption( activeWindowClass_str27, activeWindowClass_str28,
        awo->bufGridShowStr, 8 );
       awo->ef.addOption( activeWindowClass_str29, activeWindowClass_str28,

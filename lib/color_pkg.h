@@ -88,6 +88,7 @@ typedef struct colorCacheTag {
     unsigned int blinkRgb[3]; // [0]=r, [1]=g, [2]=b
     unsigned int blinkPixel;
     int index;
+    int position;
     char *name;
     rulePtr rule;
 } colorCacheType, *colorCachePtr;
@@ -148,6 +149,13 @@ public:
                           Display *d,
                           Widget top,
                           char *fileName);
+
+    int colorInfoClass::ver4InitFromFile (FILE *f,
+                          XtAppContext app,
+                          Display *d,
+                          Widget top,
+                          char *fileName);
+
     int colorInfoClass::initFromFile (XtAppContext app,
                       Display *d,
                       Widget top,
@@ -270,6 +278,7 @@ private:
     AVL_HANDLE colorCacheByPixelH;
     AVL_HANDLE colorCacheByIndexH;
     AVL_HANDLE colorCacheByNameH;
+    AVL_HANDLE colorCacheByPosH;
 
     Display *display;
     int screen;
@@ -332,7 +341,7 @@ private:
     static const int INSERT_COLOR = 16;
 
     int readFile, tokenState, parseIndex, parseLine, tokenFirst, tokenLast,
-        tokenNext, gotToken, colorIndex;
+        tokenNext, gotToken, colorIndex, colorPosition;
     char parseBuf[MAX_LINE_SIZE+1], parseToken[MAX_LINE_SIZE+1];
     FILE *parseFile;
 
