@@ -59,7 +59,7 @@ endif
 
 # Settings for RedHat7 @ SNS/LANL
 ifeq ($(FOR_WHAT), RH7_SNS_LANL)
-	EPICS=/cs/epics/R3.13.3/base
+	EPICS=/cs/epics/R3.13.5/base
 	CC=gcc
 	CXX=g++
 	CFLAGS=-g -Wall -O0 -DMOTIF 
