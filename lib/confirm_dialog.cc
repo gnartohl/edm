@@ -215,10 +215,6 @@ int n;
 
 int confirmDialogClass::popdown ( void ) {
 
-  if ( debugMode() ) {
-    printf( "debug - 4\n" );
-  }
-
   XtPopdown( shell );
 
   this->destroy();

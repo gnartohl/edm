@@ -639,10 +639,6 @@ int n;
 
 int scrolledTextClass::popdown ( void ) {
 
-  if ( debugMode() ) {
-    printf( "debug - 9\n" );
-  }
-
   XtPopdown( shell );
   windowIsOpen = 0;
 
