@@ -94,6 +94,9 @@ activeMessageBoxClass *messageboxo = (activeMessageBoxClass *) client;
   messageboxo->size = messageboxo->bufSize;
 
   messageboxo->fileSize = messageboxo->bufFileSize;
+
+  messageboxo->fileIsReadOnly = messageboxo->bufFileIsReadOnly;
+
   strncpy( messageboxo->logFileName, messageboxo->bufLogFileName, 127 );
   messageboxo->flushTimerValue = messageboxo->bufFlushTimerValue;
   if ( messageboxo->flushTimerValue < 5 ) messageboxo->flushTimerValue = 5;
@@ -241,6 +244,7 @@ activeMessageBoxClass::activeMessageBoxClass ( void ) {
   activeMode = 0;
   size = 1000;
   fileSize = 100000;
+  fileIsReadOnly = 1;
   strcpy( logFileName, "" );
   flushTimerValue = 600;
   logFileOpen = 0;
@@ -282,6 +286,7 @@ activeGraphicClass *messageboxo = (activeGraphicClass *) this;
 
   size = source->size;
   fileSize = source->fileSize;
+  fileIsReadOnly = source->fileIsReadOnly;
   strncpy( logFileName, source->logFileName, 127 );
   flushTimerValue = source->flushTimerValue;
 
@@ -423,6 +428,9 @@ int index;
 
   writeStringToFile( f, logFileName );
 
+  // version 2.1.0
+  fprintf( f, "%-d\n", fileIsReadOnly );
+
   return 1;
 
 }
@@ -512,6 +520,13 @@ char oneName[39+1];
 
   readStringFromFile( logFileName, 127, f );
 
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor == 1 ) ) ) {
+    fscanf( f, "%d\n", &fileIsReadOnly );
+  }
+  else {
+    fileIsReadOnly = 0;
+  }
+
   logFileOpen = 0;
 
   return 1;
@@ -550,6 +565,7 @@ char title[32], *ptr;
 
   bufSize = size;
   bufFileSize = fileSize;
+  bufFileIsReadOnly = fileIsReadOnly;
   bufFlushTimerValue = flushTimerValue;
   strncpy( bufLogFileName, logFileName, 127 );
 
@@ -566,6 +582,7 @@ char title[32], *ptr;
   ef.addTextField( activeMessageBoxClass_str10, 30, &bufSize );
   ef.addTextField( activeMessageBoxClass_str11, 30, bufReadPvName, 39 );
   ef.addTextField( activeMessageBoxClass_str12, 30, bufLogFileName, 127 );
+  ef.addToggle( activeMessageBoxClass_str26, &bufFileIsReadOnly );
   ef.addTextField( activeMessageBoxClass_str13, 30, &bufFileSize );
   ef.addTextField( activeMessageBoxClass_str14, 30, &bufFlushTimerValue );
   ef.addColorButton( activeMessageBoxClass_str16, actWin->ci, &fgCb, &bufFgColor );
@@ -749,22 +766,31 @@ struct stat fileStat;
 
       logFileOpen = 0;
 
-      logFile = fopen( logFileName, "a" );
-      if ( !logFile ) {
-        logFileExists = 0;
-        logFileOpen = 0;
-      }
-      else {
-        logFileOpen = 1;
-      }
+      if ( !fileIsReadOnly ) {
 
-      if ( logFileOpen ) {
-        status = lockFile( logFile );
-        if ( !( status & 1 ) ) {
-          fclose( logFile );
+        logFile = fopen( logFileName, "a" );
+        if ( !logFile ) {
           logFileExists = 0;
           logFileOpen = 0;
         }
+        else {
+          logFileOpen = 1;
+        }
+
+        if ( logFileOpen ) {
+          status = lockFile( logFile );
+          if ( !( status & 1 ) ) {
+            fclose( logFile );
+            logFileExists = 0;
+            logFileOpen = 0;
+          }
+        }
+
+      }
+      else {
+
+        logFileExists = 0;
+
       }
 
     }

@@ -32,7 +32,7 @@
 #endif
 
 #define MESSAGEBOXC_MAJOR_VERSION 2
-#define MESSAGEBOXC_MINOR_VERSION 0
+#define MESSAGEBOXC_MINOR_VERSION 1
 #define MESSAGEBOXC_RELEASE 0
 
 #ifdef __message_box_cc
@@ -152,6 +152,8 @@ expStringClass readPvExpStr;
 char bufReadPvName[39+1];
 char bufLogFileName[127+1];
 int bufFileSize;
+
+int fileIsReadOnly, bufFileIsReadOnly;
 
 int readExists, logFileExists;
 

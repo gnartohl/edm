@@ -26,5 +26,6 @@
 #define activeMessageBoxClass_str23 "ca_clear_channel failure\n"
 #define activeMessageBoxClass_str24 "frameWidget create failed\n"
 #define activeMessageBoxClass_str25 "ca_add_masked_array_event failed\n"
+#define activeMessageBoxClass_str26 "Read Only"
 
 #endif
