@@ -23,6 +23,32 @@ keypadClass *kp = (keypadClass *) client;
   }
   else if ( w == kp->pbOK ) {
 
+    if ( strcmp( &kp->buf[1], "." ) == 0 ) { // only single "." was entered
+
+      kp->popdown();
+      if ( kp->cancelFunc ) {
+        (*kp->cancelFunc)( w, (XtPointer) kp->userPtr, client );
+      }
+      XtDestroyWidget( kp->shell );
+      kp->shell = NULL;
+
+      return;
+
+    }
+
+    if ( kp->state == keypadClass::ISNULL ) {
+
+      kp->popdown();
+      if ( kp->cancelFunc ) {
+        (*kp->cancelFunc)( w, (XtPointer) kp->userPtr, client );
+      }
+      XtDestroyWidget( kp->shell );
+      kp->shell = NULL;
+
+      return;
+
+    }
+
     switch ( dataType ) {
 
     case keypadClass::INT:
@@ -59,6 +85,68 @@ keypadClass *kp = (keypadClass *) client;
   else {
 
     switch ( kp->state ) {
+
+    case keypadClass::ISNULL:
+
+      if ( w == kp->pb1 ) {
+        strcpy( kp->buf, "-1" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb2 ) {
+        strcpy( kp->buf, "-2" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb3 ) {
+        strcpy( kp->buf, "-3" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb4 ) {
+        strcpy( kp->buf, "-4" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb5 ) {
+        strcpy( kp->buf, "-5" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb6 ) {
+        strcpy( kp->buf, "-6" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb7 ) {
+        strcpy( kp->buf, "-7" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb8 ) {
+        strcpy( kp->buf, "-8" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb9 ) {
+        strcpy( kp->buf, "-9" );
+        kp->state = keypadClass::NODECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb0 ) {
+        strcpy( kp->buf, "-0" );
+        kp->state = keypadClass::ZERO;
+        kp->count = 0;
+      }
+      else if ( w == kp->pbPoint ) {
+        strcpy( kp->buf, "-." );
+        kp->state = keypadClass::DECPOINT;
+        kp->count++;
+      }
+
+      kp->positive = 1;
+
+      break;
 
     case keypadClass::ZERO:
 
@@ -111,6 +199,12 @@ keypadClass *kp = (keypadClass *) client;
         strcpy( kp->buf, "-." );
         kp->state = keypadClass::DECPOINT;
         kp->count++;
+      }
+      else if ( w == kp->pbBksp ) {
+        kp->positive = 1;
+        kp->state = keypadClass::ISNULL;
+        kp->count = 0;
+        strcpy( kp->buf, "-" );
       }
 
       kp->positive = 1;
@@ -186,9 +280,9 @@ keypadClass *kp = (keypadClass *) client;
       else if ( w == kp->pbBksp ) {
         if ( kp->count == 1 ) {
           kp->positive = 1;
-          kp->state = keypadClass::ZERO;
+          kp->state = keypadClass::ISNULL;
           kp->count = 0;
-          strcpy( kp->buf, "-0" );
+          strcpy( kp->buf, "-" );
 	}
         else {
           kp->buf[kp->count] = 0;
@@ -261,9 +355,9 @@ keypadClass *kp = (keypadClass *) client;
       else if ( w == kp->pbBksp ) {
         if ( kp->count == 1 ) {
           kp->positive = 1;
-          kp->state = keypadClass::ZERO;
+          kp->state = keypadClass::ISNULL;
           kp->count = 0;
-          strcpy( kp->buf, "-0" );
+          strcpy( kp->buf, "-" );
 	}
         else if ( kp->buf[kp->count] == '.' ) {
           kp->buf[kp->count] = 0;
@@ -444,9 +538,15 @@ int keypadClass::create (
 
   positive = 1;
   count = 0;
+
+#if 0
   state = ZERO;
   strcpy( this->buf, "-0" );
   XmTextFieldSetString( text, "0" );
+#endif
+  state = ISNULL;
+  strcpy( this->buf, "-" );
+  XmTextFieldSetString( text, "" );
 
 // ---------------------------------------
 
