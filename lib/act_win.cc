@@ -4742,17 +4742,10 @@ char schemeFile[255+1];
        curObjNameNode->objType, schemeFile, 255 );
       if ( strcmp( schemeFile, "" ) != 0 ) {
         //printf( "load new scheme [%s]\n", schemeFile );
-        if ( strcmp( schemeFile, "default" ) == 0 ) {
-          awo->appCtx->displayScheme.loadDefault( &awo->appCtx->ci );
-          awo->setDisplayScheme( &awo->appCtx->displayScheme );
+        stat = awo->loadComponentScheme( schemeFile );
+        if ( !( stat & 1 ) ) {
+          awo->loadComponentScheme( "default" );
         }
-	else {
-          stat = awo->loadScheme( schemeFile );
-          if ( !( stat & 1 ) ) {
-            awo->appCtx->displayScheme.loadDefault( &awo->appCtx->ci );
-            awo->setDisplayScheme( &awo->appCtx->displayScheme );
-          }
-	}
       }
 
       // create object
@@ -11893,8 +11886,10 @@ void activeWindowClass::setUnchanged ( void ) {
 
 }
 
-int activeWindowClass::loadScheme (
-  char *fName ) {
+int activeWindowClass::genericLoadScheme (
+  char *fName,
+  int includeDisplayProperties )
+{
 
 char *gotOne, oneFileName[255+1];
 displaySchemeClass scheme;
@@ -11954,9 +11949,10 @@ int stat;
     stat = defaultBtnFm.setFontAlignment( defaultBtnAlignment );
   }
 
-  fgColor = scheme.getFg();
-
-  bgColor = scheme.getBg();
+  if ( includeDisplayProperties ) {
+    fgColor = scheme.getFg();
+    bgColor = scheme.getBg();
+  }
 
   defaultTextFgColor = scheme.getDefTextFg();
 
@@ -11972,17 +11968,35 @@ int stat;
 
   defaultOffsetColor = scheme.getOffset();
 
-  drawGc.setFG( ci->pix(fgColor) );
-  drawGc.setBG( ci->pix(bgColor) );
-  drawGc.setBaseBG( ci->pix(bgColor) );
-  executeGc.setBaseBG( ci->pix(bgColor) );
-  cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );
+  if ( includeDisplayProperties ) {
+    drawGc.setFG( ci->pix(fgColor) );
+    drawGc.setBG( ci->pix(bgColor) );
+    drawGc.setBaseBG( ci->pix(bgColor) );
+    executeGc.setBaseBG( ci->pix(bgColor) );
+    cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );
+  }
 
   setChanged();
 
   updateAllSelectedDisplayInfo();
 
   return 1;
+
+}
+
+int activeWindowClass::loadScheme (
+  char *fName )
+{
+
+  return genericLoadScheme( fName, 1 );
+
+}
+
+int activeWindowClass::loadComponentScheme (
+  char *fName )
+{
+
+  return genericLoadScheme( fName, 0 );
 
 }
 

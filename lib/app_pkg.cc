@@ -1815,11 +1815,19 @@ int stat, dup, state, i;
   //printf( "build scheme list\n" );
   stat = avl_init_tree( compare_nodes, compare_key, copy_nodes,
    &(this->schemeList) );
-  if ( !( stat & 1 ) ) return;
+  if ( !( stat & 1 ) ) {
+    numSchemeSets = 0;
+    schemeListExists = 0;
+    return;
+  }
 
   stat = avl_init_tree( compare_nodes, compare_key, copy_nodes,
    &(this->schemeSet) );
-  if ( !( stat & 1 ) ) return;
+  if ( !( stat & 1 ) ) {
+    numSchemeSets = 0;
+    schemeListExists = 0;
+    return;
+  }
 
   // open scheme list file and build tree
   envPtr = getenv(environment_str2);
@@ -1836,6 +1844,8 @@ int stat, dup, state, i;
 
   f = fopen( fName, "r" );
   if ( !f ) {
+    numSchemeSets = 0;
+    schemeListExists = 0;
     return;
   }
 
@@ -1849,13 +1859,16 @@ int stat, dup, state, i;
 
       //printf( "GETTING_SET_NAME\n" );
 
-      ptr = fgets ( line, 255, f );
-      if ( !ptr ) {
-        fclose( f );
-        schemeListExists = 1;
-        goto done;
-        return;
-      }
+      do {
+
+        ptr = fgets ( line, 255, f );
+        if ( !ptr ) {
+          fclose( f );
+          schemeListExists = 1;
+          goto done;
+        }
+
+      } while ( blank( line ) );
 
       tk = strtok( line, " \t\n" );
       if ( tk ) {
@@ -1868,6 +1881,8 @@ int stat, dup, state, i;
           if ( strcmp( tk, "{" ) != 0 ) {
             printf( "syntax err\n" );
             fclose( f );
+            numSchemeSets = 0;
+            schemeListExists = 0;
             return;
           }
 
@@ -1875,6 +1890,8 @@ int stat, dup, state, i;
 	else {
           printf( "syntax err\n" );
           fclose( f );
+          numSchemeSets = 0;
+          schemeListExists = 0;
           return;
         }
 
@@ -1882,6 +1899,8 @@ int stat, dup, state, i;
       else {
         printf( "syntax err\n" );
         fclose( f );
+        numSchemeSets = 0;
+        schemeListExists = 0;
         return;
       }
 
@@ -1891,6 +1910,8 @@ int stat, dup, state, i;
       stat = avl_insert_node( this->schemeSet, (void *) curSet, &dup );
       if ( !( stat & 1 ) ) {
         fclose( f );
+        numSchemeSets = 0;
+        schemeListExists = 0;
         return;
       }
       if ( dup ) {
@@ -1908,12 +1929,18 @@ int stat, dup, state, i;
 
       //printf( "GETTING_LIST\n" );
 
-      ptr = fgets ( line, 255, f );
-      if ( !ptr ) {
-        printf( "syntax err\n" );
-        fclose( f );
-        return;
-      }
+      do {
+
+        ptr = fgets ( line, 255, f );
+        if ( !ptr ) {
+          printf( "syntax err\n" );
+          fclose( f );
+          numSchemeSets = 0;
+          schemeListExists = 0;
+          return;
+        }
+
+      } while ( blank( line ) );
 
       tk = strtok( line, " \t\n" );
       if ( tk ) {
@@ -1933,6 +1960,8 @@ int stat, dup, state, i;
           cur = new schemeListType;
           if ( !cur ) {
             fclose( f );
+            numSchemeSets = 0;
+            schemeListExists = 0;
             return;
           }
 
@@ -1949,6 +1978,8 @@ int stat, dup, state, i;
           stat = avl_insert_node( this->schemeList, (void *) cur, &dup );
           if ( !( stat & 1 ) ) {
             fclose( f );
+            numSchemeSets = 0;
+            schemeListExists = 0;
             return;
           }
           if ( dup ) {
@@ -1959,6 +1990,8 @@ int stat, dup, state, i;
         else {
           printf( "syntax err\n" );
           fclose( f );
+          numSchemeSets = 0;
+          schemeListExists = 0;
           return;
         }
 
@@ -1966,6 +1999,8 @@ int stat, dup, state, i;
       else {
         printf( "syntax err\n" );
         fclose( f );
+        numSchemeSets = 0;
+        schemeListExists = 0;
         return;
       }
 
@@ -1981,6 +2016,8 @@ done:
 
   stat = avl_get_first( schemeSet, (void **) &curSet );
   if ( !( stat & 1 ) ) {
+    numSchemeSets = 0;
+    schemeListExists = 0;
     return;
   }
 
@@ -1995,6 +2032,8 @@ done:
 
     stat = avl_get_next( schemeSet, (void **) &curSet );
     if ( !( stat & 1 ) ) {
+      numSchemeSets = 0;
+      schemeListExists = 0;
       return;
     }
 

@@ -940,8 +940,15 @@ void activeWindowClass::setChanged ( void );
 
 void activeWindowClass::setUnchanged ( void );
 
+int activeWindowClass::genericLoadScheme (
+  char *fName,
+  int includeDisplayProperties );
+
 int activeWindowClass::loadScheme (
-  char *fileName );
+  char *fName );
+
+int activeWindowClass::loadComponentScheme (
+  char *fName );
 
 int activeWindowClass::saveScheme (
   char *fileName );
