@@ -122,15 +122,15 @@ static int num = 0;
     return 0;
   }
   else if ( num == MAX_X_ERRORS ) {
+    num++;
     fprintf( stderr, "Too many X errors\n" );
     return 0;
   }
+
   num++;
 
-  if ( err->error_code != BadAccess ) {
-    XGetErrorText( d, err->error_code, msg, 80 );
-    fprintf( stderr, main_str1, err->error_code, msg );
-  }
+  XGetErrorText( d, err->error_code, msg, 80 );
+  fprintf( stderr, main_str1, err->error_code, msg );
 
   return 0;
 
@@ -146,9 +146,11 @@ static int num = 0;
     return;
   }
   else if ( num == MAX_X_ERRORS ) {
+    num++;
     fprintf( stderr, "Too many Xt errors\n" );
     return;
   }
+
   num++;
 
   fprintf( stderr, "xtErrorHandler - %s\n", msg );
