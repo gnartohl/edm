@@ -2808,6 +2808,9 @@ time_t t1, t2;
   xAxisStyle = XYGC_K_AXIS_STYLE_LINEAR;
   xAxisSource = XYGC_K_AUTOSCALE;
   xAxisTimeFormat = 0;
+  curXMin = 1;
+  curXMax = 2;
+  curXNumLabelTicks = 2;
 
   for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
     y1Axis[yi] = 1;
@@ -2815,6 +2818,9 @@ time_t t1, t2;
     y1AxisSource[yi] = XYGC_K_AUTOSCALE;
     y1FormatType[yi] = 0;
     strcpy( y1Format[yi], "f" );
+    curY1Min[yi] = 1;
+    curY1Max[yi] = 2;
+    curY1NumLabelTicks[yi] = 2;
   }
 
   xFormatType = 0;
@@ -2926,6 +2932,9 @@ int i, yi;
   xMin = source->xMin;
   xMax = source->xMax;
   xAxisTimeFormat = source->xAxisTimeFormat;
+  curXMin = 1;
+  curXMax = 2;
+  curXNumLabelTicks = 2;
 
   for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
     y1Axis[yi] = source->y1Axis[yi];
@@ -2935,6 +2944,9 @@ int i, yi;
     y1Max[yi] = source->y1Max[yi];
     y1FormatType[yi] = source->y1FormatType[yi];
     strncpy( y1Format[yi], source->y1Format[yi], 15 );
+    curY1Min[yi] = 1;
+    curY1Max[yi] = 2;
+    curY1NumLabelTicks[yi] = 2;
   }
 
   xFormatType = source->xFormatType;
