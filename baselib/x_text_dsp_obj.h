@@ -41,7 +41,7 @@
 #define XTDC_K_COLORMODE_ALARM 1
 
 #define XTDC_MAJOR_VERSION 2
-#define XTDC_MINOR_VERSION 1
+#define XTDC_MINOR_VERSION 2
 #define XTDC_RELEASE 0
 
 #ifdef __x_text_dsp_obj_cc
@@ -324,6 +324,7 @@ fontMenuClass fm;
 char fontTag[63+1], bufFontTag[63+1];
 int useDisplayBg, bufUseDisplayBg, alignment, autoHeight, bufAutoHeight;
 int limitsFromDb, bufLimitsFromDb;
+int changeValOnLoseFocus, bufChangeValOnLoseFocus;
 int precision;
 efInt efPrecision, bufEfPrecision;
 unsigned int bgColor, bufBgColor;

@@ -68,5 +68,6 @@
 #define activeXTextDspClass_str65 "value"
 #define activeXTextDspClass_str66 "widgetValue"
 #define activeXTextDspClass_str67 "Keypad"
+#define activeXTextDspClass_str68 "Lose Focus Update"
 
 #endif

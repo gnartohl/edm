@@ -1101,6 +1101,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   axtdo->limitsFromDb = axtdo->bufLimitsFromDb;
 
+  axtdo->changeValOnLoseFocus = axtdo->bufChangeValOnLoseFocus;
+
   axtdo->efPrecision = axtdo->bufEfPrecision;
 
   if ( axtdo->efPrecision.isNull() )
@@ -1234,6 +1236,8 @@ int i;
     stateString[i] = NULL;
   }
   limitsFromDb = 1;
+  changeValOnLoseFocus = 0;
+
   efPrecision.setNull(1);
   precision = 3;
 
@@ -1325,6 +1329,7 @@ int i;
   fgPvExpStr.copy( source->fgPvExpStr );
 
   limitsFromDb = source->limitsFromDb;
+  changeValOnLoseFocus = source->changeValOnLoseFocus;
   precision = source->precision;
   efPrecision = source->efPrecision;
 
@@ -1484,6 +1489,9 @@ int index, stat;
 
   // version 2.1.0
   fprintf( f, "%-d\n", useKp );
+
+  // version 2.2.0
+  fprintf( f, "%-d\n", changeValOnLoseFocus );
 
   return 1;
 
@@ -1675,6 +1683,17 @@ char oneName[39+1];
   else {
 
     useKp = 0;
+
+  }
+
+  if ( ( ( major == 2 ) && ( minor > 1 ) ) || ( major > 2 ) ) {
+
+    fscanf( f, "%d\n", &changeValOnLoseFocus ); actWin->incLine();
+
+  }
+  else {
+
+    changeValOnLoseFocus = 1; // older version behavior
 
   }
 
@@ -1894,6 +1913,7 @@ char *tk, *gotData, *context, buf[255+1];
   fgColor.setColor( bufFgColor, actWin->ci );
 
   limitsFromDb = 1;
+  changeValOnLoseFocus = 0;
   precision = 3;
   efPrecision.setValue( 3 );
 
@@ -1983,8 +2003,8 @@ char title[32], *ptr;
   bufIsWidget = isWidget;
   bufUseKp = useKp;
   bufLimitsFromDb = limitsFromDb;
+  bufChangeValOnLoseFocus = changeValOnLoseFocus;
   bufEfPrecision = efPrecision;
-
   bufChangeCallbackFlag = changeCallbackFlag;
   bufActivateCallbackFlag = activateCallbackFlag;
   bufDeactivateCallbackFlag = deactivateCallbackFlag;
@@ -2022,6 +2042,7 @@ char title[32], *ptr;
   ef.addToggle( activeXTextDspClass_str67, &bufUseKp );
   ef.addToggle( activeXTextDspClass_str28, &bufSmartRefresh );
   ef.addToggle( activeXTextDspClass_str29, &bufIsWidget );
+  ef.addToggle( activeXTextDspClass_str68, &bufChangeValOnLoseFocus );
   ef.addToggle( activeXTextDspClass_str30, &bufActivateCallbackFlag );
   ef.addToggle( activeXTextDspClass_str31, &bufDeactivateCallbackFlag );
   ef.addToggle( activeXTextDspClass_str32, &bufChangeCallbackFlag );
@@ -3167,9 +3188,10 @@ static XtActionsRec dragActions[] = {
           XtAddCallback( tf_widget, XmNactivateCallback,
            xtdoTextFieldToStringA, this );
 
-          XtAddCallback( tf_widget, XmNlosingFocusCallback,
-           xtdoTextFieldToStringLF, this );
-
+          if ( changeValOnLoseFocus ) {
+            XtAddCallback( tf_widget, XmNlosingFocusCallback,
+             xtdoTextFieldToStringLF, this );
+	  }
           break;
 
         case DBR_SHORT:
@@ -3178,8 +3200,10 @@ static XtActionsRec dragActions[] = {
           XtAddCallback( tf_widget, XmNactivateCallback,
            xtdoTextFieldToIntA, this );
 
-          XtAddCallback( tf_widget, XmNlosingFocusCallback,
-           xtdoTextFieldToIntLF, this );
+          if ( changeValOnLoseFocus ) {
+            XtAddCallback( tf_widget, XmNlosingFocusCallback,
+             xtdoTextFieldToIntLF, this );
+	  }
 
           break;
 
@@ -3189,8 +3213,10 @@ static XtActionsRec dragActions[] = {
           XtAddCallback( tf_widget, XmNactivateCallback,
            xtdoTextFieldToDoubleA, this );
 
-          XtAddCallback( tf_widget, XmNlosingFocusCallback,
-           xtdoTextFieldToDoubleLF, this );
+          if ( changeValOnLoseFocus ) {
+            XtAddCallback( tf_widget, XmNlosingFocusCallback,
+             xtdoTextFieldToDoubleLF, this );
+	  }
 
           break;
 
