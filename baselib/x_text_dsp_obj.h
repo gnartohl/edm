@@ -47,7 +47,7 @@
 #define XTDC_K_FILE_NAME 2
 
 #define XTDC_MAJOR_VERSION 2
-#define XTDC_MINOR_VERSION 10
+#define XTDC_MINOR_VERSION 11
 #define XTDC_RELEASE 0
 
 #ifdef __x_text_dsp_obj_cc
@@ -505,6 +505,9 @@ calpadClass cp;
 fselectClass fsel;
 
 int grabUpdate;
+
+int showUnits, bufShowUnits;
+char units[MAX_UNITS_SIZE+1];
 
 public:
 

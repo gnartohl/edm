@@ -1163,6 +1163,13 @@ short svalue;
 
     } // end switch
 
+    if ( !blank( axtdo->curValue ) ) {
+      if ( axtdo->showUnits && !blank( axtdo->units ) ) {
+        Strncat( axtdo->curValue, " ", 127 );
+        Strncat( axtdo->curValue, axtdo->units, 127 );
+      }
+    }
+
     axtdo->needUpdate = 1;
     axtdo->actWin->addDefExeNode( axtdo->aglPtr );
 
@@ -1379,6 +1386,13 @@ short svalue;
 
   } // end switch
 
+  if ( !blank( axtdo->curValue ) ) {
+    if ( axtdo->showUnits && !blank( axtdo->units ) ) {
+      Strncat( axtdo->curValue, " ", 127 );
+      Strncat( axtdo->curValue, axtdo->units, 127 );
+    }
+  }
+
   axtdo->needRefresh = 1;
   axtdo->actWin->appCtx->proc->lock();
   axtdo->actWin->addDefExeNode( axtdo->aglPtr );
@@ -1410,6 +1424,9 @@ struct dbr_gr_enum enumInfoRec;
 
     stringInfoRec = *( (dbr_sts_string *) ast_args.dbr );
 
+    strcpy( axtdo->units, "" );
+    axtdo->showUnits = 0;
+
     axtdo->fgColor.setStatus( stringInfoRec.status, stringInfoRec.severity );
 
     break;
@@ -1417,6 +1434,9 @@ struct dbr_gr_enum enumInfoRec;
   case DBR_FLOAT:
 
     floatInfoRec = *( (dbr_gr_float *) ast_args.dbr );
+
+    strncpy( axtdo->units, floatInfoRec.units, MAX_UNITS_SIZE );
+    axtdo->units[MAX_UNITS_SIZE] = 0;
 
     if ( axtdo->limitsFromDb || axtdo->efPrecision.isNull() ) {
       axtdo->precision = floatInfoRec.precision;
@@ -1434,6 +1454,9 @@ struct dbr_gr_enum enumInfoRec;
 
     doubleInfoRec = *( (dbr_gr_double *) ast_args.dbr );
 
+    strncpy( axtdo->units, doubleInfoRec.units, MAX_UNITS_SIZE );
+    axtdo->units[MAX_UNITS_SIZE] = 0;
+
     if ( axtdo->limitsFromDb || axtdo->efPrecision.isNull() ) {
       axtdo->precision = doubleInfoRec.precision;
     }
@@ -1450,6 +1473,9 @@ struct dbr_gr_enum enumInfoRec;
 
     shortInfoRec = *( (dbr_gr_short *) ast_args.dbr );
 
+    strncpy( axtdo->units, shortInfoRec.units, MAX_UNITS_SIZE );
+    axtdo->units[MAX_UNITS_SIZE] = 0;
+
     axtdo->fgColor.setStatus( shortInfoRec.status, shortInfoRec.severity );
 
     axtdo->isDate = 0;
@@ -1462,6 +1488,9 @@ struct dbr_gr_enum enumInfoRec;
 
     longInfoRec = *( (dbr_gr_long *) ast_args.dbr );
 
+    strncpy( axtdo->units, longInfoRec.units, MAX_UNITS_SIZE );
+    axtdo->units[MAX_UNITS_SIZE] = 0;
+
     axtdo->fgColor.setStatus( longInfoRec.status, longInfoRec.severity );
 
     axtdo->isDate = 0;
@@ -1473,6 +1502,9 @@ struct dbr_gr_enum enumInfoRec;
   case DBR_ENUM:
 
     enumInfoRec = *( (dbr_gr_enum *) ast_args.dbr );
+
+    strcpy( axtdo->units, "" );
+    axtdo->showUnits = 0;
 
     n = enumInfoRec.no_str;
 
@@ -1802,6 +1834,11 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   axtdo->dateAsFileName = axtdo->bufDateAsFileName;
 
+  axtdo->showUnits = axtdo->bufShowUnits;
+  if ( axtdo->editable ) {
+    axtdo->showUnits = 0;
+  }
+
   strncpy( axtdo->id, axtdo->bufId, 31 );
   axtdo->id[31] = 0;
   axtdo->changeCallbackFlag = axtdo->bufChangeCallbackFlag;
@@ -1944,6 +1981,9 @@ int i;
 
   nullDetectMode = 0;
 
+  showUnits = 0;
+  strcpy( units, "" );
+
   connection.setMaxPvs( 3 );
 
   unconnectedTimer = 0;
@@ -2040,6 +2080,9 @@ int i;
   fastUpdate = source->fastUpdate;
   precision = source->precision;
   efPrecision = source->efPrecision;
+
+  showUnits = source->showUnits;
+  strcpy( units, "" );
 
   activeMode = 0;
 
@@ -2249,6 +2292,9 @@ int index, stat;
   // version 2.10
   fprintf( f, "%-d\n", fileComponent );
   fprintf( f, "%-d\n", dateAsFileName );
+
+  // version 2.11
+  fprintf( f, "%-d\n", showUnits );
 
   return 1;
 
@@ -2543,6 +2589,17 @@ unsigned int pixel;
   else {
     fileComponent = XTDC_K_FILE_FULL_PATH;
     dateAsFileName = 0;
+  }
+
+  if ( ( ( major == 2 ) && ( minor > 10 ) ) || ( major > 2 ) ) {
+    fscanf( f, "%d\n", &showUnits );
+  }
+  else {
+    showUnits = 0;
+  }
+
+  if ( editable ) {
+    showUnits = 0;
   }
 
   actWin->fi->loadFontTag( fontTag );
@@ -2906,6 +2963,7 @@ int noedit;
   bufAutoSelect = autoSelect;
   bufUpdatePvOnDrop = updatePvOnDrop;
   bufUseHexPrefix = useHexPrefix;
+  bufShowUnits = showUnits;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -2931,7 +2989,7 @@ int noedit;
   ef.addToggle( activeXTextDspClass_str77, &bufUseHexPrefix );
   ef.addToggle( activeXTextDspClass_str20, &bufLimitsFromDb );
   ef.addTextField( activeXTextDspClass_str21, 35, &bufEfPrecision );
-
+  ef.addToggle( activeXTextDspClass_str81, &bufShowUnits );
   ef.addToggle( activeXTextDspClass_str11, &bufAutoHeight );
 
   if ( !noedit ) {

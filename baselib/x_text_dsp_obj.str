@@ -81,5 +81,6 @@
 #define activeXTextDspClass_str78 (char *) "Return"
 #define activeXTextDspClass_str79 (char *) "Full Path|Name & Ext|Name Only"
 #define activeXTextDspClass_str80 (char *) "Convert Date To File Name"
+#define activeXTextDspClass_str81 (char *) "Show Units"
 
 #endif
