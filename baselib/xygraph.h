@@ -628,7 +628,6 @@ int plotAreaX, plotAreaY, plotAreaW, plotAreaH;
 
 objPlusIndexType argRec[XYGC_K_MAX_TRACES];
 
-//ProcessVariable *xPv[XYGC_K_MAX_TRACES], *yPv[XYGC_K_MAX_TRACES];
 chid xPv[XYGC_K_MAX_TRACES], yPv[XYGC_K_MAX_TRACES];
 evid xEv[XYGC_K_MAX_TRACES], yEv[XYGC_K_MAX_TRACES];
 
@@ -642,8 +641,6 @@ int y2Scale[XYGC_K_MAX_TRACES];
 
 expStringClass xPvExpStr[XYGC_K_MAX_TRACES], yPvExpStr[XYGC_K_MAX_TRACES];
 
-//const ProcessVariable::Type xPvType[XYGC_K_MAX_TRACES];
-//const ProcessVariable::Type yPvType[XYGC_K_MAX_TRACES];
 int xPvType[XYGC_K_MAX_TRACES], yPvType[XYGC_K_MAX_TRACES];
 
 int traceType[XYGC_K_MAX_TRACES]; // XYGC_K_TRACE_XY or XYGC_K_TRACE_CHRONOLOGICAL
@@ -692,7 +689,6 @@ int arrayHead[XYGC_K_MAX_TRACES], arrayTail[XYGC_K_MAX_TRACES],
 
 int effectiveCount[XYGC_K_MAX_TRACES], totalCount[XYGC_K_MAX_TRACES];
 
-//ProcessVariable *trigPv, *resetPv;
 chid resetPv, trigPv;
 evid resetEv, trigEv;
 expStringClass trigPvExpStr, resetPvExpStr;
@@ -844,14 +840,6 @@ void getYMinMax (
   double *min,
   double *max
 );
-
-static void plotPvConnectStateCallback (
-  ProcessVariable *pv,
-  void *userarg );
-
-static void plotUpdate (
-  ProcessVariable *pv,
-  void *userarg );
 
 char *objName ( void ) {
 
