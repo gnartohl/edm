@@ -327,6 +327,13 @@ int importFromXchFile (
   char *name,
   activeWindowClass *_actWin );
 
+int createSpecial (
+  char *fname,
+  activeWindowClass *_actWin );
+
+void sendMsg (
+  char *param );
+
 int genericEdit ( void );
 
 int edit ( void );

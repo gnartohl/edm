@@ -587,7 +587,7 @@ static void xtdoGrabUpdate (
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
-  return;
+  if ( axtdo->inputFocusUpdatesAllowed ) return;
 
   if ( !axtdo->enabled ) return;
 
@@ -666,7 +666,9 @@ char *buf;
     axtdo->actWin->appCtx->proc->unlock();
   }
 
-  XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
+  //XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
+
+  if ( !axtdo->inputFocusUpdatesAllowed ) axtdo->grabUpdate = 0;
 
 }
 
@@ -771,6 +773,8 @@ char *buf, tmp[XTDC_K_MAX+1];
     //XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
 
   }
+
+  if ( !axtdo->inputFocusUpdatesAllowed ) axtdo->grabUpdate = 0;
 
 }
 
@@ -919,6 +923,8 @@ char *buf, tmp[XTDC_K_MAX+1];
     //XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
 
   }
+
+  if ( !axtdo->inputFocusUpdatesAllowed ) axtdo->grabUpdate = 0;
 
 }
 
@@ -1699,6 +1705,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   axtdo->useAlarmBorder = axtdo->eBuf->bufUseAlarmBorder;
 
+  axtdo->inputFocusUpdatesAllowed = axtdo->eBuf->bufInputFocusUpdatesAllowed;
+
   strncpy( axtdo->id, axtdo->bufId, 31 );
   axtdo->id[31] = 0;
   axtdo->changeCallbackFlag = axtdo->eBuf->bufChangeCallbackFlag;
@@ -1842,6 +1850,8 @@ activeXTextDspClass::activeXTextDspClass ( void ) {
 
   useAlarmBorder = 0;
 
+  inputFocusUpdatesAllowed = 0;
+
   newPositioning = 1;
 
   prevAlarmSeverity = -1;
@@ -1955,6 +1965,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   nullDetectMode = source->nullDetectMode;
 
   useAlarmBorder = source->useAlarmBorder;
+
+  inputFocusUpdatesAllowed = source->inputFocusUpdatesAllowed;
 
   newPositioning = 1;
 
@@ -2179,6 +2191,7 @@ static int objTypeEnum[4] = {
   tag.loadBoolW( "showUnits", &showUnits, &zero );
   tag.loadBoolW( "useAlarmBorder", &useAlarmBorder, &zero );
   tag.loadBoolW( "newPos", &newPositioning, &zero );
+  tag.loadBoolW( "inputFocusUpdates", &inputFocusUpdatesAllowed, &zero );
   tag.loadW( "objType", 4, objTypeEnumStr, objTypeEnum, &objType,
    &objTypeUnknown );
   tag.loadW( "endObjectProperties" );
@@ -2428,6 +2441,7 @@ static int objTypeEnum[4] = {
   tag.loadR( "showUnits", &showUnits, &zero );
   tag.loadR( "useAlarmBorder", &useAlarmBorder, &zero );
   tag.loadR( "newPos", &newPositioning, &zero );
+  tag.loadR( "inputFocusUpdates", &inputFocusUpdatesAllowed, &zero );
   tag.loadR( "objType", 4, objTypeEnumStr, objTypeEnum, &objType,
    &objTypeUnknown );
   tag.loadR( "endObjectProperties" );
@@ -3186,6 +3200,7 @@ int noedit;
   eBuf->bufUseHexPrefix = useHexPrefix;
   eBuf->bufShowUnits = showUnits;
   eBuf->bufUseAlarmBorder = useAlarmBorder;
+  eBuf->bufInputFocusUpdatesAllowed = inputFocusUpdatesAllowed;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -3232,11 +3247,13 @@ int noedit;
   ef.addToggle( activeXTextDspClass_str29, &eBuf->bufIsWidget );
 
   if ( !noedit ) {
+    ef.addToggle( activeXTextDspClass_str83, &eBuf->bufInputFocusUpdatesAllowed );
     ef.addToggle( activeXTextDspClass_str68, &eBuf->bufChangeValOnLoseFocus );
     ef.addToggle( activeXTextDspClass_str75, &eBuf->bufAutoSelect );
     ef.addToggle( activeXTextDspClass_str76, &eBuf->bufUpdatePvOnDrop );
   }
   else {
+    eBuf->bufInputFocusUpdatesAllowed = inputFocusUpdatesAllowed = 0;
     eBuf->bufChangeValOnLoseFocus = changeValOnLoseFocus = 0;
     eBuf->bufAutoSelect = autoSelect = 0;
     eBuf->bufUpdatePvOnDrop = updatePvOnDrop = 0;
@@ -4761,8 +4778,10 @@ Atom importList[2];
 
 	}
 
-        XtAddEventHandler( tf_widget, EnterWindowMask|LeaveWindowMask, False,
-         eventHandler, (XtPointer) this );
+        if ( inputFocusUpdatesAllowed ) {
+          XtAddEventHandler( tf_widget, EnterWindowMask|LeaveWindowMask, False,
+           eventHandler, (XtPointer) this );
+        }
 
         switch ( pvType ) {
 

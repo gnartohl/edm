@@ -56,6 +56,7 @@ activeGraphicClass::activeGraphicClass ( void ) {
   defaultEnabled = enabled = prevEnabled = 1;
   needSmartDraw = 0;
   mouseOver = 0;
+  hidden = 0;
 
 }
 
@@ -91,6 +92,7 @@ void activeGraphicClass::clone ( const activeGraphicClass *source ) {
   defaultEnabled = enabled = prevEnabled = 1;
   needSmartDraw = 0;
   mouseOver = 0;
+  hidden = 0;
 
   if ( source->createParam ) {
     createParam = new char[strlen(source->createParam)+1];
@@ -1975,6 +1977,21 @@ char *gotData, *context, *tk, buf[255+1];
   } while ( more );
 
   return 1;
+
+}
+
+int activeGraphicClass::createSpecial (
+  char *param,
+  activeWindowClass *actWin )
+{
+
+  return 2; // error
+
+}
+
+void activeGraphicClass::sendMsg (
+  char *param )
+{
 
 }
 

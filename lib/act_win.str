@@ -200,5 +200,6 @@
 #define activeWindowClass_str201 (char *) "Dump PV List"
 #define activeWindowClass_str202 (char *) "Clip Drawing Area to Viewport"
 #define activeWindowClass_str203 (char *) "Disable Scrolling"
+#define activeWindowClass_str204 (char *) "Open Display in New Window"
 
 #endif

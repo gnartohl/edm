@@ -57,5 +57,6 @@
 #define activeXTextDspClass_str80 (char *) "Convert Date To File Name"
 #define activeXTextDspClass_str81 (char *) "Show Units"
 #define activeXTextDspClass_str82 (char *) "Alarm Border"
+#define activeXTextDspClass_str83 (char *) "Allow Input Focus Updates"
 
 #endif

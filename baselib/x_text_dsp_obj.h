@@ -498,6 +498,7 @@ typedef struct editBufTag {
   int bufUseKp;
   int bufShowUnits;
   int bufUseAlarmBorder;
+  int bufInputFocusUpdatesAllowed;
 } editBufType, *editBufPtr;
 
 editBufPtr eBuf;
@@ -584,6 +585,8 @@ int useAlarmBorder;
 int newPositioning;
 
 int oldStat, oldSev;
+
+int inputFocusUpdatesAllowed;
 
 public:
 

@@ -165,6 +165,12 @@ int startEdit, editConfirmed;
 
 int deleteRequest; // if true, then wants to be deleted
 
+// act_win.cc processes hidden objects as follows:
+//  o they are not included in a "select all" operation
+//  o they are not included in a "edit outliers" operation
+//  o they are not included in a "save" operation
+int hidden;
+
 int needSmartDraw;
 
 activeGraphicClass ( void );
@@ -498,6 +504,13 @@ virtual int importFromXchFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
+
+virtual int createSpecial (
+  char *param,
+  activeWindowClass *actWin );
+
+virtual void sendMsg (
+  char *param );
 
 virtual int save (
   FILE *fptr );

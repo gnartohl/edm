@@ -1513,6 +1513,53 @@ char *tk, *gotData, *context, buf[255+1];
 
 }
 
+int relatedDisplayClass::createSpecial (
+  char *fname,
+  activeWindowClass *_actWin )
+{
+
+int i;
+
+  x = -100;
+  y = 0;
+  w = 5;
+  h = 5;
+
+  this->actWin = _actWin;
+  strcpy( fontTag, "" );
+  ofsX = ofsY = useFocus = button3Popup = 0;
+  noEdit = invisible = numDsps = 1;
+  setPostion[0] = 0;
+  allowDups[0] = 0;
+  cascade[0] = 0;
+  replaceSymbols[0] = 0;
+  propagateMacros[0] = 1;
+  closeAction[0] = 0;
+  icon = 0;
+  displayFileName[0].setRaw( fname );
+  
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  for ( i=0; i<NUMPVS; i++ ) {
+    destPvExpString[i].setRaw( "" );
+    sourceExpString[i].setRaw( "" );
+  }
+
+  return 1;
+
+}
+
+void relatedDisplayClass::sendMsg (
+  char *param )
+{
+
+  if ( param ) {
+    //printf( "  msg = [%s]\n", param );
+    popupDisplay( 0 );
+  }
+
+}
+
 int relatedDisplayClass::genericEdit ( void ) {
 
 int i;

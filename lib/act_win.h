@@ -121,6 +121,7 @@
 #define AWC_POPUP_PASTE_GROUP_INFO 154
 #define AWC_POPUP_SAVE_TO_PATH 155
 #define AWC_POPUP_DUMP_PVLIST 156
+#define AWC_POPUP_OPEN_SELF 157
 
 #define AWC_NONE_SELECTED 1
 #define AWC_ONE_SELECTED 2
@@ -667,6 +668,8 @@ Widget drawWidget, executeWidget, fileSelectBox, schemeSelectBox,
  pvlistFileSelectBox;
 Display *d;
 int bufX, bufY, bufW, bufH;
+
+activeGraphicClass *internalRelatedDisplay;
 
 activeGraphicListPtr head;
 activeGraphicListPtr cutHead;

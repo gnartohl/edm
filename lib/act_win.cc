@@ -1712,7 +1712,13 @@ char *envPtr, text[255+1];
 
       awo->clearActive();
       awo->refreshActive();
+      break;
 
+    case AWC_POPUP_OPEN_SELF:
+
+      if ( awo->internalRelatedDisplay ) {
+        awo->internalRelatedDisplay->sendMsg( "popup" );
+      }
       break;
 
     case AWC_POPUP_EDIT:
@@ -2431,6 +2437,8 @@ Atom wm_delete_window;
       cur1 = awo->head->blink;
       while ( cur1 != awo->head ) {
 
+	if ( !cur1->node->hidden ) {
+
           wasSelected = cur1->node->isSelected();
           if ( !wasSelected ) {
             num_selected++;
@@ -2441,6 +2449,8 @@ Atom wm_delete_window;
             awo->selectedHead->selBlink = cur1;
             cur1->selFlink = awo->selectedHead;
           }
+
+	}
 
         cur1 = cur1->blink;
 
@@ -2935,14 +2945,15 @@ Atom wm_delete_window;
       while ( cur1 != awo->head ) {
 
         if (
-             ( ( cur1->node->getX0()+6 > awo->w ) &&
-               ( cur1->node->getX1() > awo->w ) ) ||
-             ( ( cur1->node->getX1()-6 < 0 ) &&
-               ( cur1->node->getX0() < 0 ) ) ||
-             ( ( cur1->node->getY0()+6 > awo->h ) &&
-               ( cur1->node->getY1() > awo->h ) ) ||
-             ( ( cur1->node->getY1()-6 < 0 ) &&
-               ( cur1->node->getY0() < 0 ) )
+	     ( !cur1->node->hidden ) &&
+             ( ( ( cur1->node->getX0()+6 > awo->w ) &&
+                 ( cur1->node->getX1() > awo->w ) ) ||
+               ( ( cur1->node->getX1()-6 < 0 ) &&
+                 ( cur1->node->getX0() < 0 ) ) ||
+               ( ( cur1->node->getY0()+6 > awo->h ) &&
+                 ( cur1->node->getY1() > awo->h ) ) ||
+               ( ( cur1->node->getY1()-6 < 0 ) &&
+                 ( cur1->node->getY0() < 0 ) ) )
           ) {
 
           n++;
@@ -10015,6 +10026,8 @@ activeWindowClass::activeWindowClass ( void ) {
   commentTail = commentHead;
   commentTail->flink = NULL;
 
+  internalRelatedDisplay = NULL;
+
   head = new activeGraphicListType;
   head->flink = head;
   head->blink = head;
@@ -10808,6 +10821,8 @@ int activeWindowClass::createNoEdit (
   char **_macros,
   char **_expansions ) {
 
+  _edmDebug();
+
   return genericCreate(
    ctx,
    parent,
@@ -11102,6 +11117,7 @@ char tmp[10];
        XmNshadowThickness,0,
        XmNscrollingPolicy, XmAUTOMATIC,
        XmNscrollBarDisplayPolicy, XmAS_NEEDED,
+       XmNbackground, embBg,
        NULL );
 
       drawWidget = XtVaCreateManagedWidget( "screen", xmDrawingAreaWidgetClass,
@@ -13609,6 +13625,32 @@ Arg args[3];
    (XtPointer) &curBlockListNode->block );
 
 
+  if ( isEmbedded ) {
+
+  str = XmStringCreateLocalized( activeWindowClass_str204 );
+
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   b2ExecutePopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_OPEN_SELF;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseExecute_cb,
+   (XtPointer) &curBlockListNode->block );
+
+  }
+
 //===================================================================
 
 }
@@ -14089,7 +14131,7 @@ tagClass tag;
 
   cur = head->flink;
   while ( cur != head ) {
-    if ( !cur->node->deleteRequest ) {
+    if ( !cur->node->deleteRequest && !cur->node->hidden ) {
       if ( strcmp( cur->node->getCreateParam(), "" ) == 0 ) {
         strncpy( fullName, cur->node->objName(), 255 );
         description = obj.getNameFromClass( fullName );
@@ -14460,6 +14502,46 @@ tagClass tag;
       stat = this->loadWin( f );
     }
     if ( !( stat & 1 ) ) return stat; // memory leak here
+
+
+    if ( isEmbedded ) {
+
+      // Create internal, hidden related display object
+
+      strncpy( tagName, prefix, 255 );
+      Strncat( tagName, displayName, 255 );
+      Strncat( tagName, postfix, 255 );
+
+      cur = new activeGraphicListType;
+      if ( !cur ) {
+        fileClose( f );
+        appCtx->postMessage(
+         activeWindowClass_str157 );
+        return 0;
+      }
+      cur->defExeFlink = NULL;
+      cur->defExeBlink = NULL;
+
+      cur->node = obj.createNew( "relatedDisplayClass" );
+
+      if ( cur->node ) {
+
+        // tagName is related display filename
+        stat = cur->node->createSpecial( tagName, this );
+        if ( stat & 1 ) { // else memory leak here
+          internalRelatedDisplay = cur->node;
+          cur->blink = head->blink;
+          head->blink->flink = cur;
+          head->blink = cur;
+          cur->flink = head;
+        }
+
+        cur->node->hidden = 1; // make hidden
+
+      }
+
+    }
+
 
     // read file and process each "object" tag
     tag.init();
