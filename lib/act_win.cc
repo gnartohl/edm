@@ -13277,6 +13277,7 @@ char callbackName[63+1];
         cnt++;
         if ( !( cnt % 300 ) ) {
           ca_pend_io( 1.0 );
+          ca_pend_event( 0.00001 );
           processAllEvents( appCtx->appContext(), d );
 	}
 #endif
@@ -13454,6 +13455,7 @@ char **muxMacro, **muxExpansion;
         cnt++;
         if ( !( cnt % 300 ) ) {
           ca_pend_io( 1.0 );
+          ca_pend_event( 0.00001 );
           processAllEvents( appCtx->appContext(), d );
 	}
 #endif
@@ -13558,6 +13560,7 @@ char callbackName[63+1];
     cnt++;
     if ( !( cnt % 300 ) ) {
       ca_pend_io( 1.0 );
+      ca_pend_event( 0.00001 );
       processAllEvents( appCtx->appContext(), d );
     }
 #endif
