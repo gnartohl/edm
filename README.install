@@ -25,13 +25,6 @@
 
    -- We are building as an EPICS extension; so modify the files in
       "$EPICS_EXTENSIONS/config" appropriately for your site
-      
-   -- The pvFactory component of the edm distribution does not follow
-      the EPICS build convention.  So examine the make.setup file located
-      in $EPICS_EXTENSIONS/src/edm and modify appropriately for your site.
-
-   -- Don't worry all other components of EDM follow the "EPICS build paradigm" of
-      R3.13.5.
    
    -- Note we are using gcc-2.95.2 and GNU make version 3.79.1
 
@@ -60,7 +53,7 @@
       -- EDMOBJECTS=$EPICS_EXTENSIONS/ext_pref/edm
       -- EDMHELPFILES=$EPICS_EXTENSIONS/src/edm/helpFiles
       -- EDMFILES=$EPICS_EXTENSIONS/ext_pref/edm
-      -- EDMDATAFILES=$IOCTOP/<system1>/opi/edl:$IOCTOP/<system2>/opi/edl
+      -- EDMDATAFILES=./:$IOCTOP/<system1>/opi/edl:$IOCTOP/<system2>/opi/edl
 
       Also, we will make available the $EPICS_EXTENSIONS/ext_pref/edm as an example.
       This will be tarred up as ext_pref-edm.tar on our ftp site: (ftp://snsftp.sns.ornl.gov/UPLOAD/controls/edm)
@@ -83,13 +76,6 @@
 
    -- We are building as an EPICS extension; so modify the files in
       "$EPICS_EXTENSIONS/config" appropriately for your site
-      
-   -- The pvFactory component of the edm distribution does not follow
-      the EPICS build convention.  So examine the make.setup file located
-      in $EPICS_EXTENSIONS/src/edm and modify appropriately for your site.
-
-   -- Don't worry all other components of EDM follow the "EPICS build paradigm" of
-      R3.13.5.
    
    -- Note we are using gcc-2.96 (Linux native compiler) and GNU make version 3.79.1
 
@@ -115,7 +101,7 @@
       -- EDMOBJECTS=$EPICS_EXTENSIONS/ext_pref/edm
       -- EDMHELPFILES=$EPICS_EXTENSIONS/src/edm/helpFiles
       -- EDMFILES=$EPICS_EXTENSIONS/ext_pref/edm
-      -- EDMDATAFILES=$IOCTOP/<system1>/opi/edl:$IOCTOP/<system2>/opi/edl
+      -- EDMDATAFILES=./:$IOCTOP/<system1>/opi/edl:$IOCTOP/<system2>/opi/edl
 
       Also, we will make available the $EPICS_EXTENSIONS/ext_pref/edm as an example.
       This will be tarred up as ext_pref-edm.tar on our ftp site: (ftp://snsftp.sns.ornl.gov/UPLOAD/controls/edm)
@@ -131,7 +117,7 @@ Note: Documentation is still under construction.  If you find any problems with 
       Please take a look at the HTML-based edm documentation as well.
 
 
-
+Note: Also, edm works with Red Hat 7.3
 
 
 
