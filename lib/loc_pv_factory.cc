@@ -94,7 +94,7 @@ ProcessVariable *LOC_PV_Factory::create(const char *PV_name)
     tmp[PV_Factory::MAX_PV_NAME] = 0;
 
     ctx = NULL;
-    tk = strtok_r( tmp, "=", &ctx );
+    tk = strtok_r( tmp, "=~", &ctx );
 
     //item.name = PV_name;
     item.name = tk;
@@ -109,7 +109,7 @@ ProcessVariable *LOC_PV_Factory::create(const char *PV_name)
         n_item->name = pv->get_name();
         n_item->pv = pv;
         processvariables.insert(n_item);
-        tk = strtok_r( NULL, "=", &ctx );
+        tk = strtok_r( NULL, "=~", &ctx );
         pv->setAttributes( tk );
     }
     return pv;
