@@ -468,8 +468,8 @@ int fontInfoClass::initFromFile (
 // Read font specs from given file, query server, and populate data structure.
 // If font does not exist, use some other font.
 
-char line[127+1], *ptr;
-int stat;
+char line[127+1], *ptr, *fontSpec, *tk;
+int stat, preload;
 FILE *f;
 int empty = 1;
 fontNameListPtr cur;
@@ -512,28 +512,56 @@ XFontStruct *fs;
   do {
 
     ptr = fgets ( line, 127, f );
-    if ( ptr ) {
+    if ( ptr ) { // ignore blank lines
 
-      line[strlen(line)-1] = 0; // discard \n
+      fontSpec = strtok( line, "\t\n" );
+      if ( fontSpec ) {
 
-      cur = new fontNameListType;
+        if ( major >= 2 ) {
 
-      stat = this->resolveFont( line, cur );
-      if ( !( stat & 1 ) ) {
-        delete cur;
-        return stat;
+          tk = strtok( NULL, "\t\n" );
+          if ( tk ) {
+            if ( strcmp( tk, "preload" ) == 0 ) {
+              preload = 1;
+	    }
+	    else {
+              preload = 0;
+	    }
+	  }
+	  else {
+	    preload = 0;
+	  }
+
+	}
+	else {
+
+	  preload = 0;
+
+	}
+
+        cur = new fontNameListType;
+
+        stat = this->resolveFont( fontSpec, cur );
+        if ( !( stat & 1 ) ) {
+          delete cur;
+          return stat;
+        }
+
+        stat = avl_insert_node( this->fontNameListH, (void *) cur, &dup );
+        if ( !( stat & 1 ) ) return stat;
+//        if ( dup ) printf( "duplicate\n" );
+
+        if ( preload ) {
+          //printf( "preload %s\n", cur->name );
+          fs = getXFontStruct( cur->name );
+	}
+
+        stat = appendSizeMenu( cur->family, cur->size, cur->fsize );
+        if ( !( stat & 1 ) ) return stat;
+
+        empty = 0;
+
       }
-
-      stat = avl_insert_node( this->fontNameListH, (void *) cur, &dup );
-      if ( !( stat & 1 ) ) return stat;
-//       if ( dup ) printf( "duplicate\n" );
-
-      fs = getXFontStruct( cur->name );
-
-      stat = appendSizeMenu( cur->family, cur->size, cur->fsize );
-      if ( !( stat & 1 ) ) return stat;
-
-      empty = 0;
 
     }
 
