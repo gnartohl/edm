@@ -1229,8 +1229,9 @@ char *item;
   }
   else {
     strncpy( awo->curSchemeSet, "", 63 );
-    awo->appCtx->displayScheme.loadDefault( &awo->appCtx->ci );
-    awo->setDisplayScheme( &awo->appCtx->displayScheme );
+    awo->loadComponentScheme( "default" );
+    //awo->appCtx->displayScheme.loadDefault( &awo->appCtx->ci );
+    //awo->setDisplayScheme( &awo->appCtx->displayScheme );
   }
 
 }
