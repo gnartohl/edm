@@ -70,11 +70,12 @@
 #define activeMotifSliderClass_str76 (char *) "save"
 #define activeMotifSliderClass_str77 (char *) " rest"
 #define activeMotifSliderClass_str85 (char *) "controlValue"
-#define activeMotifSliderClass_str86 (char *) "limits"
-#define activeMotifSliderClass_str87 (char *) "label"
-#define activeMotifSliderClass_str88 (char *) "value"
+#define activeMotifSliderClass_str86 (char *) "Limits"
+#define activeMotifSliderClass_str87 (char *) "Label"
+#define activeMotifSliderClass_str88 (char *) "Value"
 #define activeMotifSliderClass_str89 (char *) "Orientation"
 #define activeMotifSliderClass_str90 (char *) "Horizontal|Vertical"
 #define activeMotifSliderClass_str91 (char *) ""
+#define activeMotifSliderClass_str92 (char *) "Saved Value"
 
 #endif

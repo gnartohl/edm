@@ -32,7 +32,7 @@
 #include "cvtFast.h"
 
 #define MSLC_MAJOR_VERSION 4
-#define MSLC_MINOR_VERSION 1
+#define MSLC_MINOR_VERSION 2
 #define MSLC_RELEASE 0
 
 #define MSLC_STATE_IDLE 1
@@ -278,7 +278,7 @@ XtIntervalId updateControlTimer;
 int updateControlTimerValue;
 int updateControlTimerActive;
 
-double oneControlV, savedV;
+double oneControlV, savedV, newSavedV, autoSetSavedV;
 
 XtIntervalId incrementTimer;
 int incrementTimerActive;
@@ -293,6 +293,7 @@ typedef struct editBufTag {
 // edit buffer
   char controlBufPvName[PV_Factory::MAX_PV_NAME+1];
   char controlBufLabelName[PV_Factory::MAX_PV_NAME+1];
+  char savedValueBufPvName[PV_Factory::MAX_PV_NAME+1];
 } editBufType, *editBufPtr;
 
 editBufPtr eBuf;
@@ -302,7 +303,7 @@ int bufX, bufY, bufW, bufH;
 Widget frameWidget, motifSliderWidget, scaleWidget, scrollBarWidget;
 
 int showLimits, bufShowLimits, showValue, bufShowValue, showLabel,
- bufShowLabel;
+ bufShowLabel, showSavedValue, bufShowSavedValue;
 
 double bufControlV, bufIncrement;
 int valueFormX, valueFormY, valueFormW, valueFormH, valueFormMaxH;
@@ -320,36 +321,39 @@ pvColorClass bgColor, fgColor;
 int bufBgColor, bufFgColor;
 int shadeColor, bufShadeColor, topColor, bufTopColor, botColor, bufBotColor;
 colorButtonClass fgCb, bgCb, shadeCb, topCb, botCb;
-char controlValue[14+1];
+char controlValue[14+1], savedValue[14+1];
 char minValue[14+1], maxValue[14+1];
 char incString[31+1];
 
 int minX, minY, maxX, maxY, valX, valY, labelX, labelY, scaleX, scaleY,
- scaleW, scaleH, controlX, savedX, limitsH, labelH, midVertScaleY;
+ scaleW, scaleH, controlX, limitsH, labelH, midVertScaleY,
+ midVertScaleY1, midVertScaleY2;
 
 fontMenuClass fm;
 char fontTag[63+1], bufFontTag[63+1];
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
-ProcessVariable *controlPvId, *controlLabelPvId;
+ProcessVariable *controlPvId, *controlLabelPvId, *savedValuePvId;
 
-expStringClass controlPvName, controlLabelName;
+expStringClass controlPvName, controlLabelName, savedValuePvName;
 
 char controlLabel[PV_Factory::MAX_PV_NAME+1];
 int formatType, bufFormatType;
 char controlFormat[15+1];
 
-int controlExists, controlLabelExists;
+int controlExists, controlLabelExists, savedValueExists;
 
 int controlLabelType, bufControlLabelType;
 
-int controlPvConnected, bufInvalid, active, activeMode, init;
+int controlPvConnected, savedValuePvConnected, bufInvalid, active,
+ activeMode, init;
 
 int positive;
 
 int needCtlConnectInit, needCtlInfoInit, needCtlRefresh;
 int needCtlLabelConnectInit, needCtlLabelInfoInit, needCtlUpdate;
+int needSavedConnectInit, needSavedRefresh;
 int needErase, needDraw;
 int needToDrawUnconnected, needToEraseUnconnected;
 int unconnectedTimer;
@@ -400,11 +404,19 @@ static void controlLabelUpdate (
   ProcessVariable *pv,
   void *userarg );
 
+static void savedValueUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
 static void monitorControlLabelConnectState (
   ProcessVariable *pv,
   void *userarg );
 
 static void monitorControlConnectState (
+  ProcessVariable *pv,
+  void *userarg );
+
+static void monitorSavedValueConnectState (
   ProcessVariable *pv,
   void *userarg );
 

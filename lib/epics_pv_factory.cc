@@ -641,10 +641,10 @@ static ProcessVariable::Type double_type =
 { ProcessVariable::Type::real, 64, "real:64" };
 
 static ProcessVariable::specificType d_type =
-{ ProcessVariable::specificType::real, 32 };
+{ ProcessVariable::specificType::real, 64 };
 
 static ProcessVariable::specificType f_type =
-{ ProcessVariable::specificType::flt, 16 };
+{ ProcessVariable::specificType::flt, 32 };
 
 PVValueDouble::PVValueDouble(EPICS_ProcessVariable *epv)
         : PVValue(epv)
@@ -678,7 +678,16 @@ const ProcessVariable::Type &PVValueDouble::get_type() const
 {   return double_type; }
 
 short PVValueDouble::get_DBR() const
-{   return DBR_DOUBLE; }
+{
+
+  if ( specific_type.type == f_type.flt ) {
+    return DBR_FLOAT;
+  }
+  else {
+    return DBR_DOUBLE;
+  }
+
+}
 
 double PVValueDouble::get_double() const
 {   return value[0]; }
@@ -688,31 +697,79 @@ const double * PVValueDouble::get_double_array() const
 
 void PVValueDouble::read_ctrlinfo(const void *buf)
 {
-    const  dbr_ctrl_double *val = (const dbr_ctrl_double *)buf;
-    status = val->status;
-    severity = val->severity;
-    precision = val->precision;
-    strncpy(units, val->units, MAX_UNITS_SIZE);
-    units[MAX_UNITS_SIZE] = '\0';
-    upper_disp_limit = val->upper_disp_limit;
-    lower_disp_limit = val->lower_disp_limit;
-    upper_alarm_limit = val->upper_alarm_limit; 
-    upper_warning_limit = val->upper_warning_limit;
-    lower_warning_limit = val->lower_warning_limit;
-    lower_alarm_limit = val->lower_alarm_limit;
-    upper_ctrl_limit = val->upper_ctrl_limit;
-    lower_ctrl_limit = val->lower_ctrl_limit;
-    *value = val->value;
+
+    const  dbr_ctrl_double *dval = (const dbr_ctrl_double *)buf;
+    const  dbr_ctrl_float *fval = (const dbr_ctrl_float *)buf;
+
+    if ( specific_type.type == f_type.flt ) {
+
+      status = fval->status;
+      severity = fval->severity;
+      precision = fval->precision;
+      strncpy(units, fval->units, MAX_UNITS_SIZE);
+      units[MAX_UNITS_SIZE] = '\0';
+      upper_disp_limit = fval->upper_disp_limit;
+      lower_disp_limit = fval->lower_disp_limit;
+      upper_alarm_limit = fval->upper_alarm_limit; 
+      upper_warning_limit = fval->upper_warning_limit;
+      lower_warning_limit = fval->lower_warning_limit;
+      lower_alarm_limit = fval->lower_alarm_limit;
+      upper_ctrl_limit = fval->upper_ctrl_limit;
+      lower_ctrl_limit = fval->lower_ctrl_limit;
+      *value = fval->value;
+
+    }
+    else {
+
+      status = dval->status;
+      severity = dval->severity;
+      precision = dval->precision;
+      strncpy(units, dval->units, MAX_UNITS_SIZE);
+      units[MAX_UNITS_SIZE] = '\0';
+      upper_disp_limit = dval->upper_disp_limit;
+      lower_disp_limit = dval->lower_disp_limit;
+      upper_alarm_limit = dval->upper_alarm_limit; 
+      upper_warning_limit = dval->upper_warning_limit;
+      lower_warning_limit = dval->lower_warning_limit;
+      lower_alarm_limit = dval->lower_alarm_limit;
+      upper_ctrl_limit = dval->upper_ctrl_limit;
+      lower_ctrl_limit = dval->lower_ctrl_limit;
+      *value = dval->value;
+
+    }
+
 }
 
 void PVValueDouble::read_value(const void *buf)
 {
-    const  dbr_time_double *val = (const dbr_time_double *)buf;
-    time = val->stamp.secPastEpoch + epochSecPast1970;
-    nano = val->stamp.nsec;
-    status = val->status;
-    severity = val->severity;
-    memcpy(value, &val->value, sizeof(double) * epv->get_dimension());
+
+    const  dbr_time_double *dval = (const dbr_time_double *)buf;
+    const  dbr_time_float *fval = (const dbr_time_float *)buf;
+    int i;
+
+    if ( specific_type.type == f_type.flt ) {
+
+      time = fval->stamp.secPastEpoch + epochSecPast1970;
+      nano = fval->stamp.nsec;
+      status = fval->status;
+      severity = fval->severity;
+
+      for ( i=0; i<epv->get_dimension(); i++ ) {
+	value[i] = (double) (&fval->value)[i];
+      }
+
+    }
+    else {
+
+      time = dval->stamp.secPastEpoch + epochSecPast1970;
+      nano = dval->stamp.nsec;
+      status = dval->status;
+      severity = dval->severity;
+
+      memcpy(value, &dval->value, sizeof(double) * epv->get_dimension());
+
+    }
+
 }
 
 // ---------------------- PVValueEnum -----------------------------

@@ -132,7 +132,7 @@ double fvalue;
 
   mslo->controlV = fvalue;
 
-  sprintf( mslo->controlValue, mslo->controlFormat, mslo->controlV );
+  snprintf( mslo->controlValue, 14, mslo->controlFormat, mslo->controlV );
 
   stat = mslo->drawActiveControlText();
 
@@ -190,7 +190,7 @@ double fvalue;
 
   mslo->controlV = fvalue;
 
-  sprintf( mslo->controlValue, mslo->controlFormat, mslo->controlV );
+  snprintf( mslo->controlValue, 14, mslo->controlFormat, mslo->controlV );
 
   stat = mslo->drawActiveControlText();
 
@@ -439,10 +439,7 @@ double fv;
   mslo->controlX = (int) ( ( fv - mslo->minFv ) /
    mslo->factor + 0.5 );
 
-  mslo->savedX = (int) ( ( mslo->savedV - mslo->minFv ) /
-   mslo->factor + 0.5 );
-
-  sprintf( mslo->controlValue, mslo->controlFormat, mslo->controlV );
+  snprintf( mslo->controlValue, 14, mslo->controlFormat, mslo->controlV );
 
   stat = mslo->drawActiveControlText();
 
@@ -480,7 +477,7 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
     mslo->increment = mslo->incArray[mslo->incIndex];
   }
 
-  sprintf( mslo->incString, mslo->controlFormat, mslo->increment );
+  snprintf( mslo->incString, 31, mslo->controlFormat, mslo->increment );
 
   mslo->actWin->appCtx->proc->lock();
   mslo->curControlV = mslo->controlV;
@@ -557,11 +554,13 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
   mslo->botColor = mslo->bufBotColor;
 
   mslo->increment = mslo->bufIncrement;
-  sprintf( mslo->incString, mslo->controlFormat, mslo->increment );
+  snprintf( mslo->incString, 31, mslo->controlFormat, mslo->increment );
 
   mslo->controlPvName.setRaw( mslo->eBuf->controlBufPvName );
 
   mslo->controlLabelName.setRaw( mslo->eBuf->controlBufLabelName );
+
+  mslo->savedValuePvName.setRaw( mslo->eBuf->savedValueBufPvName );
 
   mslo->controlLabelType = mslo->bufControlLabelType;
 
@@ -587,6 +586,7 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
   mslo->showLimits = mslo->bufShowLimits;
   mslo->showLabel = mslo->bufShowLabel;
   mslo->showValue = mslo->bufShowValue;
+  mslo->showSavedValue = mslo->bufShowSavedValue;
 
   mslo->orientation = mslo->bufOrientation;
 
@@ -752,6 +752,30 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) userarg;
 
 }
 
+void activeMotifSliderClass::monitorSavedValueConnectState (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+activeMotifSliderClass *mslo = (activeMotifSliderClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+    mslo->needSavedConnectInit = 1;
+
+  }
+  else {
+
+    mslo->savedValuePvConnected = 0;
+
+  }
+
+  mslo->actWin->appCtx->proc->lock();
+  mslo->actWin->addDefExeNode( mslo->aglPtr );
+  mslo->actWin->appCtx->proc->unlock();
+
+}
+
 void activeMotifSliderClass::controlLabelUpdate (
   ProcessVariable *pv,
   void *userarg )
@@ -808,6 +832,22 @@ int st, sev;
 
 }
 
+void activeMotifSliderClass::savedValueUpdate (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+activeMotifSliderClass *mslo = (activeMotifSliderClass *) userarg;
+
+  mslo->newSavedV = pv->get_double();
+
+  mslo->needSavedRefresh = 1;
+  mslo->actWin->appCtx->proc->lock();
+  mslo->actWin->addDefExeNode( mslo->aglPtr );
+  mslo->actWin->appCtx->proc->unlock();
+
+}
+
 activeMotifSliderClass::activeMotifSliderClass ( void ) {
 
   name = new char[strlen("activeMotifSliderClass")+1];
@@ -832,12 +872,15 @@ activeMotifSliderClass::activeMotifSliderClass ( void ) {
   showLimits = 0;
   showLabel = 0;
   showValue = 0;
+  showSavedValue = 0;
 
   orientation = MSLC_K_HORIZONTAL;
 
   limitsH = 0;
   labelH = 0;
   midVertScaleY = 0;
+  midVertScaleY1 = 0;
+  midVertScaleY2 = 0;
 
   keySensitive = 0;
 
@@ -881,6 +924,7 @@ activeGraphicClass *mslo = (activeGraphicClass *) this;
 
   controlPvName.copy( source->controlPvName );
   controlLabelName.copy( source->controlLabelName );
+  savedValuePvName.copy( source->savedValuePvName );
 
   strncpy( fontTag, source->fontTag, 63 );
 
@@ -889,6 +933,7 @@ activeGraphicClass *mslo = (activeGraphicClass *) this;
   updateDimensions();
 
   strcpy( controlValue, "0.0" );
+  strcpy( savedValue, "0.0" );
   strcpy( controlLabel, "" );
 
   controlLabelType = source->controlLabelType;
@@ -911,10 +956,13 @@ activeGraphicClass *mslo = (activeGraphicClass *) this;
   showLimits = source->showLimits;
   showLabel = source->showLabel;
   showValue = source->showValue;
+  showSavedValue = source->showSavedValue;
 
   orientation = source->orientation;
 
   keySensitive = source->keySensitive;
+
+  savedV = source->savedV;
 
   frameWidget = NULL;
   scaleWidget = NULL;
@@ -1068,6 +1116,8 @@ static int orienTypeEnum[2] = {
   tag.loadBoolW( "showValue", &showValue, &zero );
   tag.loadW( "orientation", 2, orienTypeEnumStr, orienTypeEnum,
    &orientation, &horz );
+  tag.loadW( "savedValuePv", &savedValuePvName, emptyStr );
+  tag.loadBoolW( "showSavedValue", &showSavedValue, &zero );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -1225,6 +1275,8 @@ static int orienTypeEnum[2] = {
   tag.loadR( "showValue", &showValue, &zero );
   tag.loadR( "orientation", 2, orienTypeEnumStr, orienTypeEnum, &orientation,
    &horz );
+  tag.loadR( "savedValuePv", &savedValuePvName, emptyStr );
+  tag.loadR( "showSavedValue", &showSavedValue, &zero );
   tag.loadW( "endObjectProperties" );
 
   stat = tag.readTags( f, "endObjectProperties" );
@@ -1452,6 +1504,7 @@ char title[32], *ptr;
   bufShowLimits = showLimits;
   bufShowLabel = showLabel;
   bufShowValue = showValue;
+  bufShowSavedValue = showSavedValue;
 
   bufOrientation = orientation;
 
@@ -1466,6 +1519,12 @@ char title[32], *ptr;
      PV_Factory::MAX_PV_NAME );
   else
     strcpy( eBuf->controlBufLabelName, "" );
+
+  if ( savedValuePvName.getRaw() )
+    strncpy( eBuf->savedValueBufPvName, savedValuePvName.getRaw(),
+    PV_Factory::MAX_PV_NAME );
+  else
+    strcpy( eBuf->savedValueBufPvName, "" );
 
   bufControlLabelType = controlLabelType;
 
@@ -1490,6 +1549,9 @@ char title[32], *ptr;
   ef.addTextField( activeMotifSliderClass_str36, 35, eBuf->controlBufPvName,
    PV_Factory::MAX_PV_NAME );
 
+  ef.addTextField( activeMotifSliderClass_str48, 35, eBuf->savedValueBufPvName,
+   PV_Factory::MAX_PV_NAME );
+
   ef.addTextField( activeMotifSliderClass_str37, 35, eBuf->controlBufLabelName,
    PV_Factory::MAX_PV_NAME );
   ef.addOption( activeMotifSliderClass_str38, activeMotifSliderClass_str39,
@@ -1498,6 +1560,7 @@ char title[32], *ptr;
   ef.addToggle( activeMotifSliderClass_str86, &bufShowLimits );
   ef.addToggle( activeMotifSliderClass_str87, &bufShowLabel );
   ef.addToggle( activeMotifSliderClass_str88, &bufShowValue );
+  ef.addToggle( activeMotifSliderClass_str92, &bufShowSavedValue );
 
   ef.addOption( activeMotifSliderClass_str89,
    activeMotifSliderClass_str90, &bufOrientation );
@@ -1619,9 +1682,14 @@ int tX, tY;
     scaleH = h - scaleY - 2;
     midVertScaleY = scaleH/2 + scaleY -
      (int) ( (double) fontHeight * 0.5 );
+    midVertScaleY1 = scaleH/3 + scaleY -
+     (int) ( (double) fontHeight * 0.5 );
+    midVertScaleY2 = 2*scaleH/3 + scaleY -
+     (int) ( (double) fontHeight * 0.5 );
   }
 
   actWin->drawGc.saveFg();
+  actWin->executeGc.saveBg();
   actWin->executeGc.setLineWidth( 1 );
   actWin->executeGc.setLineStyle( LineSolid );
 
@@ -1673,16 +1741,52 @@ int tX, tY;
   if ( showValue ) {
 
     if ( orientation == MSLC_K_HORIZONTAL ) {
-      tX = w/2;
+
       tY = labelH;
+
+      if ( showSavedValue ) {
+        tX = w/3;
+      }
+      else {
+        tX = w/2;
+      }
       drawText( actWin->drawWidget, &actWin->drawGc, fs, tX+x, tY+y,
        XmALIGNMENT_CENTER, "0.0" );
+
+      if ( showSavedValue ) {
+        tX = 2*w/3;
+        actWin->drawGc.setBG( fgColor.pixelColor() );
+        actWin->drawGc.setFG( bgColor.pixelColor() );
+        drawImageText( actWin->drawWidget, &actWin->drawGc, fs, tX+x, tY+y,
+         XmALIGNMENT_CENTER, "0.0" );
+        actWin->drawGc.setBG( bgColor.pixelColor() );
+        actWin->drawGc.setFG( fgColor.pixelColor() );
+      }
+
     }
     else {
+
       tX = scaleX;
-      tY = midVertScaleY;
+
+      if ( showSavedValue ) {
+        tY = midVertScaleY1;
+      }
+      else {
+        tY = midVertScaleY;
+      }
       drawText( actWin->drawWidget, &actWin->drawGc, fs, tX+x, tY+y,
        XmALIGNMENT_END, "0.0" );
+
+      if ( showSavedValue ) {
+        tY = midVertScaleY2;
+        actWin->drawGc.setBG( fgColor.pixelColor() );
+        actWin->drawGc.setFG( bgColor.pixelColor() );
+        drawImageText( actWin->drawWidget, &actWin->drawGc, fs, tX+x, tY+y,
+         XmALIGNMENT_END, "0.0" );
+        actWin->drawGc.setBG( bgColor.pixelColor() );
+        actWin->drawGc.setFG( fgColor.pixelColor() );
+      }
+
     }
 
   }
@@ -1705,6 +1809,7 @@ int tX, tY;
   }
 
   actWin->drawGc.restoreFg();
+  actWin->drawGc.restoreBg();
 
   return 1;
 
@@ -1719,24 +1824,72 @@ int tX, tY;
   if ( fs && controlExists ) {
 
     actWin->executeGc.saveFg();
+    actWin->executeGc.saveBg();
+
     actWin->executeGc.setFG( bgColor.getColor() );
 
     actWin->executeGc.setFontTag( fontTag, actWin->fi );
 
     if ( orientation == MSLC_K_HORIZONTAL ) {
-      tX = w/2;
+
       tY = labelH;
+
+      if ( showSavedValue ) {
+        tX = w/3;
+      }
+      else {
+        tX = w/2;
+      }
+
       drawText( frameWidget, &actWin->executeGc, fs, tX, tY,
        XmALIGNMENT_CENTER, controlValue );
+
+      if ( showSavedValue ) {
+
+        actWin->executeGc.setBG( fgColor.pixelColor() );
+        actWin->executeGc.setFG( fgColor.pixelColor() );
+
+        tX = 2*w/3;
+        drawImageText( frameWidget, &actWin->executeGc, fs, tX, tY,
+         XmALIGNMENT_CENTER, savedValue );
+
+        actWin->executeGc.setBG( bgColor.pixelColor() );
+        actWin->executeGc.setFG( bgColor.pixelColor() );
+
+      }
+
     }
     else {
+
       tX = scaleX;
-      tY = midVertScaleY;
+
+      if ( showSavedValue ) {
+        tY = midVertScaleY1;
+      }
+      else {
+        tY = midVertScaleY;
+      }
       drawText( frameWidget, &actWin->executeGc, fs, tX, tY,
        XmALIGNMENT_END, controlValue );
+
+      if ( showSavedValue ) {
+
+        actWin->executeGc.setBG( fgColor.pixelColor() );
+        actWin->executeGc.setFG( fgColor.pixelColor() );
+
+        tY = midVertScaleY2;
+        drawImageText( frameWidget, &actWin->executeGc, fs, tX, tY,
+         XmALIGNMENT_END, savedValue );
+
+        actWin->executeGc.setBG( bgColor.pixelColor() );
+        actWin->executeGc.setFG( bgColor.pixelColor() );
+
+      }
+
     }
 
     actWin->executeGc.restoreFg();
+    actWin->executeGc.restoreBg();
 
   }
 
@@ -1753,6 +1906,8 @@ int tX, tY;
   if ( fs && controlExists ) {
 
     actWin->executeGc.saveFg();
+    actWin->executeGc.saveBg();
+
     actWin->executeGc.setFG( fgColor.getColor() );
 
     if ( fs ) {
@@ -1760,16 +1915,61 @@ int tX, tY;
       actWin->executeGc.setFontTag( fontTag, actWin->fi );
 
       if ( orientation == MSLC_K_HORIZONTAL ) {
-        tX = w/2;
+
         tY = labelH;
+
+        if ( showSavedValue ) {
+          tX = w/3;
+        }
+        else {
+          tX = w/2;
+        }
+
         drawText( frameWidget, &actWin->executeGc, fs, tX, tY,
          XmALIGNMENT_CENTER, controlValue );
+
+        if ( showSavedValue ) {
+
+          actWin->executeGc.setBG( fgColor.pixelColor() );
+          actWin->executeGc.setFG( bgColor.pixelColor() );
+
+          tX = 2*w/3;
+          drawImageText( frameWidget, &actWin->executeGc, fs, tX, tY,
+           XmALIGNMENT_CENTER, savedValue );
+
+          actWin->executeGc.setBG( bgColor.pixelColor() );
+          actWin->executeGc.setFG( fgColor.pixelColor() );
+
+	}
+
       }
       else {
+
         tX = scaleX;
-        tY = midVertScaleY;
+
+        if ( showSavedValue ) {
+          tY = midVertScaleY1;
+        }
+        else {
+          tY = midVertScaleY;
+        }
         drawText( frameWidget, &actWin->executeGc, fs, tX, tY,
          XmALIGNMENT_END, controlValue );
+
+        if ( showSavedValue ) {
+
+          actWin->executeGc.setBG( fgColor.pixelColor() );
+          actWin->executeGc.setFG( bgColor.pixelColor() );
+
+          tY = midVertScaleY2;
+          drawImageText( frameWidget, &actWin->executeGc, fs, tX, tY,
+           XmALIGNMENT_END, savedValue );
+
+          actWin->executeGc.setBG( bgColor.pixelColor() );
+          actWin->executeGc.setFG( fgColor.pixelColor() );
+
+        }
+
       }
 
     }
@@ -1816,6 +2016,8 @@ int tX, tY;
    NULL );
 
   actWin->executeGc.saveFg();
+  actWin->executeGc.saveBg();
+
   actWin->executeGc.setFG( fgColor.getColor() );
 
   if ( fs ) {
@@ -1858,16 +2060,61 @@ int tX, tY;
       if ( showValue ) {
 
         if ( orientation == MSLC_K_HORIZONTAL ) {
-          tX = w/2;
+
           tY = labelH;
+
+          if ( showSavedValue ) {
+            tX = w/3;
+          }
+          else {
+            tX = w/2;
+          }
+
           drawText( frameWidget, &actWin->executeGc, fs, tX, tY,
            XmALIGNMENT_CENTER, controlValue );
+
+          if ( showSavedValue ) {
+
+            actWin->executeGc.setBG( fgColor.pixelColor() );
+            actWin->executeGc.setFG( bgColor.pixelColor() );
+
+            tX = 2*w/3;
+            drawImageText( frameWidget, &actWin->executeGc, fs, tX, tY,
+             XmALIGNMENT_CENTER, savedValue );
+
+            actWin->executeGc.setBG( bgColor.pixelColor() );
+            actWin->executeGc.setFG( fgColor.pixelColor() );
+
+	  }
+
         }
         else {
+
           tX = scaleX;
-          tY = midVertScaleY;
+
+          if ( showSavedValue ) {
+            tY = midVertScaleY1;
+          }
+          else {
+            tY = midVertScaleY;
+          }
           drawText( frameWidget, &actWin->executeGc, fs, tX, tY,
            XmALIGNMENT_END, controlValue );
+
+          if ( showSavedValue ) {
+
+            actWin->executeGc.setBG( fgColor.pixelColor() );
+            actWin->executeGc.setFG( bgColor.pixelColor() );
+
+            tY = midVertScaleY2;
+            drawImageText( frameWidget, &actWin->executeGc, fs, tX, tY,
+             XmALIGNMENT_END, savedValue );
+
+            actWin->executeGc.setBG( bgColor.pixelColor() );
+            actWin->executeGc.setFG( fgColor.pixelColor() );
+
+          }
+
         }
 
       }
@@ -1894,6 +2141,7 @@ int tX, tY;
   }
 
   actWin->executeGc.restoreFg();
+  actWin->executeGc.restoreBg();
 
   return 1;
 
@@ -2002,7 +2250,7 @@ double mult, fvalue;
 
       mslo->controlV = fvalue;
 
-      sprintf( mslo->controlValue, mslo->controlFormat, mslo->controlV );
+      snprintf( mslo->controlValue, 14, mslo->controlFormat, mslo->controlV );
 
       stat = mslo->drawActiveControlText();
 
@@ -2053,7 +2301,7 @@ double mult, fvalue;
 
       mslo->controlV = fvalue;
 
-      sprintf( mslo->controlValue, mslo->controlFormat, mslo->controlV );
+      snprintf( mslo->controlValue, 14, mslo->controlFormat, mslo->controlV );
 
       stat = mslo->drawActiveControlText();
 
@@ -2110,6 +2358,9 @@ double mult, fvalue;
       mult = 1.0;
     }
 
+    if ( key == XK_Down ) key = XK_Left;
+    if ( key == XK_Up ) key = XK_Right;
+
     if ( ( key == XK_Left ) ||
          ( key == XK_Right ) ) {
 
@@ -2163,13 +2414,48 @@ double mult, fvalue;
 
       mslo->controlV = fvalue;
 
-      sprintf( mslo->controlValue, mslo->controlFormat, mslo->controlV );
+      snprintf( mslo->controlValue, 14, mslo->controlFormat, mslo->controlV );
 
       stat = mslo->drawActiveControlText();
 
       if ( mslo->controlExists ) {
         if ( mslo->controlPvId ) {
           stat = mslo->controlPvId->put( fvalue );
+          if ( !stat ) printf( activeMotifSliderClass_str59 );
+        }
+      }
+
+    }
+    else if ( key == XK_S ) {
+
+      *continueToDispatch = False;
+
+      mslo->savedV = mslo->controlV;
+
+      if ( mslo->savedValueExists ) {
+        if ( mslo->savedValuePvId ) {
+          stat = mslo->savedValuePvId->put( mslo->savedV );
+          if ( !stat ) printf( activeMotifSliderClass_str59 );
+        }
+      }
+      else {
+        mslo->newSavedV = mslo->savedV;
+        mslo->needSavedRefresh = 1;
+        mslo->actWin->appCtx->proc->lock();
+        mslo->actWin->addDefExeNode( mslo->aglPtr );
+        mslo->actWin->appCtx->proc->unlock();
+      }
+
+    }
+    else if ( key == XK_R ) {
+
+      *continueToDispatch = False;
+
+      mslo->controlV = mslo->savedV;
+
+      if ( mslo->controlExists ) {
+        if ( mslo->controlPvId ) {
+          stat = mslo->controlPvId->put( mslo->controlV );
           if ( !stat ) printf( activeMotifSliderClass_str59 );
         }
       }
@@ -2353,7 +2639,7 @@ double fvalue, mult;
 
       mslo->controlV = fvalue;
 
-      sprintf( mslo->controlValue, mslo->controlFormat, mslo->controlV );
+      snprintf( mslo->controlValue, 14, mslo->controlFormat, mslo->controlV );
 
       stat = mslo->drawActiveControlText();
 
@@ -2404,7 +2690,7 @@ double fvalue, mult;
 
       mslo->controlV = fvalue;
 
-      sprintf( mslo->controlValue, mslo->controlFormat, mslo->controlV );
+      snprintf( mslo->controlValue, 14, mslo->controlFormat, mslo->controlV );
 
       stat = mslo->drawActiveControlText();
 
@@ -2477,18 +2763,21 @@ int opStat;
       oldSev = -1;
       prevScaleV = -1;
       dragIndicator = 0;
-      controlPvId = controlLabelPvId = 0;
+      controlPvId = controlLabelPvId = savedValuePvId = 0;
 
       strcpy( controlValue, "" );
       strcpy( incString, "" );
+      strcpy( savedValue, "" );
       activeMode = 1;
       init = 0;
       active = 0;
       aglPtr = ptr;
       curControlV = oneControlV = 0.0;
       controlV = 0.0;
+      savedV = 0.0;
       needCtlConnectInit = needCtlInfoInit = needCtlRefresh =
        needCtlLabelConnectInit = needCtlLabelInfoInit =
+       needSavedConnectInit = needSavedRefresh =
        needErase = needDraw = 0;
 
       needToEraseUnconnected = 0;
@@ -2517,6 +2806,17 @@ int opStat;
         controlExists = 1;
         fgColor.setConnectSensitive();
         bgColor.setConnectSensitive();
+      }
+
+      savedValuePvConnected = 0;
+
+      if ( !savedValuePvName.getExpanded() ||
+	 // ( strcmp( savedValuePvName.getExpanded(), "" ) == 0 ) ) {
+         blankOrComment( savedValuePvName.getExpanded() ) ) {
+        savedValueExists = 0;
+      }
+      else {
+        savedValueExists = 1;
       }
 
       if ( !controlLabelName.getExpanded() ||
@@ -2560,6 +2860,17 @@ int opStat;
            monitorControlConnectState, this );
           controlPvId->add_value_callback(
            controlUpdate, this );
+	}
+      }
+
+      if ( savedValueExists ) {
+        savedValuePvId = the_PV_Factory->create(
+         savedValuePvName.getExpanded() );
+	if ( savedValuePvId ) {
+          savedValuePvId->add_conn_state_callback(
+           monitorSavedValueConnectState, this );
+          savedValuePvId->add_value_callback(
+           savedValueUpdate, this );
 	}
       }
 
@@ -2622,6 +2933,14 @@ int activeMotifSliderClass::deactivate (
        controlUpdate, this );
       controlPvId->release();
       controlPvId = 0;
+    }
+
+    if ( savedValuePvId ) {
+      savedValuePvId->remove_conn_state_callback(
+       monitorSavedValueConnectState, this );
+       savedValuePvId->remove_value_callback( savedValueUpdate, this );
+       savedValuePvId->release();
+       savedValuePvId = 0;
     }
 
     if ( controlLabelPvId ) {
@@ -2794,6 +3113,8 @@ void activeMotifSliderClass::updateDimensions ( void )
   if ( factor == 0.0 ) factor = 1.0;
 
   midVertScaleY = scaleH/2 + scaleY - (int) ( (double) fontHeight * 0.5 );
+  midVertScaleY1 = scaleH/3 + scaleY - (int) ( (double) fontHeight * 0.5 );
+  midVertScaleY2 = 2*scaleH/3 + scaleY - (int) ( (double) fontHeight * 0.5 );
 
 }
 
@@ -2808,6 +3129,9 @@ int activeMotifSliderClass::expand1st (
   retStat = 1;
 
   stat = controlPvName.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+
+  stat = savedValuePvName.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
   stat = controlLabelName.expand1st( numMacros, macros, expansions );
@@ -2830,6 +3154,9 @@ int activeMotifSliderClass::expand2nd (
   stat = controlPvName.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
+  stat = savedValuePvName.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+
   stat = controlLabelName.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
@@ -2841,6 +3168,8 @@ int activeMotifSliderClass::containsMacros ( void ) {
 
   if ( controlPvName.containsPrimaryMacros() ) return 1;
 
+  if ( savedValuePvName.containsPrimaryMacros() ) return 1;
+
   if ( controlLabelName.containsPrimaryMacros() ) return 1;
 
   return 0;
@@ -2849,7 +3178,7 @@ int activeMotifSliderClass::containsMacros ( void ) {
 
 void activeMotifSliderClass::executeDeferred ( void ) {
 
-int stat, ncc, nci, ncr, nclc, ncli, ne, nd, i;
+int stat, ncc, nci, ncr, nclc, ncli, nsc, nsr, ne, nd, i;
 unsigned char orien, pd;
 double cv, fv;
 WidgetList children;
@@ -2865,6 +3194,8 @@ Cardinal numChildren;
   ncr = needCtlRefresh; needCtlRefresh = 0;
   nclc = needCtlLabelConnectInit; needCtlLabelConnectInit = 0;
   ncli = needCtlLabelInfoInit; needCtlLabelInfoInit = 0;
+  nsc = needSavedConnectInit; needSavedConnectInit = 0;
+  nsr = needSavedRefresh; needSavedRefresh = 0;
   ne = needErase; needErase = 0;
   nd = needDraw; needDraw = 0;
   cv = curControlV;
@@ -2924,6 +3255,10 @@ Cardinal numChildren;
           scaleY = labelH + 1;
           scaleH = h - scaleY - 2;
           midVertScaleY = scaleH/2 + scaleY -
+           (int) ( (double) fontHeight * 0.5 );
+          midVertScaleY1 = scaleH/3 + scaleY -
+           (int) ( (double) fontHeight * 0.5 );
+          midVertScaleY2 = 2*scaleH/3 + scaleY -
            (int) ( (double) fontHeight * 0.5 );
         }
 
@@ -3028,16 +3363,16 @@ Cardinal numChildren;
 
     controlV = cv;
 
-    sprintf( minValue, "%-g", minFv );
+    snprintf( minValue, 14, "%-g", minFv );
 
-    sprintf( maxValue, "%-g", maxFv );
+    snprintf( maxValue, 14, "%-g", maxFv );
 
     if ( maxFv > minFv )
       positive = 1;
     else
       positive = 0;
 
-    sprintf( controlValue, controlFormat, controlV );
+    snprintf( controlValue, 14, controlFormat, controlV );
 
     factor = ( maxFv - minFv ) / 100000;
     if ( factor == 0.0 ) factor = 1.0;
@@ -3045,15 +3380,15 @@ Cardinal numChildren;
     controlX = (int) ( ( controlV - minFv ) /
      factor + 0.5 );
 
-    sprintf( incString, controlFormat, increment );
+    snprintf( incString, 31, controlFormat, increment );
 
     active = 1;
     init = 1;
 
-    savedV = controlV;
-
-    savedX = (int) ( ( savedV - minFv ) /
-     factor + 0.5 );
+    if ( !savedValueExists ) {
+      savedV = controlV;
+      snprintf( savedValue, 14, controlFormat, savedV );
+    }
 
     fgColor.setConnected();
     bgColor.setConnected();
@@ -3097,10 +3432,29 @@ Cardinal numChildren;
     controlX = (int) ( ( fv - minFv ) /
      factor + 0.5 );
 
-    savedX = (int) ( ( savedV - minFv ) /
-     factor + 0.5 );
+    snprintf( controlValue, 14, controlFormat, controlV );
 
-    sprintf( controlValue, controlFormat, controlV );
+    stat = drawActiveControlText();
+
+  }
+
+//----------------------------------------------------------------------------
+
+  if ( nsc ) {
+
+    savedValuePvConnected = 1;
+
+  }
+
+//----------------------------------------------------------------------------
+
+  if ( nsr ) {
+
+    eraseActiveControlText();
+
+    savedV = newSavedV;
+
+    snprintf( savedValue, 14, controlFormat, savedV );
 
     stat = drawActiveControlText();
 
@@ -3197,6 +3551,9 @@ char *activeMotifSliderClass::dragValue (
     case 0:
       return controlPvName.getExpanded();
       break;
+    case 1:
+      return savedValuePvName.getExpanded();
+      break;
     }
 
   }
@@ -3205,6 +3562,9 @@ char *activeMotifSliderClass::dragValue (
     switch ( i ) {
     case 0:
       return controlPvName.getRaw();
+      break;
+    case 1:
+      return savedValuePvName.getRaw();
       break;
     }
 
@@ -3321,13 +3681,14 @@ void activeMotifSliderClass::getPvs (
   ProcessVariable *pvs[],
   int *n ) {
 
-  if ( max < 1 ) {
+  if ( max < 2 ) {
     *n = 0;
     return;
   }
 
-  *n = 1;
+  *n = 2;
   pvs[0] = controlPvId;
+  pvs[1] = savedValuePvId;
 
 }
 
