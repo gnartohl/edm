@@ -79,13 +79,11 @@ libRecPtr head, tail, cur;
       tk = strtok( line, "\n" );
       numComponents = atol( tk );
       if ( numComponents <= 0 ) {
-	printf( "3\n" );
         printf( appContextClass_str2, fileName );
         return;
       }
     }
     else {
-      printf( "4\n" );
       printf( appContextClass_str2, fileName );
       fileEmpty = 1;
       fclose( f );
@@ -977,6 +975,7 @@ activeWindowListPtr cur, next;
     if ( cur->requestDelete ) {
       cur->blink->flink = cur->flink;
       cur->flink->blink = cur->blink;
+      apco->removeAllDeferredExecutionQueueNode( &cur->node );
       delete cur;
     }
     cur = next;
@@ -1608,6 +1607,73 @@ int i, stat;
   }
 
   return 1;
+
+}
+
+void appContextClass::removeAllDeferredExecutionQueueNode (
+  class activeWindowClass *awo )
+{
+
+  // remove all nodes associated with awo
+
+int q_stat_r, q_stat_i;
+APPDEFEXE_NODE_PTR node;
+
+  do {
+
+    q_stat_r = REMQHI( (void *) &appDefExeActiveQueue, (void **) &node, 0 );
+
+    if ( q_stat_r & 1 ) {
+
+      if ( node->awObj ) { // active window object
+
+	if ( node->awObj == awo ) { // remove node
+
+          q_stat_i = INSQTI( (void *) node, (void *) &appDefExeFreeQueue, 0 );
+          if ( !( q_stat_i & 1 ) ) {
+            printf( appContextClass_str31 );
+          }
+
+	}
+	else { // don't remove, put it back
+
+          q_stat_i = INSQTI( (void *) node, (void *) &appDefExeActiveQueue,
+           0 );
+          if ( !( q_stat_i & 1 ) ) {
+            printf( appContextClass_str33 );
+          }
+
+	}
+
+      }
+      else { // active graphics object
+
+        if ( node->obj->actWin == awo ) {  // remove node
+
+          q_stat_i = INSQTI( (void *) node, (void *) &appDefExeFreeQueue, 0 );
+          if ( !( q_stat_i & 1 ) ) {
+            printf( appContextClass_str31 );
+          }
+
+	}
+	else { // don't remove, put it back
+
+          q_stat_i = INSQTI( (void *) node, (void *) &appDefExeActiveQueue,
+           0 );
+          if ( !( q_stat_i & 1 ) ) {
+            printf( appContextClass_str33 );
+          }
+
+	}
+
+      }
+
+    }
+    else if ( q_stat_r != QUEWASEMP ) {
+      printf( appContextClass_str32 );
+    }
+
+  } while ( q_stat_r & 1 );
 
 }
 
@@ -2770,6 +2836,7 @@ char msg[127+1];
         iconActionCount++;
         cur->blink->flink = cur->flink;
         cur->flink->blink = cur->blink;
+        removeAllDeferredExecutionQueueNode( &cur->node );
         delete cur;
         if ( requestFlag > 0 ) requestFlag--;
       }

@@ -161,9 +161,12 @@ static void acw_autosave (
 
 activeWindowClass *awo = (activeWindowClass *) client;
 int stat;
-char name[255+1], oldName[255+1];
+//char name[255+1], oldName[255+1];
+//char str[31+1];
 
 struct sigaction sa, oldsa, dummysa;
+
+  awo->autosaveTimer = 0;
 
   stat = setjmp( g_jump_h );
   if ( !stat ) {
@@ -183,6 +186,9 @@ struct sigaction sa, oldsa, dummysa;
 
   }
 
+  //stat = sys_get_datetime_string( 31, str );
+  //printf( "[%s] %s - autosave\n", str, awo->fileName );
+
   if ( strcmp( awo->startSignature, "edmActiveWindow" ) != 0 ) {
     printf( "Auto-save failed - bad initial signature\n" );
     return;
@@ -195,10 +201,10 @@ struct sigaction sa, oldsa, dummysa;
 
   awo->doAutoSave = 1;
   awo->appCtx->postDeferredExecutionQueue( awo );
+
   return;
 
-  awo->autosaveTimer = 0;
-
+#if 0
   if ( !awo->changeSinceAutoSave ) return;
 
   awo->changeSinceAutoSave = 0;
@@ -228,6 +234,10 @@ struct sigaction sa, oldsa, dummysa;
     awo->setTitleUsingTitle();
     XFlush( awo->d );
 
+    if ( awo->restoreTimer ) {
+      XtRemoveTimeOut( awo->restoreTimer );
+      awo->restoreTimer = 0;
+    }
     awo->restoreTimer = XtAppAddTimeOut( awo->appCtx->appContext(),
      3000, acw_restoreTitle, awo );
 
@@ -237,6 +247,8 @@ struct sigaction sa, oldsa, dummysa;
   if ( strcmp( oldName, "" ) != 0 ) {
     stat = unlink( oldName );
   }
+
+#endif
 
 }
 
@@ -8880,8 +8892,14 @@ commentLinesPtr commentCur, commentNext;
     dragPopup = NULL;
   }
 
-  if ( autosaveTimer ) XtRemoveTimeOut( autosaveTimer );
-  if ( restoreTimer ) XtRemoveTimeOut( restoreTimer );
+  if ( autosaveTimer ) {
+    XtRemoveTimeOut( autosaveTimer );
+    autosaveTimer = 0;
+  }
+  if ( restoreTimer ) {
+    XtRemoveTimeOut( restoreTimer );
+    restoreTimer = 0;
+  }
 
   commentCur = commentHead->flink;
   while ( commentCur ) {
@@ -11680,13 +11698,22 @@ int activeWindowClass::changed ( void ) {
 
 void activeWindowClass::setChanged ( void ) {
 
+//char str[31+1];
+int stat;
+
   change = 1;
 
   if ( !changeSinceAutoSave ) {
     changeSinceAutoSave = 1;
+    //stat = sys_get_datetime_string( 31, str );
+    if ( autosaveTimer ) {
+      XtRemoveTimeOut( autosaveTimer );
+      autosaveTimer = 0;
+    }
     autosaveTimer = XtAppAddTimeOut( appCtx->appContext(),
-    300000, acw_autosave, this );
-    //10000, acw_autosave, this );
+     300000, acw_autosave, this );
+     //30000, acw_autosave, this );
+    //printf( "[%s] %s - add autosave timer\n", str, fileName );
   }
 
 }
@@ -15110,8 +15137,6 @@ void activeWindowClass::executeFromDeferredQueue( void )
 
     doAutoSave = 0;
 
-    autosaveTimer = 0;
-
     if ( !changeSinceAutoSave ) return;
 
     changeSinceAutoSave = 0;
@@ -15141,6 +15166,10 @@ void activeWindowClass::executeFromDeferredQueue( void )
       setTitleUsingTitle();
       XFlush( d );
 
+      if ( restoreTimer ) {
+        XtRemoveTimeOut( restoreTimer );
+        restoreTimer = 0;
+      }
       restoreTimer = XtAppAddTimeOut( appCtx->appContext(),
        3000, acw_restoreTitle, this );
 

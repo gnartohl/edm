@@ -311,6 +311,9 @@ int appContextClass::getProperty (
 
 int appContextClass::initDeferredExecutionQueue ( void );
 
+void appContextClass::removeAllDeferredExecutionQueueNode (
+  class activeWindowClass *awo );
+
 void appContextClass::processDeferredExecutionQueue ( void );
 
 void appContextClass::postDeferredExecutionQueue (
