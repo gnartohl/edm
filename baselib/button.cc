@@ -542,6 +542,7 @@ activeButtonClass::activeButtonClass ( void ) {
   strcpy( minVisString, "" );
   strcpy( maxVisString, "" );
   connection.setMaxPvs( 4 );
+  activeMode = 0;
 
   fgColorMode = BTC_K_COLORMODE_STATIC;
 
@@ -624,6 +625,7 @@ activeGraphicClass *bto = (activeGraphicClass *) this;
   visInverted = source->visInverted;
   strncpy( minVisString, source->minVisString, 39 );
   strncpy( maxVisString, source->maxVisString, 39 );
+  activeMode = 0;
 
   connection.setMaxPvs( 4 );
 

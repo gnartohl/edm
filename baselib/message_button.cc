@@ -469,6 +469,7 @@ activeMessageButtonClass::activeMessageButtonClass ( void ) {
   strcpy( maxVisString, "" );
   connection.setMaxPvs( 3 );
   useEnumNumeric = 0;
+  activeMode = 0;
 
   setBlinkFunction( (void *) doBlink );
 
@@ -535,6 +536,8 @@ activeGraphicClass *msgbto = (activeGraphicClass *) this;
   strncpy( minVisString, source->minVisString, 39 );
   strncpy( maxVisString, source->maxVisString, 39 );
   useEnumNumeric = source->useEnumNumeric;
+
+  activeMode = 0;
 
   connection.setMaxPvs( 3 );
 

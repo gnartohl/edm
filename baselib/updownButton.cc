@@ -712,6 +712,7 @@ activeUpdownButtonClass::activeUpdownButtonClass ( void ) {
   strcpy( minVisString, "" );
   strcpy( maxVisString, "" );
   connection.setMaxPvs( 4 );
+  activeMode = 0;
 
   setBlinkFunction( (void *) doBlink );
 
@@ -770,6 +771,7 @@ activeGraphicClass *udbto = (activeGraphicClass *) this;
   visInverted = source->visInverted;
   strncpy( minVisString, source->minVisString, 39 );
   strncpy( maxVisString, source->maxVisString, 39 );
+  activeMode = 0;
 
   connection.setMaxPvs( 4 );
 
