@@ -1142,6 +1142,7 @@ void edmTextentryClass::text_entered_callback(Widget w,
                 break;
             case dm_hex:
                 hexnum = strtol(text, 0, 16);
+                // printf("Text: %s -> %d\n", text, hexnum);
                 me->pv->put(hexnum);
                 break;
             default:
