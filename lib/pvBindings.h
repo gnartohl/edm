@@ -24,6 +24,7 @@
 #include <dlfcn.h>
 
 #include "pv.h"
+#include "sys_types.h"
 
 #ifdef __pv_bindings_c
 
