@@ -84,5 +84,7 @@
 #define appContextClass_str131 (char *) "Warning - using obselete color file version"
 #define appContextClass_str132 (char *) "Shutdown"
 #define appContextClass_str133 (char *) "Shutdown all displays"
+#define appContextClass_str134 (char *) "Enable image rendering"
+#define appContextClass_str135 (char *) "Disable image rendering"
 
 #endif

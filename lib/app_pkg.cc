@@ -1520,6 +1520,34 @@ appContextClass *apco = (appContextClass *) client;
 
 }
 
+void renderImages_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+appContextClass *apco = (appContextClass *) client;
+XmString str;
+
+  if ( apco->renderImagesFlag ) {
+    apco->renderImagesFlag = 0;
+    str = XmStringCreateLocalized( appContextClass_str134 );
+    XtVaSetValues( apco->renderImagesB,
+     XmNlabelString, str,
+     NULL );
+    XmStringFree( str );
+  }
+  else {
+    apco->renderImagesFlag = 1;
+    str = XmStringCreateLocalized( appContextClass_str135 );
+    XtVaSetValues( apco->renderImagesB,
+     XmNlabelString, str,
+     NULL );
+    XmStringFree( str );
+  }
+
+}
+
 void view_xy_cb (
   Widget w,
   XtPointer client,
@@ -1724,6 +1752,7 @@ appContextClass::appContextClass (
   requestFlag = 0;
   iconified = 0;
   usingControlPV = 0;
+  renderImagesFlag = 1;
 
   entryFormX = 0;
   entryFormY = 0;
@@ -2980,6 +3009,14 @@ int i;
   XtAddCallback( viewXyB, XmNactivateCallback, view_xy_cb,
    (XtPointer) this );
 
+  str = XmStringCreateLocalized( appContextClass_str135 );
+  renderImagesB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   viewPullDown,
+   XmNlabelString, str,
+   NULL );
+  XmStringFree( str );
+  XtAddCallback( renderImagesB, XmNactivateCallback, renderImages_cb,
+   (XtPointer) this );
 
 
 
@@ -4600,4 +4637,19 @@ int appContextClass::getShutdownFlag ( void )
   return shutdownFlag;
 
 }
+
+int appContextClass::renderImages ( void ) {
+
+  return renderImagesFlag;
+
+}
+
+void appContextClass::setRenderImages (
+  int flag
+) {
+
+  renderImagesFlag = flag;
+
+}
+
 

@@ -171,6 +171,11 @@ friend void exit_cb (
   XtPointer client,
   XtPointer call );
 
+friend void renderImages_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 friend void view_pvList_cb (
   Widget w,
   XtPointer client,
@@ -271,6 +276,9 @@ char colorPath[127+1];
 
 int viewXy;
 Widget viewXyB;
+
+int renderImagesFlag;
+Widget renderImagesB;
 
 ulBindingClass userLibObject;
 int exitFlag;
@@ -503,6 +511,12 @@ int appContextClass::getShutdownFlag ( void );
 void appContextClass::reloadAll ( void );
 
 void appContextClass::refreshAll ( void );
+
+int appContextClass::renderImages ( void );
+
+void appContextClass::setRenderImages (
+  int flag
+);
 
 };
 
