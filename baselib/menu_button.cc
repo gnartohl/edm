@@ -862,7 +862,7 @@ int activeMenuButtonClass::eraseActive ( void ) {
 int activeMenuButtonClass::draw ( void ) {
 
 int tX, tY, bumpX, bumpY;
-XRectangle xR = { x, y, w-20, h };
+XRectangle xR = { x+3, y, w-23, h };
 
   if ( deleteRequest || activeMode ) return 1;
 
@@ -971,7 +971,7 @@ int activeMenuButtonClass::drawActive ( void ) {
 
 int tX, tY, bumpX, bumpY;
 short v;
-XRectangle xR = { x, y, w, h };
+XRectangle xR = { x+3, y, w-23, h };
 char string[MAX_ENUM_STRING_SIZE+1];
 
   if ( !init ) {
