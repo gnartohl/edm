@@ -4,6 +4,7 @@
 // kasemir@lanl.gov
 //
 // Changes:
+// 5.0.0  Use color index instead of name as per EDM video conference
 // 4.0.0  Added "Alarm Sensitive" to text color
 // 3.0.0  Added colorPv for color rules
 // 2.0.0  Use color name, fall back to index
@@ -18,7 +19,7 @@
 
 #define TEXTUPDATE_CLASSNAME "TextupdateClass"
 #define TEXTENTRY_CLASSNAME  "TextentryClass"
-#define TEXT_MAJOR 4
+#define TEXT_MAJOR 5
 #define TEXT_MINOR 0
 #define TEXT_RELEASE 0
 

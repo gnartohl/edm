@@ -1,6 +1,6 @@
 3 0 1
-98
-72
+102
+95
 546
 452
 helvetica-medium-r-18.0
@@ -27,9 +27,9 @@ helvetica-medium-r-12.0
 0
 helvetica-medium-r-14.0
 0
-EOD
+<<<E~O~D>>>
 TextupdateClass
-2 0 0
+5 0 0
 32
 93
 255
@@ -37,15 +37,17 @@ TextupdateClass
 EPICS\jane
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 1
 helvetica-medium-i-18.0
 1
 135650656 1080014445
-EOD
+<<<E~O~D>>>
 TextupdateClass
-2 0 0
+5 0 0
 32
 134
 255
@@ -53,15 +55,17 @@ TextupdateClass
 jane
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 1
 helvetica-bold-r-18.0
 2
 0 0
-EOD
+<<<E~O~D>>>
 TextupdateClass
-2 0 0
+5 0 0
 32
 269
 255
@@ -69,15 +73,17 @@ TextupdateClass
 jane
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 1
 helvetica-medium-r-18.0
 0
 0 0
-EOD
+<<<E~O~D>>>
 TextupdateClass
-2 0 0
+5 0 0
 182
 228
 108
@@ -85,15 +91,17 @@ TextupdateClass
 janet
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 0
 helvetica-medium-r-12.0
 0
 135660728 1080014445
-EOD
+<<<E~O~D>>>
 TextupdateClass
-2 0 0
+5 0 0
 30
 178
 254
@@ -101,15 +109,17 @@ TextupdateClass
 fred
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 1
 times-medium-r-24.0
 2
 135662000 1080014445
-EOD
+<<<E~O~D>>>
 TextupdateClass
-2 0 0
+5 0 0
 32
 402
 126
@@ -117,15 +127,17 @@ TextupdateClass
 CALC\random(jane)
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 1
 helvetica-medium-r-18.0
 0
 135663272 1080014445
-EOD
+<<<E~O~D>>>
 TextupdateClass
-2 0 0
+5 0 0
 32
 361
 255
@@ -133,15 +145,17 @@ TextupdateClass
 janet
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 1
 helvetica-medium-r-18.0
 0
 2 0
-EOD
+<<<E~O~D>>>
 TextupdateClass
-2 0 0
+5 0 0
 32
 309
 254
@@ -149,13 +163,15 @@ TextupdateClass
 fred
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 1
 helvetica-medium-r-18.0
 1
 1 0
-EOD
+<<<E~O~D>>>
 activeXTextClass
 2 0 0
 32
@@ -177,9 +193,9 @@ helvetica-medium-r-24.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 TextupdateClass
-2 0 0
+5 0 0
 32
 41
 253
@@ -187,15 +203,17 @@ TextupdateClass
 EPICS\fred
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 1
 helvetica-medium-r-18.0
 0
 5 0
-EOD
+<<<E~O~D>>>
 TextupdateClass
-2 0 0
+5 0 0
 32
 228
 108
@@ -203,15 +221,17 @@ TextupdateClass
 janet
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 0
 helvetica-medium-r-12.0
 0
 135660728 1080014445
-EOD
+<<<E~O~D>>>
 TextentryClass
-2 0 0
+5 0 0
 326
 39
 157
@@ -219,15 +239,17 @@ TextentryClass
 fred
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 1
 helvetica-medium-r-12.0
 0
 0 1
-EOD
+<<<E~O~D>>>
 TextentryClass
-2 0 0
+5 0 0
 326
 102
 157
@@ -235,15 +257,17 @@ TextentryClass
 fred
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 1
 helvetica-bold-r-14.0
 2
 0 1
-EOD
+<<<E~O~D>>>
 TextentryClass
-2 0 0
+5 0 0
 326
 165
 157
@@ -251,15 +275,17 @@ TextentryClass
 fred
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 1
 helvetica-medium-r-12.0
 0
 0 1
-EOD
+<<<E~O~D>>>
 TextentryClass
-2 0 0
+5 0 0
 326
 228
 157
@@ -267,15 +293,17 @@ TextentryClass
 fred
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 1
 helvetica-medium-r-12.0
 0
 0 1
-EOD
+<<<E~O~D>>>
 TextupdateClass
-2 0 0
+5 0 0
 388
 397
 126
@@ -283,15 +311,17 @@ TextupdateClass
 CALC\sum(fred,CALC\sum(fred,fred))
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 1
 helvetica-medium-r-18.0
 0
 135663272 1080014445
-EOD
+<<<E~O~D>>>
 TextupdateClass
-2 0 0
+5 0 0
 388
 362
 126
@@ -299,29 +329,33 @@ TextupdateClass
 CALC\sum(fred, 1)
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 1
 helvetica-medium-r-18.0
 0
 135663272 1080014445
-EOD
+<<<E~O~D>>>
 TextupdateClass
-2 0 0
-388
+5 0 0
+387
 326
 126
 28
 EPICS\fred
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 1
 helvetica-medium-r-18.0
 0
 135663272 1080014445
-EOD
+<<<E~O~D>>>
 activeXTextClass
 2 0 0
 344
@@ -343,7 +377,7 @@ helvetica-medium-r-18.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
 2 0 0
 324
@@ -365,7 +399,7 @@ helvetica-medium-r-18.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 activeXTextClass
 2 0 0
 277
@@ -387,9 +421,9 @@ helvetica-medium-r-18.0
 0
 1
 <<<empty>>>
-EOD
+<<<E~O~D>>>
 TextentryClass
-2 0 0
+5 0 0
 275
 271
 119
@@ -397,15 +431,17 @@ TextentryClass
 jane
 0
 0
-Monitor: NORMAL
-Wid-bg/Anno-pri
+15
+1
+10
+<<<empty>>>
 1
 helvetica-medium-r-12.0
 0
 0 1
-EOD
+<<<E~O~D>>>
 activeXTextDspClass
-2 4 0
+2 5 0
 414
 280
 112
@@ -439,4 +475,5 @@ helvetica-medium-r-18.0
 0
 <<<empty>>>
 <<<empty>>>
-EOD
+-1
+<<<E~O~D>>>

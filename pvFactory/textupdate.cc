@@ -180,9 +180,9 @@ int edmTextupdateClass::save(FILE *f)
     fprintf(f, "%-d\n", (int) displayMode);
     fprintf(f, "%-d\n", (int) precision);
     // textcolor, fillcolor
-    writeStringToFile(f, (char *)textColor.getName(actWin->ci));
+    fprintf(f, "%-d\n", textColor.getIndex());
     fprintf(f, "%-d\n", textColor.isAlarmSensitive());
-    writeStringToFile(f, (char *)fillColor.getName(actWin->ci));
+    fprintf(f, "%-d\n", fillColor.getIndex());
     writeStringToFile(f, (char *)getRawName(color_pv_name));
     // fill mode, fonts
     fprintf(f, "%-d\n", is_filled);
@@ -227,26 +227,32 @@ int edmTextupdateClass::createFromFile(FILE *f, char *filename,
         fscanf(f, "%d\n", &index ); actWin->incLine();
         precision = index;
     }
-    // colors
-    // Changed for 2.0.0: Use names
-    if (major < 2)
+    // text color. Changed for 2.0.0: Use names
+    // Since 5.0.0: back to indices
+    if (major < 2 || major >= 5)
     {
         fscanf(f, "%d\n", &index ); actWin->incLine();
         textColor.setIndex(index);
-        // fillcolor index & mode
-        fscanf(f, "%d\n", &index ); actWin->incLine();
-        fillColor.setIndex(index);
     }
     else
     {
         readStringFromFile(name, PV_Factory::MAX_PV_NAME,f); actWin->incLine();
         textColor.setName(actWin->ci, name);
-        // Since 4.0: alarm_sensitive
-        if (major >= 4)
-        {
-            fscanf(f, "%d\n", &index); actWin->incLine();
-            textColor.setAlarmSensitive(index > 0);
-        }
+    }
+    // Since 4.0: alarm_sensitive
+    if (major >= 4)
+    {
+        fscanf(f, "%d\n", &index); actWin->incLine();
+        textColor.setAlarmSensitive(index > 0);
+    }
+    // fillcolor index & mode
+    if (major < 2 || major >= 5)
+    {
+        fscanf(f, "%d\n", &index ); actWin->incLine();
+        fillColor.setIndex(index);
+    }
+    else
+    {
         readStringFromFile(name, PV_Factory::MAX_PV_NAME,f); actWin->incLine();
         fillColor.setName(actWin->ci, name);
     }
@@ -255,7 +261,7 @@ int edmTextupdateClass::createFromFile(FILE *f, char *filename,
         color_pv_name.setRaw(0);
     else
     {
-        readStringFromFile(name, PV_Factory::MAX_PV_NAME, f); actWin->incLine();
+        readStringFromFile(name, PV_Factory::MAX_PV_NAME,f); actWin->incLine();
         color_pv_name.setRaw(name);
     }
 
