@@ -1,1259 +1,1190 @@
-3 1 0
-103
-128
-477
-725
-helvetica-medium-r-12.0
-0
-helvetica-medium-r-12.0
-0
-rgb
-0,0,0
-rgb
-50971,52011,50971
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-rgb
-34327,34327,34327
-Help - Mouse Operations
-0
-0
-15
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-84
-92
-277
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-press and hold the button while moving the cursor
-helvetica-medium-i-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-18
-213
-90
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Ctrl-Left B Drag
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-17
-232
-91
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Ctrl-Left B Click
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-212
-213
-136
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Prevent resize operation
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-212
-232
-162
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Cycle single object selection
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-15
-193
-93
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Shft-Left B Click
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-44
-173
-64
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Left B Click
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-212
-193
-255
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Toggle selection (add to current select group)
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-212
-173
-212
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Select single object (deselect current)
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-291
-245
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Middle B drag select box Top-L --> Bot-R
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-308
-245
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Middle B drag select box Bot-R --> Top-L
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-353
-291
-107
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Select all enclosed
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-353
-308
-99
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Select by corners
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-142
-498
-15
-15
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-232
-498
-15
-15
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-322
-498
-15
-15
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-142
-618
-15
-15
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-232
-618
-15
-15
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-322
-618
-15
-15
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-142
-558
-15
-15
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-322
-558
-15
-15
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-149
-505
-181
-121
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-272
-699
-185
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Left B drag control point to resize
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-312
-442
-151
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Left B drag interior to move
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-55
-363
-131
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Left B drag and release
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-359
-363
-102
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Create new object
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-420
-199
-16
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Move and Resize Operations
-helvetica-bold-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-13
-408
-452
-1
-2
-13 408
-465 409
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-2
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-359
-382
-73
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Edit object(s)
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-382
-173
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Left Click on selected object(s)
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-271
-457
-123
-78
-2
-394 457
-271 535
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-240
-629
-122
-61
-3
-333 629
-362 690
-240 629
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-90
-479
-100
-82
-3
-147 502
-90 479
-190 561
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-463
-227
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Ctrl-Left B drag anywhere to force move
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-14
-259
-452
-1
-2
-14 259
-466 260
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-2
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-14
-334
-452
-1
-2
-14 334
-466 335
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-2
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeExitButtonClass
-2 1 0
-6
-694
-59
-24
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-1
-0
-helvetica-medium-r-14.0
-Close
-0
-0
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-202
-550
-80
-28
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpFineMouseCtl
-<<<empty>>>
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-1
-1
-Fine control
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-37
-312
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Left B means left button, Right B means right button, etc.
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-55
-71
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Press means
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-73
-68
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Click means
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-91
-67
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Drag means
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-87
-56
-85
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-press and hold
-helvetica-medium-i-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-87
-73
-99
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-press and release
-helvetica-medium-i-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-110
-146
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Shift middle B click means
-helvetica-medium-r-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-161
-111
-281
-14
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-hold down the shift key and click the middle button
-helvetica-medium-i-12.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-14
-140
-452
-1
-2
-14 140
-466 141
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-2
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-12
-118
-16
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Some Definitions
-helvetica-bold-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-149
-176
-16
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Simple Select Operations
-helvetica-bold-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-268
-185
-16
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Multiple Select Operations
-helvetica-bold-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-13
-342
-159
-16
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Create/Edit Operations
-helvetica-bold-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 385
+y 70
+w 484
+h 825
+font "helvetica-medium-r-12.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 50886 51143 50886
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 0
+ctlBgColor1 rgb 44461 44718 44461
+ctlBgColor2 rgb 33924 34438 33924
+topShadowColor rgb 61423 60395 61423
+botShadowColor rgb 23130 22873 23130
+title "Help - Mouse Operations"
+gridSize 15
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 84
+y 92
+w 277
+h 14
+font "helvetica-medium-i-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "press and hold the button while moving the cursor"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 18
+y 213
+w 87
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Ctrl-Left B Drag"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 17
+y 232
+w 88
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Ctrl-Left B Click"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 212
+y 213
+w 136
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Prevent resize operation"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 212
+y 232
+w 162
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Cycle single object selection"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 15
+y 193
+w 90
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Shft-Left B Click"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 44
+y 173
+w 64
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Left B Click"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 212
+y 193
+w 255
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Toggle selection (add to current select group)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 212
+y 173
+w 212
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Select single object (deselect current)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 13
+y 291
+w 233
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Middle B drag select box Top-L --> Bot-R"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 13
+y 308
+w 233
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Middle B drag select box Bot-R --> Top-L"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 353
+y 291
+w 107
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Select all enclosed"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 353
+y 308
+w 99
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Select by corners"
+}
+autoSize
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 142
+y 596
+w 15
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 232
+y 596
+w 15
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 322
+y 596
+w 15
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 142
+y 716
+w 15
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 232
+y 716
+w 15
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 322
+y 716
+w 15
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 142
+y 656
+w 15
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 322
+y 656
+w 15
+h 15
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 149
+y 603
+w 181
+h 121
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 797
+w 185
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Left B drag control point to resize"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 312
+y 540
+w 151
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Left B drag interior to move"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 55
+y 363
+w 131
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Left B drag and release"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 352
+y 363
+w 102
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Create new object"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 13
+y 518
+w 199
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Move and Resize Operations"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 13
+y 506
+w 452
+h 1
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+lineWidth 2
+numPoints 2
+xPoints {
+  0 13
+  1 465
+}
+yPoints {
+  0 506
+  1 507
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 352
+y 382
+w 73
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Edit object(s)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 13
+y 382
+w 173
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Left Click on selected object(s)"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 271
+y 555
+w 123
+h 78
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+numPoints 2
+xPoints {
+  0 394
+  1 271
+}
+yPoints {
+  0 555
+  1 633
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 240
+y 727
+w 122
+h 61
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+numPoints 3
+xPoints {
+  0 333
+  1 362
+  2 240
+}
+yPoints {
+  0 727
+  1 788
+  2 727
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 90
+y 577
+w 100
+h 82
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+numPoints 3
+xPoints {
+  0 147
+  1 90
+  2 190
+}
+yPoints {
+  0 600
+  1 577
+  2 659
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 13
+y 561
+w 224
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Ctrl-Left B drag anywhere to force move"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 14
+y 259
+w 452
+h 1
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+lineWidth 2
+numPoints 2
+xPoints {
+  0 14
+  1 466
+}
+yPoints {
+  0 259
+  1 260
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 14
+y 334
+w 452
+h 1
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+lineWidth 2
+numPoints 2
+xPoints {
+  0 14
+  1 466
+}
+yPoints {
+  0 334
+  1 335
+}
+endObjectProperties
+
+# (Exit Button)
+object activeExitButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 6
+y 792
+w 59
+h 24
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+topShadowColor rgb 61423 60395 61423
+botShadowColor rgb 23130 22873 23130
+label "Close"
+font "helvetica-medium-r-14.0"
+3d
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 202
+y 648
+w 80
+h 28
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+topShadowColor rgb 61423 60395 61423
+botShadowColor rgb 23130 22873 23130
+font "helvetica-medium-r-12.0"
+useFocus
+buttonLabel "Fine control"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpFineMouseCtl"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 13
+y 37
+w 312
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Left B means left button, Right B means right button, etc."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 13
+y 55
+w 71
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Press means"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 13
+y 73
+w 68
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Click means"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 13
+y 91
+w 67
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Drag means"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 87
+y 56
+w 82
+h 14
+font "helvetica-medium-i-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "press and hold"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 87
+y 73
+w 96
+h 14
+font "helvetica-medium-i-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "press and release"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 13
+y 110
+w 146
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Shift middle B click means"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 161
+y 111
+w 281
+h 14
+font "helvetica-medium-i-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "hold down the shift key and click the middle button"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 14
+y 140
+w 452
+h 1
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+lineWidth 2
+numPoints 2
+xPoints {
+  0 14
+  1 466
+}
+yPoints {
+  0 140
+  1 141
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 13
+y 12
+w 118
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Some Definitions"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 13
+y 149
+w 176
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Simple Select Operations"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 13
+y 268
+w 185
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Multiple Select Operations"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 13
+y 342
+w 159
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Create/Edit Operations"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 352
+y 402
+w 113
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Drag/Drop PV name"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 85
+y 402
+w 102
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Ctrl Middle B drag"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 13
+y 429
+w 452
+h 1
+lineColor rgb 0 0 0
+fillColor rgb 44461 44718 44461
+lineWidth 2
+numPoints 2
+xPoints {
+  0 13
+  1 465
+}
+yPoints {
+  0 429
+  1 430
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 13
+y 438
+w 179
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Execute Mode Operations"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 352
+y 478
+w 87
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Display PV info"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 17
+y 478
+w 103
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Ctrl Middle B click"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 352
+y 461
+w 113
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Drag/Drop PV name"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 41
+y 461
+w 79
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 44461 44718 44461
+useDisplayBg
+value {
+  "Middle B drag"
+}
+autoSize
+endObjectProperties
+
