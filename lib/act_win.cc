@@ -14762,21 +14762,23 @@ char s[127+1];
   }
 
   if ( ( *_major > 1 ) || ( *_minor > 5 ) ) {
-    readStringFromFile( defaultPvType, 15, f );
-  }
-  else {
-    strcpy( defaultPvType, "epics" );
+    readStringFromFile( s, 15, f );
   }
 
   if ( ( *_major > 1 ) || ( *_minor > 6 ) ) {
-    readStringFromFile( this->id, 31, f );
-    fscanf( f, "%d\n", &this->activateCallbackFlag );
-    fscanf( f, "%d\n", &this->deactivateCallbackFlag );
+    readStringFromFile( s, 31, f );
+    fscanf( f, "%d\n", &i );
+    fscanf( f, "%d\n", &i );
   }
-  else {
-    strcpy( this->id, "" );
-    activateCallbackFlag = 0;
-    deactivateCallbackFlag = 0;
+
+  if ( ( major > 2 ) ||
+       ( ( major == 2 ) && ( minor > 0 ) ) ||
+       ( ( major == 2 ) && ( minor == 0 ) && ( release > 0 ) ) ) {
+
+    readStringFromFile( s, 63, f );
+
+    fscanf( f, "%d\n", &i );
+
   }
 
   popVersion();
@@ -15268,6 +15270,32 @@ int i;
       f = fopen( buf, mode );
       if ( f ) {
         strncpy( fileName, buf, 255 ); // update fileName
+        return f;
+      }
+    }
+
+  }
+
+  return NULL;
+
+}
+
+FILE *activeWindowClass::openAnySymFile (
+  char *name,
+  char *mode )
+{
+
+char buf[255+1];
+FILE *f;
+int i;
+
+  for ( i=0; i<appCtx->numPaths; i++ ) {
+
+    appCtx->expandFileName( i, buf, name, ".edl", 255 );
+
+    if ( strcmp( buf, "" ) != 0 ) {
+      f = fopen( buf, mode );
+      if ( f ) {
         return f;
       }
     }

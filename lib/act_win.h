@@ -1141,6 +1141,10 @@ FILE *activeWindowClass::openAny (
   char *name,
   char *mode );
 
+FILE *activeWindowClass::openAnySymFile (
+  char *name,
+  char *mode );
+
 /* new new new */
 
 FILE *activeWindowClass::openExchangeFile (

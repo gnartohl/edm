@@ -722,7 +722,7 @@ expStringClass expStr;
   expStr.setRaw( name );
   expStr.expand1st( actWin->numMacros, actWin->macros, actWin->expansions );
 
-  f = actWin->openAny( expStr.getExpanded(), "r" );
+  f = actWin->openAnySymFile( expStr.getExpanded(), "r" );
   if ( !f ) {
     // numStates = 0;
     return 0;
