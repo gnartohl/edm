@@ -10,7 +10,9 @@
 #include<time.h>
 #include"hashtable.h"
 #include"dl_list.h"
-
+void setReadOnly ( void );
+void setReadWrite ( void );
+int isReadOnly ( void );
 int pend_io ( double sec );
 int pend_event ( double sec );
 

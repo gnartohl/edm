@@ -308,10 +308,23 @@ double EPICS_ProcessVariable::get_lower_ctrl_limit() const
 {   return value->lower_ctrl_limit; }
 
 bool EPICS_ProcessVariable::have_write_access() const
-{   return ca_write_access(pv_chid) != 0; }
+{
+
+    if ( isReadOnly() ) {
+      return 0;
+    }
+
+    return ca_write_access(pv_chid) != 0;
+
+}
 
 bool EPICS_ProcessVariable::put(double value)
 {
+
+    if ( isReadOnly() ) {
+      return false;
+    }
+
     if (is_valid())
     {
         dbr_double_t v = value;
@@ -319,10 +332,16 @@ bool EPICS_ProcessVariable::put(double value)
         return true;
     }
     return false;
+
 }
 
 bool EPICS_ProcessVariable::put(int value)
 {
+
+    if ( isReadOnly() ) {
+      return false;
+    }
+
     if (is_valid())
     {
         dbr_long_t v = value;
@@ -330,46 +349,71 @@ bool EPICS_ProcessVariable::put(int value)
         return true;
     }
     return false;
+
 }
     
 bool EPICS_ProcessVariable::put(const char *value)
 {
+
+    if ( isReadOnly() ) {
+      return false;
+    }
+
     if (is_valid())
     {
         ca_bput(pv_chid, value);
         return true;
     }
     return false;
+
 }
 
 bool EPICS_ProcessVariable::putText(char *value)
 {
-  if (is_valid())
+
+    if ( isReadOnly() ) {
+      return false;
+    }
+
+    if (is_valid())
     {
         ca_put( DBR_STRING, pv_chid, value);
         return true;
     }
     return false;
+
 }
 
 bool EPICS_ProcessVariable::putArrayText(char *value)
 {
-  if (is_valid())
+
+    if ( isReadOnly() ) {
+      return false;
+    }
+
+    if (is_valid())
     {
         ca_array_put( DBR_CHAR, strlen(value)+1, pv_chid, value );
         return true;
     }
     return false;
+
 }
 
 bool EPICS_ProcessVariable::putAck(short value)
 {
-  if (is_valid())
+
+    if ( isReadOnly() ) {
+      return false;
+    }
+
+    if (is_valid())
     {
         ca_put( DBR_PUT_ACKS, pv_chid, &value );
         return true;
     }
     return false;
+
 }
 
 // ---------------------- PVValue ---------------------------------

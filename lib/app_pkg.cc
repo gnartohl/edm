@@ -3679,6 +3679,7 @@ static void displayParamInfo ( void ) {
 
   printf( global_str30 );
   printf( global_str31 );
+  printf( global_str99 );
 
   printf( global_str32 );
   printf( global_str33 );
@@ -3951,6 +3952,8 @@ fileListPtr curFile;
         }
 	else if ( strcmp( argv[n], global_str96 ) == 0 ) { //exit on last close
 	  exitOnLastClose = 1;
+	}
+	else if ( strcmp( argv[n], global_str98 ) == 0 ) { //readonly
 	}
 
         else {

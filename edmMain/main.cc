@@ -1069,6 +1069,9 @@ Display *testDisplay;
 	}
         else if ( strcmp( argv[n], global_str96 ) == 0 ) {
 	}
+        else if ( strcmp( argv[n], global_str98 ) == 0 ) { //readonly
+          setReadOnly();
+	}
         else {
           *local = 1;
           return;

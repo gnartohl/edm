@@ -10,6 +10,23 @@
 #include"calc_pv_factory.h"
 #include"loc_pv_factory.h"
 
+static int edmReadOnly = 0;
+
+void setReadOnly ( void )
+{
+  edmReadOnly = 1;
+}
+
+void setReadWrite ( void )
+{
+  edmReadOnly = 0;
+}
+
+int isReadOnly ( void )
+{
+  return edmReadOnly;
+}
+
 int pend_io ( double sec )
 {
 
