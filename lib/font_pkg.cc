@@ -475,6 +475,7 @@ int empty = 1;
 fontNameListPtr cur;
 int dup;
 int major, minor, release;
+XFontStruct *fs;
 
   this->display = d;
 
@@ -523,11 +524,11 @@ int major, minor, release;
         return stat;
       }
 
-      XLoadFont( d, cur->fullName );
-
       stat = avl_insert_node( this->fontNameListH, (void *) cur, &dup );
       if ( !( stat & 1 ) ) return stat;
 //       if ( dup ) printf( "duplicate\n" );
+
+      fs = getXFontStruct( cur->name );
 
       stat = appendSizeMenu( cur->family, cur->size, cur->fsize );
       if ( !( stat & 1 ) ) return stat;
