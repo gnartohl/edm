@@ -2481,6 +2481,7 @@ int activeGroupClass::startDrag (
 
 activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
 activeGraphicListPtr cur;
+int stat = 0;
 
   cur = head->blink;
   while ( cur != head ) {
@@ -2492,9 +2493,10 @@ activeGraphicListPtr cur;
 
       // only the highest object may participate
       if ( cur->node->dragValue( cur->node->getCurrentDragIndex() ) ) {
-        cur->node->startDrag( x, y );
+        stat = cur->node->startDrag( x, y );
+        if ( stat ) break;
       }
-      break; // out of while loop
+      //break; // out of while loop
 
     }
 
@@ -2502,7 +2504,7 @@ activeGraphicListPtr cur;
 
   }
 
-  return 1;
+  return stat;
 
 }
 

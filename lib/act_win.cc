@@ -8823,10 +8823,12 @@ activeGraphicClass *ptr;
 
           // only the highest object may participate
           if ( cur->node->dragValue( cur->node->getCurrentDragIndex() ) ) {
-            cur->node->startDrag( be->x, be->y );
-            foundAction = 1;
+            action = cur->node->startDrag( be->x, be->y );
+            if ( action ) {
+              foundAction = 1;
+              break; // out of while loop
+	    }
 	  }
-          break; // out of while loop
 
 	}
 

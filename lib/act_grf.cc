@@ -3009,6 +3009,10 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
   XGCValues       gcValues;
   unsigned long   gcValueMask;
 
+  char *str = agc->dragValue(agc->getCurrentDragIndex());
+  if ( !str ) return NULL;
+  if ( blank(str) ) return NULL;
+
   Display *display = XtDisplay(w);
   int screenNum = DefaultScreen(display);
 
@@ -3027,8 +3031,8 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
 
   fontHeight = fixedFont->ascent + fixedFont->descent;
 
-  char *str = agc->dragValue(agc->getCurrentDragIndex());
-  if (!str) str = "";
+  // char *str = agc->dragValue(agc->getCurrentDragIndex());
+  // if (!str) str = "";
 
   clipbdStart();
   clipbdAdd(str);
@@ -3083,6 +3087,7 @@ Arg args[10];
 XMotionEvent dragEvent;
 
   Widget icon = mkDragIcon(actWin->executeWidget, this);
+  if ( !icon ) return 0;
 
   expList[0] = XA_STRING;
   n = 0;
@@ -3119,7 +3124,8 @@ int n;
 Arg args[10];
 
   Widget icon = mkDragIcon(w, this);
- 
+  if ( !icon ) return 0;
+
   expList[0] = XA_STRING;
   n = 0;
   XtSetArg( args[n], XmNexportTargets, expList ); n++;
