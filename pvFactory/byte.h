@@ -24,7 +24,8 @@ public:
     edmByteClass();
     edmByteClass(edmByteClass *rhs);
     virtual ~edmByteClass();
-    void bufInvalidate(void);
+    //void bufInvalidate(void) { bufInvalid++; };
+    void bufInvalidate(void) { bufInvalid = 1; };
     char *objName();
     const char *getRawPVName();
     const char *getExpandedPVName();
@@ -87,7 +88,7 @@ public:
     int lineColor;
     int onColor, offColor;
     int onPixel, offPixel;
-    int makeOutline();
+    void updateDimensions();
 
     char *firstDragName();
     char *nextDragName();
@@ -97,16 +98,19 @@ public:
 protected:
 
     void clone(const edmByteClass *rhs, const char *classname);
+    int drawActivePrivate();
     int drawActiveFull();
     int drawActiveBits();
     inline void innerDrawFull(int value, int i, int mask, 
                                      int &previous, int &lastseg);
     inline void innerDrawBits(int value, int i, int mask);
 
+    //void bufValidate() { if (bufInvalid > 0) bufInvalid--; };
+    void bufValidate() { bufInvalid = 0; };
     bool is_executing;          // edit or execute mode? (was activeMode?)
     bool is_pvname_valid;       
     ProcessVariable *valuePvId;        // ChannelAccess, PV
-    bool bufInvalid;
+    int bufInvalid;
     bool validFlag;
     unsigned int value, lastval;
     
@@ -150,8 +154,7 @@ protected:
     static void edit_cancel_delete(Widget w, XtPointer client,
                                    XtPointer call);
     // CA callbacks
-    static void pv_conn_state_callback(ProcessVariable *pv, void *userarg);
-    static void pv_value_callback(ProcessVariable *pv, void *userarg);
+    static void pv_callback(ProcessVariable *pv, void *userarg);
 
 
 };

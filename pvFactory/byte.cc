@@ -12,7 +12,7 @@
 
 
 edmByteClass::edmByteClass() : activeGraphicClass(), init(0), 
-  is_executing(false), is_pvname_valid(false), valuePvId(0), bufInvalid(true),
+  is_executing(false), is_pvname_valid(false), valuePvId(0), bufInvalid(0),
   validFlag(false), value(0), lastval(0), theDir(BIGENDIAN),  nobt(16),
   shft(0), lineWidth(1), lineStyle(LineSolid), theOutline(0)
 {
@@ -57,8 +57,8 @@ edmByteClass::~edmByteClass()
 {
     if (valuePvId)
     {
-        valuePvId->remove_conn_state_callback(pv_conn_state_callback, this);
-        valuePvId->remove_value_callback(pv_value_callback, this);
+        valuePvId->remove_conn_state_callback(pv_callback, this);
+        valuePvId->remove_value_callback(pv_callback, this);
         valuePvId->release();
         valuePvId = 0;
     }
@@ -162,7 +162,7 @@ int edmByteClass::createFromFile(FILE *f, char *filename,
   fscanf( f, "%d\n", &temp ); actWin->incLine();
   shft = (temp < 0)?0:((temp > 15)?15:temp);
   
-  makeOutline();
+  updateDimensions();
 
   return 1;
 
@@ -274,7 +274,7 @@ int edmByteClass::genericEdit() // create Property Dialog
     return 1;
 }
 
-int edmByteClass::makeOutline()
+void edmByteClass::updateDimensions()
 //
 // The outline of the byte widget is the segment list for an XDrawSegments 
 // call.  It is also used to get coordinates for the XFillRectangle calls 
@@ -287,7 +287,7 @@ int edmByteClass::makeOutline()
 
    theOutline = new XSegment[(nobt + 3) * 2];
 
-   if (!theOutline) return 0;
+   if (!theOutline) return;
 
    if (w > h)	// horizontal
    {
@@ -327,8 +327,6 @@ int edmByteClass::makeOutline()
       theOutline[nobt + 2].x2 = x + w;
       theOutline[nobt + 2].y2 = y + h;
    }
-   
-   return 1;
 }
 
 int edmByteClass::draw()  // render the edit-mode image
@@ -348,7 +346,7 @@ int edmByteClass::draw()  // render the edit-mode image
     actWin->drawGc.setLineWidth( lineWidth );
     actWin->drawGc.setLineStyle( lineStyle );
 
-    makeOutline();
+    updateDimensions();
 
     if (theOutline)
     {
@@ -460,7 +458,7 @@ void edmByteClass::edit_update(Widget w, XtPointer client,XtPointer call)
     me->h = me->bufH;
     me->sboxH = me->bufH;
 
-    me->makeOutline();
+    me->updateDimensions();
   
 }
 
@@ -583,18 +581,13 @@ int edmByteClass::activate(int pass, void *ptr)
                 valuePvId = the_PV_Factory->create(getExpandedPVName());
                 if (valuePvId)
                 {
-                    valuePvId->add_conn_state_callback(pv_conn_state_callback, this);
-                    valuePvId->add_value_callback(pv_value_callback, this);
+                    valuePvId->add_conn_state_callback(pv_callback, this);
+                    valuePvId->add_value_callback(pv_callback, this);
                 }
             }
             break;
     }
     return 1;
-}
-
-void edmByteClass::bufInvalidate(void)
-{
-   bufInvalid = true;
 }
 
 int edmByteClass::deactivate(int pass)
@@ -603,8 +596,8 @@ int edmByteClass::deactivate(int pass)
   if ( pass == 1 ) {
             if (valuePvId)
             {
-                valuePvId->remove_conn_state_callback(pv_conn_state_callback, this);
-                valuePvId->remove_value_callback(pv_value_callback, this);
+                valuePvId->remove_conn_state_callback(pv_callback, this);
+                valuePvId->remove_value_callback(pv_callback, this);
                 valuePvId->release();
                 valuePvId = 0;
             }
@@ -646,6 +639,31 @@ inline void edmByteClass::innerDrawFull(int value, int i, int mask,
 
 int edmByteClass::drawActive()
 {
+    bufInvalidate();
+    drawActivePrivate();
+    return (1);
+}
+
+int edmByteClass::drawActivePrivate()
+{
+   if (is_executing)
+   {
+      if (valuePvId->is_valid())
+      {
+         lastval = value;
+         value = (valuePvId->get_int() >> shft);
+         if (!validFlag) 
+         {
+            validFlag = true;
+            bufInvalidate();
+         }
+       }
+       else if (validFlag)
+       {
+          validFlag = false;
+          bufInvalidate();
+       }
+   }
    if (bufInvalid)
    {
       drawActiveFull();
@@ -654,7 +672,6 @@ int edmByteClass::drawActive()
    {
       drawActiveBits();
    }
-
    return 1;
 }
 
@@ -747,7 +764,7 @@ int edmByteClass::drawActiveFull()
      actWin->executeGc.setFG(offPixel);
      XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
-     bufInvalid = false;
+     bufValidate();
   }
   else if (validFlag)
   {
@@ -775,14 +792,14 @@ int edmByteClass::drawActiveFull()
            innerDrawFull(value, i, mask, previous, lastseg);
         }
      }
-     bufInvalid = false;
+     bufValidate();
   }
   else // invalid PV
   {
     actWin->drawGc.setFG( 0 );	// white
     XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
        actWin->drawGc.normGC(), x, y, w, h );
-    bufInvalid = false;
+    bufValidate();
   }
  
   actWin->executeGc.setFG( actWin->ci->getPixelByIndex(lineColor) );
@@ -827,50 +844,13 @@ int edmByteClass::eraseActive()
     return 1;
 }
 
-void edmByteClass::pv_conn_state_callback(ProcessVariable *pv, void *userarg)
+void edmByteClass::pv_callback(ProcessVariable *pv, void *userarg)
 {
     edmByteClass *me = (edmByteClass *)userarg;
     me->actWin->appCtx->proc->lock();
     if (me->is_executing)
     {
-        if (me->valuePvId->is_valid())
-        {
-           me->lastval = me->value;
-           me->value = (me->valuePvId->get_int() >> me->shft);
-           me->validFlag = true;
-        }
-        else 
-        {
-           me->validFlag = false;
-        }
-        me->bufInvalidate();
-        me->actWin->addDefExeNode(me->aglPtr);
-    }
-    me->actWin->appCtx->proc->unlock();
-}
-
-void edmByteClass::pv_value_callback(ProcessVariable *pv, void *userarg)
-{
-    edmByteClass *me = (edmByteClass *)userarg;
-    me->actWin->appCtx->proc->lock();
-    if (me->is_executing)
-    {
-        if (me->valuePvId->is_valid())
-        {
-           me->lastval = me->value;
-           me->value = (me->valuePvId->get_int() >> me->shft);
-           if (!me->validFlag) 
-           {
-              me->validFlag = true;
-              me->bufInvalidate();
-           }
-        }
-        else if (me->validFlag)
-        {
-           me->validFlag = false;
-           me->bufInvalidate();
-        }
-        me->actWin->addDefExeNode(me->aglPtr);
+       me->actWin->addDefExeNode(me->aglPtr);
     }
     me->actWin->appCtx->proc->unlock();
 }
@@ -878,19 +858,15 @@ void edmByteClass::pv_value_callback(ProcessVariable *pv, void *userarg)
 
 void edmByteClass::executeDeferred()
 {   // Called as a result of addDefExeNode
-    if (actWin->isIconified)
-        return;
 
     if (is_executing)
     {
-       drawActive();
+       if (!actWin->isIconified)
+           drawActivePrivate();
 
-       if (!bufInvalid)
-       {
-          actWin->appCtx->proc->lock();
-          actWin->remDefExeNode(aglPtr);
-          actWin->appCtx->proc->unlock();
-       }
+       actWin->appCtx->proc->lock();
+       actWin->remDefExeNode(aglPtr);
+       actWin->appCtx->proc->unlock();
     }
 }
 
