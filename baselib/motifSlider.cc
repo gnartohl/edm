@@ -555,11 +555,13 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
   mslo->fgColor.setColorIndex( mslo->bufFgColor, mslo->actWin->ci );
   mslo->bgColor.setColorIndex( mslo->bufBgColor, mslo->actWin->ci );
 
-  mslo->fgColorMode = mslo->bufFgColorMode;
-  if ( mslo->fgColorMode == MSLC_K_COLORMODE_ALARM )
-    mslo->fgColor.setAlarmSensitive();
-  else
-    mslo->fgColor.setAlarmInsensitive();
+  mslo->bgColorMode = mslo->bufBgColorMode;
+  if ( mslo->bgColorMode == MSLC_K_COLORMODE_ALARM ) {
+    mslo->bgColor.setAlarmSensitive();
+  }
+  else {
+    mslo->bgColor.setAlarmInsensitive();
+  }
 
   mslo->shadeColor = mslo->bufShadeColor;
   mslo->topColor = mslo->bufTopColor;
@@ -783,8 +785,23 @@ void activeMotifSliderClass::controlUpdate (
 {
 
 activeMotifSliderClass *mslo = (activeMotifSliderClass *) userarg;
+int st, sev;
 
   mslo->curControlV = mslo->oneControlV = pv->get_double();
+
+  st = pv->get_status();
+  sev = pv->get_severity();
+  if ( ( st != mslo->oldStat ) || ( sev != mslo->oldSev ) ) {
+    mslo->oldStat = st;
+    mslo->oldSev = sev;
+    mslo->bgColor.setStatus( st, sev );
+    mslo->bufInvalidate();
+    mslo->needErase = 1;
+    mslo->needDraw = 1;
+    mslo->actWin->appCtx->proc->lock();
+    mslo->actWin->addDefExeNode( mslo->aglPtr );
+    mslo->actWin->appCtx->proc->unlock();
+  }
 
   // xtimer updates image
 
@@ -844,7 +861,7 @@ activeGraphicClass *mslo = (activeGraphicClass *) this;
   bgColor.copy( source->bgColor );
   fgColor.copy( source->fgColor );
 
-  fgColorMode = source->fgColorMode;
+  bgColorMode = source->bgColorMode;
 
   shadeColor = source->shadeColor;
   topColor = source->topColor;
@@ -929,7 +946,7 @@ int activeMotifSliderClass::createInteractive (
   fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
   bgColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
 
-  fgColorMode = 0;
+  bgColorMode = 0;
 
   shadeColor =actWin->defaultOffsetColor;
   topColor = actWin->defaultTopShadowColor;
@@ -1003,7 +1020,7 @@ int index, stat;
 
   writeStringToFile( f, fontTag );
 
-  fprintf( f, "%-d\n", fgColorMode );
+  fprintf( f, "%-d\n", bgColorMode );
 
   fprintf( f, "%-d\n", limitsFromDb );
   stat = efPrecision.write( f );
@@ -1103,7 +1120,14 @@ float val;
 
   readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
-  fscanf( f, "%d\n", &fgColorMode ); actWin->incLine();
+  fscanf( f, "%d\n", &bgColorMode ); actWin->incLine();
+
+  if ( bgColorMode == MSLC_K_COLORMODE_ALARM ) {
+    bgColor.setAlarmSensitive();
+  }
+  else {
+    bgColor.setAlarmInsensitive();
+  }
 
   fscanf( f, "%d\n", &limitsFromDb ); actWin->incLine();
 
@@ -1170,7 +1194,7 @@ char title[32], *ptr;
   bufH = h;
   bufFgColor = fgColor.pixelIndex();
   bufBgColor = bgColor.pixelIndex();
-  bufFgColorMode = fgColorMode;
+  bufBgColorMode = bgColorMode;
   bufShadeColor = shadeColor;
   bufTopColor = topColor;
   bufBotColor = botColor;
@@ -1241,9 +1265,9 @@ char title[32], *ptr;
 
   ef.addColorButton( activeMotifSliderClass_str24, actWin->ci, &fgCb,
    &bufFgColor );
-  ef.addToggle( activeMotifSliderClass_str25, &bufFgColorMode );
   ef.addColorButton( activeMotifSliderClass_str26, actWin->ci, &bgCb,
    &bufBgColor );
+  ef.addToggle( activeMotifSliderClass_str25, &bufBgColorMode );
 
   ef.addColorButton( activeMotifSliderClass_str27, actWin->ci, &shadeCb,
    &bufShadeColor );
@@ -1536,12 +1560,9 @@ int tX, tY;
 
   if ( !activeMode || !init ) return 1;
 
-  if ( scrollBarWidget ) {
-    XtVaSetValues( scrollBarWidget,
-     XmNbackground, bgColor.getColor(),
-     NULL );
-  }
-
+  XtVaSetValues( frameWidget,
+   XmNbackground, bgColor.getColor(),
+   NULL );
   XtVaSetValues( scaleWidget,
    XmNbackground, bgColor.getColor(),
    NULL );
@@ -1824,6 +1845,8 @@ int opStat;
 
       opComplete = 1;
 
+      oldStat = -1;
+      oldSev = -1;
       prevScaleV = -1;
       dragIndicator = 0;
       controlPvId = controlLabelPvId = 0;

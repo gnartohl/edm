@@ -318,7 +318,7 @@ double curControlV;
 double increment;
 int compute_initial_increment;
 
-int fgColorMode, bufFgColorMode;
+int bgColorMode, bufBgColorMode;
 pvColorClass bgColor, fgColor;
 int bufBgColor, bufFgColor;
 int shadeColor, bufShadeColor, topColor, bufTopColor, botColor, bufBotColor;
@@ -378,6 +378,8 @@ double kpCtlDouble, kpIncDouble;
 
 double incArray[7];
 int incIndex;
+
+int oldStat, oldSev; // for alarms
 
 public:
 
