@@ -143,7 +143,7 @@ static const int FIELD_TYPE_MENU = 1;
 static const int FIELD_TYPE_TOGGLE = 2;
 static const int FIELD_TYPE_TEXT = 3;
 
-static char * const nullString = "";
+// static char * const nullString = "";
 
 edmPrintClass ( void );
 

@@ -4,6 +4,8 @@
 #include "environment.str"
 #include "edmPrint.h"
 
+static char * const g_nullString = "";
+
 static int posInt (
   char *tk
 ) {
@@ -746,10 +748,10 @@ char *ptr, *tk;
   }
 
   if ( !*tk ) {
-    tk = edmPrintClass::nullString;
+    tk = g_nullString;
   }
   if ( strcmp( tk, "\"" ) == 0 ) {
-    tk = edmPrintClass::nullString;
+    tk = g_nullString;
   }
 
   return tk;
