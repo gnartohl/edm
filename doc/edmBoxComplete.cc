@@ -49,6 +49,9 @@ static void edmBoxInfoUpdate (
   struct event_handler_args ast_args )
 {
 
+  if ( ast_args.status == ECA_DISCONN ) {
+    return;
+  }
 
 edmBoxClass *ebo = (edmBoxClass *) ast_args.usr;
 struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
@@ -296,10 +299,10 @@ static void ebc_edit_cancel_delete (
 
 edmBoxClass *ebo = (edmBoxClass *) client;
 
-  ebo->ef.popdown();
-  ebo->operationCancel();
   ebo->erase();
   ebo->deleteRequest = 1;
+  ebo->ef.popdown();
+  ebo->operationCancel();
   ebo->drawAll();
 
 }
@@ -443,7 +446,7 @@ char title[32], *ptr;
   else
     strncpy( title, edmBoxComplete_str2, 31 );
 
-  strncat( title, edmBoxComplete_str3, 31 );
+  Strncat( title, edmBoxComplete_str3, 31 );
 
   bufX = x;
   bufY = y;
@@ -461,9 +464,9 @@ char title[32], *ptr;
   bufLineStyle = lineStyle;
 
   if ( pvExpStr.getRaw() )
-    strncpy( bufPvName, pvExpStr.getRaw(), 39 );
+    strncpy( bufPvName, pvExpStr.getRaw(), activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufPvName, "", 39 );
+    strcpy( bufPvName, "" );
 
   bufEfReadMin = efReadMin;
   bufEfReadMax = efReadMax;
@@ -477,10 +480,10 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( edmBoxComplete_str4, 25, &bufX );
-  ef.addTextField( edmBoxComplete_str5, 25, &bufY );
-  ef.addTextField( edmBoxComplete_str6, 25, &bufW );
-  ef.addTextField( edmBoxComplete_str7, 25, &bufH );
+  ef.addTextField( edmBoxComplete_str4, 30, &bufX );
+  ef.addTextField( edmBoxComplete_str5, 30, &bufY );
+  ef.addTextField( edmBoxComplete_str6, 30, &bufW );
+  ef.addTextField( edmBoxComplete_str7, 30, &bufH );
   ef.addOption( edmBoxComplete_str8, edmBoxComplete_str19,
    &bufLineWidth );
   ef.addOption( edmBoxComplete_str9, edmBoxComplete_str20,
@@ -492,12 +495,13 @@ char title[32], *ptr;
   ef.addColorButton( edmBoxComplete_str13, actWin->ci, &fillCb,
    &bufFillColor );
   ef.addToggle( edmBoxComplete_str11, &bufFillColorMode );
-  ef.addTextField( edmBoxComplete_str14, 27, bufPvName, 39 );
-  ef.addTextField( edmBoxComplete_str15, 27, &bufEfReadMin );
-  ef.addTextField( edmBoxComplete_str16, 27, &bufEfReadMax );
+  ef.addTextField( edmBoxComplete_str14, 30, bufPvName,
+   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( edmBoxComplete_str15, 30, &bufEfReadMin );
+  ef.addTextField( edmBoxComplete_str16, 30, &bufEfReadMax );
   ef.addFontMenu( edmBoxComplete_str17, actWin->fi, &fm, fontTag );
   fm.setFontAlignment( alignment );
-  ef.addTextField( edmBoxComplete_str18, 27, bufLabel, 63 );
+  ef.addTextField( edmBoxComplete_str18, 30, bufLabel, 63 );
 
   return 1;
 
@@ -534,11 +538,16 @@ int edmBoxClass::createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[39+1];
+char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
   fscanf( f, "%d %d %d\n", &major, &minor, &release ); actWin->incLine();
+
+  if ( major > EBC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
 
   fscanf( f, "%d\n", &x ); actWin->incLine();
   fscanf( f, "%d\n", &y ); actWin->incLine();
@@ -547,7 +556,27 @@ char oneName[39+1];
 
   this->initSelectBox(); // call after getting x,y,w,h
 
-  if ( major > 1 ) {
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 0 ) ) ) {
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    lineColor.setColorIndex( index, actWin->ci );
+
+    fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
+
+    if ( lineColorMode == EBC_K_COLORMODE_ALARM )
+      lineColor.setAlarmSensitive();
+    else
+      lineColor.setAlarmInsensitive();
+
+    fscanf( f, "%d\n", &fill ); actWin->incLine();
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    fillColor.setColorIndex( index, actWin->ci );
+
+  }
+  else if ( major > 1 ) {
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
     lineColor.setColorIndex( index, actWin->ci );
@@ -595,7 +624,8 @@ char oneName[39+1];
   else
     fillColor.setAlarmInsensitive();
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   pvExpStr.setRaw( oneName );
 
   fscanf( f, "%d\n", &lineWidth ); actWin->incLine();
@@ -616,8 +646,8 @@ char oneName[39+1];
   }
 
   if ( ( major > 1 ) || ( minor > 3 ) ) {
-    readStringFromFile( fontTag, 63, f ); actWin->incLine();
-    readStringFromFile( label, 63, f ); actWin->incLine();
+    readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
+    readStringFromFile( label, 63+1, f ); actWin->incLine();
     actWin->fi->loadFontTag( fontTag );
     fs = actWin->fi->getXFontStruct( fontTag );
     stringLength = strlen( label );
@@ -688,14 +718,16 @@ int index, stat;
   fprintf( f, "%-d\n", h );
 
   index = lineColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", lineColorMode );
 
   fprintf( f, "%-d\n", fill );
 
   index = fillColor.pixelIndex();
-  fprintf( f, "%-d\n", index );
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", fillColorMode );
 
@@ -1361,6 +1393,8 @@ double value;
 }
 
 char *edmBoxClass::firstDragName ( void ) {
+
+  dragIndex = 0;
 
   return dragName[dragIndex];
 
