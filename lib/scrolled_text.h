@@ -90,6 +90,7 @@ int destroyEmbedded ( void );
 
 int create (
   Widget top,
+  char *widgetName,
   int _x,
   int _y,
   int _bufSize,

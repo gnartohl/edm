@@ -527,7 +527,7 @@ SYS_TIME_TYPE sysTime;
     XtDestroyWidget( shell );
   }
 
-  shell = XtVaCreatePopupShell( "", xmDialogShellWidgetClass,
+  shell = XtVaCreatePopupShell( "calpad", xmDialogShellWidgetClass,
    top,
    XmNmappedWhenManaged, False,
    XmNmwmDecorations, 0,
@@ -535,21 +535,21 @@ SYS_TIME_TYPE sysTime;
    XmNy, y,
    NULL );
 
-  rowcol = XtVaCreateWidget( "", xmRowColumnWidgetClass, shell,
+  rowcol = XtVaCreateWidget( "rowcol", xmRowColumnWidgetClass, shell,
    XmNorientation, XmVERTICAL,
    XmNnumColumns, 1,
    NULL );
 
-  topForm = XtVaCreateWidget( "", xmFormWidgetClass, rowcol, NULL );
+  topForm = XtVaCreateWidget( "topform", xmFormWidgetClass, rowcol, NULL );
 
-  YearForm = XtVaCreateWidget( "", xmFormWidgetClass, topForm,
+  YearForm = XtVaCreateWidget( "yearform", xmFormWidgetClass, topForm,
    XmNtopAttachment, XmATTACH_FORM,
    XmNleftAttachment, XmATTACH_FORM,
    XmNrightAttachment, XmATTACH_FORM,
    NULL );
 
   YearDec = XtVaCreateManagedWidget(
-   "", xmArrowButtonWidgetClass,
+   "yeardec", xmArrowButtonWidgetClass,
    YearForm,
    XmNtopAttachment, XmATTACH_FORM,
    XmNleftAttachment, XmATTACH_FORM,
@@ -562,7 +562,7 @@ SYS_TIME_TYPE sysTime;
    this );
 
   YearInc = XtVaCreateManagedWidget(
-   "", xmArrowButtonWidgetClass,
+   "yearinc", xmArrowButtonWidgetClass,
    YearForm,
    XmNtopAttachment, XmATTACH_FORM,
    XmNrightAttachment, XmATTACH_FORM,
@@ -575,7 +575,7 @@ SYS_TIME_TYPE sysTime;
    this );
 
   str = XmStringCreateLocalized( "Year" );
-  YearLabel = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  YearLabel = XtVaCreateManagedWidget( "yearlabel", xmLabelWidgetClass,
    YearForm,
    XmNleftAttachment, XmATTACH_WIDGET,
    XmNleftWidget, YearDec,
@@ -586,7 +586,7 @@ SYS_TIME_TYPE sysTime;
    NULL );
   XmStringFree( str );
 
-  MonForm = XtVaCreateWidget( "", xmFormWidgetClass, topForm,
+  MonForm = XtVaCreateWidget( "monform", xmFormWidgetClass, topForm,
    XmNtopAttachment, XmATTACH_WIDGET,
    XmNtopWidget, YearForm,
    XmNleftAttachment, XmATTACH_FORM,
@@ -594,7 +594,7 @@ SYS_TIME_TYPE sysTime;
    NULL );
 
   MonDec = XtVaCreateManagedWidget(
-   "", xmArrowButtonWidgetClass,
+   "mondec", xmArrowButtonWidgetClass,
    MonForm,
    XmNtopAttachment, XmATTACH_FORM,
    XmNleftAttachment, XmATTACH_FORM,
@@ -607,7 +607,7 @@ SYS_TIME_TYPE sysTime;
    this );
 
   MonInc = XtVaCreateManagedWidget(
-   "", xmArrowButtonWidgetClass,
+   "moninc", xmArrowButtonWidgetClass,
    MonForm,
    XmNtopAttachment, XmATTACH_FORM,
    XmNrightAttachment, XmATTACH_FORM,
@@ -620,7 +620,7 @@ SYS_TIME_TYPE sysTime;
    this );
 
   str = XmStringCreateLocalized( "Month" );
-  MonLabel = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  MonLabel = XtVaCreateManagedWidget( "monlabel", xmLabelWidgetClass,
    MonForm,
    XmNleftAttachment, XmATTACH_WIDGET,
    XmNleftWidget, MonDec,
@@ -631,7 +631,7 @@ SYS_TIME_TYPE sysTime;
    NULL );
   XmStringFree( str );
 
-  sep1 = XtVaCreateManagedWidget( "", xmSeparatorWidgetClass, topForm,
+  sep1 = XtVaCreateManagedWidget( "sep1", xmSeparatorWidgetClass, topForm,
    XmNtopAttachment, XmATTACH_WIDGET,
    XmNtopWidget, MonForm,
    XmNleftAttachment, XmATTACH_FORM,
@@ -645,21 +645,21 @@ SYS_TIME_TYPE sysTime;
   startDay = startDayOfWeek;
   numCols = 6;
 
-  kprowcol = XtVaCreateWidget( "", xmRowColumnWidgetClass, rowcol,
+  kprowcol = XtVaCreateWidget( "kprowcol", xmRowColumnWidgetClass, rowcol,
    XmNorientation, XmHORIZONTAL,
    XmNnumColumns, numCols+1,
    XmNpacking, XmPACK_COLUMN,
    NULL );
 
-  bottomForm = XtVaCreateWidget( "", xmFormWidgetClass, rowcol, NULL );
+  bottomForm = XtVaCreateWidget( "bottomform", xmFormWidgetClass, rowcol, NULL );
 
-  scaleForm = XtVaCreateWidget( "", xmFormWidgetClass, bottomForm,
+  scaleForm = XtVaCreateWidget( "scaleform", xmFormWidgetClass, bottomForm,
    XmNtopAttachment, XmATTACH_FORM,
    XmNleftAttachment, XmATTACH_FORM,
    XmNrightAttachment, XmATTACH_FORM,
    NULL );
 
-  buttonForm = XtVaCreateWidget( "", xmFormWidgetClass, bottomForm,
+  buttonForm = XtVaCreateWidget( "buttonform", xmFormWidgetClass, bottomForm,
    XmNtopAttachment, XmATTACH_WIDGET,
    XmNtopWidget, scaleForm,
    XmNleftAttachment, XmATTACH_FORM,
@@ -673,7 +673,7 @@ SYS_TIME_TYPE sysTime;
 
     str = XmStringCreateLocalized( weekDayString[i] );
     weekDayPb[i] = XtVaCreateManagedWidget(
-    "", xmLabelWidgetClass,
+    "pb", xmLabelWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -687,7 +687,7 @@ SYS_TIME_TYPE sysTime;
     if ( ( i < startDayOfWeek ) || ( count+1 >lastDayOfMon ) ) {
 
       pb[i] = XtVaCreateManagedWidget(
-       "", xmPushButtonWidgetClass,
+       "pb", xmPushButtonWidgetClass,
        kprowcol,
        XmNshadowThickness, 0,
        XmNborderWidth, 0,
@@ -702,7 +702,7 @@ SYS_TIME_TYPE sysTime;
       str = XmStringCreateLocalized( buf );
 
       pb[i] = XtVaCreateManagedWidget(
-       "", xmPushButtonWidgetClass,
+       "pb", xmPushButtonWidgetClass,
        kprowcol,
        XmNshadowThickness, 0,
        XmNborderWidth, 0,
@@ -720,7 +720,7 @@ SYS_TIME_TYPE sysTime;
 
 // ---------------------------------------
 
-  sep2 = XtVaCreateManagedWidget( "", xmSeparatorWidgetClass, scaleForm,
+  sep2 = XtVaCreateManagedWidget( "sep2", xmSeparatorWidgetClass, scaleForm,
    XmNtopAttachment, XmATTACH_FORM,
    XmNleftAttachment, XmATTACH_FORM,
    XmNrightAttachment, XmATTACH_FORM,
@@ -728,7 +728,7 @@ SYS_TIME_TYPE sysTime;
 
   str = XmStringCreateLocalized( "Hour" );
   hourScale = XtVaCreateManagedWidget(
-   "", xmScaleWidgetClass,
+   "hourscale", xmScaleWidgetClass,
    scaleForm,
    XmNtopAttachment, XmATTACH_WIDGET,
    XmNtopWidget, sep2,
@@ -748,7 +748,7 @@ SYS_TIME_TYPE sysTime;
 
   str = XmStringCreateLocalized( "Min" );
   minScale = XtVaCreateManagedWidget(
-   "", xmScaleWidgetClass,
+   "minscale", xmScaleWidgetClass,
    scaleForm,
    XmNtopAttachment, XmATTACH_WIDGET,
    XmNtopWidget, hourScale,
@@ -768,7 +768,7 @@ SYS_TIME_TYPE sysTime;
 
   str = XmStringCreateLocalized( "Hour Min Sec" );
   secScale = XtVaCreateManagedWidget(
-   "", xmScaleWidgetClass,
+   "secscale", xmScaleWidgetClass,
    scaleForm,
    XmNtopAttachment, XmATTACH_WIDGET,
    XmNtopWidget, minScale,
@@ -786,7 +786,7 @@ SYS_TIME_TYPE sysTime;
   XtAddCallback( secScale, XmNvalueChangedCallback,
    (XtCallbackProc) changeTime, this );
 
-  sep3 = XtVaCreateManagedWidget( "", xmSeparatorWidgetClass, scaleForm,
+  sep3 = XtVaCreateManagedWidget( "sep3", xmSeparatorWidgetClass, scaleForm,
    XmNtopAttachment, XmATTACH_WIDGET,
    XmNtopWidget, secScale,
    XmNleftAttachment, XmATTACH_FORM,
@@ -799,7 +799,7 @@ SYS_TIME_TYPE sysTime;
     str = XmStringCreateLocalized( "Cancel" );
 
   pbCancel = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
+   "pbcancel", xmPushButtonWidgetClass,
    buttonForm,
    XmNlabelString, str,
    XmNbottomAttachment, XmATTACH_FORM,
@@ -820,7 +820,7 @@ SYS_TIME_TYPE sysTime;
     str = XmStringCreateLocalized( "OK" );
 
   pbOK = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
+   "pbok", xmPushButtonWidgetClass,
    buttonForm,
    XmNlabelString, str,
    XmNbottomAttachment, XmATTACH_FORM,

@@ -35,6 +35,11 @@
 static int gFastRefresh = -1;
 static const int gMaxExecutePasses = 7;
 
+#define ADD_SCROLLED_WIN
+
+#ifdef ADD_SCROLLED_WIN
+static void b2ReleaseClip_cb( Widget, XtPointer, XtPointer );
+#endif
 
 void _edmDebug ( void ) {
 
@@ -404,8 +409,8 @@ Atom wm_delete_window;
       XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
     }
 
-    awo->fileSelectBox = XmCreateFileSelectionDialog( awo->top, "", args,
-     n );
+    awo->fileSelectBox = XmCreateFileSelectionDialog( awo->top,
+     "screensavefileselect", args, n );
 
     XmStringFree( xmStr1 );
     if ( xmStr2 ) XmStringFree( xmStr2 );
@@ -497,8 +502,9 @@ static void awc_edit_apply (
 {
 
 activeWindowClass *awo = (activeWindowClass *) client;
+
 int n;
-Arg args[3];
+Arg args[4];
 
   strncpy( awo->defaultFontTag, awo->defaultFm.currentFontTag(), 127 );
   strncpy( awo->defaultCtlFontTag, awo->defaultCtlFm.currentFontTag(),
@@ -539,35 +545,52 @@ Arg args[3];
 
   awo->gridSpacing = awo->bufGridSpacing;
 
-   n = 0;
-   XtSetArg( args[n], XmNx, (XtArgVal) awo->x ); n++;
-   XtSetValues( awo->drawWidget, args, n );
+#ifndef ADD_SCROLLED_WIN
+  n = 0;
+  XtSetArg( args[n], XmNx, (XtArgVal) awo->x ); n++;
+  XtSetValues( awo->drawWidget, args, n );
 
-   n = 0;
-   XtSetArg( args[n], XmNy, (XtArgVal) awo->y ); n++;
-   XtSetValues( awo->drawWidget, args, n );
+  n = 0;
+  XtSetArg( args[n], XmNy, (XtArgVal) awo->y ); n++;
+  XtSetValues( awo->drawWidget, args, n );
 
-   n = 0;
-   XtSetArg( args[n], XmNwidth, (XtArgVal) awo->w ); n++;
-   XtSetValues( awo->top, args, n );
+  n = 0;
+  XtSetArg( args[n], XmNwidth, (XtArgVal) awo->w ); n++;
+  XtSetValues( awo->top, args, n );
 
-   n = 0;
-   XtSetArg( args[n], XmNheight, (XtArgVal) awo->h ); n++;
-   XtSetValues( awo->top, args, n );
+  n = 0;
+  XtSetArg( args[n], XmNheight, (XtArgVal) awo->h ); n++;
+  XtSetValues( awo->top, args, n );
+#else
+  if ( !awo->appCtx->useScrollBars ) {
 
+    n = 0;
+    XtSetArg( args[n], XmNx, (XtArgVal) awo->x ); n++;
+    XtSetValues( awo->drawWidget, args, n );
 
-  strncpy( awo->gridActiveStr, awo->bufGridActiveStr, 7 );
-  strncpy( awo->gridShowStr, awo->bufGridShowStr, 7 );
+    n = 0;
+    XtSetArg( args[n], XmNy, (XtArgVal) awo->y ); n++;
+    XtSetValues( awo->drawWidget, args, n );
 
-  if ( strcmp( awo->gridActiveStr, activeWindowClass_str3 ) == 0 )
-    awo->gridActive = 1;
-  else
-    awo->gridActive = 0;
+    n = 0;
+    XtSetArg( args[n], XmNwidth, (XtArgVal) awo->w ); n++;
+    XtSetValues( awo->top, args, n );
 
-  if ( strcmp( awo->gridShowStr, activeWindowClass_str3 ) == 0 )
-    awo->gridShow = 1;
-  else
-    awo->gridShow = 0;
+    n = 0;
+    XtSetArg( args[n], XmNheight, (XtArgVal) awo->h ); n++;
+    XtSetValues( awo->top, args, n );
+
+  }
+  else {
+
+    awo->reconfig();
+
+  }
+#endif
+
+  awo->gridActive = awo->bufGridActive;
+
+  awo->gridShow = awo->bufGridShow;
 
   if ( awo->oldGridSpacing != awo->gridSpacing ) {
 
@@ -578,6 +601,12 @@ Arg args[3];
   awo->orthoMove = awo->bufOrthoMove;
 
   awo->orthogonal = awo->bufOrthogonal;
+
+#ifdef ADD_SCROLLED_WIN
+  awo->disableScroll = awo->bufDisableScroll;
+#else
+  awo->disableScroll = 0;
+#endif
 
   awo->activateCallbackFlag = awo->bufActivateCallbackFlag;
   awo->deactivateCallbackFlag = awo->bufDeactivateCallbackFlag;
@@ -991,10 +1020,10 @@ unsigned int mask;
 
   if ( awo->edlFileExists( awo->fileName ) ) {
 
-    XQueryPointer( awo->d, XtWindow(awo->top), &root, &child,
+    XQueryPointer( awo->d, XtWindow(awo->drawWidget), &root, &child,
      &rootX, &rootY, &winX, &winY, &mask );
 
-    awo->confirm1.create( awo->top, awo->b2PressXRoot, awo->b2PressYRoot, 2,
+    awo->confirm1.create( awo->top, "confirm", awo->b2PressXRoot, awo->b2PressYRoot, 2,
      activeWindowClass_str4, NULL, NULL );
 
     awo->confirm1.addButton( activeWindowClass_str5, awc_dont_save_cb,
@@ -1644,7 +1673,8 @@ char *envPtr, text[255+1];
       XtSetArg( args[n], XmNpattern, xmStr2 ); n++;
 
       awo->pvlistFileSelectBox =
-       XmCreateFileSelectionDialog( awo->top, "", args, n );
+       XmCreateFileSelectionDialog( awo->top, "screendumpfileselect",
+        args, n );
 
       XmStringFree( xmStr1 );
       XmStringFree( xmStr2 );
@@ -1718,8 +1748,8 @@ char *envPtr, text[255+1];
         XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
       }
 
-      awo->fileSelectBox = XmCreateFileSelectionDialog( awo->top, "", args,
-       n );
+      awo->fileSelectBox = XmCreateFileSelectionDialog( awo->top,
+       "screenopenfileselect", args, n );
 
       XmStringFree( xmStr1 );
       if ( xmStr2 ) XmStringFree( xmStr2 );
@@ -1772,8 +1802,8 @@ char *envPtr, text[255+1];
         XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
       }
 
-      awo->fileSelectBox = XmCreateFileSelectionDialog( awo->top, "", args,
-       n );
+      awo->fileSelectBox = XmCreateFileSelectionDialog( awo->top,
+       "screenopenfileselect", args, n );
 
       XmStringFree( xmStr1 );
       if ( xmStr2 ) XmStringFree( xmStr2 );
@@ -2825,10 +2855,10 @@ Atom wm_delete_window;
         awo->savedState = awo->state;
         awo->state = AWC_WAITING;
 
-        XQueryPointer( awo->d, XtWindow(awo->top), &root, &child,
+        XQueryPointer( awo->d, XtWindow(awo->drawWidget), &root, &child,
          &rootX, &rootY, &winX, &winY, &mask );
 
-        awo->confirm.create( awo->top, awo->b2PressXRoot, awo->b2PressYRoot, 3,
+        awo->confirm.create( awo->top, "confirm", awo->b2PressXRoot, awo->b2PressYRoot, 3,
          activeWindowClass_str12, NULL, NULL );
         awo->confirm.addButton( activeWindowClass_str13, awc_continue_cb,
          (void *) awo );
@@ -2968,8 +2998,8 @@ Atom wm_delete_window;
         XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
       }
 
-      awo->schemeSelectBox = XmCreateFileSelectionDialog( awo->top, "", args,
-       n );
+      awo->schemeSelectBox = XmCreateFileSelectionDialog( awo->top,
+       "screenloadschemefileselect", args, n );
 
       XmStringFree( xmStr1 );
       if ( xmStr2 ) XmStringFree( xmStr2 );
@@ -3020,8 +3050,8 @@ Atom wm_delete_window;
         XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
       }
 
-      awo->schemeSelectBox = XmCreateFileSelectionDialog( awo->top, "", args,
-       n );
+      awo->schemeSelectBox = XmCreateFileSelectionDialog( awo->top,
+       "screensaveschemefileselect", args, n );
 
       XmStringFree( xmStr1 );
       if ( xmStr2 ) XmStringFree( xmStr2 );
@@ -3074,8 +3104,8 @@ Atom wm_delete_window;
         XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
       }
 
-      awo->fileSelectBox = XmCreateFileSelectionDialog( awo->top, "", args,
-       n );
+      awo->fileSelectBox = XmCreateFileSelectionDialog( awo->top,
+       "screensavefileselect", args, n );
 
       XmStringFree( xmStr1 );
       if ( xmStr2 ) XmStringFree( xmStr2 );
@@ -3130,8 +3160,8 @@ Atom wm_delete_window;
           XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
         }
 
-        awo->fileSelectBox = XmCreateFileSelectionDialog( awo->top, "", args,
-         n );
+        awo->fileSelectBox = XmCreateFileSelectionDialog( awo->top,
+         "screensavefileselect", args, n );
 
         XmStringFree( xmStr1 );
         if ( xmStr2 ) XmStringFree( xmStr2 );
@@ -3186,7 +3216,7 @@ Atom wm_delete_window;
         strcpy( saveMsg, activeWindowClass_str197 );
         Strncat( saveMsg, awo->newPath, 255 );
         Strncat( saveMsg, "?", 255 );
-        awo->confirm1.create( awo->top, awo->b2PressXRoot, awo->b2PressYRoot,
+        awo->confirm1.create( awo->top, "confirm", awo->b2PressXRoot, awo->b2PressYRoot,
          2, saveMsg, NULL, NULL );
         awo->confirm1.addButton( activeWindowClass_str5, awc_dont_save_cb,
          (void *) awo );
@@ -3217,8 +3247,8 @@ Atom wm_delete_window;
         XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
       }
 
-      awo->fileSelectBox = XmCreateFileSelectionDialog( awo->top, "", args,
-       n );
+      awo->fileSelectBox = XmCreateFileSelectionDialog( awo->top,
+       "screenopenfileselect", args, n );
 
       XmStringFree( xmStr1 );
       if ( xmStr2 ) XmStringFree( xmStr2 );
@@ -3271,8 +3301,8 @@ Atom wm_delete_window;
         XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
       }
 
-      awo->fileSelectBox = XmCreateFileSelectionDialog( awo->top, "", args,
-       n );
+      awo->fileSelectBox = XmCreateFileSelectionDialog( awo->top,
+       "screenopenfileselect", args, n );
 
       XmStringFree( xmStr1 );
       if ( xmStr2 ) XmStringFree( xmStr2 );
@@ -3469,9 +3499,12 @@ Atom wm_delete_window;
 
       awo->bufOrthoMove = awo->orthoMove;
       awo->bufOrthogonal = awo->orthogonal;
+#ifdef ADD_SCROLLED_WIN
+      awo->bufDisableScroll = awo->disableScroll;
+#endif
       awo->bufGridSpacing = awo->gridSpacing;
-      strcpy( awo->bufGridActiveStr, awo->gridActiveStr );
-      strcpy( awo->bufGridShowStr, awo->gridShowStr );
+      awo->bufGridActive = awo->gridActive;
+      awo->bufGridShow = awo->gridShow;
       awo->bufActivateCallbackFlag = awo->activateCallbackFlag;
       awo->bufDeactivateCallbackFlag = awo->deactivateCallbackFlag;
 
@@ -3507,16 +3540,17 @@ Atom wm_delete_window;
        &awo->bufFgColor );
       awo->ef.addColorButton( activeWindowClass_str26, awo->ci, &awo->bgCb,
        &awo->bufBgColor );
-      awo->ef.addOption( activeWindowClass_str27, activeWindowClass_str28,
-       awo->bufGridShowStr, 8 );
-      awo->ef.addOption( activeWindowClass_str29, activeWindowClass_str28,
-       awo->bufGridActiveStr, 8 );
+      awo->ef.addToggle( activeWindowClass_str27, &awo->bufGridShow );
+      awo->ef.addToggle( activeWindowClass_str29, &awo->bufGridActive );
       awo->ef.addTextField( activeWindowClass_str30, 35,
        &awo->bufGridSpacing );
-      awo->ef.addOption( activeWindowClass_str168, activeWindowClass_str32,
-       &awo->bufOrthoMove );
-      awo->ef.addOption( activeWindowClass_str31, activeWindowClass_str32,
-       &awo->bufOrthogonal );
+      awo->ef.addToggle( activeWindowClass_str168, &awo->bufOrthoMove );
+      awo->ef.addToggle( activeWindowClass_str31, &awo->bufOrthogonal );
+#ifdef ADD_SCROLLED_WIN
+      if ( awo->appCtx->useScrollBars ) {
+        awo->ef.addToggle( activeWindowClass_str203, &awo->bufDisableScroll );
+      }
+#endif
       awo->ef.addColorButton( activeWindowClass_str33, awo->ci, &awo->defaultTextFgCb,
        &awo->bufDefaultTextFgColor );
       awo->ef.addColorButton( activeWindowClass_str34, awo->ci, &awo->defaultFg1Cb,
@@ -5682,7 +5716,6 @@ static void topWinEventHandler (
 
 XConfigureEvent *ce;
 activeWindowClass *awo;
-int check_origin;
 
   awo = (activeWindowClass *) client;
 
@@ -5692,44 +5725,99 @@ int check_origin;
 
     ce = (XConfigureEvent *) e;
 
-    check_origin = 0;
+    if ( !ce->send_event ) {
 
-    if ( ( ce->width > 1 ) && ( ce->height > 1 ) ) {
+#ifdef ADD_SCROLLED_WIN
+      // This is a special case - scroll bars are in use but they are
+      // disabled for this screen
+      if ( awo->appCtx->useScrollBars ) {
 
-      if ( ( awo->w != ce->width ) ||
-           ( awo->h != ce->height ) ) {
+        if ( awo->disableScroll ) {
 
-        awo->w = ce->width;
-        awo->h = ce->height;
+          XtVaSetValues(awo->drawWidget,
+           XmNwidth, (Dimension)ce->width,
+           XmNheight, (Dimension)ce->height,
+           0);
 
-      }
-      else {
+          if ( awo->scroll ) {
+            XtVaSetValues(awo->scroll,
+             XmNwidth, (Dimension)ce->width,
+             XmNheight, (Dimension)ce->height,
+             0);
+          }
 
-        check_origin = 1;
-
-      }
-
-    }
-
-    if ( check_origin ) {
-
-      if ( ( awo->w > 0 ) && ( awo->h > 0 ) ) {
-
-#if 0
-      if ( ( ce->x != 0 ) && ( ce->y != 0 ) &&
-           ( awo->w > 0 ) && ( awo->h > 0 ) &&
-           ( awo->x != 0 ) && ( awo->y != 0 ) ) {
-#endif
-
-        if ( ( awo->x != ce->x ) ||
-             ( awo->y != ce->y ) ) {
-
-          awo->x = ce->x;
-          awo->y = ce->y;
+          XtVaSetValues(awo->top,
+           XmNwidth, (Dimension)ce->width,
+           XmNheight, (Dimension)ce->height,
+           0);
 
         }
 
       }
+#endif
+
+      return;
+
+    }
+
+    if ( ( awo->w != ce->width ) ||
+         ( awo->h != ce->height ) ) {
+
+#ifdef ADD_SCROLLED_WIN
+      if ( awo->appCtx->useScrollBars && !awo->disableScroll ) {
+        if (ce->width > awo->w ) {
+          awo->w = ce->width;
+        }
+      }
+      else {
+        awo->w = ce->width;
+      }
+
+      if ( awo->appCtx->useScrollBars && !awo->disableScroll ) {
+        if ( ce->height > awo->h ) {
+          awo->h = ce->height;
+        }
+      }
+      else {
+        awo->h = ce->height;
+      }
+
+      if ( awo->appCtx->useScrollBars && !awo->disableScroll ) {
+
+        XtVaSetValues(awo->drawWidget,
+         XmNwidth, (Dimension)awo->w,
+         XmNheight, (Dimension)awo->h,
+         0);
+
+      }
+      else {
+
+        if ( awo->scroll ) {
+          XtVaSetValues(awo->scroll,
+           XmNwidth, (Dimension)awo->w,
+           XmNheight, (Dimension)awo->h,
+           0);
+	}
+
+        XtVaSetValues(awo->drawWidget,
+         XmNwidth, (Dimension)awo->w,
+         XmNheight, (Dimension)awo->h,
+         0);
+
+      }
+
+#else
+        awo->w = ce->width;
+        awo->h = ce->height;
+#endif
+
+    }
+
+    if ( ( awo->x != ce->x ) ||
+         ( awo->y != ce->y ) ) {
+
+      awo->x = ce->x;
+      awo->y = ce->y;
 
     }
 
@@ -5764,6 +5852,8 @@ double xScaleFactor, yScaleFactor, newX, newW, newY, newH;
 Window root, child;
 int rootX, rootY, winX, winY;
 unsigned int mask;
+
+Boolean  nothingDone = False;
 
   awo = (activeWindowClass *) client;
 
@@ -5812,6 +5902,15 @@ unsigned int mask;
   }
   else if ( e->type == KeyPress ) {
 
+    // The following supports wheel mice on older versions
+    // of the Exceed X server which can't map wheel events to the
+    // (standard) Button4/5 but only to Key events.
+    if ( ((XKeyEvent*)e)->state &
+	 ( ControlMask | Mod1Mask | Mod3Mask | Mod4Mask | Mod5Mask ) ) {
+      *continueToDispatch = True;
+      return;
+    }
+
     if ( awo->state == AWC_START_DEFINE_REGION ) goto done;
     if ( awo->state == AWC_DEFINE_REGION ) goto done;
     if ( awo->state == AWC_EDITING ) goto done;
@@ -5845,23 +5944,19 @@ unsigned int mask;
     }
     else if ( key == XK_G ) {
       awo->gridShow = 1;
-      strcpy( awo->gridShowStr, activeWindowClass_str3 ); // Yes
       awo->clear();
       awo->refresh();
     }
     else if ( key == XK_g ) {
       awo->gridShow = 0;
-      strcpy( awo->gridShowStr, activeWindowClass_str5 ); // No
       awo->clear();
       awo->refresh();
     }
     else if ( key == XK_S ) {
       awo->gridActive = 1;
-      strcpy( awo->gridActiveStr, activeWindowClass_str3 ); // Yes
     }
     else if ( key == XK_s ) {
       awo->gridActive = 0;
-      strcpy( awo->gridActiveStr, activeWindowClass_str5 ); // No
     }
     else if ( key == XK_x ) {
       cut( awo );
@@ -5872,13 +5967,13 @@ unsigned int mask;
       awo->refresh();
     }
     else if ( key == XK_v ) {
-      XQueryPointer( awo->d, XtWindow(awo->top), &root, &child,
+      XQueryPointer( awo->d, XtWindow(awo->drawWidget), &root, &child,
        &rootX, &rootY, &winX, &winY, &mask );
       paste( winX, winY, AWC_POPUP_PASTE, awo );
       awo->refresh();
     }
     else if ( key == XK_V ) {
-      XQueryPointer( awo->d, XtWindow(awo->top), &root, &child,
+      XQueryPointer( awo->d, XtWindow(awo->drawWidget), &root, &child,
        &rootX, &rootY, &winX, &winY, &mask );
       paste( winX, winY, AWC_POPUP_PASTE_IN_PLACE, awo );
       awo->refresh();
@@ -5893,16 +5988,21 @@ unsigned int mask;
       stat = undo( awo );
       if ( !( stat & 1 ) ) XBell( awo->d, 50 );
     }
+    else {
+      nothingDone = True;
+    }
 
     if ( ( awo->state == AWC_ONE_SELECTED ) ||
 	 ( awo->state == AWC_MANY_SELECTED ) ) {
+
+      nothingDone = False;
 
       if ( ( key == XK_Left ) ||
            ( key == XK_Right ) ||
            ( key == XK_Up ) ||
 	   ( key == XK_Down ) ) {
 
-        XQueryPointer( awo->d, XtWindow(awo->top), &root, &child,
+        XQueryPointer( awo->d, XtWindow(awo->drawWidget), &root, &child,
          &rootX, &rootY, &winX, &winY, &mask );
 
         cur = awo->selectedHead->selFlink;
@@ -6566,6 +6666,12 @@ unsigned int mask;
   }
   else if ( e->type == ButtonPress ) {
 
+    if ( Button4 == ((XButtonEvent*)e)->button ||
+         Button5 == ((XButtonEvent*)e)->button ) {
+      nothingDone = True;
+      goto done;
+    }
+
     if ( awo->state == AWC_WAITING ) goto done;
 
     mask = ShiftMask & ControlMask;
@@ -6936,6 +7042,12 @@ unsigned int mask;
 
   }
   else if ( e->type == ButtonRelease ) {
+
+    if ( Button4 == ((XButtonEvent*)e)->button ||
+         Button5 == ((XButtonEvent*)e)->button ) {
+      nothingDone = True;
+      goto done;
+    }
 
     if ( awo->state == AWC_WAITING ) goto done;
 
@@ -9217,9 +9329,13 @@ unsigned int mask;
   }
   else {
 
+    nothingDone = True;
+
   }
 
 done:
+
+  if ( nothingDone ) *continueToDispatch = True;
 
   return;
 
@@ -9243,6 +9359,8 @@ activeGraphicListPtr cur;
 activeGraphicClass *ptr;
 Window root, child;
 int rootX, rootY, winX, winY;
+
+Boolean nothingDone = False;
 
   awo = (activeWindowClass *) client;
 
@@ -9288,13 +9406,19 @@ int rootX, rootY, winX, winY;
   }
   else if ( e->type == ButtonPress ) {
 
+    if ( Button4 == ((XButtonEvent*)e)->button ||
+         Button5 == ((XButtonEvent*)e)->button ) {
+      nothingDone = True;
+      goto done;
+    }
+
     if ( awo->state == AWC_WAITING ) goto done;
 
     mask = ShiftMask & ControlMask;
 
     be = (XButtonEvent *) e;
 
-    XQueryPointer( awo->d, XtWindow(awo->top), &root, &child,
+    XQueryPointer( awo->d, XtWindow(awo->executeWidget), &root, &child,
      &rootX, &rootY, &winX, &winY, &mask );
 
     if ( ( be->button == 2 ) &&
@@ -9476,11 +9600,17 @@ int rootX, rootY, winX, winY;
   }
   else if ( e->type == ButtonRelease ) {
 
+    if ( Button4 == ((XButtonEvent*)e)->button ||
+         Button5 == ((XButtonEvent*)e)->button ) {
+      nothingDone = True;
+      goto done;
+    }
+
     if ( awo->state == AWC_WAITING ) goto done;
 
     be = (XButtonEvent *) e;
 
-    XQueryPointer( awo->d, XtWindow(awo->top), &root, &child,
+    XQueryPointer( awo->d, XtWindow(awo->executeWidget), &root, &child,
      &rootX, &rootY, &winX, &winY, &mask );
 
     if ( ( be->button == 2 ) &&
@@ -9635,7 +9765,7 @@ int rootX, rootY, winX, winY;
 
     if ( awo->state == AWC_WAITING ) goto done;
 
-    XQueryPointer( awo->d, XtWindow(awo->top), &root, &child,
+    XQueryPointer( awo->d, XtWindow(awo->executeWidget), &root, &child,
      &rootX, &rootY, &winX, &winY, &mask );
 
     me = (XMotionEvent *) e;
@@ -9819,11 +9949,13 @@ int rootX, rootY, winX, winY;
   }
   else {
 
-//     printf( "unknown\n" );
+    nothingDone = True;
 
   }
 
 done:
+
+  if ( nothingDone ) *continueToDispatch = True;
 
   return;
 
@@ -9848,6 +9980,7 @@ activeWindowClass::activeWindowClass ( void ) {
   noRefresh = 0;
   exit_after_save = 0;
   orthogonal = 0;
+  disableScroll = 0;
   orthoMove = 0;
   masterSelectX0 = masterSelectY0 = masterSelectX1 = masterSelectY1 = 0;
   isIconified = False;
@@ -10819,12 +10952,11 @@ char tmp[10];
   h = OneH;
 
   gridActive = 0;
-  strcpy( gridActiveStr, activeWindowClass_str84 );
   gridShow = 0;
-  strcpy( gridShowStr, activeWindowClass_str84 );
   gridSpacing = 10;
   oldGridSpacing = gridSpacing;
   orthogonal = 0;
+  disableScroll = 0;
   orthoMove = 0;
   strcpy( windowControlName, "" );
   strcpy( windowIdName, "" );
@@ -10858,17 +10990,18 @@ char tmp[10];
   updateAllSelectedDisplayInfo();
 
   mode = AWC_EDIT;
-
+ 
+#ifndef ADD_SCROLLED_WIN
   if ( !parent ) {
 
-    top = XtVaAppCreateShell( "", "", topLevelShellWidgetClass,
+    top = XtVaAppCreateShell( "edm", "edm", topLevelShellWidgetClass,
      d,
      XmNmappedWhenManaged, False,
      XmNmwmDecorations, windowDecorations,
      XmNresizePolicy, XmRESIZE_GROW,
      NULL );
 
-    drawWidget = XtVaCreateManagedWidget( "", xmDrawingAreaWidgetClass,
+    drawWidget = XtVaCreateManagedWidget( "screen", xmDrawingAreaWidgetClass,
      top,
      XmNwidth, w,
      XmNheight, h,
@@ -10894,7 +11027,7 @@ char tmp[10];
 
     }
 
-    drawWidget = XtVaCreateWidget( "", xmDrawingAreaWidgetClass,
+    drawWidget = XtVaCreateWidget( "screen", xmDrawingAreaWidgetClass,
      top,
      XmNx, x,
      XmNy, y,
@@ -10906,6 +11039,112 @@ char tmp[10];
      NULL );
 
   }
+
+  scroll = 0;
+
+#else
+  if ( appCtx->useScrollBars ) {
+
+    if ( !parent ) {
+
+      top = XtVaAppCreateShell( "edm", "edm", topLevelShellWidgetClass,
+       d,
+       XmNmappedWhenManaged, False,
+       XmNmwmDecorations, windowDecorations,
+       NULL );
+
+    }
+    else {
+
+      top = parent;
+
+    }
+
+    {
+
+      Dimension maxW = WidthOfScreen(XtScreen(top));
+      Dimension maxH = HeightOfScreen(XtScreen(top));
+
+      scroll = parent ? 0 : XtVaCreateManagedWidget( "screenscroll", xmScrolledWindowWidgetClass,
+       top, 
+       XmNwidth, w > maxW ? maxW : w,
+       XmNheight, h > maxH ? maxH : h,
+       /* avoid getting scrollbars just because of the viewport shadows
+        * so we eliminate them. Ideally, all of this should happen in the
+        * resource files but edm is not written properly :-O
+        */
+       XmNshadowThickness,0,
+       XmNscrollingPolicy, XmAUTOMATIC,
+       XmNscrollBarDisplayPolicy, XmAS_NEEDED,
+       NULL );
+
+      drawWidget = XtVaCreateManagedWidget( "screen", xmDrawingAreaWidgetClass,
+       scroll ? scroll : top,
+       XmNresizePolicy, XmRESIZE_GROW,
+       XmNx, parent ? x : 0,
+       XmNy, parent ? y : 0,
+       XmNwidth, w,
+       XmNheight, h,
+       XmNmappedWhenManaged, False,
+       NULL );
+
+    }
+
+  }
+  else {
+
+    if ( !parent ) {
+
+      top = XtVaAppCreateShell( "edm", "edm", topLevelShellWidgetClass,
+       d,
+       XmNmappedWhenManaged, False,
+       XmNmwmDecorations, windowDecorations,
+       XmNresizePolicy, XmRESIZE_GROW,
+       NULL );
+
+      drawWidget = XtVaCreateManagedWidget( "screen", xmDrawingAreaWidgetClass,
+       top,
+       XmNwidth, w,
+       XmNheight, h,
+       XmNmappedWhenManaged, False,
+       XmNresizePolicy, XmRESIZE_GROW,
+       NULL );
+
+    }
+    else {
+
+      top = parent;
+
+      if ( isEmbedded ) {
+
+        XtVaGetValues( parent,
+        XmNbackground, &embBg,
+        NULL );
+
+      }
+      else {
+
+        embBg = bPix;
+
+      }
+
+      drawWidget = XtVaCreateWidget( "screen", xmDrawingAreaWidgetClass,
+       top,
+       XmNx, x,
+       XmNy, y,
+       XmNwidth, w,
+       XmNheight, h,
+       XmNmappedWhenManaged, False,
+       XmNresizePolicy, XmRESIZE_GROW,
+       XmNbackground, embBg,
+       NULL );
+
+    }
+
+    scroll = 0;
+
+  }
+#endif
 
   executeWidget = drawWidget;
 
@@ -10982,13 +11221,14 @@ Arg args[3];
 
   n = 0;
   XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
-  b1OneSelectPopup = XmCreatePopupMenu( top, "", args, n );
+  b1OneSelectPopup = XmCreatePopupMenu( top, "b1oneselectmenu", args, n );
 
-  chPd = XmCreatePulldownMenu( b1OneSelectPopup, "", NULL, 0 );
+  chPd = XmCreatePulldownMenu( b1OneSelectPopup, "b1oneselectpulldown",
+   NULL, 0 );
 
   str = XmStringCreateLocalized( activeWindowClass_str86 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b1OneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11010,7 +11250,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str87 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b1OneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11034,9 +11274,10 @@ Arg args[3];
 
   n = 0;
   XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
-  b1NoneSelectPopup = XmCreatePopupMenu( top, "", args, n );
+  b1NoneSelectPopup = XmCreatePopupMenu( top, "b1noneselectmenu", args, n );
 
-  grPd = XmCreatePulldownMenu( b1NoneSelectPopup, "", NULL, 0 );
+  grPd = XmCreatePulldownMenu( b1NoneSelectPopup, "b1noneselectpulldown",
+   NULL, 0 );
 
   str = XmStringCreateLocalized( global_str3 );
 
@@ -11056,7 +11297,7 @@ Arg args[3];
 
     str = XmStringCreateLocalized( menuName );
 
-    pb = XtVaCreateManagedWidget( "",
+    pb = XtVaCreateManagedWidget( "pb",
      xmPushButtonWidgetClass,
      grPd,
      XmNlabelString, str,
@@ -11082,7 +11323,8 @@ Arg args[3];
 
   }
 
-  mnPd = XmCreatePulldownMenu( b1NoneSelectPopup, "", NULL, 0 );
+  mnPd = XmCreatePulldownMenu( b1NoneSelectPopup, "b1noneselectpulldown",
+   NULL, 0 );
 
   str = XmStringCreateLocalized( global_str2 );
 
@@ -11102,7 +11344,7 @@ Arg args[3];
 
     str = XmStringCreateLocalized( menuName );
 
-    pb = XtVaCreateManagedWidget( "",
+    pb = XtVaCreateManagedWidget( "pb",
      xmPushButtonWidgetClass,
      mnPd,
      XmNlabelString, str,
@@ -11128,7 +11370,8 @@ Arg args[3];
 
   }
 
-  ctlPd = XmCreatePulldownMenu( b1NoneSelectPopup, "", NULL, 0 );
+  ctlPd = XmCreatePulldownMenu( b1NoneSelectPopup, "b1noneselectpulldown",
+   NULL, 0 );
 
   str = XmStringCreateLocalized( global_str5 );
 
@@ -11148,7 +11391,7 @@ Arg args[3];
 
     str = XmStringCreateLocalized( menuName );
 
-    pb = XtVaCreateManagedWidget( "",
+    pb = XtVaCreateManagedWidget( "pb",
      xmPushButtonWidgetClass,
      ctlPd,
      XmNlabelString, str,
@@ -11178,11 +11421,11 @@ Arg args[3];
 
   n = 0;
   XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
-  b2NoneSelectPopup = XmCreatePopupMenu( top, "", args, n );
+  b2NoneSelectPopup = XmCreatePopupMenu( top, "b2noneselectmenu", args, n );
 
   str = XmStringCreateLocalized( activeWindowClass_str92 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11206,7 +11449,8 @@ Arg args[3];
   setSchemePd = NULL;
   if ( appCtx->numSchemeSets ) {
 
-    setSchemePd = XmCreatePulldownMenu( b2NoneSelectPopup, "", NULL, 0 );
+    setSchemePd = XmCreatePulldownMenu( b2NoneSelectPopup,
+     "b2noneselectpulldown", NULL, 0 );
 
     str = XmStringCreateLocalized( activeWindowClass_str186 );
 
@@ -11221,7 +11465,7 @@ Arg args[3];
 
     str = XmStringCreateLocalized( "None" );
 
-    pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+    pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      setSchemePd,
      XmNlabelString, str,
      NULL );
@@ -11245,7 +11489,7 @@ Arg args[3];
 
       str = XmStringCreateLocalized( appCtx->schemeSetList[i] );
 
-      pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+      pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
        setSchemePd,
        XmNlabelString, str,
        NULL );
@@ -11277,7 +11521,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str93 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11300,7 +11544,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str196 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11323,7 +11567,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str94 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11346,7 +11590,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str185 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11369,7 +11613,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str95 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11392,7 +11636,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str167 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11415,7 +11659,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str96 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11438,7 +11682,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str97 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11461,7 +11705,7 @@ Arg args[3];
 
    str = XmStringCreateLocalized( activeWindowClass_str98 );
 
-   pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
     b2NoneSelectPopup,
     XmNlabelString, str,
     NULL );
@@ -11485,7 +11729,7 @@ Arg args[3];
 #if 0
    str = XmStringCreateLocalized( activeWindowClass_str99 );
 
-   pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
     b2NoneSelectPopup,
     XmNlabelString, str,
     NULL );
@@ -11508,7 +11752,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str100 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11531,7 +11775,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str101 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11554,7 +11798,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str102 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11577,7 +11821,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str103 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11600,7 +11844,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str104 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11623,7 +11867,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str169 );
 
-  undoPb1 = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  undoPb1 = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    XmNsensitive, 0,
@@ -11647,7 +11891,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str192 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11674,7 +11918,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str105 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11694,10 +11938,29 @@ Arg args[3];
   XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
    (XtPointer) &curBlockListNode->block );
 
+#ifdef ADD_SCROLLED_WIN
+  {
+
+    if ( appCtx->useScrollBars ) {
+
+      str = XmStringCreateLocalized( activeWindowClass_str202 );
+      pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+       b2NoneSelectPopup,
+       XmNlabelString, str,
+       NULL);
+
+      XmStringFree(str);
+      XtAddCallback( pb, XmNactivateCallback, b2ReleaseClip_cb, (XtPointer)this);
+
+    }
+
+  }
+#endif
+
 
   str = XmStringCreateLocalized( activeWindowClass_str184 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2NoneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11721,11 +11984,11 @@ Arg args[3];
 
   n = 0;
   XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
-  b2OneSelectPopup = XmCreatePopupMenu( top, "", args, n );
+  b2OneSelectPopup = XmCreatePopupMenu( top, "b2oneselectmenu", args, n );
 
   str = XmStringCreateLocalized( activeWindowClass_str106 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2OneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11748,7 +12011,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str107 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2OneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11771,7 +12034,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str108 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2OneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11794,7 +12057,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str109 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2OneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11817,7 +12080,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str110 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2OneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11840,7 +12103,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str167 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2OneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11863,7 +12126,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str111 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2OneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11886,7 +12149,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str112 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2OneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11907,16 +12170,9 @@ Arg args[3];
    (XtPointer) &curBlockListNode->block );
 
 
-
-
-
-
-
-
-
   str = XmStringCreateLocalized( activeWindowClass_str194 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2OneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11937,13 +12193,9 @@ Arg args[3];
    (XtPointer) &curBlockListNode->block );
 
 
-
-
-
-
   str = XmStringCreateLocalized( activeWindowClass_str195 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2OneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -11964,20 +12216,8 @@ Arg args[3];
    (XtPointer) &curBlockListNode->block );
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-  orientPd1 = XmCreatePulldownMenu( b2OneSelectPopup, "", NULL, 0 );
+  orientPd1 = XmCreatePulldownMenu( b2OneSelectPopup, "b2oneselectpulldown",
+   NULL, 0 );
 
   str = XmStringCreateLocalized( activeWindowClass_str176 );
 
@@ -11992,7 +12232,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str177 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    orientPd1,
    XmNlabelString, str,
    NULL );
@@ -12014,7 +12254,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str178 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    orientPd1,
    XmNlabelString, str,
    NULL );
@@ -12036,7 +12276,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str179 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    orientPd1,
    XmNlabelString, str,
    NULL );
@@ -12058,7 +12298,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str180 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    orientPd1,
    XmNlabelString, str,
    NULL );
@@ -12079,7 +12319,8 @@ Arg args[3];
    (XtPointer) &curBlockListNode->block );
 
 
-  editPd1 = XmCreatePulldownMenu( b2OneSelectPopup, "", NULL, 0 );
+  editPd1 = XmCreatePulldownMenu( b2OneSelectPopup, "b2oneselectpulldown",
+   NULL, 0 );
 
   str = XmStringCreateLocalized( activeWindowClass_str140 );
 
@@ -12094,7 +12335,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str141 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    editPd1,
    XmNlabelString, str,
    NULL );
@@ -12116,7 +12357,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str142 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    editPd1,
    XmNlabelString, str,
    NULL );
@@ -12139,7 +12380,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str143 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2OneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -12162,7 +12403,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str169 );
 
-  undoPb2 = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  undoPb2 = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2OneSelectPopup,
    XmNlabelString, str,
    XmNsensitive, 0,
@@ -12186,7 +12427,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str114 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2OneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -12209,7 +12450,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str184 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2OneSelectPopup,
    XmNlabelString, str,
    NULL );
@@ -12233,11 +12474,11 @@ Arg args[3];
  
   n = 0;
   XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
-  b2ManySelectPopup = XmCreatePopupMenu( top, "", args, n );
+  b2ManySelectPopup = XmCreatePopupMenu( top, "b2manyselectmenu", args, n );
 
   str = XmStringCreateLocalized( activeWindowClass_str115 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ManySelectPopup,
    XmNlabelString, str,
    NULL );
@@ -12261,7 +12502,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str116 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ManySelectPopup,
    XmNlabelString, str,
    NULL );
@@ -12285,7 +12526,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str117 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ManySelectPopup,
    XmNlabelString, str,
    NULL );
@@ -12309,7 +12550,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str118 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ManySelectPopup,
    XmNlabelString, str,
    NULL );
@@ -12333,7 +12574,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str119 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ManySelectPopup,
    XmNlabelString, str,
    NULL );
@@ -12356,7 +12597,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str167 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ManySelectPopup,
    XmNlabelString, str,
    NULL );
@@ -12379,7 +12620,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str120 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ManySelectPopup,
    XmNlabelString, str,
    NULL );
@@ -12403,7 +12644,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str121 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ManySelectPopup,
    XmNlabelString, str,
    NULL );
@@ -12424,7 +12665,8 @@ Arg args[3];
    (XtPointer) &curBlockListNode->block );
 
 
-  orientPdM = XmCreatePulldownMenu( b2ManySelectPopup, "", NULL, 0 );
+  orientPdM = XmCreatePulldownMenu( b2ManySelectPopup, "b2manyselectpulldown",
+   NULL, 0 );
 
   str = XmStringCreateLocalized( activeWindowClass_str176 );
 
@@ -12439,7 +12681,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str177 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    orientPdM,
    XmNlabelString, str,
    NULL );
@@ -12461,7 +12703,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str178 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    orientPdM,
    XmNlabelString, str,
    NULL );
@@ -12483,7 +12725,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str179 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    orientPdM,
    XmNlabelString, str,
    NULL );
@@ -12505,7 +12747,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str180 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    orientPdM,
    XmNlabelString, str,
    NULL );
@@ -12526,7 +12768,8 @@ Arg args[3];
    (XtPointer) &curBlockListNode->block );
 
 
-  alignPd = XmCreatePulldownMenu( b2ManySelectPopup, "", NULL, 0 );
+  alignPd = XmCreatePulldownMenu( b2ManySelectPopup, "b2manyselectpulldown",
+   NULL, 0 );
 
   str = XmStringCreateLocalized( activeWindowClass_str122 );
 
@@ -12541,7 +12784,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str123 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    alignPd,
    XmNlabelString, str,
    NULL );
@@ -12565,7 +12808,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str124 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    alignPd,
    XmNlabelString, str,
    NULL );
@@ -12589,7 +12832,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str125 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    alignPd,
    XmNlabelString, str,
    NULL );
@@ -12613,7 +12856,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str126 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    alignPd,
    XmNlabelString, str,
    NULL );
@@ -12633,7 +12876,8 @@ Arg args[3];
   XtAddCallback( pb, XmNactivateCallback, b2ReleaseManySelect_cb,
    (XtPointer) &curBlockListNode->block );
 
-  centerPd = XmCreatePulldownMenu( b2ManySelectPopup, "", NULL, 0 );
+  centerPd = XmCreatePulldownMenu( b2ManySelectPopup, "b2manyselectpulldown",
+   NULL, 0 );
 
   str = XmStringCreateLocalized( activeWindowClass_str127 );
 
@@ -12648,7 +12892,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str128 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    centerPd,
    XmNlabelString, str,
    NULL );
@@ -12672,7 +12916,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str129 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    centerPd,
    XmNlabelString, str,
    NULL );
@@ -12695,7 +12939,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str130 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    centerPd,
    XmNlabelString, str,
    NULL );
@@ -12716,7 +12960,8 @@ Arg args[3];
    (XtPointer) &curBlockListNode->block );
 
 
-  sizePd = XmCreatePulldownMenu( b2ManySelectPopup, "", NULL, 0 );
+  sizePd = XmCreatePulldownMenu( b2ManySelectPopup, "b2manyselectpulldown",
+   NULL, 0 );
 
   str = XmStringCreateLocalized( activeWindowClass_str131 );
 
@@ -12731,7 +12976,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str132 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    sizePd,
    XmNlabelString, str,
    NULL );
@@ -12755,7 +13000,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str133 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    sizePd,
    XmNlabelString, str,
    NULL );
@@ -12778,7 +13023,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str134 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    sizePd,
    XmNlabelString, str,
    NULL );
@@ -12799,7 +13044,8 @@ Arg args[3];
    (XtPointer) &curBlockListNode->block );
 
 
-  distributePd = XmCreatePulldownMenu( b2ManySelectPopup, "", NULL, 0 );
+  distributePd = XmCreatePulldownMenu( b2ManySelectPopup,
+   "b2manyselectpulldown", NULL, 0 );
 
   str = XmStringCreateLocalized( activeWindowClass_str135 );
 
@@ -12813,7 +13059,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str136 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    distributePd,
    XmNlabelString, str,
    NULL );
@@ -12837,7 +13083,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str137 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    distributePd,
    XmNlabelString, str,
    NULL );
@@ -12861,7 +13107,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str138 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    distributePd,
    XmNlabelString, str,
    NULL );
@@ -12884,7 +13130,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str139 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    distributePd,
    XmNlabelString, str,
    NULL );
@@ -12908,7 +13154,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str190 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    distributePd,
    XmNlabelString, str,
    NULL );
@@ -12931,7 +13177,8 @@ Arg args[3];
 
 
 
-  editPdM = XmCreatePulldownMenu( b2ManySelectPopup, "", NULL, 0 );
+  editPdM = XmCreatePulldownMenu( b2ManySelectPopup, "b2manyselectpulldown",
+   NULL, 0 );
 
   str = XmStringCreateLocalized( activeWindowClass_str140 );
 
@@ -12946,7 +13193,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str141 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    editPdM,
    XmNlabelString, str,
    NULL );
@@ -12968,7 +13215,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str142 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    editPdM,
    XmNlabelString, str,
    NULL );
@@ -12991,7 +13238,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str143 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ManySelectPopup,
    XmNlabelString, str,
    NULL );
@@ -13014,7 +13261,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str169 );
 
-  undoPb3 = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  undoPb3 = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ManySelectPopup,
    XmNlabelString, str,
    XmNsensitive, 0,
@@ -13038,7 +13285,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str144 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ManySelectPopup,
    XmNlabelString, str,
    NULL );
@@ -13061,7 +13308,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str184 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ManySelectPopup,
    XmNlabelString, str,
    NULL );
@@ -13085,13 +13332,13 @@ Arg args[3];
 
   n = 0;
   XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
-  b2ExecutePopup = XmCreatePopupMenu( top, "", args, n );
+  b2ExecutePopup = XmCreatePopupMenu( top, "b2executemenu", args, n );
 
   if ( !noEdit && closeAllowed ) {
 
     str = XmStringCreateLocalized( activeWindowClass_str145 );
 
-    pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+    pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      b2ExecutePopup,
      XmNlabelString, str,
      NULL );
@@ -13116,7 +13363,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str146 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ExecutePopup,
    XmNlabelString, str,
    NULL );
@@ -13140,7 +13387,7 @@ Arg args[3];
 #if 0
   str = XmStringCreateLocalized( activeWindowClass_str147 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ExecutePopup,
    XmNlabelString, str,
    NULL );
@@ -13166,7 +13413,7 @@ Arg args[3];
 
     str = XmStringCreateLocalized( activeWindowClass_str148 );
 
-    pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+    pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      b2ExecutePopup,
      XmNlabelString, str,
      NULL );
@@ -13191,7 +13438,7 @@ Arg args[3];
 
     str = XmStringCreateLocalized( activeWindowClass_str149 );
 
-    pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+    pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      b2ExecutePopup,
      XmNlabelString, str,
      NULL );
@@ -13217,7 +13464,7 @@ Arg args[3];
 
     str = XmStringCreateLocalized( activeWindowClass_str150 );
 
-    pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+    pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      b2ExecutePopup,
      XmNlabelString, str,
      NULL );
@@ -13242,7 +13489,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str151 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ExecutePopup,
    XmNlabelString, str,
    NULL );
@@ -13267,7 +13514,7 @@ Arg args[3];
 
     str = XmStringCreateLocalized( activeWindowClass_str192 );
 
-    pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+    pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      b2ExecutePopup,
      XmNlabelString, str,
      NULL );
@@ -13296,7 +13543,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str201 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ExecutePopup,
    XmNlabelString, str,
    NULL );
@@ -13319,7 +13566,7 @@ Arg args[3];
 
   str = XmStringCreateLocalized( activeWindowClass_str152 );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    b2ExecutePopup,
    XmNlabelString, str,
    NULL );
@@ -14950,6 +15197,56 @@ char callbackName[63+1];
 
   highlightedObject = NULL;
 
+#ifdef ADD_SCROLLED_WIN
+
+  if ( appCtx->useScrollBars ) {
+
+    /* if they resized the toplevel window in execute mode, revert
+     * the change now...
+     */
+    if ( scroll ) {
+
+      Dimension currW, currH, tmpD;
+      Position currX, currY;
+      Widget clip;
+
+      XtVaGetValues( scroll, XmNclipWindow, &clip, 0 );
+
+      if ( !clip ) {
+
+        XtWarning("activeWindowClass::returnToEdit(): no clipWindow found");
+
+      }
+      else {
+
+        XtVaGetValues(
+         clip,
+         XmNwidth, &currW,
+         XmNheight, &currH,
+         XmNx, &currX,
+         XmNy, &currY,
+         0 );
+
+        if ( currW > w && currH > h ) {
+          XtVaSetValues( top, XmNwidth, (Dimension)w, XmNheight, (Dimension)h, 0 );
+        }
+        else if ( currW > w ) {
+          XtVaGetValues( top, XmNwidth, &tmpD, 0);
+          XtVaSetValues( top, XmNwidth, (Dimension)(w + tmpD - currW ), 0);
+        }
+        else if ( currH > h ) {
+          XtVaGetValues( top, XmNheight, &tmpD, 0);
+          XtVaSetValues( top, XmNheight, (Dimension)(h + tmpD - currH ), 0);
+        }
+
+      }
+
+    }
+
+  }
+
+#endif
+
   cursor.set( XtWindow(drawWidget), CURSOR_K_CROSSHAIR );
   cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );
 
@@ -15038,10 +15335,10 @@ char callbackName[63+1];
       savedState = state;
       state = AWC_WAITING;
 
-      XQueryPointer( d, XtWindow(top), &root, &child,
+      XQueryPointer( d, XtWindow(executeWidget), &root, &child,
        &rootX, &rootY, &winX, &winY, &mask );
 
-      confirm.create( top, rootX, rootY, 2,
+      confirm.create( top, "confirm", rootX, rootY, 2,
        activeWindowClass_str161, NULL, NULL );
       confirm.addButton( activeWindowClass_str162, awc_abort_cb,
        (void *) this );
@@ -15477,6 +15774,7 @@ char str[255+1], *strPtr;
   tag.loadW( "gridSize", &gridSpacing, &ten );
   tag.loadBoolW( "orthoLineDraw", &orthogonal, &zero );
   tag.loadW( "pvType", defaultPvType, emptyStr );
+  tag.loadBoolW( "disableScroll", &disableScroll, &zero );
   tag.loadW( "endScreenProperties" );
   tag.loadW( "" );
 
@@ -15740,6 +16038,7 @@ static int alignEnum[3] = {
   tag.loadR( "gridSize", &gridSpacing, &ten );
   tag.loadR( "orthoLineDraw", &orthogonal, &zero );
   tag.loadR( "pvType", 15, defaultPvType, emptyStr );
+  tag.loadR( "disableScroll", &disableScroll, &zero );
   tag.loadR( "endScreenProperties" );
 
   stat = tag.readTags( f, "endScreenProperties" );
@@ -15783,13 +16082,31 @@ static int alignEnum[3] = {
   printf( "h = %-d\n", h );
 #endif
 
-   n = 0;
-   XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
-   XtSetValues( drawWidget, args, n );
+#ifdef ADD_SCROLLED_WIN
+  if ( isEmbedded ) {
 
-   n = 0;
-   XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
-   XtSetValues( drawWidget, args, n );
+    if ( appCtx->useScrollBars ) {
+
+      n = 0;
+      XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+      XtSetValues( drawWidget, args, n );
+
+      n = 0;
+      XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+      XtSetValues( drawWidget, args, n );
+
+    }
+
+  }
+#else
+  n = 0;
+  XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+  XtSetValues( drawWidget, args, n );
+
+  n = 0;
+  XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+  XtSetValues( drawWidget, args, n );
+#endif
 
   if ( isEmbedded ) {
 
@@ -15853,6 +16170,7 @@ static int alignEnum[3] = {
   }
   else {
 
+#ifndef ADD_SCROLLED_WIN
     n = 0;
     XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
     XtSetValues( top, args, n );
@@ -15860,6 +16178,24 @@ static int alignEnum[3] = {
     n = 0;
     XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
     XtSetValues( top, args, n );
+#else
+    if ( !appCtx->useScrollBars ) {
+
+      n = 0;
+      XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+      XtSetValues( top, args, n );
+
+      n = 0;
+      XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+      XtSetValues( top, args, n );
+
+    }
+    else {
+
+      reconfig();
+
+    }
+#endif
 
   }
 
@@ -15884,16 +16220,6 @@ static int alignEnum[3] = {
   drawGc.setBaseBG( ci->pix(bgColor) );
 
   expStrTitle.setRaw( title );
-
-  if ( gridShow )
-    strcpy( gridShowStr, activeWindowClass_str3 );
-  else
-    strcpy( gridShowStr, activeWindowClass_str5 );
-
-  if ( gridActive )
-    strcpy( gridActiveStr, activeWindowClass_str3 );
-  else
-    strcpy( gridActiveStr, activeWindowClass_str5 );
 
   updateAllSelectedDisplayInfo();
 
@@ -15970,6 +16296,23 @@ unsigned int pixel;
 
   }
 
+#ifdef ADD_SCROLLED_WIN
+  if ( isEmbedded ) {
+
+    if ( appCtx->useScrollBars ) {
+
+      n = 0;
+      XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+      XtSetValues( drawWidget, args, n );
+
+      n = 0;
+      XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+      XtSetValues( drawWidget, args, n );
+
+    }
+
+  }
+#else
   n = 0;
   XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
   XtSetValues( drawWidget, args, n );
@@ -15977,6 +16320,7 @@ unsigned int pixel;
   n = 0;
   XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
   XtSetValues( drawWidget, args, n );
+#endif
 
   if ( isEmbedded ) {
 
@@ -16054,6 +16398,7 @@ unsigned int pixel;
   }
   else {
 
+#ifndef ADD_SCROLLED_WIN
     n = 0;
     XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
     XtSetValues( top, args, n );
@@ -16061,6 +16406,24 @@ unsigned int pixel;
     n = 0;
     XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
     XtSetValues( top, args, n );
+#else
+    if ( !appCtx->useScrollBars ) {
+
+      n = 0;
+      XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+      XtSetValues( top, args, n );
+
+      n = 0;
+      XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+      XtSetValues( top, args, n );
+
+    }
+    else {
+
+      reconfig();
+
+    }
+#endif
 
   }
 
@@ -16284,16 +16647,8 @@ unsigned int pixel;
   if ( ( major > 1 ) || ( minor > 4 ) ) {
 
     fscanf( f, "%d\n", &gridShow ); incLine();
-    if ( gridShow )
-      strcpy( gridShowStr, activeWindowClass_str3 );
-    else
-      strcpy( gridShowStr, activeWindowClass_str5 );
 
     fscanf( f, "%d\n", &gridActive ); incLine();
-    if ( gridActive )
-      strcpy( gridActiveStr, activeWindowClass_str3 );
-    else
-      strcpy( gridActiveStr, activeWindowClass_str5 );
 
     fscanf( f, "%d\n", &gridSpacing ); incLine();
 
@@ -16303,9 +16658,7 @@ unsigned int pixel;
   else {
 
     gridShow = 0;
-    strcpy( gridShowStr, activeWindowClass_str5 );
     gridActive = 0;
-    strcpy( gridActiveStr, activeWindowClass_str5 );
     gridSpacing = 10;
     orthogonal = 0;
 
@@ -16387,13 +16740,15 @@ int activeWindowClass::old_loadWin (
 int activeWindowClass::importWin (
   FILE *f ) {
 
-int r, g, b, n;
-Arg args[5];
+int r, g, b;
 char buf[255+1], *gotData;
 int more;
 unsigned int pixel;
 
 char *tk, *context;
+
+int n;
+Arg args[5];
 
   r = 0xffff;
   g = 0xffff;
@@ -16546,6 +16901,7 @@ char *tk, *context;
   ci->setRGB( r, g, b, &pixel );
   bgColor = ci->pixIndex( pixel );
 
+#ifndef ADD_SCROLLED_WIN
   n = 0;
   XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
   XtSetValues( drawWidget, args, n );
@@ -16561,12 +16917,34 @@ char *tk, *context;
   n = 0;
   XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
   XtSetValues( top, args, n );
+#else
+  if ( appCtx->useScrollBars ) {
+
+    n = 0;
+    XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
+    XtSetValues( drawWidget, args, n );
+
+    n = 0;
+    XtSetArg( args[n], XmNy, (XtArgVal) y ); n++;
+    XtSetValues( drawWidget, args, n );
+
+    n = 0;
+    XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+    XtSetValues( top, args, n );
+
+    n = 0;
+    XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+    XtSetValues( top, args, n );
+
+  }
+  else {
+
+    reconfig();
+
+  }
+#endif
 
   drawGc.setBaseBG( ci->pix(bgColor) );
-
-  strcpy( gridShowStr, activeWindowClass_str5 );
-
-  strcpy( gridActiveStr, activeWindowClass_str5 );
 
   fscanf( f, "%d\n", &gridSpacing );
 
@@ -17542,7 +17920,7 @@ void activeWindowClass::executeFromDeferredQueue( void )
         savedState = state;
         state = AWC_WAITING;
 
-        confirm.create( top, x, y, 3,
+        confirm.create( top, "confirm", x, y, 3,
          activeWindowClass_str161, NULL, NULL );
         confirm.addButton( activeWindowClass_str163, awc_continue_cb,
          (void *) this );
@@ -17863,18 +18241,18 @@ Widget labelW, sepW;
 
   n = 0;
   XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
-  dragPopup = XmCreatePopupMenu( top, "", args, n );
+  dragPopup = XmCreatePopupMenu( top, "dragmenu", args, n );
 
   str = XmStringCreateLocalized( label );
 
-  labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  labelW = XtVaCreateManagedWidget( "draglabel", xmLabelWidgetClass,
    dragPopup,
    XmNlabelString, str,
    NULL );
 
   XmStringFree( str );
 
-  sepW = XtVaCreateManagedWidget( "", xmSeparatorWidgetClass,
+  sepW = XtVaCreateManagedWidget( "dragsep", xmSeparatorWidgetClass,
    dragPopup,
    NULL );
 
@@ -17894,7 +18272,7 @@ int n;
 
   n = 0;
   XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
-  dragPopup = XmCreatePopupMenu( top, "", args, n );
+  dragPopup = XmCreatePopupMenu( top, "dragmenu", args, n );
 
   dragItemIndex = 0;
 
@@ -17910,7 +18288,7 @@ Widget pb;
 
   str = XmStringCreateLocalized( item );
 
-  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pb = XtVaCreateManagedWidget( "dragpb", xmPushButtonWidgetClass,
    dragPopup,
    XmNlabelString, str,
    NULL );
@@ -18275,3 +18653,86 @@ activeWindowClass *aw;
   return 0;
 
 }
+
+#ifdef ADD_SCROLLED_WIN
+
+void activeWindowClass::reconfig ( void ) {
+
+Arg args[5];
+Cardinal n;
+
+Dimension maxW = WidthOfScreen( XtScreen(top) ), scrollw;
+Dimension maxH = HeightOfScreen( XtScreen(top) ), scrollh;
+
+  n = 0;
+  XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
+  XtSetArg( args[n], XmNy, (XtArgVal) y ); n++;
+  XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+  XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+
+  if ( !scroll ) {
+
+    XtSetValues( drawWidget, args, 2 );
+    XtSetValues( top, args+2, 2 );
+
+  }
+  else {
+
+    XtSetValues( top, args, n );
+
+    XtSetArg( args[0], XmNx, (XtArgVal) 0 );
+    XtSetArg( args[1], XmNy, (XtArgVal) 0 );
+    XtSetValues( drawWidget, args, n );
+
+    n = 0;
+    XtSetArg( args[n], XmNwidth, (XtArgVal)&scrollw ); n++;
+    XtSetArg( args[n], XmNheight, (XtArgVal)&scrollh ); n++;
+    XtGetValues(top, args, n);
+
+    if ( scrollw > maxW ) scrollw = maxW;
+    if ( scrollh > maxH ) scrollh = maxH;
+    XtSetArg( args[0], XmNwidth, (XtArgVal)scrollw );
+    XtSetArg( args[1], XmNheight, (XtArgVal)scrollh );
+    XtSetValues( top, args, n );
+
+  }
+
+}
+
+static void b2ReleaseClip_cb (
+  Widget w,
+  XtPointer client_data,
+  XtPointer call_data
+) {
+
+Dimension newW, newH;
+activeWindowClass *awc = (activeWindowClass*)client_data;
+Widget clip = 0;
+Widget scroll = awc->scrollWidgetId();
+
+  awc->setChanged();
+
+  if ( scroll )
+    XtVaGetValues( scroll, XmNclipWindow, &clip, 0 );
+
+  if ( !clip ) {
+    XtWarning("b2ReleaseClip_cb(): no clipWindow found");
+    return;
+  }
+
+  XtVaGetValues(
+   clip,
+   XmNwidth, &newW,
+   XmNheight, &newH,
+   0 );
+
+  XtVaSetValues( awc->drawWidget, XmNwidth, newW, XmNheight, newH, 0 );
+
+  XtVaSetValues( awc->top,XmNwidth, newW, XmNheight, newH, 0 );
+
+  awc->w = newW;
+  awc->h = newH;
+
+}
+
+#endif

@@ -59,6 +59,7 @@ int confirmDialogClass::destroy ( void ) {
 
 int confirmDialogClass::create (
   Widget top,
+  char *widgetName,
   int _x,
   int _y,
   int _maxButtons,
@@ -89,35 +90,46 @@ XmString str;
 
   }
 
-  shell = XtVaCreatePopupShell( "", xmDialogShellWidgetClass,
+  shell = XtVaCreatePopupShell( widgetName, xmDialogShellWidgetClass,
    top,
    XmNmappedWhenManaged, False,
    NULL );
 
-  pane = XtVaCreateWidget( "", xmPanedWindowWidgetClass, shell,
+  pane = XtVaCreateWidget( "pane", xmPanedWindowWidgetClass, shell,
    XmNsashWidth, 1,
    XmNsashHeight, 1,
    NULL );
 
-  labelForm = XtVaCreateWidget( "", xmFormWidgetClass, pane, NULL );
+  labelForm = XtVaCreateWidget( "labelform", xmFormWidgetClass, pane, NULL );
 
   if ( actionTag )
     str = XmStringCreate( text, actionTag );
   else
     str = XmStringCreateLocalized( text );
 
-  mainLabel = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
-   labelForm,
-   XmNlabelString, str,
-   XmNtopAttachment, XmATTACH_FORM,
-   XmNrightAttachment, XmATTACH_FORM,
-   XmNleftAttachment, XmATTACH_FORM,
-   XmNfontList, actionFontList,
-   NULL );
+  if ( actionFontList ) {
+    mainLabel = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
+     labelForm,
+     XmNlabelString, str,
+     XmNtopAttachment, XmATTACH_FORM,
+     XmNrightAttachment, XmATTACH_FORM,
+     XmNleftAttachment, XmATTACH_FORM,
+     XmNfontList, actionFontList,
+     NULL );
+  }
+  else {
+    mainLabel = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
+     labelForm,
+     XmNlabelString, str,
+     XmNtopAttachment, XmATTACH_FORM,
+     XmNrightAttachment, XmATTACH_FORM,
+     XmNleftAttachment, XmATTACH_FORM,
+     NULL );
+  }
 
   XmStringFree( str );
 
-  bottomForm = XtVaCreateWidget( "", xmFormWidgetClass, pane,
+  bottomForm = XtVaCreateWidget( "botform", xmFormWidgetClass, pane,
    NULL );
 
   return 1;
@@ -141,31 +153,58 @@ XmString str;
 
   if ( numButtons == 0 ) {
 
-  pb[numButtons] = XtVaCreateManagedWidget( "", xmPushButtonGadgetClass,
-   bottomForm,
-   XmNtopAttachment, XmATTACH_FORM,
-   XmNbottomAttachment, XmATTACH_FORM,
-   XmNrightAttachment, XmATTACH_FORM,
-   XmNdefaultButtonShadowThickness, 1,
-   XmNlabelString, str,
-   XmNfontList, actionFontList,
-   NULL );
+    if ( actionFontList ) {
+      pb[numButtons] = XtVaCreateManagedWidget( "pb", xmPushButtonGadgetClass,
+       bottomForm,
+       XmNtopAttachment, XmATTACH_FORM,
+       XmNbottomAttachment, XmATTACH_FORM,
+       XmNrightAttachment, XmATTACH_FORM,
+       XmNdefaultButtonShadowThickness, 1,
+       XmNlabelString, str,
+       XmNfontList, actionFontList,
+       NULL );
+    }
+    else {
+      pb[numButtons] = XtVaCreateManagedWidget( "pb", xmPushButtonGadgetClass,
+       bottomForm,
+       XmNtopAttachment, XmATTACH_FORM,
+       XmNbottomAttachment, XmATTACH_FORM,
+       XmNrightAttachment, XmATTACH_FORM,
+       XmNdefaultButtonShadowThickness, 1,
+       XmNlabelString, str,
+       NULL );
+    }
 
   }
   else {
 
-  pb[numButtons] = XtVaCreateManagedWidget( "", xmPushButtonGadgetClass,
-   bottomForm,
-   XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
-   XmNtopWidget, pb[numButtons-1],
-   XmNbottomAttachment, XmATTACH_OPPOSITE_WIDGET,
-   XmNbottomWidget, pb[numButtons-1],
-   XmNrightAttachment, XmATTACH_WIDGET,
-   XmNrightWidget, pb[numButtons-1],
-   XmNdefaultButtonShadowThickness, 1,
-   XmNlabelString, str,
-   XmNfontList, actionFontList,
-   NULL );
+    if ( actionFontList ) {
+      pb[numButtons] = XtVaCreateManagedWidget( "pb", xmPushButtonGadgetClass,
+       bottomForm,
+       XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+       XmNtopWidget, pb[numButtons-1],
+       XmNbottomAttachment, XmATTACH_OPPOSITE_WIDGET,
+       XmNbottomWidget, pb[numButtons-1],
+       XmNrightAttachment, XmATTACH_WIDGET,
+       XmNrightWidget, pb[numButtons-1],
+       XmNdefaultButtonShadowThickness, 1,
+       XmNlabelString, str,
+       XmNfontList, actionFontList,
+       NULL );
+    }
+    else {
+      pb[numButtons] = XtVaCreateManagedWidget( "pb", xmPushButtonGadgetClass,
+       bottomForm,
+       XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+       XmNtopWidget, pb[numButtons-1],
+       XmNbottomAttachment, XmATTACH_OPPOSITE_WIDGET,
+       XmNbottomWidget, pb[numButtons-1],
+       XmNrightAttachment, XmATTACH_WIDGET,
+       XmNrightWidget, pb[numButtons-1],
+       XmNdefaultButtonShadowThickness, 1,
+       XmNlabelString, str,
+       NULL );
+    }
 
   }
 

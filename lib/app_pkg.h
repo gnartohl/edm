@@ -364,6 +364,8 @@ int syncOnce;
 GC ddgc; // for drag and drop
 XFontStruct *ddFixedFont; // for drag and drop
 
+int useScrollBars;
+
 appContextClass (
   void );
 

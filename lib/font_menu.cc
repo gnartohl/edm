@@ -315,10 +315,10 @@ Widget firstSizePulldown = NULL;
 Widget firstSizePb = NULL;
 
 
-  form = XtCreateManagedWidget( "", xmFormWidgetClass, parent,
+  form = XtCreateManagedWidget( "fontmenuform", xmFormWidgetClass, parent,
    args, numArgs );
 
-  familyPullDown = XmCreatePulldownMenu( form, "", NULL, 0 );
+  familyPullDown = XmCreatePulldownMenu( form, "familymenu", NULL, 0 );
 
 
   // for each family, create family pushbutton and size pulldown
@@ -337,7 +337,7 @@ Widget firstSizePb = NULL;
 
     // creat pushbutton
     str = XmStringCreateLocalized( curFamily->name );
-    curFamilyOption->familyPb = XtVaCreateManagedWidget( "",
+    curFamilyOption->familyPb = XtVaCreateManagedWidget( "pb",
      xmPushButtonWidgetClass, familyPullDown,
      XmNlabelString, str,
      NULL );
@@ -353,7 +353,7 @@ Widget firstSizePb = NULL;
 
 
     // create pulldown
-    curFamilyOption->sizePullDown = XmCreatePulldownMenu( form, "", NULL, 0 );
+    curFamilyOption->sizePullDown = XmCreatePulldownMenu( form, "familymenu", NULL, 0 );
 
     if ( !firstSizePulldown )
      firstSizePulldown = curFamilyOption->sizePullDown;
@@ -386,7 +386,7 @@ Widget firstSizePb = NULL;
 
 
       str = XmStringCreateLocalized( string );
-      curSizePB->pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+      curSizePB->pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
        curFamilyOption->sizePullDown,
        XmNlabelString, str,
        NULL );
@@ -431,7 +431,7 @@ Widget firstSizePb = NULL;
 
     // Alignment
 
-    alignPullDown = XmCreatePulldownMenu( form, "", NULL, 0 );
+    alignPullDown = XmCreatePulldownMenu( form, "alignmenu", NULL, 0 );
 
     curAlign = new alignOptionListType;
 
@@ -441,7 +441,7 @@ Widget firstSizePb = NULL;
     curAlign->align = (int) XmALIGNMENT_BEGINNING;
 
     str = XmStringCreateLocalized( curAlign->alignString );
-    curAlign->pb = XtVaCreateManagedWidget( "",
+    curAlign->pb = XtVaCreateManagedWidget( "pb",
      xmPushButtonWidgetClass, alignPullDown,
      XmNlabelString, str,
      NULL );
@@ -467,7 +467,7 @@ Widget firstSizePb = NULL;
 
 
     str = XmStringCreateLocalized( curAlign->alignString );
-    curAlign->pb = XtVaCreateManagedWidget( "",
+    curAlign->pb = XtVaCreateManagedWidget( "pb",
      xmPushButtonWidgetClass, alignPullDown,
      XmNlabelString, str,
      NULL );
@@ -489,7 +489,7 @@ Widget firstSizePb = NULL;
 
 
     str = XmStringCreateLocalized( curAlign->alignString );
-    curAlign->pb = XtVaCreateManagedWidget( "",
+    curAlign->pb = XtVaCreateManagedWidget( "pb",
      xmPushButtonWidgetClass, alignPullDown,
      XmNlabelString, str,
      NULL );
@@ -513,7 +513,7 @@ Widget firstSizePb = NULL;
   XtSetArg( locArgs[n], XmNmenuHistory, (XtArgVal) firstFamilyPb ); n++;
   XtSetArg( locArgs[n], XmNtopAttachment, (XtArgVal) XmATTACH_FORM ); n++;
   XtSetArg( locArgs[n], XmNleftAttachment, (XtArgVal) XmATTACH_FORM ); n++;
-  familyOption = XmCreateOptionMenu( form, "", locArgs, n );
+  familyOption = XmCreateOptionMenu( form, "familyoptionmenu", locArgs, n );
 
   XtManageChild( familyOption );
 
@@ -528,7 +528,7 @@ Widget firstSizePb = NULL;
   XtSetArg( locArgs[n], XmNleftAttachment,
    (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
   XtSetArg( locArgs[n], XmNleftWidget, (XtArgVal) familyOption ); n++;
-  sizeOption = XmCreateOptionMenu( form, "", locArgs, n );
+  sizeOption = XmCreateOptionMenu( form, "sizeoptionmenu", locArgs, n );
 
   XtManageChild( sizeOption );
 
@@ -549,7 +549,7 @@ Widget firstSizePb = NULL;
   XtSetArg( locArgs[n], XmNleftAttachment,
    (XtArgVal) XmATTACH_WIDGET ); n++;
   XtSetArg( locArgs[n], XmNleftWidget, (XtArgVal) sizeOption ); n++;
-  boldToggle =   XtCreateManagedWidget( "", xmToggleButtonWidgetClass,
+  boldToggle =   XtCreateManagedWidget( "boldtoggle", xmToggleButtonWidgetClass,
    form, locArgs, n );
   XmStringFree( str );
 
@@ -573,7 +573,7 @@ Widget firstSizePb = NULL;
   XtSetArg( locArgs[n], XmNleftAttachment,
    (XtArgVal) XmATTACH_WIDGET ); n++;
   XtSetArg( locArgs[n], XmNleftWidget, (XtArgVal) boldToggle ); n++;
-  italicsToggle =   XtCreateManagedWidget( "", xmToggleButtonWidgetClass,
+  italicsToggle =   XtCreateManagedWidget( "italicstoggle", xmToggleButtonWidgetClass,
    form, locArgs, n );
   XmStringFree( str );
 
@@ -595,7 +595,7 @@ Widget firstSizePb = NULL;
     XtSetArg( locArgs[n], XmNleftAttachment,
      (XtArgVal) XmATTACH_WIDGET ); n++;
     XtSetArg( locArgs[n], XmNleftWidget, (XtArgVal) italicsToggle ); n++;
-    alignOption = XmCreateOptionMenu( form, "", locArgs, n );
+    alignOption = XmCreateOptionMenu( form, "alignoptionmenu", locArgs, n );
 
     XtManageChild( alignOption );
 

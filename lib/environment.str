@@ -2,8 +2,7 @@
 #define __environment_str 1
 
 
-// global_str99 is last
-
+// global_str101 is last
 
 #define environment_str1 (char *) "EDMDATAFILES"
 #define environment_str2 (char *) "EDMFILES"
@@ -54,6 +53,7 @@
 #define global_str93 (char *) "-open"
 #define global_str96 (char *) "-eolc"
 #define global_str98 (char *) "-ro"
+#define global_str100 (char *) "-noscrl"
 
 // help text (some content must agree with command line options)
 #define global_str24 (char *) "EXECUTION\n"
@@ -65,6 +65,7 @@
 #define global_str30 (char *) "  -noedit  Remove capability to put display in edit mode, used\n"
 #define global_str31 (char *) "           with -x to produce execute only operation\n\n"
 #define global_str99 (char *) "  -ro      Read-only mode (when the -server option is in use,\n           this option affects the primary server only;\n           clients inherit this attribute from the server)\n\n"
+#define global_str101 (char *) "  -noscrl  Disable scroll bars\n\n"
 #define global_str32 (char *) "  -m       Introduces list of macros/expansions\n\n"
 #define global_str33 (char *) "             e.g. -m \"facility=beamline-5,section=z\"\n\n"
 #define global_str34 (char *) "  -pv      Takes PV class name (.e.g epics)\n\n"

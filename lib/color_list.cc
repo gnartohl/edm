@@ -152,7 +152,8 @@ XmString str;
 
   display = XtDisplay( top );
 
-  shell = XtVaAppCreateShell( colorListClass_str7, colorListClass_str7,
+  //shell = XtVaAppCreateShell( colorListClass_str7, colorListClass_str7,
+  shell = XtVaAppCreateShell( "edm", "edm",
    topLevelShellWidgetClass,
    XtDisplay(top),
    XtNmappedWhenManaged, False,
@@ -164,28 +165,28 @@ XmString str;
   // XmNmappedWhenManaged, False,
   // NULL );
 
-  pane = XtVaCreateWidget( "", xmPanedWindowWidgetClass, shell,
+  pane = XtVaCreateWidget( "colormenu", xmPanedWindowWidgetClass, shell,
    XmNsashWidth, 1,
    XmNsashHeight, 1,
    XmNallowResize, True,
    NULL );
 
-  rowColTop = XtVaCreateWidget( "", xmRowColumnWidgetClass, pane,
+  rowColTop = XtVaCreateWidget( "rowcol", xmRowColumnWidgetClass, pane,
    NULL );
 
   n = 0;
   XtSetArg( args[n], XmNvisibleItemCount, numVisibleItems ); n++;
   XtSetArg( args[n], XmNselectionPolicy, XmSINGLE_SELECT ); n++;
-  list = XmCreateScrolledList( rowColTop, "", args, n );
+  list = XmCreateScrolledList( rowColTop, "scrolledlist", args, n );
 
   XtAddCallback( list, XmNsingleSelectionCallback, clc_select, this );
 
-  formBot = XtVaCreateWidget( "", xmFormWidgetClass, pane,
+  formBot = XtVaCreateWidget( "botform", xmFormWidgetClass, pane,
    NULL );
 
   str = XmStringCreateLocalized( colorListClass_str6 );
 
-  dismiss_pb = XtVaCreateManagedWidget( "", xmPushButtonGadgetClass,
+  dismiss_pb = XtVaCreateManagedWidget( "dismisspb", xmPushButtonGadgetClass,
    formBot,
    XmNtopAttachment, XmATTACH_FORM,
    XmNrightAttachment, XmATTACH_FORM,

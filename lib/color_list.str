@@ -7,6 +7,6 @@
 #define colorListClass_str4 (char *) (char *) "Upper"
 #define colorListClass_str5 (char *) (char *) "Lower"
 #define colorListClass_str6 (char *) (char *) "Dismiss"
-#define colorListClass_str7 (char *) (char *) "Color Names"
+#define colorListClass_str7 (char *) (char *) "Color-Names"
 
 #endif

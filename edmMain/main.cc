@@ -1347,6 +1347,8 @@ Display *testDisplay;
         else if ( strcmp( argv[n], global_str98 ) == 0 ) { //readonly
           setReadOnly();
 	}
+        else if ( strcmp( argv[n], global_str100 ) == 0 ) {
+	}
         else {
           *local = 1;
           return;

@@ -433,6 +433,8 @@ efSetItemCallbackDscType setItemDsc;
 
 int isPoppedUp;
 
+char title[31+1];
+
 public:
 
 int *x, *y, *w, *h, *largestH;

@@ -671,7 +671,7 @@ int keypadClass::create (
     XtDestroyWidget( shell );
   }
 
-  shell = XtVaCreatePopupShell( "", xmDialogShellWidgetClass,
+  shell = XtVaCreatePopupShell( "keypad", xmDialogShellWidgetClass,
    top,
    XmNmappedWhenManaged, False,
    XmNmwmDecorations, 0,
@@ -679,22 +679,22 @@ int keypadClass::create (
    XmNy, y,
    NULL );
 
-  rowcol = XtVaCreateWidget( "", xmRowColumnWidgetClass, shell,
+  rowcol = XtVaCreateWidget( "rowcol", xmRowColumnWidgetClass, shell,
    XmNorientation, XmVERTICAL,
    XmNnumColumns, 1,
    NULL );
 
-  topForm = XtVaCreateWidget( "", xmFormWidgetClass, rowcol, NULL );
+  topForm = XtVaCreateWidget( "topform", xmFormWidgetClass, rowcol, NULL );
 
-  kprowcol = XtVaCreateWidget( "", xmRowColumnWidgetClass, rowcol,
+  kprowcol = XtVaCreateWidget( "kprowcol", xmRowColumnWidgetClass, rowcol,
    XmNorientation, XmHORIZONTAL,
    XmNnumColumns, 4,
    XmNpacking, XmPACK_COLUMN,
    NULL );
 
-  bottomForm = XtVaCreateWidget( "", xmFormWidgetClass, rowcol, NULL );
+  bottomForm = XtVaCreateWidget( "botform", xmFormWidgetClass, rowcol, NULL );
 
-  text = XtVaCreateManagedWidget( "", xmTextFieldWidgetClass, topForm,
+  text = XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass, topForm,
    XmNcolumns, (short) MAXCHARS,
    XmNmaxLength, (short) MAXCHARS,
    XmNleftAttachment, XmATTACH_FORM,
@@ -722,7 +722,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " C" );
 
     pbc = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -739,7 +739,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " D" );
 
     pbd = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -756,7 +756,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " E" );
 
     pbe = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -773,7 +773,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " F " );
 
     pbf = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -790,7 +790,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 8" );
 
     pb8 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -807,7 +807,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 9" );
 
     pb9 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -824,7 +824,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " A" );
 
     pba = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -841,7 +841,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " B" );
 
     pbb = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -858,7 +858,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 4" );
 
     pb4 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -875,7 +875,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 5" );
 
     pb5 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -892,7 +892,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 6" );
 
     pb6 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -909,7 +909,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 7" );
 
     pb7 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -926,7 +926,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 0" );
 
     pb0 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -943,7 +943,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 1" );
 
     pb1 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -960,7 +960,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 2" );
 
     pb2 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -977,7 +977,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 3" );
 
     pb3 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -1001,7 +1001,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 7" );
 
     pb7 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -1018,7 +1018,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 8" );
 
     pb8 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -1035,7 +1035,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 9" );
 
     pb9 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -1052,7 +1052,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 4" );
 
     pb4 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -1069,7 +1069,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 5" );
 
     pb5 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -1086,7 +1086,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 6" );
 
     pb6 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -1103,7 +1103,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 1" );
 
     pb1 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -1120,7 +1120,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 2" );
 
     pb2 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -1137,7 +1137,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 3" );
 
     pb3 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -1154,7 +1154,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " 0" );
 
     pb0 = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -1171,7 +1171,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( " ." );
 
     pbPoint = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -1188,7 +1188,7 @@ int keypadClass::create (
       str = XmStringCreateLocalized( "+/-" );
 
     pbSign = XtVaCreateManagedWidget(
-     "", xmPushButtonWidgetClass,
+     "pb", xmPushButtonWidgetClass,
      kprowcol,
      XmNlabelString, str,
      NULL );
@@ -1209,7 +1209,7 @@ int keypadClass::create (
     str = XmStringCreateLocalized( "Cancel" );
 
   pbCancel = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
+   "pbcancel", xmPushButtonWidgetClass,
    bottomForm,
    XmNlabelString, str,
    XmNbottomAttachment, XmATTACH_FORM,
@@ -1228,7 +1228,7 @@ int keypadClass::create (
     str = XmStringCreateLocalized( "OK" );
 
   pbOK = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
+   "pbok", xmPushButtonWidgetClass,
    bottomForm,
    XmNlabelString, str,
    XmNbottomAttachment, XmATTACH_FORM,
@@ -1247,7 +1247,7 @@ int keypadClass::create (
     str = XmStringCreateLocalized( "BS" );
 
   pbBksp = XtVaCreateManagedWidget(
-   "", xmPushButtonWidgetClass,
+   "pbbksp", xmPushButtonWidgetClass,
    bottomForm,
    XmNlabelString, str,
    XmNbottomAttachment, XmATTACH_FORM,

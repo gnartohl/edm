@@ -135,6 +135,7 @@ int scrolledTextClass::destroy ( void ) {
 
 int scrolledTextClass::create (
   Widget top,
+  char *widgetName,
   int _x,
   int _y,
   int _bufSize,
@@ -171,17 +172,17 @@ XmString str;
 
   }
 
-  shell = XtVaCreatePopupShell( "", topLevelShellWidgetClass,
+  shell = XtVaCreatePopupShell( widgetName, topLevelShellWidgetClass,
    top,
    XmNmappedWhenManaged, False,
    NULL );
 
-  pane = XtVaCreateWidget( "", xmPanedWindowWidgetClass, shell,
+  pane = XtVaCreateWidget( "pane", xmPanedWindowWidgetClass, shell,
    XmNsashWidth, 1,
    XmNsashHeight, 1,
    NULL );
 
-  topForm = XtVaCreateWidget( "", xmFormWidgetClass, pane,
+  topForm = XtVaCreateWidget( "topform", xmFormWidgetClass, pane,
    NULL );
 
   n = 0;
@@ -190,25 +191,36 @@ XmString str;
   XtSetArg( args[n], XmNeditable, False ); n++;
   XtSetArg( args[n], XmNeditMode, XmMULTI_LINE_EDIT ); n++;
   XtSetArg( args[n], XmNcursorPositionVisible, False ); n++;
-  XtSetArg( args[n], XmNfontList, textFontList ); n++;
+  if ( textFontList ) { XtSetArg( args[n], XmNfontList, textFontList ); n++; }
   XtSetArg( args[n], XmNmaxLength, maxSize+10 ); n++;
   // XtSetArg( args[n], XmN, ); n++;
 
-  topScrolledText = XmCreateScrolledText( pane, "", args, n );
+  topScrolledText = XmCreateScrolledText( pane, "scrolledtext", args, n );
 
   if ( textTag )
     str = XmStringCreate( scrolledTextClass_str1, textTag );
   else
     str = XmStringCreateLocalized( scrolledTextClass_str1 );
 
-  dismiss_pb = XtVaCreateManagedWidget( "", xmPushButtonGadgetClass,
-   topForm,
-   XmNtopAttachment, XmATTACH_FORM,
-   XmNrightAttachment, XmATTACH_FORM,
-   XmNdefaultButtonShadowThickness, 1,
-   XmNlabelString, str,
-   XmNfontList, textFontList,
-   NULL );
+  if ( textFontList ) {
+    dismiss_pb = XtVaCreateManagedWidget( "dismisspb", xmPushButtonGadgetClass,
+     topForm,
+     XmNtopAttachment, XmATTACH_FORM,
+     XmNrightAttachment, XmATTACH_FORM,
+     XmNdefaultButtonShadowThickness, 1,
+     XmNlabelString, str,
+     XmNfontList, textFontList,
+     NULL );
+  }
+  else {
+    dismiss_pb = XtVaCreateManagedWidget( "dismisspb", xmPushButtonGadgetClass,
+     topForm,
+     XmNtopAttachment, XmATTACH_FORM,
+     XmNrightAttachment, XmATTACH_FORM,
+     XmNdefaultButtonShadowThickness, 1,
+     XmNlabelString, str,
+     NULL );
+  }
 
   XmStringFree( str );
 
@@ -227,16 +239,29 @@ XmString str;
   else
     str = XmStringCreateLocalized( scrolledTextClass_str2 );
 
-  clear_pb = XtVaCreateManagedWidget( "", xmPushButtonGadgetClass,
-   topForm,
-   XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
-   XmNtopWidget, dismiss_pb,
-   XmNrightAttachment, XmATTACH_WIDGET,
-   XmNrightWidget, dismiss_pb,
-   XmNdefaultButtonShadowThickness, 1,
-   XmNlabelString, str,
-   XmNfontList, textFontList,
-   NULL );
+  if ( textFontList ) {
+    clear_pb = XtVaCreateManagedWidget( "clearpb", xmPushButtonGadgetClass,
+     topForm,
+     XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+     XmNtopWidget, dismiss_pb,
+     XmNrightAttachment, XmATTACH_WIDGET,
+     XmNrightWidget, dismiss_pb,
+     XmNdefaultButtonShadowThickness, 1,
+     XmNlabelString, str,
+     XmNfontList, textFontList,
+     NULL );
+  }
+  else {
+    clear_pb = XtVaCreateManagedWidget( "clearpb", xmPushButtonGadgetClass,
+     topForm,
+     XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+     XmNtopWidget, dismiss_pb,
+     XmNrightAttachment, XmATTACH_WIDGET,
+     XmNrightWidget, dismiss_pb,
+     XmNdefaultButtonShadowThickness, 1,
+     XmNlabelString, str,
+     NULL );
+  }
 
   XmStringFree( str );
 
@@ -249,15 +274,27 @@ XmString str;
   else
     str = XmStringCreateLocalized( scrolledTextClass_str3 );
 
-  autoOpen_tb = XtVaCreateManagedWidget( "", xmToggleButtonWidgetClass,
-   topForm,
-   XmNset, (XtArgVal) True,
-   XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
-   XmNtopWidget, dismiss_pb,
-   XmNleftAttachment, XmATTACH_FORM,
-   XmNlabelString, str,
-   XmNfontList, textFontList,
-   NULL );
+  if ( textFontList ) {
+    autoOpen_tb = XtVaCreateManagedWidget( "autoopentoggle", xmToggleButtonWidgetClass,
+     topForm,
+     XmNset, (XtArgVal) True,
+     XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+     XmNtopWidget, dismiss_pb,
+     XmNleftAttachment, XmATTACH_FORM,
+     XmNlabelString, str,
+     XmNfontList, textFontList,
+     NULL );
+  }
+  else {
+    autoOpen_tb = XtVaCreateManagedWidget( "autoopentoggle", xmToggleButtonWidgetClass,
+     topForm,
+     XmNset, (XtArgVal) True,
+     XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+     XmNtopWidget, dismiss_pb,
+     XmNleftAttachment, XmATTACH_FORM,
+     XmNlabelString, str,
+     NULL );
+  }
 
   XmStringFree( str );
 
@@ -270,16 +307,29 @@ XmString str;
   else
     str = XmStringCreateLocalized( scrolledTextClass_str4 );
 
-  autoRaise_tb = XtVaCreateManagedWidget( "", xmToggleButtonWidgetClass,
-   topForm,
-   XmNset, (XtArgVal) True,
-   XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
-   XmNtopWidget, dismiss_pb,
-   XmNleftAttachment, XmATTACH_WIDGET,
-   XmNleftWidget, autoOpen_tb,
-   XmNlabelString, str,
-   XmNfontList, textFontList,
-   NULL );
+  if ( textFontList ) {
+    autoRaise_tb = XtVaCreateManagedWidget( "autoraisetoggle", xmToggleButtonWidgetClass,
+     topForm,
+     XmNset, (XtArgVal) True,
+     XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+     XmNtopWidget, dismiss_pb,
+     XmNleftAttachment, XmATTACH_WIDGET,
+     XmNleftWidget, autoOpen_tb,
+     XmNlabelString, str,
+     XmNfontList, textFontList,
+     NULL );
+  }
+  else {
+    autoRaise_tb = XtVaCreateManagedWidget( "autoraisetoggle", xmToggleButtonWidgetClass,
+     topForm,
+     XmNset, (XtArgVal) True,
+     XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+     XmNtopWidget, dismiss_pb,
+     XmNleftAttachment, XmATTACH_WIDGET,
+     XmNleftWidget, autoOpen_tb,
+     XmNlabelString, str,
+     NULL );
+  }
 
   XmStringFree( str );
 
@@ -353,12 +403,12 @@ XmString str;
 
   }
 
-  pane = XtVaCreateWidget( "", xmPanedWindowWidgetClass, top,
+  pane = XtVaCreateWidget( "pane", xmPanedWindowWidgetClass, top,
    XmNsashWidth, 1,
    XmNsashHeight, 1,
    NULL );
 
-  topForm = XtVaCreateWidget( "", xmFormWidgetClass, pane,
+  topForm = XtVaCreateWidget( "topform", xmFormWidgetClass, pane,
    NULL );
 
   n = 0;
@@ -370,14 +420,14 @@ XmString str;
   XtSetArg( args[n], XmNfontList, textFontList ); n++;
   XtSetArg( args[n], XmNmaxLength, maxSize+10 ); n++;
 
-  topScrolledText = XmCreateScrolledText( pane, "", args, n );
+  topScrolledText = XmCreateScrolledText( pane, "scrolledtext", args, n );
 
   if ( textTag )
     str = XmStringCreate( scrolledTextClass_str2, textTag );
   else
     str = XmStringCreateLocalized( scrolledTextClass_str2 );
 
-  clear_pb = XtVaCreateManagedWidget( "", xmPushButtonGadgetClass,
+  clear_pb = XtVaCreateManagedWidget( "clearpb", xmPushButtonGadgetClass,
    topForm,
    XmNtopAttachment, XmATTACH_FORM,
    XmNrightAttachment, XmATTACH_FORM,
@@ -446,12 +496,12 @@ XmString str;
 
   }
 
-  pane = XtVaCreateWidget( "", xmPanedWindowWidgetClass, top,
+  pane = XtVaCreateWidget( "pane", xmPanedWindowWidgetClass, top,
    XmNsashWidth, 1,
    XmNsashHeight, 1,
    NULL );
 
-  topForm = XtVaCreateWidget( "", xmFormWidgetClass, pane,
+  topForm = XtVaCreateWidget( "topform", xmFormWidgetClass, pane,
    NULL );
 
   n = 0;
@@ -463,7 +513,7 @@ XmString str;
   XtSetArg( args[n], XmNfontList, textFontList ); n++;
   XtSetArg( args[n], XmNmaxLength, maxSize+10 ); n++;
 
-  topScrolledText = XmCreateScrolledText( pane, "", args, n );
+  topScrolledText = XmCreateScrolledText( pane, "scrolledtext", args, n );
 
   if ( provideClearButton ) {
 
@@ -472,7 +522,7 @@ XmString str;
     else
       str = XmStringCreateLocalized( scrolledTextClass_str2 );
 
-    clear_pb = XtVaCreateManagedWidget( "", xmPushButtonGadgetClass,
+    clear_pb = XtVaCreateManagedWidget( "clearpb", xmPushButtonGadgetClass,
      topForm,
      XmNtopAttachment, XmATTACH_FORM,
      XmNrightAttachment, XmATTACH_FORM,

@@ -16,7 +16,8 @@
 
 #include"dl_list.h"
 
-#include <iostream.h>
+//#include <iostream.h>
+#include <iostream>
 template <class T, size_t o, size_t N=5>
 class Hashtable
 {

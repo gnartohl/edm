@@ -23,6 +23,8 @@
 #include "edm.version"
 #include <unistd.h>
 
+#include <X11/Intrinsic.h>
+
 typedef struct libRecTag {
   struct libRecTag *flink;
   char *className;
@@ -1399,7 +1401,8 @@ char oneFileName[127+1];
   else
     oneFileNum++;
 
-  XtMapWidget( XtParent( cur->node.drawWidgetId() ) );
+  //XtMapWidget( XtParent( cur->node.drawWidgetId() ) );
+  XtMapWidget( cur->node.topWidgetId() );
 
   cur->blink = apco->head->blink;
   apco->head->blink->flink = cur;
@@ -1566,7 +1569,7 @@ unsigned int mask;
   if ( changes ) {
     XQueryPointer( apco->display, XtWindow(apco->appTop), &root, &child,
      &rootX, &rootY, &winX, &winY, &mask );
-    apco->confirm.create( apco->appTop, rootX, rootY, 2,
+    apco->confirm.create( apco->appTop, "confirm", rootX, rootY, 2,
      appContextClass_str24, NULL, NULL );
     apco->confirm.addButton( appContextClass_str25, abort_cb, (void *) apco );
     apco->confirm.addButton( appContextClass_str26, continue_cb,
@@ -1633,7 +1636,7 @@ unsigned int mask;
     XQueryPointer( apco->display, XtWindow(apco->appTop), &root, &child,
      &rootX, &rootY, &winX, &winY, &mask );
 
-    apco->confirm.create( apco->appTop, rootX, rootY, 2,
+    apco->confirm.create( apco->appTop, "confirm", rootX, rootY, 2,
      appContextClass_str24, NULL, NULL );
     apco->confirm.addButton( appContextClass_str137, do_shutdown_cb,
      (void *) apco );
@@ -1936,6 +1939,26 @@ char *sysMacros[] = {
 
 }
 
+/* ugly -- but why does EDM not use/support toolkit resources !? */
+typedef struct AppContextResourceRec_ {
+	Position	efX,efY;
+	int			efW,efH;
+	int			llH;		
+} AppContextResourceRec;
+
+static XtResource resource_list[] = {
+	{ "entryFormX", "EntryFormX", XtRPosition, sizeof(Position),
+	  XtOffsetOf( AppContextResourceRec, efX ), XtRImmediate, (XtPointer) 0 },
+	{ "entryFormY", "EntryFormY", XtRPosition, sizeof(Position),
+	  XtOffsetOf( AppContextResourceRec, efX ), XtRImmediate, (XtPointer) 0 },
+	{ "entryFormW", "EntryFormW", XtRInt,       sizeof(int),
+	  XtOffsetOf( AppContextResourceRec, efW ), XtRImmediate, (XtPointer) 0 },
+	{ "entryFormH", "EntryFormH", XtRInt,       sizeof(int),
+	  XtOffsetOf( AppContextResourceRec, efH ), XtRImmediate, (XtPointer) 0 },
+	{ "largestH",   "LargestH",   XtRInt,       sizeof(int),
+	  XtOffsetOf( AppContextResourceRec, llH ), XtRImmediate, (XtPointer) 0 },
+};
+
 appContextClass::appContextClass (
   void )
 {
@@ -1958,11 +1981,13 @@ appContextClass::appContextClass (
   renderImagesFlag = 1;
   exitOnLastClose = 0;
   atLeastOneOpen = 0;
+  useScrollBars = 1;
 
   entryFormX = 0;
   entryFormY = 0;
   entryFormW = 0;
-  entryFormH = 600;
+  //entryFormH = 600;
+  entryFormH = 0;
   largestH = 600;
 
   head = new activeWindowListType;
@@ -2434,6 +2459,7 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
       if ( !httpPath( path ) ) {
 
         stat = chdir( path );
+
         if ( stat && !useHttp ) {
           snprintf( msg, 127, appContextClass_str119, path );
           perror( msg );
@@ -3303,19 +3329,19 @@ XmString menuStr, str;
 callbackBlockPtr curBlock;
 int i;
 
-  mainWin = XtVaCreateManagedWidget( "", xmMainWindowWidgetClass,
+  mainWin = XtVaCreateManagedWidget( "main", xmMainWindowWidgetClass,
    appTop,
    XmNscrollBarDisplayPolicy, XmAS_NEEDED,
    XmNscrollingPolicy, XmAUTOMATIC,
    NULL );
 
   // create menubar
-  menuBar = XmCreateMenuBar( mainWin, "", NULL, 0 );
+  menuBar = XmCreateMenuBar( mainWin, "menubar", NULL, 0 );
 
-  filePullDown = XmCreatePulldownMenu( menuBar, "", NULL, 0 );
+  filePullDown = XmCreatePulldownMenu( menuBar, "file", NULL, 0 );
 
   menuStr = XmStringCreateLocalized( appContextClass_str35 );
-  fileCascade = XtVaCreateManagedWidget( "", xmCascadeButtonWidgetClass,
+  fileCascade = XtVaCreateManagedWidget( "filemenu", xmCascadeButtonWidgetClass,
    menuBar,
    XmNlabelString, menuStr,
    XmNmnemonic, 'f',
@@ -3326,7 +3352,7 @@ int i;
   if ( !noEdit ) {
 
     str = XmStringCreateLocalized( appContextClass_str36 );
-    newB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+    newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      filePullDown,
      XmNlabelString, str,
      NULL );
@@ -3337,7 +3363,7 @@ int i;
   }
 
   str = XmStringCreateLocalized( appContextClass_str37 );
-  newB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    filePullDown,
    XmNlabelString, str,
    NULL );
@@ -3347,7 +3373,7 @@ int i;
 
 #if 0
   str = XmStringCreateLocalized( appContextClass_str38 );
-  newB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    filePullDown,
    XmNlabelString, str,
    NULL );
@@ -3357,7 +3383,7 @@ int i;
 #endif
 
   str = XmStringCreateLocalized( appContextClass_str39 );
-  newB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    filePullDown,
    XmNlabelString, str,
    NULL );
@@ -3366,7 +3392,7 @@ int i;
    (XtPointer) this );
 
   str = XmStringCreateLocalized( appContextClass_str40 );
-  newB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    filePullDown,
    XmNlabelString, str,
    NULL );
@@ -3375,7 +3401,7 @@ int i;
    (XtPointer) this );
 
   str = XmStringCreateLocalized( "Reload All" );
-  newB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    filePullDown,
    XmNlabelString, str,
    NULL );
@@ -3384,7 +3410,7 @@ int i;
    (XtPointer) this );
 
   str = XmStringCreateLocalized( appContextClass_str41 );
-  newB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    filePullDown,
    XmNlabelString, str,
    NULL );
@@ -3399,7 +3425,7 @@ int i;
     else if ( primaryServer == 2 ) {
       str = XmStringCreateLocalized( appContextClass_str133 );
     }
-    newB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+    newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      filePullDown,
      XmNlabelString, str,
      NULL );
@@ -3409,10 +3435,10 @@ int i;
   }
 
 
-  viewPullDown = XmCreatePulldownMenu( menuBar, "", NULL, 0 );
+  viewPullDown = XmCreatePulldownMenu( menuBar, "view", NULL, 0 );
 
   menuStr = XmStringCreateLocalized( appContextClass_str42 );
-  viewCascade = XtVaCreateManagedWidget( "", xmCascadeButtonWidgetClass,
+  viewCascade = XtVaCreateManagedWidget( "viewmenu", xmCascadeButtonWidgetClass,
    menuBar,
    XmNlabelString, menuStr,
    XmNmnemonic, 'v',
@@ -3421,7 +3447,7 @@ int i;
   XmStringFree( menuStr );
 
   str = XmStringCreateLocalized( appContextClass_str43 );
-  msgB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  msgB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    viewPullDown,
    XmNlabelString, str,
    NULL );
@@ -3430,7 +3456,7 @@ int i;
    (XtPointer) this );
 
   str = XmStringCreateLocalized( appContextClass_str44 );
-  pvB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pvB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    viewPullDown,
    XmNlabelString, str,
    NULL );
@@ -3439,7 +3465,7 @@ int i;
    (XtPointer) this );
 
   str = XmStringCreateLocalized( appContextClass_str45 );
-  pvB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  pvB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    viewPullDown,
    XmNlabelString, str,
    NULL );
@@ -3448,7 +3474,7 @@ int i;
    (XtPointer) this );
 
   str = XmStringCreateLocalized( appContextClass_str112 );
-  viewXyB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  viewXyB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    viewPullDown,
    XmNlabelString, str,
    NULL );
@@ -3457,7 +3483,7 @@ int i;
    (XtPointer) this );
 
   str = XmStringCreateLocalized( appContextClass_str135 );
-  renderImagesB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  renderImagesB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    viewPullDown,
    XmNlabelString, str,
    NULL );
@@ -3466,7 +3492,7 @@ int i;
    (XtPointer) this );
 
   str = XmStringCreateLocalized( appContextClass_str136 );
-  checkpointPidB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  checkpointPidB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    viewPullDown,
    XmNlabelString, str,
    NULL );
@@ -3475,7 +3501,7 @@ int i;
    (XtPointer) this );
 
   str = XmStringCreateLocalized( appContextClass_str141 );
-  viewFontMappingB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  viewFontMappingB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    viewPullDown,
    XmNlabelString, str,
    NULL );
@@ -3484,10 +3510,10 @@ int i;
    (XtPointer) this );
 
 
-  pathPullDown = XmCreatePulldownMenu( menuBar, "", NULL, 0 );
+  pathPullDown = XmCreatePulldownMenu( menuBar, "path", NULL, 0 );
 
   menuStr = XmStringCreateLocalized( appContextClass_str121 );
-  pathCascade = XtVaCreateManagedWidget( "", xmCascadeButtonWidgetClass,
+  pathCascade = XtVaCreateManagedWidget( "pathmenu", xmCascadeButtonWidgetClass,
    menuBar,
    XmNlabelString, menuStr,
    XmNmnemonic, 'v',
@@ -3506,7 +3532,7 @@ int i;
     callbackBlockTail->flink = NULL;
 
     str = XmStringCreateLocalized( dataFilePrefix[i] );
-    msgB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+    msgB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      pathPullDown,
      XmNlabelString, str,
      NULL );
@@ -3516,10 +3542,10 @@ int i;
 
   }
 
-  helpPullDown = XmCreatePulldownMenu( menuBar, "", NULL, 0 );
+  helpPullDown = XmCreatePulldownMenu( menuBar, "help", NULL, 0 );
 
   menuStr = XmStringCreateLocalized( appContextClass_str114 );
-  helpCascade = XtVaCreateManagedWidget( "", xmCascadeButtonWidgetClass,
+  helpCascade = XtVaCreateManagedWidget( "helpmenu", xmCascadeButtonWidgetClass,
    menuBar,
    XmNlabelString, menuStr,
    XmNmnemonic, 'h',
@@ -3528,7 +3554,7 @@ int i;
   XmStringFree( menuStr );
 
   str = XmStringCreateLocalized( appContextClass_str115 );
-  msgB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  msgB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    helpPullDown,
    XmNlabelString, str,
    NULL );
@@ -3537,7 +3563,7 @@ int i;
    (XtPointer) this );
 
   //str = XmStringCreateLocalized( appContextClass_str116 );
-  //msgB = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+  //msgB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
   // helpPullDown,
   // XmNlabelString, str,
   // NULL );
@@ -3849,6 +3875,7 @@ static void displayParamInfo ( void ) {
   printf( global_str30 );
   printf( global_str31 );
   printf( global_str99 );
+  printf( global_str101 );
 
   printf( global_str32 );
   printf( global_str33 );
@@ -3952,6 +3979,7 @@ fileListPtr curFile;
   local = 0;
   privColorMap = 0;
   exitOnLastClose = 0;
+  useScrollBars = 1;
 
   // check first for component management commands
   if ( argc > 1 ) {
@@ -4124,6 +4152,9 @@ fileListPtr curFile;
 	}
 	else if ( strcmp( argv[n], global_str98 ) == 0 ) { //readonly
 	}
+	else if ( strcmp( argv[n], global_str100 ) == 0 ) { //disable scroll bars
+          useScrollBars = 0;
+	}
 
         else {
           return -2;
@@ -4196,6 +4227,8 @@ int appContextClass::startApplication (
   return startApplication( argc, argv, _primaryServer, 0, 0 );
 
 }
+
+extern "C" void scrolledWAcceleratorSupportInstall();
 
 int appContextClass::startApplication (
   int argc,
@@ -4306,6 +4339,25 @@ err_return:
 
     app = XtCreateApplicationContext();
 
+    /* install wheelmouse support */
+    {
+      String	fbr[]={
+#if 0
+        "edm*baseTranslations:#override\\n"
+        "<Btn4Up>:\\n <Btn4Down>:\\n <Btn5Up>:\\n <Btn5Down>:\\n",
+#endif
+        "edm*XmScrolledWindow.VertScrollBar.accelerators:#override\\n"
+        "~Shift<Btn4Up>:IncrementUpOrLeft(Up)\\n"
+        "~Shift<Btn5Up>:IncrementDownOrRight(Down)\\n",
+        "*XmScrolledWindow.HorScrollBar.accelerators:#override\\n"
+        "Shift<Btn4Up>:IncrementUpOrLeft(Left)\\n"
+        "Shift<Btn5Up>:IncrementDownOrRight(Right)\\n",
+        0
+      };
+      scrolledWAcceleratorSupportInstall();
+      XtAppSetFallbackResources(app, fbr);
+    }
+
     display = XtOpenDisplay( app, NULL, NULL, "edm", NULL, 0, &argCount,
      args );
 
@@ -4325,6 +4377,24 @@ err_return:
       iconified = 0;
     }
 #endif
+
+  }
+
+  {
+
+    AppContextResourceRec rs;
+
+    XtGetApplicationResources(
+     appTop,
+     &rs,
+     resource_list, XtNumber( resource_list ),
+     NULL, 0);
+
+    entryFormX = rs.efX;
+    entryFormY = rs.efY;
+    entryFormW = rs.efW;
+    entryFormY = rs.efH;
+    largestH   = rs.llH;
 
   }
 
@@ -4353,17 +4423,19 @@ err_return:
 
   displayH = XDisplayHeight( display, DefaultScreen(display) );
   displayW = XDisplayWidth( display, DefaultScreen(display) );
-  largestH = displayH;
+  //largestH = displayH;
 
-  msgBox.create( appTop, 0, 0, 50000, NULL, NULL );
+  if (largestH <= 0) largestH += displayH;
 
-  pvList.create( appTop, 20 );
+  msgBox.create( appTop, "msgbox", 0, 0, 50000, NULL, NULL );
+
+  pvList.create( appTop, "pvlist", 20 );
 
   n = 0;
   xmStr1 = XmStringCreateLocalized( "*.edl" );
   XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
-  fileSelectBox = XmCreateFileSelectionDialog( appTop, "", args, n );
+  fileSelectBox = XmCreateFileSelectionDialog( appTop, "menuopenfileselect", args, n );
 
   XmStringFree( xmStr1 );
 
@@ -4377,7 +4449,7 @@ err_return:
   xmStr1 = XmStringCreateLocalized( "*.xch" );
   XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
-  importSelectBox = XmCreateFileSelectionDialog( appTop, "", args, n );
+  importSelectBox = XmCreateFileSelectionDialog( appTop, "menuimportfileselect", args, n );
 
   XmStringFree( xmStr1 );
 
@@ -5001,7 +5073,8 @@ char msg[127+1];
           }
         }
         if ( !reloadFlag ) {
-          XtMapWidget( XtParent( cur->node.drawWidgetId() ) );
+          //XtMapWidget( XtParent( cur->node.drawWidgetId() ) );
+          XtMapWidget( cur->node.topWidgetId() );
 	}
 
         if ( !( stat & 1 ) ) {
@@ -5011,7 +5084,8 @@ char msg[127+1];
           cur->requestActivate = 0;
           cur->requestReactivate = 0;
           XtUnmanageChild( cur->node.drawWidgetId() );
-          XtUnmapWidget( XtParent( cur->node.drawWidgetId() ) );
+          //XtUnmapWidget( XtParent( cur->node.drawWidgetId() ) );
+          XtUnmapWidget( cur->node.topWidgetId() );
           if ( requestFlag > 0 ) requestFlag--;
           if ( cur->requestActivate == 1 ) {
             cur->requestActivate = 0;

@@ -3049,26 +3049,27 @@ term:
 
   // create window
 
-  shell = XtVaAppCreateShell( colorInfoClass_str2, colorInfoClass_str2,
+  //shell = XtVaAppCreateShell( colorInfoClass_str2, colorInfoClass_str2,
+  shell = XtVaAppCreateShell( "edm", "edm",
    topLevelShellWidgetClass,
    XtDisplay(top),
    XtNmappedWhenManaged, False,
    NULL );
 
-  rc = XtVaCreateWidget( "", xmRowColumnWidgetClass, shell,
+  rc = XtVaCreateWidget( "colorpallete", xmRowColumnWidgetClass, shell,
    XmNorientation, XmVERTICAL,
    XmNnumColumns, 1,
    NULL );
 
   str1 = XmStringCreateLocalized( colorInfoClass_str3 );
-  mbar = XmVaCreateSimpleMenuBar( rc, "",
+  mbar = XmVaCreateSimpleMenuBar( rc, "menubar",
    XmVaCASCADEBUTTON, str1, 'f',
    NULL );
   XmStringFree( str1 );
 
   str1 = XmStringCreateLocalized( colorInfoClass_str4 );
   str2 = XmStringCreateLocalized( colorInfoClass_str5 );
-  mb1 = XmVaCreateSimplePulldownMenu( mbar, "", 0, file_cb,
+  mb1 = XmVaCreateSimplePulldownMenu( mbar, "pb", 0, file_cb,
    XmVaPUSHBUTTON, str1, 'x', NULL, NULL,
    XmVaPUSHBUTTON, str2, 's', NULL, NULL,
    NULL );
@@ -3080,7 +3081,7 @@ term:
   remainder = (max_colors) % ncols;
   if ( remainder ) nrows++;
 
-  form = XtVaCreateWidget( "", xmDrawingAreaWidgetClass, rc,
+  form = XtVaCreateWidget( "form", xmDrawingAreaWidgetClass, rc,
    XmNwidth, ncols*20 + ncols*5 + 5,
    XmNheight, nrows*20 + nrows*5 + 5,
    XmNresizePolicy, XmRESIZE_NONE,
@@ -4901,26 +4902,27 @@ term:
 
   // create window
 
-  shell = XtVaAppCreateShell( colorInfoClass_str2, colorInfoClass_str2,
+  //shell = XtVaAppCreateShell( colorInfoClass_str2, colorInfoClass_str2,
+  shell = XtVaAppCreateShell( "edm", "edm",
    topLevelShellWidgetClass,
    XtDisplay(top),
    XtNmappedWhenManaged, False,
    NULL );
 
-  rc = XtVaCreateWidget( "", xmRowColumnWidgetClass, shell,
+  rc = XtVaCreateWidget( "colorpallete", xmRowColumnWidgetClass, shell,
    XmNorientation, XmVERTICAL,
    XmNnumColumns, 1,
    NULL );
 
   str1 = XmStringCreateLocalized( colorInfoClass_str3 );
-  mbar = XmVaCreateSimpleMenuBar( rc, "",
+  mbar = XmVaCreateSimpleMenuBar( rc, "menubar",
    XmVaCASCADEBUTTON, str1, 'f',
    NULL );
   XmStringFree( str1 );
 
   str1 = XmStringCreateLocalized( colorInfoClass_str4 );
   str2 = XmStringCreateLocalized( colorInfoClass_str5 );
-  mb1 = XmVaCreateSimplePulldownMenu( mbar, "", 0, file_cb,
+  mb1 = XmVaCreateSimplePulldownMenu( mbar, "pb", 0, file_cb,
    XmVaPUSHBUTTON, str1, 'x', NULL, NULL,
    XmVaPUSHBUTTON, str2, 's', NULL, NULL,
    NULL );
@@ -4932,7 +4934,7 @@ term:
   remainder = (max_colors) % ncols;
   if ( remainder ) nrows++;
 
-  form = XtVaCreateWidget( "", xmDrawingAreaWidgetClass, rc,
+  form = XtVaCreateWidget( "form", xmDrawingAreaWidgetClass, rc,
    XmNwidth, ncols*20 + ncols*5 + 5,
    XmNheight, nrows*20 + nrows*5 + 5,
    XmNresizePolicy, XmRESIZE_NONE,
@@ -5686,33 +5688,34 @@ firstTry:
 
   // create window
 
-  shell = XtVaAppCreateShell( colorInfoClass_str2, colorInfoClass_str2,
+  //shell = XtVaAppCreateShell( colorInfoClass_str2, colorInfoClass_str2,
+  shell = XtVaAppCreateShell( "edm", "edm",
    topLevelShellWidgetClass,
    XtDisplay(top),
    XtNmappedWhenManaged, False,
    NULL );
 
-  rc = XtVaCreateWidget( "", xmRowColumnWidgetClass, shell,
+  rc = XtVaCreateWidget( "colorpallete", xmRowColumnWidgetClass, shell,
    XmNorientation, XmVERTICAL,
    XmNnumColumns, 1,
    NULL );
 
   str1 = XmStringCreateLocalized( colorInfoClass_str3 );
-  mbar = XmVaCreateSimpleMenuBar( rc, "",
+  mbar = XmVaCreateSimpleMenuBar( rc, "menubar",
    XmVaCASCADEBUTTON, str1, 'f',
    NULL );
   XmStringFree( str1 );
 
   str1 = XmStringCreateLocalized( colorInfoClass_str4 );
   str2 = XmStringCreateLocalized( colorInfoClass_str5 );
-  mb1 = XmVaCreateSimplePulldownMenu( mbar, "", 0, file_cb,
+  mb1 = XmVaCreateSimplePulldownMenu( mbar, "pb", 0, file_cb,
    XmVaPUSHBUTTON, str1, 'x', NULL, NULL,
    XmVaPUSHBUTTON, str2, 's', NULL, NULL,
    NULL );
   XmStringFree( str1 );
   XmStringFree( str2 );
 
-//   form = XtVaCreateManagedWidget( "", xmFormWidgetClass, rc,
+//   form = XtVaCreateManagedWidget( "form", xmFormWidgetClass, rc,
 //    NULL );
 
   ncols = num_color_cols;
@@ -5720,7 +5723,7 @@ firstTry:
   remainder = (max_colors+num_blinking_colors) % ncols;
   if ( remainder ) nrows++;
 
-  form = XtVaCreateManagedWidget( "", xmDrawingAreaWidgetClass, rc,
+  form = XtVaCreateManagedWidget( "form", xmDrawingAreaWidgetClass, rc,
    XmNwidth, ncols*20 + ncols*5 + 5,
    XmNheight, nrows*20 + nrows*5 + 5,
    NULL );

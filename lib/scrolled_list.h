@@ -142,6 +142,7 @@ int destroy ( void );
 
 int create (
   Widget top,
+  char *widgetName,
   int numVisItems );
 
 void setFile (

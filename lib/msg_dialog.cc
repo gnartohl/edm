@@ -50,18 +50,18 @@ XmString str;
 
   display = XtDisplay( top );
 
-  shell = XtVaCreatePopupShell( "", xmDialogShellWidgetClass,
+  shell = XtVaCreatePopupShell( "msg", xmDialogShellWidgetClass,
    top,
    XmNmappedWhenManaged, False,
    XmNmwmDecorations, 0,
    XmNoverrideRedirect, True,
    NULL );
 
-  labelForm = XtVaCreateWidget( "", xmFormWidgetClass, shell, NULL );
+  labelForm = XtVaCreateWidget( "labelform", xmFormWidgetClass, shell, NULL );
 
   str = XmStringCreateLocalized( "  " );
 
-  label = XtVaCreateWidget( "", xmLabelWidgetClass,
+  label = XtVaCreateWidget( "label", xmLabelWidgetClass,
    labelForm,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_FORM,
@@ -88,18 +88,18 @@ XmString str;
 
   display = XtDisplay( top );
 
-  shell = XtVaCreatePopupShell( "", xmDialogShellWidgetClass,
+  shell = XtVaCreatePopupShell( "msg", xmDialogShellWidgetClass,
    top,
    XmNmappedWhenManaged, False,
    XmNmwmDecorations, 0,
    //XmNoverrideRedirect, True,
    NULL );
 
-  labelForm = XtVaCreateWidget( "", xmFormWidgetClass, shell, NULL );
+  labelForm = XtVaCreateWidget( "labelform", xmFormWidgetClass, shell, NULL );
 
   str = XmStringCreateLocalized( "  " );
 
-  label = XtVaCreateWidget( "", xmLabelWidgetClass,
+  label = XtVaCreateWidget( "label", xmLabelWidgetClass,
    labelForm,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_FORM,

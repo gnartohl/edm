@@ -60,7 +60,7 @@
 
 #define AWC_MAJOR_VERSION 4
 #define AWC_MINOR_VERSION 0
-#define AWC_RELEASE 0
+#define AWC_RELEASE 1
 
 #define AWC_EDIT 1
 #define AWC_EXECUTE 2
@@ -686,10 +686,8 @@ fontMenuClass defaultFm, defaultCtlFm, defaultBtnFm;
 int defaultAlignment;
 int defaultCtlAlignment;
 int defaultBtnAlignment;
-char bufGridActiveStr[8], gridActiveStr[8];
-char bufGridShowStr[8], gridShowStr[8];
-int gridActive;
-int gridShow;
+int bufGridActive, gridActive;
+int bufGridShow, gridShow;
 int orthogonal, bufOrthogonal;
 int orthoMove, bufOrthoMove;
 int bufGridSpacing, gridSpacing, oldGridSpacing;
@@ -842,7 +840,7 @@ activeGraphicClass *currentObject, *currentPointObject;
 pointPtr currentPoint;
 
 int x, y, w, h;
-Widget top;
+Widget top, scroll;
 gcClass drawGc, executeGc;
 fontInfoClass *fi;
 
@@ -876,6 +874,8 @@ Widget *widgetToDeallocate;
 int btnDownX, btnDownY;
 
 int loadFailure;
+
+int bufDisableScroll, disableScroll;
 
 activeWindowClass ( void );
 
@@ -1050,6 +1050,8 @@ Widget topWidgetId ( void );
 Widget drawWidgetId ( void );
 
 Widget executeWidgetId ( void );
+
+Widget scrollWidgetId() { return scroll; };
 
 int changed ( void );
 
@@ -1389,6 +1391,10 @@ int yPos ( void );
 int sameAncestorName (
   char *name
 );
+
+void	reconfig();
+
+void	clip();
 
 char endSignature[15+1];
 

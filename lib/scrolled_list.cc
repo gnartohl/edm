@@ -222,6 +222,7 @@ int scrolledListClass::destroy ( void ) {
 
 int scrolledListClass::create (
   Widget top,
+  char *widgetName,
   int numVisItems )
 {
 
@@ -233,30 +234,30 @@ XmString str;
 
   display = XtDisplay( top );
 
-  shell = XtVaCreatePopupShell( "", topLevelShellWidgetClass,
+  shell = XtVaCreatePopupShell( widgetName, topLevelShellWidgetClass,
    top,
    XmNmappedWhenManaged, False,
    NULL );
 
-  pane = XtVaCreateWidget( "", xmPanedWindowWidgetClass, shell,
+  pane = XtVaCreateWidget( "pane", xmPanedWindowWidgetClass, shell,
    XmNsashWidth, 1,
    XmNsashHeight, 1,
    XmNallowResize, True,
    NULL );
 
-  formTop = XtVaCreateWidget( "", xmFormWidgetClass, pane,
+  formTop = XtVaCreateWidget( "topform", xmFormWidgetClass, pane,
    NULL );
 
   str = XmStringCreateLocalized( scrolledListClass_str1 );
 
-  file = XtVaCreateWidget( "", xmTextFieldWidgetClass, formTop,
+  file = XtVaCreateWidget( "filetext", xmTextFieldWidgetClass, formTop,
    XmNcolumns, (short) 31,
    XmNmaxLength, (short) 127,
    XmNtopAttachment, XmATTACH_FORM,
    XmNrightAttachment, XmATTACH_FORM,
    NULL );
 
-  fileLabel = XtVaCreateManagedWidget( "", xmLabelWidgetClass, formTop,
+  fileLabel = XtVaCreateManagedWidget( "filelabel", xmLabelWidgetClass, formTop,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
    XmNtopWidget, file,
@@ -270,7 +271,7 @@ XmString str;
 
   str = XmStringCreateLocalized( scrolledListClass_str2 );
 
-  filter = XtVaCreateWidget( "", xmTextFieldWidgetClass, formTop,
+  filter = XtVaCreateWidget( "filtertext", xmTextFieldWidgetClass, formTop,
    XmNcolumns, (short) 31,
    XmNmaxLength, (short) 31,
    XmNtopAttachment, XmATTACH_WIDGET,
@@ -278,7 +279,7 @@ XmString str;
    XmNrightAttachment, XmATTACH_FORM,
    NULL );
 
-  filterLabel = XtVaCreateManagedWidget( "", xmLabelWidgetClass, formTop,
+  filterLabel = XtVaCreateManagedWidget( "filterlabel", xmLabelWidgetClass, formTop,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
    XmNtopWidget, filter,
@@ -292,7 +293,7 @@ XmString str;
 
   str = XmStringCreateLocalized( scrolledListClass_str3 );
 
-  prefix = XtVaCreateWidget( "", xmTextFieldWidgetClass, formTop,
+  prefix = XtVaCreateWidget( "prefixtext", xmTextFieldWidgetClass, formTop,
    XmNcolumns, (short) 31,
    XmNmaxLength, (short) 31,
    XmNtopAttachment, XmATTACH_WIDGET,
@@ -300,7 +301,7 @@ XmString str;
    XmNrightAttachment, XmATTACH_FORM,
    NULL );
 
-  prefixLabel = XtVaCreateManagedWidget( "", xmLabelWidgetClass, formTop,
+  prefixLabel = XtVaCreateManagedWidget( "prefixlabel", xmLabelWidgetClass, formTop,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
    XmNtopWidget, prefix,
@@ -314,7 +315,7 @@ XmString str;
 
   str = XmStringCreateLocalized( scrolledListClass_str4 );
 
-  ucTb = XtVaCreateManagedWidget( "", xmToggleButtonWidgetClass, formTop,
+  ucTb = XtVaCreateManagedWidget( "uctoggle", xmToggleButtonWidgetClass, formTop,
    XmNtopAttachment, XmATTACH_WIDGET,
    XmNtopWidget, prefix,
    XmNrightAttachment, XmATTACH_FORM,
@@ -327,7 +328,7 @@ XmString str;
 
   str = XmStringCreateLocalized( scrolledListClass_str5 );
 
-  lcTb = XtVaCreateManagedWidget( "", xmToggleButtonWidgetClass, formTop,
+  lcTb = XtVaCreateManagedWidget( "lctoggle", xmToggleButtonWidgetClass, formTop,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
    XmNtopWidget, ucTb,
    XmNrightAttachment, XmATTACH_WIDGET,
@@ -339,31 +340,31 @@ XmString str;
 
   XtAddCallback( lcTb, XmNvalueChangedCallback, setLower, this );
 
-  rowColTop = XtVaCreateWidget( "", xmRowColumnWidgetClass, pane,
+  rowColTop = XtVaCreateWidget( "rowcol", xmRowColumnWidgetClass, pane,
    NULL );
 
   n = 0;
   XtSetArg( args[n], XmNvisibleItemCount, numVisibleItems ); n++;
   XtSetArg( args[n], XmNselectionPolicy, XmSINGLE_SELECT ); n++;
-  list = XmCreateScrolledList( rowColTop, "", args, n );
+  list = XmCreateScrolledList( rowColTop, "list", args, n );
 
   XtAddCallback( list, XmNsingleSelectionCallback, slc_select, this );
 
-  formMid = XtVaCreateWidget( "", xmFormWidgetClass, pane,
+  formMid = XtVaCreateWidget( "midform", xmFormWidgetClass, pane,
    NULL );
 
-  text = XtVaCreateWidget( "", xmTextFieldWidgetClass, formMid,
+  text = XtVaCreateWidget( "text", xmTextFieldWidgetClass, formMid,
    XmNcolumns, (short) 31,
    XmNmaxLength, (short) 63,
    XmNtopAttachment, XmATTACH_FORM,
    NULL );
 
-  formBot = XtVaCreateWidget( "", xmFormWidgetClass, pane,
+  formBot = XtVaCreateWidget( "botform", xmFormWidgetClass, pane,
    NULL );
 
   str = XmStringCreateLocalized( scrolledListClass_str6 );
 
-  dismiss_pb = XtVaCreateManagedWidget( "", xmPushButtonGadgetClass,
+  dismiss_pb = XtVaCreateManagedWidget( "dismisspb", xmPushButtonGadgetClass,
    formBot,
    XmNtopAttachment, XmATTACH_FORM,
    XmNrightAttachment, XmATTACH_FORM,

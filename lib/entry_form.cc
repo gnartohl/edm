@@ -40,31 +40,9 @@ Time deltaTime;
 
     be = (XButtonEvent *) e;
 
-    deltaTime = be->time - efo->buttonClickTime;
-    efo->buttonClickTime = be->time;
-
-    if ( deltaTime < 250 ) {
-
-      pbcb.reason = XmCR_ACTIVATE;
-      pbcb.event = e;
-      pbcb.click_count = 1;
-
-      if ( be->button == Button1 ) {
-        (*efo->okCb)( efo->pb_ok, efo->pbCallbackPtr,
-         (XtPointer) &pbcb );
-      }
-      else if ( be->button == Button2 ) {
-        XBell( efo->display, 25 );
-        (*efo->applyCb)( efo->pb_apply, efo->pbCallbackPtr,
-         (XtPointer) &pbcb );
-      }
-      else if ( be->button == Button3 ) {
-        (*efo->cancelCb)( efo->pb_cancel, efo->pbCallbackPtr,
-         (XtPointer) &pbcb );
-      }
-
+    if ( be->button != Button1 && be->button != Button2 && be->button != Button3 ) {
+      *continueToDispatch = True;
       return;
-
     }
 
     if ( ( be->state & ShiftMask ) && ( be->state & ControlMask ) ) {
@@ -102,6 +80,46 @@ Time deltaTime;
 
       (*efo->cancelCb)( efo->pb_cancel, efo->pbCallbackPtr,
        (XtPointer) &pbcb );
+
+    }
+    else {
+
+      *continueToDispatch = True;
+
+    }
+
+  }
+  if ( e->type == ButtonRelease ) {
+
+    be = (XButtonEvent *) e;
+
+    deltaTime = be->time - efo->buttonClickTime;
+    efo->buttonClickTime = be->time;
+
+    if ( deltaTime < 250 ) {
+
+      pbcb.reason = XmCR_ACTIVATE;
+      pbcb.event = e;
+      pbcb.click_count = 1;
+
+      *continueToDispatch = False;
+
+      if ( be->button == Button1 ) {
+        (*efo->okCb)( efo->pb_ok, efo->pbCallbackPtr,
+         (XtPointer) &pbcb );
+      }
+      else if ( be->button == Button2 ) {
+        XBell( efo->display, 25 );
+        (*efo->applyCb)( efo->pb_apply, efo->pbCallbackPtr,
+         (XtPointer) &pbcb );
+      }
+      else if ( be->button == Button3 ) {
+        (*efo->cancelCb)( efo->pb_cancel, efo->pbCallbackPtr,
+         (XtPointer) &pbcb );
+      }
+      else {
+        *continueToDispatch = True;
+      }
 
     }
     else {
@@ -385,11 +403,13 @@ XConfigureEvent *ce;
 
   if ( ce->type == ConfigureNotify ) {
 
-//      printf( "In entryFormEventHandler\n" );
-//      printf( "cur: x=%-d, y=%-d, w=%-d, h=%-d\n",
-//       *(efo->x), *(efo->y), *(efo->w), *(efo->h) );
-//      printf( "new: x=%-d, y=%-d, w=%-d, h=%-d\n",
-//       ce->x, ce->y, ce->width, ce->height );
+    XWindowAttributes atts;
+    XGetWindowAttributes(ce->display, ce->window, &atts); 
+
+    /* another hack to (hopefully) avoid getting distracted
+     * while the WM messes around reparenting/reconfiguring
+     */
+    if ( IsUnmapped == atts.map_state ) return;
 
     if ( *(efo->h) > *efo->largestH ) *efo->largestH = *(efo->h);
     if ( ce->height > *efo->largestH ) *efo->largestH = ce->height;
@@ -412,6 +432,11 @@ XConfigureEvent *ce;
       }
 
     }
+
+  }
+  else {
+
+    *continueToDispatch = True;
 
   }
 
@@ -807,6 +832,9 @@ XmString str;
   curWidgetIsLabel = 0;
   leftAttachmentExists = 0;
 
+  strncpy( title, label, 31 );
+  title[31] = 0;
+
   if ( fi ) {
 
     if ( entryFontTag ) {
@@ -826,29 +854,30 @@ XmString str;
 
   }
 
-  shell = XtVaCreatePopupShell( label, xmDialogShellWidgetClass,
+  //shell = XtVaCreatePopupShell( label, xmDialogShellWidgetClass,
+  shell = XtVaCreatePopupShell( "properties", xmDialogShellWidgetClass,
    top,
    XmNmappedWhenManaged, False,
    NULL );
 
-  scrollWin = XtVaCreateWidget( "", xmScrolledWindowWidgetClass, shell,
+  scrollWin = XtVaCreateWidget( "scrollwin", xmScrolledWindowWidgetClass, shell,
    XmNscrollBarDisplayPolicy, XmAS_NEEDED,
    XmNscrollingPolicy, XmAUTOMATIC,
    NULL );
 
-  pane = XtVaCreateWidget( "", xmPanedWindowWidgetClass, scrollWin,
+  pane = XtVaCreateWidget( "pane", xmPanedWindowWidgetClass, scrollWin,
    XmNsashWidth, 1,
    XmNsashHeight, 1,
    NULL );
 
-  labelForm = XtVaCreateWidget( "", xmFormWidgetClass, pane, NULL );
+  labelForm = XtVaCreateWidget( "labelform", xmFormWidgetClass, pane, NULL );
 
   if ( entryTag )
     str = XmStringCreate( label, entryTag );
   else
     str = XmStringCreateLocalized( label );
 
-  mainLabel = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  mainLabel = XtVaCreateManagedWidget( "mainlabel", xmLabelWidgetClass,
    labelForm,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_FORM,
@@ -860,10 +889,10 @@ XmString str;
   XmStringFree( str );
 
   XtAddEventHandler( labelForm,
-   KeyPressMask|ButtonPressMask, False,
+   KeyPressMask|ButtonPressMask|ButtonReleaseMask, False,
    efEventHandler, (XtPointer) this );
 
-  topForm = XtVaCreateWidget( "", xmFormWidgetClass, pane,
+  topForm = XtVaCreateWidget( "topform", xmFormWidgetClass, pane,
    XmNallowResize, True,
    XmNpaneMaximum, 10000,
    NULL );
@@ -871,20 +900,20 @@ XmString str;
   curTopParent = topForm;
 
   XtAddEventHandler( topForm,
-   KeyPressMask|ButtonPressMask, False,
+   KeyPressMask|ButtonPressMask|ButtonReleaseMask, False,
    efEventHandler, (XtPointer) this );
 
-  controlForm = XtVaCreateWidget( "", xmFormWidgetClass, pane,
+  controlForm = XtVaCreateWidget( "controlform", xmFormWidgetClass, pane,
    NULL );
 
-  arrayForm = XtVaCreateWidget( "", xmFormWidgetClass, pane,
+  arrayForm = XtVaCreateWidget( "arrayform", xmFormWidgetClass, pane,
    NULL );
 
-  bottomForm = XtVaCreateWidget( "", xmFormWidgetClass, pane,
+  bottomForm = XtVaCreateWidget( "bottomform", xmFormWidgetClass, pane,
    NULL );
 
   XtAddEventHandler( bottomForm,
-   KeyPressMask|ButtonPressMask, False,
+   KeyPressMask|ButtonPressMask|ButtonReleaseMask, False,
    efEventHandler, (XtPointer) this );
 
   return 1;
@@ -1010,6 +1039,9 @@ char buf[16];
   curWidgetIsLabel = 0;
   leftAttachmentExists = 0;
 
+  strncpy( title, label, 31 );
+  title[31] = 0;
+
   if ( fi ) {
 
     if ( entryFontTag ) {
@@ -1028,44 +1060,45 @@ char buf[16];
 
   }
 
-  shell = XtVaCreatePopupShell( label, xmDialogShellWidgetClass,
+  //shell = XtVaCreatePopupShell( label, xmDialogShellWidgetClass,
+  shell = XtVaCreatePopupShell( "properties", xmDialogShellWidgetClass,
    top,
    XmNmappedWhenManaged, False,
    NULL );
 
-  scrollWin = XtVaCreateWidget( "", xmScrolledWindowWidgetClass, shell,
+  scrollWin = XtVaCreateWidget( "scrollwin", xmScrolledWindowWidgetClass, shell,
    XmNscrollBarDisplayPolicy, XmAS_NEEDED,
    XmNscrollingPolicy, XmAUTOMATIC,
    NULL );
 
-  pane = XtVaCreateWidget( "", xmPanedWindowWidgetClass, scrollWin,
+  pane = XtVaCreateWidget( "pane", xmPanedWindowWidgetClass, scrollWin,
    XmNsashWidth, 1,
    XmNsashHeight, 1,
    NULL );
 
-  labelForm = XtVaCreateWidget( "", xmFormWidgetClass, pane, NULL );
+  labelForm = XtVaCreateWidget( "labelform", xmFormWidgetClass, pane, NULL );
 
   if ( entryTag )
     str = XmStringCreate( label, entryTag );
   else
     str = XmStringCreateLocalized( label );
 
-  mainLabel = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  mainLabel = XtVaCreateManagedWidget( "mainlabel", xmLabelWidgetClass,
    labelForm,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_FORM,
    XmNrightAttachment, XmATTACH_FORM,
    XmNleftAttachment, XmATTACH_FORM,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
 
   XtAddEventHandler( labelForm,
-   KeyPressMask|ButtonPressMask, False,
+   KeyPressMask|ButtonPressMask|ButtonReleaseMask, False,
    efEventHandler, (XtPointer) this );
 
-  topForm = XtVaCreateWidget( "", xmFormWidgetClass, pane,
+  topForm = XtVaCreateWidget( "topform", xmFormWidgetClass, pane,
    XmNallowResize, True,
    XmNpaneMaximum, 10000,
    NULL );
@@ -1073,16 +1106,16 @@ char buf[16];
   curTopParent = topForm;
 
   XtAddEventHandler( topForm,
-   KeyPressMask|ButtonPressMask, False,
+   KeyPressMask|ButtonPressMask|ButtonReleaseMask, False,
    efEventHandler, (XtPointer) this );
 
-  controlForm = XtVaCreateWidget( "", xmFormWidgetClass, pane, NULL );
+  controlForm = XtVaCreateWidget( "controlform", xmFormWidgetClass, pane, NULL );
 
   if ( maxItems > 1 ) {
 
     // number of items
 
-    numItemsArrowInc = XtVaCreateManagedWidget( "", xmArrowButtonGadgetClass,
+    numItemsArrowInc = XtVaCreateManagedWidget( "arrow", xmArrowButtonGadgetClass,
      controlForm,
      XmNtopOffset, 5,
      XmNarrowDirection, XmARROW_RIGHT,
@@ -1097,7 +1130,7 @@ char buf[16];
 
     sprintf( buf, "%-d", numItems );
 
-    numItemsText = XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    numItemsText = XtVaCreateManagedWidget( "numitemstext", xmTextFieldWidgetClass,
      controlForm,
      XmNcolumns, (short) 3,
      XmNvalue, buf,
@@ -1107,7 +1140,7 @@ char buf[16];
   //    XmNtopWidget, numItemsArrowDec,
      XmNrightAttachment, XmATTACH_WIDGET,
      XmNrightWidget, numItemsArrowInc,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     if ( setItem_cb && setItemDsc.obj ) {
@@ -1115,7 +1148,7 @@ char buf[16];
        ef_set_num_items, (void *) &setItemDsc );
     }
 
-    numItemsArrowDec = XtVaCreateManagedWidget( "", xmArrowButtonGadgetClass,
+    numItemsArrowDec = XtVaCreateManagedWidget( "arrow", xmArrowButtonGadgetClass,
      controlForm,
      XmNarrowDirection, XmARROW_LEFT,
      XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -1131,7 +1164,7 @@ char buf[16];
 
     str = XmStringCreateLocalized( "Number of Items" );
 
-    numItemsLabel = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+    numItemsLabel = XtVaCreateManagedWidget( "numitemslabel", xmLabelWidgetClass,
      controlForm,
      XmNmarginTop, 7,
      XmNlabelString, str,
@@ -1139,14 +1172,14 @@ char buf[16];
      XmNtopWidget, numItemsText,
      XmNrightAttachment, XmATTACH_WIDGET,
      XmNrightWidget, numItemsArrowDec,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
 
     // item number
 
-    itemNumArrowInc = XtVaCreateManagedWidget( "", xmArrowButtonGadgetClass,
+    itemNumArrowInc = XtVaCreateManagedWidget( "arrow", xmArrowButtonGadgetClass,
      controlForm,
      XmNtopOffset, 5,
      XmNarrowDirection, XmARROW_RIGHT,
@@ -1161,7 +1194,7 @@ char buf[16];
       ef_increment_item_num, (void *) &setItemDsc );
     }
 
-    itemNumText = XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    itemNumText = XtVaCreateManagedWidget( "itemnumtext", xmTextFieldWidgetClass,
      controlForm,
      XmNcolumns, (short) 3,
      XmNvalue, "1",
@@ -1170,7 +1203,7 @@ char buf[16];
      XmNtopWidget, numItemsText,
      XmNleftAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNleftWidget, numItemsText,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     if ( setItem_cb && setItemDsc.obj ) {
@@ -1178,14 +1211,14 @@ char buf[16];
        ef_set_item_num, (void *) &setItemDsc );
     }
 
-    itemNumArrowDec = XtVaCreateManagedWidget( "", xmArrowButtonGadgetClass,
+    itemNumArrowDec = XtVaCreateManagedWidget( "arrow", xmArrowButtonGadgetClass,
      controlForm,
      XmNarrowDirection, XmARROW_LEFT,
      XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNtopWidget, itemNumArrowInc,
      XmNleftAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNleftWidget, numItemsArrowDec,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     if ( setItem_cb && setItemDsc.obj ) {
@@ -1195,7 +1228,7 @@ char buf[16];
 
     str = XmStringCreateLocalized( "Item Number" );
 
-    itemNumLabel = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+    itemNumLabel = XtVaCreateManagedWidget( "itemnumlabel", xmLabelWidgetClass,
      controlForm,
      XmNmarginTop, 7,
      XmNlabelString, str,
@@ -1203,29 +1236,29 @@ char buf[16];
      XmNtopWidget, numItemsText,
      XmNrightAttachment, XmATTACH_WIDGET,
      XmNrightWidget, itemNumArrowDec,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
 
   }
 
-  arrayForm = XtVaCreateWidget( "", xmFormWidgetClass, pane,
+  arrayForm = XtVaCreateWidget( "arrayform", xmFormWidgetClass, pane,
    NULL );
 
 //    XtAddEventHandler( controlForm,
-//     KeyPressMask|ButtonPressMask, False,
+//     KeyPressMask|ButtonPressMask|ButtonReleaseMask, False,
 //     efEventHandler, (XtPointer) this );
 
   XtAddEventHandler( arrayForm,
-   KeyPressMask|ButtonPressMask, False,
+   KeyPressMask|ButtonPressMask|ButtonReleaseMask, False,
    efEventHandler, (XtPointer) this );
 
-  bottomForm = XtVaCreateWidget( "", xmFormWidgetClass, pane,
+  bottomForm = XtVaCreateWidget( "bottomform", xmFormWidgetClass, pane,
    NULL );
 
   XtAddEventHandler( bottomForm,
-   KeyPressMask|ButtonPressMask, False,
+   KeyPressMask|ButtonPressMask|ButtonReleaseMask, False,
    efEventHandler, (XtPointer) this );
 
   return 1;
@@ -1267,7 +1300,7 @@ embeddedEfEntry *cur;
 
     firstItem = 0;
 
-    cur->activeW = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+    cur->activeW = XtVaCreateManagedWidget( "embeddedformpb", xmPushButtonWidgetClass,
      topForm,
      XmNnavigationType, XmTAB_GROUP,
      //XmNwidth, 25,
@@ -1283,7 +1316,7 @@ embeddedEfEntry *cur;
   }
   else {
 
-    cur->activeW = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+    cur->activeW = XtVaCreateManagedWidget( "embeddedformpb", xmPushButtonWidgetClass,
      topForm,
      XmNnavigationType, XmTAB_GROUP,
      //XmNwidth, 25,
@@ -1309,7 +1342,7 @@ embeddedEfEntry *cur;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -1317,7 +1350,7 @@ embeddedEfEntry *cur;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
    XmNmarginTop, 7,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -1403,7 +1436,7 @@ fontMenuEntry *cur;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -1411,7 +1444,7 @@ fontMenuEntry *cur;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
    XmNmarginTop, 7,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -1747,14 +1780,14 @@ char buf[127+1];
 
     firstItem = 0;
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      topForm,
      XmNcolumns, (short) length,
      XmNvalue, buf,
      XmNmaxLength, length,
      XmNtopAttachment, XmATTACH_FORM,
      XmNrightAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curW = cur->activeW;
@@ -1763,7 +1796,7 @@ char buf[127+1];
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      topForm,
      XmNcolumns, (short) length,
      XmNvalue, buf,
@@ -1772,7 +1805,7 @@ char buf[127+1];
      XmNtopWidget, curW,
      XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNrightWidget, curRW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     curW = cur->activeW;
@@ -1785,7 +1818,7 @@ char buf[127+1];
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNmarginTop, 7,
@@ -1793,7 +1826,7 @@ char buf[127+1];
    XmNtopWidget, curW,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -1810,18 +1843,18 @@ char buf[127+1];
     else
       str = XmStringCreateLocalized( label );
 
-    cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+    cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
      curTopParent,
      XmNlabelString, str,
      XmNmarginTop, 7,
      XmNtopAttachment, XmATTACH_FORM,
      XmNleftAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      curTopParent,
      XmNcolumns, (short) length,
      XmNvalue, buf,
@@ -1831,7 +1864,7 @@ char buf[127+1];
      XmNtopWidget, cur->labelW,
      XmNleftAttachment, XmATTACH_WIDGET,
      XmNleftWidget, cur->labelW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     prevW = cur->activeW;
@@ -1839,7 +1872,7 @@ char buf[127+1];
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      curTopParent,
      XmNcolumns, (short) length,
      XmNvalue, buf,
@@ -1849,7 +1882,7 @@ char buf[127+1];
      XmNtopWidget, prevW,
      XmNleftAttachment, XmATTACH_WIDGET,
      XmNleftWidget, prevW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     prevW = cur->activeW;
@@ -1896,14 +1929,14 @@ char buf[127+1];
 
     firstItem = 0;
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      topForm,
      XmNcolumns, (short) length,
      XmNvalue, buf,
      XmNmaxLength, length,
      XmNtopAttachment, XmATTACH_FORM,
      XmNrightAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curW = cur->activeW;
@@ -1912,7 +1945,7 @@ char buf[127+1];
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      topForm,
      XmNcolumns, (short) length,
      XmNvalue, buf,
@@ -1921,7 +1954,7 @@ char buf[127+1];
      XmNtopWidget, curW,
      XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNrightWidget, curRW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     curW = cur->activeW;
@@ -1934,7 +1967,7 @@ char buf[127+1];
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNmarginTop, 7,
@@ -1942,7 +1975,7 @@ char buf[127+1];
    XmNtopWidget, curW,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -1959,18 +1992,18 @@ char buf[127+1];
     else
       str = XmStringCreateLocalized( label );
 
-    cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+    cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
      curTopParent,
      XmNlabelString, str,
      XmNmarginTop, 7,
      XmNtopAttachment, XmATTACH_FORM,
      XmNleftAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      curTopParent,
      XmNcolumns, (short) length,
      XmNvalue, buf,
@@ -1980,7 +2013,7 @@ char buf[127+1];
      XmNtopWidget, cur->labelW,
      XmNleftAttachment, XmATTACH_WIDGET,
      XmNleftWidget, cur->labelW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     prevW = cur->activeW;
@@ -1988,7 +2021,7 @@ char buf[127+1];
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      curTopParent,
      XmNcolumns, (short) length,
      XmNvalue, buf,
@@ -1998,7 +2031,7 @@ char buf[127+1];
      XmNtopWidget, prevW,
      XmNleftAttachment, XmATTACH_WIDGET,
      XmNleftWidget, prevW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     prevW = cur->activeW;
@@ -2044,14 +2077,14 @@ char buf[127+1];
 
     firstItem = 0;
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      topForm,
      XmNcolumns, (short) length,
      XmNvalue, buf,
      XmNmaxLength, length,
      XmNtopAttachment, XmATTACH_FORM,
      XmNrightAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curW = cur->activeW;
@@ -2060,7 +2093,7 @@ char buf[127+1];
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      topForm,
      XmNcolumns, (short) length,
      XmNvalue, buf,
@@ -2069,7 +2102,7 @@ char buf[127+1];
      XmNtopWidget, curW,
      XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNrightWidget, curRW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curW = cur->activeW;
@@ -2082,7 +2115,7 @@ char buf[127+1];
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNmarginTop, 7,
@@ -2090,7 +2123,7 @@ char buf[127+1];
    XmNtopWidget, curW,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -2107,18 +2140,18 @@ char buf[127+1];
     else
       str = XmStringCreateLocalized( label );
 
-    cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+    cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
      curTopParent,
      XmNlabelString, str,
      XmNmarginTop, 7,
      XmNtopAttachment, XmATTACH_FORM,
      XmNleftAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      curTopParent,
      XmNcolumns, (short) length,
      XmNvalue, buf,
@@ -2128,7 +2161,7 @@ char buf[127+1];
      XmNtopWidget, cur->labelW,
      XmNleftAttachment, XmATTACH_WIDGET,
      XmNleftWidget, cur->labelW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     prevW = cur->activeW;
@@ -2136,7 +2169,7 @@ char buf[127+1];
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      curTopParent,
      XmNcolumns, (short) length,
      XmNvalue, buf,
@@ -2146,7 +2179,7 @@ char buf[127+1];
      XmNtopWidget, prevW,
      XmNleftAttachment, XmATTACH_WIDGET,
      XmNleftWidget, prevW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     prevW = cur->activeW;
@@ -2193,14 +2226,14 @@ char buf[127+1];
 
     firstItem = 0;
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      topForm,
      XmNcolumns, (short) length,
      XmNvalue, buf,
      XmNmaxLength, length,
      XmNtopAttachment, XmATTACH_FORM,
      XmNrightAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curW = cur->activeW;
@@ -2209,7 +2242,7 @@ char buf[127+1];
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      topForm,
      XmNcolumns, (short) length,
      XmNvalue, buf,
@@ -2218,7 +2251,7 @@ char buf[127+1];
      XmNtopWidget, curW,
      XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNrightWidget, curRW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curW = cur->activeW;
@@ -2231,7 +2264,7 @@ char buf[127+1];
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNmarginTop, 7,
@@ -2239,7 +2272,7 @@ char buf[127+1];
    XmNtopWidget, curW,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -2256,18 +2289,18 @@ char buf[127+1];
     else
       str = XmStringCreateLocalized( label );
 
-    cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+    cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
      curTopParent,
      XmNlabelString, str,
      XmNmarginTop, 7,
      XmNtopAttachment, XmATTACH_FORM,
      XmNleftAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      curTopParent,
      XmNcolumns, (short) length,
      XmNvalue, buf,
@@ -2277,7 +2310,7 @@ char buf[127+1];
      XmNtopWidget, cur->labelW,
      XmNleftAttachment, XmATTACH_WIDGET,
      XmNleftWidget, cur->labelW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     prevW = cur->activeW;
@@ -2285,7 +2318,7 @@ char buf[127+1];
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      curTopParent,
      XmNcolumns, (short) length,
      XmNvalue, buf,
@@ -2295,7 +2328,7 @@ char buf[127+1];
      XmNtopWidget, prevW,
      XmNleftAttachment, XmATTACH_WIDGET,
      XmNleftWidget, prevW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     prevW = cur->activeW;
@@ -2337,14 +2370,14 @@ XmString str;
 
     firstItem = 0;
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      topForm,
      XmNcolumns, (short) length,
      XmNvalue, dest,
      XmNmaxLength, stringSize,
      XmNtopAttachment, XmATTACH_FORM,
      XmNrightAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curW = cur->activeW;
@@ -2353,7 +2386,7 @@ XmString str;
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      topForm,
      XmNcolumns, (short) length,
      XmNvalue, dest,
@@ -2362,7 +2395,7 @@ XmString str;
      XmNtopWidget, curW,
      XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNrightWidget, curRW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curW = cur->activeW;
@@ -2378,7 +2411,7 @@ XmString str;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNmarginTop, 7,
@@ -2386,7 +2419,7 @@ XmString str;
    XmNtopWidget, curW,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -2403,18 +2436,18 @@ XmString str;
     else
       str = XmStringCreateLocalized( label );
 
-    cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+    cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
      curTopParent,
      XmNlabelString, str,
      XmNmarginTop, 7,
      XmNtopAttachment, XmATTACH_FORM,
      XmNleftAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      curTopParent,
      XmNcolumns, (short) length,
      XmNvalue, dest,
@@ -2424,7 +2457,7 @@ XmString str;
      XmNtopWidget, cur->labelW,
      XmNleftAttachment, XmATTACH_WIDGET,
      XmNleftWidget, cur->labelW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     prevW = cur->activeW;
@@ -2432,7 +2465,7 @@ XmString str;
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      curTopParent,
      XmNcolumns, (short) length,
      XmNvalue, dest,
@@ -2442,7 +2475,7 @@ XmString str;
      XmNtopWidget, prevW,
      XmNleftAttachment, XmATTACH_WIDGET,
      XmNleftWidget, prevW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     prevW = cur->activeW;
@@ -2497,7 +2530,7 @@ Widget scrolledTextWidget = NULL;
     XtSetArg( args[n], XmNeditable, True ); n++;
     XtSetArg( args[n], XmNeditMode, XmMULTI_LINE_EDIT ); n++;
     XtSetArg( args[n], XmNcursorPositionVisible, True ); n++;
-    XtSetArg( args[n], XmNfontList, NULL ); n++;
+    //XtSetArg( args[n], XmNfontList, NULL ); n++;
     XtSetArg( args[n], XmNmaxLength, stringSize ); n++;
     XtSetArg( args[n], XmNtopAttachment, XmATTACH_FORM ); n++;
     XtSetArg( args[n], XmNrightAttachment, XmATTACH_FORM ); n++;
@@ -2505,7 +2538,7 @@ Widget scrolledTextWidget = NULL;
     XtSetArg( args[n], XmNwordWrap, False ); n++;
 
     scrolledTextWidget = cur->activeW =
-     XmCreateScrolledText( topForm, "", args, n );
+     XmCreateScrolledText( topForm, "scrolledtext", args, n );
 
     curW = cur->activeW;
     curRW = cur->activeW;
@@ -2519,7 +2552,7 @@ Widget scrolledTextWidget = NULL;
     XtSetArg( args[n], XmNeditable, True ); n++;
     XtSetArg( args[n], XmNeditMode, XmMULTI_LINE_EDIT ); n++;
     XtSetArg( args[n], XmNcursorPositionVisible, True ); n++;
-    XtSetArg( args[n], XmNfontList, NULL ); n++;
+    //XtSetArg( args[n], XmNfontList, NULL ); n++;
     XtSetArg( args[n], XmNmaxLength, stringSize ); n++;
     XtSetArg( args[n], XmNtopAttachment, XmATTACH_WIDGET ); n++;
     XtSetArg( args[n], XmNtopWidget, curW ); n++;
@@ -2529,7 +2562,7 @@ Widget scrolledTextWidget = NULL;
     XtSetArg( args[n], XmNwordWrap, False ); n++;
 
     scrolledTextWidget = cur->activeW =
-     XmCreateScrolledText( topForm, "", args, n );
+     XmCreateScrolledText( topForm, "scrolledtext", args, n );
 
     curW = cur->activeW;
     curRW = cur->activeW;
@@ -2544,7 +2577,7 @@ Widget scrolledTextWidget = NULL;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNmarginTop, 7,
@@ -2552,7 +2585,7 @@ Widget scrolledTextWidget = NULL;
    XmNtopWidget, curW,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -2569,13 +2602,13 @@ Widget scrolledTextWidget = NULL;
     else
       str = XmStringCreateLocalized( label );
 
-    cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+    cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
      curTopParent,
      XmNlabelString, str,
      XmNmarginTop, 7,
      XmNtopAttachment, XmATTACH_FORM,
      XmNleftAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
@@ -2586,7 +2619,7 @@ Widget scrolledTextWidget = NULL;
     XtSetArg( args[n], XmNeditable, True ); n++;
     XtSetArg( args[n], XmNeditMode, XmMULTI_LINE_EDIT ); n++;
     XtSetArg( args[n], XmNcursorPositionVisible, True ); n++;
-    XtSetArg( args[n], XmNfontList, NULL ); n++;
+    //XtSetArg( args[n], XmNfontList, NULL ); n++;
     XtSetArg( args[n], XmNmaxLength, stringSize ); n++;
     XtSetArg( args[n], XmNtopAttachment, XmATTACH_WIDGET ); n++;
     XtSetArg( args[n], XmNtopWidget, cur->labelW ); n++;
@@ -2596,7 +2629,7 @@ Widget scrolledTextWidget = NULL;
     XtSetArg( args[n], XmNvalue, dest ); n++;
     XtSetArg( args[n], XmNwordWrap, False ); n++;
 
-    cur->activeW = XmCreateScrolledText( curTopParent, "", args, n );
+    cur->activeW = XmCreateScrolledText( curTopParent, "scrolledtext", args, n );
 
     prevW = cur->activeW;
 
@@ -2609,7 +2642,7 @@ Widget scrolledTextWidget = NULL;
     XtSetArg( args[n], XmNeditable, True ); n++;
     XtSetArg( args[n], XmNeditMode, XmMULTI_LINE_EDIT ); n++;
     XtSetArg( args[n], XmNcursorPositionVisible, True ); n++;
-    XtSetArg( args[n], XmNfontList, NULL ); n++;
+    //XtSetArg( args[n], XmNfontList, NULL ); n++;
     XtSetArg( args[n], XmNmaxLength, stringSize ); n++;
     XtSetArg( args[n], XmNtopAttachment, XmATTACH_WIDGET ); n++;
     XtSetArg( args[n], XmNtopWidget, prevW ); n++;
@@ -2619,7 +2652,7 @@ Widget scrolledTextWidget = NULL;
     XtSetArg( args[n], XmNvalue, dest ); n++;
     XtSetArg( args[n], XmNwordWrap, False ); n++;
 
-    cur->activeW = XmCreateScrolledText( curTopParent, "", args, n );
+    cur->activeW = XmCreateScrolledText( curTopParent, "scrolledtext", args, n );
 
     prevW = cur->activeW;
 
@@ -2665,14 +2698,14 @@ XmString str;
 
     firstItem = 0;
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      topForm,
      XmNcolumns, (short) length,
      XmNvalue, dest,
      XmNmaxLength, stringSize,
      XmNtopAttachment, XmATTACH_FORM,
      XmNrightAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      XmNverifyBell, False,
      NULL );
 
@@ -2682,7 +2715,7 @@ XmString str;
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      topForm,
      XmNcolumns, (short) length,
      XmNvalue, dest,
@@ -2691,7 +2724,7 @@ XmString str;
      XmNtopWidget, curW,
      XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNrightWidget, curRW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      XmNverifyBell, False,
      NULL );
 
@@ -2708,7 +2741,7 @@ XmString str;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNmarginTop, 7,
@@ -2716,7 +2749,7 @@ XmString str;
    XmNtopWidget, curW,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -2733,18 +2766,18 @@ XmString str;
     else
       str = XmStringCreateLocalized( label );
 
-    cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+    cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
      curTopParent,
      XmNlabelString, str,
      XmNmarginTop, 7,
      XmNtopAttachment, XmATTACH_FORM,
      XmNleftAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      curTopParent,
      XmNcolumns, (short) length,
      XmNvalue, dest,
@@ -2754,7 +2787,7 @@ XmString str;
      XmNtopWidget, cur->labelW,
      XmNleftAttachment, XmATTACH_WIDGET,
      XmNleftWidget, cur->labelW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      XmNverifyBell, False,
      NULL );
 
@@ -2763,7 +2796,7 @@ XmString str;
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      curTopParent,
      XmNcolumns, (short) length,
      XmNvalue, dest,
@@ -2773,7 +2806,7 @@ XmString str;
      XmNtopWidget, prevW,
      XmNleftAttachment, XmATTACH_WIDGET,
      XmNleftWidget, prevW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      XmNverifyBell, False,
      NULL );
 
@@ -2819,14 +2852,14 @@ XmString str;
 
     firstItem = 0;
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      topForm,
      XmNcolumns, (short) length,
      XmNvalue, "<LOCKED>",
      XmNmaxLength, stringSize,
      XmNtopAttachment, XmATTACH_FORM,
      XmNrightAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      XmNeditable, False,
      XmNcursorPositionVisible, False,
      NULL );
@@ -2837,7 +2870,7 @@ XmString str;
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      topForm,
      XmNcolumns, (short) length,
      XmNvalue, "<LOCKED>",
@@ -2846,7 +2879,7 @@ XmString str;
      XmNtopWidget, curW,
      XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNrightWidget, curRW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      XmNeditable, False,
      XmNcursorPositionVisible, False,
      NULL );
@@ -2864,7 +2897,7 @@ XmString str;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNmarginTop, 7,
@@ -2872,7 +2905,7 @@ XmString str;
    XmNtopWidget, curW,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -2889,18 +2922,18 @@ XmString str;
     else
       str = XmStringCreateLocalized( label );
 
-    cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+    cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
      curTopParent,
      XmNlabelString, str,
      XmNmarginTop, 7,
      XmNtopAttachment, XmATTACH_FORM,
      XmNleftAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      curTopParent,
      XmNcolumns, (short) length,
      XmNvalue, "<LOCKED>",
@@ -2910,7 +2943,7 @@ XmString str;
      XmNtopWidget, cur->labelW,
      XmNleftAttachment, XmATTACH_WIDGET,
      XmNleftWidget, cur->labelW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      XmNeditable, False,
      XmNcursorPositionVisible, False,
      NULL );
@@ -2920,7 +2953,7 @@ XmString str;
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      curTopParent,
      XmNcolumns, (short) length,
      XmNvalue, "<LOCKED>",
@@ -2930,7 +2963,7 @@ XmString str;
      XmNtopWidget, prevW,
      XmNleftAttachment, XmATTACH_WIDGET,
      XmNleftWidget, prevW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      XmNeditable, False,
      XmNcursorPositionVisible, False,
      NULL );
@@ -3145,7 +3178,7 @@ colorButtonEntry *cur;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -3153,7 +3186,7 @@ colorButtonEntry *cur;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
    XmNmarginTop, 7,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -3264,7 +3297,7 @@ colorButtonEntry *cur;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    curTopParent,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -3272,7 +3305,7 @@ colorButtonEntry *cur;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, prevW,
    XmNmarginTop, 7,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   prevW = cur->labelW;
@@ -3364,7 +3397,7 @@ colorButtonEntry *cur;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -3372,7 +3405,7 @@ colorButtonEntry *cur;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
    XmNmarginTop, 7,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -3389,13 +3422,13 @@ colorButtonEntry *cur;
     else
       str = XmStringCreateLocalized( label );
 
-    cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+    cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
      curTopParent,
      XmNlabelString, str,
      XmNmarginTop, 7,
      XmNtopAttachment, XmATTACH_FORM,
      XmNleftAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
@@ -3495,7 +3528,7 @@ textEntry *te;
     XtSetArg( tArgs[tN], XmNhighlightThickness, 0 ); tN++;
     XtSetArg( tArgs[tN], XmNcolumns, (short) numCols ); tN++;
     XtSetArg( tArgs[tN], XmNpendingDelete, True ); tN++;
-    XtSetArg( tArgs[tN], XmNfontList, entryFontList ); tN++;
+    //XtSetArg( tArgs[tN], XmNfontList, entryFontList ); tN++;
 
     if ( pvName )
       cb->createWithText( topForm, dest, ci, pvName, fArgs, fN, bArgs, bN,
@@ -3538,7 +3571,7 @@ textEntry *te;
     XtSetArg( tArgs[tN], XmNvalue, cb->getPv() ); tN++;
     XtSetArg( tArgs[tN], XmNmaxLength, (short) cb->PvSize() ); tN++;
     XtSetArg( tArgs[tN], XmNpendingDelete, True ); tN++;
-    XtSetArg( tArgs[tN], XmNfontList, entryFontList ); tN++;
+    //XtSetArg( tArgs[tN], XmNfontList, entryFontList ); tN++;
 
     if ( pvName )
       cb->createWithText( topForm, dest, ci, pvName, fArgs, fN, bArgs, bN,
@@ -3568,7 +3601,7 @@ textEntry *te;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -3576,7 +3609,7 @@ textEntry *te;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
    XmNmarginTop, 7,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -3645,7 +3678,7 @@ textEntry *te;
     XtSetArg( tArgs[tN], XmNhighlightThickness, 0 ); tN++;
     XtSetArg( tArgs[tN], XmNcolumns, (short) numCols ); tN++;
     XtSetArg( tArgs[tN], XmNpendingDelete, True ); tN++;
-    XtSetArg( tArgs[tN], XmNfontList, entryFontList ); tN++;
+    //XtSetArg( tArgs[tN], XmNfontList, entryFontList ); tN++;
 
     cb->createWithRule( topForm, dest, ci, pvName, fArgs, fN, bArgs, bN,
      nbArgs, nbN, tArgs, tN );
@@ -3706,7 +3739,7 @@ textEntry *te;
     XtSetArg( tArgs[tN], XmNvalue, cb->getPv() ); tN++;
     XtSetArg( tArgs[tN], XmNmaxLength, (short) cb->PvSize() ); tN++;
     XtSetArg( tArgs[tN], XmNpendingDelete, True ); tN++;
-    XtSetArg( tArgs[tN], XmNfontList, entryFontList ); tN++;
+    //XtSetArg( tArgs[tN], XmNfontList, entryFontList ); tN++;
 
     cb->createWithRule( topForm, dest, ci, pvName, fArgs, fN, bArgs, bN,
      nbArgs, nbN, tArgs, tN );
@@ -3737,7 +3770,7 @@ textEntry *te;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -3745,7 +3778,7 @@ textEntry *te;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
    XmNmarginTop, 7,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -3777,7 +3810,7 @@ widgetListPtr curpb;
 
   cur = new optionEntry;
 
-  cur->pd = XmCreatePulldownMenu( curTopParent, "", NULL, 0 );
+  cur->pd = XmCreatePulldownMenu( curTopParent, "pulldown", NULL, 0 );
 
   buf = new char[strlen(options)+1];
   strcpy( buf, options );
@@ -3803,10 +3836,10 @@ widgetListPtr curpb;
     else
       str = XmStringCreateLocalized( tk );
 
-    curpb->w = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+    curpb->w = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      cur->pd,
      XmNlabelString, str,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
@@ -3840,7 +3873,7 @@ widgetListPtr curpb;
     XtSetArg( args[n], XmNmenuHistory, (XtArgVal) curHistoryWidget ); n++;
     XtSetArg( args[n], XmNtopAttachment, (XtArgVal) XmATTACH_FORM ); n++;
     XtSetArg( args[n], XmNrightAttachment, (XtArgVal) XmATTACH_FORM ); n++;
-    cur->activeW = XmCreateOptionMenu( topForm, "", args, n );
+    cur->activeW = XmCreateOptionMenu( topForm, "menu", args, n );
 
     curW = cur->activeW;
     curRW = cur->activeW;
@@ -3858,7 +3891,7 @@ widgetListPtr curpb;
      (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
     XtSetArg( args[n], XmNleftWidget, (XtArgVal) curRW ); n++;
 
-    cur->activeW = XmCreateOptionMenu( topForm, "", args, n );
+    cur->activeW = XmCreateOptionMenu( topForm, "menu", args, n );
 
     curW = cur->activeW;
 
@@ -3873,7 +3906,7 @@ widgetListPtr curpb;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -3881,7 +3914,7 @@ widgetListPtr curpb;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
    XmNmarginTop, 7,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -3898,13 +3931,13 @@ widgetListPtr curpb;
     else
       str = XmStringCreateLocalized( label );
 
-    cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+    cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
      curTopParent,
      XmNlabelString, str,
      XmNmarginTop, 7,
      XmNtopAttachment, XmATTACH_FORM,
      XmNleftAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
@@ -3918,7 +3951,7 @@ widgetListPtr curpb;
     XtSetArg( args[n], XmNtopWidget, cur->labelW ); n++;
     XtSetArg( args[n], XmNleftAttachment, XmATTACH_WIDGET ); n++;
     XtSetArg( args[n], XmNleftWidget, cur->labelW ); n++;
-    cur->activeW = XmCreateOptionMenu( curTopParent, "", args, n );
+    cur->activeW = XmCreateOptionMenu( curTopParent, "menu", args, n );
 
     prevW = cur->activeW;
 
@@ -3934,7 +3967,7 @@ widgetListPtr curpb;
     XtSetArg( args[n], XmNtopWidget, prevW ); n++;
     XtSetArg( args[n], XmNleftAttachment, XmATTACH_WIDGET ); n++;
     XtSetArg( args[n], XmNleftWidget, prevW ); n++;
-    cur->activeW = XmCreateOptionMenu( curTopParent, "", args, n );
+    cur->activeW = XmCreateOptionMenu( curTopParent, "menu", args, n );
 
     prevW = cur->activeW;
 
@@ -3970,7 +4003,7 @@ widgetListPtr curpb;
 
   cur = new optionEntry;
 
-  cur->pd = XmCreatePulldownMenu( curTopParent, "", NULL, 0 );
+  cur->pd = XmCreatePulldownMenu( curTopParent, "pulldown", NULL, 0 );
 
   buf = new char[strlen(options)+1];
   strcpy( buf, options );
@@ -3996,10 +4029,10 @@ widgetListPtr curpb;
     else
       str = XmStringCreateLocalized( tk );
 
-    curpb->w = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+    curpb->w = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      cur->pd,
      XmNlabelString, str,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
@@ -4036,7 +4069,7 @@ widgetListPtr curpb;
     XtSetArg( args[n], XmNmenuHistory, (XtArgVal) curHistoryWidget ); n++;
     XtSetArg( args[n], XmNtopAttachment, (XtArgVal) XmATTACH_FORM ); n++;
     XtSetArg( args[n], XmNrightAttachment, (XtArgVal) XmATTACH_FORM ); n++;
-    cur->activeW = XmCreateOptionMenu( curTopParent, "", args, n );
+    cur->activeW = XmCreateOptionMenu( curTopParent, "menu", args, n );
 
     curW = cur->activeW;
     curRW = cur->activeW;
@@ -4053,7 +4086,7 @@ widgetListPtr curpb;
     XtSetArg( args[n], XmNleftAttachment,
      (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
     XtSetArg( args[n], XmNleftWidget, (XtArgVal) curRW ); n++;
-    cur->activeW = XmCreateOptionMenu( curTopParent, "", args, n );
+    cur->activeW = XmCreateOptionMenu( curTopParent, "menu", args, n );
 
     curW = cur->activeW;
 
@@ -4068,7 +4101,7 @@ widgetListPtr curpb;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    curTopParent,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -4076,7 +4109,7 @@ widgetListPtr curpb;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
    XmNmarginTop, 7,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -4093,13 +4126,13 @@ widgetListPtr curpb;
     else
       str = XmStringCreateLocalized( label );
 
-    cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+    cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
      curTopParent,
      XmNlabelString, str,
      XmNmarginTop, 7,
      XmNtopAttachment, XmATTACH_FORM,
      XmNleftAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
@@ -4113,7 +4146,7 @@ widgetListPtr curpb;
     XtSetArg( args[n], XmNtopWidget, cur->labelW ); n++;
     XtSetArg( args[n], XmNleftAttachment, XmATTACH_WIDGET ); n++;
     XtSetArg( args[n], XmNleftWidget, cur->labelW ); n++;
-    cur->activeW = XmCreateOptionMenu( curTopParent, "", args, n );
+    cur->activeW = XmCreateOptionMenu( curTopParent, "menu", args, n );
 
     prevW = cur->activeW;
 
@@ -4129,7 +4162,7 @@ widgetListPtr curpb;
     XtSetArg( args[n], XmNtopWidget, prevW ); n++;
     XtSetArg( args[n], XmNleftAttachment, XmATTACH_WIDGET ); n++;
     XtSetArg( args[n], XmNleftWidget, prevW ); n++;
-    cur->activeW = XmCreateOptionMenu( curTopParent, "", args, n );
+    cur->activeW = XmCreateOptionMenu( curTopParent, "menu", args, n );
 
     prevW = cur->activeW;
 
@@ -4168,7 +4201,7 @@ widgetListPtr curpb;
   cur = new optionEntry;
   *obj = cur;
 
-  cur->pd = XmCreatePulldownMenu( arrayForm, "", NULL, 0 );
+  cur->pd = XmCreatePulldownMenu( arrayForm, "pulldown", NULL, 0 );
 
   buf = new char[strlen(options)+1];
   strcpy( buf, options );
@@ -4194,10 +4227,10 @@ widgetListPtr curpb;
     else
       str = XmStringCreateLocalized( tk );
 
-    curpb->w = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+    curpb->w = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      cur->pd,
      XmNlabelString, str,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
@@ -4235,7 +4268,7 @@ widgetListPtr curpb;
     XtSetArg( args[n], XmNmenuHistory, (XtArgVal) curHistoryWidget ); n++;
     XtSetArg( args[n], XmNtopAttachment, (XtArgVal) XmATTACH_FORM ); n++;
     XtSetArg( args[n], XmNrightAttachment, (XtArgVal) XmATTACH_FORM ); n++;
-    cur->activeW = XmCreateOptionMenu( arrayForm, "", args, n );
+    cur->activeW = XmCreateOptionMenu( arrayForm, "menu", args, n );
 
     curArrayW = cur->activeW;
     curArrayRW = cur->activeW;
@@ -4252,7 +4285,7 @@ widgetListPtr curpb;
     XtSetArg( args[n], XmNleftAttachment,
      (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
     XtSetArg( args[n], XmNleftWidget, (XtArgVal) curArrayRW ); n++;
-    cur->activeW = XmCreateOptionMenu( arrayForm, "", args, n );
+    cur->activeW = XmCreateOptionMenu( arrayForm, "menu", args, n );
 
     curArrayW = cur->activeW;
 
@@ -4267,7 +4300,7 @@ widgetListPtr curpb;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    arrayForm,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -4275,7 +4308,7 @@ widgetListPtr curpb;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curArrayW,
    XmNmarginTop, 7,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -4309,7 +4342,7 @@ widgetListPtr curpb;
   cur = new optionEntry;
   *obj = cur;
 
-  cur->pd = XmCreatePulldownMenu( arrayForm, "", NULL, 0 );
+  cur->pd = XmCreatePulldownMenu( arrayForm, "pulldown", NULL, 0 );
 
   buf = new char[strlen(options)+1];
   strcpy( buf, options );
@@ -4335,10 +4368,10 @@ widgetListPtr curpb;
     else
       str = XmStringCreateLocalized( tk );
 
-    curpb->w = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+    curpb->w = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      cur->pd,
      XmNlabelString, str,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
@@ -4378,7 +4411,7 @@ widgetListPtr curpb;
     XtSetArg( args[n], XmNmenuHistory, (XtArgVal) curHistoryWidget ); n++;
     XtSetArg( args[n], XmNtopAttachment, (XtArgVal) XmATTACH_FORM ); n++;
     XtSetArg( args[n], XmNrightAttachment, (XtArgVal) XmATTACH_FORM ); n++;
-    cur->activeW = XmCreateOptionMenu( arrayForm, "", args, n );
+    cur->activeW = XmCreateOptionMenu( arrayForm, "menu", args, n );
 
     curArrayW = cur->activeW;
     curArrayRW = cur->activeW;
@@ -4395,7 +4428,7 @@ widgetListPtr curpb;
     XtSetArg( args[n], XmNleftAttachment,
      (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
     XtSetArg( args[n], XmNleftWidget, (XtArgVal) curArrayRW ); n++;
-    cur->activeW = XmCreateOptionMenu( arrayForm, "", args, n );
+    cur->activeW = XmCreateOptionMenu( arrayForm, "menu", args, n );
 
     curArrayW = cur->activeW;
 
@@ -4410,7 +4443,7 @@ widgetListPtr curpb;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    arrayForm,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -4418,7 +4451,7 @@ widgetListPtr curpb;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curArrayW,
    XmNmarginTop, 7,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -4507,13 +4540,13 @@ int n;
 
     firstItem = 0;
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmToggleButtonWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "toggle", xmToggleButtonWidgetClass,
      curTopParent,
      XmNnavigationType, XmTAB_GROUP,
      XmNtopAttachment, XmATTACH_FORM,
      XmNleftAttachment, XmATTACH_FORM,
      XmNlabelString, str,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      XmNindicatorOn, XmINDICATOR_CROSS_BOX,
      NULL );
 
@@ -4523,7 +4556,7 @@ int n;
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmToggleButtonWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "toggle", xmToggleButtonWidgetClass,
      curTopParent,
      XmNnavigationType, XmTAB_GROUP,
      XmNtopAttachment, XmATTACH_WIDGET,
@@ -4531,7 +4564,7 @@ int n;
      XmNleftAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNleftWidget, curRW,
      XmNlabelString, str,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      XmNindicatorOn, XmINDICATOR_CROSS_BOX,
      NULL );
 
@@ -4548,18 +4581,18 @@ int n;
 
     firstSubFormChild = 0;
 
-    cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+    cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
      curTopParent,
      XmNlabelString, str,
      XmNmarginTop, 7,
      XmNtopAttachment, XmATTACH_FORM,
      XmNleftAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmToggleButtonWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "toggle", xmToggleButtonWidgetClass,
      curTopParent,
      XmNnavigationType, XmTAB_GROUP,
      XmNmarginTop, 7,
@@ -4568,7 +4601,7 @@ int n;
      XmNleftAttachment, XmATTACH_WIDGET,
      XmNleftWidget, cur->labelW,
      XmNlabelString, str,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      XmNindicatorOn, XmINDICATOR_CROSS_BOX,
      NULL );
 
@@ -4577,7 +4610,7 @@ int n;
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmToggleButtonWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "toggle", xmToggleButtonWidgetClass,
      curTopParent,
      XmNnavigationType, XmTAB_GROUP,
      XmNmarginTop, 7,
@@ -4586,7 +4619,7 @@ int n;
      XmNleftAttachment, XmATTACH_WIDGET,
      XmNleftWidget, prevW,
      XmNlabelString, str,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      XmNindicatorOn, XmINDICATOR_CROSS_BOX,
      NULL );
 
@@ -4643,7 +4676,7 @@ int n;
 
     firstItem = 0;
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmToggleButtonWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "toggle", xmToggleButtonWidgetClass,
      topForm,
      XmNnavigationType, XmTAB_GROUP,
      XmNtopAttachment, XmATTACH_FORM,
@@ -4657,7 +4690,7 @@ int n;
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmToggleButtonWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "toggle", xmToggleButtonWidgetClass,
      topForm,
      XmNnavigationType, XmTAB_GROUP,
      XmNtopAttachment, XmATTACH_WIDGET,
@@ -4693,7 +4726,7 @@ int n;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNmarginTop, 7,
@@ -4701,7 +4734,7 @@ int n;
    XmNtopWidget, curW,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -4749,13 +4782,13 @@ Widget *children;
   else
     str = XmStringCreateLocalized( "Cancel" );
 
-  pb_cancel = XtVaCreateManagedWidget( "", xmPushButtonGadgetClass, bottomForm,
+  pb_cancel = XtVaCreateManagedWidget( "pb", xmPushButtonGadgetClass, bottomForm,
    XmNtopAttachment, XmATTACH_FORM,
    XmNbottomAttachment, XmATTACH_FORM,
    XmNrightAttachment, XmATTACH_FORM,
    XmNdefaultButtonShadowThickness, 1,
    XmNlabelString, str,
-   XmNfontList, actionFontList,
+   //XmNfontList, actionFontList,
    NULL );
 
   XmStringFree( str );
@@ -4779,7 +4812,7 @@ Widget *children;
   else
     str = XmStringCreateLocalized( "Apply" );
 
-  pb_apply = XtVaCreateManagedWidget( "", xmPushButtonGadgetClass,  bottomForm,
+  pb_apply = XtVaCreateManagedWidget( "pb", xmPushButtonGadgetClass,  bottomForm,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
    XmNtopWidget, pb_cancel,
    XmNbottomAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -4788,7 +4821,7 @@ Widget *children;
    XmNrightWidget, pb_cancel,
    XmNdefaultButtonShadowThickness, 1,
    XmNlabelString, str,
-   XmNfontList, actionFontList,
+   //XmNfontList, actionFontList,
    NULL );
 
   XmStringFree( str );
@@ -4802,7 +4835,7 @@ Widget *children;
   else
     str = XmStringCreateLocalized( "OK" );
 
-  pb_ok = XtVaCreateManagedWidget( "", xmPushButtonGadgetClass, bottomForm,
+  pb_ok = XtVaCreateManagedWidget( "pb", xmPushButtonGadgetClass, bottomForm,
    XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
    XmNtopWidget, pb_apply,
    XmNbottomAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -4813,7 +4846,7 @@ Widget *children;
    XmNshowAsDefault, True,
    XmNdefaultButtonShadowThickness, 1,
    XmNlabelString, str,
-   XmNfontList, actionFontList,
+   //XmNfontList, actionFontList,
    NULL );
 
   XmStringFree( str );
@@ -4867,14 +4900,14 @@ Widget *children;
   else
     str = XmStringCreateLocalized( "Close" );
 
-  pb_ok = XtVaCreateManagedWidget( "", xmPushButtonGadgetClass, bottomForm,
+  pb_ok = XtVaCreateManagedWidget( "pb", xmPushButtonGadgetClass, bottomForm,
    XmNtopAttachment, XmATTACH_FORM,
    XmNbottomAttachment, XmATTACH_FORM,
    XmNrightAttachment, XmATTACH_FORM,
    XmNshowAsDefault, True,
    XmNdefaultButtonShadowThickness, 1,
    XmNlabelString, str,
-   XmNfontList, actionFontList,
+   //XmNfontList, actionFontList,
    NULL );
 
   XmStringFree( str );
@@ -4919,6 +4952,8 @@ int entryFormClass::popup ( void ) {
 Arg args[5];
 int n;
 short paneW = 0, paneH = 0;
+XTextProperty xtext;
+char *pTitle;
 
  if ( ( *x != 0 ) ) {
    n = 0;
@@ -4956,6 +4991,12 @@ short paneW = 0, paneH = 0;
    entryFormEventHandler, (XtPointer) this );
 
   XtPopup( shell, XtGrabNone );
+
+  pTitle = title;
+  XStringListToTextProperty( &pTitle, 1, &xtext );
+  XSetWMName( display, XtWindow(shell), &xtext );
+  XSetWMIconName( display, XtWindow(shell), &xtext );
+  XFree( xtext.value );
 
   isPoppedUp = 1;
 
@@ -5009,14 +5050,14 @@ XmString str;
 
     firstArrayItem = 0;
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      arrayForm,
      XmNcolumns, (short) length,
      XmNvalue, dest[0],
      XmNmaxLength, length,
      XmNtopAttachment, XmATTACH_FORM,
      XmNrightAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curArrayW = cur->activeW;
@@ -5025,7 +5066,7 @@ XmString str;
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      arrayForm,
      XmNcolumns, (short) length,
      XmNvalue, dest[0],
@@ -5034,7 +5075,7 @@ XmString str;
      XmNtopWidget, curArrayW,
      XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNrightWidget, curArrayRW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curArrayW = cur->activeW;
@@ -5054,7 +5095,7 @@ XmString str;
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    arrayForm,
    XmNlabelString, str,
    XmNmarginTop, 7,
@@ -5062,7 +5103,7 @@ XmString str;
    XmNtopWidget, curArrayW,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curArrayW,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -5101,14 +5142,14 @@ char buf[127+1];
 
     firstArrayItem = 0;
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      arrayForm,
      XmNcolumns, (short) length,
      XmNvalue, buf,
      XmNmaxLength, length,
      XmNtopAttachment, XmATTACH_FORM,
      XmNrightAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curArrayW = cur->activeW;
@@ -5117,7 +5158,7 @@ char buf[127+1];
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      arrayForm,
      XmNcolumns, (short) length,
      XmNvalue, buf,
@@ -5126,7 +5167,7 @@ char buf[127+1];
      XmNtopWidget, curArrayW,
      XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNrightWidget, curArrayRW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curArrayW = cur->activeW;
@@ -5146,7 +5187,7 @@ char buf[127+1];
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    arrayForm,
    XmNlabelString, str,
    XmNmarginTop, 7,
@@ -5154,7 +5195,7 @@ char buf[127+1];
    XmNtopWidget, curArrayW,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curArrayW,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -5195,14 +5236,14 @@ char buf[127+1];
 
     firstArrayItem = 0;
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      arrayForm,
      XmNcolumns, (short) length,
      XmNvalue, buf,
      XmNmaxLength, length,
      XmNtopAttachment, XmATTACH_FORM,
      XmNrightAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curArrayW = cur->activeW;
@@ -5211,7 +5252,7 @@ char buf[127+1];
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      arrayForm,
      XmNcolumns, (short) length,
      XmNvalue, buf,
@@ -5220,7 +5261,7 @@ char buf[127+1];
      XmNtopWidget, curArrayW,
      XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNrightWidget, curArrayRW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curArrayW = cur->activeW;
@@ -5240,7 +5281,7 @@ char buf[127+1];
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    arrayForm,
    XmNlabelString, str,
    XmNmarginTop, 7,
@@ -5248,7 +5289,7 @@ char buf[127+1];
    XmNtopWidget, curArrayW,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curArrayW,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -5286,14 +5327,14 @@ char buf[127+1];
 
     firstArrayItem = 0;
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      arrayForm,
      XmNcolumns, (short) length,
      XmNvalue, buf,
      XmNmaxLength, length,
      XmNtopAttachment, XmATTACH_FORM,
      XmNrightAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curArrayW = cur->activeW;
@@ -5302,7 +5343,7 @@ char buf[127+1];
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      arrayForm,
      XmNcolumns, (short) length,
      XmNvalue, buf,
@@ -5311,7 +5352,7 @@ char buf[127+1];
      XmNtopWidget, curArrayW,
      XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNrightWidget, curArrayRW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curArrayW = cur->activeW;
@@ -5331,7 +5372,7 @@ char buf[127+1];
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    arrayForm,
    XmNlabelString, str,
    XmNmarginTop, 7,
@@ -5339,7 +5380,7 @@ char buf[127+1];
    XmNtopWidget, curArrayW,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curArrayW,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -5378,14 +5419,14 @@ char buf[127+1];
 
     firstArrayItem = 0;
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      arrayForm,
      XmNcolumns, (short) length,
      XmNvalue, buf,
      XmNmaxLength, length,
      XmNtopAttachment, XmATTACH_FORM,
      XmNrightAttachment, XmATTACH_FORM,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curArrayW = cur->activeW;
@@ -5394,7 +5435,7 @@ char buf[127+1];
   }
   else {
 
-    cur->activeW =  XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
      arrayForm,
      XmNcolumns, (short) length,
      XmNvalue, buf,
@@ -5403,7 +5444,7 @@ char buf[127+1];
      XmNtopWidget, curArrayW,
      XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
      XmNrightWidget, curArrayRW,
-     XmNfontList, entryFontList,
+     //XmNfontList, entryFontList,
      NULL );
 
      curArrayW = cur->activeW;
@@ -5423,7 +5464,7 @@ char buf[127+1];
   else
     str = XmStringCreateLocalized( label );
 
-  cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
    arrayForm,
    XmNlabelString, str,
    XmNmarginTop, 7,
@@ -5431,7 +5472,7 @@ char buf[127+1];
    XmNtopWidget, curArrayW,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curArrayW,
-   XmNfontList, entryFontList,
+   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -5459,7 +5500,7 @@ textEntry *cur;
 
       firstItem = 0;
 
-      cur->labelW = XtVaCreateManagedWidget( "", xmSeparatorWidgetClass,
+      cur->labelW = XtVaCreateManagedWidget( "sep", xmSeparatorWidgetClass,
        topForm,
        XmNmarginTop, 7,
        XmNtopAttachment, XmATTACH_FORM,
@@ -5473,7 +5514,7 @@ textEntry *cur;
     }
     else {
 
-      cur->labelW = XtVaCreateManagedWidget( "", xmSeparatorWidgetClass,
+      cur->labelW = XtVaCreateManagedWidget( "sep", xmSeparatorWidgetClass,
        topForm,
        XmNmarginTop, 7,
        XmNtopAttachment, XmATTACH_WIDGET,
@@ -5493,7 +5534,7 @@ textEntry *cur;
 
       firstSubFormChild = 0;
 
-      cur->labelW = XtVaCreateManagedWidget( "", xmSeparatorWidgetClass,
+      cur->labelW = XtVaCreateManagedWidget( "sep", xmSeparatorWidgetClass,
        curTopParent,
        XmNmarginTop, 7,
        XmNmarginBottom, 7,
@@ -5508,7 +5549,7 @@ textEntry *cur;
     }
     else {
 
-      cur->labelW = XtVaCreateManagedWidget( "", xmSeparatorWidgetClass,
+      cur->labelW = XtVaCreateManagedWidget( "sep", xmSeparatorWidgetClass,
        curTopParent,
        XmNmarginTop, 7,
        XmNmarginBottom, 7,
@@ -5557,13 +5598,13 @@ XmString str;
       else
         str = XmStringCreateLocalized( label );
 
-      cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+      cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
        topForm,
        XmNlabelString, str,
        XmNmarginTop, 7,
        XmNtopAttachment, XmATTACH_FORM,
        XmNleftAttachment, XmATTACH_FORM,
-       XmNfontList, entryFontList,
+       //XmNfontList, entryFontList,
        NULL );
 
       XmStringFree( str );
@@ -5579,7 +5620,7 @@ XmString str;
       else
         str = XmStringCreateLocalized( label );
 
-      cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+      cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
        topForm,
        XmNlabelString, str,
        XmNmarginTop, 7,
@@ -5587,7 +5628,7 @@ XmString str;
        XmNtopWidget, curW,
        XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
        XmNrightWidget, curW,
-       XmNfontList, entryFontList,
+       //XmNfontList, entryFontList,
        NULL );
 
       XmStringFree( str );
@@ -5608,13 +5649,13 @@ XmString str;
       else
         str = XmStringCreateLocalized( label );
 
-      cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+      cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
        curTopParent,
        XmNlabelString, str,
        XmNmarginTop, 7,
        XmNtopAttachment, XmATTACH_FORM,
        XmNleftAttachment, XmATTACH_FORM,
-       XmNfontList, entryFontList,
+       //XmNfontList, entryFontList,
        NULL );
 
       XmStringFree( str );
@@ -5629,7 +5670,7 @@ XmString str;
       else
         str = XmStringCreateLocalized( label );
 
-      cur->labelW = XtVaCreateManagedWidget( "", xmLabelWidgetClass,
+      cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
        curTopParent,
        XmNlabelString, str,
        XmNmarginTop, 7,
@@ -5637,7 +5678,7 @@ XmString str;
        XmNtopWidget, prevW,
        XmNleftAttachment, XmATTACH_WIDGET,
        XmNleftWidget, prevW,
-       XmNfontList, entryFontList,
+       //XmNfontList, entryFontList,
        NULL );
 
       XmStringFree( str );
@@ -5670,7 +5711,7 @@ int entryFormClass::beginSubForm ( void ) {
 
     firstItem = 0;
 
-    *subForm = XtVaCreateWidget( "", xmFormWidgetClass, topForm,
+    *subForm = XtVaCreateWidget( "subform", xmFormWidgetClass, topForm,
      XmNtopAttachment, XmATTACH_FORM,
      XmNleftAttachment, XmATTACH_FORM,
      NULL );
@@ -5680,7 +5721,7 @@ int entryFormClass::beginSubForm ( void ) {
   }
   else {
 
-    *subForm = XtVaCreateWidget( "", xmFormWidgetClass, topForm,
+    *subForm = XtVaCreateWidget( "subform", xmFormWidgetClass, topForm,
      XmNtopAttachment, XmATTACH_WIDGET,
      XmNtopWidget, curW,
      XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
@@ -5692,7 +5733,7 @@ int entryFormClass::beginSubForm ( void ) {
   }
 
   XtAddEventHandler( *subForm,
-   KeyPressMask|ButtonPressMask, False,
+   KeyPressMask|ButtonPressMask|ButtonReleaseMask, False,
    efEventHandler, (XtPointer) this );
 
   curTopParent = *subForm;
@@ -5711,7 +5752,7 @@ int entryFormClass::beginLeftSubForm ( void ) {
 
     firstItem = 0;
 
-    *subForm = XtVaCreateWidget( "", xmFormWidgetClass, topForm,
+    *subForm = XtVaCreateWidget( "subform", xmFormWidgetClass, topForm,
      XmNtopAttachment, XmATTACH_FORM,
      XmNleftAttachment, XmATTACH_FORM,
      NULL );
@@ -5721,7 +5762,7 @@ int entryFormClass::beginLeftSubForm ( void ) {
   }
   else {
 
-    *subForm = XtVaCreateWidget( "", xmFormWidgetClass, topForm,
+    *subForm = XtVaCreateWidget( "subform", xmFormWidgetClass, topForm,
      XmNtopAttachment, XmATTACH_WIDGET,
      XmNtopWidget, curW,
      XmNleftAttachment, XmATTACH_FORM,
@@ -5732,7 +5773,7 @@ int entryFormClass::beginLeftSubForm ( void ) {
   }
 
   XtAddEventHandler( *subForm,
-   KeyPressMask|ButtonPressMask, False,
+   KeyPressMask|ButtonPressMask|ButtonReleaseMask, False,
    efEventHandler, (XtPointer) this );
 
   curTopParent = *subForm;
