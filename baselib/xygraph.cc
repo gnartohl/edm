@@ -123,59 +123,97 @@ double dxValue, minValue;
 
   xyo->kpXMinEfDouble.setNull(1);
 
-  // find min x value
+  if ( xyo->xAxisSource == XYGC_K_USER_SPECIFIED ) {
 
-  minValue = 0;
-  first = 1;
-  for ( i=0; i<xyo->numTraces; i++ ) {
+    minValue = xyo->xMin.value();
 
-    ii = xyo->arrayHead[i];
-    while ( ii != xyo->arrayTail[i] ) {
+    if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = log10( minValue );
+    }
+    else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = log10( minValue );
+    }
 
-      switch ( xyo->xPvType[i] ) {
-      case DBR_FLOAT:
-        dxValue = (double) ( (float *) xyo->xPvData[i] )[ii];
-        break;
-      case DBR_DOUBLE: 
-        dxValue = ( (double *) xyo->xPvData[i] )[ii];
-        break;
-      case DBR_SHORT:
-        dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
-        break;
-      case DBR_CHAR:
-        dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
-        break;
-      case DBR_LONG:
-        dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
-        break;
-      case DBR_ENUM:
-        dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
-        break;
-      default:
-        dxValue = ( (double *) xyo->xPvData[i] )[ii];
-        break;
+  }
+  else if ( xyo->xAxisSource == XYGC_K_FROM_PV ) {
+
+    minValue = xyo->dbXMin[0];
+    for ( i=1; i<xyo->numTraces; i++ ) {
+      if ( xyo->dbXMin[i] < minValue ) minValue = xyo->dbXMin[i];
+    }
+
+    if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = log10( minValue );
+    }
+    else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = log10( minValue );
+    }
+
+  }
+  else { // auto scale
+
+    // find min x value
+
+    minValue = 0.9 * xyo->curXMax;
+    if ( minValue > xyo->curXMax ) minValue = 1.1 * xyo->curXMax;
+    first = 1;
+    for ( i=0; i<xyo->numTraces; i++ ) {
+
+      ii = xyo->arrayHead[i];
+      while ( ii != xyo->arrayTail[i] ) {
+
+        switch ( xyo->xPvType[i] ) {
+        case DBR_FLOAT:
+          dxValue = (double) ( (float *) xyo->xPvData[i] )[ii];
+          break;
+        case DBR_DOUBLE: 
+          dxValue = ( (double *) xyo->xPvData[i] )[ii];
+          break;
+        case DBR_SHORT:
+          dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+          break;
+        case DBR_CHAR:
+          dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
+          break;
+        case DBR_LONG:
+          dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
+          break;
+        case DBR_ENUM:
+          dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+          break;
+        default:
+          dxValue = ( (double *) xyo->xPvData[i] )[ii];
+          break;
+        }
+
+        if ( first ) {
+          first = 0;
+          minValue = dxValue;
+        }
+        else {
+          if ( dxValue < minValue ) minValue = dxValue;
+        }
+
+        ii++;
+        if ( ii > xyo->plotBufSize[i] ) {
+          ii = 0;
+        }
+
       }
 
-      if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-        if ( dxValue > 0 ) dxValue  = log10( dxValue );
-      }
-      else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-        if ( dxValue > 0 ) dxValue  = log10( dxValue );
-      }
+    }
 
-      if ( first ) {
-        first = 0;
-        minValue = dxValue;
-      }
-      else {
-        if ( dxValue < minValue ) minValue = dxValue;
-      }
-
-      ii++;
-      if ( ii > xyo->plotBufSize[i] ) {
-        ii = 0;
-      }
-
+    if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = log10( minValue );
+    }
+    else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = log10( minValue );
     }
 
   }
@@ -206,59 +244,97 @@ double dxValue, maxValue;
 
   xyo->kpXMaxEfDouble.setNull(1);
 
-  // find max x value
+  if ( xyo->xAxisSource == XYGC_K_USER_SPECIFIED ) {
 
-  maxValue = 0;
-  first = 1;
-  for ( i=0; i<xyo->numTraces; i++ ) {
+    maxValue = xyo->xMax.value();
 
-    ii = xyo->arrayHead[i];
-    while ( ii != xyo->arrayTail[i] ) {
+    if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = log10( maxValue );
+    }
+    else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = log10( maxValue );
+    }
 
-      switch ( xyo->xPvType[i] ) {
-      case DBR_FLOAT:
-        dxValue = (double) ( (float *) xyo->xPvData[i] )[ii];
-        break;
-      case DBR_DOUBLE: 
-        dxValue = ( (double *) xyo->xPvData[i] )[ii];
-        break;
-      case DBR_SHORT:
-        dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
-        break;
-      case DBR_CHAR:
-        dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
-        break;
-      case DBR_LONG:
-        dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
-        break;
-      case DBR_ENUM:
-        dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
-        break;
-      default:
-        dxValue = ( (double *) xyo->xPvData[i] )[ii];
-        break;
+  }
+  else if ( xyo->xAxisSource == XYGC_K_FROM_PV ) {
+
+    maxValue = xyo->dbXMax[0];
+    for ( i=1; i<xyo->numTraces; i++ ) {
+      if ( xyo->dbXMax[i] > maxValue ) maxValue = xyo->dbXMax[i];
+    }
+
+    if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = log10( maxValue );
+    }
+    else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = log10( maxValue );
+    }
+
+  }
+  else { // auto scale
+
+    // find max x value
+
+    maxValue = 1.1 * xyo->curXMin;
+    if ( maxValue < xyo->curXMin ) maxValue = 0.9 * xyo->curXMin;
+    first = 1;
+    for ( i=0; i<xyo->numTraces; i++ ) {
+
+      ii = xyo->arrayHead[i];
+      while ( ii != xyo->arrayTail[i] ) {
+
+        switch ( xyo->xPvType[i] ) {
+        case DBR_FLOAT:
+          dxValue = (double) ( (float *) xyo->xPvData[i] )[ii];
+          break;
+        case DBR_DOUBLE: 
+          dxValue = ( (double *) xyo->xPvData[i] )[ii];
+          break;
+        case DBR_SHORT:
+          dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+          break;
+        case DBR_CHAR:
+          dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[ii];
+          break;
+        case DBR_LONG:
+          dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
+          break;
+        case DBR_ENUM:
+          dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[ii];
+          break;
+        default:
+          dxValue = ( (double *) xyo->xPvData[i] )[ii];
+          break;
+        }
+
+        if ( first ) {
+          first = 0;
+          maxValue = dxValue;
+        }
+        else {
+          if ( dxValue > maxValue ) maxValue = dxValue;
+        }
+
+        ii++;
+        if ( ii > xyo->plotBufSize[i] ) {
+          ii = 0;
+        }
+
       }
 
-      if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-        if ( dxValue > 0 ) dxValue = log10( dxValue );
-      }
-      else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-        if ( dxValue > 0 ) dxValue  = log10( dxValue );
-      }
+    }
 
-      if ( first ) {
-        first = 0;
-        maxValue = dxValue;
-      }
-      else {
-        if ( dxValue > maxValue ) maxValue = dxValue;
-      }
-
-      ii++;
-      if ( ii > xyo->plotBufSize[i] ) {
-        ii = 0;
-      }
-
+    if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = log10( maxValue );
+    }
+    else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = log10( maxValue );
     }
 
   }
@@ -349,56 +425,85 @@ double dy1Value, minValue;
 
   xyo->kpY1MinEfDouble.setNull(1);
 
-  // find min y1 value
+  if ( xyo->y1AxisSource == XYGC_K_USER_SPECIFIED ) {
 
-  minValue = 0;
-  first = 1;
-  for ( i=0; i<xyo->numTraces; i++ ) {
+    minValue = xyo->y1Min.value();
 
-    ii = xyo->arrayHead[i];
-    while ( ii != xyo->arrayTail[i] ) {
+    if ( xyo->y1AxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = log10( minValue );
+    }
 
-      switch ( xyo->yPvType[i] ) {
-      case DBR_FLOAT:
-        dy1Value = (double) ( (float *) xyo->yPvData[i] )[ii];
-        break;
-      case DBR_DOUBLE: 
-        dy1Value = ( (double *) xyo->yPvData[i] )[ii];
-        break;
-      case DBR_SHORT:
-        dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
-        break;
-      case DBR_CHAR:
-        dy1Value = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
-        break;
-      case DBR_LONG:
-        dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
-        break;
-      case DBR_ENUM:
-        dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
-        break;
-      default:
-        dy1Value = ( (double *) xyo->yPvData[i] )[ii];
-        break;
+  }
+  else if ( xyo->y1AxisSource == XYGC_K_FROM_PV ) {
+
+    minValue = xyo->dbYMin[0];
+    for ( i=1; i<xyo->numTraces; i++ ) {
+      if ( xyo->dbYMin[i] < minValue ) minValue = xyo->dbYMin[i];
+    }
+
+    if ( xyo->y1AxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = log10( minValue );
+    }
+
+  }
+  else { // auto scale
+
+    // find min y1 value
+
+    minValue = 0.9 * xyo->curY1Max;
+    if ( minValue > xyo->curY1Max ) minValue = 1.1 * xyo->curY1Max;
+    first = 1;
+    for ( i=0; i<xyo->numTraces; i++ ) {
+
+      ii = xyo->arrayHead[i];
+      while ( ii != xyo->arrayTail[i] ) {
+
+        switch ( xyo->yPvType[i] ) {
+        case DBR_FLOAT:
+          dy1Value = (double) ( (float *) xyo->yPvData[i] )[ii];
+          break;
+        case DBR_DOUBLE: 
+          dy1Value = ( (double *) xyo->yPvData[i] )[ii];
+          break;
+        case DBR_SHORT:
+          dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+          break;
+        case DBR_CHAR:
+          dy1Value = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
+          break;
+        case DBR_LONG:
+          dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
+          break;
+        case DBR_ENUM:
+          dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+          break;
+        default:
+          dy1Value = ( (double *) xyo->yPvData[i] )[ii];
+          break;
+        }
+
+        if ( first ) {
+          first = 0;
+          minValue = dy1Value;
+        }
+        else {
+          if ( dy1Value < minValue ) minValue = dy1Value;
+        }
+
+        ii++;
+        if ( ii > xyo->plotBufSize[i] ) {
+          ii = 0;
+        }
+
       }
 
-      if ( xyo->y1AxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-        if ( dy1Value > 0 ) dy1Value = log10( dy1Value );
-      }
+    }
 
-      if ( first ) {
-        first = 0;
-        minValue = dy1Value;
-      }
-      else {
-        if ( dy1Value < minValue ) minValue = dy1Value;
-      }
-
-      ii++;
-      if ( ii > xyo->plotBufSize[i] ) {
-        ii = 0;
-      }
-
+    if ( xyo->y1AxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = log10( minValue );
     }
 
   }
@@ -429,56 +534,85 @@ double dy1Value, maxValue;
 
   xyo->kpY1MaxEfDouble.setNull(1);
 
-  // find max y1 value
+  if ( xyo->y1AxisSource == XYGC_K_USER_SPECIFIED ) {
 
-  maxValue = 0;
-  first = 1;
-  for ( i=0; i<xyo->numTraces; i++ ) {
+    maxValue = xyo->y1Max.value();
 
-    ii = xyo->arrayHead[i];
-    while ( ii != xyo->arrayTail[i] ) {
+    if ( xyo->y1AxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = log10( maxValue );
+    }
 
-      switch ( xyo->yPvType[i] ) {
-      case DBR_FLOAT:
-        dy1Value = (double) ( (float *) xyo->yPvData[i] )[ii];
-        break;
-      case DBR_DOUBLE: 
-        dy1Value = ( (double *) xyo->yPvData[i] )[ii];
-        break;
-      case DBR_SHORT:
-        dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
-        break;
-      case DBR_CHAR:
-        dy1Value = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
-        break;
-      case DBR_LONG:
-        dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
-        break;
-      case DBR_ENUM:
-        dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
-        break;
-      default:
-        dy1Value = ( (double *) xyo->yPvData[i] )[ii];
-        break;
+  }
+  else if ( xyo->y1AxisSource == XYGC_K_FROM_PV ) {
+
+    maxValue = xyo->dbYMax[0];
+    for ( i=1; i<xyo->numTraces; i++ ) {
+      if ( xyo->dbYMax[i] > maxValue ) maxValue = xyo->dbYMax[i];
+    }
+
+    if ( xyo->y1AxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = log10( maxValue );
+    }
+
+  }
+  else { // auto scale
+
+    // find max y1 value
+
+    maxValue = 1.1 * xyo->curY1Min;
+    if ( maxValue < xyo->curY1Min ) maxValue = 0.9 * xyo->curY1Min;
+    first = 1;
+    for ( i=0; i<xyo->numTraces; i++ ) {
+
+      ii = xyo->arrayHead[i];
+      while ( ii != xyo->arrayTail[i] ) {
+
+        switch ( xyo->yPvType[i] ) {
+        case DBR_FLOAT:
+          dy1Value = (double) ( (float *) xyo->yPvData[i] )[ii];
+          break;
+        case DBR_DOUBLE: 
+          dy1Value = ( (double *) xyo->yPvData[i] )[ii];
+          break;
+        case DBR_SHORT:
+          dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+          break;
+        case DBR_CHAR:
+          dy1Value = (double) ( (unsigned char *) xyo->yPvData[i] )[ii];
+          break;
+        case DBR_LONG:
+          dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
+          break;
+        case DBR_ENUM:
+          dy1Value = (double) ( (unsigned short *) xyo->yPvData[i] )[ii];
+          break;
+        default:
+          dy1Value = ( (double *) xyo->yPvData[i] )[ii];
+          break;
+        }
+
+        if ( first ) {
+          first = 0;
+          maxValue = dy1Value;
+        }
+        else {
+          if ( dy1Value > maxValue ) maxValue = dy1Value;
+        }
+
+        ii++;
+        if ( ii > xyo->plotBufSize[i] ) {
+          ii = 0;
+        }
+
       }
 
-      if ( xyo->y1AxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-        if ( dy1Value > 0 ) dy1Value = log10( dy1Value );
-      }
+    }
 
-      if ( first ) {
-        first = 0;
-        maxValue = dy1Value;
-      }
-      else {
-        if ( dy1Value > maxValue ) maxValue = dy1Value;
-      }
-
-      ii++;
-      if ( ii > xyo->plotBufSize[i] ) {
-        ii = 0;
-      }
-
+    if ( xyo->y1AxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = log10( maxValue );
     }
 
   }
@@ -5279,6 +5413,8 @@ char format[31+1];
   if ( ny1rescl ) {
 
     //printf( "need y1 rescale, y = %-g\n", y1RescaleValue );
+    //printf( "need y1 rescale, curY1Min = %-g\n", curY1Min );
+    //printf( "need y1 rescale, curY1Max = %-g\n", curY1Max );
 
     if ( y1RescaleValue < curY1Min ) {
       range = curY1Max - y1RescaleValue;
