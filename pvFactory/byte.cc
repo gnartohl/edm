@@ -277,6 +277,8 @@ int edmByteClass::makeOutline()
 // coloring the bits. 
 //
 {
+   float bitLen;
+
    outlineOK = false;
 
    if (nobt < 1) return 1;
@@ -629,13 +631,13 @@ inline void edmByteClass::innerDraw(int value, int i, int mask, int current,
                     actWin->executeGc.normGC(), 
                     theOutline[lastseg].x1, 
                     theOutline[lastseg].y1,
-                    (int)(bitLen * (i - lastseg)), h);
+                    theOutline[i].x1 - theOutline[lastseg].x1, h);
      else
         XFillRectangle(actWin->d, XtWindow(actWin->executeWidget),
                     actWin->executeGc.normGC(), 
                     theOutline[lastseg].x1, 
                     theOutline[lastseg].y1,
-                    w, (int)(bitLen * (i - lastseg)));
+                    w, theOutline[i].y1 - theOutline[lastseg].y1);
      previous = current;
      lastseg = i;
    } 

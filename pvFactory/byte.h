@@ -87,7 +87,6 @@ public:
     int onColor, offColor;
     int onPixel, offPixel;
     int makeOutline();
-    float bitLen;
 
     char *firstDragName();
     char *nextDragName();
