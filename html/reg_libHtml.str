@@ -1,0 +1,6 @@
+#ifndef __reg_libef43365d_7b2a_4d7d_a10b_ffe4374a342d_str
+#define __reg_libef43365d_7b2a_4d7d_a10b_ffe4374a342d_str 1
+
+#define reg_str1 (char *) "html"
+
+#endif

@@ -1,0 +1,50 @@
+TOP = ../../../..
+include $(TOP)/config/CONFIG_EXTENSIONS
+STATIC_BUILD=NO
+SHARED_LIBRARIES=YES
+
+IMAGELIB=/usr/local
+
+USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+
+USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xpm Xtst X11 pthread dl html
+
+USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+
+USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt html
+
+USR_LDFLAGS += -L$(INSTALL_LIB) -L$(IMAGELIB)
+
+LIBRARY = 605432d2-f29d-11d2-973b-00104b8742df
+
+PROD_LIBS += ca Com
+
+USR_INCLUDES = -I../ -I../../util -I../../lib -I../../pvlib
+USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC) -I$(GIF_INC)
+
+Xm_DIR = $(MOTIF_LIB)
+Xt_DIR = $(X11_LIB)
+X11_DIR = $(X11_LIB)
+Xmu_DIR = $(X11_LIB)
+# ELW added following two lines for 
+# Red Hat 7.0 LINUX 
+Xp_DIR = $(X11_LIB)
+Xpm_DIR = $(X11_LIB)
+Xext = $(X11)/lib
+#
+XlibGUI_DIR = $(X11_LIB)
+XmStatic_DIR = $(MOTIF_LIB)
+XmStatXt_DIR = $(MOTIF_LIB)
+HCLXt_DIR = $(X11_LIB)
+Xlib_DIR = $(X11_LIB)
+HCLXmu_DIR = $(X11_LIB)
+
+gif_DIR=$(GIF_LIB)
+
+LIBSRCS += html.cc
+LIBSRCS += reg_libHtml.cc
+
+include $(TOP)/config/RULES.Host
+
+G++_NORMAL = $(G++)
+G++_STRICT = $(G++)

@@ -1,0 +1,26 @@
+#ifndef __html_str
+#define __html_str 1
+
+#define htmlClass_str1 (char *) "Disabled"
+#define htmlClass_str2 (char *) "Color PV"
+#define htmlClass_str3 (char *) "Visibility PV"
+#define htmlClass_str4 (char *) "Unknown object"
+#define htmlClass_str5 (char *) " Properties"
+#define htmlClass_str6 (char *) "ID"
+#define htmlClass_str7 (char *) "X"
+#define htmlClass_str8 (char *) "Y"
+#define htmlClass_str9 (char *) "Width"
+#define htmlClass_str10 (char *) "Height"
+#define htmlClass_str11 (char *) "Use File"
+#define htmlClass_str12 (char *) "Doc Root"
+#define htmlClass_str13 (char *) "Fg Color"
+#define htmlClass_str16 (char *) "Bg Color"
+#define htmlClass_str18 (char *) "Color PV"
+#define htmlClass_str19 (char *) "Visibility PV"
+#define htmlClass_str20 (char *) "Not Visible if|Visible if"
+#define htmlClass_str21 (char *) ">="
+#define htmlClass_str22 (char *) "and <"
+#define htmlClass_str23 (char *) "HTML"
+#define htmlClass_str24 (char *) "import file syntax error"
+#define htmlClass_str25 (char *) "Content PV"
+#endif
