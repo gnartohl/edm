@@ -2801,7 +2801,7 @@ int sum;
   return BlackPixel( display, screen );
 
 }
-
+
 char *colorInfoClass::colorName (
   int index )
 {
@@ -2815,7 +2815,25 @@ char *colorInfoClass::colorName (
   return colorNames[index];
 
 }
+int colorInfoClass::colorIndexByName (
+  char *name )
+{
 
+int stat;
+colorCachePtr cur;
+
+  stat = avl_get_match( this->colorCacheByNameH, (void *) name,
+   (void **) &cur );
+  if ( !( stat & 1 ) ) {
+    return 0;
+  }
+  if ( !cur ) {
+    return 0;
+  }
+
+  return cur->index;
+
+}
 
 int colorInfoClass::pixIndex(
   unsigned int pixel )
