@@ -1846,7 +1846,7 @@ static void b2ReleaseNoneSelect_cb (
 
 activeWindowClass *awo;
 popupBlockPtr block;
-int stat, item;
+int stat, item, wasSelected, num_selected;
 activeGraphicListPtr curSel;
 activeGraphicListPtr symHead, cur1, cur2, curGroup, next1, next2;
 int n;
@@ -1873,6 +1873,56 @@ Atom wm_delete_window;
   awo = (activeWindowClass *) block->awo;
 
   switch ( item ) {
+
+    case AWC_POPUP_SELECT_ALL:
+
+      cur1 = awo->head->blink;
+      while ( cur1 != awo->head ) {
+
+          wasSelected = cur1->node->isSelected();
+          if ( !wasSelected ) {
+            num_selected++;
+            cur1->node->setSelected();
+            //cur1->node->drawSelectBoxCorners();
+            cur1->selBlink = awo->selectedHead->selBlink;
+            awo->selectedHead->selBlink->selFlink = cur1;
+            awo->selectedHead->selBlink = cur1;
+            cur1->selFlink = awo->selectedHead;
+          }
+
+        cur1 = cur1->blink;
+
+      }
+
+      // determine new state
+      num_selected = 0;
+
+      curSel = awo->selectedHead->selFlink;
+      while ( ( curSel != awo->selectedHead ) &&
+              ( num_selected < 2 ) ) {
+
+        num_selected++;
+        curSel = curSel->selFlink;
+
+      }
+
+      if ( num_selected == 0 ) {
+        awo->state = AWC_NONE_SELECTED;
+        awo->updateMasterSelection();
+      }
+      else if ( num_selected == 1 ) {
+        awo->state = AWC_ONE_SELECTED;
+        awo->useFirstSelectedAsReference = 1;
+        awo->updateMasterSelection();
+      }
+      else {
+        awo->state = AWC_MANY_SELECTED;
+        awo->updateMasterSelection();
+      }
+
+      awo->refresh();
+
+      break;
 
     case AWC_POPUP_MAKESYMBOL:
 
@@ -9818,6 +9868,29 @@ Atom wm_delete_window;
   curBlockListNode = new popupBlockListType;
   curBlockListNode->block.w = pb;
   curBlockListNode->block.ptr = (void *) AWC_POPUP_SAVE_AS;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
+
+  str = XmStringCreateLocalized( activeWindowClass_str185 );
+
+  pb = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+   b2NoneSelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_SELECT_ALL;
   curBlockListNode->block.awo = this;
 
   curBlockListNode->blink = popupBlockHead->blink;

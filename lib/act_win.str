@@ -181,5 +181,6 @@
 #define activeWindowClass_str182 "Undo Flip (z)"
 #define activeWindowClass_str183 "Default Text Font"
 #define activeWindowClass_str184 "Help"
+#define activeWindowClass_str185 "Select All"
 
 #endif
