@@ -19,87 +19,37 @@
 #define __xygraph_cc 1
 
 #include "xygraph.h"
-#include "app_pkg.h"
-#include "act_win.h"
 
-#include "thread.h"
+// This is the EPICS specific line right now:
+static PV_Factory *pv_factory = new EPICS_PV_Factory();
 
-#ifdef __epics__
+static void axygc_edit_ok_trace (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
 
-static void xygo_monitor_plot_connect_state (
-  struct connection_handler_args arg );
+xyGraphClass *axygo = (xyGraphClass *) client;
 
-objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(ast_args.chid);
-xyGraphClass *axygo = (xyGraphClass *) ptr->objPtr;
-
-  if ( axygo->activeMode ) {
-
-    if ( arg.op == CA_OP_CONN_UP ) {
-
-      axygo->pvType = (int) ca_field_type( axygo->pvId );
-
-      axygo->needPlotConnectInit = 1;
-      axygo->needPlotConnect[ptr->index] = 1;
-      axygo->notPlotPvConnected &= ptr->clrMask;
-
-    }
-    else {
-
-      axygo->notPlotPvConnected |= ptr->setMask;
-      axygo->fgColor.setDisconnected();
-      axygo->needRefresh = 1;
-
-    }
-
-    axygo->actWin->appCtx->proc->lock();
-    axygo->actWin->addDefExeNode( axygo->aglPtr );
-    axygo->actWin->appCtx->proc->unlock();
-
-  }
+  axygo->efTrace->popdownNoDestroy();
 
 }
 
-static void plotInfoUpdate (
-  struct event_handler_args ast_args );
+//-------------------------------------------------------------------------
 
-objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(ast_args.chid);
-xyGraphClass *axygo = (xyGraphClass *) ptr->objPtr;
+static void axygc_edit_ok_axis (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
 
-int i, n;
-struct dbr_gr_double doubleInfoRec;
+xyGraphClass *axygo = (xyGraphClass *) client;
 
-  doubleInfoRec = *( (dbr_gr_double *) ast_args.dbr );
-
-  if ( axygo->limitsFromDb || axygo->efPrecision.isNull() ) {
-    axygo->precision = doubleInfoRec.precision;
-  }
-
-  axygo->needPlotInfoInit = 1;
-  axygo->needPlotInfo[ptr->index] = 1;
-  axygo->actWin->appCtx->proc->lock();
-  axygo->actWin->addDefExeNode( axygo->aglPtr );
-  axygo->actWin->appCtx->proc->unlock();
+  axygo->efAxis->popdownNoDestroy();
 
 }
 
-static void plotUpdate (
-  struct event_handler_args ast_args );
-
-objPlusIndexPtr ptr = (objPlusIndexPtr) ca_puser(ast_args.chid);
-xyGraphClass *axygo = (xyGraphClass *) ptr->objPtr;
-
-double dvalue;
-
-  dvalue = *( (double *) ast_args.dbr );
-  axygo->needUpdate = 1;
-  axygo->actWin->appCtx->proc->lock();
-  axygo->actWin->addDefExeNode( axygo->aglPtr );
-  axygo->actWin->appCtx->proc->unlock();
-
-}
-
-
-#endif
+//-------------------------------------------------------------------------
 
 static void axygc_edit_update (
   Widget w,
@@ -115,66 +65,72 @@ int i;
   axygo->eraseSelectBoxCorners();
   axygo->erase();
 
-  axygo->fgColor.setColor( axygo->bufFgColor, axygo->actWin->ci );
-  axygo->fgColor.setConnectSensitive();
+  axygo->x = axygo->eBuf->bufX;
+  axygo->sboxX = axygo->eBuf->bufX;
 
-  for ( i=0; i<XYGC_K_MAX_PLOTS; i++ ) {
-    strncpy( axygo->pvName[i], axygo->bufPvName[i], 39 );
-    axygo->pvExpStr[i].setRaw( axygo->pvName[i] );
-    axygo->plotColor[i].setColor( axygo->bufPlotColor[i], axygo->actWin->ci );
+  axygo->y = axygo->eBuf->bufY;
+  axygo->sboxY = axygo->eBuf->bufY;
+
+  axygo->w = axygo->eBuf->bufW;
+  axygo->sboxW = axygo->eBuf->bufW;
+
+  axygo->h = axygo->eBuf->bufH;
+  axygo->sboxH = axygo->eBuf->bufH;
+
+  axygo->graphTitle.setRaw( axygo->eBuf->bufGraphTitle );
+
+  axygo->xLabel.setRaw( axygo->eBuf->bufXLabel );
+
+  axygo->yLabel.setRaw( axygo->eBuf->bufYLabel );
+
+  axygo->fgColor = axygo->eBuf->bufFgColor;
+
+  axygo->bgColor = axygo->eBuf->bufBgColor;
+
+  axygo->plotStyle = axygo->eBuf->bufPlotStyle;
+
+  axygo->plotMode = axygo->eBuf->bufPlotMode;
+
+  axygo->count = axygo->eBuf->bufCount;
+
+  axygo->numTraces = 0;
+  for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
+    axygo->plotColor[i] = axygo->eBuf->bufPlotColor[i];
+    if ( ( !blank( axygo->eBuf->bufXPvName[i] ) ) ||
+         ( !blank( axygo->eBuf->bufYPvName[i] ) ) ) {
+      (axygo->numTraces)++;
+      axygo->xPvExpStr[i].setRaw( axygo->eBuf->bufXPvName[i] );
+      axygo->yPvExpStr[i].setRaw( axygo->eBuf->bufYPvName[i] );
+    }
+    else {
+      axygo->xPvExpStr[i].setRaw( "" );
+      axygo->yPvExpStr[i].setRaw( "" );
+    }
   }
 
-  strncpy( axygo->ctlPvName, axygo->bufCtlPvName, 39 );
-  axygo->ctlPvExpStr.setRaw( axygo->ctlPvName );
+  axygo->xAxisStyle = axygo->eBuf->bufXAxisStyle;
+  axygo->xAxisSource = axygo->eBuf->bufXAxisSource;
+  axygo->xMin = axygo->eBuf->bufXMin;
+  axygo->xMax = axygo->eBuf->bufXMax;
+  axygo->xAxisTimeFormat = axygo->eBuf->bufXAxisTimeFormat;
+
+  axygo->y1AxisStyle = axygo->eBuf->bufY1AxisStyle;
+  axygo->y1AxisSource = axygo->eBuf->bufY1AxisSource;
+  axygo->y1Min = axygo->eBuf->bufY1Min;
+  axygo->y1Max = axygo->eBuf->bufY1Max;
+
+  axygo->y2AxisStyle = axygo->eBuf->bufY2AxisStyle;
+  axygo->y2AxisSource = axygo->eBuf->bufY2AxisSource;
+  axygo->y2Min = axygo->eBuf->bufY2Min;
+  axygo->y2Max = axygo->eBuf->bufY2Max;
+
+  axygo->trigPvExpStr.setRaw( axygo->eBuf->bufTrigPvName );
+  axygo->erasePvExpStr.setRaw( axygo->eBuf->bufErasePvName );
+  axygo->eraseMode = axygo->eBuf->bufEraseMode;
 
   strncpy( axygo->fontTag, axygo->fm.currentFontTag(), 63 );
   axygo->actWin->fi->loadFontTag( axygo->fontTag );
   axygo->actWin->drawGc.setFontTag( axygo->fontTag, axygo->actWin->fi );
-
-  axygo->fs = axygo->actWin->fi->getXFontStruct( axygo->fontTag );
-
-  axygo->autoScale = axygo->bufAutoScale;
-
-  strncpy( axygo->formatType,  axygo->bufFormatType, 1 );
-
-  strncpy( axygo->plotTitle, axygo->bufPlotTitle, 79 );
-
-  labelType = bufLabelType;
-  border = bufBorder;
-  xLabelTicks = bufXLabelTicks;
-  xMajorTicks = bufXMajorTicks;
-  xMinorTicks = bufXMinorTicks;
-  yLabelTicks = bufYLabelTicks;
-  yMajorTicks = bufYMajorTicks;
-  yMinorTicks = bufYMinorTicks;
-
-  axygo->efPrecision = axygo->bufEfPrecision;
-
-  if ( axygo->efPrecision.isNull() )
-    axygo->precision = 3;
-  else
-    axygo->precision = axygo->efPrecision.value();
-
-  axygo->bgColor = axygo->bufBgColor;
-
-  strncpy( axygo->id, axygo->bufId, 31 );
-
-  axygo->activateCallbackFlag = axygo->bufActivateCallbackFlag;
-  axygo->deactivateCallbackFlag = axygo->bufDeactivateCallbackFlag;
-  axygo->anyCallbackFlag = axygo->activateCallbackFlag ||
-   axygo->deactivateCallbackFlag;
-
-  axygo->x = axygo->bufX;
-  axygo->sboxX = axygo->bufX;
-
-  axygo->y = axygo->bufY;
-  axygo->sboxY = axygo->bufY;
-
-  axygo->w = axygo->bufW;
-  axygo->sboxW = axygo->bufW;
-
-  axygo->h = axygo->bufH;
-  axygo->sboxH = axygo->bufH;
 
 }
 
@@ -234,6 +190,8 @@ xyGraphClass *axygo = (xyGraphClass *) client;
 
 }
 
+//-------------------------------------------------------------------------
+
 xyGraphClass::xyGraphClass ( void ) {
 
 int i;
@@ -241,34 +199,46 @@ int i;
   name = new char[strlen("xyGraphClass")+1];
   strcpy( name, "xyGraphClass" );
 
-  for ( i=0; i<XYGC_K_MAX_PLOTS; i++ ) {
-    strcpy( plotPvName[i], "" );
+  plotStyle = XYGC_K_PLOT_STYLE_POINT;
+  plotMode = XYGC_K_PLOT_MODE_PLOT_N_STOP;
+  count = 1;
+
+  numTraces = 0;
+
+  for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
+    xPv[i] = NULL;
+    yPv[i] = NULL;
   }
+  trigPv = NULL;
+  erasePv = NULL;
 
-  strcpy( ctlPvName, "" );
+  eraseMode = 0;
+  xAxisStyle = 0;
+  xAxisSource = 0;
+  xAxisTimeFormat = 0;
 
-  strcpy( formatType, "g" );
-  efPrecision.setNull(1);
-  precision = 3;
+  y1AxisStyle = 0;
+  y1AxisSource = 0;
+  y1AxisTimeFormat = 0;
+
+  y2AxisStyle = 0;
+  y2AxisSource = 0;
+  y2AxisTimeFormat = 0;
+
+  xFormatType = 0;
+  strcpy( xFormat, "f" );
+
+  y1FormatType = 0;
+  strcpy( y1Format, "f" );
+
+  y2FormatType = 0;
+  strcpy( y2Format, "f" );
+
+  border = 0;
+
   activeMode = 0;
-  strcpy( id, "" );
-  activateCallbackFlag = 0;
-  deactivateCallbackFlag = 0;
-  anyCallbackFlag = 0;
-  activateCallback = NULL;
-  deactivateCallback = NULL;
-  autoScale = 0;
 
-  strcpy( plotTitle, "" );
-
-  labelType = XYGC_K_PVNAME;
-  border = 1;
-  xLabelTicks = 10;
-  xMajorTicks = 20;
-  xMinorTicks = 2;
-  yLabelTicks = 10;
-  yMajorTicks = 20;
-  yMinorTicks = 2;
+  eBuf = NULL;
 
 }
 
@@ -284,46 +254,121 @@ int i;
   name = new char[strlen("xyGraphClass")+1];
   strcpy( name, "xyGraphClass" );
 
-  for ( i=0; i<XYGC_K_MAX_PLOTS; i++ ) {
-    strncpy( pvName[i], source->pvName[i], 39 );
-    pvExpStr[i].copy( source->pvExpStr[i] );
-    plotColor[i].copy( source->plotColor[i] );
-    plotCb[i] = source->plotCb[i];
-  }
+  graphTitle.copy( source->graphTitle );
+  xLabel.copy( source->xLabel );
+  yLabel.copy( source->yLabel );
 
-  strncpy( ctlPvName, source->ctlPvName, 39 ); );
-  ctlPvExpStr.copy( source->ctlPvExpStr );
-  strncpy( formatType, source->formatType, 1 );
-  efPrecision = source->efPrecision;
-  precision = source->precision;
-  activeMode = source->activeMode;
-  strncpy( id, source->id, 31 );
-  activateCallbackFlag = source->activateCallbackFlag;
-  deactivateCallbackFlag = source->deactivateCallbackFlag;
-  anyCallbackFlag = source->anyCallbackFlag;
-  activateCallback = NULL;
-  deactivateCallback = NULL;
-  autoScale = source->autoScale;
-  bgColor = source->bgColor;
-  fgColor.copy(source->fgColor);
-  strncpy( fontTag, source->fontTag, 63 );
-  strncpy( bufFontTag, source->bufFontTag, 63 );
-  fs = actWin->fi->getXFontStruct( fontTag );
   fgCb = source->fgCb;
   bgCb = source->bgCb;
-  activeMode = 0;
-  strncpy( id, source->id, 31 );
 
-  strncpy( plotTitle, source->plotTitle, 79 );
+  plotStyle = source->plotStyle;
+  plotMode = source->plotMode;
+  count = source->count;
 
-  labelType = source->labelType;
+  numTraces = source->numTraces;
+
+  for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
+    xPv[i] = NULL;
+    yPv[i] = NULL;
+    plotColor[i] = source->plotColor[i];
+    xPvExpStr[i].copy( source->xPvExpStr[i] );
+    yPvExpStr[i].copy( source->yPvExpStr[i] );
+  }
+
+  trigPv = NULL;
+  trigPvExpStr.copy( source->trigPvExpStr );
+
+  erasePv = NULL;
+  erasePvExpStr.copy( source->erasePvExpStr );
+  eraseMode = source->eraseMode;
+
+  xAxisStyle = source->xAxisStyle;
+  xAxisSource = source->xAxisSource;
+  xAxisTimeFormat = source->xAxisTimeFormat;
+
+  y1AxisStyle = source->y1AxisStyle;
+  y1AxisSource = source->y1AxisSource;
+  y1AxisTimeFormat = source->y1AxisTimeFormat;
+
+  y2AxisStyle = source->y2AxisStyle;
+  y2AxisSource = source->y2AxisSource;
+  y2AxisTimeFormat = source->y2AxisTimeFormat;
+
+  xFormatType = source->xFormatType;
+  strncpy( xFormat, source->xFormat, 15 );
+
+  y1FormatType = source->y1FormatType;
+  strncpy( y1Format, source->y1Format, 15 );
+
+  y2FormatType = source->y2FormatType;
+  strncpy( y2Format, source->y2Format, 15 );
+
   border = source->border;
-  xLabelTicks = source->xLabelTicks;
-  xMajorTicks = source->xMajorTicks;
-  xMinorTicks = source->xMinorTicks;
-  yLabelTicks = source->yLabelTicks;
-  yMajorTicks = source->yMajorTicks;
-  yMinorTicks = source->yMinorTicks;
+
+  activeMode = source->activeMode;
+
+  strncpy( fontTag, source->fontTag, 63 );
+  fs = actWin->fi->getXFontStruct( fontTag );
+  fontAscent = source->fontAscent;
+  fontDescent = source->fontDescent;
+  fontHeight = source->fontHeight;
+
+  eBuf = NULL;
+
+}
+
+void xyGraphClass::plotPvConnectStateCallback (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+objPlusIndexPtr ptr = (objPlusIndexPtr) userarg;
+xyGraphClass *axygo = (xyGraphClass *) ptr->objPtr;
+
+  if ( pv->is_valid() ) {
+
+  }
+  else { // lost connection
+
+    axygo->connection.setPvDisconnected( (void *) ptr->index );
+
+    axygo->actWin->appCtx->proc->lock();
+    axygo->needRefresh = 1;
+    axygo->actWin->addDefExeNode( axygo->aglPtr );
+    axygo->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
+void xyGraphClass::plotUpdate (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+objPlusIndexPtr ptr = (objPlusIndexPtr) userarg;
+xyGraphClass *axygo = (xyGraphClass *) ptr->objPtr;
+
+  if ( !axygo->connection.pvsConnected() ) {
+
+    axygo->connection.setPvConnected( (void *) ptr->index );
+
+    if ( axygo->connection.pvsConnected() ) {
+      axygo->actWin->appCtx->proc->lock();
+      axygo->needConnectInit = 1;
+      axygo->actWin->addDefExeNode( axygo->aglPtr );
+      axygo->actWin->appCtx->proc->unlock();
+    }
+
+  }
+  else {
+
+    axygo->actWin->appCtx->proc->lock();
+    axygo->needUpdate = 1;
+    axygo->actWin->addDefExeNode( axygo->aglPtr );
+    axygo->actWin->appCtx->proc->unlock();
+
+  }
 
 }
 
@@ -341,16 +386,17 @@ int xyGraphClass::createInteractive (
   h = _h;
 
 int i;
+char traceColor[15+1];
 
-  plotColor[0].setColor( actWin->defaultFg1Color, actWin->ci );
-  for ( i=1; i<XYGC_K_MAX_PLOTS; i++ ) {
-    plotColor[i].setColor( actWin->defaultFg2Color, actWin->ci );
-  }
-
-  fgColor.setColor( actWin->defaultTextFgColor, actWin->ci );
+  fgColor = actWin->defaultTextFgColor;
   bgColor = actWin->defaultBgColor;
 
-  strcpy( fontTag, actWin->defaultFontTag );
+  for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
+    sprintf( traceColor, "trace%-d", i );
+    plotColor[i] = actWin->ci->colorIndexByAlias( traceColor );
+  }
+
+  strcpy( fontTag, actWin->defaultCtlFontTag );
   actWin->fi->loadFontTag( fontTag );
   fs = actWin->fi->getXFontStruct( fontTag );
   if ( fs ) {
@@ -378,7 +424,7 @@ int xyGraphClass::save (
   FILE *f )
 {
 
-int index, stat, i;
+int i, stat = 1;
 
   fprintf( f, "%-d %-d %-d\n", XYGC_MAJOR_VERSION, XYGC_MINOR_VERSION,
    XYGC_RELEASE );
@@ -388,46 +434,76 @@ int index, stat, i;
   fprintf( f, "%-d\n", w );
   fprintf( f, "%-d\n", h );
 
-  for ( i=1; i<XYGC_K_MAX_PLOTS; i++ ) {
-    writeStringToFile( f, plotPvName[i] );
-    actWin->ci->getIndex( plotColor[i].pixelColor(), &index );
-    fprintf( f, "%-d\n", index );
+  if ( graphTitle.getRaw() )
+    writeStringToFile( f, graphTitle.getRaw() );
+  else
+    writeStringToFile( f, "" );
+
+  if ( xLabel.getRaw() )
+    writeStringToFile( f, xLabel.getRaw() );
+  else
+    writeStringToFile( f, "" );
+
+  if ( yLabel.getRaw() )
+    writeStringToFile( f, yLabel.getRaw() );
+  else
+    writeStringToFile( f, "" );
+
+  fprintf( f, "%-d\n", fgColor );
+
+  fprintf( f, "%-d\n", bgColor );
+
+  fprintf( f, "%-d\n", plotStyle );
+
+  fprintf( f, "%-d\n", plotMode );
+
+  fprintf( f, "%-d\n", count );
+
+  fprintf( f, "%-d\n", numTraces );
+
+  for ( i=0; i<numTraces; i++ ) {
+    if ( xPvExpStr[i].getRaw() )
+      writeStringToFile( f, xPvExpStr[i].getRaw() );
+    else
+      writeStringToFile( f, "" );
+    if ( yPvExpStr[i].getRaw() )
+      writeStringToFile( f, yPvExpStr[i].getRaw() );
+    else
+      writeStringToFile( f, "" );
+    fprintf( f, "%-d\n", plotColor[i] ); actWin->incLine();
   }
 
-  writeStringToFile( f, ctlPvName );
+  fprintf( f, "%-d\n", xAxisStyle );
+  fprintf( f, "%-d\n", xAxisSource );
+  stat = xMin.write( f );
+  stat = xMax.write( f );
+  fprintf( f, "%-d\n", xAxisTimeFormat );
+
+  fprintf( f, "%-d\n", y1AxisStyle );
+  fprintf( f, "%-d\n", y1AxisSource );
+  stat = y1Min.write( f );
+  stat = y1Max.write( f );
+
+  fprintf( f, "%-d\n", y2AxisStyle );
+  fprintf( f, "%-d\n", y2AxisSource );
+  stat = y2Min.write( f );
+  stat = y2Max.write( f );
+
+  if ( trigPvExpStr.getRaw() )
+    writeStringToFile( f, trigPvExpStr.getRaw() );
+  else
+    writeStringToFile( f, "" );
+
+  if ( erasePvExpStr.getRaw() )
+    writeStringToFile( f, erasePvExpStr.getRaw() );
+  else
+    writeStringToFile( f, "" );
+
+  fprintf( f, "%-d\n", eraseMode );
 
   writeStringToFile( f, fontTag );
 
-  actWin->ci->getIndex( fgColor.pixelColor(), &index );
-  fprintf( f, "%-d\n", index );
-
-  actWin->ci->getIndex( bgColor, &index );
-  fprintf( f, "%-d\n", index );
-
-  writeStringToFile( f, formatType );
-
-  writeStringToFile( f, plotTitle );
-
-  fprintf( f, "%-d\n", labelType );
-  fprintf( f, "%-d\n", border );
-  fprintf( f, "%-d\n", xLabelTicks );
-  fprintf( f, "%-d\n", xMajorTicks );
-  fprintf( f, "%-d\n", xMinorTicks );
-  fprintf( f, "%-d\n", yLabelTicks );
-  fprintf( f, "%-d\n", yMajorTicks );
-  fprintf( f, "%-d\n", yMinorTicks );
-
-  stat = efPrecision.write( f );
-
-  fprintf( f, "%-d\n", autoScale );
-
-  writeStringToFile( f, id );
-
-  fprintf( f, "%-d\n", activateCallbackFlag );
-
-  fprintf( f, "%-d\n", deactivateCallbackFlag );
-
-  return 1;
+  return stat;
 
 }
 
@@ -437,9 +513,10 @@ int xyGraphClass::createFromFile (
   activeWindowClass *_actWin )
 {
 
-int i, r, g, b, index;
+int i;
 int major, minor, release;
 int stat = 1;
+char str[127+1], traceColor[15+1];
 
   this->actWin = _actWin;
 
@@ -452,79 +529,82 @@ int stat = 1;
 
   this->initSelectBox();
 
-  for ( i=1; i<XYGC_K_MAX_PLOTS; i++ ) {
+  readStringFromFile( str, 127, f ); actWin->incLine();
+  graphTitle.setRaw( str );
 
-    readStringFromFile( plotPvName[i], 39, f ); actWin->incLine();
-    plotPvExpStr[i].setRaw( plotPvName[i] );
+  readStringFromFile( str, 127, f ); actWin->incLine();
+  xLabel.setRaw( str );
 
-    if ( major > 1 ) {
-      fscanf( f, "%d\n", &index ); actWin->incLine();
-      actWin->ci->setIndex( index, &bufPlotColor[i] );
-    }
-    else {
-      fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
-      actWin->ci->setRGB( r, g, b, &bufPlotColor[i] );
-    }
-    plotColor[i].setColor( bufPlotColor[i], actWin->ci );
+  readStringFromFile( str, 127, f ); actWin->incLine();
+  yLabel.setRaw( str );
 
+  fscanf( f, "%d\n", &fgColor ); actWin->incLine();
+
+  fscanf( f, "%d\n", &bgColor ); actWin->incLine();
+
+  fscanf( f, "%d\n", &plotStyle ); actWin->incLine();
+
+  fscanf( f, "%d\n", &plotMode ); actWin->incLine();
+
+  fscanf( f, "%d\n", &count ); actWin->incLine();
+
+  fscanf( f, "%d\n", &numTraces ); actWin->incLine();
+
+  for ( i=0; i<numTraces; i++ ) {
+    readStringFromFile( str, 39, f ); actWin->incLine();
+    xPvExpStr[i].setRaw( str );
+    readStringFromFile( str, 39, f ); actWin->incLine();
+    yPvExpStr[i].setRaw( str );
+    fscanf( f, "%d\n", &plotColor[i] ); actWin->incLine();
   }
 
-  readStringFromFile( ctlPvName, 39, f ); actWin->incLine();
-  ctlPvExpStr.setRaw( ctlPvName );
+  for ( i=numTraces; i<XYGC_K_MAX_TRACES; i++ ) {
+    sprintf( traceColor, "trace%-d", i );
+    plotColor[i] = actWin->ci->colorIndexByAlias( traceColor );
+  }
+
+  fscanf( f, "%d\n", &xAxisStyle ); actWin->incLine();
+  fscanf( f, "%d\n", &xAxisSource ); actWin->incLine();
+  stat = xMin.read( f ); actWin->incLine();
+  stat = xMax.read( f ); actWin->incLine();
+  fscanf( f, "%d\n", &xAxisTimeFormat ); actWin->incLine();
+
+  fscanf( f, "%d\n", &y1AxisStyle ); actWin->incLine();
+  fscanf( f, "%d\n", &y1AxisSource ); actWin->incLine();
+  stat = y1Min.read( f ); actWin->incLine();
+  stat = y1Max.read( f ); actWin->incLine();
+
+  fscanf( f, "%d\n", &y2AxisStyle ); actWin->incLine();
+  fscanf( f, "%d\n", &y2AxisSource ); actWin->incLine();
+  stat = y2Min.read( f ); actWin->incLine();
+  stat = y2Max.read( f ); actWin->incLine();
+
+  readStringFromFile( str, 39, f ); actWin->incLine();
+  trigPvExpStr.setRaw( str );
+
+  readStringFromFile( str, 39, f ); actWin->incLine();
+  erasePvExpStr.setRaw( str );
+
+  fscanf( f, "%d\n", &eraseMode ); actWin->incLine();
 
   readStringFromFile( fontTag, 63, f ); actWin->incLine();
-
-  if ( major > 1 ) {
-
-    fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &bufFgColor );
-    fgColor.setColor( bufFgColor, actWin->ci );
-
-    fscanf( f, "%d\n", &index ); actWin->incLine();
-    actWin->ci->setIndex( index, &bgColor );
-
-  }
-  else {
-
-    fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
-    actWin->ci->setRGB( r, g, b, &bufFgColor );
-    fgColor.setColor( bufFgColor, actWin->ci );
-
-    fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
-    actWin->ci->setRGB( r, g, b, &bgColor );
-
-  }
-
-  readStringFromFile( this->formatType, 2, f ); actWin->incLine();
-
-  readStringFromFile( plotTitle, 79, f ); actWin->incLine();
-
-  fscanf( f, "%d\n", &labelType ); actWin->incLine();
-  fscanf( f, "%d\n", &border ); actWin->incLine();
-  fscanf( f, "%d\n", &xLabelTicks ); actWin->incLine();
-  fscanf( f, "%d\n", &xMajorTicks ); actWin->incLine();
-  fscanf( f, "%d\n", &xMinorTicks ); actWin->incLine();
-  fscanf( f, "%d\n", &yLabelTicks ); actWin->incLine();
-  fscanf( f, "%d\n", &yMajorTicks ); actWin->incLine();
-  fscanf( f, "%d\n", &yMinorTicks ); actWin->incLine();
-
-  stat = efPrecision.read( f ); actWin->incLine();
-  if ( efPrecision.isNull() )
-    precision = 3;
-  else
-    precision = efPrecision.value();
-
-  fscanf( f, "%d\n", &autoScale ); actWin->incLine();
-
-  readStringFromFile( this->id, 31, f ); actWin->incLine();
-  fscanf( f, "%d\n", &activateCallbackFlag ); actWin->incLine();
-  fscanf( f, "%d\n", &deactivateCallbackFlag ); actWin->incLine();
-  anyCallbackFlag = activateCallbackFlag || deactivateCallbackFlag;
 
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
   fs = actWin->fi->getXFontStruct( fontTag );
+  if ( fs ) {
+    fontAscent = fs->ascent;
+    fontDescent = fs->descent;
+    fontHeight = fontAscent + fontDescent;
+  }
+  else {
+    fontAscent = 0;
+    fontDescent = 0;
+    fontHeight = 0;
+  }
+
+  updateDimensions();
 
   return stat;
 
@@ -536,6 +616,7 @@ int xyGraphClass::importFromXchFile (
   activeWindowClass *_actWin )
 {
 
+#if 0
 int r, g, b, more;
 int stat = 1;
 char *tk, *gotData, *context, buf[255+1];
@@ -543,6 +624,7 @@ char *tk, *gotData, *context, buf[255+1];
   r = 0xffff;
   g = 0xffff;
   b = 0xffff;
+#endif
 
   this->actWin = _actWin;
 
@@ -553,6 +635,7 @@ char *tk, *gotData, *context, buf[255+1];
 int xyGraphClass::genericEdit ( void ) {
 
 char title[32], *ptr;
+int i;
 
   ptr = actWin->obj.getNameFromClass( "xyGraphClass" );
   if ( ptr )
@@ -562,41 +645,29 @@ char title[32], *ptr;
 
   strncat( title, " Properties", 31 );
 
-  strncpy( bufId, id, 31 );
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
+  eBuf->bufX = x;
+  eBuf->bufY = y;
+  eBuf->bufW = w;
+  eBuf->bufH = h;
 
-  bufFgColor = fgColor.pixelColor();
-  bufBgColor = bgColor;
-  strncpy( bufFontTag, fontTag, 63 );
-  bufUseDisplayBg = useDisplayBg;
-  bufAutoHeight = autoHeight;
-  strncpy( bufFormatType, formatType, 1 );
-  bufColorMode = colorMode;
-  strncpy( bufValue, value, 127 );
-  strncpy( bufPvName, pvName, 39 );
-  bufEditable = editable;
-  bufIsWidget = isWidget;
-  bufLimitsFromDb = limitsFromDb;
-  bufEfPrecision = efPrecision;
+  eBuf->bufPlotStyle = plotStyle;
 
-  strncpy( bufPlotTitle, plotTitle, 79 );
+  eBuf->bufPlotMode = plotMode;
 
-  bufLabelType = labelType;
-  bufBorder = border;
-  bufXLabelTicks = xLabelTicks;
-  bufXMajorTicks = xMajorTicks;
-  bufXMinorTicks = xMinorTicks;
-  bufYLabelTicks = yLabelTicks;
-  bufYMajorTicks = yMajorTicks;
-  bufYMinorTicks = yMinorTicks;
+  eBuf->bufCount = count;
 
-  bufChangeCallbackFlag = changeCallbackFlag;
-  bufActivateCallbackFlag = activateCallbackFlag;
-  bufDeactivateCallbackFlag = deactivateCallbackFlag;
+  strncpy( eBuf->bufGraphTitle, graphTitle.getRaw(), 127 );
+  strncpy( eBuf->bufXLabel, xLabel.getRaw(), 127 );
+  strncpy( eBuf->bufYLabel, yLabel.getRaw(), 127 );
+  eBuf->bufFgColor = fgColor;
+  eBuf->bufBgColor = bgColor;
+  strncpy( eBuf->bufTrigPvName, trigPvExpStr.getRaw(), 39 );
+  strncpy( eBuf->bufErasePvName, erasePvExpStr.getRaw(), 39 );
+  eBuf->bufEraseMode = eraseMode;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -604,19 +675,137 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( "ID", 30, bufId, 31 );
-  ef.addTextField( "X", 30, &bufX );
-  ef.addTextField( "Y", 30, &bufY );
-  ef.addTextField( "Width", 30, &bufW );
-  ef.addTextField( "Height", 30, &bufH );
+  ef.addTextField( "X", 30, &eBuf->bufX );
+  ef.addTextField( "Y", 30, &eBuf->bufY );
+  ef.addTextField( "Width", 30, &eBuf->bufW );
+  ef.addTextField( "Height", 30, &eBuf->bufH );
+  ef.addTextField( "Title", 30, eBuf->bufGraphTitle, 127 );
+  ef.addTextField( "X Label", 30, eBuf->bufXLabel, 127 );
+  ef.addTextField( "Y Label", 30, eBuf->bufYLabel, 127 );
+  ef.addColorButton( "Foreground", actWin->ci, &fgCb, &eBuf->bufFgColor );
+  ef.addColorButton( "Background", actWin->ci, &bgCb, &eBuf->bufBgColor );
+  ef.addOption( "Plot Style", "point|line", &eBuf->bufPlotStyle );
+  ef.addOption( "Plot Mode", "plot n pts & stop|plot last n pts", &eBuf->bufPlotMode );
+  ef.addTextField( "Count", 30, &eBuf->bufCount );
+
+  ef.addEmbeddedEf( "X/Y/Trace Data", "... ", &efTrace );
+
+    efTrace->create( actWin->top, actWin->appCtx->ci.getColorMap(),
+     &actWin->appCtx->entryFormX,
+     &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
+     &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
+     title, NULL, NULL, NULL );
+
+    for ( i=0; i<numTraces; i++ ) {
+      strncpy( eBuf->bufXPvName[i], xPvExpStr[i].getRaw(), 39 );
+      strncpy( eBuf->bufYPvName[i], yPvExpStr[i].getRaw(), 39 );
+      eBuf->bufPlotColor[i] = plotColor[i];
+    }
+    for ( i=numTraces; i<XYGC_K_MAX_TRACES; i++ ) {
+      strcpy( eBuf->bufXPvName[i], "" );
+      strcpy( eBuf->bufYPvName[i], "" );
+      eBuf->bufPlotColor[i] = plotColor[i];
+    }
+
+    i = 0;
+    efTrace->beginSubForm();
+    efTrace->addTextField( "X ", 30, eBuf->bufXPvName[i], 39 );
+    efTrace->addLabel( "Y " );
+    efTrace->addTextField( "", 30, eBuf->bufYPvName[i], 39 );
+    efTrace->addLabel( " " );
+    efTrace->addColorButton( "", actWin->ci, &plotCb[i],
+     &eBuf->bufPlotColor[i] );
+    efTrace->endSubForm();
+
+    for ( i=1; i<XYGC_K_MAX_TRACES; i++ ) {
+
+      efTrace->beginLeftSubForm();
+      efTrace->addTextField( "X ", 30, eBuf->bufXPvName[i], 39 );
+      efTrace->addLabel( "Y " );
+      efTrace->addTextField( "", 30, eBuf->bufYPvName[i], 39 );
+      efTrace->addLabel( " " );
+      efTrace->addColorButton( "", actWin->ci, &plotCb[i],
+       &eBuf->bufPlotColor[i] );
+      efTrace->endSubForm();
+
+    }
+
+    efTrace->finished( axygc_edit_ok_trace, this );
+
+  eBuf->bufXAxisStyle = xAxisStyle;
+  eBuf->bufXAxisSource = xAxisSource;
+  eBuf->bufXMin = xMin;
+  eBuf->bufXMax = xMax;
+  eBuf->bufXAxisTimeFormat = xAxisTimeFormat;
+
+  eBuf->bufY1AxisStyle = y1AxisStyle;
+  eBuf->bufY1AxisSource = y1AxisSource;
+  eBuf->bufY1Min = y1Min;
+  eBuf->bufY1Max = y1Max;
+
+  eBuf->bufY2AxisStyle = y2AxisStyle;
+  eBuf->bufY2AxisSource = y2AxisSource;
+  eBuf->bufY2Min = y2Min;
+  eBuf->bufY2Max = y2Max;
+
+  ef.addEmbeddedEf( "Axis Data", "... ", &efAxis );
+
+    efAxis->create( actWin->top, actWin->appCtx->ci.getColorMap(),
+     &actWin->appCtx->entryFormX,
+     &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
+     &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
+     title, NULL, NULL, NULL );
+
+    efAxis->beginSubForm();
+    efAxis->addLabel( " X Axis " );
+    efAxis->addLabel( " Style" );
+    efAxis->addOption( "", "linear|log10|time", &eBuf->bufXAxisStyle );
+    efAxis->addLabel( " Range" );
+    efAxis->addOption( "", "from channel|user-specified|auto-scale",
+     &eBuf->bufXAxisSource );
+    efAxis->addLabel( " Minimum" );
+    efAxis->addTextField( "", 10, &eBuf->bufXMin );
+    efAxis->addLabel( " Maximum" );
+    efAxis->addTextField( "", 10, &eBuf->bufXMax );
+    efAxis->addLabel( " Time Format" );
+    efAxis->addOption( "",
+     "hh:mm:ss|hh:mm|hh:00|MMM DD YYYY|MMM DD|MMM DD hh:00|wd hh:00",
+     &eBuf->bufXAxisTimeFormat );
+    efAxis->endSubForm();
+
+    efAxis->beginLeftSubForm();
+    efAxis->addLabel( "Y1 Axis " );
+    efAxis->addLabel( " Style" );
+    efAxis->addOption( "", "linear|log10", &eBuf->bufY1AxisStyle );
+    efAxis->addLabel( " Range" );
+    efAxis->addOption( "", "from channel|user-specified|auto-scale",
+     &eBuf->bufY1AxisSource );
+    efAxis->addLabel( " Minimum" );
+    efAxis->addTextField( "", 10, &eBuf->bufY1Min );
+    efAxis->addLabel( " Maximum" );
+    efAxis->addTextField( "", 10, &eBuf->bufY1Max );
+    efAxis->endSubForm();
+
+    efAxis->beginLeftSubForm();
+    efAxis->addLabel( "Y2 Axis " );
+    efAxis->addLabel( " Style" );
+    efAxis->addOption( "", "linear|log10", &eBuf->bufY2AxisStyle );
+    efAxis->addLabel( " Range" );
+    efAxis->addOption( "", "from channel|user-specified|auto-scale",
+     &eBuf->bufY2AxisSource );
+    efAxis->addLabel( " Minimum" );
+    efAxis->addTextField( "", 10, &eBuf->bufY2Min );
+    efAxis->addLabel( " Maximum" );
+    efAxis->addTextField( "", 10, &eBuf->bufY2Max );
+    efAxis->endSubForm();
+
+    efAxis->finished( axygc_edit_ok_axis, this );
+
+  ef.addTextField( "Trigger Channel", 30, eBuf->bufTrigPvName, 39 );
+  ef.addTextField( "Erase Channel", 30, eBuf->bufErasePvName, 39 );
+  ef.addOption( "Erase Mode", "if not zero|if zero", &eBuf->bufEraseMode );
   ef.addFontMenu( "Font", actWin->fi, &fm, fontTag );
-  ef.addColorButton( "Fg Color", actWin->ci, &fgCb, &bufFgColor );
-  ef.addColorButton( "Bg Color", actWin->ci, &bgCb, &bufBgColor );
-  ef.addOption( "Scale Format", "g|f|e", bufFormatType, 1 );
-  ef.addTextField( "Scale Precision", 30, &bufEfPrecision );
-  ef.addTextField( "Ctl PV Name", 30, bufCtlPvName, 39 );
-  ef.addToggle( "Activate Callback", &bufActivateCallbackFlag );
-  ef.addToggle( "Deactivate Callback", &bufDeactivateCallbackFlag );
+  ef.addFontMenuNoAlignInfo( "Font", actWin->fi, &fm, fontTag );
 
   return 1;
 
@@ -637,7 +826,6 @@ int xyGraphClass::edit ( void ) {
 
   this->genericEdit();
   ef.finished( axygc_edit_ok, axygc_edit_apply, axygc_edit_cancel, this );
-  fm.setFontAlignment( alignment );
   actWin->currentEf = &ef;
   ef.popup();
 
@@ -675,8 +863,15 @@ int xyGraphClass::draw ( void ) {
 
   if ( activeMode || deleteRequest ) return 1;
 
-  actWin->drawGc.setFG( fgColor.pixelColor() );
-  actWin->drawGc.setBG( bgColor );
+  actWin->drawGc.saveFg();
+
+  actWin->drawGc.setFG( actWin->ci->pix(fgColor) );
+  //actWin->drawGc.setBG( actWin->ci->pix(bgColor) );
+
+  XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), x, y, w, h );
+
+  actWin->drawGc.restoreFg();
 
   return 1;
 
@@ -686,8 +881,15 @@ int xyGraphClass::drawActive ( void ) {
 
   if ( !activeMode || !init ) return 1;
 
-  actWin->drawGc.setFG( fgColor.pixelColor() );
-  actWin->drawGc.setBG( bgColor );
+  actWin->executeGc.saveFg();
+
+  actWin->executeGc.setFG( actWin->ci->pix(fgColor) );
+  //actWin->executeGc.setBG( actWin->ci->pix(bgColor) );
+
+  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), x, y, w, h );
+
+  actWin->executeGc.restoreFg();
 
   return 1;
 
@@ -706,11 +908,25 @@ int xyGraphClass::expand1st (
 
 int i, stat, retStat = 1;
 
-  stat = ctlPvExpStr.expand1st( numMacros, macros, expansions );
+  stat = graphTitle.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
-  for ( i=0; i<XYGC_K_MAX_PLOTS; i++ ) {
-    stat = plotPvExpStr.expand1st( numMacros, macros, expansions );
+  stat = xLabel.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+
+  stat = yLabel.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+
+  stat = trigPvExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+
+  stat = erasePvExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+
+  for ( i=0; i<numTraces; i++ ) {
+    stat = xPvExpStr[i].expand1st( numMacros, macros, expansions );
+    if ( !( stat & 1 ) ) retStat = stat;
+    stat = yPvExpStr[i].expand1st( numMacros, macros, expansions );
     if ( !( stat & 1 ) ) retStat = stat;
   }
 
@@ -723,15 +939,27 @@ int xyGraphClass::expand2nd (
   char *macros[],
   char *expansions[] ) {
 
-int stat;
-
 int i, stat, retStat = 1;
 
-  stat = ctlPvExpStr.expand2nd( numMacros, macros, expansions );
+  stat = graphTitle.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
-  for ( i=0; i<XYGC_K_MAX_PLOTS; i++ ) {
-    stat = plotPvExpStr.expand2nd( numMacros, macros, expansions );
+  stat = xLabel.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+
+  stat = yLabel.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+
+  stat = trigPvExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+
+  stat = erasePvExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
+
+  for ( i=0; i<numTraces; i++ ) {
+    stat = xPvExpStr[i].expand2nd( numMacros, macros, expansions );
+    if ( !( stat & 1 ) ) retStat = stat;
+    stat = yPvExpStr[i].expand2nd( numMacros, macros, expansions );
     if ( !( stat & 1 ) ) retStat = stat;
   }
 
@@ -743,11 +971,25 @@ int xyGraphClass::containsMacros ( void ) {
 
 int i, result;
 
-  result = ctlPvExpStr.containsPrimaryMacros();
+  result = graphTitle.containsPrimaryMacros();
   if ( result ) return result;
 
-  for ( i=0; i<XYGC_K_MAX_PLOTS; i++ ) {
-    result = plotPvExpStr.containsPrimaryMacros();
+  result = xLabel.containsPrimaryMacros();
+  if ( result ) return result;
+
+  result = yLabel.containsPrimaryMacros();
+  if ( result ) return result;
+
+  result = trigPvExpStr.containsPrimaryMacros();
+  if ( result ) return result;
+
+  result = erasePvExpStr.containsPrimaryMacros();
+  if ( result ) return result;
+
+  for ( i=0; i<numTraces; i++ ) {
+    result = xPvExpStr[i].containsPrimaryMacros();
+    if ( result ) return result;
+    result = yPvExpStr[i].containsPrimaryMacros();
     if ( result ) return result;
   }
 
@@ -761,127 +1003,6 @@ int xyGraphClass::activate (
 {
 
 int i, stat;
-char callbackName[63+1];
-
-  switch ( pass ) {
-
-  case 1:
-
-    aglPtr = ptr;
-    plot_widget = NULL;
-    opComplete = 0;
-    activeMode = 1;
-    init = 0;
-
-    needPlotConnectInit = needPlotInfoInit = needErase = needDraw =
-     needRefresh = needUpdate = 0;
-
-    for ( i=0; i<XYGC_K_MAX_PLOTS; i++ ) {
-
-#ifdef __epics__
-      plotEventId[i] = 0;
-#endif
-
-      needPlotConnect[i] = 0;
-      needPlotInfo[i] = 0;
-
-      plotPvExists[i] = 0;
-      if ( plotPvExpStr[i].getExpanded() ) {
-        if ( !blank( plotPvExpStr[i].getExpanded() ) ) {
-          plotPvExists[i] = 1;
-	}
-      }
-
-    }
-
-#ifdef __epics__
-      ctlEventId[i] = 0;
-#endif
-
-    ctlPvExists = 0;
-    if ( ctlPvExpStr.getExpanded() ) {
-      if ( !blank( ctlPvExpStr.getExpanded() ) ) {
-        ctlPvExists = 1;
-      }
-    }
-
-    break;
-
-  case 2:
-
-    if ( !opComplete ) {
-
-      atLeastOnePlotPvExists = 0;
-      for ( i=0; i<XYGC_K_MAX_PLOTS; i++ ) {
-
-        if ( plotPvExists[i] ) {
-
-          atLeastOnePlotPvExists = 1;
-
-          argRec[i].objPtr = (void *) this;
-          argRec[i].index = i;
-          argRec[i].setMask = (unsigned int) 1 << i;
-          argRec[i].clrMask = ~(argRec[i].setMask);
-
-
-#ifdef __epics__
-          stat = ca_search_and_connect( plotExpStr[i].getExpanded(),
-           &plotPvId[i], xygo_monitor_plot_connect_state, &argRec[i] );
-          if ( stat != ECA_NORMAL ) {
-            printf( "error from ca_search\n" );
-            return 0;
-          }
-#endif
-
-        }
-
-      }
-
-      if ( !atLeastOnePlotPvExists && anyCallbackFlag ) {
-
-        needInfoInit = 1;
-        actWin->appCtx->proc->lock();
-        actWin->addDefExeNode( aglPtr );
-        actWin->appCtx->proc->unlock();
-
-      }
-
-      if ( anyCallbackFlag ) {
-
-        if ( activateCallbackFlag ) {
-          strncpy( callbackName, id, 63 );
-          strncat( callbackName, "Activate", 63 );
-          activateCallback =
-           actWin->appCtx->userLibObject.getFunc( callbackName );
-	}
-
-        if ( deactivateCallbackFlag ) {
-          strncpy( callbackName, id, 63 );
-          strncat( callbackName, "Deactivate", 63 );
-          deactivateCallback =
-           actWin->appCtx->userLibObject.getFunc( callbackName );
-	}
-
-        if ( activateCallback ) {
-          (*activateCallback)( this );
-        }
-
-      }
-
-      opComplete = 1;
-
-    }
-
-    break;
-
-  case 3:
-  case 4:
-  case 5:
-  case 6:
-
-    break;
-
-  } // end switch
 
   return 1;
 
@@ -893,42 +1014,29 @@ int xyGraphClass::deactivate (
 
 int i, stat;
 
-  if ( pass == 1 ) {
-
-  activeMode = 0;
-
-  if ( deactivateCallback ) {
-    (*deactivateCallback)( this );
-  }
-
-#ifdef __epics__
-
-  for ( i=0; i<XYGC_K_MAX_PLOTS; i++ ) {
-
-    if ( plotPvExists[i] ) {
-
-      stat = ca_clear_channel( plotPvId[i] );
-      if ( stat != ECA_NORMAL )
-        printf( "ca_clear_channel failure\n" );
-
-    }
-
-  }
-
-#endif
-
-  }
-  else if ( pass == 2 ) {
-
-    if ( plot_widget ) XtDestroyWidget( plot_widget );
-
-  }
-
   return 1;
 
 }
 
 void xyGraphClass::updateDimensions ( void )
+{
+
+}
+
+void xyGraphClass::btnDrag (
+  int x,
+  int y,
+  int buttonState,
+  int buttonNumber )
+{
+
+}
+
+void xyGraphClass::btnUp (
+  int x,
+  int y,
+  int buttonState,
+  int buttonNumber )
 {
 
 }
@@ -958,117 +1066,9 @@ int xyGraphClass::getButtonActionRequest (
 
 void xyGraphClass::executeDeferred ( void ) {
 
-int i, stat;
-int npc, npi, ncc, nu, nr;
-Arg args[10];
-int pc[XYGC_K_MAX_PLOTS], pi[XYGC_K_MAX_PLOTS];
-
-  if ( actWin->isIconified ) return;
-
-  actWin->appCtx->proc->lock();
-  npc = needPlotConnectInit; needPlotConnectInit = 0;
-  npi = needPlotInfoInit; needPlotInfoInit = 0;
-  for ( i=0; i<XYGC_K_MAX_PLOTS; i++ ) {
-    pc[i] = needPlotConnect[i];
-    pi[i] = needPlotInfo[i];
-  }
-  ncc = needCtlConnectInit; needCtlConnectInit = 0;
-  nr = needRefresh; needRefresh = 0;
-  nu = needUpdate; needUpdate = 0;
-  actWin->appCtx->proc->unlock();
-
-  if ( !activeMode ) return;
-
-  if ( npc ) {
-
-    for ( i=0; i<XYGC_K_MAX_PLOTS; i++ ) {
-
-#ifdef __epics__
-      stat = ca_get_callback( DBR_GR_DOUBLE, ?Id,
-       ?InfoUpdate, (void *) this );
-      if ( stat != ECA_NORMAL ) {
-        printf( "ca_get_callback failed\n" );
-      }
-#endif
-
-      bufInvalidate();
-
-    }
-
-  }
-
-  if ( npi ) {
-
-    for ( i=0; i<XYGC_K_MAX_PLOTS; i++ ) {
-
-      if ( plotPvExists[i] ) {
-
-        sprintf( format, "%%.%-df%%", precision, formatType );
-
-#ifdef __epics__
-        if ( !eventId ) {
-          stat = ca_add_masked_array_event( DBR_DOUBLE, 1, ?Id,
-           ?Update, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-           &eventId, DBE_VALUE );
-          if ( stat != ECA_NORMAL ) {
-            printf( "ca_add_masked_array_event failed\n" );
-          }
-        }
-#endif
-
-      }
-
-    }
-
-    if ( !plot_widget ) {
-
-      plot_widget = XtVaCreateManagedWidget( "", xmdrawingWidgetClass,
-       actWin->executeWidget,
-       XmNx, x,
-       XmNy, y,
-       XmNforeground, fgColor.getColor(),
-       XmNbackground, bg,
-       XmNhighlightThickness, 0,
-       XmNmarginHeight, 0,
-       NULL );
-
-        XtAddCallback( plot_widget, XmN?Callback,
-         xygo?, this );
-
-    } // end if ( !plot_widget )
-
-  init = 1;
-
-  }
-
-  if ( nr ) {
-
-    bufInvalidate();
-    eraseActive();
-    drawActive();
-
-  }
-
-  if ( nu ) {
-
-    eraseActive();
-    drawActive();
-
-  }
-
   actWin->appCtx->proc->lock();
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
-
-}
-
-int xyGraphClass::getProperty (
-  char *prop,
-  int bufSize,
-  char *_value )
-{
-
-  return 0;
 
 }
 
