@@ -293,10 +293,10 @@ static void dsc_edit_cancel_delete (
 
 activeDynSymbolClass *dso = (activeDynSymbolClass *) client;
 
-  dso->erase();
-  dso->deleteRequest = 1;
   dso->ef.popdown();
   dso->operationCancel();
+  dso->erase();
+  dso->deleteRequest = 1;
   dso->drawAll();
 
 }

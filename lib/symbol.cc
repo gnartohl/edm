@@ -273,10 +273,10 @@ static void asc_edit_cancel_delete (
 
 activeSymbolClass *aso = (activeSymbolClass *) client;
 
-  aso->erase();
-  aso->deleteRequest = 1;
   aso->ef.popdown();
   aso->operationCancel();
+  aso->erase();
+  aso->deleteRequest = 1;
   aso->drawAll();
 
 }
