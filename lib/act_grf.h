@@ -751,26 +751,26 @@ virtual void pointerOut (
   int y,
   int buttonState );
 
-virtual void activeGraphicClass::checkMouseOver (
+virtual void checkMouseOver (
   int x,
   int y,
   int buttonState );
 
-virtual void activeGraphicClass::mousePointerIn (
+virtual void mousePointerIn (
   int _x,
   int _y,
   int buttonState );
 
-virtual void activeGraphicClass::mousePointerOut (
+virtual void mousePointerOut (
   int _x,
   int _y,
   int buttonState );
 
-virtual int activeGraphicClass::mouseIsOver ( void );
+virtual int mouseIsOver ( void );
 
-virtual void activeGraphicClass::setMouseOver ( void );
+virtual void setMouseOver ( void );
 
-virtual void activeGraphicClass::clearMouseOver ( void );
+virtual void clearMouseOver ( void );
 
 virtual int initDefExeNode (
   void *ptr );

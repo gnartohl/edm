@@ -177,7 +177,7 @@ int printStatusOK ( void );
 
 int printEvent ( void );
 
-int edmPrintClass::printFailure ( void );
+int printFailure ( void );
 
 int printDefFileError ( void );
 

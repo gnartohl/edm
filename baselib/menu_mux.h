@@ -310,26 +310,26 @@ int deactivate ( int pass );
 
 void updateDimensions ( void );
 
-void menuMuxClass::btnUp (
+void btnUp (
   int _x,
   int _y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-void menuMuxClass::btnDown (
+void btnDown (
   int _x,
   int _y,
   int buttonState,
   int buttonNumber,
   int *action );
 
-void menuMuxClass::pointerIn (
+void pointerIn (
   int _x,
   int _y,
   int buttonState );
 
-int menuMuxClass::getButtonActionRequest (
+int getButtonActionRequest (
   int *up,
   int *down,
   int *drag,

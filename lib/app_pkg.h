@@ -449,7 +449,7 @@ void addActiveWindow (
 int refreshActiveWindow (
   activeWindowClass *activeWindowNode );
 
-int appContextClass::smartDrawAllActive (
+int smartDrawAllActive (
   activeWindowClass *activeWindowNode );
 
 int removeActiveWindow (

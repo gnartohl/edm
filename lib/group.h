@@ -369,7 +369,7 @@ int startDrag (
   int y
 );
 
-int activeGroupClass::selectDragValue (
+int selectDragValue (
   int x,
   int y
 );
