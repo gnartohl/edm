@@ -3613,6 +3613,9 @@ static void displayParamInfo ( void ) {
   printf( global_str35 );
   printf( global_str36 );
   printf( global_str37 );
+  printf( global_str87 );
+  printf( global_str88 );
+
   printf( global_str77 );
   printf( global_str78 );
   printf( global_str85 );
