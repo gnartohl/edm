@@ -62,6 +62,10 @@
 
 #include "main.str"
 
+void setServerSocketFd (
+  int fd
+);
+
 typedef struct main_node_tag { /* locked queue node */
   void *flink;
   void *blink;
@@ -1043,6 +1047,8 @@ int *portNumPtr = (int *) thread_get_app_data( h );
       perror( "listen" );
       goto err_return;
     }
+
+    setServerSocketFd( sockfd );
 
     more = 1;
     while ( more ) {

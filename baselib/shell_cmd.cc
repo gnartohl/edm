@@ -64,7 +64,7 @@ threadParamBlockPtr threadParamBlock =
     thread_delay( h, threadParamBlock->secondsToDelay );
   }
 
-  stat = system( threadParamBlock->cmd );
+  stat = executeCmd( threadParamBlock->cmd );
 
   if ( threadParamBlock->multipleInstancesAllowed ) {
     delete threadParamBlock->cmd;
