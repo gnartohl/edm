@@ -9,6 +9,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<float.h>
+#include<math.h>
 #include"calc_pv_factory.h"
 #include"postfix.h"
 
@@ -120,12 +121,17 @@ bool CALC_PV_Factory::parseFile(const char *filename)
     size_t len;
 
     FILE *f = fopen(filename, "rt");
-    if (! f)
+    if (!f)
     {
-        fprintf(stderr, "Cannot find '%s' for CALC configuration\n",
-                filename);
-        return false;
+        const char *path=getenv("EDMFILES");
+        if (path)
+        {
+            sprintf(name, "%s/%s", path, filename);
+            f = fopen(name, "rt");
+        }
     }
+    if (!f)
+        return false;
 
     // Check version code
     if (!fgets(line, sizeof line, f)  ||
@@ -176,82 +182,111 @@ bool CALC_PV_Factory::parseFile(const char *filename)
     return true;
 }
 
+// Fills *arg with copy of next argument found,
+// returns 0 or updated position p
+static const char *get_arg(const char *p, char **arg)
+{
+    // find start...
+    while (*p && strchr(", \t)", *p))
+        ++p;
+    if (! *p)
+        return 0;
+
+    // find end, including spaces...
+    const char *end = p+1;
+    int braces = 0;
+    while (*end)
+    {
+        if (*end == '(')
+            ++braces;
+        else if (*end == ')')
+        {
+            --braces;
+            if (braces < 0)
+                break;
+        }
+        else if (*end == ',')
+        {
+            if (braces==0)
+                break;
+        }
+        ++end;
+    }
+    // end is on character NOT to copy: '\0'  ','  ')'
+    // remove trailing space
+    while (end > p  && strchr(whitespace, *(end-1)))
+        --end;
+    // copy
+    int len = end - p;
+    if (len <= 0)
+        return 0;
+    // Compiler created trash when using *arg instead of temp. narg
+    char *narg = (char *)malloc(len+1);
+    memcpy(narg, p, len);
+    narg[len] = '\0';
+    *arg = narg;
+
+    return end;
+}
+
 ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
 {
-    const char *arg_name[CALC_ProcessVariable::MaxArgs];
-    size_t arg_count = 0;
+    char *arg_name[CALC_ProcessVariable::MaxArgs];
+    size_t i, arg_count = 0;
+    const char *p;
 
-    // Locate start of expression
+    for (i=0; i<CALC_ProcessVariable::MaxArgs; ++i)
+        arg_name[i] = 0;
+    
+    // Locate expression: start...
     while (strchr(whitespace, *PV_name))
         ++PV_name;
-    size_t len = strlen(PV_name);
+    p = PV_name;
+    // end...
+    while (*p && !strchr(" \t(", *p))
+        ++p;
+    // copy
+    int len = p - PV_name; 
     if (len <= 0)
     {
         fprintf(stderr, "Empty expression '%s'\n", PV_name);
         return 0;
     }
-    char *expression = strdup(PV_name);
-    char *p = expression;
-
-    // Locate end of expression name
-    const char *end = expression + len;
-    while (*p && p<end && !strchr(" \t(", *p))
+    char *expression = (char *)malloc(len+1);
+    memcpy(expression, PV_name, len);
+    expression[len] = '\0';
+    
+    while (*p && strchr(whitespace, *p))
         ++p;
-
-    if (*p) // anything after end of expression name?
+    // Do arguments follow?
+    if (*p == '(')
     {
-        bool have_args = false;
-        // ... start of arg1 in "(arg1, arg1, ...)"
-        do
-        {
-            if (*p == '(')
-                have_args = true;
-            *(p++) = '\0';
-        }
-        while (*p && p<end && strchr(" \t(", *p));
-
-        if (p < end && !have_args)
-        {
-            fprintf(stderr, "Malformed expression '%s'\n", PV_name);
-            return 0;
-        }
-
-        if (have_args)
-        {
-            do
-            {
-                arg_name[arg_count++] = p;
-                do
-                    ++p;
-                while (*p && !strchr(" \t,)", *p));
-                if (*p)
-                {
-                    *p = '\0'; // end of arg, find next arg
-                    do
-                        ++p;
-                    while (*p && strchr(" \t,)", *p));
-                }
-            }
-            while (p && p < end);
-        }
+        ++p;
+        while ((p=get_arg(p, &arg_name[arg_count])) != 0)
+            ++arg_count;
     }
-    printf("CALC PV: '%s'\n", expression);
+    printf("CALC PV: '%s'\n", PV_name);
+    printf("\texpression: '%s'\n", expression);
     for (size_t i=0; i<arg_count; ++i)
         printf("\targ %d: '%s'\n", i, arg_name[i]);
     
     HashedExpression he;
     he.name = expression;
     ExpressionHash::iterator entry = expressions->find(&he);
-    // 'he' will delete the strdup'ed  expression!
     if (entry == expressions->end())
     {
         fprintf(stderr, "Unknown CALC expression '%s'\n", expression);
         return 0;
     }
-    return new CALC_ProcessVariable(PV_name,
-                                    *entry,
-                                    arg_count,
-                                    arg_name);
+    CALC_ProcessVariable *pv =
+        new CALC_ProcessVariable(PV_name,
+                                 *entry,
+                                 arg_count,
+                                 (const char **)arg_name);
+    // 'he' will delete the strdup'ed  expression
+    for (size_t i=0; i<arg_count; ++i)
+        free(arg_name[i]);
+    return pv;
 }
 
 // ------------------------------------------------------------------
@@ -280,12 +315,34 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
     arg_count = _arg_count;
     for (i=0; i<arg_count; ++i)
     {
-        arg[i] = 0.0;
-        arg_pv[i] = the_PV_Factory->create(arg_name[i]);
-        if (arg_pv[i])
+        if (strchr("0123456789+-.", arg_name[i][0]) &&
+            strspn(arg_name[i], "0123456789+-.eEx"))
         {
-            arg_pv[i]->add_status_callback(status_callback, this);
-            arg_pv[i]->add_value_callback(value_callback, this);
+            arg[i] = strtod(arg_name[i], 0);
+            if (arg[i] == HUGE_VAL ||
+                arg[i] == -HUGE_VAL)
+            {
+                fprintf(stderr, "CALC PV %s: invalid number arg '%s'\n",
+                        name, arg_name[i]);
+                arg[i] = 0.0;
+            }
+        }
+        else
+        {
+            
+            
+            arg[i] = 0.0;
+            arg_pv[i] = the_PV_Factory->create(arg_name[i]);
+            if (arg_pv[i])
+            {
+                arg_pv[i]->add_status_callback(status_callback, this);
+                arg_pv[i]->add_value_callback(value_callback, this);
+            }
+            else
+            {
+                fprintf(stderr, "CALC PV %s: invalid PV arg '%s'\n",
+                        name, arg_name[i]);
+            }
         }
     }
     for (/**/; i<MaxArgs; ++i)

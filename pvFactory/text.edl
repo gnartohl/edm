@@ -1,6 +1,6 @@
 3 0 1
-226
-43
+238
+112
 546
 452
 helvetica-medium-r-18.0
@@ -276,11 +276,27 @@ helvetica-medium-r-12.0
 EOD
 TextupdateClass
 1 1 0
-167
-402
+308
+401
 126
 28
-CALC\sum(fred,EPICS\jane)
+CALC\sum(fred,CALC\sum(fred,fred))
+0
+0
+0
+1
+1
+helvetica-medium-r-18.0
+0
+135663272 1080014445
+EOD
+TextupdateClass
+1 1 0
+168
+401
+126
+28
+CALC\sum(fred, 1)
 0
 0
 0

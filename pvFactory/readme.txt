@@ -15,11 +15,17 @@ In principle, the actual implementation should
 be in a shared library and loaded on demand,
 maybe user can even select the implementation
 when configuring the widget (Epics, Vsystem, ...).
-Currently this is not possible, widgets hard-link the
-implementation.
+Currently this is not possible.
+Widgets ask PV factory to ProcessVariable,
+PV factory has hardcoded table to pick factory
+depending on prefix "EPICS\" or "CALC\".
+Default for no prefix: EPICS.
 
 * epics_pv_factory.*
-Implementaion for EPICS/ChannelAccess
+Implementation for EPICS ChannelAccess.
+
+* calc_pv_factory.*
+Implementation for CALC
 
 * Widget: Monitors/Textupdate
 (in textupdate.*)
@@ -39,3 +45,5 @@ If the IOC's time is out of sync with the host,
 you see nothing!
 Otherwise you can see that e.g. the IOC is x seconds
 behind the host.
+
+kasemir@lanl.gov
