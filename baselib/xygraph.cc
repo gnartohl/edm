@@ -907,13 +907,6 @@ int i, stat;
 
     if ( plotPvExists[i] ) {
 
-      if ( plotEventId[i] ) {
-        stat = ca_clear_event( plotEventId[i] );
-        eventId = 0;
-        if ( stat != ECA_NORMAL )
-          printf( "ca_clear_channel failure\n" );
-      }
-
       stat = ca_clear_channel( plotPvId[i] );
       if ( stat != ECA_NORMAL )
         printf( "ca_clear_channel failure\n" );

@@ -1105,18 +1105,6 @@ int stat;
 
   bgRule->deactivate();
 
-  if ( alarmEventId ) {
-    stat = ca_clear_event( alarmEventId );
-    if ( stat != ECA_NORMAL )
-      printf( expRectClass_str41 );
-  }
-
-  if ( visEventId ) {
-    stat = ca_clear_event( visEventId );
-    if ( stat != ECA_NORMAL )
-      printf( expRectClass_str42 );
-  }
-
   if ( alarmPvExists ) {
     stat = ca_clear_channel( alarmPvId );
     if ( stat != ECA_NORMAL )

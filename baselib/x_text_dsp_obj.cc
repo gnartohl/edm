@@ -2575,20 +2575,6 @@ int stat;
 
   if ( pvExists ) {
 
-    if ( eventId ) {
-      stat = ca_clear_event( eventId );
-      eventId = 0;
-      if ( stat != ECA_NORMAL )
-        printf( activeXTextDspClass_str39 );
-    }
-
-    if ( alarmEventId ) {
-      stat = ca_clear_event( alarmEventId );
-      alarmEventId = 0;
-      if ( stat != ECA_NORMAL )
-        printf( activeXTextDspClass_str40 );
-    }
-
     stat = ca_clear_channel( pvId );
     if ( stat != ECA_NORMAL )
       printf( activeXTextDspClass_str41 );

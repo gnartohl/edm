@@ -1102,18 +1102,6 @@ int stat;
 
 #ifdef __epics__
 
-  if ( alarmEventId ) {
-    stat = ca_clear_event( alarmEventId );
-    if ( stat != ECA_NORMAL )
-      printf( activeArcClass_str29 );
-  }
-
-  if ( visEventId ) {
-    stat = ca_clear_event( visEventId );
-    if ( stat != ECA_NORMAL )
-      printf( activeArcClass_str29 );
-  }
-
   if ( alarmPvExists ) {
     stat = ca_clear_channel( alarmPvId );
     if ( stat != ECA_NORMAL )
