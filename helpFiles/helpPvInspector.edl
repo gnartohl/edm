@@ -1,0 +1,626 @@
+4 0 0
+beginScreenProperties
+major 4
+minor 0
+release 0
+x 134
+y 168
+w 1094
+h 786
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 51400 51400 51400
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 49344
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+endScreenProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 24
+y 498
+w 503
+h 272
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 18
+y 19
+w 142
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 60652 60652 60652
+value {
+  "PV Inspector"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 16
+y 63
+w 437
+h 416
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "The Pv Inspector widget is a related display widget that opens"
+  "a display file whose name is constructed from a base name"
+  "concatenated with some or all of the following PV properties:"
+  ""
+  "  o RTYP"
+  "  o Type"
+  "  o Specific Type"
+  "  o Dimension"
+  ""
+  "RTYP is the EPICS recode type (e.g. ai)."
+  ""
+  "Type is \"Real\", \"Int\", \"Enum\", \"Text\", or \"Unknown\"."
+  ""
+  "Specific Type is \"Real\", \"Float\", \"Int\", \"Short\", \"Char\", \"Enum\", \"Text\","
+  "or \"Unknown\""
+  ""
+  "This widget presents itself as a text entry field into which the name of"
+  "a PV is entered or dropped."
+  ""
+  "When the disply is opened, the following macros are set:"
+  ""
+  "  $(name) = name of pv"
+  "  $(rtype) = value of RTYP"
+  "  $(type) = value of Type"
+  "  $(specType) = value of Specific Type"
+  "  $(dim) = S or V (scalar or vector)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 33
+y 536
+w 481
+h 224
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "\"Use RTYP\" and \"Use Dim\" are selected and File = \"pvInsp-\" (base name)."
+  ""
+  "Now suppose the name of a PV, say \"somePv\", with the following properties"
+  "is dropped into the text field:"
+  ""
+  "  RTYP = \"ai\""
+  "  Dimension = 1 (scalar)"
+  ""
+  "This opens the display file \"pvInsp-aiS\" and sets the following macros"
+  "to the values shown below:"
+  ""
+  "  $(name) = somePv"
+  "  $(rtype) = ai"
+  "  $(dim) = S"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 36
+y 503
+w 89
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Example 1"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 546
+y 21
+w 0
+h 750
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+numPoints 2
+xPoints {
+  0 546
+  1 546
+}
+yPoints {
+  0 21
+  1 771
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 570
+y 22
+w 503
+h 272
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 579
+y 60
+w 481
+h 224
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "\"Use type\" and \"Use Dim\" are selected and File = \"pvInsp-\" (base name)."
+  ""
+  "Now suppose the name of a PV, say \"somePv\", with the following properties"
+  "is dropped into the text field:"
+  ""
+  "  Type = \"Real\""
+  "  Dimension = 100 (Vector)"
+  ""
+  "This opens the display file \"pvInsp-RealV\" and sets the following macros"
+  "to the values shown below:"
+  ""
+  "  $(name) = somePv"
+  "  $(type) = Real"
+  "  $(dim) = V"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 582
+y 27
+w 89
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Example 2"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 571
+y 309
+w 455
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "A menu of up to twenty different views may be specified by pressing the"
+  "\"Additional Displays\" button."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 668
+y 637
+w 70
+h 18
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "it contains."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 668
+y 619
+w 322
+h 18
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "is identified by its name and by the list of symbols"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 572
+y 601
+w 430
+h 18
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Dups Allowed: Allow duplicate displays to be popped-up. A display"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 648
+y 551
+w 401
+h 18
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "(described above) is specified as \"Button\" or \"Parent Window\""
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 572
+y 533
+w 459
+h 18
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "X/Y Offset: Offset added to new display position when Display Position"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 713
+y 509
+w 91
+h 18
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "parent display"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 604
+y 492
+w 396
+h 18
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Parent Window: Position new display using current positon of"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 661
+y 473
+w 395
+h 18
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Button: Position new display at related display button location"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 653
+y 453
+w 356
+h 18
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Original: Use position saved when display was created"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 572
+y 432
+w 105
+h 18
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Display Position"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 572
+y 406
+w 194
+h 18
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "File: Related display file name"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 572
+y 381
+w 114
+h 18
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Label: Menu label"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 571
+y 355
+w 131
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Widget Properties:"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 572
+y 662
+w 414
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Use RTYP: Include the PV RTYP in the file name and set $(rtype)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 572
+y 687
+w 401
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Use Type: Include the PV Type in the file name and set $(type)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 572
+y 712
+w 460
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Use Specific Type: Include the PV Specific Type in the file name and set"
+  "$(specType)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 572
+y 753
+w 421
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Use Dim: Include the PV dimension in the file name and set $(dim)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 569
+y 576
+w 440
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "No Edit: If selected, the related display pops up in execute-only mode"
+}
+autoSize
+endObjectProperties
+

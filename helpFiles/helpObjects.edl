@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 0
-x 92
-y 326
+x 83
+y 260
 w 454
 h 424
 font "helvetica-medium-r-18.0"
@@ -574,16 +574,13 @@ fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
 topShadowColor rgb 60652 60652 60652
 botShadowColor rgb 23130 23130 23130
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-12.0"
 noEdit
-buttonLabel "Dynamic Symbol"
+buttonLabel "Embedded Window"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "$(help)helpDynamicSymbol"
-}
-setPosition {
-  0 "button"
+  0 "$(help)helpEmbeddedWindow"
 }
 endObjectProperties
 
@@ -817,6 +814,63 @@ minor 0
 release 0
 x 165
 y 224
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "PV Inspector"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpPvInspector"
+}
+menuLabel {
+  0 "Byte"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 11
+y 289
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Dynamic Symbol"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpDynamicSymbol"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 165
+y 255
 w 118
 h 25
 fgColor rgb 0 0 0
