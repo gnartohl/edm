@@ -1939,6 +1939,8 @@ XButtonEvent *be;
 activeMotifSliderClass *mslo;
  int stat;
 char title[32], *ptr, strVal[255+1];
+int v;
+double fvalue;
 
   *continueToDispatch = True;
 
@@ -2042,6 +2044,108 @@ char title[32], *ptr, strVal[255+1];
       break;
 
 //========== B3 Press ========================================
+
+//========== B4 Press ========================================
+
+    case Button4:
+
+      XmScaleGetValue( mslo->scaleWidget, &v );
+
+      if ( mslo->positive ) {
+        fvalue = mslo->controlV + mslo->increment;
+        if ( fvalue < mslo->minFv ) fvalue = mslo->minFv;
+        if ( fvalue > mslo->maxFv ) fvalue = mslo->maxFv;
+      }
+      else {
+        fvalue = mslo->controlV - mslo->increment;
+        if ( fvalue > mslo->minFv ) fvalue = mslo->minFv;
+        if ( fvalue < mslo->maxFv ) fvalue = mslo->maxFv;
+      }
+
+      mslo->prevScaleV = v;
+
+      mslo->controlX = (int) ( ( fvalue - mslo->minFv ) /
+       mslo->factor + 0.5 );
+
+      XmScaleSetValue( mslo->scaleWidget, mslo->controlX );
+
+      mslo->oldControlV = mslo->oneControlV;
+
+      mslo->eraseActiveControlText();
+
+      mslo->actWin->appCtx->proc->lock();
+      mslo->controlV = mslo->oneControlV = mslo->curControlV;
+      mslo->actWin->appCtx->proc->unlock();
+
+      mslo->controlV = fvalue;
+
+      sprintf( mslo->controlValue, mslo->controlFormat, mslo->controlV );
+
+      stat = mslo->drawActiveControlText();
+
+      if ( mslo->controlExists ) {
+        if ( mslo->controlPvId ) {
+          stat = mslo->controlPvId->put( fvalue );
+          if ( !stat ) printf( activeMotifSliderClass_str59 );
+        }
+      }
+
+      mslo->controlAdjusted = 1;
+
+      break;
+
+//========== B4 Press ========================================
+
+//========== B5 Press ========================================
+
+    case Button5:
+
+      XmScaleGetValue( mslo->scaleWidget, &v );
+
+      if ( mslo->positive ) {
+        fvalue = mslo->controlV - mslo->increment;
+        if ( fvalue < mslo->minFv ) fvalue = mslo->minFv;
+        if ( fvalue > mslo->maxFv ) fvalue = mslo->maxFv;
+      }
+      else {
+        fvalue = mslo->controlV + mslo->increment;
+        if ( fvalue > mslo->minFv ) fvalue = mslo->minFv;
+        if ( fvalue < mslo->maxFv ) fvalue = mslo->maxFv;
+      }
+
+      mslo->prevScaleV = v;
+
+      mslo->controlX = (int) ( ( fvalue - mslo->minFv ) /
+       mslo->factor + 0.5 );
+
+      XmScaleSetValue( mslo->scaleWidget, mslo->controlX );
+
+      mslo->oldControlV = mslo->oneControlV;
+
+      mslo->eraseActiveControlText();
+
+      mslo->actWin->appCtx->proc->lock();
+      mslo->controlV = mslo->oneControlV = mslo->curControlV;
+      mslo->actWin->appCtx->proc->unlock();
+
+      mslo->controlV = fvalue;
+
+      sprintf( mslo->controlValue, mslo->controlFormat, mslo->controlV );
+
+      stat = mslo->drawActiveControlText();
+
+      if ( mslo->controlExists ) {
+        if ( mslo->controlPvId ) {
+          stat = mslo->controlPvId->put( fvalue );
+          if ( !stat ) printf( activeMotifSliderClass_str59 );
+        }
+      }
+
+      mslo->controlAdjusted = 1;
+
+      break;
+
+//========== B5 Press ========================================
 
     }
 
