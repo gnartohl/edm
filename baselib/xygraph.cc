@@ -804,7 +804,6 @@ int i;
   ef.addTextField( "Trigger Channel", 30, eBuf->bufTrigPvName, 39 );
   ef.addTextField( "Erase Channel", 30, eBuf->bufErasePvName, 39 );
   ef.addOption( "Erase Mode", "if not zero|if zero", &eBuf->bufEraseMode );
-  ef.addFontMenu( "Font", actWin->fi, &fm, fontTag );
   ef.addFontMenuNoAlignInfo( "Font", actWin->fi, &fm, fontTag );
 
   return 1;
