@@ -503,6 +503,8 @@ int i;
 
   closeAction = source->closeAction;
 
+  buttonLabel.copy( source->buttonLabel );
+
   for ( i=0; i<maxCmds; i++ ) {
     shellCommand[i].copy( source->shellCommand[i] );
     label[i].copy( source->label[i] );
