@@ -45,55 +45,36 @@ double fvalue;
 
   if ( mslo->prevScaleV == -1 ) return;
 
-  if ( abs( v - mslo->prevScaleV ) > 1 ) {
+  if ( v > mslo->prevScaleV ) {
 
-    fvalue = mslo->factor * (double) v + mslo->minFv;
     if ( mslo->positive ) {
+      fvalue = mslo->controlV + mslo->increment;
       if ( fvalue < mslo->minFv ) fvalue = mslo->minFv;
       if ( fvalue > mslo->maxFv ) fvalue = mslo->maxFv;
     }
     else {
+      fvalue = mslo->controlV - mslo->increment;
       if ( fvalue > mslo->minFv ) fvalue = mslo->minFv;
       if ( fvalue < mslo->maxFv ) fvalue = mslo->maxFv;
     }
 
-    mslo->prevScaleV = v;
-
   }
   else {
 
-    if ( v > mslo->prevScaleV ) {
-
-      if ( mslo->positive ) {
-        fvalue = mslo->controlV + mslo->increment;
-        if ( fvalue < mslo->minFv ) fvalue = mslo->minFv;
-        if ( fvalue > mslo->maxFv ) fvalue = mslo->maxFv;
-      }
-      else {
-        fvalue = mslo->controlV - mslo->increment;
-        if ( fvalue > mslo->minFv ) fvalue = mslo->minFv;
-        if ( fvalue < mslo->maxFv ) fvalue = mslo->maxFv;
-      }
-
+    if ( mslo->positive ) {
+      fvalue = mslo->controlV - mslo->increment;
+      if ( fvalue < mslo->minFv ) fvalue = mslo->minFv;
+      if ( fvalue > mslo->maxFv ) fvalue = mslo->maxFv;
     }
     else {
-
-      if ( mslo->positive ) {
-        fvalue = mslo->controlV - mslo->increment;
-        if ( fvalue < mslo->minFv ) fvalue = mslo->minFv;
-        if ( fvalue > mslo->maxFv ) fvalue = mslo->maxFv;
-      }
-      else {
-        fvalue = mslo->controlV + mslo->increment;
-        if ( fvalue > mslo->minFv ) fvalue = mslo->minFv;
-        if ( fvalue < mslo->maxFv ) fvalue = mslo->maxFv;
-      }
-
+      fvalue = mslo->controlV + mslo->increment;
+      if ( fvalue > mslo->minFv ) fvalue = mslo->minFv;
+      if ( fvalue < mslo->maxFv ) fvalue = mslo->maxFv;
     }
 
-    mslo->prevScaleV = v;
-
   }
+
+  mslo->prevScaleV = v;
 
   mslo->controlV = fvalue;
 
@@ -1366,7 +1347,37 @@ void activeMotifSliderClass::bufInvalidate ( void ) {
 
 }
 
-void motifSliderEventHandler (
+static void scrollBarEventHandler (
+  Widget w,
+  XtPointer client,
+  XEvent *e,
+  Boolean *continueToDispatch ) {
+
+activeMotifSliderClass *mslo;
+
+  mslo = (activeMotifSliderClass *) client;
+
+  if ( !mslo->active ) return;
+
+  if ( e->type == EnterNotify ) {
+    if ( !ca_write_access( mslo->controlPvId ) ) {
+      mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
+       CURSOR_K_NO );
+    }
+    else {
+      mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
+       CURSOR_K_DEFAULT );
+    }
+  }
+
+  if ( e->type == LeaveNotify ) {
+    mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
+     CURSOR_K_DEFAULT );
+  }
+
+}
+
+static void motifSliderEventHandler (
   Widget w,
   XtPointer client,
   XEvent *e,
@@ -1637,6 +1648,7 @@ static XtActionsRec dragActions[] = {
       }
 
       if ( scrollBarWidget ) {
+
         XtVaSetValues( scrollBarWidget,
          XmNforeground, fgColor.getColor(),
          XmNbackground, bgColor.pixelColor(),
@@ -1644,6 +1656,11 @@ static XtActionsRec dragActions[] = {
          XmNtopShadowColor, actWin->ci->pix(topColor),
          XmNbottomShadowColor, actWin->ci->pix(botColor),
          NULL );
+
+        XtAddEventHandler( scrollBarWidget,
+         EnterWindowMask|LeaveWindowMask, False,
+         scrollBarEventHandler, (XtPointer) this );
+
       }
 
       XtAddCallback( scaleWidget, XmNvalueChangedCallback,

@@ -107,6 +107,12 @@ static void msloCancelKp (
   XtPointer client,
   XtPointer call );
 
+static void scrollBarEventHandler (
+  Widget w,
+  XtPointer client,
+  XEvent *e,
+  Boolean *continueToDispatch );
+
 static void motifSliderEventHandler(
   Widget w,
   XtPointer client,
@@ -226,6 +232,12 @@ friend void msloCancelKp (
   Widget w,
   XtPointer client,
   XtPointer call );
+
+friend void scrollBarEventHandler (
+  Widget w,
+  XtPointer client,
+  XEvent *e,
+  Boolean *continueToDispatch );
 
 friend void motifSliderEventHandler(
   Widget w,
