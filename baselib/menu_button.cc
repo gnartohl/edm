@@ -1285,7 +1285,7 @@ char string[MAX_ENUM_STRING_SIZE+1];
     tX = x + w/2 - 10;
     tY = y + h/2 - fontAscent/2;
 
-    if ( ( v >= 0 ) && ( value < numStates ) ) {
+    if ( ( v >= 0 ) && ( v < numStates ) ) {
       strncpy( string, stateString[v], MAX_ENUM_STRING_SIZE );
     }
     else {
