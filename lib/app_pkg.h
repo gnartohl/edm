@@ -346,6 +346,7 @@ int largestH;
 int shutdownFlag;
 int saveContextOnExit;
 int primaryServer;
+int oneInstance;
 FILE *shutdownFilePtr;
 
 int reloadFlag;
@@ -505,6 +506,12 @@ int startApplication (
   int argc,
   char **argv,
   int _primaryServer );
+
+int startApplication (
+  int argc,
+  char **argv,
+  int _primaryServer,
+  int _oneInstance );
 
 void openInitialFiles ( void );
 

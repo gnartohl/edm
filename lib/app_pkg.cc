@@ -1903,6 +1903,7 @@ appContextClass::appContextClass (
   reloadFlag = 0;
   saveContextOnExit = 0;
   primaryServer = 0;
+  oneInstance = 0;
   executeOnOpen = 0;
   noEdit = 0;
   requestFlag = 0;
@@ -1977,7 +1978,7 @@ actionsPtr curAct, nextAct;
   if ( saveContextOnExit ) {
     //fprintf( shutdownFilePtr, "appCtx {\n" );
     //fprintf( shutdownFilePtr, "  primaryServer=%-d\n", primaryServer );
-    fprintf( shutdownFilePtr, "%-d\n", primaryServer );
+    fprintf( shutdownFilePtr, "%-d\n", primaryServer | ( oneInstance << 8 ) );
     //if ( blank(displayName) ) {
       //fprintf( shutdownFilePtr, "  display=<NULL>\n" );
     //}
@@ -4038,6 +4039,17 @@ int appContextClass::startApplication (
   int _primaryServer )
 {
 
+  return startApplication( argc, argv, _primaryServer, 0 );
+
+}
+
+int appContextClass::startApplication (
+  int argc,
+  char **argv,
+  int _primaryServer,
+  int _oneInstance )
+{
+
 int stat, opStat;
 activeWindowListPtr cur;
 char *name, *envPtr;
@@ -4052,6 +4064,7 @@ Arg args[10];
 XmString xmStr1;
 
   primaryServer = _primaryServer;
+  oneInstance = _oneInstance;
 
   name = argv[0];
 
@@ -5149,6 +5162,7 @@ activeWindowListPtr cur;
 int n, stat;
 char *newMacros[100+1];
 char *newValues[100+1];
+fileListPtr curFile;
 
   //printf( "appContextClass::openCheckPointScreen\n" );
 
@@ -5214,6 +5228,18 @@ char *newValues[100+1];
   }
 
   processAllEventsWithSync( app, display );
+
+  // add file name to file list
+  numFiles++;
+  curFile = new fileListType;
+  if ( !curFile ) return 6;
+  curFile->file = new char[strlen(screenName)+1];
+  if ( !curFile->file ) return 6;
+  strcpy( curFile->file, screenName );
+  fileHead->blink->flink = curFile;
+  curFile->flink = fileHead;
+  curFile->blink = fileHead->blink;
+  fileHead->blink = curFile;
 
   return 1;
 
