@@ -62,7 +62,7 @@ int dx, dy;
   ago->eraseSelectBoxCorners();
   ago->erase();
 
-  ago->visPvExpStr.setRaw( ago->bufVisPvName );
+  ago->visPvExpStr.setRaw( ago->eBuf->bufVisPvName );
 
   if ( ago->bufVisInverted )
     ago->visInverted = 0;
@@ -243,6 +243,8 @@ activeGraphicListPtr head;
 
   activeMode = 0;
 
+  eBuf = NULL;
+
 }
 
 activeGroupClass::~activeGroupClass ( void ) {
@@ -315,6 +317,7 @@ btnActionListPtr curBtnAction, nextBtnAction;
   delete btnFocusActionHead;
 
   if ( name ) delete[] name;
+  if ( eBuf ) delete eBuf;
 
 #if 0
   if ( unconnectedTimer ) {
@@ -387,6 +390,8 @@ activeGraphicListPtr head, cur, curSource, sourceHead;
   unconnectedTimer = 0;
 
   activeMode = 0;
+
+  eBuf = NULL;
 
 }
 
@@ -1039,6 +1044,10 @@ char title[32], *ptr;
 activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
 activeGraphicListPtr cur;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   cur = head->flink;
   if ( cur ) {
     addUndoEditNode( curUndoObj );
@@ -1056,9 +1065,9 @@ activeGraphicListPtr cur;
   bufY = y;
 
   if ( visPvExpStr.getRaw() )
-    strncpy( bufVisPvName, visPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+    strncpy( eBuf->bufVisPvName, visPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufVisPvName, "" );
+    strcpy( eBuf->bufVisPvName, "" );
 
   if ( visInverted )
     bufVisInverted = 0;
@@ -1076,7 +1085,7 @@ activeGraphicListPtr cur;
 
   ef.addTextField( "X", 30, &bufX );
   ef.addTextField( "Y", 30, &bufY );
-  ef.addTextField( "Visibility PV", 30, bufVisPvName,
+  ef.addTextField( "Visibility PV", 30, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
   ef.addOption( " ", "Not Visible if|Visible if", &bufVisInverted );
   ef.addTextField( ">=", 30, bufMinVisString, 39 );
@@ -1652,7 +1661,7 @@ int num;
       init = 1; // this stays true if there are no pvs
 
       if ( !visPvExpStr.getExpanded() ||
-           blank( visPvExpStr.getExpanded() ) ) {
+           blankOrComment( visPvExpStr.getExpanded() ) ) {
         visPvExists = 0;
       }
       else {
@@ -1928,7 +1937,7 @@ int num;
       init = 1; // this stays true if there are no pvs
 
       if ( !visPvExpStr.getExpanded() ||
-           blank( visPvExpStr.getExpanded() ) ) {
+           blankOrComment( visPvExpStr.getExpanded() ) ) {
         visPvExists = 0;
       }
       else {

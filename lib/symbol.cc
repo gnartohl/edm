@@ -360,8 +360,8 @@ activeSymbolClass *aso = (activeSymbolClass *) dsc->obj;
 int i;
 
   for ( i=0; i<aso->numStates; i++ ) {
-    aso->elsvMin->setValue( aso->bufStateMinValue[ef->index] );
-    aso->elsvMax->setValue( aso->bufStateMaxValue[ef->index] );
+    aso->elsvMin->setValue( aso->eBuf->bufStateMinValue[ef->index] );
+    aso->elsvMax->setValue( aso->eBuf->bufStateMaxValue[ef->index] );
   }
 
 }
@@ -389,44 +389,44 @@ int stat, resizeStat, i, saveW, saveH, saveX, saveY;
 
   strncpy( aso->id, aso->bufId, 31 );
 
-  aso->x = aso->bufX;
-  aso->sboxX = aso->bufX;
+  aso->x = aso->eBuf->bufX;
+  aso->sboxX = aso->eBuf->bufX;
 
-  aso->y = aso->bufY;
-  aso->sboxY = aso->bufY;
+  aso->y = aso->eBuf->bufY;
+  aso->sboxY = aso->eBuf->bufY;
 
   aso->numPvs = 0;
   for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
-    aso->shiftCount[i] = aso->bufShiftCount[i];
-    strncpy( aso->cXorMask[i], aso->bufXorMask[i], 9 );
-    strncpy( aso->cAndMask[i], aso->bufAndMask[i], 9 );
-    aso->controlPvExpStr[i].setRaw( aso->bufControlPvName[i] );
-    if ( !blank( aso->bufControlPvName[i] ) )
+    aso->shiftCount[i] = aso->eBuf->bufShiftCount[i];
+    strncpy( aso->cXorMask[i], aso->eBuf->bufXorMask[i], 9 );
+    strncpy( aso->cAndMask[i], aso->eBuf->bufAndMask[i], 9 );
+    aso->controlPvExpStr[i].setRaw( aso->eBuf->bufControlPvName[i] );
+    if ( !blank( aso->eBuf->bufControlPvName[i] ) )
       (aso->numPvs)++;
     else
       break; /* pv entries on form must be contiguous */
   }
 
-  aso->colorPvExpStr.setRaw( aso->bufColorPvName );
+  aso->colorPvExpStr.setRaw( aso->eBuf->bufColorPvName );
 
-  strncpy( aso->symbolFileName, aso->bufSymbolFileName, 127 );
+  strncpy( aso->symbolFileName, aso->eBuf->bufSymbolFileName, 127 );
 
   aso->numStates = aso->ef.numItems;
 
-  aso->useOriginalSize = aso->bufUseOriginalSize;
+  aso->useOriginalSize = aso->eBuf->bufUseOriginalSize;
 
-  aso->useOriginalColors = aso->bufUseOriginalColors;
+  aso->useOriginalColors = aso->eBuf->bufUseOriginalColors;
 
-  aso->fgColor = aso->bufFgColor;
-  aso->bgColor = aso->bufBgColor;
+  aso->fgColor = aso->eBuf->bufFgColor;
+  aso->bgColor = aso->eBuf->bufBgColor;
 
-  aso->binaryTruthTable = aso->bufBinaryTruthTable;
+  aso->binaryTruthTable = aso->eBuf->bufBinaryTruthTable;
 
-  aso->orientation = aso->bufOrientation;
+  aso->orientation = aso->eBuf->bufOrientation;
 
   for ( i=0; i<aso->numStates; i++ ) {
-    aso->stateMinValue[i] = aso->bufStateMinValue[i];
-    aso->stateMaxValue[i] = aso->bufStateMaxValue[i];
+    aso->stateMinValue[i] = aso->eBuf->bufStateMinValue[i];
+    aso->stateMaxValue[i] = aso->eBuf->bufStateMaxValue[i];
   }
 
   if ( aso->useOriginalSize ) {
@@ -615,6 +615,8 @@ int i;
   useOriginalColors = 1;
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
 }
 
 activeSymbolClass::~activeSymbolClass ( void ) {
@@ -683,6 +685,8 @@ int i;
   delete btnMotionActionHead;
 
   if ( name ) delete[] name;
+
+  if ( eBuf ) delete eBuf;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -780,6 +784,8 @@ int i;
 
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
 }
 
 int activeSymbolClass::createInteractive (
@@ -815,6 +821,10 @@ int activeSymbolClass::genericEdit ( void )
 int i;
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   ptr = actWin->obj.getNameFromClass( "activeSymbolClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -825,43 +835,43 @@ char title[32], *ptr;
 
   strncpy( bufId, id, 31 );
 
-  bufX = x;
-  bufY = y;
+  eBuf->bufX = x;
+  eBuf->bufY = y;
 
-  strncpy( bufSymbolFileName, symbolFileName, 127 );
+  strncpy( eBuf->bufSymbolFileName, symbolFileName, 127 );
 
   if ( colorPvExpStr.getRaw() )
-    strncpy( bufColorPvName, colorPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufColorPvName, colorPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufColorPvName, "" );
+    strcpy( eBuf->bufColorPvName, "" );
 
   for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
     if ( controlPvExpStr[i].getRaw() )
-      strncpy( bufControlPvName[i], controlPvExpStr[i].getRaw(),
-       activeGraphicClass::MAX_PV_NAME );
+      strncpy( eBuf->bufControlPvName[i], controlPvExpStr[i].getRaw(),
+       PV_Factory::MAX_PV_NAME );
     else
-      strcpy( bufControlPvName[i], "" );
-    strncpy( bufXorMask[i], cXorMask[i], 9 );
-    strncpy( bufAndMask[i], cAndMask[i], 9 );
-    bufShiftCount[i] = shiftCount[i];
+      strcpy( eBuf->bufControlPvName[i], "" );
+    strncpy( eBuf->bufXorMask[i], cXorMask[i], 9 );
+    strncpy( eBuf->bufAndMask[i], cAndMask[i], 9 );
+    eBuf->bufShiftCount[i] = shiftCount[i];
   }
 
   for ( i=0; i<SYMBOL_K_NUM_STATES; i++ ) {
-    bufStateMinValue[i] = stateMinValue[i];
-    bufStateMaxValue[i] = stateMaxValue[i];
+    eBuf->bufStateMinValue[i] = stateMinValue[i];
+    eBuf->bufStateMaxValue[i] = stateMaxValue[i];
   }
 
-  bufUseOriginalSize = useOriginalSize;
+  eBuf->bufUseOriginalSize = useOriginalSize;
 
-  bufBinaryTruthTable = binaryTruthTable;
+  eBuf->bufBinaryTruthTable = binaryTruthTable;
 
-  prevOr = bufOrientation = orientation;
+  prevOr = eBuf->bufOrientation = orientation;
 
-  bufUseOriginalColors = useOriginalColors;
+  eBuf->bufUseOriginalColors = useOriginalColors;
 
-  bufFgColor = fgColor;
-  bufBgColor = bgColor;
+  eBuf->bufFgColor = fgColor;
+  eBuf->bufBgColor = bgColor;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -872,50 +882,50 @@ char title[32], *ptr;
 
   //ef.addTextField( activeSymbolClass_str11, 32, bufId, 35 );
 
-  ef.addTextField( activeSymbolClass_str12, 32, &bufX );
-  ef.addTextField( activeSymbolClass_str13, 32, &bufY );
-  ef.addTextField( activeSymbolClass_str14, 32, bufSymbolFileName, 127 );
-  ef.addTextField( activeSymbolClass_str29, 32, bufColorPvName,
-   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeSymbolClass_str12, 32, &eBuf->bufX );
+  ef.addTextField( activeSymbolClass_str13, 32, &eBuf->bufY );
+  ef.addTextField( activeSymbolClass_str14, 32, eBuf->bufSymbolFileName, 127 );
+  ef.addTextField( activeSymbolClass_str29, 32, eBuf->bufColorPvName,
+   PV_Factory::MAX_PV_NAME );
 
   for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
     if ( i == 0 ) {
-      ef.addTextField( activeSymbolClass_str17, 32, bufControlPvName[i],
-       activeGraphicClass::MAX_PV_NAME );
+      ef.addTextField( activeSymbolClass_str17, 32, eBuf->bufControlPvName[i],
+       PV_Factory::MAX_PV_NAME );
     }
     else {
-      ef.addTextField( " ", 32, bufControlPvName[i],
-       activeGraphicClass::MAX_PV_NAME );
+      ef.addTextField( " ", 32, eBuf->bufControlPvName[i],
+       PV_Factory::MAX_PV_NAME );
     }
     ef.beginSubForm();
-    ef.addTextField( activeSymbolClass_str38, 4, bufAndMask[i], 4 );
+    ef.addTextField( activeSymbolClass_str38, 4, eBuf->bufAndMask[i], 4 );
     ef.addLabel( activeSymbolClass_str39 );
-    ef.addTextField( "", 4, bufXorMask[i], 4 );
+    ef.addTextField( "", 4, eBuf->bufXorMask[i], 4 );
     ef.addLabel( activeSymbolClass_str40 );
-    ef.addTextField( "", 3, &bufShiftCount[i] );
+    ef.addTextField( "", 3, &eBuf->bufShiftCount[i] );
     ef.endSubForm();
   }
 
-  ef.addToggle( activeSymbolClass_str16, &bufBinaryTruthTable );
+  ef.addToggle( activeSymbolClass_str16, &eBuf->bufBinaryTruthTable );
 
   ef.addOption( activeSymbolClass_str33, activeSymbolClass_str34,
-   &bufOrientation );
+   &eBuf->bufOrientation );
 
-  ef.addToggle( activeSymbolClass_str15, &bufUseOriginalSize );
+  ef.addToggle( activeSymbolClass_str15, &eBuf->bufUseOriginalSize );
 
-  ef.addToggle( activeSymbolClass_str30, &bufUseOriginalColors );
+  ef.addToggle( activeSymbolClass_str30, &eBuf->bufUseOriginalColors );
 
-  ef.addColorButton(activeSymbolClass_str31, actWin->ci, &fgCb, &bufFgColor );
+  ef.addColorButton(activeSymbolClass_str31, actWin->ci, &fgCb, &eBuf->bufFgColor );
 
-  ef.addColorButton(activeSymbolClass_str32, actWin->ci, &bgCb, &bufBgColor );
+  ef.addColorButton(activeSymbolClass_str32, actWin->ci, &bgCb, &eBuf->bufBgColor );
 
   for ( i=0; i<SYMBOL_K_NUM_STATES; i++ ) {
-    minPtr[i] = &bufStateMinValue[i];
-    maxPtr[i] = &bufStateMaxValue[i];
+    minPtr[i] = &eBuf->bufStateMinValue[i];
+    maxPtr[i] = &eBuf->bufStateMaxValue[i];
   }
 
-  ef.addTextFieldArray( activeSymbolClass_str18, 32, bufStateMinValue, &elsvMin );
-  ef.addTextFieldArray( activeSymbolClass_str19, 32, bufStateMaxValue, &elsvMax );
+  ef.addTextFieldArray( activeSymbolClass_str18, 32, eBuf->bufStateMinValue, &elsvMin );
+  ef.addTextFieldArray( activeSymbolClass_str19, 32, eBuf->bufStateMaxValue, &elsvMax );
 
   return 1;
 
@@ -1912,7 +1922,7 @@ int activeSymbolClass::old_createFromFile (
 
 int stat, resizeStat, i, saveW, saveH;
 int major, minor, release;
-char string[activeGraphicClass::MAX_PV_NAME+1];
+char string[PV_Factory::MAX_PV_NAME+1];
 float val;
 
   this->actWin = _actWin;
@@ -1943,7 +1953,7 @@ float val;
   }
 
   for ( i=0; i<numPvs; i++ ) {
-    readStringFromFile( string, activeGraphicClass::MAX_PV_NAME+1, f );
+    readStringFromFile( string, PV_Factory::MAX_PV_NAME+1, f );
      actWin->incLine();
     controlPvExpStr[i].setRaw( string );
   }
@@ -1982,7 +1992,7 @@ float val;
   }
 
   if ( ( major > 1 ) || ( minor > 4 ) ) {
-    readStringFromFile( string, activeGraphicClass::MAX_PV_NAME+1, f );
+    readStringFromFile( string, PV_Factory::MAX_PV_NAME+1, f );
      actWin->incLine();
     colorPvExpStr.setRaw( string );
   }
@@ -2359,7 +2369,9 @@ int num;
       for ( i=0; i<numPvs; i++ ) {
 
         if ( !controlPvExpStr[i].getExpanded() ||
-             blank( controlPvExpStr[i].getExpanded() ) ) controlExists = 0;
+             blankOrComment( controlPvExpStr[i].getExpanded() ) ) {
+               controlExists = 0;
+	}
 
       }
 
@@ -2370,7 +2382,7 @@ int num;
 
     }
 
-    if ( blank( colorPvExpStr.getExpanded() ) ) {
+    if ( blankOrComment( colorPvExpStr.getExpanded() ) ) {
       colorExists = 0;
     }
     else {

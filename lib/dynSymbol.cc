@@ -428,7 +428,7 @@ int stat, resizeStat, saveW, saveH;
   dso->y = dso->bufY;
   dso->sboxY = dso->bufY;
 
-//    dso->controlPvExpStr.setRaw( dso->bufControlPvName );
+//    dso->controlPvExpStr.setRaw( dso->eBuf->bufControlPvName );
 
   strncpy( dso->dynSymbolFileName, dso->bufDynSymbolFileName, 127 );
 
@@ -439,9 +439,9 @@ int stat, resizeStat, saveW, saveH;
   dso->fgColor = dso->bufFgColor;
   dso->bgColor = dso->bufBgColor;
 
-  dso->gateUpPvExpStr.setRaw( dso->bufGateUpPvName );
-  dso->gateDownPvExpStr.setRaw( dso->bufGateDownPvName );
-  dso->colorPvExpStr.setRaw( dso->bufColorPvName );
+  dso->gateUpPvExpStr.setRaw( dso->eBuf->bufGateUpPvName );
+  dso->gateDownPvExpStr.setRaw( dso->eBuf->bufGateDownPvName );
+  dso->colorPvExpStr.setRaw( dso->eBuf->bufColorPvName );
   dso->useGate = dso->bufUseGate;
   dso->gateUpValue = dso->bufGateUpValue;
   dso->gateDownValue = dso->bufGateDownValue;
@@ -588,6 +588,8 @@ int i;
   btnMotionActionHead->flink = btnMotionActionHead;
   btnMotionActionHead->blink = btnMotionActionHead;
 
+  eBuf = NULL;
+
 }
 
 activeDynSymbolClass::~activeDynSymbolClass ( void ) {
@@ -656,6 +658,7 @@ int i;
   delete btnMotionActionHead;
 
   if ( name ) delete[] name;
+  if ( eBuf ) delete eBuf;
 
 }
 
@@ -743,6 +746,7 @@ int i;
   fgColor = source->fgColor;
   bgColor = source->bgColor;
   colorPvExpStr.setRaw( source->colorPvExpStr.rawString );
+  eBuf = NULL;
 
 }
 
@@ -778,6 +782,10 @@ int activeDynSymbolClass::genericEdit ( void )
 
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   ptr = actWin->obj.getNameFromClass( "activeDynSymbolClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -794,22 +802,22 @@ char title[32], *ptr;
   strncpy( bufDynSymbolFileName, dynSymbolFileName, 127 );
 
 //    if ( controlPvExpStr.getRaw() )
-//      strncpy( bufControlPvName, controlPvExpStr.getRaw(),
-//       activeGraphicClass::MAX_PV_NAME );
+//      strncpy( eBuf->bufControlPvName, controlPvExpStr.getRaw(),
+//       PV_Factory::MAX_PV_NAME );
 //    else
-//      strcpy( bufControlPvName, "" );
+//      strcpy( eBuf->bufControlPvName, "" );
 
   if ( gateUpPvExpStr.getRaw() )
-    strncpy( bufGateUpPvName, gateUpPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufGateUpPvName, gateUpPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufGateUpPvName, "" );
+    strcpy( eBuf->bufGateUpPvName, "" );
 
   if ( gateDownPvExpStr.getRaw() )
-    strncpy( bufGateDownPvName, gateDownPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufGateDownPvName, gateDownPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufGateDownPvName, "" );
+    strcpy( eBuf->bufGateDownPvName, "" );
 
   bufUseOriginalSize = useOriginalSize;
 
@@ -828,10 +836,10 @@ char title[32], *ptr;
   bufInitialIndex = initialIndex;
 
   if ( colorPvExpStr.getRaw() )
-    strncpy( bufColorPvName, colorPvExpStr.getRaw(),
-     activeGraphicClass::MAX_PV_NAME );
+    strncpy( eBuf->bufColorPvName, colorPvExpStr.getRaw(),
+     PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufColorPvName, "" );
+    strcpy( eBuf->bufColorPvName, "" );
 
   bufUseOriginalColors = useOriginalColors;
 
@@ -860,17 +868,17 @@ char title[32], *ptr;
   ef.addTextField( activeDynSymbolClass_str8, 27, &bufX );
   ef.addTextField( activeDynSymbolClass_str9, 27, &bufY );
   ef.addTextField( activeDynSymbolClass_str10, 27, bufDynSymbolFileName, 127 );
-  ef.addTextField( activeDynSymbolClass_str34, 27, bufColorPvName,
-   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeDynSymbolClass_str34, 27, eBuf->bufColorPvName,
+   PV_Factory::MAX_PV_NAME );
 
   ef.addToggle( activeDynSymbolClass_str13, &bufUseGate );
   ef.addToggle( activeDynSymbolClass_str41, &bufGateOnMouseOver );
-  ef.addTextField( activeDynSymbolClass_str14, 27, bufGateUpPvName,
-   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeDynSymbolClass_str14, 27, eBuf->bufGateUpPvName,
+   PV_Factory::MAX_PV_NAME );
   ef.addOption( activeDynSymbolClass_str15, activeDynSymbolClass_str16,
    &bufGateUpValue );
-  ef.addTextField( activeDynSymbolClass_str17, 27, bufGateDownPvName,
-   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeDynSymbolClass_str17, 27, eBuf->bufGateDownPvName,
+   PV_Factory::MAX_PV_NAME );
   ef.addOption( activeDynSymbolClass_str18, activeDynSymbolClass_str19,
    &bufGateDownValue );
 
@@ -1718,7 +1726,7 @@ int activeDynSymbolClass::old_createFromFile (
 
 int stat, resizeStat, saveW, saveH;
 int major, minor, release;
-char string[activeGraphicClass::MAX_PV_NAME+1];
+char string[PV_Factory::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -1738,15 +1746,15 @@ char string[activeGraphicClass::MAX_PV_NAME+1];
 
   readStringFromFile( dynSymbolFileName, 127+1, f ); actWin->incLine();
 
-//    readStringFromFile( string, activeGraphicClass::MAX_PV_NAME+1, f );
+//    readStringFromFile( string, PV_Factory::MAX_PV_NAME+1, f );
 //    actWin->incLine();
 //    controlPvExpStr.setRaw( string );
 
-  readStringFromFile( string, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( string, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   gateUpPvExpStr.setRaw( string );
 
-  readStringFromFile( string, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( string, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   gateDownPvExpStr.setRaw( string );
 
@@ -1777,7 +1785,7 @@ char string[activeGraphicClass::MAX_PV_NAME+1];
   }
 
   if ( ( major > 1 ) || ( minor > 1 ) ) {
-    readStringFromFile( string, activeGraphicClass::MAX_PV_NAME+1, f );
+    readStringFromFile( string, PV_Factory::MAX_PV_NAME+1, f );
      actWin->incLine();
     colorPvExpStr.setRaw( string );
   }
@@ -2205,14 +2213,14 @@ int num;
     if ( useGate ) {
 
       if ( gateUpPvExpStr.getExpanded() &&
-           !blank( gateUpPvExpStr.getExpanded() ) ) {
+           !blankOrComment( gateUpPvExpStr.getExpanded() ) ) {
 
         gateUpExists = 1;
 
       }
 
       if ( gateDownPvExpStr.getExpanded() &&
-           !blank( gateDownPvExpStr.getExpanded() ) ) {
+           !blankOrComment( gateDownPvExpStr.getExpanded() ) ) {
 
         gateDownExists = 1;
 
@@ -2233,7 +2241,7 @@ int num;
 
     }
 
-    if ( blank( colorPvExpStr.getExpanded() ) ) {
+    if ( blankOrComment( colorPvExpStr.getExpanded() ) ) {
       colorExists = 0;
     }
     else {

@@ -1257,7 +1257,7 @@ activeWindowClass *awo = (activeWindowClass *) client;
 }
 
 static void selectScheme_cb (
-   Widget w,
+  Widget w,
   XtPointer client,
   XtPointer call )
 {
@@ -5250,21 +5250,21 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
        &awo->appCtx->entryFormH, &awo->appCtx->largestH,
        activeWindowClass_str69, NULL, NULL, NULL );
 
-      awo->ef.addTextField( activeWindowClass_str70, 35, awo->allSelectedCtlPvName[0], 100 );
+      awo->ef.addTextField( activeWindowClass_str70, 35, awo->allSelectedCtlPvName[0], PV_Factory::MAX_PV_NAME );
       awo->ef.addToggle( activeWindowClass_str71, &awo->allSelectedCtlPvNameFlag );
 
       awo->ef.addTextField( activeWindowClass_str72, 35, awo->allSelectedReadbackPvName[0],
-       100 );
+       PV_Factory::MAX_PV_NAME );
       awo->ef.addToggle( activeWindowClass_str73, &awo->allSelectedReadbackPvNameFlag );
 
-      awo->ef.addTextField( activeWindowClass_str74, 35, awo->allSelectedNullPvName[0], 100 );
+      awo->ef.addTextField( activeWindowClass_str74, 35, awo->allSelectedNullPvName[0], PV_Factory::MAX_PV_NAME );
       awo->ef.addToggle( activeWindowClass_str75, &awo->allSelectedNullPvNameFlag );
 
       awo->ef.addTextField( activeWindowClass_str76, 35, awo->allSelectedVisPvName[0],
-       100 );
+       PV_Factory::MAX_PV_NAME );
       awo->ef.addToggle( activeWindowClass_str77, &awo->allSelectedVisPvNameFlag );
 
-      awo->ef.addTextField( activeWindowClass_str78, 35, awo->allSelectedAlarmPvName[0], 100 );
+      awo->ef.addTextField( activeWindowClass_str78, 35, awo->allSelectedAlarmPvName[0], PV_Factory::MAX_PV_NAME );
       awo->ef.addToggle( activeWindowClass_str79, &awo->allSelectedAlarmPvNameFlag );
 
       awo->ef.finished( awc_change_pv_edit_ok, awc_change_pv_edit_apply,
@@ -10936,6 +10936,11 @@ Arg args[3];
 
       XtAddCallback( pb, XmNactivateCallback, selectScheme_cb,
        (XtPointer) &curBlockListNode->block );
+
+      if ( i == 0 ) {
+        // init scheme set with first one
+        strncpy( curSchemeSet, appCtx->schemeSetList[i], 63 );
+      }
 
     }
 

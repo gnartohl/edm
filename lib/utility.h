@@ -41,6 +41,9 @@ char *expandEnvVars (
 int blank (
   char *string );
 
+int blankOrComment (
+  char *string );
+
 XtIntervalId appAddTimeOut (
   XtAppContext app,
   unsigned long interval,

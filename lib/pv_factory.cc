@@ -73,14 +73,41 @@ PV_Factory::~PV_Factory()
 
 }
 
+int PV_Factory::legal_pv_type (
+  const char *pv_type )
+{
+
+  if ( strcmp( pv_type, "EPICS" ) == 0 ) {
+    return 1;
+  }
+  else if ( strcmp(pv_type, "CALC" ) == 0 ) {
+    return 1;
+  }
+  else if ( strcmp(pv_type, "LOC" ) == 0 ) {
+    return 1;
+  }
+
+  return 0;
+
+}
+
 void PV_Factory::set_default_pv_type (
   const char *pv_type )
 {
 
-  strncpy( default_pv_type, pv_type, 31 );
-  default_pv_type[31] = 0;
+  if ( legal_pv_type( pv_type ) ) {
 
-  //printf( "setting default pv type to [%s]\n", pv_type );
+    strncpy( default_pv_type, pv_type, 31 );
+    default_pv_type[31] = 0;
+
+  }
+  else {
+
+    fprintf(stderr,
+     "Cannot set default PV type to '%s', using system default\n", pv_type );
+    strcpy( default_pv_type, "" );
+
+  }
 
 }
 

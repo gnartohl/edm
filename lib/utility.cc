@@ -184,10 +184,35 @@ int blank (
   char *string )
 {
 
-unsigned int i;
+unsigned int i, l;
 
-  for ( i=0; i<strlen(string); i++ ) {
+  l = strlen(string);
+  if ( !l ) return 1;
+
+  for ( i=0; i<l; i++ ) {
     if ( !isspace( (int) string[i] ) ) return 0;
+  }
+
+  return 1;
+
+}
+
+int blankOrComment (
+  char *string )
+{
+
+// return 1 for blank string or if first char is comment character
+
+unsigned int i, l;
+
+  l = strlen(string);
+  if ( !l ) return 1;
+
+  for ( i=0; i<l; i++ ) {
+    if ( !isspace( (int) string[i] ) ) {
+      if ( string[i] == '#' ) return 1;
+      return 0;
+    }
   }
 
   return 1;

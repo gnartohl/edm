@@ -83,6 +83,49 @@ typedef Hashtable<HashedExpression,
                   HashTableSize> ExpressionHash;
 static ExpressionHash *expressions;
 
+static void checkForEmbedded (
+  char *expression
+) {
+
+int l;
+char *outer, inner[255+1];
+
+  if ( !expression ) return;
+
+  //printf( "checkForEmbedded - expression = [%s]\n", expression );
+
+  l = strlen( expression );
+
+  if ( l > 255 ) return;
+
+  if ( l > 2 ) {
+
+    if ( ( expression[0] == '{' ) && ( expression[l-1] == '}' ) ) {
+
+      HashedExpression he;
+      outer = strdup( expression );
+      // 'he' will delete the strdup'ed  expression
+      he.name = outer;
+      ExpressionHash::iterator entry = expressions->find(&he);
+      if (entry == expressions->end()) {
+
+        strcpy( inner, &expression[1] );
+        l = strlen( inner );
+        inner[l-1] = 0;
+
+        //printf( "New calc - name=%s, expression=%s\n",
+        // expression, inner );
+
+        expressions->insert( new HashedExpression( expression, inner ) );
+
+      }
+
+    }
+
+  }
+
+}
+
 CALC_PV_Factory::CALC_PV_Factory()
 {
 #   ifdef CALC_DEBUG
@@ -277,6 +320,7 @@ ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
     char *arg_name[CALC_ProcessVariable::MaxArgs];
     size_t i, arg_count = 0;
     const char *p;
+    int more, findingInline = 0;
 
     for (i=0; i<CALC_ProcessVariable::MaxArgs; ++i)
         arg_name[i] = 0;
@@ -286,8 +330,17 @@ ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
         ++PV_name;
     p = PV_name;
     // end...
-    while (*p && !strchr(" \t(", *p))
+    more = 1;
+    //printf( "*p = [%s]\n", p );
+    if ( *p == '(' ) more = 0;
+    while (*p && more) {
+        if ( *p == '{' ) findingInline++;
+        if ( ( *p == '}' ) && findingInline ) findingInline--;
         ++p;
+        if ( ( *p == '(' ) && !findingInline ) more = 0;
+	//printf( "%c, findingInline = %-d, more = %-d\n",
+        // (char) *p, findingInline, more );
+    }
     // copy
     int len = p - PV_name; 
     if (len <= 0)
@@ -315,6 +368,7 @@ ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
     for (size_t i=0; i<arg_count; ++i)
         printf("\targ %d: '%s'\n", i, arg_name[i]);
 #   endif    
+    checkForEmbedded( expression );
     HashedExpression he;
     he.name = expression;
     ExpressionHash::iterator entry = expressions->find(&he);
@@ -366,6 +420,8 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
     
     expression = _expression;
     arg_count = _arg_count;
+
+    // first go through and populate args and create pvs
     for (i=0; i<arg_count; ++i)
     {
         // Is this argument a number or another PV?
@@ -387,21 +443,22 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
         else
         {   // It's a PV
             arg_pv[i] = the_PV_Factory->create(arg_name[i]);
-            if (arg_pv[i])
-            {
-                arg_pv[i]->add_conn_state_callback(status_callback, this);
-                arg_pv[i]->add_value_callback(value_callback, this);
-            }
-            else
-            {
-                fprintf(stderr, "CALC PV %s: invalid PV arg '%s'\n",
-                        name, arg_name[i]);
-            }
 #   ifdef CALC_DEBUG
             printf("arg[%d] = PV %s\n", i, arg_name[i]);
 #   endif
         }
     }
+
+    // then add callbacks
+    for (i=0; i<arg_count; ++i)
+    {
+        if (arg_pv[i])
+        {
+            arg_pv[i]->add_conn_state_callback(status_callback, this);
+            arg_pv[i]->add_value_callback(value_callback, this);
+        }
+    }
+
 }
 
 CALC_ProcessVariable::~CALC_ProcessVariable()

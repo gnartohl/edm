@@ -99,10 +99,16 @@ btnActionListPtr btnFocusActionHead;
 int depth;
 undoClass undoObj;
 
+typedef struct editBufTag {
+// edit buffer
+  char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
+
 int bufX, bufY;
 ProcessVariable *visPvId;
 expStringClass visPvExpStr;
-char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
 pvValType minVis, maxVis;
 char minVisString[39+1], bufMinVisString[39+1];
 char maxVisString[39+1], bufMaxVisString[39+1];

@@ -154,6 +154,16 @@ entryListBase *elsvMin;
 entryListBase *elsvMax;
 double *minPtr[DYNSYMBOL_K_NUM_STATES], *maxPtr[DYNSYMBOL_K_NUM_STATES];
 
+typedef struct editBufTag {
+// edit buffer
+  char bufControlPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufGateDownPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufGateUpPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufColorPvName[PV_Factory::MAX_PV_NAME+1];
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
+
 int bufX;
 int bufY;
 int bufW;
@@ -161,11 +171,7 @@ int bufH;
 
 double bufStateMinValue[DYNSYMBOL_K_NUM_STATES];
 double bufStateMaxValue[DYNSYMBOL_K_NUM_STATES];
-char bufDynSymbolFileName[127+1],
- bufControlPvName[activeGraphicClass::MAX_PV_NAME+1],
- bufGateDownPvName[activeGraphicClass::MAX_PV_NAME+1],
- bufGateUpPvName[activeGraphicClass::MAX_PV_NAME+1],
- bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
+char bufDynSymbolFileName[127+1];
 int bufNumStates, bufUseOriginalSize, bufUseOriginalColors, bufUseGate,
  bufContinuous;
 double bufRate;

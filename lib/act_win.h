@@ -781,11 +781,11 @@ char defaultFontTag[127+1];
 char defaultCtlFontTag[127+1];
 char defaultBtnFontTag[127+1];
 
-char allSelectedCtlPvName[1][100+1];
-char allSelectedReadbackPvName[1][100+1];
-char allSelectedNullPvName[1][100+1];
-char allSelectedVisPvName[1][100+1];
-char allSelectedAlarmPvName[1][100+1];
+char allSelectedCtlPvName[1][PV_Factory::MAX_PV_NAME+1];
+char allSelectedReadbackPvName[1][PV_Factory::MAX_PV_NAME+1];
+char allSelectedNullPvName[1][PV_Factory::MAX_PV_NAME+1];
+char allSelectedVisPvName[1][PV_Factory::MAX_PV_NAME+1];
+char allSelectedAlarmPvName[1][PV_Factory::MAX_PV_NAME+1];
 int allSelectedCtlPvNameFlag;
 int allSelectedReadbackPvNameFlag;
 int allSelectedNullPvNameFlag;

@@ -157,22 +157,35 @@ entryListBase *elsvMin;
 entryListBase *elsvMax;
 double *minPtr[SYMBOL_K_NUM_STATES], *maxPtr[SYMBOL_K_NUM_STATES];
 
-int bufX;
-int bufY;
-int bufW;
-int bufH;
+typedef struct editBufTag {
+// edit buffer
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  int bufFgColor;
+  int bufBgColor;
+  int bufBinaryTruthTable;
+  int bufOrientation;
+  char bufXorMask[SYMBOL_K_MAX_PVS][9+1];
+  char bufAndMask[SYMBOL_K_MAX_PVS][9+1];
+  int bufShiftCount[SYMBOL_K_MAX_PVS];
+  double bufStateMinValue[SYMBOL_K_NUM_STATES];
+  double bufStateMaxValue[SYMBOL_K_NUM_STATES];
+  char bufSymbolFileName[127+1];
+  char bufControlPvName[SYMBOL_K_MAX_PVS][PV_Factory::MAX_PV_NAME+1];
+  char bufColorPvName[PV_Factory::MAX_PV_NAME+1];
+  int bufNumStates;
+  int bufUseOriginalSize;
+  int bufUseOriginalColors;
+} editBufType, *editBufPtr;
 
-double bufStateMinValue[SYMBOL_K_NUM_STATES];
-double bufStateMaxValue[SYMBOL_K_NUM_STATES];
-char bufSymbolFileName[127+1],
- bufControlPvName[SYMBOL_K_MAX_PVS][activeGraphicClass::MAX_PV_NAME+1],
- bufColorPvName[activeGraphicClass::MAX_PV_NAME+1];
-int bufNumStates, bufUseOriginalSize, bufUseOriginalColors;
+editBufPtr eBuf;
 
-int fgColor, bgColor, bufFgColor, bufBgColor;
+int fgColor, bgColor;
 colorButtonClass fgCb, bgCb;
 
-int binaryTruthTable, bufBinaryTruthTable;
+int binaryTruthTable;
 
 entryListBase *pvNamesObj;
 
@@ -181,17 +194,13 @@ int needErase, needDraw, needConnectInit, needConnect[SYMBOL_K_MAX_PVS],
  needToEraseUnconnected;
 int unconnectedTimer;
 
-int orientation, bufOrientation, prevOr;
+int orientation, prevOr;
 
 unsigned int xorMask[SYMBOL_K_MAX_PVS];
 unsigned int andMask[SYMBOL_K_MAX_PVS];
 char cXorMask[SYMBOL_K_MAX_PVS][9+1];
 char cAndMask[SYMBOL_K_MAX_PVS][9+1];
 int shiftCount[SYMBOL_K_MAX_PVS];
-
-char bufXorMask[SYMBOL_K_MAX_PVS][9+1];
-char bufAndMask[SYMBOL_K_MAX_PVS][9+1];
-int bufShiftCount[SYMBOL_K_MAX_PVS];
 
 unsigned int curUiVal[SYMBOL_K_MAX_PVS];
 
