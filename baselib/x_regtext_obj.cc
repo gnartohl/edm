@@ -1410,8 +1410,10 @@ int activeXRegTextClass::deactivate (
   if ( pass == 1 ) {
 
 // --------------------------------------------------------
+    if ( re_valid ) {
        regfree(&compiled_re);
-        re_valid = false;
+       re_valid = false;
+    }
 // --------------------------------------------------------
 
   activeMode = 0;
