@@ -1,6 +1,9 @@
 # -*- makefile -*-
 include ../make.setup
 
+.phony : inc
+inc :;
+
 # Nothing to configure here, try to resolve problems in make.setup
 LIBNAME = $(ODIR)/libPV.so
 OBJS    = $(ODIR)/pv_factory.o

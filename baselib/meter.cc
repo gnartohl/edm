@@ -762,7 +762,6 @@ char title[32], *ptr;
   ef.addTextField( activeMeterClass_str9, 30, bufReadPvName, 39 );
   ef.addOption( activeMeterClass_str10, activeMeterClass_str11, &bufLabelType );
   ef.addTextField( activeMeterClass_str12, 30, bufLiteralLabel, 39 );
-  ef.addFontMenu( activeMeterClass_str13, actWin->fi, &labelFm, labelFontTag );
   ef.addColorButton( activeMeterClass_str14, actWin->ci,&labelCb,&bufLabelColor);
   ef.addTextField(activeMeterClass_str15,30,&bufMeterAngle);
   ef.addToggle( activeMeterClass_str16, &bufShowScale );
@@ -771,7 +770,6 @@ char title[32], *ptr;
   ef.addToggle( activeMeterClass_str20, &bufScaleLimitsFromDb );
   ef.addTextField(activeMeterClass_str21,30,&bufScaleMin);
   ef.addTextField(activeMeterClass_str22,30,&bufScaleMax);
-  ef.addFontMenu( activeMeterClass_str23, actWin->fi, &scaleFm, scaleFontTag );
   ef.addColorButton( activeMeterClass_str24, actWin->ci,&scaleCb,&bufScaleColor);
   ef.addToggle( activeMeterClass_str25, &bufScaleColorMode );
   ef.addTextField(activeMeterClass_str26, 30, &bufMajorIntervals);
@@ -785,6 +783,9 @@ char title[32], *ptr;
   ef.addToggle(activeMeterClass_str34,&bufShadowMode);
   ef.addColorButton(activeMeterClass_str35,actWin->ci, &tsCb,&bufTsColor);
   ef.addColorButton(activeMeterClass_str36,actWin->ci,&bsCb,&bufBsColor);
+
+  ef.addFontMenu( activeMeterClass_str13, actWin->fi, &labelFm, labelFontTag );
+  ef.addFontMenu( activeMeterClass_str23, actWin->fi, &scaleFm, scaleFontTag );
 
   XtUnmanageChild( scaleFm.alignWidget() ); // no alignment info
   XtUnmanageChild( labelFm.alignWidget() ); // no alignment info

@@ -864,12 +864,13 @@ char title[32], *ptr;
   ef.addTextField( activeMessageButtonClass_str16, 30, bufSourcePressPvName, 39 );
   ef.addTextField( activeMessageButtonClass_str17, 30, bufSourceReleasePvName, 39 );
   ef.addTextField( activeMessageButtonClass_str18, 30, bufDestPvName, 39 );
-  ef.addFontMenu( activeMessageButtonClass_str19, actWin->fi, &fm, fontTag );
   ef.addColorButton( activeMessageButtonClass_str20, actWin->ci, &fgCb, &bufFgColor );
   ef.addColorButton( activeMessageButtonClass_str21, actWin->ci, &onCb, &bufOnColor );
   ef.addColorButton( activeMessageButtonClass_str22, actWin->ci, &offCb, &bufOffColor );
   ef.addColorButton( activeMessageButtonClass_str23, actWin->ci, &topShadowCb, &bufTopShadowColor );
   ef.addColorButton( activeMessageButtonClass_str24, actWin->ci, &botShadowCb, &bufBotShadowColor );
+
+  ef.addFontMenu( activeMessageButtonClass_str19, actWin->fi, &fm, fontTag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 

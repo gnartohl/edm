@@ -927,7 +927,6 @@ char title[32], *ptr;
   ef.addTextField( activeBarClass_str13, 30, bufNullPvName, 39 );
   ef.addOption( activeBarClass_str14, activeBarClass_str15, &bufLabelType );
   ef.addTextField( activeBarClass_str16, 30, bufLabel, 39 );
-  ef.addFontMenu( activeBarClass_str17, actWin->fi, &fm, fontTag );
   ef.addToggle( activeBarClass_str18, &bufBorder );
   ef.addToggle( activeBarClass_str19, &bufShowScale );
 
@@ -947,6 +946,8 @@ char title[32], *ptr;
   ef.addColorButton( activeBarClass_str32, actWin->ci, &fgCb, &bufFgColor );
   ef.addToggle( activeBarClass_str33, &bufFgColorMode );
   ef.addColorButton( activeBarClass_str34, actWin->ci, &bgCb, &bufBgColor );
+
+  ef.addFontMenu( activeBarClass_str17, actWin->fi, &fm, fontTag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 

@@ -568,7 +568,6 @@ char title[32], *ptr;
   ef.addTextField( activeMessageBoxClass_str12, 30, bufLogFileName, 127 );
   ef.addTextField( activeMessageBoxClass_str13, 30, &bufFileSize );
   ef.addTextField( activeMessageBoxClass_str14, 30, &bufFlushTimerValue );
-  ef.addFontMenu( activeMessageBoxClass_str15, actWin->fi, &fm, fontTag );
   ef.addColorButton( activeMessageBoxClass_str16, actWin->ci, &fgCb, &bufFgColor );
   ef.addColorButton( activeMessageBoxClass_str17, actWin->ci, &bg2Cb, &bufBg2Color );
   ef.addColorButton( activeMessageBoxClass_str18, actWin->ci, &bgCb, &bufBgColor );
@@ -576,6 +575,7 @@ char title[32], *ptr;
    &bufTopShadowColor );
   ef.addColorButton( activeMessageBoxClass_str20, actWin->ci, &botCb,
    &bufBotShadowColor );
+  ef.addFontMenu( activeMessageBoxClass_str15, actWin->fi, &fm, fontTag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 

@@ -1103,7 +1103,6 @@ char title[32], *ptr;
   ef.addToggle( activeButtonClass_str35, &bufDeactivateCallbackFlag );
   ef.addToggle( activeButtonClass_str36, &bufDownCallbackFlag );
   ef.addToggle( activeButtonClass_str37, &bufUpCallbackFlag );
-  ef.addFontMenu( activeButtonClass_str38, actWin->fi, &fm, fontTag );
   ef.addColorButton( activeButtonClass_str39, actWin->ci, &fgCb, &bufFgColor );
   ef.addOption( activeButtonClass_str40, activeButtonClass_str41, &bufFgColorMode );
   ef.addColorButton( activeButtonClass_str42, actWin->ci, &onCb, &bufOnColor );
@@ -1112,6 +1111,8 @@ char title[32], *ptr;
    &inconsistentCb, &bufInconsistentColor );
   ef.addColorButton( activeButtonClass_str45, actWin->ci, &topShadowCb, &bufTopShadowColor );
   ef.addColorButton( activeButtonClass_str46, actWin->ci, &botShadowCb, &bufBotShadowColor );
+
+  ef.addFontMenu( activeButtonClass_str38, actWin->fi, &fm, fontTag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 

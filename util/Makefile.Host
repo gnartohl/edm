@@ -1,5 +1,8 @@
+.phony : inc
 .phony : buildInstall
 .phony : install
+
+inc :;
 
 install : buildInstall
 	echo "util libs installed"

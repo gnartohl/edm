@@ -1355,7 +1355,6 @@ char title[32], *ptr;
   ef.addTextField( activeSliderClass_str20, 30, &bufY );
   ef.addTextField( activeSliderClass_str21, 30, &bufW );
   ef.addTextField( activeSliderClass_str22, 30, &bufH );
-  ef.addFontMenu( activeSliderClass_str23, actWin->fi, &fm, fontTag );
   ef.addColorButton( activeSliderClass_str24, actWin->ci, &fgCb, &bufFgColor );
   ef.addToggle( activeSliderClass_str25, &bufFgColorMode );
   ef.addColorButton( activeSliderClass_str26, actWin->ci, &bgCb, &bufBgColor );
@@ -1388,6 +1387,7 @@ char title[32], *ptr;
   ef.addToggle( activeSliderClass_str49, &bufActivateCallbackFlag );
   ef.addToggle( activeSliderClass_str50, &bufDeactivateCallbackFlag );
   ef.addToggle( activeSliderClass_str51, &bufChangeCallbackFlag );
+  ef.addFontMenu( activeSliderClass_str23, actWin->fi, &fm, fontTag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 

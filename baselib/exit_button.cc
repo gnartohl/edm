@@ -397,11 +397,12 @@ char title[32], *ptr;
   ef.addToggle( activeExitButtonClass_str10, &bufInvisible );
   ef.addToggle( activeExitButtonClass_str11, &bufIconify );
   ef.addToggle( activeExitButtonClass_str12, &bufExitProgram );
-  ef.addFontMenu( activeExitButtonClass_str13, actWin->fi, &fm, fontTag );
   ef.addColorButton( activeExitButtonClass_str14, actWin->ci, &fgCb, &bufFgColor );
   ef.addColorButton( activeExitButtonClass_str15, actWin->ci, &bgCb, &bufBgColor );
   ef.addColorButton( activeExitButtonClass_str16, actWin->ci, &topShadowCb, &bufTopShadowColor );
   ef.addColorButton( activeExitButtonClass_str17, actWin->ci, &botShadowCb, &bufBotShadowColor );
+
+  ef.addFontMenu( activeExitButtonClass_str13, actWin->fi, &fm, fontTag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 
