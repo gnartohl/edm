@@ -1685,7 +1685,6 @@ double angle, totAngle, diff;
   efStartAngle.setValue( angle );
   startAngle = (int) ( efStartAngle.value() * 64.0 +0.5 );
 
-  stat = activeGraphicClass::rotate( xOrigin, yOrigin, direction );
   return stat;
 
 }
