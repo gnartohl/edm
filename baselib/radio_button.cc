@@ -602,7 +602,8 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
   readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
 
   if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 1 ) ) ) {
-    fscanf( f, "%d\n", &index ); actWin->incLine();
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
     selectColor = index;
   }
   else {
