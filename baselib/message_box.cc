@@ -863,8 +863,6 @@ struct stat fileStat;
         fgColor.setConnectSensitive();
       }
 
-      frameWidget = NULL;
-
       opStat = 1;
 
 #ifdef __epics__
@@ -955,10 +953,10 @@ int stat;
   else if ( pass == 2 ) {
 
   if ( frameWidget ) {
+    scrolledText.destroyEmbedded();
     XtDestroyWidget( frameWidget );
     frameWidget = NULL;
   }
-  scrolledText.destroyEmbedded();
 
   }
 
@@ -1009,6 +1007,8 @@ int activeMessageBoxClass::createWidgets ( void ) {
 int n, textHeight;
 Arg args[10];
 Widget widget;
+
+  frameWidget = NULL;
 
   frameWidget = XtVaCreateManagedWidget( "", xmFrameWidgetClass,
    actWin->executeWidgetId(),
