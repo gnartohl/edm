@@ -1,0 +1,4 @@
+#ifndef __msg_dialog_str
+#define __msg_dialog_str 1
+
+#endif
