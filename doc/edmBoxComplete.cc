@@ -1,283 +1,38 @@
-//  for object: 2ed7d2e8-f439-11d2-8fed-00104b8742df
-//  for lib: 3014b6ee-f439-11d2-ad99-00104b8742df
+//  object: 2ed7d2e8-f439-11d2-8fed-00104b8742df
+//     lib: 3014b6ee-f439-11d2-ad99-00104b8742df
 
+// define SMARTDRAW if the widget may be part of an overlapping
+// stack of widgets
 //#define SMARTDRAW 1
 
-#define __edmBox_cc 1
+#define __edmBoxComplete_cc 1
 
 #include "edmBoxComplete.h"
+
 
-static void eboMonitorPvConnectState (
-  ProcessVariable *pv,
-  void *userarg )
-{
+//---------------------------------------------------------------------------
 
-edmBoxClass *ebo = (edmBoxClass *) userarg;
-
-  ebo->actWin->appCtx->proc->lock();
-
-  if ( !ebo->activeMode ) {
-    ebo->actWin->appCtx->proc->unlock();
-    return;
-  }
-
-  if ( pv->is_valid() ) {
-
-    ebo->fieldType = (int) pv->get_type().type;
-
-    ebo->curValue = pv->get_double();
-
-    if ( ebo->efReadMin.isNull() ) {
-      ebo->readMin = pv->get_lower_disp_limit();
-    }
-    else {
-      ebo->readMin = ebo->efReadMin.value();
-    }
-
-    if ( ebo->efReadMax.isNull() ) {
-      ebo->readMax = pv->get_upper_disp_limit();
-    }
-    else {
-      ebo->readMax = ebo->efReadMax.value();
-    }
-
-    ebo->needConnectInit = 1;
-
-  }
-  else { // lost connection
-
-    ebo->active = 0;
-    ebo->lineColor.setDisconnected();
-    ebo->fillColor.setDisconnected();
-    ebo->bufInvalidate();
-    ebo->needDraw = 1;
-
-  }
-
-  ebo->actWin->addDefExeNode( ebo->aglPtr );
-
-  ebo->actWin->appCtx->proc->unlock();
-
-}
-
-static void edmBoxUpdate (
-  ProcessVariable *pv,
-  void *userarg )
-{
-
-class edmBoxClass *ebo = (edmBoxClass *) userarg;
-int st, sev;
-
-  if ( !ebo->activeMode ) return;
-
-  ebo->actWin->appCtx->proc->lock();
-
-  ebo->curValue = pv->get_double();
-  ebo->needUpdate = 1;
-
-  st = pv->get_status();
-  sev = pv->get_severity();
-  if ( ( st != ebo->oldStat ) || ( sev != ebo->oldSev ) ) {
-    ebo->oldStat = st;
-    ebo->oldSev = sev;
-    ebo->lineColor.setStatus( st, sev );
-    ebo->fillColor.setStatus( st, sev );
-    ebo->needDraw = 1;
-    ebo->bufInvalidate();
-  }
-
-  ebo->actWin->addDefExeNode( ebo->aglPtr );
-
-  ebo->actWin->appCtx->proc->unlock();
-
-}
-
-static void ebc_edit_update (
-  Widget w,
-  XtPointer client,
-  XtPointer call )
-{
-
-edmBoxClass *ebo = (edmBoxClass *) client;
-
-  ebo->actWin->setChanged();
-
-  ebo->eraseSelectBoxCorners();
-  ebo->erase();
-
-  ebo->lineColorMode = ebo->bufLineColorMode;
-  if ( ebo->lineColorMode == EBC_K_COLORMODE_ALARM )
-    ebo->lineColor.setAlarmSensitive();
-  else
-    ebo->lineColor.setAlarmInsensitive();
-  ebo->lineColor.setColorIndex( ebo->bufLineColor, ebo->actWin->ci );
-
-  ebo->fill = ebo->bufFill;
-
-  ebo->fillColorMode = ebo->bufFillColorMode;
-  if ( ebo->fillColorMode == EBC_K_COLORMODE_ALARM )
-    ebo->fillColor.setAlarmSensitive();
-  else
-    ebo->fillColor.setAlarmInsensitive();
-  ebo->fillColor.setColorIndex( ebo->bufFillColor, ebo->actWin->ci );
-
-  ebo->lineWidth = ebo->bufLineWidth;
-
-  if ( ebo->bufLineStyle == 0 )
-    ebo->lineStyle = LineSolid;
-  else if ( ebo->bufLineStyle == 1 )
-    ebo->lineStyle = LineOnOffDash;
-
-  ebo->pvExpStr.setRaw( ebo->bufPvName );
-
-  ebo->efReadMin = ebo->bufEfReadMin;
-  ebo->efReadMax = ebo->bufEfReadMax;
-
-  if ( ( ebo->efReadMin.isNull() ) && ( ebo->efReadMax.isNull() ) ) {
-    ebo->readMin = 0;
-    ebo->readMax = 10;
-  }
-  else{
-    ebo->readMin = ebo->efReadMin.value();
-    ebo->readMax = ebo->efReadMax.value();
-  }
-
-  strncpy( ebo->fontTag, ebo->fm.currentFontTag(), 63 );
-  ebo->fontTag[63] = 0;
-
-  ebo->actWin->fi->loadFontTag( ebo->fontTag );
-
-  ebo->alignment = ebo->fm.currentFontAlignment();
-
-  ebo->fs = ebo->actWin->fi->getXFontStruct( ebo->fontTag );
-
-  strncpy( ebo->label, ebo->bufLabel, 63 );
-  ebo->label[63] = 0;
-
-  ebo->stringLength = strlen( ebo->label );
-
-  ebo->updateFont( ebo->label, ebo->fontTag, &ebo->fs,
-   &ebo->fontAscent, &ebo->fontDescent, &ebo->fontHeight,
-   &ebo->stringWidth );
-
-  ebo->x = ebo->bufX;
-  ebo->sboxX = ebo->bufX;
-
-  ebo->y = ebo->bufY;
-  ebo->sboxY = ebo->bufY;
-
-  ebo->w = ebo->bufW;
-  ebo->sboxW = ebo->bufW;
-
-  ebo->h = ebo->bufH;
-  ebo->sboxH = ebo->bufH;
-
-  if ( ebo->w < 5 ) {
-    ebo->w = 5;
-    ebo->sboxW = ebo->w;
-  }
-
-  ebo->boxH = ebo->h - ebo->fontHeight;
-  if ( ebo->boxH < 5 ) {
-    ebo->boxH = 5;
-    ebo->h = ebo->boxH + ebo->fontHeight;
-    ebo->sboxH = ebo->h;
-  }
-
-  if ( ebo->readMax > ebo->readMin ) {
-    ebo->factorW = (double) ebo->w / ( ebo->readMax - ebo->readMin );
-    ebo->factorH = (double) ebo->boxH / ( ebo->readMax - ebo->readMin );
-  }
-  else {
-    ebo->factorW = 1;
-    ebo->factorH = 1;
-  }
-
-  ebo->centerX = ebo->x + (int) ( ebo->w * 0.5 + 0.5 );
-  ebo->centerY = ebo->y + (int) ( ebo->boxH * 0.5 + 0.5 );
-
-  if ( ebo->alignment == XmALIGNMENT_BEGINNING )
-    ebo->labelX = ebo->x;
-  else if ( ebo->alignment == XmALIGNMENT_CENTER )
-    ebo->labelX = ebo->x + ebo->w/2 - ebo->stringWidth/2;
-  else if ( ebo->alignment == XmALIGNMENT_END )
-    ebo->labelX = ebo->x + ebo->w - ebo->stringWidth;
-
-  ebo->labelY = ebo->y + ebo->h;
-
-}
-
-static void ebc_edit_apply (
-  Widget w,
-  XtPointer client,
-  XtPointer call )
-{
-
-edmBoxClass *ebo = (edmBoxClass *) client;
-
-  ebc_edit_update( w, client, call );
-  ebo->refresh( ebo );
-
-}
-
-static void ebc_edit_ok (
-  Widget w,
-  XtPointer client,
-  XtPointer call )
-{
-
-edmBoxClass *ebo = (edmBoxClass *) client;
-
-  ebc_edit_update( w, client, call );
-  ebo->ef.popdown();
-  ebo->operationComplete();
-
-}
-
-static void ebc_edit_cancel (
-  Widget w,
-  XtPointer client,
-  XtPointer call )
-{
-
-edmBoxClass *ebo = (edmBoxClass *) client;
-
-  ebo->ef.popdown();
-  ebo->operationCancel();
-
-}
-
-static void ebc_edit_cancel_delete (
-  Widget w,
-  XtPointer client,
-  XtPointer call )
-{
-
-edmBoxClass *ebo = (edmBoxClass *) client;
-
-  ebo->erase();
-  ebo->deleteRequest = 1;
-  ebo->ef.popdown();
-  ebo->operationCancel();
-  ebo->drawAll();
-
-}
-
 // default constructor
+
 edmBoxClass::edmBoxClass ( void ) {
 
+  // Allocate space for the component name and init
   name = new char[strlen("2ed7d2e8_f439_11d2_8fed_00104b8742df")+1];
   strcpy( name, "2ed7d2e8_f439_11d2_8fed_00104b8742df" );
+
+  // Init class member data
+  editBuf = NULL;
   pvExists = 0;
   active = 0;
   activeMode = 0;
   fill = 0;
-  lineColorMode = EBC_K_COLORMODE_STATIC;
-  fillColorMode = EBC_K_COLORMODE_STATIC;
+  lineColorMode = COLORMODE_STATIC;
+  fillColorMode = COLORMODE_STATIC;
   lineWidth = 1;
   lineStyle = LineSolid;
   readMin = 0;
   readMax = 10;
+  precision = 1;
   efReadMin.setNull(1);
   efReadMax.setNull(1);
   strcpy( fontTag, "" );
@@ -287,19 +42,32 @@ edmBoxClass::edmBoxClass ( void ) {
   labelY = 0;
   alignment = XmALIGNMENT_BEGINNING;
 
+  unconnectedTimer = 0;
+
+  // This makes the blinking color magic work
+  setBlinkFunction( (void *) doBlink );
+
 }
 
+//---------------------------------------------------------------------------
+
 // copy constructor
+
 edmBoxClass::edmBoxClass
  ( const edmBoxClass *source ) {
 
 activeGraphicClass *ago = (activeGraphicClass *) this;
 
+  // clone base class data
   ago->clone( (activeGraphicClass *) source );
 
+  // Allocate space for the component name and init
   name = new char[strlen("2ed7d2e8_f439_11d2_8fed_00104b8742df")+1];
   strcpy( name, "2ed7d2e8_f439_11d2_8fed_00104b8742df" );
 
+  editBuf = NULL;
+
+  // copy edit mode data and initialize execute mode data
   lineColor.copy(source->lineColor);
   fillColor.copy(source->fillColor);
   lineCb = source->lineCb;
@@ -322,32 +90,58 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   alignment = source->alignment;
   lineWidth = source->lineWidth;
   lineStyle = source->lineStyle;
-
   pvExpStr.setRaw( source->pvExpStr.rawString );
-
   pvExists = 0;
   active = 0;
   activeMode = 0;
-
   readMin = source->readMin;
   readMax = source->readMax;
+  precision = source->precision;
   efReadMin = source->efReadMin;
   efReadMax = source->efReadMax;
+  efPrecision = source->efPrecision;
+
+  unconnectedTimer = 0;
+
+  // This makes the blinking color magic work
+  setBlinkFunction( (void *) doBlink );
 
 }
 
+//---------------------------------------------------------------------------
+
+// Destructor
+
 edmBoxClass::~edmBoxClass ( void ) {
 
-  if ( name ) delete name;
+  // deallocate dynamic memory
+
+  if ( name ) delete[] name;
+
+  if ( unconnectedTimer ) {
+    XtRemoveTimeOut( unconnectedTimer );
+    unconnectedTimer = 0;
+  }
+
+  if ( editBuf ) delete editBuf;
+
+  // disable blink function
+  updateBlink( 0 );
 
 }
 
+//---------------------------------------------------------------------------
+
 char *edmBoxClass::objName ( void ) {
+
+  // Return component name
 
   return name;
 
 }
 
+//---------------------------------------------------------------------------
+
 int edmBoxClass::createInteractive (
   activeWindowClass *aw_obj,
   int _x,
@@ -355,7 +149,11 @@ int edmBoxClass::createInteractive (
   int _w,
   int _h ) {
 
+  // All widgets must copy active window object
   actWin = (activeWindowClass *) aw_obj;
+
+  // Initialize edit mode data so an initial edit mode image
+  // may be drawn
 
   x = _x;
   y = _y;
@@ -372,30 +170,84 @@ int edmBoxClass::createInteractive (
    &fontAscent, &fontDescent, &fontHeight,
    &stringWidth );
 
-  boxH = h - fontHeight;
+  boxH = h - fontHeight - fontHeight;
   if ( boxH < 5 ) {
     boxH = 5;
-    h = boxH + fontHeight;
+    h = boxH + fontHeight + fontHeight;
     sboxH = h;
   }
+
+  boxY = y + fontHeight;
 
   if ( w < 5 ) {
     w = 5;
     sboxW = 5;
   }
 
+  // Draw initial edit mode image
   this->draw();
 
+  // create and popup the property dialog for a newly created object
   this->editCreate();
 
   return 1;
 
 }
 
+//---------------------------------------------------------------------------
+
+int edmBoxClass::editCreate ( void ) {
+
+  this->genericEdit();
+
+  // Map dialog box form buttons to callbacks
+  ef.finished( editOk, editApply, editCancelDelete, this );
+
+  // Required by display engine
+  actWin->currentEf = NULL;
+
+  // Pop-up the dialog box
+  ef.popup();
+
+  return 1;
+
+}
+
+//---------------------------------------------------------------------------
+
+int edmBoxClass::edit ( void ) {
+
+  this->genericEdit();
+
+  // Map dialog box form buttons to callbacks
+  ef.finished( editOk, editApply, editCancel, this );
+
+  // Required by display engine
+  actWin->currentEf = &ef;
+
+  // Pop-up the dialog box
+  ef.popup();
+
+  return 1;
+
+}
+
+//---------------------------------------------------------------------------
+
 int edmBoxClass::genericEdit ( void ) {
+
+// Create the property dialog box so that user may edit widget attributes
 
 char title[32], *ptr;
 
+// Allocate the edit buffer, this holds values until the OK or Cancel button
+// is pressed
+  if ( !editBuf ) {
+    editBuf = new editBufType;
+  }
+
+  // Build property dialog title - this will become "Box Properties"
+  // Get the widget nickname from the component name
   ptr = actWin->obj.getNameFromClass( "2ed7d2e8_f439_11d2_8fed_00104b8742df" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -404,92 +256,298 @@ char title[32], *ptr;
 
   Strncat( title, edmBoxComplete_str3, 31 );
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
+  // Copy current property values into edit buffer; on OK or Apply
+  // edit buffer values will be copied back into current property values
 
-  bufLineColor = lineColor.pixelIndex();
-  bufLineColorMode = lineColorMode;
+  editBuf->bufX = x;
+  editBuf->bufY = y;
+  editBuf->bufW = w;
+  editBuf->bufH = h;
 
-  bufFillColor = fillColor.pixelIndex();
-  bufFillColorMode = fillColorMode;
+  editBuf->bufLineColor = lineColor.pixelIndex();
+  editBuf->bufLineColorMode = lineColorMode;
 
-  bufFill = fill;
-  bufLineWidth = lineWidth;
-  bufLineStyle = lineStyle;
+  editBuf->bufFillColor = fillColor.pixelIndex();
+  editBuf->bufFillColorMode = fillColorMode;
+
+  editBuf->bufFill = fill;
+  editBuf->bufLineWidth = lineWidth;
+  editBuf->bufLineStyle = lineStyle;
 
   if ( pvExpStr.getRaw() )
-    strncpy( bufPvName, pvExpStr.getRaw(), activeGraphicClass::MAX_PV_NAME );
+    strncpy( editBuf->bufPvName, pvExpStr.getRaw(), activeGraphicClass::MAX_PV_NAME );
   else
-    strcpy( bufPvName, "" );
+    strcpy( editBuf->bufPvName, "" );
 
-  bufEfReadMin = efReadMin;
-  bufEfReadMax = efReadMax;
+  editBuf->bufEfReadMin = efReadMin;
+  editBuf->bufEfReadMax = efReadMax;
+  editBuf->bufEfPrecision = efPrecision;
 
-  strncpy( bufLabel, label, 63 );
-  bufLabel[63] = 0;
+  strncpy( editBuf->bufLabel, label, 63 );
+  editBuf->bufLabel[63] = 0;
 
+  // Create the property dialog data entry form
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( edmBoxComplete_str4, 30, &bufX );
-  ef.addTextField( edmBoxComplete_str5, 30, &bufY );
-  ef.addTextField( edmBoxComplete_str6, 30, &bufW );
-  ef.addTextField( edmBoxComplete_str7, 30, &bufH );
+  // Add fields to the form
+  ef.addTextField( edmBoxComplete_str4, 30, &editBuf->bufX );
+  ef.addTextField( edmBoxComplete_str5, 30, &editBuf->bufY );
+  ef.addTextField( edmBoxComplete_str6, 30, &editBuf->bufW );
+  ef.addTextField( edmBoxComplete_str7, 30, &editBuf->bufH );
   ef.addOption( edmBoxComplete_str8, edmBoxComplete_str19,
-   &bufLineWidth );
+   &editBuf->bufLineWidth );
   ef.addOption( edmBoxComplete_str9, edmBoxComplete_str20,
-   &bufLineStyle );
+   &editBuf->bufLineStyle );
   ef.addColorButton( edmBoxComplete_str10, actWin->ci, &lineCb,
-   &bufLineColor );
-  ef.addToggle( edmBoxComplete_str11, &bufLineColorMode );
-  ef.addToggle( edmBoxComplete_str12, &bufFill );
+   &editBuf->bufLineColor );
+  ef.addToggle( edmBoxComplete_str11, &editBuf->bufLineColorMode );
+  ef.addToggle( edmBoxComplete_str12, &editBuf->bufFill );
   ef.addColorButton( edmBoxComplete_str13, actWin->ci, &fillCb,
-   &bufFillColor );
-  ef.addToggle( edmBoxComplete_str11, &bufFillColorMode );
-  ef.addTextField( edmBoxComplete_str14, 30, bufPvName,
+   &editBuf->bufFillColor );
+  ef.addToggle( edmBoxComplete_str11, &editBuf->bufFillColorMode );
+  ef.addTextField( edmBoxComplete_str14, 30, editBuf->bufPvName,
    activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( edmBoxComplete_str15, 30, &bufEfReadMin );
-  ef.addTextField( edmBoxComplete_str16, 30, &bufEfReadMax );
+  ef.addTextField( edmBoxComplete_str15, 30, &editBuf->bufEfReadMin );
+  ef.addTextField( edmBoxComplete_str16, 30, &editBuf->bufEfReadMax );
+  ef.addTextField( edmBoxComplete_str23, 30, &editBuf->bufEfPrecision );
   ef.addFontMenu( edmBoxComplete_str17, actWin->fi, &fm, fontTag );
   fm.setFontAlignment( alignment );
-  ef.addTextField( edmBoxComplete_str18, 30, bufLabel, 63 );
+  ef.addTextField( edmBoxComplete_str18, 30, editBuf->bufLabel, 63 );
 
   return 1;
 
 }
 
-int edmBoxClass::editCreate ( void ) {
+//---------------------------------------------------------------------------
 
-  this->genericEdit();
-  ef.finished( ebc_edit_ok, ebc_edit_apply, ebc_edit_cancel_delete, this );
-  actWin->currentEf = NULL;
-  ef.popup();
+// called by editApply and editOK
 
-  return 1;
+void edmBoxClass::editUpdate (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+edmBoxClass *ebo = (edmBoxClass *) client;
+
+  // Widget data has changed
+  ebo->actWin->setChanged();
+
+  // All widgets must include next two lines
+  ebo->eraseSelectBoxCorners();
+  ebo->erase();
+
+  // Copy edit buffer into current property values
+
+  ebo->lineColorMode = ebo->editBuf->bufLineColorMode;
+  if ( ebo->lineColorMode == COLORMODE_ALARM )
+    ebo->lineColor.setAlarmSensitive();
+  else
+    ebo->lineColor.setAlarmInsensitive();
+  ebo->lineColor.setColorIndex( ebo->editBuf->bufLineColor, ebo->actWin->ci );
+
+  ebo->fill = ebo->editBuf->bufFill;
+
+  ebo->fillColorMode = ebo->editBuf->bufFillColorMode;
+  if ( ebo->fillColorMode == COLORMODE_ALARM )
+    ebo->fillColor.setAlarmSensitive();
+  else
+    ebo->fillColor.setAlarmInsensitive();
+  ebo->fillColor.setColorIndex( ebo->editBuf->bufFillColor, ebo->actWin->ci );
+
+  ebo->lineWidth = ebo->editBuf->bufLineWidth;
+
+  if ( ebo->editBuf->bufLineStyle == 0 )
+    ebo->lineStyle = LineSolid;
+  else if ( ebo->editBuf->bufLineStyle == 1 )
+    ebo->lineStyle = LineOnOffDash;
+
+  ebo->pvExpStr.setRaw( ebo->editBuf->bufPvName );
+
+  ebo->efReadMin = ebo->editBuf->bufEfReadMin;
+  ebo->efReadMax = ebo->editBuf->bufEfReadMax;
+  ebo->efPrecision = ebo->editBuf->bufEfPrecision;
+
+  if ( ebo->efReadMin.isNull() ) {
+    ebo->readMin = 0;
+  }
+  else{
+    ebo->readMin = ebo->efReadMin.value();
+  }
+
+  if ( ebo->efReadMax.isNull() ) {
+    ebo->readMax = 10;
+  }
+  else{
+    ebo->readMax = ebo->efReadMax.value();
+  }
+
+  if ( ( ebo->efPrecision.isNull() ) ) {
+    ebo->precision = 1;
+  }
+  else{
+    ebo->precision = ebo->efPrecision.value();
+  }
+
+  strncpy( ebo->fontTag, ebo->fm.currentFontTag(), 63 );
+  ebo->fontTag[63] = 0;
+
+  ebo->actWin->fi->loadFontTag( ebo->fontTag );
+
+  ebo->alignment = ebo->fm.currentFontAlignment();
+
+  ebo->fs = ebo->actWin->fi->getXFontStruct( ebo->fontTag );
+
+  strncpy( ebo->label, ebo->editBuf->bufLabel, 63 );
+  ebo->label[63] = 0;
+
+  ebo->stringLength = strlen( ebo->label );
+
+  ebo->updateFont( ebo->label, ebo->fontTag, &ebo->fs,
+   &ebo->fontAscent, &ebo->fontDescent, &ebo->fontHeight,
+   &ebo->stringWidth );
+
+  // copy into object dimensions and select box dimensions
+
+  ebo->x = ebo->editBuf->bufX;
+  ebo->sboxX = ebo->editBuf->bufX;
+
+  ebo->y = ebo->editBuf->bufY;
+  ebo->sboxY = ebo->editBuf->bufY;
+
+  ebo->w = ebo->editBuf->bufW;
+  ebo->sboxW = ebo->editBuf->bufW;
+
+  ebo->h = ebo->editBuf->bufH;
+  ebo->sboxH = ebo->editBuf->bufH;
+
+  // Check values and do a few calculations
+
+  if ( ebo->w < 5 ) {
+    ebo->w = 5;
+    ebo->sboxW = ebo->w;
+  }
+
+  ebo->boxH = ebo->h - ebo->fontHeight - ebo->fontHeight;
+  if ( ebo->boxH < 5 ) {
+    ebo->boxH = 5;
+    ebo->h = ebo->boxH + ebo->fontHeight + ebo->fontHeight;
+    ebo->sboxH = ebo->h;
+  }
+
+  ebo->boxY = ebo->y + ebo->fontHeight;
+
+  if ( ebo->readMax > ebo->readMin ) {
+    ebo->factorW = (double) ( ebo->w - 2 ) / ( ebo->readMax - ebo->readMin );
+    ebo->factorH = (double) ebo->boxH / ( ebo->readMax - ebo->readMin );
+  }
+  else {
+    ebo->factorW = 1;
+    ebo->factorH = 1;
+  }
+
+  ebo->centerX = ebo->x + (int) ( ebo->w * 0.5 + 0.5 );
+  ebo->centerY = ebo->boxY + (int) ( ebo->boxH * 0.5 + 0.5 );
+
+  // updateDimensions should be called whenever the widget size
+  // or text fonts might have changed
+  ebo->updateDimensions();
 
 }
 
-int edmBoxClass::edit ( void ) {
+//---------------------------------------------------------------------------
 
-  this->genericEdit();
-  ef.finished( ebc_edit_ok, ebc_edit_apply, ebc_edit_cancel, this );
-  actWin->currentEf = &ef;
-  ef.popup();
+// X Windows callback function for the apply button on the property dialog
 
-  return 1;
+void edmBoxClass::editApply (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+edmBoxClass *ebo = (edmBoxClass *) client;
+
+  edmBoxClass::editUpdate( w, client, call );
+  ebo->refresh( ebo );
 
 }
 
+//---------------------------------------------------------------------------
+
+// X Windows callback function for the OK button on the property dialog
+
+void edmBoxClass::editOk (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+edmBoxClass *ebo = (edmBoxClass *) client;
+
+  edmBoxClass::editUpdate( w, client, call );
+  delete ebo->editBuf;
+  ebo->editBuf = NULL;
+  ebo->ef.popdown();
+  ebo->operationComplete();
+
+}
+
+//---------------------------------------------------------------------------
+
+// X Windows callback function for the cancel button on the property dialog
+
+void edmBoxClass::editCancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+edmBoxClass *ebo = (edmBoxClass *) client;
+
+  delete ebo->editBuf;
+  ebo->editBuf = NULL;
+  ebo->ef.popdown();
+  ebo->operationCancel();
+
+}
+
+//---------------------------------------------------------------------------
+
+// X Windows callback function for the cancel button on the property dialog
+// when the object is being created. If user cancels edit, object creation
+// is being canceled thus deleteRequest must be set.
+
+void edmBoxClass::editCancelDelete (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+edmBoxClass *ebo = (edmBoxClass *) client;
+
+  delete ebo->editBuf;
+  ebo->editBuf = NULL;
+  ebo->erase();
+  ebo->deleteRequest = 1;
+  ebo->ef.popdown();
+  ebo->operationCancel();
+  ebo->drawAll();
+
+}
+
+//---------------------------------------------------------------------------
+
 int edmBoxClass::createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
 {
+
+  // Read widget properties from file
 
 int major, minor, release, stat;
 
@@ -542,6 +600,7 @@ static int alignEnum[3] = {
   tag.loadR( "lineStyle", 2, styleEnumStr, styleEnum, &lineStyle, &solid );
   tag.loadR( "min", &efReadMin );
   tag.loadR( "max", &efReadMax );
+  tag.loadR( "precision", &efPrecision );
   tag.loadR( "font", 63, fontTag );
   tag.loadR( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
   tag.loadR( "label", 63, label, emptyStr );
@@ -553,37 +612,57 @@ static int alignEnum[3] = {
     actWin->appCtx->postMessage( tag.errMsg() );
   }
 
-  if ( major > EBC_MAJOR_VERSION ) {
+  // If new object version is greater than current version then abort
+  if ( major > MAJOR_VERSION ) {
     postIncompatable();
     return 0;
   }
 
+  // If new object version is "old file format" then abort
   if ( major < 4 ) {
     postIncompatable();
     return 0;
   }
 
+  // initSelectBox must always be call after getting x,y,w,h
   this->initSelectBox(); // call after getting x,y,w,h
 
-  if ( lineColorMode == EBC_K_COLORMODE_ALARM )
+  // Process pv alarm information
+
+  if ( lineColorMode == COLORMODE_ALARM )
     lineColor.setAlarmSensitive();
   else
     lineColor.setAlarmInsensitive();
 
-  if ( fillColorMode == EBC_K_COLORMODE_ALARM )
+  if ( fillColorMode == COLORMODE_ALARM )
     fillColor.setAlarmSensitive();
   else
     fillColor.setAlarmInsensitive();
 
-  if ( ( efReadMin.isNull() ) && ( efReadMax.isNull() ) ) {
+  // Process min, max, precision
+
+  if ( efReadMin.isNull() ) {
     readMin = 0;
-    readMax = 10;
   }
   else{
     readMin = efReadMin.value();
+  }
+
+  if ( efReadMax.isNull() ) {
+    readMax = 10;
+  }
+  else{
     readMax = efReadMax.value();
   }
 
+  if ( ( efPrecision.isNull() ) ) {
+    precision = 1;
+  }
+  else{
+    precision = efPrecision.value();
+  }
+
+  // Make fonts available to X Server, get font struct and font metrics
   actWin->fi->loadFontTag( fontTag );
   fs = actWin->fi->getXFontStruct( fontTag );
   stringLength = strlen( label );
@@ -591,22 +670,14 @@ static int alignEnum[3] = {
    &fontAscent, &fontDescent, &fontHeight,
    &stringWidth );
 
-  if ( alignment == XmALIGNMENT_BEGINNING )
-    labelX = x;
-  else if ( alignment == XmALIGNMENT_CENTER )
-    labelX = x + w/2 - stringWidth/2;
-  else if ( alignment == XmALIGNMENT_END )
-    labelX = x + w - stringWidth;
-  labelY = y + h;
+  // updateDimensions should be called whenever the widget size
+  // or text fonts might have changed
+  updateDimensions();
 
-  boxH = h - fontHeight;
-  if ( boxH < 5 ) {
-    boxH = 5;
-    h = boxH + fontHeight;
-  }
+  // Do various calculations
 
   if ( readMax > readMin ) {
-    factorW = (double) w / ( readMax - readMin );
+    factorW = (double) ( w - 2 ) / ( readMax - readMin );
     factorH = (double) boxH / ( readMax - readMin );
   }
   else {
@@ -615,7 +686,7 @@ static int alignEnum[3] = {
   }
 
   centerX = x + (int) ( w * 0.5 + 0.5 );
-  centerY = y + (int) ( boxH * 0.5 + 0.5 );
+  centerY = boxY + (int) ( boxH * 0.5 + 0.5 );
 
   curValue = 0;
 
@@ -623,6 +694,8 @@ static int alignEnum[3] = {
 
 }
 
+//---------------------------------------------------------------------------
+
 int edmBoxClass::old_createFromFile (
   FILE *f,
   char *name,
@@ -638,7 +711,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   fscanf( f, "%d %d %d\n", &major, &minor, &release ); actWin->incLine();
 
-  if ( major > EBC_MAJOR_VERSION ) {
+  if ( major > MAJOR_VERSION ) {
     postIncompatable();
     return 0;
   }
@@ -658,7 +731,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
     fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
 
-    if ( lineColorMode == EBC_K_COLORMODE_ALARM )
+    if ( lineColorMode == COLORMODE_ALARM )
       lineColor.setAlarmSensitive();
     else
       lineColor.setAlarmInsensitive();
@@ -677,7 +750,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
     fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
 
-    if ( lineColorMode == EBC_K_COLORMODE_ALARM )
+    if ( lineColorMode == COLORMODE_ALARM )
       lineColor.setAlarmSensitive();
     else
       lineColor.setAlarmInsensitive();
@@ -697,7 +770,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
     fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
 
-    if ( lineColorMode == EBC_K_COLORMODE_ALARM )
+    if ( lineColorMode == COLORMODE_ALARM )
       lineColor.setAlarmSensitive();
     else
       lineColor.setAlarmInsensitive();
@@ -713,7 +786,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   fscanf( f, "%d\n", &fillColorMode ); actWin->incLine();
 
-  if ( fillColorMode == EBC_K_COLORMODE_ALARM )
+  if ( fillColorMode == COLORMODE_ALARM )
     fillColor.setAlarmSensitive();
   else
     fillColor.setAlarmInsensitive();
@@ -774,14 +847,16 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
     labelX = x + w - stringWidth;
   labelY = y + h;
 
-  boxH = h - fontHeight;
+  boxH = h - fontHeight - fontHeight;
   if ( boxH < 5 ) {
     boxH = 5;
-    h = boxH + fontHeight;
+    h = boxH + fontHeight + fontHeight;
   }
 
+  boxY = y + fontHeight;
+
   if ( readMax > readMin ) {
-    factorW = (double) w / ( readMax - readMin );
+    factorW = (double) ( w - 2 ) / ( readMax - readMin );
     factorH = (double) boxH / ( readMax - readMin );
   }
   else {
@@ -790,7 +865,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
   }
 
   centerX = x + (int) ( w * 0.5 + 0.5 );
-  centerY = y + (int) ( boxH * 0.5 + 0.5 );
+  centerY = boxY + (int) ( boxH * 0.5 + 0.5 );
 
   curValue = 0;
 
@@ -798,9 +873,13 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
 }
 
+//---------------------------------------------------------------------------
+
 int edmBoxClass::save (
   FILE *f )
 {
+
+// Save widget properties to file
 
 int major, minor, release, stat;
 
@@ -832,9 +911,9 @@ static int alignEnum[3] = {
   XmALIGNMENT_END
 };
 
-  major = EBC_MAJOR_VERSION;
-  minor = EBC_MINOR_VERSION;
-  release = EBC_RELEASE;
+  major = MAJOR_VERSION;
+  minor = MINOR_VERSION;
+  release = RELEASE;
 
   tag.init();
   tag.loadW( "beginObjectProperties" );
@@ -855,6 +934,7 @@ static int alignEnum[3] = {
   tag.loadW( "lineStyle", 2, styleEnumStr, styleEnum, &lineStyle, &solid );
   tag.loadW( "min", &efReadMin );
   tag.loadW( "max", &efReadMax );
+  tag.loadW( "precision", &efPrecision );
   tag.loadW( "font", fontTag );
   tag.loadW( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
   tag.loadW( "label", label, emptyStr );
@@ -867,14 +947,15 @@ static int alignEnum[3] = {
 
 }
 
+//---------------------------------------------------------------------------
+
 int edmBoxClass::old_save (
   FILE *f )
 {
 
 int index, stat;
 
-  fprintf( f, "%-d %-d %-d\n", EBC_MAJOR_VERSION, EBC_MINOR_VERSION,
-   EBC_RELEASE );
+  fprintf( f, "%-d %-d %-d\n", MAJOR_VERSION, MINOR_VERSION, RELEASE );
   fprintf( f, "%-d\n", x );
   fprintf( f, "%-d\n", y );
   fprintf( f, "%-d\n", w );
@@ -916,81 +997,428 @@ int index, stat;
 
 }
 
-int edmBoxClass::drawActive ( void ) {
+//---------------------------------------------------------------------------
 
-  if ( !enabled || !activeMode || !init ) return 1;
+int edmBoxClass::draw ( void ) {
 
-  actWin->executeGc.saveFg();
+// Draw edit mode image
 
+XRectangle xR = { x, y, w, h };
+int clipStat;
+int blink = 0;
+
+  // if widget is being activated or has been deleted, return
+  if ( activeMode || deleteRequest ) return 1;
+
+  // Save foreground color
+  actWin->drawGc.saveFg();
+
+  // Set clipping region
+  clipStat = actWin->drawGc.addNormXClipRectangle( xR );
+
+  // If filled, fill in rectangle with specified color
   if ( fill ) {
-    actWin->executeGc.setFG( fillColor.getColor() );
-    XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), sideX, sideY, sideW, sideH );
+    actWin->drawGc.setFG( fillColor.pixelIndex(), &blink );
+    XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.normGC(), x+1, boxY, w-2, boxH );
   }
 
-  actWin->executeGc.setFG( lineColor.getColor() );
-  actWin->executeGc.setLineWidth( lineWidth );
-  actWin->executeGc.setLineStyle( lineStyle );
+  // Set line color, style, and width to specified values
+  actWin->drawGc.setFG( lineColor.pixelIndex(), &blink );
+  actWin->drawGc.setLineWidth( lineWidth );
+  actWin->drawGc.setLineStyle( lineStyle );
 
-  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-   actWin->executeGc.normGC(), sideX, sideY, sideW, sideH );
+  // Draw rectangle outline
+  XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.normGC(), x+1, boxY, w-2, boxH );
 
-  actWin->executeGc.setLineWidth( 1 );
-  actWin->executeGc.setLineStyle( LineSolid );
-
-  if ( bufferInvalid ) {
-
-    if ( strcmp( fontTag, "" ) != 0 ) {
-      actWin->executeGc.setFontTag( fontTag, actWin->fi );
-    }
-
-    XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.normGC(), labelX, labelY, fontHeight,
-     label, strlen(label) );
-
-    bufferInvalid = 0;
-
+  // Set graphic context font
+  if ( strcmp( fontTag, "" ) != 0 ) {
+    actWin->drawGc.setFontTag( fontTag, actWin->fi );
   }
 
-  actWin->executeGc.restoreFg();
+  // Draw label text
+  xDrawText( actWin->d, XtWindow(actWin->drawWidget),
+   &actWin->drawGc, fs, labelX, labelY, alignment,
+   label );
+
+  // Remove clippling region
+  if ( clipStat & 1 ) actWin->drawGc.removeNormXClipRectangle();
+
+  // restore graphic context values
+  actWin->drawGc.setLineWidth( 1 );
+  actWin->drawGc.setLineStyle( LineSolid );
+  actWin->drawGc.restoreFg();
+
+  // This makes the blink magic work
+  updateBlink( blink );
 
   return 1;
 
 }
 
-int edmBoxClass::eraseActive ( void ) {
+//---------------------------------------------------------------------------
+
+int edmBoxClass::erase ( void ) {
+
+// Draw edit mode image
+
+// Colors are not set because the eraseGC is used; the eraseGC contains
+// the color of the display background
+
+XRectangle xR = { x, y, w, h };
+int clipStat;
+
+  // if widget is being activated or has been deleted, return
+  if ( activeMode || deleteRequest ) return 1;
+
+  // Set clipping region
+  clipStat = actWin->drawGc.addEraseXClipRectangle( xR );
+
+  // If filled, erase fill
+  if ( fill ) {
+    XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.eraseGC(), x+1, boxY, w-2, boxH );
+  }
+
+  // Set line style and width to specified values
+  actWin->drawGc.setLineWidth( lineWidth );
+  actWin->drawGc.setLineStyle( lineStyle );
+
+  // Erase rectangle outline
+  XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.eraseGC(), x+1, boxY, w-2, boxH );
+
+  // Set graphic context font
+  if ( strcmp( fontTag, "" ) != 0 ) {
+    actWin->drawGc.setFontTag( fontTag, actWin->fi );
+  }
+
+  // Erase label text
+  xEraseText( actWin->d, XtWindow(actWin->drawWidget),
+   &actWin->drawGc, fs, labelX, labelY, alignment,
+   label );
+
+  // Remove clippling region
+  if ( clipStat & 1 ) actWin->drawGc.removeEraseXClipRectangle();
+
+  // restore graphic context values
+  actWin->drawGc.setLineWidth( 1 );
+  actWin->drawGc.setLineStyle( LineSolid );
+
+  return 1;
+
+}
+
+//---------------------------------------------------------------------------
+
+int edmBoxClass::checkResizeSelectBox (
+  int _x,
+  int _y,
+  int _w,
+  int _h ) {
+
+  // Constrain minimum widget area size, input parameters are
+  // delta values
+
+int tmpw, tmph, tmpBoxH, ret_stat;
+
+  ret_stat = 1;
+
+  tmpw = sboxW;
+  tmph = sboxH;
+
+  tmpw += _w;
+  tmph += _h;
+
+  tmpBoxH = tmph - fontHeight - fontHeight;
+  if ( tmpBoxH < 5 ) ret_stat = 0;
+
+  if ( tmpw < 5 ) ret_stat = 0;
+
+  return ret_stat;
+
+}
+
+//---------------------------------------------------------------------------
+
+int edmBoxClass::checkResizeSelectBoxAbs (
+  int _x,
+  int _y,
+  int _w,
+  int _h ) {
+
+  // Constrain minimum widget area size, input parameters are
+  // absolute values
+
+int tmpw, tmph, tmpBoxH, ret_stat;
+
+  ret_stat = 1;
+
+  tmpw = _w;
+  tmph = _h;
+
+  if ( tmph != -1 ) {
+    tmpBoxH = tmph - fontHeight - fontHeight;
+    if ( tmpBoxH < 5 ) ret_stat = 0;
+  }
+
+  if ( tmpw != -1 ) {
+    if ( tmpw < 5 ) ret_stat = 0;
+  }
+
+  return ret_stat;
+
+}
+
+//---------------------------------------------------------------------------
+
+void edmBoxClass::updateDimensions ( void ) {
+
+  // Update values of position and size of widget internal details
+
+  boxY = y + fontHeight;
+  labelY = y + h - fontHeight;
+  textValueY = y;
+
+  if ( alignment == XmALIGNMENT_BEGINNING )
+    textValueX = x;
+  else if ( alignment == XmALIGNMENT_CENTER )
+    textValueX = x + w/2;
+  else if ( alignment == XmALIGNMENT_END )
+    textValueX = x + w;
+
+  if ( alignment == XmALIGNMENT_BEGINNING )
+    labelX = x;
+  else if ( alignment == XmALIGNMENT_CENTER )
+    labelX = x + w/2;
+  else if ( alignment == XmALIGNMENT_END )
+    labelX = x + w;
+
+  boxH = h - fontHeight - fontHeight;
+  if ( boxH < 5 ) {
+    boxH = 5;
+    h = boxH + fontHeight + fontHeight;
+    sboxH = h;
+  }
+
+  if ( w < 5 ) {
+    w = 5;
+    sboxW = 5;
+  }
+
+}
+
+//---------------------------------------------------------------------------
+
+void edmBoxClass::changeDisplayParams (
+  unsigned int _flag,
+  char *_fontTag,
+  int _alignment,
+  char *_ctlFontTag,
+  int _ctlAlignment,
+  char *_btnFontTag,
+  int _btnAlignment,
+  int _textFgColor,
+  int _fg1Color,
+  int _fg2Color,
+  int _offsetColor,
+  int _bgColor,
+  int _topShadowColor,
+  int _botShadowColor )
+{
+
+  // Depending on flag bits set, update various display properties; widgets
+  // ignore properties that are not applicable
+
+  if ( _flag & ACTGRF_FG1COLOR_MASK )
+    lineColor.setColorIndex( _fg1Color, actWin->ci );
+
+  if ( _flag & ACTGRF_BGCOLOR_MASK )
+    fillColor.setColorIndex( _bgColor, actWin->ci );
+
+  if ( _flag & ACTGRF_CTLFONTTAG_MASK ) {
+
+    strcpy( fontTag, _ctlFontTag );
+    alignment = _ctlAlignment;
+
+    fs = actWin->fi->getXFontStruct( fontTag );
+    updateFont( " ", fontTag, &fs,
+     &fontAscent, &fontDescent, &fontHeight,
+     &stringWidth );
+
+    updateDimensions();
+
+  }
+
+}
+
+//---------------------------------------------------------------------------
+
+void edmBoxClass::changePvNames (
+  int flag,
+  int numCtlPvs,
+  char *ctlPvs[],
+  int numReadbackPvs,
+  char *readbackPvs[],
+  int numNullPvs,
+  char *nullPvs[],
+  int numVisPvs,
+  char *visPvs[],
+  int numAlarmPvs,
+  char *alarmPvs[] )
+{
+
+  // Depending on flag bits set, update various process variable
+  // names; widgets ignore pv names that are not applicable
+
+  if ( flag & ACTGRF_CTLPVS_MASK ) {
+    if ( numCtlPvs ) {
+      pvExpStr.setRaw( ctlPvs[0] );
+    }
+  }
+
+}
+
+//---------------------------------------------------------------------------
+
+int edmBoxClass::drawActive ( void ) {
+
+XRectangle xR = { x, y, w, h };
+int clipStat;
+char string[31+1];
+int ascent, descent, height, width;
+int blink = 0;
+
+  if ( !init ) {
+    if ( needToDrawUnconnected ) {
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( lineColor.getDisconnectedIndex(), &blink );
+      actWin->executeGc.setLineWidth( 1 );
+      actWin->executeGc.setLineStyle( LineSolid );
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
+      actWin->executeGc.restoreFg();
+      needToEraseUnconnected = 1;
+      updateBlink( blink );
+    }
+  }
+  else if ( needToEraseUnconnected ) {
+    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineStyle( LineSolid );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.eraseGC(), x, y, w, h );
+    needToEraseUnconnected = 0;
+  }
 
   if ( !enabled || !activeMode || !init ) return 1;
 
+  actWin->executeGc.saveFg();
+
+  clipStat = actWin->executeGc.addNormXClipRectangle( xR );
+
+  if ( fill ) {
+    actWin->executeGc.setFG( fillColor.getIndex(), &blink  );
+    XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), valueBoxX, valueBoxY, valueBoxW, valueBoxH );
+  }
+
+  actWin->executeGc.setFG( lineColor.getIndex(), &blink  );
+  actWin->executeGc.setLineWidth( lineWidth );
+  actWin->executeGc.setLineStyle( lineStyle );
+
+  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+   actWin->executeGc.normGC(), valueBoxX, valueBoxY, valueBoxW, valueBoxH );
+
+  actWin->executeGc.setLineWidth( 1 );
+  actWin->executeGc.setLineStyle( LineSolid );
+
+  snprintf( string, 31, format, value );
+
+  if ( strcmp( fontTag, "" ) != 0 ) {
+    actWin->executeGc.setFontTag( fontTag, actWin->fi );
+  }
+
+  updateFont( string, fontTag, &fs,
+   &ascent, &descent, &height, &width );
+
+  xDrawText( actWin->d, XtWindow(actWin->executeWidget),
+   &actWin->executeGc, fs, textValueX, textValueY, alignment,
+   string );
+
+  prevValue = value;
+
+  if ( bufferInvalid ) {
+
+    xDrawText( actWin->d, XtWindow(actWin->executeWidget),
+     &actWin->executeGc, fs, labelX, labelY, alignment,
+     label );
+
+    bufferInvalid = 0;
+
+  }
+
+  if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
+
+  actWin->executeGc.restoreFg();
+
+  updateBlink( blink );
+
+  return 1;
+
+}
+
+//---------------------------------------------------------------------------
+
+int edmBoxClass::eraseActive ( void ) {
+
+XRectangle xR = { x, y, w, h };
+int clipStat;
+char string[31+1];
+
+  if ( !enabled || !activeMode || !init ) return 1;
+
+  clipStat = actWin->executeGc.addEraseXClipRectangle( xR );
+
   if ( fill ) {
     XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.eraseGC(), sideX, sideY, sideW, sideH );
+     actWin->executeGc.eraseGC(), valueBoxX, valueBoxY, valueBoxW, valueBoxH );
   }
 
   actWin->executeGc.setLineWidth( lineWidth );
   actWin->executeGc.setLineStyle( lineStyle );
 
   XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
-   actWin->executeGc.eraseGC(), sideX, sideY, sideW, sideH );
+   actWin->executeGc.eraseGC(), valueBoxX, valueBoxY, valueBoxW, valueBoxH );
 
   actWin->executeGc.setLineWidth( 1 );
   actWin->executeGc.setLineStyle( LineSolid );
 
+  snprintf( string, 31, format, prevValue );
+
+  if ( strcmp( fontTag, "" ) != 0 ) {
+    actWin->executeGc.setFontTag( fontTag, actWin->fi );
+  }
+
+  xEraseText( actWin->d, XtWindow(actWin->executeWidget),
+   &actWin->executeGc, fs, textValueX, textValueY, alignment,
+   string );
+
   if ( bufferInvalid ) {
 
-    if ( strcmp( fontTag, "" ) != 0 ) {
-      actWin->executeGc.setFontTag( fontTag, actWin->fi );
-    }
-
-    XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.eraseGC(), labelX, labelY, fontHeight,
-     label, strlen(label) );
+    xEraseText( actWin->d, XtWindow(actWin->executeWidget),
+     &actWin->executeGc, fs, labelX, labelY, alignment,
+     label );
 
   }
+
+  if ( clipStat & 1 ) actWin->executeGc.removeEraseXClipRectangle();
 
   return 1;
 
 }
+
+//---------------------------------------------------------------------------
 
 void edmBoxClass::bufInvalidate ( void )
 {
@@ -999,6 +1427,8 @@ void edmBoxClass::bufInvalidate ( void )
 
 }
 
+//---------------------------------------------------------------------------
+
 int edmBoxClass::expand1st (
   int numMacros,
   char *macros[],
@@ -1013,6 +1443,8 @@ int stat;
 
 }
 
+//---------------------------------------------------------------------------
+
 int edmBoxClass::expand2nd (
   int numMacros,
   char *macros[],
@@ -1027,6 +1459,8 @@ int stat;
 
 }
 
+//---------------------------------------------------------------------------
+
 int edmBoxClass::containsMacros ( void ) {
 
   if ( pvExpStr.containsPrimaryMacros() ) return 1;
@@ -1035,6 +1469,8 @@ int edmBoxClass::containsMacros ( void ) {
 
 }
 
+//---------------------------------------------------------------------------
+
 int edmBoxClass::activate (
   int pass,
   void *ptr )
@@ -1063,8 +1499,17 @@ int stat;
       bufferInvalid = 0;
       pointerMotionDetected = 0;
       pvId = NULL;
-      initialConnection = 1;
       oldStat = oldSev = -1;
+      value = prevValue = 0;
+
+      needToDrawUnconnected = 0;
+      needToEraseUnconnected = 0;
+      unconnectedTimer = 0;
+
+      if ( !unconnectedTimer ) {
+        unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
+         2000, unconnectedTimeout, this );
+      }
 
       if ( !pvExpStr.getExpanded() ||
          ( strcmp( pvExpStr.getExpanded(), "" ) == 0 ) ) {
@@ -1079,7 +1524,8 @@ int stat;
       if ( pvExists ) {
 	pvId = the_PV_Factory->create( pvExpStr.getExpanded() );
 	if ( pvId ) {
-	  pvId->add_conn_state_callback( eboMonitorPvConnectState, this );
+	  pvId->add_conn_state_callback( monitorPvConnectState, this );
+          pvId->add_value_callback( pvUpdate, this );
 	}
 	else {
           printf( edmBoxComplete_str21 );
@@ -1088,10 +1534,10 @@ int stat;
       else {
         active = 1;
         init = 1;
-        sideW = w;
-        sideX = x;
-        sideH = boxH;
-        sideY = y;
+        valueBoxW = w-2;
+        valueBoxX = x+1;
+        valueBoxH = boxH;
+        valueBoxY = boxY;
         stat = drawActive();
       }
 
@@ -1114,17 +1560,26 @@ int stat;
 
 }
 
+//---------------------------------------------------------------------------
+
 int edmBoxClass::deactivate (
   int pass )
 {
 
   if ( pass == 1 ) {
 
+    if ( unconnectedTimer ) {
+      XtRemoveTimeOut( unconnectedTimer );
+      unconnectedTimer = 0;
+    }
+
+    updateBlink( 0 );
+
     activeMode = 0;
 
     if ( pvId ) {
-      pvId->remove_conn_state_callback( eboMonitorPvConnectState, this );
-      pvId->remove_value_callback( edmBoxUpdate, this );
+      pvId->remove_conn_state_callback( monitorPvConnectState, this );
+      pvId->remove_value_callback( pvUpdate, this );
       pvId->release();
       pvId = NULL;
     }
@@ -1135,148 +1590,8 @@ int edmBoxClass::deactivate (
 
 }
 
-int edmBoxClass::draw ( void ) {
+//---------------------------------------------------------------------------
 
-  if ( activeMode || deleteRequest ) return 1;
-
-  actWin->drawGc.saveFg();
-
-  if ( fill ) {
-    actWin->drawGc.setFG( fillColor.pixelColor() );
-    XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
-     actWin->drawGc.normGC(), x, y, w, boxH );
-  }
-
-  actWin->drawGc.setFG( lineColor.pixelColor() );
-  actWin->drawGc.setLineWidth( lineWidth );
-  actWin->drawGc.setLineStyle( lineStyle );
-
-  XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
-   actWin->drawGc.normGC(), x, y, w, boxH );
-
-  actWin->drawGc.setLineWidth( 1 );
-  actWin->drawGc.setLineStyle( LineSolid );
-
-  if ( strcmp( fontTag, "" ) != 0 ) {
-    actWin->drawGc.setFontTag( fontTag, actWin->fi );
-  }
-
-  XDrawStrings( actWin->d, XtWindow(actWin->drawWidget),
-   actWin->drawGc.normGC(), labelX, labelY, fontHeight,
-   label, strlen(label) );
-
-  actWin->drawGc.restoreFg();
-
-  return 1;
-
-}
-
-int edmBoxClass::erase ( void ) {
-
-  if ( activeMode || deleteRequest ) return 1;
-
-  if ( fill ) {
-    XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
-     actWin->drawGc.eraseGC(), x, y, w, boxH );
-  }
-
-  actWin->drawGc.setLineWidth( lineWidth );
-  actWin->drawGc.setLineStyle( lineStyle );
-
-  XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
-   actWin->drawGc.eraseGC(), x, y, w, boxH );
-
-  actWin->drawGc.setLineWidth( 1 );
-  actWin->drawGc.setLineStyle( LineSolid );
-
-  if ( strcmp( fontTag, "" ) != 0 ) {
-    actWin->drawGc.setFontTag( fontTag, actWin->fi );
-  }
-
-  XDrawStrings( actWin->d, XtWindow(actWin->drawWidget),
-   actWin->drawGc.eraseGC(), labelX, labelY, fontHeight,
-   label, strlen(label) );
-
-  return 1;
-
-}
-
-int edmBoxClass::checkResizeSelectBox (
-  int _x,
-  int _y,
-  int _w,
-  int _h ) {
-
-int tmpw, tmph, tmpBoxH, ret_stat;
-
-  ret_stat = 1;
-
-  tmpw = sboxW;
-  tmph = sboxH;
-
-  tmpw += _w;
-  tmph += _h;
-
-  tmpBoxH = tmph - fontHeight;
-  if ( tmpBoxH < 5 ) ret_stat = 0;
-
-  if ( tmpw < 5 ) ret_stat = 0;
-
-  return ret_stat;
-
-}
-
-int edmBoxClass::checkResizeSelectBoxAbs (
-  int _x,
-  int _y,
-  int _w,
-  int _h ) {
-
-int tmpw, tmph, tmpBoxH, ret_stat;
-
-  ret_stat = 1;
-
-  tmpw = _w;
-  tmph = _h;
-
-  if ( tmph != -1 ) {
-    tmpBoxH = tmph - fontHeight;
-    if ( tmpBoxH < 5 ) ret_stat = 0;
-  }
-
-  if ( tmpw != -1 ) {
-    if ( tmpw < 5 ) ret_stat = 0;
-  }
-
-  return ret_stat;
-
-}
-
-void edmBoxClass::updateDimensions ( void ) {
-
-  if ( alignment == XmALIGNMENT_BEGINNING )
-    labelX = x;
-  else if ( alignment == XmALIGNMENT_CENTER )
-    labelX = x + w/2 - stringWidth/2;
-  else if ( alignment == XmALIGNMENT_END )
-    labelX = x + w - stringWidth;
-
-  labelY = y + h;
-
-  boxH = h - fontHeight;
-  if ( boxH < 5 ) {
-    boxH = 5;
-    h = boxH + fontHeight;
-    sboxH = h;
-  }
-
-  if ( w < 5 ) {
-    w = 5;
-    sboxW = 5;
-  }
-
-}
-
 void edmBoxClass::btnUp (
   int x,
   int y,
@@ -1285,20 +1600,37 @@ void edmBoxClass::btnUp (
   int *action )
 {
 
-double v;
+double v, dInc;
 
   *action = 0;
 
   if ( !enabled ) return;
 
+  dInc = 10.0;
+
+  // wheel
+  if ( buttonNumber == 4 ) {
+    buttonNumber = 1;
+    dInc = 1.0;
+  }
+
+  if ( buttonNumber == 5 ) {
+    buttonNumber = 1;
+    buttonState |= ShiftMask;
+    dInc = 1.0;
+  }
+  // wheel
+
+  if ( buttonNumber != 1 ) return;
+
   if ( pvExists && !pointerMotionDetected ) {
 
     if ( buttonState & ShiftMask ) {
-      v = curValue - 10.0;
+      v = curValue - dInc;
       if ( v < readMin ) v = readMin;
     }
     else {
-      v = curValue + 10.0;
+      v = curValue + dInc;
       if ( v > readMax ) v = readMax;
     }
 
@@ -1307,6 +1639,8 @@ double v;
   }
 
 }
+
+//---------------------------------------------------------------------------
 
 void edmBoxClass::btnDown (
   int x,
@@ -1317,12 +1651,16 @@ void edmBoxClass::btnDown (
 {
 
   if ( !enabled ) return;
+  if ( buttonNumber == 4 ) buttonNumber = 1;
+  if ( buttonNumber == 5 ) buttonNumber = 1;
+  if ( buttonNumber != 1 ) return;
 
   pointerMotionDetected = 0;
 
 }
-
 
+//---------------------------------------------------------------------------
+
 void edmBoxClass::btnDrag (
   int x,
   int y,
@@ -1333,6 +1671,7 @@ void edmBoxClass::btnDrag (
 double v;
 
   if ( !enabled ) return;
+  if ( buttonNumber != 1 ) return;
 
   pointerMotionDetected = 1;
 
@@ -1352,6 +1691,8 @@ double v;
   }
 
 }
+
+//---------------------------------------------------------------------------
 
 int edmBoxClass::getButtonActionRequest (
   int *up,
@@ -1373,10 +1714,11 @@ int edmBoxClass::getButtonActionRequest (
 
 }
 
+//---------------------------------------------------------------------------
+
 void edmBoxClass::executeDeferred ( void ) {
 
 int stat, nc, nu, nd;
-double value;
 
   if ( actWin->isIconified ) return;
 
@@ -1397,7 +1739,7 @@ double value;
   actWin->appCtx->proc->unlock();
 
 
-//----------------------------------------------------------------------------
+//--------------
 
   if ( nc ) {
 
@@ -1405,10 +1747,12 @@ double value;
     if ( ( fieldType == ProcessVariable::Type::real ) ||
          ( fieldType == ProcessVariable::Type::integer ) ) {
 
+      snprintf( format, 15, "%%.%-df", precision );
+
       stat = eraseActive();
 
       if ( readMax > readMin ) {
-        factorW = (double) w / ( readMax - readMin );
+        factorW = (double) ( w - 2 ) / ( readMax - readMin );
         factorH = (double) boxH / ( readMax - readMin );
       }
       else {
@@ -1417,23 +1761,19 @@ double value;
       }
 
       centerX = x + (int) ( w * 0.5 + 0.5 );
-      centerY = y + (int) ( boxH * 0.5 + 0.5 );
+      centerY = boxY + (int) ( boxH * 0.5 + 0.5 );
 
       if ( value > 0.0 ) {
-        sideW = (int) ( value * factorW + 0.5 );
-        sideX = centerX - (int) ( (double) sideW * 0.5 + 0.5 );
-        sideH = (int) ( value * factorH + 0.5 );
-        sideY = centerY - (int) ( (double) sideH * 0.5 + 0.5 );
+        valueBoxW = (int) ( value * factorW + 0.5 );
+        valueBoxX = centerX - (int) ( (double) valueBoxW * 0.5 + 0.5 );
+        valueBoxH = (int) ( value * factorH + 0.5 );
+        valueBoxY = centerY - (int) ( (double) valueBoxH * 0.5 + 0.5 );
       }
       else {
-        sideW = 1;
-        sideX = centerX;
-        sideH = 1;
-        sideY = centerY;
-      }
-
-      if ( initialConnection ) {
-        pvId->add_value_callback( edmBoxUpdate, this );
+        valueBoxW = 1;
+        valueBoxX = centerX;
+        valueBoxH = 1;
+        valueBoxY = centerY;
       }
 
       init = 1;
@@ -1457,10 +1797,10 @@ double value;
 
       active = 0;
       init = 1;
-      sideW = w;
-      sideX = x;
-      sideH = boxH;
-      sideY = y;
+      valueBoxW = w-2;
+      valueBoxX = x+1;
+      valueBoxH = boxH;
+      valueBoxY = boxY;
       lineColor.setDisconnected();
       fillColor.setDisconnected();
 
@@ -1475,23 +1815,23 @@ double value;
   }
 
 
-//----------------------------------------------------------------------------
+//--------------
 
   if ( nu ) {
 
     eraseActive();
 
     if ( value > 0.0 ) {
-      sideW = (int) ( value * factorW + 0.5 );
-      sideX = centerX - (int) ( (double) sideW * 0.5 + 0.5 );
-      sideH = (int) ( value * factorH + 0.5 );
-      sideY = centerY - (int) ( (double) sideH * 0.5 + 0.5 );
+      valueBoxW = (int) ( value * factorW + 0.5 );
+      valueBoxX = centerX - (int) ( (double) valueBoxW * 0.5 + 0.5 );
+      valueBoxH = (int) ( value * factorH + 0.5 );
+      valueBoxY = centerY - (int) ( (double) valueBoxH * 0.5 + 0.5 );
     }
     else {
-      sideW = 1;
-      sideX = centerX;
-      sideH = 1;
-      sideY = centerY;
+      valueBoxW = 1;
+      valueBoxX = centerX;
+      valueBoxH = 1;
+      valueBoxY = centerY;
     }
 
 #if SMARTDRAW
@@ -1503,7 +1843,7 @@ double value;
   }
 
 
-//----------------------------------------------------------------------------
+//--------------
 
   if ( nd ) {
 
@@ -1517,19 +1857,26 @@ double value;
 
 }
 
+//---------------------------------------------------------------------------
+
 char *edmBoxClass::firstDragName ( void ) {
 
   if ( !enabled ) return NULL;
 
+  dragIndex = 0;
   return dragName[dragIndex];
 
 }
+
+//---------------------------------------------------------------------------
 
 char *edmBoxClass::nextDragName ( void ) {
 
   return NULL;
 
 }
+
+//---------------------------------------------------------------------------
 
 char *edmBoxClass::dragValue (
   int i ) {
@@ -1549,77 +1896,174 @@ char *edmBoxClass::dragValue (
 
 }
 
-void edmBoxClass::changeDisplayParams (
-  unsigned int _flag,
-  char *_fontTag,
-  int _alignment,
-  char *_ctlFontTag,
-  int _ctlAlignment,
-  char *_btnFontTag,
-  int _btnAlignment,
-  int _textFgColor,
-  int _fg1Color,
-  int _fg2Color,
-  int _offsetColor,
-  int _bgColor,
-  int _topShadowColor,
-  int _botShadowColor )
-{
+//---------------------------------------------------------------------------
 
-  if ( _flag & ACTGRF_FG1COLOR_MASK )
-    lineColor.setColorIndex( _fg1Color, actWin->ci );
+// X windows makes client code do blinking if color depth is
+// anything other than 8 bits
 
-  if ( _flag & ACTGRF_BGCOLOR_MASK )
-    fillColor.setColorIndex( _bgColor, actWin->ci );
+void edmBoxClass::doBlink (
+  void *ptr
+) {
 
-  if ( _flag & ACTGRF_CTLFONTTAG_MASK ) {
+edmBoxClass *ebo = (edmBoxClass *) ptr;
 
-    strcpy( fontTag, _ctlFontTag );
-    alignment = _ctlAlignment;
-
-    fs = actWin->fi->getXFontStruct( fontTag );
-    updateFont( " ", fontTag, &fs,
-     &fontAscent, &fontDescent, &fontHeight,
-     &stringWidth );
-
-    boxH = h - fontHeight;
-    if ( boxH < 5 ) {
-      boxH = 5;
-      h = boxH + fontHeight;
-      sboxH = h;
-    }
-
-    if ( w < 5 ) {
-      w = 5;
-      sboxW = 5;
-    }
-
+  if ( !ebo->activeMode ) {
+    if ( ebo->isSelected() ) ebo->drawSelectBoxCorners(); // erase via xor
+#if SMARTDRAW
+    ebo->smartDrawAll();
+#else
+      ebo->draw();
+#endif
+    if ( ebo->isSelected() ) ebo->drawSelectBoxCorners();
+  }
+  else {
+    ebo->actWin->appCtx->proc->lock();
+    ebo->bufInvalidate();
+    ebo->needUpdate = 1;
+    ebo->actWin->addDefExeNode( ebo->aglPtr );
+    ebo->actWin->appCtx->proc->unlock();
   }
 
 }
 
-void edmBoxClass::changePvNames (
-  int flag,
-  int numCtlPvs,
-  char *ctlPvs[],
-  int numReadbackPvs,
-  char *readbackPvs[],
-  int numNullPvs,
-  char *nullPvs[],
-  int numVisPvs,
-  char *visPvs[],
-  int numAlarmPvs,
-  char *alarmPvs[] )
+//---------------------------------------------------------------------------
+
+void edmBoxClass::unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id )
 {
 
-  if ( flag & ACTGRF_CTLPVS_MASK ) {
-    if ( numCtlPvs ) {
-      pvExpStr.setRaw( ctlPvs[0] );
-    }
+edmBoxClass *ebo = (edmBoxClass *) client;
+
+  if ( !ebo->init ) {
+    ebo->actWin->appCtx->proc->lock();
+    ebo->bufInvalidate();
+    ebo->needToDrawUnconnected = 1;
+    ebo->needUpdate = 1;
+    ebo->actWin->addDefExeNode( ebo->aglPtr );
+    ebo->actWin->appCtx->proc->unlock();
   }
+
+  ebo->unconnectedTimer = 0;
+
+}
+
+
+//---------------------------------------------------------------------------
+
+void edmBoxClass::monitorPvConnectState (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+edmBoxClass *ebo = (edmBoxClass *) userarg;
+
+  ebo->actWin->appCtx->proc->lock();
+
+  if ( !ebo->activeMode ) {
+    ebo->actWin->appCtx->proc->unlock();
+    return;
+  }
+
+  if ( pv->is_valid() ) {
+
+    ebo->fieldType = (int) pv->get_type().type;
+
+    ebo->curValue = pv->get_double();
+
+    if ( ebo->efReadMin.isNull() ) {
+      ebo->readMin = pv->get_lower_disp_limit();
+    }
+    else {
+      ebo->readMin = ebo->efReadMin.value();
+    }
+
+    if ( ebo->efReadMax.isNull() ) {
+      ebo->readMax = pv->get_upper_disp_limit();
+    }
+    else {
+      ebo->readMax = ebo->efReadMax.value();
+    }
+
+    if ( ebo->efPrecision.isNull() ) {
+      ebo->precision = pv->get_precision();
+    }
+    else {
+      ebo->precision = ebo->efPrecision.value();
+    }
+
+    ebo->needConnectInit = 1;
+
+  }
+  else { // lost connection
+
+    ebo->active = 0;
+    ebo->lineColor.setDisconnected();
+    ebo->fillColor.setDisconnected();
+    ebo->bufInvalidate();
+    ebo->needDraw = 1;
+
+  }
+
+  ebo->actWin->addDefExeNode( ebo->aglPtr );
+
+  ebo->actWin->appCtx->proc->unlock();
 
 }
 
+//---------------------------------------------------------------------------
+
+void edmBoxClass::pvUpdate (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+class edmBoxClass *ebo = (edmBoxClass *) userarg;
+int st, sev;
+
+  if ( !ebo->activeMode ) return;
+
+  ebo->actWin->appCtx->proc->lock();
+
+  ebo->curValue = pv->get_double();
+  ebo->needUpdate = 1;
+
+  st = pv->get_status();
+  sev = pv->get_severity();
+  if ( ( st != ebo->oldStat ) || ( sev != ebo->oldSev ) ) {
+    ebo->oldStat = st;
+    ebo->oldSev = sev;
+    ebo->lineColor.setStatus( st, sev );
+    ebo->fillColor.setStatus( st, sev );
+    ebo->needDraw = 1;
+    ebo->bufInvalidate();
+  }
+
+  ebo->actWin->addDefExeNode( ebo->aglPtr );
+
+  ebo->actWin->appCtx->proc->unlock();
+
+}
+
+void edmBoxClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 1 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 1;
+  pvs[0] = pvId;
+
+}
+
+//---------------------------------------------------------------------------
+
+// "C" compatible class factory functions
+
 extern "C" {
 
 void *create_2ed7d2e8_f439_11d2_8fed_00104b8742dfPtr ( void ) {

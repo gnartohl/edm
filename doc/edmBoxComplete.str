@@ -23,5 +23,6 @@
 #define edmBoxComplete_str20 (char *) "Solid|Dash"
 #define edmBoxComplete_str21 (char *) "error creating pv\n"
 #define edmBoxComplete_str22 (char *) "edmBoxClass - Process variable must be numeric"
+#define edmBoxComplete_str23 (char *) "Precision"
 
 #endif
