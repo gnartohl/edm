@@ -605,11 +605,13 @@ char title[32], *ptr;
    title, SYMBOL_K_NUM_STATES, numStates,
    symbolSetItem, (void *) this, NULL, NULL, NULL );
 
-  ef.addTextField( activeSymbolClass_str11, 27, bufId, 31 );
+  //ef.addTextField( activeSymbolClass_str11, 27, bufId, 31 );
 
   ef.addTextField( activeSymbolClass_str12, 27, &bufX );
   ef.addTextField( activeSymbolClass_str13, 27, &bufY );
   ef.addTextField( activeSymbolClass_str14, 27, bufSymbolFileName, 127 );
+  ef.addTextField( activeSymbolClass_str29, 27, bufColorPvName, 39 );
+
   ef.addToggle( activeSymbolClass_str15, &bufUseOriginalSize );
 
   ef.addOption( "orientation", "Original|Rotate CW|Rotate CCW|Flip V|Flip H",
@@ -621,8 +623,6 @@ char title[32], *ptr;
   for ( i=1; i<SYMBOL_K_MAX_PVS; i++ ) {
     ef.addTextField( " ", 27, bufControlPvName[i], 39 );
   }
-
-  ef.addTextField( activeSymbolClass_str29, 27, bufColorPvName, 39 );
 
   for ( i=0; i<SYMBOL_K_NUM_STATES; i++ ) {
     minPtr[i] = &bufStateMinValue[i];

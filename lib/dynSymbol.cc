@@ -654,27 +654,27 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeDynSymbolClass_str7, 27, bufId, 31 );
+  //ef.addTextField( activeDynSymbolClass_str7, 27, bufId, 31 );
 
   ef.addTextField( activeDynSymbolClass_str8, 27, &bufX );
   ef.addTextField( activeDynSymbolClass_str9, 27, &bufY );
   ef.addTextField( activeDynSymbolClass_str10, 27, bufDynSymbolFileName, 127 );
-  ef.addToggle( activeDynSymbolClass_str11, &bufUseOriginalSize );
+  ef.addTextField( activeDynSymbolClass_str34, 27, bufColorPvName, 39 );
 
-//    ef.addTextField( activeDynSymbolClass_str12, 27, bufControlPvName, 39 );
+  ef.addToggle( activeDynSymbolClass_str11, &bufUseOriginalSize );
 
   ef.addToggle( activeDynSymbolClass_str13, &bufUseGate );
   ef.addTextField( activeDynSymbolClass_str14, 27, bufGateUpPvName, 39 );
-  ef.addOption( activeDynSymbolClass_str15, activeDynSymbolClass_str16, &bufGateUpValue );
+  ef.addOption( activeDynSymbolClass_str15, activeDynSymbolClass_str16,
+   &bufGateUpValue );
   ef.addTextField( activeDynSymbolClass_str17, 27, bufGateDownPvName, 39 );
-  ef.addOption( activeDynSymbolClass_str18, activeDynSymbolClass_str19, &bufGateDownValue );
+  ef.addOption( activeDynSymbolClass_str18, activeDynSymbolClass_str19,
+   &bufGateDownValue );
 
   ef.addToggle( activeDynSymbolClass_str20, &bufContinuous );
   ef.addTextField( activeDynSymbolClass_str21, 27, &bufRate );
 
   ef.addTextField( activeDynSymbolClass_str22, 27, &bufInitialIndex );
-
-  ef.addTextField( activeDynSymbolClass_str34, 27, bufColorPvName, 39 );
 
   return 1;
 
