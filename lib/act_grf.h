@@ -136,6 +136,8 @@ int onBlinkList;
 void *blinkFunc;
 int blinkDisable;
 
+int mouseOver;
+
 static const int UNKNOWN = -1;
 static const int GRAPHICS = 1;
 static const int MONITORS = 2;
@@ -748,6 +750,27 @@ virtual void pointerOut (
   int x,
   int y,
   int buttonState );
+
+virtual void activeGraphicClass::checkMouseOver (
+  int x,
+  int y,
+  int buttonState );
+
+virtual void activeGraphicClass::mousePointerIn (
+  int _x,
+  int _y,
+  int buttonState );
+
+virtual void activeGraphicClass::mousePointerOut (
+  int _x,
+  int _y,
+  int buttonState );
+
+virtual int activeGraphicClass::mouseIsOver ( void );
+
+virtual void activeGraphicClass::setMouseOver ( void );
+
+virtual void activeGraphicClass::clearMouseOver ( void );
 
 virtual int initDefExeNode (
   void *ptr );

@@ -129,6 +129,7 @@ activeGraphicListPtr head, cur, next, sourceHead, curSource;
     dso->stateMaxValue[i] = _dso->stateMaxValue[i];
   }
 
+  dso->gateOnMouseOver = _dso->gateOnMouseOver;
   dso->showOOBState = _dso->showOOBState;
   dso->useOriginalSize = _dso->useOriginalSize;
   dso->useOriginalColors = _dso->useOriginalColors;
@@ -444,6 +445,7 @@ int stat, resizeStat, saveW, saveH;
   dso->rate = dso->bufRate;
   dso->initialIndex = dso->bufInitialIndex;
   dso->showOOBState = dso->bufShowOOBState;
+  dso->gateOnMouseOver = dso->bufGateOnMouseOver;
 
   if ( dso->rate < 0.05 ) dso->rate = 0.05;
 
@@ -563,6 +565,7 @@ int i;
   useOriginalSize = 0;
   useOriginalColors = 1;
   showOOBState = 0;
+  gateOnMouseOver = 0;
 
   for ( i=0; i<DYNSYMBOL_K_NUM_STATES; i++ ) {
     stateMinValue[i] = i;
@@ -727,6 +730,7 @@ int i;
     stateMaxValue[i] = i+1;
   }
 
+  gateOnMouseOver = source->gateOnMouseOver;
   showOOBState = source->showOOBState;
   useOriginalSize = source->useOriginalSize;
   useOriginalColors = source->useOriginalColors;
@@ -832,6 +836,8 @@ char title[32], *ptr;
 
   bufShowOOBState = showOOBState;
 
+  bufGateOnMouseOver = gateOnMouseOver;
+
 //    ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
 //     &actWin->appCtx->entryFormX,
 //     &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -854,6 +860,7 @@ char title[32], *ptr;
    activeGraphicClass::MAX_PV_NAME );
 
   ef.addToggle( activeDynSymbolClass_str13, &bufUseGate );
+  ef.addToggle( activeDynSymbolClass_str41, &bufGateOnMouseOver );
   ef.addTextField( activeDynSymbolClass_str14, 27, bufGateUpPvName,
    activeGraphicClass::MAX_PV_NAME );
   ef.addOption( activeDynSymbolClass_str15, activeDynSymbolClass_str16,
@@ -1158,6 +1165,9 @@ int activeDynSymbolClass::save (
   // version 1.4.0
   fprintf( f, "%-d\n", showOOBState );
 
+  // version 1.5.0
+  fprintf( f, "%-d\n", gateOnMouseOver );
+
   return 1;
 
 }
@@ -1250,6 +1260,13 @@ char string[activeGraphicClass::MAX_PV_NAME+1];
   }
   else {
     showOOBState = 0;
+  }
+
+  if ( ( major > 1 ) || ( minor > 4 ) ) {
+    fscanf( f, "%d\n", &gateOnMouseOver ); actWin->incLine();
+  }
+  else {
+    gateOnMouseOver = 0;
   }
 
   saveW = w;
@@ -1412,15 +1429,136 @@ activeGraphicListPtr cur;
 
 }
 
+void activeDynSymbolClass::pointerIn (
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+}
+
+void activeDynSymbolClass::pointerOut (
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+}
+
+void activeDynSymbolClass::mousePointerIn (
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+  if ( useGate && gateOnMouseOver ) {
+
+    if ( continuous ) {
+
+      timerActive = 1;
+      up = 1;
+      down = 0;
+      curCount++;
+      if ( curCount > numStates-1 ) {
+        if ( showOOBState ) {
+          curCount = 0;
+	}
+	else {
+          curCount = 1;
+	}
+      }
+
+    }
+    else {
+
+      up = 1;
+      down = 0;
+      timerActive = 1;
+
+    }
+
+    curControlV = (double) (curCount);
+    needRefresh = 1;
+    actWin->appCtx->proc->lock();
+    actWin->addDefExeNode( aglPtr );
+    actWin->appCtx->proc->unlock();
+
+    if ( timerActive ) {
+      timer = appAddTimeOut( actWin->appCtx->appContext(),
+       (unsigned long) (rate*1000.0), dsc_updateControl, this );
+    }
+    else {
+      timer = 0;
+    }
+
+  }
+
+}
+
+void activeDynSymbolClass::mousePointerOut (
+  int x,
+  int y,
+  int buttonState )
+{
+
+  if ( useGate && gateOnMouseOver ) {
+
+    if ( continuous ) {
+
+      timerActive = 0;
+      up = 0;
+      down = 1;
+      if ( showOOBState ) {
+        curCount = 0;
+      }
+      else {
+        curCount = 1;
+      }
+
+    }
+    else {
+
+      up = 0;
+      down = 1;
+      timerActive = 1;
+
+    }
+
+    curControlV = (double) (curCount);
+    needRefresh = 1;
+    actWin->appCtx->proc->lock();
+    actWin->addDefExeNode( aglPtr );
+    actWin->appCtx->proc->unlock();
+
+    if ( timerActive ) {
+      timer = appAddTimeOut( actWin->appCtx->appContext(),
+       (unsigned long) (rate*1000.0), dsc_updateControl, this );
+    }
+    else {
+      timer = 0;
+    }
+
+  }
+
+}
+
 int activeDynSymbolClass::getButtonActionRequest (
   int *up,
   int *down,
-  int *drag )
+  int *drag,
+  int *focus )
 {
 
   *up = 1;
   *down = 1;
   *drag = 0;
+
+  if ( useGate && gateOnMouseOver ) {
+    *focus = 1;
+  }
+  else {
+    *focus = 0;
+  }
 
   return 1;
 
@@ -3417,6 +3555,7 @@ int i;
     stateMaxValue[i] = ptr->dso->stateMaxValue[i];
   }
 
+  gateOnMouseOver = ptr->dso->gateOnMouseOver;
   showOOBState = ptr->dso->showOOBState;
   useOriginalSize = ptr->dso->useOriginalSize;
   useOriginalColors = ptr->dso->useOriginalColors;

@@ -31,7 +31,7 @@
 #endif
 
 #define DSC_MAJOR_VERSION 1
-#define DSC_MINOR_VERSION 4
+#define DSC_MINOR_VERSION 5
 #define DSC_RELEASE 0
 
 #define DYNSYMBOL_K_NUM_STATES 64
@@ -179,6 +179,8 @@ int needGateDown, needGateDownConnect;
 int needColorInit, needColorRefresh;
 
 int showOOBState, bufShowOOBState;
+
+int gateOnMouseOver, bufGateOnMouseOver;
 
 public:
 
@@ -338,10 +340,31 @@ int resizeAbs (
   int _w,
   int _h );
 
+void mousePointerIn (
+  int _x,
+  int _y,
+  int buttonState );
+
+void mousePointerOut (
+  int x,
+  int y,
+  int buttonState );
+
+void pointerIn (
+  int _x,
+  int _y,
+  int buttonState );
+
+void pointerOut (
+  int x,
+  int y,
+  int buttonState );
+
 int getButtonActionRequest (
   int *up,
   int *down,
-  int *drag );
+  int *drag,
+  int *focus );
 
 void btnDown (
   int x,

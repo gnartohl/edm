@@ -41,5 +41,6 @@
 #define activeDynSymbolClass_str38 (char *) "Show OOB State"
 #define activeDynSymbolClass_str39 (char *) "Dynamic symbol rotate not implemented"
 #define activeDynSymbolClass_str40 (char *) "Dynamic symbol flip not implemented"
+#define activeDynSymbolClass_str41 (char *) "Gate On Mouse-over"
 
 #endif

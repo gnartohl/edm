@@ -233,6 +233,11 @@ void pointerOut (
   int y,
   int buttonState );
 
+void checkMouseOver (
+  int x,
+  int y,
+  int buttonState );
+
 activeGraphicClass *getTail ( void );
 
 void updateGroup ( void );

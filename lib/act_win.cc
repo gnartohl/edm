@@ -9112,6 +9112,20 @@ activeGraphicClass *ptr;
 
     }
 
+    /* mouse pointer in and out - processed for all objects */
+
+    curBtn = awo->btnFocusActionHead->blink;
+    while ( curBtn != awo->btnFocusActionHead ) {
+
+      curBtn->node->checkMouseOver( me->x, me->y, me->state );
+
+      curBtn = curBtn->blink;
+
+    }
+
+    /* pointer in and out - processed for only the top object, in */
+    /* addition, this can make the pointer icon change */
+
     numIn = numOut = 0;
 
     if ( awo->highlightedObject ) {
@@ -9135,7 +9149,7 @@ activeGraphicClass *ptr;
 
     if ( !(awo->highlightedObject) ) {
 
-      curBtn = awo->btnFocusActionHead->flink;
+      curBtn = awo->btnFocusActionHead->blink;
       while ( curBtn != awo->btnFocusActionHead ) {
 
         ptr = curBtn->node->enclosingObject( me->x, me->y );
@@ -9147,42 +9161,11 @@ activeGraphicClass *ptr;
 	  break;
         }
 
-        curBtn = curBtn->flink;
+        curBtn = curBtn->blink;
 
       }
 
     }
-
-#if 0
-    curBtn = awo->btnFocusActionHead->flink;
-    while ( curBtn != awo->btnFocusActionHead ) {
-
-      awo->highlightedObject = curBtn->node->enclosingObject( me->x, me->y );
-      if ( awo->highlightedObject ) {
-
-        if ( curBtn->in != 1 ) {
-          curBtn->in = 1;
-          curBtn->node->pointerIn( me->x, me->y, me->state );
-          numIn++;
-          foundAction = 1;
-        }
-
-      }
-      else {
-
-        if ( curBtn->in == 1 ) {
-          curBtn->in = 0;
-          curBtn->node->pointerOut( me->x, me->y, me->state );
-          numOut++;
-          foundAction = 1;
-	}
-
-      }
-
-      curBtn = curBtn->flink;
-
-    }
-#endif
 
     if ( numIn ) {
       awo->showActive = 1;

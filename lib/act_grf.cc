@@ -53,6 +53,7 @@ activeGraphicClass::activeGraphicClass ( void ) {
   blinkDisable = 0;
   createParam = NULL;
   needSmartDraw = 0;
+  mouseOver = 0;
 
 }
 
@@ -86,6 +87,7 @@ void activeGraphicClass::clone ( const activeGraphicClass *source ) {
   blinkFunc = NULL;
   blinkDisable = 0;
   needSmartDraw = 0;
+  mouseOver = 0;
 
   if ( source->createParam ) {
     createParam = new char[strlen(source->createParam)+1];
@@ -2288,9 +2290,68 @@ void activeGraphicClass::pointerOut (
   XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
    actWin->executeGc.eraseGC(), x-2, y-2, w+4, h+4 );
 
+  actWin->executeGc.setLineWidth( 1 );
+
   refreshActive( x-4, y-4, w+8, h+8 );
 
-  actWin->executeGc.setLineWidth( 1 );
+}
+
+void activeGraphicClass::checkMouseOver (
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+  if ( enclosingObject( _x, _y ) ) {
+
+    if ( !mouseIsOver() ) {
+      setMouseOver();
+      mousePointerIn( _x, _y, buttonState );
+    }
+
+  }
+  else {
+
+    if ( mouseIsOver() ) {
+      clearMouseOver();
+      mousePointerOut( _x, _y, buttonState );
+    }
+
+  }
+
+}
+
+void activeGraphicClass::mousePointerIn (
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+}
+
+void activeGraphicClass::mousePointerOut (
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+}
+
+int activeGraphicClass::mouseIsOver ( void ) {
+
+  return mouseOver;
+
+}
+
+void activeGraphicClass::setMouseOver ( void ) {
+
+  mouseOver = 1;
+
+}
+
+void activeGraphicClass::clearMouseOver ( void ) {
+
+  mouseOver = 0;
 
 }
 

@@ -585,14 +585,14 @@ activeGraphicClass *activeGroupClass::enclosingObject (
 btnActionListPtr curBtn;
 activeGraphicClass *obj;
 
-  curBtn = btnDownActionHead->flink;
+  curBtn = btnDownActionHead->blink;
   while ( curBtn != btnDownActionHead ) {
 
     if ( ( obj = curBtn->node->enclosingObject( _x, _y ) ) != NULL ) {
       return obj;
     }
 
-    curBtn = curBtn->flink;
+    curBtn = curBtn->blink;
 
   }
 
@@ -952,18 +952,17 @@ void activeGroupClass::pointerIn (
 {
 
 btnActionListPtr curBtn;
+activeGraphicClass *ptr;
 
   curBtn = btnFocusActionHead->flink;
   while ( curBtn != btnFocusActionHead ) {
 
-    if ( ( _x > curBtn->node->getX0() ) &&
-         ( _x < curBtn->node->getX1() ) &&
-         ( _y > curBtn->node->getY0() ) &&
-         ( _y < curBtn->node->getY1() ) ) {
+    ptr = curBtn->node->enclosingObject( _x, _y );
+    if ( ptr ) {
 
       if ( curBtn->in != 1 ) {
         curBtn->in = 1;
-        curBtn->node->pointerIn( _x, _y, buttonState );
+        ptr->pointerIn( _x, _y, buttonState );
       }
 
     }
@@ -981,14 +980,13 @@ void activeGroupClass::pointerOut (
 {
 
 btnActionListPtr curBtn;
+activeGraphicClass *ptr;
 
   curBtn = btnFocusActionHead->flink;
   while ( curBtn != btnFocusActionHead ) {
 
-    if ( ( _x <= curBtn->node->getX0() ) ||
-         ( _x >= curBtn->node->getX1() ) ||
-         ( _y <= curBtn->node->getY0() ) ||
-         ( _y >= curBtn->node->getY1() ) ) {
+    ptr = curBtn->node->enclosingObject( _x, _y );
+    if ( !ptr ) {
 
       if ( curBtn->in == 1 ) {
         curBtn->in = 0;
@@ -996,6 +994,25 @@ btnActionListPtr curBtn;
       }
 
     }
+
+    curBtn = curBtn->flink;
+
+  }
+
+}
+
+void activeGroupClass::checkMouseOver (
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+btnActionListPtr curBtn;
+
+  curBtn = btnFocusActionHead->flink;
+  while ( curBtn != btnFocusActionHead ) {
+
+    curBtn->node->checkMouseOver( _x, _y, buttonState );
 
     curBtn = curBtn->flink;
 
