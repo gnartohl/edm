@@ -84,6 +84,13 @@ static "UNMS help"        { 32896 19275 21588 }    #
 static "78"               {     0     0     0 }    #
 static "79"               {     0     0     0 }    #
 
+rule Rainbow
+{
+  <0        : yellow-36
+  >0        : red-23
+  default   : black-14
+}
+
 menumap { 
  "Disconn/Invalid"
  "Wid-bg/Anno-pri"
@@ -165,6 +172,7 @@ menumap {
  "49"
  "78"
  "79"
+ "Rainbow"
  }
 
 alarm { 
