@@ -37,6 +37,7 @@
 #include "entry_form.h"
 #include "pvConnection.h"
 #include "tag_pkg.h"
+#include "pv_factory.h"
 
 #define MAX_UNITS_SIZE 16
 #define MAX_ENUM_STRING_SIZE 16
@@ -1001,6 +1002,16 @@ virtual void setCurrentDragIndex (
   int num );
 
 virtual int getCurrentDragIndex ( void );
+
+virtual void activeGraphicClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
+
+virtual int showPvInfo (
+  XButtonEvent *be,
+  int x,
+  int y );
 
 #define ACTGRF_FONTTAG_MASK		1
 #define ACTGRF_ALIGNMENT_MASK		2

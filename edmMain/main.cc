@@ -1642,8 +1642,9 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
         oneAppCtx = cur->appArgs->appCtxPtr->appContext();
         oneDisplay = cur->appArgs->appCtxPtr->getDisplay();
         delete cur->appArgs->appCtxPtr;
-        for ( i=0; i<cur->appArgs->argc; i++ ) delete cur->appArgs->argv[i];
-        delete cur->appArgs->argv;
+        for ( i=0; i<cur->appArgs->argc; i++ ) delete[] cur->appArgs->argv[i];
+        delete[] cur->appArgs->argv;
+        delete cur->appArgs;
 
         delete cur;
 
@@ -1846,6 +1847,26 @@ parse_error:
   if ( shutdown ) {
     fprintf( f, "<<<EOD>>>\n" );
     fclose( f );
+  }
+
+  delete obj;
+  obj = NULL;
+
+  delete pvObj;
+  pvObj = NULL;
+
+  stat = thread_destroy_handle( serverH );
+  serverH = NULL;
+
+  stat = thread_destroy_handle( delayH );
+  delayH = NULL;
+
+  if ( server ) {
+
+    stat = sys_destroyq( &g_mainFreeQueue );
+
+    stat = sys_destroyq( &g_mainActiveQueue );
+
   }
 
 }

@@ -314,7 +314,7 @@ btnActionListPtr curBtnAction, nextBtnAction;
   btnFocusActionHead->blink = NULL;
   delete btnFocusActionHead;
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
 #if 0
   if ( unconnectedTimer ) {
@@ -3397,6 +3397,39 @@ int stat;
   if ( !( stat & 1 ) ) XBell( actWin->d, 50 );
 
   return 1;
+
+}
+
+int activeGroupClass::showPvInfo (
+  XButtonEvent *be,
+  int x,
+  int y )
+{
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+int stat = 0;
+
+  cur = head->blink;
+  while ( cur != head ) {
+
+    if ( ( x > cur->node->getX0() ) &&
+         ( x < cur->node->getX1() ) &&
+         ( y > cur->node->getY0() ) &&
+         ( y < cur->node->getY1() ) ) {
+
+      if ( cur->node->atLeastOneDragPv( x, y ) ) {
+        stat = cur->node->showPvInfo( be, x, y );
+        if ( stat ) break;
+      }
+
+    }
+
+    cur = cur->blink;
+
+  }
+
+  return stat;
 
 }
 

@@ -1924,8 +1924,8 @@ actionsPtr curAct, nextAct;
   curMacro = macroHead->flink;
   while ( curMacro != macroHead ) {
     nextMacro = curMacro->flink;
-    if ( curMacro->macro ) delete curMacro->macro;
-    if ( curMacro->expansion ) delete curMacro->expansion;
+    if ( curMacro->macro ) delete[] curMacro->macro;
+    if ( curMacro->expansion ) delete[] curMacro->expansion;
     delete curMacro;
     curMacro = nextMacro;
   }
@@ -1935,7 +1935,7 @@ actionsPtr curAct, nextAct;
   curFile = fileHead->flink;
   while ( curFile != fileHead ) {
     nextFile = curFile->flink;
-    if ( curFile->file ) delete curFile->file;
+    if ( curFile->file ) delete[] curFile->file;
     delete curFile;
     curFile = nextFile;
   }
@@ -1970,10 +1970,10 @@ actionsPtr curAct, nextAct;
 
   if ( dataFilePrefix ) {
     for ( i=0; i<numPaths; i++ ) {
-      delete dataFilePrefix[i];
+      delete[] dataFilePrefix[i];
       dataFilePrefix[i] = NULL;
     }
-    delete dataFilePrefix;
+    delete[] dataFilePrefix;
     dataFilePrefix = NULL;
   }
 
@@ -1996,8 +1996,11 @@ actionsPtr curAct, nextAct;
     delete curAct;
     curAct = nextAct;
   }
+  delete actHead;
   thread_unlock( actionsLock );
   thread_destroy_lock_handle( actionsLock );
+
+  termDeferredExecutionQueue();
 
 }
 
@@ -2215,7 +2218,7 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
     else {
       if ( allocL > curLen ) {
         curLen = allocL;
-        delete buf;
+        delete[] buf;
         buf = new char[allocL];
       }
     }
@@ -2263,7 +2266,7 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
       dataFilePrefix[0] = new char[strlen(path)+1];
       strcpy( dataFilePrefix[0], path );
 
-      if ( buf ) delete buf;
+      if ( buf ) delete[] buf;
 
       return;
 
@@ -2323,7 +2326,7 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
 
   }
 
-  if ( buf ) delete buf;
+  if ( buf ) delete[] buf;
 
 }
 
@@ -2648,9 +2651,9 @@ schemeListPtr cur;
 
   if ( schemeSetList ) {
     for ( i=0; i<numSchemeSets; i++ ) {
-      delete schemeSetList[i];
+      delete[] schemeSetList[i];
     }
-    delete schemeSetList;
+    delete[] schemeSetList;
   }
 
   if ( !schemeList ) return;
@@ -2663,8 +2666,8 @@ schemeListPtr cur;
   while ( cur ) {
 
     stat = avl_delete_node( schemeList, (void **) &cur );
-    delete cur->objName;
-    delete cur->fileName;
+    delete[] cur->objName;
+    delete[] cur->fileName;
     delete cur;
 
     stat = avl_get_first( schemeList, (void **) &cur );
@@ -2674,8 +2677,7 @@ schemeListPtr cur;
 
   }
 
-  //printf( "need avl delete tree\n" );
-  //delete schemeList;
+  stat = avl_destroy( schemeList );
 
   if ( !schemeSet ) return;
 
@@ -2687,7 +2689,7 @@ schemeListPtr cur;
   while ( cur ) {
 
     stat = avl_delete_node( schemeSet, (void **) &cur );
-    delete cur->objName;
+    delete[] cur->objName;
     delete cur;
 
     stat = avl_get_first( schemeSet, (void **) &cur );
@@ -2697,8 +2699,7 @@ schemeListPtr cur;
 
   }
 
-  //printf( "need avl delete tree\n" );
-  //delete schemeSet;
+  stat = avl_destroy( schemeSet );
 
 }
 
@@ -2784,6 +2785,19 @@ char buf[255+1];
   else {
     strncpy( schemeFileName, "default", maxLen );
   }
+
+}
+
+void appContextClass::termDeferredExecutionQueue ( void )
+{
+
+int stat;
+
+  stat = sys_destroyq( &appDefExeFreeQueue );
+
+  stat = sys_destroyq( &appDefExeActiveQueue );
+
+  stat = sys_destroyq( &appDefExeActiveNextQueue );
 
 }
 

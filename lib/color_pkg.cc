@@ -768,6 +768,43 @@ blinkNodePtr p1, p2;
   return 1;
 
 }
+
+static void copyRuleCondition (
+  ruleConditionPtr dst,
+  ruleConditionPtr src
+) {
+
+  dst->value1 = src->value1;
+  dst->ruleFunc1 = src->ruleFunc1;
+  dst->value2 = src->value2;
+  dst->ruleFunc2 = src->ruleFunc2;
+  dst->connectingFunc = src->connectingFunc;
+  dst->joiningFunc = src->joiningFunc;
+  dst->result = src->result;
+  dst->resultName = new char[strlen(src->resultName)+1];
+  strcpy( dst->resultName, src->resultName );
+
+}
+
+static void colorCacheInit (
+  colorCachePtr cur
+) {
+
+  cur->rgb[0] = 0;
+  cur->rgb[1] = 0;
+  cur->rgb[2] = 0;
+  cur->pixel = 0;
+  cur->blinkRgb[0] = 0;
+  cur->blinkRgb[1] = 0;
+  cur->blinkRgb[2] = 0;
+  cur->blinkPixel = 0;
+  cur->index = 0;
+  cur->position = 0;
+  cur->name = NULL;
+  cur->aliasValue = NULL;
+  cur->rule = NULL;
+
+}
 
 colorInfoClass::colorInfoClass ( void ) {
 
@@ -840,12 +877,21 @@ int stat;
 
   usePrivColorMapFlag = 0;
 
+  menuIndexMap = NULL;
+
 }
 
 colorInfoClass::~colorInfoClass ( void ) {
 
-blinkNodePtr cur, next;
-int i;
+colorCachePtr cur;
+ruleConditionPtr curRule, nextRule;
+blinkNodePtr curBlink, nextBlink;
+int i, stat;
+
+  if ( menuIndexMap ) {
+    delete[] menuIndexMap;
+    menuIndexMap = NULL;
+  }
 
   for ( i=0; i<max_colors+num_blinking_colors; i++ ) {
     if ( simpleColorButtons[i].blink ) {
@@ -867,31 +913,347 @@ int i;
     XtRemoveTimeOut( incrementTimer );
   }
 
-  cur = blinkLookasideHead->next;
-  while ( cur ) {
-    next = cur->next;
-    delete cur;
-    cur = next;
+  curBlink = blinkLookasideHead->next;
+  while ( curBlink ) {
+    nextBlink = curBlink->next;
+    delete curBlink;
+    curBlink = nextBlink;
   }
   delete blinkLookasideHead;
 
-  cur = addBlinkHead->next;
-  while ( cur ) {
-    next = cur->next;
-    delete cur;
-    cur = next;
+  curBlink = addBlinkHead->next;
+  while ( curBlink ) {
+    nextBlink = curBlink->next;
+    delete curBlink;
+    curBlink = nextBlink;
   }
   delete addBlinkHead;
 
-  cur = remBlinkHead->next;
-  while ( cur ) {
-    next = cur->next;
-    delete cur;
-    cur = next;
+  curBlink = remBlinkHead->next;
+  while ( curBlink ) {
+    nextBlink = curBlink->next;
+    delete curBlink;
+    curBlink = nextBlink;
   }
   delete remBlinkHead;
 
-  // need to delete avl trees
+  //------------------------------------------------------------------------
+
+  // Delete avl trees
+
+  stat = avl_get_first( this->colorCacheByPosH, (void **) &cur );
+  if ( !( stat & 1 ) ) {
+    cur = NULL;
+  }
+
+  while ( cur ) {
+
+    stat = avl_delete_node( this->colorCacheByPosH, (void **) &cur );
+    if ( stat & 1 ) {
+
+      if ( cur->name ) {
+        delete[] cur->name;
+        cur->name = NULL;
+      }
+
+      if ( cur->aliasValue ) {
+        delete[] cur->aliasValue;
+        cur->aliasValue = NULL;
+      }
+
+      if ( cur->rule ) {
+
+        curRule = cur->rule->ruleHead->flink;
+        while ( curRule ) {
+
+          nextRule = curRule->flink;
+
+          if ( curRule->resultName ) {
+            delete[] curRule->resultName;
+            curRule->resultName = NULL;
+	  }
+
+          delete curRule;
+
+          curRule = nextRule;
+
+	}
+        delete cur->rule->ruleHead;
+        cur->rule->ruleHead = NULL;
+
+        delete cur->rule;
+        cur->rule = NULL;
+
+      }
+
+      delete cur;
+      cur = NULL;
+
+    }
+
+    stat = avl_get_first( this->colorCacheByPosH, (void **) &cur );
+    if ( !( stat & 1 ) ) {
+      cur = NULL;
+    }
+
+  }    
+
+  //-------------------------------------------------------------------
+
+  stat = avl_get_first( this->colorCacheByAliasH, (void **) &cur );
+  if ( !( stat & 1 ) ) {
+    cur = NULL;
+  }
+
+  while ( cur ) {
+
+    stat = avl_delete_node( this->colorCacheByAliasH, (void **) &cur );
+    if ( stat & 1 ) {
+
+      if ( cur->name ) {
+        delete[] cur->name;
+        cur->name = NULL;
+      }
+
+      if ( cur->aliasValue ) {
+        delete[] cur->aliasValue;
+        cur->aliasValue = NULL;
+      }
+
+      if ( cur->rule ) {
+
+        curRule = cur->rule->ruleHead->flink;
+        while ( curRule ) {
+
+          nextRule = curRule->flink;
+
+          if ( curRule->resultName ) {
+            delete[] curRule->resultName;
+            curRule->resultName = NULL;
+	  }
+
+          delete curRule;
+
+          curRule = nextRule;
+
+	}
+        delete cur->rule->ruleHead;
+        cur->rule->ruleHead = NULL;
+
+        delete cur->rule;
+        cur->rule = NULL;
+
+      }
+
+      delete cur;
+      cur = NULL;
+
+    }
+
+    stat = avl_get_first( this->colorCacheByAliasH, (void **) &cur );
+    if ( !( stat & 1 ) ) {
+      cur = NULL;
+    }
+
+  }    
+
+  //-------------------------------------------------------------------
+
+  stat = avl_get_first( this->colorCacheByNameH, (void **) &cur );
+  if ( !( stat & 1 ) ) {
+    cur = NULL;
+  }
+
+  while ( cur ) {
+
+    stat = avl_delete_node( this->colorCacheByNameH, (void **) &cur );
+    if ( stat & 1 ) {
+
+      if ( cur->name ) {
+        delete[] cur->name;
+        cur->name = NULL;
+      }
+
+      if ( cur->aliasValue ) {
+        delete[] cur->aliasValue;
+        cur->aliasValue = NULL;
+      }
+
+      if ( cur->rule ) {
+
+        curRule = cur->rule->ruleHead->flink;
+        while ( curRule ) {
+
+          nextRule = curRule->flink;
+
+          if ( curRule->resultName ) {
+            delete[] curRule->resultName;
+            curRule->resultName = NULL;
+	  }
+
+          delete curRule;
+
+          curRule = nextRule;
+
+	}
+        delete cur->rule->ruleHead;
+        cur->rule->ruleHead = NULL;
+
+        delete cur->rule;
+        cur->rule = NULL;
+
+      }
+
+      delete cur;
+      cur = NULL;
+
+    }
+
+    stat = avl_get_first( this->colorCacheByNameH, (void **) &cur );
+    if ( !( stat & 1 ) ) {
+      cur = NULL;
+    }
+
+  }    
+
+  //-------------------------------------------------------------------
+
+  stat = avl_get_first( this->colorCacheByIndexH, (void **) &cur );
+  if ( !( stat & 1 ) ) {
+    cur = NULL;
+  }
+
+  while ( cur ) {
+
+    stat = avl_delete_node( this->colorCacheByIndexH, (void **) &cur );
+    if ( stat & 1 ) {
+
+      if ( cur->name ) {
+        delete[] cur->name;
+        cur->name = NULL;
+      }
+
+      if ( cur->aliasValue ) {
+        delete[] cur->aliasValue;
+        cur->aliasValue = NULL;
+      }
+
+      if ( cur->rule ) {
+
+        curRule = cur->rule->ruleHead->flink;
+        while ( curRule ) {
+
+          nextRule = curRule->flink;
+
+          if ( curRule->resultName ) {
+            delete[] curRule->resultName;
+            curRule->resultName = NULL;
+	  }
+
+          delete curRule;
+
+          curRule = nextRule;
+
+	}
+        delete cur->rule->ruleHead;
+        cur->rule->ruleHead = NULL;
+
+        delete cur->rule;
+        cur->rule = NULL;
+
+      }
+
+      delete cur;
+      cur = NULL;
+
+    }
+
+    stat = avl_get_first( this->colorCacheByIndexH, (void **) &cur );
+    if ( !( stat & 1 ) ) {
+      cur = NULL;
+    }
+
+  }    
+
+  //-------------------------------------------------------------------
+
+  stat = avl_get_first( this->colorCacheByColorH, (void **) &cur );
+  if ( !( stat & 1 ) ) {
+    cur = NULL;
+  }
+
+  while ( cur ) {
+
+    stat = avl_delete_node( this->colorCacheByColorH, (void **) &cur );
+    if ( stat & 1 ) {
+
+      if ( cur->name ) {
+        delete[] cur->name;
+        cur->name = NULL;
+      }
+
+      if ( cur->aliasValue ) {
+        delete[] cur->aliasValue;
+        cur->aliasValue = NULL;
+      }
+
+      if ( cur->rule ) {
+
+        curRule = cur->rule->ruleHead->flink;
+        while ( curRule ) {
+
+          nextRule = curRule->flink;
+
+          if ( curRule->resultName ) {
+            delete[] curRule->resultName;
+            curRule->resultName = NULL;
+	  }
+
+          delete curRule;
+
+          curRule = nextRule;
+
+	}
+        delete cur->rule->ruleHead;
+        cur->rule->ruleHead = NULL;
+
+        delete cur->rule;
+        cur->rule = NULL;
+
+      }
+
+      delete cur;
+      cur = NULL;
+
+    }
+
+    stat = avl_get_first( this->colorCacheByColorH, (void **) &cur );
+    if ( !( stat & 1 ) ) {
+      cur = NULL;
+    }
+
+  }    
+
+  //-------------------------------------------------------------------
+
+  stat = avl_destroy( colorCacheByColorH );
+  stat = avl_destroy( colorCacheByPixelH );
+  stat = avl_destroy( colorCacheByIndexH );
+  stat = avl_destroy( colorCacheByAliasH );
+  stat = avl_destroy( colorCacheByNameH );
+  stat = avl_destroy( colorCacheByPosH );
+  stat = avl_destroy( blinkH );
+
+  delete[] colors;
+  colors = NULL;
+  delete[] blinkingColors;
+  blinkingColors = NULL;
+  delete[] simpleColorButtons;
+  simpleColorButtons = NULL;
+  delete[] colorNames;
+  colorNames = NULL;
+  delete[] colorNodes;
+  colorNodes = NULL;
 
 }
 
@@ -1322,6 +1684,7 @@ char msg[127+1];
         maxMenuItems = 0;
         menuMapSize = 128;
         menuIndexMap = new int[menuMapSize];
+        for ( i=0; i<menuMapSize; i++ ) menuIndexMap[i] = 0;
 
         state = GET_MENU_MAP;
 
@@ -1528,10 +1891,21 @@ char msg[127+1];
       }
 
       if ( strcmp( tk, "}" ) == 0 ) {
+
         //printf( "rule complete\n" );
+
+        if ( ruleCond->resultName ) {
+          delete[] ruleCond->resultName;
+          ruleCond->resultName = NULL;
+        }
+
         delete ruleCond;
+        ruleCond = NULL;
+
         state = INSERT_COLOR;
+
         break;
+
       }
 
       if ( strcmp( tk, "default" ) == 0 ) {
@@ -2096,7 +2470,10 @@ char msg[127+1];
           for ( i=0; i<menuMapSize; i++ ) {
             tmp[i] = menuIndexMap[i];
           }
-          delete menuIndexMap;
+          for ( i=menuMapSize; i<tmpSize; i++ ) {
+            tmp[i] = 0;
+	  }
+          delete[] menuIndexMap;
           menuIndexMap = tmp;
         }
 
@@ -2860,7 +3237,7 @@ XColor color;
 Arg arg[20];
 XmString str1, str2;
 colorCachePtr cur1, cur2, cur3, cur4, cur[curMax], curSpecial;
-ruleConditionPtr ruleCond;
+ruleConditionPtr ruleCond, ruleCondTmp, curRule, nextRule;
 unsigned long bgColor;
 int tmpSize;
 int *tmp;
@@ -2957,6 +3334,7 @@ int blinkMs = 500;
         maxMenuItems = 0;
         menuMapSize = 128;
         menuIndexMap = new int[menuMapSize];
+        for ( i=0; i<menuMapSize; i++ ) menuIndexMap[i] = 0;
 
         state = GET_MENU_MAP;
 
@@ -3126,10 +3504,12 @@ int blinkMs = 500;
 
       for( n=0; n<curMax; n++ ) {
         cur[n] = new colorCacheType;
+        colorCacheInit( cur[n] );
         cur[n]->rule = new ruleType;
         cur[n]->pixel = 0;
         cur[n]->blinkPixel = 0;
         cur[n]->rule->ruleHead = new ruleConditionType; // sentinel
+        cur[n]->rule->ruleHead->resultName = NULL;
         cur[n]->rule->ruleTail = cur[n]->rule->ruleHead;
         cur[n]->rule->ruleTail->flink = NULL;
         cur[n]->rgb[0] = 0;
@@ -3202,6 +3582,7 @@ int blinkMs = 500;
 
       //printf( "new condition\n" );
       ruleCond = new ruleConditionType;
+      ruleCond->resultName = NULL;
       state = GET_FIRST_OP_OR_ARG;
       break;
 
@@ -3220,10 +3601,21 @@ int blinkMs = 500;
       }
 
       if ( strcmp( tk, "}" ) == 0 ) {
+
         //printf( "rule complete\n" );
+
+        if ( ruleCond->resultName ) {
+          delete[] ruleCond->resultName;
+          ruleCond->resultName = NULL;
+        }
+
         delete ruleCond;
+        ruleCond = NULL;
+
         state = INSERT_COLOR;
+
         break;
+
       }
 
       if ( strcmp( tk, "default" ) == 0 ) {
@@ -3478,9 +3870,14 @@ int blinkMs = 500;
       }
 
       // link into condition list
-      for( n=0; n<curMax; n++ ) {
-        cur[n]->rule->ruleTail->flink = ruleCond;
-        cur[n]->rule->ruleTail = ruleCond;
+      cur[0]->rule->ruleTail->flink = ruleCond;
+      cur[0]->rule->ruleTail = ruleCond;
+      cur[0]->rule->ruleTail->flink = NULL;
+      for( n=1; n<curMax; n++ ) {
+        ruleCondTmp = new ruleConditionType;
+        copyRuleCondition( ruleCondTmp, ruleCond );
+        cur[n]->rule->ruleTail->flink = ruleCondTmp;
+        cur[n]->rule->ruleTail = ruleCondTmp;
         cur[n]->rule->ruleTail->flink = NULL;
       }
       state = GET_RULE_CONDITION;
@@ -3491,6 +3888,7 @@ int blinkMs = 500;
 
       for( n=0; n<curMax; n++ ) {
         cur[n] = new colorCacheType;
+        colorCacheInit( cur[n] );
         cur[n]->rule = NULL;
         cur[n]->pixel = 0;
         cur[n]->blinkPixel = 0;
@@ -3662,6 +4060,7 @@ int blinkMs = 500;
     case GET_ALIAS:
 
       cur1 = new colorCacheType;
+      colorCacheInit( cur1 );
 
       stat = getToken( tk ); // alias name
       if ( stat == FAIL ) {
@@ -3768,7 +4167,44 @@ int blinkMs = 500;
       }
 
       if ( dup ) { // in this case, some duplicates are expected
+
+        if ( cur[3]->name ) {
+          delete[] cur[3]->name;
+          cur[3]->name = NULL;
+        }
+
+        if ( cur[3]->aliasValue ) {
+          delete[] cur[3]->aliasValue;
+          cur[3]->aliasValue = NULL;
+        }
+
+        if ( cur[3]->rule ) {
+
+          curRule = cur[3]->rule->ruleHead->flink;
+          while ( curRule ) {
+
+            nextRule = curRule->flink;
+
+            if ( curRule->resultName ) {
+              delete[] curRule->resultName;
+              curRule->resultName = NULL;
+            }
+
+            delete curRule;
+
+            curRule = nextRule;
+
+          }
+          delete cur[3]->rule->ruleHead;
+          cur[3]->rule->ruleHead = NULL;
+
+          delete cur[3]->rule;
+          cur[3]->rule = NULL;
+
+        }
+
         delete cur[3];
+
       }
 
       //===============================
@@ -3822,7 +4258,10 @@ int blinkMs = 500;
           for ( i=0; i<menuMapSize; i++ ) {
             tmp[i] = menuIndexMap[i];
           }
-          delete menuIndexMap;
+          for ( i=menuMapSize; i<tmpSize; i++ ) {
+            tmp[i] = 0;
+	  }
+          delete[] menuIndexMap;
           menuIndexMap = tmp;
         }
 
@@ -4715,6 +5154,14 @@ restart:
   delete blinkingColorCells;
   delete blinkingXColor;
   delete offBlinkingXColor;
+
+  stat = avl_destroy( colorCacheByColorH );
+  stat = avl_destroy( colorCacheByPixelH );
+  stat = avl_destroy( colorCacheByIndexH );
+  stat = avl_destroy( colorCacheByAliasH );
+  stat = avl_destroy( colorCacheByNameH );
+  stat = avl_destroy( colorCacheByPosH );
+  stat = avl_destroy( blinkH );
 
   stat = avl_init_tree( compare_nodes_by_color,
    compare_key_by_color, copy_nodes, &(this->colorCacheByColorH) );

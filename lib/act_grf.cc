@@ -104,7 +104,7 @@ void activeGraphicClass::clone ( const activeGraphicClass *source ) {
 activeGraphicClass::~activeGraphicClass ( void ) {
 
   if ( baseName ) {
-    delete baseName;
+    delete[] baseName;
     baseName = NULL;
   }
 
@@ -117,7 +117,7 @@ activeGraphicClass::~activeGraphicClass ( void ) {
   }
 
   if ( createParam ) {
-    delete createParam;
+    delete[] createParam;
     createParam = NULL;
   }
 
@@ -3343,6 +3343,75 @@ void activeGraphicClass::setCurrentDragIndex (
 int activeGraphicClass::getCurrentDragIndex ( void ) {
 
   return currentDragIndex;
+
+}
+
+void activeGraphicClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  printf( "activeGraphicClass::getPvs\n" );
+  *n = 0;
+
+}
+
+int activeGraphicClass::showPvInfo (
+  XButtonEvent *be,
+  int x,
+  int y ) {
+
+ProcessVariable *pv;
+ProcessVariable *pvs[50];
+int i, n, foundOne;
+char msg[79+1];
+
+  foundOne = 0;
+
+  getPvs( 50, pvs, &n );
+  for ( i=0; i<n; i++ ) {
+
+    pv = pvs[i];
+
+    if ( pv ) {
+
+      foundOne = 1;
+
+      if ( pv->get_name() ) {
+        snprintf( msg, 79, "%s (%-d,%-d): %s\n",
+         actWin->obj.getNameFromClass(objName()), this->x, this->y,
+         pv->get_name() );
+        actWin->appCtx->postMessage( msg );
+      }
+      if ( !pv->is_valid() ) {
+	snprintf( msg, 79, "  Not connected\n" );
+        actWin->appCtx->postMessage( msg );
+      }
+      if ( pv->get_node_name() ) {
+        snprintf( msg, 79, "  Host: %s\n",
+         pv->get_node_name() );
+        actWin->appCtx->postMessage( msg );
+      }
+      snprintf( msg, 79, "  Num times conected = %-d\n",
+       pv->get_num_times_connected() );
+      actWin->appCtx->postMessage( msg );
+      snprintf( msg, 79, "  Num times disconected = %-d\n",
+       pv->get_num_times_disconnected() );
+      actWin->appCtx->postMessage( msg );
+      snprintf( msg, 79, "  Num value changes = %-d\n",
+       pv->get_num_value_change_events() );
+      actWin->appCtx->postMessage( msg );
+      snprintf( msg, 79, "  Num references = %-d\n",
+       pv->get_num_references() );
+      actWin->appCtx->postMessage( msg );
+      snprintf( msg, 79, "\n" );
+      actWin->appCtx->postMessage( msg );
+
+    }
+
+  }
+
+  return foundOne;
 
 }
 

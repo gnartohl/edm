@@ -110,9 +110,24 @@ bool equals(const PVCallbackInfo *lhs, const PVCallbackInfo *rhs);
 typedef Hashtable<PVCallbackInfo,offsetof(PVCallbackInfo,node),43>
             PVCallbackInfoHash;
 
+typedef struct
+{
+    char *nodeName;
+    DLNode   node; // for Hashtable
+} NodeNameInfo;
+
+size_t hash(const NodeNameInfo *item, size_t N);
+bool equals(const NodeNameInfo *lhs, const NodeNameInfo *rhs);
+
+typedef Hashtable<NodeNameInfo,offsetof(NodeNameInfo,node),43>
+            NodeNameInfoHash;
+
+static NodeNameInfoHash nodeNames; // entries in this table never get deleted
+
 class ProcessVariable
 {
 public:
+
     const char *get_name() const;
 
     // When no longer used, release, don't delete:
@@ -125,6 +140,15 @@ public:
     // Called on change in value, see above for details
     void add_value_callback(PVCallback func, void *userarg);
     void remove_value_callback(PVCallback func, void *userarg);
+
+    // Called by derived classes that are associated with a node
+    void set_node_name( const char *_nodeName );
+
+    char *get_node_name ( void );
+    int get_num_times_connected ( void );
+    int get_num_times_disconnected ( void );
+    int get_num_value_change_events ( void );
+    int get_num_references ( void );
 
     // Called on change in "is_valid" status, see above
     void add_conn_state_callback(PVCallback func, void *userarg);
@@ -247,6 +271,10 @@ protected:
 private:
     char *name;            // PV name
     int refcount;          // reference count, deleted on <=0
+    int numTimesConnected;
+    int numTimesDisconnected;
+    int numValueChangeEvents;
+    char *nodeName;
 };
 
 // ------------- Inlines -----------------------------------------------
@@ -258,5 +286,25 @@ inline void ProcessVariable::reference()
 
 inline void ProcessVariable::release()
 {   if (--refcount <= 0) delete this; }
+
+inline char *ProcessVariable::get_node_name ( void ) {
+  return nodeName;
+}
+
+inline int ProcessVariable::get_num_times_connected ( void ) {
+  return numTimesConnected;
+}
+
+inline int ProcessVariable::get_num_times_disconnected ( void ) {
+  return numTimesDisconnected;
+}
+
+inline int ProcessVariable::get_num_value_change_events ( void ) {
+  return numValueChangeEvents;
+}
+
+inline int ProcessVariable::get_num_references ( void ) {
+  return refcount;
+}
 
 #endif

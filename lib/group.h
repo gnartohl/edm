@@ -471,6 +471,11 @@ int undoFlip (
   int w,
   int h );
 
+int activeGroupClass::showPvInfo (
+  XButtonEvent *be,
+  int x,
+  int y );
+
 int startDrag (
   XButtonEvent *be,
   int x,

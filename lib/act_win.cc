@@ -4550,7 +4550,7 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
       }
 
       if ( n > awo->list_array_size ) {
-        delete awo->list_array;
+        delete[] awo->list_array;
         awo->list_array_size = n;
         awo->list_array = new activeGraphicListType[n];
         awo->list_array->defExeFlink = NULL;
@@ -4638,7 +4638,7 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
       }
 
       if ( n > awo->list_array_size ) {
-        delete awo->list_array;
+        delete[] awo->list_array;
         awo->list_array_size = n;
         awo->list_array = new activeGraphicListType[n];
         awo->list_array->defExeFlink = NULL;
@@ -4716,7 +4716,7 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
       }
 
       if ( n > awo->list_array_size ) {
-        delete awo->list_array;
+        delete[] awo->list_array;
         awo->list_array_size = n;
         awo->list_array = new activeGraphicListType[n];
         awo->list_array->defExeFlink = NULL;
@@ -4804,7 +4804,7 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
       }
 
       if ( n > awo->list_array_size ) {
-        delete awo->list_array;
+        delete[] awo->list_array;
         awo->list_array_size = n;
         awo->list_array = new activeGraphicListType[n];
         awo->list_array->defExeFlink = NULL;
@@ -5005,7 +5005,7 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
 
       // if necessary, reallocate work array
       if ( maxRows > awo->list_array_size ) {
-        delete awo->list_array;
+        delete[] awo->list_array;
         awo->list_array_size = maxRows;
         awo->list_array = new activeGraphicListType[maxRows];
         awo->list_array->defExeFlink = NULL;
@@ -8972,7 +8972,9 @@ int rootX, rootY, winX, winY;
     XQueryPointer( awo->d, XtWindow(awo->top), &root, &child,
      &rootX, &rootY, &winX, &winY, &mask );
 
-    if ( ( be->button == 2 ) && !( be->state & ShiftMask ) ) {
+    if ( ( be->button == 2 ) &&
+         !( be->state & ShiftMask ) &&
+         !( be->state & ControlMask ) ) {
 
       cur = awo->head->blink;
       while ( cur != awo->head ) {
@@ -8985,6 +8987,33 @@ int rootX, rootY, winX, winY;
           // only the highest object (with a non-blank pv) may participate
           if ( cur->node->atLeastOneDragPv( be->x, be->y ) ) {
             action = cur->node->startDrag( be, be->x, be->y );
+            if ( action ) {
+              foundAction = 1;
+              break; // out of while loop
+	    }
+	  }
+
+	}
+
+        cur = cur->blink;
+
+      }
+
+    }
+    else if ( ( be->button == 2 ) &&
+         !( be->state & ShiftMask ) &&
+         ( be->state & ControlMask ) ) {
+
+      cur = awo->head->blink;
+      while ( cur != awo->head ) {
+
+        if ( ( be->x > cur->node->getX0() ) &&
+             ( be->x < cur->node->getX1() ) &&
+             ( be->y > cur->node->getY0() ) &&
+             ( be->y < cur->node->getY1() ) ) {
+
+          if ( cur->node->atLeastOneDragPv( be->x, be->y ) ) {
+            action = cur->node->showPvInfo( be, be->x, be->y );
             if ( action ) {
               foundAction = 1;
               break; // out of while loop
@@ -9129,7 +9158,9 @@ int rootX, rootY, winX, winY;
     XQueryPointer( awo->d, XtWindow(awo->top), &root, &child,
      &rootX, &rootY, &winX, &winY, &mask );
 
-    if ( ( be->button == 2 ) && ( be->state & ShiftMask ) ) {
+    if ( ( be->button == 2 ) &&
+         ( be->state & ShiftMask ) &&
+         !( be->state & ControlMask ) ) {
 
       cur = awo->head->blink;
       while ( cur != awo->head ) {
@@ -9792,7 +9823,7 @@ commentLinesPtr commentCur, commentNext;
   commentCur = commentHead->flink;
   while ( commentCur ) {
     commentNext = commentCur->flink;
-    if ( commentCur->line ) delete commentCur->line;
+    if ( commentCur->line ) delete[] commentCur->line;
     delete commentCur;
     commentCur = commentNext;
   }
@@ -9806,7 +9837,7 @@ commentLinesPtr commentCur, commentNext;
     stat = unlink( autosaveName );
   }
 
- if ( list_array_size > 0 ) delete list_array;
+ if ( list_array_size > 0 ) delete[] list_array;
 
   // empty cut list
   curCut = cutHead->flink;
@@ -9862,7 +9893,7 @@ commentLinesPtr commentCur, commentNext;
     XtRemoveCallback( curObjName->w, XmNactivateCallback, createPopup_cb,
      (XtPointer) this );
     XtDestroyWidget( curObjName->w );
-    delete curObjName->objType;
+    delete[] curObjName->objType;
     delete curObjName;
     curObjName = nextObjName;
   }
@@ -9876,17 +9907,17 @@ commentLinesPtr commentCur, commentNext;
   if ( pollHead ) delete pollHead;
 
   for ( i=0; i<actualNumMacros; i++ ) {
-    delete macros[i];
-    delete expansions[i];
+    delete[] macros[i];
+    delete[] expansions[i];
   }
 
   if ( macros ) {
-    delete macros;
+    delete[] macros;
     macros = NULL;
   }
 
   if ( expansions ) {
-    delete expansions;
+    delete[] expansions;
     expansions = NULL;
   }
 
@@ -17564,7 +17595,7 @@ char *sysMacros[] = {
    sysMacros, sysValues );
 
   for ( i=0; i<numSysMacros; i++ ) {
-    delete sysValues[i];
+    delete[] sysValues[i];
   }
 
   cur->node.realize();
@@ -17658,7 +17689,7 @@ commentLinesPtr commentCur, commentNext;
   commentCur = commentHead->flink;
   while ( commentCur ) {
     commentNext = commentCur->flink;
-    if ( commentCur->line ) delete commentCur->line;
+    if ( commentCur->line ) delete[] commentCur->line;
     delete commentCur;
     commentCur = commentNext;
   }

@@ -207,18 +207,40 @@ bool equals(const PVCallbackInfo *lhs,
         lhs->userarg == rhs->userarg;
 }
 
+size_t hash(const NodeNameInfo *item, size_t N)
+{   return generic_string_hash(item->nodeName, N); }
+
+bool equals(const NodeNameInfo *lhs,
+            const NodeNameInfo *rhs)
+{   return strcmp(lhs->nodeName, rhs->nodeName) == 0; }
+
 ProcessVariable::ProcessVariable(const char *_name)
 {
     name = strdup(_name);
     refcount = 1;
+    numTimesConnected = numTimesDisconnected = numValueChangeEvents = 0;
+    nodeName = NULL;
 }
 
 ProcessVariable::~ProcessVariable()
 {
+
+    //printf( "~ProcessVariable, name=[%s]\n", name );
+    //printf( "num times connected = %-d, disconnected = %-d\n",
+    // numTimesConnected, numTimesDisconnected );
+    //printf( "num value change events = %-d\n", numValueChangeEvents );
+    //if ( nodeName ) {
+    //  printf( "node name = [%s] [%-x]\n", nodeName, (int) nodeName );
+    //}
+
     if (refcount != 0)
         printf("ProcessVariable %s deleted with refcount %d\n",
                name, refcount);
-    free(name);
+    if ( name ) {
+      free(name);
+      name = NULL;
+    }
+
 }
 
 // Some defaults for member functions:
@@ -251,6 +273,29 @@ void ProcessVariable::add_conn_state_callback(PVCallback func, void *userarg)
     // (otherwise user would have to wait until the next change)
     if (is_valid())
         (*func)(this, userarg);
+}
+
+void _edmDebug( void );
+
+void ProcessVariable::set_node_name( const char *_nodeName ) {
+
+  char *theName;
+  NodeNameInfo info;
+  info.nodeName = (char *) _nodeName;
+  _edmDebug();
+  NodeNameInfoHash::iterator entry = nodeNames.find(&info);
+  if (entry == nodeNames.end()) {
+    NodeNameInfo *pinfo = new NodeNameInfo;
+    pinfo->nodeName = strdup( (char *) _nodeName );
+    nodeNames.insert(pinfo);
+    theName = pinfo->nodeName;
+  }
+  else {
+    theName = (*entry)->nodeName;
+  }
+
+  this->nodeName = theName;
+
 }
 
 void ProcessVariable::remove_conn_state_callback(PVCallback func, void *userarg)
@@ -296,6 +341,14 @@ void ProcessVariable::remove_value_callback(PVCallback func, void *userarg)
 void ProcessVariable::do_conn_state_callbacks()
 {
     PVCallbackInfo *info;
+
+    if ( is_valid() ) {
+      numTimesConnected++;
+    }
+    else {
+      numTimesDisconnected++;
+    }
+
     for (PVCallbackInfoHash::iterator entry = conn_state_callbacks.begin();
          entry != conn_state_callbacks.end();
          ++entry)
@@ -309,6 +362,9 @@ void ProcessVariable::do_conn_state_callbacks()
 void ProcessVariable::do_value_callbacks()
 {
     PVCallbackInfo *info;
+
+    numValueChangeEvents++;
+
     for (PVCallbackInfoHash::iterator entry = value_callbacks.begin();
          entry != value_callbacks.end();
          ++entry)

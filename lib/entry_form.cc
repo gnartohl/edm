@@ -560,7 +560,7 @@ widgetListPtr cur, next;
   while ( cur ) {
     next = cur->flink;
 //     printf( "optionEntry::~optionEntry - delete node\n" );
-    delete cur->value;
+    delete[] cur->value;
     delete cur;
     cur = next;
   }
@@ -701,12 +701,12 @@ entryListBase *cur, *next;
 
   if ( entryTag ) {
 //     printf( "entryFormClass::destroy - delete entryTag\n" );
-    delete entryTag;
+    delete[] entryTag;
   }
 
   if ( actionTag ) {
 //     printf( "entryFormClass::destroy - delete actionTag\n" );
-    delete actionTag;
+    delete[] actionTag;
   }
 
   if ( itemHead->flink ) {
@@ -3824,7 +3824,7 @@ widgetListPtr curpb;
 
   }
 
-  delete buf;
+  delete[] buf;
 
   // create the option menu
 
@@ -4019,7 +4019,7 @@ widgetListPtr curpb;
 
   }
 
-  delete buf;
+  delete[] buf;
 
 
   // create the option menu
@@ -4220,7 +4220,7 @@ widgetListPtr curpb;
 
   }
 
-  delete buf;
+  delete[] buf;
 
 
   // create the option menu
@@ -4363,7 +4363,7 @@ widgetListPtr curpb;
 
   }
 
-  delete buf;
+  delete[] buf;
 
 
   // create the option menu

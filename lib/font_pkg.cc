@@ -116,7 +116,76 @@ int stat;
 
 fontInfoClass::~fontInfoClass ( void ) {   // destructor
 
-// Need to free all avl nodes
+int stat;
+fontNameListPtr cur;
+familyListPtr curFamily, nextFamily;
+sizeListPtr curSize, nextSize;
+
+  stat = avl_get_first( this->fontNameListH, (void **) &cur );
+  if ( !( stat & 1 ) ) {
+    cur = NULL;
+  }
+
+  while ( cur ) {
+
+    stat = avl_delete_node( this->fontNameListH, (void **) &cur );
+    if ( stat & 1 ) {
+
+      if ( cur->fontLoaded ) {
+        if ( cur->fontStruct ) {
+          XFreeFont( this->display, cur->fontStruct );
+          cur->fontLoaded = 0;
+        }
+      }
+
+      if ( cur->name ) {
+        delete[] cur->name;
+        cur->name = NULL;
+      }
+      if ( cur->fullName ) {
+        delete[] cur->fullName;
+        cur->fullName = NULL;
+      }
+      if ( cur->family ) {
+        delete[] cur->family;
+        cur->family = NULL;
+      }
+
+      delete cur;
+
+    }
+
+    stat = avl_get_first( this->fontNameListH, (void **) &cur );
+    if ( !( stat & 1 ) ) {
+      cur = NULL;
+    }
+
+  }
+
+  stat = avl_destroy( this->fontNameListH );
+
+  curFamily = familyHead->flink;
+  while ( curFamily ) {
+
+    nextFamily = curFamily->flink;
+
+    curSize = curFamily->sizeHead->flink;
+    while ( curSize ) {
+      nextSize = curSize->flink;
+      delete curSize;
+      curSize = nextSize;
+    }
+    delete curFamily->sizeHead;
+
+    delete[] curFamily->name;
+
+    delete curFamily;
+
+    curFamily = nextFamily;
+
+  }
+
+  delete familyHead;
 
 }
 

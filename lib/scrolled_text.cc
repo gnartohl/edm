@@ -102,7 +102,7 @@ scrolledTextClass::~scrolledTextClass ( void ) {
   maxSize = 0;
   bufSize = 0;
 
-  if ( textTag ) delete textTag;
+  if ( textTag ) delete[] textTag;
   textTag = (char *) NULL;
 
   if ( textFontList ) XmFontListFree( textFontList );
@@ -114,7 +114,7 @@ int scrolledTextClass::destroy ( void ) {
 
   XtDestroyWidget( shell );
 
-  if ( textTag ) delete textTag;
+  if ( textTag ) delete[] textTag;
   textTag = (char *) NULL;
 
   if ( textFontList ) XmFontListFree( textFontList );
@@ -300,7 +300,7 @@ XmString str;
 
 int scrolledTextClass::destroyEmbedded ( void ) {
 
-  if ( textTag ) delete textTag;
+  if ( textTag ) delete[] textTag;
   textTag = (char *) NULL;
 
   if ( textFontList ) XmFontListFree( textFontList );

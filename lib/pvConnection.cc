@@ -17,8 +17,8 @@ pvConnectionClass::pvConnectionClass ( void )
 pvConnectionClass::~pvConnectionClass ( void )
 {
 
-  if ( id ) delete id;
-  if ( mask ) delete mask;
+  if ( id ) delete[] id;
+  if ( mask ) delete[] mask;
 
 }
 

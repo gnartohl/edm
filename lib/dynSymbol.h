@@ -522,6 +522,11 @@ int undoFlip (
   int w,
   int h );
 
+void getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
+
 };
 
 #endif

@@ -655,7 +655,7 @@ int i;
   btnMotionActionHead->blink = NULL;
   delete btnMotionActionHead;
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
 }
 
@@ -4180,5 +4180,22 @@ int activeDynSymbolClass::undoFlip (
   //printf( "activeDynSymbolClass::undoFlip - not implemented\n" );
 
   return 1;
+
+}
+
+void activeDynSymbolClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 3 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 3;
+  pvs[0] = gateUpPvId;
+  pvs[1] = gateDownPvId;
+  pvs[2] = colorPvId;
 
 }

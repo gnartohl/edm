@@ -128,6 +128,9 @@ void EPICS_ProcessVariable::ca_connect_callback(
     EPICS_ProcessVariable *me = (EPICS_ProcessVariable *)ca_puser(arg.chid);
     if (arg.op == CA_OP_CONN_UP)
     {
+
+        me->set_node_name( ca_host_name(me->pv_chid) );
+
         // Check type of PVValue *value
         if (me->value && me->value->get_DBR() != ca_field_type(arg.chid))
         {

@@ -108,6 +108,17 @@ colorListClass::colorListClass ( void ) {
 
 colorListClass::~colorListClass ( void ) {
 
+int i;
+
+  for ( i=0; i<numColors; i++ ) {
+    if ( items[i] ) {
+      XmStringFree( (XmString) items[i] );
+      items[i] = (void *) NULL; 
+    }
+  }
+
+  delete[] items;
+
 }
 
 int colorListClass::destroy ( void ) {
@@ -125,13 +136,16 @@ int colorListClass::create (
   colorInfoClass *_ci )
 {
 
-int n;
+int i, n;
 Arg args[10];
 XmString str;
 
   indexColor = 0;
   numColors = _numColors;
   items = new void *[numColors];
+  for ( i=0; i<numColors; i++ ) {
+    items[i] = (void *) NULL; 
+  }
 
   numVisibleItems = numVisItems;
   ci = _ci;
@@ -234,7 +248,7 @@ XmString str;
     items[indexColor++] = (void *) str;
   }
 
-  XmStringFree( str );
+  //XmStringFree( str );
 
 }
 
@@ -321,7 +335,6 @@ void colorListClass::filterList ( void )
 {
 
 int i, l;
-colorCachePtr colorNode;
 char *colorName;
 
   for ( i=0; i<ci->menuSize(); i++ ) {

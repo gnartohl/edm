@@ -437,6 +437,8 @@ int getProperty (
 
 int initDeferredExecutionQueue ( void );
 
+void termDeferredExecutionQueue ( void );
+
 void removeAllDeferredExecutionQueueNode (
   class activeWindowClass *awo );
 

@@ -168,6 +168,7 @@ int i, ii;
   numOptions = 0;
   for ( i=0; i<MAX_OPTIONS; i++ ) {
     option[i] = NULL;
+    optionDefault[i] = NULL;
   }
 
   for ( i=0; i<MAX_FIELDS; i++ ) {
@@ -220,32 +221,36 @@ edmPrintClass::~edmPrintClass ( void ) {
 int i, ii;
 
   if ( errMsg ) {
-    delete errMsg;
+    delete[] errMsg;
     errMsg = NULL;
   }
 
   for ( i=0; i<MAX_OPTIONS; i++ ) {
     if ( option[i] ) {
-      delete option[i];
+      delete[] option[i];
       option[i] = NULL;
+    }
+    if ( optionDefault[i] ) {
+      free( optionDefault[i] );
+      optionDefault[i] = NULL;
     }
   }
 
   for ( i=0; i<MAX_FIELDS; i++ ) {
 
     if ( label[i] ) {
-      delete label[i];
+      free( label[i] );
       label[i] = NULL;
     }
 
     if ( menu[i] ) {
-      delete menu[i];
+      free( menu[i] );
       menu[i] = NULL;
     }
 
     for ( ii=0; ii<MAX_ACTIONS; ii++ ) {
       if ( action[i][ii] ) {
-        delete action[i][ii];
+        free( action[i][ii] );
         action[i][ii] = NULL;
       }
     }
@@ -253,17 +258,17 @@ int i, ii;
   }
 
   if ( printCmd ) {
-    delete printCmd;
+    free( printCmd );
     printCmd = NULL;
   }
 
   if ( printToFileCmd ) {
-    delete printToFileCmd;
+    free( printToFileCmd );
     printToFileCmd = NULL;
   }
 
   if ( newCmd ) {
-    delete newCmd;
+    free( newCmd );
     newCmd = NULL;
   }
 
@@ -1620,9 +1625,9 @@ char *tk, tmp[31+1];
 
   }
 
-  delete lineBuf;
+  delete[] lineBuf;
   lineBuf = NULL;
-  delete lineBuf2;
+  delete[] lineBuf2;
   lineBuf2 = NULL;
   status = closePrintDefFile();
   if ( !( status & 1 ) ) {

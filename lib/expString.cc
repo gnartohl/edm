@@ -48,14 +48,14 @@ expStringClass::~expStringClass ( void )
 {
 
   if ( rawStringSize ) {
-    if ( rawString ) delete rawString;
+    if ( rawString ) delete[] rawString;
     rawString = NULL;
     rawStringSize = 0;
     rawStringLen = 0;
   }
 
   if ( expandedString1Size ) {
-    if ( expandedString1 ) delete expandedString1;
+    if ( expandedString1 ) delete[] expandedString1;
     expandedString1 = NULL;
     expandedString1Size = 0;
     expandedString1Len = 0;
@@ -63,7 +63,7 @@ expStringClass::~expStringClass ( void )
   }
 
   if ( expandedStringSize ) {
-    if ( expandedString ) delete expandedString;
+    if ( expandedString ) delete[] expandedString;
     expandedString = NULL;
     expandedStringSize = 0;
     expandedStringLen = 0;
@@ -71,7 +71,7 @@ expStringClass::~expStringClass ( void )
   }
 
   if ( expandedString2Size ) {
-    if ( expandedString2 ) delete expandedString2;
+    if ( expandedString2 ) delete[] expandedString2;
     expandedString2 = NULL;
     expandedString2Size = 0;
     expandedString2Len = 0;
@@ -181,14 +181,14 @@ int expStringClass::setRaw (
 char *subStr;
 
   if ( expandedStringSize ) {
-    delete expandedString;
+    delete[] expandedString;
     expandedString = NULL;
   }
   expandedStringSize = 0;
   expandedStringLen = 0;
 
   if ( expandedString1Size ) {
-    delete expandedString1;
+    delete[] expandedString1;
     expandedString1 = NULL;
   }
   expandedString1Size = 0;
@@ -196,7 +196,7 @@ char *subStr;
   numPossibleSymbols2 = 0;
 
   if ( expandedString2Size ) {
-    delete expandedString2;
+    delete[] expandedString2;
     expandedString2 = NULL;
   }
   expandedString2Size = 0;
@@ -215,7 +215,7 @@ char *subStr;
   }
 
  if ( rawStringSize < (int) strlen(str)+1 ) {
-    if ( rawStringSize ) delete rawString;
+    if ( rawStringSize ) delete[] rawString;
     rawStringSize = strlen(str)+1;
     rawString = new char[rawStringSize];
   }
@@ -288,7 +288,7 @@ int numSymbolsFound;
 
   if ( stat & 1 ) {
     if ( expandedString1Size > expandedStringSize ) {
-      if ( expandedString ) delete expandedString;
+      if ( expandedString ) delete[] expandedString;
       expandedString = new char[expandedString1Size];
       expandedStringSize = expandedString1Size;
     }
@@ -314,7 +314,7 @@ int numSymbolsFound;
 void expStringClass::reset ( void ) {
 
   if ( expandedString1Size > expandedStringSize ) {
-    if ( expandedString ) delete expandedString;
+    if ( expandedString ) delete[] expandedString;
     expandedString = new char[expandedString1Size];
     expandedStringSize = expandedString1Size;
   }
@@ -352,7 +352,7 @@ int numSymbolsFound;
     if ( numPossibleSymbols2 > 0 ) {
 
       if ( expandedString2Size > expandedStringSize ) {
-        if ( expandedString ) delete expandedString;
+        if ( expandedString ) delete[] expandedString;
         expandedString = new char[expandedString2Size];
         expandedStringSize = expandedString2Size;
       }
@@ -577,7 +577,7 @@ int state, foundOne, i, ii, nOut, nIn, nMacro, outStrLen;
   if ( nOut ) {
 
     if ( *outStringSize < nOut+1 ) {
-      if ( *outStringSize ) delete *outString;
+      if ( *outStringSize ) delete[] *outString;
       *outStringSize = nOut+1;
       *outString = new char[nOut+1];
     }

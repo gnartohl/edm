@@ -34,6 +34,7 @@ pvColorClass::pvColorClass( void )
 
   alarmSensitive = 0;
   connectSensitive = 0;
+  connected = 0;
   pixel = 0;
   staticPixel = 0;
   effectivePixel = 0;

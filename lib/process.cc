@@ -31,6 +31,11 @@ int stat;
 processClass::~processClass ( void )
 {
 
+int stat;
+
+  stat = thread_destroy_lock_handle( processLock );
+  processLock = NULL;
+
 }
 
 int processClass::lock ( void )
