@@ -12391,7 +12391,8 @@ int activeWindowClass::refresh (
 {
 
 XRectangle xR = { _x, _y, _w, _h };
-activeGraphicListPtr cur;
+activeGraphicListPtr cur, next;
+int needDelete;
 
   if ( noRefresh ) return 1;
 
@@ -12405,7 +12406,21 @@ activeGraphicListPtr cur;
 
   cur = head->flink;
   if ( cur != head ) {
-    cur->node->refresh( _x, _y, _w, _h );
+    needDelete = cur->node->refresh( _x, _y, _w, _h );
+  }
+
+  if ( needDelete ) {
+    cur = head->flink;
+    while ( cur != head ) {
+      next = cur->flink;
+      if ( cur->node->deleteRequest ) {
+        cur->blink->flink = cur->flink;
+        cur->flink->blink = cur->blink;
+        delete cur->node;
+        delete cur;
+      }
+      cur = next;
+    }
   }
 
   return 1;
@@ -12414,7 +12429,8 @@ activeGraphicListPtr cur;
 
 int activeWindowClass::refresh ( void ) {
 
-activeGraphicListPtr cur;
+activeGraphicListPtr cur, next;
+int needDelete;
 
   if ( noRefresh ) return 1;
 
@@ -12426,7 +12442,21 @@ activeGraphicListPtr cur;
 
   cur = head->flink;
   if ( cur != head ) { // if list is not empty
-    cur->node->refresh();
+    needDelete = cur->node->refresh();
+  }
+
+  if ( needDelete ) {
+    cur = head->flink;
+    while ( cur != head ) {
+      next = cur->flink;
+      if ( cur->node->deleteRequest ) {
+        cur->blink->flink = cur->flink;
+        cur->flink->blink = cur->blink;
+        delete cur->node;
+        delete cur;
+      }
+      cur = next;
+    }
   }
 
   return 1;

@@ -670,8 +670,10 @@ int activeGraphicClass::refresh (
 {
 
 activeGraphicListPtr cur, next;
-int clipStat, x0, x1, y0, y1, x0sb, x1sb, y0sb, y1sb;
+int clipStat, x0, x1, y0, y1, x0sb, x1sb, y0sb, y1sb, needDelete;
 XRectangle xR = { _x, _y, _w, _h };
+
+  needDelete = 0;
 
   x0 = _x;
   y0 = _y;
@@ -690,11 +692,15 @@ XRectangle xR = { _x, _y, _w, _h };
 
     if ( cur->node->deleteRequest ) {
 
+      needDelete = 1;
+
+#if 0
       cur->blink->flink = cur->flink;
       cur->flink->blink = cur->blink;
 
       delete cur->node;
       delete cur;
+#endif
 
     }
     else {
@@ -715,9 +721,11 @@ XRectangle xR = { _x, _y, _w, _h };
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
-    if ( cur->node->intersects( x0, y0, x1, y1 ) ) {
-      cur->node->bufInvalidate();
-      cur->node->draw( x0, y0, x1, y1 );
+    if ( !cur->node->deleteRequest ) {
+      if ( cur->node->intersects( x0, y0, x1, y1 ) ) {
+        cur->node->bufInvalidate();
+        cur->node->draw( x0, y0, x1, y1 );
+      }
     }
     cur = cur->flink;
   }
@@ -727,21 +735,26 @@ XRectangle xR = { _x, _y, _w, _h };
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
-    if ( cur->node->isSelected() ) {
-      if ( cur->node->intersects( x0sb, y0sb, x1sb, y1sb ) ) {
-        cur->node->drawSelectBoxCorners();
+    if ( !cur->node->deleteRequest ) {
+      if ( cur->node->isSelected() ) {
+        if ( cur->node->intersects( x0sb, y0sb, x1sb, y1sb ) ) {
+          cur->node->drawSelectBoxCorners();
+        }
       }
     }
     cur = cur->flink;
   }
 
-  return 1;
+  return needDelete;
 
 }
 
 int activeGraphicClass::refresh ( void ) {
 
 activeGraphicListPtr cur, next;
+int needDelete;
+
+  needDelete = 0;
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
@@ -750,11 +763,15 @@ activeGraphicListPtr cur, next;
 
     if ( cur->node->deleteRequest ) {
 
+      needDelete = 1;
+
+#if 0
       cur->blink->flink = cur->flink;
       cur->flink->blink = cur->blink;
 
       delete cur->node;
       delete cur;
+#endif
 
     }
     else {
@@ -771,19 +788,23 @@ activeGraphicListPtr cur, next;
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
-    cur->node->draw();
+    if ( !cur->node->deleteRequest ) {
+      cur->node->draw();
+    }
     cur = cur->flink;
   }
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
-    if ( cur->node->isSelected() ) {
-      cur->node->drawSelectBoxCorners();
+    if ( !cur->node->deleteRequest ) {
+      if ( cur->node->isSelected() ) {
+        cur->node->drawSelectBoxCorners();
+      }
     }
     cur = cur->flink;
   }
 
-  return 1;
+  return needDelete;
 
 }
 
@@ -791,6 +812,9 @@ int activeGraphicClass::refresh (
   activeGraphicClass *oneNode ) {
 
 activeGraphicListPtr cur, next;
+int needDelete;
+
+  needDelete = 0;
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
@@ -799,11 +823,15 @@ activeGraphicListPtr cur, next;
 
     if ( cur->node->deleteRequest ) {
 
+      needDelete = 1;
+
+#if 0
       cur->blink->flink = cur->flink;
       cur->flink->blink = cur->blink;
 
       delete cur->node;
       delete cur;
+#endif
 
     }
 
@@ -813,19 +841,23 @@ activeGraphicListPtr cur, next;
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
-    cur->node->draw();
+    if ( !cur->node->deleteRequest ) {
+      cur->node->draw();
+    }
     cur = cur->flink;
   }
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
-    if ( cur->node->isSelected() && cur->node == oneNode ) {
-      cur->node->drawSelectBoxCorners();
+    if ( !cur->node->deleteRequest ) {
+      if ( cur->node->isSelected() && cur->node == oneNode ) {
+        cur->node->drawSelectBoxCorners();
+      }
     }
     cur = cur->flink;
   }
 
-  return 1;
+  return needDelete;
 
 }
 
