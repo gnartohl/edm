@@ -905,7 +905,7 @@ int oneX, oneY, oneW, oneH;
 
   // draw with selected removed
 
-  if ( cur->blink != head ) {
+  if ( ( cur != head ) && ( cur->flink != head ) ) {
     XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.xorGC(), cur->x, cur->y,
      cur->flink->x, cur->flink->y );
