@@ -18957,7 +18957,6 @@ pvDefPtr pvDefCur, pvDefNext;
   }
   pvDefTail = pvDefHead;
   pvDefTail->flink = NULL;
-  delete pvDefHead;
 
   // empty main list
   cur = head->flink;

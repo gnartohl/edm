@@ -618,7 +618,7 @@ tagClass tag;
 int zero = 0;
 char *emptyStr = "";
 
-int labelTypePvState = 0;
+int labelTypePvState = BTC_K_PV_STATE;
 static char *labelEnumStr[2] = {
   "pvState",
   "literal"
@@ -814,7 +814,7 @@ tagClass tag;
 int zero = 0;
 char *emptyStr = "";
 
-int labelTypePvState = 0;
+int labelTypePvState = BTC_K_PV_STATE;
 static char *labelEnumStr[2] = {
   "pvState",
   "literal"

@@ -3314,7 +3314,7 @@ int tagClass::writeTags (
   FILE *f
 ) {
 
-int i, ii, index, colorIndex, *colorIndexArray, doWrite;
+int i, ii, index, colorIndex, *colorIndexArray, doWrite, tagDefaultValue;
 int *iArray;
 unsigned int *uiArray;
 double *dArray;
@@ -3589,23 +3589,42 @@ efInt *efI;
       }
 
       if ( tagClass::genDoc() ) {
+
         if ( tagDefault[index] ) {
+
+          tagDefaultValue = -1;
+          for ( i=0; i<enumNumChoices[index]; i++ ) {
+            if ( *( (int *) tagDefault[index] ) == enumIntArray[index][i] ) {
+              tagDefaultValue = i;
+              break;
+	    }
+          }
+
           printf( "[%s (", tagName[index] );
           printf( "\"%s\"", enumStrArray[index][0] );
           for ( i=1; i<enumNumChoices[index]; i++ ) {
             printf( "|\"%s\"", enumStrArray[index][i] );
           }
-          printf( ")]   /* default = \"%s\" */\n",
-           enumStrArray[index][*( (int *) tagDefault[index] )] );
+          if ( tagDefaultValue == -1 ) {
+            printf( ")]   /* default = \"UNKNOWN\" */\n" );
+	  }
+	  else {
+            printf( ")]   /* default = \"%s\" */\n",
+             enumStrArray[index][tagDefaultValue] );
+	  }
+
 	}
 	else {
+
           printf( "%s (", tagName[index] );
           printf( "\"%s\"", enumStrArray[index][0] );
           for ( i=1; i<enumNumChoices[index]; i++ ) {
             printf( "|\"%s\"", enumStrArray[index][i] );
           }
           printf( ")\n" );
+
 	}
+
       }
 
       break;
@@ -3689,6 +3708,14 @@ efInt *efI;
 
         if ( tagDefault[index] ) {
 
+          tagDefaultValue = -1;
+          for ( i=0; i<enumNumChoices[index]; i++ ) {
+            if ( *( (int *) tagDefault[index] ) == enumIntArray[index][i] ) {
+              tagDefaultValue = i;
+              break;
+	    }
+          }
+
           printf( "[%s {\n", tagName[index] );
 
           printf( "  [<int element> (" );
@@ -3696,16 +3723,26 @@ efInt *efI;
           for ( i=1; i<enumNumChoices[index]; i++ ) {
             printf( "|\"%s\"", enumStrArray[index][i] );
           }
-          printf( ")]   /* default = \"%s\" */\n",
-           enumStrArray[index][*( (int *) tagDefault[index] )] );
+          if ( tagDefaultValue == -1 ) {
+            printf( ")]   /* default = \"UNKNOWN\" */\n" );
+	  }
+	  else {
+            printf( ")]   /* default = \"%s\" */\n",
+             enumStrArray[index][tagDefaultValue] );
+	  }
 
           printf( "  [<int element> (" );
           printf( "\"%s\"", enumStrArray[index][0] );
           for ( i=1; i<enumNumChoices[index]; i++ ) {
             printf( "|\"%s\"", enumStrArray[index][i] );
           }
-          printf( ")]   /* default = \"%s\" */\n",
-           enumStrArray[index][*( (int *) tagDefault[index] )] );
+          if ( tagDefaultValue == -1 ) {
+            printf( ")]   /* default = \"UNKNOWN\" */\n" );
+	  }
+	  else {
+            printf( ")]   /* default = \"%s\" */\n",
+             enumStrArray[index][tagDefaultValue] );
+	  }
 
 	  printf( "                .\n" );
 	  printf( "                .\n" );
