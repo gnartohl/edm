@@ -166,7 +166,7 @@ activeMessageButtonClass *msgbto = (activeMessageButtonClass *) client;
     }
   }
   else if ( strcmp( msgbto->bufPw1, msgbto->bufPw2 ) != 0 ) {
-    msgbto->actWin->appCtx->postMessage( "Password not changed" );
+    msgbto->actWin->appCtx->postMessage( activeMessageButtonClass_str33 );
     if ( blank(msgbto->pw) ) {
       msgbto->usePassword = 0;
     }
@@ -197,6 +197,8 @@ activeMessageButtonClass *msgbto = (activeMessageButtonClass *) client;
     msgbto->visInverted = 0;
   else
     msgbto->visInverted = 1;
+
+  msgbto->useEnumNumeric = msgbto->bufUseEnumNumeric;
 
   msgbto->colorPvExpString.setRaw( msgbto->bufColorPvName );
 
@@ -315,6 +317,31 @@ activeMessageButtonClass *msgbto =
   msgbto->actWin->appCtx->proc->lock();
   msgbto->actWin->addDefExeNode( msgbto->aglPtr );
   msgbto->actWin->appCtx->proc->unlock();
+
+}
+
+static void msgbt_destInfoUpdate (
+  struct event_handler_args ast_args )
+{
+
+int i;
+activeMessageButtonClass *msgbto =
+ (activeMessageButtonClass *) ast_args.usr;
+struct dbr_gr_enum enumRec;
+
+  enumRec = *( (struct dbr_gr_enum *) ast_args.dbr );
+
+  msgbto->numStates = enumRec.no_str;
+
+  for ( i=0; i<msgbto->numStates; i++ ) {
+
+    if ( msgbto->stateString[i] == NULL ) {
+      msgbto->stateString[i] = new char[MAX_ENUM_STRING_SIZE+1];
+    }
+
+    strncpy( msgbto->stateString[i], enumRec.strs[i], MAX_ENUM_STRING_SIZE );
+
+  }
 
 }
 
@@ -441,6 +468,7 @@ activeMessageButtonClass::activeMessageButtonClass ( void ) {
   strcpy( minVisString, "" );
   strcpy( maxVisString, "" );
   connection.setMaxPvs( 3 );
+  useEnumNumeric = 0;
 
   setBlinkFunction( (void *) doBlink );
 
@@ -506,6 +534,7 @@ activeGraphicClass *msgbto = (activeGraphicClass *) this;
   visInverted = source->visInverted;
   strncpy( minVisString, source->minVisString, 39 );
   strncpy( maxVisString, source->maxVisString, 39 );
+  useEnumNumeric = source->useEnumNumeric;
 
   connection.setMaxPvs( 3 );
 
@@ -667,6 +696,9 @@ int index;
     writeStringToFile( f, colorPvExpString.getRaw() );
   else
     writeStringToFile( f, "" );
+
+  //ver 2.5.0
+  fprintf( f, "%-d\n", useEnumNumeric );
 
   return 1;
 
@@ -863,6 +895,17 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
     readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
      actWin->incLine();
     colorPvExpString.setRaw( oneName );
+
+  }
+
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 4 ) ) ) {
+
+    fscanf( f, "%d\n", &useEnumNumeric ); actWin->incLine();
+
+  }
+  else {
+
+    useEnumNumeric = 1;
 
   }
 
@@ -1160,8 +1203,7 @@ char title[32], *ptr, *envPtr, saveLock;
   if ( envPtr ) {
     if ( strcmp( envPtr, "TRUE" ) == 0 ) {
       if ( lock ) {
-        actWin->appCtx->postMessage(
-         "Supervisor mode - password lock cleared" );
+        actWin->appCtx->postMessage( activeMessageButtonClass_str34 );
       }
       saveLock = lock;
       lock = 0;
@@ -1262,6 +1304,8 @@ char title[32], *ptr, *envPtr, saveLock;
   strncpy( bufMinVisString, minVisString, 39 );
   strncpy( bufMaxVisString, maxVisString, 39 );
 
+  bufUseEnumNumeric = useEnumNumeric;
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -1288,6 +1332,7 @@ char title[32], *ptr, *envPtr, saveLock;
   ef.addToggle( activeMessageButtonClass_str11, &bufInvisible );
   ef.addToggle( activeMessageButtonClass_str12, &bufPressAction );
   ef.addToggle( activeMessageButtonClass_str13, &bufReleaseAction );
+  ef.addToggle( activeMessageButtonClass_str35, &bufUseEnumNumeric );
 
   ef.addTextField( activeMessageButtonClass_str14, 35, bufOnLabel,
    MAX_ENUM_STRING_SIZE );
@@ -1309,9 +1354,9 @@ char title[32], *ptr, *envPtr, saveLock;
     ef.addTextField( activeMessageButtonClass_str17, 35,
      bufSourceReleasePvName, 39 );
 
-    ef.addPasswordField( "Password", 35, bufPw1, 31 );
-    ef.addPasswordField( "Confirm", 35, bufPw2, 31 );
-    ef.addToggle( "Lock (forever)", &bufLock );
+    ef.addPasswordField( activeMessageButtonClass_str36, 35, bufPw1, 31 );
+    ef.addPasswordField( activeMessageButtonClass_str37, 35, bufPw2, 31 );
+    ef.addToggle( activeMessageButtonClass_str38, &bufLock );
 
   }
   else {
@@ -1319,8 +1364,8 @@ char title[32], *ptr, *envPtr, saveLock;
     ef.addLockedField( activeMessageButtonClass_str17, 35,
      bufSourceReleasePvName, 39 );
 
-    ef.addLockedField( "Password", 35, bufPw1, 31 );
-    ef.addLockedField( "Confirm", 35, bufPw2, 31 );
+    ef.addLockedField( activeMessageButtonClass_str36, 35, bufPw1, 31 );
+    ef.addLockedField( activeMessageButtonClass_str37, 35, bufPw2, 31 );
 
   }
 
@@ -1721,7 +1766,7 @@ int activeMessageButtonClass::activate (
   void *ptr )
 {
 
-int stat, opStat;
+int stat, opStat, i;
 
   switch ( pass ) {
 
@@ -1736,6 +1781,11 @@ int stat, opStat;
     if ( !opComplete ) {
 
       connection.init();
+
+      numStates = 0;
+      for ( i=0; i<MAX_ENUM_STATES; i++ ) {
+        stateString[i] = NULL;
+      }
 
       needConnectInit = needErase = needDraw = needPerformDownAction =
        needPerformUpAction = needWarning = needVisConnectInit =
@@ -1857,7 +1907,7 @@ int activeMessageButtonClass::deactivate (
   int pass
 ) {
 
-int stat;
+int i, stat;
 
   if ( pass == 1 ) {
 
@@ -1883,6 +1933,14 @@ int stat;
   }
 
 #endif
+
+  if ( numStates ) {
+    for ( i=0; i<numStates; i++ ) {
+      delete stateString[i];
+      stateString[i] = NULL;
+    }
+    numStates = 0;
+  }
 
   }
 
@@ -1942,8 +2000,20 @@ int stat;
     break;
 
   case DBR_ENUM:
-    destV.s = (short) atol( sourceReleasePvExpString.getExpanded() );
-    stat = ca_put( DBR_ENUM, destPvId, &destV.s );
+    if ( useEnumNumeric ) {
+      destV.s = (short) atol( sourceReleasePvExpString.getExpanded() );
+      stat = ca_put( DBR_ENUM, destPvId, &destV.s );
+    }
+    else {
+      stat = getEnumNumeric( sourceReleasePvExpString.getExpanded(),
+       &destV.s );
+      if ( !( stat & 1 ) ) {
+        actWin->appCtx->postMessage( activeMessageButtonClass_str40 );
+      }
+      else {
+        stat = ca_put( DBR_ENUM, destPvId, &destV.s );
+      }
+    }
     break;
 
   }
@@ -2030,8 +2100,19 @@ char labelValue[39+1];
     break;
 
   case DBR_ENUM:
-    destV.s = (short) atol( labelValue );
-    stat = ca_put( DBR_ENUM, destPvId, &destV.s );
+    if ( useEnumNumeric ) {
+      destV.s = (short) atol( labelValue );
+      stat = ca_put( DBR_ENUM, destPvId, &destV.s );
+    }
+    else {
+      stat = getEnumNumeric( labelValue, &destV.s );
+      if ( !( stat & 1 ) ) {
+        actWin->appCtx->postMessage( activeMessageButtonClass_str39 );
+      }
+      else {
+        stat = ca_put( DBR_ENUM, destPvId, &destV.s );
+      }
+    }
     break;
 
   }
@@ -2073,7 +2154,7 @@ void activeMessageButtonClass::btnDown (
 
       strcpy( bufPw1, "" );
 
-      ef.addPasswordField( "Password", 35, bufPw1, 31 );
+      ef.addPasswordField( activeMessageButtonClass_str36, 35, bufPw1, 31 );
 
       ef.finished( pw_ok, pw_apply, pw_cancel, this );
 
@@ -2254,6 +2335,11 @@ int stat, index, invisColor;
     connection.setPvConnected( (void *) destPvConnection );
     destType = ca_field_type( destPvId );
 
+    if ( destType == DBR_ENUM ) {
+      stat = ca_get_callback( DBR_GR_ENUM, destPvId,
+       msgbt_destInfoUpdate, (void *) this );
+    }
+
     if ( connection.pvsConnected() ) {
       active = 1;
       init = 1;
@@ -2414,7 +2500,7 @@ int stat, index, invisColor;
 
   if ( nw ) {
 
-    actWin->appCtx->postMessage( "Incorrect Password" );
+    actWin->appCtx->postMessage( activeMessageButtonClass_str41 );
 
   }
 
@@ -2575,6 +2661,24 @@ void activeMessageButtonClass::changePvNames (
       visPvExpString.setRaw( ctlPvs[0] );
     }
   }
+
+}
+
+int activeMessageButtonClass::getEnumNumeric (
+  char *string,
+  short *value ) {
+
+  int i;
+
+  for ( i=0; i<numStates; i++ ) {
+    if ( strcmp( string, stateString[i] ) == 0 ) {
+      *value = (short) i;
+      return 1;
+    }
+  }
+
+  *value = 0;
+  return 0;
 
 }
 

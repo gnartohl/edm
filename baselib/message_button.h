@@ -25,7 +25,7 @@
 #include "cadef.h"
 
 #define MSGBTC_MAJOR_VERSION 2
-#define MSGBTC_MINOR_VERSION 4
+#define MSGBTC_MINOR_VERSION 5
 #define MSGBTC_RELEASE 0
 
 #define MSGBTC_K_PUSH 1
@@ -108,6 +108,9 @@ static void msgbt_monitor_dest_connect_state (
 
 static void msgbt_monitor_vis_connect_state (
   struct connection_handler_args arg );
+
+static void msgbt_destInfoUpdate (
+  struct event_handler_args ast_args );
 
 static void msgbt_visInfoUpdate (
   struct event_handler_args ast_args );
@@ -197,6 +200,9 @@ friend void msgbt_monitor_dest_connect_state (
 
 friend void msgbt_monitor_vis_connect_state (
   struct connection_handler_args arg );
+
+friend void msgbt_destInfoUpdate (
+  struct event_handler_args ast_args );
 
 friend void msgbt_visInfoUpdate (
   struct event_handler_args ast_args );
@@ -298,6 +304,11 @@ char bufPw2[31+1];
 int usePassword;
 
 int lock, bufLock;
+
+int useEnumNumeric, bufUseEnumNumeric;
+
+char *stateString[MAX_ENUM_STATES]; // allocated at run-time
+int numStates;
 
 int pwFormX, pwFormY, pwFormW, pwFormH, pwFormMaxH;
 
@@ -436,6 +447,10 @@ void activeMessageButtonClass::changePvNames (
   char *visPvs[],
   int numAlarmPvs,
   char *alarmPvs[] );
+
+int activeMessageButtonClass::getEnumNumeric (
+  char *string,
+  short *value );
 
 };
 

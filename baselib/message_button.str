@@ -33,4 +33,14 @@
 #define activeMessageButtonClass_str30 (char *) ">="
 #define activeMessageButtonClass_str31 (char *) "and <"
 #define activeMessageButtonClass_str32 (char *) "Color PV"
+#define activeMessageButtonClass_str33 (char *) "Password not changed"
+#define activeMessageButtonClass_str34 (char *) "Supervisor mode - password lock cleared"
+#define activeMessageButtonClass_str35 (char *) "Use numeric for enums"
+#define activeMessageButtonClass_str36 (char *) "Password"
+#define activeMessageButtonClass_str37 (char *) "Confirm"
+#define activeMessageButtonClass_str38 (char *) "Lock (forever)"
+#define activeMessageButtonClass_str39 (char *) "Invalid enum string press value"
+#define activeMessageButtonClass_str40 (char *) "Invalid enum string release value"
+#define activeMessageButtonClass_str41 (char *) "Incorrect Password"
+
 #endif
