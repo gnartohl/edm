@@ -1294,8 +1294,10 @@ int stat, opStat;
 
     if ( !opComplete ) {
 
-      unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
-       2000, unconnectedTimeout, this );
+      if ( !unconnectedTimer ) {
+        unconnectedTimer = XtAppAddTimeOut( actWin->appCtx->appContext(),
+         2000, unconnectedTimeout, this );
+      }
 
       opStat = 1;
 
