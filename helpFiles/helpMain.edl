@@ -1,445 +1,331 @@
-3 1 0
-8
-0
-156
-391
-helvetica-medium-r-12.0
-0
-helvetica-medium-r-12.0
-0
-rgb
-0,0,0
-rgb
-46810,47850,46810
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-rgb
-34327,34327,34327
-Help
-0
-0
-10
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-9
-11
-138
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpMouse
-Pointer
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Mouse Operations
-1
-<<<E~O~D>>>
-activeExitButtonClass
-2 1 0
-11
-356
-59
-24
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-1
-0
-helvetica-medium-r-12.0
-Close
-0
-0
-<<<E~O~D>>>
-shellCmdClass
-2 3 0
-86
-356
-59
-24
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-netscape $(help)/index.htm
-html
-helvetica-medium-r-12.0
-0
-0
-0
-0
-0
-<<<empty>>>
-0
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-9
-313
-138
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-availableSymbols
-<<<empty>>>
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Available Symbols
-0
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-9
-200
-138
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpLineCreate
-Creating
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-2
-$(help)helpLineEdit
-Editing
-0
-1
-0
-0
-<<<empty>>>
-0
-1
-Line Objects
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-9
-238
-138
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpAlign
-Creating
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Aligning Objects
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-9
-87
-138
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpCreate
-Creating
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Creating Objects
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-9
-163
-138
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpEdit
-Editing
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Editing Objects
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-9
-49
-138
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpFile
-File
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-File Operations
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-9
-125
-138
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpSelect
-Selecting
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Selecting Objects
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-9
-276
-138
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpObjects
-<<<empty>>>
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Objects
-1
-<<<E~O~D>>>
+4 0 0
+beginScreenProperties
+major 4
+minor 0
+release 0
+x 8
+y 0
+w 156
+h 391
+font "helvetica-medium-r-12.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 0
+ctlBgColor1 rgb 44718 44718 44718
+ctlBgColor2 rgb 34181 34181 34181
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+title "Help"
+endScreenProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 9
+y 11
+w 138
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 44718 44718 44718
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "Mouse Operations"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpMouse"
+}
+menuLabel {
+  0 "Pointer"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Exit Button)
+object activeExitButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 11
+y 356
+w 59
+h 24
+fgColor rgb 0 0 0
+bgColor rgb 44718 44718 44718
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+label "Close"
+font "helvetica-medium-r-12.0"
+3d
+endObjectProperties
+
+# (Shell Command)
+object shellCmdClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 86
+y 356
+w 59
+h 24
+fgColor rgb 0 0 0
+bgColor rgb 44718 44718 44718
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-12.0"
+buttonLabel "html"
+numCmds 1
+command {
+  0 "$EDMWEBBROWSER ics-web1.sns.ornl.gov/edm/index.phtml"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 9
+y 313
+w 138
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 44718 44718 44718
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-12.0"
+buttonLabel "Available Symbols"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "availableSymbols"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 9
+y 200
+w 138
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 44718 44718 44718
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "Line Objects"
+numPvs 4
+numDsps 2
+displayFileName {
+  0 "$(help)helpLineCreate"
+  1 "$(help)helpLineEdit"
+}
+menuLabel {
+  0 "Creating"
+  1 "Editing"
+}
+setPosition {
+  0 "button"
+  1 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 9
+y 238
+w 138
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 44718 44718 44718
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "Aligning Objects"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpAlign"
+}
+menuLabel {
+  0 "Creating"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 9
+y 87
+w 138
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 44718 44718 44718
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "Creating Objects"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpCreate"
+}
+menuLabel {
+  0 "Creating"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 9
+y 163
+w 138
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 44718 44718 44718
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "Editing Objects"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpEdit"
+}
+menuLabel {
+  0 "Editing"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 9
+y 49
+w 138
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 44718 44718 44718
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "File Operations"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpFile"
+}
+menuLabel {
+  0 "File"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 9
+y 125
+w 138
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 44718 44718 44718
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "Selecting Objects"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpSelect"
+}
+menuLabel {
+  0 "Selecting"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 9
+y 276
+w 138
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 44718 44718 44718
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "Objects"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpObjects"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+

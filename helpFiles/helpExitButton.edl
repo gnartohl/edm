@@ -1,225 +1,202 @@
-3 1 0
-694
-186
-500
-310
-helvetica-medium-r-18.0
-0
-helvetica-medium-r-12.0
-0
-rgb
-0,0,0
-rgb
-51400,51400,51400
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-0,0,49344
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-26985,26985,26985
-rgb
-56026,56026,56026
-Exit Button
-0
-0
-10
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-20
-30
-122
-27
-rgb
-0,0,0
-0
-0
-rgb
-60652,60652,60652
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Exit Button
-helvetica-medium-r-24.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeExitButtonClass
-2 1 0
-43
-82
-83
-40
-rgb
-65535,65535,65535
-rgb
-65535,0,0
-rgb
-57054,50372,64507
-rgb
-32896,0,0
-1
-0
-helvetica-medium-r-18.0
-EXIT
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-139
-95
-27
-16
-rgb
-0,0,0
-0
-1
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-3-D
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeExitButtonClass
-2 1 0
-43
-139
-83
-40
-rgb
-65535,65535,65535
-rgb
-65535,0,0
-rgb
-57054,50372,64507
-rgb
-32896,0,0
-0
-0
-helvetica-medium-r-18.0
-EXIT
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-139
-151
-53
-16
-rgb
-0,0,0
-0
-1
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Not 3-D
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-45
-199
-322
-16
-rgb
-0,0,0
-0
-1
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Button is still active when invisible box is checked.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-45
-224
-394
-32
-rgb
-0,0,0
-0
-1
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-If Iconify only is checked, the display window is iconified when\nthe button is clicked.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-45
-265
-407
-16
-rgb
-0,0,0
-0
-1
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-If Exit program is checked, edm exits when the button is clicked.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
+4 0 0
+beginScreenProperties
+major 4
+minor 0
+release 0
+x 702
+y 226
+w 500
+h 345
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 51400 51400 51400
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 49344
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+title "Exit Button"
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 20
+y 30
+w 122
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 60652 60652 60652
+value {
+  "Exit Button"
+}
+autoSize
+endObjectProperties
+
+# (Exit Button)
+object activeExitButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 43
+y 82
+w 83
+h 40
+fgColor rgb 65535 65535 65535
+bgColor rgb 65535 0 0
+topShadowColor rgb 57054 50372 64507
+botShadowColor rgb 32896 0 0
+label "EXIT"
+font "helvetica-medium-r-18.0"
+3d
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 139
+y 95
+w 27
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "3-D"
+}
+autoSize
+endObjectProperties
+
+# (Exit Button)
+object activeExitButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 43
+y 139
+w 83
+h 40
+fgColor rgb 65535 65535 65535
+bgColor rgb 65535 0 0
+topShadowColor rgb 57054 50372 64507
+botShadowColor rgb 32896 0 0
+label "EXIT"
+font "helvetica-medium-r-18.0"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 139
+y 151
+w 53
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Not 3-D"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 45
+y 199
+w 322
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Button is still active when invisible box is checked."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 45
+y 224
+w 394
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "If Iconify only is checked, the display window is iconified when"
+  "the button is clicked."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 45
+y 265
+w 407
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "If Exit program is checked, edm exits when the button is clicked."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 45
+y 291
+w 403
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "If Apply to parent is checked and exit button is in an embedded"
+  "window, actions apply to topmost parent window."
+}
+autoSize
+endObjectProperties
+
