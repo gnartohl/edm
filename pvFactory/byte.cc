@@ -588,8 +588,9 @@ int edmByteClass::activate(int pass, void *ptr)
                 }
             }
             bufInvalidate();
-            if (!valuePvId)
-                drawActive();
+            actWin->appCtx->proc->lock();
+            actWin->addDefExeNode(aglPtr);
+            actWin->appCtx->proc->unlock();
 
             break;
     }
@@ -652,7 +653,6 @@ int edmByteClass::drawActive()
 {
    if (bufInvalid)
    {
-      bufInvalid = false;
       drawActiveFull();
    }
    else
@@ -710,14 +710,14 @@ int edmByteClass::drawActiveBits()
   }
   else if (valuePvId && valuePvId->is_valid())
   {
-     value = valuePvId->get_int();
+     value = (valuePvId->get_int() >> shft);
      int i = 0;
      int mask;
      actWin->executeGc.setLineWidth( lineWidth );
      actWin->executeGc.setLineStyle( lineStyle );
      if (theDir == LITTLEENDIAN)
      {
-        for (i = 0, mask = 1 << shft; i < nobt; i++, mask <<= 1)
+        for (i = 0, mask = 1; i < nobt; i++, mask <<= 1)
         {
            if ((lastval ^ value) & mask)
               innerDrawBits(value, i, mask);
@@ -725,7 +725,7 @@ int edmByteClass::drawActiveBits()
      }
      else  // BIGENDIAN
      {
-        for (i = 0, mask= 1 << (shft + nobt -1); i < nobt; i++, mask >>= 1)
+        for (i = 0, mask= 1 << (nobt -1); i < nobt; i++, mask >>= 1)
         {
            if ((lastval ^ value) & mask)
               innerDrawBits(value, i, mask);
@@ -754,18 +754,19 @@ int edmByteClass::drawActiveFull()
      actWin->executeGc.setFG(offPixel);
      XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
+     bufInvalid = false;
   }
   else if (valuePvId && valuePvId->is_valid())
   {
      lastval = value;
-     value = valuePvId->get_int();
+     value = (valuePvId->get_int() >> shft);
      int previous = 0;
      int lastseg = 0;
      int i = 0;
      int mask;
      if (theDir == LITTLEENDIAN)
      {
-        mask = 1 << shft;
+        mask = 1;
         previous = (value & mask)?1:0;
         mask <<= 1;
         for (i = 1; i <= nobt; i++, mask <<= 1)
@@ -775,7 +776,7 @@ int edmByteClass::drawActiveFull()
      }
      else  // BIGENDIAN
      {
-        mask = 1 << shft + nobt -1;
+        mask = 1 << (nobt -1);
         previous = (value & mask)?1:0;
         mask >>= 1;
         for (i = 1; i <= nobt; i++, mask >>= 1)
@@ -783,6 +784,7 @@ int edmByteClass::drawActiveFull()
            innerDrawFull(value, i, mask, previous, lastseg);
         }
      }
+     bufInvalid = false;
   }
  
   actWin->executeGc.setFG( actWin->ci->getPixelByIndex(lineColor) );
@@ -857,12 +859,17 @@ void edmByteClass::executeDeferred()
     if (actWin->isIconified)
         return;
 
-    actWin->appCtx->proc->lock();
-    actWin->remDefExeNode(aglPtr);
-    actWin->appCtx->proc->unlock();
-
     if (is_executing)
+    {
        drawActive();
+
+       if (!bufInvalid)
+       {
+          actWin->appCtx->proc->lock();
+          actWin->remDefExeNode(aglPtr);
+          actWin->appCtx->proc->unlock();
+       }
+    }
 }
 
 // Drag & drop support
