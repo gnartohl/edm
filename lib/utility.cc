@@ -21,6 +21,20 @@
 #include "utility.h"
 #include <errno.h>
 
+int debugMode ( void ) {
+
+char *envPtr;
+
+  envPtr = getenv( "EDMDEBUGMODE" );
+  if ( envPtr ) {
+    return 1;
+  }
+  else {
+    return 0;
+  }
+
+}
+
 int blank (
   char *string )
 {

@@ -432,6 +432,10 @@ void keypadClass::popup ( void ) {
 
 void keypadClass::popdown ( void ) {
 
+  if ( debugMode() ) {
+    printf( "debug - 5\n" );
+  }
+
   XtPopdown( shell );
   poppedUp = 0;
 

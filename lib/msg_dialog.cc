@@ -131,6 +131,10 @@ Arg args[5];
 int n;
 XmString str;
 
+  if ( debugMode() ) {
+    printf( "debug - 6\n" );
+  }
+
   XtPopdown( shell );
 
   str = XmStringCreateLocalized( text );
@@ -160,6 +164,10 @@ XmString str;
 }
 
 int msgDialogClass::popdown ( void ) {
+
+  if ( debugMode() ) {
+    printf( "debug - 7\n" );
+  }
 
   winOpen = 0;
   XtPopdown( shell );

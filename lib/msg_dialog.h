@@ -36,6 +36,7 @@
 
 #include "font_pkg.h"
 #include "msg_dialog.str"
+#include "utility.h"
 
 class msgDialogClass {
 

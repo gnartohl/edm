@@ -37,6 +37,8 @@
 #include <Xm/List.h>
 #include <Xm/Protocols.h>
 
+#include "utility.h"
+
 #ifdef __scrolled_list_cc
 
 #include "scrolled_list.str"

@@ -23,6 +23,8 @@
 #include <Xm/TextF.h>
 #include <Xm/Text.h>
 
+#include "utility.h"
+
 typedef struct keypadWidgetListTag {
   struct widgetListTag *flink;
   Widget pb;

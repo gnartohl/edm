@@ -36,6 +36,7 @@
 
 #include "font_pkg.h"
 #include "confirm_dialog.str"
+#include "utility.h"
 
 class confirmDialogClass {
 

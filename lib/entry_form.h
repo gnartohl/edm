@@ -36,6 +36,7 @@
 #include <Xm/Text.h>
 #include <Xm/Separator.h>
 
+#include "utility.h"
 #include "color_pkg.h"
 #include "color_button.h"
 #include "font_pkg.h"

@@ -29,6 +29,8 @@
 #include "font_pkg.h"
 #include "gc_pkg.h"
 
+int debugMode ( void );
+
 int blank (
   char *string );
 

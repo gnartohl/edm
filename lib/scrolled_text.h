@@ -37,6 +37,7 @@
 #include <Xm/Protocols.h>
 
 #include "font_pkg.h"
+#include "utility.h"
 
 #include "scrolled_text.str"
 

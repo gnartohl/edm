@@ -447,6 +447,10 @@ int scrolledListClass::popup ( void ) {
 
 int scrolledListClass::popdown ( void ) {
 
+  if ( debugMode() ) {
+    printf( "debug - 8\n" );
+  }
+
   XtPopdown( shell );
   windowIsOpen = 0;
 

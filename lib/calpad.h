@@ -27,6 +27,8 @@
 #include <Xm/Scale.h>
 #include <Xm/ArrowB.h>
 
+#include "utility.h"
+
 typedef struct calpadWidgetListTag {
   struct widgetListTag *flink;
   Widget pb;

@@ -232,6 +232,10 @@ void calpadClass::popup ( void ) {
 
 void calpadClass::popdown ( void ) {
 
+  if ( debugMode() ) {
+    printf( "debug - 3\n" );
+  }
+
   XtPopdown( shell );
   poppedUp = 0;
 

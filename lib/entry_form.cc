@@ -4927,6 +4927,10 @@ short paneW = 0, paneH = 0;
 
 int entryFormClass::popdown ( void ) {
 
+  if ( debugMode() ) {
+    printf( "debug - 1\n" );
+  }
+
   XtPopdown( shell );
 
   isPoppedUp = 0;
@@ -4941,6 +4945,10 @@ int entryFormClass::popdownNoDestroy ( void ) {
 
   XtRemoveEventHandler( shell, StructureNotifyMask, False,
    entryFormEventHandler, (XtPointer) this );
+
+  if ( debugMode() ) {
+    printf( "debug - 2\n" );
+  }
 
   XtPopdown( shell );
 
