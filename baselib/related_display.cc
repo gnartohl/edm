@@ -1486,7 +1486,12 @@ XmString str;
 
           for ( ii=0; ii<numDsps; ii++ ) {
 
-            str = XmStringCreateLocalized( label[ii].getExpanded() );
+            if ( label[ii].getExpanded() ) {
+              str = XmStringCreateLocalized( label[ii].getExpanded() );
+	    }
+	    else {
+              str = XmStringCreateLocalized( " " );
+	    }
             pb[ii] = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
              popUpMenu,
              XmNlabelString, str,
