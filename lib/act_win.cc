@@ -6389,6 +6389,16 @@ unsigned int mask;
 
 //========== Shift B3 Press ===================================
 
+          if ( awo->state == AWC_EDITING_POINTS ) {
+
+            awo->currentPointObject->lineEditCancel();
+            stat = awo->undoObj.performUndo();
+            awo->clear();
+            awo->refresh();
+            awo->updateMasterSelection();
+
+	  }
+
 //========== Shift B3 Press ===================================
 
         }
@@ -6396,12 +6406,28 @@ unsigned int mask;
 
 //========== Ctrl B3 Press ===================================
 
+          if ( awo->state == AWC_EDITING_POINTS ) {
+
+            //awo->filterPosition( &be->x, &be->y, be->x, be->y );
+
+            stat = awo->currentPointObject->removePoint( be->x, be->y );
+
+          }
+
 //========== Ctrl B3 Press ===================================
 
         }
         else {
 
 //========== B3 Press ===================================
+
+          if ( awo->state == AWC_EDITING_POINTS ) {
+
+            //awo->filterPosition( &be->x, &be->y, be->x, be->y );
+
+            stat = awo->currentPointObject->insertPoint( be->x, be->y );
+
+          }
 
 //========== B3 Press ===================================
 

@@ -1969,6 +1969,24 @@ int activeGraphicClass::addPoint (
 
 }
 
+int activeGraphicClass::insertPoint (
+  int x,
+  int y )
+{
+
+  return 1;
+
+}
+
+int activeGraphicClass::removePoint (
+  int x,
+  int y )
+{
+
+  return 1;
+
+}
+
 int activeGraphicClass::removeLastPoint ( void )
 {
 

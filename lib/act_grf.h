@@ -493,6 +493,14 @@ virtual int addPoint (
   int x,
   int y );
 
+virtual int activeGraphicClass::insertPoint (
+  int x,
+  int y );
+
+virtual int activeGraphicClass::removePoint (
+  int x,
+  int y );
+
 virtual int removeLastPoint ( void );
 
 virtual pointPtr selectPoint (
