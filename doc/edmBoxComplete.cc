@@ -1,19 +1,18 @@
 //  for object: 2ed7d2e8-f439-11d2-8fed-00104b8742df
 //  for lib: 3014b6ee-f439-11d2-ad99-00104b8742df
 
-#define SMARTDRAW 1
+//#define SMARTDRAW 1
 
 #define __edmBox_cc 1
 
 #include "edmBoxComplete.h"
-#include "app_pkg.h"
-#include "act_win.h"
 
 static void eboMonitorPvConnectState (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-edmBoxClass *ebo = (edmBoxClass *) ca_puser(arg.chid);
+edmBoxClass *ebo = (edmBoxClass *) userarg;
 
   ebo->actWin->appCtx->proc->lock();
 
@@ -22,9 +21,25 @@ edmBoxClass *ebo = (edmBoxClass *) ca_puser(arg.chid);
     return;
   }
 
-  ebo->fieldType = ca_field_type(arg.chid);
+  if ( pv->is_valid() ) {
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+    ebo->fieldType = (int) pv->get_type().type;
+
+    ebo->curValue = pv->get_double();
+
+    if ( ebo->efReadMin.isNull() ) {
+      ebo->readMin = pv->get_lower_disp_limit();
+    }
+    else {
+      ebo->readMin = ebo->efReadMin.value();
+    }
+
+    if ( ebo->efReadMax.isNull() ) {
+      ebo->readMax = pv->get_upper_disp_limit();
+    }
+    else {
+      ebo->readMax = ebo->efReadMax.value();
+    }
 
     ebo->needConnectInit = 1;
 
@@ -45,91 +60,32 @@ edmBoxClass *ebo = (edmBoxClass *) ca_puser(arg.chid);
 
 }
 
-static void edmBoxInfoUpdate (
-  struct event_handler_args ast_args )
-{
-
-  if ( ast_args.status == ECA_DISCONN ) {
-    return;
-  }
-
-edmBoxClass *ebo = (edmBoxClass *) ast_args.usr;
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
-
-  ebo->actWin->appCtx->proc->lock();
-
-  if ( !ebo->activeMode ) {
-    ebo->actWin->appCtx->proc->unlock();
-    return;
-  }
-
-  ebo->curValue = controlRec.value;
-
-  if ( ebo->efReadMin.isNull() ) {
-    ebo->readMin = controlRec.lower_disp_limit;
-  }
-  else {
-    ebo->readMin = ebo->efReadMin.value();
-  }
-
-  if ( ebo->efReadMax.isNull() ) {
-    ebo->readMax = controlRec.upper_disp_limit;
-  }
-  else {
-    ebo->readMax = ebo->efReadMax.value();
-  }
-
-  ebo->needInfoInit = 1;
-  ebo->actWin->addDefExeNode( ebo->aglPtr );
-
-  ebo->actWin->appCtx->proc->unlock();
-
-}
-
 static void edmBoxUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-class edmBoxClass *ebo = (edmBoxClass *) ast_args.usr;
+class edmBoxClass *ebo = (edmBoxClass *) userarg;
+int st, sev;
+
+  if ( !ebo->activeMode ) return;
 
   ebo->actWin->appCtx->proc->lock();
 
-  if ( !ebo->activeMode ) {
-    ebo->actWin->appCtx->proc->unlock();
-    return;
-  }
-
-  ebo->curValue = *( (double *) ast_args.dbr );
-
+  ebo->curValue = pv->get_double();
   ebo->needUpdate = 1;
-  ebo->actWin->addDefExeNode( ebo->aglPtr );
 
-  ebo->actWin->appCtx->proc->unlock();
-
-}
-
-static void edmBoxAlarmUpdate (
-  struct event_handler_args ast_args )
-{
-
-edmBoxClass *ebo = (edmBoxClass *) ca_puser(ast_args.chid);
-struct dbr_sts_float boxStatus;
-
-  ebo->actWin->appCtx->proc->lock();
-
-  if ( !ebo->activeMode ) {
-    ebo->actWin->appCtx->proc->unlock();
-    return;
+  st = pv->get_status();
+  sev = pv->get_severity();
+  if ( ( st != ebo->oldStat ) || ( sev != ebo->oldSev ) ) {
+    ebo->oldStat = st;
+    ebo->oldSev = sev;
+    ebo->lineColor.setStatus( st, sev );
+    ebo->fillColor.setStatus( st, sev );
+    ebo->needDraw = 1;
+    ebo->bufInvalidate();
   }
 
-  ebo = (edmBoxClass *) ast_args.usr;
-
-  boxStatus = *( (struct dbr_sts_float *) ast_args.dbr );
-  ebo->lineColor.setStatus( boxStatus.status, boxStatus.severity );
-  ebo->fillColor.setStatus( boxStatus.status, boxStatus.severity );
-
-  ebo->needDraw = 1;
-  ebo->bufInvalidate();
   ebo->actWin->addDefExeNode( ebo->aglPtr );
 
   ebo->actWin->appCtx->proc->unlock();
@@ -535,6 +491,144 @@ int edmBoxClass::createFromFile (
   activeWindowClass *_actWin )
 {
 
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+int one = 1;
+static char *emptyStr = "";
+
+int solid = LineSolid;
+static char *styleEnumStr[2] = {
+  "solid",
+  "dash"
+};
+static int styleEnum[2] = {
+  LineSolid,
+  LineOnOffDash
+};
+
+static int left = XmALIGNMENT_BEGINNING;
+static char *alignEnumStr[3] = {
+  "left",
+  "center",
+  "right"
+};
+static int alignEnum[3] = {
+  XmALIGNMENT_BEGINNING,
+  XmALIGNMENT_CENTER,
+  XmALIGNMENT_END
+};
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "controlPv", &pvExpStr, emptyStr );
+  tag.loadR( "lineColor", actWin->ci, &lineColor );
+  tag.loadR( "lineAlarm", &lineColorMode, &zero );
+  tag.loadR( "fill", &fill, &zero );
+  tag.loadR( "fillColor", actWin->ci, &fillColor );
+  tag.loadR( "fillAlarm", &fillColorMode, &zero );
+  tag.loadR( "lineWidth", &lineWidth, &one );
+  tag.loadR( "lineStyle", 2, styleEnumStr, styleEnum, &lineStyle, &solid );
+  tag.loadR( "min", &efReadMin );
+  tag.loadR( "max", &efReadMax );
+  tag.loadR( "font", 63, fontTag );
+  tag.loadR( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
+  tag.loadR( "label", 63, label, emptyStr );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > EBC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  if ( lineColorMode == EBC_K_COLORMODE_ALARM )
+    lineColor.setAlarmSensitive();
+  else
+    lineColor.setAlarmInsensitive();
+
+  if ( fillColorMode == EBC_K_COLORMODE_ALARM )
+    fillColor.setAlarmSensitive();
+  else
+    fillColor.setAlarmInsensitive();
+
+  if ( ( efReadMin.isNull() ) && ( efReadMax.isNull() ) ) {
+    readMin = 0;
+    readMax = 10;
+  }
+  else{
+    readMin = efReadMin.value();
+    readMax = efReadMax.value();
+  }
+
+  actWin->fi->loadFontTag( fontTag );
+  fs = actWin->fi->getXFontStruct( fontTag );
+  stringLength = strlen( label );
+  updateFont( label, fontTag, &fs,
+   &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+
+  if ( alignment == XmALIGNMENT_BEGINNING )
+    labelX = x;
+  else if ( alignment == XmALIGNMENT_CENTER )
+    labelX = x + w/2 - stringWidth/2;
+  else if ( alignment == XmALIGNMENT_END )
+    labelX = x + w - stringWidth;
+  labelY = y + h;
+
+  boxH = h - fontHeight;
+  if ( boxH < 5 ) {
+    boxH = 5;
+    h = boxH + fontHeight;
+  }
+
+  if ( readMax > readMin ) {
+    factorW = (double) w / ( readMax - readMin );
+    factorH = (double) boxH / ( readMax - readMin );
+  }
+  else {
+    factorW = 1;
+    factorH = 1;
+  }
+
+  centerX = x + (int) ( w * 0.5 + 0.5 );
+  centerY = y + (int) ( boxH * 0.5 + 0.5 );
+
+  curValue = 0;
+
+  return stat;
+
+}
+
+int edmBoxClass::old_createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
@@ -708,6 +802,75 @@ int edmBoxClass::save (
   FILE *f )
 {
 
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+int one = 1;
+static char *emptyStr = "";
+
+int solid = LineSolid;
+static char *styleEnumStr[2] = {
+  "solid",
+  "dash"
+};
+static int styleEnum[2] = {
+  LineSolid,
+  LineOnOffDash
+};
+
+static int left = XmALIGNMENT_BEGINNING;
+static char *alignEnumStr[3] = {
+  "left",
+  "center",
+  "right"
+};
+static int alignEnum[3] = {
+  XmALIGNMENT_BEGINNING,
+  XmALIGNMENT_CENTER,
+  XmALIGNMENT_END
+};
+
+  major = EBC_MAJOR_VERSION;
+  minor = EBC_MINOR_VERSION;
+  release = EBC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "controlPv", &pvExpStr, emptyStr );
+  tag.loadW( "lineColor", actWin->ci, &lineColor );
+  tag.loadBoolW( "lineAlarm", &lineColorMode, &zero );
+  tag.loadBoolW( "fill", &fill, &zero );
+  tag.loadW( "fillColor", actWin->ci, &fillColor );
+  tag.loadBoolW( "fillAlarm", &fillColorMode, &zero );
+  tag.loadW( "lineWidth", &lineWidth, &one );
+  tag.loadW( "lineStyle", 2, styleEnumStr, styleEnum, &lineStyle, &solid );
+  tag.loadW( "min", &efReadMin );
+  tag.loadW( "max", &efReadMax );
+  tag.loadW( "font", fontTag );
+  tag.loadW( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
+  tag.loadW( "label", label, emptyStr );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int edmBoxClass::old_save (
+  FILE *f )
+{
+
 int index, stat;
 
   fprintf( f, "%-d %-d %-d\n", EBC_MAJOR_VERSION, EBC_MINOR_VERSION,
@@ -755,7 +918,7 @@ int index, stat;
 
 int edmBoxClass::drawActive ( void ) {
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   actWin->executeGc.saveFg();
 
@@ -797,7 +960,7 @@ int edmBoxClass::drawActive ( void ) {
 
 int edmBoxClass::eraseActive ( void ) {
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   if ( fill ) {
     XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
@@ -883,25 +1046,7 @@ int stat;
 
   case 1: // initialize
 
-    aglPtr = ptr;
-    needConnectInit = needInfoInit = needUpdate = needDraw = 0;
-    init = 0;
     opComplete = 0;
-    eventId = alarmEventId = infoEventId = 0;
-    active = 0;
-    activeMode = 1;
-    bufferInvalid = 0;
-    pointerMotionDetected = 0;
-
-    if ( !pvExpStr.getExpanded() ||
-       ( strcmp( pvExpStr.getExpanded(), "" ) == 0 ) ) {
-      pvExists = 0;
-    }
-    else {
-      pvExists = 1;
-      lineColor.setConnectSensitive();
-      fillColor.setConnectSensitive();
-    }
 
     break;
 
@@ -909,12 +1054,35 @@ int stat;
 
     if ( !opComplete ) {
 
+      initEnable();
+      aglPtr = ptr;
+      needConnectInit = needUpdate = needDraw = 0;
+      init = 0;
+      active = 0;
+      activeMode = 1;
+      bufferInvalid = 0;
+      pointerMotionDetected = 0;
+      pvId = NULL;
+      initialConnection = 1;
+      oldStat = oldSev = -1;
+
+      if ( !pvExpStr.getExpanded() ||
+         ( strcmp( pvExpStr.getExpanded(), "" ) == 0 ) ) {
+        pvExists = 0;
+      }
+      else {
+        pvExists = 1;
+        lineColor.setConnectSensitive();
+        fillColor.setConnectSensitive();
+      }
+
       if ( pvExists ) {
-        stat = ca_search_and_connect( pvExpStr.getExpanded(), &pvId,
-         eboMonitorPvConnectState, this );
-        if ( stat != ECA_NORMAL ) {
+	pvId = the_PV_Factory->create( pvExpStr.getExpanded() );
+	if ( pvId ) {
+	  pvId->add_conn_state_callback( eboMonitorPvConnectState, this );
+	}
+	else {
           printf( edmBoxComplete_str21 );
-          return 0;
         }
       }
       else {
@@ -950,23 +1118,16 @@ int edmBoxClass::deactivate (
   int pass )
 {
 
-int stat;
-
   if ( pass == 1 ) {
 
-  activeMode = 0;
+    activeMode = 0;
 
-  if ( eventId ) {
-    stat = ca_clear_event( eventId );
-    if ( stat != ECA_NORMAL )
-      printf( edmBoxComplete_str22 );
-  }
-
-  if ( pvExists ) {
-    stat = ca_clear_channel( pvId );
-    if ( stat != ECA_NORMAL )
-      printf( edmBoxComplete_str23 );
-  }
+    if ( pvId ) {
+      pvId->remove_conn_state_callback( eboMonitorPvConnectState, this );
+      pvId->remove_value_callback( edmBoxUpdate, this );
+      pvId->release();
+      pvId = NULL;
+    }
 
   }
 
@@ -1125,9 +1286,10 @@ void edmBoxClass::btnUp (
 {
 
 double v;
-int stat;
 
   *action = 0;
+
+  if ( !enabled ) return;
 
   if ( pvExists && !pointerMotionDetected ) {
 
@@ -1140,11 +1302,7 @@ int stat;
       if ( v > readMax ) v = readMax;
     }
 
-#ifdef __epics__
-
-    stat = ca_put( DBR_DOUBLE, pvId, &v );
-
-#endif
+    pvId->put( v );
 
   }
 
@@ -1157,6 +1315,8 @@ void edmBoxClass::btnDown (
   int buttonNumber,
   int *action )
 {
+
+  if ( !enabled ) return;
 
   pointerMotionDetected = 0;
 
@@ -1171,9 +1331,10 @@ void edmBoxClass::btnDrag (
 {
 
 double v;
-int stat;
 
- pointerMotionDetected = 1;
+  if ( !enabled ) return;
+
+  pointerMotionDetected = 1;
 
   if ( pvExists ) {
 
@@ -1186,11 +1347,7 @@ int stat;
       if ( v > readMax ) v = readMax;
     }
 
-#ifdef __epics__
-
-    stat = ca_put( DBR_DOUBLE, pvId, &v );
-
-#endif
+    pvId->put( v );
 
   }
 
@@ -1218,7 +1375,7 @@ int edmBoxClass::getButtonActionRequest (
 
 void edmBoxClass::executeDeferred ( void ) {
 
-int stat, nc, ni, nu, nd;
+int stat, nc, nu, nd;
 double value;
 
   if ( actWin->isIconified ) return;
@@ -1233,7 +1390,6 @@ double value;
 
   value = curValue;
   nc = needConnectInit; needConnectInit = 0;
-  ni = needInfoInit; needInfoInit = 0;
   nu = needUpdate; needUpdate = 0;
   nd = needDraw; needDraw = 0;
   actWin->remDefExeNode( aglPtr );
@@ -1246,25 +1402,58 @@ double value;
   if ( nc ) {
 
     // require process variable to be numeric
-    if ( ( fieldType == DBR_ENUM ) ||
-         ( fieldType == DBR_INT ) ||
-         ( fieldType == DBR_LONG ) ||
-         ( fieldType == DBR_FLOAT ) ||
-         ( fieldType == DBR_DOUBLE ) ) {
+    if ( ( fieldType == ProcessVariable::Type::real ) ||
+         ( fieldType == ProcessVariable::Type::integer ) ) {
 
-      if ( !infoEventId ) {
-        stat = ca_get_callback( DBR_GR_DOUBLE, pvId,
-         edmBoxInfoUpdate, (void *) this );
-        if ( stat != ECA_NORMAL ) {
-          printf( edmBoxComplete_str24 );
-        }
+      stat = eraseActive();
+
+      if ( readMax > readMin ) {
+        factorW = (double) w / ( readMax - readMin );
+        factorH = (double) boxH / ( readMax - readMin );
       }
+      else {
+        factorW = 1;
+        factorH = 1;
+      }
+
+      centerX = x + (int) ( w * 0.5 + 0.5 );
+      centerY = y + (int) ( boxH * 0.5 + 0.5 );
+
+      if ( value > 0.0 ) {
+        sideW = (int) ( value * factorW + 0.5 );
+        sideX = centerX - (int) ( (double) sideW * 0.5 + 0.5 );
+        sideH = (int) ( value * factorH + 0.5 );
+        sideY = centerY - (int) ( (double) sideH * 0.5 + 0.5 );
+      }
+      else {
+        sideW = 1;
+        sideX = centerX;
+        sideH = 1;
+        sideY = centerY;
+      }
+
+      if ( initialConnection ) {
+        pvId->add_value_callback( edmBoxUpdate, this );
+      }
+
+      init = 1;
+      active = 1;
+      lineColor.setConnected();
+      fillColor.setConnected();
+
+      bufInvalidate();
+
+#if SMARTDRAW
+      smartDrawAllActive();
+#else
+      drawActive();
+#endif
 
     }
     else { // force a draw in the non-active state & post error message
 
       actWin->appCtx->postMessage(
-       edmBoxComplete_str25 );
+       edmBoxComplete_str22 );
 
       active = 0;
       init = 1;
@@ -1274,6 +1463,7 @@ double value;
       sideY = y;
       lineColor.setDisconnected();
       fillColor.setDisconnected();
+
 #if SMARTDRAW
       smartDrawAllActive();
 #else
@@ -1281,71 +1471,6 @@ double value;
 #endif
 
     }
-
-  }
-
-
-//----------------------------------------------------------------------------
-
-  if ( ni ) {
-
-    stat = eraseActive();
-
-    if ( readMax > readMin ) {
-      factorW = (double) w / ( readMax - readMin );
-      factorH = (double) boxH / ( readMax - readMin );
-    }
-    else {
-      factorW = 1;
-      factorH = 1;
-    }
-
-    centerX = x + (int) ( w * 0.5 + 0.5 );
-    centerY = y + (int) ( boxH * 0.5 + 0.5 );
-
-    if ( value > 0.0 ) {
-      sideW = (int) ( value * factorW + 0.5 );
-      sideX = centerX - (int) ( (double) sideW * 0.5 + 0.5 );
-      sideH = (int) ( value * factorH + 0.5 );
-      sideY = centerY - (int) ( (double) sideH * 0.5 + 0.5 );
-    }
-    else {
-      sideW = 1;
-      sideX = centerX;
-      sideH = 1;
-      sideY = centerY;
-    }
-
-    if ( !eventId ) {
-      stat = ca_add_masked_array_event( DBR_DOUBLE, 1, pvId,
-       edmBoxUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &eventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL ) {
-        printf( edmBoxComplete_str26 );
-      }
-    }
-
-    if ( !alarmEventId ) {
-      stat = ca_add_masked_array_event( DBR_STS_DOUBLE, 1, pvId,
-       edmBoxAlarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &alarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL ) {
-        printf( edmBoxComplete_str26 );
-      }
-    }
-
-    init = 1;
-    active = 1;
-    lineColor.setConnected();
-    fillColor.setConnected();
-
-    bufInvalidate();
-
-#if SMARTDRAW
-    smartDrawAllActive();
-#else
-    drawActive();
-#endif
 
   }
 
@@ -1394,7 +1519,7 @@ double value;
 
 char *edmBoxClass::firstDragName ( void ) {
 
-  dragIndex = 0;
+  if ( !enabled ) return NULL;
 
   return dragName[dragIndex];
 
@@ -1409,7 +1534,18 @@ char *edmBoxClass::nextDragName ( void ) {
 char *edmBoxClass::dragValue (
   int i ) {
 
-  return pvExpStr.getExpanded();
+  if ( !enabled ) return NULL;
+
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    return pvExpStr.getExpanded();
+
+  }
+  else {
+
+    return pvExpStr.getRaw();
+
+  }
 
 }
 

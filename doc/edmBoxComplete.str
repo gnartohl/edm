@@ -21,11 +21,7 @@
 #define edmBoxComplete_str18 (char *) "Label"
 #define edmBoxComplete_str19 (char *) "0|1|2|3|4|5|6|7|8|9|10"
 #define edmBoxComplete_str20 (char *) "Solid|Dash"
-#define edmBoxComplete_str21 (char *) "error from ca_search\n"
-#define edmBoxComplete_str22 (char *) "ca_clear_event failure\n"
-#define edmBoxComplete_str23 (char *) "ca_clear_channel failure\n"
-#define edmBoxComplete_str24 (char *) "ca_get_callback failed\n"
-#define edmBoxComplete_str25 (char *) "edmBoxClass - Process variable must be numeric"
-#define edmBoxComplete_str26 (char *) "ca_add_masked_array_event failed\n"
+#define edmBoxComplete_str21 (char *) "error creating pv\n"
+#define edmBoxComplete_str22 (char *) "edmBoxClass - Process variable must be numeric"
 
 #endif

@@ -1,19 +1,18 @@
 //  for object: 2ed7d2e8-f439-11d2-8fed-00104b8742df
 //  for lib: 3014b6ee-f439-11d2-ad99-00104b8742df
 
-#define SMARTDRAW 1
+//#define SMARTDRAW 1
 
 #define __edmBox_cc 1
 
 #include "edmBoxComplete.h"
-#include "app_pkg.h"
-#include "act_win.h"
 
 static void eboMonitorPvConnectState (
-  struct connection_handler_args arg )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-edmBoxClass *ebo = (edmBoxClass *) ca_puser(arg.chid);
+edmBoxClass *ebo = (edmBoxClass *) userarg;
 
   ebo->actWin->appCtx->proc->lock();
 
@@ -22,9 +21,25 @@ edmBoxClass *ebo = (edmBoxClass *) ca_puser(arg.chid);
     return;
   }
 
-  ebo->fieldType = ca_field_type(arg.chid);
+  if ( pv->is_valid() ) {
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+    ebo->fieldType = (int) pv->get_type().type;
+
+    ebo->curValue = pv->get_double();
+
+    if ( ebo->efReadMin.isNull() ) {
+      ebo->readMin = pv->get_lower_disp_limit();
+    }
+    else {
+      ebo->readMin = ebo->efReadMin.value();
+    }
+
+    if ( ebo->efReadMax.isNull() ) {
+      ebo->readMax = pv->get_upper_disp_limit();
+    }
+    else {
+      ebo->readMax = ebo->efReadMax.value();
+    }
 
     ebo->needConnectInit = 1;
 
@@ -45,88 +60,32 @@ edmBoxClass *ebo = (edmBoxClass *) ca_puser(arg.chid);
 
 }
 
-static void edmBoxInfoUpdate (
-  struct event_handler_args ast_args )
-{
-
-
-edmBoxClass *ebo = (edmBoxClass *) ast_args.usr;
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
-
-  ebo->actWin->appCtx->proc->lock();
-
-  if ( !ebo->activeMode ) {
-    ebo->actWin->appCtx->proc->unlock();
-    return;
-  }
-
-  ebo->curValue = controlRec.value;
-
-  if ( ebo->efReadMin.isNull() ) {
-    ebo->readMin = controlRec.lower_disp_limit;
-  }
-  else {
-    ebo->readMin = ebo->efReadMin.value();
-  }
-
-  if ( ebo->efReadMax.isNull() ) {
-    ebo->readMax = controlRec.upper_disp_limit;
-  }
-  else {
-    ebo->readMax = ebo->efReadMax.value();
-  }
-
-  ebo->needInfoInit = 1;
-  ebo->actWin->addDefExeNode( ebo->aglPtr );
-
-  ebo->actWin->appCtx->proc->unlock();
-
-}
-
 static void edmBoxUpdate (
-  struct event_handler_args ast_args )
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-class edmBoxClass *ebo = (edmBoxClass *) ast_args.usr;
+class edmBoxClass *ebo = (edmBoxClass *) userarg;
+int st, sev;
+
+  if ( !ebo->activeMode ) return;
 
   ebo->actWin->appCtx->proc->lock();
 
-  if ( !ebo->activeMode ) {
-    ebo->actWin->appCtx->proc->unlock();
-    return;
-  }
-
-  ebo->curValue = *( (double *) ast_args.dbr );
-
+  ebo->curValue = pv->get_double();
   ebo->needUpdate = 1;
-  ebo->actWin->addDefExeNode( ebo->aglPtr );
 
-  ebo->actWin->appCtx->proc->unlock();
-
-}
-
-static void edmBoxAlarmUpdate (
-  struct event_handler_args ast_args )
-{
-
-edmBoxClass *ebo = (edmBoxClass *) ca_puser(ast_args.chid);
-struct dbr_sts_float boxStatus;
-
-  ebo->actWin->appCtx->proc->lock();
-
-  if ( !ebo->activeMode ) {
-    ebo->actWin->appCtx->proc->unlock();
-    return;
+  st = pv->get_status();
+  sev = pv->get_severity();
+  if ( ( st != ebo->oldStat ) || ( sev != ebo->oldSev ) ) {
+    ebo->oldStat = st;
+    ebo->oldSev = sev;
+    ebo->lineColor.setStatus( st, sev );
+    ebo->fillColor.setStatus( st, sev );
+    ebo->needDraw = 1;
+    ebo->bufInvalidate();
   }
 
-  ebo = (edmBoxClass *) ast_args.usr;
-
-  boxStatus = *( (struct dbr_sts_float *) ast_args.dbr );
-  ebo->lineColor.setStatus( boxStatus.status, boxStatus.severity );
-  ebo->fillColor.setStatus( boxStatus.status, boxStatus.severity );
-
-  ebo->needDraw = 1;
-  ebo->bufInvalidate();
   ebo->actWin->addDefExeNode( ebo->aglPtr );
 
   ebo->actWin->appCtx->proc->unlock();
@@ -151,7 +110,7 @@ edmBoxClass *ebo = (edmBoxClass *) client;
     ebo->lineColor.setAlarmSensitive();
   else
     ebo->lineColor.setAlarmInsensitive();
-  ebo->lineColor.setColor( ebo->bufLineColor, ebo->actWin->ci );
+  ebo->lineColor.setColorIndex( ebo->bufLineColor, ebo->actWin->ci );
 
   ebo->fill = ebo->bufFill;
 
@@ -160,7 +119,7 @@ edmBoxClass *ebo = (edmBoxClass *) client;
     ebo->fillColor.setAlarmSensitive();
   else
     ebo->fillColor.setAlarmInsensitive();
-  ebo->fillColor.setColor( ebo->bufFillColor, ebo->actWin->ci );
+  ebo->fillColor.setColorIndex( ebo->bufFillColor, ebo->actWin->ci );
 
   ebo->lineWidth = ebo->bufLineWidth;
 
@@ -185,8 +144,8 @@ edmBoxClass *ebo = (edmBoxClass *) client;
 
   strncpy( ebo->fontTag, ebo->fm.currentFontTag(), 63 );
   ebo->fontTag[63] = 0;
+
   ebo->actWin->fi->loadFontTag( ebo->fontTag );
-  ebo->actWin->drawGc.setFontTag( ebo->fontTag, ebo->actWin->fi );
 
   ebo->alignment = ebo->fm.currentFontAlignment();
 
@@ -296,10 +255,10 @@ static void ebc_edit_cancel_delete (
 
 edmBoxClass *ebo = (edmBoxClass *) client;
 
-  ebo->ef.popdown();
-  ebo->operationCancel();
   ebo->erase();
   ebo->deleteRequest = 1;
+  ebo->ef.popdown();
+  ebo->operationCancel();
   ebo->drawAll();
 
 }
@@ -403,13 +362,13 @@ int edmBoxClass::createInteractive (
   w = _w;
   h = _h;
 
-  lineColor.setColor( actWin->defaultFg1Color, actWin->ci );
-  fillColor.setColor( actWin->defaultBgColor, actWin->ci );
-  strcpy( fontTag, actWin->defaultFontTag );
-  alignment = actWin->defaultAlignment;
+  lineColor.setColorIndex( actWin->defaultFg1Color, actWin->ci );
+  fillColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
+  strcpy( fontTag, actWin->defaultCtlFontTag );
+  alignment = actWin->defaultCtlAlignment;
 
   fs = actWin->fi->getXFontStruct( fontTag );
-  updateFont( "box", fontTag, &fs,
+  updateFont( " ", fontTag, &fs,
    &fontAscent, &fontDescent, &fontHeight,
    &stringWidth );
 
@@ -441,19 +400,19 @@ char title[32], *ptr;
   if ( ptr )
     strncpy( title, ptr, 31 );
   else
-    strncpy( title, "Unknown object", 31 );
+    strncpy( title, edmBoxComplete_str2, 31 );
 
-  strncat( title, " Properties", 31 );
+  Strncat( title, edmBoxComplete_str3, 31 );
 
   bufX = x;
   bufY = y;
   bufW = w;
   bufH = h;
 
-  bufLineColor = lineColor.pixelColor();
+  bufLineColor = lineColor.pixelIndex();
   bufLineColorMode = lineColorMode;
 
-  bufFillColor = fillColor.pixelColor();
+  bufFillColor = fillColor.pixelIndex();
   bufFillColorMode = fillColorMode;
 
   bufFill = fill;
@@ -461,9 +420,9 @@ char title[32], *ptr;
   bufLineStyle = lineStyle;
 
   if ( pvExpStr.getRaw() )
-    strncpy( bufPvName, pvExpStr.getRaw(), 39 );
+    strncpy( bufPvName, pvExpStr.getRaw(), activeGraphicClass::MAX_PV_NAME );
   else
-    strncpy( bufPvName, "", 39 );
+    strcpy( bufPvName, "" );
 
   bufEfReadMin = efReadMin;
   bufEfReadMax = efReadMax;
@@ -477,23 +436,28 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( "X", 25, &bufX );
-  ef.addTextField( "Y", 25, &bufY );
-  ef.addTextField( "Width", 25, &bufW );
-  ef.addTextField( "Height", 25, &bufH );
-  ef.addOption( "Line Thk", "0|1|2|3|4|5|6|7|8|9|10", &bufLineWidth );
-  ef.addOption( "Line Style", "Solid|Dash", &bufLineStyle );
-  ef.addColorButton( "Line Color", actWin->ci, &lineCb, &bufLineColor );
-  ef.addToggle( "Alarm Sensitive", &bufLineColorMode );
-  ef.addToggle( "Fill", &bufFill );
-  ef.addColorButton( "Fill Color", actWin->ci, &fillCb, &bufFillColor );
-  ef.addToggle( "Alarm Sensitive", &bufFillColorMode );
-  ef.addTextField( "PV", 27, bufPvName, 39 );
-  ef.addTextField( "Min Value", 27, &bufEfReadMin );
-  ef.addTextField( "Max Value", 27, &bufEfReadMax );
-  ef.addFontMenu( "Font", actWin->fi, &fm, fontTag );
+  ef.addTextField( edmBoxComplete_str4, 30, &bufX );
+  ef.addTextField( edmBoxComplete_str5, 30, &bufY );
+  ef.addTextField( edmBoxComplete_str6, 30, &bufW );
+  ef.addTextField( edmBoxComplete_str7, 30, &bufH );
+  ef.addOption( edmBoxComplete_str8, edmBoxComplete_str19,
+   &bufLineWidth );
+  ef.addOption( edmBoxComplete_str9, edmBoxComplete_str20,
+   &bufLineStyle );
+  ef.addColorButton( edmBoxComplete_str10, actWin->ci, &lineCb,
+   &bufLineColor );
+  ef.addToggle( edmBoxComplete_str11, &bufLineColorMode );
+  ef.addToggle( edmBoxComplete_str12, &bufFill );
+  ef.addColorButton( edmBoxComplete_str13, actWin->ci, &fillCb,
+   &bufFillColor );
+  ef.addToggle( edmBoxComplete_str11, &bufFillColorMode );
+  ef.addTextField( edmBoxComplete_str14, 30, bufPvName,
+   activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( edmBoxComplete_str15, 30, &bufEfReadMin );
+  ef.addTextField( edmBoxComplete_str16, 30, &bufEfReadMax );
+  ef.addFontMenu( edmBoxComplete_str17, actWin->fi, &fm, fontTag );
   fm.setFontAlignment( alignment );
-  ef.addTextField( "Label", 27, bufLabel, 63 );
+  ef.addTextField( edmBoxComplete_str18, 30, bufLabel, 63 );
 
   return 1;
 
@@ -527,14 +491,157 @@ int edmBoxClass::createFromFile (
   activeWindowClass *_actWin )
 {
 
-int r, g, b;
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+int one = 1;
+static char *emptyStr = "";
+
+int solid = LineSolid;
+static char *styleEnumStr[2] = {
+  "solid",
+  "dash"
+};
+static int styleEnum[2] = {
+  LineSolid,
+  LineOnOffDash
+};
+
+static int left = XmALIGNMENT_BEGINNING;
+static char *alignEnumStr[3] = {
+  "left",
+  "center",
+  "right"
+};
+static int alignEnum[3] = {
+  XmALIGNMENT_BEGINNING,
+  XmALIGNMENT_CENTER,
+  XmALIGNMENT_END
+};
+
+  this->actWin = _actWin;
+
+  tag.init();
+  tag.loadR( "beginObjectProperties" );
+  tag.loadR( "major", &major );
+  tag.loadR( "minor", &minor );
+  tag.loadR( "release", &release );
+  tag.loadR( "x", &x );
+  tag.loadR( "y", &y );
+  tag.loadR( "w", &w );
+  tag.loadR( "h", &h );
+  tag.loadR( "controlPv", &pvExpStr, emptyStr );
+  tag.loadR( "lineColor", actWin->ci, &lineColor );
+  tag.loadR( "lineAlarm", &lineColorMode, &zero );
+  tag.loadR( "fill", &fill, &zero );
+  tag.loadR( "fillColor", actWin->ci, &fillColor );
+  tag.loadR( "fillAlarm", &fillColorMode, &zero );
+  tag.loadR( "lineWidth", &lineWidth, &one );
+  tag.loadR( "lineStyle", 2, styleEnumStr, styleEnum, &lineStyle, &solid );
+  tag.loadR( "min", &efReadMin );
+  tag.loadR( "max", &efReadMax );
+  tag.loadR( "font", 63, fontTag );
+  tag.loadR( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
+  tag.loadR( "label", 63, label, emptyStr );
+  tag.loadR( "endObjectProperties" );
+
+  stat = tag.readTags( f, "endObjectProperties" );
+
+  if ( !( stat & 1 ) ) {
+    actWin->appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( major > EBC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
+
+  if ( major < 4 ) {
+    postIncompatable();
+    return 0;
+  }
+
+  this->initSelectBox(); // call after getting x,y,w,h
+
+  if ( lineColorMode == EBC_K_COLORMODE_ALARM )
+    lineColor.setAlarmSensitive();
+  else
+    lineColor.setAlarmInsensitive();
+
+  if ( fillColorMode == EBC_K_COLORMODE_ALARM )
+    fillColor.setAlarmSensitive();
+  else
+    fillColor.setAlarmInsensitive();
+
+  if ( ( efReadMin.isNull() ) && ( efReadMax.isNull() ) ) {
+    readMin = 0;
+    readMax = 10;
+  }
+  else{
+    readMin = efReadMin.value();
+    readMax = efReadMax.value();
+  }
+
+  actWin->fi->loadFontTag( fontTag );
+  fs = actWin->fi->getXFontStruct( fontTag );
+  stringLength = strlen( label );
+  updateFont( label, fontTag, &fs,
+   &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+
+  if ( alignment == XmALIGNMENT_BEGINNING )
+    labelX = x;
+  else if ( alignment == XmALIGNMENT_CENTER )
+    labelX = x + w/2 - stringWidth/2;
+  else if ( alignment == XmALIGNMENT_END )
+    labelX = x + w - stringWidth;
+  labelY = y + h;
+
+  boxH = h - fontHeight;
+  if ( boxH < 5 ) {
+    boxH = 5;
+    h = boxH + fontHeight;
+  }
+
+  if ( readMax > readMin ) {
+    factorW = (double) w / ( readMax - readMin );
+    factorH = (double) boxH / ( readMax - readMin );
+  }
+  else {
+    factorW = 1;
+    factorH = 1;
+  }
+
+  centerX = x + (int) ( w * 0.5 + 0.5 );
+  centerY = y + (int) ( boxH * 0.5 + 0.5 );
+
+  curValue = 0;
+
+  return stat;
+
+}
+
+int edmBoxClass::old_createFromFile (
+  FILE *f,
+  char *name,
+  activeWindowClass *_actWin )
+{
+
+int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[39+1];
+char oneName[activeGraphicClass::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
   fscanf( f, "%d %d %d\n", &major, &minor, &release ); actWin->incLine();
+
+  if ( major > EBC_MAJOR_VERSION ) {
+    postIncompatable();
+    return 0;
+  }
 
   fscanf( f, "%d\n", &x ); actWin->incLine();
   fscanf( f, "%d\n", &y ); actWin->incLine();
@@ -543,22 +650,66 @@ char oneName[39+1];
 
   this->initSelectBox(); // call after getting x,y,w,h
 
-  fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
-  actWin->ci->setRGB( r, g, b, &pixel );
-  lineColor.setColor( pixel, actWin->ci );
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 0 ) ) ) {
 
-  fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    lineColor.setColorIndex( index, actWin->ci );
 
-  if ( lineColorMode == EBC_K_COLORMODE_ALARM )
-    lineColor.setAlarmSensitive();
-  else
-    lineColor.setAlarmInsensitive();
+    fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
 
-  fscanf( f, "%d\n", &fill ); actWin->incLine();
+    if ( lineColorMode == EBC_K_COLORMODE_ALARM )
+      lineColor.setAlarmSensitive();
+    else
+      lineColor.setAlarmInsensitive();
 
-  fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
-  actWin->ci->setRGB( r, g, b, &pixel );
-  fillColor.setColor( pixel, actWin->ci );
+    fscanf( f, "%d\n", &fill ); actWin->incLine();
+
+    actWin->ci->readColorIndex( f, &index );
+    actWin->incLine(); actWin->incLine();
+    fillColor.setColorIndex( index, actWin->ci );
+
+  }
+  else if ( major > 1 ) {
+
+    fscanf( f, "%d\n", &index ); actWin->incLine();
+    lineColor.setColorIndex( index, actWin->ci );
+
+    fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
+
+    if ( lineColorMode == EBC_K_COLORMODE_ALARM )
+      lineColor.setAlarmSensitive();
+    else
+      lineColor.setAlarmInsensitive();
+
+    fscanf( f, "%d\n", &fill ); actWin->incLine();
+
+    fscanf( f, "%d\n", &index ); actWin->incLine();
+    fillColor.setColorIndex( index, actWin->ci );
+
+  }
+  else {
+
+    fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
+    actWin->ci->setRGB( r, g, b, &pixel );
+    index = actWin->ci->pixIndex( pixel );
+    lineColor.setColorIndex( index, actWin->ci );
+
+    fscanf( f, "%d\n", &lineColorMode ); actWin->incLine();
+
+    if ( lineColorMode == EBC_K_COLORMODE_ALARM )
+      lineColor.setAlarmSensitive();
+    else
+      lineColor.setAlarmInsensitive();
+
+    fscanf( f, "%d\n", &fill ); actWin->incLine();
+
+    fscanf( f, "%d %d %d\n", &r, &g, &b ); actWin->incLine();
+    actWin->ci->setRGB( r, g, b, &pixel );
+    index = actWin->ci->pixIndex( pixel );
+    fillColor.setColorIndex( index, actWin->ci );
+
+  }
 
   fscanf( f, "%d\n", &fillColorMode ); actWin->incLine();
 
@@ -567,7 +718,8 @@ char oneName[39+1];
   else
     fillColor.setAlarmInsensitive();
 
-  readStringFromFile( oneName, 39, f ); actWin->incLine();
+  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+   actWin->incLine();
   pvExpStr.setRaw( oneName );
 
   fscanf( f, "%d\n", &lineWidth ); actWin->incLine();
@@ -588,8 +740,8 @@ char oneName[39+1];
   }
 
   if ( ( major > 1 ) || ( minor > 3 ) ) {
-    readStringFromFile( fontTag, 63, f ); actWin->incLine();
-    readStringFromFile( label, 63, f ); actWin->incLine();
+    readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
+    readStringFromFile( label, 63+1, f ); actWin->incLine();
     actWin->fi->loadFontTag( fontTag );
     fs = actWin->fi->getXFontStruct( fontTag );
     stringLength = strlen( label );
@@ -650,7 +802,76 @@ int edmBoxClass::save (
   FILE *f )
 {
 
-int r, g, b, stat;
+int major, minor, release, stat;
+
+tagClass tag;
+
+int zero = 0;
+int one = 1;
+static char *emptyStr = "";
+
+int solid = LineSolid;
+static char *styleEnumStr[2] = {
+  "solid",
+  "dash"
+};
+static int styleEnum[2] = {
+  LineSolid,
+  LineOnOffDash
+};
+
+static int left = XmALIGNMENT_BEGINNING;
+static char *alignEnumStr[3] = {
+  "left",
+  "center",
+  "right"
+};
+static int alignEnum[3] = {
+  XmALIGNMENT_BEGINNING,
+  XmALIGNMENT_CENTER,
+  XmALIGNMENT_END
+};
+
+  major = EBC_MAJOR_VERSION;
+  minor = EBC_MINOR_VERSION;
+  release = EBC_RELEASE;
+
+  tag.init();
+  tag.loadW( "beginObjectProperties" );
+  tag.loadW( "major", &major );
+  tag.loadW( "minor", &minor );
+  tag.loadW( "release", &release );
+  tag.loadW( "x", &x );
+  tag.loadW( "y", &y );
+  tag.loadW( "w", &w );
+  tag.loadW( "h", &h );
+  tag.loadW( "controlPv", &pvExpStr, emptyStr );
+  tag.loadW( "lineColor", actWin->ci, &lineColor );
+  tag.loadBoolW( "lineAlarm", &lineColorMode, &zero );
+  tag.loadBoolW( "fill", &fill, &zero );
+  tag.loadW( "fillColor", actWin->ci, &fillColor );
+  tag.loadBoolW( "fillAlarm", &fillColorMode, &zero );
+  tag.loadW( "lineWidth", &lineWidth, &one );
+  tag.loadW( "lineStyle", 2, styleEnumStr, styleEnum, &lineStyle, &solid );
+  tag.loadW( "min", &efReadMin );
+  tag.loadW( "max", &efReadMax );
+  tag.loadW( "font", fontTag );
+  tag.loadW( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
+  tag.loadW( "label", label, emptyStr );
+  tag.loadW( "endObjectProperties" );
+  tag.loadW( "" );
+
+  stat = tag.writeTags( f );
+
+  return stat;
+
+}
+
+int edmBoxClass::old_save (
+  FILE *f )
+{
+
+int index, stat;
 
   fprintf( f, "%-d %-d %-d\n", EBC_MAJOR_VERSION, EBC_MINOR_VERSION,
    EBC_RELEASE );
@@ -659,15 +880,17 @@ int r, g, b, stat;
   fprintf( f, "%-d\n", w );
   fprintf( f, "%-d\n", h );
 
-  actWin->ci->getRGB( lineColor.pixelColor(), &r, &g, &b );
-  fprintf( f, "%-d %-d %-d\n", r, g, b );
+  index = lineColor.pixelIndex();
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", lineColorMode );
 
   fprintf( f, "%-d\n", fill );
 
-  actWin->ci->getRGB( fillColor.pixelColor(), &r, &g, &b );
-  fprintf( f, "%-d %-d %-d\n", r, g, b );
+  index = fillColor.pixelIndex();
+  actWin->ci->writeColorIndex( f, index );
+  //fprintf( f, "%-d\n", index );
 
   fprintf( f, "%-d\n", fillColorMode );
 
@@ -695,7 +918,7 @@ int r, g, b, stat;
 
 int edmBoxClass::drawActive ( void ) {
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   actWin->executeGc.saveFg();
 
@@ -737,7 +960,7 @@ int edmBoxClass::drawActive ( void ) {
 
 int edmBoxClass::eraseActive ( void ) {
 
-  if ( !activeMode || !init ) return 1;
+  if ( !enabled || !activeMode || !init ) return 1;
 
   if ( fill ) {
     XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
@@ -823,24 +1046,7 @@ int stat;
 
   case 1: // initialize
 
-    aglPtr = ptr;
-    needConnectInit = needInfoInit = needUpdate = needDraw = 0;
-    init = 0;
     opComplete = 0;
-    eventId = alarmEventId = infoEventId = 0;
-    active = 0;
-    activeMode = 1;
-    bufferInvalid = 0;
-
-    if ( !pvExpStr.getExpanded() ||
-       ( strcmp( pvExpStr.getExpanded(), "" ) == 0 ) ) {
-      pvExists = 0;
-    }
-    else {
-      pvExists = 1;
-      lineColor.setConnectSensitive();
-      fillColor.setConnectSensitive();
-    }
 
     break;
 
@@ -848,12 +1054,35 @@ int stat;
 
     if ( !opComplete ) {
 
+      initEnable();
+      aglPtr = ptr;
+      needConnectInit = needUpdate = needDraw = 0;
+      init = 0;
+      active = 0;
+      activeMode = 1;
+      bufferInvalid = 0;
+      pointerMotionDetected = 0;
+      pvId = NULL;
+      initialConnection = 1;
+      oldStat = oldSev = -1;
+
+      if ( !pvExpStr.getExpanded() ||
+         ( strcmp( pvExpStr.getExpanded(), "" ) == 0 ) ) {
+        pvExists = 0;
+      }
+      else {
+        pvExists = 1;
+        lineColor.setConnectSensitive();
+        fillColor.setConnectSensitive();
+      }
+
       if ( pvExists ) {
-        stat = ca_search_and_connect( pvExpStr.getExpanded(), &pvId,
-         eboMonitorPvConnectState, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( "error from ca_search\n" );
-          return 0;
+	pvId = the_PV_Factory->create( pvExpStr.getExpanded() );
+	if ( pvId ) {
+	  pvId->add_conn_state_callback( eboMonitorPvConnectState, this );
+	}
+	else {
+          printf( edmBoxComplete_str21 );
         }
       }
       else {
@@ -889,23 +1118,16 @@ int edmBoxClass::deactivate (
   int pass )
 {
 
-int stat;
-
   if ( pass == 1 ) {
 
-  activeMode = 0;
+    activeMode = 0;
 
-  if ( eventId ) {
-    stat = ca_clear_event( eventId );
-    if ( stat != ECA_NORMAL )
-      printf( "ca_clear_event failure\n" );
-  }
-
-  if ( pvExists ) {
-    stat = ca_clear_channel( pvId );
-    if ( stat != ECA_NORMAL )
-      printf( "ca_clear_channel failure\n" );
-  }
+    if ( pvId ) {
+      pvId->remove_conn_state_callback( eboMonitorPvConnectState, this );
+      pvId->remove_value_callback( edmBoxUpdate, this );
+      pvId->release();
+      pvId = NULL;
+    }
 
   }
 
@@ -1055,9 +1277,105 @@ void edmBoxClass::updateDimensions ( void ) {
 
 }
 
+void edmBoxClass::btnUp (
+  int x,
+  int y,
+  int buttonState,
+  int buttonNumber,
+  int *action )
+{
+
+double v;
+
+  *action = 0;
+
+  if ( !enabled ) return;
+
+  if ( pvExists && !pointerMotionDetected ) {
+
+    if ( buttonState & ShiftMask ) {
+      v = curValue - 10.0;
+      if ( v < readMin ) v = readMin;
+    }
+    else {
+      v = curValue + 10.0;
+      if ( v > readMax ) v = readMax;
+    }
+
+    pvId->put( v );
+
+  }
+
+}
+
+void edmBoxClass::btnDown (
+  int x,
+  int y,
+  int buttonState,
+  int buttonNumber,
+  int *action )
+{
+
+  if ( !enabled ) return;
+
+  pointerMotionDetected = 0;
+
+}
+
+
+void edmBoxClass::btnDrag (
+  int x,
+  int y,
+  int buttonState,
+  int buttonNumber )
+{
+
+double v;
+
+  if ( !enabled ) return;
+
+  pointerMotionDetected = 1;
+
+  if ( pvExists ) {
+
+    if ( buttonState & ShiftMask ) {
+      v = curValue - 1.0;
+      if ( v < readMin ) v = readMin;
+    }
+    else {
+      v = curValue + 1.0;
+      if ( v > readMax ) v = readMax;
+    }
+
+    pvId->put( v );
+
+  }
+
+}
+
+int edmBoxClass::getButtonActionRequest (
+  int *up,
+  int *down,
+  int *drag,
+  int *focus )
+{
+
+  *drag = 1;
+  *down = 1;
+  *up = 1;
+
+  if ( pvExists )
+    *focus = 1;
+  else
+    *focus = 0;
+
+  return 1;
+
+}
+
 void edmBoxClass::executeDeferred ( void ) {
 
-int stat, nc, ni, nu, nd;
+int stat, nc, nu, nd;
 double value;
 
   if ( actWin->isIconified ) return;
@@ -1072,7 +1390,6 @@ double value;
 
   value = curValue;
   nc = needConnectInit; needConnectInit = 0;
-  ni = needInfoInit; needInfoInit = 0;
   nu = needUpdate; needUpdate = 0;
   nd = needDraw; needDraw = 0;
   actWin->remDefExeNode( aglPtr );
@@ -1085,30 +1402,47 @@ double value;
   if ( nc ) {
 
     // require process variable to be numeric
-    if ( ( fieldType == DBR_ENUM ) ||
-         ( fieldType == DBR_INT ) ||
-         ( fieldType == DBR_LONG ) ||
-         ( fieldType == DBR_FLOAT ) ||
-         ( fieldType == DBR_DOUBLE ) ) {
+    if ( ( fieldType == ProcessVariable::Type::real ) ||
+         ( fieldType == ProcessVariable::Type::integer ) ) {
 
-      if ( !infoEventId ) {
-        stat = ca_get_callback( DBR_GR_DOUBLE, pvId,
-         edmBoxInfoUpdate, (void *) this );
-        if ( stat != ECA_NORMAL ) {
-          printf( "ca_get_callback failed\n" );
-        }
+      stat = eraseActive();
+
+      if ( readMax > readMin ) {
+        factorW = (double) w / ( readMax - readMin );
+        factorH = (double) boxH / ( readMax - readMin );
+      }
+      else {
+        factorW = 1;
+        factorH = 1;
       }
 
-    }
-    else { // force a draw in the non-active state & post error message
+      centerX = x + (int) ( w * 0.5 + 0.5 );
+      centerY = y + (int) ( boxH * 0.5 + 0.5 );
 
-      actWin->appCtx->postMessage(
-       "edmBoxClass - Process variable must be numeric" );
+      if ( value > 0.0 ) {
+        sideW = (int) ( value * factorW + 0.5 );
+        sideX = centerX - (int) ( (double) sideW * 0.5 + 0.5 );
+        sideH = (int) ( value * factorH + 0.5 );
+        sideY = centerY - (int) ( (double) sideH * 0.5 + 0.5 );
+      }
+      else {
+        sideW = 1;
+        sideX = centerX;
+        sideH = 1;
+        sideY = centerY;
+      }
 
-      active = 0;
+      if ( initialConnection ) {
+        pvId->add_value_callback( edmBoxUpdate, this );
+      }
+
       init = 1;
-      lineColor.setDisconnected();
-      fillColor.setDisconnected();
+      active = 1;
+      lineColor.setConnected();
+      fillColor.setConnected();
+
+      bufInvalidate();
+
 #if SMARTDRAW
       smartDrawAllActive();
 #else
@@ -1116,71 +1450,27 @@ double value;
 #endif
 
     }
+    else { // force a draw in the non-active state & post error message
 
-  }
+      actWin->appCtx->postMessage(
+       edmBoxComplete_str22 );
 
-
-//----------------------------------------------------------------------------
-
-  if ( ni ) {
-
-    stat = eraseActive();
-
-    if ( readMax > readMin ) {
-      factorW = (double) w / ( readMax - readMin );
-      factorH = (double) boxH / ( readMax - readMin );
-    }
-    else {
-      factorW = 1;
-      factorH = 1;
-    }
-
-    centerX = x + (int) ( w * 0.5 + 0.5 );
-    centerY = y + (int) ( boxH * 0.5 + 0.5 );
-
-    if ( value > 0.0 ) {
-      sideW = (int) ( value * factorW + 0.5 );
-      sideX = centerX - (int) ( (double) sideW * 0.5 + 0.5 );
-      sideH = (int) ( value * factorH + 0.5 );
-      sideY = centerY - (int) ( (double) sideH * 0.5 + 0.5 );
-    }
-    else {
-      sideW = 1;
-      sideX = centerX;
-      sideH = 1;
-      sideY = centerY;
-    }
-
-    if ( !eventId ) {
-      stat = ca_add_masked_array_event( DBR_DOUBLE, 1, pvId,
-       edmBoxUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &eventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL ) {
-        printf( "ca_add_masked_array_event failed\n" );
-      }
-    }
-
-    if ( !alarmEventId ) {
-      stat = ca_add_masked_array_event( DBR_STS_DOUBLE, 1, pvId,
-       edmBoxAlarmUpdate, (void *) this, (float) 0.0, (float) 0.0,
-       (float) 0.0, &alarmEventId, DBE_ALARM );
-      if ( stat != ECA_NORMAL ) {
-        printf( "ca_add_masked_array_event failed\n" );
-      }
-    }
-
-    init = 1;
-    active = 1;
-    lineColor.setConnected();
-    fillColor.setConnected();
-
-    bufInvalidate();
+      active = 0;
+      init = 1;
+      sideW = w;
+      sideX = x;
+      sideH = boxH;
+      sideY = y;
+      lineColor.setDisconnected();
+      fillColor.setDisconnected();
 
 #if SMARTDRAW
-    smartDrawAllActive();
+      smartDrawAllActive();
 #else
-    drawActive();
+      drawActive();
 #endif
+
+    }
 
   }
 
@@ -1223,6 +1513,109 @@ double value;
     drawActive();
 #endif
 
+  }
+
+}
+
+char *edmBoxClass::firstDragName ( void ) {
+
+  if ( !enabled ) return NULL;
+
+  return dragName[dragIndex];
+
+}
+
+char *edmBoxClass::nextDragName ( void ) {
+
+  return NULL;
+
+}
+
+char *edmBoxClass::dragValue (
+  int i ) {
+
+  if ( !enabled ) return NULL;
+
+  if ( actWin->mode == AWC_EXECUTE ) {
+
+    return pvExpStr.getExpanded();
+
+  }
+  else {
+
+    return pvExpStr.getRaw();
+
+  }
+
+}
+
+void edmBoxClass::changeDisplayParams (
+  unsigned int _flag,
+  char *_fontTag,
+  int _alignment,
+  char *_ctlFontTag,
+  int _ctlAlignment,
+  char *_btnFontTag,
+  int _btnAlignment,
+  int _textFgColor,
+  int _fg1Color,
+  int _fg2Color,
+  int _offsetColor,
+  int _bgColor,
+  int _topShadowColor,
+  int _botShadowColor )
+{
+
+  if ( _flag & ACTGRF_FG1COLOR_MASK )
+    lineColor.setColorIndex( _fg1Color, actWin->ci );
+
+  if ( _flag & ACTGRF_BGCOLOR_MASK )
+    fillColor.setColorIndex( _bgColor, actWin->ci );
+
+  if ( _flag & ACTGRF_CTLFONTTAG_MASK ) {
+
+    strcpy( fontTag, _ctlFontTag );
+    alignment = _ctlAlignment;
+
+    fs = actWin->fi->getXFontStruct( fontTag );
+    updateFont( " ", fontTag, &fs,
+     &fontAscent, &fontDescent, &fontHeight,
+     &stringWidth );
+
+    boxH = h - fontHeight;
+    if ( boxH < 5 ) {
+      boxH = 5;
+      h = boxH + fontHeight;
+      sboxH = h;
+    }
+
+    if ( w < 5 ) {
+      w = 5;
+      sboxW = 5;
+    }
+
+  }
+
+}
+
+void edmBoxClass::changePvNames (
+  int flag,
+  int numCtlPvs,
+  char *ctlPvs[],
+  int numReadbackPvs,
+  char *readbackPvs[],
+  int numNullPvs,
+  char *nullPvs[],
+  int numVisPvs,
+  char *visPvs[],
+  int numAlarmPvs,
+  char *alarmPvs[] )
+{
+
+  if ( flag & ACTGRF_CTLPVS_MASK ) {
+    if ( numCtlPvs ) {
+      pvExpStr.setRaw( ctlPvs[0] );
+    }
   }
 
 }

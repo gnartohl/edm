@@ -6,14 +6,17 @@
 
 #include "act_grf.h"
 #include "entry_form.h"
+#include "app_pkg.h"
+#include "act_win.h"
 
-#include "cadef.h"
+#include "pv_factory.h"
+#include "cvtFast.h"
 
 #define EBC_K_COLORMODE_STATIC 0
 #define EBC_K_COLORMODE_ALARM 1
 
-#define EBC_MAJOR_VERSION 2
-#define EBC_MINOR_VERSION 1
+#define EBC_MAJOR_VERSION 4
+#define EBC_MINOR_VERSION 0
 #define EBC_RELEASE 0
 
 #ifdef __edmBox_cc
@@ -49,17 +52,13 @@ static void ebc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-static void edmBoxAlarmUpdate (
-  struct event_handler_args ast_args );
-
 static void eboMonitorPvConnectState (
-  struct connection_handler_args arg );
+  ProcessVariable *pv,
+  void *userarg );
 
 static void edmBoxUpdate (
-  struct event_handler_args ast_args );
-
-static void edmBoxInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 #endif
 
@@ -92,17 +91,13 @@ friend void ebc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-friend void edmBoxAlarmUpdate (
-  struct event_handler_args ast_args );
-
 friend void eboMonitorPvConnectState (
-  struct connection_handler_args arg );
-
-friend void edmBoxInfoUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void edmBoxUpdate (
-  struct event_handler_args ast_args );
+  ProcessVariable *pv,
+  void *userarg );
 
 int init, active, activeMode, opComplete, pvExists, pointerMotionDetected;
 
@@ -142,15 +137,16 @@ int fontAscent, fontDescent, fontHeight, stringLength, stringWidth,
 
 int bufferInvalid, boxH, alignment;
 
-chid pvId;
+ProcessVariable *pvId;
 int fieldType;
-evid eventId, alarmEventId, infoEventId;
+int initialConnection;
+int oldStat, oldSev;
 
 double value, curValue, readMin, readMax, factorW, factorH;
 int centerX, centerY, sideW, sideH, sideX, sideY;
 efDouble efReadMin, efReadMax, bufEfReadMin, bufEfReadMax;
 
-int needConnectInit, needInfoInit, needUpdate, needDraw, needErase;
+int needConnectInit, needUpdate, needDraw, needErase;
 
 public:
 
@@ -174,7 +170,15 @@ int createInteractive (
 int save (
   FILE *f );
 
+int old_save (
+  FILE *f );
+
 int createFromFile (
+  FILE *fptr,
+  char *name,
+  activeWindowClass *actWin );
+
+int old_createFromFile (
   FILE *fptr,
   char *name,
   activeWindowClass *actWin );
