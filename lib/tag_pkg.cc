@@ -826,7 +826,7 @@ char *s = destination;
 
   for ( i=0; i<maxLen; i++ ) {
     strncpy( s, oneDefault, strSize-1 );
-    s[strSize] = 0;
+    s[strSize-1] = 0;
     s += strSize;
   }
 
