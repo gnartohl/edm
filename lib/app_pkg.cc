@@ -3712,13 +3712,13 @@ char msg[127+1];
 
 #ifdef __epics__
           stat = ca_pend_io( 1.0 );
-          ca_pend_event( 0.00001 );
+          //ca_pend_event( 0.00001 );
 #endif
           cur->node.processObjects();
 
 #ifdef __epics__
           stat = ca_pend_io( 1.0 );
-          ca_pend_event( 0.00001 );
+          //ca_pend_event( 0.00001 );
 #endif
           processAllEvents( app, display );
 
@@ -3775,7 +3775,7 @@ char msg[127+1];
 
 #ifdef __epics__
     stat = ca_pend_io( 1.0 );
-    ca_pend_event( 0.00001 );
+    //ca_pend_event( 0.00001 );
 #endif
     processAllEvents( app, display );
 
@@ -3785,7 +3785,7 @@ char msg[127+1];
 
 #ifdef __epics__
   stat = ca_pend_io( 3.0 );
-  ca_pend_event( 0.00001 );
+  //ca_pend_event( 0.00001 );
 #endif
 
   processAllEvents( app, display );

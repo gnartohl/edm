@@ -13275,9 +13275,14 @@ char callbackName[63+1];
 
 #if 1
         cnt++;
-        if ( !( cnt % 300 ) ) {
-          ca_pend_io( 1.0 );
-          ca_pend_event( 0.00001 );
+        if ( !( cnt % 1000 ) ) {
+          ca_pend_io( 3.0 );
+          if ( pass == 6 ) {
+            ca_pend_event( 0.01 );
+	  }
+          else {
+            ca_pend_event( 0.1 );
+	  }
           processAllEvents( appCtx->appContext(), d );
 	}
 #endif
@@ -13453,9 +13458,14 @@ char **muxMacro, **muxExpansion;
 
 #if 1
         cnt++;
-        if ( !( cnt % 300 ) ) {
-          ca_pend_io( 1.0 );
-          ca_pend_event( 0.00001 );
+        if ( !( cnt % 1000 ) ) {
+          ca_pend_io( 3.0 );
+          if ( pass == 6 ) {
+            ca_pend_event( 0.01 );
+	  }
+          else {
+            ca_pend_event( 0.1 );
+	  }
           processAllEvents( appCtx->appContext(), d );
 	}
 #endif
@@ -13558,9 +13568,14 @@ char callbackName[63+1];
 
 #if 1
     cnt++;
-    if ( !( cnt % 300 ) ) {
-      ca_pend_io( 1.0 );
-      ca_pend_event( 0.00001 );
+    if ( !( cnt % 1000 ) ) {
+      ca_pend_io( 3.0 );
+      if ( pass == 2 ) {
+        ca_pend_event( 0.01 );
+      }
+      else {
+        ca_pend_event( 0.1 );
+      }
       processAllEvents( appCtx->appContext(), d );
     }
 #endif
