@@ -620,7 +620,7 @@ evid resetEv, trigEv;
 expStringClass trigPvExpStr, resetPvExpStr;
 
 int count, bufferScrollSize, plotStyle[XYGC_K_MAX_TRACES], plotMode, resetMode;
-int firstTimeSample, curSec, curNsec, drawGridFlag;
+int firstTimeSample, curSec, curNsec, drawGridFlag, special[XYGC_K_MAX_TRACES];
 
 int xAxis, xAxisStyle, xAxisSource, xAxisTimeFormat;
 efDouble xMin, xMax;
@@ -739,8 +739,6 @@ int xSigned[XYGC_K_MAX_TRACES], ySigned[XYGC_K_MAX_TRACES];
 int lowestYScaleIndex[NUM_Y_AXES], numYTraces[NUM_Y_AXES];
 
 time_t timeOffset;
-
-int wrapIndex;
 
 public:
 

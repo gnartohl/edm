@@ -2202,13 +2202,23 @@ struct dbr_time_enum *dbrEnumPtr;
       }
       else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LINEAR ) {
 
-        dxValue = (double) ( ++(xyo->totalCount[i]) % xyo->count );
+        if ( xyo->special[i] ) {
+          dxValue = (double) ( ++(xyo->totalCount[i]) % xyo->count );
+	}
+	else {
+          dxValue = (double) ++(xyo->totalCount[i]);
+	}
         ( (double *) xyo->xPvData[i] )[ii] = dxValue;
 
       }
       else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
 
-        dxValue = (double) ( ++(xyo->totalCount[i]) % xyo->count );
+        if ( xyo->special[i] ) {
+          dxValue = (double) ( ++(xyo->totalCount[i]) % xyo->count );
+	}
+	else {
+          dxValue = (double) ++(xyo->totalCount[i]);
+	}
         ( (double *) xyo->xPvData[i] )[ii] = dxValue;
         if ( dxValue > 0 ) dxValue = log10( dxValue );
 
@@ -4603,7 +4613,7 @@ int numFullDraws, remainder, i, ii, j, jj, symHW, symHH;
 
 int xyGraphClass::eraseActive ( void ) {
 
-int i, n;
+int i;
 XRectangle xR = { plotAreaX+1, plotAreaY+1, plotAreaW-2, plotAreaH-2 };
 
   if ( !activeMode || !init ) return 1;
@@ -4677,26 +4687,9 @@ XRectangle xR = { plotAreaX+1, plotAreaY+1, plotAreaW-2, plotAreaH-2 };
           actWin->executeGc.setLineWidth( lineThk[i] );
           actWin->executeGc.setLineStyle( lineStyle[i] );
 
-          if ( ( wrapIndex > 0 ) && ( wrapIndex < curNpts[i]-1 ) ) {
-
-            n = wrapIndex + 1;
-            XDrawLines( actWin->d, pixmap,
-            actWin->executeGc.normGC(), &plotBuf[i][0], n,
-            CoordModeOrigin );
-
-            n = curNpts[i] - wrapIndex - 1;
-            XDrawLines( actWin->d, pixmap,
-            actWin->executeGc.normGC(), &plotBuf[i][wrapIndex+1], n,
-            CoordModeOrigin );
-
-	  }
-	  else {
-
-            XDrawLines( actWin->d, pixmap,
-             actWin->executeGc.normGC(), plotBuf[i], curNpts[i],
-             CoordModeOrigin );
-
-	  }
+          XDrawLines( actWin->d, pixmap,
+           actWin->executeGc.normGC(), plotBuf[i], curNpts[i],
+           CoordModeOrigin );
 
         }
 
@@ -4738,7 +4731,7 @@ int xyGraphClass::drawActiveOne (
   int i // trace
 ) {
 
-int npts, n;
+int npts;
 
   actWin->executeGc.setLineWidth(1);
   actWin->executeGc.setLineStyle( LineSolid );
@@ -4756,7 +4749,6 @@ int npts, n;
     if ( yPvCount[i] > 1 ) { // vector
 
       npts = fillPlotArray( i );
-      //wrapIndex = -1;
 
       if ( npts > 1 ) {
 
@@ -4863,26 +4855,9 @@ int npts, n;
           actWin->executeGc.setLineWidth( lineThk[i] );
           actWin->executeGc.setLineStyle( lineStyle[i] );
 
-          if ( ( wrapIndex > 0 ) && ( wrapIndex < npts-1 ) ) {
-
-            n = wrapIndex + 1;
-            XDrawLines( actWin->d, pixmap,
-            actWin->executeGc.normGC(), &plotBuf[i][0], n,
-            CoordModeOrigin );
-
-            n = npts - wrapIndex - 1;
-            XDrawLines( actWin->d, pixmap,
-            actWin->executeGc.normGC(), &plotBuf[i][wrapIndex+1], n,
-            CoordModeOrigin );
-
-	  }
-	  else {
-
-            XDrawLines( actWin->d, pixmap,
-             actWin->executeGc.normGC(), plotBuf[i], npts,
-             CoordModeOrigin );
-
-	  }
+          XDrawLines( actWin->d, pixmap,
+           actWin->executeGc.normGC(), plotBuf[i], npts,
+           CoordModeOrigin );
 
           curNpts[i] = npts;
 
@@ -5174,7 +5149,6 @@ int screen_num, depth;
        needRealUpdate = needBoxRescale = needNewLimits =
        needOriginalLimits = 0;
       drawGridFlag = 0;
-      wrapIndex = -1;
 
       for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
         needY1Rescale[yi] = 0;
@@ -6101,6 +6075,24 @@ int yi, yScaleIndex;
 
     for ( i=0; i<numTraces; i++ ) {
 
+      if (
+           ( plotStyle[i] == XYGC_K_PLOT_STYLE_LINE ) &&
+           ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) &&
+           ( yPvCount[i] == 1 ) && // must be scalar; use y here,
+                                   // x is not used for chonological
+           ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LINEAR ) ||
+             ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) )
+      ) {
+
+        special[i] = 1;
+
+      }
+      else {
+
+        special[i] = 0;
+
+      }
+
       yi = 0;
       if ( y2Scale[i] ) yi = 1;
 
@@ -6499,153 +6491,156 @@ int yi, yScaleIndex;
 
     for ( i=0; i<numTraces; i++ ) {
 
-      yi = 0;
-      if ( y2Scale[i] ) yi = 1;
+      if ( !special[i] ) {
 
-      yArrayNeedUpdate[i] = xArrayNeedUpdate[i] = 1;
+        yi = 0;
+        if ( y2Scale[i] ) yi = 1;
 
-      if ( needThisbufScroll[i] ) {
-
-        needThisbufScroll[i] = 0;
-
-        initPlotInfo( i );
         yArrayNeedUpdate[i] = xArrayNeedUpdate[i] = 1;
-        yArrayGotValue[i] = xArrayGotValue[i] =  0;
-        //arrayNumPoints[i] = curNpts[i] = 0;
-        arrayNumPoints[i] = 0;
-        plotState[i] = XYGC_K_STATE_INITIALIZING;
 
+        if ( needThisbufScroll[i] ) {
 
-        // we don't have to worry about head passing tail in the following
-        // two blocks
+          needThisbufScroll[i] = 0;
 
-        if ( arrayTail[i] != arrayHead[i] ) {
+          initPlotInfo( i );
+          yArrayNeedUpdate[i] = xArrayNeedUpdate[i] = 1;
+          yArrayGotValue[i] = xArrayGotValue[i] =  0;
+          //arrayNumPoints[i] = curNpts[i] = 0;
+          arrayNumPoints[i] = 0;
+          plotState[i] = XYGC_K_STATE_INITIALIZING;
 
-          ii = arrayHead[i] + bufferScrollSize;
-          if ( ii > plotBufSize[i] ) {
-            ii = ii - plotBufSize[i] - 1;
-          }
+          // we don't have to worry about head passing tail in the following
+          // two blocks
 
-          arrayHead[i] = ii;
+          if ( arrayTail[i] != arrayHead[i] ) {
 
-          // ii = arrayHead[i];
-
-          do {
-
-            switch ( yPvType[i] ) {
-            case DBR_FLOAT:
-              dyValue = (double) ( (float *) yPvData[i] )[ii];
-              break;
-            case DBR_DOUBLE: 
-              dyValue = ( (double *) yPvData[i] )[ii];
-              break;
-            case DBR_SHORT:
-              if ( ySigned[i] ) {
-                dyValue = (double) ( (short *) yPvData[i] )[ii];
-              }
-              else {
-                dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
-              }
-              break;
-            case DBR_CHAR:
-              if ( ySigned[i] ) {
-                dyValue = (double) ( (char *) yPvData[i] )[ii];
-              }
-              else {
-                dyValue = (double) ( (unsigned char *) yPvData[i] )[ii];
-              }
-              break;
-            case DBR_LONG:
-              if ( ySigned[i] ) {
-                dyValue = (double) ( (int *) yPvData[i] )[ii];
-              }
-              else {
-                dyValue = (double) ( (int *) yPvData[i] )[ii];
-              }
-              break;
-            case DBR_ENUM:
-              if ( ySigned[i] ) {
-                dyValue = (double) ( (short *) yPvData[i] )[ii];
-              }
-              else {
-                dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
-              }
-              break;
-            default:
-              dyValue = ( (double *) yPvData[i] )[ii];
-              break;
-            }
-
-            if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-              if ( dyValue > 0 ) dyValue = log10( dyValue );
-            }
-
-            scaledY = (short) plotAreaH -
-             (short) rint( ( dyValue - curY1Min[yi] ) *
-             y1Factor[yi][i] - y1Offset[yi][i] );
-
-            switch ( xPvType[i] ) {
-            case DBR_FLOAT:
-              dxValue = (double) ( (float *) xPvData[i] )[ii];
-              break;
-            case DBR_DOUBLE: 
-              dxValue = ( (double *) xPvData[i] )[ii];
-              break;
-            case DBR_SHORT:
-              if ( xSigned[i] ) {
-                dxValue = (double) ( (short *) xPvData[i] )[ii];
-              }
-              else {
-                dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
-              }
-              break;
-            case DBR_CHAR:
-              if ( xSigned[i] ) {
-                dxValue = (double) ( (char *) xPvData[i] )[ii];
-              }
-              else {
-                dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
-              }
-              break;
-            case DBR_LONG:
-              if ( xSigned[i] ) {
-                dxValue = (double) ( (int *) xPvData[i] )[ii];
-              }
-              else {
-                dxValue = (double) ( (int *) xPvData[i] )[ii];
-              }
-              break;
-            case DBR_ENUM:
-              if ( xSigned[i] ) {
-                dxValue = (double) ( (short *) xPvData[i] )[ii];
-              }
-              else {
-                dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
-              }
-              break;
-            default:
-              dxValue = ( (double *) xPvData[i] )[ii];
-              break;
-            }
-
-            if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-              if ( dxValue > 0 ) dxValue = log10( dxValue );
-            }
-            else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-              if ( dxValue > 0 ) dxValue = log10( dxValue );
-            }
-
-            scaledX = (short) rint( ( dxValue - curXMin ) *
-             xFactor[i] + xOffset[i] );
-
-            addPoint( dxValue, scaledX, scaledY, i );
-
-            ii++;
+            ii = arrayHead[i] + bufferScrollSize;
             if ( ii > plotBufSize[i] ) {
-              ii = 0;
+              ii = ii - plotBufSize[i] - 1;
             }
 
-          } while ( ii != arrayTail[i] );
+            arrayHead[i] = ii;
+
+            // ii = arrayHead[i];
+
+            do {
+
+              switch ( yPvType[i] ) {
+              case DBR_FLOAT:
+                dyValue = (double) ( (float *) yPvData[i] )[ii];
+                break;
+              case DBR_DOUBLE: 
+                dyValue = ( (double *) yPvData[i] )[ii];
+                break;
+              case DBR_SHORT:
+                if ( ySigned[i] ) {
+                  dyValue = (double) ( (short *) yPvData[i] )[ii];
+                }
+                else {
+                  dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+                }
+                break;
+              case DBR_CHAR:
+                if ( ySigned[i] ) {
+                  dyValue = (double) ( (char *) yPvData[i] )[ii];
+                }
+                else {
+                  dyValue = (double) ( (unsigned char *) yPvData[i] )[ii];
+                }
+                break;
+              case DBR_LONG:
+                if ( ySigned[i] ) {
+                  dyValue = (double) ( (int *) yPvData[i] )[ii];
+                }
+                else {
+                  dyValue = (double) ( (int *) yPvData[i] )[ii];
+                }
+                break;
+              case DBR_ENUM:
+                if ( ySigned[i] ) {
+                  dyValue = (double) ( (short *) yPvData[i] )[ii];
+                }
+                else {
+                  dyValue = (double) ( (unsigned short *) yPvData[i] )[ii];
+                }
+                break;
+              default:
+                dyValue = ( (double *) yPvData[i] )[ii];
+                break;
+              }
+
+              if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+                if ( dyValue > 0 ) dyValue = log10( dyValue );
+              }
+
+              scaledY = (short) plotAreaH -
+               (short) rint( ( dyValue - curY1Min[yi] ) *
+               y1Factor[yi][i] - y1Offset[yi][i] );
+
+              switch ( xPvType[i] ) {
+              case DBR_FLOAT:
+                dxValue = (double) ( (float *) xPvData[i] )[ii];
+                break;
+              case DBR_DOUBLE: 
+                dxValue = ( (double *) xPvData[i] )[ii];
+                break;
+              case DBR_SHORT:
+                if ( xSigned[i] ) {
+                  dxValue = (double) ( (short *) xPvData[i] )[ii];
+                }
+                else {
+                  dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+                }
+                break;
+              case DBR_CHAR:
+                if ( xSigned[i] ) {
+                  dxValue = (double) ( (char *) xPvData[i] )[ii];
+                }
+                else {
+                  dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
+                }
+                break;
+              case DBR_LONG:
+                if ( xSigned[i] ) {
+                  dxValue = (double) ( (int *) xPvData[i] )[ii];
+                }
+                else {
+                  dxValue = (double) ( (int *) xPvData[i] )[ii];
+                }
+                break;
+              case DBR_ENUM:
+                if ( xSigned[i] ) {
+                  dxValue = (double) ( (short *) xPvData[i] )[ii];
+                }
+                else {
+                  dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+                }
+                break;
+              default:
+                dxValue = ( (double *) xPvData[i] )[ii];
+                break;
+              }
+
+              if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+                if ( dxValue > 0 ) dxValue = log10( dxValue );
+              }
+              else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+                if ( dxValue > 0 ) dxValue = log10( dxValue );
+              }
+
+              scaledX = (short) rint( ( dxValue - curXMin ) *
+               xFactor[i] + xOffset[i] );
+
+              addPoint( dxValue, scaledX, scaledY, i );
+
+              ii++;
+              if ( ii > plotBufSize[i] ) {
+                ii = 0;
+              }
+
+            } while ( ii != arrayTail[i] );
+
+          }
 
         }
 
@@ -6907,11 +6902,15 @@ int yi, yScaleIndex;
       getXMinMax( &curXMin, &curXMax );
 
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+        if ( curXMin > 0 ) curXMin = log10( curXMin );
+        if ( curXMax > 0 ) curXMax = log10( curXMax );
         get_log10_scale_params1( curXMin, curXMax, &curXMin, &curXMax,
          &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
          format );
       }
       else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+        if ( curXMin > 0 ) curXMin = log10( curXMin );
+        if ( curXMax > 0 ) curXMax = log10( curXMax );
         get_log10_scale_params1( curXMin, curXMax, &curXMin, &curXMax,
          &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
          format );
@@ -6942,6 +6941,8 @@ int yi, yScaleIndex;
         anyRescale = 1;
 
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+          if ( curY1Min[yi] > 0 ) curY1Min[yi] = log10( curY1Min[yi] );
+          if ( curY1Max[yi] > 0 ) curY1Max[yi] = log10( curY1Max[yi] );
           get_log10_scale_params1( curY1Min[yi], curY1Max[yi], &curY1Min[yi],
            &curY1Max[yi], &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
            &curY1MinorsPerMajor[yi], format );
@@ -7185,7 +7186,6 @@ int i;
 
     i = plotInfoTail[trace];
 
-    plotInfo[trace][i].firstDX = x;
     plotInfo[trace][i].firstX = scaledX;
     plotInfo[trace][i].firstY = scaledY;
 
@@ -7285,9 +7285,9 @@ int xyGraphClass::fillPlotArray (
   int trace
 ) {
 
-int i, npts, findWrap;
+int i, npts;
 short curX, curY, prevX, prevY;
-double logWrapValue;
+double n;
 
   npts = 0;
 
@@ -7358,7 +7358,18 @@ double logWrapValue;
 
       i = plotInfoHead[trace];
       if ( i != plotInfoTail[trace] ) {
-        prevX = plotInfo[trace][i].firstX;
+        if ( special[trace] ) {
+          n = (double) npts;
+          if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
+               ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
+            if ( n > 0 ) n = log10( n );
+	  }
+          prevX = (short) rint( ( n - curXMin ) *
+           xFactor[trace] + xOffset[trace] );
+	}
+	else {
+          prevX = plotInfo[trace][i].firstX;
+	}
         prevY = plotInfo[trace][i].firstY;
         plotBuf[trace][npts].x = prevX;
         plotBuf[trace][npts].y = prevY;
@@ -7370,49 +7381,20 @@ double logWrapValue;
         i = 0;
       }
 
-      if (
-           ( plotStyle[trace] == XYGC_K_PLOT_STYLE_LINE ) &&
-           ( traceType[trace] == XYGC_K_TRACE_CHRONOLOGICAL ) &&
-           ( yPvCount[trace] == 1 ) && // must be scalar; use y here,
-                                       // x is not used for chonological
-           ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LINEAR ) ||
-             ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) )
-	 ) {
-
-        findWrap = 1;
-
-      }
-      else {
-        findWrap = 0;
-      }
-
-      this->wrapIndex = -1;
-
-      logWrapValue = -1;
-      if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-        if ( count > 1 ) {
-          logWrapValue = log10((double)(count-1));
-	}
-      }
-
       while ( i != plotInfoTail[trace] ) {
 
-	if ( findWrap ) {
-          if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-            if ( plotInfo[trace][i].firstDX == logWrapValue ) {
-              this->wrapIndex = i;
-              findWrap = 0;
-	    }
+        if ( special[trace] ) {
+          n = (double) npts;
+          if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
+               ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
+            if ( n > 0 ) n = log10( n );
 	  }
-	  else {
-            if ( rint(plotInfo[trace][i].firstDX) == count-1 ) {
-              this->wrapIndex = i;
-              findWrap = 0;
-	    }
-	  }
+          curX = (short) rint( ( n - curXMin ) *
+           xFactor[trace] + xOffset[trace] );
 	}
-
-        curX = plotInfo[trace][i].firstX;
+	else {
+          curX = plotInfo[trace][i].firstX;
+	}
         curY = plotInfo[trace][i].firstY;
 
         if ( ( curX != prevX ) || ( curY != prevY ) ) {
