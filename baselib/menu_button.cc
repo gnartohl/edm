@@ -24,6 +24,8 @@
 
 #include "thread.h"
 
+#include "Xm/CascadeBG.h"
+
 #ifdef __epics__
 
 static void putValue (
@@ -1268,6 +1270,33 @@ static XtActionsRec dragActions[] = {
     XtSetValues( widget, args, n );
 
     XtManageChild( optionMenu );
+
+{
+
+WidgetList children;
+Cardinal numChildren;
+int ii;
+
+      XtVaGetValues( optionMenu,
+       XmNnumChildren, &numChildren,
+       XmNchildren, &children,
+       NULL );
+
+      for ( ii=0; ii<(int)numChildren; ii++ ) {
+
+        if ( XtClass( children[ii] ) == xmCascadeButtonGadgetClass ) {
+
+          XtVaSetValues( children[ii],
+	   XmNbackground, (XtArgVal) bgColor.getColor(),
+	   XmNtopShadowColor, actWin->ci->pix(topShadowColor),
+           XmNbottomShadowColor, actWin->ci->pix(botShadowColor),
+	   NULL );
+
+        }
+
+      }
+
+}
 
     widgetsCreated = 1;
 
