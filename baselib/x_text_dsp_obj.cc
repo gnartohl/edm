@@ -3341,18 +3341,34 @@ int i;
   if ( useKp ) {
 
     if ( ( pvType == DBR_FLOAT ) || ( pvType == DBR_DOUBLE ) ) {
-      kp.create( actWin->top, teX, teY, "", &kpDouble,
-       (void *) this,
-       (XtCallbackProc) xtdoSetKpDoubleValue,
-       (XtCallbackProc) xtdoCancelKp );
+      if ( formatType == XTDC_K_FORMAT_HEX ) {
+        kp.createHex( actWin->top, teX, teY, "", &kpDouble,
+         (void *) this,
+         (XtCallbackProc) xtdoSetKpDoubleValue,
+         (XtCallbackProc) xtdoCancelKp );
+      }
+      else {
+        kp.create( actWin->top, teX, teY, "", &kpDouble,
+         (void *) this,
+         (XtCallbackProc) xtdoSetKpDoubleValue,
+         (XtCallbackProc) xtdoCancelKp );
+      }
       editDialogIsActive = 1;
       return;
     }
     else if ( ( pvType == DBR_SHORT ) || ( pvType == DBR_LONG ) ) {
-      kp.create( actWin->top, teX, teY, "", &kpInt,
-       (void *) this,
-       (XtCallbackProc) xtdoSetKpIntValue,
-       (XtCallbackProc) xtdoCancelKp );
+      if ( formatType == XTDC_K_FORMAT_HEX ) {
+        kp.createHex( actWin->top, teX, teY, "", &kpInt,
+         (void *) this,
+         (XtCallbackProc) xtdoSetKpIntValue,
+         (XtCallbackProc) xtdoCancelKp );
+      }
+      else {
+        kp.create( actWin->top, teX, teY, "", &kpInt,
+         (void *) this,
+         (XtCallbackProc) xtdoSetKpIntValue,
+         (XtCallbackProc) xtdoCancelKp );
+      }
       editDialogIsActive = 1;
       return;
     }
