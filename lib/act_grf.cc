@@ -3415,7 +3415,8 @@ time_t timet;
       // theTime.tm_mon+1, theTime.tm_mday, theTime.tm_year+1880,
       // theTime.tm_hour, theTime.tm_min, fs );
       strcpy( msg, "  Time stamp = " );
-      asctime_r( &theTime, &msg[15] );
+      strftime( &msg[15], 40, "%c", &theTime );
+      //asctime_r( &theTime, &msg[15] );
       //msg[strlen(msg)-1] = 0;
       //snprintf( frac, 31, " (%.6f)", fs ); 
       //Strncat( msg, frac, 79 );
