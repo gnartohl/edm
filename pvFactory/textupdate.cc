@@ -13,6 +13,18 @@
 #include "epics_pv_factory.h"
 #include "cvtFast.h"
 
+static int g_transInit = 1;
+static XtTranslations g_parsedTrans;
+
+static char g_dragTrans[] =
+"#override\n~Shift<Btn2Down>: startDrag()\nShift<Btn2Up>: selectDrag()";
+
+static XtActionsRec g_dragActions[] =
+{
+    { "startDrag", (XtActionProc) drag },
+    { "selectDrag", (XtActionProc) selectDrag }
+};
+
 // Stolen from dm2k updateMonitors.c, Mark Andersion, Frederick Vong:
 // Display number in enineering notaion (power of ten is n*3)
 static void localCvtDoubleToExpNotationString(double value,
@@ -950,16 +962,6 @@ static void selectDrag(Widget w, XEvent *e, String *params, Cardinal numParams)
     obj->selectDragValue(obj->getX0() + be->x, obj->getY0() + be->y);
 }
 
-static char dragTrans[] =
-"#override\n~Shift<Btn2Down>: startDrag()\nShift<Btn2Up>: selectDrag()";
-
-static XtActionsRec dragActions[] =
-{
-    { "startDrag", (XtActionProc) drag },
-    { "selectDrag", (XtActionProc) selectDrag }
-};
-
-
 int edmTextentryClass::activate(int pass, void *ptr)
 {
     XmFontList fonts;
@@ -971,10 +973,12 @@ int edmTextentryClass::activate(int pass, void *ptr)
         case 1: // initialize
             // from man XmTextField
             fonts = XmFontListCreate(fs, XmSTRING_DEFAULT_CHARSET);
-            XtTranslations parsedTrans;
-            parsedTrans = XtParseTranslationTable(dragTrans);
-            XtAppAddActions(actWin->appCtx->appContext(), dragActions,
-                            XtNumber(dragActions));
+	    if ( g_transInit ) {
+	      g_transInit = 0;
+              g_parsedTrans = XtParseTranslationTable(g_dragTrans);
+              XtAppAddActions(actWin->appCtx->appContext(), g_dragActions,
+                              XtNumber(g_dragActions));
+	    }
             
             widget = XtVaCreateManagedWidget("TextEntry",
                                              xmTextFieldWidgetClass,
@@ -994,7 +998,7 @@ int edmTextentryClass::activate(int pass, void *ptr)
                                                  (XtArgVal)alignment,
                                              XmNalignment,
                                                  (XtArgVal)alignment,
-                                             XmNtranslations, parsedTrans,
+                                             XmNtranslations, g_parsedTrans,
                                              XmNuserData,
                                                  this,// obj accessible to d&d
                                              XmNhighlightThickness,

@@ -23,6 +23,10 @@
 #define TEXT_MINOR 0
 #define TEXT_RELEASE 0
 
+static void drag(Widget w, XEvent *e, String *params, Cardinal numParams);
+static void selectDrag(Widget w, XEvent *e, String *params,
+ Cardinal numParams);
+
 class edmTextupdateClass : public activeGraphicClass
 {
 public:
