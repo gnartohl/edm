@@ -2816,7 +2816,7 @@ char *colorInfoClass::colorName (
 
 }
 int colorInfoClass::colorIndexByName (
-  char *name )
+  const char *name )
 {
 
 int stat;

@@ -330,7 +330,7 @@ char *colorInfoClass::colorName (
   int index );
 
 int colorInfoClass::colorIndexByName (
-  char *name );
+  const char *name );
 
 int colorInfoClass::isRule (
   int index );
