@@ -240,6 +240,10 @@ int i;
 
   }
 
+  i = tail;
+  deleteNodes( i );
+  delete undoList[i].head;
+
 }
 
 void undoClass::deleteNodes (
@@ -587,20 +591,39 @@ void undoClass::flush ( void )
 int i;
 undoListPtr cur;
 
- if ( head == tail ) return; // empty list
+  if ( head == tail ) return; // empty list
 
   // update undo button text and sensitivity
   cur = undoList[tail].head->flink;
   if ( strcmp( undoButtonText[tail], "" ) != 0 ) {
     cur->node->actGrfAddr->setUndoText( NULL );
   }
-  cur = undoList[tail].head->flink;
+
+  i = head + 1;
+  if ( i >= max ) i = 0;
+
+  while ( i != tail ) {
+
+    cur = undoList[i].head->flink;
+    while ( cur ) {
+      cur->node->actGrfAddr->flushUndo();
+      cur = cur->flink;
+    }
+
+    i++;
+    if ( i >= max ) i = 0;
+
+  }
+
+  i = tail;
+  cur = undoList[i].head->flink;
   while ( cur ) {
     cur->node->actGrfAddr->flushUndo();
     cur = cur->flink;
   }
 
-  i = head;
+  i = head + 1;
+  if ( i >= max ) i = 0;
 
   while ( i != tail ) {
 
