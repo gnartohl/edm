@@ -3729,6 +3729,10 @@ char msg[127+1];
 
     processAllEvents( app, display );
 
+    raiseMessageWindow();
+
+    processAllEvents( app, display );
+
     /* if all windows have been activated then iconify main window */
     if ( ( iconNodeCount == iconActionCount ) && ( iconNodeCount != 0 ) ) {
       if ( !usingControlPV ) iconifyMainWindow();
@@ -3803,6 +3807,13 @@ void appContextClass::postMessage (
 {
 
   msgBox.addText( msg );
+
+}
+
+void appContextClass::raiseMessageWindow ( void )
+{
+
+  msgBox.raise();
 
 }
 

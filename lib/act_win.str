@@ -184,5 +184,6 @@
 #define activeWindowClass_str185 (char *) "Select All"
 #define activeWindowClass_str186 (char *) "Select Scheme Set"
 #define activeWindowClass_str187 (char *) "Load Component Scheme"
+#define activeWindowClass_str188 (char *) "Scheme file save failure: %s\n"
 
 #endif

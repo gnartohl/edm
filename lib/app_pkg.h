@@ -452,6 +452,8 @@ Widget appContextClass::importSelectBoxWidgetId ( void );
 void appContextClass::postMessage (
   char *msg );
 
+void appContextClass::raiseMessageWindow ( void );
+
 void appContextClass::iconifyMainWindow ( void );
 
 void appContextClass::deiconifyMainWindow ( void );

@@ -136,6 +136,8 @@ int scrolledTextClass::popup ( void );
 
 int scrolledTextClass::popdown ( void );
 
+void scrolledTextClass::raise ( void );
+
 Widget scrolledTextClass::top ( void );
 
 Widget scrolledTextClass::textWidget ( void );

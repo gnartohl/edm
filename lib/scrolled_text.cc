@@ -646,6 +646,14 @@ int scrolledTextClass::popdown ( void ) {
 
 }
 
+void scrolledTextClass::raise ( void ) {
+
+  if ( windowIsOpen && autoRaiseWindow ) {
+    XRaiseWindow( display, XtWindow(shell) );
+  }
+
+}
+
 Widget scrolledTextClass::top ( void ) {
 
   return shell;

@@ -1127,6 +1127,7 @@ static void awc_saveSchemeSelectOk_cb (
   XtPointer call )
 {
 
+int stat;
 char *fName;
 activeWindowClass *awo = (activeWindowClass *) client;
 XmFileSelectionBoxCallbackStruct *cbs =
@@ -1150,7 +1151,15 @@ char fileName[127+1];
   XtFree( fName );
   XtUnmanageChild( w );
 
-  awo->saveScheme( fileName );
+  stat = awo->saveScheme( fileName );
+  if ( !( stat & 1 ) ) {
+    {
+    char msg[255+1];
+    sprintf( msg, activeWindowClass_str188, fileName );
+    awo->appCtx->postMessage( msg );
+    }
+  }
+
   awo->operationComplete();
 
 done:
