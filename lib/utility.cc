@@ -47,6 +47,8 @@ FILE *f;
 char *tk, *context, buf[32000+1];
 static char *var = NULL;
 
+  if ( !getenv(name) ) return NULL;
+
   strncpy( buf, getenv(name), 255 );
   buf[255] = 0;
 
