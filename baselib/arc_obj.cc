@@ -1301,6 +1301,11 @@ pvValType pvV;
       change = 1;
     }
 
+    if ( change ) {
+      lineColor.setStatus( curStatus, curSeverity );
+      fillColor.setStatus( curStatus, curSeverity );
+    }
+
     index = actWin->ci->evalRule( lineColor.pixelIndex(),
     alarmPvId->get_double() );
 

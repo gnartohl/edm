@@ -1527,6 +1527,11 @@ pvValType pvV;
       change = 1;
     }
 
+    if ( change ) {
+      fgColor.setStatus( curStatus, curSeverity );
+      bgColor.setStatus( curStatus, curSeverity );
+    }
+
     index = actWin->ci->evalRule( fgColor.pixelIndex(),
      alarmPvId->get_double() );
 
