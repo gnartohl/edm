@@ -1687,7 +1687,13 @@ XmString menuStr, str;
   XtAddCallback( pvB, XmNactivateCallback, view_screens_cb,
    (XtPointer) this );
 
+  //mainDrawingArea = XtVaCreateManagedWidget( "", xmDrawingAreaWidgetClass,
+  // mainWin,
+  // NULL );
+
   XtManageChild( menuBar );
+
+  msgDialog.create( appTop );
 
 }
 
@@ -2442,6 +2448,8 @@ err_return:
 
   display = XtDisplay( appTop );
 
+  processAllEvents( app, display );
+
   wm_delete_window = XmInternAtom( display, "WM_DELETE_WINDOW", False );
   XmAddWMProtocolCallback( appTop, wm_delete_window,
    exit_cb, (XtPointer) this );
@@ -2488,9 +2496,15 @@ err_return:
 
   XSetWindowColormap( display, XtWindow(pvList.top()), ci.getColorMap() );
 
+  postNote( "Loading fonts..." );
+
+  processAllEvents( app, display );
+
   strncpy( fname, prefix, 127 );
   strncat( fname, "fonts.list", 127 );
   opStat = fi.initFromFile( display, fname );
+
+  closeNote();
 
   if ( !( opStat & 1 ) ) {
     printf( appContextClass_str107 );
@@ -2959,3 +2973,20 @@ void appContextClass::findTop ( void ) {
 
 }
 
+void appContextClass::postNote ( 
+  char *msg ) {
+
+int _x, _y;
+
+  _x = XDisplayWidth( display, DefaultScreen(display) ) / 2;
+  _y = XDisplayHeight( display, DefaultScreen(display) ) / 2;
+
+  msgDialog.popup( msg, _x, _y );
+
+}
+
+void appContextClass::closeNote ( void ) {
+
+  msgDialog.popdown();
+
+}

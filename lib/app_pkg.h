@@ -32,6 +32,7 @@
 #include "confirm_dialog.h"
 #include "scrolled_text.h"
 #include "scrolled_list.h"
+#include "msg_dialog.h"
 
 #include "act_win.h"
 #include "act_grf.h"
@@ -179,7 +180,8 @@ APPDEFEXE_QUE_TYPE appDefExeFreeQueue, appDefExeActiveQueue;
 APPDEFEXE_NODE_TYPE appDefExeNodes[APPDEFEXE_QUEUE_SIZE+1];
 
 Widget appTop, fileSelectBox, importSelectBox, mainWin, menuBar, filePullDown,
- fileCascade, newB, openB, exitB, viewPullDown, viewCascade, msgB, pvB;
+ fileCascade, newB, openB, exitB, viewPullDown, viewCascade, msgB, pvB,
+ mainDrawingArea;
 XtAppContext app;
 Display *display;
 char displayName[31+1];
@@ -224,6 +226,8 @@ pvEventClass *ctlPvEventId;
 
 confirmDialogClass confirm;
 int local;
+
+msgDialogClass msgDialog;
 
 public:
 
@@ -390,6 +394,11 @@ void appContextClass::xSynchronize (
 void appContextClass::exitProgram ( void );
 
 void appContextClass::findTop ( void );
+
+void appContextClass::postNote ( 
+  char *msg );
+
+void appContextClass::closeNote ( void );
 
 };
 

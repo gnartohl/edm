@@ -523,6 +523,8 @@ int major, minor, release;
         return stat;
       }
 
+      XLoadFont( d, cur->fullName );
+
       stat = avl_insert_node( this->fontNameListH, (void *) cur, &dup );
       if ( !( stat & 1 ) ) return stat;
 //       if ( dup ) printf( "duplicate\n" );
