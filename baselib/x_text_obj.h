@@ -81,6 +81,8 @@ class activeXTextClass : public activeGraphicClass {
 
 private:
 
+static const int activeXTextClass::MAX_TEXT_LEN = 4000;
+
 friend void doBlink (
   void *ptr
 );
@@ -152,7 +154,7 @@ int alarmPvExists, visPvExists;
 int activeMode, init, opComplete;
 
 expStringClass value;
-char bufValue[255+1];
+char *bufValue;
 
 fontMenuClass fm;
 char fontTag[63+1], bufFontTag[63+1];

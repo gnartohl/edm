@@ -103,7 +103,9 @@ activeXTextClass *axto = (activeXTextClass *) client;
   strncpy( axto->minVisString, axto->bufMinVisString, 39 );
   strncpy( axto->maxVisString, axto->bufMaxVisString, 39 );
 
-  axto->value.setRaw( axto->bufValue );
+  if ( axto->bufValue ) {
+    axto->value.setRaw( axto->bufValue );
+  }
 
   strncpy( axto->fontTag, axto->fm.currentFontTag(), 63 );
   axto->actWin->fi->loadFontTag( axto->fontTag );
@@ -147,9 +149,9 @@ activeXTextClass *axto = (activeXTextClass *) client;
   axto->updateDimensions();
 
   if ( axto->autoSize && axto->fs ) {
-    axto->w = XTextWidth( axto->fs, axto->value.getRaw(), axto->stringLength );
+    getStringBoxSize( axto->value.getRaw(), axto->stringLength,
+    &(axto->fs), axto->alignment, &(axto->w), &(axto->h) );
     axto->sboxW = axto->w;
-    axto->h = axto->fs->ascent + axto->fs->descent;
     axto->sboxH = axto->h;
   }
 
@@ -177,6 +179,12 @@ static void axtc_edit_ok (
 activeXTextClass *axto = (activeXTextClass *) client;
 
   axtc_edit_update ( w, client, call );
+
+  if ( axto->bufValue ) {
+    delete axto->bufValue;
+    axto->bufValue = NULL;
+  }
+
   axto->ef.popdown();
   axto->operationComplete();
 
@@ -190,6 +198,11 @@ static void axtc_edit_cancel (
 
 activeXTextClass *axto = (activeXTextClass *) client;
 
+  if ( axto->bufValue ) {
+    delete axto->bufValue;
+    axto->bufValue = NULL;
+  }
+
   axto->ef.popdown();
   axto->operationCancel();
 
@@ -202,6 +215,11 @@ static void axtc_edit_cancel_delete (
 {
 
 activeXTextClass *axto = (activeXTextClass *) client;
+
+  if ( axto->bufValue ) {
+    delete axto->bufValue;
+    axto->bufValue = NULL;
+  }
 
   axto->ef.popdown();
   axto->operationCancel();
@@ -339,6 +357,7 @@ activeXTextClass::activeXTextClass ( void ) {
   connection.setMaxPvs( 2 );
   unconnectedTimer = 0;
   setBlinkFunction( (void *) doBlink );
+  bufValue = NULL;
 
 }
 
@@ -394,6 +413,7 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   stringWidth = source->stringWidth;
   stringY = source->stringY;
   stringX = source->stringX;
+  bufValue = NULL;
 
   connection.setMaxPvs( 2 );
 
@@ -406,6 +426,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 activeXTextClass::~activeXTextClass ( void ) {
 
   if ( name ) delete name;
+
+  if ( bufValue ) delete bufValue;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -471,6 +493,10 @@ int activeXTextClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  if ( !bufValue ) {
+    bufValue = new char[activeXTextClass::MAX_TEXT_LEN+1];
+  }
+
   ptr = actWin->obj.getNameFromClass( "activeXTextClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
@@ -515,9 +541,9 @@ char title[32], *ptr;
   bufAutoSize = autoSize;
 
   if ( value.getRaw() )
-    strncpy( bufValue, value.getRaw(), 255 );
+    strncpy( bufValue, value.getRaw(), activeXTextClass::MAX_TEXT_LEN );
   else
-    strncpy( bufValue, "", 255 );
+    strncpy( bufValue, "", activeXTextClass::MAX_TEXT_LEN );
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -531,7 +557,12 @@ char title[32], *ptr;
   ef.addTextField( activeXTextClass_str8, 35, &bufY );
   ef.addTextField( activeXTextClass_str9, 35, &bufW );
   ef.addTextField( activeXTextClass_str10, 35, &bufH );
-  ef.addTextField( activeXTextClass_str23, 35, bufValue, 255 );
+
+  ef.addTextBox( activeXTextClass_str23, 32, 10, bufValue,
+   activeXTextClass::MAX_TEXT_LEN );
+
+  //ef.addTextField( activeXTextClass_str23, 35, bufValue, 255 );
+
   ef.addToggle( activeXTextClass_str11, &bufAutoSize );
   ef.addColorButton( activeXTextClass_str13, actWin->ci, &fgCb, &bufFgColor );
   ef.addToggle( activeXTextClass_str14, &bufFgColorMode );
@@ -584,7 +615,8 @@ int activeXTextClass::createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneValue[255+1], onePv[PV_Factory::MAX_PV_NAME+1];
+char oneValue[activeXTextClass::MAX_TEXT_LEN+1],
+ onePv[PV_Factory::MAX_PV_NAME+1];
 int stat = 1;
 
   this->actWin = _actWin;
@@ -695,7 +727,8 @@ int stat = 1;
     strcpy( maxVisString, "1" );
   }
 
-  readStringFromFile( oneValue, 255+1, f ); actWin->incLine();
+  readStringFromFile( oneValue, activeXTextClass::MAX_TEXT_LEN+1, f );
+   actWin->incLine();
   value.setRaw( oneValue );
 
   readStringFromFile( fontTag, 63+1, f ); actWin->incLine();
@@ -755,7 +788,8 @@ int activeXTextClass::importFromXchFile (
 int r, g, b, more, index;
 unsigned int pixel;
 int stat = 1;
-char *tk, *gotData, *context, oneValue[255+1], buf[255+1];
+char *tk, *gotData, *context,
+ oneValue[activeXTextClass::MAX_TEXT_LEN+1], buf[255+1];
 
   r = 0xffff;
   g = 0xffff;
@@ -854,8 +888,8 @@ char *tk, *gotData, *context, oneValue[255+1], buf[255+1];
           return 0;
         }
 
-        strncpy( oneValue, tk, 255 );
-        oneValue[255] = 0;
+        strncpy( oneValue, tk, activeXTextClass::MAX_TEXT_LEN );
+        oneValue[activeXTextClass::MAX_TEXT_LEN] = 0;
 
       }
             
@@ -1061,9 +1095,11 @@ int blink = 0;
       if ( strcmp( fontTag, "" ) != 0 ) {
         actWin->executeGc.setFontTag( fontTag, actWin->fi );
       }
-      XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
-       actWin->executeGc.normGC(), stringX, stringY, fontHeight,
-       value.getExpanded(), stringLength );
+      clipStat = actWin->executeGc.addNormXClipRectangle( xR );
+      XDrawStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, stringY, w,
+       value.getExpanded(), stringLength, &fs, alignment );
+      if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
       updateBlink( blink );
@@ -1074,9 +1110,9 @@ int blink = 0;
     if ( strcmp( fontTag, "" ) != 0 ) {
       actWin->executeGc.setFontTag( fontTag, actWin->fi );
     }
-    XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.eraseGC(), stringX, stringY, fontHeight,
-     value.getExpanded(), stringLength );
+    XDrawStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), x, stringY, w,
+     value.getExpanded(), stringLength, &fs, alignment );
     actWin->executeGc.restoreFg();
   }
 
@@ -1101,9 +1137,9 @@ int blink = 0;
 
     if ( useDisplayBg ) {
 
-      XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
-       actWin->executeGc.normGC(), stringX, stringY, fontHeight,
-       value.getExpanded(), stringLength );
+      XDrawStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, stringY, w,
+       value.getExpanded(), stringLength, &fs, alignment );
 
     }
     else {
@@ -1111,9 +1147,9 @@ int blink = 0;
       actWin->executeGc.saveBg();
       actWin->executeGc.setBG( bgColor.getColor() );
 
-      XDrawImageStrings( actWin->d, XtWindow(actWin->executeWidget),
-       actWin->executeGc.normGC(), stringX, stringY, fontHeight,
-       value.getExpanded(), stringLength );
+      XDrawImageStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, stringY, w,
+       value.getExpanded(), stringLength, &fs, alignment );
 
       actWin->executeGc.restoreBg();
 
@@ -1143,16 +1179,16 @@ XRectangle xR = { x, y, w, h };
 
   if ( useDisplayBg ) {
 
-    XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.eraseGC(), stringX, stringY, fontHeight,
-     value.getExpanded(), stringLength );
+    XDrawStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.eraseGC(), x, stringY, w,
+     value.getExpanded(), stringLength, &fs, alignment );
 
   }
   else {
 
-    XDrawImageStrings( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.eraseGC(), stringX, stringY, fontHeight,
-     value.getExpanded(), stringLength );
+    XDrawImageStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.eraseGC(), x, stringY, w,
+     value.getExpanded(), stringLength, &fs, alignment );
 
   }
 
@@ -1183,9 +1219,9 @@ XRectangle xR = { x, y, w, h };
 
     actWin->executeGc.addEraseXClipRectangle( xR );
 
-    XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
-     actWin->executeGc.eraseGC(), stringX, stringY, fontHeight,
-     value.getExpanded(), stringLength );
+    XDrawStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.eraseGC(), x, stringY, w,
+     value.getExpanded(), stringLength, &fs, alignment );
 
     actWin->executeGc.removeEraseXClipRectangle();
 
@@ -1202,9 +1238,9 @@ XRectangle xR = { x, y, w, h };
       actWin->executeGc.setFG( bgColor.getColor() );
       actWin->executeGc.setBG( bgColor.getColor() );
 
-      XDrawImageStrings( actWin->d, XtWindow(actWin->executeWidget),
-       actWin->executeGc.normGC(), stringX, stringY, fontHeight,
-       value.getExpanded(), stringLength );
+      XDrawImageStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, stringY, w,
+       value.getExpanded(), stringLength, &fs, alignment );
 
     }
 
@@ -1473,18 +1509,18 @@ int blink = 0;
   if ( useDisplayBg ) {
 
     if ( value.getRaw() ) {
-      XDrawStrings( actWin->d, XtWindow(actWin->drawWidget),
-       actWin->drawGc.normGC(), stringX, stringY, fontHeight,
-       value.getRaw(), stringLength );
+      XDrawStringsAligned( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->drawGc.normGC(), x, stringY, w,
+       value.getRaw(), stringLength, &fs, alignment );
     }
 
   }
   else {
 
     if ( value.getRaw() ) {
-      XDrawImageStrings( actWin->d, XtWindow(actWin->drawWidget),
-       actWin->drawGc.normGC(), stringX, stringY, fontHeight,
-       value.getRaw(), stringLength );
+      XDrawImageStringsAligned( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->drawGc.normGC(), x, stringY, w,
+       value.getRaw(), stringLength, &fs, alignment );
     }
 
   }
@@ -1519,18 +1555,18 @@ XRectangle xR = { x, y, w, h };
   if ( useDisplayBg ) {
 
     if ( value.getRaw() ) {
-      XDrawStrings( actWin->d, XtWindow(actWin->drawWidget),
-       actWin->drawGc.eraseGC(), stringX, stringY, fontHeight,
-       value.getRaw(), stringLength );
+      XDrawStringsAligned( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->drawGc.eraseGC(), x, stringY, w,
+       value.getRaw(), stringLength, &fs, alignment );
     }
 
   }
   else {
 
     if ( value.getRaw() ) {
-      XDrawImageStrings( actWin->d, XtWindow(actWin->drawWidget),
-       actWin->drawGc.eraseGC(), stringX, stringY, fontHeight,
-       value.getRaw(), stringLength );
+      XDrawImageStringsAligned( actWin->d, XtWindow(actWin->drawWidget),
+       actWin->drawGc.eraseGC(), x, stringY, w,
+       value.getRaw(), stringLength, &fs, alignment );
     }
 
   }
@@ -1741,17 +1777,20 @@ pvValType pvV;
 
     eraseActive();
 
-    value.setRaw( bufValue );
-
-    stringLength = strlen( bufValue );
+    if ( bufValue ) {
+      value.setRaw( bufValue );
+      stringLength = strlen( bufValue );
+      delete bufValue;
+      bufValue = NULL;
+    }
 
     updateFont( value.getRaw(), fontTag, &fs, &fontAscent, &fontDescent,
      &fontHeight, &stringWidth );
 
     if ( autoSize && fs ) {
-      w = XTextWidth( fs, value.getRaw(), stringLength );
+      getStringBoxSize( value.getRaw(), stringLength,
+      &fs, alignment, &w, &h );
       sboxW = w;
-      h = fs->ascent + fs->descent;
       sboxH = h;
     }
 
@@ -1768,9 +1807,13 @@ int activeXTextClass::setProperty (
   char *_value )
 {
 
+  if ( !bufValue ) {
+    bufValue = new char[activeXTextClass::MAX_TEXT_LEN+1];
+  }
+
   if ( strcmp( prop, activeXTextClass_str33 ) == 0 ) {
 
-    strncpy( bufValue, _value, 255 );
+    strncpy( bufValue, _value, activeXTextClass::MAX_TEXT_LEN );
 
     actWin->appCtx->proc->lock();
     actWin->addDefExeNode( aglPtr );
