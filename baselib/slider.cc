@@ -2583,12 +2583,15 @@ char callbackName[63+1];
 
   case 1:
 
-    frameWidget = XtVaCreateManagedWidget( "", xmFrameWidgetClass,
+    frameWidget = XtVaCreateManagedWidget( "", xmBulletinBoardWidgetClass,
      actWin->executeWidgetId(),
      XmNx, x,
      XmNy, y,
-     XmNmarginWidth, 0,
+     XmNwidth, w,
+     XmNheight, h,
      XmNmarginHeight, 0,
+     XmNmarginWidth, 0,
+     XmNshadowThickness, 2,
      XmNtopShadowColor, shadeColor.pixelColor(),
      XmNbottomShadowColor, BlackPixel( actWin->display(),
       DefaultScreen(actWin->display()) ),
@@ -2603,6 +2606,8 @@ char callbackName[63+1];
 
     sliderWidget = XtVaCreateManagedWidget( "", xmDrawingAreaWidgetClass,
      frameWidget,
+     XmNx, 2,
+     XmNy, 2,
      XmNwidth, w-4,
      XmNheight, h-4,
      XmNbackground, bgColor.pixelColor(),
