@@ -24,6 +24,9 @@
 
 #include "thread.h"
 
+// This is the EPICS specific line right now:
+static PV_Factory *pv_factory = new EPICS_PV_Factory();
+
 static void msloValueChangeCB (
   Widget w,
   XtPointer client,
@@ -96,10 +99,8 @@ double fvalue;
   stat = mslo->drawActiveControlText();
 
   if ( mslo->controlExists ) {
-#ifdef __epics__
-    stat = ca_put( DBR_DOUBLE, mslo->controlPvId, &fvalue );
-    if ( stat != ECA_NORMAL ) printf( activeMotifSliderClass_str59 );
-#endif
+    stat = mslo->controlPvId->put( fvalue );
+    //if ( stat != ECA_NORMAL ) printf( activeMotifSliderClass_str59 );
   }
 
   mslo->controlAdjusted = 1;
@@ -154,10 +155,8 @@ double fvalue;
   stat = mslo->drawActiveControlText();
 
   if ( mslo->controlExists ) {
-#ifdef __epics__
-    stat = ca_put( DBR_DOUBLE, mslo->controlPvId, &fvalue );
-    if ( stat != ECA_NORMAL ) printf( activeMotifSliderClass_str59 );
-#endif
+    stat = mslo->controlPvId->put( fvalue );
+    //if ( stat != ECA_NORMAL ) printf( activeMotifSliderClass_str59 );
   }
 
   mslo->controlAdjusted = 1;
@@ -329,7 +328,7 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
 int stat;
 
   if ( mslo->controlExists ) {
-    stat = ca_put( DBR_DOUBLE, mslo->controlPvId, &mslo->kpCtlDouble );
+    stat = mslo->controlPvId->put( mslo->kpCtlDouble );
     mslo->actWin->appCtx->proc->lock();
     mslo->needCtlRefresh = 1;
     mslo->actWin->addDefExeNode( mslo->aglPtr );
@@ -475,14 +474,11 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
 // for EPICS support
 
   if ( mslo->controlExists ) {
-#ifdef __epics__
-    stat = ca_put( DBR_DOUBLE, mslo->controlPvId, &fvalue );
-    if ( stat != ECA_NORMAL ) printf( activeMotifSliderClass_str3 );
-    //mslo->needCtlRefresh = 1;
+    stat = mslo->controlPvId->put( fvalue );
+    //if ( stat != ECA_NORMAL ) printf( activeMotifSliderClass_str3 );
     mslo->actWin->appCtx->proc->lock();
     mslo->actWin->addDefExeNode( mslo->aglPtr );
     mslo->actWin->appCtx->proc->unlock();
-#endif
   }
 
   mslo->controlAdjusted = 1;
@@ -661,17 +657,46 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
 }
 
 // for EPICS support
-#ifdef __epics__
 
-static void sl_monitor_control_connect_state (
-  struct connection_handler_args arg )
+void activeMotifSliderClass::monitorControlConnectState (
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeMotifSliderClass *mslo = (activeMotifSliderClass *) ca_puser(arg.chid);
+activeMotifSliderClass *mslo = (activeMotifSliderClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
+
+    if ( mslo->limitsFromDb || mslo->efScaleMin.isNull() ) {
+      mslo->scaleMin = pv->get_lower_disp_limit();
+    }
+
+    if ( mslo->limitsFromDb || mslo->efScaleMax.isNull() ) {
+      mslo->scaleMax = pv->get_upper_disp_limit();
+    }
+
+    if ( mslo->limitsFromDb || mslo->efPrecision.isNull() ) {
+      mslo->precision = pv->get_precision();
+    }
+
+    if ( mslo->formatType == MSLC_K_FORMAT_FLOAT ) {
+      sprintf( mslo->controlFormat, "%%.%-df", mslo->precision );
+    }
+    else if ( mslo->formatType == MSLC_K_FORMAT_EXPONENTIAL ) {
+      sprintf( mslo->controlFormat, "%%.%-de", mslo->precision );
+    }
+    else {
+      sprintf( mslo->controlFormat, "%%.%-dg", mslo->precision );
+    }
+
+    mslo->minFv = mslo->scaleMin;
+
+    mslo->maxFv = mslo->scaleMax;
+
+    mslo->curControlV = pv->get_double();
 
     mslo->needCtlConnectInit = 1;
+    mslo->needCtlInfoInit = 1;
 
   }
   else {
@@ -691,13 +716,14 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) ca_puser(arg.chid);
 
 }
 
-static void sl_monitor_control_label_connect_state (
-  struct connection_handler_args arg )
+void activeMotifSliderClass::monitorControlLabelConnectState (
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeMotifSliderClass *mslo = (activeMotifSliderClass *) ca_puser(arg.chid);
+activeMotifSliderClass *mslo = (activeMotifSliderClass *) userarg;
 
-  if ( arg.op == CA_OP_CONN_UP ) {
+  if ( pv->is_valid() ) {
 
     mslo->needCtlLabelConnectInit = 1;
     mslo->actWin->appCtx->proc->lock();
@@ -708,13 +734,14 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) ca_puser(arg.chid);
 
 }
 
-static void sl_controlLabelUpdate (
-  struct event_handler_args ast_args )
+void activeMotifSliderClass::controlLabelUpdate (
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeMotifSliderClass *mslo = (activeMotifSliderClass *) ast_args.usr;
+activeMotifSliderClass *mslo = (activeMotifSliderClass *) userarg;
 
-  strncpy( mslo->controlLabel, (char *) ast_args.dbr, 39 );
+  pv->get_string( mslo->controlLabel, 39 );
 
   mslo->needCtlLabelInfoInit = 1;
   mslo->actWin->appCtx->proc->lock();
@@ -723,60 +750,18 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) ast_args.usr;
 
 }
 
-static void sl_infoUpdate (
-  struct event_handler_args ast_args )
+void activeMotifSliderClass::controlUpdate (
+  ProcessVariable *pv,
+  void *userarg )
 {
 
-activeMotifSliderClass *mslo = (activeMotifSliderClass *) ast_args.usr;
-struct dbr_gr_double controlRec = *( (dbr_gr_double *) ast_args.dbr );
+activeMotifSliderClass *mslo = (activeMotifSliderClass *) userarg;
 
-  if ( mslo->limitsFromDb || mslo->efScaleMin.isNull() ) {
-    mslo->scaleMin = controlRec.lower_disp_limit;
-  }
+  mslo->curControlV = mslo->oneControlV = pv->get_double();
 
-  if ( mslo->limitsFromDb || mslo->efScaleMax.isNull() ) {
-    mslo->scaleMax = controlRec.upper_disp_limit;
-  }
-
-  if ( mslo->limitsFromDb || mslo->efPrecision.isNull() ) {
-    mslo->precision = controlRec.precision;
-  }
-
-  if ( mslo->formatType == MSLC_K_FORMAT_FLOAT ) {
-    sprintf( mslo->controlFormat, "%%.%-df", mslo->precision );
-  }
-  else if ( mslo->formatType == MSLC_K_FORMAT_EXPONENTIAL ) {
-    sprintf( mslo->controlFormat, "%%.%-de", mslo->precision );
-  }
-  else {
-    sprintf( mslo->controlFormat, "%%.%-dg", mslo->precision );
-  }
-
-  mslo->minFv = mslo->scaleMin;
-
-  mslo->maxFv = mslo->scaleMax;
-
-  mslo->curControlV = controlRec.value;
-
-  mslo->needCtlInfoInit = 1;
-  mslo->actWin->appCtx->proc->lock();
-  mslo->actWin->addDefExeNode( mslo->aglPtr );
-  mslo->actWin->appCtx->proc->unlock();
+  // xtimer updates image
 
 }
-
-static void sl_controlUpdate (
-  struct event_handler_args ast_args )
-{
-
-activeMotifSliderClass *mslo = (activeMotifSliderClass *) ast_args.usr;
-
-  mslo->oneControlV = *( (double *) ast_args.dbr ); // an xtimer updates image
-  mslo->curControlV = mslo->oneControlV;
-
-}
-
-#endif
 
 activeMotifSliderClass::activeMotifSliderClass ( void ) {
 
@@ -1546,7 +1531,7 @@ activeMotifSliderClass *mslo;
   if ( !mslo->active ) return;
 
   if ( e->type == EnterNotify ) {
-    if ( !ca_write_access( mslo->controlPvId ) ) {
+    if ( !mslo->controlPvId->have_write_access() ) {
       mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
        CURSOR_K_NO );
     }
@@ -1579,7 +1564,7 @@ char title[32], *ptr, strVal[255+1];
   if ( !mslo->active ) return;
 
   if ( e->type == EnterNotify ) {
-    if ( !ca_write_access( mslo->controlPvId ) ) {
+    if ( !mslo->controlPvId->have_write_access() ) {
       mslo->actWin->cursor.set( XtWindow(mslo->actWin->executeWidget),
        CURSOR_K_NO );
     }
@@ -1610,7 +1595,7 @@ char title[32], *ptr, strVal[255+1];
 
   }
 
-  if ( !ca_write_access( mslo->controlPvId ) ) return;
+  if ( !mslo->controlPvId->have_write_access() ) return;
 
   if ( e->type == ButtonPress ) {
 
@@ -1701,7 +1686,7 @@ int activeMotifSliderClass::activate (
 {
 
 int i;
-int stat, opStat;
+int opStat;
 XtTranslations parsedTrans;
 WidgetList children;
 Cardinal numChildren;
@@ -1738,6 +1723,7 @@ static XtActionsRec dragActions[] = {
 
       prevScaleV = -1;
       dragIndicator = 0;
+      controlPvId = controlLabelPvId = 0;
 
       frameWidget = XtVaCreateManagedWidget( "",
        xmDrawingAreaWidgetClass,
@@ -1884,10 +1870,6 @@ static XtActionsRec dragActions[] = {
       incrementTimerActive = 0;
       opComplete = 0;
 
-  #ifdef __epics__
-      controlEventId = controlLabelEventId = 0;
-  #endif
-
       controlPvConnected = 0;
 
       if ( !controlPvName.getExpanded() ||
@@ -1931,25 +1913,33 @@ static XtActionsRec dragActions[] = {
       opStat = 1;
 
       if ( controlExists ) {
-#ifdef __epics__
-        stat = ca_search_and_connect( controlPvName.getExpanded(),
-         &controlPvId, sl_monitor_control_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeMotifSliderClass_str63 );
-          opStat = 0;
-        }
-#endif
+        controlPvId = pv_factory->create( controlPvName.getExpanded() );
+        if ( controlPvId ) {
+          if ( controlPvId->is_valid() ) {
+            monitorControlConnectState( controlPvId, this );
+            controlUpdate( controlPvId, this );
+	  }
+          controlPvId->add_conn_state_callback(
+           monitorControlConnectState, this );
+          controlPvId->add_value_callback(
+           controlUpdate, this );
+	}
       }
 
       if ( controlLabelExists && ( controlLabelType == MSLC_K_LABEL )  ) {
-#ifdef __epics__
-        stat = ca_search_and_connect( controlLabelName.getExpanded(),
-         &controlLabelPvId, sl_monitor_control_label_connect_state, this );
-        if ( stat != ECA_NORMAL ) {
-          printf( activeMotifSliderClass_str67 );
-          opStat = 0;
-        }
-#endif
+        controlLabelPvId =
+         pv_factory->create( controlLabelName.getExpanded() );
+        if ( controlLabelPvId ) {
+          if ( controlLabelPvId->is_valid() ) {
+           monitorControlLabelConnectState( controlLabelPvId, this );
+            controlLabelUpdate( controlLabelPvId, this );
+	  }
+          controlLabelPvId->add_conn_state_callback(
+           monitorControlLabelConnectState, this );
+          controlLabelPvId->add_value_callback(
+           controlLabelUpdate, this );
+	}
+
       }
 
       if ( opStat & 1 ) {
@@ -1984,8 +1974,6 @@ int activeMotifSliderClass::deactivate (
   int pass
 ) {
 
-int stat;
-
   activeMode = 0;
 
   if ( ef.formIsPoppedUp() ) {
@@ -2008,21 +1996,24 @@ int stat;
      motifSliderEventHandler, (XtPointer) this );
 
 // for EPICS support
-#ifdef __epics__
 
-    if ( controlExists ) {
-      stat = ca_clear_channel( controlPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeMotifSliderClass_str71 );
-    }
-  
-    if ( controlLabelExists && ( controlLabelType == MSLC_K_LABEL )  ) {
-      stat = ca_clear_channel( controlLabelPvId );
-      if ( stat != ECA_NORMAL )
-        printf( activeMotifSliderClass_str72 );
+    if ( controlPvId ) {
+      controlPvId->remove_conn_state_callback(
+       monitorControlConnectState, this );
+      controlPvId->remove_value_callback(
+       controlUpdate, this );
+      controlPvId->release();
+      controlPvId = 0;
     }
 
-#endif
+    if ( controlLabelPvId ) {
+      controlLabelPvId->remove_conn_state_callback(
+       monitorControlLabelConnectState, this );
+      controlLabelPvId->remove_value_callback(
+       controlLabelUpdate, this );
+      controlLabelPvId->release();
+      controlLabelPvId = 0;
+    }
 
     break;
 
@@ -2220,20 +2211,11 @@ double cv, fv;
 
 //----------------------------------------------------------------------------
 
-#ifdef __epics__
-
   if ( ncc ) {
 
     controlPvConnected = 1;
 
-    stat = ca_get_callback( DBR_GR_DOUBLE, controlPvId,
-     sl_infoUpdate, (void *) this );
-    if ( stat != ECA_NORMAL )
-      printf( activeMotifSliderClass_str78 );
-
   }
-
-#endif
 
 //----------------------------------------------------------------------------
 
@@ -2267,16 +2249,6 @@ double cv, fv;
 
     savedX = (int) ( ( savedV - minFv ) /
      factor + 0.5 );
-
-    if ( controlExists && !controlEventId ) {
-#ifdef __epics__
-      stat = ca_add_masked_array_event( DBR_DOUBLE, 1, controlPvId,
-       sl_controlUpdate, (void *) this, (float) 0.0, (float) 0.0, (float) 0.0,
-       &controlEventId, DBE_VALUE );
-      if ( stat != ECA_NORMAL )
-        printf( activeMotifSliderClass_str79 );
-#endif
-    }
 
     fgColor.setConnected();
 
@@ -2330,18 +2302,11 @@ double cv, fv;
 
 //----------------------------------------------------------------------------
 
-#ifdef __epics__
-
   if ( nclc ) {
 
-    stat = ca_get_callback( DBR_STRING, controlLabelPvId,
-     sl_controlLabelUpdate, (void *) this );
-    if ( stat != ECA_NORMAL )
-      printf( activeMotifSliderClass_str83 );
+    ; // do nothing
 
   }
-
-#endif
 
 //----------------------------------------------------------------------------
 

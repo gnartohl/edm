@@ -28,7 +28,9 @@
 #include "Xm/Scale.h"
 #include "Xm/ScrollBar.h"
 
-#include "cadef.h"
+#include "pv_factory.h"
+#include "epics_pv_factory.h"
+#include "cvtFast.h"
 
 #define MSLC_MAJOR_VERSION 1
 #define MSLC_MINOR_VERSION 0
@@ -163,21 +165,6 @@ static void mslc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-static void sl_controlUpdate (
-  struct event_handler_args ast_args );
-
-static void sl_infoUpdate (
-  struct event_handler_args ast_args );
-
-static void sl_controlLabelUpdate (
-  struct event_handler_args ast_args );
-
-static void sl_monitor_control_label_connect_state (
-  struct connection_handler_args arg );
-
-static void sl_monitor_control_connect_state (
-  struct connection_handler_args arg );
-
 #endif
 
 class activeMotifSliderClass : public activeGraphicClass {
@@ -289,21 +276,6 @@ friend void mslc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-friend void sl_controlUpdate (
-  struct event_handler_args ast_args );
-
-friend void sl_infoUpdate (
-  struct event_handler_args ast_args );
-
-friend void sl_controlLabelUpdate (
-  struct event_handler_args ast_args );
-
-friend void sl_monitor_control_label_connect_state (
-  struct connection_handler_args arg );
-
-friend void sl_monitor_control_connect_state (
-  struct connection_handler_args arg );
-
 XtIntervalId updateControlTimer;
 int updateControlTimerValue;
 int updateControlTimerActive;
@@ -355,8 +327,7 @@ char fontTag[63+1], bufFontTag[63+1];
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
 
-chid controlPvId, controlLabelPvId;
-evid controlEventId, controlLabelEventId;
+ProcessVariable *controlPvId, *controlLabelPvId;
 
 expStringClass controlPvName, controlLabelName;
 
@@ -410,6 +381,26 @@ activeMotifSliderClass::~activeMotifSliderClass ( void ) {
   if ( name ) delete name;
 
 }
+
+static void activeMotifSliderClass::controlUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
+static void activeMotifSliderClass::infoUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
+static void activeMotifSliderClass::controlLabelUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
+static void activeMotifSliderClass::monitorControlLabelConnectState (
+  ProcessVariable *pv,
+  void *userarg );
+
+static void activeMotifSliderClass::monitorControlConnectState (
+  ProcessVariable *pv,
+  void *userarg );
 
 char *activeMotifSliderClass::objName ( void ) {
 
