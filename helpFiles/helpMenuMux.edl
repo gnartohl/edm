@@ -1,6 +1,6 @@
 3 1 0
-182
-82
+186
+106
 1032
 718
 helvetica-medium-r-18.0
@@ -253,7 +253,7 @@ activePngClass
 414
 277
 137
-helpMenuMuxPng1
+$(help)helpMenuMuxPng1
 0
 0
 0
@@ -264,7 +264,7 @@ activePngClass
 444
 30
 46
-helpMenuMuxPng2
+$(help)helpMenuMuxPng2
 0
 0
 0
@@ -275,7 +275,7 @@ activePngClass
 564
 277
 137
-helpMenuMuxPng3
+$(help)helpMenuMuxPng3
 0
 0
 0
