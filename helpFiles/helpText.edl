@@ -1,6 +1,6 @@
 3 1 0
-53
-69
+184
+72
 1058
 940
 helvetica-medium-r-18.0
@@ -10,21 +10,21 @@ helvetica-medium-r-12.0
 rgb
 0,0,0
 rgb
-50971,52011,50971
+51400,51400,51400
 rgb
 0,0,0
 rgb
 0,0,0
 rgb
-0,0,48891
+0,0,49344
 rgb
-46810,47850,46810
+48059,48059,48059
 rgb
-61374,61374,61374
+60652,60652,60652
 rgb
-27046,27046,27046
+26985,26985,26985
 rgb
-55132,56172,55132
+56026,56026,56026
 <<<empty>>>
 0
 0
@@ -44,11 +44,11 @@ activeRectangleClass
 151
 21
 rgb
-40569,40569,40569
+40606,40606,40606
 0
 0
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -66,11 +66,11 @@ activeRectangleClass
 151
 21
 rgb
-40569,40569,40569
+40606,40606,40606
 0
 0
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -92,7 +92,7 @@ rgb
 0
 0
 rgb
-61374,61374,61374
+60652,60652,60652
 0
 <<<empty>>>
 <<<empty>>>
@@ -116,7 +116,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -140,7 +140,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -164,7 +164,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -188,7 +188,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -212,7 +212,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -278,11 +278,11 @@ activeRectangleClass
 18
 9
 rgb
-57213,64494,44730
+57825,63736,45489
 0
 1
 rgb
-57213,64494,44730
+57825,63736,45489
 0
 <<<empty>>>
 <<<empty>>>
@@ -304,7 +304,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -328,7 +328,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -352,7 +352,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -376,7 +376,7 @@ rgb
 0
 0
 rgb
-57213,64494,44730
+57825,63736,45489
 0
 <<<empty>>>
 <<<empty>>>
@@ -418,11 +418,11 @@ activeRectangleClass
 18
 9
 rgb
-57213,64494,44730
+57825,63736,45489
 0
 1
 rgb
-57213,64494,44730
+57825,63736,45489
 0
 <<<empty>>>
 <<<empty>>>
@@ -444,7 +444,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -536,11 +536,11 @@ activeRectangleClass
 151
 21
 rgb
-40569,40569,40569
+40606,40606,40606
 0
 0
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -562,7 +562,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -586,7 +586,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -610,7 +610,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -634,7 +634,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -658,7 +658,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -682,7 +682,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -706,7 +706,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -730,7 +730,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -754,7 +754,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -778,7 +778,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -802,7 +802,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -826,7 +826,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -850,7 +850,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -874,7 +874,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -898,7 +898,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -922,7 +922,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -946,7 +946,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -970,7 +970,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -994,7 +994,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1018,7 +1018,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1042,7 +1042,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1066,7 +1066,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1090,7 +1090,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1114,7 +1114,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1128,7 +1128,7 @@ helvetica-medium-r-14.0
 <<<empty>>>
 <<<E~O~D>>>
 activeLineClass
-2 1 0
+2 2 0
 505
 5
 0
@@ -1141,7 +1141,7 @@ rgb
 0
 0
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 2
 0
@@ -1150,6 +1150,8 @@ rgb
 0
 <<<empty>>>
 <<<empty>>>
+0
+0
 <<<E~O~D>>>
 activeXTextClass
 2 1 0
@@ -1162,7 +1164,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1179,21 +1181,21 @@ activeXTextClass
 2 1 0
 542
 190
-398
+408
 16
 rgb
 0,0,0
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
 0
 <<<empty>>>
 <<<empty>>>
-widget. Lose Focus Update is applicable only for motif widgets.
+widget. Lose Focus Update and Auto Select Text are applicable
 helvetica-medium-r-14.0
 0
 1
@@ -1202,7 +1204,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 542
-298
+305
 441
 16
 rgb
@@ -1210,7 +1212,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1234,7 +1236,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1258,7 +1260,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1274,7 +1276,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 542
-314
+321
 466
 16
 rgb
@@ -1282,7 +1284,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1298,7 +1300,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 542
-330
+337
 31
 16
 rgb
@@ -1306,7 +1308,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1322,7 +1324,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 542
-360
+367
 445
 16
 rgb
@@ -1330,7 +1332,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1346,7 +1348,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 542
-376
+383
 480
 16
 rgb
@@ -1354,7 +1356,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1370,7 +1372,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 542
-392
+399
 462
 16
 rgb
@@ -1378,7 +1380,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1394,7 +1396,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 542
-408
+415
 267
 16
 rgb
@@ -1402,7 +1404,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1426,7 +1428,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1450,7 +1452,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1466,7 +1468,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 542
-439
+508
 450
 16
 rgb
@@ -1474,7 +1476,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1490,7 +1492,7 @@ helvetica-medium-r-14.0
 activeXTextClass
 2 1 0
 542
-454
+523
 282
 16
 rgb
@@ -1498,7 +1500,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1522,7 +1524,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1546,7 +1548,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1562,7 +1564,7 @@ helvetica-medium-r-14.0
 cfcf6c8a_dbeb_11d2_8a97_00104b8742df
 1 2 0
 543
-232
+239
 127
 43
 $(help)helpMotifWidget
@@ -1573,7 +1575,7 @@ $(help)helpMotifWidget
 activeXTextClass
 2 1 0
 683
-245
+252
 139
 16
 rgb
@@ -1581,7 +1583,7 @@ rgb
 0
 1
 rgb
-46810,47850,46810
+48059,48059,48059
 0
 <<<empty>>>
 <<<empty>>>
@@ -1589,6 +1591,246 @@ rgb
 <<<empty>>>
 <<<empty>>>
 Motif Widget Example
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+542
+207
+135
+16
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+only for motif widgets.
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+542
+446
+460
+16
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+If Auto Select Text is checked, the text is selected when the widget gets
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+542
+462
+468
+16
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+keyboard focus either from the mouse pointer entering the display window
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+542
+478
+364
+16
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+or when the TAB key is used to advance to the next field.
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+542
+551
+481
+16
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+If Editable, Keypad, and Date are checked, clicking on the text area calls up
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+542
+567
+461
+16
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+at calendar window in which the date and time may be entered. This may
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+542
+583
+190
+16
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+be used only with a string PV.
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+542
+610
+474
+16
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+If Editable, Keypad, and File are checked, clicking on the text area calls up
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+542
+626
+477
+16
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+a file selection dialog which uses the contents of Default Dir and Pattern as
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+542
+642
+362
+16
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+filter parameters. This may be used only with a string PV.
 helvetica-medium-r-14.0
 0
 1
