@@ -1,6 +1,6 @@
 3 0 1
-136
-34
+747
+228
 500
 600
 helvetica-medium-r-18.0
@@ -29,35 +29,35 @@ helvetica-medium-r-18.0
 0
 EOD
 StripClass
-2 0 1
+3 0 0
 20
 32
 461
 538
 6
 CALC\sum(fred,jane)
-29
+Monitor: NORMAL
 1
 fred
-44
+Monitor: MAJOR
 1
 freddy
-39
+Monitor: MINOR
 1
 jane
-58
+Controller
 1
 janet
-64
+CRYO help
 1
 <<<empty>>>
-9
+GLOBAL help
 1
 60.0
 0 1
-0
-1
-19
+black-14
+Disconn/Invalid
+grey-2
 helvetica-medium-r-18.0
 0
 EOD

@@ -1,6 +1,6 @@
 3 0 1
-468
-24
+364
+87
 546
 452
 helvetica-medium-r-18.0
@@ -8,7 +8,7 @@ helvetica-medium-r-18.0
 helvetica-medium-r-12.0
 0
 0
-23
+3
 0
 0
 36
@@ -37,8 +37,8 @@ TextupdateClass
 EPICS\jane
 0
 0
-disconnect/invalid
-lt grey
+Monitor: NORMAL
+Wid-bg/Anno-pri
 1
 helvetica-medium-i-18.0
 1
@@ -53,8 +53,8 @@ TextupdateClass
 jane
 0
 0
-Mon: MAJOR Alarm
-white
+Monitor: NORMAL
+Wid-bg/Anno-pri
 1
 helvetica-bold-r-18.0
 2
@@ -69,8 +69,8 @@ TextupdateClass
 jane
 0
 0
-orange
-white
+Monitor: NORMAL
+Wid-bg/Anno-pri
 1
 helvetica-medium-r-18.0
 0
@@ -85,8 +85,8 @@ TextupdateClass
 janet
 0
 0
-disconnect/invalid
-Mon: MAJOR Alarm
+Monitor: NORMAL
+Wid-bg/Anno-pri
 0
 helvetica-medium-r-12.0
 0
@@ -101,8 +101,8 @@ TextupdateClass
 fred
 0
 0
-turquoise
-white
+Monitor: NORMAL
+Wid-bg/Anno-pri
 1
 times-medium-r-24.0
 2
@@ -117,8 +117,8 @@ TextupdateClass
 CALC\random(jane)
 0
 0
-disconnect/invalid
-white
+Monitor: NORMAL
+Wid-bg/Anno-pri
 1
 helvetica-medium-r-18.0
 0
@@ -133,8 +133,8 @@ TextupdateClass
 janet
 0
 0
-disconnect/invalid
-white
+Monitor: NORMAL
+Wid-bg/Anno-pri
 1
 helvetica-medium-r-18.0
 0
@@ -149,8 +149,8 @@ TextupdateClass
 fred
 0
 0
-disconnect/invalid
-white
+Monitor: NORMAL
+Wid-bg/Anno-pri
 1
 helvetica-medium-r-18.0
 1
@@ -160,12 +160,12 @@ activeXTextClass
 2 0 0
 32
 9
-453
+344
 27
-35
+14
 0
-1
-20
+0
+52
 0
 <<<empty>>>
 <<<empty>>>
@@ -187,8 +187,8 @@ TextupdateClass
 EPICS\fred
 0
 0
-Mon: NORMAL
-grey6
+Monitor: NORMAL
+Wid-bg/Anno-pri
 1
 helvetica-medium-r-18.0
 0
@@ -203,8 +203,8 @@ TextupdateClass
 janet
 0
 0
-disconnect/invalid
-Mon: MAJOR Alarm
+Monitor: NORMAL
+Wid-bg/Anno-pri
 0
 helvetica-medium-r-12.0
 0
@@ -219,8 +219,8 @@ TextentryClass
 fred
 0
 0
-disconnect/invalid
-Mon: NORMAL
+Monitor: NORMAL
+Wid-bg/Anno-pri
 1
 helvetica-medium-r-12.0
 0
@@ -235,8 +235,8 @@ TextentryClass
 fred
 0
 0
-disconnect/invalid
-Mon: NORMAL
+Monitor: NORMAL
+Wid-bg/Anno-pri
 1
 helvetica-bold-r-14.0
 2
@@ -251,8 +251,8 @@ TextentryClass
 fred
 0
 0
-disconnect/invalid
-navy
+Monitor: NORMAL
+Wid-bg/Anno-pri
 1
 helvetica-medium-r-12.0
 0
@@ -267,8 +267,8 @@ TextentryClass
 fred
 0
 0
-disconnect/invalid
-Mon: NORMAL
+Monitor: NORMAL
+Wid-bg/Anno-pri
 1
 helvetica-medium-r-12.0
 0
@@ -283,8 +283,8 @@ TextupdateClass
 CALC\sum(fred,CALC\sum(fred,fred))
 0
 0
-disconnect/invalid
-white
+Monitor: NORMAL
+Wid-bg/Anno-pri
 1
 helvetica-medium-r-18.0
 0
@@ -299,8 +299,8 @@ TextupdateClass
 CALC\sum(fred, 1)
 0
 0
-disconnect/invalid
-white
+Monitor: NORMAL
+Wid-bg/Anno-pri
 1
 helvetica-medium-r-18.0
 0
@@ -315,8 +315,8 @@ TextupdateClass
 EPICS\fred
 0
 0
-disconnect/invalid
-white
+Monitor: NORMAL
+Wid-bg/Anno-pri
 1
 helvetica-medium-r-18.0
 0
@@ -328,10 +328,10 @@ activeXTextClass
 328
 31
 21
-0
+14
 0
 1
-20
+10
 0
 <<<empty>>>
 <<<empty>>>
@@ -350,10 +350,10 @@ activeXTextClass
 366
 51
 21
-0
+14
 0
 1
-20
+10
 0
 <<<empty>>>
 <<<empty>>>
@@ -372,10 +372,10 @@ activeXTextClass
 403
 98
 21
-0
+14
 0
 1
-20
+10
 0
 <<<empty>>>
 <<<empty>>>
