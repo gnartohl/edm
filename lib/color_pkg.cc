@@ -1186,6 +1186,7 @@ char msg[127+1];
         ruleCond->ruleFunc1 = alwaysTrue;
         ruleCond->value1 = 0;
         ruleCond->connectingFunc = NULL;
+        ruleCond->joiningFunc = NULL;
         state = GET_COLON;
 
       }
@@ -1278,7 +1279,7 @@ char msg[127+1];
       }
       else if ( strcmp( tk, ":" ) == 0 ) {
         ruleCond->connectingFunc = NULL;
-        state = GET_RESULT_NAME;
+        state = GET_RESULT_NAME_OR_JOININGFUNC;
       }
       else {
         parseError( colorInfoClass_str24 );
@@ -1382,7 +1383,7 @@ char msg[127+1];
       }
 
       if ( strcmp( tk, ":" ) == 0 ) {
-        state = GET_RESULT_NAME;
+        state = GET_RESULT_NAME_OR_JOININGFUNC;
       }
       else {
         parseError( colorInfoClass_str19 );
@@ -1392,7 +1393,7 @@ char msg[127+1];
 
       break;
 
-    case GET_RESULT_NAME:
+    case GET_RESULT_NAME_OR_JOININGFUNC:
 
       stat = getToken( tk ); // color name to use when this condition is true
       if ( stat == FAIL ) {
@@ -1411,19 +1412,35 @@ char msg[127+1];
         parseStatus = FAIL;
         goto term;
       }
+      else if ( strcmp( tk, "&&" ) == 0 ) {
+	printf( "joining func = and\n" );
+        ruleCond->resultName = NULL;
+        ruleCond->joiningFunc = thisAnd;
+        ruleCond->result = 0; // we will map above name to an index
+                              // later and store the index here
+      }
+      else if ( strcmp( tk, "||" ) == 0 ) {
+	printf( "joining func = or\n" );
+        ruleCond->resultName = NULL;
+        ruleCond->joiningFunc = thisOr;
+        ruleCond->result = 0; // we will map above name to an index
+                              // later and store the index here
+      }
       else {
+        ruleCond->joiningFunc = NULL;
         ruleCond->resultName = new char[strlen(tk)+1];
         strcpy( ruleCond->resultName, tk );
         ruleCond->result = 0; // we will map above name to an index
                               // later and store the index here
-        // link into condition list
-        for( n=0; n<2; n++ ) {
-          cur[n]->rule->ruleTail->flink = ruleCond;
-          cur[n]->rule->ruleTail = ruleCond;
-          cur[n]->rule->ruleTail->flink = NULL;
-	}
-        state = GET_RULE_CONDITION;
       }
+
+      // link into condition list
+      for( n=0; n<2; n++ ) {
+        cur[n]->rule->ruleTail->flink = ruleCond;
+        cur[n]->rule->ruleTail = ruleCond;
+        cur[n]->rule->ruleTail->flink = NULL;
+      }
+      state = GET_RULE_CONDITION;
 
       break;
 
@@ -2092,50 +2109,57 @@ term:
 
       while ( ruleCond ) {
 
-        stat = avl_get_match( this->colorCacheByNameH,
-         (void *) ruleCond->resultName, (void **) &cur1 );
-        if ( cur1 ) {
-          if ( isRule( cur1->index ) ) { // rules may not reference other rules
-            printf( colorInfoClass_str29, colorNodes[i]->name );
+        if ( ruleCond->resultName ) { // this condition might be combined
+                                      // with others via ||, &&
+
+          stat = avl_get_match( this->colorCacheByNameH,
+           (void *) ruleCond->resultName, (void **) &cur1 );
+          if ( cur1 ) {
+            if ( isRule( cur1->index ) ) { // rules may not reference
+	                                   // other rules
+              printf( colorInfoClass_str29, colorNodes[i]->name );
+              return 0;
+            }
+            ruleCond->result = cur1->index;
+            //printf( "result name %s --> %-d\n", ruleCond->resultName,
+            // ruleCond->result );
+          }
+          else {
+            printf( colorInfoClass_str28, colorNodes[i]->name );
             return 0;
           }
-          ruleCond->result = cur1->index;
-          //printf( "result name %s --> %-d\n", ruleCond->resultName,
-          // ruleCond->result );
-        }
-        else {
-          printf( colorInfoClass_str28, colorNodes[i]->name );
-          return 0;
-        }
 
-        if ( firstCond ) { // use first rule condition as static color for rule
+          if ( firstCond ) { // use first rule condition as static
+	                     // color for rule
 
-          colors[i] = cur1->pixel;
+            colors[i] = cur1->pixel;
 
-          firstCond = 0;
-          colorNodes[i]->pixel = cur1->pixel;
-          colorNodes[i]->blinkPixel = cur1->blinkPixel;
-          for ( ii=0; ii<3; ii++ ) {
-            colorNodes[i]->rgb[ii] = cur1->rgb[ii];
-            colorNodes[i]->blinkRgb[ii] = cur1->blinkRgb[ii];
-          }
-
-          // --------------------------------------------------------------
-          // update tree sorted by name
-          stat = avl_get_match( this->colorCacheByNameH,
-           (void *) colorNodes[i]->name,
-           (void **) &cur2 );
-          if ( cur2 ) {
-            cur2->pixel = colorNodes[i]->pixel;
-            cur2->blinkPixel = colorNodes[i]->blinkPixel;
+            firstCond = 0;
+            colorNodes[i]->pixel = cur1->pixel;
+            colorNodes[i]->blinkPixel = cur1->blinkPixel;
             for ( ii=0; ii<3; ii++ ) {
-              cur2->rgb[ii] = colorNodes[i]->rgb[ii];
-              cur2->blinkRgb[ii] = colorNodes[i]->blinkRgb[ii];
+              colorNodes[i]->rgb[ii] = cur1->rgb[ii];
+              colorNodes[i]->blinkRgb[ii] = cur1->blinkRgb[ii];
             }
-          }
-          // --------------------------------------------------------------
 
-  	}
+            // --------------------------------------------------------------
+            // update tree sorted by name
+            stat = avl_get_match( this->colorCacheByNameH,
+             (void *) colorNodes[i]->name,
+             (void **) &cur2 );
+            if ( cur2 ) {
+              cur2->pixel = colorNodes[i]->pixel;
+              cur2->blinkPixel = colorNodes[i]->blinkPixel;
+              for ( ii=0; ii<3; ii++ ) {
+                cur2->rgb[ii] = colorNodes[i]->rgb[ii];
+                cur2->blinkRgb[ii] = colorNodes[i]->blinkRgb[ii];
+              }
+            }
+            // --------------------------------------------------------------
+
+	  }
+
+	}
 
         ruleCond = ruleCond->flink;
 
@@ -3476,6 +3500,8 @@ int opResult, opResult1, opResult2;
     return index;
   }
 
+  colorNodes[index]->rule->needJoin = 0;
+
   ruleCond = colorNodes[index]->rule->ruleHead->flink;
   while ( ruleCond ) {
 
@@ -3489,8 +3515,21 @@ int opResult, opResult1, opResult2;
       opResult = opResult1;
     }
 
-    if ( opResult ) {
-      return ruleCond->result;
+    if ( colorNodes[index]->rule->needJoin ) { // set by prev rule
+      opResult = colorNodes[index]->rule->curJoinFunc(
+       opResult, colorNodes[index]->rule->combinedOpResult );
+    }
+
+    if ( ruleCond->joiningFunc ) { // set by this rule
+      colorNodes[index]->rule->curJoinFunc = ruleCond->joiningFunc;
+      colorNodes[index]->rule->combinedOpResult = opResult;
+      colorNodes[index]->rule->needJoin = 1;
+    }
+    else {
+      colorNodes[index]->rule->needJoin = 0;
+      if ( opResult ) {
+        return ruleCond->result;
+      }
     }
 
     ruleCond = ruleCond->flink;

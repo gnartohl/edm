@@ -68,6 +68,7 @@ typedef struct ruleConditionTag {
     double value2;
     ruleFuncType ruleFunc2;
     connectingFuncType connectingFunc;
+    connectingFuncType joiningFunc; // joins one rule with another
     int result;
     char *resultName;
 } ruleConditionType, *ruleConditionPtr;
@@ -75,6 +76,9 @@ typedef struct ruleConditionTag {
 typedef struct ruleTag {
     ruleConditionPtr ruleHead;
     ruleConditionPtr ruleTail;
+    int needJoin;
+    connectingFuncType curJoinFunc;
+    int combinedOpResult;
 } ruleType, *rulePtr;
 
 typedef struct colorCacheTag {
@@ -316,7 +320,7 @@ private:
     static const int GET_RULE_CONDITION = 9;
     static const int GET_CONNECTOR_OR_COLON = 10;
     static const int GET_COLON = 11;
-    static const int GET_RESULT_NAME = 12;
+    static const int GET_RESULT_NAME_OR_JOININGFUNC = 12;
     static const int GET_COLOR = 13;
     static const int GET_ALARM_PARAMS = 14;
     static const int GET_MENU_MAP = 15;
