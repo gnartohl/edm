@@ -32,8 +32,8 @@ activeRectangleClass *aro = (activeRectangleClass *) ptr;
     if ( aro->isSelected() ) aro->drawSelectBoxCorners();
   }
   else {
-    aro->needRefresh = 1;
-    aro->actWin->addDefExeNode( aro->aglPtr );
+    aro->bufInvalidate();
+    aro->smartDrawAllActive();
   }
 
 }
