@@ -22,9 +22,6 @@
 
 void _edmDebug ( void );
 
-// This is the EPICS specific line right now:
-static PV_Factory *pv_factory = new EPICS_PV_Factory();
-
 static void updateTimerAction (
   XtPointer client,
   XtIntervalId *id )
@@ -3163,62 +3160,6 @@ double dyValue[NUM_Y_AXES];
       }
 
     }
-
-  }
-
-}
-
-
-void xyGraphClass::plotPvConnectStateCallback (
-  ProcessVariable *pv,
-  void *userarg
-) {
-
-objPlusIndexPtr ptr = (objPlusIndexPtr) userarg;
-xyGraphClass *axygo = (xyGraphClass *) ptr->objPtr;
-
-  if ( pv->is_valid() ) {
-
-  }
-  else { // lost connection
-
-    axygo->connection.setPvDisconnected( (void *) ptr->index );
-
-    axygo->actWin->appCtx->proc->lock();
-    axygo->needRefresh = 1;
-    axygo->actWin->addDefExeNode( axygo->aglPtr );
-    axygo->actWin->appCtx->proc->unlock();
-
-  }
-
-}
-
-void xyGraphClass::plotUpdate (
-  ProcessVariable *pv,
-  void *userarg
-) {
-
-objPlusIndexPtr ptr = (objPlusIndexPtr) userarg;
-xyGraphClass *axygo = (xyGraphClass *) ptr->objPtr;
-
-  if ( !axygo->connection.pvsConnected() ) {
-
-    axygo->connection.setPvConnected( (void *) ptr->index );
-
-    if ( axygo->connection.pvsConnected() ) {
-      axygo->actWin->appCtx->proc->lock();
-      axygo->needConnect = 1;
-      axygo->actWin->addDefExeNode( axygo->aglPtr );
-      axygo->actWin->appCtx->proc->unlock();
-    }
-
-  }
-  else {
-
-    axygo->actWin->appCtx->proc->lock();
-    axygo->needUpdate = 1;
-    axygo->actWin->addDefExeNode( axygo->aglPtr );
-    axygo->actWin->appCtx->proc->unlock();
 
   }
 
