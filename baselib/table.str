@@ -1,0 +1,25 @@
+#ifndef __table_str
+#define __table_str 1
+
+#define activeTableClass_str1 (char *) "rename %s to %s failed\n"
+#define activeTableClass_str2 (char *) "Cannot get file lock - no logging to file will be done\n"
+#define activeTableClass_str3 (char *) "No logging to file will be done\n"
+#define activeTableClass_str4 (char *) "Unknown object"
+#define activeTableClass_str5 (char *) " Properties"
+#define activeTableClass_str6 (char *) "X"
+#define activeTableClass_str7 (char *) "Y"
+#define activeTableClass_str8 (char *) "Width"
+#define activeTableClass_str9 (char *) "Height"
+#define activeTableClass_str11 (char *) "PV"
+#define activeTableClass_str15 (char *) "Font"
+#define activeTableClass_str16 (char *) "Fg Color"
+#define activeTableClass_str17 (char *) "Bg Color"
+#define activeTableClass_str18 (char *) "Odd Col Bg Color"
+#define activeTableClass_str19 (char *) "Top Shadow Color"
+#define activeTableClass_str20 (char *) "Bot Shadow Color"
+#define activeTableClass_str21 (char *) "Table"
+#define activeTableClass_str22 (char *) "error creating pv\n"
+#define activeTableClass_str24 (char *) "frameWidget create failed\n"
+#define activeTableClass_str25 (char *) "Even Col Bg Color"
+
+#endif

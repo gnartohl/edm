@@ -52,7 +52,8 @@ static libRecType libRec[] = {
   { "menuMuxClass", global_str5, reg_str18 },
   { "relatedDisplayClass", global_str5, reg_str19 },
   { "shellCmdClass", global_str5, reg_str20 },
-  { "pvInspectorClass", global_str2, reg_str26 }
+  { "pvInspectorClass", global_str2, reg_str26 },
+  { "activeTableClass", global_str2, reg_str27 },
 };
 
 #ifdef __cplusplus

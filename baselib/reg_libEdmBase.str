@@ -24,7 +24,7 @@
 #define reg_str24 (char *) "Text Control"
 #define reg_str25 (char *) "Embedded Window"
 #define reg_str26 (char *) "PV Inspector"
-
+#define reg_str27 (char *) "Table"
 
 #define reg_str98 (char *) "Text w. Reg. Exp."
 #define reg_str99 (char *) "Exp Rectangle"
