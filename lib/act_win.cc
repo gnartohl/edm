@@ -11012,6 +11012,8 @@ char tmp[10];
 
   mode = AWC_EDIT;
  
+  embBg = bPix;
+
 #ifndef ADD_SCROLLED_WIN
   if ( !parent ) {
 
@@ -11040,11 +11042,6 @@ char tmp[10];
       XtVaGetValues( parent,
       XmNbackground, &embBg,
       NULL );
-
-    }
-    else {
-
-      embBg = bPix;
 
     }
 
@@ -11084,11 +11081,6 @@ char tmp[10];
         XtVaGetValues( parent,
         XmNbackground, &embBg,
         NULL );
-
-      }
-      else {
-
-        embBg = bPix;
 
       }
 
@@ -11155,11 +11147,6 @@ char tmp[10];
         XtVaGetValues( parent,
         XmNbackground, &embBg,
         NULL );
-
-      }
-      else {
-
-        embBg = bPix;
 
       }
 
