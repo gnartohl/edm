@@ -14,7 +14,7 @@
 #define relatedDisplayClass_str11 (char *) "Bottom Shadow"
 #define relatedDisplayClass_str12 (char *) "Font"
 #define relatedDisplayClass_str13 (char *) "Button Label"
-#define relatedDisplayClass_str14 (char *) "Display File Params"
+#define relatedDisplayClass_str14 (char *) "Additional Displays"
 #define relatedDisplayClass_str15 (char *) "PV"
 #define relatedDisplayClass_str16 (char *) "Value"
 #define relatedDisplayClass_str17 (char *) "On Focus"

@@ -83,8 +83,8 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
 
   rdo->actWin->setChanged();
 
-  rdo->numDsps = 0;
-  for ( i=0; i<rdo->maxDsps; i++ ) {
+  rdo->numDsps = 1;
+  for ( i=1; i<rdo->maxDsps; i++ ) {
     rdo->displayFileName[i].setRaw( rdo->buf->bufDisplayFileName[i] );
     if ( blank( rdo->displayFileName[i].getRaw() ) ) {
       rdo->closeAction[i] = 0;
@@ -153,13 +153,60 @@ static void rdc_edit_update (
   XtPointer call )
 {
 
-int i;
+int i, more;
 relatedDisplayClass *rdo = (relatedDisplayClass *) client;
 
   rdo->actWin->setChanged();
 
   rdo->eraseSelectBoxCorners();
   rdo->erase();
+
+  rdo->displayFileName[0].setRaw( rdo->buf->bufDisplayFileName[0] );
+  if ( blank( rdo->displayFileName[0].getRaw() ) ) {
+    rdo->closeAction[0] = 0;
+    rdo->setPostion[0] = 0;
+    rdo->allowDups[0] = 0;
+    rdo->cascade[0] = 0;
+    rdo->propagateMacros[0] = 1;
+    rdo->label[0].setRaw( "" );
+    rdo->symbolsExpStr[0].setRaw( "" );
+    rdo->replaceSymbols[0] = 0;
+    rdo->numDsps = 0;
+  }
+  else {
+    rdo->closeAction[0] = rdo->buf->bufCloseAction[0];
+    rdo->setPostion[0] = rdo->buf->bufSetPostion[0];
+    rdo->allowDups[0] = rdo->buf->bufAllowDups[0];
+    rdo->cascade[0] = rdo->buf->bufCascade[0];
+    rdo->propagateMacros[0] = rdo->buf->bufPropagateMacros[0];
+    rdo->label[0].setRaw( rdo->buf->bufLabel[0] );
+    rdo->symbolsExpStr[0].setRaw( rdo->buf->bufSymbols[0] );
+    rdo->replaceSymbols[0] = rdo->buf->bufReplaceSymbols[0];
+    rdo->numDsps = 1;
+  }
+
+  if ( rdo->numDsps ) {
+    more = 1;
+    for ( i=1; (i<rdo->maxDsps) && more; i++ ) {
+      if ( !blank( rdo->displayFileName[i].getRaw() ) ) {
+        (rdo->numDsps)++;
+      }
+      else {
+	more = 0;
+      }
+    }
+  }
+
+  for ( i=rdo->numDsps; i<rdo->maxDsps; i++ ) {
+    rdo->closeAction[i] = 0;
+    rdo->setPostion[i] = 0;
+    rdo->allowDups[i] = 0;
+    rdo->cascade[i] = 0;
+    rdo->propagateMacros[i] = 1;
+    rdo->label[i].setRaw( "" );
+    rdo->symbolsExpStr[i].setRaw( "" );
+    rdo->replaceSymbols[i] = 0;
+  }
 
   strncpy( rdo->fontTag, rdo->fm.currentFontTag(), 63 );
   rdo->actWin->fi->loadFontTag( rdo->fontTag );
@@ -1224,7 +1271,17 @@ char title[32], *ptr;
   ef.addTextField( relatedDisplayClass_str6, 30, &buf->bufW );
   ef.addTextField( relatedDisplayClass_str7, 30, &buf->bufH );
 
-  ef.addEmbeddedEf( relatedDisplayClass_str14, &ef1 );
+  ef.addTextField( "Label", 30, buf->bufLabel[0], 127 );
+  ef.addTextField( "File", 30, buf->bufDisplayFileName[0], 127 );
+  ef.addTextField( "Macros", 30, buf->bufSymbols[0], 255 );
+  ef.addOption( "Mode", "Append|Replace", &buf->bufReplaceSymbols[0] );
+  ef.addToggle( "Propagate", &buf->bufPropagateMacros[0] );
+  ef.addToggle( "Set Position", &buf->bufSetPostion[0] );
+  ef.addToggle( "Close Current", &buf->bufCloseAction[0] );
+  ef.addToggle( "Dups Allowed", &buf->bufAllowDups[0] );
+  ef.addToggle( "Cascade", &buf->bufCascade[0] );
+
+  ef.addEmbeddedEf( relatedDisplayClass_str14, "...", &ef1 );
 
   ef1->create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -1232,7 +1289,7 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  for ( i=0; i<maxDsps; i++ ) {
+  for ( i=1; i<maxDsps; i++ ) {
 
     ef1->beginSubForm();
     ef1->addTextField( "Label", 30, buf->bufLabel[i], 127 );
