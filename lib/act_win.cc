@@ -336,6 +336,23 @@ activeWindowClass *awo = (activeWindowClass *) client;
 
 }
 
+static void awc_do_save_new_path_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeWindowClass *awo = (activeWindowClass *) client;
+
+  awo->confirm1.popdown();
+  strncpy( awo->fileName, awo->newPath, 255 );
+  awo->fileName[255] = 0;
+  awo->save( awo->fileName );
+  awo->setTitle();
+  awo->state = awo->savedState;
+
+}
+
 static void awc_continue_cb (
   Widget w,
   XtPointer client,

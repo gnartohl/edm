@@ -176,6 +176,11 @@ static void awc_do_save_and_exit_cb (
   XtPointer client,
   XtPointer call );
 
+static void awc_do_save_new_path_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 static void awc_fileSelectOk_cb (
   Widget w,
   XtPointer client,
@@ -445,6 +450,11 @@ friend void awc_do_save_cb (
   XtPointer call );
 
 friend void awc_do_save_and_exit_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void awc_do_save_new_path_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
