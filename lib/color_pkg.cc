@@ -2761,20 +2761,6 @@ unsigned int colorInfoClass::getPixelByIndex (
 
 }
 
-unsigned int colorInfoClass::pix ( // same as getPixelByIndex
-  int index )
-{
-
-  if ( index >= max_colors+num_blinking_colors )
-    return BlackPixel( display, screen );
-
-  if ( index < 0 )
-    return WhitePixel( display, screen );
-
-  return colors[index];
-
-}
-
 unsigned int colorInfoClass::labelPix ( // return reasonable fg for given bg
   int index )
 {

@@ -61,296 +61,265 @@
 typedef int (*ruleFuncType)( double v1, double v2 );
 
 typedef struct ruleConditionTag {
-  struct ruleConditionTag *flink;
-  double value1;
-  ruleFuncType ruleFunc1;
-  double value2;
-  ruleFuncType ruleFunc2;
-  ruleFuncType connectingFunc;
-  int result;
-  char *resultName;
+    struct ruleConditionTag *flink;
+    double value1;
+    ruleFuncType ruleFunc1;
+    double value2;
+    ruleFuncType ruleFunc2;
+    ruleFuncType connectingFunc;
+    int result;
+    char *resultName;
 } ruleConditionType, *ruleConditionPtr;
 
 typedef struct ruleTag {
-  ruleConditionPtr ruleHead;
-  ruleConditionPtr ruleTail;
+    ruleConditionPtr ruleHead;
+    ruleConditionPtr ruleTail;
 } ruleType, *rulePtr;
 
 typedef struct colorCacheTag {
-  AVL_FIELDS(colorCacheTag)
-  unsigned int rgb[3]; // [0]=r, [1]=g, [2]=b
-  unsigned int pixel;
-  unsigned int blinkRgb[3]; // [0]=r, [1]=g, [2]=b
-  unsigned int blinkPixel;
-  int index;
-  char *name;
-  rulePtr rule;
+    AVL_FIELDS(colorCacheTag)
+        unsigned int rgb[3]; // [0]=r, [1]=g, [2]=b
+    unsigned int pixel;
+    unsigned int blinkRgb[3]; // [0]=r, [1]=g, [2]=b
+    unsigned int blinkPixel;
+    int index;
+    char *name;
+    rulePtr rule;
 } colorCacheType, *colorCachePtr;
 
 typedef struct showNameBlockTag {
-  int x;
-  int y;
-  int i;
-  void *ptr;
+    int x;
+    int y;
+    int i;
+    void *ptr;
 } showNameBlockType, *showNameBlockPtr;
 
 class colorListClass;
 class colorButtonClass;
 
+// colorInfoClass: handles palette and colors
+//
+// Definitions:
+// name    -  a color string name
+// menu    -  colors available to users in color dialog
+// palette -  aka color map: colors available on screen
+// index   -  index of color in the current palette/color map
+//            (unless we talk about the menu index)
+// pixel   -  index in palette, X11 pixel value, used in X calls
+//
+// colorInfoClass 
+// * Reads color definition file
+// * Translates index <-> name, index <-> pixel, pixel <-> RGB
+//
+// Usually accessed via actWin->ci
+
 class colorInfoClass {
-
-private:
-
-friend void showColorName (
-  XtPointer client,
-  XtIntervalId *id );
-
-friend void doColorBlink (
-  XtPointer client,
-  XtIntervalId *id );
-
-friend void colorShellEventHandler (
-  Widget w,
-  XtPointer client,
-  XEvent *e,
-  Boolean *continueToDispatch );
-
-friend void colorRcEventHandler (
-  Widget w,
-  XtPointer client,
-  XEvent *e,
-  Boolean *continueToDispatch );
-
-friend void colorFormEventHandler (
-  Widget w,
-  XtPointer client,
-  XEvent *e,
-  Boolean *continueToDispatch );
-
-friend class colorButtonClass;
-
-int major, minor, release;
-
-int max_colors, num_blinking_colors, num_color_cols, usingPrivateColorMap;
-
-AVL_HANDLE colorCacheByColorH;
-AVL_HANDLE colorCacheByPixelH;
-AVL_HANDLE colorCacheByIndexH;
-AVL_HANDLE colorCacheByNameH;
-
-Display *display;
-int screen;
-int depth;
-Visual *visual;
-Colormap cmap;
-unsigned int fg;
-
-/*  unsigned int *colors[MAX_COLORS+NUM_BLINKING_COLORS]; */
-/*  unsigned long *blinkingColorCells[NUM_BLINKING_COLORS]; */
-/*  XColor *blinkingXColor[NUM_BLINKING_COLORS], */
-/*   *offBlinkingXColor[NUM_BLINKING_COLORS]; */
-
-unsigned int *colors, *blinkingColors;
-unsigned long *blinkingColorCells;
-XColor *blinkingXColor, *offBlinkingXColor;
-char **colorNames; // dynamic array of pointers to char
-
-int special[NUM_SPECIAL_COLORS];
-int specialIndex[NUM_SPECIAL_COLORS];
-int numColors, blink;
-
-int curIndex, curX, curY;
-
-XtAppContext appCtx;
-XtIntervalId incrementTimer, showNameTimer;
-int incrementTimerValue, incrementTimerActive, showNameTimerActive;
-
-Widget activeWidget, nameWidget;
-int *curDestination;
-
-gcClass gc;
-
-Widget shell, rc, mbar, mb1, mb2, form, rc1, rc2, fgpb, bgpb;
-
-// color file processing
-static const int MAX_LINE_SIZE = 255;
-
-static const int GET_1ST_NONWS_CHAR = 1;
-static const int GET_TIL_END_OF_TOKEN = 2;
-static const int GET_TIL_END_OF_QUOTE = 3;
-static const int GET_TIL_END_OF_SPECIAL = 4;
-
-static const int GET_FIRST_TOKEN = 1;
-static const int GET_NUM_COLUMNS = 2;
-static const int GET_MAX = 3;
-static const int GET_RULE = 4;
-static const int GET_RULE_CONDITION = 5;
-static const int GET_RULE_CONNECTOR = 6;
-static const int GET_RULE_INDEX = 7;
-static const int GET_COLOR = 8;
-static const int GET_ALARM_PARAMS = 9;
-static const int GET_MENU_MAP = 10;
-
-int readFile, tokenState, parseIndex, parseLine, tokenFirst, tokenLast,
- tokenNext, gotToken, colorIndex;
-char parseBuf[MAX_LINE_SIZE+1], parseToken[MAX_LINE_SIZE+1];
-FILE *parseFile;
-
-int maxColor, numPaletteCols;
-
-int maxMenuItems, menuMapSize;
-int *menuIndexMap; // dynamic array
-
-msgDialogClass msgDialog;
-int curPaletteRow, curPaletteCol;
-showNameBlockType showNameBlock;
 
 public:
 
-static const int SUCCESS = 1;
-static const int FAIL = 0;
+    static const int SUCCESS = 1;
+    static const int FAIL = 0;
 
-colorListClass colorList;
-colorButtonClass *curCb;
+    colorListClass colorList;
+    colorButtonClass *curCb;
 
-int change;
+    int change;
 
-int colorWindowIsOpen;
+    int colorWindowIsOpen;
 
-colorInfoClass::colorInfoClass ( void );   // constructor
+    colorInfoClass::colorInfoClass ();
+    colorInfoClass::~colorInfoClass ();
 
-colorInfoClass::~colorInfoClass ( void );   // destructor
+    int colorInfoClass::colorChanged()
+    {
+        int i;
+        i = change;
+        change = 0;
+        return i;
+    }
 
-int colorInfoClass::colorChanged ( void ) {
-int i;
-  i = change;
-  change = 0;
-  return i;
-}
+    int colorInfoClass::ver3InitFromFile (FILE *f,
+                          XtAppContext app,
+                          Display *d,
+                          Widget top,
+                          char *fileName);
+    int colorInfoClass::initFromFile (XtAppContext app,
+                      Display *d,
+                      Widget top,
+                      char *fileName);
 
-int colorInfoClass::ver3InitFromFile (
-  FILE *f,
-  XtAppContext app,
-  Display *d,
-  Widget top,
-  char *fileName );
+    int colorInfoClass::openColorWindow();
+    int colorInfoClass::closeColorWindow();
 
-int colorInfoClass::initFromFile (
-  XtAppContext app,
-  Display *d,
-  Widget top,
-  char *fileName );
+    unsigned int colorInfoClass::getFg();
 
-int colorInfoClass::openColorWindow( void );
+    // RGB <-> pixel
+    int colorInfoClass::getRGB (unsigned int pixel, int *r, int *g, int *b);
+    int colorInfoClass::setRGB (int r, int g, int b, unsigned int *pixel);
 
-int colorInfoClass::closeColorWindow( void );
+    Colormap colorInfoClass::getColorMap ();
 
-unsigned int colorInfoClass::getFg( void );
+    // Highlights active color pallete cell
+    int colorInfoClass::setCurIndex (int index);
 
-void colorInfoClass::setCurDestination( int *ptr );
+    // index <-> pixel
+    unsigned int colorInfoClass::getPixelByIndex (int index);
+    unsigned int colorInfoClass::pix (int index) 
+    {   return  getPixelByIndex (index); }
+    int colorInfoClass::pixIndex (unsigned int pixel);
+    
+    // return reasonable fg for given bg
+    unsigned int colorInfoClass::labelPix (int index);
 
-int *colorInfoClass::getCurDestination( void );
+    void colorInfoClass::initParseEngine (FILE *f);
 
-void colorInfoClass::setCurCb( colorButtonClass *cb );
+    void colorInfoClass::parseError (char *msg);
 
-colorButtonClass *colorInfoClass::getCurCb( void );
+    int colorInfoClass::getToken (char toke[255+1]);
 
-int colorInfoClass::setActiveWidget( Widget w );
+    // index <-> name
+    char *colorInfoClass::colorName (int index);
+    int colorInfoClass::colorIndexByName (const char *name);
 
-Widget colorInfoClass::getActiveWidget( void );
+    int colorInfoClass::isRule (int index );
 
-int colorInfoClass::setNameWidget( Widget w );
+    char *colorInfoClass::firstColor (colorCachePtr node);
+    char *colorInfoClass::nextColor (colorCachePtr node);
 
-Widget colorInfoClass::getNameWidget( void );
+    int colorInfoClass::majorVersion ();
 
-Widget colorInfoClass::createColorButton(
-  Widget parent,
-  Arg args[],
-  int num_args );
+    int colorInfoClass::menuIndex (int index);
 
-int colorInfoClass::getRGB (
-  unsigned int pixel,
-  int *r,
-  int *g,
-  int *b );
+    int colorInfoClass::menuPosition (int index);
 
-int colorInfoClass::setRGB (
-  int r,
-  int g,
-  int b,
-  unsigned int *pixel );
+    int colorInfoClass::menuSize ();
 
-int colorInfoClass::getIndex (
-  unsigned int pixel,
-  int *index );
+    // The following functions are for use in color_button.cc and
+    // entry_form.cc; they are not intended for general use.
+    void colorInfoClass::setCurDestination(int *ptr);
+    int *colorInfoClass::getCurDestination();
+    void colorInfoClass::setCurCb(colorButtonClass *cb);
+    colorButtonClass *colorInfoClass::getCurCb();
+    int colorInfoClass::setActiveWidget(Widget w);
+    Widget colorInfoClass::getActiveWidget();
+    int colorInfoClass::setNameWidget(Widget w);
+    Widget colorInfoClass::getNameWidget();
 
-int colorInfoClass::setIndex (
-  int index,
-  unsigned int *pixel );
+    // These functions are used by pvColor.cc and are not intended for
+    // general use.
+    int colorInfoClass::getSpecialColor (int index);
+    int colorInfoClass::getSpecialIndex (int index);
 
-int colorInfoClass::getSpecialColor (
-  int index );
+    // deprecated functions, for backward compatibility only
+    int colorInfoClass::getIndex (unsigned int pixel, int *index);
+    int colorInfoClass::setIndex (int index, unsigned int *pixel);
+    int colorInfoClass::setCurIndexByPixel (unsigned int pixel);
+    int colorInfoClass::canDiscardPixel (unsigned int pixel);
 
-int colorInfoClass::getSpecialIndex (
-  int index );
+private:
+    friend void showColorName (
+        XtPointer client,
+        XtIntervalId *id );
 
-Colormap colorInfoClass::getColorMap ( void );
+    friend void doColorBlink (
+        XtPointer client,
+        XtIntervalId *id );
 
-int colorInfoClass::setCurIndexByPixel (
-  unsigned int pixel );
+    friend void colorShellEventHandler (
+        Widget w,
+        XtPointer client,
+        XEvent *e,
+        Boolean *continueToDispatch );
 
-int colorInfoClass::setCurIndex (
-  int index );
+    friend void colorRcEventHandler (
+        Widget w,
+        XtPointer client,
+        XEvent *e,
+        Boolean *continueToDispatch );
 
-int colorInfoClass::canDiscardPixel (
-  unsigned int pixel );
+    friend void colorFormEventHandler (
+        Widget w,
+        XtPointer client,
+        XEvent *e,
+        Boolean *continueToDispatch );
 
-unsigned int colorInfoClass::getPixelByIndex (
-  int index );
+    friend class colorButtonClass;
 
-unsigned int colorInfoClass::pix ( // same as getPixelByIndex
-  int index );
+    int major, minor, release;
 
-unsigned int colorInfoClass::labelPix ( // return reasonable fg for given bg
-  int index );
+    int max_colors, num_blinking_colors, num_color_cols, usingPrivateColorMap;
 
-int colorInfoClass::pixIndex (
-  unsigned int pixel );
+    AVL_HANDLE colorCacheByColorH;
+    AVL_HANDLE colorCacheByPixelH;
+    AVL_HANDLE colorCacheByIndexH;
+    AVL_HANDLE colorCacheByNameH;
 
-void colorInfoClass::initParseEngine (
-  FILE *f );
+    Display *display;
+    int screen;
+    int depth;
+    Visual *visual;
+    Colormap cmap;
+    unsigned int fg;
 
-void colorInfoClass::parseError (
- char *msg );
+    /*  unsigned int *colors[MAX_COLORS+NUM_BLINKING_COLORS]; */
+    /*  unsigned long *blinkingColorCells[NUM_BLINKING_COLORS]; */
+    /*  XColor *blinkingXColor[NUM_BLINKING_COLORS], */
+    /*   *offBlinkingXColor[NUM_BLINKING_COLORS]; */
 
-int colorInfoClass::getToken (
- char toke[255+1] );
+    unsigned int *colors, *blinkingColors;
+    unsigned long *blinkingColorCells;
+    XColor *blinkingXColor, *offBlinkingXColor;
+    char **colorNames; // dynamic array of pointers to char
 
-char *colorInfoClass::colorName (
-  int index );
+    int special[NUM_SPECIAL_COLORS];
+    int specialIndex[NUM_SPECIAL_COLORS];
+    int numColors, blink;
 
-int colorInfoClass::colorIndexByName (
-  const char *name );
+    int curIndex, curX, curY;
 
-int colorInfoClass::isRule (
-  int index );
+    XtAppContext appCtx;
+    XtIntervalId incrementTimer, showNameTimer;
+    int incrementTimerValue, incrementTimerActive, showNameTimerActive;
 
-char *colorInfoClass::firstColor (
-  colorCachePtr node );
+    Widget activeWidget, nameWidget;
+    int *curDestination;
 
-char *colorInfoClass::nextColor (
-  colorCachePtr node );
+    gcClass gc;
 
-int colorInfoClass::majorVersion ( void );
+    Widget shell, rc, mbar, mb1, mb2, form, rc1, rc2, fgpb, bgpb;
 
-int colorInfoClass::menuIndex (
-  int index );
+    // color file processing
+    static const int MAX_LINE_SIZE = 255;
 
-int colorInfoClass::menuPosition (
-  int index );
+    static const int GET_1ST_NONWS_CHAR = 1;
+    static const int GET_TIL_END_OF_TOKEN = 2;
+    static const int GET_TIL_END_OF_QUOTE = 3;
+    static const int GET_TIL_END_OF_SPECIAL = 4;
 
-int colorInfoClass::menuSize ( void );
+    static const int GET_FIRST_TOKEN = 1;
+    static const int GET_NUM_COLUMNS = 2;
+    static const int GET_MAX = 3;
+    static const int GET_RULE = 4;
+    static const int GET_RULE_CONDITION = 5;
+    static const int GET_RULE_CONNECTOR = 6;
+    static const int GET_RULE_INDEX = 7;
+    static const int GET_COLOR = 8;
+    static const int GET_ALARM_PARAMS = 9;
+    static const int GET_MENU_MAP = 10;
 
+    int readFile, tokenState, parseIndex, parseLine, tokenFirst, tokenLast,
+        tokenNext, gotToken, colorIndex;
+    char parseBuf[MAX_LINE_SIZE+1], parseToken[MAX_LINE_SIZE+1];
+    FILE *parseFile;
+
+    int maxColor, numPaletteCols;
+
+    int maxMenuItems, menuMapSize;
+    int *menuIndexMap; // dynamic array
+
+    msgDialogClass msgDialog;
+    int curPaletteRow, curPaletteCol;
+    showNameBlockType showNameBlock;
 };
 
 #endif
