@@ -6,7 +6,7 @@
 // This list looks like the std::list as far as the
 // method names/semantics are concerned.
 // Differences/characteristics/limitations:
-// - slightly faster and more memory friendly.
+// - slightly faster and more memory friendly
 //   since it's intrusive (each list item contains the node information)
 // - therefore each list item has to contain a DLNode.
 // - limited to pointer lists.
@@ -16,7 +16,7 @@
 //
 // Comparison:
 //
-// To put a class X into this list, is has to contain
+// To put a class X into this list, it has to contain
 // an element
 //    DLNode node;
 //
