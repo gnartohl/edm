@@ -1,6 +1,0 @@
-#ifndef __reg_lib3014b6ee_f439_11d2_ad99_00104b8742df_str
-#define __reg_lib3014b6ee_f439_11d2_ad99_00104b8742df_str 1
-
-#define reg_str1 "Box"
-
-#endif

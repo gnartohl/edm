@@ -1,8 +1,0 @@
-.phony : buildInstall
-.phony : install
-
-install : buildInstall
-	echo "edm libs moved"
-
-buildInstall : ;
-	@$(MAKE) -s -k -f ../makefile.move

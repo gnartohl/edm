@@ -1,7 +1,0 @@
-#ifndef __reg_lib605432d2_f29d_11d2_973b_00104b8742df_str
-#define __reg_lib605432d2_f29d_11d2_973b_00104b8742df_str 1
-
-#define reg_str1 (char *) "GIF Image"
-#define reg_str2 (char *) "PNG Image"
-
-#endif

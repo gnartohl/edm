@@ -1,9 +1,0 @@
-.facility	unix
-.prefix		unix_
-.value		1
-
-.severity	success
-SUCCESS		<Normal completion>
-
-.severity	error
-ERROR		<System error, see errno>

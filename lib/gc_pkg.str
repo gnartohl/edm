@@ -1,8 +1,0 @@
-#ifndef __gc_pkg_str
-#define __gc_pkg_str 1
-
-#define gcClass_str1 (char *) "addNormXClipRectangle - GC_STACK_OVFLO\n"
-#define gcClass_str2 (char *) "addEraseXClipRectangle - GC_STACK_OVFLO\n"
-#define gcClass_str3 (char *) "addXorXClipRectangle - GC_STACK_OVFLO\n"
-
-#endif

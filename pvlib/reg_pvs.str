@@ -1,6 +1,0 @@
-#ifndef __reg_pvs_str
-#define __reg_pvs_str 1
-
-#define reg_str1 (char *) "epics"
-
-#endif

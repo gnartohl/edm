@@ -1,7 +1,0 @@
-#ifndef __font_pkg_str
-#define __font_pkg_str 1
-
-#define fontInfoClass_str1 (char *) "error from avl_get_first\n"
-#define fontInfoClass_str2 (char *) "error from avl_get_next\n"
-
-#endif
