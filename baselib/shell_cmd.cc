@@ -50,7 +50,7 @@ static void shellCmdThread (
 
 #ifdef HP_UX
 static void *shellCmdThread (
-  THREAD_HANDLE h );
+  THREAD_HANDLE h )
 {
 #endif
 

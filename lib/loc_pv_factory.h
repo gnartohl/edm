@@ -75,10 +75,10 @@ public:
 private:
     friend class LOC_PV_Factory;
 
-    int LOC_ProcessVariable::setAttributes (
+    int setAttributes (
       char *string
     );
-    
+
     // hidden, use create/release
     LOC_ProcessVariable(const char *_name);
     LOC_ProcessVariable(const ProcessVariable &rhs); // not impl.

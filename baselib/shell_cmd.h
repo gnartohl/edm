@@ -129,6 +129,11 @@ friend void shellCmdThread (
   THREAD_HANDLE h );
 #endif
 
+#ifdef HP_UX
+friend void *shellCmdThread (
+  THREAD_HANDLE h );
+#endif
+
 friend void menu_cb (
   Widget w,
   XtPointer client,
