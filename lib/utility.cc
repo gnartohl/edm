@@ -175,15 +175,23 @@ int isLegalInteger (
 {
 
 char buf[127+1];
-int i, l, legal, state;
+int i, l, legal, state, hex;
 
   strncpy( buf, str, 127 );
   trimWhiteSpace( buf );
   l = strlen(buf);
   if ( l < 1 ) return 0;
 
-  state = SIGN_OR_NUM;
+  hex = 0;
   i = 0;
+  if ( l > 2 ) {
+    if ( ( buf[0] == '0' ) && ( ( buf[1] == 'x' ) || ( buf[1] == 'X' ) ) ) {
+      hex = 1;
+      i = 2;
+    }
+  }
+
+  state = SIGN_OR_NUM;
   legal = 1;
   while ( state != DONE ) {
 
@@ -205,10 +213,19 @@ int i, l, legal, state;
         continue;
       }
         
-      if ( isdigit(buf[i]) ) {
-        i++;
-        state = NUM;
-        continue;
+      if ( hex ) {
+        if ( isxdigit(buf[i]) ) {
+          i++;
+          state = NUM;
+          continue;
+        }
+      }
+      else {
+        if ( isdigit(buf[i]) ) {
+          i++;
+          state = NUM;
+          continue;
+        }
       }
 
       legal = 0;
@@ -218,9 +235,17 @@ int i, l, legal, state;
 
     case NUM:
 
-      if ( isdigit(buf[i]) ) {
-        i++;
-        continue;
+      if ( hex ) {
+        if ( isxdigit(buf[i]) ) {
+          i++;
+          continue;
+        }
+      }
+      else {
+        if ( isdigit(buf[i]) ) {
+          i++;
+          continue;
+        }
       }
 
       legal = 0;

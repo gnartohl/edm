@@ -214,7 +214,8 @@ Arg args[2];
     blank = 1;
   else
     blank = 0;
-  i = atol( ptr );
+  //i = atol( ptr );
+  i = strtol( ptr, NULL, 0 );
   XtFree( ptr );
 
   if ( blank ) return;
@@ -335,7 +336,8 @@ Arg args[2];
     blank = 1;
   else
     blank = 0;
-  i = atol( ptr );
+  //i = atol( ptr );
+  i = strtol( ptr, NULL, 0 );
   XtFree( ptr );
 
   if ( blank ) return;
@@ -1493,7 +1495,8 @@ int *dest;
   dest = (int *) client;
 
   buf = XmTextGetString( w );
-  *dest = atol( buf );
+  //*dest = atol( buf );
+  *dest = strtol( buf, NULL, 0 );
   XtFree( buf );
 
 }
@@ -1511,7 +1514,8 @@ int i;
   dest = (efInt *) client;
 
   buf = XmTextGetString( w );
-  i = atol( buf );
+  //i = atol( buf );
+  i = strtol( buf, NULL, 0 );
   dest->setValue( i );
   tk = strtok( buf, " \t\n" );
   if ( tk )
@@ -1605,7 +1609,8 @@ int i, value;
 //   printf( "In TextFieldToIntArray, index = %-d\n", i );
 
   buf = XmTextGetString( w );
-  value = atol( buf );
+  //value = atol( buf );
+  value = strtol( buf, NULL, 0 );
   XtFree( buf );
 
   destArray[i] = value;
@@ -1629,7 +1634,8 @@ int i, value;
   i = *(dsc->indexPtr);
 
   buf = XmTextGetString( w );
-  value = atol( buf );
+  //value = atol( buf );
+  value = strtol( buf, NULL, 0 );
   tk = strtok( buf, " \t\n" );
   if ( tk ) {
     destArray[i].setNull( 0 );
