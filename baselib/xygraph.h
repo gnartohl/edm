@@ -686,11 +686,13 @@ int traceIsDrawn[XYGC_K_MAX_TRACES];
 
 double dbXMin[XYGC_K_MAX_TRACES], dbXMax[XYGC_K_MAX_TRACES];
 int dbXPrec[XYGC_K_MAX_TRACES], xArrayNeedInit[XYGC_K_MAX_TRACES],
- xArrayNeedUpdate[XYGC_K_MAX_TRACES], xArrayGotValue[XYGC_K_MAX_TRACES];
+ xArrayNeedUpdate[XYGC_K_MAX_TRACES], xArrayGotValue[XYGC_K_MAX_TRACES],
+ xArrayGotValueCallback[XYGC_K_MAX_TRACES];
 
 double dbYMin[XYGC_K_MAX_TRACES], dbYMax[XYGC_K_MAX_TRACES];
 int dbYPrec[XYGC_K_MAX_TRACES], yArrayNeedInit[XYGC_K_MAX_TRACES],
- yArrayNeedUpdate[XYGC_K_MAX_TRACES], yArrayGotValue[XYGC_K_MAX_TRACES];
+ yArrayNeedUpdate[XYGC_K_MAX_TRACES], yArrayGotValue[XYGC_K_MAX_TRACES],
+ yArrayGotValueCallback[XYGC_K_MAX_TRACES];
 
 int arrayHead[XYGC_K_MAX_TRACES], arrayTail[XYGC_K_MAX_TRACES],
  arrayNumPoints[XYGC_K_MAX_TRACES], curNpts[XYGC_K_MAX_TRACES];

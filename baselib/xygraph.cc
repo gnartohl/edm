@@ -1447,6 +1447,8 @@ double scaledX, scaledY;
 
   xyo->actWin->appCtx->proc->lock();
 
+  if ( !xyo->xArrayGotValueCallback[i] ) xyo->xArrayGotValueCallback[i] = 1;
+
   yi = 0;
   if ( xyo->y2Scale[i] ) yi = 1;
 
@@ -1842,6 +1844,8 @@ int yi;
 
   xyo->actWin->appCtx->proc->lock();
 
+  if ( !xyo->yArrayGotValueCallback[i] ) xyo->yArrayGotValueCallback[i] = 1;
+
   yi = 0;
   if ( xyo->y2Scale[i] ) yi = 1;
 
@@ -2188,6 +2192,8 @@ double scaledX, scaledY;
   if ( !xyo->activeMode ) return;
 
   xyo->actWin->appCtx->proc->lock();
+
+  if ( !xyo->yArrayGotValueCallback[i] ) xyo->yArrayGotValueCallback[i] = 1;
 
   yi = 0;
   if ( xyo->y2Scale[i] ) yi = 1;
@@ -6243,6 +6249,8 @@ XmString str;
         yArrayNeedUpdate[i] = 0;
         yArrayGotValue[i] = 0;
         xArrayGotValue[i] = 0;
+        yArrayGotValueCallback[i] = 0;
+        xArrayGotValueCallback[i] = 0;
         xPvData[i] = NULL;
         yPvData[i] = NULL;
         xPv[i] = NULL;
@@ -7510,6 +7518,16 @@ int yi, yScaleIndex;
     anyRescale = 0;
     for ( i=0; i<numTraces; i++ ) {
 
+      if ( yArrayGotValueCallback[i] == 1 ) {
+        yArrayGotValueCallback[i] = 2;
+        yArrayNeedUpdate[i] = 1;
+      }
+
+      if ( xArrayGotValueCallback[i] == 1 ) {
+        xArrayGotValueCallback[i] = 2;
+        xArrayNeedUpdate[i] = 1;
+      }
+
       if ( yPvCount[i] > 1 ) {
 
         if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
@@ -8268,6 +8286,20 @@ int yi, yScaleIndex;
   }
 
   if ( nru ) {
+
+    for ( i=0; i<numTraces; i++ ) {
+
+      if ( yArrayGotValueCallback[i] == 1 ) {
+        yArrayGotValueCallback[i] = 2;
+        yArrayNeedUpdate[i] = 1;
+      }
+
+      if ( xArrayGotValueCallback[i] == 1 ) {
+        xArrayGotValueCallback[i] = 2;
+        xArrayNeedUpdate[i] = 1;
+      }
+
+    }
 
     eraseActive();
     drawActive();

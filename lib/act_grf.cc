@@ -3410,24 +3410,26 @@ time_t timet;
       snprintf( msg, 79, "  Num references = %-d\n",
        pv->get_num_references() );
       actWin->appCtx->postMessage( msg );
-      timet = pv->get_time_t(); // - 631152000;
+      if ( pv->is_valid() ) {
+        timet = pv->get_time_t(); // - 631152000;
 #if EPICS_VERSION > 3
-      timet += 7305*86400;
+        timet += 7305*86400;
 #elif EPICS_REVISION > 13
-      timet += 7305*86400;
+        timet += 7305*86400;
 #endif
-      localtime_r( &timet, &theTime );
-      fs = (double) pv->get_nano() / 1.0e9;
-      //snprintf( msg, 79, "  Time stamp = %-d/%-d/%-d %-d:%-d:%.6f",
-      // theTime.tm_mon+1, theTime.tm_mday, theTime.tm_year+1880,
-      // theTime.tm_hour, theTime.tm_min, fs );
-      strcpy( msg, "  Time stamp = " );
-      strftime( &msg[15], 40, "%c", &theTime );
-      //asctime_r( &theTime, &msg[15] );
-      //msg[strlen(msg)-1] = 0;
-      //snprintf( frac, 31, " (%.6f)", fs ); 
-      //Strncat( msg, frac, 79 );
-      actWin->appCtx->postMessage( msg );
+        localtime_r( &timet, &theTime );
+        fs = (double) pv->get_nano() / 1.0e9;
+        //snprintf( msg, 79, "  Time stamp = %-d/%-d/%-d %-d:%-d:%.6f",
+        // theTime.tm_mon+1, theTime.tm_mday, theTime.tm_year+1880,
+        // theTime.tm_hour, theTime.tm_min, fs );
+        strcpy( msg, "  Time stamp = " );
+        strftime( &msg[15], 40, "%c", &theTime );
+        //asctime_r( &theTime, &msg[15] );
+        //msg[strlen(msg)-1] = 0;
+        //snprintf( frac, 31, " (%.6f)", fs ); 
+        //Strncat( msg, frac, 79 );
+        actWin->appCtx->postMessage( msg );
+      }
       snprintf( msg, 79, "\n" );
       actWin->appCtx->postMessage( msg );
 
