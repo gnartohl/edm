@@ -714,17 +714,19 @@ int activeRadioButtonClass::drawActive ( void ) {
     if ( needToDrawUnconnected ) {
       actWin->executeGc.saveFg();
       actWin->executeGc.setFG( fgColor.getDisconnected() );
-      actWin->executeGc.setFontTag( fontTag, actWin->fi );
-      drawText( actWin->executeWidget, &actWin->executeGc,
-       fs, x, y, XmALIGNMENT_BEGINNING, "?" );
+      actWin->executeGc.setLineWidth( 1 );
+      actWin->executeGc.setLineStyle( LineSolid );
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
     }
   }
   else if ( needToEraseUnconnected ) {
-    actWin->executeGc.setFontTag( fontTag, actWin->fi );
-    eraseText( actWin->executeWidget, &actWin->executeGc,
-     fs, x, y, XmALIGNMENT_BEGINNING, "?" );
+    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineStyle( LineSolid );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.eraseGC(), x, y, w, h );
     needToEraseUnconnected = 0;
   }
 
@@ -1049,7 +1051,10 @@ static XtActionsRec dragActions[] = {
     XtSetArg( args[n], XmNbackground, (XtArgVal) bgColor.getColor() ); n++;
     XtSetArg( args[n], XmNforeground, (XtArgVal) fgColor.getColor() ); n++;
     XtSetArg( args[n], XmNtranslations, parsedTrans ); n++;
+    XtSetArg( args[n], XmNnavigationType, XmNONE ); n++;
+    XtSetArg( args[n], XmNtraversalOn, False ); n++;
     XtSetArg( args[n], XmNuserData, this ); n++;
+
 
     radioBox = XmCreateRadioBox( actWin->executeWidgetId(),
      "", args, n );

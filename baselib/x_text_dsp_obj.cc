@@ -2520,17 +2520,19 @@ int n;
     if ( needToDrawUnconnected ) {
       actWin->executeGc.saveFg();
       actWin->executeGc.setFG( fgColor.getDisconnected() );
-      actWin->executeGc.setFontTag( fontTag, actWin->fi );
-      drawText( actWin->executeWidget, &actWin->executeGc,
-       fs, x, y, XmALIGNMENT_BEGINNING, "?" );
+      actWin->executeGc.setLineWidth( 1 );
+      actWin->executeGc.setLineStyle( LineSolid );
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+       actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
     }
   }
   else if ( needToEraseUnconnected ) {
-    actWin->executeGc.setFontTag( fontTag, actWin->fi );
-    eraseText( actWin->executeWidget, &actWin->executeGc,
-     fs, x, y, XmALIGNMENT_BEGINNING, "?" );
+    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineStyle( LineSolid );
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
     needToEraseUnconnected = 0;
   }
 
