@@ -1,762 +1,1040 @@
-4 0 0
-beginScreenProperties
-major 4
-minor 0
-release 0
-x 71
-y 59
-w 549
-h 916
-font "helvetica-medium-r-18.0"
-ctlFont "helvetica-medium-r-12.0"
-btnFont "helvetica-bold-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 51400 51400 51400
-textColor rgb 0 0 0
-ctlFgColor1 rgb 0 0 0
-ctlFgColor2 rgb 0 0 65535
-ctlBgColor1 rgb 48059 48059 48059
-ctlBgColor2 rgb 56026 56026 56026
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
-title "Related Display"
-endScreenProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 27
-y 17
-w 172
-h 27
-font "helvetica-medium-r-24.0"
-fgColor rgb 0 0 0
-bgColor rgb 60652 60652 60652
-value {
-  "Related Display"
-}
-autoSize
-endObjectProperties
-
-# (Related Display)
-object relatedDisplayClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 29
-y 64
-w 75
-h 39
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
-font "helvetica-bold-r-14.0"
-buttonLabel "Screen"
-numPvs 4
-numDsps 0
-endObjectProperties
-
-# (Related Display)
-object relatedDisplayClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 156
-y 64
-w 75
-h 39
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
-font "helvetica-bold-r-14.0"
-buttonLabel "Menu"
-numPvs 4
-numDsps 0
-endObjectProperties
-
-# (GIF Image)
-object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 183
-y 92
-w 60
-h 67
-file "$(help)helpRelatedDisplayMenuGif"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 29
-y 174
-w 289
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "Symbols may be used in labels and filenames"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 29
-y 203
-w 436
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "If the On Focus button is checked, and the button is associated with"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 29
-y 221
-w 445
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "only one related display file, then the display pops up when the mouse"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 29
-y 238
-w 336
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "cursor crosses into the area occupied by the button."
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 29
-y 298
-w 410
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "If the No Edit box is checked, then the related display pops up in"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 29
-y 350
-w 442
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "Pressing the Display File Params button brings up another dialog box"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 29
-y 367
-w 389
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "containing 19 groups of display attribute entry fields. Up to 19"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 29
-y 382
-w 413
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "related displays may be specified and configured here. Press the"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 29
-y 400
-w 181
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "button below for an example."
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 29
-y 473
-w 158
-h 16
-font "helvetica-bold-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "Display File Properties"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 51
-y 500
-w 113
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "Label: Menu label"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 30
-y 267
-w 221
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "Button is still active when invisible."
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 29
-y 315
-w 128
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "execute-only mode."
-}
-autoSize
-endObjectProperties
-
-# (Related Display)
-object relatedDisplayClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 29
-y 429
-w 195
-h 30
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
-font "helvetica-medium-r-14.0"
-buttonLabel "Display File Params Example"
-numPvs 4
-numDsps 1
-displayFileName {
-  0 "$(help)helpRelatedDisplayParams"
-}
-setPosition {
-  0 "button"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 51
-y 523
-w 187
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "File: Related display file name"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 51
-y 547
-w 448
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "Macros: New list of symbols that may be defined for the related display"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 51
-y 571
-w 400
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "Mode=Append: Append the new symbols to those given in the"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 51
-y 608
-w 425
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "Mode=Replace: Replace command line symbols with the new ones"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 51
-y 631
-w 442
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "Propagate: All symbols defined for the related display propagate to its"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 124
-y 647
-w 54
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "children."
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 51
-y 807
-w 426
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "Close Current: Close current display when related display pops up."
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 51
-y 831
-w 430
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "Dups Allowed: Allow duplicate displays to be popped-up. A display"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 147
-y 846
-w 313
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "is identified by its name and by the list of symbols"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 156
-y 588
-w 88
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "command line"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 51
-y 888
-w 212
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "Cascade: Currently not functional"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 147
-y 863
-w 69
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "it contains."
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 51
-y 669
-w 102
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "Display Position"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 132
-y 690
-w 350
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "Original: Use position saved when display was created"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 140
-y 707
-w 389
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "Button: Position new display at related display button location"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 83
-y 724
-w 390
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "Parent Window: Position new display using current positon of"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 188
-y 741
-w 90
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "parent display"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 51
-y 766
-w 445
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "X/Y Offset: Offset added to new display position when Display Position"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 121
-y 784
-w 398
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-useDisplayBg
-value {
-  "(described above) is specified as \"Button\" or \"Parent Window\""
-}
-autoSize
-endObjectProperties
-
+3 1 0
+401
+20
+549
+985
+helvetica-medium-r-18.0
+0
+helvetica-medium-r-12.0
+0
+rgb
+0,0,0
+rgb
+51400,51400,51400
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+0,0,65535
+rgb
+48059,48059,48059
+rgb
+60652,60652,60652
+rgb
+23130,23130,23130
+rgb
+56026,56026,56026
+Related Display
+0
+0
+10
+0
+<<<empty>>>
+<<<empty>>>
+0
+0
+helvetica-bold-r-14.0
+0
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+27
+17
+178
+31
+rgb
+0,0,0
+0
+0
+rgb
+60652,60652,60652
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Related Display
+helvetica-medium-r-24.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+relatedDisplayClass
+2 7 0
+29
+64
+75
+39
+rgb
+0,0,0
+rgb
+48059,48059,48059
+rgb
+60652,60652,60652
+rgb
+23130,23130,23130
+<<<empty>>>
+<<<empty>>>
+helvetica-bold-r-14.0
+0
+0
+0
+4
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+0
+0
+<<<empty>>>
+0
+1
+0
+0
+Screen
+0
+0
+0
+0
+<<<E~O~D>>>
+relatedDisplayClass
+2 7 0
+156
+64
+75
+39
+rgb
+0,0,0
+rgb
+48059,48059,48059
+rgb
+60652,60652,60652
+rgb
+23130,23130,23130
+<<<empty>>>
+<<<empty>>>
+helvetica-bold-r-14.0
+0
+0
+0
+4
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+0
+0
+<<<empty>>>
+0
+1
+0
+0
+Menu
+0
+0
+0
+0
+<<<E~O~D>>>
+cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+1 2 0
+183
+92
+60
+67
+$(help)helpRelatedDisplayMenuGif
+0
+0
+0
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+29
+174
+289
+16
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Symbols may be used in labels and filenames
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+29
+200
+440
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+If the On Focus button is checked, and the button is associated with
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+29
+218
+453
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+only one related display file, then the display pops up when the mouse
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+29
+235
+338
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+cursor crosses into the area occupied by the button.
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+29
+291
+416
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+If the No Edit box is checked, then the related display pops up in
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+29
+400
+449
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Pressing the Display File Params button brings up another dialog box
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+29
+417
+395
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+containing 19 groups of display attribute entry fields. Up to 19
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+29
+432
+421
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+related displays may be specified and configured here. Press the
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+29
+450
+187
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+button below for an example.
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+29
+523
+158
+19
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Display File Properties
+helvetica-bold-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+51
+550
+114
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Label: Menu label
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+30
+264
+224
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Button is still active when invisible.
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+29
+308
+129
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+execute-only mode.
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+relatedDisplayClass
+2 7 0
+29
+479
+209
+30
+rgb
+0,0,0
+rgb
+48059,48059,48059
+rgb
+60652,60652,60652
+rgb
+23130,23130,23130
+$(help)helpRelatedDisplayParams
+<<<empty>>>
+helvetica-medium-r-14.0
+0
+0
+1
+4
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+0
+0
+<<<empty>>>
+0
+1
+0
+1
+Display File Params Example
+0
+0
+0
+0
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+51
+573
+194
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+File: Related display file name
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+51
+597
+461
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Macros: New list of symbols that may be defined for the related display
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+51
+621
+403
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Mode=Append: Append the new symbols to those given in the
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+51
+658
+439
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Mode=Replace: Replace command line symbols with the new ones
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+51
+681
+449
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Propagate: All symbols defined for the related display propagate to its
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+124
+697
+55
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+children.
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+51
+857
+434
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Close Current: Close current display when related display pops up.
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+51
+881
+430
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Dups Allowed: Allow duplicate displays to be popped-up. A display
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+147
+896
+322
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+is identified by its name and by the list of symbols
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+156
+638
+92
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+command line
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+51
+938
+217
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Cascade: Currently not functional
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+147
+913
+70
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+it contains.
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+51
+719
+105
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Display Position
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+132
+740
+356
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Original: Use position saved when display was created
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+140
+757
+395
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Button: Position new display at related display button location
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+83
+774
+396
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Parent Window: Position new display using current positon of
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+192
+791
+91
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+parent display
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+51
+816
+459
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+X/Y Offset: Offset added to new display position when Display Position
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+127
+834
+401
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+(described above) is specified as "Button" or "Parent Window"
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+29
+336
+407
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+If Button 3 Popup is checked, and the button is associated with
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+29
+370
+318
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+button is pressed and pops down when released.
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+29
+353
+436
+18
+rgb
+0,0,0
+0
+1
+rgb
+48059,48059,48059
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+only one related display file, then the display pops up when the right
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
