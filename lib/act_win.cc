@@ -16565,14 +16565,24 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar;
 	}
         else if ( strcmp( param, "<DSPNAME>" ) == 0 ) {
           bufOut[iOut] = 0;
-          strncpy( dspName, XDisplayName(""), 127 );
+          if ( strcmp( appCtx->displayName, "" ) == 0 ) {
+            strncpy( dspName, XDisplayName(""), 127 );
+	  }
+	  else {
+            strncpy( dspName, appCtx->displayName, 31 );
+	  }
           Strncat( bufOut, dspName, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
 	}
         else if ( strcmp( param, "<DSPID>" ) == 0 ) {
           bufOut[iOut] = 0;
-          strncpy( dspName, XDisplayName(""), 127 );
+          if ( strcmp( appCtx->displayName, "" ) == 0 ) {
+            strncpy( dspName, XDisplayName(""), 127 );
+	  }
+	  else {
+            strncpy( dspName, appCtx->displayName, 31 );
+	  }
           for ( i=0; i<(int) strlen(dspName); i++ ) {
             if ( dspName[i] == '.' ) dspName[i] = '-';
 	  }
