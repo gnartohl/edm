@@ -71,7 +71,7 @@ public:
                        int numAlarmPvs,
                        char *alarmPvs[]);
     
-void edmByteClass::getPvs(int max,
+void getPvs(int max,
 			  ProcessVariable *pvs[],
 			  int *n);
 

@@ -80,7 +80,7 @@ public:
                        int numAlarmPvs,
                        char *alarmPvs[]);
 
-void edmTextupdateClass::getPvs(int max,
+void getPvs(int max,
 				ProcessVariable *pvs[],
 				int *n);
     
