@@ -23,6 +23,51 @@
 
 #include "thread.h"
 
+static char *getStrFromFile (
+  char *str,
+  int maxLen,
+  FILE *f
+) {
+
+char *ctx, *ptr, *tk;
+char buf[maxLen+1];
+int tryAgain;
+
+  // ignore blank lines and comment lines
+
+  if ( maxLen < 1 ) return (char *) NULL;
+
+  do {
+
+    tryAgain = 0;
+
+    ptr = fgets( str, maxLen, f );
+    if ( !ptr ) {
+      strcpy( str, "" );
+      return (char *) NULL;
+    }
+
+    strcpy( buf, str );
+
+    ctx = NULL;
+    tk = strtok_r( buf, "\n", &ctx );
+
+    if ( tk ) {
+
+      if ( tk[0] == '#' ) tryAgain = 1;
+
+    }
+    else {
+
+      tryAgain = 1;
+
+    }
+
+  } while ( tryAgain );
+
+  return str;
+
+}
 
 static int compare_nodes (
   void *node1,
@@ -557,7 +602,7 @@ int fontInfoClass::initFromFileVer3 (
 
 char line[255+1], buf[255+1], t1[255+1], t2[255+1], t3[255+1], t4[255+1],
  t5[255+1], t6[255+1], t7[255+1], mod[4][255+1], fontSpec[255+1],
- userFontFamilyName[63+1], *famTk, *ptr, *tk1, *tk2, *ctx1, *ctx2;
+ userFontFamilyName[63+1], *ptr, *tk1, *tk2, *ctx1, *ctx2;
 int i, ii, iii, pointSize[200], numSizes;
 int stat, preload;
 int empty = 1;
@@ -565,7 +610,7 @@ fontNameListPtr cur;
 int dup;
 XFontStruct *fs;
 
-  ptr = fgets ( defSiteFontTag, 127, f );
+  ptr = getStrFromFile( defSiteFontTag, 127, f );
   if ( !ptr ) {
     fclose( f );
     return FONTINFO_EMPTY;
@@ -573,7 +618,7 @@ XFontStruct *fs;
 
   defSiteFontTag[strlen(defSiteFontTag)-1] = 0; // discard \n
 
-  ptr = fgets ( defFontTag, 127, f );
+  ptr =  getStrFromFile( defFontTag, 127, f );
   if ( !ptr ) {
     fclose( f );
     return FONTINFO_EMPTY;
@@ -585,231 +630,219 @@ XFontStruct *fs;
 
     processAllEvents( app, display );
 
-    ptr = fgets ( line, 255, f );
-    if ( ptr ) { // ignore blank lines
+    ptr = getStrFromFile ( line, 255, f );
+    if ( ptr ) {
 
       ctx1 = NULL;
       strcpy( buf, line );
-      tk1 = strtok_r( buf, " \t\n", &ctx1 );
-      if ( tk1 ) { // ignore blank lines
 
-        if ( tk1[0] != '#' ) { // ignore comment lines
+      tk1 = strtok_r( buf, "=\t\n()", &ctx1 );
+      if ( tk1 ) {
+        strncpy( userFontFamilyName, tk1, 63 );
+        userFontFamilyName[63] = 0;
+      }
+      else {
+        fclose( f );
+        return FONTINFO_SYNTAX;
+      }
 
-          ctx1 = NULL;
-          strcpy( buf, line );
+      tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
+      if ( tk1 ) {
+        strcpy( t1, tk1 );
+      }
+      else {
+        fclose( f );
+        return FONTINFO_SYNTAX;
+      }
 
-          tk1 = strtok_r( buf, "=\t\n()", &ctx1 );
-          if ( tk1 ) {
-            strncpy( userFontFamilyName, tk1, 63 );
-            userFontFamilyName[63] = 0;
-          }
-          else {
+      tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
+      if ( tk1 ) {
+        strcpy( t2, tk1 );
+      }
+      else {
+        fclose( f );
+        return FONTINFO_SYNTAX;
+      }
+
+        // get bold and medium indicators
+
+        ctx2 = NULL;
+        tk2 = strtok_r( t2, ",", &ctx2 );
+        if ( tk2 ) {
+          strcpy( mod[0], tk2 );
+        }
+        else {
+          fclose( f );
+          return FONTINFO_SYNTAX;
+        }
+
+        tk2 = strtok_r( NULL, ",", &ctx2 );
+        if ( tk2 ) {
+          strcpy( mod[1], tk2 );
+        }
+        else {
+          fclose( f );
+          return FONTINFO_SYNTAX;
+        }
+
+      tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
+      if ( tk1 ) {
+        strcpy( t3, tk1 );
+      }
+      else {
+        fclose( f );
+        return FONTINFO_SYNTAX;
+      }
+
+      tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
+      if ( tk1 ) {
+        strcpy( t4, tk1 );
+      }
+      else {
+        fclose( f );
+        return FONTINFO_SYNTAX;
+      }
+
+        // get italic and regular indicators
+
+        ctx2 = NULL;
+        tk2 = strtok_r( t4, ",", &ctx2 );
+        if ( tk2 ) {
+          strcpy( mod[2], tk2 );
+        }
+        else {
+          fclose( f );
+          return FONTINFO_SYNTAX;
+        }
+
+        tk2 = strtok_r( NULL, ",", &ctx2 );
+        if ( tk2 ) {
+          strcpy( mod[3], tk2 );
+        }
+        else {
+          fclose( f );
+          return FONTINFO_SYNTAX;
+        }
+
+      tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
+      if ( tk1 ) {
+        strcpy( t5, tk1 );
+      }
+      else {
+        fclose( f );
+        return FONTINFO_SYNTAX;
+      }
+
+      tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
+      if ( tk1 ) {
+        strcpy( t6, tk1 );
+      }
+      else {
+        fclose( f );
+        return FONTINFO_SYNTAX;
+      }
+
+        // get point sizes
+        numSizes = 0;
+        ctx2 = NULL;
+        tk2 = strtok_r( t6, ",", &ctx2 );
+        if ( tk2 ) {
+          pointSize[numSizes] = atol( tk2 );
+          numSizes++;
+          if ( numSizes >= 200 ) {
             fclose( f );
             return FONTINFO_SYNTAX;
           }
+        }
+        else {
+          fclose( f );
+          return FONTINFO_SYNTAX;
+        }
 
-          tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
-          if ( tk1 ) {
-            strcpy( t1, tk1 );
-          }
-          else {
-            fclose( f );
-            return FONTINFO_SYNTAX;
-          }
+        do {
 
-          tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
-          if ( tk1 ) {
-            strcpy( t2, tk1 );
-          }
-          else {
-            fclose( f );
-            return FONTINFO_SYNTAX;
-          }
-
-            // get bold and medium indicators
-
-            ctx2 = NULL;
-            tk2 = strtok_r( t2, ",", &ctx2 );
-            if ( tk2 ) {
-              strcpy( mod[0], tk2 );
-            }
-            else {
+          tk2 = strtok_r( NULL, ",", &ctx2 );
+          if ( tk2 ) {
+            pointSize[numSizes] = atol( tk2 );
+            numSizes++;
+            if ( numSizes >= 200 ) {
               fclose( f );
               return FONTINFO_SYNTAX;
             }
-
-            tk2 = strtok_r( NULL, ",", &ctx2 );
-            if ( tk2 ) {
-              strcpy( mod[1], tk2 );
-            }
-            else {
-              fclose( f );
-              return FONTINFO_SYNTAX;
-            }
-
-          tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
-          if ( tk1 ) {
-            strcpy( t3, tk1 );
-          }
-          else {
-            fclose( f );
-            return FONTINFO_SYNTAX;
           }
 
-          tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
-          if ( tk1 ) {
-            strcpy( t4, tk1 );
-          }
-          else {
-            fclose( f );
-            return FONTINFO_SYNTAX;
-          }
+        } while ( tk2 );
 
-            // get italic and regular indicators
+      tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
+      if ( tk1 ) {
+        strcpy( t7, tk1 );
+      }
+      else {
+        fclose( f );
+        return FONTINFO_SYNTAX;
+      }
 
-            ctx2 = NULL;
-            tk2 = strtok_r( t4, ",", &ctx2 );
-            if ( tk2 ) {
-              strcpy( mod[2], tk2 );
-            }
-            else {
-              fclose( f );
-              return FONTINFO_SYNTAX;
-            }
+      tk1 = strtok_r( NULL, "\t\n", &ctx1 );
+      if ( tk1 ) {
+        if ( strcmp( tk1, "preload" ) == 0 ) {
+          preload = 1;
+        }
+        else {
+          preload = 0;
+        }
+      }
+      else {
+        preload = 0;
+      }
 
-            tk2 = strtok_r( NULL, ",", &ctx2 );
-            if ( tk2 ) {
-              strcpy( mod[3], tk2 );
-            }
-            else {
-              fclose( f );
-              return FONTINFO_SYNTAX;
-            }
+      //printf( "t1 = [%s]\n", t1 );
+      //printf( "  mod[0] = [%s]\n", mod[0] );
+      //printf( "  mod[1] = [%s]\n", mod[1] );
+      //printf( "t3 = [%s]\n", t3 );
+      //printf( "  mod[2] = [%s]\n", mod[2] );
+      //printf( "  mod[3] = [%s]\n", mod[3] );
+      //printf( "t5 = [%s]\n", t5 );
 
-          tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
-          if ( tk1 ) {
-            strcpy( t5, tk1 );
-          }
-          else {
-            fclose( f );
-            return FONTINFO_SYNTAX;
-          }
+      //for ( i=0; i<numSizes; i++ ) {
+      //  printf( "  size[%-d] = %-d\n", i, pointSize[i] );
+      //}
 
-          tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
-          if ( tk1 ) {
-            strcpy( t6, tk1 );
-          }
-          else {
-            fclose( f );
-            return FONTINFO_SYNTAX;
-          }
+      //printf( "t7 = [%s]\n", t7 );
 
-            // get point sizes
-            numSizes = 0;
-            ctx2 = NULL;
-            tk2 = strtok_r( t6, ",", &ctx2 );
-            if ( tk2 ) {
-              pointSize[numSizes] = atol( tk2 );
-              numSizes++;
-	      if ( numSizes >= 200 ) {
-                fclose( f );
-                return FONTINFO_SYNTAX;
-              }
-            }
-            else {
-              fclose( f );
-              return FONTINFO_SYNTAX;
+      // Build fontspec
+
+      for ( i=0; i<2; i++ ) {
+
+        for ( ii=2; ii<4; ii++ ) {
+
+          for ( iii=0; iii<numSizes; iii++ ) {
+
+            sprintf( fontSpec, "%s%s%s%s%s%-d%s", t1, mod[i], t3, mod[ii],
+             t5, pointSize[iii], t7 );
+
+            //printf( "[%s]\n", fontSpec );
+
+            cur = new fontNameListType;
+
+            stat = this->resolveFont( fontSpec, userFontFamilyName, cur );
+            if ( !( stat & 1 ) ) {
+              delete cur;
+              return stat;
             }
 
-            do {
+            stat = avl_insert_node( this->fontNameListH, (void *) cur,
+             &dup );
+            if ( !( stat & 1 ) ) return stat;
+            // if ( dup ) printf( "duplicate\n" );
 
-              tk2 = strtok_r( NULL, ",", &ctx2 );
-              if ( tk2 ) {
-                pointSize[numSizes] = atol( tk2 );
-                numSizes++;
-                if ( numSizes >= 200 ) {
-                  fclose( f );
-                  return FONTINFO_SYNTAX;
-                }
-              }
-
-            } while ( tk2 );
-
-          tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
-          if ( tk1 ) {
-            strcpy( t7, tk1 );
-          }
-          else {
-            fclose( f );
-            return FONTINFO_SYNTAX;
-          }
-
-          tk1 = strtok_r( NULL, "\t\n", &ctx1 );
-          if ( tk1 ) {
-            if ( strcmp( tk1, "preload" ) == 0 ) {
-              preload = 1;
+            if ( preload ) {
+              //printf( "preload %s\n", cur->name );
+              fs = getXFontStruct( cur->name );
             }
-            else {
-              preload = 0;
-            }
-          }
-          else {
-            preload = 0;
-          }
 
-          //printf( "t1 = [%s]\n", t1 );
-          //printf( "  mod[0] = [%s]\n", mod[0] );
-          //printf( "  mod[1] = [%s]\n", mod[1] );
-          //printf( "t3 = [%s]\n", t3 );
-          //printf( "  mod[2] = [%s]\n", mod[2] );
-          //printf( "  mod[3] = [%s]\n", mod[3] );
-          //printf( "t5 = [%s]\n", t5 );
-
-          //for ( i=0; i<numSizes; i++ ) {
-          //  printf( "  size[%-d] = %-d\n", i, pointSize[i] );
-          //}
-
-          //printf( "t7 = [%s]\n", t7 );
-
-          // Build fontspec
-
-          for ( i=0; i<2; i++ ) {
-
-            for ( ii=2; ii<4; ii++ ) {
-
-              for ( iii=0; iii<numSizes; iii++ ) {
-
-                sprintf( fontSpec, "%s%s%s%s%s%-d%s", t1, mod[i], t3, mod[ii],
-                 t5, pointSize[iii], t7 );
-
-                //printf( "[%s]\n", fontSpec );
-
-                cur = new fontNameListType;
-
-                stat = this->resolveFont( fontSpec, userFontFamilyName, cur );
-                if ( !( stat & 1 ) ) {
-                  delete cur;
-                  return stat;
-                }
-
-                stat = avl_insert_node( this->fontNameListH, (void *) cur,
-                 &dup );
-                if ( !( stat & 1 ) ) return stat;
-                // if ( dup ) printf( "duplicate\n" );
-
-                if ( preload ) {
-                  //printf( "preload %s\n", cur->name );
-                  fs = getXFontStruct( cur->name );
-                }
-
-                stat = appendSizeMenu( cur->family, cur->size, cur->fsize );
-                if ( !( stat & 1 ) ) return stat;
-
-                empty = 0;
-
-              }
-
-            }
+            stat = appendSizeMenu( cur->family, cur->size, cur->fsize );
+            if ( !( stat & 1 ) ) return stat;
+             empty = 0;
 
           }
 
