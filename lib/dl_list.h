@@ -52,10 +52,10 @@ public:
         bool operator == (const iterator &rhs)  { return rhs.node == node; }
         bool operator != (const iterator &rhs)  { return rhs.node != node; }
     private:
-        friend DLList;
+        friend class DLList;
         DLNode *node;
     };
-    
+
     DLList();
     bool empty() const               { return anchor.next==&anchor; }
     size_t size() const              { return elements; }
@@ -78,7 +78,7 @@ public:
     }       
     
 private:
-    friend iterator; // needed for g++ 2.91.66
+    friend class iterator; // needed for g++ 2.91.66
     static DLNode *get_node(T *item);
     static T *get_item(DLNode *node);
     DLNode anchor;

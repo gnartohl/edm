@@ -16,6 +16,7 @@
 
 #include"dl_list.h"
 
+#include <iostream.h>
 template <class T, size_t o, size_t N=5>
 class Hashtable
 {
@@ -24,26 +25,69 @@ class Hashtable
     {
     public:
         iterator();
-        iterator(Hashtable *_hash, size_t _n, DLList<T,o>::iterator _pos);
-        T * operator * ()                                    { return *pos; }
-        iterator &operator ++ ();
+        //iterator(Hashtable *_hash, size_t _n, DLList<T,o>::iterator _pos);
+        iterator(Hashtable *_hash, size_t _n, typename DLList<T,o>::iterator _pos);
+                T * operator * ()   { return *pos; }
+        iterator &operator ++ () {
+                        ++pos;
+                        if (pos != hash->bucket[n].end())
+                                return *this;
+                        // find next valid bucket
+                        while (++n < N)
+                                if (!hash->bucket[n].empty())
+                                {
+                                        pos = hash->bucket[n].begin();
+                                        return *this;
+                                }
+                        // Move to end()
+                        n = N-1;
+                        pos = hash->bucket[N-1].end();
+                        return *this;
+                }
         bool operator == (const iterator &rhs)     { return pos == rhs.pos; }
         bool operator != (const iterator &rhs)     { return pos != rhs.pos; }
-        iterator & operator = (const iterator &rhs);
+        iterator & operator = (const iterator &rhs) {
+                         hash = rhs.hash; n = rhs.n; pos = rhs.pos; return *this; }
     private:
-        friend Hashtable;
+        //friend class Hashtable<T,o,N>;
+        friend class Hashtable;
         Hashtable *hash;
         size_t n;
-        DLList<T,o>::iterator pos;
+        typename DLList<T,o>::iterator pos;
     };
     void insert(T *item);
-    iterator find(const T *item);
-    iterator begin();
-    iterator end();
+    iterator find(const T *item){
+                // Item that uses Hashtable has to provide
+                //  size_t hash(const T *item, size_t N);
+                size_t h = hash(item, N);
+                typename DLList<T,o>::iterator i = bucket[h].begin();
+                while (i != bucket[h].end())
+                {
+                        // Item has to provide
+                        // bool equals(const T *lhs, const T *rhs);
+                        if (equals(*i, item))
+                                return iterator(this, h, i);
+                        ++i;
+                }
+                return end();
+        }
+    iterator begin(){
+                for (size_t n=0; n<N; ++n)
+                {
+                        if (!bucket[n].empty())
+                                {
+                                        return iterator(this, n, bucket[n].begin());
+                                }
+                }
+                return end();
+        }
+    iterator end(){
+        return iterator(this, N-1, bucket[N-1].end());
+        }
     void erase(iterator& it);
     void info();
 private:
-    friend iterator;
+    friend class iterator;
     DLList<T,o> bucket[N];
 };
 
@@ -72,39 +116,16 @@ inline Hashtable<T,o,N>::iterator::iterator()
     n = 0;
 }
 
+
 template <class T, size_t o, size_t N>
-inline Hashtable<T,o,N>::iterator::iterator(Hashtable *_hash, size_t _n,
-                                            DLList<T,o>::iterator _pos)
+inline Hashtable<T,o,N>::iterator::iterator(Hashtable<T,o,N> *_hash, size_t _n,
+                                        typename DLList<T,o>::iterator _pos)
 {
     hash = _hash;
     n = _n;
     pos = _pos;
 }
 
-template <class T, size_t o, size_t N>
-inline Hashtable<T,o,N>::iterator &
-Hashtable<T,o,N>::iterator::operator ++ ()
-{
-    ++pos;
-    if (pos != hash->bucket[n].end())
-        return *this;
-    // find next valid bucket
-    while (++n < N)
-        if (!hash->bucket[n].empty())
-        {
-            pos = hash->bucket[n].begin();
-            return *this;
-        }
-    // Move to end()
-    n = N-1;
-    pos = hash->bucket[N-1].end();
-    return *this;
-}
-
-template <class T, size_t o, size_t N>
-inline Hashtable<T,o,N>::iterator&
-Hashtable<T,o,N>::iterator::operator = (const iterator &rhs)
-{ hash = rhs.hash; n = rhs.n; pos = rhs.pos; return *this; }
 
 template <class T, size_t o, size_t N>
 inline void Hashtable<T,o,N>::insert(T *item)
@@ -116,56 +137,21 @@ inline void Hashtable<T,o,N>::insert(T *item)
     bucket[h].push_back(item);
 }
 
-template <class T, size_t o, size_t N>
-inline Hashtable<T,o,N>::iterator Hashtable<T,o,N>::find(const T *item)
-{
-    // Item that uses Hashtable has to provide
-    //  size_t hash(const T *item, size_t N);
-    size_t h = hash(item, N);
-    DLList<T,o>::iterator i = bucket[h].begin();
-    while (i != bucket[h].end())
-    {
-        // Item has to provide
-        // bool equals(const T *lhs, const T *rhs);
-        if (equals(*i, item))
-            return iterator(this, h, i);
-        ++i;
-    }
-    return end();
-}
 
 template <class T, size_t o, size_t N>
-inline void Hashtable<T,o,N>::erase(Hashtable<T,o,N>::iterator& it)
+inline void Hashtable<T,o,N>::erase(typename Hashtable<T,o,N>::iterator& it)
 {
     bucket[it.n].erase(it.pos);
 }
 
-template <class T, size_t o, size_t N>
-inline Hashtable<T,o,N>::iterator Hashtable<T,o,N>::begin()
-{
-    for (size_t n=0; n<N; ++n)
-    {
-        if (!bucket[n].empty())
-            {
-                return iterator(this, n, bucket[n].begin());
-            }
-    }
-    return end();
-}
-
-template <class T, size_t o, size_t N>
-inline Hashtable<T,o,N>::iterator Hashtable<T,o,N>::end()
-{
-    return iterator(this, N-1, bucket[N-1].end());
-}
 
 template <class T, size_t o, size_t N>
 inline void Hashtable<T,o,N>::info()
 {
-    std::cout << "Hashtable info: " << N << " buckets\n";
+    cout << "Hashtable info: " << N << " buckets\n";
     for (size_t n=0; n<N; ++n)
     {
-        std::cout << n << ":  "
+        cout << n << ":  "
                   << bucket[n].size() << " elements\n";
     }
 }

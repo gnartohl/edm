@@ -576,6 +576,12 @@ void caPendThread (
 {
 #endif
 
+#ifdef HP_UX
+void *caPendThread (
+  THREAD_HANDLE h )
+{
+#endif
+
 int stat;
 
   do {
@@ -603,6 +609,12 @@ void *serverThread (
 
 #ifdef __osf__
 void serverThread (
+  THREAD_HANDLE h )
+{
+#endif
+
+#ifdef HP_UX
+void *serverThread (
   THREAD_HANDLE h )
 {
 #endif
@@ -739,6 +751,10 @@ err_return:
 #endif
 
 #ifdef __solaris__
+  return NULL;
+#endif
+
+#ifdef HP_UX
   return NULL;
 #endif
 

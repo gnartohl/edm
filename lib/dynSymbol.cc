@@ -32,7 +32,7 @@ public:
 
 activeDynSymbolClass *dso;
 
-undoDynSymbolOpClass::undoDynSymbolOpClass ()
+undoDynSymbolOpClass ()
 {
 
   printf( "undoDynSymbolOpClass::undoDynSymbolOpClass\n" );
@@ -40,7 +40,7 @@ undoDynSymbolOpClass::undoDynSymbolOpClass ()
 
 }
 
-undoDynSymbolOpClass::undoDynSymbolOpClass (
+undoDynSymbolOpClass (
   activeDynSymbolClass *_dso
 ) {
 
@@ -140,7 +140,7 @@ activeGraphicListPtr head, cur, next, sourceHead, curSource;
 
 }
 
-undoDynSymbolOpClass::~undoDynSymbolOpClass ()
+~undoDynSymbolOpClass ()
 {
 
   if ( dso ) {

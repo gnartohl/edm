@@ -34,7 +34,7 @@ public:
 
 activeSymbolClass *aso;
 
-undoSymbolOpClass::undoSymbolOpClass ()
+undoSymbolOpClass ()
 {
 
   printf( "undoSymbolOpClass::undoSymbolOpClass\n" );
@@ -42,7 +42,7 @@ undoSymbolOpClass::undoSymbolOpClass ()
 
 }
 
-undoSymbolOpClass::undoSymbolOpClass (
+undoSymbolOpClass (
   activeSymbolClass *_aso
 ) {
 
@@ -141,7 +141,7 @@ activeGraphicListPtr head, cur, next, sourceHead, curSource;
 
 }
 
-undoSymbolOpClass::~undoSymbolOpClass ()
+~undoSymbolOpClass ()
 {
 
   if ( aso ) {
