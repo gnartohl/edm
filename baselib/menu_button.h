@@ -35,7 +35,7 @@
 #define MBTC_K_COLORMODE_ALARM 1
 
 #define MBTC_MAJOR_VERSION 2
-#define MBTC_MINOR_VERSION 0
+#define MBTC_MINOR_VERSION 1
 #define MBTC_RELEASE 0
 
 #define MBTC_K_LITERAL 1
@@ -49,32 +49,21 @@ static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id );
 
-static void menuButtonEventHandler (
+static void menu_cb (
   Widget w,
   XtPointer client,
-  XEvent *e,
-  Boolean *continueToDispatch );
+  XtPointer call );
 
 static char *dragName[] = {
   activeMenuButtonClass_str1,
+  activeMenuButtonClass_str28,
 };
-
-static void selectDrag (
-   Widget w,
-   XEvent *e,
-   String *params,
-   Cardinal numParams );
 
 static void mbt_infoUpdate (
   struct event_handler_args ast_args );
 
 static void mbt_readInfoUpdate (
   struct event_handler_args ast_args );
-
-static void putValue (
-  Widget w,
-  XtPointer client,
-  XtPointer call );
 
 static void mbtc_edit_ok (
   Widget w,
@@ -129,28 +118,16 @@ friend void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id );
 
-friend void menuButtonEventHandler (
+friend void menu_cb (
   Widget w,
   XtPointer client,
-  XEvent *e,
-  Boolean *continueToDispatch );
-
-friend void selectDrag (
-   Widget w,
-   XEvent *e,
-   String *params,
-   Cardinal numParams );
+  XtPointer call );
 
 friend void mbt_infoUpdate (
   struct event_handler_args ast_args );
 
 friend void mbt_readInfoUpdate (
   struct event_handler_args ast_args );
-
-friend void putValue (
-  Widget w,
-  XtPointer client,
-  XtPointer call );
 
 friend void mbtc_edit_ok (
   Widget w,
@@ -197,17 +174,17 @@ friend void mbt_monitor_read_connect_state (
 
 pvConnectionClass connection;
 
-int opComplete, pvCheckExists;
+int init, opComplete, pvCheckExists, controlValid, readValid;
 
 int bufX, bufY, bufW, bufH;
 
-short curValue, value;
+short curValue, value, curReadValue, readValue;
 
 int topShadowColor, bufTopShadowColor;
 int botShadowColor, bufBotShadowColor;
-int bufFgColor, bufBgColor;
-pvColorClass fgColor, bgColor;
-colorButtonClass fgCb, bgCb, topShadowCb, botShadowCb;
+int bufFgColor, bufBgColor, bufInconsistentColor;
+pvColorClass fgColor, bgColor, inconsistentColor;
+colorButtonClass fgCb, bgCb, inconsistentCb, topShadowCb, botShadowCb;
 int fgColorMode, bgColorMode, bufFgColorMode, bufBgColorMode;
 
 char *stateString[MAX_ENUM_STATES]; // allocated at run-time
@@ -218,6 +195,8 @@ char fontTag[63+1], bufFontTag[63+1];
 XmFontList fontList;
 XFontStruct *fs;
 int fontAscent, fontDescent, fontHeight;
+
+int buttonPressed;
 
 #ifdef __epics__
 chid controlPvId, readPvId;
@@ -232,8 +211,7 @@ expStringClass readPvExpStr;
 
 int controlExists, readExists, widgetsCreated, active, activeMode;
 
-Widget optionMenu, pulldownMenu, curHistoryWidget,
- pb[MAX_ENUM_STATES];
+Widget popUpMenu, pullDownMenu, pb[MAX_ENUM_STATES];
 
 int needConnectInit, needReadConnectInit, needInfoInit,
  needReadInfoInit, needDraw, needRefresh, needToDrawUnconnected,
@@ -303,6 +281,31 @@ int activeMenuButtonClass::activate ( int pass, void *ptr );
 int activeMenuButtonClass::deactivate ( int pass );
 
 void activeMenuButtonClass::updateDimensions ( void );
+
+void activeMenuButtonClass::btnUp (
+  int _x,
+  int _y,
+  int buttonState,
+  int buttonNumber,
+  int *action );
+
+void activeMenuButtonClass::btnDown (
+  int _x,
+  int _y,
+  int buttonState,
+  int buttonNumber,
+  int *action );
+
+void activeMenuButtonClass::pointerIn (
+  int _x,
+  int _y,
+  int buttonState );
+
+int activeMenuButtonClass::getButtonActionRequest (
+  int *up,
+  int *down,
+  int *drag,
+  int *focus );
 
 void activeMenuButtonClass::executeDeferred ( void );
 
