@@ -992,11 +992,17 @@ int value, stat, n, n_in, q_stat_r, q_stat_i;
 THREAD_HANDLE delayH;
 MAIN_NODE_PTR node;
 SYS_TIME_TYPE timeout;
-int len, cliLen, num, cmd;
+int len, num, cmd;
 char msg[255+1], msg1[255+1];
 struct sockaddr_in s, cli_s;
 int sockfd, newsockfd, more;
 unsigned short port_num;
+
+#ifdef HPUX
+  int cliLen;
+#else
+  socklen_t cliLen;
+#endif
 
 int *portNumPtr = (int *) thread_get_app_data( h );
 
@@ -1060,7 +1066,7 @@ int *portNumPtr = (int *) thread_get_app_data( h );
       /* accept connection */
       cliLen = sizeof(cli_s);
       newsockfd = accept( sockfd, (struct sockaddr *) &cli_s,
-       (socklen_t *) &cliLen );
+       &cliLen );
 
       if ( newsockfd < 0 ) {
         perror( "accept" );
