@@ -19,6 +19,7 @@
 #include "app_pkg.h"
 
 #include "thread.h"
+#include "clipbd.h"
 #include "edm.version"
 #include <unistd.h>
 
@@ -2794,6 +2795,8 @@ err_return:
   }
  
   this->createMainWindow();
+
+  clipbdInit( appTop );
 
   XtRealizeWidget( appTop );
 

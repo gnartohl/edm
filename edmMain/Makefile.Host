@@ -6,7 +6,7 @@ ifeq ($(HOST_ARCH),Linux)
 
   USR_CXXFLAGS += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
 
-  USR_LIBS_DEFAULT = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df 114135a4-6f6c-11d3-95bc-00104b8742df Xm Xt Xp Xtst X11 pthread dl
+  USR_LIBS_DEFAULT = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df 114135a4-6f6c-11d3-95bc-00104b8742df Xm Xmu Xt Xp Xtst X11 pthread dl
 
 endif
 

@@ -22,8 +22,12 @@
 #include "act_win.h"
 #include "app_pkg.h"
 #include "undo.h"
+#include "clipbd.h"
 
 #include "thread.h"
+
+#include <X11/Xlib.h>
+#include <X11/Xlibint.h>
 
 activeGraphicClass::activeGraphicClass ( void ) {
 
@@ -2574,12 +2578,90 @@ char *firstName, *nextName;
 
 }
 
+Widget mkDragIcon( Widget w, char *lbl )
+{
+  Arg             args[8];
+  Cardinal        n;
+  Atom            exportList[1];
+  Widget          sourceIcon;
+  int             textWidth, maxWidth, maxHeight, fontHeight, ascent;
+  unsigned long   fg, bg;
+  XButtonEvent  * xbutton;
+  XGCValues       gcValues;
+  unsigned long   gcValueMask;
+
+  Display *display = XtDisplay(w);
+  int screenNum = DefaultScreen(display);
+
+  Pixmap sourcePixmap = (Pixmap)NULL;
+  static GC gc = NULL;
+  static XFontStruct * fixedFont = NULL;
+
+  clipbdStart();
+  clipbdAdd(lbl);
+  clipbdHold();
+
+  if (fixedFont == NULL)
+     fixedFont = XLoadQueryFont( display, "fixed" );
+
+#define X_SHIFT 8
+#define MARGIN  2
+
+  bg = BlackPixel(display,screenNum);
+  fg = WhitePixel(display,screenNum);
+
+  fontHeight = fixedFont->ascent + fixedFont->descent;
+  textWidth = XTextWidth(fixedFont, lbl, strlen(lbl));
+  maxWidth = X_SHIFT + (textWidth + MARGIN);
+  maxHeight = fontHeight + 2*MARGIN;
+  
+  sourcePixmap = XCreatePixmap(display,
+			       RootWindow(display, screenNum),
+			       maxWidth,maxHeight,
+			       DefaultDepth(display,screenNum));  
+  if (gc == NULL) 
+     gc = XCreateGC(display,sourcePixmap,0,NULL);
+  
+  gcValueMask = GCForeground|GCBackground|GCFunction|GCFont;
+  
+  gcValues.foreground = bg;
+  gcValues.background = bg;
+  gcValues.function   = GXcopy;
+  gcValues.font       = fixedFont->fid;
+  
+  XChangeGC(display,gc,gcValueMask,&gcValues);
+  
+  XFillRectangle(display,sourcePixmap,gc,0,0,maxWidth,maxHeight);
+
+  XSetForeground(display,gc,fg);
+  XDrawString( display, sourcePixmap, gc, 
+	       X_SHIFT, fixedFont->ascent + MARGIN, 
+	       lbl, strlen(lbl) );
+  
+  n = 0;
+  XtSetArg(args[n],XmNpixmap,sourcePixmap); n++;
+  XtSetArg(args[n],XmNwidth,maxWidth); n++;
+  XtSetArg(args[n],XmNheight,maxHeight); n++;
+  XtSetArg(args[n],XmNdepth,DefaultDepth(display,screenNum)); n++;
+  sourceIcon = XmCreateDragIcon(XtParent(w),"sourceIcon",args,n);
+
+  return sourceIcon;
+}
+
+
 int activeGraphicClass::startDrag ( void ) {
 
 Atom expList[1];
 int n;
 Arg args[10];
 XMotionEvent dragEvent;
+char *firstName;
+Widget icon;
+
+  firstName = firstDragName(); 
+  if ( firstName ) {
+     icon = mkDragIcon(actWin->executeWidget, dragValue(currentDragIndex));
+  }
 
   expList[0] = XA_STRING;
   n = 0;
@@ -2587,6 +2669,7 @@ XMotionEvent dragEvent;
   XtSetArg( args[n], XmNnumExportTargets, 1 ); n++;
   XtSetArg( args[n], XmNdragOperations, XmDROP_COPY ); n++;
   XtSetArg( args[n], XmNconvertProc, cvt ); n++;
+  XtSetArg( args[n], XmNsourcePixmapIcon, icon ); n++;
   XtSetArg( args[n], XmNclientData, this ); n++;
     
   memset( (char *) &dragEvent, 0, sizeof(dragEvent) );
@@ -2609,6 +2692,13 @@ int activeGraphicClass::startDrag (
 Atom expList[1];
 int n;
 Arg args[10];
+char *firstName;
+Widget icon;
+
+  firstName = firstDragName(); 
+  if ( firstName ) {
+     icon = mkDragIcon(w, dragValue(currentDragIndex));
+  }
 
   expList[0] = XA_STRING;
   n = 0;
@@ -2616,6 +2706,7 @@ Arg args[10];
   XtSetArg( args[n], XmNnumExportTargets, 1 ); n++;
   XtSetArg( args[n], XmNdragOperations, XmDROP_COPY ); n++;
   XtSetArg( args[n], XmNconvertProc, cvt ); n++;
+  XtSetArg( args[n], XmNsourcePixmapIcon, icon ); n++;
   XtSetArg( args[n], XmNclientData, this ); n++;
     
   dc = XmDragStart( w, e, args, n );

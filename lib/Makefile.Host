@@ -43,6 +43,7 @@ HCLXt_DIR = $(X11_LIB)
 Xlib_DIR = $(X11_LIB)
 HCLXmu_DIR = $(X11_LIB)
 
+LIBSRCS += clipbd.cc
 LIBSRCS += process.cc
 LIBSRCS += app_pkg.cc
 LIBSRCS += act_win.cc
