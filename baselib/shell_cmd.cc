@@ -451,7 +451,7 @@ float val;
   fscanf( f, "%d\n", &invisible ); actWin->incLine();
   fscanf( f, "%d\n", &closeAction ); actWin->incLine();
 
-  if ( ( major >= 1 ) && ( minor > 0 ) ) {
+  if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 0 ) ) ) {
     fscanf( f, "%g\n", &val ); actWin->incLine();
     autoExecInterval = (double) val;
   }
@@ -459,7 +459,7 @@ float val;
     autoExecInterval = 0.0;
   }
 
-  if ( ( major >= 1 ) && ( minor > 1 ) ) {
+  if ( ( major > 1 ) || ( ( major == 1 ) && ( minor > 1 ) ) ) {
     fscanf( f, "%d\n", &multipleInstancesAllowed ); actWin->incLine();
   }
   else {
