@@ -383,6 +383,8 @@ double fv;
     return;
   }
 
+  if ( !mslo->active || !mslo->init ) return;
+
   if ( mslo->controlAdjusted ) {
     mslo->controlAdjusted = 0;
     return;
