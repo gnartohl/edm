@@ -23,7 +23,7 @@
 #include "entry_form.h"
 
 #define SHCMDC_MAJOR_VERSION 2
-#define SHCMDC_MINOR_VERSION 0
+#define SHCMDC_MINOR_VERSION 1
 #define SHCMDC_RELEASE 0
 
 #ifdef __shell_cmd_cc
@@ -149,8 +149,8 @@ expStringClass label;
 
 int activeMode;
 
-double autoExecInterval;
-double bufAutoExecInterval;
+double threadSecondsToDelay, bufThreadSecondsToDelay;
+double autoExecInterval, bufAutoExecInterval;
 XtIntervalId timer;
 int timerActive, timerValue;
 int multipleInstancesAllowed, bufMultipleInstancesAllowed;

@@ -24,10 +24,11 @@
 
 #include "thread.h"
 
-typedef struct threadFuncBlockTag {
+typedef struct threadParamBlockTag {
   int multipleInstancesAllowed;
   char *cmd;
-} threadFuncBlockType, *threadFuncBlockPtr;
+  float secondsToDelay;
+} threadParamBlockType, *threadParamBlockPtr;
 
 #ifdef __linux__
 static void *shellCmdThread (
@@ -48,19 +49,23 @@ static void shellCmdThread (
 #endif
 
 int stat;
-threadFuncBlockPtr threadFuncBlock =
- (threadFuncBlockPtr) thread_get_app_data( h );
+threadParamBlockPtr threadParamBlock =
+ (threadParamBlockPtr) thread_get_app_data( h );
 
-  stat = system( threadFuncBlock->cmd );
+  if ( threadParamBlock->secondsToDelay > 0.0 ) {
+    thread_delay( h, threadParamBlock->secondsToDelay );
+  }
 
-  if ( threadFuncBlock->multipleInstancesAllowed ) {
-    delete threadFuncBlock->cmd;
-    delete threadFuncBlock;
+  stat = system( threadParamBlock->cmd );
+
+  if ( threadParamBlock->multipleInstancesAllowed ) {
+    delete threadParamBlock->cmd;
+    delete threadParamBlock;
     stat = thread_detached_exit( h, NULL ); // this call deallocates h
   }
   else {
-    delete threadFuncBlock->cmd;
-    delete threadFuncBlock;
+    delete threadParamBlock->cmd;
+    delete threadParamBlock;
     stat = thread_exit( h, NULL ); // this requires a join
   }
 
@@ -80,7 +85,7 @@ static void shcmdc_executeCmd (
 {
 
 shellCmdClass *shcmdo = (shellCmdClass *) client;
-threadFuncBlockPtr threadFuncBlock;
+threadParamBlockPtr threadParamBlock;
 int stat;
 
   if ( shcmdo->timerActive ) {
@@ -96,12 +101,13 @@ int stat;
    shcmdo->bufShellCommand );
 
   if ( shcmdo->multipleInstancesAllowed ) {
-    threadFuncBlock = new threadFuncBlockType;
-    threadFuncBlock->cmd = new (char)[strlen(shcmdo->bufShellCommand)+1];
-    strcpy( threadFuncBlock->cmd, shcmdo->bufShellCommand );
-    threadFuncBlock->multipleInstancesAllowed =
+    threadParamBlock = new threadParamBlockType;
+    threadParamBlock->cmd = new (char)[strlen(shcmdo->bufShellCommand)+1];
+    strcpy( threadParamBlock->cmd, shcmdo->bufShellCommand );
+    threadParamBlock->multipleInstancesAllowed =
      shcmdo->multipleInstancesAllowed;
-    stat = thread_create_handle( &shcmdo->thread, threadFuncBlock );
+    threadParamBlock->secondsToDelay = (float) shcmdo->threadSecondsToDelay;
+    stat = thread_create_handle( &shcmdo->thread, threadParamBlock );
     stat = thread_create_proc( shcmdo->thread, shellCmdThread );
     stat = thread_detach( shcmdo->thread );
   }
@@ -110,22 +116,24 @@ int stat;
       stat = thread_wait_til_complete_no_block( shcmdo->thread );
       if ( stat & 1 ) {
         stat = thread_destroy_handle( shcmdo->thread );
-        threadFuncBlock = new threadFuncBlockType;
-        threadFuncBlock->cmd = new (char)[strlen(shcmdo->bufShellCommand)+1];
-        strcpy( threadFuncBlock->cmd, shcmdo->bufShellCommand );
-        threadFuncBlock->multipleInstancesAllowed =
+        threadParamBlock = new threadParamBlockType;
+        threadParamBlock->cmd = new (char)[strlen(shcmdo->bufShellCommand)+1];
+        strcpy( threadParamBlock->cmd, shcmdo->bufShellCommand );
+        threadParamBlock->multipleInstancesAllowed =
          shcmdo->multipleInstancesAllowed;
-        stat = thread_create_handle( &shcmdo->thread, threadFuncBlock );
+        threadParamBlock->secondsToDelay = (float) shcmdo->threadSecondsToDelay;
+        stat = thread_create_handle( &shcmdo->thread, threadParamBlock );
         stat = thread_create_proc( shcmdo->thread, shellCmdThread );
       }
     }
     else {
-      threadFuncBlock = new threadFuncBlockType;
-      threadFuncBlock->cmd = new (char)[strlen(shcmdo->bufShellCommand)+1];
-      strcpy( threadFuncBlock->cmd, shcmdo->bufShellCommand );
-      threadFuncBlock->multipleInstancesAllowed =
+      threadParamBlock = new threadParamBlockType;
+      threadParamBlock->cmd = new (char)[strlen(shcmdo->bufShellCommand)+1];
+      strcpy( threadParamBlock->cmd, shcmdo->bufShellCommand );
+      threadParamBlock->multipleInstancesAllowed =
        shcmdo->multipleInstancesAllowed;
-      stat = thread_create_handle( &shcmdo->thread, threadFuncBlock );
+      threadParamBlock->secondsToDelay = (float) shcmdo->threadSecondsToDelay;
+      stat = thread_create_handle( &shcmdo->thread, threadParamBlock );
       stat = thread_create_proc( shcmdo->thread, shellCmdThread );
     }
   }
@@ -182,6 +190,8 @@ shellCmdClass *shcmdo = (shellCmdClass *) client;
   shcmdo->autoExecInterval = shcmdo->bufAutoExecInterval;
 
   shcmdo->multipleInstancesAllowed = shcmdo->bufMultipleInstancesAllowed;
+
+  shcmdo->threadSecondsToDelay = shcmdo->bufThreadSecondsToDelay;
 
   shcmdo->updateDimensions();
 
@@ -253,6 +263,7 @@ shellCmdClass::shellCmdClass ( void ) {
   invisible = 0;
   closeAction = 0;
   multipleInstancesAllowed = 0;
+  threadSecondsToDelay = 0;
   autoExecInterval = 0;
   timerActive = 0;
   fontList = NULL;
@@ -307,6 +318,8 @@ activeGraphicClass *shcmdo = (activeGraphicClass *) this;
   autoExecInterval = source->autoExecInterval;
 
   multipleInstancesAllowed = source->multipleInstancesAllowed;
+
+  threadSecondsToDelay = source->threadSecondsToDelay;
 
   timerActive = 0;
 
@@ -401,6 +414,9 @@ float val;
 
   fprintf( f, "%-d\n", multipleInstancesAllowed );
 
+  // ver 2.1.0
+  fprintf( f, "%g\n", threadSecondsToDelay );
+
   return 1;
 
 }
@@ -490,6 +506,14 @@ float val;
   }
   else {
     multipleInstancesAllowed = 1;
+  }
+
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 0 ) ) ) {
+    fscanf( f, "%g\n", &val ); actWin->incLine();
+    threadSecondsToDelay = (double) val;
+  }
+  else {
+    threadSecondsToDelay = 0;
   }
 
   actWin->fi->loadFontTag( fontTag );
@@ -810,6 +834,8 @@ char title[32], *ptr;
 
   bufMultipleInstancesAllowed = multipleInstancesAllowed;
 
+  bufThreadSecondsToDelay = threadSecondsToDelay;
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -832,6 +858,7 @@ char title[32], *ptr;
   ef.addToggle( shellCmdClass_str15, &bufInvisible );
   ef.addToggle( shellCmdClass_str16, &bufCloseAction );
   ef.addToggle( shellCmdClass_str17, &bufMultipleInstancesAllowed );
+  ef.addTextField( shellCmdClass_str20, 30, &bufThreadSecondsToDelay );
   ef.addTextField( shellCmdClass_str18, 30, &bufAutoExecInterval );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
@@ -1214,7 +1241,7 @@ void shellCmdClass::btnDown (
 {
 
 int stat;
-threadFuncBlockPtr threadFuncBlock;
+threadParamBlockPtr threadParamBlock;
 
   actWin->substituteSpecial( 127, shellCommand.getExpanded(),
    bufShellCommand );
@@ -1224,12 +1251,13 @@ threadFuncBlockPtr threadFuncBlock;
 
   if ( multipleInstancesAllowed ) {
 
-    threadFuncBlock = new threadFuncBlockType;
-    threadFuncBlock->cmd = new (char)[strlen(bufShellCommand)+1];
-    strcpy( threadFuncBlock->cmd, bufShellCommand );
-    threadFuncBlock->multipleInstancesAllowed =
+    threadParamBlock = new threadParamBlockType;
+    threadParamBlock->cmd = new (char)[strlen(bufShellCommand)+1];
+    strcpy( threadParamBlock->cmd, bufShellCommand );
+    threadParamBlock->multipleInstancesAllowed =
      multipleInstancesAllowed;
-    stat = thread_create_handle( &thread, threadFuncBlock );
+    threadParamBlock->secondsToDelay = (float) threadSecondsToDelay;
+    stat = thread_create_handle( &thread, threadParamBlock );
     stat = thread_create_proc( thread, shellCmdThread );
     stat = thread_detach( thread );
 
@@ -1244,24 +1272,26 @@ threadFuncBlockPtr threadFuncBlock;
       }
       else {
         stat = thread_destroy_handle( thread );
-        threadFuncBlock = new threadFuncBlockType;
-        threadFuncBlock->cmd = new (char)[strlen(bufShellCommand)+1];
-        strcpy( threadFuncBlock->cmd, bufShellCommand );
-        threadFuncBlock->multipleInstancesAllowed =
+        threadParamBlock = new threadParamBlockType;
+        threadParamBlock->cmd = new (char)[strlen(bufShellCommand)+1];
+        strcpy( threadParamBlock->cmd, bufShellCommand );
+        threadParamBlock->multipleInstancesAllowed =
          multipleInstancesAllowed;
-        stat = thread_create_handle( &thread, threadFuncBlock );
+        threadParamBlock->secondsToDelay = (float) threadSecondsToDelay;
+        stat = thread_create_handle( &thread, threadParamBlock );
         stat = thread_create_proc( thread, shellCmdThread );
       }
 
     }
     else {
 
-      threadFuncBlock = new threadFuncBlockType;
-      threadFuncBlock->cmd = new (char)[strlen(bufShellCommand)+1];
-      strcpy( threadFuncBlock->cmd, bufShellCommand );
-      threadFuncBlock->multipleInstancesAllowed =
+      threadParamBlock = new threadParamBlockType;
+      threadParamBlock->cmd = new (char)[strlen(bufShellCommand)+1];
+      strcpy( threadParamBlock->cmd, bufShellCommand );
+      threadParamBlock->multipleInstancesAllowed =
        multipleInstancesAllowed;
-      stat = thread_create_handle( &thread, threadFuncBlock );
+      threadParamBlock->secondsToDelay = (float) threadSecondsToDelay;
+      stat = thread_create_handle( &thread, threadParamBlock );
       stat = thread_create_proc( thread, shellCmdThread );
 
     }
