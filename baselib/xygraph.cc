@@ -4815,7 +4815,8 @@ int numFullDraws, remainder, i, ii, j, jj, symHW, symHH;
 int xyGraphClass::eraseActive ( void ) {
 
 int i;
-XRectangle xR = { plotAreaX+1, plotAreaY+1, plotAreaW-2, plotAreaH-2 };
+XRectangle xR = { plotAreaX, plotAreaY, plotAreaW, plotAreaH };
+//XRectangle xR = { plotAreaX+1, plotAreaY+1, plotAreaW-2, plotAreaH-2 };
 
   if ( !activeMode || !init ) return 1;
 
@@ -5077,7 +5078,8 @@ int npts;
 int xyGraphClass::drawActive ( void ) {
 
 int i;
-XRectangle xR = { plotAreaX+1, plotAreaY+1, plotAreaW-2, plotAreaH-2 };
+XRectangle xR = { plotAreaX, plotAreaY, plotAreaW, plotAreaH };
+//XRectangle xR = { plotAreaX+1, plotAreaY+1, plotAreaW-2, plotAreaH-2 };
 
   if ( !activeMode || !init ) return 1;
 
@@ -7677,7 +7679,7 @@ double n;
         prevY = plotInfo[trace][i].firstY;
 
         plotBuf[trace][npts].x = prevX;
-        plotBuf[trace][npts].y = plotAreaY+plotAreaH;
+        plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
         npts++;
 
         plotBuf[trace][npts].x = prevX;
@@ -7685,7 +7687,7 @@ double n;
         npts++;
 
         plotBuf[trace][npts].x = prevX;
-        plotBuf[trace][npts].y = plotAreaY+plotAreaH;
+        plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
         npts++;
 
       }
@@ -7706,7 +7708,7 @@ double n;
           prevY = curY;
 
           plotBuf[trace][npts].x = curX;
-          plotBuf[trace][npts].y = plotAreaY+plotAreaH;
+          plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
           plotBuf[trace][npts].x = curX;
@@ -7714,7 +7716,7 @@ double n;
           npts++;
 
           plotBuf[trace][npts].x = curX;
-          plotBuf[trace][npts].y = plotAreaY+plotAreaH;
+          plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
         }
@@ -7801,7 +7803,7 @@ double n;
         if ( plotInfo[trace][i].n == 1 ) {
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
-          plotBuf[trace][npts].y = plotAreaY+plotAreaH;
+          plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
@@ -7809,14 +7811,14 @@ double n;
           npts++;
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
-          plotBuf[trace][npts].y = plotAreaY+plotAreaH;
+          plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
         }
         else if ( plotInfo[trace][i].n == 2 ) {
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
-          plotBuf[trace][npts].y = plotAreaY+plotAreaH;
+          plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
@@ -7828,14 +7830,14 @@ double n;
           npts++;
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
-          plotBuf[trace][npts].y = plotAreaY+plotAreaH;
+          plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
         }
         else if ( plotInfo[trace][i].n > 2 ) {
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
-          plotBuf[trace][npts].y = plotAreaY+plotAreaH;
+          plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
@@ -7843,7 +7845,7 @@ double n;
           npts++;
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
-          plotBuf[trace][npts].y = plotAreaY+plotAreaH;
+          plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
         }
