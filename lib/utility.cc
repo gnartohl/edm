@@ -2357,6 +2357,10 @@ unsigned int white, black;
 struct tm *t;
 time_t theTime;
 
+  if ( scaleLen < 1 ) return;
+  if ( num_label_ticks < 1 ) return;
+  if ( adj_max <= adj_min ) return;
+
   firstLabel = 1;
 
   white = WhitePixel( d, DefaultScreen(d) );
@@ -2684,6 +2688,10 @@ int fontAscent, fontDescent, fontHeight,
 char buf[31+1];
 unsigned int white, black;
 
+  if ( scaleLen < 1 ) return;
+  if ( num_label_ticks < 1 ) return;
+  if ( adj_max <= adj_min ) return;
+
   white = WhitePixel( d, DefaultScreen(d) );
   black = BlackPixel( d, DefaultScreen(d) );
 
@@ -2978,6 +2986,10 @@ int fontAscent, fontDescent, fontHeight,
 char buf[31+1];
 unsigned int white, black;
 
+  if ( scaleLen < 1 ) return;
+  if ( num_label_ticks < 1 ) return;
+  if ( adj_max <= adj_min ) return;
+
   white = WhitePixel( d, DefaultScreen(d) );
   black = BlackPixel( d, DefaultScreen(d) );
 
@@ -3251,6 +3263,10 @@ double xFactor, xOffset, labelVal, lastInc, labelInc, z;
 int fontAscent, fontDescent, fontHeight, stringWidth;
 char buf[31+1];
 
+  if ( scaleLen < 1 ) return;
+  if ( num_label_ticks < 1 ) return;
+  if ( adj_max <= adj_min ) return;
+
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
 
   xFactor = (double) ( scaleLen ) / ( adj_max - adj_min );
@@ -3329,6 +3345,10 @@ int label_tick_height;
 double xFactor, xOffset, labelVal, lastInc, labelInc;
 int fontAscent, fontDescent, fontHeight, stringWidth;
 char buf[31+1];
+
+  if ( scaleLen < 1 ) return;
+  if ( num_label_ticks < 1 ) return;
+  if ( adj_max <= adj_min ) return;
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
 
@@ -3415,6 +3435,10 @@ int fontAscent, fontDescent, fontHeight,
  stringWidth;
 char buf[31+1];
 unsigned int white, black;
+
+  if ( scaleHeight < 1 ) return;
+  if ( num_label_ticks < 1 ) return;
+  if ( adj_max <= adj_min ) return;
 
   white = WhitePixel( d, DefaultScreen(d) );
   black = BlackPixel( d, DefaultScreen(d) );
@@ -3708,6 +3732,10 @@ int fontAscent, fontDescent, fontHeight,
  stringWidth;
 char buf[31+1];
 unsigned int white, black;
+
+  if ( scaleHeight < 1 ) return;
+  if ( num_label_ticks < 1 ) return;
+  if ( adj_max <= adj_min ) return;
 
   white = WhitePixel( d, DefaultScreen(d) );
   black = BlackPixel( d, DefaultScreen(d) );
@@ -4027,6 +4055,10 @@ unsigned int white, black;
 //printf( "adj_min = %-g\n", adj_min );
 //printf( "adj_max = %-g\n", adj_max );
 
+  if ( scaleHeight < 1 ) return;
+  if ( num_label_ticks < 1 ) return;
+  if ( adj_max <= adj_min ) return;
+
   white = WhitePixel( d, DefaultScreen(d) );
   black = BlackPixel( d, DefaultScreen(d) );
 
@@ -4327,6 +4359,10 @@ int fontAscent, fontDescent, fontHeight,
 char buf[31+1];
 unsigned int white, black;
 
+  if ( scaleHeight < 1 ) return;
+  if ( num_label_ticks < 1 ) return;
+  if ( adj_max <= adj_min ) return;
+
   white = WhitePixel( d, DefaultScreen(d) );
   black = BlackPixel( d, DefaultScreen(d) );
 
@@ -4588,6 +4624,9 @@ int fontAscent, fontDescent, fontHeight,
 char buf[31+1];
 double labelInc, lastInc, labelVal, z;
 
+  if ( num_label_ticks < 1 ) return 10; // pixels
+  if ( adj_max <= adj_min ) return 10; // pixels
+
   updateFontInfo( " ", fontTag, &fs,
    &fontAscent, &fontDescent, &fontHeight,
    &stringWidth );
@@ -4633,6 +4672,9 @@ int fontAscent, fontDescent, fontHeight,
  stringWidth, label_tick_length, scaleWidth, l;
 char buf[31+1];
 double labelInc, lastInc, labelVal, z, log10Val;
+
+  if ( num_label_ticks < 1 ) return 10; // pixels
+  if ( adj_max <= adj_min ) return 10; // pixels
 
   updateFontInfo( " ", fontTag, &fs,
    &fontAscent, &fontDescent, &fontHeight,
@@ -4708,6 +4750,10 @@ int label_tick_height;
 double yFactor, yOffset, labelVal, lastInc, labelInc, z;
 int fontAscent, fontDescent, fontHeight, stringWidth;
 char buf[31+1];
+
+  if ( scaleHeight < 1 ) return;
+  if ( num_label_ticks < 1 ) return;
+  if ( adj_max <= adj_min ) return;
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
 
@@ -4792,6 +4838,10 @@ double yFactor, yOffset, labelVal, lastInc, labelInc, z;
 int fontAscent, fontDescent, fontHeight, stringWidth;
 char buf[31+1];
 
+  if ( scaleHeight < 1 ) return;
+  if ( num_label_ticks < 1 ) return;
+  if ( adj_max <= adj_min ) return;
+
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
 
   yFactor = (double) ( scaleHeight ) / ( adj_max - adj_min );
@@ -4875,6 +4925,10 @@ double yFactor, yOffset, labelVal, lastInc, labelInc;
 int fontAscent, fontDescent, fontHeight, stringWidth;
 char buf[31+1];
 
+  if ( scaleHeight < 1 ) return;
+  if ( num_label_ticks < 1 ) return;
+  if ( adj_max <= adj_min ) return;
+
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
 
   yFactor = (double) ( scaleHeight ) / ( adj_max - adj_min );
@@ -4951,6 +5005,10 @@ int label_tick_height;
 double yFactor, yOffset, labelVal, lastInc, labelInc;
 int fontAscent, fontDescent, fontHeight, stringWidth;
 char buf[31+1];
+
+  if ( scaleHeight < 1 ) return;
+  if ( num_label_ticks < 1 ) return;
+  if ( adj_max <= adj_min ) return;
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
 
