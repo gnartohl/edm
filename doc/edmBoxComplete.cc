@@ -275,7 +275,7 @@ char title[32], *ptr;
   editBuf->bufLineStyle = lineStyle;
 
   if ( pvExpStr.getRaw() )
-    strncpy( editBuf->bufPvName, pvExpStr.getRaw(), activeGraphicClass::MAX_PV_NAME );
+    strncpy( editBuf->bufPvName, pvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
     strcpy( editBuf->bufPvName, "" );
 
@@ -310,7 +310,7 @@ char title[32], *ptr;
    &editBuf->bufFillColor );
   ef.addToggle( edmBoxComplete_str11, &editBuf->bufFillColorMode );
   ef.addTextField( edmBoxComplete_str14, 30, editBuf->bufPvName,
-   activeGraphicClass::MAX_PV_NAME );
+   PV_Factory::MAX_PV_NAME );
   ef.addTextField( edmBoxComplete_str15, 30, &editBuf->bufEfReadMin );
   ef.addTextField( edmBoxComplete_str16, 30, &editBuf->bufEfReadMax );
   ef.addTextField( edmBoxComplete_str23, 30, &editBuf->bufEfPrecision );
@@ -705,7 +705,7 @@ int edmBoxClass::old_createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[activeGraphicClass::MAX_PV_NAME+1];
+char oneName[PV_Factory::MAX_PV_NAME+1];
 
   this->actWin = _actWin;
 
@@ -791,7 +791,7 @@ char oneName[activeGraphicClass::MAX_PV_NAME+1];
   else
     fillColor.setAlarmInsensitive();
 
-  readStringFromFile( oneName, activeGraphicClass::MAX_PV_NAME+1, f );
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   pvExpStr.setRaw( oneName );
 
@@ -1512,7 +1512,8 @@ int stat;
       }
 
       if ( !pvExpStr.getExpanded() ||
-         ( strcmp( pvExpStr.getExpanded(), "" ) == 0 ) ) {
+	 // ( strcmp( pvExpStr.getExpanded(), "" ) == 0 ) ) {
+         blankOrComment( pvExpStr.getExpanded() ) ) {
         pvExists = 0;
       }
       else {
@@ -1572,8 +1573,6 @@ int edmBoxClass::deactivate (
       XtRemoveTimeOut( unconnectedTimer );
       unconnectedTimer = 0;
     }
-
-    updateBlink( 0 );
 
     activeMode = 0;
 

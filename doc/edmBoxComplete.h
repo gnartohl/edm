@@ -301,7 +301,7 @@ typedef struct editBufTag {
   int bufFillColorMode;
   char bufFontTag[63+1];
   char bufLabel[63+1];
-  char bufPvName[activeGraphicClass::MAX_PV_NAME+1];
+  char bufPvName[PV_Factory::MAX_PV_NAME+1];
   efDouble bufEfReadMin;
   efDouble bufEfReadMax;
   efInt bufEfPrecision;
