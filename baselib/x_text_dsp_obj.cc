@@ -2291,23 +2291,23 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  //ef.addTextField( activeXTextDspClass_str6, 31, bufId, 31 );
-  ef.addTextField( activeXTextDspClass_str7, 31, &bufX );
-  ef.addTextField( activeXTextDspClass_str8, 31, &bufY );
-  ef.addTextField( activeXTextDspClass_str9, 31, &bufW );
-  ef.addTextField( activeXTextDspClass_str10, 31, &bufH );
-  ef.addTextField( activeXTextDspClass_str22, 31, bufPvName,
+  //ef.addTextField( activeXTextDspClass_str6, 35, bufId, 31 );
+  ef.addTextField( activeXTextDspClass_str7, 35, &bufX );
+  ef.addTextField( activeXTextDspClass_str8, 35, &bufY );
+  ef.addTextField( activeXTextDspClass_str9, 35, &bufW );
+  ef.addTextField( activeXTextDspClass_str10, 35, &bufH );
+  ef.addTextField( activeXTextDspClass_str22, 35, bufPvName,
    activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeXTextDspClass_str74, 31, bufColorPvName,
+  ef.addTextField( activeXTextDspClass_str74, 35, bufColorPvName,
    activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeXTextDspClass_str25, 31, bufSvalPvName,
+  ef.addTextField( activeXTextDspClass_str25, 35, bufSvalPvName,
    activeGraphicClass::MAX_PV_NAME );
   ef.addOption( activeXTextDspClass_str23, activeXTextDspClass_str24,
    &bufNullDetectMode );
   ef.addOption( activeXTextDspClass_str18,
    activeXTextDspClass_str19, &bufFormatType );
   ef.addToggle( activeXTextDspClass_str20, &bufLimitsFromDb );
-  ef.addTextField( activeXTextDspClass_str21, 31, &bufEfPrecision );
+  ef.addTextField( activeXTextDspClass_str21, 35, &bufEfPrecision );
 
   ef.addToggle( activeXTextDspClass_str11, &bufAutoHeight );
   ef.addToggle( activeXTextDspClass_str27, &bufEditable );
@@ -2318,8 +2318,8 @@ char title[32], *ptr;
   ef.addToggle( activeXTextDspClass_str69, &bufFastUpdate );
   ef.addToggle( activeXTextDspClass_str70, &bufIsDate );
   ef.addToggle( activeXTextDspClass_str71, &bufIsFile );
-  ef.addTextField( activeXTextDspClass_str72, 31, bufDefDir, 127 );
-  ef.addTextField( activeXTextDspClass_str73, 31, bufPattern, 127 );
+  ef.addTextField( activeXTextDspClass_str72, 35, bufDefDir, 127 );
+  ef.addTextField( activeXTextDspClass_str73, 35, bufPattern, 127 );
 
   ef.addColorButton( activeXTextDspClass_str15, actWin->ci, &fgCb,
    &bufFgColor );

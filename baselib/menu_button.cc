@@ -789,13 +789,13 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeMenuButtonClass_str4, 30, &bufX );
-  ef.addTextField( activeMenuButtonClass_str5, 30, &bufY );
-  ef.addTextField( activeMenuButtonClass_str6, 30, &bufW );
-  ef.addTextField( activeMenuButtonClass_str7, 30, &bufH );
-  ef.addTextField( activeMenuButtonClass_str17, 30, bufControlPvName,
+  ef.addTextField( activeMenuButtonClass_str4, 35, &bufX );
+  ef.addTextField( activeMenuButtonClass_str5, 35, &bufY );
+  ef.addTextField( activeMenuButtonClass_str6, 35, &bufW );
+  ef.addTextField( activeMenuButtonClass_str7, 35, &bufH );
+  ef.addTextField( activeMenuButtonClass_str17, 35, bufControlPvName,
    activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeMenuButtonClass_str18, 30, bufReadPvName,
+  ef.addTextField( activeMenuButtonClass_str18, 35, bufReadPvName,
    activeGraphicClass::MAX_PV_NAME );
 
   ef.addColorButton( activeMenuButtonClass_str8, actWin->ci, &fgCb,

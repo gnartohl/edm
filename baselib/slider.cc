@@ -1377,37 +1377,37 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  //ef.addTextField( activeSliderClass_str18, 30, bufId, 31 );
-  ef.addTextField( activeSliderClass_str19, 30, &bufX );
-  ef.addTextField( activeSliderClass_str20, 30, &bufY );
-  ef.addTextField( activeSliderClass_str21, 30, &bufW );
-  ef.addTextField( activeSliderClass_str22, 30, &bufH );
+  //ef.addTextField( activeSliderClass_str18, 35, bufId, 31 );
+  ef.addTextField( activeSliderClass_str19, 35, &bufX );
+  ef.addTextField( activeSliderClass_str20, 35, &bufY );
+  ef.addTextField( activeSliderClass_str21, 35, &bufW );
+  ef.addTextField( activeSliderClass_str22, 35, &bufH );
 
-  ef.addTextField( activeSliderClass_str36, 30, controlBufPvName,
+  ef.addTextField( activeSliderClass_str36, 35, controlBufPvName,
    activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeSliderClass_str42, 30, readBufPvName,
+  ef.addTextField( activeSliderClass_str42, 35, readBufPvName,
    activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeSliderClass_str48, 30, savedValueBufPvName,
+  ef.addTextField( activeSliderClass_str48, 35, savedValueBufPvName,
    activeGraphicClass::MAX_PV_NAME );
 
-  ef.addTextField( activeSliderClass_str37, 30, controlBufLabelName,
+  ef.addTextField( activeSliderClass_str37, 35, controlBufLabelName,
    activeGraphicClass::MAX_PV_NAME );
   ef.addOption( activeSliderClass_str38, activeSliderClass_str39,
    controlLabelTypeStr, 15 );
 
-  ef.addTextField( activeSliderClass_str43, 30, readBufLabelName,
+  ef.addTextField( activeSliderClass_str43, 35, readBufLabelName,
    activeGraphicClass::MAX_PV_NAME );
   ef.addOption( activeSliderClass_str44, activeSliderClass_str45,
    readLabelTypeStr, 15 );
 
-  ef.addTextField( activeSliderClass_str28, 30, &bufIncrement );
+  ef.addTextField( activeSliderClass_str28, 35, &bufIncrement );
 
   ef.addToggle( activeSliderClass_str29, &bufLimitsFromDb );
   ef.addOption( activeSliderClass_str30, activeSliderClass_str35,
    bufDisplayFormat, 15 );
-  ef.addTextField( activeSliderClass_str31, 30, &bufEfPrecision );
-  ef.addTextField( activeSliderClass_str32, 30, &bufEfScaleMin );
-  ef.addTextField( activeSliderClass_str33, 30, &bufEfScaleMax );
+  ef.addTextField( activeSliderClass_str31, 35, &bufEfPrecision );
+  ef.addTextField( activeSliderClass_str32, 35, &bufEfScaleMin );
+  ef.addTextField( activeSliderClass_str33, 35, &bufEfScaleMax );
 
   ef.addColorButton( activeSliderClass_str24, actWin->ci, &fgCb, &bufFgColor );
   ef.addToggle( activeSliderClass_str25, &bufFgColorMode );

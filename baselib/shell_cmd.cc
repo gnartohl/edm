@@ -963,35 +963,35 @@ char title[32], *ptr, *envPtr, saveLock;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( shellCmdClass_str4, 30, &bufX );
-  ef.addTextField( shellCmdClass_str5, 30, &bufY );
-  ef.addTextField( shellCmdClass_str6, 30, &bufW );
-  ef.addTextField( shellCmdClass_str7, 30, &bufH );
+  ef.addTextField( shellCmdClass_str4, 35, &bufX );
+  ef.addTextField( shellCmdClass_str5, 35, &bufY );
+  ef.addTextField( shellCmdClass_str6, 35, &bufW );
+  ef.addTextField( shellCmdClass_str7, 35, &bufH );
 
   if ( !lock ) {
-    ef.addTextField( shellCmdClass_str14, 30, bufShellCommand, 127 );
+    ef.addTextField( shellCmdClass_str14, 35, bufShellCommand, 127 );
   }
   else {
-    ef.addLockedField( shellCmdClass_str14, 30, bufShellCommand, 127 );
+    ef.addLockedField( shellCmdClass_str14, 35, bufShellCommand, 127 );
   }
 
-  ef.addTextField( shellCmdClass_str13, 30, bufLabel, 127 );
+  ef.addTextField( shellCmdClass_str13, 35, bufLabel, 127 );
 
   if ( !lock ) {
-    ef.addPasswordField( "Password", 30, bufPw1, 31 );
-    ef.addPasswordField( "Confirm", 30, bufPw2, 31 );
+    ef.addPasswordField( "Password", 35, bufPw1, 31 );
+    ef.addPasswordField( "Confirm", 35, bufPw2, 31 );
     ef.addToggle( "Lock (forever)", &bufLock );
   }
   else {
-    ef.addLockedField( "Password", 30, bufPw1, 31 );
-    ef.addLockedField( "Confirm", 30, bufPw2, 31 );
+    ef.addLockedField( "Password", 35, bufPw1, 31 );
+    ef.addLockedField( "Confirm", 35, bufPw2, 31 );
   }
 
   ef.addToggle( shellCmdClass_str15, &bufInvisible );
   ef.addToggle( shellCmdClass_str16, &bufCloseAction );
   ef.addToggle( shellCmdClass_str17, &bufMultipleInstancesAllowed );
-  ef.addTextField( shellCmdClass_str20, 30, &bufThreadSecondsToDelay );
-  ef.addTextField( shellCmdClass_str18, 30, &bufAutoExecInterval );
+  ef.addTextField( shellCmdClass_str20, 35, &bufThreadSecondsToDelay );
+  ef.addTextField( shellCmdClass_str18, 35, &bufAutoExecInterval );
 
   ef.addColorButton( shellCmdClass_str8, actWin->ci, &fgCb, &bufFgColor );
   ef.addColorButton( shellCmdClass_str9, actWin->ci, &bgCb, &bufBgColor );
@@ -1473,7 +1473,7 @@ void shellCmdClass::btnDown (
 
       strcpy( bufPw1, "" );
 
-      ef.addPasswordField( "Password", 30, bufPw1, 31 );
+      ef.addPasswordField( "Password", 35, bufPw1, 31 );
 
       ef.finished( pw_ok, pw_apply, pw_cancel, this );
 

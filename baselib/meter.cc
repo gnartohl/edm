@@ -791,29 +791,29 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeMeterClass_str4, 30, &bufX );
-  ef.addTextField( activeMeterClass_str5, 30, &bufY );
-  ef.addTextField( activeMeterClass_str6, 30, &bufW );
-  ef.addTextField( activeMeterClass_str7, 30, &bufH );
-  //   ef.addTextField( activeMeterClass_str8, 30, bufControlPvName,
+  ef.addTextField( activeMeterClass_str4, 35, &bufX );
+  ef.addTextField( activeMeterClass_str5, 35, &bufY );
+  ef.addTextField( activeMeterClass_str6, 35, &bufW );
+  ef.addTextField( activeMeterClass_str7, 35, &bufH );
+  //   ef.addTextField( activeMeterClass_str8, 35, bufControlPvName,
   //    activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeMeterClass_str9, 30, bufReadPvName,
+  ef.addTextField( activeMeterClass_str9, 35, bufReadPvName,
    activeGraphicClass::MAX_PV_NAME );
   ef.addOption( activeMeterClass_str10, activeMeterClass_str11, &bufLabelType );
-  ef.addTextField( activeMeterClass_str12, 30, bufLiteralLabel, 39 );
+  ef.addTextField( activeMeterClass_str12, 35, bufLiteralLabel, 39 );
   ef.addColorButton( activeMeterClass_str14, actWin->ci,&labelCb,&bufLabelColor);
-  ef.addTextField(activeMeterClass_str15,30,&bufMeterAngle);
+  ef.addTextField(activeMeterClass_str15, 35, &bufMeterAngle);
   ef.addToggle( activeMeterClass_str16, &bufShowScale );
   ef.addOption( activeMeterClass_str17, activeMeterClass_str43,
    bufScaleFormat, 15 );
-  ef.addTextField( activeMeterClass_str19,30,&bufScalePrecision);
+  ef.addTextField( activeMeterClass_str19, 35, &bufScalePrecision);
   ef.addToggle( activeMeterClass_str20, &bufScaleLimitsFromDb );
-  ef.addTextField(activeMeterClass_str21,30,&bufScaleMin);
-  ef.addTextField(activeMeterClass_str22,30,&bufScaleMax);
+  ef.addTextField(activeMeterClass_str21, 35, &bufScaleMin);
+  ef.addTextField(activeMeterClass_str22, 35, &bufScaleMax);
   ef.addColorButton( activeMeterClass_str24, actWin->ci,&scaleCb,&bufScaleColor);
   ef.addToggle( activeMeterClass_str25, &bufScaleColorMode );
-  ef.addTextField(activeMeterClass_str26, 30, &bufMajorIntervals);
-  ef.addTextField(activeMeterClass_str27, 30, &bufMinorIntervals);
+  ef.addTextField(activeMeterClass_str26, 35, &bufMajorIntervals);
+  ef.addTextField(activeMeterClass_str27, 35, &bufMinorIntervals);
   ef.addToggle(activeMeterClass_str28, &bufNeedleType);  
   ef.addColorButton( activeMeterClass_str29, actWin->ci, &fgCb, &bufFgColor );
   ef.addToggle( activeMeterClass_str30, &bufFgColorMode );

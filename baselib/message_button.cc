@@ -1006,17 +1006,17 @@ char title[32], *ptr, *envPtr, saveLock;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeMessageButtonClass_str4, 30, &bufX );
-  ef.addTextField( activeMessageButtonClass_str5, 30, &bufY );
-  ef.addTextField( activeMessageButtonClass_str6, 30, &bufW );
-  ef.addTextField( activeMessageButtonClass_str7, 30, &bufH );
+  ef.addTextField( activeMessageButtonClass_str4, 35, &bufX );
+  ef.addTextField( activeMessageButtonClass_str5, 35, &bufY );
+  ef.addTextField( activeMessageButtonClass_str6, 35, &bufW );
+  ef.addTextField( activeMessageButtonClass_str7, 35, &bufH );
 
   if ( !lock ) {
-    ef.addTextField( activeMessageButtonClass_str18, 30, bufDestPvName,
+    ef.addTextField( activeMessageButtonClass_str18, 35, bufDestPvName,
      activeGraphicClass::MAX_PV_NAME );
   }
   else {
-    ef.addLockedField( activeMessageButtonClass_str18, 30, bufDestPvName,
+    ef.addLockedField( activeMessageButtonClass_str18, 35, bufDestPvName,
      activeGraphicClass::MAX_PV_NAME );
   }
 
@@ -1027,38 +1027,38 @@ char title[32], *ptr, *envPtr, saveLock;
   ef.addToggle( activeMessageButtonClass_str12, &bufPressAction );
   ef.addToggle( activeMessageButtonClass_str13, &bufReleaseAction );
 
-  ef.addTextField( activeMessageButtonClass_str14, 30, bufOnLabel,
+  ef.addTextField( activeMessageButtonClass_str14, 35, bufOnLabel,
    MAX_ENUM_STRING_SIZE );
 
   if ( !lock ) {
-    ef.addTextField( activeMessageButtonClass_str16, 30, bufSourcePressPvName,
+    ef.addTextField( activeMessageButtonClass_str16, 35, bufSourcePressPvName,
      39 );
   }
   else {
-    ef.addLockedField( activeMessageButtonClass_str16, 30,
+    ef.addLockedField( activeMessageButtonClass_str16, 35,
      bufSourcePressPvName, 39 );
   }
 
-  ef.addTextField( activeMessageButtonClass_str15, 30, bufOffLabel,
+  ef.addTextField( activeMessageButtonClass_str15, 35, bufOffLabel,
    MAX_ENUM_STRING_SIZE );
 
   if ( !lock ) {
 
-    ef.addTextField( activeMessageButtonClass_str17, 30,
+    ef.addTextField( activeMessageButtonClass_str17, 35,
      bufSourceReleasePvName, 39 );
 
-    ef.addPasswordField( "Password", 30, bufPw1, 31 );
-    ef.addPasswordField( "Confirm", 30, bufPw2, 31 );
+    ef.addPasswordField( "Password", 35, bufPw1, 31 );
+    ef.addPasswordField( "Confirm", 35, bufPw2, 31 );
     ef.addToggle( "Lock (forever)", &bufLock );
 
   }
   else {
 
-    ef.addLockedField( activeMessageButtonClass_str17, 30,
+    ef.addLockedField( activeMessageButtonClass_str17, 35,
      bufSourceReleasePvName, 39 );
 
-    ef.addLockedField( "Password", 30, bufPw1, 31 );
-    ef.addLockedField( "Confirm", 30, bufPw2, 31 );
+    ef.addLockedField( "Password", 35, bufPw1, 31 );
+    ef.addLockedField( "Confirm", 35, bufPw2, 31 );
 
   }
 
@@ -1699,7 +1699,7 @@ void activeMessageButtonClass::btnDown (
 
       strcpy( bufPw1, "" );
 
-      ef.addPasswordField( "Password", 30, bufPw1, 31 );
+      ef.addPasswordField( "Password", 35, bufPw1, 31 );
 
       ef.finished( pw_ok, pw_apply, pw_cancel, this );
 

@@ -975,29 +975,29 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeBarClass_str7, 30, &bufX );
-  ef.addTextField( activeBarClass_str8, 30, &bufY );
-  ef.addTextField( activeBarClass_str9, 30, &bufW );
-  ef.addTextField( activeBarClass_str10, 30, &bufH );
-//   ef.addTextField( activeBarClass_str11, 30, bufControlPvName, activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeBarClass_str12, 30, bufReadPvName, activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeBarClass_str13, 30, bufNullPvName, activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeBarClass_str7, 35, &bufX );
+  ef.addTextField( activeBarClass_str8, 35, &bufY );
+  ef.addTextField( activeBarClass_str9, 35, &bufW );
+  ef.addTextField( activeBarClass_str10, 35, &bufH );
+//   ef.addTextField( activeBarClass_str11, 35, bufControlPvName, activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeBarClass_str12, 35, bufReadPvName, activeGraphicClass::MAX_PV_NAME );
+  ef.addTextField( activeBarClass_str13, 35, bufNullPvName, activeGraphicClass::MAX_PV_NAME );
   ef.addOption( activeBarClass_str14, activeBarClass_str15, &bufLabelType );
-  ef.addTextField( activeBarClass_str16, 30, bufLabel, 39 );
+  ef.addTextField( activeBarClass_str16, 35, bufLabel, 39 );
   ef.addToggle( activeBarClass_str18, &bufBorder );
   ef.addToggle( activeBarClass_str19, &bufShowScale );
 
-  ef.addTextField( activeBarClass_str20, 30, &bufLabelTicks );
-  ef.addTextField( activeBarClass_str21, 30, &bufMajorTicks );
-  ef.addTextField( activeBarClass_str22, 30, &bufMinorTicks );
+  ef.addTextField( activeBarClass_str20, 35, &bufLabelTicks );
+  ef.addTextField( activeBarClass_str21, 35, &bufMajorTicks );
+  ef.addTextField( activeBarClass_str22, 35, &bufMinorTicks );
 
   ef.addToggle( activeBarClass_str23, &bufLimitsFromDb );
   ef.addOption( activeBarClass_str24, activeBarClass_str25, bufScaleFormat, 15 );
-  ef.addTextField( activeBarClass_str26, 30, &bufEfPrecision );
-  ef.addTextField( activeBarClass_str27, 30, &bufEfReadMin );
-  ef.addTextField( activeBarClass_str28, 30, &bufEfReadMax );
+  ef.addTextField( activeBarClass_str26, 35, &bufEfPrecision );
+  ef.addTextField( activeBarClass_str27, 35, &bufEfReadMin );
+  ef.addTextField( activeBarClass_str28, 35, &bufEfReadMax );
 
-  ef.addTextField( activeBarClass_str29, 30, &bufEfBarOriginX );
+  ef.addTextField( activeBarClass_str29, 35, &bufEfBarOriginX );
 
   ef.addOption( activeBarClass_str44, activeBarClass_str45,
    &bufHorizontal );

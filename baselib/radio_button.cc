@@ -596,11 +596,11 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeRadioButtonClass_str4, 30, &bufX );
-  ef.addTextField( activeRadioButtonClass_str5, 30, &bufY );
-  ef.addTextField( activeRadioButtonClass_str6, 30, &bufW );
-  ef.addTextField( activeRadioButtonClass_str7, 30, &bufH );
-  ef.addTextField( activeRadioButtonClass_str17, 30, bufControlPvName,
+  ef.addTextField( activeRadioButtonClass_str4, 35, &bufX );
+  ef.addTextField( activeRadioButtonClass_str5, 35, &bufY );
+  ef.addTextField( activeRadioButtonClass_str6, 35, &bufW );
+  ef.addTextField( activeRadioButtonClass_str7, 35, &bufH );
+  ef.addTextField( activeRadioButtonClass_str17, 35, bufControlPvName,
    activeGraphicClass::MAX_PV_NAME );
 
   ef.addColorButton( activeRadioButtonClass_str8, actWin->ci, &fgCb,

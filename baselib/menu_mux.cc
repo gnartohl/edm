@@ -793,13 +793,13 @@ char title[32], *ptr;
    title, MMUX_MAX_STATES, numItems,
    mmuxSetItem, (void *) this, NULL, NULL, NULL );
 
-  ef.addTextField( menuMuxClass_str4, 30, &bufX );
-  ef.addTextField( menuMuxClass_str5, 30, &bufY );
-  ef.addTextField( menuMuxClass_str6, 30, &bufW );
-  ef.addTextField( menuMuxClass_str7, 30, &bufH );
-  ef.addTextField( menuMuxClass_str17, 30, bufControlPvName,
+  ef.addTextField( menuMuxClass_str4, 35, &bufX );
+  ef.addTextField( menuMuxClass_str5, 35, &bufY );
+  ef.addTextField( menuMuxClass_str6, 35, &bufW );
+  ef.addTextField( menuMuxClass_str7, 35, &bufH );
+  ef.addTextField( menuMuxClass_str17, 35, bufControlPvName,
    activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( menuMuxClass_str18, 30, bufInitialState, 30 );
+  ef.addTextField( menuMuxClass_str18, 35, bufInitialState, 30 );
 
   ef.addColorButton( menuMuxClass_str8, actWin->ci, &fgCb, &bufFgColor );
   ef.addToggle( menuMuxClass_str10, &bufFgColorMode );
@@ -824,12 +824,12 @@ char title[32], *ptr;
     }
   }
 
-  ef.addTextFieldArray( menuMuxClass_str19, 30, tagPtr, MMUX_MAX_STRING_SIZE, &elbt );
+  ef.addTextFieldArray( menuMuxClass_str19, 35, tagPtr, MMUX_MAX_STRING_SIZE, &elbt );
 
   for ( i=0; i<MMUX_MAX_ENTRIES; i++ ) {
-    ef.addTextFieldArray( menuMuxClass_str20, 30, mPtr[i], MMUX_MAX_STRING_SIZE,
+    ef.addTextFieldArray( menuMuxClass_str20, 35, mPtr[i], MMUX_MAX_STRING_SIZE,
      &elbm[i] );
-    ef.addTextFieldArray( menuMuxClass_str21, 30, ePtr[i], MMUX_MAX_STRING_SIZE,
+    ef.addTextFieldArray( menuMuxClass_str21, 35, ePtr[i], MMUX_MAX_STRING_SIZE,
      &elbe[i] );
   }
 

@@ -1151,24 +1151,24 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeUpdownButtonClass_str4, 30, &bufX );
-  ef.addTextField( activeUpdownButtonClass_str5, 30, &bufY );
-  ef.addTextField( activeUpdownButtonClass_str6, 30, &bufW );
-  ef.addTextField( activeUpdownButtonClass_str7, 30, &bufH );
-  ef.addTextField( activeUpdownButtonClass_str8, 30, bufDestPvName,
+  ef.addTextField( activeUpdownButtonClass_str4, 35, &bufX );
+  ef.addTextField( activeUpdownButtonClass_str5, 35, &bufY );
+  ef.addTextField( activeUpdownButtonClass_str6, 35, &bufW );
+  ef.addTextField( activeUpdownButtonClass_str7, 35, &bufH );
+  ef.addTextField( activeUpdownButtonClass_str8, 35, bufDestPvName,
    activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeUpdownButtonClass_str25, 30, bufSavePvName,
+  ef.addTextField( activeUpdownButtonClass_str25, 35, bufSavePvName,
    activeGraphicClass::MAX_PV_NAME );
 
   ef.addToggle( activeUpdownButtonClass_str26, &bufLimitsFromDb );
-  ef.addTextField( activeUpdownButtonClass_str27, 30, &bufEfScaleMin );
-  ef.addTextField( activeUpdownButtonClass_str28, 30, &bufEfScaleMax );
-  ef.addTextField( activeUpdownButtonClass_str9, 30, bufCoarse, 39 );
-  ef.addTextField( activeUpdownButtonClass_str10, 30, bufFine, 39 );
-  ef.addTextField( activeUpdownButtonClass_str11, 30, &bufRate );
+  ef.addTextField( activeUpdownButtonClass_str27, 35, &bufEfScaleMin );
+  ef.addTextField( activeUpdownButtonClass_str28, 35, &bufEfScaleMax );
+  ef.addTextField( activeUpdownButtonClass_str9, 35, bufCoarse, 39 );
+  ef.addTextField( activeUpdownButtonClass_str10, 35, bufFine, 39 );
+  ef.addTextField( activeUpdownButtonClass_str11, 35, &bufRate );
   ef.addToggle( activeUpdownButtonClass_str12, &buf3D );
   ef.addToggle( activeUpdownButtonClass_str13, &bufInvisible );
-  ef.addTextField( activeUpdownButtonClass_str14, 30, bufLabel, 39 );
+  ef.addTextField( activeUpdownButtonClass_str14, 35, bufLabel, 39 );
   ef.addColorButton( activeUpdownButtonClass_str16, actWin->ci, &fgCb, &bufFgColor );
   ef.addColorButton( activeUpdownButtonClass_str17, actWin->ci, &bgCb, &bufBgColor );
   ef.addColorButton( activeUpdownButtonClass_str18, actWin->ci, &topShadowCb, &bufTopShadowColor );

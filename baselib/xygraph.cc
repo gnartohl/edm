@@ -1006,19 +1006,19 @@ int i;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( "X", 30, &eBuf->bufX );
-  ef.addTextField( "Y", 30, &eBuf->bufY );
-  ef.addTextField( "Width", 30, &eBuf->bufW );
-  ef.addTextField( "Height", 30, &eBuf->bufH );
-  ef.addTextField( "Title", 30, eBuf->bufGraphTitle, 127 );
-  ef.addTextField( "X Label", 30, eBuf->bufXLabel, 127 );
-  ef.addTextField( "Y Label", 30, eBuf->bufYLabel, 127 );
+  ef.addTextField( "X", 35, &eBuf->bufX );
+  ef.addTextField( "Y", 35, &eBuf->bufY );
+  ef.addTextField( "Width", 35, &eBuf->bufW );
+  ef.addTextField( "Height", 35, &eBuf->bufH );
+  ef.addTextField( "Title", 35, eBuf->bufGraphTitle, 127 );
+  ef.addTextField( "X Label", 35, eBuf->bufXLabel, 127 );
+  ef.addTextField( "Y Label", 35, eBuf->bufYLabel, 127 );
   ef.addColorButton( "Foreground", actWin->ci, &fgCb, &eBuf->bufFgColor );
   ef.addColorButton( "Background", actWin->ci, &bgCb, &eBuf->bufBgColor );
   ef.addColorButton( "Grid", actWin->ci, &gridCb, &eBuf->bufGridColor );
   ef.addOption( "Plot Style", "point|line", &eBuf->bufPlotStyle );
   ef.addOption( "Plot Mode", "plot n pts & stop|plot last n pts", &eBuf->bufPlotMode );
-  ef.addTextField( "Count", 30, &eBuf->bufCount );
+  ef.addTextField( "Count", 35, &eBuf->bufCount );
 
   ef.addEmbeddedEf( "X/Y/Trace Data", "... ", &efTrace );
 
@@ -1220,9 +1220,9 @@ int i;
    
     efAxis->finished( axygc_edit_ok_axis, this );
 
-  ef.addTextField( "Trigger Channel", 30, eBuf->bufTrigPvName,
+  ef.addTextField( "Trigger Channel", 35, eBuf->bufTrigPvName,
    activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( "Erase Channel", 30, eBuf->bufErasePvName,
+  ef.addTextField( "Erase Channel", 35, eBuf->bufErasePvName,
    activeGraphicClass::MAX_PV_NAME );
   ef.addOption( "Erase Mode", "if not zero|if zero", &eBuf->bufEraseMode );
   ef.addFontMenuNoAlignInfo( "Font", actWin->fi, &fm, fontTag );

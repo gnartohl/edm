@@ -1173,15 +1173,15 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeMotifSliderClass_str19, 30, &bufX );
-  ef.addTextField( activeMotifSliderClass_str20, 30, &bufY );
-  ef.addTextField( activeMotifSliderClass_str21, 30, &bufW );
-  ef.addTextField( activeMotifSliderClass_str22, 30, &bufH );
+  ef.addTextField( activeMotifSliderClass_str19, 35, &bufX );
+  ef.addTextField( activeMotifSliderClass_str20, 35, &bufY );
+  ef.addTextField( activeMotifSliderClass_str21, 35, &bufW );
+  ef.addTextField( activeMotifSliderClass_str22, 35, &bufH );
 
-  ef.addTextField( activeMotifSliderClass_str36, 30, controlBufPvName,
+  ef.addTextField( activeMotifSliderClass_str36, 35, controlBufPvName,
    PV_Factory::MAX_PV_NAME );
 
-  ef.addTextField( activeMotifSliderClass_str37, 30, controlBufLabelName,
+  ef.addTextField( activeMotifSliderClass_str37, 35, controlBufLabelName,
    PV_Factory::MAX_PV_NAME );
   ef.addOption( activeMotifSliderClass_str38, activeMotifSliderClass_str39,
    &bufControlLabelType );
@@ -1193,14 +1193,14 @@ char title[32], *ptr;
   ef.addOption( activeMotifSliderClass_str89,
    activeMotifSliderClass_str90, &bufOrientation );
 
-  ef.addTextField( activeMotifSliderClass_str28, 30, &bufIncrement );
+  ef.addTextField( activeMotifSliderClass_str28, 35, &bufIncrement );
 
   ef.addToggle( activeMotifSliderClass_str29, &bufLimitsFromDb );
   ef.addOption( activeMotifSliderClass_str30, activeMotifSliderClass_str35,
    &bufFormatType );
-  ef.addTextField( activeMotifSliderClass_str31, 30, &bufEfPrecision );
-  ef.addTextField( activeMotifSliderClass_str32, 30, &bufEfScaleMin );
-  ef.addTextField( activeMotifSliderClass_str33, 30, &bufEfScaleMax );
+  ef.addTextField( activeMotifSliderClass_str31, 35, &bufEfPrecision );
+  ef.addTextField( activeMotifSliderClass_str32, 35, &bufEfScaleMin );
+  ef.addTextField( activeMotifSliderClass_str33, 35, &bufEfScaleMax );
 
   ef.addColorButton( activeMotifSliderClass_str24, actWin->ci, &fgCb,
    &bufFgColor );

@@ -1224,14 +1224,14 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( relatedDisplayClass_str4, 30, &buf->bufX );
-  ef.addTextField( relatedDisplayClass_str5, 30, &buf->bufY );
-  ef.addTextField( relatedDisplayClass_str6, 30, &buf->bufW );
-  ef.addTextField( relatedDisplayClass_str7, 30, &buf->bufH );
+  ef.addTextField( relatedDisplayClass_str4, 35, &buf->bufX );
+  ef.addTextField( relatedDisplayClass_str5, 35, &buf->bufY );
+  ef.addTextField( relatedDisplayClass_str6, 35, &buf->bufW );
+  ef.addTextField( relatedDisplayClass_str7, 35, &buf->bufH );
 
-  ef.addTextField( "Menu Label", 30, buf->bufLabel[0], 127 );
-  ef.addTextField( "File", 30, buf->bufDisplayFileName[0], 127 );
-  ef.addTextField( "Macros", 30, buf->bufSymbols[0], 255 );
+  ef.addTextField( "Menu Label", 35, buf->bufLabel[0], 127 );
+  ef.addTextField( "File", 35, buf->bufDisplayFileName[0], 127 );
+  ef.addTextField( "Macros", 35, buf->bufSymbols[0], 255 );
   ef.addOption( "Mode", "Append|Replace", &buf->bufReplaceSymbols[0] );
   ef.addToggle( "Propagate", &buf->bufPropagateMacros[0] );
   ef.addToggle( "Set Position", &buf->bufSetPostion[0] );
@@ -1250,11 +1250,11 @@ char title[32], *ptr;
   for ( i=1; i<maxDsps; i++ ) {
 
     ef1->beginSubForm();
-    ef1->addTextField( "Label", 30, buf->bufLabel[i], 127 );
+    ef1->addTextField( "Label", 35, buf->bufLabel[i], 127 );
     ef1->addLabel( "  File" );
-    ef1->addTextField( "", 30, buf->bufDisplayFileName[i], 127 );
+    ef1->addTextField( "", 35, buf->bufDisplayFileName[i], 127 );
     ef1->addLabel( "  Macros" );
-    ef1->addTextField( "", 30, buf->bufSymbols[i], 255 );
+    ef1->addTextField( "", 35, buf->bufSymbols[i], 255 );
     ef1->endSubForm();
 
     ef1->beginLeftSubForm();
@@ -1278,16 +1278,16 @@ char title[32], *ptr;
   //ef1->finished( rdc_edit_ok1, rdc_edit_apply1, rdc_edit_cancel1, this );
   ef1->finished( rdc_edit_ok1, this );
 
-  ef.addTextField( relatedDisplayClass_str13, 30, buf->bufButtonLabel, 127 );
+  ef.addTextField( relatedDisplayClass_str13, 35, buf->bufButtonLabel, 127 );
 
   ef.addToggle( relatedDisplayClass_str17, &buf->bufUseFocus );
   ef.addToggle( relatedDisplayClass_str19, &buf->bufInvisible );
   ef.addToggle( relatedDisplayClass_str29, &buf->bufNoEdit );
 
   for ( i=0; i<NUMPVS; i++ ) {
-    ef.addTextField( relatedDisplayClass_str15, 30, buf->bufDestPvName[i],
+    ef.addTextField( relatedDisplayClass_str15, 35, buf->bufDestPvName[i],
      activeGraphicClass::MAX_PV_NAME );
-    ef.addTextField( relatedDisplayClass_str16, 30, buf->bufSource[i], 39 );
+    ef.addTextField( relatedDisplayClass_str16, 35, buf->bufSource[i], 39 );
   }
 
   ef.addColorButton( relatedDisplayClass_str8, actWin->ci, &fgCb, &buf->bufFgColor );

@@ -502,13 +502,13 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  //ef.addTextField( activeXTextClass_str6, 30, bufId, 31 );
+  //ef.addTextField( activeXTextClass_str6, 35, bufId, 31 );
 
-  ef.addTextField( activeXTextClass_str7, 30, &bufX );
-  ef.addTextField( activeXTextClass_str8, 30, &bufY );
-  ef.addTextField( activeXTextClass_str9, 30, &bufW );
-  ef.addTextField( activeXTextClass_str10, 30, &bufH );
-  ef.addTextField( activeXTextClass_str23, 30, bufValue, 255 );
+  ef.addTextField( activeXTextClass_str7, 35, &bufX );
+  ef.addTextField( activeXTextClass_str8, 35, &bufY );
+  ef.addTextField( activeXTextClass_str9, 35, &bufW );
+  ef.addTextField( activeXTextClass_str10, 35, &bufH );
+  ef.addTextField( activeXTextClass_str23, 35, bufValue, 255 );
   ef.addToggle( activeXTextClass_str11, &bufAutoSize );
   ef.addColorButton( activeXTextClass_str13, actWin->ci, &fgCb, &bufFgColor );
   ef.addToggle( activeXTextClass_str14, &bufFgColorMode );
@@ -517,13 +517,13 @@ char title[32], *ptr;
   ef.addToggle( activeXTextClass_str17, &bufBgColorMode );
   ef.addFontMenu( activeXTextClass_str12, actWin->fi, &fm, fontTag );
   fm.setFontAlignment( alignment );
-  ef.addTextField( activeXTextClass_str18, 30, bufAlarmPvName,
+  ef.addTextField( activeXTextClass_str18, 35, bufAlarmPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addTextField( activeXTextClass_str19, 30, bufVisPvName,
+  ef.addTextField( activeXTextClass_str19, 35, bufVisPvName,
    PV_Factory::MAX_PV_NAME );
   ef.addOption( " ", activeXTextClass_str20, &bufVisInverted );
-  ef.addTextField( activeXTextClass_str21, 30, bufMinVisString, 39 );
-  ef.addTextField( activeXTextClass_str22, 30, bufMaxVisString, 39 );
+  ef.addTextField( activeXTextClass_str21, 35, bufMinVisString, 39 );
+  ef.addTextField( activeXTextClass_str22, 35, bufMaxVisString, 39 );
 
   return 1;
 

@@ -576,17 +576,17 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( activeMessageBoxClass_str6, 30, &bufX );
-  ef.addTextField( activeMessageBoxClass_str7, 30, &bufY );
-  ef.addTextField( activeMessageBoxClass_str8, 30, &bufW );
-  ef.addTextField( activeMessageBoxClass_str9, 30, &bufH );
-  ef.addTextField( activeMessageBoxClass_str10, 30, &bufSize );
-  ef.addTextField( activeMessageBoxClass_str11, 30, bufReadPvName,
+  ef.addTextField( activeMessageBoxClass_str6, 35, &bufX );
+  ef.addTextField( activeMessageBoxClass_str7, 35, &bufY );
+  ef.addTextField( activeMessageBoxClass_str8, 35, &bufW );
+  ef.addTextField( activeMessageBoxClass_str9, 35, &bufH );
+  ef.addTextField( activeMessageBoxClass_str10, 35, &bufSize );
+  ef.addTextField( activeMessageBoxClass_str11, 35, bufReadPvName,
    activeGraphicClass::MAX_PV_NAME );
-  ef.addTextField( activeMessageBoxClass_str12, 30, bufLogFileName, 127 );
+  ef.addTextField( activeMessageBoxClass_str12, 35, bufLogFileName, 127 );
   ef.addToggle( activeMessageBoxClass_str26, &bufFileIsReadOnly );
-  ef.addTextField( activeMessageBoxClass_str13, 30, &bufFileSize );
-  ef.addTextField( activeMessageBoxClass_str14, 30, &bufFlushTimerValue );
+  ef.addTextField( activeMessageBoxClass_str13, 35, &bufFileSize );
+  ef.addTextField( activeMessageBoxClass_str14, 35, &bufFlushTimerValue );
   ef.addColorButton( activeMessageBoxClass_str16, actWin->ci, &fgCb, &bufFgColor );
   ef.addColorButton( activeMessageBoxClass_str17, actWin->ci, &bg2Cb, &bufBg2Color );
   ef.addColorButton( activeMessageBoxClass_str18, actWin->ci, &bgCb, &bufBgColor );
