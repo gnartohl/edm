@@ -1,6 +1,6 @@
 3 1 0
-186
-106
+194
+154
 1032
 718
 helvetica-medium-r-18.0
@@ -241,7 +241,7 @@ rgb
 0
 <<<empty>>>
 <<<empty>>>
-The next images show how the multiplexor affects the window at\nrun-time. In this example, analog1 = 50 and analog2 = 75.
+The next images show how the multiplexor affects the window at\nrun-time. In this example, ana1 = 50 and ana2 = 75.
 helvetica-medium-r-14.0
 0
 1
