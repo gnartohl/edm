@@ -4,11 +4,26 @@ STATIC_BUILD=NO
 SHARED_LIBRARIES=YES
 HOST_OPT=NO
 
-USR_CXXFLAGS_Linux += -Wall -D__linux__ -D_BSD_SOURCE -DSINGLE_THREADED=1 -D__epics__=1
+# If you want support accessing files via http and curl
+# then set USE_CURL=YES
+USE_CURL=NO
+
+ifeq ($(USE_CURL), YES)
+	USR_CXXFLAGS_Linux += -Wall -DUSECURL -D__linux__ -D_BSD_SOURCE -DSINGLE_THREADED=1 -D__epics__=1
+else
+	USR_CXXFLAGS_Linux += -Wall -D__linux__ -D_BSD_SOURCE -DSINGLE_THREADED=1 -D__epics__=1
+endif
+
 # Add debugging
 USR_CXXFLAGS_Linux += -g -O0
 
-USR_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl
+
+ifeq ($(USE_CURL), YES)
+	USR_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl curl
+else
+	USR_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl
+endif
+
 
 USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
 USR_LIBS_solaris = Xm Xt Xmu X11 Xext pthread dl rt
