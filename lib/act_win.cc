@@ -14564,7 +14564,7 @@ tagClass tag;
 
 
 
-    // read file and process each "object" tag
+    // read file and process each leading keyword
     tag.init();
     tag.loadR( "object", 63, objName );
     tag.loadR( "pvdef", 255, defName );
@@ -14623,9 +14623,11 @@ tagClass tag;
           tag.loadR( "endObjectProperties", 63, objName );
           stat = tag.readTags( f, "endObjectProperties" );
 
-	  // Start looking for "object" again
+	  // Start looking for leading keywords again
           tag.init();
           tag.loadR( "object", 63, objName );
+          tag.loadR( "pvdef", 255, defName );
+          tag.loadR( "forceLocalPvs" );
 
           //return 0;
 

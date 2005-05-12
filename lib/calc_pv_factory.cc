@@ -17,6 +17,7 @@
 static const char *whitespace = " \t\n\r";
 
 #undef CALC_DEBUG
+//#define CALC_DEBUG 1
 
 // HashedExpression:
 // One formula, hashed by name, read from the config file
@@ -43,10 +44,14 @@ static const char *whitespace = " \t\n\r";
 HashedExpression::HashedExpression()
 {   name = 0; }
 
-HashedExpression::HashedExpression(const char *_name, char *formula)
+HashedExpression::HashedExpression(const char *_name, char *formula,
+ char *rewriteString=NULL )
 {
     short error;
     name = strdup(_name);
+    if ( rewriteString ) {
+      expStr.setRaw( rewriteString );
+    }
     if (postfix(formula, this->compiled, &error) != 0)
     {
         fprintf(stderr, "CALC '%s': error in expression '%s'\n",
@@ -65,7 +70,7 @@ HashedExpression::~HashedExpression()
 }
 
 bool HashedExpression::calc(const double args[], double &result)
-{   return calcPerform(args, &result, compiled) == 0; }
+{   return calcPerform((double *) args, &result, compiled) == 0; }
 
 // Required for Hashtable<>:
 size_t hash(const HashedExpression *item, size_t N)
@@ -200,7 +205,7 @@ CALC_PV_Factory::~CALC_PV_Factory()
 
 bool CALC_PV_Factory::parseFile(const char *filename)
 {
-    char line[200], name[200];
+    char line[200], name[200], newArgList[200];
     size_t len;
 
 #   ifdef CALC_DEBUG
@@ -252,16 +257,39 @@ bool CALC_PV_Factory::parseFile(const char *filename)
         if (need_name)
         {
             strcpy(name, p);
+            strcpy( newArgList, "" );
             need_name = false;
         }
         else
         {
+
+	  if ( p[0] == '@' ) {
+
+            strcpy( newArgList, &p[1] );
+
+	  }
+	  else {
+
             need_name = true;
 #           ifdef CALC_DEBUG
             printf("CALC_PV_Factory::parseFile expr '%s' <-> '%s'\n",
                    name, p);
 #           endif
-            expressions->insert(new HashedExpression(name, p));
+
+	    if ( strcmp( newArgList, "" ) ) {
+
+              expressions->insert(new HashedExpression(name, p,
+               newArgList));
+
+	    }
+	    else {
+
+              expressions->insert(new HashedExpression(name, p));
+
+	    }
+
+	  }
+
         }
     }
     fclose(f);
@@ -318,9 +346,12 @@ static const char *get_arg(const char *p, char **arg)
 ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
 {
     char *arg_name[CALC_ProcessVariable::MaxArgs];
-    size_t i, arg_count = 0;
+    char *exp_arg_name[CALC_ProcessVariable::MaxArgs];
+    size_t i, ii, l, arg_count = 0;
     const char *p;
-    int more, findingInline = 0;
+    char *p1, *start;
+    int more, findingInline = 0, gettingFirst;
+    CALC_ProcessVariable *pv;
 
     for (i=0; i<CALC_ProcessVariable::MaxArgs; ++i)
         arg_name[i] = 0;
@@ -365,7 +396,7 @@ ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
 #   ifdef CALC_DEBUG
     printf("CALC_PV_Factory::create: '%s'\n", PV_name);
     printf("\texpression: '%s'\n", expression);
-    for (size_t i=0; i<arg_count; ++i)
+    for (i=0; i<arg_count; ++i)
         printf("\targ %d: '%s'\n", i, arg_name[i]);
 #   endif    
     checkForEmbedded( expression );
@@ -377,13 +408,108 @@ ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
         fprintf(stderr, "Unknown CALC expression '%s'\n", expression);
         return 0;
     }
-    CALC_ProcessVariable *pv =
-        new CALC_ProcessVariable(PV_name, *entry,
-                                 arg_count, (const char **)arg_name);
-    // 'he' will delete the strdup'ed  expression
-    for (size_t i=0; i<arg_count; ++i)
-        free(arg_name[i]);
+
+    if ( strcmp( (*entry)->expStr.getRaw(), "" ) ) {
+
+      char **sym;
+      char **val;
+      sym = (char **) new char*[arg_count];
+      val = (char **) new char*[arg_count];
+      for ( i=0; i<arg_count; ++i ) {
+        sym[i] = strdup( " " );
+        sym[i][0] = (char) i+65;
+        val[i] = strdup( arg_name[i] );
+      }
+      (*entry)->expStr.expand1st( arg_count, sym, val );
+      free( sym );
+      free( val );
+
+      for ( i=0; i<CALC_ProcessVariable::MaxArgs; ++i )
+        exp_arg_name[i] = 0;
+
+      i = ii = l = 0;
+      p1 = (*entry)->expStr.getExpanded();
+      gettingFirst = 1;
+
+      while ( ii < strlen( p1 ) ) {
+
+        if ( gettingFirst ) {
+
+          if ( p1[ii] != ' ' ) {
+            start = &p1[ii];
+	    l = 1;
+            gettingFirst = 0;
+	  }
+
+	}
+	else {
+
+          if ( p1[ii] == ',' ) {
+            exp_arg_name[i] = (char *) malloc(l+1);
+            strncpy( exp_arg_name[i], start, l );
+            exp_arg_name[i][l] = 0;
+	    gettingFirst = 1;
+	    i++;
+	    l = 0;
+	  }
+	  else {
+	    l++;
+	  }
+
+	}
+
+	ii++;
+
+      }
+
+      if ( !gettingFirst ) {
+
+            exp_arg_name[i] = (char *) malloc(l+1);
+            strncpy( exp_arg_name[i], start, l );
+            exp_arg_name[i][l] = 0;
+	    i++;
+
+      }
+
+#   ifdef CALC_DEBUG
+      printf( "got %-d exp args\n", i );
+      for ( ii=0; ii<i; ii++ ) {
+	printf( "[%s]\n", exp_arg_name[ii] );
+      }
+
+      if ( strcmp( (*entry)->expStr.getRaw(), "" ) ) {
+        printf( "raw: [%s]\n", (*entry)->expStr.getRaw() );
+      }
+
+      if ( strcmp( (*entry)->expStr.getExpanded(), "" ) ) {
+        printf( "exp: [%s]\n", (*entry)->expStr.getExpanded() );
+      }
+#   endif    
+
+      pv = new CALC_ProcessVariable(PV_name, *entry,
+       i, (const char **)exp_arg_name);
+
+      for ( ii=0; ii<i; ii++ ) {
+	free( exp_arg_name[ii] );
+        exp_arg_name[ii] = NULL;
+      }
+
+    }
+    else {
+
+      pv = new CALC_ProcessVariable(PV_name, *entry,
+       arg_count, (const char **)arg_name);
+
+    }
+
+    // 'he' will delete the allocated expression
+    for (i=0; i<arg_count; ++i) {
+      free( arg_name[i] );
+      arg_name[i] = NULL;
+    }
+
     return pv;
+
 }
 
 // ------------------------------------------------------------------

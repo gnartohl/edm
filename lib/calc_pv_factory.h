@@ -8,6 +8,7 @@
 #define __CALC_PV_FACTORY_H__
 
 #include"pv_factory.h"
+#include"expString.h"
 
 #define CALC_FILENAME "calc.list"
 #define CALC_ENV "EDMCALC"
@@ -16,7 +17,8 @@ class HashedExpression
 {
 public:
     HashedExpression();
-    HashedExpression(const char *name, char *formula);
+    HashedExpression(const char *name, char *formula,
+     char *rewriteString );
     ~HashedExpression();
     
     char *name;
@@ -25,6 +27,7 @@ public:
     
     // Required for Hashtable<>:
     DLNode node;
+    expStringClass expStr;
 private:
     char compiled[200];
 };

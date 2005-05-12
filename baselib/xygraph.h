@@ -158,6 +158,21 @@ static void adjp_edit_cancel (
   XtPointer client,
   XtPointer call );
 
+static void dump_edit_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void dump_edit_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void dump_edit_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 static void menu_cb (
   Widget w,
   XtPointer client,
@@ -438,6 +453,21 @@ friend void adjp_edit_ok (
   XtPointer call );
 
 friend void adjp_edit_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void dump_edit_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void dump_edit_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void dump_edit_cancel (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -804,7 +834,7 @@ double xRescaleValue, y1RescaleValue[NUM_Y_AXES], y2RescaleValue;
 
 int needThisbufScroll[XYGC_K_MAX_TRACES];
 
-entryFormClass *efTrace, *efAxis;
+entryFormClass *efTrace, *efAxis, efDump;
 
 editBufPtr eBuf;
 
@@ -826,9 +856,13 @@ int lowestYScaleIndex[NUM_Y_AXES], numYTraces[NUM_Y_AXES];
 time_t timeOffset;
 
 int widgetsCreated;
-Widget popUpMenu, pullDownMenu, pbAutoScale, pbOrigScale, pbAdjustParams;
+Widget popUpMenu, pullDownMenu, pbAutoScale, pbOrigScale, pbAdjustParams,
+ pbDumpData;
 
 int adjpFormX, adjpFormY, adjpFormW, adjpFormH, adjpFormMaxH;
+
+int dumpFormX, dumpFormY, dumpFormW, dumpFormH, dumpFormMaxH;
+char dumpFileName[255+1];
 
 int popupMenuX, popupMenuY;
 
@@ -840,6 +874,17 @@ xyGraphClass
  ( const xyGraphClass *source );
 
 ~xyGraphClass ( void );
+
+int getDbXMinXMax (
+  double *min,
+  double *max
+);
+
+void getDbYMinYMax (
+  double *min,
+  double *max,
+  int yi
+);
 
 void getXMinMax (
   double *min,
