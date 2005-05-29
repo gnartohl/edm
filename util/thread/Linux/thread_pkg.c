@@ -253,21 +253,32 @@ int ret_stat, stat;
   stat = pthread_mutex_destroy( &priv_handle->mutex );
   if ( stat ) {
     ret_stat = UNIX_ERROR;
+    
+    /*
     //goto err_return;
+    */
   }
 
   stat = pthread_cond_destroy( &priv_handle->cv );
   if ( stat ) {
     ret_stat = UNIX_ERROR;
+    
+    /*
     //goto err_return;
+    */
+    
   }
 
   if ( priv_handle->process_active ) {
     stat = pthread_detach( priv_handle->os_thread_id );
+    
+    /*
     //if ( stat ) {
     //  ret_stat = UNIX_ERROR;
     //  goto err_return;
     //}
+    */
+    
   }
 
   free( priv_handle );
@@ -297,7 +308,11 @@ int stat, ret_stat;
   stat = pthread_mutex_destroy( &priv_thr_lock->mutex );
   if ( stat ) {
     ret_stat = UNIX_ERROR;
+    
+    /*
     //goto err_return;
+    */
+    
   }
 
   free( priv_thr_lock );
@@ -855,9 +870,9 @@ int stat;
   stat = pthread_mutex_unlock( &priv_handle->mutex );
   if ( stat ) return UNIX_ERROR;
 
-  pthread_exit( retval ); // this never returns
+  pthread_exit( retval ); /* this never returns */
 
-  return THR_SUCCESS; // so compiler won't complain
+  return THR_SUCCESS; /* so compiler won't complain */
 
 }
 
@@ -881,8 +896,8 @@ int stat;
   free( priv_handle );
   priv_handle = NULL;
 
-  pthread_exit( retval ); // this never returns
+  pthread_exit( retval ); /* this never returns */
 
-  return THR_SUCCESS; // so compiler won't complain
+  return THR_SUCCESS; /* so compiler won't complain */
 
 }

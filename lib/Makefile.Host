@@ -6,7 +6,7 @@ HOST_OPT=NO
 
 # If you want support accessing files via http and curl
 # then set USE_CURL=YES
-USE_CURL=NO
+USE_CURL=YES
 
 ifeq ($(USE_CURL), YES)
 	USR_CXXFLAGS_Linux += -Wall -DUSECURL -D__linux__ -D_BSD_SOURCE -DSINGLE_THREADED=1 -D__epics__=1

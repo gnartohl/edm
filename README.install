@@ -1,5 +1,11 @@
 ###### INSTALLATION NOTES #########
 
+##### EDM Version 1-10-1zd ###########################################
+The Makefile has been modified to be more native for EPICS R3.14 builds.
+The modifications have been made for Linux only.
+
+
+
 ### EDM Version 1-7-0c ############################
 
 #### Installing on Solaris 8 *********************
