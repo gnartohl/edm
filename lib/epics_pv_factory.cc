@@ -869,7 +869,7 @@ size_t PVValueString::get_string(char *strbuf, size_t buflen) const
     strbuf[len] = '\0';
     
     return len;
-};
+}
 
 void PVValueString::read_ctrlinfo(const void *buf)
 {
@@ -953,7 +953,7 @@ size_t PVValueChar::get_string(char *strbuf, size_t buflen) const
     strbuf[dst] = '\0';
     
     return dst;
-};
+}
 
 void PVValueChar::read_ctrlinfo(const void *buf)
 {
