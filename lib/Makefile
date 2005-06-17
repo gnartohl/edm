@@ -4,10 +4,10 @@ ifdef EPICS_HOST_ARCH
   #HOST_OPT=NO
   # If you want support accessing files via http and curl
   # then set USE_CURL=YES
-  USE_CURL=NO
+  USE_CURL=YES
 
   ifeq ($(USE_CURL), YES)
-        USR_CXXFLAGS_Linux += -DUSECURL -DSINGLE_THREADED=1 -D__epics__=1
+        USR_CXXFLAGS_Linux += -DUSECURL -DSINGLE_THREADED=1 -D__epics__=1 -pedantic
   else
         USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
   endif
@@ -16,9 +16,9 @@ ifdef EPICS_HOST_ARCH
   #USR_CXXFLAGS_Linux += -g -O0
 
   ifeq ($(USE_CURL), YES)
-        cfcaa62e-8199-11d3-a77f-00104_SYS_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl curl
+        cfcaa62e-8199-11d3-a77f-00104b8742df_SYS_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl curl
   else
-        cfcaa62e-8199-11d3-a77f-00104_SYS_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl
+        cfcaa62e-8199-11d3-a77f-00104b8742df_SYS_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl
   endif
 
 
@@ -29,7 +29,7 @@ ifdef EPICS_HOST_ARCH
   USR_LIBS_hpux11_11_mt = Xm Xt X11 Xext pthread
 
   USR_LDFLAGS += -L$(INSTALL_LIB)
-  
+  cfcaa62e-8199-11d3-a77f-00104b8742df_LDFLAGS += -L$(MOTIF_LIB) -L$(X11_LIB)
 
   # Add Debugging
   #USR_LDFLAGS += -g
