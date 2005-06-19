@@ -25,6 +25,13 @@
 using namespace std;
 #endif
 
+// the following was introduced to get edm
+// to compile under gcc 4.0 and higher
+#if (__GNUC__==4)&&(__GNUC_MINOR__==0)
+using namespace std;
+#endif
+
+
 template <class T, size_t o, size_t N=5>
 class Hashtable
 {
