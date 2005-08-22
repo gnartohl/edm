@@ -98,7 +98,7 @@ class activePipClass : public activeGraphicClass {
 
 public:
 
-static const int maxDsps = 24;
+static const int maxDsps = 64;
 static const int displayFromPV = 0;
 static const int displayFromForm = 1;
 static const int displayFromMenu = 2;
