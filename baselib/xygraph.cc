@@ -6894,9 +6894,7 @@ int yi = 0;
     rescaleBoxX1 = pmX;
 
     dx0 = ( rescaleBoxX0 - xOffset[0] ) / xFactor[0] + curXMin;
-    dx0 = dclamp( dx0 );
     dx1 = ( rescaleBoxX1 - xOffset[0] ) / xFactor[0] + curXMin;
-    dx1 = dclamp( dx1 );
 
     if ( dx0 < dx1 ) {
       boxXMin = dx0;
@@ -6919,11 +6917,9 @@ int yi = 0;
         dy0 = ( plotAreaH - rescaleBoxY0 +
          y1Offset[yi][lowestYScaleIndex[yi]] ) /
          y1Factor[yi][lowestYScaleIndex[yi]] + curY1Min[yi];
-        dy0 = dclamp( dy0 );
         dy1 = ( plotAreaH - rescaleBoxY1 +
          y1Offset[yi][lowestYScaleIndex[yi]] ) /
          y1Factor[yi][lowestYScaleIndex[yi]] + curY1Min[yi];
-        dy1 = dclamp( dy1 );
 
         if ( dy0 < dy1 ) {
           boxYMin[yi] = dy0;
@@ -7070,7 +7066,6 @@ struct tm ts;
          ( xAxisTimeFormat != XYGC_K_AXIS_TIME_FMT_SEC ) ) {
 
         dxValue = ( pmX - xOffset[0] ) / xFactor[0] + curXMin;
-        dxValue = dclamp( dxValue );
 
         {
 
@@ -7098,7 +7093,6 @@ struct tm ts;
       else {
 
         dxValue = ( pmX - xOffset[0] ) / xFactor[0] + curXMin;
-        dxValue = dclamp( dxValue );
         if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
              ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
           dxValue = pow(10,dxValue);
@@ -7113,7 +7107,6 @@ struct tm ts;
       if ( y1Axis[yi] && ( numYTraces[yi] > 0 ) ) {
         dyValue = ( plotAreaH - pmY + y1Offset[yi][lowestYScaleIndex[yi]] )
          / y1Factor[yi][lowestYScaleIndex[yi]] + curY1Min[yi];
-        dyValue = dclamp( dyValue );
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           dyValue = pow(10,dyValue);
         }
@@ -7125,7 +7118,6 @@ struct tm ts;
       if ( y1Axis[yi] && ( numYTraces[yi] > 0 ) ) {
         dyValue2 = ( plotAreaH - pmY + y1Offset[yi][lowestYScaleIndex[yi]] )
          / y1Factor[yi][lowestYScaleIndex[yi]] + curY1Min[yi];
-        dyValue2 = dclamp( dyValue2 );
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           dyValue2 = pow(10,dyValue2);
         }
