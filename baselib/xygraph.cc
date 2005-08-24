@@ -6813,6 +6813,7 @@ void xyGraphClass::btnDrag (
 
 int rsw, rsh;
 int pmX, pmY;
+int tmpX, tmpY;
 
   if ( !enabled ) return;
 
@@ -6827,20 +6828,48 @@ int pmX, pmY;
     actWin->executeGc.setFGforGivenBG (
      actWin->ci->pix(fgColor), actWin->ci->pix(bgColor) );
 
+    if ( oldRescaleBoxW >= 0 ) {
+      tmpX = rescaleBoxX0;
+    }
+    else {
+      tmpX = rescaleBoxX0 + oldRescaleBoxW;
+    }
+
+    if ( oldRescaleBoxH >= 0 ) {
+      tmpY = rescaleBoxY0;
+    }
+    else {
+      tmpY = rescaleBoxY0 + oldRescaleBoxH;
+    }
+
     XDrawRectangle( actWin->d, pixmap,
-     actWin->executeGc.xorGC(), rescaleBoxX0, rescaleBoxY0,
-     oldRescaleBoxW, oldRescaleBoxH );
+     actWin->executeGc.xorGC(), tmpX, tmpY,
+     abs(oldRescaleBoxW), abs(oldRescaleBoxH) );
 
     rescaleBoxX1 = pmX;
     rescaleBoxY1 = pmY;
-    rsw = abs( rescaleBoxX1 - rescaleBoxX0 );
-    rsh = abs( rescaleBoxY1 - rescaleBoxY0 );
+    rsw = rescaleBoxX1 - rescaleBoxX0;
+    rsh = rescaleBoxY1 - rescaleBoxY0;
     oldRescaleBoxW = rsw;
     oldRescaleBoxH = rsh;
 
+    if ( rsw >= 0 ) {
+      tmpX = rescaleBoxX0;
+    }
+    else {
+      tmpX = rescaleBoxX0 + rsw;
+    }
+
+    if ( rsh >= 0 ) {
+      tmpY = rescaleBoxY0;
+    }
+    else {
+      tmpY = rescaleBoxY0 + rsh;
+    }
+
     XDrawRectangle( actWin->d, pixmap,
-     actWin->executeGc.xorGC(), rescaleBoxX0, rescaleBoxY0,
-     oldRescaleBoxW, oldRescaleBoxH );
+     actWin->executeGc.xorGC(), tmpX, tmpY,
+     abs(rsw), abs(rsh) );
 
     actWin->executeGc.restoreFg();
 
@@ -6865,6 +6894,7 @@ void xyGraphClass::btnUp (
 int pmX, pmY;
 double dx0, dy0, dx1, dy1;
 int yi = 0;
+int tmpX, tmpY;
 
   *action = 0;
 
@@ -6881,15 +6911,29 @@ int yi = 0;
     actWin->executeGc.setFGforGivenBG (
      actWin->ci->pix(fgColor), actWin->ci->pix(bgColor) );
 
+    if ( oldRescaleBoxW >= 0 ) {
+      tmpX = rescaleBoxX0;
+    }
+    else {
+      tmpX = rescaleBoxX0 + oldRescaleBoxW;
+    }
+
+    if ( oldRescaleBoxH >= 0 ) {
+      tmpY = rescaleBoxY0;
+    }
+    else {
+      tmpY = rescaleBoxY0 + oldRescaleBoxH;
+    }
+
     XDrawRectangle( actWin->d, pixmap,
-     actWin->executeGc.xorGC(), rescaleBoxX0, rescaleBoxY0,
-     oldRescaleBoxW, oldRescaleBoxH );
+     actWin->executeGc.xorGC(), tmpX, tmpY,
+     abs(oldRescaleBoxW), abs(oldRescaleBoxH) );
 
     actWin->executeGc.restoreFg();
 
     doingBoxRescale = 0;
 
-    if ( ( oldRescaleBoxW < 5 ) || ( oldRescaleBoxH < 5 ) ) return;
+    if ( ( abs(oldRescaleBoxW) < 5 ) || ( abs(oldRescaleBoxH) < 5 ) ) return;
 
     rescaleBoxX1 = pmX;
 
@@ -7919,6 +7963,14 @@ int yi, yScaleIndex, allChronological;
        (double) ( plotAreaH ) / ( curY1Max[yi] - curY1Min[yi] );
       y1Offset[yi][i] = plotAreaY;
 
+    }
+
+    kpXMinEfDouble.setValue( curXMin );
+    kpXMaxEfDouble.setValue( curXMax );
+
+    for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+      kpY1MinEfDouble[yi].setValue( curY1Min[yi] );
+      kpY1MaxEfDouble[yi].setValue( curY1Max[yi] );
     }
 
     regenBuffer();
