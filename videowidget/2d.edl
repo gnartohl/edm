@@ -1,0 +1,90 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 509
+y 241
+w 461
+h 533
+font "helvetica-bold-i-18.0"
+fontAlign "center"
+ctlFont "courier-bold-r-14.0"
+ctlFontAlign "right"
+btnFont "EOD"
+fgColor index 10
+bgColor index 3
+textColor index 10
+ctlFgColor1 index 25
+ctlFgColor2 index 30
+ctlBgColor1 index 5
+ctlBgColor2 index 10
+topShadowColor index 5
+botShadowColor index 10
+pvType "EPICS"
+endScreenProperties
+
+# (Video)
+object TwoDProfileMonitorClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 69
+y 35
+w 302
+h 267
+dataPvStr "hoffHost:image"
+widthPvStr "hoffHost:width"
+dataWidth 0
+pvBasedDataSize 0
+endObjectProperties
+
+# (X-Y Graph)
+object xyGraphClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+# Geometry
+x 18
+y 353
+w 430
+h 174
+# Appearance
+border
+fgColor index 10
+bgColor index 5
+gridColor index 10
+font "courier-bold-r-14.0"
+# Operating Modes
+nPts 2
+triggerPv "hoffHost:image"
+# X axis properties
+showXAxis
+xAxisSrc "AutoScale"
+xMax 1
+# Y axis properties
+showYAxis
+yAxisSrc "AutoScale"
+yMax 1
+# Y2 axis properties
+showY2Axis
+y2AxisSrc "AutoScale"
+y2Max 1
+# Trace Properties
+numTraces 1
+yPv {
+  0 "hoffHost:image"
+}
+opMode {
+  0 "plot"
+}
+ySigned {
+  0 1
+}
+plotColor {
+  0 index 112
+}
+endObjectProperties
+
