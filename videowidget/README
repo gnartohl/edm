@@ -1,0 +1,9 @@
+# Video Widget:
+Larry please add some notes:
+
+After the videowidget is compiled, add the following line to 
+your edmObjects file:
+#==========================================================================
+TwoDProfileMonitorClass $(EDMLIBS)/libTwoDProfileMonitor.so Monitors Video
+# =========================================================================
+
