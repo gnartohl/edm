@@ -7,7 +7,9 @@
 #ifndef __LOC_PV_FACTORY_H__
 #define __LOC_PV_FACTORY_H__
 
-#include"pv_factory.h"
+#include "pv_factory.h"
+
+class LOC_ProcessVariable;
 
 class LOC_PV_Factory : public PV_Factory
 {

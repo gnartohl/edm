@@ -10,6 +10,8 @@
 #include<cadef.h>
 #include"pv_factory.h"
 
+class EPICS_ProcessVariable;
+
 class EPICS_PV_Factory : public PV_Factory
 {
 public:
