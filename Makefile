@@ -11,6 +11,7 @@ ifdef EPICS_HOST_ARCH
  DIRS += pnglib 
  DIRS += pvFactory 
  DIRS += choiceButton
+ DIRS += videowidget
  include $(TOP)/configure/RULES_DIRS
 
 else
