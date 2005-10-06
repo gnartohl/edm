@@ -439,7 +439,7 @@ int i;
       break;
 
     case FIELD_TYPE_TEXT:
-      ef.addTextField( label[i], 20, optionStringValue[i], 31 );
+      ef.addTextField( label[i], 31, optionStringValue[i], 31 );
       break;
 
     }
