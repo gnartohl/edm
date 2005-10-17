@@ -48,7 +48,7 @@ void clipBdClass::clipbdInit (
    XtNwidth, 1,
    XtNheight, 1,
    XmNuserData, (XtPointer) this,
-   0 );
+   NULL );
 
 }
 
