@@ -366,6 +366,10 @@ int fileClose (
 
   }
 
+  if ( diagnosticMode() ) {
+    logDiagnostic( "close file\n" );
+  }
+
   return fclose( f );
 
 }
@@ -486,6 +490,12 @@ char errBuf[CURL_ERROR_SIZE+1];
 CURLcode result;
 mode_t curMode, newMode;
 #endif
+
+  if ( diagnosticMode() ) {
+    char diagBuf[255+1];
+    snprintf( diagBuf, 255, "open [%s]\n", fullNameBuf );
+    logDiagnostic( diagBuf );
+  }
 
   strncpy( fullName, fullNameBuf, 255 );
   fullName[255] = 0;

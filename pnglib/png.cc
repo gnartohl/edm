@@ -793,7 +793,7 @@ expStringClass expStr;
 
   status = readpng_init( fp, &image_width, &image_height );
   if ( !( status & 1 ) ) {
-    fclose(fp);
+    fileClose(fp);
     goto error_return;
   }
 
@@ -805,7 +805,7 @@ expStringClass expStr;
   imageData = readpng_get_image( display_exponent, &image_channels,
    &image_rowbytes );
 
-  fclose(fp);
+  fileClose(fp);
 
   w = image_width;
   h = image_height;

@@ -15129,6 +15129,12 @@ char **muxMacro, **muxExpansion;
 char callbackName[63+1];
 pvDefPtr pvDefCur;
 
+  if ( diagnosticMode() ) {
+    char diagBuf[255+1];
+    snprintf( diagBuf, 255, "execute [%s]\n", fileName );
+    logDiagnostic( diagBuf );
+  }
+
   // process local pv definitions
   pvDefCur = pvDefHead->flink;
   while ( pvDefCur ) {
@@ -15360,6 +15366,12 @@ pvDefPtr pvDefCur;
 int numMuxMacros;
 char **muxMacro, **muxExpansion;
 
+  if ( diagnosticMode() ) {
+    char diagBuf[255+1];
+    snprintf( diagBuf, 255, "reexecute [%s]\n", fileName );
+    logDiagnostic( diagBuf );
+  }
+
   // process local pv definitions
   pvDefCur = pvDefHead->flink;
   while ( pvDefCur ) {
@@ -15494,6 +15506,12 @@ pvDefPtr pvDefCur;
   if ( !okToDeactivate() ) {
     appCtx->postMessage( activeWindowClass_str193 );
     return 0;
+  }
+
+  if ( diagnosticMode() ) {
+    char diagBuf[255+1];
+    snprintf( diagBuf, 255, "returnToEdit [%s]\n", fileName );
+    logDiagnostic( diagBuf );
   }
 
   // process local pv definitions
@@ -15731,6 +15749,12 @@ activeGraphicListPtr cur;
 int numSubObjects, cnt;
 
   if ( mode == AWC_EDIT ) return 1;
+
+  if ( diagnosticMode() ) {
+    char diagBuf[255+1];
+    snprintf( diagBuf, 255, "preReexecute [%s]\n", fileName );
+    logDiagnostic( diagBuf );
+  }
 
   mode = AWC_EDIT;
 

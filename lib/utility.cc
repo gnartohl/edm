@@ -19,6 +19,7 @@
 // utility functions
 
 #include "utility.h"
+#include "environment.str"
 
 static int g_serverSocketFd = -1;
 
@@ -36,6 +37,84 @@ char *envPtr;
   else {
     return 0;
   }
+
+}
+
+static int g_needDiagModeInit = 1;
+static int g_diagMode = 0;
+
+int diagnosticMode ( void ) {
+
+int val;
+char *envPtr;
+
+  if ( g_needDiagModeInit ) {
+
+    g_needDiagModeInit = 0;
+
+    envPtr = getenv( "EDMDIAGNOSTICMODE" );
+    if ( envPtr ) {
+      g_diagMode = atol(envPtr);
+      if ( !g_diagMode ) val = 1; // if value is non-numeric make it 1
+    }
+    else {
+      g_diagMode = 0;
+    }
+
+  }
+
+  return g_diagMode;
+
+}
+
+static int g_needDiagInit = 1;
+static char g_diagFileName[255+1];
+static FILE *g_diagFile = NULL;
+
+int logDiagnostic (
+  char *text
+) {
+
+char *envPtr;
+char time_string[34+1];
+
+  if ( g_needDiagInit ) {
+
+    g_needDiagInit = 0;
+
+    envPtr = getenv( environment_str8 );
+    if ( envPtr ) {
+      strncpy( g_diagFileName, envPtr, 255 );
+      if ( envPtr[strlen(envPtr)] != '/' ) {
+        Strncat( g_diagFileName, "/", 255 );
+      }
+    }
+    else {
+      strncpy( g_diagFileName, "/tmp/", 255 );
+    }
+
+    Strncat( g_diagFileName, "edmDiag", 255 );
+
+    Strncat( g_diagFileName, "_XXXXXX", 255 );
+
+    mkstemp( g_diagFileName );
+
+    g_diagFile = fopen( g_diagFileName, "a" );
+
+  }
+
+  if ( g_diagFile ) {
+    sys_get_datetime_string( 31, time_string );
+    time_string[31] = 0;
+    Strncat( time_string, " : ", 34 );
+    fprintf( g_diagFile, time_string );
+    fprintf( g_diagFile, text );
+  }
+  else {
+    return 2;
+  }
+
+  return 1;
 
 }
 

@@ -24,6 +24,7 @@
 #include <fcntl.h>
 #include <math.h>
 #include <sys/types.h>
+#include <sys/time.h>
 #include <wait.h>
 #include <signal.h>
 #include <unistd.h>
@@ -38,6 +39,12 @@
 #include "remFileOpen.h"
 
 int debugMode ( void );
+
+int diagnosticMode ( void );
+
+int logDiagnostic (
+  char *text
+);
 
 char *getEnvironmentVar (
   char *name
