@@ -140,8 +140,222 @@ static void dump_edit_apply (
 {
 
 xyGraphClass *xyo = (xyGraphClass *) client;
+int i, n, size;
+double dxValue, dyValue;
+char fname[255+1], *envPtr;
+FILE *tmp;
 
-  printf( "apply\n" );
+  envPtr = getenv( environment_str8 );
+  if ( envPtr ) {
+    strncpy( fname, envPtr, 255 );
+    if ( envPtr[strlen(envPtr)] != '/' ) {
+      Strncat( fname, "/", 255 );
+    }
+  }
+  else {
+    strncpy( fname, "/tmp/", 255 );
+  }
+
+  Strncat( fname, xyo->dumpFileName, 255 );
+
+  if ( xyo->actWin->fileExists( fname ) ) {
+    xyo->actWin->appCtx->postMessage( "File exists - not overwritten" );
+    xyo->actWin->appCtx->raiseMessageWindow();
+    return;
+  }
+
+  tmp = fopen( fname, "w" );
+
+  if ( debugMode() ) {
+    fprintf( stderr, "dumpFileName = [%s]\n", fname );
+  }
+
+  fprintf( tmp, "number of traces = %-d\n", xyo->numTraces );
+
+  for ( i=0; i<xyo->numTraces; i++ ) {
+
+    if ( xyo->traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
+
+      if ( (int) xyo->yPv[i]->get_dimension() > 1 ) {
+
+        fprintf( tmp, "trace %-d (chronological) size = %-d\n",
+         i, (int) xyo->yPv[i]->get_dimension() );
+
+	fprintf( tmp, "index, %s\n", xyo->yPvExpStr[i].getExpanded() );
+
+        for ( n=0; n<(int) xyo->yPv[i]->get_dimension(); n++ ) {
+
+          switch ( xyo->yPvType[i] ) {
+          case ProcessVariable::specificType::flt:
+            dyValue = (double) ( (float *) xyo->yPvData[i] )[n];
+            break;
+          case ProcessVariable::specificType::real: 
+            dyValue = ( (double *) xyo->yPvData[i] )[n];
+            break;
+          case ProcessVariable::specificType::shrt:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (short *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::chr:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (char *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (unsigned char *) xyo->yPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::integer:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::enumerated:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (short *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[n];
+            }
+            break;
+          default:
+            dyValue = ( (double *) xyo->yPvData[i] )[n];
+            break;
+          }
+
+          fprintf( tmp, "%-d, %-g\n", n, dyValue );
+
+	}
+
+      }
+
+    }
+    else {
+
+      if ( ( (int) xyo->yPv[i]->get_dimension() > 1 ) &&
+           ( (int) xyo->xPv[i]->get_dimension() > 1 ) ) {
+
+        fprintf( tmp, "trace %-d (x/y) x size = %-d, y size = %-d\n",
+         i, (int) xyo->xPv[i]->get_dimension(),
+         (int) xyo->yPv[i]->get_dimension() );
+
+	fprintf( tmp, "%s, %s\n", xyo->xPvExpStr[i].getExpanded(),
+         xyo->yPvExpStr[i].getExpanded() );
+
+	size = (int) xyo->xPv[i]->get_dimension();
+	if ( size > (int) xyo->yPv[i]->get_dimension() ) {
+          size = (int) xyo->yPv[i]->get_dimension();
+	}
+
+        for ( n=0; n<size; n++ ) {
+
+	  // x
+          switch ( xyo->xPvType[i] ) {
+          case ProcessVariable::specificType::flt:
+            dxValue = (double) ( (float *) xyo->xPvData[i] )[n];
+            break;
+          case ProcessVariable::specificType::real: 
+            dxValue = ( (double *) xyo->xPvData[i] )[n];
+            break;
+          case ProcessVariable::specificType::shrt:
+            if (  xyo->ySigned[i] ) {
+              dxValue = (double) ( (short *) xyo->xPvData[i] )[n];
+            }
+            else {
+              dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::chr:
+            if (  xyo->ySigned[i] ) {
+              dxValue = (double) ( (char *) xyo->xPvData[i] )[n];
+            }
+            else {
+              dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::integer:
+            if (  xyo->ySigned[i] ) {
+              dxValue = (double) ( (int *) xyo->xPvData[i] )[n];
+            }
+            else {
+              dxValue = (double) ( (int *) xyo->xPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::enumerated:
+            if (  xyo->ySigned[i] ) {
+              dxValue = (double) ( (short *) xyo->xPvData[i] )[n];
+            }
+            else {
+              dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[n];
+            }
+            break;
+          default:
+            dxValue = ( (double *) xyo->xPvData[i] )[n];
+            break;
+          }
+
+	  // y
+          switch ( xyo->yPvType[i] ) {
+          case ProcessVariable::specificType::flt:
+            dyValue = (double) ( (float *) xyo->yPvData[i] )[n];
+            break;
+          case ProcessVariable::specificType::real: 
+            dyValue = ( (double *) xyo->yPvData[i] )[n];
+            break;
+          case ProcessVariable::specificType::shrt:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (short *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::chr:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (char *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (unsigned char *) xyo->yPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::integer:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::enumerated:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (short *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[n];
+            }
+            break;
+          default:
+            dyValue = ( (double *) xyo->yPvData[i] )[n];
+            break;
+          }
+
+          fprintf( tmp, "%-g, %-g\n", dxValue, dyValue );
+
+	}
+
+      }
+
+    }
+
+  }
+
+  fclose( tmp );
 
 }
 
@@ -261,8 +475,6 @@ int yi;
 
   }
   else if ( w == xyo->pbDumpData ) {
-
-    printf( "dump data\n" );
 
     if ( !xyo->eBuf ) {
       xyo->eBuf = new xyGraphClass::editBufType;
@@ -6597,6 +6809,10 @@ int i;
 
     if ( ef.formIsPoppedUp() ) {
       ef.popdown();
+    }
+
+    if ( efDump.formIsPoppedUp() ) {
+      efDump.popdown();
     }
 
     if ( widgetsCreated ) {

@@ -1459,6 +1459,55 @@ int primaryServerWantsExit;
 
 int numLocaleFailures = 0;
 
+struct sigaction sa, oldsa, dummysa;
+
+  if ( diagnosticMode() ) {
+
+#if 0
+  // block signal
+  sigemptyset( &sa.sa_mask );
+  sigaddset( &sa.sa_mask, SIGTERM );
+  sigprocmask( SIG_BLOCK, &sa.sa_mask, &oldsa.sa_mask );
+#endif
+
+#if 1
+    // catch signal
+    stat = setjmp( g_jump_h );
+    if ( !stat ) {
+
+      sa.sa_handler = signal_handler;
+      sigemptyset( &sa.sa_mask );
+      sa.sa_flags = 0;
+
+      stat = sigaction( SIGHUP, &sa, &oldsa );
+      stat = sigaction( SIGINT, &sa, &dummysa );
+      stat = sigaction( SIGQUIT, &sa, &dummysa );
+      stat = sigaction( SIGILL, &sa, &dummysa );
+      stat = sigaction( SIGTRAP, &sa, &dummysa );
+      stat = sigaction( SIGABRT, &sa, &dummysa );
+      stat = sigaction( SIGBUS, &sa, &dummysa );
+      stat = sigaction( SIGFPE, &sa, &dummysa );
+      stat = sigaction( SIGUSR1, &sa, &dummysa );
+      stat = sigaction( SIGSEGV, &sa, &dummysa );
+      stat = sigaction( SIGUSR2, &sa, &dummysa );
+      stat = sigaction( SIGTERM, &sa, &dummysa );
+
+    }
+    else {
+
+      char diagBuf[255+1];
+      snprintf( diagBuf, 255, "got signal %-d\n", g_sigNumber );
+      logDiagnostic( diagBuf );
+
+      fprintf( stderr, diagBuf );
+
+      exit(0);
+
+    }
+#endif
+
+  }
+
   do {
 
     if ( numLocaleFailures == 0 ) {
