@@ -13,7 +13,7 @@
 #define VIDEO_MAX_DATA_HEIGHT 10000
 #define VIDEO_MAJOR_VERSION 4
 #define VIDEO_MINOR_VERSION 0
-#define VIDEO_RELEASE 0
+#define VIDEO_RELEASE 1
 
 #include <time.h>
 #include <stream.h>
@@ -335,15 +335,19 @@ public:
 #ifdef DEBUG
         printf ("executeDeferred (TwoDMon.cc) - pvBasedDataWidth = %d\n",
                  pvBasedDataWidth);
-        printf ("executeDeferred (TwoDMon.cc) - widthPv = %x\n", widthPv);
-        printf ("executeDeferred (TwoDMon.cc) - is_valid = %d\n",
-                 widthPv->is_valid ());
+        printf ("executeDeferred (TwoDMon.cc) - widthPv = %x\n", (int) widthPv);
+        if ( widthPv ) {
+          printf ("executeDeferred (TwoDMon.cc) - is_valid = %d\n",
+                   widthPv->is_valid ());
+	}
 #endif
         if (pvBasedDataSize && widthPv && widthPv->is_valid ())
         {
 #ifdef DEBUG
             printf ("executeDeferred (TwoDMon.cc) - pv based width\n");
 #endif
+            dataWidth = (int) widthPv->get_int ();
+#if 0
             switch (widthPv->get_type ().type)
             {
             case ProcessVariable::Type::real:
@@ -356,11 +360,14 @@ public:
                 dataWidth = -1;
                 break;
             }
+#endif
 #ifdef DEBUG
             printf ("executeDeferred (TwoDMon.cc) - width = %d\n", dataWidth);
 #endif
             if (heightPv && heightPv->is_valid ())
             {
+                dataHeight = (int) heightPv->get_int ();
+#if 0
                 switch (heightPv->get_type ().type)
                 {
                 case ProcessVariable::Type::real:
@@ -372,6 +379,7 @@ public:
                 default:
                     dataHeight = -1;
                 }
+#endif
             }
         }
     
@@ -383,6 +391,8 @@ public:
                 dataWidth, dataHeight);
             return; 
         }   
+
+#if 0
         if ((dataHeight != 0) &&
             ((dataHeight * dataWidth) != (int)dataPv->get_dimension ()))
         {
@@ -394,17 +404,18 @@ public:
                 "TwoDProfMon::execDef - resubscribe - new dataW %d dataH %d\n",
                 dataWidth, dataHeight);
 #endif
-            actWin->appCtx->proc->lock ();
+            //actWin->appCtx->proc->lock ();
             dataPv->remove_value_callback ( dataUpdate, this );
             dataPv->remove_conn_state_callback (monitorDataConnectState, this);
             dataPv->release ();
             dataPv = the_PV_Factory->create ( dataPvStr.getExpanded () );
             dataPv->add_conn_state_callback ( monitorDataConnectState, this );
             dataPv->add_value_callback ( dataUpdate, this );
-            actWin->appCtx->proc->unlock ();
+            //actWin->appCtx->proc->unlock ();
             return;
         }
-        actWin->appCtx->proc->lock ();
+        //actWin->appCtx->proc->lock ();
+#endif
 
 #ifdef DEBUG
         printf ("executeDeferred (TwoDMon.cc) - before data PV type switch\n");
@@ -760,6 +771,7 @@ void TwoDProfileMonitor::constructCommon (void)
     heightPvStr.setRaw ("");
   
     dataPv = NULL;
+    widthPv = NULL;
     heightPv = NULL;
 
     strcpy (dataPvBuf, ""); // just to be safe
@@ -926,12 +938,18 @@ int TwoDProfileMonitor::activate ( int pass )
                 //heightPv->add_value_callback ( pvUpdate, this );
             }
 #ifdef DEBUG
-            printf ("activate (TwoDMon.cc) - dataPv->is_valid = %d\n",
-                    dataPv->is_valid ());
-            printf ("activate (TwoDMon.cc) - widthPv->is_valid = %d\n",
-                    widthPv->is_valid ());
-            printf ("activate (TwoDMon.cc) - heightPv->is_valid = %d\n",
-                    heightPv->is_valid ());
+            if ( dataPv ) {
+              printf ("activate (TwoDMon.cc) - dataPv->is_valid = %d\n",
+                      dataPv->is_valid ());
+	    }
+            if ( widthPv ) {
+              printf ("activate (TwoDMon.cc) - widthPv->is_valid = %d\n",
+                      widthPv->is_valid ());
+	    }
+            if ( heightPv ) {
+              printf ("activate (TwoDMon.cc) - heightPv->is_valid = %d\n",
+                      heightPv->is_valid ());
+	    }
 #endif
         }
         break;
