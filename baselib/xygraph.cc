@@ -170,6 +170,12 @@ FILE *tmp;
     fprintf( stderr, "dumpFileName = [%s]\n", fname );
   }
 
+  if ( !tmp ) {
+    xyo->actWin->appCtx->postMessage( "File open failure" );
+    xyo->actWin->appCtx->raiseMessageWindow();
+    return;
+  }
+
   fprintf( tmp, "number of traces = %-d\n", xyo->numTraces );
 
   for ( i=0; i<xyo->numTraces; i++ ) {
