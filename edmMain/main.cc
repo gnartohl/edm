@@ -1422,6 +1422,18 @@ Display *testDisplay;
 
 }
 
+static jmp_buf g_jump_h;
+static int g_sigNumber = 0;
+
+static void signal_handler (
+  int sig
+) {
+
+  g_sigNumber = sig;
+  longjmp( g_jump_h, 1 );
+
+}
+
 extern int main (
   int argc,
   char **argv )
