@@ -145,15 +145,33 @@ double dxValue, dyValue;
 char fname[255+1], *envPtr;
 FILE *tmp;
 
-  envPtr = getenv( environment_str8 );
+  // try EDMDUMPFILES, then EDMTMPFILES, else use /tmp
+  envPtr = getenv( environment_str14 );
   if ( envPtr ) {
+
     strncpy( fname, envPtr, 255 );
     if ( envPtr[strlen(envPtr)] != '/' ) {
       Strncat( fname, "/", 255 );
     }
+
   }
   else {
-    strncpy( fname, "/tmp/", 255 );
+
+    envPtr = getenv( environment_str8 );
+    if ( envPtr ) {
+
+      strncpy( fname, envPtr, 255 );
+      if ( envPtr[strlen(envPtr)] != '/' ) {
+        Strncat( fname, "/", 255 );
+      }
+
+    }
+    else {
+
+      strncpy( fname, "/tmp/", 255 );
+
+    }
+
   }
 
   Strncat( fname, xyo->dumpFileName, 255 );
