@@ -218,6 +218,9 @@ sigset_t chldmask, savemask;
       close( g_serverSocketFd );
     }
 
+    // create new process group session
+    setsid();
+
     execl( "/bin/sh", "sh", "-c", cmdString, (char *) NULL );
     _exit(127);
 
