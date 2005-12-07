@@ -29,6 +29,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <errno.h>
+#include <limits.h>
 
 #include <X11/Xlib.h>
 #include <Xm/Xm.h>

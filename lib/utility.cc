@@ -181,12 +181,36 @@ void setServerSocketFd (
 }
 
 // From Stevens' book
+
+#ifdef OPEN_MAX
+static int g_openMax = OPEN_MAX;
+#else
+static int g_openMax = 0;
+#endif
+
+#define OPEN_MAX_GUESS 256
+
+static int open_max ( void ) {
+
+  if ( !g_openMax ) {
+    errno = 0;
+    if ( ( g_openMax = sysconf( _SC_OPEN_MAX ) ) < 0 ) {
+      g_openMax = OPEN_MAX_GUESS;
+    }
+  }
+
+  return g_openMax;
+
+}
+
+// From Stevens' book
+
 int executeCmd (
   const char *cmdString
 ) {
 
 pid_t pid;
-int status;
+int status, i;
 struct sigaction ignore, saveintr, savequit;
 sigset_t chldmask, savemask;
 
@@ -216,6 +240,11 @@ sigset_t chldmask, savemask;
 
     if ( g_serverSocketFd != -1 ) {
       close( g_serverSocketFd );
+    }
+
+    // close all open files
+    for ( i=3; i<open_max(); i++ ) {
+      close( i );
     }
 
     // create new process group session
