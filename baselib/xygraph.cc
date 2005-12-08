@@ -140,7 +140,7 @@ static void dump_edit_apply (
 {
 
 xyGraphClass *xyo = (xyGraphClass *) client;
-int i, n, size;
+int i, index, n, size, h, t;
 double dxValue, dyValue;
 char fname[255+1], *envPtr;
 FILE *tmp;
@@ -202,6 +202,7 @@ FILE *tmp;
 
       if ( (int) xyo->yPv[i]->get_dimension() > 1 ) {
 
+        // vector
         fprintf( tmp, "trace %-d (chronological) size = %-d\n",
          i, (int) xyo->yPv[i]->get_dimension() );
 
@@ -258,6 +259,83 @@ FILE *tmp;
 	}
 
       }
+      else {
+
+        // scalar
+        h = xyo->arrayHead[i];
+        t = xyo->arrayTail[i];
+        n = h;
+        index = 0;
+
+        if ( t >= h ) {
+          size = t - h;
+        }
+        else {
+          size = xyo->plotBufSize[i] - h + t;
+        }
+
+        fprintf( tmp, "trace %-d (chronological) size = %-d\n",
+         i, size );
+
+        fprintf( tmp, "index, %s\n", xyo->yPvExpStr[i].getExpanded() );
+
+        while ( n != t ) {
+
+          switch ( xyo->yPvType[i] ) {
+          case ProcessVariable::specificType::flt:
+            dyValue = (double) ( (float *) xyo->yPvData[i] )[n];
+            break;
+          case ProcessVariable::specificType::real: 
+            dyValue = ( (double *) xyo->yPvData[i] )[n];
+            break;
+          case ProcessVariable::specificType::shrt:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (short *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::chr:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (char *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (unsigned char *) xyo->yPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::integer:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::enumerated:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (short *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[n];
+            }
+            break;
+          default:
+            dyValue = ( (double *) xyo->yPvData[i] )[n];
+            break;
+          }
+
+          fprintf( tmp, "%-d, %-g\n", index, dyValue );
+
+          index++;
+          n++;
+          if ( n > xyo->plotBufSize[i] ) {
+            n = 0;
+          }
+
+        }
+
+      }
 
     }
     else {
@@ -265,6 +343,7 @@ FILE *tmp;
       if ( ( (int) xyo->yPv[i]->get_dimension() > 1 ) &&
            ( (int) xyo->xPv[i]->get_dimension() > 1 ) ) {
 
+        // vector
         fprintf( tmp, "trace %-d (x/y) x size = %-d, y size = %-d\n",
          i, (int) xyo->xPv[i]->get_dimension(),
          (int) xyo->yPv[i]->get_dimension() );
@@ -372,6 +451,134 @@ FILE *tmp;
           fprintf( tmp, "%-g, %-g\n", dxValue, dyValue );
 
 	}
+
+      }
+      else if ( ( (int) xyo->yPv[i]->get_dimension() == 1 ) &&
+                ( (int) xyo->xPv[i]->get_dimension() == 1 ) ) {
+
+        // scalar
+        h = xyo->arrayHead[i];
+        t = xyo->arrayTail[i];
+        n = h;
+
+        if ( t >= h ) {
+          size = t - h;
+        }
+        else {
+          size = xyo->plotBufSize[i] - h + t;
+        }
+
+        fprintf( tmp, "trace %-d (x/y) x size = %-d, y size = %-d\n",
+         i, size, size );
+
+        fprintf( tmp, "%s, %s\n", xyo->xPvExpStr[i].getExpanded(),
+         xyo->yPvExpStr[i].getExpanded() );
+
+        while ( n != t ) {
+
+          // x
+          switch ( xyo->xPvType[i] ) {
+          case ProcessVariable::specificType::flt:
+            dxValue = (double) ( (float *) xyo->xPvData[i] )[n];
+            break;
+          case ProcessVariable::specificType::real: 
+            dxValue = ( (double *) xyo->xPvData[i] )[n];
+            break;
+          case ProcessVariable::specificType::shrt:
+            if (  xyo->ySigned[i] ) {
+              dxValue = (double) ( (short *) xyo->xPvData[i] )[n];
+            }
+            else {
+              dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::chr:
+            if (  xyo->ySigned[i] ) {
+              dxValue = (double) ( (char *) xyo->xPvData[i] )[n];
+            }
+            else {
+              dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::integer:
+            if (  xyo->ySigned[i] ) {
+              dxValue = (double) ( (int *) xyo->xPvData[i] )[n];
+            }
+            else {
+              dxValue = (double) ( (int *) xyo->xPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::enumerated:
+            if (  xyo->ySigned[i] ) {
+              dxValue = (double) ( (short *) xyo->xPvData[i] )[n];
+            }
+            else {
+              dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[n];
+            }
+            break;
+          default:
+            dxValue = ( (double *) xyo->xPvData[i] )[n];
+            break;
+         }
+
+          // y
+          switch ( xyo->yPvType[i] ) {
+          case ProcessVariable::specificType::flt:
+            dyValue = (double) ( (float *) xyo->yPvData[i] )[n];
+            break;
+          case ProcessVariable::specificType::real: 
+            dyValue = ( (double *) xyo->yPvData[i] )[n];
+            break;
+          case ProcessVariable::specificType::shrt:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (short *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::chr:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (char *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (unsigned char *) xyo->yPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::integer:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::enumerated:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (short *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[n];
+            }
+            break;
+          default:
+            dyValue = ( (double *) xyo->yPvData[i] )[n];
+            break;
+          }
+
+          fprintf( tmp, "%-g, %-g\n", dxValue, dyValue );
+
+          n++;
+          if ( n > xyo->plotBufSize[i] ) {
+            n = 0;
+          }
+
+        }
+
+      }
+      else {
+
+        fprintf( tmp, "Cannot dump x/y trace - mixed pv dimensions\n" );
 
       }
 
@@ -5086,8 +5293,16 @@ double scaledX, scaledY;
 
   for ( i=0; i<numTraces; i++ ) {
 
+    xFactor[i] =
+     (double) ( plotAreaW ) / ( curXMax - curXMin );
+    xOffset[i] = plotAreaX;
+
     yi = 0;
     if ( y2Scale[i] ) yi = 1;
+
+    y1Factor[yi][i] =
+     (double) ( plotAreaH ) / ( curY1Max[yi] - curY1Min[yi] );
+    y1Offset[yi][i] = plotAreaY;
 
     initPlotInfo( i );
     arrayNumPoints[i] = curNpts[i] = 0;
@@ -7569,6 +7784,7 @@ int yi, yScaleIndex, allChronological;
   if ( actWin->isIconified ) return;
 
   actWin->appCtx->proc->lock();
+
   nc = needConnect; needConnect = 0;
   ni = needInit; needInit = 0;
   nu = needUpdate; needUpdate = 0;
@@ -7587,13 +7803,14 @@ int yi, yScaleIndex, allChronological;
   nnl = needNewLimits; needNewLimits = 0;
   nol = needOriginalLimits; needOriginalLimits = 0;
   actWin->remDefExeNode( aglPtr );
-  actWin->appCtx->proc->unlock();
-
-  doRescale = 0;
 
   for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
     ny1rescl[yi] = needY1Rescale[yi]; needY1Rescale[yi] = 0;
   }
+
+  actWin->appCtx->proc->unlock();
+
+  doRescale = 0;
 
   if ( !activeMode ) return;
 
@@ -8706,11 +8923,13 @@ int yi, yScaleIndex, allChronological;
         curY1MinorsPerMajor[yi] = y1NumMinorPerMajor[yi].value();
       }
 
+#if 0
       for ( i=0; i<numTraces; i++ ) {
         xFactor[i] =
          (double) ( plotAreaW ) / ( curXMax - curXMin );
         xOffset[i] = plotAreaX;
       }
+#endif
 
       for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
 
@@ -8742,6 +8961,26 @@ int yi, yScaleIndex, allChronological;
            &curY1MinorsPerMajor[yi], format );
         }
 
+#if 0
+        for ( i=0; i<numTraces; i++ ) {
+          y1Factor[yi][i] =
+           (double) ( plotAreaH ) / ( curY1Max[yi] - curY1Min[yi] );
+          y1Offset[yi][i] = plotAreaY;
+        }
+#endif
+
+      }
+    
+      updateDimensions();
+
+      for ( i=0; i<numTraces; i++ ) {
+        xFactor[i] =
+         (double) ( plotAreaW ) / ( curXMax - curXMin );
+        xOffset[i] = plotAreaX;
+      }
+
+      for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
+
         for ( i=0; i<numTraces; i++ ) {
           y1Factor[yi][i] =
            (double) ( plotAreaH ) / ( curY1Max[yi] - curY1Min[yi] );
@@ -8749,8 +8988,6 @@ int yi, yScaleIndex, allChronological;
         }
 
       }
-    
-      updateDimensions();
 
     }
 
