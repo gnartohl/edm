@@ -69,7 +69,6 @@ char *envPtr;
 
 static int g_needDiagInit = 1;
 static char g_diagFileName[255+1];
-static FILE *g_diagFile = NULL;
 
 int logDiagnostic (
   char *text
@@ -77,6 +76,7 @@ int logDiagnostic (
 
 char *envPtr;
 char time_string[34+1];
+static FILE *diagFile = NULL;
 
   if ( g_needDiagInit ) {
 
@@ -99,20 +99,48 @@ char time_string[34+1];
 
     mkstemp( g_diagFileName );
 
-    g_diagFile = fopen( g_diagFileName, "a" );
+    diagFile = fopen( g_diagFileName, "a" );
 
-  }
+    if ( diagFile ) {
 
-  if ( g_diagFile ) {
-    sys_get_datetime_string( 31, time_string );
-    time_string[31] = 0;
-    Strncat( time_string, " : ", 34 );
-    fprintf( g_diagFile, time_string );
-    fprintf( g_diagFile, text );
+      sys_get_datetime_string( 31, time_string );
+      time_string[31] = 0;
+      Strncat( time_string, " : ", 34 );
+      fprintf( diagFile, time_string );
+      fprintf( diagFile, "First diagnostic message\n" );
+      fprintf( diagFile, time_string );
+      fprintf( diagFile, text );
+
+    }
+    else {
+
+      return 2;
+
+    }
+
   }
   else {
-    return 2;
+
+    diagFile = fopen( g_diagFileName, "a" );
+
+    if ( diagFile ) {
+
+      sys_get_datetime_string( 31, time_string );
+      time_string[31] = 0;
+      Strncat( time_string, " : ", 34 );
+      fprintf( diagFile, time_string );
+      fprintf( diagFile, text );
+
+    }
+    else {
+
+      return 2;
+
+    }
+
   }
+
+  fclose( diagFile );
 
   return 1;
 
