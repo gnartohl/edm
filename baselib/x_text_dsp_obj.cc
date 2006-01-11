@@ -3611,6 +3611,7 @@ int activeXTextDspClass::drawActive ( void ) {
 Arg args[10];
 int n;
 int blink = 0;
+unsigned int color;
 
   if ( !init && !connection.pvsConnected() ) {
     if ( needToDrawUnconnected ) {
@@ -3650,17 +3651,19 @@ int blink = 0;
           n = 0;
           XtSetArg( args[n], XmNvalue, (XtArgVal) value ); n++;
           if ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) ) {
-            XtSetArg( args[n], XmNforeground, fgColor.pixelColor() );
+	    color = fgColor.pixelColor();
+            XtSetArg( args[n], XmNforeground, (XtArgVal) color ); n++;
           }
           else {
-            XtSetArg( args[n], XmNforeground, fgColor.getColor() ); n++;
+	    color = fgColor.getColor();
+            XtSetArg( args[n], XmNforeground, (XtArgVal) color ); n++;
           }
           if ( colorMode == XTDC_K_COLORMODE_ALARM ) {
             if ( fgColor.getSeverity() != prevAlarmSeverity ) {
               if ( fgColor.getSeverity() && useAlarmBorder ) {
                 XtSetArg( args[n], XmNborderWidth, (XtArgVal) 2 ); n++;
-                XtSetArg( args[n], XmNborderColor, fgColor.getColor() );
-                 n++;
+	        color = fgColor.getColor();
+                XtSetArg( args[n], XmNborderColor, (XtArgVal) color ); n++;
               }
               else {
                 XtSetArg( args[n], XmNborderWidth, (XtArgVal) 0 ); n++;
