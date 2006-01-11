@@ -77,6 +77,8 @@ int logDiagnostic (
 char *envPtr;
 char time_string[34+1];
 static FILE *diagFile = NULL;
+static pid_t procPid;
+static char hostName[63+1];
 
   if ( g_needDiagInit ) {
 
@@ -107,7 +109,8 @@ static FILE *diagFile = NULL;
       time_string[31] = 0;
       Strncat( time_string, " : ", 34 );
       fprintf( diagFile, time_string );
-      fprintf( diagFile, "First diagnostic message\n" );
+      fprintf( diagFile, "host %s, pid %-d - ", hostName, procPid );
+      fprintf( diagFile, "first diagnostic message\n" );
       fprintf( diagFile, time_string );
       fprintf( diagFile, text );
 
