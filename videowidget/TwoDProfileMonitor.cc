@@ -483,7 +483,7 @@ public:
     
         // actWin->remDefExeNode (aglPtr);
     
-        actWin->appCtx->proc->unlock ();
+        // actWin->appCtx->proc->unlock ();
     
         // Get approx average elapsed time for call - no point in being precise
         gettimeofday (&tv, 0);
