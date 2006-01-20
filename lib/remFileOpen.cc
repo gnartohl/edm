@@ -480,9 +480,9 @@ FILE *fileOpen (
 char fullName[255+1], cmd[255+1], prog[255+1];
 char oneExt[32], *oneExtPtr, *filterCmd, *ptr1, *ptr2, *ptr3;
  int gotExt, i, l, startPos, stat;
+FILE *f;
 
 #ifdef USECURL
-FILE *f;
 char buf[255+1], name[255+1], allPaths[10239+1], plainName[255+1],
  *urlList, *tk, *context;
 int gotFile, useHttp;
