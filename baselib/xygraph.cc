@@ -7783,6 +7783,14 @@ int yi, yScaleIndex, allChronological;
 
   if ( actWin->isIconified ) return;
 
+  xmin = 1.0e30;
+  xmax = -1.0e30;
+  ymin[0] = 1.0e30;
+  ymin[1] = 1.0e30;
+  ymax[0] = -1.0e30;
+  ymax[1] = -1.0e30;
+  allChronological = 0;
+
   actWin->appCtx->proc->lock();
 
   nc = needConnect; needConnect = 0;
