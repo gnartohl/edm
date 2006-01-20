@@ -589,8 +589,10 @@ mode_t curMode, newMode;
 
   if ( diagnosticMode() ) {
     char diagBuf[255+1];
-    snprintf( diagBuf, 255, "open [%s]\n", fullName );
-    logDiagnostic( diagBuf );
+    if ( f ) {
+      snprintf( diagBuf, 255, "open [%s]\n", fullName );
+      logDiagnostic( diagBuf );
+    }
   }
 
   return f;
@@ -779,8 +781,10 @@ mode_t curMode, newMode;
 
     if ( diagnosticMode() ) {
       char diagBuf[255+1];
-      snprintf( diagBuf, 255, "open [%s]\n", buf );
-      logDiagnostic( diagBuf );
+      if ( f ) {
+        snprintf( diagBuf, 255, "open [%s]\n", buf );
+        logDiagnostic( diagBuf );
+      }
     }
 
     return f;
@@ -877,8 +881,10 @@ mode_t curMode, newMode;
 
     if ( diagnosticMode() ) {
       char diagBuf[255+1];
-      snprintf( diagBuf, 255, "open [%s]\n", fullName );
-      logDiagnostic( diagBuf );
+      if ( f ) {
+        snprintf( diagBuf, 255, "open [%s]\n", fullName );
+        logDiagnostic( diagBuf );
+      }
     }
 
     return f;
@@ -1056,8 +1062,10 @@ mode_t curMode, newMode;
 
     if ( diagnosticMode() ) {
       char diagBuf[255+1];
-      snprintf( diagBuf, 255, "open [%s]\n", buf );
-      logDiagnostic( diagBuf );
+      if ( f ) {
+        snprintf( diagBuf, 255, "open [%s]\n", buf );
+        logDiagnostic( diagBuf );
+      }
     }
 
   }
