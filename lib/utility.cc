@@ -84,6 +84,9 @@ static char hostName[63+1];
 
     g_needDiagInit = 0;
 
+    procPid = getpid();
+    gethostname( hostName, 63 );
+
     envPtr = getenv( environment_str8 );
     if ( envPtr ) {
       strncpy( g_diagFileName, envPtr, 255 );
