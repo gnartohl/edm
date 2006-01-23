@@ -494,11 +494,15 @@ ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
         exp_arg_name[ii] = NULL;
       }
 
+      pv->value = 0.0;
+
     }
     else {
 
       pv = new CALC_ProcessVariable(PV_name, *entry,
        arg_count, (const char **)arg_name);
+
+      pv->value = 0.0;
 
     }
 

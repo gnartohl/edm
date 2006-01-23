@@ -202,7 +202,7 @@ char tmp[PV_Factory::MAX_PV_NAME+1], *tk, *ctx;
 
     while ( tk ) {
 
-      enums[numEnumStates] = new char[strlen(tk)];
+      enums[numEnumStates] = new char[strlen(tk)+1];
       strcpy( enums[numEnumStates], tk );
       if ( numEnumStates < MAX_ENUM_NUM ) numEnumStates++;
 

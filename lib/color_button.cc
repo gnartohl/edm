@@ -124,7 +124,7 @@ colorButtonClass::~colorButtonClass ( void ) {
 //   printf( "In colorButtonClass::~colorButtonClass\n" );
 
   if ( colorPvName ) {
-    delete colorPvName;
+    delete[] colorPvName;
     colorPvName = NULL;
   }
 

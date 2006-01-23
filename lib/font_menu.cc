@@ -226,7 +226,7 @@ alignOptionListPtr curAlign, nextAlign;
     nextFamilyOption = curFamilyOption->flink;
 
 // printf( "[%s]\n", curFamilyOption->name );
-    delete curFamilyOption->name;
+    delete[] curFamilyOption->name;
 
     // ==============================================
     // delete all size pushbutton data
@@ -237,7 +237,7 @@ alignOptionListPtr curAlign, nextAlign;
       nextSizePB = curSizePB->flink;
 
 // printf( "[%s]\n", curSizePB->sizeString );
-      delete curSizePB->sizeString;
+      delete[] curSizePB->sizeString;
 
       delete curSizePB;
 
@@ -274,7 +274,7 @@ alignOptionListPtr curAlign, nextAlign;
     nextAlign = curAlign->flink;
 
 // printf( "[%s]\n", curAlign->alignString );
-    delete curAlign->alignString;
+    delete[] curAlign->alignString;
 
 // printf( "delete curAlign\n" );
     delete curAlign;
@@ -788,7 +788,7 @@ Arg locArgs[3];
     if ( curAlign->align == _align ) {
 
       align=curAlign->align;
-      strncpy( alignStr, curAlign->alignString, 1 );
+      alignStr = curAlign->alignString;
 
       n = 0;
       XtSetArg( locArgs[n], XmNmenuHistory, (XtArgVal) curAlign->pb ); n++;
