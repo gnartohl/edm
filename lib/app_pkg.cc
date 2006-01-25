@@ -1544,6 +1544,8 @@ appContextClass *apco = (appContextClass *) client;
   apco->confirm.popdown();
   apco->exitFlag = 1;
 
+  if ( diagnosticMode() ) logDiagnostic( "Program exit requested\n" );
+
 }
 
 void exit_cb (
@@ -1582,6 +1584,8 @@ unsigned int mask;
   }
 
   apco->exitFlag = 1;
+
+  if ( diagnosticMode() ) logDiagnostic( "Program exit requested\n" );
 
 }
 
@@ -5229,7 +5233,10 @@ char msg[127+1];
 
     if ( nodeCount ) atLeastOneOpen = 1;
     if ( exitOnLastClose && atLeastOneOpen ) {
-      if ( nodeCount == 0 ) exitFlag = 1;
+      if ( nodeCount == 0 ) {
+        exitFlag = 1;
+        if ( diagnosticMode() ) logDiagnostic( "Program exit requested\n" );
+      }
     }
 
     processAllEvents( app, display );
@@ -5555,6 +5562,7 @@ void appContextClass::performShutdown (
     shutdownFilePtr = f;
     saveContextOnExit = 1;
     exitFlag = 1;
+    if ( diagnosticMode() ) logDiagnostic( "Program exit requested\n" );
     //abort_cb( (Widget) NULL, (XtPointer) this, (XtPointer) NULL );
   }
 

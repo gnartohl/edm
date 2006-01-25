@@ -18272,43 +18272,44 @@ void activeWindowClass::executeFromDeferredQueue( void )
     else {
 
       doClose = 0;
+      waiting = 0;
 
-      if ( change ) {
+      //if ( change ) {
 
-        savedState = state;
-        state = AWC_WAITING;
+      //  savedState = state;
+      //  state = AWC_WAITING;
 
-        confirm.create( top, "confirm", x, y, 3,
-         activeWindowClass_str161, NULL, NULL );
-        confirm.addButton( activeWindowClass_str163, awc_continue_cb,
-         (void *) this );
-        confirm.addButton( activeWindowClass_str165, awc_abort_cb,
-         (void *) this );
-        confirm.addButton( activeWindowClass_str166, awc_save_and_exit_cb,
-         (void *) this );
-        confirm.finished();
-        confirm.popup();
-        XSetWindowColormap( d, XtWindow(confirm.top()),
-         appCtx->ci.getColorMap() );
+      //  confirm.create( top, "confirm", x, y, 3,
+      //   activeWindowClass_str161, NULL, NULL );
+      //  confirm.addButton( activeWindowClass_str163, awc_continue_cb,
+      //   (void *) this );
+      //  confirm.addButton( activeWindowClass_str165, awc_abort_cb,
+      //   (void *) this );
+      //  confirm.addButton( activeWindowClass_str166, awc_save_and_exit_cb,
+      //   (void *) this );
+      //  confirm.finished();
+      //  confirm.popup();
+      //  XSetWindowColormap( d, XtWindow(confirm.top()),
+      //   appCtx->ci.getColorMap() );
 
-      }
-      else {
+      //}
+      //else {
 
-        if ( autosaveTimer ) {
-          XtRemoveTimeOut( autosaveTimer );
-          autosaveTimer = 0;
-        }
-        if ( restoreTimer ) {
-          XtRemoveTimeOut( restoreTimer );
-          restoreTimer = 0;
-        }
+      //  if ( autosaveTimer ) {
+      //    XtRemoveTimeOut( autosaveTimer );
+      //    autosaveTimer = 0;
+      //  }
+      //  if ( restoreTimer ) {
+      //    XtRemoveTimeOut( restoreTimer );
+      //    restoreTimer = 0;
+      //  }
 
-        //mark active window for delege
-        appCtx->removeActiveWindow( this );
+      //  //mark active window for delege
+      //  appCtx->removeActiveWindow( this );
 
-        XtUnmanageChild( drawWidget );
+      //  XtUnmanageChild( drawWidget );
 
-      }
+      //}
 
     }
 
