@@ -71,7 +71,7 @@ static void destroyPixmap(Display *d, Pixmap p, Colormap cm, unsigned long *ac, 
        XFreePixmap (d, p);
        register unsigned long planes = AllPlanes;
        planes = (1<<DefaultDepth(d,0))-1; // override to avoid error message
-       XFreeColors(d, cm, &ac[6], 1, planes);
+       XFreeColors(d, cm, ac, nc, planes);
        XpmFree(ac);
 
 }

@@ -1,3 +1,4 @@
+#define blankOrComment(x) 1
 // g++ -shared -o TwoDProfileMonitor.so TwoDProfileMonitor.cc -g -O -Wall -ansi
 // -pedantic -I/ade/epics/supTop/extensions/R3.14.4/src/edm/util
 // -I/ade/epics/supTop/extensions/R3.14.4/src/edm/lib 
