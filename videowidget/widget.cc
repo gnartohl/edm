@@ -69,7 +69,9 @@ static Pixmap makePixmap (Display *d, Colormap cm, Widget w, char **data, unsign
 static void destroyPixmap(Display *d, Pixmap p, Colormap cm, unsigned long *ac, unsigned long nc){
 
        XFreePixmap (d, p);
-       XFreeColors(d, cm, ac, nc, AllPlanes);
+       register unsigned long planes = AllPlanes;
+       planes = (1<<DefaultDepth(d,0))-1; // override to avoid error message
+       XFreeColors(d, cm, &ac[6], 1, planes);
        XpmFree(ac);
 
 }
