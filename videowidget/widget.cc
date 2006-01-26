@@ -17,6 +17,8 @@ typedef struct
     Display *d;
     Colormap cm;
     Widget parent;
+    unsigned long *ac;
+    long nc;
     unsigned long widgetw_old;
     unsigned long widgeth_old;
     unsigned long dataw_old;
@@ -33,7 +35,7 @@ widgetData widgetCreate (void)
     return (widgetData) md;
 }
 
-static Pixmap makePixmap (Display *d, Colormap cm, Widget w, char **data)
+static Pixmap makePixmap (Display *d, Colormap cm, Widget w, char **data, unsigned long **pac, long *pnc)
 {
 
     XpmAttributes attr;
@@ -41,8 +43,9 @@ static Pixmap makePixmap (Display *d, Colormap cm, Widget w, char **data)
 
    /* tell XPM to allocate fairly close (not exact) colors from the window's
       colormap */
+    /* also tell me about allocated colors so I can free them later */
     attr.valuemask = XpmSize | XpmCloseness | XpmAllocCloseColors |
-                     XpmExactColors | XpmColormap | XpmDepth | XpmVisual;
+                     XpmExactColors | XpmColormap | XpmDepth | XpmVisual | XpmReturnAllocPixels ;
     attr.closeness = 30000;
     attr.alloc_close_colors = True;
     attr.exactColors = False;
@@ -54,8 +57,21 @@ static Pixmap makePixmap (Display *d, Colormap cm, Widget w, char **data)
     if (XpmCreatePixmapFromData (d, XtWindow (w), data, &p, NULL, &attr) !=
         XpmSuccess)
         return 0;
-  
+ 
+    /* record allocated colors for later deletion */
+    /* don't bother to delete attr data structure contents, but do explicitly free alloc_color
+       after colors are freed */
+    *pac = attr.alloc_pixels;
+    *pnc = attr.nalloc_pixels;
     return p;
+}
+
+static void destroyPixmap(Display *d, Pixmap p, Colormap cm, unsigned long *ac, unsigned long nc){
+
+       XFreePixmap (d, p);
+       XFreeColors(d, cm, ac, nc, AllPlanes);
+       XpmFree(ac);
+
 }
 
 #include "twoD.xpm"
@@ -74,7 +90,8 @@ Widget widgetCreateWidget (widgetData wd, XtAppContext app, Display *d,
     md->cm = cm;
     md->parent = parent;
     if (md->p == 0)
-        md->p = makePixmap (d, cm, parent, twoD);
+        /* be sure to record the allocated colors for deletion later */
+        md->p = makePixmap (d, cm, parent, twoD, &md->ac, &md->nc);
   
     /* Here's our picture, no border around our nice pixmap */
     widget = XtVaCreateManagedWidget ("2D widget", xmLabelWidgetClass, parent, 
@@ -172,7 +189,7 @@ void widgetNewDisplayData (widgetData wd,
     // gettimeofday (&tv, 0);
     // printf ("widgetNDD after create pixmapData - time %ld %ld\n", tv.tv_sec,
     //         tv.tv_usec);
-    register Pixmap temp = makePixmap (md->d, md->cm, md->parent, pixmapData);
+    register Pixmap temp = makePixmap (md->d, md->cm, md->parent, pixmapData, &md->ac, &md->nc);
 
     // gettimeofday (&tv, 0);
     // printf ("widgetNDD after makePixmap - time %ld %ld\n", tv.tv_sec,
@@ -217,7 +234,7 @@ void widgetNewDisplayData (widgetData wd,
         XtVaSetValues (md->w, XmNlabelType, XmPIXMAP, XmNlabelPixmap, md->p,
                        NULL);
   
-        XFreePixmap (md->d, old);
+	destroyPixmap(md->d, old, md->cm, md->ac, md->nc);
 
 
 #ifdef DEMO_MODE
@@ -227,7 +244,7 @@ void widgetNewDisplayData (widgetData wd,
     {
         XCopyArea (md->d, temp, md->p, DefaultGC (md->d, 0), 0, 0,
                    widgetw, widgeth, 0, 0);
-        XFreePixmap (md->d, temp);
+	destroyPixmap(md->d, temp, md->cm, md->ac, md->nc);
 
         static XEvent event = {Expose};
         XtDispatchEventToWidget (md->w, &event);
@@ -267,8 +284,9 @@ void widgetDestroy (widgetData wd)
   
     myData *md = (myData *) wd;
   
-    if (md->p)
-        XFreePixmap (md->d, md->p);
-  
+    if (md->p){
+      destroyPixmap(md->d, md->p, md->cm, md->ac, md->nc);
+      }
+    
     delete md;
 }
