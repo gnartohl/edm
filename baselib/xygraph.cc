@@ -664,45 +664,49 @@ int yi;
       xyo->eBuf = new xyGraphClass::editBufType;
     }
 
-    xyo->adjpFormX = xyo->popupMenuX;
-    xyo->adjpFormY = xyo->popupMenuY;
-    xyo->adjpFormW = 0;
-    xyo->adjpFormH = 0;
-    xyo->adjpFormMaxH = 600;
+    if ( !xyo->ef.formIsPoppedUp() ) {
 
-    xyo->ef.create( xyo->actWin->top,
-     xyo->actWin->appCtx->ci.getColorMap(),
-     &xyo->adjpFormX, &xyo->adjpFormY,
-     &xyo->adjpFormW, &xyo->adjpFormH, &xyo->adjpFormMaxH,
-     "Adjust Params", NULL, NULL, NULL );
+      xyo->adjpFormX = xyo->popupMenuX;
+      xyo->adjpFormY = xyo->popupMenuY;
+      xyo->adjpFormW = 0;
+      xyo->adjpFormH = 0;
+      xyo->adjpFormMaxH = 600;
 
-    xyo->eBuf->bufXMin.setNull(1);
-    xyo->eBuf->bufXMax.setNull(1);
-    xyo->eBuf->bufY1Min[0].setNull(1);
-    xyo->eBuf->bufY1Max[0].setNull(1);
-    xyo->eBuf->bufY1Min[1].setNull(1);
-    xyo->eBuf->bufY1Max[1].setNull(1);
+      xyo->ef.create( xyo->actWin->top,
+       xyo->actWin->appCtx->ci.getColorMap(),
+       &xyo->adjpFormX, &xyo->adjpFormY,
+       &xyo->adjpFormW, &xyo->adjpFormH, &xyo->adjpFormMaxH,
+       "Adjust Params", NULL, NULL, NULL );
 
-    if ( ( xyo->xAxisStyle != XYGC_K_AXIS_STYLE_TIME ) ||
-         ( xyo->xAxisTimeFormat == XYGC_K_AXIS_TIME_FMT_SEC ) ) {
+      xyo->eBuf->bufXMin.setNull(1);
+      xyo->eBuf->bufXMax.setNull(1);
+      xyo->eBuf->bufY1Min[0].setNull(1);
+      xyo->eBuf->bufY1Max[0].setNull(1);
+      xyo->eBuf->bufY1Min[1].setNull(1);
+      xyo->eBuf->bufY1Max[1].setNull(1);
 
-      xyo->ef.addTextField( "X Min", 10, &xyo->eBuf->bufXMin );
-      xyo->ef.addTextField( "X Max", 10, &xyo->eBuf->bufXMax );
+      if ( ( xyo->xAxisStyle != XYGC_K_AXIS_STYLE_TIME ) ||
+           ( xyo->xAxisTimeFormat == XYGC_K_AXIS_TIME_FMT_SEC ) ) {
+
+        xyo->ef.addTextField( "X Min", 10, &xyo->eBuf->bufXMin );
+        xyo->ef.addTextField( "X Max", 10, &xyo->eBuf->bufXMax );
+
+      }
+
+      xyo->ef.addTextField( "Y1 Min", 10, &xyo->eBuf->bufY1Min[0] );
+
+      xyo->ef.addTextField( "Y1 Max", 10, &xyo->eBuf->bufY1Max[0] );
+
+      xyo->ef.addTextField( "Y2 Min", 10, &xyo->eBuf->bufY1Min[1] );
+
+      xyo->ef.addTextField( "Y2 Max", 10, &xyo->eBuf->bufY1Max[1] );
+
+      xyo->ef.finished( adjp_edit_ok, adjp_edit_apply, adjp_edit_cancel,
+       xyo );
+
+      xyo->ef.popup();
 
     }
-
-    xyo->ef.addTextField( "Y1 Min", 10, &xyo->eBuf->bufY1Min[0] );
-
-    xyo->ef.addTextField( "Y1 Max", 10, &xyo->eBuf->bufY1Max[0] );
-
-    xyo->ef.addTextField( "Y2 Min", 10, &xyo->eBuf->bufY1Min[1] );
-
-    xyo->ef.addTextField( "Y2 Max", 10, &xyo->eBuf->bufY1Max[1] );
-
-    xyo->ef.finished( adjp_edit_ok, adjp_edit_apply, adjp_edit_cancel,
-     xyo );
-
-    xyo->ef.popup();
 
   }
   else if ( w == xyo->pbDumpData ) {
