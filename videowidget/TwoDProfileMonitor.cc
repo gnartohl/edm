@@ -24,7 +24,10 @@
 #include <entry_form.h>
 #include <pv_factory.h>
 
-#include "widget.h"
+//#include "widget.h"
+#include "image.h"
+
+void _edmDebug ( void );
 
 // our widget class
 class TwoDProfileMonitor : public activeGraphicClass
@@ -61,10 +64,14 @@ class TwoDProfileMonitor : public activeGraphicClass
     int init, active, activeMode;
     struct timeval lasttv;
     unsigned long average_time_usec;
+    int opComplete;
 
     // widget-specific stuff
-    widgetData wd;
-    Widget twoDWidget;
+    //widgetData wd;
+    //Widget twoDWidget;
+
+    // image object
+    imageClass *img;
 
     // constructor "helper" function
     void constructCommon (void);
@@ -112,10 +119,12 @@ public:
 
     virtual int draw ( void ); 
   
+    virtual int drawActive ( void ); 
+  
     // called in response to "cut" command
     virtual int erase ( void );  
   
-    virtual int activate (int pass);
+    virtual int activate (int pass, void *ptr);
   
     // apply the results of either "Apply" or "OK" buttons
     void applyEditChanges (void);
@@ -168,12 +177,6 @@ public:
     // execute mode widget functions
   
     virtual int deactivate ( int pass );
-  
-    virtual int initDefExeNode ( void *ptr )
-    { 
-        aglPtr = ptr; /* why isn't this done for me? */
-        return activeGraphicClass::initDefExeNode (ptr);
-    }
   
     virtual int expand1st (int numMacros,
                            char *macros[],
@@ -428,12 +431,24 @@ public:
         
             case ProcessVariable::Type::real:
                 // printf ("real\n");
-                widgetNewDisplayData (
-                    wd, dataPv->get_time_t (), dataPv->get_nano (),
-                    (unsigned long) w, (unsigned long) h, dataWidth,
-                    (dataHeight > 0 ? dataHeight 
-                                    : dataPv->get_dimension () / dataWidth),
-                    (const double *) dataPv->get_double_array ());
+                // ??????????
+                //widgetNewDisplayData (
+                //    wd, dataPv->get_time_t (), dataPv->get_nano (),
+                //    (unsigned long) w, (unsigned long) h, dataWidth,
+                //    (dataHeight > 0 ? dataHeight 
+                //                    : dataPv->get_dimension () / dataWidth),
+                //    (const double *) dataPv->get_double_array ());
+
+                img->update( dataWidth,
+                 (dataHeight > 0 ? dataHeight 
+                                   : dataPv->get_dimension () / dataWidth),
+                 (double *) dataPv->get_double_array() );
+		if ( img->validImage() ) {
+                  XPutImage( actWin->d, XtWindow(actWin->executeWidget),
+                   actWin->executeGc.normGC(), img->ximage(),
+		   0, 0, x, y, w, h );
+		}
+
                 break;
 
             case ProcessVariable::Type::text:
@@ -444,13 +459,23 @@ public:
 #ifdef DEBUG
                     printf ("TwoDProfMon::execDef calling widgetNewDispData\n");
 #endif
-                    widgetNewDisplayData (
-                        wd, dataPv->get_time_t (), dataPv->get_nano (),
-                        (unsigned long)w, (unsigned long) h, dataWidth,
-                        (dataHeight > 0 ? dataHeight 
-                                        : dataPv->get_dimension() / dataWidth),
-                        temp);
-                   free (temp);
+		    // ????????????????????
+                    //widgetNewDisplayData (
+                    //    wd, dataPv->get_time_t (), dataPv->get_nano (),
+                    //    (unsigned long)w, (unsigned long) h, dataWidth,
+                    //    (dataHeight > 0 ? dataHeight 
+                    //                    : dataPv->get_dimension() / dataWidth),
+                    //    temp);
+                   img->update( dataWidth,
+                    (dataHeight > 0 ? dataHeight 
+                                      : dataPv->get_dimension () / dataWidth),
+                    temp );
+		   free (temp);
+                   if ( img->validImage() ) {
+                     XPutImage( actWin->d, XtWindow(actWin->executeWidget),
+                      actWin->executeGc.normGC(), img->ximage(),
+                      0, 0, x, y, w, h );
+		   }
                 }
                 break;
 
@@ -459,13 +484,23 @@ public:
                 {
                     double* temp = int_to_double (dataPv->get_dimension (),
                                                   dataPv->get_int_array ());
-                    widgetNewDisplayData (
-                        wd, dataPv->get_time_t (), dataPv->get_nano (),
-                        (unsigned long) w, (unsigned long) h, dataWidth,
-                        (dataHeight > 0 ? dataHeight 
-                                        : dataPv->get_dimension() / dataWidth),
-                        temp);
+		    // ?????????????????
+                    //widgetNewDisplayData (
+                    // wd, dataPv->get_time_t (), dataPv->get_nano (),
+                    // (unsigned long) w, (unsigned long) h, dataWidth,
+                    // (dataHeight > 0 ? dataHeight 
+                    //                 : dataPv->get_dimension() / dataWidth),
+                    // temp);
+                    img->update( dataWidth,
+                     (dataHeight > 0 ? dataHeight 
+                                       : dataPv->get_dimension () / dataWidth),
+                     temp );
                     free (temp);
+                    if ( img->validImage() ) {
+                      XPutImage( actWin->d, XtWindow(actWin->executeWidget),
+                       actWin->executeGc.normGC(), img->ximage(),
+                       0, 0, x, y, w, h );
+		    }
                 }
                 break;
 
@@ -473,12 +508,14 @@ public:
                 // nothing to do!
                 break;
             }
-            widgetNewDisplayInfo (wd, true, dataPv->get_status (),
-                                  dataPv->get_severity ());
+	    // ??????????????????????
+            //widgetNewDisplayInfo (wd, true, dataPv->get_status (),
+            //                      dataPv->get_severity ());
         }
         else
         {
-            widgetNewDisplayInfo (wd, false, 0, 0);
+            // ????????????????
+            //widgetNewDisplayInfo (wd, false, 0, 0);
         }
     
         // actWin->remDefExeNode (aglPtr);
@@ -761,8 +798,9 @@ void TwoDProfileMonitor::constructCommon (void)
     dataHeight = 0; // 0 if no PV supplied which is OK, -1 if invalid PV
     activeMode = 0;
 
-    wd = widgetCreate ();
-    twoDWidget = NULL;
+    // ???????????????
+    //wd = widgetCreate ();
+    //twoDWidget = NULL;
 
     name = "TwoDProfileMonitorClass";
   
@@ -777,7 +815,7 @@ void TwoDProfileMonitor::constructCommon (void)
     strcpy (dataPvBuf, ""); // just to be safe
     strcpy (widthPvBuf, ""); // just to be safe
     strcpy (heightPvBuf, ""); // just to be safe
-    twoDWidget = NULL;
+    //twoDWidget = NULL;
 
     average_time_usec = 0;
 
@@ -787,6 +825,8 @@ void TwoDProfileMonitor::constructCommon (void)
     int textAlignment;
     int textColour;
 #endif
+
+    img = NULL;
 
 }
 
@@ -817,16 +857,34 @@ TwoDProfileMonitor::TwoDProfileMonitor (const TwoDProfileMonitor &s)
     dataWidth = s.dataWidth; 
 }
 
-TwoDProfileMonitor::~TwoDProfileMonitor (void) {widgetDestroy (wd);}
+TwoDProfileMonitor::~TwoDProfileMonitor (void) {
+
+  // ?????????????????
+  //widgetDestroy (wd);
+
+}
 
 // called when widget is made active as edm changes to "execute" mode,
 // pass values are 0-6
-int TwoDProfileMonitor::activate ( int pass )
+int TwoDProfileMonitor::activate ( int pass,
+				   void *ptr )
 {
 
     switch (pass)
     {
     case 1:
+        opComplete = 0;
+	aglPtr = ptr;
+        break;
+
+    case 2:
+        if ( !opComplete ) {
+	  _edmDebug();
+          img = new imageClass( actWin->d, actWin->ci->getColorMap(),
+           actWin->executeGc.normGC(), w, h );
+          opComplete = 1;
+        }
+
         initialDataConnection = 1;
         initialWidthConnection = 0;
         initialHeightConnection = 0;
@@ -884,7 +942,7 @@ int TwoDProfileMonitor::activate ( int pass )
         break;
     
         // connect PVs during pass 2
-    case 2:
+    case 3:
         {
             // assume the best!
             pvColour.setColorIndex ( actWin->defaultTextFgColor, actWin->ci );
@@ -959,20 +1017,21 @@ int TwoDProfileMonitor::activate ( int pass )
 
         // create the execute-mode widget using XRT or other
         // standard Motif 2-D data widget
-        twoDWidget = widgetCreateWidget (
-                         wd, actWin->appCtx->appContext (), actWin->d,
-                         actWin->ci->getColorMap (), actWin->executeWidget,
-                         x, y, h, w);
+        // ????????????????
+        //twoDWidget = widgetCreateWidget (
+        //                 wd, actWin->appCtx->appContext (), actWin->d,
+        //                 actWin->ci->getColorMap (), actWin->executeWidget,
+        //                 x, y, h, w);
 
         // capture events to pass on to EDM
-        XtAddEventHandler (
-            twoDWidget,
-            LeaveWindowMask | EnterWindowMask | PointerMotionMask |
-            ButtonPressMask |ButtonReleaseMask,
-            False, grabButtonEvent, (XtPointer) this);
+        //XtAddEventHandler (
+        //    twoDWidget,
+        //    LeaveWindowMask | EnterWindowMask | PointerMotionMask |
+        //    ButtonPressMask |ButtonReleaseMask,
+        //    False, grabButtonEvent, (XtPointer) this);
    
         // hand over control 
-        XtManageChild (twoDWidget);
+        //XtManageChild (twoDWidget);
    
         break;
 
@@ -1209,8 +1268,9 @@ int TwoDProfileMonitor::draw (void)
     XDrawImageString ( actWin->d, XtWindow (actWin->drawWidget),
                        actWin->drawGc.normGC (), x + 5, y + h / 2,
                        dataPvStr.getRaw (), strlen (dataPvStr.getRaw ()) );
-  
-    return activeGraphicClass::draw (); 
+
+    return 1;
+    //return activeGraphicClass::draw (); 
 } ;
 
 // erase widget in responce to "cut" command
@@ -1222,8 +1282,22 @@ int TwoDProfileMonitor::erase (void)
     XDrawRectangle ( actWin->d, XtWindow (actWin->drawWidget),
                     actWin->drawGc.eraseGC (), x, y, w, h );
 
-    return activeGraphicClass::erase (); 
+    return 1;
+    //return activeGraphicClass::erase (); 
 } ;
+
+int TwoDProfileMonitor::drawActive (void)
+{
+
+  if ( img->validImage() ) {
+    XPutImage( actWin->d, XtWindow(actWin->executeWidget),
+     actWin->executeGc.normGC(), img->ximage(),
+     0, 0, x, y, w, h );
+  }
+
+  return 1;
+
+}
 
 // returning to edit mode, pass values are 1 and 2
 int TwoDProfileMonitor::deactivate ( int pass )
@@ -1280,14 +1354,20 @@ int TwoDProfileMonitor::deactivate ( int pass )
 #ifdef DEBUG
         printf ("TwoDProfileMonitor::deactivate - pass 2\n");
 #endif
-        widgetNewDisplayInfo (wd, false, 0, 0);
-        XtUnmanageChild (twoDWidget);
-        XtDestroyWidget (twoDWidget);
-        widgetDestroyWidget (wd);
+	// ???????????????????
+        //widgetNewDisplayInfo (wd, false, 0, 0);
+        //XtUnmanageChild (twoDWidget);
+        //XtDestroyWidget (twoDWidget);
+	// ????????????????????
+        //widgetDestroyWidget (wd);
+
+	_edmDebug();
+	img->destroy();
 
     }
   
-    return activeGraphicClass::deactivate (pass); 
+    return 1;
+    //return activeGraphicClass::deactivate (pass); 
 }
 
 

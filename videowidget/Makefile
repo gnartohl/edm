@@ -53,7 +53,7 @@ ifdef EPICS_HOST_ARCH
   HCLXmu_DIR = $(X11_LIB)
 
   LIB_SRCS += TwoDProfileMonitor.cc
-  LIB_SRCS += widget.cc
+  LIB_SRCS += image.cc
   
 
   include $(TOP)/configure/RULES
