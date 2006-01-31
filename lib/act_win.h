@@ -453,7 +453,7 @@ XtIntervalId autosaveTimer, restoreTimer;
 int changeSinceAutoSave, doAutoSave;
 char autosaveName[255+1];
 
-int doClose;
+int doClose, doActiveClose;
 
 widgetAndPointerType wpFileSelect, wpSchemeSelect, pvlistFileSelect;
 

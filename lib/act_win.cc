@@ -1539,7 +1539,12 @@ static void awc_WMExit_cb (
 {
 activeWindowClass *awo = (activeWindowClass *) client;
 
-  awo->doClose = 1;
+  if ( awo->mode == AWC_EDIT ) {
+    awo->doClose = 1;
+  }
+  else {
+    awo->doActiveClose = 1;
+  }
   awo->appCtx->postDeferredExecutionQueue( awo );
 
 }
@@ -10019,6 +10024,7 @@ activeWindowClass::activeWindowClass ( void ) {
   autosaveTimer = 0;
   doAutoSave = 0;
   doClose = 0;
+  doActiveClose = 0;
   restoreTimer = 0;
 
   commentHead = new commentLinesType;
@@ -10934,6 +10940,7 @@ char tmp[10];
   autosaveTimer = 0;
   doAutoSave = 0;
   doClose = 0;
+  doActiveClose = 0;
   restoreTimer = 0;
 
   change = 0;
@@ -18251,13 +18258,12 @@ void activeWindowClass::executeFromDeferredQueue( void )
 
   }
 
-
-  if ( doClose ) {
+  if ( doActiveClose ) {
 
     if ( mode != AWC_EDIT ) {
 
       if ( waiting == 0 ) {
-        doClose = 0;
+        doActiveClose = 0;
         returnToEdit( 1 );
       }
       else if ( waiting < 0 ) { // wait, don't close
@@ -18271,47 +18277,82 @@ void activeWindowClass::executeFromDeferredQueue( void )
     }
     else {
 
-      doClose = 0;
-      waiting = 0;
-
-      //if ( change ) {
-
-      //  savedState = state;
-      //  state = AWC_WAITING;
-
-      //  confirm.create( top, "confirm", x, y, 3,
-      //   activeWindowClass_str161, NULL, NULL );
-      //  confirm.addButton( activeWindowClass_str163, awc_continue_cb,
-      //   (void *) this );
-      //  confirm.addButton( activeWindowClass_str165, awc_abort_cb,
-      //   (void *) this );
-      //  confirm.addButton( activeWindowClass_str166, awc_save_and_exit_cb,
-      //   (void *) this );
-      //  confirm.finished();
-      //  confirm.popup();
-      //  XSetWindowColormap( d, XtWindow(confirm.top()),
-      //   appCtx->ci.getColorMap() );
-
-      //}
-      //else {
-
-      //  if ( autosaveTimer ) {
-      //    XtRemoveTimeOut( autosaveTimer );
-      //    autosaveTimer = 0;
-      //  }
-      //  if ( restoreTimer ) {
-      //    XtRemoveTimeOut( restoreTimer );
-      //    restoreTimer = 0;
-      //  }
-
-      //  //mark active window for delege
-      //  appCtx->removeActiveWindow( this );
-
-      //  XtUnmanageChild( drawWidget );
-
-      //}
+        doActiveClose = 0;
 
     }
+
+  }
+  else if ( doClose ) {
+
+    if ( mode == AWC_EDIT ) {
+
+      if ( waiting == 0 ) {
+
+        doClose = 0;
+
+        if ( change ) {
+
+          savedState = state;
+          state = AWC_WAITING;
+
+          confirm.create( top, "confirm", x, y, 3,
+           activeWindowClass_str161, NULL, NULL );
+          confirm.addButton( activeWindowClass_str163, awc_continue_cb,
+           (void *) this );
+          confirm.addButton( activeWindowClass_str165, awc_abort_cb,
+           (void *) this );
+          confirm.addButton( activeWindowClass_str166, awc_save_and_exit_cb,
+           (void *) this );
+          confirm.finished();
+          confirm.popup();
+          XSetWindowColormap( d, XtWindow(confirm.top()),
+           appCtx->ci.getColorMap() );
+
+        }
+        else {
+
+          if ( autosaveTimer ) {
+            XtRemoveTimeOut( autosaveTimer );
+            autosaveTimer = 0;
+          }
+          if ( restoreTimer ) {
+            XtRemoveTimeOut( restoreTimer );
+            restoreTimer = 0;
+          }
+
+          //mark active window for delege
+          appCtx->removeActiveWindow( this );
+
+          XtUnmanageChild( drawWidget );
+
+        }
+
+
+      }
+      else if ( waiting < 0 ) { // wait, don't close
+
+        appCtx->postDeferredExecutionNextQueue( this );
+
+      }
+      else {                    // close after n cycles
+
+        waiting--;
+        appCtx->postDeferredExecutionNextQueue( this );
+
+      }
+
+    }
+    else {
+
+        doClose = 0;
+
+    }
+
+  }
+  else {
+
+    doActiveClose = 0;
+    doClose = 0;
 
   }
 
@@ -18756,7 +18797,7 @@ void activeWindowClass::closeDeferred (
 {
 
   waiting = 1;
-  doClose = 1;
+  doActiveClose = 1;
   appCtx->postDeferredExecutionQueue( this );
 
 }
@@ -18917,6 +18958,7 @@ pvDefPtr pvDefCur, pvDefNext;
   autosaveTimer = 0;
   doAutoSave = 0;
   doClose = 0;
+  doActiveClose = 0;
   restoreTimer = 0;
   change = 0;
   changeSinceAutoSave = 0;
