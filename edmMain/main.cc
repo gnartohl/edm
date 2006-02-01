@@ -58,6 +58,7 @@
 #include "act_win.h"
 #include "act_grf.h"
 #include "bindings.h"
+#include "utility.h"
 
 #include "sys_types.h"
 #include "thread.h"
@@ -1458,6 +1459,10 @@ appListPtr primary;
 int primaryServerWantsExit;
 
 int numLocaleFailures = 0;
+
+  if ( diagnosticMode() ) {
+    logDiagnostic( "edm started\n" );
+  }
 
   do {
 

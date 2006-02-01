@@ -21,9 +21,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #include <math.h>
-#include <sys/types.h>
 #include <sys/time.h>
 #include <wait.h>
 #include <signal.h>

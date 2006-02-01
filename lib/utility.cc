@@ -78,7 +78,9 @@ char *envPtr;
 char time_string[34+1];
 static FILE *diagFile = NULL;
 static pid_t procPid;
-static char hostName[63+1];
+static char hostName[63+1], buf[255+1];
+int i, ii, l, fd;
+mode_t curMode;
 
   if ( g_needDiagInit ) {
 
@@ -86,6 +88,43 @@ static char hostName[63+1];
 
     procPid = getpid();
     gethostname( hostName, 63 );
+
+    sys_get_datetime_string( 31, time_string );
+    time_string[31] = 0;
+
+    envPtr = getenv( environment_str8 );
+    if ( envPtr ) {
+      strncpy( g_diagFileName, envPtr, 255 );
+      if ( envPtr[strlen(envPtr)] != '/' ) {
+        Strncat( g_diagFileName, "/", 255 );
+      }
+    }
+    else {
+      strncpy( g_diagFileName, "/tmp/", 255 );
+    }
+
+    Strncat( g_diagFileName, "edmStdErr", 255 );
+
+    Strncat( g_diagFileName, "_XXXXXX", 255 );
+
+    mkstemp( g_diagFileName );
+
+    l = strlen( g_diagFileName );
+    for ( i=l-7, ii=0; i<l; i++, ii++ ) {
+      buf[ii] = g_diagFileName[i];
+    }
+    buf[ii] = 0;
+
+    close( 2 );
+    curMode = umask( 0 );
+    fd = open( g_diagFileName, O_CREAT|O_WRONLY );
+    umask( curMode );
+    Strncat( time_string, " : ", 34 );
+    fprintf( stderr, time_string );
+    fprintf( stderr, "host %s, pid %-d - ", hostName, procPid );
+    fprintf( stderr, "first diagnostic message\n" );
+    fprintf( stderr, time_string );
+    fprintf( stderr, text );
 
     envPtr = getenv( environment_str8 );
     if ( envPtr ) {
@@ -100,16 +139,12 @@ static char hostName[63+1];
 
     Strncat( g_diagFileName, "edmDiag", 255 );
 
-    Strncat( g_diagFileName, "_XXXXXX", 255 );
-
-    mkstemp( g_diagFileName );
+    Strncat( g_diagFileName, buf, 255 );
 
     diagFile = fopen( g_diagFileName, "a" );
 
     if ( diagFile ) {
 
-      sys_get_datetime_string( 31, time_string );
-      time_string[31] = 0;
       Strncat( time_string, " : ", 34 );
       fprintf( diagFile, time_string );
       fprintf( diagFile, "host %s, pid %-d - ", hostName, procPid );
