@@ -91,6 +91,7 @@ mode_t curMode;
 
     sys_get_datetime_string( 31, time_string );
     time_string[31] = 0;
+    Strncat( time_string, " : ", 34 );
 
     envPtr = getenv( environment_str8 );
     if ( envPtr ) {
@@ -119,7 +120,6 @@ mode_t curMode;
     curMode = umask( 0 );
     fd = open( g_diagFileName, O_CREAT|O_WRONLY );
     umask( curMode );
-    Strncat( time_string, " : ", 34 );
     fprintf( stderr, time_string );
     fprintf( stderr, "host %s, pid %-d - ", hostName, procPid );
     fprintf( stderr, "first diagnostic message\n" );
@@ -145,7 +145,6 @@ mode_t curMode;
 
     if ( diagFile ) {
 
-      Strncat( time_string, " : ", 34 );
       fprintf( diagFile, time_string );
       fprintf( diagFile, "host %s, pid %-d - ", hostName, procPid );
       fprintf( diagFile, "first diagnostic message\n" );
