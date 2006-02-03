@@ -67,13 +67,13 @@ threadParamBlockPtr threadParamBlock =
   stat = executeCmd( threadParamBlock->cmd );
 
   if ( threadParamBlock->multipleInstancesAllowed ) {
-    delete threadParamBlock->cmd;
-    delete threadParamBlock;
+    stat = thread_request_free_ptr( (void *) threadParamBlock->cmd );
+    stat = thread_request_free_ptr( (void *) threadParamBlock );
     stat = thread_detached_exit( h, NULL ); // this call deallocates h
   }
   else {
-    delete threadParamBlock->cmd;
-    delete threadParamBlock;
+    stat = thread_request_free_ptr( (void *) threadParamBlock->cmd );
+    stat = thread_request_free_ptr( (void *) threadParamBlock );
     stat = thread_exit( h, NULL ); // this requires a join
   }
 
@@ -229,9 +229,9 @@ char buffer[255+1];
    buffer );
 
   if ( shcmdo->multipleInstancesAllowed ) {
-    threadParamBlock = new threadParamBlockType;
-    threadParamBlock->cmd =
-     new char[strlen(buffer)+1];
+    threadParamBlock =
+     (threadParamBlockPtr) calloc( 1, sizeof(threadParamBlockType) );
+    threadParamBlock->cmd = (char *) calloc( strlen(buffer)+1, 1 );
     strcpy( threadParamBlock->cmd, buffer );
     threadParamBlock->multipleInstancesAllowed =
      shcmdo->multipleInstancesAllowed;
@@ -244,10 +244,10 @@ char buffer[255+1];
     if ( shcmdo->thread ) {
       stat = thread_wait_til_complete_no_block( shcmdo->thread );
       if ( stat & 1 ) {
-        stat = thread_destroy_handle( shcmdo->thread );
-        threadParamBlock = new threadParamBlockType;
-        threadParamBlock->cmd =
-         new char[strlen(buffer)+1];
+        thread_request_free_handle( shcmdo->thread );
+        threadParamBlock =
+         (threadParamBlockPtr) calloc( 1, sizeof(threadParamBlockType) );
+        threadParamBlock->cmd = (char *) calloc( strlen(buffer)+1, 1 );
         strcpy( threadParamBlock->cmd, buffer );
         threadParamBlock->multipleInstancesAllowed =
          shcmdo->multipleInstancesAllowed;
@@ -258,9 +258,9 @@ char buffer[255+1];
       }
     }
     else {
-      threadParamBlock = new threadParamBlockType;
-      threadParamBlock->cmd =
-       new char[strlen(buffer)+1];
+      threadParamBlock =
+       (threadParamBlockPtr) calloc( 1, sizeof(threadParamBlockType) );
+      threadParamBlock->cmd = (char *) calloc( strlen(buffer)+1, 1 );
       strcpy( threadParamBlock->cmd, buffer );
       threadParamBlock->multipleInstancesAllowed =
        shcmdo->multipleInstancesAllowed;
@@ -1758,7 +1758,7 @@ int stat;
     if ( thread ) {
       if ( !multipleInstancesAllowed ) {
         stat = thread_detach( thread );
-        stat = thread_destroy_handle( thread );
+        thread_request_free_handle( thread );
         thread = NULL;
       }
     }
@@ -1873,9 +1873,9 @@ char buffer[255+1];
    buffer );
 
   if ( multipleInstancesAllowed ) {
-
-    threadParamBlock = new threadParamBlockType;
-    threadParamBlock->cmd = new char[strlen(buffer)+1];
+    threadParamBlock =
+     (threadParamBlockPtr) calloc( 1, sizeof(threadParamBlockType) );
+    threadParamBlock->cmd = (char *) calloc( strlen(buffer)+1, 1 );
     strcpy( threadParamBlock->cmd, buffer );
     threadParamBlock->multipleInstancesAllowed =
      multipleInstancesAllowed;
@@ -1894,9 +1894,10 @@ char buffer[255+1];
         actWin->appCtx->postMessage( shellCmdClass_str19 );
       }
       else {
-        stat = thread_destroy_handle( thread );
-        threadParamBlock = new threadParamBlockType;
-        threadParamBlock->cmd = new char[strlen(buffer)+1];
+        thread_request_free_handle( thread );
+        threadParamBlock =
+         (threadParamBlockPtr) calloc( 1, sizeof(threadParamBlockType) );
+        threadParamBlock->cmd = (char *) calloc( strlen(buffer)+1, 1 );
         strcpy( threadParamBlock->cmd, buffer );
         threadParamBlock->multipleInstancesAllowed =
          multipleInstancesAllowed;
@@ -1908,8 +1909,9 @@ char buffer[255+1];
     }
     else {
 
-      threadParamBlock = new threadParamBlockType;
-      threadParamBlock->cmd = new char[strlen(buffer)+1];
+      threadParamBlock =
+       (threadParamBlockPtr) calloc( 1, sizeof(threadParamBlockType) );
+      threadParamBlock->cmd = (char *) calloc( strlen(buffer)+1, 1 );
       strcpy( threadParamBlock->cmd, buffer );
       threadParamBlock->multipleInstancesAllowed =
        multipleInstancesAllowed;

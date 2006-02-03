@@ -2237,6 +2237,7 @@ parse_error:
 
     proc.timeCount++;
     if ( proc.timeCount >= 100 ) { // 10 sec
+
       stat = sys_get_time( &proc.tim1 );
       stat = sys_get_time_diff_in_hours( &proc.tim0, &proc.tim1, &hours );
       proc.timeCount = 0;
@@ -2247,6 +2248,10 @@ parse_error:
       else
         proc.cycleTimeFactor = 1.0;
       proc.halfSecCount = (int) ceil( (double) 5.0 * proc.cycleTimeFactor );
+
+      // process thread delete-request queue
+      thread_cleanup_from_main_thread_only();
+
     }
 
   }
@@ -2266,6 +2271,7 @@ parse_error:
   delete pvObj;
   pvObj = NULL;
 
+#if 0
   stat = thread_destroy_handle( serverH );
   serverH = NULL;
 
@@ -2279,6 +2285,7 @@ parse_error:
     stat = sys_destroyq( &g_mainActiveQueue );
 
   }
+#endif
 
 }
 

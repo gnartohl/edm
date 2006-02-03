@@ -278,11 +278,17 @@ int executeCmd (
 ) {
 
 pid_t pid;
-int status, i;
+int status, i, l;
 struct sigaction ignore, saveintr, savequit;
 sigset_t chldmask, savemask;
+char buf[2048+1];
 
   if ( !cmdString ) return 1;
+
+  l = strlen( cmdString);
+  if ( l > 2048 ) return 1;
+
+  strcpy( buf, cmdString );
 
   ignore.sa_handler = SIG_IGN;
   sigemptyset( &ignore.sa_mask );
@@ -318,7 +324,7 @@ sigset_t chldmask, savemask;
     // create new process group session
     setsid();
 
-    execl( "/bin/sh", "sh", "-c", cmdString, (char *) NULL );
+    execl( "/bin/sh", "sh", "-c", buf, (char *) NULL );
     _exit(127);
 
   }
