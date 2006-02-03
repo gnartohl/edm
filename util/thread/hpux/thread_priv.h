@@ -20,6 +20,15 @@
 #include "sys_types.h"
 #include "thread.h"
 
+#define THREAD_PTR_TYPE_GENERIC 1
+#define THREAD_PTR_TYPE_HANDLE 2
+#define THREAD_PTR_TYPE_LOCK 3
+
+typedef struct cleanupListTag {
+  struct cleanupListTag *flink;
+  int ptrType;
+  void *ptr;
+} cleanupListType, *cleanupListPtr;
 
 /* typedef void *pthread_mutexattr_t; */
 typedef void *ptread_condattr_t;

@@ -160,6 +160,20 @@ int thread_detached_exit(
   void *retval
 );
 
+int thread_request_free_handle(
+  THREAD_HANDLE handle
+);
+
+int thread_request_free_lock(
+  THREAD_LOCK_HANDLE handle
+);
+
+int thread_request_free_ptr(
+  void* _ptr
+);
+
+int thread_cleanup_from_main_thread_only( void );
+
 #ifdef __cplusplus
 }
 #endif

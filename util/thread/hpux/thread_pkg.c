@@ -7,6 +7,8 @@ static pthread_mutexattr_t g_master_mu_attr;
 static pthread_mutex_t g_master_mutex;
 static ptread_condattr_t g_master_cv_attr;
 static pthread_cond_t g_master_cv;
+
+static cleanupListPtr g_cleanupHead, g_cleanupTail;
 
 static int do_init ( void ) {
 
@@ -17,6 +19,10 @@ int stat;
   
   stat = pthread_cond_init( &g_master_cv, NULL );
   if ( stat ) return stat;
+
+  g_cleanupHead = (cleanupListPtr) calloc( 1, sizeof(cleanupListType) );
+  g_cleanupTail = g_cleanupHead;
+  g_cleanupTail->flink = NULL;
 
   return 0;
 
@@ -265,27 +271,11 @@ int ret_stat, stat;
 
   ret_stat = THR_SUCCESS;
 
-  stat = pthread_mutex_destroy( &priv_handle->mutex );
-  if ( stat ) {
-    ret_stat = UNIX_ERROR;
-    //goto err_return;
-  }
-
-  stat = pthread_cond_destroy( &priv_handle->cv );
-  if ( stat ) {
-    ret_stat = UNIX_ERROR;
-    //goto err_return;
-  }
-
   if ( priv_handle->process_active ) {
     stat = pthread_detach( priv_handle->os_thread_id );
-    //if ( stat ) {
-    //  ret_stat = UNIX_ERROR;
-    //  goto err_return;
-    //}
   }
 
-  free( priv_handle );
+  thread_request_free_handle( handle );
   priv_handle = NULL;
 
   return ret_stat;
@@ -309,13 +299,7 @@ int stat, ret_stat;
 
   ret_stat = THR_SUCCESS;
 
-  stat = pthread_mutex_destroy( &priv_thr_lock->mutex );
-  if ( stat ) {
-    ret_stat = UNIX_ERROR;
-    //goto err_return;
-  }
-
-  free( priv_thr_lock );
+  thread_request_free_lock( handle );
   priv_thr_lock = NULL;
 
   return ret_stat;
@@ -870,9 +854,9 @@ int stat;
   stat = pthread_mutex_unlock( &priv_handle->mutex );
   if ( stat ) return UNIX_ERROR;
 
-  pthread_exit( retval ); // this never returns
+  pthread_exit( retval ); /* this never returns */
 
-  return THR_SUCCESS; // so compiler won't complain
+  return THR_SUCCESS; /* so compiler won't complain */
 
 }
 
@@ -889,15 +873,143 @@ int stat;
   priv_handle = (THREAD_ID_PTR) handle;
   if ( !priv_handle ) return THR_BADPARAM;
 
-  stat = pthread_mutex_destroy( &priv_handle->mutex );
-
-  stat = pthread_cond_destroy( &priv_handle->cv );
-
-  free( priv_handle );
+  thread_request_free_handle( handle );
   priv_handle = NULL;
 
-  pthread_exit( retval ); // this never returns
+  pthread_exit( retval ); /* this never returns */
 
-  return THR_SUCCESS; // so compiler won't complain
+  return THR_SUCCESS; /* so compiler won't complain */
+
+}
+
+int thread_request_free(
+  int ptrType,
+  void *_ptr
+) {
+
+cleanupListPtr cur;
+int stat;
+
+  if ( g_init ) return THR_BADSTATE;
+
+  stat = pthread_mutex_lock( &g_master_mutex );
+  if ( stat ) return UNIX_ERROR;
+
+  cur = (cleanupListPtr) malloc( sizeof(cleanupListType) );
+  if ( cur ) {
+    cur->ptrType = ptrType;
+    cur->ptr = _ptr;
+    g_cleanupTail->flink = cur;
+    g_cleanupTail = cur;
+    g_cleanupTail->flink = NULL;
+  }
+  else {
+    stat = pthread_mutex_unlock( &g_master_mutex );
+    return THR_NOMEM;
+  }
+
+  stat = pthread_mutex_unlock( &g_master_mutex );
+  if ( stat ) return UNIX_ERROR;
+
+  return THR_SUCCESS;
+
+}
+
+int thread_request_free_handle(
+  THREAD_HANDLE handle
+) {
+
+int stat;
+
+  stat = thread_request_free( THREAD_PTR_TYPE_HANDLE, (void *) handle );
+
+  return stat;
+
+}
+
+int thread_request_free_lock(
+  THREAD_LOCK_HANDLE handle
+) {
+
+int stat;
+
+  stat = thread_request_free( THREAD_PTR_TYPE_LOCK, (void *) handle );
+
+  return stat;
+
+}
+
+int thread_request_free_ptr(
+  void* ptr
+) {
+
+int stat;
+
+  stat = thread_request_free( THREAD_PTR_TYPE_GENERIC, ptr );
+
+  return stat;
+
+}
+
+int thread_cleanup_from_main_thread_only( void ) {
+
+/* This function must be called from the main thread only */
+
+cleanupListPtr cur, next;
+int stat, n=0;
+THREAD_ID_PTR priv_handle;
+THREAD_LOCK_PTR priv_thr_lock;
+
+  if ( g_init ) return THR_BADSTATE;
+
+  stat = pthread_mutex_lock( &g_master_mutex );
+  if ( stat ) return UNIX_ERROR;
+
+  cur = g_cleanupHead->flink;
+  while ( cur ) {
+
+    next = cur->flink;
+
+    g_cleanupHead->flink = next;
+
+    if ( cur->ptr ) {
+
+      switch ( cur->ptrType ) {
+
+      case THREAD_PTR_TYPE_HANDLE:
+        priv_handle = (THREAD_ID_PTR) cur->ptr;
+        pthread_mutex_destroy( &priv_handle->mutex );
+        pthread_cond_destroy( &priv_handle->cv );
+        /* free( priv_handle ); */
+        break;
+
+      case THREAD_PTR_TYPE_LOCK:
+        priv_thr_lock = (THREAD_LOCK_PTR) cur->ptr;
+        pthread_mutex_destroy( &priv_thr_lock->mutex );
+        /* free( priv_thr_lock ); */
+        break;
+
+      case THREAD_PTR_TYPE_GENERIC:
+      default:
+        free( cur->ptr );
+        break;
+
+      }
+
+    }
+
+    free( cur );
+    n++;
+    cur = next;
+
+  }
+
+  g_cleanupTail = g_cleanupHead;
+  g_cleanupTail->flink = NULL;
+
+  stat = pthread_mutex_unlock( &g_master_mutex );
+  if ( stat ) return UNIX_ERROR;
+
+  return THR_SUCCESS;
 
 }
