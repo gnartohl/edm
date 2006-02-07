@@ -27,21 +27,6 @@ int stat;
   return 0;
 
 }
-
-/* JS
-void timeradd(struct timeval *a, struct timeval *b, struct timeval *result)
-{
-    do {
-        (result)->tv_sec = (a)->tv_sec + (b)->tv_sec;
-        (result)->tv_usec = (a)->tv_usec + (b)->tv_usec;
-        if ((result)->tv_usec >= 1000000) {
-            ++(result)->tv_sec;
-            (result)->tv_usec -= 1000000;
-        }
-    } while (0);
-}
-*/
-
 
 int thread_init( void ) {
 
@@ -327,7 +312,7 @@ int thread_detach (
 ) {
 
 THREAD_ID_PTR priv_handle;
-int ret_stat, stat;
+int ret_stat, stat, doJoin;
 
   if ( g_init ) return THR_BADSTATE;
 
@@ -398,6 +383,7 @@ int thread_set_stack (
 ) {
 
 THREAD_ID_PTR priv_handle;
+int stat;
 
   if ( g_init ) return THR_BADSTATE;
 
@@ -406,7 +392,13 @@ THREAD_ID_PTR priv_handle;
     return THR_BADPARAM;
   }
 
-  return THR_SUCCESS;
+  stat = pthread_attr_setstacksize( &priv_handle->thr_attr,
+   (size_t) size );
+
+  if ( !stat )
+    return THR_SUCCESS;
+  else
+    return THR_BADPARAM;
 
 }
 
