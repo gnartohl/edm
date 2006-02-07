@@ -1,13 +1,20 @@
 #ifndef __thread_priv_h
 #define __thread_priv_h 1
 
+/* The following is needed due to the change
+   in RH 7.1 to /usr/include/sys/time.h
+*/
+#define __USE_GNU
+
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <string.h>
 #include <fcntl.h>
 #include <pthread.h>
 #include <sys/time.h>
 #include <time.h>
+//#include <linux/unistd.h>
 #include <unistd.h>
 #include <errno.h>
 #include "sys_types.h"
@@ -55,6 +62,7 @@ typedef struct thread_id_tag {
   int wantJoin;
   void *application_data;
   int process_active;
+  int parent_detached;
 } THREAD_ID_TYPE;
 typedef THREAD_ID_TYPE *THREAD_ID_PTR;
 

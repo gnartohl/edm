@@ -62,6 +62,7 @@ typedef struct thread_id_tag {
   int wantJoin;
   void *application_data;
   int process_active;
+  int parent_detached;
 } THREAD_ID_TYPE;
 typedef THREAD_ID_TYPE *THREAD_ID_PTR;
 

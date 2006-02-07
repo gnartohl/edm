@@ -1758,7 +1758,6 @@ int stat;
     if ( thread ) {
       if ( !multipleInstancesAllowed ) {
         stat = thread_detach( thread );
-        thread_request_free_handle( thread );
         thread = NULL;
       }
     }

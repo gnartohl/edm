@@ -221,6 +221,7 @@ int ret_stat, stat;
   }
 
   priv_handle->process_active = 0;
+  priv_handle->parent_detached = 0;
 
   if ( g_init ) {
     g_init = 0;
@@ -261,7 +262,7 @@ int thread_destroy_handle (
 ) {
 
 THREAD_ID_PTR priv_handle;
-int ret_stat, stat;
+int ret_stat, stat, active;
 
   priv_handle = (THREAD_ID_PTR) handle;
   if ( !priv_handle ) {
@@ -271,12 +272,24 @@ int ret_stat, stat;
 
   ret_stat = THR_SUCCESS;
 
+  stat = pthread_mutex_lock( &priv_handle->mutex );
+  if ( stat ) return UNIX_ERROR;
+
   if ( priv_handle->process_active ) {
     stat = pthread_detach( priv_handle->os_thread_id );
+    priv_handle->parent_detached = 1;
+    active = 1;
+  }
+  else {
+    active = 0;
   }
 
-  thread_request_free_handle( handle );
-  priv_handle = NULL;
+  stat = pthread_mutex_unlock( &priv_handle->mutex );
+  if ( stat ) return UNIX_ERROR;
+
+  if ( !active ) {
+    thread_request_free_handle( handle ); /* this locks */
+  }
 
   return ret_stat;
 
@@ -324,13 +337,38 @@ int ret_stat, stat;
     goto err_return;
   }
 
-  stat = pthread_detach( priv_handle->os_thread_id );
-  if ( stat ) {
-    ret_stat = UNIX_ERROR;
-    goto err_return;
-  }
+  stat = pthread_mutex_lock( &priv_handle->mutex );
+  if ( stat ) return UNIX_ERROR;
 
-  priv_handle->process_active = 0;
+  doJoin = priv_handle->wantJoin;
+
+  stat = pthread_mutex_unlock( &priv_handle->mutex );
+  if ( stat ) return UNIX_ERROR;
+
+  if ( doJoin ) { /* thread has already called thread_exit */
+
+    thread_request_free_handle( handle ); /* this locks */
+
+  }
+  else {
+
+    stat = pthread_mutex_lock( &priv_handle->mutex );
+    if ( stat ) return UNIX_ERROR;
+
+    stat = pthread_detach( priv_handle->os_thread_id );
+    if ( stat ) {
+      pthread_mutex_unlock( &priv_handle->mutex );
+      ret_stat = UNIX_ERROR;
+      goto err_return;
+    }
+
+    priv_handle->process_active = 0;
+    priv_handle->parent_detached = 1;
+
+    stat = pthread_mutex_unlock( &priv_handle->mutex );
+    if ( stat ) return UNIX_ERROR;
+
+  }
 
   return THR_SUCCESS;
 
@@ -432,6 +470,7 @@ int ret_stat, stat;
   }
 
   priv_handle->process_active = 1;
+  priv_handle->parent_detached = 0;
 
   return THR_SUCCESS;
 
@@ -839,7 +878,7 @@ int thread_exit(
 ) {
 
 THREAD_ID_PTR priv_handle;
-int stat;
+int stat, detached;
 
   if ( g_init ) return THR_BADSTATE;
 
@@ -850,9 +889,14 @@ int stat;
   if ( stat ) return UNIX_ERROR;
 
   priv_handle->wantJoin = 1;
+  detached = priv_handle->parent_detached;
 
   stat = pthread_mutex_unlock( &priv_handle->mutex );
   if ( stat ) return UNIX_ERROR;
+
+  if ( detached ) {
+    thread_request_free_handle( handle ); /* this locks */
+  }
 
   pthread_exit( retval ); /* this never returns */
 
@@ -874,7 +918,6 @@ int stat;
   if ( !priv_handle ) return THR_BADPARAM;
 
   thread_request_free_handle( handle );
-  priv_handle = NULL;
 
   pthread_exit( retval ); /* this never returns */
 
@@ -980,13 +1023,13 @@ THREAD_LOCK_PTR priv_thr_lock;
         priv_handle = (THREAD_ID_PTR) cur->ptr;
         pthread_mutex_destroy( &priv_handle->mutex );
         pthread_cond_destroy( &priv_handle->cv );
-        /* free( priv_handle ); */
+        free( priv_handle );
         break;
 
       case THREAD_PTR_TYPE_LOCK:
         priv_thr_lock = (THREAD_LOCK_PTR) cur->ptr;
         pthread_mutex_destroy( &priv_thr_lock->mutex );
-        /* free( priv_thr_lock ); */
+        free( priv_thr_lock );
         break;
 
       case THREAD_PTR_TYPE_GENERIC:

@@ -14,7 +14,8 @@
 #include <pthread.h>
 #include <sys/time.h>
 #include <time.h>
-#include <linux/unistd.h>
+//#include <linux/unistd.h>
+#include <unistd.h>
 #include <errno.h>
 #include "sys_types.h"
 #include "thread.h"
@@ -61,7 +62,28 @@ typedef struct thread_id_tag {
   int wantJoin;
   void *application_data;
   int process_active;
+  int parent_detached;
 } THREAD_ID_TYPE;
 typedef THREAD_ID_TYPE *THREAD_ID_PTR;
+
+#define TIMEVAL_TO_TIMESPEC( val, spec )\
+  spec->tv_sec = val->tv_sec;\
+  spec->tv_nsec = val->tv_usec * 1000;
+
+#define TIMESPEC_TO_TIMEVAL( spec, val )\
+  val->tv_sec = spec->tv_sec;\
+  val->tv_usec = spec->tv_nsec / 1000;
+
+/* add timeval's */
+#define timeradd( time1, time2, sum )\
+{ \
+double s1 = (double) time1->tv_sec + \
+ ( (double) time1->tv_usec ) / 1.0e6; \
+double s2 = (double) time2->tv_sec + \
+ ( (double) time2->tv_usec ) / 1.0e6; \
+double s3 = s1 + s2; \
+sum->tv_sec = (int) s3; \
+sum->tv_usec = (int) ( ( s3 - (double) sum->tv_sec ) * 1.0e6 ); \
+}
 
 #endif
