@@ -30,7 +30,7 @@
 #define RDC_PARENT_OFS_POS 2
 
 #define RDC_MAJOR_VERSION 4
-#define RDC_MINOR_VERSION 0
+#define RDC_MINOR_VERSION 1
 #define RDC_RELEASE 0
 
 typedef struct objAndIndexTag {
@@ -213,6 +213,7 @@ typedef struct bufTag {
   int bufOfsY;
   int bufButton3Popup;
   int bufIcon;
+  int bufSwapButtons;
 } bufType, *bufPtr;
 
 colorButtonClass fgCb, bgCb, topShadowCb, botShadowCb;
@@ -283,6 +284,8 @@ int ofsX, ofsY;
 int button3Popup;
 
 int icon;
+
+int swapButtons;
 
 public:
 

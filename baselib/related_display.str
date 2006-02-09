@@ -47,5 +47,6 @@
 #define relatedDisplayClass_str45 (char *) "Macro definition file is empty: [%s]"
 #define relatedDisplayClass_str46 (char *) "Macro definition file read failure: [%s]"
 #define relatedDisplayClass_str47 (char *) "Icon"
+#define relatedDisplayClass_str48 (char *) "Swap L/R Buttons"
 
 #endif

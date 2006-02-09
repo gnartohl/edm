@@ -303,6 +303,8 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
 
   rdo->icon = rdo->buf->bufIcon;
 
+  rdo->swapButtons = rdo->buf->bufSwapButtons;
+
   rdo->x = rdo->buf->bufX;
   rdo->sboxX = rdo->buf->bufX;
 
@@ -408,6 +410,7 @@ int i;
   useFocus = 0;
   button3Popup = 0;
   icon = 0;
+  swapButtons = 0;
 
   for ( i=0; i<maxDsps; i++ ) {
     closeAction[i] = 0;
@@ -508,6 +511,7 @@ activeGraphicClass *rdo = (activeGraphicClass *) this;
   useFocus = source->useFocus;
   button3Popup = source->button3Popup;
   icon = source->icon;
+  swapButtons = source->swapButtons;
 
   for ( i=0; i<maxDsps; i++ ) {
     closeAction[i] = source->closeAction[i];
@@ -651,6 +655,7 @@ static int setPosEnum[3] = {
   tag.loadW( "colorPv", &colorPvExpString, emptyStr );
   tag.loadBoolW( "icon", &icon, &zero );
   tag.loadW( "endObjectProperties" );
+  tag.loadBoolW( "swapButtons", &swapButtons, &zero );
   tag.loadW( "" );
 
   stat = tag.writeTags( f );
@@ -865,6 +870,7 @@ static int setPosEnum[3] = {
   tag.loadR( "closeDisplay", maxDsps, closeAction, &n2, &zero );
   tag.loadR( "colorPv", &colorPvExpString, emptyStr );
   tag.loadR( "icon", &icon, &zero );
+  tag.loadR( "swapButtons", &swapButtons, &zero );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.loadR( "endObjectProperties" );
@@ -1241,6 +1247,7 @@ char onePvName[PV_Factory::MAX_PV_NAME+1];
   }
 
   icon = 0;
+  swapButtons = 0;
 
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
@@ -1536,6 +1543,7 @@ int i;
   propagateMacros[0] = 1;
   closeAction[0] = 0;
   icon = 0;
+  swapButtons = 0;
   displayFileName[0].setRaw( fname );
   
   this->initSelectBox(); // call after getting x,y,w,h
@@ -1673,6 +1681,8 @@ char title[32], *ptr;
 
   buf->bufIcon = icon;
 
+  buf->bufSwapButtons = swapButtons;
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -1747,6 +1757,7 @@ char title[32], *ptr;
   ef.addToggle( relatedDisplayClass_str29, &buf->bufNoEdit );
   ef.addToggle( relatedDisplayClass_str34, &buf->bufButton3Popup );
   ef.addToggle( relatedDisplayClass_str47, &buf->bufIcon );
+  ef.addToggle( relatedDisplayClass_str48, &buf->bufSwapButtons );
 
   ef.addTextField( "Color PV", 35, buf->bufColorPvName,
    PV_Factory::MAX_PV_NAME );
@@ -2906,6 +2917,15 @@ void relatedDisplayClass::btnUp (
 
   if ( !enabled ) return;
 
+  if ( swapButtons ) {
+    if ( buttonNumber == 1 ) {
+      buttonNumber = 3;
+    }
+    else if ( buttonNumber == 3 ) {
+      buttonNumber = 1;
+    }
+  }
+
   if ( numDsps == 1 ) {
     if ( button3Popup ) {
       needClose = 1;
@@ -2940,6 +2960,15 @@ int focus;
   *action = 0; // close screen via actWin->closeDeferred
 
   if ( !enabled ) return;
+
+  if ( swapButtons ) {
+    if ( buttonNumber == 1 ) {
+      buttonNumber = 3;
+    }
+    else if ( buttonNumber == 3 ) {
+      buttonNumber = 1;
+    }
+  }
 
   focus = useFocus;
   if ( numDsps > 1 ) focus = 0;
