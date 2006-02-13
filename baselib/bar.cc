@@ -814,6 +814,13 @@ char fmt[31+1], str[31+1];
     readMax = efReadMax.value();
   }
 
+  if ( efBarOriginX.isNull() ) {
+    barOriginX = readMin;
+  }
+  else {
+    barOriginX = efBarOriginX.value();
+  }
+
   if ( strcmp( scaleFormat, "GFloat" ) == 0 ) {
     sprintf( fmt, "%%.%-dg", precision );
   }
@@ -2742,7 +2749,6 @@ int locW;
           barW = barAreaW - originW;
 
         factorGe = ( barAreaW - originW ) / ( readMax - barOriginX );
-        barMaxW = barAreaW - originW;
 
       }
 
@@ -2803,8 +2809,6 @@ int locW;
 
       }
 
-      barMaxW = barAreaW - originW;
-
     }
     else {
 
@@ -2838,6 +2842,8 @@ int locW;
     break;
 
   }
+
+  barMaxW = barAreaW - originW;
 
   barX += barAreaX;
 
@@ -2906,7 +2912,6 @@ int locH;
           barH = barAreaH - originH;
 
         factorGe = ( barAreaH - originH ) / ( readMax - barOriginX );
-        barMaxH = barAreaH - originH;
 
       }
 
@@ -2967,8 +2972,6 @@ int locH;
 
       }
 
-      barMaxH = barAreaH - originH;
-
     }
     else {
 
@@ -3002,6 +3005,8 @@ int locH;
     break;
 
   }
+
+  barMaxH = barAreaH - originH;
 
 }
 
