@@ -110,6 +110,7 @@ ifdef EPICS_HOST_ARCH
   LIB_SRCS += remFileOpen.cc
   LIB_SRCS += tableObj.cc
   LIB_SRCS += scrolledWAcceleratorSupport.c
+  LIB_SRCS += postfix.c
 
   include $(TOP)/configure/RULES
 

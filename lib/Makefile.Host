@@ -101,6 +101,7 @@ LIBSRCS += tag_pkg.cc
 LIBSRCS += remFileOpen.cc
 LIBSRCS += tableObj.cc
 LIBSRCS += scrolledWAcceleratorSupport.c
+LIBSRCS += postfix.c
 
 include $(TOP)/config/RULES.Host
 
