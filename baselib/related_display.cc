@@ -654,8 +654,8 @@ static int setPosEnum[3] = {
   tag.loadW( "closeDisplay", closeAction, numDsps, &zero );
   tag.loadW( "colorPv", &colorPvExpString, emptyStr );
   tag.loadBoolW( "icon", &icon, &zero );
-  tag.loadW( "endObjectProperties" );
   tag.loadBoolW( "swapButtons", &swapButtons, &zero );
+  tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
   stat = tag.writeTags( f );
@@ -872,8 +872,6 @@ static int setPosEnum[3] = {
   tag.loadR( "icon", &icon, &zero );
   tag.loadR( "swapButtons", &swapButtons, &zero );
   tag.loadR( "endObjectProperties" );
-
-  stat = tag.loadR( "endObjectProperties" );
 
   stat = tag.readTags( f, "endObjectProperties" );
 
