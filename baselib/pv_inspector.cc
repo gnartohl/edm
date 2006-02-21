@@ -930,8 +930,6 @@ static int setPosEnum[3] = {
   tag.loadR( "appendDimension", maxDsps, useDim, &n1, &zero );
   tag.loadR( "endObjectProperties" );
 
-  stat = tag.loadR( "endObjectProperties" );
-
   stat = tag.readTags( f, "endObjectProperties" );
 
   if ( !( stat & 1 ) ) {
