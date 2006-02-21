@@ -179,12 +179,12 @@ unsigned char c;
   dSrcY = 0;
   for ( destY=destOfsY; destY<effH; destY++ ) {
 
-    srcY = (int) rint( dSrcY );
+    srcY = (int) floor( dSrcY );
 
     dSrcX = 0;
     for ( destX=destOfsX; destX<effW; destX++ ) {
 
-      srcX = (int) rint( dSrcX );
+      srcX = (int) floor( dSrcX );
 
       i = ( srcX + srcY*srcW );
       if ( i > srcMaxIndex ) i = srcMaxIndex;
