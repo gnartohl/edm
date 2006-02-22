@@ -25,15 +25,11 @@ ifdef EPICS_HOST_ARCH
 
    PROD_LIBS += ca Com
 
-   USR_INCLUDES = -I../ -I../../util -I../../lib -I../../pvlib
-   USR_INCLUDES += -I$(TOP)/include/sys/linux
-   USR_INCLUDES += -I$(TOP)/include/net/linux
-   USR_INCLUDES += -I$(TOP)/include/msg
-   USR_INCLUDES += -I$(TOP)/include/thread/linux
-   USR_INCLUDES += -I$(TOP)/include/iprpc/osf
-   USR_INCLUDES += -I$(TOP)/include/avl
-   USR_INCLUDES += -I$(TOP)/include/crc
+    USR_INCLUDES = -I../
+    USR_INCLUDES += -I$(TOP)/include/edm -I../../util -I../../lib -I../../pvlib
+
    USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
+
 
    Xm_DIR =   $(MOTIF_LIB)
    Xt_DIR =   $(X11_LIB)
