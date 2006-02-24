@@ -271,6 +271,7 @@ protected:
     PVCallbackInfoHash conn_state_callbacks;
     void do_value_callbacks();
     void do_conn_state_callbacks();
+    virtual void recalc();
 
 private:
     char *name;            // PV name

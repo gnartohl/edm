@@ -362,8 +362,10 @@ void ProcessVariable::add_value_callback(PVCallback func, void *userarg)
 
     // Perform initial callback in case we already have a value
     // (otherwise user would have to wait until the next change)
-    if (is_valid())
+    if (is_valid()) {
+        recalc();
         (*func)(this, userarg);
+    }
 }
 
 void ProcessVariable::remove_value_callback(PVCallback func, void *userarg)
