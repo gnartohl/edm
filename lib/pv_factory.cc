@@ -418,6 +418,9 @@ void ProcessVariable::do_value_callbacks()
     }
 }
 
+void ProcessVariable::recalc() {
+}
+
 bool ProcessVariable::have_write_access() const
 {
     return true;
