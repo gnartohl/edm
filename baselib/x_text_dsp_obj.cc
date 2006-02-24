@@ -1254,6 +1254,34 @@ unsigned short svalue;
 
       ivalue = pv->get_int();
       sprintf( axtdo->curValue, axtdo->format, ivalue );
+      axtdo->curDoubleValue = pv->get_int();
+
+      if ( !axtdo->noSval ) {
+        if ( axtdo->nullDetectMode == 0 ) {
+          if ( axtdo->curDoubleValue == axtdo->curSvalValue ) {
+            axtdo->fgColor.setNull();
+            axtdo->bufInvalidate();
+	  }
+	  else {
+            axtdo->fgColor.setNotNull();
+            axtdo->bufInvalidate();
+	  }
+	}
+	else if ( axtdo->nullDetectMode == 1 ) {
+          if ( axtdo->curSvalValue == 0 ) {
+            axtdo->fgColor.setNull();
+            axtdo->bufInvalidate();
+	  }
+	  else {
+            axtdo->fgColor.setNotNull();
+            axtdo->bufInvalidate();
+	  }
+	}
+        else {
+          axtdo->fgColor.setNotNull();
+        }
+      }
+
       break;
 
     case ProcessVariable::specificType::enumerated:
@@ -1267,11 +1295,38 @@ unsigned short svalue;
       else {
         strcpy( axtdo->curValue, "" );
       }
+      axtdo->curDoubleValue = pv->get_int();
+
+      if ( !axtdo->noSval ) {
+        if ( axtdo->nullDetectMode == 0 ) {
+          if ( axtdo->curDoubleValue == axtdo->curSvalValue ) {
+            axtdo->fgColor.setNull();
+            axtdo->bufInvalidate();
+	  }
+	  else {
+            axtdo->fgColor.setNotNull();
+            axtdo->bufInvalidate();
+	  }
+	}
+	else if ( axtdo->nullDetectMode == 1 ) {
+          if ( axtdo->curSvalValue == 0 ) {
+            axtdo->fgColor.setNull();
+            axtdo->bufInvalidate();
+	  }
+	  else {
+            axtdo->fgColor.setNotNull();
+            axtdo->bufInvalidate();
+	  }
+	}
+        else {
+          axtdo->fgColor.setNotNull();
+        }
 
       break;
 
     default:
       strcpy( axtdo->curValue, "" );
+      axtdo->curDoubleValue = 0;
       break;
 
     } // end switch
@@ -1316,6 +1371,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) userarg;
     switch ( axtdo->svalPvType ) {
 
     case ProcessVariable::specificType::integer:
+    case ProcessVariable::specificType::enumerated:
+    case ProcessVariable::specificType::shrt:
 
       axtdo->curSvalValue = pv->get_int();
 
@@ -1394,6 +1451,7 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) userarg;
       break;
 
     default:
+      axtdo->curSvalValue = 0;
       break;
 
     } // end switch
