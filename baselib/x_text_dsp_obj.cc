@@ -1321,6 +1321,7 @@ unsigned short svalue;
         else {
           axtdo->fgColor.setNotNull();
         }
+      }
 
       break;
 
