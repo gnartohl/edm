@@ -1281,7 +1281,8 @@ char msg[79+1];
        XmNindicatorOn, XmINDICATOR_CHECK_BOX,
        XmNtranslations, g_parsedTrans,
        XmNuserData, this,
-       XmNspacing, 0,
+       XmNmarginHeight, 0,
+       XmNmarginWidth, 0,
        XmNselectColor, actWin->ci->pix(selectColor),
        NULL );
 
