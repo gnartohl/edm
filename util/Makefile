@@ -9,14 +9,14 @@ USR_CFLAGS += -D__osf__=1
 
 INSTALL_INCLUDE = $(TOP)/include/edm
 
-SRC_DIRS += $(EDMTOP)/util/sys/linux
+SRC_DIRS += $(EDMTOP)/util/sys/$(OS_CLASS)
 INC += os.h
 INC += os_objs.h
 INC += sys_types.h
 INC += os_priv.h
 
 
-SRC_DIRS += $(EDMTOP)/util/net/linux
+SRC_DIRS += $(EDMTOP)/util/net/$(OS_CLASS)
 INC += ipncl.h
 INC += ipncl_priv.h
 INC += ipnsv.h
@@ -31,7 +31,7 @@ INC += msg.h
 INC += msg_priv.h
 
 
-SRC_DIRS += $(EDMTOP)/util/thread/linux
+SRC_DIRS += $(EDMTOP)/util/thread/$(OS_CLASS)
 INC += thread.h
 INC += thread_priv.h
 
