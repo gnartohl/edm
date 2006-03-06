@@ -562,7 +562,7 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
         {   // It's a number
             arg[i] = strtod(arg_name[i], 0);
             //if (arg[i] == HUGE_VAL || arg[i] == -HUGE_VAL)
-			if (arg[i] == CALC_PV_HUGE_VAL || arg[i] == -CALC_PV_HUGE_VAL)
+            if (arg[i] == CALC_PV_HUGE_VAL || arg[i] == -CALC_PV_HUGE_VAL)
             {
                 fprintf(stderr, "CALC PV %s: invalid number arg '%s'\n",
                         name, arg_name[i]);
