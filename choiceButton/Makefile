@@ -8,6 +8,11 @@ ifdef EPICS_HOST_ARCH
    7e1b4e6f-239d-4650-95e6-a040d41ba633_LIBS_Linux += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
    7e1b4e6f-239d-4650-95e6-a040d41ba633_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl
    
+   USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
+   
+   7e1b4e6f-239d-4650-95e6-a040d41ba633_LIBS_Darwin += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
+   7e1b4e6f-239d-4650-95e6-a040d41ba633_SYS_LIBS_Darwin += Xm Xt Xp Xtst X11 pthread dl
+   
    
    USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
    USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt

@@ -46,7 +46,14 @@ static void *printThread (
   THREAD_HANDLE h )
 {
 #endif
-
+	
+#ifdef darwin
+static void *printThread (
+  THREAD_HANDLE h )
+{
+#endif
+		
+		
 int stat;
 edmPrintThreadParamBlockPtr threadParamBlock =
  (edmPrintThreadParamBlockPtr) thread_get_app_data( h );
@@ -68,7 +75,11 @@ edmPrintThreadParamBlockPtr threadParamBlock =
 #ifdef __solaris__
   return (void *) NULL;
 #endif
-
+  
+#ifdef darwin
+  return (void *) NULL;
+#endif
+  
 }
 
 

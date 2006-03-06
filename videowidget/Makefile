@@ -4,9 +4,13 @@ ifdef EPICS_HOST_ARCH
   #HOST_OPT=NO
   
         USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1 -Wno-deprecated
+		
+        USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1 -Wno-deprecated
   
 # System Libraries to link in:
   TwoDProfileMonitor_SYS_LIBS_Linux = Xpm
+
+  TwoDProfileMonitor_SYS_LIBS_Darwin = Xpm
  
   USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1 -Wno-deprecated
   USR_LIBS_solaris =  Xpm

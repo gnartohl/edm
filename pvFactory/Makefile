@@ -4,6 +4,10 @@ ifdef EPICS_HOST_ARCH
 
    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
    USR_CFLAGS_Linux = $(USR_CXXFLAGS_Linux)
+
+   #USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
+   USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1 -I/usr/X11R6/include/Xm -I/usr/X11R6/include
+   USR_CFLAGS_Darwin = $(USR_CXXFLAGS_Darwin)
    
    
    # Add Debugging
@@ -18,6 +22,29 @@ ifdef EPICS_HOST_ARCH
 
    USR_LDFLAGS += -L$(INSTALL_LIB)
 
+   #USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
+   USR_INCLUDES += -I/usr/X11R6/include/Xm -I/usr/X11R6/include
+
+
+   Xm_DIR =   $(MOTIF_LIB)
+   Xt_DIR =   $(X11_LIB)
+   X11_DIR =  $(X11_LIB)
+   Xmu_DIR =  $(X11_LIB)
+   Xtst_DIR = $(X11_LIB)
+  
+   # ELW added following two lines for
+   # Red Hat 7.0 LINUX
+   Xp_DIR =   $(X11_LIB)
+   Xext_DIR = $(X11_LIB)
+   #
+   XlibGUI_DIR = $(X11_LIB)
+   XmStatic_DIR = $(MOTIF_LIB)
+   XmStatXt_DIR = $(MOTIF_LIB)
+   HCLXt_DIR = $(X11_LIB)
+   Xlib_DIR = $(X11_LIB)
+   HCLXmu_DIR = $(X11_LIB)
+   
+  
    LIBRARY = PV
 
    PROD_LIBS += ca Com

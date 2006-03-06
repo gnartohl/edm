@@ -4,9 +4,13 @@ ifdef EPICS_HOST_ARCH
    
    IMAGELIB=/usr/local
    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
+   USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
    
    cf322683-513e-4570-a44b-7cdd7cae0de5_LIBS_Linux += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
    cf322683-513e-4570-a44b-7cdd7cae0de5_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl ungif
+   
+   cf322683-513e-4570-a44b-7cdd7cae0de5_LIBS_Darwin += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
+   cf322683-513e-4570-a44b-7cdd7cae0de5_SYS_LIBS_Darwin += Xm Xt Xp Xtst X11 pthread dl ungif
    
    
    

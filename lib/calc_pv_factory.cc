@@ -15,6 +15,7 @@
 #include"calc_pv_factory.h"
 
 static const char *whitespace = " \t\n\r";
+#define CALC_PV_HUGE_VAL 1e50
 
 #undef CALC_DEBUG
 //#define CALC_DEBUG 1
@@ -560,7 +561,8 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
             strspn(arg_name[i], "0123456789+-.eE"))
         {   // It's a number
             arg[i] = strtod(arg_name[i], 0);
-            if (arg[i] == HUGE_VAL || arg[i] == -HUGE_VAL)
+            //if (arg[i] == HUGE_VAL || arg[i] == -HUGE_VAL)
+			if (arg[i] == CALC_PV_HUGE_VAL || arg[i] == -CALC_PV_HUGE_VAL)
             {
                 fprintf(stderr, "CALC PV %s: invalid number arg '%s'\n",
                         name, arg_name[i]);

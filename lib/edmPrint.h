@@ -63,6 +63,11 @@ static void *printThread (
   THREAD_HANDLE h );
 #endif
 
+#ifdef darwin
+static void *printThread (
+  THREAD_HANDLE h );
+#endif
+
 static void ok (
   Widget w,
   XtPointer client,
@@ -100,6 +105,11 @@ friend void printThread (
 #endif
 
 #ifdef HP_UX
+friend void *printThread (
+  THREAD_HANDLE h );
+#endif
+
+#ifdef darwin
 friend void *printThread (
   THREAD_HANDLE h );
 #endif

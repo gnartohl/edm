@@ -26,7 +26,13 @@
 #include <fcntl.h>
 #include <math.h>
 #include <sys/time.h>
-#include <wait.h>
+
+#ifdef darwin
+	#include <sys/wait.h>
+#else
+	#include <wait.h>
+#endif
+
 #include <signal.h>
 #include <unistd.h>
 #include <errno.h>

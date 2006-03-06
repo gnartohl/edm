@@ -37,7 +37,13 @@ static void *shellCmdThread (
   THREAD_HANDLE h )
 {
 #endif
-
+	
+#ifdef darwin
+static void *shellCmdThread (
+  THREAD_HANDLE h )
+{
+#endif
+		
 #ifdef __solaris__
 static void *shellCmdThread (
   THREAD_HANDLE h )
@@ -80,7 +86,11 @@ threadParamBlockPtr threadParamBlock =
 #ifdef __linux__
   return (void *) NULL;
 #endif
-
+  
+#ifdef darwin
+  return (void *) NULL;
+#endif
+  
 #ifdef __solaris__
   return (void *) NULL;
 #endif

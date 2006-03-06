@@ -35,6 +35,11 @@ static void *shellCmdThread (
   THREAD_HANDLE h );
 #endif
 
+#ifdef darwin
+static void *shellCmdThread (
+  THREAD_HANDLE h );
+#endif
+
 #ifdef __solaris__
 static void *shellCmdThread (
   THREAD_HANDLE h );
@@ -118,7 +123,12 @@ private:
 friend void *shellCmdThread (
   THREAD_HANDLE h );
 #endif
-
+	
+#ifdef darwin
+	friend void *shellCmdThread (
+  THREAD_HANDLE h );
+#endif
+	
 #ifdef __solaris__
 friend void *shellCmdThread (
   THREAD_HANDLE h );

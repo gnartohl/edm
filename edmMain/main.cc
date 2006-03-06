@@ -935,7 +935,13 @@ void *caPendThread (
   THREAD_HANDLE h )
 {
 #endif
-
+	
+#ifdef darwin
+void *caPendThread (
+  THREAD_HANDLE h )
+{
+#endif
+		
 #ifdef __solaris__
 void *caPendThread (
   THREAD_HANDLE h )
@@ -970,7 +976,13 @@ void *serverThread (
   THREAD_HANDLE h )
 {
 #endif
-
+	
+#ifdef darwin
+void *serverThread (
+  THREAD_HANDLE h )
+{
+#endif
+		
 #ifdef __solaris__
 void *serverThread (
   THREAD_HANDLE h )
@@ -1168,7 +1180,11 @@ err_return:
 #ifdef __linux__
   return NULL;
 #endif
-
+  
+#ifdef darwin
+  return NULL;
+#endif
+  
 #ifdef __solaris__
   return NULL;
 #endif
