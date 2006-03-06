@@ -118,6 +118,50 @@ The modifications have been made for Linux only.
       in the following: $EPICS_EXTENSIONS/src/edm/doc
   b. Make sure you define LD_LIBRARY_PATH to include $EPICS_EXTESIONS/lib/$HOST_ARCH
 
+   
+#### Installing on Mac OS X 10.4.5 PowerPC *********************
+
+1. Additional software packages required:
+   1a. Install Apple's developer tools including the optional X11 SDK
+   2a. Make sure you install X11 (Apple provides X11 as an optional installation for Mac OS X and the developer tools)
+   3a. You need to download and install darwin ports for other items
+	 -- http://darwinports.opendarwin.org/
+   4a. Using darwin ports, install openmotif, libungif and libpng
+         -- sudo port install openmotif
+	 -- sudo port install libungif
+	 -- sudo port install libpng
+      
+2.  Configuration for compiling
+    -- To build edm as an EPICS Extensions unzip/untar the distribution in the following location: $EPICS_EXTENSIONS/src
+
+   -- Make sure your environment variables are setup for EPICS (EPICS base, extensions, EDM, etc).
+
+   -- We are building as an EPICS extension; so modify the files in
+      "$EPICS_EXTENSIONS/configure" appropriately for your site (for example, you must specify EPICS_BASE_RELEASE explicitly)
+   
+   -- Note we are using gcc-4.0.1 (Apple's version of the Mac OS X native compiler) and GNU make version 3.80
+
+   -- Open the Terminal application and change directory to the EDM source and type "make" to build EDM
+
+3. Run Time Configuration/Setup
+   a. Define the following environment variables:
+      EDMPVOBJECTS   "This is the location of a file that describes the path to EPICS
+                      PV shared libraries"
+      EDMOBJECTS     "This is the location of a file that describes the path to the
+                      various EDM shared libraries"
+      EDMHELPFILES   " Location of EDM "HELP system"
+
+      EDMFILES       " Location of colors.list, fonts.list, and default.scheme files" 
+
+      EDMDATAFILES   " Default search path for edm screens (analogous to $EPICS_DISPLAY_PATH)
+
+      As an example here is what we set at the SNS: 
+
+      -- EDMPVOBJECTS=$EPICS_EXTENSIONS/ext_pref/edm
+      -- EDMOBJECTS=$EPICS_EXTENSIONS/ext_pref/edm
+      -- EDMHELPFILES=$EPICS_EXTENSIONS/src/edm/helpFiles
+      -- EDMFILES=$EPICS_EXTENSIONS/ext_pref/edm
+      -- EDMDATAFILES=./:$IOCTOP/<system1>/opi/edl:$IOCTOP/<system2>/opi/edl
 
 
 
