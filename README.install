@@ -140,6 +140,8 @@ The modifications have been made for Linux only.
       "$EPICS_EXTENSIONS/configure" appropriately for your site (for example, you must specify EPICS_BASE_RELEASE explicitly)
    
    -- Note we are using gcc-4.0.1 (Apple's version of the Mac OS X native compiler) and GNU make version 3.80
+   
+   -- EPICS 3.14.8 is recommended.  If you are using EPICS 3.14.7, you must make sure that "-Ddarwin" flag is passed to the compiler.  Typically you do this by modifying the configuration file:  <base>/configure/os/CONFIG.Common.darwin-ppc  to append the darwin flag as such:   OP_SYS_CPPFLAGS += -Ddarwin
 
    -- Open the Terminal application and change directory to the EDM source and type "make" to build EDM
 
