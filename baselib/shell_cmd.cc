@@ -37,13 +37,13 @@ static void *shellCmdThread (
   THREAD_HANDLE h )
 {
 #endif
-	
+
 #ifdef darwin
 static void *shellCmdThread (
   THREAD_HANDLE h )
 {
 #endif
-		
+
 #ifdef __solaris__
 static void *shellCmdThread (
   THREAD_HANDLE h )
@@ -86,7 +86,7 @@ threadParamBlockPtr threadParamBlock =
 #ifdef __linux__
   return (void *) NULL;
 #endif
-  
+
 #ifdef darwin
   return (void *) NULL;
 #endif
@@ -225,13 +225,14 @@ char buffer[255+1];
 
   i = 0; // this is called from an X timer, always use command index 0
 
-  if ( shcmdo->timerActive ) {
+  if ( !shcmdo->timerActive ) {
+    return;
+  }
+
+  if ( shcmdo->timerActive && !shcmdo->oneShot ) {
     shcmdo->timer = appAddTimeOut(
      shcmdo->actWin->appCtx->appContext(),
      shcmdo->timerValue, shcmdc_executeCmd, client );
-  }
-  else {
-    return;
   }
 
   shcmdo->actWin->substituteSpecial( 255,
@@ -393,6 +394,8 @@ int i;
   strncpy( shcmdo->requiredHostName, shcmdo->buf->bufRequiredHostName, 15 );
   shcmdo->requiredHostName[15] = 0;
 
+  shcmdo->oneShot = shcmdo->buf->bufOneShot;
+
   shcmdo->updateDimensions();
 
 }
@@ -481,6 +484,7 @@ shellCmdClass::shellCmdClass ( void ) {
   strcpy( pw, "" );
   usePassword = 0;
   lock = 0;
+  oneShot = 0;
   numCmds = 0;
   cmdIndex = 0;
   buf = NULL;
@@ -549,6 +553,8 @@ int i;
   strcpy( pw, source->pw );
   usePassword = source->usePassword;
   lock = source->lock;
+
+  oneShot = source->oneShot;
 
   numCmds = source->numCmds;
   cmdIndex = 0;
@@ -635,6 +641,7 @@ char *emptyStr = "";
   tag.loadW( "initialDelay", &threadSecondsToDelay, &dzero );
   tag.loadW( "password", pw, emptyStr );
   tag.loadBoolW( "lock", &lock, &zero );
+  tag.loadBoolW( "oneShot", &oneShot, &zero );
   tag.loadBoolW( "multipleInstances", &multipleInstancesAllowed,
    &zero );
   tag.loadW( "requiredHostName", requiredHostName, emptyStr );
@@ -771,6 +778,7 @@ char *emptyStr = "";
   tag.loadR( "initialDelay", &threadSecondsToDelay, &dzero );
   tag.loadR( "password", 31, pw, emptyStr );
   tag.loadR( "lock", &lock, &zero );
+  tag.loadR( "oneShot", &oneShot, &zero );
   tag.loadR( "multipleInstances", &multipleInstancesAllowed, &zero );
   tag.loadR( "requiredHostName", 15, requiredHostName, emptyStr );
   tag.loadR( "numCmds", &numCmds, &zero );
@@ -1345,6 +1353,8 @@ char title[32], *ptr, *envPtr, saveLock;
   strncpy( buf->bufRequiredHostName, requiredHostName, 15 );
   buf->bufRequiredHostName[15] = 0;
 
+  buf->bufOneShot = oneShot;
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -1409,6 +1419,7 @@ char title[32], *ptr, *envPtr, saveLock;
   ef.addToggle( shellCmdClass_str17, &buf->bufMultipleInstancesAllowed );
   ef.addTextField( shellCmdClass_str20, 35, &buf->bufThreadSecondsToDelay );
   ef.addTextField( shellCmdClass_str18, 35, &buf->bufAutoExecInterval );
+  ef.addToggle( shellCmdClass_str33, &buf->bufOneShot );
 
   ef.addColorButton( shellCmdClass_str8, actWin->ci, &fgCb, &buf->bufFgColor );
   ef.addColorButton( shellCmdClass_str9, actWin->ci, &bgCb, &buf->bufBgColor );
@@ -1697,10 +1708,10 @@ XmString str;
 
       if ( numCmds == 1 ) {
         cmdIndex = 0;
-        if ( autoExecInterval > 0.5 ) {
+        if ( oneShot || ( autoExecInterval > 0.5 ) ) {
           timerValue = (int) ( autoExecInterval * 1000.0 );
           timer = appAddTimeOut( actWin->appCtx->appContext(),
-           timerValue, shcmdc_executeCmd, this );
+           0, shcmdc_executeCmd, this );
           timerActive = 1;
         }
       }

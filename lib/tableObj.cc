@@ -35,14 +35,13 @@ tableClass::tableClass ( void ) {
 
 void tableClass::deleteMain ( void ) {
 
+  if ( main ) {
+    main = NULL;
+  }
+
   if ( scroll ) {
     XtDestroyWidget( scroll );
     scroll = NULL;
-  }
-
-  if ( main ) {
-    XtDestroyWidget( main );
-    main = NULL;
   }
 
 }
@@ -62,7 +61,6 @@ colListPtr curC, nextC;
 
       nextR = curR->flink;
 
-      XtDestroyWidget( curR->w );
       curR->w = NULL;
       delete curR;
 
@@ -70,7 +68,6 @@ colListPtr curC, nextC;
 
     }
 
-    XtDestroyWidget( curC->w );
     curC->w = NULL;
 
     delete curC->head;
@@ -280,11 +277,17 @@ int tableClass::destroy ( void ) {
 
   if ( !main ) return TABLECLASS_E_SUCCESS;
 
-  deleteMain();
-
   deleteRows();
   numCols = 0;
   curCol = NULL;
+
+  if ( head ) {
+    delete head;
+    head = NULL;
+    tail = head;
+  }
+
+  deleteMain();
 
   if ( headerAlignment ) {
     delete[] headerAlignment;

@@ -23,7 +23,7 @@
 #include "entry_form.h"
 
 #define SHCMDC_MAJOR_VERSION 4
-#define SHCMDC_MINOR_VERSION 0
+#define SHCMDC_MINOR_VERSION 1
 #define SHCMDC_RELEASE 0
 
 #ifdef __shell_cmd_cc
@@ -123,12 +123,12 @@ private:
 friend void *shellCmdThread (
   THREAD_HANDLE h );
 #endif
-	
+
 #ifdef darwin
 	friend void *shellCmdThread (
   THREAD_HANDLE h );
 #endif
-	
+
 #ifdef __solaris__
 friend void *shellCmdThread (
   THREAD_HANDLE h );
@@ -218,6 +218,7 @@ typedef struct bufTag {
   double bufAutoExecInterval;
   int bufMultipleInstancesAllowed;
   char bufRequiredHostName[63+1];
+  int bufOneShot;
 } bufType, *bufPtr;
 
 // static char * const nullHost = "";
@@ -255,7 +256,7 @@ int opComplete;
 
 double threadSecondsToDelay, autoExecInterval;
 XtIntervalId timer;
-int timerActive, timerValue, multipleInstancesAllowed;
+int oneShot, timerActive, timerValue, multipleInstancesAllowed;
 THREAD_HANDLE thread;
 
 int pwFormX, pwFormY, pwFormW, pwFormH, pwFormMaxH;

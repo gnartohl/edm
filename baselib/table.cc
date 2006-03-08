@@ -1015,7 +1015,7 @@ Widget wdgt;
     }
     else {
 
-      strcmp( comment, "" );
+      strcpy( comment, "" );
 
       tag.init();
       tag.loadR( "begin" );
