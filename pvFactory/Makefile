@@ -6,7 +6,7 @@ ifdef EPICS_HOST_ARCH
    USR_CFLAGS_Linux = $(USR_CXXFLAGS_Linux)
 
    #USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
-   USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1 -I/usr/X11R6/include/Xm -I/usr/X11R6/include
+   USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
    USR_CFLAGS_Darwin = $(USR_CXXFLAGS_Darwin)
    
    
