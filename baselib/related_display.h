@@ -390,6 +390,9 @@ void btnDown (
   int buttonNumber,
   int *action );
 
+#ifdef TRIUMF
+#endif
+
 int getButtonActionRequest (
   int *up,
   int *down,

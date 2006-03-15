@@ -857,7 +857,7 @@ time_t timeOffset;
 
 int widgetsCreated;
 Widget popUpMenu, pullDownMenu, pbAutoScale, pbOrigScale, pbAdjustParams,
- pbDumpData;
+ pbDumpData, pbClearPlot;
 
 int adjpFormX, adjpFormY, adjpFormW, adjpFormH, adjpFormMaxH;
 

@@ -34,6 +34,9 @@
 #include "thread.h"
 #include "crc.h"
 
+#ifdef TRIUMF
+#endif
+
 static void doBlink (
   void *ptr
 ) {
@@ -2209,6 +2212,9 @@ int i, ii, opStat, n;
 Arg args[5];
 XmString str;
 
+#ifdef TRIUMF
+#endif
+
   switch ( pass ) {
 
   case 1:
@@ -2944,6 +2950,9 @@ void relatedDisplayClass::btnUp (
 
 }
 
+#ifdef TRIUMF
+#endif
+
 void relatedDisplayClass::btnDown (
   XButtonEvent *be,
   int _x,
@@ -2972,13 +2981,20 @@ int focus;
   if ( numDsps > 1 ) focus = 0;
 
   if ( focus ) {
+
     if ( buttonNumber != -1 ) return;
+
   }
   else {
+
+#ifdef TRIUMF
+#endif
+
     if ( ( buttonNumber != 1 ) && ( buttonNumber != 3 ) ) return;
     if ( ( buttonNumber == 3 ) && !button3Popup ) return;
     if ( ( buttonNumber == 1 ) && button3Popup ) return;
     if ( button3Popup && aw ) return;
+
   }
 
   if ( numDsps < 1 ) return;

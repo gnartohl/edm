@@ -709,6 +709,14 @@ int yi;
     }
 
   }
+  else if ( w == xyo->pbClearPlot ) {
+
+    xyo->actWin->appCtx->proc->lock();
+    xyo->needReset = 1;
+    xyo->actWin->addDefExeNode( xyo->aglPtr );
+    xyo->actWin->appCtx->proc->unlock();
+
+  }
   else if ( w == xyo->pbDumpData ) {
 
     if ( !xyo->eBuf ) {
@@ -6735,6 +6743,16 @@ XmString str;
         XmStringFree( str );
 
         XtAddCallback( pbAdjustParams, XmNactivateCallback, menu_cb,
+         (XtPointer) this );
+
+        str = XmStringCreateLocalized( "Clear Plot" );
+        pbClearPlot = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+         popUpMenu,
+         XmNlabelString, str,
+         NULL );
+        XmStringFree( str );
+
+        XtAddCallback( pbClearPlot, XmNactivateCallback, menu_cb,
          (XtPointer) this );
 
         str = XmStringCreateLocalized( "Dump to file" );
