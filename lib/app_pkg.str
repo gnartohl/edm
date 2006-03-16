@@ -88,5 +88,6 @@
 #define appContextClass_str140 (char *) "newFile"
 #define appContextClass_str141 (char *) "Font Mappings"
 #define appContextClass_str142 (char *) "Too many macros"
+#define appContextClass_str143 (char *) "Select Path..."
 
 #endif

@@ -42,6 +42,9 @@
 #include "edmPrint.h"
 #include "clipbd.h"
 
+class pathListClass;
+#include "path_list.h"
+
 #include "thread.h"
 #include "avl.h"
 
@@ -133,6 +136,11 @@ class appContextClass {
 private:
 
 friend void setPath_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void selectPath_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -255,6 +263,8 @@ char colormode[7+1]; // index (default) or rgb
 int privColorMap;
 int exitOnLastClose, atLeastOneOpen;
 XEvent event;
+
+pathListClass pathList;
 
 scrolledTextClass msgBox;
 scrolledListClass pvList;

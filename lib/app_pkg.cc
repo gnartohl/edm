@@ -1200,6 +1200,20 @@ appContextClass *apco = (appContextClass *) cbPtr->apco;
 
 }
 
+void selectPath_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+callbackBlockPtr cbPtr = (callbackBlockPtr) client;
+char *item = (char *) cbPtr->ptr;
+appContextClass *apco = (appContextClass *) cbPtr->apco;
+
+  apco->pathList.popup();
+
+}
+
 void app_fileSelectOk_cb (
   Widget w,
   XtPointer client,
@@ -1542,6 +1556,9 @@ void abort_cb (
 appContextClass *apco = (appContextClass *) client;
 
   apco->confirm.popdown();
+
+  apco->pathList.popdown();
+
   apco->exitFlag = 1;
 
   if ( diagnosticMode() ) logDiagnostic( "Program exit requested\n" );
@@ -1582,6 +1599,8 @@ unsigned int mask;
      apco->ci.getColorMap() );
     return;
   }
+
+  apco->pathList.popdown();
 
   apco->exitFlag = 1;
 
@@ -3379,7 +3398,7 @@ void appContextClass::createMainWindow ( void ) {
 
 XmString menuStr, str;
 callbackBlockPtr curBlock;
-int i;
+int i, numVisible;
 
   mainWin = XtVaCreateManagedWidget( "main", xmMainWindowWidgetClass,
    appTop,
@@ -3562,37 +3581,83 @@ int i;
    (XtPointer) this );
 
 
-  pathPullDown = XmCreatePulldownMenu( menuBar, "path", NULL, 0 );
+  if ( numPaths <= 30 ) {
 
-  menuStr = XmStringCreateLocalized( appContextClass_str121 );
-  pathCascade = XtVaCreateManagedWidget( "pathmenu", xmCascadeButtonWidgetClass,
-   menuBar,
-   XmNlabelString, menuStr,
-   XmNmnemonic, 'v',
-   XmNsubMenuId, pathPullDown,
-   NULL );
-  XmStringFree( menuStr );
+    pathPullDown = XmCreatePulldownMenu( menuBar, "path", NULL, 0 );
 
-  for ( i=0; i<numPaths; i++ ) {
+    menuStr = XmStringCreateLocalized( appContextClass_str121 );
+    pathCascade = XtVaCreateManagedWidget( "pathmenu", xmCascadeButtonWidgetClass,
+     menuBar,
+     XmNlabelString, menuStr,
+     XmNmnemonic, 'v',
+     XmNsubMenuId, pathPullDown,
+     NULL );
+    XmStringFree( menuStr );
+
+    for ( i=0; i<numPaths; i++ ) {
+
+      curBlock = new callbackBlockType;
+      curBlock->ptr = (void *) dataFilePrefix[i];
+      curBlock->apco = this;
+
+      callbackBlockTail->flink = curBlock;
+      callbackBlockTail = curBlock;
+      callbackBlockTail->flink = NULL;
+
+      str = XmStringCreateLocalized( dataFilePrefix[i] );
+      msgB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+       pathPullDown,
+       XmNlabelString, str,
+       NULL );
+      XmStringFree( str );
+      XtAddCallback( msgB, XmNactivateCallback, setPath_cb,
+       (XtPointer) curBlock );
+
+    }
+
+  }
+  else {
+
+    pathPullDown = XmCreatePulldownMenu( menuBar, "path", NULL, 0 );
+
+    numVisible = ( numPaths > 30 ? 30 : numPaths );
+    pathList.create( numPaths, mainWin, numVisible, this );
+
+    XtAddCallback( msgB, XmNactivateCallback, setPath_cb,
+     (XtPointer) curBlock );
+
+    menuStr = XmStringCreateLocalized( appContextClass_str121 );
+    pathCascade = XtVaCreateManagedWidget( "pathmenu", xmCascadeButtonWidgetClass,
+     menuBar,
+     XmNlabelString, menuStr,
+     XmNmnemonic, 'v',
+     XmNsubMenuId, pathPullDown,
+     NULL );
+    XmStringFree( menuStr );
 
     curBlock = new callbackBlockType;
-    curBlock->ptr = (void *) dataFilePrefix[i];
+    curBlock->ptr = NULL;
     curBlock->apco = this;
 
     callbackBlockTail->flink = curBlock;
     callbackBlockTail = curBlock;
     callbackBlockTail->flink = NULL;
 
-    str = XmStringCreateLocalized( dataFilePrefix[i] );
+    str = XmStringCreateLocalized( appContextClass_str143 );
     msgB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      pathPullDown,
      XmNlabelString, str,
      NULL );
     XmStringFree( str );
-    XtAddCallback( msgB, XmNactivateCallback, setPath_cb,
+    XtAddCallback( msgB, XmNactivateCallback, selectPath_cb,
      (XtPointer) curBlock );
 
+    for ( i=0; i<numPaths; i++ ) {
+      pathList.addItem( dataFilePrefix[i] );
+    }
+
   }
+
 
   helpPullDown = XmCreatePulldownMenu( menuBar, "help", NULL, 0 );
 
@@ -5234,6 +5299,7 @@ char msg[127+1];
     if ( nodeCount ) atLeastOneOpen = 1;
     if ( exitOnLastClose && atLeastOneOpen ) {
       if ( nodeCount == 0 ) {
+        pathList.popdown();
         exitFlag = 1;
         if ( diagnosticMode() ) logDiagnostic( "Program exit requested\n" );
       }
@@ -5561,6 +5627,7 @@ void appContextClass::performShutdown (
   if ( !saveContextOnExit ) {
     shutdownFilePtr = f;
     saveContextOnExit = 1;
+    pathList.popdown();
     exitFlag = 1;
     if ( diagnosticMode() ) logDiagnostic( "Program exit requested\n" );
     //abort_cb( (Widget) NULL, (XtPointer) this, (XtPointer) NULL );

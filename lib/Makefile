@@ -72,7 +72,7 @@ ifdef EPICS_HOST_ARCH
   INC += ulBindings.h
   INC += undo.h
   INC += utility.h
-
+  INC += path_list.h
 
   USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
   USR_LIBS_solaris = Xm Xt Xmu X11 Xext pthread dl rt
@@ -157,6 +157,7 @@ ifdef EPICS_HOST_ARCH
   LIB_SRCS += tableObj.cc
   LIB_SRCS += scrolledWAcceleratorSupport.c
   LIB_SRCS += postfix.c
+  LIB_SRCS += path_list.cc
 
   include $(TOP)/configure/RULES
 

@@ -1,0 +1,13 @@
+#ifndef __path_list_str
+#define __path_list_str 1
+
+#define pathListClass_str1 (char *) (char *) "File "
+#define pathListClass_str2 (char *) (char *) "Filter "
+#define pathListClass_str3 (char *) (char *) "Prefix "
+#define pathListClass_str4 (char *) (char *) "Upper"
+#define pathListClass_str5 (char *) (char *) "Lower"
+#define pathListClass_str6 (char *) (char *) "Dismiss"
+#define pathListClass_str7 (char *) (char *) "Path-Names"
+#define pathListClass_str8 (char *) (char *) "Select Path"
+
+#endif
