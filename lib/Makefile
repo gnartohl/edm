@@ -4,7 +4,7 @@ ifdef EPICS_HOST_ARCH
   #HOST_OPT=NO
   # If you want support accessing files via http and curl
   # then set USE_CURL=YES
-  USE_CURL=YES
+  USE_CURL=NO
 
   ifeq ($(USE_CURL), YES)
         USR_CXXFLAGS_Darwin += -DUSECURL -DSINGLE_THREADED=1 -D__epics__=1 -pedantic
