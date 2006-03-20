@@ -2303,6 +2303,9 @@ parse_error:
   }
 #endif
 
+  if ( diagnosticMode() ) {
+    fprintf( stderr, "edm terminated\n" );
+    logDiagnostic( "edm terminated\n" );
+  }
+
 }
-
-
