@@ -598,6 +598,11 @@ int addTextField (
   int length,
   double *dest );
 
+class textEntry* addTextFieldAccessible (
+  char *label,
+  int length,
+  double *dest );
+
 int addTextField (
   char *label,
   int length,

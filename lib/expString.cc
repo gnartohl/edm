@@ -16,9 +16,256 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+#define __expString_cc 1
+
 #include "expString.h"
 
 static char *g_expStrBlank = "";
+
+int expand (
+  int numMacros,
+  char *macro[],
+  char *expansion[],
+  int preserveSymbols,
+  char *inString,
+  int inStringSize,
+  int inStringLen,
+  char **outString,
+  int *outStringSize,
+  int *outStringLen,
+  int numPossibleSymbols,
+  int *numSymbolsFound )
+{
+
+char buf[MAX_EXPAND_SIZE+1];
+char thisMacro[MAX_EXPAND_SIZE+1];
+int state, foundOne, i, ii, nOut, nIn, nMacro, outStrLen;
+
+  *numSymbolsFound = 0;
+
+  if ( numPossibleSymbols == 0 ) return EXPSTR_SUCCESS;
+
+  nOut = nIn = nMacro = 0;
+  outStrLen = 0;
+  state = STATE_COPY_OUT;
+
+  while ( state != STATE_DONE ) {
+
+    // printf( "state = %-d, char = %c\n", state, inString[nIn] );
+
+    switch ( state ) {
+
+    // ====================================================================
+
+    case STATE_COPY_OUT:
+
+      if ( nIn >= inStringLen ) {
+
+        if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
+        buf[nOut] = 0;
+
+        state = STATE_DONE;
+
+      }
+      else if ( inString[nIn] == '$' ) {
+
+        strcpy( thisMacro, "" );
+        nMacro = 0;
+        state = STATE_FIND_LEFT_PAREN;
+
+      }
+      else {
+
+        if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
+        buf[nOut] = inString[nIn];
+        nOut++;
+
+      }
+
+      break;
+
+    // ====================================================================
+
+//    case STATE_FIND_LEFT_PAREN:
+//
+//      if ( nIn >= inStringLen ) {
+//
+//        return EXPSTR_SYNTAX;
+//
+//      }
+//      else if ( inString[nIn] == '(' ) {
+//
+//        state = STATE_FIND_NON_WHITE;
+//
+//      }
+//      else if ( ( inString[nIn] != ' ' ) || ( inString[nIn] != '\t' ) ) {
+//
+//        return EXPSTR_SYNTAX;
+//
+//      }
+//
+//      break;
+
+    // ====================================================================
+
+    case STATE_FIND_LEFT_PAREN:
+
+      if ( nIn >= inStringLen ) {
+
+        if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
+        buf[nOut] = '$';
+        nOut++;
+
+	state = STATE_DONE;
+
+      }
+      else if ( inString[nIn] == '(' ) {
+
+        state = STATE_FIND_NON_WHITE;
+
+      }
+      else {
+
+        if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
+        buf[nOut] = '$';
+        nOut++;
+
+        if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
+        buf[nOut] = inString[nIn];
+        nOut++;
+
+        state = STATE_COPY_OUT;
+
+      }
+
+      break;
+
+    // ====================================================================
+
+    case STATE_FIND_NON_WHITE:
+
+      if ( nIn >= inStringLen ) {
+
+        return EXPSTR_SYNTAX;
+
+      }
+      else if ( inString[nIn] == ')' ) {
+
+        return EXPSTR_SYNTAX;
+
+      }
+      else if ( ( inString[nIn] != ' ' ) || ( inString[nIn] != '\t' ) ) {
+
+        state = STATE_COPY_MACRO;
+
+        if ( nMacro+1 >= MAX_EXPAND_SIZE ) return EXPSTR_MACOVFL;
+        thisMacro[nMacro] = inString[nIn];
+        nMacro++;
+
+      }
+
+      break;
+
+    // ====================================================================
+
+    case STATE_COPY_MACRO:
+
+      if ( nIn >= inStringLen ) {
+
+        return EXPSTR_SYNTAX;
+
+      }
+      else if ( inString[nIn] == ')' ) {
+
+        state = STATE_COPY_OUT;
+
+        if ( nMacro+1 >= MAX_EXPAND_SIZE ) return EXPSTR_MACOVFL;
+        thisMacro[nMacro] = 0;
+
+        foundOne = 0;
+
+        // do substitution
+        // printf( "processing [%s]\n", thisMacro );
+        for ( i=0; i<numMacros; i++ ) {
+          if ( strcmp( thisMacro, macro[i] ) == 0 ) {
+            for ( ii=0; ii<(int) strlen(expansion[i]); ii++ ) {
+              if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
+              buf[nOut] = expansion[i][ii];
+              nOut++;
+            }
+            (*numSymbolsFound)++;
+            foundOne = 1;
+            break; // found one, don't continue testing for more
+          }
+        }
+
+        if ( !foundOne && preserveSymbols ) {
+          if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
+          buf[nOut] = '$';
+          nOut++;
+          if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
+          buf[nOut] = '(';
+          nOut++;
+          for ( i=0; i<(int) strlen(thisMacro); i++ ) {
+            if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
+            buf[nOut] = thisMacro[i];
+            nOut++;
+          }
+          if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
+          buf[nOut] = ')';
+          nOut++;
+        }
+
+      }
+      else if ( ( inString[nIn] != ' ' ) || ( inString[nIn] != '\t' ) ) {
+
+        if ( nMacro+1 >= MAX_EXPAND_SIZE ) return EXPSTR_MACOVFL;
+        thisMacro[nMacro] = inString[nIn];
+        nMacro++;
+
+      }
+
+      break;
+
+    } // end switch
+
+    nIn++;
+
+  }
+
+  //printf( "nOut = %-d\n", nOut );
+  //printf( "buf = [%s]\n", buf );
+
+  if ( nOut ) {
+
+    if ( *outStringSize < nOut+1 ) {
+      if ( *outStringSize ) delete[] *outString;
+      *outStringSize = nOut+1;
+      *outString = new char[nOut+1];
+    }
+
+    *outStringLen = nOut;
+//    strcpy( *outString, buf );
+
+    strncpy( *outString, buf, nOut );
+    *((*outString)+nOut) = 0;
+
+  }
+  else {
+
+    if ( *outStringSize == 0 ) {
+      *outStringSize = 1;
+      *outString = new char[1];
+    }
+
+    if ( outString ) strcpy( *outString, "" );
+    *outStringLen = 0;
+
+  }
+
+  return EXPSTR_SUCCESS;
+
+}
 
 expStringClass::expStringClass ( void )
 {
@@ -391,250 +638,5 @@ char *expansion[] = { "!", "!" };
    numPossibleSymbols2, &numSymbolsFound );
 
   return stat;
-
-}
-
-int expand (
-  int numMacros,
-  char *macro[],
-  char *expansion[],
-  int preserveSymbols,
-  char *inString,
-  int inStringSize,
-  int inStringLen,
-  char **outString,
-  int *outStringSize,
-  int *outStringLen,
-  int numPossibleSymbols,
-  int *numSymbolsFound )
-{
-
-char buf[MAX_EXPAND_SIZE+1];
-char thisMacro[MAX_EXPAND_SIZE+1];
-int state, foundOne, i, ii, nOut, nIn, nMacro, outStrLen;
-
-  *numSymbolsFound = 0;
-
-  if ( numPossibleSymbols == 0 ) return EXPSTR_SUCCESS;
-
-  nOut = nIn = nMacro = 0;
-  outStrLen = 0;
-  state = STATE_COPY_OUT;
-
-  while ( state != STATE_DONE ) {
-
-    // printf( "state = %-d, char = %c\n", state, inString[nIn] );
-
-    switch ( state ) {
-
-    // ====================================================================
-
-    case STATE_COPY_OUT:
-
-      if ( nIn >= inStringLen ) {
-
-        if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
-        buf[nOut] = 0;
-
-        state = STATE_DONE;
-
-      }
-      else if ( inString[nIn] == '$' ) {
-
-        strcpy( thisMacro, "" );
-        nMacro = 0;
-        state = STATE_FIND_LEFT_PAREN;
-
-      }
-      else {
-
-        if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
-        buf[nOut] = inString[nIn];
-        nOut++;
-
-      }
-
-      break;
-
-    // ====================================================================
-
-//    case STATE_FIND_LEFT_PAREN:
-//
-//      if ( nIn >= inStringLen ) {
-//
-//        return EXPSTR_SYNTAX;
-//
-//      }
-//      else if ( inString[nIn] == '(' ) {
-//
-//        state = STATE_FIND_NON_WHITE;
-//
-//      }
-//      else if ( ( inString[nIn] != ' ' ) || ( inString[nIn] != '\t' ) ) {
-//
-//        return EXPSTR_SYNTAX;
-//
-//      }
-//
-//      break;
-
-    // ====================================================================
-
-    case STATE_FIND_LEFT_PAREN:
-
-      if ( nIn >= inStringLen ) {
-
-        if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
-        buf[nOut] = '$';
-        nOut++;
-
-	state = STATE_DONE;
-
-      }
-      else if ( inString[nIn] == '(' ) {
-
-        state = STATE_FIND_NON_WHITE;
-
-      }
-      else {
-
-        if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
-        buf[nOut] = '$';
-        nOut++;
-
-        if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
-        buf[nOut] = inString[nIn];
-        nOut++;
-
-        state = STATE_COPY_OUT;
-
-      }
-
-      break;
-
-    // ====================================================================
-
-    case STATE_FIND_NON_WHITE:
-
-      if ( nIn >= inStringLen ) {
-
-        return EXPSTR_SYNTAX;
-
-      }
-      else if ( inString[nIn] == ')' ) {
-
-        return EXPSTR_SYNTAX;
-
-      }
-      else if ( ( inString[nIn] != ' ' ) || ( inString[nIn] != '\t' ) ) {
-
-        state = STATE_COPY_MACRO;
-
-        if ( nMacro+1 >= MAX_EXPAND_SIZE ) return EXPSTR_MACOVFL;
-        thisMacro[nMacro] = inString[nIn];
-        nMacro++;
-
-      }
-
-      break;
-
-    // ====================================================================
-
-    case STATE_COPY_MACRO:
-
-      if ( nIn >= inStringLen ) {
-
-        return EXPSTR_SYNTAX;
-
-      }
-      else if ( inString[nIn] == ')' ) {
-
-        state = STATE_COPY_OUT;
-
-        if ( nMacro+1 >= MAX_EXPAND_SIZE ) return EXPSTR_MACOVFL;
-        thisMacro[nMacro] = 0;
-
-        foundOne = 0;
-
-        // do substitution
-        // printf( "processing [%s]\n", thisMacro );
-        for ( i=0; i<numMacros; i++ ) {
-          if ( strcmp( thisMacro, macro[i] ) == 0 ) {
-            for ( ii=0; ii<(int) strlen(expansion[i]); ii++ ) {
-              if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
-              buf[nOut] = expansion[i][ii];
-              nOut++;
-            }
-            (*numSymbolsFound)++;
-            foundOne = 1;
-            break; // found one, don't continue testing for more
-          }
-        }
-
-        if ( !foundOne && preserveSymbols ) {
-          if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
-          buf[nOut] = '$';
-          nOut++;
-          if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
-          buf[nOut] = '(';
-          nOut++;
-          for ( i=0; i<(int) strlen(thisMacro); i++ ) {
-            if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
-            buf[nOut] = thisMacro[i];
-            nOut++;
-          }
-          if ( nOut+1 >= MAX_EXPAND_SIZE ) return EXPSTR_OUTOVFL;
-          buf[nOut] = ')';
-          nOut++;
-        }
-
-      }
-      else if ( ( inString[nIn] != ' ' ) || ( inString[nIn] != '\t' ) ) {
-
-        if ( nMacro+1 >= MAX_EXPAND_SIZE ) return EXPSTR_MACOVFL;
-        thisMacro[nMacro] = inString[nIn];
-        nMacro++;
-
-      }
-
-      break;
-
-    } // end switch
-
-    nIn++;
-
-  }
-
-  //printf( "nOut = %-d\n", nOut );
-  //printf( "buf = [%s]\n", buf );
-
-  if ( nOut ) {
-
-    if ( *outStringSize < nOut+1 ) {
-      if ( *outStringSize ) delete[] *outString;
-      *outStringSize = nOut+1;
-      *outString = new char[nOut+1];
-    }
-
-    *outStringLen = nOut;
-//    strcpy( *outString, buf );
-
-    strncpy( *outString, buf, nOut );
-    *((*outString)+nOut) = 0;
-
-  }
-  else {
-
-    if ( *outStringSize == 0 ) {
-      *outStringSize = 1;
-      *outString = new char[1];
-    }
-
-    if ( outString ) strcpy( *outString, "" );
-    *outStringLen = 0;
-
-  }
-
-  return EXPSTR_SUCCESS;
 
 }

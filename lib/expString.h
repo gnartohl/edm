@@ -36,6 +36,24 @@
 #define EXPSTR_MACOVFL 102
 #define EXPSTR_SYNTAX  104
 
+#ifdef __expString_cc
+
+static int expand (
+  int numMacros,
+  char *macro[],
+  char *expansion[],
+  int preserveSymbols,
+  char *inString,
+  int inStringSize,
+  int inStringLen,
+  char **outString,
+  int *outStringSize,
+  int *outStringLen,
+  int numPossibleSymbols,
+  int *numSymbolsFound );
+
+#endif
+
 class expStringClass {
 
 private:

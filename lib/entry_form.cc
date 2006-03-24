@@ -2199,6 +2199,154 @@ char buf[127+1];
 
 }
 
+class textEntry* entryFormClass::addTextFieldAccessible (
+  char *label,
+  int length,
+  double *dest )
+{
+
+textEntry *cur;
+XmString str;
+char buf[127+1];
+
+  leftAttachmentExists = 1;
+
+  sprintf( buf, "%-g", *dest );
+
+//   printf( "entryFormClass::addTextField - new textEntry\n" );
+
+  cur = new textEntry;
+
+  // textField widget
+
+  if ( curTopParent  == topForm ) {
+
+  if ( firstItem ) {
+
+    firstItem = 0;
+
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
+     topForm,
+     XmNcolumns, (short) length,
+     XmNvalue, buf,
+     XmNmaxLength, length,
+     XmNtopAttachment, XmATTACH_FORM,
+     XmNrightAttachment, XmATTACH_FORM,
+     //XmNfontList, entryFontList,
+     NULL );
+
+     curW = cur->activeW;
+     curRW = cur->activeW;
+
+  }
+  else {
+
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
+     topForm,
+     XmNcolumns, (short) length,
+     XmNvalue, buf,
+     XmNmaxLength, length,
+     XmNtopAttachment, XmATTACH_WIDGET,
+     XmNtopWidget, curW,
+     XmNrightAttachment, XmATTACH_OPPOSITE_WIDGET,
+     XmNrightWidget, curRW,
+     //XmNfontList, entryFontList,
+     NULL );
+
+     curW = cur->activeW;
+     curRW = cur->activeW;
+
+  }
+
+  if ( entryTag )
+    str = XmStringCreate( label, entryTag );
+  else
+    str = XmStringCreateLocalized( label );
+
+  cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
+   topForm,
+   XmNlabelString, str,
+   XmNmarginTop, 7,
+   XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+   XmNtopWidget, curW,
+   XmNrightAttachment, XmATTACH_WIDGET,
+   XmNrightWidget, curW,
+   //XmNfontList, entryFontList,
+   NULL );
+
+  XmStringFree( str );
+
+  }
+  else {
+
+  if ( firstSubFormChild ) {
+
+    firstSubFormChild = 0;
+
+    if ( entryTag )
+      str = XmStringCreate( label, entryTag );
+    else
+      str = XmStringCreateLocalized( label );
+
+    cur->labelW = XtVaCreateManagedWidget( "label", xmLabelWidgetClass,
+     curTopParent,
+     XmNlabelString, str,
+     XmNmarginTop, 7,
+     XmNtopAttachment, XmATTACH_FORM,
+     XmNleftAttachment, XmATTACH_FORM,
+     //XmNfontList, entryFontList,
+     NULL );
+
+    XmStringFree( str );
+
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
+     curTopParent,
+     XmNcolumns, (short) length,
+     XmNvalue, buf,
+     XmNmaxLength, length,
+     XmNmarginTop, 7,
+     XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+     XmNtopWidget, cur->labelW,
+     XmNleftAttachment, XmATTACH_WIDGET,
+     XmNleftWidget, cur->labelW,
+     //XmNfontList, entryFontList,
+     NULL );
+
+    prevW = cur->activeW;
+
+  }
+  else {
+
+    cur->activeW =  XtVaCreateManagedWidget( "text", xmTextFieldWidgetClass,
+     curTopParent,
+     XmNcolumns, (short) length,
+     XmNvalue, buf,
+     XmNmaxLength, length,
+     XmNmarginTop, 7,
+     XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+     XmNtopWidget, prevW,
+     XmNleftAttachment, XmATTACH_WIDGET,
+     XmNleftWidget, prevW,
+     //XmNfontList, entryFontList,
+     NULL );
+
+    prevW = cur->activeW;
+
+  }
+
+  }
+
+  XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextFieldToDouble,
+   dest );
+
+  itemTail->flink = cur;
+  itemTail = cur;
+  itemTail->flink = NULL;
+
+  return cur;
+
+}
+
 int entryFormClass::addTextField (
   char *label,
   int length,
