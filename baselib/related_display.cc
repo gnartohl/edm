@@ -3185,6 +3185,8 @@ activeWindowListPtr cur;
        (void *) this );
     }
 
+    smartDrawAllActive();
+
   }
 
   if ( nu ) {
