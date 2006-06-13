@@ -1541,9 +1541,11 @@ activeWindowClass *awo = (activeWindowClass *) client;
 
   if ( awo->mode == AWC_EDIT ) {
     awo->doClose = 1;
+    awo->waiting = 0;
   }
   else {
     awo->doActiveClose = 1;
+    awo->waiting = 0;
   }
   awo->appCtx->postDeferredExecutionQueue( awo );
 
@@ -10025,6 +10027,7 @@ activeWindowClass::activeWindowClass ( void ) {
   doAutoSave = 0;
   doClose = 0;
   doActiveClose = 0;
+  waiting = 0;
   restoreTimer = 0;
 
   commentHead = new commentLinesType;
@@ -10941,6 +10944,7 @@ char tmp[10];
   doAutoSave = 0;
   doClose = 0;
   doActiveClose = 0;
+  waiting = 0;
   restoreTimer = 0;
 
   change = 0;
@@ -18959,6 +18963,7 @@ pvDefPtr pvDefCur, pvDefNext;
   doAutoSave = 0;
   doClose = 0;
   doActiveClose = 0;
+  waiting = 0;
   restoreTimer = 0;
   change = 0;
   changeSinceAutoSave = 0;
