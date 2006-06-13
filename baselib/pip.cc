@@ -1063,7 +1063,7 @@ XmString str;
              this );
 	  }
 	  else {
-            printf( activePipClass_str22 );
+            fprintf( stderr, activePipClass_str22 );
           }
 
         }
@@ -1099,7 +1099,7 @@ XmString str;
              this );
 	  }
 	  else {
-            printf( activePipClass_str22 );
+            fprintf( stderr, activePipClass_str22 );
           }
 
           if ( labelExists ) {
@@ -1109,7 +1109,7 @@ XmString str;
                pip_monitor_label_connect_state, this );
 	    }
 	    else {
-              printf( activePipClass_str22 );
+              fprintf( stderr, activePipClass_str22 );
             }
 	  }
 
@@ -1427,7 +1427,7 @@ XmString str;
              this );
 	  }
 	  else {
-            printf( activePipClass_str22 );
+            fprintf( stderr, activePipClass_str22 );
           }
 
         }
@@ -1463,7 +1463,7 @@ XmString str;
              this );
 	  }
 	  else {
-            printf( activePipClass_str22 );
+            fprintf( stderr, activePipClass_str22 );
           }
 
           if ( labelExists ) {
@@ -1473,7 +1473,7 @@ XmString str;
                pip_monitor_label_connect_state, this );
 	    }
 	    else {
-              printf( activePipClass_str22 );
+              fprintf( stderr, activePipClass_str22 );
             }
 	  }
 
@@ -1537,6 +1537,110 @@ XmString str;
   }
 
   return 1;
+
+}
+
+// This widget is like a related display, but it can operate in 3 modes.
+//
+// Mode 1 gets the display name from a string pv and thus it is impossible
+// to know what the value might be so num displays will be reported as 0.
+//
+// Mode 2 gets the display name from the form - one name with no macros
+//
+// Mode 3 gets the display name from a menu of entries with macros and with
+// the propagate attribute
+
+int activePipClass::isRelatedDisplay ( void ) {
+
+  return 1;
+
+}
+
+int activePipClass::getNumRelatedDisplays ( void ) {
+
+  if ( displaySource == displayFromPV ) {
+    return 0;
+  }
+  else if ( displaySource == displayFromForm ) {
+    return 1;
+  }
+  else if ( displaySource == displayFromMenu ) {
+    return numDsps;
+  }
+
+  return 0;
+
+}
+
+int activePipClass::getRelatedDisplayProperty (
+  int index,
+  char *key
+) {
+
+  if ( displaySource == displayFromMenu ) {
+
+    if ( strcmp( key, "propagate" ) == 0 ) {
+      return propagateMacros[index];
+    }
+    else if ( strcmp( key, "replace" ) == 0 ) {
+      return replaceSymbols[index];
+    }
+
+  }
+  else {
+
+    if ( strcmp( key, "propagate" ) == 0 ) {
+      return 1;
+    }
+    else if ( strcmp( key, "replace" ) == 0 ) {
+      return 0;
+    }
+
+  }
+
+  return 0;
+
+}
+
+char *activePipClass::getRelatedDisplayName (
+  int index
+) {
+
+  if ( displaySource == displayFromPV ) {
+
+    return NULL;
+
+  }
+  else if ( displaySource == displayFromForm ) {
+
+    if ( index != 0 ) return NULL;
+
+    return fileNameExpStr.getExpanded();
+
+  }
+  else if ( displaySource == displayFromMenu ) {
+
+    if ( ( index < 0 ) || ( index >= numDsps ) ) {
+      return NULL;
+    }
+
+    return displayFileName[index].getExpanded();
+
+  }
+
+  return NULL;
+
+}
+
+char *activePipClass::getRelatedDisplayMacros (
+  int index
+) {
+
+  if ( ( index < 0 ) || ( index >= numDsps ) ) {
+    return NULL;
+  }
+
+  return symbolsExpStr[index].getExpanded();
 
 }
 
@@ -1644,7 +1748,7 @@ int activePipClass::createPipWidgets ( void ) {
      NULL );
 
     if ( !(*frameWidget) ) {
-      printf( activePipClass_str24 );
+      fprintf( stderr, activePipClass_str24 );
       frameWidget = NULL;
       return 0;
     }
@@ -1672,7 +1776,7 @@ int activePipClass::createPipWidgets ( void ) {
      NULL );
 
     if ( !(*frameWidget) ) {
-      printf( activePipClass_str24 );
+      fprintf( stderr, activePipClass_str24 );
       frameWidget = NULL;
       return 0;
     }
@@ -2120,7 +2224,7 @@ XButtonEvent be;
   if ( nu ) {
 
     strncpy( readV, v, 39 );
-    //printf( "readV = [%s]\n", readV );
+    //fprintf( stderr, "readV = [%s]\n", readV );
 
     if ( enabled && !blank( readV ) ) {
 
@@ -2172,7 +2276,7 @@ XButtonEvent be;
 
         if ( !aw ) {
 
-          //printf( "Open file %s\n", readV );
+          //fprintf( stderr, "Open file %s\n", readV );
 
           strncpy( curFileName, readV, 127 );
           curFileName[127] = 0;
@@ -2294,7 +2398,7 @@ XButtonEvent be;
 
               if ( !aw ) {
 
-                //printf( "Open file %s\n", readV );
+                //fprintf( stderr, "Open file %s\n", readV );
 
                 strncpy( curFileName, displayFileName[i].getExpanded(), 127 );
                 curFileName[127] = 0;
@@ -2353,7 +2457,7 @@ XButtonEvent be;
 
     if ( enabled && fileExists ) {
 
-      //printf( "Open file %s\n", fileNameExpStr.getExpanded() );
+      //fprintf( stderr, "Open file %s\n", fileNameExpStr.getExpanded() );
 
       strncpy( curFileName, fileNameExpStr.getExpanded(), 127 );
       curFileName[127] = 0;

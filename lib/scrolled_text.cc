@@ -600,7 +600,7 @@ int stringSize, newTotalSize, num;
 
     num = newTotalSize - maxSize + bufExtra;
 
-//     printf( "replace %-d characters\n", num );
+//     fprintf( stderr, "replace %-d characters\n", num );
     XmTextReplace( topScrolledText, 0, num, "" );
     totalSize -= num - 1;
 
@@ -636,7 +636,7 @@ int stringSize, newTotalSize, num;
 
     num = newTotalSize - maxSize + bufExtra;
 
-//     printf( "replace %-d characters\n", num );
+//     fprintf( stderr, "replace %-d characters\n", num );
     XmTextReplace( topScrolledText, 0, num, "" );
     totalSize -= num - 1;
 

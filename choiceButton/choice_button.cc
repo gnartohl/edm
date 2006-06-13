@@ -1852,7 +1852,7 @@ int opStat;
           stateStringPvId = controlPvId;
 	}
 	else {
-          printf( activeChoiceButtonClass_str20,
+          fprintf( stderr, activeChoiceButtonClass_str20,
            controlPvExpStr.getExpanded() );
           opStat = 0;
         }
@@ -1868,7 +1868,7 @@ int opStat;
           if ( !controlExists ) stateStringPvId = readPvId;
 	}
 	else {
-          printf( activeChoiceButtonClass_str21,
+          fprintf( stderr, activeChoiceButtonClass_str21,
            readPvExpStr.getExpanded() );
           opStat = 0;
         }
@@ -1883,7 +1883,7 @@ int opStat;
            acb_monitor_vis_connect_state, this );
 	}
 	else {
-          printf( activeChoiceButtonClass_str21,
+          fprintf( stderr, activeChoiceButtonClass_str21,
            visPvExpStr.getExpanded() );
           opStat = 0;
         }
@@ -1898,7 +1898,7 @@ int opStat;
            acb_monitor_color_connect_state, this );
 	}
 	else {
-          printf( activeChoiceButtonClass_str21,
+          fprintf( stderr, activeChoiceButtonClass_str21,
            colorPvExpStr.getExpanded() );
           opStat = 0;
         }

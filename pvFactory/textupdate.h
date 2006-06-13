@@ -80,9 +80,12 @@ public:
                        int numAlarmPvs,
                        char *alarmPvs[]);
 
-void getPvs(int max,
-				ProcessVariable *pvs[],
-				int *n);
+    void getPvs(int max,
+      ProcessVariable *pvs[],
+      int *n);
+
+    char *crawlerGetFirstPv ( void );
+    char *crawlerGetNextPv ( void );
     
     // Macro support
     int containsMacros();

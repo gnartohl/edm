@@ -81,7 +81,7 @@ VPFUNC ulBindingClass::getFunc (
 VPFUNC func;
 char *error;
 
-//    printf( "ulBindingClass::getFunc, func name = [%s]\n", funcName );
+//    fprintf( stderr, "ulBindingClass::getFunc, func name = [%s]\n", funcName );
 
   if ( !dllHandle ) return NULL;
 
@@ -103,7 +103,7 @@ RULEFUNC ulBindingClass::getRuleFunc (
 RULEFUNC func;
 char *error;
 
-// printf( "ulBindingClass::getRuleFunc, func name = [%s]\n", funcName );
+// fprintf( stderr, "ulBindingClass::getRuleFunc, func name = [%s]\n", funcName );
 
   if ( !dllHandle ) return NULL;
 

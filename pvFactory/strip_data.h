@@ -95,14 +95,14 @@ private:
 inline void StripData::lock()
 {
     if (pthread_mutex_lock(&mutex) != 0)
-        printf ("StripData mutex error: lock\n");
+        fprintf (stderr,"StripData mutex error: lock\n");
     
 }
 
 inline void StripData::unlock()
 {
     if (pthread_mutex_unlock(&mutex) != 0)
-        printf ("StripData mutex error: unlock\n");
+        fprintf (stderr,"StripData mutex error: unlock\n");
 }
 
 inline size_t StripData::getBucketCount() const

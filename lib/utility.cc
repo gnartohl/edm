@@ -141,7 +141,9 @@ mode_t curMode;
 
     Strncat( g_diagFileName, buf, 255 );
 
+    curMode = umask( 0 );
     diagFile = fopen( g_diagFileName, "a" );
+    umask( curMode );
 
     if ( diagFile ) {
 
@@ -161,7 +163,9 @@ mode_t curMode;
   }
   else {
 
+    curMode = umask( 0 );
     diagFile = fopen( g_diagFileName, "a" );
+    umask( curMode );
 
     if ( diagFile ) {
 
@@ -199,7 +203,7 @@ static char *var = NULL;
   strncpy( buf, getenv(name), 255 );
   buf[255] = 0;
 
-  //printf( "name = [%s]\n", buf );
+  //fprintf( stderr, "name = [%s]\n", buf );
 
   context = NULL;
   tk = strtok_r( buf, " \t\n", &context );
@@ -216,7 +220,7 @@ static char *var = NULL;
 
   if ( !tk ) return NULL;
 
-  //printf( "read env var values from file: [%s]\n", tk );
+  //fprintf( stderr, "read env var values from file: [%s]\n", tk );
 
   f = fileOpen( tk, "r" );
 
@@ -478,13 +482,13 @@ static const int FINDING_RIGHT_PAREN = 3;
 
 syntaxErr:
 
-  printf( "Syntax error in env var reference\n" );
+  fprintf( stderr, "Syntax error in env var reference\n" );
   if ( bufOnHeap ) delete [] buf;
   return NULL;
 
 limitErr:
 
-  printf( "Parameter size limit exceeded in env var reference\n" );
+  fprintf( stderr, "Parameter size limit exceeded in env var reference\n" );
   if ( bufOnHeap ) delete [] buf;
   return NULL;
 
@@ -2364,7 +2368,7 @@ int imag, inorm, imin, imax, inc1, inc2, inc5, imin1, imax1,
 
   diff = dmax - dmin;
 
-  /* printf( "dmin = %-g, dmax = %-g, diff =  %-g\n", dmin, dmax, diff ); */
+  /* fprintf( stderr, "dmin = %-g, dmax = %-g, diff =  %-g\n", dmin, dmax, diff ); */
 
   mag = log10( diff );
   imag = (int ) floor( mag ) - 1;
@@ -2372,8 +2376,8 @@ int imag, inorm, imin, imax, inc1, inc2, inc5, imin1, imax1,
   norm = diff * pow(10.0,-1.0*imag);
   inorm = (int) ceil( norm );
 
-  //printf( "mag = %-g, imag = %-d\n", mag, imag );
-  //printf( "norm = %-d\n", inorm );
+  //fprintf( stderr, "mag = %-g, imag = %-d\n", mag, imag );
+  //fprintf( stderr, "norm = %-d\n", inorm );
 
 
   /* normalize min & max */
@@ -2387,7 +2391,7 @@ int imag, inorm, imin, imax, inc1, inc2, inc5, imin1, imax1,
   imax1 = imax;
   if ( inc1 < 8 ) ok = 1;
 
-  //printf( "1st adj min 1 = %-d, 1st adj max 1 = %-d\n", imin1, imax1 );
+  //fprintf( stderr, "1st adj min 1 = %-d, 1st adj max 1 = %-d\n", imin1, imax1 );
 
   if ( imin < 0 ) {
     if ( imin % 2 )
@@ -2412,7 +2416,7 @@ int imag, inorm, imin, imax, inc1, inc2, inc5, imin1, imax1,
   inc2 = ( imax2 - imin2 ) / 2;
   if ( inc2 < 8 ) ok = 1;
 
-  //printf( "1st adj min 2 = %-d, 1st adj max 2 = %-d\n", imin2, imax2 );
+  //fprintf( stderr, "1st adj min 2 = %-d, 1st adj max 2 = %-d\n", imin2, imax2 );
 
   if ( imin < 0 ) {
     if ( imin % 5 )
@@ -2437,11 +2441,11 @@ int imag, inorm, imin, imax, inc1, inc2, inc5, imin1, imax1,
   inc5 = ( imax5 - imin5 ) / 5;
   if ( inc5 < 8 ) ok = 1;
 
-  //printf( "1st adj min 5 = %-d, 1st adj max 5 = %-d\n", imin5, imax5 );
+  //fprintf( stderr, "1st adj min 5 = %-d, 1st adj max 5 = %-d\n", imin5, imax5 );
 
-  //printf( "1 inc1 = %-d\n", inc1 );
-  //printf( "1 inc2 = %-d\n", inc2 );
-  //printf( "1 inc5 = %-d\n", inc5 );
+  //fprintf( stderr, "1 inc1 = %-d\n", inc1 );
+  //fprintf( stderr, "1 inc2 = %-d\n", inc2 );
+  //fprintf( stderr, "1 inc5 = %-d\n", inc5 );
 
   if ( ! ok ) {
 
@@ -2456,7 +2460,7 @@ int imag, inorm, imin, imax, inc1, inc2, inc5, imin1, imax1,
     imax1 = imax;
     if ( inc1 < 8 ) ok = 1;
 
-    //printf( "1st adj min 1 = %-d, 1st adj max 1 = %-d\n", imin1, imax1 );
+    //fprintf( stderr, "1st adj min 1 = %-d, 1st adj max 1 = %-d\n", imin1, imax1 );
 
     if ( imin < 0 ) {
       if ( imin % 2 )
@@ -2481,7 +2485,7 @@ int imag, inorm, imin, imax, inc1, inc2, inc5, imin1, imax1,
     inc2 = ( imax2 - imin2 ) / 2;
     if ( inc2 < 8 ) ok = 1;
 
-    //printf( "1st adj min 2 = %-d, 1st adj max 2 = %-d\n", imin2, imax2 );
+    //fprintf( stderr, "1st adj min 2 = %-d, 1st adj max 2 = %-d\n", imin2, imax2 );
 
     if ( imin < 0 ) {
       if ( imin % 5 )
@@ -2506,11 +2510,11 @@ int imag, inorm, imin, imax, inc1, inc2, inc5, imin1, imax1,
     inc5 = ( imax5 - imin5 ) / 5;
     if ( inc5 < 8 ) ok = 1;
 
-    //printf( "1st adj min 5 = %-d, 1st adj max 5 = %-d\n", imin5, imax5 );
+    //fprintf( stderr, "1st adj min 5 = %-d, 1st adj max 5 = %-d\n", imin5, imax5 );
 
-    //printf( "2 inc1 = %-d\n", inc1 );
-    //printf( "2 inc2 = %-d\n", inc2 );
-    //printf( "2 inc5 = %-d\n", inc5 );
+    //fprintf( stderr, "2 inc1 = %-d\n", inc1 );
+    //fprintf( stderr, "2 inc2 = %-d\n", inc2 );
+    //fprintf( stderr, "2 inc5 = %-d\n", inc5 );
 
   }
 
@@ -2589,15 +2593,15 @@ int imin, imax, inc1, imin1, imax1,
  bestInc, bestMin, bestMax, idiff, idiv,
  choice, ok, div;
 
-//printf( "\n\n=========================================================\n" );
-//printf( "get_log10_scale_params1, min=%-g, max=%-g\n", min, max );
+//fprintf( stderr, "\n\n=========================================================\n" );
+//fprintf( stderr, "get_log10_scale_params1, min=%-g, max=%-g\n", min, max );
 
   div = 1;
   ok = 0;
 
   imin = (int) floor( min );
   imax = (int) ceil( max );
-  //printf( "imin = %-d, imax = %-d\n", imin, imax );
+  //fprintf( stderr, "imin = %-d, imax = %-d\n", imin, imax );
 
   do {
 
@@ -2628,14 +2632,14 @@ int imin, imax, inc1, imin1, imax1,
     if ( inc1 < 1 ) inc1 = 1;
     if ( inc1 < 8 ) ok = 1;
 
-    //printf( "1st adj min 1 = %-d, 1st adj max 1 = %-d\n", imin1, imax1 );
-    //printf( "inc1 = %-d\n", inc1 );
+    //fprintf( stderr, "1st adj min 1 = %-d, 1st adj max 1 = %-d\n", imin1, imax1 );
+    //fprintf( stderr, "inc1 = %-d\n", inc1 );
 
     if ( !ok ) div *= 10;
 
   } while ( !ok );
 
-  //printf( "2 inc1 = %-d\n", inc1 );
+  //fprintf( stderr, "2 inc1 = %-d\n", inc1 );
 
   bestInc = inc1;
   bestMin = imin1;
@@ -4648,8 +4652,8 @@ int fontAscent, fontDescent, fontHeight,
 char buf[31+1];
 unsigned int white, black;
 
-//printf( "adj_min = %-g\n", adj_min );
-//printf( "adj_max = %-g\n", adj_max );
+//fprintf( stderr, "adj_min = %-g\n", adj_min );
+//fprintf( stderr, "adj_max = %-g\n", adj_max );
 
   if ( scaleHeight < 1 ) return;
   if ( num_label_ticks < 1 ) return;
@@ -4671,11 +4675,11 @@ unsigned int white, black;
   yFactor = (double) ( scaleHeight ) / ( adj_max - adj_min );
   yOffset = y;
 
-  //printf( "adj_min = %-g\n", adj_min );
-  //printf( "adj_max = %-g\n", adj_max );
-  //printf( "yOffset = %-g\n", yOffset );
-  //printf( "yFactor = %-g\n", yFactor );
-  //printf( "scaleHeight = %-d\n", scaleHeight );
+  //fprintf( stderr, "adj_min = %-g\n", adj_min );
+  //fprintf( stderr, "adj_max = %-g\n", adj_max );
+  //fprintf( stderr, "yOffset = %-g\n", yOffset );
+  //fprintf( stderr, "yFactor = %-g\n", yFactor );
+  //fprintf( stderr, "scaleHeight = %-d\n", scaleHeight );
 
   labelVal = adj_min;
 
@@ -4807,19 +4811,19 @@ unsigned int white, black;
           val1 = val0 * 10;
           minorInc = ( val1 - val0 ) / minors_per_major;
 
-	  //printf( "val0 = %-g\n", val0 );
-	  //printf( "val1 = %-g\n", val1 );
-	  //printf( "minorInc = %-g\n", minorInc );
-	  //printf( "minors_per_major = %-d\n", minors_per_major );
+	  //fprintf( stderr, "val0 = %-g\n", val0 );
+	  //fprintf( stderr, "val1 = %-g\n", val1 );
+	  //fprintf( stderr, "minorInc = %-g\n", minorInc );
+	  //fprintf( stderr, "minors_per_major = %-d\n", minors_per_major );
 
           val = val0 + minorInc;
-	  //printf( "val = %-g\n", val );
-	  //printf( "adj_min = %-g\n", adj_min );
+	  //fprintf( stderr, "val = %-g\n", val );
+	  //fprintf( stderr, "adj_min = %-g\n", adj_min );
 
           for ( iii=1; iii<minors_per_major; iii++ ) {
 
             minorVal = log10( val );
-	    //printf( "minorVal = %-g\n", minorVal );
+	    //fprintf( stderr, "minorVal = %-g\n", minorVal );
 
             x0 = x;
             x1 = x0 - minor_tick_height;

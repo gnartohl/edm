@@ -106,7 +106,7 @@ int n;
 
   fop->fmp->change = 1;
 
-//   printf( "name = %s\n", fop->name );
+//   fprintf( stderr, "name = %s\n", fop->name );
 
   n = 0;
   XtSetArg( args[n], XmNsubMenuId, (XtArgVal) fop->sizePullDown ); n++;
@@ -166,7 +166,7 @@ fontMenuClass::fontMenuClass ( void ) {
 
 fontMenuClass::~fontMenuClass ( void ) {
 
-//    printf( "In fontMenuClass::~fontMenuClass\n" );
+//    fprintf( stderr, "In fontMenuClass::~fontMenuClass\n" );
 
   if ( familyHead && alignHead ) {
     if ( familyHead->flink && alignHead->flink ) destroyFontMenu();
@@ -214,7 +214,7 @@ familyOptionListPtr curFamilyOption, nextFamilyOption;
 sizeMenuListPtr curSizePB, nextSizePB;
 alignOptionListPtr curAlign, nextAlign;
 
-//    printf( "In fontMenuClass::destroyFontMenu\n" );
+//    fprintf( stderr, "In fontMenuClass::destroyFontMenu\n" );
 
   // delete all family option button data
 
@@ -225,7 +225,7 @@ alignOptionListPtr curAlign, nextAlign;
 
     nextFamilyOption = curFamilyOption->flink;
 
-// printf( "[%s]\n", curFamilyOption->name );
+// fprintf( stderr, "[%s]\n", curFamilyOption->name );
     delete[] curFamilyOption->name;
 
     // ==============================================
@@ -236,7 +236,7 @@ alignOptionListPtr curAlign, nextAlign;
 
       nextSizePB = curSizePB->flink;
 
-// printf( "[%s]\n", curSizePB->sizeString );
+// fprintf( stderr, "[%s]\n", curSizePB->sizeString );
       delete[] curSizePB->sizeString;
 
       delete curSizePB;
@@ -246,19 +246,19 @@ alignOptionListPtr curAlign, nextAlign;
     }
 
     // delete size sentinel node
-// printf( "delete size sentinel node\n" );
+// fprintf( stderr, "delete size sentinel node\n" );
     delete curFamilyOption->head;
 
     // ==============================================
 
-// printf( "delete curFamilyOption\n" );
+// fprintf( stderr, "delete curFamilyOption\n" );
     delete curFamilyOption;
 
     curFamilyOption = nextFamilyOption;
 
   }
 
-// printf( "set familyTail, familyHead empty\n" );
+// fprintf( stderr, "set familyTail, familyHead empty\n" );
   familyTail = familyHead;
   familyTail->flink = NULL;
 
@@ -273,17 +273,17 @@ alignOptionListPtr curAlign, nextAlign;
 
     nextAlign = curAlign->flink;
 
-// printf( "[%s]\n", curAlign->alignString );
+// fprintf( stderr, "[%s]\n", curAlign->alignString );
     delete[] curAlign->alignString;
 
-// printf( "delete curAlign\n" );
+// fprintf( stderr, "delete curAlign\n" );
     delete curAlign;
 
     curAlign = nextAlign;
 
   }
 
-// printf( "set alignTail, alignHead empty\n" );
+// fprintf( stderr, "set alignTail, alignHead empty\n" );
   alignTail = alignHead;
   alignTail->flink = NULL;
 
@@ -325,7 +325,7 @@ Widget firstSizePb = NULL;
   curFamily = fi->familyHead->flink;
   while ( curFamily ) {
 
-//     printf( "Family: %s\n", curFamily->name );
+//     fprintf( stderr, "Family: %s\n", curFamily->name );
 
     curFamilyOption = new familyOptionListType;
 
@@ -370,7 +370,7 @@ Widget firstSizePb = NULL;
     curSize = curFamily->sizeHead->flink;
     while ( curSize ) {
 
-//       printf( "size: %-.1f\n", curSize->fsize );
+//       fprintf( stderr, "size: %-.1f\n", curSize->fsize );
       sprintf( string, "%-.1f", curSize->fsize );
 
       curSizePB = new sizeMenuListType;
@@ -422,7 +422,7 @@ Widget firstSizePb = NULL;
     familyTail = curFamilyOption;
     familyTail->flink = NULL;
 
-//     printf( "\n" );
+//     fprintf( stderr, "\n" );
     curFamily = curFamily->flink;
 
   }
@@ -617,7 +617,7 @@ Widget fontMenuClass::createFontMenu (
 
 void fontMenuClass::show( void ) {
 
-  printf( "%s-%s-%s-%s\n", this->familyStr, this->boldStr,
+  fprintf( stderr, "%s-%s-%s-%s\n", this->familyStr, this->boldStr,
    this->italicsStr, this->sizeStr );
 
 }

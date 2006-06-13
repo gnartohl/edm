@@ -189,9 +189,11 @@ FILE *tmp;
   }
 
   if ( !tmp ) {
+
     xyo->actWin->appCtx->postMessage( "File open failure" );
     xyo->actWin->appCtx->raiseMessageWindow();
     return;
+
   }
 
   fprintf( tmp, "number of traces = %-d\n", xyo->numTraces );
@@ -200,13 +202,13 @@ FILE *tmp;
 
     if ( xyo->traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 
+      // vector
       if ( (int) xyo->yPv[i]->get_dimension() > 1 ) {
 
-        // vector
         fprintf( tmp, "trace %-d (chronological) size = %-d\n",
          i, (int) xyo->yPv[i]->get_dimension() );
 
-	fprintf( tmp, "index, %s\n", xyo->yPvExpStr[i].getExpanded() );
+        fprintf( tmp, "index, %s\n", xyo->yPvExpStr[i].getExpanded() );
 
         for ( n=0; n<(int) xyo->yPv[i]->get_dimension(); n++ ) {
 
@@ -256,30 +258,30 @@ FILE *tmp;
 
           fprintf( tmp, "%-d, %-g\n", n, dyValue );
 
-	}
+        }
 
       }
       else {
 
-        // scalar
-        h = xyo->arrayHead[i];
+	// scalar
+	h = xyo->arrayHead[i];
         t = xyo->arrayTail[i];
         n = h;
-        index = 0;
+	index = 0;
 
-        if ( t >= h ) {
-          size = t - h;
-        }
-        else {
-          size = xyo->plotBufSize[i] - h + t;
-        }
+	if ( t >= h ) {
+	  size = t - h;
+	}
+	else {
+	  size = xyo->plotBufSize[i] - h + t;
+	}
 
         fprintf( tmp, "trace %-d (chronological) size = %-d\n",
          i, size );
 
         fprintf( tmp, "index, %s\n", xyo->yPvExpStr[i].getExpanded() );
 
-        while ( n != t ) {
+	while ( n != t ) {
 
           switch ( xyo->yPvType[i] ) {
           case ProcessVariable::specificType::flt:
@@ -327,154 +329,36 @@ FILE *tmp;
 
           fprintf( tmp, "%-d, %-g\n", index, dyValue );
 
-          index++;
-          n++;
+	  index++;
+	  n++;
           if ( n > xyo->plotBufSize[i] ) {
-            n = 0;
-          }
+	    n = 0;
+	  }
 
-        }
+	}
 
       }
 
     }
     else {
 
+      // vector
       if ( ( (int) xyo->yPv[i]->get_dimension() > 1 ) &&
            ( (int) xyo->xPv[i]->get_dimension() > 1 ) ) {
 
-        // vector
         fprintf( tmp, "trace %-d (x/y) x size = %-d, y size = %-d\n",
          i, (int) xyo->xPv[i]->get_dimension(),
          (int) xyo->yPv[i]->get_dimension() );
 
-	fprintf( tmp, "%s, %s\n", xyo->xPvExpStr[i].getExpanded(),
-         xyo->yPvExpStr[i].getExpanded() );
-
-	size = (int) xyo->xPv[i]->get_dimension();
-	if ( size > (int) xyo->yPv[i]->get_dimension() ) {
-          size = (int) xyo->yPv[i]->get_dimension();
-	}
-
-        for ( n=0; n<size; n++ ) {
-
-	  // x
-          switch ( xyo->xPvType[i] ) {
-          case ProcessVariable::specificType::flt:
-            dxValue = (double) ( (float *) xyo->xPvData[i] )[n];
-            break;
-          case ProcessVariable::specificType::real: 
-            dxValue = ( (double *) xyo->xPvData[i] )[n];
-            break;
-          case ProcessVariable::specificType::shrt:
-            if (  xyo->ySigned[i] ) {
-              dxValue = (double) ( (short *) xyo->xPvData[i] )[n];
-            }
-            else {
-              dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[n];
-            }
-            break;
-          case ProcessVariable::specificType::chr:
-            if (  xyo->ySigned[i] ) {
-              dxValue = (double) ( (char *) xyo->xPvData[i] )[n];
-            }
-            else {
-              dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[n];
-            }
-            break;
-          case ProcessVariable::specificType::integer:
-            if (  xyo->ySigned[i] ) {
-              dxValue = (double) ( (int *) xyo->xPvData[i] )[n];
-            }
-            else {
-              dxValue = (double) ( (int *) xyo->xPvData[i] )[n];
-            }
-            break;
-          case ProcessVariable::specificType::enumerated:
-            if (  xyo->ySigned[i] ) {
-              dxValue = (double) ( (short *) xyo->xPvData[i] )[n];
-            }
-            else {
-              dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[n];
-            }
-            break;
-          default:
-            dxValue = ( (double *) xyo->xPvData[i] )[n];
-            break;
-          }
-
-	  // y
-          switch ( xyo->yPvType[i] ) {
-          case ProcessVariable::specificType::flt:
-            dyValue = (double) ( (float *) xyo->yPvData[i] )[n];
-            break;
-          case ProcessVariable::specificType::real: 
-            dyValue = ( (double *) xyo->yPvData[i] )[n];
-            break;
-          case ProcessVariable::specificType::shrt:
-            if (  xyo->ySigned[i] ) {
-              dyValue = (double) ( (short *) xyo->yPvData[i] )[n];
-            }
-            else {
-              dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[n];
-            }
-            break;
-          case ProcessVariable::specificType::chr:
-            if (  xyo->ySigned[i] ) {
-              dyValue = (double) ( (char *) xyo->yPvData[i] )[n];
-            }
-            else {
-              dyValue = (double) ( (unsigned char *) xyo->yPvData[i] )[n];
-            }
-            break;
-          case ProcessVariable::specificType::integer:
-            if (  xyo->ySigned[i] ) {
-              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
-            }
-            else {
-              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
-            }
-            break;
-          case ProcessVariable::specificType::enumerated:
-            if (  xyo->ySigned[i] ) {
-              dyValue = (double) ( (short *) xyo->yPvData[i] )[n];
-            }
-            else {
-              dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[n];
-            }
-            break;
-          default:
-            dyValue = ( (double *) xyo->yPvData[i] )[n];
-            break;
-          }
-
-          fprintf( tmp, "%-g, %-g\n", dxValue, dyValue );
-
-	}
-
-      }
-      else if ( ( (int) xyo->yPv[i]->get_dimension() == 1 ) &&
-                ( (int) xyo->xPv[i]->get_dimension() == 1 ) ) {
-
-        // scalar
-        h = xyo->arrayHead[i];
-        t = xyo->arrayTail[i];
-        n = h;
-
-        if ( t >= h ) {
-          size = t - h;
-        }
-        else {
-          size = xyo->plotBufSize[i] - h + t;
-        }
-
-        fprintf( tmp, "trace %-d (x/y) x size = %-d, y size = %-d\n",
-         i, size, size );
-
         fprintf( tmp, "%s, %s\n", xyo->xPvExpStr[i].getExpanded(),
          xyo->yPvExpStr[i].getExpanded() );
 
-        while ( n != t ) {
+        size = (int) xyo->xPv[i]->get_dimension();
+        if ( size > (int) xyo->yPv[i]->get_dimension() ) {
+          size = (int) xyo->yPv[i]->get_dimension();
+        }
+
+        for ( n=0; n<size; n++ ) {
 
           // x
           switch ( xyo->xPvType[i] ) {
@@ -568,12 +452,130 @@ FILE *tmp;
 
           fprintf( tmp, "%-g, %-g\n", dxValue, dyValue );
 
-          n++;
-          if ( n > xyo->plotBufSize[i] ) {
-            n = 0;
+        }
+
+      }
+      else if ( ( (int) xyo->yPv[i]->get_dimension() == 1 ) &&
+                ( (int) xyo->xPv[i]->get_dimension() == 1 ) ) {
+
+	// scalar
+	h = xyo->arrayHead[i];
+        t = xyo->arrayTail[i];
+        n = h;
+
+	if ( t >= h ) {
+	  size = t - h;
+	}
+	else {
+	  size = xyo->plotBufSize[i] - h + t;
+	}
+
+        fprintf( tmp, "trace %-d (x/y) x size = %-d, y size = %-d\n",
+	 i, size, size );
+
+        fprintf( tmp, "%s, %s\n", xyo->xPvExpStr[i].getExpanded(),
+         xyo->yPvExpStr[i].getExpanded() );
+
+	while ( n != t ) {
+
+          // x
+          switch ( xyo->xPvType[i] ) {
+          case ProcessVariable::specificType::flt:
+            dxValue = (double) ( (float *) xyo->xPvData[i] )[n];
+            break;
+          case ProcessVariable::specificType::real: 
+            dxValue = ( (double *) xyo->xPvData[i] )[n];
+            break;
+          case ProcessVariable::specificType::shrt:
+            if (  xyo->ySigned[i] ) {
+              dxValue = (double) ( (short *) xyo->xPvData[i] )[n];
+            }
+            else {
+              dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::chr:
+            if (  xyo->ySigned[i] ) {
+              dxValue = (double) ( (char *) xyo->xPvData[i] )[n];
+            }
+            else {
+              dxValue = (double) ( (unsigned char *) xyo->xPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::integer:
+            if (  xyo->ySigned[i] ) {
+              dxValue = (double) ( (int *) xyo->xPvData[i] )[n];
+            }
+            else {
+              dxValue = (double) ( (int *) xyo->xPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::enumerated:
+            if (  xyo->ySigned[i] ) {
+              dxValue = (double) ( (short *) xyo->xPvData[i] )[n];
+            }
+            else {
+              dxValue = (double) ( (unsigned short *) xyo->xPvData[i] )[n];
+            }
+            break;
+          default:
+            dxValue = ( (double *) xyo->xPvData[i] )[n];
+            break;
+         }
+
+          // y
+          switch ( xyo->yPvType[i] ) {
+          case ProcessVariable::specificType::flt:
+            dyValue = (double) ( (float *) xyo->yPvData[i] )[n];
+            break;
+          case ProcessVariable::specificType::real: 
+            dyValue = ( (double *) xyo->yPvData[i] )[n];
+            break;
+          case ProcessVariable::specificType::shrt:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (short *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::chr:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (char *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (unsigned char *) xyo->yPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::integer:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
+            }
+            break;
+          case ProcessVariable::specificType::enumerated:
+            if (  xyo->ySigned[i] ) {
+              dyValue = (double) ( (short *) xyo->yPvData[i] )[n];
+            }
+            else {
+              dyValue = (double) ( (unsigned short *) xyo->yPvData[i] )[n];
+            }
+            break;
+          default:
+            dyValue = ( (double *) xyo->yPvData[i] )[n];
+            break;
           }
 
-        }
+          fprintf( tmp, "%-g, %-g\n", dxValue, dyValue );
+
+	  n++;
+          if ( n > xyo->plotBufSize[i] ) {
+	    n = 0;
+	  }
+
+	}
 
       }
       else {
@@ -2324,7 +2326,7 @@ double scaledX, scaledY;
 
   case XYGC_K_TRACE_CHRONOLOGICAL:
 
-    printf( "error XYGC_K_TRACE_CHRONOLOGICAL in xValueUpdate\n" );
+    fprintf( stderr, "error XYGC_K_TRACE_CHRONOLOGICAL in xValueUpdate\n" );
 
     break;
 
@@ -2721,7 +2723,7 @@ int yi;
 
   case XYGC_K_TRACE_CHRONOLOGICAL:
 
-    printf( "XYGC_K_TRACE_CHRONOLOGICAL not implemented in yValueUpdate\n" );
+    fprintf( stderr, "XYGC_K_TRACE_CHRONOLOGICAL not implemented in yValueUpdate\n" );
 
     break;
 
@@ -2756,7 +2758,7 @@ double scaledX, scaledY;
 
   case XYGC_K_TRACE_XY:
 
-    printf( "xy illegal\n" );
+    fprintf( stderr, "xy illegal\n" );
     break;
 
   case XYGC_K_TRACE_CHRONOLOGICAL:
@@ -5299,10 +5301,11 @@ int xyGraphClass::edit ( void ) {
 
 void xyGraphClass::regenBuffer ( void ) {
 
-int i, ii, yi;
+int i, ii, yi, count;
 double dxValue, dyValue;
 double scaledX, scaledY;
 
+  count = 0;
   for ( i=0; i<numTraces; i++ ) {
 
     xFactor[i] =
@@ -6893,7 +6896,7 @@ XmString str;
 	  resetPv->add_conn_state_callback( resetMonitorConnection, this );
 	}
 	else {
-          printf( "pv create failed for [%s]\n",
+          fprintf( stderr, "pv create failed for [%s]\n",
            resetPvExpStr.getExpanded() );
         }
       }
@@ -6911,7 +6914,7 @@ XmString str;
 	  trigPv->add_conn_state_callback( trigMonitorConnection, this );
 	}
 	else {
-          printf( "pv create failed for [%s]\n",
+          fprintf( stderr, "pv create failed for [%s]\n",
            trigPvExpStr.getExpanded() );
         }
       }
@@ -6984,7 +6987,7 @@ XmString str;
                &ycArgRec[i] );
 	    }
 	    else {
-              printf( "pv create failed for [%s]\n",
+              fprintf( stderr, "pv create failed for [%s]\n",
                yPvExpStr[i].getExpanded() );
             }
 
@@ -7001,7 +7004,7 @@ XmString str;
                  &xcArgRec[i] );
 	      }
 	      else {
-                printf( "pv create failed for [%s]\n",
+                fprintf( stderr, "pv create failed for [%s]\n",
                  xPvExpStr[i].getExpanded() );
               }
 
@@ -7021,7 +7024,7 @@ XmString str;
                &ycArgRec[i] );
 	    }
 	    else {
-              printf( "pv create failed for [%s]\n",
+              fprintf( stderr, "pv create failed for [%s]\n",
                yPvExpStr[i].getExpanded() );
             }
 
@@ -7614,6 +7617,7 @@ struct tm ts;
       else {
 
         dxValue = ( pmX - xOffset[0] ) / xFactor[0] + curXMin;
+
         if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
              ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
           dxValue = pow(10,dxValue);
@@ -8689,7 +8693,7 @@ int yi, yScaleIndex, allChronological;
     }
 
     if ( !kpXMaxEfDouble.isNull() ) {
-      //printf( "user xmax = %-g\n", kpXMaxEfDouble.value() );
+      //fprintf( stderr, "user xmax = %-g\n", kpXMaxEfDouble.value() );
       curXMax = kpXMaxEfDouble.value();
       if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
            ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
@@ -10264,6 +10268,54 @@ int i, ii, num;
   }
   pvs[ii++] = resetPv;
   pvs[ii++] = trigPv;
+
+}
+
+// crawler functions may return blank pv names
+char *xyGraphClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return trigPvExpStr.getExpanded();
+
+}
+
+char *xyGraphClass::crawlerGetNextPv ( void ) {
+
+int i, max;
+
+  max = numTraces*2 + 1;
+
+  if ( crawlerPvIndex >= max ) return NULL;
+
+  crawlerPvIndex++;
+
+  if ( crawlerPvIndex == 1 ) {
+    return resetPvExpStr.getExpanded();
+  }
+  else {
+
+    // index starts here from 2; x is even, y is odd
+
+    i = crawlerPvIndex / 2 - 1;
+
+    if ( crawlerPvIndex % 2 ) {
+
+      // odd - y
+
+      return yPvExpStr[i].getExpanded();
+
+    }
+    else {
+
+      // even - x
+
+      return xPvExpStr[i].getExpanded();
+
+    }
+
+  }
+
+  return NULL;
 
 }
 

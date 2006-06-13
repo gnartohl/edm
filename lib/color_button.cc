@@ -48,7 +48,7 @@ static void destroy_cb (
 colorInfoClass *ci;
 colorButtonClass *cb = (colorButtonClass *) client;
 
-//   printf( "In destroy_widget_cb\n" );
+//   fprintf( stderr, "In destroy_widget_cb\n" );
 
   if ( cb->blink ) {
     cb->ci->removeFromBlinkList( (void *) cb, (void *) doCbBlink );
@@ -121,7 +121,7 @@ colorButtonClass colorButtonClass::operator = (
 
 colorButtonClass::~colorButtonClass ( void ) {
 
-//   printf( "In colorButtonClass::~colorButtonClass\n" );
+//   fprintf( stderr, "In colorButtonClass::~colorButtonClass\n" );
 
   if ( colorPvName ) {
     delete[] colorPvName;

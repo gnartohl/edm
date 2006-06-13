@@ -126,12 +126,12 @@ char tmp[39+1];
     else if ( pv == arplo->startTimePv ) {
       arplo->startTimeFieldType = pv->get_type().type;
       pv->get_string( tmp, 39 );
-      /* printf( "start time = %s\n", tmp ); */
+      /* fprintf( stderr, "start time = %s\n", tmp ); */
     }
     else if ( pv == arplo->endTimePv ) {
       arplo->endTimeFieldType = pv->get_type().type;
       pv->get_string( tmp, 39 );
-      /* printf( "end time = %s\n", tmp ); */
+      /* fprintf( stderr, "end time = %s\n", tmp ); */
     }
 
   }
@@ -229,13 +229,13 @@ int stat;
     stat = sys_cvt_string_to_time( tmp, strlen(tmp), &sysTime );
 
 #if 0
-    printf( "mon=%-d, day=%-d, yr=%-d, h=%-d, m=%-d, s=%-d\n\n",
+    fprintf( stderr, "mon=%-d, day=%-d, yr=%-d, h=%-d, m=%-d, s=%-d\n\n",
 	    sysTime.tm_time.tm_mon+1, sysTime.tm_time.tm_mday,
 	    sysTime.tm_time.tm_year+1900,
 	    sysTime.tm_time.tm_hour, sysTime.tm_time.tm_min,
 	    sysTime.tm_time.tm_sec );
 
-    printf( "seconds=%-d\n\n", sysTime.cal_time );
+    fprintf( stderr, "seconds=%-d\n\n", sysTime.cal_time );
 #endif
 
     {
@@ -1019,7 +1019,7 @@ int clipStat;
 
   if ( !enabled || !activeMode || !init ) return 1;
 
-  /* printf( "apc drawActive\n" ); */
+  /* fprintf( stderr, "apc drawActive\n" ); */
 
   rescale();
 
@@ -1090,7 +1090,7 @@ int archivePlotClass::eraseActive ( void ) {
 
   if ( !enabled || !activeMode || !init ) return 1;
 
-  /* printf( "eraseActive\n" ); */
+  /* fprintf( stderr, "eraseActive\n" ); */
 
   actWin->executeGc.setLineWidth( 1 );
   actWin->executeGc.setLineStyle( LineSolid );
@@ -1643,7 +1643,7 @@ int archivePlotClass::draw ( void ) {
 
   if ( activeMode || deleteRequest ) return 1;
 
-  /* printf( "draw\n" ); */
+  /* fprintf( stderr, "draw\n" ); */
 
   actWin->drawGc.saveFg();
 
@@ -1669,7 +1669,7 @@ int archivePlotClass::erase ( void ) {
 
   if ( activeMode || deleteRequest ) return 1;
 
-  /* printf( "erase\n" ); */
+  /* fprintf( stderr, "erase\n" ); */
 
   actWin->drawGc.setLineWidth( 1 );
   actWin->drawGc.setLineStyle( LineSolid );
@@ -1781,7 +1781,7 @@ double dx0, dy0, dx1, dy1;
 
   btn1Down = 0;
 
-  //printf( "btnUp\n" );
+  //fprintf( stderr, "btnUp\n" );
 
   drawRegion = 0;
 
@@ -1796,11 +1796,11 @@ double dx0, dy0, dx1, dy1;
     else {
       saveIndex--;
     }
-    /* printf( "saveIndex = %-d\n", saveIndex ); */
-    /* printf( "saveXMin = %-g\n", saveXMin[saveIndex] ); */
-    /* printf( "saveXMax = %-g\n", saveXMax[saveIndex] ); */
-    /* printf( "saveYMin = %-g\n", saveYMin[saveIndex] ); */
-    /* printf( "saveYMax = %-g\n\n", saveYMax[saveIndex] ); */
+    /* fprintf( stderr, "saveIndex = %-d\n", saveIndex ); */
+    /* fprintf( stderr, "saveXMin = %-g\n", saveXMin[saveIndex] ); */
+    /* fprintf( stderr, "saveXMax = %-g\n", saveXMax[saveIndex] ); */
+    /* fprintf( stderr, "saveYMin = %-g\n", saveYMin[saveIndex] ); */
+    /* fprintf( stderr, "saveYMax = %-g\n\n", saveYMax[saveIndex] ); */
     if ( connection.pvsConnected() ) {
       xMinPv->put( saveXMin[saveIndex] );
       xMaxPv->put( saveXMax[saveIndex] );
@@ -1851,7 +1851,7 @@ double dx0, dy0, dx1, dy1;
   if ( y1 > h ) y1 = h;
   if ( y0 == y1 ) y1 = y0 + 1;
 
-  /* printf( "%-d,%-d      %-d,%-d\n", x0, y0, x1, y1 ); */
+  /* fprintf( stderr, "%-d,%-d      %-d,%-d\n", x0, y0, x1, y1 ); */
 
   dx0 = (double) x0 / (double) w * ( xMax - xMin ) + xMin;
   dy0 = (double) y0 / (double) h * ( yMax - yMin ) + yMin;
@@ -1859,7 +1859,7 @@ double dx0, dy0, dx1, dy1;
   dx1 = (double) x1 / (double) w * ( xMax - xMin ) + xMin;
   dy1 = (double) y1 / (double) h * ( yMax - yMin ) + yMin;
 
-  /* printf( "%-g,%-g      %-g,%-g\n\n", dx0, dy0, dx1, dy1 ); */
+  /* fprintf( stderr, "%-g,%-g      %-g,%-g\n\n", dx0, dy0, dx1, dy1 ); */
 
   xMin = dx0;
   xMax = dx1;
@@ -1945,7 +1945,7 @@ void archivePlotClass::btnDown (
 
   if ( ( buttonNumber != 1 ) || ( buttonState & ShiftMask ) ) return;
 
-  //printf( "btnDown\n" );
+  //fprintf( stderr, "btnDown\n" );
 
   btn1Down = 1;
 
@@ -1987,7 +1987,7 @@ void archivePlotClass::btnDrag (
 
   if ( !btn1Down ) return;
 
-  //printf( "btnDrag\n" );
+  //fprintf( stderr, "btnDrag\n" );
 
   actWin->executeGc.saveFg();
 
@@ -2084,7 +2084,7 @@ double xRange;
 
   if ( nc ) {
 
-    /* printf( "needConnectInit\n" ); */
+    /* fprintf( stderr, "needConnectInit\n" ); */
 
     init = 1; // OK to draw in active state now
 
@@ -2099,7 +2099,7 @@ double xRange;
 
   if ( nfu ) {
 
-    // printf( "needFileUpdate\n" );
+    // fprintf( stderr, "needFileUpdate\n" );
 
     readFile();
     readArchive();
@@ -2125,11 +2125,11 @@ double xRange;
     yMin = bufYMin;
     yMax = bufYMax;
 
-    /* printf( "needUpdate\n" ); */
-    /* printf( "xMin = %-g\n", xMin ); */
-    /* printf( "xMax = %-g\n", xMax ); */
-    /* printf( "yMin = %-g\n", yMin ); */
-    /* printf( "yMax = %-g\n", yMax ); */
+    /* fprintf( stderr, "needUpdate\n" ); */
+    /* fprintf( stderr, "xMin = %-g\n", xMin ); */
+    /* fprintf( stderr, "xMax = %-g\n", xMax ); */
+    /* fprintf( stderr, "yMin = %-g\n", yMin ); */
+    /* fprintf( stderr, "yMax = %-g\n", yMax ); */
 
     eraseActive();
 
@@ -2161,7 +2161,7 @@ double xRange;
 
   if ( nmdc ) {
 
-    //printf( "need x marker draw command, x=%-g, y=%-g\n",
+    //fprintf( stderr, "need x marker draw command, x=%-g, y=%-g\n",
     // bufXMin, bufXMax );
 
     if ( connection.pvsConnected() ) {
@@ -2174,7 +2174,7 @@ double xRange;
 
   if ( nmec ) {
 
-    /* printf( "need x marker erase command\n" ); */
+    /* fprintf( stderr, "need x marker erase command\n" ); */
 
     if ( connection.pvsConnected() ) {
       updatePv->put( eraseXMarker );
@@ -2184,7 +2184,7 @@ double xRange;
 
   if ( nmd ) {
 
-    //printf( "1 need x marker draw, bufXMax = %-g\n", bufXMax );
+    //fprintf( stderr, "1 need x marker draw, bufXMax = %-g\n", bufXMax );
 
     actWin->executeGc.setFG( lineColor.pixelColor() );
     actWin->executeGc.setLineWidth( 1 );
@@ -2195,13 +2195,13 @@ double xRange;
       markerX = bufXMax;
     }
 
-    //printf( "2 need x marker draw, markerX = %-g\n", markerX );
+    //fprintf( stderr, "2 need x marker draw, markerX = %-g\n", markerX );
 
     clipStat = actWin->executeGc.addXorXClipRectangle( xR );
 
     if ( markerDrawn ) {
 
-      /* printf( "erase old\n" ); */
+      /* fprintf( stderr, "erase old\n" ); */
 
       if ( ( oldMarkerX >= xMin ) && ( oldMarkerX <= xMax ) ) {
 
@@ -2243,11 +2243,11 @@ double xRange;
   if ( nme ) {
 
     if ( !markerDrawn ) {
-      /* printf( "no erase was performed\n" ); */
+      /* fprintf( stderr, "no erase was performed\n" ); */
     }
     else {
 
-      /* printf( "need x marker erase, x = %-g\n", oldMarkerX ); */
+      /* fprintf( stderr, "need x marker erase, x = %-g\n", oldMarkerX ); */
 
       if ( ( oldMarkerX >= xMin ) && ( oldMarkerX <= xMax ) ) {
 
@@ -2331,7 +2331,7 @@ FILE *f;
 char line[127+1], *tk, *context, *result;
 int n;
 
-/* printf( "readFile\n" ); */
+/* fprintf( stderr, "readFile\n" ); */
 
   numPoints = 0;
 
@@ -2426,8 +2426,8 @@ ValueIterator values;
 osiTime start( start_time_t, 0 );
 osiTime end( end_time_t, 0 );
 
-  // printf( "readArchive\n" );
-  // printf( "archive is [%s]\n", archiveName );
+  // fprintf( stderr, "readArchive\n" );
+  // fprintf( stderr, "archive is [%s]\n", archiveName );
 
   try {
 
@@ -2438,7 +2438,7 @@ osiTime end( end_time_t, 0 );
 
   if ( !channel ) return 0;
 
-  //printf( "channel is [%s]\n", file );
+  //fprintf( stderr, "channel is [%s]\n", file );
 
   ValueIterator values( archiveObj );
 
@@ -2481,7 +2481,7 @@ osiTime end( end_time_t, 0 );
 
 #if 0
     if ( debugMode() ) {
-      printf( "before: time(hr) = %-15.9g, value = %-g\n",
+      fprintf( stderr, "before: time(hr) = %-15.9g, value = %-g\n",
        (double) values->getTime() / 3600.0 - tt0,
        values->getDouble() );
     }
@@ -2505,7 +2505,7 @@ osiTime end( end_time_t, 0 );
 
 #if 0
       if ( debugMode() ) {
-        printf( "time(hr) = %-15.9g, value = %-g\n",
+        fprintf( stderr, "time(hr) = %-15.9g, value = %-g\n",
          (double) values->getTime() / 3600.0 - tt0,
          values->getDouble() );
       }
@@ -2582,7 +2582,7 @@ osiTime end( end_time_t, 0 );
 
 #if 0
         if ( debugMode() ) {
-          printf( "after: time(hr) = %-15.9g, value = %-g\n",
+          fprintf( stderr, "after: time(hr) = %-15.9g, value = %-g\n",
            (double) values->getTime() / 3600.0 - tt0,
            values->getDouble() );
         }
@@ -2732,15 +2732,15 @@ IndexFile indexf(50);
 double delta = 0.0;
 epicsTimeStamp stamp;
 
-  // printf( "readArchive\n" );
-  // printf( "archive is [%s]\n", archiveName );
+  // fprintf( stderr, "readArchive\n" );
+  // fprintf( stderr, "archive is [%s]\n", archiveName );
 
   epicsTimeFromTime_t( &stamp, start_time_t );
-  //printf( "start = %-d\n", stamp.secPastEpoch );
+  //fprintf( stderr, "start = %-d\n", stamp.secPastEpoch );
   epicsTime tStart( stamp );
 
   epicsTimeFromTime_t( &stamp, end_time_t );
-  //printf( "start = %-d\n", stamp.secPastEpoch );
+  //fprintf( stderr, "start = %-d\n", stamp.secPastEpoch );
   epicsTime tEnd( stamp );
 
   //try {
@@ -2782,7 +2782,7 @@ epicsTimeStamp stamp;
 
     for ( i=1; i<n; i++ ) {
 
-      //printf( "%16.11lg     %16.11lg\n", xarray[i], yarray[i] );
+      //fprintf( stderr, "%16.11lg     %16.11lg\n", xarray[i], yarray[i] );
 
       xarray[i] = xarray[i] / 3600.0;
       if ( xarray[i] > xMax ) xMax = xarray[i];
@@ -2816,7 +2816,7 @@ epicsTimeStamp stamp;
 
   numPoints = n;
 
-  //printf( "numPoints = %-d\n", numPoints );
+  //fprintf( stderr, "numPoints = %-d\n", numPoints );
 
   if ( xMax <= xMin ) xMax = xMin + 1.0;
   if ( yMax <= yMin ) yMax = yMin + 1.0;
@@ -2857,11 +2857,11 @@ int i;
 
   if ( !activeMode || !init ) return;
 
-  /* printf( "rescale\n" ); */
-  /* printf( "xMin = %-g\n", xMin ); */
-  /* printf( "xMax = %-g\n", xMax ); */
-  /* printf( "yMin = %-g\n", yMin ); */
-  /* printf( "yMax = %-g\n", yMax ); */
+  /* fprintf( stderr, "rescale\n" ); */
+  /* fprintf( stderr, "xMin = %-g\n", xMin ); */
+  /* fprintf( stderr, "xMax = %-g\n", xMax ); */
+  /* fprintf( stderr, "yMin = %-g\n", yMin ); */
+  /* fprintf( stderr, "yMax = %-g\n", yMax ); */
 
   xRange = xMax - xMin;
   yRange = yMax - yMin;

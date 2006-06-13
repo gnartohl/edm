@@ -26,7 +26,7 @@ undoNodeClass::~undoNodeClass () {
 
 int undoNodeClass::undo ( void ) {
 
-  printf( "undoNodeClass::undo( void )\n" );
+  fprintf( stderr, "undoNodeClass::undo( void )\n" );
 
   return undoClass::success;
 
@@ -693,7 +693,7 @@ activeGraphicClass *gPtr;
 
   while ( cur ) {
     gPtr = cur->node->actGrfAddr;
-    printf( "obj = %s, edit = %-d\n", gPtr->objName(),
+    fprintf( stderr, "obj = %s, edit = %-d\n", gPtr->objName(),
      gPtr->checkEditStatus() );
     cur = cur->flink;
   }

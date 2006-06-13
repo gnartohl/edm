@@ -382,7 +382,7 @@ int activeCircleClass::createInteractive (
   int _w,
   int _h ) {
 
-//   printf( "In activeCircleClass::createInteractive\n" );
+//   fprintf( stderr, "In activeCircleClass::createInteractive\n" );
 
   actWin = (activeWindowClass *) aw_obj;
   x = _x;
@@ -1808,6 +1808,22 @@ void activeCircleClass::getPvs (
   *n = 2;
   pvs[0] = alarmPvId;
   pvs[1] = visPvId;
+
+}
+
+// crawler functions may return blank pv names
+char *activeCircleClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return alarmPvExpStr.getExpanded();
+
+}
+
+char *activeCircleClass::crawlerGetNextPv ( void ) {
+
+  if ( crawlerPvIndex >= 1 ) return NULL;
+  crawlerPvIndex++;
+  return visPvExpStr.getExpanded();
 
 }
 

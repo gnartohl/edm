@@ -100,6 +100,8 @@ void getPvs(int max,
     char *nextDragName();
     char *dragValue(int i);
 
+    char *crawlerGetFirstPv ( void );
+    char *crawlerGetNextPv ( void );
     
 protected:
 
@@ -159,7 +161,6 @@ protected:
                                    XtPointer call);
     // CA callbacks
     static void pv_callback(ProcessVariable *pv, void *userarg);
-
 
 };
 

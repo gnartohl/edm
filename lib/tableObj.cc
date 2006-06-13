@@ -350,7 +350,7 @@ int align;
     bgc = even;
   }
 
-  //printf( "r %-d     c %-d\n", rowNum, colNum );
+  //fprintf( stderr, "r %-d     c %-d\n", rowNum, colNum );
 
   if ( rowNum == 0 ) {
 

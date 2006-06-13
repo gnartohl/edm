@@ -139,7 +139,7 @@ double fvalue;
   if ( mslo->controlExists ) {
     if ( mslo->controlPvId ) {
       stat = mslo->controlPvId->put( fvalue );
-      if ( !stat ) printf( activeMotifSliderClass_str59 );
+      if ( !stat ) fprintf( stderr, activeMotifSliderClass_str59 );
     }
   }
 
@@ -197,7 +197,7 @@ double fvalue;
   if ( mslo->controlExists ) {
     if ( mslo->controlPvId ) {
       stat = mslo->controlPvId->put( fvalue );
-      if ( !stat ) printf( activeMotifSliderClass_str59 );
+      if ( !stat ) fprintf( stderr, activeMotifSliderClass_str59 );
     }
   }
 
@@ -478,7 +478,7 @@ activeMotifSliderClass *mslo = (activeMotifSliderClass *) client;
   if ( mslo->controlExists ) {
     if ( mslo->controlPvId ) {
       stat = mslo->controlPvId->put( fvalue );
-      if ( !stat ) printf( activeMotifSliderClass_str3 );
+      if ( !stat ) fprintf( stderr, activeMotifSliderClass_str3 );
       mslo->actWin->appCtx->proc->lock();
       mslo->actWin->addDefExeNode( mslo->aglPtr );
       mslo->actWin->appCtx->proc->unlock();
@@ -2243,7 +2243,7 @@ double mult, fvalue;
       if ( mslo->controlExists ) {
         if ( mslo->controlPvId ) {
           stat = mslo->controlPvId->put( fvalue );
-          if ( !stat ) printf( activeMotifSliderClass_str59 );
+          if ( !stat ) fprintf( stderr, activeMotifSliderClass_str59 );
         }
       }
 
@@ -2294,7 +2294,7 @@ double mult, fvalue;
       if ( mslo->controlExists ) {
         if ( mslo->controlPvId ) {
           stat = mslo->controlPvId->put( fvalue );
-          if ( !stat ) printf( activeMotifSliderClass_str59 );
+          if ( !stat ) fprintf( stderr, activeMotifSliderClass_str59 );
         }
       }
 
@@ -2407,7 +2407,7 @@ double mult, fvalue;
       if ( mslo->controlExists ) {
         if ( mslo->controlPvId ) {
           stat = mslo->controlPvId->put( fvalue );
-          if ( !stat ) printf( activeMotifSliderClass_str59 );
+          if ( !stat ) fprintf( stderr, activeMotifSliderClass_str59 );
         }
       }
 
@@ -2421,7 +2421,7 @@ double mult, fvalue;
       if ( mslo->savedValueExists ) {
         if ( mslo->savedValuePvId ) {
           stat = mslo->savedValuePvId->put( mslo->savedV );
-          if ( !stat ) printf( activeMotifSliderClass_str59 );
+          if ( !stat ) fprintf( stderr, activeMotifSliderClass_str59 );
         }
       }
       else {
@@ -2442,7 +2442,7 @@ double mult, fvalue;
       if ( mslo->controlExists ) {
         if ( mslo->controlPvId ) {
           stat = mslo->controlPvId->put( mslo->controlV );
-          if ( !stat ) printf( activeMotifSliderClass_str59 );
+          if ( !stat ) fprintf( stderr, activeMotifSliderClass_str59 );
         }
       }
 
@@ -2632,7 +2632,7 @@ double fvalue, mult;
       if ( mslo->controlExists ) {
         if ( mslo->controlPvId ) {
           stat = mslo->controlPvId->put( fvalue );
-          if ( !stat ) printf( activeMotifSliderClass_str59 );
+          if ( !stat ) fprintf( stderr, activeMotifSliderClass_str59 );
         }
       }
 
@@ -2683,7 +2683,7 @@ double fvalue, mult;
       if ( mslo->controlExists ) {
         if ( mslo->controlPvId ) {
           stat = mslo->controlPvId->put( fvalue );
-          if ( !stat ) printf( activeMotifSliderClass_str59 );
+          if ( !stat ) fprintf( stderr, activeMotifSliderClass_str59 );
         }
       }
 
@@ -3674,6 +3674,40 @@ void activeMotifSliderClass::getPvs (
   *n = 2;
   pvs[0] = controlPvId;
   pvs[1] = savedValuePvId;
+
+}
+
+// crawler functions may return blank pv names
+char *activeMotifSliderClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return controlPvName.getExpanded();
+
+}
+
+char *activeMotifSliderClass::crawlerGetNextPv ( void ) {
+
+int max;
+
+  if ( controlLabelType != MSLC_K_LITERAL ) { // label name is a pv
+    max = 2;
+  }
+  else {
+    max = 1;
+  }
+
+  if ( crawlerPvIndex >= max ) return NULL;
+
+  crawlerPvIndex++;
+
+  if ( crawlerPvIndex == 1 ) {
+    return savedValuePvName.getExpanded();
+  }
+  else if ( crawlerPvIndex == 2 ) {
+    return controlLabelName.getExpanded();
+  }
+
+  return NULL;
 
 }
 

@@ -1,7 +1,7 @@
 #ifndef __png_str
 #define __png_str 1
 
-#define activePngClass_str1 (char *) "Cannot read png file"
+#define activePngClass_str1 (char *) "[%s] Cannot read png file - [%s]"
 #define activePngClass_str2 (char *) "Unknown object"
 #define activePngClass_str3 (char *) " Properties"
 #define activePngClass_str4 (char *) "X"

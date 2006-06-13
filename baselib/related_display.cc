@@ -443,7 +443,7 @@ relatedDisplayClass::~relatedDisplayClass ( void ) {
 int okToClose;
 activeWindowListPtr cur;
 
-/*   printf( "In relatedDisplayClass::~relatedDisplayClass\n" ); */
+/*   fprintf( stderr, "In relatedDisplayClass::~relatedDisplayClass\n" ); */
 
   if ( aw ) {
 
@@ -523,11 +523,8 @@ activeGraphicClass *rdo = (activeGraphicClass *) this;
     cascade[i] = source->cascade[i];
     propagateMacros[i] = source->propagateMacros[i];
     displayFileName[i].copy( source->displayFileName[i] );
-    //strncpy( displayFileName[i], source->displayFileName[i], 127 );
     label[i].copy( source->label[i] );
-    // strncpy( label[i], source->label[i], 127 );
     symbolsExpStr[i].copy( source->symbolsExpStr[i] );
-    // strncpy( symbols[i], source->symbols[i], 255 );
     replaceSymbols[i] = source->replaceSymbols[i];
   }
 
@@ -1563,7 +1560,7 @@ void relatedDisplayClass::sendMsg (
 {
 
   if ( param ) {
-    //printf( "  msg = [%s]\n", param );
+    //fprintf( stderr, "  msg = [%s]\n", param );
     popupDisplay( 0 );
   }
 
@@ -1708,7 +1705,6 @@ char title[32], *ptr;
   ef.addTextField( relatedDisplayClass_str33, 35, &buf->bufOfsY );
   ef.addToggle( relatedDisplayClass_str20, &buf->bufCloseAction[0] );
   ef.addToggle( relatedDisplayClass_str21, &buf->bufAllowDups[0] );
-  //ef.addToggle( relatedDisplayClass_str22, &buf->bufCascade[0] );
 
   ef.addEmbeddedEf( relatedDisplayClass_str14, "...", &ef1 );
 
@@ -2297,7 +2293,7 @@ XmString str;
           singleOpComplete = 1;
 	}
 	else {
-          printf( relatedDisplayClass_str27 );
+          fprintf( stderr, relatedDisplayClass_str27 );
           opStat = 0;
         }
 
@@ -2358,7 +2354,7 @@ XmString str;
             opComplete[i] = 1;
 	  }
 	  else {
-            printf( relatedDisplayClass_str27 );
+            fprintf( stderr, relatedDisplayClass_str27 );
             opStat = 0;
           }
 
@@ -2448,6 +2444,58 @@ void relatedDisplayClass::updateDimensions ( void )
 
 }
 
+int relatedDisplayClass::isRelatedDisplay ( void ) {
+
+  return 1;
+
+}
+
+int relatedDisplayClass::getNumRelatedDisplays ( void ) {
+
+  return numDsps;
+
+}
+
+int relatedDisplayClass::getRelatedDisplayProperty (
+  int index,
+  char *key
+) {
+
+  if ( strcmp( key, "propagate" ) == 0 ) {
+    return propagateMacros[index];
+  }
+  else if ( strcmp( key, "replace" ) == 0 ) {
+    return replaceSymbols[index];
+  }
+
+  return 0;
+
+}
+
+char *relatedDisplayClass::getRelatedDisplayName (
+  int index
+) {
+
+  if ( ( index < 0 ) || ( index >= numDsps ) ) {
+    return NULL;
+  }
+
+  return displayFileName[index].getExpanded();
+
+}
+
+char *relatedDisplayClass::getRelatedDisplayMacros (
+  int index
+) {
+
+  if ( ( index < 0 ) || ( index >= numDsps ) ) {
+    return NULL;
+  }
+
+  return symbolsExpStr[index].getExpanded();
+
+}
+
 int relatedDisplayClass::expand1st (
   int numMacros,
   char *macros[],
@@ -2530,7 +2578,7 @@ void relatedDisplayClass::popupDisplay (
 {
 
 activeWindowListPtr cur;
-int i, l, stat, newX, newY;
+int i, ii, dup, numDeleted, l, stat, newX, newY;
 char name[127+1], symbolsWithSubs[255+1];
 pvValType destV;
 unsigned int crc;
@@ -2799,6 +2847,65 @@ char prefix[127+1];
     numNewMacros += numFound;
 
   }
+
+  // ??????????????????????
+  //if ( numNewMacros > 0 ) fprintf( stderr, "\n" );
+  //for ( i=0; i<numNewMacros; i++ ) {
+  //  fprintf( stderr, "[%s]=[%s]", newMacros[i], newValues[i] );
+  //  if ( i < numNewMacros-1 ) fprintf( stderr, "," );
+  //}
+  //if ( numNewMacros > 0 ) fprintf( stderr, "\n" );
+
+  // Eliminate duplicate symbols
+
+  numDeleted = 0;
+
+  for ( i=numNewMacros-1; i>0; i-- ) {
+
+    dup = 0;
+    ii = 0;
+    while ( ii < i ) {
+
+      if ( strcmp( newMacros[ii], newMacros[i] ) == 0 ) {
+        dup = 1;
+	break;
+      }
+
+      ii++;
+
+    }
+
+    if ( dup ) {
+
+      // delete entry i
+
+      if ( !useSmallArrays ) {
+        delete newMacros[i];
+        delete newValues[i];
+      }
+
+      for ( ii=i; ii<numNewMacros-1; ii++ ) {
+        newMacros[ii] = newMacros[ii+1];
+        newValues[ii] = newValues[ii+1];
+      }
+
+      numDeleted++;
+
+    }
+
+  }
+
+  numNewMacros -= numDeleted;
+
+  // ??????????????????
+  //if ( numDeleted ) {
+  //  fprintf( stderr, "Removed %-d duplicate symbol(s)\n", numDeleted );
+  //  for ( i=0; i<numNewMacros; i++ ) {
+  //    fprintf( stderr, "[%s]=[%s]", newMacros[i], newValues[i] );
+  //    if ( i < numNewMacros-1 ) fprintf( stderr, "," );
+  //  }
+  //  if ( numNewMacros > 0 ) fprintf( stderr, "\n" );
+  //}
 
   stat = getFileName( name, displayFileName[index].getExpanded(), 127 );
   stat = getFilePrefix( prefix, displayFileName[index].getExpanded(), 127 );
@@ -3235,6 +3342,22 @@ activeWindowListPtr cur;
     }
 
   }
+
+}
+
+// crawler functions may return blank pv names
+char *relatedDisplayClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return destPvExpString[crawlerPvIndex].getExpanded();
+
+}
+
+char *relatedDisplayClass::crawlerGetNextPv ( void ) {
+
+  if ( crawlerPvIndex >= NUMPVS-1 ) return NULL;
+  crawlerPvIndex++;
+  return destPvExpString[crawlerPvIndex].getExpanded();
 
 }
 

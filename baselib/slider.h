@@ -566,6 +566,10 @@ void getPvs (
   ProcessVariable *pvs[],
   int *n );
 
+char *crawlerGetFirstPv ( void );
+
+char *crawlerGetNextPv ( void );
+
 };
 
 #ifdef __cplusplus

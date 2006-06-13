@@ -743,7 +743,7 @@ int opStat;
            table_monitor_read_connect_state, this );
 	}
 	else {
-          printf( activeTableClass_str22 );
+          fprintf( stderr, activeTableClass_str22 );
           opStat = 0;
         }
       }
@@ -872,7 +872,7 @@ int activeTableClass::createTableWidgets ( void ) {
    NULL );
 
   if ( !frameWidget ) {
-    printf( activeTableClass_str24 );
+    fprintf( stderr, activeTableClass_str24 );
     return 0;
   }
 
@@ -994,7 +994,7 @@ Widget wdgt;
     strncpy( readV, v, 39 );
 
     // open file name in readV
-    //printf( "open [%s]\n", readV );
+    //fprintf( stderr, "open [%s]\n", readV );
 
     f = fopen( readV, "r" );
     if ( !f ) {
@@ -1033,10 +1033,10 @@ Widget wdgt;
       }
       else {
 
-	//printf( "numCols = %-d\n", numCols );
-	//printf( "alignStr = [%s]\n", alignStr );
-	//printf( "headerAlignStr = [%s]\n", headerAlignStr );
-	//printf( "sepStr = [%s]\n", sepStr );
+	//fprintf( stderr, "numCols = %-d\n", numCols );
+	//fprintf( stderr, "alignStr = [%s]\n", alignStr );
+	//fprintf( stderr, "headerAlignStr = [%s]\n", headerAlignStr );
+	//fprintf( stderr, "sepStr = [%s]\n", sepStr );
 
 	Strncat( sepStr, "\n", 255 );
 
@@ -1059,10 +1059,10 @@ Widget wdgt;
             ctx = NULL;
             tk = strtok_r( msg, sepStr, &ctx );
             if ( tk ) {
-	      //printf( "tk = [%s]\n", tk );
+	      //fprintf( stderr, "tk = [%s]\n", tk );
               if ( strncmp( tk, comment, 1 ) != 0 ) {
                 wdgt = table.addCell( tk );
-                //if ( !wdgt ) printf( "err\n" );
+                //if ( !wdgt ) fprintf( stderr, "err\n" );
 	      }
 	      else {
 		isComment = 1;
@@ -1075,7 +1075,7 @@ Widget wdgt;
 	      for ( i=1; i<numCols; i++ ) {
                 tk = strtok_r( NULL, sepStr, &ctx );
                 if ( tk ) {
-	          //printf( "tk = [%s]\n", tk );
+	          //fprintf( stderr, "tk = [%s]\n", tk );
                   table.addCell( tk );
 	        }
 	        else {
@@ -1201,6 +1201,20 @@ void activeTableClass::getPvs (
 
   *n = 1;
   pvs[0] = readPvId;
+
+}
+
+// crawler functions may return blank pv names
+char *activeTableClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return readPvExpStr.getExpanded();
+
+}
+
+char *activeTableClass::crawlerGetNextPv ( void ) {
+
+  return NULL;
 
 }
 

@@ -1821,6 +1821,22 @@ void activeRectangleClass::getPvs (
 
 }
 
+// crawler functions may return blank pv names
+char *activeRectangleClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return alarmPvExpStr.getExpanded();
+
+}
+
+char *activeRectangleClass::crawlerGetNextPv ( void ) {
+
+  if ( crawlerPvIndex >= 1 ) return NULL;
+  crawlerPvIndex++;
+  return visPvExpStr.getExpanded();
+
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif

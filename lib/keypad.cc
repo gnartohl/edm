@@ -1426,12 +1426,12 @@ int result, isXEvent, argc;
   } while ( result );
 
   if ( dest != old ) {
-    printf( "dest = %-d\n", dest );
+    fprintf( stderr, "dest = %-d\n", dest );
     old = dest;
   }
 
   if ( dest1 != old1 ) {
-    printf( "dest1 = %-g\n", dest1 );
+    fprintf( stderr, "dest1 = %-g\n", dest1 );
     old1 = dest1;
   }
 

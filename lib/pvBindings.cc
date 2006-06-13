@@ -42,7 +42,7 @@ char *more, *envPtr, *tk, *error;
 char prefix[127+1], fname[127+1], line[255+1], buf[255+1], rawLine[255+1];
 FILE *f;
 
-//   printf( "pvBindingClass::pvBindingClass\n" );
+//   fprintf( stderr, "pvBindingClass::pvBindingClass\n" );
 
   max = 0;
 
@@ -64,7 +64,7 @@ FILE *f;
 
     f = fopen( fname, "r" );
     if ( !f ) {
-      printf( pvBindingClass_str1, fname );
+      fprintf( stderr, pvBindingClass_str1, fname );
       return;
     }
 
@@ -73,36 +73,36 @@ FILE *f;
       tk = strtok( line, "\n" );
       num = atol( tk );
       if ( num <= 0 ) {
-        printf( pvBindingClass_str2, fname );
+        fprintf( stderr, pvBindingClass_str2, fname );
         return;
       }
     }
     else {
-      printf( pvBindingClass_str3, fname );
+      fprintf( stderr, pvBindingClass_str3, fname );
       return;
     }
 
     names = new char *[num];
     if ( !names ) {
-      printf( pvBindingClass_str4 );
+      fprintf( stderr, pvBindingClass_str4 );
       exit(-1);
     }
 
     classNames = new char *[num];
     if ( !classNames ) {
-      printf( pvBindingClass_str5 );
+      fprintf( stderr, pvBindingClass_str5 );
       exit(-1);
     }
 
     dllHandle = new void *[num];
     if ( !dllHandle ) {
-      printf( pvBindingClass_str6 );
+      fprintf( stderr, pvBindingClass_str6 );
       exit(-1);
     }
 
     dllName = new char *[num];
     if ( !dllName ) {
-      printf( pvBindingClass_str7 );
+      fprintf( stderr, pvBindingClass_str7 );
       exit(-1);
     }
 
@@ -132,7 +132,7 @@ FILE *f;
 
             tk = strtok( line, " \t\n" );
             if ( !tk ) {
-              printf( pvBindingClass_str8 );
+              fprintf( stderr, pvBindingClass_str8 );
               exit(-1);
             }
             classNames[index] = new char[strlen(tk)+1];
@@ -140,7 +140,7 @@ FILE *f;
 
             tk = strtok( NULL, " \t\n" );
             if ( !tk ) {
-              printf( pvBindingClass_str9 );
+              fprintf( stderr, pvBindingClass_str9 );
               exit(-1);
             }
             dllName[index] = new char[strlen(tk)+1];
@@ -148,13 +148,13 @@ FILE *f;
 
 //              tk = strtok( NULL, " \t\n" );
 //              if ( !tk ) {
-//                printf( pvBindingClass_str10 );
+//                fprintf( stderr, pvBindingClass_str10 );
 //                exit(-1);
 //              }
 
             tk = strtok( NULL, "\n" );
             if ( !tk ) {
-              printf( pvBindingClass_str11 );
+              fprintf( stderr, pvBindingClass_str11 );
               exit(-1);
             }
             names[index] = new char[strlen(tk)+1];
@@ -180,15 +180,15 @@ FILE *f;
     fclose( f );
 
     if ( index != num ) {
-      printf( pvBindingClass_str12, fname );
+      fprintf( stderr, pvBindingClass_str12, fname );
       exit(-1);
     }
 
     for ( index=0; index<num; index++ ) {
 
-//       printf( "\nclassNames = [%s]\n", classNames[index] );
-//       printf( "names = [%s]\n", names[index] );
-//       printf( "dllName = [%s]\n", dllName[index] );
+//       fprintf( stderr, "\nclassNames = [%s]\n", classNames[index] );
+//       fprintf( stderr, "names = [%s]\n", names[index] );
+//       fprintf( stderr, "dllName = [%s]\n", dllName[index] );
 
       needToOpenDll = 1;
       for ( i=0; i<index; i++ ) {
@@ -203,7 +203,7 @@ FILE *f;
 
         if ( strcmp( dllName[index], "!" ) != 0 ) {
 
-//           printf( "Open %s\n", dllName[index] );
+//           fprintf( stderr, "Open %s\n", dllName[index] );
 
           dllHandle[index] = dlopen( dllName[index], RTLD_LAZY );
           if ((error = dlerror()) != NULL)  {
@@ -264,7 +264,7 @@ pvClass *cur;
 int i;
 char name[127+1], *error;
 
-  // printf( "pvBindingClass::createNew - name = [%s]\n", oneClassName );
+  // fprintf( stderr, "pvBindingClass::createNew - name = [%s]\n", oneClassName );
 
   for ( i=0; i<max; i++ ) {
 
@@ -274,7 +274,7 @@ char name[127+1], *error;
       Strncat( name, classNames[i], 127 );
       Strncat( name, "Ptr", 127 );
 
-      // printf( "func name = [%s]\n", name );
+      // fprintf( stderr, "func name = [%s]\n", name );
 
       func = (VPFUNC) dlsym( dllHandle[i], name );
       if ((error = dlerror()) != NULL)  {
@@ -283,9 +283,9 @@ char name[127+1], *error;
         return NULL;
       }
 
-// printf( "1\n" );
+// fprintf( stderr, "1\n" );
       cur = (pvClass *) (*func)();
-// printf( "2\n" );
+// fprintf( stderr, "2\n" );
       return cur;
 
     }
@@ -307,7 +307,7 @@ pvClass *cur;
 int i;
 char name[127+1], *error;
 
-  // printf( "In pvBindingClass::clone, name = [%s]\n", oneClassName );
+  // fprintf( stderr, "In pvBindingClass::clone, name = [%s]\n", oneClassName );
 
   for ( i=0; i<max; i++ ) {
 
@@ -458,7 +458,7 @@ void pvBindingClass::getOptionMenuList (
   strncpy( list, pvOptionMenuList, listSize );
   *_num = num;
 
-  // printf( "pvOptionMenuList = [%s]\n", pvOptionMenuList );
-  // printf( "list = [%s]\n", list );
+  // fprintf( stderr, "pvOptionMenuList = [%s]\n", pvOptionMenuList );
+  // fprintf( stderr, "list = [%s]\n", list );
 
 }

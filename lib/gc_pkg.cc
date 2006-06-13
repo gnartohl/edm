@@ -175,7 +175,7 @@ int gcClass::addNormXClipRectangle (
 {
 
   if ( normStackPtr >= GC_STACK_MAX ) {
-    printf( gcClass_str1 );
+    fprintf( stderr, gcClass_str1 );
     return GC_STACK_OVFLO;
   }
 
@@ -211,7 +211,7 @@ int gcClass::addEraseXClipRectangle (
 {
 
   if ( eraseStackPtr >= GC_STACK_MAX ) {
-    printf( gcClass_str2 );
+    fprintf( stderr, gcClass_str2 );
     return GC_STACK_OVFLO;
   }
 
@@ -245,7 +245,7 @@ int gcClass::addXorXClipRectangle (
 {
 
   if ( xorStackPtr >= GC_STACK_MAX ) {
-    printf( gcClass_str3 );
+    fprintf( stderr, gcClass_str3 );
     return GC_STACK_OVFLO;
   }
 

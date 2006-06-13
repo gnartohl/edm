@@ -1782,7 +1782,7 @@ int blink = 0;
   if ( clipStat & 1 )
     actWin->drawGc.removeNormXClipRectangle();
   //else
-  //  printf( "clipStat = %-d\n", clipStat );
+  //  fprintf( stderr, "clipStat = %-d\n", clipStat );
 
   actWin->drawGc.restoreFg();
   actWin->drawGc.restoreBg();
@@ -2387,6 +2387,22 @@ void activeXTextClass::getPvs (
   *n = 2;
   pvs[0] = alarmPvId;
   pvs[1] = visPvId;
+
+}
+
+// crawler functions may return blank pv names
+char *activeXTextClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return alarmPvExpStr.getExpanded();
+
+}
+
+char *activeXTextClass::crawlerGetNextPv ( void ) {
+
+  if ( crawlerPvIndex >= 1 ) return NULL;
+  crawlerPvIndex++;
+  return visPvExpStr.getExpanded();
 
 }
 

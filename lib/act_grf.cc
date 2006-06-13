@@ -57,6 +57,7 @@ activeGraphicClass::activeGraphicClass ( void ) {
   needSmartDraw = 0;
   mouseOver = 0;
   hidden = 0;
+  crawlerPvIndex = 0; // for crawler
 
 }
 
@@ -93,6 +94,7 @@ void activeGraphicClass::clone ( const activeGraphicClass *source ) {
   needSmartDraw = 0;
   mouseOver = 0;
   hidden = 0;
+  crawlerPvIndex = 0; // for crawler
 
   if ( source->createParam ) {
     createParam = new char[strlen(source->createParam)+1];
@@ -144,7 +146,7 @@ void activeGraphicClass::checkBaseClassVersion (
 ) {
 
   if ( baseMajorVersion() != ver ) {
-    printf( "Incompatible base class version - %s\n", file );
+    fprintf( stderr, "Incompatible base class version - %s\n", file );
     exit(-1);
   }
 
@@ -284,7 +286,7 @@ int activeGraphicClass::rotate (
 double dx0, dy0, dx1, dy1, dxOrig, dyOrig, dxPrime0, dyPrime0,
  dxPrime1, dyPrime1;
 
-  //printf( "activeGraphicClass::rotate %c, xO=%-d, yO=%-d\n",
+  //fprintf( stderr, "activeGraphicClass::rotate %c, xO=%-d, yO=%-d\n",
   // direction, xOrigin, yOrigin );
 
   dxOrig = (double) xOrigin;
@@ -297,38 +299,38 @@ double dx0, dy0, dx1, dy1, dxOrig, dyOrig, dxPrime0, dyPrime0,
     dx0 = (double) ( x - dxOrig );
     dy0 = (double) ( dyOrig - y );
 
-    //printf( "1 dx0=%-g, dy0=%-g\n", dx0, dy0 );
+    //fprintf( stderr, "1 dx0=%-g, dy0=%-g\n", dx0, dy0 );
 
     // rotate
     dxPrime0 = dy0;
     dyPrime0 = dx0 * -1.0;
 
-    //printf( "2 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
+    //fprintf( stderr, "2 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
 
     // translate
     dxPrime0 += dxOrig;
     dyPrime0 = dyOrig - dyPrime0;
 
-    //printf( "3 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
+    //fprintf( stderr, "3 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
 
 
     // translate
     dx1 = (double) ( getX1() - dxOrig );
     dy1 = (double) ( dyOrig - getY1() );
 
-    //printf( "1 dx1=%-g, dy1=%-g\n", dx1, dy1 );
+    //fprintf( stderr, "1 dx1=%-g, dy1=%-g\n", dx1, dy1 );
 
     // rotate
     dxPrime1 = dy1;
     dyPrime1 = dx1 * -1.0;
 
-    //printf( "2 dxPrime1=%-g, dyPrime1=%-g\n", dxPrime1, dyPrime1 );
+    //fprintf( stderr, "2 dxPrime1=%-g, dyPrime1=%-g\n", dxPrime1, dyPrime1 );
 
     // translate
     dxPrime1 += dxOrig;
     dyPrime1 = dyOrig - dyPrime1;
 
-    //printf( "3 dxPrime1=%-g, dyPrime1=%-g\n", dxPrime1, dyPrime1 );
+    //fprintf( stderr, "3 dxPrime1=%-g, dyPrime1=%-g\n", dxPrime1, dyPrime1 );
 
     // compute final x, y, w, & h
     x = (int) dxPrime0;
@@ -345,38 +347,38 @@ double dx0, dy0, dx1, dy1, dxOrig, dyOrig, dxPrime0, dyPrime0,
     dx0 = (double) ( x - dxOrig );
     dy0 = (double) ( dyOrig - y );
 
-    //printf( "1 dx0=%-g, dy0=%-g\n", dx0, dy0 );
+    //fprintf( stderr, "1 dx0=%-g, dy0=%-g\n", dx0, dy0 );
 
     // rotate
     dxPrime0 = dy0 * -1.0;
     dyPrime0 = dx0;
 
-    //printf( "2 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
+    //fprintf( stderr, "2 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
 
     // translate
     dxPrime0 += dxOrig;
     dyPrime0 = dyOrig - dyPrime0;
 
-    //printf( "3 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
+    //fprintf( stderr, "3 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
 
 
     // translate
     dx1 = (double) ( getX1() - dxOrig );
     dy1 = (double) ( dyOrig - getY1() );
 
-    //printf( "1 dx1=%-g, dy1=%-g\n", dx1, dy1 );
+    //fprintf( stderr, "1 dx1=%-g, dy1=%-g\n", dx1, dy1 );
 
     // rotate
     dxPrime1 = dy1 * -1.0;
     dyPrime1 = dx1;
 
-    //printf( "2 dxPrime1=%-g, dyPrime1=%-g\n", dxPrime1, dyPrime1 );
+    //fprintf( stderr, "2 dxPrime1=%-g, dyPrime1=%-g\n", dxPrime1, dyPrime1 );
 
     // translate
     dxPrime1 += dxOrig;
     dyPrime1 = dyOrig - dyPrime1;
 
-    //printf( "3 dxPrime1=%-g, dyPrime1=%-g\n", dxPrime1, dyPrime1 );
+    //fprintf( stderr, "3 dxPrime1=%-g, dyPrime1=%-g\n", dxPrime1, dyPrime1 );
 
     // compute final x, y, w, & h
     x = (int) dxPrime0;
@@ -400,7 +402,7 @@ int activeGraphicClass::flip (
 
 double dx0, dy0, dxOrig, dyOrig, dxPrime0, dyPrime0;
 
-  //printf( "flip %c, xO=%-d, yO=%-d\n", direction, xOrigin, yOrigin );
+  //fprintf( stderr, "flip %c, xO=%-d, yO=%-d\n", direction, xOrigin, yOrigin );
 
   dxOrig = (double) xOrigin;
   dyOrig = (double) yOrigin;
@@ -411,17 +413,17 @@ double dx0, dy0, dxOrig, dyOrig, dxPrime0, dyPrime0;
     // translate
     dx0 = (double) ( x - dxOrig );
 
-    //printf( "1 dx0=%-g, dy0=%-g\n", dx0, dy0 );
+    //fprintf( stderr, "1 dx0=%-g, dy0=%-g\n", dx0, dy0 );
 
     // move
     dxPrime0 = dx0 * -1.0;
 
-    //printf( "2 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
+    //fprintf( stderr, "2 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
 
     // translate
     dxPrime0 += dxOrig;
 
-    //printf( "3 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
+    //fprintf( stderr, "3 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
 
     // compute final x
     x = (int) dxPrime0 - w;
@@ -432,17 +434,17 @@ double dx0, dy0, dxOrig, dyOrig, dxPrime0, dyPrime0;
     // translate
     dy0 = (double) ( dyOrig - y );
 
-    //printf( "1 dx0=%-g, dy0=%-g\n", dx0, dy0 );
+    //fprintf( stderr, "1 dx0=%-g, dy0=%-g\n", dx0, dy0 );
 
     // move
     dyPrime0 = dy0 * -1.0;
 
-    //printf( "2 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
+    //fprintf( stderr, "2 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
 
     // translate
     dyPrime0 = dyOrig - dyPrime0;
 
-    //printf( "3 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
+    //fprintf( stderr, "3 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
 
     // compute final y
     y = (int) dyPrime0 - h;
@@ -866,8 +868,8 @@ XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
   x1 = this->getX1();
   y1 = this->getY1();
 
-  //printf( "activeGraphicClass::doSmartDrawAllActive, %s\n", objName() );
-  //printf( "x0=%-d, y0=%-d, x1=%-d, y1=%-d\n", x0, y0, x1, y1 );
+  //fprintf( stderr, "activeGraphicClass::doSmartDrawAllActive, %s\n", objName() );
+  //fprintf( stderr, "x0=%-d, y0=%-d, x1=%-d, y1=%-d\n", x0, y0, x1, y1 );
 
   this->bufInvalidate();
   this->eraseActive();
@@ -906,14 +908,14 @@ int activeGraphicClass::drawActiveIfIntersects (
   int y1 )
 {
 
-  //printf( "x0=%-d, y0=%-d, x1=%-d, y1=%-d\n", x0, y0, x1, y1 );
+  //fprintf( stderr, "x0=%-d, y0=%-d, x1=%-d, y1=%-d\n", x0, y0, x1, y1 );
   if ( intersects( x0, y0, x1, y1 ) ) {
-    //printf( "%s intersects\n", objName() );
+    //fprintf( stderr, "%s intersects\n", objName() );
     bufInvalidate();
     drawActive( x0, y0, x1, y1 );
   }
   else {
-    //printf( "%s not intersects\n", objName() );
+    //fprintf( stderr, "%s not intersects\n", objName() );
   }
 
   return 1;
@@ -2208,7 +2210,7 @@ int activeGraphicClass::movePoint (
 
 int activeGraphicClass::lineEditComplete ( void ) {
 
-  printf( "lineEditComplete\n" );
+  fprintf( stderr, "lineEditComplete\n" );
 
   curUndoObj = NULL;
 
@@ -2218,7 +2220,7 @@ int activeGraphicClass::lineEditComplete ( void ) {
 
 int activeGraphicClass::lineEditCancel ( void ) {
 
-  printf( "lineEditCancel\n" );
+  fprintf( stderr, "lineEditCancel\n" );
 
   curUndoObj = NULL;
 
@@ -3597,7 +3599,7 @@ int activeGraphicClass::addUndoEditNode ( undoClass *undoObj ) {
 
 int stat;
 
-  printf( "Generic addUndoEditNode\n" );
+  fprintf( stderr, "Generic addUndoEditNode\n" );
 
   stat = undoObj->addEditNode( this, NULL );
   return stat;
@@ -4007,3 +4009,17 @@ int activeGraphicClass::putGroupVisInfo ( // for group objects
   return 0; // error, only implemented for group objects
 
 }
+
+char *activeGraphicClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return NULL;
+
+}
+
+char *activeGraphicClass::crawlerGetNextPv ( void ) {
+
+  return NULL;
+
+}
+

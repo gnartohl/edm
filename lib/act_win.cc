@@ -55,12 +55,12 @@ void printErrMsg (
   const char *msg )
 {
 
-  printf( "==============================================================\n" );
-  printf( "Internal error in %s at line %-d\nError Message: %s\n\n",
+  fprintf( stderr, "==============================================================\n" );
+  fprintf( stderr, "Internal error in %s at line %-d\nError Message: %s\n\n",
    fileName, lineNum, msg );
-  printf( "Please contact the author of this software or else send \n" );
-  printf( "the text of this message to tech-talk@aps.anl.gov\n" );
-  printf( "==============================================================\n" );
+  fprintf( stderr, "Please contact the author of this software or else send \n" );
+  fprintf( stderr, "the text of this message to tech-talk@aps.anl.gov\n" );
+  fprintf( stderr, "==============================================================\n" );
 
 }
 
@@ -176,7 +176,7 @@ static void signal_handler (
   int sig
 ) {
 
-  //printf( "Got signal: sig = %-d\n", sig );
+  //fprintf( stderr, "Got signal: sig = %-d\n", sig );
   longjmp( g_jump_h, 1 );
 
 }
@@ -209,22 +209,22 @@ activeWindowClass *awo = (activeWindowClass *) client;
   }
   else {
 
-    printf( "Auto-save failed - received exception\n" );
+    fprintf( stderr, "Auto-save failed - received exception\n" );
     return;
 
   }
 #endif
 
   //stat = sys_get_datetime_string( 31, str );
-  //printf( "[%s] %s - autosave\n", str, awo->fileName );
+  //fprintf( stderr, "[%s] %s - autosave\n", str, awo->fileName );
 
   if ( strcmp( awo->startSignature, "edmActiveWindow" ) != 0 ) {
-    printf( "Auto-save failed - bad initial signature\n" );
+    fprintf( stderr, "Auto-save failed - bad initial signature\n" );
     return;
   }
 
   if ( strcmp( awo->endSignature, "wodniWevitcAmde" ) != 0 ) {
-    printf( "Auto-save failed - bad ending signature\n" );
+    fprintf( stderr, "Auto-save failed - bad ending signature\n" );
     return;
   }
 
@@ -1398,7 +1398,7 @@ int fileOpened = 0;
 
   }
 
-  // printf( "awc_pvlistFileSelectOk_cb, file name = [%s]\n", tmp );
+  // fprintf( stderr, "awc_pvlistFileSelectOk_cb, file name = [%s]\n", tmp );
 
   ptr = strstr( tmp, "." );
 
@@ -1447,9 +1447,22 @@ int fileOpened = 0;
     goto done;
   }
 
-  //printf( "Num PVs = %-d\n", nPvs );
+  //fprintf( stderr, "Num PVs = %-d\n", nPvs );
 
 done:
+
+  if ( fileOpened ) {
+
+    fileOpened = 0;
+
+    stat = fclose(f);
+    if ( stat < 0 ) {
+      strncpy( msg, activeWindowClass_str200, 255 );
+      Strncat( msg, tmp, 255 );
+      awo->appCtx->postMessage( msg );
+    }
+
+  }
 
   XtRemoveCallback( w, XmNcancelCallback,
    awc_fileSelectCancel_cb, (void *) awo );
@@ -1504,7 +1517,7 @@ static void awc_pvlistFileSelectCancel_cb (
 
 activeWindowClass *awo = (activeWindowClass *) client;
 
-  // printf( "awc_pvlistFileSelectCancel_cb\n" );
+  // fprintf( stderr, "awc_pvlistFileSelectCancel_cb\n" );
 
   XtRemoveCallback( w, XmNcancelCallback,
    awc_fileSelectCancel_cb, (void *) awo );
@@ -1526,7 +1539,7 @@ static void awc_pvlistFileSelectKill_cb (
 
 widgetAndPointerPtr wp = (widgetAndPointerPtr) client;
 
-  // printf( "awc_pvlistFileSelectKill_cb\n" );
+  // fprintf( stderr, "awc_pvlistFileSelectKill_cb\n" );
 
   awc_fileSelectCancel_cb( wp->w, wp->client, NULL );
 
@@ -1566,7 +1579,7 @@ char *item;
   awo = (activeWindowClass *) block->awo;
 
   if ( item ) {
-    //printf( "selectScheme_cb, item = [%s]\n", item );
+    //fprintf( stderr, "selectScheme_cb, item = [%s]\n", item );
     strncpy( awo->curSchemeSet, item, 63 );
   }
   else {
@@ -3639,10 +3652,10 @@ activeGraphicListPtr cur, curSel, nextSel;
          awo->appCtx->curGroupMaxVisString );
 	if ( stat & 1 ) {
           awo->appCtx->haveGroupVisInfo = 1;
-	  //printf( "pv = [%s]\n", awo->appCtx->curGroupVisPvExpStr.getRaw() );
-	  //printf( "inv = %-d\n", awo->appCtx->curGroupVisInverted );
-	  //printf( "min = [%s]\n", awo->appCtx->curGroupMinVisString );
-	  //printf( "max = [%s]\n", awo->appCtx->curGroupMaxVisString );
+	  //fprintf( stderr, "pv = [%s]\n", awo->appCtx->curGroupVisPvExpStr.getRaw() );
+	  //fprintf( stderr, "inv = %-d\n", awo->appCtx->curGroupVisInverted );
+	  //fprintf( stderr, "min = [%s]\n", awo->appCtx->curGroupMinVisString );
+	  //fprintf( stderr, "max = [%s]\n", awo->appCtx->curGroupMaxVisString );
 	}
 	else {
 	  XBell( awo->d, 50 );
@@ -3739,7 +3752,7 @@ activeGraphicListPtr cur, curSel, nextSel;
       else {
 
         printErrMsg( __FILE__, __LINE__, "Inconsistent select state" );
-        //printf( "Klingons decloaking! (1)\n" );
+        //fprintf( stderr, "Klingons decloaking! (1)\n" );
 
       }
 
@@ -3778,7 +3791,7 @@ activeGraphicListPtr cur, curSel, nextSel;
       else {
 
         printErrMsg( __FILE__, __LINE__, "Inconsistent select state" );
-        //printf( "Klingons decloaking! (2)\n" );
+        //fprintf( stderr, "Klingons decloaking! (2)\n" );
 
       }
 
@@ -5300,7 +5313,7 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
       // debug
       //cur = twoDimHead1->flink;
       //while ( cur != twoDimHead1 ) {
-      //  printf( "x=%-d, y=%-d\n", cur->node->getX0(),
+      //  fprintf( stderr, "x=%-d, y=%-d\n", cur->node->getX0(),
       //   cur->node->getY0() );
       //  cur = cur->flink;
       //}
@@ -5356,7 +5369,7 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
 
       }
 
-      //printf( "num cols = %-d, max rows = %-d\n", nCols, maxRows );
+      //fprintf( stderr, "num cols = %-d, max rows = %-d\n", nCols, maxRows );
 
       if ( nCols > 1 ) {
         incX = ( rightX - leftX ) / ( nCols - 1 );
@@ -5372,7 +5385,7 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
         incY = 1;
       }
 
-      //printf( "incX = %-d, incY = %-d\n", incX, incY );
+      //fprintf( stderr, "incX = %-d, incY = %-d\n", incX, incY );
 
       // if necessary, reallocate work array
       if ( maxRows > awo->list_array_size ) {
@@ -5684,7 +5697,7 @@ char schemeFile[255+1];
       awo->appCtx->getScheme( awo->curSchemeSet, curObjNameNode->objName,
        curObjNameNode->objType, schemeFile, 255 );
       if ( strcmp( schemeFile, "" ) != 0 ) {
-        //printf( "load new scheme [%s]\n", schemeFile );
+        //fprintf( stderr, "load new scheme [%s]\n", schemeFile );
         stat = awo->loadComponentScheme( schemeFile );
         if ( !( stat & 1 ) ) {
           awo->loadComponentScheme( "default" );
@@ -5741,6 +5754,9 @@ activeWindowClass *awo;
 
   if ( e->type == ConfigureNotify ) {
 
+    //if ( !(awo->isEmbedded) ) fprintf( stderr, "ConfigureNotify - [%s]\n",
+    //  awo->fileNameForSym );
+
     ce = (XConfigureEvent *) e;
 
     if ( !ce->send_event ) {
@@ -5780,6 +5796,8 @@ activeWindowClass *awo;
 
     if ( ( awo->w != ce->width ) ||
          ( awo->h != ce->height ) ) {
+
+      //printf( "  resize\n" );
 
 #ifdef ADD_SCROLLED_WIN
       if ( awo->appCtx->useScrollBars && !awo->disableScroll ) {
@@ -5833,6 +5851,8 @@ activeWindowClass *awo;
 
     if ( ( awo->x != ce->x ) ||
          ( awo->y != ce->y ) ) {
+
+      //printf( "  move\n" );
 
       awo->x = ce->x;
       awo->y = ce->y;
@@ -6803,7 +6823,7 @@ Boolean  nothingDone = False;
                     cur->selBlink->selFlink = cur->selFlink;
 		  }
 		  else {
-                    printf( "%s at x=%-d, y=%-d : selBlink is null (1)\n",
+                    fprintf( stderr, "%s at x=%-d, y=%-d : selBlink is null (1)\n",
 		     cur->node->objName(), cur->node->getX0(),
 		     cur->node->getY0() );
 		  }
@@ -6811,7 +6831,7 @@ Boolean  nothingDone = False;
                     cur->selFlink->selBlink = cur->selBlink;
 		  }
 		  else {
-                    printf( "%s at x=%-d, y=%-d : selFlink is null (2)\n",
+                    fprintf( stderr, "%s at x=%-d, y=%-d : selFlink is null (2)\n",
 		     cur->node->objName(), cur->node->getX0(),
 		     cur->node->getY0() );
 		  }
@@ -6902,7 +6922,7 @@ Boolean  nothingDone = False;
                 else {
                   printErrMsg( __FILE__, __LINE__,
                    "Inconsistent select state" );
-                  //printf( "Klingons decloaking! (3)\n" );
+                  //fprintf( stderr, "Klingons decloaking! (3)\n" );
                   awo->state = AWC_MANY_SELECTED;
                   awo->updateMasterSelection();
                 }
@@ -7128,7 +7148,7 @@ Boolean  nothingDone = False;
                       cur->selBlink->selFlink = cur->selFlink;
 		    }
 		    else {
-                      printf( "%s at x=%-d, y=%-d : selBlink is null (3)\n",
+                      fprintf( stderr, "%s at x=%-d, y=%-d : selBlink is null (3)\n",
 		       cur->node->objName(), cur->node->getX0(),
 		       cur->node->getY0() );
 		    }
@@ -7136,7 +7156,7 @@ Boolean  nothingDone = False;
                       cur->selFlink->selBlink = cur->selBlink;
 		    }
 		    else {
-                      printf( "%s at x=%-d, y=%-d : selFlink is null (4)\n",
+                      fprintf( stderr, "%s at x=%-d, y=%-d : selFlink is null (4)\n",
 		       cur->node->objName(), cur->node->getX0(),
 		       cur->node->getY0() );
 		    }
@@ -7244,7 +7264,7 @@ Boolean  nothingDone = False;
                     cur->selBlink->selFlink = cur->selFlink;
 		  }
 		  else {
-                    printf( "%s at x=%-d, y=%-d : selBlink is null (5)\n",
+                    fprintf( stderr, "%s at x=%-d, y=%-d : selBlink is null (5)\n",
 		     cur->node->objName(), cur->node->getX0(),
 		     cur->node->getY0() );
 		  }
@@ -7252,7 +7272,7 @@ Boolean  nothingDone = False;
                     cur->selFlink->selBlink = cur->selBlink;
 		  }
 		  else {
-                    printf( "%s at x=%-d, y=%-d : selFlink is null (6)\n",
+                    fprintf( stderr, "%s at x=%-d, y=%-d : selFlink is null (6)\n",
 		     cur->node->objName(), cur->node->getX0(),
 		     cur->node->getY0() );
 		  }
@@ -7350,7 +7370,7 @@ Boolean  nothingDone = False;
               else {
                   printErrMsg( __FILE__, __LINE__,
                    "Inconsistent select state" );
-                  //printf( "Klingons decloaking! (4)\n" );
+                  //fprintf( stderr, "Klingons decloaking! (4)\n" );
                 awo->state = AWC_MANY_SELECTED;
                 awo->updateMasterSelection();
               }
@@ -7745,7 +7765,7 @@ Boolean  nothingDone = False;
                       cur->selBlink->selFlink = cur->selFlink;
 		    }
 		    else {
-                      printf( "%s at x=%-d, y=%-d : selBlink is null (7)\n",
+                      fprintf( stderr, "%s at x=%-d, y=%-d : selBlink is null (7)\n",
 		       cur->node->objName(), cur->node->getX0(),
 		       cur->node->getY0() );
 		    }
@@ -7753,7 +7773,7 @@ Boolean  nothingDone = False;
                       cur->selFlink->selBlink = cur->selBlink;
 		    }
 		    else {
-                      printf( "%s at x=%-d, y=%-d : selFlink is null (8)\n",
+                      fprintf( stderr, "%s at x=%-d, y=%-d : selFlink is null (8)\n",
 		       cur->node->objName(), cur->node->getX0(),
 		       cur->node->getY0() );
 		    }
@@ -7789,7 +7809,7 @@ Boolean  nothingDone = False;
                 else {
                   printErrMsg( __FILE__, __LINE__,
                    "Inconsistent select state" );
-                  //printf( "Klingons decloaking! (5)\n" );
+                  //fprintf( stderr, "Klingons decloaking! (5)\n" );
                   awo->state = AWC_MANY_SELECTED;
                   awo->updateMasterSelection();
                 }
@@ -8100,7 +8120,7 @@ Boolean  nothingDone = False;
                           cur->selBlink->selFlink = cur->selFlink;
 		        }
 		        else {
-                          printf(
+                          fprintf( stderr,
                            "%s at x=%-d, y=%-d : selBlink is null (9)\n",
 		           cur->node->objName(), cur->node->getX0(),
 		           cur->node->getY0() );
@@ -8109,7 +8129,7 @@ Boolean  nothingDone = False;
                           cur->selFlink->selBlink = cur->selBlink;
 		        }
 		        else {
-                          printf(
+                          fprintf( stderr,
                            "%s at x=%-d, y=%-d : selFlink is null (A)\n",
 		           cur->node->objName(), cur->node->getX0(),
 		           cur->node->getY0() );
@@ -8145,7 +8165,7 @@ Boolean  nothingDone = False;
                           cur->selBlink->selFlink = cur->selFlink;
 		        }
 		        else {
-                          printf(
+                          fprintf( stderr,
                            "%s at x=%-d, y=%-d : selBlink is null (B)\n",
 		           cur->node->objName(), cur->node->getX0(),
 		           cur->node->getY0() );
@@ -8154,7 +8174,7 @@ Boolean  nothingDone = False;
                           cur->selFlink->selBlink = cur->selBlink;
 		        }
 		        else {
-                          printf(
+                          fprintf( stderr,
                            "%s at x=%-d, y=%-d : selFlink is null (C)\n",
 		           cur->node->objName(), cur->node->getX0(),
 		           cur->node->getY0() );
@@ -10316,6 +10336,8 @@ objNameListPtr curObjName, nextObjName;
 commentLinesPtr commentCur, commentNext;
 pvDefPtr pvDefCur, pvDefNext;
 
+  //if ( !isEmbedded ) fprintf( stderr, "Destroy - [%s]\n", fileNameForSym );
+
   if ( dragPopup ) {
     XtDestroyWidget( dragPopup );
     dragPopup = NULL;
@@ -11237,6 +11259,178 @@ char tmp[10];
    KeyPressMask|ButtonPressMask|ButtonReleaseMask|Button1MotionMask|
     Button2MotionMask|Button3MotionMask|ExposureMask, False,
    drawWinEventHandler, (XtPointer) this );
+
+  return 1;
+
+}
+
+int activeWindowClass::createNodeForCrawler (
+  appContextClass *ctx,
+  char *filename
+) {
+
+tagClass tag;
+FILE *f;
+char objName[63+1], defName[255+1], tagName[255+1], val[4095+1],
+ *gotOne;
+int isCompound, stat, l;
+objBindingClass obj;
+activeGraphicListPtr cur;
+
+  loadFailure = 1;
+  tag.initLine();
+
+  f = openAny( filename, "r" );
+  if ( !f ) {
+    fprintf( stderr, activeWindowClass_str208, filename );
+    return( 1000 );
+  }
+
+#if 0
+  head = new activeGraphicListType;
+  head->flink = head;
+  head->blink = head;
+#endif
+
+  readCommentsAndVersion( f );
+
+  if ( major < 4 ) {
+
+    fprintf( stderr, activeWindowClass_str206, this->fileName, major );
+    fileClose( f );
+    return( 1000 );
+
+    stat = readUntilEndOfData( f ); // for forward compatibility
+    if ( !( stat & 1 ) ) return stat; // memory leak here
+
+    while ( !feof(f) ) {
+
+      gotOne = fgets( objName, 63, f ); incLine();
+
+      if ( gotOne ) {
+
+        l = strlen(objName);
+        if ( l > 63 ) l = 63;
+        objName[l-1] = 0;  // discard \n
+
+        cur = new activeGraphicListType;
+        if ( !cur ) {
+          fileClose( f );
+          fprintf( stderr, activeWindowClass_str207 );
+          return 1000;
+        }
+        cur->defExeFlink = NULL;
+        cur->defExeBlink = NULL;
+
+        cur->node = obj.createNew( objName );
+
+        if ( cur->node ) {
+
+          stat = cur->node->old_createFromFile( f, objName, this );
+          if ( !( stat & 1 ) ) return stat; // memory leak here
+
+          stat = readUntilEndOfData( f ); // for forward compatibility
+          if ( !( stat & 1 ) ) return stat; // memory leak here
+
+          cur->blink = head->blink;
+          head->blink->flink = cur;
+          head->blink = cur;
+          cur->flink = head;
+
+        }
+        else {
+
+          fileClose( f );
+          fprintf( stderr, activeWindowClass_str209, line(),
+           objName );
+          return 1000;
+
+        }
+
+      }
+
+    }
+
+    //fileClose( f );
+    //return 1000;
+
+  }
+  else {
+
+  // read file and process each leading keyword
+  tag.init();
+  tag.loadR( "object", 63, objName );
+  tag.loadR( "pvdef", 255, defName );
+  tag.loadR( "forceLocalPvs" );
+
+  gotOne = tag.getName( tagName, 255, f );
+
+  while ( gotOne ) {
+
+    //fprintf( stderr, "name = [%s]\n", tagName );
+
+    if ( strcmp( tagName, "object" ) == 0 ) {
+
+      tag.getValue( val, 4095, f, &isCompound );
+      tag.decode( tagName, val, isCompound );
+
+      // ==============================================================
+      // Create object
+
+      //fprintf( stderr, "objName = [%s]\n", objName );
+
+      cur = new activeGraphicListType;
+      if ( !cur ) {
+        fileClose( f );
+        fprintf( stderr, activeWindowClass_str207 );
+        return 1000;
+      }
+      cur->defExeFlink = NULL;
+      cur->defExeBlink = NULL;
+
+      cur->node = obj.createNew( objName );
+
+      if ( cur->node ) {
+
+        stat = cur->node->createFromFile( f, objName, this );
+        if ( !( stat & 1 ) ) return stat;
+
+        cur->blink = head->blink;
+        head->blink->flink = cur;
+        head->blink = cur;
+        cur->flink = head;
+
+      }
+      else {
+
+        // Discard all content up to "endObjectProperties"
+
+        fprintf( stderr, activeWindowClass_str209, tag.line(),
+         objName );
+
+        tag.init();
+        tag.loadR( "endObjectProperties", 63, objName );
+        stat = tag.readTags( f, "endObjectProperties" );
+
+        // Start looking for leading keywords again
+        tag.init();
+        tag.loadR( "object", 63, objName );
+        tag.loadR( "pvdef", 255, defName );
+        tag.loadR( "forceLocalPvs" );
+
+      }
+
+    }
+
+    gotOne = tag.getName( tagName, 255, f );
+
+  }
+
+  }
+
+  fileClose( f );
+
+  loadFailure = 0;
 
   return 1;
 
@@ -13734,6 +13928,25 @@ Widget activeWindowClass::topWidgetId ( void ) {
 
 }
 
+Widget activeWindowClass::actualTopWidgetId ( void ) {
+
+activeWindowClass *aw, *prevAw;
+
+  prevAw = NULL;
+  aw = this;
+  while ( aw ) {
+    prevAw = aw;
+    aw = aw->parent;
+  }
+
+  if ( prevAw ) {
+    return prevAw->top;
+  }
+
+  return (Widget) NULL;
+
+}
+
 Widget activeWindowClass::drawWidgetId ( void ) {
 
   return drawWidget;
@@ -13775,7 +13988,7 @@ void activeWindowClass::setChanged ( void ) {
     autosaveTimer = appAddTimeOut( appCtx->appContext(),
      300000, acw_autosave, this );
      //30000, acw_autosave, this );
-    //printf( "[%s] %s - add autosave timer\n", str, fileName );
+    //fprintf( stderr, "[%s] %s - add autosave timer\n", str, fileName );
   }
 
 }
@@ -14167,8 +14380,8 @@ tagClass tag;
         fprintf( f, "# (%s)\n", description );
         fprintf( f, "object %s\n", cur->node->objName() );
         if ( tag.genDoc() ) {
-          printf( "# (%s)\n", description );
-          printf( "object %s\n", cur->node->objName() );
+          fprintf( stderr, "# (%s)\n", description );
+          fprintf( stderr, "object %s\n", cur->node->objName() );
 	}
       }
       else {
@@ -14183,8 +14396,8 @@ tagClass tag;
         fprintf( f, "object %s:%s\n", cur->node->objName(),
          cur->node->getCreateParam() );
         if ( tag.genDoc() ) {
-          printf( "# (%s)\n", description );
-          printf( "object %s:%s\n", cur->node->objName(),
+          fprintf( stderr, "# (%s)\n", description );
+          fprintf( stderr, "object %s:%s\n", cur->node->objName(),
            cur->node->getCreateParam() );
 	}
         Strncat( fullName, cur->node->getCreateParam(), 255 );
@@ -14289,7 +14502,7 @@ Widget clipWidget, hsbWidget, vsbWidget;
 
       if ( cur->node ) {
 
-	printf( "call old_createFromFile\n" );
+	fprintf( stderr, "call old_createFromFile\n" );
         stat = cur->node->old_createFromFile( f, name, this );
         if ( !( stat & 1 ) ) return stat; // memory leak here
 
@@ -14585,7 +14798,7 @@ tagClass tag;
 
     while ( gotOne ) {
 
-      //printf( "name = [%s]\n", tagName );
+      //fprintf( stderr, "name = [%s]\n", tagName );
 
       if ( strcmp( tagName, "object" ) == 0 ) {
 
@@ -14595,7 +14808,7 @@ tagClass tag;
         // ==============================================================
         // Create object
 
-        //printf( "objName = [%s]\n", objName );
+        //fprintf( stderr, "objName = [%s]\n", objName );
 
         cur = new activeGraphicListType;
         if ( !cur ) {
@@ -14640,8 +14853,6 @@ tagClass tag;
           tag.loadR( "pvdef", 255, defName );
           tag.loadR( "forceLocalPvs" );
 
-          //return 0;
-
         }
 
         // ===================================
@@ -14654,7 +14865,7 @@ tagClass tag;
         tag.getValue( val, 4095, f, &isCompound );
         tag.decode( tagName, val, isCompound );
 
-	//printf( "pv = [%s]\n", defName );
+	//fprintf( stderr, "pv = [%s]\n", defName );
         pvDefCur = new pvDefType;
         pvDefCur->def = new char[strlen(defName)+1];
         strcpy( pvDefCur->def, defName );
@@ -14668,14 +14879,14 @@ tagClass tag;
       else if ( strcmp( tagName, "forceLocalPvs" ) == 0 ) {
 
 	forceLocalPvs = 1;
-	//printf( "force local pvs\n" );
+	//fprintf( stderr, "force local pvs\n" );
 
         gotOne = tag.getName( tagName, 255, f );
 
       }
       else {
 
-        printf( "Got Junk\n" );
+        fprintf( stderr, "Unknown tag name: [%s]\n", tagName );
         gotOne = NULL;
 
       }
@@ -15149,7 +15360,7 @@ pvDefPtr pvDefCur;
   // process local pv definitions
   pvDefCur = pvDefHead->flink;
   while ( pvDefCur ) {
-    //printf( "execute - create pv = [%s]\n", pvDefCur->def );
+    //fprintf( stderr, "execute - create pv = [%s]\n", pvDefCur->def );
     pvDefCur->id = the_PV_Factory->create( pvDefCur->def );
     pvDefCur = pvDefCur->flink;
   }
@@ -15386,7 +15597,7 @@ char **muxMacro, **muxExpansion;
   // process local pv definitions
   pvDefCur = pvDefHead->flink;
   while ( pvDefCur ) {
-    //printf( "reexecute - create pv = [%s]\n", pvDefCur->def );
+    //fprintf( stderr, "reexecute - create pv = [%s]\n", pvDefCur->def );
     pvDefCur = pvDefCur->flink;
   }
 
@@ -15528,7 +15739,7 @@ pvDefPtr pvDefCur;
   // process local pv definitions
   pvDefCur = pvDefHead->flink;
   while ( pvDefCur ) {
-    //printf( "returnToEdit - release pv = [%s]\n", pvDefCur->def );
+    //fprintf( stderr, "returnToEdit - release pv = [%s]\n", pvDefCur->def );
     pvDefCur->id->release();
     pvDefCur = pvDefCur->flink;
   }
@@ -16421,13 +16632,13 @@ static int alignEnum[3] = {
   }
 
 #if 0
-  printf( "embCenter = %-d\n", embCenter );
-  printf( "embSetSize = %-d\n", embSetSize );
-  printf( "embSizeOfs = %-d\n", embSizeOfs );
-  printf( "embeddedW = %-d\n", embeddedW );
-  printf( "embeddedH = %-d\n", embeddedH );
-  printf( "w = %-d\n", w );
-  printf( "h = %-d\n", h );
+  fprintf( stderr, "embCenter = %-d\n", embCenter );
+  fprintf( stderr, "embSetSize = %-d\n", embSetSize );
+  fprintf( stderr, "embSizeOfs = %-d\n", embSizeOfs );
+  fprintf( stderr, "embeddedW = %-d\n", embeddedW );
+  fprintf( stderr, "embeddedH = %-d\n", embeddedH );
+  fprintf( stderr, "w = %-d\n", w );
+  fprintf( stderr, "h = %-d\n", h );
 #endif
 
 #ifdef ADD_SCROLLED_WIN
@@ -18262,6 +18473,7 @@ void activeWindowClass::executeFromDeferredQueue( void )
 
   }
 
+
   if ( doActiveClose ) {
 
     if ( mode != AWC_EDIT ) {
@@ -18838,11 +19050,11 @@ int i;
     //fprintf( fptr, "    }\n" );
   }
   else {
-    printf( "name=%s\tx=%-d\ty=%-d\ti=%-d\n", fileName, x, y,
+    fprintf( stderr, "name=%s\tx=%-d\ty=%-d\ti=%-d\n", fileName, x, y,
      isIconified );
-    printf( "num=%-d\n", numMacros );
+    fprintf( stderr, "num=%-d\n", numMacros );
     for ( i=0; i<numMacros; i++ ) {
-      printf( "%s=%s\n", macros[i], expansions[i] );
+      fprintf( stderr, "%s=%s\n", macros[i], expansions[i] );
     }
   }
 

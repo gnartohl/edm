@@ -164,7 +164,7 @@ efSetItemCallbackDscPtr dsc;
   dsc = (efSetItemCallbackDscPtr) client;
   eo = (entryFormClass *) dsc->ef;
 
-//   printf( "ef_increment_num_items\n" );
+//   fprintf( stderr, "ef_increment_num_items\n" );
 
   if ( eo->numItems + 1 > eo->maxItems )
     eo->numItems = eo->maxItems;
@@ -194,7 +194,7 @@ efSetItemCallbackDscPtr dsc;
   dsc = (efSetItemCallbackDscPtr) client;
   eo = (entryFormClass *) dsc->ef;
 
-//   printf( "ef_decrement_num_items\n" );
+//   fprintf( stderr, "ef_decrement_num_items\n" );
 
   if ( eo->numItems - 1 < 1 )
     eo->numItems = 1;
@@ -225,7 +225,7 @@ Arg args[2];
   dsc = (efSetItemCallbackDscPtr) client;
   eo = (entryFormClass *) dsc->ef;
 
-//   printf( "ef_set_num_items\n" );
+//   fprintf( stderr, "ef_set_num_items\n" );
 
   ptr = XmTextGetString( w );
   if ( ptr[0] == 0 )
@@ -284,7 +284,7 @@ efSetItemCallbackDscPtr dsc;
   dsc = (efSetItemCallbackDscPtr) client;
   eo = (entryFormClass *) dsc->ef;
 
-// printf( "ef_increment_item_num\n" );
+// fprintf( stderr, "ef_increment_item_num\n" );
 
   if ( eo->index + 1 >= eo->numItems )
     eo->index = eo->numItems - 1;
@@ -314,7 +314,7 @@ efSetItemCallbackDscPtr dsc;
   dsc = (efSetItemCallbackDscPtr) client;
   eo = (entryFormClass *) dsc->ef;
 
-// printf( "ef_decrement_item_num\n" );
+// fprintf( stderr, "ef_decrement_item_num\n" );
 
   if ( eo->index - 1 < 0 )
     eo->index = 0;
@@ -345,7 +345,7 @@ Arg args[2];
   dsc = (efSetItemCallbackDscPtr) client;
   eo = (entryFormClass *) dsc->ef;
 
-// printf( "ef_set_item_num\n" );
+// fprintf( stderr, "ef_set_item_num\n" );
 
   updateOld = 0;
 
@@ -537,7 +537,7 @@ colorButtonEntry::colorButtonEntry ( void )
 colorButtonEntry::~colorButtonEntry ( void )
 {
 
-}
+};
 
 void colorButtonEntry::setValue ( int value ) {
 
@@ -564,11 +564,11 @@ fontMenuEntry::~fontMenuEntry ( void )
 
   if ( fmo ) fmo->destroyFontMenu();
 
-}
+};
 
 optionEntry::optionEntry ( void ) {
 
-//   printf( "optionEntry::optionEntry - new widgetListType\n" );
+//   fprintf( stderr, "optionEntry::optionEntry - new widgetListType\n" );
 
   head = new widgetListType;
   tail = head;
@@ -584,13 +584,13 @@ widgetListPtr cur, next;
   cur = head->flink;
   while ( cur ) {
     next = cur->flink;
-//     printf( "optionEntry::~optionEntry - delete node\n" );
+//     fprintf( stderr, "optionEntry::~optionEntry - delete node\n" );
     delete[] cur->value;
     delete cur;
     cur = next;
   }
 
-//   printf( "optionEntry::~optionEntry - delete head\n" );
+//   fprintf( stderr, "optionEntry::~optionEntry - delete head\n" );
   delete head;
 
 }
@@ -601,7 +601,7 @@ widgetListPtr curpb;
 int item, n;
 Arg args[2];
 
-//   printf( "In optionEntry::setValue, value = %-d\n", value );
+//   fprintf( stderr, "In optionEntry::setValue, value = %-d\n", value );
 
   item = 0;
   curpb = head->flink;
@@ -627,7 +627,7 @@ widgetListPtr curpb;
 int item, n;
 Arg args[2];
 
-//   printf( "In optionEntry::setValue, value = [%s]\n", value );
+//   fprintf( stderr, "In optionEntry::setValue, value = [%s]\n", value );
 
   curpb = head->flink;
   while ( curpb ) {
@@ -661,7 +661,7 @@ entryFormClass *eo;
 
 entryFormClass::entryFormClass ( void ) {
 
-  // printf( "In entryFormClass::entryFormClass - new entryListBase\n" );
+  // fprintf( stderr, "In entryFormClass::entryFormClass - new entryListBase\n" );
 
   itemHead = new entryListBase;
   itemTail = itemHead;
@@ -693,19 +693,19 @@ entryFormClass::~entryFormClass ( void ) {
 
 entryListBase *cur, *next;
 
-//  printf( "In entryFormClass::~entryFormClass\n" );
+//  fprintf( stderr, "In entryFormClass::~entryFormClass\n" );
 
   if ( itemHead ) {
 
     cur = itemHead->flink;
     while ( cur ) {
       next = cur->flink;
-//        printf( "entryFormClass::~entryFormClass - delete node\n" );
+//        fprintf( stderr, "entryFormClass::~entryFormClass - delete node\n" );
       delete cur;
       cur = next;
     }
 
-//      printf( "entryFormClass::~entryFormClass - delete itemHead\n" );
+//      fprintf( stderr, "entryFormClass::~entryFormClass - delete itemHead\n" );
     delete itemHead;
     itemHead = NULL;
 
@@ -717,7 +717,7 @@ int entryFormClass::destroy ( void ) {
 
 entryListBase *cur, *next;
 
-// printf( "entryFormClass::destroy\n" );
+// fprintf( stderr, "entryFormClass::destroy\n" );
 
   if ( entryFontList ) XmFontListFree( entryFontList );
   if ( actionFontList ) XmFontListFree( actionFontList );
@@ -725,12 +725,12 @@ entryListBase *cur, *next;
   if ( shell ) XtDestroyWidget( shell );
 
   if ( entryTag ) {
-//     printf( "entryFormClass::destroy - delete entryTag\n" );
+//     fprintf( stderr, "entryFormClass::destroy - delete entryTag\n" );
     delete[] entryTag;
   }
 
   if ( actionTag ) {
-//     printf( "entryFormClass::destroy - delete actionTag\n" );
+//     fprintf( stderr, "entryFormClass::destroy - delete actionTag\n" );
     delete[] actionTag;
   }
 
@@ -739,7 +739,7 @@ entryListBase *cur, *next;
     cur = itemHead->flink;
     while ( cur ) {
       next = cur->flink;
-//       printf( "entryFormClass::destroy - delete node\n" );
+//       fprintf( stderr, "entryFormClass::destroy - delete node\n" );
       delete cur;
       cur = next;
     }
@@ -838,7 +838,7 @@ XmString str;
   if ( fi ) {
 
     if ( entryFontTag ) {
-//       printf( "entryFormClass::create - new char[strlen(entryFontTag)+1]\n" );
+//       fprintf( stderr, "entryFormClass::create - new char[strlen(entryFontTag)+1]\n" );
       entryTag = new char[strlen(entryFontTag)+1];
       strcpy( entryTag, entryFontTag );
       fi->getTextFontList( entryTag, &entryFontList );
@@ -846,7 +846,7 @@ XmString str;
 }
 
     if ( actionFontTag ) {
-//       printf( "entryFormClass::create - new char[strlen(actionFontTag)+1]\n" );
+//       fprintf( stderr, "entryFormClass::create - new char[strlen(actionFontTag)+1]\n" );
       actionTag = new char[strlen(actionFontTag)+1];
       strcpy( actionTag, actionFontTag );
       fi->getTextFontList( actionTag, &actionFontList );
@@ -1045,14 +1045,14 @@ char buf[16];
   if ( fi ) {
 
     if ( entryFontTag ) {
-//       printf( "entryFormClass::create - new char[strlen(entryFontTag)+1]\n" );
+//       fprintf( stderr, "entryFormClass::create - new char[strlen(entryFontTag)+1]\n" );
       entryTag = new char[strlen(entryFontTag)+1];
       strcpy( entryTag, entryFontTag );
       fi->getTextFontList( entryTag, &entryFontList );
     }
 
     if ( actionFontTag ) {
-//       printf( "entryFormClass::create - new char[strlen(actionFontTag)+1]\n" );
+//       fprintf( stderr, "entryFormClass::create - new char[strlen(actionFontTag)+1]\n" );
       actionTag = new char[strlen(actionFontTag)+1];
       strcpy( actionTag, actionFontTag );
       fi->getTextFontList( actionTag, &actionFontList );
@@ -1631,7 +1631,7 @@ int i;
   destArray = (char **) dsc->destPtr;
   i = *(dsc->indexPtr);
 
-//   printf( "In TextFieldToStringArray, index = %-d\n", i );
+//   fprintf( stderr, "In TextFieldToStringArray, index = %-d\n", i );
 
   buf = XmTextGetString( w );
   strncpy( destArray[i], buf, dsc->size );
@@ -1655,7 +1655,7 @@ int i, value;
   destArray = (int *) dsc->destPtr;
   i = *(dsc->indexPtr);
 
-//   printf( "In TextFieldToIntArray, index = %-d\n", i );
+//   fprintf( stderr, "In TextFieldToIntArray, index = %-d\n", i );
 
   buf = XmTextGetString( w );
   //value = atol( buf );
@@ -1714,7 +1714,7 @@ double value;
   destArray = (double *) dsc->destPtr;
   i = *(dsc->indexPtr);
 
-//   printf( "In TextFieldToDoubleArray, index = %-d\n", i );
+//   fprintf( stderr, "In TextFieldToDoubleArray, index = %-d\n", i );
 
   buf = XmTextGetString( w );
   value = atof( buf );
@@ -2065,7 +2065,7 @@ char buf[127+1];
 
   sprintf( buf, "%-g", *dest );
 
-//   printf( "entryFormClass::addTextField - new textEntry\n" );
+//   fprintf( stderr, "entryFormClass::addTextField - new textEntry\n" );
 
   cur = new textEntry;
 
@@ -2213,7 +2213,7 @@ char buf[127+1];
 
   sprintf( buf, "%-g", *dest );
 
-//   printf( "entryFormClass::addTextField - new textEntry\n" );
+  // fprintf( stderr, "entryFormClass::addTextField - new textEntry\n" );
 
   cur = new textEntry;
 
@@ -3176,9 +3176,9 @@ int i;
   i = *(dsc->indexPtr);
   value = (char *) dsc->valuePtr;
 
-//   printf ( "In OptionToStringArray\n" );
-//   printf ( "i = %-d\n", i );
-//   printf( "value = [%s]\n", value );
+//   fprintf( stderr, "In OptionToStringArray\n" );
+//   fprintf( stderr, "i = %-d\n", i );
+//   fprintf( stderr, "value = [%s]\n", value );
 
   strncpy( destArray[i], value, dsc->size );
 
@@ -3201,10 +3201,10 @@ long value;
   i = *(dsc->indexPtr);
   value = (long) dsc->valuePtr;
 
-//   printf( "In OptionToIntArray\n" );
-//   printf ( "i = %-d\n", i );
-//   printf( "old value = %-d\n", destArray[i] );
-//   printf( "new value = %-d\n", value );
+//   fprintf( stderr, "In OptionToIntArray\n" );
+//   fprintf( stderr, "i = %-d\n", i );
+//   fprintf( stderr, "old value = %-d\n", destArray[i] );
+//   fprintf( stderr, "new value = %-d\n", value );
 
   destArray[i] = (int) value;
 
@@ -3228,7 +3228,7 @@ colorButtonEntry *cur;
 
   if ( curTopParent == topForm ) {
 
-  //printf( "using topForm\n" );
+  //fprintf( stderr, "using topForm\n" );
 
   if ( firstItem ) {
 
@@ -3342,13 +3342,13 @@ colorButtonEntry *cur;
   }
   else {
 
-  //printf( "using subForm\n" );
+  //fprintf( stderr, "using subForm\n" );
 
   if ( firstSubFormChild ) {
 
     firstSubFormChild = 0;
 
-    //printf( "first subFrom\n" );
+    //fprintf( stderr, "first subFrom\n" );
 
     fN = 0;
     XtSetArg( fArgs[fN], XmNtopAttachment, (XtArgVal) XmATTACH_FORM ); fN++;
@@ -3392,7 +3392,7 @@ colorButtonEntry *cur;
   }
   else {
 
-    //printf( "not first subFrom\n" );
+    //fprintf( stderr, "not first subFrom\n" );
 
     fN = 0;
     XtSetArg( fArgs[fN], XmNtopAttachment,
@@ -5278,7 +5278,7 @@ char buf[127+1];
 
   sprintf( buf, "%-d", dest[0] );
 
-//   printf( "entryFormClass::addTextFieldArray - new textEntry\n" );
+//   fprintf( stderr, "entryFormClass::addTextFieldArray - new textEntry\n" );
 
   cur = new textEntry;
   *obj = cur;
@@ -5372,7 +5372,7 @@ char buf[127+1];
   else
     sprintf( buf, "%-d", dest[0].value() );
 
-//   printf( "entryFormClass::addTextFieldArray - new textEntry\n" );
+//   fprintf( stderr, "entryFormClass::addTextFieldArray - new textEntry\n" );
 
   cur = new textEntry;
   *obj = cur;
@@ -5463,7 +5463,7 @@ char buf[127+1];
 
   sprintf( buf, "%-g", dest[0] );
 
-//   printf( "entryFormClass::addTextFieldArray - new textEntry\n" );
+//   fprintf( stderr, "entryFormClass::addTextFieldArray - new textEntry\n" );
 
   cur = new textEntry;
   *obj = cur;

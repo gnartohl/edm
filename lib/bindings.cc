@@ -29,7 +29,7 @@ char prefix[127+1], fname[127+1], line[255+1], buf[255+1], buf1[255+1],
  rawLine[255+1];
 FILE *f;
 
-//   printf( "objBindingClass::objBindingClass\n" );
+//   fprintf( stderr, "objBindingClass::objBindingClass\n" );
 
   max = 0;
 
@@ -49,7 +49,7 @@ FILE *f;
 
     f = fopen( fname, "r" );
     if ( !f ) {
-      printf( objBindingClass_str1, fname );
+      fprintf( stderr, objBindingClass_str1, fname );
       return;
     }
 
@@ -59,52 +59,52 @@ FILE *f;
       tk = strtok_r( line, "\n", &c1 );
       num = atol( tk );
       if ( num <= 0 ) {
-        printf( objBindingClass_str2, fname );
+        fprintf( stderr, objBindingClass_str2, fname );
         return;
       }
     }
     else {
-      printf( objBindingClass_str2, fname );
+      fprintf( stderr, objBindingClass_str2, fname );
       return;
     }
 
     names = new char *[num+2]; /* add one more for symbols and
                                     one more for dynSymbols */
     if ( !names ) {
-      printf( objBindingClass_str3 );
+      fprintf( stderr, objBindingClass_str3 );
       exit(-1);
     }
 
     classNames = new char *[num+2]; /* add one more for symbols and
                                          one more for dynSymbols */
     if ( !classNames ) {
-      printf( objBindingClass_str3 );
+      fprintf( stderr, objBindingClass_str3 );
       exit(-1);
     }
 
     param = new char *[num+2]; /* add one more for symbols and
                                          one more for dynSymbols */
     if ( !param ) {
-      printf( objBindingClass_str3 );
+      fprintf( stderr, objBindingClass_str3 );
       exit(-1);
     }
 
     types = new char *[num+2]; /* add one more for symbols and
                                          one more for dynSymbols */
     if ( !types ) {
-      printf( objBindingClass_str3 );
+      fprintf( stderr, objBindingClass_str3 );
       exit(-1);
     }
 
     dllHandle = new void *[num];
     if ( !dllHandle ) {
-      printf( objBindingClass_str3 );
+      fprintf( stderr, objBindingClass_str3 );
       exit(-1);
     }
 
     dllName = new char *[num];
     if ( !dllName ) {
-      printf( objBindingClass_str3 );
+      fprintf( stderr, objBindingClass_str3 );
       exit(-1);
     }
 
@@ -136,7 +136,7 @@ FILE *f;
             c1 = NULL;
             tk = strtok_r( line, " \t\n", &c1 );
             if ( !tk ) {
-              printf( objBindingClass_str4 );
+              fprintf( stderr, objBindingClass_str4 );
               exit(-1);
             }
 
@@ -162,7 +162,7 @@ FILE *f;
 
             tk = strtok_r( NULL, " \t\n", &c1 );
             if ( !tk ) {
-              printf( objBindingClass_str4 );
+              fprintf( stderr, objBindingClass_str4 );
               exit(-1);
             }
             dllName[index] = new char[strlen(tk)+1];
@@ -170,7 +170,7 @@ FILE *f;
 
             tk = strtok_r( NULL, " \t\n", &c1 );
             if ( !tk ) {
-              printf( objBindingClass_str4 );
+              fprintf( stderr, objBindingClass_str4 );
               exit(-1);
             }
             types[index] = new char[strlen(tk)+1];
@@ -178,7 +178,7 @@ FILE *f;
 
             tk = strtok_r( NULL, "\n", &c1 );
             if ( !tk ) {
-              printf( objBindingClass_str4 );
+              fprintf( stderr, objBindingClass_str4 );
               exit(-1);
             }
             names[index] = new char[strlen(tk)+1];
@@ -197,7 +197,7 @@ FILE *f;
     fclose( f );
 
     if ( index != num ) {
-      printf( objBindingClass_str5, fname );
+      fprintf( stderr, objBindingClass_str5, fname );
       exit(-1);
     }
 
@@ -332,7 +332,7 @@ activeGraphicClass *cur;
 int i;
 char name[127+1], *error, buf[127+1], *tk;
 
-//    printf( "objBindingClass::createNew - name = [%s]\n", oneClassName );
+//    fprintf( stderr, "objBindingClass::createNew - name = [%s]\n", oneClassName );
 
   if ( strcmp( oneClassName, "activeGroupClass" ) == 0 ) {
 
@@ -473,7 +473,7 @@ char name[127+1], *error, buf[127+1], *tk;
       Strncat( name, tk, 127 );
       Strncat( name, "Ptr", 127 );
 
-//        printf( "func name = [%s]\n", name );
+//        fprintf( stderr, "func name = [%s]\n", name );
 
       func = (VPFUNC) dlsym( dllHandle[i], name );
       if ((error = dlerror()) != NULL)  {
@@ -506,7 +506,7 @@ activeGraphicClass *cur;
 int i;
 char name[127+1], *error, buf[127+1], *tk;
 
-//    printf( "In objBindingClass::clone, name = [%s]\n", oneClassName );
+//    fprintf( stderr, "In objBindingClass::clone, name = [%s]\n", oneClassName );
 
   if ( strcmp( oneClassName, "activeGroupClass" ) == 0 ) {
 

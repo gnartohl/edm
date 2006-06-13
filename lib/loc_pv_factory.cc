@@ -71,14 +71,14 @@ static PVHash processvariables;
 LOC_PV_Factory::LOC_PV_Factory()
 {
 #ifdef DEBUG_LOC
-    printf("LOC_PV_Factory created\n");
+    fprintf( stderr,"LOC_PV_Factory created\n");
 #endif
 }
 
 LOC_PV_Factory::~LOC_PV_Factory()
 {
 #ifdef DEBUG_LOC
-    printf("LOC_PV_Factory deleted\n");
+    fprintf( stderr,"LOC_PV_Factory deleted\n");
 #endif
 }
 
@@ -111,6 +111,7 @@ ProcessVariable *LOC_PV_Factory::create(const char *PV_name)
         processvariables.insert(n_item);
         tk = strtok_r( NULL, "=~", &ctx );
         pv->setAttributes( tk );
+	strcpy( pv->units, "" );
     }
     return pv;
 }
@@ -225,7 +226,7 @@ char tmp[PV_Factory::MAX_PV_NAME+1], *tk, *ctx;
 
   }
 
-  //printf( "LOC_ProcessVariable::setAttributes, string = [%s]\n", string );
+  //fprintf( stderr, "LOC_ProcessVariable::setAttributes, string = [%s]\n", string );
 
   return 1;
 
@@ -249,7 +250,7 @@ LOC_ProcessVariable::LOC_ProcessVariable(const char *_name)
     have_ctrlinfo = true;
     strcpy( buf, "" );
     bufLen = 0;
-    //printf("LOC_ProcessVariable %s created\n", get_name());
+    //fprintf( stderr,"LOC_ProcessVariable %s created\n", get_name());
 }
 
 LOC_ProcessVariable::~LOC_ProcessVariable()
@@ -261,7 +262,7 @@ void LOC_ProcessVariable::connect_callback(
     conHndArgsType arg)
 {
 
-  //printf( "connect_callback\n" );
+  //fprintf( stderr, "connect_callback\n" );
 
   // me->is_connected = true;
   // do callback
@@ -272,7 +273,7 @@ void LOC_ProcessVariable::value_callback (
   eventArgsType args)
 {
 
-  //printf( "value_callback\n" );
+  //fprintf( stderr, "value_callback\n" );
 
   //LOC_ProcessVariable *me = (LOC_ProcessVariable *) ?;
 
@@ -346,7 +347,7 @@ int LOC_ProcessVariable::get_int() const
 
 int i = atol( buf );
 
-  //printf( "[%s] int value is %-d\n", get_name(), i );
+  //fprintf( stderr, "[%s] int value is %-d\n", get_name(), i );
   return i;
 
 }
@@ -360,7 +361,7 @@ double d = atof( buf );
     d = drand48();
   }
 
-  //printf( "[%s] double value is %-.15g\n", get_name(), d );
+  //fprintf( stderr, "[%s] double value is %-.15g\n", get_name(), d );
   return d;
 
 }
@@ -533,7 +534,7 @@ bool LOC_ProcessVariable::have_write_access() const
 bool LOC_ProcessVariable::put(double value)
 {
 
-  //printf( "[%s] put double, value = %-.15g\n", get_name(), value );
+  //fprintf( stderr, "[%s] put double, value = %-.15g\n", get_name(), value );
 
   status = 0;
   severity = 0;
@@ -549,7 +550,7 @@ bool LOC_ProcessVariable::put(double value)
 bool LOC_ProcessVariable::put(int value)
 {
 
-  //printf( "[%s] put int, value = %-d\n", get_name(), value );
+  //fprintf( stderr, "[%s] put int, value = %-d\n", get_name(), value );
 
   status = 0;
   severity = 0;

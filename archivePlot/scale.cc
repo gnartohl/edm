@@ -155,7 +155,7 @@ class scaleClass *sclo = (scaleClass *) userArg;
          ( sclo->update == sclo->updateAll ) ) {
       sclo->needUpdate = 1;
       sclo->actWin->addDefExeNode( sclo->aglPtr );
-      /* printf( "got scale update, min=%-g, max=%-g\n", sclo->min, sclo->max ); */
+      /* fprintf( stderr, "got scale update, min=%-g, max=%-g\n", sclo->min, sclo->max ); */
     }
   }
 
@@ -833,7 +833,7 @@ char fullName[127+1];
 
     stat = actWin->fi->getFontName( fontTag, 90.0, fullName, 127 );
 
-    //printf( "fullName = [%s]\n", fullName );
+    //fprintf( stderr, "fullName = [%s]\n", fullName );
 
     actWin->executeGc.setNativeFont( fullName, actWin->fi );
 
@@ -842,9 +842,9 @@ char fullName[127+1];
     stringX = x + (int) ( 1.0 * (double) fontHeight );
     stringY = y + scaleOfs + scaleLen/2 + l/2;
 
-    //printf( "stringX = %-d\n", stringX );
-    //printf( "stringY = %-d\n", stringY );
-    //printf( "label = [%s]\n", label );
+    //fprintf( stderr, "stringX = %-d\n", stringX );
+    //fprintf( stderr, "stringY = %-d\n", stringY );
+    //fprintf( stderr, "label = [%s]\n", label );
 
     for ( i=0; i<strlen(label); i++ ) {
 
@@ -1621,7 +1621,7 @@ char buf[31+1];
     major_tick = label_tick / numMajTicks;
     minor_tick = major_tick / numMinTicks;
 
-    //printf( "\n\nscale %-d, min=%-g, max=%-g, adj_min=%-g, adj_max=%-g\n\n",
+    //fprintf( stderr, "\n\nscale %-d, min=%-g, max=%-g, adj_min=%-g, adj_max=%-g\n\n",
     //   scaleId, min, max, adj_min, adj_max );
 
     minPv->put( adj_min );
@@ -1691,7 +1691,7 @@ char buf[31+1];
     major_tick = label_tick / numMajTicks;
     minor_tick = major_tick / numMinTicks;
 
-    //printf( "\n\nscale %-d, min=%-g, max=%-g, adj_min=%-g, adj_max=%-g\n\n",
+    //fprintf( stderr, "\n\nscale %-d, min=%-g, max=%-g, adj_min=%-g, adj_max=%-g\n\n",
     //   scaleId, min, max, adj_min, adj_max );
 
     minPv->put( adj_min );

@@ -1247,6 +1247,7 @@ unsigned short svalue;
           axtdo->fgColor.setNotNull();
         }
       }
+
       break;
 
     case ProcessVariable::specificType::shrt:
@@ -1937,6 +1938,8 @@ activeXTextDspClass::activeXTextDspClass ( void ) {
   unconnectedTimer = 0;
 
   eBuf = NULL;
+
+  pvIndex = 0;
 
   setBlinkFunction( (void *) doBlink );
 
@@ -4019,7 +4022,7 @@ char callbackName[63+1];
 	  pvId->add_conn_state_callback( xtdo_monitor_connect_state, this );
 	}
 	else {
-          printf( activeXTextDspClass_str33 );
+          fprintf( stderr, activeXTextDspClass_str33 );
           return 0;
         }
 
@@ -4031,7 +4034,7 @@ char callbackName[63+1];
              this );
           }
           else {
-            printf( activeXTextDspClass_str33 );
+            fprintf( stderr, activeXTextDspClass_str33 );
             return 0;
           }
 
@@ -4045,7 +4048,7 @@ char callbackName[63+1];
              this );
           }
           else {
-            printf( activeXTextDspClass_str33 );
+            fprintf( stderr, activeXTextDspClass_str33 );
             return 0;
           }
 
@@ -4773,6 +4776,12 @@ Atom importList[2];
 
           sprintf( format, "%%s" );
 
+          if ( svalPvExists ) {
+	    if ( svalPvId ) {
+              svalPvId->add_value_callback( XtextDspSvalUpdate, this );
+	    }
+	  }
+
           break;
 
         default:
@@ -5356,6 +5365,32 @@ void activeXTextDspClass::getPvs (
   pvs[0] = pvId;
   pvs[1] = svalPvId;
   pvs[2] = fgPvId;
+
+}
+
+char *activeXTextDspClass::crawlerGetFirstPv ( void ) {
+
+  pvIndex = 0;
+  return pvExpStr.getExpanded();
+
+}
+
+char *activeXTextDspClass::crawlerGetNextPv ( void ) {
+
+  if ( pvIndex >= 2 ) return NULL;
+
+  pvIndex++;
+
+  switch ( pvIndex ) {
+  case 1:
+    return svalPvExpStr.getExpanded();
+    break;
+  case 2:
+    return fgPvExpStr.getExpanded();
+    break;
+  }
+
+  return NULL;
 
 }
 

@@ -1016,7 +1016,7 @@ int opStat;
            rbt_monitor_control_connect_state, this );
 	}
 	else {
-          printf( activeRadioButtonClass_str20,
+          fprintf( stderr, activeRadioButtonClass_str20,
            controlPvExpStr.getExpanded() );
           opStat = 0;
         }
@@ -1533,6 +1533,20 @@ void activeRadioButtonClass::getPvs (
 
   *n = 1;
   pvs[0] = controlPvId;
+
+}
+
+// crawler functions may return blank pv names
+char *activeRadioButtonClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return controlPvExpStr.getExpanded();
+
+}
+
+char *activeRadioButtonClass::crawlerGetNextPv ( void ) {
+
+  return NULL;
 
 }
 

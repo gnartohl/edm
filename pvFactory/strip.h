@@ -77,6 +77,9 @@ public:
     int containsMacros();
     int expand1st(int numMacros, char *macros[], char *expansions[]);
     int expand2nd(int numMacros, char *macros[], char *expansions[]);
+
+    char *crawlerGetFirstPv ( void );
+    char *crawlerGetNextPv ( void );
     
     // Execute
     int activate(int pass, void *ptr);

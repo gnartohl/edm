@@ -131,7 +131,7 @@ fontMenuClass ( void );
 
 fontMenuClass ( const fontMenuClass& source ) {
 
-  printf( "In fontMenuClass( const fontMenuClass& source )\n" );
+  fprintf( stderr, "In fontMenuClass( const fontMenuClass& source )\n" );
   // do not let compiler generate default copy constructor
 
 }

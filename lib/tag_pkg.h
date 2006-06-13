@@ -129,7 +129,22 @@ int loadR (
 
 int loadR (
   char *tag,
+  int maxLen,
   efDouble *destination,
+  int *numElements
+);
+
+int loadR (
+  char *tag,
+  efDouble *destination,
+  double *oneDefault
+);
+
+int loadR (
+  char *tag,
+  int maxLen,
+  efDouble *destination,
+  int *numElements,
   double *oneDefault
 );
 
@@ -140,7 +155,22 @@ int loadR (
 
 int loadR (
   char *tag,
+  int maxLen,
   efInt *destination,
+  int *numElements
+);
+
+int loadR (
+  char *tag,
+  efInt *destination,
+  int *oneDefault
+);
+
+int loadR (
+  char *tag,
+  int maxLen,
+  efInt *destination,
+  int *numElements,
   int *oneDefault
 );
 

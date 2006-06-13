@@ -2065,7 +2065,7 @@ XmString str;
            this );
 	}
 	else {
-          printf( activeUpdownButtonClass_str20 );
+          fprintf( stderr, activeUpdownButtonClass_str20 );
           opStat = 0;
         }
 
@@ -2085,7 +2085,7 @@ XmString str;
            this );
 	}
 	else {
-          printf( activeUpdownButtonClass_str20 );
+          fprintf( stderr, activeUpdownButtonClass_str20 );
           opStat = 0;
         }
 
@@ -2099,7 +2099,7 @@ XmString str;
            udbtc_monitor_color_connect_state, this );
 	}
 	else {
-          printf( activeUpdownButtonClass_str20 );
+          fprintf( stderr, activeUpdownButtonClass_str20 );
           opStat = 0;
         }
 
@@ -2113,7 +2113,7 @@ XmString str;
            this );
 	}
 	else {
-          printf( activeUpdownButtonClass_str20 );
+          fprintf( stderr, activeUpdownButtonClass_str20 );
           opStat = 0;
         }
 
@@ -2273,7 +2273,7 @@ void activeUpdownButtonClass::btnUp (
 
   buttonPressed = 0;
 
-//    printf( "btn up\n" );
+//    fprintf( stderr, "btn up\n" );
 
   actWin->appCtx->proc->lock();
   needRefresh = 1;
@@ -2305,7 +2305,7 @@ double dval;
 
   buttonPressed = 1;
 
-  //printf( "btn down, x=%-d, y=%-d, bn=%-d\n", _x-x, _y-y , buttonNumber );
+  //fprintf( stderr, "btn down, x=%-d, y=%-d, bn=%-d\n", _x-x, _y-y , buttonNumber );
 
   actWin->appCtx->proc->lock();
   dval = curControlV;
@@ -2864,6 +2864,34 @@ void activeUpdownButtonClass::getPvs (
   *n = 2;
   pvs[0] = destPvId;
   pvs[1] = savePvId;
+
+}
+
+// crawler functions may return blank pv names
+char *activeUpdownButtonClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return destPvExpString.getExpanded();
+
+}
+
+char *activeUpdownButtonClass::crawlerGetNextPv ( void ) {
+
+  if ( crawlerPvIndex >=4 ) return NULL;
+
+  crawlerPvIndex++;
+
+  if ( crawlerPvIndex == 1 ) {
+    return savePvExpString.getExpanded();
+  }
+  else if ( crawlerPvIndex == 2 ) {
+    return visPvExpString.getExpanded();
+  }
+  else if ( crawlerPvIndex == 3 ) {
+    return colorPvExpString.getExpanded();
+  }
+
+  return NULL;
 
 }
 

@@ -1362,6 +1362,88 @@ int stat;
 
 }
 
+int menuMuxClass::getNumMacroSets ( void ) {
+
+  return numItems;
+
+}
+
+int menuMuxClass::getMacrosSet (
+  int *numMacros,
+  char ***macro,
+  char ***expansion,
+  int n
+) {
+
+int i, ii, count;
+
+  if ( ( n < 0 ) || ( n >= numItems ) ) {
+    *numMacros = 0;
+    *macro = NULL;
+    *expansion = NULL;
+  }
+
+// count number of non-null entries
+  count = 0;
+  for ( i=0; i<MMUX_MAX_ENTRIES; i++ ) {
+    if ( ( strcmp( m[n][i], "" ) != 0 ) &&
+         ( strcmp( e[n][i], "" ) != 0 ) ) {
+      count++;
+    }
+  }
+
+  if ( numMac < count ) {
+
+    for ( i=0; i<numMac; i++ ) {
+      if ( mac[i] ) {
+        delete[] mac[i];
+        mac[i] = NULL;
+      }
+      if ( exp[i] ) {
+        delete[] exp[i];
+        exp[i] = NULL;
+      }
+    }
+    if ( mac ) {
+      delete[] mac;
+      mac = NULL;
+    }
+    if ( exp ) {
+      delete[] exp;
+      exp = NULL;
+    }
+
+    numMac = count;
+
+    mac = new char*[numMac];
+    exp = new char*[numMac];
+
+    for ( i=0; i<numMac; i++ ) {
+      mac[i] = new char[MMUX_MAX_STRING_SIZE+1];
+      exp[i] = new char[MMUX_MAX_STRING_SIZE+1];
+    }
+
+  }
+
+  // populate ptr arrays
+  ii = 0;
+  for ( i=0; i<MMUX_MAX_ENTRIES; i++ ) {
+    if ( ( strcmp( m[n][i], "" ) != 0 ) &&
+         ( strcmp( e[n][i], "" ) != 0 ) ) {
+      strncpy( mac[ii], m[n][i], MMUX_MAX_STRING_SIZE+1 );
+      strncpy( exp[ii], e[n][i], MMUX_MAX_STRING_SIZE+1 );
+      ii++;
+    }
+  }
+
+  *numMacros = count;
+  *macro = mac;
+  *expansion = exp;
+
+  return 1;
+
+}
+
 int menuMuxClass::getMacros (
   int *numMacros,
   char ***macro,
@@ -1496,7 +1578,7 @@ int opStat;
            mmux_monitor_control_connect_state, this );
 	}
 	else {
-          printf( menuMuxClass_str23 );
+          fprintf( stderr, menuMuxClass_str23 );
           opStat = 0;
         }
 
@@ -1986,6 +2068,20 @@ void menuMuxClass::getPvs (
 
   *n = 1;
   pvs[0] = controlPvId;
+
+}
+
+// crawler functions may return blank pv names
+char *menuMuxClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return controlPvExpStr.getExpanded();
+
+}
+
+char *menuMuxClass::crawlerGetNextPv ( void ) {
+
+  return NULL;
 
 }
 

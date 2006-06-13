@@ -473,7 +473,7 @@ activeGraphicClass *baro = (activeGraphicClass *) this;
 
 activeBarClass::~activeBarClass ( void ) {
 
-/*   printf( "In activeBarClass::~activeBarClass\n" ); */
+/*   fprintf( stderr, "In activeBarClass::~activeBarClass\n" ); */
 
   if ( name ) delete[] name;
 
@@ -2243,7 +2243,7 @@ int opStat;
            this );
 	}
 	else {
-          printf( activeBarClass_str36 );
+          fprintf( stderr, activeBarClass_str36 );
           opStat = 0;
         }
       }
@@ -2255,7 +2255,7 @@ int opStat;
            this );
 	}
 	else {
-          printf( activeBarClass_str36 );
+          fprintf( stderr, activeBarClass_str36 );
           opStat = 0;
         }
       }
@@ -3522,6 +3522,28 @@ void activeBarClass::getPvs (
   *n = 2;
   pvs[0] = readPvId;
   pvs[1] = nullPvId;
+
+}
+
+// crawler functions may return blank pv names
+char *activeBarClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return readPvExpStr.getExpanded();
+
+}
+
+char *activeBarClass::crawlerGetNextPv ( void ) {
+
+  if ( crawlerPvIndex >= 1 ) return NULL;
+
+  crawlerPvIndex++;
+
+  if ( crawlerPvIndex == 1 ) {
+    return nullPvExpStr.getExpanded();
+  }
+
+  return NULL;
 
 }
 

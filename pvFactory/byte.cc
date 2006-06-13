@@ -816,7 +816,7 @@ int edmByteClass::activate(int pass, void *ptr)
         case 2: // connect to pv
             initEnable();
             if (valuePvId)
-                printf("byte::activate: pv already set!\n");
+                fprintf( stderr,"byte::activate: pv already set!\n");
             if (is_pvname_valid)
             {
                 valuePvId = the_PV_Factory->create(getExpandedPVName());
@@ -1154,5 +1154,20 @@ char *edmByteClass::dragValue(int i)
       return (char *)getRawPVName();
 
    }
+
+}
+
+// crawler functions may return blank pv names
+char *edmByteClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+
+  return pv_exp_str.getExpanded();
+
+}
+
+char *edmByteClass::crawlerGetNextPv ( void ) {
+
+  return NULL;
 
 }

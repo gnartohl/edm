@@ -8,46 +8,47 @@
 // Registration
 // --------------------------------------------------------
 
-typedef struct
-{
-    char *className;
-    char *typeName;
-    char *text;
-} libRecType;
+//typedef struct
+//{
+//    char *className;
+//    char *typeName;
+//    char *text;
+//} libRecType;
 
-static int libRecIndex = 0;
+//static int libRecIndex = 0;
 
-static libRecType exported[] =
-{
-    { TEXTUPDATE_CLASSNAME, "Monitors", "Textupdate" },
-    { REGTEXTUPDATE_CLASSNAME, "Monitors", "RegTextupdate" },
-    { TEXTENTRY_CLASSNAME, "Controls", "Textentry" },
-    { STRIP_CLASSNAME, "Monitors", "Stripchart" },
-    { BYTE_CLASSNAME, "Monitors", "Byte" }
-};
+//static libRecType exported[] =
+//{
+//    { TEXTUPDATE_CLASSNAME, "Monitors", "Textupdate" },
+//    { REGTEXTUPDATE_CLASSNAME, "Monitors", "RegTextupdate" },
+//    { TEXTENTRY_CLASSNAME, "Controls", "Textentry" },
+//    { STRIP_CLASSNAME, "Monitors", "Stripchart" },
+//    { BYTE_CLASSNAME, "Monitors", "Byte" }
+//};
 
 extern "C"
 {
-    int firstRegRecord(char **className, char **typeName, char **text)
-    {
-        *className = exported[0].className;
-        *typeName  = exported[0].typeName;
-        *text      = exported[0].text;
-        libRecIndex = 1;
-        return 0;
-    }
 
-    int nextRegRecord(char **className, char **typeName, char **text)
-    {
-        int max = sizeof(exported) / sizeof(exported[0]);
-        if (libRecIndex >= max)
-            return -1; //no more 
-        *className = exported[libRecIndex].className;
-        *typeName  = exported[libRecIndex].typeName;
-        *text      = exported[libRecIndex].text;
-        libRecIndex++;
-        return 0;
-    }
+  //    int firstRegRecord(char **className, char **typeName, char **text)
+  //    {
+  //        *className = exported[0].className;
+  //        *typeName  = exported[0].typeName;
+  //        *text      = exported[0].text;
+  //        libRecIndex = 1;
+  //        return 0;
+  //    }
+  //
+  //    int nextRegRecord(char **className, char **typeName, char **text)
+  //    {
+  //        int max = sizeof(exported) / sizeof(exported[0]);
+  //        if (libRecIndex >= max)
+  //            return -1; //no more 
+  //        *className = exported[libRecIndex].className;
+  //        *typeName  = exported[libRecIndex].typeName;
+  //        *text      = exported[libRecIndex].text;
+  //        libRecIndex++;
+  //        return 0;
+  //    }
 
     void *create_TextupdateClassPtr (void)
     {
@@ -88,18 +89,18 @@ extern "C"
         return (void *) obj;
     }
 
-    void *create_StripClassPtr (void)
-    {
-        edmStripClass *obj = new edmStripClass;
-        return (void *) obj;
-    }
-    
-    void *clone_StripClassPtr (void *rhs)
-    {
-        edmStripClass *src = (edmStripClass *) rhs;
-        edmStripClass *obj = new edmStripClass(src);
-        return (void *) obj;
-    }
+  //    void *create_StripClassPtr (void)
+  //    {
+  //        edmStripClass *obj = new edmStripClass;
+  //        return (void *) obj;
+  //    }
+  //    
+  //    void *clone_StripClassPtr (void *rhs)
+  //    {
+  //        edmStripClass *src = (edmStripClass *) rhs;
+  //        edmStripClass *obj = new edmStripClass(src);
+  //        return (void *) obj;
+  //    }
 
     void *create_ByteClassPtr (void)
     {
@@ -113,7 +114,6 @@ extern "C"
         edmByteClass *obj = new edmByteClass(src);
         return (void *) obj;
     }
-
     
 } // extern "C"
 

@@ -25,7 +25,7 @@ static void __epicsPvConnectHandler (
 
 __epicsPvEvArgPtr eventArg = (__epicsPvEvArgPtr) ca_puser(arg.chid);
 
-//  printf( "__epicsPvConnectHandler\n" );
+//  fprintf( stderr, "__epicsPvConnectHandler\n" );
 
   (*eventArg->callback)( eventArg->classPtr,
    (void *) eventArg->clientData, (void *) &arg );
@@ -38,7 +38,7 @@ static void __epicsPvEventHandler (
 
 __epicsPvEvArgPtr eventArg = (__epicsPvEvArgPtr) arg.usr;
 
-//  printf( "__epicsPvEventHandler\n" );
+//  fprintf( stderr, "__epicsPvEventHandler\n" );
 
   (*eventArg->callback)( eventArg->classPtr,
    (void *) eventArg->clientData, (void *) &arg );
@@ -51,7 +51,7 @@ static void __epicsPvGetCbHandler (
 
 __epicsPvEvArgPtr eventArg = (__epicsPvEvArgPtr) arg.usr;
 
-//  printf( "__epicsPvGetCbHandler\n" );
+//  fprintf( stderr, "__epicsPvGetCbHandler\n" );
 
   (*eventArg->callback)( eventArg->classPtr,
    (void *) eventArg->clientData, (void *) &arg );
@@ -203,13 +203,13 @@ int epicsPvClass::searchAndConnect (
 
 int stat;
 
-//  printf( "epicsPvClass::searchAndConnect\n" );
+//  fprintf( stderr, "epicsPvClass::searchAndConnect\n" );
 
   this->eventArg.clientData = clientData;
   this->eventArg.classPtr = this;
   this->eventArg.callback = (pvCbFunc) callback;
 
-//    printf( "name = [%s]\n", name->getExpanded() );
+//    fprintf( stderr, "name = [%s]\n", name->getExpanded() );
 
   stat = ca_search_and_connect( name->getExpanded(), &id,
    __epicsPvConnectHandler, &this->eventArg );
@@ -371,7 +371,7 @@ __epicsPvEvArgPtr eventArg;
   epicsEventId->tail = cur;
   epicsEventId->tail->flink = NULL;
 
-//  printf( "ca_add_masked_array_event\n" );
+//  fprintf( stderr, "ca_add_masked_array_event\n" );
 
   stat = ca_add_masked_array_event( type, numElements, id,
    __epicsPvEventHandler, eventArg, (float) 0.0, (float) 0.0,

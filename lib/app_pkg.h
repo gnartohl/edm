@@ -276,10 +276,6 @@ int iconified;
 
 THREAD_HANDLE threadHandle;
 
-macroListPtr macroHead;
-int numFiles;
-fileListPtr fileHead;
-
 char ctlPV[127+1];
 char userLib[127+1];
 
@@ -294,7 +290,14 @@ msgDialogClass msgDialog;
 THREAD_LOCK_HANDLE actionsLock;
 actionsPtr actHead, actTail;
 
+int useStdErrFlag;
+char *errMsgPrefix;
+
 public:
+
+macroListPtr macroHead;
+int numFiles;
+fileListPtr fileHead;
 
 char displayName[127+1];
 
@@ -557,6 +560,14 @@ XtAppContext appContext ( void );
 Widget fileSelectBoxWidgetId ( void );
 
 Widget importSelectBoxWidgetId ( void );
+
+void setErrMsgPrefix (
+  char *prefix
+);
+
+void useStdErr (
+  int flag
+);
 
 void postMessage (
   char *msg );

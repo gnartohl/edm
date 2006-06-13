@@ -70,7 +70,7 @@ int *y;
 undoLineOpClass ()
 {
 
-  printf( "undoLineOpClass::undoLineOpClass\n" );
+  fprintf( stderr, "undoLineOpClass::undoLineOpClass\n" );
   n = 0;
 
 }
@@ -491,7 +491,7 @@ activeLineClass::activeLineClass
 activeGraphicClass *ago = (activeGraphicClass *) this;
 int i;
 
-//  printf( "In copy constructor\n" );
+//  fprintf( stderr, "In copy constructor\n" );
 
   ago->clone( (activeGraphicClass *) source );
 
@@ -562,7 +562,7 @@ int activeLineClass::createInteractive (
   int _w,
   int _h ) {
 
-//   printf( "In activeLineClass::createInteractive\n" );
+//   fprintf( stderr, "In activeLineClass::createInteractive\n" );
 
   actWin = (activeWindowClass *) aw_obj;
   x = _x;
@@ -990,7 +990,7 @@ int activeLineClass::removeLastPoint ( void )
 pointPtr cur;
 int oneX, oneY, oneW, oneH;
 
-//   printf( "In activeLineClass::removeLastPoint\n" );
+//   fprintf( stderr, "In activeLineClass::removeLastPoint\n" );
 
   actWin->drawGc.saveFg();
   actWin->drawGc.setFG( lineColor.pixelColor() );
@@ -1120,8 +1120,8 @@ int activeLineClass::movePoint (
 
 int oneX, oneY, oneW, oneH;
 
-//   printf( "In activeLineClass::movePoint\n" );
-//   printf( "x = %-d, y = %-d\n", x, y );
+//   fprintf( stderr, "In activeLineClass::movePoint\n" );
+//   fprintf( stderr, "x = %-d, y = %-d\n", x, y );
 
   actWin->drawGc.saveFg();
   actWin->drawGc.setFG( lineColor.pixelColor() );
@@ -1233,7 +1233,7 @@ int n, oneX, oneY, oneW, oneH, minX, minY, maxX, maxY;
 
   oneW = oneH = ctlBoxLen();
 
-//   printf( "In activeLineClass::lineEditComplete\n" );
+//   fprintf( stderr, "In activeLineClass::lineEditComplete\n" );
 
   actWin->drawGc.saveFg();
   actWin->drawGc.setFG( lineColor.pixelColor() );
@@ -1302,7 +1302,7 @@ int n, oneX, oneY, oneW, oneH, minX, minY, maxX, maxY;
   oldW = w;
   oldH = h;
 
-//   printf( "minX=%-d, minY=%-d, w=%-d, h=%-d\n", x, y, w, h );
+//   fprintf( stderr, "minX=%-d, minY=%-d, w=%-d, h=%-d\n", x, y, w, h );
 
   initSelectBox();
 
@@ -2581,7 +2581,7 @@ double dx0, dy0, dxOrig, dyOrig, dxPrime0, dyPrime0;
   oldW = w;
   oldH = h;
 
-  //printf( "activeLineClass::rotate %c, xO=%-d, yO=%-d\n",
+  //fprintf( stderr, "activeLineClass::rotate %c, xO=%-d, yO=%-d\n",
   // direction, xOrigin, yOrigin );
 
   dxOrig = (double) xOrigin;
@@ -2596,19 +2596,19 @@ double dx0, dy0, dxOrig, dyOrig, dxPrime0, dyPrime0;
       dx0 = (double) ( xpoints[i].x - dxOrig );
       dy0 = (double) ( dyOrig - xpoints[i].y );
 
-      //printf( "1 dx0=%-g, dy0=%-g\n", dx0, dy0 );
+      //fprintf( stderr, "1 dx0=%-g, dy0=%-g\n", dx0, dy0 );
 
       // rotate
       dxPrime0 = dy0;
       dyPrime0 = dx0 * -1.0;
 
-      //printf( "2 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
+      //fprintf( stderr, "2 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
 
       // translate
       dxPrime0 += dxOrig;
       dyPrime0 = dyOrig - dyPrime0;
 
-      //printf( "3 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
+      //fprintf( stderr, "3 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
 
       // set final x, y
       xpoints[i].x = (short) dxPrime0;
@@ -2621,19 +2621,19 @@ double dx0, dy0, dxOrig, dyOrig, dxPrime0, dyPrime0;
       dx0 = (double) ( xpoints[i].x - dxOrig );
       dy0 = (double) ( dyOrig - xpoints[i].y );
 
-      //printf( "1 dx0=%-g, dy0=%-g\n", dx0, dy0 );
+      //fprintf( stderr, "1 dx0=%-g, dy0=%-g\n", dx0, dy0 );
 
       // rotate
       dxPrime0 = dy0 * -1.0;
       dyPrime0 = dx0;
 
-      //printf( "2 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
+      //fprintf( stderr, "2 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
 
       // translate
       dxPrime0 += dxOrig;
       dyPrime0 = dyOrig - dyPrime0;
 
-      //printf( "3 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
+      //fprintf( stderr, "3 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
 
       // set final x, y
       xpoints[i].x = (short) dxPrime0;
@@ -2656,7 +2656,7 @@ int activeLineClass::flip (
 int i;
 double dx0, dy0, dxOrig, dyOrig, dxPrime0, dyPrime0;
 
-  //printf( "activeLineClass::flip %c, xO=%-d, yO=%-d\n",
+  //fprintf( stderr, "activeLineClass::flip %c, xO=%-d, yO=%-d\n",
   // direction, xOrigin, yOrigin );
 
   // execute base class flip
@@ -2674,24 +2674,24 @@ double dx0, dy0, dxOrig, dyOrig, dxPrime0, dyPrime0;
 
   for ( i=0; i<numPoints; i++ ) {
 
-    //printf( "%-d: x=%-d, y=%-d\n", i, xpoints[i].x, xpoints[i].y );
+    //fprintf( stderr, "%-d: x=%-d, y=%-d\n", i, xpoints[i].x, xpoints[i].y );
 
     if ( direction == 'H' ) { // horizontal
 
       // translate
       dx0 = (double) ( xpoints[i].x - dxOrig );
 
-      //printf( "1 dx0=%-g\n", dx0 );
+      //fprintf( stderr, "1 dx0=%-g\n", dx0 );
 
       // move
       dxPrime0 = dx0 * -1.0;
 
-      //printf( "2 dxPrime0=%-g\n", dxPrime0 );
+      //fprintf( stderr, "2 dxPrime0=%-g\n", dxPrime0 );
 
       // translate
       dxPrime0 += dxOrig;
 
-      //printf( "3 dxPrime0=%-g\n", dxPrime0 );
+      //fprintf( stderr, "3 dxPrime0=%-g\n", dxPrime0 );
 
       // set final x
       xpoints[i].x = (short) dxPrime0;
@@ -2702,17 +2702,17 @@ double dx0, dy0, dxOrig, dyOrig, dxPrime0, dyPrime0;
       // translate
       dy0 = (double) ( dyOrig - xpoints[i].y );
 
-      //printf( "1 dx0=%-g, dy0=%-g\n", dx0, dy0 );
+      //fprintf( stderr, "1 dx0=%-g, dy0=%-g\n", dx0, dy0 );
 
       // move
       dyPrime0 = dy0 * -1.0;
 
-      //printf( "2 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
+      //fprintf( stderr, "2 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
 
       // translate
       dyPrime0 = dyOrig - dyPrime0;
 
-      //printf( "3 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
+      //fprintf( stderr, "3 dxPrime0=%-g, dyPrime0=%-g\n", dxPrime0, dyPrime0 );
 
       // set final y
       xpoints[i].y = (short) dyPrime0;
@@ -3301,15 +3301,15 @@ double halfLen = 5.0;
 
       slope = 1e30;
       slopeUndef = 1;
-      //printf( "1 slope undefined\n" );
+      //fprintf( stderr, "1 slope undefined\n" );
 
     }
 
-    //printf( "x0 = %-g\n", x0 );
-    //printf( "y0 = %-g\n", y0 );
-    //printf( "x1 = %-g\n", x1 );
-    //printf( "y1 = %-g\n", y1 );
-    //printf( "slope = %-g\n", slope );
+    //fprintf( stderr, "x0 = %-g\n", x0 );
+    //fprintf( stderr, "y0 = %-g\n", y0 );
+    //fprintf( stderr, "x1 = %-g\n", x1 );
+    //fprintf( stderr, "y1 = %-g\n", y1 );
+    //fprintf( stderr, "slope = %-g\n", slope );
 
 
     x0P = (double) xpoints[0].y;
@@ -3327,17 +3327,17 @@ double halfLen = 5.0;
 
       slopeP = 1e30;
       slopeUndefP = 1;
-      //printf( "2 slopeP undefined\n" );
+      //fprintf( stderr, "2 slopeP undefined\n" );
 
     }
 
   }
 
-  //printf( "x0P = %-g\n", x0P );
-  //printf( "y0P = %-g\n", y0P );
-  //printf( "x1P = %-g\n", x1P );
-  //printf( "y1P = %-g\n", y1P );
-  //printf( "slopeP = %-g\n", slopeP );
+  //fprintf( stderr, "x0P = %-g\n", x0P );
+  //fprintf( stderr, "y0P = %-g\n", y0P );
+  //fprintf( stderr, "x1P = %-g\n", x1P );
+  //fprintf( stderr, "y1P = %-g\n", y1P );
+  //fprintf( stderr, "slopeP = %-g\n", slopeP );
 
   // point interscting first line
   if ( slopeUndef ) {
@@ -3351,7 +3351,7 @@ double halfLen = 5.0;
   }
   else {
     theta = atan( slope );
-    //printf( "theta = %-g\n", theta );
+    //fprintf( stderr, "theta = %-g\n", theta );
     if ( x0 >= x1 ) {
       ax0 = x0 - len * fabs( cos( theta ) );
     }
@@ -3366,8 +3366,8 @@ double halfLen = 5.0;
     }
   }
 
-  //printf( "ax0 = %-g\n", ax0 );
-  //printf( "ay0 = %-g\n", ay0 );
+  //fprintf( stderr, "ax0 = %-g\n", ax0 );
+  //fprintf( stderr, "ay0 = %-g\n", ay0 );
 
 
   // fisrt corner
@@ -3403,10 +3403,10 @@ double halfLen = 5.0;
 
   }
 
-  //printf( "ax1 = %-g\n", ax1 );
-  //printf( "ay1 = %-g\n", ay1 );
-  //printf( "ax2 = %-g\n", ax2 );
-  //printf( "ay2 = %-g\n", ay2 );
+  //fprintf( stderr, "ax1 = %-g\n", ax1 );
+  //fprintf( stderr, "ay1 = %-g\n", ay1 );
+  //fprintf( stderr, "ax2 = %-g\n", ax2 );
+  //fprintf( stderr, "ay2 = %-g\n", ay2 );
 
   points[0].x = (short) rint(x0);
   points[0].y = (short) rint(y0);
@@ -3442,15 +3442,15 @@ double halfLen = 5.0;
 
       slope = 1e30;
       slopeUndef = 1;
-      //printf( "3 slope undefined\n" );
+      //fprintf( stderr, "3 slope undefined\n" );
 
     }
 
-    //printf( "x0 = %-g\n", x0 );
-    //printf( "y0 = %-g\n", y0 );
-    //printf( "x1 = %-g\n", x1 );
-    //printf( "y1 = %-g\n", y1 );
-    //printf( "slope = %-g\n", slope );
+    //fprintf( stderr, "x0 = %-g\n", x0 );
+    //fprintf( stderr, "y0 = %-g\n", y0 );
+    //fprintf( stderr, "x1 = %-g\n", x1 );
+    //fprintf( stderr, "y1 = %-g\n", y1 );
+    //fprintf( stderr, "slope = %-g\n", slope );
 
 
     x0P = (double) xpoints[n0].y;
@@ -3468,17 +3468,17 @@ double halfLen = 5.0;
 
       slopeP = 1e30;
       slopeUndefP = 1;
-      //printf( "4 slopeP undefined\n" );
+      //fprintf( stderr, "4 slopeP undefined\n" );
 
     }
 
   }
 
-  //printf( "x0P = %-g\n", x0P );
-  //printf( "y0P = %-g\n", y0P );
-  //printf( "x1P = %-g\n", x1P );
-  //printf( "y1P = %-g\n", y1P );
-  //printf( "slopeP = %-g\n", slopeP );
+  //fprintf( stderr, "x0P = %-g\n", x0P );
+  //fprintf( stderr, "y0P = %-g\n", y0P );
+  //fprintf( stderr, "x1P = %-g\n", x1P );
+  //fprintf( stderr, "y1P = %-g\n", y1P );
+  //fprintf( stderr, "slopeP = %-g\n", slopeP );
 
   // point interscting first line
   if ( slopeUndef ) {
@@ -3492,7 +3492,7 @@ double halfLen = 5.0;
   }
   else {
     theta = atan( slope );
-    //printf( "theta = %-g\n", theta );
+    //fprintf( stderr, "theta = %-g\n", theta );
     if ( x0 >= x1 ) {
       ax0 = x0 - len * fabs( cos( theta ) );
     }
@@ -3507,8 +3507,8 @@ double halfLen = 5.0;
     }
   }
 
-  //printf( "ax0 = %-g\n", ax0 );
-  //printf( "ay0 = %-g\n", ay0 );
+  //fprintf( stderr, "ax0 = %-g\n", ax0 );
+  //fprintf( stderr, "ay0 = %-g\n", ay0 );
 
 
   // fisrt corner
@@ -3544,10 +3544,10 @@ double halfLen = 5.0;
 
   }
 
-  //printf( "ax1 = %-g\n", ax1 );
-  //printf( "ay1 = %-g\n", ay1 );
-  //printf( "ax2 = %-g\n", ax2 );
-  //printf( "ay2 = %-g\n", ay2 );
+  //fprintf( stderr, "ax1 = %-g\n", ax1 );
+  //fprintf( stderr, "ay1 = %-g\n", ay1 );
+  //fprintf( stderr, "ax2 = %-g\n", ax2 );
+  //fprintf( stderr, "ay2 = %-g\n", ay2 );
 
   points[4].x = (short) rint(x0);
   points[4].y = (short) rint(y0);
@@ -3587,6 +3587,22 @@ void activeLineClass::getPvs (
   *n = 2;
   pvs[0] = alarmPvId;
   pvs[1] = visPvId;
+
+}
+
+// crawler functions may return blank pv names
+char *activeLineClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return alarmPvExpStr.getExpanded();
+
+}
+
+char *activeLineClass::crawlerGetNextPv ( void ) {
+
+  if ( crawlerPvIndex >= 1 ) return NULL;
+  crawlerPvIndex++;
+  return visPvExpStr.getExpanded();
 
 }
 

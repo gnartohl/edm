@@ -1043,6 +1043,11 @@ int genericCreate (
   char **_macros,
   char **_expansions );
 
+int createNodeForCrawler (
+  appContextClass *ctx,
+  char *filename
+);
+
 void map ( void );
 
 void realize ( void );
@@ -1059,6 +1064,8 @@ int setGraphicEnvironment (
 Display *display ( void );
 
 Widget topWidgetId ( void );
+
+Widget actualTopWidgetId ( void );
 
 Widget drawWidgetId ( void );
 

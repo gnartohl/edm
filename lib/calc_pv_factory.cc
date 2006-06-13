@@ -98,7 +98,7 @@ char *outer, inner[255+1];
 
   if ( !expression ) return;
 
-  //printf( "checkForEmbedded - expression = [%s]\n", expression );
+  //fprintf( stderr, "checkForEmbedded - expression = [%s]\n", expression );
 
   l = strlen( expression );
 
@@ -119,9 +119,6 @@ char *outer, inner[255+1];
         l = strlen( inner );
         inner[l-1] = 0;
 
-        //printf( "New calc - name=%s, expression=%s\n",
-        // expression, inner );
-
         expressions->insert( new HashedExpression( expression, inner ) );
 
       }
@@ -135,7 +132,7 @@ char *outer, inner[255+1];
 CALC_PV_Factory::CALC_PV_Factory()
 {
 #   ifdef CALC_DEBUG
-    printf("CALC_PV_Factory created\n");
+    fprintf( stderr,"CALC_PV_Factory created\n");
 #   endif
     if (expressions)
     {
@@ -200,7 +197,7 @@ CALC_PV_Factory::~CALC_PV_Factory()
         expressions = 0;
     }
 #   ifdef CALC_DEBUG
-    printf("CALC_PV_Factory deleted\n");
+    fprintf( stderr,"CALC_PV_Factory deleted\n");
 #   endif
 }
 
@@ -210,13 +207,13 @@ bool CALC_PV_Factory::parseFile(const char *filename)
     size_t len;
 
 #   ifdef CALC_DEBUG
-    printf("CALC_PV_Factory::parseFile '%s'\n", filename);
+    fprintf( stderr,"CALC_PV_Factory::parseFile '%s'\n", filename);
 #   endif
     FILE *f = fopen(filename, "rt");
     if (!f)
     {
 #       ifdef CALC_DEBUG
-        printf("CALC_PV_Factory::parseFile failed\n");
+        fprintf( stderr,"CALC_PV_Factory::parseFile failed\n");
 #       endif
         return false;
     }
@@ -273,7 +270,7 @@ bool CALC_PV_Factory::parseFile(const char *filename)
 
             need_name = true;
 #           ifdef CALC_DEBUG
-            printf("CALC_PV_Factory::parseFile expr '%s' <-> '%s'\n",
+            fprintf( stderr,"CALC_PV_Factory::parseFile expr '%s' <-> '%s'\n",
                    name, p);
 #           endif
 
@@ -363,14 +360,14 @@ ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
     p = PV_name;
     // end...
     more = 1;
-    //printf( "*p = [%s]\n", p );
+    //fprintf( stderr, "*p = [%s]\n", p );
     if ( *p == '(' ) more = 0;
     while (*p && more) {
         if ( *p == '{' ) findingInline++;
         if ( ( *p == '}' ) && findingInline ) findingInline--;
         ++p;
         if ( ( *p == '(' ) && !findingInline ) more = 0;
-	//printf( "%c, findingInline = %-d, more = %-d\n",
+	//fprintf( stderr, "%c, findingInline = %-d, more = %-d\n",
         // (char) *p, findingInline, more );
     }
     // copy
@@ -395,10 +392,10 @@ ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
     }
 
 #   ifdef CALC_DEBUG
-    printf("CALC_PV_Factory::create: '%s'\n", PV_name);
-    printf("\texpression: '%s'\n", expression);
+    fprintf( stderr,"CALC_PV_Factory::create: '%s'\n", PV_name);
+    fprintf( stderr,"\texpression: '%s'\n", expression);
     for (i=0; i<arg_count; ++i)
-        printf("\targ %d: '%s'\n", i, arg_name[i]);
+        fprintf( stderr,"\targ %d: '%s'\n", i, arg_name[i]);
 #   endif    
     checkForEmbedded( expression );
     HashedExpression he;
@@ -473,17 +470,17 @@ ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
       }
 
 #   ifdef CALC_DEBUG
-      printf( "got %-d exp args\n", i );
+      fprintf( stderr, "got %-d exp args\n", i );
       for ( ii=0; ii<i; ii++ ) {
-	printf( "[%s]\n", exp_arg_name[ii] );
+	fprintf( stderr, "[%s]\n", exp_arg_name[ii] );
       }
 
       if ( strcmp( (*entry)->expStr.getRaw(), "" ) ) {
-        printf( "raw: [%s]\n", (*entry)->expStr.getRaw() );
+        fprintf( stderr, "raw: [%s]\n", (*entry)->expStr.getRaw() );
       }
 
       if ( strcmp( (*entry)->expStr.getExpanded(), "" ) ) {
-        printf( "exp: [%s]\n", (*entry)->expStr.getExpanded() );
+        fprintf( stderr, "exp: [%s]\n", (*entry)->expStr.getExpanded() );
       }
 #   endif    
 
@@ -530,7 +527,7 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
     size_t i;
 
 #   ifdef CALC_DEBUG
-    printf("CALC_ProcessVariable '%s'\n", name);
+    fprintf( stderr,"CALC_ProcessVariable '%s'\n", name);
 #   endif
     
     for (i=0; i<MaxArgs; ++i)
@@ -569,14 +566,14 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
                 arg[i] = 0.0;
             }
 #   ifdef CALC_DEBUG
-            printf("arg[%d] = CONSTANT %g\n", i, arg[i]);
+            fprintf( stderr,"arg[%d] = CONSTANT %g\n", i, arg[i]);
 #   endif
         }
         else
         {   // It's a PV
             arg_pv[i] = the_PV_Factory->create(arg_name[i]);
 #   ifdef CALC_DEBUG
-            printf("arg[%d] = PV %s\n", i, arg_name[i]);
+            fprintf( stderr,"arg[%d] = PV %s\n", i, arg_name[i]);
 #   endif
         }
     }
@@ -596,7 +593,7 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
 CALC_ProcessVariable::~CALC_ProcessVariable()
 {
 #ifdef CALC_DEBUG
-    printf("CALC_ProcessVariable(%s) deleted\n", get_name());
+    fprintf( stderr,"CALC_ProcessVariable(%s) deleted\n", get_name());
 #endif
     for (size_t i=0; i<arg_count; ++i)
     {
@@ -614,7 +611,7 @@ void CALC_ProcessVariable::status_callback(ProcessVariable *pv, void *userarg)
 {
     CALC_ProcessVariable *me = (CALC_ProcessVariable *)userarg;
 #   ifdef CALC_DEBUG
-    printf("CALC %s: status callback from %s.\n",
+    fprintf( stderr,"CALC %s: status callback from %s.\n",
            me->get_name(), pv->get_name());
 #   endif
     me->recalc();
@@ -625,7 +622,7 @@ void CALC_ProcessVariable::value_callback(ProcessVariable *pv, void *userarg)
 {
     CALC_ProcessVariable *me = (CALC_ProcessVariable *)userarg;
 #   ifdef CALC_DEBUG
-    printf("CALC %s: value callback %s\n",
+    fprintf( stderr,"CALC %s: value callback %s\n",
            me->get_name(), pv->get_name());
 #   endif
     if ( me->is_valid() ) {
@@ -647,7 +644,7 @@ void CALC_ProcessVariable::recalc()
         if (!arg_pv[i])
         {
 #   ifdef CALC_DEBUG
-            printf("arg[%d] = constant %g\n", i, arg[i]);
+            fprintf( stderr,"arg[%d] = constant %g\n", i, arg[i]);
 #   endif
             continue;
         }
@@ -668,7 +665,7 @@ void CALC_ProcessVariable::recalc()
                 status   = arg_pv[i]->get_status();
             }
 #           ifdef CALC_DEBUG
-            printf("arg[%d] = PV %s %g stat %d sevr %d\n",
+            fprintf( stderr,"arg[%d] = PV %s %g stat %d sevr %d\n",
                    i, arg_pv[i]->get_name(), arg[i],
                    arg_pv[i]->get_status(), arg_pv[i]->get_severity());
 #           endif
@@ -678,7 +675,7 @@ void CALC_ProcessVariable::recalc()
             status = UDF_ALARM;
             severity = INVALID_ALARM;
 #           ifdef CALC_DEBUG
-            printf("arg[%d] = PV %s is invalid\n",
+            fprintf( stderr,"arg[%d] = PV %s is invalid\n",
                    i, arg_pv[i]->get_name());
 #           endif
         }
@@ -696,7 +693,7 @@ void CALC_ProcessVariable::recalc()
     }
 
 #   ifdef CALC_DEBUG
-    printf("Result: %g stat %d sevr %d (%s)\n",
+    fprintf( stderr,"Result: %g stat %d sevr %d (%s)\n",
            value, status, severity,
            (is_valid() ? "valid" : "invalid"));
 #   endif

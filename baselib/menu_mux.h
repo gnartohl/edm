@@ -317,6 +317,15 @@ int expand1st (
   char *macros[],
   char *expansions[] );
 
+int getNumMacroSets ( void );
+
+int getMacrosSet (
+  int *numMacros,
+  char ***macro,
+  char ***expansion,
+  int n
+);
+
 int getMacros (
   int *numMacros,
   char ***macro,
@@ -399,6 +408,10 @@ void getPvs (
   int max,
   ProcessVariable *pvs[],
   int *n );
+
+char *crawlerGetFirstPv ( void );
+
+char *crawlerGetNextPv ( void );
 
 };
 

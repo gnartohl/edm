@@ -953,7 +953,7 @@ int edmTextupdateClass::activate(int pass, void *ptr)
         case 2: // connect to pv
             if (pv)
             {
-                printf("textupdate::activate: pv already set!\n");
+                fprintf( stderr,"textupdate::activate: pv already set!\n");
                 return 1;
             }
             if (is_pv_valid)
@@ -1116,7 +1116,7 @@ void edmTextupdateClass::pv_value_callback(ProcessVariable *pv,
                                            void *userarg)
 {
 #if 0
-    printf("New Value for '%s': Type %s, Dim. %d\n",
+    fprintf( stderr,"New Value for '%s': Type %s, Dim. %d\n",
            pv->get_name(),
            pv->get_type().description,
            pv->get_dimension());
@@ -1125,18 +1125,18 @@ void edmTextupdateClass::pv_value_callback(ProcessVariable *pv,
     {
         case ProcessVariable::Type::integer:
             for (i=0; i<pv->get_dimension(); ++i)
-                printf("%d ", pv->get_int_array()[i]);
-            printf("\n");
+                fprintf( stderr,"%d ", pv->get_int_array()[i]);
+            fprintf( stderr,"\n");
             break;
         case ProcessVariable::Type::real:
             for (i=0; i<pv->get_dimension(); ++i)
-                printf("%g ", pv->get_double_array()[i]);
-            printf("\n");
+                fprintf( stderr,"%g ", pv->get_double_array()[i]);
+            fprintf( stderr,"\n");
             break;
         default:
             char buf[200];
             pv->get_string(buf, 200);
-            printf("%s\n", buf);
+            fprintf( stderr,"%s\n", buf);
     }
 #endif
     edmTextupdateClass *me = (edmTextupdateClass *)userarg;
@@ -1372,7 +1372,7 @@ void edmTextentryClass::text_edit_callback(Widget w,
     {
         me->editing = true;
 #ifdef DEBUG_TEXTWIDGETS
-        printf("Textentry: Editing '%s'\n",
+        fprintf( stderr,"Textentry: Editing '%s'\n",
                (me->pv ? me->pv->get_name() : "<no PV>"));
 #endif
         switch (XtHasCallbacks(w,XmNlosingFocusCallback))
@@ -1413,7 +1413,7 @@ void edmTextentryClass::text_entered_callback(Widget w,
     me->editing= false;
     XtVaSetValues(w, XmNcursorPosition, (XmTextPosition) 0, NULL);
 #ifdef DEBUG_TEXTWIDGETS
-    printf("Textentry: Writing '%s'\n", text);
+    fprintf( stderr,"Textentry: Writing '%s'\n", text);
 #endif
     if (me->pv && me->pv->is_valid())
     {
@@ -1433,7 +1433,7 @@ void edmTextentryClass::text_entered_callback(Widget w,
                 break;
             case dm_hex:
                 hexnum = strtol(text, 0, 16);
-                // printf("Text: %s -> %d\n", text, hexnum);
+                // fprintf( stderr,"Text: %s -> %d\n", text, hexnum);
                 me->pv->put(hexnum);
                 break;
             default:
@@ -1457,7 +1457,7 @@ void edmTextentryClass::text_noedit_callback(Widget w,
                      (XtCallbackProc)text_noedit_callback, me);
     me->editing= false;
 #ifdef DEBUG_TEXTWIDGETS
-    printf("Textentry: Quit editing '%s'\n",
+    fprintf( stderr,"Textentry: Quit editing '%s'\n",
            (me->pv ? me->pv->get_name() : "<no PV>"));
 #endif
     pv_value_callback(me->pv, me);
@@ -1472,5 +1472,27 @@ void edmTextentryClass::map( void ) {
 void edmTextentryClass::unmap( void ) {
 
   if ( widget ) XtUnmapWidget( widget );
+
+}
+
+// crawler functions may return blank pv names
+char *edmTextupdateClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return pv_name.getExpanded();
+
+}
+
+char *edmTextupdateClass::crawlerGetNextPv ( void ) {
+
+  if ( crawlerPvIndex >= 1 ) return NULL;
+
+  crawlerPvIndex++;
+
+  if ( crawlerPvIndex == 1 ) {
+    return color_pv_name.getExpanded();
+  }
+
+  return NULL;
 
 }

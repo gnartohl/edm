@@ -40,7 +40,7 @@ static void signal_handler (
   int sig
 ) {
 
-  //printf( "Got signal: sig = %-d\n", sig );
+  //fprintf( stderr, "Got signal: sig = %-d\n", sig );
   longjmp( g_jump_h, 1 );
 
 }
@@ -116,7 +116,10 @@ int status;
   agifo->initSelectBox();
 
   if ( !( status & 1 ) ) {
-    agifo->actWin->appCtx->postMessage( activeGifClass_str1 );
+    char msg[255+1];
+    snprintf( msg, 255, activeGifClass_str1, agifo->actWin->fileName,
+     agifo->gifFileName );
+    agifo->actWin->appCtx->postMessage( msg );
   }
 
 }
@@ -203,7 +206,7 @@ activeGifClass::~activeGifClass ( void ) {
 
 int i;
 
-//   printf( "In activeGifClass::~activeGifClass\n" );
+//   fprintf( stderr, "In activeGifClass::~activeGifClass\n" );
 
   if ( name ) delete[] name;
 
@@ -1045,7 +1048,10 @@ static char *emptyStr = "";
 
   status = readGifFile();
   if ( !( status & 1 ) ) {
-    actWin->appCtx->postMessage( "Cannot read gif file" );
+    char msg[255+1];
+    snprintf( msg, 255, activeGifClass_str1, actWin->fileName,
+     gifFileName );
+    actWin->appCtx->postMessage( msg );
   }
 
   return stat;
@@ -1097,7 +1103,10 @@ int major, minor, release;
 
   status = readGifFile();
   if ( !( status & 1 ) ) {
-    actWin->appCtx->postMessage( "Cannot read gif file" );
+    char msg[255+1];
+    snprintf( msg, 255, activeGifClass_str1, actWin->fileName,
+     gifFileName );
+    actWin->appCtx->postMessage( msg );
   }
 
   this->initSelectBox();

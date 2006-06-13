@@ -199,7 +199,7 @@ fd_set fds;
      (fd_set *) NULL, &timeout );
 
     if ( fd == 0 ) { /* timeout */
-      /* printf( "timeout\n" ); */
+      /* fprintf( stderr, "timeout\n" ); */
       return 0;
     }
 
@@ -302,9 +302,9 @@ struct hostent *hostEntry;
   strcpy( reply, "" );
 
 #if 0
-  printf( "ipAddrArg = [%s]\n", ipAddrArg );
-  printf( "portArg = [%s]\n", portArg );
-  printf( "cmd = [%s]\n", cmd );
+  fprintf( stderr, "ipAddrArg = [%s]\n", ipAddrArg );
+  fprintf( stderr, "portArg = [%s]\n", portArg );
+  fprintf( stderr, "cmd = [%s]\n", cmd );
   return 1;
 #endif
 
@@ -346,7 +346,7 @@ struct hostent *hostEntry;
     goto abortClose;
   }
 
-  // printf( "connected\n" );
+  // fprintf( stderr, "connected\n" );
 
   // primary connection complete
 
@@ -360,7 +360,7 @@ struct hostent *hostEntry;
     goto abort;
   }
 
-  // printf( "nIn = %-d, reply = [%s]\n", nIn, reply );
+  // fprintf( stderr, "nIn = %-d, reply = [%s]\n", nIn, reply );
 
   stat = shutdown( sockfd, 2 );
   stat = close( sockfd );
@@ -489,8 +489,8 @@ int n;
 
   // ------------------------------------------------------------------
 
-  //printf( "numPvs = %-d\n", this->numPvs );
-  //printf( "bufSize = %-d\n", this->bufSize );
+  //fprintf( stderr, "numPvs = %-d\n", this->numPvs );
+  //fprintf( stderr, "bufSize = %-d\n", this->bufSize );
 
   this->needInit = 0;
 

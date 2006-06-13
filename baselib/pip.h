@@ -310,6 +310,23 @@ int reactivate (
   int pass,
   void *ptr );
 
+int isRelatedDisplay ( void );
+
+int getNumRelatedDisplays ( void );
+
+int getRelatedDisplayProperty (
+  int index,
+  char *key
+);
+
+char *getRelatedDisplayName (
+  int index
+);
+
+char *getRelatedDisplayMacros (
+  int index
+);
+
 int expand1st (
   int numMacros,
   char *macros[],

@@ -543,6 +543,7 @@ int nullDetectMode;
 
 ProcessVariable *pvId, *svalPvId, *fgPvId;
 
+int pvIndex;
 expStringClass pvExpStr, svalPvExpStr, fgPvExpStr;
 char pvName[PV_Factory::MAX_PV_NAME+1];
 
@@ -758,6 +759,10 @@ void getPvs (
   int max,
   ProcessVariable *pvs[],
   int *n );
+
+char *crawlerGetFirstPv ( void );
+
+char *crawlerGetNextPv ( void );
 
 };
 

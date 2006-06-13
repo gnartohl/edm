@@ -1,7 +1,7 @@
 #ifndef __gif_str
 #define __gif_str 1
 
-#define activeGifClass_str1 (char *) "Cannot read gif file"
+#define activeGifClass_str1 (char *) "[%s] Cannot read gif file - [%s]"
 #define activeGifClass_str2 (char *) "Unknown object"
 #define activeGifClass_str3 (char *) " Properties"
 #define activeGifClass_str4 (char *) "X"

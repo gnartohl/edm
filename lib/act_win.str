@@ -201,5 +201,10 @@
 #define activeWindowClass_str202 (char *) "Clip Drawing Area to Viewport"
 #define activeWindowClass_str203 (char *) "Disable Scrolling"
 #define activeWindowClass_str204 (char *) "Open Display in New Window"
+#define activeWindowClass_str205 (char *) "Incompatable file version (major=%-d)\n"
+#define activeWindowClass_str206 (char *) "displayCrawlerStatus: [%s] old file version not processed (major=%-d)\n"
+#define activeWindowClass_str207 (char *) "displayCrawlerStatus: Insufficient virtual memory\n"
+#define activeWindowClass_str208 (char *) "displayCrawlerStatus: Cannot open file: [%s]\n"
+#define activeWindowClass_str209 (char *) "displayCrawlerStatus: Line %-d, Error creating object \"%s\"\n"
 
 #endif

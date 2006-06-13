@@ -68,7 +68,7 @@ double angle;
 undoArcOpClass ()
 {
 
-  printf( "undoArcOpClass::undoArcOpClass\n" );
+  fprintf( stderr, "undoArcOpClass::undoArcOpClass\n" );
 
 }
 
@@ -451,7 +451,7 @@ int activeArcClass::createInteractive (
   int _w,
   int _h ) {
 
-//   printf( "In activeArcClass::createInteractive\n" );
+//   fprintf( stderr, "In activeArcClass::createInteractive\n" );
 
   actWin = (activeWindowClass *) aw_obj;
   x = _x;
@@ -2109,6 +2109,22 @@ void activeArcClass::getPvs (
   *n = 2;
   pvs[0] = alarmPvId;
   pvs[1] = visPvId;
+
+}
+
+// crawler functions may return blank pv names
+char *activeArcClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return alarmPvExpStr.getExpanded();
+
+}
+
+char *activeArcClass::crawlerGetNextPv ( void ) {
+
+  if ( crawlerPvIndex >= 1 ) return NULL;
+  crawlerPvIndex++;
+  return visPvExpStr.getExpanded();
 
 }
 

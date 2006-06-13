@@ -2170,7 +2170,7 @@ char callbackName[63+1];
           if ( !readExists ) stateStringPvId = controlPvId;
 	}
 	else {
-          printf( activeButtonClass_str47 );
+          fprintf( stderr, activeButtonClass_str47 );
           opStat = 0;
         }
 
@@ -2185,7 +2185,7 @@ char callbackName[63+1];
           stateStringPvId = readPvId;
 	}
 	else {
-          printf( activeButtonClass_str47 );
+          fprintf( stderr, activeButtonClass_str47 );
           opStat = 0;
         }
 
@@ -2199,7 +2199,7 @@ char callbackName[63+1];
            bt_monitor_vis_connect_state, this );
 	}
 	else {
-          printf( activeButtonClass_str47 );
+          fprintf( stderr, activeButtonClass_str47 );
           opStat = 0;
         }
 
@@ -2213,7 +2213,7 @@ char callbackName[63+1];
            bt_monitor_color_connect_state, this );
 	}
 	else {
-          printf( activeButtonClass_str47 );
+          fprintf( stderr, activeButtonClass_str47 );
           opStat = 0;
         }
 
@@ -3010,6 +3010,33 @@ void activeButtonClass::getPvs (
 
 }
 
+// crawler functions may return blank pv names
+char *activeButtonClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return controlPvName.getExpanded();
+
+}
+
+char *activeButtonClass::crawlerGetNextPv ( void ) {
+
+  if ( crawlerPvIndex >=3 ) return NULL;
+
+  crawlerPvIndex++;
+
+  if ( crawlerPvIndex == 1 ) {
+    return readPvName.getExpanded();
+  }
+  else if ( crawlerPvIndex == 2 ) {
+    return colorPvExpString.getExpanded();
+  }
+  else if ( crawlerPvIndex == 3 ) {
+    return visPvExpString.getExpanded();
+  }
+
+  return NULL;
+
+}
 #ifdef __cplusplus
 extern "C" {
 #endif

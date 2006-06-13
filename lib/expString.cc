@@ -22,7 +22,7 @@
 
 static char *g_expStrBlank = "";
 
-int expand (
+static int expand (
   int numMacros,
   char *macro[],
   char *expansion[],
@@ -51,7 +51,7 @@ int state, foundOne, i, ii, nOut, nIn, nMacro, outStrLen;
 
   while ( state != STATE_DONE ) {
 
-    // printf( "state = %-d, char = %c\n", state, inString[nIn] );
+    // fprintf( stderr, "state = %-d, char = %c\n", state, inString[nIn] );
 
     switch ( state ) {
 
@@ -185,7 +185,7 @@ int state, foundOne, i, ii, nOut, nIn, nMacro, outStrLen;
         foundOne = 0;
 
         // do substitution
-        // printf( "processing [%s]\n", thisMacro );
+        // fprintf( stderr, "processing [%s]\n", thisMacro );
         for ( i=0; i<numMacros; i++ ) {
           if ( strcmp( thisMacro, macro[i] ) == 0 ) {
             for ( ii=0; ii<(int) strlen(expansion[i]); ii++ ) {
@@ -233,8 +233,8 @@ int state, foundOne, i, ii, nOut, nIn, nMacro, outStrLen;
 
   }
 
-  //printf( "nOut = %-d\n", nOut );
-  //printf( "buf = [%s]\n", buf );
+  //fprintf( stderr, "nOut = %-d\n", nOut );
+  //fprintf( stderr, "buf = [%s]\n", buf );
 
   if ( nOut ) {
 

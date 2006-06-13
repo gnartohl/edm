@@ -300,7 +300,7 @@ int edmStripClass::createFromFile(FILE *f, char *filename,
 
     if (file_num_pvs != num_pvs)
     {
-        printf ("File has Stripchart with %d PVs, can only handle %d\n",
+        fprintf(stderr,"File has Stripchart with %d PVs, can only handle %d\n",
                 file_num_pvs, num_pvs);
         return 0;
     }
@@ -342,7 +342,7 @@ int edmStripClass::old_createFromFile(FILE *f, char *filename,
     file_num_pvs = (size_t) tmpi;
     if (file_num_pvs != num_pvs)
     {
-        printf ("File has Stripchart with %d PVs, can only handle %d\n",
+        fprintf(stderr,"File has Stripchart with %d PVs, can only handle %d\n",
                 file_num_pvs, num_pvs);
         return 0;
     }
@@ -812,7 +812,7 @@ int edmStripClass::activate(int pass, void *ptr)
 
             if (!plot_widget)
             {
-                printf("Cannot create SciPlot widget\n");
+                fprintf( stderr,"Cannot create SciPlot widget\n");
                 return 0;
             }
             XtMapWidget(plot_widget);
@@ -892,7 +892,7 @@ int edmStripClass::activate(int pass, void *ptr)
             for (i=0; i<num_pvs; ++i)
             {
                 if (pv[i])
-                    printf("strip::activate: pv %d already set to %s!\n",
+                    fprintf( stderr,"strip::activate: pv %d already set to %s!\n",
                            i, pv[i]->get_name());
                 if (is_pvname_valid[i])
                 {
@@ -1092,7 +1092,7 @@ void edmStripClass::pv_conn_state_callback(ProcessVariable *cb_pv, void *userarg
                     if (cb_pv->get_type().type >=
                         ProcessVariable::Type::text)
                     {
-                        printf("Stripchart: cannot plot PV '%s': type %s\n",
+                        fprintf( stderr,"Stripchart: cannot plot PV '%s': type %s\n",
                                cb_pv->get_name(),
                                cb_pv->get_type().description);
                     }
@@ -1129,7 +1129,7 @@ void edmStripClass::pv_value_callback(ProcessVariable *cb_pv, void *userarg)
     {
         if (cb_pv == me->pv[i])
         {
-            //printf("new value: pv %d '%s'\n", i, cb_pv->get_name());
+            //fprintf( stderr,"new value: pv %d '%s'\n", i, cb_pv->get_name());
             if (me->use_pv_time[i])
             {
                 secs = cb_pv->get_time_t();
@@ -1214,6 +1214,21 @@ void edmStripClass::executeDeferred()
         smartDrawAllActive();
 }
 
+// crawler functions may return blank pv names
+char *edmStripClass::crawlerGetFirstPv ( void ) {
 
+  crawlerPvIndex = 0;
+  if ( crawlerPvIndex < num_pvs ) return pv_name[crawlerPvIndex].getExpanded();
 
+  return NULL;
 
+}
+
+char *edmStripClass::crawlerGetNextPv ( void ) {
+
+  if ( crawlerPvIndex >= num_pvs ) return NULL;
+
+  crawlerPvIndex++;
+  return pv_name[crawlerPvIndex].getExpanded();
+
+}

@@ -30,7 +30,7 @@ static void changeTime (
 
 calpadClass *kp = (calpadClass *) client;
 
-  //printf( "changeTime\n" );
+  //fprintf( stderr, "changeTime\n" );
 
   if ( w == kp->hourScale ) {
     XmScaleGetValue( w, &kp->hour );
@@ -872,7 +872,7 @@ static void cancel (
   XtPointer call )
 {
 
-  printf( "cancel\n" );
+  fprintf( stderr, "cancel\n" );
 
 }
 
@@ -885,7 +885,7 @@ static void ok (
 char str[127+1];
 calpadClass *kp = (calpadClass *) client;
 
-  printf( "ok, date = [%s]\n", kp->getDate( str, 127 ) );
+  fprintf( stderr, "ok, date = [%s]\n", kp->getDate( str, 127 ) );
 
 }
 

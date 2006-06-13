@@ -1642,7 +1642,7 @@ XPoint xpoints[6];
  // crude attempt to prevent divide by zero in angle calc
  if ((scaleMax - scaleMin) < 0.000001 * (readV - scaleMin)){
    scaleMax = scaleMin +1.0;
-   // printf ("check meter scale min and max\n");
+   // fprintf(stderr,"check meter scale min and max\n");
  }
 
  beginAngle = descentAngle;
@@ -2081,7 +2081,7 @@ int opStat;
            this );
 	}
 	else {
-          printf( activeMeterClass_str38 );
+          fprintf( stderr, activeMeterClass_str38 );
           opStat = 0;
         }
       }
@@ -2520,6 +2520,20 @@ void activeMeterClass::getPvs (
 
   *n = 1;
   pvs[0] = readPvId;
+
+}
+
+// crawler functions may return blank pv names
+char *activeMeterClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return readPvExpStr.getExpanded();
+
+}
+
+char *activeMeterClass::crawlerGetNextPv ( void ) {
+
+  return NULL;
 
 }
 

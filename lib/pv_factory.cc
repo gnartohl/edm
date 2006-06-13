@@ -9,6 +9,7 @@
 #include"epics_pv_factory.h"
 #include"calc_pv_factory.h"
 #include"loc_pv_factory.h"
+//#include"db_pv_factory.h"
 
 static int edmReadOnly = 0;
 
@@ -58,10 +59,21 @@ int pend_event ( double sec )
 static PV_Factory *epics_pv_factory = new EPICS_PV_Factory();
 static PV_Factory *calc_pv_factory  = new CALC_PV_Factory();
 static PV_Factory *loc_pv_factory  = new LOC_PV_Factory();
+//static PV_Factory *db_pv_factory  = new DB_PV_Factory();
 
 //extern "C" static void remove_pv_factories()
 static void remove_pv_factories()
 {
+    //if (db_pv_factory)
+    //{
+    //    delete db_pv_factory;
+    //    db_pv_factory = 0;
+    //}
+    if (loc_pv_factory)
+    {
+        delete loc_pv_factory;
+        loc_pv_factory = 0;
+    }
     if (calc_pv_factory)
     {
         delete calc_pv_factory;
@@ -103,6 +115,9 @@ int PV_Factory::legal_pv_type (
   else if ( strcmp(pv_type, "LOC" ) == 0 ) {
     return 1;
   }
+  //else if ( strcmp(pv_type, "DB" ) == 0 ) {
+  //  return 1;
+  //}
 
   return 0;
 
@@ -131,7 +146,7 @@ void PV_Factory::set_default_pv_type (
 void PV_Factory::clear_default_pv_type ( void )
 {
 
-  //printf( "clearing default pv type\n" );
+  //fprintf( stderr, "clearing default pv type\n" );
 
   strcpy( default_pv_type, "" );
 
@@ -154,6 +169,10 @@ class ProcessVariable *pv;
     pv = loc_pv_factory->create(PV_name+4);
     return pv;
   }
+  //else if (strncmp(PV_name, "DB\\", 3)==0) {
+  //  pv = db_pv_factory->create(PV_name+3);
+  //  return pv;
+  //}
   else if (strchr(PV_name, '\\')) {
     fprintf(stderr, "Unknown PV Factory for PV '%s'\n", PV_name);
     return 0;
@@ -173,6 +192,10 @@ class ProcessVariable *pv;
       pv = loc_pv_factory->create(PV_name);
       return pv;
     }
+    //else if (strncmp(default_pv_type, "DB", 3)==0) {
+    //  pv = db_pv_factory->create(PV_name);
+    //  return pv;
+    //}
     else {
       fprintf(stderr, "Unknown PV Factory for PV '%s\\%s'\n",
        default_pv_type, PV_name);
@@ -205,6 +228,10 @@ class ProcessVariable *pv;
     pv = loc_pv_factory->create(PV_name+4);
     return pv;
   }
+  //else if (strncmp(PV_name, "DB\\", 3)==0) {
+  //  pv = db_pv_factory->create(PV_name+3);
+  //  return pv;
+  //}
   else if (strchr(PV_name, '\\')) {
     fprintf(stderr, "Unknown PV Factory for PV '%s'\n", PV_name);
     return 0;
@@ -224,6 +251,10 @@ class ProcessVariable *pv;
       pv = loc_pv_factory->create(PV_name);
       return pv;
     }
+    //else if (strncmp(default_pv_type, "DB", 3)==0) {
+    //  pv = db_pv_factory->create(PV_name);
+    //  return pv;
+    //}
     else {
       fprintf(stderr, "Unknown PV Factory for PV '%s\\%s'\n",
        default_pv_type, PV_name);
@@ -269,16 +300,16 @@ ProcessVariable::ProcessVariable(const char *_name)
 ProcessVariable::~ProcessVariable()
 {
 
-    //printf( "~ProcessVariable, name=[%s]\n", name );
-    //printf( "num times connected = %-d, disconnected = %-d\n",
+    //fprintf( stderr, "~ProcessVariable, name=[%s]\n", name );
+    //fprintf( stderr, "num times connected = %-d, disconnected = %-d\n",
     // numTimesConnected, numTimesDisconnected );
-    //printf( "num value change events = %-d\n", numValueChangeEvents );
+    //fprintf( stderr, "num value change events = %-d\n", numValueChangeEvents );
     //if ( nodeName ) {
-    //  printf( "node name = [%s] [%-x]\n", nodeName, (int) nodeName );
+    //  fprintf( stderr, "node name = [%s] [%-x]\n", nodeName, (int) nodeName );
     //}
 
     if (refcount != 0)
-        printf("ProcessVariable %s deleted with refcount %d\n",
+        fprintf( stderr,"ProcessVariable %s deleted with refcount %d\n",
                name, refcount);
     if ( name ) {
       free(name);
@@ -315,8 +346,9 @@ void ProcessVariable::add_conn_state_callback(PVCallback func, void *userarg)
     conn_state_callbacks.insert(info);
     // Perform initial callback in case we already have a value
     // (otherwise user would have to wait until the next change)
-    if (is_valid())
+    if (is_valid()) {
         (*func)(this, userarg);
+    }
 }
 
 void ProcessVariable::set_node_name( const char *_nodeName ) {
@@ -413,8 +445,9 @@ void ProcessVariable::do_value_callbacks()
          ++entry)
     {
         info = *entry;
-        if (info->func)
+        if (info->func) {
             (*info->func) (this, info->userarg);
+	}
     }
 }
 

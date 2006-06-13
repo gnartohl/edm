@@ -59,6 +59,8 @@
 #include "act_grf.h"
 #include "bindings.h"
 #include "utility.h"
+#include "crawler.h"
+#include "lookup.h"
 
 #include "sys_types.h"
 #include "thread.h"
@@ -205,7 +207,7 @@ SYS_PROC_ID_TYPE procId;
   sys_get_proc_id( &procId );
   sprintf( procIdName, "%-d", (int) procId.id );
   Strncat( checkPointFileName, procIdName, 255 );
-  //printf( "[%s]\n", checkPointFileName );
+  //fprintf( stderr, "[%s]\n", checkPointFileName );
 
 }
 
@@ -228,7 +230,7 @@ char *envPtr;
   }
   Strncat( checkPointFileName, "edmCheckPointFile_", 255 );
   Strncat( checkPointFileName, procIdName, 255 );
-  //printf( "%-d, [%s]\n", g_pidNum, checkPointFileName );
+  //fprintf( stderr, "%-d, [%s]\n", g_pidNum, checkPointFileName );
 
 }
 
@@ -397,7 +399,7 @@ fd_set fds;
      (fd_set *) NULL, &timeout );
 
     if ( fd == 0 ) { /* timeout */
-      /* printf( "timeout\n" ); */
+      /* fprintf( stderr, "timeout\n" ); */
       return 0;
     }
 
@@ -544,7 +546,7 @@ int value, n, nIn, nOut;
 
   stat = sys_cvt_seconds_to_timeout( 10.0, &timeout );
   if ( !( stat & 1 ) ) {
-    printf( main_str3 );
+    fprintf( stderr, main_str3 );
     return;
   }
 
@@ -585,7 +587,7 @@ int value, n, nIn, nOut;
 
     }
 
-    //printf( "Checking host [%s], merit = %-f\n", chkHost, merit );
+    //fprintf( stderr, "Checking host [%s], merit = %-f\n", chkHost, merit );
 
     stat = getHostAddr( chkHost, &ip_addr );
     if ( stat ) return;
@@ -617,7 +619,7 @@ int value, n, nIn, nOut;
       goto abortClose;
     }
 
-    //printf( "connected\n" );
+    //fprintf( stderr, "connected\n" );
 
     msg[0] = (char) QUERY_LOAD;
     msg[1] = '\n';
@@ -634,7 +636,7 @@ int value, n, nIn, nOut;
 
     sscanf( msg, "%d", &n );
 
-    //printf( "nIn = %-d, reply = %-d\n", nIn, n );
+    //fprintf( stderr, "nIn = %-d, reply = %-d\n", nIn, n );
 
     if ( !nIn ) {
       goto nextHost;
@@ -649,7 +651,7 @@ int value, n, nIn, nOut;
       useItem = item;
     }
 
-    //printf( "min = %-f, adj num = %-f\n", min, num );
+    //fprintf( stderr, "min = %-f, adj num = %-f\n", min, num );
 
 nextHost:
 
@@ -662,7 +664,7 @@ nextHost:
 
   }
 
-  //printf( "Using host [%s], item %-d\n", host, useItem );
+  //fprintf( stderr, "Using host [%s], item %-d\n", host, useItem );
 
   stat = getHostAddr( host, &ip_addr );
   if ( stat ) return;
@@ -694,7 +696,7 @@ nextHost:
     goto abortClose;
   }
 
-  //printf( "connected\n" );
+  //fprintf( stderr, "connected\n" );
 
   if ( oneInstance ) {
 
@@ -843,7 +845,7 @@ fd_set fds;
      (fd_set *) NULL, &timeout );
 
     if ( fd == 0 ) { /* timeout */
-      /* printf( "timeout\n" ); */
+      /* fprintf( stderr, "timeout\n" ); */
       return 0;
     }
 
@@ -884,7 +886,7 @@ fd_set fds;
   remain = maxLen;
   while ( more ) {
 
-    /* printf( "socketFd = %-d\n", socketFd ); */
+    /* fprintf( stderr, "socketFd = %-d\n", socketFd ); */
 
     FD_ZERO( &fds );
     FD_SET( socketFd, &fds );
@@ -935,13 +937,13 @@ void *caPendThread (
   THREAD_HANDLE h )
 {
 #endif
-	
+
 #ifdef darwin
 void *caPendThread (
   THREAD_HANDLE h )
 {
 #endif
-		
+
 #ifdef __solaris__
 void *caPendThread (
   THREAD_HANDLE h )
@@ -976,13 +978,13 @@ void *serverThread (
   THREAD_HANDLE h )
 {
 #endif
-	
+
 #ifdef darwin
 void *serverThread (
   THREAD_HANDLE h )
 {
 #endif
-		
+
 #ifdef __solaris__
 void *serverThread (
   THREAD_HANDLE h )
@@ -1023,7 +1025,7 @@ int *portNumPtr = (int *) thread_get_app_data( h );
 
   stat = sys_cvt_seconds_to_timeout( 10.0, &timeout );
   if ( !( stat & 1 ) ) {
-    printf( main_str3 );
+    fprintf( stderr, main_str3 );
     goto err_return;
   }
 
@@ -1074,7 +1076,7 @@ int *portNumPtr = (int *) thread_get_app_data( h );
     more = 1;
     while ( more ) {
 
-      /*printf( "sockfd = %-d\n", sockfd ); */
+      /*fprintf( stderr, "sockfd = %-d\n", sockfd ); */
 
       /* accept connection */
       cliLen = sizeof(cli_s);
@@ -1103,11 +1105,11 @@ int *portNumPtr = (int *) thread_get_app_data( h );
             strncpy( node->msg, &msg[1], 254 );
             q_stat_i = INSQTI( (void *) node, (void *) &g_mainActiveQueue, 0 );
             if ( !( q_stat_i & 1 ) ) {
-              printf( main_str17 );
+              fprintf( stderr, main_str17 );
             }
           }
           else {
-            printf( main_str18 );
+            fprintf( stderr, main_str18 );
           }
 
           stat = thread_unlock_master( h );
@@ -1124,7 +1126,7 @@ int *portNumPtr = (int *) thread_get_app_data( h );
 
           n_in = reply( newsockfd, msg1, strlen(msg1) );
           if ( n_in < 1 ) {
-            printf( main_str44 );
+            fprintf( stderr, main_str44 );
           }
 
           break;
@@ -1139,11 +1141,11 @@ int *portNumPtr = (int *) thread_get_app_data( h );
             strncpy( node->msg, &msg[1], 254 );
             q_stat_i = INSQTI( (void *) node, (void *) &g_mainActiveQueue, 0 );
             if ( !( q_stat_i & 1 ) ) {
-              printf( main_str17 );
+              fprintf( stderr, main_str17 );
             }
           }
           else {
-            printf( main_str18 );
+            fprintf( stderr, main_str18 );
           }
 
           stat = thread_unlock_master( h );
@@ -1180,11 +1182,11 @@ err_return:
 #ifdef __linux__
   return NULL;
 #endif
-  
+
 #ifdef darwin
   return NULL;
 #endif
-  
+
 #ifdef __solaris__
   return NULL;
 #endif
@@ -1195,7 +1197,7 @@ err_return:
 
 }
 
-void checkParams (
+static void checkParams (
   int argc,
   char **argv,
   int *local,
@@ -1206,8 +1208,10 @@ void checkParams (
   int *restart,
   int *oneInstance,
   int *openCmd,
-  int *convertOnly )
-{
+  int *convertOnly,
+  int *crawl,
+  int *verbose
+) {
 
 char buf[1023+1], mac[1023+1], exp[1023+1];
 int state = SWITCHES;
@@ -1224,6 +1228,7 @@ Display *testDisplay;
   *portNum = 19000;
   *restart = 0;
   *convertOnly = 0;
+  *crawl = 0;
 
   // check first for component management commands
   if ( argc > 1 ) {
@@ -1253,6 +1258,16 @@ Display *testDisplay;
 	  *oneInstance = 0;
           *server = 0;
           *local = 1;
+	}
+	else if ( strcmp( argv[n], global_str102 ) == 0 ) {
+          *convertOnly = 0;
+	  *oneInstance = 0;
+          *server = 0;
+          *local = 1;
+	  *crawl = 1;
+	}
+	else if ( strcmp( argv[n], global_str104 ) == 0 ) {
+	  *verbose = 1;
 	}
         else if ( strcmp( argv[n], global_str10 ) == 0 ) {
           *server = 1;
@@ -1417,7 +1432,7 @@ Display *testDisplay;
 
       stat = gethostname( displayName, 127 );
       if ( stat ) {
-        printf( main_str35 );
+        fprintf( stderr, main_str35 );
         exit(0);
       }
 
@@ -1429,7 +1444,7 @@ Display *testDisplay;
 
   testDisplay = XOpenDisplay( displayName );
   if ( !testDisplay ) {
-    printf( main_str36 );
+    fprintf( stderr, main_str36 );
     exit(0);
   }
 
@@ -1446,7 +1461,7 @@ extern int main (
 
 int i, j, stat, numAppsRemaining, exitProg, shutdown, q_stat_r, q_stat_i,
  local, server, portNum, restart, n, x, y, icon, sessionNoEdit, screenNoEdit,
- oneInstance, openCmd, convertOnly, needConnect;
+ oneInstance, openCmd, convertOnly, crawl, verbose, needConnect;
 THREAD_HANDLE delayH, serverH; //, caPendH;
 argsPtr args;
 appListPtr cur, next, appArgsHead, newOne, first;
@@ -1486,7 +1501,7 @@ int numLocaleFailures = 0;
 
       if ( setlocale( LC_ALL, "C" ) == NULL ) {
         if ( setlocale( LC_ALL, "" ) == NULL ) {
-          printf( "Cannot set locale - abort\n" );
+          fprintf( stderr, "Cannot set locale - abort\n" );
           exit(1);
         }
       }
@@ -1495,7 +1510,7 @@ int numLocaleFailures = 0;
     else if ( numLocaleFailures == 1 ) {
 
       if ( setlocale( LC_ALL, "C" ) == NULL ) {
-        printf( "Cannot set locale - abort\n" );
+        fprintf( stderr, "Cannot set locale - abort\n" );
         exit(1);
       }
 
@@ -1504,7 +1519,7 @@ int numLocaleFailures = 0;
     if ( !XSupportsLocale() ) {
       numLocaleFailures++;
       if ( numLocaleFailures > 1 ) {
-        printf( "X does not support locale \"%s\" - abort\n",
+        fprintf( stderr, "X does not support locale \"%s\" - abort\n",
          setlocale( LC_ALL, NULL ) );
         exit(1);
       }
@@ -1516,11 +1531,11 @@ int numLocaleFailures = 0;
   } while ( numLocaleFailures );
 
   if ( XSetLocaleModifiers( "" ) == NULL ) {
-    printf( "Cannot set locale modifiers - abort\n" );
+    fprintf( stderr, "Cannot set locale modifiers - abort\n" );
     exit(1);
   }
 
-  // printf( "locale is \"%s\"\n", setlocale( LC_ALL, NULL ) );
+  // fprintf( stderr, "locale is \"%s\"\n", setlocale( LC_ALL, NULL ) );
 
   envPtr = getenv( "EDMXSYNC" );
   if ( envPtr ) doXSync = 1;
@@ -1528,12 +1543,13 @@ int numLocaleFailures = 0;
   g_numClients = 1;
 
   checkParams( argc, argv, &local, &server, &appendDisplay, displayName,
-   &portNum, &restart, &oneInstance, &openCmd, &convertOnly );
+   &portNum, &restart, &oneInstance, &openCmd, &convertOnly, &crawl,
+   &verbose );
 
   // if doing a restart, read in check point file
   if ( restart ) {
 
-    //printf( "restart\n" );
+    //fprintf( stderr, "restart\n" );
 
     getCheckPointFileName( checkPointFileName, g_restartId );
     f = fopen( checkPointFileName, "r" );
@@ -1563,13 +1579,13 @@ int numLocaleFailures = 0;
         local = 0;
       }
 
-      //printf( "primaryServerFlag = %-d\n", primaryServerFlag );
-      //printf( "oneInstanceFlag = %-d\n", oneInstanceFlag );
-      //printf( "server = %-d\n", server );
-      //printf( "displayName = [%s]\n", displayName );
-      //printf( "sessionNoEdit = %-d\n", sessionNoEdit );
-      //printf( "numCheckPointMacros = %-d\n", numCheckPointMacros );
-      //printf( "checkPointMacros = [%s]\n", checkPointMacros );
+      //fprintf( stderr, "primaryServerFlag = %-d\n", primaryServerFlag );
+      //fprintf( stderr, "oneInstanceFlag = %-d\n", oneInstanceFlag );
+      //fprintf( stderr, "server = %-d\n", server );
+      //fprintf( stderr, "displayName = [%s]\n", displayName );
+      //fprintf( stderr, "sessionNoEdit = %-d\n", sessionNoEdit );
+      //fprintf( stderr, "numCheckPointMacros = %-d\n", numCheckPointMacros );
+      //fprintf( stderr, "checkPointMacros = [%s]\n", checkPointMacros );
 
     }
     else {
@@ -1592,18 +1608,18 @@ int numLocaleFailures = 0;
     // If openCmd is true, we want the server to open some screens;
     // if no server is running, we do not want to launch an instance of edm
     if ( openCmd ) {
-      printf( main_str46 );
+      fprintf( stderr, main_str46 );
       exit(0);
     }
 
     stat = sys_iniq( &g_mainFreeQueue );
     if ( !( stat & 1 ) ) {
-      printf( main_str37 );
+      fprintf( stderr, main_str37 );
       exit(0);
     }
     stat = sys_iniq( &g_mainActiveQueue );
     if ( !( stat & 1 ) ) {
-      printf( main_str38 );
+      fprintf( stderr, main_str38 );
       exit(0);
     }
 
@@ -1617,7 +1633,7 @@ int numLocaleFailures = 0;
       stat = INSQTI( (void *) &g_mainNodes[i], (void *) &g_mainFreeQueue,
        0 );
       if ( !( stat & 1 ) ) {
-        printf( main_str39 );
+        fprintf( stderr, main_str39 );
         exit(0);
       }
 
@@ -1651,9 +1667,9 @@ int numLocaleFailures = 0;
 
   if ( restart ) { // append display name and macros to args
 
-    //printf( "adjust args for restart\n" );
+    //fprintf( stderr, "adjust args for restart\n" );
 
-    //printf( "argc = %-d\n", argc );
+    //fprintf( stderr, "argc = %-d\n", argc );
 
     n = 0;
     if ( !blank(displayName) ) n += 2;
@@ -1739,9 +1755,9 @@ int numLocaleFailures = 0;
   args->appCtxPtr = new appContextClass;
   args->appCtxPtr->proc = &proc;
 
-  //printf( "argc = %-d\n", args->argc );
+  //fprintf( stderr, "argc = %-d\n", args->argc );
   //for ( i=0; i<args->argc; i++ ) {
-  //  printf( "argv[%-d] = [%s]\n", i, args->argv[i] );
+  //  fprintf( stderr, "argv[%-d] = [%s]\n", i, args->argv[i] );
   //}
 
   if ( server ) {
@@ -1760,11 +1776,113 @@ int numLocaleFailures = 0;
     XtAppSetWarningHandler( oneAppCtx, xtErrorHandler );
   }
 
+  if ( crawl ) {
+
+    {
+
+      macroListPtr cur;
+      fileListPtr curFile;
+      crawlListPtr crawlList;
+
+      int i, l, numMacros, found;
+      char *fname;
+      char **symbols;
+      char **values;
+      char crawlFileName[255+1];
+
+      setCrawlVerbose( verbose );
+
+      args->appCtxPtr->useStdErr( 1 );
+      args->appCtxPtr->setErrMsgPrefix( "displayCrawlerStatus: " );
+
+      numMacros = 0;
+      cur = args->appCtxPtr->macroHead->flink;
+      while ( cur != args->appCtxPtr->macroHead ) {
+        numMacros++;
+        cur = cur->flink;
+      }
+
+      symbols = new char*[numMacros];
+      values = new char*[numMacros];
+
+      i = 0;
+      cur = args->appCtxPtr->macroHead->flink;
+      while ( cur != args->appCtxPtr->macroHead ) {
+
+        //fprintf( stderr, "[%s] = [%s]\n", cur->macro, cur->expansion );
+
+	l = strlen( cur->macro );
+        symbols[i] = new char[l+1];
+	strcpy( symbols[i], cur->macro );
+
+	l = strlen( cur->expansion );
+        values[i] = new char[l+1];
+        strcpy( values[i], cur->expansion );
+
+	i++;
+        cur = cur->flink;
+
+      }
+
+      curFile = args->appCtxPtr->fileHead->flink;
+      while ( curFile != args->appCtxPtr->fileHead ) {
+
+        getFirstFile( curFile->file, 255, crawlFileName, &found );
+        if ( found ) {
+
+          while ( found ) {
+
+	    //fprintf( stderr, "file = [%s]\n", crawlFileName );
+
+            fname = new char[strlen(crawlFileName)+1];
+            strcpy( fname, crawlFileName );
+
+            initCrawlList( &crawlList );
+
+            setCrawlListBaseMacros( numMacros, symbols, values );
+
+            addCrawlNode( crawlList, fname, numMacros,
+             symbols, values );
+
+            stat = crawlEdlFiles( args->appCtxPtr, crawlList );
+
+            getNextFile( curFile->file, 255, crawlFileName, &found );
+
+	  }
+
+	}
+	else {
+
+          //fprintf( stderr, "one file = [%s]\n", curFile->file );
+
+          initCrawlList( &crawlList );
+
+          setCrawlListBaseMacros( numMacros, symbols, values );
+
+          addCrawlNode( crawlList, curFile->file, numMacros,
+           symbols, values );
+
+          stat = crawlEdlFiles( args->appCtxPtr, crawlList );
+
+	}
+
+        curFile = curFile->flink;
+
+      }
+
+      stat = displayCrawlerResults();
+
+    }
+
+    exit( 0 );
+
+  }
+
   if ( restart ) { // open all displays
 
     n = getNumCheckPointScreens( f );
 
-    //printf( "%-d screen(s)\n", n );
+    //fprintf( stderr, "%-d screen(s)\n", n );
 
     for ( i=0; i<n; i++ ) {
 
@@ -1878,7 +1996,7 @@ int numLocaleFailures = 0;
 
         n = getNumCheckPointScreens( f );
 
-        //printf( "%-d screen(s)\n", n );
+        //fprintf( stderr, "%-d screen(s)\n", n );
 
         for ( i=0; i<n; i++ ) {
 
@@ -1928,12 +2046,12 @@ int numLocaleFailures = 0;
     if ( zz ) zz--;
     if ( zz == 1 ) {
       //zz = 200;
-      printf( "reset\n" );
+      fprintf( stderr, "reset\n" );
       memTrackReset();
     }
 
     showMem();
-    printf( "[%-d]\n", zz );
+    fprintf( stderr, "[%-d]\n", zz );
 
 #endif
 
@@ -1994,7 +2112,7 @@ int numLocaleFailures = 0;
       else if ( cur->appArgs->appCtxPtr->exitFlag &&
        cur->appArgs->appCtxPtr->objDelFlag > 1 ) {
 
-        //printf( "decrement\n" );
+        //fprintf( stderr, "decrement\n" );
 
         (cur->appArgs->appCtxPtr->objDelFlag)--;
 
@@ -2013,7 +2131,7 @@ int numLocaleFailures = 0;
 	}
 	else {
 
-          //printf( "delete\n" );
+          //fprintf( stderr, "delete\n" );
 
           // unlink and delete
           cur->blink->flink = cur->flink;
@@ -2185,12 +2303,12 @@ parse_error:
 
             q_stat_i = INSQTI( (void *) node, (void *) &g_mainFreeQueue, 0 );
             if ( !( q_stat_i & 1 ) ) {
-              printf( main_str40 );
+              fprintf( stderr, main_str40 );
             }
 
           }
           else if ( q_stat_r != QUEWASEMP ) {
-            printf( main_str41 );
+            fprintf( stderr, main_str41 );
           }
 
           stat = thread_unlock_master( serverH );

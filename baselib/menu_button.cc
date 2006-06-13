@@ -1628,7 +1628,7 @@ int opStat;
           usePvId = activeMenuButtonClass::useControlPvId;
 	}
 	else {
-          printf( activeMenuButtonClass_str20,
+          fprintf( stderr, activeMenuButtonClass_str20,
            controlPvExpStr.getExpanded() );
           opStat = 0;
         }
@@ -1644,7 +1644,7 @@ int opStat;
           if ( !controlExists ) usePvId = activeMenuButtonClass::useReadPvId;
 	}
 	else {
-          printf( activeMenuButtonClass_str20,
+          fprintf( stderr, activeMenuButtonClass_str20,
            readPvExpStr.getExpanded() );
           opStat = 0;
         }
@@ -1659,7 +1659,7 @@ int opStat;
            mbt_monitor_vis_connect_state, this );
 	}
 	else {
-          printf( activeMenuButtonClass_str20,
+          fprintf( stderr, activeMenuButtonClass_str20,
            visPvExpStr.getExpanded() );
           opStat = 0;
         }
@@ -1674,7 +1674,7 @@ int opStat;
            mbt_monitor_color_connect_state, this );
 	}
 	else {
-          printf( activeMenuButtonClass_str20,
+          fprintf( stderr, activeMenuButtonClass_str20,
            colorPvExpStr.getExpanded() );
           opStat = 0;
         }
@@ -2378,6 +2378,33 @@ void activeMenuButtonClass::getPvs (
 
 }
 
+// crawler functions may return blank pv names
+char *activeMenuButtonClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return controlPvExpStr.getExpanded();
+
+}
+
+char *activeMenuButtonClass::crawlerGetNextPv ( void ) {
+
+  if ( crawlerPvIndex >=3 ) return NULL;
+
+  crawlerPvIndex++;
+
+  if ( crawlerPvIndex == 1 ) {
+    return readPvExpStr.getExpanded();
+  }
+  else if ( crawlerPvIndex == 2 ) {
+    return colorPvExpStr.getExpanded();
+  }
+  else if ( crawlerPvIndex == 3 ) {
+    return visPvExpStr.getExpanded();
+  }
+
+  return NULL;
+
+}
 
 #ifdef __cplusplus
 extern "C" {

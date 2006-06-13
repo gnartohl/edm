@@ -214,7 +214,7 @@ static void cancel (
   XtPointer call )
 {
 
-  printf( "cancel\n" );
+  fprintf( stderr, "cancel\n" );
 
 }
 
@@ -227,7 +227,7 @@ static void ok (
 char str[127+1];
 fselectClass *fs = (fselectClass *) client;
 
-  printf( "ok, selection = [%s]\n", fs->getSelection( str, 127 ) );
+  fprintf( stderr, "ok, selection = [%s]\n", fs->getSelection( str, 127 ) );
 
 }
 

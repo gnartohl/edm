@@ -906,18 +906,78 @@ virtual int containsMacros ( void ) {
 
 }
 
+virtual int getNumMacroSets ( void ) {
+
+  return 0;
+
+}
+
+virtual int getMacrosSet (
+  int *numMacros,
+  char ***macro,
+  char ***expansion,
+  int n
+) {
+
+  *numMacros = 0;
+  *macro = NULL;
+  *expansion = NULL;
+
+  return 1;
+
+}
+
 virtual int getMacros (
   int *numMacros,
   char ***macro,
   char ***expansion ) {
 
   *numMacros = 0;
+  *macro = NULL;
+  *expansion = NULL;
 
   return 1;
 
 }
 
 virtual int isMux ( void ) { return 0; }
+
+
+// related display functions
+
+virtual int isRelatedDisplay ( void ) { return 0; }
+
+virtual int getNumRelatedDisplays ( void ) {
+
+  return 0;
+
+}
+
+virtual int getRelatedDisplayProperty (
+  int index,
+  char *key
+) {
+
+  return 0;
+
+}
+
+
+virtual char *getRelatedDisplayName (
+  int index
+) {
+
+  return NULL;
+
+}
+
+virtual char *getRelatedDisplayMacros (
+  int index
+) {
+
+  return NULL;
+
+}
 
 void updateFont (
   char *string,
@@ -1253,6 +1313,12 @@ virtual int putGroupVisInfo ( // for group objects
   char *minVis,
   char *maxVis
 );
+
+int crawlerPvIndex; // for crawler
+
+// pv crawler functions
+virtual char *crawlerGetFirstPv ( void );
+virtual char *crawlerGetNextPv ( void );
 
 };
 

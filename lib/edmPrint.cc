@@ -46,19 +46,18 @@ static void *printThread (
   THREAD_HANDLE h )
 {
 #endif
-	
+
 #ifdef darwin
 static void *printThread (
   THREAD_HANDLE h )
 {
 #endif
-		
-		
+
 int stat;
 edmPrintThreadParamBlockPtr threadParamBlock =
  (edmPrintThreadParamBlockPtr) thread_get_app_data( h );
 
-  //printf( "this is printThread [%s]\n", threadParamBlock->cmd );
+  //fprintf( stderr, "this is printThread [%s]\n", threadParamBlock->cmd );
 
   stat = system( threadParamBlock->cmd );
 
@@ -75,11 +74,11 @@ edmPrintThreadParamBlockPtr threadParamBlock =
 #ifdef __solaris__
   return (void *) NULL;
 #endif
-  
+
 #ifdef darwin
   return (void *) NULL;
 #endif
-  
+
 }
 
 
@@ -649,7 +648,7 @@ THREAD_HANDLE thread;
     fileDefError = 1;
     event++;
 
-    printf( "%s\n", errMsg );
+    fprintf( stderr, "%s\n", errMsg );
 
   }
 
@@ -892,7 +891,7 @@ char *tk, tmp[31+1];
     tk = nextTk();
     if ( !tk ) state = DONE;
 
-    // printf( "(%-d) tk = [%s]\n", state, tk );
+    // fprintf( stderr, "(%-d) tk = [%s]\n", state, tk );
 
     switch ( state ) {
 
@@ -1023,7 +1022,7 @@ char *tk, tmp[31+1];
       }
       printCmd = strdup( tk );
 
-      //printf( "printCmd = [%s]\n", printCmd );
+      //fprintf( stderr, "printCmd = [%s]\n", printCmd );
 
       state = GET_KEYWORD;
 
@@ -1048,7 +1047,7 @@ char *tk, tmp[31+1];
       }
       printToFileCmd = strdup( tk );
 
-      //printf( "printToFileCmd = [%s]\n", printToFileCmd );
+      //fprintf( stderr, "printToFileCmd = [%s]\n", printToFileCmd );
       state = GET_KEYWORD;
 
       break;
@@ -1112,7 +1111,7 @@ char *tk, tmp[31+1];
         goto missingData;
       }
 
-      //printf( "opt %-d default = %s\n", index, tk );
+      //fprintf( stderr, "opt %-d default = %s\n", index, tk );
 
       if ( index+1 > numOptions ) numOptions = index+1;
 
@@ -1154,7 +1153,7 @@ char *tk, tmp[31+1];
         goto missingData;
       }
 
-      //printf( "\noption %-d %s", index+1, tk );
+      //fprintf( stderr, "\noption %-d %s", index+1, tk );
       optionIndex[numFields] = index;
 
       tk = nextTk();
@@ -1182,7 +1181,7 @@ char *tk, tmp[31+1];
           goto missingData;
         }
 
-        //printf( ": menu choices = [%s]\n", tk );
+        //fprintf( stderr, ": menu choices = [%s]\n", tk );
         optionType[numFields] = INT_TYPE;
         fieldType[numFields] = FIELD_TYPE_MENU;
         menu[numFields] = strdup( tk );
@@ -1203,7 +1202,7 @@ char *tk, tmp[31+1];
       }
       else if ( strcmp( tk, "toggle" ) == 0 ) {
 
-        //printf( ": toggle\n" );
+        //fprintf( stderr, ": toggle\n" );
         optionType[numFields] = INT_TYPE;
         fieldType[numFields] = FIELD_TYPE_TOGGLE;
 
@@ -1223,7 +1222,7 @@ char *tk, tmp[31+1];
       }
       else if ( strcmp( tk, "text" ) == 0 ) {
 
-        //printf( ": text\n" );
+        //fprintf( stderr, ": text\n" );
         optionType[numFields] = STRING_TYPE;
         fieldType[numFields] = FIELD_TYPE_TEXT;
 
@@ -1277,7 +1276,7 @@ char *tk, tmp[31+1];
         goto missingData;
       }
 
-      //printf( "label = [%s]\n", tk );
+      //fprintf( stderr, "label = [%s]\n", tk );
       label[numFields] = strdup( tk );
 
       state = GET_MENU_DEFAULT;
@@ -1308,7 +1307,7 @@ char *tk, tmp[31+1];
         goto missingData;
       }
 
-      //printf( "default = [%s]\n", tk );
+      //fprintf( stderr, "default = [%s]\n", tk );
       optionIntValue[numFields] = atol( tk );
 
       state = GET_MENU_OPTION;
@@ -1372,7 +1371,7 @@ char *tk, tmp[31+1];
         goto missingData;
       }
 
-      //printf( "case %-d = [%s], option=%-d, operator=%-d\n",
+      //fprintf( stderr, "case %-d = [%s], option=%-d, operator=%-d\n",
       // caseIndex, tk, index, op );
       action[numFields][caseIndex] = strdup( tk );
       actionOperator[numFields][caseIndex] = op;
@@ -1408,7 +1407,7 @@ char *tk, tmp[31+1];
         goto missingData;
       }
 
-      //printf( "label = [%s]\n", tk );
+      //fprintf( stderr, "label = [%s]\n", tk );
       label[numFields] = strdup( tk );
 
       state = GET_TOGGLE_DEFAULT;
@@ -1439,7 +1438,7 @@ char *tk, tmp[31+1];
         goto missingData;
       }
 
-      //printf( "default = [%s]\n", tk );
+      //fprintf( stderr, "default = [%s]\n", tk );
       optionIntValue[numFields] = atol( tk );
 
       state = GET_TOGGLE_OPTION;
@@ -1503,7 +1502,7 @@ char *tk, tmp[31+1];
         goto missingData;
       }
 
-      //printf( "case %-d = [%s], option=%-d, operator=%-d\n",
+      //fprintf( stderr, "case %-d = [%s], option=%-d, operator=%-d\n",
       // caseIndex, tk, index, op );
       action[numFields][caseIndex] = strdup( tk );
       actionOperator[numFields][caseIndex] = op;
@@ -1539,7 +1538,7 @@ char *tk, tmp[31+1];
         goto missingData;
       }
 
-      //printf( "label = [%s]\n", tk );
+      //fprintf( stderr, "label = [%s]\n", tk );
       label[numFields] = strdup( tk );
 
       state = GET_TEXT_DEFAULT;
@@ -1570,7 +1569,7 @@ char *tk, tmp[31+1];
         goto missingData;
       }
 
-      //printf( "default = [%s]\n", tk );
+      //fprintf( stderr, "default = [%s]\n", tk );
       strncpy( optionStringValue[numFields], tk, 31 );
       optionStringValue[numFields][31] = 0;
 
@@ -1608,7 +1607,7 @@ char *tk, tmp[31+1];
         goto missingData;
       }
 
-      //printf( "value = [%s], option=%-d, operator=%-d\n", tk, index, op );
+      //fprintf( stderr, "value = [%s], option=%-d, operator=%-d\n", tk, index, op );
       numActions[numFields] = 1;
       actionOperator[numFields][0] = op;
       action[numFields][0] = strdup( tk );
@@ -1675,7 +1674,7 @@ char *tk, tmp[31+1];
 
   if ( !printCmd || !printToFileCmd ) {
     setErrorMsg( edmPrint_str11 );
-    printf( "%s\n", errMsg );
+    fprintf( stderr, "%s\n", errMsg );
     fileDefError = 1;
     event++;
     status = FAILURE;
@@ -1747,7 +1746,7 @@ char *tk, tmp[31+1];
 
 missingData:
 
-  printf( "%s\n", errMsg );
+  fprintf( stderr, "%s\n", errMsg );
   status = FAILURE;
   fileDefError = 1;
   event++;
@@ -1755,7 +1754,7 @@ missingData:
 
 syntaxError:
 
-  printf( "%s\n", errMsg );
+  fprintf( stderr, "%s\n", errMsg );
   status = FAILURE;
   fileDefError = 1;
   event++;
@@ -1763,7 +1762,7 @@ syntaxError:
 
 limitError:
 
-  printf( "%s\n", errMsg );
+  fprintf( stderr, "%s\n", errMsg );
   status = FAILURE;
   fileDefError = 1;
   event++;

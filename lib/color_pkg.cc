@@ -166,14 +166,14 @@ vfunc vf;
 
   while ( cur ) {
 
-    //printf( "obj = %-d\n", (int) cur->obj );
+    //fprintf( stderr, "obj = %-d\n", (int) cur->obj );
 
     vf = (vfunc) cur->func;
     if ( vf ) {
       (*vf)( cur->obj );
     }
     else {
-      printf( colorInfoClass_str35 );
+      fprintf( stderr, colorInfoClass_str35 );
     }
 
     stat = avl_get_next( cio->blinkH, (void **) &cur );
@@ -468,7 +468,7 @@ colorCachePtr cur;
 
     if ( showRGB ) {
       cio->getRGB( bg, &red, &green, &blue );
-      printf( colorInfoClass_str8, i, red, green, blue );
+      fprintf( stderr, colorInfoClass_str8, i, red, green, blue );
     }
 
   }
@@ -1311,7 +1311,7 @@ void colorInfoClass::parseError (
 char *msg )
 {
 
-  printf( colorInfoClass_str6, parseLine, msg );
+  fprintf( stderr, colorInfoClass_str6, parseLine, msg );
 
 }
 
@@ -1634,7 +1634,7 @@ char msg[127+1];
 
   while ( state != -1 ) {
 
-    //printf( "[%-d]\n", state );
+    //fprintf( stderr, "[%-d]\n", state );
 
     switch ( state ) {
 
@@ -1863,7 +1863,7 @@ char msg[127+1];
         goto term;
       }
 
-      //printf( "rule is [%s]\n", cur[0]->name );
+      //fprintf( stderr, "rule is [%s]\n", cur[0]->name );
 
       state = GET_RULE_CONDITION;
 
@@ -1871,7 +1871,7 @@ char msg[127+1];
 
     case GET_RULE_CONDITION:
 
-      //printf( "new condition\n" );
+      //fprintf( stderr, "new condition\n" );
       ruleCond = new ruleConditionType;
       state = GET_FIRST_OP_OR_ARG;
       break;
@@ -1892,7 +1892,7 @@ char msg[127+1];
 
       if ( strcmp( tk, "}" ) == 0 ) {
 
-        //printf( "rule complete\n" );
+        //fprintf( stderr, "rule complete\n" );
 
         if ( ruleCond->resultName ) {
           delete[] ruleCond->resultName;
@@ -2199,7 +2199,7 @@ char msg[127+1];
 	                               // sequence number
       }
 
-      //printf( "[%s]\n", tk );
+      //fprintf( stderr, "[%s]\n", tk );
       if ( strcmp( tk, "invisible" ) == 0 ) {
         invisibleIndex = colorIndex;
       }
@@ -2884,16 +2884,16 @@ term:
 
   }
 
-  //printf( "fixup dynamic rules\n" );
+  //fprintf( stderr, "fixup dynamic rules\n" );
 
   // map dynamic color rule result name into result index
   for ( i=0; i<max_colors; i++ ) {
 
-    //printf( "i = %-d\n", i );
+    //fprintf( stderr, "i = %-d\n", i );
 
     if ( colorNodes[i]->rule ) { // dynamic color rules only
 
-      //printf( "rule is %s, index=%-d\n", colorNodes[i]->name,
+      //fprintf( stderr, "rule is %s, index=%-d\n", colorNodes[i]->name,
       // colorNodes[i]->index );
 
       colorNames[i] = colorNodes[i]->name; // populate color name array
@@ -2902,7 +2902,7 @@ term:
       ruleCond = colorNodes[i]->rule->ruleHead->flink;
 
       if ( !ruleCond ) {
-        printf( colorInfoClass_str30, colorNodes[i]->name );
+        fprintf( stderr, colorInfoClass_str30, colorNodes[i]->name );
         return 0;
       }
 
@@ -2916,15 +2916,15 @@ term:
           if ( cur1 ) {
             if ( isRule( cur1->index ) ) { // rules may not reference
 	                                   // other rules
-              printf( colorInfoClass_str29, colorNodes[i]->name );
+              fprintf( stderr, colorInfoClass_str29, colorNodes[i]->name );
               return 0;
             }
             ruleCond->result = cur1->index;
-            //printf( "result name %s --> %-d\n", ruleCond->resultName,
+            //fprintf( stderr, "result name %s --> %-d\n", ruleCond->resultName,
             // ruleCond->result );
           }
           else {
-            printf( colorInfoClass_str28, colorNodes[i]->name );
+            fprintf( stderr, colorInfoClass_str28, colorNodes[i]->name );
             return 0;
           }
 
@@ -2974,30 +2974,30 @@ term:
 
     double v;
 
-    printf( "eval rules\n\n\n" );
+    fprintf( stderr, "eval rules\n\n\n" );
 
     i = 0;
 
     v = 0;
-    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+    fprintf( stderr, "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
 
     v = 1;
-    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+    fprintf( stderr, "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
 
     v = .5;
-    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+    fprintf( stderr, "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
 
     v = 1000;
-    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+    fprintf( stderr, "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
 
     v = 5.5;
-    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+    fprintf( stderr, "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
 
     v = 99.1;
-    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+    fprintf( stderr, "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
 
     v = -1;
-    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+    fprintf( stderr, "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
 
   }
 #endif
@@ -3011,35 +3011,35 @@ term:
 
   while ( cur1 ) {
 
-    printf( "name: %s, index: %-d, r: %-d, g: %-d, b: %-d, p: %-d, bp: %-d\n",
+    fprintf( stderr, "name: %s, index: %-d, r: %-d, g: %-d, b: %-d, p: %-d, bp: %-d\n",
      cur1->name, cur1->index, cur1->rgb[0], cur1->rgb[1], cur1->rgb[2],
      cur1->pixel, cur1->blinkPixel );
 
     stat = avl_get_next( this->colorCacheByIndexH, (void **) &cur1 );
     if ( !( stat & 1 ) ) {
-      printf( "error 1\n" );
+      fprintf( stderr, "error 1\n" );
       return 0;
     }
 
   }
 
-  printf( "\n" );
+  fprintf( stderr, "\n" );
 
   stat = avl_get_first( this->colorCacheByNameH, (void **) &cur1 );
   if ( !( stat & 1 ) ) {
-    printf( "error 1\n" );
+    fprintf( stderr, "error 1\n" );
     return 0;
   }
 
   while ( cur1 ) {
 
-    printf( "name: %s, index: %-d, r: %-d, g: %-d, b: %-d, p: %-d, bp: %-d\n",
+    fprintf( stderr, "name: %s, index: %-d, r: %-d, g: %-d, b: %-d, p: %-d, bp: %-d\n",
      cur1->name, cur1->index, cur1->rgb[0], cur1->rgb[1], cur1->rgb[2],
      cur1->pixel, cur1->blinkPixel );
 
     stat = avl_get_next( this->colorCacheByNameH, (void **) &cur1 );
     if ( !( stat & 1 ) ) {
-      printf( "error 1\n" );
+      fprintf( stderr, "error 1\n" );
       return 0;
     }
 
@@ -3281,7 +3281,7 @@ int blinkMs = 500;
 
   while ( state != -1 ) {
 
-    //printf( "[%-d]\n", state );
+    //fprintf( stderr, "[%-d]\n", state );
 
     switch ( state ) {
 
@@ -3574,7 +3574,7 @@ int blinkMs = 500;
         goto term;
       }
 
-      //printf( "rule is [%s]\n", cur[0]->name );
+      //fprintf( stderr, "rule is [%s]\n", cur[0]->name );
 
       state = GET_RULE_CONDITION;
 
@@ -3582,7 +3582,7 @@ int blinkMs = 500;
 
     case GET_RULE_CONDITION:
 
-      //printf( "new condition\n" );
+      //fprintf( stderr, "new condition\n" );
       ruleCond = new ruleConditionType;
       ruleCond->resultName = NULL;
       state = GET_FIRST_OP_OR_ARG;
@@ -3604,7 +3604,7 @@ int blinkMs = 500;
 
       if ( strcmp( tk, "}" ) == 0 ) {
 
-        //printf( "rule complete\n" );
+        //fprintf( stderr, "rule complete\n" );
 
         if ( ruleCond->resultName ) {
           delete[] ruleCond->resultName;
@@ -3934,7 +3934,7 @@ int blinkMs = 500;
                                           // sequence number
       }
 
-      //printf( "[%s]\n", tk );
+      //fprintf( stderr, "[%s]\n", tk );
       if ( strcmp( tk, "invisible" ) == 0 ) {
         invisibleIndex = colorIndex;
       }
@@ -4702,21 +4702,21 @@ term:
 
   }
 
-  //printf( "fixup dynamic rules\n" );
+  //fprintf( stderr, "fixup dynamic rules\n" );
 
   // map dynamic color rule result name into result index
   for ( i=0; i<max_colors; i++ ) {
 
-    //printf( "i = %-d\n", i );
+    //fprintf( stderr, "i = %-d\n", i );
 
     if ( !colorNodes[i] ) {
-      printf( colorInfoClass_str33, i );
+      fprintf( stderr, colorInfoClass_str33, i );
       return 0;
     }
 
     if ( colorNodes[i]->rule ) { // dynamic color rules only
 
-      //printf( "i=%-d, rule is %s, index=%-d\n", i, colorNodes[i]->name,
+      //fprintf( stderr, "i=%-d, rule is %s, index=%-d\n", i, colorNodes[i]->name,
       // colorNodes[i]->index );
 
       colorNames[i] = colorNodes[i]->name; // populate color name array
@@ -4725,7 +4725,7 @@ term:
       ruleCond = colorNodes[i]->rule->ruleHead->flink;
 
       if ( !ruleCond ) {
-        printf( colorInfoClass_str30, colorNodes[i]->name );
+        fprintf( stderr, colorInfoClass_str30, colorNodes[i]->name );
         return 0;
       }
 
@@ -4739,15 +4739,15 @@ term:
           if ( cur1 ) {
             if ( isRule( cur1->index ) ) { // rules may not reference
 	                                   // other rules
-              printf( colorInfoClass_str29, colorNodes[i]->name );
+              fprintf( stderr, colorInfoClass_str29, colorNodes[i]->name );
               return 0;
             }
             ruleCond->result = cur1->index;
-            //printf( "result name %s --> %-d\n", ruleCond->resultName,
+            //fprintf( stderr, "result name %s --> %-d\n", ruleCond->resultName,
             // ruleCond->result );
           }
           else {
-            printf( colorInfoClass_str28, colorNodes[i]->name );
+            fprintf( stderr, colorInfoClass_str28, colorNodes[i]->name );
             return 0;
           }
 
@@ -4827,30 +4827,30 @@ term:
 
     double v;
 
-    printf( "eval rules\n\n\n" );
+    fprintf( stderr, "eval rules\n\n\n" );
 
     i = 0;
 
     v = 0;
-    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+    fprintf( stderr, "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
 
     v = 1;
-    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+    fprintf( stderr, "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
 
     v = .5;
-    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+    fprintf( stderr, "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
 
     v = 1000;
-    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+    fprintf( stderr, "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
 
     v = 5.5;
-    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+    fprintf( stderr, "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
 
     v = 99.1;
-    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+    fprintf( stderr, "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
 
     v = -1;
-    printf( "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
+    fprintf( stderr, "rule %-d, value=%-g, result=%-d\n\n", i, v, evalRule( i, v ) );
 
   }
 #endif
@@ -4864,35 +4864,35 @@ term:
 
   while ( cur1 ) {
 
-    printf( "name: %s, index: %-d, r: %-d, g: %-d, b: %-d, p: %-d, bp: %-d\n",
+    fprintf( stderr, "name: %s, index: %-d, r: %-d, g: %-d, b: %-d, p: %-d, bp: %-d\n",
      cur1->name, cur1->index, cur1->rgb[0], cur1->rgb[1], cur1->rgb[2],
      cur1->pixel, cur1->blinkPixel );
 
     stat = avl_get_next( this->colorCacheByIndexH, (void **) &cur1 );
     if ( !( stat & 1 ) ) {
-      printf( "error 1\n" );
+      fprintf( stderr, "error 1\n" );
       return 0;
     }
 
   }
 
-  printf( "\n" );
+  fprintf( stderr, "\n" );
 
   stat = avl_get_first( this->colorCacheByNameH, (void **) &cur1 );
   if ( !( stat & 1 ) ) {
-    printf( "error 1\n" );
+    fprintf( stderr, "error 1\n" );
     return 0;
   }
 
   while ( cur1 ) {
 
-    printf( "name: %s, index: %-d, r: %-d, g: %-d, b: %-d, p: %-d, bp: %-d\n",
+    fprintf( stderr, "name: %s, index: %-d, r: %-d, g: %-d, b: %-d, p: %-d, bp: %-d\n",
      cur1->name, cur1->index, cur1->rgb[0], cur1->rgb[1], cur1->rgb[2],
      cur1->pixel, cur1->blinkPixel );
 
     stat = avl_get_next( this->colorCacheByNameH, (void **) &cur1 );
     if ( !( stat & 1 ) ) {
-      printf( "error 1\n" );
+      fprintf( stderr, "error 1\n" );
       return 0;
     }
 
@@ -5584,7 +5584,7 @@ firstTry:
       goto restart;
     }
 
-    printf( colorInfoClass_str1 );
+    fprintf( stderr, colorInfoClass_str1 );
     // discard file contents
     for ( i=0; i<num_blinking_colors*2; i++ ) {
       ptr = fgets ( line, 127, f );
@@ -5670,19 +5670,19 @@ firstTry:
 
   while ( cur ) {
 
-    printf( "name: %s, index: %-d, r: %-d, g: %-d, b: %-d, p: %-d, bp: %-d\n",
+    fprintf( stderr, "name: %s, index: %-d, r: %-d, g: %-d, b: %-d, p: %-d, bp: %-d\n",
      cur->name, cur->index, cur->rgb[0], cur->rgb[1], cur->rgb[2],
      cur->pixel, cur->blinkPixel );
 
     stat = avl_get_next( this->colorCacheByIndexH, (void **) &cur );
     if ( !( stat & 1 ) ) {
-      printf( "error 1\n" );
+      fprintf( stderr, "error 1\n" );
       return 0;
     }
 
   }
 
-  printf( "\n" );
+  fprintf( stderr, "\n" );
 
 #endif
 
@@ -6027,7 +6027,7 @@ colorCachePtr cur;
 int diff, min, foundOne;
 unsigned int bestPixel;
 
-  //printf( "\n\nstart r=%-d, g=%-d, b=%-d,\n", r, g, b );
+  //fprintf( stderr, "\n\nstart r=%-d, g=%-d, b=%-d,\n", r, g, b );
 
   foundOne = 0;
 
@@ -6038,7 +6038,7 @@ unsigned int bestPixel;
     foundOne = 1;
     min = abs( r - cur->rgb[0] ) + abs( g - cur->rgb[1] ) +
           abs( b - cur->rgb[2] );
-    //printf( "min=%-d\n", min );
+    //fprintf( stderr, "min=%-d\n", min );
     if ( min == 0 ) {
       *pixel = cur->pixel;
       return COLORINFO_SUCCESS;
@@ -6055,7 +6055,7 @@ unsigned int bestPixel;
 
     diff = abs( r - cur->rgb[0] ) + abs( g - cur->rgb[1] ) +
           abs( b - cur->rgb[2] );
-    //printf( "min=%-d\n", diff );
+    //fprintf( stderr, "min=%-d\n", diff );
     if ( diff < min ) {
       if ( diff == 0 ) {
         *pixel = cur->pixel;
@@ -6107,7 +6107,7 @@ int colorInfoClass::setIndex (
 int stat;
 colorCachePtr cur;
 
-//printf( "obsolete colorInfoClass::setIndex\n" );
+//fprintf( stderr, "obsolete colorInfoClass::setIndex\n" );
 
   stat = avl_get_match( this->colorCacheByIndexH, (void *) &index,
    (void **) &cur );
@@ -6641,7 +6641,7 @@ int r, g, b, idx;
 unsigned int pixel;
 
   if ( ( index < 0 ) || ( index >= max_colors+num_blinking_colors ) ) {
-    printf( "colorInfoClass::writeColorIndex - bad index encountered [%-d]\n",
+    fprintf( stderr, "colorInfoClass::writeColorIndex - bad index encountered [%-d]\n",
      index );
     idx = getSpecialIndex( COLORINFO_K_INVALID );
   }
@@ -6678,7 +6678,7 @@ int r, g, b, idx;
 unsigned int pixel;
 
   if ( ( index < 0 ) || ( index >= max_colors+num_blinking_colors ) ) {
-    printf( "colorInfoClass::writeColorIndex - bad index encountered [%-d]\n",
+    fprintf( stderr, "colorInfoClass::writeColorIndex - bad index encountered [%-d]\n",
      index );
     idx = getSpecialIndex( COLORINFO_K_INVALID );
   }
@@ -6713,7 +6713,7 @@ int r, g, b, idx;
 unsigned int pixel;
 
   if ( ( index < 0 ) || ( index >= max_colors+num_blinking_colors ) ) {
-    printf( "colorInfoClass::writeColorArrayIndex - bad index encountered [%-d]\n",
+    fprintf( stderr, "colorInfoClass::writeColorArrayIndex - bad index encountered [%-d]\n",
      index );
     idx = getSpecialIndex( COLORINFO_K_INVALID );
   }
@@ -6747,7 +6747,7 @@ int r, g, b, idx;
 unsigned int pixel;
 
   if ( ( index < 0 ) || ( index >= max_colors+num_blinking_colors ) ) {
-    printf( "colorInfoClass::writeColorArrayIndex - bad index encountered [%-d]\n",
+    fprintf( stderr, "colorInfoClass::writeColorArrayIndex - bad index encountered [%-d]\n",
      index );
     idx = getSpecialIndex( COLORINFO_K_INVALID );
   }
@@ -6797,7 +6797,7 @@ char colorMode[10+1];
   }
 
   if ( ( *index < 0 ) || ( *index >= max_colors+num_blinking_colors ) ) {
-    printf( "colorInfoClass::readColorIndex - bad index encountered [%-d]\n",
+    fprintf( stderr, "colorInfoClass::readColorIndex - bad index encountered [%-d]\n",
      *index );
     //*index = getSpecialIndex( COLORINFO_K_INVALID );
   }
@@ -6835,7 +6835,7 @@ blinkNodePtr cur;
     return 1;
   }
 
-  //printf( "colorInfoClass::addToBlinkList - obj = %-X\n", (int) obj );
+  //fprintf( stderr, "colorInfoClass::addToBlinkList - obj = %-X\n", (int) obj );
 
   if ( blinkLookasideHead->next ) {
     cur = blinkLookasideHead->next;
@@ -6858,7 +6858,7 @@ blinkNodePtr cur;
 
   //stat = avl_insert_node( this->blinkH, (void *) cur, &dup );
   //if ( !( stat & 1 ) ) {
-  //  printf( colorInfoClass_str36, stat );
+  //  fprintf( stderr, colorInfoClass_str36, stat );
   //}
 
   return 1;
@@ -6876,7 +6876,7 @@ blinkNodePtr cur;
     return 1;
   }
 
-  //printf( "colorInfoClass::removeFromBlinkList - obj = %-X\n", (int) obj );
+  //fprintf( stderr, "colorInfoClass::removeFromBlinkList - obj = %-X\n", (int) obj );
 
   if ( blinkLookasideHead->next ) {
     cur = blinkLookasideHead->next;
@@ -6899,16 +6899,16 @@ blinkNodePtr cur;
 
   //stat = avl_get_match( blinkH, obj, (void **) &cur );
   //if ( !( stat & 1 ) ) {
-  //  printf( colorInfoClass_str37, stat );
+  //  fprintf( stderr, colorInfoClass_str37, stat );
   //}
   //if ( !cur ) {
-  //  printf( colorInfoClass_str38 );
+  //  fprintf( stderr, colorInfoClass_str38 );
   //  return 0;
   //}
 
   //stat = avl_delete_node( blinkH, (void **) &cur );
   //if ( !( stat & 1 ) ) {
-  //  printf( colorInfoClass_str39, stat );
+  //  fprintf( stderr, colorInfoClass_str39, stat );
   //}
 
   //blinkLookasideTail->next = cur;
@@ -6940,17 +6940,17 @@ blinkNodePtr cur, next, prev, curBlinkNode;
       prev->next = next;
       cur->next = NULL; // diagnostic
 
-      //printf( "colorInfoClass::addAllToBlinkList - insert\n" );
+      //fprintf( stderr, "colorInfoClass::addAllToBlinkList - insert\n" );
 
       stat = avl_insert_node( this->blinkH, (void *) cur, &dup );
       if ( !( stat & 1 ) ) {
-        printf( colorInfoClass_str36, stat );
+        fprintf( stderr, colorInfoClass_str36, stat );
         blinkLookasideTail->next = cur;
         blinkLookasideTail = cur;
         blinkLookasideTail->next = NULL;
       }
       else if ( dup ) {
-        printf( "dup\n" );
+        fprintf( stderr, "dup\n" );
         blinkLookasideTail->next = cur;
         blinkLookasideTail = cur;
         blinkLookasideTail->next = NULL;
@@ -6959,22 +6959,22 @@ blinkNodePtr cur, next, prev, curBlinkNode;
     }
     else if ( cur->op == 2 ) {
 
-      //printf( "colorInfoClass::removeAllFromBlinkList - find\n" );
+      //fprintf( stderr, "colorInfoClass::removeAllFromBlinkList - find\n" );
 
       stat = avl_get_match( blinkH, cur->obj, (void **) &curBlinkNode );
       if ( !( stat & 1 ) ) {
-        printf( colorInfoClass_str37, stat );
+        fprintf( stderr, colorInfoClass_str37, stat );
       }
       else if ( !curBlinkNode ) {
-        printf( colorInfoClass_str38 );
+        fprintf( stderr, colorInfoClass_str38 );
       }
       else {
 
-        //printf( "colorInfoClass::removeAllFromBlinkList - delete\n" );
+        //fprintf( stderr, "colorInfoClass::removeAllFromBlinkList - delete\n" );
 
         stat = avl_delete_node( blinkH, (void **) &curBlinkNode );
         if ( !( stat & 1 ) ) {
-          printf( colorInfoClass_str39, stat );
+          fprintf( stderr, colorInfoClass_str39, stat );
         }
 
         blinkLookasideTail->next = curBlinkNode;
@@ -7006,7 +7006,7 @@ blinkNodePtr cur, next, prev, curBlinkNode;
     }
     else {
 
-      printf( "Bad request node\n" );
+      fprintf( stderr, "Bad request node\n" );
 
     }
 
@@ -7040,22 +7040,22 @@ blinkNodePtr cur, next, curBlinkNode;
 
     next = cur->next;
 
-    printf( "colorInfoClass::removeAllFromBlinkList - find\n" );
+    fprintf( stderr, "colorInfoClass::removeAllFromBlinkList - find\n" );
 
     stat = avl_get_match( blinkH, cur->obj, (void **) &curBlinkNode );
     if ( !( stat & 1 ) ) {
-      printf( colorInfoClass_str37, stat );
+      fprintf( stderr, colorInfoClass_str37, stat );
     }
     else if ( !curBlinkNode ) {
-      printf( colorInfoClass_str38 );
+      fprintf( stderr, colorInfoClass_str38 );
     }
     else {
 
-      printf( "colorInfoClass::removeAllFromBlinkList - delete\n" );
+      fprintf( stderr, "colorInfoClass::removeAllFromBlinkList - delete\n" );
 
       stat = avl_delete_node( blinkH, (void **) &curBlinkNode );
       if ( !( stat & 1 ) ) {
-        printf( colorInfoClass_str39, stat );
+        fprintf( stderr, colorInfoClass_str39, stat );
       }
 
       blinkLookasideTail->next = curBlinkNode;
@@ -7097,7 +7097,7 @@ void colorInfoClass::warnIfBadIndex (
 ) {
 
   if ( ( index < 0 ) || ( index >= max_colors+num_blinking_colors ) ) {
-    printf( "Bad color index encountered [%-d] near line %-d\n",
+    fprintf( stderr, "Bad color index encountered [%-d] near line %-d\n",
      index, line );
   }
 

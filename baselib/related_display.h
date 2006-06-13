@@ -200,12 +200,12 @@ typedef struct bufTag {
   int bufAllowDups[maxDsps];
   int bufCascade[maxDsps];
   int bufPropagateMacros[maxDsps];
-  char bufDisplayFileName[maxDsps][127+1];;
-  char bufSymbols[maxDsps][255+1];;
+  char bufDisplayFileName[maxDsps][127+1];
+  char bufSymbols[maxDsps][255+1];
   int bufReplaceSymbols[maxDsps];
-  char bufButtonLabel[127+1];;
-  char bufLabel[maxDsps][127+1];;
-  char bufFontTag[63+1];;
+  char bufButtonLabel[127+1];
+  char bufLabel[maxDsps][127+1];
+  char bufFontTag[63+1];
   char bufColorPvName[PV_Factory::MAX_PV_NAME+1];
   char bufDestPvName[NUMPVS][PV_Factory::MAX_PV_NAME+1];
   char bufSource[NUMPVS][39+1];
@@ -241,7 +241,6 @@ int propagateMacros[maxDsps];
 expStringClass displayFileName[maxDsps];
 
 expStringClass symbolsExpStr[maxDsps];
-char symbols[maxDsps][255+1];
 
 int replaceSymbols[maxDsps]; // else append
 
@@ -359,6 +358,23 @@ int deactivate ( int pass );
 
 void updateDimensions ( void );
 
+int isRelatedDisplay ( void );
+
+int getNumRelatedDisplays ( void );
+
+int getRelatedDisplayProperty (
+  int index,
+  char *key
+);
+
+char *getRelatedDisplayName (
+  int index
+);
+
+char *getRelatedDisplayMacros (
+  int index
+);
+
 int expand1st (
   int numMacros,
   char *macros[],
@@ -440,6 +456,10 @@ void mousePointerOut (
   int buttonState );
 
  void executeDeferred ( void );
+
+char *crawlerGetFirstPv ( void );
+
+char *crawlerGetNextPv ( void );
 
 };
 
