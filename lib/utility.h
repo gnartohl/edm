@@ -27,7 +27,7 @@
 #include <math.h>
 #include <sys/time.h>
 
-#ifdef darwin
+#if defined(darwin) || defined(HP_UX)
 	#include <sys/wait.h>
 #else
 	#include <wait.h>
