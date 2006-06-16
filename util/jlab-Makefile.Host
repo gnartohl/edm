@@ -1,0 +1,19 @@
+TOP = ../../../..
+include $(TOP)/config/CONFIG_EXTENSIONS
+
+.phony : inc
+.phony : buildInstall
+.phony : install
+.phony : clean
+
+inc :;
+
+install : buildInstall
+	echo "util libs installed"
+
+buildInstall : ;
+	-rm ../*.h
+	@$(MAKE) -f ../makefile.$(HOST_ARCH)
+	mkdir -p $(INSTALL_LIB)
+	cp lib114135a4-6f6c-11d3-95bc-00104b8742df.a $(INSTALL_LIB)
+	cp lib114135a4-6f6c-11d3-95bc-00104b8742df$(SHRLIB_SUFFIX) $(INSTALL_LIB)

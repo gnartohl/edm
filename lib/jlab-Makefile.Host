@@ -1,0 +1,110 @@
+TOP = ../../../..
+include $(TOP)/config/CONFIG_EXTENSIONS
+STATIC_BUILD=NO
+SHARED_LIBRARIES=YES
+HOST_OPT=NO
+
+# If you want support accessing files via http and curl
+# then set USE_CURL=YES
+USE_CURL=YES
+
+USR_CXXFLAGS_Linux += -Wall -D__linux__ -D_BSD_SOURCE -DSINGLE_THREADED=1 -D__epics__=1
+
+# Add debugging
+USR_CXXFLAGS_Linux += -g -O0
+
+
+USR_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl
+
+
+USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+USR_LIBS_solaris = Xm Xt Xmu X11 Xext pthread dl rt
+
+USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
+USR_LIBS_hpux11_11_mt = Xm Xt X11 Xext pthread 
+
+ifeq ($(USE_CURL), YES)
+	USR_CXXFLAGS += -DUSECURL
+	USR_LIBS += curl ssl crypto
+endif
+
+USR_LDFLAGS += -L$(INSTALL_LIB)
+
+# Add Debugging
+#USR_LDFLAGS += -g
+
+LIBRARY = cfcaa62e-8199-11d3-a77f-00104b8742df
+
+PROD_LIBS += ca Com
+
+USR_INCLUDES += -I../ -I../../util -I../../pvlib
+USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
+USR_INCLUDES += -I$(CURL_INC)
+
+Xm_DIR = $(MOTIF_LIB)
+Xt_DIR = $(X11_LIB)
+X11_DIR = $(X11_LIB)
+Xmu_DIR = $(X11_LIB)
+# ELW added following two lines for 
+# Red Hat 7.0 LINUX 
+Xp_DIR = $(X11_LIB)
+Xext = $(X11)/lib
+#
+XlibGUI_DIR = $(X11_LIB)
+XmStatic_DIR = $(MOTIF_LIB)
+XmStatXt_DIR = $(MOTIF_LIB)
+HCLXt_DIR = $(X11_LIB)
+Xlib_DIR = $(X11_LIB)
+HCLXmu_DIR = $(X11_LIB)
+curl_DIR = $(CURL_LIB)
+ssl_DIR = $(SSL_LIB)
+
+LIBSRCS += clipbd.cc
+LIBSRCS += process.cc
+LIBSRCS += app_pkg.cc
+LIBSRCS += act_win.cc
+LIBSRCS += act_grf.cc
+LIBSRCS += font_pkg.cc
+LIBSRCS += color_pkg.cc
+LIBSRCS += font_menu.cc
+LIBSRCS += utility.cc
+LIBSRCS += pvColor.cc
+LIBSRCS += expString.cc
+LIBSRCS += cursor.cc
+LIBSRCS += color_button.cc
+LIBSRCS += gc_pkg.cc
+LIBSRCS += entry_form.cc
+LIBSRCS += confirm_dialog.cc
+LIBSRCS += bindings.cc
+LIBSRCS += scheme.cc
+LIBSRCS += scrolled_text.cc
+LIBSRCS += pvs.cc
+LIBSRCS += scrolled_list.cc
+LIBSRCS += ulBindings.cc
+LIBSRCS += pvBindings.cc
+LIBSRCS += pvConnection.cc
+LIBSRCS += group.cc
+LIBSRCS += symbol.cc
+LIBSRCS += dynSymbol.cc
+LIBSRCS += keypad.cc
+LIBSRCS += calpad.cc
+LIBSRCS += fileSelect.cc
+LIBSRCS += undo.cc
+LIBSRCS += color_list.cc
+LIBSRCS += msg_dialog.cc
+LIBSRCS += loc_pv_factory.cc
+LIBSRCS += calc_pv_factory.cc
+LIBSRCS += epics_pv_factory.cc
+LIBSRCS += pv_factory.cc
+LIBSRCS += edmPrint.cc
+LIBSRCS += tag_pkg.cc
+LIBSRCS += remFileOpen.cc
+LIBSRCS += tableObj.cc
+LIBSRCS += scrolledWAcceleratorSupport.c
+LIBSRCS += postfix.c
+LIBSRCS += path_list.cc
+
+include $(TOP)/config/RULES.Host
+
+G++_NORMAL=$(G++)
+G++_STRICT=$(G++)

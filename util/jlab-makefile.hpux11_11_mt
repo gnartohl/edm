@@ -1,0 +1,148 @@
+CFLAGS = -DHP_UX=1111 +z  -DUNIX  -D__epics__=1 -I../
+
+BLDMSG=../bldmsg/bldmsg
+
+compile = cc $(CFLAGS)
+
+SRCS = ../net/hpux/ipncl_pkg.c ../net/hpux/ipnsv_pkg.c \
+ ../sys/hpux/sys_pkg.c ../sys/hpux/os_pkg.c \
+ ../msg/msg_pkg.c ../thread/hpux/thread_pkg.c \
+ ../iprpc/osf/server_iprpc_pkg.c ../iprpc/osf/client_iprpc_pkg.c \
+ ../net/hpux/ipnis_pkg.c ../avl/avl.c ../crc/crc.c
+
+OBJS = ipncl_pkg.o ipnsv_pkg.o sys_pkg.o os_pkg.o msg_pkg.o thread_pkg.o\
+ server_iprpc_pkg.o client_iprpc_pkg.o ipnis_pkg.o avl.o crc.o
+
+INCLUDES = ../os.h ../os_objs.h ../sys_types.h ../os_priv.h ../ipncl.h \
+ ../ipncl_priv.h ../ipnsv.h ../ipnsv_priv.h ../ipport.h ../ipport_priv.h \
+ ../msg.h ../msg_priv.h ../ipncl.msh ../ipnsv.msh ../msg.msh ../ipnis.msh \
+ ../os.msh ../unix.msh ../thread.h ../thread_priv.h ../client_iprpc.h \
+ ../iprpc_priv.h ../server_iprpc_priv.h ../client_iprpc_priv.h \
+ ../server_iprpc.h ../iprpc.h ../ipnis.h ../ipnis_priv.h ../avl.h \
+ ../avl_priv.h ../crc.h
+
+util : $(INCLUDES) \
+	lib114135a4-6f6c-11d3-95bc-00104b8742df.sl \
+	lib114135a4-6f6c-11d3-95bc-00104b8742df.a
+	@echo "done"
+
+lib114135a4-6f6c-11d3-95bc-00104b8742df.sl : $(OBJS)
+	#gcc -shared -Wl -o lib114135a4-6f6c-11d3-95bc-00104b8742df.so $(OBJS)
+	aCC -b -o lib114135a4-6f6c-11d3-95bc-00104b8742df.sl $(OBJS)
+
+lib114135a4-6f6c-11d3-95bc-00104b8742df.a : $(OBJS) 
+	ar -r lib114135a4-6f6c-11d3-95bc-00104b8742df.a $(OBJS)
+
+ipncl_pkg.o : ../net/hpux/ipncl_pkg.c
+	$(compile) -c ../net/hpux/ipncl_pkg.c -o $@
+
+ipnsv_pkg.o : ../net/hpux/ipnsv_pkg.c
+	$(compile) -c ../net/hpux/ipnsv_pkg.c -o $@
+
+sys_pkg.o : ../sys/hpux/sys_pkg.c
+	$(compile) -c ../sys/hpux/sys_pkg.c -o $@
+
+os_pkg.o : ../sys/hpux/os_pkg.c
+	$(compile) -c ../sys/hpux/os_pkg.c -o $@
+
+msg_pkg.o : ../msg/msg_pkg.c
+	$(compile) -c ../msg/msg_pkg.c -o $@
+
+thread_pkg.o : ../thread/hpux/thread_pkg.c
+	$(compile) -c ../thread/hpux/thread_pkg.c -o $@
+
+client_iprpc_pkg.o : ../iprpc/osf/client_iprpc_pkg.c
+	$(compile) -c ../iprpc/osf/client_iprpc_pkg.c -o $@
+
+server_iprpc_pkg.o : ../iprpc/osf/server_iprpc_pkg.c
+	$(compile) -c ../iprpc/osf/server_iprpc_pkg.c -o $@
+
+ipnis_pkg.o : ../net/hpux/ipnis_pkg.c
+	$(compile) -c ../net/hpux/ipnis_pkg.c -o $@
+
+avl.o : ../avl/avl.c
+	$(compile) -c ../avl/avl.c -o $@
+
+crc.o : ../crc/crc.c
+	$(compile) -c ../crc/crc.c -o $@
+
+../os.h : ../sys/hpux/os.h
+	cp ../sys/hpux/os.h ../
+
+../os_objs.h : ../sys/hpux/os_objs.h
+	cp ../sys/hpux/os_objs.h ../
+
+../sys_types.h : ../sys/hpux/sys_types.h
+	cp ../sys/hpux/sys_types.h ../
+
+../os_priv.h : ../sys/hpux/os_priv.h
+	cp ../sys/hpux/os_priv.h ../
+
+../ipncl.h : ../net/hpux/ipncl.h
+	cp ../net/hpux/ipncl.h ../
+
+../ipncl_priv.h : ../net/hpux/ipncl_priv.h
+	cp ../net/hpux/ipncl_priv.h ../
+
+../ipnsv.h : ../net/hpux/ipnsv.h
+	cp ../net/hpux/ipnsv.h ../
+
+../ipnsv_priv.h : ../net/hpux/ipnsv_priv.h
+	cp ../net/hpux/ipnsv_priv.h ../
+
+../ipport.h : ../net/hpux/ipport.h
+	cp ../net/hpux/ipport.h ../
+
+../ipport_priv.h : ../net/hpux/ipport_priv.h
+	cp ../net/hpux/ipport_priv.h ../
+
+../msg.h : ../msg/msg.h
+	cp ../msg/msg.h ../
+
+../msg_priv.h : ../msg/msg_priv.h
+	cp ../msg/msg_priv.h ../
+
+../thread.h : ../thread/hpux/thread.h
+	cp ../thread/hpux/thread.h ../
+
+../thread_priv.h : ../thread/hpux/thread_priv.h
+	cp ../thread/hpux/thread_priv.h ../
+
+../client_iprpc.h : ../iprpc/osf/client_iprpc.h
+	cp ../iprpc/osf/client_iprpc.h ../
+
+../iprpc.h : ../iprpc/osf/iprpc.h
+	cp ../iprpc/osf/iprpc.h ../
+
+../iprpc_priv.h : ../iprpc/osf/iprpc_priv.h
+	cp ../iprpc/osf/iprpc_priv.h ../
+
+../server_iprpc_priv.h : ../iprpc/osf/server_iprpc_priv.h
+	cp ../iprpc/osf/server_iprpc_priv.h ../
+
+../client_iprpc_priv.h : ../iprpc/osf/client_iprpc_priv.h
+	cp ../iprpc/osf/client_iprpc_priv.h ../
+
+../server_iprpc.h : ../iprpc/osf/server_iprpc.h
+	cp ../iprpc/osf/server_iprpc.h ../
+
+../ipnis.h : ../net/hpux/ipnis.h
+	cp ../net/hpux/ipnis.h ../
+
+../ipnis_priv.h : ../net/hpux/ipnis_priv.h
+	cp ../net/hpux/ipnis_priv.h ../
+
+../avl.h : ../avl/avl.h
+	cp ../avl/avl.h ../
+
+../avl_priv.h : ../avl/avl_priv.h
+	cp ../avl/avl_priv.h ../
+
+../crc.h : ../crc/crc.h
+	cp ../crc/crc.h ../
+
+depend :
+	makedepend -- $(CFLAGS) -- $(SRCS)
+
+# DO NOT DELETE THIS LINE -- make depend depends on it.
+
