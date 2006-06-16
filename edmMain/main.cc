@@ -799,7 +799,7 @@ nextHost:
 
   }
 
-  Strncat( msg, "\n", max );
+  Strncat( msg, "\n", MAX_MSG_LEN );
 
   if ( strlen(msg) == MAX_MSG_LEN ) {
     fprintf( stderr, "Message length exceeded - abort\n" );
