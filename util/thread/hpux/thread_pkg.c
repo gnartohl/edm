@@ -327,7 +327,7 @@ int thread_detach (
 ) {
 
 THREAD_ID_PTR priv_handle;
-int ret_stat, stat;
+int ret_stat, stat, doJoin;
 
   if ( g_init ) return THR_BADSTATE;
 
