@@ -4759,7 +4759,12 @@ char name[127+1], prefix[127+1];
 
     if ( state == GETTING_INITIAL ) {
 
-      if ( strcmp( tk, global_str93 ) == 0 ) {
+      if ( strcmp( tk, global_str73 ) == 0 ) {
+        tk = strtok_r( NULL, "|", &buf1 );
+        tk = strtok_r( NULL, "|", &buf1 );
+	if ( !tk ) return;
+      }
+      else if ( strcmp( tk, global_str93 ) == 0 ) {
 
         state = GETTING_FILES;
         tk = strtok_r( NULL, "|", &buf1 );
@@ -4771,6 +4776,11 @@ char name[127+1], prefix[127+1];
         state = GETTING_1ST_MACRO;
         tk = strtok_r( NULL, "|", &buf1 );
 	if ( !tk ) return;
+
+      }
+      else if ( tk[0] == '-' ) { //skip other options if present
+        tk = strtok_r( NULL, "|", &buf1 );
+        if ( !tk ) return;
 
       }
       else {

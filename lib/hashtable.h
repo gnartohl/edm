@@ -37,6 +37,12 @@ using namespace std;
 using namespace std;
 #endif
 
+// the following was introduced to get edm
+// to compile under aCC on HP_UX
+#ifdef HP_UX
+using namespace std;
+#endif
+
 template <class T, size_t o, size_t N=5>
 class Hashtable
 {

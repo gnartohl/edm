@@ -518,7 +518,8 @@ void checkForServer (
 
 char chkHost[31+1], host[31+1], buf[511+1];
 int i, len, pos, max, argCount, stat, item, useItem;
-char msg[255+1];
+const int MAX_MSG_LEN = 256;
+char msg[MAX_MSG_LEN+1];
 SYS_TIME_TYPE timeout;
 char *envPtr, *tk1, *tk2, *buf1, *buf2;
 double merit, min, num;
@@ -696,66 +697,68 @@ nextHost:
 
   //printf( "connected\n" );
 
+  msg[MAX_MSG_LEN] = 0;
+
   if ( oneInstance ) {
 
     if ( openCmd ) {
 
       msg[0] = (char) OPEN;
       pos = 1;
-      max = 255 - pos;
+      max = MAX_MSG_LEN - pos;
 
       strncpy( &msg[pos], "*OPN*|", max );
       pos = strlen(msg);
-      max = 255 - pos;
+      max = MAX_MSG_LEN - pos;
 
     }
     else {
 
       msg[0] = (char) OPEN_INITIAL;
       pos = 1;
-      max = 255 - pos;
+      max = MAX_MSG_LEN - pos;
 
       strncpy( &msg[pos], "*OIS*|", max );
       pos = strlen(msg);
-      max = 255 - pos;
+      max = MAX_MSG_LEN - pos;
 
     }
 
     strncpy( &msg[pos], displayName, max );
     pos = strlen(msg);
-    max = 255 - pos;
+    max = MAX_MSG_LEN - pos;
 
     strncpy( &msg[pos], "|", max );
     pos = strlen(msg);
-    max = 255 - pos;
+    max = MAX_MSG_LEN - pos;
 
     snprintf( &msg[pos], max, "%-d|", argCount );
     pos = strlen(msg);
-    max = 255 - pos;
+    max = MAX_MSG_LEN - pos;
 
     strncpy( &msg[pos], "edm|", max );
     pos = strlen(msg);
-    max = 255 - pos;
+    max = MAX_MSG_LEN - pos;
 
     if ( appendDisplay ) {
       strncpy( &msg[pos], global_str56, max );
       pos = strlen(msg);
-      max = 255 - pos;
+      max = MAX_MSG_LEN - pos;
       strncpy( &msg[pos], displayName, max );
       pos = strlen(msg);
-      max = 255 - pos;
+      max = MAX_MSG_LEN - pos;
       Strncat( &msg[pos], "|", max );
       pos = strlen(msg);
-      max = 255 - pos;
+      max = MAX_MSG_LEN - pos;
     }
 
     for ( i=1; i<argc; i++ ) {
       strncpy( &msg[pos], argv[i], max );
       pos = strlen(msg);
-      max = 255 - pos;
+      max = MAX_MSG_LEN - pos;
       Strncat( &msg[pos], "|", max );
       pos = strlen(msg);
-      max = 255 - pos;
+      max = MAX_MSG_LEN - pos;
     }
 
   }
@@ -763,39 +766,47 @@ nextHost:
 
     msg[0] = (char) CONNECT;
     pos = 1;
+    max = MAX_MSG_LEN - pos;
 
-    sprintf( &msg[pos], "%-d|", argCount );
+    snprintf( &msg[pos], max, "%-d|", argCount );
     pos = strlen(msg);
-    max = 255 - pos;
+    max = MAX_MSG_LEN - pos;
 
     strncpy( &msg[pos], "edm|", max );
     pos = strlen(msg);
-    max = 255 - pos;
+    max = MAX_MSG_LEN - pos;
 
     if ( appendDisplay ) {
       strncpy( &msg[pos], global_str56, max );
       pos = strlen(msg);
-      max = 255 - pos;
+      max = MAX_MSG_LEN - pos;
       strncpy( &msg[pos], displayName, max );
       pos = strlen(msg);
-      max = 255 - pos;
+      max = MAX_MSG_LEN - pos;
       Strncat( &msg[pos], "|", max );
       pos = strlen(msg);
-      max = 255 - pos;
+      max = MAX_MSG_LEN - pos;
     }
 
     for ( i=1; i<argc; i++ ) {
       strncpy( &msg[pos], argv[i], max );
       pos = strlen(msg);
-      max = 255 - pos;
+      max = MAX_MSG_LEN - pos;
       Strncat( &msg[pos], "|", max );
       pos = strlen(msg);
-      max = 255 - pos;
+      max = MAX_MSG_LEN - pos;
     }
 
   }
 
   Strncat( msg, "\n", max );
+
+  if ( strlen(msg) == MAX_MSG_LEN ) {
+    fprintf( stderr, "Message length exceeded - abort\n" );
+    stat = shutdown( sockfd, 2 );
+    stat = close( sockfd );
+    exit(1);
+  }
 
   nOut = sendCmd( sockfd, msg, strlen(msg) );
   if ( !nOut ) {
