@@ -102,6 +102,8 @@ LIBSRCS += remFileOpen.cc
 LIBSRCS += tableObj.cc
 LIBSRCS += scrolledWAcceleratorSupport.c
 LIBSRCS += postfix.c
+LIBSRCS += crawler.cc
+LIBSRCS += lookup.cc
 
 include $(TOP)/config/RULES.Host
 
