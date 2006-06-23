@@ -102,6 +102,7 @@ LIBSRCS += remFileOpen.cc
 LIBSRCS += tableObj.cc
 LIBSRCS += scrolledWAcceleratorSupport.c
 LIBSRCS += postfix.c
+LIBSRCS += path_list.cc
 LIBSRCS += crawler.cc
 LIBSRCS += lookup.cc
 
