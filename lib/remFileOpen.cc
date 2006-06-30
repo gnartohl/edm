@@ -549,8 +549,9 @@ mode_t curMode, newMode;
         }
 
         if ( gPipeIsOpen ) {
-          fprintf( stderr, "Pipe is already open\n" );
-          return NULL;
+          fprintf( stderr, "Pipe is already open (1)\n" );
+          pclose( gPipeF );
+          //return NULL;
         }
 
         gPipeIsOpen = 1;
@@ -738,8 +739,9 @@ mode_t curMode, newMode;
           }
 
           if ( gPipeIsOpen ) {
-            fprintf( stderr, "Pipe is already open\n" );
-            return NULL;
+            fprintf( stderr, "Pipe is already open (2)\n" );
+            pclose( gPipeF );
+            //return NULL;
           }
 
           gPipeIsOpen = 1;
@@ -841,8 +843,9 @@ mode_t curMode, newMode;
           }
 
           if ( gPipeIsOpen ) {
-            fprintf( stderr, "Pipe is already open\n" );
-            return NULL;
+            fprintf( stderr, "Pipe is already open (3)\n" );
+            pclose( gPipeF );
+            //return NULL;
           }
 
           gPipeIsOpen = 1;
@@ -1022,8 +1025,9 @@ mode_t curMode, newMode;
           }
 
           if ( gPipeIsOpen ) {
-            fprintf( stderr, "Pipe is already open\n" );
-            return NULL;
+            fprintf( stderr, "Pipe is already open (4)\n" );
+            pclose( gPipeF );
+            //return NULL;
           }
 
           gPipeIsOpen = 1;
