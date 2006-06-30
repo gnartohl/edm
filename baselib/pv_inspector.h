@@ -30,7 +30,7 @@
 #define PIC_PARENT_OFS_POS 2
 
 #define PIC_MAJOR_VERSION 4
-#define PIC_MINOR_VERSION 0
+#define PIC_MINOR_VERSION 1
 #define PIC_RELEASE 0
 
 typedef struct objAndIndexTag {
@@ -271,16 +271,17 @@ typedef struct bufTag {
   int bufNoEdit;
   int bufSetPostion[maxDsps];
   int bufAllowDups[maxDsps];
-  char bufDisplayFileName[maxDsps][127+1];;
-  char bufButtonLabel[127+1];;
-  char bufLabel[maxDsps][127+1];;
-  char bufFontTag[63+1];;
+  char bufDisplayFileName[maxDsps][127+1];
+  char bufButtonLabel[127+1];
+  char bufLabel[maxDsps][127+1];
+  char bufFontTag[63+1];
   int bufOfsX;
   int bufOfsY;
   int bufUseRtype[maxDsps];
   int bufUseType[maxDsps];
   int bufUseSpecType[maxDsps];
   int bufUseDim[maxDsps];
+  char bufDisplayFileExt[maxDsps][15+1];
 } bufType, *bufPtr;
 
 int numDsps, dspIndex;
@@ -302,6 +303,7 @@ int allowDups[maxDsps];
 int propagateMacros[maxDsps];
 
 expStringClass displayFileName[maxDsps];
+expStringClass displayFileExt[maxDsps];
 
 expStringClass symbolsExpStr[maxDsps];
 char symbols[maxDsps][255+1];

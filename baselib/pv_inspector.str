@@ -38,5 +38,6 @@
 #define pvInspectorClass_str35 (char *) "Use Dim"
 #define pvInspectorClass_str36 (char *) "Resolving PV Info..."
 #define pvInspectorClass_str37 (char *) "PV Failed to connect"
+#define pvInspectorClass_str38 (char *) "Ext (e.g. \".edl\")"
 
 #endif

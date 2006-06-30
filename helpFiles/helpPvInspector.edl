@@ -1,12 +1,12 @@
-4 0 0
+4 0 1
 beginScreenProperties
 major 4
 minor 0
-release 0
-x 134
-y 168
+release 1
+x 109
+y 105
 w 1094
-h 786
+h 820
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
@@ -14,11 +14,11 @@ fgColor rgb 0 0 0
 bgColor rgb 51400 51400 51400
 textColor rgb 0 0 0
 ctlFgColor1 rgb 0 0 0
-ctlFgColor2 rgb 0 0 49344
+ctlFgColor2 rgb 0 0 65535
 ctlBgColor1 rgb 48059 48059 48059
 ctlBgColor2 rgb 56026 56026 56026
 topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 26985 26985 26985
+botShadowColor rgb 23130 23130 23130
 endScreenProperties
 
 # (Rectangle)
@@ -28,7 +28,7 @@ major 4
 minor 0
 release 0
 x 24
-y 498
+y 516
 w 503
 h 272
 lineColor rgb 0 0 0
@@ -39,7 +39,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 18
 y 19
@@ -58,7 +58,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 16
 y 63
@@ -103,10 +103,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 33
-y 536
+y 554
 w 481
 h 224
 font "helvetica-medium-r-14.0"
@@ -136,10 +136,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 36
-y 503
+y 521
 w 89
 h 21
 font "helvetica-bold-r-18.0"
@@ -157,11 +157,11 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 546
 y 21
 w 0
-h 750
+h 782
 lineColor rgb 0 0 0
 fillColor rgb 48059 48059 48059
 numPoints 2
@@ -171,7 +171,7 @@ xPoints {
 }
 yPoints {
   0 21
-  1 771
+  1 803
 }
 endObjectProperties
 
@@ -193,7 +193,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 579
 y 60
@@ -226,7 +226,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 582
 y 27
@@ -246,7 +246,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 571
 y 309
@@ -267,12 +267,12 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 668
-y 637
-w 70
-h 18
+y 663
+w 69
+h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
@@ -287,12 +287,12 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 668
-y 619
-w 322
-h 18
+y 645
+w 313
+h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
@@ -307,12 +307,12 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 572
-y 601
-w 430
-h 18
+y 627
+w 426
+h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
@@ -327,12 +327,12 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 648
-y 551
-w 401
-h 18
+y 577
+w 398
+h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
@@ -347,12 +347,12 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 572
-y 533
-w 459
-h 18
+y 559
+w 445
+h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
@@ -367,12 +367,12 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 713
-y 509
-w 91
-h 18
+y 535
+w 90
+h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
@@ -387,12 +387,12 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 604
-y 492
-w 396
-h 18
+y 518
+w 390
+h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
@@ -407,12 +407,12 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 661
-y 473
-w 395
-h 18
+y 499
+w 389
+h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
@@ -427,12 +427,12 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 653
-y 453
-w 356
-h 18
+y 479
+w 350
+h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
@@ -447,12 +447,12 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 572
-y 432
-w 105
-h 18
+y 458
+w 102
+h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
@@ -467,12 +467,12 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 572
 y 406
-w 194
-h 18
+w 187
+h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
@@ -487,12 +487,12 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 572
 y 381
-w 114
-h 18
+w 113
+h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
@@ -507,7 +507,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 571
 y 355
@@ -527,10 +527,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 572
-y 662
+y 688
 w 414
 h 16
 font "helvetica-medium-r-14.0"
@@ -547,10 +547,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 572
-y 687
+y 713
 w 401
 h 16
 font "helvetica-medium-r-14.0"
@@ -567,10 +567,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 572
-y 712
+y 738
 w 460
 h 32
 font "helvetica-medium-r-14.0"
@@ -588,10 +588,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 572
-y 753
+y 779
 w 421
 h 16
 font "helvetica-medium-r-14.0"
@@ -608,10 +608,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 569
-y 576
+y 602
 w 440
 h 16
 font "helvetica-medium-r-14.0"
@@ -620,6 +620,26 @@ bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "No Edit: If selected, the related display pops up in execute-only mode"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 572
+y 431
+w 485
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Ext: Related display file extension (you must supply the leading \".\", e.g. \".edl\")"
 }
 autoSize
 endObjectProperties

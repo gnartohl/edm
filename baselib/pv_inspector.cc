@@ -392,6 +392,7 @@ pvInspectorClass *pio = (pvInspectorClass *) client;
   pio->useAnyRtype = 0;
   pio->displayFileName[0].setRaw( pio->buf->bufDisplayFileName[0] );
   if ( blank( pio->displayFileName[0].getRaw() ) ) {
+    pio->displayFileExt[0].setRaw( "" );
     pio->setPostion[0] = 0;
     pio->allowDups[0] = 0;
     pio->label[0].setRaw( "" );
@@ -402,6 +403,7 @@ pvInspectorClass *pio = (pvInspectorClass *) client;
     pio->numDsps = 0;
   }
   else {
+    pio->displayFileExt[0].setRaw( pio->buf->bufDisplayFileExt[0] );
     pio->setPostion[0] = pio->buf->bufSetPostion[0];
     pio->allowDups[0] = pio->buf->bufAllowDups[0];
     pio->label[0].setRaw( pio->buf->bufLabel[0] );
@@ -418,6 +420,7 @@ pvInspectorClass *pio = (pvInspectorClass *) client;
     for ( i=1; (i<pio->maxDsps) && more; i++ ) {
       pio->displayFileName[i].setRaw( pio->buf->bufDisplayFileName[i] );
       if ( blank( pio->displayFileName[i].getRaw() ) ) {
+        pio->displayFileExt[i].setRaw( "" );
         pio->setPostion[i] = 0;
         pio->allowDups[i] = 0;
         pio->label[i].setRaw( "" );
@@ -428,6 +431,7 @@ pvInspectorClass *pio = (pvInspectorClass *) client;
         more = 0;
       }
       else {
+        pio->displayFileExt[i].setRaw( pio->buf->bufDisplayFileExt[i] );
         pio->setPostion[i] = pio->buf->bufSetPostion[i];
         pio->allowDups[i] = pio->buf->bufAllowDups[i];
         pio->label[i].setRaw( pio->buf->bufLabel[i] );
@@ -666,6 +670,7 @@ activeGraphicClass *pio = (activeGraphicClass *) this;
     allowDups[i] = source->allowDups[i];
     propagateMacros[i] = source->propagateMacros[i];
     displayFileName[i].copy( source->displayFileName[i] );
+    displayFileExt[i].copy( source->displayFileExt[i] );
     label[i].copy( source->label[i] );
     symbolsExpStr[i].copy( source->symbolsExpStr[i] );
     replaceSymbols[i] = source->replaceSymbols[i];
@@ -769,6 +774,7 @@ static int setPosEnum[3] = {
   tag.loadW( "buttonLabel", &buttonLabel, emptyStr );
   tag.loadW( "numDsps", &numDsps );
   tag.loadW( "displayFileName", displayFileName, numDsps, emptyStr );
+  tag.loadW( "displayFileExt", displayFileExt, numDsps, emptyStr );
   tag.loadW( "menuLabel", label, numDsps, emptyStr );
   tag.loadW( "setPosition", 3, setPosEnumStr, setPosEnum, setPostion, 
    numDsps, &setPosOriginal );
@@ -920,6 +926,7 @@ static int setPosEnum[3] = {
   tag.loadR( "buttonLabel", &buttonLabel, emptyStr );
   tag.loadR( "numDsps", &numDsps, &zero );
   tag.loadR( "displayFileName", maxDsps, displayFileName, &n1, emptyStr );
+  tag.loadR( "displayFileExt", maxDsps, displayFileExt, &n1, emptyStr );
   tag.loadR( "menuLabel", maxDsps, label, &n1, emptyStr );
   tag.loadR( "setPosition", 3, setPosEnumStr, setPosEnum, maxDsps, setPostion, 
    &n1, &setPosOriginal );
@@ -1082,6 +1089,8 @@ char oneName[255+1];
     numDsps = 1;
   }
 
+  displayFileExt[0].setRaw( "" );
+
   readStringFromFile( oneName, 127+1, f ); actWin->incLine();
   label[0].setRaw( oneName );
 
@@ -1119,6 +1128,8 @@ char oneName[255+1];
         else {
           more = 0;
         }
+
+        displayFileExt[i].setRaw( "" );
 
         readStringFromFile( oneName, 127+1, f ); actWin->incLine();
         label[i].setRaw( oneName );
@@ -1165,6 +1176,8 @@ char oneName[255+1];
       if ( blank(displayFileName[i].getRaw() ) ) {
         more = 0;
       }
+
+      displayFileExt[i].setRaw( "" );
 
       readStringFromFile( oneName, 127+1, f ); actWin->incLine();
       label[i].setRaw( oneName );
@@ -1251,6 +1264,11 @@ char title[32], *ptr;
     else
       strncpy( buf->bufDisplayFileName[i], "", 127 );
 
+    if ( displayFileExt[i].getRaw() )
+      strncpy( buf->bufDisplayFileExt[i], displayFileExt[i].getRaw(), 15 );
+    else
+      strncpy( buf->bufDisplayFileExt[i], "", 15 );
+
     if ( label[i].getRaw() )
       strncpy( buf->bufLabel[i], label[i].getRaw(), 127 );
     else
@@ -1289,6 +1307,8 @@ char title[32], *ptr;
   ef.addTextField( pvInspectorClass_str20, 35, buf->bufLabel[0], 127 );
   ef.addTextField( pvInspectorClass_str21, 35, buf->bufDisplayFileName[0],
    127 );
+  ef.addTextField( pvInspectorClass_str38, 35, buf->bufDisplayFileExt[0],
+   15 );
   ef.addOption( pvInspectorClass_str16, pvInspectorClass_str17,
    &buf->bufSetPostion[0] );
   ef.addTextField( pvInspectorClass_str18, 35, &buf->bufOfsX );
@@ -1309,6 +1329,8 @@ char title[32], *ptr;
     ef1->addTextField( pvInspectorClass_str22, 35, buf->bufLabel[i], 127 );
     ef1->addLabel( pvInspectorClass_str23 );
     ef1->addTextField( "", 35, buf->bufDisplayFileName[i], 127 );
+    ef1->addLabel( pvInspectorClass_str38 );
+    ef1->addTextField( "", 15, buf->bufDisplayFileExt[i], 15 );
     ef1->endSubForm();
 
     ef1->beginLeftSubForm();
@@ -1802,6 +1824,7 @@ int i;
   for ( i=0; i<maxDsps; i++ ) {
     label[i].expand1st( numMacros, macros, expansions );
     displayFileName[i].expand1st( numMacros, macros, expansions );
+    displayFileExt[i].expand1st( numMacros, macros, expansions );
   }
 
   buttonLabel.expand1st( numMacros, macros, expansions );
@@ -1821,6 +1844,7 @@ int i;
   for ( i=0; i<maxDsps; i++ ) {
     label[i].expand2nd( numMacros, macros, expansions );
     displayFileName[i].expand2nd( numMacros, macros, expansions );
+    displayFileExt[i].expand2nd( numMacros, macros, expansions );
   }
 
   buttonLabel.expand2nd( numMacros, macros, expansions );
@@ -1836,6 +1860,7 @@ int i;
   for ( i=0; i<maxDsps; i++ ) {
     if ( label[i].containsPrimaryMacros() ) return 1;
     if ( displayFileName[i].containsPrimaryMacros() ) return 1;
+    if ( displayFileExt[i].containsPrimaryMacros() ) return 1;
   }
 
   if ( buttonLabel.containsPrimaryMacros() ) return 1;
@@ -1914,7 +1939,7 @@ void pvInspectorClass::popupDisplay (
 
 activeWindowListPtr cur;
 int i, l, stat, newX, newY;
-char name[127+1], nameWithParams[127+1], symbolsWithSubs[255+1];
+char name[127+1], nameAndExt[127+1], nameWithParams[127+1], symbolsWithSubs[255+1];
 unsigned int crc;
 char *tk, *context, buf[255+1], *fileTk, *fileContext, fileBuf[255+1],
  *result, msg[79+1];
@@ -2156,6 +2181,15 @@ char prefix[127+1];
   if ( useDim[index] ) Strncat( nameWithParams, vectorId(isVector), 127 );
 
   stat = getFileName( name, nameWithParams, 127 );
+
+  strcpy( nameAndExt, name );
+
+  if ( displayFileExt[index].getExpanded() ) {
+    if ( !blank( displayFileExt[index].getExpanded() ) ) {
+      Strncat( nameAndExt, displayFileExt[index].getExpanded(), 127 );
+    }
+  }
+
   stat = getFilePrefix( prefix, nameWithParams, 127 );
 
   // calc crc
@@ -2225,8 +2259,7 @@ char prefix[127+1];
   cur->node.realize();
   cur->node.setGraphicEnvironment( &actWin->appCtx->ci, &actWin->appCtx->fi );
 
-  //cur->node.storeFileName( displayFileName[index].getExpanded() );
-  cur->node.storeFileName( name );
+  cur->node.storeFileName( nameAndExt );
 
   if ( setPostion[index] == PIC_BUTTON_POS ) {
     actWin->appCtx->openActivateActiveWindow( &cur->node,
