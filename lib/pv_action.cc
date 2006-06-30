@@ -1,58 +1,6 @@
 #include "pv_action.h"
 
-#ifdef __linux__
-static void *executeThread (
-  THREAD_HANDLE h )
-{
-#endif
-
-#ifdef darwin
-static void *executeThread (
-  THREAD_HANDLE h )
-{
-#endif
-
-#ifdef __solaris__
-static void *executeThread (
-  THREAD_HANDLE h )
-{
-#endif
-
-#ifdef __osf__
-static void executeThread (
-  THREAD_HANDLE h )
-{
-#endif
-
-#ifdef HP_UX
-static void *executeThread (
-  THREAD_HANDLE h )
-{
-#endif
-
-int stat;
-threadParamBlockPtr threadParamBlock =
- (threadParamBlockPtr) thread_get_app_data( h );
-
-  stat = executeCmd( threadParamBlock->cmd );
-
-  stat = thread_request_free_ptr( (void *) threadParamBlock->cmd );
-  stat = thread_request_free_ptr( (void *) threadParamBlock );
-  stat = thread_detached_exit( h, NULL ); // this call deallocates h
-
-#ifdef __linux__
-  return (void *) NULL;
-#endif
-
-#ifdef darwin
-  return (void *) NULL;
-#endif
-  
-#ifdef __solaris__
-  return (void *) NULL;
-#endif
-
-}
+int debugMode ( void );
 
 pvActionClass::pvActionClass ( void ) {
 
@@ -75,6 +23,8 @@ FILE *f;
   else {
     Strncat( file, (char *) "edmActions", 255 );
   }
+
+  if ( debugMode() ) fprintf( stderr, "Action file is [%s]\n", file );
 
   f = fopen( file, "r" );
   if ( !f ) return;
@@ -150,10 +100,12 @@ FILE *f;
 
   fclose( f );
 
-  //for ( i=0; i<numLines; i++ ) {
-  //  printf( "name[%-d] = [%s], action[%-d] = [%s]\n", i, name[i],
-  //   i, action[i] );
-  //}
+  if ( debugMode() ) {
+    for ( i=0; i<numLines; i++ ) {
+      fprintf( stderr, "name[%-d] = [%s], action[%-d] = [%s]\n", i, name[i],
+       i, action[i] );
+    }
+  }
 
   n = numLines;
 
@@ -182,6 +134,60 @@ int i;
   delete[] name;
   delete[] action;
   delete[] expAction;
+
+}
+
+#ifdef __linux__
+void *pvActionClass::executeThread (
+  THREAD_HANDLE h )
+{
+#endif
+
+#ifdef darwin
+void *pvActionClass::executeThread (
+  THREAD_HANDLE h )
+{
+#endif
+
+#ifdef __solaris__
+void *pvActionClass::executeThread (
+  THREAD_HANDLE h )
+{
+#endif
+
+#ifdef __osf__
+void pvActionClass::executeThread (
+  THREAD_HANDLE h )
+{
+#endif
+
+#ifdef HP_UX
+void *pvActionClass::executeThread (
+  THREAD_HANDLE h )
+{
+#endif
+
+int stat;
+threadParamBlockPtr threadParamBlock =
+ (threadParamBlockPtr) thread_get_app_data( h );
+
+  stat = executeCmd( threadParamBlock->cmd );
+
+  stat = thread_request_free_ptr( (void *) threadParamBlock->cmd );
+  stat = thread_request_free_ptr( (void *) threadParamBlock );
+  stat = thread_detached_exit( h, NULL ); // this call deallocates h
+
+#ifdef __linux__
+  return (void *) NULL;
+#endif
+
+#ifdef darwin
+  return (void *) NULL;
+#endif
+  
+#ifdef __solaris__
+  return (void *) NULL;
+#endif
 
 }
 
@@ -244,7 +250,7 @@ int stat;
 
   stat = thread_create_handle( &thread, threadParamBlock );
 
-  stat = thread_create_proc( thread, executeThread );
+  stat = thread_create_proc( thread, pvActionClass::executeThread );
 
   stat = thread_detach( thread );
 
