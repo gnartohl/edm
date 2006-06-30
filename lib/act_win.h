@@ -51,6 +51,7 @@
 #include "scheme.h"
 #include "undo.h"
 #include "msg_dialog.h"
+#include "pv_action.h"
 
 #include "tag_pkg.h"
 
@@ -342,6 +343,11 @@ static void awc_abort_cb (
   XtPointer call );
 
 static void awc_save_and_exit_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void b3Action_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -660,6 +666,11 @@ friend void awc_save_and_exit_cb (
   XtPointer client,
   XtPointer call );
 
+friend void b3Action_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 msgDialogClass msgDialog;
 int msgDialogCreated, msgDialogPoppedUp;
 
@@ -723,10 +734,11 @@ pvBindingClass pvObj;
 
 Widget b1OneSelectPopup, b1ManySelectPopup, b1NoneSelectPopup,
  b2NoneSelectPopup, b2OneSelectPopup, b2ManySelectPopup, b3NoneSelectPopup,
- b2ExecutePopup, chPd, grPd, grCb, mnPd, mnCb, ctlPd, ctlCb, alignPd, alignCb,
- centerPd, centerCb, distributePd, distributeCb, sizePd, sizeCb, orientPd1,
- orientPdM, orientCb1, orientCbM, editPd1, editPdM, editCb1, editCbM,
- dragPopup, undoPb1, undoPb2, undoPb3, setSchemePd, setSchemeCb;
+ b2ExecutePopup, b3ActionPopup, chPd, grPd, grCb, mnPd, mnCb, ctlPd, ctlCb,
+ alignPd, alignCb, centerPd, centerCb, distributePd, distributeCb, sizePd,
+ sizeCb, orientPd1, orientPdM, orientCb1, orientCbM, editPd1, editPdM,
+ editCb1, editCbM, dragPopup, undoPb1, undoPb2, undoPb3, setSchemePd,
+ setSchemeCb;
 
 int state;
 int savedState;
@@ -889,6 +901,8 @@ int btnDownX, btnDownY;
 int loadFailure;
 
 int bufDisableScroll, disableScroll;
+
+pvActionClass *pvAction;
 
 activeWindowClass ( void );
 

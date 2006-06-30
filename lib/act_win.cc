@@ -5673,6 +5673,31 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
   }
 
 }
+static void b3Action_cb (
+   Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeWindowClass *awo;
+popupBlockPtr block;
+long item;
+int n, stat;
+Arg args[10];
+XmString xmStr1, xmStr2;
+Atom wm_delete_window;
+char *envPtr, text[255+1];
+
+  block = (popupBlockPtr) client;
+  item = (long) block->ptr;
+  awo = (activeWindowClass *) block->awo;
+
+  printf( "item = %-d, action = [%s]\n",
+   item, awo->pvAction->getAction( item ) );
+
+  awo->pvAction->executeAction( item );
+
+}
 
 static void createPopup_cb (
    Widget w,
@@ -9396,7 +9421,7 @@ int action, foundAction, numOut, numIn, buttonNum;
 activeGraphicListPtr cur;
 activeGraphicClass *ptr;
 Window root, child;
-int rootX, rootY, winX, winY;
+int rootX, rootY, winX, winY, di;
 
 Boolean nothingDone = False;
 
@@ -9787,6 +9812,55 @@ Boolean nothingDone = False;
         else {
 
 //========== B3 Release ===================================
+
+          if ( ( awo->state == AWC_CREATING_POINTS ) ||
+               ( awo->state == AWC_EDITING_POINTS ) ) {
+            // do nothing
+          }
+          else {
+
+            cur = awo->head->blink;
+            while ( cur != awo->head ) {
+
+              if ( ( be->x > cur->node->getX0() ) &&
+                   ( be->x < cur->node->getX1() ) &&
+                   ( be->y > cur->node->getY0() ) &&
+                   ( be->y < cur->node->getY1() ) ) {
+
+                if ( cur->node->atLeastOneDragPv( be->x, be->y ) ) {
+                  di = cur->node->getCurrentDragIndex();
+
+                  if ( cur->node->dragValue(di) ) {
+
+                    if ( !blankOrComment( cur->node->dragValue(di) ) ) {
+
+		      if ( awo->pvAction->numActions() ) {
+
+                        awo->pvAction->setPv( cur->node->dragValue(di) );
+
+                        XmMenuPosition( awo->b3ActionPopup, be );
+                        XtManageChild( awo->b3ActionPopup );
+
+                        XSetWindowColormap( awo->d,
+                         XtWindow(XtParent(awo->b3ActionPopup)),
+                         awo->appCtx->ci.getColorMap() );
+
+		      }
+
+		    }
+
+		  }
+
+                  break; // out of while loop
+                }
+
+              }
+
+              cur = cur->blink;
+
+            }
+
+          }
 
 //========== B3 Release ===================================
 
@@ -10228,6 +10302,8 @@ activeWindowClass::activeWindowClass ( void ) {
 
   mode = AWC_EDIT;
 
+  pvAction = new pvActionClass;
+
 }
 
 int activeWindowClass::okToDeactivate ( void ) {
@@ -10523,6 +10599,8 @@ pvDefPtr pvDefCur, pvDefNext;
     delete widgetToDeallocate;
     widgetToDeallocate = NULL;
   }
+
+  delete pvAction;
 
 }
 
@@ -13875,6 +13953,37 @@ Arg args[3];
   }
 
 //===================================================================
+
+  n = 0;
+  XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
+  b3ActionPopup = XmCreatePopupMenu( top, "b3actionmenu", args, n );
+
+
+  for ( i=0; i<pvAction->numActions(); i++ ) {
+
+    str = XmStringCreateLocalized( pvAction->getActionName( i ) );
+
+    pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+     b3ActionPopup,
+     XmNlabelString, str,
+     NULL );
+
+    XmStringFree( str );
+
+    curBlockListNode = new popupBlockListType;
+    curBlockListNode->block.w = pb;
+    curBlockListNode->block.ptr = (void *) i;
+    curBlockListNode->block.awo = this;
+
+    curBlockListNode->blink = popupBlockHead->blink;
+    popupBlockHead->blink->flink = curBlockListNode;
+    popupBlockHead->blink = curBlockListNode;
+    curBlockListNode->flink = popupBlockHead;
+
+    XtAddCallback( pb, XmNactivateCallback, b3Action_cb,
+     (XtPointer) &curBlockListNode->block );
+
+  }
 
 }
 

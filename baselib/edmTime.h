@@ -169,7 +169,7 @@ public:
 
 	void show(unsigned)
 	{
-		printf("edmTime: sec=%lu nSec=%lu\n", 
+		fprintf(stderr,"edmTime: sec=%lu nSec=%lu\n", 
 			this->sec, this->nSec);
 	}
 private:

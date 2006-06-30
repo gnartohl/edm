@@ -105,6 +105,7 @@ LIBSRCS += postfix.c
 LIBSRCS += path_list.cc
 LIBSRCS += crawler.cc
 LIBSRCS += lookup.cc
+LIBSRCS += pv_action.cc
 
 include $(TOP)/config/RULES.Host
 

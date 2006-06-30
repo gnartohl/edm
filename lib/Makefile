@@ -75,6 +75,7 @@ ifdef EPICS_HOST_ARCH
   INC += path_list.h
   INC += crawler.h
   INC += lookup.h
+  INC += pv_action.h
 
   USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
   USR_LIBS_solaris = Xm Xt Xmu X11 Xext pthread dl rt
@@ -162,6 +163,7 @@ ifdef EPICS_HOST_ARCH
   LIB_SRCS += path_list.cc
   LIB_SRCS += crawler.cc
   LIB_SRCS += lookup.cc
+  LIB_SRCS += pv_action.cc
 
   include $(TOP)/configure/RULES
 
