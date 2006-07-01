@@ -30,7 +30,9 @@ static XtTranslations g_parsedTrans;
 static char g_dragTrans[] =
   "#override ~Ctrl~Shift<Btn2Down>: startDrag()\n\
    Ctrl~Shift<Btn2Down>: pvInfo()\n\
-   Shift<Btn2Down>: dummy()\n\
+   Shift Ctrl<Btn2Down>: dummy()\n\
+   Shift~Ctrl<Btn2Down>: dummy()\n\
+   Shift Ctrl<Btn2Up>: selectActions()\n\
    Shift~Ctrl<Btn2Up>: selectDrag()\n\
    <Btn3Up>: changeParams()";
 
@@ -38,6 +40,7 @@ static XtActionsRec g_dragActions[] = {
   { "startDrag", (XtActionProc) drag },
   { "pvInfo", (XtActionProc) pvInfo },
   { "dummy", (XtActionProc) dummy },
+  { "selectActions", (XtActionProc) selectActions },
   { "changeParams", (XtActionProc) changeParams },
   { "selectDrag", (XtActionProc) selectDrag }
 };
@@ -358,6 +361,24 @@ XButtonEvent *be = (XButtonEvent *) e;
   if ( !mslo->enabled ) return;
 
   stat = mslo->selectDragValue( be );
+
+}
+
+static void selectActions (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams )
+{
+
+activeMotifSliderClass *mslo;
+XButtonEvent *be = (XButtonEvent *) e;
+
+  XtVaGetValues( w, XmNuserData, &mslo, NULL );
+
+  if ( !mslo->enabled ) return;
+
+  mslo->doActions( be, be->x, be->y );
 
 }
 
@@ -2708,6 +2729,10 @@ double fvalue, mult;
       if ( ( be->state & ShiftMask ) &&
            !( be->state & ControlMask ) ) {
         stat = mslo->selectDragValue( be );
+      }
+      else if ( ( be->state & ShiftMask ) &&
+                ( be->state & ControlMask ) ) {
+        mslo->doActions( be, be->x, be->y );
       }
 
       break;

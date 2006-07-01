@@ -97,6 +97,12 @@ static void selectDrag (
    String *params,
    Cardinal numParams );
 
+static void selectActions (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams );
+
 static void pvInfo (
    Widget w,
    XEvent *e,
@@ -196,6 +202,12 @@ friend void drag (
    Cardinal numParams );
 
 friend void selectDrag (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams );
+
+friend void selectActions (
    Widget w,
    XEvent *e,
    String *params,

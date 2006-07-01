@@ -197,23 +197,38 @@ int pvActionClass::numActions ( void ) {
 
 }
 
-void pvActionClass::setPv (
-  char *pvName
+void pvActionClass::setInfo (
+  char *pvName,
+  char *displayName
 ) {
 
 int i;
-char mArray[255+1][2], vArray[255+1][2];
-char *macros[2], *values[2];
+char mArray[3][255+1], vArray[3][255+1];
+char *macros[3], *values[3];
 
   strcpy( mArray[0], "pv" );
   strncpy( vArray[0], pvName, 255 );
   vArray[0][255] = 0;
 
-  macros[0] = mArray[0];
-  values[0] = vArray[0];
+  strcpy( mArray[1], "display" );
+  strncpy( vArray[1], displayName, 255 );
+  vArray[1][255] = 0;
+
+  for ( i=0; i<2; i++ ) {
+    macros[i] = mArray[i];
+    values[i] = vArray[i];
+  }
 
   for ( i=0; i<n; i++ ) {
-    expAction[i].expand1st( 1, macros, values );
+    expAction[i].expand1st( 2, macros, values );
+  }
+
+  if ( debugMode() ) {
+    for ( i=0; i<n; i++ ) {
+      fprintf( stderr,
+       "name[%-d] = [%s], expanded action[%-d] = [%s]\n", i, name[i],
+       i, expAction[i].getExpanded() );
+    }
   }
 
 }

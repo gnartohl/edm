@@ -17,11 +17,15 @@ static int g_transInit = 1;
 static XtTranslations g_parsedTrans;
 
 static char g_dragTrans[] =
-"#override\n~Shift<Btn2Down>: startDrag()\nShift<Btn2Up>: selectDrag()";
+  "#override\n\
+  ~Shift<Btn2Down>: startDrag()\n\
+  Shift Ctrl<Btn2Up>: selectActions()\n\
+  Shift<Btn2Up>: selectDrag()";
 
 static XtActionsRec g_dragActions[] =
 {
     { "startDrag", (XtActionProc) drag },
+    { "selectActions", (XtActionProc) selectActions },
     { "selectDrag", (XtActionProc) selectDrag }
 };
 
@@ -1233,6 +1237,21 @@ static void selectDrag(Widget w, XEvent *e, String *params, Cardinal numParams)
 
     XtVaGetValues(w, XmNuserData, &obj, NULL);
     obj->selectDragValue( be );
+}
+
+static void selectActions (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams )
+{
+
+    activeGraphicClass *obj;
+    XButtonEvent *be = (XButtonEvent *) e;
+
+    XtVaGetValues( w, XmNuserData, &obj, NULL );
+    obj->doActions( be, be->x, be->y );
+
 }
 
 int edmTextentryClass::activate(int pass, void *ptr)

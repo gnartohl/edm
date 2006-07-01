@@ -19,7 +19,10 @@ virtual ~pvActionClass ( void );
 
 int numActions ( void );
 
-void setPv ( char *pvName );
+void setInfo (
+  char *pvName,
+  char *displayName
+);
 
 char *getActionName (
   int index

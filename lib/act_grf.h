@@ -1060,6 +1060,12 @@ virtual int startDrag (
   int y );
 
 // for motif widgets
+virtual void activeGraphicClass::doActions (
+  XButtonEvent *be,
+  int x,
+  int y
+);
+
 virtual int startDrag (
   Widget w,
   XEvent *e );

@@ -31,11 +31,15 @@ static char g_dragTrans[] =
   "#override\n\
    ~Ctrl~Shift<Btn2Down>: startDrag()\n\
    Ctrl~Shift<Btn2Down>: pvInfo()\n\
+   Shift Ctrl<Btn2Down>: dummy()\n\
+   Shift Ctrl<Btn2Up>: selectActions()\n\
    Shift~Ctrl<Btn2Up>: selectDrag()";
 
 static XtActionsRec g_dragActions[] = {
   { "startDrag", (XtActionProc) drag },
   { "pvInfo", (XtActionProc) pvInfo },
+  { "dummy", (XtActionProc) dummy },
+  { "selectActions", (XtActionProc) selectActions },
   { "selectDrag", (XtActionProc) selectDrag }
 };
 
@@ -4452,6 +4456,15 @@ int activeXTextDspClass::getButtonActionRequest (
 
 }
 
+static void dummy (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams )
+{
+
+}
+
 static void drag (
    Widget w,
    XEvent *e,
@@ -4482,6 +4495,22 @@ XButtonEvent *be = (XButtonEvent *) e;
   XtVaGetValues( w, XmNuserData, &atdo, NULL );
 
   stat = atdo->selectDragValue( be );
+
+}
+
+static void selectActions (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams )
+{
+
+activeXTextDspClass *atdo;
+XButtonEvent *be = (XButtonEvent *) e;
+
+  XtVaGetValues( w, XmNuserData, &atdo, NULL );
+
+  atdo->doActions( be, be->x, be->y );
 
 }
 

@@ -34,12 +34,15 @@ static char g_dragTrans[] =
    ~Ctrl~Shift<Btn2Down>: startDrag()\n\
    Ctrl~Shift<Btn2Down>: pvInfo()\n\
    Shift~Ctrl<Btn2Down>: dummy()\n\
+   Shift Ctrl<Btn2Down>: dummy()\n\
+   Shift Ctrl<Btn2Up>: selectActions()\n\
    Shift~Ctrl<Btn2Up>: selectDrag()";
 
 static XtActionsRec g_dragActions[] = {
   { "startDrag", (XtActionProc) drag },
   { "pvInfo", (XtActionProc) pvInfo },
   { "dummy", (XtActionProc) dummy },
+  { "selectActions", (XtActionProc) selectActions },
   { "selectDrag", (XtActionProc) selectDrag }
 };
 
@@ -1148,6 +1151,23 @@ XButtonEvent *be = (XButtonEvent *) e;
   XtVaGetValues( w, XmNuserData, &rbto, NULL );
 
   stat = rbto->selectDragValue( be );
+
+}
+
+static void selectActions (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams )
+{
+
+activeRadioButtonClass *rbto;
+int stat;
+XButtonEvent *be = (XButtonEvent *) e;
+
+  XtVaGetValues( w, XmNuserData, &rbto, NULL );
+
+  rbto->doActions( be, be->x, be->y );
 
 }
 

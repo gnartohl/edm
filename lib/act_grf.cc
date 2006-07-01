@@ -3275,6 +3275,44 @@ Arg args[10];
 }
 
 // for motif widgets
+void activeGraphicClass::doActions (
+  XButtonEvent *be,
+  int x,
+  int y
+) {
+
+int di;
+
+  if ( atLeastOneDragPv( x, y ) ) {
+
+    di = getCurrentDragIndex();
+
+    if ( dragValue(di) ) {
+
+      if ( !blankOrComment( dragValue(di) ) ) {
+
+        if ( actWin->pvAction->numActions() ) {
+
+          actWin->pvAction->setInfo( dragValue(di),
+           XDisplayName(actWin->appCtx->displayName) );
+
+          XmMenuPosition( actWin->b3ActionPopup, be );
+          XtManageChild( actWin->b3ActionPopup );
+
+          XSetWindowColormap( actWin->d,
+           XtWindow(XtParent(actWin->b3ActionPopup)),
+           actWin->appCtx->ci.getColorMap() );
+
+        }
+
+      }
+
+    }
+
+  }
+
+}
+
 int activeGraphicClass::startDrag (
   Widget w,
   XEvent *e )

@@ -9417,7 +9417,7 @@ XConfigureEvent *ce;
 activeWindowClass *awo;
 unsigned int mask;
 btnActionListPtr curBtn;
-int action, foundAction, numOut, numIn, buttonNum;
+int action, foundAction, foundPvAction, numOut, numIn, buttonNum;
 activeGraphicListPtr cur;
 activeGraphicClass *ptr;
 Window root, child;
@@ -9757,20 +9757,80 @@ Boolean nothingDone = False;
       case Button2:
 
 
-        if ( be->state & ShiftMask ) {
+        if ( ( be->state & ShiftMask ) && !( be->state & ControlMask ) ) {
+	//if ( be->state & ShiftMask ) {
 
 //========== Shift B2 Release ===================================
 
 //========== Shift B2 Release ===================================
 
         }
-        else if ( be->state & ControlMask ) {
+        else if ( !( be->state & ShiftMask ) && ( be->state & ControlMask ) ) {
+	//else if ( be->state & ControlMask ) {
 
 //========== Ctrl B2 Release ===================================
 
 //========== Ctrl B2 Release ===================================
 
         }
+        else if ( ( be->state & ShiftMask ) && ( be->state & ControlMask ) ) {
+
+          if ( ( awo->state == AWC_CREATING_POINTS ) ||
+               ( awo->state == AWC_EDITING_POINTS ) ) {
+            // do nothing
+          }
+          else {
+
+            foundPvAction = 0;
+
+            cur = awo->head->blink;
+            while ( cur != awo->head ) {
+
+              if ( ( be->x > cur->node->getX0() ) &&
+                   ( be->x < cur->node->getX1() ) &&
+                   ( be->y > cur->node->getY0() ) &&
+                   ( be->y < cur->node->getY1() ) ) {
+
+                if ( cur->node->atLeastOneDragPv( be->x, be->y ) ) {
+
+                  di = cur->node->getCurrentDragIndex();
+
+                  if ( cur->node->dragValue(di) ) {
+
+                    if ( !blankOrComment( cur->node->dragValue(di) ) ) {
+
+		      if ( awo->pvAction->numActions() ) {
+
+			foundPvAction = 1;
+
+                        awo->pvAction->setInfo( cur->node->dragValue(di),
+                         XDisplayName(awo->appCtx->displayName) );
+
+                        XmMenuPosition( awo->b3ActionPopup, be );
+                        XtManageChild( awo->b3ActionPopup );
+
+                        XSetWindowColormap( awo->d,
+                         XtWindow(XtParent(awo->b3ActionPopup)),
+                         awo->appCtx->ci.getColorMap() );
+
+		      }
+
+		    }
+
+		  }
+
+                  break; // out of while loop
+                }
+
+              }
+
+              cur = cur->blink;
+
+            }
+
+          }
+
+	}
         else {
 
 //========== B2 Release ===================================
@@ -9812,55 +9872,6 @@ Boolean nothingDone = False;
         else {
 
 //========== B3 Release ===================================
-
-          if ( ( awo->state == AWC_CREATING_POINTS ) ||
-               ( awo->state == AWC_EDITING_POINTS ) ) {
-            // do nothing
-          }
-          else {
-
-            cur = awo->head->blink;
-            while ( cur != awo->head ) {
-
-              if ( ( be->x > cur->node->getX0() ) &&
-                   ( be->x < cur->node->getX1() ) &&
-                   ( be->y > cur->node->getY0() ) &&
-                   ( be->y < cur->node->getY1() ) ) {
-
-                if ( cur->node->atLeastOneDragPv( be->x, be->y ) ) {
-                  di = cur->node->getCurrentDragIndex();
-
-                  if ( cur->node->dragValue(di) ) {
-
-                    if ( !blankOrComment( cur->node->dragValue(di) ) ) {
-
-		      if ( awo->pvAction->numActions() ) {
-
-                        awo->pvAction->setPv( cur->node->dragValue(di) );
-
-                        XmMenuPosition( awo->b3ActionPopup, be );
-                        XtManageChild( awo->b3ActionPopup );
-
-                        XSetWindowColormap( awo->d,
-                         XtWindow(XtParent(awo->b3ActionPopup)),
-                         awo->appCtx->ci.getColorMap() );
-
-		      }
-
-		    }
-
-		  }
-
-                  break; // out of while loop
-                }
-
-              }
-
-              cur = cur->blink;
-
-            }
-
-          }
 
 //========== B3 Release ===================================
 

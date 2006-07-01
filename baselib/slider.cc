@@ -2755,6 +2755,10 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
            !( be->state & ControlMask ) ) {
         stat = slo->selectDragValue( be );
       }
+      else if ( ( be->state & ShiftMask ) &&
+                ( be->state & ControlMask ) ) {
+        slo->doActions( be, be->x, be->y );
+      }
 
       break;
 
