@@ -3296,11 +3296,11 @@ int di;
           actWin->pvAction->setInfo( dragValue(di),
            XDisplayName(actWin->appCtx->displayName) );
 
-          XmMenuPosition( actWin->b3ActionPopup, be );
-          XtManageChild( actWin->b3ActionPopup );
+          XmMenuPosition( actWin->actionPopup, be );
+          XtManageChild( actWin->actionPopup );
 
           XSetWindowColormap( actWin->d,
-           XtWindow(XtParent(actWin->b3ActionPopup)),
+           XtWindow(XtParent(actWin->actionPopup)),
            actWin->appCtx->ci.getColorMap() );
 
         }

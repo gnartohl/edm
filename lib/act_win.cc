@@ -5673,7 +5673,7 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
   }
 
 }
-static void b3Action_cb (
+static void action_cb (
    Widget w,
   XtPointer client,
   XtPointer call )
@@ -5682,18 +5682,10 @@ static void b3Action_cb (
 activeWindowClass *awo;
 popupBlockPtr block;
 long item;
-int n, stat;
-Arg args[10];
-XmString xmStr1, xmStr2;
-Atom wm_delete_window;
-char *envPtr, text[255+1];
 
   block = (popupBlockPtr) client;
   item = (long) block->ptr;
   awo = (activeWindowClass *) block->awo;
-
-  printf( "item = %-d, action = [%s]\n",
-   item, awo->pvAction->getAction( item ) );
 
   awo->pvAction->executeAction( item );
 
@@ -9758,7 +9750,6 @@ Boolean nothingDone = False;
 
 
         if ( ( be->state & ShiftMask ) && !( be->state & ControlMask ) ) {
-	//if ( be->state & ShiftMask ) {
 
 //========== Shift B2 Release ===================================
 
@@ -9766,7 +9757,6 @@ Boolean nothingDone = False;
 
         }
         else if ( !( be->state & ShiftMask ) && ( be->state & ControlMask ) ) {
-	//else if ( be->state & ControlMask ) {
 
 //========== Ctrl B2 Release ===================================
 
@@ -9775,60 +9765,57 @@ Boolean nothingDone = False;
         }
         else if ( ( be->state & ShiftMask ) && ( be->state & ControlMask ) ) {
 
-          if ( ( awo->state == AWC_CREATING_POINTS ) ||
-               ( awo->state == AWC_EDITING_POINTS ) ) {
-            // do nothing
-          }
-          else {
+//========== Shift-Ctrl B2 Release =============================
 
-            foundPvAction = 0;
+          foundPvAction = 0;
 
-            cur = awo->head->blink;
-            while ( cur != awo->head ) {
+          cur = awo->head->blink;
+          while ( cur != awo->head ) {
 
-              if ( ( be->x > cur->node->getX0() ) &&
-                   ( be->x < cur->node->getX1() ) &&
-                   ( be->y > cur->node->getY0() ) &&
-                   ( be->y < cur->node->getY1() ) ) {
+            if ( ( be->x > cur->node->getX0() ) &&
+                 ( be->x < cur->node->getX1() ) &&
+                 ( be->y > cur->node->getY0() ) &&
+                 ( be->y < cur->node->getY1() ) ) {
 
-                if ( cur->node->atLeastOneDragPv( be->x, be->y ) ) {
+              if ( cur->node->atLeastOneDragPv( be->x, be->y ) ) {
 
-                  di = cur->node->getCurrentDragIndex();
+                di = cur->node->getCurrentDragIndex();
 
-                  if ( cur->node->dragValue(di) ) {
+                if ( cur->node->dragValue(di) ) {
 
-                    if ( !blankOrComment( cur->node->dragValue(di) ) ) {
+                  if ( !blankOrComment( cur->node->dragValue(di) ) ) {
 
-		      if ( awo->pvAction->numActions() ) {
+                    if ( awo->pvAction->numActions() ) {
 
-			foundPvAction = 1;
+                      foundPvAction = 1;
 
-                        awo->pvAction->setInfo( cur->node->dragValue(di),
-                         XDisplayName(awo->appCtx->displayName) );
+                      awo->pvAction->setInfo( cur->node->dragValue(di),
+                       XDisplayName(awo->appCtx->displayName) );
 
-                        XmMenuPosition( awo->b3ActionPopup, be );
-                        XtManageChild( awo->b3ActionPopup );
+                      XmMenuPosition( awo->actionPopup, be );
+                      XtManageChild( awo->actionPopup );
 
-                        XSetWindowColormap( awo->d,
-                         XtWindow(XtParent(awo->b3ActionPopup)),
-                         awo->appCtx->ci.getColorMap() );
+                      XSetWindowColormap( awo->d,
+                       XtWindow(XtParent(awo->actionPopup)),
+                       awo->appCtx->ci.getColorMap() );
 
-		      }
+                    }
 
-		    }
+                  }
 
-		  }
-
-                  break; // out of while loop
                 }
+
+                break; // out of while loop
 
               }
 
-              cur = cur->blink;
-
             }
 
+            cur = cur->blink;
+
           }
+
+//========== Shift-Ctrl B2 Release =============================
 
 	}
         else {
@@ -13967,7 +13954,7 @@ Arg args[3];
 
   n = 0;
   XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
-  b3ActionPopup = XmCreatePopupMenu( top, "b3actionmenu", args, n );
+  actionPopup = XmCreatePopupMenu( top, "actionmenu", args, n );
 
 
   for ( i=0; i<pvAction->numActions(); i++ ) {
@@ -13975,7 +13962,7 @@ Arg args[3];
     str = XmStringCreateLocalized( pvAction->getActionName( i ) );
 
     pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
-     b3ActionPopup,
+     actionPopup,
      XmNlabelString, str,
      NULL );
 
@@ -13991,7 +13978,7 @@ Arg args[3];
     popupBlockHead->blink = curBlockListNode;
     curBlockListNode->flink = popupBlockHead;
 
-    XtAddCallback( pb, XmNactivateCallback, b3Action_cb,
+    XtAddCallback( pb, XmNactivateCallback, action_cb,
      (XtPointer) &curBlockListNode->block );
 
   }

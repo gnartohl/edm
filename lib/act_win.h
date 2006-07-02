@@ -347,7 +347,7 @@ static void awc_save_and_exit_cb (
   XtPointer client,
   XtPointer call );
 
-static void b3Action_cb (
+static void action_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -666,7 +666,7 @@ friend void awc_save_and_exit_cb (
   XtPointer client,
   XtPointer call );
 
-friend void b3Action_cb (
+friend void action_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -734,7 +734,7 @@ pvBindingClass pvObj;
 
 Widget b1OneSelectPopup, b1ManySelectPopup, b1NoneSelectPopup,
  b2NoneSelectPopup, b2OneSelectPopup, b2ManySelectPopup, b3NoneSelectPopup,
- b2ExecutePopup, b3ActionPopup, chPd, grPd, grCb, mnPd, mnCb, ctlPd, ctlCb,
+ b2ExecutePopup, actionPopup, chPd, grPd, grCb, mnPd, mnCb, ctlPd, ctlCb,
  alignPd, alignCb, centerPd, centerCb, distributePd, distributeCb, sizePd,
  sizeCb, orientPd1, orientPdM, orientCb1, orientCbM, editPd1, editPdM,
  editCb1, editCbM, dragPopup, undoPb1, undoPb2, undoPb3, setSchemePd,
