@@ -10232,6 +10232,7 @@ activeWindowClass::activeWindowClass ( void ) {
   b2OneSelectPopup = NULL;
   b2ManySelectPopup = NULL;
   b2ExecutePopup = NULL;
+  actionPopup = NULL;
   drawWidget = NULL;
   top = NULL;
 
@@ -10582,6 +10583,7 @@ pvDefPtr pvDefCur, pvDefNext;
   if ( b2OneSelectPopup ) XtDestroyWidget( b2OneSelectPopup );
   if ( b2ManySelectPopup ) XtDestroyWidget( b2ManySelectPopup );
   if ( b2ExecutePopup ) XtDestroyWidget( b2ExecutePopup );
+  if ( actionPopup ) XtDestroyWidget( actionPopup );
 
   if ( drawWidget ) XtDestroyWidget( drawWidget );
 
