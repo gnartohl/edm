@@ -537,7 +537,7 @@ colorButtonEntry::colorButtonEntry ( void )
 colorButtonEntry::~colorButtonEntry ( void )
 {
 
-};
+}
 
 void colorButtonEntry::setValue ( int value ) {
 
@@ -564,7 +564,7 @@ fontMenuEntry::~fontMenuEntry ( void )
 
   if ( fmo ) fmo->destroyFontMenu();
 
-};
+}
 
 optionEntry::optionEntry ( void ) {
 
