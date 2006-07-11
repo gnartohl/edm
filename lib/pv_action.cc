@@ -8,6 +8,10 @@ char *ptr, *tk, *ctx, file[255+1], line[255+1];
 int i, l, stat, numLines;
 FILE *f;
 
+  name = NULL;
+  action = NULL;
+  expAction = NULL;
+
   n = 0;
 
   ptr = getenv( environment_str15 );
@@ -131,9 +135,9 @@ int i;
 
   }
 
-  delete[] name;
-  delete[] action;
-  delete[] expAction;
+  if ( name ) delete[] name;
+  if ( action ) delete[] action;
+  if ( expAction ) delete[] expAction;
 
 }
 
