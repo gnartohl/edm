@@ -57,15 +57,12 @@ static PVHash processvariables;
 EPICS_PV_Factory::EPICS_PV_Factory()
 {
 
-  //enum ca_preemptive_callback_select  
-  //{ ca_disable_preemptive_callback, ca_enable_preemptive_callback };
-
   // explicitly set ca single threaded mode
   if ( !g_context_created ) {
-    //fprintf( stderr, "create context\n" );
     g_context_created = 1;
+#if (EPICS_VERSION>3)||((EPICS_VERSION==3)&&(EPICS_REVISION>=14))
     ca_context_create( ca_disable_preemptive_callback );
-    //ca_context_create( ca_enable_preemptive_callback );
+#endif
   }
 
 #ifdef DEBUG_EPICS
@@ -567,7 +564,7 @@ static ProcessVariable::specificType s_type =
 PVValueInt::PVValueInt(EPICS_ProcessVariable *epv)
         : PVValue(epv)
 {
-    int i;
+    unsigned int i;
     value = new int[epv->get_dimension()];
     for ( i=0; i<epv->get_dimension(); i++ ) value[i] = 0;
     specific_type = i_type;
@@ -576,7 +573,7 @@ PVValueInt::PVValueInt(EPICS_ProcessVariable *epv)
 PVValueInt::PVValueInt(EPICS_ProcessVariable *epv, const char* typeInfo)
         : PVValue(epv)
 {
-    int i;
+    unsigned int i;
     value = new int[epv->get_dimension()];
     for ( i=0; i<epv->get_dimension(); i++ ) value[i] = 0;
     if ( !strcmp( typeInfo, "short" ) ) {
@@ -667,7 +664,7 @@ static ProcessVariable::specificType f_type =
 PVValueDouble::PVValueDouble(EPICS_ProcessVariable *epv)
         : PVValue(epv)
 {
-    int i;
+    unsigned int i;
     value = new double[epv->get_dimension()];
     for ( i=0; i<epv->get_dimension(); i++ ) value[i] = 0;
     specific_type = d_type;
@@ -676,7 +673,7 @@ PVValueDouble::PVValueDouble(EPICS_ProcessVariable *epv)
 PVValueDouble::PVValueDouble(EPICS_ProcessVariable *epv, const char* typeInfo)
         : PVValue(epv)
 {
-    int i;
+    unsigned int i;
     value = new double[epv->get_dimension()];
     for ( i=0; i<epv->get_dimension(); i++ ) value[i] = 0;
     if ( !strcmp( typeInfo, "float" ) ) {
@@ -763,7 +760,7 @@ void PVValueDouble::read_value(const void *buf)
 
     const  dbr_time_double *dval = (const dbr_time_double *)buf;
     const  dbr_time_float *fval = (const dbr_time_float *)buf;
-    int i;
+    unsigned int i;
 
     if ( specific_type.type == f_type.flt ) {
 
@@ -915,7 +912,7 @@ static ProcessVariable::specificType c_type =
 PVValueChar::PVValueChar(EPICS_ProcessVariable *epv)
         : PVValue(epv)
 {
-    int i;
+    unsigned int i;
     size_t room = epv->get_dimension() + 1;
     if (room < 2)
         room = 2;
