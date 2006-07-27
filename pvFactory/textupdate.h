@@ -30,6 +30,8 @@ static void selectDrag(Widget w, XEvent *e, String *params,
  Cardinal numParams);
 static void selectActions(Widget w, XEvent *e, String *params,
  Cardinal numParams);
+static void pvInfo(Widget w, XEvent *e, String *params,
+ Cardinal numParams);
 
 class edmTextupdateClass : public activeGraphicClass
 {

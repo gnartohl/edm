@@ -18,13 +18,15 @@ static XtTranslations g_parsedTrans;
 
 static char g_dragTrans[] =
   "#override\n\
-  ~Shift<Btn2Down>: startDrag()\n\
+  ~Ctrl~Shift<Btn2Down>: startDrag()\n\
+  Ctrl~Shift<Btn2Down>: pvInfo()\n\
   Shift Ctrl<Btn2Up>: selectActions()\n\
   Shift<Btn2Up>: selectDrag()";
 
 static XtActionsRec g_dragActions[] =
 {
     { "startDrag", (XtActionProc) drag },
+    { "pvInfo", (XtActionProc) pvInfo },
     { "selectActions", (XtActionProc) selectActions },
     { "selectDrag", (XtActionProc) selectDrag }
 };
@@ -1251,6 +1253,22 @@ static void selectActions (
 
     XtVaGetValues( w, XmNuserData, &obj, NULL );
     obj->doActions( be, be->x, be->y );
+
+}
+
+static void pvInfo (
+   Widget w,
+   XEvent *e,
+   String *params,
+   Cardinal numParams )
+{
+
+  activeGraphicClass *obj;
+  XButtonEvent *be = (XButtonEvent *) e;
+
+  XtVaGetValues( w, XmNuserData, &obj, NULL );
+
+  obj->showPvInfo( be, be->x, be->y );
 
 }
 
