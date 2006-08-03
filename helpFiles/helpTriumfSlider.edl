@@ -1,0 +1,329 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 63
+y 88
+w 701
+h 536
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor index 1
+bgColor index 0
+textColor index 1
+ctlFgColor1 index 1
+ctlFgColor2 index 22
+ctlBgColor1 index 0
+ctlBgColor2 index 3
+topShadowColor index 29
+botShadowColor index 4
+title "Slider"
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 29
+y 30
+w 143
+h 27
+font "helvetica-medium-r-24.0"
+fgColor index 1
+bgColor index 29
+value {
+  "Triumf Slider"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 255
+y 25
+w 222
+h 16
+font "helvetica-medium-r-14.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "The Triumf Slider is a variant of the"
+}
+autoSize
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 256
+y 46
+w 221
+h 24
+fgColor index 1
+bgColor index 0
+topShadowColor index 29
+botShadowColor index 4
+font "helvetica-bold-r-14.0"
+buttonLabel "Motif Slider"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpMotifSlider.edl"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 10
+y 147
+w 453
+h 48
+font "helvetica-medium-r-14.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "- The Triumf slider must be selected (with a left-click on the slider bar)"
+  "  and active (mouse over the slider area)"
+  "  before you can do anything with it."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 9
+y 264
+w 439
+h 32
+font "helvetica-medium-r-14.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "- If selected, the slider bar changes its color to COLOR_SELECTED."
+  "   Only one slider can be selected per edm instance."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 9
+y 366
+w 666
+h 16
+font "helvetica-medium-r-14.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "- If the mouse pointer leaves the slider area, the slider bar color changes to COLOR_OUTOFWINDOW."
+}
+autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 33
+y 202
+w 222
+h 55
+file "$(help)helpTriumfSliderUnselected.png"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 253
+y 210
+w 115
+h 14
+font "helvetica-bold-i-12.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "slider not selected"
+}
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 42
+y 295
+w 213
+h 54
+file "$(help)helpTriumfSliderSelectedIn.png"
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 41
+y 380
+w 253
+h 56
+file "$(help)helpTriumfSliderSelectedOut.png"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 257
+y 388
+w 152
+h 14
+font "helvetica-bold-i-12.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "slider selected (inactive)"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 258
+y 306
+w 142
+h 14
+font "helvetica-bold-i-12.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "slider selected (active)"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 8
+y 492
+w 170
+h 24
+fgColor index 1
+bgColor index 0
+topShadowColor index 29
+botShadowColor index 4
+font "helvetica-bold-r-14.0"
+buttonLabel "Slider Sensitivity"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpTriumfSliderSensitivity.edl"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 12
+y 76
+w 148
+h 16
+font "helvetica-medium-r-14.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "Here is what's different:"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 10
+y 123
+w 110
+h 16
+font "helvetica-bold-r-14.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "Slider Selection"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 20
+y 440
+w 536
+h 28
+font "helvetica-medium-r-12.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "NOTE: presently, the colors COLOR_SELECTED etc. are hard-coded indices in the source file."
+  "       This should be connected to the colors.list palette in a future release."
+}
+autoSize
+endObjectProperties
+

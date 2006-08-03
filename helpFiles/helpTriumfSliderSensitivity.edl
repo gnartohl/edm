@@ -1,0 +1,437 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 457
+y 28
+w 732
+h 986
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor index 1
+bgColor index 0
+textColor index 1
+ctlFgColor1 index 1
+ctlFgColor2 index 22
+ctlBgColor1 index 0
+ctlBgColor2 index 3
+topShadowColor index 29
+botShadowColor index 4
+title "Slider"
+endScreenProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 41
+y 741
+w 216
+h 57
+file "$(help)helpTriumfSliderRecentered.png"
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 43
+y 643
+w 225
+h 56
+file "$(help)helpTriumfSliderOutOfRange.png"
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 44
+y 506
+w 221
+h 62
+file "$(help)helpTriumfSliderExpanded.png"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 29
+y 30
+w 355
+h 27
+font "helvetica-medium-r-24.0"
+fgColor index 1
+bgColor index 29
+value {
+  "Triumf Slider - Slider Sensitivity"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 16
+y 600
+w 599
+h 48
+font "helvetica-medium-r-14.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "- If a slider is expanded, it is possible that the PV setpoint is changed somewhere else and is"
+  "  no longer inside the slider's range."
+  "  In this case, the slider bar colour changes to COLOR_OUTOFRANGE"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 271
+y 657
+w 185
+h 14
+font "helvetica-bold-i-12.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "set-point outside slider range"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 17
+y 715
+w 492
+h 32
+font "helvetica-medium-r-14.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "- An out-of-range slider can be recentered by left-clicking on the slider bar."
+  "  The slider is automatically re-selected."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 269
+y 754
+w 214
+h 14
+font "helvetica-bold-i-12.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "slider re-centered and re-selected"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 16
+y 481
+w 628
+h 32
+font "helvetica-medium-r-14.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "- A slider with sensitivity < 100% shows an expanded range centered around the current setpoint."
+  "- The original range is restored by selecting 100%"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 519
+w 339
+h 14
+font "helvetica-bold-i-12.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "slider selected (active) and expanded to 10% sensitivity"
+}
+autoSize
+endObjectProperties
+
+# (Circle)
+object activeCircleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 103
+y 645
+w 98
+h 41
+lineColor index 31
+fillColor index 0
+lineWidth 2
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 12
+y 105
+w 518
+h 32
+font "helvetica-medium-r-14.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "- The slider properties window (right-click) allows selection of slider \"sensitivity\"."
+  "- The value field has a call-back, which keeps the set-point value up-to-date."
+}
+autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 48
+y 143
+w 461
+h 327
+file "$(help)helpTriumfSliderSensitivitySelect.png"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 61
+y 252
+w 136
+h 28
+font "helvetica-bold-r-12.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "this value updates,"
+  "if the setpoint changes"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 185
+y 233
+w 169
+h 24
+lineColor index 1
+fillColor index 0
+numPoints 2
+xPoints {
+  0 185
+  1 354
+}
+yPoints {
+  0 257
+  1 233
+}
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 17
+y 858
+w 222
+h 60
+file "$(help)helpTriumfSliderPan1.png"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 11
+y 819
+w 407
+h 16
+font "helvetica-medium-r-14.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "- In order to move an expanded slider beyond its present limits:"
+}
+autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 234
+y 861
+w 219
+h 57
+file "$(help)helpTriumfSliderPan2.png"
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 450
+y 861
+w 219
+h 57
+file "$(help)helpTriumfSliderPan3.png"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 36
+y 840
+w 144
+h 16
+font "helvetica-medium-r-14.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "   a) left-click and hold"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 32
+y 917
+w 291
+h 16
+font "helvetica-medium-r-14.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "The slider will re-center at the new set-point."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 261
+y 840
+w 122
+h 16
+font "helvetica-medium-r-14.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "b) drag to the edge"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 474
+y 840
+w 165
+h 16
+font "helvetica-medium-r-14.0"
+fgColor index 1
+bgColor index 0
+useDisplayBg
+value {
+  "c) release and grab again"
+}
+autoSize
+endObjectProperties
+
