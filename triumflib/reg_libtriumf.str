@@ -1,0 +1,6 @@
+#ifndef __reg_libtriumf_str
+#define __reg_libtriumf_str 1
+
+#define reg_str1 (char *) "Triumf Slider"
+
+#endif

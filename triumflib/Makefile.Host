@@ -1,0 +1,59 @@
+TOP = ../../../..
+include $(TOP)/config/CONFIG_EXTENSIONS
+STATIC_BUILD=NO
+SHARED_LIBRARIES=YES
+
+IMAGELIB=/usr/local
+
+
+# Add Debugging
+USR_CXXFLAGS_Linux += -g -O0
+USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+
+USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl
+
+USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+
+USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt
+
+USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
+
+USR_LIBS_hpux11_11_mt = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt X11 Xext pthread
+
+# Add Debugging
+#USR_LDFLAGS += -g
+
+USR_LDFLAGS += -L$(INSTALL_LIB) -L$(IMAGELIB)
+
+LIBRARY = EdmTriumf
+
+PROD_LIBS += ca Com
+
+USR_INCLUDES = -I../ -I../../util -I../../lib -I../../pvlib
+USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC) -I$(GIF_INC)
+
+Xm_DIR = $(MOTIF_LIB)
+Xt_DIR = $(X11_LIB)
+X11_DIR = $(X11_LIB)
+Xmu_DIR = $(X11_LIB)
+# ELW added following two lines for 
+# Red Hat 7.0 LINUX 
+Xp_DIR = $(X11_LIB)
+Xext = $(X11)/lib
+#
+XlibGUI_DIR = $(X11_LIB)
+XmStatic_DIR = $(MOTIF_LIB)
+XmStatXt_DIR = $(MOTIF_LIB)
+HCLXt_DIR = $(X11_LIB)
+Xlib_DIR = $(X11_LIB)
+HCLXmu_DIR = $(X11_LIB)
+
+gif_DIR=$(GIF_LIB)
+
+LIBSRCS += triumfSlider.cc
+LIBSRCS += reg_libtriumf.cc
+
+include $(TOP)/config/RULES.Host
+
+G++_NORMAL = $(G++)
+G++_STRICT = $(G++)
