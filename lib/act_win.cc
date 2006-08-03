@@ -2771,15 +2771,15 @@ Atom wm_delete_window;
           nodeArray[n].listElement = cur1;
           nodeArray[n].ySortValue = 0;
           nodeArray[n].processed = 0;
-          n++;
-
+          if ( n < SYMBOL_K_NUM_STATES-1 ) n++;
+            
           cur1 = cur1->flink;
 
         }
 
         // set ySortValue for all nodes in same row to common value
         sortValue = 1;
-        for ( i=0; i<n-1; i++ ) {
+        for ( i=0; i<n; i++ ) {
 
           if ( !nodeArray[i].processed ) {
 
