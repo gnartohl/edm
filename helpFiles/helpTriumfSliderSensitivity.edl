@@ -3,22 +3,22 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 457
-y 28
+x 465
+y 88
 w 732
 h 986
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
-fgColor index 1
-bgColor index 0
-textColor index 1
-ctlFgColor1 index 1
-ctlFgColor2 index 22
-ctlBgColor1 index 0
-ctlBgColor2 index 3
-topShadowColor index 29
-botShadowColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 65535
+ctlBgColor1 rgb 53456 53456 53456
+ctlBgColor2 rgb 58082 58082 58082
+topShadowColor rgb 60138 60138 60138
+botShadowColor rgb 30069 30069 30069
 title "Slider"
 endScreenProperties
 
@@ -72,8 +72,8 @@ y 30
 w 355
 h 27
 font "helvetica-medium-r-24.0"
-fgColor index 1
-bgColor index 29
+fgColor rgb 0 0 0
+bgColor rgb 60138 60138 60138
 value {
   "Triumf Slider - Slider Sensitivity"
 }
@@ -91,13 +91,13 @@ y 600
 w 599
 h 48
 font "helvetica-medium-r-14.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "- If a slider is expanded, it is possible that the PV setpoint is changed somewhere else and is"
   "  no longer inside the slider's range."
-  "  In this case, the slider bar colour changes to COLOR_OUTOFRANGE"
+  "  In this case, the slider bar colour changes to \"triumf-color-outofrange\""
 }
 autoSize
 endObjectProperties
@@ -110,11 +110,11 @@ minor 1
 release 0
 x 271
 y 657
-w 185
+w 175
 h 14
 font "helvetica-bold-i-12.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "set-point outside slider range"
@@ -133,8 +133,8 @@ y 715
 w 492
 h 32
 font "helvetica-medium-r-14.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "- An out-of-range slider can be recentered by left-clicking on the slider bar."
@@ -154,8 +154,8 @@ y 754
 w 214
 h 14
 font "helvetica-bold-i-12.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "slider re-centered and re-selected"
@@ -173,8 +173,8 @@ y 481
 w 628
 h 32
 font "helvetica-medium-r-14.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "- A slider with sensitivity < 100% shows an expanded range centered around the current setpoint."
@@ -191,11 +191,11 @@ minor 1
 release 0
 x 272
 y 519
-w 339
+w 330
 h 14
 font "helvetica-bold-i-12.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "slider selected (active) and expanded to 10% sensitivity"
@@ -213,8 +213,8 @@ x 103
 y 645
 w 98
 h 41
-lineColor index 31
-fillColor index 0
+lineColor rgb 65535 0 0
+fillColor rgb 53456 53456 53456
 lineWidth 2
 endObjectProperties
 
@@ -229,8 +229,8 @@ y 105
 w 518
 h 32
 font "helvetica-medium-r-14.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "- The slider properties window (right-click) allows selection of slider \"sensitivity\"."
@@ -263,8 +263,8 @@ y 252
 w 136
 h 28
 font "helvetica-bold-r-12.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "this value updates,"
@@ -283,8 +283,8 @@ x 185
 y 233
 w 169
 h 24
-lineColor index 1
-fillColor index 0
+lineColor rgb 0 0 0
+fillColor rgb 53456 53456 53456
 numPoints 2
 xPoints {
   0 185
@@ -320,8 +320,8 @@ y 819
 w 407
 h 16
 font "helvetica-medium-r-14.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "- In order to move an expanded slider beyond its present limits:"
@@ -366,8 +366,8 @@ y 840
 w 144
 h 16
 font "helvetica-medium-r-14.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "   a) left-click and hold"
@@ -386,8 +386,8 @@ y 917
 w 291
 h 16
 font "helvetica-medium-r-14.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "The slider will re-center at the new set-point."
@@ -406,8 +406,8 @@ y 840
 w 122
 h 16
 font "helvetica-medium-r-14.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "b) drag to the edge"
@@ -426,8 +426,8 @@ y 840
 w 165
 h 16
 font "helvetica-medium-r-14.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "c) release and grab again"

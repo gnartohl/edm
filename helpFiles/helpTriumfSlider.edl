@@ -3,22 +3,22 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 63
-y 88
-w 701
-h 536
+x 957
+y 150
+w 674
+h 587
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
-fgColor index 1
-bgColor index 0
-textColor index 1
-ctlFgColor1 index 1
-ctlFgColor2 index 22
-ctlBgColor1 index 0
-ctlBgColor2 index 3
-topShadowColor index 29
-botShadowColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 65535
+ctlBgColor1 rgb 53456 53456 53456
+ctlBgColor2 rgb 58082 58082 58082
+topShadowColor rgb 60138 60138 60138
+botShadowColor rgb 30069 30069 30069
 title "Slider"
 endScreenProperties
 
@@ -33,8 +33,8 @@ y 30
 w 143
 h 27
 font "helvetica-medium-r-24.0"
-fgColor index 1
-bgColor index 29
+fgColor rgb 0 0 0
+bgColor rgb 60138 60138 60138
 value {
   "Triumf Slider"
 }
@@ -52,8 +52,8 @@ y 25
 w 222
 h 16
 font "helvetica-medium-r-14.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "The Triumf Slider is a variant of the"
@@ -71,10 +71,10 @@ x 256
 y 46
 w 221
 h 24
-fgColor index 1
-bgColor index 0
-topShadowColor index 29
-botShadowColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
+topShadowColor rgb 60138 60138 60138
+botShadowColor rgb 30069 30069 30069
 font "helvetica-bold-r-14.0"
 buttonLabel "Motif Slider"
 numPvs 4
@@ -90,13 +90,13 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 10
-y 147
+x 12
+y 227
 w 453
 h 48
 font "helvetica-medium-r-14.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "- The Triumf slider must be selected (with a left-click on the slider bar)"
@@ -112,16 +112,16 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 9
-y 264
-w 439
+x 11
+y 344
+w 458
 h 32
 font "helvetica-medium-r-14.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
-  "- If selected, the slider bar changes its color to COLOR_SELECTED."
+  "- If selected, the slider bar changes its color to \"triumf-color-selected\"."
   "   Only one slider can be selected per edm instance."
 }
 autoSize
@@ -133,16 +133,16 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 9
-y 366
-w 666
+x 11
+y 446
+w 665
 h 16
 font "helvetica-medium-r-14.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
-  "- If the mouse pointer leaves the slider area, the slider bar color changes to COLOR_OUTOFWINDOW."
+  "- If the mouse pointer leaves the slider area, the slider bar color changes to \"triumf-color-outofwindow\"."
 }
 autoSize
 endObjectProperties
@@ -153,8 +153,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 33
-y 202
+x 35
+y 282
 w 222
 h 55
 file "$(help)helpTriumfSliderUnselected.png"
@@ -166,13 +166,13 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 253
-y 210
+x 255
+y 290
 w 115
 h 14
 font "helvetica-bold-i-12.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "slider not selected"
@@ -185,8 +185,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 42
-y 295
+x 44
+y 375
 w 213
 h 54
 file "$(help)helpTriumfSliderSelectedIn.png"
@@ -198,8 +198,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 41
-y 380
+x 43
+y 460
 w 253
 h 56
 file "$(help)helpTriumfSliderSelectedOut.png"
@@ -211,13 +211,13 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 257
-y 388
+x 259
+y 468
 w 152
 h 14
 font "helvetica-bold-i-12.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "slider selected (inactive)"
@@ -230,13 +230,13 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 258
-y 306
+x 260
+y 386
 w 142
 h 14
 font "helvetica-bold-i-12.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "slider selected (active)"
@@ -249,14 +249,14 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 8
-y 492
+x 11
+y 533
 w 170
 h 24
-fgColor index 1
-bgColor index 0
-topShadowColor index 29
-botShadowColor index 4
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
+topShadowColor rgb 60138 60138 60138
+botShadowColor rgb 30069 30069 30069
 font "helvetica-bold-r-14.0"
 buttonLabel "Slider Sensitivity"
 numPvs 4
@@ -272,16 +272,19 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 12
-y 76
-w 148
-h 16
+x 15
+y 119
+w 543
+h 64
 font "helvetica-medium-r-14.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
-  "Here is what's different:"
+  "The Triumf slider uses three color aliases, which must be defined in the colors.list file:"
+  "- triumf-slider-selected"
+  "- triumf-slider-outofrange"
+  "- triumf-slider-outofwindow"
 }
 autoSize
 endObjectProperties
@@ -292,13 +295,13 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 10
-y 123
+x 12
+y 203
 w 110
 h 16
 font "helvetica-bold-r-14.0"
-fgColor index 1
-bgColor index 0
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
   "Slider Selection"
@@ -312,17 +315,36 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 20
-y 440
-w 536
-h 28
-font "helvetica-medium-r-12.0"
-fgColor index 1
-bgColor index 0
+x 15
+y 100
+w 47
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
 useDisplayBg
 value {
-  "NOTE: presently, the colors COLOR_SELECTED etc. are hard-coded indices in the source file."
-  "       This should be connected to the colors.list palette in a future release."
+  "Colors"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 17
+y 68
+w 148
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 53456 53456 53456
+useDisplayBg
+value {
+  "Here is what's different:"
 }
 autoSize
 endObjectProperties
