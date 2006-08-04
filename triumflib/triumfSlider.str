@@ -62,7 +62,7 @@
 #define activeTriumfSliderClass_str59 (char *) "put failed\n"
 #define activeTriumfSliderClass_str60 (char *) "put failed\n"
 #define activeTriumfSliderClass_str61 (char *) "frameWidget create failed\n"
-#define activeTriumfSliderClass_str62 (char *) "triumfSliderWidger create failed\n"
+#define activeTriumfSliderClass_str62 (char *) "triumfSliderWidget create failed\n"
 #define activeTriumfSliderClass_str63 (char *) "error creating pv\n"
 #define activeTriumfSliderClass_str64 (char *) "Change"
 #define activeTriumfSliderClass_str65 (char *) "Activate"
@@ -79,5 +79,6 @@
 #define activeTriumfSliderClass_str92 (char *) "Saved Value"
 #ifdef TRIUMF
 #define activeTriumfSliderClass_str93 (char *) "Sensitivity"
+#define activeTriumfSliderClass_str94 (char *) "No color aliases defined for triumfSlider\n"
 #endif
 #endif

@@ -18,14 +18,14 @@
 //
 //  TRIUMF additions by R.Keitel, Jan 2006
 //  - slider must be selected (left-click on slider bar) before value can change
-//  - if selected, slider bar changes to COLOR_SELECTED
-//  - if mouse leaves slider, color changes to COLOR_OUTOFWINDOW
+//  - if selected, slider bar changes to mslo->colorSelected
+//  - if mouse leaves slider, color changes to mslo->colorOutofWindow
 //  - a slider sensitivity selection widget is used to narrow slider range to sensitivity*(original range)
 //    centred around current value. This allows higher precision sliding.
 //  - if a slider with sensitivity < 100% is moved to left or right edge of widget and released,
 //    the slider pans the range to center around current value
 //  - if the PV of a slider with sensitivity < 100% is moved out of range by other events,
-//    the slider bar changes to COLOR_OUTOFRANGE. If the slider is reselected,
+//    the slider bar changes to mslo->colorOutofRange. If the slider is reselected,
 //    and is centred around the current value.
 //  20060717 re-package as "Triumf Slider"
 //    Note: I'll keep the ifdef TRIUMF in order to indicate the changes from the
@@ -44,9 +44,6 @@
 
 #include "thread.h"
 
-#define COLOR_OUTOFWINDOW 11
-#define COLOR_SELECTED 8
-#define COLOR_OUTOFRANGE 9
 
 static int g_transInit = 1;
 static XtTranslations g_parsedTrans;
@@ -1065,11 +1062,15 @@ activeTriumfSliderClass *mslo = (activeTriumfSliderClass *) userarg;
     }
     // for changing the slider sensitivity, save the original limits in minFvOrg, maxFvOrg
     mslo->minFv = mslo->minFvOrg = mslo->scaleMin;
-
     mslo->maxFv = mslo->maxFvOrg = mslo->scaleMax;
-
     mslo->curControlV = pv->get_double();
-
+	
+	mslo->colorSelected = mslo->actWin->ci->colorIndexByAlias("triumf-slider-selected");
+	mslo->colorOutofRange = mslo->actWin->ci->colorIndexByAlias("triumf-slider-outofrange");
+	mslo->colorOutofWindow = mslo->actWin->ci->colorIndexByAlias("triumf-slider-outofwindow");
+	if (mslo->colorSelected == 0 || mslo->colorOutofRange == 0 || mslo->colorOutofWindow == 0) {
+      fprintf( stderr, activeTriumfSliderClass_str94 );
+	}
     mslo->needCtlConnectInit = 1;
     mslo->needCtlInfoInit = 1;
 #ifdef TRIUMF
@@ -1185,12 +1186,12 @@ int st, sev;
  	  mslo->outOfRange = 1;
 	  // if a slider is moved out of range by an external event, we require a new selection
 	  mslo->newSelect = 1;
-	  if (mslo->shadeColor != COLOR_OUTOFRANGE) {
+	  if (mslo->shadeColor != mslo->colorOutofRange) {
 	    mslo->shadeColorInRange = mslo->shadeColor;
       }
-      mslo->shadeColor = COLOR_OUTOFRANGE;
+      mslo->shadeColor = mslo->colorOutofRange;
       XtVaSetValues( mslo->scrollBarWidget,
-          XmNtroughColor, mslo->actWin->ci->pix(COLOR_OUTOFRANGE),
+          XmNtroughColor, mslo->actWin->ci->pix(mslo->colorOutofRange),
           NULL );
     }
   } else {
@@ -2600,11 +2601,11 @@ double df;
     if (mslo == activeTriumfSliderClass::selectedSlider) {
       if (mslo->outOfRange) {
         XtVaSetValues( mslo->scrollBarWidget,
-          XmNtroughColor, mslo->actWin->ci->pix(COLOR_OUTOFRANGE),
+          XmNtroughColor, mslo->actWin->ci->pix(mslo->colorOutofRange),
           NULL );
         } else {
         XtVaSetValues( mslo->scrollBarWidget,
-          XmNtroughColor, mslo->actWin->ci->pix(COLOR_SELECTED),
+          XmNtroughColor, mslo->actWin->ci->pix(mslo->colorSelected),
           NULL );
       }
     } else {
@@ -2625,11 +2626,11 @@ double df;
     if (mslo == activeTriumfSliderClass::selectedSlider) {
       if (mslo->outOfRange) {
         XtVaSetValues( mslo->scrollBarWidget,
-          XmNtroughColor, mslo->actWin->ci->pix(COLOR_OUTOFRANGE),
+          XmNtroughColor, mslo->actWin->ci->pix(mslo->colorOutofRange),
           NULL );
       } else {
         XtVaSetValues( mslo->scrollBarWidget,
-          XmNtroughColor, mslo->actWin->ci->pix(COLOR_OUTOFWINDOW),
+          XmNtroughColor, mslo->actWin->ci->pix(mslo->colorOutofWindow),
           NULL );
       }
     }
@@ -3248,11 +3249,11 @@ void activeTriumfSliderClass::changeSelectedSlider(activeTriumfSliderClass *mslo
 	// .. then set the newly selected slider to the "selected color"
 	if (mslo) {
       if (fromPopup) {
-        mslo->shadeColor = COLOR_OUTOFWINDOW;
-        mslo->shadeColorInRange = COLOR_OUTOFWINDOW;
+        mslo->shadeColor = mslo->colorOutofWindow;
+        mslo->shadeColorInRange = mslo->colorOutofWindow;
       } else {
-        mslo->shadeColor = COLOR_SELECTED;
-        mslo->shadeColorInRange = COLOR_SELECTED;
+        mslo->shadeColor = mslo->colorSelected;
+        mslo->shadeColorInRange = mslo->colorSelected;
       }
       activeTriumfSliderClass::selectedSlider = mslo;
       XtVaSetValues( mslo->scrollBarWidget,
@@ -3261,7 +3262,7 @@ void activeTriumfSliderClass::changeSelectedSlider(activeTriumfSliderClass *mslo
 	  newSelect = 1;
     }
   } else if (mslo->newSelect) {
-      mslo->shadeColor = COLOR_SELECTED;
+      mslo->shadeColor = mslo->colorSelected;
       XtVaSetValues( mslo->scrollBarWidget,
          XmNtroughColor, mslo->actWin->ci->pix(mslo->shadeColor),
          NULL );
