@@ -396,6 +396,8 @@ int i;
 
   shcmdo->oneShot = shcmdo->buf->bufOneShot;
 
+  shcmdo->swapButtons = shcmdo->buf->bufSwapButtons;
+
   shcmdo->updateDimensions();
 
 }
@@ -485,6 +487,7 @@ shellCmdClass::shellCmdClass ( void ) {
   usePassword = 0;
   lock = 0;
   oneShot = 0;
+  swapButtons = 0;
   numCmds = 0;
   cmdIndex = 0;
   buf = NULL;
@@ -555,6 +558,8 @@ int i;
   lock = source->lock;
 
   oneShot = source->oneShot;
+
+  swapButtons = source->swapButtons;
 
   numCmds = source->numCmds;
   cmdIndex = 0;
@@ -642,6 +647,7 @@ char *emptyStr = "";
   tag.loadW( "password", pw, emptyStr );
   tag.loadBoolW( "lock", &lock, &zero );
   tag.loadBoolW( "oneShot", &oneShot, &zero );
+  tag.loadBoolW( "swapButtons", &swapButtons, &zero );
   tag.loadBoolW( "multipleInstances", &multipleInstancesAllowed,
    &zero );
   tag.loadW( "requiredHostName", requiredHostName, emptyStr );
@@ -779,6 +785,7 @@ char *emptyStr = "";
   tag.loadR( "password", 31, pw, emptyStr );
   tag.loadR( "lock", &lock, &zero );
   tag.loadR( "oneShot", &oneShot, &zero );
+  tag.loadR( "swapButtons", &swapButtons, &zero );
   tag.loadR( "multipleInstances", &multipleInstancesAllowed, &zero );
   tag.loadR( "requiredHostName", 15, requiredHostName, emptyStr );
   tag.loadR( "numCmds", &numCmds, &zero );
@@ -855,6 +862,8 @@ float val;
   fscanf( f, "%d\n", &h ); actWin->incLine();
 
   this->initSelectBox(); // call after getting x,y,w,h
+
+  swapButtons = 0;
 
   if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 2 ) ) ) {
 
@@ -1039,6 +1048,8 @@ char *tk, *gotData, *context, buffer[255+1];
 
   fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
   bgColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
+
+  swapButtons = 0;
 
   // continue until tag is <eod>
 
@@ -1355,6 +1366,8 @@ char title[32], *ptr, *envPtr, saveLock;
 
   buf->bufOneShot = oneShot;
 
+  buf->bufSwapButtons = swapButtons;
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -1420,6 +1433,7 @@ char title[32], *ptr, *envPtr, saveLock;
   ef.addTextField( shellCmdClass_str20, 35, &buf->bufThreadSecondsToDelay );
   ef.addTextField( shellCmdClass_str18, 35, &buf->bufAutoExecInterval );
   ef.addToggle( shellCmdClass_str33, &buf->bufOneShot );
+  ef.addToggle( shellCmdClass_str34, &buf->bufSwapButtons );
 
   ef.addColorButton( shellCmdClass_str8, actWin->ci, &fgCb, &buf->bufFgColor );
   ef.addColorButton( shellCmdClass_str9, actWin->ci, &bgCb, &buf->bufBgColor );
@@ -1868,6 +1882,17 @@ void shellCmdClass::btnUp (
 
   if ( !enabled ) return;
 
+  if ( swapButtons ) {
+    if ( buttonNumber == 1 ) {
+      buttonNumber = 3;
+    }
+    else if ( buttonNumber == 3 ) {
+      buttonNumber = 1;
+    }
+  }
+
+  if ( buttonNumber != 1 ) return;
+
   if ( numCmds < 2 ) return;
 
   XmMenuPosition( popUpMenu, be );
@@ -1957,6 +1982,15 @@ void shellCmdClass::btnDown (
   if ( !enabled ) {
     *action = 0;
     return;
+  }
+
+  if ( swapButtons ) {
+    if ( buttonNumber == 1 ) {
+      buttonNumber = 3;
+    }
+    else if ( buttonNumber == 3 ) {
+      buttonNumber = 1;
+    }
   }
 
   if ( buttonNumber != 1 ) return;

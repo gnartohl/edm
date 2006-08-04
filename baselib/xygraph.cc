@@ -8263,10 +8263,16 @@ int yi, yScaleIndex, allChronological;
       // end of pass two
       // ------------------------------------------------------------------
 
-      arrayHead[i] = 0;
-      arrayTail[i] = 0;
-      arrayNumPoints[i] = 0;
-      curNpts[i] = 0;
+      if ( count == 1 ) {
+        arrayNumPoints[i] = 0;
+        curNpts[i] = 0;
+      }
+      else {
+        arrayHead[i] = 0;
+        arrayTail[i] = 0;
+        arrayNumPoints[i] = 0;
+        curNpts[i] = 0;
+      }
 
     }
 
@@ -9167,6 +9173,7 @@ int yi, yScaleIndex, allChronological;
   }
 
   if ( nr ) {
+    regenBuffer();
     fullRefresh();
   }
 

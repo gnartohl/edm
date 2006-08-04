@@ -23,7 +23,7 @@
 #include "entry_form.h"
 
 #define SHCMDC_MAJOR_VERSION 4
-#define SHCMDC_MINOR_VERSION 1
+#define SHCMDC_MINOR_VERSION 2
 #define SHCMDC_RELEASE 0
 
 #ifdef __shell_cmd_cc
@@ -219,6 +219,7 @@ typedef struct bufTag {
   int bufMultipleInstancesAllowed;
   char bufRequiredHostName[63+1];
   int bufOneShot;
+  int bufSwapButtons;
 } bufType, *bufPtr;
 
 // static char * const nullHost = "";
@@ -256,7 +257,7 @@ int opComplete;
 
 double threadSecondsToDelay, autoExecInterval;
 XtIntervalId timer;
-int oneShot, timerActive, timerValue, multipleInstancesAllowed;
+int oneShot, timerActive, timerValue, multipleInstancesAllowed, swapButtons;
 THREAD_HANDLE thread;
 
 int pwFormX, pwFormY, pwFormW, pwFormH, pwFormMaxH;
