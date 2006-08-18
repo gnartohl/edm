@@ -5,7 +5,7 @@ int debugMode ( void );
 pvActionClass::pvActionClass ( void ) {
 
 char *ptr, *tk, *ctx, file[255+1], line[255+1];
-int i, l, stat, numLines;
+int i, l, stat, numLines, comment;
 FILE *f;
 
   name = NULL;
@@ -33,12 +33,24 @@ FILE *f;
   f = fopen( file, "r" );
   if ( !f ) return;
 
-  numLines = 0;
+  numLines = comment = 0;
   ptr = fgets( line, 255, f );
   while ( ptr ) {
 
-    numLines++;
+    ctx = NULL;
+    tk = strtok_r( line, " \t\n", &ctx );
+    if ( !tk ) {
+      comment = 1;
+    }
+    else if ( tk[0] == '#' ) {
+      comment = 1;
+    }
 
+    if ( !comment ) { /* not an empty line or comment */
+      numLines++;
+    }
+
+    comment = 0;
     ptr = fgets( line, 255, f );
 
   }
@@ -52,7 +64,7 @@ FILE *f;
   f = fopen( file, "r" );
   if ( !f ) return;
 
-  i = 0;
+  i = comment = 0;
   ptr = fgets( line, 255, f );
   while ( ptr ) {
 
@@ -61,43 +73,45 @@ FILE *f;
     // ---------------------------------------
 
     tk = strtok_r( line, " \t\n", &ctx );
-    if ( tk ) {
+
+    if ( !tk ) {
+      comment = 1;
+    }
+    else if ( tk[0] == '#' ) {
+      comment = 1;
+    }
+
+    if ( !comment ) { /* not an empty line or comment */
 
       l = strlen( tk ) + 1;
       name[i] = new char [l];
       strcpy( name[i], tk );
 
-    }
-    else {
+      // ---------------------------------------
 
-      l = strlen( "Unknown" ) + 1;
-      name[i] = new char [l];
-      strcpy( name[i], "Unknown" );
+      tk = strtok_r( NULL, "\n", &ctx );
+      if ( tk ) {
 
-    }
+        l = strlen( tk ) + 1;
+        action[i] = new char [l];
+        strcpy( action[i], tk );
 
-    // ---------------------------------------
+      }
+      else {
 
-    tk = strtok_r( NULL, "\n", &ctx );
-    if ( tk ) {
+        l = strlen( "Unknown" ) + 1;
+        action[i] = new char [l];
+        strcpy( action[i], "Unknown" );
 
-      l = strlen( tk ) + 1;
-      action[i] = new char [l];
-      strcpy( action[i], tk );
+      }
 
-    }
-    else {
+      // ---------------------------------------
 
-      l = strlen( "Unknown" ) + 1;
-      action[i] = new char [l];
-      strcpy( action[i], "Unknown" );
+      i++;
 
     }
 
-    // ---------------------------------------
-
-    i++;
-
+    comment = 0;
     ptr = fgets( line, 255, f );
 
   }
