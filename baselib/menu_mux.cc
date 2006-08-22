@@ -1979,7 +1979,7 @@ char *menuMuxClass::nextDragName ( void ) {
 char *menuMuxClass::dragValue (
   int i ) {
 
-  if ( actWin->mode != AWC_EXECUTE ) {
+  if ( actWin->mode == AWC_EXECUTE ) {
 
     return controlPvExpStr.getExpanded();
 
