@@ -29,7 +29,7 @@
 #define BARC_K_COLORMODE_ALARM 1
 
 #define BARC_MAJOR_VERSION 4
-#define BARC_MINOR_VERSION 0
+#define BARC_MINOR_VERSION 1
 #define BARC_RELEASE 0
 
 #define BARC_K_PV_NAME 0
@@ -169,7 +169,7 @@ int barY, oldBarY, barH, oldBarH, barW, oldBarW, bufInvalid, barX, oldBarX,
  originW, originH, mode, barAreaX, barAreaW, barAreaY, barAreaH, barStrLen, barMaxW, barMaxH,
  aboveBarOrigin, oldAboveBarOrigin, zeroCrossover;
 double barOriginX, barOriginY, factorLt, factorGe;
-efDouble efBarOriginX;
+expStringClass barOriginXExpStr;
 
 fontMenuClass fm;
 char fontTag[63+1];
@@ -195,13 +195,14 @@ char label[39+1];
 int labelType;
 int border;
 int showScale;
+expStringClass labelTicksExpStr, majorTicksExpStr, minorTicksExpStr;
 int labelTicks, majorTicks, minorTicks;
 char scaleFormat[15+1];
 int limitsFromDb;
+expStringClass readMinExpStr, readMaxExpStr;
 double readMin, readMax;
-efDouble efReadMin, efReadMax;
 int precision;
-efInt efPrecision;
+expStringClass precisionExpStr;
 
 int bufBarColorMode, bufFgColorMode;
 int bufBarColor, bufFgColor, bufBgColor;
@@ -209,13 +210,13 @@ char bufLabel[39+1];
 int bufLabelType;
 int bufBorder;
 int bufShowScale;
-int bufLabelTicks, bufMajorTicks, bufMinorTicks;
+char bufLabelTicks[15+1], bufMajorTicks[15+1], bufMinorTicks[15+1];
 char bufFontTag[63+1];
 char bufScaleFormat[15+1];
 int bufLimitsFromDb;
-efDouble bufEfReadMin, bufEfReadMax;
-efInt bufEfPrecision;
-efDouble bufEfBarOriginX;
+char bufReadMin[15+1], bufReadMax[15+1];
+char bufPrecision[15+1];
+char bufBarOriginX[15+1];
 
 int needErase, needDraw, needFullDraw, needDrawCheck, needConnectInit,
  needRefresh, needInfoInit;
@@ -245,9 +246,6 @@ int createInteractive (
   int h );
 
 int save (
-  FILE *f );
-
-int old_save (
   FILE *f );
 
 int createFromFile (

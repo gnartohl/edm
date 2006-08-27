@@ -329,6 +329,8 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
 
   rdo->colorPvExpString.setRaw( rdo->buf->bufColorPvName );
 
+  rdo->helpCommandExpString.setRaw( rdo->buf->bufHelpCommand );
+
   rdo->updateDimensions();
 
 }
@@ -429,6 +431,8 @@ int i;
   fontList = NULL;
   aw = NULL;
   buf = NULL;
+
+  helpItem = -1;
 
   unconnectedTimer = 0;
 
@@ -541,14 +545,55 @@ activeGraphicClass *rdo = (activeGraphicClass *) this;
 
   colorPvExpString.copy( source->colorPvExpString );
 
+  helpCommandExpString.copy( source->helpCommandExpString );
+
   aw = NULL;
   buf = NULL;
+
+  helpItem = -1;
 
   unconnectedTimer = 0;
 
   connection.setMaxPvs( NUMPVS + 1 );
 
   setBlinkFunction( (void *) doBlink );
+
+}
+
+void relatedDisplayClass::setHelpItem ( void ) {
+
+char *ctx, *tk, *err, buf[255+1];
+int item;
+
+  helpItem = -1;
+
+  if ( !blank( helpCommandExpString.getExpanded() ) ) {
+
+    strncpy( buf, helpCommandExpString.getExpanded(), 255 );
+    buf[255] = 0;
+
+    ctx = NULL;
+    tk = strtok_r( buf, " \t", &ctx );
+
+    if ( tk ) {
+
+      if ( strcmp( tk, "item" ) == 0 ) {
+
+        tk = strtok_r( NULL, " \t", &ctx );
+
+        if ( tk ) {
+
+          errno = 0;
+          item = strtol( tk, &err, 0 );
+          if ( !errno ) helpItem = item;
+
+	}
+
+      }
+
+    }
+
+  }
 
 }
 
@@ -655,6 +700,7 @@ static int setPosEnum[3] = {
   tag.loadW( "colorPv", &colorPvExpString, emptyStr );
   tag.loadBoolW( "icon", &icon, &zero );
   tag.loadBoolW( "swapButtons", &swapButtons, &zero );
+  tag.loadW( "helpCommand", &helpCommandExpString, emptyStr );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -871,6 +917,7 @@ static int setPosEnum[3] = {
   tag.loadR( "colorPv", &colorPvExpString, emptyStr );
   tag.loadR( "icon", &icon, &zero );
   tag.loadR( "swapButtons", &swapButtons, &zero );
+  tag.loadW( "helpCommand", &helpCommandExpString, emptyStr );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.readTags( f, "endObjectProperties" );
@@ -1681,6 +1728,11 @@ char title[32], *ptr;
 
   buf->bufSwapButtons = swapButtons;
 
+  if ( helpCommandExpString.getRaw() )
+    strncpy( buf->bufHelpCommand, helpCommandExpString.getRaw(), 255 );
+  else
+    strncpy( buf->bufHelpCommand, "", 255 );
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -1716,7 +1768,7 @@ char title[32], *ptr;
 
   for ( i=1; i<maxDsps; i++ ) {
 
-    ef1->beginSubForm();
+    ef1->beginLeftSubForm();
     ef1->addTextField( relatedDisplayClass_str38, 35, buf->bufLabel[i], 127 );
     ef1->addLabel( relatedDisplayClass_str39 );
     ef1->addTextField( "", 35, buf->bufDisplayFileName[i], 127 );
@@ -1746,6 +1798,8 @@ char title[32], *ptr;
 
   //ef1->finished( rdc_edit_ok1, rdc_edit_apply1, rdc_edit_cancel1, this );
   ef1->finished( rdc_edit_ok1, this );
+
+  ef.addTextField( relatedDisplayClass_str49, 35, buf->bufHelpCommand, 255 );
 
   ef.addTextField( relatedDisplayClass_str13, 35, buf->bufButtonLabel, 127 );
 
@@ -2223,6 +2277,8 @@ XmString str;
     init = 0;
     active = 0;
 
+    setHelpItem();
+
   case 2:
 
     aglPtr = ptr;
@@ -2318,22 +2374,30 @@ XmString str;
 
           pullDownMenu = XmCreatePulldownMenu( popUpMenu, "", NULL, 0 );
 
+          numMenuItems = 0;
+
           for ( ii=0; ii<numDsps; ii++ ) {
 
-            if ( label[ii].getExpanded() ) {
-              str = XmStringCreateLocalized( label[ii].getExpanded() );
-	    }
-	    else {
-              str = XmStringCreateLocalized( " " );
-	    }
-            pb[ii] = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
-             popUpMenu,
-             XmNlabelString, str,
-             NULL );
-            XmStringFree( str );
+	    if ( ii != helpItem ) {
 
-            XtAddCallback( pb[ii], XmNactivateCallback, menu_cb,
-             (XtPointer) this );
+              numMenuItems++;
+
+              if ( label[ii].getExpanded() ) {
+                str = XmStringCreateLocalized( label[ii].getExpanded() );
+	      }
+	      else {
+                str = XmStringCreateLocalized( " " );
+	      }
+              pb[ii] = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
+               popUpMenu,
+               XmNlabelString, str,
+               NULL );
+              XmStringFree( str );
+
+              XtAddCallback( pb[ii], XmNactivateCallback, menu_cb,
+               (XtPointer) this );
+
+	    }
 
 	  }
 
@@ -2504,6 +2568,9 @@ int relatedDisplayClass::expand1st (
 
 int i;
 
+int n;
+char *m[255], *e[255];
+
   colorPvExpString.expand1st( numMacros, macros, expansions );
 
   for ( i=0; i<NUMPVS; i++ ) {
@@ -2518,6 +2585,28 @@ int i;
   }
 
   buttonLabel.expand1st( numMacros, macros, expansions );
+
+  for ( i=0, n=0; i<numMacros; i++, n++ ) {
+    m[i] = new char[strlen(macros[i])+1];
+    strcpy( m[i], macros[i] );
+    e[i] = new char[strlen(expansions[i])+1];
+    strcpy( e[i], expansions[i] );
+  }
+
+  if ( i+1 < 255 ) {
+    m[i] = new char[strlen("!label")+1];
+    strcpy( m[i], "!label" );
+    e[i] = new char[strlen(buttonLabel.getExpanded())+1];
+    strcpy( e[i], buttonLabel.getExpanded() );
+    n++;
+  }
+
+  helpCommandExpString.expand1st( n, m, e );
+
+  for ( i=0; i<n; i++ ) {
+    delete[] m[i];
+    delete[] e[i];
+  }
 
   return 1;
 
@@ -2546,6 +2635,8 @@ int i;
 
   buttonLabel.expand2nd( numMacros, macros, expansions );
 
+  helpCommandExpString.expand2nd( numMacros, macros, expansions );
+
   return 1;
 
 }
@@ -2568,6 +2659,8 @@ int i;
   }
 
   if ( buttonLabel.containsPrimaryMacros() ) return 1;
+
+  if ( helpCommandExpString.containsPrimaryMacros() ) return 1;
 
   return 0;
 
@@ -2600,7 +2693,8 @@ int numNewMacros, max, numFound;
 char prefix[127+1];
 
   focus = useFocus;
-  if ( numDsps > 1 ) {
+  //if ( numDsps > 1 ) {
+  if ( numMenuItems > 1 ) {
     focus = 0;
   }
 
@@ -3037,7 +3131,8 @@ void relatedDisplayClass::btnUp (
     }
   }
 
-  if ( numDsps == 1 ) {
+  //if ( numDsps == 1 ) {
+  if ( numMenuItems == 1 ) {
     if ( button3Popup ) {
       needClose = 1;
       actWin->addDefExeNode( aglPtr );
@@ -3045,7 +3140,8 @@ void relatedDisplayClass::btnUp (
     }
   }
 
-  if ( numDsps < 2 ) return;
+  //if ( numDsps < 2 ) return;
+  if ( numMenuItems < 2 ) return;
 
   if ( buttonNumber != 1 ) return;
 
@@ -3075,6 +3171,19 @@ int focus;
 
   if ( !enabled ) return;
 
+  //if ( ( buttonNumber == 3 ) && ( buttonState == 5 ) ) {
+  if ( !blank( helpCommandExpString.getExpanded() ) ) {
+    if ( ( buttonNumber == 3 ) && ( buttonState == 0 ) ) {
+      if ( helpItem != -1 ) {
+        if ( helpItem < numDsps ) popupDisplay( helpItem );
+      }
+      else {
+        executeCommandInThread( helpCommandExpString.getExpanded() );
+      }
+      return;
+    }
+  }
+
   if ( swapButtons ) {
     if ( buttonNumber == 1 ) {
       buttonNumber = 3;
@@ -3085,7 +3194,8 @@ int focus;
   }
 
   focus = useFocus;
-  if ( numDsps > 1 ) focus = 0;
+  //if ( numDsps > 1 ) focus = 0;
+  if ( numMenuItems > 1 ) focus = 0;
 
   if ( focus ) {
 
@@ -3104,9 +3214,11 @@ int focus;
 
   }
 
-  if ( numDsps < 1 ) return;
+  //if ( numDsps < 1 ) return;
+  if ( numMenuItems < 1 ) return;
 
-  if ( numDsps == 1 ) {
+  //if ( numDsps == 1 ) {
+  if ( numMenuItems == 1 ) {
     posX = x + _x - be->x;
     posY = y + _y - be->y;
     popupDisplay( 0 );
@@ -3131,6 +3243,14 @@ int focus;
 
     activeGraphicClass::pointerIn( me, me->x, me->y, buttonState );
 
+  }
+
+  if ( !blankOrComment( helpCommandExpString.getExpanded() ) ) {
+    actWin->cursor.set( XtWindow(actWin->executeWidget),
+     CURSOR_K_WILL_OPEN_WITH_HELP );
+  }
+  else {
+    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_WILL_OPEN );
   }
 
 }
@@ -3171,7 +3291,8 @@ XButtonEvent *be;
   if ( !enabled ) return;
 
   focus = useFocus;
-  if ( numDsps > 1 ) focus = 0;
+  //if ( numDsps > 1 ) focus = 0;
+  if ( numMenuItems > 1 ) focus = 0;
 
   if ( focus ) {
 
@@ -3196,7 +3317,8 @@ int focus;
   if ( !enabled ) return;
 
   focus = useFocus;
-  if ( numDsps > 1 ) focus = 0;
+  //if ( numDsps > 1 ) focus = 0;
+  if ( numMenuItems > 1 ) focus = 0;
 
   if ( focus ) {
 

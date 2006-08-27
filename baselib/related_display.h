@@ -214,6 +214,7 @@ typedef struct bufTag {
   int bufButton3Popup;
   int bufIcon;
   int bufSwapButtons;
+  char bufHelpCommand[255+1];
 } bufType, *bufPtr;
 
 colorButtonClass fgCb, bgCb, topShadowCb, botShadowCb;
@@ -285,6 +286,11 @@ int button3Popup;
 int icon;
 
 int swapButtons;
+
+expStringClass helpCommandExpString;
+int helpItem, numMenuItems;
+
+void setHelpItem ( void );
 
 public:
 

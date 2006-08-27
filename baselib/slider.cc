@@ -2419,7 +2419,7 @@ void sliderEventHandler(
 XMotionEvent *me;
 XButtonEvent *be;
 activeSliderClass *slo;
-int stat, deltaX, xOfs, newX;
+int stat, deltaX, xOfs, newX, popupDialog = 0;
 double fvalue;
 char title[32], *ptr;
 int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
@@ -2626,34 +2626,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         }
 	else {
 
-          if ( !slo->eBuf ) {
-            slo->eBuf = new activeSliderClass::editBufType;
-          }
-
-          slo->eBuf->bufIncrement = slo->increment;
-          slo->eBuf->bufAccelMultiplier = slo->accelMultiplier;
-          slo->eBuf->bufControlV = slo->controlV;
-          slo->valueFormX = be->x_root;
-          slo->valueFormY = be->y_root;
-          slo->valueFormW = 0;
-          slo->valueFormH = 0;
-          slo->valueFormMaxH = 600;
-
-          slo->ef.create( slo->actWin->top,
-           slo->actWin->appCtx->ci.getColorMap(),
-           &slo->valueFormX, &slo->valueFormY,
-           &slo->valueFormW, &slo->valueFormH, &slo->valueFormMaxH,
-           title, NULL, NULL, NULL );
-
-          slo->ef.addTextField( activeSliderClass_str57, 14,
-           &slo->eBuf->bufControlV );
-          slo->ef.addTextField( activeSliderClass_str58, 14,
-           &slo->eBuf->bufIncrement );
-          slo->ef.addTextField( activeSliderClass_str86, 14,
-           &slo->eBuf->bufAccelMultiplier );
-          slo->ef.finished( slc_value_ok, slc_value_apply, slc_value_cancel,
-           slo );
-          slo->ef.popup();
+	  popupDialog = 1;
 
 	}
 
@@ -2699,6 +2672,11 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         slo->xRef = be->x;
 
         slo->controlState = SLC_STATE_MOVING;
+
+      }
+      else {
+
+	popupDialog = 1;
 
       }
 
@@ -3069,6 +3047,39 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
     }
 
 //========== Motion with no button press ======================
+
+  }
+
+  if ( popupDialog ) {
+
+    if ( !slo->eBuf ) {
+      slo->eBuf = new activeSliderClass::editBufType;
+    }
+
+    slo->eBuf->bufIncrement = slo->increment;
+    slo->eBuf->bufAccelMultiplier = slo->accelMultiplier;
+    slo->eBuf->bufControlV = slo->controlV;
+    slo->valueFormX = be->x_root;
+    slo->valueFormY = be->y_root;
+    slo->valueFormW = 0;
+    slo->valueFormH = 0;
+    slo->valueFormMaxH = 600;
+
+    slo->ef.create( slo->actWin->top,
+     slo->actWin->appCtx->ci.getColorMap(),
+     &slo->valueFormX, &slo->valueFormY,
+     &slo->valueFormW, &slo->valueFormH, &slo->valueFormMaxH,
+     title, NULL, NULL, NULL );
+
+    slo->ef.addTextField( activeSliderClass_str57, 14,
+     &slo->eBuf->bufControlV );
+    slo->ef.addTextField( activeSliderClass_str58, 14,
+     &slo->eBuf->bufIncrement );
+    slo->ef.addTextField( activeSliderClass_str86, 14,
+     &slo->eBuf->bufAccelMultiplier );
+    slo->ef.finished( slc_value_ok, slc_value_apply, slc_value_cancel,
+     slo );
+    slo->ef.popup();
 
   }
 

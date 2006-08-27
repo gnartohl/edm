@@ -29,7 +29,7 @@
 #define METERC_K_COLORMODE_ALARM 1
 
 #define METERC_MAJOR_VERSION 4
-#define METERC_MINOR_VERSION 0
+#define METERC_MINOR_VERSION 1
 #define METERC_RELEASE 0
 
 #define METERC_K_LITERAL 1
@@ -137,9 +137,9 @@ typedef struct editBufTag {
   int bufMeterColorMode;
   int bufFgColorMode;
   int bufScaleColorMode;
-  int bufLabelIntervals;
-  int bufMajorIntervals;
-  int bufMinorIntervals;
+  char bufLabelIntervals[15+1];
+  char bufMajorIntervals[15+1];
+  char bufMinorIntervals[15+1];
   int bufMeterColor;
   int bufFgColor;
   int bufBgColor;
@@ -149,9 +149,9 @@ typedef struct editBufTag {
   int bufBsColor;
   int bufLabelType;
   double bufMeterAngle;
-  int bufScalePrecision;
-  double bufScaleMin;
-  double bufScaleMax;
+  char bufScalePrecision[15+1];
+  char bufScaleMin[15+1];
+  char bufScaleMax[15+1];
   int bufNeedleType;
   int bufShadowMode;
   int bufShowScale;
@@ -168,6 +168,7 @@ typedef struct editBufTag {
   char bufLiteralLabel[39+1];
   char bufControlPvName[PV_Factory::MAX_PV_NAME+1];
   char bufReadPvName[PV_Factory::MAX_PV_NAME+1];
+  int bufTrackDelta;
 } editBufType, *editBufPtr;
 
 editBufPtr eBuf;
@@ -179,7 +180,7 @@ int opComplete;
 int minW;
 int minH;
 
-double controlV, curControlV, readV, curReadV, readMin, readMax;
+double controlV, curControlV, readV, curReadV, readMin, readMax, baseV;
 int meterW, oldMeterW, bufInvalid, meterX, oldMeterX, originW, mode;
 double meterOriginX;
 
@@ -198,7 +199,9 @@ ProcessVariable *readPvId;
 int initialReadConnection;
 int oldStat, oldSev;
 
-expStringClass controlPvExpStr, readPvExpStr;
+expStringClass controlPvExpStr, readPvExpStr, scaleMinExpStr,
+ scaleMaxExpStr, scalePrecExpStr, labIntExpStr, majorIntExpStr,
+ minorIntExpStr;
 
 int controlExists, readExists;
 
@@ -212,6 +215,7 @@ int labelType;
 int drawStaticFlag;
 int showScale;
 int useDisplayBg;
+int trackDelta;
 
 int labelIntervals, majorIntervals, minorIntervals;
 char literalLabel[39+1];

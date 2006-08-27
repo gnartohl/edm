@@ -93,9 +93,10 @@ int l;
 
   strncpy( baro->scaleFormat, baro->bufScaleFormat, 15 );
   baro->showScale = baro->bufShowScale;
-  baro->labelTicks = baro->bufLabelTicks;
-  baro->majorTicks = baro->bufMajorTicks;
-  baro->minorTicks = baro->bufMinorTicks;
+
+  baro->labelTicksExpStr.setRaw( baro->bufLabelTicks );
+  baro->majorTicksExpStr.setRaw( baro->bufMajorTicks );
+  baro->minorTicksExpStr.setRaw( baro->bufMinorTicks );
 
   baro->x = baro->bufX;
   baro->sboxX = baro->bufX;
@@ -112,41 +113,23 @@ int l;
   baro->horizontal = baro->bufHorizontal;
 
   baro->limitsFromDb = baro->bufLimitsFromDb;
-  baro->efPrecision = baro->bufEfPrecision;
-  baro->efReadMin = baro->bufEfReadMin;
-  baro->efReadMax = baro->bufEfReadMax;
-  baro->efBarOriginX = baro->bufEfBarOriginX;
 
-  if ( baro->efPrecision.isNull() )
-    baro->precision = 0;
-  else
-    baro->precision = baro->efPrecision.value();
+  baro->precisionExpStr.setRaw( baro->bufPrecision );
 
-  if ( strcmp( baro->scaleFormat, "GFloat" ) == 0 ) {
-    sprintf( fmt, "%%.%-dg", baro->precision );
-  }
-  else if ( strcmp( baro->scaleFormat, "Exponential" ) == 0 ) {
-    sprintf( fmt, "%%.%-de", baro->precision );
-  }
-  else {
-    sprintf( fmt, "%%.%-df", baro->precision );
-  }
+  baro->readMinExpStr.setRaw( baro->bufReadMin );
+  baro->readMaxExpStr.setRaw( baro->bufReadMax );
 
-  if ( ( baro->efReadMin.isNull() ) && ( baro->efReadMax.isNull() ) ) {
-    baro->readMin = 0;
-    baro->readMax = 10;
-  }
-  else{
-    baro->readMin = baro->efReadMin.value();
-    baro->readMax = baro->efReadMax.value();
-  }
+  baro->barOriginXExpStr.setRaw( baro->bufBarOriginX );
 
-  if ( baro->efBarOriginX.isNull() ) {
-    baro->barOriginX = baro->readMin;
-  }
-  else {
-    baro->barOriginX = baro->efBarOriginX.value();
-  }
+  // set edit-mode display values
+  baro->precision = 0;
+  baro->readMin = 0;
+  baro->readMax = 10;
+  baro->labelTicks = 10;
+  baro->majorTicks = 2;
+  baro->minorTicks = 2;
+  baro->barOriginX = 0;
+  strcpy( fmt, "%.0-dg" );
 
   sprintf( str, fmt, baro->readMin );
   if ( baro->fs ) {
@@ -384,18 +367,15 @@ activeBarClass::activeBarClass ( void ) {
   labelType = BARC_K_LITERAL;
   border = 1;
   showScale = 1;
-  labelTicks = 10;
-  majorTicks = 20;
-  minorTicks = 2;
-  barOriginX = 0.0;
-  readMin = 0;
-  readMax = 10;
+  labelTicksExpStr.setRaw( "" );
+  majorTicksExpStr.setRaw( "" );
+  minorTicksExpStr.setRaw( "" );
+  barOriginXExpStr.setRaw( "" );
+  readMinExpStr.setRaw( "" );
+  readMaxExpStr.setRaw( "" );
 
   limitsFromDb = 1;
-  efReadMin.setNull(1);
-  efReadMax.setNull(1);
-  efPrecision.setNull(1);
-  efBarOriginX.setNull(1);
+  precisionExpStr.setRaw( "" );
   strcpy( scaleFormat, "FFloat" );
   precision = 0;
   unconnectedTimer = 0;
@@ -436,10 +416,10 @@ activeGraphicClass *baro = (activeGraphicClass *) this;
   labelType = source->labelType;
   border = source->border;
   showScale = source->showScale;
-  labelTicks = source->labelTicks;
-  majorTicks = source->majorTicks;
-  minorTicks = source->minorTicks;
-  barOriginX = source->barOriginX;
+  labelTicksExpStr.copy( source->labelTicksExpStr );
+  majorTicksExpStr.copy( source->majorTicksExpStr );
+  minorTicksExpStr.copy( source->minorTicksExpStr );
+  barOriginXExpStr.copy( source->barOriginXExpStr );
   barStrLen = source->barStrLen;
 
   minW = 50;
@@ -449,14 +429,11 @@ activeGraphicClass *baro = (activeGraphicClass *) this;
   activeMode = 0;
 
   limitsFromDb = source->limitsFromDb;
-  readMin = source->readMin;
-  readMax = source->readMax;
-  precision = source->precision;
+  readMinExpStr.copy( source->readMinExpStr );
+  readMaxExpStr.copy( source->readMaxExpStr );
 
-  efReadMin = source->efReadMin;
-  efReadMax = source->efReadMax;
-  efPrecision = source->efPrecision;
-  efBarOriginX = source->efBarOriginX;
+  precisionExpStr.copy( source->precisionExpStr );
+
   strncpy( scaleFormat, source->scaleFormat, 15 );
 
   strcpy( label, source->label );
@@ -523,8 +500,6 @@ int activeBarClass::createInteractive (
   actWin->fi->loadFontTag( fontTag );
   fs = actWin->fi->getXFontStruct( fontTag );
 
-  efPrecision.setValue( 0 );
-
   updateDimensions();
 
   this->draw();
@@ -590,16 +565,16 @@ static int orienTypeEnum[2] = {
   tag.loadW( "labelType", 2, labelTypeEnumStr, labelTypeEnum,
    &labelType, &lit );
   tag.loadBoolW( "showScale", &showScale, &zero );
-  tag.loadW( "origin", &efBarOriginX );
+  tag.loadW( "origin", &barOriginXExpStr, emptyStr );
   tag.loadW( "font", fontTag );
-  tag.loadW( "labelTicks", &labelTicks, &zero );
-  tag.loadW( "majorTicks", &majorTicks, &zero );
-  tag.loadW( "minorTicks", &minorTicks, &zero );
+  tag.loadW( "labelTicks", &labelTicksExpStr, emptyStr );
+  tag.loadW( "majorTicks", &majorTicksExpStr, emptyStr );
+  tag.loadW( "minorTicks", &minorTicksExpStr, emptyStr );
   tag.loadBoolW( "border", &border, &zero );
   tag.loadBoolW( "limitsFromDb", &limitsFromDb, &zero );
-  tag.loadW( "precision", &efPrecision );
-  tag.loadW( "min", &efReadMin );
-  tag.loadW( "max", &efReadMax );
+  tag.loadW( "precision", &precisionExpStr, emptyStr );
+  tag.loadW( "min", &readMinExpStr, emptyStr );
+  tag.loadW( "max", &readMaxExpStr, emptyStr );
   tag.loadW( "scaleFormat", scaleFormat );
   tag.loadW( "orientation", 2, orienTypeEnumStr, orienTypeEnum,
    &horizontal, &horz );
@@ -609,83 +584,6 @@ static int orienTypeEnum[2] = {
   stat = tag.writeTags( f );
 
   return stat;
-
-}
-
-int activeBarClass::old_save (
-  FILE *f )
-{
-
-int stat, index;
-
-  fprintf( f, "%-d %-d %-d\n", BARC_MAJOR_VERSION, BARC_MINOR_VERSION,
-   BARC_RELEASE );
-
-  fprintf( f, "%-d\n", x );
-  fprintf( f, "%-d\n", y );
-  fprintf( f, "%-d\n", w );
-  fprintf( f, "%-d\n", h );
-
-  index = barColor.pixelIndex();
-  actWin->ci->writeColorIndex( f, index );
-  //fprintf( f, "%-d\n", index );
-
-  fprintf( f, "%-d\n", barColorMode );
-
-  index = fgColor.pixelIndex();
-  actWin->ci->writeColorIndex( f, index );
-  //fprintf( f, "%-d\n", index );
-
-  fprintf( f, "%-d\n", fgColorMode );
-
-  index = bgColor.pixelIndex();
-  actWin->ci->writeColorIndex( f, index );
-  //fprintf( f, "%-d\n", index );
-
-  if ( controlPvExpStr.getRaw() )
-    writeStringToFile( f, controlPvExpStr.getRaw() );
-  else
-    writeStringToFile( f, "" );
-
-  if ( readPvExpStr.getRaw() )
-    writeStringToFile( f, readPvExpStr.getRaw() );
-  else
-    writeStringToFile( f, "" );
-
-  writeStringToFile( f, label );
-
-  fprintf( f, "%-d\n", labelType );
-
-  fprintf( f, "%-d\n", showScale );
-
-  stat = efBarOriginX.write( f );
-//    fprintf( f, "%-g\n", barOriginX );
-
-  writeStringToFile( f, fontTag );
-
-  fprintf( f, "%-d\n", labelTicks );
-  fprintf( f, "%-d\n", majorTicks );
-  fprintf( f, "%-d\n", minorTicks );
-
-  fprintf( f, "%-d\n", border );
-
-  fprintf( f, "%-d\n", limitsFromDb );
-
-  stat = efPrecision.write( f );
-  stat = efReadMin.write( f );
-  stat = efReadMax.write( f );
-
-  writeStringToFile( f, scaleFormat );
-
-  if ( nullPvExpStr.getRaw() )
-    writeStringToFile( f, nullPvExpStr.getRaw() );
-  else
-    writeStringToFile( f, "" );
-
-  // version 2.1
-  fprintf( f, "%-d\n", horizontal );
-
-  return 1;
 
 }
 
@@ -725,6 +623,9 @@ static int orienTypeEnum[2] = {
 int l;
 char fmt[31+1], str[31+1];
 
+efInt efI;
+efDouble efD;
+
   this->actWin = _actWin;
 
   tag.init();
@@ -747,16 +648,89 @@ char fmt[31+1], str[31+1];
   tag.loadR( "labelType", 2, labelTypeEnumStr, labelTypeEnum,
    &labelType, &lit );
   tag.loadR( "showScale", &showScale, &zero );
-  tag.loadR( "origin", &efBarOriginX );
+  tag.loadR( "origin", &barOriginXExpStr, emptyStr );
   tag.loadR( "font", 63, fontTag );
-  tag.loadR( "labelTicks", &labelTicks, &zero );
-  tag.loadR( "majorTicks", &majorTicks, &zero );
-  tag.loadR( "minorTicks", &minorTicks, &zero );
+
+  if ( ( ( major == 4 ) && ( minor > 0 ) ) || ( major > 4 ) ) {
+
+    tag.loadR( "labelTicks", &labelTicksExpStr, emptyStr );
+    tag.loadR( "majorTicks", &majorTicksExpStr, emptyStr );
+    tag.loadR( "minorTicks", &minorTicksExpStr, emptyStr );
+
+  }
+  else {
+
+    tag.loadR( "labelTicks", &efI );
+    if ( efI.isNull() ) {
+      strcpy( str, "" );
+    }
+    else {
+      snprintf( str, 31, "%-d", efI.value() );
+    }
+    labelTicksExpStr.setRaw( str );
+
+    tag.loadR( "majorTicks", &efI );
+    if ( efI.isNull() ) {
+      strcpy( str, "" );
+    }
+    else {
+      snprintf( str, 31, "%-d", efI.value() );
+    }
+    majorTicksExpStr.setRaw( str );
+
+    tag.loadR( "minorTicks", &efI );
+    if ( efI.isNull() ) {
+      strcpy( str, "" );
+    }
+    else {
+      snprintf( str, 31, "%-d", efI.value() );
+    }
+    minorTicksExpStr.setRaw( str );
+
+  }
+
   tag.loadR( "border", &border, &zero );
   tag.loadR( "limitsFromDb", &limitsFromDb, &zero );
-  tag.loadR( "precision", &efPrecision );
-  tag.loadR( "min", &efReadMin );
-  tag.loadR( "max", &efReadMax );
+
+
+  if ( ( ( major == 4 ) && ( minor > 0 ) ) || ( major > 4 ) ) {
+
+    tag.loadR( "precision", &precisionExpStr, emptyStr );
+    tag.loadR( "min", &readMinExpStr, emptyStr );
+    tag.loadR( "max", &readMaxExpStr, emptyStr );
+
+  }
+  else {
+
+    tag.loadR( "precision", &efI );
+    if ( efI.isNull() ) {
+      strcpy( str, "" );
+    }
+    else {
+      snprintf( str, 31, "%-d", efI.value() );
+    }
+    precisionExpStr.setRaw( str );
+
+    tag.loadR( "min", &efD );
+    if ( efD.isNull() ) {
+      strcpy( str, "" );
+    }
+    else {
+      snprintf( str, 31, "%-g", efD.value() );
+    }
+    readMinExpStr.setRaw( str );
+
+    tag.loadR( "max", &efD );
+    if ( efD.isNull() ) {
+      strcpy( str, "" );
+    }
+    else {
+      snprintf( str, 31, "%-g", efD.value() );
+    }
+    readMaxExpStr.setRaw( str );
+
+  }
+
   tag.loadR( "scaleFormat", 15, scaleFormat );
   tag.loadR( "orientation", 2, orienTypeEnumStr, orienTypeEnum,
    &horizontal, &horz );
@@ -799,37 +773,14 @@ char fmt[31+1], str[31+1];
     barStrLen = XTextWidth( fs, "10", 2 );
   }
 
-  if ( limitsFromDb || efPrecision.isNull() )
-    precision = 0;
-  else
-    precision = efPrecision.value();
-
-  if ( ( limitsFromDb || efReadMin.isNull() ) &&
-       ( limitsFromDb || efReadMax.isNull() ) ) {
-    readMin = 0;
-    readMax = 10;
-  }
-  else{
-    readMin = efReadMin.value();
-    readMax = efReadMax.value();
-  }
-
-  if ( efBarOriginX.isNull() ) {
-    barOriginX = readMin;
-  }
-  else {
-    barOriginX = efBarOriginX.value();
-  }
-
-  if ( strcmp( scaleFormat, "GFloat" ) == 0 ) {
-    sprintf( fmt, "%%.%-dg", precision );
-  }
-  else if ( strcmp( scaleFormat, "Exponential" ) == 0 ) {
-    sprintf( fmt, "%%.%-de", precision );
-  }
-  else {
-    sprintf( fmt, "%%.%-df", precision );
-  }
+  // set edit-mode display values
+  readMin = 0;
+  readMax = 10;
+  labelTicks = 10;
+  majorTicks = 2;
+  minorTicks = 2;
+  barOriginX = 0;
+  strcpy( fmt, "%.0-dg" );
 
   sprintf( str, fmt, readMin );
   if ( fs ) {
@@ -857,11 +808,13 @@ int activeBarClass::old_createFromFile (
   activeWindowClass *_actWin )
 {
 
-int r, g, b, discard, l, stat, index;
+int r, g, b, discard, l, index;
 int major, minor, release;
 unsigned int pixel;
 char oneName[PV_Factory::MAX_PV_NAME+1], fmt[31+1], str[31+1];
 float fBarOriginX;
+efInt efI;
+efDouble efD;
 
   this->actWin = _actWin;
 
@@ -1004,14 +957,21 @@ float fBarOriginX;
 
   if ( ( major > 1 ) || ( minor > 4 ) ) {
 
-    stat = efBarOriginX.read( f ); actWin->incLine();
-    barOriginX = efBarOriginX.value();
+    efD.read( f ); actWin->incLine();
+    if ( !efD.isNull() ) {
+      snprintf( oneName, 15, "%-g", efD.value() );
+    }
+    else {
+      strcpy( oneName, "" );
+    }
+    barOriginXExpStr.setRaw( oneName );
 
   }
   else {
 
     fscanf( f, "%g\n", &fBarOriginX ); actWin->incLine();
-    barOriginX = (double) fBarOriginX;
+    snprintf( oneName, 15, "%-g", (double) fBarOriginX );
+    barOriginXExpStr.setRaw( oneName );
 
   }
 
@@ -1026,17 +986,32 @@ float fBarOriginX;
 
   if ( ( major > 1 ) || ( minor > 0 ) ) {
 
-    fscanf( f, "%d\n", &labelTicks ); actWin->incLine();
-    fscanf( f, "%d\n", &majorTicks ); actWin->incLine();
-    fscanf( f, "%d\n", &minorTicks ); actWin->incLine();
+    readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
+     actWin->incLine();
+    labelTicksExpStr.setRaw( oneName );
+
+    readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
+     actWin->incLine();
+    majorTicksExpStr.setRaw( oneName );
+
+    readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
+     actWin->incLine();
+    minorTicksExpStr.setRaw( oneName );
 
     // majorTicks now means majors per label
+
+    labelTicks = atol( labelTicksExpStr.getRaw() );
+
     if ( labelTicks ) {
       majorTicks /= labelTicks;
     }
     else {
       majorTicks = 0;
     }
+
+    snprintf( str, 31, "%-d", majorTicks );
+
+    majorTicksExpStr.setRaw( str );
 
     fscanf( f, "%d\n", &border ); actWin->incLine();
 
@@ -1051,36 +1026,45 @@ float fBarOriginX;
 
   if ( ( major > 1 ) || ( minor > 2 ) ) {
 
-    stat = efPrecision.read( f ); actWin->incLine();
+    efI.read( f ); actWin->incLine();
+    if ( !efI.isNull() ) {
+      snprintf( oneName, 15, "%-d", efI.value() );
+    }
+    else {
+      strcpy( oneName, "" );
+    }
+    precisionExpStr.setRaw( oneName );
 
-    efReadMin.read( f ); actWin->incLine();
+    efD.read( f ); actWin->incLine();
+    if ( !efD.isNull() ) {
+      snprintf( oneName, 15, "%-g", efD.value() );
+    }
+    else {
+      strcpy( oneName, "" );
+    }
+    readMinExpStr.setRaw( oneName );
 
-    efReadMax.read( f ); actWin->incLine();
+    efD.read( f ); actWin->incLine();
+    if ( !efD.isNull() ) {
+      snprintf( oneName, 15, "%-g", efD.value() );
+    }
+    else {
+      strcpy( oneName, "" );
+    }
+    readMaxExpStr.setRaw( oneName );
 
     readStringFromFile( oneName, 39+1, f ); actWin->incLine();
     strncpy( scaleFormat, oneName, 15 );
 
-    if ( limitsFromDb || efPrecision.isNull() )
-      precision = 0;
-    else
-      precision = efPrecision.value();
-
-    if ( ( limitsFromDb || efReadMin.isNull() ) &&
-         ( limitsFromDb || efReadMax.isNull() ) ) {
-      readMin = 0;
-      readMax = 10;
-    }
-    else{
-      readMin = efReadMin.value();
-      readMax = efReadMax.value();
-    }
-
   }
   else {
 
-    efPrecision.setValue( 0 );
+    
+    precisionExpStr.setRaw( "" );
     precision = 0;
+    readMinExpStr.setRaw( "" );
     readMin = 0;
+    readMaxExpStr.setRaw( "" );
     readMax = 10;
 
   }
@@ -1114,15 +1098,14 @@ float fBarOriginX;
 
   }
 
-  if ( strcmp( scaleFormat, "GFloat" ) == 0 ) {
-    sprintf( fmt, "%%.%-dg", precision );
-  }
-  else if ( strcmp( scaleFormat, "Exponential" ) == 0 ) {
-    sprintf( fmt, "%%.%-de", precision );
-  }
-  else {
-    sprintf( fmt, "%%.%-df", precision );
-  }
+  // set edit-mode display values
+  readMin = 0;
+  readMax = 10;
+  labelTicks = 10;
+  majorTicks = 2;
+  minorTicks = 2;
+  barOriginX = 0;
+  strcpy( fmt, "%.0-dg" );
 
   sprintf( str, fmt, readMin );
   if ( fs ) {
@@ -1201,16 +1184,65 @@ char title[32], *ptr;
   bufBorder = border;
 
   bufShowScale = showScale;
-  bufLabelTicks = labelTicks;
-  bufMajorTicks = majorTicks;
-  bufMinorTicks = minorTicks;
 
-  bufEfBarOriginX = efBarOriginX;
+  if ( labelTicksExpStr.getRaw() ) {
+    strncpy( bufLabelTicks, labelTicksExpStr.getRaw(), 15 );
+    bufLabelTicks[15] = 0;
+  }
+  else {
+    strcpy( bufLabelTicks, "" );
+  }
+
+  if ( majorTicksExpStr.getRaw() ) {
+    strncpy( bufMajorTicks, majorTicksExpStr.getRaw(), 15 );
+    bufMajorTicks[15] = 0;
+  }
+  else {
+    strcpy( bufMajorTicks, "" );
+  }
+
+  if ( minorTicksExpStr.getRaw() ) {
+    strncpy( bufMinorTicks, minorTicksExpStr.getRaw(), 15 );
+    bufMinorTicks[15] = 0;
+  }
+  else {
+    strcpy( bufMinorTicks, "" );
+  }
+
+  if ( barOriginXExpStr.getRaw() ) {
+    strncpy( bufBarOriginX, barOriginXExpStr.getRaw(), 15 );
+    bufBarOriginX[15] = 0;
+  }
+  else {
+    strcpy( bufBarOriginX, "" );
+  }
 
   bufLimitsFromDb = limitsFromDb;
-  bufEfPrecision = efPrecision;
-  bufEfReadMin = efReadMin;
-  bufEfReadMax = efReadMax;
+
+  if ( precisionExpStr.getRaw() ) {
+    strncpy( bufPrecision, precisionExpStr.getRaw(), 15 );
+    bufPrecision[15] = 0;
+  }
+  else {
+    strcpy( bufPrecision, "" );
+  }
+
+  if ( readMinExpStr.getRaw() ) {
+    strncpy( bufReadMin, readMinExpStr.getRaw(), 15 );
+    bufReadMin[15] = 0;
+  }
+  else {
+    strcpy( bufReadMin, "" );
+  }
+
+  if ( readMaxExpStr.getRaw() ) {
+    strncpy( bufReadMax, readMaxExpStr.getRaw(), 15 );
+    bufReadMax[15] = 0;
+  }
+  else {
+    strcpy( bufReadMax, "" );
+  }
+
   strncpy( bufScaleFormat, scaleFormat, 15 );
   bufHorizontal = horizontal;
 
@@ -1232,17 +1264,17 @@ char title[32], *ptr;
   ef.addToggle( activeBarClass_str18, &bufBorder );
   ef.addToggle( activeBarClass_str19, &bufShowScale );
 
-  ef.addTextField( activeBarClass_str20, 35, &bufLabelTicks );
-  ef.addTextField( activeBarClass_str21, 35, &bufMajorTicks );
-  ef.addTextField( activeBarClass_str22, 35, &bufMinorTicks );
+  ef.addTextField( activeBarClass_str20, 35, bufLabelTicks, 15 );
+  ef.addTextField( activeBarClass_str21, 35, bufMajorTicks, 15 );
+  ef.addTextField( activeBarClass_str22, 35, bufMinorTicks, 15 );
 
   ef.addToggle( activeBarClass_str23, &bufLimitsFromDb );
   ef.addOption( activeBarClass_str24, activeBarClass_str25, bufScaleFormat, 15 );
-  ef.addTextField( activeBarClass_str26, 35, &bufEfPrecision );
-  ef.addTextField( activeBarClass_str27, 35, &bufEfReadMin );
-  ef.addTextField( activeBarClass_str28, 35, &bufEfReadMax );
+  ef.addTextField( activeBarClass_str26, 35, bufPrecision, 15 );
+  ef.addTextField( activeBarClass_str27, 35, bufReadMin, 15 );
+  ef.addTextField( activeBarClass_str28, 35, bufReadMax, 15 );
 
-  ef.addTextField( activeBarClass_str29, 35, &bufEfBarOriginX );
+  ef.addTextField( activeBarClass_str29, 35, bufBarOriginX, 15 );
 
   ef.addOption( activeBarClass_str44, activeBarClass_str45,
    &bufHorizontal );
@@ -2162,6 +2194,7 @@ int activeBarClass::activate (
 {
 
 int opStat;
+char fmt[31+1];
 
   switch ( pass ) {
 
@@ -2227,6 +2260,76 @@ int opStat;
 
     if ( !opComplete ) {
 
+      if ( blank( labelTicksExpStr.getExpanded() ) ) {
+        labelTicks = 2;
+      }
+      else {
+        labelTicks = atol( labelTicksExpStr.getExpanded() );
+      }
+
+      if ( blank( majorTicksExpStr.getExpanded() ) ) {
+        majorTicks = 0;
+      }
+      else {
+        majorTicks = atol( majorTicksExpStr.getExpanded() );
+      }
+
+      if ( blank( minorTicksExpStr.getExpanded() ) ) {
+        minorTicks = 0;
+      }
+      else {
+        minorTicks = atol( minorTicksExpStr.getExpanded() );
+      }
+
+      if ( blank( barOriginXExpStr.getExpanded() ) ) {
+        barOriginX = 0;
+      }
+      else {
+        barOriginX = atol( barOriginXExpStr.getExpanded() );
+      }
+
+      if ( blank( precisionExpStr.getExpanded() ) ) {
+        precision = 0;
+      }
+      else {
+        precision = atol( precisionExpStr.getExpanded() );
+      }
+
+      if ( blank( readMinExpStr.getExpanded() ) ) {
+        readMin = 0;
+      }
+      else {
+        readMin = atof( readMinExpStr.getExpanded() );
+      }
+
+      if ( blank( readMaxExpStr.getExpanded() ) ) {
+        readMax = 0;
+      }
+      else {
+        readMax = atof( readMaxExpStr.getExpanded() );
+      }
+
+      if ( readMax == readMin ) {
+        readMax = readMin + 1;
+      }
+
+      if ( blank( barOriginXExpStr.getExpanded() ) ) {
+        barOriginX = 0;
+      }
+      else {
+        barOriginX = atof( barOriginXExpStr.getExpanded() );
+      }
+
+      if ( strcmp( scaleFormat, "GFloat" ) == 0 ) {
+        sprintf( fmt, "%%.%-dg", precision );
+      }
+      else if ( strcmp( scaleFormat, "Exponential" ) == 0 ) {
+        sprintf( fmt, "%%.%-de", precision );
+      }
+      else {
+        sprintf( fmt, "%%.%-df", precision );
+      }
+
       initEnable();
 
       if ( !unconnectedTimer ) {
@@ -2285,6 +2388,9 @@ int activeBarClass::deactivate (
   int pass
 ) {
 
+char fmt[31+1], str[31+1];
+int l;
+
   active = 0;
   activeMode = 0;
 
@@ -2316,6 +2422,27 @@ int activeBarClass::deactivate (
     }
 
   }
+
+  // set edit-mode display values
+  readMin = 0;
+  readMax = 10;
+  labelTicks = 10;
+  majorTicks = 2;
+  minorTicks = 2;
+  barOriginX = 0;
+  strcpy( fmt, "%.0-dg" );
+
+  sprintf( str, fmt, readMin );
+  if ( fs ) {
+    barStrLen = XTextWidth( fs, str, strlen(str) );
+  }
+  sprintf( str, fmt, readMax );
+  if ( fs ) {
+    l = XTextWidth( fs, str, strlen(str) );
+    if ( l > barStrLen ) barStrLen = l;
+  }
+
+  updateDimensions();
 
   return 1;
 
@@ -2552,6 +2679,13 @@ int stat;
 
   stat = readPvExpStr.expand1st( numMacros, macros, expansions );
   stat = nullPvExpStr.expand1st( numMacros, macros, expansions );
+  stat = labelTicksExpStr.expand1st( numMacros, macros, expansions );
+  stat = majorTicksExpStr.expand1st( numMacros, macros, expansions );
+  stat = minorTicksExpStr.expand1st( numMacros, macros, expansions );
+  stat = readMinExpStr.expand1st( numMacros, macros, expansions );
+  stat = readMaxExpStr.expand1st( numMacros, macros, expansions );
+  stat = precisionExpStr.expand1st( numMacros, macros, expansions );
+  stat = barOriginXExpStr.expand1st( numMacros, macros, expansions );
 
   return stat;
 
@@ -2567,6 +2701,13 @@ int stat;
 
   stat = readPvExpStr.expand2nd( numMacros, macros, expansions );
   stat = nullPvExpStr.expand2nd( numMacros, macros, expansions );
+  stat = labelTicksExpStr.expand2nd( numMacros, macros, expansions );
+  stat = majorTicksExpStr.expand2nd( numMacros, macros, expansions );
+  stat = minorTicksExpStr.expand2nd( numMacros, macros, expansions );
+  stat = readMinExpStr.expand2nd( numMacros, macros, expansions );
+  stat = readMaxExpStr.expand2nd( numMacros, macros, expansions );
+  stat = precisionExpStr.expand2nd( numMacros, macros, expansions );
+  stat = barOriginXExpStr.expand2nd( numMacros, macros, expansions );
 
   return stat;
 
@@ -2580,6 +2721,27 @@ int result;
   if ( result ) return 1;
 
   result = nullPvExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
+
+  result = labelTicksExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
+
+  result = majorTicksExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
+
+  result = minorTicksExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
+
+  result = readMinExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
+
+  result = readMaxExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
+
+  result = precisionExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
+
+  result = barOriginXExpStr.containsPrimaryMacros();
   if ( result ) return 1;
 
   return 0;
@@ -3259,15 +3421,15 @@ double v;
 
     v = curReadV = readPvId->get_double();
 
-    if ( limitsFromDb || efReadMin.isNull() ) {
+    if ( limitsFromDb || blank( readMinExpStr.getExpanded() ) ) {
       readMin = readPvId->get_lower_disp_limit();
     }
 
-    if ( limitsFromDb || efReadMax.isNull() ) {
+    if ( limitsFromDb || blank( readMaxExpStr.getExpanded() ) ) {
       readMax = readPvId->get_upper_disp_limit();
     }
 
-    if ( limitsFromDb || efPrecision.isNull() ) {
+    if ( limitsFromDb || blank( precisionExpStr.getExpanded() ) ) {
       precision = readPvId->get_precision();
     }
 
@@ -3279,7 +3441,7 @@ double v;
 
   if ( ni ) {
 
-    if ( efBarOriginX.isNull() ) {
+    if ( blank( barOriginXExpStr.getExpanded() ) ) {
       barOriginX = readMin;
     }
 

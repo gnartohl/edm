@@ -81,16 +81,28 @@ activeMeterClass *metero = (activeMeterClass *) client;
   metero->meterAngle = metero->eBuf->bufMeterAngle;
 
   metero->scaleLimitsFromDb = metero->eBuf->bufScaleLimitsFromDb;
-  metero->scaleMin   = metero->eBuf->bufScaleMin;
-  metero->scaleMax   = metero->eBuf->bufScaleMax;
+
+  //metero->scaleMin   = metero->eBuf->bufScaleMin;
+  metero->scaleMinExpStr.setRaw( metero->eBuf->bufScaleMin );
+
+  //metero->scaleMax   = metero->eBuf->bufScaleMax;
+  metero->scaleMaxExpStr.setRaw( metero->eBuf->bufScaleMax );
+
   strncpy( metero->scaleFormat, metero->eBuf->bufScaleFormat, 15 );
-  metero->scalePrecision = metero->eBuf->bufScalePrecision;
+
+  //metero->scalePrecision = metero->eBuf->bufScalePrecision;
+  metero->scalePrecExpStr.setRaw( metero->eBuf->bufScalePrecision );
 
   metero->needleType = metero->eBuf->bufNeedleType;
 
-  metero->labelIntervals = metero->eBuf->bufLabelIntervals;
-  metero->majorIntervals = metero->eBuf->bufMajorIntervals;
-  metero->minorIntervals = metero->eBuf->bufMinorIntervals;
+  //metero->labelIntervals = metero->eBuf->bufLabelIntervals;
+  metero->labIntExpStr.setRaw( metero->eBuf->bufLabelIntervals );
+
+  //metero->majorIntervals = metero->eBuf->bufMajorIntervals;
+  metero->majorIntExpStr.setRaw( metero->eBuf->bufMajorIntervals );
+
+  //metero->minorIntervals = metero->eBuf->bufMinorIntervals;
+  metero->minorIntExpStr.setRaw( metero->eBuf->bufMinorIntervals );
 
   metero->bgColor.setColorIndex( metero->eBuf->bufBgColor, metero->actWin->ci );
 
@@ -117,6 +129,8 @@ activeMeterClass *metero = (activeMeterClass *) client;
 
   metero->actWin->fi->loadFontTag( metero->labelFontTag );
   metero->labelFs = metero->actWin->fi->getXFontStruct( metero->labelFontTag );
+
+  metero->trackDelta = metero->eBuf->bufTrackDelta;
 
   metero->showScale = metero->eBuf->bufShowScale;
 
@@ -232,6 +246,8 @@ static void meter_readUpdate (
 activeMeterClass *metero = (activeMeterClass *) userarg;
 int st, sev;
 
+  metero->curReadV = pv->get_double() - metero->baseV;
+
   if ( metero->active ) {
 
     st = pv->get_status();
@@ -245,7 +261,7 @@ int st, sev;
       metero->bufInvalidate();
     }
 
-    metero->curReadV = pv->get_double();
+    metero->curReadV = pv->get_double() - metero->baseV;
     metero->needErase = 1;
     metero->needDraw = 1;
     metero->actWin->appCtx->proc->lock();
@@ -286,6 +302,7 @@ activeMeterClass::activeMeterClass ( void ) {
   labelType = METERC_K_PV_LABEL;
   showScale = 1;
   useDisplayBg = 1;
+  trackDelta = 0;
 
   scaleLimitsFromDb = 1;
 
@@ -295,6 +312,8 @@ activeMeterClass::activeMeterClass ( void ) {
   eBuf = NULL;
 
   unconnectedTimer = 0;
+
+  baseV = 0;
 
 }
 
@@ -336,18 +355,27 @@ activeGraphicClass *metero = (activeGraphicClass *) this;
   scaleLimitsFromDb = source->scaleLimitsFromDb;
   needleType = source->needleType;
   scalePrecision = source->scalePrecision;
+  scalePrecExpStr.copy( source->scalePrecExpStr );
   strncpy( scaleFormat, source->scaleFormat, 15 );
   meterAngle = source->meterAngle;
   scaleMin = source->scaleMin;
+  scaleMinExpStr.copy( source->scaleMinExpStr );
   scaleMax = source->scaleMax;
+  scaleMaxExpStr.copy( source->scaleMaxExpStr );
   labelType = source->labelType;
+  trackDelta = source->trackDelta;
   showScale = source->showScale;
   useDisplayBg = source->useDisplayBg;
   drawStaticFlag = source->drawStaticFlag;
 
   labelIntervals = source->labelIntervals;
+  labIntExpStr.copy( source->labIntExpStr );
+
   majorIntervals = source->majorIntervals;
+  majorIntExpStr.copy( source->majorIntExpStr );
+
   minorIntervals = source->minorIntervals;
+  minorIntExpStr.copy( source->minorIntExpStr );
 
   readMin = scaleMin;
   readMax = scaleMax;
@@ -359,6 +387,8 @@ activeGraphicClass *metero = (activeGraphicClass *) this;
   unconnectedTimer = 0;
 
   eBuf = NULL;
+
+  baseV = 0;
 
   updateDimensions();
 
@@ -430,7 +460,6 @@ tagClass tag;
 
 int zero = 0;
 double a180 = 180;
-double dzero = 0;
 char *emptyStr = "";
 
 int lit = 2;
@@ -472,18 +501,19 @@ static int labelTypeEnum[3] = {
   tag.loadW( "label", literalLabel, emptyStr );
   tag.loadW( "labelType", 3, labelTypeEnumStr, labelTypeEnum,
    &labelType, &lit );
+  tag.loadBoolW( "trackDelta", &trackDelta, &zero );
   tag.loadBoolW( "showScale", &showScale, &zero );
   tag.loadW( "scaleFormat", scaleFormat );
-  tag.loadW( "scalePrecision", &scalePrecision, &zero );
+  tag.loadW( "scalePrecision", &scalePrecExpStr );
   tag.loadBoolW( "scaleLimitsFromDb", &scaleLimitsFromDb, &zero );
   tag.loadBoolW( "useDisplayBg", &useDisplayBg, &zero );
-  tag.loadW( "labelIntervals", &labelIntervals, &zero );
-  tag.loadW( "majorIntervals", &majorIntervals, &zero );
-  tag.loadW( "minorIntervals", &minorIntervals, &zero );
+  tag.loadW( "labelIntervals", &labIntExpStr, emptyStr );
+  tag.loadW( "majorIntervals", &majorIntExpStr, emptyStr );
+  tag.loadW( "minorIntervals", &minorIntExpStr, emptyStr );
   tag.loadBoolW( "complexNeedle", &needleType, &zero );
   tag.loadBoolW( "3d", &shadowMode, &zero );
-  tag.loadW( "scaleMin", &scaleMin, &dzero );
-  tag.loadW( "scaleMax", &scaleMax, &dzero );
+  tag.loadW( "scaleMin", &scaleMinExpStr, emptyStr );
+  tag.loadW( "scaleMax", &scaleMaxExpStr, emptyStr );
   tag.loadW( "labelFontTag", labelFontTag );
   tag.loadW( "scaleFontTag", scaleFontTag );
   tag.loadW( "meterAngle", &meterAngle, &a180 );
@@ -561,7 +591,12 @@ int index;
 
   fprintf( f, "%-d\n", showScale );
   writeStringToFile( f, scaleFormat );
-  fprintf( f, "%-d\n", scalePrecision);
+
+  if ( scalePrecExpStr.getRaw() )
+    writeStringToFile( f, scalePrecExpStr.getRaw() );
+  else
+    writeStringToFile( f, "" );
+
   fprintf( f, "%-d\n", scaleLimitsFromDb );
   fprintf( f, "%-d\n", useDisplayBg );
   fprintf( f, "%-d\n", majorIntervals );
@@ -569,9 +604,15 @@ int index;
   fprintf( f, "%-d\n", needleType );
   fprintf( f, "%-d\n", shadowMode );
 
-  fprintf( f, "%-g\n",scaleMin  );
-  fprintf( f, "%-g\n",scaleMax );
+  if ( scaleMinExpStr.getRaw() )
+    writeStringToFile( f, scaleMinExpStr.getRaw() );
+  else
+    writeStringToFile( f, "" );
 
+  if ( scaleMaxExpStr.getRaw() )
+    writeStringToFile( f, scaleMaxExpStr.getRaw() );
+  else
+    writeStringToFile( f, "" );
 
   writeStringToFile( f, labelFontTag );
 
@@ -595,7 +636,6 @@ tagClass tag;
 
 int zero = 0;
 double a180 = 180;
-double dzero = 0;
 char *emptyStr = "";
 
 int lit = 2;
@@ -635,18 +675,19 @@ static int labelTypeEnum[3] = {
   tag.loadR( "label", 39, literalLabel, emptyStr );
   tag.loadR( "labelType", 3, labelTypeEnumStr, labelTypeEnum,
    &labelType, &lit );
+  tag.loadR( "trackDelta", &trackDelta, &zero );
   tag.loadR( "showScale", &showScale, &zero );
   tag.loadR( "scaleFormat", 15, scaleFormat );
-  tag.loadR( "scalePrecision", &scalePrecision, &zero );
+  tag.loadR( "scalePrecision", &scalePrecExpStr );
   tag.loadR( "scaleLimitsFromDb", &scaleLimitsFromDb, &zero );
   tag.loadR( "useDisplayBg", &useDisplayBg, &zero );
-  tag.loadR( "labelIntervals", &labelIntervals, &zero );
-  tag.loadR( "majorIntervals", &majorIntervals, &zero );
-  tag.loadR( "minorIntervals", &minorIntervals, &zero );
+  tag.loadR( "labelIntervals", &labIntExpStr, emptyStr );
+  tag.loadR( "majorIntervals", &majorIntExpStr, emptyStr );
+  tag.loadR( "minorIntervals", &minorIntExpStr, emptyStr );
   tag.loadR( "complexNeedle", &needleType, &zero );
   tag.loadR( "3d", &shadowMode, &zero );
-  tag.loadR( "scaleMin", &scaleMin, &dzero );
-  tag.loadR( "scaleMax", &scaleMax, &dzero );
+  tag.loadR( "scaleMin", &scaleMinExpStr, emptyStr );
+  tag.loadR( "scaleMax", &scaleMaxExpStr, emptyStr );
   tag.loadR( "labelFontTag", 63, labelFontTag );
   tag.loadR( "scaleFontTag", 63, scaleFontTag );
   tag.loadR( "meterAngle", &meterAngle, &a180 );
@@ -666,6 +707,34 @@ static int labelTypeEnum[3] = {
   if ( major < 4 ) {
     postIncompatable();
     return 0;
+  }
+
+  if ( ( major == 4 ) && ( minor < 1 ) ) {
+
+    if ( blank(scaleMinExpStr.getRaw()) ) {
+      scaleMinExpStr.setRaw( "0" );
+    }
+
+    if ( blank(scaleMaxExpStr.getRaw()) ) {
+      scaleMaxExpStr.setRaw( "0" );
+    }
+
+    if ( blank(scalePrecExpStr.getRaw()) ) {
+      scalePrecExpStr.setRaw( "0" );
+    }
+
+    if ( blank(labIntExpStr.getRaw()) ) {
+      labIntExpStr.setRaw( "0" );
+    }
+
+    if ( blank(majorIntExpStr.getRaw()) ) {
+      majorIntExpStr.setRaw( "0" );
+    }
+
+    if ( blank(minorIntExpStr.getRaw()) ) {
+      minorIntExpStr.setRaw( "0" );
+    }
+
   }
 
   this->initSelectBox(); // call after getting x,y,w,h
@@ -715,7 +784,7 @@ int activeMeterClass::old_createFromFile (
 int r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[PV_Factory::MAX_PV_NAME+1];
+char oneName[PV_Factory::MAX_PV_NAME+1], str[15+1];
 
   this->actWin = _actWin;
 
@@ -917,7 +986,9 @@ char oneName[PV_Factory::MAX_PV_NAME+1];
     strcpy( scaleFormat, "Exponential" );
   }
 
-  fscanf( f, "%d\n", &scalePrecision ); actWin->incLine();
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
+   actWin->incLine();
+  scalePrecExpStr.setRaw( oneName );
 
   fscanf( f, "%d\n", &scaleLimitsFromDb ); actWin->incLine();
 
@@ -936,11 +1007,25 @@ char oneName[PV_Factory::MAX_PV_NAME+1];
   majorIntervals = minorIntervals;
   minorIntervals = 1;
 
+  snprintf( str, 15, "%-d", labelIntervals );
+  labIntExpStr.setRaw( str );
+
+  snprintf( str, 15, "%-d", majorIntervals );
+  majorIntExpStr.setRaw( str );
+
+  snprintf( str, 15, "%-d", minorIntervals );
+  minorIntExpStr.setRaw( str );
+
   fscanf( f, "%d\n", &needleType ); actWin->incLine();
   fscanf( f, "%d\n", &shadowMode ); actWin->incLine();
 
-  fscanf( f, "%lg\n", &scaleMin ); actWin->incLine();
-  fscanf( f, "%lg\n", &scaleMax ); actWin->incLine();
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
+   actWin->incLine();
+  scaleMinExpStr.setRaw( oneName );
+
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
+   actWin->incLine();
+  scaleMaxExpStr.setRaw( oneName );
 
   readStringFromFile( labelFontTag, 63+1, f ); actWin->incLine();
   actWin->fi->loadFontTag( labelFontTag );
@@ -988,9 +1073,26 @@ char title[32], *ptr;
   eBuf->bufMeterColorMode = meterColorMode;
   eBuf->bufScaleColorMode = scaleColorMode;
 
-  eBuf->bufLabelIntervals = labelIntervals;
-  eBuf->bufMajorIntervals = majorIntervals;
-  eBuf->bufMinorIntervals = minorIntervals;
+  //eBuf->bufLabelIntervals = labelIntervals;
+  if ( labIntExpStr.getRaw() )
+    strncpy( eBuf->bufLabelIntervals, labIntExpStr.getRaw(),
+     15 );
+  else
+    strcpy( eBuf->bufLabelIntervals, "" );
+
+  //eBuf->bufMajorIntervals = majorIntervals;
+  if ( majorIntExpStr.getRaw() )
+    strncpy( eBuf->bufMajorIntervals, majorIntExpStr.getRaw(),
+     15 );
+  else
+    strcpy( eBuf->bufMajorIntervals, "" );
+
+  //eBuf->bufMinorIntervals = minorIntervals;
+  if ( minorIntExpStr.getRaw() )
+    strncpy( eBuf->bufMinorIntervals, minorIntExpStr.getRaw(),
+     15 );
+  else
+    strcpy( eBuf->bufMinorIntervals, "" );
 
   eBuf->bufFgColor = fgColor.pixelIndex();
   eBuf->bufFgColorMode = fgColorMode;
@@ -1023,9 +1125,29 @@ char title[32], *ptr;
   eBuf->bufScaleLimitsFromDb = scaleLimitsFromDb;
   eBuf->bufMeterAngle = meterAngle;
   eBuf->bufNeedleType = needleType;
-  eBuf->bufScalePrecision = scalePrecision;
-  eBuf->bufScaleMin = scaleMin;
-  eBuf->bufScaleMax = scaleMax;
+
+  //eBuf->bufScalePrecision = scalePrecision;
+  if ( scalePrecExpStr.getRaw() )
+    strncpy( eBuf->bufScalePrecision, scalePrecExpStr.getRaw(),
+     15 );
+  else
+    strcpy( eBuf->bufScalePrecision, "" );
+
+  //eBuf->bufScaleMin = scaleMin;
+  if ( scaleMinExpStr.getRaw() )
+    strncpy( eBuf->bufScaleMin, scaleMinExpStr.getRaw(),
+     15 );
+  else
+    strcpy( eBuf->bufScaleMin, "" );
+
+  //eBuf->bufScaleMax = scaleMax;
+  if ( scaleMaxExpStr.getRaw() )
+    strncpy( eBuf->bufScaleMax, scaleMaxExpStr.getRaw(),
+     15 );
+  else
+    strcpy( eBuf->bufScaleMax, "" );
+
+  eBuf->bufTrackDelta = trackDelta;
   eBuf->bufShowScale = showScale;
   eBuf->bufUseDisplayBg = useDisplayBg;
   strncpy( eBuf->bufScaleFormat, scaleFormat, 15 );
@@ -1048,18 +1170,22 @@ char title[32], *ptr;
   ef.addTextField( activeMeterClass_str12, 35, eBuf->bufLiteralLabel, 39 );
   ef.addColorButton( activeMeterClass_str14, actWin->ci,&eBuf->labelCb,&eBuf->bufLabelColor);
   ef.addTextField(activeMeterClass_str15, 35, &eBuf->bufMeterAngle);
+  ef.addToggle( activeMeterClass_str45, &eBuf->bufTrackDelta );
   ef.addToggle( activeMeterClass_str16, &eBuf->bufShowScale );
   ef.addOption( activeMeterClass_str17, activeMeterClass_str43,
    eBuf->bufScaleFormat, 15 );
-  ef.addTextField( activeMeterClass_str19, 35, &eBuf->bufScalePrecision);
+  //ef.addTextField( activeMeterClass_str19, 35, &eBuf->bufScalePrecision );
+  ef.addTextField(activeMeterClass_str19, 35, eBuf->bufScalePrecision, 15 );
   ef.addToggle( activeMeterClass_str20, &eBuf->bufScaleLimitsFromDb );
-  ef.addTextField(activeMeterClass_str21, 35, &eBuf->bufScaleMin);
-  ef.addTextField(activeMeterClass_str22, 35, &eBuf->bufScaleMax);
+  //ef.addTextField(activeMeterClass_str21, 35, &eBuf->bufScaleMin);
+  ef.addTextField(activeMeterClass_str21, 35, eBuf->bufScaleMin, 15 );
+  //ef.addTextField(activeMeterClass_str22, 35, &eBuf->bufScaleMax );
+  ef.addTextField(activeMeterClass_str22, 35, eBuf->bufScaleMax, 15 );
   ef.addColorButton( activeMeterClass_str24, actWin->ci,&eBuf->scaleCb,&eBuf->bufScaleColor);
   ef.addToggle( activeMeterClass_str25, &eBuf->bufScaleColorMode );
-  ef.addTextField(activeMeterClass_str44, 35, &eBuf->bufLabelIntervals);
-  ef.addTextField(activeMeterClass_str26, 35, &eBuf->bufMajorIntervals);
-  ef.addTextField(activeMeterClass_str27, 35, &eBuf->bufMinorIntervals);
+  ef.addTextField(activeMeterClass_str44, 35, eBuf->bufLabelIntervals, 15 );
+  ef.addTextField(activeMeterClass_str26, 35, eBuf->bufMajorIntervals, 15 );
+  ef.addTextField(activeMeterClass_str27, 35, eBuf->bufMinorIntervals, 15 );
   ef.addToggle(activeMeterClass_str28, &eBuf->bufNeedleType);  
   ef.addColorButton( activeMeterClass_str29, actWin->ci, &eBuf->fgCb, &eBuf->bufFgColor );
   ef.addToggle( activeMeterClass_str30, &eBuf->bufFgColorMode );
@@ -2027,6 +2153,8 @@ int opStat;
     opComplete = 0;
     oldMeterNeedleXEnd = 0;
     oldMeterNeedleYEnd = 0;
+    meterNeedleXend = 1;
+    meterNeedleYend = 1;
     oldMeterNeedleXOrigin = 0;
     oldMeterNeedleYOrigin = 0;
     readPvId = NULL;
@@ -2064,6 +2192,48 @@ int opStat;
   case 2:
 
     if ( !opComplete ) {
+
+      if ( scaleMinExpStr.getExpanded() ) {
+        scaleMin = atof( scaleMinExpStr.getExpanded() );
+      }
+      else {
+        scaleMin = 0;
+      }
+
+      if ( scaleMaxExpStr.getExpanded() ) {
+        scaleMax = atof( scaleMaxExpStr.getExpanded() );
+      }
+      else {
+        scaleMax = 0;
+      }
+
+      if ( scalePrecExpStr.getExpanded() ) {
+        scalePrecision = atol( scalePrecExpStr.getExpanded() );
+      }
+      else {
+        scalePrecision = 0;
+      }
+
+      if ( labIntExpStr.getExpanded() ) {
+        labelIntervals = atol( labIntExpStr.getExpanded() );
+      }
+      else {
+        labelIntervals = 0;
+      }
+
+      if ( majorIntExpStr.getExpanded() ) {
+        majorIntervals = atol( majorIntExpStr.getExpanded() );
+      }
+      else {
+        majorIntervals = 0;
+      }
+
+      if ( minorIntExpStr.getExpanded() ) {
+        minorIntervals = atol( minorIntExpStr.getExpanded() );
+      }
+      else {
+        minorIntervals = 0;
+      }
 
       initEnable();
 
@@ -2231,11 +2401,30 @@ int activeMeterClass::expand1st (
   char *expansions[] )
 {
 
-int stat;
+int stat, retStat = 1;
 
   stat = readPvExpStr.expand1st( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
 
-  return stat;
+  stat = scaleMinExpStr.expand1st( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
+
+  stat = scaleMaxExpStr.expand1st( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
+
+  stat = scalePrecExpStr.expand1st( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
+
+  stat = labIntExpStr.expand1st( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
+
+  stat = majorIntExpStr.expand1st( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
+
+  stat = minorIntExpStr.expand1st( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
+
+  return retStat;
 
 }
 
@@ -2245,21 +2434,63 @@ int activeMeterClass::expand2nd (
   char *expansions[] )
 {
 
-int stat;
+int stat, retStat = 1;
 
   stat = readPvExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
 
-  return stat;
+  stat = scaleMinExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
+
+  stat = scaleMaxExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
+
+  stat = scalePrecExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
+
+  stat = labIntExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
+
+  stat = majorIntExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
+
+
+  stat = minorIntExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
+
+
+  return retStat;
 
 }
 
 int activeMeterClass::containsMacros ( void ) {
 
-int stat;
+int result;
 
-  stat = readPvExpStr.containsPrimaryMacros();
+ return 1;
 
-  return stat;
+  result = readPvExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
+
+  result = scaleMinExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
+
+  result = scaleMaxExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
+
+  result = scalePrecExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
+
+  result = labIntExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
+
+  result = majorIntExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
+
+  result = minorIntExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
+
+  return 0;
 
 }
 
@@ -2341,7 +2572,7 @@ int nc, ni, nr, ne, nd;
 
     readPvConnected = 1;
 
-    v = curReadV = readPvId->get_double();
+    v = readV = curReadV = readPvId->get_double() - baseV;
     readMin = readPvId->get_lower_disp_limit();
     readMax = readPvId->get_upper_disp_limit();
 
@@ -2356,6 +2587,13 @@ int nc, ni, nr, ne, nd;
       initialReadConnection = 0;
 
       readPvId->add_value_callback( meter_readUpdate, this );
+
+      if ( trackDelta ) {
+        baseV = readPvId->get_double();
+      }
+      else {
+	baseV = 0;
+      }
 
     }
 
@@ -2375,7 +2613,7 @@ int nc, ni, nr, ne, nd;
     active = 1;
     activeInitFlag = 1;
 
-    readV = v;
+    v = readV = curReadV = readPvId->get_double() - baseV;
     bufInvalidate();
     eraseActive();
     drawActive();
@@ -2385,6 +2623,9 @@ int nc, ni, nr, ne, nd;
   if ( nr ) {
     bufInvalidate();
     eraseActive();
+    if ( readPvId && readPvId->is_valid() ) {
+      v = readV = curReadV = readPvId->get_double() - baseV;
+    }
     drawActive();
   }
 
@@ -2393,7 +2634,9 @@ int nc, ni, nr, ne, nd;
   }
 
   if ( nd ) {
-    readV = v;
+    if ( readPvId && readPvId->is_valid() ) {
+      v = readV = curReadV = readPvId->get_double() - baseV;
+    }
     drawActive();
   }
 

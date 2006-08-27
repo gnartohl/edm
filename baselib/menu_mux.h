@@ -25,7 +25,7 @@
 #include "pv_factory.h"
 #include "cvtFast.h"
 
-#define MMUX_MAX_ENTRIES 4
+#define MMUX_MAX_ENTRIES 8
 #define MMUX_MAX_STATES 16
 #define MMUX_MAX_STRING_SIZE 32
 
@@ -33,7 +33,7 @@
 #define MMUXC_K_COLORMODE_ALARM 1
 
 #define MMUXC_MAJOR_VERSION 4
-#define MMUXC_MINOR_VERSION 0
+#define MMUXC_MINOR_VERSION 1
 #define MMUXC_RELEASE 0
 
 #define MMUXC_K_LITERAL 1

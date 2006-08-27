@@ -398,6 +398,8 @@ int i;
 
   shcmdo->swapButtons = shcmdo->buf->bufSwapButtons;
 
+  shcmdo->includeHelpIcon = shcmdo->buf->bufIncludeHelpIcon;
+
   shcmdo->updateDimensions();
 
 }
@@ -488,6 +490,7 @@ shellCmdClass::shellCmdClass ( void ) {
   lock = 0;
   oneShot = 0;
   swapButtons = 0;
+  includeHelpIcon = 0;
   numCmds = 0;
   cmdIndex = 0;
   buf = NULL;
@@ -560,6 +563,8 @@ int i;
   oneShot = source->oneShot;
 
   swapButtons = source->swapButtons;
+
+  includeHelpIcon = source->includeHelpIcon;
 
   numCmds = source->numCmds;
   cmdIndex = 0;
@@ -654,6 +659,7 @@ char *emptyStr = "";
   tag.loadW( "numCmds", &numCmds );
   tag.loadW( "commandLabel", label, numCmds, emptyStr );
   tag.loadW( "command", shellCommand, numCmds, emptyStr );
+  tag.loadBoolW( "includeHelpIcon", &includeHelpIcon, &zero );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -791,6 +797,7 @@ char *emptyStr = "";
   tag.loadR( "numCmds", &numCmds, &zero );
   tag.loadR( "commandLabel", maxCmds, label, &n, emptyStr );
   tag.loadR( "command", maxCmds, shellCommand, &n, emptyStr );
+  tag.loadR( "includeHelpIcon", &includeHelpIcon, &zero );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.readTags( f, "endObjectProperties" );
@@ -864,6 +871,7 @@ float val;
   this->initSelectBox(); // call after getting x,y,w,h
 
   swapButtons = 0;
+  includeHelpIcon = 0;
 
   if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 2 ) ) ) {
 
@@ -1050,6 +1058,7 @@ char *tk, *gotData, *context, buffer[255+1];
   bgColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
 
   swapButtons = 0;
+  includeHelpIcon = 0;
 
   // continue until tag is <eod>
 
@@ -1368,6 +1377,8 @@ char title[32], *ptr, *envPtr, saveLock;
 
   buf->bufSwapButtons = swapButtons;
 
+  buf->bufIncludeHelpIcon = includeHelpIcon;
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -1434,6 +1445,7 @@ char title[32], *ptr, *envPtr, saveLock;
   ef.addTextField( shellCmdClass_str18, 35, &buf->bufAutoExecInterval );
   ef.addToggle( shellCmdClass_str33, &buf->bufOneShot );
   ef.addToggle( shellCmdClass_str34, &buf->bufSwapButtons );
+  ef.addToggle( shellCmdClass_str35, &buf->bufIncludeHelpIcon );
 
   ef.addColorButton( shellCmdClass_str8, actWin->ci, &fgCb, &buf->bufFgColor );
   ef.addColorButton( shellCmdClass_str9, actWin->ci, &bgCb, &buf->bufBgColor );
@@ -2053,6 +2065,28 @@ void shellCmdClass::btnDown (
 
     *action = 0;
 
+  }
+
+}
+
+void shellCmdClass::pointerIn (
+  XMotionEvent *me,
+  int _x,
+  int _y,
+  int buttonState )
+{
+
+  if ( !enabled ) return;
+
+  activeGraphicClass::pointerIn( me, me->x, me->y, buttonState );
+
+  if ( includeHelpIcon ) {
+    actWin->cursor.set( XtWindow(actWin->executeWidget),
+     CURSOR_K_RUN_WITH_HELP );
+  }
+  else {
+    actWin->cursor.set( XtWindow(actWin->executeWidget),
+     CURSOR_K_RUN );
   }
 
 }

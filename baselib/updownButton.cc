@@ -2357,7 +2357,7 @@ void activeUpdownButtonClass::pointerIn (
     actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
   }
   else {
-    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_DEFAULT );
+    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_UPDOWN );
   }
 
   activeGraphicClass::pointerIn( _x, _y, buttonState );

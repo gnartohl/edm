@@ -39,5 +39,6 @@
 #define activeMeterClass_str38 (char *) "error creating pv\n"
 #define activeMeterClass_str43 (char *) "GFloat|FFloat|Exponential"
 #define activeMeterClass_str44 (char *) "Label Intervals"
+#define activeMeterClass_str45 (char *) "Track Delta"
 
 #endif

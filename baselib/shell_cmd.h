@@ -220,6 +220,7 @@ typedef struct bufTag {
   char bufRequiredHostName[63+1];
   int bufOneShot;
   int bufSwapButtons;
+  int bufIncludeHelpIcon;
 } bufType, *bufPtr;
 
 // static char * const nullHost = "";
@@ -257,7 +258,8 @@ int opComplete;
 
 double threadSecondsToDelay, autoExecInterval;
 XtIntervalId timer;
-int oneShot, timerActive, timerValue, multipleInstancesAllowed, swapButtons;
+int oneShot, timerActive, timerValue, multipleInstancesAllowed,
+ swapButtons, includeHelpIcon;
 THREAD_HANDLE thread;
 
 int pwFormX, pwFormY, pwFormW, pwFormH, pwFormMaxH;
@@ -365,6 +367,12 @@ void btnDown (
   int buttonState,
   int buttonNumber,
   int *action );
+
+void pointerIn (
+  XMotionEvent *me,
+  int _x,
+  int _y,
+  int buttonState );
 
 int getButtonActionRequest (
   int *up,
