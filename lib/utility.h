@@ -66,6 +66,10 @@ int executeCmd (
   const char *cmdString
 );
 
+void executeCommandInThread (
+  char *_cmd
+);
+
 char *expandEnvVars (
   char *inStr,
   int maxOut,

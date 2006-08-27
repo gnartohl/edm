@@ -1,890 +1,773 @@
-3 1 0
-775
-120
-500
-805
-helvetica-medium-r-18.0
-0
-helvetica-medium-r-12.0
-0
-rgb
-0,0,0
-rgb
-50971,52011,50971
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-0,0,48891
-rgb
-46810,47850,46810
-rgb
-61374,61374,61374
-rgb
-27046,27046,27046
-rgb
-55132,56172,55132
-Bar
-0
-0
-10
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-1 2 0
-18
-100
-264
-430
-$(help)helpActiveBarGif
-0
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-24
-25
-39
-27
-rgb
-0,0,0
-0
-0
-rgb
-61374,61374,61374
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Bar
-helvetica-medium-r-24.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-240
-75
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Border: Yes
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-257
-107
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Show Scale: Yes
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-274
-139
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Label Type: PV Name
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-109
-75
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Border: Yes
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-126
-107
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Show Scale: Yes
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-143
-117
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Label Type: Literal
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-135
-70
-55
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Fg Color
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-37
-80
-93
-36
-2
-130 80
-37 116
-rgb
-0,0,0
-0
-0
-rgb
-46810,47850,46810
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-36
-80
-92
-82
-2
-128 80
-36 162
-rgb
-0,0,0
-0
-0
-rgb
-46810,47850,46810
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-221
-70
-55
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Bg Color
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-149
-85
-69
-31
-2
-218 85
-149 116
-rgb
-0,0,0
-0
-0
-rgb
-46810,47850,46810
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-309
-70
-60
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Bar Color
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-171
-82
-131
-56
-2
-302 82
-171 138
-rgb
-0,0,0
-0
-0
-rgb
-46810,47850,46810
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-483
-68
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Border: No
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-499
-100
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Show Scale: No
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-534
-158
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-No Label string specified
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-154
-197
-43
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Border
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-116
-183
-34
-19
-2
-150 202
-116 183
-rgb
-0,0,0
-0
-0
-rgb
-46810,47850,46810
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-516
-117
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Label Type: Literal
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-29
-600
-139
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Scale Format Options
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-62
-622
-331
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-GFloat - precision gives number of significant digits
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-62
-640
-323
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-FFloat - precision gives number of decimal places
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-62
-658
-359
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Exponential - precision gives number of decimal places,
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-29
-711
-437
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-If Scale Info From DB is checked, then scale precision, min, and max
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-29
-727
-308
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-are taken from HOPR & LOPR fields in database.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-160
-53
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Origin: 0
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-291
-53
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Origin: 1
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-551
-53
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Origin: 0
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-366
-75
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Border: Yes
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-383
-107
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Show Scale: Yes
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-400
-117
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Label Type: Literal
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-417
-53
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Origin: 0
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-296
-435
-191
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Readback & Null PV specified
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-145
-676
-258
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-number is displayed in scientific notation
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 392
+y 99
+w 508
+h 841
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 51400 51400 51400
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 49344
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+title "Bar"
+endScreenProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 18
+y 100
+w 264
+h 430
+file "$(help)helpActiveBarGif"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 24
+y 25
+w 39
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 60652 60652 60652
+value {
+  "Bar"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 240
+w 75
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Border: Yes"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 257
+w 107
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Show Scale: Yes"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 274
+w 139
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Label Type: PV Name"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 109
+w 75
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Border: Yes"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 126
+w 107
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Show Scale: Yes"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 143
+w 117
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Label Type: Literal"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 135
+y 70
+w 55
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Fg Color"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 37
+y 80
+w 93
+h 36
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+numPoints 2
+xPoints {
+  0 130
+  1 37
+}
+yPoints {
+  0 80
+  1 116
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 36
+y 80
+w 92
+h 82
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+numPoints 2
+xPoints {
+  0 128
+  1 36
+}
+yPoints {
+  0 80
+  1 162
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 221
+y 70
+w 55
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Bg Color"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 149
+y 85
+w 69
+h 31
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+numPoints 2
+xPoints {
+  0 218
+  1 149
+}
+yPoints {
+  0 85
+  1 116
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 309
+y 70
+w 60
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Bar Color"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 171
+y 82
+w 131
+h 56
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+numPoints 2
+xPoints {
+  0 302
+  1 171
+}
+yPoints {
+  0 82
+  1 138
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 483
+w 68
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Border: No"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 499
+w 100
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Show Scale: No"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 534
+w 158
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "No Label string specified"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 154
+y 197
+w 43
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Border"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 116
+y 183
+w 34
+h 19
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+numPoints 2
+xPoints {
+  0 150
+  1 116
+}
+yPoints {
+  0 202
+  1 183
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 516
+w 117
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Label Type: Literal"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 29
+y 600
+w 139
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Scale Format Options"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 62
+y 622
+w 331
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "GFloat - precision gives number of significant digits"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 62
+y 640
+w 323
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "FFloat - precision gives number of decimal places"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 62
+y 658
+w 359
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Exponential - precision gives number of decimal places,"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 29
+y 711
+w 437
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "If Scale Info From DB is checked, then scale precision, min, and max"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 29
+y 727
+w 308
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "are taken from HOPR & LOPR fields in database."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 160
+w 53
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Origin: 0"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 291
+w 53
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Origin: 1"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 551
+w 53
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Origin: 0"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 366
+w 75
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Border: Yes"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 383
+w 107
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Show Scale: Yes"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 400
+w 117
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Label Type: Literal"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 417
+w 53
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Origin: 0"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 296
+y 435
+w 191
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Readback & Null PV specified"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 145
+y 676
+w 258
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "number is displayed in scientific notation"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 28
+y 763
+w 364
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Readback PV, Label Tick Intervals, Majors per Label,"
+  "Minors per Major, Scale Precision, Min Scale Value,"
+  "Max Scale Value, and Origin may include macro symbols"
+}
+autoSize
+endObjectProperties
+

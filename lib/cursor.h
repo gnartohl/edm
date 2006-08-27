@@ -26,6 +26,12 @@
 #define CURSOR_K_TINYCROSSHAIR 3
 #define CURSOR_K_WAIT 4
 #define CURSOR_K_NO 5
+#define CURSOR_K_WILL_SET 6
+#define CURSOR_K_WILL_OPEN 7
+#define CURSOR_K_WILL_OPEN_WITH_HELP 8
+#define CURSOR_K_RUN 9
+#define CURSOR_K_RUN_WITH_HELP 10
+#define CURSOR_K_UPDOWN 11
 
 class cursorClass {
 
@@ -46,7 +52,26 @@ XColor waitShapeColor, waitMaskColor;
 Pixmap noShape, noMask;
 XColor noShapeColor, noMaskColor;
 
-Cursor curCursor, crossHair, tinyCrossHair, wait, no;
+Pixmap willSetShape, willSetMask;
+XColor willSetShapeColor, willSetMaskColor;
+
+Pixmap willOpenShape, willOpenMask;
+XColor willOpenShapeColor, willOpenMaskColor;
+
+Pixmap willOpenWithHelpShape, willOpenWithHelpMask;
+XColor willOpenWithHelpShapeColor, willOpenWithHelpMaskColor;
+
+Pixmap runShape, runMask;
+XColor runShapeColor, runMaskColor;
+
+Pixmap runWithHelpShape, runWithHelpMask;
+XColor runWithHelpShapeColor, runWithHelpMaskColor;
+
+Pixmap upDownShape, upDownMask;
+XColor upDownShapeColor, upDownMaskColor;
+
+Cursor curCursor, crossHair, tinyCrossHair, wait, no, willSet,
+ willOpen, willOpenWithHelp, run, runWithHelp, upDown;
 
 public:
 

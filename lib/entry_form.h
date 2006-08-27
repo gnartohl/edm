@@ -260,6 +260,11 @@ public:
 
 char *charDest;
 int maxLen;
+char lastGoodNumeric[31+1];
+double *destPtrD;
+int *destPtrI;
+efDouble *destPtrEfD;
+efInt *destPtrEfI;
 
 textEntry ( void );
 

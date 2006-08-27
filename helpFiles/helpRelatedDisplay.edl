@@ -3,22 +3,22 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 92
-y 114
-w 1041
-h 725
+x 106
+y 118
+w 1045
+h 792
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 50886 51143 50886
+bgColor rgb 51400 51400 51400
 textColor rgb 0 0 0
 ctlFgColor1 rgb 0 0 0
 ctlFgColor2 rgb 0 0 65535
-ctlBgColor1 rgb 48573 47802 48573
-ctlBgColor2 rgb 54998 56283 54998
-topShadowColor rgb 61423 60395 61423
-botShadowColor rgb 23130 22873 23130
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
 title "Related Display"
 endScreenProperties
 
@@ -34,7 +34,7 @@ w 172
 h 27
 font "helvetica-medium-r-24.0"
 fgColor rgb 0 0 0
-bgColor rgb 61423 60395 61423
+bgColor rgb 60652 60652 60652
 value {
   "Related Display"
 }
@@ -52,9 +52,9 @@ y 64
 w 75
 h 39
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
-topShadowColor rgb 61423 60395 61423
-botShadowColor rgb 23130 22873 23130
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
 font "helvetica-bold-r-14.0"
 buttonLabel "Screen"
 numPvs 4
@@ -72,9 +72,9 @@ y 64
 w 75
 h 39
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
-topShadowColor rgb 61423 60395 61423
-botShadowColor rgb 23130 22873 23130
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
 font "helvetica-bold-r-14.0"
 buttonLabel "Menu"
 numPvs 4
@@ -106,7 +106,7 @@ w 289
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Symbols may be used in labels and filenames"
@@ -126,7 +126,7 @@ w 436
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "If the On Focus button is checked, and the button is associated with"
@@ -146,7 +146,7 @@ w 445
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "only one related display file, then the display pops up when the mouse"
@@ -166,7 +166,7 @@ w 336
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "cursor crosses into the area occupied by the button."
@@ -186,7 +186,7 @@ w 410
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "If the No Edit box is checked, then the related display pops up in"
@@ -206,7 +206,7 @@ w 442
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Pressing the Display File Params button brings up another dialog box"
@@ -226,7 +226,7 @@ w 389
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "containing 19 groups of display attribute entry fields. Up to 19"
@@ -246,7 +246,7 @@ w 413
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "related displays may be specified and configured here. Press the"
@@ -266,7 +266,7 @@ w 181
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "button below for an example."
@@ -286,7 +286,7 @@ w 221
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Button is still active when invisible."
@@ -306,7 +306,7 @@ w 124
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "execute-only mode."
@@ -326,7 +326,7 @@ w 402
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "If Button 3 Popup is checked, and the button is associated with"
@@ -346,7 +346,7 @@ w 315
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "button is pressed and pops down when released."
@@ -366,7 +366,7 @@ w 430
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "only one related display file, then the display pops up when the right"
@@ -380,20 +380,20 @@ beginObjectProperties
 major 4
 minor 0
 release 1
-x 498
+x 504
 y 26
 w 0
-h 676
+h 744
 lineColor rgb 0 0 0
-fillColor rgb 48573 47802 48573
+fillColor rgb 48059 48059 48059
 numPoints 2
 xPoints {
-  0 498
-  1 498
+  0 504
+  1 504
 }
 yPoints {
   0 26
-  1 702
+  1 770
 }
 endObjectProperties
 
@@ -403,13 +403,13 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 519
-y 27
+x 30
+y 655
 w 158
 h 16
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Display File Properties"
@@ -423,13 +423,13 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 541
-y 54
+x 52
+y 682
 w 113
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Label: Menu label"
@@ -448,9 +448,9 @@ y 596
 w 209
 h 30
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
-topShadowColor rgb 61423 60395 61423
-botShadowColor rgb 23130 22873 23130
+bgColor rgb 48059 48059 48059
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
 font "helvetica-medium-r-14.0"
 buttonLabel "Display File Params Example"
 numPvs 4
@@ -469,13 +469,13 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 541
-y 77
+x 52
+y 705
 w 187
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "File: Related display file name"
@@ -490,12 +490,12 @@ major 4
 minor 1
 release 0
 x 544
-y 99
+y 28
 w 446
 h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Macros: Comma separated list of symbols or a filename containing"
@@ -512,12 +512,12 @@ major 4
 minor 1
 release 0
 x 544
-y 367
+y 296
 w 400
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Mode=Append: Append the new symbols to those given in the"
@@ -532,12 +532,12 @@ major 4
 minor 1
 release 0
 x 544
-y 404
+y 333
 w 425
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Mode=Replace: Replace command line symbols with the new ones"
@@ -552,12 +552,12 @@ major 4
 minor 1
 release 0
 x 544
-y 427
+y 356
 w 442
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Propagate: All symbols defined for the related display propagate to its"
@@ -572,12 +572,12 @@ major 4
 minor 1
 release 0
 x 617
-y 443
+y 372
 w 54
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "children."
@@ -592,12 +592,12 @@ major 4
 minor 1
 release 0
 x 544
-y 603
+y 532
 w 426
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Close Current: Close current display when related display pops up."
@@ -612,12 +612,12 @@ major 4
 minor 1
 release 0
 x 544
-y 627
+y 556
 w 426
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Dups Allowed: Allow duplicate displays to be popped-up. A display"
@@ -632,12 +632,12 @@ major 4
 minor 1
 release 0
 x 640
-y 642
+y 571
 w 313
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "is identified by its name and by the list of symbols"
@@ -652,12 +652,12 @@ major 4
 minor 1
 release 0
 x 649
-y 384
+y 313
 w 88
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "command line"
@@ -672,12 +672,12 @@ major 4
 minor 1
 release 0
 x 640
-y 659
+y 588
 w 69
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "it contains."
@@ -692,12 +692,12 @@ major 4
 minor 1
 release 0
 x 544
-y 465
+y 394
 w 102
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Display Position"
@@ -712,12 +712,12 @@ major 4
 minor 1
 release 0
 x 625
-y 486
+y 415
 w 350
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Original: Use position saved when display was created"
@@ -732,12 +732,12 @@ major 4
 minor 1
 release 0
 x 633
-y 503
+y 432
 w 389
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Button: Position new display at related display button location"
@@ -752,12 +752,12 @@ major 4
 minor 1
 release 0
 x 576
-y 520
+y 449
 w 390
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Parent Window: Position new display using current positon of"
@@ -772,12 +772,12 @@ major 4
 minor 1
 release 0
 x 685
-y 537
+y 466
 w 90
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "parent display"
@@ -792,12 +792,12 @@ major 4
 minor 1
 release 0
 x 544
-y 562
+y 491
 w 445
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "X/Y Offset: Offset added to new display position when Display Position"
@@ -812,12 +812,12 @@ major 4
 minor 1
 release 0
 x 620
-y 580
+y 509
 w 398
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "(described above) is specified as \"Button\" or \"Parent Window\""
@@ -832,12 +832,12 @@ major 4
 minor 1
 release 0
 x 568
-y 189
+y 118
 w 417
 h 160
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "examples:"
@@ -861,12 +861,12 @@ major 4
 minor 1
 release 0
 x 543
-y 156
+y 85
 w 180
 h 16
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "(255 characters maximum)"
@@ -886,7 +886,7 @@ w 340
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "If Icon is checked, an icon is displayed on the button."
@@ -906,11 +906,77 @@ w 409
 h 32
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "If Swap L/R Buttons is checked, the functions of the left and right"
   "buttons are swapped."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 544
+y 617
+w 65
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Help Cmd:"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 617
+y 617
+w 397
+h 96
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Two forms are allowed."
+  ""
+  "1) item <n> (e.g. item 5) - designate nth entry as a help screen"
+  "    that pops up when the right mouse button is clicked"
+  ""
+  "2) command (e.g. firefox http://ics-web1.sns.ornl.gov)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 616
+y 727
+w 367
+h 42
+font "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Both forms inherit a special symbol, $(!label),"
+  "which translates to the button label contents"
 }
 autoSize
 endObjectProperties

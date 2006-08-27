@@ -1,404 +1,354 @@
-3 1 0
-194
-154
-1032
-718
-helvetica-medium-r-18.0
-0
-helvetica-medium-r-12.0
-0
-rgb
-0,0,0
-rgb
-51400,51400,51400
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-0,0,49344
-rgb
-48059,48059,48059
-rgb
-60652,60652,60652
-rgb
-26985,26985,26985
-rgb
-56026,56026,56026
-Menu Mux
-0
-0
-10
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-20
-30
-115
-27
-rgb
-0,0,0
-0
-0
-rgb
-60652,60652,60652
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Menu Mux
-helvetica-medium-r-24.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-20
-77
-463
-128
-rgb
-0,0,0
-0
-1
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-This is a multiplexor widget that can modify the contents of up to four\nsymbols with 16 different values at run-time.\n\nThe following example illustrates how this widget might be used.\n\nThe display window shown below contains a multiplexor that controls the\nsymbol "loc". We want loc to take on the values 1 or 2 which will\ncause the displayed PVs to alternate between ana1 and ana2.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-20
-221
-271
-131
-rgb
-0,0,0
-0
-0
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-28
-230
-75
-21
-rgb
-0,0,0
-0
-0
-rgb
-44718,44718,44718
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-ana$(loc)
-helvetica-medium-r-18.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-28
-284
-256
-59
-rgb
-0,0,0
-0
-1
-rgb
-44718,44718,44718
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-54
-305
-183
-16
-rgb
-0,0,0
-0
-1
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Slider - Ctl PV = ana$(loc)
-helvetica-bold-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-202
-230
-82
-46
-rgb
-0,0,0
-0
-1
-rgb
-44718,44718,44718
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-228
-245
-29
-16
-rgb
-0,0,0
-0
-1
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Mux
-helvetica-bold-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-20
-368
-407
-32
-rgb
-0,0,0
-0
-1
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-The next images show how the multiplexor affects the window at\nrun-time. In this example, ana1 = 50 and ana2 = 75.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activePngClass
-1 0 0
-20
-414
-277
-137
-$(help)helpMenuMuxPng1
-0
-0
-0
-<<<E~O~D>>>
-activePngClass
-1 0 0
-262
-444
-30
-46
-$(help)helpMenuMuxPng2
-0
-0
-0
-<<<E~O~D>>>
-activePngClass
-1 0 0
-20
-564
-277
-137
-$(help)helpMenuMuxPng3
-0
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-310
-432
-188
-21
-rgb
-0,0,0
-0
-1
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Menu Mux Properties
-helvetica-bold-r-18.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-336
-473
-130
-208
-rgb
-0,0,0
-0
-1
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Number of Items = 2\n\nItem Number 1\n\n  Tag = One\n  Symbol = loc\n  Value = 1\n\nItem Number 2\n\n  Tag = Two\n  Symbol = loc\n  Value = 2
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 2 0
-510
-79
-1
-620
-2
-511 79
-510 699
-rgb
-0,0,0
-0
-0
-rgb
-48059,48059,48059
-0
-2
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-535
-77
-452
-80
-rgb
-0,0,0
-0
-1
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-The multiplexor may also control and be controlled by a PV. If so,\nthe PV Name field will give its name which may itself contain symbols.\nThese symbols will be resolved only from command line parameters or\nfrom parameters passed in from a parent window. A multiplexor can not\naffect its own symbols nor those from another multiplexor.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-535
-173
-430
-32
-rgb
-0,0,0
-0
-1
-rgb
-48059,48059,48059
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-If PV Name is blank, Initial State may contain the initial symbol state\n(starting with 0).
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 130
+y 163
+w 1032
+h 718
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 51400 51400 51400
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 49344
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+title "Menu Mux"
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 20
+y 30
+w 115
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 60652 60652 60652
+value {
+  "Menu Mux"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 20
+y 77
+w 463
+h 128
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "This is a multiplexor widget that can modify the contents of up to eight"
+  "symbols with 16 different values at run-time."
+  ""
+  "The following example illustrates how this widget might be used."
+  ""
+  "The display window shown below contains a multiplexor that controls the"
+  "symbol \"loc\". We want loc to take on the values 1 or 2 which will"
+  "cause the displayed PVs to alternate between ana1 and ana2."
+}
+autoSize
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 20
+y 221
+w 271
+h 131
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 28
+y 230
+w 75
+h 21
+font "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 44718 44718 44718
+value {
+  "ana$(loc)"
+}
+autoSize
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 28
+y 284
+w 256
+h 59
+lineColor rgb 0 0 0
+fill
+fillColor rgb 44718 44718 44718
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 54
+y 305
+w 179
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Slider - Ctl PV = ana$(loc)"
+}
+autoSize
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 202
+y 230
+w 82
+h 46
+lineColor rgb 0 0 0
+fill
+fillColor rgb 44718 44718 44718
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 228
+y 245
+w 29
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Mux"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 20
+y 368
+w 407
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "The next images show how the multiplexor affects the window at"
+  "run-time. In this example, ana1 = 50 and ana2 = 75."
+}
+autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 20
+y 414
+w 277
+h 137
+file "$(help)helpMenuMuxPng1"
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 262
+y 444
+w 30
+h 46
+file "$(help)helpMenuMuxPng2"
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 20
+y 564
+w 277
+h 137
+file "$(help)helpMenuMuxPng3"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 310
+y 432
+w 188
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Menu Mux Properties"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 336
+y 473
+w 130
+h 208
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Number of Items = 2"
+  ""
+  "Item Number 1"
+  ""
+  "  Tag = One"
+  "  Symbol = loc"
+  "  Value = 1"
+  ""
+  "Item Number 2"
+  ""
+  "  Tag = Two"
+  "  Symbol = loc"
+  "  Value = 2"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 510
+y 79
+w 1
+h 620
+lineColor rgb 0 0 0
+fillColor rgb 48059 48059 48059
+lineWidth 2
+numPoints 2
+xPoints {
+  0 511
+  1 510
+}
+yPoints {
+  0 79
+  1 699
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 535
+y 77
+w 452
+h 80
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "The multiplexor may also control and be controlled by a PV. If so,"
+  "the PV Name field will give its name which may itself contain symbols."
+  "These symbols will be resolved only from command line parameters or"
+  "from parameters passed in from a parent window. A multiplexor can not"
+  "affect its own symbols nor those from another multiplexor."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 535
+y 173
+w 430
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "If PV Name is blank, Initial State may contain the initial symbol state"
+  "(starting with 0)."
+}
+autoSize
+endObjectProperties
+

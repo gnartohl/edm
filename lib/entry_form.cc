@@ -1538,14 +1538,28 @@ void TextFieldToInt (
   XtPointer call )
 {
 
+class textEntry *teo;
 char *buf;
 int *dest;
+XmTextPosition pos;
 
-  dest = (int *) client;
+  teo = (class textEntry *) client;
+  dest = teo->destPtrI;
 
   buf = XmTextGetString( w );
-  //*dest = atol( buf );
-  *dest = strtol( buf, NULL, 0 );
+
+  if ( blank(buf) || isLegalInteger( buf ) ) {
+    *dest = strtol( buf, NULL, 0 );
+    strncpy( teo->lastGoodNumeric, buf, 31 );
+    teo->lastGoodNumeric[31] = 0;
+  }
+  else {
+    pos = XmTextGetCursorPosition( w );
+    XmTextSetString( w, teo->lastGoodNumeric );
+    if ( pos > 0 ) pos -= 1;
+    XmTextSetCursorPosition( w, pos );
+  }
+
   XtFree( buf );
 
 }
@@ -1556,21 +1570,38 @@ void TextFieldToEfInt (
   XtPointer call )
 {
 
-char *buf, *tk;
+class textEntry *teo;
+char *buf, *tk, *ctx;
 efInt *dest;
 int i;
+XmTextPosition pos;
 
-  dest = (efInt *) client;
+  teo = (class textEntry *) client;
+  dest = teo->destPtrEfI;
 
   buf = XmTextGetString( w );
-  //i = atol( buf );
-  i = strtol( buf, NULL, 0 );
-  dest->setValue( i );
-  tk = strtok( buf, " \t\n" );
-  if ( tk )
-    dest->setNull( 0 );
-  else
-    dest->setNull( 1 );
+
+  if ( blank(buf) || isLegalInteger( buf ) ) {
+    strncpy( teo->lastGoodNumeric, buf, 31 );
+    teo->lastGoodNumeric[31] = 0;
+    i = strtol( buf, NULL, 0 );
+    dest->setValue( i );
+    ctx = NULL;
+    tk = strtok_r( buf, " \t\n", &ctx );
+    if ( tk ) {
+      dest->setNull( 0 );
+    }
+    else {
+      dest->setNull( 1 );
+    }
+  }
+  else {
+    pos = XmTextGetCursorPosition( w );
+    XmTextSetString( w, teo->lastGoodNumeric );
+    if ( pos > 0 ) pos -= 1;
+    XmTextSetCursorPosition( w, pos );
+  }
+
   XtFree( buf );
 
 }
@@ -1581,13 +1612,28 @@ void TextFieldToDouble (
   XtPointer call )
 {
 
+class textEntry *teo;
 char *buf;
 double *dest;
+XmTextPosition pos;
 
-  dest = (double *) client;
+  teo = (class textEntry *) client;
+  dest = teo->destPtrD;
 
   buf = XmTextGetString( w );
-  *dest = atof( buf );
+
+  if ( blank(buf) || isLegalFloat( buf ) ) {
+    *dest = atof( buf );
+    strncpy( teo->lastGoodNumeric, buf, 31 );
+    teo->lastGoodNumeric[31] = 0;
+  }
+  else {
+    pos = XmTextGetCursorPosition( w );
+    XmTextSetString( w, teo->lastGoodNumeric );
+    if ( pos > 0 ) pos -= 1;
+    XmTextSetCursorPosition( w, pos );
+  }
+
   XtFree( buf );
 
 }
@@ -1598,20 +1644,38 @@ void TextFieldToEfDouble (
   XtPointer call )
 {
 
-char *buf, *tk;
+class textEntry *teo;
+char *buf, *tk, *ctx;
 efDouble *dest;
 double d;
+XmTextPosition pos;
 
-  dest = (efDouble *) client;
+  teo = (class textEntry *) client;
+  dest = teo->destPtrEfD;
 
   buf = XmTextGetString( w );
-  d = atof( buf );
-  dest->setValue( d );
-  tk = strtok( buf, " \t\n" );
-  if ( tk )
-    dest->setNull( 0 );
-  else
-    dest->setNull( 1 );
+
+  if ( blank(buf) || isLegalFloat( buf ) ) {
+    strncpy( teo->lastGoodNumeric, buf, 31 );
+    teo->lastGoodNumeric[31] = 0;
+    d = atof( buf );
+    dest->setValue( d );
+    ctx = NULL;
+    tk = strtok_r( buf, " \t\n", &ctx );
+    if ( tk ) {
+      dest->setNull( 0 );
+    }
+    else {
+      dest->setNull( 1 );
+    }
+  }
+  else {
+    pos = XmTextGetCursorPosition( w );
+    XmTextSetString( w, teo->lastGoodNumeric );
+    if ( pos > 0 ) pos -= 1;
+    XmTextSetCursorPosition( w, pos );
+  }
+
   XtFree( buf );
 
 }
@@ -1645,12 +1709,14 @@ void TextFieldToIntArray (
   XtPointer call )
 {
 
+class textEntry *teo;
 efArrayCallbackDscPtr dsc;
 char *buf;
 int *destArray;
 int i, value;
 
-  dsc = (efArrayCallbackDscPtr) client;
+  teo = (class textEntry *) client;
+  dsc = &(teo->arrayDsc);
 
   destArray = (int *) dsc->destPtr;
   i = *(dsc->indexPtr);
@@ -1672,12 +1738,14 @@ void TextFieldToEfIntArray (
   XtPointer call )
 {
 
+class textEntry *teo;
 efArrayCallbackDscPtr dsc;
-char *buf, *tk;
+char *buf, *tk, *ctx;
 efInt *destArray;
 int i, value;
 
-  dsc = (efArrayCallbackDscPtr) client;
+  teo = (class textEntry *) client;
+  dsc = &(teo->arrayDsc);
 
   destArray = (efInt *) dsc->destPtr;
   i = *(dsc->indexPtr);
@@ -1685,7 +1753,8 @@ int i, value;
   buf = XmTextGetString( w );
   //value = atol( buf );
   value = strtol( buf, NULL, 0 );
-  tk = strtok( buf, " \t\n" );
+  ctx = NULL;
+  tk = strtok_r( buf, " \t\n", &ctx );
   if ( tk ) {
     destArray[i].setNull( 0 );
     destArray[i].setValue( value );
@@ -1703,13 +1772,15 @@ void TextFieldToDoubleArray (
   XtPointer call )
 {
 
+class textEntry *teo;
 efArrayCallbackDscPtr dsc;
 char *buf;
 double *destArray;
 int i;
 double value;
 
-  dsc = (efArrayCallbackDscPtr) client;
+  teo = (class textEntry *) client;
+  dsc = &(teo->arrayDsc);
 
   destArray = (double *) dsc->destPtr;
   i = *(dsc->indexPtr);
@@ -1730,20 +1801,23 @@ void TextFieldToEfDoubleArray (
   XtPointer call )
 {
 
+class textEntry *teo;
 efArrayCallbackDscPtr dsc;
-char *buf, *tk;
+char *buf, *tk, *ctx;
 efDouble *destArray;
 int i;
 double value;
 
-  dsc = (efArrayCallbackDscPtr) client;
+  teo = (class textEntry *) client;
+  dsc = &(teo->arrayDsc);
 
   destArray = (efDouble *) dsc->destPtr;
   i = *(dsc->indexPtr);
 
   buf = XmTextGetString( w );
   value = atof( buf );
-  tk = strtok( buf, " \t\n" );
+  ctx = NULL;
+  tk = strtok_r( buf, " \t\n", &ctx );
   if ( tk ) {
     destArray[i].setNull( 0 );
     destArray[i].setValue( value );
@@ -1773,6 +1847,10 @@ char buf[127+1];
   cur = new textEntry;
 
   // textField widget
+
+  cur->destPtrI = dest;
+  strncpy( cur->lastGoodNumeric, buf, 31 );
+  cur->lastGoodNumeric[31] = 0;
 
   if ( curTopParent  == topForm ) {
 
@@ -1892,7 +1970,7 @@ char buf[127+1];
   }
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextFieldToInt,
-   dest );
+   cur );
 
   itemTail->flink = cur;
   itemTail = cur;
@@ -1922,6 +2000,10 @@ char buf[127+1];
   cur = new textEntry;
 
   // textField widget
+
+  cur->destPtrEfI = dest;
+  strncpy( cur->lastGoodNumeric, buf, 31 );
+  cur->lastGoodNumeric[31] = 0;
 
   if ( curTopParent  == topForm ) {
 
@@ -2041,7 +2123,7 @@ char buf[127+1];
   }
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextFieldToEfInt,
-   dest );
+   cur );
 
   itemTail->flink = cur;
   itemTail = cur;
@@ -2071,6 +2153,10 @@ char buf[127+1];
 
   // textField widget
 
+  cur->destPtrD = dest;
+  strncpy( cur->lastGoodNumeric, buf, 31 );
+  cur->lastGoodNumeric[31] = 0;
+
   if ( curTopParent  == topForm ) {
 
   if ( firstItem ) {
@@ -2189,7 +2275,7 @@ char buf[127+1];
   }
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextFieldToDouble,
-   dest );
+   cur );
 
   itemTail->flink = cur;
   itemTail = cur;
@@ -2219,6 +2305,10 @@ char buf[127+1];
 
   // textField widget
 
+  cur->destPtrD = dest;
+  strncpy( cur->lastGoodNumeric, buf, 31 );
+  cur->lastGoodNumeric[31] = 0;
+
   if ( curTopParent  == topForm ) {
 
   if ( firstItem ) {
@@ -2337,7 +2427,7 @@ char buf[127+1];
   }
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextFieldToDouble,
-   dest );
+   cur );
 
   itemTail->flink = cur;
   itemTail = cur;
@@ -2365,6 +2455,10 @@ char buf[127+1];
     sprintf( buf, "%-g", dest->value() );
 
   cur = new textEntry;
+
+  cur->destPtrEfD = dest;
+  strncpy( cur->lastGoodNumeric, buf, 31 );
+  cur->lastGoodNumeric[31] = 0;
 
   // textField widget
 
@@ -2486,7 +2580,7 @@ char buf[127+1];
   }
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextFieldToEfDouble,
-   dest );
+   cur );
 
   itemTail->flink = cur;
   itemTail = cur;
@@ -3946,7 +4040,7 @@ int entryFormClass::addOption (
   int stringSize )
 {
 
-char *buf, *tk;
+char *buf, *tk, *ctx;
 optionEntry *cur;
 XmString str;
 Arg args[10];
@@ -3969,7 +4063,8 @@ widgetListPtr curpb;
   // create all pushbuttons for the option menu
 
   n = 0;
-  tk = strtok( buf, "|" );
+  ctx = NULL;
+  tk = strtok_r( buf, "|", &ctx );
   while ( tk ) {
 
     curpb = new widgetListType;
@@ -4001,7 +4096,7 @@ widgetListPtr curpb;
     cur->tail = curpb;
     cur->tail->flink = NULL;
 
-    tk = strtok( NULL, "|" );
+    tk = strtok_r( NULL, "|", &ctx );
 
   }
 
@@ -4139,7 +4234,7 @@ int entryFormClass::addOption (
   int *dest )
 {
 
-char *buf, *tk;
+char *buf, *tk, *ctx;
 optionEntry *cur;
 XmString str;
 Arg args[10];
@@ -4162,7 +4257,8 @@ widgetListPtr curpb;
   // create all pushbuttons for the option menu
 
   n = 0;
-  tk = strtok( buf, "|" );
+  ctx = NULL;
+  tk = strtok_r( buf, "|", &ctx );
   while ( tk ) {
 
     curpb = new widgetListType;
@@ -4194,7 +4290,7 @@ widgetListPtr curpb;
     cur->tail = curpb;
     cur->tail->flink = NULL;
 
-    tk = strtok( NULL, "|" );
+    tk = strtok_r( NULL, "|", &ctx );
 
     n++;
 
@@ -4336,7 +4432,7 @@ int entryFormClass::addOptionArray (
   entryListBase **obj )
 {
 
-char *buf, *tk;
+char *buf, *tk, *ctx;
 optionEntry *cur;
 XmString str;
 Arg args[10];
@@ -4360,7 +4456,8 @@ widgetListPtr curpb;
   // create all pushbuttons for the option menu
 
   n = 0;
-  tk = strtok( buf, "|" );
+  ctx = NULL;
+  tk = strtok_r( buf, "|", &ctx );
   while ( tk ) {
 
     curpb = new widgetListType;
@@ -4397,7 +4494,7 @@ widgetListPtr curpb;
     cur->tail = curpb;
     cur->tail->flink = NULL;
 
-    tk = strtok( NULL, "|" );
+    tk = strtok_r( NULL, "|", &ctx );
 
   }
 
@@ -4477,7 +4574,7 @@ int entryFormClass::addOptionArray (
   entryListBase **obj )
 {
 
-char *buf, *tk;
+char *buf, *tk, *ctx;
 optionEntry *cur;
 XmString str;
 Arg args[10];
@@ -4501,7 +4598,8 @@ widgetListPtr curpb;
   // create all pushbuttons for the option menu
 
   n = 0;
-  tk = strtok( buf, "|" );
+  ctx = NULL;
+  tk = strtok_r( buf, "|", &ctx );
   while ( tk ) {
 
     curpb = new widgetListType;
@@ -4538,7 +4636,7 @@ widgetListPtr curpb;
     cur->tail = curpb;
     cur->tail->flink = NULL;
 
-    tk = strtok( NULL, "|" );
+    tk = strtok_r( NULL, "|", &ctx );
 
     n++;
 
@@ -5285,7 +5383,6 @@ char buf[127+1];
 
   // textField widget
 
-
   if ( firstArrayItem ) {
 
     firstArrayItem = 0;
@@ -5328,7 +5425,8 @@ char buf[127+1];
   cur->arrayDsc.size = sizeof(int);
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextFieldToIntArray,
-   &(cur->arrayDsc) );
+   cur );
+   //&(cur->arrayDsc) );
 
   if ( entryTag )
     str = XmStringCreate( label, entryTag );
@@ -5379,7 +5477,6 @@ char buf[127+1];
 
   // textField widget
 
-
   if ( firstArrayItem ) {
 
     firstArrayItem = 0;
@@ -5422,7 +5519,8 @@ char buf[127+1];
   cur->arrayDsc.size = sizeof(int);
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextFieldToEfIntArray,
-   &(cur->arrayDsc) );
+   cur );
+   //&(cur->arrayDsc) );
 
   if ( entryTag )
     str = XmStringCreate( label, entryTag );
@@ -5470,7 +5568,6 @@ char buf[127+1];
 
   // textField widget
 
-
   if ( firstArrayItem ) {
 
     firstArrayItem = 0;
@@ -5513,7 +5610,8 @@ char buf[127+1];
   cur->arrayDsc.size = sizeof(double);
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextFieldToDoubleArray,
-   &(cur->arrayDsc) );
+   cur );
+   //&(cur->arrayDsc) );
 
   if ( entryTag )
     str = XmStringCreate( label, entryTag );
@@ -5562,7 +5660,6 @@ char buf[127+1];
 
   // textField widget
 
-
   if ( firstArrayItem ) {
 
     firstArrayItem = 0;
@@ -5605,7 +5702,9 @@ char buf[127+1];
   cur->arrayDsc.size = sizeof(int);
 
   XtAddCallback( cur->activeW, XmNvalueChangedCallback,
-   TextFieldToEfDoubleArray, &(cur->arrayDsc) );
+   TextFieldToEfDoubleArray,
+   cur );
+   //&(cur->arrayDsc) );
 
   if ( entryTag )
     str = XmStringCreate( label, entryTag );

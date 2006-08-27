@@ -1,12 +1,12 @@
-4 0 0
+4 0 1
 beginScreenProperties
 major 4
 minor 0
-release 0
-x 241
-y 72
-w 477
-h 869
+release 1
+x 269
+y 21
+w 490
+h 971
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
@@ -20,13 +20,14 @@ ctlBgColor2 rgb 56026 56026 56026
 topShadowColor rgb 60652 60652 60652
 botShadowColor rgb 23130 23130 23130
 title "Shell Command"
+disableScroll
 endScreenProperties
 
 # (Shell Command)
 object shellCmdClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 164
 y 94
@@ -55,7 +56,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 28
 y 28
@@ -87,7 +88,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 249
@@ -107,10 +108,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
-y 751
+y 835
 w 420
 h 16
 font "helvetica-medium-r-14.0"
@@ -127,10 +128,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
-y 768
+y 852
 w 406
 h 16
 font "helvetica-medium-r-14.0"
@@ -147,10 +148,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
-y 783
+y 867
 w 418
 h 32
 font "helvetica-medium-r-14.0"
@@ -168,10 +169,10 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
-y 825
+y 916
 w 237
 h 30
 fgColor rgb 0 0 0
@@ -194,7 +195,7 @@ endObjectProperties
 object shellCmdClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 29
 y 94
@@ -216,7 +217,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 222
@@ -236,7 +237,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 28
 y 320
@@ -258,7 +259,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 27
 y 379
@@ -278,10 +279,10 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 28
-y 603
+y 687
 w 356
 h 128
 font "helvetica-medium-r-14.0"
@@ -305,7 +306,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 30
 y 406
@@ -328,7 +329,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 482
@@ -350,11 +351,11 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 541
-w 360
+w 356
 h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
@@ -372,7 +373,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 277
@@ -392,7 +393,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 29
 y 292
@@ -404,6 +405,48 @@ bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "instance of edm is running must match."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 29
+y 601
+w 431
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Checking One Shot causes the command to be executed only once"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 29
+y 629
+w 424
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Checking Include Help Icon implies that you have placed a related"
+  "display button below this one, configured to open a help screen on"
+  "a right button click"
 }
 autoSize
 endObjectProperties

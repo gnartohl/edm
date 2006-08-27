@@ -1,410 +1,357 @@
-3 1 0
-693
-356
-500
-619
-helvetica-medium-r-18.0
-0
-helvetica-medium-r-12.0
-0
-rgb
-0,0,0
-rgb
-50971,52011,50971
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-0,0,48891
-rgb
-46810,47850,46810
-rgb
-61374,61374,61374
-rgb
-27046,27046,27046
-rgb
-55132,56172,55132
-<<<empty>>>
-0
-0
-10
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-37
-27
-64
-27
-rgb
-0,0,0
-0
-0
-rgb
-61374,61374,61374
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Meter
-helvetica-medium-r-24.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-255
-112
-158
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Embellished Needle: Yes
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-255
-136
-50
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-3D: Yes
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-255
-159
-215
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Total Display Angle: 120 Degrees
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-255
-283
-151
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Embellished Needle: No
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-255
-307
-43
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-3D: No
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-255
-330
-215
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Total Display Angle: 180 Degrees
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-38
-450
-139
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Scale Format Options
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-71
-472
-331
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-GFloat - precision gives number of significant digits
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-71
-490
-323
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-FFloat - precision gives number of decimal places
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-71
-508
-359
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Exponential - precision gives number of decimal places,
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-38
-420
-320
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Label Type: must be Literal is this version of EDM.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-38
-558
-374
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-If Min & Max From DB is checked, then scale min and max
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-38
-574
-308
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-are taken from HOPR & LOPR fields in database.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-155
-525
-258
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-number is displayed in scientific notation
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-1 2 0
-30
-76
-215
-316
-$(help)helpActiveMeterGif
-0
-0
-0
-<<<E~O~D>>>
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 73
+y 179
+w 496
+h 689
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 51400 51400 51400
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 49344
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 37
+y 27
+w 64
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 60652 60652 60652
+value {
+  "Meter"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 255
+y 112
+w 158
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Embellished Needle: Yes"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 255
+y 136
+w 50
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "3D: Yes"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 255
+y 159
+w 215
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Total Display Angle: 120 Degrees"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 255
+y 283
+w 151
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Embellished Needle: No"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 255
+y 307
+w 43
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "3D: No"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 255
+y 330
+w 215
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Total Display Angle: 180 Degrees"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 38
+y 450
+w 139
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Scale Format Options"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 71
+y 472
+w 331
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "GFloat - precision gives number of significant digits"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 71
+y 490
+w 323
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "FFloat - precision gives number of decimal places"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 71
+y 508
+w 359
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Exponential - precision gives number of decimal places,"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 38
+y 420
+w 320
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Label Type: must be Literal is this version of EDM."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 38
+y 558
+w 374
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "If Min & Max From DB is checked, then scale min and max"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 38
+y 574
+w 308
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "are taken from HOPR & LOPR fields in database."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 155
+y 525
+w 258
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "number is displayed in scientific notation"
+}
+autoSize
+endObjectProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 30
+y 76
+w 215
+h 316
+file "$(help)helpActiveMeterGif"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 39
+y 610
+w 358
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 48059 48059 48059
+useDisplayBg
+value {
+  "Readback PV, Scale Precision, Scale Min, Scale Max,"
+  "Label Intervals, Majors per Label, and Minors per Major"
+  "may include macro symbols"
+}
+autoSize
+endObjectProperties
+

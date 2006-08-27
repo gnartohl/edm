@@ -352,6 +352,78 @@ char buf[2048+1];
 
 }
 
+#ifdef __linux__
+static void *executeCmdThread (
+  THREAD_HANDLE h )
+{
+#endif
+
+#ifdef darwin
+static void *executeCmdThread (
+  THREAD_HANDLE h )
+{
+#endif
+
+#ifdef __solaris__
+static void *executeCmdThread (
+  THREAD_HANDLE h )
+{
+#endif
+
+#ifdef __osf__
+static void executeCmdThread (
+  THREAD_HANDLE h )
+{
+#endif
+
+#ifdef HP_UX
+static void *executeCmdThread (
+  THREAD_HANDLE h )
+{
+#endif
+
+int stat;
+char *cmd = (char *) thread_get_app_data( h );
+
+  stat = executeCmd( cmd );
+
+  stat = thread_request_free_ptr( (void *) cmd );
+  stat = thread_detached_exit( h, NULL ); // this call deallocates h
+
+#ifdef __linux__
+  return (void *) NULL;
+#endif
+
+#ifdef darwin
+  return (void *) NULL;
+#endif
+  
+#ifdef __solaris__
+  return (void *) NULL;
+#endif
+
+}
+
+void executeCommandInThread (
+  char *_cmd
+) {
+
+char *cmd;
+THREAD_HANDLE thread;
+int stat;
+
+  if ( !_cmd ) return;
+  if ( blankOrComment(_cmd) ) return;
+
+  cmd = new char[strlen(_cmd)+1];
+  strcpy( cmd, _cmd );
+
+  stat = thread_create_handle( &thread, (void *) cmd );
+  stat = thread_create_proc( thread, executeCmdThread );
+  stat = thread_detach( thread );
+
+}
+
 char *expandEnvVars (
   char *inStr,
   int maxOut,
