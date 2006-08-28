@@ -604,11 +604,18 @@ int relatedDisplayClass::createInteractive (
   int _w,
   int _h ) {
 
+char *ptr;
+
   actWin = (activeWindowClass *) aw_obj;
   x = _x;
   y = _y;
   w = _w;
   h = _h;
+
+  ptr = getenv( "EDMRDDHS" );
+  if ( ptr ) {
+    helpCommandExpString.setRaw( ptr );
+  }
 
   strcpy( fontTag, actWin->defaultBtnFontTag );
   actWin->fi->loadFontTag( fontTag );
