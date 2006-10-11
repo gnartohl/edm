@@ -1867,6 +1867,18 @@ int found;
 
 }
 
+void viewEnv_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+appContextClass *apco = (appContextClass *) client;
+
+  apco->showEnv();
+
+}
+
 void help_cb (
   Widget w,
   XtPointer client,
@@ -3586,6 +3598,15 @@ int i, numVisible;
    NULL );
   XmStringFree( str );
   XtAddCallback( viewFontMappingB, XmNactivateCallback, viewFontMapping_cb,
+   (XtPointer) this );
+
+  str = XmStringCreateLocalized( appContextClass_str144 );
+  viewEnvB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   viewPullDown,
+   XmNlabelString, str,
+   NULL );
+  XmStringFree( str );
+  XtAddCallback( viewEnvB, XmNactivateCallback, viewEnv_cb,
    (XtPointer) this );
 
   // --------------------------------------------------------------------
@@ -5847,5 +5868,283 @@ actionsPtr curAct;
   XtAppAddActions( app, actions, n );
 
   thread_unlock( actionsLock );
+
+}
+
+void appContextClass::showEnv ( void ) {
+
+char *envPtr, text[255+1];
+
+  snprintf( text, 255, "Environment:" );
+  postMessage( text );
+
+  envPtr = getenv( environment_str2 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str2, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str2 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str3 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str3, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str3 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str4 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str4, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str4 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str5 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str5, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str5 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str7 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str7, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str7 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str8 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str8, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str8 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str9 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str9, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str9 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str10 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str10, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str10 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str11 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str11, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str11 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str12 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str12, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str12 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str13 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str13, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str13 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str14 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str14, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str14 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str15 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str15, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str15 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( "EDMCOMMENTS" );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", "EDMCOMMENTS", envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", "EDMCOMMENTS" );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( "EDMHTTPDOCROOT" );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", "EDMHTTPDOCROOT", envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", "EDMHTTPDOCROOT" );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( "CALC_ENV" );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", "CALC_ENV", envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", "CALC_ENV" );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( "EDMCOLORMODE" );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", "EDMCOLORMODE", envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", "EDMCOLORMODE" );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( "EDMPRINTER" );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", "EDMPRINTER", envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", "EDMPRINTER" );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( "EDMSERVERS" );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", "EDMSERVERS", envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", "EDMSERVERS" );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+
+  // site specific vars
+
+  snprintf( text, 255, " " );
+  postMessage( text );
+  snprintf( text, 255, "  (Site Specific)" );
+  postMessage( text );
+
+  envPtr = getenv( "EDMRDDHS" );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", "EDMRDDHS", envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", "EDMRDDHS" );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+
+// diagnostic vars
+
+  snprintf( text, 255, " " );
+  postMessage( text );
+  snprintf( text, 255, "  (Diagnostic)" );
+  postMessage( text );
+
+  envPtr = getenv( "EDMSUPERVISORMODE" );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", "EDMSUPERVISORMODE", envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", "EDMSUPERVISORMODE" );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( "EDMGENDOC" );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", "EDMGENDOC", envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", "EDMGENDOC" );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( "EDMDEBUGMODE" );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", "EDMDEBUGMODE", envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", "EDMDEBUGMODE" );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( "EDMDIAGNOSTICMODE" );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", "EDMDIAGNOSTICMODE", envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", "EDMDIAGNOSTICMODE" );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( "EDMXSYNC" );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", "EDMXSYNC", envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", "EDMXSYNC" );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  snprintf( text, 255, " " );
+  postMessage( text );
 
 }

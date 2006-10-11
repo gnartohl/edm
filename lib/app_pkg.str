@@ -89,5 +89,6 @@
 #define appContextClass_str141 (char *) "Font Mappings"
 #define appContextClass_str142 (char *) "Too many macros"
 #define appContextClass_str143 (char *) "Select Path..."
+#define appContextClass_str144 (char *) "Environment"
 
 #endif

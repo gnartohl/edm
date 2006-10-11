@@ -1638,7 +1638,7 @@ static void b2ReleaseExecute_cb (
 activeWindowClass *awo;
 popupBlockPtr block;
 long item;
-int n, stat;
+int i, n, stat;
 Arg args[10];
 XmString xmStr1, xmStr2;
 Atom wm_delete_window;
@@ -1649,6 +1649,35 @@ char *envPtr, text[255+1];
   awo = (activeWindowClass *) block->awo;
 
   switch ( item ) {
+
+    case AWC_POPUP_SHOW_MACROS:
+
+      if ( awo->numMacros < 1 ) {
+
+        snprintf( text, 255, "No Macros have been defined" );
+        awo->appCtx->postMessage( text );
+
+      }
+      else {
+
+        snprintf( text, 255, "Macros:" );
+        awo->appCtx->postMessage( text );
+
+        for ( i=0; i<awo->numMacros; i++ ) {
+
+          snprintf( text, 255, "  %s=%s", awo->macros[i], awo->expansions[i] );
+          text[255] = 0;
+          awo->appCtx->postMessage( text );
+
+	}
+
+      }
+
+      snprintf( text, 255, " " );
+      awo->appCtx->postMessage( text );
+
+      break;
+
 
     case AWC_POPUP_FINDTOP:
 
@@ -2436,7 +2465,7 @@ int rootX, rootY, winX, winY;
 unsigned int mask;
 int symbolStateCount, invisRect, contained, autoMakePossible, y0, y1, yMid,
  sortValue, i, ii, first, last;
-char msg[79+1];
+char msg[79+1], text[255+1];
 
 struct {
   activeGraphicListPtr listElement;
@@ -2950,6 +2979,34 @@ Atom wm_delete_window;
 
       awo->clear();
       awo->refresh();
+
+      break;
+
+    case AWC_POPUP_SHOW_MACROS:
+
+      if ( awo->numMacros < 1 ) {
+
+        snprintf( text, 255, "No Macros have been defined" );
+        awo->appCtx->postMessage( text );
+
+      }
+      else {
+
+        snprintf( text, 255, "Macros:" );
+        awo->appCtx->postMessage( text );
+
+        for ( i=0; i<awo->numMacros; i++ ) {
+
+          snprintf( text, 255, "  %s=%s", awo->macros[i], awo->expansions[i] );
+          text[255] = 0;
+          awo->appCtx->postMessage( text );
+
+	}
+
+      }
+
+      snprintf( text, 255, " " );
+      awo->appCtx->postMessage( text );
 
       break;
 
@@ -12181,6 +12238,29 @@ Arg args[3];
    (XtPointer) &curBlockListNode->block );
 
 
+  str = XmStringCreateLocalized( activeWindowClass_str210 );
+
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   b2NoneSelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_SHOW_MACROS;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
+
   str = XmStringCreateLocalized( activeWindowClass_str104 );
 
   pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
@@ -12324,6 +12404,30 @@ Arg args[3];
   n = 0;
   XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
   b2OneSelectPopup = XmCreatePopupMenu( top, "b2oneselectmenu", args, n );
+
+
+  str = XmStringCreateLocalized( activeWindowClass_str92 );
+
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   b2OneSelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_EXECUTE;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
 
   str = XmStringCreateLocalized( activeWindowClass_str106 );
 
@@ -12814,6 +12918,30 @@ Arg args[3];
   n = 0;
   XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
   b2ManySelectPopup = XmCreatePopupMenu( top, "b2manyselectmenu", args, n );
+
+
+  str = XmStringCreateLocalized( activeWindowClass_str92 );
+
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   b2ManySelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_EXECUTE;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
 
   str = XmStringCreateLocalized( activeWindowClass_str115 );
 
@@ -13824,6 +13952,29 @@ Arg args[3];
      (XtPointer) &curBlockListNode->block );
 
   }
+
+
+  str = XmStringCreateLocalized( activeWindowClass_str210 );
+
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   b2ExecutePopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_SHOW_MACROS;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseExecute_cb,
+   (XtPointer) &curBlockListNode->block );
 
 
   str = XmStringCreateLocalized( activeWindowClass_str151 );

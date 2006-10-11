@@ -123,6 +123,7 @@
 #define AWC_POPUP_SAVE_TO_PATH 155
 #define AWC_POPUP_DUMP_PVLIST 156
 #define AWC_POPUP_OPEN_SELF 157
+#define AWC_POPUP_SHOW_MACROS 158
 
 #define AWC_NONE_SELECTED 1
 #define AWC_ONE_SELECTED 2
@@ -1439,9 +1440,9 @@ int sameAncestorName (
   char *name
 );
 
-void	reconfig();
+void reconfig ( void );
 
-void	clip();
+void clip ( void );
 
 char endSignature[15+1];
 

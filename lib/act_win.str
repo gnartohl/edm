@@ -206,5 +206,6 @@
 #define activeWindowClass_str207 (char *) "displayCrawlerStatus: Insufficient virtual memory\n"
 #define activeWindowClass_str208 (char *) "displayCrawlerStatus: Cannot open file: [%s]\n"
 #define activeWindowClass_str209 (char *) "displayCrawlerStatus: Line %-d, Error creating object \"%s\"\n"
+#define activeWindowClass_str210 (char *) "Show Macros"
 
 #endif
