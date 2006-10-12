@@ -1201,6 +1201,95 @@ int oneX, oneY, oneW, oneH;
 
 }
 
+int activeLineClass::movePointRel (
+  pointPtr curPoint,
+  int _xofs,
+  int _yofs )
+{
+
+int oneX, oneY, oneW, oneH;
+
+//   fprintf( stderr, "In activeLineClass::movePoint\n" );
+//   fprintf( stderr, "x = %-d, y = %-d\n", x, y );
+
+  actWin->drawGc.saveFg();
+  actWin->drawGc.setFG( lineColor.pixelColor() );
+
+  oneX = curPoint->x;
+  oneY = curPoint->y;
+
+  oneW = oneH = ctlBoxLen();
+
+  actWin->drawGc.setLineStyle( LineSolid );
+  actWin->drawGc.setLineWidth( 1 );
+
+  // erase old via xor gc
+  XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.xorGC(), oneX-oneW/2, oneY-oneH/2, oneW, oneH );
+
+  actWin->drawGc.setLineStyle( this->lineStyle );
+  actWin->drawGc.setLineWidth( this->lineWidth );
+
+  if ( curPoint->blink != head ) {
+    XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.xorGC(), curPoint->blink->x, curPoint->blink->y,
+     curPoint->x, curPoint->y );
+  }
+
+  if ( curPoint->flink != head ) {
+    XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.xorGC(), curPoint->x, curPoint->y,
+     curPoint->flink->x, curPoint->flink->y );
+  }
+
+  if ( actWin->orthogonal ) {
+    if ( curPoint->blink != head ) {
+      if ( abs( oneX - curPoint->blink->x ) >=
+           abs( oneY - curPoint->blink->y ) )
+        _yofs = 0;
+      else
+        _xofs = 0;
+    }
+  }
+
+  curPoint->x += _xofs;
+  curPoint->y += _yofs;
+
+  oneX = curPoint->x;
+  oneY = curPoint->y;
+
+  actWin->drawGc.setLineStyle( LineSolid );
+  actWin->drawGc.setLineWidth( 1 );
+
+  // draw new
+  XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+   actWin->drawGc.xorGC(), oneX-oneW/2, oneY-oneH/2, oneW, oneH );
+
+  actWin->drawGc.setLineStyle( this->lineStyle );
+  actWin->drawGc.setLineWidth( this->lineWidth );
+
+  if ( curPoint->blink != head ) {
+    XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.xorGC(), curPoint->blink->x, curPoint->blink->y,
+     curPoint->x, curPoint->y );
+  }
+
+  if ( curPoint->flink != head ) {
+    XDrawLine( actWin->d, XtWindow(actWin->drawWidget),
+     actWin->drawGc.xorGC(), curPoint->x, curPoint->y,
+     curPoint->flink->x, curPoint->flink->y );
+  }
+
+  actWin->drawGc.restoreFg();
+  actWin->drawGc.setLineStyle( LineSolid );
+  actWin->drawGc.setLineWidth( 1 );
+
+  this->actWin->refreshGrid();
+
+  return 1;
+
+}
+
 int activeLineClass::lineEditComplete ( void )
 {
 

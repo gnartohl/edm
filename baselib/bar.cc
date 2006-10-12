@@ -353,8 +353,8 @@ activeBarClass::activeBarClass ( void ) {
   name = new char[strlen("activeBarClass")+1];
   strcpy( name, "activeBarClass" );
   minW = 50;
-  minH = 5;
-  minVertW = 5;
+  minH = 2;
+  minVertW = 2;
   minVertH = 10;
   barStrLen = 10;
   strcpy( fontTag, "" );
@@ -373,6 +373,13 @@ activeBarClass::activeBarClass ( void ) {
   barOriginXExpStr.setRaw( "" );
   readMinExpStr.setRaw( "" );
   readMaxExpStr.setRaw( "" );
+
+  readMin = 0;
+  readMax = 10;
+  labelTicks = 10;
+  majorTicks = 2;
+  minorTicks = 2;
+  barOriginX = 0;
 
   limitsFromDb = 1;
   precisionExpStr.setRaw( "" );
@@ -423,8 +430,8 @@ activeGraphicClass *baro = (activeGraphicClass *) this;
   barStrLen = source->barStrLen;
 
   minW = 50;
-  minH = 5;
-  minVertW = 5;
+  minH = 2;
+  minVertW = 2;
   minVertH = 10;
   activeMode = 0;
 
@@ -1832,8 +1839,8 @@ int tX, tY;
 
   if ( deleteRequest ) return 1;
 
-  actWin->executeGc.setLineWidth( 1 );
-  actWin->executeGc.setLineStyle( LineSolid );
+  actWin->drawGc.setLineWidth( 1 );
+  actWin->drawGc.setLineStyle( LineSolid );
 
   actWin->drawGc.saveFg();
 
@@ -2469,7 +2476,7 @@ void activeBarClass::updateDimensions ( void )
 
   if ( horizontal ) {
 
-    minH = 5;
+    minH = 2;
     barY = y;
 
     barAreaX = x;
@@ -2534,7 +2541,7 @@ void activeBarClass::updateDimensions ( void )
   }
   else {  // vertical
 
-    minVertW = 5;
+    minVertW = 2;
     minVertH = 10;
 
     if ( ( strcmp( label, "" ) != 0 ) ||

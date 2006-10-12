@@ -1536,6 +1536,16 @@ int activeGraphicClass::getSelectBoxOperation (
   int _y )
 {
 
+  return getSelectBoxOperation( 0, _x, _y );
+
+}
+
+int activeGraphicClass::getSelectBoxOperation (
+  int controlKeyPressed,
+  int _x,
+  int _y )
+{
+
 int x0, y0, x1, y1, xx0, yy0, xx1, yy1;
 int boxW = 6;
 int boxH = 6;
@@ -1557,6 +1567,7 @@ int boxH = 6;
 
     if ( ( _x >= xx0 ) && ( _x <= xx1 ) && ( _y >= yy0 ) && ( _y <= yy1 ) ) {
 
+      if ( controlKeyPressed ) return AGC_MOVE_OP;
       return AGC_LEFT_TOP_OP;
 
     }
@@ -1569,6 +1580,7 @@ int boxH = 6;
 
     if ( ( _x >= xx0 ) && ( _x <= xx1 ) && ( _y >= yy0 ) && ( _y <= yy1 ) ) {
 
+      if ( controlKeyPressed ) return AGC_MOVE_OP;
       return AGC_LEFT_OP;
 
     }
@@ -1581,6 +1593,7 @@ int boxH = 6;
 
     if ( ( _x >= xx0 ) && ( _x <= xx1 ) && ( _y >= yy0 ) && ( _y <= yy1 ) ) {
 
+      if ( controlKeyPressed ) return AGC_MOVE_OP;
       return AGC_LEFT_BOTTOM_OP;
 
     }
@@ -1593,6 +1606,7 @@ int boxH = 6;
 
     if ( ( _x >= xx0 ) && ( _x <= xx1 ) && ( _y >= yy0 ) && ( _y <= yy1 ) ) {
 
+      if ( controlKeyPressed ) return AGC_MOVE_OP;
       return AGC_TOP_OP;
 
     }
@@ -1605,6 +1619,7 @@ int boxH = 6;
 
     if ( ( _x >= xx0 ) && ( _x <= xx1 ) && ( _y >= yy0 ) && ( _y <= yy1 ) ) {
 
+      if ( controlKeyPressed ) return AGC_MOVE_OP;
       return AGC_BOTTOM_OP;
 
     }
@@ -1617,6 +1632,7 @@ int boxH = 6;
 
     if ( ( _x >= xx0 ) && ( _x <= xx1 ) && ( _y >= yy0 ) && ( _y <= yy1 ) ) {
 
+      if ( controlKeyPressed ) return AGC_MOVE_OP;
       return AGC_RIGHT_TOP_OP;
 
     }
@@ -1629,6 +1645,7 @@ int boxH = 6;
 
     if ( ( _x >= xx0 ) && ( _x <= xx1 ) && ( _y >= yy0 ) && ( _y <= yy1 ) ) {
 
+      if ( controlKeyPressed ) return AGC_MOVE_OP;
       return AGC_RIGHT_OP;
 
     }
@@ -1641,6 +1658,7 @@ int boxH = 6;
 
     if ( ( _x >= xx0 ) && ( _x <= xx1 ) && ( _y >= yy0 ) && ( _y <= yy1 ) ) {
 
+      if ( controlKeyPressed ) return AGC_MOVE_OP;
       return AGC_RIGHT_BOTTOM_OP;
 
     }
@@ -2202,6 +2220,16 @@ int activeGraphicClass::movePoint (
   pointPtr curPoint,
   int x,
   int y )
+{
+
+  return 1;
+
+}
+
+int activeGraphicClass::movePointRel (
+  pointPtr curPoint,
+  int xofs,
+  int yofs )
 {
 
   return 1;

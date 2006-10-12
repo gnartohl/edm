@@ -905,6 +905,8 @@ int bufDisableScroll, disableScroll;
 
 pvActionClass *pvAction;
 
+int ctlKeyPressed;
+
 activeWindowClass ( void );
 
 ~activeWindowClass ( void );

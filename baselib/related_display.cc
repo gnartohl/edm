@@ -3138,8 +3138,8 @@ void relatedDisplayClass::btnUp (
     }
   }
 
-  //if ( numDsps == 1 ) {
-  if ( numMenuItems == 1 ) {
+  if ( numDsps == 1 ) {
+  //if ( numMenuItems == 1 ) {
     if ( button3Popup ) {
       needClose = 1;
       actWin->addDefExeNode( aglPtr );
@@ -3178,7 +3178,8 @@ int focus;
 
   if ( !enabled ) return;
 
-  //if ( ( buttonNumber == 3 ) && ( buttonState == 5 ) ) {
+  if ( ( numDsps > 1 ) && button3Popup ) return;
+
   if ( !blank( helpCommandExpString.getExpanded() ) ) {
     if ( ( buttonNumber == 3 ) && ( buttonState == 0 ) ) {
       if ( helpItem != -1 ) {
@@ -3201,7 +3202,6 @@ int focus;
   }
 
   focus = useFocus;
-  //if ( numDsps > 1 ) focus = 0;
   if ( numMenuItems > 1 ) focus = 0;
 
   if ( focus ) {
@@ -3221,10 +3221,8 @@ int focus;
 
   }
 
-  //if ( numDsps < 1 ) return;
   if ( numMenuItems < 1 ) return;
 
-  //if ( numDsps == 1 ) {
   if ( numMenuItems == 1 ) {
     posX = x + _x - be->x;
     posY = y + _y - be->y;

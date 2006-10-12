@@ -1925,6 +1925,360 @@ static int isContained(
 
 }
 
+static void alignLeft (
+  activeWindowClass *awo )
+{
+
+activeGraphicListPtr cur, curSel;
+int deltaX, leftmost, stat;
+
+  awo->undoObj.startNewUndoList( activeWindowClass_str172 );
+  cur = awo->selectedHead->selFlink;
+  while ( cur != awo->selectedHead ) {
+    stat = cur->node->addUndoMoveNode( &(awo->undoObj) );
+    cur = cur->selFlink;
+  }
+
+  awo->setChanged();
+
+  curSel = awo->selectedHead->selFlink;
+  leftmost = curSel->node->getX0();
+  while ( curSel != awo->selectedHead ) {
+
+    if ( curSel->node->getX0() < leftmost )
+      leftmost = curSel->node->getX0();
+
+    curSel = curSel->selFlink;
+
+  }
+
+  curSel = awo->selectedHead->selFlink;
+  while ( curSel != awo->selectedHead ) {
+
+    curSel->node->eraseSelectBoxCorners();
+    curSel->node->erase();
+
+    deltaX = leftmost - curSel->node->getX0();
+    curSel->node->move( deltaX, 0 );
+    curSel->node->moveSelectBox( deltaX, 0 );
+
+    curSel = curSel->selFlink;
+
+  }
+
+  awo->refresh();
+
+}
+
+static void alignRight (
+  activeWindowClass *awo )
+{
+
+activeGraphicListPtr cur, curSel;
+int deltaX, rightmost, stat;
+
+  awo->undoObj.startNewUndoList( activeWindowClass_str172 );
+  cur = awo->selectedHead->selFlink;
+  while ( cur != awo->selectedHead ) {
+    stat = cur->node->addUndoMoveNode( &(awo->undoObj) );
+    cur = cur->selFlink;
+  }
+
+  awo->setChanged();
+
+  curSel = awo->selectedHead->selFlink;
+  rightmost = curSel->node->getX1();
+  while ( curSel != awo->selectedHead ) {
+
+    if ( curSel->node->getX1() > rightmost )
+      rightmost = curSel->node->getX1();
+
+    curSel = curSel->selFlink;
+
+  }
+
+  curSel = awo->selectedHead->selFlink;
+  while ( curSel != awo->selectedHead ) {
+
+    curSel->node->eraseSelectBoxCorners();
+    curSel->node->erase();
+
+    deltaX = rightmost - curSel->node->getX1();
+    curSel->node->move( deltaX, 0 );
+    curSel->node->moveSelectBox( deltaX, 0 );
+
+    curSel = curSel->selFlink;
+
+  }
+
+  awo->refresh();
+
+}
+
+static void alignTop (
+  activeWindowClass *awo )
+{
+
+activeGraphicListPtr cur, curSel;
+int deltaY, topmost, stat;
+
+  awo->undoObj.startNewUndoList( activeWindowClass_str172 );
+  cur = awo->selectedHead->selFlink;
+  while ( cur != awo->selectedHead ) {
+    stat = cur->node->addUndoMoveNode( &(awo->undoObj) );
+    cur = cur->selFlink;
+  }
+
+  awo->setChanged();
+
+  curSel = awo->selectedHead->selFlink;
+  topmost = curSel->node->getY0();
+  while ( curSel != awo->selectedHead ) {
+
+    if ( curSel->node->getY0() < topmost )
+      topmost = curSel->node->getY0();
+
+    curSel = curSel->selFlink;
+
+  }
+
+  curSel = awo->selectedHead->selFlink;
+  while ( curSel != awo->selectedHead ) {
+
+    curSel->node->eraseSelectBoxCorners();
+    curSel->node->erase();
+
+    deltaY = topmost - curSel->node->getY0();
+    curSel->node->move( 0, deltaY );
+    curSel->node->moveSelectBox( 0, deltaY );
+
+    curSel = curSel->selFlink;
+
+  }
+
+  awo->refresh();
+
+}
+
+static void alignBot (
+  activeWindowClass *awo )
+{
+
+activeGraphicListPtr cur, curSel;
+int deltaY, botmost, stat;
+
+  awo->undoObj.startNewUndoList( activeWindowClass_str172 );
+  cur = awo->selectedHead->selFlink;
+  while ( cur != awo->selectedHead ) {
+    stat = cur->node->addUndoMoveNode( &(awo->undoObj) );
+    cur = cur->selFlink;
+  }
+
+  awo->setChanged();
+
+  curSel = awo->selectedHead->selFlink;
+  botmost = curSel->node->getY1();
+  while ( curSel != awo->selectedHead ) {
+
+    if ( curSel->node->getY1() > botmost )
+      botmost = curSel->node->getY1();
+
+    curSel = curSel->selFlink;
+
+  }
+
+  curSel = awo->selectedHead->selFlink;
+  while ( curSel != awo->selectedHead ) {
+
+    curSel->node->eraseSelectBoxCorners();
+    curSel->node->erase();
+
+    deltaY = botmost - curSel->node->getY1();
+    curSel->node->move( 0, deltaY );
+    curSel->node->moveSelectBox( 0, deltaY );
+
+    curSel = curSel->selFlink;
+
+  }
+
+  awo->refresh();
+
+}
+
+static void do_selectAll (
+  activeWindowClass *awo )
+{
+
+activeGraphicListPtr cur, curSel;
+int num_selected, wasSelected;
+
+  cur = awo->head->blink;
+  while ( cur != awo->head ) {
+
+    if ( !cur->node->hidden ) {
+
+      wasSelected = cur->node->isSelected();
+      if ( !wasSelected ) {
+        num_selected++;
+        cur->node->setSelected();
+        //cur->node->drawSelectBoxCorners();
+        cur->selBlink = awo->selectedHead->selBlink;
+        awo->selectedHead->selBlink->selFlink = cur;
+        awo->selectedHead->selBlink = cur;
+        cur->selFlink = awo->selectedHead;
+      }
+
+    }
+
+    cur = cur->blink;
+
+  }
+
+  // determine new state
+  num_selected = 0;
+
+  curSel = awo->selectedHead->selFlink;
+  while ( ( curSel != awo->selectedHead ) &&
+          ( num_selected < 2 ) ) {
+
+    num_selected++;
+    curSel = curSel->selFlink;
+
+  }
+
+  if ( num_selected == 0 ) {
+    awo->state = AWC_NONE_SELECTED;
+    awo->updateMasterSelection();
+  }
+  else if ( num_selected == 1 ) {
+    awo->state = AWC_ONE_SELECTED;
+    awo->useFirstSelectedAsReference = 1;
+    awo->updateMasterSelection();
+  }
+  else {
+    awo->state = AWC_MANY_SELECTED;
+    awo->updateMasterSelection();
+  }
+
+  awo->refresh();
+
+}
+
+static void do_deselect (
+  activeWindowClass *awo )
+{
+
+activeGraphicListPtr cur;
+
+      // deselect all
+      cur = awo->selectedHead->selFlink;
+      while ( cur != awo->selectedHead ) {
+        cur->node->deselect();
+        cur->node->drawSelectBoxCorners(); // erase via xor gc
+        cur = cur->selFlink;
+      }
+      // make list empty
+      awo->selectedHead->selFlink = awo->selectedHead;
+      awo->selectedHead->selBlink = awo->selectedHead;
+      awo->state = AWC_NONE_SELECTED;
+      awo->updateMasterSelection();
+
+      awo->refresh();
+
+}
+
+static void do_group (
+  activeWindowClass *awo )
+{
+
+activeGraphicListPtr cur;
+int stat;
+
+      awo->undoObj.flush();
+
+      awo->setChanged();
+
+      cur = new activeGraphicListType;
+      cur->defExeFlink = NULL;
+      cur->defExeBlink = NULL;
+      cur->node = new activeGroupClass;
+      stat = cur->node->createGroup( awo );
+
+      // link into main list
+      cur->blink = awo->head->blink;
+      awo->head->blink->flink = cur;
+      awo->head->blink = cur;
+      cur->flink = awo->head;
+
+      // link into selected list (which has been emptied by the
+      // createGroup operation
+      cur->selBlink = awo->selectedHead->selBlink;
+      awo->selectedHead->selBlink->selFlink = cur;
+      awo->selectedHead->selBlink = cur;
+      cur->selFlink = awo->selectedHead;
+
+      cur->node->setSelected();
+
+      awo->state = AWC_ONE_SELECTED;
+      awo->useFirstSelectedAsReference = 1;
+      awo->updateMasterSelection();
+
+      awo->refresh();
+
+}
+
+static void do_ungroup (
+  activeWindowClass *awo )
+{
+
+activeGraphicListPtr curSel, nextSel;
+int num_selected;
+
+      awo->undoObj.flush();
+
+      awo->setChanged();
+
+      curSel = awo->selectedHead->selFlink;
+      while ( curSel != awo->selectedHead ) {
+
+        nextSel = curSel->selFlink;
+
+        curSel->node->ungroup( (void *) curSel );
+
+        curSel = nextSel;
+
+      }
+
+      // determine new state
+      num_selected = 0;
+
+      curSel = awo->selectedHead->selFlink;
+      while ( ( curSel != awo->selectedHead ) &&
+              ( num_selected < 2 ) ) {
+
+        num_selected++;
+        curSel = curSel->selFlink;
+
+      }
+
+      if ( num_selected == 0 ) {
+        awo->state = AWC_NONE_SELECTED;
+        awo->updateMasterSelection();
+      }
+      else if ( num_selected == 1 ) {
+        awo->state = AWC_ONE_SELECTED;
+        awo->useFirstSelectedAsReference = 1;
+        awo->updateMasterSelection();
+      }
+      else {
+        awo->state = AWC_MANY_SELECTED;
+        awo->updateMasterSelection();
+      }
+
+      awo->refresh();
+
+}
+
 static void raise (
   activeWindowClass *awo )
 {
@@ -2452,7 +2806,7 @@ static void b2ReleaseNoneSelect_cb (
 
 activeWindowClass *awo;
 popupBlockPtr block;
-int stat, wasSelected, num_selected;
+int stat;
 long item;
 activeGraphicListPtr curSel;
 activeGraphicListPtr symHead, cur1, cur2, curGroup, next1, next2;
@@ -2483,56 +2837,7 @@ Atom wm_delete_window;
 
     case AWC_POPUP_SELECT_ALL:
 
-      cur1 = awo->head->blink;
-      while ( cur1 != awo->head ) {
-
-	if ( !cur1->node->hidden ) {
-
-          wasSelected = cur1->node->isSelected();
-          if ( !wasSelected ) {
-            num_selected++;
-            cur1->node->setSelected();
-            //cur1->node->drawSelectBoxCorners();
-            cur1->selBlink = awo->selectedHead->selBlink;
-            awo->selectedHead->selBlink->selFlink = cur1;
-            awo->selectedHead->selBlink = cur1;
-            cur1->selFlink = awo->selectedHead;
-          }
-
-	}
-
-        cur1 = cur1->blink;
-
-      }
-
-      // determine new state
-      num_selected = 0;
-
-      curSel = awo->selectedHead->selFlink;
-      while ( ( curSel != awo->selectedHead ) &&
-              ( num_selected < 2 ) ) {
-
-        num_selected++;
-        curSel = curSel->selFlink;
-
-      }
-
-      if ( num_selected == 0 ) {
-        awo->state = AWC_NONE_SELECTED;
-        awo->updateMasterSelection();
-      }
-      else if ( num_selected == 1 ) {
-        awo->state = AWC_ONE_SELECTED;
-        awo->useFirstSelectedAsReference = 1;
-        awo->updateMasterSelection();
-      }
-      else {
-        awo->state = AWC_MANY_SELECTED;
-        awo->updateMasterSelection();
-      }
-
-      awo->refresh();
-
+      do_selectAll( awo );
       break;
 
     case AWC_POPUP_MAKESYMBOL:
@@ -3687,9 +3992,9 @@ static void b2ReleaseOneSelect_cb (
 
 activeWindowClass *awo;
 popupBlockPtr block;
-int stat, num_selected;
+int stat;
 long item;
-activeGraphicListPtr cur, curSel, nextSel;
+activeGraphicListPtr curSel;
 
   block = (popupBlockPtr) client;
   item = (long) block->ptr;
@@ -3761,21 +4066,7 @@ activeGraphicListPtr cur, curSel, nextSel;
 
     case AWC_POPUP_DESELECT:
 
-      // deselect all
-      cur = awo->selectedHead->selFlink;
-      while ( cur != awo->selectedHead ) {
-        cur->node->deselect();
-        cur->node->drawSelectBoxCorners(); // erase via xor gc
-        cur = cur->selFlink;
-      }
-      // make list empty
-      awo->selectedHead->selFlink = awo->selectedHead;
-      awo->selectedHead->selBlink = awo->selectedHead;
-      awo->state = AWC_NONE_SELECTED;
-      awo->updateMasterSelection();
-
-      awo->refresh();
-
+      do_deselect( awo );
       break;
 
     case AWC_POPUP_RAISE: // raise
@@ -3977,84 +4268,12 @@ activeGraphicListPtr cur, curSel, nextSel;
 
     case AWC_POPUP_GROUP:
 
-      awo->undoObj.flush();
-
-      awo->setChanged();
-
-      cur = new activeGraphicListType;
-      cur->defExeFlink = NULL;
-      cur->defExeBlink = NULL;
-      cur->node = new activeGroupClass;
-      stat = cur->node->createGroup( awo );
-
-      // link into main list
-      cur->blink = awo->head->blink;
-      awo->head->blink->flink = cur;
-      awo->head->blink = cur;
-      cur->flink = awo->head;
-
-      // link into selected list (which has been emptied by the
-      // createGroup operation
-      cur->selBlink = awo->selectedHead->selBlink;
-      awo->selectedHead->selBlink->selFlink = cur;
-      awo->selectedHead->selBlink = cur;
-      cur->selFlink = awo->selectedHead;
-
-      cur->node->setSelected();
-
-      awo->state = AWC_ONE_SELECTED;
-      awo->useFirstSelectedAsReference = 1;
-      awo->updateMasterSelection();
-
-      awo->refresh();
-
+      do_group( awo );
       break;
 
     case AWC_POPUP_UNGROUP:
 
-      awo->undoObj.flush();
-
-      awo->setChanged();
-
-      curSel = awo->selectedHead->selFlink;
-      while ( curSel != awo->selectedHead ) {
-
-        nextSel = curSel->selFlink;
-
-        curSel->node->ungroup( (void *) curSel );
-
-        curSel = nextSel;
-
-      }
-
-      // determine new state
-      num_selected = 0;
-
-      curSel = awo->selectedHead->selFlink;
-      while ( ( curSel != awo->selectedHead ) &&
-              ( num_selected < 2 ) ) {
-
-        num_selected++;
-        curSel = curSel->selFlink;
-
-      }
-
-      if ( num_selected == 0 ) {
-        awo->state = AWC_NONE_SELECTED;
-        awo->updateMasterSelection();
-      }
-      else if ( num_selected == 1 ) {
-        awo->state = AWC_ONE_SELECTED;
-        awo->useFirstSelectedAsReference = 1;
-        awo->updateMasterSelection();
-      }
-      else {
-        awo->state = AWC_MANY_SELECTED;
-        awo->updateMasterSelection();
-      }
-
-      awo->refresh();
-
+      do_ungroup( awo );
       break;
 
     case AWC_POPUP_ROTATE_CW:
@@ -4102,13 +4321,13 @@ static void b2ReleaseManySelect_cb (
 
 activeWindowClass *awo;
 popupBlockPtr block;
-int i, deltaX, deltaY, leftmost, rightmost, topmost, botmost, n,
+int i, leftmost, topmost, n,
  curY0, curY1, curX0, curX1, minY, maxY, minX, maxX, midX, midY,
- stat, num_selected, width, height, maxRows, nRows, nCols, listEmpty,
+ stat, width, height, maxRows, nRows, nCols, listEmpty,
  leftX, rightX, topY, bottomY, incX, incY, curMidX, curMidY;
 long item;
 double space, totalSpace, dY0, dX0, resid;
-activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
+activeGraphicListPtr cur, curSel, topmostNode, leftmostNode,
  twoDimHead1, twoDimHead2, next;
 
   block = (popupBlockPtr) client;
@@ -4119,103 +4338,17 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
 
     case AWC_POPUP_DESELECT:
 
-      // deselect all
-      cur = awo->selectedHead->selFlink;
-      while ( cur != awo->selectedHead ) {
-        cur->node->deselect();
-        cur->node->drawSelectBoxCorners(); // erase via xor gc
-        cur = cur->selFlink;
-      }
-      // make list empty
-      awo->selectedHead->selFlink = awo->selectedHead;
-      awo->selectedHead->selBlink = awo->selectedHead;
-      awo->state = AWC_NONE_SELECTED;
-      awo->updateMasterSelection();
-
-      awo->refresh();
-
+      do_deselect( awo );
       break;
 
     case AWC_POPUP_GROUP:
 
-      awo->undoObj.flush();
-
-      awo->setChanged();
-
-      cur = new activeGraphicListType;
-      cur->defExeFlink = NULL;
-      cur->defExeBlink = NULL;
-      cur->node = new activeGroupClass;
-      stat = cur->node->createGroup( awo );
-
-      // link into main list
-      cur->blink = awo->head->blink;
-      awo->head->blink->flink = cur;
-      awo->head->blink = cur;
-      cur->flink = awo->head;
-
-      // link into selected list (which has been emptied by the
-      // createGroup operation
-      cur->selBlink = awo->selectedHead->selBlink;
-      awo->selectedHead->selBlink->selFlink = cur;
-      awo->selectedHead->selBlink = cur;
-      cur->selFlink = awo->selectedHead;
-
-      cur->node->setSelected();
-
-      awo->state = AWC_ONE_SELECTED;
-      awo->useFirstSelectedAsReference = 1;
-      awo->updateMasterSelection();
-
-      awo->refresh();
-
+      do_group( awo );
       break;
 
     case AWC_POPUP_UNGROUP:
 
-      awo->undoObj.flush();
-
-      awo->setChanged();
-
-      curSel = awo->selectedHead->selFlink;
-      while ( curSel != awo->selectedHead ) {
-
-        nextSel = curSel->selFlink;
-
-        curSel->node->ungroup( (void *) curSel );
-
-        curSel = nextSel;
-
-      }
-
-      // determine new state
-      num_selected = 0;
-
-      curSel = awo->selectedHead->selFlink;
-      while ( ( curSel != awo->selectedHead ) &&
-              ( num_selected < 2 ) ) {
-
-        num_selected++;
-        curSel = curSel->selFlink;
-
-      }
-
-      if ( num_selected == 0 ) {
-        awo->state = AWC_NONE_SELECTED;
-        awo->updateMasterSelection();
-      }
-      else if ( num_selected == 1 ) {
-        awo->state = AWC_ONE_SELECTED;
-        awo->useFirstSelectedAsReference = 1;
-        awo->updateMasterSelection();
-      }
-      else {
-        awo->state = AWC_MANY_SELECTED;
-        awo->updateMasterSelection();
-      }
-
-      awo->refresh();
-
+      do_ungroup( awo );
       break;
 
     case AWC_POPUP_RAISE:
@@ -4448,163 +4581,22 @@ activeGraphicListPtr cur, curSel, nextSel, topmostNode, leftmostNode,
 
     case AWC_POPUP_ALIGN_LEFT:
 
-      awo->undoObj.startNewUndoList( activeWindowClass_str172 );
-      cur = awo->selectedHead->selFlink;
-      while ( cur != awo->selectedHead ) {
-        stat = cur->node->addUndoMoveNode( &(awo->undoObj) );
-        cur = cur->selFlink;
-      }
-
-      awo->setChanged();
-
-      curSel = awo->selectedHead->selFlink;
-      leftmost = curSel->node->getX0();
-      while ( curSel != awo->selectedHead ) {
-
-        if ( curSel->node->getX0() < leftmost )
-          leftmost = curSel->node->getX0();
-
-        curSel = curSel->selFlink;
-
-      }
-
-      curSel = awo->selectedHead->selFlink;
-      while ( curSel != awo->selectedHead ) {
-
-        curSel->node->eraseSelectBoxCorners();
-        curSel->node->erase();
-
-        deltaX = leftmost - curSel->node->getX0();
-        curSel->node->move( deltaX, 0 );
-        curSel->node->moveSelectBox( deltaX, 0 );
-
-        curSel = curSel->selFlink;
-
-      }
-
-      awo->refresh();
-
-
+      alignLeft( awo );
       break;
 
     case AWC_POPUP_ALIGN_RIGHT:
 
-      awo->undoObj.startNewUndoList( activeWindowClass_str172 );
-      cur = awo->selectedHead->selFlink;
-      while ( cur != awo->selectedHead ) {
-        stat = cur->node->addUndoMoveNode( &(awo->undoObj) );
-        cur = cur->selFlink;
-      }
-
-      awo->setChanged();
-
-      curSel = awo->selectedHead->selFlink;
-      rightmost = curSel->node->getX1();
-      while ( curSel != awo->selectedHead ) {
-
-        if ( curSel->node->getX1() > rightmost )
-          rightmost = curSel->node->getX1();
-
-        curSel = curSel->selFlink;
-
-      }
-
-      curSel = awo->selectedHead->selFlink;
-      while ( curSel != awo->selectedHead ) {
-
-        curSel->node->eraseSelectBoxCorners();
-        curSel->node->erase();
-
-        deltaX = rightmost - curSel->node->getX1();
-        curSel->node->move( deltaX, 0 );
-        curSel->node->moveSelectBox( deltaX, 0 );
-
-        curSel = curSel->selFlink;
-
-      }
-
-      awo->refresh();
-
+      alignRight( awo );
       break;
 
     case AWC_POPUP_ALIGN_TOP:
 
-      awo->undoObj.startNewUndoList( activeWindowClass_str172 );
-      cur = awo->selectedHead->selFlink;
-      while ( cur != awo->selectedHead ) {
-        stat = cur->node->addUndoMoveNode( &(awo->undoObj) );
-        cur = cur->selFlink;
-      }
-
-      awo->setChanged();
-
-      curSel = awo->selectedHead->selFlink;
-      topmost = curSel->node->getY0();
-      while ( curSel != awo->selectedHead ) {
-
-        if ( curSel->node->getY0() < topmost )
-          topmost = curSel->node->getY0();
-
-        curSel = curSel->selFlink;
-
-      }
-
-      curSel = awo->selectedHead->selFlink;
-      while ( curSel != awo->selectedHead ) {
-
-        curSel->node->eraseSelectBoxCorners();
-        curSel->node->erase();
-
-        deltaY = topmost - curSel->node->getY0();
-        curSel->node->move( 0, deltaY );
-        curSel->node->moveSelectBox( 0, deltaY );
-
-        curSel = curSel->selFlink;
-
-      }
-
-      awo->refresh();
-
+      alignTop( awo );
       break;
 
     case AWC_POPUP_ALIGN_BOTTOM:
 
-      awo->undoObj.startNewUndoList( activeWindowClass_str172 );
-      cur = awo->selectedHead->selFlink;
-      while ( cur != awo->selectedHead ) {
-        stat = cur->node->addUndoMoveNode( &(awo->undoObj) );
-        cur = cur->selFlink;
-      }
-
-      awo->setChanged();
-
-      curSel = awo->selectedHead->selFlink;
-      botmost = curSel->node->getY1();
-      while ( curSel != awo->selectedHead ) {
-
-        if ( curSel->node->getY1() > botmost )
-          botmost = curSel->node->getY1();
-
-        curSel = curSel->selFlink;
-
-      }
-
-      curSel = awo->selectedHead->selFlink;
-      while ( curSel != awo->selectedHead ) {
-
-        curSel->node->eraseSelectBoxCorners();
-        curSel->node->erase();
-
-        deltaY = botmost - curSel->node->getY1();
-        curSel->node->move( 0, deltaY );
-        curSel->node->moveSelectBox( 0, deltaY );
-
-        curSel = curSel->selFlink;
-
-      }
-
-      awo->refresh();
-
+      alignBot( awo );
       break;
 
     case AWC_POPUP_ALIGN_CENTER:
@@ -6012,13 +6004,24 @@ Boolean  nothingDone = False;
       awo->refresh( expe->x, expe->y, expe->width, expe->height );
 
   }
+  else if ( e->type == KeyRelease ) {
+
+    ke = (XKeyEvent *) e;
+
+    charCount = XLookupString( ke, keyBuf, keyBufSize, &key, &compose );
+
+    if ( ( key == XK_Control_L ) || ( key == XK_Control_R ) ) {
+      awo->ctlKeyPressed = 0;
+    }
+
+  }
   else if ( e->type == KeyPress ) {
 
     // The following supports wheel mice on older versions
     // of the Exceed X server which can't map wheel events to the
     // (standard) Button4/5 but only to Key events.
     if ( ((XKeyEvent*)e)->state &
-	 ( ControlMask | Mod1Mask | Mod3Mask | Mod4Mask | Mod5Mask ) ) {
+	 ( Mod1Mask | Mod3Mask | Mod4Mask | Mod5Mask ) ) {
       *continueToDispatch = True;
       return;
     }
@@ -6030,8 +6033,8 @@ Boolean  nothingDone = False;
     if ( awo->state == AWC_DEFINE_SELECT_REGION ) goto done;
     if ( awo->state == AWC_EDITING_POINTS ) goto done;
     if ( awo->state == AWC_CREATING_POINTS ) goto done;
-    if ( awo->state == AWC_MOVING_POINT ) goto done;
-    if ( awo->state == AWC_MOVING_CREATE_POINT ) goto done;
+    //if ( awo->state == AWC_MOVING_POINT ) goto done;
+    //if ( awo->state == AWC_MOVING_CREATE_POINT ) goto done;
     if ( awo->state == AWC_CHOOSING_LINE_OP ) goto done;
     if ( awo->state == AWC_WAITING ) goto done;
 
@@ -6041,6 +6044,46 @@ Boolean  nothingDone = False;
     yInc = 0;
 
     charCount = XLookupString( ke, keyBuf, keyBufSize, &key, &compose );
+
+
+
+
+    if ( ( awo->state == AWC_MOVING_POINT ) ||
+         ( awo->state == AWC_MOVING_CREATE_POINT ) ) {
+
+      xInc = yInc = 0;
+
+      if ( key == XK_Left ) {
+        xInc = -1;
+      }
+      else if ( key == XK_Right ) {
+        xInc = 1;
+      }
+      else if ( key == XK_Up ) {
+        yInc = -1;
+      }
+      else if ( key == XK_Down ) {
+        yInc = 1;
+      }
+      else {
+        goto done;
+      }
+
+      awo->usingArrowKeys = 1;
+
+      stat = awo->currentPointObject->movePointRel( awo->currentPoint,
+       xInc, yInc );
+
+      goto done;
+
+    }
+
+
+
+
+    if ( ( key == XK_Control_L ) || ( key == XK_Control_R ) ) {
+      awo->ctlKeyPressed = 1;
+    }
 
     if ( key == XK_M ) {
       awo->orthoMove = 1;
@@ -6100,6 +6143,27 @@ Boolean  nothingDone = False;
       stat = undo( awo );
       if ( !( stat & 1 ) ) XBell( awo->d, 50 );
     }
+    else if ( key == XK_period ) {
+      if ( awo->state == AWC_NONE_SELECTED ) {
+        do_selectAll( awo );
+      }
+      else if ( ( awo->state == AWC_ONE_SELECTED ) ||
+	   ( awo->state == AWC_MANY_SELECTED ) ) {
+        do_deselect( awo );
+      }
+    }
+    else if ( key == XK_bracketleft ) {
+      if ( ( awo->state == AWC_ONE_SELECTED ) ||
+	   ( awo->state == AWC_MANY_SELECTED ) ) {
+        do_group( awo );
+      }
+    }
+    else if ( key == XK_bracketright ) {
+      if ( ( awo->state == AWC_ONE_SELECTED ) ||
+	   ( awo->state == AWC_MANY_SELECTED ) ) {
+        do_ungroup( awo );
+      }
+    }
     else {
       nothingDone = True;
     }
@@ -6120,7 +6184,8 @@ Boolean  nothingDone = False;
         cur = awo->selectedHead->selFlink;
         operation = 0;
         while ( ( cur != awo->selectedHead ) && !operation ) {
-          operation = cur->node->getSelectBoxOperation( winX, winY );
+          operation = cur->node->getSelectBoxOperation( awo->ctlKeyPressed,
+           winX, winY );
           cur = cur->selFlink;
         }
 
@@ -6209,6 +6274,29 @@ Boolean  nothingDone = False;
             }
 
           }
+
+	}
+	else {
+
+	  // ----------------------------------------------------------
+	  // no operation so if more than one selected do align
+	  if ( awo->state == AWC_MANY_SELECTED ) {
+
+            if ( key == XK_Left ) {
+	      alignLeft( awo );
+	    }
+            else if ( key == XK_Right ) {
+	      alignRight( awo );
+	    }
+            else if ( key == XK_Up ) {
+	      alignTop( awo );
+	    }
+            else if ( key == XK_Down ) {
+	      alignBot( awo );
+	    }
+
+	  }
+	  // ----------------------------------------------------------
 
 	}
 
@@ -8048,11 +8136,13 @@ Boolean  nothingDone = False;
 	    case AWC_MOVING_POINT:
 
               awo->state = AWC_EDITING_POINTS;
+              awo->usingArrowKeys = 0;
               break;
 
 	    case AWC_MOVING_CREATE_POINT:
 
               awo->state = AWC_CREATING_POINTS;
+              awo->usingArrowKeys = 0;
               break;
 
 	    case AWC_EDITING_POINTS:
@@ -9276,8 +9366,10 @@ Boolean  nothingDone = False;
 	  case AWC_MOVING_POINT:
 	  case AWC_MOVING_CREATE_POINT:
 
-            stat = awo->currentPointObject->movePoint( awo->currentPoint,
-             me->x, me->y );
+	    if ( !awo->usingArrowKeys ) {
+              stat = awo->currentPointObject->movePoint( awo->currentPoint,
+               me->x, me->y );
+	    }
             break;
 
 	  case AWC_EDITING_POINTS:
@@ -10360,6 +10452,8 @@ activeWindowClass::activeWindowClass ( void ) {
 
   pvAction = new pvActionClass;
 
+  ctlKeyPressed = 0;
+
 }
 
 int activeWindowClass::okToDeactivate ( void ) {
@@ -10603,7 +10697,8 @@ pvDefPtr pvDefCur, pvDefNext;
 
   if ( drawWidget ) {
     XtRemoveEventHandler( drawWidget,
-     KeyPressMask|ButtonPressMask|ButtonReleaseMask|Button1MotionMask|
+     KeyPressMask|KeyReleaseMask|ButtonPressMask|
+     ButtonReleaseMask|Button1MotionMask|
      Button2MotionMask|Button3MotionMask|ExposureMask, False,
      drawWinEventHandler, (XtPointer) this );
   }
@@ -11391,8 +11486,9 @@ char tmp[10];
   }
 
   XtAddEventHandler( drawWidget,
-   KeyPressMask|ButtonPressMask|ButtonReleaseMask|Button1MotionMask|
-    Button2MotionMask|Button3MotionMask|ExposureMask, False,
+   KeyPressMask|KeyReleaseMask|ButtonPressMask|
+   ButtonReleaseMask|Button1MotionMask|
+   Button2MotionMask|Button3MotionMask|ExposureMask, False,
    drawWinEventHandler, (XtPointer) this );
 
   return 1;
@@ -15669,8 +15765,9 @@ pvDefPtr pvDefCur;
   cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );
 
   XtRemoveEventHandler( drawWidget,
-   KeyPressMask|ButtonPressMask|ButtonReleaseMask|Button1MotionMask|
-    Button2MotionMask|Button3MotionMask|ExposureMask, False,
+   KeyPressMask|KeyReleaseMask|ButtonPressMask|
+   ButtonReleaseMask|Button1MotionMask|
+   Button2MotionMask|Button3MotionMask|ExposureMask, False,
    drawWinEventHandler, (XtPointer) this );
 
   executeGc.setBaseBG( drawGc.getBaseBG() );
@@ -16203,8 +16300,9 @@ pvDefPtr pvDefCur;
   }
 
   XtAddEventHandler( drawWidget,
-   KeyPressMask|ButtonPressMask|ButtonReleaseMask|Button1MotionMask|
-    Button2MotionMask|Button3MotionMask|ExposureMask, False,
+   KeyPressMask|KeyReleaseMask|ButtonPressMask|
+   ButtonReleaseMask|Button1MotionMask|
+   Button2MotionMask|Button3MotionMask|ExposureMask, False,
    drawWinEventHandler, (XtPointer) this );
 
   this->clear();

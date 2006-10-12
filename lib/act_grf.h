@@ -397,6 +397,11 @@ virtual int drawSelectBoxCorners ( void );
 virtual int drawSelectBox ( void );
 
 virtual int getSelectBoxOperation (
+  int controlKeyPressed,
+  int _x,
+  int _y );
+
+virtual int getSelectBoxOperation (
   int _x,
   int _y );
 
@@ -577,6 +582,11 @@ virtual int movePoint (
   pointPtr curPoint,
   int x,
   int y );
+
+virtual int movePointRel (
+  pointPtr curPoint,
+  int xofs,
+  int yofs );
 
 virtual int lineEditComplete ( void );
 

@@ -301,6 +301,11 @@ virtual int movePoint (
   int x,
   int y );
 
+virtual int movePointRel (
+  pointPtr curPoint,
+  int xofs,
+  int yofs );
+
 int select (
   int x,
   int y );
