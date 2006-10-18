@@ -112,11 +112,12 @@ activeMeterClass *metero = (activeMeterClass *) client;
   metero->scaleColor.setColorIndex( metero->eBuf->bufScaleColor, metero->actWin->ci );
   metero->labelColor.setColorIndex( metero->eBuf->bufLabelColor, metero->actWin->ci );
 
-  metero->controlPvExpStr.setRaw( metero->eBuf->bufControlPvName );
   metero->readPvExpStr.setRaw( metero->eBuf->bufReadPvName );
 
-  strncpy( metero->label, metero->eBuf->bufLabel, 39 );
-  strncpy( metero->literalLabel, metero->eBuf->bufLiteralLabel, 39 );
+  strncpy( metero->literalLabel, metero->eBuf->bufLiteralLabel,
+   PV_Factory::MAX_PV_NAME );
+
+  metero->readPvLabelExpStr.setRaw( metero->literalLabel );
 
   metero->labelType = metero->eBuf->bufLabelType;
 
@@ -213,28 +214,64 @@ static void meter_monitor_read_connect_state (
 
 activeMeterClass *metero = (activeMeterClass *) userarg;
 
+  metero->actWin->appCtx->proc->lock();
+
   if ( pv->is_valid() ) {
 
-    metero->needConnectInit = 1;
-    metero->actWin->appCtx->proc->lock();
-    metero->actWin->addDefExeNode( metero->aglPtr );
-    metero->actWin->appCtx->proc->unlock();
+    metero->connection.setPvConnected( (void *) metero->readPvConnection );
+
+    if ( metero->connection.pvsConnected() ) {
+      metero->needConnectInit = 1;
+      metero->actWin->addDefExeNode( metero->aglPtr );
+    }
 
   }
   else {
 
-    metero->readPvConnected = 0;
+    metero->connection.setPvDisconnected( (void *) metero->readPvConnection );
     metero->active = 0;
     metero->meterColor.setDisconnected();
     metero->fgColor.setDisconnected();
     metero->scaleColor.setDisconnected();
     metero->bufInvalidate();
     metero->needDraw = 1;
-    metero->actWin->appCtx->proc->lock();
     metero->actWin->addDefExeNode( metero->aglPtr );
-    metero->actWin->appCtx->proc->unlock();
 
   }
+
+  metero->actWin->appCtx->proc->unlock();
+
+}
+
+static void meter_monitor_read_label_connect_state (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+activeMeterClass *metero = (activeMeterClass *) userarg;
+
+  metero->actWin->appCtx->proc->lock();
+
+  if ( pv->is_valid() ) {
+
+    metero->connection.setPvConnected( (void *) metero->readPvLabelConnection );
+
+    if ( metero->connection.pvsConnected() ) {
+      metero->needConnectInit = 1;
+      metero->actWin->addDefExeNode( metero->aglPtr );
+    }
+
+  }
+  else {
+
+    metero->connection.setPvDisconnected( (void *) metero->readPvLabelConnection );
+    metero->bufInvalidate();
+    metero->needDraw = 1;
+    metero->actWin->addDefExeNode( metero->aglPtr );
+
+  }
+
+  metero->actWin->appCtx->proc->unlock();
 
 }
 
@@ -268,6 +305,27 @@ int st, sev;
     metero->actWin->addDefExeNode( metero->aglPtr );
     metero->actWin->appCtx->proc->unlock();
 
+  }
+
+}
+
+static void meter_readLabelUpdate (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+activeMeterClass *metero = (activeMeterClass *) userarg;
+
+  pv->get_string( metero->readPvLabel, PV_Factory::MAX_PV_NAME );
+  metero->readPvLabel[PV_Factory::MAX_PV_NAME] = 0;
+
+  if ( metero->active ) {
+    metero->bufInvalidate();
+    metero->needErase = 1;
+    metero->needDraw = 1;
+    metero->actWin->appCtx->proc->lock();
+    metero->actWin->addDefExeNode( metero->aglPtr );
+    metero->actWin->appCtx->proc->unlock();
   }
 
 }
@@ -315,6 +373,10 @@ activeMeterClass::activeMeterClass ( void ) {
 
   baseV = 0;
 
+  strcpy( readPvLabel, "" );
+
+  connection.setMaxPvs( 2 );
+
 }
 
 // copy constructor
@@ -342,11 +404,10 @@ activeGraphicClass *metero = (activeGraphicClass *) this;
   scaleColor.copy(source->scaleColor);
   labelColor.copy(source->labelColor);
 
-  controlPvExpStr.copy( source->controlPvExpStr );
   readPvExpStr.copy( source->readPvExpStr );
 
-  strncpy( label, source->label, 39 );
-  strncpy( literalLabel, source->literalLabel, 39);
+  strncpy( label, source->label, PV_Factory::MAX_PV_NAME );
+  strncpy( literalLabel, source->literalLabel, PV_Factory::MAX_PV_NAME );
 
   meterColorMode = source->meterColorMode;
   scaleColorMode = source->scaleColorMode;
@@ -389,6 +450,10 @@ activeGraphicClass *metero = (activeGraphicClass *) this;
   eBuf = NULL;
 
   baseV = 0;
+
+  connection.setMaxPvs( 2 );
+
+  strcpy( readPvLabel, "" );
 
   updateDimensions();
 
@@ -574,10 +639,7 @@ int index;
   actWin->ci->writeColorIndex( f, index );
   //fprintf( f, "%-d\n", index );
 
-  if ( controlPvExpStr.getRaw() )
-    writeStringToFile( f, controlPvExpStr.getRaw() );
-  else
-    writeStringToFile( f, "" );
+  writeStringToFile( f, "" ); // use to be controlpv
 
   if ( readPvExpStr.getRaw() )
     writeStringToFile( f, readPvExpStr.getRaw() );
@@ -672,7 +734,7 @@ static int labelTypeEnum[3] = {
   tag.loadR( "topShadowColor", actWin->ci, &tsColor );
   tag.loadR( "botShadowColor", actWin->ci, &bsColor );
   tag.loadR( "readPv", &readPvExpStr, emptyStr );
-  tag.loadR( "label", 39, literalLabel, emptyStr );
+  tag.loadR( "label", PV_Factory::MAX_PV_NAME, literalLabel, emptyStr );
   tag.loadR( "labelType", 3, labelTypeEnumStr, labelTypeEnum,
    &labelType, &lit );
   tag.loadR( "trackDelta", &trackDelta, &zero );
@@ -757,8 +819,6 @@ static int labelTypeEnum[3] = {
 
   bgColor.setAlarmInsensitive();
 
-  controlPvExpStr.setRaw( "" );
-
   actWin->fi->loadFontTag( labelFontTag );
   labelFs = actWin->fi->getXFontStruct( labelFontTag );
   updateFont( labelFontTag, &labelFs, &labelFontAscent, &labelFontDescent,
@@ -768,6 +828,8 @@ static int labelTypeEnum[3] = {
   scaleFs = actWin->fi->getXFontStruct( scaleFontTag );
   updateFont( scaleFontTag, &scaleFs, &scaleFontAscent, &scaleFontDescent,
    &scaleFontHeight );
+
+  readPvLabelExpStr.setRaw( literalLabel );
 
   updateDimensions();
 
@@ -957,15 +1019,16 @@ char oneName[PV_Factory::MAX_PV_NAME+1], str[15+1];
 
   readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
-  controlPvExpStr.setRaw( oneName );
+  //controlPvExpStr.setRaw( oneName );
 
   readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
    actWin->incLine();
   readPvExpStr.setRaw( oneName );
 
-  readStringFromFile( literalLabel, 39+1, f ); actWin->incLine();
+  readStringFromFile( literalLabel, PV_Factory::MAX_PV_NAME+1,
+   f ); actWin->incLine();
 
-  readStringFromFile( label, 39+1, f ); actWin->incLine();
+  readStringFromFile( label, PV_Factory::MAX_PV_NAME+1, f ); actWin->incLine();
 
   fscanf( f, "%d\n", &labelType ); actWin->incLine();
 
@@ -1112,14 +1175,7 @@ char title[32], *ptr;
   else
     strcpy( eBuf->bufReadPvName, "" );
 
-  if ( controlPvExpStr.getRaw() )
-    strncpy( eBuf->bufControlPvName, controlPvExpStr.getRaw(),
-     PV_Factory::MAX_PV_NAME );
-  else
-    strcpy( eBuf->bufControlPvName, "" );
-
-  strncpy( eBuf->bufLabel, label, 39 );
-  strncpy( eBuf->bufLiteralLabel, literalLabel, 39);
+  strncpy( eBuf->bufLiteralLabel, literalLabel, PV_Factory::MAX_PV_NAME );
 
   eBuf->bufLabelType = labelType;
   eBuf->bufScaleLimitsFromDb = scaleLimitsFromDb;
@@ -1162,12 +1218,11 @@ char title[32], *ptr;
   ef.addTextField( activeMeterClass_str5, 35, &eBuf->bufY );
   ef.addTextField( activeMeterClass_str6, 35, &eBuf->bufW );
   ef.addTextField( activeMeterClass_str7, 35, &eBuf->bufH );
-  //   ef.addTextField( activeMeterClass_str8, 35, eBuf->bufControlPvName,
-  //    PV_Factory::MAX_PV_NAME );
   ef.addTextField( activeMeterClass_str9, 35, eBuf->bufReadPvName,
    PV_Factory::MAX_PV_NAME );
   ef.addOption( activeMeterClass_str10, activeMeterClass_str11, &eBuf->bufLabelType );
-  ef.addTextField( activeMeterClass_str12, 35, eBuf->bufLiteralLabel, 39 );
+  ef.addTextField( activeMeterClass_str12, 35, eBuf->bufLiteralLabel,
+   PV_Factory::MAX_PV_NAME );
   ef.addColorButton( activeMeterClass_str14, actWin->ci,&eBuf->labelCb,&eBuf->bufLabelColor);
   ef.addTextField(activeMeterClass_str15, 35, &eBuf->bufMeterAngle);
   ef.addToggle( activeMeterClass_str45, &eBuf->bufTrackDelta );
@@ -1283,6 +1338,7 @@ int activeMeterClass::draw ( void ) {
   double tickSize;
   int  farEndX, farEndY, nearEndX, nearEndY;
   char fmt[31+1];
+  XRectangle xR;
 
   if (meterAngle < 10)  meterAngle = 10;
   if (meterAngle > 360) meterAngle = 360;
@@ -1305,20 +1361,32 @@ int activeMeterClass::draw ( void ) {
  faceW = w - 2 * caseWidth;
  faceH = h - 2 * caseWidth;
 
-// if (labelType = 0 || !(strlen(literalLabel))) {
-//    fetch pv name ...
-//}
-// else if (labelType = 1) {
-//    fetch pv label ...
-//}
-// else if (labelType =2) {
- if (strlen(literalLabel)){
-   strncpy (label, literalLabel, 39);
-   faceH = faceH + caseWidth - 4 - labelFontHeight;
- }
- else strcpy (label,"");
-
-//}
+  if ( labelType == 0 ) {
+    strncpy( label, readPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+    label[PV_Factory::MAX_PV_NAME] = 0;
+  }
+  else if ( labelType == 1 ) {
+    if ( strlen(literalLabel) ) {
+      strncpy ( label, literalLabel, PV_Factory::MAX_PV_NAME );
+      label[PV_Factory::MAX_PV_NAME] = 0;
+    }
+    else {
+      strcpy (label,"");
+    }
+  }
+  else if ( labelType == 2 ) {
+    if ( strlen(literalLabel) ) {
+      strncpy ( label, literalLabel, PV_Factory::MAX_PV_NAME );
+      label[PV_Factory::MAX_PV_NAME] = 0;
+    }
+    else {
+      strcpy (label,"");
+    }
+  }
+  else {
+    strcpy (label,"");
+  }
+  faceH = faceH + caseWidth - 4 - labelFontHeight;
 
  if(scalePrecision > 10 || scalePrecision < 0) scalePrecision = 1;
 
@@ -1435,9 +1503,15 @@ int activeMeterClass::draw ( void ) {
    }
 
    if (strlen (label)){
+     xR.x = faceX;
+     xR.y = faceY + faceH + 2;
+     xR.width  = faceW;
+     xR.height = h - faceH;
+     actWin->drawGc.addNormXClipRectangle( xR );
      drawText (actWin->drawWidget, &actWin->drawGc,
-	       labelFs, faceX + 2, faceY + faceH + 2,
-	       XmALIGNMENT_BEGINNING, label);
+	       labelFs, x+w/2, faceY + faceH + 2,
+	       XmALIGNMENT_CENTER, label);
+     actWin->drawGc.removeNormXClipRectangle();
    }
 
    if (shadowMode) {
@@ -1602,8 +1676,7 @@ int activeMeterClass::draw ( void ) {
 
 int activeMeterClass::drawActive ( void ) {
 
-  int i, ii, tX, tY;
-  //XRectangle xR = { x, y, w, h };
+ int i, ii, tX, tY;
  char scaleMinString[39+1],scaleMaxString[39+1],scaleString[39+1];
  double labelAngle, labelAngleIncr, majorAngleIncr, minorAngleIncr;
  double meterTotalAngle, beginAngle, endAngle;
@@ -1624,7 +1697,7 @@ int activeMeterClass::drawActive ( void ) {
 
 XPoint xpoints[6];
 
-  if ( !activeInitFlag ) {
+  if ( !activeInitFlag && !connection.pvsConnected() ) {
     if ( needToDrawUnconnected ) {
       actWin->executeGc.saveFg();
       actWin->executeGc.setFG( meterColor.getDisconnected() );
@@ -1658,20 +1731,27 @@ XPoint xpoints[6];
  faceW = w - 2 * caseWidth;
  faceH = h - 2 * caseWidth;
 
-// if (labelType = 0) {
-//    fetch pv name ...
-//}
-// else if (labelType = 1) {
-//    fetch pv label ...
-//}
-// else if (labelType =2) {
- if (strlen(literalLabel)){
-   strncpy (label, literalLabel, 39);
-   faceH = faceH + caseWidth - 4 - labelFontHeight;
- }
- else strcpy (label,"");
-
-//}
+  if ( labelType == 0 ) {
+    strncpy( label, readPvExpStr.getExpanded(), PV_Factory::MAX_PV_NAME );
+    label[PV_Factory::MAX_PV_NAME] = 0;
+  }
+  else if ( labelType == 1 ) {
+    strncpy( label, readPvLabel, PV_Factory::MAX_PV_NAME );
+    label[PV_Factory::MAX_PV_NAME] = 0;
+  }
+  else if ( labelType == 2 ) {
+    if ( strlen(literalLabel) ) {
+      strncpy( label, literalLabel, PV_Factory::MAX_PV_NAME );
+      label[PV_Factory::MAX_PV_NAME] = 0;
+    }
+    else {
+      strcpy (label,"");
+    }
+  }
+  else {
+    strcpy (label,"");
+  }
+  faceH = faceH + caseWidth - 4 - labelFontHeight;
 
  actWin->executeGc.saveFg();
 
@@ -1810,9 +1890,15 @@ if (drawStaticFlag){
    }
 
    if (strlen (label)){
+     xR.x = faceX;
+     xR.y = faceY + faceH + 2;
+     xR.width  = faceW;
+     xR.height = h - faceH;
+     actWin->executeGc.addNormXClipRectangle( xR );
      drawText (actWin->executeWidget, &actWin->executeGc,
-	       labelFs, faceX + 2, faceY + faceH + 2,
-	       XmALIGNMENT_BEGINNING, label);
+	       labelFs, x+w/2, faceY + faceH + 2,
+	       XmALIGNMENT_CENTER, label);
+     actWin->executeGc.removeNormXClipRectangle();
    }
 
    if (shadowMode) {
@@ -2157,41 +2243,48 @@ int opStat;
     meterNeedleYend = 1;
     oldMeterNeedleXOrigin = 0;
     oldMeterNeedleYOrigin = 0;
-    readPvId = NULL;
-    initialReadConnection = 1;
+    readPvId = readPvLabelId = NULL;
+    initialReadConnection = initialReadLabelConnection = 1;
     oldStat = oldSev = -1;
+    strcpy( readPvLabel, "" );
+    connection.init();
 
     drawStaticFlag = 1;
 
-    controlPvConnected = readPvConnected = active = activeInitFlag= 0;
+    active = activeInitFlag= 0;
     activeMode = 1;
-
-    if ( !controlPvExpStr.getExpanded() ||
-      // ( strcmp( controlPvExpStr.getExpanded(), "" ) == 0 ) ) {
-      blankOrComment( controlPvExpStr.getExpanded() ) ) {
-      controlExists = 0;
-    }
-    else {
-      controlExists = 1;
-    }
-
-    if ( !readPvExpStr.getExpanded() ||
-      // ( strcmp( readPvExpStr.getExpanded(), "" ) == 0 ) ) {
-      blankOrComment( readPvExpStr.getExpanded() ) ) {
-      readExists = 0;
-    }
-    else {
-      readExists = 1;
-      meterColor.setConnectSensitive();
-      fgColor.setConnectSensitive();
-      scaleColor.setConnectSensitive();
-    }
 
     break;
 
   case 2:
 
     if ( !opComplete ) {
+
+      if ( !readPvExpStr.getExpanded() ||
+        blankOrComment( readPvExpStr.getExpanded() ) ) {
+        readExists = 0;
+      }
+      else {
+        readExists = 1;
+        connection.addPv();
+        meterColor.setConnectSensitive();
+        fgColor.setConnectSensitive();
+        scaleColor.setConnectSensitive();
+      }
+
+      if ( labelType == 1 ) {
+        if ( !readPvLabelExpStr.getExpanded() ||
+          blankOrComment( readPvLabelExpStr.getExpanded() ) ) {
+          readLabelExists = 0;
+        }
+        else {
+          readLabelExists = 1;
+          connection.addPv();
+        }
+      }
+      else {
+        readLabelExists = 0;
+      }
 
       if ( scaleMinExpStr.getExpanded() ) {
         scaleMin = atof( scaleMinExpStr.getExpanded() );
@@ -2256,6 +2349,20 @@ int opStat;
         }
       }
 
+      if ( readLabelExists ) {
+	readPvLabelId = the_PV_Factory->create(
+         readPvLabelExpStr.getExpanded() );
+	if ( readPvLabelId ) {
+	  readPvLabelId->add_conn_state_callback(
+           meter_monitor_read_label_connect_state,
+           this );
+	}
+	else {
+          fprintf( stderr, activeMeterClass_str46 );
+          opStat = 0;
+        }
+      }
+
       if ( opStat & 1 ) opComplete = 1;
 
       return opStat;
@@ -2298,6 +2405,17 @@ int activeMeterClass::deactivate (
         readPvId->remove_value_callback( meter_readUpdate, this );
         readPvId->release();
         readPvId = NULL;
+      }
+    }
+
+    if ( readLabelExists ) {
+      if ( readPvLabelId ) {
+        readPvLabelId->remove_conn_state_callback(
+         meter_monitor_read_label_connect_state,
+         this );
+        readPvLabelId->remove_value_callback( meter_readLabelUpdate, this );
+        readPvLabelId->release();
+        readPvLabelId = NULL;
       }
     }
 
@@ -2373,17 +2491,9 @@ int activeMeterClass::getMeterActionRequest (
   int *drag )
 {
 
-  if ( !controlExists ) {
-    *up = 0;
-    *down = 0;
-    *drag = 0;
-    return 1;
-  }
-
-  *up = 1;
-  *down = 1;
-  *drag = 1;
-
+  *up = 0;
+  *down = 0;
+  *drag = 0;
   return 1;
 
 }
@@ -2538,7 +2648,7 @@ int tmpw, tmph, ret_stat;
     }
   }
 
-  if ( -h != -1 ) {
+  if ( _h != -1 ) {
     tmph = _h;
     if ( tmph < minH ) {
       ret_stat = 0;
@@ -2570,8 +2680,6 @@ int nc, ni, nr, ne, nd;
 
   if ( nc ) {
 
-    readPvConnected = 1;
-
     v = readV = curReadV = readPvId->get_double() - baseV;
     readMin = readPvId->get_lower_disp_limit();
     readMax = readPvId->get_upper_disp_limit();
@@ -2582,17 +2690,33 @@ int nc, ni, nr, ne, nd;
 
   if ( ni ) {
 
-    if ( initialReadConnection ) {
+    if ( readExists ) {
 
-      initialReadConnection = 0;
+      if ( initialReadConnection ) {
 
-      readPvId->add_value_callback( meter_readUpdate, this );
+        initialReadConnection = 0;
 
-      if ( trackDelta ) {
-        baseV = readPvId->get_double();
+        readPvId->add_value_callback( meter_readUpdate, this );
+
+        if ( trackDelta ) {
+          baseV = readPvId->get_double();
+        }
+        else {
+	  baseV = 0;
+        }
+
       }
-      else {
-	baseV = 0;
+
+    }
+
+    if ( readLabelExists ) {
+
+      if ( initialReadLabelConnection ) {
+
+        initialReadLabelConnection = 0;
+
+        readPvLabelId->add_value_callback( meter_readLabelUpdate, this );
+
       }
 
     }

@@ -80,7 +80,15 @@ static void meter_readUpdate (
   ProcessVariable *pv,
   void *userarg );
 
+static void meter_readLabelUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
 static void meter_monitor_read_connect_state (
+  ProcessVariable *pv,
+  void *userarg );
+
+static void meter_monitor_read_label_connect_state (
   ProcessVariable *pv,
   void *userarg );
 
@@ -123,7 +131,15 @@ friend void meter_readUpdate (
   ProcessVariable *pv,
   void *userarg );
 
+friend void meter_readLabelUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
 friend void meter_monitor_read_connect_state (
+  ProcessVariable *pv,
+  void *userarg );
+
+friend void meter_monitor_read_label_connect_state (
   ProcessVariable *pv,
   void *userarg );
 
@@ -164,9 +180,7 @@ typedef struct editBufTag {
   colorButtonClass labelCb;
   colorButtonClass scaleCb;
   char bufScaleFormat[15+1];
-  char bufLabel[39+1];
-  char bufLiteralLabel[39+1];
-  char bufControlPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufLiteralLabel[PV_Factory::MAX_PV_NAME+1];
   char bufReadPvName[PV_Factory::MAX_PV_NAME+1];
   int bufTrackDelta;
 } editBufType, *editBufPtr;
@@ -180,7 +194,7 @@ int opComplete;
 int minW;
 int minH;
 
-double controlV, curControlV, readV, curReadV, readMin, readMax, baseV;
+double readV, curReadV, readMin, readMax, baseV;
 int meterW, oldMeterW, bufInvalid, meterX, oldMeterX, originW, mode;
 double meterOriginX;
 
@@ -195,22 +209,26 @@ XFontStruct *scaleFs, *labelFs;
 int scaleFontAscent, scaleFontDescent, scaleFontHeight;
 int labelFontAscent, labelFontDescent, labelFontHeight;
 
-ProcessVariable *readPvId;
-int initialReadConnection;
+ProcessVariable *readPvId, *readPvLabelId;
+int initialReadConnection, initialReadLabelConnection;
 int oldStat, oldSev;
 
-expStringClass controlPvExpStr, readPvExpStr, scaleMinExpStr,
+static const int readPvConnection = 1;
+static const int readPvLabelConnection = 2;
+pvConnectionClass connection;
+
+expStringClass readPvExpStr, readPvLabelExpStr, scaleMinExpStr,
  scaleMaxExpStr, scalePrecExpStr, labIntExpStr, majorIntExpStr,
  minorIntExpStr;
 
-int controlExists, readExists;
+int readExists, readLabelExists;
 
-int controlPvConnected, readPvConnected, active, activeMode, activeInitFlag;
+int active, activeMode, activeInitFlag;
 
 int meterColorMode, fgColorMode, scaleColorMode;
 pvColorClass meterColor, fgColor, bgColor;
 pvColorClass tsColor, bsColor, labelColor, scaleColor;
-char label[39+1];
+char label[PV_Factory::MAX_PV_NAME+1];
 int labelType;
 int drawStaticFlag;
 int showScale;
@@ -218,7 +236,8 @@ int useDisplayBg;
 int trackDelta;
 
 int labelIntervals, majorIntervals, minorIntervals;
-char literalLabel[39+1];
+char literalLabel[PV_Factory::MAX_PV_NAME+1];
+char readPvLabel[PV_Factory::MAX_PV_NAME+1];
 double meterAngle;
 char scaleFormat[15+1];
 int scalePrecision;
