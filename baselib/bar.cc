@@ -435,11 +435,19 @@ activeGraphicClass *baro = (activeGraphicClass *) this;
   minVertH = 10;
   activeMode = 0;
 
+  readMin = source->readMin;
+  readMax = source->readMax;
+  labelTicks = source->labelTicks;
+  majorTicks = source->majorTicks;
+  minorTicks = source->minorTicks;
+  barOriginX = source->barOriginX;
+
   limitsFromDb = source->limitsFromDb;
   readMinExpStr.copy( source->readMinExpStr );
   readMaxExpStr.copy( source->readMaxExpStr );
 
   precisionExpStr.copy( source->precisionExpStr );
+  precision = source->precision;
 
   strncpy( scaleFormat, source->scaleFormat, 15 );
 
