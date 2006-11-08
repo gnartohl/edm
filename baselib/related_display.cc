@@ -3181,7 +3181,9 @@ int focus;
   if ( ( numDsps > 1 ) && button3Popup ) return;
 
   if ( !blank( helpCommandExpString.getExpanded() ) ) {
-    if ( ( buttonNumber == 3 ) && ( buttonState == 0 ) ) {
+    if (  ( buttonNumber == 3 ) &&
+         !( buttonState & ShiftMask ) &&
+         !( buttonState & ControlMask ) ) {
       if ( helpItem != -1 ) {
         if ( helpItem < numDsps ) popupDisplay( helpItem );
       }
