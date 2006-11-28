@@ -225,11 +225,8 @@ void executeDeferred ( void );
 extern "C" {
 #endif
 
-void *create_12345678901234567890123456789012GIFPtr ( void );
-void *clone_12345678901234567890123456789012GIFPtr ( void * );
-
-void *create_activeGifClassPtr ( void );
-void *clone_activeGifClassPtr ( void * );
+void *create_cfcf6c8a_dbeb_11d2_8a97_00104b8742dfPtr( void );
+void *clone_cfcf6c8a_dbeb_11d2_8a97_00104b8742dfPtr ( void * );
 
 #ifdef __cplusplus
 }
