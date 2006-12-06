@@ -1,0 +1,9 @@
+#ifndef __pv_register_str
+#define __pv_register_str 1
+
+#define reg_str1 (char *) "Text Update"
+#define reg_str2 (char *) "Reg Text Update"
+#define reg_str3 (char *) "Text Entry"
+#define reg_str4 (char *) "Byte"
+
+#endif
