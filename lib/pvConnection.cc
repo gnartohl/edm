@@ -69,7 +69,8 @@ int i;
 
   for ( i=0; i<maxPvs; i++ ) {
     id[i] = NULL;
-    mask[i] = (unsigned int) pow(2,i);
+    //mask[i] = (unsigned int) pow(2,i); <-- solaris compile prob
+    mask[i] = 1 << i;
   }
 
   return 1;

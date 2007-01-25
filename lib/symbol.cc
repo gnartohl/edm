@@ -2429,7 +2429,8 @@ int num;
     }
     colorPvId = NULL;
 
-    notControlPvConnected = (int) pow(2,numPvs) - 1;
+    //notControlPvConnected = (int) pow(2,numPvs) - 1; <-- solaris compile prob
+    notControlPvConnected = (1 << numPvs) - 1;
 
     if ( numPvs ) {
 
