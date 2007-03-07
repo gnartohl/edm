@@ -97,7 +97,7 @@
 
 #define global_str90 (char *)  "  -one     Allow only one edm instance (all instances must be launched\n           with the same command line parameters)\n\n"
 
-#define global_str94 (char *)  "  -open    Request edm server to open files\n\n"
+#define global_str94 (char *)  "  -open    Request edm server to open files (-open file?x?y opens file at x,y)\n\n"
 
 #define global_str97 (char *)  "  -eolc    Exit when last screen is closed\n\n"
 
