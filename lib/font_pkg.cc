@@ -403,22 +403,27 @@ static char **findBestFont(
   int *n ) {
 
 char **list;
+
 char *tk, spec[127+1], rest[127+1], foundry[63+1], family[63+1], weight[31+1],
  slant[31+1], ftype[31+1], size[31+1], newFont[127+1];
 
   strncpy( spec, fontSpec, 127 );
+  spec[127] = 0;
 
   tk = strtok( spec, "-" );
   if ( !tk ) goto err_return;
   strncpy( foundry, tk, 63 );
+  foundry[63] = 0;
 
   tk = strtok( NULL, "-" );
   if ( !tk ) goto err_return;
   strncpy( family, tk, 63 );
+  family[63] = 0;
 
   tk = strtok( NULL, "\n" );
   if ( !tk ) goto err_return;
   strncpy( rest, tk, 127 );
+  rest[127] = 0;
 
   strncpy( newFont, "-", 127 );
   Strncat( newFont, foundry, 127 );
@@ -432,14 +437,17 @@ char *tk, spec[127+1], rest[127+1], foundry[63+1], family[63+1], weight[31+1],
   if ( *n == 1 ) return list;
 
   strncpy( spec, rest, 127 );
+  spec[127] = 0;
 
   tk = strtok( spec, "-" );
   if ( !tk ) goto err_return;
-  strncpy( weight, tk, 63 );
+  strncpy( weight, tk, 31 );
+  weight[31] = 0;
 
   tk = strtok( NULL, "\n" );
   if ( !tk ) goto err_return;
   strncpy( rest, tk, 127 );
+  rest[127] = 0;
 
   strncpy( newFont, "-", 127 );
   Strncat( newFont, foundry, 127 );
@@ -454,14 +462,17 @@ char *tk, spec[127+1], rest[127+1], foundry[63+1], family[63+1], weight[31+1],
   if ( *n == 1 ) return list;
 
   strncpy( spec, rest, 127 );
+  spec[127] = 0;
 
   tk = strtok( spec, "-" );
   if ( !tk ) goto err_return;
-  strncpy( slant, tk, 63 );
+  strncpy( slant, tk, 31 );
+  slant[31] = 0;
 
   tk = strtok( NULL, "\n" );
   if ( !tk ) goto err_return;
   strncpy( rest, tk, 127 );
+  rest[127] = 0;
 
   strncpy( newFont, "-", 127 );
   Strncat( newFont, foundry, 127 );
@@ -477,18 +488,22 @@ char *tk, spec[127+1], rest[127+1], foundry[63+1], family[63+1], weight[31+1],
   if ( *n == 1 ) return list;
 
   strncpy( spec, rest, 127 );
+  spec[127] = 0;
 
   tk = strtok( spec, "-" );
   if ( !tk ) goto err_return;
-  strncpy( ftype, tk, 63 );
+  strncpy( ftype, tk, 31 );
+  ftype[31] = 0;
 
   tk = strtok( NULL, "-" );
   if ( !tk ) goto err_return;
   strncpy( size, tk, 31 );
+  size[31] = 0;
 
   tk = strtok( NULL, "\n" );
   if ( !tk ) goto err_return;
   strncpy( rest, tk, 127 );
+  rest[127] = 0;
 
   strncpy( newFont, "-", 127 );
   Strncat( newFont, foundry, 127 );

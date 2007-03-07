@@ -35,6 +35,89 @@ typedef struct libRecTag {
 
 static int g_needXtInit = 1;
 
+static void extractPosition (
+  char *str,
+  char *filePart,
+  int max,
+  int *gotPosition,
+  int *posx,
+  int *posy
+) {
+
+char buf[1023+1], *tk, *ctx, *err;
+int ok;
+
+  strncpy( buf, str, 1023 );
+  buf[1023] = 0;
+
+  ok = 1;
+
+  ctx = NULL;
+  tk = strtok_r( buf, "?", &ctx );
+
+  if ( tk ) {
+
+    strncpy( filePart, tk, max );
+    filePart[max] = 0;
+
+    tk = strtok_r( NULL, "?", &ctx );
+
+    if ( tk ) {
+
+      err = NULL;
+      *posx = strtod( tk, &err );
+      if ( err ) {
+	if ( strcmp( err, "" ) != 0 ) {
+	  ok = 0;
+	}
+      }
+
+      tk = strtok_r( NULL, "?", &ctx );
+
+      if ( tk ) {
+
+        err = NULL;
+        *posy = strtod( tk, &err );
+        if ( err ) {
+	  if ( strcmp( err, "" ) != 0 ) {
+	    ok = 0;
+	  }
+        }
+
+      }
+      else {
+
+        ok = 0;
+
+      }
+
+    }
+    else {
+
+      ok = 0;
+
+    }
+
+  }
+  else {
+
+    ok = 0;
+
+  }
+
+  if ( ok ) {
+    *gotPosition = 1;
+  }
+  else {
+    strncpy( filePart, str, max );
+    filePart[max] = 0;
+    *gotPosition = 0;
+    *posx = 0;
+    *posy = 0;
+  }
+
+}
+
 static int httpPath (
   char *path
  ) {
@@ -4768,6 +4851,8 @@ int state;
 char *macTk, *macBuf, macTmp[255+1];
 int stat;
 char name[127+1], prefix[127+1];
+char filePart[255+1];
+int gotPosition, posx, posy;
 
   //fprintf( stderr, "list = [%s]\n", list );
 
@@ -4897,7 +4982,15 @@ char name[127+1], prefix[127+1];
           cur->node.realize();
           cur->node.setGraphicEnvironment( &ci, &fi );
 
-          cur->node.storeFileName( tk );
+          extractPosition( tk, filePart, 255, &gotPosition, &posx, &posy );
+
+	  if ( gotPosition ) {
+	    cur->x = posx;
+	    cur->y = posy;
+	    cur->requestPosition = 1;
+	  }
+
+          cur->node.storeFileName( filePart );
 
           cur->requestOpen = 1;
           requestFlag++;
