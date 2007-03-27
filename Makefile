@@ -1,4 +1,4 @@
-# Makefile for medm top level
+# Makefile for edm top level
 TOP = ../..
 ifdef EPICS_HOST_ARCH
  include $(TOP)/configure/CONFIG
@@ -12,6 +12,7 @@ ifdef EPICS_HOST_ARCH
  DIRS += pvFactory 
  DIRS += choiceButton
  DIRS += videowidget
+ DIRS += triumflib
  include $(TOP)/configure/RULES_DIRS
 
 else

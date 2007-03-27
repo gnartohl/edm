@@ -63,9 +63,9 @@ static void *shellCmdThread (
 #endif
 
 int stat;
+
 threadParamBlockPtr threadParamBlock =
  (threadParamBlockPtr) thread_get_app_data( h );
-
   if ( threadParamBlock->secondsToDelay > 0.0 ) {
     thread_delay( h, threadParamBlock->secondsToDelay );
   }

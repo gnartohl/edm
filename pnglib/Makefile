@@ -1,21 +1,25 @@
 TOP = ../../..
 ifdef EPICS_HOST_ARCH
   include $(TOP)/configure/CONFIG
-   
-   IMAGELIB=/usr/local
+
+#====================================================================
+# Required by EDM on Solaris at SLAC
+#====================================================================
+PNG_LIB=/afs/slac/package/graphics/png/1.0.14/sun4x_57/lib
+PNG_INC=/afs/slac/package/graphics/png/1.0.14/common/include
+
    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
-   
+   USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
+   USR_CXXFLAGS_solaris +=  -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+
    57d79238-2924-420b-ba67-dfbecdf03fcd_LIBS_Linux += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
    57d79238-2924-420b-ba67-dfbecdf03fcd_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl png
    
-   USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
-   
    57d79238-2924-420b-ba67-dfbecdf03fcd_LIBS_Darwin += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
    57d79238-2924-420b-ba67-dfbecdf03fcd_SYS_LIBS_Darwin += Xm Xt Xp Xtst X11 pthread dl png
-   
-   USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
 
-   USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt png
+   57d79238-2924-420b-ba67-dfbecdf03fcd_LIBS_solaris += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
+   57d79238-2924-420b-ba67-dfbecdf03fcd_SYS_LIBS_solaris +=  Xm Xt Xmu X11 Xext pthread dl rt png 
 
    USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
 
@@ -24,6 +28,7 @@ ifdef EPICS_HOST_ARCH
    
    
    USR_LDFLAGS += -L$(INSTALL_LIB) -L$(IMAGELIB)
+   USR_LDFLAGS_solaris += -L$(INSTALL_LIB -L$(PNG_LIB)
    57d79238-2924-420b-ba67-dfbecdf03fcd_LDFLAGS += -L$(MOTIF_LIB) -L$(X11_LIB)
    
    LIBRARY = 57d79238-2924-420b-ba67-dfbecdf03fcd
@@ -34,6 +39,7 @@ ifdef EPICS_HOST_ARCH
     USR_INCLUDES += -I$(TOP)/include/edm -I../../util -I../../lib -I../../pvlib
 
    USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
+   USR_INCLUDES_solaris += -I$(MOTIF_INC) -I$(X11_INC) -I$(PNG_INC)
 
 
    Xm_DIR =   $(MOTIF_LIB)
@@ -57,8 +63,6 @@ ifdef EPICS_HOST_ARCH
   
    LIB_SRCS += png.cc
    LIB_SRCS += reg_lib57d79238-2924-420b-ba67-dfbecdf03fcd.cc
-   
-   
 
    include $(TOP)/configure/RULES
    

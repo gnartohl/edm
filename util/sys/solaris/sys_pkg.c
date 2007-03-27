@@ -18,9 +18,9 @@ char *Strncat(
   char *src,
   int max ) {
 
-  // max must be >= 0 and no more than stringsize - 1
-  //
-  // for char string[10];       max must be <= 9
+  /* max must be >= 0 and no more than stringsize - 1 */
+  
+  /* for char string[10];       max must be <= 9 */
 
 int l, newMax;
 char *s;

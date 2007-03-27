@@ -6,14 +6,17 @@ ifdef EPICS_HOST_ARCH
         USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1 -Wno-deprecated
 		
         USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1 -Wno-deprecated
-  
+        
+        USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1 -Wno-deprecated
+
 # System Libraries to link in:
   TwoDProfileMonitor_SYS_LIBS_Linux = Xpm
 
   TwoDProfileMonitor_SYS_LIBS_Darwin = Xpm
- 
-  USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1 -Wno-deprecated
-  USR_LIBS_solaris =  Xpm
+  
+  TwoDProfileMonitor_SYS_LIBS_solaris = Xpm
+   
+
 
   USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1 -Wno-deprecated
   USR_LIBS_hpux11_11_mt = Xpm
@@ -54,7 +57,6 @@ ifdef EPICS_HOST_ARCH
 
   LIB_SRCS += TwoDProfileMonitor.cc
   LIB_SRCS += image.cc
-  
 
   include $(TOP)/configure/RULES
 

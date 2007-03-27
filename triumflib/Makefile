@@ -12,10 +12,13 @@ ifdef EPICS_HOST_ARCH
    
    EdmTriumf_LIBS_Darwin += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
    EdmTriumf_SYS_LIBS_Darwin += Xm Xt Xp Xtst X11 pthread dl
-   
-   USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
 
-   USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt
+   EdmTriumf_LIBS_solaris += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
+   EdmTriumf_SYS_LIBS_solaris +=  Xm Xt Xmu X11 Xext pthread dl rt
+   
+   #USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+
+   #USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt
 
    USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
 
@@ -58,8 +61,6 @@ ifdef EPICS_HOST_ARCH
    LIB_SRCS += triumfSlider.cc
    LIB_SRCS += reg_libtriumf.cc
    
-   
-
    include $(TOP)/configure/RULES
    
 else

@@ -9,9 +9,11 @@ ifdef EPICS_HOST_ARCH
   ifeq ($(USE_CURL), YES)
         USR_CXXFLAGS_Darwin += -DUSECURL -DSINGLE_THREADED=1 -D__epics__=1 -pedantic
         USR_CXXFLAGS_Linux += -DUSECURL -DSINGLE_THREADED=1 -D__epics__=1 -pedantic
+	USR_CXXFLAGS_solaris += -D__solaris__ -DUSECURL -DSINGLE_THREADED=1 -D__epics__=1 -pedantic
   else
         USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
         USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
+        USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
   endif
 
   # Add debugging
@@ -20,9 +22,11 @@ ifdef EPICS_HOST_ARCH
   ifeq ($(USE_CURL), YES)
         cfcaa62e-8199-11d3-a77f-00104b8742df_SYS_LIBS_Darwin = Xm Xt Xp Xtst X11 pthread dl curl
         cfcaa62e-8199-11d3-a77f-00104b8742df_SYS_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl curl
+	cfcaa62e-8199-11d3-a77f-00104b8742df_SYS_LIBS_solaris = Xm Xt Xmu X11 Xext pthread dl rt curl ca Com
   else
         cfcaa62e-8199-11d3-a77f-00104b8742df_SYS_LIBS_Darwin = Xm Xt Xp Xtst X11 pthread dl
         cfcaa62e-8199-11d3-a77f-00104b8742df_SYS_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl
+	cfcaa62e-8199-11d3-a77f-00104b8742df_SYS_LIBS_solaris = Xm Xt Xmu X11 Xext pthread dl rt ca Com
   endif
 
   INSTALL_INCLUDE = $(TOP)/include/edm
@@ -77,17 +81,12 @@ ifdef EPICS_HOST_ARCH
   INC += lookup.h
   INC += pv_action.h
 
-  USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
-  USR_LIBS_solaris = Xm Xt Xmu X11 Xext pthread dl rt
 
   USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
   USR_LIBS_hpux11_11_mt = Xm Xt X11 Xext pthread
 
   USR_LDFLAGS += -L$(INSTALL_LIB)
   cfcaa62e-8199-11d3-a77f-00104b8742df_LDFLAGS += -L$(MOTIF_LIB) -L$(X11_LIB)
-
-  # Add Debugging
-  #USR_LDFLAGS += -g
 
   # Build Shared library
   LIBRARY = cfcaa62e-8199-11d3-a77f-00104b8742df
