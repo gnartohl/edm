@@ -23,6 +23,9 @@
 #include "path_list.h"
 #include "app_pkg.h"
 
+#ifdef index
+#undef index
+#endif
 
 static void plc_select (
   Widget w,
