@@ -440,12 +440,12 @@ char *first, *last;
   if ( first ) {
     last = rindex( (const char *) fname, (int) ']' );
     if ( last ) {
-      len1 = (int) first - (int) fname;
+      len1 = (long) first - (long) fname;
       if ( len1 > 255 ) len1 = 255;
       strncpy( nameToCheck, fname, len1 );
       nameToCheck[len1] = 0;
       remain = 255 - len1;
-      len2 = strlen( fname ) - (int) last + (int) fname - 1;
+      len2 = strlen( fname ) - (long) last + (long) fname - 1;
       if ( len2 > remain ) len2 = remain;
       strncat( nameToCheck, last+1, len2 );
       nameToCheck[len1+len2] = 0;
