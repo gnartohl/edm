@@ -51,7 +51,7 @@
 #define XTDC_K_FILE_NAME 2
 
 #define XTDC_MAJOR_VERSION 4
-#define XTDC_MINOR_VERSION 1
+#define XTDC_MINOR_VERSION 2
 #define XTDC_RELEASE 0
 
 #ifdef __x_text_dsp_obj_cc
@@ -498,6 +498,7 @@ typedef struct editBufTag {
   int bufUpdatePvOnDrop;
   int bufUseHexPrefix;
   efInt bufEfPrecision;
+  char bufFieldLenInfo[7+1];
   int bufClipToDspLimits;
   int bufBgColor;
   int bufFgColor;
@@ -546,6 +547,7 @@ int updatePvOnDrop;
 int useHexPrefix;
 int precision;
 efInt efPrecision;
+char fieldLenInfo[7+1];
 int clipToDspLimits;
 double upperLim, lowerLim;
 int bgColor;

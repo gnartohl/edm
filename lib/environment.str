@@ -19,6 +19,7 @@
 #define environment_str13 (char *) "EDMTMPUMASK"
 #define environment_str14 (char *) "EDMDUMPFILES"
 #define environment_str15 (char *) "EDMACTIONS"
+#define environment_str16 (char *) "EDMTEXTBORDERALWAYS"
 
 #define global_str1 (char *) "Symbol"
 #define global_str2 (char *) "Monitors"

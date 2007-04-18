@@ -27,6 +27,9 @@
 static int g_transInit = 1;
 static XtTranslations g_parsedTrans;
 
+static int g_initTextBorderCheck = 1;
+static int g_showTextBorderAlways = 0;
+
 static char g_dragTrans[] =
   "#override\n\
    ~Ctrl~Shift<Btn2Down>: startDrag()\n\
@@ -42,6 +45,21 @@ static XtActionsRec g_dragActions[] = {
   { "selectActions", (XtActionProc) selectActions },
   { "selectDrag", (XtActionProc) selectDrag }
 };
+
+static void checkTextBorderAlways ( void ) {
+
+  if ( g_initTextBorderCheck ) {
+
+    g_initTextBorderCheck = 0;
+
+    char *envPtr = getenv( environment_str16 );
+    if ( envPtr ) {
+      g_showTextBorderAlways = 1;
+    }
+
+  }
+
+}
 
 static int stringPut (
   ProcessVariable *id,
@@ -1736,6 +1754,9 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
   else
     axtdo->precision = axtdo->efPrecision.value();
 
+  strncpy( axtdo->fieldLenInfo, axtdo->eBuf->bufFieldLenInfo, 7 );
+  axtdo->fieldLenInfo[7] = 0;
+
   axtdo->clipToDspLimits = axtdo->eBuf->bufClipToDspLimits;
 
   axtdo->fgColor.setConnectSensitive();
@@ -1907,6 +1928,7 @@ activeXTextDspClass::activeXTextDspClass ( void ) {
 
   efPrecision.setNull(1);
   precision = 3;
+  strcpy( fieldLenInfo, "" );
 
   clipToDspLimits = 0;
   upperLim = lowerLim = 0.0;
@@ -1944,6 +1966,8 @@ activeXTextDspClass::activeXTextDspClass ( void ) {
   eBuf = NULL;
 
   pvIndex = 0;
+
+  if ( g_initTextBorderCheck ) checkTextBorderAlways();
 
   setBlinkFunction( (void *) doBlink );
 
@@ -2027,6 +2051,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   fastUpdate = source->fastUpdate;
   precision = source->precision;
   efPrecision = source->efPrecision;
+  strncpy( fieldLenInfo, source->fieldLenInfo, 7 );
+  fieldLenInfo[7] = 0;
   clipToDspLimits = source->clipToDspLimits;
   upperLim = source->upperLim;
   lowerLim = source->lowerLim;
@@ -2063,6 +2089,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   unconnectedTimer = 0;
 
   eBuf = NULL;
+
+  if ( g_initTextBorderCheck ) checkTextBorderAlways();
 
   setBlinkFunction( (void *) doBlink );
 
@@ -2306,6 +2334,7 @@ static int objTypeEnum[4] = {
   tag.loadBoolW( "motifWidget", &isWidget, &zero );
   tag.loadBoolW( "limitsFromDb", &limitsFromDb, &zero );
   tag.loadW( "precision", &efPrecision );
+  tag.loadW( "fieldLen", fieldLenInfo, emptyStr );
   tag.loadW( "nullPv", &svalPvExpStr, emptyStr );
   index = fgColor.nullIndex();
   tag.loadW( "nullColor", actWin->ci, &index );
@@ -2558,6 +2587,7 @@ static int objTypeEnum[4] = {
   tag.loadR( "motifWidget", &isWidget, &zero );
   tag.loadR( "limitsFromDb", &limitsFromDb, &zero );
   tag.loadR( "precision", &efPrecision );
+  tag.loadR( "fieldLen", 7, fieldLenInfo, emptyStr );
   tag.loadR( "nullPv", &svalPvExpStr, emptyStr );
   tag.loadR( "nullColor", actWin->ci, &index );
   tag.loadR( "nullCondition", 3, nullCondEnumStr, nullCondEnum,
@@ -3334,6 +3364,8 @@ int noedit;
   eBuf->bufChangeValOnLoseFocus = changeValOnLoseFocus;
   eBuf->bufFastUpdate = fastUpdate;
   eBuf->bufEfPrecision = efPrecision;
+  strncpy( eBuf->bufFieldLenInfo, fieldLenInfo, 7 );
+  eBuf->bufFieldLenInfo[7] = 0;
   eBuf->bufClipToDspLimits = clipToDspLimits;
   eBuf->bufChangeCallbackFlag = changeCallbackFlag;
   eBuf->bufActivateCallbackFlag = activateCallbackFlag;
@@ -3368,6 +3400,7 @@ int noedit;
    activeXTextDspClass_str19, &eBuf->bufFormatType );
   ef.addToggle( activeXTextDspClass_str77, &eBuf->bufUseHexPrefix );
   ef.addToggle( activeXTextDspClass_str20, &eBuf->bufLimitsFromDb );
+  ef.addTextField( activeXTextDspClass_str85, 35, eBuf->bufFieldLenInfo, 7 );
   ef.addTextField( activeXTextDspClass_str21, 35, &eBuf->bufEfPrecision );
   ef.addToggle( activeXTextDspClass_str84, &eBuf->bufClipToDspLimits );
   ef.addToggle( activeXTextDspClass_str81, &eBuf->bufShowUnits );
@@ -3726,7 +3759,8 @@ unsigned int color;
           }
           if ( colorMode == XTDC_K_COLORMODE_ALARM ) {
             if ( fgColor.getSeverity() != prevAlarmSeverity ) {
-              if ( fgColor.getSeverity() && useAlarmBorder ) {
+              if ( ( ( g_showTextBorderAlways && actWin->ci->shouldShowNoAlarmState() ) ||
+                     fgColor.getSeverity() ) && useAlarmBorder ) {
                 XtSetArg( args[n], XmNborderWidth, (XtArgVal) 2 ); n++;
 	        color = fgColor.getColor();
                 XtSetArg( args[n], XmNborderColor, (XtArgVal) color ); n++;
@@ -3816,7 +3850,8 @@ unsigned int color;
 
   if ( colorMode == XTDC_K_COLORMODE_ALARM ) {
 
-    if ( fgColor.getSeverity() && useAlarmBorder ) {
+    if ( ( ( g_showTextBorderAlways && actWin->ci->shouldShowNoAlarmState() ) ||
+           fgColor.getSeverity() ) && useAlarmBorder ) {
 
       actWin->executeGc.setFG( fgColor.getIndex(), &blink );
       actWin->executeGc.setLineWidth( 2 );
@@ -4540,6 +4575,7 @@ unsigned int bg, pixel;
 XmFontList textFontList = NULL;
 Cardinal numImportTargets;
 Atom importList[2];
+char locFieldLenInfo[7+1];
 
   if ( actWin->isIconified ) return;
 
@@ -4705,15 +4741,23 @@ Atom importList[2];
 
         case ProcessVariable::specificType::flt:
 
+          if ( blank(fieldLenInfo) ) {
+            strcpy( locFieldLenInfo, "" );
+          }
+          else {
+            strncpy( locFieldLenInfo, fieldLenInfo, 7 );
+            locFieldLenInfo[7] = 0;
+          }
+
           switch( formatType ) {
           case XTDC_K_FORMAT_FLOAT:
-            sprintf( format, "%%.%-df", precision );
+            sprintf( format, "%%%s.%-df", locFieldLenInfo, precision );
             break;
           case XTDC_K_FORMAT_EXPONENTIAL:
-            sprintf( format, "%%.%-de", precision );
+            sprintf( format, "%%%s.%-de", locFieldLenInfo, precision );
             break;
           default:
-            sprintf( format, "%%.%-df", precision );
+            sprintf( format, "%%%s.%-df", locFieldLenInfo, precision );
             break;
           } // end switch( formatType )
   
@@ -4727,15 +4771,23 @@ Atom importList[2];
 
         case ProcessVariable::specificType::real:
 
+          if ( blank(fieldLenInfo) ) {
+            strcpy( locFieldLenInfo, "" );
+          }
+          else {
+            strncpy( locFieldLenInfo, fieldLenInfo, 7 );
+            locFieldLenInfo[7] = 0;
+          }
+
           switch( formatType ) {
           case XTDC_K_FORMAT_FLOAT:
-            sprintf( format, "%%.%-df", precision );
+            sprintf( format, "%%%s.%-df", locFieldLenInfo, precision );
             break;
           case XTDC_K_FORMAT_EXPONENTIAL:
-            sprintf( format, "%%.%-de", precision );
+            sprintf( format, "%%%s.%-de", locFieldLenInfo, precision );
             break;
           default:
-            sprintf( format, "%%.%-df", precision );
+            sprintf( format, "%%%s.%-df", locFieldLenInfo, precision );
             break;
           } // end switch( formatType )
 
@@ -4749,20 +4801,28 @@ Atom importList[2];
 
         case ProcessVariable::specificType::shrt:
 
+          if ( blank(fieldLenInfo) ) {
+            strcpy( locFieldLenInfo, "-" );
+          }
+          else {
+            strncpy( locFieldLenInfo, fieldLenInfo, 7 );
+            locFieldLenInfo[7] = 0;
+          }
+
           switch( formatType ) {
           case XTDC_K_FORMAT_DECIMAL:
-            sprintf( format, "%%-d" );
+            sprintf( format, "%%%sd", locFieldLenInfo );
             break;
           case XTDC_K_FORMAT_HEX:
             if ( useHexPrefix ) {
-              sprintf( format, "0x%%-X" );
+              sprintf( format, "0x%%%sX", locFieldLenInfo );
             }
             else {
-              sprintf( format, "%%-X" );
+              sprintf( format, "%%%sX", locFieldLenInfo );
             }
             break;
           default:
-            sprintf( format, "%%-d" );
+            sprintf( format, "%%%sd", locFieldLenInfo );
             break;
           } // end switch( formatType )
 
@@ -4776,20 +4836,28 @@ Atom importList[2];
 
         case ProcessVariable::specificType::integer:
 
+          if ( blank(fieldLenInfo) ) {
+            strcpy( locFieldLenInfo, "-" );
+          }
+          else {
+            strncpy( locFieldLenInfo, fieldLenInfo, 7 );
+            locFieldLenInfo[7] = 0;
+          }
+
           switch( formatType ) {
           case XTDC_K_FORMAT_DECIMAL:
-            sprintf( format, "%%-d" );
+            sprintf( format, "%%%sd", locFieldLenInfo );
             break;
           case XTDC_K_FORMAT_HEX:
             if ( useHexPrefix ) {
-              sprintf( format, "0x%%-X" );
+              sprintf( format, "0x%%%sX", locFieldLenInfo );
             }
             else {
-              sprintf( format, "%%-X" );
+              sprintf( format, "%%%sX", locFieldLenInfo );
             }
             break;
           default:
-            sprintf( format, "%%-d" );
+            sprintf( format, "%%%sd", locFieldLenInfo );
             break;
           } // end switch( formatType )
 

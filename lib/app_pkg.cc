@@ -6101,6 +6101,16 @@ char *envPtr, text[255+1];
   text[255] = 0;
   postMessage( text );
 
+  envPtr = getenv( environment_str16 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str16, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str16 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
   envPtr = getenv( "EDMCOMMENTS" );
   if ( envPtr ) {
     snprintf( text, 255, "  %s=[%s]", "EDMCOMMENTS", envPtr );
@@ -6166,7 +6176,7 @@ char *envPtr, text[255+1];
 
   snprintf( text, 255, " " );
   postMessage( text );
-  snprintf( text, 255, "  (Site Specific)" );
+  snprintf( text, 255, "  (Site Related)" );
   postMessage( text );
 
   envPtr = getenv( "EDMRDDHS" );

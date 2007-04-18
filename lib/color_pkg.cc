@@ -879,6 +879,8 @@ int stat;
 
   menuIndexMap = NULL;
 
+  showNoAlarmState = 1;
+
 }
 
 colorInfoClass::~colorInfoClass ( void ) {
@@ -2741,6 +2743,7 @@ char msg[127+1];
         if ( strcmp( tk, "*" ) == 0 ) {
 
           specialIndex[index] = -1;
+	  showNoAlarmState = 0;
           
 	}
 	else {
@@ -4531,6 +4534,7 @@ int blinkMs = 500;
         if ( strcmp( tk, "*" ) == 0 ) {
 
           specialIndex[index] = -1;
+	  showNoAlarmState = 0;
           
 	}
 	else {
@@ -7100,5 +7104,11 @@ void colorInfoClass::warnIfBadIndex (
     fprintf( stderr, "Bad color index encountered [%-d] near line %-d\n",
      index, line );
   }
+
+}
+
+int colorInfoClass::shouldShowNoAlarmState ( void ) {
+
+  return showNoAlarmState;
 
 }

@@ -2742,7 +2742,7 @@ objPlusIndexPtr ptr = (objPlusIndexPtr) userarg;
 xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 int ii, yi, i =  ptr->index;
 int sec, nsec;
-double dxValue, dyValue;
+double dxValue=0., dyValue;
 double scaledX, scaledY;
 
   if ( !xyo->activeMode ) return;
@@ -5691,6 +5691,11 @@ void xyGraphClass::genXyVector (
 int ii, iii, yi, needRescale, n;
 double dxValue, dyValue;
 double scaledX, scaledY;
+// Ron Chestnut changes 3/2/2007
+ double squash;
+double new_min_y = -1., new_max_y = 1.;
+double new_min_x = -1., new_max_x = 1.;
+// End of changes
 char format[31+1];
 
   *rescale = needRescale = 0;
@@ -5752,10 +5757,17 @@ char format[31+1];
       break;
     }
 
+
     if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( dyValue > 0 ) dyValue = log10( dyValue );
     }
-
+// Ron Chestnut changes 3/2/2007
+    if ( ii == 0) new_min_y = new_max_y = dyValue;
+    else {
+      if(dyValue > new_max_y) new_max_y=dyValue;
+      if(dyValue < new_min_y) new_min_y=dyValue;
+    }
+// end of changes
     scaledY = plotAreaH -
      rint( ( dyValue - curY1Min[yi] ) *
      y1Factor[yi][i] - y1Offset[yi][i] );
@@ -5820,41 +5832,60 @@ char format[31+1];
 
     addPoint( dxValue, scaledX, scaledY, i );
 
+// Ron Chestnut changes 3/2/2007
+    if ( ii == 0) new_min_x = new_max_x = dxValue;
+    else {
+      if(dxValue > new_max_x) new_max_x=dxValue;
+      if(dxValue < new_min_x) new_min_x=dxValue;
+    }
+// end of changes
+
+  }
+// Ron Chestnut changes 3/2/2007
+
     if ( xAxisSource == XYGC_K_AUTOSCALE ) {
+      squash = (curXMax-curXMin)*.20;
       if ( kpXMinEfDouble.isNull() ) {
-        if ( dxValue < curXMin ) {
-          curXMin = dxValue;
+        if ( new_min_x < curXMin ||
+             new_min_x > curXMin+squash) {
           needRescale = 1;
+	  //fprintf( stderr, "min X rescale %g %g\n", new_min_x,curXMin );
+          curXMin = new_min_x;
         }
       }
       if ( kpXMaxEfDouble.isNull() ) {
-        if ( dxValue > curXMax ) {
-          curXMax = dxValue;
+        if ( new_max_x > curXMax ||
+             new_max_x < curXMax - squash) {
           needRescale = 1;
+	  //fprintf( stderr, "max X rescale %g %g\n",new_max_x,curXMax );
+          curXMax = new_max_x;
         }
       }
     }
-
+ 
     if ( y1AxisSource[yi] == XYGC_K_AUTOSCALE ) {
+      squash = (curY1Max[yi]-curY1Min[yi])*.20;
       if ( kpY1MinEfDouble[yi].isNull() ) {
-        if ( dyValue < curY1Min[yi] ) {
+        if ( new_min_y < curY1Min[yi] ||
+             new_min_y > curY1Min[yi]+squash) {
           needRescale = 1;
-          curY1Min[yi] = dyValue;
+	  //fprintf( stderr, "min Y rescale %g %g\n", new_min_y,curY1Min[yi] );
+          curY1Min[yi] = new_min_y;
         }
       }
       if ( kpY1MaxEfDouble[yi].isNull() ) {
-        if ( dyValue > curY1Max[yi] ) {
+        if ( new_max_y > curY1Max[yi] ||
+             new_max_y < curY1Max[yi]-squash) {
           needRescale = 1;
-          curY1Max[yi] = dyValue;
-          actWin->addDefExeNode( aglPtr );
+	  //fprintf( stderr, "max Y rescale %g %g\n",new_max_y,curY1Max[yi] );
+          curY1Max[yi] = new_max_y;
         }
       }
     }
-
-  }
+// end of changes
 
   if ( needRescale ) {
-
+    actWin->addDefExeNode( aglPtr );
     if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
       get_log10_scale_params1( curXMin, curXMax, &curXMin, &curXMax,
        &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor, format );
@@ -9523,7 +9554,7 @@ int xyGraphClass::fillPlotArray (
 ) {
 
 int i, npts, curCount;
-short curX, curY, prevX, prevY;
+short curX, curY, prevX=0, prevY=0;
 double n;
 
   curCount = npts = 0;
@@ -10192,7 +10223,7 @@ char fullName[127+1], label[127+1];
     lX = fontHeight;
     //lY = h - fontHeight * 3 / 2;
     lW = XTextWidth( fs, label, strlen(label) );
-    lY = plotAreaY + ( plotAreaH + lW ) / 2;
+    lY = plotAreaY + ( plotAreaH - lW ) / 2;
 
     actWin->executeGc.saveFg();
     actWin->executeGc.setFG( actWin->ci->pix(fgColor) );
@@ -10205,8 +10236,8 @@ char fullName[127+1], label[127+1];
       XDrawString( actWin->d, pixmap,
        actWin->executeGc.normGC(), lX, lY, &label[i], 1 );
 
-      inc = XTextWidth( fs, &label[i], 1 );
-      lY -= inc;
+      inc = 2*XTextWidth( fs, &label[i], 1 );
+      lY += inc;
 
     }
 
@@ -10242,7 +10273,7 @@ char fullName[127+1], label[127+1];
       XDrawString( actWin->d, pixmap,
        actWin->executeGc.normGC(), lX, lY, &label[i], 1 );
 
-      inc = XTextWidth( fs, &label[i], 1 );
+      inc = 2*XTextWidth( fs, &label[i], 1 );
       lY += inc;
 
     }

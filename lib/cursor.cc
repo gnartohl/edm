@@ -417,65 +417,99 @@ static char no_mask_bits[] = {
   no = XCreatePixmapCursor( dsp, noShape, noMask,
    &noShapeColor, &noMaskColor, no_x_hot, no_y_hot );
 
-  willSetShape = XCreatePixmapFromBitmapData ( dsp, rootWin,
-   willSet_bits, willSet_width, willSet_height, 1, 0, 1 );
+  // set non-zero to disable special cursor shapes
+  int noSpecialCursors = 0;
 
-  willSetMask = XCreatePixmapFromBitmapData ( dsp, rootWin,
-   willSet_mask_bits, willSet_width, willSet_height, 1, 0, 1 );
+  if ( noSpecialCursors ) {
 
-  willSet = XCreatePixmapCursor( dsp, willSetShape,
-   willSetMask, &shapeColor, &maskColor, willSet_x_hot,
-   willSet_y_hot );
+    willSet = XCreatePixmapCursor( dsp, crossHairShape,
+     crossHairMask, &shapeColor, &maskColor, cross_x_hot,
+     cross_y_hot );
 
-  willOpenShape = XCreatePixmapFromBitmapData ( dsp, rootWin,
-   willOpen_bits, willOpen_width, willOpen_height, 1, 0, 1 );
+    willOpen = XCreatePixmapCursor( dsp, crossHairShape,
+     crossHairMask, &shapeColor, &maskColor, cross_x_hot,
+     cross_y_hot );
 
-  willOpenMask = XCreatePixmapFromBitmapData ( dsp, rootWin,
-   willOpen_mask_bits, willOpen_width, willOpen_height, 1, 0, 1 );
+    willOpenWithHelp = XCreatePixmapCursor( dsp, crossHairShape,
+     crossHairMask, &shapeColor, &maskColor, cross_x_hot,
+     cross_y_hot );
 
-  willOpen = XCreatePixmapCursor( dsp, willOpenShape,
-   willOpenMask, &shapeColor, &maskColor, willOpen_x_hot,
-   willOpen_y_hot );
+    run = XCreatePixmapCursor( dsp, crossHairShape,
+     crossHairMask, &shapeColor, &maskColor, cross_x_hot,
+     cross_y_hot );
 
-  willOpenWithHelpShape = XCreatePixmapFromBitmapData ( dsp, rootWin,
-   willOpenWithHelp_bits, willOpenWithHelp_width, willOpenWithHelp_height, 1, 0, 1 );
+    runWithHelp = XCreatePixmapCursor( dsp, crossHairShape,
+     crossHairMask, &shapeColor, &maskColor, cross_x_hot,
+     cross_y_hot );
 
-  willOpenWithHelpMask = XCreatePixmapFromBitmapData ( dsp, rootWin,
-   willOpenWithHelp_mask_bits, willOpenWithHelp_width, willOpenWithHelp_height, 1, 0, 1 );
+    upDown = XCreatePixmapCursor( dsp, crossHairShape,
+     crossHairMask, &shapeColor, &maskColor, cross_x_hot,
+     cross_y_hot );
 
-  willOpenWithHelp = XCreatePixmapCursor( dsp, willOpenWithHelpShape,
-   willOpenWithHelpMask, &shapeColor, &maskColor, willOpenWithHelp_x_hot,
-   willOpenWithHelp_y_hot );
+  }
+  else {
 
-  runShape = XCreatePixmapFromBitmapData ( dsp, rootWin,
-   run_bits, run_width, run_height, 1, 0, 1 );
+    willSetShape = XCreatePixmapFromBitmapData ( dsp, rootWin,
+     willSet_bits, willSet_width, willSet_height, 1, 0, 1 );
 
-  runMask = XCreatePixmapFromBitmapData ( dsp, rootWin,
-   run_mask_bits, run_width, run_height, 1, 0, 1 );
+    willSetMask = XCreatePixmapFromBitmapData ( dsp, rootWin,
+     willSet_mask_bits, willSet_width, willSet_height, 1, 0, 1 );
 
-  run = XCreatePixmapCursor( dsp, runShape,
-   runMask, &shapeColor, &maskColor, run_x_hot,
-   run_y_hot );
+    willSet = XCreatePixmapCursor( dsp, willSetShape,
+     willSetMask, &shapeColor, &maskColor, willSet_x_hot,
+     willSet_y_hot );
 
-  runWithHelpShape = XCreatePixmapFromBitmapData ( dsp, rootWin,
-   runWithHelp_bits, runWithHelp_width, runWithHelp_height, 1, 0, 1 );
+    willOpenShape = XCreatePixmapFromBitmapData ( dsp, rootWin,
+     willOpen_bits, willOpen_width, willOpen_height, 1, 0, 1 );
 
-  runWithHelpMask = XCreatePixmapFromBitmapData ( dsp, rootWin,
-   runWithHelp_mask_bits, runWithHelp_width, runWithHelp_height, 1, 0, 1 );
+    willOpenMask = XCreatePixmapFromBitmapData ( dsp, rootWin,
+     willOpen_mask_bits, willOpen_width, willOpen_height, 1, 0, 1 );
 
-  runWithHelp = XCreatePixmapCursor( dsp, runWithHelpShape,
-   runWithHelpMask, &shapeColor, &maskColor, runWithHelp_x_hot,
-   runWithHelp_y_hot );
+    willOpen = XCreatePixmapCursor( dsp, willOpenShape,
+     willOpenMask, &shapeColor, &maskColor, willOpen_x_hot,
+     willOpen_y_hot );
 
-  upDownShape = XCreatePixmapFromBitmapData ( dsp, rootWin,
-   upDown_bits, upDown_width, upDown_height, 1, 0, 1 );
+    willOpenWithHelpShape = XCreatePixmapFromBitmapData ( dsp, rootWin,
+     willOpenWithHelp_bits, willOpenWithHelp_width, willOpenWithHelp_height, 1, 0, 1 );
 
-  upDownMask = XCreatePixmapFromBitmapData ( dsp, rootWin,
-   upDown_mask_bits, upDown_width, upDown_height, 1, 0, 1 );
+    willOpenWithHelpMask = XCreatePixmapFromBitmapData ( dsp, rootWin,
+     willOpenWithHelp_mask_bits, willOpenWithHelp_width, willOpenWithHelp_height, 1, 0, 1 );
 
-  upDown = XCreatePixmapCursor( dsp, upDownShape,
-   upDownMask, &shapeColor, &maskColor, upDown_x_hot,
-   upDown_y_hot );
+    willOpenWithHelp = XCreatePixmapCursor( dsp, willOpenWithHelpShape,
+     willOpenWithHelpMask, &shapeColor, &maskColor, willOpenWithHelp_x_hot,
+     willOpenWithHelp_y_hot );
+
+    runShape = XCreatePixmapFromBitmapData ( dsp, rootWin,
+     run_bits, run_width, run_height, 1, 0, 1 );
+
+    runMask = XCreatePixmapFromBitmapData ( dsp, rootWin,
+     run_mask_bits, run_width, run_height, 1, 0, 1 );
+
+    run = XCreatePixmapCursor( dsp, runShape,
+     runMask, &shapeColor, &maskColor, run_x_hot,
+     run_y_hot );
+
+    runWithHelpShape = XCreatePixmapFromBitmapData ( dsp, rootWin,
+     runWithHelp_bits, runWithHelp_width, runWithHelp_height, 1, 0, 1 );
+
+    runWithHelpMask = XCreatePixmapFromBitmapData ( dsp, rootWin,
+     runWithHelp_mask_bits, runWithHelp_width, runWithHelp_height, 1, 0, 1 );
+
+    runWithHelp = XCreatePixmapCursor( dsp, runWithHelpShape,
+     runWithHelpMask, &shapeColor, &maskColor, runWithHelp_x_hot,
+     runWithHelp_y_hot );
+
+    upDownShape = XCreatePixmapFromBitmapData ( dsp, rootWin,
+     upDown_bits, upDown_width, upDown_height, 1, 0, 1 );
+
+    upDownMask = XCreatePixmapFromBitmapData ( dsp, rootWin,
+     upDown_mask_bits, upDown_width, upDown_height, 1, 0, 1 );
+
+    upDown = XCreatePixmapCursor( dsp, upDownShape,
+     upDownMask, &shapeColor, &maskColor, upDown_x_hot,
+     upDown_y_hot );
+
+  }
 
 }
 

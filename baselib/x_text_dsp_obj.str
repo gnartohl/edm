@@ -59,5 +59,6 @@
 #define activeXTextDspClass_str82 (char *) "Alarm Border"
 #define activeXTextDspClass_str83 (char *) "Allow Input Focus Updates"
 #define activeXTextDspClass_str84 (char *) "Clip To LOPR/HOPR"
+#define activeXTextDspClass_str85 (char *) "Field Length"
 
 #endif
