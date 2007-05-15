@@ -2141,6 +2141,9 @@ int stat, i, state, buttonX, buttonY, buttonH, buttonW,
       }
       if ( buttonW < 3 ) buttonW = 3;
 
+      lowExtra = extra / 2;
+      highExtra = numStates - 1 - lowExtra - extra % 2;
+
       buttonX = x;
       buttonY = y;
 
