@@ -3807,7 +3807,7 @@ int i, numVisible;
 
   XtVaSetValues( menuBar,
    XmNmenuHelpWidget, helpCascade,
-   0 );
+   NULL );
 
   XtManageChild( menuBar );
 
