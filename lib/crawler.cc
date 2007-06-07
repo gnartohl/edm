@@ -316,6 +316,7 @@ char *s, *v, *saveSym, *saveVal;
       for ( n=0; n<numBaseMacros; n++ ) {
         (*newSymbols)[n] = new char[strlen(baseSymbols[n])+1];
         strcpy( (*newSymbols)[n], baseSymbols[n] );
+        (*newValues)[n] = new char[strlen(oldValues[n])+1];
 	if ( strcmp( baseValues[n], "''" ) == 0 ) {
           strcpy( (*newValues)[n], "" );
 	}
