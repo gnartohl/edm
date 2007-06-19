@@ -7,7 +7,41 @@ static int fileLineNumber[MAXLEVEL] = { 1, 1, 1, 1, 1 };
 static char fileName[MAXLEVEL][127+1];
 static int level = -1;
 
-tagClass::tagClass ( void ) {
+unknownTag::unknownTag( char *tag, char *val, bool isCompound ) {
+  this->tag = strdup( tag );
+  this->val = strdup( val );
+  this->isCompound = isCompound;
+}
+
+unknownTag::unknownTag( const unknownTag &other ) {
+  this->tag = strdup( other.tag );
+  this->val = strdup( other.val );
+  this->isCompound = other.isCompound;
+}
+
+unknownTag &unknownTag::operator=( const unknownTag &other ) {
+  if ( this->tag ) {
+    free( this->tag );
+  }
+  if ( this->val ) {
+    free( this->val );
+  }
+  this->tag = strdup( other.tag );
+  this->val = strdup( other.val );
+  this->isCompound = other.isCompound;
+  return *this;
+}
+
+unknownTag::~unknownTag() {
+  if ( this->tag ) {
+    free( this->tag );
+  }
+  if ( this->val ) {
+    free( this->val );
+  }
+}
+
+tagClass::tagClass ( void ) : unknownTags(NULL) {
 
 char *envPtr;
 int i;
@@ -122,6 +156,7 @@ int tagClass::init ( void ) {
   numTags = 0;
   ci = NULL;
   first = last = len = 0;
+  unknownTags = NULL;
 
   return 1;
 
@@ -1289,6 +1324,16 @@ int tagClass::loadR ( // dynamic double array
 
 }
 
+int tagClass::loadR (
+  unknownTagList &unknownTags
+) {
+
+  this->unknownTags = &unknownTags;
+
+  return 1;
+
+}
+
 void tagClass::writeMultiLineString (
   FILE *f,
   char *s
@@ -1396,8 +1441,14 @@ double smallDoubleArray[100];
   }
 
   if ( index == -1 ) {
-    fprintf( stderr, tagClass_str3, tag, line(), filename() );
-    return 3;
+    if ( unknownTags ) {
+      unknownTags->push_back( unknownTag( tag, val, valueIsCompound ) );
+      return 1;
+    }
+    else {
+      fprintf( stderr, tagClass_str3, tag, line(), filename() );
+      return 3;
+    }
   }
 
   switch ( tagDestType[index] ) {
@@ -3391,6 +3442,29 @@ int tagClass::loadW (
 
 }
 
+int tagClass::loadW (
+  unknownTagList &unknownTags
+) {
+
+unknownTagList::iterator it;
+
+  this->unknownTags = &unknownTags;
+
+  for( it = unknownTags.begin(); it != unknownTags.end(); it++ ) {
+
+    tagName[numTags] = it->tag;
+    tagDestination[numTags] = (void *) it->val;
+    isCompound[numTags] = it->isCompound;
+    tagDestType[numTags] = tagClass::UNKNOWN;
+
+    if ( numTags < MAX ) numTags++;
+
+  }
+
+  return 1;
+
+}
+
 int tagClass::readTags (
   FILE *f,
   char *endingTag
@@ -4815,6 +4889,25 @@ efInt *efI;
 	  fprintf( stderr, "}\n" );
 	}
 
+      }
+
+      break;
+
+    case tagClass::UNKNOWN:
+
+      if( isCompound[index] ) {
+        fprintf( f, "%s {\n", tagName[index] );
+        char *val = (char *) tagDestination[index];
+        while ( char *end = strchr(val,'\n') ) {
+          *end = 0;
+          fprintf( f, "  %s\n", val );
+          *end = '\n';
+          val = end+1;
+        }
+        fprintf( f, "}\n" );
+      }
+      else {
+        fprintf( f, "%s %s", tagName[index], (char *) tagDestination[index] );
       }
 
       break;

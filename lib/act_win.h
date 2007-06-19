@@ -425,6 +425,8 @@ typedef struct pvDefTag {
 
 class activeWindowClass {
 
+unknownTagList unknownTags;
+
 public:
 
 static const int NUM_PER_PENDIO = 1000;

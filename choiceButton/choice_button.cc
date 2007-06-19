@@ -598,6 +598,7 @@ static int orienTypeEnum[2] = {
   tag.loadW( "colorPv", &colorPvExpStr, emptyStr );
   tag.loadW( "orientation", 2, orienTypeEnumStr, orienTypeEnum,
    &orientation, &vert );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -701,6 +702,7 @@ static int orienTypeEnum[2] = {
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

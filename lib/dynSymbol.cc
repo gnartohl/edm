@@ -1199,6 +1199,7 @@ int visInverted;
       // read in group properties
       tag.init();
       tag.loadR( "beginObjectProperties" );
+      tag.loadR( unknownTags );
       tag.loadR( "major", &major );
       tag.loadR( "minor", &minor );
       tag.loadR( "release", &release );
@@ -1586,6 +1587,7 @@ char *emptyStr = "";
   tag.loadW( "bgColor", actWin->ci, &bgColor );
   tag.loadBoolW( "showOOBState", &showOOBState, &zero );
   tag.loadBoolW( "gateOnMouseOver", &gateOnMouseOver, &zero );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -1683,6 +1685,7 @@ char *emptyStr = "";
   // read file and process each "object" tag
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

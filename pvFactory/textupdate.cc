@@ -262,6 +262,7 @@ static int alignEnum[3] = {
   tag.loadW( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
   tag.loadW( "lineWidth", &line_width );
   tag.loadBoolW( "lineAlarm", &is_line_alarm_sensitive, &zero );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -348,6 +349,7 @@ static int alignEnum[3] = {
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

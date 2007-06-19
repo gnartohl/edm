@@ -1228,6 +1228,7 @@ int visInverted;
       // read in group properties
       tag.init();
       tag.loadR( "beginObjectProperties" );
+      tag.loadR( unknownTags );
       tag.loadR( "major", &major );
       tag.loadR( "minor", &minor );
       tag.loadR( "release", &release );
@@ -1684,6 +1685,7 @@ int i, saveX, saveY, origX, origY, origW, origH;
   tag.loadW( "fgColor", actWin->ci, &fgColor );
   tag.loadW( "bgColor", actWin->ci, &bgColor );
   tag.loadW( "endObjectProperties" );
+  tag.loadW( unknownTags );
   tag.loadW( "" );
 
   stat = tag.writeTags( f );
@@ -1840,6 +1842,7 @@ int resizeStat, readSymfileStat, i, n1, n2, saveW, saveH;
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

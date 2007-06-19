@@ -8,6 +8,8 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+#include <list>
+
 #include "color_pkg.h"
 #include "expString.h"
 #include "pvColor.h"
@@ -15,7 +17,24 @@
 
 #include "tag_pkg.str"
 
+using namespace std;
+
+struct unknownTag {
+  char *tag;
+  char *val;
+  bool isCompound;
+
+  unknownTag( char *tag, char *val, bool isCompound );
+  unknownTag( const unknownTag &other );
+  unknownTag &operator=( const unknownTag &other );
+  ~unknownTag();
+};
+
+typedef list < unknownTag > unknownTagList;
+
 class tagClass {
+
+unknownTagList *unknownTags;
 
 public:
 
@@ -320,6 +339,10 @@ int loadR ( // dynamic double array
   int *numElements
 );
 
+int loadR (
+  unknownTagList &unknownTags
+);
+
 // load for write  functions that include defaults
 // (if value == default, don't write)
 int loadW (
@@ -589,6 +612,10 @@ int loadW ( // no default variation
   double *oneDefault
 );
 
+int loadW (
+  unknownTagList &unknownTags
+);
+
 char *getName (
   char *tag,
   int maxLen,
@@ -671,6 +698,8 @@ static const int ENUMERATED_ARRAY = 28;
 static const int COLOR_ARRAY = 29;
 static const int PV_COLOR_ARRAY = 30;
 static const int STRING_ARRAY = 31;
+
+static const int UNKNOWN = 32;
 
 static const int TAG_E_SUCCESS = 1;
 static const int TAG_E_NOTAGS = 100;

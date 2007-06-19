@@ -152,6 +152,7 @@ static int endianEnum[2] = {
   tag.loadW( "endian", 2, endianEnumStr, endianEnum, &en, &bigEndian );
   tag.loadW( "numBits", &nobt, &sixteen );
   tag.loadW( "shift", &shft, &zero );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -232,6 +233,7 @@ static int endianEnum[2] = {
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

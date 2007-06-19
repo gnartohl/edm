@@ -133,6 +133,8 @@ float orientation;
 int selected; // if true, then is selected
 int editMode;
 
+unknownTagList unknownTags;
+
 activeGraphicClass *nextToEdit; // for group edits
 int inGroup;
 

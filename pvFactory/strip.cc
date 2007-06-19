@@ -171,6 +171,7 @@ int edmStripClass::save(FILE *f)
 
     tag.loadW( "updateMs", &update_ms );
 
+    tag.loadW( unknownTags );
     tag.loadW( "endObjectProperties" );
     tag.loadW( "" );
     
@@ -244,6 +245,7 @@ int edmStripClass::createFromFile(FILE *f, char *filename,
 
     tag.init();
     tag.loadR( "beginObjectProperties" );
+    tag.loadR( unknownTags );
     tag.loadR( "major", &major );
     tag.loadR( "minor", &minor );
     tag.loadR( "release", &release );

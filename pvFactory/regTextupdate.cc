@@ -183,7 +183,7 @@ int edmRegTextupdateClass::activate(int pass, void *ptr)
             {
                 char buf[100];
                 regerror(res, &compiled_re, buf, sizeof buf);
-                printf("Error in regular expression: %s\n", buf);
+                fprintf( stderr,"Error in regular expression: %s\n", buf);
             }
             else
                 re_valid = true;

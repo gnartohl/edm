@@ -548,6 +548,7 @@ char *emptyStr = "";
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );
@@ -721,6 +722,7 @@ char *emptyStr = "";
   tag.loadW( "modePv", &modePvExpStr, emptyStr );
   tag.loadW( "labelPv", &labelPvExpStr, emptyStr );
   tag.loadW( "updatePv", &updatePvExpStr, emptyStr );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 

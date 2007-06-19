@@ -713,6 +713,7 @@ char *emptyStr = "";
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );
@@ -912,6 +913,7 @@ char *emptyStr = "";
   tag.loadW( "archivePv", &archivePvExpStr, emptyStr );
   tag.loadW( "startTimePv", &startTimePvExpStr, emptyStr );
   tag.loadW( "endTimePv", &endTimePvExpStr, emptyStr );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 

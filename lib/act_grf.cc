@@ -30,7 +30,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xlibint.h>
 
-activeGraphicClass::activeGraphicClass ( void ) {
+activeGraphicClass::activeGraphicClass ( void ) : unknownTags() {
 
   baseName = new char[strlen("base")+1];
   strcpy( baseName, "base" );

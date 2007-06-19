@@ -10241,7 +10241,7 @@ done:
 
 }
 
-activeWindowClass::activeWindowClass ( void ) {
+activeWindowClass::activeWindowClass ( void ) : unknownTags() {
 
   strcpy( startSignature, "edmActiveWindow" );
   strcpy( endSignature, "wodniWevitcAmde" );
@@ -16692,6 +16692,7 @@ char str[255+1], *strPtr;
   tag.loadBoolW( "orthoLineDraw", &orthogonal, &zero );
   tag.loadW( "pvType", defaultPvType, emptyStr );
   tag.loadBoolW( "disableScroll", &disableScroll, &zero );
+  tag.loadW( unknownTags );
   tag.loadW( "endScreenProperties" );
   tag.loadW( "" );
 
@@ -16924,6 +16925,7 @@ static int alignEnum[3] = {
 
   tag.init();
   tag.loadR( "beginScreenProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );
@@ -17877,6 +17879,7 @@ int stat;
 tagClass tag;
 int i, r, g, b, index;
 char s[127+1];
+unknownTagList junkTags;
 
   // don't inc line here
 
@@ -18031,6 +18034,7 @@ char s[127+1];
 
   tag.init();
   tag.loadR( "beginScreenProperties" );
+  tag.loadR( junkTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

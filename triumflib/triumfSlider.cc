@@ -1517,6 +1517,7 @@ static int orienTypeEnum[2] = {
    &orientation, &horz );
   tag.loadW( "savedValuePv", &savedValuePvName, emptyStr );
   tag.loadBoolW( "showSavedValue", &showSavedValue, &zero );
+  tag.loadR( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -1644,6 +1645,7 @@ static int orienTypeEnum[2] = {
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

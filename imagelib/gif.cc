@@ -965,6 +965,7 @@ static char *emptyStr = "";
   tag.loadBoolW( "uniformSize", &uniformSize, &zero );
   tag.loadBoolW( "fastErase", &fastErase, &zero );
   tag.loadBoolW( "noErase", &noErase, &zero );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -1014,6 +1015,7 @@ static char *emptyStr = "";
   // read file and process each "object" tag
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );
