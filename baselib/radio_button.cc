@@ -463,6 +463,7 @@ char *emptyStr = "";
   tag.loadW( "botShadowColor", actWin->ci, &botShadowColor );
   tag.loadW( "controlPv", &controlPvExpStr, emptyStr );
   tag.loadW( "font", fontTag );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -542,6 +543,7 @@ char *emptyStr = "";
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

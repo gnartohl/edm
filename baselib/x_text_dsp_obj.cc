@@ -2362,6 +2362,7 @@ static int objTypeEnum[4] = {
   tag.loadW( "objType", 4, objTypeEnumStr, objTypeEnum, &objType,
    &objTypeUnknown );
   tag.loadBoolW( "clipToDspLimits", &clipToDspLimits, &zero );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -2566,6 +2567,7 @@ static int objTypeEnum[4] = {
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

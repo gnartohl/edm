@@ -660,6 +660,7 @@ char *emptyStr = "";
   tag.loadW( "commandLabel", label, numCmds, emptyStr );
   tag.loadW( "command", shellCommand, numCmds, emptyStr );
   tag.loadBoolW( "includeHelpIcon", &includeHelpIcon, &zero );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -771,6 +772,7 @@ char *emptyStr = "";
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

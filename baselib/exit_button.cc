@@ -265,6 +265,7 @@ char *emptyStr = "";
   tag.loadBoolW( "iconify", &iconify, &zero );
   tag.loadBoolW( "exitProgram", &exitProgram, &zero );
   tag.loadBoolW( "controlParent", &controlParent, &zero );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -339,6 +340,7 @@ char *emptyStr = "";
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

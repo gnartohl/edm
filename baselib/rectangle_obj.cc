@@ -532,6 +532,7 @@ static int styleEnum[2] = {
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );
@@ -987,6 +988,7 @@ static int styleEnum[2] = {
   tag.loadBoolW( "visInvert", &visInverted, &zero );
   tag.loadW( "visMin", minVisString, emptyStr );
   tag.loadW( "visMax", maxVisString, emptyStr );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 

@@ -582,6 +582,7 @@ static int labelTypeEnum[3] = {
   tag.loadW( "labelFontTag", labelFontTag );
   tag.loadW( "scaleFontTag", scaleFontTag );
   tag.loadW( "meterAngle", &meterAngle, &a180 );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -716,6 +717,7 @@ static int labelTypeEnum[3] = {
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

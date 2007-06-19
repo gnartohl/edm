@@ -1118,6 +1118,7 @@ static int labelEnum[3] = {
   tag.loadW( "scaleMin", &efScaleMin );
   tag.loadW( "scaleMax", &efScaleMax );
   tag.loadW( "displayFormat", displayFormat );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -1252,6 +1253,7 @@ static int labelEnum[3] = {
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

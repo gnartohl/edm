@@ -783,6 +783,7 @@ static int setPosEnum[3] = {
   tag.loadW( "appendType", useType, numDsps, &zero );
   tag.loadW( "appendSpecificType", useSpecType, numDsps, &zero );
   tag.loadW( "appendDimension", useDim, numDsps, &zero );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -908,6 +909,7 @@ static int setPosEnum[3] = {
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

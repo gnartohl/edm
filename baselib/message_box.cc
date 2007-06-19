@@ -407,6 +407,7 @@ char *emptyStr = "";
   tag.loadW( "flushTimerValue", &flushTimerValue, &zero );
   tag.loadW( "logFileName", &logFileName, emptyStr );
   tag.loadBoolW( "readOnly", &fileIsReadOnly, &zero );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -492,6 +493,7 @@ char *emptyStr = "";
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

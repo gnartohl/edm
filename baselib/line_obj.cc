@@ -1492,6 +1492,7 @@ static int arrowsEnum[4] = {
   // read file and process each "object" tag
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );
@@ -1821,6 +1822,7 @@ static int arrowsEnum[4] = {
   tag.loadW( "xPoints", xArray, numPoints );
   tag.loadW( "yPoints", yArray, numPoints );
 
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 

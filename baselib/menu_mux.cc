@@ -560,6 +560,7 @@ char *emptyStr = "";
     itemTag.loadW( tmpV[i], MMUX_MAX_STRING_SIZE+1, tmpBufV[i][0], numItems,
      emptyStr );
   }
+  itemTag.loadW( unknownTags );
   itemTag.loadW( "endObjectProperties" );
   itemTag.loadW( "" );
 
@@ -656,6 +657,7 @@ char *emptyStr = "";
 
   itemTag.init();
   itemTag.loadR( "beginObjectProperties" );
+  itemTag.loadR( unknownTags );
   itemTag.loadR( "major", &major );
   itemTag.loadR( "minor", &minor );
   itemTag.loadR( "release", &release );

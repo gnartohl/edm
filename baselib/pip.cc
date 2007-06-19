@@ -554,6 +554,7 @@ static int displaySourceEnum[3] = {
   tag.loadW( "replaceSymbols", replaceSymbols, numDsps, &zero );
   tag.loadW( "propagateMacros", propagateMacros, numDsps, &one );
   tag.loadBoolW( "noScroll", &noScroll, &zero );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -634,6 +635,7 @@ static int displaySourceEnum[3] = {
   // read file and process each "object" tag
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

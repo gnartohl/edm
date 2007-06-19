@@ -708,6 +708,7 @@ static int setPosEnum[3] = {
   tag.loadBoolW( "icon", &icon, &zero );
   tag.loadBoolW( "swapButtons", &swapButtons, &zero );
   tag.loadW( "helpCommand", &helpCommandExpString, emptyStr );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -887,6 +888,7 @@ static int setPosEnum[3] = {
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

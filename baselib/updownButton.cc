@@ -765,6 +765,7 @@ char *emptyStr = "";
 
   tag.init();
   tag.loadW( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadW( "major", &major );
   tag.loadW( "minor", &minor );
   tag.loadW( "release", &release );
@@ -937,6 +938,7 @@ char *emptyStr = "";
   tag.loadR( "visMin", 39, minVisString, emptyStr );
   tag.loadR( "visMax", 39, maxVisString, emptyStr );
   tag.loadR( "colorPv", &colorPvExpString, emptyStr );
+  tag.loadW( unknownTags );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.readTags( f, "endObjectProperties" );

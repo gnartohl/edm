@@ -618,6 +618,7 @@ static int fillModeEnum[2] = {
   // read file and process each "object" tag
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );
@@ -1097,6 +1098,7 @@ static int fillModeEnum[2] = {
   tag.loadW( "totalAngle", &efTotalAngle );
   tag.loadW( "fillMode", 2, fillModeEnumStr, fillModeEnum, &fillMode,
    &fillModeChord );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 

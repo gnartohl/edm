@@ -4174,6 +4174,7 @@ static int resetModeEnum[2] = {
   tag.loadW( "ySigned", ySigned, numTraces, &zero );
   tag.loadW( "plotColor", actWin->ci, plotColor, numTraces );
 
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -4478,6 +4479,7 @@ static int resetModeEnum[2] = {
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );

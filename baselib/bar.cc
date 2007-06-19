@@ -593,6 +593,7 @@ static int orienTypeEnum[2] = {
   tag.loadW( "scaleFormat", scaleFormat );
   tag.loadW( "orientation", 2, orienTypeEnumStr, orienTypeEnum,
    &horizontal, &horz );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -645,6 +646,7 @@ efDouble efMin, efMax;
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );
