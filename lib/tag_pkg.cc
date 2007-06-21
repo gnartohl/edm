@@ -1441,6 +1441,12 @@ double smallDoubleArray[100];
   }
 
   if ( index == -1 ) {
+
+    if ( tag[0] != UNKNOWN_PREFIX ) {
+      fprintf( stderr, tagClass_str3, tag, line(), filename() );
+      return 3;
+    }
+
     if ( unknownTags ) {
       unknownTags->push_back( unknownTag( tag, val, valueIsCompound ) );
       return 1;
@@ -1449,6 +1455,7 @@ double smallDoubleArray[100];
       fprintf( stderr, tagClass_str3, tag, line(), filename() );
       return 3;
     }
+
   }
 
   switch ( tagDestType[index] ) {

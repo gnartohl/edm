@@ -17,6 +17,10 @@
 
 #include "tag_pkg.str"
 
+// prefix for foreign tags - edm remembers foreign tags and
+// writes them back during a save operation
+#define UNKNOWN_PREFIX '_'
+
 using namespace std;
 
 struct unknownTag {
