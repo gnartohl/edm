@@ -1684,8 +1684,8 @@ int i, saveX, saveY, origX, origY, origW, origH;
   tag.loadBoolW( "useOriginalColors", &useOriginalColors, &zero );
   tag.loadW( "fgColor", actWin->ci, &fgColor );
   tag.loadW( "bgColor", actWin->ci, &bgColor );
-  tag.loadW( "endObjectProperties" );
   tag.loadW( unknownTags );
+  tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
   stat = tag.writeTags( f );
