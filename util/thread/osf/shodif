@@ -1,7 +1,0 @@
-#!/sbin/sh
-diff makefile ../../../util1/thread/osf
-diff test.c ../../../util1/thread/osf
-diff thread.h ../../../util1/thread/osf
-diff thread.mes ../../../util1/thread/osf
-diff thread_pkg.c ../../../util1/thread/osf
-diff thread_priv.h ../../../util1/thread/osf

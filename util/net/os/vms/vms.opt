@@ -1,0 +1,4 @@
+sys$share:cma$open_lib_shr.exe/share
+sys$share:cma$open_rtl.exe/share
+MULTINET_COMMON_ROOT:[MULTINET]MULTINET_SOCKET_LIBRARY.EXE/share
+sys$share:vaxcrtl.exe/share
