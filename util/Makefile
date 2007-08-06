@@ -4,19 +4,21 @@ include $(TOP)/configure/CONFIG
 
 EDMTOP = $(TOP)/src/edm
 
+SHARED_LIBRARIES = YES
+
 USR_CFLAGS += -D__osf__=1
 
 
-INSTALL_INCLUDE = $(TOP)/include/edm
+INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
 
-SRC_DIRS += $(EDMTOP)/util/sys/$(OS_CLASS)
+SRC_DIRS += $(EDMTOP)/util/sys
 INC += os.h
 INC += os_objs.h
 INC += sys_types.h
 INC += os_priv.h
 
 
-SRC_DIRS += $(EDMTOP)/util/net/$(OS_CLASS)
+SRC_DIRS += $(EDMTOP)/util/net
 INC += ipncl.h
 INC += ipncl_priv.h
 INC += ipnsv.h
@@ -31,7 +33,7 @@ INC += msg.h
 INC += msg_priv.h
 
 
-SRC_DIRS += $(EDMTOP)/util/thread/$(OS_CLASS)
+SRC_DIRS += $(EDMTOP)/util/thread
 INC += thread.h
 INC += thread_priv.h
 
@@ -52,12 +54,7 @@ INC += avl_priv.h
 SRC_DIRS += $(EDMTOP)/util/crc
 INC += crc.h
 
-
-
-
-LIBRARY_HOST += 114135a4-6f6c-11d3-95bc-00104b8742df
-LIB_LIB += 114135a4-6f6c-11d3-95bc-00104b8742df
-
+LIBRARY += 114135a4-6f6c-11d3-95bc-00104b8742df
 
 LIB_SRCS += ipncl_pkg.c
 LIB_SRCS += ipnsv_pkg.c

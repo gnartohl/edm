@@ -8,39 +8,34 @@ ifdef EPICS_HOST_ARCH
 GIF_LIB=/afs/slac/package/graphics/png/libungif/4.1.0/sun4x_57/lib
 GIF_INC=/afs/slac/package/graphics/png/libungif/4.1.0/sun4x_57/include
    
+   SHARED_LIBRARIES = YES
+
    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
    USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
    USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
-
-
-   cf322683-513e-4570-a44b-7cdd7cae0de5_LIBS_Linux += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
-   cf322683-513e-4570-a44b-7cdd7cae0de5_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl ungif
-   
-   cf322683-513e-4570-a44b-7cdd7cae0de5_LIBS_Darwin += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
-   cf322683-513e-4570-a44b-7cdd7cae0de5_SYS_LIBS_Darwin += Xm Xt Xp Xtst X11 pthread dl ungif
-   
-   cf322683-513e-4570-a44b-7cdd7cae0de5_LIBS_solaris += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
-   cf322683-513e-4570-a44b-7cdd7cae0de5_SYS_LIBS_solaris += Xm Xt Xmu X11 Xext pthread dl rt ungif 
-
    USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
 
-   USR_LIBS_hpux11_11_mt = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt X11 Xext pthread ungif
-   
-   USR_LDFLAGS += -L$(INSTALL_LIB)
-   USR_LDFLAGS_solaris += -L$(INSTALL_LIB) -L$(GIF_LIB)
+   USR_LIBS += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
 
-   cf322683-513e-4570-a44b-7cdd7cae0de5_LDFLAGS += -L$(MOTIF_LIB) -L$(X11_LIB)
+   USR_LIBS_Linux += Xm Xt Xp Xtst X11
+   USR_SYS_LIBS_Linux += pthread dl ungif
+   
+   USR_LIBS_Darwin += Xm Xt Xp Xtst X11
+   USR_SYS_LIBS_Darwin += pthread dl ungif
+   
+   USR_LIBS_solaris += Xm Xt Xmu X11 Xext
+   USR_SYS_LIBS_solaris += pthread dl rt ungif 
+
+   USR_LIBS_hpux11_11_mt = Xm Xt X11 Xext
+   USR_SYS_LIBS_hpux11_11_mt = pthread ungif
    
    LIBRARY = cf322683-513e-4570-a44b-7cdd7cae0de5
 
-   PROD_LIBS += ca Com
-
-   USR_INCLUDES = -I../
-   USR_INCLUDES += -I$(TOP)/include/edm -I../../util -I../../lib -I../../pvlib
+   INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
+   USR_INCLUDES += -I../../util -I../../lib -I../../pvlib
 
    USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
-   USR_INCLUDES_solaris += -I$(MOTIF_INC) -I$(X11_INC) -I$(GIF_INC)
-
+   USR_INCLUDES_solaris += -I$(GIF_INC)
 
    Xm_DIR =   $(MOTIF_LIB)
    Xt_DIR =   $(X11_LIB)

@@ -981,7 +981,7 @@ int stat;
     stat = pend_event( 0.05 );
 
   } while ( 1 );
-
+  return 0;
 }
 
 #ifdef __linux__

@@ -2,35 +2,31 @@ TOP = ../../..
 ifdef EPICS_HOST_ARCH
   include $(TOP)/configure/CONFIG
 
+   SHARED_LIBRARIES = YES
+
    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
    USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
    USR_CXXFLAGS_Darwin += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+   USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
 
 
-   INSTALL_INCLUDE = $(TOP)/include/edm
+   INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
    INC += pv.h
    INC += epicsPv.h
 
-   Epics_LIBS_Linux += cfcaa62e-8199-11d3-a77f-00104b8742df
+   Epics_LIBS += cfcaa62e-8199-11d3-a77f-00104b8742df
+
    Epics_SYS_LIBS_Linux += pthread dl
-   
-   Epics_LIBS_Darwin += cfcaa62e-8199-11d3-a77f-00104b8742df
    Epics_SYS_LIBS_Darwin += pthread dl
-
-   Epics_LIBS_solaris += cfcaa62e-8199-11d3-a77f-00104b8742df
    Epics_SYS_LIBS_solaris += pthread dl 
-   
-   USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
-   USR_LIBS_hpux11_11_mt = cfcaa62e-8199-11d3-a77f-00104b8742df pthread
-
-   USR_LDFLAGS += -L$(INSTALL_LIB)
+   Epics_SYS_LIBS_hpux11_11_mt += pthread
 
    LIBRARY = Epics
 
-   PROD_LIBS += ca Com
+   USR_LIBS_DEFAULT = ca Com
+   USR_LIBS_Darwin = -nil-  
 
-   USR_INCLUDES = -I../ 
-   USR_INCLUDES += -I$(TOP)/include/edm -I../../lib
+   USR_INCLUDES += -I../../lib
 
 
    LIB_SRCS += reg_pvs.cc

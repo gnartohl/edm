@@ -16,20 +16,28 @@ ifdef EPICS_HOST_ARCH
         USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
   endif
 
+  SHARED_LIBRARIES = YES
+
   # Add debugging
   #USR_CXXFLAGS_Linux += -g -O0
 
+  USR_LIBS_Darwin += Xm Xt Xp Xtst X11
+  USR_SYS_LIBS_Darwin += pthread dl
+
+  USR_LIBS_Linux += Xm Xt Xp Xtst X11
+  USR_SYS_LIBS_Linux += pthread dl
+
+  USR_LIBS_solaris += Xm Xt Xmu X11 Xext
+  USR_SYS_LIBS_solaris += pthread dl rt
+
   ifeq ($(USE_CURL), YES)
-        cfcaa62e-8199-11d3-a77f-00104b8742df_SYS_LIBS_Darwin = Xm Xt Xp Xtst X11 pthread dl curl
-        cfcaa62e-8199-11d3-a77f-00104b8742df_SYS_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl curl
-	cfcaa62e-8199-11d3-a77f-00104b8742df_SYS_LIBS_solaris = Xm Xt Xmu X11 Xext pthread dl rt curl ca Com
-  else
-        cfcaa62e-8199-11d3-a77f-00104b8742df_SYS_LIBS_Darwin = Xm Xt Xp Xtst X11 pthread dl
-        cfcaa62e-8199-11d3-a77f-00104b8742df_SYS_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl
-	cfcaa62e-8199-11d3-a77f-00104b8742df_SYS_LIBS_solaris = Xm Xt Xmu X11 Xext pthread dl rt ca Com
+        USR_SYS_LIBS_Darwin += curl
+        USR_SYS_LIBS_Linux +=  curl 
+	USR_SYS_LIBS_solaris += curl
   endif
 
-  INSTALL_INCLUDE = $(TOP)/include/edm
+  INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
+
   INC += act_grf.h
   INC += act_win.h
   INC += app_pkg.h
@@ -85,16 +93,14 @@ ifdef EPICS_HOST_ARCH
   USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
   USR_LIBS_hpux11_11_mt = Xm Xt X11 Xext pthread
 
-  USR_LDFLAGS += -L$(INSTALL_LIB)
-  cfcaa62e-8199-11d3-a77f-00104b8742df_LDFLAGS += -L$(MOTIF_LIB) -L$(X11_LIB)
-
   # Build Shared library
   LIBRARY = cfcaa62e-8199-11d3-a77f-00104b8742df
 
-  PROD_LIBS += ca Com
+  USR_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
+  LIB_LIBS_DEFAULT += ca Com
+  LIB_LIBS_Darwin += -nil-
 
-  USR_INCLUDES = -I../
-  USR_INCLUDES += -I$(TOP)/include/edm -I../../util -I../../lib -I../../pvlib
+  USR_INCLUDES += -I../../util -I../../lib -I../../pvlib
   
   USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
 

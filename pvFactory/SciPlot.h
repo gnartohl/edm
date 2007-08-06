@@ -153,7 +153,7 @@ extern "C"
 #define SciPlotListCreateFromDouble SciPlotListCreateDouble
 #define SciPlotListUpdateFromDouble SciPlotListUpdateDouble
 
-#if __STDC__ || defined(__cplusplus)
+#if defined(__STDC__) || defined(__cplusplus)
 #define P_(s) s
 #else
 #define P_(s) ()

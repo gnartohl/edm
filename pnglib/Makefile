@@ -1,5 +1,6 @@
 TOP = ../../..
 ifdef EPICS_HOST_ARCH
+
   include $(TOP)/configure/CONFIG
 
 #====================================================================
@@ -8,39 +9,37 @@ ifdef EPICS_HOST_ARCH
 PNG_LIB=/afs/slac/package/graphics/png/1.0.14/sun4x_57/lib
 PNG_INC=/afs/slac/package/graphics/png/1.0.14/common/include
 
+   SHARED_LIBRARIES = YES
+
    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
    USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
    USR_CXXFLAGS_solaris +=  -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
-
-   57d79238-2924-420b-ba67-dfbecdf03fcd_LIBS_Linux += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
-   57d79238-2924-420b-ba67-dfbecdf03fcd_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl png
-   
-   57d79238-2924-420b-ba67-dfbecdf03fcd_LIBS_Darwin += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
-   57d79238-2924-420b-ba67-dfbecdf03fcd_SYS_LIBS_Darwin += Xm Xt Xp Xtst X11 pthread dl png
-
-   57d79238-2924-420b-ba67-dfbecdf03fcd_LIBS_solaris += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
-   57d79238-2924-420b-ba67-dfbecdf03fcd_SYS_LIBS_solaris +=  Xm Xt Xmu X11 Xext pthread dl rt png 
-
    USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
 
-   USR_LIBS_hpux11_11_mt = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt X11 Xext pthread png
+   USR_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
+   USR_LIBS += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
+
+   USR_LIBS_Linux += Xm Xt Xp Xtst X11
+   USR_SYS_LIBS_Linux += pthread dl png
    
+   USR_LIBS_Darwin += Xm Xt Xp Xtst X11
+   USR_SYS_LIBS_Darwin += pthread dl png
+
+   USR_LIBS_solaris +=  Xm Xt Xmu X11 Xext
+   USR_SYS_LIBS_solaris += pthread dl rt png z
+
+   USR_LIBS_hpux11_11_mt = Xm Xt X11 Xext
+   USR_SYS_LIBS_hpux11_11_mt = pthread png
    
-   
-   USR_LDFLAGS += -L$(INSTALL_LIB) -L$(IMAGELIB)
-   USR_LDFLAGS_solaris += -L$(INSTALL_LIB -L$(PNG_LIB)
-   57d79238-2924-420b-ba67-dfbecdf03fcd_LDFLAGS += -L$(MOTIF_LIB) -L$(X11_LIB)
    
    LIBRARY = 57d79238-2924-420b-ba67-dfbecdf03fcd
 
-   PROD_LIBS += ca Com
-
-    USR_INCLUDES = -I../
-    USR_INCLUDES += -I$(TOP)/include/edm -I../../util -I../../lib -I../../pvlib
+   INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
+   USR_INCLUDES += -I../../util -I../../lib -I../../pvlib
 
    USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
-   USR_INCLUDES_solaris += -I$(MOTIF_INC) -I$(X11_INC) -I$(PNG_INC)
-
+   USR_INCLUDES_solaris += -I$(PNG_INC)
+   USR_LDFLAGS_solaris += -L$(PNG_LIB) -R$(PNG_LIB)
 
    Xm_DIR =   $(MOTIF_LIB)
    Xt_DIR =   $(X11_LIB)

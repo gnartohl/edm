@@ -5,33 +5,32 @@ ifdef EPICS_HOST_ARCH
    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
    USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
    USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+   USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
 
    # Add Debugging
    #USR_CXXFLAGS_Linux += -g -O0
-   edm_LIBS_Linux += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df 
-   edm_LIBS_Linux += 114135a4-6f6c-11d3-95bc-00104b8742df
-   edm_SYS_LIBS_Linux += Xm Xmu Xt Xp Xtst X11 pthread dl
+
+   edm_LIBS += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df 
+   edm_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
+
+   edm_LIBS_Linux += Xm Xmu Xt Xp Xtst X11
+   edm_SYS_LIBS_Linux += pthread dl
    
-   edm_LIBS_Darwin += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df 
-   edm_LIBS_Darwin += 114135a4-6f6c-11d3-95bc-00104b8742df
-   edm_SYS_LIBS_Darwin += Xm Xmu Xt Xp Xtst X11 pthread dl
+   edm_LIBS_Darwin += Xm Xmu Xt Xp Xtst X11
+   edm_SYS_LIBS_Darwin += pthread dl
 
-   edm_LIBS_solaris += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df 
-   edm_LIBS_solaris += 114135a4-6f6c-11d3-95bc-00104b8742df
-   edm_SYS_LIBS_solaris += Xm Xt Xmu X11 Xext pthread dl rt socket nsl
+   edm_LIBS_solaris += Xt Xt Xmu X11 Xext
+   edm_SYS_LIBS_solaris += pthread dl rt socket nsl
 
-   USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
-   USR_LIBS_hpux11_11_mt = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df 114135a4-6f6c-11d3-95bc-00104b8742df Xm Xt Xmu X11 Xext pthread
+   USR_LIBS_hpux11_11_mt = Xm Xt Xmu X11 Xext
+   USR_SYS_LIBS_hpux11_11_mt = pthread
 
-   USR_LDFLAGS += -L$(INSTALL_LIB)
-   edm_LDFLAGS += -L$(MOTIF_LIB) -L$(X11_LIB)
-   
    PROD = edm
    
    PROD_LIBS += ca Com
    
-   USR_INCLUDES = -I../ 
-   USR_INCLUDES += -I$(TOP)/include/edm -I../../util -I../../pvlib -I../../lib
+   INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
+   USR_INCLUDES += -I../../util -I../../pvlib -I../../lib
 
    USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
 

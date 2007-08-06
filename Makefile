@@ -7,7 +7,7 @@ ifdef EPICS_HOST_ARCH
  DIRS += baselib 
  DIRS += edmMain 
  DIRS += pvlib 
- DIRS += giflib 
+# DIRS += giflib 
  DIRS += pnglib 
  DIRS += pvFactory 
  DIRS += choiceButton

@@ -16,7 +16,11 @@
 #define VIDEO_RELEASE 1
 
 #include <time.h>
+#ifdef SOLARIS
+#include <iostream.h>
+#else
 #include <stream.h>
+#endif
 
 #include <act_grf.h>
 #include <act_win.h>

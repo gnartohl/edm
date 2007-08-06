@@ -1,40 +1,38 @@
 TOP = ../../..
 ifdef EPICS_HOST_ARCH
   include $(TOP)/configure/CONFIG
+
+   SHARED_LIBRARIES = YES
    
-   IMAGELIB=/usr/local
+   #IMAGELIB=/usr/local
    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
-   
-   EdmTriumf_LIBS_Linux += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
-   EdmTriumf_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl
-   
    USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
-   
-   EdmTriumf_LIBS_Darwin += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
-   EdmTriumf_SYS_LIBS_Darwin += Xm Xt Xp Xtst X11 pthread dl
-
-   EdmTriumf_LIBS_solaris += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
-   EdmTriumf_SYS_LIBS_solaris +=  Xm Xt Xmu X11 Xext pthread dl rt
-   
-   #USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
-
-   #USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt
-
+   USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
    USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
+   
+   EdmTriumf_LIBS += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
+   EdmTriumf_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
 
-   USR_LIBS_hpux11_11_mt = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt X11 Xext pthread
+   EdmTriumf_LIBS_Linux += Xm Xt Xp Xtst X11
+   EdmTriumf_SYS_LIBS_Linux += pthread dl
    
+   EdmTriumf_LIBS_Darwin += Xm Xt Xp Xtst X11
+   EdmTriumf_SYS_LIBS_Darwin += pthread dl
+
+   EdmTriumf_LIBS_solaris +=  Xm Xt Xmu X11 Xext
+   EdmTriumf_SYS_LIBS_solaris +=  pthread dl rt
+
+   USR_LIBS_hpux11_11_mt = Xm Xt X11 Xext
+   USR_SYS_LIBS_hpux11_11_mt = pthread
    
-   
-   USR_LDFLAGS += -L$(INSTALL_LIB) -L$(IMAGELIB)
-   EdmTriumf_LDFLAGS += -L$(MOTIF_LIB) -L$(X11_LIB)
+   #USR_LDFLAGS += -L$(IMAGELIB)
    
    LIBRARY = EdmTriumf
 
-   PROD_LIBS += ca Com
+   #PROD_LIBS += ca Com
 
-    USR_INCLUDES = -I../
-    USR_INCLUDES += -I$(TOP)/include/edm -I../../util -I../../lib -I../../pvlib
+   INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
+   USR_INCLUDES += -I../../util -I../../lib -I../../pvlib
 
    USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
 

@@ -2,6 +2,8 @@ TOP = ../../..
 ifdef EPICS_HOST_ARCH
   include $(TOP)/configure/CONFIG
 
+   SHARED_LIBRARIES = YES
+
    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
    USR_CFLAGS_Linux = $(USR_CXXFLAGS_Linux)
 
@@ -11,16 +13,13 @@ ifdef EPICS_HOST_ARCH
    
    USR_CXXFLAGS_solaris += -DSINGLE_THREADED=1 -D__epics__=1
    USR_CFLAGS_solaris = $(USR_CXXFLAGS_solaris)
-   
+   USR_LIBS_solaris += Xm Xt X11 Xmu
+   USR_SYS_LIBS_solaris = pthread dl
 
    USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
    USR_LIBS_hpux11_11_mt = cfcaa62e-8199-11d3-a77f-00104b8742df pthread
 
-   USR_LDFLAGS += -L$(INSTALL_LIB)
-
    USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
-
-  # USR_INCLUDES += -I/usr/X11R6/include/Xm -I/usr/X11R6/include
 
 
    Xm_DIR =   $(MOTIF_LIB)
@@ -44,10 +43,14 @@ ifdef EPICS_HOST_ARCH
   
    LIBRARY = PV
 
-   PROD_LIBS += ca Com
+   USR_LIBS += cfcaa62e-8199-11d3-a77f-00104b8742df
+   USR_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
 
-   USR_INCLUDES = -I../
-   USR_INCLUDES += -I$(TOP)/include/edm -I../../util -I../../pvlib -I../../lib
+   PV_LIBS_DEFAULT += ca Com
+   PV_LIBS_Darwin += -nil-
+
+   INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
+   USR_INCLUDES += -I../../util -I../../pvlib -I../../lib
 
    LIB_SRCS   += textupdate.cc
    LIB_SRCS   += SciPlot.cc

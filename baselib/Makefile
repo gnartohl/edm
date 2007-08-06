@@ -2,33 +2,35 @@ TOP = ../../..
 ifdef EPICS_HOST_ARCH
   include $(TOP)/configure/CONFIG
 
+   SHARED_LIBRARIES = YES
+
    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
    
    USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
 
    USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
 
-   EdmBase_LIBS_Linux += cfcaa62e-8199-11d3-a77f-00104b8742df 
-   EdmBase_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl
-
-   EdmBase_LIBS_Darwin += cfcaa62e-8199-11d3-a77f-00104b8742df 
-   EdmBase_SYS_LIBS_Darwin += Xm Xt Xp Xtst X11 pthread dl
-
-   EdmBase_LIBS_solaris += cfcaa62e-8199-11d3-a77f-00104b8742df 
-   EdmBase_SYS_LIBS_solaris += Xm Xt Xmu X11 Xext pthread dl rt 
-
    USR_CXXFLAGS_hpux11_11_mt += +W652 -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
-   USR_LIBS_hpux11_11_mt = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread
 
-   USR_LDFLAGS += -L$(INSTALL_LIB) -L$(INSTALL_BIN) 
-   EdmBase_LDFLAGS += -L$(MOTIF_LIB) -L$(X11_LIB)
-   
+   EdmBase_LIBS_Linux += Xm Xt Xp Xtst X11
+   EdmBase_SYS_LIBS_Linux += pthread dl
+
+   EdmBase_LIBS_Darwin += Xm Xt Xp Xtst X11
+   EdmBase_SYS_LIBS_Darwin += pthread dl
+
+   EdmBase_SYS_LIBS_solaris += Xm Xt Xmu X11 Xext
+   EdmBase_SYS_LIBS_solaris += pthread dl rt 
+
+   USR_LIBS_hpux11_11_mt = Xm Xt Xp Xtst X11
+   USR_SYS_LIBS_hpux11_11_mt = pthread
+
    LIBRARY = EdmBase
 
-   PROD_LIBS += ca Com
-   
-    USR_INCLUDES = -I../ 
-    USR_INCLUDES += -I$(TOP)/include/edm -I../../util -I../../pvlib -I../../lib
+   USR_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
+   USR_LIBS += cfcaa62e-8199-11d3-a77f-00104b8742df 
+
+   INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
+   USR_INCLUDES += -I../../util -I../../pvlib -I../../lib
 
    USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
 
@@ -77,7 +79,6 @@ ifdef EPICS_HOST_ARCH
    LIB_SRCS += pip.cc
    LIB_SRCS += pv_inspector.cc
    LIB_SRCS += table.cc
-   LIB_SRCS += rampButton.cc
 
    include $(TOP)/configure/RULES
 
