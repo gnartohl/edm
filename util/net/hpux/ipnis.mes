@@ -1,9 +1,0 @@
-.facility	IPNIS
-.prefix		IPNIS_
-.value		106
-
-.severity	success
-SUCCESS		<Normal completion>
-
-.severity	error
-UNKSVC		<Unknown remote service name>
