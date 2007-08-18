@@ -462,6 +462,8 @@ int count = 0;
 
 void tableClass::endOfContent ( void ) {
 
+unsigned short theW, theH;
+
   eoc = 1;
   manageAll();
   XtRealizeWidget( parent );
@@ -473,6 +475,20 @@ void tableClass::endOfContent ( void ) {
    XmNhighlightColor, bg,
    XmNbackground, bg,
    XmNforeground, bg,
+   NULL );
+
+  theW = theH = 0;
+  XtVaGetValues( main,
+   XmNwidth, &theW,
+   XmNheight, &theH,
+   NULL );
+
+  if ( theW < w ) {
+    x = x + ( w - theW ) / 2 ;
+  }
+
+  XtVaSetValues( main,
+   XmNx, (short) x,
    NULL );
 
 }

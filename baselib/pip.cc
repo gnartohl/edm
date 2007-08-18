@@ -746,10 +746,14 @@ int i;
   buf = new bufType;
 
   ptr = actWin->obj.getNameFromClass( "activePipClass" );
-  if ( ptr )
+  if ( ptr ) {
     strncpy( title, ptr, 31 );
-  else
+    title[31] = 0;
+  }
+  else {
     strncpy( title, activePipClass_str4, 31 );
+    title[31] = 0;
+  }
 
   Strncat( title, activePipClass_str5, 31 );
 
@@ -763,22 +767,32 @@ int i;
   buf->bufTopShadowColor = topShadowColor.pixelIndex();
   buf->bufBotShadowColor = botShadowColor.pixelIndex();
 
-  if ( readPvExpStr.getRaw() )
+  if ( readPvExpStr.getRaw() ) {
     strncpy( buf->bufReadPvName, readPvExpStr.getRaw(),
      PV_Factory::MAX_PV_NAME );
-  else
+    buf->bufReadPvName[PV_Factory::MAX_PV_NAME] = 0;
+  }
+  else {
     strcpy( buf->bufReadPvName, "" );
+    buf->bufReadPvName[PV_Factory::MAX_PV_NAME] = 0;
+  }
 
-  if ( labelPvExpStr.getRaw() )
+  if ( labelPvExpStr.getRaw() ) {
     strncpy( buf->bufLabelPvName, labelPvExpStr.getRaw(),
      PV_Factory::MAX_PV_NAME );
-  else
+    buf->bufLabelPvName[PV_Factory::MAX_PV_NAME] = 0;
+  }
+  else {
     strcpy( buf->bufLabelPvName, "" );
+  }
 
-  if ( fileNameExpStr.getRaw() )
+  if ( fileNameExpStr.getRaw() ) {
     strncpy( buf->bufFileName, fileNameExpStr.getRaw(), 127 );
-  else
+    buf->bufFileName[127] = 0;
+  }
+  else {
     strcpy( buf->bufFileName, "" );
+  }
 
   buf->bufDisplaySource = displaySource;
 
@@ -789,18 +803,25 @@ int i;
 
   for ( i=0; i<maxDsps; i++ ) {
 
-    if ( displayFileName[i].getRaw() )
+    if ( displayFileName[i].getRaw() ) {
       strncpy( buf->bufDisplayFileName[i], displayFileName[i].getRaw(), 127 );
-    else
+      buf->bufDisplayFileName[i][127] = 0;
+    }
+    else {
       strncpy( buf->bufDisplayFileName[i], "", 127 );
+    }
 
-    if ( label[i].getRaw() )
+    if ( label[i].getRaw() ) {
       strncpy( buf->bufLabel[i], label[i].getRaw(), 127 );
-    else
+      buf->bufLabel[i][127] = 0;
+    }
+    else {
       strncpy( buf->bufLabel[i], "", 127 );
+    }
 
     if ( symbolsExpStr[i].getRaw() ) {
       strncpy( buf->bufSymbols[i], symbolsExpStr[i].getRaw(), 255 );
+      buf->bufSymbols[i][255] = 0;
     }
     else {
       strncpy( buf->bufSymbols[i], "", 255 );
@@ -2177,6 +2198,7 @@ XButtonEvent be;
   nmap = needMap; needMap = 0;
   nunmap = needUnmap; needUnmap = 0;
   strncpy( v, curReadV, 39 );
+  v[39] = 0;
   iv = curReadIV;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
@@ -2226,6 +2248,7 @@ XButtonEvent be;
   if ( nu ) {
 
     strncpy( readV, v, 39 );
+    readV[39] = 0;
     //fprintf( stderr, "readV = [%s]\n", readV );
 
     if ( enabled && !blank( readV ) ) {
@@ -2280,8 +2303,8 @@ XButtonEvent be;
 
           //fprintf( stderr, "Open file %s\n", readV );
 
-          strncpy( curFileName, readV, 127 );
-          curFileName[127] = 0;
+          strncpy( curFileName, readV, 39 );
+          curFileName[39] = 0;
 
           cur = new activeWindowListType;
           actWin->appCtx->addActiveWindow( cur );
@@ -2320,8 +2343,8 @@ XButtonEvent be;
     }
 
     if ( !enabled ) { // copy filename to be used when enabled becomes true
-      strncpy( curFileName, readV, 127 );
-      curFileName[127] = 0;
+      strncpy( curFileName, readV, 39 );
+      curFileName[39] = 0;
     }
 
   }
