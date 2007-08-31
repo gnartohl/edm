@@ -3223,6 +3223,7 @@ int i, yi;
 
   axygo->border = axygo->eBuf->bufBorder;
   axygo->plotAreaBorder = axygo->eBuf->bufPlotAreaBorder;
+  axygo->autoScaleBothDirections = axygo->eBuf->bufAutoScaleBothDirections;
 
   axygo->trigPvExpStr.setRaw( axygo->eBuf->bufTrigPvName );
   axygo->resetPvExpStr.setRaw( axygo->eBuf->bufResetPvName );
@@ -3418,6 +3419,7 @@ time_t t1, t2;
 
   border = 1;
   plotAreaBorder = 0;
+  autoScaleBothDirections = 0;
 
   activeMode = 0;
 
@@ -3480,6 +3482,7 @@ int i, yi;
   count = source->count;
   border = source->border;
   plotAreaBorder = source->plotAreaBorder;
+  autoScaleBothDirections = source->autoScaleBothDirections;
 
   numTraces = source->numTraces;
 
@@ -4078,6 +4081,7 @@ static int resetModeEnum[2] = {
   tag.loadW( "# Appearance" );
   tag.loadBoolW( "border", &border, &zero );
   tag.loadBoolW( "plotAreaBorder", &plotAreaBorder, &zero );
+  tag.loadBoolW( "autoScaleBothDirections", &autoScaleBothDirections, &zero );
   tag.loadW( "graphTitle", &graphTitle, emptyStr );
   tag.loadW( "xLabel", &xLabel, emptyStr );
   tag.loadW( "yLabel", &yLabel, emptyStr );
@@ -4493,6 +4497,7 @@ static int resetModeEnum[2] = {
   //tag.loadR( "# Appearance" );
   tag.loadR( "border", &border, &zero );
   tag.loadR( "plotAreaBorder", &plotAreaBorder, &zero );
+  tag.loadR( "autoScaleBothDirections", &autoScaleBothDirections, &zero );
   tag.loadR( "graphTitle", &graphTitle, emptyStr );
   tag.loadR( "xLabel", &xLabel, emptyStr );
   tag.loadR( "yLabel", &yLabel, emptyStr );
@@ -4955,22 +4960,29 @@ int i, yi;
   eBuf->bufBorder = border;
 
   eBuf->bufPlotAreaBorder = plotAreaBorder;
+  eBuf->bufAutoScaleBothDirections = autoScaleBothDirections;
 
   eBuf->bufUpdateTimerValue = updateTimerValue;
 
   eBuf->bufCount = count;
 
   strncpy( eBuf->bufGraphTitle, graphTitle.getRaw(), 127 );
+  eBuf->bufGraphTitle[127] = 0;
   strncpy( eBuf->bufXLabel, xLabel.getRaw(), 127 );
+  eBuf->bufXLabel[127] = 0;
   strncpy( eBuf->bufYLabel, yLabel.getRaw(), 127 );
+  eBuf->bufYLabel[127] = 0;
   strncpy( eBuf->bufY2Label, y2Label.getRaw(), 127 );
+  eBuf->bufY2Label[127] = 0;
   eBuf->bufFgColor = fgColor;
   eBuf->bufBgColor = bgColor;
   eBuf->bufGridColor = gridColor;
   strncpy( eBuf->bufTrigPvName, trigPvExpStr.getRaw(),
    PV_Factory::MAX_PV_NAME );
+  eBuf->bufTrigPvName[PV_Factory::MAX_PV_NAME] = 0;
   strncpy( eBuf->bufResetPvName, resetPvExpStr.getRaw(),
    PV_Factory::MAX_PV_NAME );
+  eBuf->bufResetPvName[PV_Factory::MAX_PV_NAME] = 0;
   eBuf->bufResetMode = resetMode;
 
   eBuf->bufXNumLabelIntervals = xNumLabelIntervals;
@@ -5015,6 +5027,7 @@ int i, yi;
   ef.addTextField( "Update Delay (ms)", 35, &eBuf->bufUpdateTimerValue );
   ef.addToggle( "Border", &eBuf->bufBorder );
   ef.addToggle( "Plot Area Border", &eBuf->bufPlotAreaBorder );
+  ef.addToggle( "Auto Scale Both Dir", &eBuf->bufAutoScaleBothDirections );
 
   ef.addEmbeddedEf( "X/Y/Trace Data", "... ", &efTrace );
 
@@ -5027,8 +5040,10 @@ int i, yi;
     for ( i=0; i<numTraces; i++ ) {
       strncpy( eBuf->bufXPvName[i], xPvExpStr[i].getRaw(),
        PV_Factory::MAX_PV_NAME );
+      eBuf->bufXPvName[i][PV_Factory::MAX_PV_NAME] = 0;
       strncpy( eBuf->bufYPvName[i], yPvExpStr[i].getRaw(),
        PV_Factory::MAX_PV_NAME );
+      eBuf->bufYPvName[i][PV_Factory::MAX_PV_NAME] = 0;
       eBuf->bufPlotStyle[i] = plotStyle[i];
       eBuf->bufPlotSymbolType[i] = plotSymbolType[i];
       eBuf->bufPlotUpdateMode[i] = plotUpdateMode[i];
@@ -5628,7 +5643,7 @@ char format[31+1];
         if ( dyValue > curY1Max[yi] ) {
           needRescale = 1;
           curY1Max[yi] = dyValue;
-          actWin->addDefExeNode( aglPtr );
+          //actWin->addDefExeNode( aglPtr );
         }
       }
     }
@@ -5636,6 +5651,8 @@ char format[31+1];
   }
 
   if ( needRescale ) {
+
+    actWin->addDefExeNode( aglPtr );
 
     if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
       get_log10_scale_params1( curXMin, curXMax, &curXMin, &curXMax,
@@ -5759,7 +5776,6 @@ char format[31+1];
       break;
     }
 
-
     if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( dyValue > 0 ) dyValue = log10( dyValue );
     }
@@ -5834,15 +5850,66 @@ char format[31+1];
 
     addPoint( dxValue, scaledX, scaledY, i );
 
-// Ron Chestnut changes 3/2/2007
-    if ( ii == 0) new_min_x = new_max_x = dxValue;
-    else {
-      if(dxValue > new_max_x) new_max_x=dxValue;
-      if(dxValue < new_min_x) new_min_x=dxValue;
+    // =================================================
+    // DO NOT AUTO SCALE BOTH DIRECTIONS
+    if ( !autoScaleBothDirections ) {
+
+      if ( xAxisSource == XYGC_K_AUTOSCALE ) {
+
+        if ( kpXMinEfDouble.isNull() ) {
+          if ( dxValue < curXMin ) {
+            curXMin = dxValue;
+            needRescale = 1;
+          }
+        }
+        if ( kpXMaxEfDouble.isNull() ) {
+          if ( dxValue > curXMax ) {
+            curXMax = dxValue;
+            needRescale = 1;
+          }
+        }
+      }
+
+      if ( y1AxisSource[yi] == XYGC_K_AUTOSCALE ) {
+        if ( kpY1MinEfDouble[yi].isNull() ) {
+          if ( dyValue < curY1Min[yi] ) {
+            needRescale = 1;
+            curY1Min[yi] = dyValue;
+          }
+        }
+        if ( kpY1MaxEfDouble[yi].isNull() ) {
+          if ( dyValue > curY1Max[yi] ) {
+            needRescale = 1;
+            curY1Max[yi] = dyValue;
+            //actWin->addDefExeNode( aglPtr );
+          }
+        }
+      }
+
     }
+    // =================================================
+
+    // =================================================
+    // DO AUTO SCALE BOTH DIRECTIONS
+    if ( autoScaleBothDirections ) {
+// Ron Chestnut changes 3/2/2007
+      if ( ii == 0) {
+        new_min_x = new_max_x = dxValue;
+      }
+      else {
+        if(dxValue > new_max_x) new_max_x=dxValue;
+        if(dxValue < new_min_x) new_min_x=dxValue;
+      }
 // end of changes
+    }
+    // =================================================
 
   }
+
+  // =================================================
+  // DO AUTO SCALE BOTH DIRECTIONS
+  if ( autoScaleBothDirections ) {
+
 // Ron Chestnut changes 3/2/2007
 
     if ( xAxisSource == XYGC_K_AUTOSCALE ) {
@@ -5851,7 +5918,7 @@ char format[31+1];
         if ( new_min_x < curXMin ||
              new_min_x > curXMin+squash) {
           needRescale = 1;
-	  //fprintf( stderr, "min X rescale %g %g\n", new_min_x,curXMin );
+        //fprintf( stderr, "min X rescale %g %g\n", new_min_x,curXMin );
           curXMin = new_min_x;
         }
       }
@@ -5859,7 +5926,7 @@ char format[31+1];
         if ( new_max_x > curXMax ||
              new_max_x < curXMax - squash) {
           needRescale = 1;
-	  //fprintf( stderr, "max X rescale %g %g\n",new_max_x,curXMax );
+        //fprintf( stderr, "max X rescale %g %g\n",new_max_x,curXMax );
           curXMax = new_max_x;
         }
       }
@@ -5871,7 +5938,7 @@ char format[31+1];
         if ( new_min_y < curY1Min[yi] ||
              new_min_y > curY1Min[yi]+squash) {
           needRescale = 1;
-	  //fprintf( stderr, "min Y rescale %g %g\n", new_min_y,curY1Min[yi] );
+        //fprintf( stderr, "min Y rescale %g %g\n", new_min_y,curY1Min[yi] );
           curY1Min[yi] = new_min_y;
         }
       }
@@ -5879,15 +5946,20 @@ char format[31+1];
         if ( new_max_y > curY1Max[yi] ||
              new_max_y < curY1Max[yi]-squash) {
           needRescale = 1;
-	  //fprintf( stderr, "max Y rescale %g %g\n",new_max_y,curY1Max[yi] );
+        //fprintf( stderr, "max Y rescale %g %g\n",new_max_y,curY1Max[yi] );
           curY1Max[yi] = new_max_y;
         }
       }
     }
 // end of changes
 
+  }
+  // =================================================
+
   if ( needRescale ) {
+
     actWin->addDefExeNode( aglPtr );
+
     if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
       get_log10_scale_params1( curXMin, curXMax, &curXMin, &curXMax,
        &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor, format );
@@ -6204,22 +6276,22 @@ XRectangle xR = { plotAreaX+1, plotAreaY, plotAreaW-2, plotAreaH };
              actWin->executeGc.normGC(), plotBuf[i], curNpts[i],
              CoordModeOrigin );
 
-	  }
-	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_CIRCLE ) {
+          }
+          else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_CIRCLE ) {
 
             drawCircles( i, plotBuf[i], curNpts[i] );
 
-	  }
-	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_SQUARE ) {
+          }
+          else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_SQUARE ) {
 
             drawSquares( i, plotBuf[i], curNpts[i] );
 
-	  }
-	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_DIAMOND ) {
+          }
+          else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_DIAMOND ) {
 
             drawDiamonds( i, plotBuf[i], curNpts[i] );
 
-	  }
+          }
 
         }
 
@@ -6228,15 +6300,15 @@ XRectangle xR = { plotAreaX+1, plotAreaY, plotAreaW-2, plotAreaH };
 
         if ( curNpts[i] > 0 ) {
 
-	  if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_CIRCLE ) {
+          if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_CIRCLE ) {
             drawCircles( i, plotBuf[i], curNpts[i] );
-	  }
-	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_SQUARE ) {
+          }
+          else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_SQUARE ) {
             drawSquares( i, plotBuf[i], curNpts[i] );
-	  }
-	  else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_DIAMOND ) {
+          }
+          else if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_DIAMOND ) {
             drawDiamonds( i, plotBuf[i], curNpts[i] );
-	  }
+          }
 
           actWin->executeGc.setLineWidth( lineThk[i] );
           actWin->executeGc.setLineStyle( lineStyle[i] );
@@ -6247,7 +6319,7 @@ XRectangle xR = { plotAreaX+1, plotAreaY, plotAreaW-2, plotAreaH };
              actWin->executeGc.normGC(), plotBuf[i], curNpts[i],
              CoordModeOrigin );
 
-	  }
+          }
 
         }
 

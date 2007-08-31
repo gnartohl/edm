@@ -100,7 +100,7 @@
 
 #define XYGC_MAJOR_VERSION 4
 #define XYGC_MINOR_VERSION 3
-#define XYGC_RELEASE 0
+#define XYGC_RELEASE 1
 
 #ifdef __xygraph_cc
 
@@ -422,6 +422,7 @@ typedef struct editBufTag {
   int bufFormatType;
   int bufBorder;
   int bufPlotAreaBorder;
+  int bufAutoScaleBothDirections;
   int bufXFormatType;
   efInt bufXPrecision;
   int bufY1FormatType[NUM_Y_AXES];
@@ -778,6 +779,7 @@ char fontTag[63+1];
 
 int border;
 int plotAreaBorder;
+int autoScaleBothDirections;
 
 int opComplete, active, activeMode, init, bufInvalid;
 XFontStruct *fs;
