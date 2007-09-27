@@ -2959,7 +2959,7 @@ double scaledX, scaledY;
       }
 
       if ( xyo->firstTimeSample ) {
-        xyo->firstTimeSample = 0;
+        //xyo->firstTimeSample = 0;
         xyo->curSec = sec;
         xyo->curNsec = 0;
         sec = 0;
@@ -2984,27 +2984,39 @@ double scaledX, scaledY;
       }
       else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LINEAR ) {
 
+	_edmDebug();
+
         if ( xyo->special[i] ) {
-          dxValue = (double) ( ++(xyo->totalCount[i]) % xyo->count );
+          dxValue = (double) ( xyo->totalCount[i] % xyo->count );
 	}
 	else {
-          dxValue = (double) ++(xyo->totalCount[i]);
+          dxValue = (double) xyo->totalCount[i];
 	}
         ( (double *) xyo->xPvData[i] )[ii] = dxValue;
+
+        if ( !(xyo->firstTimeSample) ) {
+          ++(xyo->totalCount[i]);
+	}
 
       }
       else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
 
         if ( xyo->special[i] ) {
-          dxValue = (double) ( ++(xyo->totalCount[i]) % xyo->count );
+          dxValue = (double) ( xyo->totalCount[i] % xyo->count );
 	}
 	else {
-          dxValue = (double) ++(xyo->totalCount[i]);
+          dxValue = (double) xyo->totalCount[i];
 	}
         ( (double *) xyo->xPvData[i] )[ii] = dxValue;
         if ( dxValue > 0 ) dxValue = log10( dxValue );
 
+        if ( !xyo->firstTimeSample ) {
+          ++(xyo->totalCount[i]);
+	}
+
       }
+
+      xyo->firstTimeSample = 0;
 
       if ( xyo->plotUpdateMode[i] != XYGC_K_UPDATE_ON_TRIG ) {
 
@@ -3739,7 +3751,7 @@ double dxValue;
 
       if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 
-	dxValue = ( (double *) xPvData[i] )[ii];
+        dxValue = ( (double *) xPvData[i] )[ii];
 
       }
       else {
@@ -8237,7 +8249,8 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
     for ( i=0; i<numTraces; i++ ) {
 
       if (
-           ( plotStyle[i] == XYGC_K_PLOT_STYLE_LINE ) &&
+           ( ( plotStyle[i] == XYGC_K_PLOT_STYLE_LINE ) ||
+             ( plotStyle[i] == XYGC_K_PLOT_STYLE_POINT ) ) &&
            ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) &&
            ( yPvCount[i] == 1 ) && // must be scalar; use y here,
                                    // x is not used for chonological
