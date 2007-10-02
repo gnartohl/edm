@@ -1,0 +1,310 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 329
+y 119
+w 472
+h 747
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 52171 52171 52171
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 65535
+ctlBgColor1 rgb 46517 46517 46517
+ctlBgColor2 rgb 56797 56797 56797
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+disableScroll
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 18
+y 19
+w 120
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 61423 61423 61423
+value {
+  "Coef Table"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 21
+y 75
+w 426
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "This widget displays a table of coefficients from a numeric array pv."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 26
+y 372
+w 390
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "The following is an example coefficient table in execute mode:"
+}
+autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 101
+y 407
+w 181
+h 208
+file "$(help)helpCoefTable"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 26
+y 640
+w 55
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Fg Color"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 26
+y 662
+w 55
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Bg Color"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 26
+y 684
+w 117
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Odd Row Bg Color"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 26
+y 707
+w 123
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Even Row Bg Color"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 89
+y 580
+w 35
+h 68
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+arrows "to"
+numPoints 2
+xPoints {
+  0 89
+  1 124
+}
+yPoints {
+  0 648
+  1 580
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 89
+y 554
+w 142
+h 116
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+arrows "to"
+numPoints 3
+xPoints {
+  0 89
+  1 231
+  2 231
+}
+yPoints {
+  0 670
+  1 619
+  2 554
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 146
+y 485
+w 29
+h 206
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+arrows "to"
+numPoints 3
+xPoints {
+  0 146
+  1 175
+  2 175
+}
+yPoints {
+  0 691
+  1 681
+  2 485
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 149
+y 460
+w 55
+h 255
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+arrows "to"
+numPoints 3
+xPoints {
+  0 149
+  1 204
+  2 203
+}
+yPoints {
+  0 715
+  1 698
+  2 460
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 26
+y 125
+w 390
+h 208
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "PV specifies the numeric array pv"
+  ""
+  "Then Labels field contains a list of coefficient labels"
+  "separated by commas"
+  ""
+  "First Element specifies the 1st array element to display"
+  ""
+  "If Num Elements is not specified, the number of labels"
+  "determines the number of elements to be displayed"
+  ""
+  "If Num Elements is specified, it determines the number of"
+  "elements to be displayed; if there are more elements than"
+  "labels, the remaining element labels will use the form \"Coef N\""
+}
+autoSize
+endObjectProperties
+
