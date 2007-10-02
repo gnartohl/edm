@@ -483,15 +483,15 @@ libRecPtr head, tail, cur, prev, next;
         index = 42;
       else
         index = strlen(line) + 5;
-      Strncat( line, "                                        ", 255 );
-      strncpy( &line[index], typeNamePtr, 255 );
+      Strncat( line, "                                             ", 255 );
+      strncpy( &line[index], typeNamePtr, 255-index );
 
       if ( strlen(line) < 50 )
         index = 55;
       else
         index = strlen(line) + 5;
-      Strncat( line, "                                        ", 255 );
-      strncpy( &line[index], textPtr, 255 );
+      Strncat( line, "                                                       ", 255 );
+      strncpy( &line[index], textPtr, 255-index );
 
       fprintf( stderr, "%s\n", line );
 
@@ -922,8 +922,8 @@ libRecPtr head, tail, cur, prev, next;
         index = 45;
       else
         index = strlen(line) + 5;
-      Strncat( line, "                                        ", 255 );
-      strncpy( &line[index], textPtr, 255 );
+      Strncat( line, "                                             ", 255 );
+      strncpy( &line[index], textPtr, 255-index );
 
       fprintf( stderr, "%s\n", line );
 

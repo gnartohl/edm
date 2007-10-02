@@ -1,0 +1,25 @@
+#ifndef __coefTable_str
+#define __coefTable_str 1
+
+#define activeCoefTableClass_str4 (char *) "Unknown object"
+#define activeCoefTableClass_str5 (char *) " Properties"
+#define activeCoefTableClass_str6 (char *) "X"
+#define activeCoefTableClass_str7 (char *) "Y"
+#define activeCoefTableClass_str8 (char *) "Width"
+#define activeCoefTableClass_str9 (char *) "Height"
+#define activeCoefTableClass_str11 (char *) "PV"
+#define activeCoefTableClass_str15 (char *) "Font"
+#define activeCoefTableClass_str16 (char *) "Fg Color"
+#define activeCoefTableClass_str17 (char *) "Bg Color"
+#define activeCoefTableClass_str18 (char *) "Odd Row Bg Color"
+#define activeCoefTableClass_str19 (char *) "Top Shadow Color"
+#define activeCoefTableClass_str20 (char *) "Bot Shadow Color"
+#define activeCoefTableClass_str21 (char *) "Table"
+#define activeCoefTableClass_str22 (char *) "error creating pv\n"
+#define activeCoefTableClass_str24 (char *) "frameWidget create failed\n"
+#define activeCoefTableClass_str25 (char *) "Even Row Bg Color"
+#define activeCoefTableClass_str26 (char *) "Labels (l1,l2,...)"
+#define activeCoefTableClass_str27 (char *) "First Element"
+#define activeCoefTableClass_str28 (char *) "Num Elements"
+
+#endif
