@@ -3,22 +3,22 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 95
-y 321
+x 400
+y 264
 w 454
 h 461
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 52942 52171 52942
+bgColor rgb 52171 52171 52171
 textColor rgb 0 0 0
 ctlFgColor1 rgb 0 0 0
 ctlFgColor2 rgb 0 0 65535
-ctlBgColor1 rgb 46517 46774 46517
-ctlBgColor2 rgb 57054 56283 57054
+ctlBgColor1 rgb 46517 46517 46517
+ctlBgColor2 rgb 56797 56797 56797
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 title "Objects"
 endScreenProperties
 
@@ -26,16 +26,16 @@ endScreenProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 165
 y 28
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Meter"
@@ -53,16 +53,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 165
 y 60
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Bar"
@@ -80,16 +80,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 165
 y 92
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Message Box"
@@ -107,16 +107,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 319
 y 28
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Text"
@@ -134,16 +134,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 319
 y 60
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Slider"
@@ -161,16 +161,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 319
 y 124
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Button"
@@ -188,16 +188,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 319
 y 156
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Menu Button"
@@ -215,16 +215,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 319
 y 284
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Message Button"
@@ -242,16 +242,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 319
 y 252
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Up-Down Button"
@@ -269,16 +269,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 319
 y 380
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Related Display"
@@ -304,7 +304,7 @@ w 59
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Graphics"
@@ -324,7 +324,7 @@ w 57
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Monitors"
@@ -344,7 +344,7 @@ w 54
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Controls"
@@ -363,9 +363,9 @@ y 384
 w 59
 h 24
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 label "Close"
 font "helvetica-medium-r-12.0"
 3d
@@ -375,16 +375,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 11
 y 28
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Lines"
@@ -402,16 +402,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 11
 y 60
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Rectangle"
@@ -429,16 +429,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 11
 y 92
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Circle"
@@ -456,16 +456,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 11
 y 124
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Arc"
@@ -483,16 +483,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 11
 y 156
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Static Text"
@@ -510,16 +510,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 11
 y 188
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Gif Image"
@@ -537,16 +537,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 11
 y 220
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Png Image"
@@ -564,16 +564,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 11
 y 252
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-12.0"
 noEdit
 buttonLabel "Embedded Window"
@@ -588,16 +588,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 165
 y 124
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Byte"
@@ -618,16 +618,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 319
 y 348
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Shell Command"
@@ -645,16 +645,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 319
 y 188
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Choice Button"
@@ -672,16 +672,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 319
 y 220
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Radio Box"
@@ -699,16 +699,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 165
 y 156
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "X-Y Graph"
@@ -723,16 +723,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 165
 y 188
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Table"
@@ -753,16 +753,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 319
 y 412
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Menu Mux"
@@ -780,16 +780,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 319
 y 316
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Exit Button"
@@ -807,16 +807,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 165
-y 220
+y 252
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "PV Inspector"
@@ -837,16 +837,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 11
 y 284
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Dynamic Symbol"
@@ -864,16 +864,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 165
-y 252
+y 284
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Symbol"
@@ -894,16 +894,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 319
 y 92
 w 118
 h 25
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-14.0"
 noEdit
 buttonLabel "Motif Slider"
@@ -911,6 +911,36 @@ numPvs 4
 numDsps 1
 displayFileName {
   0 "$(help)helpMotifSlider"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 165
+y 220
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Coef Table"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpCoefTable"
+}
+menuLabel {
+  0 "Byte"
 }
 setPosition {
   0 "button"
