@@ -1,19 +1,31 @@
-18
-activeLineClass /home/sinclair/edm/sources/libEdmBase.so Graphics Lines
-activeRectangleClass /home/sinclair/edm/sources/libEdmBase.so Graphics Rectangle
-activeCircleClass /home/sinclair/edm/sources/libEdmBase.so Graphics Circle
-activeXTextClass /home/sinclair/edm/sources/libEdmBase.so Graphics Static Text
-activeMeterClass /home/sinclair/edm/sources/libEdmBase.so Monitors Meter
-activeBarClass /home/sinclair/edm/sources/libEdmBase.so Monitors Bar
-activeMessageBoxClass /home/sinclair/edm/sources/libEdmBase.so Monitors Message Box
-activeXTextDspClass /home/sinclair/edm/sources/libEdmBase.so Controls Text
-activeSliderClass /home/sinclair/edm/sources/libEdmBase.so Controls Slider
-activeButtonClass /home/sinclair/edm/sources/libEdmBase.so Controls Button
-activeMenuButtonClass /home/sinclair/edm/sources/libEdmBase.so Controls Menu Button
-activeMessageButtonClass /home/sinclair/edm/sources/libEdmBase.so Controls Message Button
-activeExitButtonClass /home/sinclair/edm/sources/libEdmBase.so Controls Exit Button
-menuMuxClass /home/sinclair/edm/sources/libEdmBase.so Controls Menu Mux
-relatedDisplayClass /home/sinclair/edm/sources/libEdmBase.so Controls Related Display
-shellCmdClass /home/sinclair/edm/sources/libEdmBase.so Controls Shell Command
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df /home/sinclair/edm/sources/lib605432d2-f29d-11d2-973b-00104b8742df.so Graphics GIF Image
-activePngClass /home/sinclair/edm/sources/lib605432d2-f29d-11d2-973b-00104b8742df.so Graphics PNG Image
+30
+activeLineClass $(EDMLIBS)/libEdmBase.so Graphics Lines
+activeRectangleClass $(EDMLIBS)/libEdmBase.so Graphics Rectangle
+activeCircleClass $(EDMLIBS)/libEdmBase.so Graphics Circle
+activeArcClass $(EDMLIBS)/libEdmBase.so Graphics Arc
+activeXTextClass $(EDMLIBS)/libEdmBase.so Graphics Static Text
+activePipClass $(EDMLIBS)/libEdmBase.so Graphics Embedded Window
+activeMeterClass $(EDMLIBS)/libEdmBase.so Monitors Meter
+activeBarClass $(EDMLIBS)/libEdmBase.so Monitors Bar
+activeMessageBoxClass $(EDMLIBS)/libEdmBase.so Monitors Message Box
+xyGraphClass $(EDMLIBS)/libEdmBase.so Monitors X-Y Graph
+activeXTextDspClass $(EDMLIBS)/libEdmBase.so Controls Text Control
+activeXTextDspClass:noedit $(EDMLIBS)/libEdmBase.so Monitors Text Monitor
+activeSliderClass $(EDMLIBS)/libEdmBase.so Controls Slider
+activeMotifSliderClass $(EDMLIBS)/libEdmBase.so Controls Motif Slider
+activeButtonClass $(EDMLIBS)/libEdmBase.so Controls Button
+activeChoiceButtonClass $(EDMLIBS)/lib7e1b4e6f-239d-4650-95e6-a040d41ba633.so Controls Choice Button
+activeMenuButtonClass $(EDMLIBS)/libEdmBase.so Controls Menu Button
+activeRadioButtonClass $(EDMLIBS)/libEdmBase.so Controls Radio Box
+activeMessageButtonClass $(EDMLIBS)/libEdmBase.so Controls Message Button
+activeUpdownButtonClass $(EDMLIBS)/libEdmBase.so Controls Up/Down Button
+activeRampButtonClass /home/sinclair/edm/libEdmBase.so Controls Ramp Button
+activeExitButtonClass $(EDMLIBS)/libEdmBase.so Controls Exit Button
+ByteClass $(EDMLIBS)/libPV.so Monitors Byte
+menuMuxClass $(EDMLIBS)/libEdmBase.so Controls Menu Mux
+relatedDisplayClass $(EDMLIBS)/libEdmBase.so Controls Related Display
+shellCmdClass $(EDMLIBS)/libEdmBase.so Controls Shell Command
+activeTableClass $(EDMLIBS)/libEdmBase.so Monitors Table
+activeCoefTableClass $(EDMLIBS)/libEdmBase.so Monitors Coef Table
+cfcf6c8a_dbeb_11d2_8a97_00104b8742df $(EDMLIBS)/libcf322683-513e-4570-a44b-7cdd7cae0de5.so Graphics GIF Image
+activePngClass $(EDMLIBS)/lib57d79238-2924-420b-ba67-dfbecdf03fcd.so Graphics PNG Image
