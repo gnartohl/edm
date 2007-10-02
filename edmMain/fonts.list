@@ -1,158 +1,17 @@
-1 1 0
-helvetica-medium-r-10.0
+3 0 0
+helvetica-medium-r-12.0
 helvetica-medium-r-18.0
--adobe-utopia-bold-i-normal--*-80-75-75-p-*-iso8859-1
--adobe-utopia-bold-i-normal--*-90-75-75-p-*-iso8859-1
--adobe-utopia-bold-i-normal--*-100-75-75-p-*-iso8859-1
--adobe-utopia-bold-i-normal--*-110-75-75-p-*-iso8859-1
--adobe-utopia-bold-i-normal--*-120-75-75-p-*-iso8859-1
--adobe-utopia-bold-i-normal--*-130-75-75-p-*-iso8859-1
--adobe-utopia-bold-i-normal--*-140-75-75-p-*-iso8859-1
--adobe-utopia-bold-i-normal--*-180-75-75-p-*-iso8859-1
--adobe-utopia-bold-i-normal--*-240-75-75-p-*-iso8859-1
--adobe-utopia-bold-i-normal--*-320-75-75-p-*-iso8859-1
--adobe-utopia-bold-i-normal--*-720-75-75-p-*-iso8859-1
--adobe-utopia-bold-i-normal--*-2880-75-75-p-*-iso8859-1
--adobe-utopia-bold-r-normal--*-80-75-75-p-*-iso8859-1
--adobe-utopia-bold-r-normal--*-90-75-75-p-*-iso8859-1
--adobe-utopia-bold-r-normal--*-100-75-75-p-*-iso8859-1
--adobe-utopia-bold-r-normal--*-110-75-75-p-*-iso8859-1
--adobe-utopia-bold-r-normal--*-120-75-75-p-*-iso8859-1
--adobe-utopia-bold-r-normal--*-130-75-75-p-*-iso8859-1
--adobe-utopia-bold-r-normal--*-140-75-75-p-*-iso8859-1
--adobe-utopia-bold-r-normal--*-180-75-75-p-*-iso8859-1
--adobe-utopia-bold-r-normal--*-240-75-75-p-*-iso8859-1
--adobe-utopia-bold-r-normal--*-320-75-75-p-*-iso8859-1
--adobe-utopia-bold-r-normal--*-720-75-75-p-*-iso8859-1
--adobe-utopia-bold-r-normal--*-2880-75-75-p-*-iso8859-1
--adobe-utopia-medium-i-normal--*-80-75-75-p-*-iso8859-1
--adobe-utopia-medium-i-normal--*-90-75-75-p-*-iso8859-1
--adobe-utopia-medium-i-normal--*-100-75-75-p-*-iso8859-1
--adobe-utopia-medium-i-normal--*-110-75-75-p-*-iso8859-1
--adobe-utopia-medium-i-normal--*-120-75-75-p-*-iso8859-1
--adobe-utopia-medium-i-normal--*-130-75-75-p-*-iso8859-1
--adobe-utopia-medium-i-normal--*-140-75-75-p-*-iso8859-1
--adobe-utopia-medium-i-normal--*-180-75-75-p-*-iso8859-1
--adobe-utopia-medium-i-normal--*-240-75-75-p-*-iso8859-1
--adobe-utopia-medium-i-normal--*-320-75-75-p-*-iso8859-1
--adobe-utopia-medium-i-normal--*-720-75-75-p-*-iso8859-1
--adobe-utopia-medium-i-normal--*-2880-75-75-p-*-iso8859-1
--adobe-utopia-medium-r-normal--*-80-75-75-p-*-iso8859-1
--adobe-utopia-medium-r-normal--*-90-75-75-p-*-iso8859-1
--adobe-utopia-medium-r-normal--*-100-75-75-p-*-iso8859-1
--adobe-utopia-medium-r-normal--*-110-75-75-p-*-iso8859-1
--adobe-utopia-medium-r-normal--*-120-75-75-p-*-iso8859-1
--adobe-utopia-medium-r-normal--*-130-75-75-p-*-iso8859-1
--adobe-utopia-medium-r-normal--*-140-75-75-p-*-iso8859-1
--adobe-utopia-medium-r-normal--*-180-75-75-p-*-iso8859-1
--adobe-utopia-medium-r-normal--*-240-75-75-p-*-iso8859-1
--adobe-utopia-medium-r-normal--*-320-75-75-p-*-iso8859-1
--adobe-utopia-medium-r-normal--*-720-75-75-p-*-iso8859-1
--adobe-utopia-medium-r-normal--*-2880-75-75-p-*-iso8859-1
--adobe-courier-bold-o-normal--8-80-75-75-m-50-iso8859-1
--adobe-courier-bold-o-normal--*-90-75-75-m-*-iso8859-1
--adobe-courier-bold-o-normal--10-100-75-75-m-60-iso8859-1
--adobe-courier-bold-o-normal--12-120-75-75-m-70-iso8859-1
--adobe-courier-bold-o-normal--14-140-75-75-m-90-iso8859-1
--adobe-courier-bold-o-normal--18-180-75-75-m-110-iso8859-1
--adobe-courier-bold-o-normal--24-240-75-75-m-150-iso8859-1
--adobe-courier-bold-r-normal--10-100-75-75-m-60-iso8859-1
--adobe-courier-bold-r-normal--12-120-75-75-m-70-iso8859-1
--adobe-courier-bold-r-normal--14-140-75-75-m-90-iso8859-1
--adobe-courier-bold-r-normal--18-180-75-75-m-110-iso8859-1
--adobe-courier-bold-r-normal--24-240-75-75-m-150-iso8859-1
--adobe-courier-bold-r-normal--8-80-75-75-m-50-iso8859-1
--adobe-courier-bold-r-normal--*-90-75-75-m-*-iso8859-1
--adobe-courier-medium-o-normal--10-100-75-75-m-60-iso8859-1
--adobe-courier-medium-o-normal--12-120-75-75-m-70-iso8859-1
--adobe-courier-medium-o-normal--14-140-75-75-m-90-iso8859-1
--adobe-courier-medium-o-normal--18-180-75-75-m-110-iso8859-1
--adobe-courier-medium-o-normal--24-240-75-75-m-150-iso8859-1
--adobe-courier-medium-o-normal--8-80-75-75-m-50-iso8859-1
--adobe-courier-medium-o-normal--*-90-75-75-m-*-iso8859-1
--adobe-courier-medium-r-normal--10-100-75-75-m-60-iso8859-1
--adobe-courier-medium-r-normal--12-120-75-75-m-70-iso8859-1
--adobe-courier-medium-r-normal--14-140-75-75-m-90-iso8859-1
--adobe-courier-medium-r-normal--18-180-75-75-m-110-iso8859-1
--adobe-courier-medium-r-normal--24-240-75-75-m-150-iso8859-1
--adobe-courier-medium-r-normal--8-80-75-75-m-50-iso8859-1
--adobe-courier-medium-r-normal--*-90-75-75-m-*-iso8859-1
--adobe-helvetica-bold-o-normal--8-80-75-75-p-50-iso8859-1
--adobe-helvetica-bold-o-normal--10-100-75-75-p-60-iso8859-1
--adobe-helvetica-bold-o-normal--12-120-75-75-p-69-iso8859-1
--adobe-helvetica-bold-o-normal--14-140-75-75-p-82-iso8859-1
--adobe-helvetica-bold-o-normal--18-180-75-75-p-104-iso8859-1
--adobe-helvetica-bold-o-normal--24-240-75-75-p-138-iso8859-1
--adobe-helvetica-bold-o-normal--*-720-75-75-p-*-iso8859-1
--adobe-helvetica-bold-o-normal--8-80-75-75-p-50-iso8859-1
--adobe-helvetica-bold-r-normal--10-100-75-75-p-60-iso8859-1
--adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1
--adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1
--adobe-helvetica-bold-r-normal--14-140-75-75-p-82-iso8859-1
--adobe-helvetica-bold-r-normal--14-140-75-75-p-82-iso8859-1
--adobe-helvetica-bold-r-normal--18-180-75-75-p-103-iso8859-1
--adobe-helvetica-bold-r-normal--24-240-75-75-p-138-iso8859-1
--adobe-helvetica-bold-r-normal--*-720-75-75-p-*-iso8859-1
--adobe-helvetica-bold-r-normal--8-80-75-75-p-50-iso8859-1
--adobe-helvetica-medium-o-normal--10-100-75-75-p-57-iso8859-1
--adobe-helvetica-medium-o-normal--12-120-75-75-p-67-iso8859-1
--adobe-helvetica-medium-o-normal--14-140-75-75-p-78-iso8859-1
--adobe-helvetica-medium-o-normal--18-180-75-75-p-98-iso8859-1
--adobe-helvetica-medium-o-normal--24-240-75-75-p-130-iso8859-1
--adobe-helvetica-medium-o-normal--*-720-75-75-p-*-iso8859-1
--adobe-helvetica-medium-o-normal--8-80-75-75-p-47-iso8859-1
--adobe-helvetica-medium-r-normal--10-100-75-75-p-56-iso8859-1
--adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1
--adobe-helvetica-medium-r-normal--14-140-75-75-p-77-iso8859-1
--adobe-helvetica-medium-r-normal--18-180-75-75-p-98-iso8859-1
--adobe-helvetica-medium-r-normal--24-240-75-75-p-130-iso8859-1
--adobe-helvetica-medium-r-normal--*-720-75-75-p-*-iso8859-1
--adobe-helvetica-medium-r-normal--8-80-75-75-p-46-iso8859-1
--adobe-new century schoolbook-bold-i-normal--8-80-75-75-p-56-iso8859-1
--adobe-new century schoolbook-bold-i-normal--10-100-75-75-p-66-iso8859-1
--adobe-new century schoolbook-bold-i-normal--12-120-75-75-p-76-iso8859-1
--adobe-new century schoolbook-bold-i-normal--14-140-75-75-p-88-iso8859-1
--adobe-new century schoolbook-bold-i-normal--18-180-75-75-p-111-iso8859-1
--adobe-new century schoolbook-bold-i-normal--24-240-75-75-p-148-iso8859-1
--adobe-new century schoolbook-bold-r-normal--10-100-75-75-p-66-iso8859-1
--adobe-new century schoolbook-bold-r-normal--12-120-75-75-p-77-iso8859-1
--adobe-new century schoolbook-bold-r-normal--14-140-75-75-p-87-iso8859-1
--adobe-new century schoolbook-bold-r-normal--18-180-75-75-p-113-iso8859-1
--adobe-new century schoolbook-bold-r-normal--24-240-75-75-p-149-iso8859-1
--adobe-new century schoolbook-bold-r-normal--8-80-75-75-p-56-iso8859-1
--adobe-new century schoolbook-medium-i-normal--10-100-75-75-p-60-iso8859-1
--adobe-new century schoolbook-medium-i-normal--12-120-75-75-p-70-iso8859-1
--adobe-new century schoolbook-medium-i-normal--14-140-75-75-p-81-iso8859-1
--adobe-new century schoolbook-medium-i-normal--18-180-75-75-p-104-iso8859-1
--adobe-new century schoolbook-medium-i-normal--24-240-75-75-p-136-iso8859-1
--adobe-new century schoolbook-medium-i-normal--8-80-75-75-p-50-iso8859-1
--adobe-new century schoolbook-medium-r-normal--10-100-75-75-p-60-iso8859-1
--adobe-new century schoolbook-medium-r-normal--12-120-75-75-p-70-iso8859-1
--adobe-new century schoolbook-medium-r-normal--14-140-75-75-p-82-iso8859-1
--adobe-new century schoolbook-medium-r-normal--18-180-75-75-p-103-iso8859-1
--adobe-new century schoolbook-medium-r-normal--24-240-75-75-p-137-iso8859-1
--adobe-new century schoolbook-medium-r-normal--8-80-75-75-p-50-iso8859-1
--adobe-times-bold-i-normal--8-80-75-75-p-47-iso8859-1
--adobe-times-bold-i-normal--10-100-75-75-p-57-iso8859-1
--adobe-times-bold-i-normal--12-120-75-75-p-68-iso8859-1
--adobe-times-bold-i-normal--14-140-75-75-p-77-iso8859-1
--adobe-times-bold-i-normal--18-180-75-75-p-98-iso8859-1
--adobe-times-bold-i-normal--24-240-75-75-p-128-iso8859-1
--adobe-times-bold-r-normal--10-100-75-75-p-57-iso8859-1
--adobe-times-bold-r-normal--12-120-75-75-p-67-iso8859-1
--adobe-times-bold-r-normal--14-140-75-75-p-77-iso8859-1
--adobe-times-bold-r-normal--18-180-75-75-p-99-iso8859-1
--adobe-times-bold-r-normal--24-240-75-75-p-132-iso8859-1
--adobe-times-bold-r-normal--8-80-75-75-p-47-iso8859-1
--adobe-times-medium-i-normal--10-100-75-75-p-52-iso8859-1
--adobe-times-medium-i-normal--12-120-75-75-p-63-iso8859-1
--adobe-times-medium-i-normal--14-140-75-75-p-73-iso8859-1
--adobe-times-medium-i-normal--18-180-75-75-p-94-iso8859-1
--adobe-times-medium-i-normal--24-240-75-75-p-125-iso8859-1
--adobe-times-medium-i-normal--8-80-75-75-p-42-iso8859-1
--adobe-times-medium-r-normal--10-100-75-75-p-54-iso8859-1
--adobe-times-medium-r-normal--12-120-75-75-p-64-iso8859-1
--adobe-times-medium-r-normal--14-140-75-75-p-74-iso8859-1
--adobe-times-medium-r-normal--18-180-75-75-p-94-iso8859-1
--adobe-times-medium-r-normal--24-240-75-75-p-124-iso8859-1
--adobe-times-medium-r-normal--8-80-75-75-p-44-iso8859-1
+
+helvetica={
+-*-helvetica-(medium,bold)-(r,o)-normal--0-(80,100,120,140,180,240,320,480,720)-75-75-p-0-*-*
+-*-helvetica-(medium,bold)-(r,o)-normal--*-(80,100,120,140,180,240,320,480,720)-75-75-p-*-*-*
+}
+
+utopia=-*-utopia-(medium,bold)-(r,i)-normal--0-(80,90,100,110,120,140,180,240,320,480,720)-75-75-p-0-*-*
+
+new century schoolbook=-*-century schoolbook l-(medium,bold)-(r,i)-normal--0-(80,90,100,110,120,140,180,240,320,480,720)-75-75-p-0-*-*
+
+times=-*-times-(medium,bold)-(r,i)-normal--0-(80,90,100,110,120,140,180,240,320,480,720)-75-75-p-0-*-*
+
+courier=-*-courier-(medium,bold)-(r,o)-normal--0-(80,90,100,110,120,140,180,240,320,480,720)-75-75-*-0-*-*
+
