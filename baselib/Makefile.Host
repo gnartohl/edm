@@ -73,6 +73,8 @@ LIBSRCS += xygraph.cc
 LIBSRCS += pip.cc
 LIBSRCS += pv_inspector.cc
 LIBSRCS += table.cc
+LIB_SRCS += coefTable.cc
+LIB_SRCS += rampButton.cc
 
 include $(TOP)/config/RULES.Host
 

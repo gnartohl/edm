@@ -79,6 +79,8 @@ ifdef EPICS_HOST_ARCH
    LIB_SRCS += pip.cc
    LIB_SRCS += pv_inspector.cc
    LIB_SRCS += table.cc
+   LIB_SRCS += coefTable.cc
+   LIB_SRCS += rampButton.cc
 
    include $(TOP)/configure/RULES
 
