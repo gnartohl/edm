@@ -753,7 +753,7 @@ static int libRecIndex = 0;
 
 static libRecType libRec[] = 
 {
-    { "TwoDProfileMonitor", global_str2, "Hoff Video" }
+    { "TwoDProfileMonitor", global_str2, "New Monitor" }
 };
 
 extern "C" 
