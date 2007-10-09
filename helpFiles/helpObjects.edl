@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 400
-y 264
+x 395
+y 222
 w 454
-h 461
+h 562
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
@@ -217,8 +217,8 @@ beginObjectProperties
 major 4
 minor 2
 release 0
-x 319
-y 284
+x 320
+y 316
 w 118
 h 25
 fgColor rgb 0 0 0
@@ -271,8 +271,8 @@ beginObjectProperties
 major 4
 minor 2
 release 0
-x 319
-y 380
+x 320
+y 412
 w 118
 h 25
 fgColor rgb 0 0 0
@@ -359,7 +359,7 @@ major 4
 minor 1
 release 0
 x 196
-y 384
+y 505
 w 59
 h 24
 fgColor rgb 0 0 0
@@ -620,8 +620,8 @@ beginObjectProperties
 major 4
 minor 2
 release 0
-x 319
-y 348
+x 320
+y 380
 w 118
 h 25
 fgColor rgb 0 0 0
@@ -755,8 +755,8 @@ beginObjectProperties
 major 4
 minor 2
 release 0
-x 319
-y 412
+x 320
+y 444
 w 118
 h 25
 fgColor rgb 0 0 0
@@ -782,8 +782,8 @@ beginObjectProperties
 major 4
 minor 2
 release 0
-x 319
-y 316
+x 320
+y 348
 w 118
 h 25
 fgColor rgb 0 0 0
@@ -941,6 +941,33 @@ displayFileName {
 }
 menuLabel {
   0 "Byte"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 319
+y 284
+w 118
+h 25
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+font "helvetica-medium-r-14.0"
+noEdit
+buttonLabel "Ramp Button"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpRampButton"
 }
 setPosition {
   0 "button"
