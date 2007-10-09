@@ -1567,6 +1567,9 @@ int activeRampButtonClass::deactivate (
 
   if ( rampStateExists ) {
     if ( rampStatePvId ) {
+      if ( rampStateExists ) {
+        rampStatePvId->put( 0 );
+      }
       rampStatePvId->remove_conn_state_callback( rbtc_monitor_rampState_connect_state,
        this );
       rampStatePvId->release();
