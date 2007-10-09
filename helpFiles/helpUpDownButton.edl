@@ -1,445 +1,371 @@
-3 1 0
-212
-91
-458
-720
-helvetica-medium-r-18.0
-0
-helvetica-medium-r-12.0
-0
-rgb
-0,0,0
-rgb
-52171,52171,52171
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-0,0,65535
-rgb
-46517,46517,46517
-rgb
-61423,61423,61423
-rgb
-24929,24929,24929
-rgb
-56797,56797,56797
-Up-Down Button
-0
-0
-10
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-27
-31
-190
-27
-rgb
-0,0,0
-0
-0
-rgb
-61423,61423,61423
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Up-Down Button
-helvetica-medium-r-24.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-1 2 0
-20
-82
-97
-158
-$(help)helpUpdownButtonGif.gif
-0
-0
-0
-<<<E~O~D>>>
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-1 2 0
-73
-204
-96
-130
-$(help)helpUpdownButtonMenuGif.gif
-0
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-203
-101
-198
-16
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Control PV = Save/Restore PV
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-203
-154
-198
-16
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Control PV = Save/Restore PV
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-203
-207
-104
-16
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Menu Operation
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-27
-357
-368
-16
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Single click changes Control PV value by Fine Increment.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-27
-547
-308
-16
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-are taken from HOPR & LOPR fields in database.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-27
-386
-409
-16
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Press and hold changes Control PV value by Coarse Increment
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-27
-402
-279
-16
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-repeatedly at the rate given by Repeat Rate.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-27
-434
-342
-16
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Right button increments value, left button decrements.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-27
-463
-319
-48
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Button is still active when invisible box is checked\nbut is not active when it becomes invisible as the\nresult of a rule evaluation.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-27
-529
-306
-16
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-If Limits From DB is checked, then Min and Max
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-26
-681
-362
-16
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-The button state is not initialized to the current PV value.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-27
-579
-380
-16
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Color PV is used with dynaimic colors and alarm sensitivity.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-27
-597
-324
-16
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-If both are present, alarm colors have precedence.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-27
-628
-400
-16
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Visibility may be achieved through visibility PV and embedded 
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-27
-648
-165
-16
-rgb
-0,0,0
-0
-1
-rgb
-46517,46517,46517
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-rule or with invisible color.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 442
+y 72
+w 458
+h 720
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 52171 52171 52171
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 65535
+ctlBgColor1 rgb 46517 46517 46517
+ctlBgColor2 rgb 56797 56797 56797
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+title "Up-Down Button"
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 27
+y 31
+w 190
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 61423 61423 61423
+value {
+  "Up-Down Button"
+}
+autoSize
+endObjectProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 20
+y 82
+w 97
+h 158
+file "$(help)helpUpdownButtonGif.gif"
+endObjectProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 73
+y 204
+w 96
+h 130
+file "$(help)helpUpdownButtonMenuGif.gif"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 203
+y 101
+w 198
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Control PV = Save/Restore PV"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 203
+y 154
+w 202
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Control PV != Save/Restore PV"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 203
+y 207
+w 104
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Menu Operation"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 27
+y 357
+w 368
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Single click changes Control PV value by Fine Increment."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 27
+y 547
+w 308
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "are taken from HOPR & LOPR fields in database."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 27
+y 386
+w 409
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Press and hold changes Control PV value by Coarse Increment"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 27
+y 402
+w 279
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "repeatedly at the rate given by Repeat Rate."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 27
+y 434
+w 342
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Right button increments value, left button decrements."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 27
+y 463
+w 319
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Button is still active when invisible box is checked"
+  "but is not active when it becomes invisible as the"
+  "result of a rule evaluation."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 27
+y 529
+w 306
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "If Limits From DB is checked, then Min and Max"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 26
+y 681
+w 362
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "The button state is not initialized to the current PV value."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 27
+y 579
+w 380
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Color PV is used with dynaimic colors and alarm sensitivity."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 27
+y 597
+w 324
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "If both are present, alarm colors have precedence."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 27
+y 628
+w 400
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Visibility may be achieved through visibility PV and embedded "
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 27
+y 648
+w 165
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "rule or with invisible color."
+}
+autoSize
+endObjectProperties
+
