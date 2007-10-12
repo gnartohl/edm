@@ -14,7 +14,7 @@
 #define activeCoefTableClass_str18 (char *) "Odd Row Bg Color"
 #define activeCoefTableClass_str19 (char *) "Top Shadow Color"
 #define activeCoefTableClass_str20 (char *) "Bot Shadow Color"
-#define activeCoefTableClass_str21 (char *) "Table"
+#define activeCoefTableClass_str21 (char *) "Coef Table"
 #define activeCoefTableClass_str22 (char *) "error creating pv\n"
 #define activeCoefTableClass_str24 (char *) "frameWidget create failed\n"
 #define activeCoefTableClass_str25 (char *) "Even Row Bg Color"
