@@ -83,7 +83,7 @@ static void pipc_edit_update (
 {
 
 activePipClass *pipo = (activePipClass *) client;
-int i, more;
+int i, ii;
 
   pipo->actWin->setChanged();
 
@@ -97,6 +97,7 @@ int i, more;
     pipo->symbolsExpStr[0].setRaw( "" );
     pipo->replaceSymbols[0] = 0;
     pipo->numDsps = 0;
+    ii = 0;
   }
   else {
     pipo->propagateMacros[0] = pipo->buf->bufPropagateMacros[0];
@@ -104,26 +105,18 @@ int i, more;
     pipo->symbolsExpStr[0].setRaw( pipo->buf->bufSymbols[0] );
     pipo->replaceSymbols[0] = pipo->buf->bufReplaceSymbols[0];
     pipo->numDsps = 1;
+    ii = 1;
   }
 
-  if ( pipo->numDsps ) {
-    more = 1;
-    for ( i=1; (i<pipo->maxDsps) && more; i++ ) {
-      pipo->displayFileName[i].setRaw( pipo->buf->bufDisplayFileName[i] );
-      if ( blank( pipo->displayFileName[i].getRaw() ) ) {
-        pipo->propagateMacros[i] = 1;
-        pipo->label[i].setRaw( "" );
-        pipo->symbolsExpStr[i].setRaw( "" );
-        pipo->replaceSymbols[i] = 0;
-        more = 0;
-      }
-      else {
-        pipo->propagateMacros[i] = pipo->buf->bufPropagateMacros[i];
-        pipo->label[i].setRaw( pipo->buf->bufLabel[i] );
-        pipo->symbolsExpStr[i].setRaw( pipo->buf->bufSymbols[i] );
-        pipo->replaceSymbols[i] = pipo->buf->bufReplaceSymbols[i];
-        (pipo->numDsps)++;
-      }
+  for ( i=ii; i<pipo->maxDsps; i++ ) {
+    if ( !blank( pipo->buf->bufDisplayFileName[i] ) ) {
+      pipo->displayFileName[ii].setRaw( pipo->buf->bufDisplayFileName[i] );
+      pipo->propagateMacros[ii] = pipo->buf->bufPropagateMacros[i];
+      pipo->label[ii].setRaw( pipo->buf->bufLabel[i] );
+      pipo->symbolsExpStr[ii].setRaw( pipo->buf->bufSymbols[i] );
+      pipo->replaceSymbols[ii] = pipo->buf->bufReplaceSymbols[i];
+      (pipo->numDsps)++;
+      ii++;
     }
   }
 
@@ -820,11 +813,11 @@ int i;
     }
 
     if ( symbolsExpStr[i].getRaw() ) {
-      strncpy( buf->bufSymbols[i], symbolsExpStr[i].getRaw(), 255 );
-      buf->bufSymbols[i][255] = 0;
+      strncpy( buf->bufSymbols[i], symbolsExpStr[i].getRaw(), maxSymbolLen );
+      buf->bufSymbols[i][maxSymbolLen] = 0;
     }
     else {
-      strncpy( buf->bufSymbols[i], "", 255 );
+      strncpy( buf->bufSymbols[i], "", maxSymbolLen );
     }
 
     buf->bufPropagateMacros[i] = propagateMacros[i];
@@ -870,7 +863,7 @@ int i;
     ef1->addLabel( "  File" );
     ef1->addTextField( "", 35, buf->bufDisplayFileName[i], 127 );
     ef1->addLabel( "  Macros" );
-    ef1->addTextField( "", 35, buf->bufSymbols[i], 255 );
+    ef1->addTextField( "", 35, buf->bufSymbols[i], maxSymbolLen );
     ef1->endSubForm();
 
     ef1->beginLeftSubForm();
@@ -1912,7 +1905,7 @@ void activePipClass::openEmbeddedByIndex (
 
 activeWindowListPtr cur;
 int i, l, stat;
-char symbolsWithSubs[255+1];
+char symbolsWithSubs[maxSymbolLen+1];
 int useSmallArrays, symbolCount, maxSymbolLength;
 char smallNewMacros[SMALL_SYM_ARRAY_SIZE+1][SMALL_SYM_ARRAY_LEN+1+1];
 char smallNewValues[SMALL_SYM_ARRAY_SIZE+1][SMALL_SYM_ARRAY_LEN+1+1];
@@ -1920,8 +1913,8 @@ char *newMacros[100];
 char *newValues[100];
 int numNewMacros, max, numFound;
 
-char *formTk, *formContext, formBuf[255+1], *fileTk, *fileContext, fileBuf[255+1],
- *result, msg[79+1], macDefFileName[127+1];
+char *formTk, *formContext, formBuf[maxSymbolLen+1], *fileTk, *fileContext,
+ fileBuf[maxSymbolLen+1], *result, msg[79+1], macDefFileName[127+1];
 FILE *f;
 expStringClass symbolsFromFile;
 int gotSymbolsFromFile;
@@ -1929,8 +1922,8 @@ int gotSymbolsFromFile;
   // allow the syntax: @filename s1=v1,s2=v2,...
   // which means read symbols from file and append list
   gotSymbolsFromFile = 0;
-  strncpy( formBuf, symbolsExpStr[index].getExpanded(), 255 );
-  formBuf[255] = 0;
+  strncpy( formBuf, symbolsExpStr[index].getExpanded(), maxSymbolLen );
+  formBuf[maxSymbolLen] = 0;
   formContext = NULL;
   formTk = strtok_r( formBuf, " \t\n", &formContext );
   if ( formTk ) {
@@ -1944,7 +1937,7 @@ int gotSymbolsFromFile;
           symbolsFromFile.setRaw( "" );
 	}
 	else {
-	  result = fgets( fileBuf, 255, f );
+	  result = fgets( fileBuf, maxSymbolLen, f );
 	  if ( result ) {
             fileContext = NULL;
             fileTk = strtok_r( fileBuf, "\n", &fileContext );
@@ -1975,19 +1968,19 @@ int gotSymbolsFromFile;
       // append inline list to file contents
       formTk = strtok_r( NULL, "\n", &formContext );
       if ( formTk ) {
-        strncpy( fileBuf, symbolsFromFile.getRaw(), 255 );
-        fileBuf[255] = 0;
+        strncpy( fileBuf, symbolsFromFile.getRaw(), maxSymbolLen );
+        fileBuf[maxSymbolLen] = 0;
         if ( blank(fileBuf) ) {
           strcpy( fileBuf, "" );
 	}
         else {
-          Strncat( fileBuf, ",", 255 );
+          Strncat( fileBuf, ",", maxSymbolLen );
 	}
-	Strncat( fileBuf, formTk, 255 );
+	Strncat( fileBuf, formTk, maxSymbolLen );
         symbolsFromFile.setRaw( fileBuf );
       }
       // do special substitutions
-      actWin->substituteSpecial( 255, symbolsFromFile.getExpanded(),
+      actWin->substituteSpecial( maxSymbolLen, symbolsFromFile.getExpanded(),
        symbolsWithSubs );
       gotSymbolsFromFile = 1;
     }
@@ -1995,7 +1988,7 @@ int gotSymbolsFromFile;
 
   if ( !gotSymbolsFromFile ) {
     // do special substitutions
-    actWin->substituteSpecial( 255, symbolsExpStr[index].getExpanded(),
+    actWin->substituteSpecial( maxSymbolLen, symbolsExpStr[index].getExpanded(),
      symbolsWithSubs );
   }
 

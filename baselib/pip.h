@@ -102,6 +102,7 @@ static const int maxDsps = 100;
 static const int displayFromPV = 0;
 static const int displayFromForm = 1;
 static const int displayFromMenu = 2;
+static const int maxSymbolLen = 2550;
 
 private:
 
@@ -179,7 +180,7 @@ typedef struct bufTag {
   char bufFileName[127+1];
   int bufPropagateMacros[maxDsps];
   char bufDisplayFileName[maxDsps][127+1];
-  char bufSymbols[maxDsps][255+1];
+  char bufSymbols[maxDsps][maxSymbolLen+1];
   int bufReplaceSymbols[maxDsps];
   char bufLabel[maxDsps][127+1];
   int bufCenter;
@@ -207,7 +208,7 @@ Widget *frameWidget, clipWidget, hsbWidget, vsbWidget, popUpMenu,
 int propagateMacros[maxDsps];
 expStringClass displayFileName[maxDsps];
 expStringClass symbolsExpStr[maxDsps];
-char symbols[maxDsps][255+1];
+char symbols[maxDsps][maxSymbolLen+1];
 int replaceSymbols[maxDsps]; // else append
 expStringClass label[maxDsps];
 

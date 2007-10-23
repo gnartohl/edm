@@ -105,6 +105,7 @@ public:
 
 static const int NUMPVS = 4;
 static const int maxDsps = 24;
+static const int maxSymbolLen = 2550;
 
 private:
 
@@ -201,7 +202,7 @@ typedef struct bufTag {
   int bufCascade[maxDsps];
   int bufPropagateMacros[maxDsps];
   char bufDisplayFileName[maxDsps][127+1];
-  char bufSymbols[maxDsps][255+1];
+  char bufSymbols[maxDsps][maxSymbolLen+1];
   int bufReplaceSymbols[maxDsps];
   char bufButtonLabel[127+1];
   char bufLabel[maxDsps][127+1];

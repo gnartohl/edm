@@ -2298,12 +2298,14 @@ int parseSymbolsAndValues (
   // and v1, v2, v3, ... into values
 
 int l;
-char *context, *tk, buf[511+1];
+char *context, *tk, buf[10000+1];
 
   if ( !string ) return 100; // fail
 
-  strncpy( buf, string, 511 );
-  buf[511] = 0;
+  l = strlen(string);
+  if ( l > 10000 ) l = 10000;
+  strncpy( buf, string, l );
+  buf[l] = 0;
 
   *numFound = 0;
   context = NULL;
@@ -2317,7 +2319,9 @@ char *context, *tk, buf[511+1];
     trimWhiteSpace( symbols[*numFound] );
 
     tk = strtok_r( NULL, ",=", &context );
-    if ( !tk ) return 101; // missing value
+    if ( !tk ) {
+      return 101; // missing value
+    }
 
     if ( strcmp( tk, "''" ) == 0 ) {
       l = 1;
@@ -2364,12 +2368,14 @@ int parseLocalSymbolsAndValues (
   // and v1, v2, v3, ... into values
 
 int l;
-char *context, *tk, buf[511+1];
+char *context, *tk, buf[10000+1];
 
   if ( !string ) return 100; // fail
 
-  strncpy( buf, string, 511 );
-  buf[511] = 0;
+  l = strlen(string);
+  if ( l > 10000 ) l = 10000;
+  strncpy( buf, string, l );
+  buf[l] = 0;
 
   *numFound = 0;
   context = NULL;

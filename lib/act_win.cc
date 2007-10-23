@@ -19211,6 +19211,8 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar;
 
   }
 
+  bufOut[max] = 0;
+
 }
 
 static void dragMenuCb (
