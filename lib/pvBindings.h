@@ -66,10 +66,10 @@ char *firstPvName ( void );
 
 char *nextPvName ( void );
 
-pvClass *createNew (
+class pvClass *createNew (
   char *oneName );
 
-pvClass *clone (
+class pvClass *clone (
   char *oneName,
   pvClass *source );
 

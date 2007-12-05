@@ -254,7 +254,7 @@ char *pvBindingClass::nextPvName ( void )
 
 }
 
-pvClass *pvBindingClass::createNew (
+class pvClass *pvBindingClass::createNew (
   char *oneClassName )
 {
 
@@ -296,7 +296,7 @@ char name[127+1], *error;
 
 }
 
-pvClass *pvBindingClass::clone (
+class pvClass *pvBindingClass::clone (
   char *oneClassName,
   pvClass *source )
 {
