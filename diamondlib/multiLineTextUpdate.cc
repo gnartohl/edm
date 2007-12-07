@@ -1198,12 +1198,10 @@ int edmmultiLineTextUpdateClass::drawActive ()
 #ifdef DEBUG
     printf ("Start of multiLineTextUpdateClass::drawActive\n");
 #endif
-#if 0
     if ( !enabled ) 
     {
         if ( widget ) XtUnmapWidget ( widget );
     }
-#endif
     // ****** End of SJS addition ******
     if ( !enabled || !is_executing )
         return 1;
@@ -1521,12 +1519,10 @@ int edmmultiLineTextEntryClass::drawActive ()
 #ifdef DEBUG
     printf ("Start of multiLineTextEntryClass::drawActive\n");
 #endif
-#if 0
     if ( !enabled ) 
     {
         if ( widget ) XtUnmapWidget ( widget );
     }
-#endif
     // ****** End of SJS addition ******
     if ( !enabled || !is_executing )
         return 1;
