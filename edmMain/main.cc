@@ -599,6 +599,14 @@ int value, n, nIn, nOut;
       return;
     }
 
+    {
+      int flags, status;
+      flags = fcntl( sockfd, F_GETFD );
+      if ( flags >= 0 ) {
+        status = fcntl( sockfd, F_SETFD, flags | FD_CLOEXEC );
+      }
+    }
+
     value = 1;
     len = sizeof(value);
     stat = setsockopt( sockfd, SOL_SOCKET, SO_KEEPALIVE,
@@ -674,6 +682,14 @@ nextHost:
   if ( sockfd == -1 ) {
     //perror( "" );
     return;
+  }
+
+  {
+    int flags, status;
+    flags = fcntl( sockfd, F_GETFD );
+    if ( flags >= 0 ) {
+      status = fcntl( sockfd, F_SETFD, flags | FD_CLOEXEC );
+    }
   }
 
   value = 1;
@@ -1047,6 +1063,14 @@ int *portNumPtr = (int *) thread_get_app_data( h );
     if ( sockfd == -1 ) {
       perror( "socket" );
       goto err_return;
+    }
+
+    {
+      int flags, status;
+      flags = fcntl( sockfd, F_GETFD );
+      if ( flags >= 0 ) {
+        status = fcntl( sockfd, F_SETFD, flags | FD_CLOEXEC );
+      }
     }
 
     value = 1;
