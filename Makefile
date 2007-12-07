@@ -13,6 +13,7 @@ ifdef EPICS_HOST_ARCH
  DIRS += choiceButton
  DIRS += videowidget
  DIRS += triumflib
+ DIRS += diamondlib
  include $(TOP)/configure/RULES_DIRS
 
 else

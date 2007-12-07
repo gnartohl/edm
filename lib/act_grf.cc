@@ -4011,7 +4011,7 @@ void activeGraphicClass::initEnable ( void ) {
 
 void activeGraphicClass::enable ( void ) { // smartDrawAllActive should be
                                            // called after this
-  if ( enabled ) return;
+  //if ( enabled ) return;
 
   bufInvalidate();
   enabled = 1;
@@ -4021,7 +4021,7 @@ void activeGraphicClass::enable ( void ) { // smartDrawAllActive should be
 
 void activeGraphicClass::disable ( void ) {
 
-  if ( !enabled ) return;
+  //if ( !enabled ) return;
 
   bufInvalidate();
   eraseActive();
