@@ -156,7 +156,15 @@ Widget VertScrollWidget ( void );
 
 int autoOpen ( void );
 
+void setAutoOpen (
+  int flag
+);
+
 int autoRaise ( void );
+
+void setAutoRaise (
+  int flag
+);
 
 };
 

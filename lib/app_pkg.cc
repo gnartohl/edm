@@ -4136,6 +4136,8 @@ static void displayParamInfo ( void ) {
 
   fprintf( stderr, global_str97 );
 
+  fprintf( stderr, global_str107 );
+
   fprintf( stderr, global_str103 );
   fprintf( stderr, global_str105 );
 
@@ -4391,6 +4393,10 @@ fileListPtr curFile;
 	}
 	else if ( strcmp( argv[n], global_str100 ) == 0 ) { //disable scroll bars
           useScrollBars = 0;
+	}
+	else if ( strcmp( argv[n], global_str106 ) == 0 ) { //noautomsg
+	  printf( "no auto msg\n" );
+          msgBox.setAutoOpen( 0 );
 	}
 
         else {

@@ -1422,6 +1422,8 @@ Display *testDisplay;
 	}
         else if ( strcmp( argv[n], global_str100 ) == 0 ) {
 	}
+        else if ( strcmp( argv[n], global_str106 ) == 0 ) { //noautomsg
+	}
         else {
           *local = 1;
           return;
