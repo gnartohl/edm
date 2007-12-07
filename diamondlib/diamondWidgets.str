@@ -1,0 +1,7 @@
+#ifndef __diamondWidgets_str
+#define __diamondWidgets_str 1
+
+#define reg_str1 (char *) "Multi-line Text Update"
+#define reg_str2 (char *) "Multi-line Text Entry"
+
+#endif
