@@ -1,362 +1,296 @@
-3 1 0
-735
-189
-500
-475
-helvetica-medium-r-18.0
-0
-helvetica-medium-r-12.0
-0
-rgb
-0,0,0
-rgb
-50971,52011,50971
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-0,0,48891
-rgb
-46810,47850,46810
-rgb
-61374,61374,61374
-rgb
-27046,27046,27046
-rgb
-55132,56172,55132
-PNG Image
-0
-0
-10
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-1 2 0
-7
-70
-267
-110
-$(help)helpEdmGif.gif
-0
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-29
-32
-127
-27
-rgb
-0,0,0
-0
-0
-rgb
-61374,61374,61374
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-PNG Image
-helvetica-medium-r-24.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-31
-278
-399
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-If Refresh Rate is non-zero, the gif file is periodically examined.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-31
-294
-233
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-If the file has changed, it is reloaded.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-31
-322
-410
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Uniform Size and Fast Erase all apply to the case where Refresh
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-31
-338
-450
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-Rate is non-zero. Both parameters are used to optimized performance.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-31
-366
-373
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-If all files define images of the same size, then Uniform Size
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-31
-382
-125
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-should be checked.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-31
-427
-421
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-the boundaries of any other object on the display, then Fast Erase
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-31
-411
-426
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-If the files define images of varying sizes but no image will intersect
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-31
-444
-125
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-should be checked.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-31
-230
-345
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-If a directory is not specified, the environment variable
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-31
-247
-167
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-EDMDATAFILES is used.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-34
-199
-248
-16
-rgb
-0,0,0
-0
-1
-rgb
-46810,47850,46810
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-File specification may contain symbols.
-helvetica-medium-r-14.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 455
+y 202
+w 500
+h 475
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 52171 52171 52171
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 65535
+ctlBgColor1 rgb 46517 46517 46517
+ctlBgColor2 rgb 56797 56797 56797
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+title "PNG Image"
+endScreenProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 7
+y 70
+w 267
+h 110
+file "$(help)helpEdmGif.gif"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 29
+y 32
+w 127
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 61423 61423 61423
+value {
+  "PNG Image"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 31
+y 278
+w 399
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "If Refresh Rate is non-zero, the gif file is periodically examined."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 31
+y 294
+w 233
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "If the file has changed, it is reloaded."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 31
+y 322
+w 410
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Uniform Size and Fast Erase all apply to the case where Refresh"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 31
+y 338
+w 450
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Rate is non-zero. Both parameters are used to optimized performance."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 31
+y 366
+w 373
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "If all files define images of the same size, then Uniform Size"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 31
+y 382
+w 125
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "should be checked."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 31
+y 427
+w 421
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "the boundaries of any other object on the display, then Fast Erase"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 31
+y 411
+w 426
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "If the files define images of varying sizes but no image will intersect"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 31
+y 444
+w 125
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "should be checked."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 31
+y 230
+w 345
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "If a directory is not specified, the environment variable"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 31
+y 247
+w 167
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "EDMDATAFILES is used."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 34
+y 199
+w 248
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "File specification may contain symbols."
+}
+autoSize
+endObjectProperties
+

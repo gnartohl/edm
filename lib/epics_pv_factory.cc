@@ -12,6 +12,8 @@
 #include"epics_pv_factory.h"
 #include "epicsVersion.h"
 
+static PV_Factory *epics_pv_factory = new EPICS_PV_Factory();
+
 //#define DEBUG_EPICS
 
 #if EPICS_VERSION == 3
@@ -24,8 +26,6 @@
 #else
   static const unsigned epochSecPast1970 = 0;
 #endif
-
-void _edmDebug( void );
 
 // --------------------- EPICS_PV_Factory -------------------------------
 
@@ -220,7 +220,6 @@ void EPICS_ProcessVariable::ca_connect_callback(
     {
         me->is_connected = false;
         me->have_ctrlinfo = false;
-        _edmDebug();
         me->do_conn_state_callbacks(); // tell widgets we disconnected
     }
 }
@@ -997,3 +996,43 @@ void PVValueChar::read_value(const void *buf)
     //           epv->get_name(), value);
 }
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+int epics_pend_io (
+  double sec
+) {
+
+  return ca_pend_io( sec );
+
+}
+
+int epics_pend_event (
+  double sec
+) {
+
+  return ca_pend_event( sec );
+
+}
+
+void epics_task_exit ( void ) {
+
+  ca_task_exit();
+
+}
+
+ProcessVariable *create_EPICSPtr (
+  const char *PV_name
+) {
+
+ProcessVariable *ptr;
+
+  ptr = epics_pv_factory->create( PV_name );
+  return ptr;
+
+}
+
+#ifdef __cplusplus
+}
+#endif

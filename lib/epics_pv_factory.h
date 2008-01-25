@@ -218,5 +218,27 @@ private:
     size_t len;
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+int epics_pend_io (
+  double sec
+);
+
+int epics_pend_event (
+  double sec
+);
+
+void epics_task_exit ( void );
+
+ProcessVariable *create_EPICSPtr (
+  const char *PV_name
+);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 

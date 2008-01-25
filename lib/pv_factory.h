@@ -16,6 +16,7 @@ void setReadWrite ( void );
 int isReadOnly ( void );
 int pend_io ( double sec );
 int pend_event ( double sec );
+void task_exit ( void );
 
 // PV_Factory: Factory for ProcessVariables.
 // When e.g. a widget asks for PV by name for the first time,

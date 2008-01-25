@@ -112,4 +112,16 @@ protected:
     static void value_callback(ProcessVariable *pv, void *userarg);
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+ProcessVariable *create_CALCPtr (
+  const char *PV_name
+);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

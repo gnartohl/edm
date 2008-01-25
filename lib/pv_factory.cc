@@ -6,12 +6,10 @@
 
 #include<stdio.h>
 #include<stdlib.h>
-#include"epics_pv_factory.h"
-#include"calc_pv_factory.h"
-#include"loc_pv_factory.h"
-//#include"db_pv_factory.h"
+#include "pvBindings.h"
 
 static int edmReadOnly = 0;
+static pvBindingClass pvObj;
 
 void setReadOnly ( void )
 {
@@ -31,59 +29,29 @@ int isReadOnly ( void )
 int pend_io ( double sec )
 {
 
-#ifdef __epics__
-  return (int) ca_pend_io( sec );
-#endif
-
-#ifndef __epics__
-  return (int) ECA_NORMAL;
-#endif
+  return (int) pvObj.pend_io( sec );
 
 }
 
 int pend_event ( double sec )
 {
 
-#ifdef __epics__
-  return (int) ca_pend_event( sec );
-#endif
+  return (int) pvObj.pend_event( sec );
 
-#ifndef __epics__
-  return (int) ECA_NORMAL;
-#endif
+}
+
+void task_exit ( void ) {
+
+  pvObj.task_exit();
 
 }
 
 // Available PV_Factories:
        PV_Factory *the_PV_Factory   = new PV_Factory();
-static PV_Factory *epics_pv_factory = new EPICS_PV_Factory();
-static PV_Factory *calc_pv_factory  = new CALC_PV_Factory();
-static PV_Factory *loc_pv_factory  = new LOC_PV_Factory();
-//static PV_Factory *db_pv_factory  = new DB_PV_Factory();
 
 //extern "C" static void remove_pv_factories()
 static void remove_pv_factories()
 {
-    //if (db_pv_factory)
-    //{
-    //    delete db_pv_factory;
-    //    db_pv_factory = 0;
-    //}
-    if (loc_pv_factory)
-    {
-        delete loc_pv_factory;
-        loc_pv_factory = 0;
-    }
-    if (calc_pv_factory)
-    {
-        delete calc_pv_factory;
-        calc_pv_factory = 0;
-    }
-    if (epics_pv_factory)
-    {
-        delete epics_pv_factory;
-        epics_pv_factory = 0;
-    }
     if (the_PV_Factory)
     {
         delete the_PV_Factory;
@@ -106,18 +74,18 @@ int PV_Factory::legal_pv_type (
   const char *pv_type )
 {
 
-  if ( strcmp( pv_type, "EPICS" ) == 0 ) {
-    return 1;
+char *supportedType;
+
+  supportedType = pvObj.firstPvName();
+  while ( supportedType ) {
+
+    if ( strcmp( pv_type, supportedType ) == 0 ) {
+      return 1;
+    }
+
+    supportedType = pvObj.nextPvName();
+
   }
-  else if ( strcmp(pv_type, "CALC" ) == 0 ) {
-    return 1;
-  }
-  else if ( strcmp(pv_type, "LOC" ) == 0 ) {
-    return 1;
-  }
-  //else if ( strcmp(pv_type, "DB" ) == 0 ) {
-  //  return 1;
-  //}
 
   return 0;
 
@@ -156,56 +124,48 @@ class ProcessVariable *PV_Factory::create(const char *PV_name)
 {
 
 class ProcessVariable *pv;
+char *tk, *ctx;
+char buf[255+1];
+int i, l, pos;
 
-  if (strncmp(PV_name, "EPICS\\", 6)==0) {
-    pv = epics_pv_factory->create(PV_name+6);
-    return pv;
-  }
-  else if (strncmp(PV_name, "CALC\\", 5)==0) {
-    pv = calc_pv_factory->create(PV_name+5);
-    return pv;
-  }
-  else if (strncmp(PV_name, "LOC\\", 4)==0) {
-    pv = loc_pv_factory->create(PV_name+4);
-    return pv;
-  }
-  //else if (strncmp(PV_name, "DB\\", 3)==0) {
-  //  pv = db_pv_factory->create(PV_name+3);
-  //  return pv;
-  //}
-  else if (strchr(PV_name, '\\')) {
-    fprintf(stderr, "Unknown PV Factory for PV '%s'\n", PV_name);
-    return 0;
-  }
+  if ( strchr(PV_name, '\\') ) {
 
-  if ( strcmp( default_pv_type, "" ) ) {
+    strcpy( buf, "" );
+    l = strlen(PV_name);
+    if ( l > 255 ) l = 255;
+    for ( i=0; i<l; i++ ) {
+      if ( PV_name[i] == '\\' ) break;
+      buf[i] = PV_name[i];
+    }
+    buf[i] = 0;
 
-    if (strncmp(default_pv_type, "EPICS", 6)== 0) {
-      pv = epics_pv_factory->create(PV_name);
+    pos = i + 1;
+
+    pv = pvObj.createNew( buf, PV_name+pos );
+    if ( pv ) {
       return pv;
     }
-    else if (strncmp(default_pv_type, "CALC", 5)==0) {
-      pv = calc_pv_factory->create(PV_name);
-      return pv;
-    }
-    else if (strncmp(default_pv_type, "LOC", 4)==0) {
-      pv = loc_pv_factory->create(PV_name);
-      return pv;
-    }
-    //else if (strncmp(default_pv_type, "DB", 3)==0) {
-    //  pv = db_pv_factory->create(PV_name);
-    //  return pv;
-    //}
     else {
-      fprintf(stderr, "Unknown PV Factory for PV '%s\\%s'\n",
-       default_pv_type, PV_name);
+      fprintf(stderr, "Unknown PV Factory for PV '%s'\n", PV_name);
       return 0;
     }
 
   }
-    
-  pv = epics_pv_factory->create(PV_name);
 
+  if ( strcmp( default_pv_type, "" ) ) {
+
+    pv = pvObj.createNew( default_pv_type, PV_name );
+    if ( pv ) {
+      return pv;
+    }
+    else {
+      fprintf(stderr, "Unknown PV Factory for PV '%s'\n", PV_name);
+      return 0;
+    }
+
+  }
+
+  pv = pvObj.createNew( pvObj.firstPvName(), PV_name );
   return pv;
 
 }
@@ -215,56 +175,48 @@ class ProcessVariable *PV_Factory::createWithInitialCallbacks (
 ) {
 
 class ProcessVariable *pv;
+char *tk, *ctx;
+char buf[255+1];
+int i, l, pos;
 
-  if (strncmp(PV_name, "EPICS\\", 6)==0) {
-    pv = epics_pv_factory->create(PV_name+6);
-    return pv;
-  }
-  else if (strncmp(PV_name, "CALC\\", 5)==0) {
-    pv = calc_pv_factory->create(PV_name+5);
-    return pv;
-  }
-  else if (strncmp(PV_name, "LOC\\", 4)==0) {
-    pv = loc_pv_factory->create(PV_name+4);
-    return pv;
-  }
-  //else if (strncmp(PV_name, "DB\\", 3)==0) {
-  //  pv = db_pv_factory->create(PV_name+3);
-  //  return pv;
-  //}
-  else if (strchr(PV_name, '\\')) {
-    fprintf(stderr, "Unknown PV Factory for PV '%s'\n", PV_name);
-    return 0;
-  }
-    
-  if ( strcmp( default_pv_type, "" ) ) {
+  if ( strchr(PV_name, '\\') ) {
 
-    if (strncmp(default_pv_type, "EPICS", 6)== 0) {
-      pv = epics_pv_factory->create(PV_name);
+    strcpy( buf, "" );
+    l = strlen(PV_name);
+    if ( l > 255 ) l = 255;
+    for ( i=0; i<l; i++ ) {
+      if ( PV_name[i] == '\\' ) break;
+      buf[i] = PV_name[i];
+    }
+    buf[i] = 0;
+
+    pos = i + 1;
+
+    pv = pvObj.createNew( buf, PV_name+pos );
+    if ( pv ) {
       return pv;
     }
-    else if (strncmp(default_pv_type, "CALC", 5)==0) {
-      pv = calc_pv_factory->create(PV_name);
-      return pv;
-    }
-    else if (strncmp(default_pv_type, "LOC", 4)==0) {
-      pv = loc_pv_factory->create(PV_name);
-      return pv;
-    }
-    //else if (strncmp(default_pv_type, "DB", 3)==0) {
-    //  pv = db_pv_factory->create(PV_name);
-    //  return pv;
-    //}
     else {
-      fprintf(stderr, "Unknown PV Factory for PV '%s\\%s'\n",
-       default_pv_type, PV_name);
+      fprintf(stderr, "Unknown PV Factory for PV '%s'\n", PV_name);
       return 0;
     }
 
   }
-    
-  pv = epics_pv_factory->create(PV_name);
 
+  if ( strcmp( default_pv_type, "" ) ) {
+
+    pv = pvObj.createNew( default_pv_type, PV_name );
+    if ( pv ) {
+      return pv;
+    }
+    else {
+      fprintf(stderr, "Unknown PV Factory for PV '%s'\n", PV_name);
+      return 0;
+    }
+
+  }
+
+  pv = pvObj.createNew( pvObj.firstPvName(), PV_name );
   return pv;
 
 }
@@ -432,6 +384,7 @@ void ProcessVariable::do_conn_state_callbacks()
         if (info->func)
             (*info->func) (this, info->userarg);
     }
+
 }
 
 void ProcessVariable::do_value_callbacks()
@@ -449,6 +402,7 @@ void ProcessVariable::do_value_callbacks()
             (*info->func) (this, info->userarg);
 	}
     }
+
 }
 
 void ProcessVariable::recalc() {

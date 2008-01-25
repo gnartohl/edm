@@ -23,7 +23,7 @@
 #include <string.h>
 #include <dlfcn.h>
 
-#include "pv.h"
+#include "pv_factory.h"
 
 #ifdef __osf__
 #include <sys/time.h>
@@ -66,12 +66,9 @@ char *firstPvName ( void );
 
 char *nextPvName ( void );
 
-class pvClass *createNew (
-  char *oneName );
-
-class pvClass *clone (
-  char *oneName,
-  pvClass *source );
+class ProcessVariable *createNew (
+  const char *oneName,
+  const char *PV_name );
 
 char *getPvName (
   int i );
@@ -98,6 +95,16 @@ void getOptionMenuList (
   char *list,
   int listSize,
   int *num );
+
+int pend_io (
+  double sec
+);
+
+int pend_event (
+  double sec
+);
+
+void task_exit ( void );
 
 };
 

@@ -11,8 +11,11 @@
 #include<float.h>
 #include<math.h>
 #include"postfix.h"
-#include"alarm.h"
+//#include"alarm.h"
+#include "epicsAlarmLike.h"
 #include"calc_pv_factory.h"
+
+static PV_Factory *calc_pv_factory = new CALC_PV_Factory();
 
 static const char *whitespace = " \t\n\r";
 #define CALC_PV_HUGE_VAL 1e50
@@ -799,3 +802,22 @@ bool CALC_ProcessVariable::putText(char *value)
 
 bool CALC_ProcessVariable::putArrayText(char *value)
 {   return false; }
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+ProcessVariable *create_CALCPtr (
+  const char *PV_name
+) {
+
+ProcessVariable *ptr;
+
+  ptr = calc_pv_factory->create( PV_name );
+  return ptr;
+
+}
+
+#ifdef __cplusplus
+}
+#endif

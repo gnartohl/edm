@@ -132,5 +132,17 @@ private:
     static void value_callback(eventArgsType args);
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+ProcessVariable *create_LOCPtr (
+  const char *PV_name
+);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 

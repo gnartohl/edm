@@ -8,6 +8,8 @@
 
 #include"loc_pv_factory.h"
 
+static PV_Factory *loc_pv_factory = new LOC_PV_Factory();
+
 //#define DEBUG_LOC
 
 static ProcessVariable::Type integer_type =
@@ -634,3 +636,22 @@ int l;
   return true;
 
 }
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+ProcessVariable *create_LOCPtr (
+  const char *PV_name
+) {
+
+ProcessVariable *ptr;
+
+  ptr = loc_pv_factory->create( PV_name );
+  return ptr;
+
+}
+
+#ifdef __cplusplus
+}
+#endif

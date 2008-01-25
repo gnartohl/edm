@@ -23,7 +23,7 @@
 
 #include "pvBindings.h"
 #include "thread.h"
-#include "utility.h"
+//#include "utility.h"
 
 //  contents of file edmPvObjects
 
@@ -34,6 +34,165 @@
 //  	.
 //  	.
 //  classNameN dllName userVisibleName
+
+static int blank (
+  char *string )
+{
+
+unsigned int i, l;
+
+  l = strlen(string);
+  if ( !l ) return 1;
+
+  for ( i=0; i<l; i++ ) {
+    if ( !isspace( (int) string[i] ) ) return 0;
+  }
+
+  return 1;
+
+}
+
+static char *expandEnvVars (
+  char *inStr,
+  int maxOut,
+  char *outStr
+) {
+
+  // expands all environment vars of the form $(envVar) found in inStr
+  // and sends the expanded string to outStr
+
+int i, ii, iii, inL, state, bufOnHeap;
+char *ptr, stackBuf[255+1];
+char *buf;
+
+static const int DONE = -1;
+static const int FINDING_DOLLAR = 1;
+static const int FINDING_LEFT_PAREN = 2;
+static const int FINDING_RIGHT_PAREN = 3;
+
+  if ( !inStr || !outStr || ( maxOut < 1 ) ) return NULL;
+
+  inL = strlen( inStr );
+  if ( inL < 1 ) return NULL;
+
+  if ( maxOut > 255 ) {
+    buf = new char[maxOut+1];
+    bufOnHeap = 1;
+  }
+  else {
+    buf = stackBuf;
+    bufOnHeap = 0;
+  }
+
+  state = FINDING_DOLLAR;
+  strcpy( outStr, "" );
+  i = ii = 0;
+  while ( state != DONE ) {
+
+    switch ( state ) {
+
+    case FINDING_DOLLAR:
+
+      if ( i >= inL ) {
+        state = DONE;
+        break;
+      }
+
+      if ( inStr[i] == '\n' ) {
+        state = DONE;
+      }
+      else if ( inStr[i] == '$' ) {
+        state = FINDING_LEFT_PAREN;
+      }
+      else {
+        if ( ii >= maxOut ) goto limitErr; // out string too big
+        outStr[ii] = inStr[i];
+        ii++;
+      }
+
+      break;
+
+    case FINDING_LEFT_PAREN:
+
+      if ( i >= inL ) goto syntaxErr; // never found '(' after '$'
+      if ( inStr[i] == '\n' ) goto syntaxErr; // never found '(' after '$'
+      if ( inStr[i] != '(' ) goto syntaxErr; // char after '$' was not '('
+      strcpy( buf, "" );
+      iii = 0;
+      state = FINDING_RIGHT_PAREN;
+
+      break;
+
+    case FINDING_RIGHT_PAREN:
+
+      if ( i >= inL ) goto syntaxErr; // never found ')'
+      if ( inStr[i] == '\n' ) goto syntaxErr; // never found ')'
+
+      if ( inStr[i] == ')' ) {
+
+	// add terminating 0
+        if ( iii >= maxOut ) goto syntaxErr; // env var value too big
+        buf[iii] = 0;
+
+        // translate and output env var value using buf
+
+        if ( !blank( buf ) ) {
+
+          ptr = getenv( buf );
+          if ( ptr ) {
+
+            for ( iii=0; iii<(int) strlen(ptr); iii++ ) {
+              if ( ii > maxOut ) goto limitErr;
+              outStr[ii] = ptr[iii];
+              ii++;
+	    }
+
+	  }
+
+	}
+
+        state = FINDING_DOLLAR;
+
+      }
+      else {
+
+        if ( iii >= maxOut ) goto syntaxErr; // env var value too big
+        buf[iii] = inStr[i];
+        iii++;
+
+      }
+
+      break;
+
+    }
+
+    i++;
+
+  }
+
+// normalReturn
+
+  // add terminating 0
+  if ( ii > maxOut ) goto limitErr;
+  outStr[ii] = 0;
+
+  if ( bufOnHeap ) delete [] buf;
+
+  return outStr;
+
+syntaxErr:
+
+  fprintf( stderr, "Syntax error in env var reference\n" );
+  if ( bufOnHeap ) delete [] buf;
+  return NULL;
+
+limitErr:
+
+  fprintf( stderr, "Parameter size limit exceeded in env var reference\n" );
+  if ( bufOnHeap ) delete [] buf;
+  return NULL;
+
+}
 
 pvBindingClass::pvBindingClass ( void ) {
 
@@ -186,9 +345,9 @@ FILE *f;
 
     for ( index=0; index<num; index++ ) {
 
-//       fprintf( stderr, "\nclassNames = [%s]\n", classNames[index] );
-//       fprintf( stderr, "names = [%s]\n", names[index] );
-//       fprintf( stderr, "dllName = [%s]\n", dllName[index] );
+       //fprintf( stderr, "\nclassNames = [%s]\n", classNames[index] );
+       //fprintf( stderr, "names = [%s]\n", names[index] );
+       //fprintf( stderr, "dllName = [%s]\n", dllName[index] );
 
       needToOpenDll = 1;
       for ( i=0; i<index; i++ ) {
@@ -254,13 +413,14 @@ char *pvBindingClass::nextPvName ( void )
 
 }
 
-class pvClass *pvBindingClass::createNew (
-  char *oneClassName )
+class ProcessVariable *pvBindingClass::createNew (
+  const char *oneClassName,
+  const char *PV_name )
 {
 
-typedef void *(*VPFUNC)( void );
+typedef void *(*VPFUNC)( const char *PV_name );
 VPFUNC func;
-pvClass *cur;
+ProcessVariable *cur;
 int i;
 char name[127+1], *error;
 
@@ -274,7 +434,7 @@ char name[127+1], *error;
       Strncat( name, classNames[i], 127 );
       Strncat( name, "Ptr", 127 );
 
-      // fprintf( stderr, "func name = [%s]\n", name );
+      //fprintf( stderr, "func name = [%s]\n", name );
 
       func = (VPFUNC) dlsym( dllHandle[i], name );
       if ((error = dlerror()) != NULL)  {
@@ -284,47 +444,8 @@ char name[127+1], *error;
       }
 
 // fprintf( stderr, "1\n" );
-      cur = (pvClass *) (*func)();
+      cur = (ProcessVariable *) (*func)( PV_name );
 // fprintf( stderr, "2\n" );
-      return cur;
-
-    }
-
-  }
-
-  return NULL;
-
-}
-
-class pvClass *pvBindingClass::clone (
-  char *oneClassName,
-  pvClass *source )
-{
-
-typedef void *(*VPFUNC)( void * );
-VPFUNC func;
-pvClass *cur;
-int i;
-char name[127+1], *error;
-
-  // fprintf( stderr, "In pvBindingClass::clone, name = [%s]\n", oneClassName );
-
-  for ( i=0; i<max; i++ ) {
-
-    if ( strcmp( oneClassName, classNames[i] ) == 0 ) {
-
-      strcpy( name, "clone_" );
-      Strncat( name, classNames[i], 127 );
-      Strncat( name, "Ptr", 127 );
-
-      func = (VPFUNC) dlsym( dllHandle[i], name );
-      if ((error = dlerror()) != NULL)  {
-        fputs(error, stderr);
-        fputs( "\n", stderr );
-        return NULL;
-      }
-
-      cur = (pvClass *) (*func)( (void *) source );
       return cur;
 
     }
@@ -460,5 +581,143 @@ void pvBindingClass::getOptionMenuList (
 
   // fprintf( stderr, "pvOptionMenuList = [%s]\n", pvOptionMenuList );
   // fprintf( stderr, "list = [%s]\n", list );
+
+}
+
+int pvBindingClass::pend_io (
+  double sec
+) {
+
+char *error;
+int i;
+static int init=1;
+typedef int (*FUNC1)( double );
+static FUNC1 func = NULL;
+
+  if ( init ) {
+
+    init = 0;
+
+    for ( i=0; i<max; i++ ) {
+
+      if ( strcmp( "EPICS", classNames[i] ) == 0 ) {
+
+        func = (FUNC1) dlsym( dllHandle[i], "epics_pend_io" );
+        if ((error = dlerror()) != NULL)  {
+          fputs(error, stderr);
+          fputs( "\n", stderr );
+          return -1;
+        }
+
+        return (*func)( sec );
+
+      }
+
+    }
+
+    return 1;
+
+  }
+  else {
+
+    if ( func ) {
+      return (*func)( sec );
+    }
+    else {
+      return 1;
+    }
+
+  }
+
+}
+
+int pvBindingClass::pend_event (
+  double sec
+) {
+
+char *error;
+int i;
+static int init=1;
+typedef int (*FUNC1)( double );
+static FUNC1 func = NULL;
+static THREAD_HANDLE h = NULL;
+
+  if ( init ) {
+
+    init = 0;
+
+    for ( i=0; i<max; i++ ) {
+
+      if ( strcmp( "EPICS", classNames[i] ) == 0 ) {
+
+        func = (FUNC1) dlsym( dllHandle[i], "epics_pend_event" );
+        if ((error = dlerror()) != NULL)  {
+          fputs(error, stderr);
+          fputs( "\n", stderr );
+          return -1;
+        }
+
+        return (*func)( sec );
+
+      }
+
+    }
+
+    thread_create_handle( &h, NULL );
+    if ( h ) thread_delay( h, sec );
+    return 1;
+
+  }
+  else {
+
+    if ( func ) {
+      return (*func)( sec );
+    }
+    else {
+      if ( h ) thread_delay( h, sec );
+      return 1;
+    }
+
+  }
+
+}
+
+void pvBindingClass::task_exit ( void ) {
+
+char *error;
+int i;
+static int init=1;
+typedef void (*FUNC1)( void );
+static FUNC1 func = NULL;
+
+  if ( init ) {
+
+    init = 0;
+
+    for ( i=0; i<max; i++ ) {
+
+      if ( strcmp( "EPICS", classNames[i] ) == 0 ) {
+
+        func = (FUNC1) dlsym( dllHandle[i], "epics_task_exit" );
+        if ((error = dlerror()) != NULL)  {
+          fputs(error, stderr);
+          fputs( "\n", stderr );
+          return;
+        }
+
+        (*func)();
+
+      }
+
+    }
+
+  }
+  else {
+
+    if ( func ) {
+      (*func)();
+    }
+
+  }
 
 }
