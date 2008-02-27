@@ -3,28 +3,30 @@ ifdef EPICS_HOST_ARCH
   include $(TOP)/configure/CONFIG
 
    SHARED_LIBRARIES = YES
-   
+
    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
+   
    USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
+
    USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
-   USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
 
-   EdmDiamond_LIBS += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
-   EdmDiamond_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
+   USR_CXXFLAGS_hpux11_11_mt += +W652 -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
 
-   EdmDiamond_LIBS_Linux += Xm Xt Xp Xtst X11
-   EdmDiamond_SYS_LIBS_Linux += pthread dl
+   EdmBase_LIBS_Linux += Xm Xt Xp Xtst X11
+   EdmBase_SYS_LIBS_Linux += pthread dl
 
-   EdmDiamond_LIBS_Darwin += Xm Xt Xp Xtst X11
-   EdmDiamond_SYS_LIBS_Darwin += pthread dl
+   EdmBase_LIBS_Darwin += Xm Xt Xp Xtst X11
+   EdmBase_SYS_LIBS_Darwin += pthread dl
 
-   EdmDiamond_LIBS_solaris +=  Xm Xt Xmu X11 Xext
-   EdmDiamond_SYS_LIBS_solaris +=  pthread dl rt
+   EdmBase_SYS_LIBS_solaris += Xm Xt Xmu X11 Xext
+   EdmBase_SYS_LIBS_solaris += pthread dl rt 
 
-   USR_LIBS_hpux11_11_mt = Xm Xt X11 Xext
+   USR_LIBS_hpux11_11_mt = Xm Xt Xp Xtst X11
    USR_SYS_LIBS_hpux11_11_mt = pthread
 
-   LIBRARY = Diamond
+   LIBRARY = Calc
+
+   USR_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
 
    INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
    USR_INCLUDES += -I../../util -I../../lib
@@ -49,12 +51,14 @@ ifdef EPICS_HOST_ARCH
    HCLXt_DIR = $(X11_LIB)
    Xlib_DIR = $(X11_LIB)
    HCLXmu_DIR = $(X11_LIB)
-   
-   LIB_SRCS += multiLineTextUpdate.cc
-   LIB_SRCS += diamondWidgets.cc
-   
+
+   LIB_SRCS += calc_pv_factory.cc
+   LIB_SRCS += postfix.cc
+   LIB_SRCS += regCalc.cc
+
+
    include $(TOP)/configure/RULES
-   
+
 else
    ifneq ($(wildcard $(TOP)/config)x,x)
      # New Makefile.Host config file location
@@ -67,4 +71,3 @@ else
      include $(EPICS)/config/RULES_ARCHS
    endif
 endif
-

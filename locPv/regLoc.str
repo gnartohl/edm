@@ -1,0 +1,6 @@
+#ifndef __regLoc_str
+#define __regLoc_str 1
+
+#define reg_str1 (char *) "Local PV"
+
+#endif

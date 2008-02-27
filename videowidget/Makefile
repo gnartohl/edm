@@ -6,11 +6,11 @@ ifdef EPICS_HOST_ARCH
   SHARED_LIBRARIES = YES
 
         USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1 -Wno-deprecated
-		
+
         USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1 -Wno-deprecated
-        
+
         USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1 -Wno-deprecated
- 
+
         USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1 -Wno-deprecated
 
 # System Libraries to link in:
@@ -30,18 +30,16 @@ ifdef EPICS_HOST_ARCH
   LIBRARY = TwoDProfileMonitor
 
   INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
-  USR_INCLUDES += -I../../util -I../../pvlib -I../../lib
-  
-  #USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
-    
+  USR_INCLUDES += -I../../util -I../../lib
 
+  #USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
 
   Xm_DIR =   $(MOTIF_LIB)
   Xt_DIR =   $(X11_LIB)
   X11_DIR =  $(X11_LIB)
   Xmu_DIR =  $(X11_LIB)
   Xtst_DIR = $(X11_LIB)
-  
+
   # ELW added following two lines for
   # Red Hat 7.0 LINUX
   Xp_DIR =   $(X11_LIB)

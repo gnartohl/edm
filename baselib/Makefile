@@ -30,7 +30,7 @@ ifdef EPICS_HOST_ARCH
    USR_LIBS += cfcaa62e-8199-11d3-a77f-00104b8742df 
 
    INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
-   USR_INCLUDES += -I../../util -I../../pvlib -I../../lib
+   USR_INCLUDES += -I../../util -I../../lib
 
    USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
 

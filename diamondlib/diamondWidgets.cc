@@ -1,7 +1,7 @@
-#include"epics_pv_factory.h"
-#include"multiLineTextUpdate.h"
-#include"environment.str"
-#include"diamondWidgets.str"
+#include "pv_factory.h"
+#include "multiLineTextUpdate.h"
+#include "environment.str"
+#include "diamondWidgets.str"
 
 // --------------------------------------------------------
 // Registration

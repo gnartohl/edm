@@ -1,0 +1,6 @@
+#ifndef __regCalc_str
+#define __regCalc_str 1
+
+#define reg_str1 (char *) "Calculation PV"
+
+#endif

@@ -16,7 +16,7 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#include "reg_pvs.str"
+#include "regLoc.str"
 #include "environment.str"
 
 typedef struct libRecTag {
@@ -27,7 +27,7 @@ typedef struct libRecTag {
 static int libRecIndex = 0;
 
 static libRecType libRec[] = {
-  { "epicsPv", reg_str1 }
+  { "LOC", reg_str1 }
 };
 
 #ifdef __cplusplus

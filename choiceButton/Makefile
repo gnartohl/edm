@@ -17,21 +17,21 @@ ifdef EPICS_HOST_ARCH
 
    USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
    USR_LIBS_solaris += Xm Xt X11
-   
+
    USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
    USR_SYS_LIBS_hpux11_11_mt = pthread
-   
+
    LIBRARY = 7e1b4e6f-239d-4650-95e6-a040d41ba633
 
    INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
-   USR_INCLUDES += -I../../util -I../../lib -I../../pvlib
+   USR_INCLUDES += -I../../util -I../../lib
 
    Xm_DIR =   $(MOTIF_LIB)
    Xt_DIR =   $(X11_LIB)
    X11_DIR =  $(X11_LIB)
    Xmu_DIR =  $(X11_LIB)
    Xtst_DIR = $(X11_LIB)
-  
+
    # ELW added following two lines for
    # Red Hat 7.0 LINUX
    Xp_DIR =   $(X11_LIB)

@@ -1,4 +1,4 @@
-#include"epics_pv_factory.h"
+#include"pv_factory.h"
 #include"textupdate.h"
 #include"regTextupdate.h"
 #include"strip.h"

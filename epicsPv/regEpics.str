@@ -1,0 +1,6 @@
+#ifndef __regEpics_str
+#define __regEpics_str 1
+
+#define reg_str1 (char *) "EPICS PV"
+
+#endif

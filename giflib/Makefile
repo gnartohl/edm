@@ -32,7 +32,7 @@ GIF_INC=/afs/slac/package/graphics/png/libungif/4.1.0/sun4x_57/include
    LIBRARY = cf322683-513e-4570-a44b-7cdd7cae0de5
 
    INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
-   USR_INCLUDES += -I../../util -I../../lib -I../../pvlib
+   USR_INCLUDES += -I../../util -I../../lib
 
    USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
    USR_INCLUDES_solaris += -I$(GIF_INC)

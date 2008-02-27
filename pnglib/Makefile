@@ -21,7 +21,7 @@ PNG_INC=/afs/slac/package/graphics/png/1.0.14/common/include
 
    USR_LIBS_Linux += Xm Xt Xp Xtst X11
    USR_SYS_LIBS_Linux += pthread dl png
-   
+
    USR_LIBS_Darwin += Xm Xt Xp Xtst X11
    USR_SYS_LIBS_Darwin += pthread dl png
 
@@ -30,12 +30,11 @@ PNG_INC=/afs/slac/package/graphics/png/1.0.14/common/include
 
    USR_LIBS_hpux11_11_mt = Xm Xt X11 Xext
    USR_SYS_LIBS_hpux11_11_mt = pthread png
-   
-   
+
    LIBRARY = 57d79238-2924-420b-ba67-dfbecdf03fcd
 
    INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
-   USR_INCLUDES += -I../../util -I../../lib -I../../pvlib
+   USR_INCLUDES += -I../../util -I../../lib
 
    USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
    USR_INCLUDES_solaris += -I$(PNG_INC)
