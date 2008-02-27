@@ -43,7 +43,6 @@ ifdef EPICS_HOST_ARCH
   INC += app_pkg.h
   INC += bindings.h
   INC += btnActionListType.h
-  INC += calc_pv_factory.h
   INC += calpad.h
   INC += clipbd.h
   INC += color_button.h
@@ -56,7 +55,6 @@ ifdef EPICS_HOST_ARCH
   INC += dynSymbol.h
   INC += edmPrint.h
   INC += entry_form.h
-  INC += epics_pv_factory.h
   INC += expString.h
   INC += fileSelect.h
   INC += font_menu.h
@@ -65,15 +63,10 @@ ifdef EPICS_HOST_ARCH
   INC += group.h
   INC += hashtable.h
   INC += keypad.h
-  INC += loc_pv_factory.h
   INC += msg_dialog.h
-  INC += postfix.h
-  INC += postfixPvt.h
   INC += process.h
-  INC += pvBindings.h
   INC += pvColor.h
   INC += pvConnection.h
-  INC += pv_factory.h
   INC += remFileOpen.h
   INC += scheme.h
   INC += scrolled_list.h
@@ -88,7 +81,8 @@ ifdef EPICS_HOST_ARCH
   INC += crawler.h
   INC += lookup.h
   INC += pv_action.h
-
+  INC += pv_factory.h
+  INC += pvBindings.h
 
   USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
   USR_LIBS_hpux11_11_mt = Xm Xt X11 Xext pthread
@@ -100,7 +94,7 @@ ifdef EPICS_HOST_ARCH
   LIB_LIBS_DEFAULT += ca Com
   LIB_LIBS_Darwin += -nil-
 
-  USR_INCLUDES += -I../../util -I../../lib -I../../pvlib
+  USR_INCLUDES += -I../../util -I../../lib
   
   USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
 
@@ -144,7 +138,6 @@ ifdef EPICS_HOST_ARCH
   LIB_SRCS += pvs.cc
   LIB_SRCS += scrolled_list.cc
   LIB_SRCS += ulBindings.cc
-  LIB_SRCS += pvBindings.cc
   LIB_SRCS += pvConnection.cc
   LIB_SRCS += group.cc
   LIB_SRCS += symbol.cc
@@ -155,20 +148,17 @@ ifdef EPICS_HOST_ARCH
   LIB_SRCS += undo.cc
   LIB_SRCS += color_list.cc
   LIB_SRCS += msg_dialog.cc
-  LIB_SRCS += loc_pv_factory.cc
-  LIB_SRCS += calc_pv_factory.cc
-  LIB_SRCS += epics_pv_factory.cc
-  LIB_SRCS += pv_factory.cc
   LIB_SRCS += edmPrint.cc
   LIB_SRCS += tag_pkg.cc
   LIB_SRCS += remFileOpen.cc
   LIB_SRCS += tableObj.cc
   LIB_SRCS += scrolledWAcceleratorSupport.c
-  LIB_SRCS += postfix.c
   LIB_SRCS += path_list.cc
   LIB_SRCS += crawler.cc
   LIB_SRCS += lookup.cc
   LIB_SRCS += pv_action.cc
+  LIB_SRCS += pv_factory.cc
+  LIB_SRCS += pvBindings.cc
 
   include $(TOP)/configure/RULES
 
