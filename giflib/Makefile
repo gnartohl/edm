@@ -7,8 +7,8 @@ ifdef EPICS_HOST_ARCH
 #====================================================================
 #GIF_LIB=/afs/slac/package/graphics/png/libungif/4.1.0/sun4x_57/lib
 #GIF_INC=/afs/slac/package/graphics/png/libUNGIF/4.1.0/sun4x_57/include
-GIF_LIB=/usr/lib
-GIF_INC=/usr/include 
+GIF_LIB ?= /usr/lib
+GIF_INC ?= /usr/include
 
    SHARED_LIBRARIES = YES
 
