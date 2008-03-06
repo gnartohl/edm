@@ -11,6 +11,7 @@ ifdef EPICS_HOST_ARCH
 
    EdmDiamond_LIBS += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
    EdmDiamond_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
+   EdmDiamond_LIBS += Com
 
    EdmDiamond_LIBS_Linux += Xm Xt Xp Xtst X11
    EdmDiamond_SYS_LIBS_Linux += pthread dl
