@@ -24,7 +24,7 @@ ifdef EPICS_HOST_ARCH
    USR_LIBS_hpux11_11_mt = Xm Xt X11 Xext
    USR_SYS_LIBS_hpux11_11_mt = pthread
 
-   LIBRARY = Diamond
+   LIBRARY = EdmDiamond 
 
    INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
    USR_INCLUDES += -I../../util -I../../lib

@@ -8,10 +8,10 @@ The modifications have been made for Linux only.
 
 ### EDM Version 1-7-0c ############################
 
-#### Installing on Solaris 8 *********************
+#### Installing on Solaris 8/9/10 ********************* 
 
 1. Additional software packages required:
-   1a. You need "zlib"   (we use version 1.1.3)
+   1a. You need "zlib"  for libpng (we use version 1.1.3) 
        -- http://www.gzip.org/zlib/
 
    1b. You need "libpng" (we use version 1.0.9)
@@ -30,8 +30,8 @@ The modifications have been made for Linux only.
       the following location: $EPICS_EXTENSIONS/src
 
    -- We are building as an EPICS extension; so modify the files in
-      "$EPICS_EXTENSIONS/config" appropriately for your site
-   
+      "$EPICS_EXTENSIONS/configure" appropriately for your site 
+
    -- Note we are using gcc-2.95.2 and GNU make version 3.79.1
 
    -- Now go for the gusto and compile
@@ -65,8 +65,10 @@ The modifications have been made for Linux only.
       This will be tarred up as ext_pref-edm.tar on our ftp site: (ftp://snsftp.sns.ornl.gov/UPLOAD/controls/edm)
       Some of the configuration steps may be discussed in the edm documentation located 
       in the following: $EPICS_EXTENSIONS/src/edm/doc
-  b. Make sure you define LD_LIBRARY_PATH to include $EPICS_EXTESIONS/lib/$HOST_ARCH
-
+  b.  You do not need to modify LD_LIBRARY_PATH to run edm but make sure you do not
+      rename the $EPICS_EXTESIONS/lib/$HOST_ARCH directory. This full path name is
+      recorded in the build output executables and libraries and is added to the
+      library search directories used by the runtime linker.
    
 #### Installing on Red Hat Linux 7.0/7.1/7.2 *********************
 
@@ -81,8 +83,8 @@ The modifications have been made for Linux only.
       the following location: $EPICS_EXTENSIONS/src
 
    -- We are building as an EPICS extension; so modify the files in
-      "$EPICS_EXTENSIONS/config" appropriately for your site
-   
+      "$EPICS_EXTENSIONS/configure" appropriately for your site
+
    -- Note we are using gcc-2.96 (Linux native compiler) and GNU make version 3.79.1
 
    -- Need to make the following softlinks in /usr/include so edm can find motif headers:

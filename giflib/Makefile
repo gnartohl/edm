@@ -5,9 +5,11 @@ ifdef EPICS_HOST_ARCH
 #====================================================================
 # Required by EDM on Solaris at SLAC
 #====================================================================
-GIF_LIB=/afs/slac/package/graphics/png/libungif/4.1.0/sun4x_57/lib
-GIF_INC=/afs/slac/package/graphics/png/libungif/4.1.0/sun4x_57/include
-   
+#GIF_LIB=/afs/slac/package/graphics/png/libungif/4.1.0/sun4x_57/lib
+#GIF_INC=/afs/slac/package/graphics/png/libUNGIF/4.1.0/sun4x_57/include
+GIF_LIB=/usr/lib
+GIF_INC=/usr/include 
+
    SHARED_LIBRARIES = YES
 
    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
@@ -16,19 +18,20 @@ GIF_INC=/afs/slac/package/graphics/png/libungif/4.1.0/sun4x_57/include
    USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
 
    USR_LIBS += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
+   USR_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
 
    USR_LIBS_Linux += Xm Xt Xp Xtst X11
-   USR_SYS_LIBS_Linux += pthread dl ungif
-   
+   USR_SYS_LIBS_Linux += pthread dl ungif gif
+
    USR_LIBS_Darwin += Xm Xt Xp Xtst X11
-   USR_SYS_LIBS_Darwin += pthread dl ungif
-   
+   USR_SYS_LIBS_Darwin += pthread dl ungif gif
+
    USR_LIBS_solaris += Xm Xt Xmu X11 Xext
-   USR_SYS_LIBS_solaris += pthread dl rt ungif 
+   USR_SYS_LIBS_solaris += pthread dl rt ungif gif
 
    USR_LIBS_hpux11_11_mt = Xm Xt X11 Xext
-   USR_SYS_LIBS_hpux11_11_mt = pthread ungif
-   
+   USR_SYS_LIBS_hpux11_11_mt = pthread ungif gif
+
    LIBRARY = cf322683-513e-4570-a44b-7cdd7cae0de5
 
    INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
@@ -36,6 +39,7 @@ GIF_INC=/afs/slac/package/graphics/png/libungif/4.1.0/sun4x_57/include
 
    USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
    USR_INCLUDES_solaris += -I$(GIF_INC)
+   USR_LDFLAGS_solaris += -L$(GIF_LIB)
 
    Xm_DIR =   $(MOTIF_LIB)
    Xt_DIR =   $(X11_LIB)
@@ -44,7 +48,7 @@ GIF_INC=/afs/slac/package/graphics/png/libungif/4.1.0/sun4x_57/include
    Xtst_DIR = $(X11_LIB)
 
 
-  
+
    # ELW added following two lines for
    # Red Hat 7.0 LINUX
    Xp_DIR =   $(X11_LIB)

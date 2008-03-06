@@ -3250,14 +3250,15 @@ int focus;
 
     activeGraphicClass::pointerIn( me, me->x, me->y, buttonState );
 
-  }
+    if ( !blankOrComment( helpCommandExpString.getExpanded() ) ) {
+      actWin->cursor.set( XtWindow(actWin->executeWidget),
+       CURSOR_K_WILL_OPEN_WITH_HELP );
+    }
+    else {
+      actWin->cursor.set( XtWindow(actWin->executeWidget),
+       CURSOR_K_WILL_OPEN );
+    }
 
-  if ( !blankOrComment( helpCommandExpString.getExpanded() ) ) {
-    actWin->cursor.set( XtWindow(actWin->executeWidget),
-     CURSOR_K_WILL_OPEN_WITH_HELP );
-  }
-  else {
-    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_WILL_OPEN );
   }
 
 }
