@@ -9617,10 +9617,14 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
 
       anyRescale = 1;
 
-      getXMinMax( &curXMin, &curXMax );
+      getXMinMax( &checkXMin, &checkXMax );
 
-       curXMin -= 0.02 * fabs( curXMax - curXMin );
-       curXMax += 0.02 * fabs( curXMax - curXMin );
+      if ( kpXMinEfDouble.isNull() ) {
+        curXMin = checkXMin - 0.02 * fabs( checkXMax - curXMin );
+      }
+      if ( kpXMaxEfDouble.isNull() ) {
+        curXMax = checkXMax + 0.02 * fabs( checkXMax - curXMin );
+      }
 
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
         if ( curXMin > 0 ) curXMin = log10( curXMin );
@@ -9667,19 +9671,20 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
         xOffset[i] = plotAreaX;
       }
 
-      kpXMinEfDouble.setNull(1);
-      kpXMaxEfDouble.setNull(1);
-
     }
 
     for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
 
       if ( y1AxisSource[yi] == XYGC_K_AUTOSCALE ) {
 
-        getYMinMax( yi, curY1Min, curY1Max );
+        getYMinMax( yi, checkY1Min, checkY1Max );
 
-        curY1Min[yi] -= 0.02 * fabs( curY1Max[yi] - curY1Min[yi] );
-        curY1Max[yi] += 0.02 * fabs( curY1Max[yi] - curY1Min[yi] );
+	if ( kpY1MinEfDouble[yi].isNull() ) {
+          curY1Min[yi] = checkY1Min[yi] - 0.02 * fabs( checkY1Max[yi] - checkY1Min[yi] );
+	}
+	if ( kpY1MaxEfDouble[yi].isNull() ) {
+          curY1Max[yi] = checkY1Max[yi] + 0.02 * fabs( checkY1Max[yi] - checkY1Min[yi] );
+	}
 
         anyRescale = 1;
 
@@ -9712,11 +9717,6 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
           y1Factor[yi][i] =
            (double) ( plotAreaH ) / ( curY1Max[yi] - curY1Min[yi] );
           y1Offset[yi][i] = plotAreaY;
-        }
-
-        if ( numYTraces[yi] > 0 ) {
-          kpY1MinEfDouble[yi].setNull(1);
-          kpY1MaxEfDouble[yi].setNull(1);
         }
 
       }

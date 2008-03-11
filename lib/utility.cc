@@ -3041,7 +3041,7 @@ time_t theTime;
     y0 = y;
     y1 = y0 + label_tick_height;
 
-    if ( labelGrid && count++ ) {
+    if ( labelGrid && count ) {
       if ( erase ) {
         XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y0-gridHeight );
       }
@@ -3051,6 +3051,7 @@ time_t theTime;
         gc->setFG( scaleColor );
       }
     }
+    count++;
 
     if ( drawScale ) {
 
@@ -3375,7 +3376,7 @@ int reverse = 0;
     y0 = y;
     y1 = y0 + label_tick_height;
 
-    if ( labelGrid && count++ ) {
+    if ( labelGrid && count ) {
       if ( erase ) {
         XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y0-gridHeight );
       }
@@ -3385,6 +3386,7 @@ int reverse = 0;
         gc->setFG( scaleColor );
       }
     }
+    count++;
 
     if ( drawScale ) {
 
@@ -3697,7 +3699,7 @@ int reverse = 0;
 
     if ( ( x0 >= x ) && ( x0 <= ( x + scaleLen ) ) ) {
 
-      if ( labelGrid && count++ ) {
+      if ( labelGrid && count ) {
         if ( erase ) {
           XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y0-gridHeight );
         }
@@ -3760,6 +3762,7 @@ int reverse = 0;
       }
 
     }
+    count++;
 
     if ( majors_per_label > 0 ) {
 
@@ -4031,7 +4034,7 @@ unsigned int white, black;
     y0 = y;
     y1 = y0 + label_tick_height;
 
-    if ( labelGrid && count++ ) {
+    if ( labelGrid && count ) {
       if ( erase ) {
         XDrawLine( d, win, gc->eraseGC(), x0, y0, x1, y0-gridHeight );
       }
@@ -4041,6 +4044,7 @@ unsigned int white, black;
         gc->setFG( scaleColor );
       }
     }
+    count++;
 
     if ( drawScale ) {
 
@@ -4498,7 +4502,7 @@ int reverse = 0;
     y0 = (int) rint( yOffset - ( labelVal - adj_min ) * yFactor );
     y1 = y0;
 
-    if ( labelGrid && count++ ) {
+    if ( labelGrid && count ) {
       if ( erase ) {
         XDrawLine( d, win, gc->eraseGC(), x0, y0, x0+gridLen, y1 );
       }
@@ -4508,6 +4512,7 @@ int reverse = 0;
         gc->setFG( scaleColor );
       }
     }
+    count++;
 
     if ( drawScale ) {
 
@@ -4821,7 +4826,7 @@ int reverse = 0;
 
     if ( ( y0 <= y ) && ( y0 >= ( y - scaleHeight ) ) ) {
 
-      if ( labelGrid && count++ ) {
+      if ( labelGrid && count ) {
         if ( erase ) {
           XDrawLine( d, win, gc->eraseGC(), x0, y0, x0+gridLen, y1 );
         }
@@ -4886,6 +4891,7 @@ int reverse = 0;
       }
 
     }
+    count++;
 
     if ( majors_per_label > 0 ) {
 
@@ -5168,7 +5174,7 @@ int reverse = 0;
     y0 = (int) rint( yOffset - ( labelVal - adj_min ) * yFactor );
     y1 = y0;
 
-    if ( labelGrid && count++ ) {
+    if ( labelGrid && count ) {
       if ( erase ) {
         //XDrawLine( d, win, gc->eraseGC(), x0, y0, x0+gridLen, y1 );
         XDrawLine( d, win, gc->eraseGC(), x0, y0, x0-gridLen, y1 );
@@ -5180,6 +5186,7 @@ int reverse = 0;
         gc->setFG( scaleColor );
       }
     }
+    count++;
 
     if ( drawScale ) {
 
@@ -5512,7 +5519,7 @@ int reverse = 0;
 
     if ( ( y0 <= y ) && ( y0 >= ( y - scaleHeight ) ) ) {
 
-      if ( labelGrid && count++ ) {
+      if ( labelGrid && count ) {
         if ( erase ) {
           XDrawLine( d, win, gc->eraseGC(), x0, y0, x0-gridLen, y1 );
         }
@@ -5577,6 +5584,7 @@ int reverse = 0;
       }
 
     }
+    count++;
 
     if ( majors_per_label > 0 ) {
 
@@ -5860,7 +5868,7 @@ unsigned int white, black;
     y0 = (int) rint( yOffset - ( labelVal - adj_min ) * yFactor );
     y1 = y0;
 
-    if ( labelGrid && count++ ) {
+    if ( labelGrid && count ) {
       if ( erase ) {
         XDrawLine( d, win, gc->eraseGC(), x0, y0, x0+gridLen, y1 );
       }
@@ -5870,6 +5878,7 @@ unsigned int white, black;
         gc->setFG( scaleColor );
       }
     }
+    count++;
 
     if ( drawScale ) {
 
@@ -6158,7 +6167,7 @@ unsigned int white, black;
     y0 = (int) rint( yOffset - ( labelVal - adj_min ) * yFactor );
     y1 = y0;
 
-    if ( labelGrid && count++ ) {
+    if ( labelGrid && count ) {
       if ( erase ) {
         XDrawLine( d, win, gc->eraseGC(), x0, y0, x0-gridLen, y1 );
       }
@@ -6168,6 +6177,7 @@ unsigned int white, black;
         gc->setFG( scaleColor );
       }
     }
+    count++;
 
     if ( drawScale ) {
 
