@@ -99,7 +99,7 @@
 #define XYGC_K_PLOT_SORTED_X_MODE 1
 
 #define XYGC_MAJOR_VERSION 4
-#define XYGC_MINOR_VERSION 3
+#define XYGC_MINOR_VERSION 4
 #define XYGC_RELEASE 0
 
 #ifdef __xygraph_cc
@@ -389,6 +389,7 @@ typedef struct editBufTag {
   int bufXMinorGrid;
   efInt bufXAnnotationPrecision;
   int bufXAnnotationFormat;
+  int bufXGridMode;
 
   int bufY1Axis[NUM_Y_AXES];
   int bufY1AxisStyle[NUM_Y_AXES];
@@ -404,6 +405,7 @@ typedef struct editBufTag {
   int bufY1MinorGrid[NUM_Y_AXES];
   efInt bufY1AnnotationPrecision[NUM_Y_AXES];
   int bufY1AnnotationFormat[NUM_Y_AXES];
+  int bufY1GridMode[NUM_Y_AXES];
 
   int bufY2Axis;
   int bufY2AxisStyle;
@@ -808,6 +810,7 @@ efInt xNumMinorPerMajor;
 int xMinorGrid;
 efInt xAnnotationPrecision;
 int xAnnotationFormat;
+int xGridMode;
 
 efInt y1NumLabelIntervals[NUM_Y_AXES];
 int y1LabelGrid[NUM_Y_AXES];
@@ -817,6 +820,7 @@ efInt y1NumMinorPerMajor[NUM_Y_AXES];
 int y1MinorGrid[NUM_Y_AXES];
 efInt y1AnnotationPrecision[NUM_Y_AXES];
 int y1AnnotationFormat[NUM_Y_AXES];
+int y1GridMode[NUM_Y_AXES];
 
 efInt y2NumLabelIntervals;
 int y2LabelGrid;

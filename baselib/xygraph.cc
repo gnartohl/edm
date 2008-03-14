@@ -3284,6 +3284,7 @@ int i, yi;
   axygo->xMinorGrid = axygo->eBuf->bufXMinorGrid;
   axygo->xAnnotationFormat = axygo->eBuf->bufXAnnotationFormat;
   axygo->xAnnotationPrecision = axygo->eBuf->bufXAnnotationPrecision;
+  axygo->xGridMode = axygo->eBuf->bufXGridMode;
 
   for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
     axygo->y1NumLabelIntervals[yi] = axygo->eBuf->bufY1NumLabelIntervals[yi];
@@ -3295,6 +3296,7 @@ int i, yi;
     axygo->y1AnnotationFormat[yi] = axygo->eBuf->bufY1AnnotationFormat[yi];
     axygo->y1AnnotationPrecision[yi] =
      axygo->eBuf->bufY1AnnotationPrecision[yi];
+    axygo->y1GridMode[yi] = axygo->eBuf->bufY1GridMode[yi];
   }
 
   // check for conflicts
@@ -3479,6 +3481,7 @@ time_t t1, t2;
   xMinorGrid = 0;
   xAnnotationPrecision.setNull(1);
   xAnnotationFormat = 0;
+  xGridMode = 0; // not user specified
 
   for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
     y1NumLabelIntervals[yi].setNull(1);
@@ -3489,6 +3492,7 @@ time_t t1, t2;
     y1MinorGrid[yi] = 0;
     y1AnnotationPrecision[yi].setNull(1);
     y1AnnotationFormat[yi] = 0;
+    y1GridMode[yi] = 0; // not user specified
   }
 
   updateTimerValue = 0;
@@ -3607,6 +3611,7 @@ int i, yi;
   xMinorGrid = source->xMinorGrid;
   xAnnotationPrecision = source->xAnnotationPrecision;
   xAnnotationFormat = source->xAnnotationFormat;
+  xGridMode = source->xGridMode;
 
   for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
     y1NumLabelIntervals[yi] = source->y1NumLabelIntervals[yi];
@@ -3617,6 +3622,7 @@ int i, yi;
     y1MinorGrid[yi] = source->y1MinorGrid[yi];
     y1AnnotationPrecision[yi] = source->y1AnnotationPrecision[yi];
     y1AnnotationFormat[yi] = source->y1AnnotationFormat[yi];
+    y1GridMode[yi] = source->y1GridMode[yi];
   }
 
   connection.setMaxPvs( 2 * XYGC_K_MAX_TRACES + 2 );
@@ -4170,6 +4176,7 @@ static int resetModeEnum[2] = {
   tag.loadW( "xLableFormat", 2, annoFormatEnumStr, annoFormatEnum,
    &xAnnotationFormat, &annoFormatF );
   tag.loadW( "xLablePrecision", &xAnnotationPrecision );
+  tag.loadW( "xUserSpecScaleDiv", &xGridMode, &zero );
 
   tag.loadW( "# Y axis properties" );
   tag.loadBoolW( "showYAxis", &y1Axis[0], &zero );
@@ -4188,6 +4195,7 @@ static int resetModeEnum[2] = {
   tag.loadW( "yAxisFormat", 2, annoFormatEnumStr, annoFormatEnum,
    &y1AnnotationFormat[0], &annoFormatF );
   tag.loadW( "yAxisPrecision", &y1AnnotationPrecision[0] );
+  tag.loadW( "yUserSpecScaleDiv", &y1GridMode[0], &zero );
 
   tag.loadW( "# Y2 axis properties" );
   tag.loadBoolW( "showY2Axis", &y1Axis[1], &zero );
@@ -4206,6 +4214,7 @@ static int resetModeEnum[2] = {
   tag.loadW( "y2AxisFormat", 2, annoFormatEnumStr, annoFormatEnum,
    &y1AnnotationFormat[1], &annoFormatF );
   tag.loadW( "y2AxisPrecision", &y1AnnotationPrecision[1] );
+  tag.loadW( "y2UserSpecScaleDiv", &y1GridMode[1], &zero );
 
   // trace properties (arrays)
   tag.loadW( "# Trace Properties" );
@@ -4588,6 +4597,7 @@ static int resetModeEnum[2] = {
   tag.loadR( "xLableFormat", 2, annoFormatEnumStr, annoFormatEnum,
    &xAnnotationFormat, &annoFormatF );
   tag.loadR( "xLablePrecision", &xAnnotationPrecision );
+  tag.loadR( "xUserSpecScaleDiv", &xGridMode, &zero );
 
   //tag.loadR( "# Y axis properties" );
   tag.loadR( "showYAxis", &y1Axis[0], &zero );
@@ -4606,6 +4616,7 @@ static int resetModeEnum[2] = {
   tag.loadR( "yAxisFormat", 2, annoFormatEnumStr, annoFormatEnum,
    &y1AnnotationFormat[0], &annoFormatF );
   tag.loadR( "yAxisPrecision", &y1AnnotationPrecision[0] );
+  tag.loadR( "yUserSpecScaleDiv", &y1GridMode[0], &zero );
 
   //tag.loadR( "# Y2 axis properties" );
   tag.loadR( "showY2Axis", &y1Axis[1], &zero );
@@ -4624,6 +4635,7 @@ static int resetModeEnum[2] = {
   tag.loadR( "y2AxisFormat", 2, annoFormatEnumStr, annoFormatEnum,
    &y1AnnotationFormat[1], &annoFormatF );
   tag.loadR( "y2AxisPrecision", &y1AnnotationPrecision[1] );
+  tag.loadR( "y2UserSpecScaleDiv", &y1GridMode[1], &zero );
 
   // trace properties (arrays)
   //tag.loadR( "# Trace Properties" );
@@ -5054,6 +5066,7 @@ int i, yi;
   eBuf->bufXMinorGrid = xMinorGrid;
   eBuf->bufXAnnotationFormat = xAnnotationFormat;
   eBuf->bufXAnnotationPrecision = xAnnotationPrecision;
+  eBuf->bufXGridMode = xGridMode;
 
   for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
     eBuf->bufY1NumLabelIntervals[yi] = y1NumLabelIntervals[yi];
@@ -5064,6 +5077,7 @@ int i, yi;
     eBuf->bufY1MinorGrid[yi] = y1MinorGrid[yi];
     eBuf->bufY1AnnotationFormat[yi] = y1AnnotationFormat[yi];
     eBuf->bufY1AnnotationPrecision[yi] = y1AnnotationPrecision[yi];
+    eBuf->bufY1GridMode[yi] = y1GridMode[yi];
   }
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
@@ -5261,10 +5275,12 @@ int i, yi;
     efAxis->addTextField( "", 3, &eBuf->bufXNumMinorPerMajor );
     efAxis->addLabel( " Grid" );
     efAxis->addToggle( " ", &eBuf->bufXMinorGrid );
-    efAxis->addLabel( " Format" );
-    efAxis->addOption( "", "f|g", &eBuf->bufXAnnotationFormat );
-    efAxis->addLabel( " Precision " );
-    efAxis->addTextField( "", 3, &eBuf->bufXAnnotationPrecision );
+    efAxis->addLabel( "User Specified Scale Divisions" );
+    efAxis->addToggle( " ", &eBuf->bufXGridMode );
+    //efAxis->addLabel( " Format" );
+    //efAxis->addOption( "", "f|g", &eBuf->bufXAnnotationFormat );
+    //efAxis->addLabel( " Precision " );
+    //efAxis->addTextField( "", 3, &eBuf->bufXAnnotationPrecision );
     efAxis->endSubForm();
    
     efAxis->addSeparator();
@@ -5299,10 +5315,12 @@ int i, yi;
     efAxis->addTextField( "", 3, &eBuf->bufY1NumMinorPerMajor[yi] );
     efAxis->addLabel( " Grid" );
     efAxis->addToggle( " ", &eBuf->bufY1MinorGrid[yi] );
-    efAxis->addLabel( " Format" );
-    efAxis->addOption( "", "f|g", &eBuf->bufY1AnnotationFormat[yi] );
-    efAxis->addLabel( " Precision " );
-    efAxis->addTextField( "", 3, &eBuf->bufY1AnnotationPrecision[yi] );
+    efAxis->addLabel( "User Specified Scale Divisions" );
+    efAxis->addToggle( " ", &eBuf->bufY1GridMode[yi] );
+    //efAxis->addLabel( " Format" );
+    //efAxis->addOption( "", "f|g", &eBuf->bufY1AnnotationFormat[yi] );
+    //efAxis->addLabel( " Precision " );
+    //efAxis->addTextField( "", 3, &eBuf->bufY1AnnotationPrecision[yi] );
     efAxis->endSubForm();
    
     efAxis->addSeparator();
@@ -5338,10 +5356,12 @@ int i, yi;
     efAxis->addTextField( "", 3, &eBuf->bufY1NumMinorPerMajor[yi] );
     efAxis->addLabel( " Grid" );
     efAxis->addToggle( " ", &eBuf->bufY1MinorGrid[yi] );
-    efAxis->addLabel( " Format" );
-    efAxis->addOption( "", "f|g", &eBuf->bufY1AnnotationFormat[yi] );
-    efAxis->addLabel( " Precision " );
-    efAxis->addTextField( "", 3, &eBuf->bufY1AnnotationPrecision[yi] );
+    efAxis->addLabel( "User Specified Scale Divisions" );
+    efAxis->addToggle( " ", &eBuf->bufY1GridMode[yi] );
+    //efAxis->addLabel( " Format" );
+    //efAxis->addOption( "", "f|g", &eBuf->bufY1AnnotationFormat[yi] );
+    //efAxis->addLabel( " Precision " );
+    //efAxis->addTextField( "", 3, &eBuf->bufY1AnnotationPrecision[yi] );
     efAxis->endSubForm();
 
     efAxis->finished( axygc_edit_ok_axis, this );
@@ -10535,6 +10555,13 @@ void xyGraphClass::drawXScale ( void ) {
 #endif
 
 #if 1
+      if ( xGridMode == XYGC_K_USER_SPECIFIED ) {
+        curXNumLabelTicks = xNumLabelIntervals.value();
+        if ( curXNumLabelTicks < 1 ) curXNumLabelTicks = 1;
+        curXMajorsPerLabel = xNumMajorPerLabel.value();
+        curXMinorsPerMajor = xNumMinorPerMajor.value();
+      }
+
       drawXLinearScale2 ( actWin->d, pixmap, &actWin->executeGc, xAxis,
        plotAreaX, plotAreaY+plotAreaH, plotAreaW,
        curXMin, curXMax, adjCurXMin, adjCurXMax,
@@ -10595,6 +10622,13 @@ int yi = 0;
   }
   else {
 
+    if ( y1GridMode[yi] == XYGC_K_USER_SPECIFIED ) {
+      curY1NumLabelTicks[yi] = y1NumLabelIntervals[yi].value();
+      if ( curY1NumLabelTicks[yi] < 1 ) curY1NumLabelTicks[yi] = 1;
+      curY1MajorsPerLabel[yi] = y1NumMajorPerLabel[yi].value();
+      curY1MinorsPerMajor[yi] = y1NumMinorPerMajor[yi].value();
+    }
+
     drawYLinearScale2 ( actWin->d, pixmap, &actWin->executeGc, y1Axis[yi],
      plotAreaX, plotAreaY+plotAreaH, plotAreaH,
      curY1Min[yi], curY1Max[yi],
@@ -10652,6 +10686,13 @@ int yi = 1;
 
   }
   else {
+
+    if ( y1GridMode[yi] == XYGC_K_USER_SPECIFIED ) {
+      curY1NumLabelTicks[yi] = y1NumLabelIntervals[yi].value();
+      if ( curY1NumLabelTicks[yi] < 1 ) curY1NumLabelTicks[yi] = 1;
+      curY1MajorsPerLabel[yi] = y1NumMajorPerLabel[yi].value();
+      curY1MinorsPerMajor[yi] = y1NumMinorPerMajor[yi].value();
+    }
 
     drawY2LinearScale2 ( actWin->d, pixmap, &actWin->executeGc, y1Axis[yi],
      plotAreaX+plotAreaW, plotAreaY+plotAreaH, plotAreaH,
@@ -10714,6 +10755,13 @@ int yi;
 #endif
 
 #if 1
+      if ( xGridMode == XYGC_K_USER_SPECIFIED ) {
+        curXNumLabelTicks = xNumLabelIntervals.value();
+        if ( curXNumLabelTicks < 1 ) curXNumLabelTicks = 1;
+        curXMajorsPerLabel = xNumMajorPerLabel.value();
+        curXMinorsPerMajor = xNumMinorPerMajor.value();
+      }
+
       drawXLinearScale2 ( actWin->d, pixmap, &actWin->executeGc, xAxis,
        plotAreaX, plotAreaY+plotAreaH, plotAreaW,
        curXMin, curXMax, adjCurXMin, adjCurXMax,
@@ -10750,6 +10798,13 @@ int yi;
         }
         else {
 
+          if ( y1GridMode[yi] == XYGC_K_USER_SPECIFIED ) {
+            curY1NumLabelTicks[yi] = y1NumLabelIntervals[yi].value();
+            if ( curY1NumLabelTicks[yi] < 1 ) curY1NumLabelTicks[yi] = 1;
+            curY1MajorsPerLabel[yi] = y1NumMajorPerLabel[yi].value();
+            curY1MinorsPerMajor[yi] = y1NumMinorPerMajor[yi].value();
+          }
+
           drawYLinearScale2 ( actWin->d, pixmap, &actWin->executeGc, y1Axis[yi],
            plotAreaX, plotAreaY+plotAreaH, plotAreaH,
            curY1Min[yi], curY1Max[yi],
@@ -10781,6 +10836,13 @@ int yi;
 
         }
         else {
+
+          if ( y1GridMode[yi] == XYGC_K_USER_SPECIFIED ) {
+            curY1NumLabelTicks[yi] = y1NumLabelIntervals[yi].value();
+            if ( curY1NumLabelTicks[yi] < 1 ) curY1NumLabelTicks[yi] = 1;
+            curY1MajorsPerLabel[yi] = y1NumMajorPerLabel[yi].value();
+            curY1MinorsPerMajor[yi] = y1NumMinorPerMajor[yi].value();
+          }
 
           drawY2LinearScale2 ( actWin->d, pixmap, &actWin->executeGc, y1Axis[yi],
            plotAreaX+plotAreaW, plotAreaY+plotAreaH, plotAreaH,
