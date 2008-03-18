@@ -2,6 +2,7 @@
 #include "multiLineTextUpdate.h"
 #include "environment.str"
 #include "diamondWidgets.str"
+#include "edm.version"
 
 // --------------------------------------------------------
 // Registration
@@ -24,6 +25,14 @@ static libRecType exported[] =
 
 extern "C"
 {
+
+char *version ( void ) {
+
+    static char *v = VERSION;
+
+      return v;
+
+    }
 
     char *author ( void ) {
 

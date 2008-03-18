@@ -27,6 +27,7 @@
 #include <app_pkg.h>
 #include <entry_form.h>
 #include <pv_factory.h>
+#include "edm.version"
 
 //#include "widget.h"
 #include "image.h"
@@ -758,6 +759,22 @@ static libRecType libRec[] =
 
 extern "C" 
 {
+
+    char *version ( void ) {
+
+    static char *v = VERSION;
+
+      return v;
+
+    }
+
+    char *author ( void ) {
+
+    static char *a = "Lawrence T. Hoff (hoff@bnl.gov)";
+
+      return a;
+
+    }
 
     int firstRegRecord (char **className,
                         char **typeName,
@@ -1511,6 +1528,3 @@ void TwoDProfileMonitor::sizeUpdate (ProcessVariable *pv,
     me->actWin->appCtx->proc->unlock ();
 #endif
 }
-
-
-

@@ -18,6 +18,7 @@
 
 #include "reg_libtriumf.str"
 #include "environment.str"
+#include "edm.version"
 
 typedef struct libRecTag {
   char *className;
@@ -34,6 +35,14 @@ static libRecType libRec[] = {
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+char *version ( void ) {
+
+static char *v = VERSION;
+
+  return v;
+
+}
 
 char *author ( void ) {
 

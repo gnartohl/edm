@@ -442,13 +442,26 @@ libRecPtr head, tail, cur, prev, next;
 
   if ( strcmp( op, global_str8 ) == 0 ) {  // show
 
+    fprintf( stderr, "\n" );
+
+    strcpy( line, "version" );
+    cfunc = (CHARFUNC) dlsym( dllHandle, line );
+    if ((error = dlerror()) == NULL)  {
+      fprintf( stderr, "Built with edm version: %s\n", (*cfunc)() );
+    }
+    else {
+      fprintf( stderr, "edm version not registered\n" );
+    }
+
+    fprintf( stderr, "\n" );
+
     strcpy( line, "author" );
     cfunc = (CHARFUNC) dlsym( dllHandle, line );
     if ((error = dlerror()) == NULL)  {
-      fprintf( stderr, "\nAuthor: %s\n", (*cfunc)() );
+      fprintf( stderr, "Author: %s\n", (*cfunc)() );
     }
     else {
-      fprintf( stderr, "\nAuthor name not registered\n" );
+      fprintf( stderr, "Author name not registered\n" );
     }
 
     fprintf( stderr, "\n" );
@@ -742,6 +755,8 @@ static void managePvComponents (
 
 typedef int (*PVREGFUNC)( char **, char ** );
 PVREGFUNC func;
+typedef char *(*CHARFUNC)( void );
+CHARFUNC cfunc;
 
 int stat, index, comment, fileExists, fileEmpty, doAdd, alreadyExists;
 char *classNamePtr, *textPtr, *error;
@@ -889,6 +904,17 @@ libRecPtr head, tail, cur, prev, next;
   }
 
   if ( strcmp( op, global_str65 ) == 0 ) {  // showpv
+
+    fprintf( stderr, "\n" );
+
+    strcpy( line, "version" );
+    cfunc = (CHARFUNC) dlsym( dllHandle, line );
+    if ((error = dlerror()) == NULL)  {
+      fprintf( stderr, "Built with edm version: %s\n", (*cfunc)() );
+    }
+    else {
+      fprintf( stderr, "edm version not registered\n" );
+    }
 
     fprintf( stderr, "\n" );
 
