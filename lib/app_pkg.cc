@@ -2690,7 +2690,7 @@ void appContextClass::expandFileName (
   int maxSize )
 {
 
-unsigned int i;
+unsigned int i, l, first, more;
 int state, noPrefix;
 
   if ( index >= numPaths ) {
@@ -2748,15 +2748,23 @@ int state, noPrefix;
     Strncat( expandedName, inName, maxSize );
   }
 
-  if ( strlen(expandedName) > strlen(ext) ) {
-    if ( strcmp( &expandedName[strlen(expandedName)-strlen(ext)], ext )
-     != 0 ) {
-      Strncat( expandedName, ext, maxSize );
+
+  // if no extension specified, add ext from argument
+
+  l = strlen(expandedName);
+  more = 1;
+  first = 0;
+  for ( i=l-1; (i>=0) && more; i-- ) {
+    if ( expandedName[i] == '/' ) {
+      more = 0;
+      first = i;
     }
   }
-  else {
+  if ( !strstr( &expandedName[first], "." ) ) {
     Strncat( expandedName, ext, maxSize );
   }
+
+  return;
 
 }
 
@@ -4421,7 +4429,6 @@ fileListPtr curFile;
           useScrollBars = 0;
 	}
 	else if ( strcmp( argv[n], global_str106 ) == 0 ) { //noautomsg
-	  printf( "no auto msg\n" );
           msgBox.setAutoOpen( 0 );
 	}
 

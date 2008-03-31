@@ -278,18 +278,6 @@ int start, end, i, ii, l, ret_stat;
 
   end = l-1;
 
-#if 0
-  for ( i=l-1; i>=start; i-- ) {
-
-    if ( fullName[i] == '.' ) {
-      end = i-1;
-      break;
-
-    }
-
-  }
-#endif
-
   strcpy( name, "" );
   for ( i=start, ii=0; (i<=end) && (ii<maxSize); i++, ii++ ) {
     name[ii] = fullName[i];
@@ -439,25 +427,32 @@ char *first, *last;
   first = index( (const char *) fname, (int) '[' );
   if ( first ) {
     last = rindex( (const char *) fname, (int) ']' );
-    if ( last ) {
-      len1 = (long) first - (long) fname;
-      if ( len1 > 255 ) len1 = 255;
-      strncpy( nameToCheck, fname, len1 );
-      nameToCheck[len1] = 0;
-      remain = 255 - len1;
-      len2 = strlen( fname ) - (long) last + (long) fname - 1;
-      if ( len2 > remain ) len2 = remain;
-      strncat( nameToCheck, last+1, len2 );
-      nameToCheck[len1+len2] = 0;
-    }
-    else {
-      strncpy( nameToCheck, fname, 255 );
-      nameToCheck[255] = 0;
-    }
+  }
+  if ( first && last && ( first < last ) ) {
+    len1 = (long) first - (long) fname;
+    if ( len1 > 255 ) len1 = 255;
+    strncpy( nameToCheck, fname, len1 );
+    nameToCheck[len1] = 0;
+    remain = 255 - len1;
+    len2 = strlen( fname ) - (long) last + (long) fname - 1;
+    if ( len2 > remain ) len2 = remain;
+    strncat( nameToCheck, last+1, len2 );
+    nameToCheck[len1+len2] = 0;
   }
   else {
+
     strncpy( nameToCheck, fname, 255 );
     nameToCheck[255] = 0;
+
+    // else if filename is of the form name.ext?params,
+    // use name.ext in the "is readable check".
+    first = index( (const char *) nameToCheck, (int) '?' );
+    if ( first ) {
+      *first = (char) 0;
+    }
+
+    // else use fname without any changes
+
   }
 
   f = fopen( nameToCheck, "r" );
@@ -472,14 +467,145 @@ char *first, *last;
 
 }
 
+static void discardParams (
+  char *name,
+  int maxlen
+) {
+
+char *first, *last;
+int len1, len2, remain;
+char buf[255+1];
+
+ if ( maxlen > 255 ) maxlen = 255;
+  strcpy( buf, "" );
+
+  first = index( (const char *) name, (int) '[' );
+  if ( first ) {
+    last = rindex( (const char *) name, (int) ']' );
+  }
+  if ( first && last && ( first < last ) ) {
+
+    // filename is of the form name[parm].ext
+
+    len1 = (long) first - (long) name;
+    if ( len1 > maxlen ) len1 = maxlen;
+    strncpy( buf, name, len1 );
+    buf[len1] = 0;
+    remain = maxlen - len1;
+    len2 = strlen( name ) - (long) last + (long) name - 1;
+    if ( len2 > remain ) len2 = remain;
+    strncat( buf, last+1, len2 );
+    buf[len1+len2] = 0;
+
+    strncpy( name, buf, maxlen );
+    name[maxlen] = 0;
+
+  }
+  else {
+
+    first = index( (const char *) name, (int) '?' );
+
+    if ( first ) {
+      // filename is of the form name.ext?params
+      *first = (char) 0;
+    }
+
+  }
+
+}
+
+static void getParams (
+  char *params,
+  char *fullNameWithParams,
+  int maxlen
+) {
+
+char *first, *last, *ptr;
+int len, i;
+
+  strcpy( params, "" );
+
+  first = index( (const char *) fullNameWithParams, (int) '[' );
+  if ( first ) {
+    last = rindex( (const char *) fullNameWithParams, (int) ']' );
+  }
+  if ( first && last && ( first < last ) ) {
+
+    // filename is of the form name[parm].ext
+
+    len = last - first + 1;
+    if ( len > maxlen ) len = maxlen;
+    if ( len < 0 ) len = 0;
+
+    for ( i=0, ptr=first; i<len; i++, ptr++ ) {
+      params[i] = *ptr;
+    }
+    params[i] = 0;
+
+  }
+  else {
+
+    first = index( (const char *) fullNameWithParams, (int) '?' );
+
+    if ( first ) {
+      // filename is of the form name.ext?params
+      Strncat( params, first, maxlen );
+    }
+
+  }
+
+}
+
+
+static void reassemble (
+  char *fullNameWithParams,
+  char *fullName,
+  char *params,
+  int maxlen
+) {
+
+char *first;
+int len, i, loc;
+
+  first = index( (const char *) params, (int) '[' );
+  if ( first ) {
+
+    first = 0;
+    len = strlen( fullName );
+    for ( i=len; i>=0; i-- ) {
+      if ( fullName[i] == '.' ) {
+        loc = i;
+        break;
+      }
+    }
+
+    for ( i=0; i<loc; i++ ) {
+      fullNameWithParams[i] = fullName[i];
+    }
+    fullNameWithParams[i] = 0;
+    Strncat( fullNameWithParams, params, maxlen );
+    Strncat( fullNameWithParams, &fullName[loc], maxlen );
+
+  }
+  else {
+
+    strncpy( fullNameWithParams, fullName, maxlen );
+    Strncat( fullNameWithParams, params, maxlen );
+    fullNameWithParams[maxlen] = 0;
+
+  }
+
+}
+
+
 FILE *fileOpen (
   char *fullNameBuf,
   char *mode
 ) {
 
-char fullName[255+1], cmd[255+1], prog[255+1];
-char oneExt[32], *oneExtPtr, *filterCmd, *ptr1, *ptr2, *ptr3;
- int gotExt, i, l, startPos, stat;
+char fullName[255+1], params[255+1], fullNameWithParams[255+1],
+ cmd[255+1], prog[255+1], oneExt[32], *filterCmd;
+int gotExt, i, l, startPos, stat, ii, iii, more;
 FILE *f;
 
 #ifdef USECURL
@@ -494,6 +620,10 @@ mode_t curMode, newMode;
   strncpy( fullName, fullNameBuf, 255 );
   fullName[255] = 0;
 
+  discardParams( fullName, 255 );
+
+  getParams( params, fullNameBuf, 255 );
+
   if ( gInitList ) {
     gInitList = 0;
     initFilters();
@@ -502,7 +632,7 @@ mode_t curMode, newMode;
 #ifndef USECURL
   if ( debugMode() ) fprintf( stderr, "Using local access only\n" );
 
-  if ( strcmp( mode, "r" ) != 0 ) {
+  if ( strcmp( mode, "r" ) && strcmp( mode, "rb" ) ) {
 
     return fopen( fullName, mode );
 
@@ -515,21 +645,18 @@ mode_t curMode, newMode;
     startPos = i;
   }
 
+
+
   gotExt = 0;
-  ptr1 = strstr( &fullName[startPos], "." );
-  if ( ptr1 ) {
-    ptr2 = strstr( &ptr1[1], "."  );
-    if ( ptr2 ) {
-      l = strlen( ptr2 );
-      if ( ( l < 25 ) && ( strcmp( ptr2, ".edl" ) == 0 ) ) {
-        oneExtPtr = oneExt;
-        for ( ptr3=ptr1; ptr3<ptr2; ptr3++ ) {
-          *oneExtPtr++ = *ptr3;
-        }
-        *oneExtPtr = 0;
-        gotExt = 1;
-        *ptr2 = 0;
+  more = (int) strstr( &fullName[startPos], "." );
+  for ( i=l; (i>=startPos) && more; i-- ) {
+    if ( fullName[i] == '.' ) {
+      more = 0;
+      gotExt = 1;
+      for ( iii=0, ii=i; ii<l; ii++, iii++ ) {
+        oneExt[iii] = fullName[ii];
       }
+      oneExt[iii] = 0;
     }
   }
 
@@ -540,7 +667,9 @@ mode_t curMode, newMode;
 
       if ( !fileReadable( fullName ) ) return NULL;
 
-      stat = buildCommand( cmd, 255, prog, 255, filterCmd, fullName );
+      reassemble( fullNameWithParams, fullName, params, 255 );
+
+      stat = buildCommand( cmd, 255, prog, 255, filterCmd, fullNameWithParams );
       if ( stat & 1 ) {
 
         if ( !filterInstalled( prog ) ) {
@@ -556,20 +685,7 @@ mode_t curMode, newMode;
 
         gPipeIsOpen = 1;
 
-	if ( debugMode() ) fprintf( stderr, "1 Filter cmd is [%s]\n", cmd );
-
-        // change extension, if any, to .edl
-        ptr1 = ptr2 = strstr( fullName, oneExt );
-        while ( ptr2 ) {
-          ptr2 = strstr( &ptr1[1], oneExt );
-          if ( ptr2 ) {
-            ptr1 = ptr2;
-          }
-        }
-        if ( ptr1 ) {
-          *ptr1 = 0;
-          strcat( fullName, ".edl" );
-        }
+        if ( debugMode() ) fprintf( stderr, "1 Filter cmd is [%s]\n", cmd );
 
         gPipeF = popen( cmd, "r" );
 
@@ -626,46 +742,18 @@ mode_t curMode, newMode;
       startPos = i;
     }
 
-    gotExt = 0;
-    ptr1 = strstr( &fullName[startPos], "." );
-    if ( ptr1 ) {
-      ptr2 = strstr( &ptr1[1], "."  );
-      if ( ptr2 ) {
-        l = strlen( ptr2 );
-        if ( ( l < 25 ) && ( strcmp( ptr2, ".edl" ) == 0 ) ) {
-          oneExtPtr = oneExt;
-          for ( ptr3=ptr1; ptr3<ptr2; ptr3++ ) {
-            *oneExtPtr++ = *ptr3;
-          }
-          *oneExtPtr = 0;
-          gotExt = 1;
-          *ptr2 = 0;
-        }
-      }
-    }
 
-    // First find last "/"
-    l = strlen( plainName );
-    startPos = l;
-    for ( i=l; (i>=0) && (plainName[i] != '/'); i-- ) {
-      startPos = i;
-    }
 
     gotExt = 0;
-    ptr1 = strstr( &plainName[startPos], "." );
-    if ( ptr1 ) {
-      ptr2 = strstr( &ptr1[1], "."  );
-      if ( ptr2 ) {
-        l = strlen( ptr2 );
-        if ( ( l < 25 ) && ( strcmp( ptr2, ".edl" ) == 0 ) ) {
-          oneExtPtr = oneExt;
-          for ( ptr3=ptr1; ptr3<ptr2; ptr3++ ) {
-            *oneExtPtr++ = *ptr3;
-          }
-          *oneExtPtr = 0;
-          gotExt = 1;
-          *ptr2 = 0;
+    more = (int) strstr( &fullName[startPos], "." );
+    for ( i=l; (i>=startPos) && more; i-- ) {
+      if ( fullName[i] == '.' ) {
+        more = 0;
+        gotExt = 1;
+        for ( iii=0, ii=i; ii<l; ii++, iii++ ) {
+          oneExt[iii] = fullName[ii];
         }
+        oneExt[iii] = 0;
       }
     }
 
@@ -676,7 +764,7 @@ mode_t curMode, newMode;
       if ( tk ) {
         l = strlen(tk);
         if ( tk[l-1] != '/' ) {
-  	tmpDir = new char[l+2];
+          tmpDir = new char[l+2];
           strcpy( tmpDir, tk );
           strcat( tmpDir, "/" );
         }
@@ -730,7 +818,9 @@ mode_t curMode, newMode;
       filterCmd = findFilter( oneExt );
       if ( filterCmd ) {
 
-        stat = buildCommand( cmd, 255, prog, 255, filterCmd, buf );
+        reassemble( fullNameWithParams, buf, params, 255 );
+
+        stat = buildCommand( cmd, 255, prog, 255, filterCmd, fullNameWithParams );
         if ( stat & 1 ) {
 
           if ( !filterInstalled( prog ) ) {
@@ -748,22 +838,8 @@ mode_t curMode, newMode;
 
           if ( debugMode() ) fprintf( stderr, "2 Filter cmd is [%s]\n", cmd );
 
-          // change extension, if any, to .edl
-          ptr1 = ptr2 = strstr( buf, oneExt );
-          while ( ptr2 ) {
-            ptr2 = strstr( &ptr1[1], oneExt );
-            if ( ptr2 ) {
-              ptr1 = ptr2;
-            }
-          }
-          if ( ptr1 ) {
-            *ptr1 = 0;
-            strcat( plainName, ".edl" );
-          }
-
           gPipeF = popen( cmd, "r" );
 
-          strncpy( fullName, plainName, 255 );
           return gPipeF;
 
         }
@@ -776,8 +852,6 @@ mode_t curMode, newMode;
       }
 
     }
-
-    strncpy( fullName, plainName, 255 );
 
     f = fopen( buf, "r" );
 
@@ -796,7 +870,7 @@ mode_t curMode, newMode;
   urlList = getenv( environment_str9 );
   if ( !urlList ) {
 
-    if ( strcmp( mode, "r" ) != 0 ) {
+    if ( strcmp( mode, "r" ) && strcmp( mode, "rb" ) ) {
 
       return fopen( fullName, mode );
 
@@ -810,20 +884,15 @@ mode_t curMode, newMode;
     }
 
     gotExt = 0;
-    ptr1 = strstr( &fullName[startPos], "." );
-    if ( ptr1 ) {
-      ptr2 = strstr( &ptr1[1], "."  );
-      if ( ptr2 ) {
-        l = strlen( ptr2 );
-        if ( ( l < 25 ) && ( strcmp( ptr2, ".edl" ) == 0 ) ) {
-          oneExtPtr = oneExt;
-          for ( ptr3=ptr1; ptr3<ptr2; ptr3++ ) {
-            *oneExtPtr++ = *ptr3;
-          }
-          *oneExtPtr = 0;
-          gotExt = 1;
-          *ptr2 = 0;
+    more = (int) strstr( &fullName[startPos], "." );
+    for ( i=l; (i>=startPos) && more; i-- ) {
+      if ( fullName[i] == '.' ) {
+        more = 0;
+        gotExt = 1;
+        for ( iii=0, ii=i; ii<l; ii++, iii++ ) {
+          oneExt[iii] = fullName[ii];
         }
+        oneExt[iii] = 0;
       }
     }
 
@@ -834,7 +903,9 @@ mode_t curMode, newMode;
 
         if ( !fileReadable( fullName ) ) return NULL;
 
-        stat = buildCommand( cmd, 255, prog, 255, filterCmd, fullName );
+        reassemble( fullNameWithParams, fullName, params, 255 );
+
+        stat = buildCommand( cmd, 255, prog, 255, filterCmd, fullNameWithParams );
         if ( stat & 1 ) {
 
           if ( !filterInstalled( prog ) ) {
@@ -851,19 +922,6 @@ mode_t curMode, newMode;
           gPipeIsOpen = 1;
 
           if ( debugMode() ) fprintf( stderr, "3 Filter cmd is [%s]\n", cmd );
-
-          // change extension, if any, to .edl
-          ptr1 = ptr2 = strstr( fullName, oneExt );
-          while ( ptr2 ) {
-            ptr2 = strstr( &ptr1[1], oneExt );
-            if ( ptr2 ) {
-              ptr1 = ptr2;
-            }
-          }
-          if ( ptr1 ) {
-            *ptr1 = 0;
-            strcat( fullName, ".edl" );
-          }
 
           gPipeF = popen( cmd, "r" );
 
@@ -901,21 +959,17 @@ mode_t curMode, newMode;
     startPos = i;
   }
 
+
   gotExt = 0;
-  ptr1 = strstr( &fullName[startPos], "." );
-  if ( ptr1 ) {
-    ptr2 = strstr( &ptr1[1], "."  );
-    if ( ptr2 ) {
-      l = strlen( ptr2 );
-      if ( ( l < 25 ) && ( strcmp( ptr2, ".edl" ) == 0 ) ) {
-        oneExtPtr = oneExt;
-        for ( ptr3=ptr1; ptr3<ptr2; ptr3++ ) {
-          *oneExtPtr++ = *ptr3;
-        }
-        *oneExtPtr = 0;
-        gotExt = 1;
-        *ptr2 = 0;
+  more = (int) strstr( &fullName[startPos], "." );
+  for ( i=l; (i>=startPos) && more; i-- ) {
+    if ( fullName[i] == '.' ) {
+      more = 0;
+      gotExt = 1;
+      for ( iii=0, ii=i; ii<l; ii++, iii++ ) {
+        oneExt[iii] = fullName[ii];
       }
+      oneExt[iii] = 0;
     }
   }
 
@@ -926,7 +980,7 @@ mode_t curMode, newMode;
     if ( tk ) {
       l = strlen(tk);
       if ( tk[l-1] != '/' ) {
-	tmpDir = new char[l+2];
+        tmpDir = new char[l+2];
         strcpy( tmpDir, tk );
         strcat( tmpDir, "/" );
       }
@@ -1016,7 +1070,9 @@ mode_t curMode, newMode;
       filterCmd = findFilter( oneExt );
       if ( filterCmd ) {
 
-        stat = buildCommand( cmd, 255, prog, 255, filterCmd, buf );
+        reassemble( fullNameWithParams, buf, params, 255 );
+
+        stat = buildCommand( cmd, 255, prog, 255, filterCmd, fullNameWithParams );
         if ( stat & 1 ) {
 
           if ( !filterInstalled( prog ) ) {
@@ -1033,19 +1089,6 @@ mode_t curMode, newMode;
           gPipeIsOpen = 1;
 
           if ( debugMode() ) fprintf( stderr, "4 Filter cmd is [%s]\n", cmd );
-
-          // change extension, if any, to .edl
-          ptr1 = ptr2 = strstr( buf, oneExt );
-          while ( ptr2 ) {
-            ptr2 = strstr( &ptr1[1], oneExt );
-            if ( ptr2 ) {
-              ptr1 = ptr2;
-            }
-          }
-          if ( ptr1 ) {
-            *ptr1 = 0;
-            strcat( fullName, ".edl" );
-          }
 
           gPipeF = popen( cmd, "r" );
 

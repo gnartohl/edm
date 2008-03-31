@@ -68,7 +68,7 @@ static void extractName(
   char *fileName, 
   char *name ) {
 
-int i, l;
+int i, l, more;
 char *gotOne;
 
   gotOne = strstr( fileName, "/" );
@@ -76,14 +76,24 @@ char *gotOne;
 
     strncpy( name, fileName, 255 );
 
-    // remove extension
+    // remove extension if .edl
     l = strlen( name );
 
-    for ( i=0; i<l; i++ ) {
+    more = 1;
+    for ( i=l-1; (i>=0) && more; i-- ) {
+
       if ( name[i] == '.' ) {
-        name[i] = 0;
-        return;
+
+	more = 0;
+
+        if ( l-i >= 4 ) {
+          if ( strcmp( &name[i], ".edl" ) == 0 ) {
+	    name[i] = 0;
+	  }
+	}
+
       }
+
     }
 
     return;
@@ -104,15 +114,25 @@ char *gotOne;
 
   }
 
-  // remove extension
+  // remove extension if .edl
   l = strlen( name );
 
-  for ( i=0; i<l; i++ ) {
-    if ( name[i] == '.' ) {
-      name[i] = 0;
-      return;
+    more = 1;
+    for ( i=l-1; (i>=0) && more; i-- ) {
+
+      if ( name[i] == '.' ) {
+
+	more = 0;
+
+        if ( l-i >= 3 ) {
+          if ( strcmp( &name[i], ".edl" ) == 0 ) {
+	    name[i] = 0;
+	  }
+	}
+
+      }
+
     }
-  }
 
 }
 
