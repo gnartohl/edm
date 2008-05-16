@@ -47,6 +47,9 @@
 #define XYGC_K_USER_SPECIFIED 1
 #define XYGC_K_AUTOSCALE 2
 
+#define XYGC_K_SMOOTHING 0
+#define XYGC_K_NO_SMOOTHING 1
+
 #define XYGC_K_SYMBOL_TYPE_NONE 0
 #define XYGC_K_SYMBOL_TYPE_CIRCLE 1
 #define XYGC_K_SYMBOL_TYPE_SQUARE 2
@@ -390,6 +393,7 @@ typedef struct editBufTag {
   efInt bufXAnnotationPrecision;
   int bufXAnnotationFormat;
   int bufXGridMode;
+  int bufXAxisSmoothing;
 
   int bufY1Axis[NUM_Y_AXES];
   int bufY1AxisStyle[NUM_Y_AXES];
@@ -406,6 +410,7 @@ typedef struct editBufTag {
   efInt bufY1AnnotationPrecision[NUM_Y_AXES];
   int bufY1AnnotationFormat[NUM_Y_AXES];
   int bufY1GridMode[NUM_Y_AXES];
+  int bufY1AxisSmoothing[NUM_Y_AXES];
 
   int bufY2Axis;
   int bufY2AxisStyle;
@@ -811,6 +816,7 @@ int xMinorGrid;
 efInt xAnnotationPrecision;
 int xAnnotationFormat;
 int xGridMode;
+int xAxisSmoothing;
 
 efInt y1NumLabelIntervals[NUM_Y_AXES];
 int y1LabelGrid[NUM_Y_AXES];
@@ -821,6 +827,7 @@ int y1MinorGrid[NUM_Y_AXES];
 efInt y1AnnotationPrecision[NUM_Y_AXES];
 int y1AnnotationFormat[NUM_Y_AXES];
 int y1GridMode[NUM_Y_AXES];
+int y1AxisSmoothing[NUM_Y_AXES];
 
 efInt y2NumLabelIntervals;
 int y2LabelGrid;

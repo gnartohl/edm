@@ -3285,6 +3285,7 @@ int i, yi;
   axygo->xAnnotationFormat = axygo->eBuf->bufXAnnotationFormat;
   axygo->xAnnotationPrecision = axygo->eBuf->bufXAnnotationPrecision;
   axygo->xGridMode = axygo->eBuf->bufXGridMode;
+  axygo->xAxisSmoothing = axygo->eBuf->bufXAxisSmoothing;
 
   for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
     axygo->y1NumLabelIntervals[yi] = axygo->eBuf->bufY1NumLabelIntervals[yi];
@@ -3297,6 +3298,7 @@ int i, yi;
     axygo->y1AnnotationPrecision[yi] =
      axygo->eBuf->bufY1AnnotationPrecision[yi];
     axygo->y1GridMode[yi] = axygo->eBuf->bufY1GridMode[yi];
+    axygo->y1AxisSmoothing[yi] = axygo->eBuf->bufY1AxisSmoothing[yi];
   }
 
   // check for conflicts
@@ -3482,6 +3484,7 @@ time_t t1, t2;
   xAnnotationPrecision.setNull(1);
   xAnnotationFormat = 0;
   xGridMode = 0; // not user specified
+  xAxisSmoothing = 0; // XYGC_K_SMOOTHING
 
   for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
     y1NumLabelIntervals[yi].setNull(1);
@@ -3493,6 +3496,7 @@ time_t t1, t2;
     y1AnnotationPrecision[yi].setNull(1);
     y1AnnotationFormat[yi] = 0;
     y1GridMode[yi] = 0; // not user specified
+    y1AxisSmoothing[yi] = 0; // XYGC_K_SMOOTHING
   }
 
   updateTimerValue = 0;
@@ -3612,6 +3616,7 @@ int i, yi;
   xAnnotationPrecision = source->xAnnotationPrecision;
   xAnnotationFormat = source->xAnnotationFormat;
   xGridMode = source->xGridMode;
+  xAxisSmoothing = source->xAxisSmoothing;
 
   for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
     y1NumLabelIntervals[yi] = source->y1NumLabelIntervals[yi];
@@ -3623,6 +3628,7 @@ int i, yi;
     y1AnnotationPrecision[yi] = source->y1AnnotationPrecision[yi];
     y1AnnotationFormat[yi] = source->y1AnnotationFormat[yi];
     y1GridMode[yi] = source->y1GridMode[yi];
+    y1AxisSmoothing[yi] = source->y1AxisSmoothing[yi];
   }
 
   connection.setMaxPvs( 2 * XYGC_K_MAX_TRACES + 2 );
@@ -4177,6 +4183,7 @@ static int resetModeEnum[2] = {
    &xAnnotationFormat, &annoFormatF );
   tag.loadW( "xLablePrecision", &xAnnotationPrecision );
   tag.loadW( "xUserSpecScaleDiv", &xGridMode, &zero );
+  tag.loadW( "xAxisSmoothing", &xAxisSmoothing, &zero );
 
   tag.loadW( "# Y axis properties" );
   tag.loadBoolW( "showYAxis", &y1Axis[0], &zero );
@@ -4196,6 +4203,7 @@ static int resetModeEnum[2] = {
    &y1AnnotationFormat[0], &annoFormatF );
   tag.loadW( "yAxisPrecision", &y1AnnotationPrecision[0] );
   tag.loadW( "yUserSpecScaleDiv", &y1GridMode[0], &zero );
+  tag.loadW( "yAxisSmoothing", &y1AxisSmoothing[0], &zero );
 
   tag.loadW( "# Y2 axis properties" );
   tag.loadBoolW( "showY2Axis", &y1Axis[1], &zero );
@@ -4215,6 +4223,7 @@ static int resetModeEnum[2] = {
    &y1AnnotationFormat[1], &annoFormatF );
   tag.loadW( "y2AxisPrecision", &y1AnnotationPrecision[1] );
   tag.loadW( "y2UserSpecScaleDiv", &y1GridMode[1], &zero );
+  tag.loadW( "y2AxisSmoothing", &y1AxisSmoothing[1], &zero );
 
   // trace properties (arrays)
   tag.loadW( "# Trace Properties" );
@@ -4598,6 +4607,7 @@ static int resetModeEnum[2] = {
    &xAnnotationFormat, &annoFormatF );
   tag.loadR( "xLablePrecision", &xAnnotationPrecision );
   tag.loadR( "xUserSpecScaleDiv", &xGridMode, &zero );
+  tag.loadR( "xAxisSmoothing", &xAxisSmoothing, &zero );
 
   //tag.loadR( "# Y axis properties" );
   tag.loadR( "showYAxis", &y1Axis[0], &zero );
@@ -4617,6 +4627,7 @@ static int resetModeEnum[2] = {
    &y1AnnotationFormat[0], &annoFormatF );
   tag.loadR( "yAxisPrecision", &y1AnnotationPrecision[0] );
   tag.loadR( "yUserSpecScaleDiv", &y1GridMode[0], &zero );
+  tag.loadR( "yAxisSmoothing", &y1AxisSmoothing[0], &zero );
 
   //tag.loadR( "# Y2 axis properties" );
   tag.loadR( "showY2Axis", &y1Axis[1], &zero );
@@ -4636,6 +4647,7 @@ static int resetModeEnum[2] = {
    &y1AnnotationFormat[1], &annoFormatF );
   tag.loadR( "y2AxisPrecision", &y1AnnotationPrecision[1] );
   tag.loadR( "y2UserSpecScaleDiv", &y1GridMode[1], &zero );
+  tag.loadR( "y2AxisSmoothing", &y1AxisSmoothing[1], &zero );
 
   // trace properties (arrays)
   //tag.loadR( "# Trace Properties" );
@@ -5067,6 +5079,7 @@ int i, yi;
   eBuf->bufXAnnotationFormat = xAnnotationFormat;
   eBuf->bufXAnnotationPrecision = xAnnotationPrecision;
   eBuf->bufXGridMode = xGridMode;
+  eBuf->bufXAxisSmoothing = xAxisSmoothing;
 
   for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
     eBuf->bufY1NumLabelIntervals[yi] = y1NumLabelIntervals[yi];
@@ -5078,6 +5091,7 @@ int i, yi;
     eBuf->bufY1AnnotationFormat[yi] = y1AnnotationFormat[yi];
     eBuf->bufY1AnnotationPrecision[yi] = y1AnnotationPrecision[yi];
     eBuf->bufY1GridMode[yi] = y1GridMode[yi];
+    eBuf->bufY1AxisSmoothing[yi] = y1AxisSmoothing[yi];
   }
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
@@ -5259,6 +5273,8 @@ int i, yi;
     efAxis->addOption( "",
      "Seconds|mm-dd-yy hh:mm:ss",
      &eBuf->bufXAxisTimeFormat );
+    efAxis->addLabel( "No Scale Adjustment" );
+    efAxis->addToggle( " ", &eBuf->bufXAxisSmoothing );
     efAxis->endSubForm();
 
     efAxis->beginLeftSubForm();
@@ -5299,6 +5315,8 @@ int i, yi;
     efAxis->addTextField( "", 10, &eBuf->bufY1Min[yi] );
     efAxis->addLabel( " Maximum " );
     efAxis->addTextField( "", 10, &eBuf->bufY1Max[yi] );
+    efAxis->addLabel( "No Scale Adjustment" );
+    efAxis->addToggle( " ", &eBuf->bufY1AxisSmoothing[yi] );
     efAxis->endSubForm();
 
     efAxis->beginLeftSubForm();
@@ -5340,6 +5358,8 @@ int i, yi;
     efAxis->addTextField( "", 10, &eBuf->bufY1Min[yi] );
     efAxis->addLabel( " Maximum " );
     efAxis->addTextField( "", 10, &eBuf->bufY1Max[yi] );
+    efAxis->addLabel( "No Scale Adjustment" );
+    efAxis->addToggle( " ", &eBuf->bufY1AxisSmoothing[yi] );
     efAxis->endSubForm();
 
     efAxis->beginLeftSubForm();
@@ -5762,6 +5782,10 @@ char format[31+1];
       get_scale_params1( curXMin, curXMax,
        &adjCurXMin, &adjCurXMax,
        &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor, format );
+      if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+        adjCurXMin = curXMin;
+        adjCurXMax = curXMax;
+      }
       if ( ( xAxisSource == XYGC_K_AUTOSCALE ) && kpXMinEfDouble.isNull() ) {
         curXMin = adjCurXMin;
       }
@@ -5785,6 +5809,10 @@ char format[31+1];
       get_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi],
        &adjCurY1Max[yi], &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
        &curY1MinorsPerMajor[yi], format );
+      if ( y1AxisSmoothing[yi] == XYGC_K_NO_SMOOTHING ) {
+        adjCurY1Min[yi] = curY1Min[yi];
+        adjCurY1Max[yi] = curY1Max[yi];
+      }
       if ( ( y1AxisSource[yi] == XYGC_K_AUTOSCALE ) && kpY1MinEfDouble[yi].isNull() ) {
         curY1Min[yi] = adjCurY1Min[yi];
       }
@@ -6104,6 +6132,10 @@ char format[31+1];
       if ( ( xAxisSource == XYGC_K_AUTOSCALE ) && kpXMinEfDouble.isNull() ) {
         curXMin = adjCurXMin;
       }
+      if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+        adjCurXMin = curXMin;
+        adjCurXMax = curXMax;
+      }
       if ( ( xAxisSource == XYGC_K_AUTOSCALE ) && kpXMaxEfDouble.isNull() ) {
         curXMax = adjCurXMax;
       }
@@ -6124,6 +6156,10 @@ char format[31+1];
       get_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi], &adjCurY1Max[yi],
        &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
        &curY1MinorsPerMajor[yi], format );
+      if ( y1AxisSmoothing[yi] == XYGC_K_NO_SMOOTHING ) {
+        adjCurY1Min[yi] = curY1Min[yi];
+        adjCurY1Max[yi] = curY1Max[yi];
+      }
       if ( ( y1AxisSource[yi] == XYGC_K_AUTOSCALE ) && kpY1MinEfDouble[yi].isNull() ) {
         curY1Min[yi] = adjCurY1Min[yi];
       }
@@ -8717,6 +8753,10 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
        &adjCurXMin, &adjCurXMax,
        &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
        format );
+      if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+        adjCurXMin = curXMin;
+        adjCurXMax = curXMax;
+      }
       if ( ( xAxisSource == XYGC_K_AUTOSCALE ) && kpXMinEfDouble.isNull() ) {
         curXMin = adjCurXMin;
       }
@@ -8759,6 +8799,10 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
           get_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi],
            &adjCurY1Max[yi], &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
            &curY1MinorsPerMajor[yi], format );
+          if ( y1AxisSmoothing[yi] == XYGC_K_NO_SMOOTHING ) {
+            adjCurY1Min[yi] = curY1Min[yi];
+            adjCurY1Max[yi] = curY1Max[yi];
+          }
           if ( ( y1AxisSource[yi] == XYGC_K_AUTOSCALE ) && kpY1MinEfDouble[yi].isNull() ) {
             curY1Min[yi] = adjCurY1Min[yi];
           }
@@ -9114,6 +9158,10 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
        &adjCurXMin, &adjCurXMax,
        &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
        format );
+      if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+        adjCurXMin = curXMin;
+        adjCurXMax = curXMax;
+      }
       if ( ( xAxisSource == XYGC_K_AUTOSCALE ) && kpXMinEfDouble.isNull() ) {
         curXMin = adjCurXMin;
       }
@@ -9224,6 +9272,10 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
         get_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi],
          &adjCurY1Max[yi], &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
          &curY1MinorsPerMajor[yi], format );
+        if ( y1AxisSmoothing[yi] == XYGC_K_NO_SMOOTHING ) {
+          adjCurY1Min[yi] = curY1Min[yi];
+          adjCurY1Max[yi] = curY1Max[yi];
+        }
         if ( ( y1AxisSource[yi] == XYGC_K_AUTOSCALE ) && kpY1MinEfDouble[yi].isNull() ) {
           curY1Min[yi] = adjCurY1Min[yi];
         }
@@ -9278,6 +9330,10 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
          &adjCurXMin, &adjCurXMax,
          &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
          format );
+        if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+          adjCurXMin = curXMin;
+          adjCurXMax = curXMax;
+        }
       }
       else {
         curXMin = xMin.value();
@@ -9300,6 +9356,10 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
            &adjCurXMin, &adjCurXMax,
            &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
            format );
+          if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+            adjCurXMin = curXMin;
+            adjCurXMax = curXMax;
+          }
           if ( ( xAxisSource == XYGC_K_AUTOSCALE ) && kpXMinEfDouble.isNull() ) {
             curXMin = adjCurXMin;
           }
@@ -9336,6 +9396,10 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
            &adjCurXMin, &adjCurXMax,
            &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
            format );
+          if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+            adjCurXMin = curXMin;
+            adjCurXMax = curXMax;
+          }
           if ( ( xAxisSource == XYGC_K_AUTOSCALE ) && kpXMinEfDouble.isNull() ) {
             curXMin = adjCurXMin;
           }
@@ -9371,6 +9435,10 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
           get_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi],
            &adjCurY1Max[yi], &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
            &curY1MinorsPerMajor[yi], format );
+          if ( y1AxisSmoothing[yi] == XYGC_K_NO_SMOOTHING ) {
+            adjCurY1Min[yi] = curY1Min[yi];
+            adjCurY1Max[yi] = curY1Max[yi];
+          }
 	}
 	else {
           curY1Min[yi] = y1Min[yi].value();
@@ -9397,6 +9465,10 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
           get_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi],
            &adjCurY1Max[yi], &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
            &curY1MinorsPerMajor[yi], format );
+          if ( y1AxisSmoothing[yi] == XYGC_K_NO_SMOOTHING ) {
+            adjCurY1Min[yi] = curY1Min[yi];
+            adjCurY1Max[yi] = curY1Max[yi];
+          }
           if ( ( y1AxisSource[yi] == XYGC_K_AUTOSCALE ) && kpY1MinEfDouble[yi].isNull() ) {
             curY1Min[yi] = adjCurY1Min[yi];
           }
@@ -9544,6 +9616,10 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
            &adjCurXMin, &adjCurXMax,
            &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
            format );
+          if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+            adjCurXMin = curXMin;
+            adjCurXMax = curXMax;
+          }
           if ( ( xAxisSource == XYGC_K_AUTOSCALE ) && kpXMinEfDouble.isNull() ) {
             curXMin = adjCurXMin;
           }
@@ -9597,6 +9673,10 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
             get_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi],
              &adjCurY1Max[yi], &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
              &curY1MinorsPerMajor[yi], format );
+            if ( y1AxisSmoothing[yi] == XYGC_K_NO_SMOOTHING ) {
+              adjCurY1Min[yi] = curY1Min[yi];
+              adjCurY1Max[yi] = curY1Max[yi];
+            }
             if ( ( y1AxisSource[yi] == XYGC_K_AUTOSCALE ) && kpY1MinEfDouble[yi].isNull() ) {
               curY1Min[yi] = adjCurY1Min[yi];
             }
@@ -9677,6 +9757,10 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
          &adjCurXMin, &adjCurXMax,
          &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
          format );
+        if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+          adjCurXMin = curXMin;
+          adjCurXMax = curXMax;
+        }
         if ( ( xAxisSource == XYGC_K_AUTOSCALE ) && kpXMinEfDouble.isNull() ) {
           curXMin = adjCurXMin;
         }
@@ -9725,6 +9809,10 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
           get_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi],
            &adjCurY1Max[yi], &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
            &curY1MinorsPerMajor[yi], format );
+          if ( y1AxisSmoothing[yi] == XYGC_K_NO_SMOOTHING ) {
+            adjCurY1Min[yi] = curY1Min[yi];
+            adjCurY1Max[yi] = curY1Max[yi];
+          }
           if ( ( y1AxisSource[yi] == XYGC_K_AUTOSCALE ) && kpY1MinEfDouble[yi].isNull() ) {
             curY1Min[yi] = adjCurY1Min[yi];
           }
@@ -9846,6 +9934,10 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
            &adjCurXMin, &adjCurXMax,
            &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
            format );
+          if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+            adjCurXMin = curXMin;
+            adjCurXMax = curXMax;
+          }
           if ( ( xAxisSource == XYGC_K_AUTOSCALE ) && kpXMinEfDouble.isNull() ) {
             curXMin = adjCurXMin;
           }
@@ -9880,6 +9972,10 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
            &adjCurXMin, &adjCurXMax,
            &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
            format );
+          if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+            adjCurXMin = curXMin;
+            adjCurXMax = curXMax;
+          }
           if ( ( xAxisSource == XYGC_K_AUTOSCALE ) && kpXMinEfDouble.isNull() ) {
             curXMin = adjCurXMin;
           }
@@ -9934,6 +10030,10 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
           get_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi],
            &adjCurY1Max[yi], &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
            &curY1MinorsPerMajor[yi], format );
+          if ( y1AxisSmoothing[yi] == XYGC_K_NO_SMOOTHING ) {
+            adjCurY1Min[yi] = curY1Min[yi];
+            adjCurY1Max[yi] = curY1Max[yi];
+          }
           if ( ( y1AxisSource[yi] == XYGC_K_AUTOSCALE ) && kpY1MinEfDouble[yi].isNull() ) {
             curY1Min[yi] = adjCurY1Min[yi];
           }

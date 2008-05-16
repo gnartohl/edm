@@ -3844,9 +3844,9 @@ int reverse = 0;
 
               }
 
-              minorVal += minorInc;
-
 	    }
+
+            minorVal += minorInc;
 
 	  }
 
@@ -4972,9 +4972,9 @@ int reverse = 0;
 
               }
 
-              minorVal += minorInc;
-
             }
+
+            minorVal += minorInc;
 
           }
 
@@ -5665,9 +5665,9 @@ int reverse = 0;
 
               }
 
-              minorVal += minorInc;
-
             }
+
+            minorVal += minorInc;
 
           }
 
