@@ -2907,12 +2907,12 @@ char prefix[127+1];
           l = strlen(actWin->macros[i]) + 1;
           newMacros[i] = (char *) new char[l];
           strcpy( newMacros[i], actWin->macros[i] );
-          newMacros[i][l] = 0;
+          newMacros[i][l-1] = 0;
 
           l = strlen(actWin->expansions[i]) + 1;
           newValues[i] = (char *) new char[l];
           strcpy( newValues[i], actWin->expansions[i] );
-          newValues[i][l] = 0;
+          newValues[i][l-1] = 0;
 
           numNewMacros++;
 
@@ -2926,12 +2926,12 @@ char prefix[127+1];
           l = strlen(actWin->appCtx->macros[i]) + 1;
           newMacros[i] = (char *) new char[l];
           strcpy( newMacros[i], actWin->appCtx->macros[i] );
-          newMacros[i][l] = 0;
+          newMacros[i][l-1] = 0;
 
           l = strlen(actWin->appCtx->expansions[i]) + 1;
           newValues[i] = (char *) new char[l];
           strcpy( newValues[i], actWin->appCtx->expansions[i] );
-          newValues[i][l] = 0;
+          newValues[i][l-1] = 0;
 
           numNewMacros++;
 
@@ -2981,8 +2981,8 @@ char prefix[127+1];
       // delete entry i
 
       if ( !useSmallArrays ) {
-        delete newMacros[i];
-        delete newValues[i];
+        delete[] newMacros[i];
+        delete[] newValues[i];
       }
 
       for ( ii=i; ii<numNewMacros-1; ii++ ) {
@@ -3044,8 +3044,8 @@ char prefix[127+1];
 	// cleanup
         if ( !useSmallArrays ) {
           for ( i=0; i<numNewMacros; i++ ) {
-            delete newMacros[i];
-            delete newValues[i];
+            delete[] newMacros[i];
+            delete[] newValues[i];
           }
         }
         goto done;
@@ -3075,8 +3075,8 @@ char prefix[127+1];
   if ( !useSmallArrays ) {
 
     for ( i=0; i<numNewMacros; i++ ) {
-      delete newMacros[i];
-      delete newValues[i];
+      delete[] newMacros[i];
+      delete[] newValues[i];
     }
 
   }
