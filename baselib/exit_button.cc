@@ -773,6 +773,7 @@ void activeExitButtonClass::btnDown (
 activeWindowClass *aw0, *aw1;
 
   *action = 0;
+  aw1 = NULL;
 
   if ( !enabled ) return;
 

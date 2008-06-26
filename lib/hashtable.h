@@ -27,7 +27,7 @@ using namespace std;
 
 // the following was introduced to get edm
 // to compile under gcc 4.0.X and higher
-#if (__GNUC__==4)&&(__GNUC_MINOR__==0)
+#if (__GNUC__>=4)
 using namespace std;
 #endif
 

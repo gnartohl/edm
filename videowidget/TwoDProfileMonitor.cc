@@ -16,11 +16,13 @@
 #define VIDEO_RELEASE 1
 
 #include <time.h>
-#ifdef SOLARIS
-#include <iostream.h>
-#else
-#include <stream.h>
-#endif
+#include <iostream>
+
+//#ifdef SOLARIS
+//#include <iostream.h>
+//#else
+//#include <stream.h>
+//#endif
 
 #include <act_grf.h>
 #include <act_win.h>
@@ -754,7 +756,7 @@ static int libRecIndex = 0;
 
 static libRecType libRec[] = 
 {
-    { "TwoDProfileMonitor", global_str2, "Hoff Video" }
+    { "TwoDProfileMonitorClass", global_str2, "Hoff Video" }
 };
 
 extern "C" 
