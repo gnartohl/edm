@@ -639,6 +639,8 @@ void addActions (
 
 void showEnv ( void );
 
+Widget apptop ( void );
+
 };
 
 #endif

@@ -6290,3 +6290,10 @@ char *envPtr, text[255+1];
   postMessage( text );
 
 }
+
+Widget appContextClass::apptop ( void ) {
+
+  return appTop;
+
+}
+

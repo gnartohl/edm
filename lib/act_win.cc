@@ -5857,7 +5857,7 @@ activeWindowClass *awo;
           XtVaSetValues(awo->drawWidget,
            XmNwidth, (Dimension)ce->width,
            XmNheight, (Dimension)ce->height,
-           0);
+	   NULL);
 
           if ( awo->scroll ) {
             XtVaSetValues(awo->scroll,
@@ -10584,6 +10584,8 @@ pvDefPtr pvDefCur, pvDefNext;
 
   //if ( !isEmbedded ) fprintf( stderr, "Destroy - [%s]\n", fileNameForSym );
 
+  if ( top ) XtUnmapWidget( top );  //??????? XtUnmapWidget
+
   if ( dragPopup ) {
     XtDestroyWidget( dragPopup );
     dragPopup = NULL;
@@ -10763,7 +10765,9 @@ pvDefPtr pvDefCur, pvDefNext;
 
   if ( objNameDialogCreated ) objNameDialog.destroy();
 
+#if 1
   if ( top ) XtDestroyWidget( top );
+#endif
 
   // need to deallocate widget address used for top if this was an
   // embedded window
@@ -11333,8 +11337,15 @@ char tmp[10];
 #ifndef ADD_SCROLLED_WIN
   if ( !parent ) {
 
-    top = XtVaAppCreateShell( "edm", "edm", topLevelShellWidgetClass,
-     d,
+    //top = XtVaAppCreateShell( "edm", "edm", topLevelShellWidgetClass,
+    // d,
+    // XmNmappedWhenManaged, False,
+    // XmNmwmDecorations, windowDecorations,
+    // XmNresizePolicy, XmRESIZE_GROW,
+    // NULL );
+
+    top = XtVaCreatePopupShell( "edm", topLevelShellWidgetClass,
+     appCtx->apptop(),
      XmNmappedWhenManaged, False,
      XmNmwmDecorations, windowDecorations,
      XmNresizePolicy, XmRESIZE_GROW,
@@ -11381,8 +11392,14 @@ char tmp[10];
 
     if ( !parent ) {
 
-      top = XtVaAppCreateShell( "edm", "edm", topLevelShellWidgetClass,
-       d,
+      //top = XtVaAppCreateShell( "edm", "edm", topLevelShellWidgetClass,
+      // d,
+      // XmNmappedWhenManaged, False,
+      // XmNmwmDecorations, windowDecorations,
+      // NULL );
+
+      top = XtVaCreatePopupShell( "edm", topLevelShellWidgetClass,
+       appCtx->apptop(),
        XmNmappedWhenManaged, False,
        XmNmwmDecorations, windowDecorations,
        NULL );
@@ -11439,8 +11456,15 @@ char tmp[10];
 
     if ( !parent ) {
 
-      top = XtVaAppCreateShell( "edm", "edm", topLevelShellWidgetClass,
-       d,
+      //top = XtVaAppCreateShell( "edm", "edm", topLevelShellWidgetClass,
+      // d,
+      // XmNmappedWhenManaged, False,
+      // XmNmwmDecorations, windowDecorations,
+      // XmNresizePolicy, XmRESIZE_GROW,
+      // NULL );
+
+      top = XtVaCreatePopupShell( "edm", topLevelShellWidgetClass,
+       appCtx->apptop(),
        XmNmappedWhenManaged, False,
        XmNmwmDecorations, windowDecorations,
        XmNresizePolicy, XmRESIZE_GROW,

@@ -1267,7 +1267,7 @@ static void file_cb (
 
 XmPushButtonCallbackStruct *cb;
 long num;
-Widget p, curP;
+Widget p, prevP, curP;
 
   num = (long) client;
   cb = (XmPushButtonCallbackStruct *) call;
@@ -1275,13 +1275,15 @@ Widget p, curP;
   if ( num == 0 ) {   // close window
 
     /* find topmost widget */
-    curP = p = w;
+    prevP = curP = p = w;
     do {
+      if ( XtParent(p) ) prevP = p;
       p = XtParent(p);
       if ( p ) curP = p;
     } while ( p );
 
-    XtUnmapWidget( curP );
+    //XtUnmapWidget( curP );
+    XtUnmapWidget( prevP );
 
   }
   else if ( num == 1 ) {
@@ -3053,9 +3055,14 @@ term:
   // create window
 
   //shell = XtVaAppCreateShell( colorInfoClass_str2, colorInfoClass_str2,
-  shell = XtVaAppCreateShell( "edm", "edm",
-   topLevelShellWidgetClass,
-   XtDisplay(top),
+  //shell = XtVaAppCreateShell( "edm", "edm",
+  // topLevelShellWidgetClass,
+  // XtDisplay(top),
+  // XtNmappedWhenManaged, False,
+  // NULL );
+
+  shell = XtVaCreatePopupShell( "edm", topLevelShellWidgetClass,
+   top,
    XtNmappedWhenManaged, False,
    NULL );
 
@@ -4907,9 +4914,14 @@ term:
   // create window
 
   //shell = XtVaAppCreateShell( colorInfoClass_str2, colorInfoClass_str2,
-  shell = XtVaAppCreateShell( "edm", "edm",
-   topLevelShellWidgetClass,
-   XtDisplay(top),
+  //shell = XtVaAppCreateShell( "edm", "edm",
+  // topLevelShellWidgetClass,
+  // XtDisplay(top),
+  // XtNmappedWhenManaged, False,
+  // NULL );
+
+  shell = XtVaCreatePopupShell( "edm", topLevelShellWidgetClass,
+   top,
    XtNmappedWhenManaged, False,
    NULL );
 
@@ -5693,9 +5705,14 @@ firstTry:
   // create window
 
   //shell = XtVaAppCreateShell( colorInfoClass_str2, colorInfoClass_str2,
-  shell = XtVaAppCreateShell( "edm", "edm",
-   topLevelShellWidgetClass,
-   XtDisplay(top),
+  //shell = XtVaAppCreateShell( "edm", "edm",
+  // topLevelShellWidgetClass,
+  // XtDisplay(top),
+  // XtNmappedWhenManaged, False,
+  // NULL );
+
+  shell = XtVaCreatePopupShell( "edm", topLevelShellWidgetClass,
+   top,
    XtNmappedWhenManaged, False,
    NULL );
 
