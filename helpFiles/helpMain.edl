@@ -1,24 +1,24 @@
-4 0 0
+4 0 1
 beginScreenProperties
 major 4
 minor 0
-release 0
-x 8
-y 0
+release 1
+x 230
+y 60
 w 156
 h 391
 font "helvetica-medium-r-12.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 textColor rgb 0 0 0
 ctlFgColor1 rgb 0 0 0
 ctlFgColor2 rgb 0 0 0
-ctlBgColor1 rgb 44718 44718 44718
-ctlBgColor2 rgb 34181 34181 34181
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
+ctlBgColor1 rgb 46517 46517 46517
+ctlBgColor2 rgb 35466 35466 35466
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 title "Help"
 endScreenProperties
 
@@ -26,16 +26,16 @@ endScreenProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 9
 y 11
 w 138
 h 30
 fgColor rgb 0 0 0
-bgColor rgb 44718 44718 44718
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-12.0"
 noEdit
 buttonLabel "Mouse Operations"
@@ -63,9 +63,9 @@ y 356
 w 59
 h 24
 fgColor rgb 0 0 0
-bgColor rgb 44718 44718 44718
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 label "Close"
 font "helvetica-medium-r-12.0"
 3d
@@ -75,21 +75,22 @@ endObjectProperties
 object shellCmdClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 86
 y 356
 w 59
 h 24
 fgColor rgb 0 0 0
-bgColor rgb 44718 44718 44718
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-12.0"
 buttonLabel "html"
+multipleInstances
 numCmds 1
 command {
-  0 "$EDMWEBBROWSER ics-web1.sns.ornl.gov/edm/index.phtml"
+  0 "$EDMWEBBROWSER http://ics-web.sns.ornl.gov/edm/index.php"
 }
 endObjectProperties
 
@@ -97,16 +98,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 9
 y 313
 w 138
 h 30
 fgColor rgb 0 0 0
-bgColor rgb 44718 44718 44718
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-12.0"
 buttonLabel "Available Symbols"
 numPvs 4
@@ -123,16 +124,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 9
 y 200
 w 138
 h 30
 fgColor rgb 0 0 0
-bgColor rgb 44718 44718 44718
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-12.0"
 noEdit
 buttonLabel "Line Objects"
@@ -156,16 +157,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 9
 y 238
 w 138
 h 30
 fgColor rgb 0 0 0
-bgColor rgb 44718 44718 44718
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-12.0"
 noEdit
 buttonLabel "Aligning Objects"
@@ -186,16 +187,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 9
 y 87
 w 138
 h 30
 fgColor rgb 0 0 0
-bgColor rgb 44718 44718 44718
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-12.0"
 noEdit
 buttonLabel "Creating Objects"
@@ -216,16 +217,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 9
 y 163
 w 138
 h 30
 fgColor rgb 0 0 0
-bgColor rgb 44718 44718 44718
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-12.0"
 noEdit
 buttonLabel "Editing Objects"
@@ -246,16 +247,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 9
 y 49
 w 138
 h 30
 fgColor rgb 0 0 0
-bgColor rgb 44718 44718 44718
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-12.0"
 noEdit
 buttonLabel "File Operations"
@@ -276,16 +277,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 9
 y 125
 w 138
 h 30
 fgColor rgb 0 0 0
-bgColor rgb 44718 44718 44718
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-12.0"
 noEdit
 buttonLabel "Selecting Objects"
@@ -306,16 +307,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 9
 y 276
 w 138
 h 30
 fgColor rgb 0 0 0
-bgColor rgb 44718 44718 44718
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-12.0"
 noEdit
 buttonLabel "Objects"
