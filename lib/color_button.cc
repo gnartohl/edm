@@ -228,8 +228,7 @@ Widget colorButtonClass::create(
   ci = ptr;
 
 
-  //pb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, parent, args,
-  pb = XtCreateManagedWidget( "", xmPushButtonGadgetClass, parent, args,
+  pb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, parent, args,
    num_args );
 
   destPtr = dest;
@@ -277,11 +276,10 @@ Widget colorButtonClass::createWithText(
   ci = ptr;
 
   form = XtCreateManagedWidget( "form", xmFormWidgetClass, parent,
-    fArgs, fNum_args );
+   fArgs, fNum_args );
 
-  //pb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, form,
-  pb = XtCreateManagedWidget( "", xmPushButtonGadgetClass, form,
-    bArgs, bNum_args );
+  pb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, form,
+   bArgs, bNum_args );
 
   XtSetArg( tArgs[tNum_args], XmNleftOffset, (XtArgVal) 5 ); tNum_args++;
   XtSetArg( tArgs[tNum_args], XmNtopAttachment,
@@ -294,7 +292,7 @@ Widget colorButtonClass::createWithText(
   XtSetArg( tArgs[tNum_args], XmNmaxLength, (short) PvSize() ); tNum_args++;
 
   tf = XtCreateManagedWidget( "text", xmTextWidgetClass, form,
-    tArgs, tNum_args );
+   tArgs, tNum_args );
 
   destPtr = dest;
 
@@ -342,11 +340,10 @@ Widget colorButtonClass::createWithRule(
   ci = ptr;
 
   form = XtCreateManagedWidget( "form", xmFormWidgetClass, parent,
-    fArgs, fNum_args );
+   fArgs, fNum_args );
 
-  //pb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, form,
-  pb = XtCreateManagedWidget( "", xmPushButtonGadgetClass, form,
-    bArgs, bNum_args );
+  pb = XtCreateManagedWidget( "", xmPushButtonWidgetClass, form,
+   bArgs, bNum_args );
 
   XtAddCallback( pb, XmNactivateCallback, setActive_cb, (XtPointer) this );
   XtAddCallback( pb, XmNdestroyCallback, destroy_cb, (XtPointer) this );
@@ -363,7 +360,7 @@ Widget colorButtonClass::createWithRule(
      (XtArgVal) pb ); nbNum_args++;
 
     namePb = XtCreateManagedWidget( "pb", xmPushButtonWidgetClass, form,
-      nbArgs, nbNum_args );
+     nbArgs, nbNum_args );
 
     XtAddCallback( namePb, XmNactivateCallback, nameSetActive_cb,
      (XtPointer) this );
@@ -382,7 +379,7 @@ Widget colorButtonClass::createWithRule(
     XtSetArg( tArgs[tNum_args], XmNmaxLength, (short) PvSize() ); tNum_args++;
 
     tf = XtCreateManagedWidget( "text", xmTextWidgetClass, form,
-      tArgs, tNum_args );
+     tArgs, tNum_args );
 
   }
 
