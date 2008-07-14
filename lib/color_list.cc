@@ -58,7 +58,8 @@ int *dest;
 
   for ( i=0; i<clo->numColors; i++ ) {
 
-    if ( (void *) cbs->item == clo->items[i] ) {
+    //if ( (void *) cbs->item == clo->items[i] ) {
+    if ( XmStringCompare( cbs->item, (XmString) clo->items[i] ) ) {
 
       mIndex = clo->ci->menuIndex( i );
 
@@ -74,6 +75,7 @@ int *dest;
       break;
 
     }
+
   }
 
   return;
