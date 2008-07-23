@@ -7,5 +7,6 @@
 #define scrolledListClass_str4 (char *) "Upper"
 #define scrolledListClass_str5 (char *) "Lower"
 #define scrolledListClass_str6 (char *) "Dismiss"
+#define scrolledListClass_str7 (char *) "Replace"
 
 #endif

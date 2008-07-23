@@ -96,6 +96,27 @@ Arg args[3];
 
 }
 
+static void setReplace (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+scrolledListClass *slo = (scrolledListClass *) client;
+XmToggleButtonCallbackStruct *toggleCallback =
+ (XmToggleButtonCallbackStruct *) call;
+int n;
+Arg args[3];
+
+  if ( toggleCallback->set ) {
+    slo->replace = 1;
+  }
+  else {
+    slo->replace = 0;
+  }
+
+}
+
 static void setFileDoFilter (
   Widget w,
   XtPointer client,
@@ -165,8 +186,51 @@ char buf[63+1];
 
   XmStringGetLtoR( cbs->item, XmFONTLIST_DEFAULT_TAG, &item );
 
-  strncpy( buf, slo->prefixString, 63 );
-  Strncat( buf, item, 63 );
+  if ( slo->replace ) {
+
+    char matchChar[2], replBuf[63+1], *tk, *ctx, *loc;
+    int l;
+
+    l = strlen( slo->prefixString );
+    if ( l > 0 ) {
+      matchChar[0] = slo->prefixString[l-1];
+      matchChar[1] = 0;
+    }
+    else {
+      matchChar[0] = 0;
+    }
+
+    if ( matchChar[0] ) {
+
+      strncpy( replBuf, item, 63 );
+      replBuf[63] = 0;
+      loc = strstr( replBuf, matchChar );
+
+      if ( loc ) {
+        strcpy( buf, slo->prefixString );
+        Strncat( buf, &loc[1], 63 );
+      }
+      else {
+        strncpy( buf, slo->prefixString, 63 );
+	buf[63] = 0;
+        Strncat( buf, item, 63 );
+      }
+
+    }
+    else {
+      strncpy( buf, slo->prefixString, 63 );
+      buf[63] = 0;
+      Strncat( buf, item, 63 );
+    }
+
+  }
+  else {
+
+    strncpy( buf, slo->prefixString, 63 );
+    buf[63] = 0;
+    Strncat( buf, item, 63 );
+
+  }
 
   if ( slo->lower )
     cvtToLower( buf );
@@ -205,6 +269,7 @@ scrolledListClass::scrolledListClass ( void ) {
   strcpy( prefixString, "" );
   upper = 0;
   lower = 0;
+  replace = 0;
 
 }
 
@@ -339,6 +404,21 @@ XmString str;
   XmStringFree( str );
 
   XtAddCallback( lcTb, XmNvalueChangedCallback, setLower, this );
+
+  str = XmStringCreateLocalized( scrolledListClass_str7 );
+
+  replTb = XtVaCreateManagedWidget( "repltoggle", xmToggleButtonWidgetClass,
+   formTop,
+   XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+   XmNtopWidget, ucTb,
+   XmNrightAttachment, XmATTACH_WIDGET,
+   XmNrightWidget, lcTb,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  XtAddCallback( replTb, XmNvalueChangedCallback, setReplace, this );
 
   rowColTop = XtVaCreateWidget( "rowcol", xmRowColumnWidgetClass, pane,
    NULL );
