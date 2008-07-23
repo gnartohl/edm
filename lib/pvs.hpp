@@ -30,6 +30,7 @@ static const int PVS_FAILURE = 2;
 static const int PVS_NOMORE = 3;
 static const int PVS_SERVER_FAIL = 100;
 static const int PVS_INVALID_HANDLE = 102;
+#define PVS_INCOMPATIBLE_VERION 104
 
 pvsClass( void );
 
@@ -87,8 +88,11 @@ int curNameIndex;
 char *host;
 char *port;
 char *buf;
+char *buf2;
 char *tk;
+char *tk2;
 char *ctx;
+char *ctx2;
 
 };
 

@@ -16,6 +16,9 @@ pvsClass::pvsClass ( void ) {
   this->buf = NULL;
   this->tk = NULL;
   this->ctx = NULL;
+  this->buf2 = NULL;
+  this->tk2 = NULL;
+  this->ctx2 = NULL;
 
 }
 
@@ -76,6 +79,9 @@ char *tk, *ctx, *hbuf;
   this->buf = NULL;
   this->tk = NULL;
   this->ctx = NULL;
+  this->buf2 = NULL;
+  this->tk2 = NULL;
+  this->ctx2 = NULL;
 
 }
 
@@ -84,6 +90,11 @@ pvsClass::~pvsClass ( void ) {
   if ( this->buf ) {
     free( this->buf );
     this->buf = NULL;
+  }
+
+  if ( this->buf2 ) {
+    free( this->buf2 );
+    this->buf2 = NULL;
   }
 
   if ( this->host ) {
@@ -138,6 +149,9 @@ int stat;
   *name = this->tk;
 
   this->tk = strtok_r( NULL, " ,\n", &this->ctx );
+  this->tk = strtok_r( NULL, " ,\n", &this->ctx );
+  this->tk2 = strtok_r( NULL, " ,\n", &this->ctx2 );
+  this->tk2 = strtok_r( NULL, " ,\n", &this->ctx2 );
 
   return PVS_SUCCESS;
 
@@ -170,6 +184,9 @@ int stat;
   *name = this->tk;
 
   this->tk = strtok_r( NULL, " ,\n", &this->ctx );
+  this->tk = strtok_r( NULL, " ,\n", &this->ctx );
+  this->tk2 = strtok_r( NULL, " ,\n", &this->ctx2 );
+  this->tk2 = strtok_r( NULL, " ,\n", &this->ctx2 );
 
   return PVS_SUCCESS;
 
@@ -387,6 +404,31 @@ int n;
 
  if ( !this->needInit ) return PVS_SUCCESS;
 
+  // check server version
+
+  stat = cmd( this->host, this->port, "version\n", msg, 31 );
+  if ( !( stat & 1 ) ) return PVS_SERVER_FAIL;
+
+  n = -1;
+  error = 1;  
+  ctx = NULL;
+  tk = strtok_r( msg, " \n", &ctx );
+  if ( tk ) {
+    if ( strcmp( tk, "ok" ) == 0 ) {
+      error = 0;
+    }
+  }
+  tk = strtok_r( NULL, " \n", &ctx );
+  if ( tk ) {
+    if ( strcmp( tk, "R1-2" ) == 0 ) {
+      error = 0;
+    }
+  }
+
+  if ( error ) {
+    return PVS_INCOMPATIBLE_VERION;
+  }
+
   // get my buffer size -----------------------------------------------
 
   stat = cmd( this->host, this->port, "bufsize\n", msg, 31 );
@@ -435,6 +477,7 @@ int n;
 
   this->bufSize = n;
   this->buf = (char *) calloc( sizeof(char), n+1 );
+  this->buf2 = (char *) calloc( sizeof(char), n+1 );
 
   // ------------------------------------------------------------------
 
@@ -517,6 +560,8 @@ int n;
   stat = cmd( this->host, this->port, msg, this->buf, this->bufSize );
   if ( !( stat & 1 ) ) return PVS_SERVER_FAIL;
 
+  strcpy( this->buf2, this->buf );
+
   // get status and number of pvs in this message --------------------------
   // and leave buf and ctx in a state ready to read
   // pv names
@@ -524,7 +569,9 @@ int n;
   n = -1;
   error = 1;  
   this->ctx = NULL;
-  this->tk = strtok_r( this->buf, " \n", &this->ctx );
+  this->tk = strtok_r( this->buf, " ,\n", &this->ctx );
+  this->ctx2 = NULL;
+  this->tk2 = strtok_r( this->buf2, " ,\n", &this->ctx2 );
   for ( i=0; i<2; i++ ) {
 
     if ( this->tk ) {
@@ -550,9 +597,12 @@ int n;
 
     }
 
-    this->tk = strtok_r( NULL, " \n", &this->ctx );
+    this->tk = strtok_r( NULL, " ,\n", &this->ctx );
+    this->tk2 = strtok_r( NULL, " ,\n", &this->ctx2 );
 
   }
+
+  this->tk2 = strtok_r( NULL, " ,\n", &this->ctx2 );
 
   if ( error ) {
     return PVS_SERVER_FAIL;
