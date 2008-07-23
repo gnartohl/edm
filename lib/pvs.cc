@@ -137,7 +137,7 @@ int stat;
 
   *name = this->tk;
 
-  this->tk = strtok_r( NULL, " \n", &this->ctx );
+  this->tk = strtok_r( NULL, " ,\n", &this->ctx );
 
   return PVS_SUCCESS;
 
@@ -169,7 +169,7 @@ int stat;
 
   *name = this->tk;
 
-  this->tk = strtok_r( NULL, " \n", &this->ctx );
+  this->tk = strtok_r( NULL, " ,\n", &this->ctx );
 
   return PVS_SUCCESS;
 
