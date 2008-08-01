@@ -718,7 +718,7 @@ fgColor rgb 0 0 0
 bgColor rgb 48573 47802 48573
 useDisplayBg
 value {
-  "(255 characters maximum)"
+  "(2550 characters maximum)"
 }
 autoSize
 endObjectProperties
@@ -745,7 +745,7 @@ value {
   "  2) @symbols 3=three,4=four"
   ""
   "     The file may contain only one line"
-  "     of 255 characters maximum"
+  "     of 2550 characters maximum"
   ""
   "     The format of the single line is"
   "     the same comma separated list,"
