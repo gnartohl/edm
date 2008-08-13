@@ -49,7 +49,7 @@ void transformImageData (
 );
 
 // Convert value into index in the palette of XImage
-unsigned char imageClass::convert (
+unsigned char convert (
   double d
 ) {
 	if(d<0) d = d + (1<<nbits);
