@@ -1,24 +1,24 @@
-4 0 0
+4 0 1
 beginScreenProperties
 major 4
 minor 0
-release 0
-x 394
-y 39
+release 1
+x 234
+y 112
 w 841
 h 786
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 51400 51400 51400
+bgColor rgb 52171 52171 52171
 textColor rgb 0 0 65535
-ctlFgColor1 rgb 0 0 57568
-ctlFgColor2 rgb 0 0 49344
-ctlBgColor1 rgb 0 0 41120
-ctlBgColor2 rgb 0 0 32896
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 26985 26985 26985
+ctlFgColor1 rgb 0 0 65535
+ctlFgColor2 rgb 0 0 65535
+ctlBgColor1 rgb 8995 8995 36494
+ctlBgColor2 rgb 8995 8995 36494
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 title "Help - Create"
 endScreenProperties
 
@@ -71,9 +71,9 @@ x 0
 y 0
 w 842
 h 35
-lineColor rgb 56026 56026 56026
+lineColor rgb 56797 56797 56797
 fill
-fillColor rgb 56026 56026 56026
+fillColor rgb 56797 56797 56797
 endObjectProperties
 
 # (Rectangle)
@@ -87,7 +87,7 @@ y 165
 w 65
 h 65
 lineColor rgb 0 0 0
-fillColor rgb 48059 48059 48059
+fillColor rgb 46517 46517 46517
 endObjectProperties
 
 # (Circle)
@@ -101,7 +101,7 @@ y 419
 w 65
 h 65
 lineColor rgb 0 0 0
-fillColor rgb 48059 48059 48059
+fillColor rgb 46517 46517 46517
 endObjectProperties
 
 # (Lines)
@@ -109,7 +109,7 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 280
 y 340
 w 60
@@ -145,7 +145,7 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 679
 y 431
 w 60
@@ -188,7 +188,7 @@ w 115
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "1) Left B Drag box"
@@ -208,7 +208,7 @@ w 300
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "2) Release Left B (box disappears at this point)"
@@ -228,7 +228,7 @@ w 127
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "3) Choose category"
@@ -248,7 +248,7 @@ w 48
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "6) Click"
@@ -268,7 +268,7 @@ w 132
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "5) Specify properties"
@@ -288,7 +288,7 @@ w 71
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Final result"
@@ -308,7 +308,7 @@ w 22
 h 16
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "OK"
@@ -328,7 +328,7 @@ w 268
 h 27
 font "helvetica-bold-r-24.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Create Object Example"
@@ -341,7 +341,7 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 31
 y 236
 w 50
@@ -387,9 +387,9 @@ y 756
 w 59
 h 24
 fgColor rgb 0 0 0
-bgColor rgb 44718 44718 44718
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 label "Close"
 font "helvetica-medium-r-12.0"
 3d
@@ -407,7 +407,7 @@ w 110
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "4) Choose object"
@@ -420,7 +420,7 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 99
 y 303
 w 50
@@ -459,16 +459,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 2
 release 0
 x 523
 y 125
 w 101
 h 24
 fgColor rgb 0 0 0
-bgColor rgb 44718 44718 44718
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 font "helvetica-medium-r-12.0"
 noEdit
 buttonLabel "e.g. set colors"
@@ -487,13 +487,13 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 121
 y 199
 w 22
 h 36
 lineColor rgb 0 0 0
-fillColor rgb 48059 48059 48059
+fillColor rgb 46517 46517 46517
 lineWidth 2
 arrows "to"
 numPoints 2
@@ -512,13 +512,13 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 253
 y 227
 w 27
 h 63
 lineColor rgb 0 0 0
-fillColor rgb 48059 48059 48059
+fillColor rgb 46517 46517 46517
 lineWidth 2
 arrows "to"
 numPoints 2
@@ -537,13 +537,13 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 523
 y 649
 w 208
 h 70
 lineColor rgb 0 0 0
-fillColor rgb 48059 48059 48059
+fillColor rgb 46517 46517 46517
 lineWidth 2
 arrows "from"
 numPoints 2
@@ -555,5 +555,50 @@ yPoints {
   0 719
   1 649
 }
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 10
+y 621
+w 154
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Mouse click shortcuts"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 10
+y 649
+w 309
+h 84
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "The functions performed by the OK, Apply, and Cancel"
+  "buttons may also be achieved by double clicking, in"
+  "some unoccupied background region, the left, center,"
+  "and right mouse buttons respectively. This may, at"
+  "times, eliminate the need for excessive mouse pointer"
+  "movement."
+}
+autoSize
 endObjectProperties
 
