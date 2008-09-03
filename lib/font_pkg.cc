@@ -404,23 +404,24 @@ static char **findBestFont(
 
 char **list;
 
-char *tk, spec[127+1], rest[127+1], foundry[63+1], family[63+1], weight[31+1],
- slant[31+1], ftype[31+1], size[31+1], newFont[127+1];
+char *tk, *ctx, spec[127+1], rest[127+1], foundry[63+1], family[63+1],
+ weight[31+1], slant[31+1], ftype[31+1], size[31+1], newFont[127+1];
 
   strncpy( spec, fontSpec, 127 );
   spec[127] = 0;
 
-  tk = strtok( spec, "-" );
+  ctx = NULL;
+  tk = strtok_r( spec, "-", &ctx );
   if ( !tk ) goto err_return;
   strncpy( foundry, tk, 63 );
   foundry[63] = 0;
 
-  tk = strtok( NULL, "-" );
+  tk = strtok_r( NULL, "-", &ctx );
   if ( !tk ) goto err_return;
   strncpy( family, tk, 63 );
   family[63] = 0;
 
-  tk = strtok( NULL, "\n" );
+  tk = strtok_r( NULL, "\n", &ctx );
   if ( !tk ) goto err_return;
   strncpy( rest, tk, 127 );
   rest[127] = 0;
@@ -439,12 +440,13 @@ char *tk, spec[127+1], rest[127+1], foundry[63+1], family[63+1], weight[31+1],
   strncpy( spec, rest, 127 );
   spec[127] = 0;
 
-  tk = strtok( spec, "-" );
+  ctx = NULL;
+  tk = strtok_r( spec, "-", &ctx );
   if ( !tk ) goto err_return;
   strncpy( weight, tk, 31 );
   weight[31] = 0;
 
-  tk = strtok( NULL, "\n" );
+  tk = strtok_r( NULL, "\n", &ctx );
   if ( !tk ) goto err_return;
   strncpy( rest, tk, 127 );
   rest[127] = 0;
@@ -464,12 +466,13 @@ char *tk, spec[127+1], rest[127+1], foundry[63+1], family[63+1], weight[31+1],
   strncpy( spec, rest, 127 );
   spec[127] = 0;
 
-  tk = strtok( spec, "-" );
+  ctx = NULL;
+  tk = strtok_r( spec, "-", &ctx );
   if ( !tk ) goto err_return;
   strncpy( slant, tk, 31 );
   slant[31] = 0;
 
-  tk = strtok( NULL, "\n" );
+  tk = strtok_r( NULL, "\n", &ctx );
   if ( !tk ) goto err_return;
   strncpy( rest, tk, 127 );
   rest[127] = 0;
@@ -490,17 +493,18 @@ char *tk, spec[127+1], rest[127+1], foundry[63+1], family[63+1], weight[31+1],
   strncpy( spec, rest, 127 );
   spec[127] = 0;
 
-  tk = strtok( spec, "-" );
+  ctx = NULL;
+  tk = strtok_r( spec, "-", &ctx );
   if ( !tk ) goto err_return;
   strncpy( ftype, tk, 31 );
   ftype[31] = 0;
 
-  tk = strtok( NULL, "-" );
+  tk = strtok_r( NULL, "-", &ctx );
   if ( !tk ) goto err_return;
   strncpy( size, tk, 31 );
   size[31] = 0;
 
-  tk = strtok( NULL, "\n" );
+  tk = strtok_r( NULL, "\n", &ctx );
   if ( !tk ) goto err_return;
   strncpy( rest, tk, 127 );
   rest[127] = 0;
@@ -551,7 +555,7 @@ int fontInfoClass::resolveFont (
 int n, isize, isScalable;
 float fsize;
 char **list;
-char *tk, spec[127+1], name[127+1], family[63+1], weight[31+1],
+char *tk, *ctx, spec[127+1], name[127+1], family[63+1], weight[31+1],
  slant[31+1], size[31+1];
 
   ptr->fontLoaded = 0;
@@ -568,24 +572,25 @@ char *tk, spec[127+1], name[127+1], family[63+1], weight[31+1],
 
   if ( debugMode() == 1000 ) fprintf( stderr, "Font Spec: [%s]\n", spec );
 
-  tk = strtok( spec, "-" );
+  ctx = NULL;
+  tk = strtok_r( spec, "-", &ctx );
 
-  tk = strtok( NULL, "-" );
+  tk = strtok_r( NULL, "-", &ctx );
   strncpy( family, tk, 63 );
 
-  tk = strtok( NULL, "-" );
+  tk = strtok_r( NULL, "-", &ctx );
   strncpy( weight, tk, 31 );
 
-  tk = strtok( NULL, "-" );
+  tk = strtok_r( NULL, "-", &ctx );
   if ( strcmp( tk, "r" ) == 0 )
     strncpy( slant, "r", 31 );
   else
     strncpy( slant, "i", 31 );
 
-  tk = strtok( NULL, "-" );
-  tk = strtok( NULL, "-" );
+  tk = strtok_r( NULL, "-", &ctx );
+  tk = strtok_r( NULL, "-", &ctx );
 
-  tk = strtok( NULL, "-" );
+  tk = strtok_r( NULL, "-", &ctx );
   strncpy( size, tk, 31 );
   if ( strcmp( size, "0" ) == 0 )
     isScalable = 1;
@@ -771,7 +776,7 @@ int fontInfoClass::resolveOneFont (
 int n, isize, isScalable;
 float fsize;
 char **list;
-char *tk, spec[127+1], name[127+1], family[63+1], weight[31+1],
+char *tk, *ctx, spec[127+1], name[127+1], family[63+1], weight[31+1],
  slant[31+1], size[31+1];
 
   ptr->fontLoaded = 0;
@@ -785,24 +790,25 @@ char *tk, spec[127+1], name[127+1], family[63+1], weight[31+1],
 
 //   fprintf( stderr, "Spec is [%s]\n", spec );
 
-  tk = strtok( spec, "-" );
+  ctx = NULL;
+  tk = strtok_r( spec, "-", &ctx );
 
-  tk = strtok( NULL, "-" );
+  tk = strtok_r( NULL, "-", &ctx );
   strncpy( family, tk, 63 );
 
-  tk = strtok( NULL, "-" );
+  tk = strtok_r( NULL, "-", &ctx );
   strncpy( weight, tk, 31 );
 
-  tk = strtok( NULL, "-" );
+  tk = strtok_r( NULL, "-", &ctx );
   if ( strcmp( tk, "r" ) == 0 )
     strncpy( slant, "r", 31 );
   else
     strncpy( slant, "i", 31 );
 
-  tk = strtok( NULL, "-" );
-  tk = strtok( NULL, "-" );
+  tk = strtok_r( NULL, "-", &ctx );
+  tk = strtok_r( NULL, "-", &ctx );
 
-  tk = strtok( NULL, "-" );
+  tk = strtok_r( NULL, "-", &ctx );
   strncpy( size, tk, 31 );
   if ( strcmp( size, "0" ) == 0 )
     isScalable = 1;
@@ -934,6 +940,7 @@ char **list;
 
   strncpy( buf, line, 255 );
 
+  ctx1 = NULL;
   tk1 = strtok_r( buf, "\t\n()", &ctx1 );
   if ( tk1 ) {
     strcpy( t1, tk1 );
@@ -1199,6 +1206,7 @@ fontNameListPtr cur;
 int dup;
 XFontStruct *fs;
 
+  ctx1 = NULL;
   tk1 = strtok_r( buf, "\t\n()", &ctx1 );
   if ( tk1 ) {
     strcpy( t1, tk1 );
@@ -1798,7 +1806,7 @@ int fontInfoClass::addFont (
 
 int stat, slantLoc;
 fontNameListPtr cur;
-char *tk, spec[127+1], family[63+1], weight[31+1],
+char *tk, *ctx, spec[127+1], family[63+1], weight[31+1],
  slant[31+1], pixels[31+1], size[31+1];
 int dup;
 
@@ -1810,23 +1818,24 @@ int dup;
 
   strncpy( spec, oneName, 127 );
 
-  tk = strtok( spec, "-" );
+  ctx = NULL;
+  tk = strtok_r( spec, "-", &ctx );
   if ( !tk ) return FONTINFO_FAIL;
   strncpy( family, tk, 63 );
 
-  tk = strtok( NULL, "-" );
+  tk = strtok_r( NULL, "-", &ctx );
   if ( !tk ) return FONTINFO_FAIL;
   strncpy( weight, tk, 31 );
 
-  tk = strtok( NULL, "-" );
+  tk = strtok_r( NULL, "-", &ctx );
   if ( !tk ) return FONTINFO_FAIL;
   strncpy( slant, tk, 31 );
 
-  tk = strtok( NULL, "-" );
+  tk = strtok_r( NULL, "-", &ctx );
   if ( !tk ) return FONTINFO_FAIL;
   strncpy( pixels, tk, 31 );
 
-  tk = strtok( NULL, "-" );
+  tk = strtok_r( NULL, "-", &ctx );
   if ( !tk ) return FONTINFO_FAIL;
   strncpy( size, tk, 31 );
 

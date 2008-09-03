@@ -750,6 +750,7 @@ static void xtdoTextFieldToIntA (
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int ivalue;
+unsigned int uivalue;
 char *buf, tmp[XTDC_K_MAX+1];
 
   buf = XmTextGetString( axtdo->tf_widget );
@@ -785,7 +786,8 @@ char *buf, tmp[XTDC_K_MAX+1];
     strncpy( axtdo->curValue, tmp, XTDC_K_MAX );
     axtdo->curValue[XTDC_K_MAX] = 0;
 
-    ivalue = strtol( tmp, NULL, 0 );
+    uivalue = strtoul( tmp, NULL, 0 );
+    ivalue = (int) uivalue;
     if ( axtdo->pvExists ) {
       //axtdo->pvId->put( ivalue );
       axtdo->putValueWithClip( ivalue );
@@ -1193,6 +1195,7 @@ static void XtextDspUpdate (
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) userarg;
 int ivalue, st, sev;
+unsigned int uivalue;
 unsigned short svalue;
 
   axtdo->actWin->appCtx->proc->lock();
@@ -1275,9 +1278,16 @@ unsigned short svalue;
     case ProcessVariable::specificType::shrt:
     case ProcessVariable::specificType::integer:
 
-      ivalue = pv->get_int();
+      if ( axtdo->formatType == XTDC_K_FORMAT_HEX ) {
+	uivalue = (unsigned int) pv->get_double();
+	ivalue = (int) uivalue;
+      }
+      else {
+        ivalue = pv->get_int();
+      }
       sprintf( axtdo->curValue, axtdo->format, ivalue );
-      axtdo->curDoubleValue = pv->get_int();
+
+      axtdo->curDoubleValue = (double) ivalue;
 
       if ( !axtdo->noSval ) {
         if ( axtdo->nullDetectMode == 0 ) {
@@ -1526,6 +1536,7 @@ static void axtdc_value_edit_apply (
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 double dvalue;
 int ivalue, stat, doPut;
+unsigned int uivalue;
 short svalue;
 char string[XTDC_K_MAX+1], tmp[XTDC_K_MAX+1];
 
@@ -1616,9 +1627,9 @@ char string[XTDC_K_MAX+1], tmp[XTDC_K_MAX+1];
     }
 
     if ( isLegalInteger(tmp) ) {
-      ivalue = strtol( tmp, NULL, 0 );
+      uivalue = strtoul( tmp, NULL, 0 );
+      ivalue = (int) uivalue;
       if ( axtdo->pvExists ) {
-        //axtdo->pvId->put( ivalue );
         axtdo->putValueWithClip( ivalue );
       }
       else {

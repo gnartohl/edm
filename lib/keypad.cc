@@ -10,7 +10,7 @@ static void keypadPress (
 {
 
 keypadClass *kp = (keypadClass *) client;
-int tmp;
+unsigned int tmp;
 
   if ( w == kp->pbCancel ) {
 
@@ -56,7 +56,8 @@ int tmp;
 
       if ( kp->hex ) {
 
-        *(kp->intDest) = strtol( &kp->buf[1], NULL, 16 );
+        tmp = strtoul( &kp->buf[1], NULL, 16 );
+        *(kp->intDest) = (int) tmp;
 
       }
       else {
@@ -76,7 +77,7 @@ int tmp;
 
       if ( kp->hex ) {
 
-        tmp = strtol( &kp->buf[1], NULL, 16 );
+        tmp = strtoul( &kp->buf[1], NULL, 16 );
         *(kp->doubleDest) = (double) tmp;
 
       }

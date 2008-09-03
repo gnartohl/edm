@@ -11337,18 +11337,11 @@ char tmp[10];
 #ifndef ADD_SCROLLED_WIN
   if ( !parent ) {
 
-    //top = XtVaAppCreateShell( "edm", "edm", topLevelShellWidgetClass,
-    // d,
-    // XmNmappedWhenManaged, False,
-    // XmNmwmDecorations, windowDecorations,
-    // XmNresizePolicy, XmRESIZE_GROW,
-    // NULL );
-
     top = XtVaCreatePopupShell( "edm", topLevelShellWidgetClass,
      appCtx->apptop(),
      XmNmappedWhenManaged, False,
      XmNmwmDecorations, windowDecorations,
-     XmNresizePolicy, XmRESIZE_GROW,
+     XmNresizePolicy, XmRESIZE_NONE,
      NULL );
 
     drawWidget = XtVaCreateManagedWidget( "screen", xmDrawingAreaWidgetClass,
@@ -11356,7 +11349,7 @@ char tmp[10];
      XmNwidth, w,
      XmNheight, h,
      XmNmappedWhenManaged, False,
-     XmNresizePolicy, XmRESIZE_GROW,
+     XmNresizePolicy, XmRESIZE_NONE,
      NULL );
 
   }
@@ -11379,7 +11372,7 @@ char tmp[10];
      XmNwidth, w,
      XmNheight, h,
      XmNmappedWhenManaged, False,
-     XmNresizePolicy, XmRESIZE_GROW,
+     XmNresizePolicy, XmRESIZE_NONE,
      XmNbackground, embBg,
      NULL );
 
@@ -11440,7 +11433,7 @@ char tmp[10];
 
       drawWidget = XtVaCreateManagedWidget( "screen", xmDrawingAreaWidgetClass,
        scroll ? scroll : top,
-       XmNresizePolicy, XmRESIZE_GROW,
+       XmNresizePolicy, XmRESIZE_NONE,
        XmNx, parent ? x : 0,
        XmNy, parent ? y : 0,
        XmNwidth, w,
@@ -11456,18 +11449,11 @@ char tmp[10];
 
     if ( !parent ) {
 
-      //top = XtVaAppCreateShell( "edm", "edm", topLevelShellWidgetClass,
-      // d,
-      // XmNmappedWhenManaged, False,
-      // XmNmwmDecorations, windowDecorations,
-      // XmNresizePolicy, XmRESIZE_GROW,
-      // NULL );
-
       top = XtVaCreatePopupShell( "edm", topLevelShellWidgetClass,
        appCtx->apptop(),
        XmNmappedWhenManaged, False,
        XmNmwmDecorations, windowDecorations,
-       XmNresizePolicy, XmRESIZE_GROW,
+       XmNresizePolicy, XmRESIZE_NONE,
        NULL );
 
       drawWidget = XtVaCreateManagedWidget( "screen", xmDrawingAreaWidgetClass,
@@ -11475,7 +11461,7 @@ char tmp[10];
        XmNwidth, w,
        XmNheight, h,
        XmNmappedWhenManaged, False,
-       XmNresizePolicy, XmRESIZE_GROW,
+       XmNresizePolicy, XmRESIZE_NONE,
        NULL );
 
     }
@@ -11498,7 +11484,7 @@ char tmp[10];
        XmNwidth, w,
        XmNheight, h,
        XmNmappedWhenManaged, False,
-       XmNresizePolicy, XmRESIZE_GROW,
+       XmNresizePolicy, XmRESIZE_NONE,
        XmNbackground, embBg,
        NULL );
 
@@ -17009,6 +16995,9 @@ static int alignEnum[3] = {
   if ( !( stat & 1 ) ) {
     retStat = stat;
     appCtx->postMessage( tag.errMsg() );
+  }
+
+  if ( disableScroll ) {
   }
 
   if ( strcmp( defaultPvType, "epics" ) == 0 ) {
