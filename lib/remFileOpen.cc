@@ -604,8 +604,8 @@ FILE *fileOpen (
 ) {
 
 char fullName[255+1], params[255+1], fullNameWithParams[255+1],
- cmd[255+1], prog[255+1], oneExt[32], *filterCmd;
-int gotExt, i, l, startPos, stat, ii, iii, more;
+ cmd[255+1], prog[255+1], oneExt[32], *filterCmd, *more;
+int gotExt, i, l, startPos, stat, ii, iii;
 FILE *f;
 
 #ifdef USECURL
@@ -648,10 +648,10 @@ mode_t curMode, newMode;
 
 
   gotExt = 0;
-  more = (int) strstr( &fullName[startPos], "." );
+  more = strstr( &fullName[startPos], "." );
   for ( i=l; (i>=startPos) && more; i-- ) {
     if ( fullName[i] == '.' ) {
-      more = 0;
+      more = NULL;
       gotExt = 1;
       for ( iii=0, ii=i; ii<l; ii++, iii++ ) {
         oneExt[iii] = fullName[ii];
@@ -745,10 +745,10 @@ mode_t curMode, newMode;
 
 
     gotExt = 0;
-    more = (int) strstr( &fullName[startPos], "." );
+    more = strstr( &fullName[startPos], "." );
     for ( i=l; (i>=startPos) && more; i-- ) {
       if ( fullName[i] == '.' ) {
-        more = 0;
+        more = NULL;
         gotExt = 1;
         for ( iii=0, ii=i; ii<l; ii++, iii++ ) {
           oneExt[iii] = fullName[ii];
@@ -884,10 +884,10 @@ mode_t curMode, newMode;
     }
 
     gotExt = 0;
-    more = (int) strstr( &fullName[startPos], "." );
+    more = strstr( &fullName[startPos], "." );
     for ( i=l; (i>=startPos) && more; i-- ) {
       if ( fullName[i] == '.' ) {
-        more = 0;
+        more = NULL;
         gotExt = 1;
         for ( iii=0, ii=i; ii<l; ii++, iii++ ) {
           oneExt[iii] = fullName[ii];
@@ -961,10 +961,10 @@ mode_t curMode, newMode;
 
 
   gotExt = 0;
-  more = (int) strstr( &fullName[startPos], "." );
+  more = strstr( &fullName[startPos], "." );
   for ( i=l; (i>=startPos) && more; i-- ) {
     if ( fullName[i] == '.' ) {
-      more = 0;
+      more = NULL;
       gotExt = 1;
       for ( iii=0, ii=i; ii<l; ii++, iii++ ) {
         oneExt[iii] = fullName[ii];
