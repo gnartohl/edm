@@ -183,7 +183,7 @@ char tmp[PV_Factory::MAX_PV_NAME+1], *tk, *ctx;
     tmp[MAX_BUF_CHARS] = 0;
 
     ctx = NULL;
-    tk = strtok_r( tmp, ",", &ctx );
+    tk = strtok_r( tmp, ",;", &ctx );
     if ( tk ) {
       strncpy( buf, tk, MAX_BUF_CHARS );
       buf[MAX_BUF_CHARS] = 0;
@@ -201,7 +201,7 @@ char tmp[PV_Factory::MAX_PV_NAME+1], *tk, *ctx;
     }
 
     numEnumStates = 0;
-    tk = strtok_r( NULL, ",", &ctx );
+    tk = strtok_r( NULL, ",;", &ctx );
 
     while ( tk ) {
 
@@ -209,7 +209,7 @@ char tmp[PV_Factory::MAX_PV_NAME+1], *tk, *ctx;
       strcpy( enums[numEnumStates], tk );
       if ( numEnumStates < MAX_ENUM_NUM ) numEnumStates++;
 
-      tk = strtok_r( NULL, ",", &ctx );
+      tk = strtok_r( NULL, ",;", &ctx );
 
     }
 
