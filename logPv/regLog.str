@@ -1,0 +1,6 @@
+#ifndef __regLog_str
+#define __regLog_str 1
+
+#define reg_str1 (char *) "LOG PV"
+
+#endif

@@ -6150,6 +6150,16 @@ char *envPtr, text[255+1];
   text[255] = 0;
   postMessage( text );
 
+  envPtr = getenv( environment_str17 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str17, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str17 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
   envPtr = getenv( "EDMCOMMENTS" );
   if ( envPtr ) {
     snprintf( text, 255, "  %s=[%s]", "EDMCOMMENTS", envPtr );

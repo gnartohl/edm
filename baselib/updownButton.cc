@@ -105,7 +105,8 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
       else {
 	v = udbto->kpDouble;
       }
-      udbto->destPvId->put( v );
+      udbto->destPvId->put(
+       XDisplayName(udbto->actWin->appCtx->displayName), v );
     }
   }
 
@@ -167,7 +168,9 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
   else if ( w == udbto->pbSave ) {
 
     if ( udbto->savePvConnected ) {
-      udbto->savePvId->put( udbto->curControlV );
+      udbto->savePvId->put(
+       XDisplayName(udbto->actWin->appCtx->displayName),
+       udbto->curControlV );
     }
     else {
       XBell( udbto->actWin->d, 50 );
@@ -186,7 +189,8 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
       else {
 	v = udbto->curSaveV;
       }
-      udbto->destPvId->put( v );
+      udbto->destPvId->put(
+       XDisplayName(udbto->actWin->appCtx->displayName), v );
     }
     else {
       XBell( udbto->actWin->d, 50 );
@@ -560,7 +564,8 @@ unsigned int mask;
   }
 
   if ( udbto->destExists ) {
-    udbto->destPvId->put( dval );
+    udbto->destPvId->put(
+     XDisplayName(udbto->actWin->appCtx->displayName), dval );
   }
 
 }
@@ -606,7 +611,8 @@ unsigned int mask;
   }
 
   if ( udbto->destExists ) {
-    udbto->destPvId->put( dval );
+    udbto->destPvId->put(
+     XDisplayName(udbto->actWin->appCtx->displayName), dval );
   }
 
 }
@@ -2329,7 +2335,8 @@ double dval;
     dval = maxDv;
   }
 
-  destPvId->put( dval );
+  destPvId->put(
+   XDisplayName(actWin->appCtx->displayName), dval );
 
   if ( buttonNumber == 3 ) {
     incrementTimer = appAddTimeOut( actWin->appCtx->appContext(),

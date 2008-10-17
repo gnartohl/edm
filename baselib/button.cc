@@ -2362,7 +2362,8 @@ int stat;
   }
 
   if ( !controlExists ) return;
-  stat = controlPvId->put( value );
+  stat = controlPvId->put( XDisplayName(actWin->appCtx->displayName), value );
+  //stat = controlPvId->put( value );
 
 }
 
@@ -2409,7 +2410,8 @@ int stat;
   }
 
   if ( !controlExists ) return;
-  stat = controlPvId->put( value );
+  stat = controlPvId->put( XDisplayName(actWin->appCtx->displayName), value );
+  //stat = controlPvId->put( value );
 
 }
 

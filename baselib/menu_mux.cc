@@ -131,6 +131,9 @@ int i, value;
 
     if ( w == mmuxo->pb[i] ) {
       value = i;
+      //mmuxo->controlPvId->put(
+      // XDisplayName(mmuxo->actWin->appCtx->displayName),
+      // value );
       mmuxo->controlPvId->put( value );
       return;
     }

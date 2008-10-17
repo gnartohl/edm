@@ -1649,11 +1649,15 @@ void edmmultiLineTextEntryClass::text_edit_callback (Widget w,
                 ProcessVariable::Type::enumerated)
             {
                 num = strtod (text, 0);
-                me->data_pv->put (num);
+                me->data_pv->put (
+                 XDisplayName(me->actWin->appCtx->displayName),
+                 num);
             }
             else
             {
-//              me->pv->put (text);
+//              me->pv->put (
+//               XDisplayName(me->actWin->appCtx->displayName),
+//               text);
                 int maxlen = me->data_pv->get_dimension ();
                 // If text is longer than the size of the waveform PV to which
                 // we are writing, put in a null character to truncate it to
@@ -1667,11 +1671,15 @@ void edmmultiLineTextEntryClass::text_edit_callback (Widget w,
         case dm_hex:
             hexnum = strtol (text, 0, 16);
             // fprintf ( stderr, "Text: %s -> %d\n", text, hexnum);
-            me->data_pv->put (hexnum);
+            me->data_pv->put (
+             XDisplayName(me->actWin->appCtx->displayName),
+             hexnum);
             break;
 
         default:
-            me->data_pv->put (text);
+            me->data_pv->put (
+             XDisplayName(me->actWin->appCtx->displayName),
+             text);
         }
     }
     XtFree (text);

@@ -5,6 +5,7 @@ ifdef EPICS_HOST_ARCH
  DIRS +=  util 
  DIRS += lib 
  DIRS += epicsPv
+ DIRS += logPv
  DIRS += calcPv
  DIRS += locPv
  DIRS += baselib 

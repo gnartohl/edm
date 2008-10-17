@@ -2096,7 +2096,7 @@ int stat;
   if ( destIsAckS ) {
 
     destV.s = (short) atol( sourceReleasePvExpString.getExpanded() );
-    destPvId->putAck( destV.s );
+    destPvId->putAck( XDisplayName(actWin->appCtx->displayName), destV.s );
 
   }
   else {
@@ -2105,23 +2105,23 @@ int stat;
 
     case ProcessVariable::Type::real:
       destV.d = atof( sourceReleasePvExpString.getExpanded() );
-      destPvId->put( destV.d );
+      destPvId->put( XDisplayName(actWin->appCtx->displayName), destV.d );
       break;
 
     case ProcessVariable::Type::integer:
       destV.l = atol( sourceReleasePvExpString.getExpanded() );
-      destPvId->put( destV.l );
+      destPvId->put( XDisplayName(actWin->appCtx->displayName), destV.l );
       break;
 
     case ProcessVariable::Type::text:
       strncpy( destV.str, sourceReleasePvExpString.getExpanded(), 39 );
-      destPvId->put( destV.str );
+      destPvId->put( XDisplayName(actWin->appCtx->displayName), destV.str );
       break;
 
     case ProcessVariable::Type::enumerated:
       if ( useEnumNumeric ) {
         destV.l = atol( sourceReleasePvExpString.getExpanded() );
-        destPvId->put( destV.l );
+        destPvId->put( XDisplayName(actWin->appCtx->displayName), destV.l );
       }
       else {
         stat = getEnumNumeric( sourceReleasePvExpString.getExpanded(),
@@ -2130,7 +2130,7 @@ int stat;
           actWin->appCtx->postMessage( activeMessageButtonClass_str40 );
         }
         else {
-          destPvId->put( destV.l );
+          destPvId->put( XDisplayName(actWin->appCtx->displayName), destV.l );
         }
       }
       break;
@@ -2202,7 +2202,7 @@ char labelValue[39+1];
   if ( destIsAckS ) {
 
     destV.s = (short) atol( labelValue );
-    destPvId->putAck( destV.s );
+    destPvId->putAck( XDisplayName(actWin->appCtx->displayName), destV.s );
 
   }
   else {
@@ -2211,23 +2211,23 @@ char labelValue[39+1];
 
     case ProcessVariable::Type::real:
       destV.d = atof( labelValue );
-      destPvId->put( destV.d );
+      destPvId->put( XDisplayName(actWin->appCtx->displayName), destV.d );
       break;
 
     case ProcessVariable::Type::integer:
       destV.l = atol( labelValue );
-      destPvId->put( destV.l );
+      destPvId->put( XDisplayName(actWin->appCtx->displayName), destV.l );
       break;
 
     case ProcessVariable::Type::text:
       strncpy( destV.str, labelValue, 39 );
-      destPvId->put( destV.str );
+      destPvId->put( XDisplayName(actWin->appCtx->displayName), destV.str );
       break;
 
     case ProcessVariable::Type::enumerated:
       if ( useEnumNumeric ) {
         destV.l = atol( labelValue );
-        destPvId->put( destV.l );
+        destPvId->put( XDisplayName(actWin->appCtx->displayName), destV.l );
       }
       else {
         stat = getEnumNumeric( labelValue, &destV.l );
@@ -2235,7 +2235,7 @@ char labelValue[39+1];
           actWin->appCtx->postMessage( activeMessageButtonClass_str39 );
         }
         else {
-          destPvId->put( destV.l );
+          destPvId->put( XDisplayName(actWin->appCtx->displayName), destV.l );
         }
       }
       break;

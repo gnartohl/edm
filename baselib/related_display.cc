@@ -2781,23 +2781,27 @@ char prefix[127+1];
 
       case ProcessVariable::Type::real:
         destV.d = atof( sourceExpString[i].getExpanded() );
-        destPvId[i]->put( destV.d );
+        destPvId[i]->put(
+         XDisplayName(actWin->appCtx->displayName), destV.d );
         break;
 
       case ProcessVariable::Type::integer:
         destV.l = atol( sourceExpString[i].getExpanded() );
-        destPvId[i]->put( destV.l );
+        destPvId[i]->put(
+         XDisplayName(actWin->appCtx->displayName), destV.l );
         break;
 
       case ProcessVariable::Type::text:
         strncpy( destV.str, sourceExpString[i].getExpanded(), 39 );
         destV.str[39] = 0;
-        destPvId[i]->putText( destV.str );
+        destPvId[i]->putText(
+         XDisplayName(actWin->appCtx->displayName), destV.str );
         break;
 
       case ProcessVariable::Type::enumerated:
         destV.s = (short) atol( sourceExpString[i].getExpanded() );
-        destPvId[i]->put( destV.s );
+        destPvId[i]->put(
+         XDisplayName(actWin->appCtx->displayName), destV.s );
         break;
 
       }

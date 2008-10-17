@@ -63,13 +63,14 @@ static void checkTextBorderAlways ( void ) {
 
 static int stringPut (
   ProcessVariable *id,
+  const char *dsp,
   int size,
   char *string
 ) {
 
   if ( size == 1 ) {
 
-    id->putText( string );
+    id->putText( dsp, string );
 
   }
   else {
@@ -127,7 +128,9 @@ char *buf;
       string[XTDC_K_MAX] = 0;
 
       if ( axtdo->pvExists ) {
-        stat = stringPut( axtdo->pvId, axtdo->pvCount, string );
+        stat = stringPut( axtdo->pvId,
+         XDisplayName(axtdo->actWin->appCtx->displayName),
+         axtdo->pvCount, string );
       }
       else {
         axtdo->grabUpdate = 0;
@@ -277,7 +280,9 @@ char string[XTDC_K_MAX+1], tmp[XTDC_K_MAX+1];
         strncpy( string, str, XTDC_K_MAX );
         string[XTDC_K_MAX] = 0;
         if ( axtdo->pvExists ) {
-	  stat = stringPut( axtdo->pvId, axtdo->pvCount, string );
+	  stat = stringPut( axtdo->pvId,
+           XDisplayName(axtdo->actWin->appCtx->displayName),
+           axtdo->pvCount, string );
         }
         else {
           axtdo->needUpdate = 1;
@@ -470,7 +475,9 @@ char tmp[XTDC_K_MAX+1];
   axtdo->editDialogIsActive = 0;
 
   if ( axtdo->pvExists ) {
-    stat = stringPut( axtdo->pvId, axtdo->pvCount, (char *) &axtdo->curValue );
+    stat = stringPut( axtdo->pvId,
+     XDisplayName(axtdo->actWin->appCtx->displayName),
+     axtdo->pvCount, (char *) &axtdo->curValue );
   }
 
   axtdo->actWin->appCtx->proc->lock();
@@ -539,7 +546,9 @@ char tmp[XTDC_K_MAX+1], name[XTDC_K_MAX+1], *tk;
   axtdo->editDialogIsActive = 0;
 
   if ( axtdo->pvExists ) {
-    stat = stringPut( axtdo->pvId, axtdo->pvCount, (char *) &axtdo->curValue );
+    stat = stringPut( axtdo->pvId,
+     XDisplayName(axtdo->actWin->appCtx->displayName),
+     axtdo->pvCount, (char *) &axtdo->curValue );
   }
 
   axtdo->actWin->appCtx->proc->lock();
@@ -683,7 +692,9 @@ char *buf;
   strncpy( string, axtdo->entryValue, XTDC_K_MAX );
   string[XTDC_K_MAX] = 0;
   if ( axtdo->pvExists ) {
-    stat = stringPut( axtdo->pvId, axtdo->pvCount, string );
+    stat = stringPut( axtdo->pvId,
+     XDisplayName(axtdo->actWin->appCtx->displayName),
+     axtdo->pvCount, string );
   }
   else {
     axtdo->actWin->appCtx->proc->lock();
@@ -731,7 +742,9 @@ int n;
   strncpy( string, axtdo->entryValue, XTDC_K_MAX );
   string[XTDC_K_MAX] = 0;
   if ( axtdo->pvExists ) {
-    stat = stringPut( axtdo->pvId, axtdo->pvCount, string );
+    stat = stringPut( axtdo->pvId,
+     XDisplayName(axtdo->actWin->appCtx->displayName),
+     axtdo->pvCount, string );
   }
   else {
     axtdo->needUpdate = 1;
@@ -1647,7 +1660,9 @@ char string[XTDC_K_MAX+1], tmp[XTDC_K_MAX+1];
     strncpy( string, axtdo->entryValue, XTDC_K_MAX );
     string[XTDC_K_MAX] = 0;
     if ( axtdo->pvExists ) {
-      stat = stringPut( axtdo->pvId, axtdo->pvCount, string );
+      stat = stringPut( axtdo->pvId,
+       XDisplayName(axtdo->actWin->appCtx->displayName),
+       axtdo->pvCount, string );
     }
     else {
       axtdo->needUpdate = 1;
@@ -1662,7 +1677,8 @@ char string[XTDC_K_MAX+1], tmp[XTDC_K_MAX+1];
 
     svalue = (short) axtdo->entryState;
     if ( axtdo->pvExists ) {
-      axtdo->pvId->put( svalue );
+      axtdo->pvId->put( XDisplayName(axtdo->actWin->appCtx->displayName),
+       svalue );
     }
     else {
       axtdo->needUpdate = 1;
@@ -2129,13 +2145,15 @@ void activeXTextDspClass::putValueWithClip (
   if ( clipToDspLimits ) {
 
     if ( ( val >= lowerLim ) && ( val <= upperLim ) ) {
-      pvId->put( val );
+      pvId->put( XDisplayName(actWin->appCtx->displayName), val );
+      //pvId->put( val );
     }
 
   }
   else {
 
-    pvId->put( val );
+    pvId->put( XDisplayName(actWin->appCtx->displayName), val );
+    //pvId->put( val );
 
   }
 
@@ -2148,13 +2166,13 @@ void activeXTextDspClass::putValueWithClip (
   if ( clipToDspLimits ) {
 
     if ( ( val >= (int) lowerLim ) && ( val <= (int) upperLim ) ) {
-      pvId->put( val );
+      pvId->put( XDisplayName(actWin->appCtx->displayName), val );
     }
 
   }
   else {
 
-    pvId->put( val );
+    pvId->put( XDisplayName(actWin->appCtx->displayName), val );
 
   }
 

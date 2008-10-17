@@ -10263,6 +10263,16 @@ done:
 
 activeWindowClass::activeWindowClass ( void ) : unknownTags() {
 
+char *str;
+
+  str = getenv( "EDMCLEAREPICSDEFAULT" );
+  if ( str ) {
+    clearEpicsPvTypeDefault = 1;
+  }
+  else {
+    clearEpicsPvTypeDefault = 0;
+  }
+
   strcpy( startSignature, "edmActiveWindow" );
   strcpy( endSignature, "wodniWevitcAmde" );
 
@@ -15751,7 +15761,9 @@ pvDefPtr pvDefCur;
     pvDefCur = pvDefCur->flink;
   }
 
-  if ( blank(defaultPvType) ) {
+  if ( blank(defaultPvType) ||
+       ( clearEpicsPvTypeDefault &&
+         ( strcmp( defaultPvType, "EPICS" ) == 0 ) ) ) {
     the_PV_Factory->clear_default_pv_type();
   }
   else {
@@ -15988,7 +16000,9 @@ char **muxMacro, **muxExpansion;
     pvDefCur = pvDefCur->flink;
   }
 
-  if ( blank(defaultPvType) ) {
+  if ( blank(defaultPvType) ||
+       ( clearEpicsPvTypeDefault &&
+         ( strcmp( defaultPvType, "EPICS" ) == 0 ) ) ) {
     the_PV_Factory->clear_default_pv_type();
   }
   else {

@@ -2214,7 +2214,9 @@ int stat, i, state, buttonX, buttonY, buttonH, buttonW,
 
     if ( ( state >= 0 ) && ( state < numStates ) ) {
       value = (short) state;
-      stat = controlPvId->put( value );
+      stat = controlPvId->put(
+       XDisplayName(actWin->appCtx->displayName),
+       value );
     }
 
   }

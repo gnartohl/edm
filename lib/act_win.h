@@ -429,6 +429,8 @@ unknownTagList unknownTags;
 
 public:
 
+int clearEpicsPvTypeDefault;
+
 static const int NUM_PER_PENDIO = 1000;
 
 char curSchemeSet[63+1];

@@ -413,8 +413,39 @@ bool ProcessVariable::have_write_access() const
     return true;
 }
 
+bool ProcessVariable::put(double value) {
+  return true;
+}
+
+bool ProcessVariable::put(const char *dsp, double value) {
+  return put(value);
+}
+
+bool ProcessVariable::put(const char *value) {
+  return true;
+}
+
+bool ProcessVariable::put(const char *dsp, const char *value) {
+  return put(value);
+}
+
 bool ProcessVariable::put(int value)
-{   return put(double(value)); }
+{   return true; }
+
+bool ProcessVariable::put(const char *dsp, int value)
+{   return put(value); }
+
+bool ProcessVariable::putText(char *value) {
+  return true;
+}
+
+bool ProcessVariable::putText(const char *dsp, char *value) {
+  return putText(value);
+}
 
 bool ProcessVariable::putAck(short value)
 {    return true; }
+
+bool ProcessVariable::putAck(const char *dsp, short value)
+{    return putAck(value); }
+

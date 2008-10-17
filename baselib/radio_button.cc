@@ -112,7 +112,8 @@ int i;
     if ( w == rbto->pb[i] ) {
       if ( rbto->curValue != i ) {
         rbto->curValue = i;
-        rbto->controlPvId->put( rbto->curValue );
+        rbto->controlPvId->put(
+         XDisplayName(rbto->actWin->appCtx->displayName), rbto->curValue );
       }
       break;
     }
