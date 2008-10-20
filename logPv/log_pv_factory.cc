@@ -39,7 +39,7 @@ static int g_context_created = 0;
 
 static FILE *g_pipe = NULL;
 static int g_pipe_disabled = 0;
-static char user[31+1], host[31+1];
+static char user[31+1], host[31+1], sshCon[131+1];
 
 static void writePipe(
   char *text
@@ -51,6 +51,17 @@ int err;
   if ( g_pipe_disabled ) return;
 
   if ( !g_pipe ) {
+
+    str =  getenv( "SSH_CONNECTION" );
+    if ( str ) {
+      strncpy( sshCon, " ssh=\"", 131 );
+      Strncat( sshCon, str, 131 );
+      Strncat( sshCon, "\" ", 131 );
+      sshCon[131] = 0;
+    }
+    else {
+      strcpy( sshCon, " " );
+    }
 
     str = getenv( "USER" );
     if ( str ) {
@@ -92,8 +103,8 @@ int err;
     g_pipe_disabled = 0;
   }
   else {
-    fprintf( g_pipe, "user=\"%s\" host=\"%s\" ",
-     user, host );
+    fprintf( g_pipe, "user=\"%s\" host=\"%s\"%s",
+     user, host, sshCon );
     fprintf( g_pipe, "%s\n", text );
     fflush( g_pipe );
   }

@@ -1463,20 +1463,24 @@ void edmTextentryClass::text_entered_callback(Widget w,
                     ProcessVariable::Type::enumerated)
                 {
                     num = strtod(text, 0);
-                    me->pv->put(num);
+                    me->pv->put(
+                     XDisplayName(me->actWin->appCtx->displayName),num);
                 }
                 else
                 {
-                    me->pv->put(text);
+                    me->pv->put(
+                     XDisplayName(me->actWin->appCtx->displayName),text);
                 }
                 break;
             case dm_hex:
                 hexnum = strtol(text, 0, 16);
                 // fprintf( stderr,"Text: %s -> %d\n", text, hexnum);
-                me->pv->put(hexnum);
+                me->pv->put(
+                 XDisplayName(me->actWin->appCtx->displayName),hexnum);
                 break;
             default:
-                me->pv->put(text);
+                me->pv->put(
+                 XDisplayName(me->actWin->appCtx->displayName),text);
         }
     }
     XtFree(text);

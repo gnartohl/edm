@@ -7,6 +7,7 @@
 
 #include<cadef.h>
 #include"pv_factory.h"
+#include "sys_types.h"
 
 class LOG_ProcessVariable;
 
