@@ -3,22 +3,22 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 36
+x 75
 y 21
 w 1069
-h 973
+h 984
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 50886 51143 50886
+bgColor rgb 52171 52171 52171
 textColor rgb 0 0 0
 ctlFgColor1 rgb 0 0 0
 ctlFgColor2 rgb 0 0 65535
-ctlBgColor1 rgb 48573 47802 48573
-ctlBgColor2 rgb 54998 56283 54998
-topShadowColor rgb 61423 60395 61423
-botShadowColor rgb 27499 26985 27499
+ctlBgColor1 rgb 46517 46517 46517
+ctlBgColor2 rgb 56797 56797 56797
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 title "Text"
 endScreenProperties
 
@@ -32,8 +32,8 @@ x 34
 y 305
 w 151
 h 21
-lineColor rgb 40092 40606 40092
-fillColor rgb 48573 47802 48573
+lineColor rgb 41120 41120 41120
+fillColor rgb 46517 46517 46517
 lineStyle "dash"
 endObjectProperties
 
@@ -47,8 +47,8 @@ x 34
 y 273
 w 151
 h 21
-lineColor rgb 40092 40606 40092
-fillColor rgb 48573 47802 48573
+lineColor rgb 41120 41120 41120
+fillColor rgb 46517 46517 46517
 lineStyle "dash"
 endObjectProperties
 
@@ -64,7 +64,7 @@ w 49
 h 27
 font "helvetica-medium-r-24.0"
 fgColor rgb 0 0 0
-bgColor rgb 61423 60395 61423
+bgColor rgb 61423 61423 61423
 value {
   "Text"
 }
@@ -83,7 +83,7 @@ w 55
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Fg Color"
@@ -103,7 +103,7 @@ w 380
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Color PV is used with dynaimic colors and alarm sensitivity."
@@ -123,7 +123,7 @@ w 324
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If both are present, alarm colors have precedence."
@@ -143,7 +143,7 @@ w 55
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Bg Color"
@@ -163,7 +163,7 @@ w 130
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Use Display Bg: Yes"
@@ -216,9 +216,9 @@ x 207
 y 108
 w 18
 h 9
-lineColor rgb 57054 63479 44461
+lineColor rgb 60138 60138 44461
 fill
-fillColor rgb 57054 63479 44461
+fillColor rgb 60138 60138 44461
 endObjectProperties
 
 # (Static Text)
@@ -233,7 +233,7 @@ w 55
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Fg Color"
@@ -253,7 +253,7 @@ w 55
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Bg Color"
@@ -273,7 +273,7 @@ w 123
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Use Display Bg: No"
@@ -293,7 +293,7 @@ w 45
 h 21
 font "helvetica-medium-r-18.0"
 fgColor rgb 0 0 0
-bgColor rgb 57054 63479 44461
+bgColor rgb 60138 60138 44461
 value {
   "155.4"
 }
@@ -325,9 +325,9 @@ x 207
 y 185
 w 18
 h 9
-lineColor rgb 57054 63479 44461
+lineColor rgb 60138 60138 44461
 fill
-fillColor rgb 57054 63479 44461
+fillColor rgb 60138 60138 44461
 endObjectProperties
 
 # (Static Text)
@@ -342,7 +342,7 @@ w 355
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Auto Height sets the boundary Height of the text control"
@@ -419,8 +419,8 @@ x 34
 y 240
 w 151
 h 21
-lineColor rgb 40092 40606 40092
-fillColor rgb 48573 47802 48573
+lineColor rgb 41120 41120 41120
+fillColor rgb 46517 46517 46517
 lineStyle "dash"
 endObjectProperties
 
@@ -436,7 +436,7 @@ w 164
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Auto Size: No, left justified"
@@ -456,7 +456,7 @@ w 174
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Auto Size: No, right justified"
@@ -476,7 +476,7 @@ w 187
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Auto Size: No, center justified"
@@ -496,7 +496,7 @@ w 412
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Note: The dashed lines around the text strings have been added"
@@ -516,7 +516,7 @@ w 269
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "to show the actual object size boundaries."
@@ -536,7 +536,7 @@ w 338
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Condition is true, the Fg Color is set to the Null Color."
@@ -556,7 +556,7 @@ w 339
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Null PV is used with the Null Condition rule. If the Null"
@@ -576,7 +576,7 @@ w 393
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If Alarm Sensitivity is present, alarm colors have precedence."
@@ -596,7 +596,7 @@ w 150
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Display Format Options"
@@ -616,7 +616,7 @@ w 328
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Default - precision gives number of significant digits"
@@ -636,7 +636,7 @@ w 310
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Float - precision gives number of decimal places"
@@ -656,7 +656,7 @@ w 355
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Exponential - precision gives number of decimal places,"
@@ -676,7 +676,7 @@ w 409
 h 32
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If Display Info From DB is checked, then precision is determined"
@@ -697,7 +697,7 @@ w 91
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "PV Type: Real"
@@ -717,7 +717,7 @@ w 108
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Default - Decimal"
@@ -737,7 +737,7 @@ w 117
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Decimal - Base 10"
@@ -757,7 +757,7 @@ w 91
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Hex - Base 16"
@@ -777,7 +777,7 @@ w 109
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "PV Type: Integer"
@@ -797,7 +797,7 @@ w 97
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Default - ASCII"
@@ -817,7 +817,7 @@ w 100
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "PV Type: String"
@@ -837,7 +837,7 @@ w 458
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Editable makes the object a control (checked) or a monitor (unchecked)"
@@ -857,7 +857,7 @@ w 369
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Editable + Keypad + PV type = Numeric : Edit with keypad"
@@ -877,7 +877,7 @@ w 410
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Editable + Keypad + Date + PV type = String : Edit with calendar"
@@ -890,13 +890,13 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 508
 y 5
 w 0
 h 960
 lineColor rgb 0 0 0
-fillColor rgb 48573 47802 48573
+fillColor rgb 46517 46517 46517
 lineWidth 2
 numPoints 2
 xPoints {
@@ -921,7 +921,7 @@ w 468
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If the Motif Widget box is checked, the text is displayed in a motif text field"
@@ -941,7 +941,7 @@ w 408
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "widget. Lose Focus Update and Auto Select Text are applicable"
@@ -961,7 +961,7 @@ w 441
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If Lose Focus Update is unchecked, to change the value of a PV, the"
@@ -981,7 +981,7 @@ w 434
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Editable + Keypad + File + PV type = String : Edit with file select box"
@@ -1001,7 +1001,7 @@ w 344
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Default Dir and Pattern apply only to this configuration."
@@ -1021,7 +1021,7 @@ w 466
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "ENTER key must be pressed. This is the normal configuration for numeric"
@@ -1041,7 +1041,7 @@ w 31
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "PVs."
@@ -1061,7 +1061,7 @@ w 445
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If Lose Focus Update is checked, the value of a PV will change either"
@@ -1081,7 +1081,7 @@ w 480
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "when the ENTER key is pressed or the widget loses focus (as it does when"
@@ -1101,7 +1101,7 @@ w 462
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "the TAB key is pressed). This configuration is useful when EDM is being"
@@ -1121,7 +1121,7 @@ w 267
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "to implement some type of data entry form."
@@ -1141,7 +1141,7 @@ w 440
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If the text object has been placed on top of a graphic object (e.g. a gif"
@@ -1161,7 +1161,7 @@ w 358
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "background), the Smart Refresh box should be checked."
@@ -1181,7 +1181,7 @@ w 450
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Normally, text update occurs no faster than .5 seconds. To disable this"
@@ -1201,7 +1201,7 @@ w 282
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "output throttling, check the Fast Update box."
@@ -1221,7 +1221,7 @@ w 382
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Default Dir sets the default file directory in the file select box."
@@ -1241,7 +1241,7 @@ w 311
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Pattern sets the default filter in the file select box."
@@ -1274,7 +1274,7 @@ w 154
 h 16
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Motif Widget Behavior"
@@ -1294,7 +1294,7 @@ w 135
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "only for motif widgets."
@@ -1314,7 +1314,7 @@ w 460
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If Auto Select Text is checked, the text is selected when the widget gets"
@@ -1334,7 +1334,7 @@ w 468
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "keyboard focus either from the mouse pointer entering the display window"
@@ -1354,7 +1354,7 @@ w 364
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "or when the TAB key is used to advance to the next field."
@@ -1374,7 +1374,7 @@ w 481
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If Editable, Keypad, and Date are checked, clicking on the text area calls up"
@@ -1394,7 +1394,7 @@ w 461
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "at calendar window in which the date and time may be entered. This may"
@@ -1409,32 +1409,12 @@ major 4
 minor 1
 release 0
 x 542
-y 738
-w 190
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
-useDisplayBg
-value {
-  "be used only with a string PV."
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 542
-y 869
+y 882
 w 474
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If Editable, Keypad, and File are checked, clicking on the text area calls up"
@@ -1449,12 +1429,12 @@ major 4
 minor 1
 release 0
 x 542
-y 885
+y 898
 w 477
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "a file selection dialog which uses the contents of Default Dir and Pattern as"
@@ -1469,12 +1449,12 @@ major 4
 minor 1
 release 0
 x 542
-y 901
+y 914
 w 362
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "filter parameters. This may be used only with a string PV."
@@ -1494,7 +1474,7 @@ w 444
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If Update PV On Drop is checked, then a drag-and-drop operation will"
@@ -1514,7 +1494,7 @@ w 441
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "replace the entire contents of the text field with the drag contents and"
@@ -1534,7 +1514,7 @@ w 305
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "the new value will be written to the attached PV."
@@ -1554,7 +1534,7 @@ w 514
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If Convert Date To File Name is checked, then the returned string will be suitable"
@@ -1568,13 +1548,13 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 542
-y 791
+x 543
+y 831
 w 139
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "for use as a file name."
@@ -1589,12 +1569,12 @@ major 4
 minor 1
 release 0
 x 564
-y 839
+y 852
 w 369
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "(e.g. jan-05-2003 11:30:10 becomes jan05_2003_113010)"
@@ -1609,12 +1589,12 @@ major 4
 minor 1
 release 0
 x 542
-y 927
+y 940
 w 436
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "The full path, the filename and extension, or just the file name may be"
@@ -1629,12 +1609,12 @@ major 4
 minor 1
 release 0
 x 542
-y 944
+y 957
 w 408
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "returned depending on the option selected in the \"Return\" menu."
@@ -1654,7 +1634,7 @@ w 501
 h 128
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If Allow Input Focus Updates is unchecked, updates are disallowed when the"
@@ -1665,6 +1645,26 @@ value {
   "If Allow Input Focus Updates is checked, then updates (due to an external"
   "agent changing the value of a PV) are disallowed only when the mouse pointer"
   "is inside the widget."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 543
+y 791
+w 190
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "be used only with a string PV."
 }
 autoSize
 endObjectProperties
