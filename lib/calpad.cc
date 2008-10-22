@@ -259,7 +259,8 @@ SYS_TIME_TYPE sysTime;
   weekDay = sysTime.tm_time.tm_wday;
 
   startDayOfWeek = ( weekDay - d + 1 ) % 7;
-  lastDayOfMon = numDays[month] + leap(year);
+  lastDayOfMon = numDays[month];
+  if ( month == 1 ) lastDayOfMon += leap(year);
 
   numCols = ( startDayOfWeek + lastDayOfMon ) / 7;
   if ( ( startDayOfWeek + lastDayOfMon ) % 7 ) numCols++;
@@ -510,7 +511,8 @@ SYS_TIME_TYPE sysTime;
   d = sysTime.tm_time.tm_mday;
 
   startDayOfWeek = ( weekDay - d + 1 ) % 7;
-  lastDayOfMon = numDays[month] + leap(year);
+  lastDayOfMon = numDays[month];
+  if ( month == 1 ) lastDayOfMon += leap(year);
 
   x = _x;
   y = _y;
