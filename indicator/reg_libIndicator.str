@@ -1,0 +1,6 @@
+#ifndef __reg_libIndicator_str
+#define __reg_libIndicator_str 1
+
+#define reg_str1 (char *) "Indicator"
+
+#endif

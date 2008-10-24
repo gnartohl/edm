@@ -17,6 +17,7 @@ ifdef EPICS_HOST_ARCH
  DIRS += videowidget
  DIRS += triumflib
  DIRS += diamondlib
+ DIRS += indicator
  include $(TOP)/configure/RULES_DIRS
 
 else
