@@ -972,7 +972,7 @@ int activeIndicatorClass::erase ( void ) {
 int activeIndicatorClass::eraseActive ( void ) {
 
 XRectangle xR = { x-1, y-1, w+2, h+2 };
-int clipStat;
+int clipStat, effHalfW;
 
   if ( !enabled || !activeMode || !init ) return 1;
 
@@ -996,33 +996,95 @@ int clipStat;
 
     clipStat = actWin->executeGc.addNormXClipRectangle( xR );
 
+    effHalfW = halfW;
+
     if ( horizontal ) {
 
-        points[0].x = oldIndX-halfW;
+      switch ( oldShape ) {
+      case INDICATORC_K_SHAPE_LT:
+        if ( effHalfW < 5 ) effHalfW = 5;
+        if ( effHalfW > indicatorH/2 ) {
+          effHalfW = indicatorH/2;
+          if ( effHalfW < 2 ) effHalfW = 2;
+	}
+        points[0].x = oldIndX+effHalfW+effHalfW;
+        points[0].y = indY;
+        points[1].x = oldIndX;
+        points[1].y = indY+indicatorH/2;
+        points[2].x = oldIndX+effHalfW+effHalfW;
+        points[2].y = indY+indicatorH;
+	break;
+      case INDICATORC_K_SHAPE_GT:
+        if ( effHalfW < 5 ) effHalfW = 5;
+        if ( effHalfW > indicatorH/2 ) {
+          effHalfW = indicatorH/2;
+          if ( effHalfW < 2 ) effHalfW = 2;
+	}
+        points[0].x = oldIndX-effHalfW-effHalfW;
+        points[0].y = indY;
+        points[1].x = oldIndX;
+        points[1].y = indY+indicatorH/2;
+        points[2].x = oldIndX-effHalfW-effHalfW;
+        points[2].y = indY+indicatorH;
+	break;
+      default:
+        points[0].x = oldIndX-effHalfW;
         points[0].y = indY;
         points[1].x = oldIndX;
         points[1].y = indY+indicatorH;
-        points[2].x = oldIndX+halfW;
+        points[2].x = oldIndX+effHalfW;
         points[2].y = indY;
-        if ( halfW ) {
-          XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
-           actWin->executeGc.normGC(), points, 3, Complex, CoordModeOrigin );
-        }
-        else {
-          XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
-           actWin->executeGc.normGC(), points, 2, CoordModeOrigin );
-        }
+	break;
+      }
+      if ( effHalfW ) {
+        XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), points, 3, Complex, CoordModeOrigin );
+      }
+      else {
+        XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+         actWin->executeGc.normGC(), points, 2, CoordModeOrigin );
+      }
 
     }
     else {
 
-      points[0].x = indX+indicatorW;
-      points[0].y = oldIndY-halfW;
-      points[1].x = indX;
-      points[1].y = oldIndY;
-      points[2].x = indX+indicatorW;
-      points[2].y = oldIndY+halfW;
-      if ( halfW ) {
+      switch ( oldShape ) {
+      case INDICATORC_K_SHAPE_LT:
+        if ( effHalfW < 5 ) effHalfW = 5;
+        if ( effHalfW > indicatorW/2 ) {
+          effHalfW = indicatorW/2;
+          if ( effHalfW < 2 ) effHalfW = 2;
+	}
+        points[0].x = indX+indicatorW;
+        points[0].y = oldIndY-effHalfW-effHalfW;
+        points[1].x = indX+indicatorW/2;
+        points[1].y = oldIndY;
+        points[2].x = indX;
+        points[2].y = oldIndY-effHalfW-effHalfW;
+	break;
+      case INDICATORC_K_SHAPE_GT:
+        if ( effHalfW < 5 ) effHalfW = 5;
+        if ( effHalfW > indicatorW/2 ) {
+          effHalfW = indicatorW/2;
+          if ( effHalfW < 2 ) effHalfW = 2;
+	}
+        points[0].x = indX+indicatorW;
+        points[0].y = oldIndY+effHalfW+effHalfW;
+        points[1].x = indX+indicatorW/2;
+        points[1].y = oldIndY;
+        points[2].x = indX;
+        points[2].y = oldIndY+effHalfW+effHalfW;
+	break;
+      default:
+        points[0].x = indX+indicatorW;
+        points[0].y = oldIndY-effHalfW;
+        points[1].x = indX;
+        points[1].y = oldIndY;
+        points[2].x = indX+indicatorW;
+        points[2].y = oldIndY+effHalfW;
+	break;
+      }
+      if ( effHalfW ) {
         XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
          actWin->executeGc.normGC(), points, 3, Complex, CoordModeOrigin );
         }
@@ -1226,7 +1288,7 @@ int tX, tY;
 int activeIndicatorClass::drawActive ( void ) {
 
 XRectangle xR = { x-1, y-1, w+2, h+2 };
-int clipStat;
+int clipStat, effHalfW;
 int tX, tY;
 char str[39+1];
 
@@ -1254,6 +1316,8 @@ char str[39+1];
 
   clipStat = actWin->executeGc.addNormXClipRectangle( xR );
 
+  effHalfW = halfW;
+
   actWin->executeGc.saveFg();
 
   if ( horizontal ) {
@@ -1269,13 +1333,43 @@ char str[39+1];
 
       actWin->executeGc.setFG( indicatorColor.getColor() );
 
-      points[0].x = indX-halfW;
-      points[0].y = indY;
-      points[1].x = indX;
-      points[1].y = indY+indicatorH;
-      points[2].x = indX+halfW;
-      points[2].y = indY;
-      if ( halfW ) {
+      switch ( shape ) {
+      case INDICATORC_K_SHAPE_LT:
+        if ( effHalfW < 5 ) effHalfW = 5;
+        if ( effHalfW > indicatorH/2 ) {
+          effHalfW = indicatorH/2;
+          if ( effHalfW < 2 ) effHalfW = 2;
+	}
+        points[0].x = indX+effHalfW+effHalfW;
+        points[0].y = indY;
+        points[1].x = indX;
+        points[1].y = indY+indicatorH/2;
+        points[2].x = indX+effHalfW+effHalfW;
+        points[2].y = indY+indicatorH;
+	break;
+      case INDICATORC_K_SHAPE_GT:
+        if ( effHalfW < 5 ) effHalfW = 5;
+        if ( effHalfW > indicatorH/2 ) {
+          effHalfW = indicatorH/2;
+          if ( effHalfW < 2 ) effHalfW = 2;
+	}
+        points[0].x = indX-effHalfW-effHalfW;
+        points[0].y = indY;
+        points[1].x = indX;
+        points[1].y = indY+indicatorH/2;
+        points[2].x = indX-effHalfW-effHalfW;
+        points[2].y = indY+indicatorH;
+	break;
+      default:
+        points[0].x = indX-effHalfW;
+        points[0].y = indY;
+        points[1].x = indX;
+        points[1].y = indY+indicatorH;
+        points[2].x = indX+effHalfW;
+        points[2].y = indY;
+	break;
+      }
+      if ( effHalfW ) {
         XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
          actWin->executeGc.normGC(), points, 3, Complex, CoordModeOrigin );
       }
@@ -1289,13 +1383,43 @@ char str[39+1];
 
       actWin->executeGc.setFG( indicatorColor.getColor() );
 
-      points[0].x = indX-halfW;
-      points[0].y = indY;
-      points[1].x = indX;
-      points[1].y = indY+indicatorH;
-      points[2].x = indX+halfW;
-      points[2].y = indY;
-      if ( halfW ) {
+      switch ( shape ) {
+      case INDICATORC_K_SHAPE_LT:
+        if ( effHalfW < 5 ) effHalfW = 5;
+        if ( effHalfW > indicatorH/2 ) {
+          effHalfW = indicatorH/2;
+          if ( effHalfW < 2 ) effHalfW = 2;
+	}
+        points[0].x = indX+effHalfW+effHalfW;
+        points[0].y = indY;
+        points[1].x = indX;
+        points[1].y = indY+indicatorH/2;
+        points[2].x = indX+effHalfW+effHalfW;
+        points[2].y = indY+indicatorH;
+	break;
+      case INDICATORC_K_SHAPE_GT:
+        if ( effHalfW < 5 ) effHalfW = 5;
+        if ( effHalfW > indicatorH/2 ) {
+          effHalfW = indicatorH/2;
+          if ( effHalfW < 2 ) effHalfW = 2;
+	}
+        points[0].x = indX-effHalfW-effHalfW;
+        points[0].y = indY;
+        points[1].x = indX;
+        points[1].y = indY+indicatorH/2;
+        points[2].x = indX-effHalfW-effHalfW;
+        points[2].y = indY+indicatorH;
+	break;
+      default:
+        points[0].x = indX-effHalfW;
+        points[0].y = indY;
+        points[1].x = indX;
+        points[1].y = indY+indicatorH;
+        points[2].x = indX+effHalfW;
+        points[2].y = indY;
+	break;
+      }
+      if ( effHalfW ) {
         XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
          actWin->executeGc.normGC(), points, 3, Complex, CoordModeOrigin );
       }
@@ -1307,6 +1431,7 @@ char str[39+1];
     }
 
     oldIndX = indX;
+    oldShape = shape;
 
   }
   else { // vertical
@@ -1322,13 +1447,43 @@ char str[39+1];
 
       actWin->executeGc.setFG( indicatorColor.getColor() );
 
-      points[0].x = indX+indicatorW;
-      points[0].y = indY-halfW;
-      points[1].x = indX;
-      points[1].y = indY;
-      points[2].x = indX+indicatorW;
-      points[2].y = indY+halfW;
-      if ( halfW ) {
+      switch ( shape ) {
+      case INDICATORC_K_SHAPE_LT:
+        if ( effHalfW < 5 ) effHalfW = 5;
+        if ( effHalfW > indicatorW/2 ) {
+          effHalfW = indicatorW/2;
+          if ( effHalfW < 2 ) effHalfW = 2;
+	}
+        points[0].x = indX+indicatorW;
+        points[0].y = indY-effHalfW-effHalfW;
+        points[1].x = indX+indicatorW/2;
+        points[1].y = indY;
+        points[2].x = indX;
+        points[2].y = indY-effHalfW-effHalfW;
+	break;
+      case INDICATORC_K_SHAPE_GT:
+        if ( effHalfW < 5 ) effHalfW = 5;
+        if ( effHalfW > indicatorW/2 ) {
+          effHalfW = indicatorW/2;
+          if ( effHalfW < 2 ) effHalfW = 2;
+	}
+        points[0].x = indX+indicatorW;
+        points[0].y = indY+effHalfW+effHalfW;
+        points[1].x = indX+indicatorW/2;
+        points[1].y = indY;
+        points[2].x = indX;
+        points[2].y = indY+effHalfW+effHalfW;
+	break;
+      default:
+        points[0].x = indX+indicatorW;
+        points[0].y = indY-effHalfW;
+        points[1].x = indX;
+        points[1].y = indY;
+        points[2].x = indX+indicatorW;
+        points[2].y = indY+effHalfW;
+	break;
+      }
+      if ( effHalfW ) {
         XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
          actWin->executeGc.normGC(), points, 3, Complex, CoordModeOrigin );
       }
@@ -1342,13 +1497,43 @@ char str[39+1];
 
       actWin->executeGc.setFG( indicatorColor.getColor() );
 
-      points[0].x = indX+indicatorW;
-      points[0].y = indY-halfW;
-      points[1].x = indX;
-      points[1].y = indY;
-      points[2].x = indX+indicatorW;
-      points[2].y = indY+halfW;
-      if ( halfW ) {
+      switch ( shape ) {
+      case INDICATORC_K_SHAPE_LT:
+        if ( effHalfW < 5 ) effHalfW = 5;
+        if ( effHalfW > indicatorW/2 ) {
+          effHalfW = indicatorW/2;
+          if ( effHalfW < 2 ) effHalfW = 2;
+	}
+        points[0].x = indX+indicatorW;
+        points[0].y = indY-effHalfW-effHalfW;
+        points[1].x = indX+indicatorW/2;
+        points[1].y = indY;
+        points[2].x = indX;
+        points[2].y = indY-effHalfW-effHalfW;
+	break;
+      case INDICATORC_K_SHAPE_GT:
+        if ( effHalfW < 5 ) effHalfW = 5;
+        if ( effHalfW > indicatorW/2 ) {
+          effHalfW = indicatorW/2;
+          if ( effHalfW < 2 ) effHalfW = 2;
+	}
+        points[0].x = indX+indicatorW;
+        points[0].y = indY+effHalfW+effHalfW;
+        points[1].x = indX+indicatorW/2;
+        points[1].y = indY;
+        points[2].x = indX;
+        points[2].y = indY+effHalfW+effHalfW;
+	break;
+      default:
+        points[0].x = indX+indicatorW;
+        points[0].y = indY-effHalfW;
+        points[1].x = indX;
+        points[1].y = indY;
+        points[2].x = indX+indicatorW;
+        points[2].y = indY+effHalfW;
+	break;
+      }
+      if ( effHalfW ) {
         XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
          actWin->executeGc.normGC(), points, 3, Complex, CoordModeOrigin );
       }
@@ -1360,6 +1545,7 @@ char str[39+1];
     }
 
     oldIndY = indY;
+    oldShape = shape;
 
   }
 
@@ -1462,6 +1648,9 @@ char fmt[31+1];
       indicatorY = 0;
       oldIndicatorY = 0;
     }
+
+    oldShape = INDICATORC_K_SHAPE_UNKNOWN;
+    shape = INDICATORC_K_SHAPE_PTR;
 
     pvNotConnectedMask = active = init = 0;
     activeMode = 1;
@@ -2093,14 +2282,37 @@ void activeIndicatorClass::updateIndicator ( void ) {
 
     case INDICATORC_K_MAX_GE_MIN:
 
-      indX = indicatorX + (int) ( factor * ( readV - readMin ) + 0.5 );
+      if ( readV < readMin ) {
+        indX = indicatorX;
+	shape = INDICATORC_K_SHAPE_LT;
+      }
+      else if ( readV > readMax ) {
+        indX = indicatorX + indicatorAreaW;
+	shape = INDICATORC_K_SHAPE_GT;
+      }
+      else {
+        indX = indicatorX + (int) ( factor * ( readV - readMin ) + 0.5 );
+	shape = INDICATORC_K_SHAPE_PTR;
+      }
       indY = indicatorY;
 
       break;
 
     case INDICATORC_K_MAX_LT_MIN:
 
-      indX = indicatorX + (int) ( factor * ( readV - readMin ) + 0.5 );
+      if ( readV < readMax ) {
+        indX = indicatorX + indicatorAreaW;
+	shape = INDICATORC_K_SHAPE_GT;
+      }
+      else if ( readV > readMin ) {
+        indX = indicatorX;
+	shape = INDICATORC_K_SHAPE_LT;
+      }
+      else {
+        indX = indicatorX + indicatorAreaW +
+         (int) ( factor * ( readV - readMax ) + 0.5 );
+	shape = INDICATORC_K_SHAPE_PTR;
+      }
       indY = indicatorY;
 
       break;
@@ -2115,14 +2327,37 @@ void activeIndicatorClass::updateIndicator ( void ) {
     case INDICATORC_K_MAX_GE_MIN:
 
       indX = indicatorX;
-      indY = indicatorY - (int) ( factor * ( readV - readMin ) + 0.5 );
+      if ( readV < readMin ) {
+        indY = indicatorY;
+	shape = INDICATORC_K_SHAPE_LT;
+      }
+      else if ( readV > readMax ) {
+        indY = indicatorY - indicatorAreaH;
+	shape = INDICATORC_K_SHAPE_GT;
+      }
+      else {
+        indY = indicatorY - (int) ( factor * ( readV - readMin ) + 0.5 );
+	shape = INDICATORC_K_SHAPE_PTR;
+      }
 
       break;
 
     case INDICATORC_K_MAX_LT_MIN:
 
       indX = indicatorX;
-      indY = indicatorY - (int) ( factor * ( readV - readMin ) + 0.5 );
+      if ( readV < readMax ) {
+        indY = indicatorY - indicatorAreaH;
+	shape = INDICATORC_K_SHAPE_GT;
+      }
+      else if ( readV > readMin ) {
+        indY = indicatorY;
+	shape = INDICATORC_K_SHAPE_LT;
+      }
+      else {
+        indY = indicatorY - indicatorAreaH -
+         (int) ( factor * ( readV - readMax ) + 0.5 );
+	shape = INDICATORC_K_SHAPE_PTR;
+      }
 
       break;
 

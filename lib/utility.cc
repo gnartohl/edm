@@ -2768,7 +2768,28 @@ int num_label_ticks, stat;
 
 }
 
-static int formatString (
+int formatString (
+  double value,
+  char *string,
+  int len,
+  char *fmt
+) {
+
+char buf[128];
+
+  if ( !string ) return 0;
+  if ( len < 1 ) return 0;
+
+  snprintf( buf, 127, fmt, value );
+  buf[127] = 0;
+
+  strncpy( string, buf, len );
+
+  return 1;
+
+}
+
+int formatString (
   double value,
   char *string,
   int len
@@ -2779,10 +2800,12 @@ char buf[128];
   if ( !string ) return 0;
   if ( len < 1 ) return 0;
 
-  sprintf( buf, "%-g", value );
+  snprintf( buf, 127, "%-g", value );
+  buf[127] = 0;
 
   if ( strlen(buf) > 8 ) {
-    sprintf( buf, "%-3g", value );
+    snprintf( buf, 127, "%-3g", value );
+    buf[127] = 0;
   }
 
   strncpy( string, buf, len );
@@ -3294,7 +3317,8 @@ void drawXLinearScale (
   int annotateScale,
   int minConstrained,
   int maxConstrained,
-  int erase
+  int erase,
+  char *fmt
 ) {
 
 int count, ii, iii, x0, y0, x1, y1;
@@ -3400,14 +3424,29 @@ int reverse = 0;
       y1 = y0 + (int) ( 1.2 * label_tick_height );
       z = fabs( labelVal - 0.0 ) / labelInc;
       if ( z < 1e-5 ) {
-        formatString( 0.0, buf, 31 );
+        if ( fmt ) {
+          formatString( 0.0, buf, 31, fmt );
+	}
+	else {
+          formatString( 0.0, buf, 31 );
+	}
       }
       else {
 	if ( reverse ) {
-          formatString( -1*labelVal, buf, 31 );
+          if ( fmt ) {
+            formatString( -1*labelVal, buf, 31, fmt );
+	  }
+	  else {
+            formatString( -1*labelVal, buf, 31 );
+	  }
 	}
 	else {
-          formatString( labelVal, buf, 31 );
+          if ( fmt ) {
+            formatString( labelVal, buf, 31, fmt );
+	  }
+	  else {
+            formatString( labelVal, buf, 31 );
+	  }
 	}
       }
       if ( minConstrained ) {
@@ -3551,14 +3590,29 @@ int reverse = 0;
     y1 = y0 + (int) ( 1.2 * label_tick_height );
     z = fabs( labelVal - 0.0 ) / labelInc;
     if ( z < 1e-5 ) {
-      formatString( 0.0, buf, 31 );
+      if ( fmt ) {
+        formatString( 0.0, buf, 31, fmt );
+      }
+      else {
+        formatString( 0.0, buf, 31 );
+      }
     }
     else {
       if ( reverse ) {
-        formatString( -1*labelVal, buf, 31 );
+        if ( fmt ) {
+          formatString( -1*labelVal, buf, 31, fmt );
+	}
+	else {
+          formatString( -1*labelVal, buf, 31 );
+	}
       }
       else {
-        formatString( labelVal, buf, 31 );
+        if ( fmt ) {
+          formatString( labelVal, buf, 31, fmt );
+	}
+	else {
+          formatString( labelVal, buf, 31 );
+	}
       }
     }
     if ( maxConstrained ) {
@@ -3581,6 +3635,66 @@ int reverse = 0;
 
   gc->restoreFg();
   gc->restoreBg();
+
+}
+
+void drawXLinearScale (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  int drawScale,
+  int x,
+  int y,
+  int scaleLen,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  int majors_per_label,
+  int minors_per_major,
+  unsigned int scaleColor,
+  unsigned int bgColor,
+  int labelGrid,
+  int majorGrid,
+  int minorGrid,
+  int gridHeight,
+  unsigned int gridColor,
+  fontInfoClass *fi,
+  char *fontTag,
+  XFontStruct *fs,
+  int annotateScale,
+  int minConstrained,
+  int maxConstrained,
+  int erase
+) {
+
+  drawXLinearScale (
+   d,
+   win,
+   gc,
+   drawScale,
+   x,
+   y,
+   scaleLen,
+   adj_min,
+   adj_max,
+   num_label_ticks,
+   majors_per_label,
+   minors_per_major,
+   scaleColor,
+   bgColor,
+   labelGrid,
+   majorGrid,
+   minorGrid,
+   gridHeight,
+   gridColor,
+   fi,
+   fontTag,
+   fs,
+   annotateScale,
+   minConstrained,
+   maxConstrained,
+   erase,
+   NULL );
 
 }
 
@@ -4420,7 +4534,8 @@ void drawYLinearScale (
   int annotateScale,
   int minConstrained,
   int maxConstrained,
-  int erase
+  int erase,
+  char *fmt
 ) {
 
 int count, ii, iii, x0, y0, x1, y1;
@@ -4527,14 +4642,29 @@ int reverse = 0;
       y1 = y0 - (int) ( fontHeight * 0.5 );
       z = fabs( labelVal - 0.0 ) / labelInc;
       if ( z < 1e-5 ) {
-        formatString( 0.0, buf, 31 );
+        if ( fmt ) {
+          formatString( 0.0, buf, 31, fmt );
+	}
+	else {
+          formatString( 0.0, buf, 31, fmt );
+	}
       }
       else {
 	if ( reverse ) {
-          formatString( -1*labelVal, buf, 31 );
+          if ( fmt ) {
+            formatString( -1*labelVal, buf, 31, fmt );
+	  }
+	  else {
+            formatString( -1*labelVal, buf, 31, fmt );
+	  }
 	}
 	else {
-          formatString( labelVal, buf, 31 );
+          if ( fmt ) {
+            formatString( labelVal, buf, 31, fmt );
+	  }
+	  else {
+            formatString( labelVal, buf, 31, fmt );
+	  }
 	}
       }
       if ( minConstrained ) {
@@ -4676,14 +4806,29 @@ int reverse = 0;
     y1 = y0 - (int) ( fontHeight * 0.5 );
     z = fabs( labelVal - 0.0 ) / labelInc;
     if ( z < 1e-5 ) {
-      formatString( 0.0, buf, 31 );
+      if ( fmt ) {
+        formatString( 0.0, buf, 31, fmt );
+      }
+      else {
+        formatString( 0.0, buf, 31, fmt );
+      }
     }
     else {
       if ( reverse ) {
-        formatString( -1*labelVal, buf, 31 );
+        if ( fmt ) {
+          formatString( -1*labelVal, buf, 31, fmt );
+	}
+	else {
+          formatString( -1*labelVal, buf, 31, fmt );
+	}
       }
       else {
-        formatString( labelVal, buf, 31 );
+        if ( fmt ) {
+          formatString( labelVal, buf, 31, fmt );
+	}
+	else {
+          formatString( labelVal, buf, 31, fmt );
+	}
       }
     }
     if ( maxConstrained ) {
@@ -4706,6 +4851,66 @@ int reverse = 0;
  
   gc->restoreFg();
   gc->restoreBg();
+
+}
+
+void drawYLinearScale (
+  Display *d,
+  Window win,
+  gcClass *gc,
+  int drawScale,
+  int x,
+  int y,
+  int scaleHeight,
+  double adj_min,
+  double adj_max,
+  int num_label_ticks,
+  int majors_per_label,
+  int minors_per_major,
+  unsigned int scaleColor,
+  unsigned int bgColor,
+  int labelGrid,
+  int majorGrid,
+  int minorGrid,
+  int gridLen,
+  unsigned int gridColor,
+  fontInfoClass *fi,
+  char *fontTag,
+  XFontStruct *fs,
+  int annotateScale,
+  int minConstrained,
+  int maxConstrained,
+  int erase
+) {
+
+  drawYLinearScale (
+   d,
+   win,
+   gc,
+   drawScale,
+   x,
+   y,
+   scaleHeight,
+   adj_min,
+   adj_max,
+   num_label_ticks,
+   majors_per_label,
+   minors_per_major,
+   scaleColor,
+   bgColor,
+   labelGrid,
+   majorGrid,
+   minorGrid,
+   gridLen,
+   gridColor,
+   fi,
+   fontTag,
+   fs,
+   annotateScale,
+   minConstrained,
+   maxConstrained,
+   erase,
+   NULL );
 
 }
 

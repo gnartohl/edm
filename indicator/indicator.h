@@ -40,6 +40,11 @@
 #define INDICATORC_K_LIMITS_FROM_DB 1
 #define INDICATORC_K_LIMITS_FROM_FORM 0
 
+#define INDICATORC_K_SHAPE_UNKNOWN 0
+#define INDICATORC_K_SHAPE_PTR 1
+#define INDICATORC_K_SHAPE_GT 2
+#define INDICATORC_K_SHAPE_LT 3
+
 #ifdef __indicator_cc
 
 #include "indicator.str"
@@ -169,7 +174,7 @@ double controlV, curControlV, readV, curReadV, curNullV;
 int indicatorY, oldIndicatorY, indicatorH, oldIndicatorH, indicatorW, oldIndicatorW,
  bufInvalid, indicatorX, oldIndicatorX, indX, oldIndX, indY, oldIndY, mode,
  indicatorAreaX, indicatorAreaW, indicatorAreaY, indicatorAreaH,
- indicatorStrLen, indicatorMaxW, indicatorMaxH;
+ indicatorStrLen, indicatorMaxW, indicatorMaxH, shape, oldShape;
 double range, factor, offset;
 
 fontMenuClass fm;
