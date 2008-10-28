@@ -11014,7 +11014,7 @@ int lX, lY;
 void xyGraphClass::drawYlabel ( void ) {
 
 unsigned int i;
-int lX, lY, lW, inc, stat;
+int lX, lY, lW, inc, stat, useRotated, cW, maxW;
 char fullName[127+1], label[127+1];
 
   if ( y1Axis[0] && !blank( yLabel.getExpanded() ) ) {
@@ -11022,24 +11022,55 @@ char fullName[127+1], label[127+1];
     strncpy( label, yLabel.getExpanded(), 127 );
     label[127] = 0;
 
-    lX = fontHeight;
-    //lY = h - fontHeight * 3 / 2;
-    lW = XTextWidth( fs, label, strlen(label) );
-    lY = plotAreaY + ( plotAreaH - lW ) / 2;
-
     actWin->executeGc.saveFg();
     actWin->executeGc.setFG( actWin->ci->pix(fgColor) );
 
+    useRotated = 1;
+
     stat = actWin->fi->getFontName( fontTag, 90.0, fullName, 127 );
-    actWin->executeGc.setNativeFont( fullName, actWin->fi );
+    if ( !( stat & 1 ) ) {
+      useRotated = 0;
+    }
+
+    stat = actWin->executeGc.setNativeFont( fullName, actWin->fi );
+    if ( !( stat & 1 ) ) {
+      useRotated = 0;
+    }
+
+    if ( useRotated ) {
+      lX = fontHeight;
+      lW = 2 * XTextWidth( fs, label, strlen(label) );
+      lY = plotAreaY + ( plotAreaH + lW ) / 2;
+    }
+    else {
+      maxW = XTextWidth( fs, &label[0], 1 );
+      for ( i=0; i<strlen(label); i++ ) {
+        cW = XTextWidth( fs, &label[i], 1 );
+        if ( cW > maxW ) maxW = cW;
+      }
+      lW = fontHeight * strlen(label);
+      actWin->fi->loadFontTag( fontTag );
+      actWin->executeGc.setFontTag( fontTag, actWin->fi );
+      lY = fontHeight + plotAreaY + ( plotAreaH - lW ) / 2;
+    }
 
     for ( i=0; i<strlen(label); i++ ) {
+
+      if ( !useRotated ) {
+        lX = maxW - XTextWidth( fs, &label[i], 1 ) / 2;
+      }
 
       XDrawString( actWin->d, pixmap,
        actWin->executeGc.normGC(), lX, lY, &label[i], 1 );
 
-      inc = 2*XTextWidth( fs, &label[i], 1 );
-      lY += inc;
+      if ( useRotated ) {
+        inc = 2*XTextWidth( fs, &label[i], 1 );
+        lY -= inc;
+      }
+      else {
+        inc = fontHeight;
+        lY += inc;
+      }
 
     }
 
@@ -11052,7 +11083,7 @@ char fullName[127+1], label[127+1];
 void xyGraphClass::drawY2label ( void ) {
 
 unsigned int i;
-int lX, lY, lW, inc, stat;
+int lX, lY, lW, inc, stat, useRotated, cW, maxW;
 char fullName[127+1], label[127+1];
 
   if ( y1Axis[1] && !blank( y2Label.getExpanded() ) ) {
@@ -11060,23 +11091,55 @@ char fullName[127+1], label[127+1];
     strncpy( label, y2Label.getExpanded(), 127 );
     label[127] = 0;
 
-    lX = w - fontHeight;
-    lW = XTextWidth( fs, label, strlen(label) );
-    lY = plotAreaY + ( plotAreaH - lW ) / 2;
-
     actWin->executeGc.saveFg();
     actWin->executeGc.setFG( actWin->ci->pix(fgColor) );
 
+    useRotated = 1;
+
     stat = actWin->fi->getFontName( fontTag, 270.0, fullName, 127 );
-    actWin->executeGc.setNativeFont( fullName, actWin->fi );
+    if ( !( stat & 1 ) ) {
+      useRotated = 0;
+    }
+
+    stat = actWin->executeGc.setNativeFont( fullName, actWin->fi );
+    if ( !( stat & 1 ) ) {
+      useRotated = 0;
+    }
+
+    if ( useRotated ) {
+      lX = w - fontHeight;
+      lW = 2 * XTextWidth( fs, label, strlen(label) );
+      lY = plotAreaY + ( plotAreaH - lW ) / 2;
+    }
+    else {
+      maxW = XTextWidth( fs, &label[0], 1 );
+      for ( i=0; i<strlen(label); i++ ) {
+        cW = XTextWidth( fs, &label[i], 1 );
+        if ( cW > maxW ) maxW = cW;
+      }
+      lW = fontHeight * strlen(label);
+      actWin->fi->loadFontTag( fontTag );
+      actWin->executeGc.setFontTag( fontTag, actWin->fi );
+      lY = fontHeight + plotAreaY + ( plotAreaH - lW ) / 2;
+    }
 
     for ( i=0; i<strlen(label); i++ ) {
+
+      if ( !useRotated ) {
+        lX = w - maxW - XTextWidth( fs, &label[i], 1 ) / 2;
+      }
 
       XDrawString( actWin->d, pixmap,
        actWin->executeGc.normGC(), lX, lY, &label[i], 1 );
 
-      inc = 2*XTextWidth( fs, &label[i], 1 );
-      lY += inc;
+      if ( useRotated ) {
+        inc = 2*XTextWidth( fs, &label[i], 1 );
+        lY += inc;
+      }
+      else {
+        inc = fontHeight;
+        lY += inc;
+      }
 
     }
 
