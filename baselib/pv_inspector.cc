@@ -1662,6 +1662,8 @@ Atom importList[2];
         textFontList = NULL;
       }
 
+      strcpy( entryValue, "" );
+
       tf_widget = XtVaCreateManagedWidget( "", xmTextFieldWidgetClass,
        actWin->executeWidget,
        XmNx, x,
