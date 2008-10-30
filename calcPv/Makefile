@@ -54,9 +54,9 @@ ifdef EPICS_HOST_ARCH
    HCLXmu_DIR = $(X11_LIB)
 
    LIB_SRCS += calc_pv_factory.cc
-   LIB_SRCS += postfix.cc
+   LIB_SRCS += postfix.c
+   LIB_SRCS += calcPerform.c
    LIB_SRCS += regCalc.cc
-
 
    include $(TOP)/configure/RULES
 

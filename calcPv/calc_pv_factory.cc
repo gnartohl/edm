@@ -10,7 +10,6 @@
 #include<stdlib.h>
 #include<float.h>
 #include<math.h>
-#include"postfix.h"
 //#include"alarm.h"
 #include "epicsAlarmLike.h"
 #include"calc_pv_factory.h"
@@ -46,42 +45,53 @@ static const char *whitespace = " \t\n\r";
 // HashedExpression ----------------------------------------------------
 // ------------------------------------------------------------------
 HashedExpression::HashedExpression()
-{   name = 0; }
+{ name = NULL; }
 
 HashedExpression::HashedExpression(const char *_name, char *formula,
  char *rewriteString=NULL )
 {
-    short error;
-    name = strdup(_name);
-    if ( rewriteString ) {
-      expStr.setRaw( rewriteString );
-    }
-    if (postfix(formula, this->compiled, &error) != 0)
-    {
-        fprintf(stderr, "CALC '%s': error in expression '%s'\n",
-                name, formula);
-        return;
-    }
+
+int st;
+short error;
+
+  name = strdup(_name);
+  if ( rewriteString ) {
+    expStr.setRaw( rewriteString );
+  }
+  st = edm_postfix(formula, this->compiled, &error);
+  if ( st != 0) {
+    fprintf(stderr, "CALC '%s': error in expression '%s'\n",
+     name, formula);
+  }
+
 }
 
 HashedExpression::~HashedExpression()
 {
+
     if (name)
     {
         free(name);
-        name = 0;
+        name = NULL;
     }
+
 }
 
 bool HashedExpression::calc(const double args[], double &result)
-{   return calcPerform((double *) args, &result, compiled) == 0; }
+{   
+  return edm_calcPerform((double *) args, &result, compiled) == 0;
+}
 
 // Required for Hashtable<>:
 size_t hash(const HashedExpression *item, size_t N)
-{   return generic_string_hash(item->name, N); }
+{
+  return generic_string_hash(item->name, N);
+}
 
 bool equals(const HashedExpression *lhs, const HashedExpression *rhs)
-{   return strcmp(lhs->name, rhs->name)==0; }
+{
+  return strcmp(lhs->name, rhs->name)==0;
+}
 
 // ------------------------------------------------------------------
 // CALC_PV_Factory --------------------------------------------------
@@ -97,7 +107,7 @@ static void checkForEmbedded (
 ) {
 
 int l;
-char *outer, inner[255+1];
+char *outer, inner[MAX_INFIX_SIZE];
 
   if ( !expression ) return;
 
@@ -105,7 +115,7 @@ char *outer, inner[255+1];
 
   l = strlen( expression );
 
-  if ( l > 255 ) return;
+  if ( l > MAX_INFIX_SIZE-1 ) return;
 
   if ( l > 2 ) {
 
@@ -206,7 +216,8 @@ CALC_PV_Factory::~CALC_PV_Factory()
 
 bool CALC_PV_Factory::parseFile(const char *filename)
 {
-    char line[200], name[200], newArgList[200];
+    char line[1024], name[PV_Factory::MAX_PV_NAME+1],
+     newArgList[PV_Factory::MAX_PV_NAME+1];
     size_t len;
 
 #   ifdef CALC_DEBUG
@@ -257,7 +268,8 @@ bool CALC_PV_Factory::parseFile(const char *filename)
         
         if (need_name)
         {
-            strcpy(name, p);
+            strncpy( name, p, PV_Factory::MAX_PV_NAME );
+            name[PV_Factory::MAX_PV_NAME] = 0;
             strcpy( newArgList, "" );
             need_name = false;
         }
@@ -266,7 +278,8 @@ bool CALC_PV_Factory::parseFile(const char *filename)
 
 	  if ( p[0] == '@' ) {
 
-            strcpy( newArgList, &p[1] );
+            strncpy( newArgList, &p[1], PV_Factory::MAX_PV_NAME );
+            newArgList[PV_Factory::MAX_PV_NAME] = 0;
 
 	  }
 	  else {

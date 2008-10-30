@@ -3199,7 +3199,7 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
   unsigned long   fg, bg;
   XGCValues       gcValues;
   unsigned long   gcValueMask;
-  char tmpStr[131+1];
+  char tmpStr[PV_Factory::MAX_PV_NAME+1];
 
   Display *display = XtDisplay(w);
   int screenNum = DefaultScreen(display);
@@ -3224,8 +3224,8 @@ Widget mkDragIcon( Widget w, activeGraphicClass *agc )
   char *str = agc->dragValue(agc->getCurrentDragIndex());
   if ( str ) {
     if ( !blank(str) ) {
-      strncpy( tmpStr, str, 131 );
-      tmpStr[131] = 0;
+      strncpy( tmpStr, str, PV_Factory::MAX_PV_NAME );
+      tmpStr[PV_Factory::MAX_PV_NAME] = 0;
     }
   }
 

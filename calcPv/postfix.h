@@ -1,53 +1,87 @@
+/*************************************************************************\
+* Copyright (c) 2002 The University of Chicago, as Operator of Argonne
+*     National Laboratory.
+* Copyright (c) 2002 The Regents of the University of California, as
+*     Operator of Los Alamos National Laboratory.
+* EPICS BASE Versions 3.13.7
+* and higher are distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution. 
+\*************************************************************************/
 /* postfix.h
  *      Author:          Bob Dalesio
  *      Date:            9-21-88
- *
- *      Experimental Physics and Industrial Control System (EPICS)
- *
- *      Copyright 1991, the Regents of the University of California,
- *      and the University of Chicago Board of Governors.
- *
- *      This software was produced under  U.S. Government contracts:
- *      (W-7405-ENG-36) at the Los Alamos National Laboratory,
- *      and (W-31-109-ENG-38) at Argonne National Laboratory.
- *
- *      Initial development by:
- *              The Controls and Automation Group (AT-8)
- *              Ground Test Accelerator
- *              Accelerator Technology Division
- *              Los Alamos National Laboratory
- *
- *      Co-developed with
- *              The Controls and Computing Group
- *              Accelerator Systems Division
- *              Advanced Photon Source
- *              Argonne National Laboratory
- *
- * Modification Log:
- * -----------------
- * .01  01-11-89        lrd     add right and left shift
- * .02  02-01-89        lrd     add trig functions
- * .03  02-17-92        jba     add exp, CEIL, and FLOOR
- * .04  03-03-92        jba     added MAX, MIN, and comma
- * .05  03-06-92        jba     added multiple conditional expressions ?
- * .06  04-02-92        jba     added CONSTANT for floating pt constants in expression
- * .07  05-11-94        jba     added CONST_PI, CONST_D2R, and CONST_R2D
  */
 
 #ifndef INCpostfixh
 #define INCpostfixh
 
+#if defined(TRUE)
+#undef TRUE
+#endif
+#define TRUE 1
+
+#if defined(FALSE)
+#undef FALSE
+#endif
+#define FALSE 0
+
+/* number of elements in an array */
+#define NELEMENTS(array) \
+  (sizeof (array) / sizeof ((array) [0]))
+
+#define CALCPERFORM_NARGS 12
+#define CALCPERFORM_STACK 255
+
+#define INFIX_TO_POSTFIX_SIZE(n) (((n-2)>>2)*21 + ((n-2)&2)*5 + 10)
+/* The above is calculated from the following expression fragments:
+ *  1?1:  4 chars expand to 21 chars
+ *  1+    2 chars expand to 10 chars
+ *  1     1 char expands to 9 chars
+ * All other infix operators convert by a factor of 1:1 or less.
+ * Allow 1 char each for the infix and postfix terminators,
+ * and the infix must be a complete expression
+ */
+
+/* These are not hard limits, just default sizes for the database */
+#define MAX_INFIX_SIZE 255+1
+#define MAX_POSTFIX_SIZE INFIX_TO_POSTFIX_SIZE(MAX_INFIX_SIZE)
+
+
+/* Error numbers from postfix */
+
+#define CALC_ERR_NONE            0 /* No error */
+#define CALC_ERR_TOOMANY         1 /* Too many results returned */
+#define CALC_ERR_BAD_LITERAL     2 /* Bad numeric literal */
+#define CALC_ERR_BAD_ASSIGNMENT  3 /* Bad assignment target */
+#define CALC_ERR_BAD_SEPERATOR   4 /* Comma without parentheses */
+#define CALC_ERR_PAREN_NOT_OPEN  5 /* Close parenthesis without open */
+#define CALC_ERR_PAREN_OPEN      6 /* Open parenthesis at end of expression */
+#define CALC_ERR_CONDITIONAL     7 /* Unbalanced conditional ?: operators */
+#define CALC_ERR_INCOMPLETE      8 /* Incomplete expression, operand missing */
+#define CALC_ERR_UNDERFLOW       9 /* Runtime stack would underflow */
+#define CALC_ERR_OVERFLOW       10 /* Runtime stack would overflow */
+#define CALC_ERR_SYNTAX         11 /* Syntax error */
+#define CALC_ERR_NULL_ARG       12 /* NULL or empty input argument */
+#define CALC_ERR_INTERNAL       13 /* Internal error, bad element type */
+/* Changes in the above errors must also be made in calcErrorStr() */
+
+
 #ifdef __cplusplus
-extern "C" 
-{
+extern "C" {
 #endif
 
-long postfix (char *pinfix, char *ppostfix, short *perror);
+long edm_postfix(const char *pinfix, char *ppostfix, short *perror);
 
-long calcPerform(const double *parg, double *presult, const char *post);
+long edm_calcPerform(double *parg, double *presult, const char *ppostfix);
+
+long edm_calcArgUsage(const char *ppostfix, unsigned long *pinputs, unsigned long *pstores);
+
+const char *edm_calcErrorStr(short error);
+
+void edm_calcExprDump(const char *pinst);
 
 #ifdef __cplusplus
 }
 #endif
-    
+
 #endif /* INCpostfixh */

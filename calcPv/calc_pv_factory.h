@@ -7,6 +7,7 @@
 #ifndef __CALC_PV_FACTORY_H__
 #define __CALC_PV_FACTORY_H__
 
+#include"postfix.h"
 #include"pv_factory.h"
 #include"expString.h"
 
@@ -29,7 +30,7 @@ public:
     DLNode node;
     expStringClass expStr;
 private:
-    char compiled[200];
+    char compiled[MAX_POSTFIX_SIZE+1];
 };
 
 class CALC_PV_Factory : public PV_Factory
@@ -90,7 +91,7 @@ protected:
 
     HashedExpression *expression;
     // Arguments A, B, ...: value and source PVs
-    enum { MaxArgs = 12 };
+    enum { MaxArgs = CALCPERFORM_NARGS };
     
     double arg[MaxArgs];
     ProcessVariable *arg_pv[MaxArgs];
