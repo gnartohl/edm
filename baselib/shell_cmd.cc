@@ -400,6 +400,8 @@ int i;
 
   shcmdo->includeHelpIcon = shcmdo->buf->bufIncludeHelpIcon;
 
+  shcmdo->execCursor = shcmdo->buf->bufExecCursor;
+
   shcmdo->updateDimensions();
 
 }
@@ -491,6 +493,7 @@ shellCmdClass::shellCmdClass ( void ) {
   oneShot = 0;
   swapButtons = 0;
   includeHelpIcon = 0;
+  execCursor = 0;
   numCmds = 0;
   cmdIndex = 0;
   buf = NULL;
@@ -565,6 +568,8 @@ int i;
   swapButtons = source->swapButtons;
 
   includeHelpIcon = source->includeHelpIcon;
+
+  execCursor = source->execCursor;
 
   numCmds = source->numCmds;
   cmdIndex = 0;
@@ -660,6 +665,7 @@ char *emptyStr = "";
   tag.loadW( "commandLabel", label, numCmds, emptyStr );
   tag.loadW( "command", shellCommand, numCmds, emptyStr );
   tag.loadBoolW( "includeHelpIcon", &includeHelpIcon, &zero );
+  tag.loadBoolW( "execCursor", &execCursor, &zero );
   tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
@@ -800,6 +806,7 @@ char *emptyStr = "";
   tag.loadR( "commandLabel", maxCmds, label, &n, emptyStr );
   tag.loadR( "command", maxCmds, shellCommand, &n, emptyStr );
   tag.loadR( "includeHelpIcon", &includeHelpIcon, &zero );
+  tag.loadR( "execCursor", &execCursor, &zero );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.readTags( f, "endObjectProperties" );
@@ -874,6 +881,7 @@ float val;
 
   swapButtons = 0;
   includeHelpIcon = 0;
+  execCursor = 0;
 
   if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 2 ) ) ) {
 
@@ -1061,6 +1069,7 @@ char *tk, *gotData, *context, buffer[255+1];
 
   swapButtons = 0;
   includeHelpIcon = 0;
+  execCursor = 0;
 
   // continue until tag is <eod>
 
@@ -1381,6 +1390,8 @@ char title[32], *ptr, *envPtr, saveLock;
 
   buf->bufIncludeHelpIcon = includeHelpIcon;
 
+  buf->bufExecCursor = execCursor;
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -1448,6 +1459,7 @@ char title[32], *ptr, *envPtr, saveLock;
   ef.addToggle( shellCmdClass_str33, &buf->bufOneShot );
   ef.addToggle( shellCmdClass_str34, &buf->bufSwapButtons );
   ef.addToggle( shellCmdClass_str35, &buf->bufIncludeHelpIcon );
+  ef.addToggle( shellCmdClass_str36, &buf->bufExecCursor );
 
   ef.addColorButton( shellCmdClass_str8, actWin->ci, &fgCb, &buf->bufFgColor );
   ef.addColorButton( shellCmdClass_str9, actWin->ci, &bgCb, &buf->bufBgColor );
@@ -2082,13 +2094,29 @@ void shellCmdClass::pointerIn (
 
   activeGraphicClass::pointerIn( me, me->x, me->y, buttonState );
 
-  if ( includeHelpIcon ) {
-    actWin->cursor.set( XtWindow(actWin->executeWidget),
-     CURSOR_K_RUN_WITH_HELP );
+  if ( execCursor ) {
+
+    if ( includeHelpIcon ) {
+      actWin->cursor.set( XtWindow(actWin->executeWidget),
+       CURSOR_K_RUN_WITH_HELP );
+    }
+    else {
+      actWin->cursor.set( XtWindow(actWin->executeWidget),
+       CURSOR_K_RUN );
+    }
+
   }
   else {
-    actWin->cursor.set( XtWindow(actWin->executeWidget),
-     CURSOR_K_RUN );
+
+    if ( includeHelpIcon ) {
+      actWin->cursor.set( XtWindow(actWin->executeWidget),
+       CURSOR_K_PNTR_WITH_HELP );
+    }
+    else {
+      actWin->cursor.set( XtWindow(actWin->executeWidget),
+       CURSOR_K_DEFAULT );
+    }
+
   }
 
 }

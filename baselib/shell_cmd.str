@@ -36,5 +36,6 @@
 #define shellCmdClass_str33 (char *) "One shot"
 #define shellCmdClass_str34 (char *) "Swap L/R Buttons"
 #define shellCmdClass_str35 (char *) "Include Help Icon"
+#define shellCmdClass_str36 (char *) "Exec Cursor"
 
 #endif

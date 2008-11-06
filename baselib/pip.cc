@@ -2773,24 +2773,35 @@ int activePipClass::activateComplete ( void ) {
 int flag;
 
   if ( aw ) {
+
     if ( aw->loadFailure ) {
       activateIsComplete = 1;
     }
+
   }
 
   if ( !activateIsComplete ) return 0;
 
   if ( aw ) {
+    flag = aw->okToDeactivate();
+  }
+  else {
+    flag = 1;
+  }
+
+#if 0
+  if ( aw ) {
     if ( aw->isExecuteMode() || aw->loadFailure ) {
       flag = aw->okToDeactivate();
     }
     else {
-      flag = 0;
+      flag = 1; // this was originally: flag = 0; which was incorrect
     }
   }
   else {
     flag = 1;
   }
+#endif
 
   return flag;
 
