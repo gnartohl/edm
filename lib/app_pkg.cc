@@ -5955,8 +5955,10 @@ activeWindowListPtr cur;
   cur = head->flink;
   while ( cur != head ) {
 
-    if ( !cur->node.okToDeactivate() ) {
-      return 0;
+    if ( cur->node.windowState != AWC_COMPLETE_DEACTIVATE ) {
+      if ( !cur->node.okToDeactivate() ) {
+        return 0;
+      }
     }
 
     cur = cur->flink;
