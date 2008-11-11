@@ -1976,9 +1976,11 @@ int n;
     stat = drawActive();
 
     if ( !firstEvent ) {
-      actWin->preReexecute();
-      actWin->setNoRefresh();
-      actWin->appCtx->reactivateActiveWindow( actWin );
+      stat = actWin->preReexecute();
+      if ( stat & 1 ) {
+        actWin->setNoRefresh();
+        actWin->appCtx->reactivateActiveWindow( actWin );
+      }
     }
     firstEvent = 0;
 

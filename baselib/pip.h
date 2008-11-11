@@ -243,6 +243,7 @@ int needConnectInit, needUpdate, needMenuConnectInit, needMenuUpdate,
  needToDrawUnconnected, needToEraseUnconnected, needConnectTimeout;
 int initialReadConnection, initialMenuConnection, initialLabelConnection,
  unconnectedTimer;
+int consecutiveDeactivateErrors;
 
 activeWindowClass *aw;
 

@@ -66,6 +66,13 @@
 #define AWC_EDIT 1
 #define AWC_EXECUTE 2
 
+#define AWC_INIT 1000
+#define AWC_START_EXECUTE 1001
+#define AWC_COMPLETE_EXECUTE 1002
+#define AWC_START_DEACTIVATE 1003
+#define AWC_COMPLETE_DEACTIVATE 1004
+#define AWC_TERMINATED 1005
+
 #define AWC_POPUP_RAISE 101
 #define AWC_POPUP_LOWER 102
 #define AWC_POPUP_REFRESH 103
@@ -726,7 +733,9 @@ int coordsShow;
 eventListPtr eventHead;
 eventListPtr limEventHead;
 pollListPtr pollHead;
-int mode; // AW_EDIT or AW_EXECUTE
+int mode; // AWC_EDIT or AWC_EXECUTE
+int windowState; // AWC_INIT, AWC_START_EXECUTE, AWC_COMPLETE_EXECUTE,
+                 // AWC_START_DEACTIVATE, AWC_COMPLETE_DEACTIVATE
 int waiting;
 int change;
 int exit_after_save;

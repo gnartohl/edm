@@ -19,5 +19,6 @@
 #define activePipClass_str27 (char *) "Macro definition file open failure: [%s]"
 #define activePipClass_str28 (char *) "Macro definition file is empty: [%s]"
 #define activePipClass_str29 (char *) "Macro definition file read failure: [%s]"
+#define activePipClass_str30 (char *) "Failed to close embedded display - window is not ready"
 
 #endif

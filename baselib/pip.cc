@@ -21,6 +21,8 @@
 #define SMALL_SYM_ARRAY_SIZE 10
 #define SMALL_SYM_ARRAY_LEN 31
 
+#define MAX_CONSECUTIVE_DEACTIVATE_ERRORS 100
+
 #include "pip.h"
 #include <sys/stat.h>
 #include <unistd.h>
@@ -381,6 +383,8 @@ int i;
   unconnectedTimer = 0;
   buf = NULL;
 
+  consecutiveDeactivateErrors = 0;
+
 }
 
 // copy constructor
@@ -436,6 +440,8 @@ int i;
   popUpMenu = NULL;
   unconnectedTimer = 0;
   buf = NULL;
+
+  consecutiveDeactivateErrors = 0;
 
 }
 
@@ -1206,7 +1212,7 @@ int activePipClass::deactivate (
   int pass
 ) {
 
-int okToClose;
+int okToClose, stat;
 activeWindowListPtr cur;
 
   if ( pass == 1 ) {
@@ -1244,7 +1250,7 @@ activeWindowListPtr cur;
       }
 
       if ( okToClose ) {
-        aw->returnToEdit( 1 );
+        stat = aw->returnToEdit( 1 );
       }
 
       aw = NULL;
@@ -1289,7 +1295,7 @@ activeWindowListPtr cur;
 int activePipClass::preReactivate (
   int pass ) {
 
-int okToClose;
+int okToClose, stat;
 activeWindowListPtr cur;
 
   if ( pass == 1 ) {
@@ -1322,7 +1328,7 @@ activeWindowListPtr cur;
       }
 
       if ( okToClose ) {
-        aw->returnToEdit( 1 );
+        stat = aw->returnToEdit( 1 );
       }
 
       aw = NULL;
@@ -2170,7 +2176,7 @@ void activePipClass::executeDeferred ( void ) {
 
 int iv;
 char v[39+1];
-int i, nc, nu, nmc, nmu, nd, nfo, nimfo, ncto, nmap, nunmap, okToClose;
+int i, nc, nu, nmc, nmu, nd, nfo, nimfo, ncto, nmap, nunmap, okToClose, stat;
 activeWindowListPtr cur;
 Window root, child;
 int rootX, rootY, winX, winY;
@@ -2202,6 +2208,8 @@ XButtonEvent be;
 
   if ( nc ) {
 
+    consecutiveDeactivateErrors = 0;
+
     readPvConnected = 1;
     active = 1;
     init = 1;
@@ -2220,6 +2228,8 @@ XButtonEvent be;
   }
 
   if ( nmc ) {
+
+    consecutiveDeactivateErrors = 0;
 
     readPvConnected = 1;
     active = 1;
@@ -2248,6 +2258,40 @@ XButtonEvent be;
 
       // close old
 
+      if ( aw ) {
+
+        okToClose = 0;
+        cur = actWin->appCtx->head->flink;
+        while ( cur != actWin->appCtx->head ) {
+          if ( &cur->node == aw ) {
+            okToClose = 1;
+            break;
+          }
+          cur = cur->flink;
+        }
+
+        if ( okToClose ) {
+          if ( !aw->okToDeactivate() ) {
+            consecutiveDeactivateErrors++;
+            if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
+              actWin->appCtx->proc->lock();
+              needUpdate = 1;
+              actWin->addDefExeNode( aglPtr );
+              actWin->appCtx->proc->unlock();
+              return;
+            }
+            else {
+              actWin->appCtx->postMessage( activePipClass_str30 );
+              consecutiveDeactivateErrors = 0;
+              return;
+            }
+          }
+	}
+
+      }
+
+      consecutiveDeactivateErrors = 0;
+
       if ( frameWidget ) {
         if ( *frameWidget ) XtUnmapWidget( *frameWidget );
       }
@@ -2266,7 +2310,7 @@ XButtonEvent be;
         }
 
         if ( okToClose ) {
-          aw->returnToEdit( 1 ); // this frees frameWidget
+          stat = aw->returnToEdit( 1 ); // this frees frameWidget
         }
 
         aw = NULL;
@@ -2370,6 +2414,40 @@ XButtonEvent be;
 
             // close old
 
+            if ( aw ) {
+
+              okToClose = 0;
+              cur = actWin->appCtx->head->flink;
+              while ( cur != actWin->appCtx->head ) {
+                if ( &cur->node == aw ) {
+                  okToClose = 1;
+                  break;
+                }
+                cur = cur->flink;
+              }
+
+              if ( okToClose ) {
+                if ( !aw->okToDeactivate() ) {
+                  consecutiveDeactivateErrors++;
+                  if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
+                    actWin->appCtx->proc->lock();
+                    needMenuUpdate = 1;
+                    actWin->addDefExeNode( aglPtr );
+                    actWin->appCtx->proc->unlock();
+                    return;
+                  }
+                  else {
+                    actWin->appCtx->postMessage( activePipClass_str30 );
+                    consecutiveDeactivateErrors = 0;
+                    return;
+                  }
+                }
+	      }
+
+	    }
+
+            consecutiveDeactivateErrors = 0;
+
             if ( frameWidget ) {
               if ( *frameWidget ) XtUnmapWidget( *frameWidget );
             }
@@ -2388,7 +2466,7 @@ XButtonEvent be;
               }
 
               if ( okToClose ) {
-                aw->returnToEdit( 1 ); // this frees frameWidget
+                stat = aw->returnToEdit( 1 ); // this frees frameWidget
               }
 
               aw = NULL;
@@ -2466,12 +2544,18 @@ XButtonEvent be;
 //----------------------------------------------------------------------------
 
   if ( nd ) {
+
+    consecutiveDeactivateErrors = 0;
+
     drawActive();
+
   }
 
 //----------------------------------------------------------------------------
 
   if ( nfo ) {
+
+    consecutiveDeactivateErrors = 0;
 
     if ( enabled && fileExists ) {
 
@@ -2535,6 +2619,8 @@ XButtonEvent be;
 
   if ( nimfo ) {
 
+    consecutiveDeactivateErrors = 0;
+
     if ( enabled ) {
 
       strncpy( curFileName, displayFileName[0].getExpanded(), 127 );
@@ -2577,6 +2663,8 @@ XButtonEvent be;
 
   if ( ncto ) {
 
+    consecutiveDeactivateErrors = 0;
+
     activateIsComplete = 1;
 
     drawActive();
@@ -2586,6 +2674,40 @@ XButtonEvent be;
 //----------------------------------------------------------------------------
 
   if ( nunmap ) {
+
+    if ( aw ) {
+
+      okToClose = 0;
+      cur = actWin->appCtx->head->flink;
+      while ( cur != actWin->appCtx->head ) {
+        if ( &cur->node == aw ) {
+          okToClose = 1;
+          break;
+        }
+        cur = cur->flink;
+      }
+
+      if ( okToClose ) {
+        if ( !aw->okToDeactivate() ) {
+          consecutiveDeactivateErrors++;
+          if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
+            actWin->appCtx->proc->lock();
+            needUnmap = 1;
+            actWin->addDefExeNode( aglPtr );
+            actWin->appCtx->proc->unlock();
+            return;
+          }
+          else {
+            actWin->appCtx->postMessage( activePipClass_str30 );
+            consecutiveDeactivateErrors = 0;
+            return;
+          }
+        }
+      }
+
+    }
+
+    consecutiveDeactivateErrors = 0;
 
     if ( frameWidget ) {
       if ( *frameWidget ) XtUnmapWidget( *frameWidget );
@@ -2605,7 +2727,7 @@ XButtonEvent be;
       }
 
       if ( okToClose ) {
-        aw->returnToEdit( 1 ); // this frees frameWidget
+        stat = aw->returnToEdit( 1 ); // this frees frameWidget
       }
 
       aw = NULL;
@@ -2628,6 +2750,40 @@ XButtonEvent be;
 
       // close old ( however, one should not be open )
 
+      if ( aw ) {
+
+        okToClose = 0;
+        cur = actWin->appCtx->head->flink;
+        while ( cur != actWin->appCtx->head ) {
+          if ( &cur->node == aw ) {
+            okToClose = 1;
+            break;
+          }
+          cur = cur->flink;
+        }
+
+        if ( okToClose ) {
+          if ( !aw->okToDeactivate() ) {
+            consecutiveDeactivateErrors++;
+            if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
+              actWin->appCtx->proc->lock();
+              needMap = 1;
+              actWin->addDefExeNode( aglPtr );
+              actWin->appCtx->proc->unlock();
+              return;
+            }
+            else {
+              actWin->appCtx->postMessage( activePipClass_str30 );
+              consecutiveDeactivateErrors = 0;
+              return;
+            }
+          }
+	}
+
+      }
+
+      consecutiveDeactivateErrors = 0;
+
       if ( frameWidget ) {
         if ( *frameWidget ) XtUnmapWidget( *frameWidget );
       }
@@ -2646,7 +2802,7 @@ XButtonEvent be;
         }
 
         if ( okToClose ) {
-          aw->returnToEdit( 1 ); // this frees frameWidget
+          stat = aw->returnToEdit( 1 ); // this frees frameWidget
         }
 
         aw = NULL;
@@ -2782,12 +2938,29 @@ int flag;
 
   if ( !activateIsComplete ) return 0;
 
+#if 1
+  // this fails when I return to edit while things are updating
   if ( aw ) {
     flag = aw->okToDeactivate();
   }
   else {
     flag = 1;
   }
+#endif
+
+#if 0
+  if ( aw ) {
+    if ( aw->isExecuteMode() || aw->loadFailure ) {
+      flag = aw->okToDeactivate();
+    }
+    else {
+      flag = 0;
+    }
+  }
+  else {
+    flag = 1;
+  }
+#endif
 
 #if 0
   if ( aw ) {

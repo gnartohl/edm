@@ -10265,6 +10265,8 @@ activeWindowClass::activeWindowClass ( void ) : unknownTags() {
 
 char *str;
 
+  windowState = AWC_INIT;
+
   str = getenv( "EDMCLEAREPICSDEFAULT" );
   if ( str ) {
     clearEpicsPvTypeDefault = 1;
@@ -10490,8 +10492,6 @@ int activeWindowClass::okToDeactivate ( void ) {
 
 activeGraphicListPtr cur, next;
 
-  if ( mode != AWC_EXECUTE ) return 1;
-
   cur = head->flink;
   while ( cur != head ) {
     next = cur->flink;
@@ -10499,7 +10499,11 @@ activeGraphicListPtr cur, next;
     cur = next;
   }
 
-  return 1;
+  if ( windowState == AWC_COMPLETE_EXECUTE ) {
+    return 1;
+  }
+
+  return 0;
 
 }
 
@@ -10593,6 +10597,8 @@ commentLinesPtr commentCur, commentNext;
 pvDefPtr pvDefCur, pvDefNext;
 
   //if ( !isEmbedded ) fprintf( stderr, "Destroy - [%s]\n", fileNameForSym );
+
+  windowState = AWC_TERMINATED;
 
   if ( top ) XtUnmapWidget( top );  //??????? XtUnmapWidget
 
@@ -11530,6 +11536,8 @@ char tmp[10];
    ButtonReleaseMask|Button1MotionMask|
    Button2MotionMask|Button3MotionMask|ExposureMask, False,
    drawWinEventHandler, (XtPointer) this );
+
+  windowState = AWC_COMPLETE_DEACTIVATE;
 
   return 1;
 
@@ -15747,6 +15755,8 @@ char **muxMacro, **muxExpansion;
 char callbackName[63+1];
 pvDefPtr pvDefCur;
 
+  windowState = AWC_START_EXECUTE;
+
   if ( diagnosticMode() ) {
     char diagBuf[255+1];
     snprintf( diagBuf, 255, "execute [%s]\n", fileName );
@@ -15974,6 +15984,8 @@ pvDefPtr pvDefCur;
 
   refreshActive();
 
+  windowState = AWC_COMPLETE_EXECUTE;
+
   return 1;
 
 }
@@ -15986,6 +15998,8 @@ pvDefPtr pvDefCur;
 
 int numMuxMacros;
 char **muxMacro, **muxExpansion;
+
+  windowState = AWC_START_EXECUTE;
 
   if ( diagnosticMode() ) {
     char diagBuf[255+1];
@@ -16110,6 +16124,8 @@ char **muxMacro, **muxExpansion;
 
   refreshActive();
 
+  windowState = AWC_COMPLETE_EXECUTE;
+
   return 1;
 
 }
@@ -16130,6 +16146,8 @@ pvDefPtr pvDefCur;
     appCtx->postMessage( activeWindowClass_str193 );
     return 0;
   }
+
+  windowState = AWC_START_DEACTIVATE;
 
   if ( diagnosticMode() ) {
     char diagBuf[255+1];
@@ -16330,6 +16348,8 @@ pvDefPtr pvDefCur;
         }
       }
 
+      windowState = AWC_COMPLETE_DEACTIVATE;
+
       return 1;
 
     }
@@ -16362,6 +16382,8 @@ pvDefPtr pvDefCur;
     }
   }
 
+  windowState = AWC_COMPLETE_DEACTIVATE;
+
   return 1;
 
 }
@@ -16373,6 +16395,13 @@ activeGraphicListPtr cur;
 int numSubObjects, cnt;
 
   if ( mode == AWC_EDIT ) return 1;
+
+  if ( !okToDeactivate() ) {
+    appCtx->postMessage( activeWindowClass_str193 );
+    return 0;
+  }
+
+  windowState = AWC_START_DEACTIVATE;
 
   if ( diagnosticMode() ) {
     char diagBuf[255+1];
@@ -16403,6 +16432,8 @@ int numSubObjects, cnt;
     cur = cur->flink;
 
   }
+
+  windowState = AWC_COMPLETE_DEACTIVATE;
 
   return 1;
 
