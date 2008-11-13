@@ -289,6 +289,14 @@ static void yValueWithTimeUpdate (
   ProcessVariable *pv,
   void *userarg );
 
+static void traceCtlMonitorConnection (
+  ProcessVariable *pv,
+  void *userarg );
+
+static void traceCtlValueUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
 static void resetMonitorConnection (
   ProcessVariable *pv,
   void *userarg );
@@ -374,6 +382,7 @@ typedef struct editBufTag {
   int bufLineStyle[XYGC_K_MAX_TRACES];
   char bufTrigPvName[PV_Factory::MAX_PV_NAME+1];
   char bufResetPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufTraceCtlPvName[PV_Factory::MAX_PV_NAME+1];
   int bufOpMode[XYGC_K_MAX_TRACES];
   int bufY2Scale[XYGC_K_MAX_TRACES];
   int bufCount;
@@ -599,6 +608,14 @@ friend void yValueWithTimeUpdate (
   ProcessVariable *pv,
   void *userarg );
 
+friend void traceCtlMonitorConnection (
+  ProcessVariable *pv,
+  void *userarg );
+
+friend void traceCtlValueUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
 friend void resetMonitorConnection (
   ProcessVariable *pv,
   void *userarg );
@@ -747,12 +764,14 @@ int arrayHead[XYGC_K_MAX_TRACES], arrayTail[XYGC_K_MAX_TRACES],
 
 int effectiveCount[XYGC_K_MAX_TRACES], totalCount[XYGC_K_MAX_TRACES];
 
-ProcessVariable *resetPv, *trigPv;
-int initialResetConnection, initialTrigConnection;
-expStringClass trigPvExpStr, resetPvExpStr;
+ProcessVariable *traceCtlPv, *resetPv, *trigPv;
+int initialTraceCtlConnection, initialResetConnection, initialTrigConnection;
+expStringClass traceCtlPvExpStr, trigPvExpStr, resetPvExpStr;
 
 int count, bufferScrollSize, plotStyle[XYGC_K_MAX_TRACES], plotMode, resetMode;
 int firstTimeSample, curSec, curNsec, drawGridFlag, special[XYGC_K_MAX_TRACES];
+
+int traceCtl;
 
 int xAxis, xAxisStyle, xAxisSource, xAxisTimeFormat;
 efDouble xMin, xMax;
@@ -839,7 +858,7 @@ efInt y2AnnotationPrecision;
 int y2AnnotationFormat;
 
 int xPvExists[XYGC_K_MAX_TRACES], yPvExists[XYGC_K_MAX_TRACES],
- trigPvExists, resetPvExists;
+ traceCtlPvExists, trigPvExists, resetPvExists;
 
 double xFactor[XYGC_K_MAX_TRACES], xOffset[XYGC_K_MAX_TRACES];
 double y1Factor[NUM_Y_AXES][XYGC_K_MAX_TRACES],
@@ -849,7 +868,8 @@ double y2Factor[XYGC_K_MAX_TRACES], y2Offset[XYGC_K_MAX_TRACES];
 Widget plotWidget;
 
 int needConnect, needInit, needRefresh, needUpdate, needErase, needDraw,
- needResetConnect, needReset, needTrigConnect, needTrig, needXRescale,
+ needResetConnect, needReset, needTrigConnect, needTrig,
+ needTraceCtlConnect, needTraceUpdate, needXRescale,
  needY1Rescale[NUM_Y_AXES], needY2Rescale, needBufferScroll, needVectorUpdate,
  needRealUpdate, needBoxRescale, needNewLimits, needOriginalLimits,
  needAutoScaleUpdate;

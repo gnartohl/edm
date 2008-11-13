@@ -1,24 +1,24 @@
-4 0 0
+4 0 1
 beginScreenProperties
 major 4
 minor 0
-release 0
-x 311
-y 102
-w 485
-h 803
+release 1
+x 540
+y 36
+w 476
+h 895
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 51400 51400 51400
+bgColor rgb 52171 52171 52171
 textColor rgb 0 0 0
 ctlFgColor1 rgb 0 0 0
 ctlFgColor2 rgb 0 0 65535
-ctlBgColor1 rgb 48059 48059 48059
-ctlBgColor2 rgb 56026 56026 56026
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 23130 23130 23130
+ctlBgColor1 rgb 46517 46517 46517
+ctlBgColor2 rgb 56797 56797 56797
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 title "Button"
 endScreenProperties
 
@@ -26,7 +26,7 @@ endScreenProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 23
 y 26
@@ -34,7 +34,7 @@ w 74
 h 27
 font "helvetica-medium-r-24.0"
 fgColor rgb 0 0 0
-bgColor rgb 60652 60652 60652
+bgColor rgb 61423 61423 61423
 value {
   "Button"
 }
@@ -58,7 +58,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 105
 y 90
@@ -66,7 +66,7 @@ w 347
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Button pressed, Control PV = Readback PV, 3D = Yes"
@@ -78,7 +78,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 105
 y 157
@@ -86,7 +86,7 @@ w 350
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Button released, Control PV = Readback PV, 3D = Yes"
@@ -98,7 +98,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 105
 y 227
@@ -106,7 +106,7 @@ w 351
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Button pressed, Control PV != Readback PV, 3D = Yes"
@@ -118,7 +118,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 105
 y 291
@@ -126,7 +126,7 @@ w 351
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Button released Control PV != Readback PV, 3D = Yes"
@@ -138,7 +138,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 105
 y 359
@@ -146,7 +146,7 @@ w 301
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Readback indicator, Readback = True, 3D = No"
@@ -158,7 +158,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 105
 y 430
@@ -166,7 +166,7 @@ w 307
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Readback indicator, Readback = False, 3D = No"
@@ -178,15 +178,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 23
-y 616
+y 707
 w 427
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If Label Type is PV State, label strings are taken from DB. On Label"
@@ -198,15 +198,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 23
-y 632
+y 723
 w 225
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "is used for label string in edit mode."
@@ -218,15 +218,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 23
-y 664
+y 755
 w 389
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If Label Type is Literal label strings are taken from user input."
@@ -238,15 +238,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 23
-y 525
+y 616
 w 365
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Button type may be Toggle or Push. Operation is intuitive."
@@ -258,18 +258,24 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 23
 y 491
-w 302
-h 16
+w 431
+h 112
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
-  "Control and Readback PV types must be enum."
+  "Control and Readback PV types must be enum if bit is not specified."
+  ""
+  "If bit is specified, PV types must be numeric."
+  ""
+  "Note that setting or clearing a bit is not atomic and is intended"
+  "for use with local PVs or PVs guaranteed to have only one data"
+  "source."
 }
 autoSize
 endObjectProperties
@@ -278,15 +284,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 22
-y 700
+y 791
 w 380
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Color PV is used with dynaimic colors and alarm sensitivity."
@@ -298,15 +304,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 22
-y 718
+y 809
 w 324
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If both are present, alarm colors have precedence."
@@ -318,15 +324,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 22
-y 749
+y 840
 w 400
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Visibility may be achieved through visibility PV and embedded "
@@ -338,15 +344,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 22
-y 769
+y 860
 w 165
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "rule or with invisible color."
@@ -358,15 +364,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 23
-y 554
+y 645
 w 319
 h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Button is still active when invisible box is checked"

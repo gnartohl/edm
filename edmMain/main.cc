@@ -1264,6 +1264,7 @@ Display *testDisplay;
   *restart = 0;
   *convertOnly = 0;
   *crawl = 0;
+  *verbose = 0;
 
   // check first for component management commands
   if ( argc > 1 ) {

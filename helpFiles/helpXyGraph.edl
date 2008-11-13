@@ -3,9 +3,9 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 242
-y 35
-w 820
+x 67
+y 21
+w 1188
 h 956
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
@@ -28,27 +28,30 @@ major 4
 minor 0
 release 1
 x 20
-y 122
-w 759
-h 814
+y 119
+w 1037
+h 822
 lineColor rgb 0 0 0
 fillColor rgb 46517 46517 46517
-numPoints 6
+closePolygon
+numPoints 7
 xPoints {
-  0 779
-  1 779
-  2 20
-  3 20
-  4 420
-  5 420
+  0 20
+  1 20
+  2 1057
+  3 1057
+  4 426
+  5 426
+  6 283
 }
 yPoints {
-  0 729
-  1 936
-  2 936
-  3 122
-  4 122
-  5 436
+  0 119
+  1 941
+  2 941
+  3 417
+  4 417
+  5 119
+  6 119
 }
 endObjectProperties
 
@@ -518,8 +521,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 37
-y 693
+x 385
+y 839
 w 73
 h 16
 font "helvetica-medium-r-14.0"
@@ -538,8 +541,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 59
-y 716
+x 394
+y 862
 w 202
 h 64
 font "helvetica-medium-r-14.0"
@@ -561,8 +564,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 37
-y 797
+x 699
+y 744
 w 64
 h 16
 font "helvetica-medium-r-14.0"
@@ -581,8 +584,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 59
-y 819
+x 713
+y 766
 w 230
 h 32
 font "helvetica-medium-r-14.0"
@@ -602,8 +605,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 37
-y 862
+x 699
+y 810
 w 81
 h 16
 font "helvetica-medium-r-14.0"
@@ -622,8 +625,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 59
-y 884
+x 713
+y 833
 w 303
 h 32
 font "helvetica-medium-r-14.0"
@@ -742,7 +745,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 433
+x 37
 y 744
 w 317
 h 176
@@ -762,6 +765,49 @@ value {
   ""
   "Auto Scale Thresh: Threshold in %"
   "   default: 50"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 394
+y 766
+w 280
+h 64
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Numeric PV that may be used to selectively"
+  "disable traces. Bit 0 corresponds to trace 0,"
+  "bit 1 to trace 1, etc. Setting a bit disables"
+  "the corresponding trace."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 379
+y 744
+w 86
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Trace Ctl PV:"
 }
 autoSize
 endObjectProperties
