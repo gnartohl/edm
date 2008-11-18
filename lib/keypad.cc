@@ -63,10 +63,10 @@ unsigned int tmp;
       else {
 
         if ( kp->positive ) {
-          *(kp->intDest) = atol( &kp->buf[1] );
+          *(kp->intDest) = (int) atof( &kp->buf[1] );
         }
         else {
-          *(kp->intDest) = atol( kp->buf );
+          *(kp->intDest) = (int) atof( kp->buf );
         }
 
       }
@@ -106,6 +106,8 @@ unsigned int tmp;
   }
 
   else {
+
+    //fprintf( stderr, "state = %-d\n", kp->state );
 
     switch ( kp->state ) {
 
@@ -280,7 +282,7 @@ unsigned int tmp;
       }
       else if ( w == kp->pbPoint ) {
         strcpy( kp->buf, "-." );
-        kp->state = keypadClass::DECPOINT;
+        kp->state = keypadClass::ZERODECPOINT;
         kp->count++;
       }
       else if ( w == kp->pbBksp ) {
@@ -376,10 +378,20 @@ unsigned int tmp;
         kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
+      else if ( w == kp->pbExp ) {
+        Strncat( &kp->buf[1], "E", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->count++;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::EXP;
+        kp->expCount = 0;
+        kp->expPositive = 1;
+      }
       else if ( w == kp->pbPoint ) {
         Strncat( &kp->buf[1], ".", kp->MAXCHARS-1 );
         kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
+	kp->lastState = kp->state;
         kp->state = keypadClass::DECPOINT;
       }
       else if ( w == kp->pbSign ) {
@@ -396,6 +408,146 @@ unsigned int tmp;
           kp->state = keypadClass::ISNULL;
           kp->count = 0;
           strcpy( kp->buf, "-" );
+	}
+        else {
+          kp->buf[kp->count] = 0;
+          kp->count--;
+	}
+      }
+
+      break;
+
+    case keypadClass::ZERODECPOINT:
+
+      if ( w == kp->pb0 ) {
+        Strncat( &kp->buf[1], "0", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->count++;
+      }
+      else if ( w == kp->pb1 ) {
+        Strncat( &kp->buf[1], "1", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::DECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb2 ) {
+        Strncat( &kp->buf[1], "2", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::DECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb3 ) {
+        Strncat( &kp->buf[1], "3", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::DECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb4 ) {
+        Strncat( &kp->buf[1], "4", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::DECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb5 ) {
+        Strncat( &kp->buf[1], "5", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::DECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb6 ) {
+        Strncat( &kp->buf[1], "6", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::DECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb7 ) {
+        Strncat( &kp->buf[1], "7", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::DECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb8 ) {
+        Strncat( &kp->buf[1], "8", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::DECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pb9 ) {
+        Strncat( &kp->buf[1], "9", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::DECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pba ) {
+        Strncat( &kp->buf[1], "A", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::DECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pbb ) {
+        Strncat( &kp->buf[1], "B", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::DECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pbc ) {
+        Strncat( &kp->buf[1], "C", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::DECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pbd ) {
+        Strncat( &kp->buf[1], "D", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::DECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pbe ) {
+        Strncat( &kp->buf[1], "E", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::DECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pbf ) {
+        Strncat( &kp->buf[1], "F", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::DECPOINT;
+        kp->count++;
+      }
+      else if ( w == kp->pbSign ) {
+        if ( kp->positive ) {
+          kp->positive = 0;
+	}
+	else {
+          kp->positive = 1;
+	}
+      }
+      else if ( w == kp->pbBksp ) {
+        if ( kp->count == 1 ) {
+          kp->positive = 1;
+          kp->state = keypadClass::ISNULL;
+          kp->count = 0;
+          strcpy( kp->buf, "-" );
+	}
+        else if ( kp->buf[kp->count] == '.' ) {
+          kp->buf[kp->count] = 0;
+          kp->state = keypadClass::ZERO;
+          kp->count--;
 	}
         else {
           kp->buf[kp->count] = 0;
@@ -487,6 +639,15 @@ unsigned int tmp;
         kp->buf[kp->MAXCHARS] = 0;
         kp->count++;
       }
+      else if ( w == kp->pbExp ) {
+        Strncat( &kp->buf[1], "E", kp->MAXCHARS-1 );
+        kp->buf[kp->MAXCHARS] = 0;
+        kp->count++;
+        kp->lastState = kp->state;
+        kp->state = keypadClass::EXP;
+        kp->expCount = 0;
+        kp->expPositive = 1;
+      }
       else if ( w == kp->pbSign ) {
         if ( kp->positive ) {
           kp->positive = 0;
@@ -504,7 +665,7 @@ unsigned int tmp;
 	}
         else if ( kp->buf[kp->count] == '.' ) {
           kp->buf[kp->count] = 0;
-          kp->state = keypadClass::NODECPOINT;
+          kp->state = kp->lastState;
           kp->count--;
 	}
         else {
@@ -515,7 +676,127 @@ unsigned int tmp;
 
       break;
 
+    case keypadClass::EXP:
+
+      if ( kp->expCount < 3 ) {
+
+        if ( w == kp->pb0 ) {
+          Strncat( &kp->buf[1], "0", kp->MAXCHARS-1 );
+          kp->buf[kp->MAXCHARS] = 0;
+          kp->count++;
+          kp->expCount++;
+        }
+        else if ( w == kp->pb1 ) {
+          Strncat( &kp->buf[1], "1", kp->MAXCHARS-1 );
+          kp->buf[kp->MAXCHARS] = 0;
+          kp->count++;
+          kp->expCount++;
+        }
+        else if ( w == kp->pb2 ) {
+          Strncat( &kp->buf[1], "2", kp->MAXCHARS-1 );
+          kp->buf[kp->MAXCHARS] = 0;
+          kp->count++;
+          kp->expCount++;
+        }
+        else if ( w == kp->pb3 ) {
+          Strncat( &kp->buf[1], "3", kp->MAXCHARS-1 );
+          kp->buf[kp->MAXCHARS] = 0;
+          kp->count++;
+          kp->expCount++;
+        }
+        else if ( w == kp->pb4 ) {
+          Strncat( &kp->buf[1], "4", kp->MAXCHARS-1 );
+          kp->buf[kp->MAXCHARS] = 0;
+          kp->count++;
+          kp->expCount++;
+        }
+        else if ( w == kp->pb5 ) {
+          Strncat( &kp->buf[1], "5", kp->MAXCHARS-1 );
+          kp->buf[kp->MAXCHARS] = 0;
+          kp->count++;
+          kp->expCount++;
+        }
+        else if ( w == kp->pb6 ) {
+          Strncat( &kp->buf[1], "6", kp->MAXCHARS-1 );
+          kp->buf[kp->MAXCHARS] = 0;
+          kp->count++;
+          kp->expCount++;
+        }
+        else if ( w == kp->pb7 ) {
+          Strncat( &kp->buf[1], "7", kp->MAXCHARS-1 );
+          kp->buf[kp->MAXCHARS] = 0;
+          kp->count++;
+          kp->expCount++;
+        }
+        else if ( w == kp->pb8 ) {
+          Strncat( &kp->buf[1], "8", kp->MAXCHARS-1 );
+          kp->buf[kp->MAXCHARS] = 0;
+          kp->count++;
+          kp->expCount++;
+        }
+        else if ( w == kp->pb9 ) {
+          Strncat( &kp->buf[1], "9", kp->MAXCHARS-1 );
+          kp->buf[kp->MAXCHARS] = 0;
+          kp->count++;
+          kp->expCount++;
+        }
+
+      }
+
+      if ( w == kp->pbSign ) {
+        if ( kp->expCount == 0 ) {
+          if ( kp->expPositive ) {
+            kp->expPositive = 0;
+            Strncat( &kp->buf[1], "-", kp->MAXCHARS-1 );
+            kp->buf[kp->MAXCHARS] = 0;
+            kp->count++;
+          }
+          else {
+            kp->expPositive = 1;
+            kp->buf[kp->MAXCHARS] = 0;
+            kp->buf[kp->count] = 0;
+            kp->count--;
+          }
+        }
+	else {
+          if ( kp->positive ) {
+            kp->positive = 0;
+	  }
+	  else {
+            kp->positive = 1;
+	  }
+	}
+      }
+      else if ( w == kp->pbBksp ) {
+        if ( kp->count == 1 ) {
+          kp->positive = 1;
+          kp->expPositive = 1;
+          kp->state = keypadClass::ISNULL;
+          kp->count = 0;
+          strcpy( kp->buf, "-" );
+        }
+        else if ( kp->buf[kp->count] == 'E' ) {
+          kp->buf[kp->count] = 0;
+          kp->state = kp->lastState;
+          kp->count--;
+        }
+        else if ( kp->buf[kp->count] == '-' ) {
+          kp->buf[kp->count] = 0;
+          kp->count--;
+          kp->expPositive = 1;
+        }
+        else {
+          kp->buf[kp->count] = 0;
+          kp->count--;
+          kp->expCount--;
+        }
+      }
+
+      break;
+
     }
+
+    //fprintf( stderr, "new state = %-d\n", kp->state );
 
     if ( kp->positive ) {
       XmTextFieldSetString( kp->text, &kp->buf[1] );
@@ -569,6 +850,7 @@ keypadClass::keypadClass () {
   pb9 = NULL;
   pbPoint = NULL;
   pbSign = NULL;
+  pbExp = NULL;
   pbOK = NULL;
   pbApply = NULL;
   pbCancel = NULL;
@@ -704,6 +986,8 @@ int keypadClass::create (
    XmNcursorPositionVisible, 0,
    NULL );
 
+  expPositive = 1;
+  expCount = 0;
   positive = 1;
   count = 0;
 
@@ -1202,67 +1486,159 @@ int keypadClass::create (
 
   } // end if ( hex ...
 
-// ---------------------------------------
-
-  if ( entryTag )
-    str = XmStringCreate( "Cancel", entryTag );
-  else
-    str = XmStringCreateLocalized( "Cancel" );
-
-  pbCancel = XtVaCreateManagedWidget(
-   "pbcancel", xmPushButtonWidgetClass,
-   bottomForm,
-   XmNlabelString, str,
-   XmNbottomAttachment, XmATTACH_FORM,
-   XmNleftAttachment, XmATTACH_FORM,
-   NULL );
-
-  XmStringFree( str );
-
-  XtAddCallback( pbCancel, XmNactivateCallback, (XtCallbackProc) func, this );
+  if ( hex ) {
 
 // ---------------------------------------
 
-  if ( entryTag )
-    str = XmStringCreate( "OK", entryTag );
-  else
-    str = XmStringCreateLocalized( "OK" );
+    if ( entryTag )
+      str = XmStringCreate( "Cancel", entryTag );
+    else
+      str = XmStringCreateLocalized( "Cancel" );
 
-  pbOK = XtVaCreateManagedWidget(
-   "pbok", xmPushButtonWidgetClass,
-   bottomForm,
-   XmNlabelString, str,
-   XmNbottomAttachment, XmATTACH_FORM,
-   XmNrightAttachment, XmATTACH_FORM,
-   NULL );
+    pbCancel = XtVaCreateManagedWidget(
+     "pbcancel", xmPushButtonWidgetClass,
+     bottomForm,
+     XmNlabelString, str,
+     XmNbottomAttachment, XmATTACH_FORM,
+     XmNleftAttachment, XmATTACH_FORM,
+     NULL );
 
-  XmStringFree( str );
+    XmStringFree( str );
 
-  XtAddCallback( pbOK, XmNactivateCallback, (XtCallbackProc) func, this );
+    XtAddCallback( pbCancel, XmNactivateCallback, (XtCallbackProc) func, this );
+
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( "OK", entryTag );
+    else
+      str = XmStringCreateLocalized( "OK" );
+
+    pbOK = XtVaCreateManagedWidget(
+     "pbok", xmPushButtonWidgetClass,
+     bottomForm,
+     XmNlabelString, str,
+     XmNbottomAttachment, XmATTACH_FORM,
+     XmNrightAttachment, XmATTACH_FORM,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pbOK, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
 
-  if ( entryTag )
-    str = XmStringCreate( "BS", entryTag );
-  else
-    str = XmStringCreateLocalized( "BS" );
+    if ( entryTag )
+      str = XmStringCreate( "BS", entryTag );
+    else
+      str = XmStringCreateLocalized( "BS" );
 
-  pbBksp = XtVaCreateManagedWidget(
-   "pbbksp", xmPushButtonWidgetClass,
-   bottomForm,
-   XmNlabelString, str,
-   XmNbottomAttachment, XmATTACH_FORM,
-   XmNrightAttachment, XmATTACH_WIDGET,
-   XmNrightWidget, pbOK,
-   XmNleftAttachment, XmATTACH_WIDGET,
-   XmNleftWidget, pbCancel,
-   NULL );
+    pbBksp = XtVaCreateManagedWidget(
+     "pbbksp", xmPushButtonWidgetClass,
+     bottomForm,
+     XmNlabelString, str,
+     XmNbottomAttachment, XmATTACH_FORM,
+     XmNrightAttachment, XmATTACH_WIDGET,
+     XmNrightWidget, pbOK,
+     XmNleftAttachment, XmATTACH_WIDGET,
+     XmNleftWidget, pbCancel,
+     NULL );
 
-  XmStringFree( str );
+    XmStringFree( str );
 
-  XtAddCallback( pbBksp, XmNactivateCallback, (XtCallbackProc) func, this );
+    XtAddCallback( pbBksp, XmNactivateCallback, (XtCallbackProc) func, this );
 
 // ---------------------------------------
+
+  }
+  else {
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( "EE", entryTag );
+    else
+      str = XmStringCreateLocalized( "EE" );
+
+    pbExp = XtVaCreateManagedWidget(
+     "pbexp", xmPushButtonWidgetClass,
+     bottomForm,
+     XmNlabelString, str,
+     XmNbottomAttachment, XmATTACH_FORM,
+     XmNleftAttachment, XmATTACH_FORM,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pbExp, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( "OK", entryTag );
+    else
+      str = XmStringCreateLocalized( "OK" );
+
+    pbOK = XtVaCreateManagedWidget(
+     "pbok", xmPushButtonWidgetClass,
+     bottomForm,
+     XmNlabelString, str,
+     XmNbottomAttachment, XmATTACH_FORM,
+     XmNrightAttachment, XmATTACH_FORM,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pbOK, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( "Can", entryTag );
+    else
+      str = XmStringCreateLocalized( "Can" );
+
+    pbCancel = XtVaCreateManagedWidget(
+     "pbcancel", xmPushButtonWidgetClass,
+     bottomForm,
+     XmNlabelString, str,
+     XmNbottomAttachment, XmATTACH_FORM,
+     //XmNrightAttachment, XmATTACH_WIDGET,
+     //XmNrightWidget, pbBksp,
+     XmNleftAttachment, XmATTACH_WIDGET,
+     XmNleftWidget, pbExp,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pbCancel, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+    if ( entryTag )
+      str = XmStringCreate( "BS", entryTag );
+    else
+      str = XmStringCreateLocalized( "BS" );
+
+    pbBksp = XtVaCreateManagedWidget(
+     "pbbksp", xmPushButtonWidgetClass,
+     bottomForm,
+     XmNlabelString, str,
+     XmNbottomAttachment, XmATTACH_FORM,
+     XmNrightAttachment, XmATTACH_WIDGET,
+     XmNrightWidget, pbOK,
+     XmNleftAttachment, XmATTACH_WIDGET,
+     XmNleftWidget, pbCancel,
+     NULL );
+
+    XmStringFree( str );
+
+    XtAddCallback( pbBksp, XmNactivateCallback, (XtCallbackProc) func, this );
+
+// ---------------------------------------
+
+  } /* end if hex */
 
   XtManageChild( topForm );
   XtManageChild( kprowcol );

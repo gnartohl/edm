@@ -75,17 +75,19 @@ static const int ISNULL = 0;
 static const int ZERO = 1;
 static const int NODECPOINT = 2;
 static const int DECPOINT = 3;
+static const int ZERODECPOINT = 4;
+static const int EXP = 5;
 static const int INT = 100;
 static const int DOUBLE = 101;
 
 int MAXCHARS;
 
-int x, y, count, positive, state, poppedUp;
+int x, y, count, positive, state, lastState, poppedUp, expCount, expPositive;
 char *entryTag, *actionTag;
 Display *display;
 Widget shell, rowcol, kprowcol, topForm, mainForm, bottomForm, text,
  pb0, pb1, pb2, pb3, pb4, pb5, pb6, pb7, pb8, pb9,
- pbPoint, pbSign, pbOK, pbApply, pbCancel, pbBksp,
+ pbPoint, pbSign, pbExp, pbOK, pbApply, pbCancel, pbBksp,
  pba, pbb, pbc, pbd, pbe, pbf;
 keypadWidgetListPtr wlHead, wlTail;
 char buf[MAXCHARS_TOP+1];
