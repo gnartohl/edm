@@ -93,28 +93,91 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int stat;
 char string[XTDC_K_MAX+1];
 char *buf;
+Arg args[10];
+int n, l;
 
   *continueToDispatch = True;
 
   axtdo = (activeXTextDspClass *) client;
 
-  if ( e->type == EnterNotify ) {
+  if ( !axtdo->enabled ) return;
 
-    if ( !axtdo->enabled ) return;
+  if ( e->type == FocusIn ) {
 
-    if ( !axtdo->grabUpdate ) {
+    axtdo->focusIn = 1;
+    axtdo->focusOut = 0;
 
-      XSetInputFocus( axtdo->actWin->display(),
-       XtWindow(axtdo->tf_widget), RevertToNone, CurrentTime );
+    n = 0;
+    XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) True ); n++;
+    XtSetValues( axtdo->tf_widget, args, n );
 
+    if ( !(axtdo->inputFocusUpdatesAllowed) || axtdo->cursorIn ) {
+      axtdo->grabUpdate = 1;
     }
 
-    axtdo->grabUpdate = 1;
+    if ( axtdo->autoSelect ) {
+      buf = XmTextGetString( axtdo->tf_widget );
+      l = strlen(buf);
+      XtFree( buf );
+      XmTextSetSelection( axtdo->tf_widget, 0, l,
+      XtLastTimestampProcessed( axtdo->actWin->display() ) );
+      XmTextSetInsertionPosition( axtdo->tf_widget, l );
+    }
 
     *continueToDispatch = False;
 
   }
   else if ( e->type == LeaveNotify ) {
+
+    axtdo->cursorIn = 0;
+    axtdo->cursorOut = 1;
+
+    if ( axtdo->changeValOnLoseFocus ) {
+
+      buf = XmTextGetString( axtdo->tf_widget );
+      strncpy( axtdo->entryValue, buf, XTDC_K_MAX );
+      axtdo->entryValue[XTDC_K_MAX] = 0;
+      XtFree( buf );
+      strncpy( axtdo->curValue, axtdo->entryValue, XTDC_K_MAX );
+      axtdo->curValue[XTDC_K_MAX] = 0;
+      strncpy( axtdo->value, axtdo->entryValue, XTDC_K_MAX );
+      axtdo->value[XTDC_K_MAX] = 0;
+
+      axtdo->bufInvalidate();
+      axtdo->actWin->appCtx->proc->lock();
+      axtdo->needUpdate = 1;
+      axtdo->actWin->addDefExeNode( axtdo->aglPtr );
+      axtdo->actWin->appCtx->proc->unlock();
+
+    }
+
+    if ( axtdo->inputFocusUpdatesAllowed ) {
+      axtdo->grabUpdate = 0;
+    }
+
+    *continueToDispatch = False;
+
+  }
+  else if ( e->type == EnterNotify ) {
+
+    axtdo->cursorIn = 1;
+    axtdo->cursorOut = 0;
+
+    if ( axtdo->inputFocusUpdatesAllowed && axtdo->focusIn ) {
+      axtdo->grabUpdate = 1;
+    }
+
+    *continueToDispatch = False;
+
+  }
+  else if ( e->type == FocusOut ) {
+
+    axtdo->focusIn = 0;
+    axtdo->focusOut = 1;
+
+    n = 0;
+    XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
+    XtSetValues( axtdo->tf_widget, args, n );
 
     if ( axtdo->changeValOnLoseFocus ) {
 
@@ -126,31 +189,33 @@ char *buf;
       axtdo->curValue[XTDC_K_MAX] = 0;
       strncpy( string, axtdo->entryValue, XTDC_K_MAX );
       string[XTDC_K_MAX] = 0;
-
+    
       if ( axtdo->pvExists ) {
         stat = stringPut( axtdo->pvId,
          XDisplayName(axtdo->actWin->appCtx->displayName),
          axtdo->pvCount, string );
       }
       else {
-        axtdo->grabUpdate = 0;
         axtdo->bufInvalidate();
         axtdo->actWin->appCtx->proc->lock();
         axtdo->needUpdate = 1;
         axtdo->actWin->addDefExeNode( axtdo->aglPtr );
         axtdo->actWin->appCtx->proc->unlock();
       }
-
+    
     }
     else {
 
-      axtdo->grabUpdate = 0;
       axtdo->bufInvalidate();
       axtdo->actWin->appCtx->proc->lock();
       axtdo->needUpdate = 1;
       axtdo->actWin->addDefExeNode( axtdo->aglPtr );
       axtdo->actWin->appCtx->proc->unlock();
 
+    }
+
+    if ( !(axtdo->inputFocusUpdatesAllowed) || axtdo->cursorOut ) {
+      axtdo->grabUpdate = 0;
     }
 
     *continueToDispatch = False;
@@ -394,24 +459,27 @@ static void xtdoRestoreValue (
 {
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
-Arg args[10];
-int n, l;
+int l;
 char *buf;
+
+//Arg args[10];
+//int n;
 
   axtdo->actWin->appCtx->proc->lock();
   axtdo->needRefresh = 1;
   axtdo->actWin->addDefExeNode( axtdo->aglPtr );
   axtdo->actWin->appCtx->proc->unlock();
 
-  n = 0;
-  XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
-  XtSetValues( axtdo->tf_widget, args, n );
+  //n = 0;
+  //XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
+  //XtSetValues( axtdo->tf_widget, args, n );
 
   buf = XmTextGetString( axtdo->tf_widget );
   l = strlen(buf);
   XtFree( buf );
 
-  axtdo->grabUpdate = 0;
+  //axtdo->grabUpdate = 0;
+  //  printf( "d\n" );
 
 }
 
@@ -605,11 +673,22 @@ static void xtdoSetValueChanged (
 {
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
+int result;
 
   axtdo->widget_value_changed = 1;
 
-  if ( axtdo->changeCallback ) {
-    (*axtdo->changeCallback)( axtdo );
+  if ( axtdo->changeCallbackFlag ) {
+    if ( axtdo->changeCallback ) {
+      result = abs ( (*axtdo->changeCallback)( axtdo ) );
+      if ( result != axtdo->oldChangeResult ) {
+        axtdo->oldChangeResult = result;
+        axtdo->actWin->appCtx->proc->lock();
+        axtdo->needFgPvPut = 1;
+        axtdo->fgPvValue = result;
+        axtdo->actWin->addDefExeNode( axtdo->aglPtr );
+        axtdo->actWin->appCtx->proc->unlock();
+      }
+    }
   }
 
 }
@@ -631,12 +710,13 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
     //XSetInputFocus( axtdo->actWin->display(),
      // XtWindow(axtdo->actWin->executeWidget), RevertToNone, CurrentTime );
 
-    XSetInputFocus( axtdo->actWin->display(),
-     XtWindow(axtdo->tf_widget), RevertToNone, CurrentTime );
+    //XSetInputFocus( axtdo->actWin->display(),
+    // XtWindow(axtdo->tf_widget), RevertToNone, CurrentTime );
 
   }
 
-  axtdo->grabUpdate = 1;
+  //axtdo->grabUpdate = 1;
+  //  printf( "E\n" );
 
 }
 
@@ -649,8 +729,11 @@ static void xtdoSetSelection (
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int l;
 char *buf;
-Arg args[10];
-int n;
+
+//Arg args[10];
+//int n;
+
+  printf( "xtdoSetSelection\n" );
 
   axtdo->widget_value_changed = 0;
 
@@ -658,9 +741,9 @@ int n;
   l = strlen(buf);
   XtFree( buf );
 
-  n = 0;
-  XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) True ); n++;
-  XtSetValues( axtdo->tf_widget, args, n );
+  //n = 0;
+  //XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) True ); n++;
+  //XtSetValues( axtdo->tf_widget, args, n );
 
   if ( axtdo->autoSelect ) {
     XmTextSetSelection( axtdo->tf_widget, 0, l,
@@ -705,7 +788,10 @@ char *buf;
 
   //XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
 
-  if ( !axtdo->inputFocusUpdatesAllowed ) axtdo->grabUpdate = 0;
+  //if ( !axtdo->inputFocusUpdatesAllowed ) {
+  //  axtdo->grabUpdate = 0;
+  //  printf( "f\n" );
+  //}
 
 }
 
@@ -719,14 +805,16 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int stat;
 char string[XTDC_K_MAX+1];
 char *buf;
-Arg args[10];
-int n;
 
-  axtdo->grabUpdate = 0;
+//Arg args[10];
+//int n;
 
-  n = 0;
-  XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
-  XtSetValues( axtdo->tf_widget, args, n );
+  //axtdo->grabUpdate = 0;
+  //  printf( "g\n" );
+
+  //n = 0;
+  //XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
+  //XtSetValues( axtdo->tf_widget, args, n );
 
   //XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
 
@@ -817,7 +905,10 @@ char *buf, tmp[XTDC_K_MAX+1];
 
   }
 
-  if ( !axtdo->inputFocusUpdatesAllowed ) axtdo->grabUpdate = 0;
+  //if ( !axtdo->inputFocusUpdatesAllowed ) {
+  //  axtdo->grabUpdate = 0;
+  //  printf( "h\n" );
+  //}
 
 }
 
@@ -830,15 +921,17 @@ static void xtdoTextFieldToIntLF (
 activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int ivalue;
 char *buf;
-Arg args[10];
-int n;
 char tmp[XTDC_K_MAX+1];
 
-  axtdo->grabUpdate = 0;
+//Arg args[10];
+//int n;
 
-  n = 0;
-  XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
-  XtSetValues( axtdo->tf_widget, args, n );
+  //axtdo->grabUpdate = 0;
+  //  printf( "i\n" );
+
+  //n = 0;
+  //XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
+  //XtSetValues( axtdo->tf_widget, args, n );
 
   //XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
 
@@ -969,7 +1062,10 @@ char *buf, tmp[XTDC_K_MAX+1];
 
   }
 
-  if ( !axtdo->inputFocusUpdatesAllowed ) axtdo->grabUpdate = 0;
+  //if ( !axtdo->inputFocusUpdatesAllowed ) {
+  //  axtdo->grabUpdate = 0;
+  //  printf( "j\n" );
+  //}
 
 }
 
@@ -983,14 +1079,16 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int ivalue, doPut;
 double dvalue;
 char *buf, tmp[XTDC_K_MAX+1];
-Arg args[10];
-int n;
 
-  axtdo->grabUpdate = 0;
+//Arg args[10];
+//int n;
 
-  n = 0;
-  XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
-  XtSetValues( axtdo->tf_widget, args, n );
+  //axtdo->grabUpdate = 0;
+  //  printf( "k\n" );
+
+  //n = 0;
+  //XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) False ); n++;
+  //XtSetValues( axtdo->tf_widget, args, n );
 
   //XmTextSetInsertionPosition( axtdo->tf_widget, 0 );
 
@@ -2391,6 +2489,8 @@ static int objTypeEnum[4] = {
   tag.loadW( "objType", 4, objTypeEnumStr, objTypeEnum, &objType,
    &objTypeUnknown );
   tag.loadBoolW( "clipToDspLimits", &clipToDspLimits, &zero );
+  tag.loadW( "id", id, emptyStr );
+  tag.loadBoolW( "changeCallback", &changeCallbackFlag, &zero );
   tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
@@ -2645,6 +2745,8 @@ static int objTypeEnum[4] = {
   tag.loadR( "objType", 4, objTypeEnumStr, objTypeEnum, &objType,
    &objTypeUnknown );
   tag.loadR( "clipToDspLimits", &clipToDspLimits, &zero );
+  tag.loadR( "id", 31, id, emptyStr );
+  tag.loadR( "changeCallback", &changeCallbackFlag, &zero );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.readTags( f, "endObjectProperties" );
@@ -2673,12 +2775,11 @@ static int objTypeEnum[4] = {
     
   this->initSelectBox(); // call after getting x,y,w,h
 
-
-  strcpy( this->id, "" );
-  changeCallbackFlag = 0;
   activateCallbackFlag = 0;
   deactivateCallbackFlag = 0;
-  anyCallbackFlag = 0;
+
+  anyCallbackFlag = changeCallbackFlag ||
+   activateCallbackFlag || deactivateCallbackFlag;
 
   precision = efPrecision.value();
 
@@ -3414,7 +3515,7 @@ int noedit;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  //ef.addTextField( activeXTextDspClass_str6, 35, bufId, 31 );
+  ef.addTextField( activeXTextDspClass_str6, 35, bufId, 31 );
   ef.addTextField( activeXTextDspClass_str7, 35, &eBuf->bufX );
   ef.addTextField( activeXTextDspClass_str8, 35, &eBuf->bufY );
   ef.addTextField( activeXTextDspClass_str9, 35, &eBuf->bufW );
@@ -3499,7 +3600,7 @@ int noedit;
 
   //ef.addToggle( activeXTextDspClass_str30, &eBuf->bufActivateCallbackFlag );
   //ef.addToggle( activeXTextDspClass_str31, &eBuf->bufDeactivateCallbackFlag );
-  //ef.addToggle( activeXTextDspClass_str32, &eBuf->bufChangeCallbackFlag );
+  ef.addToggle( activeXTextDspClass_str32, &eBuf->bufChangeCallbackFlag );
 
   return 1;
 
@@ -3775,37 +3876,36 @@ unsigned int color;
 
     if ( tf_widget ) {
 
-      if ( !grabUpdate || updatePvOnDrop ) {
-
-        if ( bufInvalid ) {
-          n = 0;
-          XtSetArg( args[n], XmNvalue, (XtArgVal) value ); n++;
-          if ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) ) {
-	    color = fgColor.pixelColor();
-            XtSetArg( args[n], XmNforeground, (XtArgVal) color ); n++;
-          }
-          else {
-	    color = fgColor.getColor();
-            XtSetArg( args[n], XmNforeground, (XtArgVal) color ); n++;
-          }
-          if ( colorMode == XTDC_K_COLORMODE_ALARM ) {
-            if ( fgColor.getSeverity() != prevAlarmSeverity ) {
-              if ( ( ( g_showTextBorderAlways && actWin->ci->shouldShowNoAlarmState() ) ||
-                     fgColor.getSeverity() ) && useAlarmBorder ) {
-                XtSetArg( args[n], XmNborderWidth, (XtArgVal) 2 ); n++;
-	        color = fgColor.getColor();
-                XtSetArg( args[n], XmNborderColor, (XtArgVal) color ); n++;
-              }
-              else {
-                XtSetArg( args[n], XmNborderWidth, (XtArgVal) 0 ); n++;
-              }
-            }
-          }
-          XtSetValues( tf_widget, args, n );
+      if ( bufInvalid ) {
+        n = 0;
+        if ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) ) {
+          color = fgColor.pixelColor();
+          XtSetArg( args[n], XmNforeground, (XtArgVal) color ); n++;
         }
         else {
-          XmTextFieldSetString( tf_widget, value );
+          color = fgColor.getColor();
+          XtSetArg( args[n], XmNforeground, (XtArgVal) color ); n++;
         }
+        if ( colorMode == XTDC_K_COLORMODE_ALARM ) {
+          if ( fgColor.getSeverity() != prevAlarmSeverity ) {
+            if ( ( ( g_showTextBorderAlways && actWin->ci->shouldShowNoAlarmState() ) ||
+                   fgColor.getSeverity() ) && useAlarmBorder ) {
+              XtSetArg( args[n], XmNborderWidth, (XtArgVal) 2 ); n++;
+	      color = fgColor.getColor();
+              XtSetArg( args[n], XmNborderColor, (XtArgVal) color ); n++;
+            }
+            else {
+              XtSetArg( args[n], XmNborderWidth, (XtArgVal) 0 ); n++;
+            }
+          }
+        }
+        XtSetValues( tf_widget, args, n );
+      }
+
+      if ( !grabUpdate || updatePvOnDrop || ( needInitialValue == 2 ) ) {
+
+        XmTextFieldSetString( tf_widget, value );
+        needInitialValue = 0;
 
       }
 
@@ -4001,7 +4101,7 @@ char callbackName[63+1];
 
       deferredCount = 0;
       needConnectInit = needInfoInit = needErase = needDraw = needRefresh =
-       needUpdate = 0;
+       needUpdate = needFgPvPut = 0;
       needToEraseUnconnected = 0;
       needToDrawUnconnected = 0;
       initialConnection = 1;
@@ -4027,6 +4127,10 @@ char callbackName[63+1];
       pvCount = svalPvCount = 1;
       oldStat = -1;
       oldSev = -1;
+      oldChangeResult = -1;
+      focusIn = focusOut = cursorIn = cursorOut = 0;
+      needInitialValue = 1;
+      handlerInstalled = 0;
 
       initEnable();
 
@@ -4142,7 +4246,7 @@ char callbackName[63+1];
           Strncat( callbackName, activeXTextDspClass_str36, 63 );
           callbackName[63] = 0;
           changeCallback =
-           actWin->appCtx->userLibObject.getFunc( callbackName );
+           actWin->appCtx->userLibObject.getIntFunc( callbackName );
 	}
 
         if ( activateCallbackFlag ) {
@@ -4198,6 +4302,23 @@ int activeXTextDspClass::deactivate (
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
     unconnectedTimer = 0;
+  }
+
+  if ( tf_widget ) {
+
+    if ( handlerInstalled ) {
+      if ( inputFocusUpdatesAllowed ) {
+        XtRemoveEventHandler( tf_widget,
+         EnterWindowMask|LeaveWindowMask|FocusChangeMask, False,
+         eventHandler, (XtPointer) this );
+      }
+      else {
+        XtRemoveEventHandler( tf_widget, FocusChangeMask, False,
+         eventHandler, (XtPointer) this );
+      }
+      handlerInstalled = 0;
+    }
+
   }
 
   //updateBlink( 0 );
@@ -4599,7 +4720,7 @@ XButtonEvent *be = (XButtonEvent *) e;
 void activeXTextDspClass::executeDeferred ( void ) {
 
 int n, numCols, width, csrPos;
-int nc, ni, nu, nr, nd, ne;
+int nc, ni, nu, nr, nd, ne, nfgpvp;
 short svalue;
 Arg args[10];
 unsigned int bg, pixel;
@@ -4630,12 +4751,23 @@ char locFieldLenInfo[7+1];
   nu = needUpdate; needUpdate = 0;
   nd = needDraw; needDraw = 0;
   ne = needErase; needErase = 0;
+  nfgpvp = needFgPvPut; needFgPvPut = 0;
   strncpy( value, curValue, XTDC_K_MAX );
   value[XTDC_K_MAX] = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
   if ( !activeMode ) return;
+
+  if ( nfgpvp ) {
+
+    if ( fgPvExists ) {
+      if ( fgPvId->is_valid() ) {
+        fgPvId->put( fgPvValue );
+      }
+    }
+
+  }
 
   if ( nc ) {
 
@@ -5086,10 +5218,18 @@ char locFieldLenInfo[7+1];
 
 	}
 
-        if ( inputFocusUpdatesAllowed ) {
-          XtAddEventHandler( tf_widget, EnterWindowMask|LeaveWindowMask, False,
-           eventHandler, (XtPointer) this );
-        }
+	if ( !handlerInstalled ) {
+          handlerInstalled = 1;
+          if ( inputFocusUpdatesAllowed ) {
+            XtAddEventHandler( tf_widget,
+             EnterWindowMask|LeaveWindowMask|FocusChangeMask, False,
+             eventHandler, (XtPointer) this );
+          }
+          else {
+            XtAddEventHandler( tf_widget, FocusChangeMask, False,
+             eventHandler, (XtPointer) this );
+          }
+	}
 
         switch ( pvType ) {
 
@@ -5161,6 +5301,8 @@ char locFieldLenInfo[7+1];
   }
 
   if ( nr ) {
+
+    if ( needInitialValue == 1 ) needInitialValue = 2; 
 
     bufInvalidate();
     eraseActive();

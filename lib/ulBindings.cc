@@ -74,6 +74,28 @@ int stat;
 
 }
 
+IPFUNC ulBindingClass::getIntFunc (
+  char *funcName )
+{
+
+IPFUNC func;
+char *error;
+
+//fprintf( stderr, "ulBindingClass::getFunc, func name = [%s]\n", funcName );
+
+  if ( !dllHandle ) return NULL;
+
+  func = (IPFUNC) dlsym( dllHandle, funcName );
+  if ((error = dlerror()) != NULL)  {
+    fputs(error, stderr);
+    fputs( "\n", stderr );
+    return NULL;
+  }
+
+  return func;
+
+}
+
 VPFUNC ulBindingClass::getFunc (
   char *funcName )
 {

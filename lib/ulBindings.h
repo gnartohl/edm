@@ -29,6 +29,7 @@
 
 typedef void (*VPFUNC)( void *ptr );
 typedef int (*RULEFUNC)( void *classPtr, int arraySize, void *valArray );
+typedef int (*IPFUNC)( void *ptr );
 
 class ulBindingClass {
 
@@ -45,6 +46,9 @@ ulBindingClass ( void );
 
 int openUserLibrary (
   char *libName );
+
+IPFUNC getIntFunc (
+  char *funcName );
 
 VPFUNC getFunc (
   char *funcName );
