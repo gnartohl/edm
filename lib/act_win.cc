@@ -26,6 +26,7 @@
 #include <math.h>
 #include "app_pkg.h"
 #include "act_win.h"
+#include "lookup.h"
 
 #include "thread.h"
 #include "crc.h"
@@ -14571,19 +14572,101 @@ int activeWindowClass::renameToBackupFile (
   char *fname )
 {
 
-int stat;
-char tmp[511+1];
+int stat, found, min, max, num, count;
+char tmp[530+1], spec[520+1], name[511+1], ext[511+1], verstr[10+1],
+ *tk, *ctx, *nonInt;
 
-  strncpy( tmp, fname, 510 ); // leave room for ~
-  Strncat( tmp, "~", 511 );
+char *envPtr;
+int maxver = 1;
 
-  if ( fileExists( tmp ) ) {
-    stat = unlink( tmp );
-    if ( stat ) return 2; // error
+  envPtr = getenv( environment_str18 );
+
+  if ( envPtr ) {
+
+    if ( !strcasecmp( envPtr, activeWindowClass_str211 ) ) {
+      maxver = -1;
+    }
+    else {
+
+      strncpy( tmp, envPtr, 511 );
+      tmp[511] = 0;
+      num = strtol( tmp, &nonInt, 10 );
+      if ( !nonInt || !strcmp( nonInt, "" ) ) {
+	maxver = num;
+      }
+
+      if ( maxver < 1 ) maxver = 1;
+
+    }
+
   }
-  if ( fileExists( fname ) ) {
-    stat = rename( fname, tmp );
-    if ( stat ) return 4; // error
+
+  strncpy( spec, fname, 511 );
+  Strncat( spec, "-*", 520 );
+  min = max = count = 0;
+  getFirstFileNameExt( spec, 511, name, 511, ext, &found );
+  while ( found ) {
+    ctx = NULL;
+    tk = strtok_r( ext, "-", &ctx );
+    tk = strtok_r( NULL, "-", &ctx );
+    if ( tk ) {
+      num = strtol( tk, &nonInt, 10 );
+      if ( !nonInt || !strcmp( nonInt, "" ) ) {
+        count++;
+        if ( min ) {
+          if ( min > num ) min = num;
+	}
+	else {
+	  min = num;
+	}
+	if ( max < num ) max = num;
+      }
+    }
+    getNextFileNameExt( spec, 511, name, 511, ext, &found );
+  }
+
+  if ( maxver != 1 ) {
+
+    if ( ( maxver != -1 ) && count >= maxver ) {
+
+      strncpy( tmp, fname, 510 ); // leave room for version info
+      tmp[510] = 0;
+      snprintf( verstr, 10, "-%-d", min ); 
+      Strncat( tmp, verstr, 530 );
+
+      if ( fileExists( tmp ) ) {
+        stat = unlink( tmp );
+        if ( stat ) return 2; // error
+      }
+
+    }
+
+    num = max+1;
+    strncpy( tmp, fname, 510 ); // leave room for version info
+    tmp[510] = 0;
+    snprintf( verstr, 10, "-%-d", num ); 
+    Strncat( tmp, verstr, 530 );
+
+    if ( fileExists( fname ) ) {
+      stat = rename( fname, tmp );
+      if ( stat ) return 4; // error
+    }
+
+  }
+  else {
+
+    strncpy( tmp, fname, 510 ); // leave room for ~
+    Strncat( tmp, "~", 511 );
+
+    if ( fileExists( tmp ) ) {
+      stat = unlink( tmp );
+      if ( stat ) return 2; // error
+    }
+    if ( fileExists( fname ) ) {
+      stat = rename( fname, tmp );
+      if ( stat ) return 4; // error
+    }
+
   }
 
   return 1; // success
