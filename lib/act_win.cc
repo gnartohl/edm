@@ -19537,7 +19537,7 @@ void activeWindowClass::closeDeferred (
   int cycles )
 {
 
-  waiting = 1;
+  waiting = cycles;
   doActiveClose = 1;
   appCtx->postDeferredExecutionQueue( this );
 
