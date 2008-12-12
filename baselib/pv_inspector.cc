@@ -615,8 +615,13 @@ activeWindowListPtr cur;
     }
 
     if ( okToClose ) {
-      aw->returnToEdit( 1 );
-      aw = NULL;
+      if ( aw->okToDeactivate() ) {
+        aw->returnToEdit( 1 );
+        aw = NULL;
+      }
+      else {
+        aw->closeDeferred( 20 );
+      }
     }
 
   }
@@ -2656,8 +2661,16 @@ activeWindowListPtr cur;
       }
 
       if ( okToClose ) {
-        aw->returnToEdit( 1 );
-        aw = NULL;
+        if ( aw->okToDeactivate() ) {
+          aw->returnToEdit( 1 );
+          aw = NULL;
+	}
+        else {
+          actWin->appCtx->proc->lock();
+          needClose = 1;
+          actWin->addDefExeNode( aglPtr );
+          actWin->appCtx->proc->unlock();
+	}
       }
       else {
         aw = NULL;
