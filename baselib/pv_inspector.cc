@@ -621,6 +621,7 @@ activeWindowListPtr cur;
       }
       else {
         aw->closeDeferred( 20 );
+        aw = NULL;
       }
     }
 
@@ -2666,10 +2667,8 @@ activeWindowListPtr cur;
           aw = NULL;
 	}
         else {
-          actWin->appCtx->proc->lock();
-          needClose = 1;
-          actWin->addDefExeNode( aglPtr );
-          actWin->appCtx->proc->unlock();
+          aw->closeDeferred( 20 );
+          aw = NULL;
 	}
       }
       else {
