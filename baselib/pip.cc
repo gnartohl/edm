@@ -2830,26 +2830,37 @@ XButtonEvent be;
 
         if ( !aw ) {
 
-          cur = new activeWindowListType;
-          actWin->appCtx->addActiveWindow( cur );
+          if ( displaySource == 2 ) { // menu
 
-          cur->node.createEmbedded( actWin->appCtx, frameWidget, 0, 0, w, h,
-           x, y, center, setSize, sizeOfs, noScroll, actWin->numMacros,
-           actWin->macros, actWin->expansions );
+            if ( iv < 0 ) iv = 0;
+            if ( iv > numDsps ) iv = 0;
+            openEmbeddedByIndex( iv );
 
-          cur->node.realize();
+	  }
+	  else {
 
-          cur->node.setGraphicEnvironment( &cur->node.appCtx->ci,
-           &cur->node.appCtx->fi );
+            cur = new activeWindowListType;
+            actWin->appCtx->addActiveWindow( cur );
 
-          cur->node.storeFileName( curFileName );
+            cur->node.createEmbedded( actWin->appCtx, frameWidget, 0, 0, w, h,
+             x, y, center, setSize, sizeOfs, noScroll, actWin->numMacros,
+             actWin->macros, actWin->expansions );
 
-          actWin->appCtx->openActivateActiveWindow( &cur->node, 0, 0 );
+            cur->node.realize();
 
-          aw = &cur->node;
+            cur->node.setGraphicEnvironment( &cur->node.appCtx->ci,
+             &cur->node.appCtx->fi );
 
-          aw->parent = actWin;
-          (actWin->numChildren)++;
+            cur->node.storeFileName( curFileName );
+
+            actWin->appCtx->openActivateActiveWindow( &cur->node, 0, 0 );
+
+            aw = &cur->node;
+
+            aw->parent = actWin;
+            (actWin->numChildren)++;
+
+          }
 
           drawActive();
 
