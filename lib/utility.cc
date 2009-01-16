@@ -2771,27 +2771,6 @@ int num_label_ticks, stat;
 int formatString (
   double value,
   char *string,
-  int len,
-  char *fmt
-) {
-
-char buf[128];
-
-  if ( !string ) return 0;
-  if ( len < 1 ) return 0;
-
-  snprintf( buf, 127, fmt, value );
-  buf[127] = 0;
-
-  strncpy( string, buf, len );
-
-  return 1;
-
-}
-
-int formatString (
-  double value,
-  char *string,
   int len
 ) {
 
@@ -2807,6 +2786,31 @@ char buf[128];
     snprintf( buf, 127, "%-3g", value );
     buf[127] = 0;
   }
+
+  strncpy( string, buf, len );
+
+  return 1;
+
+}
+
+int formatString (
+  double value,
+  char *string,
+  int len,
+  char *fmt
+) {
+
+char buf[128];
+
+  if ( !string ) return 0;
+  if ( len < 1 ) return 0;
+
+  if ( !fmt ) {
+    return formatString( value, string, len );
+  }
+
+  snprintf( buf, 127, fmt, value );
+  buf[127] = 0;
 
   strncpy( string, buf, len );
 
