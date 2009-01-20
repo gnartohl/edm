@@ -4650,7 +4650,7 @@ int reverse = 0;
           formatString( 0.0, buf, 31, fmt );
 	}
 	else {
-          formatString( 0.0, buf, 31, fmt );
+          formatString( 0.0, buf, 31 );
 	}
       }
       else {
@@ -4659,7 +4659,7 @@ int reverse = 0;
             formatString( -1*labelVal, buf, 31, fmt );
 	  }
 	  else {
-            formatString( -1*labelVal, buf, 31, fmt );
+            formatString( -1*labelVal, buf, 31 );
 	  }
 	}
 	else {
@@ -4667,7 +4667,7 @@ int reverse = 0;
             formatString( labelVal, buf, 31, fmt );
 	  }
 	  else {
-            formatString( labelVal, buf, 31, fmt );
+            formatString( labelVal, buf, 31 );
 	  }
 	}
       }
@@ -4814,7 +4814,7 @@ int reverse = 0;
         formatString( 0.0, buf, 31, fmt );
       }
       else {
-        formatString( 0.0, buf, 31, fmt );
+        formatString( 0.0, buf, 31 );
       }
     }
     else {
@@ -4823,7 +4823,7 @@ int reverse = 0;
           formatString( -1*labelVal, buf, 31, fmt );
 	}
 	else {
-          formatString( -1*labelVal, buf, 31, fmt );
+          formatString( -1*labelVal, buf, 31 );
 	}
       }
       else {
@@ -4831,7 +4831,7 @@ int reverse = 0;
           formatString( labelVal, buf, 31, fmt );
 	}
 	else {
-          formatString( labelVal, buf, 31, fmt );
+          formatString( labelVal, buf, 31 );
 	}
       }
     }
