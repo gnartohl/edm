@@ -733,7 +733,7 @@ char *buf;
 //Arg args[10];
 //int n;
 
-  printf( "xtdoSetSelection\n" );
+  //printf( "xtdoSetSelection\n" );
 
   axtdo->widget_value_changed = 0;
 
