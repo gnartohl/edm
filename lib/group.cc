@@ -3762,6 +3762,7 @@ activeGraphicListPtr cur;
 
 void activeGroupClass::map ( void ) {
 
+#if 0
 activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
 activeGraphicListPtr cur;
 
@@ -3770,11 +3771,13 @@ activeGraphicListPtr cur;
     cur->node->map();
     cur = cur->flink;
   }
+#endif
 
 }
 
 void activeGroupClass::unmap ( void ) {
 
+#if 0
 activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
 activeGraphicListPtr cur;
 
@@ -3783,6 +3786,7 @@ activeGraphicListPtr cur;
     cur->node->unmap();
     cur = cur->flink;
   }
+#endif
 
 }
 
