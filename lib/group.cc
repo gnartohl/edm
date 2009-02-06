@@ -1122,6 +1122,25 @@ activeGraphicListPtr cur;
 
 }
 
+int activeGroupClass::activateComplete ( void ) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  cur = head->flink;
+  while ( cur != head ) {
+    if ( !(cur->node->activateComplete()) ) {
+      //printf( "%s at %-d,%-d not ready\n", cur->node->objName(),
+      // cur->node->getX0(), cur->node->getY0() );
+      return 0;
+    }
+    cur = cur->flink;
+  }
+
+  return 1;
+
+}
+
 int activeGroupClass::checkEditStatus ( void ) {
 
 activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
@@ -3743,9 +3762,27 @@ activeGraphicListPtr cur;
 
 void activeGroupClass::map ( void ) {
 
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  cur = head->flink;
+  while ( cur != head ) {
+    cur->node->map();
+    cur = cur->flink;
+  }
+
 }
 
 void activeGroupClass::unmap ( void ) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  cur = head->flink;
+  while ( cur != head ) {
+    cur->node->unmap();
+    cur = cur->flink;
+  }
 
 }
 

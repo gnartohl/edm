@@ -191,9 +191,16 @@ int n, l;
       string[XTDC_K_MAX] = 0;
     
       if ( axtdo->pvExists ) {
-        stat = stringPut( axtdo->pvId,
-         XDisplayName(axtdo->actWin->appCtx->displayName),
-         axtdo->pvCount, string );
+	if ( axtdo->isPassword ) {
+          stat = stringPut( axtdo->pvId,
+           XDisplayName(axtdo->actWin->appCtx->displayName),
+           axtdo->pwLength, axtdo->pwValue );
+	}
+	else {
+          stat = stringPut( axtdo->pvId,
+           XDisplayName(axtdo->actWin->appCtx->displayName),
+           axtdo->pvCount, string );
+	}
       }
       else {
         axtdo->bufInvalidate();
@@ -693,6 +700,61 @@ int result;
 
 }
 
+static void xtdoModVerify (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
+XmTextVerifyPtr xmv;
+int i, l;
+
+  xmv = (XmTextVerifyPtr) call;
+
+  if ( ( xmv->startPos == 0 ) && ( !(xmv->text->ptr) ) ) {
+    xmv->doit = True;
+    return;
+  }
+
+  if ( xmv->startPos == ( xmv->endPos - 1 ) ) {
+    if ( axtdo->pwLength > 0 ) {
+      (axtdo->pwLength)--;
+      axtdo->pwValue[axtdo->pwLength] = 0;
+    }
+    xmv->doit = True;
+    return;
+  }
+
+  if ( xmv->text->ptr ) {
+
+    if ( strlen(xmv->text->ptr) == 1 ) {
+      if ( axtdo->pwLength < 255 ) {
+        axtdo->pwValue[axtdo->pwLength] = xmv->text->ptr[0];
+        (axtdo->pwLength)++;
+        axtdo->pwValue[axtdo->pwLength] = 0;
+      }
+    }
+
+    xmv->doit = True;
+    l = strlen( xmv->text->ptr );
+    for ( i=0; i<l; i++ ) {
+      if ( xmv->text->ptr[i] != '*' ) {
+        xmv->text->ptr[i] = '*';
+        xmv->doit = False;
+        xmv->doit = True;
+      }
+    }
+
+  }
+  else {
+
+    xmv->doit = False;
+
+  }
+
+}
+
 static void xtdoGrabUpdate (
   Widget w,
   XtPointer client,
@@ -733,8 +795,6 @@ char *buf;
 //Arg args[10];
 //int n;
 
-  //printf( "xtdoSetSelection\n" );
-
   axtdo->widget_value_changed = 0;
 
   buf = XmTextGetString( axtdo->tf_widget );
@@ -765,10 +825,16 @@ int stat;
 char string[XTDC_K_MAX+1];
 char *buf;
 
-  buf = XmTextGetString( axtdo->tf_widget );
-  strncpy( axtdo->entryValue, buf, XTDC_K_MAX );
-  axtdo->entryValue[XTDC_K_MAX] = 0;
-  XtFree( buf );
+  if ( axtdo->isPassword ) {
+    strncpy( axtdo->entryValue, axtdo->pwValue, XTDC_K_MAX );
+    axtdo->entryValue[XTDC_K_MAX] = 0;
+  }
+  else {
+    buf = XmTextGetString( axtdo->tf_widget );
+    strncpy( axtdo->entryValue, buf, XTDC_K_MAX );
+    axtdo->entryValue[XTDC_K_MAX] = 0;
+    XtFree( buf );
+  }
 
   strncpy( axtdo->curValue, axtdo->entryValue, XTDC_K_MAX );
   axtdo->curValue[XTDC_K_MAX] = 0;
@@ -792,6 +858,22 @@ char *buf;
   //  axtdo->grabUpdate = 0;
   //  printf( "f\n" );
   //}
+
+  if ( axtdo->isPassword ) {
+    int n, l;
+    Arg args[10];
+    char v1[10];
+    strcpy( v1, "" );
+    l = 0;
+    n = 0;
+    XtSetArg( args[n], XmNvalue, (XtPointer) &v1 ); n++;
+    XtSetArg( args[n], XmNcursorPosition, (XtPointer) l ); n++;
+    XtSetValues( w, args, n );
+    strcpy( axtdo->pwValue, "" );
+    axtdo->pwLength = 0;
+    axtdo->entryValue[0] = 0;
+    axtdo->curValue[0] = 0;
+  }
 
 }
 
@@ -820,10 +902,16 @@ char *buf;
 
   if ( !axtdo->widget_value_changed ) return;
  
-  buf = XmTextGetString( axtdo->tf_widget );
-  strncpy( axtdo->entryValue, buf, XTDC_K_MAX );
-  axtdo->entryValue[XTDC_K_MAX] = 0;
-  XtFree( buf );
+  if ( axtdo->isPassword ) {
+    strncpy( axtdo->entryValue, axtdo->pwValue, XTDC_K_MAX );
+    axtdo->entryValue[XTDC_K_MAX] = 0;
+  }
+  else {
+    buf = XmTextGetString( axtdo->tf_widget );
+    strncpy( axtdo->entryValue, buf, XTDC_K_MAX );
+    axtdo->entryValue[XTDC_K_MAX] = 0;
+    XtFree( buf );
+  }
 
   strncpy( axtdo->curValue, axtdo->entryValue, XTDC_K_MAX );
   axtdo->curValue[XTDC_K_MAX] = 0;
@@ -839,6 +927,22 @@ char *buf;
     axtdo->actWin->appCtx->proc->lock();
     axtdo->actWin->addDefExeNode( axtdo->aglPtr );
     axtdo->actWin->appCtx->proc->unlock();
+  }
+
+  if ( axtdo->isPassword ) {
+    int n, l;
+    Arg args[10];
+    char v1[10];
+    strcpy( v1, "" );
+    l = 0;
+    n = 0;
+    XtSetArg( args[n], XmNvalue, (XtPointer) &v1 ); n++;
+    XtSetArg( args[n], XmNcursorPosition, (XtPointer) l ); n++;
+    XtSetValues( w, args, n );
+    strcpy( axtdo->pwValue, "" );
+    axtdo->pwLength = 0;
+    axtdo->entryValue[0] = 0;
+    axtdo->curValue[0] = 0;
   }
 
 }
@@ -1308,6 +1412,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) userarg;
 int ivalue, st, sev;
 unsigned int uivalue;
 unsigned short svalue;
+
+  if ( axtdo->isPassword ) return;
 
   axtdo->actWin->appCtx->proc->lock();
 
@@ -1930,6 +2036,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   axtdo->inputFocusUpdatesAllowed = axtdo->eBuf->bufInputFocusUpdatesAllowed;
 
+  axtdo->isPassword = axtdo->eBuf->bufIsPassword;
+
   strncpy( axtdo->id, axtdo->bufId, 31 );
   axtdo->id[31] = 0;
   axtdo->changeCallbackFlag = axtdo->eBuf->bufChangeCallbackFlag;
@@ -2079,6 +2187,8 @@ activeXTextDspClass::activeXTextDspClass ( void ) {
 
   inputFocusUpdatesAllowed = 0;
 
+  isPassword = 0;
+
   newPositioning = 1;
 
   prevAlarmSeverity = -1;
@@ -2203,6 +2313,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   useAlarmBorder = source->useAlarmBorder;
 
   inputFocusUpdatesAllowed = source->inputFocusUpdatesAllowed;
+
+  isPassword = source->isPassword;
 
   newPositioning = 1;
 
@@ -2492,6 +2604,7 @@ static int objTypeEnum[4] = {
   tag.loadW( "id", id, emptyStr );
   tag.loadBoolW( "changeCallback", &changeCallbackFlag, &zero );
   tag.loadW( unknownTags );
+  tag.loadBoolW( "isPassword", &isPassword, &zero );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -2747,6 +2860,7 @@ static int objTypeEnum[4] = {
   tag.loadR( "clipToDspLimits", &clipToDspLimits, &zero );
   tag.loadR( "id", 31, id, emptyStr );
   tag.loadR( "changeCallback", &changeCallbackFlag, &zero );
+  tag.loadR( "isPassword", &isPassword, &zero );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.readTags( f, "endObjectProperties" );
@@ -3508,6 +3622,7 @@ int noedit;
   eBuf->bufShowUnits = showUnits;
   eBuf->bufUseAlarmBorder = useAlarmBorder;
   eBuf->bufInputFocusUpdatesAllowed = inputFocusUpdatesAllowed;
+  eBuf->bufIsPassword = isPassword;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -3560,12 +3675,14 @@ int noedit;
     ef.addToggle( activeXTextDspClass_str68, &eBuf->bufChangeValOnLoseFocus );
     ef.addToggle( activeXTextDspClass_str75, &eBuf->bufAutoSelect );
     ef.addToggle( activeXTextDspClass_str76, &eBuf->bufUpdatePvOnDrop );
+    ef.addToggle( activeXTextDspClass_str86, &eBuf->bufIsPassword );
   }
   else {
     eBuf->bufInputFocusUpdatesAllowed = inputFocusUpdatesAllowed = 0;
     eBuf->bufChangeValOnLoseFocus = changeValOnLoseFocus = 0;
     eBuf->bufAutoSelect = autoSelect = 0;
     eBuf->bufUpdatePvOnDrop = updatePvOnDrop = 0;
+    eBuf->bufIsPassword = isPassword = 0;
   }
 
   ef.addToggle( activeXTextDspClass_str69, &eBuf->bufFastUpdate );
@@ -4131,6 +4248,8 @@ char callbackName[63+1];
       focusIn = focusOut = cursorIn = cursorOut = 0;
       needInitialValue = 1;
       handlerInstalled = 0;
+      strcpy( pwValue, "" );
+      pwLength = 0;
 
       initEnable();
 
@@ -4894,6 +5013,10 @@ char locFieldLenInfo[7+1];
 
       if ( pvExists ) {
 
+        // isPassword is only valid for motif widgets and string pvs
+        if ( !isWidget ) isPassword = 0;
+        if ( pvType != ProcessVariable::specificType::text ) isPassword = 0;
+
         switch ( pvType ) {
 
         case ProcessVariable::specificType::text:
@@ -5195,14 +5318,24 @@ char locFieldLenInfo[7+1];
 
         //XmTextSetInsertionPosition( tf_widget, csrPos );
 
-        XtAddCallback( tf_widget, XmNfocusCallback,
-         xtdoSetSelection, this );
+        if ( !isPassword ) {
 
-        XtAddCallback( tf_widget, XmNmotionVerifyCallback,
-         xtdoGrabUpdate, this );
+          XtAddCallback( tf_widget, XmNfocusCallback,
+           xtdoSetSelection, this );
 
-        XtAddCallback( tf_widget, XmNvalueChangedCallback,
-         xtdoSetValueChanged, this );
+          XtAddCallback( tf_widget, XmNmotionVerifyCallback,
+           xtdoGrabUpdate, this );
+
+	}
+
+        if ( isPassword ) {
+          XtAddCallback( tf_widget, XmNmodifyVerifyCallback,
+           xtdoModVerify, this );
+	}
+	else {
+          XtAddCallback( tf_widget, XmNvalueChangedCallback,
+           xtdoSetValueChanged, this );
+	}
 
         if ( updatePvOnDrop ) {
 
@@ -5241,7 +5374,7 @@ char locFieldLenInfo[7+1];
           if ( changeValOnLoseFocus ) {
             XtAddCallback( tf_widget, XmNlosingFocusCallback,
              xtdoTextFieldToStringLF, this );
-	  }
+          }
 	  else {
             XtAddCallback( tf_widget, XmNlosingFocusCallback,
              xtdoRestoreValue, this );

@@ -377,6 +377,8 @@ void setNextSelectedToEdit (
 
 void clearNextSelectedToEdit ( void );
 
+int activateComplete ( void );
+
 void changeDisplayParams (
   unsigned int flag,
   char *fontTag,

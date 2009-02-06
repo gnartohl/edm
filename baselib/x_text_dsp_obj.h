@@ -265,6 +265,11 @@ static void xtdoSetValueChanged (
   XtPointer client,
   XtPointer call );
 
+static void xtdoModVerify (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 #endif
 
 class activeXTextDspClass : public activeGraphicClass {
@@ -473,6 +478,11 @@ friend void xtdoSetValueChanged (
   XtPointer client,
   XtPointer call );
 
+friend void xtdoModVerify (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 static const int pvConnection = 1;
 static const int svalPvConnection = 2;
 static const int fgPvConnection = 3;
@@ -525,6 +535,7 @@ typedef struct editBufTag {
   int bufShowUnits;
   int bufUseAlarmBorder;
   int bufInputFocusUpdatesAllowed;
+  int bufIsPassword;
 } editBufType, *editBufPtr;
 
 editBufPtr eBuf;
@@ -625,6 +636,10 @@ int newPositioning;
 int oldStat, oldSev;
 
 int inputFocusUpdatesAllowed;
+
+int isPassword;
+char pwValue[255+1];
+int pwLength;
 
 public:
 

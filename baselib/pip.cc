@@ -2281,6 +2281,7 @@ XButtonEvent be;
               return;
             }
             else {
+	      //printf( "1\n" );
               actWin->appCtx->postMessage( activePipClass_str30 );
               consecutiveDeactivateErrors = 0;
               return;
@@ -2384,6 +2385,8 @@ XButtonEvent be;
       curFileName[39] = 0;
     }
 
+    activateIsComplete = 1;
+
   }
 
 //----------------------------------------------------------------------------
@@ -2437,6 +2440,7 @@ XButtonEvent be;
                     return;
                   }
                   else {
+	            // printf( "2\n" );
                     actWin->appCtx->postMessage( activePipClass_str30 );
                     consecutiveDeactivateErrors = 0;
                     return;
@@ -2539,6 +2543,8 @@ XButtonEvent be;
       curFileName[127] = 0;
     }
 
+    activateIsComplete = 1;
+
   }
 
 //----------------------------------------------------------------------------
@@ -2613,6 +2619,8 @@ XButtonEvent be;
       curFileName[127] = 0;
     }
 
+    activateIsComplete = 1;
+
   }
 
 //----------------------------------------------------------------------------
@@ -2657,6 +2665,8 @@ XButtonEvent be;
       curFileName[127] = 0;
     }
 
+    activateIsComplete = 1;
+
   }
 
 //----------------------------------------------------------------------------
@@ -2675,6 +2685,11 @@ XButtonEvent be;
 
   if ( nunmap ) {
 
+    if ( frameWidget ) {
+      if ( *frameWidget ) XtUnmapWidget( *frameWidget );
+    }
+
+#if 0
     if ( aw ) {
 
       okToClose = 0;
@@ -2698,6 +2713,7 @@ XButtonEvent be;
             return;
           }
           else {
+	    // printf( "3\n" );
             actWin->appCtx->postMessage( activePipClass_str30 );
             consecutiveDeactivateErrors = 0;
             return;
@@ -2737,6 +2753,7 @@ XButtonEvent be;
     if ( frameWidget ) {
       frameWidget = NULL;
     }
+#endif
 
   }
 
@@ -2744,131 +2761,141 @@ XButtonEvent be;
 
   if ( nmap ) {
 
-    // curFileName should contain the file to open
+    if ( frameWidget ) {
+      if ( *frameWidget ) XtMapWidget( *frameWidget );
+    }
+    else {
 
-    if ( !blank( curFileName ) ) {
+      // curFileName should contain the file to open
 
-      // close old ( however, one should not be open )
+      if ( !blank( curFileName ) ) {
 
-      if ( aw ) {
+        // close old ( however, one should not be open )
 
-        okToClose = 0;
-        cur = actWin->appCtx->head->flink;
-        while ( cur != actWin->appCtx->head ) {
-          if ( &cur->node == aw ) {
-            okToClose = 1;
-            break;
+        if ( aw ) {
+
+          okToClose = 0;
+          cur = actWin->appCtx->head->flink;
+          while ( cur != actWin->appCtx->head ) {
+            if ( &cur->node == aw ) {
+              okToClose = 1;
+              break;
+            }
+            cur = cur->flink;
           }
-          cur = cur->flink;
+
+          if ( okToClose ) {
+            if ( !aw->okToDeactivate() ) {
+              consecutiveDeactivateErrors++;
+              if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
+                actWin->appCtx->proc->lock();
+                needMap = 1;
+                actWin->addDefExeNode( aglPtr );
+                actWin->appCtx->proc->unlock();
+                return;
+              }
+              else {
+                //printf( "4\n" );
+                actWin->appCtx->postMessage( activePipClass_str30 );
+                consecutiveDeactivateErrors = 0;
+                return;
+              }
+            }
+          }
+
         }
 
-        if ( okToClose ) {
-          if ( !aw->okToDeactivate() ) {
-            consecutiveDeactivateErrors++;
-            if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
-              actWin->appCtx->proc->lock();
-              needMap = 1;
-              actWin->addDefExeNode( aglPtr );
-              actWin->appCtx->proc->unlock();
-              return;
+        consecutiveDeactivateErrors = 0;
+
+        if ( frameWidget ) {
+          if ( *frameWidget ) XtUnmapWidget( *frameWidget );
+        }
+
+        if ( aw ) {
+
+          okToClose = 0;
+          // make sure the window was successfully opened
+          cur = actWin->appCtx->head->flink;
+          while ( cur != actWin->appCtx->head ) {
+            if ( &cur->node == aw ) {
+              okToClose = 1;
+              break;
+            }
+            cur = cur->flink;
+          }
+
+          if ( okToClose ) {
+            stat = aw->returnToEdit( 1 ); // this frees frameWidget
+          }
+
+          aw = NULL;
+
+        }
+
+        if ( frameWidget ) {
+          frameWidget = NULL;
+        }
+
+        // prevent possible mutual recursion
+        if ( actWin->sameAncestorName( curFileName ) ) {
+
+          actWin->appCtx->postMessage( activePipClass_str26 );
+          activateIsComplete = 1;
+
+        }
+        else {
+
+          // open new
+
+          if ( !frameWidget ) {
+            createPipWidgets();
+          }
+
+          if ( !aw ) {
+
+            if ( displaySource == 2 ) { // menu
+
+              if ( iv < 0 ) iv = 0;
+              if ( iv > numDsps ) iv = 0;
+              openEmbeddedByIndex( iv );
+
             }
             else {
-              actWin->appCtx->postMessage( activePipClass_str30 );
-              consecutiveDeactivateErrors = 0;
-              return;
+
+              cur = new activeWindowListType;
+              actWin->appCtx->addActiveWindow( cur );
+
+              cur->node.createEmbedded( actWin->appCtx, frameWidget, 0, 0, w, h,
+               x, y, center, setSize, sizeOfs, noScroll, actWin->numMacros,
+               actWin->macros, actWin->expansions );
+
+              cur->node.realize();
+
+              cur->node.setGraphicEnvironment( &cur->node.appCtx->ci,
+               &cur->node.appCtx->fi );
+
+              cur->node.storeFileName( curFileName );
+
+              actWin->appCtx->openActivateActiveWindow( &cur->node, 0, 0 );
+
+              aw = &cur->node;
+
+              aw->parent = actWin;
+              (actWin->numChildren)++;
+
             }
-          }
-	}
 
-      }
-
-      consecutiveDeactivateErrors = 0;
-
-      if ( frameWidget ) {
-        if ( *frameWidget ) XtUnmapWidget( *frameWidget );
-      }
-
-      if ( aw ) {
-
-        okToClose = 0;
-        // make sure the window was successfully opened
-        cur = actWin->appCtx->head->flink;
-        while ( cur != actWin->appCtx->head ) {
-          if ( &cur->node == aw ) {
-            okToClose = 1;
-            break;
-          }
-          cur = cur->flink;
-        }
-
-        if ( okToClose ) {
-          stat = aw->returnToEdit( 1 ); // this frees frameWidget
-        }
-
-        aw = NULL;
-
-      }
-
-      if ( frameWidget ) {
-        frameWidget = NULL;
-      }
-
-      // prevent possible mutual recursion
-      if ( actWin->sameAncestorName( curFileName ) ) {
-
-        actWin->appCtx->postMessage( activePipClass_str26 );
-        activateIsComplete = 1;
-
-      }
-      else {
-
-        // open new
-
-        if ( !frameWidget ) {
-          createPipWidgets();
-        }
-
-        if ( !aw ) {
-
-          if ( displaySource == 2 ) { // menu
-
-            if ( iv < 0 ) iv = 0;
-            if ( iv > numDsps ) iv = 0;
-            openEmbeddedByIndex( iv );
-
-	  }
-	  else {
-
-            cur = new activeWindowListType;
-            actWin->appCtx->addActiveWindow( cur );
-
-            cur->node.createEmbedded( actWin->appCtx, frameWidget, 0, 0, w, h,
-             x, y, center, setSize, sizeOfs, noScroll, actWin->numMacros,
-             actWin->macros, actWin->expansions );
-
-            cur->node.realize();
-
-            cur->node.setGraphicEnvironment( &cur->node.appCtx->ci,
-             &cur->node.appCtx->fi );
-
-            cur->node.storeFileName( curFileName );
-
-            actWin->appCtx->openActivateActiveWindow( &cur->node, 0, 0 );
-
-            aw = &cur->node;
-
-            aw->parent = actWin;
-            (actWin->numChildren)++;
+            drawActive();
 
           }
-
-          drawActive();
 
         }
 
       }
 
     }
+
+    activateIsComplete = 1;
 
   }
 
