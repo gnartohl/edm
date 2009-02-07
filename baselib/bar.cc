@@ -3125,6 +3125,7 @@ int locH;
 void activeBarClass::updateBar ( void ) {
 
 int locW, locH;
+double tempW, tempH;
 
   if ( horizontal ) {
 
@@ -3179,9 +3180,17 @@ int locW, locH;
 
         barX = originW;
 
-        barW = (int) ( factorGe * ( readV - barOriginX ) + 0.5 );
+        //barW = (int) ( factorGe * ( readV - barOriginX ) + 0.5 );
 
-        if ( barW > barMaxW ) barW = barMaxW;
+        //if ( barW > barMaxW ) barW = barMaxW;
+
+        tempW = factorGe * ( readV - barOriginX );
+        if ( tempW > barMaxW ) {
+          barW = barMaxW;
+        }
+        else {
+          barW = (int) ( tempW + 0.5 );
+        }
 
       }
       else {
@@ -3207,9 +3216,17 @@ int locW, locH;
 
         barX = originW;
 
-        barW = (int) ( ( readV - barOriginX ) * factorLt + 0.5 );
+        //barW = (int) ( ( readV - barOriginX ) * factorLt + 0.5 );
 
-        if ( barW > barMaxW ) barW = barMaxW;
+        //if ( barW > barMaxW ) barW = barMaxW;
+
+        tempW = ( readV - barOriginX ) * factorLt;
+        if ( tempW > barMaxW ) {
+          barW = barMaxW;
+        }
+        else {
+          barW = (int) ( tempW + 0.5 );
+        }
 
       }
       else {
@@ -3287,9 +3304,17 @@ int locW, locH;
 
         barY = barAreaY - originH;
 
-        barH = (int) ( factorGe * ( readV - barOriginX ) + 0.5 );
+        //barH = (int) ( factorGe * ( readV - barOriginX ) + 0.5 );
 
-        if ( barH > barMaxH ) barH = barMaxH;
+        //if ( barH > barMaxH ) barH = barMaxH;
+
+        tempH = factorGe * ( readV - barOriginX );
+        if ( tempH > barMaxH ) {
+          barH = barMaxH;
+        }
+        else {
+          barH = (int) ( tempH + 0.5 );
+        }
 
       }
       else {
@@ -3315,9 +3340,17 @@ int locW, locH;
 
         barY = barAreaY - originH;
 
-        barH = (int) ( ( readV - barOriginX ) * factorLt + 0.5 );
+        //barH = (int) ( ( readV - barOriginX ) * factorLt + 0.5 );
 
-        if ( barH > barMaxH ) barH = barMaxH;
+        //if ( barH > barMaxH ) barH = barMaxH;
+
+        tempH = ( readV - barOriginX ) * factorLt;
+        if ( tempH > barMaxH ) {
+          barH = barMaxH;
+        }
+        else {
+          barH = (int) ( tempH + 0.5 );
+        }
 
       }
       else {
