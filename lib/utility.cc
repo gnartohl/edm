@@ -3019,6 +3019,7 @@ time_t theTime;
   gc->setBG( bgColor );
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   xFactor = (double) ( scaleLen ) / ( adj_max - adj_min );
   xOffset = x;
@@ -3147,6 +3148,7 @@ time_t theTime;
     if ( majors_per_label > 0 ) {
 
       majorInc = labelInc / majors_per_label;
+      if ( majorInc <= 0 ) majorInc = 1;
       majorVal = labelVal;
       for ( ii=0; ii<majors_per_label; ii++ ) {
 
@@ -3182,6 +3184,7 @@ time_t theTime;
         if ( minors_per_major  > 0 ) {
 
           minorInc = majorInc / minors_per_major;
+          if ( minorInc <= 0 ) minorInc = 1;
           minorVal = majorVal + minorInc;
 
           for ( iii=1; iii<minors_per_major; iii++ ) {
@@ -3357,6 +3360,7 @@ int reverse = 0;
   gc->setBG( bgColor );
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   xFactor = (double) ( scaleLen ) / ( adj_max - adj_min );
   xOffset = x;
@@ -3479,6 +3483,7 @@ int reverse = 0;
     if ( majors_per_label > 0 ) {
 
       majorInc = labelInc / majors_per_label;
+      if ( majorInc <= 0 ) majorInc = 1;
       majorVal = labelVal;
       for ( ii=0; ii<majors_per_label; ii++ ) {
 
@@ -3514,6 +3519,7 @@ int reverse = 0;
         if ( minors_per_major  > 0 ) {
 
           minorInc = majorInc / minors_per_major;
+          if ( minorInc <= 0 ) minorInc = 1;
           minorVal = majorVal + minorInc;
 
           for ( iii=1; iii<minors_per_major; iii++ ) {
@@ -3771,6 +3777,7 @@ int reverse = 0;
   xOffset = adjXOffset;
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   lastLabelVal = labelVal = adj_min;
 
@@ -3885,6 +3892,7 @@ int reverse = 0;
     if ( majors_per_label > 0 ) {
 
       majorInc = labelInc / majors_per_label;
+      if ( majorInc <= 0 ) majorInc = 1;
       majorVal = labelVal;
       for ( ii=0; ii<majors_per_label; ii++ ) {
 
@@ -3926,6 +3934,7 @@ int reverse = 0;
         if ( minors_per_major  > 0 ) {
 
           minorInc = majorInc / minors_per_major;
+          if ( minorInc <= 0 ) minorInc = 1;
           minorVal = majorVal + minorInc;
 
           for ( iii=1; iii<minors_per_major; iii++ ) {
@@ -4105,6 +4114,7 @@ unsigned int white, black;
   gc->setBG( bgColor );
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   xFactor = (double) ( scaleLen ) / ( adj_max - adj_min );
   xOffset = x;
@@ -4201,6 +4211,7 @@ unsigned int white, black;
     if ( majors_per_label > 0 ) {
 
       majorInc = labelInc / majors_per_label;
+      if ( majorInc <= 0 ) majorInc = 1;
       majorVal = labelVal;
       for ( ii=0; ii<majors_per_label; ii++ ) {
 
@@ -4238,6 +4249,7 @@ unsigned int white, black;
           val0 = pow( 10, majorVal );
           val1 = val0 * 10;
           minorInc = ( val1 - val0 ) / minors_per_major;
+          if ( minorInc <= 0 ) minorInc = 1;
           val = val0 + minorInc;
 
           for ( iii=1; iii<minors_per_major; iii++ ) {
@@ -4372,6 +4384,7 @@ char buf[31+1];
   if ( adj_max <= adj_min ) return;
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   xFactor = (double) ( scaleLen ) / ( adj_max - adj_min );
   xOffset = x;
@@ -4460,6 +4473,7 @@ char buf[31+1];
   if ( adj_max <= adj_min ) return;
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   xFactor = (double) ( scaleLen ) / ( adj_max - adj_min );
   xOffset = x;
@@ -4574,6 +4588,7 @@ int reverse = 0;
   gc->setBG( bgColor );
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   yFactor = (double) ( scaleHeight ) / ( adj_max - adj_min );
   yOffset = y;
@@ -4697,6 +4712,7 @@ int reverse = 0;
     if ( majors_per_label > 0 ) {
 
       majorInc = labelInc / majors_per_label;
+      if ( majorInc <= 0 ) majorInc = 1;
       majorVal = labelVal;
       for ( ii=0; ii<majors_per_label; ii++ ) {
 
@@ -4732,6 +4748,7 @@ int reverse = 0;
         if ( minors_per_major  > 0 ) {
 
           minorInc = majorInc / minors_per_major;
+          if ( minorInc <= 0 ) minorInc = 1;
           minorVal = majorVal + minorInc;
 
           for ( iii=1; iii<minors_per_major; iii++ ) {
@@ -4987,6 +5004,7 @@ int reverse = 0;
   yOffset = adjYOffset;
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   lastLabelVal = labelVal = adj_min;
 
@@ -5105,6 +5123,7 @@ int reverse = 0;
     if ( majors_per_label > 0 ) {
 
       majorInc = labelInc / majors_per_label;
+      if ( majorInc <= 0 ) majorInc = 1;
       majorVal = labelVal;
       for ( ii=0; ii<majors_per_label; ii++ ) {
 
@@ -5146,6 +5165,7 @@ int reverse = 0;
         if ( minors_per_major  > 0 ) {
 
           minorInc = majorInc / minors_per_major;
+          if ( minorInc <= 0 ) minorInc = 1;
           minorVal = majorVal + minorInc;
 
           for ( iii=1; iii<minors_per_major; iii++ ) {
@@ -5335,6 +5355,7 @@ int reverse = 0;
   gc->setBG( bgColor );
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   yFactor = (double) ( scaleHeight ) / ( adj_max - adj_min );
   yOffset = y;
@@ -5451,6 +5472,7 @@ int reverse = 0;
     if ( majors_per_label > 0 ) {
 
       majorInc = labelInc / majors_per_label;
+      if ( majorInc <= 0 ) majorInc = 1;
       majorVal = labelVal;
       for ( ii=0; ii<majors_per_label; ii++ ) {
 
@@ -5489,6 +5511,7 @@ int reverse = 0;
         if ( minors_per_major  > 0 ) {
 
           minorInc = majorInc / minors_per_major;
+          if ( minorInc <= 0 ) minorInc = 1;
           minorVal = majorVal + minorInc;
 
           for ( iii=1; iii<minors_per_major; iii++ ) {
@@ -5680,6 +5703,7 @@ int reverse = 0;
   yOffset = adjYOffset;
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   lastLabelVal = labelVal = adj_min;
 
@@ -5798,6 +5822,7 @@ int reverse = 0;
     if ( majors_per_label > 0 ) {
 
       majorInc = labelInc / majors_per_label;
+      if ( majorInc <= 0 ) majorInc = 1;
       majorVal = labelVal;
       for ( ii=0; ii<majors_per_label; ii++ ) {
 
@@ -5839,6 +5864,7 @@ int reverse = 0;
         if ( minors_per_major  > 0 ) {
 
           minorInc = majorInc / minors_per_major;
+          if ( minorInc <= 0 ) minorInc = 1;
           minorVal = majorVal + minorInc;
 
           for ( iii=1; iii<minors_per_major; iii++ ) {
@@ -6024,6 +6050,7 @@ unsigned int white, black;
   gc->setBG( bgColor );
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   yFactor = (double) ( scaleHeight ) / ( adj_max - adj_min );
   yOffset = y;
@@ -6127,6 +6154,7 @@ unsigned int white, black;
     if ( majors_per_label > 0 ) {
 
       majorInc = labelInc / majors_per_label;
+      if ( majorInc <= 0 ) majorInc = 1;
       majorVal = labelVal;
       for ( ii=0; ii<majors_per_label; ii++ ) {
 
@@ -6164,6 +6192,7 @@ unsigned int white, black;
           val0 = pow( 10, majorVal );
           val1 = val0 * 10;
           minorInc = ( val1 - val0 ) / minors_per_major;
+          if ( minorInc <= 0 ) minorInc = 1;
 
 	  //fprintf( stderr, "val0 = %-g\n", val0 );
 	  //fprintf( stderr, "val1 = %-g\n", val1 );
@@ -6329,6 +6358,7 @@ unsigned int white, black;
   gc->setBG( bgColor );
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   yFactor = (double) ( scaleHeight ) / ( adj_max - adj_min );
   yOffset = y;
@@ -6426,6 +6456,7 @@ unsigned int white, black;
     if ( majors_per_label > 0 ) {
 
       majorInc = labelInc / majors_per_label;
+      if ( majorInc <= 0 ) majorInc = 1;
       majorVal = labelVal;
       for ( ii=0; ii<majors_per_label; ii++ ) {
 
@@ -6463,6 +6494,7 @@ unsigned int white, black;
           val0 = pow( 10, majorVal );
           val1 = val0 * 10;
           minorInc = ( val1 - val0 ) / minors_per_major;
+          if ( minorInc <= 0 ) minorInc = 1;
 
           val = val0 + minorInc;
 
@@ -6589,6 +6621,7 @@ double labelInc, lastInc, labelVal, z;
   label_tick_length = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   lastInc = labelInc * 0.5;
   labelVal = adj_min;
@@ -6643,6 +6676,7 @@ double labelInc, lastInc, labelVal, z, log10Val;
   label_tick_length = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   lastInc = labelInc * 0.5;
   labelVal = adj_min;
@@ -6721,6 +6755,7 @@ char buf[31+1];
   if ( adj_max <= adj_min ) return;
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   yFactor = (double) ( scaleHeight ) / ( adj_max - adj_min );
   yOffset = y;
@@ -6813,6 +6848,7 @@ char buf[31+1];
   if ( adj_max <= adj_min ) return;
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   yFactor = (double) ( scaleHeight ) / ( adj_max - adj_min );
   yOffset = y;
@@ -6905,6 +6941,7 @@ char buf[31+1];
   if ( adj_max <= adj_min ) return;
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   yFactor = (double) ( scaleHeight ) / ( adj_max - adj_min );
   yOffset = y;
@@ -6991,6 +7028,7 @@ char buf[31+1];
   if ( adj_max <= adj_min ) return;
 
   labelInc = ( adj_max - adj_min ) / num_label_ticks;
+  if ( labelInc <= 0 ) labelInc = 1;
 
   yFactor = (double) ( scaleHeight ) / ( adj_max - adj_min );
   yOffset = y;
