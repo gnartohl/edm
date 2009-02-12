@@ -1051,6 +1051,10 @@ virtual int activateComplete ( void ) {
   return 1;
 }
 
+virtual int activateBeforePreReexecuteComplete ( void ) {
+  return activateComplete();
+}
+
 virtual activeGraphicClass *getTail ( void );
 
 virtual void setEditProperties ( void );

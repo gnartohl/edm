@@ -43,6 +43,22 @@ menuMuxClass *mmo = (menuMuxClass *) ptr;
 
 }
 
+static void retryTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+menuMuxClass *mmo = (menuMuxClass *) client;
+
+  mmo->actWin->appCtx->proc->lock();
+  mmo->needUpdate = 1;
+  mmo->actWin->addDefExeNode( mmo->aglPtr );
+  mmo->actWin->appCtx->proc->unlock();
+
+  mmo->retryTimer = 0;
+
+}
+
 static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id )
@@ -52,9 +68,11 @@ menuMuxClass *mmo = (menuMuxClass *) client;
 
   if ( !mmo->controlPvConnected ) {
     if ( mmo->controlExists ) {
+      mmo->actWin->appCtx->proc->lock();
       mmo->needToDrawUnconnected = 1;
       mmo->needDraw = 1;
       mmo->actWin->addDefExeNode( mmo->aglPtr );
+      mmo->actWin->appCtx->proc->unlock();
     }
   }
 
@@ -371,7 +389,7 @@ int i, ii;
   activeMode = 0;
   widgetsCreated = 0;
   fontList = NULL;
-  unconnectedTimer = 0;
+  unconnectedTimer = retryTimer = 0;
 
   eBuf = NULL;
 
@@ -440,7 +458,7 @@ activeGraphicClass *mmuxo = (activeGraphicClass *) this;
   widgetsCreated = 0;
   active = 0;
   activeMode = 0;
-  unconnectedTimer = 0;
+  unconnectedTimer = retryTimer = 0;
 
   eBuf = NULL;
 
@@ -459,6 +477,11 @@ int i;
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
     unconnectedTimer = 0;
+  }
+
+  if ( retryTimer ) {
+    XtRemoveTimeOut( retryTimer );
+    retryTimer = 0;
   }
 
   if ( mac && exp ) {
@@ -1574,7 +1597,7 @@ int opStat;
        needDraw = 0;
       needToEraseUnconnected = 0;
       needToDrawUnconnected = 0;
-      unconnectedTimer = 0;
+      unconnectedTimer = retryTimer = 0;
       widgetsCreated = 0;
       firstEvent = 1;
       controlV = 0;
@@ -1976,10 +1999,18 @@ int n;
     stat = drawActive();
 
     if ( !firstEvent ) {
-      stat = actWin->preReexecute();
-      if ( stat & 1 ) {
-        actWin->setNoRefresh();
-        actWin->appCtx->reactivateActiveWindow( actWin );
+      if ( actWin->okToPreReexecute() ) {
+        stat = actWin->preReexecute();
+        if ( stat & 1 ) {
+          actWin->setNoRefresh();
+          actWin->appCtx->reactivateActiveWindow( actWin );
+        }
+      }
+      else {
+        if ( !retryTimer ) {
+          retryTimer = appAddTimeOut( actWin->appCtx->appContext(),
+           10, retryTimeout, this );
+        }
       }
     }
     firstEvent = 0;

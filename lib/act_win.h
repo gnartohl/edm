@@ -926,6 +926,8 @@ activeWindowClass ( void );
 
 int okToDeactivate ( void );
 
+int okToPreReexecute ( void );
+
 char *idName( void );
 
 void getModTime (
@@ -1151,6 +1153,11 @@ int old_load (
   int x,
   int y );
 
+int loadDummy (
+  int x,
+  int y,
+  int setPosition );
+
 int loadGeneric (
   int x,
   int y,
@@ -1263,6 +1270,12 @@ void discardCommentsAndVersion (
   int *_major,
   int *_minor,
   int *_release );
+
+int loadWinDummy (
+  FILE *f,
+  int _x,
+  int _y,
+  int setPosition );
 
 int loadWinGeneric (
   FILE *f,

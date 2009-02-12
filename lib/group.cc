@@ -1122,6 +1122,14 @@ activeGraphicListPtr cur;
 
 }
 
+int activeGroupClass::activateBeforePreReexecuteComplete ( void ) {
+
+  //return 1;
+
+  return activateComplete();
+
+}
+
 int activeGroupClass::activateComplete ( void ) {
 
 activeGraphicListPtr head = (activeGraphicListPtr) voidHead;

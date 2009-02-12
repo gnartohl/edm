@@ -10493,10 +10493,37 @@ int activeWindowClass::okToDeactivate ( void ) {
 
 activeGraphicListPtr cur, next;
 
+  if ( loadFailure ) return 1;
+
   cur = head->flink;
   while ( cur != head ) {
     next = cur->flink;
-    if ( !cur->node->activateComplete() ) return 0;
+    if ( cur->node ) {
+      if ( !cur->node->activateComplete() ) return 0;
+    }
+    cur = next;
+  }
+
+  if ( windowState == AWC_COMPLETE_EXECUTE ) {
+    return 1;
+  }
+
+  return 0;
+
+}
+
+int activeWindowClass::okToPreReexecute ( void ) {
+
+activeGraphicListPtr cur, next;
+
+  if ( loadFailure ) return 1;
+
+  cur = head->flink;
+  while ( cur != head ) {
+    next = cur->flink;
+    if ( cur->node ) {
+      if ( !cur->node->activateBeforePreReexecuteComplete() ) return 0;
+    }
     cur = next;
   }
 
@@ -15096,6 +15123,122 @@ int activeWindowClass::old_load (
 
 }
 
+int activeWindowClass::loadDummy (
+  int x,
+  int y,
+  int setPosition ) {
+
+FILE *f;
+activeGraphicListPtr cur, next;
+char tagName[255+1];
+int stat;
+Widget clipWidget, hsbWidget, vsbWidget;
+
+tagClass tag;
+
+  loadFailure = 1;
+
+  tag.initLine();
+
+  // empty main list
+  cur = head->flink;
+  while ( cur != head ) {
+    next = cur->flink;
+    delete cur->node;
+    delete cur;
+    cur = next;
+  }
+
+  head->flink = head;
+  head->blink = head;
+
+  // empty cut list
+  cur = cutHead->flink;
+  while ( cur != cutHead ) {
+    next = cur->flink;
+    delete cur->node;
+    delete cur;
+    cur = next;
+  }
+
+  cutHead->flink = cutHead;
+  cutHead->blink = cutHead;
+
+  // set select list empty
+
+  selectedHead->selFlink = selectedHead;
+  selectedHead->selBlink = selectedHead;
+
+  stat = this->loadWinDummy( f, x, y, setPosition );
+
+  this->setUnchanged();
+
+  if ( scroll ) {
+
+    XtVaSetValues( scroll,
+     XmNtopShadowColor, ci->pix(defaultTopShadowColor),
+     XmNbottomShadowColor, ci->pix(defaultBotShadowColor),
+     XmNborderColor, ci->pix(bgColor),
+     XmNhighlightColor, ci->pix(bgColor),
+     XmNforeground, ci->pix(bgColor),
+     XmNbackground, ci->pix(bgColor),
+     NULL );
+
+    XtVaGetValues( scroll,
+     XmNclipWindow, &clipWidget,
+     XmNhorizontalScrollBar, &hsbWidget,
+     XmNverticalScrollBar, &vsbWidget,
+     NULL );
+
+    if ( clipWidget ) {
+      XtVaSetValues( clipWidget,
+        XmNtopShadowColor, ci->pix(defaultTopShadowColor),
+        XmNbottomShadowColor, ci->pix(defaultBotShadowColor),
+        XmNborderColor, ci->pix(bgColor),
+        XmNhighlightColor, ci->pix(bgColor),
+        XmNforeground, ci->pix(bgColor),
+        XmNbackground, ci->pix(bgColor),
+       NULL );
+    }
+
+    if ( hsbWidget ) {
+      XtVaSetValues( hsbWidget,
+        XmNtopShadowColor, ci->pix(defaultTopShadowColor),
+        XmNbottomShadowColor, ci->pix(defaultBotShadowColor),
+        XmNborderColor, ci->pix(bgColor),
+        XmNhighlightColor, ci->pix(bgColor),
+        XmNforeground, ci->pix(bgColor),
+        XmNbackground, ci->pix(bgColor),
+        XmNtroughColor, ci->pix(bgColor),
+        NULL );
+    }
+
+    if ( vsbWidget ) {
+      XtVaSetValues( vsbWidget,
+        XmNtopShadowColor, ci->pix(defaultTopShadowColor),
+        XmNbottomShadowColor, ci->pix(defaultBotShadowColor),
+        XmNborderColor, ci->pix(bgColor),
+        XmNhighlightColor, ci->pix(bgColor),
+        XmNforeground, ci->pix(bgColor),
+        XmNbackground, ci->pix(bgColor),
+        XmNtroughColor, ci->pix(bgColor),
+        NULL );
+    }
+
+  }
+
+  showName = 0;
+
+  setTitle();
+
+  exit_after_save = 0;
+
+  loadFailure = 0;
+
+  return 1;
+
+}
+
 int activeWindowClass::loadGeneric (
   int x,
   int y,
@@ -15151,6 +15294,9 @@ tagClass tag;
   if ( !f ) {
     sprintf( msg, activeWindowClass_str156, this->fileName );
     appCtx->postMessage( msg );
+    if ( isEmbedded ) {
+      return loadDummy( x, y, setPosition );
+    }
     return 0;
   }
 
@@ -15160,6 +15306,9 @@ tagClass tag;
 
   if ( major > AWC_MAJOR_VERSION ) {
     appCtx->postMessage( activeWindowClass_str191 );
+    if ( isEmbedded ) {
+      return loadDummy( x, y, setPosition );
+    }
     return 0;
   }
 
@@ -15171,10 +15320,20 @@ tagClass tag;
     else {
       stat = this->old_loadWin( f );
     }
-    if ( !( stat & 1 ) ) return stat; // memory leak here
+    if ( !( stat & 1 ) ) {
+      if ( isEmbedded ) {
+        return loadDummy( x, y, setPosition );
+      }
+      return stat; // memory leak here
+    }
 
     stat = readUntilEndOfData( f ); // for forward compatibility
-    if ( !( stat & 1 ) ) return stat; // memory leak here
+    if ( !( stat & 1 ) ) {
+      if ( isEmbedded ) {
+        return loadDummy( x, y, setPosition );
+      }
+      return stat; // memory leak here
+    }
 
     while ( !feof(f) ) {
 
@@ -15190,6 +15349,9 @@ tagClass tag;
         if ( !cur ) {
           fileClose( f );
           appCtx->postMessage( activeWindowClass_str157 );
+          if ( isEmbedded ) {
+            return loadDummy( x, y, setPosition );
+          }
           return 0;
         }
         cur->defExeFlink = NULL;
@@ -15200,10 +15362,20 @@ tagClass tag;
         if ( cur->node ) {
 
           stat = cur->node->old_createFromFile( f, name, this );
-          if ( !( stat & 1 ) ) return stat; // memory leak here
+          if ( !( stat & 1 ) ) {
+            if ( isEmbedded ) {
+              return loadDummy( x, y, setPosition );
+            }
+            return stat; // memory leak here
+	  }
 
           stat = readUntilEndOfData( f ); // for forward compatibility
-          if ( !( stat & 1 ) ) return stat; // memory leak here
+          if ( !( stat & 1 ) ) {
+            if ( isEmbedded ) {
+              return loadDummy( x, y, setPosition );
+            }
+            return stat; // memory leak here
+	  }
 
           cur->blink = head->blink;
           head->blink->flink = cur;
@@ -15216,6 +15388,9 @@ tagClass tag;
           sprintf( msg, activeWindowClass_str158, line(),
            name );
           appCtx->postMessage( msg );
+          if ( isEmbedded ) {
+            return loadDummy( x, y, setPosition );
+          }
           return 0;
         }
 
@@ -15232,8 +15407,12 @@ tagClass tag;
     else {
       stat = this->loadWin( f );
     }
-    if ( !( stat & 1 ) ) return stat; // memory leak here
-
+    if ( !( stat & 1 ) ) {
+      if ( isEmbedded ) {
+        return loadDummy( x, y, setPosition );
+      }
+      return stat; // memory leak here
+    }
 
     if ( isEmbedded ) {
 
@@ -15248,6 +15427,9 @@ tagClass tag;
         fileClose( f );
         appCtx->postMessage(
          activeWindowClass_str157 );
+        if ( isEmbedded ) {
+          return loadDummy( x, y, setPosition );
+        }
         return 0;
       }
       cur->defExeFlink = NULL;
@@ -15302,6 +15484,9 @@ tagClass tag;
           fileClose( f );
           appCtx->postMessage(
            activeWindowClass_str157 );
+          if ( isEmbedded ) {
+            return loadDummy( x, y, setPosition );
+          }
           return 0;
         }
         cur->defExeFlink = NULL;
@@ -15312,7 +15497,12 @@ tagClass tag;
         if ( cur->node ) {
 
           stat = cur->node->createFromFile( f, objName, this );
-          if ( !( stat & 1 ) ) return stat; // memory leak here
+          if ( !( stat & 1 ) ) {
+            if ( isEmbedded ) {
+              return loadDummy( x, y, setPosition );
+            }
+            return stat; // memory leak here
+	  }
 
           cur->blink = head->blink;
           head->blink->flink = cur;
@@ -16479,7 +16669,7 @@ int numSubObjects, cnt;
 
   if ( mode == AWC_EDIT ) return 1;
 
-  if ( !okToDeactivate() ) {
+  if ( !okToPreReexecute() ) {
     appCtx->postMessage( activeWindowClass_str193 );
     return 0;
   }
@@ -17021,6 +17211,218 @@ int moreComments = 1;
   } while ( moreComments );
 
   sscanf( oneLine, "%d %d %d\n", _major, _minor, _release );
+
+}
+
+int activeWindowClass::loadWinDummy (
+  FILE *f,
+  int _x,
+  int _y,
+  int setPosition ) {
+
+  // if this is changed then activeWindowClass::discardWinLoadData
+  // must be likewise changed
+
+int stat, retStat = 1;
+int fileX, fileY, n, tmpVal;
+Arg args[5];
+
+tagClass tag;
+
+  x = 0;
+  y = 0;
+  strcpy( defaultFontTag, "" );
+  strcpy( defaultCtlFontTag, "" );
+  strcpy( defaultBtnFontTag, "" );
+
+  strcpy( this->id, "" );
+  activateCallbackFlag = 0;
+  deactivateCallbackFlag = 0;
+
+  major = 4;
+  minor = 0;
+  release = 0;
+  fileX = 0;
+  fileY = 0;
+  w = 50;
+  h = 50;
+  defaultAlignment = 0;
+  defaultCtlAlignment = 0;
+  defaultBtnAlignment = 0;
+  fgColor = 0;
+  bgColor = 0;
+  defaultTextFgColor = 0;
+  defaultFg1Color = 0;
+  defaultFg2Color = 0;
+  defaultBgColor = 0;
+  defaultOffsetColor = 0;
+  defaultTopShadowColor = 0;
+  defaultBotShadowColor = 0;
+  strcpy( title, "" );
+  gridShow = 0;
+  gridActive = 0;
+  gridSpacing = 0;
+  orthogonal = 0;
+  strcpy( defaultPvType, "" );
+
+  if ( setPosition ) {
+    x = _x;
+    y = _y;
+  }
+  else {
+    x = fileX;
+    y = fileY;
+  }
+
+  if ( !intersects( x, y, x+w, y+h, 0, 0,
+   XDisplayWidth( d, DefaultScreen(d) ),
+   XDisplayHeight( d, DefaultScreen(d) ) ) ) {
+
+//    appCtx->postMessage(
+//    "Screen location is out of display bounds - setting location to (50,50)" );
+
+    x = y = 50;
+
+  }
+
+#ifdef ADD_SCROLLED_WIN
+  if ( isEmbedded ) {
+
+      n = 0;
+      XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+      XtSetValues( drawWidget, args, n );
+
+      n = 0;
+      XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+      XtSetValues( drawWidget, args, n );
+
+  }
+#else
+  n = 0;
+  XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+  XtSetValues( drawWidget, args, n );
+
+  n = 0;
+  XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+  XtSetValues( drawWidget, args, n );
+#endif
+
+  if ( isEmbedded ) {
+
+    if ( embCenter && !embSetSize ) {
+
+      if ( embeddedH > h ) {
+
+        tmpVal = y + ( embeddedH - h ) / 2;
+        n = 0;
+        XtSetArg( args[n], XmNy, (XtArgVal) tmpVal ); n++;
+        XtSetValues( drawWidget, args, n );
+
+      }
+
+      if ( embeddedW > w ) {
+
+        tmpVal = x + ( embeddedW - w ) / 2;
+        n = 0;
+        XtSetArg( args[n], XmNx, (XtArgVal) tmpVal ); n++;
+        XtSetValues( drawWidget, args, n );
+
+      }
+
+    }
+
+  }
+  else {
+
+    n = 0;
+    XtSetArg( args[n], XmNx, (XtArgVal) x ); n++;
+    XtSetValues( drawWidget, args, n );
+
+    n = 0;
+    XtSetArg( args[n], XmNy, (XtArgVal) y ); n++;
+    XtSetValues( drawWidget, args, n );
+
+  }
+
+  if ( isEmbedded ) {
+
+    if ( embSetSize ) {
+
+      if ( w+embSizeOfs <= embeddedW ) {
+
+         n = 0;
+         XtSetArg( args[n], XmNwidth, (XtArgVal) w+embSizeOfs ); n++;
+         XtSetValues( top, args, n );
+
+      }
+
+      if ( h+embSizeOfs <= embeddedH ) {
+
+         n = 0;
+         XtSetArg( args[n], XmNheight, (XtArgVal) h+embSizeOfs ); n++;
+         XtSetValues( top, args, n );
+
+      }
+
+    }
+
+  }
+  else {
+
+#ifndef ADD_SCROLLED_WIN
+    n = 0;
+    XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+    XtSetValues( top, args, n );
+
+    n = 0;
+    XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+    XtSetValues( top, args, n );
+#else
+    if ( !appCtx->useScrollBars ) {
+
+      n = 0;
+      XtSetArg( args[n], XmNwidth, (XtArgVal) w ); n++;
+      XtSetValues( top, args, n );
+
+      n = 0;
+      XtSetArg( args[n], XmNheight, (XtArgVal) h ); n++;
+      XtSetValues( top, args, n );
+
+    }
+    else {
+
+      reconfig();
+
+    }
+#endif
+
+  }
+
+  if ( strcmp( defaultFontTag, "" ) != 0 ) {
+    stat = defaultFm.setFontTag( defaultFontTag );
+  }
+
+  stat = defaultFm.setFontAlignment( defaultAlignment );
+
+  if ( strcmp( defaultCtlFontTag, "" ) != 0 ) {
+    stat = defaultCtlFm.setFontTag( defaultCtlFontTag );
+  }
+
+  stat = defaultCtlFm.setFontAlignment( defaultCtlAlignment );
+
+  if ( strcmp( defaultBtnFontTag, "" ) != 0 ) {
+    stat = defaultBtnFm.setFontTag( defaultBtnFontTag );
+  }
+
+  stat = defaultBtnFm.setFontAlignment( defaultBtnAlignment );
+
+  drawGc.setBaseBG( ci->pix(bgColor) );
+
+  expStrTitle.setRaw( title );
+
+  updateAllSelectedDisplayInfo();
+
+  return retStat;
 
 }
 

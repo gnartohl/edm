@@ -51,6 +51,10 @@ static void doBlink (
   void *ptr
 );
 
+static void retryTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id );
@@ -120,6 +124,10 @@ private:
 friend void doBlink (
   void *ptr
 );
+
+friend void retryTimeout (
+  XtPointer client,
+  XtIntervalId *id );
 
 friend void unconnectedTimeout (
   XtPointer client,
@@ -255,6 +263,8 @@ int needConnectInit, needDisconnect, needInfoInit, needUpdate, needDraw,
  needToDrawUnconnected, needToEraseUnconnected;
 int unconnectedTimer;
 int initialConnection;
+
+int retryTimer;
 
 int buttonPressed;
 

@@ -37,6 +37,22 @@ static void unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id );
 
+static void needUpdateTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
+static void needMenuUpdateTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
+static void needUnmapTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
+static void needMapTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void menu_cb (
   Widget w,
   XtPointer client,
@@ -107,6 +123,22 @@ static const int maxSymbolLen = 2550;
 private:
 
 friend void unconnectedTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
+friend void needUpdateTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
+friend void needMenuUpdateTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
+friend void needUnmapTimeout (
+  XtPointer client,
+  XtIntervalId *id );
+
+friend void needMapTimeout (
   XtPointer client,
   XtIntervalId *id );
 
@@ -245,6 +277,8 @@ int initialReadConnection, initialMenuConnection, initialLabelConnection,
  unconnectedTimer;
 int consecutiveDeactivateErrors;
 
+int retryTimerNU, retryTimerNMU, retryTimerNUM, retryTimerNM;
+
 activeWindowClass *aw;
 
 int activateIsComplete;
@@ -304,13 +338,6 @@ int eraseActive ( void );
 int activate ( int pass, void *ptr );
 
 int deactivate ( int pass );
-
-int preReactivate (
-  int pass );
-
-int reactivate (
-  int pass,
-  void *ptr );
 
 int isRelatedDisplay ( void );
 

@@ -39,12 +39,78 @@ static void unconnectedTimeout (
 activePipClass *pipo = (activePipClass *) client;
 
   if ( !pipo->init ) {
+    pipo->actWin->appCtx->proc->lock();
     pipo->needToDrawUnconnected = 1;
     pipo->needConnectTimeout = 1;
     pipo->actWin->addDefExeNode( pipo->aglPtr );
+    pipo->actWin->appCtx->proc->unlock();
   }
 
   pipo->unconnectedTimer = 0;
+
+}
+
+static void needUpdateTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activePipClass *pipo = (activePipClass *) client;
+
+  pipo->actWin->appCtx->proc->lock();
+  pipo->needUpdate = 1;
+  pipo->actWin->addDefExeNode( pipo->aglPtr );
+  pipo->actWin->appCtx->proc->unlock();
+
+  pipo->retryTimerNU = 0;
+
+}
+
+static void needMenuUpdateTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activePipClass *pipo = (activePipClass *) client;
+
+  pipo->actWin->appCtx->proc->lock();
+  pipo->needMenuUpdate = 1;
+  pipo->actWin->addDefExeNode( pipo->aglPtr );
+  pipo->actWin->appCtx->proc->unlock();
+
+  pipo->retryTimerNMU = 0;
+
+}
+
+static void needUnmapTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activePipClass *pipo = (activePipClass *) client;
+
+  pipo->actWin->appCtx->proc->lock();
+  pipo->needUnmap = 1;
+  pipo->actWin->addDefExeNode( pipo->aglPtr );
+  pipo->actWin->appCtx->proc->unlock();
+
+  pipo->retryTimerNUM = 0;
+
+}
+
+static void needMapTimeout (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activePipClass *pipo = (activePipClass *) client;
+
+  pipo->actWin->appCtx->proc->lock();
+  pipo->needMap = 1;
+  pipo->actWin->addDefExeNode( pipo->aglPtr );
+  pipo->actWin->appCtx->proc->unlock();
+
+  pipo->retryTimerNM = 0;
 
 }
 
@@ -380,7 +446,8 @@ int i;
 
   numDsps = 0;
   popUpMenu = NULL;
-  unconnectedTimer = 0;
+  unconnectedTimer = retryTimerNU = retryTimerNMU = retryTimerNUM =
+   retryTimerNM = 0;
   buf = NULL;
 
   consecutiveDeactivateErrors = 0;
@@ -438,7 +505,8 @@ int i;
 
   numDsps = source->numDsps;
   popUpMenu = NULL;
-  unconnectedTimer = 0;
+  unconnectedTimer = retryTimerNU = retryTimerNMU = retryTimerNUM =
+   retryTimerNM = 0;
   buf = NULL;
 
   consecutiveDeactivateErrors = 0;
@@ -459,8 +527,27 @@ activePipClass::~activePipClass ( void ) {
     unconnectedTimer = 0;
   }
 
-}
+  if ( retryTimerNU ) {
+    XtRemoveTimeOut( retryTimerNU );
+    retryTimerNU = 0;
+  }
 
+  if ( retryTimerNMU ) {
+    XtRemoveTimeOut( retryTimerNMU );
+    retryTimerNMU = 0;
+  }
+
+  if ( retryTimerNUM ) {
+    XtRemoveTimeOut( retryTimerNUM );
+    retryTimerNUM = 0;
+  }
+
+  if ( retryTimerNM ) {
+    XtRemoveTimeOut( retryTimerNM );
+    retryTimerNM = 0;
+  }
+
+}
 
 int activePipClass::createInteractive (
   activeWindowClass *aw_obj,
@@ -1030,7 +1117,8 @@ XmString str;
        needDraw = needFileOpen = needInitMenuFileOpen = needUnmap =
        needMap = needToEraseUnconnected = needToDrawUnconnected =
        needConnectTimeout = 0;
-      unconnectedTimer = 0;
+      unconnectedTimer = retryTimerNU = retryTimerNMU = retryTimerNUM =
+       retryTimerNM = 0;
       activateIsComplete = 0;
       curReadIV = 0;
       strcpy( curReadV, "" );
@@ -1225,6 +1313,26 @@ activeWindowListPtr cur;
       unconnectedTimer = 0;
     }
 
+    if ( retryTimerNU ) {
+      XtRemoveTimeOut( retryTimerNU );
+      retryTimerNU = 0;
+    }
+
+    if ( retryTimerNMU ) {
+      XtRemoveTimeOut( retryTimerNMU );
+      retryTimerNMU = 0;
+    }
+
+    if ( retryTimerNUM ) {
+      XtRemoveTimeOut( retryTimerNUM );
+      retryTimerNUM = 0;
+    }
+
+    if ( retryTimerNM ) {
+      XtRemoveTimeOut( retryTimerNM );
+      retryTimerNM = 0;
+    }
+
     if ( aw ) {
       if ( aw->loadFailure ) {
         aw = NULL;
@@ -1285,276 +1393,6 @@ activeWindowListPtr cur;
       XtDestroyWidget( popUpMenu );
       popUpMenu = NULL;
     }
-
-  }
-
-  return 1;
-
-}
-
-int activePipClass::preReactivate (
-  int pass ) {
-
-int okToClose, stat;
-activeWindowListPtr cur;
-
-  if ( pass == 1 ) {
-
-    active = 0;
-    activeMode = 0;
-
-    if ( aw ) {
-      if ( aw->loadFailure ) {
-        aw = NULL;
-        frameWidget = NULL;
-      }
-    }
-
-    if ( frameWidget ) {
-      if ( *frameWidget ) XtUnmapWidget( *frameWidget );
-    }
-
-    if ( aw ) {
-
-      okToClose = 0;
-      // make sure the window was successfully opened
-      cur = actWin->appCtx->head->flink;
-      while ( cur != actWin->appCtx->head ) {
-        if ( &cur->node == aw ) {
-          okToClose = 1;
-          break;
-        }
-        cur = cur->flink;
-      }
-
-      if ( okToClose ) {
-        stat = aw->returnToEdit( 1 );
-      }
-
-      aw = NULL;
-
-    }
-
-    if ( frameWidget ) {
-      frameWidget = NULL;
-    }
-
-    if ( readPvId ) {
-      readPvId->remove_conn_state_callback( pip_monitor_read_connect_state,
-       this );
-      if ( !initialReadConnection ) {
-        readPvId->remove_value_callback( pip_readUpdate, this );
-      }
-      if ( !initialMenuConnection ) {
-        readPvId->remove_value_callback( pip_menuUpdate, this );
-      }
-      readPvId->release();
-      readPvId = NULL;
-    }
-
-    if ( labelPvId ) {
-      labelPvId->remove_conn_state_callback( pip_monitor_label_connect_state,
-       this );
-      labelPvId->release();
-      labelPvId = NULL;
-    }
-
-    if ( popUpMenu ) {
-      XtDestroyWidget( popUpMenu );
-      popUpMenu = NULL;
-    }
-
-  }
-
-  return 1;
-
-}
-
-int activePipClass::reactivate (
-  int pass,
-  void *ptr ) {
-
-int i, n;
-Arg args[5];
-XmString str;
-
-  switch ( pass ) {
-
-  case 1:
-
-    opComplete = 0;
-
-    break;
-
-  case 2:
-
-    if ( !opComplete ) {
-
-      opComplete = 1;
-
-      //initEnable();
-
-      aglPtr = ptr;
-      needConnectInit = needUpdate = needMenuConnectInit = needMenuUpdate =
-       needDraw = needFileOpen = needInitMenuFileOpen = needUnmap =
-       needMap = 0;
-      activateIsComplete = 0;
-      curReadIV = 0;
-      strcpy( curReadV, "" );
-
-      readPvId = labelPvId = NULL;
-
-      readPvConnected = active = init = 0;
-      activeMode = 1;
-
-      if ( !readPvExpStr.getExpanded() ||
-            blankOrComment( readPvExpStr.getExpanded() ) ) {
-        readExists = 0;
-      }
-      else {
-        readExists = 1;
-        fgColor.setConnectSensitive();
-      }
-
-      if ( !labelPvExpStr.getExpanded() ||
-            blankOrComment( labelPvExpStr.getExpanded() ) ) {
-        labelExists = 0;
-      }
-      else {
-        labelExists = 1;
-      }
-
-      if ( !fileNameExpStr.getExpanded() ||
-            blank( fileNameExpStr.getExpanded() ) ) {
-        fileExists = 0;
-      }
-      else {
-        fileExists = 1;
-      }
-
-      switch ( displaySource ) {
-
-      case displayFromPV:
-
-        if ( readExists ) {
-
-          if ( !unconnectedTimer ) {
-            unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
-             5000, unconnectedTimeout, this );
-          }
-
- 	  readPvId = the_PV_Factory->create( readPvExpStr.getExpanded() );
-	  if ( readPvId ) {
-	    readPvId->add_conn_state_callback( pip_monitor_read_connect_state,
-             this );
-	  }
-	  else {
-            fprintf( stderr, activePipClass_str22 );
-          }
-
-        }
-
-        activateIsComplete = 1;
-
-        break;
-
-      case displayFromForm:
-
-        if ( fileExists ) {
-          needFileOpen = 1;
-          actWin->addDefExeNode( aglPtr );
-        }
-        else {
-          activateIsComplete = 1;
-        }
-
-        break;
-
-      case displayFromMenu:
-
-        if ( readExists && ( numDsps > 0 ) ) {
-
-          if ( !unconnectedTimer ) {
-            unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
-             5000, unconnectedTimeout, this );
-          }
-
-	  readPvId = the_PV_Factory->create( readPvExpStr.getExpanded() );
-	  if ( readPvId ) {
-	    readPvId->add_conn_state_callback( pip_monitor_menu_connect_state,
-             this );
-	  }
-	  else {
-            fprintf( stderr, activePipClass_str22 );
-          }
-
-          if ( labelExists ) {
-	    labelPvId = the_PV_Factory->create( labelPvExpStr.getExpanded() );
-	    if ( labelPvId ) {
-	      labelPvId->add_conn_state_callback(
-               pip_monitor_label_connect_state, this );
-	    }
-	    else {
-              fprintf( stderr, activePipClass_str22 );
-            }
-	  }
-
-          if ( !popUpMenu ) {
-
-            n = 0;
-            XtSetArg( args[n], XmNpopupEnabled, (XtArgVal) False ); n++;
-            popUpMenu = XmCreatePopupMenu( actWin->topWidgetId(), "", args,
-             n );
-
-            pullDownMenu = XmCreatePulldownMenu( popUpMenu, "", NULL, 0 );
-
-            for ( i=0; i<numDsps; i++ ) {
-
-              if ( label[i].getExpanded() ) {
-                str = XmStringCreateLocalized( label[i].getExpanded() );
-              }
-              else {
-                str = XmStringCreateLocalized( " " );
-              }
-              pb[i] = XtVaCreateManagedWidget( "", xmPushButtonWidgetClass,
-               popUpMenu,
-               XmNlabelString, str,
-               NULL );
-              XmStringFree( str );
-
-              XtAddCallback( pb[i], XmNactivateCallback, menu_cb,
-               (XtPointer) this );
-
-            }
-
-          }
-
-	}
-	else {
-
-          activateIsComplete = 1;
-
-        }
-
-        break;
-
-      default:
-
-        activateIsComplete = 1;
-        break;
-
-      }
-
-    }
-
-    break;
-
-  case 3:
-  case 4:
-  case 5:
-  case 6:
-
-    break;
 
   }
 
@@ -2242,6 +2080,11 @@ XButtonEvent be;
       readPvId->add_value_callback( pip_menuUpdate, this );
 
     }
+    else {
+
+      activateIsComplete = 1;
+
+    }
 
     fgColor.setConnected();
     drawActive();
@@ -2259,6 +2102,13 @@ XButtonEvent be;
       // close old
 
       if ( aw ) {
+        if ( aw->loadFailure ) {
+	  aw = NULL;
+	  frameWidget = NULL;
+	}
+      }
+
+      if ( aw ) {
 
         okToClose = 0;
         cur = actWin->appCtx->head->flink;
@@ -2274,10 +2124,10 @@ XButtonEvent be;
           if ( !aw->okToDeactivate() ) {
             consecutiveDeactivateErrors++;
             if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
-              actWin->appCtx->proc->lock();
-              needUpdate = 1;
-              actWin->addDefExeNode( aglPtr );
-              actWin->appCtx->proc->unlock();
+              if ( !retryTimerNU ) {
+                retryTimerNU = appAddTimeOut( actWin->appCtx->appContext(),
+                 10, needUpdateTimeout, this );
+              }
               return;
             }
             else {
@@ -2418,6 +2268,13 @@ XButtonEvent be;
             // close old
 
             if ( aw ) {
+	      if ( aw->loadFailure ) {
+                aw = NULL;
+                frameWidget = NULL;
+	      }
+	    }
+
+            if ( aw ) {
 
               okToClose = 0;
               cur = actWin->appCtx->head->flink;
@@ -2433,10 +2290,10 @@ XButtonEvent be;
                 if ( !aw->okToDeactivate() ) {
                   consecutiveDeactivateErrors++;
                   if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
-                    actWin->appCtx->proc->lock();
-                    needMenuUpdate = 1;
-                    actWin->addDefExeNode( aglPtr );
-                    actWin->appCtx->proc->unlock();
+                    if ( !retryTimerNMU ) {
+                      retryTimerNMU = appAddTimeOut( actWin->appCtx->appContext(),
+                       10, needMenuUpdateTimeout, this );
+                    }
                     return;
                   }
                   else {
@@ -2564,8 +2421,6 @@ XButtonEvent be;
     consecutiveDeactivateErrors = 0;
 
     if ( enabled && fileExists ) {
-
-      //fprintf( stderr, "Open file %s\n", fileNameExpStr.getExpanded() );
 
       strncpy( curFileName, fileNameExpStr.getExpanded(), 127 );
       curFileName[127] = 0;
@@ -2706,10 +2561,10 @@ XButtonEvent be;
         if ( !aw->okToDeactivate() ) {
           consecutiveDeactivateErrors++;
           if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
-            actWin->appCtx->proc->lock();
-            needUnmap = 1;
-            actWin->addDefExeNode( aglPtr );
-            actWin->appCtx->proc->unlock();
+            if ( !retryTimerNUM ) {
+              retryTimerNUM = appAddTimeOut( actWin->appCtx->appContext(),
+               10, needUnmapTimeout, this );
+            }
             return;
           }
           else {
@@ -2773,6 +2628,13 @@ XButtonEvent be;
         // close old ( however, one should not be open )
 
         if ( aw ) {
+          if ( aw->loadFailure ) {
+            aw = NULL;
+            frameWidget = NULL;
+          }
+        }
+
+        if ( aw ) {
 
           okToClose = 0;
           cur = actWin->appCtx->head->flink;
@@ -2788,10 +2650,10 @@ XButtonEvent be;
             if ( !aw->okToDeactivate() ) {
               consecutiveDeactivateErrors++;
               if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
-                actWin->appCtx->proc->lock();
-                needMap = 1;
-                actWin->addDefExeNode( aglPtr );
-                actWin->appCtx->proc->unlock();
+                if ( !retryTimerNM ) {
+                  retryTimerNM = appAddTimeOut( actWin->appCtx->appContext(),
+                   10, needMapTimeout, this );
+                }
                 return;
               }
               else {
@@ -2976,7 +2838,6 @@ int flag;
 
   if ( !activateIsComplete ) return 0;
 
-#if 1
   // this fails when I return to edit while things are updating
   if ( aw ) {
     flag = aw->okToDeactivate();
@@ -2984,35 +2845,6 @@ int flag;
   else {
     flag = 1;
   }
-#endif
-
-#if 0
-  if ( aw ) {
-    if ( aw->isExecuteMode() || aw->loadFailure ) {
-      flag = aw->okToDeactivate();
-    }
-    else {
-      flag = 0;
-    }
-  }
-  else {
-    flag = 1;
-  }
-#endif
-
-#if 0
-  if ( aw ) {
-    if ( aw->isExecuteMode() || aw->loadFailure ) {
-      flag = aw->okToDeactivate();
-    }
-    else {
-      flag = 1; // this was originally: flag = 0; which was incorrect
-    }
-  }
-  else {
-    flag = 1;
-  }
-#endif
 
   return flag;
 
