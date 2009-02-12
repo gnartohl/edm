@@ -219,6 +219,7 @@ int i, ii;
   pipo->setSize = pipo->buf->bufSetSize;
   pipo->sizeOfs = pipo->buf->bufSizeOfs;
   pipo->noScroll = pipo->buf->bufNoScroll;
+  pipo->ignoreMultiplexors = pipo->buf->bufIgnoreMultiplexors;
 
   pipo->x = pipo->buf->bufX;
   pipo->sboxX = pipo->buf->bufX;
@@ -429,6 +430,7 @@ int i;
   setSize = 0;
   sizeOfs = 5;
   noScroll = 0;
+  ignoreMultiplexors = 0;
   activeMode = 0;
   frameWidget = NULL;
   clipWidget = NULL;
@@ -486,6 +488,7 @@ int i;
   setSize = source->setSize;
   sizeOfs = source->sizeOfs;
   noScroll = source->noScroll;
+  ignoreMultiplexors = source->ignoreMultiplexors;
   frameWidget = NULL;
   clipWidget = NULL;
   aw = NULL;
@@ -640,6 +643,7 @@ static int displaySourceEnum[3] = {
   tag.loadW( "replaceSymbols", replaceSymbols, numDsps, &zero );
   tag.loadW( "propagateMacros", propagateMacros, numDsps, &one );
   tag.loadBoolW( "noScroll", &noScroll, &zero );
+  tag.loadBoolW( "ignoreMultiplexors", &ignoreMultiplexors, &zero );
   tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
@@ -748,6 +752,7 @@ static int displaySourceEnum[3] = {
   tag.loadR( "replaceSymbols", maxDsps, replaceSymbols, &n, &zero );
   tag.loadR( "propagateMacros", maxDsps, propagateMacros, &n, &one );
   tag.loadR( "noScroll", &noScroll, &zero );
+  tag.loadR( "ignoreMultiplexors", &ignoreMultiplexors, &zero );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.readTags( f, "endObjectProperties" );
@@ -886,6 +891,7 @@ int i;
   buf->bufSetSize = setSize;
   buf->bufSizeOfs = sizeOfs;
   buf->bufNoScroll = noScroll;
+  buf->bufIgnoreMultiplexors = ignoreMultiplexors;
 
   for ( i=0; i<maxDsps; i++ ) {
 
@@ -940,6 +946,7 @@ int i;
   ef.addToggle( "Set Size", &buf->bufSetSize );
   ef.addTextField( "Size Ofs", 35, &buf->bufSizeOfs );
   ef.addToggle( "Disable Scroll Bars", &buf->bufNoScroll );
+  ef.addToggle( "Ignore Multiplexors", &buf->bufIgnoreMultiplexors );
 
   ef.addEmbeddedEf( "Menu Info", "...", &ef1 );
 
@@ -1084,6 +1091,31 @@ int activePipClass::drawActive ( void ) {
   }
 
   return 1;
+
+}
+
+int activePipClass::reactivate (
+  int pass,
+  void *ptr ) {
+
+  if ( ignoreMultiplexors ) {
+    return 1;
+  }
+
+  return activate( pass, ptr );
+
+}
+
+int activePipClass::reactivate (
+  int pass,
+  void *ptr,
+  int *numSubObjects ) {
+
+  if ( ignoreMultiplexors ) {
+    return 1;
+  }
+
+  return activate( pass, ptr );
 
 }
 
@@ -1293,6 +1325,28 @@ XmString str;
   }
 
   return 1;
+
+}
+
+int activePipClass::preReactivate ( int pass ) {
+
+  if ( ignoreMultiplexors ) {
+    return 1;
+  }
+
+  return deactivate( pass );
+
+}
+
+int activePipClass::preReactivate (
+  int pass,
+  int *numSubObjects ) {
+
+  if ( ignoreMultiplexors ) {
+    return 1;
+  }
+
+  return deactivate( pass );
 
 }
 
@@ -2821,6 +2875,16 @@ void activePipClass::changePvNames (
 int activePipClass::isWindowContainer ( void ) {
 
   return 1;
+
+}
+
+int activePipClass::activateBeforePreReexecuteComplete ( void ) {
+
+  if ( ignoreMultiplexors ) {
+    return 1;
+  }
+
+  return activateComplete();
 
 }
 

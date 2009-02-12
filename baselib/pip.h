@@ -219,6 +219,7 @@ typedef struct bufTag {
   int bufSetSize;
   int bufSizeOfs;
   int bufNoScroll;
+  int bufIgnoreMultiplexors;
 } bufType, *bufPtr;
 
 int numDsps, dspIndex;
@@ -233,6 +234,7 @@ int center;
 int setSize;
 int sizeOfs;
 int noScroll;
+int ignoreMultiplexors;
 
 Widget *frameWidget, clipWidget, hsbWidget, vsbWidget, popUpMenu,
  pullDownMenu, pb[maxDsps];
@@ -335,7 +337,22 @@ int drawActive ( void );
 
 int eraseActive ( void );
 
+int reactivate (
+  int pass,
+  void *ptr );
+
+int reactivate (
+  int pass,
+  void *ptr,
+  int *numSubObjects );
+
 int activate ( int pass, void *ptr );
+
+int preReactivate ( int pass );
+
+int preReactivate (
+  int pass,
+  int *numSubObjects );
 
 int deactivate ( int pass );
 
@@ -419,6 +436,8 @@ void changePvNames (
 int isWindowContainer ( void );
 
 int activateComplete ( void );
+
+int activateBeforePreReexecuteComplete ( void );
 
 void map ( void );
 
