@@ -3,22 +3,22 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 259
+x 16
 y 21
-w 812
+w 1229
 h 985
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 52171 52171 52171
+bgColor rgb 52942 52171 52942
 textColor rgb 0 0 0
 ctlFgColor1 rgb 0 0 0
 ctlFgColor2 rgb 0 0 65535
-ctlBgColor1 rgb 46517 46517 46517
-ctlBgColor2 rgb 56797 56797 56797
+ctlBgColor1 rgb 46517 46774 46517
+ctlBgColor2 rgb 57054 56283 57054
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 24929 24929 24929
+botShadowColor rgb 25443 24929 25443
 disableScroll
 endScreenProperties
 
@@ -28,12 +28,12 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 428
-y 772
+x 843
+y 19
 w 365
-h 202
+h 354
 lineColor rgb 0 0 0
-fillColor rgb 46517 46517 46517
+fillColor rgb 46517 46774 46517
 endObjectProperties
 
 # (Rectangle)
@@ -47,7 +47,7 @@ y 343
 w 363
 h 106
 lineColor rgb 0 0 0
-fillColor rgb 46517 46517 46517
+fillColor rgb 46517 46774 46517
 endObjectProperties
 
 # (Static Text)
@@ -58,8 +58,8 @@ minor 1
 release 0
 x 18
 y 19
-w 223
-h 31
+w 211
+h 27
 font "helvetica-medium-r-24.0"
 fgColor rgb 0 0 0
 bgColor rgb 61423 61423 61423
@@ -77,11 +77,11 @@ minor 1
 release 0
 x 29
 y 351
-w 192
-h 19
+w 190
+h 16
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Display Source = String PV"
@@ -97,11 +97,11 @@ minor 1
 release 0
 x 44
 y 375
-w 325
-h 76
+w 319
+h 64
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "In this mode, the widget monitors the specified PV"
@@ -123,7 +123,7 @@ y 464
 w 363
 h 106
 lineColor rgb 0 0 0
-fillColor rgb 46517 46517 46517
+fillColor rgb 46517 46774 46517
 endObjectProperties
 
 # (Static Text)
@@ -134,11 +134,11 @@ minor 1
 release 0
 x 29
 y 473
-w 163
-h 19
+w 159
+h 16
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Display Source = Form"
@@ -154,11 +154,11 @@ minor 1
 release 0
 x 44
 y 496
-w 333
-h 76
+w 326
+h 64
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "In this mode, the widget opens the display given by"
@@ -180,7 +180,7 @@ y 587
 w 363
 h 329
 lineColor rgb 0 0 0
-fillColor rgb 46517 46517 46517
+fillColor rgb 46517 46774 46517
 endObjectProperties
 
 # (Static Text)
@@ -191,11 +191,11 @@ minor 1
 release 0
 x 29
 y 596
-w 165
-h 19
+w 162
+h 16
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Display Source = Menu"
@@ -211,11 +211,11 @@ minor 1
 release 0
 x 44
 y 619
-w 328
-h 57
+w 322
+h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "In this mode, a user specified menu is used to"
@@ -233,11 +233,11 @@ minor 1
 release 0
 x 44
 y 682
-w 337
-h 57
+w 330
+h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Label PV may contain the name of a string PV. If"
@@ -255,11 +255,11 @@ minor 1
 release 0
 x 44
 y 748
-w 337
-h 95
+w 333
+h 80
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "In this mode, PV takes the name of a numeric PV."
@@ -279,11 +279,11 @@ minor 1
 release 0
 x 44
 y 849
-w 323
-h 57
+w 318
+h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Alternatively, some value other than -1 may be"
@@ -304,7 +304,7 @@ y 13
 w 0
 h 957
 lineColor rgb 0 0 0
-fillColor rgb 46517 46517 46517
+fillColor rgb 46517 46774 46517
 numPoints 2
 xPoints {
   0 409
@@ -323,12 +323,12 @@ major 4
 minor 1
 release 0
 x 521
-y 184
+y 273
 w 147
-h 23
+h 21
 font "helvetica-bold-r-18.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Menu Properties"
@@ -343,12 +343,12 @@ major 4
 minor 1
 release 0
 x 549
-y 216
+y 305
 w 71
-h 19
+h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Menu label"
@@ -363,12 +363,12 @@ major 4
 minor 1
 release 0
 x 549
-y 242
-w 163
-h 19
+y 331
+w 157
+h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Related display file name"
@@ -383,12 +383,12 @@ major 4
 minor 1
 release 0
 x 549
-y 267
-w 246
-h 114
+y 356
+w 240
+h 96
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Comma separated list of symbols or"
@@ -408,12 +408,12 @@ major 4
 minor 1
 release 0
 x 549
-y 649
-w 220
-h 38
+y 713
+w 218
+h 32
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Append the new symbols to those"
@@ -429,12 +429,12 @@ major 4
 minor 1
 release 0
 x 549
-y 691
-w 239
-h 38
+y 755
+w 230
+h 32
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Replace command line symbols with"
@@ -450,12 +450,12 @@ major 4
 minor 1
 release 0
 x 549
-y 729
-w 248
-h 38
+y 793
+w 239
+h 32
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "All symbols defined for the embedded"
@@ -471,12 +471,12 @@ major 4
 minor 1
 release 0
 x 500
-y 217
-w 41
-h 19
+y 306
+w 42
+h 16
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Label:"
@@ -491,12 +491,12 @@ major 4
 minor 1
 release 0
 x 512
-y 241
-w 29
-h 19
+y 330
+w 30
+h 16
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "File:"
@@ -511,12 +511,12 @@ major 4
 minor 1
 release 0
 x 485
-y 268
-w 56
-h 19
+y 357
+w 57
+h 16
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Macros:"
@@ -531,12 +531,12 @@ major 4
 minor 1
 release 0
 x 439
-y 651
-w 102
-h 19
+y 715
+w 103
+h 16
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Mode-Append:"
@@ -551,12 +551,12 @@ major 4
 minor 1
 release 0
 x 437
-y 692
-w 103
-h 19
+y 756
+w 105
+h 16
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Mode-Replace:"
@@ -571,12 +571,12 @@ major 4
 minor 1
 release 0
 x 465
-y 729
-w 76
-h 19
+y 793
+w 77
+h 16
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Propagate:"
@@ -590,14 +590,14 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 435
-y 810
+x 850
+y 57
 w 350
-h 156
+h 307
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 24929 24929 24929
+botShadowColor rgb 25443 24929 25443
 displaySource "file"
 file "$(help)helpRelatedDisplay"
 numDsps 0
@@ -609,13 +609,13 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 480
-y 781
-w 256
-h 23
+x 895
+y 28
+w 251
+h 21
 font "helvetica-bold-r-18.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Example Embedded Window"
@@ -631,11 +631,11 @@ minor 1
 release 0
 x 430
 y 20
-w 351
-h 152
+w 371
+h 208
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "If \"Set Size\" is selected, the embedded window area is"
@@ -646,6 +646,11 @@ value {
   "If \"Disable Scroll Bars\" is selected, scroll bars will"
   "not be created even if the target display is larger than"
   "the embedded window area."
+  ""
+  "If \"Ignore Multiplexors\" is set, the embedded window will"
+  "not refresh when a multiplexor changes a symbol set. This"
+  "can help eliminate complex and expensive interactions"
+  "between these two widgets."
 }
 autoSize
 endObjectProperties
@@ -658,11 +663,11 @@ minor 1
 release 0
 x 14
 y 931
-w 340
-h 38
+w 341
+h 32
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "If \"Center\" is selected, the target display contents are"
@@ -678,12 +683,12 @@ major 4
 minor 1
 release 0
 x 550
-y 381
-w 192
-h 19
+y 470
+w 188
+h 16
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "(2550 characters maximum)"
@@ -698,12 +703,12 @@ major 4
 minor 1
 release 0
 x 549
-y 410
-w 233
-h 228
+y 499
+w 231
+h 192
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "examples:"
@@ -730,11 +735,11 @@ minor 1
 release 0
 x 14
 y 67
-w 370
-h 57
+w 359
+h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "An embedded window is somewhat like a related display"
@@ -752,11 +757,11 @@ minor 1
 release 0
 x 14
 y 132
-w 346
-h 38
+w 337
+h 32
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "If the referenced display is larger than the embedded"
@@ -773,11 +778,11 @@ minor 1
 release 0
 x 14
 y 178
-w 332
-h 38
+w 316
+h 32
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Embedded windows may contain other embedded"
@@ -794,11 +799,11 @@ minor 1
 release 0
 x 14
 y 224
-w 358
-h 57
+w 350
+h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "Exit buttons in embedded windows are disabled unless"
@@ -816,16 +821,39 @@ minor 1
 release 0
 x 14
 y 288
-w 365
-h 38
+w 356
+h 32
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
   "The embedded contents may be specified in three ways"
   "as specified in Display Source."
 }
 autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 815
+y 13
+w 0
+h 957
+lineColor rgb 0 0 0
+fillColor rgb 46517 46774 46517
+numPoints 2
+xPoints {
+  0 815
+  1 815
+}
+yPoints {
+  0 13
+  1 970
+}
 endObjectProperties
 

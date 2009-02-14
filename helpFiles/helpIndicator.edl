@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 458
-y 55
-w 508
-h 841
+x 304
+y 76
+w 579
+h 750
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
@@ -20,19 +20,20 @@ ctlBgColor2 rgb 57054 56283 57054
 topShadowColor rgb 61423 61423 61423
 botShadowColor rgb 25443 24929 25443
 title "Bar"
+disableScroll
 endScreenProperties
 
-# (GIF Image)
-object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+# (PNG Image)
+object activePngClass
 beginObjectProperties
 major 4
 minor 0
 release 0
-x 18
-y 100
-w 264
-h 430
-file "$(help)helpActiveBarGif"
+x 14
+y 106
+w 351
+h 351
+file "helpIndicator"
 endObjectProperties
 
 # (Static Text)
@@ -43,133 +44,13 @@ minor 1
 release 0
 x 24
 y 25
-w 39
+w 97
 h 27
 font "helvetica-medium-r-24.0"
 fgColor rgb 0 0 0
 bgColor rgb 61423 61423 61423
 value {
-  "Bar"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 296
-y 240
-w 75
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Border: Yes"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 296
-y 257
-w 107
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Show Scale: Yes"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 296
-y 274
-w 139
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Label Type: PV Name"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 296
-y 109
-w 75
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Border: Yes"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 296
-y 126
-w 107
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Show Scale: Yes"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 296
-y 143
-w 117
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Label Type: Literal"
+  "Indicator"
 }
 autoSize
 endObjectProperties
@@ -223,20 +104,20 @@ beginObjectProperties
 major 4
 minor 0
 release 1
-x 36
+x 60
 y 80
-w 92
-h 82
+w 68
+h 72
 lineColor rgb 0 0 0
 fillColor rgb 46517 46774 46517
 numPoints 2
 xPoints {
   0 128
-  1 36
+  1 60
 }
 yPoints {
   0 80
-  1 162
+  1 152
 }
 endObjectProperties
 
@@ -266,20 +147,20 @@ beginObjectProperties
 major 4
 minor 0
 release 1
-x 149
+x 181
 y 85
-w 69
-h 31
+w 37
+h 40
 lineColor rgb 0 0 0
 fillColor rgb 46517 46774 46517
 numPoints 2
 xPoints {
   0 218
-  1 149
+  1 181
 }
 yPoints {
   0 85
-  1 116
+  1 125
 }
 endObjectProperties
 
@@ -291,14 +172,14 @@ minor 1
 release 0
 x 309
 y 70
-w 60
+w 95
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46774 46517
 useDisplayBg
 value {
-  "Bar Color"
+  "Indicator Color"
 }
 autoSize
 endObjectProperties
@@ -309,20 +190,20 @@ beginObjectProperties
 major 4
 minor 0
 release 1
-x 171
+x 265
 y 82
-w 131
-h 56
+w 37
+h 50
 lineColor rgb 0 0 0
 fillColor rgb 46517 46774 46517
 numPoints 2
 xPoints {
   0 302
-  1 171
+  1 265
 }
 yPoints {
   0 82
-  1 138
+  1 132
 }
 endObjectProperties
 
@@ -332,68 +213,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 296
-y 483
-w 68
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Border: No"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 296
-y 499
-w 100
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Show Scale: No"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 296
-y 534
-w 158
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "No Label string specified"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 154
-y 197
+x 453
+y 70
 w 43
 h 16
 font "helvetica-medium-r-14.0"
@@ -412,20 +233,20 @@ beginObjectProperties
 major 4
 minor 0
 release 1
-x 116
-y 183
-w 34
-h 19
+x 351
+y 79
+w 94
+h 30
 lineColor rgb 0 0 0
 fillColor rgb 46517 46774 46517
 numPoints 2
 xPoints {
-  0 150
-  1 116
+  0 445
+  1 351
 }
 yPoints {
-  0 202
-  1 183
+  0 79
+  1 109
 }
 endObjectProperties
 
@@ -435,28 +256,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 296
-y 516
-w 117
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Label Type: Literal"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 29
-y 600
+x 17
+y 520
 w 139
 h 16
 font "helvetica-medium-r-14.0"
@@ -475,8 +276,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 62
-y 622
+x 50
+y 542
 w 327
 h 16
 font "helvetica-medium-r-14.0"
@@ -495,8 +296,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 62
-y 640
+x 50
+y 560
 w 319
 h 16
 font "helvetica-medium-r-14.0"
@@ -515,8 +316,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 62
-y 658
+x 50
+y 578
 w 355
 h 16
 font "helvetica-medium-r-14.0"
@@ -535,8 +336,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 29
-y 711
+x 17
+y 631
 w 437
 h 16
 font "helvetica-medium-r-14.0"
@@ -555,8 +356,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 29
-y 727
+x 17
+y 647
 w 308
 h 16
 font "helvetica-medium-r-14.0"
@@ -575,168 +376,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 296
-y 160
-w 53
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Origin: 0"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 296
-y 291
-w 53
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Origin: 1"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 296
-y 551
-w 53
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Origin: 0"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 296
-y 366
-w 75
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Border: Yes"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 296
-y 383
-w 107
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Show Scale: Yes"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 296
-y 400
-w 117
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Label Type: Literal"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 296
-y 417
-w 53
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Origin: 0"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 296
-y 435
-w 191
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
-useDisplayBg
-value {
-  "Readback & Null PV specified"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 145
-y 676
+x 133
+y 596
 w 258
 h 16
 font "helvetica-medium-r-14.0"
@@ -755,8 +396,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 28
-y 763
+x 16
+y 683
 w 406
 h 48
 font "helvetica-medium-r-14.0"
@@ -766,7 +407,96 @@ useDisplayBg
 value {
   "Readback PV, Null PV, Label Tick Intervals, Majors per Label,"
   "Minors per Major, Scale Precision, Min Scale Value, Max Scale"
-  "Value, and Origin may include macro symbols"
+  "Value may include macro symbols."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 369
+y 124
+w 117
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Border: Yes"
+  "Show Scale: Yes"
+  "Label Type: Literal"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 369
+y 222
+w 139
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Border: Yes"
+  "Show Scale: Yes"
+  "Label Type: PV Name"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 369
+y 312
+w 191
+h 64
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Border: Yes"
+  "Show Scale: Yes"
+  "Label Type: Literal"
+  "Readback & Null PV specified"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 369
+y 418
+w 153
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Border: No"
+  "Show Scale: No"
+  "No label string specified"
 }
 autoSize
 endObjectProperties
