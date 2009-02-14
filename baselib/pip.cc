@@ -1196,7 +1196,7 @@ XmString str;
 
           if ( !unconnectedTimer ) {
             unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
-             10000, unconnectedTimeout, this );
+             5000, unconnectedTimeout, this );
           }
 
 	  readPvId = the_PV_Factory->create( readPvExpStr.getExpanded() );
@@ -2180,7 +2180,7 @@ XButtonEvent be;
             if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
               if ( !retryTimerNU ) {
                 retryTimerNU = appAddTimeOut( actWin->appCtx->appContext(),
-                 10, needUpdateTimeout, this );
+                 250, needUpdateTimeout, this );
               }
               return;
             }
@@ -2189,6 +2189,12 @@ XButtonEvent be;
               actWin->appCtx->postMessage( activePipClass_str30 );
               consecutiveDeactivateErrors = 0;
               return;
+            }
+          }
+          else {
+            if ( retryTimerNU ) {
+              XtRemoveTimeOut( retryTimerNU );
+              retryTimerNU = 0;
             }
           }
 	}
@@ -2346,7 +2352,7 @@ XButtonEvent be;
                   if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
                     if ( !retryTimerNMU ) {
                       retryTimerNMU = appAddTimeOut( actWin->appCtx->appContext(),
-                       10, needMenuUpdateTimeout, this );
+                       250, needMenuUpdateTimeout, this );
                     }
                     return;
                   }
@@ -2355,6 +2361,12 @@ XButtonEvent be;
                     actWin->appCtx->postMessage( activePipClass_str30 );
                     consecutiveDeactivateErrors = 0;
                     return;
+                  }
+                }
+                else {
+                  if ( retryTimerNMU ) {
+                    XtRemoveTimeOut( retryTimerNMU );
+                    retryTimerNMU = 0;
                   }
                 }
 	      }
@@ -2617,7 +2629,7 @@ XButtonEvent be;
           if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
             if ( !retryTimerNUM ) {
               retryTimerNUM = appAddTimeOut( actWin->appCtx->appContext(),
-               10, needUnmapTimeout, this );
+               250, needUnmapTimeout, this );
             }
             return;
           }
@@ -2626,6 +2638,12 @@ XButtonEvent be;
             actWin->appCtx->postMessage( activePipClass_str30 );
             consecutiveDeactivateErrors = 0;
             return;
+          }
+        }
+        else {
+          if ( retryTimerNUM ) {
+            XtRemoveTimeOut( retryTimerNUM );
+            retryTimerNUM = 0;
           }
         }
       }
@@ -2706,7 +2724,7 @@ XButtonEvent be;
               if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
                 if ( !retryTimerNM ) {
                   retryTimerNM = appAddTimeOut( actWin->appCtx->appContext(),
-                   10, needMapTimeout, this );
+                   250, needMapTimeout, this );
                 }
                 return;
               }
@@ -2715,6 +2733,12 @@ XButtonEvent be;
                 actWin->appCtx->postMessage( activePipClass_str30 );
                 consecutiveDeactivateErrors = 0;
                 return;
+              }
+            }
+	    else {
+	      if ( retryTimerNM ) {
+                XtRemoveTimeOut( retryTimerNM );
+                retryTimerNM = 0;
               }
             }
           }

@@ -2000,6 +2000,10 @@ int n;
 
     if ( !firstEvent ) {
       if ( actWin->okToPreReexecute() ) {
+        if ( retryTimer ) {
+          XtRemoveTimeOut( retryTimer );
+          retryTimer = 0;
+        }
         stat = actWin->preReexecute();
         if ( stat & 1 ) {
           actWin->setNoRefresh();
@@ -2009,7 +2013,7 @@ int n;
       else {
         if ( !retryTimer ) {
           retryTimer = appAddTimeOut( actWin->appCtx->appContext(),
-           10, retryTimeout, this );
+           250, retryTimeout, this );
         }
       }
     }
