@@ -146,6 +146,13 @@ fontMenuClass fm;
 char fontTag[63+1];
 XFontStruct *fs;
 
+// Font metrics
+int fontAscent;
+int fontDescent;
+int fontHeight;
+int stringLength;
+int stringWidth;
+
 ProcessVariable *readPvId;
 int initialReadConnection;
 

@@ -533,6 +533,7 @@ int activeCoefTableClass::edit ( void ) {
 
 int activeCoefTableClass::erase ( void ) {
 
+  if ( activeMode ) return 1;
   if ( deleteRequest ) return 1;
 
   XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
@@ -553,8 +554,15 @@ int activeCoefTableClass::eraseActive ( void ) {
 
 int activeCoefTableClass::draw ( void ) {
 
+XRectangle xR = { x, y, w, h };
+int clipStat;
+
+  if ( activeMode ) return 1;
   if ( deleteRequest ) return 1;
+
   actWin->drawGc.saveFg();
+
+  clipStat = actWin->drawGc.addNormXClipRectangle( xR );
 
   actWin->drawGc.setFG( bgColor.pixelColor() );
   XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
@@ -566,8 +574,20 @@ int activeCoefTableClass::draw ( void ) {
 
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
+  if ( fs ) {
+    updateFont( " ", fontTag, &fs,
+     &fontAscent, &fontDescent, &fontHeight,
+     &stringWidth );
+  }
+  else {
+    fontHeight = 10;
+  }
+
   drawText( actWin->drawWidget, &actWin->drawGc,
-   fs, x+w/2, y+h/2, XmALIGNMENT_CENTER, activeCoefTableClass_str21 );
+   fs, x+w/2, y+h/2-fontHeight/2, XmALIGNMENT_CENTER,
+   activeCoefTableClass_str21 );
+
+  if ( clipStat & 1 ) actWin->drawGc.removeNormXClipRectangle();
 
   actWin->drawGc.restoreFg();
 

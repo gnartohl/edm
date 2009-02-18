@@ -409,8 +409,8 @@ friend void ef_set_item_num (
 
 Display *display;
 
-Widget shell, scrollWin, pane, labelForm, mainLabel, topForm, controlForm,
- arrayForm, bottomForm, pb_ok,
+Widget shell, paneTop, scrollWin, pane, labelForm, mainLabel,
+ topForm, controlForm, arrayForm, bottomForm, pb_ok,
  pb_cancel, pb_apply, itemNumArrowInc, itemNumArrowDec, itemNumText,
  itemNumLabel, numItemsArrowInc, numItemsArrowDec, numItemsText,
  numItemsLabel, *subForm, prevW, curTopParent;

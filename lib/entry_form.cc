@@ -860,7 +860,14 @@ XmString str;
    XmNmappedWhenManaged, False,
    NULL );
 
-  scrollWin = XtVaCreateWidget( "scrollwin", xmScrolledWindowWidgetClass, shell,
+  paneTop = XtVaCreateWidget( "paneTop", xmPanedWindowWidgetClass, shell,
+   XmNsashWidth, 1,
+   XmNsashHeight, 1,
+   NULL );
+
+  scrollWin = XtVaCreateWidget( "scrollwin", xmScrolledWindowWidgetClass, paneTop,
+   XmNallowResize, True,
+   XmNpaneMaximum, 10000,
    XmNscrollBarDisplayPolicy, XmAS_NEEDED,
    XmNscrollingPolicy, XmAUTOMATIC,
    NULL );
@@ -870,7 +877,9 @@ XmString str;
    XmNsashHeight, 1,
    NULL );
 
-  labelForm = XtVaCreateWidget( "labelform", xmFormWidgetClass, pane, NULL );
+  labelForm = XtVaCreateWidget( "labelform", xmFormWidgetClass, pane,
+   XmNallowResize, True,
+   NULL );
 
   if ( entryTag )
     str = XmStringCreate( label, entryTag );
@@ -895,6 +904,7 @@ XmString str;
   topForm = XtVaCreateWidget( "topform", xmFormWidgetClass, pane,
    XmNallowResize, True,
    XmNpaneMaximum, 10000,
+   XmNmarginWidth, 50,
    NULL );
 
   curTopParent = topForm;
@@ -904,12 +914,18 @@ XmString str;
    efEventHandler, (XtPointer) this );
 
   controlForm = XtVaCreateWidget( "controlform", xmFormWidgetClass, pane,
+   XmNallowResize, True,
+   XmNmarginWidth, 50,
    NULL );
 
   arrayForm = XtVaCreateWidget( "arrayform", xmFormWidgetClass, pane,
+   XmNallowResize, True,
+   XmNmarginWidth, 50,
    NULL );
 
-  bottomForm = XtVaCreateWidget( "bottomform", xmFormWidgetClass, pane,
+  bottomForm = XtVaCreateWidget( "bottomform", xmFormWidgetClass, paneTop,
+   XmNallowResize, True,
+   XmNskipAdjust, True,
    NULL );
 
   XtAddEventHandler( bottomForm,
@@ -1066,7 +1082,14 @@ char buf[16];
    XmNmappedWhenManaged, False,
    NULL );
 
-  scrollWin = XtVaCreateWidget( "scrollwin", xmScrolledWindowWidgetClass, shell,
+  paneTop = XtVaCreateWidget( "paneTop", xmPanedWindowWidgetClass, shell,
+   XmNsashWidth, 1,
+   XmNsashHeight, 1,
+   NULL );
+
+  scrollWin = XtVaCreateWidget( "scrollwin", xmScrolledWindowWidgetClass, paneTop,
+   XmNallowResize, True,
+   XmNpaneMaximum, 10000,
    XmNscrollBarDisplayPolicy, XmAS_NEEDED,
    XmNscrollingPolicy, XmAUTOMATIC,
    NULL );
@@ -1076,7 +1099,9 @@ char buf[16];
    XmNsashHeight, 1,
    NULL );
 
-  labelForm = XtVaCreateWidget( "labelform", xmFormWidgetClass, pane, NULL );
+  labelForm = XtVaCreateWidget( "labelform", xmFormWidgetClass, pane,
+   XmNallowResize, True,
+   NULL );
 
   if ( entryTag )
     str = XmStringCreate( label, entryTag );
@@ -1101,6 +1126,7 @@ char buf[16];
   topForm = XtVaCreateWidget( "topform", xmFormWidgetClass, pane,
    XmNallowResize, True,
    XmNpaneMaximum, 10000,
+   XmNmarginWidth, 50,
    NULL );
 
   curTopParent = topForm;
@@ -1109,7 +1135,10 @@ char buf[16];
    KeyPressMask|ButtonPressMask|ButtonReleaseMask, False,
    efEventHandler, (XtPointer) this );
 
-  controlForm = XtVaCreateWidget( "controlform", xmFormWidgetClass, pane, NULL );
+  controlForm = XtVaCreateWidget( "controlform", xmFormWidgetClass, pane,
+   XmNallowResize, True,
+   XmNmarginWidth, 50,
+   NULL );
 
   if ( maxItems > 1 ) {
 
@@ -1244,6 +1273,8 @@ char buf[16];
   }
 
   arrayForm = XtVaCreateWidget( "arrayform", xmFormWidgetClass, pane,
+   XmNallowResize, True,
+   XmNmarginWidth, 50,
    NULL );
 
 //    XtAddEventHandler( controlForm,
@@ -1254,7 +1285,8 @@ char buf[16];
    KeyPressMask|ButtonPressMask|ButtonReleaseMask, False,
    efEventHandler, (XtPointer) this );
 
-  bottomForm = XtVaCreateWidget( "bottomform", xmFormWidgetClass, pane,
+  bottomForm = XtVaCreateWidget( "bottomform", xmFormWidgetClass, paneTop,
+   XmNskipAdjust, True,
    NULL );
 
   XtAddEventHandler( bottomForm,
@@ -5108,6 +5140,7 @@ Widget *children;
   XtManageChild( bottomForm );
   XtManageChild( pane );
   XtManageChild( scrollWin );
+  XtManageChild( paneTop );
 
   // remove pane sashes from tab traversal
   XtVaGetValues( pane,
@@ -5174,6 +5207,7 @@ Widget *children;
   XtManageChild( bottomForm );
   XtManageChild( pane );
   XtManageChild( scrollWin );
+  XtManageChild( paneTop );
 
   // remove pane sashes from tab traversal
   XtVaGetValues( pane,
@@ -5197,7 +5231,7 @@ int entryFormClass::popup ( void ) {
 
 Arg args[5];
 int n;
-short paneW = 0, paneH = 0;
+short paneW = 0, paneH = 0, botH = 0;
 XTextProperty xtext;
 char *pTitle;
 
@@ -5214,6 +5248,10 @@ char *pTitle;
  }
 
   n = 0;
+  XtSetArg( args[n], XmNheight, (XtArgVal) &botH ); n++;
+  XtGetValues( bottomForm, args, n );
+
+  n = 0;
   XtSetArg( args[n], XmNwidth, (XtArgVal) &paneW ); n++;
   XtSetArg( args[n], XmNheight, (XtArgVal) &paneH ); n++;
   XtGetValues( pane, args, n );
@@ -5221,10 +5259,10 @@ char *pTitle;
   paneW += 10;
 
   n = 0;
-  paneH += 10;
+  paneH += botH + 25;
   if ( paneH + 25 > *largestH ) {
     paneH = *largestH - 25;
-    paneW += 25;
+    paneW += 40;
   }
   XtSetArg( args[n], XmNheight, (XtArgVal) paneH ); n++;
   XtSetValues( shell, args, n );
