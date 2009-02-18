@@ -65,7 +65,7 @@ int ok;
     if ( tk ) {
 
       err = NULL;
-      *posx = strtod( tk, &err );
+      *posx = strtol( tk, &err, 0 );
       if ( err ) {
 	if ( strcmp( err, "" ) != 0 ) {
 	  ok = 0;
@@ -77,7 +77,7 @@ int ok;
       if ( tk ) {
 
         err = NULL;
-        *posy = strtod( tk, &err );
+        *posy = strtol( tk, &err, 0 );
         if ( err ) {
 	  if ( strcmp( err, "" ) != 0 ) {
 	    ok = 0;
@@ -1316,10 +1316,73 @@ void selectPath_cb (
 {
 
 callbackBlockPtr cbPtr = (callbackBlockPtr) client;
-char *item = (char *) cbPtr->ptr;
+//char *item = (char *) cbPtr->ptr;
 appContextClass *apco = (appContextClass *) cbPtr->apco;
 
   apco->pathList.popup();
+
+}
+
+void app_fileSelectFromPathOk_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+XmFileSelectionBoxCallbackStruct *cbs =
+ (XmFileSelectionBoxCallbackStruct *) call;
+appContextClass *apco = (appContextClass *) client;
+activeWindowListPtr cur;
+char *fName;
+
+  if ( !XmStringGetLtoR( cbs->value, XmFONTLIST_DEFAULT_TAG, &fName ) ) {
+    goto done;
+  }
+
+  if ( !*fName ) {
+    XtFree( fName );
+    goto done;
+  }
+
+  cur = new activeWindowListType;
+
+  cur->requestDelete = 0;
+  cur->requestActivate = 0;
+  cur->requestActivateClear = 0;
+  cur->requestReactivate = 0;
+  cur->requestOpen = 0;
+  cur->requestPosition = 0;
+  cur->requestImport = 0;
+  cur->requestRefresh = 0;
+  cur->requestActiveRedraw = 0;
+  cur->requestIconize = 0;
+  cur->requestConvertAndExit = 0;
+
+  cur->node.create( apco, NULL, 0, 0, 0, 0, apco->numMacros, apco->macros,
+   apco->expansions );
+  cur->node.realize();
+  cur->node.setGraphicEnvironment( &apco->ci, &apco->fi );
+
+  cur->blink = apco->head->blink;
+  apco->head->blink->flink = cur;
+  apco->head->blink = cur;
+  cur->flink = apco->head;
+
+  cur->node.storeFileName( fName );
+
+  XtFree( fName );
+
+  cur->requestOpen = 1;
+  (apco->requestFlag)++;
+
+  if ( apco->executeOnOpen ) {
+    cur->requestActivate = 1;
+    (apco->requestFlag)++;
+  }
+
+done:
+
+  XtUnmanageChild( w );
 
 }
 
@@ -1381,6 +1444,16 @@ char *fName;
   }
 
 done:
+
+  XtUnmanageChild( w );
+
+}
+
+void app_fileSelectFromPathCancel_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
 
   XtUnmanageChild( w );
 
@@ -1548,6 +1621,38 @@ appContextClass *apco = (appContextClass *) client;
 
 }
 
+void open_from_path_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+appContextClass *apco = (appContextClass *) client;
+int n;
+Arg args[10];
+XmString xmStr;
+char prefix[127+1];
+
+  strncpy( prefix, apco->curPath, 127 );
+
+  n = 0;
+
+  if ( strcmp( prefix, "" ) != 0 ) {
+    xmStr = XmStringCreateLocalized( prefix );
+    XtSetArg( args[n], XmNdirectory, xmStr ); n++;
+  }
+
+  XtSetValues( apco->fileSelectFromPathBox, args, n );
+
+  if ( strcmp( prefix, "" ) != 0 ) XmStringFree( xmStr );
+
+  XtManageChild( apco->fileSelectFromPathBox );
+
+  XSetWindowColormap( apco->display, XtWindow(XtParent(apco->fileSelectFromPathBox)),
+   apco->ci.getColorMap() );
+
+}
+
 void open_cb (
   Widget w,
   XtPointer client,
@@ -1558,52 +1663,18 @@ appContextClass *apco = (appContextClass *) client;
 int n;
 Arg args[10];
 XmString xmStr;
-char prefix[127+1];
 
-  strncpy( prefix, apco->curPath, 127 );
+  if ( apco->firstOpen ) {
 
-  n = 0;
+    apco->firstOpen = 0;
 
-  if ( strcmp( prefix, "" ) != 0 ) {
-    xmStr = XmStringCreateLocalized( prefix );
+    n = 0;
+    xmStr = XmStringCreateLocalized( "./" );
     XtSetArg( args[n], XmNdirectory, xmStr ); n++;
+    XtSetValues( apco->fileSelectBox, args, n );
+    XmStringFree( xmStr );
+
   }
-
-  XtSetValues( apco->fileSelectBox, args, n );
-
-  if ( strcmp( prefix, "" ) != 0 ) XmStringFree( xmStr );
-
-  XtManageChild( apco->fileSelectBox );
-
-  XSetWindowColormap( apco->display, XtWindow(XtParent(apco->fileSelectBox)),
-   apco->ci.getColorMap() );
-
-}
-
-void open_user_cb (
-  Widget w,
-  XtPointer client,
-  XtPointer call )
-{
-
-appContextClass *apco = (appContextClass *) client;
-int n;
-Arg args[10];
-XmString xmStr;
-char prefix[127+1];
-
-  strncpy( prefix, apco->curPath, 127 );
-
-  n = 0;
-
-  if ( strcmp( prefix, "" ) != 0 ) {
-    xmStr = XmStringCreateLocalized( prefix );
-    XtSetArg( args[n], XmNdirectory, xmStr ); n++;
-  }
-
-  XtSetValues( apco->fileSelectBox, args, n );
-
-  if ( strcmp( prefix, "" ) != 0 ) XmStringFree( xmStr );
 
   XtManageChild( apco->fileSelectBox );
 
@@ -2112,6 +2183,7 @@ appContextClass::appContextClass (
   void )
 {
 
+  firstOpen = 1;
   executeCount = 0;
   isActive = 0;
   exitFlag = 0;
@@ -2253,14 +2325,21 @@ actionsPtr curAct, nextAct;
   // delete widgets
 
   XtRemoveCallback( importSelectBox, XmNcancelCallback,
-   app_importSelectCancel_cb, (void *) this );
+   app_importSelectOk_cb, (void *) this );
   XtRemoveCallback( importSelectBox, XmNcancelCallback,
    app_importSelectCancel_cb, (void *) this );
   XtUnmanageChild( importSelectBox );
   XtDestroyWidget( importSelectBox );
 
+  XtRemoveCallback( fileSelectFromPathBox, XmNcancelCallback,
+   app_fileSelectFromPathOk_cb, (void *) this );
+  XtRemoveCallback( fileSelectFromPathBox, XmNcancelCallback,
+   app_fileSelectFromPathCancel_cb, (void *) this );
+  XtUnmanageChild( fileSelectFromPathBox );
+  XtDestroyWidget( fileSelectFromPathBox );
+
   XtRemoveCallback( fileSelectBox, XmNcancelCallback,
-   app_fileSelectCancel_cb, (void *) this );
+   app_fileSelectOk_cb, (void *) this );
   XtRemoveCallback( fileSelectBox, XmNcancelCallback,
    app_fileSelectCancel_cb, (void *) this );
   XtUnmanageChild( fileSelectBox );
@@ -3576,20 +3655,19 @@ int i, numVisible;
    XmNlabelString, str,
    NULL );
   XmStringFree( str );
-  XtAddCallback( newB, XmNactivateCallback, open_cb,
+  XtAddCallback( newB, XmNactivateCallback, open_from_path_cb,
    (XtPointer) this );
 
-#if 0
   str = XmStringCreateLocalized( appContextClass_str38 );
   newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    filePullDown,
    XmNlabelString, str,
    NULL );
   XmStringFree( str );
-  XtAddCallback( newB, XmNactivateCallback, open_user_cb,
+  XtAddCallback( newB, XmNactivateCallback, open_cb,
    (XtPointer) this );
-#endif
 
+#if 0
   str = XmStringCreateLocalized( appContextClass_str39 );
   newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    filePullDown,
@@ -3598,6 +3676,7 @@ int i, numVisible;
   XmStringFree( str );
   XtAddCallback( newB, XmNactivateCallback, import_cb,
    (XtPointer) this );
+#endif
 
   str = XmStringCreateLocalized( appContextClass_str40 );
   newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
@@ -4711,6 +4790,20 @@ err_return:
   xmStr1 = XmStringCreateLocalized( "*.edl" );
   XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
+  fileSelectFromPathBox = XmCreateFileSelectionDialog( appTop, "menuopenpathselect", args, n );
+
+  XmStringFree( xmStr1 );
+
+  XtAddCallback( fileSelectFromPathBox, XmNcancelCallback,
+   app_fileSelectFromPathCancel_cb, (void *) this );
+  XtAddCallback( fileSelectFromPathBox, XmNokCallback,
+   app_fileSelectFromPathOk_cb, (void *) this );
+
+
+  n = 0;
+  xmStr1 = XmStringCreateLocalized( "*.edl" );
+  XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
+
   fileSelectBox = XmCreateFileSelectionDialog( appTop, "menuopenfileselect", args, n );
 
   XmStringFree( xmStr1 );
@@ -5540,6 +5633,13 @@ XtAppContext appContextClass::appContext ( void )
 {
 
   return app;
+
+}
+
+Widget appContextClass::fileSelectFromPathBoxWidgetId ( void )
+{
+
+  return fileSelectFromPathBox;
 
 }
 

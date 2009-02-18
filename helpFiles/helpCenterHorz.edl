@@ -1,882 +1,717 @@
-3 1 0
-603
-144
-604
-859
-helvetica-medium-r-12.0
-0
-helvetica-medium-r-12.0
-0
-rgb
-0,0,0
-rgb
-46810,47850,46810
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-rgb
-34327,34327,34327
-Help - Center on horizontal axis
-0
-0
-10
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-30
-23
-71
-37
-rgb
-0,0,65535
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-178
-58
-71
-37
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-334
-15
-71
-37
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-482
-46
-71
-37
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-211
-162
-243
-21
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-3) Center on horizontal axis
-helvetica-bold-r-18.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-12
-41
-574
-0
-2
-12 41
-586 41
-rgb
-0,0,65535
-0
-0
-rgb
-44730,44730,44730
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-13
-64
-571
-0
-2
-13 64
-584 64
-rgb
-65535,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-8
-399
-589
-0
-2
-8 399
-597 399
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-3
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-211
-108
-193
-21
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1) Select this one first
-helvetica-bold-r-18.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-211
-135
-171
-21
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-2) Select remainder
-helvetica-bold-r-18.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeExitButtonClass
-2 1 0
-5
-827
-59
-24
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-1
-0
-helvetica-medium-r-12.0
-Close
-0
-0
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-49
-52
-158
-66
-3
-49 52
-128 118
-207 118
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-12
-351
-574
-0
-2
-12 351
-586 351
-rgb
-0,0,65535
-0
-0
-rgb
-44730,44730,44730
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-13
-374
-571
-0
-2
-13 374
-584 374
-rgb
-65535,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-482
-333
-71
-37
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-178
-333
-71
-37
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-334
-333
-71
-37
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-30
-333
-71
-37
-rgb
-0,0,65535
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-30
-429
-71
-37
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-178
-464
-71
-37
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-334
-421
-71
-37
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-482
-452
-71
-37
-rgb
-65535,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-211
-568
-243
-21
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-3) Center on horizontal axis
-helvetica-bold-r-18.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-12
-447
-574
-0
-2
-12 447
-586 447
-rgb
-0,0,65535
-0
-0
-rgb
-44730,44730,44730
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-13
-470
-571
-0
-2
-13 470
-584 470
-rgb
-65535,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-211
-514
-193
-21
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1) Select this one first
-helvetica-bold-r-18.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeXTextClass
-2 1 0
-211
-541
-171
-21
-rgb
-0,0,0
-0
-1
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-2) Select remainder
-helvetica-bold-r-18.0
-0
-1
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-412
-479
-88
-44
-3
-500 479
-481 523
-412 523
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-12
-738
-574
-0
-2
-12 738
-586 738
-rgb
-0,0,65535
-0
-0
-rgb
-44730,44730,44730
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-13
-761
-571
-0
-2
-13 761
-584 761
-rgb
-65535,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-482
-743
-71
-37
-rgb
-65535,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-334
-743
-71
-37
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-178
-743
-71
-37
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeRectangleClass
-2 1 0
-30
-743
-71
-37
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-1
-0
-0
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-300
-218
-40
-50
-8
-330 218
-330 248
-340 248
-320 268
-300 248
-310 248
-310 218
-330 218
-rgb
-0,0,0
-0
-1
-rgb
-0,0,0
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-300
-623
-40
-50
-8
-330 623
-330 653
-340 653
-320 673
-300 653
-310 653
-310 623
-330 623
-rgb
-0,0,0
-0
-1
-rgb
-0,0,0
-0
-1
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 607
+y 156
+w 604
+h 859
+font "helvetica-medium-r-12.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 0
+ctlBgColor1 rgb 46517 46517 46517
+ctlBgColor2 rgb 35466 35466 35466
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+title "Help - Center on horizontal axis"
+endScreenProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 30
+y 23
+w 71
+h 37
+lineColor rgb 0 0 65535
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 178
+y 58
+w 71
+h 37
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 334
+y 15
+w 71
+h 37
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 482
+y 46
+w 71
+h 37
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 211
+y 162
+w 243
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "3) Center on horizontal axis"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 12
+y 41
+w 574
+h 0
+lineColor rgb 0 0 65535
+fillColor rgb 46517 46517 46517
+numPoints 2
+xPoints {
+  0 12
+  1 586
+}
+yPoints {
+  0 41
+  1 41
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 13
+y 64
+w 571
+h 0
+lineColor rgb 65535 0 0
+fillColor rgb 46517 46517 46517
+numPoints 2
+xPoints {
+  0 13
+  1 584
+}
+yPoints {
+  0 64
+  1 64
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 8
+y 399
+w 589
+h 0
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+lineWidth 3
+numPoints 2
+xPoints {
+  0 8
+  1 597
+}
+yPoints {
+  0 399
+  1 399
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 211
+y 108
+w 193
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "1) Select this one first"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 211
+y 135
+w 169
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "2) Select remaining"
+}
+autoSize
+endObjectProperties
+
+# (Exit Button)
+object activeExitButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 5
+y 827
+w 59
+h 24
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+label "Close"
+font "helvetica-medium-r-12.0"
+3d
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 49
+y 52
+w 158
+h 66
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+numPoints 3
+xPoints {
+  0 49
+  1 128
+  2 207
+}
+yPoints {
+  0 52
+  1 118
+  2 118
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 12
+y 351
+w 574
+h 0
+lineColor rgb 0 0 65535
+fillColor rgb 46517 46517 46517
+numPoints 2
+xPoints {
+  0 12
+  1 586
+}
+yPoints {
+  0 351
+  1 351
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 13
+y 374
+w 571
+h 0
+lineColor rgb 65535 0 0
+fillColor rgb 46517 46517 46517
+numPoints 2
+xPoints {
+  0 13
+  1 584
+}
+yPoints {
+  0 374
+  1 374
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 482
+y 333
+w 71
+h 37
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 178
+y 333
+w 71
+h 37
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 334
+y 333
+w 71
+h 37
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 30
+y 333
+w 71
+h 37
+lineColor rgb 0 0 65535
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 30
+y 429
+w 71
+h 37
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 178
+y 464
+w 71
+h 37
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 334
+y 421
+w 71
+h 37
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 482
+y 452
+w 71
+h 37
+lineColor rgb 65535 0 0
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 211
+y 568
+w 243
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "3) Center on horizontal axis"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 12
+y 447
+w 574
+h 0
+lineColor rgb 0 0 65535
+fillColor rgb 46517 46517 46517
+numPoints 2
+xPoints {
+  0 12
+  1 586
+}
+yPoints {
+  0 447
+  1 447
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 13
+y 470
+w 571
+h 0
+lineColor rgb 65535 0 0
+fillColor rgb 46517 46517 46517
+numPoints 2
+xPoints {
+  0 13
+  1 584
+}
+yPoints {
+  0 470
+  1 470
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 211
+y 514
+w 193
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "1) Select this one first"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 211
+y 541
+w 169
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "2) Select remaining"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 412
+y 479
+w 88
+h 44
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+numPoints 3
+xPoints {
+  0 500
+  1 481
+  2 412
+}
+yPoints {
+  0 479
+  1 523
+  2 523
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 12
+y 738
+w 574
+h 0
+lineColor rgb 0 0 65535
+fillColor rgb 46517 46517 46517
+numPoints 2
+xPoints {
+  0 12
+  1 586
+}
+yPoints {
+  0 738
+  1 738
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 13
+y 761
+w 571
+h 0
+lineColor rgb 65535 0 0
+fillColor rgb 46517 46517 46517
+numPoints 2
+xPoints {
+  0 13
+  1 584
+}
+yPoints {
+  0 761
+  1 761
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 482
+y 743
+w 71
+h 37
+lineColor rgb 65535 0 0
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 334
+y 743
+w 71
+h 37
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 178
+y 743
+w 71
+h 37
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 30
+y 743
+w 71
+h 37
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 300
+y 218
+w 40
+h 50
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+numPoints 8
+xPoints {
+  0 330
+  1 330
+  2 340
+  3 320
+  4 300
+  5 310
+  6 310
+  7 330
+}
+yPoints {
+  0 218
+  1 248
+  2 248
+  3 268
+  4 248
+  5 248
+  6 218
+  7 218
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 300
+y 623
+w 40
+h 50
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+numPoints 8
+xPoints {
+  0 330
+  1 330
+  2 340
+  3 320
+  4 300
+  5 310
+  6 310
+  7 330
+}
+yPoints {
+  0 623
+  1 653
+  2 653
+  3 673
+  4 653
+  5 653
+  6 623
+  7 623
+}
+endObjectProperties
+

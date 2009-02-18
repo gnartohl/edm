@@ -1,26 +1,39 @@
-4 0 0
+4 0 1
 beginScreenProperties
 major 4
 minor 0
-release 0
-x 25
-y 243
+release 1
+x 219
+y 286
 w 771
 h 478
 font "helvetica-medium-r-12.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48573 47802 48573
+bgColor rgb 46517 46517 46517
 textColor rgb 0 0 0
 ctlFgColor1 rgb 0 0 0
 ctlFgColor2 rgb 0 0 0
-ctlBgColor1 rgb 44461 44718 44461
-ctlBgColor2 rgb 33924 34438 33924
-topShadowColor rgb 61423 60395 61423
-botShadowColor rgb 23130 22873 23130
+ctlBgColor1 rgb 46517 46517 46517
+ctlBgColor2 rgb 35466 35466 35466
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 title "Help - File"
 endScreenProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 35
+y 64
+w 178
+h 191
+file "helpFile-MainWin"
+endObjectProperties
 
 # (Rectangle)
 object activeRectangleClass
@@ -33,7 +46,7 @@ y 270
 w 354
 h 154
 lineColor rgb 0 0 0
-fillColor rgb 44461 44718 44461
+fillColor rgb 46517 46517 46517
 lineWidth 2
 endObjectProperties
 
@@ -43,44 +56,18 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 33
+x 36
 y 29
 w 84
 h 14
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
-bgColor rgb 44461 44718 44461
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Create new file"
 }
 autoSize
-endObjectProperties
-
-# (GIF Image)
-object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 32
-y 62
-w 139
-h 190
-file "$(help)helpFile-MainWin"
-endObjectProperties
-
-# (GIF Image)
-object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 42
-y 112
-w 150
-h 130
-file "$(help)helpFile-New"
 endObjectProperties
 
 # (Static Text)
@@ -89,13 +76,13 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 226
+x 230
 y 29
 w 97
 h 14
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
-bgColor rgb 44461 44718 44461
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Open existing file"
@@ -103,39 +90,13 @@ value {
 autoSize
 endObjectProperties
 
-# (GIF Image)
-object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 227
-y 62
-w 139
-h 190
-file "$(help)helpFile-MainWin"
-endObjectProperties
-
-# (GIF Image)
-object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 238
-y 112
-w 150
-h 130
-file "$(help)helpFile-Open"
-endObjectProperties
-
 # (Lines)
 object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
-x 400
+release 1
+x 408
 y 140
 w 40
 h 40
@@ -144,14 +105,14 @@ fill
 fillColor rgb 0 0 0
 numPoints 8
 xPoints {
-  0 400
-  1 420
-  2 420
-  3 440
-  4 420
-  5 420
-  6 400
-  7 400
+  0 408
+  1 428
+  2 428
+  3 448
+  4 428
+  5 428
+  6 408
+  7 408
 }
 yPoints {
   0 150
@@ -165,19 +126,6 @@ yPoints {
 }
 endObjectProperties
 
-# (GIF Image)
-object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 453
-y 31
-w 286
-h 400
-file "$(help)helpFile-FileSelect"
-endObjectProperties
-
 # (Exit Button)
 object activeExitButtonClass
 beginObjectProperties
@@ -189,9 +137,9 @@ y 441
 w 59
 h 24
 fgColor rgb 0 0 0
-bgColor rgb 44461 44718 44461
-topShadowColor rgb 61423 60395 61423
-botShadowColor rgb 23130 22873 23130
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 label "Close"
 font "helvetica-medium-r-12.0"
 3d
@@ -209,7 +157,7 @@ w 49
 h 14
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
-bgColor rgb 44461 44718 44461
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Save file"
@@ -229,7 +177,7 @@ w 290
 h 96
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 44461 44718 44461
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Saving a file is not done from the main"
@@ -240,5 +188,57 @@ value {
   "wish to perform this action."
 }
 autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 46
+y 109
+w 150
+h 151
+file "helpFile-New"
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 225
+y 64
+w 178
+h 191
+file "helpFile-MainWin"
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 236
+y 109
+w 150
+h 151
+file "helpFile-Open"
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 456
+y 39
+w 286
+h 401
+file "helpFile-FileSelect"
 endObjectProperties
 

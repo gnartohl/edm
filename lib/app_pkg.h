@@ -183,12 +183,12 @@ friend void new_cb (
   XtPointer client,
   XtPointer call );
 
-friend void open_cb (
+friend void open_from_path_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
 
-friend void open_user_cb (
+friend void open_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -238,6 +238,11 @@ friend void help_cb (
   XtPointer client,
   XtPointer call );
 
+friend void app_fileSelectFromPathOk_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 friend void app_fileSelectOk_cb (
   Widget w,
   XtPointer client,
@@ -259,7 +264,8 @@ APPDEFEXE_QUE_TYPE appDefExeFreeQueue, appDefExeActiveQueue,
  appDefExeActiveNextQueue;
 APPDEFEXE_NODE_TYPE appDefExeNodes[APPDEFEXE_QUEUE_SIZE+1];
 
-Widget appTop, fileSelectBox, importSelectBox, mainWin, menuBar, filePullDown,
+Widget appTop, fileSelectFromPathBox, fileSelectBox, importSelectBox,
+ mainWin, menuBar, filePullDown,
  fileCascade, newB, openB, exitB, viewPullDown, viewCascade, msgB, pvB,
  mainDrawingArea, pathPullDown, pathCascade, helpPullDown, helpCascade;
 XtAppContext app;
@@ -278,6 +284,7 @@ int executeCount;
 int isActive;
 int requestFlag;
 int iconified;
+int firstOpen;
 
 THREAD_HANDLE threadHandle;
 
@@ -563,6 +570,8 @@ int addActWin (
 void applicationLoop ( void );
 
 XtAppContext appContext ( void );
+
+Widget fileSelectFromPathBoxWidgetId ( void );
 
 Widget fileSelectBoxWidgetId ( void );
 

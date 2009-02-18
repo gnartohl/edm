@@ -1,435 +1,313 @@
-3 1 0
-424
-129
-219
-402
-helvetica-medium-r-12.0
-0
-helvetica-medium-r-12.0
-0
-rgb
-0,0,0
-rgb
-46810,47850,46810
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-rgb
-34327,34327,34327
-Help - Alignment
-0
-0
-10
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-12
-10
-196
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpAlignAll
-Creating
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Align left, right, top, bottom
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-12
-49
-196
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpCenterVert
-<<<empty>>>
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Center on vertical axis
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-12
-88
-196
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpCenterHorz
-<<<empty>>>
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Center on horizontal axis
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-12
-127
-196
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpCenterBoth
-<<<empty>>>
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Center on both axes
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-12
-166
-196
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpSizeWidth
-<<<empty>>>
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Size width
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-12
-205
-196
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpSizeHeight
-<<<empty>>>
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Size height
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-12
-244
-196
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpSizeBoth
-<<<empty>>>
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Size width & height
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-12
-283
-196
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpDistribVert
-<<<empty>>>
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Distribute on vertical axis
-1
-<<<E~O~D>>>
-relatedDisplayClass
-2 5 0
-12
-321
-196
-30
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-$(help)helpDistribHorz
-<<<empty>>>
-helvetica-medium-r-12.0
-0
-0
-1
-4
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-<<<empty>>>
-0
-0
-<<<empty>>>
-0
-1
-0
-1
-Distribute on horizontal axis
-1
-<<<E~O~D>>>
-activeExitButtonClass
-2 1 0
-81
-371
-59
-24
-rgb
-0,0,0
-rgb
-44730,44730,44730
-rgb
-61374,61374,61374
-rgb
-22885,22885,22885
-1
-0
-helvetica-medium-r-12.0
-Close
-0
-0
-<<<E~O~D>>>
-activeLineClass
-2 1 0
-2
-361
-216
-0
-2
-2 361
-218 361
-rgb
-0,0,0
-0
-0
-rgb
-44730,44730,44730
-0
-3
-0
-<<<empty>>>
-<<<empty>>>
-0
-<<<empty>>>
-<<<empty>>>
-<<<E~O~D>>>
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 428
+y 150
+w 219
+h 402
+font "helvetica-medium-r-12.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 0
+ctlBgColor1 rgb 46517 46517 46517
+ctlBgColor2 rgb 35466 35466 35466
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+title "Help - Alignment"
+endScreenProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 12
+y 10
+w 196
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "Align left, right, top, bottom"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpAlignAll"
+}
+menuLabel {
+  0 "Creating"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 12
+y 49
+w 196
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "Center on vertical axis"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpCenterVert"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 12
+y 88
+w 196
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "Center on horizontal axis"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpCenterHorz"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 12
+y 127
+w 196
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "Center on both axes"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpCenterBoth"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 12
+y 166
+w 196
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "Size width"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpSizeWidth"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 12
+y 205
+w 196
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "Size height"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpSizeHeight"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 12
+y 244
+w 196
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "Size width & height"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpSizeBoth"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 12
+y 283
+w 196
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "Distribute on vertical axis"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpDistribVert"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 12
+y 321
+w 196
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "Distribute on horizontal axis"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpDistribHorz"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Exit Button)
+object activeExitButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 81
+y 371
+w 59
+h 24
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+label "Close"
+font "helvetica-medium-r-12.0"
+3d
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 2
+y 361
+w 216
+h 0
+lineColor rgb 56797 56797 56797
+fillColor rgb 46517 46517 46517
+lineWidth 2
+numPoints 2
+xPoints {
+  0 2
+  1 218
+}
+yPoints {
+  0 361
+  1 361
+}
+endObjectProperties
+

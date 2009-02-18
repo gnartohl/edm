@@ -3,24 +3,23 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 304
-y 76
-w 579
+x 59
+y 195
+w 700
 h 750
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 52942 52171 52942
+bgColor rgb 52171 52171 52171
 textColor rgb 0 0 0
 ctlFgColor1 rgb 0 0 0
 ctlFgColor2 rgb 0 0 65535
-ctlBgColor1 rgb 46517 46774 46517
-ctlBgColor2 rgb 57054 56283 57054
+ctlBgColor1 rgb 46517 46517 46517
+ctlBgColor2 rgb 56797 56797 56797
 topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 25443 24929 25443
+botShadowColor rgb 24929 24929 24929
 title "Bar"
-disableScroll
 endScreenProperties
 
 # (PNG Image)
@@ -30,7 +29,7 @@ major 4
 minor 0
 release 0
 x 14
-y 106
+y 105
 w 351
 h 351
 file "helpIndicator"
@@ -67,7 +66,7 @@ w 55
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Fg Color"
@@ -86,7 +85,7 @@ y 80
 w 93
 h 36
 lineColor rgb 0 0 0
-fillColor rgb 46517 46774 46517
+fillColor rgb 46517 46517 46517
 numPoints 2
 xPoints {
   0 130
@@ -109,7 +108,7 @@ y 80
 w 68
 h 72
 lineColor rgb 0 0 0
-fillColor rgb 46517 46774 46517
+fillColor rgb 46517 46517 46517
 numPoints 2
 xPoints {
   0 128
@@ -133,7 +132,7 @@ w 55
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Bg Color"
@@ -152,7 +151,7 @@ y 85
 w 37
 h 40
 lineColor rgb 0 0 0
-fillColor rgb 46517 46774 46517
+fillColor rgb 46517 46517 46517
 numPoints 2
 xPoints {
   0 218
@@ -176,7 +175,7 @@ w 95
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Indicator Color"
@@ -195,7 +194,7 @@ y 82
 w 37
 h 50
 lineColor rgb 0 0 0
-fillColor rgb 46517 46774 46517
+fillColor rgb 46517 46517 46517
 numPoints 2
 xPoints {
   0 302
@@ -219,7 +218,7 @@ w 43
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Border"
@@ -238,7 +237,7 @@ y 79
 w 94
 h 30
 lineColor rgb 0 0 0
-fillColor rgb 46517 46774 46517
+fillColor rgb 46517 46517 46517
 numPoints 2
 xPoints {
   0 445
@@ -262,7 +261,7 @@ w 139
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Scale Format Options"
@@ -282,7 +281,7 @@ w 327
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "GFloat - precision gives number of significant digits"
@@ -302,7 +301,7 @@ w 319
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "FFloat - precision gives number of decimal places"
@@ -322,7 +321,7 @@ w 355
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Exponential - precision gives number of decimal places,"
@@ -342,7 +341,7 @@ w 437
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If Scale Info From DB is checked, then scale precision, min, and max"
@@ -362,7 +361,7 @@ w 308
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "are taken from HOPR & LOPR fields in database."
@@ -382,7 +381,7 @@ w 258
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "number is displayed in scientific notation"
@@ -402,7 +401,7 @@ w 406
 h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Readback PV, Null PV, Label Tick Intervals, Majors per Label,"
@@ -424,7 +423,7 @@ w 117
 h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Border: Yes"
@@ -446,7 +445,7 @@ w 139
 h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Border: Yes"
@@ -468,7 +467,7 @@ w 191
 h 64
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Border: Yes"
@@ -491,12 +490,45 @@ w 153
 h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46774 46517
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Border: No"
   "Show Scale: No"
   "No label string specified"
+}
+autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 600
+y 97
+w 73
+h 272
+file "helpIndicatorVert"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 612
+y 380
+w 50
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Vertical"
 }
 autoSize
 endObjectProperties

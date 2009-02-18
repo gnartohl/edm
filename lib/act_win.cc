@@ -15130,7 +15130,6 @@ int activeWindowClass::loadDummy (
 
 FILE *f;
 activeGraphicListPtr cur, next;
-char tagName[255+1];
 int stat;
 Widget clipWidget, hsbWidget, vsbWidget;
 
