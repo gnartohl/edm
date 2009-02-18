@@ -2180,7 +2180,7 @@ XButtonEvent be;
             if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
               if ( !retryTimerNU ) {
                 retryTimerNU = appAddTimeOut( actWin->appCtx->appContext(),
-                 250, needUpdateTimeout, this );
+                 50, needUpdateTimeout, this );
               }
               return;
             }
@@ -2352,7 +2352,7 @@ XButtonEvent be;
                   if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
                     if ( !retryTimerNMU ) {
                       retryTimerNMU = appAddTimeOut( actWin->appCtx->appContext(),
-                       250, needMenuUpdateTimeout, this );
+                       50, needMenuUpdateTimeout, this );
                     }
                     return;
                   }
@@ -2629,7 +2629,7 @@ XButtonEvent be;
           if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
             if ( !retryTimerNUM ) {
               retryTimerNUM = appAddTimeOut( actWin->appCtx->appContext(),
-               250, needUnmapTimeout, this );
+               50, needUnmapTimeout, this );
             }
             return;
           }
@@ -2724,7 +2724,7 @@ XButtonEvent be;
               if ( consecutiveDeactivateErrors < MAX_CONSECUTIVE_DEACTIVATE_ERRORS ) {
                 if ( !retryTimerNM ) {
                   retryTimerNM = appAddTimeOut( actWin->appCtx->appContext(),
-                   250, needMapTimeout, this );
+                   50, needMapTimeout, this );
                 }
                 return;
               }

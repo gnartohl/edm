@@ -2013,7 +2013,7 @@ int n;
       else {
         if ( !retryTimer ) {
           retryTimer = appAddTimeOut( actWin->appCtx->appContext(),
-           250, retryTimeout, this );
+           50, retryTimeout, this );
         }
       }
     }
