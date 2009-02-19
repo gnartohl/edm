@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 472
-y 66
+x 476
+y 87
 w 619
 h 841
 font "helvetica-medium-r-18.0"
@@ -781,7 +781,7 @@ x 507
 y 97
 w 75
 h 254
-file "helpBarVert"
+file "$(help)helpBarVert"
 endObjectProperties
 
 # (Static Text)

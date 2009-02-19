@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 59
-y 195
+x 406
+y 65
 w 700
 h 750
 font "helvetica-medium-r-18.0"
@@ -32,7 +32,7 @@ x 14
 y 105
 w 351
 h 351
-file "helpIndicator"
+file "$(help)helpIndicator"
 endObjectProperties
 
 # (Static Text)
@@ -510,7 +510,7 @@ x 600
 y 97
 w 73
 h 272
-file "helpIndicatorVert"
+file "$(help)helpIndicatorVert"
 endObjectProperties
 
 # (Static Text)

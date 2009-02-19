@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 219
-y 286
+x 223
+y 307
 w 771
 h 478
 font "helvetica-medium-r-12.0"
@@ -32,7 +32,7 @@ x 35
 y 64
 w 178
 h 191
-file "helpFile-MainWin"
+file "$(help)helpFile-MainWin"
 endObjectProperties
 
 # (Rectangle)
@@ -198,9 +198,9 @@ minor 0
 release 0
 x 46
 y 109
-w 150
+w 132
 h 151
-file "helpFile-New"
+file "$(help)helpFile-New"
 endObjectProperties
 
 # (PNG Image)
@@ -213,7 +213,7 @@ x 225
 y 64
 w 178
 h 191
-file "helpFile-MainWin"
+file "$(help)helpFile-MainWin"
 endObjectProperties
 
 # (PNG Image)
@@ -224,9 +224,9 @@ minor 0
 release 0
 x 236
 y 109
-w 150
+w 132
 h 151
-file "helpFile-Open"
+file "$(help)helpFile-Open"
 endObjectProperties
 
 # (PNG Image)
@@ -239,6 +239,6 @@ x 456
 y 39
 w 286
 h 401
-file "helpFile-FileSelect"
+file "$(help)helpFile-FileSelect"
 endObjectProperties
 
