@@ -3519,6 +3519,12 @@ time_t timet;
       snprintf( msg, 79, "  Num references = %-d\n",
        pv->get_num_references() );
       actWin->appCtx->postMessage( msg );
+      snprintf( msg, 79, "  Num conn state callbacks in list = %-d\n",
+       pv->get_num_conn_state_callbacks() );
+      actWin->appCtx->postMessage( msg );
+      snprintf( msg, 79, "  Num value callbacks in list = %-d\n",
+       pv->get_num_value_callbacks() );
+      actWin->appCtx->postMessage( msg );
       if ( pv->is_valid() ) {
         timet = pv->get_time_t(); // - 631152000;
 #if EPICS_VERSION > 3

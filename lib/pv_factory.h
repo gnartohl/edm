@@ -155,6 +155,9 @@ public:
     int get_num_times_disconnected ( void );
     int get_num_value_change_events ( void );
     int get_num_references ( void );
+    // get number of entries in callback lists
+    int get_num_conn_state_callbacks ( void );
+    int get_num_value_callbacks ( void );
 
     // Called on change in "is_valid" status, see above
     void add_conn_state_callback(PVCallback func, void *userarg);

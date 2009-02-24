@@ -387,6 +387,24 @@ void ProcessVariable::do_conn_state_callbacks()
 
 }
 
+int ProcessVariable::get_num_conn_state_callbacks ( void ) {
+
+    PVCallbackInfo *info;
+    int n = 0;
+
+    for (PVCallbackInfoHash::iterator entry = conn_state_callbacks.begin();
+         entry != conn_state_callbacks.end();
+         ++entry)
+    {
+        info = *entry;
+        if (info->func)
+            n++;
+    }
+
+    return n;
+
+}
+
 void ProcessVariable::do_value_callbacks()
 {
     PVCallbackInfo *info;
@@ -402,6 +420,25 @@ void ProcessVariable::do_value_callbacks()
             (*info->func) (this, info->userarg);
 	}
     }
+
+}
+
+int ProcessVariable::get_num_value_callbacks ( void ) {
+
+    PVCallbackInfo *info;
+    int n = 0;
+
+    for (PVCallbackInfoHash::iterator entry = value_callbacks.begin();
+         entry != value_callbacks.end();
+         ++entry)
+    {
+        info = *entry;
+        if (info->func) {
+	  n++;
+	}
+    }
+
+    return n;
 
 }
 
