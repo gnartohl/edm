@@ -35,6 +35,25 @@ typedef struct libRecTag {
 
 static int g_needXtInit = 1;
 
+static int ignoreIconic ( void ) {
+
+char *envPtr;
+static int flag = -1;
+
+  if ( flag == -1 ) {
+    envPtr = getenv( environment_str19 );
+    if ( envPtr ) {
+      flag = 1;
+    }
+    else {
+      flag = 0;
+    }
+  }
+
+  return flag;
+
+}
+
 static void extractPosition (
   char *str,
   char *filePart,
@@ -5602,12 +5621,21 @@ char msg[127+1];
     // (display screen)
     cur->node.processObjects();
 
-    iconTestCount++;
-    if ( iconTestCount > 10 ) { // periodically, check if iconified
-      iconTestCount = 0;
-      XtVaGetValues( cur->node.topWidgetId(),
-       XmNiconic, &cur->node.isIconified,
-       NULL );
+    if ( !ignoreIconic() ) {
+
+      iconTestCount++;
+      if ( iconTestCount > 10 ) { // periodically, check if iconified
+        iconTestCount = 0;
+        XtVaGetValues( cur->node.topWidgetId(),
+         XmNiconic, &cur->node.isIconified,
+         NULL );
+      }
+
+    }
+    else {
+
+      if ( cur->node.isIconified ) cur->node.isIconified = 0;
+
     }
 
     if ( !( n % 30 ) ) {
@@ -6258,6 +6286,26 @@ char *envPtr, text[255+1];
   }
   else {
     snprintf( text, 255, "  %s=[]", environment_str17 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str18 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str18, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str18 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str19 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str19, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str19 );
   }
   text[255] = 0;
   postMessage( text );

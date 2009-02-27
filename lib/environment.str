@@ -22,6 +22,7 @@
 #define environment_str16 (char *) "EDMTEXTBORDERALWAYS"
 #define environment_str17 (char *) "EDMPUTLOGGER"
 #define environment_str18 (char *) "EDMMAXVERSIONS"
+#define environment_str19 (char *) "EDMIGNOREICONIC"
 
 #define global_str1 (char *) "Symbol"
 #define global_str2 (char *) "Monitors"
