@@ -40,7 +40,7 @@
 
 #include "edmTime.h"
 
-#define XYGC_K_MAX_TRACES 14
+#define XYGC_K_MAX_TRACES 20
 
 // scaling options
 #define XYGC_K_FROM_PV 0
