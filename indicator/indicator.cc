@@ -1021,11 +1021,11 @@ int clipStat, effHalfW;
           if ( effHalfW < 2 ) effHalfW = 2;
 	}
         points[0].x = oldIndX+effHalfW+effHalfW;
-        points[0].y = indY;
+        points[0].y = oldIndY;
         points[1].x = oldIndX;
-        points[1].y = indY+indicatorH/2;
+        points[1].y = oldIndY+indicatorH/2;
         points[2].x = oldIndX+effHalfW+effHalfW;
-        points[2].y = indY+indicatorH;
+        points[2].y = oldIndY+indicatorH;
 	break;
       case INDICATORC_K_SHAPE_GT:
         if ( effHalfW < 5 ) effHalfW = 5;
@@ -1034,28 +1034,28 @@ int clipStat, effHalfW;
           if ( effHalfW < 2 ) effHalfW = 2;
 	}
         points[0].x = oldIndX-effHalfW-effHalfW;
-        points[0].y = indY;
+        points[0].y = oldIndY;
         points[1].x = oldIndX;
-        points[1].y = indY+indicatorH/2;
+        points[1].y = oldIndY+indicatorH/2;
         points[2].x = oldIndX-effHalfW-effHalfW;
-        points[2].y = indY+indicatorH;
+        points[2].y = oldIndY+indicatorH;
 	break;
       default:
         if ( pointerOpposite ) {
           points[0].x = oldIndX-effHalfW;
-          points[0].y = indY+indicatorH;
+          points[0].y = oldIndY+indicatorH;
           points[1].x = oldIndX;
-          points[1].y = indY;
+          points[1].y = oldIndY;
           points[2].x = oldIndX+effHalfW;
-          points[2].y = indY+indicatorH;
+          points[2].y = oldIndY+indicatorH;
 	}
 	else {
           points[0].x = oldIndX-effHalfW;
-          points[0].y = indY;
+          points[0].y = oldIndY;
           points[1].x = oldIndX;
-          points[1].y = indY+indicatorH;
+          points[1].y = oldIndY+indicatorH;
           points[2].x = oldIndX+effHalfW;
-          points[2].y = indY;
+          points[2].y = oldIndY;
 	}
 	break;
       }
@@ -1078,11 +1078,11 @@ int clipStat, effHalfW;
           effHalfW = indicatorW/2;
           if ( effHalfW < 2 ) effHalfW = 2;
 	}
-        points[0].x = indX+indicatorW;
+        points[0].x = oldIndX+indicatorW;
         points[0].y = oldIndY-effHalfW-effHalfW;
-        points[1].x = indX+indicatorW/2;
+        points[1].x = oldIndX+indicatorW/2;
         points[1].y = oldIndY;
-        points[2].x = indX;
+        points[2].x = oldIndX;
         points[2].y = oldIndY-effHalfW-effHalfW;
 	break;
       case INDICATORC_K_SHAPE_GT:
@@ -1091,28 +1091,28 @@ int clipStat, effHalfW;
           effHalfW = indicatorW/2;
           if ( effHalfW < 2 ) effHalfW = 2;
 	}
-        points[0].x = indX+indicatorW;
+        points[0].x = oldIndX+indicatorW;
         points[0].y = oldIndY+effHalfW+effHalfW;
-        points[1].x = indX+indicatorW/2;
+        points[1].x = oldIndX+indicatorW/2;
         points[1].y = oldIndY;
-        points[2].x = indX;
+        points[2].x = oldIndX;
         points[2].y = oldIndY+effHalfW+effHalfW;
 	break;
       default:
         if ( pointerOpposite ) {
-          points[0].x = indX;
+          points[0].x = oldIndX;
           points[0].y = oldIndY-effHalfW;
-          points[1].x = indX+indicatorW;
+          points[1].x = oldIndX+indicatorW;
           points[1].y = oldIndY;
-          points[2].x = indX;
+          points[2].x = oldIndX;
           points[2].y = oldIndY+effHalfW;
 	}
 	else {
-          points[0].x = indX+indicatorW;
+          points[0].x = oldIndX+indicatorW;
           points[0].y = oldIndY-effHalfW;
-          points[1].x = indX;
+          points[1].x = oldIndX;
           points[1].y = oldIndY;
-          points[2].x = indX+indicatorW;
+          points[2].x = oldIndX+indicatorW;
           points[2].y = oldIndY+effHalfW;
 	}
 	break;
@@ -1505,6 +1505,7 @@ char str[39+1];
     }
 
     oldIndX = indX;
+    oldIndY = indY;
     oldShape = shape;
 
   }
@@ -1638,6 +1639,7 @@ char str[39+1];
 
     }
 
+    oldIndX = indX;
     oldIndY = indY;
     oldShape = shape;
 
@@ -2372,6 +2374,11 @@ int tmpw, tmph, ret_stat;
 
 void activeIndicatorClass::updateIndicator ( void ) {
 
+int checkX, checkY;
+
+  checkX = indX;
+  checkY = indY;
+
   if ( horizontal ) {
 
     switch ( mode ) {
@@ -2459,6 +2466,13 @@ void activeIndicatorClass::updateIndicator ( void ) {
 
     }
 
+  }
+
+  if ( horizontal ) {
+    if ( checkY != indY ) bufInvalidate();
+  }
+  else { // vertical
+    if ( checkX != indX ) bufInvalidate();
   }
 
 }
