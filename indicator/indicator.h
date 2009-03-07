@@ -28,7 +28,7 @@
 #define INDICATORC_K_COLORMODE_ALARM 1
 
 #define INDICATORC_MAJOR_VERSION 4
-#define INDICATORC_MINOR_VERSION 1
+#define INDICATORC_MINOR_VERSION 2
 #define INDICATORC_RELEASE 0
 
 #define INDICATORC_K_PV_NAME 0
@@ -153,6 +153,8 @@ friend void indicator_monitor_null_connect_state (
 int horizontal, bufHorizontal;
 
 int halfW, bufHalfW;
+
+int pointerOpposite, bufPointerOpposite;
 
 typedef struct editBufTag {
 // edit buffer

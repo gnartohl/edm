@@ -1717,7 +1717,7 @@ int ctl;
 
       case XYGC_K_TRACE_XY:
 
-        if ( xyo->xPvCount[i] > 1 ) { // vector
+        if ( xyo->forceVector[i] || ( xyo->xPvCount[i] > 1 ) ) { // vector
 
           xyo->yArrayNeedUpdate[i] = xyo->xArrayNeedUpdate[i] = 1;
           xyo->needVectorUpdate = 1;
@@ -1926,7 +1926,7 @@ int ctl;
 
       case XYGC_K_TRACE_CHRONOLOGICAL:
 
-        if ( xyo->yPvCount[i] > 1 ) { // vector
+        if ( xyo->forceVector[i] || ( xyo->yPvCount[i] > 1 ) ) { // vector
 
           xyo->yArrayNeedUpdate[i] = xyo->xArrayNeedUpdate[i] = 1;
           xyo->needVectorUpdate = 1;
@@ -2103,68 +2103,134 @@ int ctl;
 
   case XYGC_K_TRACE_XY:
 
-    if ( xyo->xPvCount[i] > 1 ) { // vector
+    if ( xyo->forceVector || ( xyo->xPvCount[i] > 1 ) ) { // vector
 
       for ( ii=0; ii<xyo->xPvCount[i]; ii++ ) {
 
-        // There are two views of pv types, Type and specificType; this uses
-        // specificType
-        switch ( xyo->xPvType[i] ) {
+        if ( xyo->xPvCount[i] == 1 ) {
 
-        case ProcessVariable::specificType::flt:
-          ( (float *) xyo->xPvData[i] )[ii] =
-           (float) pv->get_double_array()[ii];
-          break;
+          // There are two views of pv types, Type and specificType; this uses
+          // specificType
+          switch ( xyo->xPvType[i] ) {
 
-        case ProcessVariable::specificType::real: 
-          ( (double *) xyo->xPvData[i] )[ii] = pv->get_double_array()[ii];
-          break;
+          case ProcessVariable::specificType::flt:
+            ( (float *) xyo->xPvData[i] )[ii] =
+             (float) pv->get_double();
+            break;
 
-        case ProcessVariable::specificType::shrt:
-          if ( xyo->xSigned[i] ) {
-            ( (short *) xyo->xPvData[i] )[ii] = (short) pv->get_int_array()[ii];
-          }
-          else {
-            ( (unsigned short *) xyo->xPvData[i] )[ii] =
-             (unsigned short) pv->get_int_array()[ii];
-          }
-          break;
+          case ProcessVariable::specificType::real: 
+            ( (double *) xyo->xPvData[i] )[ii] = pv->get_double();
+            break;
 
-        case ProcessVariable::specificType::chr:
-          if ( xyo->xSigned[i] ) {
-            ( (char *) xyo->xPvData[i] )[ii] = (char) pv->get_char_array()[ii];
-          }
-          else {
-            ( (unsigned char *) xyo->xPvData[i] )[ii] =
-             (unsigned char) pv->get_char_array()[ii];
-          }
-          break;
+          case ProcessVariable::specificType::shrt:
+            if ( xyo->xSigned[i] ) {
+              ( (short *) xyo->xPvData[i] )[ii] = (short) pv->get_int();
+            }
+            else {
+              ( (unsigned short *) xyo->xPvData[i] )[ii] =
+               (unsigned short) pv->get_int_array()[ii];
+            }
+            break;
 
-        case ProcessVariable::specificType::integer:
-          if ( xyo->xSigned[i] ) {
-            ( (long *) xyo->xPvData[i] )[ii] = pv->get_int_array()[ii];
-          }
-          else {
-            ( (unsigned long *) xyo->xPvData[i] )[ii] =
-             (unsigned long) pv->get_int_array()[ii];
-          }
-          break;
+          case ProcessVariable::specificType::chr:
+            if ( xyo->xSigned[i] ) {
+              ( (char *) xyo->xPvData[i] )[ii] = (char) pv->get_int();
+            }
+            else {
+              ( (unsigned char *) xyo->xPvData[i] )[ii] =
+               (unsigned char) pv->get_int();
+            }
+            break;
 
-        case ProcessVariable::specificType::enumerated:
-          if ( xyo->xSigned[i] ) {
-            ( (short *) xyo->xPvData[i] )[ii] = (short) pv->get_int_array()[ii];
-          }
-          else {
-            ( (unsigned short *) xyo->xPvData[i] )[ii] =
-             (unsigned short) pv->get_int_array()[ii];
-          }
-          break;
+          case ProcessVariable::specificType::integer:
+            if ( xyo->xSigned[i] ) {
+              ( (long *) xyo->xPvData[i] )[ii] = pv->get_int();
+            }
+            else {
+              ( (unsigned long *) xyo->xPvData[i] )[ii] =
+               (unsigned long) pv->get_int();
+            }
+            break;
 
-        default:
-          ( (double *) xyo->xPvData[i] )[ii] = pv->get_double_array()[ii];
-          break;
+          case ProcessVariable::specificType::enumerated:
+            if ( xyo->xSigned[i] ) {
+              ( (short *) xyo->xPvData[i] )[ii] = (short) pv->get_int();
+            }
+            else {
+              ( (unsigned short *) xyo->xPvData[i] )[ii] =
+               (unsigned short) pv->get_int();
+            }
+            break;
 
-        }
+          default:
+            ( (double *) xyo->xPvData[i] )[ii] = pv->get_double();
+            break;
+
+          }
+
+	}
+	else {
+
+          // There are two views of pv types, Type and specificType; this uses
+          // specificType
+          switch ( xyo->xPvType[i] ) {
+
+          case ProcessVariable::specificType::flt:
+            ( (float *) xyo->xPvData[i] )[ii] =
+             (float) pv->get_double_array()[ii];
+            break;
+
+          case ProcessVariable::specificType::real: 
+            ( (double *) xyo->xPvData[i] )[ii] = pv->get_double_array()[ii];
+            break;
+
+          case ProcessVariable::specificType::shrt:
+            if ( xyo->xSigned[i] ) {
+              ( (short *) xyo->xPvData[i] )[ii] = (short) pv->get_int_array()[ii];
+            }
+            else {
+              ( (unsigned short *) xyo->xPvData[i] )[ii] =
+               (unsigned short) pv->get_int_array()[ii];
+            }
+            break;
+
+          case ProcessVariable::specificType::chr:
+            if ( xyo->xSigned[i] ) {
+              ( (char *) xyo->xPvData[i] )[ii] = (char) pv->get_char_array()[ii];
+            }
+            else {
+              ( (unsigned char *) xyo->xPvData[i] )[ii] =
+               (unsigned char) pv->get_char_array()[ii];
+            }
+            break;
+
+          case ProcessVariable::specificType::integer:
+            if ( xyo->xSigned[i] ) {
+              ( (long *) xyo->xPvData[i] )[ii] = pv->get_int_array()[ii];
+            }
+            else {
+              ( (unsigned long *) xyo->xPvData[i] )[ii] =
+               (unsigned long) pv->get_int_array()[ii];
+            }
+            break;
+
+          case ProcessVariable::specificType::enumerated:
+            if ( xyo->xSigned[i] ) {
+              ( (short *) xyo->xPvData[i] )[ii] = (short) pv->get_int_array()[ii];
+            }
+            else {
+              ( (unsigned short *) xyo->xPvData[i] )[ii] =
+               (unsigned short) pv->get_int_array()[ii];
+            }
+            break;
+
+          default:
+            ( (double *) xyo->xPvData[i] )[ii] = pv->get_double_array()[ii];
+            break;
+
+          }
+
+	}
 
       }
 
@@ -2516,69 +2582,134 @@ int ctl;
 
   case XYGC_K_TRACE_XY:
 
-    if ( xyo->yPvCount[i] > 1 ) { // vector
+    if ( xyo->forceVector[i] || ( xyo->yPvCount[i] > 1 ) ) { // vector
 
       for ( ii=0; ii<xyo->yPvCount[i]; ii++ ) {
 
-        // There are two views of pv types, Type and specificType; this uses
-        // specificType
-        switch ( xyo->yPvType[i] ) {
+        if ( xyo->yPvCount[i] == 1 ) {
 
-        case ProcessVariable::specificType::flt:
-          ( (float *) xyo->yPvData[i] )[ii] =
-           (float) pv->get_double_array()[ii];
-          break;
+          // There are two views of pv types, Type and specificType; this uses
+          // specificType
+          switch ( xyo->yPvType[i] ) {
 
-        case ProcessVariable::specificType::real: 
-          ( (double *) xyo->yPvData[i] )[ii] = pv->get_double_array()[ii];
-          break;
+          case ProcessVariable::specificType::flt:
+            ( (float *) xyo->yPvData[i] )[ii] =
+             (float) pv->get_double();
+            break;
 
-        case ProcessVariable::specificType::shrt:
-          if ( xyo->ySigned[i] ) {
-          ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int_array()[ii];
-          }
-          else {
-          ( (unsigned short *) xyo->yPvData[i] )[ii] =
-           (unsigned short) pv->get_int_array()[ii];
-          }
-          break;
+          case ProcessVariable::specificType::real: 
+            ( (double *) xyo->yPvData[i] )[ii] = pv->get_double();
+            break;
 
-        case ProcessVariable::specificType::chr:
-          if ( xyo->ySigned[i] ) {
-          ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_char_array()[ii];
-          }
-          else {
-          ( (unsigned char *) xyo->yPvData[i] )[ii] =
-           (unsigned char) pv->get_char_array()[ii];
-          }
-          break;
+          case ProcessVariable::specificType::shrt:
+            if ( xyo->xSigned[i] ) {
+              ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int();
+            }
+            else {
+              ( (unsigned short *) xyo->yPvData[i] )[ii] =
+               (unsigned short) pv->get_int_array()[ii];
+            }
+            break;
 
-        case ProcessVariable::specificType::integer:
-          if ( xyo->ySigned[i] ) {
-            ( (long *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
-          }
-          else {
-            ( (unsigned long *) xyo->yPvData[i] )[ii] =
-             (unsigned long) pv->get_int_array()[ii];
-          }
-          break;
+          case ProcessVariable::specificType::chr:
+            if ( xyo->xSigned[i] ) {
+              ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_int();
+            }
+            else {
+              ( (unsigned char *) xyo->yPvData[i] )[ii] =
+               (unsigned char) pv->get_int();
+            }
+            break;
 
-        case ProcessVariable::specificType::enumerated:
-          if ( xyo->ySigned[i] ) {
-            ( (short *) xyo->yPvData[i] )[ii] =
-             (short) pv->get_int_array()[ii];
-          }
-          else {
-            ( (unsigned short *) xyo->yPvData[i] )[ii] =
-             (unsigned short) pv->get_int_array()[ii];
-          }
-          break;
+          case ProcessVariable::specificType::integer:
+            if ( xyo->xSigned[i] ) {
+              ( (long *) xyo->yPvData[i] )[ii] = pv->get_int();
+            }
+            else {
+              ( (unsigned long *) xyo->yPvData[i] )[ii] =
+               (unsigned long) pv->get_int();
+            }
+            break;
 
-        default:
-          ( (double *) xyo->yPvData[i] )[ii] = pv->get_double_array()[ii];
-          break;
+          case ProcessVariable::specificType::enumerated:
+            if ( xyo->xSigned[i] ) {
+              ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int();
+            }
+            else {
+              ( (unsigned short *) xyo->yPvData[i] )[ii] =
+               (unsigned short) pv->get_int();
+            }
+            break;
 
-        }
+          default:
+            ( (double *) xyo->yPvData[i] )[ii] = pv->get_double();
+            break;
+
+          }
+
+	}
+	else {
+
+          // There are two views of pv types, Type and specificType; this uses
+          // specificType
+          switch ( xyo->yPvType[i] ) {
+
+          case ProcessVariable::specificType::flt:
+            ( (float *) xyo->yPvData[i] )[ii] =
+             (float) pv->get_double_array()[ii];
+            break;
+
+          case ProcessVariable::specificType::real: 
+            ( (double *) xyo->yPvData[i] )[ii] = pv->get_double_array()[ii];
+            break;
+
+          case ProcessVariable::specificType::shrt:
+            if ( xyo->xSigned[i] ) {
+              ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int_array()[ii];
+            }
+            else {
+              ( (unsigned short *) xyo->yPvData[i] )[ii] =
+               (unsigned short) pv->get_int_array()[ii];
+            }
+            break;
+
+          case ProcessVariable::specificType::chr:
+            if ( xyo->xSigned[i] ) {
+              ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_char_array()[ii];
+            }
+            else {
+              ( (unsigned char *) xyo->yPvData[i] )[ii] =
+               (unsigned char) pv->get_char_array()[ii];
+            }
+            break;
+
+          case ProcessVariable::specificType::integer:
+            if ( xyo->xSigned[i] ) {
+              ( (long *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
+            }
+            else {
+              ( (unsigned long *) xyo->yPvData[i] )[ii] =
+               (unsigned long) pv->get_int_array()[ii];
+            }
+            break;
+
+          case ProcessVariable::specificType::enumerated:
+            if ( xyo->xSigned[i] ) {
+              ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int_array()[ii];
+            }
+            else {
+              ( (unsigned short *) xyo->yPvData[i] )[ii] =
+               (unsigned short) pv->get_int_array()[ii];
+            }
+            break;
+
+          default:
+            ( (double *) xyo->yPvData[i] )[ii] = pv->get_double_array()[ii];
+            break;
+
+          }
+
+	}
 
       }
 
@@ -2885,71 +3016,134 @@ int ctl;
 
   case XYGC_K_TRACE_CHRONOLOGICAL:
 
-    if ( xyo->yPvCount[i] > 1 ) { // vector
+    if ( xyo->forceVector[i] || ( xyo->yPvCount[i] > 1 ) ) { // vector
 
       for ( ii=0; ii<xyo->yPvCount[i]; ii++ ) {
 
-        // There are two views of pv types, Type and specificType; this uses
-        // specificType
-        switch ( xyo->yPvType[i] ) {
+        if ( xyo->yPvCount[i] == 1 ) {
 
-        case ProcessVariable::specificType::flt:
-          ( (float *) xyo->yPvData[i] )[ii] =
-           (float) pv->get_double_array()[ii];
-          break;
+          // There are two views of pv types, Type and specificType; this uses
+          // specificType
+          switch ( xyo->yPvType[i] ) {
 
-        case ProcessVariable::specificType::real: 
-          ( (double *) xyo->yPvData[i] )[ii] =
-	    pv->get_double_array()[ii];
-          break;
+          case ProcessVariable::specificType::flt:
+            ( (float *) xyo->yPvData[i] )[ii] =
+             (float) pv->get_double();
+            break;
 
-        case ProcessVariable::specificType::shrt:
-          if ( xyo->ySigned[i] ) {
-            ( (short *) xyo->yPvData[i] )[ii] =
-             (short) pv->get_int_array()[ii];
-	  }
-	  else {
-            ( (unsigned short *) xyo->yPvData[i] )[ii] =
-             (unsigned short) pv->get_int_array()[ii];
-	  }
-          break;
+          case ProcessVariable::specificType::real: 
+            ( (double *) xyo->yPvData[i] )[ii] = pv->get_double();
+            break;
 
-        case ProcessVariable::specificType::chr:
-          if ( xyo->ySigned[i] ) {
-            ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_char_array()[ii];
-	  }
-	  else {
-            ( (unsigned char *) xyo->yPvData[i] )[ii] =
-	      (unsigned char) pv->get_char_array()[ii];
-	  }
-          break;
+          case ProcessVariable::specificType::shrt:
+            if ( xyo->xSigned[i] ) {
+              ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int();
+            }
+            else {
+              ( (unsigned short *) xyo->yPvData[i] )[ii] =
+               (unsigned short) pv->get_int_array()[ii];
+            }
+            break;
 
-        case ProcessVariable::specificType::integer:
-          if ( xyo->ySigned[i] ) {
-            ( (long *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
-	  }
-	  else {
-            ( (unsigned long *) xyo->yPvData[i] )[ii] =
-	      (unsigned long) pv->get_int_array()[ii];
-	  }
-          break;
+          case ProcessVariable::specificType::chr:
+            if ( xyo->xSigned[i] ) {
+              ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_int();
+            }
+            else {
+              ( (unsigned char *) xyo->yPvData[i] )[ii] =
+               (unsigned char) pv->get_int();
+            }
+            break;
 
-        case ProcessVariable::specificType::enumerated:
-          if ( xyo->ySigned[i] ) {
-            ( (short *) xyo->yPvData[i] )[ii] =
-             (short) pv->get_int_array()[ii];
-	  }
-	  else {
-            ( (unsigned short *) xyo->yPvData[i] )[ii] =
-	      (unsigned short) pv->get_int_array()[ii];
-	  }
-          break;
+          case ProcessVariable::specificType::integer:
+            if ( xyo->xSigned[i] ) {
+              ( (long *) xyo->yPvData[i] )[ii] = pv->get_int();
+            }
+            else {
+              ( (unsigned long *) xyo->yPvData[i] )[ii] =
+               (unsigned long) pv->get_int();
+            }
+            break;
 
-        default:
-          ( (double *) xyo->yPvData[i] )[ii] = pv->get_double_array()[ii];
-          break;
+          case ProcessVariable::specificType::enumerated:
+            if ( xyo->xSigned[i] ) {
+              ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int();
+            }
+            else {
+              ( (unsigned short *) xyo->yPvData[i] )[ii] =
+               (unsigned short) pv->get_int();
+            }
+            break;
 
-        }
+          default:
+            ( (double *) xyo->yPvData[i] )[ii] = pv->get_double();
+            break;
+
+          }
+
+	}
+	else {
+
+          // There are two views of pv types, Type and specificType; this uses
+          // specificType
+          switch ( xyo->yPvType[i] ) {
+
+          case ProcessVariable::specificType::flt:
+            ( (float *) xyo->yPvData[i] )[ii] =
+             (float) pv->get_double_array()[ii];
+            break;
+
+          case ProcessVariable::specificType::real: 
+            ( (double *) xyo->yPvData[i] )[ii] = pv->get_double_array()[ii];
+            break;
+
+          case ProcessVariable::specificType::shrt:
+            if ( xyo->xSigned[i] ) {
+              ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int_array()[ii];
+            }
+            else {
+              ( (unsigned short *) xyo->yPvData[i] )[ii] =
+               (unsigned short) pv->get_int_array()[ii];
+            }
+            break;
+
+          case ProcessVariable::specificType::chr:
+            if ( xyo->xSigned[i] ) {
+              ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_char_array()[ii];
+            }
+            else {
+              ( (unsigned char *) xyo->yPvData[i] )[ii] =
+               (unsigned char) pv->get_char_array()[ii];
+            }
+            break;
+
+          case ProcessVariable::specificType::integer:
+            if ( xyo->xSigned[i] ) {
+              ( (long *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
+            }
+            else {
+              ( (unsigned long *) xyo->yPvData[i] )[ii] =
+               (unsigned long) pv->get_int_array()[ii];
+            }
+            break;
+
+          case ProcessVariable::specificType::enumerated:
+            if ( xyo->xSigned[i] ) {
+              ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int_array()[ii];
+            }
+            else {
+              ( (unsigned short *) xyo->yPvData[i] )[ii] =
+               (unsigned short) pv->get_int_array()[ii];
+            }
+            break;
+
+          default:
+            ( (double *) xyo->yPvData[i] )[ii] = pv->get_double_array()[ii];
+            break;
+
+          }
+
+	}
 
         dxValue = (double) ii;
         ( (double *) xyo->xPvData[i] )[ii] = dxValue;
@@ -3294,6 +3488,12 @@ int i, yi;
   for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
 
     axygo->plotStyle[i] = axygo->eBuf->bufPlotStyle[i];
+    if ( axygo->plotStyle[i] == XYGC_K_PLOT_STYLE_SINGLE_POINT ) {
+      axygo->forceVector[i] = 1;
+    }
+    else {
+      axygo->forceVector[i] = 0;
+    }
 
     axygo->plotSymbolType[i] = axygo->eBuf->bufPlotSymbolType[i];
 
@@ -3539,6 +3739,7 @@ time_t t1, t2;
     plotBufSize[i] = 0;
     plotInfo[i] = NULL;
     plotInfoSize[i] = 0;
+    forceVector[i] = 0;
   }
   trigPv = NULL;
   resetPv = NULL;
@@ -3649,7 +3850,9 @@ int i, yi;
   numTraces = source->numTraces;
 
   for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
+    forceVector[i] = 0;
     plotStyle[i] = source->plotStyle[i];
+    forceVector[i] = source->forceVector[i];
     plotSymbolType[i] = source->plotSymbolType[i];
     plotUpdateMode[i] = source->plotUpdateMode[i];
     plotColor[i] = source->plotColor[i];
@@ -4105,6 +4308,7 @@ char traceColor[15+1];
   for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
     sprintf( traceColor, "trace%-d", i );
     plotStyle[i] = XYGC_K_PLOT_STYLE_LINE;
+    forceVector[i] = 0;
     opMode[i] = XYGC_K_SCOPE_MODE;
     y2Scale[i] = 0;
     plotUpdateMode[i] = XYGC_K_UPDATE_ON_X_AND_Y;
@@ -4161,15 +4365,17 @@ static int opModeEnum[2] = {
 };
 
 int plotStyleLine = 0;
-static char *plotStyleEnumStr[3] = {
+static char *plotStyleEnumStr[4] = {
   "line",
   "point",
-  "needle"
+  "needle",
+  "single point"
 };
-static int plotStyleEnum[3] = {
+static int plotStyleEnum[4] = {
   0,
   1,
-  2
+  2,
+  3
 };
 
 int updateModexAndY = 0;
@@ -4387,7 +4593,7 @@ static int resetModeEnum[2] = {
   tag.loadW( "numTraces", &numTraces );
   tag.loadW( "xPv", xPvExpStr, numTraces, emptyStr );
   tag.loadW( "yPv", yPvExpStr, numTraces, emptyStr );
-  tag.loadW( "plotStyle", 3, plotStyleEnumStr, plotStyleEnum, plotStyle,
+  tag.loadW( "plotStyle", 4, plotStyleEnumStr, plotStyleEnum, plotStyle,
    numTraces, &plotStyleLine );
   tag.loadW( "lineThickness", lineThk, numTraces, &one );
   tag.loadW( "lineStyle", 2, styleEnumStr, styleEnum, lineStyle, numTraces,
@@ -4586,15 +4792,17 @@ static int opModeEnum[2] = {
 };
 
 int plotStyleLine = 0;
-static char *plotStyleEnumStr[3] = {
+static char *plotStyleEnumStr[4] = {
   "line",
   "point",
-  "needle"
+  "needle",
+  "single point"
 };
-static int plotStyleEnum[3] = {
+static int plotStyleEnum[4] = {
   0,
   1,
-  2
+  2,
+  3
 };
 
 int updateModexAndY = 0;
@@ -4812,7 +5020,7 @@ static int resetModeEnum[2] = {
   tag.loadR( "numTraces", &numTraces, &zero );
   tag.loadR( "xPv", XYGC_K_MAX_TRACES, xPvExpStr, &n, emptyStr );
   tag.loadR( "yPv", XYGC_K_MAX_TRACES, yPvExpStr, &n, emptyStr );
-  tag.loadR( "plotStyle", 3, plotStyleEnumStr, plotStyleEnum,
+  tag.loadR( "plotStyle", 4, plotStyleEnumStr, plotStyleEnum,
    XYGC_K_MAX_TRACES, plotStyle, &n, &plotStyleLine );
   tag.loadR( "lineThickness", XYGC_K_MAX_TRACES, lineThk, &n, &one );
   tag.loadR( "lineStyle", 2, styleEnumStr, styleEnum, XYGC_K_MAX_TRACES,
@@ -4857,6 +5065,13 @@ static int resetModeEnum[2] = {
   }
 
   for ( i=0; i<numTraces; i++ ) {
+
+    if ( plotStyle[i] == XYGC_K_PLOT_STYLE_SINGLE_POINT ) {
+      forceVector[i] = 1;
+    }
+    else {
+      forceVector[i] = 1;
+    }
 
     if ( ( !blankOrComment( xPvExpStr[i].getRaw() ) ) &&
          ( !blankOrComment( yPvExpStr[i].getRaw() ) ) ) {
@@ -5104,6 +5319,7 @@ efDouble dummy;
     plotSymbolType[i] = XYGC_K_SYMBOL_TYPE_NONE;
     opMode[i] = XYGC_K_SCOPE_MODE;
     y2Scale[i] = 0;
+    forceVector[i] = 0;
   }
 
   actWin->fi->loadFontTag( fontTag );
@@ -5342,7 +5558,7 @@ int i, yi;
     efTrace->addLabel( "  Y2" );
     efTrace->addToggle( " ", &eBuf->bufY2Scale[i] );
     //efTrace->addLabel( "  Style" );
-    efTrace->addOption( "", "line|point|needle", &eBuf->bufPlotStyle[i] );
+    efTrace->addOption( "", "line|point|needle|single point", &eBuf->bufPlotStyle[i] );
     efTrace->addLabel( "  Update" );
     efTrace->addOption( "", "X and Y|X or Y|X|Y|Trigger",
      &eBuf->bufPlotUpdateMode[i] );
@@ -5374,7 +5590,7 @@ int i, yi;
       efTrace->addLabel( "  Y2" );
       efTrace->addToggle( " ", &eBuf->bufY2Scale[i] );
       //efTrace->addLabel( "  Style" );
-      efTrace->addOption( "", "line|point|needle", &eBuf->bufPlotStyle[i] );
+      efTrace->addOption( "", "line|point|needle|single point", &eBuf->bufPlotStyle[i] );
       efTrace->addLabel( "  Update" );
       efTrace->addOption( "", "X and Y|X or Y|X|Y|Trigger",
        &eBuf->bufPlotUpdateMode[i] );
@@ -6634,7 +6850,8 @@ XRectangle xR = { plotAreaX+1, plotAreaY, plotAreaW-2, plotAreaH };
 
       traceIsDrawn[i] = 0;
 
-      if ( plotStyle[i] == XYGC_K_PLOT_STYLE_POINT ) {
+      if ( ( plotStyle[i] == XYGC_K_PLOT_STYLE_POINT ) ||
+           ( plotStyle[i] == XYGC_K_PLOT_STYLE_SINGLE_POINT ) ) {
 
         if ( curNpts[i] > 0 ) {
 
@@ -6749,13 +6966,14 @@ int ctl;
 
     yArrayNeedUpdate[i] = xArrayNeedUpdate[i] = 0;
 
-    if ( yPvCount[i] > 1 ) { // vector
+    if ( forceVector[i] || ( yPvCount[i] > 1 ) ) { // vector
 
       npts = fillVectorPlotArray( i );
 
       if ( npts > 0 ) {
 
-        if ( plotStyle[i] == XYGC_K_PLOT_STYLE_POINT ) {
+        if ( plotStyle[i] == XYGC_K_PLOT_STYLE_POINT ||
+           ( plotStyle[i] == XYGC_K_PLOT_STYLE_SINGLE_POINT ) ) {
 
           if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_NONE ) {
 
@@ -6819,7 +7037,8 @@ int ctl;
 
       if ( npts > 0 ) {
 
-        if ( plotStyle[i] == XYGC_K_PLOT_STYLE_POINT ) {
+        if ( plotStyle[i] == XYGC_K_PLOT_STYLE_POINT ||
+           ( plotStyle[i] == XYGC_K_PLOT_STYLE_SINGLE_POINT ) ) {
 
           if ( plotSymbolType[i] == XYGC_K_SYMBOL_TYPE_NONE ) {
 
@@ -8564,7 +8783,7 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
            ( ( plotStyle[i] == XYGC_K_PLOT_STYLE_LINE ) ||
              ( plotStyle[i] == XYGC_K_PLOT_STYLE_POINT ) ) &&
            ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) &&
-           ( yPvCount[i] == 1 ) && // must be scalar; use y here,
+           ( !forceVector[i] && ( yPvCount[i] == 1 ) ) && // must be scalar; use y here,
                                    // x is not used for chonological
            ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LINEAR ) ||
              ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) )
@@ -8617,7 +8836,7 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
 
         if ( !yPvData[i] ) {
 
-          if ( yPvCount[i] > 1 ) { // vector
+          if ( forceVector[i] || ( yPvCount[i] > 1 ) ) { // vector
 
             yPvData[i] = (void *) new char[yPvSize[i]+80];
 
@@ -8709,7 +8928,7 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
             }
           }
 
-          //if ( yPvCount[i] > 1 ) { // vector
+          //if ( forceVector[i] || ( yPvCount[i] > 1 ) ) { // vector
 
           //  if ( initialYConnection[i] ) {
 
@@ -8747,7 +8966,7 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
 
         if ( !xPvData[i] ) {
 
-          if ( xPvCount[i] > 1 ) { // vector
+          if ( forceVector[i] || ( xPvCount[i] > 1 ) ) { // vector
 
             xPvData[i] = (void *) new char[xPvSize[i]+80];
 
@@ -8800,7 +9019,7 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
         }
         else if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 
-          if ( yPvCount[i] > 1 ) { // vector
+          if ( forceVector[i] || ( yPvCount[i] > 1 ) ) { // vector
 
             if ( initialYConnection[i] ) {
 
@@ -8889,7 +9108,7 @@ int autoScaleX, autoScaleY[NUM_Y_AXES];
         xArrayNeedUpdate[i] = 1;
       }
 
-      if ( yPvCount[i] > 1 ) {
+      if ( forceVector[i] || ( yPvCount[i] > 1 ) ) {
 
         if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 

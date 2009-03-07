@@ -115,6 +115,8 @@ int l;
   indicatoro->halfW = indicatoro->bufHalfW;
   if ( indicatoro->halfW < 0 ) indicatoro->halfW = 0;
 
+  indicatoro->pointerOpposite = indicatoro->bufPointerOpposite;
+
   indicatoro->limitsFromDb = indicatoro->bufLimitsFromDb;
 
   indicatoro->precisionExpStr.setRaw( indicatoro->bufPrecision );
@@ -390,6 +392,8 @@ activeIndicatorClass::activeIndicatorClass ( void ) {
 
   halfW = 5;
 
+  pointerOpposite = 0;
+
   limitsFromDb = 1;
   precisionExpStr.setRaw( "" );
   strcpy( scaleFormat, "FFloat" );
@@ -463,6 +467,8 @@ activeGraphicClass *indicatoro = (activeGraphicClass *) this;
   horizontal = source->horizontal;
 
   halfW = source->halfW;
+
+  pointerOpposite = source->pointerOpposite;
 
   unconnectedTimer = 0;
 
@@ -600,6 +606,7 @@ static int orienTypeEnum[2] = {
   tag.loadW( "orientation", 2, orienTypeEnumStr, orienTypeEnum,
    &horizontal, &horz );
   tag.loadW( "halfWidth", &halfW, &zero );
+  tag.loadW( "pointerOpposite", &pointerOpposite, &zero );
   tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
@@ -690,6 +697,8 @@ efDouble efMin, efMax;
    &horizontal, &horz );
 
   tag.loadR( "halfWidth", &halfW, &zero );
+
+  tag.loadR( "pointerOpposite", &pointerOpposite, &zero );
 
   tag.loadR( "endObjectProperties" );
 
@@ -883,6 +892,8 @@ char title[32], *ptr;
 
   bufHalfW = halfW;
 
+  bufPointerOpposite = pointerOpposite;
+
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
    &actWin->appCtx->entryFormY, &actWin->appCtx->entryFormW,
@@ -912,6 +923,8 @@ char title[32], *ptr;
   ef.addTextField( activeIndicatorClass_str28, 35, bufReadMax, 15 );
 
   ef.addTextField( activeIndicatorClass_str46, 35, &bufHalfW );
+
+  ef.addToggle( activeIndicatorClass_str47, &bufPointerOpposite );
 
   ef.addOption( activeIndicatorClass_str44, activeIndicatorClass_str45,
    &bufHorizontal );
@@ -1028,12 +1041,22 @@ int clipStat, effHalfW;
         points[2].y = indY+indicatorH;
 	break;
       default:
-        points[0].x = oldIndX-effHalfW;
-        points[0].y = indY;
-        points[1].x = oldIndX;
-        points[1].y = indY+indicatorH;
-        points[2].x = oldIndX+effHalfW;
-        points[2].y = indY;
+        if ( pointerOpposite ) {
+          points[0].x = oldIndX-effHalfW;
+          points[0].y = indY+indicatorH;
+          points[1].x = oldIndX;
+          points[1].y = indY;
+          points[2].x = oldIndX+effHalfW;
+          points[2].y = indY+indicatorH;
+	}
+	else {
+          points[0].x = oldIndX-effHalfW;
+          points[0].y = indY;
+          points[1].x = oldIndX;
+          points[1].y = indY+indicatorH;
+          points[2].x = oldIndX+effHalfW;
+          points[2].y = indY;
+	}
 	break;
       }
       if ( effHalfW ) {
@@ -1076,12 +1099,22 @@ int clipStat, effHalfW;
         points[2].y = oldIndY+effHalfW+effHalfW;
 	break;
       default:
-        points[0].x = indX+indicatorW;
-        points[0].y = oldIndY-effHalfW;
-        points[1].x = indX;
-        points[1].y = oldIndY;
-        points[2].x = indX+indicatorW;
-        points[2].y = oldIndY+effHalfW;
+        if ( pointerOpposite ) {
+          points[0].x = indX;
+          points[0].y = oldIndY-effHalfW;
+          points[1].x = indX+indicatorW;
+          points[1].y = oldIndY;
+          points[2].x = indX;
+          points[2].y = oldIndY+effHalfW;
+	}
+	else {
+          points[0].x = indX+indicatorW;
+          points[0].y = oldIndY-effHalfW;
+          points[1].x = indX;
+          points[1].y = oldIndY;
+          points[2].x = indX+indicatorW;
+          points[2].y = oldIndY+effHalfW;
+	}
 	break;
       }
       if ( effHalfW ) {
@@ -1194,12 +1227,22 @@ int tX, tY;
     indX = indicatorX + indicatorAreaW / 2;
     indY = indicatorY;
 
-    points[0].x = indX-halfW;
-    points[0].y = indY;
-    points[1].x = indX;
-    points[1].y = indY+indicatorH;
-    points[2].x = indX+halfW;
-    points[2].y = indY;
+    if ( pointerOpposite ) {
+      points[0].x = indX-halfW;
+      points[0].y = indY+indicatorH;
+      points[1].x = indX;
+      points[1].y = indY;
+      points[2].x = indX+halfW;
+      points[2].y = indY+indicatorH;
+    }
+    else {
+      points[0].x = indX-halfW;
+      points[0].y = indY;
+      points[1].x = indX;
+      points[1].y = indY+indicatorH;
+      points[2].x = indX+halfW;
+      points[2].y = indY;
+    }
     if ( halfW ) {
       XFillPolygon( actWin->d, XtWindow(actWin->drawWidget),
        actWin->drawGc.normGC(), points, 3, Complex, CoordModeOrigin );
@@ -1242,12 +1285,23 @@ int tX, tY;
     indY = indicatorY - indicatorAreaH / 2;
     indX = indicatorX;
 
-    points[0].x = indX+indicatorW;
-    points[0].y = indY-halfW;
-    points[1].x = indX;
-    points[1].y = indY;
-    points[2].x = indX+indicatorW;
-    points[2].y = indY+halfW;
+    if ( pointerOpposite ) {
+      points[0].x = indX;
+      points[0].y = indY-halfW;
+      points[1].x = indX+indicatorW;
+      points[1].y = indY;
+      points[2].x = indX;
+      points[2].y = indY+halfW;
+    }
+    else {
+      points[0].x = indX+indicatorW;
+      points[0].y = indY-halfW;
+      points[1].x = indX;
+      points[1].y = indY;
+      points[2].x = indX+indicatorW;
+      points[2].y = indY+halfW;
+    }
+
     if ( halfW ) {
       XFillPolygon( actWin->d, XtWindow(actWin->drawWidget),
        actWin->drawGc.normGC(), points, 3, Complex, CoordModeOrigin );
@@ -1361,12 +1415,22 @@ char str[39+1];
         points[2].y = indY+indicatorH;
 	break;
       default:
-        points[0].x = indX-effHalfW;
-        points[0].y = indY;
-        points[1].x = indX;
-        points[1].y = indY+indicatorH;
-        points[2].x = indX+effHalfW;
-        points[2].y = indY;
+        if ( pointerOpposite ) {
+          points[0].x = indX-effHalfW;
+          points[0].y = indY+indicatorH;
+          points[1].x = indX;
+          points[1].y = indY;
+          points[2].x = indX+effHalfW;
+          points[2].y = indY+indicatorH;
+	}
+	else {
+          points[0].x = indX-effHalfW;
+          points[0].y = indY;
+          points[1].x = indX;
+          points[1].y = indY+indicatorH;
+          points[2].x = indX+effHalfW;
+          points[2].y = indY;
+	}
 	break;
       }
       if ( effHalfW ) {
@@ -1411,12 +1475,22 @@ char str[39+1];
         points[2].y = indY+indicatorH;
 	break;
       default:
-        points[0].x = indX-effHalfW;
-        points[0].y = indY;
-        points[1].x = indX;
-        points[1].y = indY+indicatorH;
-        points[2].x = indX+effHalfW;
-        points[2].y = indY;
+        if ( pointerOpposite ) {
+          points[0].x = indX-effHalfW;
+          points[0].y = indY+indicatorH;
+          points[1].x = indX;
+          points[1].y = indY;
+          points[2].x = indX+effHalfW;
+          points[2].y = indY+indicatorH;
+	}
+	else {
+          points[0].x = indX-effHalfW;
+          points[0].y = indY;
+          points[1].x = indX;
+          points[1].y = indY+indicatorH;
+          points[2].x = indX+effHalfW;
+          points[2].y = indY;
+	}
 	break;
       }
       if ( effHalfW ) {
@@ -1475,12 +1549,22 @@ char str[39+1];
         points[2].y = indY+effHalfW+effHalfW;
 	break;
       default:
-        points[0].x = indX+indicatorW;
-        points[0].y = indY-effHalfW;
-        points[1].x = indX;
-        points[1].y = indY;
-        points[2].x = indX+indicatorW;
-        points[2].y = indY+effHalfW;
+        if ( pointerOpposite ) {
+          points[0].x = indX;
+          points[0].y = indY-effHalfW;
+          points[1].x = indX+indicatorW;
+          points[1].y = indY;
+          points[2].x = indX;
+          points[2].y = indY+effHalfW;
+	}
+	else {
+          points[0].x = indX+indicatorW;
+          points[0].y = indY-effHalfW;
+          points[1].x = indX;
+          points[1].y = indY;
+          points[2].x = indX+indicatorW;
+          points[2].y = indY+effHalfW;
+	}
 	break;
       }
       if ( effHalfW ) {
@@ -1525,12 +1609,22 @@ char str[39+1];
         points[2].y = indY+effHalfW+effHalfW;
 	break;
       default:
-        points[0].x = indX+indicatorW;
-        points[0].y = indY-effHalfW;
-        points[1].x = indX;
-        points[1].y = indY;
-        points[2].x = indX+indicatorW;
-        points[2].y = indY+effHalfW;
+        if ( pointerOpposite ) {
+          points[0].x = indX;
+          points[0].y = indY-effHalfW;
+          points[1].x = indX+indicatorW;
+          points[1].y = indY;
+          points[2].x = indX;
+          points[2].y = indY+effHalfW;
+	}
+	else {
+          points[0].x = indX+indicatorW;
+          points[0].y = indY-effHalfW;
+          points[1].x = indX;
+          points[1].y = indY;
+          points[2].x = indX+indicatorW;
+          points[2].y = indY+effHalfW;
+	}
 	break;
       }
       if ( effHalfW ) {
@@ -2045,6 +2139,8 @@ void activeIndicatorClass::updateDimensions ( void )
   else {
     mode = INDICATORC_K_MAX_LT_MIN;
   }
+
+  bufInvalidate();
 
 }
 

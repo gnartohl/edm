@@ -39,5 +39,6 @@
 #define activeIndicatorClass_str44 (char *) (char *) "Orientation"
 #define activeIndicatorClass_str45 (char *) (char *) "Vertical|Horizontal"
 #define activeIndicatorClass_str46 (char *) (char *) "Indicator Half Width"
+#define activeIndicatorClass_str47 (char *) (char *) "Pointer Reversed"
 
 #endif

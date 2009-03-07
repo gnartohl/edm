@@ -64,6 +64,7 @@
 #define XYGC_K_PLOT_STYLE_LINE 0
 #define XYGC_K_PLOT_STYLE_POINT 1
 #define XYGC_K_PLOT_STYLE_NEEDLE 2
+#define XYGC_K_PLOT_STYLE_SINGLE_POINT 3
 
 #define XYGC_K_TRACE_INVALID 0
 #define XYGC_K_TRACE_XY 1
@@ -102,7 +103,7 @@
 #define XYGC_K_PLOT_SORTED_X_MODE 1
 
 #define XYGC_MAJOR_VERSION 4
-#define XYGC_MINOR_VERSION 4
+#define XYGC_MINOR_VERSION 5
 #define XYGC_RELEASE 0
 
 #ifdef __xygraph_cc
@@ -770,6 +771,7 @@ expStringClass traceCtlPvExpStr, trigPvExpStr, resetPvExpStr;
 
 int count, bufferScrollSize, plotStyle[XYGC_K_MAX_TRACES], plotMode, resetMode;
 int firstTimeSample, curSec, curNsec, drawGridFlag, special[XYGC_K_MAX_TRACES];
+int forceVector[XYGC_K_MAX_TRACES];
 
 int traceCtl;
 
