@@ -21,7 +21,7 @@ USR_LIBS_hpux11_11_mt = cfcaa62e-8199-11d3-a77f-00104b8742df pthread
 
 USR_LDFLAGS += -L$(INSTALL_LIB)
 
-LIBRARY = libMultSegRamp
+LIBRARY = MultSegRamp
 
 PROD_LIBS += ca Com
 

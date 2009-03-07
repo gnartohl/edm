@@ -21,7 +21,7 @@ ifdef EPICS_HOST_ARCH
    USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
    USR_SYS_LIBS_hpux11_11_mt = pthread
 
-   LIBRARY = libMultSegRamp
+   LIBRARY = MultSegRamp
 
    INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
    USR_INCLUDES += -I../../util -I../../lib
