@@ -5623,9 +5623,7 @@ char msg[127+1];
 
     if ( !ignoreIconic() ) {
 
-      iconTestCount++;
       if ( iconTestCount > 10 ) { // periodically, check if iconified
-        iconTestCount = 0;
         XtVaGetValues( cur->node.topWidgetId(),
          XmNiconic, &cur->node.isIconified,
          NULL );
@@ -5646,6 +5644,10 @@ char msg[127+1];
 
     cur = cur->flink;
 
+  }
+
+  if ( iconTestCount++ > 10 ) {
+    iconTestCount = 0;
   }
 
   stat = pend_io( 10.0 );
