@@ -536,6 +536,7 @@ typedef struct editBufTag {
   int bufUseAlarmBorder;
   int bufInputFocusUpdatesAllowed;
   int bufIsPassword;
+  int bufCharacterMode;
 } editBufType, *editBufPtr;
 
 editBufPtr eBuf;
@@ -641,6 +642,8 @@ int isPassword;
 char pwValue[255+1];
 int pwLength;
 
+int characterMode;
+
 public:
 
 activeXTextDspClass ( void );
@@ -656,11 +659,15 @@ char *objName ( void ) {
 
 }
 
-void putValueWithClip (
+int putValueWithClip (
+  char *val
+);
+
+int putValueWithClip (
   double val
 );
 
-void putValueWithClip (
+int putValueWithClip (
   int val
 );
 
