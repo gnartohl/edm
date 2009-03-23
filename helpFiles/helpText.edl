@@ -3,7 +3,7 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 95
+x 145
 y 21
 w 1069
 h 995
@@ -29,7 +29,7 @@ major 4
 minor 0
 release 0
 x 34
-y 305
+y 255
 w 151
 h 21
 lineColor rgb 41120 41120 41120
@@ -44,7 +44,7 @@ major 4
 minor 0
 release 0
 x 34
-y 273
+y 223
 w 151
 h 21
 lineColor rgb 41120 41120 41120
@@ -58,8 +58,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 29
-y 29
+x 12
+y 11
 w 49
 h 27
 font "helvetica-medium-r-24.0"
@@ -78,7 +78,7 @@ major 4
 minor 1
 release 0
 x 148
-y 88
+y 38
 w 55
 h 16
 font "helvetica-medium-r-14.0"
@@ -98,7 +98,7 @@ major 4
 minor 1
 release 0
 x 29
-y 463
+y 395
 w 380
 h 16
 font "helvetica-medium-r-14.0"
@@ -118,7 +118,7 @@ major 4
 minor 1
 release 0
 x 29
-y 481
+y 413
 w 324
 h 16
 font "helvetica-medium-r-14.0"
@@ -138,7 +138,7 @@ major 4
 minor 1
 release 0
 x 148
-y 105
+y 55
 w 55
 h 16
 font "helvetica-medium-r-14.0"
@@ -158,7 +158,7 @@ major 4
 minor 1
 release 0
 x 148
-y 123
+y 73
 w 130
 h 16
 font "helvetica-medium-r-14.0"
@@ -178,7 +178,7 @@ major 4
 minor 1
 release 0
 x 34
-y 104
+y 54
 w 55
 h 21
 font "helvetica-medium-r-18.0"
@@ -198,7 +198,7 @@ major 4
 minor 0
 release 0
 x 207
-y 91
+y 41
 w 18
 h 9
 lineColor rgb 0 0 0
@@ -213,7 +213,7 @@ major 4
 minor 0
 release 0
 x 207
-y 108
+y 58
 w 18
 h 9
 lineColor rgb 60138 60138 44461
@@ -228,7 +228,7 @@ major 4
 minor 1
 release 0
 x 148
-y 165
+y 115
 w 55
 h 16
 font "helvetica-medium-r-14.0"
@@ -248,7 +248,7 @@ major 4
 minor 1
 release 0
 x 148
-y 182
+y 132
 w 55
 h 16
 font "helvetica-medium-r-14.0"
@@ -268,7 +268,7 @@ major 4
 minor 1
 release 0
 x 148
-y 200
+y 150
 w 123
 h 16
 font "helvetica-medium-r-14.0"
@@ -288,7 +288,7 @@ major 4
 minor 1
 release 0
 x 34
-y 181
+y 131
 w 45
 h 21
 font "helvetica-medium-r-18.0"
@@ -307,7 +307,7 @@ major 4
 minor 0
 release 0
 x 207
-y 168
+y 118
 w 18
 h 9
 lineColor rgb 0 0 0
@@ -322,7 +322,7 @@ major 4
 minor 0
 release 0
 x 207
-y 185
+y 135
 w 18
 h 9
 lineColor rgb 60138 60138 44461
@@ -337,7 +337,7 @@ major 4
 minor 1
 release 0
 x 29
-y 866
+y 780
 w 355
 h 16
 font "helvetica-medium-r-14.0"
@@ -357,7 +357,7 @@ major 4
 minor 1
 release 0
 x 34
-y 273
+y 223
 w 151
 h 21
 font "helvetica-medium-r-18.0"
@@ -377,7 +377,7 @@ major 4
 minor 1
 release 0
 x 34
-y 305
+y 255
 w 151
 h 21
 font "helvetica-medium-r-18.0"
@@ -397,7 +397,7 @@ major 4
 minor 1
 release 0
 x 34
-y 240
+y 190
 w 151
 h 21
 font "helvetica-medium-r-18.0"
@@ -416,7 +416,7 @@ major 4
 minor 0
 release 0
 x 34
-y 240
+y 190
 w 151
 h 21
 lineColor rgb 41120 41120 41120
@@ -431,7 +431,7 @@ major 4
 minor 1
 release 0
 x 215
-y 242
+y 192
 w 164
 h 16
 font "helvetica-medium-r-14.0"
@@ -451,7 +451,7 @@ major 4
 minor 1
 release 0
 x 215
-y 275
+y 225
 w 174
 h 16
 font "helvetica-medium-r-14.0"
@@ -471,7 +471,7 @@ major 4
 minor 1
 release 0
 x 215
-y 307
+y 257
 w 187
 h 16
 font "helvetica-medium-r-14.0"
@@ -491,7 +491,7 @@ major 4
 minor 1
 release 0
 x 29
-y 340
+y 290
 w 412
 h 16
 font "helvetica-medium-r-14.0"
@@ -511,7 +511,7 @@ major 4
 minor 1
 release 0
 x 29
-y 360
+y 310
 w 269
 h 16
 font "helvetica-medium-r-14.0"
@@ -531,7 +531,7 @@ major 4
 minor 1
 release 0
 x 29
-y 530
+y 457
 w 338
 h 16
 font "helvetica-medium-r-14.0"
@@ -551,7 +551,7 @@ major 4
 minor 1
 release 0
 x 29
-y 514
+y 441
 w 339
 h 16
 font "helvetica-medium-r-14.0"
@@ -571,7 +571,7 @@ major 4
 minor 1
 release 0
 x 29
-y 546
+y 473
 w 393
 h 16
 font "helvetica-medium-r-14.0"
@@ -591,7 +591,7 @@ major 4
 minor 1
 release 0
 x 31
-y 580
+y 500
 w 150
 h 16
 font "helvetica-medium-r-14.0"
@@ -611,7 +611,7 @@ major 4
 minor 1
 release 0
 x 64
-y 628
+y 548
 w 328
 h 16
 font "helvetica-medium-r-14.0"
@@ -631,7 +631,7 @@ major 4
 minor 1
 release 0
 x 64
-y 646
+y 566
 w 310
 h 16
 font "helvetica-medium-r-14.0"
@@ -651,7 +651,7 @@ major 4
 minor 1
 release 0
 x 64
-y 664
+y 584
 w 355
 h 16
 font "helvetica-medium-r-14.0"
@@ -671,7 +671,7 @@ major 4
 minor 1
 release 0
 x 31
-y 819
+y 739
 w 409
 h 32
 font "helvetica-medium-r-14.0"
@@ -692,7 +692,7 @@ major 4
 minor 1
 release 0
 x 47
-y 609
+y 529
 w 91
 h 16
 font "helvetica-medium-r-14.0"
@@ -712,7 +712,7 @@ major 4
 minor 1
 release 0
 x 64
-y 709
+y 629
 w 108
 h 16
 font "helvetica-medium-r-14.0"
@@ -732,7 +732,7 @@ major 4
 minor 1
 release 0
 x 64
-y 727
+y 647
 w 117
 h 16
 font "helvetica-medium-r-14.0"
@@ -752,7 +752,7 @@ major 4
 minor 1
 release 0
 x 64
-y 745
+y 665
 w 91
 h 16
 font "helvetica-medium-r-14.0"
@@ -772,7 +772,7 @@ major 4
 minor 1
 release 0
 x 47
-y 690
+y 610
 w 109
 h 16
 font "helvetica-medium-r-14.0"
@@ -792,7 +792,7 @@ major 4
 minor 1
 release 0
 x 64
-y 791
+y 711
 w 97
 h 16
 font "helvetica-medium-r-14.0"
@@ -812,7 +812,7 @@ major 4
 minor 1
 release 0
 x 47
-y 772
+y 692
 w 100
 h 16
 font "helvetica-medium-r-14.0"
@@ -832,7 +832,7 @@ major 4
 minor 1
 release 0
 x 29
-y 897
+y 806
 w 458
 h 16
 font "helvetica-medium-r-14.0"
@@ -852,7 +852,7 @@ major 4
 minor 1
 release 0
 x 29
-y 930
+y 832
 w 369
 h 16
 font "helvetica-medium-r-14.0"
@@ -872,7 +872,7 @@ major 4
 minor 1
 release 0
 x 29
-y 960
+y 857
 w 410
 h 16
 font "helvetica-medium-r-14.0"
@@ -916,15 +916,18 @@ major 4
 minor 1
 release 0
 x 542
-y 173
-w 468
-h 16
+y 78
+w 472
+h 64
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If the Motif Widget box is checked, the text is displayed in a motif text field"
+  "widget. Character Mode, Allow Input Focus Updates, Lose Focus Update,"
+  "Auto Select Text, Update PV On Drop, and Password Input are applicable"
+  "to motif widgets only."
 }
 autoSize
 endObjectProperties
@@ -936,27 +939,7 @@ major 4
 minor 1
 release 0
 x 542
-y 190
-w 408
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
-useDisplayBg
-value {
-  "widget. Lose Focus Update and Auto Select Text are applicable"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 542
-y 464
+y 445
 w 441
 h 16
 font "helvetica-medium-r-14.0"
@@ -975,8 +958,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 544
-y 21
+x 29
+y 885
 w 434
 h 16
 font "helvetica-medium-r-14.0"
@@ -995,8 +978,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 567
-y 48
+x 54
+y 912
 w 344
 h 16
 font "helvetica-medium-r-14.0"
@@ -1016,7 +999,7 @@ major 4
 minor 1
 release 0
 x 542
-y 480
+y 461
 w 466
 h 16
 font "helvetica-medium-r-14.0"
@@ -1036,7 +1019,7 @@ major 4
 minor 1
 release 0
 x 542
-y 494
+y 475
 w 31
 h 16
 font "helvetica-medium-r-14.0"
@@ -1056,7 +1039,7 @@ major 4
 minor 1
 release 0
 x 542
-y 519
+y 500
 w 445
 h 16
 font "helvetica-medium-r-14.0"
@@ -1076,7 +1059,7 @@ major 4
 minor 1
 release 0
 x 542
-y 535
+y 516
 w 480
 h 16
 font "helvetica-medium-r-14.0"
@@ -1096,7 +1079,7 @@ major 4
 minor 1
 release 0
 x 542
-y 551
+y 532
 w 462
 h 16
 font "helvetica-medium-r-14.0"
@@ -1116,7 +1099,7 @@ major 4
 minor 1
 release 0
 x 542
-y 567
+y 548
 w 267
 h 16
 font "helvetica-medium-r-14.0"
@@ -1136,7 +1119,7 @@ major 4
 minor 1
 release 0
 x 542
-y 125
+y 32
 w 440
 h 16
 font "helvetica-medium-r-14.0"
@@ -1156,7 +1139,7 @@ major 4
 minor 1
 release 0
 x 542
-y 143
+y 50
 w 358
 h 16
 font "helvetica-medium-r-14.0"
@@ -1176,7 +1159,7 @@ major 4
 minor 1
 release 0
 x 542
-y 734
+y 715
 w 450
 h 16
 font "helvetica-medium-r-14.0"
@@ -1196,7 +1179,7 @@ major 4
 minor 1
 release 0
 x 542
-y 749
+y 730
 w 282
 h 16
 font "helvetica-medium-r-14.0"
@@ -1215,8 +1198,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 591
-y 72
+x 78
+y 936
 w 382
 h 16
 font "helvetica-medium-r-14.0"
@@ -1235,8 +1218,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 591
-y 89
+x 78
+y 953
 w 311
 h 16
 font "helvetica-medium-r-14.0"
@@ -1256,7 +1239,7 @@ major 4
 minor 0
 release 0
 x 541
-y 239
+y 156
 w 127
 h 43
 file "$(help)helpMotifWidget"
@@ -1269,7 +1252,7 @@ major 4
 minor 1
 release 0
 x 543
-y 289
+y 217
 w 154
 h 16
 font "helvetica-bold-r-14.0"
@@ -1289,27 +1272,7 @@ major 4
 minor 1
 release 0
 x 542
-y 207
-w 135
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
-useDisplayBg
-value {
-  "only for motif widgets."
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 542
-y 592
+y 573
 w 460
 h 16
 font "helvetica-medium-r-14.0"
@@ -1329,7 +1292,7 @@ major 4
 minor 1
 release 0
 x 542
-y 608
+y 589
 w 468
 h 16
 font "helvetica-medium-r-14.0"
@@ -1349,7 +1312,7 @@ major 4
 minor 1
 release 0
 x 542
-y 624
+y 605
 w 364
 h 16
 font "helvetica-medium-r-14.0"
@@ -1369,7 +1332,7 @@ major 4
 minor 1
 release 0
 x 542
-y 776
+y 757
 w 481
 h 16
 font "helvetica-medium-r-14.0"
@@ -1389,7 +1352,7 @@ major 4
 minor 1
 release 0
 x 542
-y 790
+y 771
 w 461
 h 16
 font "helvetica-medium-r-14.0"
@@ -1409,7 +1372,7 @@ major 4
 minor 1
 release 0
 x 542
-y 896
+y 877
 w 474
 h 16
 font "helvetica-medium-r-14.0"
@@ -1429,7 +1392,7 @@ major 4
 minor 1
 release 0
 x 542
-y 912
+y 893
 w 477
 h 16
 font "helvetica-medium-r-14.0"
@@ -1449,7 +1412,7 @@ major 4
 minor 1
 release 0
 x 542
-y 928
+y 909
 w 362
 h 16
 font "helvetica-medium-r-14.0"
@@ -1469,7 +1432,7 @@ major 4
 minor 1
 release 0
 x 542
-y 649
+y 630
 w 444
 h 16
 font "helvetica-medium-r-14.0"
@@ -1489,7 +1452,7 @@ major 4
 minor 1
 release 0
 x 542
-y 665
+y 646
 w 441
 h 16
 font "helvetica-medium-r-14.0"
@@ -1509,7 +1472,7 @@ major 4
 minor 1
 release 0
 x 542
-y 681
+y 662
 w 305
 h 16
 font "helvetica-medium-r-14.0"
@@ -1529,7 +1492,7 @@ major 4
 minor 1
 release 0
 x 542
-y 829
+y 810
 w 514
 h 16
 font "helvetica-medium-r-14.0"
@@ -1549,7 +1512,7 @@ major 4
 minor 1
 release 0
 x 543
-y 845
+y 826
 w 139
 h 16
 font "helvetica-medium-r-14.0"
@@ -1569,7 +1532,7 @@ major 4
 minor 1
 release 0
 x 564
-y 866
+y 847
 w 369
 h 16
 font "helvetica-medium-r-14.0"
@@ -1589,7 +1552,7 @@ major 4
 minor 1
 release 0
 x 542
-y 954
+y 935
 w 436
 h 16
 font "helvetica-medium-r-14.0"
@@ -1609,7 +1572,7 @@ major 4
 minor 1
 release 0
 x 542
-y 971
+y 952
 w 408
 h 16
 font "helvetica-medium-r-14.0"
@@ -1629,7 +1592,7 @@ major 4
 minor 1
 release 0
 x 542
-y 313
+y 294
 w 494
 h 64
 font "helvetica-medium-r-14.0"
@@ -1652,7 +1615,7 @@ major 4
 minor 1
 release 0
 x 543
-y 805
+y 786
 w 190
 h 16
 font "helvetica-medium-r-14.0"
@@ -1672,7 +1635,7 @@ major 4
 minor 1
 release 0
 x 29
-y 392
+y 337
 w 456
 h 48
 font "helvetica-medium-r-14.0"
@@ -1694,7 +1657,7 @@ major 4
 minor 1
 release 0
 x 542
-y 399
+y 380
 w 501
 h 48
 font "helvetica-medium-r-14.0"
@@ -1716,7 +1679,7 @@ major 4
 minor 1
 release 0
 x 542
-y 707
+y 688
 w 393
 h 16
 font "helvetica-medium-r-14.0"
@@ -1725,6 +1688,27 @@ bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Checking Password Input hides text input with \"*\" characters."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 542
+y 248
+w 517
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "If Character Mode is checked, the PV is written on every keystroke that changes"
+  "the field value. This is intended for use with forms implemented with soft PVs."
 }
 autoSize
 endObjectProperties
