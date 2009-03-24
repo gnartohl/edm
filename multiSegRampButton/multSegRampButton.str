@@ -41,5 +41,6 @@
 #define activeMultSegRampButtonClass_str43 (char *) "Max Rate"
 #define activeMultSegRampButtonClass_str44 (char *) "Monotonic"
 #define activeMultSegRampButtonClass_str45 (char *) "At least one segment must be defined"
+#define activeMultSegRampButtonClass_str46 (char *) "\nWARNING: Ramping stopped on window close\n"
 
 #endif

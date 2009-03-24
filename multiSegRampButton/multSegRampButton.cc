@@ -1846,6 +1846,7 @@ int i;
 
   if ( incrementTimerActive ) {
     if ( incrementTimer ) {
+      actWin->appCtx->postMessage( activeMultSegRampButtonClass_str46 );
       XtRemoveTimeOut( incrementTimer );
       incrementTimer = 0;
     }
