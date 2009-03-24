@@ -1535,6 +1535,7 @@ int activeRampButtonClass::deactivate (
 
   if ( incrementTimerActive ) {
     if ( incrementTimer ) {
+      actWin->appCtx->postMessage( activeRampButtonClass_str35 );
       XtRemoveTimeOut( incrementTimer );
       incrementTimer = 0;
     }

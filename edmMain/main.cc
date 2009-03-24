@@ -234,6 +234,144 @@ char *envPtr;
 
 }
 
+static int getServerCheckPointParams (
+  FILE *f,
+  int *server,
+  int *oneInstance,
+  char *displayName,
+  int *noEdit,
+  int *numCheckPointMacros,
+  char *checkPointMacros
+) {
+
+char *cptr, *tk, *buf1;
+char text[1023+1];
+int i, n, ii, nn, tmp, sanity;
+
+  *server = 0;
+  *oneInstance = 0;
+  strcpy( displayName, "" );
+  *numCheckPointMacros = 0;
+  strcpy( checkPointMacros, "" );
+
+  sanity = 99999;
+  do {
+
+    cptr = fgets( text, 1023, f );
+    text[1024] = 0;
+    if ( !cptr ) return 2; // fail
+    if ( strcmp( text, "<<<EOD>>>\n" ) == 0 ) return 3; // no more data
+    tmp = atol( text );
+    *server = tmp & 0xf;
+    *oneInstance = ( tmp >> 8 );
+
+    if ( !(*server) ) {
+
+      cptr = fgets( text, 1023, f );
+      text[1024] = 0;
+      if ( !cptr ) return 2; // fail
+
+      cptr = fgets( text, 1023, f );
+      text[1024] = 0;
+      if ( !cptr ) return 2; // fail
+
+      cptr = fgets( text, 1023, f );
+      text[1024] = 0;
+      if ( !cptr ) return 2; // fail
+      n = atol( text );
+
+      // skip all global macros
+      for ( i=0; i<n; i++ ) {
+
+        cptr = fgets( text, 1023, f );
+        text[1024] = 0;
+        if ( !cptr ) return 2; // fail
+
+      }
+
+      cptr = fgets( text, 1023, f );
+      text[1024] = 0;
+      if ( !cptr ) return 2; // fail
+      n = atol( text );
+
+      // skip all screens
+      for ( i=0; i<n; i++ ) {
+
+        cptr = fgets( text, 1023, f );
+        text[1024] = 0;
+        if ( !cptr ) return 2; // fail
+
+        cptr = fgets( text, 1023, f );
+        text[1024] = 0;
+        if ( !cptr ) return 2; // fail
+
+        cptr = fgets( text, 1023, f );
+        text[1024] = 0;
+        if ( !cptr ) return 2; // fail
+
+        cptr = fgets( text, 1023, f );
+        text[1024] = 0;
+        if ( !cptr ) return 2; // fail
+
+        cptr = fgets( text, 1023, f );
+        text[1024] = 0;
+        if ( !cptr ) return 2; // fail
+
+        cptr = fgets( text, 1023, f );
+        text[1024] = 0;
+        if ( !cptr ) return 2; // fail
+        nn = atol( text );
+
+        // skip all screen macros
+        for ( ii=0; ii<nn; ii++ ) {
+
+          cptr = fgets( text, 1023, f );
+          text[1024] = 0;
+          if ( !cptr ) return 2; // fail
+
+        }
+
+      }
+
+    }
+    else {
+
+      readStringFromFile( displayName, 127, f );
+
+      cptr = fgets( text, 1023, f );
+      text[1024] = 0;
+      if ( !cptr ) return 2; // fail
+      *noEdit = atol( text );
+
+      cptr = fgets( text, 1023, f );
+      text[1024] = 0;
+      if ( !cptr ) return 2; // fail
+      *numCheckPointMacros = atol( text );
+
+      for ( i=0; i<*numCheckPointMacros; i++ ) {
+        cptr = fgets( text, 1023, f );
+        text[1024] = 0;
+        if ( !cptr ) return 2; // fail
+        buf1 = NULL;
+        tk = strtok_r( text, "\n \t", &buf1 );
+        if ( i > 0 ) {
+          Strncat( checkPointMacros, ",", 1023 );
+          checkPointMacros[1023] = 0;
+        }
+        Strncat( checkPointMacros, tk, 1023 );
+        checkPointMacros[1023] = 0;
+      }
+
+      return 1;
+
+    }
+
+  } while ( --sanity );
+
+  return 2;
+
+}
+
 static int getMainCheckPointParams (
   FILE *f,
   int *server,
@@ -246,7 +384,9 @@ static int getMainCheckPointParams (
 
 char *cptr, *tk, *buf1;
 char text[1023+1];
-int i, tmp;
+int i, n, ii, nn, tmp, sanity;
+
+  // get params for non-server
 
   *server = 0;
   *oneInstance = 0;
@@ -254,41 +394,121 @@ int i, tmp;
   *numCheckPointMacros = 0;
   strcpy( checkPointMacros, "" );
 
-  cptr = fgets( text, 1023, f );
-  text[1024] = 0;
-  if ( !cptr ) return 2; // fail
-  if ( strcmp( text, "<<<EOD>>>\n" ) == 0 ) return 3; // no more data
-  tmp = atol( text );
-  *server = tmp & 0xf;
-  *oneInstance = ( tmp >> 8 );
+  sanity = 99999;
+  do {
 
-  readStringFromFile( displayName, 127, f );
-
-  cptr = fgets( text, 1023, f );
-  text[1024] = 0;
-  if ( !cptr ) return 2; // fail
-  *noEdit = atol( text );
-
-  cptr = fgets( text, 1023, f );
-  text[1024] = 0;
-  if ( !cptr ) return 2; // fail
-  *numCheckPointMacros = atol( text );
-
-  for ( i=0; i<*numCheckPointMacros; i++ ) {
     cptr = fgets( text, 1023, f );
     text[1024] = 0;
     if ( !cptr ) return 2; // fail
-    buf1 = NULL;
-    tk = strtok_r( text, "\n \t", &buf1 );
-    if ( i > 0 ) {
-      Strncat( checkPointMacros, ",", 1023 );
-      checkPointMacros[1023] = 0;
-    }
-    Strncat( checkPointMacros, tk, 1023 );
-    checkPointMacros[1023] = 0;
-  }
+    if ( strcmp( text, "<<<EOD>>>\n" ) == 0 ) return 3; // no more data
+    tmp = atol( text );
+    *server = tmp & 0xf;
+    *oneInstance = ( tmp >> 8 );
 
-  return 1;
+    if ( *server ) {
+
+      cptr = fgets( text, 1023, f );
+      text[1024] = 0;
+      if ( !cptr ) return 2; // fail
+
+      cptr = fgets( text, 1023, f );
+      text[1024] = 0;
+      if ( !cptr ) return 2; // fail
+
+      cptr = fgets( text, 1023, f );
+      text[1024] = 0;
+      if ( !cptr ) return 2; // fail
+      n = atol( text );
+
+      // skip all global macros
+      for ( i=0; i<n; i++ ) {
+
+        cptr = fgets( text, 1023, f );
+        text[1024] = 0;
+        if ( !cptr ) return 2; // fail
+
+      }
+
+      cptr = fgets( text, 1023, f );
+      text[1024] = 0;
+      if ( !cptr ) return 2; // fail
+      n = atol( text );
+
+      // skip all screens
+      for ( i=0; i<n; i++ ) {
+
+        cptr = fgets( text, 1023, f );
+        text[1024] = 0;
+        if ( !cptr ) return 2; // fail
+
+        cptr = fgets( text, 1023, f );
+        text[1024] = 0;
+        if ( !cptr ) return 2; // fail
+
+        cptr = fgets( text, 1023, f );
+        text[1024] = 0;
+        if ( !cptr ) return 2; // fail
+
+        cptr = fgets( text, 1023, f );
+        text[1024] = 0;
+        if ( !cptr ) return 2; // fail
+
+        cptr = fgets( text, 1023, f );
+        text[1024] = 0;
+        if ( !cptr ) return 2; // fail
+
+        cptr = fgets( text, 1023, f );
+        text[1024] = 0;
+        if ( !cptr ) return 2; // fail
+        nn = atol( text );
+
+        // skip all screen macros
+        for ( ii=0; ii<nn; ii++ ) {
+
+          cptr = fgets( text, 1023, f );
+          text[1024] = 0;
+          if ( !cptr ) return 2; // fail
+
+        }
+
+      }
+
+    }
+    else {
+
+      readStringFromFile( displayName, 127, f );
+
+      cptr = fgets( text, 1023, f );
+      text[1024] = 0;
+      if ( !cptr ) return 2; // fail
+      *noEdit = atol( text );
+
+      cptr = fgets( text, 1023, f );
+      text[1024] = 0;
+      if ( !cptr ) return 2; // fail
+      *numCheckPointMacros = atol( text );
+
+      for ( i=0; i<*numCheckPointMacros; i++ ) {
+        cptr = fgets( text, 1023, f );
+        text[1024] = 0;
+        if ( !cptr ) return 2; // fail
+        buf1 = NULL;
+        tk = strtok_r( text, "\n \t", &buf1 );
+        if ( i > 0 ) {
+          Strncat( checkPointMacros, ",", 1023 );
+          checkPointMacros[1023] = 0;
+        }
+        Strncat( checkPointMacros, tk, 1023 );
+        checkPointMacros[1023] = 0;
+      }
+
+      return 1;
+
+    }
+
+  } while ( --sanity );
+
+  return 2;
 
 }
 
@@ -1529,6 +1749,8 @@ int primaryServerWantsExit;
 
 int numLocaleFailures = 0;
 
+int shutdownTry = 1000;
+
   if ( diagnosticMode() ) {
     logDiagnostic( "edm started\n" );
   }
@@ -1593,10 +1815,23 @@ int numLocaleFailures = 0;
     f = fopen( checkPointFileName, "r" );
     if ( f ) {
 
-      stat = getMainCheckPointParams( f, &primaryServerFlag, &oneInstanceFlag,
+      stat = getServerCheckPointParams( f, &primaryServerFlag, &oneInstanceFlag,
        displayName, &sessionNoEdit, &numCheckPointMacros, checkPointMacros );
       if ( !( stat & 1 ) ) { // couldn't read file
-        restart = 0;
+
+        fclose( f );
+        f = fopen( checkPointFileName, "r" );
+        if ( !f ) restart = 0;
+        if ( f ) {
+
+          stat = getMainCheckPointParams( f, &primaryServerFlag, &oneInstanceFlag,
+           displayName, &sessionNoEdit, &numCheckPointMacros, checkPointMacros );
+          if ( !( stat & 1 ) ) { // couldn't read file
+            restart = 0;
+          }
+
+	}
+
       }
 
       if ( primaryServerFlag == 2 ) {
@@ -1934,6 +2169,10 @@ int numLocaleFailures = 0;
 
     }
 
+    fclose( f );
+    f = fopen( checkPointFileName, "r" );
+    if ( !f ) restart = 0;
+
   }
 
   if ( restart ) {
@@ -1948,6 +2187,14 @@ int numLocaleFailures = 0;
       }
 
       if ( stat != 3 ) { // end of data
+
+        //fprintf( stderr, "primaryServerFlag = %-d\n", primaryServerFlag );
+        //fprintf( stderr, "oneInstanceFlag = %-d\n", oneInstanceFlag );
+        //fprintf( stderr, "server = %-d\n", server );
+        //fprintf( stderr, "displayName = [%s]\n", displayName );
+        //fprintf( stderr, "sessionNoEdit = %-d\n", sessionNoEdit );
+        //fprintf( stderr, "numCheckPointMacros = %-d\n", numCheckPointMacros );
+        //fprintf( stderr, "checkPointMacros = [%s]\n", checkPointMacros );
 
         n = 0;
         if ( !blank(displayName) ) n += 2;
@@ -2392,10 +2639,17 @@ parse_error:
       }
       else {
 
-        cur = primary;
-        cur->appArgs->appCtxPtr->postMessage( main_str47 );
-        cur->appArgs->appCtxPtr->exitFlag = 0;
-        primaryServerWantsExit = 0;
+        shutdownTry--;
+
+        if ( shutdownTry <= 0 ) {
+
+          cur = primary;
+          cur->appArgs->appCtxPtr->postMessage( main_str47 );
+          cur->appArgs->appCtxPtr->exitFlag = 0;
+          primaryServerWantsExit = 0;
+          shutdownTry = 1000;
+
+	}
 
       }
 
