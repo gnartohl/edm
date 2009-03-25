@@ -1749,7 +1749,7 @@ int primaryServerWantsExit;
 
 int numLocaleFailures = 0;
 
-int shutdownTry = 100;
+int shutdownTry = 200; // aprox 10 seconds
 
   if ( diagnosticMode() ) {
     logDiagnostic( "edm started\n" );
@@ -2647,7 +2647,7 @@ parse_error:
           cur->appArgs->appCtxPtr->postMessage( main_str47 );
           cur->appArgs->appCtxPtr->exitFlag = 0;
           primaryServerWantsExit = 0;
-          shutdownTry = 1000;
+          shutdownTry = 200;
 
 	}
 
