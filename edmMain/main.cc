@@ -1749,7 +1749,7 @@ int primaryServerWantsExit;
 
 int numLocaleFailures = 0;
 
-int shutdownTry = 1000;
+int shutdownTry = 100;
 
   if ( diagnosticMode() ) {
     logDiagnostic( "edm started\n" );
@@ -2641,7 +2641,7 @@ parse_error:
 
         shutdownTry--;
 
-        if ( shutdownTry <= 0 ) {
+        if ( !shutdown || ( shutdownTry <= 0 ) ) {
 
           cur = primary;
           cur->appArgs->appCtxPtr->postMessage( main_str47 );
@@ -2658,8 +2658,6 @@ parse_error:
     if ( !numAppsRemaining ) exitProg = 1;
 
     pend_event( 0.05 );
-    //stat = thread_wait_for_timer( delayH );
-    //stat = thread_init_timer( delayH, 0.1 );
 
     proc.timeCount++;
     if ( proc.timeCount >= 100 ) { // 10 sec
