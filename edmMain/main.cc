@@ -1624,6 +1624,13 @@ Display *testDisplay;
           }
           strncpy( displayName, argv[n], 127 );
         }
+        else if ( strcmp( argv[n], global_str22 ) == 0 ) {
+          n++;
+          if ( n >= argc ) { // missing user library name
+            *local = 1;
+            return;
+          }
+        }
         else if ( strcmp( argv[n], global_str73 ) == 0 ) {
           n++;
           if ( n >= argc ) { // missing port num
