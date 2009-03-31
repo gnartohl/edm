@@ -3,22 +3,22 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 73
-y 179
-w 496
-h 689
+x 223
+y 104
+w 506
+h 817
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 51400 51400 51400
+bgColor rgb 52171 52171 52171
 textColor rgb 0 0 0
 ctlFgColor1 rgb 0 0 0
-ctlFgColor2 rgb 0 0 49344
-ctlBgColor1 rgb 48059 48059 48059
-ctlBgColor2 rgb 56026 56026 56026
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 26985 26985 26985
+ctlFgColor2 rgb 0 0 65535
+ctlBgColor1 rgb 46517 46517 46517
+ctlBgColor2 rgb 56797 56797 56797
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 endScreenProperties
 
 # (Static Text)
@@ -33,7 +33,7 @@ w 64
 h 27
 font "helvetica-medium-r-24.0"
 fgColor rgb 0 0 0
-bgColor rgb 60652 60652 60652
+bgColor rgb 61423 61423 61423
 value {
   "Meter"
 }
@@ -52,7 +52,7 @@ w 158
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Embellished Needle: Yes"
@@ -72,7 +72,7 @@ w 50
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "3D: Yes"
@@ -92,7 +92,7 @@ w 215
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Total Display Angle: 120 Degrees"
@@ -112,7 +112,7 @@ w 151
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Embellished Needle: No"
@@ -132,7 +132,7 @@ w 43
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "3D: No"
@@ -152,7 +152,7 @@ w 215
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Total Display Angle: 180 Degrees"
@@ -167,12 +167,12 @@ major 4
 minor 1
 release 0
 x 38
-y 450
+y 562
 w 139
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Scale Format Options"
@@ -187,12 +187,12 @@ major 4
 minor 1
 release 0
 x 71
-y 472
-w 331
+y 584
+w 327
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "GFloat - precision gives number of significant digits"
@@ -207,12 +207,12 @@ major 4
 minor 1
 release 0
 x 71
-y 490
-w 323
+y 602
+w 319
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "FFloat - precision gives number of decimal places"
@@ -227,12 +227,12 @@ major 4
 minor 1
 release 0
 x 71
-y 508
-w 359
+y 620
+w 355
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Exponential - precision gives number of decimal places,"
@@ -247,15 +247,16 @@ major 4
 minor 1
 release 0
 x 38
-y 420
-w 320
-h 16
+y 416
+w 377
+h 32
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
-  "Label Type: must be Literal is this version of EDM."
+  "If \"PV Label\" label type is selected, the name of a string PV"
+  "(or somepv.DESC) must be supplied in the Label field"
 }
 autoSize
 endObjectProperties
@@ -267,12 +268,12 @@ major 4
 minor 1
 release 0
 x 38
-y 558
+y 672
 w 374
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "If Min & Max From DB is checked, then scale min and max"
@@ -287,12 +288,12 @@ major 4
 minor 1
 release 0
 x 38
-y 574
+y 688
 w 308
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "are taken from HOPR & LOPR fields in database."
@@ -306,13 +307,13 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 155
-y 525
+x 158
+y 637
 w 258
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "number is displayed in scientific notation"
@@ -340,17 +341,59 @@ major 4
 minor 1
 release 0
 x 39
-y 610
+y 721
 w 358
 h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Readback PV, Scale Precision, Scale Min, Scale Max,"
   "Label Intervals, Majors per Label, and Minors per Major"
   "may include macro symbols"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 38
+y 462
+w 387
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "If \"PV Name\" label type is selected, the contents of the Label"
+  "field is ignored"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 38
+y 510
+w 365
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "If \"Literal\" label type is selected, the contents of the Label"
+  "field is displayed"
 }
 autoSize
 endObjectProperties
