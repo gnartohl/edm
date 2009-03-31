@@ -2103,7 +2103,9 @@ int ctl;
 
   case XYGC_K_TRACE_XY:
 
-    if ( xyo->forceVector || ( xyo->xPvCount[i] > 1 ) ) { // vector
+
+
+    if ( xyo->forceVector[i] || ( xyo->xPvCount[i] > 1 ) ) { // vector
 
       for ( ii=0; ii<xyo->xPvCount[i]; ii++ ) {
 
@@ -5070,7 +5072,7 @@ static int resetModeEnum[2] = {
       forceVector[i] = 1;
     }
     else {
-      forceVector[i] = 1;
+      forceVector[i] = 0;
     }
 
     if ( ( !blankOrComment( xPvExpStr[i].getRaw() ) ) &&

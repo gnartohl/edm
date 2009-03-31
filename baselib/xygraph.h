@@ -140,7 +140,19 @@ static char *dragName[] = {
   xyGraphClass_str27,
   xyGraphClass_str28,
   xyGraphClass_str29,
-  xyGraphClass_str30
+  xyGraphClass_str30,
+  xyGraphClass_str31,
+  xyGraphClass_str32,
+  xyGraphClass_str33,
+  xyGraphClass_str36,
+  xyGraphClass_str35,
+  xyGraphClass_str36,
+  xyGraphClass_str37,
+  xyGraphClass_str38,
+  xyGraphClass_str39,
+  xyGraphClass_str40,
+  xyGraphClass_str41,
+  xyGraphClass_str42,
 };
 
 static void updateTimerAction (
