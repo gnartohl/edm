@@ -7564,6 +7564,9 @@ XmString str;
 	curXMax = log10( curXMax );
       }
 
+      adjCurXMin = curXMin;
+      adjCurXMax = curXMax;
+
       for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
         curY1Min[yi] = y1Min[yi].value();
         curY1Max[yi] = y1Max[yi].value();
