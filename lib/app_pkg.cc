@@ -3868,9 +3868,6 @@ int i, numVisible;
     numVisible = ( numPaths > 30 ? 30 : numPaths );
     pathList.create( numPaths, mainWin, numVisible, this );
 
-    XtAddCallback( msgB, XmNactivateCallback, setPath_cb,
-     (XtPointer) curBlock );
-
     menuStr = XmStringCreateLocalized( appContextClass_str121 );
     pathCascade = XtVaCreateManagedWidget( "pathmenu", xmCascadeButtonWidgetClass,
      menuBar,
