@@ -34,6 +34,7 @@
 #include "remFileOpen.h"
 
 static int gFastRefresh = -1;
+static int gUsePixmap = -1;
 static const int gMaxExecutePasses = 7;
 
 #define ADD_SCROLLED_WIN
@@ -10272,7 +10273,6 @@ activeWindowClass::activeWindowClass ( void ) : unknownTags() {
 
 char *str;
 
-  usePixmap = -1; // -1 means unknown, will be determined on execute
   bgPixmap = (Pixmap) NULL;
   needCopy = 0;
   pixmapX0 = pixmapX1 = pixmapY0 = pixmapY1 = 0;
@@ -16161,26 +16161,26 @@ char *envPtr;
   windowState = AWC_START_EXECUTE;
 
   if ( bgPixmapFlag == AWC_BGPIXMAP_NEVER ) {
-    usePixmap = 0;
+    gUsePixmap = 0;
   }
   else if ( bgPixmapFlag == AWC_BGPIXMAP_ALWAYS ) {
-    usePixmap = 1;
+    gUsePixmap = 1;
   }
   else {
-    usePixmap = -1;
+    gUsePixmap = -1;
   }
 
-  if ( usePixmap == -1 ) {
+  if ( gUsePixmap == -1 ) {
     envPtr = getenv( environment_str23 );
     if ( envPtr ) {
-      usePixmap = 1;
+      gUsePixmap = 1;
     }
     else {
-      usePixmap = 0;
+      gUsePixmap = 0;
     }
   }
 
-  if ( usePixmap ) {
+  if ( gUsePixmap ) {
 
     needFullCopy = 0;
 
