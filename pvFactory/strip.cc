@@ -1059,7 +1059,7 @@ int edmStripClass::drawActive()
     }
     strip_data->unlock();
     XCopyArea(actWin->display(), pixmap,
-              XtWindow(actWin->executeWidget),
+              drawable(actWin->executeWidget),
               actWin->executeGc.normGC(),
               0, 0, w, h, x, y);
     // --------------------------------------------------

@@ -2258,14 +2258,14 @@ pvColorClass tmpColor;
       tmpColor.setColorIndex( 0, actWin->ci );
       actWin->executeGc.saveFg();
       actWin->executeGc.setFG( tmpColor.getDisconnected() );
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
     }
   }
   else if ( needToEraseUnconnected ) {
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
     needToEraseUnconnected = 0;
   }

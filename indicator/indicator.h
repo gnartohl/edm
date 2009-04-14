@@ -331,14 +331,17 @@ int checkResizeSelectBoxAbs (
 
 void drawScale (
   Widget widget,
+  Drawable dr,
   gcClass *gc );
 
 void drawHorzScale (
   Widget widget,
+  Drawable dr,
   gcClass *gc );
 
 void drawVertScale (
   Widget widget,
+  Drawable dr,
   gcClass *gc );
 
 void updateIndicator ( void );

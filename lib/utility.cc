@@ -1403,6 +1403,7 @@ int stringLength, stringWidth, stringX, stringY;
 
 int drawImageText (
   Widget widget,
+  Drawable dr,
   gcClass *gc,
   XFontStruct *fs,
   int _x,
@@ -1433,8 +1434,62 @@ int stringLength, stringWidth, stringX, stringY;
   else if ( _alignment == XmALIGNMENT_END )
     stringX = _x - stringWidth;
 
-  XDrawImageString( XtDisplay(widget), XtWindow(widget),
+  XDrawImageString( XtDisplay(widget), dr,
    gc->normGC(), stringX, stringY, value, stringLength );
+
+  return 1;
+
+}
+
+int drawImageText (
+  Widget widget,
+  gcClass *gc,
+  XFontStruct *fs,
+  int _x,
+  int _y,
+  int _alignment,
+  char *value ) {
+
+  Drawable dr = XtWindow(widget);
+  return drawImageText( widget, dr, gc, fs, _x, _y, _alignment, value );
+
+}
+
+int eraseImageText (
+  Widget widget,
+  Drawable dr,
+  gcClass *gc,
+  XFontStruct *fs,
+  int _x,
+  int _y,
+  int _alignment,
+  char *value ) {
+
+int stringLength, stringWidth, stringX, stringY;
+
+  stringLength = strlen( value );
+
+  if ( fs ) {
+    stringWidth = XTextWidth( fs, value, stringLength );
+    stringY = _y + fs->ascent;
+  }
+  else {
+    stringWidth = 0;
+    stringY = _y;
+  }
+
+  stringX = _x;
+
+  if ( _alignment == XmALIGNMENT_BEGINNING ) {
+    // no change
+  }
+  else if ( _alignment == XmALIGNMENT_CENTER )
+    stringX = _x - stringWidth/2;
+  else if ( _alignment == XmALIGNMENT_END )
+    stringX = _x - stringWidth;
+
+  XDrawImageString( XtDisplay(widget), dr,
+   gc->eraseGC(), stringX, stringY, value, stringLength );
 
   return 1;
 
@@ -1449,33 +1504,27 @@ int eraseImageText (
   int _alignment,
   char *value ) {
 
-int stringLength, stringWidth, stringX, stringY;
+  Drawable dr = XtWindow(widget);
+  return eraseImageText( widget, dr, gc, fs, _x, _y, _alignment, value );
 
-  stringLength = strlen( value );
+}
 
-  if ( fs ) {
-    stringWidth = XTextWidth( fs, value, stringLength );
-    stringY = _y + fs->ascent;
-  }
-  else {
-    stringWidth = 0;
-    stringY = _y;
-  }
+int drawText (
+  Widget widget,
+  Drawable dr,
+  gcClass *gc,
+  XFontStruct *fs,
+  int _x,
+  int _y,
+  int _alignment,
+  char *value ) {
 
-  stringX = _x;
+int stat;
 
-  if ( _alignment == XmALIGNMENT_BEGINNING ) {
-    // no change
-  }
-  else if ( _alignment == XmALIGNMENT_CENTER )
-    stringX = _x - stringWidth/2;
-  else if ( _alignment == XmALIGNMENT_END )
-    stringX = _x - stringWidth;
+  stat = xDrawText( XtDisplay(widget), dr,
+   gc, fs, _x, _y, _alignment, value );
 
-  XDrawImageString( XtDisplay(widget), XtWindow(widget),
-   gc->eraseGC(), stringX, stringY, value, stringLength );
-
-  return 1;
+  return stat;
 
 }
 
@@ -1488,9 +1537,24 @@ int drawText (
   int _alignment,
   char *value ) {
 
+  Drawable dr = XtWindow(widget);
+  return drawText( widget, dr, gc, fs, _x, _y, _alignment, value );
+
+}
+
+int eraseText (
+  Widget widget,
+  Drawable dr,
+  gcClass *gc,
+  XFontStruct *fs,
+  int _x,
+  int _y,
+  int _alignment,
+  char *value ) {
+
 int stat;
 
-  stat = xDrawText( XtDisplay(widget), XtWindow(widget),
+  stat = xEraseText( XtDisplay(widget), dr,
    gc, fs, _x, _y, _alignment, value );
 
   return stat;
@@ -1506,12 +1570,9 @@ int eraseText (
   int _alignment,
   char *value ) {
 
-int stat;
+  Drawable dr = XtWindow(widget);
+  return eraseText( widget, dr, gc, fs, _x, _y, _alignment, value );
 
-  stat = xEraseText( XtDisplay(widget), XtWindow(widget),
-   gc, fs, _x, _y, _alignment, value );
-
-  return stat;
 
 }
 

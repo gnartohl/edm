@@ -51,7 +51,7 @@
 #define XTDC_K_FILE_NAME 2
 
 #define XTDC_MAJOR_VERSION 4
-#define XTDC_MINOR_VERSION 3
+#define XTDC_MINOR_VERSION 4
 #define XTDC_RELEASE 0
 
 #ifdef __x_text_dsp_obj_cc
@@ -537,6 +537,7 @@ typedef struct editBufTag {
   int bufInputFocusUpdatesAllowed;
   int bufIsPassword;
   int bufCharacterMode;
+  int bufNoExecuteClipMask;
 } editBufType, *editBufPtr;
 
 editBufPtr eBuf;
@@ -643,6 +644,8 @@ char pwValue[255+1];
 int pwLength;
 
 int characterMode;
+
+int noExecuteClipMask;
 
 public:
 

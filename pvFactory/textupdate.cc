@@ -1087,7 +1087,7 @@ int edmTextupdateClass::drawActive()
     size_t len = PV_Factory::MAX_PV_NAME;
     get_current_values(text, len);
     redraw_text(actWin->d,
-                XtWindow(actWin->executeWidget),
+                drawable(actWin->executeWidget),
                 actWin->executeGc,
                 actWin->executeGc.normGC(),
                 text, len);
@@ -1101,7 +1101,7 @@ int edmTextupdateClass::eraseActive()
     if ( !enabled || !is_executing )
         return 1;
     remove_text(actWin->d,
-                XtWindow(actWin->executeWidget),
+                drawable(actWin->executeWidget),
                 actWin->executeGc,
                 actWin->executeGc.eraseGC());
     return 1;

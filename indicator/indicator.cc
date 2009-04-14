@@ -996,10 +996,10 @@ int clipStat, effHalfW;
     actWin->executeGc.setLineWidth( 1 );
     actWin->executeGc.setLineStyle( LineSolid );
 
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
 
-    XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XFillRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
 
   }
@@ -1060,11 +1060,11 @@ int clipStat, effHalfW;
 	break;
       }
       if ( effHalfW ) {
-        XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+        XFillPolygon( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), points, 3, Complex, CoordModeOrigin );
       }
       else {
-        XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+        XDrawLines( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), points, 2, CoordModeOrigin );
       }
 
@@ -1118,11 +1118,11 @@ int clipStat, effHalfW;
 	break;
       }
       if ( effHalfW ) {
-        XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+        XFillPolygon( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), points, 3, Complex, CoordModeOrigin );
         }
         else {
-          XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+          XDrawLines( actWin->d, drawable(actWin->executeWidget),
            actWin->executeGc.normGC(), points, 2, CoordModeOrigin );
         }
 
@@ -1138,6 +1138,7 @@ int clipStat, effHalfW;
 
 void activeIndicatorClass::drawHorzScale (
   Widget widget,
+  Drawable dr,
   gcClass *gc )
 {
 
@@ -1153,7 +1154,7 @@ char fmt[31+1];
     sprintf( fmt, "%%.%-df", precision );
   }
 
-  drawXLinearScale ( actWin->d, XtWindow(widget), gc, 1, indicatorAreaX,
+  drawXLinearScale ( actWin->d, dr, gc, 1, indicatorAreaX,
    indicatorY + indicatorH + 3, indicatorAreaW, readMin, readMax, labelTicks,
    majorTicks, minorTicks, fgColor.pixelColor(),
    bgColor.pixelColor(), 0, 0, 0, 0, 0, actWin->fi, fontTag, fs, 1, 0, 0, 0,
@@ -1163,6 +1164,7 @@ char fmt[31+1];
 
 void activeIndicatorClass::drawVertScale (
   Widget widget,
+  Drawable dr,
   gcClass *gc )
 {
 
@@ -1178,7 +1180,7 @@ char fmt[31+1];
     sprintf( fmt, "%%.%-df", precision );
   }
 
-  drawYLinearScale ( actWin->d, XtWindow(widget), gc, 1, indicatorAreaX - 4,
+  drawYLinearScale ( actWin->d, dr, gc, 1, indicatorAreaX - 4,
    indicatorAreaY, indicatorAreaH, readMin, readMax, labelTicks,
    majorTicks, minorTicks, fgColor.pixelColor(),
    bgColor.pixelColor(), 0, 0, 0, 0, 0, actWin->fi, fontTag, fs, 1, 0, 0, 0,
@@ -1188,13 +1190,14 @@ char fmt[31+1];
 
 void activeIndicatorClass::drawScale (
   Widget widget,
+  Drawable dr,
   gcClass *gc )
 {
 
   if ( horizontal )
-    drawHorzScale( widget, gc );
+    drawHorzScale( widget, dr, gc );
   else
-    drawVertScale( widget, gc );
+    drawVertScale( widget, dr, gc );
 
 }
 
@@ -1254,7 +1257,8 @@ int tX, tY;
 
     actWin->drawGc.setFG( fgColor.getColor() );
 
-    if ( showScale ) drawScale( actWin->drawWidget, &actWin->drawGc );
+    if ( showScale ) drawScale( actWin->drawWidget,
+     XtWindow(actWin->drawWidget), &actWin->drawGc );
 
     XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.normGC(), x, y, w, h );
@@ -1313,7 +1317,8 @@ int tX, tY;
 
     actWin->drawGc.setFG( fgColor.getColor() );
 
-    if ( showScale ) drawScale( actWin->drawWidget, &actWin->drawGc );
+    if ( showScale ) drawScale( actWin->drawWidget,
+     XtWindow(actWin->drawWidget), &actWin->drawGc );
 
     XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.normGC(), x, y, w, h );
@@ -1352,7 +1357,7 @@ char str[39+1];
       actWin->executeGc.setFG( bgColor.getDisconnected() );
       actWin->executeGc.setLineWidth( 1 );
       actWin->executeGc.setLineStyle( LineSolid );
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
@@ -1361,7 +1366,7 @@ char str[39+1];
   else if ( needToEraseUnconnected ) {
     actWin->executeGc.setLineWidth( 1 );
     actWin->executeGc.setLineStyle( LineSolid );
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
     needToEraseUnconnected = 0;
   }
@@ -1382,7 +1387,7 @@ char str[39+1];
 
       actWin->executeGc.setFG( bgColor.getColor() );
 
-      XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XFillRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
 
       actWin->executeGc.setFG( indicatorColor.getColor() );
@@ -1434,11 +1439,11 @@ char str[39+1];
 	break;
       }
       if ( effHalfW ) {
-        XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+        XFillPolygon( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), points, 3, Complex, CoordModeOrigin );
       }
       else {
-        XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+        XDrawLines( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), points, 2, CoordModeOrigin );
       }
 
@@ -1494,11 +1499,11 @@ char str[39+1];
 	break;
       }
       if ( effHalfW ) {
-        XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+        XFillPolygon( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), points, 3, Complex, CoordModeOrigin );
       }
       else {
-        XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+        XDrawLines( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), points, 2, CoordModeOrigin );
       }
 
@@ -1517,7 +1522,7 @@ char str[39+1];
 
       actWin->executeGc.setFG( bgColor.getColor() );
 
-      XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XFillRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
 
       actWin->executeGc.setFG( indicatorColor.getColor() );
@@ -1569,11 +1574,11 @@ char str[39+1];
 	break;
       }
       if ( effHalfW ) {
-        XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+        XFillPolygon( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), points, 3, Complex, CoordModeOrigin );
       }
       else {
-        XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+        XDrawLines( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), points, 2, CoordModeOrigin );
       }
 
@@ -1629,11 +1634,11 @@ char str[39+1];
 	break;
       }
       if ( effHalfW ) {
-        XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+        XFillPolygon( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), points, 3, Complex, CoordModeOrigin );
       }
       else {
-        XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+        XDrawLines( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), points, 2, CoordModeOrigin );
       }
 
@@ -1650,7 +1655,8 @@ char str[39+1];
     actWin->executeGc.setFG( fgColor.getColor() );
 
     if ( showScale ) {
-      drawScale( actWin->executeWidget, &actWin->executeGc );
+      drawScale( actWin->executeWidget,
+       drawable(actWin->executeWidget), &actWin->executeGc );
     }
 
     if ( labelType == INDICATORC_K_PV_NAME )
@@ -1666,8 +1672,8 @@ char str[39+1];
           tX = x + 2;
           tY = y + 2;
           if ( border ) tY += 2;
-          drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
-           XmALIGNMENT_BEGINNING, str );
+          drawText( actWin->executeWidget, drawable(actWin->executeWidget),
+           &actWin->executeGc, fs, tX, tY, XmALIGNMENT_BEGINNING, str );
         }
       }
 
@@ -1680,8 +1686,8 @@ char str[39+1];
           tX = indicatorAreaX + indicatorAreaW;
           tY = y + (int) ( .25 * (double) fontHeight );
           if ( border ) tY += 2;
-          drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
-           XmALIGNMENT_END, str );
+          drawText( actWin->executeWidget, drawable(actWin->executeWidget),
+           &actWin->executeGc, fs, tX, tY, XmALIGNMENT_END, str );
         }
       }
 
@@ -1690,7 +1696,7 @@ char str[39+1];
     if ( border ) {
       actWin->executeGc.setLineWidth( 1 );
       actWin->executeGc.setLineStyle( LineSolid );
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
     }
 

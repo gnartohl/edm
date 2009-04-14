@@ -597,10 +597,10 @@ int activeExitButtonClass::eraseActive ( void ) {
 
   if ( !enabled || !activeMode || invisible ) return 1;
 
-  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
    actWin->drawGc.eraseGC(), x, y, w, h );
 
-  XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+  XFillRectangle( actWin->d, drawable(actWin->executeWidget),
    actWin->drawGc.eraseGC(), x, y, w, h );
 
   return 1;
@@ -708,56 +708,56 @@ XRectangle xR = { x, y, w, h };
 
   actWin->executeGc.setFG( actWin->ci->pix(bgColor) );
 
-  XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+  XFillRectangle( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x, y, w, h );
 
-  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x, y, w, h );
 
   if ( _3D ) {
 
   actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x, y, x+w, y );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x, y, x, y+h );
 
    actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
 
-   XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   XDrawLine( actWin->d, drawable(actWin->executeWidget),
     actWin->executeGc.normGC(), x, y+h, x+w, y+h );
 
-   XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+   XDrawLine( actWin->d, drawable(actWin->executeWidget),
     actWin->executeGc.normGC(), x+w, y, x+w, y+h );
 
   actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+1, y+1, x+w-1, y+1 );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+2, y+2, x+w-2, y+2 );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+1, y+1, x+1, y+h-1 );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+2, y+2, x+2, y+h-2 );
 
   actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+1, y+h-1, x+w-1, y+h-1 );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+2, y+h-2, x+w-2, y+h-2 );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+w-1, y+1, x+w-1, y+h-1 );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+w-2, y+2, x+w-2, y+h-2 );
 
   }
@@ -772,8 +772,8 @@ XRectangle xR = { x, y, w, h };
     tX = x + w/2;
     tY = y + h/2 - fontAscent/2;
 
-    drawText( actWin->executeWidget, &actWin->executeGc,
-     fs, tX, tY, XmALIGNMENT_CENTER, label );
+    drawText( actWin->executeWidget, drawable(actWin->executeWidget),
+     &actWin->executeGc, fs, tX, tY, XmALIGNMENT_CENTER, label );
 
     actWin->executeGc.removeNormXClipRectangle();
 

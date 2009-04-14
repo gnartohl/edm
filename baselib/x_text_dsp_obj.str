@@ -62,5 +62,6 @@
 #define activeXTextDspClass_str85 (char *) "Field Length"
 #define activeXTextDspClass_str86 (char *) "Password Input"
 #define activeXTextDspClass_str87 (char *) "Character Mode"
+#define activeXTextDspClass_str88 (char *) "No Execute Clip Mask"
 
 #endif

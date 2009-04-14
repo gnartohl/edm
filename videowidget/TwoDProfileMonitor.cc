@@ -454,7 +454,7 @@ public:
                                    : dataPv->get_dimension () / dataWidth),
                  (double *) dataPv->get_double_array() );
 		if ( img->validImage() ) {
-                  XPutImage( actWin->d, XtWindow(actWin->executeWidget),
+                  XPutImage( actWin->d, drawable(actWin->executeWidget),
                    actWin->executeGc.normGC(), img->ximage(),
 		   0, 0, x, y, w, h );
 		}
@@ -482,7 +482,7 @@ public:
                     temp );
 		   free (temp);
                    if ( img->validImage() ) {
-                     XPutImage( actWin->d, XtWindow(actWin->executeWidget),
+                     XPutImage( actWin->d, drawable(actWin->executeWidget),
                       actWin->executeGc.normGC(), img->ximage(),
                       0, 0, x, y, w, h );
 		   }
@@ -507,7 +507,7 @@ public:
                      temp );
                     free (temp);
                     if ( img->validImage() ) {
-                      XPutImage( actWin->d, XtWindow(actWin->executeWidget),
+                      XPutImage( actWin->d, drawable(actWin->executeWidget),
                        actWin->executeGc.normGC(), img->ximage(),
                        0, 0, x, y, w, h );
 		    }
@@ -1323,7 +1323,7 @@ int TwoDProfileMonitor::drawActive (void)
 {
 
   if ( img->validImage() ) {
-    XPutImage( actWin->d, XtWindow(actWin->executeWidget),
+    XPutImage( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), img->ximage(),
      0, 0, x, y, w, h );
   }

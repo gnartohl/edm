@@ -1906,7 +1906,7 @@ XPoint arrowXPoints[8];
       actWin->executeGc.setFG( lineColor.getDisconnectedIndex(), &blink );
       actWin->executeGc.setLineWidth( 1 );
       actWin->executeGc.setLineStyle( LineSolid );
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
@@ -1916,7 +1916,7 @@ XPoint arrowXPoints[8];
   else if ( needToEraseUnconnected ) {
     actWin->executeGc.setLineWidth( 1 );
     actWin->executeGc.setLineStyle( LineSolid );
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
     needToEraseUnconnected = 0;
   }
@@ -1951,7 +1951,7 @@ XPoint arrowXPoints[8];
       //actWin->executeGc.setFG( fillColor.getColor() );
       actWin->executeGc.setFG( fillColor.getIndex(), &blink );
 
-      XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+      XFillPolygon( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), xpoints, n, Complex,
        CoordModeOrigin );
 
@@ -1962,24 +1962,24 @@ XPoint arrowXPoints[8];
       //actWin->executeGc.setFG( lineColor.getColor() );
       actWin->executeGc.setFG( lineColor.getIndex(), &blink );
 
-      XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawLines( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), xpoints, n, CoordModeOrigin );
 
       if ( ( drawArrows == ARROW_FROM ) || ( drawArrows == ARROW_BOTH ) ) {
         actWin->executeGc.setLineStyle( LineSolid );
-        XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+        XFillPolygon( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), arrowXPoints, 4, Complex,
          CoordModeOrigin );
-        XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+        XDrawLines( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), arrowXPoints, 4, CoordModeOrigin );
         actWin->executeGc.setLineStyle( lineStyle );
       }
       if ( ( drawArrows == ARROW_TO ) || ( drawArrows == ARROW_BOTH ) ) {
         actWin->executeGc.setLineStyle( LineSolid );
-        XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+        XFillPolygon( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), &arrowXPoints[4], 4, Complex,
          CoordModeOrigin );
-        XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+        XDrawLines( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), &arrowXPoints[4], 4, CoordModeOrigin );
         actWin->executeGc.setLineStyle( lineStyle );
       }
@@ -2027,30 +2027,30 @@ XPoint arrowXPoints[8];
 
     if ( fill ) {
 
-      XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+      XFillPolygon( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.eraseGC(), xpoints, n, Complex,
        CoordModeOrigin );
 
     }
 
-    XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawLines( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), xpoints, n, CoordModeOrigin );
 
     if ( ( drawArrows == ARROW_FROM ) || ( drawArrows == ARROW_BOTH ) ) {
       actWin->executeGc.setLineStyle( LineSolid );
-      XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+      XFillPolygon( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.eraseGC(), arrowXPoints, 4, Complex,
        CoordModeOrigin );
-      XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawLines( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.eraseGC(), arrowXPoints, 4, CoordModeOrigin );
       actWin->executeGc.setLineStyle( lineStyle );
     }
     if ( ( drawArrows == ARROW_TO ) || ( drawArrows == ARROW_BOTH ) ) {
       actWin->executeGc.setLineStyle( LineSolid );
-      XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+      XFillPolygon( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.eraseGC(), &arrowXPoints[4], 4, Complex,
        CoordModeOrigin );
-      XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawLines( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.eraseGC(), &arrowXPoints[4], 4, CoordModeOrigin );
       actWin->executeGc.setLineStyle( lineStyle );
     }
@@ -2100,30 +2100,30 @@ XPoint arrowXPoints[8];
 
     if ( fill ) {
 
-      XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+      XFillPolygon( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.eraseGC(), xpoints, n, Complex,
        CoordModeOrigin );
 
     }
 
-    XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawLines( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), xpoints, n, CoordModeOrigin );
 
     if ( ( drawArrows == ARROW_FROM ) || ( drawArrows == ARROW_BOTH ) ) {
       actWin->executeGc.setLineStyle( LineSolid );
-      XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+      XFillPolygon( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.eraseGC(), arrowXPoints, 4, Complex,
        CoordModeOrigin );
-      XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawLines( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.eraseGC(), arrowXPoints, 4, CoordModeOrigin );
       actWin->executeGc.setLineStyle( lineStyle );
     }
     if ( ( drawArrows == ARROW_TO ) || ( drawArrows == ARROW_BOTH ) ) {
       actWin->executeGc.setLineStyle( LineSolid );
-      XFillPolygon( actWin->d, XtWindow(actWin->executeWidget),
+      XFillPolygon( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.eraseGC(), &arrowXPoints[4], 4, Complex,
        CoordModeOrigin );
-      XDrawLines( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawLines( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.eraseGC(), &arrowXPoints[4], 4, CoordModeOrigin );
       actWin->executeGc.setLineStyle( lineStyle );
     }

@@ -1060,7 +1060,7 @@ int blink = 0;
       actWin->executeGc.setFG( lineColor.getDisconnectedIndex(), &blink );
       actWin->executeGc.setLineWidth( 1 );
       actWin->executeGc.setLineStyle( LineSolid );
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
@@ -1070,7 +1070,7 @@ int blink = 0;
   else if ( needToEraseUnconnected ) {
     actWin->executeGc.setLineWidth( 1 );
     actWin->executeGc.setLineStyle( LineSolid );
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
     needToEraseUnconnected = 0;
     if ( invisible ) {
@@ -1088,7 +1088,7 @@ int blink = 0;
   if ( fill && fillVisibility ) {
     actWin->executeGc.setFG( fillColor.getIndex(), &blink );
     //actWin->executeGc.setFG( fillColor.getColor() );
-    XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XFillRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
   }
 
@@ -1099,7 +1099,7 @@ int blink = 0;
     actWin->executeGc.setLineWidth( lineWidth );
     actWin->executeGc.setLineStyle( lineStyle );
 
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
 
   }
@@ -1119,14 +1119,14 @@ int activeRectangleClass::eraseUnconditional ( void ) {
   if ( !enabled ) return 1;
 
   if ( fill ) {
-    XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XFillRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
   }
 
   actWin->executeGc.setLineWidth( lineWidth );
   actWin->executeGc.setLineStyle( lineStyle );
 
-  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.eraseGC(), x, y, w, h );
 
   actWin->executeGc.setLineWidth( 1 );
@@ -1148,14 +1148,14 @@ int activeRectangleClass::eraseActive ( void ) {
   prevVisibility = visibility;
 
   if ( fill ) {
-    XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XFillRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
   }
 
   actWin->executeGc.setLineWidth( lineWidth );
   actWin->executeGc.setLineStyle( lineStyle );
 
-  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.eraseGC(), x, y, w, h );
 
   actWin->executeGc.setLineWidth( 1 );

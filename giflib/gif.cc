@@ -1137,10 +1137,10 @@ int activeGifClass::eraseActive ( void ) {
 
   if ( !enabled || noFile || !activeMode ) return 1;
 
-  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.eraseGC(), x, y, w, h );
 
-  XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+  XFillRectangle( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.eraseGC(), x, y, w, h );
 
   return 1;
@@ -1220,12 +1220,11 @@ Pixmap pixmap;
   stat = drawActive( x, y, x+w, y+h );
   return stat;
 
-//  if ( noFile || !image || !activeMode ) return 1;
   if ( !enabled || noFile || !activeMode ) return 1;
 
   if ( !actWin->appCtx->renderImages() ) {
     actWin->executeGc.setFG( actWin->defaultTextFgColor );
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
     return 1;
   }
@@ -1237,22 +1236,19 @@ Pixmap pixmap;
   pixmap = XCreatePixmap( actWin->display(),
    XtWindow(actWin->executeWidget), w, h, depth );
 
-//    XPutImage( actWin->display(), XtWindow(actWin->executeWidget),
-//     actWin->executeGc.normGC(), image, 0, 0, x, y, w, h );
-
   XPutImage( actWin->display(), pixmap,
    actWin->executeGc.normGC(), image, 0, 0, 0, 0, w, h );
 
   if ( needErase ) {
     needErase = 0;
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), bufX, bufY, bufW, bufH );
-    XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XFillRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), bufX, bufY, bufW, bufH );
   }
 
   XCopyArea( actWin->display(), pixmap,
-   XtWindow(actWin->executeWidget), actWin->executeGc.normGC(),
+   drawable(actWin->executeWidget), actWin->executeGc.normGC(),
    0, 0, w, h, x, y );
 
   XFreePixmap( actWin->display(), pixmap );
@@ -1275,7 +1271,7 @@ int curW, curH;
 
   if ( !actWin->appCtx->renderImages() ) {
     actWin->executeGc.setFG( actWin->defaultTextFgColor );
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
     return 1;
   }
@@ -1301,7 +1297,7 @@ int curW, curH;
   curW = x1 - x0;
   curH = y1 - y0;
 
-  XPutImage( actWin->display(), XtWindow(actWin->executeWidget),
+  XPutImage( actWin->display(), drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), image, x0-x, y0-y, x0, y0, curW, curH );
 
   return 1;
@@ -1326,7 +1322,7 @@ Pixmap pixmap;
 
   if ( !actWin->appCtx->renderImages() ) {
     actWin->executeGc.setFG( actWin->defaultTextFgColor );
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
     return 1;
   }
@@ -1359,18 +1355,11 @@ Pixmap pixmap;
   curW = x1 - x0;
   curH = y1 - y0;
 
-//    XPutImage( actWin->display(), pixmap,
-//     actWin->executeGc.normGC(), image, x0-x, y0-y, x0, y0, curW, curH );
-
-//    XCopyArea( actWin->display(), pixmap,
-//     XtWindow(actWin->executeWidget), actWin->executeGc.normGC(),
-//     x0, y0, curW, curH, x0, y0 );
-
   XPutImage( actWin->display(), pixmap,
    actWin->executeGc.normGC(), image, 0, 0, 0, 0, w, h );
 
   XCopyArea( actWin->display(), pixmap,
-   XtWindow(actWin->executeWidget), actWin->executeGc.normGC(),
+   drawable(actWin->executeWidget), actWin->executeGc.normGC(),
    0, 0, w, h, x, y );
 
   XFreePixmap( actWin->display(), pixmap );

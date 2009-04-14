@@ -1879,10 +1879,10 @@ int relatedDisplayClass::eraseActive ( void ) {
 
   if ( !enabled || !activeMode || !init || invisible ) return 1;
 
-  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.eraseGC(), x, y, w, h );
 
-  XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+  XFillRectangle( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.eraseGC(), x, y, w, h );
 
   return 1;
@@ -2071,7 +2071,7 @@ int blink = 0;
       actWin->executeGc.setFG( fgColor.getDisconnectedIndex(), &blink );
       actWin->executeGc.setLineWidth( 1 );
       actWin->executeGc.setLineStyle( LineSolid );
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
@@ -2081,7 +2081,7 @@ int blink = 0;
   else if ( needToEraseUnconnected ) {
     actWin->executeGc.setLineWidth( 1 );
     actWin->executeGc.setLineStyle( LineSolid );
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
     needToEraseUnconnected = 0;
     if ( invisible ) {
@@ -2096,10 +2096,10 @@ int blink = 0;
 
   actWin->executeGc.setFG( bgColor.getIndex(), &blink );
 
-  XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+  XFillRectangle( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x, y, w, h );
 
-  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x, y, w, h );
 
   if ( buttonLabel.getExpanded() )
@@ -2109,50 +2109,50 @@ int blink = 0;
 
   actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x, y, x+w, y );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x, y, x, y+h );
 
   actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x, y+h, x+w, y+h );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+w, y, x+w, y+h );
 
   // top
   actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+1, y+1, x+w-1, y+1 );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+2, y+2, x+w-2, y+2 );
 
   // left
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+1, y+1, x+1, y+h-1 );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+2, y+2, x+2, y+h-2 );
 
   // bottom
   actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+1, y+h-1, x+w-1, y+h-1 );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+2, y+h-2, x+w-2, y+h-2 );
 
   // right
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+w-1, y+1, x+w-1, y+h-1 );
 
-  XDrawLine( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawLine( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x+w-2, y+2, x+w-2, y+h-2 );
 
   if ( fs ) {
@@ -2171,8 +2171,8 @@ int blink = 0;
         actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
         actWin->executeGc.setFontTag( fontTag, actWin->fi );
 
-        drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
-         XmALIGNMENT_CENTER, string );
+        drawText( actWin->executeWidget, drawable(actWin->executeWidget),
+         &actWin->executeGc, fs, tX, tY, XmALIGNMENT_CENTER, string );
 
       }
       else {
@@ -2193,24 +2193,24 @@ int blink = 0;
 
         actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
 
-        XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+        XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), cx+ofs, cy+ofs, size, size );
 
         actWin->executeGc.setFG( bgColor.pixelIndex(), &blink );
 
-        XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+        XFillRectangle( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), cx, cy, size, size );
 
         actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
 
-        XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+        XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), cx, cy, size, size );
 
         actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
         actWin->executeGc.setFontTag( fontTag, actWin->fi );
 
-        drawText( actWin->executeWidget, &actWin->executeGc, fs, tX, tY,
-         XmALIGNMENT_BEGINNING, string );
+        drawText( actWin->executeWidget, drawable(actWin->executeWidget),
+         &actWin->executeGc, fs, tX, tY, XmALIGNMENT_BEGINNING, string );
 
       }
 
@@ -2230,17 +2230,17 @@ int blink = 0;
 
         actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
 
-        XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+        XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), cx+ofs-size, cy+ofs-size, size, size );
 
         actWin->executeGc.setFG( bgColor.pixelIndex(), &blink );
 
-        XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+        XFillRectangle( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), cx-ofs, cy-ofs, size, size );
 
         actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
 
-        XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+        XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), cx-ofs, cy-ofs, size, size );
 
       }

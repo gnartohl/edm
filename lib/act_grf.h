@@ -189,6 +189,8 @@ void clone ( const activeGraphicClass *source );
 
 virtual ~activeGraphicClass ( void );
 
+Drawable drawable ( Widget w );
+
 int baseMajorVersion ( void );
 
 int baseMinorVersion ( void );

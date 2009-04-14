@@ -2579,7 +2579,7 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
   curLen = -1;
   buf = NULL;
 
-  useHttp = getenv( "EDMHTTPDOCROOT" );
+  useHttp = getenv( environment_str9 ); // EDMHTTPDOCROOT
 
   // EDMFILES
   envPtr = getenv( environment_str2 );
@@ -4320,6 +4320,45 @@ static void displayParamInfo ( void ) {
   fprintf( stderr, global_str54 );
   fprintf( stderr, "\n" );
 
+  fprintf( stderr, global_str108 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str109 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str110 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str111 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str112 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str113 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str114 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str115 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str116 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str117 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str118 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str120 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str121 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str122 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str123 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str124 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str125 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str126 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str127 );
+  fprintf( stderr, "\n" );
+
 }
 
 #define DONE -1
@@ -5353,7 +5392,6 @@ activeWindowListPtr cur;
 
 }
 
-
 void appContextClass::applicationLoop ( void ) {
 
 static int msgCount = 0;
@@ -5580,6 +5618,8 @@ char msg[127+1];
         }
       }
 
+      cur->node.doCopy();
+
       cur = cur->flink;
 
     }
@@ -5611,12 +5651,14 @@ char msg[127+1];
   cur = head->flink;
   while ( cur != head ) {
 
+    int stuffToDo;
+
     n++;
 
     // invoke the executeDeferred function for all activeGraphicClass
     // objects (display elements) for a given activeWindowClass object
     // (display screen)
-    cur->node.processObjects();
+    stuffToDo = cur->node.processObjects();
 
     if ( !ignoreIconic() ) {
 
@@ -5651,6 +5693,13 @@ char msg[127+1];
   //pend_event( 0.00001 );
 
   processAllEvents( app, display );
+
+  cur = head->flink;
+  while ( cur != head ) {
+    cur->node.doMinCopy();
+    cur->node.doCopy();
+    cur = cur->flink;
+  }
 
   raiseMessageWindow();
 
@@ -6139,6 +6188,16 @@ char *envPtr, text[255+1];
   snprintf( text, 255, "Environment:" );
   postMessage( text );
 
+  envPtr = getenv( environment_str1 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str1, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str1 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
   envPtr = getenv( environment_str2 );
   if ( envPtr ) {
     snprintf( text, 255, "  %s=[%s]", environment_str2, envPtr );
@@ -6175,6 +6234,16 @@ char *envPtr, text[255+1];
   }
   else {
     snprintf( text, 255, "  %s=[]", environment_str5 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str6 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str6, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str6 );
   }
   text[255] = 0;
   postMessage( text );
@@ -6309,22 +6378,72 @@ char *envPtr, text[255+1];
   text[255] = 0;
   postMessage( text );
 
-  envPtr = getenv( "EDMCOMMENTS" );
+  envPtr = getenv( environment_str20 );
   if ( envPtr ) {
-    snprintf( text, 255, "  %s=[%s]", "EDMCOMMENTS", envPtr );
+    snprintf( text, 255, "  %s=[%s]", environment_str20, envPtr );
   }
   else {
-    snprintf( text, 255, "  %s=[]", "EDMCOMMENTS" );
+    snprintf( text, 255, "  %s=[]", environment_str20 );
   }
   text[255] = 0;
   postMessage( text );
 
-  envPtr = getenv( "EDMHTTPDOCROOT" );
+  envPtr = getenv( environment_str21 );
   if ( envPtr ) {
-    snprintf( text, 255, "  %s=[%s]", "EDMHTTPDOCROOT", envPtr );
+    snprintf( text, 255, "  %s=[%s]", environment_str21, envPtr );
   }
   else {
-    snprintf( text, 255, "  %s=[]", "EDMHTTPDOCROOT" );
+    snprintf( text, 255, "  %s=[]", environment_str21 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str22 ); //EDMCOMMENTS
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str22, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str22 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str23 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str23, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str23 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str24 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str24, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str24 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str25 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str25, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str25 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str26 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str26, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str26 );
   }
   text[255] = 0;
   postMessage( text );
@@ -6338,37 +6457,6 @@ char *envPtr, text[255+1];
   }
   text[255] = 0;
   postMessage( text );
-
-  envPtr = getenv( "EDMCOLORMODE" );
-  if ( envPtr ) {
-    snprintf( text, 255, "  %s=[%s]", "EDMCOLORMODE", envPtr );
-  }
-  else {
-    snprintf( text, 255, "  %s=[]", "EDMCOLORMODE" );
-  }
-  text[255] = 0;
-  postMessage( text );
-
-  envPtr = getenv( "EDMPRINTER" );
-  if ( envPtr ) {
-    snprintf( text, 255, "  %s=[%s]", "EDMPRINTER", envPtr );
-  }
-  else {
-    snprintf( text, 255, "  %s=[]", "EDMPRINTER" );
-  }
-  text[255] = 0;
-  postMessage( text );
-
-  envPtr = getenv( "EDMSERVERS" );
-  if ( envPtr ) {
-    snprintf( text, 255, "  %s=[%s]", "EDMSERVERS", envPtr );
-  }
-  else {
-    snprintf( text, 255, "  %s=[]", "EDMSERVERS" );
-  }
-  text[255] = 0;
-  postMessage( text );
-
 
   // site specific vars
 
@@ -6395,52 +6483,52 @@ char *envPtr, text[255+1];
   snprintf( text, 255, "  (Diagnostic)" );
   postMessage( text );
 
-  envPtr = getenv( "EDMSUPERVISORMODE" );
+  envPtr = getenv( environment_str27 );
   if ( envPtr ) {
-    snprintf( text, 255, "  %s=[%s]", "EDMSUPERVISORMODE", envPtr );
+    snprintf( text, 255, "  %s=[%s]", environment_str27, envPtr );
   }
   else {
-    snprintf( text, 255, "  %s=[]", "EDMSUPERVISORMODE" );
+    snprintf( text, 255, "  %s=[]", environment_str27 );
   }
   text[255] = 0;
   postMessage( text );
 
-  envPtr = getenv( "EDMGENDOC" );
+  envPtr = getenv( environment_str28 );
   if ( envPtr ) {
-    snprintf( text, 255, "  %s=[%s]", "EDMGENDOC", envPtr );
+    snprintf( text, 255, "  %s=[%s]", environment_str28, envPtr );
   }
   else {
-    snprintf( text, 255, "  %s=[]", "EDMGENDOC" );
+    snprintf( text, 255, "  %s=[]", environment_str28 );
   }
   text[255] = 0;
   postMessage( text );
 
-  envPtr = getenv( "EDMDEBUGMODE" );
+  envPtr = getenv( environment_str29 );
   if ( envPtr ) {
-    snprintf( text, 255, "  %s=[%s]", "EDMDEBUGMODE", envPtr );
+    snprintf( text, 255, "  %s=[%s]", environment_str29, envPtr );
   }
   else {
-    snprintf( text, 255, "  %s=[]", "EDMDEBUGMODE" );
+    snprintf( text, 255, "  %s=[]", environment_str29 );
   }
   text[255] = 0;
   postMessage( text );
 
-  envPtr = getenv( "EDMDIAGNOSTICMODE" );
+  envPtr = getenv( environment_str30 );
   if ( envPtr ) {
-    snprintf( text, 255, "  %s=[%s]", "EDMDIAGNOSTICMODE", envPtr );
+    snprintf( text, 255, "  %s=[%s]", environment_str30, envPtr );
   }
   else {
-    snprintf( text, 255, "  %s=[]", "EDMDIAGNOSTICMODE" );
+    snprintf( text, 255, "  %s=[]", environment_str30 );
   }
   text[255] = 0;
   postMessage( text );
 
-  envPtr = getenv( "EDMXSYNC" );
+  envPtr = getenv( environment_str31 );
   if ( envPtr ) {
-    snprintf( text, 255, "  %s=[%s]", "EDMXSYNC", envPtr );
+    snprintf( text, 255, "  %s=[%s]", environment_str31, envPtr );
   }
   else {
-    snprintf( text, 255, "  %s=[]", "EDMXSYNC" );
+    snprintf( text, 255, "  %s=[]", environment_str31 );
   }
   text[255] = 0;
   postMessage( text );

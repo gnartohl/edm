@@ -804,29 +804,30 @@ char fullName[127+1];
 
   if ( horizontal ) {
 
-    drawXLinearScale( actWin->executeWidget, &actWin->executeGc, 0 );
-    drawXLinearAnnotation( actWin->executeWidget, &actWin->executeGc, 0 );
+    drawXLinearScale( actWin->executeWidget, drawable(actWin->executeWidget),
+     &actWin->executeGc, 0 );
+    drawXLinearAnnotation( actWin->executeWidget, drawable(actWin->executeWidget),
+     &actWin->executeGc, 0 );
 
     if ( strcmp( fontTag, "" ) != 0 ) {
       actWin->executeGc.setFontTag( fontTag, actWin->fi );
     }
-    drawText( actWin->executeWidget, &actWin->executeGc, fs,
+    drawText( actWin->executeWidget, drawable(actWin->executeWidget),
+     &actWin->executeGc, fs,
      x+w/2, (int) (y+h-1.1*fontHeight), XmALIGNMENT_CENTER, label );
 
   }
   else {
 
     if ( ( mode == modeLinear ) || ( mode == modeHours ) ) {
-      ::drawYLinearScale( actWin->d, XtWindow(actWin->executeWidget),
+      ::drawYLinearScale( actWin->d, drawable(actWin->executeWidget),
        &actWin->executeGc, 1, x+w, y+scaleOfs+scaleLen, scaleLen, adj_min,
        adj_max, numLabTicks, numMajTicks, numMinTicks,
        lineColor.getColor(), actWin->executeGc.getBaseBG(),
        0, 0, 0, 0, 0, actWin->fi, fontTag, fs, 1, 0, 0, 0 );
-      //drawYLinearScale( actWin->executeWidget, &actWin->executeGc, 0 );
-      //drawYLinearAnnotation( actWin->executeWidget, &actWin->executeGc, 0 );
     }
     else if ( mode == modeLog ) {
-      ::drawYLog10Scale( actWin->d, XtWindow(actWin->executeWidget),
+      ::drawYLog10Scale( actWin->d, drawable(actWin->executeWidget),
        &actWin->executeGc, 1, x+w, y+scaleOfs+scaleLen, scaleLen, adj_min,
        adj_max, numLabTicks, numMajTicks, numMinTicks,
        lineColor.getColor(), actWin->executeGc.getBaseBG(),
@@ -851,7 +852,7 @@ char fullName[127+1];
     for ( i=0; i<strlen(label); i++ ) {
 
       XDrawString( XtDisplay(actWin->executeWidget),
-       XtWindow(actWin->executeWidget), actWin->executeGc.normGC(),
+       drawable(actWin->executeWidget), actWin->executeGc.normGC(),
        (int) stringX, stringY, &label[i], 1 );
 
       inc = 2 + XTextWidth( fs, &label[i], 1 );
@@ -884,29 +885,30 @@ char fullName[127+1];
 
   if ( horizontal ) {
 
-    drawXLinearScale( actWin->executeWidget, &actWin->executeGc, 1 );
-    drawXLinearAnnotation( actWin->executeWidget, &actWin->executeGc, 1 );
+    drawXLinearScale( actWin->executeWidget, drawable(actWin->executeWidget),
+     &actWin->executeGc, 1 );
+    drawXLinearAnnotation( actWin->executeWidget, drawable(actWin->executeWidget),
+     &actWin->executeGc, 1 );
 
     if ( strcmp( fontTag, "" ) != 0 ) {
       actWin->executeGc.setFontTag( fontTag, actWin->fi );
     }
-    eraseText( actWin->executeWidget, &actWin->executeGc, fs,
+    eraseText( actWin->executeWidget, drawable(actWin->executeWidget),
+     &actWin->executeGc, fs,
      x+w/2, (int) (y+h-1.1*fontHeight), XmALIGNMENT_CENTER, label );
 
   }
   else {
 
    if ( ( mode == modeLinear ) || ( mode == modeHours ) ) {
-      ::drawYLinearScale( actWin->d, XtWindow(actWin->executeWidget),
+      ::drawYLinearScale( actWin->d, drawable(actWin->executeWidget),
        &actWin->executeGc, 1, x+w, y+scaleOfs+scaleLen, scaleLen, adj_min,
        adj_max, numLabTicks, numMajTicks, numMinTicks,
        lineColor.getColor(), actWin->executeGc.getBaseBG(),
        0, 0, 0, 0, 0, actWin->fi, fontTag, fs, 1, 0, 0, 1 );
-      //drawYLinearScale( actWin->executeWidget, &actWin->executeGc, 1 );
-      //drawYLinearAnnotation( actWin->executeWidget, &actWin->executeGc, 1 );
     }
     else if ( mode == modeLog ) {
-      ::drawYLog10Scale( actWin->d, XtWindow(actWin->executeWidget),
+      ::drawYLog10Scale( actWin->d, drawable(actWin->executeWidget),
        &actWin->executeGc, 1, x+w, y+scaleOfs+scaleLen, scaleLen, adj_min,
        adj_max, numLabTicks, numMajTicks, numMinTicks,
        lineColor.getColor(), actWin->executeGc.getBaseBG(),
@@ -924,7 +926,7 @@ char fullName[127+1];
     for ( i=0; i<strlen(label); i++ ) {
 
       XDrawString( XtDisplay(actWin->executeWidget),
-       XtWindow(actWin->executeWidget), actWin->executeGc.eraseGC(),
+       drawable(actWin->executeWidget), actWin->executeGc.eraseGC(),
        (int) stringX, stringY, &label[i], 1 );
 
       inc = 2 + XTextWidth( fs, &label[i], 1 );
@@ -1294,8 +1296,8 @@ char fullName[127+1];
 
     scaleLen = w;
     scaleOfs = 0;
-    drawXLinearScale( actWin->drawWidget, &actWin->drawGc, 0 );
-    drawText( actWin->drawWidget, &actWin->drawGc, fs,
+    drawXLinearScale( actWin->drawWidget, XtWindow(actWin->drawWidget), &actWin->drawGc, 0 );
+    drawText( actWin->drawWidget, XtWindow(actWin->drawWidget), &actWin->drawGc, fs,
      x+w/2, (int) (y+h-1.1*fontHeight), XmALIGNMENT_CENTER, label );
 
   }
@@ -1310,8 +1312,6 @@ char fullName[127+1];
        adj_max, numLabTicks, numMajTicks, numMinTicks,
        lineColor.getColor(), actWin->drawGc.getBaseBG(),
        0, 0, 0, 0, 0, actWin->fi, fontTag, fs, 1, 0, 0, 0 );
-      //drawYLinearScale( actWin->drawWidget, &actWin->drawGc, 0 );
-      //drawYLinearAnnotation( actWin->drawWidget, &actWin->drawGc, 0 );
     }
     else if ( mode == modeLog ) {
       ::drawYLog10Scale( actWin->d, XtWindow(actWin->drawWidget),
@@ -1797,205 +1797,9 @@ void scaleClass::changePvNames (
 
 }
 
-int scaleClass::drawYLinearScale (
-  Widget wdgt,
-  gcClass *gc,
-  int erase
-) {
-
-int x0, y0, x1, y1;
-int label_tick_length, major_tick_length, minor_tick_length;
-double dy, inc, fact, ofs;
-
-  fact = scaleLen / ( adj_max - adj_min );
-  ofs = fact * adj_min * -1.0;
-
-  /* draw axis */
-  x0 = x + w;
-  y0 = y + scaleOfs;
-  x1 = x0;
-  y1 = y0 + scaleLen;
-
-  if ( erase )
-    XDrawLine( actWin->d, XtWindow(wdgt), gc->eraseGC(), x0, y0, x1, y1 );
-  else
-    XDrawLine( actWin->d, XtWindow(wdgt), gc->normGC(), x0, y0, x1, y1 );
-
-  label_tick_length = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
-  major_tick_length = (int) ( 0.7 * ( double) label_tick_length );
-  minor_tick_length = (int) ( 0.5 * ( double) major_tick_length );
-
-  /* draw label ticks */
-
-  if ( label_tick > 0.0 ) {
-
-    x0 = x + w;
-    x1 = x0 - label_tick_length;
-    y0 = y + scaleOfs + scaleLen;
-    y1 = y0;
-
-    dy = adj_min;
-    inc = label_tick;
-
-    while ( dy < ( adj_max + inc * 0.5 ) ) {
-
-      if ( erase )
-        XDrawLine( actWin->d, XtWindow(wdgt), gc->eraseGC(), x0, y0, x1, y1 );
-      else
-        XDrawLine( actWin->d, XtWindow(wdgt), gc->normGC(), x0, y0, x1, y1 );
-
-      dy += inc;
-      y0 = y1 = y + scaleOfs + scaleLen - (int) ( dy * fact + ofs + 0.5 );
-
-    }
-
-    dy = adj_max;
-    y0 = y1 = y + scaleOfs + scaleLen - (int) ( dy * fact + ofs + 0.5 );
-    if ( erase )
-      XDrawLine( actWin->d, XtWindow(wdgt), gc->eraseGC(), x0, y0, x1, y1 );
-    else
-      XDrawLine( actWin->d, XtWindow(wdgt), gc->normGC(), x0, y0, x1, y1 );
-
-  }
-
-  /* draw major ticks */
-
-  if ( major_tick > 0.0 ) {
-
-    x0 = x + w;
-    x1 = x0 - major_tick_length;
-    y0 = y + scaleOfs + scaleLen;
-    y1 = y0;
-
-    dy = adj_min;
-    inc = major_tick;
-
-    while ( dy < ( adj_max + inc * 0.5 ) ) {
-
-      if ( erase )
-        XDrawLine( actWin->d, XtWindow(wdgt), gc->eraseGC(), x0, y0, x1, y1 );
-      else
-        XDrawLine( actWin->d, XtWindow(wdgt), gc->normGC(), x0, y0, x1, y1 );
-
-      dy += inc;
-      y0 = y1 = y + scaleOfs + scaleLen - (int) ( dy * fact + ofs + 0.5 );
-
-    }
-
-    dy = adj_max;
-    y0 = y1 = y + scaleOfs + scaleLen - (int) ( dy * fact + ofs + 0.5 );
-    if ( erase )
-      XDrawLine( actWin->d, XtWindow(wdgt), gc->eraseGC(), x0, y0, x1, y1 );
-    else
-      XDrawLine( actWin->d, XtWindow(wdgt), gc->normGC(), x0, y0, x1, y1 );
-
-  }
-
-  /* draw minor ticks */
-  if ( minor_tick > 0.0 ) {
-
-    x0 = x + w;
-    x1 = x0 - minor_tick_length;
-    y0 = y + scaleOfs + scaleLen;
-    y1 = y0;
-
-    dy = adj_min;
-    inc = minor_tick;
-
-    while ( dy < ( adj_max + inc * 0.5 ) ) {
-
-      if ( erase )
-        XDrawLine( actWin->d, XtWindow(wdgt), gc->eraseGC(), x0, y0, x1, y1 );
-      else
-        XDrawLine( actWin->d, XtWindow(wdgt), gc->normGC(), x0, y0, x1, y1 );
-
-      dy += inc;
-      y0 = y1 = y + scaleOfs + scaleLen - (int) ( dy * fact + ofs + 0.5 );
-
-    }
-
-    dy = adj_max;
-    y0 = y1 = y + scaleOfs + scaleLen - (int) ( dy * fact + ofs + 0.5 );
-    if ( erase )
-      XDrawLine( actWin->d, XtWindow(wdgt), gc->eraseGC(), x0, y0, x1, y1 );
-    else
-      XDrawLine( actWin->d, XtWindow(wdgt), gc->normGC(), x0, y0, x1, y1 );
-
-  }
-
-  return 1;
-
-}
-
-int scaleClass::drawYLinearAnnotation (
-  Widget wdgt,
-  gcClass *gc,
-  int erase
-) {
-
-int x0, y0, x1, y1, stat, yPosOfs;
-int label_tick_height;
-double dy, inc, fact, ofs, z;
-char value[31+1];
-
-  fact = scaleLen / ( adj_max - adj_min );
-  ofs = fact * adj_min * -1.0;
-
-  /* draw annotation */
-
-  if ( label_tick > 0.0 ) {
-
-    yPosOfs = (int) ( 0.5 * (double) fontHeight );
-    label_tick_height = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
-    x0 = x + w - (int) ( 1.2 * label_tick_height );
-    x1 = x0;
-    y0 = y + scaleOfs + scaleLen - yPosOfs;
-    y1 = y0;
-
-    dy = adj_min;
-    inc = label_tick;
-
-    while ( dy < ( adj_max + inc * 0.5 ) ) {
-
-      z = fabs( dy - 0.0 ) / inc;
-      if ( z < 1e-5 ) dy = 0.0;
-
-      formatString( dy, value, 31 );
-
-      if ( erase )
-        stat = eraseText( wdgt, gc, fs, x0, y1, XmALIGNMENT_END,
-         value );
-      else
-        stat = drawText( wdgt, gc, fs, x0, y1, XmALIGNMENT_END,
-         value );
-
-      dy += inc;
-      y0 = y1 = y - yPosOfs + scaleOfs + scaleLen -
-       (int) ( dy * fact + ofs + 0.5 );
-
-    }
-
-    dy = adj_max;
-    y0 = y1 = y - yPosOfs + scaleOfs + scaleLen -
-     (int) ( dy * fact + ofs + 0.5 );
-
-    z = fabs( dy - 0.0 ) / inc;
-    if ( z < 1e-5 ) dy = 0.0;
-
-    formatString( dy, value, 31 );
-    if ( erase )
-      stat = eraseText( wdgt, gc, fs, x0, y1, XmALIGNMENT_END, value );
-    else
-      stat = drawText( wdgt, gc, fs, x0, y1, XmALIGNMENT_END, value );
-
-  }
-
-  return 1;
-
-}
-
 int scaleClass::drawXLinearScale (
   Widget wdgt,
+  Drawable dr,
   gcClass *gc,
   int erase
 ) {
@@ -2013,9 +1817,9 @@ double dx, inc, fact, ofs;
   x1 = x0 + scaleLen;
   y1 = y0;
   if ( erase )
-    XDrawLine( actWin->d, XtWindow(wdgt), gc->eraseGC(), x0, y0, x1, y1 );
+    XDrawLine( actWin->d, dr, gc->eraseGC(), x0, y0, x1, y1 );
   else
-    XDrawLine( actWin->d, XtWindow(wdgt), gc->normGC(), x0, y0, x1, y1 );
+    XDrawLine( actWin->d, dr, gc->normGC(), x0, y0, x1, y1 );
 
   label_tick_height = (int) ( 0.8 * (double) abs( fontHeight - 2 ) );
   major_tick_height = (int) ( 0.7 * ( double) label_tick_height );
@@ -2036,9 +1840,9 @@ double dx, inc, fact, ofs;
     while ( dx < ( adj_max + inc * 0.5 ) ) {
 
       if ( erase )
-        XDrawLine( actWin->d, XtWindow(wdgt), gc->eraseGC(), x0, y0, x1, y1 );
+        XDrawLine( actWin->d, dr, gc->eraseGC(), x0, y0, x1, y1 );
       else
-        XDrawLine( actWin->d, XtWindow(wdgt), gc->normGC(), x0, y0, x1, y1 );
+        XDrawLine( actWin->d, dr, gc->normGC(), x0, y0, x1, y1 );
 
       dx += inc;
       x0 = x1 = (int) ( dx * fact + ofs + 0.5 ) + x + scaleOfs;
@@ -2048,9 +1852,9 @@ double dx, inc, fact, ofs;
     dx = adj_max;
     x0 = x1 = (int) ( dx * fact + ofs + 0.5 ) + x + scaleOfs;
     if ( erase )
-      XDrawLine( actWin->d, XtWindow(wdgt), gc->eraseGC(), x0, y0, x1, y1 );
+      XDrawLine( actWin->d, dr, gc->eraseGC(), x0, y0, x1, y1 );
     else
-      XDrawLine( actWin->d, XtWindow(wdgt), gc->normGC(), x0, y0, x1, y1 );
+      XDrawLine( actWin->d, dr, gc->normGC(), x0, y0, x1, y1 );
 
   }
 
@@ -2069,9 +1873,9 @@ double dx, inc, fact, ofs;
     while ( dx < ( adj_max + inc * 0.5 ) ) {
 
       if ( erase )
-        XDrawLine( actWin->d, XtWindow(wdgt), gc->eraseGC(), x0, y0, x1, y1 );
+        XDrawLine( actWin->d, dr, gc->eraseGC(), x0, y0, x1, y1 );
       else
-        XDrawLine( actWin->d, XtWindow(wdgt), gc->normGC(), x0, y0, x1, y1 );
+        XDrawLine( actWin->d, dr, gc->normGC(), x0, y0, x1, y1 );
 
       dx += inc;
       x0 = x1 = (int) ( dx * fact + ofs + 0.5 ) + x + scaleOfs;
@@ -2081,9 +1885,9 @@ double dx, inc, fact, ofs;
     dx = adj_max;
     x0 = x1 = (int) ( dx * fact + ofs + 0.5 ) + x + scaleOfs;
     if ( erase )
-      XDrawLine( actWin->d, XtWindow(wdgt), gc->eraseGC(), x0, y0, x1, y1 );
+      XDrawLine( actWin->d, dr, gc->eraseGC(), x0, y0, x1, y1 );
     else
-      XDrawLine( actWin->d, XtWindow(wdgt), gc->normGC(), x0, y0, x1, y1 );
+      XDrawLine( actWin->d, dr, gc->normGC(), x0, y0, x1, y1 );
 
   }
 
@@ -2102,9 +1906,9 @@ double dx, inc, fact, ofs;
     while ( dx < ( adj_max + inc * 0.5 ) ) {
 
       if ( erase )
-        XDrawLine( actWin->d, XtWindow(wdgt), gc->eraseGC(), x0, y0, x1, y1 );
+        XDrawLine( actWin->d, dr, gc->eraseGC(), x0, y0, x1, y1 );
       else
-        XDrawLine( actWin->d, XtWindow(wdgt), gc->normGC(), x0, y0, x1, y1 );
+        XDrawLine( actWin->d, dr, gc->normGC(), x0, y0, x1, y1 );
 
       dx += inc;
       x0 = x1 = (int) ( dx * fact + ofs + 0.5 ) + x + scaleOfs;
@@ -2114,9 +1918,9 @@ double dx, inc, fact, ofs;
     dx = adj_max;
     x0 = x1 = (int) ( dx * fact + ofs + 0.5 ) + x + scaleOfs;
     if ( erase )
-      XDrawLine( actWin->d, XtWindow(wdgt), gc->eraseGC(), x0, y0, x1, y1 );
+      XDrawLine( actWin->d, dr, gc->eraseGC(), x0, y0, x1, y1 );
     else
-      XDrawLine( actWin->d, XtWindow(wdgt), gc->normGC(), x0, y0, x1, y1 );
+      XDrawLine( actWin->d, dr, gc->normGC(), x0, y0, x1, y1 );
 
   }
 
@@ -2126,6 +1930,7 @@ double dx, inc, fact, ofs;
 
 int scaleClass::drawXLinearAnnotation (
   Widget wdgt,
+  Drawable dr,
   gcClass *gc,
   int erase
 ) {
@@ -2169,18 +1974,18 @@ SYS_TIME_TYPE sysTime;
          sysTime.tm_time.tm_sec );
 
         if ( erase )
-          stat = eraseText( wdgt, gc, fs, x0, y1, XmALIGNMENT_CENTER, value );
+          stat = eraseText( wdgt, dr, gc, fs, x0, y1, XmALIGNMENT_CENTER, value );
         else
-          stat = drawText( wdgt, gc, fs, x0, y1, XmALIGNMENT_CENTER, value );
+          stat = drawText( wdgt, dr, gc, fs, x0, y1, XmALIGNMENT_CENTER, value );
 
         sprintf( value, "%-d/%02d", sysTime.tm_time.tm_mon+1,
          sysTime.tm_time.tm_mday );
 
         if ( erase )
-          stat = eraseText( wdgt, gc, fs, x0, y1+fontHeight,
+          stat = eraseText( wdgt, dr, gc, fs, x0, y1+fontHeight,
            XmALIGNMENT_CENTER, value );
         else
-          stat = drawText( wdgt, gc, fs, x0, y1+fontHeight,
+          stat = drawText( wdgt, dr, gc, fs, x0, y1+fontHeight,
            XmALIGNMENT_CENTER, value );
 
       }
@@ -2188,9 +1993,9 @@ SYS_TIME_TYPE sysTime;
 
         formatString( dx, value, 31 );
         if ( erase )
-          stat = eraseText( wdgt, gc, fs, x0, y1, XmALIGNMENT_CENTER, value );
+          stat = eraseText( wdgt, dr, gc, fs, x0, y1, XmALIGNMENT_CENTER, value );
         else
-          stat = drawText( wdgt, gc, fs, x0, y1, XmALIGNMENT_CENTER, value );
+          stat = drawText( wdgt, dr, gc, fs, x0, y1, XmALIGNMENT_CENTER, value );
 
       }
 
@@ -2214,18 +2019,18 @@ SYS_TIME_TYPE sysTime;
        sysTime.tm_time.tm_sec );
 
       if ( erase )
-        stat = eraseText( wdgt, gc, fs, x0, y1, XmALIGNMENT_CENTER, value );
+        stat = eraseText( wdgt, dr, gc, fs, x0, y1, XmALIGNMENT_CENTER, value );
       else
-        stat = drawText( wdgt, gc, fs, x0, y1, XmALIGNMENT_CENTER, value );
+        stat = drawText( wdgt, dr, gc, fs, x0, y1, XmALIGNMENT_CENTER, value );
 
       sprintf( value, "%-d/%02d", sysTime.tm_time.tm_mon+1,
        sysTime.tm_time.tm_mday );
 
       if ( erase )
-        stat = eraseText( wdgt, gc, fs, x0, y1+fontHeight,
+        stat = eraseText( wdgt, dr, gc, fs, x0, y1+fontHeight,
          XmALIGNMENT_CENTER, value );
       else
-        stat = drawText( wdgt, gc, fs, x0, y1+fontHeight,
+        stat = drawText( wdgt, dr, gc, fs, x0, y1+fontHeight,
          XmALIGNMENT_CENTER, value );
 
     }
@@ -2234,9 +2039,9 @@ SYS_TIME_TYPE sysTime;
       formatString( dx, value, 31 );
 
       if ( erase )
-        stat = eraseText( wdgt, gc, fs, x0, y1, XmALIGNMENT_CENTER, value );
+        stat = eraseText( wdgt, dr, gc, fs, x0, y1, XmALIGNMENT_CENTER, value );
       else
-        stat = drawText( wdgt, gc, fs, x0, y1, XmALIGNMENT_CENTER, value );
+        stat = drawText( wdgt, dr, gc, fs, x0, y1, XmALIGNMENT_CENTER, value );
 
     }
 

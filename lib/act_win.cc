@@ -34,6 +34,7 @@
 #include "remFileOpen.h"
 
 static int gFastRefresh = -1;
+static int gUsePixmap = -1;
 static const int gMaxExecutePasses = 7;
 
 #define ADD_SCROLLED_WIN
@@ -628,6 +629,8 @@ Arg args[4];
 #else
   awo->disableScroll = 0;
 #endif
+
+  awo->bgPixmapFlag = awo->bufBgPixmapFlag;
 
   awo->activateCallbackFlag = awo->bufActivateCallbackFlag;
   awo->deactivateCallbackFlag = awo->bufDeactivateCallbackFlag;
@@ -3931,6 +3934,7 @@ Atom wm_delete_window;
       awo->bufDefaultTopShadowColor = awo->defaultTopShadowColor;
       awo->bufDefaultBotShadowColor = awo->defaultBotShadowColor;
       awo->bufDefaultOffsetColor = awo->defaultOffsetColor;
+      awo->bufBgPixmapFlag = awo->bgPixmapFlag;
 
       awo->ef.create( awo->top, awo->appCtx->ci.getColorMap(),
        &awo->appCtx->entryFormX,
@@ -3965,6 +3969,9 @@ Atom wm_delete_window;
         awo->ef.addToggle( activeWindowClass_str203, &awo->bufDisableScroll );
       }
 #endif
+      awo->ef.addOption( activeWindowClass_str212, activeWindowClass_str213,
+       &awo->bufBgPixmapFlag );
+
       awo->ef.addColorButton( activeWindowClass_str33, awo->ci, &awo->defaultTextFgCb,
        &awo->bufDefaultTextFgColor );
       awo->ef.addColorButton( activeWindowClass_str34, awo->ci, &awo->defaultFg1Cb,
@@ -10266,9 +10273,14 @@ activeWindowClass::activeWindowClass ( void ) : unknownTags() {
 
 char *str;
 
+  bgPixmap = (Pixmap) NULL;
+  needCopy = 0;
+  pixmapX0 = pixmapX1 = pixmapY0 = pixmapY1 = 0;
+  bgPixmapFlag = 0;
+
   windowState = AWC_INIT;
 
-  str = getenv( "EDMCLEAREPICSDEFAULT" );
+  str = getenv( environment_str20 );
   if ( str ) {
     clearEpicsPvTypeDefault = 1;
   }
@@ -10486,6 +10498,119 @@ char *str;
   pvAction = new pvActionClass;
 
   ctlKeyPressed = 0;
+
+}
+
+void activeWindowClass::initCopy ( void ) {
+
+  pixmapX0 = w;
+  pixmapY0 = h;
+  pixmapX1 = 0;
+  pixmapY1 = 0;
+
+}
+
+void activeWindowClass::updateCopyRegion (
+  int _x0,
+  int _y0,
+  int _w,
+  int _h
+) {
+
+int _x1, _y1;
+
+  if ( pixmapX0 > _x0 ) pixmapX0 = _x0;
+  if ( pixmapX1 < _x1 ) pixmapX1 = _x1;
+  if ( pixmapY0 > _y0 ) pixmapY0 = _y0;
+  if ( pixmapY1 < _y1 ) pixmapY1 = _y1;
+
+}
+
+void activeWindowClass::doCopy ( void ) {
+
+  if ( mode == AWC_EDIT ) {
+    needCopy = 0;
+    return;
+  }
+
+  if ( needCopy ) {
+
+    //printf( "full copy\n" );
+    //printf( "[ %-d, %-d, %-d, %-d ]\n",
+    // pixmapX0, pixmapX1, pixmapY0, pixmapY1 );
+
+    needCopy = 0;
+    needFullCopy = 0;
+
+    if ( bgPixmap ) {
+      //printf( "do copy\n" );
+      XCopyArea( d, bgPixmap,
+       XtWindow(executeWidget), executeGc.normGC(),
+       0, 0, w, h, 0, 0 );
+    }
+
+  }
+
+}
+
+void activeWindowClass::doMinCopy ( void ) {
+
+  if ( needFullCopy ) {
+    doCopy();
+    return;
+  }
+
+  pixmapX0 -= 10;
+  if ( pixmapX0 < 1 ) pixmapX0 = 1;
+
+  pixmapX1 += 10;
+  if ( pixmapX1 > w ) pixmapX1 = w;
+
+  pixmapY0 -= 10;
+  if ( pixmapY0 < 1 ) pixmapY0 = 1;
+
+  pixmapY1 += 10;
+  if ( pixmapY1 > h ) pixmapY1 = h;
+
+  int pixW = pixmapX1 - pixmapX0 + 1;
+  int pixH = pixmapY1 - pixmapY0 + 1;
+
+  if ( pixW < 1 ) return;
+  if ( pixH < 1 ) return;
+
+  if ( mode == AWC_EDIT ) {
+    needCopy = 0;
+    return;
+  }
+
+  if ( needCopy ) {
+
+    //printf( "[ %-d, %-d, %-d, %-d ]\n",
+    // pixmapX0, pixmapX1, pixmapY0, pixmapY1 );
+
+    needCopy = 0;
+
+    if ( bgPixmap ) {
+      //printf( "do copy\n" );
+      XCopyArea( d, bgPixmap,
+       XtWindow(executeWidget), executeGc.normGC(),
+       pixmapX0, pixmapY0, pixW, pixH, pixmapX0, pixmapY0 );
+    }
+
+  }
+
+}
+
+Drawable activeWindowClass::drawable (
+  Widget w
+) {
+
+  if ( bgPixmap ) {
+    return (Drawable) bgPixmap;
+  }
+  else {
+    return (Drawable) XtWindow(executeWidget);
+  }
 
 }
 
@@ -10821,6 +10946,11 @@ pvDefPtr pvDefCur, pvDefNext;
   }
 
   delete pvAction;
+
+  if ( bgPixmap ) {
+    XFreePixmap( d, bgPixmap );
+    bgPixmap = (Pixmap) NULL;
+  }
 
 }
 
@@ -16026,8 +16156,73 @@ int numMuxMacros;
 char **muxMacro, **muxExpansion;
 char callbackName[63+1];
 pvDefPtr pvDefCur;
+char *envPtr;
 
   windowState = AWC_START_EXECUTE;
+
+  if ( bgPixmapFlag == AWC_BGPIXMAP_NEVER ) {
+    gUsePixmap = 0;
+  }
+  else if ( bgPixmapFlag == AWC_BGPIXMAP_ALWAYS ) {
+    gUsePixmap = 1;
+  }
+  else {
+    gUsePixmap = -1;
+  }
+
+  if ( gUsePixmap == -1 ) {
+    envPtr = getenv( environment_str23 );
+    if ( envPtr ) {
+      gUsePixmap = 1;
+    }
+    else {
+      gUsePixmap = 0;
+    }
+  }
+
+  if ( gUsePixmap ) {
+
+    needFullCopy = 0;
+
+    if ( bgPixmap ) {
+      XFreePixmap( d, bgPixmap );
+      bgPixmap = (Pixmap) NULL;
+    }
+
+    if ( !bgPixmap ) {
+      if ( ( w > 0 ) && ( h > 0 ) ) {
+        int screen_num, depth;
+        Display *d = appCtx->getDisplay();
+        screen_num = DefaultScreen( d );
+        depth = DefaultDepth( d, screen_num );
+        bgPixmap = XCreatePixmap( d, XtWindow(executeWidget),
+        w, h, depth );
+      }
+    }
+
+    if ( bgPixmap ) {
+      executeGc.saveFg();
+      executeGc.setFG( ci->pix(bgColor) );
+      executeGc.setLineWidth(1);
+      executeGc.setLineStyle( LineSolid );
+      XDrawRectangle( d, bgPixmap,
+       executeGc.normGC(), 0, 0,
+       w, h );
+      XFillRectangle( d, bgPixmap,
+       executeGc.normGC(), 0, 0,
+       w, h );
+      executeGc.restoreFg();
+    }
+
+  }
+  else {
+
+    if ( bgPixmap ) {
+      XFreePixmap( d, bgPixmap );
+      bgPixmap = (Pixmap) NULL;
+    }
+
+  }
 
   if ( diagnosticMode() ) {
     char diagBuf[255+1];
@@ -16713,13 +16908,41 @@ int numSubObjects, cnt;
 
 int activeWindowClass::clearActive ( void ) {
 
-  XClearWindow( d, XtWindow(executeWidget) );
+  if ( bgPixmap ) {
+
+    executeGc.setLineWidth(1);
+    executeGc.setLineStyle( LineSolid );
+
+    XDrawRectangle( d, bgPixmap,
+     executeGc.eraseGC(), 0, 0,
+     w, h );
+
+    XFillRectangle( d, bgPixmap,
+     executeGc.eraseGC(), 0, 0,
+     w, h );
+
+    needCopy = 1;
+    needFullCopy = 1;
+    doCopy();
+
+  }
+  else {
+
+    XClearWindow( d, XtWindow(executeWidget) );
+
+  }
 
   return 1;
 
 }
 
 int activeWindowClass::requestSmartDrawAllActive ( void ) {
+
+  if ( bgPixmap ) {
+    needCopy = 1;
+    smartDrawAllActive();
+    return 1;
+  }
 
   appCtx->smartDrawAllActive( this );
 
@@ -16734,7 +16957,7 @@ int n = 0;
 char *envPtr;
 
   if ( gFastRefresh == -1 ) {
-    envPtr = getenv( "EDMFASTREFRESH" );
+    envPtr = getenv( environment_str21 );
     if ( envPtr ) {
       gFastRefresh = 1;
     }
@@ -16775,11 +16998,18 @@ char *envPtr;
     cur = cur->flink;
   }
 
+  needCopy = 1;
+
   return 1;
 
 }
 
 int activeWindowClass::requestActiveRefresh ( void ) {
+
+  if ( bgPixmap ) {
+    refreshActive();
+    return 1;
+  }
 
   appCtx->refreshActiveWindow( this );
 
@@ -16796,12 +17026,18 @@ int activeWindowClass::refreshActive (
 
 activeGraphicListPtr cur;
 
-  if ( noRefresh ) return 1;
+  if ( noRefresh ) {
+    needCopy = 1;
+    return 1;
+  }
 
   cur = head->flink;
   if ( cur != head ) {
     cur->node->refreshActive( _x, _y, _w, _h );
   }
+
+  needFullCopy = 1;
+  needCopy = 1;
 
   return 1;
 
@@ -16811,12 +17047,18 @@ int activeWindowClass::refreshActive ( void ) {
 
 activeGraphicListPtr cur;
 
-  if ( noRefresh ) return 1;
+  if ( noRefresh ) {
+    needCopy = 1;
+    return 1;
+  }
 
   cur = head->flink;
   if ( cur != head ) {
     cur->node->refreshActive();
   }
+
+  needFullCopy = 1;
+  needCopy = 1;
 
   return 1;
 
@@ -16970,12 +17212,24 @@ static int alignEnum[3] = {
   XmALIGNMENT_END
 };
 
+static int perEnvVar = 0;
+static char *pixmapEnumStr[3] = {
+  "perEnvVar",
+  "never",
+  "always"
+};
+static int pixmapEnum[3] = {
+  0,
+  1,
+  2
+};
+
 char *commentFile;
 FILE *cf;
 char str[255+1], *strPtr;
 
   if ( !haveComments ) {
-    commentFile = getenv( "EDMCOMMENTS" );
+    commentFile = getenv( environment_str22 );
     if ( commentFile ) {
       cf = fopen( commentFile, "r" );
       if ( cf ) {
@@ -17039,6 +17293,8 @@ char str[255+1], *strPtr;
   tag.loadBoolW( "orthoLineDraw", &orthogonal, &zero );
   tag.loadW( "pvType", defaultPvType, emptyStr );
   tag.loadBoolW( "disableScroll", &disableScroll, &zero );
+  tag.loadW( "pixmapFlag", 3, pixmapEnumStr, pixmapEnum,
+   &bgPixmapFlag, &perEnvVar );
   tag.loadW( unknownTags );
   tag.loadW( "endScreenProperties" );
   tag.loadW( "" );
@@ -17456,6 +17712,18 @@ static int alignEnum[3] = {
   XmALIGNMENT_END
 };
 
+static int perEnvVar = 0;
+static char *pixmapEnumStr[3] = {
+  "perEnvVar",
+  "never",
+  "always"
+};
+static int pixmapEnum[3] = {
+  0,
+  1,
+  2
+};
+
 #if 0
   readCommentsAndVersion( f );
 
@@ -17517,6 +17785,8 @@ static int alignEnum[3] = {
   tag.loadR( "orthoLineDraw", &orthogonal, &zero );
   tag.loadR( "pvType", 15, defaultPvType, emptyStr );
   tag.loadR( "disableScroll", &disableScroll, &zero );
+  tag.loadR( "pixmapFlag", 3, pixmapEnumStr, pixmapEnum,
+   &bgPixmapFlag, &perEnvVar );
   tag.loadR( "endScreenProperties" );
 
   stat = tag.readTags( f, "endScreenProperties" );
@@ -18999,18 +19269,32 @@ int num_selected;
 
 }
 
-void activeWindowClass::processObjects ( void )
+int activeWindowClass::processObjects ( void )
 {
 
 activeGraphicListPtr cur, next;
+int workToDo = 0;
 
   appCtx->proc->lock();
   cur = defExeHead->defExeFlink;
   appCtx->proc->unlock();
 
-  if ( !cur ) return;
+  if ( !cur ) {
+    return 0;
+  }
+
+  if ( cur != defExeHead ) {
+    initCopy();
+    needCopy = 1;
+    workToDo = 1;
+  }
 
   while ( cur != defExeHead ) {
+
+    if ( pixmapX0 > cur->node->getX0() ) pixmapX0 = cur->node->getX0();
+    if ( pixmapX1 < cur->node->getX1() ) pixmapX1 = cur->node->getX1();
+    if ( pixmapY0 > cur->node->getY0() ) pixmapY0 = cur->node->getY0();
+    if ( pixmapY1 < cur->node->getY1() ) pixmapY1 = cur->node->getY1();
 
     appCtx->proc->lock();
     next = cur->defExeFlink;
@@ -19021,6 +19305,8 @@ activeGraphicListPtr cur, next;
     cur = next;
 
   }
+
+  return workToDo;
 
 }
 

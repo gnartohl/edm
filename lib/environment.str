@@ -2,7 +2,7 @@
 #define __environment_str 1
 
 
-// global_str105 is last
+// global_str127 is last
 
 #define environment_str1 (char *) "EDMDATAFILES"
 #define environment_str2 (char *) "EDMFILES"
@@ -23,6 +23,18 @@
 #define environment_str17 (char *) "EDMPUTLOGGER"
 #define environment_str18 (char *) "EDMMAXVERSIONS"
 #define environment_str19 (char *) "EDMIGNOREICONIC"
+#define environment_str20 (char *) "EDMCLEAREPICSDEFAULT"
+#define environment_str21 (char *) "EDMFASTREFRESH"
+#define environment_str22 (char *) "EDMCOMMENTS"
+#define environment_str23 (char *) "EDMUSEPIXMAP"
+#define environment_str24 (char *) "EDMCOLORMODE"
+#define environment_str25 (char *) "EDMPRINTER"
+#define environment_str26 (char *) "EDMSERVERS"
+#define environment_str27 (char *) "EDMSUPERVISORMODE"
+#define environment_str28 (char *) "EDMGENDOC"
+#define environment_str29 (char *) "EDMDEBUGMODE"
+#define environment_str30 (char *) "EDMDIAGNOSTICMODE"
+#define environment_str31 (char *) "EDMXSYNC"
 
 #define global_str1 (char *) "Symbol"
 #define global_str2 (char *) "Monitors"
@@ -143,10 +155,28 @@
 #define global_str83 (char *)  "\t\t\t(node1 is preffered 2/1.5, 2/1 over nodes 2 & 3)\n"
 
 #define global_str84 (char *)  "EDMTMPFILES\t\tLocation of autosave and other temp files (default: /tmp)\n"
-
 #define global_str95 (char *)  "EDMHTTPDOCROOT\t\tURL list for http access; | is the list element separator\n"
-
 #define global_str54 (char *)  "EDMUSERLIB\t\tLocation of user shared library file\n"
+#define global_str108 (char *) "EDMUSEPIXMAP\t\tDouble buffer output and consume many more cpu resources if defined\n"
+#define global_str109 (char *) "EDMPRINTDEF\t\tLocation of edmPrintDef file\n"
+#define global_str110 (char *) "EDMCOLORFILE\t\tLocation of colors.list (normally given by EDMFILES)\n"
+#define global_str111 (char *) "EDMFONTFILE\t\tLocation of fonts.list (normally given by EDMFILES)\n"
+#define global_str112 (char *) "EDMFILTERS\t\tSee user's manual\n"
+#define global_str113 (char *) "EDMTMPUMASK\t\tUMASK for temporary files\n"
+#define global_str114 (char *) "EDMDUMPFILES\t\tLocation of dumped data files\n"
+#define global_str115 (char *) "EDMACTIONS\t\tSee user's manual\n"
+#define global_str116 (char *) "EDMPUTLOGGER\t\tSee user's manual\n"
+#define global_str117 (char *) "EDMMAXVERSIONS\t\tSee user's manual\n"
+#define global_str118 (char *) "EDMCLEAREPICSDEFAULT\tFor put-logging, see user's manual\n"
+#define global_str119 (char *) "EDMFASTREFRESH\n"
+#define global_str120 (char *) "EDMCOMMENTS\t\tName of file containing comments to be inserted in new edl file\n"
+#define global_str121 (char *) "EDMCOLORMODE\t\tValue is index or rgb - for editing edm help files\n"
+#define global_str122 (char *) "EDMPRINTER\t\tDefault printer\n"
+#define global_str123 (char *) "EDMSUPERVISORMODE\tSee user's manual\n"
+#define global_str124 (char *) "EDMGENDOC\t\tSee user's manual\n"
+#define global_str125 (char *) "EDMDEBUGMODE\t\tSee user's manual\n"
+#define global_str126 (char *) "EDMDIAGNOSTICMODE\tSee user's manual\n"
+#define global_str127 (char *) "EDMXSYNC\t\tSee user's manual\n"
 
 #define global_str55 (char *)  " (-h displays help)\n"
 #define global_str56 (char *)  "-display|"

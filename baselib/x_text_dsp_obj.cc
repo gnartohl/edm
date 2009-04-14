@@ -2053,6 +2053,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   axtdo->characterMode = axtdo->eBuf->bufCharacterMode;
 
+  axtdo->noExecuteClipMask = axtdo->eBuf->bufNoExecuteClipMask;
+
   strncpy( axtdo->id, axtdo->bufId, 31 );
   axtdo->id[31] = 0;
   axtdo->changeCallbackFlag = axtdo->eBuf->bufChangeCallbackFlag;
@@ -2206,6 +2208,8 @@ activeXTextDspClass::activeXTextDspClass ( void ) {
 
   characterMode = 0;
 
+  noExecuteClipMask = 0;
+
   newPositioning = 1;
 
   prevAlarmSeverity = -1;
@@ -2334,6 +2338,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   isPassword = source->isPassword;
 
   characterMode = source->characterMode;
+
+  noExecuteClipMask = source->noExecuteClipMask;
 
   newPositioning = 1;
 
@@ -2770,6 +2776,7 @@ static int objTypeEnum[4] = {
   tag.loadW( unknownTags );
   tag.loadBoolW( "isPassword", &isPassword, &zero );
   tag.loadBoolW( "characterMode", &characterMode, &zero );
+  tag.loadBoolW( "noExecuteClipMask", &noExecuteClipMask, &zero );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -3027,6 +3034,7 @@ static int objTypeEnum[4] = {
   tag.loadR( "changeCallback", &changeCallbackFlag, &zero );
   tag.loadR( "isPassword", &isPassword, &zero );
   tag.loadR( "characterMode", &characterMode, &zero );
+  tag.loadR( "noExecuteClipMask", &noExecuteClipMask, &zero );
   tag.loadR( "endObjectProperties" );
 
   stat = tag.readTags( f, "endObjectProperties" );
@@ -3051,6 +3059,14 @@ static int objTypeEnum[4] = {
       y -= 3;
       autoHeight = 1;
     }
+  }
+
+  // pre version 4.4.0 - noExecuteClipMask should be true
+  if ( major < 4 ) {
+    noExecuteClipMask = 1;
+  }
+  else if ( ( major == 4 ) && ( minor < 4 ) ) {
+    noExecuteClipMask = 1;
   }
     
   this->initSelectBox(); // call after getting x,y,w,h
@@ -3790,6 +3806,7 @@ int noedit;
   eBuf->bufInputFocusUpdatesAllowed = inputFocusUpdatesAllowed;
   eBuf->bufIsPassword = isPassword;
   eBuf->bufCharacterMode = characterMode;
+  eBuf->bufNoExecuteClipMask = noExecuteClipMask;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -3816,6 +3833,7 @@ int noedit;
   ef.addToggle( activeXTextDspClass_str20, &eBuf->bufLimitsFromDb );
   ef.addTextField( activeXTextDspClass_str85, 35, eBuf->bufFieldLenInfo, 7 );
   ef.addTextField( activeXTextDspClass_str21, 35, &eBuf->bufEfPrecision );
+  ef.addToggle( activeXTextDspClass_str88, &eBuf->bufNoExecuteClipMask );
   ef.addToggle( activeXTextDspClass_str84, &eBuf->bufClipToDspLimits );
   ef.addToggle( activeXTextDspClass_str81, &eBuf->bufShowUnits );
   ef.addToggle( activeXTextDspClass_str11, &eBuf->bufAutoHeight );
@@ -3918,10 +3936,13 @@ int activeXTextDspClass::edit ( void ) {
 int activeXTextDspClass::erase ( void ) {
 
 XRectangle xR = { x, y, w, h };
+int clipStat;
 
   if ( activeMode || deleteRequest ) return 1;
 
-  actWin->drawGc.addEraseXClipRectangle( xR );
+  if ( !noExecuteClipMask ) {
+    clipStat = actWin->drawGc.addEraseXClipRectangle( xR );
+  }
 
   if ( strcmp( fontTag, "" ) != 0 ) {
     actWin->drawGc.setFontTag( fontTag, actWin->fi );
@@ -3948,7 +3969,9 @@ XRectangle xR = { x, y, w, h };
 
   }
 
-  actWin->drawGc.removeEraseXClipRectangle();
+  if ( !noExecuteClipMask ) {
+    if ( clipStat & 1 ) actWin->drawGc.removeEraseXClipRectangle();
+  }
 
   return 1;
 
@@ -3956,7 +3979,8 @@ XRectangle xR = { x, y, w, h };
 
 int activeXTextDspClass::eraseActive ( void ) {
 
-int len;
+XRectangle xR = { x, y, w, h };
+int clipStat, len;
 
   if ( !enabled || !init || !activeMode ) return 1;
 
@@ -3964,6 +3988,10 @@ int len;
 
   if ( !bufInvalid && ( strlen(value) == strlen(bfrValue) ) ) {
     if ( strcmp( value, bfrValue ) == 0 ) return 1;
+  }
+
+  if ( !noExecuteClipMask ) {
+    clipStat = actWin->executeGc.addEraseXClipRectangle( xR );
   }
 
   if ( strcmp( fontTag, "" ) != 0 ) {
@@ -3983,7 +4011,7 @@ int len;
           actWin->executeGc.setLineWidth( 2 );
           actWin->executeGc.setLineStyle( LineSolid );
 
-          XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+          XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
            actWin->executeGc.eraseGC(), x, y, w, h );
 
           actWin->executeGc.setLineWidth( 1 );
@@ -4006,7 +4034,7 @@ int len;
           actWin->executeGc.setLineWidth( 2 );
           actWin->executeGc.setLineStyle( LineSolid );
 
-          XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+          XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
            actWin->executeGc.eraseGC(), x, y, w, h );
 
           actWin->executeGc.setLineWidth( 1 );
@@ -4021,7 +4049,7 @@ int len;
 
   if ( useDisplayBg ) {
 
-    XDrawString( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawString( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), stringX, stringY,
      bfrValue, len );
 
@@ -4036,22 +4064,22 @@ int len;
 
     if ( bufInvalid ) {
 
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
       actWin->executeGc.eraseGC(), x, y, w, h );
 
-      XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XFillRectangle( actWin->d, drawable(actWin->executeWidget),
       actWin->executeGc.eraseGC(), x, y, w, h );
 
     }
     else {
 
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
 
-      XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XFillRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
 
-      XDrawImageString( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawImageString( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), stringX, stringY,
        bfrValue, len );
 
@@ -4060,6 +4088,10 @@ int len;
     actWin->executeGc.restoreFg();
     actWin->executeGc.restoreBg();
 
+  }
+
+  if ( !noExecuteClipMask ) {
+    if ( clipStat & 1 ) actWin->executeGc.removeEraseXClipRectangle();
   }
 
   return 1;
@@ -4129,6 +4161,8 @@ Arg args[10];
 int n;
 int blink = 0;
 unsigned int color;
+XRectangle xR = { x, y, w, h };
+int clipStat;
 
   if ( !init && !connection.pvsConnected() ) {
     if ( needToDrawUnconnected ) {
@@ -4137,7 +4171,7 @@ unsigned int color;
       actWin->executeGc.setFG( fgColor.getDisconnectedIndex(), &blink );
       actWin->executeGc.setLineWidth( 2 );
       actWin->executeGc.setLineStyle( LineSolid );
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
@@ -4147,7 +4181,7 @@ unsigned int color;
   else if ( needToEraseUnconnected ) {
     actWin->executeGc.setLineWidth( 2 );
     actWin->executeGc.setLineStyle( LineSolid );
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
     needToEraseUnconnected = 0;
   }
@@ -4218,6 +4252,8 @@ unsigned int color;
   actWin->executeGc.saveFg();
   actWin->executeGc.saveBg();
 
+  clipStat = actWin->executeGc.addNormXClipRectangle( xR );
+
   if ( strcmp( fontTag, "" ) != 0 ) {
     actWin->executeGc.setFontTag( fontTag, actWin->fi );
   }
@@ -4235,7 +4271,7 @@ unsigned int color;
 
     actWin->executeGc.setBG( actWin->ci->pix(bgColor) );
 
-    XDrawString( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawString( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), stringX, stringY,
      value, stringLength );
 
@@ -4244,10 +4280,10 @@ unsigned int color;
 
     actWin->executeGc.setFG( actWin->ci->pix(bgColor) );
 
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
 
-    XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XFillRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
 
     if ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) ) {
@@ -4259,7 +4295,7 @@ unsigned int color;
 
     actWin->executeGc.setBG( actWin->ci->pix(bgColor) );
 
-    XDrawImageString( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawImageString( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), stringX, stringY, 
      value, stringLength );
 
@@ -4274,7 +4310,7 @@ unsigned int color;
       actWin->executeGc.setLineWidth( 2 );
       actWin->executeGc.setLineStyle( LineSolid );
 
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
 
       actWin->executeGc.setLineWidth( 1 );
@@ -4282,6 +4318,8 @@ unsigned int color;
     }
 
   }
+
+  if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
 
   actWin->executeGc.restoreFg();
   actWin->executeGc.restoreBg();

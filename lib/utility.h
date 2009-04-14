@@ -158,6 +158,26 @@ int xEraseImageText (
 
 int drawText (
   Widget widget,
+  Drawable dr,
+  gcClass *gc,
+  XFontStruct *fs,
+  int _x,
+  int _y,
+  int _alignment,
+  char *value );
+
+int drawText (
+  Widget widget,
+  gcClass *gc,
+  XFontStruct *fs,
+  int _x,
+  int _y,
+  int _alignment,
+  char *value );
+
+int eraseText (
+  Widget widget,
+  Drawable dr,
   gcClass *gc,
   XFontStruct *fs,
   int _x,
@@ -176,6 +196,26 @@ int eraseText (
 
 int drawImageText (
   Widget widget,
+  Drawable dr,
+  gcClass *gc,
+  XFontStruct *fs,
+  int _x,
+  int _y,
+  int _alignment,
+  char *value );
+
+int drawImageText (
+  Widget widget,
+  gcClass *gc,
+  XFontStruct *fs,
+  int _x,
+  int _y,
+  int _alignment,
+  char *value );
+
+int eraseImageText (
+  Widget widget,
+  Drawable dr,
   gcClass *gc,
   XFontStruct *fs,
   int _x,

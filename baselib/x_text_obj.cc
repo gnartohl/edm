@@ -1260,7 +1260,7 @@ int blink = 0;
         actWin->executeGc.setFontTag( fontTag, actWin->fi );
       }
       clipStat = actWin->executeGc.addNormXClipRectangle( xR );
-      XDrawStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawStringsAligned( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, stringY, w,
        value.getExpanded(), stringLength, &fs, alignment );
       if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
@@ -1274,7 +1274,7 @@ int blink = 0;
     if ( strcmp( fontTag, "" ) != 0 ) {
       actWin->executeGc.setFontTag( fontTag, actWin->fi );
     }
-    XDrawStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawStringsAligned( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), x, stringY, w,
      value.getExpanded(), stringLength, &fs, alignment );
     actWin->executeGc.restoreFg();
@@ -1298,7 +1298,7 @@ int blink = 0;
 
       actWin->executeGc.setFG( fgColor.getIndex(), &blink );
 
-      XDrawStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawStringsAligned( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, stringY, w,
        value.getExpanded(), stringLength, &fs, alignment );
 
@@ -1307,10 +1307,10 @@ int blink = 0;
 
       actWin->executeGc.setFG( bgColor.getColor() );
 
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
 
-      XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XFillRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
 
       actWin->executeGc.setFG( fgColor.getIndex(), &blink );
@@ -1318,7 +1318,7 @@ int blink = 0;
       actWin->executeGc.saveBg();
       actWin->executeGc.setBG( bgColor.getColor() );
 
-      XDrawImageStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawImageStringsAligned( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, stringY, w,
        value.getExpanded(), stringLength, &fs, alignment );
 
@@ -1329,7 +1329,7 @@ int blink = 0;
     if ( border ) {
       actWin->executeGc.setFG( fgColor.getIndex(), &blink );
       actWin->executeGc.setLineWidth( lineThk );
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x+lineThk/2, y+lineThk/2, w-lineThk, h-lineThk );
       actWin->executeGc.setLineWidth( 1 );
     }
@@ -1362,20 +1362,20 @@ XRectangle xR = { x, y, w, h };
 
   if ( useDisplayBg ) {
 
-    XDrawStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawStringsAligned( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, stringY, w,
      value.getExpanded(), stringLength, &fs, alignment );
 
   }
   else {
 
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
 
-    XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XFillRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
 
-    XDrawImageStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawImageStringsAligned( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, stringY, w,
      value.getExpanded(), stringLength, &fs, alignment );
 
@@ -1383,7 +1383,7 @@ XRectangle xR = { x, y, w, h };
 
   if ( border ) {
     actWin->executeGc.setLineWidth( lineThk );
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x+lineThk/2, y+lineThk/2, w-lineThk, h-lineThk );
     actWin->executeGc.setLineWidth( 1 );
   }
@@ -1415,7 +1415,7 @@ XRectangle xR = { x, y, w, h };
 
     actWin->executeGc.addEraseXClipRectangle( xR );
 
-    XDrawStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawStringsAligned( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, stringY, w,
      value.getExpanded(), stringLength, &fs, alignment );
 
@@ -1436,22 +1436,22 @@ XRectangle xR = { x, y, w, h };
 
       if ( bufInvalid ) {
 
-        XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+        XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.eraseGC(), x, y, w, h );
 
-        XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+        XFillRectangle( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.eraseGC(), x, y, w, h );
 
       }
       else {
 
-        XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+        XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), x, y, w, h );
 
-        XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
+        XFillRectangle( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), x, y, w, h );
 
-        XDrawImageStringsAligned( actWin->d, XtWindow(actWin->executeWidget),
+        XDrawImageStringsAligned( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), x, stringY, w,
          value.getExpanded(), stringLength, &fs, alignment );
 
@@ -1461,7 +1461,7 @@ XRectangle xR = { x, y, w, h };
 
     if ( border ) {
       actWin->executeGc.setLineWidth( lineThk );
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.eraseGC(), x+lineThk/2, y+lineThk/2, w-lineThk, h-lineThk );
       actWin->executeGc.setLineWidth( 1 );
     }

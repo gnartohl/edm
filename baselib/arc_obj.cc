@@ -1173,7 +1173,7 @@ int blink = 0;
       actWin->executeGc.setFG( lineColor.getDisconnectedIndex(), &blink );
       actWin->executeGc.setLineWidth( 1 );
       actWin->executeGc.setLineStyle( LineSolid );
-      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
       needToEraseUnconnected = 1;
@@ -1183,7 +1183,7 @@ int blink = 0;
   else if ( needToEraseUnconnected ) {
     actWin->executeGc.setLineWidth( 1 );
     actWin->executeGc.setLineStyle( LineSolid );
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
     needToEraseUnconnected = 0;
   }
@@ -1205,14 +1205,14 @@ int blink = 0;
     }
     //actWin->executeGc.setFG( fillColor.getColor() );
     actWin->executeGc.setFG( fillColor.getIndex(), &blink );
-    XFillArc( actWin->d, XtWindow(actWin->executeWidget),
+    XFillArc( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h, startAngle, totalAngle );
   }
 
   if ( lineVisibility ) {
     //actWin->executeGc.setFG( lineColor.getColor() );
     actWin->executeGc.setFG( lineColor.getIndex(), &blink );
-    XDrawArc( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawArc( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h, startAngle, totalAngle );
   }
 
@@ -1241,10 +1241,10 @@ int activeArcClass::eraseUnconditional ( void )
     actWin->executeGc.setArcModeChord();
   }
 
-  XDrawArc( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawArc( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.eraseGC(), x, y, w, h, startAngle, totalAngle );
 
-  XFillArc( actWin->d, XtWindow(actWin->executeWidget),
+  XFillArc( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.eraseGC(), x, y, w, h, startAngle, totalAngle );
 
   actWin->executeGc.setLineStyle( LineSolid );
@@ -1276,10 +1276,10 @@ int activeArcClass::eraseActive ( void )
     actWin->executeGc.setArcModeChord();
   }
 
-  XDrawArc( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawArc( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.eraseGC(), x, y, w, h, startAngle, totalAngle );
 
-  XFillArc( actWin->d, XtWindow(actWin->executeWidget),
+  XFillArc( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.eraseGC(), x, y, w, h, startAngle, totalAngle );
 
   actWin->executeGc.setLineStyle( LineSolid );

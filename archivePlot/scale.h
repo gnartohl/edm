@@ -344,12 +344,6 @@ int drawXLinearScale (
   int erase
 );
 
-int drawYLinearScale (
-  Widget w,
-  gcClass *gc,
-  int erase
-);
-
 int formatString (
   double value,
   char *string,
@@ -357,12 +351,6 @@ int formatString (
 );
 
 int drawXLinearAnnotation (
-  Widget wdgt,
-  gcClass *gc,
-  int erase
-);
-
-int drawYLinearAnnotation (
   Widget wdgt,
   gcClass *gc,
   int erase

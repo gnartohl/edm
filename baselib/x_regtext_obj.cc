@@ -1239,7 +1239,7 @@ int clipStat;
 
     if ( useDisplayBg ) {
 
-      XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawStrings( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), stringX, stringY, fontHeight,
        text, stringLength );
 
@@ -1249,7 +1249,7 @@ int clipStat;
       actWin->executeGc.saveBg();
       actWin->executeGc.setBG( bgColor.getColor() );
 
-      XDrawImageStrings( actWin->d, XtWindow(actWin->executeWidget),
+      XDrawImageStrings( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), stringX, stringY, fontHeight,
        text, stringLength );
 
@@ -1319,7 +1319,7 @@ XRectangle xR = { x, y, w, h };
 
   if ( useDisplayBg ) {
 
-    XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawStrings( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), stringX, stringY, fontHeight,
      text, stringLength );
 //    fprintf(stderr,"eraseUnconditional: useDisplayBg; text=%s\n", text);
@@ -1327,7 +1327,7 @@ XRectangle xR = { x, y, w, h };
   }
   else {
 
-    XDrawImageStrings( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawImageStrings( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), stringX, stringY, fontHeight,
      text, stringLength );
 //    fprintf(stderr,"eraseUnconditional: !useDisplayBg; text=%s\n", text);
@@ -1364,7 +1364,7 @@ XRectangle xR = { x, y, w, h };
 
     actWin->executeGc.addEraseXClipRectangle( xR );
 
-    XDrawStrings( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawStrings( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), stringX, stringY, fontHeight,
      text, stringLength );
 //    fprintf(stderr,"eraseActive: useDisplayBg; text=%s\n", text);
@@ -1383,7 +1383,7 @@ XRectangle xR = { x, y, w, h };
 
       if ( bufInvalid ) {
 
-        XDrawImageStrings( actWin->d, XtWindow(actWin->executeWidget),
+        XDrawImageStrings( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.eraseGC(), stringX, stringY, fontHeight,
          text, stringLength );
 
@@ -1393,7 +1393,7 @@ XRectangle xR = { x, y, w, h };
         actWin->executeGc.setFG( bgColor.getColor() );
         actWin->executeGc.setBG( bgColor.getColor() );
 
-        XDrawImageStrings( actWin->d, XtWindow(actWin->executeWidget),
+        XDrawImageStrings( actWin->d, drawable(actWin->executeWidget),
          actWin->executeGc.normGC(), stringX, stringY, fontHeight,
          text, stringLength );
 

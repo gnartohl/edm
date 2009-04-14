@@ -128,6 +128,14 @@ activeGraphicClass::~activeGraphicClass ( void ) {
 
 }
 
+Drawable activeGraphicClass::drawable (
+  Widget w
+) {
+
+  return actWin->drawable( w );
+
+}
+
 int activeGraphicClass::baseMajorVersion ( void ) {
 
    return MAJOR_VERSION;
@@ -944,7 +952,7 @@ int activeGraphicClass::clear ( void ) {
 
 int activeGraphicClass::clearActive ( void ) {
 
-  XClearWindow( actWin->d, XtWindow(actWin->executeWidget) );
+  actWin->clearActive();
 
   return 1;
 
@@ -2385,12 +2393,15 @@ void activeGraphicClass::pointerIn (
   actWin->executeGc.setLineWidth( 2 );
   actWin->executeGc.setLineStyle( LineSolid );
 
-  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), x-2, y-2, w+4, h+4 );
 
   actWin->executeGc.setLineWidth( 1 );
 
   actWin->executeGc.restoreFg();
+
+  actWin->needCopy = 1;
+  actWin->updateCopyRegion( x-2, y-2, w+4, h+4 );
 
 }
 
@@ -2416,8 +2427,11 @@ void activeGraphicClass::pointerOut (
   actWin->executeGc.setLineWidth( 2 );
   actWin->executeGc.setLineStyle( LineSolid );
 
-  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+  XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.eraseGC(), x-2, y-2, w+4, h+4 );
+
+  actWin->needCopy = 1;
+  actWin->updateCopyRegion( x-4, y-4, w+8, h+8 );
 
   actWin->executeGc.setLineWidth( 1 );
 

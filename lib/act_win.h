@@ -66,6 +66,10 @@
 #define AWC_EDIT 1
 #define AWC_EXECUTE 2
 
+#define AWC_BGPIXMAP_PER_ENV_VAR 0
+#define AWC_BGPIXMAP_NEVER 1
+#define AWC_BGPIXMAP_ALWAYS 2
+
 #define AWC_INIT 1000
 #define AWC_START_EXECUTE 1001
 #define AWC_COMPLETE_EXECUTE 1002
@@ -776,6 +780,8 @@ colorButtonClass fgCb;
 int bgColor, bufBgColor;
 colorButtonClass bgCb;
 Pixmap bgPixmap;
+int needCopy, needFullCopy;
+int pixmapX0, pixmapX1, pixmapY0, pixmapY1;
 
 int defaultTextFgColor, bufDefaultTextFgColor;
 colorButtonClass defaultTextFgCb;
@@ -916,6 +922,8 @@ int loadFailure;
 
 int bufDisableScroll, disableScroll;
 
+int bufBgPixmapFlag, bgPixmapFlag; // 0=per env var, 1=never use, 2=always use
+
 pvActionClass *pvAction;
 
 int ctlKeyPressed;
@@ -925,6 +933,23 @@ activeWindowClass ( void );
 ~activeWindowClass ( void );
 
 int okToDeactivate ( void );
+
+void initCopy( void );
+
+void updateCopyRegion (
+  int _x0,
+  int _y0,
+  int _w,
+  int _h
+);
+
+void doCopy ( void );
+
+void doMinCopy ( void );
+
+Drawable drawable (
+  Widget w
+);
 
 int okToPreReexecute ( void );
 
@@ -1362,7 +1387,7 @@ int remDefExeNode (
 /*  int remDefExeNode ( */
 /*    void **node ); */
 
-void processObjects ( void );
+int processObjects ( void );
 
 /* new new new */
 
