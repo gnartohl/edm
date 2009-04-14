@@ -779,6 +779,7 @@ colorButtonClass fgCb;
 
 int bgColor, bufBgColor;
 colorButtonClass bgCb;
+int usePixmap;
 Pixmap bgPixmap;
 int needCopy, needFullCopy;
 int pixmapX0, pixmapX1, pixmapY0, pixmapY1;
