@@ -1083,10 +1083,10 @@ int activeRadioButtonClass::deactivate (
     if ( widgetsCreated ) {
       if ( bulBrd ) {
         XtUnmapWidget( bulBrd );
-        XtDestroyWidget( bulBrd );
-        bulBrd = NULL;
         XtDestroyWidget( radioBox );
         radioBox = NULL;
+        XtDestroyWidget( bulBrd );
+        bulBrd = NULL;
       }
       widgetsCreated = 0;
     }
@@ -1240,10 +1240,10 @@ char msg[79+1];
     if ( widgetsCreated ) {
       if ( bulBrd ) {
         XtUnmapWidget( bulBrd );
-        XtDestroyWidget( bulBrd );
-        bulBrd = NULL;
         XtDestroyWidget( radioBox );
         radioBox = NULL;
+        XtDestroyWidget( bulBrd );
+        bulBrd = NULL;
       }
       widgetsCreated = 0;
     }

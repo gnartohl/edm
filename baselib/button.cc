@@ -1735,10 +1735,10 @@ int activeButtonClass::eraseActive ( void ) {
 
   prevVisibility = visibility;
 
-  XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+  XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
    actWin->drawGc.eraseGC(), x, y, w, h );
 
-  XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+  XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
    actWin->drawGc.eraseGC(), x, y, w, h );
 
   return 1;

@@ -3983,7 +3983,7 @@ int len;
           actWin->executeGc.setLineWidth( 2 );
           actWin->executeGc.setLineStyle( LineSolid );
 
-          XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+          XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
            actWin->executeGc.eraseGC(), x, y, w, h );
 
           actWin->executeGc.setLineWidth( 1 );
@@ -4006,7 +4006,7 @@ int len;
           actWin->executeGc.setLineWidth( 2 );
           actWin->executeGc.setLineStyle( LineSolid );
 
-          XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+          XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
            actWin->executeGc.eraseGC(), x, y, w, h );
 
           actWin->executeGc.setLineWidth( 1 );
@@ -4244,10 +4244,10 @@ unsigned int color;
 
     actWin->executeGc.setFG( actWin->ci->pix(bgColor) );
 
-    XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
 
-    XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
+    XFillRectangle( actWin->d, XtWindow(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
 
     if ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) ) {
@@ -4274,7 +4274,7 @@ unsigned int color;
       actWin->executeGc.setLineWidth( 2 );
       actWin->executeGc.setLineStyle( LineSolid );
 
-      XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
+      XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
 
       actWin->executeGc.setLineWidth( 1 );

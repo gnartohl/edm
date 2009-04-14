@@ -39,7 +39,7 @@ static libRecType libRec[] = {
   { "activeMeterClass", global_str2, reg_str8 },
   { "activeBarClass", global_str2, reg_str9 },
   { "activeMessageBoxClass", global_str2, reg_str10 },
-  { "xyGraphClass", global_str2, "X-Y Graph" },
+  { "xyGraphClass", global_str2, reg_str30 },
   { "activeXTextDspClass", global_str5, reg_str24 },
   { "activeXTextDspClass:noedit", global_str2, reg_str12 },
   { "activeSliderClass", global_str5, reg_str13 },

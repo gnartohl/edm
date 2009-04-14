@@ -1858,7 +1858,7 @@ XRectangle xR = { x, y, w, h };
 
   if ( border ) {
     actWin->drawGc.setLineWidth( lineThk );
-    XDrawRectangle( actWin->d, XtWindow(actWin->executeWidget),
+    XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.eraseGC(), x+lineThk/2, y+lineThk/2, w-lineThk, h-lineThk );
     actWin->drawGc.setLineWidth( 1 );
   }

@@ -998,6 +998,8 @@ Widget wdgt;
     // open file name in readV
     //fprintf( stderr, "open [%s]\n", readV );
 
+    
+
     f = fopen( readV, "r" );
     if ( !f ) {
 
@@ -1020,6 +1022,7 @@ Widget wdgt;
       strcpy( comment, "" );
 
       tag.init();
+      tag.initLine();
       tag.loadR( "begin" );
       tag.loadR( "numCols", &numCols );
       tag.loadR( "headerAlign", 4095, headerAlignStr );
