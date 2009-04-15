@@ -1983,7 +1983,7 @@ int activeArcClass::flip (
   char direction ) // 'H' or 'V'
 {
 
-int stat;
+int stat = 1;
 double angle, totAngle, diff;
 
   if ( efStartAngle.isNull() ) {
