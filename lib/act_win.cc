@@ -10274,6 +10274,7 @@ char *str;
 
   usePixmap = -1; // -1 means unknown, will be determined on execute
   bgPixmap = (Pixmap) NULL;
+  pixmapW = pixmapH = -1;
   needCopy = 0;
   pixmapX0 = pixmapX1 = pixmapY0 = pixmapY1 = 0;
   bgPixmapFlag = 0;
@@ -10950,6 +10951,7 @@ pvDefPtr pvDefCur, pvDefNext;
   if ( bgPixmap ) {
     XFreePixmap( d, bgPixmap );
     bgPixmap = (Pixmap) NULL;
+    pixmapW = pixmapH = -1;
   }
 
 }
@@ -16185,8 +16187,11 @@ char *envPtr;
     needFullCopy = 0;
 
     if ( bgPixmap ) {
-      XFreePixmap( d, bgPixmap );
-      bgPixmap = (Pixmap) NULL;
+      if ( ( w != pixmapW ) || ( h != pixmapH ) ) {
+        XFreePixmap( d, bgPixmap );
+        bgPixmap = (Pixmap) NULL;
+        pixmapW = pixmapH = -1;
+      }
     }
 
     if ( !bgPixmap ) {
@@ -16197,6 +16202,8 @@ char *envPtr;
         depth = DefaultDepth( d, screen_num );
         bgPixmap = XCreatePixmap( d, XtWindow(executeWidget),
         w, h, depth );
+        pixmapW = w;
+        pixmapH = h;
       }
     }
 
@@ -16220,6 +16227,7 @@ char *envPtr;
     if ( bgPixmap ) {
       XFreePixmap( d, bgPixmap );
       bgPixmap = (Pixmap) NULL;
+      pixmapW = pixmapH = -1;
     }
 
   }
