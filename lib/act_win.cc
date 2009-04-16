@@ -10520,6 +10520,9 @@ void activeWindowClass::updateCopyRegion (
 
 int _x1, _y1;
 
+  _x1 = _x0 + _w;
+  _y1 = _y0 + _h;
+
   if ( pixmapX0 > _x0 ) pixmapX0 = _x0;
   if ( pixmapX1 < _x1 ) pixmapX1 = _x1;
   if ( pixmapY0 > _y0 ) pixmapY0 = _y0;
@@ -10548,6 +10551,7 @@ void activeWindowClass::doCopy ( void ) {
       XCopyArea( d, bgPixmap,
        XtWindow(executeWidget), executeGc.normGC(),
        0, 0, w, h, 0, 0 );
+      initCopy();
     }
 
   }
@@ -10556,19 +10560,25 @@ void activeWindowClass::doCopy ( void ) {
 
 void activeWindowClass::doMinCopy ( void ) {
 
+  if ( mode == AWC_EDIT ) {
+    needCopy = 0;
+    needFullCopy = 0;
+    return;
+  }
+
   if ( needFullCopy ) {
     doCopy();
     return;
   }
 
   pixmapX0 -= 10;
-  if ( pixmapX0 < 1 ) pixmapX0 = 1;
+  if ( pixmapX0 < 0 ) pixmapX0 = 0;
 
   pixmapX1 += 10;
   if ( pixmapX1 > w ) pixmapX1 = w;
 
   pixmapY0 -= 10;
-  if ( pixmapY0 < 1 ) pixmapY0 = 1;
+  if ( pixmapY0 < 0 ) pixmapY0 = 0;
 
   pixmapY1 += 10;
   if ( pixmapY1 > h ) pixmapY1 = h;
@@ -10579,15 +10589,7 @@ void activeWindowClass::doMinCopy ( void ) {
   if ( pixW < 1 ) return;
   if ( pixH < 1 ) return;
 
-  if ( mode == AWC_EDIT ) {
-    needCopy = 0;
-    return;
-  }
-
   if ( needCopy ) {
-
-    //printf( "[ %-d, %-d, %-d, %-d ]\n",
-    // pixmapX0, pixmapX1, pixmapY0, pixmapY1 );
 
     needCopy = 0;
 
@@ -10596,6 +10598,7 @@ void activeWindowClass::doMinCopy ( void ) {
       XCopyArea( d, bgPixmap,
        XtWindow(executeWidget), executeGc.normGC(),
        pixmapX0, pixmapY0, pixW, pixH, pixmapX0, pixmapY0 );
+      initCopy();
     }
 
   }
@@ -16160,6 +16163,8 @@ char callbackName[63+1];
 pvDefPtr pvDefCur;
 char *envPtr;
 
+  initCopy();
+
   windowState = AWC_START_EXECUTE;
 
   if ( bgPixmapFlag == AWC_BGPIXMAP_NEVER ) {
@@ -19292,7 +19297,6 @@ int workToDo = 0;
   }
 
   if ( cur != defExeHead ) {
-    initCopy();
     needCopy = 1;
     workToDo = 1;
   }

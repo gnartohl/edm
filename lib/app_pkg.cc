@@ -5618,7 +5618,7 @@ char msg[127+1];
         }
       }
 
-      cur->node.doCopy();
+      cur->node.doMinCopy();
 
       cur = cur->flink;
 
@@ -5697,7 +5697,6 @@ char msg[127+1];
   cur = head->flink;
   while ( cur != head ) {
     cur->node.doMinCopy();
-    cur->node.doCopy();
     cur = cur->flink;
   }
 
