@@ -4252,7 +4252,9 @@ int clipStat;
   actWin->executeGc.saveFg();
   actWin->executeGc.saveBg();
 
-  clipStat = actWin->executeGc.addNormXClipRectangle( xR );
+  if ( !noExecuteClipMask ) {
+    clipStat = actWin->executeGc.addNormXClipRectangle( xR );
+  }
 
   if ( strcmp( fontTag, "" ) != 0 ) {
     actWin->executeGc.setFontTag( fontTag, actWin->fi );
@@ -4319,7 +4321,9 @@ int clipStat;
 
   }
 
-  if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
+  if ( !noExecuteClipMask ) {
+    if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
+  }
 
   actWin->executeGc.restoreFg();
   actWin->executeGc.restoreBg();
