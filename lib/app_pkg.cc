@@ -1649,7 +1649,7 @@ void open_from_path_cb (
 appContextClass *apco = (appContextClass *) client;
 int n;
 Arg args[10];
-XmString xmStr;
+XmString xmStr = NULL;
 char prefix[127+1];
 
   strncpy( prefix, apco->curPath, 127 );
@@ -1681,7 +1681,7 @@ void open_cb (
 appContextClass *apco = (appContextClass *) client;
 int n;
 Arg args[10];
-XmString xmStr;
+XmString xmStr = NULL;
 
   if ( apco->firstOpen ) {
 
@@ -1711,7 +1711,7 @@ void import_cb (
 appContextClass *apco = (appContextClass *) client;
 int n;
 Arg args[10];
-XmString xmStr;
+XmString xmStr = NULL;
 char prefix[127+1];
 
   strncpy( prefix, apco->curPath, 127 );

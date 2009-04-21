@@ -15263,7 +15263,7 @@ int activeWindowClass::loadDummy (
   int y,
   int setPosition ) {
 
-FILE *f;
+FILE *f = NULL;
 activeGraphicListPtr cur, next;
 int stat;
 Widget clipWidget, hsbWidget, vsbWidget;
@@ -19232,7 +19232,7 @@ void activeWindowClass::showSelectionObject ( void ) {
 // !!!!!! notice coupling with activeWindowClass::updateMasterSelection()
 
 activeGraphicListPtr cur;
-int x1, y1;
+int x1=0, y1=0;
 char buf[31+1];
 int num_selected;
 

@@ -8592,7 +8592,7 @@ int yi, yScaleIndex, allChronological;
 
 double checkXMin, checkXMax, checkY1Min[NUM_Y_AXES], checkY1Max[NUM_Y_AXES],
  diff, maxDiff;
-int autoScaleX, autoScaleY[NUM_Y_AXES];
+int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 
   if ( actWin->isIconified ) return;
 
@@ -11495,7 +11495,7 @@ int lX, lY;
 void xyGraphClass::drawYlabel ( void ) {
 
 unsigned int i;
-int lX, lY, lW, inc, stat, useRotated, cW, maxW;
+int lX=0, lY=0, lW=0, inc, stat, useRotated, cW, maxW;
 char fullName[127+1], label[127+1];
 
   if ( y1Axis[0] && !blank( yLabel.getExpanded() ) ) {
@@ -11564,7 +11564,7 @@ char fullName[127+1], label[127+1];
 void xyGraphClass::drawY2label ( void ) {
 
 unsigned int i;
-int lX, lY, lW, inc, stat, useRotated, cW, maxW;
+int lX=0, lY=0, lW=0, inc, stat, useRotated, cW, maxW;
 char fullName[127+1], label[127+1];
 
   if ( y1Axis[1] && !blank( y2Label.getExpanded() ) ) {

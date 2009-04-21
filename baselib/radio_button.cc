@@ -1165,7 +1165,6 @@ static void selectActions (
 {
 
 activeRadioButtonClass *rbto;
-int stat;
 XButtonEvent *be = (XButtonEvent *) e;
 
   XtVaGetValues( w, XmNuserData, &rbto, NULL );

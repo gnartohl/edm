@@ -3936,7 +3936,7 @@ int activeXTextDspClass::edit ( void ) {
 int activeXTextDspClass::erase ( void ) {
 
 XRectangle xR = { x, y, w, h };
-int clipStat;
+int clipStat = 0;
 
   if ( activeMode || deleteRequest ) return 1;
 
@@ -3980,7 +3980,7 @@ int clipStat;
 int activeXTextDspClass::eraseActive ( void ) {
 
 XRectangle xR = { x, y, w, h };
-int clipStat, len;
+int clipStat = 0, len;
 
   if ( !enabled || !init || !activeMode ) return 1;
 
@@ -4101,7 +4101,7 @@ int clipStat, len;
 int activeXTextDspClass::draw ( void ) {
 
 XRectangle xR = { x, y, w, h };
-int clipStat;
+int clipStat = 0;
 int blink = 0;
 
   if ( activeMode || deleteRequest ) return 1;
@@ -4162,7 +4162,7 @@ int n;
 int blink = 0;
 unsigned int color;
 XRectangle xR = { x, y, w, h };
-int clipStat;
+int clipStat = 0;
 
   if ( !init && !connection.pvsConnected() ) {
     if ( needToDrawUnconnected ) {

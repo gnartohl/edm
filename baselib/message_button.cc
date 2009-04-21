@@ -1290,7 +1290,7 @@ char tmpDestPvName[39+1], tmpSourcePressPvName[39+1];
 
 int activeMessageButtonClass::genericEdit ( void ) {
 
-char title[32], *ptr, *envPtr, saveLock;
+char title[32], *ptr, *envPtr, saveLock = 0;
 
   if ( !eBuf ) {
     eBuf = new editBufType;

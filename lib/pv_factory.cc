@@ -124,7 +124,6 @@ class ProcessVariable *PV_Factory::create(const char *PV_name)
 {
 
 class ProcessVariable *pv;
-char *tk, *ctx;
 char buf[255+1];
 int i, l, pos;
 
@@ -175,7 +174,6 @@ class ProcessVariable *PV_Factory::createWithInitialCallbacks (
 ) {
 
 class ProcessVariable *pv;
-char *tk, *ctx;
 char buf[255+1];
 int i, l, pos;
 

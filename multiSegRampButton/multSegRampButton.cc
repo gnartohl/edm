@@ -2720,10 +2720,10 @@ char *activeMultSegRampButtonClass::dragValue (
       return visPvExpString.getExpanded();
     }
     else if ( i < 9 ) {
-      return finalPvExpString[i-3].getExpanded();
+      return finalPvExpString[i-4].getExpanded();
     }
     else if ( i < 14 ) {
-      return rampRatePvExpString[i-3].getExpanded();
+      return rampRatePvExpString[i-9].getExpanded();
     }
 
   }
@@ -2742,10 +2742,10 @@ char *activeMultSegRampButtonClass::dragValue (
       return visPvExpString.getRaw();
     }
     else if ( i < 9 ) {
-      return finalPvExpString[i-3].getRaw();
+      return finalPvExpString[i-4].getRaw();
     }
     else if ( i < 14 ) {
-      return rampRatePvExpString[i-3].getRaw();
+      return rampRatePvExpString[i-9].getRaw();
     }
 
   }

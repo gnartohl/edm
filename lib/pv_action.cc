@@ -5,7 +5,7 @@ int debugMode ( void );
 pvActionClass::pvActionClass ( void ) {
 
 char *ptr, *tk, *ctx, file[255+1], line[255+1];
-int i, l, stat, numLines, comment;
+int i, l, numLines, comment;
 FILE *f;
 
   name = NULL;

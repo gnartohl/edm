@@ -1302,7 +1302,7 @@ char *tk, *gotData, *context, buffer[255+1];
 int shellCmdClass::genericEdit ( void ) {
 
 int i;
-char title[32], *ptr, *envPtr, saveLock;
+char title[32], *ptr, *envPtr, saveLock = 0;
 
   buf = new bufType;
 

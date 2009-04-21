@@ -26,6 +26,7 @@
 
 static char *groupDragName = "?";
 
+#if 0
 static void groupUnconnectedTimeout (
   XtPointer client,
   XtIntervalId *id )
@@ -44,6 +45,7 @@ activeGroupClass *ago = (activeGroupClass *) client;
   ago->unconnectedTimer = 0;
 
 }
+#endif
 
 void agc_edit_update (
   Widget w,

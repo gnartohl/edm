@@ -26,7 +26,7 @@ pvsClass::pvsClass (
   char *hostWithPort
 ) {
 
-char *tk, *ctx, *hbuf;
+char *tk, *ctx, *hbuf=NULL;
 
   if ( !hostWithPort ) {
 
@@ -70,7 +70,7 @@ char *tk, *ctx, *hbuf;
 
   }
 
-  delete[] hbuf;
+  if ( hbuf ) delete[] hbuf;
 
   this->needInit = 1;
   this->numPvs = 0;
