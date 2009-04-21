@@ -1201,7 +1201,7 @@ void edmStripClass::button_callback(Widget w, XtPointer call, XButtonEvent *even
     XtVaSetValues(me->plot_widget,
                   XtNxLabel, xlabel,
                   XtNyLabel, ylabel,
-                  0);
+                  NULL);
     
 }
 

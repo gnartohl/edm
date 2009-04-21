@@ -1020,7 +1020,7 @@ float val;
     label[i].setRaw( "" );
   }
 
-  if ( ( major > 2 ) || ( major == 2 ) && ( minor > 4 ) ) {
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 4 ) ) ) {
     readStringFromFile( requiredHostName, 15+1, f );
   }
   else {

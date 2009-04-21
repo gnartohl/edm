@@ -945,7 +945,7 @@ char oneName[PV_Factory::MAX_PV_NAME+1];
     readPvExpStr.setRaw( "" );
   }
 
-  if ( ( major > 2 ) || ( major == 2 ) && ( minor > 0 ) ) {
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 0 ) ) ) {
     fscanf( f, "%d\n", &index ); actWin->incLine();
     inconsistentColor.setColorIndex( index, actWin->ci );
   }
