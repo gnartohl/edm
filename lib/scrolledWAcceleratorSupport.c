@@ -36,6 +36,7 @@
 #include <Xm/ScrolledWP.h>
 
 static XtRealizeProc origRealize = 0;
+static int giveUp = 0;
 
 /* install the accelerators of the NULL terminated widget list
  * 'srcs' recursively onto the children of 'destTop'.
@@ -54,7 +55,7 @@ Cardinal   n;
 
 	/* recurse */
     if (XtIsComposite(destTop)) {
-        XtVaGetValues(destTop, XmNchildren, &c, XmNnumChildren, &n, 0);
+        XtVaGetValues(destTop, XmNchildren, &c, XmNnumChildren, &n, NULL);
         while ( n-- > 0 ) {
             recursiveInstallAccs(*c++, srcs);
         }
@@ -71,6 +72,8 @@ static void installAccsRealize(Widget w, XtValueMask *pm, XSetWindowAttributes *
 XmScrolledWindowWidget sw = (XmScrolledWindowWidget)w;
 Widget	bars[3];
 int 	i = 0;
+
+        if ( giveUp ) return;
 	
 	if ( XtInheritRealize == origRealize ) {
 	/* If the 'realize' method was still 'XtInherit' at the time they installed
@@ -86,8 +89,11 @@ int 	i = 0;
 
 	/* paranoia check */
 	if ( XtInheritRealize == origRealize ) {
-		XtError("scrollWinAccSupport(): fatal error; unable to hook realize method");
-		exit(1);
+	  //XtError("scrollWinAccSupport(): Fatal error; unable to hook realize method");
+	  //exit(1);
+	  XtWarning("scrollWinAccSupport(): Error; unable to hook realize method");
+	  giveUp = 1;
+	  return;
 	}
 
 	/* Call superclass realize *before* installing accelerators
