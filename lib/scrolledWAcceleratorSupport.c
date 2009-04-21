@@ -89,8 +89,8 @@ int 	i = 0;
 
 	/* paranoia check */
 	if ( XtInheritRealize == origRealize ) {
-	  //XtError("scrollWinAccSupport(): Fatal error; unable to hook realize method");
-	  //exit(1);
+	  /*XtError("scrollWinAccSupport(): Fatal error; unable to hook realize method");*/
+	  /*exit(1);*/
 	  XtWarning("scrollWinAccSupport(): Error; unable to hook realize method");
 	  giveUp = 1;
 	  return;
