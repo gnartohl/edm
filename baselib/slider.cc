@@ -3064,6 +3064,8 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 
   if ( popupDialog ) {
 
+    be = (XButtonEvent *) e;
+
     if ( !slo->eBuf ) {
       slo->eBuf = new activeSliderClass::editBufType;
     }

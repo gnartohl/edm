@@ -258,7 +258,7 @@ int i, n, ii, nn, tmp, sanity;
   do {
 
     cptr = fgets( text, 1023, f );
-    text[1024] = 0;
+    text[1023] = 0;
     if ( !cptr ) return 2; // fail
     if ( strcmp( text, "<<<EOD>>>\n" ) == 0 ) return 3; // no more data
     tmp = atol( text );
@@ -268,15 +268,15 @@ int i, n, ii, nn, tmp, sanity;
     if ( !(*server) ) {
 
       cptr = fgets( text, 1023, f );
-      text[1024] = 0;
+      text[1023] = 0;
       if ( !cptr ) return 2; // fail
 
       cptr = fgets( text, 1023, f );
-      text[1024] = 0;
+      text[1023] = 0;
       if ( !cptr ) return 2; // fail
 
       cptr = fgets( text, 1023, f );
-      text[1024] = 0;
+      text[1023] = 0;
       if ( !cptr ) return 2; // fail
       n = atol( text );
 
@@ -284,13 +284,13 @@ int i, n, ii, nn, tmp, sanity;
       for ( i=0; i<n; i++ ) {
 
         cptr = fgets( text, 1023, f );
-        text[1024] = 0;
+        text[1023] = 0;
         if ( !cptr ) return 2; // fail
 
       }
 
       cptr = fgets( text, 1023, f );
-      text[1024] = 0;
+      text[1023] = 0;
       if ( !cptr ) return 2; // fail
       n = atol( text );
 
@@ -298,27 +298,27 @@ int i, n, ii, nn, tmp, sanity;
       for ( i=0; i<n; i++ ) {
 
         cptr = fgets( text, 1023, f );
-        text[1024] = 0;
+        text[1023] = 0;
         if ( !cptr ) return 2; // fail
 
         cptr = fgets( text, 1023, f );
-        text[1024] = 0;
+        text[1023] = 0;
         if ( !cptr ) return 2; // fail
 
         cptr = fgets( text, 1023, f );
-        text[1024] = 0;
+        text[1023] = 0;
         if ( !cptr ) return 2; // fail
 
         cptr = fgets( text, 1023, f );
-        text[1024] = 0;
+        text[1023] = 0;
         if ( !cptr ) return 2; // fail
 
         cptr = fgets( text, 1023, f );
-        text[1024] = 0;
+        text[1023] = 0;
         if ( !cptr ) return 2; // fail
 
         cptr = fgets( text, 1023, f );
-        text[1024] = 0;
+        text[1023] = 0;
         if ( !cptr ) return 2; // fail
         nn = atol( text );
 
@@ -326,7 +326,7 @@ int i, n, ii, nn, tmp, sanity;
         for ( ii=0; ii<nn; ii++ ) {
 
           cptr = fgets( text, 1023, f );
-          text[1024] = 0;
+          text[1023] = 0;
           if ( !cptr ) return 2; // fail
 
         }
@@ -339,18 +339,18 @@ int i, n, ii, nn, tmp, sanity;
       readStringFromFile( displayName, 127, f );
 
       cptr = fgets( text, 1023, f );
-      text[1024] = 0;
+      text[1023] = 0;
       if ( !cptr ) return 2; // fail
       *noEdit = atol( text );
 
       cptr = fgets( text, 1023, f );
-      text[1024] = 0;
+      text[1023] = 0;
       if ( !cptr ) return 2; // fail
       *numCheckPointMacros = atol( text );
 
       for ( i=0; i<*numCheckPointMacros; i++ ) {
         cptr = fgets( text, 1023, f );
-        text[1024] = 0;
+        text[1023] = 0;
         if ( !cptr ) return 2; // fail
         buf1 = NULL;
         tk = strtok_r( text, "\n \t", &buf1 );
@@ -398,7 +398,7 @@ int i, n, ii, nn, tmp, sanity;
   do {
 
     cptr = fgets( text, 1023, f );
-    text[1024] = 0;
+    text[1023] = 0;
     if ( !cptr ) return 2; // fail
     if ( strcmp( text, "<<<EOD>>>\n" ) == 0 ) return 3; // no more data
     tmp = atol( text );
@@ -408,15 +408,15 @@ int i, n, ii, nn, tmp, sanity;
     if ( *server ) {
 
       cptr = fgets( text, 1023, f );
-      text[1024] = 0;
+      text[1023] = 0;
       if ( !cptr ) return 2; // fail
 
       cptr = fgets( text, 1023, f );
-      text[1024] = 0;
+      text[1023] = 0;
       if ( !cptr ) return 2; // fail
 
       cptr = fgets( text, 1023, f );
-      text[1024] = 0;
+      text[1023] = 0;
       if ( !cptr ) return 2; // fail
       n = atol( text );
 
@@ -424,13 +424,13 @@ int i, n, ii, nn, tmp, sanity;
       for ( i=0; i<n; i++ ) {
 
         cptr = fgets( text, 1023, f );
-        text[1024] = 0;
+        text[1023] = 0;
         if ( !cptr ) return 2; // fail
 
       }
 
       cptr = fgets( text, 1023, f );
-      text[1024] = 0;
+      text[1023] = 0;
       if ( !cptr ) return 2; // fail
       n = atol( text );
 
@@ -438,27 +438,27 @@ int i, n, ii, nn, tmp, sanity;
       for ( i=0; i<n; i++ ) {
 
         cptr = fgets( text, 1023, f );
-        text[1024] = 0;
+        text[1023] = 0;
         if ( !cptr ) return 2; // fail
 
         cptr = fgets( text, 1023, f );
-        text[1024] = 0;
+        text[1023] = 0;
         if ( !cptr ) return 2; // fail
 
         cptr = fgets( text, 1023, f );
-        text[1024] = 0;
+        text[1023] = 0;
         if ( !cptr ) return 2; // fail
 
         cptr = fgets( text, 1023, f );
-        text[1024] = 0;
+        text[1023] = 0;
         if ( !cptr ) return 2; // fail
 
         cptr = fgets( text, 1023, f );
-        text[1024] = 0;
+        text[1023] = 0;
         if ( !cptr ) return 2; // fail
 
         cptr = fgets( text, 1023, f );
-        text[1024] = 0;
+        text[1023] = 0;
         if ( !cptr ) return 2; // fail
         nn = atol( text );
 
@@ -466,7 +466,7 @@ int i, n, ii, nn, tmp, sanity;
         for ( ii=0; ii<nn; ii++ ) {
 
           cptr = fgets( text, 1023, f );
-          text[1024] = 0;
+          text[1023] = 0;
           if ( !cptr ) return 2; // fail
 
         }
@@ -479,18 +479,18 @@ int i, n, ii, nn, tmp, sanity;
       readStringFromFile( displayName, 127, f );
 
       cptr = fgets( text, 1023, f );
-      text[1024] = 0;
+      text[1023] = 0;
       if ( !cptr ) return 2; // fail
       *noEdit = atol( text );
 
       cptr = fgets( text, 1023, f );
-      text[1024] = 0;
+      text[1023] = 0;
       if ( !cptr ) return 2; // fail
       *numCheckPointMacros = atol( text );
 
       for ( i=0; i<*numCheckPointMacros; i++ ) {
         cptr = fgets( text, 1023, f );
-        text[1024] = 0;
+        text[1023] = 0;
         if ( !cptr ) return 2; // fail
         buf1 = NULL;
         tk = strtok_r( text, "\n \t", &buf1 );
@@ -552,33 +552,33 @@ int i;
   readStringFromFile( screenName, 255, f );
 
   cptr = fgets( text, 1023, f );
-  text[1024] = 0;
+  text[1023] = 0;
   if ( !cptr ) return 2; // fail
   *x = atol( text );
 
   cptr = fgets( text, 1023, f );
-  text[1024] = 0;
+  text[1023] = 0;
   if ( !cptr ) return 2; // fail
   *y = atol( text );
 
   cptr = fgets( text, 1023, f );
-  text[1024] = 0;
+  text[1023] = 0;
   if ( !cptr ) return 2; // fail
   *icon = atol( text );
 
   cptr = fgets( text, 1023, f );
-  text[1024] = 0;
+  text[1023] = 0;
   if ( !cptr ) return 2; // fail
   *noEdit = atol( text );
 
   cptr = fgets( text, 1023, f );
-  text[1024] = 0;
+  text[1023] = 0;
   if ( !cptr ) return 2; // fail
   *numCheckPointMacros = atol( text );
 
   for ( i=0; i<*numCheckPointMacros; i++ ) {
     cptr = fgets( text, 1023, f );
-    text[1024] = 0;
+    text[1023] = 0;
     if ( !cptr ) return 2; // fail
     buf1 = NULL;
     tk = strtok_r( text, "\n \t", &buf1 );
@@ -1254,7 +1254,7 @@ int value, stat, n, n_in, q_stat_r, q_stat_i;
 THREAD_HANDLE delayH;
 MAIN_NODE_PTR node;
 SYS_TIME_TYPE timeout;
-int len, num, cmd;
+int len, num, cmd=0;
 char msg[255+1], msg1[255+1];
 struct sockaddr_in s, cli_s;
 int sockfd, newsockfd, more;
@@ -1751,7 +1751,7 @@ int primaryServerFlag, oneInstanceFlag, numCheckPointMacros;
 char *envPtr;
 int doXSync = 0;
 
-appListPtr primary;
+appListPtr primary=NULL;
 int primaryServerWantsExit;
 
 int numLocaleFailures = 0;
@@ -2618,28 +2618,32 @@ parse_error:
 
         cur = primary;
 
-        cur->appArgs->appCtxPtr->closeDownAppCtx();
-
-	// blank display name
-	strcpy( cur->appArgs->appCtxPtr->displayName, "" );
-
         stat = thread_lock_master( serverH );
         g_numClients--;
         stat = thread_unlock_master( serverH );
 
-        // unlink and delete
-        cur->blink->flink = cur->flink;
-        cur->flink->blink = cur->blink;
+	if ( cur ) {
 
-        oneAppCtx = cur->appArgs->appCtxPtr->appContext();
-        oneDisplay = cur->appArgs->appCtxPtr->getDisplay();
-        delete cur->appArgs->appCtxPtr;
-        for ( i=0; i<cur->appArgs->argc; i++ )
-          delete[] cur->appArgs->argv[i];
-        delete[] cur->appArgs->argv;
-        delete cur->appArgs;
+          cur->appArgs->appCtxPtr->closeDownAppCtx();
 
-        delete cur;
+	  // blank display name
+	  strcpy( cur->appArgs->appCtxPtr->displayName, "" );
+
+          // unlink and delete
+          cur->blink->flink = cur->flink;
+          cur->flink->blink = cur->blink;
+
+          oneAppCtx = cur->appArgs->appCtxPtr->appContext();
+          oneDisplay = cur->appArgs->appCtxPtr->getDisplay();
+          delete cur->appArgs->appCtxPtr;
+          for ( i=0; i<cur->appArgs->argc; i++ )
+            delete[] cur->appArgs->argv[i];
+          delete[] cur->appArgs->argv;
+          delete cur->appArgs;
+
+          delete cur;
+
+	}
 
         numAppsRemaining = 0;
 
@@ -2651,8 +2655,10 @@ parse_error:
         if ( !shutdown || ( shutdownTry <= 0 ) ) {
 
           cur = primary;
-          cur->appArgs->appCtxPtr->postMessage( main_str47 );
-          cur->appArgs->appCtxPtr->exitFlag = 0;
+	  if ( cur ) {
+            cur->appArgs->appCtxPtr->postMessage( main_str47 );
+            cur->appArgs->appCtxPtr->exitFlag = 0;
+	  }
           primaryServerWantsExit = 0;
           shutdownTry = 200;
 

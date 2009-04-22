@@ -1119,11 +1119,11 @@ char oneName[255+1];
   }
 
   // after v 2.3 read numDsps and then the data
-  if ( ( major < 2 ) || ( major == 2 ) && ( minor < 4 ) ) {
+  if ( ( major < 2 ) || ( ( major == 2 ) && ( minor < 4 ) ) ) {
 
     md = 8;
 
-    if ( ( major > 2 ) || ( major == 2 ) && ( minor > 0 ) ) {
+    if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 0 ) ) ) {
 
       for ( i=1; i<md; i++ ) { // for forward compatibility
 
@@ -1156,7 +1156,7 @@ char oneName[255+1];
 
     }
 
-    if ( ( major > 2 ) || ( major == 2 ) && ( minor > 1 ) ) {
+    if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 1 ) ) ) {
       readStringFromFile( oneName, 127+1, f ); actWin->incLine();
       buttonLabel.setRaw( oneName );
     }
@@ -1164,7 +1164,7 @@ char oneName[255+1];
       buttonLabel.setRaw( label[0].getRaw() );
     }
 
-    if ( ( major > 2 ) || ( major == 2 ) && ( minor > 2 ) ) {
+    if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 2 ) ) ) {
       fscanf( f, "%d\n", &noEdit ); actWin->incLine();
     }
     else {
@@ -1209,7 +1209,7 @@ char oneName[255+1];
 
   }
 
-  if ( ( major > 2 ) || ( major == 2 ) && ( minor > 5 ) ) {
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 5 ) ) ) {
     fscanf( f, "%d\n", &ofsX ); actWin->incLine();
     fscanf( f, "%d\n", &ofsY ); actWin->incLine();
   }

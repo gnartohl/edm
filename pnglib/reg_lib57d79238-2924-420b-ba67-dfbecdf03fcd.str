@@ -1,5 +1,5 @@
-#ifndef __reg_lib57d79238-2924-420b-ba67-dfbecdf03fcd_str
-#define __reg_lib57d79238-2924-420b-ba67-dfbecdf03fcd_str 1
+#ifndef __reg_lib57d79238_2924_420b_ba67_dfbecdf03fcd_str
+#define __reg_lib57d79238_2924_420b_ba67_dfbecdf03fcd_str 1
 
 #define reg_str1 (char *) "PNG Image"
 

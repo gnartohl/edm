@@ -105,8 +105,6 @@ static void setReplace (
 scrolledListClass *slo = (scrolledListClass *) client;
 XmToggleButtonCallbackStruct *toggleCallback =
  (XmToggleButtonCallbackStruct *) call;
-int n;
-Arg args[3];
 
   if ( toggleCallback->set ) {
     slo->replace = 1;
@@ -188,7 +186,7 @@ char buf[63+1];
 
   if ( slo->replace ) {
 
-    char matchChar[2], replBuf[63+1], *tk, *ctx, *loc;
+    char matchChar[2], replBuf[63+1], *loc;
     int l;
 
     l = strlen( slo->prefixString );

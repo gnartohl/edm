@@ -26,12 +26,15 @@
 #include "pv_factory.h"
 #include "cvtFast.h"
 
+#if 0
+// defined in x_text_obj.h
 #define AXTC_K_COLORMODE_STATIC 0
 #define AXTC_K_COLORMODE_ALARM 1
 
 #define AXTC_MAJOR_VERSION 4
 #define AXTC_MINOR_VERSION 0
 #define AXTC_RELEASE 0
+#endif
 
 extern "C"
 {

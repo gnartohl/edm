@@ -1649,7 +1649,7 @@ void open_from_path_cb (
 appContextClass *apco = (appContextClass *) client;
 int n;
 Arg args[10];
-XmString xmStr;
+XmString xmStr = NULL;
 char prefix[127+1];
 
   strncpy( prefix, apco->curPath, 127 );
@@ -1659,11 +1659,10 @@ char prefix[127+1];
   if ( strcmp( prefix, "" ) != 0 ) {
     xmStr = XmStringCreateLocalized( prefix );
     XtSetArg( args[n], XmNdirectory, xmStr ); n++;
+    XmStringFree( xmStr );
   }
 
   XtSetValues( apco->fileSelectFromPathBox, args, n );
-
-  if ( strcmp( prefix, "" ) != 0 ) XmStringFree( xmStr );
 
   XtManageChild( apco->fileSelectFromPathBox );
 
@@ -1711,7 +1710,7 @@ void import_cb (
 appContextClass *apco = (appContextClass *) client;
 int n;
 Arg args[10];
-XmString xmStr;
+XmString xmStr = NULL;
 char prefix[127+1];
 
   strncpy( prefix, apco->curPath, 127 );
@@ -1721,11 +1720,10 @@ char prefix[127+1];
   if ( strcmp( prefix, "" ) != 0 ) {
     xmStr = XmStringCreateLocalized( prefix );
     XtSetArg( args[n], XmNdirectory, xmStr ); n++;
+    XmStringFree( xmStr );
   }
 
   XtSetValues( apco->importSelectBox, args, n );
-
-  if ( strcmp( prefix, "" ) != 0 ) XmStringFree( xmStr );
 
   XtManageChild( apco->importSelectBox );
 

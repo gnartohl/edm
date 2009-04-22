@@ -229,7 +229,7 @@ XExposeEvent *expe;
 XButtonEvent *be;
 XCrossingEvent *ce;
 colorInfoClass *cio;
-int stat, x, y, pos, i, r, c, ncols, nrows, remainder, count;
+int stat, x, y, pos, i, r, c, ncols, nrows, remainder, count=0;
 unsigned int bg;
 int *dest;
 int red, green, blue;
@@ -1591,13 +1591,13 @@ int colorInfoClass::ver3InitFromFile (
 
 char tk[MAX_LINE_SIZE+1], *endptr;
 int i, ii, n, stat, nrows, ncols, remainder, dup,
- parseStatus, state, colorMult, val, index, maxSpecial, firstCond,
+ parseStatus, state, colorMult, val, index, maxSpecial=0, firstCond,
  x, y, r, c, pos;
 XColor color;
 Arg arg[20];
 XmString str1, str2;
 colorCachePtr cur1, cur2, cur[3], curSpecial;
-ruleConditionPtr ruleCond;
+ruleConditionPtr ruleCond=NULL;
 unsigned long bgColor;
 int tmpSize;
 int *tmp;
@@ -3242,14 +3242,14 @@ int colorInfoClass::ver4InitFromFile (
 
 char tk[MAX_LINE_SIZE+1], *endptr;
 int i, ii, n, stat, nrows, ncols, remainder, dup,
- parseStatus, state, colorMult, val, index, maxSpecial, firstCond,
+ parseStatus, state, colorMult, val, index, maxSpecial=0, firstCond,
  x, y, r, c, pos;
 
 XColor color;
 Arg arg[20];
 XmString str1, str2;
 colorCachePtr cur1, cur2, cur3, cur4, cur[curMax], curSpecial;
-ruleConditionPtr ruleCond, ruleCondTmp, curRule, nextRule;
+ruleConditionPtr ruleCond=NULL, ruleCondTmp, curRule, nextRule;
 unsigned long bgColor;
 int tmpSize;
 int *tmp;
@@ -5112,7 +5112,7 @@ XColor color;
 Arg arg[20];
 XmString str1, str2;
 colorCachePtr cur, curSpecial;
-int rgb[3], red, green, blue;
+int rgb[3], red=0, green=0, blue=0;
 unsigned long plane_masks[1], bgColor;
 
   if ( !this->colorCacheByIndexH ) return 0;
@@ -6045,8 +6045,8 @@ int colorInfoClass::setRGB (
 
 int stat;
 colorCachePtr cur;
-int diff, min, foundOne;
-unsigned int bestPixel;
+int diff, min=0, foundOne;
+unsigned int bestPixel=0;
 
   //fprintf( stderr, "\n\nstart r=%-d, g=%-d, b=%-d,\n", r, g, b );
 
@@ -6185,7 +6185,7 @@ Colormap colorInfoClass::getColorMap ( void ) {
 int colorInfoClass::setCurIndexByPixel (
   unsigned int pixel ) {
 
-int i, curI, stat;
+int i, curI=0, stat;
 
   for ( i=0; i<max_colors+num_blinking_colors; i++ ) {
 

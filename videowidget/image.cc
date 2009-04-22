@@ -118,7 +118,7 @@ void imageClass::transformImageData (
   double *src
 ) {
 
-int i, srcX, srcY, destX, destY, destW, destH,
+int i, srcX, srcY, destX, destY, destW=1, destH=1,
  destOfsX, destOfsY, effW, effH;
 double dSrcX, dSrcY, dSrcIncX, dSrcIncY, aspRatio, newW, newH;
 unsigned char c;

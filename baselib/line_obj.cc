@@ -3262,7 +3262,7 @@ int activeLineClass::undoEdit (
 
 undoLineOpClass *opPtr = (undoLineOpClass *) _opPtr;
 int i;
-int oneW, oneH, minX, minY, maxX, maxY;
+int oneW, oneH, minX=0, minY=0, maxX=0, maxY=0;
 
   if ( xpoints ) delete[] xpoints;
   numPoints = opPtr->n;
@@ -3356,8 +3356,8 @@ void activeLineClass::getArrowCoords (
 ) {
 
 int n0, n1, i, slopeUndef, slopeUndefP;
-double x0, x1, y0, y1, slope;
-double x0P, x1P, y0P, y1P, slopeP;
+double x0, x1, y0, y1, slope=1;
+double x0P=0, x1P=0, y0P=0, y1P=0, slopeP=1;
 double ax0, ay0, ax1, ay1, ax2, ay2, theta;
 
 double len = 14.0;

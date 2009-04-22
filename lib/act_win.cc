@@ -5864,13 +5864,13 @@ activeWindowClass *awo;
             XtVaSetValues(awo->scroll,
              XmNwidth, (Dimension)ce->width,
              XmNheight, (Dimension)ce->height,
-             0);
+             NULL);
           }
 
           XtVaSetValues(awo->top,
            XmNwidth, (Dimension)ce->width,
            XmNheight, (Dimension)ce->height,
-           0);
+           NULL);
 
         }
 
@@ -5910,7 +5910,7 @@ activeWindowClass *awo;
         XtVaSetValues(awo->drawWidget,
          XmNwidth, (Dimension)awo->w,
          XmNheight, (Dimension)awo->h,
-         0);
+         NULL);
 
       }
       else {
@@ -5919,13 +5919,13 @@ activeWindowClass *awo;
           XtVaSetValues(awo->scroll,
            XmNwidth, (Dimension)awo->w,
            XmNheight, (Dimension)awo->h,
-           0);
+           NULL);
 	}
 
         XtVaSetValues(awo->drawWidget,
          XmNwidth, (Dimension)awo->w,
          XmNheight, (Dimension)awo->h,
-         0);
+         NULL);
 
       }
 
@@ -15128,7 +15128,7 @@ int activeWindowClass::loadDummy (
   int y,
   int setPosition ) {
 
-FILE *f;
+FILE *f = NULL;
 activeGraphicListPtr cur, next;
 int stat;
 Widget clipWidget, hsbWidget, vsbWidget;
@@ -18949,7 +18949,7 @@ void activeWindowClass::showSelectionObject ( void ) {
 // !!!!!! notice coupling with activeWindowClass::updateMasterSelection()
 
 activeGraphicListPtr cur;
-int x1, y1;
+int x1=0, y1=0;
 char buf[31+1];
 int num_selected;
 
@@ -20374,7 +20374,7 @@ Widget scroll = awc->scrollWidgetId();
   awc->setChanged();
 
   if ( scroll )
-    XtVaGetValues( scroll, XmNclipWindow, &clip, 0 );
+    XtVaGetValues( scroll, XmNclipWindow, &clip, NULL );
 
   if ( !clip ) {
     XtWarning("b2ReleaseClip_cb(): no clipWindow found");
@@ -20385,11 +20385,11 @@ Widget scroll = awc->scrollWidgetId();
    clip,
    XmNwidth, &newW,
    XmNheight, &newH,
-   0 );
+   NULL );
 
-  XtVaSetValues( awc->drawWidget, XmNwidth, newW, XmNheight, newH, 0 );
+  XtVaSetValues( awc->drawWidget, XmNwidth, newW, XmNheight, newH, NULL );
 
-  XtVaSetValues( awc->top,XmNwidth, newW, XmNheight, newH, 0 );
+  XtVaSetValues( awc->top,XmNwidth, newW, XmNheight, newH, NULL );
 
   awc->w = newW;
   awc->h = newH;

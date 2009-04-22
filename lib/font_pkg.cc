@@ -1446,7 +1446,7 @@ int fontInfoClass::flushToBrace (
 {
 
 char line[255+1], *tk, *ptr, *ctx;
-int foundBrace;
+int foundBrace = 0;
 
   do {
 
@@ -1489,7 +1489,7 @@ int fontInfoClass::processFontGroup (
 
 char line[255+1], buf[255+1], lastLine[255+1], *ptr, *tk1, *ctx1;
 int stat;
-int foundBrace;
+int foundBrace = 0;
 
   strcpy( lastLine, "" );
   stat = FONTINFO_GROUPSYNTAX; // in case all lines are blank

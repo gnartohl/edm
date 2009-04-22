@@ -990,7 +990,7 @@ float val;
   }
 
   // after v 2.3 menu label 0, numCmds, and then the array data
-  if ( ( major > 2 ) || ( major == 2 ) && ( minor > 3 ) ) {
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 3 ) ) ) {
 
     readStringFromFile( oneName, 127+1, f ); actWin->incLine();
     label[0].setRaw( oneName );
@@ -1020,7 +1020,7 @@ float val;
     label[i].setRaw( "" );
   }
 
-  if ( ( major > 2 ) || ( major == 2 ) && ( minor > 4 ) ) {
+  if ( ( major > 2 ) || ( ( major == 2 ) && ( minor > 4 ) ) ) {
     readStringFromFile( requiredHostName, 15+1, f );
   }
   else {
@@ -1302,7 +1302,7 @@ char *tk, *gotData, *context, buffer[255+1];
 int shellCmdClass::genericEdit ( void ) {
 
 int i;
-char title[32], *ptr, *envPtr, saveLock;
+char title[32], *ptr, *envPtr, saveLock=0;
 
   buf = new bufType;
 

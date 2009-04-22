@@ -366,6 +366,10 @@ ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
     char *p1, *start;
     int more, findingInline = 0, gettingFirst;
     CALC_ProcessVariable *pv;
+    char dummy[2];
+
+    strcpy( dummy, "" );
+    start = dummy;
 
     for (i=0; i<CALC_ProcessVariable::MaxArgs; ++i)
         arg_name[i] = 0;

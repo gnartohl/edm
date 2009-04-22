@@ -1775,10 +1775,7 @@ void activeXRegTextClass::updateDimensions ( void )
   if ( activeMode ) {
     char text[80];
     getProcessedText(text);
-    if ( text )
-      stringLength = strlen( text );
-    else
-      stringLength = 0;
+    stringLength = strlen( text );
   }
   else {
     if ( value.getRaw() )

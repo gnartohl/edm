@@ -1419,7 +1419,8 @@ int tagClass::decode (
   int valueIsCompound
 ) {
 
-int i, ii, n, index, r, g, b, l, colorIndex, *intArray, oneIndex, foundValue,
+int i, ii, n, index, r=0, g=0, b=0, l, colorIndex, *intArray, oneIndex,
+ foundValue,
  max, ofs;
 unsigned int *uintArray;
 double *doubleArray;
@@ -3522,7 +3523,7 @@ double *dArray;
 char *s, *sDef, *enumString;
 expStringClass *expStr;
 pvColorClass *color;
-efDouble *efD;
+efDouble *efD=NULL;
 efInt *efI;
 
   for ( index=0; index<numTags; index++ ) {

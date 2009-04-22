@@ -61,7 +61,7 @@ static char *expandEnvVars (
   // expands all environment vars of the form $(envVar) found in inStr
   // and sends the expanded string to outStr
 
-int i, ii, iii, inL, state, bufOnHeap;
+int i, ii, iii=0, inL, state, bufOnHeap;
 char *ptr, stackBuf[255+1];
 char *buf;
 

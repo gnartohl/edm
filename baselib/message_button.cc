@@ -1015,7 +1015,7 @@ int activeMessageButtonClass::importFromXchFile (
 int fgR, fgG, fgB, bgR, bgG, bgB, more, index;
 unsigned int pixel;
 char *tk, *gotData, *context, buf[255+1];
-char tmpDestPvName[39+1], tmpSourcePressPvName[39+1];
+char tmpDestPvName[PV_Factory::MAX_PV_NAME+1], tmpSourcePressPvName[39+1];
 
   fgR = 0xffff;
   fgG = 0xffff;
@@ -1290,7 +1290,7 @@ char tmpDestPvName[39+1], tmpSourcePressPvName[39+1];
 
 int activeMessageButtonClass::genericEdit ( void ) {
 
-char title[32], *ptr, *envPtr, saveLock;
+char title[32], *ptr, *envPtr, saveLock=0;
 
   if ( !eBuf ) {
     eBuf = new editBufType;

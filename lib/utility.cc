@@ -433,7 +433,7 @@ char *expandEnvVars (
   // expands all environment vars of the form $(envVar) found in inStr
   // and sends the expanded string to outStr
 
-int i, ii, iii, inL, state, bufOnHeap;
+int i, ii, iii=0, inL, state, bufOnHeap;
 char *ptr, stackBuf[255+1];
 char *buf;
 
@@ -1905,7 +1905,7 @@ void getStringBoxSize (
   int *height )
 {
 
-int i, start, l, strL, stringWidth, maxWidth, maxHeight, charHeight;
+int i, start, l, strL, stringWidth, maxWidth, maxHeight, charHeight=0;
 
   maxWidth = 2;
   maxHeight = 0;
@@ -1983,7 +1983,7 @@ void XDrawStringsAligned (
   int alignment )
 {
 
-int charHeight, i, start, l, strL, stringWidth, stringX;
+int charHeight=0, i, start, l, strL, stringWidth, stringX=0;
 
   i = start = l = 0;
   strL = strlen( str );
@@ -2067,7 +2067,7 @@ void XDrawImageStringsAligned (
   int alignment )
 {
 
-int charHeight, i, start, l, strL, stringWidth, stringX;
+int charHeight=0, i, start, l, strL, stringWidth, stringX=0;
 
   i = start = l = 0;
   strL = strlen( str );
