@@ -1158,8 +1158,10 @@ int activeGifClass::draw ( void ) {
     return 1;
   }
 
-  XPutImage( actWin->display(), XtWindow(actWin->drawWidget),
-   actWin->drawGc.normGC(), image, 0, 0, x, y, w, h );
+  if ( image ) {
+    XPutImage( actWin->display(), XtWindow(actWin->drawWidget),
+     actWin->drawGc.normGC(), image, 0, 0, x, y, w, h );
+  }
 
   return 1;
 
@@ -1204,8 +1206,10 @@ int curW, curH;
   curW = x1 - x0;
   curH = y1 - y0;
 
-  XPutImage( actWin->display(), XtWindow(actWin->drawWidget),
-   actWin->drawGc.normGC(), image, x0-x, y0-y, x0, y0, curW, curH );
+  if ( image ) {
+    XPutImage( actWin->display(), XtWindow(actWin->drawWidget),
+     actWin->drawGc.normGC(), image, x0-x, y0-y, x0, y0, curW, curH );
+  }
 
   return 1;
 
@@ -1236,8 +1240,10 @@ Pixmap pixmap;
   pixmap = XCreatePixmap( actWin->display(),
    XtWindow(actWin->executeWidget), w, h, depth );
 
-  XPutImage( actWin->display(), pixmap,
-   actWin->executeGc.normGC(), image, 0, 0, 0, 0, w, h );
+  if ( image ) {
+    XPutImage( actWin->display(), pixmap,
+     actWin->executeGc.normGC(), image, 0, 0, 0, 0, w, h );
+  }
 
   if ( needErase ) {
     needErase = 0;
@@ -1297,8 +1303,10 @@ int curW, curH;
   curW = x1 - x0;
   curH = y1 - y0;
 
-  XPutImage( actWin->display(), drawable(actWin->executeWidget),
-   actWin->executeGc.normGC(), image, x0-x, y0-y, x0, y0, curW, curH );
+  if ( image ) {
+    XPutImage( actWin->display(), drawable(actWin->executeWidget),
+     actWin->executeGc.normGC(), image, x0-x, y0-y, x0, y0, curW, curH );
+  }
 
   return 1;
 
@@ -1355,8 +1363,10 @@ Pixmap pixmap;
   curW = x1 - x0;
   curH = y1 - y0;
 
-  XPutImage( actWin->display(), pixmap,
-   actWin->executeGc.normGC(), image, 0, 0, 0, 0, w, h );
+  if ( image ) {
+    XPutImage( actWin->display(), pixmap,
+     actWin->executeGc.normGC(), image, 0, 0, 0, 0, w, h );
+  }
 
   XCopyArea( actWin->display(), pixmap,
    drawable(actWin->executeWidget), actWin->executeGc.normGC(),

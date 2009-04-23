@@ -2,7 +2,7 @@
 #define __environment_str 1
 
 
-// global_str127 is last
+// global_str129 is last
 
 #define environment_str1 (char *) "EDMDATAFILES"
 #define environment_str2 (char *) "EDMFILES"
@@ -71,6 +71,12 @@
 #define global_str89 (char *) "-one"
 #define global_str91 (char *) "-convert"
 #define global_str93 (char *) "-open"
+#define global_str128 (char *) "-close"
+#define global_str130 (char *) "-move"
+#define global_str132 (char *) "-raise"
+#define global_str134 (char *) "-lower"
+#define global_str136 (char *) "-iconify"
+#define global_str138 (char *) "-deiconify"
 #define global_str96 (char *) "-eolc"
 #define global_str98 (char *) "-ro"
 #define global_str100 (char *) "-noscrl"
@@ -115,6 +121,18 @@
 #define global_str90 (char *)  "  -one       Allow only one edm instance (all instances must be launched\n             with the same command line parameters)\n\n"
 
 #define global_str94 (char *)  "  -open      Request edm server to open files (-open file?x?y opens file at x,y)\n\n"
+
+#define global_str129 (char *) "  -close     Request edm server to close specified window names\n\n"
+
+#define global_str131 (char *) "  -move      Request edm server to move specified window names (-move name?x?y)\n\n"
+
+#define global_str133 (char *) "  -raise     Request edm server to raise specified window names\n\n"
+
+#define global_str135 (char *) "  -lower     Request edm server to lower specified window names\n\n"
+
+#define global_str137 (char *) "  -iconify   Request edm server to iconify specified window names\n\n"
+
+#define global_str139 (char *) "  -deiconify Request edm server to deiconify specified window names\n\n"
 
 #define global_str97 (char *)  "  -eolc      Exit when last screen is closed\n\n"
 

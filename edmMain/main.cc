@@ -105,6 +105,7 @@ typedef struct main_que_tag { /* locked queue header */
 #define CONNECT 2
 #define OPEN_INITIAL 3
 #define OPEN 4
+#define CONTROL 5
 
 typedef struct argsTag {
   int argc;
@@ -735,8 +736,8 @@ void checkForServer (
   int appendDisplay,
   char *displayName,
   int oneInstance,
-  int openCmd )
-{
+  int openCmd
+) {
 
 char chkHost[31+1], host[31+1], buf[511+1];
 int i, len, pos, max, argCount, stat, item, useItem;
@@ -939,13 +940,24 @@ nextHost:
 
   if ( oneInstance ) {
 
-    if ( openCmd ) {
+    if ( openCmd == 1 ) {
 
       msg[0] = (char) OPEN;
       pos = 1;
       max = MAX_MSG_LEN - pos;
 
       strncpy( &msg[pos], "*OPN*|", max );
+      pos = strlen(msg);
+      max = MAX_MSG_LEN - pos;
+
+    }
+    else if ( openCmd == 2 ) {
+
+      msg[0] = (char) CONTROL;
+      pos = 1;
+      max = MAX_MSG_LEN - pos;
+
+      strncpy( &msg[pos], "*CTL*|", max );
       pos = strlen(msg);
       max = MAX_MSG_LEN - pos;
 
@@ -1039,7 +1051,7 @@ nextHost:
 
   Strncat( msg, "\n", MAX_MSG_LEN );
 
-  if ( strlen(msg) == MAX_MSG_LEN ) {
+  if ( strlen(msg) == (unsigned int) MAX_MSG_LEN ) {
     fprintf( stderr, "Message length exceeded - abort\n" );
     stat = shutdown( sockfd, 2 );
     stat = close( sockfd );
@@ -1371,6 +1383,26 @@ int *portNumPtr = (int *) thread_get_app_data( h );
 
           break;
 
+        case CONTROL:
+
+          stat = thread_lock_master( h );
+
+          q_stat_r = REMQHI( (void *) &g_mainFreeQueue, (void **) &node, 0 );
+          if ( q_stat_r & 1 ) {
+            strncpy( node->msg, &msg[1], 254 );
+            q_stat_i = INSQTI( (void *) node, (void *) &g_mainActiveQueue, 0 );
+            if ( !( q_stat_i & 1 ) ) {
+              fprintf( stderr, main_str17 );
+            }
+          }
+          else {
+            fprintf( stderr, main_str18 );
+          }
+
+          stat = thread_unlock_master( h );
+
+          break;
+
         case QUERY_LOAD:
 
           stat = thread_lock_master( h );
@@ -1540,6 +1572,42 @@ Display *testDisplay;
           *local = 0;
           *openCmd = 1;
         }
+	else if ( strcmp( argv[n], global_str128 ) == 0 ) { // close
+	  *oneInstance = 1;
+          *server = 1;
+          *local = 0;
+          *openCmd = 2; // control named window
+	}
+	else if ( strcmp( argv[n], global_str130 ) == 0 ) { // move
+	  *oneInstance = 1;
+          *server = 1;
+          *local = 0;
+          *openCmd = 2; // control named window
+	}
+	else if ( strcmp( argv[n], global_str132 ) == 0 ) { // raise
+	  *oneInstance = 1;
+          *server = 1;
+          *local = 0;
+          *openCmd = 2; // control named window
+	}
+	else if ( strcmp( argv[n], global_str134 ) == 0 ) { // lower
+	  *oneInstance = 1;
+          *server = 1;
+          *local = 0;
+          *openCmd = 2; // control named window
+	}
+	else if ( strcmp( argv[n], global_str136 ) == 0 ) { // iconify
+	  *oneInstance = 1;
+          *server = 1;
+          *local = 0;
+          *openCmd = 2; // control named window
+	}
+	else if ( strcmp( argv[n], global_str138 ) == 0 ) { // deiconify
+	  *oneInstance = 1;
+          *server = 1;
+          *local = 0;
+          *openCmd = 2; // control named window
+	}
         else if ( strcmp( argv[n], global_str86 ) == 0 ) {
           n++;
           if ( n >= argc ) { // missing pid num
@@ -1698,7 +1766,7 @@ Display *testDisplay;
       stat = gethostname( displayName, 127 );
       if ( stat ) {
         fprintf( stderr, main_str35 );
-        exit(0);
+        exit(1);
       }
 
       Strncat( displayName, ":0.0", 127 );
@@ -1710,7 +1778,7 @@ Display *testDisplay;
   testDisplay = XOpenDisplay( displayName );
   if ( !testDisplay ) {
     fprintf( stderr, main_str36 );
-    exit(0);
+    exit(1);
   }
 
   XCloseDisplay( testDisplay );
@@ -1885,22 +1953,22 @@ int shutdownTry = 200; // aprox 10 seconds
 
   if ( server ) {
 
-    // If openCmd is true, we want the server to open some screens;
+    // If openCmd is > 0, we want the server to take some action;
     // if no server is running, we do not want to launch an instance of edm
     if ( openCmd ) {
       fprintf( stderr, main_str46 );
-      exit(0);
+      exit(100);
     }
 
     stat = sys_iniq( &g_mainFreeQueue );
     if ( !( stat & 1 ) ) {
       fprintf( stderr, main_str37 );
-      exit(0);
+      exit(1);
     }
     stat = sys_iniq( &g_mainActiveQueue );
     if ( !( stat & 1 ) ) {
       fprintf( stderr, main_str38 );
-      exit(0);
+      exit(1);
     }
 
     g_mainFreeQueue.flink = NULL;
@@ -1914,7 +1982,7 @@ int shutdownTry = 200; // aprox 10 seconds
        0 );
       if ( !( stat & 1 ) ) {
         fprintf( stderr, main_str39 );
-        exit(0);
+        exit(1);
       }
 
     }
@@ -2048,7 +2116,7 @@ int shutdownTry = 200; // aprox 10 seconds
     stat = args->appCtxPtr->startApplication( args->argc, args->argv, 1,
      oneInstance, convertOnly );
   }
-  if ( !( stat & 1 ) ) exit( 0 );
+  if ( !( stat & 1 ) ) exit( 1 );
 
   if ( stat & 1 ) { // success
     oneAppCtx = args->appCtxPtr->appContext();
@@ -2498,6 +2566,27 @@ int shutdownTry = 200; // aprox 10 seconds
 	      }
 
 	    }
+	    else if ( strcmp( tk, "*CTL*" ) == 0 ) {
+
+              needConnect = 0;
+              tk = strtok_r( NULL, "|", &buf1 ); // should contain display name
+
+	      // make 1st app ctx open/deiconify/raise initial files
+	      // and deiconify/raise main window so things look like
+	      // a new instance of edm is starting
+              first = appArgsHead->flink;
+              while ( first != appArgsHead ) {
+		if ( ( strcmp( tk, ":0.0" ) == 0 ) ||
+                     ( strcmp( tk,
+                        first->appArgs->appCtxPtr->displayName ) == 0 ) ) {
+                  tk = strtok_r( NULL, "|", &buf1 );
+                  first->appArgs->appCtxPtr->controlWinNames( "*CTL*", node->msg );
+                  break;
+		}
+                first = first->flink;
+	      }
+
+	    }
 	    else if ( strcmp( tk, "*OIS*" ) == 0 ) {
 
               needConnect = 1;
@@ -2728,5 +2817,7 @@ parse_error:
     fprintf( stderr, "edm terminated\n" );
     logDiagnostic( "edm terminated\n" );
   }
+
+  return 0;
 
 }

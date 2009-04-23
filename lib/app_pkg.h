@@ -91,6 +91,7 @@ typedef struct appDefExe_que_tag { /* locked queue header */
 #define ONEENTQUE SYS_ONEENTQUE
 
 #define APPDEFEXE_QUEUE_SIZE 1000
+#define WINNAME_SIZE 63
 
 typedef struct activeWindowListTag {
   struct activeWindowListTag *flink;
@@ -110,6 +111,7 @@ typedef struct activeWindowListTag {
   int requestConvertAndExit;
   int x;
   int y;
+  char winName[WINNAME_SIZE+1];
 } activeWindowListType, *activeWindowListPtr;
 
 typedef struct macroListTag {
@@ -557,6 +559,10 @@ int startApplication (
 void openInitialFiles ( void );
 
 void openFiles (
+  char *list );
+
+void controlWinNames (
+  char *cmd,
   char *list );
 
 int addActWin (

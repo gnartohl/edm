@@ -137,6 +137,48 @@ int ok;
 
 }
 
+static void extractWinName (
+  char *str,
+  int max,
+  char *name,
+  int maxName
+) {
+
+char buf[1023+1], *tk, *ctx;
+
+  if ( strstr( str, "=" ) ) {
+
+    strncpy( buf, str, 1023 );
+    buf[1023] = 0;
+
+    ctx = NULL;
+    tk = strtok_r( buf, "= 	", &ctx ); // =, space, tab
+
+    if ( tk ) {
+
+      strncpy( name, tk, maxName );
+      name[maxName] = 0;
+
+      tk = strtok_r( NULL, "= 	", &ctx ); // =, space, tab
+
+      if ( tk ) {
+
+        strncpy( str, tk, max );
+        str[max] = 0;
+
+      }
+      else {
+
+        strcpy( str, "" );
+
+      }
+
+    }
+
+  } // else, no name given
+
+}
+
 static int httpPath (
   char *path
  ) {
@@ -1277,6 +1319,7 @@ SYS_PROC_ID_TYPE procId;
   }
 
   cur = new activeWindowListType;
+  strcpy( cur->winName, "" );
   cur->requestDelete = 0;
   cur->requestActivate = 0;
   cur->requestActivateClear = 0;
@@ -1365,6 +1408,7 @@ char *fName;
 
   cur = new activeWindowListType;
 
+  strcpy( cur->winName, "" );
   cur->requestDelete = 0;
   cur->requestActivate = 0;
   cur->requestActivateClear = 0;
@@ -1428,6 +1472,7 @@ char *fName;
 
   cur = new activeWindowListType;
 
+  strcpy( cur->winName, "" );
   cur->requestDelete = 0;
   cur->requestActivate = 0;
   cur->requestActivateClear = 0;
@@ -1511,6 +1556,7 @@ char *fName;
 
   cur = new activeWindowListType;
 
+  strcpy( cur->winName, "" );
   cur->requestDelete = 0;
   cur->requestActivate = 0;
   cur->requestActivateClear = 0;
@@ -1590,6 +1636,7 @@ char oneFileName[127+1];
   }
 
   cur = new activeWindowListType;
+  strcpy( cur->winName, "" );
   cur->requestDelete = 0;
   cur->requestActivate = 0;
   cur->requestActivateClear = 0;
@@ -1659,11 +1706,10 @@ char prefix[127+1];
   if ( strcmp( prefix, "" ) != 0 ) {
     xmStr = XmStringCreateLocalized( prefix );
     XtSetArg( args[n], XmNdirectory, xmStr ); n++;
+    XmStringFree( xmStr );
   }
 
   XtSetValues( apco->fileSelectFromPathBox, args, n );
-
-  if ( strcmp( prefix, "" ) != 0 ) XmStringFree( xmStr );
 
   XtManageChild( apco->fileSelectFromPathBox );
 
@@ -1721,11 +1767,10 @@ char prefix[127+1];
   if ( strcmp( prefix, "" ) != 0 ) {
     xmStr = XmStringCreateLocalized( prefix );
     XtSetArg( args[n], XmNdirectory, xmStr ); n++;
+    XmStringFree( xmStr );
   }
 
   XtSetValues( apco->importSelectBox, args, n );
-
-  if ( strcmp( prefix, "" ) != 0 ) XmStringFree( xmStr );
 
   XtManageChild( apco->importSelectBox );
 
@@ -2141,6 +2186,7 @@ char *sysMacros[] = {
   Strncat( buf, ".edl", 255 );
 
   cur = new activeWindowListType;
+  strcpy( cur->winName, "" );
   cur->requestDelete = 0;
   cur->requestActivate = 0;
   cur->requestActivateClear = 0;
@@ -2231,6 +2277,7 @@ appContextClass::appContextClass (
   largestH = 600;
 
   head = new activeWindowListType;
+  strcpy( head->winName, "" );
   head->flink = head;
   head->blink = head;
 
@@ -3950,6 +3997,7 @@ void appContextClass::addActiveWindow (
 
   // link in
 
+  strcpy( node->winName, "" );
   node->requestDelete = 0;
   node->requestActivate = 0;
   node->requestActivateClear = 0;
@@ -4263,6 +4311,18 @@ static void displayParamInfo ( void ) {
 
   fprintf( stderr, global_str94 );
 
+  fprintf( stderr, global_str129 );
+
+  fprintf( stderr, global_str131 );
+
+  fprintf( stderr, global_str133 );
+
+  fprintf( stderr, global_str135 );
+
+  fprintf( stderr, global_str137 );
+
+  fprintf( stderr, global_str139 );
+
   fprintf( stderr, global_str97 );
 
   fprintf( stderr, global_str107 );
@@ -4474,6 +4534,18 @@ fileListPtr curFile;
         else if ( strcmp( argv[n], global_str104 ) == 0 ) {
         }
         else if ( strcmp( argv[n], global_str93 ) == 0 ) {
+        }
+        else if ( strcmp( argv[n], global_str128 ) == 0 ) {
+        }
+        else if ( strcmp( argv[n], global_str130 ) == 0 ) {
+        }
+        else if ( strcmp( argv[n], global_str132 ) == 0 ) {
+        }
+        else if ( strcmp( argv[n], global_str134 ) == 0 ) {
+        }
+        else if ( strcmp( argv[n], global_str136 ) == 0 ) {
+        }
+        else if ( strcmp( argv[n], global_str138 ) == 0 ) {
         }
         else if ( strcmp( argv[n], global_str86 ) == 0 ) {
           n++; // just ignore, not used here
@@ -4968,6 +5040,7 @@ err_return:
   while ( curFile != fileHead ) {
 
     cur = new activeWindowListType;
+    strcpy( cur->winName, "" );
     cur->requestDelete = 0;
     cur->requestActivate = 0;
     cur->requestActivateClear = 0;
@@ -5038,7 +5111,7 @@ int state;
 char *macTk, *macBuf, macTmp[255+1];
 int stat;
 char name[127+1], prefix[127+1];
-char filePart[255+1];
+char filePart[255+1], winNam[WINNAME_SIZE+1];
 int gotPosition, posx, posy;
 
   //fprintf( stderr, "list = [%s]\n", list );
@@ -5112,6 +5185,10 @@ int gotPosition, posx, posy;
 
       if ( strcmp( tk, global_str93 ) != 0 ) {
 
+        extractPosition( tk, filePart, 255, &gotPosition, &posx, &posy );
+
+        extractWinName( filePart, 255, winNam, WINNAME_SIZE );
+
         doOpen = 1;
         cur = head->flink;
         while ( cur != head ) {
@@ -5122,8 +5199,8 @@ int gotPosition, posx, posy;
             crc = updateCRC( crc, locExpansions[i], strlen(locExpansions[i]) );
           }
 
-          stat = getFileName( name, tk, 127 );
-          stat = getFilePrefix( prefix, tk, 127 );
+          stat = getFileName( name, filePart, 127 );
+          stat = getFilePrefix( prefix, filePart, 127 );
 
           if ( ( strcmp( name, cur->node.displayName ) == 0 ) &&
                ( strcmp( prefix, cur->node.prefix ) == 0 ) &&
@@ -5133,6 +5210,7 @@ int gotPosition, posx, posy;
 
             XMapWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
             XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+            if ( gotPosition ) cur->node.move( posx, posy );
 
             break;
 
@@ -5147,6 +5225,8 @@ int gotPosition, posx, posy;
           //fprintf( stderr, "Do open\n" );
 
           cur = new activeWindowListType;
+	  strncpy( cur->winName, winNam, WINNAME_SIZE );
+          cur->winName[WINNAME_SIZE] = 0;
           cur->requestDelete = 0;
           cur->requestActivate = 0;
           cur->requestActivateClear = 0;
@@ -5169,8 +5249,6 @@ int gotPosition, posx, posy;
           cur->node.realize();
           cur->node.setGraphicEnvironment( &ci, &fi );
 
-          extractPosition( tk, filePart, 255, &gotPosition, &posx, &posy );
-
 	  if ( gotPosition ) {
 	    cur->x = posx;
 	    cur->y = posy;
@@ -5184,6 +5262,245 @@ int gotPosition, posx, posy;
 
           cur->requestActivate = 1;
           requestFlag++;
+
+        }
+
+      }
+
+      tk = strtok_r( NULL, "|", &buf1 );
+      if ( !tk ) return;
+
+    }
+
+    if ( state == GETTING_1ST_MACRO ) {
+
+      macBuf = NULL;
+      strcpy( macTmp, tk );
+      //fprintf( stderr, "getting 1st macro, macTmp = [%s]\n", macTmp );
+      macTk = strtok_r( macTmp, "=,", &macBuf );
+      if ( macTk ) {
+        //fprintf( stderr, "getting 1st macro, sym = [%s]\n", macTk );
+        locMacros[0] = macTk;
+      }
+
+      macTk = strtok_r( NULL, "=,", &macBuf );
+      if ( macTk ) {
+        //fprintf( stderr, "getting 1st macro, val = [%s]\n", macTk );
+        locExpansions[0] = macTk;
+        locNumMacros = 1;
+        state = GETTING_MACROS;
+      }
+      else {
+        locNumMacros = 0;
+        state = GETTING_FILES;
+        tk = strtok_r( NULL, "|", &buf1 );
+	if ( !tk ) return;
+      }
+
+    }
+
+    if ( state == GETTING_MACROS ) {
+
+      macTk = strtok_r( NULL, "=,", &macBuf );
+      if ( macTk ) {
+        if ( locNumMacros >= MAX_LOC_MACROS ) {
+          postMessage( appContextClass_str142 );
+	  return;
+	}
+        //fprintf( stderr, "getting macros, sym = [%s]\n", macTk );
+        locMacros[locNumMacros] = macTk;
+      }
+      
+      macTk = strtok_r( NULL, "=,", &macBuf );
+      if ( macTk ) {
+        //fprintf( stderr, "getting macros, val = [%s]\n", macTk );
+        locExpansions[locNumMacros] = macTk;
+        locNumMacros++;
+      }
+      else {
+        state = GETTING_FILES;
+        tk = strtok_r( NULL, "|", &buf1 );
+	if ( !tk ) return;
+      }
+      
+    }
+
+  }
+
+}
+
+void appContextClass::controlWinNames (
+  char *cmd,
+  char *list
+) {
+
+activeWindowListPtr cur, next;
+int i, doOpen;
+unsigned int crc;
+char *tk, *buf1, tmpMsg[255+1];
+int locNumMacros;
+char *locMacros[MAX_LOC_MACROS], *locExpansions[MAX_LOC_MACROS];
+int state;
+char *macTk, *macBuf, macTmp[255+1];
+int stat;
+char name[127+1], prefix[127+1];
+char filePart[255+1], winNam[WINNAME_SIZE+1];
+int gotPosition, posx, posy;
+char controlCmd[31+1];
+
+  strcpy( controlCmd, "" );
+
+  buf1 = NULL;
+  strncpy( tmpMsg, list, 255 );
+  tmpMsg[255] = 0;
+  tk = strtok_r( tmpMsg, "|", &buf1 );
+  tk = strtok_r( NULL, "|", &buf1 );
+  tk = strtok_r( NULL, "|", &buf1 );
+  tk = strtok_r( NULL, "|", &buf1 );
+  tk = strtok_r( NULL, "|", &buf1 );
+  tk = strtok_r( NULL, "|", &buf1 );
+
+  locNumMacros = 0;
+  state = GETTING_INITIAL;
+  tk = strtok_r( NULL, "|", &buf1 );
+  while ( tk ) {
+
+    //fprintf( stderr, "state = %-d\n", state );
+    //if ( tk ) {
+    //  fprintf( stderr, "tk = [%s]\n", tk );
+    //}
+    //else {
+    //  fprintf( stderr, "tk is null\n" );
+    //}
+
+    if ( state == GETTING_INITIAL ) {
+
+      if ( strcmp( tk, global_str73 ) == 0 ) {
+        tk = strtok_r( NULL, "|", &buf1 );
+        tk = strtok_r( NULL, "|", &buf1 );
+	if ( !tk ) return;
+      }
+      else if ( 
+        ( strcmp( tk, global_str128 ) == 0 ) ||
+        ( strcmp( tk, global_str130 ) == 0 ) ||
+        ( strcmp( tk, global_str132 ) == 0 ) ||
+        ( strcmp( tk, global_str134 ) == 0 ) ||
+        ( strcmp( tk, global_str136 ) == 0 ) ||
+        ( strcmp( tk, global_str138 ) == 0 )
+      ) {
+
+        state = GETTING_FILES;
+	strncpy( controlCmd, tk, 31 );
+        controlCmd[31] = 0;
+        tk = strtok_r( NULL, "|", &buf1 );
+	if ( !tk ) return;
+
+      }
+      else if ( strcmp( tk, global_str19 ) == 0 ) {
+
+        state = GETTING_1ST_MACRO;
+        tk = strtok_r( NULL, "|", &buf1 );
+	if ( !tk ) return;
+
+      }
+      else if ( tk[0] == '-' ) { //skip other options if present
+        tk = strtok_r( NULL, "|", &buf1 );
+        if ( !tk ) return;
+
+      }
+      else {
+
+        state = GETTING_FILES;
+        tk = strtok_r( NULL, "|", &buf1 );
+	if ( !tk ) return;
+
+      }
+
+    }
+
+    if ( state == GETTING_FILES ) {
+
+      //fprintf( stderr, "Getting files\n" );
+
+      //for ( i=0; i<locNumMacros; i++ ) {
+      //  fprintf( stderr, "%s[%-d] = %s\n", locMacros[i], i, locExpansions[i] );
+      //}
+
+      if ( 
+        ( strcmp( tk, global_str128 ) != 0 ) &&
+        ( strcmp( tk, global_str130 ) != 0 ) &&
+        ( strcmp( tk, global_str132 ) != 0 ) &&
+        ( strcmp( tk, global_str134 ) != 0 ) &&
+        ( strcmp( tk, global_str136 ) != 0 ) &&
+        ( strcmp( tk, global_str138 ) != 0 )
+      ) {
+
+        extractPosition( tk, filePart, 255, &gotPosition, &posx, &posy );
+
+        strncpy( winNam, filePart, WINNAME_SIZE );
+        winNam[WINNAME_SIZE] = 0;
+
+        doOpen = 1;
+        cur = head->flink;
+        while ( cur != head ) {
+
+          crc = 0;
+          for ( i=0; i<locNumMacros; i++ ) {
+            crc = updateCRC( crc, locMacros[i], strlen(locMacros[i]) );
+            crc = updateCRC( crc, locExpansions[i], strlen(locExpansions[i]) );
+          }
+
+          stat = getFileName( name, filePart, 127 );
+          stat = getFilePrefix( prefix, filePart, 127 );
+
+          next = cur->flink;
+
+          if ( strlen(winNam) > 0 ) {
+            if ( strcmp( winNam, cur->winName ) == 0 ) {
+
+              if ( strcmp( controlCmd, global_str128 ) == 0 ) { // close
+                strcpy( cur->winName, "" ); // clear this so no other
+                                            // action may be taken
+                cur->node.returnToEdit( 1 );
+	      }
+	      else if ( strcmp( controlCmd, global_str130 ) == 0 ) { // move
+	        if ( gotPosition ) {
+                  cur->node.move( posx, posy );
+		}
+	      }
+	      else if ( strcmp( controlCmd, global_str132 ) == 0 ) { // raise
+	        if ( gotPosition ) {
+                  cur->node.move( posx, posy );
+		}
+                XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+	      }
+	      else if ( strcmp( controlCmd, global_str134 ) == 0 ) { // lower
+	        if ( gotPosition ) {
+                  cur->node.move( posx, posy );
+		}
+                XLowerWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+	      }
+	      else if ( strcmp( controlCmd, global_str136 ) == 0 ) { // iconify
+                XtVaSetValues( cur->node.topWidgetId(),
+                 XmNiconic, True,
+                 NULL );
+	        if ( gotPosition ) {
+                  cur->node.move( posx, posy );
+		}
+	      }
+	      else if ( strcmp( controlCmd, global_str138 ) == 0 ) { // deiconify
+	        if ( gotPosition ) {
+                  cur->node.move( posx, posy );
+		}
+                XtVaSetValues( cur->node.topWidgetId(),
+                 XmNiconic, False,
+                 NULL );
+	      }
+
+	    }
+	  }
+
+          cur = next;
 
         }
 
@@ -5305,6 +5622,7 @@ char tmpName[127+1], prefix[127+1];
       //fprintf( stderr, "Do open\n" );
 
       cur = new activeWindowListType;
+      strcpy( cur->winName, "" );
       cur->requestDelete = 0;
       cur->requestActivate = 0;
       cur->requestActivateClear = 0;
@@ -5357,6 +5675,7 @@ int appContextClass::addActWin (
 activeWindowListPtr cur;
 
   cur = new activeWindowListType;
+  strcpy( cur->winName, "" );
   cur->requestDelete = 0;
   cur->requestActivate = 0;
   cur->requestActivateClear = 0;
@@ -6077,6 +6396,7 @@ char *newValues[100+1];
   //}
 
   cur = new activeWindowListType;
+  strcpy( cur->winName, "" );
 
   addActiveWindow( cur );
 
