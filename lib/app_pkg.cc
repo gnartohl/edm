@@ -1706,10 +1706,9 @@ char prefix[127+1];
   if ( strcmp( prefix, "" ) != 0 ) {
     xmStr = XmStringCreateLocalized( prefix );
     XtSetArg( args[n], XmNdirectory, xmStr ); n++;
+    XtSetValues( apco->fileSelectFromPathBox, args, n );
     XmStringFree( xmStr );
   }
-
-  XtSetValues( apco->fileSelectFromPathBox, args, n );
 
   XtManageChild( apco->fileSelectFromPathBox );
 
@@ -1767,10 +1766,9 @@ char prefix[127+1];
   if ( strcmp( prefix, "" ) != 0 ) {
     xmStr = XmStringCreateLocalized( prefix );
     XtSetArg( args[n], XmNdirectory, xmStr ); n++;
+    XtSetValues( apco->importSelectBox, args, n );
     XmStringFree( xmStr );
   }
-
-  XtSetValues( apco->importSelectBox, args, n );
 
   XtManageChild( apco->importSelectBox );
 
