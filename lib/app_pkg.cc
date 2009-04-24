@@ -1319,7 +1319,7 @@ SYS_PROC_ID_TYPE procId;
   }
 
   cur = new activeWindowListType;
-  strcpy( cur->winName, "" );
+  //strcpy( cur->winName, "" );
   cur->requestDelete = 0;
   cur->requestActivate = 0;
   cur->requestActivateClear = 0;
@@ -1408,7 +1408,7 @@ char *fName;
 
   cur = new activeWindowListType;
 
-  strcpy( cur->winName, "" );
+  //strcpy( cur->winName, "" );
   cur->requestDelete = 0;
   cur->requestActivate = 0;
   cur->requestActivateClear = 0;
@@ -1472,7 +1472,7 @@ char *fName;
 
   cur = new activeWindowListType;
 
-  strcpy( cur->winName, "" );
+  //strcpy( cur->winName, "" );
   cur->requestDelete = 0;
   cur->requestActivate = 0;
   cur->requestActivateClear = 0;
@@ -1556,7 +1556,7 @@ char *fName;
 
   cur = new activeWindowListType;
 
-  strcpy( cur->winName, "" );
+  //strcpy( cur->winName, "" );
   cur->requestDelete = 0;
   cur->requestActivate = 0;
   cur->requestActivateClear = 0;
@@ -1636,7 +1636,7 @@ char oneFileName[127+1];
   }
 
   cur = new activeWindowListType;
-  strcpy( cur->winName, "" );
+  //strcpy( cur->winName, "" );
   cur->requestDelete = 0;
   cur->requestActivate = 0;
   cur->requestActivateClear = 0;
@@ -2184,7 +2184,7 @@ char *sysMacros[] = {
   Strncat( buf, ".edl", 255 );
 
   cur = new activeWindowListType;
-  strcpy( cur->winName, "" );
+  //strcpy( cur->winName, "" );
   cur->requestDelete = 0;
   cur->requestActivate = 0;
   cur->requestActivateClear = 0;
@@ -2275,7 +2275,7 @@ appContextClass::appContextClass (
   largestH = 600;
 
   head = new activeWindowListType;
-  strcpy( head->winName, "" );
+  //strcpy( head->winName, "" );
   head->flink = head;
   head->blink = head;
 
@@ -3995,7 +3995,7 @@ void appContextClass::addActiveWindow (
 
   // link in
 
-  strcpy( node->winName, "" );
+  //strcpy( node->winName, "" );
   node->requestDelete = 0;
   node->requestActivate = 0;
   node->requestActivateClear = 0;
@@ -5038,7 +5038,7 @@ err_return:
   while ( curFile != fileHead ) {
 
     cur = new activeWindowListType;
-    strcpy( cur->winName, "" );
+    //strcpy( cur->winName, "" );
     cur->requestDelete = 0;
     cur->requestActivate = 0;
     cur->requestActivateClear = 0;
@@ -5109,7 +5109,7 @@ int state;
 char *macTk, *macBuf, macTmp[255+1];
 int stat;
 char name[127+1], prefix[127+1];
-char filePart[255+1], winNam[WINNAME_SIZE+1];
+char filePart[255+1], winNam[WINNAME_MAX+1];
 int gotPosition, posx, posy;
 
   //fprintf( stderr, "list = [%s]\n", list );
@@ -5185,7 +5185,7 @@ int gotPosition, posx, posy;
 
         extractPosition( tk, filePart, 255, &gotPosition, &posx, &posy );
 
-        extractWinName( filePart, 255, winNam, WINNAME_SIZE );
+        extractWinName( filePart, 255, winNam, WINNAME_MAX );
 
         doOpen = 1;
         cur = head->flink;
@@ -5223,8 +5223,9 @@ int gotPosition, posx, posy;
           //fprintf( stderr, "Do open\n" );
 
           cur = new activeWindowListType;
-	  strncpy( cur->winName, winNam, WINNAME_SIZE );
-          cur->winName[WINNAME_SIZE] = 0;
+          cur->setWinName( winNam );
+	  //strncpy( cur->winName, winNam, WINNAME_MAX );
+          //cur->winName[WINNAME_MAX] = 0;
           cur->requestDelete = 0;
           cur->requestActivate = 0;
           cur->requestActivateClear = 0;
@@ -5342,7 +5343,7 @@ int state;
 char *macTk, *macBuf, macTmp[255+1];
 int stat;
 char name[127+1], prefix[127+1];
-char filePart[255+1], winNam[WINNAME_SIZE+1];
+char filePart[255+1], winNam[WINNAME_MAX+1];
 int gotPosition, posx, posy;
 char controlCmd[31+1];
 
@@ -5435,8 +5436,8 @@ char controlCmd[31+1];
 
         extractPosition( tk, filePart, 255, &gotPosition, &posx, &posy );
 
-        strncpy( winNam, filePart, WINNAME_SIZE );
-        winNam[WINNAME_SIZE] = 0;
+        strncpy( winNam, filePart, WINNAME_MAX );
+        winNam[WINNAME_MAX] = 0;
 
         doOpen = 1;
         cur = head->flink;
@@ -5453,49 +5454,55 @@ char controlCmd[31+1];
 
           next = cur->flink;
 
-          if ( strlen(winNam) > 0 ) {
-            if ( strcmp( winNam, cur->winName ) == 0 ) {
+          if ( cur->winName ) {
 
-              if ( strcmp( controlCmd, global_str128 ) == 0 ) { // close
-                strcpy( cur->winName, "" ); // clear this so no other
-                                            // action may be taken
-                cur->node.returnToEdit( 1 );
-	      }
-	      else if ( strcmp( controlCmd, global_str130 ) == 0 ) { // move
-	        if ( gotPosition ) {
-                  cur->node.move( posx, posy );
-		}
-	      }
-	      else if ( strcmp( controlCmd, global_str132 ) == 0 ) { // raise
-	        if ( gotPosition ) {
-                  cur->node.move( posx, posy );
-		}
-                XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
-	      }
-	      else if ( strcmp( controlCmd, global_str134 ) == 0 ) { // lower
-	        if ( gotPosition ) {
-                  cur->node.move( posx, posy );
-		}
-                XLowerWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
-	      }
-	      else if ( strcmp( controlCmd, global_str136 ) == 0 ) { // iconify
-                XtVaSetValues( cur->node.topWidgetId(),
-                 XmNiconic, True,
-                 NULL );
-	        if ( gotPosition ) {
-                  cur->node.move( posx, posy );
-		}
-	      }
-	      else if ( strcmp( controlCmd, global_str138 ) == 0 ) { // deiconify
-	        if ( gotPosition ) {
-                  cur->node.move( posx, posy );
-		}
-                XtVaSetValues( cur->node.topWidgetId(),
-                 XmNiconic, False,
-                 NULL );
-	      }
+            if ( strlen(winNam) > 0 ) {
 
-	    }
+              if ( cur->simpleMatch( winNam ) ) {
+
+                if ( strcmp( controlCmd, global_str128 ) == 0 ) { // close
+                  cur->clearWinName();         // clear this so no other
+                                               // action may be taken
+                  cur->node.returnToEdit( 1 );
+                }
+                else if ( strcmp( controlCmd, global_str130 ) == 0 ) { // move
+                  if ( gotPosition ) {
+                    cur->node.move( posx, posy );
+                  }
+                }
+                else if ( strcmp( controlCmd, global_str132 ) == 0 ) { // raise
+                  if ( gotPosition ) {
+                    cur->node.move( posx, posy );
+                  }
+                  XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+                }
+                else if ( strcmp( controlCmd, global_str134 ) == 0 ) { // lower
+                  if ( gotPosition ) {
+                    cur->node.move( posx, posy );
+                  }
+                  XLowerWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+                }
+                else if ( strcmp( controlCmd, global_str136 ) == 0 ) { // iconify
+                  XtVaSetValues( cur->node.topWidgetId(),
+                   XmNiconic, True,
+                   NULL );
+                  if ( gotPosition ) {
+                    cur->node.move( posx, posy );
+                  }
+                }
+                else if ( strcmp( controlCmd, global_str138 ) == 0 ) { // deiconify
+                  if ( gotPosition ) {
+                    cur->node.move( posx, posy );
+                  }
+                  XtVaSetValues( cur->node.topWidgetId(),
+                   XmNiconic, False,
+                   NULL );
+                }
+
+              }
+
+            }
+
 	  }
 
           cur = next;
@@ -5620,7 +5627,7 @@ char tmpName[127+1], prefix[127+1];
       //fprintf( stderr, "Do open\n" );
 
       cur = new activeWindowListType;
-      strcpy( cur->winName, "" );
+      //strcpy( cur->winName, "" );
       cur->requestDelete = 0;
       cur->requestActivate = 0;
       cur->requestActivateClear = 0;
@@ -5673,7 +5680,7 @@ int appContextClass::addActWin (
 activeWindowListPtr cur;
 
   cur = new activeWindowListType;
-  strcpy( cur->winName, "" );
+  //strcpy( cur->winName, "" );
   cur->requestDelete = 0;
   cur->requestActivate = 0;
   cur->requestActivateClear = 0;
@@ -6394,7 +6401,7 @@ char *newValues[100+1];
   //}
 
   cur = new activeWindowListType;
-  strcpy( cur->winName, "" );
+  //strcpy( cur->winName, "" );
 
   addActiveWindow( cur );
 

@@ -91,11 +91,123 @@ typedef struct appDefExe_que_tag { /* locked queue header */
 #define ONEENTQUE SYS_ONEENTQUE
 
 #define APPDEFEXE_QUEUE_SIZE 1000
-#define WINNAME_SIZE 63
+#define WINNAME_MAX 63
 
-typedef struct activeWindowListTag {
-  struct activeWindowListTag *flink;
-  struct activeWindowListTag *blink;
+static const char *dummyWinName = "";
+
+class activeWindowListType {
+
+public:
+
+  activeWindowListType() {
+    winName = NULL;
+  }
+
+  ~activeWindowListType() {
+    if ( winName ) delete[] winName;
+  }
+
+  int simpleMatch (
+    char *pattern
+  ) {
+
+  int lp, ls, ends, begins, start;
+  char buf[127+1], *ptr;
+
+    // *<pattern> : winName ends in pattern
+    // <pattern>* : winName begins with pattern
+    // <pattern>  : winName exactly matches pattern
+
+    if ( !pattern ) return 0;
+    lp = strlen(pattern);
+    if ( lp == 0 ) return 1; // empty pattern same as "*"
+
+    if ( !winName ) return 0;
+    ls = strlen(winName);
+    if ( ls == 0 ) return 0;
+
+    if ( lp == ls ) {
+      if ( strcmp( winName, pattern ) == 0 ) return 1;
+    }
+
+    ends = 0;
+    begins = 0;
+
+    if ( pattern[0] == '*' ) {
+      ends = 1;
+    }
+    else if ( pattern[lp-1] == '*' ) {
+      begins = 1;
+    }
+    else {
+      return 0; // no match
+    }
+
+    if ( strcmp( pattern, "*" ) == 0 ) {
+      return 1;
+    }
+    else {
+
+      if ( begins ) {
+
+        strncpy( buf, pattern, 127 );
+        buf[lp-1] = 0;                    // discard last char
+        ptr = strstr( winName, buf );
+        if ( ptr == winName )
+          return 1;
+        else
+          return 0;
+
+      }
+      else if ( ends ) {
+
+        strncpy( buf, &pattern[1], 127 ); // discard first char
+        start = ls - strlen(buf);
+        if ( start < 0 ) return 0;
+        ptr = strstr( &winName[start], buf );
+        if ( ptr )
+          return 1;
+        else
+          return 0;
+
+      }
+
+    }
+
+    return 0;
+
+  }
+
+  void clearWinName ( void ) {
+    if ( winName ) {
+      strcpy( winName, "" );
+    }
+  }
+
+  void setWinName (
+    char *str
+  ) {
+    int l;
+    if ( str && !winName ) { // winName may be set only once
+      l = strlen(str);
+      if ( l > WINNAME_MAX ) l = WINNAME_MAX;
+      winName = new char[l+1];
+      strncpy( winName, str, l );
+      winName[l] = 0;
+    }
+  }
+
+  const char *getWinName( void ) {
+    if ( !winName ) {
+      return dummyWinName;
+    }
+    else {
+      return winName;
+    }
+  }
+
+  activeWindowListType *flink;
+  activeWindowListType *blink;
   activeWindowClass node;
   int requestDelete;
   int requestOpen;
@@ -111,8 +223,12 @@ typedef struct activeWindowListTag {
   int requestConvertAndExit;
   int x;
   int y;
-  char winName[WINNAME_SIZE+1];
-} activeWindowListType, *activeWindowListPtr;
+  char *winName;
+  //char winName[WINNAME_MAX+1];
+
+};
+
+typedef activeWindowListType *activeWindowListPtr;
 
 typedef struct macroListTag {
   struct macroListTag *flink;
