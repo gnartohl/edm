@@ -120,7 +120,7 @@ public:
 
     if ( !pattern ) return 0;
     lp = strlen(pattern);
-    if ( lp == 0 ) return 1; // empty pattern same as "*"
+    if ( lp == 0 ) return 0; // empty pattern disallowed
 
     if ( !winName ) return 0;
     ls = strlen(winName);
