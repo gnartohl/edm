@@ -11496,7 +11496,7 @@ int lX, lY;
 void xyGraphClass::drawYlabel ( void ) {
 
 unsigned int i;
-int lX=0, lY=0, lW=0, inc, stat, useRotated, cW, maxW;
+int lX=0, lY=0, lW=0, inc, stat, useRotated, cW, maxW=0;
 char fullName[127+1], label[127+1];
 
   if ( y1Axis[0] && !blank( yLabel.getExpanded() ) ) {
@@ -11565,7 +11565,7 @@ char fullName[127+1], label[127+1];
 void xyGraphClass::drawY2label ( void ) {
 
 unsigned int i;
-int lX=0, lY=0, lW=0, inc, stat, useRotated, cW, maxW;
+int lX=0, lY=0, lW=0, inc, stat, useRotated, cW, maxW=0;
 char fullName[127+1], label[127+1];
 
   if ( y1Axis[1] && !blank( y2Label.getExpanded() ) ) {

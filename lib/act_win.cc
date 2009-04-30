@@ -4349,7 +4349,7 @@ static void b2ReleaseManySelect_cb (
 activeWindowClass *awo;
 popupBlockPtr block;
 int i, leftmost, topmost, n,
- curY0, curY1, curX0, curX1, minY, maxY, minX, maxX, midX, midY,
+ curY0, curY1, curX0, curX1, minY, maxY, minX, maxX, midX=0, midY,
  stat, width, height, maxRows, nRows, nCols, listEmpty,
  leftX, rightX, topY, bottomY, incX, incY, curMidX, curMidY;
 long item;

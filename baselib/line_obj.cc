@@ -3173,7 +3173,7 @@ void activeLineClass::updateColors (
   double colorValue )
 {
 
-int index, change;
+int index, change=0;
 
   index = actWin->ci->evalRule( lineColor.pixelIndex(), colorValue );
 

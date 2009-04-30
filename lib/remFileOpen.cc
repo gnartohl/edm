@@ -565,7 +565,7 @@ static void reassemble (
 ) {
 
 char *first;
-int len, i, loc;
+int len, i, loc=0;
 
   first = index( (const char *) params, (int) '[' );
   if ( first ) {
