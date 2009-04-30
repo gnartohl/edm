@@ -3283,7 +3283,7 @@ DrawCartesianPlot (SciPlotWidget w)
     for (i = 0; i < w->plot.num_plotlist; i++) {
         p = w->plot.plotlist + i;
         if (p->draw) {
-            real x1, y1, x2, y2;
+            real x1=0, y1=0, x2, y2;
             Boolean skipnext=False;
     
             jstart = 0;
