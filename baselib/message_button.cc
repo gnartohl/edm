@@ -380,6 +380,7 @@ activeMessageButtonClass::activeMessageButtonClass ( void ) {
 
   name = new char[strlen("activeMessageButtonClass")+1];
   strcpy( name, "activeMessageButtonClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   buttonPressed = 0;
 
   // strcpy( sourcePressPvName, "" );

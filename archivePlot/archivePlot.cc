@@ -386,6 +386,7 @@ archivePlotClass::archivePlotClass ( void ) {
 
   name = new char[strlen("2d80926b_bf54_4096_ab21_af7d725f15a2")+1];
   strcpy( name, "2d80926b_bf54_4096_ab21_af7d725f15a2" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   activeMode = 0;
   connection.setMaxPvs( 12 );
   xMin = 0.0;

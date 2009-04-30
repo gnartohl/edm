@@ -113,7 +113,8 @@ int err;
 
 // All LOG_PV_Factories share the same static PV pool,
 // a hashtable by PV name
-enum { HashTableSize=43 };
+//enum { HashTableSize=43 };
+enum { HashTableSize=5003 };
 class HashTableItem
 {
 public:

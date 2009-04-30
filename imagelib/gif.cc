@@ -184,6 +184,7 @@ activeGifClass::activeGifClass ( void ) {
 
   name = new char[strlen("cfcf6c8a_dbeb_11d2_8a97_00104b8742df")+1];
   strcpy( name, "cfcf6c8a_dbeb_11d2_8a97_00104b8742df" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
   strcpy( gifFileName, "" );
 

@@ -119,6 +119,7 @@ edmmultiLineTextUpdateClass::edmmultiLineTextUpdateClass ()
 void edmmultiLineTextUpdateClass::init (const char *classname)
 {
     name = strdup (classname);
+    checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
     is_executing = false;
     data_pv = 0;
 

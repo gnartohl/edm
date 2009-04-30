@@ -395,6 +395,7 @@ int i;
 
   name = new char[strlen("relatedDisplayClass")+1];
   strcpy( name, "relatedDisplayClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
   activeMode = 0;
   invisible = 0;

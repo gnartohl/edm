@@ -424,6 +424,7 @@ int i;
 
   name = new char[strlen("activePipClass")+1];
   strcpy( name, "activePipClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   minW = 50;
   minH = 50;
   center = 0;

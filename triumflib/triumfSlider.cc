@@ -1249,6 +1249,7 @@ activeTriumfSliderClass::activeTriumfSliderClass ( void ) {
 
   name = new char[strlen("activeTriumfSliderClass")+1];
   strcpy( name, "activeTriumfSliderClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   deleteRequest = 0;
   selected = 0;
   positive = 1;

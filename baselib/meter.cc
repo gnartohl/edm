@@ -334,6 +334,7 @@ activeMeterClass::activeMeterClass ( void ) {
 
   name = new char[strlen("activeMeterClass")+1];
   strcpy( name, "activeMeterClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   minW = 100;
   minH = 50;
   strcpy( scaleFontTag, "" );

@@ -2157,8 +2157,9 @@ activeXTextDspClass::activeXTextDspClass ( void ) {
 
   name = new char[strlen("activeXTextDspClass")+1];
   strcpy( name, "activeXTextDspClass" );
-  strcpy( value, "" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
+  strcpy( value, "" );
   editable = 0;
   smartRefresh = 0;
   isWidget = 0;

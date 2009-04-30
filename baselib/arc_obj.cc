@@ -345,6 +345,7 @@ activeArcClass::activeArcClass ( void ) {
 
   name = new char[strlen("activeArcClass")+1];
   strcpy( name, "activeArcClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   visibility = 0;
   prevVisibility = -1;
   visInverted = 0;

@@ -352,6 +352,7 @@ activeBarClass::activeBarClass ( void ) {
 
   name = new char[strlen("activeBarClass")+1];
   strcpy( name, "activeBarClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   minW = 50;
   minH = 2;
   minVertW = 2;

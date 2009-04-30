@@ -761,6 +761,7 @@ activeSliderClass::activeSliderClass ( void ) {
 
   name = new char[strlen("activeSliderClass")+1];
   strcpy( name, "activeSliderClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   deleteRequest = 0;
   selected = 0;
   positive = 1;

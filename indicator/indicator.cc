@@ -363,6 +363,7 @@ activeIndicatorClass::activeIndicatorClass ( void ) {
 
   name = new char[strlen("activeIndicatorClass")+1];
   strcpy( name, "activeIndicatorClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   minW = 50;
   minH = 2;
   minVertW = 2;

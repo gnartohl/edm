@@ -28,7 +28,7 @@ int debugMode ( void ) {
 int val;
 char *envPtr;
 
-  envPtr = getenv( "EDMDEBUGMODE" );
+  envPtr = getenv( environment_str29 );
   if ( envPtr ) {
     val = atol(envPtr);
     if ( !val ) val = 1; // if value is non-numeric make it 1
@@ -52,7 +52,7 @@ char *envPtr;
 
     g_needDiagModeInit = 0;
 
-    envPtr = getenv( "EDMDIAGNOSTICMODE" );
+    envPtr = getenv( environment_str30 );
     if ( envPtr ) {
       g_diagMode = atol(envPtr);
       if ( !g_diagMode ) val = 1; // if value is non-numeric make it 1

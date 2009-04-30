@@ -308,6 +308,7 @@ int i;
 
   name = new char[strlen("activeRadioButtonClass")+1];
   strcpy( name, "activeRadioButtonClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
   for ( i=0; i<MAX_ENUM_STATES; i++ ) {
     pb[i] = NULL;

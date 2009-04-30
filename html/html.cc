@@ -54,10 +54,10 @@ htmlClass *htmlo = (htmlClass *) client;
 
   if ( cbs->url_type == ANCHOR_FILE_LOCAL ) {
     htmlo->actWin->appCtx->proc->lock();
-    //printf( "local\n" );
-    //printf( "href = [%s]\n", cbs->href );
+    //fprintf( stderr, "local\n" );
+    //fprintf( stderr, "href = [%s]\n", cbs->href );
     cbs->visited = True;
-    if ( htmlo->hrefFileName ) delete htmlo->hrefFileName;
+    if ( htmlo->hrefFileName ) delete[] htmlo->hrefFileName;
     htmlo->hrefFileName = new char[strlen(cbs->href)+1];
     strcpy( htmlo->hrefFileName, cbs->href );
     htmlo->needLink = 1;
@@ -84,23 +84,23 @@ htmlClass *htmlo = (htmlClass *) client;
   htmlo->eraseSelectBoxCorners();
   htmlo->erase();
 
-  htmlo->fgColor.setColorIndex( htmlo->bufFgColor, htmlo->actWin->ci );
+  htmlo->fgColor.setColorIndex( htmlo->eBuf->bufFgColor, htmlo->actWin->ci );
 
-  htmlo->bgColor.setColorIndex( htmlo->bufBgColor, htmlo->actWin->ci );
+  htmlo->bgColor.setColorIndex( htmlo->eBuf->bufBgColor, htmlo->actWin->ci );
 
-  htmlo->alarmPvExpStr.setRaw( htmlo->bufAlarmPvName );
+  htmlo->alarmPvExpStr.setRaw( htmlo->eBuf->bufAlarmPvName );
 
-  htmlo->visPvExpStr.setRaw( htmlo->bufVisPvName );
+  htmlo->visPvExpStr.setRaw( htmlo->eBuf->bufVisPvName );
 
-  htmlo->contentPvExpStr.setRaw( htmlo->bufContentPvName );
+  htmlo->contentPvExpStr.setRaw( htmlo->eBuf->bufContentPvName );
 
-  if ( htmlo->bufVisInverted )
+  if ( htmlo->eBuf->bufVisInverted )
     htmlo->visInverted = 0;
   else
     htmlo->visInverted = 1;
 
-  strncpy( htmlo->minVisString, htmlo->bufMinVisString, 39 );
-  strncpy( htmlo->maxVisString, htmlo->bufMaxVisString, 39 );
+  strncpy( htmlo->minVisString, htmlo->eBuf->bufMinVisString, 39 );
+  strncpy( htmlo->maxVisString, htmlo->eBuf->bufMaxVisString, 39 );
 
   if ( htmlo->bufValue ) {
     htmlo->value.setRaw( htmlo->bufValue );
@@ -112,19 +112,19 @@ htmlClass *htmlo = (htmlClass *) client;
     htmlo->docRoot.setRaw( htmlo->bufDocRoot );
   }
 
-  htmlo->useFile = htmlo->bufUseFile;
+  htmlo->useFile = htmlo->eBuf->bufUseFile;
 
-  htmlo->x = htmlo->bufX;
-  htmlo->sboxX = htmlo->bufX;
+  htmlo->x = htmlo->eBuf->bufX;
+  htmlo->sboxX = htmlo->eBuf->bufX;
 
-  htmlo->y = htmlo->bufY;
-  htmlo->sboxY = htmlo->bufY;
+  htmlo->y = htmlo->eBuf->bufY;
+  htmlo->sboxY = htmlo->eBuf->bufY;
 
-  htmlo->w = htmlo->bufW;
-  htmlo->sboxW = htmlo->bufW;
+  htmlo->w = htmlo->eBuf->bufW;
+  htmlo->sboxW = htmlo->eBuf->bufW;
 
-  htmlo->h = htmlo->bufH;
-  htmlo->sboxH = htmlo->bufH;
+  htmlo->h = htmlo->eBuf->bufH;
+  htmlo->sboxH = htmlo->eBuf->bufH;
 
   htmlo->updateDimensions();
 
@@ -154,12 +154,12 @@ htmlClass *htmlo = (htmlClass *) client;
   htmlc_edit_update ( w, client, call );
 
   if ( htmlo->bufValue ) {
-    delete htmlo->bufValue;
+    delete[] htmlo->bufValue;
     htmlo->bufValue = NULL;
   }
 
   if ( htmlo->bufDocRoot ) {
-    delete htmlo->bufDocRoot;
+    delete[] htmlo->bufDocRoot;
     htmlo->bufDocRoot = NULL;
   }
 
@@ -177,12 +177,12 @@ static void htmlc_edit_cancel (
 htmlClass *htmlo = (htmlClass *) client;
 
   if ( htmlo->bufValue ) {
-    delete htmlo->bufValue;
+    delete[] htmlo->bufValue;
     htmlo->bufValue = NULL;
   }
 
   if ( htmlo->bufDocRoot ) {
-    delete htmlo->bufDocRoot;
+    delete[] htmlo->bufDocRoot;
     htmlo->bufDocRoot = NULL;
   }
 
@@ -200,12 +200,12 @@ static void htmlc_edit_cancel_delete (
 htmlClass *htmlo = (htmlClass *) client;
 
   if ( htmlo->bufValue ) {
-    delete htmlo->bufValue;
+    delete[] htmlo->bufValue;
     htmlo->bufValue = NULL;
   }
 
   if ( htmlo->bufDocRoot ) {
-    delete htmlo->bufDocRoot;
+    delete[] htmlo->bufDocRoot;
     htmlo->bufDocRoot = NULL;
   }
 
@@ -386,6 +386,7 @@ htmlClass::htmlClass ( void ) {
 
   name = new char[strlen("html")+1];
   strcpy( name, "html" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
   visibility = 0;
   prevVisibility = -1;
@@ -401,6 +402,7 @@ htmlClass::htmlClass ( void ) {
   hrefFileName = NULL;
   bufDocRoot = NULL;
   useFile = 0;
+  eBuf = NULL;
 
 }
 
@@ -417,8 +419,6 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   fgColor.copy(source->fgColor);
   bgColor.copy(source->bgColor);
-  fgCb = source->fgCb;
-  bgCb = source->bgCb;
   visInverted = source->visInverted;
 
   alarmPvExpStr.setRaw( source->alarmPvExpStr.rawString );
@@ -449,19 +449,23 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   unconnectedTimer = 0;
 
+  eBuf = NULL;
+
 }
 
 htmlClass::~htmlClass ( void ) {
 
-  if ( name ) delete name;
+  if ( name ) delete[] name;
 
-  if ( bufValue ) delete bufValue;
+  if ( eBuf ) delete eBuf;
 
-  if ( bufDocRoot ) delete bufDocRoot;
+  if ( bufValue ) delete[] bufValue;
 
-  if ( hrefFileName ) delete hrefFileName;
+  if ( bufDocRoot ) delete[] bufDocRoot;
 
-  if ( fileContents ) delete fileContents;
+  if ( hrefFileName ) delete[] hrefFileName;
+
+  if ( fileContents ) delete[] fileContents;
 
   if ( unconnectedTimer ) {
     XtRemoveTimeOut( unconnectedTimer );
@@ -504,6 +508,10 @@ int htmlClass::genericEdit ( void ) {
 
 char title[32], *ptr;
 
+  if ( !eBuf ) {
+    eBuf = new editBufType;
+  }
+
   if ( !bufValue ) {
     bufValue = new char[htmlClass::MAX_TEXT_LEN+1];
   }
@@ -520,38 +528,38 @@ char title[32], *ptr;
 
   Strncat( title, htmlClass_str5, 31 );
 
-  bufX = x;
-  bufY = y;
-  bufW = w;
-  bufH = h;
+  eBuf->bufX = x;
+  eBuf->bufY = y;
+  eBuf->bufW = w;
+  eBuf->bufH = h;
 
-  bufFgColor = fgColor.pixelIndex();
+  eBuf->bufFgColor = fgColor.pixelIndex();
 
-  bufBgColor = bgColor.pixelIndex();
+  eBuf->bufBgColor = bgColor.pixelIndex();
 
   if ( alarmPvExpStr.getRaw() )
-    strncpy( bufAlarmPvName, alarmPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+    strncpy( eBuf->bufAlarmPvName, alarmPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufAlarmPvName, "" );
+    strcpy( eBuf->bufAlarmPvName, "" );
 
   if ( visPvExpStr.getRaw() )
-    strncpy( bufVisPvName, visPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+    strncpy( eBuf->bufVisPvName, visPvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufVisPvName, "" );
+    strcpy( eBuf->bufVisPvName, "" );
 
   if ( contentPvExpStr.getRaw() )
-    strncpy( bufContentPvName, contentPvExpStr.getRaw(),
+    strncpy( eBuf->bufContentPvName, contentPvExpStr.getRaw(),
      PV_Factory::MAX_PV_NAME );
   else
-    strcpy( bufContentPvName, "" );
+    strcpy( eBuf->bufContentPvName, "" );
 
   if ( visInverted )
-    bufVisInverted = 0;
+    eBuf->bufVisInverted = 0;
   else
-    bufVisInverted = 1;
+    eBuf->bufVisInverted = 1;
 
-  strncpy( bufMinVisString, minVisString, 39 );
-  strncpy( bufMaxVisString, maxVisString, 39 );
+  strncpy( eBuf->bufMinVisString, minVisString, 39 );
+  strncpy( eBuf->bufMaxVisString, maxVisString, 39 );
 
   if ( value.getRaw() )
     strncpy( bufValue, value.getRaw(), htmlClass::MAX_TEXT_LEN );
@@ -563,7 +571,7 @@ char title[32], *ptr;
   else
     strncpy( bufDocRoot, "", htmlClass::MAX_FILENAME_LEN );
 
-  bufUseFile = useFile;
+  eBuf->bufUseFile = useFile;
 
   ef.create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -571,25 +579,25 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  ef.addTextField( htmlClass_str7, 35, &bufX );
-  ef.addTextField( htmlClass_str8, 35, &bufY );
-  ef.addTextField( htmlClass_str9, 35, &bufW );
-  ef.addTextField( htmlClass_str10, 35, &bufH );
+  ef.addTextField( htmlClass_str7, 35, &eBuf->bufX );
+  ef.addTextField( htmlClass_str8, 35, &eBuf->bufY );
+  ef.addTextField( htmlClass_str9, 35, &eBuf->bufW );
+  ef.addTextField( htmlClass_str10, 35, &eBuf->bufH );
   ef.addTextBox( htmlClass_str23, 32, 10, bufValue,
    htmlClass::MAX_TEXT_LEN );
-  ef.addToggle( htmlClass_str11, &bufUseFile );
+  ef.addToggle( htmlClass_str11, &eBuf->bufUseFile );
   ef.addTextField( htmlClass_str12, 35, bufDocRoot, MAX_FILENAME_LEN );
-  ef.addTextField( htmlClass_str25, 35, bufContentPvName,
+  ef.addTextField( htmlClass_str25, 35, eBuf->bufContentPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addColorButton( htmlClass_str13, actWin->ci, &fgCb, &bufFgColor );
-  ef.addColorButton( htmlClass_str16, actWin->ci, &bgCb, &bufBgColor );
-  ef.addTextField( htmlClass_str18, 35, bufAlarmPvName,
+  ef.addColorButton( htmlClass_str13, actWin->ci, &eBuf->fgCb, &eBuf->bufFgColor );
+  ef.addColorButton( htmlClass_str16, actWin->ci, &eBuf->bgCb, &eBuf->bufBgColor );
+  ef.addTextField( htmlClass_str18, 35, eBuf->bufAlarmPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addTextField( htmlClass_str19, 35, bufVisPvName,
+  ef.addTextField( htmlClass_str19, 35, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addOption( " ", htmlClass_str20, &bufVisInverted );
-  ef.addTextField( htmlClass_str21, 35, bufMinVisString, 39 );
-  ef.addTextField( htmlClass_str22, 35, bufMaxVisString, 39 );
+  ef.addOption( " ", htmlClass_str20, &eBuf->bufVisInverted );
+  ef.addTextField( htmlClass_str21, 35, eBuf->bufMinVisString, 39 );
+  ef.addTextField( htmlClass_str22, 35, eBuf->bufMaxVisString, 39 );
 
   return 1;
 
@@ -635,6 +643,7 @@ char *emptyStr = "";
 
   tag.init();
   tag.loadR( "beginObjectProperties" );
+  tag.loadR( unknownTags );
   tag.loadR( "major", &major );
   tag.loadR( "minor", &minor );
   tag.loadR( "release", &release );
@@ -962,6 +971,7 @@ char *emptyStr = "";
   tag.loadW( "docRoot", &docRoot, emptyStr );
   tag.loadBoolW( "useFile", &useFile, &zero );
   tag.loadW( "contentPv", &contentPvExpStr, emptyStr );
+  tag.loadW( unknownTags );
   tag.loadW( "endObjectProperties" );
   tag.loadW( "" );
 
@@ -1298,7 +1308,8 @@ int htmlClass::activate (
       init = 1; // this stays true if there are no pvs
 
       if ( !alarmPvExpStr.getExpanded() ||
-           ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           // ( strcmp( alarmPvExpStr.getExpanded(), "" ) == 0 ) ) {
+	   blankOrComment( alarmPvExpStr.getExpanded() ) ) {
         alarmPvExists = 0;
         fgVisibility = bgVisibility = 1;
       }
@@ -1311,7 +1322,8 @@ int htmlClass::activate (
       }
 
       if ( !visPvExpStr.getExpanded() ||
-           ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           // ( strcmp( visPvExpStr.getExpanded(), "" ) == 0 ) ) {
+	   blankOrComment( visPvExpStr.getExpanded() ) ) {
         visPvExists = 0;
         visibility = 1;
       }
@@ -1326,7 +1338,8 @@ int htmlClass::activate (
       }
 
       if ( !contentPvExpStr.getExpanded() ||
-           ( strcmp( contentPvExpStr.getExpanded(), "" ) == 0 ) ) {
+           // ( strcmp( contentPvExpStr.getExpanded(), "" ) == 0 ) ) {
+	   blankOrComment( contentPvExpStr.getExpanded() ) ) {
         contentPvExists = 0;
         fgVisibility = bgVisibility = 1;
       }
@@ -1698,7 +1711,7 @@ char tmp[contentSize+1];
       loadFile( contentStringExpStr.getExpanded() );
       if ( fileContents ) {
         XmHTMLTextSetString( htmlBox, fileContents );
-        delete fileContents;
+        delete[] fileContents;
         fileContents = NULL;
       }
     }
@@ -1719,7 +1732,7 @@ char tmp[contentSize+1];
     if ( bufValue ) {
       value.setRaw( bufValue );
       stringLength = strlen( bufValue );
-      delete bufValue;
+      delete[] bufValue;
       bufValue = NULL;
     }
 
@@ -1735,7 +1748,7 @@ char tmp[contentSize+1];
       loadFile( value.getExpanded() );
       if ( fileContents ) {
         XmHTMLTextSetString( htmlBox, fileContents );
-        delete fileContents;
+        delete[] fileContents;
         fileContents = NULL;
       }
     }
@@ -1750,7 +1763,7 @@ char tmp[contentSize+1];
       loadFile( hrefFileName );
       if ( fileContents ) {
         XmHTMLTextSetString( htmlBox, fileContents );
-        delete fileContents;
+        delete[] fileContents;
         fileContents = NULL;
       }
     }
@@ -1979,7 +1992,7 @@ char tmp[MAX_FILENAME_LEN+1], tmp1[MAX_FILENAME_LEN+1], *tk;
       tmp[MAX_FILENAME_LEN] = 0;
     }
 
-    //printf( "tmp=[%s]\n", tmp );
+    //fprintf( stderr, "tmp=[%s]\n", tmp );
 
     if ( !blank(tmp) ) {
       if ( tmp[strlen(tmp)-1] != '/' ) {
@@ -1999,18 +2012,18 @@ char tmp[MAX_FILENAME_LEN+1], tmp1[MAX_FILENAME_LEN+1], *tk;
 
   }
 
-  //printf( "name=%s\n", tmp );
+  //fprintf( stderr, "name=%s\n", tmp );
 
   status = stat( tmp, &buf );
-  //printf( "status = %-d\n", status );
+  //fprintf( stderr, "status = %-d\n", status );
 
   //if ( !status ) {
-  //  printf( "size=%-ld\n", buf.st_size );
+  //  fprintf( stderr, "size=%-ld\n", buf.st_size );
   //}
 
   f = open( tmp, O_RDONLY );
   if ( f != -1 ) {
-    if ( fileContents ) delete fileContents;
+    if ( fileContents ) delete[] fileContents;
     fileContents = new char[buf.st_size+10];
     read( f, fileContents, buf.st_size );
     fileContents[buf.st_size] = 0;
@@ -2034,6 +2047,23 @@ void htmlClass::unmap ( void ) {
     XtUnmapWidget( bulBrd );
     widgetsMapped = 0;
   }
+
+}
+
+void htmlClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+  if ( max < 3 ) {
+    *n = 0;
+    return;
+  }
+
+  *n = 3;
+  pvs[0] = alarmPvId;
+  pvs[1] = visPvId;
+  pvs[2] = contentPvId;
 
 }
 

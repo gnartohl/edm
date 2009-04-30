@@ -96,7 +96,8 @@ bool equals(const HashedExpression *lhs, const HashedExpression *rhs)
 // ------------------------------------------------------------------
 // CALC_PV_Factory --------------------------------------------------
 // ------------------------------------------------------------------
-enum { HashTableSize = 43 };
+//enum { HashTableSize = 43 };
+enum { HashTableSize = 503 };
 typedef Hashtable<HashedExpression,
                   offsetof(HashedExpression, node),
                   HashTableSize> ExpressionHash;

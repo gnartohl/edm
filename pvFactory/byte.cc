@@ -18,6 +18,7 @@ edmByteClass::edmByteClass() : activeGraphicClass(), init(0),
   theOutline(0)
 {
    name = strdup(BYTE_CLASSNAME);
+   checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 }
 
 edmByteClass::edmByteClass(edmByteClass *rhs)

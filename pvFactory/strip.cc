@@ -14,6 +14,7 @@
 edmStripClass::edmStripClass()
 {
     name = strdup(STRIP_CLASSNAME);
+    checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
     is_executing = false;
     for (size_t i=0; i<num_pvs; ++i)
     {

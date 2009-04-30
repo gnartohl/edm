@@ -568,6 +568,7 @@ int i;
 
   name = new char[strlen("activeSymbolClass")+1];
   strcpy( name, "activeSymbolClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
   for ( i=0; i<SYMBOL_K_NUM_STATES; i++ ) {
 

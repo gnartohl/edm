@@ -568,6 +568,7 @@ int i;
 
   name = new char[strlen("pvInspectorClass")+1];
   strcpy( name, "pvInspectorClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
   activeMode = 0;
   ofsX = 0;

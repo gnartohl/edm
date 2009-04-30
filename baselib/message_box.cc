@@ -221,6 +221,7 @@ activeMessageBoxClass::activeMessageBoxClass ( void ) {
 
   name = new char[strlen("activeMessageBoxClass")+1];
   strcpy( name, "activeMessageBoxClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   minW = 200;
   minH = 100;
   strcpy( fontTag, "" );

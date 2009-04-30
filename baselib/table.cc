@@ -202,6 +202,7 @@ activeTableClass::activeTableClass ( void ) {
 
   name = new char[strlen("activeTableClass")+1];
   strcpy( name, "activeTableClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   strcpy( fontTag, "" );
   fs = NULL;
   activeMode = 0;

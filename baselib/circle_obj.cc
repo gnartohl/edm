@@ -299,6 +299,7 @@ activeCircleClass::activeCircleClass ( void ) {
 
   name = new char[strlen("activeCircleClass")+1];
   strcpy( name, "activeCircleClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   visibility = 0;
   prevVisibility = -1;
   visInverted = 0;

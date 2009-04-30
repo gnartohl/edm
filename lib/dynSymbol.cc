@@ -543,6 +543,7 @@ int i;
 
   name = new char[strlen("activeDynSymbolClass")+1];
   strcpy( name, "activeDynSymbolClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
   for ( i=0; i<DYNSYMBOL_K_NUM_STATES; i++ ) {
 

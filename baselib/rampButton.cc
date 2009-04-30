@@ -566,8 +566,8 @@ activeRampButtonClass::activeRampButtonClass ( void ) {
 
   name = new char[strlen("activeRampButtonClass")+1];
   strcpy( name, "activeRampButtonClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   buttonPressed = 0;
-
   state = RBTC_IDLE;
   _3D = 1;
   invisible = 0;

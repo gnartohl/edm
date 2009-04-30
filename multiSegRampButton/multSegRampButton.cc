@@ -759,6 +759,7 @@ int i;
 
   name = new char[strlen("activeMultSegRampButtonClass")+1];
   strcpy( name, "activeMultSegRampButtonClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   buttonPressed = 0;
 
   state = MSRBTC_IDLE;

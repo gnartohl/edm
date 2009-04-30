@@ -405,6 +405,7 @@ activeChoiceButtonClass::activeChoiceButtonClass ( void ) {
 
   name = new char[strlen("activeChoiceButtonClass")+1];
   strcpy( name, "activeChoiceButtonClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
   fgColorMode = ACBC_K_COLORMODE_STATIC;
   bgColorMode = ACBC_K_COLORMODE_STATIC;

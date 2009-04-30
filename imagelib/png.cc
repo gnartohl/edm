@@ -267,6 +267,7 @@ int status;
 
   name = new char[strlen("activePngClass")+1];
   strcpy( name, "activePngClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
   strcpy( pngFileName, "" );
 

@@ -208,6 +208,7 @@ activeCoefTableClass::activeCoefTableClass ( void ) {
 
   name = new char[strlen("activeCoefTableClass")+1];
   strcpy( name, "activeCoefTableClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   strcpy( fontTag, "" );
   fs = NULL;
   activeMode = 0;

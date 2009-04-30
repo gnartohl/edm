@@ -862,6 +862,8 @@ TwoDProfileMonitor::TwoDProfileMonitor (void) : activeGraphicClass ()
 { 
   
     constructCommon ();
+    checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
+
 }
 
 

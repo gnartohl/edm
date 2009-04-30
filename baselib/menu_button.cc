@@ -431,6 +431,7 @@ int i;
 
   name = new char[strlen("activeMenuButtonClass")+1];
   strcpy( name, "activeMenuButtonClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
   for ( i=0; i<MAX_ENUM_STATES; i++ ) {
     pb[i] = NULL;

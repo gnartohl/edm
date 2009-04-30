@@ -44,7 +44,8 @@ static const unsigned epochSecPast1970 = 7305*86400;
 
 // All LOC_PV_Factories share the same static PV pool,
 // a hashtable by PV name
-enum { HashTableSize=43 };
+//enum { HashTableSize=43 };
+enum { HashTableSize=503 };
 class LocHashTableItem
 {
 public:

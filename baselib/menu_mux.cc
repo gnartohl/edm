@@ -359,6 +359,7 @@ int i, ii;
 
   name = new char[strlen("menuMuxClass")+1];
   strcpy( name, "menuMuxClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
   numStates = 0;
 

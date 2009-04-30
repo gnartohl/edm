@@ -478,6 +478,7 @@ shellCmdClass::shellCmdClass ( void ) {
 
   name = new char[strlen("shellCmdClass")+1];
   strcpy( name, "shellCmdClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
   activeMode = 0;
   invisible = 0;

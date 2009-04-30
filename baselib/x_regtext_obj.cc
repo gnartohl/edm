@@ -299,6 +299,7 @@ activeXRegTextClass::activeXRegTextClass ( void ) {
 //  fprintf( stderr,"RegText constructor\n");
   name = new char[strlen("activeXRegTextClass")+1];
   strcpy( name, "activeXRegTextClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
   visibility = 0;
   prevVisibility = -1;

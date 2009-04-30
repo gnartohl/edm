@@ -212,6 +212,7 @@ activeGraphicListPtr head;
 
   name = new char[strlen("activeGroupClass")+1];
   strcpy( name, "activeGroupClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   deleteRequest = 0;
 
   head = new activeGraphicListType;

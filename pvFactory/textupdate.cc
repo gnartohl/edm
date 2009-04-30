@@ -118,6 +118,7 @@ edmTextupdateClass::edmTextupdateClass()
 void edmTextupdateClass::init(const char *classname)
 {
     name = strdup(classname);
+    checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
     is_executing = false;
     pv = 0;
 

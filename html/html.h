@@ -124,22 +124,37 @@ friend void htmlc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-int bufX, bufY, bufW, bufH;
+typedef struct editBufTag {
+// edit buffer
+  int bufX;
+  int bufY;
+  int bufW;
+  int bufH;
+  int bufFgColor;
+  int bufBgColor;
+  int bufVisInverted;
+  int bufUseFile;
+  colorButtonClass fgCb;
+  colorButtonClass bgCb;
+  char bufMinVisString[39+1];
+  char bufMaxVisString[39+1];
+  char bufAlarmPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufContentPvName[PV_Factory::MAX_PV_NAME+1];
+} editBufType, *editBufPtr;
+
+editBufPtr eBuf;
 
 pvColorClass fgColor;
-int bufFgColor;
-colorButtonClass fgCb;
 
 pvColorClass bgColor;
-int bufBgColor;
-colorButtonClass bgCb;
 
 int pvType;
 pvValType pvValue, minVis, maxVis;
-char minVisString[39+1], bufMinVisString[39+1];
-char maxVisString[39+1], bufMaxVisString[39+1];
+char minVisString[39+1];
+char maxVisString[39+1];
 
-int prevVisibility, visibility, visInverted, bufVisInverted;
+int prevVisibility, visibility, visInverted;
 int fgVisibility, prevFgVisibility;
 int bgVisibility, prevBgVisibility;
 
@@ -148,13 +163,10 @@ ProcessVariable *visPvId;
 ProcessVariable *contentPvId;
 
 expStringClass alarmPvExpStr;
-char bufAlarmPvName[PV_Factory::MAX_PV_NAME+1];
 
 expStringClass visPvExpStr;
-char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
 
 expStringClass contentPvExpStr;
-char bufContentPvName[PV_Factory::MAX_PV_NAME+1];
 
 static const int contentSize = 39;
 expStringClass contentStringExpStr;
@@ -165,7 +177,7 @@ int activeMode, init, opComplete;
 expStringClass value, docRoot;
 char *bufValue, *fileContents, *hrefFileName, *bufDocRoot;
 
-int useFile, bufUseFile;
+int useFile;
 
 int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh,
  needPropertyUpdate, needToDrawUnconnected, needToEraseUnconnected,
@@ -341,6 +353,11 @@ void loadFile (
 void map ( void );
 
 void unmap ( void );
+
+void getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
 
 };
 

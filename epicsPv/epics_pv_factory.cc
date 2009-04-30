@@ -33,7 +33,8 @@ static int g_context_created = 0;
 
 // All EPICS_PV_Factories share the same static PV pool,
 // a hashtable by PV name
-enum { HashTableSize=43 };
+//enum { HashTableSize=43 };
+enum { HashTableSize=5003 };
 class HashTableItem
 {
 public:

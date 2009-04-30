@@ -473,6 +473,7 @@ activeButtonClass::activeButtonClass ( void ) {
 
   name = new char[strlen("activeButtonClass")+1];
   strcpy( name, "activeButtonClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   deleteRequest = 0;
   selected = 0;
   strcpy( id, "" );

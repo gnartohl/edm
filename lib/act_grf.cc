@@ -150,12 +150,11 @@ int activeGraphicClass::baseMinorVersion ( void ) {
 
 void activeGraphicClass::checkBaseClassVersion (
   int ver,
-  char *file
+  char *name
 ) {
 
   if ( baseMajorVersion() != ver ) {
-    fprintf( stderr, "Incompatible base class version - %s\n", file );
-    exit(-1);
+    fprintf(stderr, "Incompatible base class version - %s\n", name );
   }
 
 }

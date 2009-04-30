@@ -134,6 +134,7 @@ activeExitButtonClass::activeExitButtonClass ( void ) {
 
   name = new char[strlen("activeExitButtonClass")+1];
   strcpy( name, "activeExitButtonClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   deleteRequest = 0;
   selected = 0;
   iconify = 0;

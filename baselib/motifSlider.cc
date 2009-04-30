@@ -862,6 +862,7 @@ activeMotifSliderClass::activeMotifSliderClass ( void ) {
 
   name = new char[strlen("activeMotifSliderClass")+1];
   strcpy( name, "activeMotifSliderClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   deleteRequest = 0;
   selected = 0;
   positive = 1;

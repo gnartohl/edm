@@ -296,6 +296,7 @@ scaleClass::scaleClass ( void ) {
 
   name = new char[strlen("458bb765_eab9_4d65_8fda_2ce55d2baec6")+1];
   strcpy( name, "458bb765_eab9_4d65_8fda_2ce55d2baec6" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   activeMode = 0;
   scaleOfs = scaleLen = 0;
   horizontal = 1;

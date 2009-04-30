@@ -3726,6 +3726,7 @@ time_t t1, t2;
 
   name = new char[strlen("xyGraphClass")+1];
   strcpy( name, "xyGraphClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
   plotMode = XYGC_K_PLOT_MODE_PLOT_N_STOP;
   count = 2;

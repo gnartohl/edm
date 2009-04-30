@@ -436,6 +436,7 @@ activeLineClass::activeLineClass ( void ) {
 
   name = new char[strlen("activeLineClass")+1];
   strcpy( name, "activeLineClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   visibility = 0;
   prevVisibility = -1;
   visInverted = 0;

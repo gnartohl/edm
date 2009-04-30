@@ -297,6 +297,7 @@ activeRectangleClass::activeRectangleClass ( void ) {
 
   name = new char[strlen("activeRectangleClass")+1];
   strcpy( name, "activeRectangleClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   invisible = 0;
   visInverted = 0;
   visPvExists = alarmPvExists = 0;

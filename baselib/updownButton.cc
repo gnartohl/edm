@@ -621,8 +621,8 @@ activeUpdownButtonClass::activeUpdownButtonClass ( void ) {
 
   name = new char[strlen("activeUpdownButtonClass")+1];
   strcpy( name, "activeUpdownButtonClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   buttonPressed = 0;
-
   _3D = 1;
   invisible = 0;
   rate = 0.1;

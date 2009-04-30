@@ -350,6 +350,7 @@ activeXTextClass::activeXTextClass ( void ) {
 
   name = new char[strlen("activeXTextClass")+1];
   strcpy( name, "activeXTextClass" );
+  checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
   visibility = 0;
   prevVisibility = -1;

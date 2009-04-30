@@ -197,7 +197,7 @@ int baseMinorVersion ( void );
 
 void checkBaseClassVersion (
   int ver,
-  char *file
+  char *name
 );
 
 virtual void setObjType (
