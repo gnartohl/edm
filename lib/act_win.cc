@@ -17039,7 +17039,10 @@ int activeWindowClass::refreshActive (
 
 activeGraphicListPtr cur;
 
-  if ( noRefresh ) return 1;
+  if ( noRefresh ) {
+    needCopy = 1;
+    return 1;
+  }
 
   cur = head->flink;
   if ( cur != head ) {
@@ -17057,7 +17060,10 @@ int activeWindowClass::refreshActive ( void ) {
 
 activeGraphicListPtr cur;
 
-  if ( noRefresh ) return 1;
+  if ( noRefresh ) {
+    needCopy = 1;
+    return 1;
+  }
 
   cur = head->flink;
   if ( cur != head ) {
