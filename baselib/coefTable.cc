@@ -630,7 +630,6 @@ int opStat;
       activeMode = 1;
 
       if ( !readPvExpStr.getExpanded() ||
-	// ( strcmp( readPvExpStr.getExpanded(), "" ) == 0 ) ) {
         blankOrComment( readPvExpStr.getExpanded() ) ) {
         readExists = 0;
       }
@@ -868,7 +867,9 @@ char buf[MaxLabelSize+1];
 char val[255+1];
 char *tk, *ctx;
 Widget wdgt;
-const double *array;
+const double *darray;
+const int *larray;
+const char *carray;
 
 //----------------------------------------------------------------------------
 
@@ -934,7 +935,31 @@ const double *array;
     ctx = NULL;
     tk = strtok_r( buf, ",", &ctx );
 
-    array = readPvId->get_double_array();
+    carray = NULL;
+    larray = NULL;
+    darray = NULL;
+
+    switch ( readPvId->get_specific_type().type ) {
+
+    case ProcessVariable::specificType::flt:
+    case ProcessVariable::specificType::real:
+      darray = readPvId->get_double_array();
+      break;
+
+    case ProcessVariable::specificType::shrt:
+    case ProcessVariable::specificType::integer:
+      larray = readPvId->get_int_array();
+      break;
+
+    case ProcessVariable::specificType::chr:
+      carray = readPvId->get_char_array();
+      break;
+
+    default:
+      break;
+
+    }
+
     max = readPvId->get_dimension();
     if ( max > 1000 ) max = 1000;
 
@@ -954,6 +979,7 @@ const double *array;
     if ( last > max ) last = max;
 
     for ( i=first; i<last; i++ ) {
+
       if ( tk ) {
         wdgt = table.addCell( tk );
       }
@@ -961,7 +987,45 @@ const double *array;
         snprintf( val, 255, "Coef %-d", i );
         wdgt = table.addCell( val );
       }
-      snprintf( val, 255, "%-g", array[i] );
+
+      switch ( readPvId->get_specific_type().type ) {
+
+      case ProcessVariable::specificType::flt:
+      case ProcessVariable::specificType::real:
+        if ( darray ) {
+          snprintf( val, 255, "%-g", darray[i] );
+        }
+        else {
+          strcpy( val, "Error" );
+        }
+        break;
+
+      case ProcessVariable::specificType::shrt:
+      case ProcessVariable::specificType::integer:
+        if ( larray ) {
+          snprintf( val, 255, "%-d", larray[i] );
+        }
+        else {
+          strcpy( val, "Error" );
+        }
+        break;
+
+      case ProcessVariable::specificType::chr:
+        if ( carray ) {
+          snprintf( val, 255, "%-d", (int) carray[i] );
+        }
+        else {
+          strcpy( val, "Error" );
+        }
+        break;
+
+      default:
+        strcpy( val, "Unsupported type" );
+        break;
+
+
+      }
+
       wdgt = table.addCell( val );
 
       tk = strtok_r( NULL, ",", &ctx );

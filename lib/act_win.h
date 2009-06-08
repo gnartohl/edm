@@ -930,6 +930,8 @@ pvActionClass *pvAction;
 
 int ctlKeyPressed;
 
+int invalidFile, invalidBgColor;
+
 activeWindowClass ( void );
 
 ~activeWindowClass ( void );

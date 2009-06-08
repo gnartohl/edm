@@ -10272,6 +10272,9 @@ activeWindowClass::activeWindowClass ( void ) : unknownTags() {
 
 char *str;
 
+  invalidBgColor = 0;
+  invalidFile = 0;
+
   usePixmap = -1; // -1 means unknown, will be determined on execute
   bgPixmap = (Pixmap) NULL;
   pixmapW = pixmapH = -1;
@@ -10996,6 +10999,7 @@ void activeWindowClass::setTitle ( void ) {
 XTextProperty xtext;
 char *cptr;
 char *none = activeWindowClass_str83;
+char t[255+1];
 
   strncpy( fileNameAndRev, fileName, 255 );
   fileNameAndRev[255] = 0;
@@ -11034,7 +11038,15 @@ char *none = activeWindowClass_str83;
       }
     }
     else {
-      cptr = expStrTitle.getExpanded();
+      //cptr = expStrTitle.getExpanded();
+      strncpy( t, expStrTitle.getExpanded(), 255 );
+      t[255] = 0;
+      if ( invalidFile ) {
+        Strncat( t, " (", 255 );
+        Strncat( t, activeWindowClass_str214, 255 );
+        Strncat( t, ")", 255 );
+      }
+      cptr = t;
     }
 
   }
@@ -15589,7 +15601,10 @@ tagClass tag;
 
     }
 
-
+    if ( invalidFile ) {
+      bgColor = invalidBgColor;
+      drawGc.setBaseBG( ci->pix(bgColor) );
+    }
 
     // read file and process each leading keyword
     tag.init();
@@ -17376,7 +17391,26 @@ int numComments = 0, moreComments = 1, checkForRev = 1,
 
             if ( tk ) {
 
-              if ( strcmp( tk, "$Revision:" ) == 0 ) {
+              if ( strcmp( tk, "$InvalidBgColor:" ) == 0 ) {
+
+		invalidFile = 1;
+                invalidBgColor = 0;
+
+                checkForRev = 0; // use first rev found, don't check any more
+
+                tk = strtok_r( NULL, " \t\n#", &context2 );
+                if ( tk ) {
+                  char *nonInt;
+                  invalidBgColor = strtol( tk, &nonInt, 10 );
+                  Strncat( fileNameAndRev, " (", 287 );
+                  Strncat( fileNameAndRev, activeWindowClass_str214, 287 );
+                  Strncat( fileNameAndRev, ")", 287 );
+                  strncpy( fileRev, activeWindowClass_str214, 31 );
+                  fileRev[31] = 0;
+	        }
+
+              }
+              else if ( strcmp( tk, "$Revision:" ) == 0 ) {
 
                 checkForRev = 0; // use first rev found, don't check any more
 

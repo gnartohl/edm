@@ -210,5 +210,6 @@
 #define activeWindowClass_str211 (char *) "unlimited"
 #define activeWindowClass_str212 (char *) "Pixmap Control"
 #define activeWindowClass_str213 (char *) "Use env var|Never|Always"
+#define activeWindowClass_str214 (char *) "invalid"
 
 #endif

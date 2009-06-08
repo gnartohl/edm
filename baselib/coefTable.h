@@ -27,7 +27,7 @@
 
 #define COEFTABLEC_MAJOR_VERSION 4
 #define COEFTABLEC_MINOR_VERSION 0
-#define COEFTABLEC_RELEASE 0
+#define COEFTABLEC_RELEASE 1
 
 #ifdef __coefTable_cc
 
