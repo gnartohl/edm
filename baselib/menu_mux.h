@@ -261,10 +261,10 @@ Widget popUpMenu, pullDownMenu, pb[MAX_ENUM_STATES];
 
 int needConnectInit, needDisconnect, needInfoInit, needUpdate, needDraw,
  needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 int initialConnection;
 
-int retryTimer;
+XtIntervalId retryTimer;
 
 int buttonPressed;
 

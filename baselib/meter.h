@@ -248,7 +248,7 @@ int shadowMode;
 
 int needErase, needDraw, needConnectInit, needRefresh, needInfoInit;
 int needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 public:
 

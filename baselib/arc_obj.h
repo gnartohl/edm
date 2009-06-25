@@ -174,7 +174,7 @@ int lineStyle;
 
 int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh;
 int needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 int curLineColorIndex, curFillColorIndex, curStatus, curSeverity;
 static const int alarmPvConnection = 1;

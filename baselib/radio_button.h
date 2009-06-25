@@ -255,7 +255,7 @@ Widget bulBrd, radioBox, pb[MAX_ENUM_STATES];
 
 int needConnectInit, needInfoInit, needDraw, needRefresh,
  needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 int initialConnection;
 
 int firstValueChange;

@@ -221,7 +221,7 @@ char bufBarOriginX[15+1];
 int needErase, needDraw, needFullDraw, needDrawCheck, needConnectInit,
  needRefresh, needInfoInit;
 int needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 public:
 

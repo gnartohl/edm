@@ -227,7 +227,7 @@ bufPtr buf;
 activeWindowClass *aw;
 int useFocus, needClose, needConnect, needUpdate, needRefresh;
 int needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 int topShadowColor;
 int botShadowColor;

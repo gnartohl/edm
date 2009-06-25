@@ -613,7 +613,7 @@ int widget_value_changed;
 int needConnectInit, needInfoInit, needErase, needDraw, needRefresh,
  needUpdate, deferredCount, needToDrawUnconnected, needToEraseUnconnected,
  needFgPvPut, initialConnection;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 keypadClass kp;
 int kpInt;

@@ -192,7 +192,7 @@ entryListBase *pvNamesObj;
 int needErase, needDraw, needConnectInit, needConnect[SYMBOL_K_MAX_PVS],
  needRefresh, needColorInit, needColorRefresh, needToDrawUnconnected,
  needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 int orientation, prevOr;
 

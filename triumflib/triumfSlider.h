@@ -410,7 +410,7 @@ int needCtlLabelConnectInit, needCtlLabelInfoInit, needCtlUpdate;
 int needSavedConnectInit, needSavedRefresh;
 int needErase, needDraw;
 int needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 char displayFormat[15+1];
 int limitsFromDb;

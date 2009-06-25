@@ -288,7 +288,7 @@ double controlV, curControlV, curFinalV, rampFinalV;
 int needConnectInit, needFinalConnectInit, needRampStateConnectInit,
  needCtlInfoInit, needRefresh, needErase, needDraw, needToDrawUnconnected,
  needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 int initialConnection, initialFinalValueConnection,
  initialRampStateValueConnection, initialVisConnection,
  initialColorConnection;

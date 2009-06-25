@@ -283,7 +283,7 @@ int sourcePressPvConnected, sourceReleasePvConnected, destPvConnected,
 
 int needConnectInit, needErase, needDraw, needToEraseUnconnected,
  needToDrawUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 char pw[31+1];
 int usePassword;

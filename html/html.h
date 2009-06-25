@@ -182,7 +182,7 @@ int useFile;
 int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh,
  needPropertyUpdate, needToDrawUnconnected, needToEraseUnconnected,
  needLink, needOpenFile, needContentUpdate;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 int curFgColorIndex, curBgColorIndex, curStatus, curSeverity;
 static const int alarmPvConnection = 1;

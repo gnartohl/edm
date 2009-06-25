@@ -233,7 +233,7 @@ int controlExists, readExists, active, activeMode;
 int needConnectInit, needReadConnectInit, needInfoInit,
  needReadInfoInit, needDraw, needRefresh, needToDrawUnconnected,
  needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 int initialConnection, initialReadConnection, initialVisConnection,
  initialColorConnection;
 

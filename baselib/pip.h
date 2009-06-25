@@ -275,11 +275,11 @@ int bufFgColor, bufBgColor, bufTopShadowColor, bufBotShadowColor;
 int needConnectInit, needUpdate, needMenuConnectInit, needMenuUpdate,
  needDraw, needFileOpen, needInitMenuFileOpen, needMap, needUnmap,
  needToDrawUnconnected, needToEraseUnconnected, needConnectTimeout;
-int initialReadConnection, initialMenuConnection, initialLabelConnection,
- unconnectedTimer;
+int initialReadConnection, initialMenuConnection, initialLabelConnection;
+XtIntervalId unconnectedTimer;
 int consecutiveDeactivateErrors;
 
-int retryTimerNU, retryTimerNMU, retryTimerNUM, retryTimerNM;
+XtIntervalId retryTimerNU, retryTimerNMU, retryTimerNUM, retryTimerNM;
 
 activeWindowClass *aw;
 

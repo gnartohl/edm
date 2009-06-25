@@ -302,7 +302,7 @@ double controlV, curControlV, curSaveV, coarse, fine;
 
 int needConnectInit, needSaveConnectInit, needCtlInfoInit, needRefresh,
  needErase, needDraw, needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 int initialConnection, initialSavedValueConnection, initialVisConnection,
  initialColorConnection;
 

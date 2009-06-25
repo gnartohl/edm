@@ -316,7 +316,7 @@ double controlV, curControlV, curFinalV[MAXSEGS], rampFinalV[MAXSEGS], curRampRa
 int needConnectInit, needFinalConnectInit[MAXSEGS], needRampRateConnectInit[MAXSEGS],
  needRampStateConnectInit, needCtlInfoInit, needRefresh, needErase, needDraw,
  needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 int initialConnection, initialFinalValueConnection[MAXSEGS],
  initialRampRateConnection[MAXSEGS],
  initialRampStateValueConnection, initialVisConnection,

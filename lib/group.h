@@ -124,7 +124,7 @@ pvConnectionClass connection;
 int needConnectInit, needVisUpdate, needRefresh, needToDrawUnconnected,
  needToEraseUnconnected;
 
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 public:
 

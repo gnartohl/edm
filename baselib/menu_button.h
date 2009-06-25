@@ -246,7 +246,7 @@ Widget popUpMenu, pullDownMenu, pb[MAX_ENUM_STATES];
 int needConnectInit, needReadConnectInit, needInfoInit,
  needReadInfoInit, needDraw, needRefresh, needToDrawUnconnected,
  needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 int initialConnection, initialReadConnection, initialVisConnection,
  initialColorConnection;
 

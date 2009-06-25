@@ -180,7 +180,7 @@ int lineThk;
 
 int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh,
  needPropertyUpdate, needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 int curFgColorIndex, curBgColorIndex, curStatus, curSeverity;
 static const int alarmPvConnection = 1;
