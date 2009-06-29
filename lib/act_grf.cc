@@ -3933,6 +3933,9 @@ int stat;
         setBlink();
       }
 
+      actWin->needCopy = 1;
+      actWin->updateCopyRegion( x-4, y-4, w+8, h+8 );
+
     }
     else {
 
