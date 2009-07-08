@@ -103,7 +103,7 @@
 #define XYGC_K_PLOT_SORTED_X_MODE 1
 
 #define XYGC_MAJOR_VERSION 4
-#define XYGC_MINOR_VERSION 5
+#define XYGC_MINOR_VERSION 6
 #define XYGC_RELEASE 0
 
 #ifdef __xygraph_cc

@@ -7575,6 +7575,8 @@ XmString str;
           curY1Min[yi] = log10( curY1Min[yi] );
           curY1Max[yi] = log10( curY1Max[yi] );
         }
+        adjCurY1Min[yi] = curY1Min[yi];
+        adjCurY1Max[yi] = curY1Max[yi];
       }
 
       curXNumLabelTicks = xNumLabelIntervals.value();
@@ -7974,7 +7976,9 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
        curY1Max[yi], curY1NumLabelTicks[yi] ) + 4;
     }
     else {
-      ly1 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi],
+      //ly1 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi],
+      // curY1NumLabelTicks[yi] ) + 4;
+      ly1 = yScaleWidth( fontTag, fs, adjCurY1Min[yi], adjCurY1Max[yi],
        curY1NumLabelTicks[yi] ) + 4;
     }
   }
@@ -7987,7 +7991,9 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
        curY1Max[yi], curY1NumLabelTicks[yi] ) + 2;
     }
     else {
-      ly2 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi],
+      //ly2 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi],
+      // curY1NumLabelTicks[yi] ) + 2;
+      ly2 = yScaleWidth( fontTag, fs, adjCurY1Min[yi], adjCurY1Max[yi],
        curY1NumLabelTicks[yi] ) + 2;
     }
   }
@@ -8012,15 +8018,15 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
   }
 
   if ( y1Axis[0] && !y1Axis[1] ) {
-    ly2 = ly1;
+    ly2 = 10;
   }
 
   if ( !y1Axis[0] && y1Axis[1] ) {
-    ly1 = ly2;
+    ly1 = 10;
   }
 
-  if ( ly1 < lx ) ly1 = lx;
-  if ( ly2 < lx ) ly2 = lx;
+  if ( ly1 < lx/2 ) ly1 = lx/2;
+  if ( ly2 < lx/2 ) ly2 = lx/2;
 
   if ( border )
     bInc = 1;
@@ -8060,7 +8066,9 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
     y2lInc = fontHeight + 1;
 
   plotAreaX = ly1 + bInc + ylInc;
+
   plotAreaW = w - bInc - bInc - ylInc - ly1 - ly2 - y2lInc;
+
   plotAreaY = 0 + bInc + (int) ( 1.5 * tInc );
   plotAreaH = h - bInc - bInc - (int) ( 1.5 * tInc ) -
    (int) ( 1.5 * xlInc ) - (int) ( 1.5 * hx );
