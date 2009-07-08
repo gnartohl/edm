@@ -8025,8 +8025,8 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
     ly1 = 10;
   }
 
-  if ( ly1 < lx/2 ) ly1 = lx/2;
-  if ( ly2 < lx/2 ) ly2 = lx/2;
+  if ( ly1 < lx ) ly1 = lx;
+  if ( ly2 < lx ) ly2 = lx;
 
   if ( border )
     bInc = 1;
