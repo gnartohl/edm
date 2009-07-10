@@ -2428,7 +2428,7 @@ void sliderEventHandler(
 XMotionEvent *me;
 XButtonEvent *be;
 activeSliderClass *slo;
-int stat, deltaX, xOfs, newX, popupDialog = 0;
+int stat, b2Op, deltaX, xOfs, newX, popupDialog = 0;
 double fvalue;
 char title[32], *ptr;
 int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
@@ -2472,7 +2472,18 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 
   }
 
-  if ( !slo->controlPvId->have_write_access() ) return;
+  // allow Button2 operations when no write access
+  b2Op = 0;
+  if ( ( e->type == ButtonPress ) || ( e->type == ButtonRelease ) ) {
+    be = (XButtonEvent *) e;
+    if ( be->button == Button2 ) {
+      b2Op = 1;
+    }
+  }
+
+  if ( slo->controlPvId ) {
+    if ( !slo->controlPvId->have_write_access() && !b2Op ) return;
+  }
 
   if ( e->type == ButtonPress ) {
 
@@ -2537,9 +2548,11 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         slo->actWin->appCtx->proc->unlock();
 
         if ( slo->controlExists ) {
-          stat = slo->controlPvId->put(
-           XDisplayName(slo->actWin->appCtx->displayName), fvalue );
-          if ( !stat ) fprintf( stderr, activeSliderClass_str56 );
+          if ( slo->controlPvId ) {
+            stat = slo->controlPvId->put(
+             XDisplayName(slo->actWin->appCtx->displayName), fvalue );
+            if ( !stat ) fprintf( stderr, activeSliderClass_str56 );
+	  }
         }
         else if ( slo->anyCallbackFlag ) {
           slo->needCtlRefresh = 1;
@@ -2802,9 +2815,11 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         slo->actWin->appCtx->proc->unlock();
 
         if ( slo->controlExists ) {
-          stat = slo->controlPvId->put(
-           XDisplayName(slo->actWin->appCtx->displayName), fvalue );
-          if ( !stat ) fprintf( stderr, activeSliderClass_str59 );
+          if ( slo->controlPvId ) {
+            stat = slo->controlPvId->put(
+             XDisplayName(slo->actWin->appCtx->displayName), fvalue );
+            if ( !stat ) fprintf( stderr, activeSliderClass_str59 );
+	  }
         }
         else if ( slo->anyCallbackFlag ) {
           slo->needCtlRefresh = 1;
@@ -2868,9 +2883,11 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         slo->actWin->appCtx->proc->unlock();
 
         if ( slo->controlExists ) {
-          stat = slo->controlPvId->put(
-           XDisplayName(slo->actWin->appCtx->displayName), fvalue );
-          if ( !stat ) fprintf( stderr, activeSliderClass_str60 );
+          if ( slo->controlPvId ) {
+            stat = slo->controlPvId->put(
+             XDisplayName(slo->actWin->appCtx->displayName), fvalue );
+            if ( !stat ) fprintf( stderr, activeSliderClass_str60 );
+	  }
         }
         else if ( slo->anyCallbackFlag ) {
           slo->needCtlRefresh = 1;

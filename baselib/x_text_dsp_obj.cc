@@ -102,14 +102,33 @@ int n, l;
 
   if ( !axtdo->enabled ) return;
 
+  if ( axtdo->writeDisabled && axtdo->editable ) {
+    if ( axtdo->pvId->have_write_access() ) {
+      axtdo->writeDisabled = 0;
+      XtVaSetValues( axtdo->tf_widget,
+       XmNeditable, (XtArgVal) True,
+       NULL );
+    }
+  }
+  if ( !axtdo->writeDisabled && axtdo->editable ) {
+    if ( !axtdo->pvId->have_write_access() ) {
+      axtdo->writeDisabled = 1;
+      XtVaSetValues( axtdo->tf_widget,
+       XmNeditable, (XtArgVal) False,
+       NULL );
+    }
+  }
+
   if ( e->type == FocusIn ) {
 
     axtdo->focusIn = 1;
     axtdo->focusOut = 0;
 
-    n = 0;
-    XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) True ); n++;
-    XtSetValues( axtdo->tf_widget, args, n );
+    if ( axtdo->pvId->have_write_access() ) {
+      n = 0;
+      XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) True ); n++;
+      XtSetValues( axtdo->tf_widget, args, n );
+    }
 
     if ( !(axtdo->inputFocusUpdatesAllowed) || axtdo->cursorIn ) {
       axtdo->grabUpdate = 1;
@@ -807,18 +826,11 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int l;
 char *buf;
 
-//Arg args[10];
-//int n;
-
   axtdo->widget_value_changed = 0;
 
   buf = XmTextGetString( axtdo->tf_widget );
   l = strlen(buf);
   XtFree( buf );
-
-  //n = 0;
-  //XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) True ); n++;
-  //XtSetValues( axtdo->tf_widget, args, n );
 
   if ( axtdo->autoSelect ) {
     XmTextSetSelection( axtdo->tf_widget, 0, l,
@@ -1263,6 +1275,30 @@ char *buf, tmp[XTDC_K_MAX+1];
     }
 
   }
+
+}
+
+static void xtdo_access_security_change (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeXTextDspClass *axtdo = (activeXTextDspClass *) userarg;
+
+  axtdo->actWin->appCtx->proc->lock();
+
+  if ( axtdo->activeMode ) {
+
+    if ( pv->is_valid() ) {
+
+      axtdo->needAccessSecurityCheck = 1;
+      axtdo->actWin->addDefExeNode( axtdo->aglPtr );
+
+    }
+
+  }
+
+  axtdo->actWin->appCtx->proc->unlock();
 
 }
 
@@ -4430,7 +4466,7 @@ char callbackName[63+1];
 
       deferredCount = 0;
       needConnectInit = needInfoInit = needErase = needDraw = needRefresh =
-       needUpdate = needFgPvPut = 0;
+       needUpdate = needFgPvPut = needAccessSecurityCheck = 0;
       needToEraseUnconnected = 0;
       needToDrawUnconnected = 0;
       initialConnection = 1;
@@ -4462,6 +4498,7 @@ char callbackName[63+1];
       handlerInstalled = 0;
       strcpy( pwValue, "" );
       pwLength = 0;
+      writeDisabled = 0;
 
       initEnable();
 
@@ -4525,6 +4562,7 @@ char callbackName[63+1];
 	pvId = the_PV_Factory->create( pvExpStr.getExpanded() );
 	if ( pvId ) {
 	  pvId->add_conn_state_callback( xtdo_monitor_connect_state, this );
+          pvId->add_access_security_callback( xtdo_access_security_change, this );
 	}
 	else {
           fprintf( stderr, activeXTextDspClass_str33 );
@@ -4678,6 +4716,7 @@ int activeXTextDspClass::deactivate (
   if ( pvExists ) {
 
     if ( pvId ) {
+      pvId->remove_access_security_callback( xtdo_access_security_change, this );
       pvId->remove_conn_state_callback( xtdo_monitor_connect_state, this );
       pvId->remove_value_callback( XtextDspUpdate, this );
       pvId->release();
@@ -4929,10 +4968,10 @@ void activeXTextDspClass::pointerIn (
 
   if ( !pvId->have_write_access() ) {
 
-    if ( isWidget ) {
+    if ( isWidget && !writeDisabled && editable ) {
+      writeDisabled = 1;
       XtVaSetValues( tf_widget,
        XmNeditable, (XtArgVal) False,
-       XmNcursorPositionVisible, (XtArgVal) False,
        NULL );
     }
 
@@ -4940,6 +4979,13 @@ void activeXTextDspClass::pointerIn (
 
   }
   else {
+
+    if ( isWidget && writeDisabled && editable ) {
+      writeDisabled = 0;
+      XtVaSetValues( tf_widget,
+       XmNeditable, (XtArgVal) True,
+       NULL );
+    }
 
     actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_DEFAULT );
 
@@ -5051,7 +5097,7 @@ XButtonEvent *be = (XButtonEvent *) e;
 void activeXTextDspClass::executeDeferred ( void ) {
 
 int n, numCols, width, csrPos;
-int nc, ni, nu, nr, nd, ne, nfgpvp;
+int nc, ni, nu, nr, nd, ne, nfgpvp, nasc;
 short svalue;
 Arg args[10];
 unsigned int bg, pixel;
@@ -5083,12 +5129,36 @@ char locFieldLenInfo[7+1];
   nd = needDraw; needDraw = 0;
   ne = needErase; needErase = 0;
   nfgpvp = needFgPvPut; needFgPvPut = 0;
+  nasc = needAccessSecurityCheck; needAccessSecurityCheck = 0;
   strncpy( value, curValue, XTDC_K_MAX );
   value[XTDC_K_MAX] = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
   if ( !activeMode ) return;
+
+  if ( nasc ) {
+
+    if ( pvId ) {
+      if ( pvId->have_write_access() ) {
+        if ( isWidget && writeDisabled && editable ) {
+          writeDisabled = 0;
+          XtVaSetValues( tf_widget,
+           XmNeditable, (XtArgVal) True,
+           NULL );
+        }
+      }
+      else {
+        if ( isWidget && !writeDisabled && editable ) {
+          writeDisabled = 1;
+          XtVaSetValues( tf_widget,
+           XmNeditable, (XtArgVal) False,
+           NULL );
+        }
+      }
+    }
+
+  }
 
   if ( nfgpvp ) {
 

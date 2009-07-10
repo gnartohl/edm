@@ -205,6 +205,7 @@ LOG_ProcessVariable::LOG_ProcessVariable(const char *_name)
 {
     is_connected = false;
     have_ctrlinfo = false;
+    read_access = write_access = false;
     pv_chid = 0;
     pv_value_evid = 0;
     value = 0;
@@ -305,6 +306,29 @@ void LOG_ProcessVariable::ca_connect_callback(
     }
 }
 
+void LOG_ProcessVariable::ca_access_security_callback(
+    struct access_rights_handler_args arg)
+{
+    LOG_ProcessVariable *me = (LOG_ProcessVariable *)ca_puser(arg.chid);
+
+    if ( arg.ar.read_access ) {
+      me->read_access = true;
+    }
+    else {
+      me->read_access = false;
+    }
+
+    if ( arg.ar.write_access ) {
+      me->write_access = true;
+    }
+    else {
+      me->write_access = false;
+    }
+
+    me->do_access_security_callbacks(); // tell widgets about change
+
+}
+
 void LOG_ProcessVariable::ca_ctrlinfo_callback(
     struct event_handler_args args)
 {
@@ -331,13 +355,23 @@ void LOG_ProcessVariable::ca_ctrlinfo_callback(
         if (stat != ECA_NORMAL)
             fprintf(stderr, "CA add event error('%s'): %s\n",
                     me->get_name(), ca_message(stat));
+
+        stat = ca_replace_access_rights_event(me->pv_chid,
+                          ca_access_security_callback);
+
+        if (stat != ECA_NORMAL)
+            fprintf(stderr, "CA replace access rights event error('%s'): %s\n",
+                    me->get_name(), ca_message(stat));
+
     }
     else
     {
         if ( !me->have_ctrlinfo ) {
             me->have_ctrlinfo = true;
             me->do_conn_state_callbacks();  // tell widgets we connected
-	}                                   // & got info
+	                                    // & got info
+            me->do_access_security_callbacks();
+	}
     }
 }
 
@@ -458,6 +492,13 @@ double LOG_ProcessVariable::get_upper_ctrl_limit() const
 
 double LOG_ProcessVariable::get_lower_ctrl_limit() const
 {   return value->lower_ctrl_limit; }
+
+bool LOG_ProcessVariable::have_read_access() const
+{
+
+    return ca_read_access(pv_chid) != 0;
+
+}
 
 bool LOG_ProcessVariable::have_write_access() const
 {

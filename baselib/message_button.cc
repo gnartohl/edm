@@ -2094,6 +2094,12 @@ int stat;
 
   if ( strcmp( sourceReleasePvExpString.getExpanded(), "" ) == 0 ) return;
 
+  if ( destPvId ) {
+    if ( !destPvId->have_write_access() ) {
+      return;
+    }
+  }
+
   if ( destIsAckS ) {
 
     destV.s = (short) atol( sourceReleasePvExpString.getExpanded() );
@@ -2156,6 +2162,12 @@ void activeMessageButtonClass::btnUp (
     return;
   }
 
+  if ( destPvId ) {
+    if ( !destPvId->have_write_access() ) {
+      return;
+    }
+  }
+
   if ( usePassword ) {
     *action = 0;
     return;
@@ -2199,6 +2211,12 @@ char labelValue[39+1];
   smartDrawAllActive();
 
   if ( strcmp( labelValue, "" ) == 0 ) return;
+
+  if ( destPvId ) {
+    if ( !destPvId->have_write_access() ) {
+      return;
+    }
+  }
 
   if ( destIsAckS ) {
 
@@ -2263,6 +2281,12 @@ void activeMessageButtonClass::btnDown (
     return;
   }
 
+  if ( destPvId ) {
+    if ( !destPvId->have_write_access() ) {
+      return;
+    }
+  }
+
   if ( usePassword ) {
 
     if ( !ef.formIsPoppedUp() ) {
@@ -2319,11 +2343,13 @@ void activeMessageButtonClass::pointerIn (
 
   if ( !enabled || !active || !visibility ) return;
 
-  if ( !destPvId->have_write_access() ) {
-    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
-  }
-  else {
-    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_DEFAULT );
+  if ( destPvId ) {
+    if ( !destPvId->have_write_access() ) {
+      actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
+    }
+    else {
+      actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_DEFAULT );
+    }
   }
 
   activeGraphicClass::pointerIn( _x, _y, buttonState );

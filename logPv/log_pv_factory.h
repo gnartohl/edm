@@ -55,6 +55,7 @@ public:
     double      get_upper_ctrl_limit() const;
     double      get_lower_ctrl_limit() const;
 
+    bool have_read_access() const;
     bool have_write_access() const;
 
     bool put(double value);
@@ -90,11 +91,14 @@ private:
     chid pv_chid;          // CAC channel ID
     evid pv_value_evid;    // CAC event ID
     class PVValue *value;  // current value, type-dependent
-    
+    bool read_access;
+    bool write_access;
+
     static void ca_connect_callback(struct connection_handler_args arg);
     static void ca_ctrlinfo_callback(struct event_handler_args args);
     static void ca_ctrlinfo_refresh_callback(struct event_handler_args args);
     static void ca_value_callback(struct event_handler_args args);
+    static void ca_access_security_callback(struct access_rights_handler_args args);
 };
 
 // ----------- Internals of less interest to users ---------------------

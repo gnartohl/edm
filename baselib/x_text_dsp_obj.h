@@ -51,7 +51,7 @@
 #define XTDC_K_FILE_NAME 2
 
 #define XTDC_MAJOR_VERSION 4
-#define XTDC_MINOR_VERSION 4
+#define XTDC_MINOR_VERSION 5
 #define XTDC_RELEASE 0
 
 #ifdef __x_text_dsp_obj_cc
@@ -155,6 +155,10 @@ static void pvInfo (
    XEvent *e,
    String *params,
    Cardinal numParams );
+
+static void xtdo_access_security_change (
+  ProcessVariable *pv,
+  void *userarg );
 
 static void xtdo_monitor_connect_state (
   ProcessVariable *pv,
@@ -368,6 +372,10 @@ friend void pvInfo (
    XEvent *e,
    String *params,
    Cardinal numParams );
+
+friend void xtdo_access_security_change (
+  ProcessVariable *pv,
+  void *userarg );
 
 friend void xtdo_monitor_connect_state (
   ProcessVariable *pv,
@@ -612,7 +620,7 @@ int widget_value_changed;
 
 int needConnectInit, needInfoInit, needErase, needDraw, needRefresh,
  needUpdate, deferredCount, needToDrawUnconnected, needToEraseUnconnected,
- needFgPvPut, initialConnection;
+ needFgPvPut, needAccessSecurityCheck, initialConnection;
 XtIntervalId unconnectedTimer;
 
 keypadClass kp;
@@ -646,6 +654,8 @@ int pwLength;
 int characterMode;
 
 int noExecuteClipMask;
+
+int writeDisabled;
 
 public:
 

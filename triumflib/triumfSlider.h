@@ -61,6 +61,7 @@
 
 static char *dragName[] = {
   activeTriumfSliderClass_str36,
+  activeTriumfSliderClass_str48
 };
 
 static void unconnectedTimeout (

@@ -70,7 +70,9 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) client;
 int i;
 short value;
 
-  if ( !mbto->controlPvId->have_write_access() ) return;
+  if ( mbto->controlPvId ) {
+    if ( !mbto->controlPvId->have_write_access() ) return;
+  }
 
   if ( mbto->stateStringPvId ) {
 
@@ -1839,6 +1841,10 @@ void activeMenuButtonClass::btnUp (
 
   if ( !controlExists ) return;
 
+  if ( controlPvId ) {
+    if ( !controlPvId->have_write_access() ) return;
+  }
+
   if ( buttonNumber == 1 ) {
 
     XmMenuPosition( popUpMenu, be );
@@ -1863,6 +1869,10 @@ void activeMenuButtonClass::btnDown (
 
   if ( !controlExists ) return;
 
+  if ( controlPvId ) {
+    if ( !controlPvId->have_write_access() ) return;
+  }
+
   if ( buttonNumber == 1 ) {
     buttonPressed = 1;
   }
@@ -1877,11 +1887,13 @@ void activeMenuButtonClass::pointerIn (
 
   if ( !enabled || !init || !visibility ) return;
 
-  if ( !controlPvId->have_write_access() ) {
-    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
-  }
-  else {
-    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_DEFAULT );
+  if ( controlPvId ) {
+    if ( !controlPvId->have_write_access() ) {
+      actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
+    }
+    else {
+      actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_DEFAULT );
+    }
   }
 
   activeGraphicClass::pointerIn( _x, _y, buttonState );

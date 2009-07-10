@@ -57,6 +57,7 @@
 
 static char *dragName[] = {
   activeMotifSliderClass_str36,
+  activeMotifSliderClass_str48
 };
 
 static void unconnectedTimeout (

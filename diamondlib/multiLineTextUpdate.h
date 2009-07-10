@@ -183,6 +183,7 @@ protected:
     // CA callbacks
     static void pv_conn_state_callback (ProcessVariable *pv, void *userarg);
     static void pv_value_callback (ProcessVariable *pv, void *userarg);
+    static void access_security_change (ProcessVariable *pv, void *userarg);
 };
 
 class edmmultiLineTextEntryClass : public edmmultiLineTextUpdateClass

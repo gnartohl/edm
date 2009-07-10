@@ -301,6 +301,24 @@ void ProcessVariable::add_conn_state_callback(PVCallback func, void *userarg)
     }
 }
 
+void ProcessVariable::add_access_security_callback (
+  PVCallback func, void *userarg
+) {
+
+PVCallbackInfo *info = new PVCallbackInfo;
+
+  info->func = func;
+  info->userarg = userarg;
+  // TODO: search for existing one?
+  access_security_callbacks.insert(info);
+  // Perform initial callback in case we already have information
+  // (otherwise user would have to wait until the next change)
+  if (is_valid()) {
+    (*func)(this, userarg);
+  }
+
+}
+
 void ProcessVariable::set_node_name( const char *_nodeName ) {
 
   char *theName;
@@ -332,6 +350,23 @@ void ProcessVariable::remove_conn_state_callback(PVCallback func, void *userarg)
         conn_state_callbacks.erase(entry);
         delete p_item;
     }
+}
+
+void ProcessVariable::remove_access_security_callback (
+  PVCallback func, void *userarg
+) {
+
+PVCallbackInfo info;
+
+  info.func = func;
+  info.userarg = userarg;
+  PVCallbackInfoHash::iterator entry = access_security_callbacks.find(&info);
+  if (entry != access_security_callbacks.end()) {
+    PVCallbackInfo *p_item = *entry;
+    access_security_callbacks.erase(entry);
+    delete p_item;
+  }
+
 }
 
 void ProcessVariable::add_value_callback(PVCallback func, void *userarg)
@@ -403,6 +438,20 @@ int ProcessVariable::get_num_conn_state_callbacks ( void ) {
 
 }
 
+void ProcessVariable::do_access_security_callbacks ( void ) {
+
+PVCallbackInfo *info;
+
+  for (PVCallbackInfoHash::iterator entry = access_security_callbacks.begin();
+   entry != access_security_callbacks.end(); ++entry) {
+    info = *entry;
+    if (info->func) {
+      (*info->func) (this, info->userarg);
+    }
+  }
+
+}
+
 void ProcessVariable::do_value_callbacks()
 {
     PVCallbackInfo *info;
@@ -441,6 +490,11 @@ int ProcessVariable::get_num_value_callbacks ( void ) {
 }
 
 void ProcessVariable::recalc() {
+}
+
+bool ProcessVariable::have_read_access() const
+{
+    return true;
 }
 
 bool ProcessVariable::have_write_access() const

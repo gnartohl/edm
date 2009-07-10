@@ -163,6 +163,10 @@ public:
     void add_conn_state_callback(PVCallback func, void *userarg);
     void remove_conn_state_callback(PVCallback func, void *userarg);
 
+    // Called on access security change
+    void add_access_security_callback(PVCallback func, void *userarg);
+    void remove_access_security_callback(PVCallback func, void *userarg);
+
     // Type information for this ProcessVariable
     // For EPICS, we could just use DBF_INT, DBF_DOUBLE etc.
     // but this is meant to descibe PV types of other systems as well.
@@ -257,6 +261,7 @@ public:
     // e.g. based on the current user ID.
     // A control widget might choose to indicate
     // if there is no write access to this PV
+    virtual bool have_read_access() const;
     virtual bool have_write_access() const;
     virtual bool put(double value);
     virtual bool put(const char *dsp, double value);
@@ -279,8 +284,10 @@ protected:
 
     PVCallbackInfoHash value_callbacks;
     PVCallbackInfoHash conn_state_callbacks;
+    PVCallbackInfoHash access_security_callbacks;
     void do_value_callbacks();
     void do_conn_state_callbacks();
+    void do_access_security_callbacks(void);
     virtual void recalc();
 
 private:

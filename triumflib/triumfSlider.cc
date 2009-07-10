@@ -2577,7 +2577,7 @@ KeySym key;
 char keyBuf[20];
 const int keyBufSize = 20;
 XComposeStatus compose;
-int charCount, stat, v;
+int b2Op, charCount, stat, v;
 double mult, fvalue;
 #ifdef TRIUMF
 int at_limit = 0;
@@ -2649,7 +2649,24 @@ double df;
     }
 #endif
   }
-  else if ( e->type == ButtonPress ) {
+
+  // allow Button2 operations when no write access
+  b2Op = 0;
+  if ( ( e->type == ButtonPress ) || ( e->type == ButtonRelease ) ) {
+    be = (XButtonEvent *) e;
+    if ( be->button == Button2 ) {
+      b2Op = 1;
+    }
+  }
+
+  if ( mslo->controlPvId ) {
+    if ( !mslo->controlPvId->have_write_access() && !b2Op ) {
+      *continueToDispatch = False;
+      return;
+    }
+  }
+
+  if ( e->type == ButtonPress ) {
 
     be = (XButtonEvent *) e;
 
@@ -2968,7 +2985,7 @@ static void triumfSliderEventHandler (
 
 XButtonEvent *be;
 activeTriumfSliderClass *mslo;
-int stat;
+int stat, b2Op;
 char title[32], *ptr, strVal[255+1];
 
 #if 0
@@ -3022,11 +3039,23 @@ double fvalue, mult;
 
   }
 
-  if ( mslo->controlPvId ) {
-    if ( !mslo->controlPvId->have_write_access() ) return;
+  // allow Button2 operations when no write access
+  b2Op = 0;
+  if ( ( e->type == ButtonPress ) || ( e->type == ButtonRelease ) ) {
+    be = (XButtonEvent *) e;
+    if ( be->button == Button2 ) {
+      b2Op = 1;
+    }
   }
-  if ( e->type == ButtonPress ) {
 
+  if ( mslo->controlPvId ) {
+    if ( !mslo->controlPvId->have_write_access() && !b2Op ) {
+      *continueToDispatch = False;
+      return;
+    }
+  }
+
+  if ( e->type == ButtonPress ) {
 
     be = (XButtonEvent *) e;
 

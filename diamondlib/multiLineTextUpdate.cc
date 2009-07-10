@@ -180,6 +180,7 @@ edmmultiLineTextUpdateClass::~edmmultiLineTextUpdateClass ()
     if (data_pv)
     {
         data_pv->remove_conn_state_callback (pv_conn_state_callback, this);
+        data_pv->remove_access_security_callback(access_security_change, this);
         data_pv->remove_value_callback (pv_value_callback, this);
         data_pv->release ();
         data_pv = 0;
@@ -1001,6 +1002,7 @@ int edmmultiLineTextUpdateClass::setupPVs (int pass, void *ptr)
             if (data_pv)
             {
                 data_pv->add_conn_state_callback (pv_conn_state_callback, this);
+                data_pv->add_access_security_callback(access_security_change, this);
                 data_pv->add_value_callback (pv_value_callback, this);
             }
         }
@@ -1098,6 +1100,7 @@ int edmmultiLineTextUpdateClass::removeCallbacks (int pass)
         {
             data_pv->remove_conn_state_callback (pv_conn_state_callback,
                                                  this);
+            data_pv->remove_access_security_callback(access_security_change, this);
             data_pv->remove_value_callback (pv_value_callback, this);
             data_pv->release ();
             data_pv = 0;
@@ -1294,6 +1297,28 @@ void edmmultiLineTextUpdateClass::pv_value_callback (ProcessVariable *pv,
         me->actWin->addDefExeNode (me->aglPtr);
     }
     me->actWin->appCtx->proc->unlock ();
+}
+
+void edmmultiLineTextUpdateClass::access_security_change (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+edmmultiLineTextUpdateClass *me = (edmmultiLineTextUpdateClass *)userarg;
+
+  if ( me->data_pv ) {
+    if ( me->data_pv->have_write_access() ) {
+      XtVaSetValues( me->widget,
+       XmNeditable, True,
+       NULL );
+    }
+    else {
+      XtVaSetValues( me->widget,
+       XmNeditable, False,
+       NULL );
+    }
+  }
+
 }
 
 void edmmultiLineTextUpdateClass::executeDeferred ()
@@ -1539,10 +1564,13 @@ int edmmultiLineTextEntryClass::drawActive ()
                        XmNforeground,
                        (XtArgVal)textColour.getPixel (actWin->ci),
                        NULL);
-        if (data_pv->have_write_access ())
+        if (data_pv->have_write_access ()) {
             actWin->cursor.set (XtWindow (widget), CURSOR_K_DEFAULT);
-        else
+	}
+        else {
             actWin->cursor.set (XtWindow (widget), CURSOR_K_NO);
+            XtVaSetValues (widget, XmNeditable, False, NULL);
+	}
     }
     else
     {

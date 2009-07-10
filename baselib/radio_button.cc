@@ -70,25 +70,44 @@ static void radioBoxEventHandler (
   Boolean *continueToDispatch ) {
 
 activeRadioButtonClass *rbto = (activeRadioButtonClass *) client;
+int b2Op;
+XButtonEvent *be;
 
   *continueToDispatch = True;
 
   if ( !rbto->active ) return;
 
   if ( e->type == EnterNotify ) {
-    if ( !rbto->controlPvId->have_write_access() ) {
-      rbto->actWin->cursor.set( XtWindow(rbto->actWin->executeWidget),
-       CURSOR_K_NO );
-    }
-    else {
-      rbto->actWin->cursor.set( XtWindow(rbto->actWin->executeWidget),
-       CURSOR_K_DEFAULT );
+    if ( rbto->controlPvId ) {
+      if ( !rbto->controlPvId->have_write_access() ) {
+        rbto->actWin->cursor.set( XtWindow(rbto->actWin->executeWidget),
+         CURSOR_K_NO );
+      }
+      else {
+        rbto->actWin->cursor.set( XtWindow(rbto->actWin->executeWidget),
+         CURSOR_K_DEFAULT );
+      }
     }
   }
 
   if ( e->type == LeaveNotify ) {
     rbto->actWin->cursor.set( XtWindow(rbto->actWin->executeWidget),
      CURSOR_K_DEFAULT );
+  }
+
+  // allow Button2 operations when no write access
+  b2Op = 0;
+  if ( ( e->type == ButtonPress ) || ( e->type == ButtonRelease ) ) {
+    be = (XButtonEvent *) e;
+    if ( be->button == Button2 ) {
+      b2Op = 1;
+    }
+  }
+
+  if ( rbto->controlPvId ) {
+    if ( !rbto->controlPvId->have_write_access() && !b2Op ) {
+      *continueToDispatch = False;
+    }
   }
 
 }
@@ -1309,23 +1328,6 @@ char msg[79+1];
        XmNselectColor, actWin->ci->pix(selectColor),
        NULL );
 
-      if ( controlExists ) {
-        if ( controlPvId->have_write_access() ) {
-          n = 0;
-          XtSetArg( args[n], XmNsensitive, True ); n++;
-	}
-	else {
-          n = 0;
-          XtSetArg( args[n], XmNsensitive, False ); n++;
-	}
-      }
-      else {
-        n = 0;
-        XtSetArg( args[n], XmNsensitive, False ); n++;
-      }
-
-      XtSetValues( pb[i], args, n );
-
       XtAddCallback( pb[i], XmNvalueChangedCallback, putValue,
        (XtPointer) this );
 
@@ -1340,7 +1342,7 @@ Cardinal numChildren;
 int ii;
 
     XtAddEventHandler( radioBox,
-     EnterWindowMask|LeaveWindowMask,
+     ButtonPressMask|ButtonReleaseMask|EnterWindowMask|LeaveWindowMask,
      False, radioBoxEventHandler, (XtPointer) this );
 
     XtVaGetValues( radioBox,
@@ -1351,7 +1353,7 @@ int ii;
     for ( ii=0; ii<(int)numChildren; ii++ ) {
 
       XtAddEventHandler( children[ii],
-       EnterWindowMask,
+       ButtonPressMask|ButtonReleaseMask|EnterWindowMask,
        False, radioBoxEventHandler, (XtPointer) this );
 
     }
