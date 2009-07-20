@@ -788,6 +788,21 @@ void edmByteClass::getPvs(int max,
 int edmByteClass::containsMacros()
 {   return pv_exp_str.containsPrimaryMacros(); }
 
+int edmByteClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[]
+) {
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( pv_exp_str.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  pv_exp_str.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
 
 int edmByteClass::expand1st(int numMacros, char *macros[],
                                   char *expansions[])

@@ -266,6 +266,11 @@ int eraseActive ( void );
 
 int eraseUnconditional ( void );
 
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
+
 int expand1st (
   int numMacros,
   char *macros[],

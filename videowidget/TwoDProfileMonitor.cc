@@ -187,6 +187,29 @@ public:
     // execute mode widget functions
   
     virtual int deactivate ( int pass );
+
+    virtual int expandTemplate (int numMacros,
+                           char *macros[],
+                           char *expansions[] ) 
+    {
+
+        expStringClass tmpStr;
+
+        tmpStr.setRaw( dataPvStr.getRaw() );
+        tmpStr.expand1st( numMacros, macros, expansions );
+        dataPvStr.setRaw( tmpStr.getExpanded() );
+
+        tmpStr.setRaw( widthPvStr.getRaw() );
+        tmpStr.expand1st( numMacros, macros, expansions );
+        widthPvStr.setRaw( tmpStr.getExpanded() );
+
+        tmpStr.setRaw( heightPvStr.getRaw() );
+        tmpStr.expand1st( numMacros, macros, expansions );
+        heightPvStr.setRaw( tmpStr.getExpanded() );
+
+        return 1;
+    
+    }
   
     virtual int expand1st (int numMacros,
                            char *macros[],

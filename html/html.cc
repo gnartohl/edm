@@ -1145,6 +1145,38 @@ int htmlClass::eraseActive ( void ) {
 
 }
 
+int htmlClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( alarmPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  alarmPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( visPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  visPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( contentPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  contentPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( value.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  value.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( docRoot.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  docRoot.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int htmlClass::expand1st (
   int numMacros,
   char *macros[],

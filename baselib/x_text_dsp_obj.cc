@@ -4388,6 +4388,53 @@ void activeXTextDspClass::bufInvalidate ( void ) {
 
 }
 
+int activeXTextDspClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] ) {
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( pvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  pvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( svalPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  svalPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( fgPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  fgPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( defDir.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  defDir.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( pattern.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  pattern.setRaw( tmpStr.getExpanded() );
+
+  strncpy( pvName, pvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+  pvName[PV_Factory::MAX_PV_NAME] = 0;
+  strncpy( value, pvName, minStringSize() );
+  value[minStringSize()] = 0;
+  stringLength = strlen( value );
+  fs = actWin->fi->getXFontStruct( fontTag );
+  updateFont( value, fontTag, &fs, &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+  stringY = y + fontAscent + h/2 - fontHeight/2;
+  if ( alignment == XmALIGNMENT_BEGINNING )
+    stringX = x;
+  else if ( alignment == XmALIGNMENT_CENTER )
+    stringX = x + w/2 - stringWidth/2;
+  else if ( alignment == XmALIGNMENT_END )
+    stringX = x + w - stringWidth;
+
+  return 1;
+
+}
+
 int activeXTextDspClass::expand1st (
   int numMacros,
   char *macros[],

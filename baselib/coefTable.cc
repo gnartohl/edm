@@ -721,6 +721,26 @@ int activeCoefTableClass::deactivate (
 
 }
 
+int activeCoefTableClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( readPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( labelsExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  labelsExpStr.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int activeCoefTableClass::expand1st (
   int numMacros,
   char *macros[],

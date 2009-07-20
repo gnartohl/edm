@@ -498,6 +498,11 @@ int eraseActiveControlText ( void );
 
 int drawActiveControlText ( void );
 
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
+
 int expand1st (
   int numMacros,
   char *macros[],

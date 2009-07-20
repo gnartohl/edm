@@ -955,6 +955,26 @@ int edmmultiLineTextUpdateClass::containsMacros ()
         colour_pv_name.containsPrimaryMacros ();
 }
 
+int edmmultiLineTextUpdateClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[]
+) {
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( colour_pv_name.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  colour_pv_name.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( data_pv_name.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  data_pv_name.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int edmmultiLineTextUpdateClass::expand1st (int numMacros, char *macros[],
                                             char *expansions[])
 {

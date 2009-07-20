@@ -1290,6 +1290,26 @@ int activeArcClass::eraseActive ( void )
 
 }
 
+int activeArcClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( alarmPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  alarmPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( visPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  visPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int activeArcClass::expand1st (
   int numMacros,
   char *macros[],

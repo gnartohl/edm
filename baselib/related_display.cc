@@ -2567,6 +2567,55 @@ char *relatedDisplayClass::getRelatedDisplayMacros (
 
 }
 
+int relatedDisplayClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+int i;
+expStringClass tmpStr;
+
+  tmpStr.setRaw( colorPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  colorPvExpString.setRaw( tmpStr.getExpanded() );
+
+  for ( i=0; i<NUMPVS; i++ ) {
+
+    tmpStr.setRaw( destPvExpString[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    destPvExpString[i].setRaw( tmpStr.getExpanded() );
+
+    tmpStr.setRaw( sourceExpString[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    sourceExpString[i].setRaw( tmpStr.getExpanded() );
+
+  }
+
+  for ( i=0; i<maxDsps; i++ ) {
+
+    tmpStr.setRaw( symbolsExpStr[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    symbolsExpStr[i].setRaw( tmpStr.getExpanded() );
+
+    tmpStr.setRaw( label[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    label[i].setRaw( tmpStr.getExpanded() );
+
+    tmpStr.setRaw( displayFileName[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    displayFileName[i].setRaw( tmpStr.getExpanded() );
+
+  }
+
+  tmpStr.setRaw( buttonLabel.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  buttonLabel.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int relatedDisplayClass::expand1st (
   int numMacros,
   char *macros[],

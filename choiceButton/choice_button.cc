@@ -1764,13 +1764,41 @@ int inconsistent;
 
 }
 
+int activeChoiceButtonClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( controlPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  controlPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( readPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( visPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  visPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( colorPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  colorPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int activeChoiceButtonClass::expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] )
 {
 
-int stat, retStat = 1;;
+int stat, retStat = 1;
 
   stat = controlPvExpStr.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;

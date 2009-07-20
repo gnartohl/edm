@@ -1413,6 +1413,30 @@ XRectangle xR = { x, y, w, h };
 
 }
 
+int activeXRegTextClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( alarmPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  alarmPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( visPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  visPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( value.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  value.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int activeXRegTextClass::expand1st (
   int numMacros,
   char *macros[],

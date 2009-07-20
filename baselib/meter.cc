@@ -544,6 +544,9 @@ static int labelTypeEnum[3] = {
   minor = METERC_MINOR_VERSION;
   release = METERC_RELEASE;
 
+  strncpy( literalLabel, readPvLabelExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+  literalLabel[PV_Factory::MAX_PV_NAME] = 0;
+
   tag.init();
   tag.loadW( "beginObjectProperties" );
   tag.loadW( "major", &major );
@@ -2513,6 +2516,54 @@ void activeMeterClass::bufInvalidate ( void )
 
 }
 
+int activeMeterClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( readPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( scaleMinExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  scaleMinExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( scaleMaxExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  scaleMaxExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( scalePrecExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  scalePrecExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( labIntExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  labIntExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( majorIntExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  majorIntExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( minorIntExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  minorIntExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( readPvLabelExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readPvLabelExpStr.setRaw( tmpStr.getExpanded() );
+
+  strncpy( literalLabel, readPvLabelExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+  literalLabel[PV_Factory::MAX_PV_NAME] = 0;
+
+  return 1;
+
+}
+
+
 int activeMeterClass::expand1st (
   int numMacros,
   char *macros[],
@@ -2520,6 +2571,12 @@ int activeMeterClass::expand1st (
 {
 
 int stat, retStat = 1;
+
+  stat = readPvLabelExpStr.expand1st( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
+  strncpy( literalLabel, readPvLabelExpStr.getExpanded(),
+   PV_Factory::MAX_PV_NAME );
+  literalLabel[PV_Factory::MAX_PV_NAME] = 0;
 
   stat = readPvExpStr.expand1st( numMacros, macros, expansions );
   if ( !(stat & 1 ) ) retStat = stat;
@@ -2554,6 +2611,12 @@ int activeMeterClass::expand2nd (
 
 int stat, retStat = 1;
 
+  stat = readPvLabelExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
+  strncpy( literalLabel, readPvLabelExpStr.getExpanded(),
+   PV_Factory::MAX_PV_NAME );
+  literalLabel[PV_Factory::MAX_PV_NAME] = 0;
+
   stat = readPvExpStr.expand2nd( numMacros, macros, expansions );
   if ( !(stat & 1 ) ) retStat = stat;
 
@@ -2572,10 +2635,8 @@ int stat, retStat = 1;
   stat = majorIntExpStr.expand2nd( numMacros, macros, expansions );
   if ( !(stat & 1 ) ) retStat = stat;
 
-
   stat = minorIntExpStr.expand2nd( numMacros, macros, expansions );
   if ( !(stat & 1 ) ) retStat = stat;
-
 
   return retStat;
 
@@ -2586,6 +2647,9 @@ int activeMeterClass::containsMacros ( void ) {
 int result;
 
  return 1;
+
+  result = readPvLabelExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
 
   result = readPvExpStr.containsPrimaryMacros();
   if ( result ) return 1;

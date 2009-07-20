@@ -751,6 +751,27 @@ int edmStripClass::containsMacros()
     return 0;
 }
 
+int edmStripClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[]
+) {
+
+int i;
+expStringClass tmpStr;
+
+  for ( size_t i=0; i<num_pvs; ++i ) {
+
+    tmpStr.setRaw( pv_name[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    pv_name[i].setRaw( tmpStr.getExpanded() );
+
+  }
+
+  return 1;
+
+}
+
 int edmStripClass::expand1st(int numMacros, char *macros[],
                              char *expansions[])
 {

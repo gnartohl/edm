@@ -218,6 +218,11 @@ int activate ( int pass, void *ptr );
 
 int deactivate ( int pass );
 
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
+
 int expand1st (
   int numMacros,
   char *macros[],

@@ -932,6 +932,22 @@ int activeRadioButtonClass::drawActive ( void ) {
 
 }
 
+int activeRadioButtonClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( controlPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  controlPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int activeRadioButtonClass::expand1st (
   int numMacros,
   char *macros[],

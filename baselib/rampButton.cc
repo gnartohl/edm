@@ -1784,6 +1784,42 @@ int activeRampButtonClass::getButtonActionRequest (
 
 }
 
+int activeRampButtonClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( destPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  destPvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( finalPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  finalPvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( rampStatePvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  rampStatePvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( label.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  label.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( visPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  visPvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( colorPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  colorPvExpString.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int activeRampButtonClass::expand1st (
   int numMacros,
   char *macros[],

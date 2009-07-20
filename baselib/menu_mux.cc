@@ -1398,6 +1398,26 @@ char string[MMUX_MAX_STRING_SIZE+1];
 
 }
 
+int menuMuxClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( controlPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  controlPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( initialStateExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  initialStateExpStr.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int menuMuxClass::expand1st (
   int numMacros,
   char *macros[],

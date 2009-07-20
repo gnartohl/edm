@@ -3359,6 +3359,46 @@ int i;
 
 }
 
+int activeSymbolClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+int i;
+
+  if ( deleteRequest ) return 1;
+
+  for ( i=0; i<numPvs; i++ ) {
+
+    tmpStr.setRaw( controlPvExpStr[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    controlPvExpStr[i].setRaw( tmpStr.getExpanded() );
+
+  }
+
+  for ( i=0; i<numStates; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while ( cur != head ) {
+
+      cur->node->expandTemplate( numMacros, macros, expansions );
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+  return 1;
+
+}
+
 int activeSymbolClass::expand1st (
   int numMacros,
   char *macros[],

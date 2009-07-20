@@ -1559,6 +1559,48 @@ char *activePipClass::getRelatedDisplayMacros (
 
 }
 
+int activePipClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+int i;
+expStringClass tmpStr;
+
+  tmpStr.setRaw( readPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( labelPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  labelPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( fileNameExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  fileNameExpStr.setRaw( tmpStr.getExpanded() );
+
+
+  for ( i=0; i<numDsps; i++ ) {
+
+    tmpStr.setRaw( symbolsExpStr[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    symbolsExpStr[i].setRaw( tmpStr.getExpanded() );
+
+    tmpStr.setRaw( label[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    label[i].setRaw( tmpStr.getExpanded() );
+
+    tmpStr.setRaw( displayFileName[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    displayFileName[i].setRaw( tmpStr.getExpanded() );
+
+  }
+
+  return 1;
+
+}
+
 int activePipClass::expand1st (
   int numMacros,
   char *macros[],

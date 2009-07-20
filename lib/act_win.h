@@ -59,6 +59,9 @@
 #include "thread.h"
 #include "avl.h"
 
+#define AWC_MAXTMPLPARAMS 30
+#define AWC_TMPLPARAMSIZE 35
+
 #define AWC_MAJOR_VERSION 4
 #define AWC_MINOR_VERSION 0
 #define AWC_RELEASE 1
@@ -135,6 +138,7 @@
 #define AWC_POPUP_DUMP_PVLIST 156
 #define AWC_POPUP_OPEN_SELF 157
 #define AWC_POPUP_SHOW_MACROS 158
+#define AWC_POPUP_INSERT_TEMPLATE 159
 
 #define AWC_NONE_SELECTED 1
 #define AWC_ONE_SELECTED 2
@@ -192,6 +196,11 @@ static void awc_do_save_and_exit_cb (
   XtPointer call );
 
 static void awc_do_save_new_path_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void awc_templateFileSelectOk_cb (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -271,6 +280,21 @@ static void awc_pvlistFileSelectKill_cb (
   XtPointer client,
   XtPointer call );
 
+static void awc_tedit_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void awc_tedit_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void awc_tedit_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 static void awc_edit_ok (
   Widget w,
   XtPointer client,
@@ -282,6 +306,11 @@ static void awc_edit_apply (
   XtPointer call );
 
 static void awc_edit_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void awc_edit_ok1 (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -506,6 +535,11 @@ friend void awc_do_save_new_path_cb (
   XtPointer client,
   XtPointer call );
 
+friend void awc_templateFileSelectOk_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 friend void awc_fileSelectOk_cb (
   Widget w,
   XtPointer client,
@@ -564,6 +598,21 @@ friend void awc_pvlistFaveFileSelectOk_cb (
 friend void *pv_poll_thread (
   THREAD_HANDLE h );
 
+friend void awc_tedit_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void awc_tedit_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void awc_tedit_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 friend void awc_edit_ok (
   Widget w,
   XtPointer client,
@@ -575,6 +624,11 @@ friend void awc_edit_apply (
   XtPointer call );
 
 friend void awc_edit_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void awc_edit_ok1 (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -744,6 +798,10 @@ int waiting;
 int change;
 int exit_after_save;
 
+char paramValue[AWC_MAXTMPLPARAMS][AWC_TMPLPARAMSIZE+1];
+char bufParamValue[AWC_MAXTMPLPARAMS][AWC_TMPLPARAMSIZE+1];
+int bufNumParamValues, numParamValues;
+
 int list_array_size;
 activeGraphicListType *list_array;
 
@@ -758,6 +816,8 @@ Widget b1OneSelectPopup, b1ManySelectPopup, b1NoneSelectPopup,
  editCb1, editCbM, dragPopup, undoPb1, undoPb2, undoPb3, setSchemePd,
  setSchemeCb;
 
+int b2NoneSelectX;
+int b2NoneSelectY;
 int state;
 int savedState;
 int oldState;
@@ -847,7 +907,7 @@ int allSelectedBtnFontTagFlag;
 int allSelectedBtnAlignment;
 int allSelectedBtnAlignmentFlag;
 
-entryFormClass ef;
+entryFormClass ef, *ef1, tef;
 confirmDialogClass confirm, confirm1;
 
 int noRefresh;
@@ -873,6 +933,10 @@ int numMacros;
 int actualNumMacros;
 char **macros;
 char **expansions;
+
+int numTemplateMacros;
+char **templateMacros;
+char **templateExpansions;
 
 int haveComments;
 char fileName[255+1], fileRev[31+1], fileNameAndRev[287+1], newPath[255+1];
@@ -1187,6 +1251,15 @@ int loadDummy (
   int y,
   int setPosition );
 
+int getTemplateMacros ( void );
+
+void deleteTemplateMacros ( void );
+
+int loadTemplate (
+  int x,
+  int y,
+  char *fname );
+
 int loadGeneric (
   int x,
   int y,
@@ -1402,6 +1475,14 @@ void storeFileNameForSymbols (
   char *inName );
 
 FILE *openAny (
+  char *name,
+  char *mode );
+
+FILE *openAnyTemplate (
+  char *name,
+  char *mode );
+
+FILE *openAnyTemplateParam (
   char *name,
   char *mode );
 

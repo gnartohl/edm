@@ -1478,6 +1478,63 @@ XRectangle xR = { x, y, w, h };
 
 }
 
+int activeXTextClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( alarmPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  alarmPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( visPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  visPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( value.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  value.setRaw( tmpStr.getExpanded() );
+
+  actWin->fi->loadFontTag( fontTag );
+  actWin->drawGc.setFontTag( fontTag, actWin->fi );
+
+  if ( value.getRaw() )
+    stringLength = strlen( value.getRaw() );
+  else
+    stringLength = 0;
+
+  fs = actWin->fi->getXFontStruct( fontTag );
+
+  if ( value.getRaw() )
+    updateFont( value.getRaw(), fontTag, &fs, &fontAscent, &fontDescent,
+     &fontHeight, &stringWidth );
+  else
+    updateFont( " ", fontTag, &fs, &fontAscent, &fontDescent,
+     &fontHeight, &stringWidth );
+
+  updateDimensions();
+
+  if ( autoSize && fs ) {
+    sboxW = w = stringBoxWidth;
+    sboxH = h = stringBoxHeight;
+  }
+
+  stringY = y + fontAscent + h/2 - stringBoxHeight/2;
+
+  if ( alignment == XmALIGNMENT_BEGINNING )
+    stringX = x;
+  else if ( alignment == XmALIGNMENT_CENTER )
+    stringX = x + w/2 - stringWidth/2;
+  else if ( alignment == XmALIGNMENT_END )
+    stringX = x + w - stringWidth;
+
+  return 1;
+
+}
+
 int activeXTextClass::expand1st (
   int numMacros,
   char *macros[],

@@ -1115,6 +1115,66 @@ void archivePlotClass::bufInvalidate ( void )
 
 }
 
+int archivePlotClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( xMinPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  xMinPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( xMaxPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  xMaxPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( xModePvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  xModePvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( yMinPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  yMinPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( yMaxPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  yMaxPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( yModePvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  yModePvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( colorPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  colorPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( filePvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  filePvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( updatePvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  updatePvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( archivePvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  archivePvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( startTimePvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  startTimePvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( endTimePvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  endTimePvExpStr.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int archivePlotClass::expand1st (
   int numMacros,
   char *macros[],

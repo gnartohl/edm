@@ -3114,6 +3114,46 @@ int i;
 
 }
 
+int activeDynSymbolClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+int i;
+
+  if ( deleteRequest ) return 1;
+
+  tmpStr.setRaw( gateUpPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  gateUpPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( gateDownPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  gateDownPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  for ( i=0; i<numStates; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while ( cur != head ) {
+
+      cur->node->expandTemplate( numMacros, macros, expansions );
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+  return 1;
+
+}
+
 int activeDynSymbolClass::expand1st (
   int numMacros,
   char *macros[],

@@ -1846,6 +1846,35 @@ void shellCmdClass::updateDimensions ( void )
 
 }
 
+int shellCmdClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+int i;
+expStringClass tmpStr;
+
+  for ( i=0; i<numCmds; i++ ) {
+
+    tmpStr.setRaw( shellCommand[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    shellCommand[i].setRaw( tmpStr.getExpanded() );
+
+    tmpStr.setRaw( label[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    label[i].setRaw( tmpStr.getExpanded() );
+
+  }
+
+  tmpStr.setRaw( buttonLabel.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  buttonLabel.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int shellCmdClass::expand1st (
   int numMacros,
   char *macros[],

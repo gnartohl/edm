@@ -2274,6 +2274,51 @@ int i, atLeastOne;
 
 }
 
+int activeMultSegRampButtonClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+int i;
+expStringClass tmpStr;
+
+  tmpStr.setRaw( destPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  destPvExpString.setRaw( tmpStr.getExpanded() );
+
+  for ( i=0; i<MAXSEGS; i++ ) {
+
+    tmpStr.setRaw( finalPvExpString[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    finalPvExpString[i].setRaw( tmpStr.getExpanded() );
+
+    tmpStr.setRaw( rampRatePvExpString[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    rampRatePvExpString[i].setRaw( tmpStr.getExpanded() );
+
+  }
+
+  tmpStr.setRaw( rampStatePvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  rampStatePvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( label.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  label.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( visPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  visPvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( colorPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  colorPvExpString.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int activeMultSegRampButtonClass::expand1st (
   int numMacros,
   char *macros[],

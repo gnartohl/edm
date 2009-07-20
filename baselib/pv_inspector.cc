@@ -1824,6 +1824,39 @@ void pvInspectorClass::updateDimensions ( void )
 
 }
 
+int pvInspectorClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+int i;
+expStringClass tmpStr;
+
+  for ( i=0; i<maxDsps; i++ ) {
+
+    tmpStr.setRaw( label[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    label[i].setRaw( tmpStr.getExpanded() );
+
+    tmpStr.setRaw( displayFileName[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    displayFileName[i].setRaw( tmpStr.getExpanded() );
+
+    tmpStr.setRaw( displayFileExt[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    displayFileExt[i].setRaw( tmpStr.getExpanded() );
+
+  }
+
+  tmpStr.setRaw( buttonLabel.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  buttonLabel.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int pvInspectorClass::expand1st (
   int numMacros,
   char *macros[],

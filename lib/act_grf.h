@@ -104,7 +104,7 @@ protected:
 // will help avoid base class poisoning run-time issues for libraries built
 // at one site and utilized at another.
 //
-static const int MAJOR_VERSION = 2;
+static const int MAJOR_VERSION = 3;
 static const int MINOR_VERSION = 0;
 
 friend void dragFin (
@@ -895,6 +895,15 @@ virtual void clearMouseOver ( void );
 
 virtual int initDefExeNode (
   void *ptr );
+
+virtual int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] ) {
+
+  return 1;
+
+}
 
 virtual int expand1st (
   int numMacros,

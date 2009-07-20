@@ -76,7 +76,7 @@ int l;
   baro->readPvExpStr.setRaw( baro->eBuf->bufReadPvName );
   baro->nullPvExpStr.setRaw( baro->eBuf->bufNullPvName );
 
-  strncpy( baro->label, baro->bufLabel, 39 );
+  baro->label.setRaw( baro->eBuf->bufLabel );
 
   baro->labelType = baro->bufLabelType;
 
@@ -360,7 +360,6 @@ activeBarClass::activeBarClass ( void ) {
   barStrLen = 10;
   strcpy( fontTag, "" );
   fs = NULL;
-  strcpy( label, "" );
   activeMode = 0;
 
   barColorMode = BARC_K_COLORMODE_STATIC;
@@ -416,8 +415,7 @@ activeGraphicClass *baro = (activeGraphicClass *) this;
   controlPvExpStr.copy( source->controlPvExpStr );
   readPvExpStr.copy( source->readPvExpStr );
   nullPvExpStr.copy( source->nullPvExpStr );
-
-  strncpy( label, source->label, 39 );
+  label.copy( source->label );
 
   barColorMode = source->barColorMode;
   fgColorMode = source->fgColorMode;
@@ -451,8 +449,6 @@ activeGraphicClass *baro = (activeGraphicClass *) this;
   precision = source->precision;
 
   strncpy( scaleFormat, source->scaleFormat, 15 );
-
-  strcpy( label, source->label );
 
   horizontal = source->horizontal;
 
@@ -577,7 +573,7 @@ static int orienTypeEnum[2] = {
   tag.loadW( "bgColor", actWin->ci, &bgColor );
   tag.loadW( "indicatorPv", &readPvExpStr, emptyStr );
   tag.loadW( "nullPv", &nullPvExpStr, emptyStr );
-  tag.loadW( "label", label, emptyStr );
+  tag.loadW( "label", &label, emptyStr );
   tag.loadW( "labelType", 2, labelTypeEnumStr, labelTypeEnum,
    &labelType, &lit );
   tag.loadBoolW( "showScale", &showScale, &zero );
@@ -662,7 +658,7 @@ efDouble efMin, efMax;
   tag.loadR( "bgColor", actWin->ci, &bgColor );
   tag.loadR( "indicatorPv", &readPvExpStr, emptyStr );
   tag.loadR( "nullPv", &nullPvExpStr, emptyStr );
-  tag.loadR( "label", 39, label, emptyStr );
+  tag.loadR( "label", &label, emptyStr );
   tag.loadR( "labelType", 2, labelTypeEnumStr, labelTypeEnum,
    &labelType, &lit );
   tag.loadR( "showScale", &showScale, &zero );
@@ -894,7 +890,9 @@ efDouble efD;
    actWin->incLine();
   readPvExpStr.setRaw( oneName );
 
-  readStringFromFile( label, 39+1, f ); actWin->incLine();
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f );
+   actWin->incLine();
+  label.setRaw( oneName );
 
   fscanf( f, "%d\n", &labelType ); actWin->incLine();
 
@@ -1002,7 +1000,7 @@ efDouble efD;
     }
     readMaxExpStr.setRaw( oneName );
 
-    readStringFromFile( oneName, 39+1, f ); actWin->incLine();
+    readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f ); actWin->incLine();
     strncpy( scaleFormat, oneName, 15 );
 
   }
@@ -1126,7 +1124,10 @@ char title[32], *ptr;
   else
     strcpy( eBuf->bufNullPvName, "" );
 
-  strncpy( bufLabel, label, 39 );
+  if ( label.getRaw() )
+    strncpy( eBuf->bufLabel, label.getRaw(), PV_Factory::MAX_PV_NAME );
+  else
+    strcpy( eBuf->bufLabel, "" );
 
   bufLabelType = labelType;
 
@@ -1209,7 +1210,7 @@ char title[32], *ptr;
   ef.addTextField( activeBarClass_str12, 35, eBuf->bufReadPvName, PV_Factory::MAX_PV_NAME );
   ef.addTextField( activeBarClass_str13, 35, eBuf->bufNullPvName, PV_Factory::MAX_PV_NAME );
   ef.addOption( activeBarClass_str14, activeBarClass_str15, &bufLabelType );
-  ef.addTextField( activeBarClass_str16, 35, bufLabel, 39 );
+  ef.addTextField( activeBarClass_str16, 35, eBuf->bufLabel, PV_Factory::MAX_PV_NAME );
   ef.addToggle( activeBarClass_str18, &bufBorder );
   ef.addToggle( activeBarClass_str19, &bufShowScale );
 
@@ -1380,14 +1381,14 @@ int tX, tY;
     XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.normGC(), x, y, w, h );
 
-    if ( strcmp( label, "" ) != 0 ) {
+    if ( strcmp( label.getRaw(), "" ) != 0 ) {
       if ( fs ) {
         actWin->drawGc.setFontTag( fontTag, actWin->fi );
         tX = barAreaX;
         tY = y + 2;
         if ( border ) tY += 2;
         drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
-         XmALIGNMENT_BEGINNING, label );
+         XmALIGNMENT_BEGINNING, label.getRaw() );
       }
     }
 
@@ -1413,14 +1414,14 @@ int tX, tY;
     XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.normGC(), x, y, w, h );
 
-    if ( strcmp( label, "" ) != 0 ) {
+    if ( strcmp( label.getRaw(), "" ) != 0 ) {
       if ( fs ) {
         actWin->drawGc.setFontTag( fontTag, actWin->fi );
         tX = barAreaX + barAreaW;
         tY = y + (int) ( .25 * (double) fontHeight );
         if ( border ) tY += 2;
         drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
-         XmALIGNMENT_END, label );
+         XmALIGNMENT_END, label.getRaw() );
       }
     }
 
@@ -1435,7 +1436,7 @@ int tX, tY;
 int activeBarClass::drawActive ( void ) {
 
 int tX, tY, x0, y0, x1, y1;
-char str[39+1];
+char str[PV_Factory::MAX_PV_NAME+1];
 
   if ( !init ) {
     if ( needToDrawUnconnected ) {
@@ -1664,9 +1665,9 @@ char str[39+1];
     }
 
     if ( labelType == BARC_K_PV_NAME )
-      strncpy( str, readPvId->get_name(), 39 );
+      strncpy( str, readPvId->get_name(), PV_Factory::MAX_PV_NAME );
     else
-      strncpy( str, label, 39 );
+      strncpy( str, label.getExpanded(), PV_Factory::MAX_PV_NAME );
 
     if ( horizontal ) {
 
@@ -2001,7 +2002,7 @@ void activeBarClass::updateDimensions ( void )
     barAreaX = x;
     barAreaW = w;
 
-    if ( ( strcmp( label, "" ) != 0 ) ||
+    if ( ( strcmp( label.getRaw(), "" ) != 0 ) ||
          ( labelType == BARC_K_PV_NAME ) ) {
       minH += fontHeight + 5;
       barY += fontHeight + 5;
@@ -2025,7 +2026,7 @@ void activeBarClass::updateDimensions ( void )
       barAreaW = w - barStrLen - 6;
     }
 
-    if ( border && !showScale && ( ( strcmp( label, "" ) == 0 ) ||
+    if ( border && !showScale && ( ( strcmp( label.getRaw(), "" ) == 0 ) ||
      ( labelType == BARC_K_PV_NAME ) ) ) {
       minH += 9;
       barY += 5;
@@ -2042,7 +2043,7 @@ void activeBarClass::updateDimensions ( void )
 
     barH = h;
 
-    if ( ( strcmp( label, "" ) != 0 ) ||
+    if ( ( strcmp( label.getRaw(), "" ) != 0 ) ||
          ( labelType == BARC_K_PV_NAME ) ) {
       barH -= ( fontHeight + 5 );
       if ( border ) barH -= 9;
@@ -2052,7 +2053,7 @@ void activeBarClass::updateDimensions ( void )
       barH -= ( fontHeight + fontHeight + 5 );
     }
 
-    if ( border && !showScale && ( ( strcmp( label, "" ) == 0 ) ||
+    if ( border && !showScale && ( ( strcmp( label.getRaw(), "" ) == 0 ) ||
      ( labelType == BARC_K_PV_NAME ) ) ) {
       barH -= 9;
     }
@@ -2063,7 +2064,7 @@ void activeBarClass::updateDimensions ( void )
     minVertW = 2;
     minVertH = 10;
 
-    if ( ( strcmp( label, "" ) != 0 ) ||
+    if ( ( strcmp( label.getRaw(), "" ) != 0 ) ||
          ( labelType == BARC_K_PV_NAME ) ) {
       minVertH += fontHeight + 5;
     }
@@ -2098,7 +2099,7 @@ void activeBarClass::updateDimensions ( void )
     barX = barAreaX = x;
     barW = barAreaW = w;
 
-    if ( ( strcmp( label, "" ) != 0 ) ||
+    if ( ( strcmp( label.getRaw(), "" ) != 0 ) ||
          ( labelType == BARC_K_PV_NAME ) ) {
       barAreaH -= (int) ( 1.5 * (double) fontHeight ) - 5;
       barH = barAreaH;
@@ -2197,25 +2198,87 @@ void activeBarClass::bufInvalidate ( void )
 
 }
 
+int activeBarClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( label.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  label.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( readPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( nullPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  nullPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( labelTicksExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  labelTicksExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( majorTicksExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  majorTicksExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( minorTicksExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  minorTicksExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( readMinExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readMinExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( readMaxExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readMaxExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( precisionExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  precisionExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( barOriginXExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  barOriginXExpStr.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int activeBarClass::expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] )
 {
 
-int stat;
+int retStat, stat;
 
+  retStat = label.expand1st( numMacros, macros, expansions );
   stat = readPvExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = nullPvExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = labelTicksExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = majorTicksExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = minorTicksExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = readMinExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = readMaxExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = precisionExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = barOriginXExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
-  return stat;
+  return retStat;
 
 }
 
@@ -2225,25 +2288,38 @@ int activeBarClass::expand2nd (
   char *expansions[] )
 {
 
-int stat;
+int retStat, stat;
 
+  retStat = label.expand2nd( numMacros, macros, expansions );
   stat = readPvExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = nullPvExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = labelTicksExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = majorTicksExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = minorTicksExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = readMinExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = readMaxExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = precisionExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = barOriginXExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
-  return stat;
+  return retStat;
 
 }
 
 int activeBarClass::containsMacros ( void ) {
 
 int result;
+
+  result = label.containsPrimaryMacros();
+  if ( result ) return 1;
 
   result = readPvExpStr.containsPrimaryMacros();
   if ( result ) return 1;

@@ -3724,6 +3724,30 @@ void activeTriumfSliderClass::updateDimensions ( void )
 
 }
 
+int activeTriumfSliderClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( controlPvName.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  controlPvName.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( savedValuePvName.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  savedValuePvName.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( controlLabelName.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  controlLabelName.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int activeTriumfSliderClass::expand1st (
   int numMacros,
   char *macros[],

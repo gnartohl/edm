@@ -2820,6 +2820,35 @@ activeGraphicListPtr cur;
 
 }
 
+int activeGroupClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  if ( deleteRequest ) return 1;
+
+  tmpStr.setRaw( visPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  visPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  cur = head->flink;
+  while ( cur != head ) {
+
+    cur->node->expandTemplate( numMacros, macros, expansions );
+
+    cur = cur->flink;
+
+  }
+
+  return 1;
+
+}
+
 int activeGroupClass::expand1st (
   int numMacros,
   char *macros[],

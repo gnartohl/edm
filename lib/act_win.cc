@@ -516,6 +516,80 @@ activeWindowClass *awo = (activeWindowClass *) client;
 
 }
 
+static void awc_tedit_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeWindowClass *awo = (activeWindowClass *) client;
+
+}
+
+static void awc_tedit_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeWindowClass *awo = (activeWindowClass *) client;
+int i, num_selected;
+activeGraphicListPtr curSel;
+
+  awc_tedit_apply( w, client, call );
+  awo->tef.popdown();
+
+  awo->loadTemplate( awo->b2NoneSelectX, awo->b2NoneSelectY,
+   awo->fileNameForSym );
+
+  awo->operationComplete();
+  awo->deleteTemplateMacros();
+
+  // determine new state
+  num_selected = 0;
+
+  curSel = awo->selectedHead->selFlink;
+  while ( ( curSel != awo->selectedHead ) &&
+          ( num_selected < 2 ) ) {
+
+    num_selected++;
+    curSel = curSel->selFlink;
+
+  }
+
+  if ( num_selected == 0 ) {
+    awo->state = AWC_NONE_SELECTED;
+    awo->updateMasterSelection();
+  }
+  else if ( num_selected == 1 ) {
+    awo->state = AWC_ONE_SELECTED;
+    awo->useFirstSelectedAsReference = 1;
+    awo->updateMasterSelection();
+  }
+  else {
+    awo->state = AWC_MANY_SELECTED;
+    awo->updateMasterSelection();
+  }
+
+  awo->clear();
+  awo->refresh();
+
+}
+
+static void awc_tedit_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeWindowClass *awo = (activeWindowClass *) client;
+
+  awo->tef.popdown();
+  awo->deleteTemplateMacros();
+  awo->operationComplete();
+
+}
+
 static void awc_edit_apply (
   Widget w,
   XtPointer client,
@@ -524,7 +598,7 @@ static void awc_edit_apply (
 
 activeWindowClass *awo = (activeWindowClass *) client;
 
-int n;
+int i, n;
 Arg args[4];
 
   strncpy( awo->defaultFontTag, awo->defaultFm.currentFontTag(), 127 );
@@ -565,6 +639,10 @@ Arg args[4];
   strncpy( awo->defaultPvType, awo->bufDefaultPvType, 15 );
 
   awo->gridSpacing = awo->bufGridSpacing;
+
+  for ( i=0; i<AWC_MAXTMPLPARAMS; i++ ) {
+    strcpy( awo->paramValue[i], awo->bufParamValue[i] );
+  }
 
 #ifndef ADD_SCROLLED_WIN
   n = 0;
@@ -666,6 +744,18 @@ activeWindowClass *awo = (activeWindowClass *) client;
   awo->refresh();
   awo->ef.popdown();
   awo->operationComplete();
+
+}
+
+static void awc_edit_ok1 (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeWindowClass *awo = (activeWindowClass *) client;
+
+  awo->ef1->popdownNoDestroy();
 
 }
 
@@ -918,6 +1008,110 @@ activeWindowClass *awo = (activeWindowClass *) client;
   awo->refresh();
   awo->ef.popdown();
   awo->operationComplete();
+
+}
+
+static void awc_templateFileSelectOk_cb (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+char *fName;
+activeWindowClass *awo = (activeWindowClass *) client;
+XmFileSelectionBoxCallbackStruct *cbs =
+ (XmFileSelectionBoxCallbackStruct *) call;
+activeWindowListPtr cur;
+int i, stat, num_selected;
+activeGraphicListPtr curSel;
+
+  if ( !XmStringGetLtoR( cbs->value, XmFONTLIST_DEFAULT_TAG, &fName ) ) {
+    goto done;
+  }
+
+  if ( !*fName ) {
+    XtFree( fName );
+    goto done;
+  }
+
+  strncpy( awo->fileNameForSym, fName, 255 );
+  awo->fileNameForSym[255] = 0;
+
+  awo->numTemplateMacros = 0;
+  awo->templateMacros = NULL;
+  awo->templateExpansions = NULL;
+
+  stat = awo->getTemplateMacros();
+  if ( !( stat & 1 ) ) {
+    awo->operationComplete();
+    goto done;
+  }
+
+  if ( awo->numTemplateMacros > 0 ) {
+
+    awo->tef.create( awo->top, awo->appCtx->ci.getColorMap(),
+     &awo->appCtx->entryFormX,
+     &awo->appCtx->entryFormY, &awo->appCtx->entryFormW,
+     &awo->appCtx->entryFormH, &awo->appCtx->largestH,
+     activeWindowClass_str216, NULL, NULL, NULL );
+
+    for ( i=0; i<awo->numTemplateMacros; i++ ) {
+      awo->tef.addTextField( awo->templateMacros[i],
+       35, awo->templateExpansions[i], AWC_TMPLPARAMSIZE );
+    }
+
+    awo->tef.finished( awc_tedit_ok, awc_tedit_apply, awc_tedit_cancel, awo );
+    awo->tef.popup();
+
+  }
+  else {
+
+    awo->loadTemplate( awo->b2NoneSelectX, awo->b2NoneSelectY,
+     awo->fileNameForSym );
+
+    awo->operationComplete();
+    awo->deleteTemplateMacros();
+
+    // determine new state
+    num_selected = 0;
+
+    curSel = awo->selectedHead->selFlink;
+    while ( ( curSel != awo->selectedHead ) &&
+            ( num_selected < 2 ) ) {
+
+      num_selected++;
+      curSel = curSel->selFlink;
+
+    }
+
+    if ( num_selected == 0 ) {
+      awo->state = AWC_NONE_SELECTED;
+      awo->updateMasterSelection();
+    }
+    else if ( num_selected == 1 ) {
+      awo->state = AWC_ONE_SELECTED;
+      awo->useFirstSelectedAsReference = 1;
+      awo->updateMasterSelection();
+    }
+    else {
+      awo->state = AWC_MANY_SELECTED;
+      awo->updateMasterSelection();
+    }
+
+    awo->clear();
+    awo->refresh();
+
+  }
+
+done:
+
+  XtRemoveCallback( w, XmNcancelCallback,
+   awc_fileSelectCancel_cb, (void *) awo );
+  XtRemoveCallback( w, XmNokCallback,
+   awc_templateFileSelectOk_cb, (void *) awo );
+
+  XtUnmanageChild( w ); // it's ok to unmanage a child again
+  XtDestroyWidget( w );
 
 }
 
@@ -3644,6 +3838,60 @@ Atom wm_delete_window;
 
       break;
 
+    case AWC_POPUP_INSERT_TEMPLATE:
+
+      awo->savedState = awo->state;
+      awo->state = AWC_WAITING;
+
+      XtVaGetValues( awo->appCtx->fileSelectBoxWidgetId(),
+       XmNpattern, &xmStr1,
+       NULL );
+
+      xmStr2 = NULL;
+
+      n = 0;
+      XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
+
+      if ( strcmp( awo->appCtx->curPath, "" ) != 0 ) {
+        xmStr2 = XmStringCreateLocalized( awo->appCtx->curPath );
+        XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
+      }
+
+      awo->fileSelectBox = XmCreateFileSelectionDialog( awo->top,
+       "templateopenfileselect", args, n );
+
+      XmStringFree( xmStr1 );
+      if ( xmStr2 ) XmStringFree( xmStr2 );
+
+      XtAddCallback( awo->fileSelectBox, XmNcancelCallback,
+       awc_fileSelectCancel_cb, (void *) awo );
+      XtAddCallback( awo->fileSelectBox, XmNokCallback,
+       awc_templateFileSelectOk_cb, (void *) awo );
+
+      // -----------------------------------------------------
+
+      awo->wpFileSelect.w = awo->fileSelectBox;
+      awo->wpFileSelect.client = (void *) awo;
+
+      wm_delete_window = XmInternAtom( XtDisplay(awo->top),
+       "WM_DELETE_WINDOW", False );
+
+      XmAddWMProtocolCallback( XtParent(awo->fileSelectBox),
+       wm_delete_window, awc_fileSelectKill_cb, &awo->wpFileSelect );
+
+      XtVaSetValues( XtParent(awo->fileSelectBox), XmNdeleteResponse,
+       XmDO_NOTHING, NULL );
+
+      // -----------------------------------------------------
+
+      XtManageChild( awo->fileSelectBox );
+
+      XSetWindowColormap( awo->d,
+       XtWindow(XtParent(awo->fileSelectBox)),
+       awo->appCtx->ci.getColorMap() );
+
+      break;
+
     case AWC_POPUP_OPEN:
 
       awo->savedState = awo->state;
@@ -3997,6 +4245,30 @@ Atom wm_delete_window;
       awo->ef.addToggle( activeWindowClass_str42, &awo->bufActivateCallbackFlag );
       awo->ef.addToggle( activeWindowClass_str43,
        &awo->bufDeactivateCallbackFlag );
+
+      awo->ef.addEmbeddedEf(activeWindowClass_str218 , "...", &awo->ef1 );
+
+      //-----------------------------------------------------------------------
+
+      awo->ef1->create( awo->top, awo->appCtx->ci.getColorMap(),
+       &awo->appCtx->entryFormX,
+       &awo->appCtx->entryFormY, &awo->appCtx->entryFormW,
+       &awo->appCtx->entryFormH, &awo->appCtx->largestH,
+       activeWindowClass_str216, NULL, NULL, NULL );
+
+      for ( i=0; i<AWC_MAXTMPLPARAMS; i++ ) {
+        awo->ef1->beginLeftSubForm();
+        char paramName[15+1];
+        snprintf( paramName, 15, "%s%-d", activeWindowClass_str219, i+1 );
+        strcpy( awo->bufParamValue[i], awo->paramValue[i] );
+        awo->ef1->addTextField( paramName, 35, awo->bufParamValue[i], AWC_MAXTMPLPARAMS );
+        awo->ef1->endSubForm();
+      }
+
+      awo->ef1->finished( awc_edit_ok1, awo );
+
+      //-----------------------------------------------------------------------
+
       awo->ef.finished( awc_edit_ok, awc_edit_apply, awc_edit_cancel, awo );
       awo->ef.popup();
 
@@ -8178,6 +8450,8 @@ Boolean  nothingDone = False;
 
 	    case AWC_NONE_SELECTED:
 
+              awo->b2NoneSelectX = be->x;
+              awo->b2NoneSelectY = be->y;
               XmMenuPosition( awo->b2NoneSelectPopup, be );
               XtManageChild( awo->b2NoneSelectPopup );
 
@@ -10271,6 +10545,11 @@ done:
 activeWindowClass::activeWindowClass ( void ) : unknownTags() {
 
 char *str;
+int i;
+
+  for ( i=0; i<AWC_MAXTMPLPARAMS; i++ ) {
+    strcpy( paramValue[i], "" );
+  }
 
   invalidBgColor = 0;
   invalidFile = 0;
@@ -10502,6 +10781,8 @@ char *str;
   pvAction = new pvActionClass;
 
   ctlKeyPressed = 0;
+
+  b2NoneSelectX = b2NoneSelectY = 0;
 
 }
 
@@ -12430,6 +12711,29 @@ Arg args[3];
    curBlockListNode = new popupBlockListType;
    curBlockListNode->block.w = pb;
    curBlockListNode->block.ptr = (void *) AWC_POPUP_OPEN;
+   curBlockListNode->block.awo = this;
+
+   curBlockListNode->blink = popupBlockHead->blink;
+   popupBlockHead->blink->flink = curBlockListNode;
+   popupBlockHead->blink = curBlockListNode;
+   curBlockListNode->flink = popupBlockHead;
+
+   XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
+    (XtPointer) &curBlockListNode->block );
+
+
+   str = XmStringCreateLocalized( activeWindowClass_str215 );
+
+   pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+    b2NoneSelectPopup,
+    XmNlabelString, str,
+    NULL );
+
+   XmStringFree( str );
+
+   curBlockListNode = new popupBlockListType;
+   curBlockListNode->block.w = pb;
+   curBlockListNode->block.ptr = (void *) AWC_POPUP_INSERT_TEMPLATE;
    curBlockListNode->block.awo = this;
 
    curBlockListNode->blink = popupBlockHead->blink;
@@ -15385,6 +15689,254 @@ tagClass tag;
 
 }
 
+void activeWindowClass::deleteTemplateMacros ( void ) {
+
+int i;
+
+  for ( i=0; i<numTemplateMacros; i++ ) {
+    if ( templateMacros[i] ) delete[] templateMacros[i];
+    if ( templateExpansions[i] ) delete[] templateExpansions[i];
+  }
+  delete templateMacros;
+  templateMacros = NULL;
+  delete templateExpansions;
+  templateExpansions = NULL;
+
+}
+
+int activeWindowClass::getTemplateMacros ( void ) {
+
+char tmplName[255+1];
+tagClass tag;
+FILE *f;
+int i, ii, n, stat, winMajor, winMinor, winRelease;
+char saveParams[AWC_MAXTMPLPARAMS][AWC_TMPLPARAMSIZE+1];
+expStringClass tmpStr[AWC_MAXTMPLPARAMS];
+char *emptyStr = "";
+
+  numTemplateMacros = 0;
+
+  f = this->openAnyTemplate( fileNameForSym, "r" );
+  if ( !f ) {
+    return 0;
+  }
+
+  // save template params
+  for ( i=0; i<AWC_MAXTMPLPARAMS; i++ ) {
+    strcpy( saveParams[i], paramValue[i] );
+  }
+
+  // the next func reads template params into bufParamValue
+  discardWinLoadData( f, &winMajor, &winMinor, &winRelease );
+
+  // copy buf
+  for ( i=0; i<AWC_MAXTMPLPARAMS; i++ ) {
+    strcpy( paramValue[i], bufParamValue[i] );
+  }
+
+  fclose( f );
+
+  n = 0;
+  for ( i=0; i<AWC_MAXTMPLPARAMS; i++ ) {
+    if ( !blank(paramValue[i]) ) {
+      n++;
+    }
+  }
+
+  numTemplateMacros = n;
+  templateMacros = (char **) calloc( n, sizeof( char *) );
+  templateExpansions = (char **) calloc( n, sizeof( char *) );
+
+  for ( i=0, ii=0; i<AWC_MAXTMPLPARAMS; i++ ) {
+    if ( !blank(paramValue[i]) ) {
+      if ( ii < n ) {
+        templateMacros[ii] = new char[strlen(paramValue[i])];
+        strcpy( templateMacros[ii], paramValue[i] );
+        templateExpansions[ii] = new char[AWC_TMPLPARAMSIZE+1];
+        strcpy( templateExpansions[ii], "" );
+      }
+      ii++;
+    }
+  }
+
+  // restore template params
+  for ( i=0; i<AWC_MAXTMPLPARAMS; i++ ) {
+    strcpy( paramValue[i], saveParams[i] );
+  }
+
+  return 1;
+
+}
+
+int activeWindowClass::loadTemplate (
+  int x,
+  int y,
+  char *fname ) {
+
+FILE *f;
+activeGraphicListPtr cur, next;
+char *gotOne, name[63+1], tagName[255+1], objName[63+1], val[4095+1],
+ defName[255+1];
+int stat, l;
+char msg[79+1];
+Widget clipWidget, hsbWidget, vsbWidget;
+pvDefPtr pvDefCur;
+int winMajor, winMinor, winRelease;
+
+int isCompound;
+tagClass tag;
+
+  tag.initLine();
+
+  // set select list empty
+
+  selectedHead->selFlink = selectedHead;
+  selectedHead->selBlink = selectedHead;
+
+  // read in file
+  f = this->openAnyTemplate( fname, "r" );
+  if ( !f ) {
+    sprintf( msg, activeWindowClass_str156, this->fileName );
+    appCtx->postMessage( msg );
+    return 0;
+  }
+
+  this->setChanged();
+
+  discardWinLoadData( f, &winMajor, &winMinor, &winRelease );
+
+  if ( winMajor > AWC_MAJOR_VERSION ) {
+    appCtx->postMessage( activeWindowClass_str191 );
+    return 0;
+  }
+
+  if ( winMajor < 4 ) {
+
+    appCtx->postMessage( activeWindowClass_str191 );
+    return 0;
+
+  }
+  else {
+
+    // read file and process each leading keyword
+    tag.init();
+    tag.loadR( "object", 63, objName );
+    tag.loadR( "pvdef", 255, defName );
+    tag.loadR( "forceLocalPvs" );
+
+    gotOne = tag.getName( tagName, 255, f );
+
+    while ( gotOne ) {
+
+      //fprintf( stderr, "name = [%s]\n", tagName );
+
+      if ( strcmp( tagName, "object" ) == 0 ) {
+
+        tag.getValue( val, 4095, f, &isCompound );
+        tag.decode( tagName, val, isCompound );
+
+        // ==============================================================
+        // Create object
+
+        //fprintf( stderr, "objName = [%s]\n", objName );
+
+        cur = new activeGraphicListType;
+        if ( !cur ) {
+          fileClose( f );
+          appCtx->postMessage(
+           activeWindowClass_str157 );
+          return 0;
+        }
+        cur->defExeFlink = NULL;
+        cur->defExeBlink = NULL;
+
+        cur->node = obj.createNew( objName );
+
+        if ( cur->node ) {
+
+          stat = cur->node->createFromFile( f, objName, this );
+          if ( !( stat & 1 ) ) {
+            return stat; // memory leak here
+	  }
+
+          cur->node->move( x, y );
+          cur->node->moveSelectBox( x, y );
+
+	  cur->node->expandTemplate( numTemplateMacros,
+	   templateMacros, templateExpansions );
+
+          cur->blink = head->blink;
+          head->blink->flink = cur;
+          head->blink = cur;
+          cur->flink = head;
+
+	  // select
+          cur->node->setSelected();
+          cur->selBlink = selectedHead->selBlink;
+          selectedHead->selBlink->selFlink = cur;
+          selectedHead->selBlink = cur;
+          cur->selFlink = selectedHead;
+
+        }
+        else {
+
+	  // Discard all content up to "endObjectProperties"
+
+          sprintf( msg, activeWindowClass_str158, tag.line(),
+           objName );
+          appCtx->postMessage( msg );
+
+          tag.init();
+          tag.loadR( "endObjectProperties", 63, objName );
+          stat = tag.readTags( f, "endObjectProperties" );
+
+	  // Start looking for leading keywords again
+          tag.init();
+          tag.loadR( "object", 63, objName );
+          tag.loadR( "pvdef", 255, defName );
+          tag.loadR( "forceLocalPvs" );
+
+        }
+
+        // ===================================
+
+        gotOne = tag.getName( tagName, 255, f );
+
+      }
+      else if ( strcmp( tagName, "pvdef" ) == 0 ) {
+
+	// discard these
+
+        tag.getValue( val, 4095, f, &isCompound );
+        tag.decode( tagName, val, isCompound );
+
+        gotOne = tag.getName( tagName, 255, f );
+
+      }
+      else if ( strcmp( tagName, "forceLocalPvs" ) == 0 ) {
+
+	// ignore this
+
+        gotOne = tag.getName( tagName, 255, f );
+
+      }
+      else {
+
+        fprintf( stderr, "Unknown tag name: [%s]\n", tagName );
+        gotOne = NULL;
+
+      }
+
+    }
+
+  }
+
+  fileClose( f );
+
+  return 1;
+
+}
+
 int activeWindowClass::loadGeneric (
   int x,
   int y,
@@ -17323,6 +17875,7 @@ char str[255+1], *strPtr;
   tag.loadBoolW( "disableScroll", &disableScroll, &zero );
   tag.loadW( "pixmapFlag", 3, pixmapEnumStr, pixmapEnum,
    &bgPixmapFlag, &perEnvVar );
+  tag.loadW( "templateParams", AWC_TMPLPARAMSIZE+1, (char *) paramValue, AWC_MAXTMPLPARAMS, emptyStr );
   tag.loadW( unknownTags );
   tag.loadW( "endScreenProperties" );
   tag.loadW( "" );
@@ -17834,6 +18387,8 @@ static int pixmapEnum[3] = {
   tag.loadR( "disableScroll", &disableScroll, &zero );
   tag.loadR( "pixmapFlag", 3, pixmapEnumStr, pixmapEnum,
    &bgPixmapFlag, &perEnvVar );
+  tag.loadR( "templateParams", AWC_MAXTMPLPARAMS, AWC_TMPLPARAMSIZE+1, (char *) paramValue,
+   &numParamValues, emptyStr );
   tag.loadR( "endScreenProperties" );
 
   stat = tag.readTags( f, "endScreenProperties" );
@@ -18759,6 +19314,7 @@ tagClass tag;
 int i, r, g, b, index;
 char s[127+1];
 unknownTagList junkTags;
+char *emptyStr = "";
 
   // don't inc line here
 
@@ -18943,6 +19499,8 @@ unknownTagList junkTags;
   tag.loadR( "orthoLineDraw", 255, junk );
   tag.loadR( "pvType", 255, junk );
   tag.loadR( "disableScroll", 255, junk );
+  tag.loadR( "templateParams", AWC_MAXTMPLPARAMS, AWC_TMPLPARAMSIZE+1, (char *) bufParamValue,
+   &bufNumParamValues, emptyStr );
   tag.loadR( "endScreenProperties" );
 
   stat = tag.readTags( f, "endScreenProperties" );
@@ -19570,6 +20128,58 @@ int i;
       if ( f ) {
         strncpy( fileName, buf, 255 ); // update fileName
         storeFileNameForSymbols( buf ); // update int sym file name components
+        return f;
+      }
+    }
+
+  }
+
+  return NULL;
+
+}
+
+FILE *activeWindowClass::openAnyTemplate (
+  char *name,
+  char *mode )
+{
+
+char buf[255+1];
+FILE *f;
+int i;
+
+  for ( i=0; i<appCtx->numPaths; i++ ) {
+
+    appCtx->expandFileName( i, buf, name, ".edl", 255 );
+
+    if ( strcmp( buf, "" ) != 0 ) {
+      f = fileOpen( buf, mode );
+      if ( f ) {
+        return f;
+      }
+    }
+
+  }
+
+  return NULL;
+
+}
+
+FILE *activeWindowClass::openAnyTemplateParam (
+  char *name,
+  char *mode )
+{
+
+char buf[255+1];
+FILE *f;
+int i;
+
+  for ( i=0; i<appCtx->numPaths; i++ ) {
+
+    appCtx->expandFileName( i, buf, name, ".tmpl", 255 );
+
+    if ( strcmp( buf, "" ) != 0 ) {
+      f = fileOpen( buf, mode );
+      if ( f ) {
         return f;
       }
     }

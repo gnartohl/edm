@@ -77,6 +77,7 @@ void getPvs(int max,
 
     // Macro support
     int containsMacros();
+    int expandTemplate (int numMacros, char *macros[], char *expansions[]);
     int expand1st(int numMacros, char *macros[], char *expansions[]);
     int expand2nd(int numMacros, char *macros[], char *expansions[]);
     

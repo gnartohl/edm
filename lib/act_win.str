@@ -211,5 +211,10 @@
 #define activeWindowClass_str212 (char *) "Pixmap Control"
 #define activeWindowClass_str213 (char *) "Use env var|Never|Always"
 #define activeWindowClass_str214 (char *) "invalid"
+#define activeWindowClass_str215 (char *) "Insert File As Template..."
+#define activeWindowClass_str216 (char *) "Template Parameters"
+#define activeWindowClass_str217 (char *) "Template parameter file corrupt or missing - %s"
+#define activeWindowClass_str218 (char *) "Template Params"
+#define activeWindowClass_str219 (char *) "Param"
 
 #endif

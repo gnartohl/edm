@@ -1072,6 +1072,26 @@ int activeMessageBoxClass::deactivate (
 
 }
 
+int activeMessageBoxClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( readPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( logFileName.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  logFileName.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int activeMessageBoxClass::expand1st (
   int numMacros,
   char *macros[],

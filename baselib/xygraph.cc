@@ -7189,6 +7189,58 @@ void xyGraphClass::bufInvalidate ( void ) {
 
 }
 
+int xyGraphClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] ) {
+
+int i;
+expStringClass tmpStr;
+
+  tmpStr.setRaw( graphTitle.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  graphTitle.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( xLabel.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  xLabel.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( yLabel.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  yLabel.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( y2Label.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  y2Label.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( traceCtlPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  traceCtlPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( trigPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  trigPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( resetPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  resetPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  for ( i=0; i<numTraces; i++ ) {
+
+    tmpStr.setRaw( xPvExpStr[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    xPvExpStr[i].setRaw( tmpStr.getExpanded() );
+
+    tmpStr.setRaw( yPvExpStr[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    yPvExpStr[i].setRaw( tmpStr.getExpanded() );
+
+  }
+
+  return 1;
+
+}
+
 int xyGraphClass::expand1st (
   int numMacros,
   char *macros[],

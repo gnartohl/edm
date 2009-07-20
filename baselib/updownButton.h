@@ -432,6 +432,11 @@ int getButtonActionRequest (
   int *drag,
   int *focus );
 
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
+
 int expand1st (
   int numMacros,
   char *macros[],

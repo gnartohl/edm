@@ -2602,6 +2602,34 @@ int activeButtonClass::getButtonActionRequest (
 
 }
 
+int activeButtonClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( controlPvName.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  controlPvName.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( readPvName.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readPvName.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( visPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  visPvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( colorPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  colorPvExpString.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int activeButtonClass::expand1st (
   int numMacros,
   char *macros[],

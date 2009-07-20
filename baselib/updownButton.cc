@@ -2400,6 +2400,46 @@ int activeUpdownButtonClass::getButtonActionRequest (
 
 }
 
+int activeUpdownButtonClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( destPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  destPvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( savePvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  savePvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( fineExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  fineExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( coarseExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  coarseExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( label.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  label.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( visPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  visPvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( colorPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  colorPvExpString.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int activeUpdownButtonClass::expand1st (
   int numMacros,
   char *macros[],

@@ -950,6 +950,42 @@ void scaleClass::bufInvalidate ( void )
 
 }
 
+int scaleClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( minPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  minPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( maxPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  maxPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( colorPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  colorPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( modePvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  modePvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( labelPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  labelPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( updatePvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  updatePvExpStr.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int scaleClass::expand1st (
   int numMacros,
   char *macros[],

@@ -2383,6 +2383,46 @@ int activeMessageButtonClass::getButtonActionRequest (
 
 }
 
+int activeMessageButtonClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( destPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  destPvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( sourcePressPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  sourcePressPvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( sourceReleasePvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  sourceReleasePvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( onLabel.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  onLabel.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( offLabel.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  offLabel.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( visPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  visPvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( colorPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  colorPvExpString.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int activeMessageButtonClass::expand1st (
   int numMacros,
   char *macros[],

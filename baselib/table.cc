@@ -815,6 +815,22 @@ int activeTableClass::deactivate (
 
 }
 
+int activeTableClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( readPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int activeTableClass::expand1st (
   int numMacros,
   char *macros[],
