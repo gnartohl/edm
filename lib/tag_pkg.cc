@@ -425,17 +425,15 @@ int i, ii, firstNonWS, firstChar, lastChar, more, foundQuote, escape = 0, maxLen
 	  }
 	  else {
             if ( *overFlow ) { // if this is set we overflowed more than once
-              //printf( "over flow - maxLen = %-d\n", *maxLen );
               maxLenNew = (*maxLen) * 2;
               valNew = new char[maxLenNew+1];
               memcpy( valNew, val, *maxLen );
-              delete[] val;
+              if ( val ) delete[] val;
               *valp = valNew;
               val = valNew;
               *maxLen = maxLenNew;
 	    }
 	    else { // else valp is a stack variable
-              //printf( "over flow - maxLen = %-d\n", *maxLen );
               maxLenNew = (*maxLen) * 2;
               valNew = new char[maxLenNew+1];
               memcpy( valNew, val, *maxLen );
@@ -443,7 +441,7 @@ int i, ii, firstNonWS, firstChar, lastChar, more, foundQuote, escape = 0, maxLen
               val = valNew;
               *maxLen = maxLenNew;
 	    }
-	    *overFlow = 1;
+            *overFlow = 1;
             val[ii++] = buf[i];
 	  }
 
@@ -454,6 +452,27 @@ int i, ii, firstNonWS, firstChar, lastChar, more, foundQuote, escape = 0, maxLen
 
         escape = 0;
         if ( ii < *maxLen-1 ) {
+          val[ii++] = buf[i];
+	}
+	else {
+          if ( *overFlow ) { // if this is set we overflowed more than once
+            maxLenNew = (*maxLen) * 2;
+            valNew = new char[maxLenNew+1];
+            memcpy( valNew, val, *maxLen );
+            if ( val ) delete[] val;
+            *valp = valNew;
+            val = valNew;
+            *maxLen = maxLenNew;
+	  }
+	  else { // else valp is a stack variable
+            maxLenNew = (*maxLen) * 2;
+            valNew = new char[maxLenNew+1];
+            memcpy( valNew, val, *maxLen );
+            *valp = valNew;
+            val = valNew;
+            *maxLen = maxLenNew;
+	  }
+          *overFlow = 1;
           val[ii++] = buf[i];
 	}
 
@@ -3771,7 +3790,7 @@ int isCompound, overFlow, maxLen;
       decode( tagName, valp, isCompound );
 
       if ( overFlow ) {
-        delete[] valp;
+        if ( valp ) delete[] valp;
         valp = NULL;
       }
 
