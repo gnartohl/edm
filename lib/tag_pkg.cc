@@ -335,6 +335,159 @@ char *gotOne;
 
 }
 
+char *tagClass::getCompoundValue (
+  char **valp,  // valp initially points to a stack variable, on overflow we allocate a new buffer
+  int *maxLen,
+  FILE *f,
+  int *overFlow // set if an overflow occurs so caller may delete the allocated buffer
+) {
+
+int i, ii, firstNonWS, firstChar, lastChar, more, foundQuote, escape = 0, maxLenNew;
+ char *gotOne, *val, *valNew;
+
+  //fprintf( stderr, "getCompoundValue\n" );
+
+  // read and append file contents until "}"
+
+  val = *valp;
+
+  more = 1;
+  ii = 0;
+  *overFlow = 0;
+
+  do {
+
+    gotOne = fgets( buf, MAXBUF, f );
+    if ( !gotOne ) return NULL;
+
+    incLine();
+
+    lastChar = strlen(buf) - 1;
+
+    // find 1st non-white-space char
+    firstNonWS = -1;
+    for ( i=0; i<=lastChar; i++ ) {
+      if ( !isspace( buf[i] ) ) {
+        firstNonWS = i;
+        break;
+      }
+    }
+    if ( firstNonWS == -1 ) {
+      return NULL;
+    }
+
+    firstChar = firstNonWS;
+
+    if ( lastChar > 0 ) {
+
+      if ( buf[lastChar] == '\"' ) {
+        lastChar = lastChar - 1; 
+      }
+      else if ( buf[lastChar] == '\n' ) {
+        if ( buf[lastChar-1] == '\"' ) {
+          buf[lastChar-1] = '\n';
+          buf[lastChar] = 0;
+          lastChar--;
+	}
+      }
+
+    }
+
+    //fprintf( stderr, "string is [%s]\n", buf );
+    //fprintf( stderr, "firstChar = %-d\n", firstChar );
+    //fprintf( stderr, "lastChar = %-d\n", lastChar );
+
+    foundQuote = escape = 0;
+    for ( i=firstChar; i<=lastChar; i++ ) {
+
+      if ( !escape ) {
+
+        if ( buf[i] == '}' ) {
+
+          more = 0;
+          break;
+
+        }
+	else if ( buf[i] == '\\' ) {
+
+	  escape = 1;
+
+	}
+	else if ( ( buf[i] == '\"' ) && !foundQuote ) {
+
+	  foundQuote = 1;
+
+	}
+        else {
+
+          if ( ii < *maxLen-1 ) {
+            val[ii++] = buf[i];
+	  }
+	  else {
+            if ( *overFlow ) { // if this is set we overflowed more than once
+              maxLenNew = (*maxLen) * 2;
+              valNew = new char[maxLenNew+1];
+              memcpy( valNew, val, *maxLen );
+              if ( val ) delete[] val;
+              *valp = valNew;
+              val = valNew;
+              *maxLen = maxLenNew;
+	    }
+	    else { // else valp is a stack variable
+              maxLenNew = (*maxLen) * 2;
+              valNew = new char[maxLenNew+1];
+              memcpy( valNew, val, *maxLen );
+              *valp = valNew;
+              val = valNew;
+              *maxLen = maxLenNew;
+	    }
+            *overFlow = 1;
+            val[ii++] = buf[i];
+	  }
+
+        }
+
+      }
+      else { // escape: next char is data
+
+        escape = 0;
+        if ( ii < *maxLen-1 ) {
+          val[ii++] = buf[i];
+	}
+	else {
+          if ( *overFlow ) { // if this is set we overflowed more than once
+            maxLenNew = (*maxLen) * 2;
+            valNew = new char[maxLenNew+1];
+            memcpy( valNew, val, *maxLen );
+            if ( val ) delete[] val;
+            *valp = valNew;
+            val = valNew;
+            *maxLen = maxLenNew;
+	  }
+	  else { // else valp is a stack variable
+            maxLenNew = (*maxLen) * 2;
+            valNew = new char[maxLenNew+1];
+            memcpy( valNew, val, *maxLen );
+            *valp = valNew;
+            val = valNew;
+            *maxLen = maxLenNew;
+	  }
+          *overFlow = 1;
+          val[ii++] = buf[i];
+	}
+
+      }
+
+    }
+
+  } while ( more );
+
+  val[ii] = 0;
+
+  return val;
+
+}
+
 char *tagClass::getValue (
   char *val,
   int maxLen,
@@ -432,6 +585,144 @@ int firstChar, lastChar, escape;
     if ( tk ) {
 
       for ( i=firstChar, ii=0; (i<=(int)lastChar) && (ii<maxLen); i++ ) {
+
+        if ( !escape ) {
+
+          if ( tk[i] == '\\' ) {
+            escape = 1;
+          }
+          else {
+            val[ii++] = tk[i];
+	  }
+
+	}
+        else {
+
+          escape = 0;
+          val[ii++] = tk[i];
+
+	}
+
+      }
+
+      val[ii++] = 0;
+
+    }
+
+    else {
+
+      return NULL;
+
+    }
+
+  }
+
+  first = last = len = 0;
+
+  return val;
+
+}
+
+char *tagClass::getValue (
+  char **valp,
+  int *maxLen,
+  FILE *f,
+  int *valueIsCompound,
+  int *overFlow
+) {
+
+int i, ii, firstNonWS;
+char *tk, *context, *gotData, *val;
+int firstChar, lastChar, escape;
+
+  //fprintf( stderr, "first = %-d\n", first );
+  //fprintf( stderr, "last = %-d\n", last );
+  //fprintf( stderr, "len = %-d\n", len );
+
+  *valueIsCompound = 0;
+  *overFlow = 0;
+  val = *valp;
+  strcpy( val, "" );
+
+  // find 1st non-white-space char
+  firstNonWS = -1;
+  for ( i=first; i<len; i++ ) {
+    if ( !isspace( buf[i] ) ) {
+      firstNonWS = i;
+      break;
+    }
+  }
+  if ( firstNonWS == -1 ) {
+    return NULL;
+  }
+
+  // we may have a compound entry, e.g.
+  //
+  // <keyword name> {
+  //   12
+  //   55
+  //   3
+  //   .
+  //   .
+  //   .
+  // }
+
+  if ( buf[firstNonWS] == '{' ) {
+    *valueIsCompound = 1;
+  }
+  else {
+    *valueIsCompound = 0;
+  }
+
+  if ( *valueIsCompound ) {
+
+    if ( len > firstNonWS+1 ) {
+      context = NULL;
+      tk = strtok_r( &buf[firstNonWS+1], " \t\n", &context );
+      if ( tk ) {
+        fprintf( stderr, tagClass_str1, line(), filename() );
+        return NULL;
+      }
+    }
+
+    gotData = getCompoundValue( valp, maxLen, f, overFlow );
+    if ( !gotData ) {
+      fprintf( stderr, tagClass_str2, line(), filename() );
+      return NULL;
+    }
+
+  }
+  else {  // simple entry contained on one line
+
+    tk = &buf[firstNonWS];
+
+    //fprintf( stderr, "string is [%s]\n", tk );
+
+    firstChar = 0;
+    if ( tk[0] == '\"' ) firstChar = 1;
+
+    lastChar = strlen(tk) - 1;
+    if ( lastChar > 0 ) {
+
+      if ( tk[lastChar] == '\"' ) {
+        lastChar = lastChar - 1; 
+      }
+      else if ( tk[lastChar] == '\n' ) {
+        if ( tk[lastChar-1] == '\"' ) {
+          tk[lastChar-1] = '\n';
+          tk[lastChar] = 0;
+	}
+      }
+
+    }
+
+    // copy string to tag
+
+    escape = 0;
+
+    if ( tk ) {
+
+      for ( i=firstChar, ii=0; (i<=(int)lastChar) && (ii<*maxLen); i++ ) {
 
         if ( !escape ) {
 
@@ -1420,8 +1711,7 @@ int tagClass::decode (
 ) {
 
 int i, ii, n, index, r=0, g=0, b=0, l, colorIndex, *intArray, oneIndex,
- foundValue,
- max, ofs;
+ foundValue, max, ofs;
 unsigned int *uintArray;
 double *doubleArray;
 unsigned int pixel;
@@ -3478,8 +3768,8 @@ int tagClass::readTags (
   char *endingTag
 ) {
 
-char *gotOne, tagName[255+1], val[4095+1];
-int isCompound;
+char *gotOne, tagName[255+1], val[10000+1], *valp;
+int isCompound, overFlow, maxLen;
 
   gotOne = getName( tagName, 255, f );
   if ( !gotOne ) {
@@ -3493,9 +3783,16 @@ int isCompound;
 
     if ( strcmp( tagName, endingTag ) ) {
 
-      getValue( val, 4095, f, &isCompound );
+      maxLen = 10000;
+      valp = val;
+      getValue( &valp, &maxLen, f, &isCompound, &overFlow );
 
-      decode( tagName, val, isCompound );
+      decode( tagName, valp, isCompound );
+
+      if ( overFlow ) {
+        if ( valp ) delete[] valp;
+        valp = NULL;
+      }
 
       gotOne = getName( tagName, 255, f );
 

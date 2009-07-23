@@ -639,6 +639,21 @@ char *getValue (
   int *valueIsCompound
 );
 
+char *getCompoundValue (
+  char **valp,
+  int *maxLen,
+  FILE *f,
+  int *overFlow
+);
+
+char *getValue (
+  char **valp,
+  int *maxLen,
+  FILE *f,
+  int *valueIsCompound,
+  int *overFlow
+);
+
 void writeMultiLineString (
   FILE *f,
   char *s
