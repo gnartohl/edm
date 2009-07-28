@@ -61,6 +61,7 @@
 
 #define AWC_MAXTMPLPARAMS 30
 #define AWC_TMPLPARAMSIZE 35
+#define AWC_MAXTEMPLINFO 600
 
 #define AWC_MAJOR_VERSION 4
 #define AWC_MINOR_VERSION 0
@@ -807,6 +808,7 @@ int exit_after_save;
 char paramValue[AWC_MAXTMPLPARAMS][AWC_TMPLPARAMSIZE+1];
 char bufParamValue[AWC_MAXTMPLPARAMS][AWC_TMPLPARAMSIZE+1];
 int bufNumParamValues, numParamValues;
+char templInfo[AWC_MAXTEMPLINFO+1], *bufTemplInfo;
 
 int list_array_size;
 activeGraphicListType *list_array;

@@ -729,7 +729,22 @@ int addTextField (
   char *dest,
   int stringSize );
 
+int addGenericTextBox (
+  int edit,
+  char *label,
+  int width,
+  int height,
+  char *dest,
+  int stringSize );
+
 int addTextBox (
+  char *label,
+  int width,
+  int height,
+  char *dest,
+  int stringSize );
+
+int addReadonlyTextBox (
   char *label,
   int width,
   int height,

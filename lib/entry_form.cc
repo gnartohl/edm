@@ -3173,7 +3173,8 @@ XmString str;
 
 }
 
-int entryFormClass::addTextBox (
+int entryFormClass::addGenericTextBox (
+  int edit,
   char *label,
   int width,
   int height,
@@ -3202,10 +3203,19 @@ Widget scrolledTextWidget = NULL;
     n = 0;
     XtSetArg( args[n], XmNrows, height ); n++;
     XtSetArg( args[n], XmNcolumns, width ); n++;
-    XtSetArg( args[n], XmNeditable, True ); n++;
+    if ( edit ) {
+      XtSetArg( args[n], XmNeditable, True ); n++;
+    }
+    else {
+      XtSetArg( args[n], XmNeditable, False ); n++;
+    }
     XtSetArg( args[n], XmNeditMode, XmMULTI_LINE_EDIT ); n++;
-    XtSetArg( args[n], XmNcursorPositionVisible, True ); n++;
-    //XtSetArg( args[n], XmNfontList, NULL ); n++;
+    if ( edit ) {
+      XtSetArg( args[n], XmNcursorPositionVisible, True ); n++;
+    }
+    else {
+      XtSetArg( args[n], XmNcursorPositionVisible, False ); n++;
+    }
     XtSetArg( args[n], XmNmaxLength, stringSize ); n++;
     XtSetArg( args[n], XmNtopAttachment, XmATTACH_FORM ); n++;
     XtSetArg( args[n], XmNrightAttachment, XmATTACH_FORM ); n++;
@@ -3224,10 +3234,19 @@ Widget scrolledTextWidget = NULL;
     n = 0;
     XtSetArg( args[n], XmNrows, height ); n++;
     XtSetArg( args[n], XmNcolumns, width ); n++;
-    XtSetArg( args[n], XmNeditable, True ); n++;
+    if ( edit ) {
+      XtSetArg( args[n], XmNeditable, True ); n++;
+    }
+    else {
+      XtSetArg( args[n], XmNeditable, False ); n++;
+    }
     XtSetArg( args[n], XmNeditMode, XmMULTI_LINE_EDIT ); n++;
-    XtSetArg( args[n], XmNcursorPositionVisible, True ); n++;
-    //XtSetArg( args[n], XmNfontList, NULL ); n++;
+    if ( edit ) {
+      XtSetArg( args[n], XmNcursorPositionVisible, True ); n++;
+    }
+    else {
+      XtSetArg( args[n], XmNcursorPositionVisible, False ); n++;
+    }
     XtSetArg( args[n], XmNmaxLength, stringSize ); n++;
     XtSetArg( args[n], XmNtopAttachment, XmATTACH_WIDGET ); n++;
     XtSetArg( args[n], XmNtopWidget, curW ); n++;
@@ -3260,7 +3279,6 @@ Widget scrolledTextWidget = NULL;
    XmNtopWidget, curW,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, curW,
-   //XmNfontList, entryFontList,
    NULL );
 
   XmStringFree( str );
@@ -3283,7 +3301,6 @@ Widget scrolledTextWidget = NULL;
      XmNmarginTop, 7,
      XmNtopAttachment, XmATTACH_FORM,
      XmNleftAttachment, XmATTACH_FORM,
-     //XmNfontList, entryFontList,
      NULL );
 
     XmStringFree( str );
@@ -3291,10 +3308,19 @@ Widget scrolledTextWidget = NULL;
     n = 0;
     XtSetArg( args[n], XmNrows, height ); n++;
     XtSetArg( args[n], XmNcolumns, width ); n++;
-    XtSetArg( args[n], XmNeditable, True ); n++;
+    if ( edit ) {
+      XtSetArg( args[n], XmNeditable, True ); n++;
+    }
+    else {
+      XtSetArg( args[n], XmNeditable, False ); n++;
+    }
     XtSetArg( args[n], XmNeditMode, XmMULTI_LINE_EDIT ); n++;
-    XtSetArg( args[n], XmNcursorPositionVisible, True ); n++;
-    //XtSetArg( args[n], XmNfontList, NULL ); n++;
+    if ( edit ) {
+      XtSetArg( args[n], XmNcursorPositionVisible, True ); n++;
+    }
+    else {
+      XtSetArg( args[n], XmNcursorPositionVisible, False ); n++;
+    }
     XtSetArg( args[n], XmNmaxLength, stringSize ); n++;
     XtSetArg( args[n], XmNtopAttachment, XmATTACH_WIDGET ); n++;
     XtSetArg( args[n], XmNtopWidget, cur->labelW ); n++;
@@ -3314,10 +3340,19 @@ Widget scrolledTextWidget = NULL;
     n = 0;
     XtSetArg( args[n], XmNrows, height ); n++;
     XtSetArg( args[n], XmNcolumns, width ); n++;
-    XtSetArg( args[n], XmNeditable, True ); n++;
+    if ( edit ) {
+      XtSetArg( args[n], XmNeditable, True ); n++;
+    }
+    else {
+      XtSetArg( args[n], XmNeditable, False ); n++;
+    }
     XtSetArg( args[n], XmNeditMode, XmMULTI_LINE_EDIT ); n++;
-    XtSetArg( args[n], XmNcursorPositionVisible, True ); n++;
-    //XtSetArg( args[n], XmNfontList, NULL ); n++;
+    if ( edit ) {
+      XtSetArg( args[n], XmNcursorPositionVisible, True ); n++;
+    }
+    else {
+      XtSetArg( args[n], XmNcursorPositionVisible, False ); n++;
+    }
     XtSetArg( args[n], XmNmaxLength, stringSize ); n++;
     XtSetArg( args[n], XmNtopAttachment, XmATTACH_WIDGET ); n++;
     XtSetArg( args[n], XmNtopWidget, prevW ); n++;
@@ -3340,14 +3375,38 @@ Widget scrolledTextWidget = NULL;
 
   if ( scrolledTextWidget ) XtManageChild( scrolledTextWidget );
 
-  XtAddCallback( cur->activeW, XmNvalueChangedCallback, TextBoxToString,
-   cur );
+  if ( edit ) XtAddCallback( cur->activeW, XmNvalueChangedCallback,
+   TextBoxToString, cur );
 
   itemTail->flink = cur;
   itemTail = cur;
   itemTail->flink = NULL;
 
   return 1;
+
+}
+
+int entryFormClass::addTextBox (
+  char *label,
+  int width,
+  int height,
+  char *dest,
+  int stringSize )
+{
+
+  return addGenericTextBox( 1, label, width, height, dest, stringSize );
+
+}
+
+int entryFormClass::addReadonlyTextBox (
+  char *label,
+  int width,
+  int height,
+  char *dest,
+  int stringSize )
+{
+
+  return addGenericTextBox( 0, label, width, height, dest, stringSize );
 
 }
 

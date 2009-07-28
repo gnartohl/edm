@@ -642,6 +642,8 @@ Arg args[4];
 
   awo->gridSpacing = awo->bufGridSpacing;
 
+  strcpy( awo->templInfo, awo->bufTemplInfo );
+
   for ( i=0; i<AWC_MAXTMPLPARAMS; i++ ) {
     strcpy( awo->paramValue[i], awo->bufParamValue[i] );
   }
@@ -1055,6 +1057,16 @@ activeGraphicListPtr curSel;
      &awo->appCtx->entryFormY, &awo->appCtx->entryFormW,
      &awo->appCtx->entryFormH, &awo->appCtx->largestH,
      activeWindowClass_str216, NULL, NULL, NULL );
+
+    if ( !(awo->bufTemplInfo) ) {
+      awo->bufTemplInfo = new char[AWC_MAXTEMPLINFO+1];
+    }
+    awo->tef.addReadonlyTextBox( "Info", 32, 10, awo->bufTemplInfo,
+     AWC_MAXTEMPLINFO );
+
+    awo->tef.addLabel( " " );
+    awo->tef.addSeparator();
+    awo->tef.addLabel( " " );
 
     for ( i=0; i<awo->numTemplateMacros; i++ ) {
       awo->tef.addTextField( awo->templateMacros[i],
@@ -4258,13 +4270,25 @@ Atom wm_delete_window;
        &awo->appCtx->entryFormH, &awo->appCtx->largestH,
        activeWindowClass_str216, NULL, NULL, NULL );
 
+      if ( !(awo->bufTemplInfo) ) {
+        awo->bufTemplInfo = new char[AWC_MAXTEMPLINFO+1];
+      }
+      strcpy( awo->bufTemplInfo, awo->templInfo );
+      awo->ef1->addTextBox( "Info", 32, 10, awo->bufTemplInfo,
+       AWC_MAXTEMPLINFO );
+
+      awo->ef1->addLabel( " " );
+      awo->ef1->addSeparator();
+      awo->ef1->addLabel( " " );
+
       for ( i=0; i<AWC_MAXTMPLPARAMS; i++ ) {
-        awo->ef1->beginLeftSubForm();
+        //awo->ef1->beginLeftSubForm();
         char paramName[15+1];
-        snprintf( paramName, 15, "%s%-d", activeWindowClass_str219, i+1 );
+        snprintf( paramName, 15, "    %s%-d", activeWindowClass_str219, i+1 );
         strcpy( awo->bufParamValue[i], awo->paramValue[i] );
-        awo->ef1->addTextField( paramName, 35, awo->bufParamValue[i], AWC_MAXTMPLPARAMS );
-        awo->ef1->endSubForm();
+        awo->ef1->addTextField( paramName, 35, awo->bufParamValue[i],
+         AWC_MAXTMPLPARAMS );
+        //awo->ef1->endSubForm();
       }
 
       awo->ef1->finished( awc_edit_ok1, awo );
@@ -10549,6 +10573,9 @@ activeWindowClass::activeWindowClass ( void ) : unknownTags() {
 char *str;
 int i;
 
+  strcpy( templInfo, "" );
+  bufTemplInfo = NULL;
+
   for ( i=0; i<AWC_MAXTMPLPARAMS; i++ ) {
     strcpy( paramValue[i], "" );
   }
@@ -11042,6 +11069,11 @@ pvDefPtr pvDefCur, pvDefNext;
   //if ( !isEmbedded ) fprintf( stderr, "Destroy - [%s]\n", fileNameForSym );
 
   windowState = AWC_TERMINATED;
+
+  if ( bufTemplInfo ) {
+    delete[] bufTemplInfo;
+    bufTemplInfo = NULL;
+  }
 
   if ( top ) XtUnmapWidget( top );  //??????? XtUnmapWidget
 
@@ -15759,7 +15791,7 @@ char saveParams[AWC_MAXTMPLPARAMS][AWC_TMPLPARAMSIZE+1];
   for ( i=0, ii=0; i<AWC_MAXTMPLPARAMS; i++ ) {
     if ( !blank(paramValue[i]) ) {
       if ( ii < n ) {
-        templateMacros[ii] = new char[strlen(paramValue[i])];
+        templateMacros[ii] = new char[strlen(paramValue[i])+1];
         strcpy( templateMacros[ii], paramValue[i] );
         templateExpansions[ii] = new char[AWC_TMPLPARAMSIZE+1];
         strcpy( templateExpansions[ii], "" );
@@ -17883,7 +17915,9 @@ char str[255+1], *strPtr;
   tag.loadBoolW( "disableScroll", &disableScroll, &zero );
   tag.loadW( "pixmapFlag", 3, pixmapEnumStr, pixmapEnum,
    &bgPixmapFlag, &perEnvVar );
-  tag.loadW( "templateParams", AWC_TMPLPARAMSIZE+1, (char *) paramValue, AWC_MAXTMPLPARAMS, emptyStr );
+  tag.loadW( "templateParams", AWC_TMPLPARAMSIZE+1, (char *) paramValue,
+   AWC_MAXTMPLPARAMS, emptyStr );
+  tag.loadComplexW( "templateInfo", (char *) templInfo, emptyStr );
   tag.loadW( unknownTags );
   tag.loadW( "endScreenProperties" );
   tag.loadW( "" );
@@ -18395,8 +18429,10 @@ static int pixmapEnum[3] = {
   tag.loadR( "disableScroll", &disableScroll, &zero );
   tag.loadR( "pixmapFlag", 3, pixmapEnumStr, pixmapEnum,
    &bgPixmapFlag, &perEnvVar );
-  tag.loadR( "templateParams", AWC_MAXTMPLPARAMS, AWC_TMPLPARAMSIZE+1, (char *) paramValue,
-   &numParamValues, emptyStr );
+  tag.loadR( "templateParams", AWC_MAXTMPLPARAMS, AWC_TMPLPARAMSIZE+1,
+   (char *) paramValue, &numParamValues, emptyStr );
+  tag.loadR( "templateInfo", AWC_MAXTEMPLINFO, (char *) templInfo,
+   emptyStr );
   tag.loadR( "endScreenProperties" );
 
   stat = tag.readTags( f, "endScreenProperties" );
@@ -19507,8 +19543,14 @@ char *emptyStr = "";
   tag.loadR( "orthoLineDraw", 255, junk );
   tag.loadR( "pvType", 255, junk );
   tag.loadR( "disableScroll", 255, junk );
-  tag.loadR( "templateParams", AWC_MAXTMPLPARAMS, AWC_TMPLPARAMSIZE+1, (char *) bufParamValue,
-   &bufNumParamValues, emptyStr );
+  tag.loadR( "templateParams", AWC_MAXTMPLPARAMS, AWC_TMPLPARAMSIZE+1,
+   (char *) bufParamValue, &bufNumParamValues, emptyStr );
+  if ( !bufTemplInfo ) {
+    bufTemplInfo = new char[AWC_MAXTEMPLINFO+1];
+  }
+  tag.loadR( "templateInfo", AWC_MAXTEMPLINFO, (char *) bufTemplInfo,
+   emptyStr );
+
   tag.loadR( "endScreenProperties" );
 
   stat = tag.readTags( f, "endScreenProperties" );
