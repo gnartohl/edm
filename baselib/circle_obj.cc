@@ -465,16 +465,33 @@ char title[32], *ptr;
   ef.addOption( activeCircleClass_str12, activeCircleClass_str13, &eBuf->bufLineStyle );
   ef.addColorButton( activeCircleClass_str14, actWin->ci, &eBuf->lineCb, &eBuf->bufLineColor );
   ef.addToggle( activeCircleClass_str15, &eBuf->bufLineColorMode );
+
   ef.addToggle( activeCircleClass_str16, &eBuf->bufFill );
+  fillEntry = ef.getCurItem();
   ef.addColorButton( activeCircleClass_str17, actWin->ci, &eBuf->fillCb, &eBuf->bufFillColor );
+  fillColorEntry = ef.getCurItem();
+  fillEntry->addDependency( fillColorEntry );
   ef.addToggle( activeCircleClass_str18, &eBuf->bufFillColorMode );
+  fillAlarmSensEntry = ef.getCurItem();
+  fillEntry->addDependency( fillAlarmSensEntry );
+  fillEntry->addDependencyCallbacks();
+
   ef.addTextField( activeCircleClass_str19, 30, eBuf->bufAlarmPvName,
    PV_Factory::MAX_PV_NAME );
+
   ef.addTextField( activeCircleClass_str20, 30, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
+  invisPvEntry = ef.getCurItem();
   ef.addOption( " ", activeCircleClass_str21, &eBuf->bufVisInverted );
+  visInvEntry = ef.getCurItem();
+  invisPvEntry->addDependency( visInvEntry );
   ef.addTextField( activeCircleClass_str22, 30, eBuf->bufMinVisString, 39 );
+  minVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( minVisEntry );
   ef.addTextField( activeCircleClass_str23, 30, eBuf->bufMaxVisString, 39 );
+  maxVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( maxVisEntry );
+  invisPvEntry->addDependencyCallbacks();
 
   return 1;
 

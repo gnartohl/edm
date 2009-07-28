@@ -1100,10 +1100,17 @@ activeGraphicListPtr cur;
   ef.addTextField( "Y", 30, &bufY );
   ef.addTextField( "Visibility PV", 30, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
+  invisPvEntry = ef.getCurItem();
   ef.addOption( " ", "Not Visible if|Visible if", &bufVisInverted );
+  visInvEntry = ef.getCurItem();
+  invisPvEntry->addDependency( visInvEntry );
   ef.addTextField( ">=", 30, bufMinVisString, 39 );
+  minVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( minVisEntry );
   ef.addTextField( "and <", 30, bufMaxVisString, 39 );
-
+  maxVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( maxVisEntry );
+  invisPvEntry->addDependencyCallbacks();
   ef.finished( agc_edit_ok, agc_edit_apply, agc_edit_cancel, this );
   actWin->currentEf = &ef;
   ef.popup();

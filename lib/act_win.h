@@ -463,11 +463,17 @@ typedef struct pvDefTag {
   ProcessVariable *id;
 } pvDefType, *pvDefPtr;
 
+static char stdEdlFileExt[63+1] = ".edl";
+static char defEdlFileExt[63+1] = ".edl";
+static char defEdlFileSearchMask[63+1] = "*.edl";
+
 class activeWindowClass {
 
 unknownTagList unknownTags;
 
 public:
+
+//static char stdEdlFileExt[63+1];
 
 int clearEpicsPvTypeDefault;
 
@@ -999,6 +1005,49 @@ int invalidFile, invalidBgColor;
 activeWindowClass ( void );
 
 ~activeWindowClass ( void );
+
+static char* stdExt ( void ) {
+
+  return stdEdlFileExt;
+
+}
+
+static char* defExt ( void ) {
+
+char *envPtr;
+static int init = 1;
+
+  if ( init ) {
+    init = 0;
+    envPtr = getenv( environment_str32 );
+    if ( envPtr ) {
+      strncpy( defEdlFileExt, envPtr, 62 );
+      defEdlFileExt[62] = 0;
+    }
+  }
+
+  return defEdlFileExt;
+
+}
+
+static char* defMask ( void ) {
+
+char *envPtr;
+static int init = 1;
+
+  if ( init ) {
+    init = 0;
+    envPtr = getenv( environment_str32 );
+    if ( envPtr ) {
+      strcpy( defEdlFileSearchMask, "*" );
+      Strncat( defEdlFileSearchMask, envPtr, 63 );
+      defEdlFileSearchMask[63] = 0;
+    }
+  }
+
+  return defEdlFileSearchMask;
+
+}
 
 int okToDeactivate ( void );
 

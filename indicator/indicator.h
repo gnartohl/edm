@@ -166,6 +166,14 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *labelTypeEntry, *labelEntry;
+
+entryListBase *showScaleEntry, *labelTicksEntry, *majorTicksEntry,
+ *minorTicksEntry, *scaleFormatEntry;
+
+entryListBase *limitsFromDbEntry, *scalePrecEntry, *scaleMinEntry,
+ *scaleMaxEntry;
+
 int bufX, bufY, bufW, bufH;
 
 int opComplete;

@@ -229,6 +229,12 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *ctlPvEntry, *ctlPvBitEntry;
+
+entryListBase *rdPvEntry, *rdPvBitEntry;
+
+entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry;
+
 short controlV, curControlV, readV, curReadV;
 
 int needCtlConnectInit, needCtlInfoInit, needCtlRefresh;

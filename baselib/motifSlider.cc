@@ -1567,8 +1567,13 @@ char title[32], *ptr;
 
   ef.addTextField( activeMotifSliderClass_str37, 35, eBuf->controlBufLabelName,
    PV_Factory::MAX_PV_NAME );
+  labelEntry = ef.getCurItem();
   ef.addOption( activeMotifSliderClass_str38, activeMotifSliderClass_str39,
    &bufControlLabelType );
+  labelTypeEntry = ef.getCurItem();
+  labelTypeEntry->setNumValues( 3 );
+  labelTypeEntry->addInvDependency( 2, labelEntry );
+  labelTypeEntry->addDependencyCallbacks();
 
   ef.addToggle( activeMotifSliderClass_str86, &bufShowLimits );
   ef.addToggle( activeMotifSliderClass_str87, &bufShowLabel );
@@ -1581,11 +1586,19 @@ char title[32], *ptr;
   ef.addTextField( activeMotifSliderClass_str28, 35, &bufIncrement );
 
   ef.addToggle( activeMotifSliderClass_str29, &bufLimitsFromDb );
+  limitsFromDbEntry = ef.getCurItem();
   ef.addOption( activeMotifSliderClass_str30, activeMotifSliderClass_str35,
    &bufFormatType );
   ef.addTextField( activeMotifSliderClass_str31, 35, &bufEfPrecision );
+  scalePrecEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scalePrecEntry );
   ef.addTextField( activeMotifSliderClass_str32, 35, &bufEfScaleMin );
+  scaleMinEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scaleMinEntry );
   ef.addTextField( activeMotifSliderClass_str33, 35, &bufEfScaleMax );
+  scaleMaxEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scaleMaxEntry );
+  limitsFromDbEntry->addDependencyCallbacks();
 
   ef.addColorButton( activeMotifSliderClass_str24, actWin->ci, &fgCb,
    &bufFgColor );

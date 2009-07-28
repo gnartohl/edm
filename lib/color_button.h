@@ -99,6 +99,10 @@ colorButtonClass operator = (
 
 ~colorButtonClass ( void );
 
+void enable ( void );
+
+void disable ( void );
+
 Widget create (
   Widget parent,
   int *dest,

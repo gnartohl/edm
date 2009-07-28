@@ -222,6 +222,8 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry;
+
 char bufPw1[31+1];
 char bufPw2[31+1];
 

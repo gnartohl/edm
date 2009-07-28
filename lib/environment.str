@@ -35,6 +35,7 @@
 #define environment_str29 (char *) "EDMDEBUGMODE"
 #define environment_str30 (char *) "EDMDIAGNOSTICMODE"
 #define environment_str31 (char *) "EDMXSYNC"
+#define environment_str32 (char *) "EDMDEFEXT"
 
 #define global_str1 (char *) "Symbol"
 #define global_str2 (char *) "Monitors"

@@ -1206,25 +1206,52 @@ char title[32], *ptr;
   ef.addTextField( activeBarClass_str8, 35, &bufY );
   ef.addTextField( activeBarClass_str9, 35, &bufW );
   ef.addTextField( activeBarClass_str10, 35, &bufH );
-//   ef.addTextField( activeBarClass_str11, 35, eBuf->bufControlPvName, PV_Factory::MAX_PV_NAME );
+
   ef.addTextField( activeBarClass_str12, 35, eBuf->bufReadPvName, PV_Factory::MAX_PV_NAME );
   ef.addTextField( activeBarClass_str13, 35, eBuf->bufNullPvName, PV_Factory::MAX_PV_NAME );
-  ef.addOption( activeBarClass_str14, activeBarClass_str15, &bufLabelType );
-  ef.addTextField( activeBarClass_str16, 35, eBuf->bufLabel, PV_Factory::MAX_PV_NAME );
-  ef.addToggle( activeBarClass_str18, &bufBorder );
-  ef.addToggle( activeBarClass_str19, &bufShowScale );
 
+  ef.addOption( activeBarClass_str14, activeBarClass_str15, &bufLabelType );
+  labelTypeEntry = ef.getCurItem();
+  labelTypeEntry->setNumValues( 2 );
+  ef.addTextField( activeBarClass_str16, 35, eBuf->bufLabel, PV_Factory::MAX_PV_NAME );
+  labelEntry = ef.getCurItem();
+  labelTypeEntry->addInvDependency( 0, labelEntry );
+  labelTypeEntry->addDependencyCallbacks();
+
+  ef.addToggle( activeBarClass_str18, &bufBorder );
+
+  ef.addToggle( activeBarClass_str19, &bufShowScale );
+  showScaleEntry = ef.getCurItem();
   ef.addTextField( activeBarClass_str20, 35, bufLabelTicks, 15 );
+  labelTicksEntry = ef.getCurItem();
+  showScaleEntry->addDependency( labelTicksEntry );
   ef.addTextField( activeBarClass_str21, 35, bufMajorTicks, 15 );
+  majorTicksEntry = ef.getCurItem();
+  showScaleEntry->addDependency( majorTicksEntry );
   ef.addTextField( activeBarClass_str22, 35, bufMinorTicks, 15 );
+  minorTicksEntry = ef.getCurItem();
+  showScaleEntry->addDependency( minorTicksEntry );
 
   ef.addToggle( activeBarClass_str23, &bufLimitsFromDb );
+  limitsFromDbEntry = ef.getCurItem();
   ef.addOption( activeBarClass_str24, activeBarClass_str25, bufScaleFormat, 15 );
+  scaleFormatEntry = ef.getCurItem();
+  showScaleEntry->addDependency( scaleFormatEntry );
   ef.addTextField( activeBarClass_str26, 35, bufPrecision, 15 );
+  scalePrecEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scalePrecEntry );
   ef.addTextField( activeBarClass_str27, 35, bufReadMin, 15 );
+  scaleMinEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scaleMinEntry );
   ef.addTextField( activeBarClass_str28, 35, bufReadMax, 15 );
+  scaleMaxEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scaleMaxEntry );
+  limitsFromDbEntry->addDependencyCallbacks();
 
   ef.addTextField( activeBarClass_str29, 35, bufBarOriginX, 15 );
+  scaleOriginEntry = ef.getCurItem();
+  showScaleEntry->addDependency( scaleOriginEntry );
+  showScaleEntry->addDependencyCallbacks();
 
   ef.addOption( activeBarClass_str44, activeBarClass_str45,
    &bufHorizontal );

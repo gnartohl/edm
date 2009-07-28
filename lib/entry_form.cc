@@ -23,6 +23,148 @@
 
 #include "thread.h"
 
+static void toggleEntryDependency (
+  Widget w,
+  XtPointer client,
+  XtPointer call
+) {
+
+class toggleEntry *tbo;
+int i;
+
+  tbo = (class toggleEntry *) client;
+
+  if ( XmToggleButtonGetState( w ) ) {
+    for ( i=0; i<tbo->numDepend; i++ ) {
+      if ( tbo->dependList[i].entry ) {
+        if ( tbo->dependList[i].sense ) {
+          tbo->dependList[i].entry->enable();
+        }
+        else {
+          tbo->dependList[i].entry->disable();
+        }
+      }
+    }
+  }
+  else {
+    for ( i=0; i<tbo->numDepend; i++ ) {
+      if ( tbo->dependList[i].entry ) {
+        if ( tbo->dependList[i].sense ) {
+          tbo->dependList[i].entry->disable();
+        }
+        else {
+          tbo->dependList[i].entry->enable();
+        }
+      }
+    }
+  }
+
+}
+
+static void textEntryDependency (
+  Widget w,
+  XtPointer client,
+  XtPointer call
+) {
+
+class textEntry *teo;
+char *buf;
+int i;
+
+  teo = (class textEntry *) client;
+
+  buf = XmTextGetString( w );
+  if ( !blank( buf ) ) {
+    for ( i=0; i<teo->numDepend; i++ ) {
+      if ( teo->dependList[i].entry ) {
+        if ( teo->dependList[i].sense ) {
+          teo->dependList[i].entry->enable();
+	}
+	else {
+          teo->dependList[i].entry->disable();
+	}
+      }
+    }
+  }
+  else {
+    for ( i=0; i<teo->numDepend; i++ ) {
+      if ( teo->dependList[i].entry ) {
+        if ( teo->dependList[i].sense ) {
+          teo->dependList[i].entry->disable();
+	}
+	else {
+          teo->dependList[i].entry->enable();
+	}
+      }
+    }
+  }
+  XtFree( buf );
+
+}
+
+static void optionEntryDependency (
+  Widget w,
+  XtPointer client,
+  XtPointer call
+) {
+
+widgetListPtr curpb;
+Widget curHistoryWidget;
+class optionEntry *opto;
+ int i, n;
+
+  opto = (class optionEntry *) client;
+
+  XtVaGetValues( opto->activeW,
+   XmNmenuHistory, (XtArgVal) &curHistoryWidget,
+   NULL );
+
+  if ( w != curHistoryWidget ) return;
+
+  n = 0;
+  curpb = opto->head->flink;
+  while ( curpb ) {
+
+    if ( curpb->w == w ) {
+
+      for ( i=0; i<opto->optNumDepend[n]; i++ ) {
+
+        if ( opto->optDependList[n][i].entry ) {
+          if ( opto->optDependList[n][i].sense ) {
+            opto->optDependList[n][i].entry->enable();
+	  }
+	  else {
+            opto->optDependList[n][i].entry->disable();
+	  }
+	}
+
+      }
+
+    }
+    else {
+
+      for ( i=0; i<opto->optNumDepend[n]; i++ ) {
+
+        if ( opto->optDependList[n][i].entry ) {
+          if ( opto->optDependList[n][i].sense ) {
+            opto->optDependList[n][i].entry->disable();
+	  }
+	  else {
+            opto->optDependList[n][i].entry->enable();
+	  }
+	}
+
+      }
+
+    }
+
+    curpb = curpb->flink;
+    n++;
+
+  }
+
+}
+
 static void efEventHandler (
   Widget w,
   XtPointer client,
@@ -442,6 +584,72 @@ XConfigureEvent *ce;
 
 }
 
+void entryListBase::addDependency (
+  class entryListBase* entry
+) {
+
+  if ( numDepend < 9 ) {
+    dependList[numDepend].entry = entry;
+    dependList[numDepend].sense = 1;
+    numDepend++;
+  }
+
+}
+
+void entryListBase::addInvDependency (
+  class entryListBase* entry
+) {
+
+  if ( numDepend < 9 ) {
+    dependList[numDepend].entry = entry;
+    dependList[numDepend].sense = 0;
+    numDepend++;
+  }
+
+}
+
+void entryListBase::addDependency (
+  int i,
+  class entryListBase* entry
+) {
+
+  if ( numDepend < 9 ) {
+    dependList[numDepend].entry = entry;
+    dependList[numDepend].sense = 1;
+    numDepend++;
+  }
+
+}
+
+void entryListBase::addInvDependency (
+  int i,
+  class entryListBase* entry
+) {
+
+  if ( numDepend < 9 ) {
+    dependList[numDepend].entry = entry;
+    dependList[numDepend].sense = 0;
+    numDepend++;
+  }
+
+}
+
+void entryListBase::enable ( void ) {
+
+  if ( activeW ) {
+    XtSetSensitive( activeW, True );
+  }
+
+}
+
+void entryListBase::disable ( void ) {
+
+  if ( activeW ) {
+    XtSetSensitive( activeW, False );
+  }
+
+}
+
 subFormWidget::subFormWidget ( void ) {
 
   wPtr = NULL;
@@ -473,6 +681,12 @@ toggleEntry::~toggleEntry ( void ) {
 
 }
 
+void toggleEntry::cleanup ( void ) {
+
+  removeDependencyCallbacks();
+
+}
+
 void toggleEntry::setValue ( int value ) {
 
 int n;
@@ -484,9 +698,38 @@ Arg args[2];
 
 }
 
+void toggleEntry::addDependencyCallbacks ( void ) {
+
+  if ( !haveCallback ) {
+    haveCallback = 1;
+    XtAddCallback( activeW, XmNvalueChangedCallback, toggleEntryDependency,
+     this );
+    toggleEntryDependency( activeW, this, NULL );
+  }
+
+}
+
+void toggleEntry::removeDependencyCallbacks ( void ) {
+
+  if ( haveCallback ) {
+    haveCallback = 0;
+    //XtRemoveCallback( activeW, XmNvalueChangedCallback,
+    // toggleEntryDependency, this );
+  }
+
+  numDepend = 0;
+
+}
+
 textEntry::textEntry ( void ) { }
 
 textEntry::~textEntry ( void ) {
+
+}
+
+void textEntry::cleanup ( void ) {
+
+  removeDependencyCallbacks();
 
 }
 
@@ -529,8 +772,33 @@ Arg args[2];
 
 }
 
+void textEntry::addDependencyCallbacks ( void ) {
+
+  if ( !haveCallback ) {
+    haveCallback = 1;
+    XtAddCallback( activeW, XmNvalueChangedCallback, textEntryDependency,
+     this );
+    textEntryDependency( activeW, this, NULL );
+  }
+
+}
+
+void textEntry::removeDependencyCallbacks ( void ) {
+
+  if ( haveCallback ) {
+    haveCallback = 0;
+    //XtRemoveCallback( activeW, XmNvalueChangedCallback,
+    // textEntryDependency, this );
+  }
+
+  numDepend = 0;
+
+}
+
 colorButtonEntry::colorButtonEntry ( void )
 {
+
+  theCb = NULL;
 
 }
 
@@ -552,6 +820,19 @@ Arg args[2];
 
 }
 
+void colorButtonEntry::enable ( void ) {
+
+  if ( theCb ) theCb->enable();
+
+}
+
+void colorButtonEntry::disable ( void ) {
+
+  if ( theCb ) theCb->disable();
+
+}
+
+
 fontMenuEntry::fontMenuEntry ( void )
 {
 
@@ -568,11 +849,19 @@ fontMenuEntry::~fontMenuEntry ( void )
 
 optionEntry::optionEntry ( void ) {
 
+int i;
+
 //   fprintf( stderr, "optionEntry::optionEntry - new widgetListType\n" );
 
   head = new widgetListType;
   tail = head;
   tail->flink = NULL;
+
+  numValues = 0;
+  for ( i=0; i<10; i++ ) {
+    optNumDepend[i] = 0;
+    optHaveCallback[i] = 0;
+  }
 
 }
 
@@ -584,14 +873,18 @@ widgetListPtr cur, next;
   cur = head->flink;
   while ( cur ) {
     next = cur->flink;
-//     fprintf( stderr, "optionEntry::~optionEntry - delete node\n" );
     delete[] cur->value;
     delete cur;
     cur = next;
   }
 
-//   fprintf( stderr, "optionEntry::~optionEntry - delete head\n" );
   delete head;
+
+}
+
+void optionEntry::cleanup ( void ) {
+
+  removeDependencyCallbacks();
 
 }
 
@@ -600,8 +893,6 @@ void optionEntry::setValue ( int value ) {
 widgetListPtr curpb;
 int item, n;
 Arg args[2];
-
-//   fprintf( stderr, "In optionEntry::setValue, value = %-d\n", value );
 
   item = 0;
   curpb = head->flink;
@@ -627,8 +918,6 @@ widgetListPtr curpb;
 int item, n;
 Arg args[2];
 
-//   fprintf( stderr, "In optionEntry::setValue, value = [%s]\n", value );
-
   curpb = head->flink;
   while ( curpb ) {
 
@@ -642,6 +931,105 @@ Arg args[2];
     curpb = curpb->flink;
     item++;
 
+  }
+
+}
+
+void optionEntry::addDependency (
+  int i,
+  class entryListBase* entry
+) {
+
+  if ( i < 0 ) return;
+  if ( i >= numValues ) return;
+
+  if ( optNumDepend[i] < 9 ) {
+    optDependList[i][optNumDepend[i]].entry = entry;
+    optDependList[i][optNumDepend[i]].sense = 1;
+    optNumDepend[i]++;
+  }
+
+}
+
+void optionEntry::addInvDependency (
+  int i,
+  class entryListBase* entry
+) {
+
+  if ( i < 0 ) return;
+  if ( i >= numValues ) return;
+
+  if ( optNumDepend[i] < 9 ) {
+    optDependList[i][optNumDepend[i]].entry = entry;
+    optDependList[i][optNumDepend[i]].sense = 0;
+    optNumDepend[i]++;
+  }
+
+}
+
+void optionEntry::addDependencyCallbacks ( void ) {
+
+int i;
+widgetListPtr curpb;
+
+  if ( numValues == 0 ) {
+    fprintf( stderr,
+     "optionEntry::addDependencyCallbacks - numValues not set\n" );
+  }
+
+  i = 0;
+  curpb = head->flink;
+  while ( curpb ) {
+
+    if ( i <= numValues ) {
+      if ( !optHaveCallback[i] ) {
+        optHaveCallback[i] = 1;
+        if ( curpb->w ) {
+          XtAddCallback( curpb->w, XmNactivateCallback,
+           optionEntryDependency, this );
+          optionEntryDependency( curpb->w, this, NULL );
+        }
+      }
+    }
+    else {
+      return;
+    }
+
+    curpb = curpb->flink;
+    i++;
+
+  }
+
+}
+
+void optionEntry::removeDependencyCallbacks ( void ) {
+
+widgetListPtr curpb;
+int i;
+
+  i = 0;
+  curpb = head->flink;
+  while ( curpb ) {
+
+    if ( i <= numValues ) {
+
+      if ( optHaveCallback[i] ) {
+        optHaveCallback[i] = 0;
+        //XtRemoveCallback( curpb->w, XmNactivateCallback,
+        // optionEntryDependency, this );
+      }
+
+    }
+
+    curpb = curpb->flink;
+    i++;
+
+  }
+
+  numValues = 0;
+  for ( i=0; i<10; i++ ) {
+    optNumDepend[i] = 0;
+    optHaveCallback[i] = 0;
   }
 
 }
@@ -719,6 +1107,12 @@ entryListBase *cur, *next;
 
 // fprintf( stderr, "entryFormClass::destroy\n" );
 
+  cur = itemHead->flink;
+  while ( cur ) {
+    cur->cleanup();
+    cur = cur->flink;
+  }
+
   if ( entryFontList ) XmFontListFree( entryFontList );
   if ( actionFontList ) XmFontListFree( actionFontList );
 
@@ -750,6 +1144,13 @@ entryListBase *cur, *next;
   }
 
   return 1;
+
+}
+
+entryListBase *entryFormClass::getCurItem ( void )
+{
+
+  return itemTail;
 
 }
 
@@ -3352,6 +3753,8 @@ colorButtonEntry *cur;
 
   cur = new colorButtonEntry;
 
+  cur->theCb = cb;
+
   if ( curTopParent == topForm ) {
 
   //fprintf( stderr, "using topForm\n" );
@@ -3620,6 +4023,8 @@ colorButtonEntry *cur;
 
   cur = new colorButtonEntry;
 
+  cur->theCb = cb;
+
   if ( curTopParent  == topForm ) {
 
   if ( firstItem ) {
@@ -3781,6 +4186,8 @@ textEntry *te;
 
   cur = new colorButtonEntry;
 
+  cur->theCb = cb;
+
   if ( firstItem ) {
 
     firstItem = 0;
@@ -3913,6 +4320,8 @@ colorButtonEntry *cur;
 textEntry *te;
 
   cur = new colorButtonEntry;
+
+  cur->theCb = cb;
 
   if ( firstItem ) {
 

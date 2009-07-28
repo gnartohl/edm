@@ -550,6 +550,23 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *nullPvEntry, *nullCondEntry, *nullColorEntry;
+
+entryListBase *limitsFromDbEntry, *precisionEntry;
+
+entryListBase *editableEntry, *keypadEntry;
+
+entryListBase *isWidgetEntry, *charModeEntry, *inFocUpdEntry, *chgValOnFocEntry,
+ *autoSelEntry, *updPvOnDropEntry, *isPwEntry;
+
+entryListBase *dateEntry, *cvtDateToFileEntry;
+
+entryListBase *fileEntry, *returnEntry, *defDirEntry, *patEntry;
+
+entryListBase *chgCbEntry;
+
+entryListBase *useDspBgEntry, *bgColorEntry;
+
 int numDecimals, formatType, colorMode,
  pvType, pvCount, svalPvType, noSval, svalPvCount;
 char format[15+1];

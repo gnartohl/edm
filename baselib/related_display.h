@@ -224,6 +224,8 @@ int numDsps, dspIndex;
 
 bufPtr buf;
 
+entryListBase *pvEntry[NUMPVS], *valEntry[NUMPVS];
+
 activeWindowClass *aw;
 int useFocus, needClose, needConnect, needUpdate, needRefresh;
 int needToDrawUnconnected, needToEraseUnconnected;

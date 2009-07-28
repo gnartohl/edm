@@ -466,18 +466,35 @@ char title[32], *ptr;
   ef.addColorButton( activeRectangleClass_str14, actWin->ci, &eBuf->lineCb,
    &eBuf->bufLineColor );
   ef.addToggle( activeRectangleClass_str15, &eBuf->bufLineColorMode );
+
   ef.addToggle( activeRectangleClass_str16, &eBuf->bufFill );
+  fillEntry = ef.getCurItem();
   ef.addColorButton( activeRectangleClass_str17, actWin->ci, &eBuf->fillCb,
    &eBuf->bufFillColor );
+  fillColorEntry = ef.getCurItem();
+  fillEntry->addDependency( fillColorEntry );
   ef.addToggle( activeRectangleClass_str18, &eBuf->bufFillColorMode );
+  fillAlarmSensEntry = ef.getCurItem();
+  fillEntry->addDependency( fillAlarmSensEntry );
+  fillEntry->addDependencyCallbacks();
+
   ef.addToggle( activeRectangleClass_str19, &eBuf->bufInvisible );
   ef.addTextField( activeRectangleClass_str20, 30, eBuf->bufAlarmPvName,
    PV_Factory::MAX_PV_NAME );
+
   ef.addTextField( activeRectangleClass_str21, 30, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
+  invisPvEntry = ef.getCurItem();
   ef.addOption( " ", activeRectangleClass_str22, &eBuf->bufVisInverted );
+  visInvEntry = ef.getCurItem();
+  invisPvEntry->addDependency( visInvEntry );
   ef.addTextField( activeRectangleClass_str23, 30, eBuf->bufMinVisString, 39 );
+  minVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( minVisEntry );
   ef.addTextField( activeRectangleClass_str24, 30, eBuf->bufMaxVisString, 39 );
+  maxVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( maxVisEntry );
+  invisPvEntry->addDependencyCallbacks();
 
   return 1;
 

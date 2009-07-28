@@ -1631,17 +1631,27 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
-  //ef.addTextField( activeButtonClass_str17, 35, bufId, 31 );
   ef.addTextField( activeButtonClass_str18, 35, &eBuf->bufX );
   ef.addTextField( activeButtonClass_str19, 35, &eBuf->bufY );
   ef.addTextField( activeButtonClass_str20, 35, &eBuf->bufW );
   ef.addTextField( activeButtonClass_str21, 35, &eBuf->bufH );
+
   ef.addTextField( activeButtonClass_str22, 35, eBuf->controlBufPvName,
    PV_Factory::MAX_PV_NAME );
+  ctlPvEntry = ef.getCurItem();
   ef.addTextField( "Bit", 35, &eBuf->bufEfControlBitPos );
+  ctlPvBitEntry = ef.getCurItem();
+  ctlPvEntry->addDependency( ctlPvBitEntry );
+  ctlPvEntry->addDependencyCallbacks();
+
   ef.addTextField( activeButtonClass_str23, 35, eBuf->readBufPvName,
    PV_Factory::MAX_PV_NAME );
+  rdPvEntry = ef.getCurItem();
   ef.addTextField( "Bit", 35, &eBuf->bufEfReadBitPos );
+  rdPvBitEntry = ef.getCurItem();
+  rdPvEntry->addDependency( rdPvBitEntry );
+  rdPvEntry->addDependencyCallbacks();
+
   ef.addOption( activeButtonClass_str24, activeButtonClass_str25,
    buttonTypeStr, 7 );
   ef.addOption( activeButtonClass_str26, activeButtonClass_str27, _3DString,
@@ -1654,11 +1664,6 @@ char title[32], *ptr;
    MAX_ENUM_STRING_SIZE );
   ef.addTextField( activeButtonClass_str33, 35, eBuf->bufOffLabel,
    MAX_ENUM_STRING_SIZE );
-
-  //ef.addToggle( activeButtonClass_str34, &eBuf->bufActivateCallbackFlag );
-  //ef.addToggle( activeButtonClass_str35, &eBuf->bufDeactivateCallbackFlag );
-  //ef.addToggle( activeButtonClass_str36, &eBuf->bufDownCallbackFlag );
-  //ef.addToggle( activeButtonClass_str37, &eBuf->bufUpCallbackFlag );
 
   ef.addColorButton( activeButtonClass_str39, actWin->ci, &eBuf->fgCb, &eBuf->bufFgColor );
   ef.addToggle( activeButtonClass_str41, &eBuf->bufFgColorMode );
@@ -1681,9 +1686,17 @@ char title[32], *ptr;
 
   ef.addTextField( activeButtonClass_str58, 30, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
+  invisPvEntry = ef.getCurItem();
   ef.addOption( " ", activeButtonClass_str59, &eBuf->bufVisInverted );
+  visInvEntry = ef.getCurItem();
+  invisPvEntry->addDependency( visInvEntry );
   ef.addTextField( activeButtonClass_str60, 30, eBuf->bufMinVisString, 39 );
+  minVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( minVisEntry );
   ef.addTextField( activeButtonClass_str61, 30, eBuf->bufMaxVisString, 39 );
+  maxVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( maxVisEntry );
+  invisPvEntry->addDependencyCallbacks();
 
   return 1;
 

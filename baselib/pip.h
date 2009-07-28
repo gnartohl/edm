@@ -222,6 +222,11 @@ typedef struct bufTag {
   int bufIgnoreMultiplexors;
 } bufType, *bufPtr;
 
+entryListBase *disSrcEntry, *pvNameEntry, *labelPvNameEntry, *fileNameEntry,
+ *menuBtnEntry;
+
+entryListBase *setSizeEntry, *sizeOfsEntry;
+
 int numDsps, dspIndex;
 
 bufPtr buf;

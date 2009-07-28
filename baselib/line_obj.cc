@@ -662,17 +662,34 @@ char title[32], *ptr;
   ef.addColorButton( activeLineClass_str14, actWin->ci, &eBuf->lineCb,
    &eBuf->bufLineColor );
   ef.addToggle( activeLineClass_str15, &eBuf->bufLineColorMode );
+
   ef.addToggle( activeLineClass_str16, &eBuf->bufFill );
+  fillEntry = ef.getCurItem();
   ef.addColorButton( activeLineClass_str17, actWin->ci, &eBuf->fillCb,
    &eBuf->bufFillColor );
+  fillColorEntry = ef.getCurItem();
+  fillEntry->addDependency( fillColorEntry );
   ef.addToggle( activeLineClass_str18, &eBuf->bufFillColorMode );
+  fillAlarmSensEntry = ef.getCurItem();
+  fillEntry->addDependency( fillAlarmSensEntry );
+  fillEntry->addDependencyCallbacks();
+
   ef.addTextField( activeLineClass_str19, 30, eBuf->bufAlarmPvName,
    PV_Factory::MAX_PV_NAME );
+
   ef.addTextField( activeLineClass_str20, 30, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
+  invisPvEntry = ef.getCurItem();
   ef.addOption( " ", activeLineClass_str22, &eBuf->bufVisInverted );
+  visInvEntry = ef.getCurItem();
+  invisPvEntry->addDependency( visInvEntry );
   ef.addTextField( activeLineClass_str23, 30, eBuf->bufMinVisString, 39 );
+  minVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( minVisEntry );
   ef.addTextField( activeLineClass_str24, 30, eBuf->bufMaxVisString, 39 );
+  maxVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( maxVisEntry );
+  invisPvEntry->addDependencyCallbacks();
 
   return 1;
 

@@ -163,6 +163,9 @@ protected:
     // Returns 1 if PV is valid
     bool get_current_values (char *text, size_t &len);
 
+    entryListBase *lineEntry, *alarmSensLineEntry;
+    entryListBase *fillEntry, *fillColorEntry;
+
     void redraw_text (Display *dis,
                       Drawable drw,
                       gcClass &gcc,

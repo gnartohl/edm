@@ -268,6 +268,12 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *finalEntry[MAXSEGS], *rateEntry[MAXSEGS];
+
+entryListBase *limitsFromDbEntry, *minEntry, *maxEntry;
+
+entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry;
+
 int destType, finalType[MAXSEGS], rampRateType[MAXSEGS], rampStateType;
 
 pvColorClass fgColor, bgColor;

@@ -936,20 +936,42 @@ int i;
   ef.addTextField( activePipClass_str7, 35, &buf->bufY );
   ef.addTextField( activePipClass_str8, 35, &buf->bufW );
   ef.addTextField( activePipClass_str9, 35, &buf->bufH );
+
   ef.addOption( "Display Source", "String PV|Form|Menu",
    &buf->bufDisplaySource );
+  disSrcEntry = ef.getCurItem();
+  disSrcEntry->setNumValues( 3 );
+
   ef.addTextField( activePipClass_str11, 35, buf->bufReadPvName,
    PV_Factory::MAX_PV_NAME );
+  pvNameEntry = ef.getCurItem();
+
   ef.addTextField( "Label PV", 35, buf->bufLabelPvName,
    PV_Factory::MAX_PV_NAME );
+  labelPvNameEntry = ef.getCurItem();
+
   ef.addTextField( activePipClass_str12, 35, buf->bufFileName, 127 );
+  fileNameEntry = ef.getCurItem();
+  disSrcEntry->addDependency( 1, fileNameEntry );
+  disSrcEntry->addInvDependency( 1, pvNameEntry );
+
   ef.addToggle( "Center", &buf->bufCenter );
+
   ef.addToggle( "Set Size", &buf->bufSetSize );
+  setSizeEntry = ef.getCurItem();
   ef.addTextField( "Size Ofs", 35, &buf->bufSizeOfs );
+  sizeOfsEntry = ef.getCurItem();
+  setSizeEntry->addDependency( sizeOfsEntry );
+  setSizeEntry->addDependencyCallbacks();
+
   ef.addToggle( "Disable Scroll Bars", &buf->bufNoScroll );
   ef.addToggle( "Ignore Multiplexors", &buf->bufIgnoreMultiplexors );
 
   ef.addEmbeddedEf( "Menu Info", "...", &ef1 );
+  menuBtnEntry = ef.getCurItem();
+  disSrcEntry->addDependency( 2, menuBtnEntry );
+  disSrcEntry->addDependency( 2, labelPvNameEntry );
+  disSrcEntry->addDependencyCallbacks();
 
   ef1->create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,

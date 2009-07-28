@@ -1483,9 +1483,17 @@ char title[32], *ptr, *envPtr, saveLock = 0;
 
   ef.addTextField( activeMessageButtonClass_str28, 30, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
+  invisPvEntry = ef.getCurItem();
   ef.addOption( " ", activeMessageButtonClass_str29, &eBuf->bufVisInverted );
+  visInvEntry = ef.getCurItem();
+  invisPvEntry->addDependency( visInvEntry );
   ef.addTextField( activeMessageButtonClass_str30, 30, eBuf->bufMinVisString, 39 );
+  minVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( minVisEntry );
   ef.addTextField( activeMessageButtonClass_str31, 30, eBuf->bufMaxVisString, 39 );
+  maxVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( maxVisEntry );
+  invisPvEntry->addDependencyCallbacks();
 
   if ( envPtr ) {
     if ( strcmp( envPtr, "TRUE" ) == 0 ) {

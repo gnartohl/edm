@@ -106,6 +106,8 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry;
+
 int bufX, bufY;
 ProcessVariable *visPvId;
 expStringClass visPvExpStr;

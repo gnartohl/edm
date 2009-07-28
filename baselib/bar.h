@@ -158,6 +158,14 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *labelTypeEntry, *labelEntry;
+
+entryListBase *showScaleEntry, *labelTicksEntry, *majorTicksEntry,
+ *minorTicksEntry, *scaleFormatEntry, *scaleOriginEntry;
+
+entryListBase *limitsFromDbEntry, *scalePrecEntry, *scaleMinEntry,
+ *scaleMaxEntry;
+
 int bufX, bufY, bufW, bufH;
 
 int opComplete;
@@ -167,8 +175,8 @@ int minH, minVertH;
 
 double controlV, curControlV, readV, curReadV, curNullV;
 int barY, oldBarY, barH, oldBarH, barW, oldBarW, bufInvalid, barX, oldBarX,
- originW, originH, mode, barAreaX, barAreaW, barAreaY, barAreaH, barStrLen, barMaxW, barMaxH,
- aboveBarOrigin, oldAboveBarOrigin, zeroCrossover;
+ originW, originH, mode, barAreaX, barAreaW, barAreaY, barAreaH, barStrLen,
+ barMaxW, barMaxH, aboveBarOrigin, oldAboveBarOrigin, zeroCrossover;
 double barOriginX, barOriginY, factorLt, factorGe;
 expStringClass barOriginXExpStr;
 

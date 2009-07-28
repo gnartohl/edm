@@ -77,7 +77,7 @@ char *gotOne;
 
     strncpy( name, fileName, 255 );
 
-    // remove extension if .edl
+    // remove extension if .edl (default one)
     l = strlen( name );
 
     more = 1;
@@ -88,7 +88,8 @@ char *gotOne;
 	more = 0;
 
         if ( l-i >= 4 ) {
-          if ( strcmp( &name[i], ".edl" ) == 0 ) {
+          //if ( strcmp( &name[i], ".edl" ) == 0 ) {
+          if ( strcmp( &name[i], activeWindowClass::defExt() ) == 0 ) {
 	    name[i] = 0;
 	  }
 	}
@@ -115,7 +116,7 @@ char *gotOne;
 
   }
 
-  // remove extension if .edl
+  // remove extension if .edl (default one)
   l = strlen( name );
 
     more = 1;
@@ -126,7 +127,8 @@ char *gotOne;
 	more = 0;
 
         if ( l-i >= 3 ) {
-          if ( strcmp( &name[i], ".edl" ) == 0 ) {
+          //if ( strcmp( &name[i], ".edl" ) == 0 ) {
+          if ( strcmp( &name[i], activeWindowClass::defExt() ) == 0 ) {
 	    name[i] = 0;
 	  }
 	}
@@ -533,7 +535,7 @@ static void awc_tedit_ok (
 {
 
 activeWindowClass *awo = (activeWindowClass *) client;
-int i, num_selected;
+int num_selected;
 activeGraphicListPtr curSel;
 
   awc_tedit_apply( w, client, call );
@@ -1021,7 +1023,6 @@ char *fName;
 activeWindowClass *awo = (activeWindowClass *) client;
 XmFileSelectionBoxCallbackStruct *cbs =
  (XmFileSelectionBoxCallbackStruct *) call;
-activeWindowListPtr cur;
 int i, stat, num_selected;
 activeGraphicListPtr curSel;
 
@@ -3822,7 +3823,8 @@ Atom wm_delete_window;
 	strncpy( awo->newPath, awo->appCtx->curPath, 255 );
         awo->newPath[255] = 0;
         Strncat( awo->newPath, name, 255 );
-        Strncat( awo->newPath, ".edl", 255 );
+        //Strncat( awo->newPath, ".edl", 255 );
+        Strncat( awo->newPath, activeWindowClass::defExt(), 255 );
         strcpy( saveMsg, activeWindowClass_str197 );
         Strncat( saveMsg, awo->newPath, 255 );
         Strncat( saveMsg, "?", 255 );
@@ -15210,15 +15212,20 @@ int stat;
 
   if ( appendExtensionFlag ) {
 
-    if ( strlen(oneFileName) > strlen(".edl") ) {
+    //if ( strlen(oneFileName) > strlen(".edl") ) {
+    if ( strlen(oneFileName) > strlen(activeWindowClass::defExt()) ) {
       if (
-       strcmp( &oneFileName[strlen(oneFileName)-strlen(".edl")], ".edl" ) !=
-       0 ) {
-        Strncat( oneFileName, ".edl", 255 );
+        //strcmp( &oneFileName[strlen(oneFileName)-strlen(".edl")],
+        // ".edl" ) != 0 ) {
+        strcmp( &oneFileName[strlen(oneFileName)-strlen(activeWindowClass::defExt())],
+         activeWindowClass::defExt() ) != 0 ) {
+        //Strncat( oneFileName, ".edl", 255 );
+        Strncat( oneFileName, activeWindowClass::defExt(), 255 );
       }
     }
     else {
-      Strncat( oneFileName, ".edl", 255 );
+      //Strncat( oneFileName, ".edl", 255 );
+      Strncat( oneFileName, activeWindowClass::defExt(), 255 );
     }
 
   }
@@ -15304,15 +15311,20 @@ tagClass tag;
 
   if ( appendExtensionFlag ) {
 
-    if ( strlen(oneFileName) > strlen(".edl") ) {
+    //if ( strlen(oneFileName) > strlen(".edl") ) {
+    if ( strlen(oneFileName) > strlen(activeWindowClass::defExt()) ) {
       if (
-       strcmp( &oneFileName[strlen(oneFileName)-strlen(".edl")], ".edl" ) !=
-       0 ) {
-        Strncat( oneFileName, ".edl", 255 );
+	//strcmp( &oneFileName[strlen(oneFileName)-strlen(".edl")],
+        // ".edl" ) != 0 ) {
+        strcmp( &oneFileName[strlen(oneFileName)-strlen(activeWindowClass::defExt())],
+         activeWindowClass::defExt() ) != 0 ) {
+        //Strncat( oneFileName, ".edl", 255 );
+        Strncat( oneFileName, activeWindowClass::defExt(), 255 );
       }
     }
     else {
-      Strncat( oneFileName, ".edl", 255 );
+      //Strncat( oneFileName, ".edl", 255 );
+      Strncat( oneFileName, activeWindowClass::defExt(), 255 );
     }
 
   }
@@ -15706,13 +15718,10 @@ int i;
 
 int activeWindowClass::getTemplateMacros ( void ) {
 
-char tmplName[255+1];
 tagClass tag;
 FILE *f;
-int i, ii, n, stat, winMajor, winMinor, winRelease;
+int i, ii, n, winMajor, winMinor, winRelease;
 char saveParams[AWC_MAXTMPLPARAMS][AWC_TMPLPARAMSIZE+1];
-expStringClass tmpStr[AWC_MAXTMPLPARAMS];
-char *emptyStr = "";
 
   numTemplateMacros = 0;
 
@@ -15774,13 +15783,11 @@ int activeWindowClass::loadTemplate (
   char *fname ) {
 
 FILE *f;
-activeGraphicListPtr cur, next;
-char *gotOne, name[63+1], tagName[255+1], objName[63+1], val[4095+1],
+activeGraphicListPtr cur;
+char *gotOne, tagName[255+1], objName[63+1], val[4095+1],
  defName[255+1];
-int stat, l;
+int stat;
 char msg[79+1];
-Widget clipWidget, hsbWidget, vsbWidget;
-pvDefPtr pvDefCur;
 int winMajor, winMinor, winRelease;
 
 int isCompound;
@@ -16453,11 +16460,12 @@ char msg[79+1];
 
   fclose( f );
 
-  // change file extension to .edl
+  // change file extension to .edl (default one)
   l = strlen(this->fileName);
   if ( l > 4 ) {
     if ( strcmp( &this->fileName[l-4], ".xch" ) == 0 ) {
-      strcpy( &this->fileName[l-4], ".edl" );
+      //strcpy( &this->fileName[l-4], ".edl" );
+      strcpy( &this->fileName[l-4], activeWindowClass::defExt() );
     }
   }
 
@@ -19602,14 +19610,19 @@ int result;
     Strncat( oneFileName, fName, 255 );
   }
 
-  if ( strlen(oneFileName) > strlen(".edl") ) {
-    if ( strcmp( &oneFileName[strlen(oneFileName)-strlen(".edl")], ".edl" ) !=
-      0 ) {
-      Strncat( oneFileName, ".edl", 255 );
+  //if ( strlen(oneFileName) > strlen(".edl") ) {
+  if ( strlen(oneFileName) > strlen(activeWindowClass::defExt()) ) {
+    //if ( strcmp( &oneFileName[strlen(oneFileName)-strlen(".edl")],
+    //   ".edl" ) != 0 ) {
+    if ( strcmp( &oneFileName[strlen(oneFileName)-strlen(activeWindowClass::defExt())],
+       activeWindowClass::defExt() ) != 0 ) {
+      //Strncat( oneFileName, ".edl", 255 );
+      Strncat( oneFileName, activeWindowClass::defExt(), 255 );
     }
   }
   else {
-    Strncat( oneFileName, ".edl", 255 );
+    //Strncat( oneFileName, ".edl", 255 );
+    Strncat( oneFileName, activeWindowClass::defExt(), 255 );
   }
 
   //f = fopen( oneFileName, "r" );
@@ -20118,9 +20131,14 @@ char buf[255+1];
 FILE *f;
 int i;
 
+  //printf( "standard ext is [%s]\n", activeWindowClass::stdExt() );
+  //printf( "default ext is [%s]\n", activeWindowClass::defExt() );
+  //printf( "default search mask is [%s]\n", activeWindowClass::defMask() );
+
   for ( i=0; i<appCtx->numPaths; i++ ) {
 
-    appCtx->expandFileName( i, buf, name, ".edl", 255 );
+    //appCtx->expandFileName( i, buf, name, ".edl", 255 );
+    appCtx->expandFileName( i, buf, name, activeWindowClass::defExt(), 255 );
 
     if ( strcmp( buf, "" ) != 0 ) {
       //f = fopen( buf, mode );
@@ -20149,7 +20167,8 @@ int i;
 
   for ( i=0; i<appCtx->numPaths; i++ ) {
 
-    appCtx->expandFileName( i, buf, name, ".edl", 255 );
+    //appCtx->expandFileName( i, buf, name, ".edl", 255 );
+    appCtx->expandFileName( i, buf, name, activeWindowClass::defExt(), 255 );
 
     if ( strcmp( buf, "" ) != 0 ) {
       f = fileOpen( buf, mode );
@@ -20201,7 +20220,8 @@ int i;
 
   for ( i=0; i<appCtx->numPaths; i++ ) {
 
-    appCtx->expandFileName( i, buf, name, ".edl", 255 );
+    //appCtx->expandFileName( i, buf, name, ".edl", 255 );
+    appCtx->expandFileName( i, buf, name, activeWindowClass::defExt(), 255 );
 
     if ( strcmp( buf, "" ) != 0 ) {
       //f = fopen( buf, mode );
@@ -20989,7 +21009,8 @@ char *sysMacros[] = {
   // ============
 
   Strncat( buf, fName, 255 );
-  Strncat( buf, ".edl", 255 );
+  //Strncat( buf, ".edl", 255 );
+  Strncat( buf, activeWindowClass::defExt(), 255 );
 
   cur = new activeWindowListType;
   appCtx->addActiveWindow( cur );

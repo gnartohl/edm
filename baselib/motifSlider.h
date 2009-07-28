@@ -311,6 +311,11 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *labelTypeEntry, *labelEntry;
+
+entryListBase *limitsFromDbEntry, *scalePrecEntry, *scaleMinEntry,
+ *scaleMaxEntry;
+
 int bufX, bufY, bufW, bufH;
 
 Widget frameWidget, motifSliderWidget, scaleWidget, scrollBarWidget;

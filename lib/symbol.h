@@ -182,6 +182,13 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *cntlPvEntry[SYMBOL_K_MAX_PVS],
+ *andMaskEntry[SYMBOL_K_MAX_PVS],
+ *xorMaskEntry[SYMBOL_K_MAX_PVS],
+ *shiftCountEntry[SYMBOL_K_MAX_PVS];
+
+entryListBase *presColorEntry, *fgColorEntry, *bgColorEntry;
+
 int fgColor, bgColor;
 colorButtonClass fgCb, bgCb;
 

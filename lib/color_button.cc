@@ -135,6 +135,20 @@ colorButtonClass::~colorButtonClass ( void ) {
 
 }
 
+void colorButtonClass::enable ( void ) {
+
+  if ( pb ) XtSetSensitive( pb, True );
+  if ( namePb ) XtSetSensitive( namePb, True );
+
+}
+
+void colorButtonClass::disable ( void ) {
+
+  if ( pb ) XtSetSensitive( pb, False );
+  if ( namePb ) XtSetSensitive( namePb, False );
+
+}
+
 static void setActive_cb (
   Widget w,
   XtPointer client,

@@ -947,8 +947,15 @@ char title[32], *ptr;
    PV_Factory::MAX_PV_NAME );
 
   ef.addToggle( activeRampButtonClass_str26, &eBuf->bufLimitsFromDb );
+  limitsFromDbEntry = ef.getCurItem();
   ef.addTextField( activeRampButtonClass_str27, 35, &eBuf->bufEfScaleMin );
+  minEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( minEntry );
   ef.addTextField( activeRampButtonClass_str28, 35, &eBuf->bufEfScaleMax );
+  maxEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( maxEntry );
+  limitsFromDbEntry->addDependencyCallbacks();
+
   ef.addTextField( activeRampButtonClass_str10, 35, &eBuf->bufRampRate );
   ef.addTextField( activeRampButtonClass_str11, 35, &eBuf->bufUpdateRate );
   ef.addToggle( activeRampButtonClass_str12, &eBuf->buf3D );
@@ -968,9 +975,17 @@ char title[32], *ptr;
 
   ef.addTextField( activeRampButtonClass_str29, 30, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
+  invisPvEntry = ef.getCurItem();
   ef.addOption( " ", activeRampButtonClass_str30, &eBuf->bufVisInverted );
+  visInvEntry = ef.getCurItem();
+  invisPvEntry->addDependency( visInvEntry );
   ef.addTextField( activeRampButtonClass_str31, 30, eBuf->bufMinVisString, 39 );
+  minVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( minVisEntry );
   ef.addTextField( activeRampButtonClass_str32, 30, eBuf->bufMaxVisString, 39 );
+  maxVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( maxVisEntry );
+  invisPvEntry->addDependencyCallbacks();
 
   return 1;
 

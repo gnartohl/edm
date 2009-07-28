@@ -164,6 +164,13 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *useGateEntry, *gateOnMouseEntry, *gateUpPvEntry, *gateDnPvEntry, 
+*gateUpValEntry, *gateDnValEntry;
+
+entryListBase *contEntry, *rateEntry;
+
+entryListBase *presColorEntry, *fgColorEntry, *bgColorEntry;
+
 int bufX;
 int bufY;
 int bufW;

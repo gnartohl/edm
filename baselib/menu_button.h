@@ -213,6 +213,8 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry;
+
 int bufX, bufY, bufW, bufH;
 
 short curValue, value, curReadValue, readValue;

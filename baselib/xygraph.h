@@ -469,6 +469,12 @@ typedef struct editBufTag {
 
 } editBufType, *editBufPtr;
 
+entryListBase *scaleInwardEntry, *scaleInwardTimerEntry, *scaleInwardThreshEntry;
+
+
+entryListBase *resetPvEntry, *resetModeEntry;
+
+
 typedef struct objPlusIndexTag {
   void *objPtr;
   int index;

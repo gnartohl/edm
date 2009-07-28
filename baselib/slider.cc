@@ -1738,31 +1738,52 @@ char title[32], *ptr;
 
   ef.addTextField( activeSliderClass_str36, 35, eBuf->controlBufPvName,
    PV_Factory::MAX_PV_NAME );
+
   ef.addTextField( activeSliderClass_str42, 35, eBuf->readBufPvName,
    PV_Factory::MAX_PV_NAME );
+  rdPvEntry = ef.getCurItem();
+
   ef.addTextField( activeSliderClass_str48, 35, eBuf->savedValueBufPvName,
    PV_Factory::MAX_PV_NAME );
 
   ef.addTextField( activeSliderClass_str37, 35, eBuf->controlBufLabelName,
    PV_Factory::MAX_PV_NAME );
+  ctlLabelEntry = ef.getCurItem();
   ef.addOption( activeSliderClass_str38, activeSliderClass_str39,
    controlLabelTypeStr, 15 );
+  ctlLabelTypeEntry = ef.getCurItem();
+  ctlLabelTypeEntry->setNumValues( 3 );
+  ctlLabelTypeEntry->addInvDependency( 2, ctlLabelEntry );
+  ctlLabelTypeEntry->addDependencyCallbacks();
 
   ef.addTextField( activeSliderClass_str43, 35, eBuf->readBufLabelName,
    PV_Factory::MAX_PV_NAME );
+  rdLabelEntry = ef.getCurItem();
   ef.addOption( activeSliderClass_str44, activeSliderClass_str45,
    readLabelTypeStr, 15 );
+  rdLabelTypeEntry = ef.getCurItem();
+  rdLabelTypeEntry->setNumValues( 3 );
+  rdLabelTypeEntry->addInvDependency( 2, rdLabelEntry );
+  rdLabelTypeEntry->addDependencyCallbacks();
 
   ef.addTextField( activeSliderClass_str28, 35, &eBuf->bufIncrement );
 
   ef.addTextField( activeSliderClass_str86, 35, &eBuf->bufAccelMultiplier );
 
   ef.addToggle( activeSliderClass_str29, &eBuf->bufLimitsFromDb );
+  limitsFromDbEntry = ef.getCurItem();
   ef.addOption( activeSliderClass_str30, activeSliderClass_str35,
    eBuf->bufDisplayFormat, 15 );
   ef.addTextField( activeSliderClass_str31, 35, &eBuf->bufEfPrecision );
+  precEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( precEntry );
   ef.addTextField( activeSliderClass_str32, 35, &eBuf->bufEfScaleMin );
+  scaleMinEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scaleMinEntry );
   ef.addTextField( activeSliderClass_str33, 35, &eBuf->bufEfScaleMax );
+  scaleMaxEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scaleMaxEntry );
+  limitsFromDbEntry->addDependencyCallbacks();
 
   ef.addColorButton( activeSliderClass_str24, actWin->ci, &eBuf->fgCb, &eBuf->bufFgColor );
   ef.addColorButton( activeSliderClass_str26, actWin->ci, &eBuf->bgCb, &eBuf->bufBgColor );
@@ -1771,15 +1792,17 @@ char title[32], *ptr;
   ef.addColorButton( activeSliderClass_str40, actWin->ci, &eBuf->controlCb,
    &eBuf->bufControlColor );
   ef.addToggle( activeSliderClass_str41, &eBuf->bufControlColorMode );
+
   ef.addColorButton( activeSliderClass_str46, actWin->ci, &eBuf->readCb,
    &eBuf->bufReadColor );
+  rdPvColorEntry = ef.getCurItem();
+  rdPvEntry->addDependency( rdPvColorEntry );
   ef.addToggle( activeSliderClass_str47, &eBuf->bufReadColorMode );
+  rdPvAlarmSensEntry = ef.getCurItem();
+  rdPvEntry->addDependency( rdPvAlarmSensEntry );
+  rdPvEntry->addDependencyCallbacks();
 
   ef.addFontMenu( activeSliderClass_str23, actWin->fi, &fm, fontTag );
-
-  //ef.addToggle( activeSliderClass_str49, &eBuf->bufActivateCallbackFlag );
-  //ef.addToggle( activeSliderClass_str50, &eBuf->bufDeactivateCallbackFlag );
-  //ef.addToggle( activeSliderClass_str51, &eBuf->bufChangeCallbackFlag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 

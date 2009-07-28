@@ -140,6 +140,10 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry;
+
+entryListBase *fillEntry, *fillColorEntry, *fillAlarmSensEntry;
+
 pvColorClass fgColor;
 int fgColorMode;
 

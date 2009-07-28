@@ -1823,7 +1823,11 @@ char title[32], *ptr;
   for ( i=0; i<NUMPVS; i++ ) {
     ef.addTextField( relatedDisplayClass_str15, 35, buf->bufDestPvName[i],
      PV_Factory::MAX_PV_NAME );
+    pvEntry[i] = ef.getCurItem();
     ef.addTextField( relatedDisplayClass_str16, 35, buf->bufSource[i], 39 );
+    valEntry[i] = ef.getCurItem();
+    pvEntry[i]->addDependency( valEntry[i] );
+    pvEntry[i]->addDependencyCallbacks();
   }
 
   ef.addColorButton( relatedDisplayClass_str8, actWin->ci, &fgCb, &buf->bufFgColor );

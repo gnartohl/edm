@@ -3860,16 +3860,28 @@ int noedit;
    PV_Factory::MAX_PV_NAME );
   ef.addTextField( activeXTextDspClass_str74, 35, eBuf->bufColorPvName,
    PV_Factory::MAX_PV_NAME );
+
   ef.addTextField( activeXTextDspClass_str25, 35, eBuf->bufSvalPvName,
    PV_Factory::MAX_PV_NAME );
+  nullPvEntry = ef.getCurItem();
+
   ef.addOption( activeXTextDspClass_str23, activeXTextDspClass_str24,
    &eBuf->bufNullDetectMode );
+  nullCondEntry = ef.getCurItem();
+  nullPvEntry->addDependency( nullCondEntry );
+
   ef.addOption( activeXTextDspClass_str18,
    activeXTextDspClass_str19, &eBuf->bufFormatType );
   ef.addToggle( activeXTextDspClass_str77, &eBuf->bufUseHexPrefix );
+
   ef.addToggle( activeXTextDspClass_str20, &eBuf->bufLimitsFromDb );
-  ef.addTextField( activeXTextDspClass_str85, 35, eBuf->bufFieldLenInfo, 7 );
+  limitsFromDbEntry = ef.getCurItem();
   ef.addTextField( activeXTextDspClass_str21, 35, &eBuf->bufEfPrecision );
+  precisionEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( precisionEntry );
+  limitsFromDbEntry->addDependencyCallbacks();
+
+  ef.addTextField( activeXTextDspClass_str85, 35, eBuf->bufFieldLenInfo, 7 );
   ef.addToggle( activeXTextDspClass_str88, &eBuf->bufNoExecuteClipMask );
   ef.addToggle( activeXTextDspClass_str84, &eBuf->bufClipToDspLimits );
   ef.addToggle( activeXTextDspClass_str81, &eBuf->bufShowUnits );
@@ -3877,28 +3889,51 @@ int noedit;
 
   if ( !noedit ) {
     ef.addToggle( activeXTextDspClass_str27, &eBuf->bufEditable );
+    editableEntry = ef.getCurItem();
   }
   else {
     eBuf->bufEditable = editable = 0;
+    editableEntry = NULL;
   }
 
   if ( !noedit ) {
     ef.addToggle( activeXTextDspClass_str67, &eBuf->bufUseKp );
+    keypadEntry = ef.getCurItem();
   }
   else {
     eBuf->bufUseKp = useKp = 0;
+    keypadEntry = NULL;
   }
 
   ef.addToggle( activeXTextDspClass_str28, &eBuf->bufSmartRefresh );
   ef.addToggle( activeXTextDspClass_str29, &eBuf->bufIsWidget );
+  if ( !noedit ) {
+    isWidgetEntry = ef.getCurItem();
+  }
+  else {
+    isWidgetEntry = NULL;
+  }
 
   if ( !noedit ) {
     ef.addToggle( activeXTextDspClass_str87, &eBuf->bufCharacterMode );
+    charModeEntry = ef.getCurItem();
+    isWidgetEntry->addDependency( charModeEntry );
     ef.addToggle( activeXTextDspClass_str83, &eBuf->bufInputFocusUpdatesAllowed );
+    inFocUpdEntry = ef.getCurItem();
+    isWidgetEntry->addDependency( inFocUpdEntry );
     ef.addToggle( activeXTextDspClass_str68, &eBuf->bufChangeValOnLoseFocus );
+    chgValOnFocEntry = ef.getCurItem();
+    isWidgetEntry->addDependency( chgValOnFocEntry );
     ef.addToggle( activeXTextDspClass_str75, &eBuf->bufAutoSelect );
+    autoSelEntry = ef.getCurItem();
+    isWidgetEntry->addDependency( autoSelEntry );
     ef.addToggle( activeXTextDspClass_str76, &eBuf->bufUpdatePvOnDrop );
+    updPvOnDropEntry = ef.getCurItem();
+    isWidgetEntry->addDependency( updPvOnDropEntry );
     ef.addToggle( activeXTextDspClass_str86, &eBuf->bufIsPassword );
+    isPwEntry = ef.getCurItem();
+    isWidgetEntry->addDependency( isPwEntry );
+    isWidgetEntry->addDependencyCallbacks();
   }
   else {
     eBuf->bufCharacterMode = characterMode = 0;
@@ -3913,35 +3948,67 @@ int noedit;
 
   if ( !noedit ) {
     ef.addToggle( activeXTextDspClass_str70, &eBuf->bufIsDate );
+    dateEntry = ef.getCurItem();
     ef.addToggle( activeXTextDspClass_str80, &eBuf->bufDateAsFileName );
+    cvtDateToFileEntry = ef.getCurItem();
+    dateEntry->addDependency( cvtDateToFileEntry );
+    dateEntry->addDependencyCallbacks();
     ef.addToggle( activeXTextDspClass_str71, &eBuf->bufIsFile );
+    fileEntry = ef.getCurItem();
     ef.addOption( activeXTextDspClass_str78,
      activeXTextDspClass_str79, &eBuf->bufFileComponent );
+    returnEntry = ef.getCurItem();
+    fileEntry->addDependency( returnEntry );
     ef.addTextField( activeXTextDspClass_str72, 35, eBuf->bufDefDir, XTDC_K_MAX );
+    defDirEntry = ef.getCurItem();
+    fileEntry->addDependency( defDirEntry );
     ef.addTextField( activeXTextDspClass_str73, 35, eBuf->bufPattern, XTDC_K_MAX );
+    patEntry = ef.getCurItem();
+    fileEntry->addDependency( patEntry );
+    fileEntry->addDependencyCallbacks();
   }
   else {
     eBuf->bufIsDate = isDate = 0;
     eBuf->bufIsFile = isFile = 0;
     fileComponent = XTDC_K_FILE_FULL_PATH;
     dateAsFileName = 0;
+    dateEntry = fileEntry = NULL;
   }
 
   ef.addColorButton( activeXTextDspClass_str15, actWin->ci, &eBuf->fgCb,
    &eBuf->bufFgColor );
   ef.addToggle( activeXTextDspClass_str14, &eBuf->bufColorMode );
   ef.addToggle( activeXTextDspClass_str82, &eBuf->bufUseAlarmBorder );
+
   ef.addColorButton( activeXTextDspClass_str16, actWin->ci, &eBuf->bgCb,
    &eBuf->bufBgColor );
+  bgColorEntry = ef.getCurItem();
   ef.addToggle( activeXTextDspClass_str17, &eBuf->bufUseDisplayBg );
+  useDspBgEntry = ef.getCurItem();
+  useDspBgEntry->addInvDependency( bgColorEntry );
+  useDspBgEntry->addDependencyCallbacks();
+
   ef.addColorButton( activeXTextDspClass_str26, actWin->ci, &eBuf->svalCb,
    &eBuf->bufSvalColor );
+  nullColorEntry = ef.getCurItem();
+  nullPvEntry->addDependency( nullColorEntry );
+  nullPvEntry->addDependencyCallbacks();
+
   ef.addFontMenu( activeXTextDspClass_str12, actWin->fi, &fm, eBuf->bufFontTag );
   fm.setFontAlignment( alignment );
 
-  //ef.addToggle( activeXTextDspClass_str30, &eBuf->bufActivateCallbackFlag );
-  //ef.addToggle( activeXTextDspClass_str31, &eBuf->bufDeactivateCallbackFlag );
-  ef.addToggle( activeXTextDspClass_str32, &eBuf->bufChangeCallbackFlag );
+  if ( !noedit ) {
+    ef.addToggle( activeXTextDspClass_str32, &eBuf->bufChangeCallbackFlag );
+    chgCbEntry = ef.getCurItem();
+  }
+
+  if ( !noedit ) {
+    editableEntry->addDependency( keypadEntry );
+    editableEntry->addDependency( dateEntry );
+    editableEntry->addDependency( fileEntry );
+    editableEntry->addDependency( chgCbEntry );
+    editableEntry->addDependencyCallbacks();
+  }
 
   return 1;
 

@@ -1186,33 +1186,60 @@ int i;
   i = 0;
   ef.addTextField( activeMultSegRampButtonClass_str9, 35, eBuf->bufFinalPvName[i],
    PV_Factory::MAX_PV_NAME );
+  finalEntry[i] = ef.getCurItem();
   ef.addTextField( activeMultSegRampButtonClass_str10, 35, eBuf->bufRampRatePvName[i],
    PV_Factory::MAX_PV_NAME );
+  rateEntry[i] = ef.getCurItem();
+  finalEntry[i]->addDependency( rateEntry[i] );
+  finalEntry[i]->addDependencyCallbacks();
   i++;
   ef.addTextField( activeMultSegRampButtonClass_str35, 35, eBuf->bufFinalPvName[i],
    PV_Factory::MAX_PV_NAME );
+  finalEntry[i] = ef.getCurItem();
   ef.addTextField( activeMultSegRampButtonClass_str39, 35, eBuf->bufRampRatePvName[i],
    PV_Factory::MAX_PV_NAME );
+  rateEntry[i] = ef.getCurItem();
+  finalEntry[i]->addDependency( rateEntry[i] );
+  finalEntry[i]->addDependencyCallbacks();
   i++;
   ef.addTextField( activeMultSegRampButtonClass_str36, 35, eBuf->bufFinalPvName[i],
    PV_Factory::MAX_PV_NAME );
+  finalEntry[i] = ef.getCurItem();
   ef.addTextField( activeMultSegRampButtonClass_str40, 35, eBuf->bufRampRatePvName[i],
    PV_Factory::MAX_PV_NAME );
+  rateEntry[i] = ef.getCurItem();
+  finalEntry[i]->addDependency( rateEntry[i] );
+  finalEntry[i]->addDependencyCallbacks();
   i++;
   ef.addTextField( activeMultSegRampButtonClass_str37, 35, eBuf->bufFinalPvName[i],
    PV_Factory::MAX_PV_NAME );
+  finalEntry[i] = ef.getCurItem();
   ef.addTextField( activeMultSegRampButtonClass_str41, 35, eBuf->bufRampRatePvName[i],
    PV_Factory::MAX_PV_NAME );
+  rateEntry[i] = ef.getCurItem();
+  finalEntry[i]->addDependency( rateEntry[i] );
+  finalEntry[i]->addDependencyCallbacks();
   i++;
   ef.addTextField( activeMultSegRampButtonClass_str38, 35, eBuf->bufFinalPvName[i],
    PV_Factory::MAX_PV_NAME );
+  finalEntry[i] = ef.getCurItem();
   ef.addTextField( activeMultSegRampButtonClass_str42, 35, eBuf->bufRampRatePvName[i],
    PV_Factory::MAX_PV_NAME );
+  rateEntry[i] = ef.getCurItem();
+  finalEntry[i]->addDependency( rateEntry[i] );
+  finalEntry[i]->addDependencyCallbacks();
   i++;
 
   ef.addToggle( activeMultSegRampButtonClass_str26, &eBuf->bufLimitsFromDb );
+  limitsFromDbEntry = ef.getCurItem();
   ef.addTextField( activeMultSegRampButtonClass_str27, 35, &eBuf->bufEfScaleMin );
+  minEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( minEntry );
   ef.addTextField( activeMultSegRampButtonClass_str28, 35, &eBuf->bufEfScaleMax );
+  maxEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( maxEntry );
+  limitsFromDbEntry->addDependencyCallbacks();
+
   ef.addTextField( activeMultSegRampButtonClass_str43, 35, &eBuf->bufEfRateMax );
   ef.addTextField( activeMultSegRampButtonClass_str11, 35, &eBuf->bufUpdateRate );
   ef.addToggle( activeMultSegRampButtonClass_str12, &eBuf->buf3D );
@@ -1232,9 +1259,17 @@ int i;
 
   ef.addTextField( activeMultSegRampButtonClass_str29, 30, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
+  invisPvEntry = ef.getCurItem();
   ef.addOption( " ", activeMultSegRampButtonClass_str30, &eBuf->bufVisInverted );
+  visInvEntry = ef.getCurItem();
+  invisPvEntry->addDependency( visInvEntry );
   ef.addTextField( activeMultSegRampButtonClass_str31, 30, eBuf->bufMinVisString, 39 );
+  minVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( minVisEntry );
   ef.addTextField( activeMultSegRampButtonClass_str32, 30, eBuf->bufMaxVisString, 39 );
+  maxVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( maxVisEntry );
+  invisPvEntry->addDependencyCallbacks();
 
   return 1;
 

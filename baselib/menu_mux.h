@@ -216,6 +216,8 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *pvNameEntry, *iniStateEntry;
+
 int controlV, curControlV;
 
 int topShadowColor;

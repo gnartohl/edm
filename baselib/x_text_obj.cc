@@ -597,18 +597,35 @@ char title[32], *ptr;
    &eBuf->bufLineThk );
   ef.addColorButton( activeXTextClass_str13, actWin->ci, &eBuf->fgCb, &eBuf->bufFgColor );
   ef.addToggle( activeXTextClass_str14, &eBuf->bufFgColorMode );
+
   ef.addToggle( activeXTextClass_str15, &eBuf->bufUseDisplayBg );
+  fillEntry = ef.getCurItem();
   ef.addColorButton( activeXTextClass_str16, actWin->ci, &eBuf->bgCb, &eBuf->bufBgColor );
+  fillColorEntry = ef.getCurItem();
+  fillEntry->addInvDependency( fillColorEntry );
   ef.addToggle( activeXTextClass_str17, &eBuf->bufBgColorMode );
+  fillAlarmSensEntry = ef.getCurItem();
+  fillEntry->addInvDependency( fillAlarmSensEntry );
+  fillEntry->addDependencyCallbacks();
+
   ef.addFontMenu( activeXTextClass_str12, actWin->fi, &fm, fontTag );
   fm.setFontAlignment( alignment );
   ef.addTextField( activeXTextClass_str18, 35, eBuf->bufAlarmPvName,
    PV_Factory::MAX_PV_NAME );
+
   ef.addTextField( activeXTextClass_str19, 35, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
+  invisPvEntry = ef.getCurItem();
   ef.addOption( " ", activeXTextClass_str20, &eBuf->bufVisInverted );
+  visInvEntry = ef.getCurItem();
+  invisPvEntry->addDependency( visInvEntry );
   ef.addTextField( activeXTextClass_str21, 35, eBuf->bufMinVisString, 39 );
+  minVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( minVisEntry );
   ef.addTextField( activeXTextClass_str22, 35, eBuf->bufMaxVisString, 39 );
+  maxVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( maxVisEntry );
+  invisPvEntry->addDependencyCallbacks();
 
   return 1;
 

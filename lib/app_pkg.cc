@@ -2181,7 +2181,8 @@ char *sysMacros[] = {
   // ============
 
   Strncat( buf, fName, 255 );
-  Strncat( buf, ".edl", 255 );
+  //Strncat( buf, ".edl", 255 );
+  Strncat( buf, activeWindowClass::defExt(), 255 );
 
   cur = new activeWindowListType;
   //strcpy( cur->winName, "" );
@@ -4912,7 +4913,8 @@ err_return:
   pvList.create( appTop, "pvlist", 20 );
 
   n = 0;
-  xmStr1 = XmStringCreateLocalized( "*.edl" );
+  //xmStr1 = XmStringCreateLocalized( "*.edl" );
+  xmStr1 = XmStringCreateLocalized( activeWindowClass::defMask() );
   XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
   fileSelectFromPathBox = XmCreateFileSelectionDialog( appTop, "menuopenpathselect", args, n );
@@ -4926,7 +4928,8 @@ err_return:
 
 
   n = 0;
-  xmStr1 = XmStringCreateLocalized( "*.edl" );
+  //xmStr1 = XmStringCreateLocalized( "*.edl" );
+  xmStr1 = XmStringCreateLocalized( activeWindowClass::defMask() );
   XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
   fileSelectBox = XmCreateFileSelectionDialog( appTop, "menuopenfileselect", args, n );

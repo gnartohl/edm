@@ -885,8 +885,6 @@ char title[32], *ptr;
    title, SYMBOL_K_NUM_STATES, numStates,
    symbolSetItem, (void *) this, NULL, NULL, NULL );
 
-  //ef.addTextField( activeSymbolClass_str11, 32, bufId, 35 );
-
   ef.addTextField( activeSymbolClass_str12, 32, &eBuf->bufX );
   ef.addTextField( activeSymbolClass_str13, 32, &eBuf->bufY );
   ef.addTextField( activeSymbolClass_str14, 32, eBuf->bufSymbolFileName, 127 );
@@ -897,17 +895,26 @@ char title[32], *ptr;
     if ( i == 0 ) {
       ef.addTextField( activeSymbolClass_str17, 32, eBuf->bufControlPvName[i],
        PV_Factory::MAX_PV_NAME );
+      cntlPvEntry[i] = ef.getCurItem();
     }
     else {
       ef.addTextField( " ", 32, eBuf->bufControlPvName[i],
        PV_Factory::MAX_PV_NAME );
+      cntlPvEntry[i] = ef.getCurItem();
     }
     ef.beginSubForm();
     ef.addTextField( activeSymbolClass_str38, 4, eBuf->bufAndMask[i], 4 );
+    andMaskEntry[i] = ef.getCurItem();
+    cntlPvEntry[i]->addDependency( andMaskEntry[i] );
     ef.addLabel( activeSymbolClass_str39 );
     ef.addTextField( "", 4, eBuf->bufXorMask[i], 4 );
+    xorMaskEntry[i] = ef.getCurItem();
+    cntlPvEntry[i]->addDependency( xorMaskEntry[i] );
     ef.addLabel( activeSymbolClass_str40 );
     ef.addTextField( "", 3, &eBuf->bufShiftCount[i] );
+    shiftCountEntry[i] = ef.getCurItem();
+    cntlPvEntry[i]->addDependency( shiftCountEntry[i] );
+    cntlPvEntry[i]->addDependencyCallbacks();
     ef.endSubForm();
   }
 
@@ -919,10 +926,14 @@ char title[32], *ptr;
   ef.addToggle( activeSymbolClass_str15, &eBuf->bufUseOriginalSize );
 
   ef.addToggle( activeSymbolClass_str30, &eBuf->bufUseOriginalColors );
-
+  presColorEntry = ef.getCurItem();
   ef.addColorButton(activeSymbolClass_str31, actWin->ci, &fgCb, &eBuf->bufFgColor );
-
+  fgColorEntry = ef.getCurItem();
+  presColorEntry->addInvDependency( fgColorEntry );
   ef.addColorButton(activeSymbolClass_str32, actWin->ci, &bgCb, &eBuf->bufBgColor );
+  bgColorEntry = ef.getCurItem();
+  presColorEntry->addInvDependency( bgColorEntry );
+  presColorEntry->addDependencyCallbacks();
 
   for ( i=0; i<SYMBOL_K_NUM_STATES; i++ ) {
     minPtr[i] = &eBuf->bufStateMinValue[i];

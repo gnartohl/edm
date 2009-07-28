@@ -904,23 +904,49 @@ char title[32], *ptr;
   ef.addTextField( activeIndicatorClass_str8, 35, &bufY );
   ef.addTextField( activeIndicatorClass_str9, 35, &bufW );
   ef.addTextField( activeIndicatorClass_str10, 35, &bufH );
-//   ef.addTextField( activeIndicatorClass_str11, 35, eBuf->bufControlPvName, PV_Factory::MAX_PV_NAME );
   ef.addTextField( activeIndicatorClass_str12, 35, eBuf->bufReadPvName, PV_Factory::MAX_PV_NAME );
   ef.addTextField( activeIndicatorClass_str13, 35, eBuf->bufNullPvName, PV_Factory::MAX_PV_NAME );
-  ef.addOption( activeIndicatorClass_str14, activeIndicatorClass_str15, &bufLabelType );
-  ef.addTextField( activeIndicatorClass_str16, 35, eBuf->bufLabel, PV_Factory::MAX_PV_NAME );
-  ef.addToggle( activeIndicatorClass_str18, &bufBorder );
-  ef.addToggle( activeIndicatorClass_str19, &bufShowScale );
 
+  ef.addOption( activeIndicatorClass_str14, activeIndicatorClass_str15, &bufLabelType );
+  labelTypeEntry = ef.getCurItem();
+  labelTypeEntry->setNumValues( 2 );
+  ef.addTextField( activeIndicatorClass_str16, 35, eBuf->bufLabel, PV_Factory::MAX_PV_NAME );
+  labelEntry = ef.getCurItem();
+  labelTypeEntry->addInvDependency( 0, labelEntry );
+  labelTypeEntry->addDependencyCallbacks();
+
+  ef.addToggle( activeIndicatorClass_str18, &bufBorder );
+
+  ef.addToggle( activeIndicatorClass_str19, &bufShowScale );
+  showScaleEntry = ef.getCurItem();
   ef.addTextField( activeIndicatorClass_str20, 35, bufLabelTicks, 15 );
+  labelTicksEntry = ef.getCurItem();
+  showScaleEntry->addDependency( labelTicksEntry );
   ef.addTextField( activeIndicatorClass_str21, 35, bufMajorTicks, 15 );
+  majorTicksEntry = ef.getCurItem();
+  showScaleEntry->addDependency( majorTicksEntry );
   ef.addTextField( activeIndicatorClass_str22, 35, bufMinorTicks, 15 );
+  minorTicksEntry = ef.getCurItem();
+  showScaleEntry->addDependency( minorTicksEntry );
 
   ef.addToggle( activeIndicatorClass_str23, &bufLimitsFromDb );
+  limitsFromDbEntry = ef.getCurItem();
+
   ef.addOption( activeIndicatorClass_str24, activeIndicatorClass_str25, bufScaleFormat, 15 );
+  scaleFormatEntry = ef.getCurItem();
+  showScaleEntry->addDependency( scaleFormatEntry );
+  showScaleEntry->addDependencyCallbacks();
+
   ef.addTextField( activeIndicatorClass_str26, 35, bufPrecision, 15 );
+  scalePrecEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scalePrecEntry );
   ef.addTextField( activeIndicatorClass_str27, 35, bufReadMin, 15 );
+  scaleMinEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scaleMinEntry );
   ef.addTextField( activeIndicatorClass_str28, 35, bufReadMax, 15 );
+  scaleMaxEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scaleMaxEntry );
+  limitsFromDbEntry->addDependencyCallbacks();
 
   ef.addTextField( activeIndicatorClass_str46, 35, &bufHalfW );
 

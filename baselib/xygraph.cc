@@ -5496,9 +5496,16 @@ int i, yi;
   ef.addTextField( "Update Delay (ms)", 35, &eBuf->bufUpdateTimerValue );
   ef.addToggle( "Border", &eBuf->bufBorder );
   ef.addToggle( "Plot Area Border", &eBuf->bufPlotAreaBorder );
+
   ef.addToggle( "Auto Scale Inward", &eBuf->bufAutoScaleBothDirections );
+  scaleInwardEntry = ef.getCurItem();
   ef.addTextField( "Auto Scale Rate (ms)", 35, &eBuf->bufAutoScaleTimerMs );
+  scaleInwardTimerEntry = ef.getCurItem();
+  scaleInwardEntry->addDependency( scaleInwardTimerEntry );
   ef.addTextField( "Auto Scale Thresh (%)", 35, &eBuf->bufAutoScaleThreshPct );
+  scaleInwardThreshEntry = ef.getCurItem();
+  scaleInwardEntry->addDependency( scaleInwardThreshEntry );
+  scaleInwardEntry->addDependencyCallbacks();
 
   ef.addEmbeddedEf( "X/Y/Trace Data", "... ", &efTrace );
 
@@ -5770,9 +5777,15 @@ int i, yi;
    PV_Factory::MAX_PV_NAME );
   ef.addTextField( "Trigger PV", 35, eBuf->bufTrigPvName,
    PV_Factory::MAX_PV_NAME );
+
   ef.addTextField( "Reset PV", 35, eBuf->bufResetPvName,
    PV_Factory::MAX_PV_NAME );
+  resetPvEntry = ef.getCurItem();
   ef.addOption( "Reset Mode", "if not zero|if zero", &eBuf->bufResetMode );
+  resetModeEntry = ef.getCurItem();
+  resetPvEntry->addDependency( resetModeEntry );
+  resetPvEntry->addDependencyCallbacks();
+
   ef.addFontMenuNoAlignInfo( "Font", actWin->fi, &fm, fontTag );
 
   return 1;
@@ -8473,35 +8486,37 @@ struct tm ts;
 
       yi = 0;
       strcpy( y1Buf, "" );
-      if ( y1Axis[yi] && ( numYTraces[yi] > 0 ) ) {
+      //if ( y1Axis[yi] && ( numYTraces[yi] > 0 ) ) {
+      if ( numYTraces[yi] > 0 ) {
         dyValue = ( plotAreaH - pmY + y1Offset[yi][lowestYScaleIndex[yi]] )
          / y1Factor[yi][lowestYScaleIndex[yi]] + curY1Min[yi];
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           dyValue = pow(10,dyValue);
         }
-        sprintf( y1Buf, "%-.4g", dyValue );
+        sprintf( y1Buf, " %-.4g", dyValue );
       }
 
       yi = 1;
       strcpy( y2Buf, "" );
-      if ( y1Axis[yi] && ( numYTraces[yi] > 0 ) ) {
+      //if ( y1Axis[yi] && ( numYTraces[yi] > 0 ) ) {
+      if ( numYTraces[yi] > 0 ) {
         dyValue2 = ( plotAreaH - pmY + y1Offset[yi][lowestYScaleIndex[yi]] )
          / y1Factor[yi][lowestYScaleIndex[yi]] + curY1Min[yi];
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           dyValue2 = pow(10,dyValue2);
         }
         if ( strcmp( y1Buf, "" ) != 0 ) {
-          sprintf( y2Buf, ",%-.4g", dyValue2 );
+          sprintf( y2Buf, ", %-.4g", dyValue2 );
 	}
 	else {
-          sprintf( y2Buf, "%-.4g", dyValue2 );
+          sprintf( y2Buf, " %-.4g (y2)", dyValue2 );
 	}
       }
  
       if ( msgDialogPopedUp ) {
         msgDialog.popdown();
       }
-      sprintf( buf, "(%s,%s%s)", xBuf, y1Buf, y2Buf );
+      sprintf( buf, "[ %s,%s%s ]", xBuf, y1Buf, y2Buf );
       msgDialog.popup( buf, this->x+_x-be->x+actWin->xPos(),
        this->y+_y-be->y+actWin->yPos() );
       msgDialogPopedUp = 1;

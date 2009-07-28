@@ -542,17 +542,36 @@ char title[32], *ptr;
   ef.addOption( activeArcClass_str14, activeArcClass_str15, &eBuf->bufLineStyle );
   ef.addColorButton( activeArcClass_str16, actWin->ci, &eBuf->lineCb, &eBuf->bufLineColor );
   ef.addToggle( activeArcClass_str17, &eBuf->bufLineColorMode );
+
   ef.addToggle( activeArcClass_str18, &eBuf->bufFill );
+  fillEntry = ef.getCurItem();
   ef.addOption( activeArcClass_str19, activeArcClass_str20, &eBuf->bufFillMode );
+  fillModeEntry = ef.getCurItem();
+  fillEntry->addDependency( fillModeEntry );
   ef.addColorButton( activeArcClass_str21, actWin->ci, &eBuf->fillCb, &eBuf->bufFillColor );
+  fillColorEntry = ef.getCurItem();
+  fillEntry->addDependency( fillColorEntry );
   ef.addToggle( activeArcClass_str22, &eBuf->bufFillColorMode );
+  fillAlarmSensEntry = ef.getCurItem();
+  fillEntry->addDependency( fillAlarmSensEntry );
+  fillEntry->addDependencyCallbacks();
+
   ef.addTextField( activeArcClass_str23, 30, eBuf->bufAlarmPvName,
    PV_Factory::MAX_PV_NAME );
+
   ef.addTextField( activeArcClass_str24, 30, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
+  invisPvEntry = ef.getCurItem();
   ef.addOption( " ", activeArcClass_str25, &eBuf->bufVisInverted );
+  visInvEntry = ef.getCurItem();
+  invisPvEntry->addDependency( visInvEntry );
   ef.addTextField( activeArcClass_str26, 30, eBuf->bufMinVisString, 39 );
+  minVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( minVisEntry );
   ef.addTextField( activeArcClass_str27, 30, eBuf->bufMaxVisString, 39 );
+  maxVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( maxVisEntry );
+  invisPvEntry->addDependencyCallbacks();
 
   return 1;
 
