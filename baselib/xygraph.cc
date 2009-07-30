@@ -8480,7 +8480,7 @@ struct tm ts;
           dxValue = pow(10,dxValue);
         }
 
-        sprintf( xBuf, "%-.4g", dxValue );
+        sprintf( xBuf, "%-.6g", dxValue );
 
       }
 
@@ -8493,7 +8493,7 @@ struct tm ts;
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           dyValue = pow(10,dyValue);
         }
-        sprintf( y1Buf, " %-.4g", dyValue );
+        sprintf( y1Buf, " %-.6g", dyValue );
       }
 
       yi = 1;
@@ -8506,10 +8506,10 @@ struct tm ts;
           dyValue2 = pow(10,dyValue2);
         }
         if ( strcmp( y1Buf, "" ) != 0 ) {
-          sprintf( y2Buf, ", %-.4g", dyValue2 );
+          sprintf( y2Buf, ", %-.6g", dyValue2 );
 	}
 	else {
-          sprintf( y2Buf, " %-.4g (y2)", dyValue2 );
+          sprintf( y2Buf, " %-.6g (y2)", dyValue2 );
 	}
       }
  
