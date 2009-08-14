@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 204
-y 48
-w 484
-h 875
+x 198
+y 54
+w 482
+h 933
 font "helvetica-medium-r-12.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
@@ -290,7 +290,7 @@ major 4
 minor 0
 release 0
 x 142
-y 643
+y 704
 w 15
 h 15
 lineColor rgb 0 0 0
@@ -304,7 +304,7 @@ major 4
 minor 0
 release 0
 x 232
-y 643
+y 704
 w 15
 h 15
 lineColor rgb 0 0 0
@@ -318,7 +318,7 @@ major 4
 minor 0
 release 0
 x 322
-y 643
+y 704
 w 15
 h 15
 lineColor rgb 0 0 0
@@ -332,7 +332,7 @@ major 4
 minor 0
 release 0
 x 142
-y 763
+y 824
 w 15
 h 15
 lineColor rgb 0 0 0
@@ -346,7 +346,7 @@ major 4
 minor 0
 release 0
 x 232
-y 763
+y 824
 w 15
 h 15
 lineColor rgb 0 0 0
@@ -360,7 +360,7 @@ major 4
 minor 0
 release 0
 x 322
-y 763
+y 824
 w 15
 h 15
 lineColor rgb 0 0 0
@@ -374,7 +374,7 @@ major 4
 minor 0
 release 0
 x 142
-y 703
+y 764
 w 15
 h 15
 lineColor rgb 0 0 0
@@ -388,7 +388,7 @@ major 4
 minor 0
 release 0
 x 322
-y 703
+y 764
 w 15
 h 15
 lineColor rgb 0 0 0
@@ -402,7 +402,7 @@ major 4
 minor 0
 release 0
 x 149
-y 650
+y 711
 w 181
 h 121
 lineColor rgb 0 0 0
@@ -416,7 +416,7 @@ major 4
 minor 1
 release 0
 x 272
-y 844
+y 905
 w 185
 h 14
 font "helvetica-medium-r-12.0"
@@ -436,7 +436,7 @@ major 4
 minor 1
 release 0
 x 312
-y 587
+y 648
 w 151
 h 14
 font "helvetica-medium-r-12.0"
@@ -496,7 +496,7 @@ major 4
 minor 1
 release 0
 x 13
-y 565
+y 626
 w 199
 h 16
 font "helvetica-bold-r-14.0"
@@ -516,7 +516,7 @@ major 4
 minor 0
 release 1
 x 13
-y 553
+y 614
 w 452
 h 1
 lineColor rgb 0 0 0
@@ -528,8 +528,8 @@ xPoints {
   1 465
 }
 yPoints {
-  0 553
-  1 554
+  0 614
+  1 615
 }
 endObjectProperties
 
@@ -580,7 +580,7 @@ major 4
 minor 0
 release 1
 x 271
-y 602
+y 663
 w 123
 h 78
 lineColor rgb 0 0 0
@@ -591,8 +591,8 @@ xPoints {
   1 271
 }
 yPoints {
-  0 602
-  1 680
+  0 663
+  1 741
 }
 endObjectProperties
 
@@ -603,7 +603,7 @@ major 4
 minor 0
 release 1
 x 240
-y 774
+y 835
 w 122
 h 61
 lineColor rgb 0 0 0
@@ -615,9 +615,9 @@ xPoints {
   2 240
 }
 yPoints {
-  0 774
-  1 835
-  2 774
+  0 835
+  1 896
+  2 835
 }
 endObjectProperties
 
@@ -628,7 +628,7 @@ major 4
 minor 0
 release 1
 x 90
-y 624
+y 685
 w 100
 h 82
 lineColor rgb 0 0 0
@@ -640,9 +640,9 @@ xPoints {
   2 190
 }
 yPoints {
-  0 647
-  1 624
-  2 706
+  0 708
+  1 685
+  2 767
 }
 endObjectProperties
 
@@ -653,7 +653,7 @@ major 4
 minor 1
 release 0
 x 13
-y 608
+y 669
 w 224
 h 14
 font "helvetica-medium-r-12.0"
@@ -721,7 +721,7 @@ major 4
 minor 1
 release 0
 x 6
-y 839
+y 900
 w 59
 h 24
 fgColor rgb 0 0 0
@@ -740,7 +740,7 @@ major 4
 minor 2
 release 0
 x 202
-y 695
+y 756
 w 80
 h 28
 fgColor rgb 0 0 0
@@ -1071,7 +1071,7 @@ major 4
 minor 0
 release 1
 x 13
-y 429
+y 460
 w 452
 h 1
 lineColor rgb 0 0 0
@@ -1083,8 +1083,8 @@ xPoints {
   1 465
 }
 yPoints {
-  0 429
-  1 430
+  0 460
+  1 461
 }
 endObjectProperties
 
@@ -1095,7 +1095,7 @@ major 4
 minor 1
 release 0
 x 13
-y 438
+y 469
 w 179
 h 16
 font "helvetica-bold-r-14.0"
@@ -1115,7 +1115,7 @@ major 4
 minor 1
 release 0
 x 352
-y 480
+y 588
 w 87
 h 14
 font "helvetica-medium-r-12.0"
@@ -1135,7 +1135,7 @@ major 4
 minor 1
 release 0
 x 46
-y 480
+y 541
 w 104
 h 14
 font "helvetica-medium-r-12.0"
@@ -1155,7 +1155,7 @@ major 4
 minor 1
 release 0
 x 352
-y 461
+y 492
 w 113
 h 14
 font "helvetica-medium-r-12.0"
@@ -1175,7 +1175,7 @@ major 4
 minor 1
 release 0
 x 71
-y 461
+y 492
 w 79
 h 14
 font "helvetica-medium-r-12.0"
@@ -1195,7 +1195,7 @@ major 4
 minor 1
 release 0
 x 352
-y 500
+y 541
 w 80
 h 14
 font "helvetica-medium-r-12.0"
@@ -1215,7 +1215,7 @@ major 4
 minor 1
 release 0
 x 17
-y 500
+y 588
 w 133
 h 14
 font "helvetica-medium-r-12.0"
@@ -1234,8 +1234,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 351
-y 516
+x 362
+y 557
 w 112
 h 28
 font "helvetica-medium-i-12.0"
@@ -1245,6 +1245,88 @@ useDisplayBg
 value {
   "(as specified in"
   " the edmActions file)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 352
+y 511
+w 93
+h 28
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Select drag/drop"
+  "PV name"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 41
+y 511
+w 109
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Shift-Middle B click"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 352
+y 423
+w 93
+h 28
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Select drag/drop"
+  "PV name"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 78
+y 423
+w 109
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Shift-Middle B click"
 }
 autoSize
 endObjectProperties

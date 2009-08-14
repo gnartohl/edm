@@ -3687,7 +3687,7 @@ int i, numVisible;
    XmNscrollingPolicy, XmAUTOMATIC,
    NULL );
 
-  // create menubar
+  // create menubars
   menuBar = XmCreateMenuBar( mainWin, "menubar", NULL, 0 );
 
   filePullDown = XmCreatePulldownMenu( menuBar, "file", NULL, 0 );
@@ -4322,6 +4322,8 @@ static void displayParamInfo ( void ) {
 
   fprintf( stderr, global_str139 );
 
+  fprintf( stderr, global_str141 );
+
   fprintf( stderr, global_str97 );
 
   fprintf( stderr, global_str107 );
@@ -4545,6 +4547,8 @@ fileListPtr curFile;
         else if ( strcmp( argv[n], global_str136 ) == 0 ) {
         }
         else if ( strcmp( argv[n], global_str138 ) == 0 ) {
+        }
+        else if ( strcmp( argv[n], global_str140 ) == 0 ) {
         }
         else if ( strcmp( argv[n], global_str86 ) == 0 ) {
           n++; // just ignore, not used here
@@ -5388,7 +5392,8 @@ char controlCmd[31+1];
         ( strcmp( tk, global_str132 ) == 0 ) ||
         ( strcmp( tk, global_str134 ) == 0 ) ||
         ( strcmp( tk, global_str136 ) == 0 ) ||
-        ( strcmp( tk, global_str138 ) == 0 )
+        ( strcmp( tk, global_str138 ) == 0 ) ||
+        ( strcmp( tk, global_str140 ) == 0 )
       ) {
 
         state = GETTING_FILES;
@@ -5434,7 +5439,8 @@ char controlCmd[31+1];
         ( strcmp( tk, global_str132 ) != 0 ) &&
         ( strcmp( tk, global_str134 ) != 0 ) &&
         ( strcmp( tk, global_str136 ) != 0 ) &&
-        ( strcmp( tk, global_str138 ) != 0 )
+        ( strcmp( tk, global_str138 ) != 0 ) &&
+        ( strcmp( tk, global_str140 ) != 0 )
       ) {
 
         extractPosition( tk, filePart, 255, &gotPosition, &posx, &posy );
@@ -5500,6 +5506,26 @@ char controlCmd[31+1];
                   XtVaSetValues( cur->node.topWidgetId(),
                    XmNiconic, False,
                    NULL );
+                }
+                else if ( strcmp( controlCmd, global_str140 ) == 0 ) { // snapshot
+                  if ( gotPosition ) {
+                    cur->node.move( posx, posy );
+                  }
+                  // snapshot
+                  XRaiseWindow( cur->node.d, XtWindow(cur->node.topWidgetId()) );
+                  processAllEventsWithSync( app, display );
+                  cur->node.smartDrawAllActive();
+                  cur->node.refreshActive();
+                  processAllEventsWithSync( app, display );
+		  {
+		    char name[255+1];
+		    int winid = (int) XtWindow(cur->node.top);
+                    snprintf( name, 255, "xwd -id %-d -out /tmp/", winid );
+		    Strncat( name, cur->node.displayNameForSym, 255 );
+		    Strncat( name, ".xwd", 255 );
+		    if ( debugMode() ) fprintf( stderr, "%s\n", name );
+                    system( name );
+		  }
                 }
 
               }
@@ -6870,4 +6896,3 @@ Widget appContextClass::apptop ( void ) {
   return appTop;
 
 }
-

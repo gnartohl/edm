@@ -29,10 +29,10 @@ static XtTranslations g_parsedTrans;
 
 static char g_dragTrans[] =
   "#override ~Ctrl~Shift<Btn2Down>: startDrag()\n\
-   Ctrl~Shift<Btn2Down>: pvInfo()\n\
-   Shift Ctrl<Btn2Down>: dummy()\n\
+   Ctrl~Shift<Btn2Up>: selectActions()\n\
+   Ctrl~Shift<Btn2Down>: dummy()\n\
    Shift~Ctrl<Btn2Down>: dummy()\n\
-   Shift Ctrl<Btn2Up>: selectActions()\n\
+   Shift Ctrl<Btn2Down>: pvInfo()\n\
    Shift~Ctrl<Btn2Up>: selectDrag()\n\
    <Btn3Up>: changeParams()";
 
@@ -2613,7 +2613,7 @@ double fvalue, mult;
       if ( !( be->state & ( ControlMask | ShiftMask ) ) ) {
         stat = mslo->startDrag( w, e );
       }
-      else if ( !( be->state & ShiftMask ) &&
+      else if ( ( be->state & ShiftMask ) &&
                 ( be->state & ControlMask ) ) {
         stat = mslo->showPvInfo( be, be->x, be->y );
       }
@@ -2785,7 +2785,7 @@ double fvalue, mult;
            !( be->state & ControlMask ) ) {
         stat = mslo->selectDragValue( be );
       }
-      else if ( ( be->state & ShiftMask ) &&
+      else if ( !( be->state & ShiftMask ) &&
                 ( be->state & ControlMask ) ) {
         mslo->doActions( be, be->x, be->y );
       }

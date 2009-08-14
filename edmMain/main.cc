@@ -1608,6 +1608,12 @@ Display *testDisplay;
           *local = 0;
           *openCmd = 2; // control named window
 	}
+	else if ( strcmp( argv[n], global_str140 ) == 0 ) { // print
+	  *oneInstance = 1;
+          *server = 1;
+          *local = 0;
+          *openCmd = 2; // control named window
+	}
         else if ( strcmp( argv[n], global_str86 ) == 0 ) {
           n++;
           if ( n >= argc ) { // missing pid num

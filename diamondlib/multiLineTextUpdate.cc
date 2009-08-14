@@ -19,9 +19,9 @@ static XtTranslations g_parsedTrans;
 static char g_dragTrans[] =
   "#override\n\
   ~Ctrl~Shift<Btn2Down>: startDrag()\n\
-  Ctrl~Shift<Btn2Down>: pvInfo()\n\
-  Shift Ctrl<Btn2Up>: selectActions()\n\
-  Shift<Btn2Up>: selectDrag()";
+  Ctrl~Shift<Btn2Up>: selectActions()\n\
+  Shift Ctrl<Btn2Down>: pvInfo()\n\
+  Shift~Ctrl<Btn2Up>: selectDrag()";
 
 static XtActionsRec g_dragActions[] =
 {

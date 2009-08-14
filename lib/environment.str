@@ -2,7 +2,7 @@
 #define __environment_str 1
 
 
-// global_str129 is last
+// global_str141 is last
 
 #define environment_str1 (char *) "EDMDATAFILES"
 #define environment_str2 (char *) "EDMFILES"
@@ -78,6 +78,7 @@
 #define global_str134 (char *) "-lower"
 #define global_str136 (char *) "-iconify"
 #define global_str138 (char *) "-deiconify"
+#define global_str140 (char *) "-xwdsnap"
 #define global_str96 (char *) "-eolc"
 #define global_str98 (char *) "-ro"
 #define global_str100 (char *) "-noscrl"
@@ -134,6 +135,8 @@
 #define global_str137 (char *) "  -iconify   Request edm server to iconify specified window names\n\n"
 
 #define global_str139 (char *) "  -deiconify Request edm server to deiconify specified window names\n\n"
+
+#define global_str141 (char *) "  -xwdsnap   Request edm server to raise and snapshot specified window names\n\n"
 
 #define global_str97 (char *)  "  -eolc      Exit when last screen is closed\n\n"
 

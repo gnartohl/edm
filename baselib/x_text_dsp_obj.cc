@@ -33,9 +33,9 @@ static int g_showTextBorderAlways = 0;
 static char g_dragTrans[] =
   "#override\n\
    ~Ctrl~Shift<Btn2Down>: startDrag()\n\
-   Ctrl~Shift<Btn2Down>: pvInfo()\n\
-   Shift Ctrl<Btn2Down>: dummy()\n\
-   Shift Ctrl<Btn2Up>: selectActions()\n\
+   Ctrl~Shift<Btn2Up>: selectActions()\n\
+   Shift~Ctrl<Btn2Down>: dummy()\n\
+   Shift Ctrl<Btn2Down>: pvInfo()\n\
    Shift~Ctrl<Btn2Up>: selectDrag()";
 
 static XtActionsRec g_dragActions[] = {
@@ -717,7 +717,8 @@ char *buf;
 
   buf = XmTextGetString( axtdo->tf_widget );
 
-  if ( !blank( buf ) && axtdo->characterMode ) {
+  //if ( !blank( buf ) && axtdo->characterMode ) {
+  if ( axtdo->characterMode ) {
     if ( axtdo->pvExists ) {
       axtdo->putValueWithClip( buf );
     }

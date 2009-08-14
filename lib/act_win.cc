@@ -9981,7 +9981,7 @@ Boolean nothingDone = False;
 
     }
     else if ( ( be->button == 2 ) &&
-         !( be->state & ShiftMask ) &&
+         ( be->state & ShiftMask ) &&
          ( be->state & ControlMask ) ) {
 
       cur = awo->head->blink;
@@ -10236,13 +10236,6 @@ Boolean nothingDone = False;
 
 //========== Ctrl B2 Release ===================================
 
-//========== Ctrl B2 Release ===================================
-
-        }
-        else if ( ( be->state & ShiftMask ) && ( be->state & ControlMask ) ) {
-
-//========== Shift-Ctrl B2 Release =============================
-
           foundPvAction = 0;
 
           cur = awo->head->blink;
@@ -10290,6 +10283,13 @@ Boolean nothingDone = False;
             cur = cur->blink;
 
           }
+
+//========== Ctrl B2 Release ===================================
+
+        }
+        else if ( ( be->state & ShiftMask ) && ( be->state & ControlMask ) ) {
+
+//========== Shift-Ctrl B2 Release =============================
 
 //========== Shift-Ctrl B2 Release =============================
 

@@ -2694,7 +2694,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
       if ( !( be->state & ( ControlMask | ShiftMask ) ) ) {
         stat = slo->startDrag( w, e );
       }
-      else if ( !( be->state & ShiftMask ) &&
+      else if ( ( be->state & ShiftMask ) &&
                 ( be->state & ControlMask ) ) {
         stat = slo->showPvInfo( be, be->x, be->y );
       }
@@ -2780,7 +2780,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
            !( be->state & ControlMask ) ) {
         stat = slo->selectDragValue( be );
       }
-      else if ( ( be->state & ShiftMask ) &&
+      else if ( !( be->state & ShiftMask ) &&
                 ( be->state & ControlMask ) ) {
         slo->doActions( be, be->x, be->y );
       }
