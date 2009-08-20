@@ -3743,6 +3743,17 @@ time_t t1, t2;
     plotInfo[i] = NULL;
     plotInfoSize[i] = 0;
     forceVector[i] = 0;
+    xSigned[i] = 0;
+    ySigned[i] = 0;
+    traceType[i] = XYGC_K_TRACE_XY;
+    plotStyle[i] = XYGC_K_PLOT_STYLE_LINE;
+    plotSymbolType[i] = XYGC_K_SYMBOL_TYPE_NONE;
+    plotUpdateMode[i] = XYGC_K_UPDATE_ON_X_AND_Y;
+    plotColor[i] = 0;
+    lineThk[i] = 1;
+    opMode[i] = XYGC_K_SCOPE_MODE;
+    y2Scale[i] = 0;
+    lineStyle[i] = LineSolid;
   }
   trigPv = NULL;
   resetPv = NULL;
@@ -3853,9 +3864,9 @@ int i, yi;
   numTraces = source->numTraces;
 
   for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
-    forceVector[i] = 0;
+    xSigned[i] = source->xSigned[i];
+    ySigned[i] = source->ySigned[i];
     plotStyle[i] = source->plotStyle[i];
-    forceVector[i] = source->forceVector[i];
     plotSymbolType[i] = source->plotSymbolType[i];
     plotUpdateMode[i] = source->plotUpdateMode[i];
     plotColor[i] = source->plotColor[i];
@@ -3874,6 +3885,7 @@ int i, yi;
     plotBufSize[i] = 0;
     plotInfo[i] = NULL;
     plotInfoSize[i] = 0;
+    forceVector[i] = 0;
   }
 
   trigPv = NULL;
