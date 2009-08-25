@@ -10010,6 +10010,9 @@ Boolean nothingDone = False;
     else if ( ( be->button == 2 ) && ( be->state & ShiftMask ) ) {
       // do nothing
     }
+    else if ( ( be->button == 2 ) && ( be->state & ControlMask ) ) {
+      // do nothing
+    }
     else {
 
       curBtn = awo->btnDownActionHead->flink;
@@ -10223,7 +10226,6 @@ Boolean nothingDone = False;
         break;
 
       case Button2:
-
 
         if ( ( be->state & ShiftMask ) && !( be->state & ControlMask ) ) {
 
