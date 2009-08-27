@@ -3002,7 +3002,7 @@ int scaleOfs;
 char buf[31+1];
 int stringWidth;
 
-  strcpy( buf, "00:00:00" );
+  strcpy( buf, "00-00-0000" );
 
   if ( fs ) {
     stringWidth = XTextWidth( fs, buf, strlen(buf) );

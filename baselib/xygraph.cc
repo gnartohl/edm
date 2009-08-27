@@ -8087,6 +8087,7 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
     }
     else if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME ) &&
               ( xAxisTimeFormat == XYGC_K_AXIS_TIME_FMT_MMDDYY_HHMMSS ) ) {
+      lx = xTimeScaleMargin( fontTag, fs, curXMin, curXMax ) + 1;
       hx += fontHeight;
     }
     else {
@@ -11211,19 +11212,6 @@ void xyGraphClass::drawXScale ( void ) {
     }
     else {
 
-#if 0
-      drawXLinearScale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
-       plotAreaX, plotAreaY+plotAreaH, plotAreaW,
-       curXMin, curXMax,
-       curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
-       actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
-       xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
-       actWin->fi, fontTag, fs, 1,
-       !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
-       0 );
-#endif
-
-#if 1
       if ( xGridMode == XYGC_K_USER_SPECIFIED ) {
         curXNumLabelTicks = xNumLabelIntervals.value();
         if ( curXNumLabelTicks < 1 ) curXNumLabelTicks = 1;
@@ -11240,7 +11228,6 @@ void xyGraphClass::drawXScale ( void ) {
        actWin->fi, fontTag, fs, 1,
        !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
        0 );
-#endif
 
     }
 
@@ -11395,8 +11382,8 @@ int yi;
 
   if ( xLabelGrid || xMajorGrid || xMinorGrid ) {
 
-  if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
-       ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
+    if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
+         ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
 
       drawXLog10Scale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
        plotAreaX, plotAreaY+plotAreaH, plotAreaW,
@@ -11411,36 +11398,51 @@ int yi;
     }
     else {
 
-#if 0
-      drawXLinearScale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
-       plotAreaX, plotAreaY+plotAreaH, plotAreaW,
-       curXMin, curXMax,
-       curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
-       actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
-       xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
-       actWin->fi, fontTag, fs, 1,
-       !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
-       0 );
-#endif
+      if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME ) &&
+           ( xAxisTimeFormat != XYGC_K_AXIS_TIME_FMT_SEC ) ) {
 
-#if 1
-      if ( xGridMode == XYGC_K_USER_SPECIFIED ) {
-        curXNumLabelTicks = xNumLabelIntervals.value();
-        if ( curXNumLabelTicks < 1 ) curXNumLabelTicks = 1;
-        curXMajorsPerLabel = xNumMajorPerLabel.value();
-        curXMinorsPerMajor = xNumMinorPerMajor.value();
+        {
+
+          time_t t;
+
+          edmTime base( (const unsigned long) ( curSec ),
+           (const unsigned long) curNsec );
+
+          t = base.getSec() + timeOffset;
+
+          drawXLinearTimeScale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
+           plotAreaX, plotAreaY+plotAreaH, plotAreaW,
+           t, curXMin, curXMax, xAxisTimeFormat,
+           curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
+           actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
+           xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
+           actWin->fi, fontTag, fs, 1,
+           !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
+           0 );
+
+        }
+
       }
+      else {
 
-      drawXLinearScale2 ( actWin->d, pixmap, &actWin->executeGc, xAxis,
-       plotAreaX, plotAreaY+plotAreaH, plotAreaW,
-       curXMin, curXMax, adjCurXMin, adjCurXMax,
-       curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
-       actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
-       xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
-       actWin->fi, fontTag, fs, 1,
-       !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
-       0 );
-#endif
+        if ( xGridMode == XYGC_K_USER_SPECIFIED ) {
+          curXNumLabelTicks = xNumLabelIntervals.value();
+          if ( curXNumLabelTicks < 1 ) curXNumLabelTicks = 1;
+          curXMajorsPerLabel = xNumMajorPerLabel.value();
+          curXMinorsPerMajor = xNumMinorPerMajor.value();
+        }
+
+        drawXLinearScale2 ( actWin->d, pixmap, &actWin->executeGc, xAxis,
+         plotAreaX, plotAreaY+plotAreaH, plotAreaW,
+         curXMin, curXMax, adjCurXMin, adjCurXMax,
+         curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
+         actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
+         xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
+         actWin->fi, fontTag, fs, 1,
+         !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
+         0 );
+
+      }
 
     }
 
