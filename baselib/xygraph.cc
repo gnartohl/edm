@@ -9977,6 +9977,29 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           }
 	}
       }
+      // from pv limits but not all chronological
+      else {
+        if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+          get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+        }
+        else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+          get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+        }
+        else {
+          get_scale_params1( curXMin, curXMax,
+           &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+          if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+            adjCurXMin = curXMin;
+            adjCurXMax = curXMax;
+          }
+        }
+      }
 
       for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
         curY1NumLabelTicks[yi] = y1NumLabelIntervals[yi].value();
@@ -10553,6 +10576,29 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
             curXMax = adjCurXMax;
           }
 	}
+      }
+      // from pv limits but not all chronological
+      else {
+        if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+          get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+        }
+        else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+          get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+        }
+        else {
+          get_scale_params1( curXMin, curXMax,
+           &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+          if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+            adjCurXMin = curXMin;
+            adjCurXMax = curXMax;
+          }
+        }
       }
 
       for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
