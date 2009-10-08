@@ -3742,6 +3742,17 @@ time_t t1, t2;
     plotInfo[i] = NULL;
     plotInfoSize[i] = 0;
     forceVector[i] = 0;
+    xSigned[i] = 0;
+    ySigned[i] = 0;
+    traceType[i] = XYGC_K_TRACE_XY;
+    plotStyle[i] = XYGC_K_PLOT_STYLE_LINE;
+    plotSymbolType[i] = XYGC_K_SYMBOL_TYPE_NONE;
+    plotUpdateMode[i] = XYGC_K_UPDATE_ON_X_AND_Y;
+    plotColor[i] = 0;
+    lineThk[i] = 1;
+    opMode[i] = XYGC_K_SCOPE_MODE;
+    y2Scale[i] = 0;
+    lineStyle[i] = LineSolid;
   }
   trigPv = NULL;
   resetPv = NULL;
@@ -3852,9 +3863,9 @@ int i, yi;
   numTraces = source->numTraces;
 
   for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
-    forceVector[i] = 0;
+    xSigned[i] = source->xSigned[i];
+    ySigned[i] = source->ySigned[i];
     plotStyle[i] = source->plotStyle[i];
-    forceVector[i] = source->forceVector[i];
     plotSymbolType[i] = source->plotSymbolType[i];
     plotUpdateMode[i] = source->plotUpdateMode[i];
     plotColor[i] = source->plotColor[i];
@@ -3873,6 +3884,7 @@ int i, yi;
     plotBufSize[i] = 0;
     plotInfo[i] = NULL;
     plotInfoSize[i] = 0;
+    forceVector[i] = 0;
   }
 
   trigPv = NULL;
@@ -7574,6 +7586,8 @@ XmString str;
           curY1Min[yi] = log10( curY1Min[yi] );
           curY1Max[yi] = log10( curY1Max[yi] );
         }
+        adjCurY1Min[yi] = curY1Min[yi];
+        adjCurY1Max[yi] = curY1Max[yi];
       }
 
       curXNumLabelTicks = xNumLabelIntervals.value();
@@ -7973,7 +7987,9 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
        curY1Max[yi], curY1NumLabelTicks[yi] ) + 4;
     }
     else {
-      ly1 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi],
+      //ly1 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi],
+      // curY1NumLabelTicks[yi] ) + 4;
+      ly1 = yScaleWidth( fontTag, fs, adjCurY1Min[yi], adjCurY1Max[yi],
        curY1NumLabelTicks[yi] ) + 4;
     }
   }
@@ -7986,7 +8002,9 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
        curY1Max[yi], curY1NumLabelTicks[yi] ) + 2;
     }
     else {
-      ly2 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi],
+      //ly2 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi],
+      // curY1NumLabelTicks[yi] ) + 2;
+      ly2 = yScaleWidth( fontTag, fs, adjCurY1Min[yi], adjCurY1Max[yi],
        curY1NumLabelTicks[yi] ) + 2;
     }
   }
@@ -8003,6 +8021,7 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
     }
     else if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME ) &&
               ( xAxisTimeFormat == XYGC_K_AXIS_TIME_FMT_MMDDYY_HHMMSS ) ) {
+      lx = xTimeScaleMargin( fontTag, fs, curXMin, curXMax ) + 1;
       hx += fontHeight;
     }
     else {
@@ -8011,11 +8030,11 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
   }
 
   if ( y1Axis[0] && !y1Axis[1] ) {
-    ly2 = ly1;
+    ly2 = 10;
   }
 
   if ( !y1Axis[0] && y1Axis[1] ) {
-    ly1 = ly2;
+    ly1 = 10;
   }
 
   if ( ly1 < lx ) ly1 = lx;
@@ -8406,41 +8425,43 @@ struct tm ts;
           dxValue = pow(10,dxValue);
         }
 
-        sprintf( xBuf, "%-.4g", dxValue );
+        sprintf( xBuf, "%-.6g", dxValue );
 
       }
 
       yi = 0;
       strcpy( y1Buf, "" );
-      if ( y1Axis[yi] && ( numYTraces[yi] > 0 ) ) {
+      //if ( y1Axis[yi] && ( numYTraces[yi] > 0 ) ) {
+      if ( numYTraces[yi] > 0 ) {
         dyValue = ( plotAreaH - pmY + y1Offset[yi][lowestYScaleIndex[yi]] )
          / y1Factor[yi][lowestYScaleIndex[yi]] + curY1Min[yi];
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           dyValue = pow(10,dyValue);
         }
-        sprintf( y1Buf, "%-.4g", dyValue );
+        sprintf( y1Buf, " %-.6g", dyValue );
       }
 
       yi = 1;
       strcpy( y2Buf, "" );
-      if ( y1Axis[yi] && ( numYTraces[yi] > 0 ) ) {
+      //if ( y1Axis[yi] && ( numYTraces[yi] > 0 ) ) {
+      if ( numYTraces[yi] > 0 ) {
         dyValue2 = ( plotAreaH - pmY + y1Offset[yi][lowestYScaleIndex[yi]] )
          / y1Factor[yi][lowestYScaleIndex[yi]] + curY1Min[yi];
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           dyValue2 = pow(10,dyValue2);
         }
         if ( strcmp( y1Buf, "" ) != 0 ) {
-          sprintf( y2Buf, ",%-.4g", dyValue2 );
+          sprintf( y2Buf, ", %-.6g", dyValue2 );
 	}
 	else {
-          sprintf( y2Buf, "%-.4g", dyValue2 );
+          sprintf( y2Buf, " %-.6g (y2)", dyValue2 );
 	}
       }
  
       if ( msgDialogPopedUp ) {
         msgDialog.popdown();
       }
-      sprintf( buf, "(%s,%s%s)", xBuf, y1Buf, y2Buf );
+      sprintf( buf, "[ %s,%s%s ]", xBuf, y1Buf, y2Buf );
       msgDialog.popup( buf, this->x+_x-be->x+actWin->xPos(),
        this->y+_y-be->y+actWin->yPos() );
       msgDialogPopedUp = 1;
@@ -9888,6 +9909,29 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           }
 	}
       }
+      // from pv limits but not all chronological
+      else {
+        if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+          get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+        }
+        else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+          get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+        }
+        else {
+          get_scale_params1( curXMin, curXMax,
+           &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+          if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+            adjCurXMin = curXMin;
+            adjCurXMax = curXMax;
+          }
+        }
+      }
 
       for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
         curY1NumLabelTicks[yi] = y1NumLabelIntervals[yi].value();
@@ -10464,6 +10508,29 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
             curXMax = adjCurXMax;
           }
 	}
+      }
+      // from pv limits but not all chronological
+      else {
+        if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+          get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+        }
+        else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+          get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+        }
+        else {
+          get_scale_params1( curXMin, curXMax,
+           &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+          if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+            adjCurXMin = curXMin;
+            adjCurXMax = curXMax;
+          }
+        }
       }
 
       for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
@@ -11123,19 +11190,6 @@ void xyGraphClass::drawXScale ( void ) {
     }
     else {
 
-#if 0
-      drawXLinearScale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
-       plotAreaX, plotAreaY+plotAreaH, plotAreaW,
-       curXMin, curXMax,
-       curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
-       actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
-       xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
-       actWin->fi, fontTag, fs, 1,
-       !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
-       0 );
-#endif
-
-#if 1
       if ( xGridMode == XYGC_K_USER_SPECIFIED ) {
         curXNumLabelTicks = xNumLabelIntervals.value();
         if ( curXNumLabelTicks < 1 ) curXNumLabelTicks = 1;
@@ -11152,7 +11206,6 @@ void xyGraphClass::drawXScale ( void ) {
        actWin->fi, fontTag, fs, 1,
        !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
        0 );
-#endif
 
     }
 
@@ -11307,8 +11360,8 @@ int yi;
 
   if ( xLabelGrid || xMajorGrid || xMinorGrid ) {
 
-  if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
-       ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
+    if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
+         ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
 
       drawXLog10Scale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
        plotAreaX, plotAreaY+plotAreaH, plotAreaW,
@@ -11323,36 +11376,51 @@ int yi;
     }
     else {
 
-#if 0
-      drawXLinearScale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
-       plotAreaX, plotAreaY+plotAreaH, plotAreaW,
-       curXMin, curXMax,
-       curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
-       actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
-       xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
-       actWin->fi, fontTag, fs, 1,
-       !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
-       0 );
-#endif
+      if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME ) &&
+           ( xAxisTimeFormat != XYGC_K_AXIS_TIME_FMT_SEC ) ) {
 
-#if 1
-      if ( xGridMode == XYGC_K_USER_SPECIFIED ) {
-        curXNumLabelTicks = xNumLabelIntervals.value();
-        if ( curXNumLabelTicks < 1 ) curXNumLabelTicks = 1;
-        curXMajorsPerLabel = xNumMajorPerLabel.value();
-        curXMinorsPerMajor = xNumMinorPerMajor.value();
+        {
+
+          time_t t;
+
+          edmTime base( (const unsigned long) ( curSec ),
+           (const unsigned long) curNsec );
+
+          t = base.getSec() + timeOffset;
+
+          drawXLinearTimeScale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
+           plotAreaX, plotAreaY+plotAreaH, plotAreaW,
+           t, curXMin, curXMax, xAxisTimeFormat,
+           curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
+           actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
+           xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
+           actWin->fi, fontTag, fs, 1,
+           !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
+           0 );
+
+        }
+
       }
+      else {
 
-      drawXLinearScale2 ( actWin->d, pixmap, &actWin->executeGc, xAxis,
-       plotAreaX, plotAreaY+plotAreaH, plotAreaW,
-       curXMin, curXMax, adjCurXMin, adjCurXMax,
-       curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
-       actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
-       xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
-       actWin->fi, fontTag, fs, 1,
-       !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
-       0 );
-#endif
+        if ( xGridMode == XYGC_K_USER_SPECIFIED ) {
+          curXNumLabelTicks = xNumLabelIntervals.value();
+          if ( curXNumLabelTicks < 1 ) curXNumLabelTicks = 1;
+          curXMajorsPerLabel = xNumMajorPerLabel.value();
+          curXMinorsPerMajor = xNumMinorPerMajor.value();
+        }
+
+        drawXLinearScale2 ( actWin->d, pixmap, &actWin->executeGc, xAxis,
+         plotAreaX, plotAreaY+plotAreaH, plotAreaW,
+         curXMin, curXMax, adjCurXMin, adjCurXMax,
+         curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
+         actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
+         xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
+         actWin->fi, fontTag, fs, 1,
+         !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
+         0 );
+
+      }
 
     }
 
@@ -11495,7 +11563,7 @@ int lX, lY;
 void xyGraphClass::drawYlabel ( void ) {
 
 unsigned int i;
-int lX=0, lY=0, lW=0, inc, stat, useRotated, cW, maxW;
+int lX=0, lY=0, lW=0, inc, stat, useRotated, cW, maxW=0;
 char fullName[127+1], label[127+1];
 
   if ( y1Axis[0] && !blank( yLabel.getExpanded() ) ) {
@@ -11564,7 +11632,7 @@ char fullName[127+1], label[127+1];
 void xyGraphClass::drawY2label ( void ) {
 
 unsigned int i;
-int lX=0, lY=0, lW=0, inc, stat, useRotated, cW, maxW;
+int lX=0, lY=0, lW=0, inc, stat, useRotated, cW, maxW=0;
 char fullName[127+1], label[127+1];
 
   if ( y1Axis[1] && !blank( y2Label.getExpanded() ) ) {

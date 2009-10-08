@@ -1653,16 +1653,16 @@ XmString xmStr = NULL;
 char prefix[127+1];
 
   strncpy( prefix, apco->curPath, 127 );
+  prefix[127] = 0;
 
   n = 0;
 
   if ( strcmp( prefix, "" ) != 0 ) {
     xmStr = XmStringCreateLocalized( prefix );
     XtSetArg( args[n], XmNdirectory, xmStr ); n++;
+    XtSetValues( apco->fileSelectFromPathBox, args, n );
     XmStringFree( xmStr );
   }
-
-  XtSetValues( apco->fileSelectFromPathBox, args, n );
 
   XtManageChild( apco->fileSelectFromPathBox );
 
@@ -1680,7 +1680,7 @@ void open_cb (
 appContextClass *apco = (appContextClass *) client;
 int n;
 Arg args[10];
-XmString xmStr;
+XmString xmStr = NULL;
 
   if ( apco->firstOpen ) {
 
