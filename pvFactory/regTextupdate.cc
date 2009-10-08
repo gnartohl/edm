@@ -8,7 +8,7 @@
 #include "regTextupdate.h"
 #include "app_pkg.h"
 #include "act_win.h"
-#include "pv_factory.h"
+#include "epics_pv_factory.h"
 #include "cvtFast.h"
 #include <libgen.h>
 
@@ -238,7 +238,7 @@ int edmRegTextupdateClass::drawActive()
     }
 
     redraw_text(actWin->d,
-                XtWindow(actWin->executeWidget),
+                drawable(actWin->executeWidget),
                 actWin->executeGc,
                 actWin->executeGc.normGC(),
                 text, len);
