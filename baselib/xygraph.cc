@@ -168,6 +168,12 @@ double dxValue, dyValue;
 char fname[255+1], *envPtr;
 FILE *tmp;
 
+time_t curSeconds;
+edmTime base( (const unsigned long) ( xyo->curSec ),
+ (const unsigned long) xyo->curNsec );
+
+  curSeconds = base.getSec() + xyo->timeOffset;
+
   // try EDMDUMPFILES, then EDMTMPFILES, else use /tmp
   envPtr = getenv( environment_str14 );
   if ( envPtr ) {
@@ -306,6 +312,29 @@ FILE *tmp;
 
 	while ( n != t ) {
 
+          if ( ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME ) ||
+               ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
+
+            if ( xyo->xAxisTimeFormat == XYGC_K_AXIS_TIME_FMT_SEC ) {
+              // for chronological plot, x type is double
+              dxValue = ( (double *) xyo->xPvData[i] )[n];
+	    }
+	    else {
+              dxValue = ( (double *) xyo->xPvData[i] )[n] + (double) curSeconds;
+	    }
+
+	  }
+	  else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LINEAR ) {
+
+            dxValue = (double) index;
+
+	  }
+	  else {
+
+            dxValue = (double) index;
+
+	  }
+
           switch ( xyo->yPvType[i] ) {
           case ProcessVariable::specificType::flt:
             dyValue = (double) ( (float *) xyo->yPvData[i] )[n];
@@ -350,7 +379,7 @@ FILE *tmp;
             break;
           }
 
-          fprintf( tmp, "%-d, %-g\n", index, dyValue );
+          fprintf( tmp, "%-19.13g, %-g\n", dxValue, dyValue );
 
 	  index++;
 	  n++;
@@ -392,7 +421,7 @@ FILE *tmp;
             dxValue = ( (double *) xyo->xPvData[i] )[n];
             break;
           case ProcessVariable::specificType::shrt:
-            if (  xyo->ySigned[i] ) {
+            if (  xyo->xSigned[i] ) {
               dxValue = (double) ( (short *) xyo->xPvData[i] )[n];
             }
             else {
@@ -400,7 +429,7 @@ FILE *tmp;
             }
             break;
           case ProcessVariable::specificType::chr:
-            if (  xyo->ySigned[i] ) {
+            if (  xyo->xSigned[i] ) {
               dxValue = (double) ( (char *) xyo->xPvData[i] )[n];
             }
             else {
@@ -408,7 +437,7 @@ FILE *tmp;
             }
             break;
           case ProcessVariable::specificType::integer:
-            if (  xyo->ySigned[i] ) {
+            if (  xyo->xSigned[i] ) {
               dxValue = (double) ( (int *) xyo->xPvData[i] )[n];
             }
             else {
@@ -416,7 +445,7 @@ FILE *tmp;
             }
             break;
           case ProcessVariable::specificType::enumerated:
-            if (  xyo->ySigned[i] ) {
+            if (  xyo->xSigned[i] ) {
               dxValue = (double) ( (short *) xyo->xPvData[i] )[n];
             }
             else {
@@ -510,7 +539,7 @@ FILE *tmp;
             dxValue = ( (double *) xyo->xPvData[i] )[n];
             break;
           case ProcessVariable::specificType::shrt:
-            if (  xyo->ySigned[i] ) {
+            if (  xyo->xSigned[i] ) {
               dxValue = (double) ( (short *) xyo->xPvData[i] )[n];
             }
             else {
@@ -518,7 +547,7 @@ FILE *tmp;
             }
             break;
           case ProcessVariable::specificType::chr:
-            if (  xyo->ySigned[i] ) {
+            if (  xyo->xSigned[i] ) {
               dxValue = (double) ( (char *) xyo->xPvData[i] )[n];
             }
             else {
@@ -526,7 +555,7 @@ FILE *tmp;
             }
             break;
           case ProcessVariable::specificType::integer:
-            if (  xyo->ySigned[i] ) {
+            if (  xyo->xSigned[i] ) {
               dxValue = (double) ( (int *) xyo->xPvData[i] )[n];
             }
             else {
@@ -534,7 +563,7 @@ FILE *tmp;
             }
             break;
           case ProcessVariable::specificType::enumerated:
-            if (  xyo->ySigned[i] ) {
+            if (  xyo->xSigned[i] ) {
               dxValue = (double) ( (short *) xyo->xPvData[i] )[n];
             }
             else {
@@ -2604,7 +2633,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::shrt:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int();
             }
             else {
@@ -2614,7 +2643,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::chr:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_int();
             }
             else {
@@ -2624,7 +2653,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::integer:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (long *) xyo->yPvData[i] )[ii] = pv->get_int();
             }
             else {
@@ -2634,7 +2663,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::enumerated:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int();
             }
             else {
@@ -2666,7 +2695,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::shrt:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int_array()[ii];
             }
             else {
@@ -2676,7 +2705,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::chr:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_char_array()[ii];
             }
             else {
@@ -2686,7 +2715,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::integer:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (long *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
             }
             else {
@@ -2696,7 +2725,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::enumerated:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int_array()[ii];
             }
             else {
@@ -3038,7 +3067,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::shrt:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int();
             }
             else {
@@ -3048,7 +3077,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::chr:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_int();
             }
             else {
@@ -3058,7 +3087,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::integer:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (long *) xyo->yPvData[i] )[ii] = pv->get_int();
             }
             else {
@@ -3068,7 +3097,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::enumerated:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int();
             }
             else {
@@ -3100,7 +3129,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::shrt:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int_array()[ii];
             }
             else {
@@ -3110,7 +3139,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::chr:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_char_array()[ii];
             }
             else {
@@ -3120,7 +3149,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::integer:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (long *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
             }
             else {
@@ -3130,7 +3159,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::enumerated:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int_array()[ii];
             }
             else {
