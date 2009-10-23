@@ -105,7 +105,7 @@ int n, l;
   if ( axtdo->writeDisabled && axtdo->editable ) {
     if ( axtdo->pvId->have_write_access() ) {
       axtdo->writeDisabled = 0;
-      XtVaSetValues( axtdo->tf_widget,
+      if ( axtdo->tf_widget ) XtVaSetValues( axtdo->tf_widget,
        XmNeditable, (XtArgVal) True,
        NULL );
     }
@@ -113,7 +113,7 @@ int n, l;
   if ( !axtdo->writeDisabled && axtdo->editable ) {
     if ( !axtdo->pvId->have_write_access() ) {
       axtdo->writeDisabled = 1;
-      XtVaSetValues( axtdo->tf_widget,
+      if ( axtdo->tf_widget ) XtVaSetValues( axtdo->tf_widget,
        XmNeditable, (XtArgVal) False,
        NULL );
     }
@@ -127,7 +127,7 @@ int n, l;
     if ( axtdo->pvId->have_write_access() ) {
       n = 0;
       XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) True ); n++;
-      XtSetValues( axtdo->tf_widget, args, n );
+      if ( axtdo->tf_widget ) XtSetValues( axtdo->tf_widget, args, n );
     }
 
     if ( !(axtdo->inputFocusUpdatesAllowed) || axtdo->cursorIn ) {
@@ -5085,7 +5085,7 @@ void activeXTextDspClass::pointerIn (
 
     if ( isWidget && !writeDisabled && editable ) {
       writeDisabled = 1;
-      XtVaSetValues( tf_widget,
+      if ( tf_widget ) XtVaSetValues( tf_widget,
        XmNeditable, (XtArgVal) False,
        NULL );
     }
@@ -5097,7 +5097,7 @@ void activeXTextDspClass::pointerIn (
 
     if ( isWidget && writeDisabled && editable ) {
       writeDisabled = 0;
-      XtVaSetValues( tf_widget,
+      if ( tf_widget ) XtVaSetValues( tf_widget,
        XmNeditable, (XtArgVal) True,
        NULL );
     }
@@ -5258,7 +5258,7 @@ char locFieldLenInfo[7+1];
       if ( pvId->have_write_access() ) {
         if ( isWidget && writeDisabled && editable ) {
           writeDisabled = 0;
-          XtVaSetValues( tf_widget,
+          if ( tf_widget ) XtVaSetValues( tf_widget,
            XmNeditable, (XtArgVal) True,
            NULL );
         }
@@ -5266,7 +5266,7 @@ char locFieldLenInfo[7+1];
       else {
         if ( isWidget && !writeDisabled && editable ) {
           writeDisabled = 1;
-          XtVaSetValues( tf_widget,
+          if ( tf_widget ) XtVaSetValues( tf_widget,
            XmNeditable, (XtArgVal) False,
            NULL );
         }

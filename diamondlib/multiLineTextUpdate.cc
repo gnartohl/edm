@@ -1336,12 +1336,12 @@ edmmultiLineTextUpdateClass *me = (edmmultiLineTextUpdateClass *)userarg;
 
   if ( me->data_pv ) {
     if ( me->data_pv->have_write_access() ) {
-      XtVaSetValues( me->widget,
+      if ( me->widget ) XtVaSetValues( me->widget,
        XmNeditable, True,
        NULL );
     }
     else {
-      XtVaSetValues( me->widget,
+      if ( me->widget ) XtVaSetValues( me->widget,
        XmNeditable, False,
        NULL );
     }
