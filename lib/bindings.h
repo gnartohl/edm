@@ -26,17 +26,9 @@
 #include "act_grf.h"
 #include "group.h"
 
-// ========================
-
-#ifdef GENERIC_PV
-#include "symbolGen.h"
-#endif
-
-#ifndef GENERIC_PV
 #include "symbol.h"
-#endif
 
-// ========================
+#include "asymbol.h"
 
 #include "dynSymbol.h"
 

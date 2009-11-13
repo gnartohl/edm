@@ -72,6 +72,7 @@ ifdef EPICS_HOST_ARCH
   INC += scrolled_list.h
   INC += scrolled_text.h
   INC += symbol.h
+  INC += asymbol.h
   INC += tableObj.h
   INC += tag_pkg.h
   INC += ulBindings.h
@@ -141,6 +142,7 @@ ifdef EPICS_HOST_ARCH
   LIB_SRCS += pvConnection.cc
   LIB_SRCS += group.cc
   LIB_SRCS += symbol.cc
+  LIB_SRCS += asymbol.cc
   LIB_SRCS += dynSymbol.cc
   LIB_SRCS += keypad.cc
   LIB_SRCS += calpad.cc

@@ -68,28 +68,28 @@ FILE *f;
       return;
     }
 
-    names = new char *[num+2]; /* add one more for symbols and
+    names = new char *[num+3]; /* add one more for symbols, asymbols, and
                                     one more for dynSymbols */
     if ( !names ) {
       fprintf( stderr, objBindingClass_str3 );
       exit(-1);
     }
 
-    classNames = new char *[num+2]; /* add one more for symbols and
+    classNames = new char *[num+3]; /* add one more for symbols, asymbols, and
                                          one more for dynSymbols */
     if ( !classNames ) {
       fprintf( stderr, objBindingClass_str3 );
       exit(-1);
     }
 
-    param = new char *[num+2]; /* add one more for symbols and
+    param = new char *[num+3]; /* add one more for symbols, asymbols, and
                                          one more for dynSymbols */
     if ( !param ) {
       fprintf( stderr, objBindingClass_str3 );
       exit(-1);
     }
 
-    types = new char *[num+2]; /* add one more for symbols and
+    types = new char *[num+3]; /* add one more for symbols, asymbols, and
                                          one more for dynSymbols */
     if ( !types ) {
       fprintf( stderr, objBindingClass_str3 );
@@ -249,26 +249,41 @@ FILE *f;
     types[num] = new char[strlen(global_str2)+1];
     strcpy( types[num], global_str2 );
 
-    /* add text for dynSymbols, note that names and types have been
+    /* add text for asymbols, note that names and types have been
        allocated to contain an additional element */
 
-    classNames[num+1] = new char[strlen("activeDynSymbolClass")+1];
-    strcpy( classNames[num+1], "activeDynSymbolClass" );
+    classNames[num+1] = new char[strlen("anaSymbolClass")+1];
+    strcpy( classNames[num+1], "anaSymbolClass" );
 
     param[num+1] = new char[1];
     strcpy( param[num+1], "" );
 
-    names[num+1] = new char[strlen(global_str4)+1];
-    strcpy( names[num+1], global_str4 );
+    names[num+1] = new char[strlen(global_str142)+1];
+    strcpy( names[num+1], global_str142 );
 
-    types[num+1] = new char[strlen(global_str3)+1];
-    strcpy( types[num+1], global_str3 );
+    types[num+1] = new char[strlen(global_str2)+1];
+    strcpy( types[num+1], global_str2 );
+
+    /* add text for dynSymbols, note that names and types have been
+       allocated to contain an additional element */
+
+    classNames[num+2] = new char[strlen("activeDynSymbolClass")+1];
+    strcpy( classNames[num+2], "activeDynSymbolClass" );
+
+    param[num+2] = new char[1];
+    strcpy( param[num+2], "" );
+
+    names[num+2] = new char[strlen(global_str4)+1];
+    strcpy( names[num+2], global_str4 );
+
+    types[num+2] = new char[strlen(global_str3)+1];
+    strcpy( types[num+2], global_str3 );
 
   }
 
   cur_index = 0;
 
-  max = num + 2;
+  max = num + 3;
 
 }
 
@@ -343,6 +358,12 @@ char name[127+1], *error, buf[127+1], *tk;
   else if ( strcmp( oneClassName, "activeSymbolClass" ) == 0 ) {
 
     cur = new activeSymbolClass;
+    return cur;
+
+  }
+  else if ( strcmp( oneClassName, "anaSymbolClass" ) == 0 ) {
+
+    cur = new anaSymbolClass;
     return cur;
 
   }
@@ -517,6 +538,12 @@ char name[127+1], *error, buf[127+1], *tk;
   else if ( strcmp( oneClassName, "activeSymbolClass" ) == 0 ) {
 
     cur = new activeSymbolClass( (activeSymbolClass *) source );
+    return cur;
+
+  }
+  else if ( strcmp( oneClassName, "anaSymbolClass" ) == 0 ) {
+
+    cur = new anaSymbolClass( (anaSymbolClass *) source );
     return cur;
 
   }

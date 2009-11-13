@@ -908,6 +908,45 @@ XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
 
 }
 
+int activeGraphicClass::doSmartDrawAllButMeActive ( void ) {
+
+activeGraphicListPtr cur;
+int x0, x1, y0, y1;
+XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
+
+  resetSmartDrawCount();
+
+  x0 = this->getX0();
+  y0 = this->getY0();
+  x1 = this->getX1();
+  y1 = this->getY1();
+
+  this->bufInvalidate();
+  this->eraseActive();
+
+  actWin->executeGc.addNormXClipRectangle( xR );
+  actWin->executeGc.addXorXClipRectangle( xR );
+  actWin->executeGc.addEraseXClipRectangle( xR );
+
+  cur = actWin->head->flink;
+  while ( cur != actWin->head ) {
+
+    if ( this != cur->node ) {
+      cur->node->drawActiveIfIntersects( x0, y0, x1, y1 );
+    }
+
+    cur = cur->flink;
+
+  }
+
+  actWin->executeGc.removeNormXClipRectangle();
+  actWin->executeGc.removeXorXClipRectangle();
+  actWin->executeGc.removeEraseXClipRectangle();
+
+  return 1;
+
+}
+
 int activeGraphicClass::drawActiveIfIntersects (
   int x0,
   int y0,

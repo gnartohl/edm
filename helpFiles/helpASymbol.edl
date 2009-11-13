@@ -1,0 +1,68 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 432
+y 255
+w 485
+h 199
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 52171 52171 52171
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 65535
+ctlBgColor1 rgb 46517 46517 46517
+ctlBgColor2 rgb 56797 56797 56797
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+title "Symbol"
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 20
+y 24
+w 193
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 61423 61423 61423
+value {
+  "Animated Symbol"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 21
+y 75
+w 445
+h 96
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "An animated symbol is simply an edm symbol whose location may be "
+  "moved at runtime on a rotated cartesian coordinate system. The"
+  "position of the symbol is a function of the value of the X PV, Y PV, and"
+  "Angle PV."
+  ""
+  "Refer to the symbol documentation for additional information."
+}
+autoSize
+endObjectProperties
+

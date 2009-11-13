@@ -2,7 +2,7 @@
 #define __environment_str 1
 
 
-// global_str141 is last
+// global_str142 is last
 
 #define environment_str1 (char *) "EDMDATAFILES"
 #define environment_str2 (char *) "EDMFILES"
@@ -42,6 +42,7 @@
 #define global_str3 (char *) "Graphics"
 #define global_str4 (char *) "Dynamic Symbol"
 #define global_str5 (char *) "Controls"
+#define global_str142 (char *) "Animated Symbol"
 
 // these are used across the following files:
 // main.cc, app_pkg.cc

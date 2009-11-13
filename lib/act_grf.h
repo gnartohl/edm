@@ -104,7 +104,7 @@ protected:
 // will help avoid base class poisoning run-time issues for libraries built
 // at one site and utilized at another.
 //
-static const int MAJOR_VERSION = 3;
+static const int MAJOR_VERSION = 4;
 static const int MINOR_VERSION = 0;
 
 friend void dragFin (
@@ -712,6 +712,8 @@ virtual int intersects (
 virtual int smartDrawAllActive ( void );
 
 virtual int doSmartDrawAllActive ( void );
+
+virtual int doSmartDrawAllButMeActive ( void );
 
 virtual int drawActiveIfIntersects (
   int x0,
