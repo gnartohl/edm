@@ -1,0 +1,18 @@
+#ifndef __dimDialog_str
+#define __dimDialog_str 1
+
+#define dimDialog_str1  (char *) "              X"
+#define dimDialog_str2  (char *) "Y"
+#define dimDialog_str3  (char *) "Point Dist"
+#define dimDialog_str4  (char *) "Angle"
+#define dimDialog_str5  (char *) "Rel Angle"
+#define dimDialog_str6  (char *) "Obj X"
+#define dimDialog_str7  (char *) "Obj Y"
+#define dimDialog_str8  (char *) "Obj W"
+#define dimDialog_str9  (char *) "Obj H"
+#define dimDialog_str10 (char *) "Dist From Top"
+#define dimDialog_str11 (char *) "Dist From Bot"
+#define dimDialog_str12 (char *) "Dist From Left"
+#define dimDialog_str13 (char *) "Dist From Right"
+
+#endif

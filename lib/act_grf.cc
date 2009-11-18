@@ -4150,3 +4150,16 @@ char *activeGraphicClass::crawlerGetNextPv ( void ) {
 
 }
 
+void activeGraphicClass::getSelBoxDims (
+  int *x,
+  int *y,
+  int *w,
+  int *h
+) {
+
+  *x = sboxX;
+  *y = sboxY;
+  *w = sboxW;
+  *h = sboxH;
+
+}

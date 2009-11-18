@@ -104,7 +104,7 @@ protected:
 // will help avoid base class poisoning run-time issues for libraries built
 // at one site and utilized at another.
 //
-static const int MAJOR_VERSION = 4;
+static const int MAJOR_VERSION = 5;
 static const int MINOR_VERSION = 0;
 
 friend void dragFin (
@@ -581,6 +581,8 @@ virtual int removeLastPoint ( void );
 virtual pointPtr selectPoint (
   int x,
   int y );
+
+virtual void deselectAllPoints ( void ) {}
 
 virtual int movePoint (
   pointPtr curPoint,
@@ -1354,6 +1356,13 @@ int crawlerPvIndex; // for crawler
 // pv crawler functions
 virtual char *crawlerGetFirstPv ( void );
 virtual char *crawlerGetNextPv ( void );
+
+void getSelBoxDims (
+  int *x,
+  int *y,
+  int *w,
+  int *h
+);
 
 };
 

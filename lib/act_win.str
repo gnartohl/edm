@@ -216,5 +216,7 @@
 #define activeWindowClass_str217 (char *) "Template parameter file corrupt or missing - %s"
 #define activeWindowClass_str218 (char *) "Template Params"
 #define activeWindowClass_str219 (char *) "Param"
+#define activeWindowClass_str220 (char *) "Toggle View Dimensions"
+#define activeWindowClass_str221 (char *) "Record Object Dimensions (R/r)"
 
 #endif

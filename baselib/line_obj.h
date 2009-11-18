@@ -300,6 +300,8 @@ virtual pointPtr selectPoint (
   int x,
   int y );
 
+virtual void deselectAllPoints ( void );
+
 virtual int movePoint (
   pointPtr curPoint,
   int x,

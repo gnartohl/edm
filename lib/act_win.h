@@ -52,6 +52,7 @@
 #include "undo.h"
 #include "msg_dialog.h"
 #include "pv_action.h"
+#include "dimDialog.h"
 
 #include "tag_pkg.h"
 
@@ -140,6 +141,8 @@
 #define AWC_POPUP_OPEN_SELF 157
 #define AWC_POPUP_SHOW_MACROS 158
 #define AWC_POPUP_INSERT_TEMPLATE 159
+#define AWC_POPUP_TOGGLE_VIEW_DIMS 160
+#define AWC_POPUP_RECORD_DIMS 161
 
 #define AWC_NONE_SELECTED 1
 #define AWC_ONE_SELECTED 2
@@ -398,6 +401,7 @@ static void action_cb (
 
 class appContextClass;
 class activeGraphicClass;
+class dimDialogClass;
 
 typedef struct widgetAndPointerTag {
   Widget w;
@@ -464,6 +468,50 @@ typedef struct pvDefTag {
   ProcessVariable *id;
 } pvDefType, *pvDefPtr;
 
+typedef struct refPointTag {
+  char label[31+1];
+  int x;
+  int y;
+} refPointType, *refPointPtr;
+
+typedef struct refRectTag {
+  char label[31+1];
+  int x;
+  int y;
+  int w;
+  int h;
+} refRectType, *refRectPtr;
+
+typedef struct showDimBufTag {
+  int init;
+  int x;
+  int y;
+  double dist;
+  double theta;
+  double relTheta;
+  int objX;
+  int objY;
+  int objW;
+  int objH;
+  int objTopDist;
+  int objBotDist;
+  int objLeftDist;
+  int objRightDist;
+  int prev_x;
+  int prev_y;
+  double prev_dist;
+  double prev_theta;
+  double prev_relTheta;
+  int prev_objX;
+  int prev_objY;
+  int prev_objW;
+  int prev_objH;
+  int prev_objTopDist;
+  int prev_objBotDist;
+  int prev_objLeftDist;
+  int prev_objRightDist;
+} showDimBufType, *showDimBufPtr;
+
 static char stdEdlFileExt[63+1] = ".edl";
 static char defEdlFileExt[63+1] = ".edl";
 static char defEdlFileSearchMask[63+1] = "*.edl";
@@ -474,7 +522,19 @@ unknownTagList unknownTags;
 
 public:
 
+dimDialogClass *dimDialog;
+int viewDims;
+
+showDimBufType showDimBuf;
+int numRefPoints;
+refPointType refPoint[2];
+int recordedRefRect;
+int numRefRects;
+refRectType refRect[2];
+XtIntervalId showDimTimer;
+
 //static char stdEdlFileExt[63+1];
+
 
 int clearEpicsPvTypeDefault;
 

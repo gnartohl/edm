@@ -50,6 +50,265 @@ int i;
 
 }
 
+static void showObjectDimensions (
+  XtPointer client,
+  XtIntervalId *id
+) {
+
+activeWindowClass *awo = (activeWindowClass *) client;
+activeGraphicListPtr cur;
+int doUpdate;
+
+  if ( !awo->dimDialog ) {
+    awo->dimDialog = new dimDialogClass;
+    awo->dimDialog->create( awo );
+  }
+
+  if ( awo->viewDims ) {
+    awo->dimDialog->popup();
+  }
+  else {
+    awo->dimDialog->popdown();
+    return;
+  }
+
+  awo->showDimBuf.objTopDist = 0;
+  awo->showDimBuf.objBotDist = 0;
+  awo->showDimBuf.objLeftDist = 0;
+  awo->showDimBuf.objRightDist = 0;
+
+  awo->numRefRects = 0;
+
+  cur = awo->selectedHead->selFlink;
+  if ( cur != awo->selectedHead ) {
+
+    if ( cur->selFlink == awo->selectedHead ) { // only one selected
+      awo->numRefRects = 1;
+      cur->node->getSelBoxDims( &(awo->refRect[0].x), &(awo->refRect[0].y),
+       &(awo->refRect[0].w), &(awo->refRect[0].h) );
+    }
+
+  }
+
+  if ( awo->numRefRects == 1 ) {
+
+    awo->showDimBuf.objX = awo->refRect[0].x;
+    awo->showDimBuf.objY = awo->refRect[0].y;
+    awo->showDimBuf.objW = awo->refRect[0].w;
+    awo->showDimBuf.objH = awo->refRect[0].h;
+
+    if ( awo->recordedRefRect ) {
+      awo->showDimBuf.objTopDist = awo->refRect[0].y - awo->refRect[1].y;
+      awo->showDimBuf.objBotDist = awo->refRect[0].y - awo->refRect[1].y -
+       awo->refRect[1].h;
+      awo->showDimBuf.objLeftDist = awo->refRect[0].x - awo->refRect[1].x;
+      awo->showDimBuf.objRightDist = awo->refRect[0].x - awo->refRect[1].x -
+       awo->refRect[1].w;
+    }
+
+  }
+  else {
+
+    awo->showDimBuf.objX = 0;
+    awo->showDimBuf.objY = 0;
+    awo->showDimBuf.objW = 0;
+    awo->showDimBuf.objH = 0;
+
+  }
+
+  if ( ( awo->state != AWC_MOVING_POINT ) &&
+       ( awo->state != AWC_MOVING_CREATE_POINT ) &&
+       ( awo->state != AWC_CREATING_POINTS ) &&
+       ( awo->state != AWC_EDITING_POINTS ) ) {
+
+    awo->showDimBuf.dist = 0;
+    awo->showDimBuf.theta = 0;
+    awo->showDimBuf.relTheta = 0;
+
+  }
+
+  doUpdate = 0;
+
+  if ( awo->showDimBuf.init || ( awo->showDimBuf.x != awo->showDimBuf.prev_x ) ) {
+    awo->showDimBuf.prev_x = awo->showDimBuf.x;
+    doUpdate = 1;
+  }
+
+  if ( awo->showDimBuf.init || ( awo->showDimBuf.y != awo->showDimBuf.prev_y ) ) {
+    awo->showDimBuf.prev_y = awo->showDimBuf.y;
+    doUpdate = 1;
+  }
+
+  if ( awo->showDimBuf.init || ( awo->showDimBuf.dist != awo->showDimBuf.prev_dist ) ) {
+    awo->showDimBuf.prev_dist = awo->showDimBuf.dist;
+    doUpdate = 1;
+  }
+
+  if ( awo->showDimBuf.init || ( awo->showDimBuf.theta != awo->showDimBuf.prev_theta ) ) {
+    awo->showDimBuf.prev_theta = awo->showDimBuf.theta;
+    doUpdate = 1;
+  }
+
+  if ( awo->showDimBuf.init || ( awo->showDimBuf.relTheta != awo->showDimBuf.prev_relTheta ) ) {
+    awo->showDimBuf.prev_relTheta = awo->showDimBuf.relTheta;
+    doUpdate = 1;
+  }
+
+  if ( awo->showDimBuf.init || ( awo->showDimBuf.objX != awo->showDimBuf.prev_objX ) ) {
+    awo->showDimBuf.prev_objX = awo->showDimBuf.objX;
+    doUpdate = 1;
+  }
+
+  if ( awo->showDimBuf.init || ( awo->showDimBuf.objY != awo->showDimBuf.prev_objY ) ) {
+    awo->showDimBuf.prev_objY = awo->showDimBuf.objY;
+    doUpdate = 1;
+  }
+
+  if ( awo->showDimBuf.init || ( awo->showDimBuf.objW != awo->showDimBuf.prev_objW ) ) {
+    awo->showDimBuf.prev_objW = awo->showDimBuf.objW;
+    doUpdate = 1;
+  }
+
+  if ( awo->showDimBuf.init || ( awo->showDimBuf.objH != awo->showDimBuf.prev_objH ) ) {
+    awo->showDimBuf.prev_objH = awo->showDimBuf.objH;
+    doUpdate = 1;
+  }
+
+  if ( awo->showDimBuf.init ||
+       ( awo->showDimBuf.objTopDist != awo->showDimBuf.prev_objTopDist ) ) {
+    awo->showDimBuf.prev_objTopDist = awo->showDimBuf.objTopDist;
+    doUpdate = 1;
+  }
+
+  if ( awo->showDimBuf.init ||
+       ( awo->showDimBuf.objBotDist != awo->showDimBuf.prev_objBotDist ) ) {
+    awo->showDimBuf.prev_objBotDist = awo->showDimBuf.objBotDist;
+    doUpdate = 1;
+  }
+
+  if ( awo->showDimBuf.init ||
+       ( awo->showDimBuf.objLeftDist != awo->showDimBuf.prev_objLeftDist ) ) {
+    awo->showDimBuf.prev_objLeftDist = awo->showDimBuf.objLeftDist;
+    doUpdate = 1;
+  }
+
+  if ( awo->showDimBuf.init ||
+       ( awo->showDimBuf.objRightDist != awo->showDimBuf.prev_objRightDist ) ) {
+    awo->showDimBuf.prev_objRightDist = awo->showDimBuf.objRightDist;
+    doUpdate = 1;
+  }
+
+  awo->showDimBuf.init = 0;
+
+  if ( doUpdate ) {
+
+    awo->dimDialog->setX( awo->showDimBuf.x );
+    awo->dimDialog->setY( awo->showDimBuf.y );
+    awo->dimDialog->setLen( awo->showDimBuf.dist );
+    awo->dimDialog->setAngle( awo->showDimBuf.theta );
+    awo->dimDialog->setRelAngle( awo->showDimBuf.relTheta );
+    awo->dimDialog->setObjX( awo->showDimBuf.objX );
+    awo->dimDialog->setObjY( awo->showDimBuf.objY );
+    awo->dimDialog->setObjW( awo->showDimBuf.objW );
+    awo->dimDialog->setObjH( awo->showDimBuf.objH );
+    awo->dimDialog->setObjTopDist( awo->showDimBuf.objTopDist );
+    awo->dimDialog->setObjBotDist( awo->showDimBuf.objBotDist );
+    awo->dimDialog->setObjLeftDist( awo->showDimBuf.objLeftDist );
+    awo->dimDialog->setObjRightDist( awo->showDimBuf.objRightDist );
+
+  }
+
+  awo->showDimTimer = appAddTimeOut( awo->appCtx->appContext(),
+   250, showObjectDimensions, awo );
+
+}
+
+static void setPointDimensions (
+  activeWindowClass *awo,
+  int x,
+  int y
+) {
+
+double hyp1, theta1, hyp2, theta2, adiff;
+int xx, yy, ww, hh;
+
+  awo->showDimBuf.x = x;
+  awo->showDimBuf.y = y;
+
+  if ( awo->numRefPoints == 2 ) {
+
+    xx = awo->refPoint[0].x - awo->refPoint[1].x;
+    yy = awo->refPoint[1].y - awo->refPoint[0].y;
+    ww = abs( xx );
+    hh = abs( yy );
+    hyp1 =
+     sqrt( (double) xx * (double) xx +
+           (double) yy * (double) yy );
+    if ( fabs(hyp1) > 0.001 ) {
+      theta1 = asin ( (double) yy / hyp1 ) * 57.29578;
+      if ( awo->refPoint[0].x < awo->refPoint[1].x ) theta1 = 180 - theta1;
+      if ( theta1 < 0 ) {
+        theta1 = 360 + theta1;
+      }
+    }
+    else {
+      theta1 = 0;
+    }
+
+    xx = x - awo->refPoint[1].x;
+    yy = awo->refPoint[1].y - y;
+    ww = abs( xx );
+    hh = abs( yy );
+    hyp2 =
+     sqrt( (double) xx * (double) xx +
+           (double) yy * (double) yy );
+    if ( fabs(hyp2) > 0.001 ) {
+      theta2 = asin ( (double) yy / hyp2 ) * 57.29578;
+      if ( x < awo->refPoint[1].x ) theta2 = 180 - theta2;
+      if ( theta2 < 0 ) {
+        theta2 = 360 + theta2;
+      }
+    }
+    else {
+      theta2 = 0;
+    }
+
+    adiff = theta2 - theta1;
+    if ( adiff < 0 ) adiff = 360 + adiff;
+
+    awo->showDimBuf.dist = hyp2;
+    awo->showDimBuf.theta = theta2;
+    awo->showDimBuf.relTheta = adiff;
+
+  }
+  else if ( awo->numRefPoints == 1 ) {
+
+    xx = x - awo->refPoint[1].x;
+    yy = awo->refPoint[1].y - y;
+    ww = abs( xx );
+    hh = abs( yy );
+    hyp2 =
+     sqrt( (double) xx * (double) xx +
+           (double) yy * (double) yy );
+    if ( fabs(hyp2) > 0.001 ) {
+      theta2 = asin ( (double) yy / hyp2 ) * 57.29578;
+      if ( x < awo->refPoint[1].x ) theta2 = 180 - theta2;
+      if ( theta2 < 0 ) {
+        theta2 = 360 + theta2;
+      }
+    }
+    else {
+      theta2 = 0;
+    }
+
+    awo->showDimBuf.dist = hyp2;
+    awo->showDimBuf.theta = theta2;
+    awo->showDimBuf.relTheta = 0.0;
+
+  }
+
+}
+
 void printErrMsg (
   const char *fileName,
   int lineNum,
@@ -4300,6 +4559,42 @@ Atom wm_delete_window;
 
       break;
 
+    case AWC_POPUP_TOGGLE_VIEW_DIMS:
+
+      if ( !awo->dimDialog ) {
+        awo->dimDialog = new dimDialogClass;
+        awo->dimDialog->create( awo );
+      }
+
+      if ( awo->viewDims ) {
+        awo->viewDims = 0;
+        XtRemoveTimeOut( awo->showDimTimer );
+        awo->showDimTimer = 0;
+        awo->dimDialog->popdown();
+      }
+      else {
+        awo->viewDims = 1;
+	awo->dimDialog->popup();
+        awo->showDimBuf.init = 1;
+        awo->showDimBuf.x = 0;
+        awo->showDimBuf.y = 0;
+        awo->showDimBuf.dist = 0;
+        awo->showDimBuf.theta = 0;
+        awo->showDimBuf.relTheta = 0;
+        awo->showDimBuf.objX = 0;
+        awo->showDimBuf.objY = 0;
+        awo->showDimBuf.objW = 0;
+        awo->showDimBuf.objH = 0;
+        awo->showDimBuf.objTopDist = 0;
+        awo->showDimBuf.objBotDist = 0;
+        awo->showDimBuf.objLeftDist = 0;
+        awo->showDimBuf.objRightDist = 0;
+        awo->showDimTimer = appAddTimeOut( awo->appCtx->appContext(),
+         250, showObjectDimensions, awo );
+      }
+
+      break;
+
     case AWC_POPUP_HELP:
 
       awo->openExecuteSysFile( "helpMain" );
@@ -4385,6 +4680,17 @@ activeGraphicListPtr curSel;
 
         printErrMsg( __FILE__, __LINE__, "Inconsistent select state" );
 
+      }
+
+      break;
+
+    case AWC_POPUP_RECORD_DIMS:
+
+      curSel = awo->selectedHead->selFlink;
+      if ( curSel != awo->selectedHead ) {
+        awo->recordedRefRect = 1;
+        curSel->node->getSelBoxDims( &(awo->refRect[1].x),
+         &(awo->refRect[1].y), &(awo->refRect[1].w), &(awo->refRect[1].h) );
       }
 
       break;
@@ -6399,6 +6705,11 @@ Boolean  nothingDone = False;
       stat = awo->currentPointObject->movePointRel( awo->currentPoint,
        xInc, yInc );
 
+      if ( awo->viewDims ) {
+        setPointDimensions( awo, awo->currentPoint->x,
+         awo->currentPoint->y );
+      }
+
       goto done;
 
     }
@@ -6488,6 +6799,17 @@ Boolean  nothingDone = False;
 	   ( awo->state == AWC_MANY_SELECTED ) ) {
         do_ungroup( awo );
       }
+    }
+    else if ( key == XK_R ) {
+      curSel = awo->selectedHead->selFlink;
+      if ( curSel != awo->selectedHead ) {
+        awo->recordedRefRect = 1;
+        curSel->node->getSelBoxDims( &(awo->refRect[1].x),
+         &(awo->refRect[1].y), &(awo->refRect[1].w), &(awo->refRect[1].h) );
+      }
+    }
+    else if ( key == XK_r ) {
+      awo->recordedRefRect = 0;
     }
     else {
       nothingDone = True;
@@ -7496,7 +7818,9 @@ Boolean  nothingDone = False;
             awo->currentPoint =
               awo->currentPointObject->selectPoint( be->x, be->y );
 
-            if ( awo->currentPoint ) awo->state = AWC_MOVING_CREATE_POINT;
+            if ( awo->currentPoint ) {
+              awo->state = AWC_MOVING_CREATE_POINT;
+	    }
 
           }
 
@@ -8462,12 +8786,19 @@ Boolean  nothingDone = False;
 
               awo->state = AWC_EDITING_POINTS;
               awo->usingArrowKeys = 0;
+              if ( awo->currentPointObject ) {
+                awo->currentPointObject->deselectAllPoints();
+	      }
               break;
 
 	    case AWC_MOVING_CREATE_POINT:
 
               awo->state = AWC_CREATING_POINTS;
               awo->usingArrowKeys = 0;
+              if ( awo->currentPointObject ) {
+                awo->currentPointObject->deselectAllPoints();
+	      }
+
               break;
 
 	    case AWC_EDITING_POINTS:
@@ -8756,6 +9087,12 @@ Boolean  nothingDone = False;
     if ( awo->state == AWC_WAITING ) goto done;
 
     me = (XMotionEvent *) e;
+
+    if ( !awo->usingArrowKeys ) {
+      if ( awo->viewDims ) {
+        setPointDimensions( awo, (int) me->x, (int) me->y );
+      }
+    }
 
     if ( awo->appCtx->viewXy ) {
 
@@ -10575,6 +10912,11 @@ activeWindowClass::activeWindowClass ( void ) : unknownTags() {
 char *str;
 int i;
 
+  numRefPoints = numRefRects = recordedRefRect = 0;
+  showDimTimer = 0;
+  dimDialog = NULL;
+  viewDims = 0;
+
   strcpy( templInfo, "" );
   bufTemplInfo = NULL;
 
@@ -11078,6 +11420,17 @@ pvDefPtr pvDefCur, pvDefNext;
   }
 
   if ( top ) XtUnmapWidget( top );  //??????? XtUnmapWidget
+
+  if ( dimDialog ) {
+    if ( showDimTimer ) {
+      XtRemoveTimeOut( showDimTimer );
+      showDimTimer = 0;
+    }
+    viewDims = 0;
+    dimDialog->destroy();
+    delete dimDialog;
+    dimDialog = NULL;
+  }
 
   if ( dragPopup ) {
     XtDestroyWidget( dragPopup );
@@ -12024,7 +12377,7 @@ char tmp[10];
   }
 
   XtAddEventHandler( drawWidget,
-   KeyPressMask|KeyReleaseMask|ButtonPressMask|
+   KeyPressMask|KeyReleaseMask|ButtonPressMask|PointerMotionMask|
    ButtonReleaseMask|Button1MotionMask|
    Button2MotionMask|Button3MotionMask|ExposureMask, False,
    drawWinEventHandler, (XtPointer) this );
@@ -12701,6 +13054,29 @@ Arg args[3];
   curBlockListNode = new popupBlockListType;
   curBlockListNode->block.w = pb;
   curBlockListNode->block.ptr = (void *) AWC_POPUP_PROPERTIES;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
+
+  str = XmStringCreateLocalized( activeWindowClass_str220 );
+
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   b2NoneSelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_TOGGLE_VIEW_DIMS;
   curBlockListNode->block.awo = this;
 
   curBlockListNode->blink = popupBlockHead->blink;
@@ -13477,6 +13853,29 @@ Arg args[3];
   curBlockListNode->flink = popupBlockHead;
 
   XtAddCallback( pb, XmNactivateCallback, b2ReleaseManySelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
+
+  str = XmStringCreateLocalized( activeWindowClass_str221 );
+
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   b2OneSelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_RECORD_DIMS;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseOneSelect_cb,
    (XtPointer) &curBlockListNode->block );
 
 
@@ -17453,7 +17852,7 @@ pvDefPtr pvDefCur;
   }
 
   XtAddEventHandler( drawWidget,
-   KeyPressMask|KeyReleaseMask|ButtonPressMask|
+   KeyPressMask|KeyReleaseMask|ButtonPressMask|PointerMotionMask|
    ButtonReleaseMask|Button1MotionMask|
    Button2MotionMask|Button3MotionMask|ExposureMask, False,
    drawWinEventHandler, (XtPointer) this );
