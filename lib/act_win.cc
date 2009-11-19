@@ -11594,7 +11594,7 @@ pvDefPtr pvDefCur, pvDefNext;
 
   if ( drawWidget ) {
     XtRemoveEventHandler( drawWidget,
-     KeyPressMask|KeyReleaseMask|ButtonPressMask|
+     KeyPressMask|KeyReleaseMask|ButtonPressMask|PointerMotionMask|
      ButtonReleaseMask|Button1MotionMask|
      Button2MotionMask|Button3MotionMask|ExposureMask, False,
      drawWinEventHandler, (XtPointer) this );
@@ -17334,7 +17334,7 @@ char *envPtr;
   cursor.setColor( ci->pix(fgColor), ci->pix(bgColor) );
 
   XtRemoveEventHandler( drawWidget,
-   KeyPressMask|KeyReleaseMask|ButtonPressMask|
+   KeyPressMask|KeyReleaseMask|ButtonPressMask|PointerMotionMask|
    ButtonReleaseMask|Button1MotionMask|
    Button2MotionMask|Button3MotionMask|ExposureMask, False,
    drawWinEventHandler, (XtPointer) this );
