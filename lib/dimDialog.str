@@ -14,5 +14,10 @@
 #define dimDialog_str11 (char *) "Dist From Bot"
 #define dimDialog_str12 (char *) "Dist From Left"
 #define dimDialog_str13 (char *) "Dist From Right"
+#define dimDialog_str14 (char *) "Meas Dist From:"
+#define dimDialog_str15 (char *) "Top/Left"
+#define dimDialog_str16 (char *) "Top/Right"
+#define dimDialog_str17 (char *) "Bot/Left"
+#define dimDialog_str18 (char *) "Bot/Right"
 
 #endif

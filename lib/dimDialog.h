@@ -104,22 +104,27 @@ int setObjRightDist (
   int d
 );
 
+int getDistMode ( void );
+
 private:
 
 activeWindowClass *awo;
 
+int distMode;
 int isPoppedUp;
 int widgetsCreated;
 
-Widget shell, topForm, sep1, sep2,
+Widget shell, topForm, sep1, sep2, sep3,
  xLabel, xValue, yLabel, yValue, lenLabel, lenValue,
- angleLabel, angleValue, relAngleLabel, relAngleValue,
+ angleLabel, angleValue, negAngleValue,
+ relAngleLabel, relAngleValue, negRelAngleValue,
  objXLabel, objXValue, objYLabel, objYValue,
  objWLabel, objWValue, objHLabel, objHValue,
  objTopDistLabel, objTopDistValue,
  objBotDistLabel, objBotDistValue,
  objLeftDistLabel, objLeftDistValue,
- objRightDistLabel, objRightDistValue;
+ objRightDistLabel, objRightDistValue,
+ optLabel, pdm, opt, pb1, pb2, pb3, pb4;
 
 int xval, yval;
 double lval, aval, raval;

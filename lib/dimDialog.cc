@@ -37,6 +37,7 @@ int dimDialogClass::destroy ( void ) {
 
   XtDestroyWidget( sep1 );
   XtDestroyWidget( sep2 );
+  XtDestroyWidget( sep3 );
   XtDestroyWidget( xLabel );
   XtDestroyWidget( xValue );
   XtDestroyWidget( yLabel );
@@ -45,8 +46,10 @@ int dimDialogClass::destroy ( void ) {
   XtDestroyWidget( lenValue );
   XtDestroyWidget( angleLabel );
   XtDestroyWidget( angleValue );
+  XtDestroyWidget( negAngleValue );
   XtDestroyWidget( relAngleLabel );
   XtDestroyWidget( relAngleValue );
+  XtDestroyWidget( negRelAngleValue );
   XtDestroyWidget( objXLabel );
   XtDestroyWidget( objXValue );
   XtDestroyWidget( objYLabel );
@@ -63,6 +66,13 @@ int dimDialogClass::destroy ( void ) {
   XtDestroyWidget( objLeftDistValue );
   XtDestroyWidget( objRightDistLabel );
   XtDestroyWidget( objRightDistValue );
+  XtDestroyWidget( pb1 );
+  XtDestroyWidget( pb2 );
+  XtDestroyWidget( pb3 );
+  XtDestroyWidget( pb4 );
+  XtDestroyWidget( pdm );
+  XtDestroyWidget( opt );
+  XtDestroyWidget( optLabel );
   XtDestroyWidget( topForm );
   XtDestroyWidget( shell );
   widgetsCreated = 0;
@@ -79,6 +89,8 @@ XmString str;
 char buf[7+1];
 Atom wm_delete_window;
 Dimension formw, formh;
+Arg args[10];
+int n;
 
   if ( widgetsCreated ) return 1;
   widgetsCreated = 1;
@@ -105,6 +117,7 @@ Dimension formw, formh;
    XmNtopAttachment, XmATTACH_FORM,
    XmNleftAttachment, XmATTACH_FORM,
    NULL );
+  XmStringFree( str );
 
   strcpy( buf, "" );
 
@@ -129,6 +142,7 @@ Dimension formw, formh;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, xValue,
    NULL );
+  XmStringFree( str );
 
   strcpy( buf, "" );
 
@@ -162,6 +176,7 @@ Dimension formw, formh;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, xValue,
    NULL );
+  XmStringFree( str );
 
   strcpy( buf, "" );
 
@@ -186,6 +201,7 @@ Dimension formw, formh;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, xValue,
    NULL );
+  XmStringFree( str );
 
   strcpy( buf, "" );
 
@@ -201,15 +217,29 @@ Dimension formw, formh;
    XmNleftWidget, angleLabel,
    NULL );
 
+  negAngleValue = XtVaCreateManagedWidget( "neganglevalue", xmTextFieldWidgetClass,
+   topForm,
+   XmNcolumns, (short) 8,
+   XmNvalue, buf,
+   XmNmaxLength, (short) 10,
+   XmNtopAttachment, XmATTACH_WIDGET,
+   XmNtopWidget, angleValue,
+   XmNtopOffset, 0,
+   XmNleftAttachment, XmATTACH_WIDGET,
+   XmNleftWidget, angleLabel,
+   NULL );
+
   str = XmStringCreateLocalized( dimDialog_str5 );
   relAngleLabel = XtVaCreateManagedWidget( "relanglelabel", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_WIDGET,
-   XmNtopWidget, angleLabel,
+   XmNtopWidget, negAngleValue,
+   XmNtopOffset, 10,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, xValue,
    NULL );
+  XmStringFree( str );
 
   strcpy( buf, "" );
 
@@ -226,11 +256,25 @@ Dimension formw, formh;
    XmNleftWidget, relAngleLabel,
    NULL );
 
+  negRelAngleValue = XtVaCreateManagedWidget( "negrelanglevalue",
+   xmTextFieldWidgetClass,
+   topForm,
+   XmNcolumns, (short) 8,
+   XmNvalue, buf,
+   XmNmaxLength, (short) 10,
+   XmNtopAttachment, XmATTACH_WIDGET,
+   XmNtopWidget, relAngleValue,
+   XmNtopOffset, 0,
+   XmNleftAttachment, XmATTACH_WIDGET,
+   XmNleftWidget, relAngleLabel,
+   NULL );
+
   sep2 = XtVaCreateManagedWidget( "sep2", xmSeparatorWidgetClass,
    topForm,
    XmNmarginTop, 7,
    XmNtopAttachment, XmATTACH_WIDGET,
-   XmNtopWidget, relAngleLabel,
+   XmNtopWidget, negRelAngleValue,
+   XmNtopOffset, 8,
    XmNrightAttachment, XmATTACH_FORM,
    XmNleftAttachment, XmATTACH_FORM,
    NULL );
@@ -244,6 +288,7 @@ Dimension formw, formh;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, xValue,
    NULL );
+  XmStringFree( str );
 
   strcpy( buf, "" );
 
@@ -269,6 +314,7 @@ Dimension formw, formh;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, xValue,
    NULL );
+  XmStringFree( str );
 
   strcpy( buf, "" );
 
@@ -294,6 +340,7 @@ Dimension formw, formh;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, xValue,
    NULL );
+  XmStringFree( str );
 
   strcpy( buf, "" );
 
@@ -319,6 +366,7 @@ Dimension formw, formh;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, xValue,
    NULL );
+  XmStringFree( str );
 
   strcpy( buf, "" );
 
@@ -335,15 +383,82 @@ Dimension formw, formh;
    XmNleftWidget, objHLabel,
    NULL );
 
+  sep3 = XtVaCreateManagedWidget( "sep2", xmSeparatorWidgetClass,
+   topForm,
+   XmNmarginTop, 7,
+   XmNtopAttachment, XmATTACH_WIDGET,
+   XmNtopWidget, objHLabel,
+   XmNrightAttachment, XmATTACH_FORM,
+   XmNleftAttachment, XmATTACH_FORM,
+   NULL );
+
+  pdm = XmCreatePulldownMenu( topForm, "pulldown", NULL, 0 );
+
+  // top/left
+  str = XmStringCreateLocalized( dimDialog_str15 );
+  pb1 = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   pdm,
+   XmNlabelString, str,
+   NULL );
+  XmStringFree( str );
+
+  // top/right
+  str = XmStringCreateLocalized( dimDialog_str16 );
+  pb2 = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   pdm,
+   XmNlabelString, str,
+   NULL );
+  XmStringFree( str );
+
+  // bot/left
+  str = XmStringCreateLocalized( dimDialog_str17 );
+  pb3 = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   pdm,
+   XmNlabelString, str,
+   NULL );
+  XmStringFree( str );
+
+  // bot/right
+  str = XmStringCreateLocalized( dimDialog_str18 );
+  pb4 = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   pdm,
+   XmNlabelString, str,
+   NULL );
+  XmStringFree( str );
+
+  n = 0;
+  XtSetArg( args[n], XmNnavigationType, XmTAB_GROUP ); n++;
+  XtSetArg( args[n], XmNsubMenuId, (XtArgVal) pdm ); n++;
+  XtSetArg( args[n], XmNmenuHistory, (XtArgVal) pb1 ); n++;
+  XtSetArg( args[n], XmNtopAttachment, (XtArgVal) XmATTACH_WIDGET ); n++;
+  XtSetArg( args[n], XmNtopWidget, (XtArgVal) sep3 ); n++;
+  XtSetArg( args[n], XmNleftAttachment, (XtArgVal) XmATTACH_OPPOSITE_WIDGET ); n++;
+  XtSetArg( args[n], XmNleftWidget, (XtArgVal) xValue ); n++;
+  XtSetArg( args[n], XmNtopOffset, (XtArgVal) 5 ); n++;
+  opt = XmCreateOptionMenu( topForm, "opt", args, n );
+  XtManageChild( opt );
+
+  str = XmStringCreateLocalized( dimDialog_str14 );
+  optLabel = XtVaCreateManagedWidget( "optlabel", xmLabelWidgetClass,
+   topForm,
+   XmNlabelString, str,
+   XmNtopAttachment, XmATTACH_WIDGET,
+   XmNtopWidget, sep3,
+   XmNrightAttachment, XmATTACH_WIDGET,
+   XmNrightWidget, opt,
+   NULL );
+  XmStringFree( str );
+
   str = XmStringCreateLocalized( dimDialog_str10 );
   objTopDistLabel = XtVaCreateManagedWidget( "topdistlabel", xmLabelWidgetClass,
    topForm,
    XmNlabelString, str,
    XmNtopAttachment, XmATTACH_WIDGET,
-   XmNtopWidget, objHLabel,
+   XmNtopWidget, opt,
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, xValue,
    NULL );
+  XmStringFree( str );
 
   strcpy( buf, "" );
 
@@ -369,6 +484,7 @@ Dimension formw, formh;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, xValue,
    NULL );
+  XmStringFree( str );
 
   strcpy( buf, "" );
 
@@ -394,6 +510,7 @@ Dimension formw, formh;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, xValue,
    NULL );
+  XmStringFree( str );
 
   strcpy( buf, "" );
 
@@ -419,6 +536,7 @@ Dimension formw, formh;
    XmNrightAttachment, XmATTACH_WIDGET,
    XmNrightWidget, xValue,
    NULL );
+  XmStringFree( str );
 
   strcpy( buf, "" );
 
@@ -569,6 +687,14 @@ char buf[15+1];
    XmNvalue, buf,
    NULL );
 
+  if ( strcmp( buf, "0.00" ) != 0 ) {
+    snprintf( buf, 15, "%-.2f", angle-360.0 );
+  }
+
+  XtVaSetValues( negAngleValue,
+   XmNvalue, buf,
+   NULL );
+
   return 1;
 
 }
@@ -584,6 +710,14 @@ char buf[15+1];
   snprintf( buf, 15, "%-.2f", relAngle );
 
   XtVaSetValues( relAngleValue,
+   XmNvalue, buf,
+   NULL );
+
+  if ( strcmp( buf, "0.00" ) != 0 ) {
+    snprintf( buf, 15, "%-.2f", relAngle-360.0 );
+  }
+
+  XtVaSetValues( negRelAngleValue,
    XmNvalue, buf,
    NULL );
 
@@ -732,5 +866,27 @@ char buf[15+1];
    NULL );
 
   return 1;
+
+}
+
+int dimDialogClass::getDistMode ( void ) {
+
+Widget curHistoryWidget;
+
+  XtVaGetValues( opt,
+   XmNmenuHistory, (XtArgVal) &curHistoryWidget,
+   NULL );
+
+  if ( curHistoryWidget == pb4 ) {
+    return 3;
+  }
+  else if ( curHistoryWidget == pb3 ) {
+    return 2;
+  }
+  else if ( curHistoryWidget == pb2 ) {
+    return 1;
+  }
+
+  return 0;
 
 }

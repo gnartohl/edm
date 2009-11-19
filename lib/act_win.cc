@@ -57,7 +57,7 @@ static void showObjectDimensions (
 
 activeWindowClass *awo = (activeWindowClass *) client;
 activeGraphicListPtr cur;
-int doUpdate;
+int doUpdate, distMode, x0, y0;
 
   if ( !awo->dimDialog ) {
     awo->dimDialog = new dimDialogClass;
@@ -80,13 +80,11 @@ int doUpdate;
   awo->numRefRects = 0;
 
   cur = awo->selectedHead->selFlink;
-  if ( cur != awo->selectedHead ) {
+  if ( cur != awo->selectedHead ) { // use first selected object
 
-    if ( cur->selFlink == awo->selectedHead ) { // only one selected
-      awo->numRefRects = 1;
-      cur->node->getSelBoxDims( &(awo->refRect[0].x), &(awo->refRect[0].y),
-       &(awo->refRect[0].w), &(awo->refRect[0].h) );
-    }
+    awo->numRefRects = 1;
+    cur->node->getSelBoxDims( &(awo->refRect[0].x), &(awo->refRect[0].y),
+     &(awo->refRect[0].w), &(awo->refRect[0].h) );
 
   }
 
@@ -98,12 +96,43 @@ int doUpdate;
     awo->showDimBuf.objH = awo->refRect[0].h;
 
     if ( awo->recordedRefRect ) {
+
+      distMode = awo->dimDialog->getDistMode();
+
+      switch ( distMode ) {
+      case 0:
+	x0 = awo->refRect[0].x;
+	y0 = awo->refRect[0].y;
+	break;
+      case 1:
+	x0 = awo->refRect[0].x + awo->refRect[0].w;
+	y0 = awo->refRect[0].y;
+	break;
+      case 2:
+	x0 = awo->refRect[0].x;
+	y0 = awo->refRect[0].y + awo->refRect[0].h;
+	break;
+      case 3:
+	x0 = awo->refRect[0].x + awo->refRect[0].w;
+	y0 = awo->refRect[0].y + awo->refRect[0].h;
+	break;
+      default:
+	x0 = awo->refRect[0].x;
+	y0 = awo->refRect[0].y;
+      }
+
       awo->showDimBuf.objTopDist = awo->refRect[0].y - awo->refRect[1].y;
       awo->showDimBuf.objBotDist = awo->refRect[0].y - awo->refRect[1].y -
        awo->refRect[1].h;
       awo->showDimBuf.objLeftDist = awo->refRect[0].x - awo->refRect[1].x;
       awo->showDimBuf.objRightDist = awo->refRect[0].x - awo->refRect[1].x -
        awo->refRect[1].w;
+
+      awo->showDimBuf.objTopDist = y0 - awo->refRect[1].y;
+      awo->showDimBuf.objBotDist = y0 - awo->refRect[1].y - awo->refRect[1].h;
+      awo->showDimBuf.objLeftDist = x0 - awo->refRect[1].x;
+      awo->showDimBuf.objRightDist = x0 - awo->refRect[1].x - awo->refRect[1].w;
+
     }
 
   }
