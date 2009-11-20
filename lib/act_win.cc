@@ -17200,6 +17200,9 @@ char callbackName[63+1];
 pvDefPtr pvDefCur;
 char *envPtr;
 
+  viewDims = 0;
+  if ( dimDialog->dialogIsPoppedUp() ) dimDialog->popdown();
+
   initCopy();
 
   windowState = AWC_START_EXECUTE;
