@@ -17200,8 +17200,10 @@ char callbackName[63+1];
 pvDefPtr pvDefCur;
 char *envPtr;
 
-  viewDims = 0;
-  if ( dimDialog->dialogIsPoppedUp() ) dimDialog->popdown();
+  if ( dimDialog ) {
+    viewDims = 0;
+    if ( dimDialog->dialogIsPoppedUp() ) dimDialog->popdown();
+  }
 
   initCopy();
 
