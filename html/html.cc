@@ -2053,7 +2053,7 @@ char tmp[MAX_FILENAME_LEN+1], tmp1[MAX_FILENAME_LEN+1], *tk;
   //  fprintf( stderr, "size=%-ld\n", buf.st_size );
   //}
 
-  f = open( tmp, O_RDONLY );
+  f = open( tmp, O_RDONLY, 0777 );
   if ( f != -1 ) {
     if ( fileContents ) delete[] fileContents;
     fileContents = new char[buf.st_size+10];
