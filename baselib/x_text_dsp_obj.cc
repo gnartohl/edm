@@ -4966,13 +4966,13 @@ int i;
     if ( ( pvType == ProcessVariable::specificType::flt ) ||
          ( pvType == ProcessVariable::specificType::real ) ) {
       if ( formatType == XTDC_K_FORMAT_HEX ) {
-        kp.createHex( actWin->top, teX, teY, "", &kpDouble,
+        kp.createHex( actWin->appCtx->apptop(), teX, teY, "", &kpDouble,
          (void *) this,
          (XtCallbackProc) xtdoSetKpDoubleValue,
          (XtCallbackProc) xtdoCancelKp );
       }
       else {
-        kp.create( actWin->top, teX, teY, "", &kpDouble,
+        kp.create( actWin->appCtx->apptop(), teX, teY, "", &kpDouble,
          (void *) this,
          (XtCallbackProc) xtdoSetKpDoubleValue,
          (XtCallbackProc) xtdoCancelKp );
@@ -4983,13 +4983,13 @@ int i;
     else if ( ( pvType == ProcessVariable::specificType::shrt ) ||
               ( pvType == ProcessVariable::specificType::integer ) ) {
       if ( formatType == XTDC_K_FORMAT_HEX ) {
-        kp.createHex( actWin->top, teX, teY, "", &kpInt,
+        kp.createHex( actWin->appCtx->apptop(), teX, teY, "", &kpInt,
          (void *) this,
          (XtCallbackProc) xtdoSetKpIntValue,
          (XtCallbackProc) xtdoCancelKp );
       }
       else {
-        kp.create( actWin->top, teX, teY, "", &kpInt,
+        kp.create( actWin->appCtx->apptop(), teX, teY, "", &kpInt,
          (void *) this,
          (XtCallbackProc) xtdoSetKpIntValue,
          (XtCallbackProc) xtdoCancelKp );

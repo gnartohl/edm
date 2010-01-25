@@ -180,7 +180,7 @@
 #define global_str84 (char *)  "EDMTMPFILES\t\tLocation of autosave and other temp files (default: /tmp)\n"
 #define global_str95 (char *)  "EDMHTTPDOCROOT\t\tURL list for http access; | is the list element separator\n"
 #define global_str54 (char *)  "EDMUSERLIB\t\tLocation of user shared library file\n"
-#define global_str108 (char *) "EDMUSEPIXMAP\t\tDouble buffer output and consume many more cpu resources if defined\n"
+#define global_str108 (char *) "EDMUSEPIXMAP\t\tDouble buffer output and consume more cpu resources if defined\n"
 #define global_str109 (char *) "EDMPRINTDEF\t\tLocation of edmPrintDef file\n"
 #define global_str110 (char *) "EDMCOLORFILE\t\tLocation of colors.list (normally given by EDMFILES)\n"
 #define global_str111 (char *) "EDMFONTFILE\t\tLocation of fonts.list (normally given by EDMFILES)\n"

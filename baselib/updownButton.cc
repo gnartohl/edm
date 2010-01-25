@@ -124,7 +124,7 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
   if ( w == udbto->pbCoarse ) {
 
     udbto->kpDest = udbto->kpCoarseDest;
-    udbto->kp.create( udbto->actWin->top,
+    udbto->kp.create( udbto->actWin->appCtx->apptop(),
      udbto->rootX, udbto->rootY, "", &udbto->kpDouble,
      (void *) client,
      (XtCallbackProc) udbtoSetKpDoubleValue,
@@ -135,7 +135,7 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
   else if ( w == udbto->pbFine ) {
 
     udbto->kpDest = udbto->kpFineDest;
-    udbto->kp.create( udbto->actWin->top,
+    udbto->kp.create( udbto->actWin->appCtx->apptop(),
      udbto->rootX, udbto->rootY, "", &udbto->kpDouble,
      (void *) client,
      (XtCallbackProc) udbtoSetKpDoubleValue,
@@ -146,7 +146,7 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
   else if ( w == udbto->pbRate ) {
 
     udbto->kpDest = udbto->kpRateDest;
-    udbto->kp.create( udbto->actWin->top,
+    udbto->kp.create( udbto->actWin->appCtx->apptop(),
      udbto->rootX, udbto->rootY, "", &udbto->kpDouble,
      (void *) client,
      (XtCallbackProc) udbtoSetKpDoubleValue,
@@ -157,7 +157,7 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
   else if ( w == udbto->pbValue ) {
 
     udbto->kpDest = udbto->kpValueDest;
-    udbto->kp.create( udbto->actWin->top,
+    udbto->kp.create( udbto->actWin->appCtx->apptop(),
      udbto->rootX, udbto->rootY, "", &udbto->kpDouble,
      (void *) client,
      (XtCallbackProc) udbtoSetKpDoubleValue,

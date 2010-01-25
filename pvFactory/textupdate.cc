@@ -45,18 +45,18 @@ static void localCvtDoubleToExpNotationString(double value,
     absVal = fabs(value);
     minus = value < 0.0;
     newVal = absVal;
-    if (absVal < 1.)
+    if ( !finite(absVal) || absVal==0.0 ) { /* don't try to evaluate Inf, NaN, 0.0 */
+        cvtDoubleToExpString(newVal, textField ,precision);
+    }
+    else if (absVal < 1.)
     {
         exp = 0;
-        if (absVal != 0.)
-        {		/* really ought to test against some epsilon */
-            do
-            {
-                newVal *= 1000.0;
-                exp += 3;
-            }
-            while (newVal < 1.);
+        do
+        {
+            newVal *= 1000.0;
+            exp += 3;
         }
+        while (newVal < 1.);
         cvtDoubleToString(newVal, TF ,precision);
         k = 0; l = 0;
         if (minus)

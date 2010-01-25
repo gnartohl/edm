@@ -2652,7 +2652,8 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
              ( be->y > y0 ) &&
              ( be->y < y1 ) ) {
 
-          slo->kp.create( slo->actWin->top, be->x_root, be->y_root,
+          slo->kp.create( slo->actWin->appCtx->apptop(),
+           be->x_root, be->y_root,
            "", &slo->kpCtlDouble,
            (void *) slo,
            (XtCallbackProc) sloSetCtlKpDoubleValue,
@@ -2664,7 +2665,8 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
              ( be->y > incY0 ) &&
              ( be->y < incY1 ) ) {
 
-          slo->kp.create( slo->actWin->top, be->x_root, be->y_root,
+          slo->kp.create( slo->actWin->appCtx->apptop(),
+           be->x_root, be->y_root,
            "", &slo->kpIncDouble,
            (void *) slo,
            (XtCallbackProc) sloSetIncKpDoubleValue,
