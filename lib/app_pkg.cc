@@ -6811,6 +6811,26 @@ char *envPtr, text[255+1];
   text[255] = 0;
   postMessage( text );
 
+  envPtr = getenv( environment_str32 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str32, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str32 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str33 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str33, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str33 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
   // site specific vars
 
   snprintf( text, 255, " " );

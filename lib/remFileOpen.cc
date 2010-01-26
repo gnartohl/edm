@@ -605,7 +605,7 @@ FILE *fileOpen (
 
 char fullName[255+1], params[255+1], fullNameWithParams[255+1],
  cmd[255+1], prog[255+1], oneExt[32], *filterCmd, *more;
-int gotExt, i, l, startPos, stat, ii, iii;
+int gotExt, i, l, startPos, status, ii, iii;
 FILE *f;
 
 #ifdef USECURL
@@ -615,6 +615,32 @@ int gotFile, useHttp;
 char errBuf[CURL_ERROR_SIZE+1];
 CURLcode result;
 mode_t curMode, newMode;
+struct stat sbuf;
+time_t tsDiff;
+static time_t expireSeconds = 0;
+char *nonInt, *expireString;
+static int disableCache = 0;
+#endif
+
+
+#ifdef USECURL
+  if ( expireSeconds == 0 ) {
+    expireString = getenv( environment_str33 );
+    if ( expireString ) {
+      if ( strcmp( expireString, "DISABLE" ) == 0 ) {
+	disableCache = 1;
+      }
+      expireSeconds = (time_t) strtol( expireString, &nonInt, 10 );
+      if ( nonInt && strcmp( nonInt, "" ) ) {
+        expireSeconds = 5;
+      }
+    }
+    else {
+      expireSeconds = 5;
+    }
+    if ( debugMode() ) fprintf( stderr, "disableCache = %-d\n", disableCache );
+    if ( debugMode() ) fprintf( stderr, "expireSeconds = %-d\n", expireSeconds );
+  }
 #endif
 
   strncpy( fullName, fullNameBuf, 255 );
@@ -669,8 +695,8 @@ mode_t curMode, newMode;
 
       reassemble( fullNameWithParams, fullName, params, 255 );
 
-      stat = buildCommand( cmd, 255, prog, 255, filterCmd, fullNameWithParams );
-      if ( stat & 1 ) {
+      status = buildCommand( cmd, 255, prog, 255, filterCmd, fullNameWithParams );
+      if ( status & 1 ) {
 
         if ( !filterInstalled( prog ) ) {
           fprintf( stderr, "Filter %s (%s) is not installed\n", prog, oneExt );
@@ -779,36 +805,50 @@ mode_t curMode, newMode;
 
     strncpy( buf, tmpDir, 255 );
     Strncat( buf, plainName, 255 );
-    if ( debugMode() ) fprintf( stderr, "open [%s]\n", buf );
-    if ( gUseUmask ) {
-      newMode = gUmask;
-      curMode = umask( newMode );
+
+    if ( disableCache ) {
+      status = 0;
+      tsDiff = 0;
     }
-    f = fopen( buf, "w" );
-    if ( gUseUmask ) {
-      umask( curMode );
+    else {
+      status = stat( buf, &sbuf );
+      tsDiff = time( NULL ) - sbuf.st_mtime;
     }
-    if ( !f ) return NULL;
 
-    strncpy( buf, fullName, 255 );
+    if ( disableCache || status || ( tsDiff > expireSeconds ) ) {
 
-    if ( debugMode() ) fprintf( stderr, "get [%s]\n", buf );
+      if ( debugMode() ) fprintf( stderr, "open [%s]\n", buf );
+      if ( gUseUmask ) {
+        newMode = gUmask;
+        curMode = umask( newMode );
+      }
+      f = fopen( buf, "w" );
+      if ( gUseUmask ) {
+        umask( curMode );
+      }
+      if ( !f ) return NULL;
 
-    curl_easy_setopt( curlH, CURLOPT_URL, buf );
-    curl_easy_setopt( curlH, CURLOPT_FILE, f );
-    curl_easy_setopt( curlH, CURLOPT_ERRORBUFFER, errBuf );
-    curl_easy_setopt( curlH, CURLOPT_FAILONERROR, 1 );
-    curl_easy_setopt( curlH, CURLOPT_SSL_VERIFYPEER, 0 );
-    curl_easy_setopt( curlH, CURLOPT_SSL_VERIFYHOST, 0 );
-    strcpy( errBuf, "" );
-    result = curl_easy_perform( curlH );
-    if ( debugMode() ) fprintf( stderr, "result = %-d, errno = %-d\n",
-     (int) result, errno );
-    if ( debugMode() ) fprintf( stderr, "errBuf = [%s]\n", errBuf );
+      strncpy( buf, fullName, 255 );
 
-    fclose( f );
+      if ( debugMode() ) fprintf( stderr, "get [%s]\n", buf );
 
-    if ( result ) return NULL;
+      curl_easy_setopt( curlH, CURLOPT_URL, buf );
+      curl_easy_setopt( curlH, CURLOPT_FILE, f );
+      curl_easy_setopt( curlH, CURLOPT_ERRORBUFFER, errBuf );
+      curl_easy_setopt( curlH, CURLOPT_FAILONERROR, 1 );
+      curl_easy_setopt( curlH, CURLOPT_SSL_VERIFYPEER, 0 );
+      curl_easy_setopt( curlH, CURLOPT_SSL_VERIFYHOST, 0 );
+      strcpy( errBuf, "" );
+      result = curl_easy_perform( curlH );
+      if ( debugMode() ) fprintf( stderr, "result = %-d, errno = %-d\n",
+       (int) result, errno );
+      if ( debugMode() ) fprintf( stderr, "errBuf = [%s]\n", errBuf );
+
+      fclose( f );
+
+      if ( result ) return NULL;
+
+    }
 
     strncpy( buf, tmpDir, 255 );
     Strncat( buf, plainName, 255 );
@@ -820,8 +860,8 @@ mode_t curMode, newMode;
 
         reassemble( fullNameWithParams, buf, params, 255 );
 
-        stat = buildCommand( cmd, 255, prog, 255, filterCmd, fullNameWithParams );
-        if ( stat & 1 ) {
+        status = buildCommand( cmd, 255, prog, 255, filterCmd, fullNameWithParams );
+        if ( status & 1 ) {
 
           if ( !filterInstalled( prog ) ) {
             fprintf( stderr, "Filter %s (%s) is not installed\n", prog, oneExt );
@@ -905,8 +945,8 @@ mode_t curMode, newMode;
 
         reassemble( fullNameWithParams, fullName, params, 255 );
 
-        stat = buildCommand( cmd, 255, prog, 255, filterCmd, fullNameWithParams );
-        if ( stat & 1 ) {
+        status = buildCommand( cmd, 255, prog, 255, filterCmd, fullNameWithParams );
+        if ( status & 1 ) {
 
           if ( !filterInstalled( prog ) ) {
             fprintf( stderr, "Filter %s (%s) is not installed\n", prog, oneExt );
@@ -1000,8 +1040,8 @@ mode_t curMode, newMode;
 
   if ( !strcmp( mode, "r" ) || !strcmp( mode, "rb" ) ) {
 
-    stat = getFileNameAndExt( name, fullName, 255 );
-    if ( !(stat & 1 ) ) {
+    status = getFileNameAndExt( name, fullName, 255 );
+    if ( !(status & 1 ) ) {
       strncpy( name, fullName, 255 );
       name[255] = 0;
     }
@@ -1022,39 +1062,60 @@ mode_t curMode, newMode;
 
       strncpy( buf, tmpDir, 255 );
       Strncat( buf, name, 255 );
-      if ( debugMode() ) fprintf( stderr, "open [%s]\n", buf );
-      if ( gUseUmask ) {
-        newMode = gUmask;
-        curMode = umask( newMode );
+
+      if ( disableCache ) {
+        status = 0;
+        tsDiff = 0;
       }
-      f = fopen( buf, "w" );
-      if ( gUseUmask ) {
-        umask( curMode );
+      else {
+        status = stat( buf, &sbuf );
+        tsDiff = time( NULL ) - sbuf.st_mtime;
       }
-      if ( !f ) return NULL;
 
-      strcpy( buf, tk );
-      Strncat( buf, fullName, 255 );
+      if ( disableCache || status || ( tsDiff > expireSeconds ) ) {
 
-      if ( debugMode() ) fprintf( stderr, "get [%s]\n", buf );
+        if ( debugMode() ) fprintf( stderr, "open [%s]\n", buf );
+        if ( gUseUmask ) {
+          newMode = gUmask;
+          curMode = umask( newMode );
+        }
+        f = fopen( buf, "w" );
+        if ( gUseUmask ) {
+          umask( curMode );
+        }
+        if ( !f ) return NULL;
 
-      curl_easy_setopt( curlH, CURLOPT_URL, buf );
-      curl_easy_setopt( curlH, CURLOPT_FILE, f );
-      curl_easy_setopt( curlH, CURLOPT_ERRORBUFFER, errBuf );
-      curl_easy_setopt( curlH, CURLOPT_FAILONERROR, 1 );
-      curl_easy_setopt( curlH, CURLOPT_SSL_VERIFYPEER, 0 );
-      curl_easy_setopt( curlH, CURLOPT_SSL_VERIFYHOST, 0 );
-      strcpy( errBuf, "" );
-      result = curl_easy_perform( curlH );
-      if ( debugMode() ) fprintf( stderr, "result = %-d, errno = %-d\n",
-       (int) result, errno );
-      if ( debugMode() ) fprintf( stderr, "errBuf = [%s]\n", errBuf );
+        strcpy( buf, tk );
+        Strncat( buf, fullName, 255 );
 
-      fclose( f );
+        if ( debugMode() ) fprintf( stderr, "get [%s]\n", buf );
 
-      gotFile = !result;
+        curl_easy_setopt( curlH, CURLOPT_URL, buf );
+        curl_easy_setopt( curlH, CURLOPT_FILE, f );
+        curl_easy_setopt( curlH, CURLOPT_ERRORBUFFER, errBuf );
+        curl_easy_setopt( curlH, CURLOPT_FAILONERROR, 1 );
+        curl_easy_setopt( curlH, CURLOPT_SSL_VERIFYPEER, 0 );
+        curl_easy_setopt( curlH, CURLOPT_SSL_VERIFYHOST, 0 );
+        strcpy( errBuf, "" );
+        result = curl_easy_perform( curlH );
+        if ( debugMode() ) fprintf( stderr, "result = %-d, errno = %-d\n",
+         (int) result, errno );
+        if ( debugMode() ) fprintf( stderr, "errBuf = [%s]\n", errBuf );
 
-      tk = strtok_r( NULL, "|", &context );
+        fclose( f );
+
+        gotFile = !result;
+
+        tk = strtok_r( NULL, "|", &context );
+
+      }
+      else {
+
+        result = (CURLcode) 0; // reuse existing file
+	tk = NULL;
+	gotFile = 1;
+
+      }
 
     }
 
@@ -1072,8 +1133,8 @@ mode_t curMode, newMode;
 
         reassemble( fullNameWithParams, buf, params, 255 );
 
-        stat = buildCommand( cmd, 255, prog, 255, filterCmd, fullNameWithParams );
-        if ( stat & 1 ) {
+        status = buildCommand( cmd, 255, prog, 255, filterCmd, fullNameWithParams );
+        if ( status & 1 ) {
 
           if ( !filterInstalled( prog ) ) {
             fprintf( stderr, "Filter %s (%s) is not installed\n", prog, oneExt );
