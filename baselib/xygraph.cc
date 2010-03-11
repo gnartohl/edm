@@ -8471,6 +8471,14 @@ int pmX, pmY, ifrac;
 int yi;
 time_t t;
 struct tm ts;
+Widget parent;
+
+  if ( useAppTopParent() ) {
+    parent = actWin->appCtx->apptop();
+  }
+  else {
+    parent = actWin->top;
+  }
 
   *action = 0;
 
@@ -8611,7 +8619,7 @@ struct tm ts;
       if ( ( xMinX0 <= pmX ) && ( xMinX1 >= pmX ) &&
            ( xMinY0 <= pmY ) && ( xMinY1 >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->appCtx->apptop(), be->x_root, be->y_root, "",
+          kp.create( parent, be->x_root, be->y_root, "",
            &kpXMin, (void *) this,
            (XtCallbackProc) setKpXMinDoubleValue,
            (XtCallbackProc) cancelKpXMin );
@@ -8621,7 +8629,7 @@ struct tm ts;
       if ( ( xMaxX0 <= pmX ) && ( xMaxX1 >= pmX ) &&
            ( xMaxY0 <= pmY ) && ( xMaxY1 >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->appCtx->apptop(), be->x_root, be->y_root, "",
+          kp.create( parent, be->x_root, be->y_root, "",
            &kpXMax, (void *) this,
            (XtCallbackProc) setKpXMaxDoubleValue,
            (XtCallbackProc) cancelKpXMax );
@@ -8634,7 +8642,7 @@ struct tm ts;
       if ( ( y1MinX0[yi] <= pmX ) && ( y1MinX1[yi] >= pmX ) &&
            ( y1MinY0[yi] <= pmY ) && ( y1MinY1[yi] >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->appCtx->apptop(), be->x_root, be->y_root, "",
+          kp.create( parent, be->x_root, be->y_root, "",
            &kpY1Min[yi], (void *) this,
            (XtCallbackProc) setKpY1MinDoubleValue,
            (XtCallbackProc) cancelKpY1Min );
@@ -8644,7 +8652,7 @@ struct tm ts;
       if ( ( y1MaxX0[yi] <= pmX ) && ( y1MaxX1[yi] >= pmX ) &&
            ( y1MaxY0[yi] <= pmY ) && ( y1MaxY1[yi] >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->appCtx->apptop(), be->x_root, be->y_root, "",
+          kp.create( parent, be->x_root, be->y_root, "",
            &kpY1Max[yi], (void *) this,
            (XtCallbackProc) setKpY1MaxDoubleValue,
            (XtCallbackProc) cancelKpY1Max );
@@ -8657,7 +8665,7 @@ struct tm ts;
       if ( ( y1MinX0[yi] <= pmX ) && ( y1MinX1[yi] >= pmX ) &&
            ( y1MinY0[yi] <= pmY ) && ( y1MinY1[yi] >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->appCtx->apptop(), be->x_root, be->y_root, "",
+          kp.create( parent, be->x_root, be->y_root, "",
            &kpY1Min[yi], (void *) this,
            (XtCallbackProc) setKpY2MinDoubleValue,
            (XtCallbackProc) cancelKpY2Min );
@@ -8667,7 +8675,7 @@ struct tm ts;
       if ( ( y1MaxX0[yi] <= pmX ) && ( y1MaxX1[yi] >= pmX ) &&
            ( y1MaxY0[yi] <= pmY ) && ( y1MaxY1[yi] >= pmY ) ) {
         if ( !kp.isPoppedUp() ) {
-          kp.create( actWin->appCtx->apptop(), be->x_root, be->y_root, "",
+          kp.create( parent, be->x_root, be->y_root, "",
            &kpY1Max[yi], (void *) this,
            (XtCallbackProc) setKpY2MaxDoubleValue,
            (XtCallbackProc) cancelKpY2Max );

@@ -46,6 +46,8 @@
 #include "expString.h"
 #include "remFileOpen.h"
 
+int useAppTopParent ( void );
+
 int debugMode ( void );
 
 int diagnosticMode ( void );

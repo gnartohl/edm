@@ -23,6 +23,25 @@
 
 static int g_serverSocketFd = -1;
 
+int useAppTopParent ( void ) {
+
+static int useAppTop = -1;
+char *envPtr;
+
+  if ( useAppTop == -1 ) {
+    envPtr = getenv( environment_str34 );
+    if ( envPtr ) {
+      useAppTop = 1;
+    }
+    else {
+      useAppTop = 0;
+    }
+  }
+
+  return useAppTop;
+
+}
+
 int debugMode ( void ) {
 
 int val;

@@ -120,11 +120,19 @@ static void menu_cb (
 
 double v;
 activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
+Widget parent;
+
+  if ( useAppTopParent() ) {
+    parent = udbto->actWin->appCtx->apptop();
+  }
+  else {
+    parent = udbto->actWin->top;
+  }
 
   if ( w == udbto->pbCoarse ) {
 
     udbto->kpDest = udbto->kpCoarseDest;
-    udbto->kp.create( udbto->actWin->appCtx->apptop(),
+    udbto->kp.create( parent,
      udbto->rootX, udbto->rootY, "", &udbto->kpDouble,
      (void *) client,
      (XtCallbackProc) udbtoSetKpDoubleValue,
@@ -135,7 +143,7 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
   else if ( w == udbto->pbFine ) {
 
     udbto->kpDest = udbto->kpFineDest;
-    udbto->kp.create( udbto->actWin->appCtx->apptop(),
+    udbto->kp.create( parent,
      udbto->rootX, udbto->rootY, "", &udbto->kpDouble,
      (void *) client,
      (XtCallbackProc) udbtoSetKpDoubleValue,
@@ -146,7 +154,7 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
   else if ( w == udbto->pbRate ) {
 
     udbto->kpDest = udbto->kpRateDest;
-    udbto->kp.create( udbto->actWin->appCtx->apptop(),
+    udbto->kp.create( parent,
      udbto->rootX, udbto->rootY, "", &udbto->kpDouble,
      (void *) client,
      (XtCallbackProc) udbtoSetKpDoubleValue,
@@ -157,7 +165,7 @@ activeUpdownButtonClass *udbto = (activeUpdownButtonClass *) client;
   else if ( w == udbto->pbValue ) {
 
     udbto->kpDest = udbto->kpValueDest;
-    udbto->kp.create( udbto->actWin->appCtx->apptop(),
+    udbto->kp.create( parent,
      udbto->rootX, udbto->rootY, "", &udbto->kpDouble,
      (void *) client,
      (XtCallbackProc) udbtoSetKpDoubleValue,

@@ -4932,6 +4932,14 @@ void activeXTextDspClass::btnDown (
 
 char selectString[XTDC_K_MAX+1], tmpDir[XTDC_K_MAX+1], tmpPat[XTDC_K_MAX+1];
 int i;
+Widget parent;
+
+  if ( useAppTopParent() ) {
+    parent = actWin->appCtx->apptop();
+  }
+  else {
+    parent = actWin->top;
+  }
 
   *action = 0;
 
@@ -4966,13 +4974,13 @@ int i;
     if ( ( pvType == ProcessVariable::specificType::flt ) ||
          ( pvType == ProcessVariable::specificType::real ) ) {
       if ( formatType == XTDC_K_FORMAT_HEX ) {
-        kp.createHex( actWin->appCtx->apptop(), teX, teY, "", &kpDouble,
+        kp.createHex( parent, teX, teY, "", &kpDouble,
          (void *) this,
          (XtCallbackProc) xtdoSetKpDoubleValue,
          (XtCallbackProc) xtdoCancelKp );
       }
       else {
-        kp.create( actWin->appCtx->apptop(), teX, teY, "", &kpDouble,
+        kp.create( parent, teX, teY, "", &kpDouble,
          (void *) this,
          (XtCallbackProc) xtdoSetKpDoubleValue,
          (XtCallbackProc) xtdoCancelKp );
@@ -4983,13 +4991,13 @@ int i;
     else if ( ( pvType == ProcessVariable::specificType::shrt ) ||
               ( pvType == ProcessVariable::specificType::integer ) ) {
       if ( formatType == XTDC_K_FORMAT_HEX ) {
-        kp.createHex( actWin->appCtx->apptop(), teX, teY, "", &kpInt,
+        kp.createHex( parent, teX, teY, "", &kpInt,
          (void *) this,
          (XtCallbackProc) xtdoSetKpIntValue,
          (XtCallbackProc) xtdoCancelKp );
       }
       else {
-        kp.create( actWin->appCtx->apptop(), teX, teY, "", &kpInt,
+        kp.create( parent, teX, teY, "", &kpInt,
          (void *) this,
          (XtCallbackProc) xtdoSetKpIntValue,
          (XtCallbackProc) xtdoCancelKp );
@@ -5028,7 +5036,7 @@ int i;
       }
       else if ( isDate ) {
 
-        cp.create( actWin->top, teX, teY, entryValue, XTDC_K_MAX,
+        cp.create( parent, teX, teY, entryValue, XTDC_K_MAX,
          (void *) this,
          (XtCallbackProc) xtdoSetCpValue,
          (XtCallbackProc) xtdoCancelStr );

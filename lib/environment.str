@@ -2,7 +2,7 @@
 #define __environment_str 1
 
 
-// global_str142 is last
+// global_str145 is last
 
 #define environment_str1 (char *) "EDMDATAFILES"
 #define environment_str2 (char *) "EDMFILES"
@@ -37,6 +37,7 @@
 #define environment_str31 (char *) "EDMXSYNC"
 #define environment_str32 (char *) "EDMDEFEXT"
 #define environment_str33 (char *) "EDMEXPIRECACHE"
+#define environment_str34 (char *) "EDMAPPTOPPARENT"
 
 #define global_str1 (char *) "Symbol"
 #define global_str2 (char *) "Monitors"
@@ -201,6 +202,9 @@
 #define global_str125 (char *) "EDMDEBUGMODE\t\tSee user's manual\n"
 #define global_str126 (char *) "EDMDIAGNOSTICMODE\tSee user's manual\n"
 #define global_str127 (char *) "EDMXSYNC\t\tSee user's manual\n"
+#define global_str143 (char *) "EDMDEFEXT\t\tSet default file extension (normally .edl)\n"
+#define global_str144 (char *) "EDMEXPIRECACHE\t\tSet cache expiration in seconds for remote access\n"
+#define global_str145 (char *) "EDMAPPTOPPARENT\t\tSet parent of keypad widgets to app top\n"
 
 #define global_str55 (char *)  " (-h displays help)\n"
 #define global_str56 (char *)  "-display|"
