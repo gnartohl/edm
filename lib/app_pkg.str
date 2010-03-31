@@ -90,5 +90,7 @@
 #define appContextClass_str142 (char *) "Too many macros"
 #define appContextClass_str143 (char *) "Select Path..."
 #define appContextClass_str144 (char *) "Environment"
+#define appContextClass_str145 (char *) "Cannot open display [%s]\n"
+#define appContextClass_str146 (char *) "Cannot open display\n"
 
 #endif

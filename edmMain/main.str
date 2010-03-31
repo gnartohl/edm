@@ -14,7 +14,7 @@
 #define main_str41 (char *) "Cannot remove node from active queue\n"
 #define main_str44 (char *) "Error from reply\n"
 #define main_str45 (char *) "Exit command ignored - some window is not ready"
-#define main_str46 (char *) "No server found - abort\n"
+#define main_str46 (char *) "No server found for display - abort\n"
 #define main_str47 (char *) "Primary session cannot exit with other sessions active"
 
 #endif
