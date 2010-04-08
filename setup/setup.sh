@@ -50,7 +50,7 @@ export EDMFILES=$EDMBASE/setup
 export EDMOBJECTS=$EDMBASE/setup
 export EDMPVOBJECTS=$EDMBASE/setup
 
-for libdir in baselib imagelib lib pvlib util choiceButton
+for libdir in baselib imagelib lib epicsPv locPv calcPv util choiceButton
 do
     LD_LIBRARY_PATH=$EDMBASE/$libdir/O.$ODIR:$LD_LIBRARY_PATH
 done
@@ -64,7 +64,9 @@ then
     echo To have it recreated, remove that file and restart.
     echo ""
 else
-    $EDM -addpv $EDMBASE/pvlib/O.$ODIR/libEpics.so
+    $EDM -addpv $EDMBASE/epicsPv/O.$ODIR/libEpics.so
+    $EDM -addpv $EDMBASE/locPv/O.$ODIR/libLoc.so
+    $EDM -addpv $EDMBASE/calcPv/O.$ODIR/libCalc.so
 fi
 
 if [ -f $EDMOBJECTS/edmObjects ]
