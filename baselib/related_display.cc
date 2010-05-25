@@ -1970,7 +1970,7 @@ int blink = 0;
 	// no icon
 
         tX = x + w/2;
-        tY = y + h/2 - fontHeight/2;
+        tY = y + h/2 - fontAscent/2;
 
         actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
         actWin->drawGc.setFontTag( fontTag, actWin->fi );
@@ -1988,27 +1988,27 @@ int blink = 0;
 
         tX = x + (int) ( w/2+0.5 ) - (int) ( strW/2+0.5 ) +
          (int) ( 1.2*fontAscent+0.5 );
-        tY = y + (int) ( h/2+0.5 ) - (int) ( fontHeight/2+0.5 );
+        tY = y + (int) ( h/2+0.5 ) - (int) ( fontAscent/2+0.5 );
 
+        ofs = (int) ( fontAscent*0.1+0.5 );
+        size = (int) ( fontAscent-2.0*ofs+0.5 );
         cx = tX - (int) ( 1.5*fontAscent+0.5 );
-        cy = tY + (int) ( fontHeight*0.1+0.5 );
-        ofs = (int) ( fontHeight*0.2+0.5 );
-        size = (int) ( fontHeight-2.0*ofs+0.5 );
+        cy = tY + ofs;
 
         actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
 
         XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
-         actWin->drawGc.normGC(), cx+ofs, cy+ofs, size, size );
+         actWin->drawGc.normGC(), cx+2*ofs, cy+ofs, size, size );
 
         actWin->drawGc.setFG( bgColor.pixelIndex(), &blink );
 
         XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
-         actWin->drawGc.normGC(), cx, cy, size, size );
+         actWin->drawGc.normGC(), cx, cy-ofs, size, size );
 
         actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
 
         XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
-         actWin->drawGc.normGC(), cx, cy, size, size );
+         actWin->drawGc.normGC(), cx, cy-ofs, size, size );
 
         actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
         actWin->drawGc.setFontTag( fontTag, actWin->fi );
@@ -2171,7 +2171,7 @@ int blink = 0;
 	// no icon
 
         tX = x + w/2;
-        tY = y + h/2 - fontHeight/2;
+        tY = y + h/2 - fontAscent/2;
 
         actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
         actWin->executeGc.setFontTag( fontTag, actWin->fi );
@@ -2189,27 +2189,27 @@ int blink = 0;
 
         tX = x + (int) ( w/2+0.5 ) - (int) ( strW/2+0.5 ) +
          (int) ( 1.2*fontAscent+0.5 );
-        tY = y + (int) ( h/2+0.5 ) - (int) ( fontHeight/2+0.5 );
+        tY = y + (int) ( h/2+0.5 ) - (int) ( fontAscent/2+0.5 );
 
+        ofs = (int) ( fontAscent*0.1+0.5 );
+        size = (int) ( fontAscent-2.0*ofs+0.5 );
         cx = tX - (int) ( 1.5*fontAscent+0.5 );
-        cy = tY + (int) ( fontHeight*0.1+0.5 );
-        ofs = (int) ( fontHeight*0.2+0.5 );
-        size = (int) ( fontHeight-2.0*ofs+0.5 );
+        cy = tY + ofs;
 
         actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
 
         XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
-         actWin->executeGc.normGC(), cx+ofs, cy+ofs, size, size );
+         actWin->executeGc.normGC(), cx+2*ofs, cy+ofs, size, size );
 
         actWin->executeGc.setFG( bgColor.pixelIndex(), &blink );
 
         XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-         actWin->executeGc.normGC(), cx, cy, size, size );
+         actWin->executeGc.normGC(), cx, cy-ofs, size, size );
 
         actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
 
         XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
-         actWin->executeGc.normGC(), cx, cy, size, size );
+         actWin->executeGc.normGC(), cx, cy-ofs, size, size );
 
         actWin->executeGc.setFG( fgColor.pixelIndex(), &blink );
         actWin->executeGc.setFontTag( fontTag, actWin->fi );

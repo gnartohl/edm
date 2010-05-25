@@ -2633,6 +2633,52 @@ activeWindowListPtr cur;
 
 }
 
+void appContextClass::requestSelectedReload ( void )
+{
+
+  reloadFlag = 3;
+
+}
+
+void appContextClass::reloadSelected ( void )
+{
+
+activeWindowListPtr cur;
+
+  // walk activeWindowList and reload
+  cur = head->flink;
+  while ( cur != head ) {
+    if ( !cur->requestDelete && cur->node.reloadRequestFlag ) {
+      cur->requestActivate = 0;
+      cur->requestActivateClear = 0;
+      cur->requestReactivate = 0;
+      cur->requestOpen = 1;
+      requestFlag++;
+      cur->requestPosition = 1;
+      cur->requestImport = 0;
+      cur->requestRefresh = 0;
+      cur->requestActiveRedraw = 0;
+      cur->requestIconize = 0;
+      cur->requestConvertAndExit = 0;
+      cur->x = cur->node.x;
+      cur->y = cur->node.y;
+      if ( cur->node.mode == AWC_EXECUTE ) {
+        cur->node.returnToEdit( 0 );
+        cur->node.noRaise = 1;
+        processAllEvents( app, display );
+        cur->requestActivate = 1;
+        cur->requestActivateClear = 1;
+        requestFlag++;
+      }
+      cur->node.reloadRequestFlag = 0;
+      cur->node.reloadSelf();
+    }
+    cur = cur->flink;
+  }
+  processAllEvents( app, display );
+
+}
+
 void appContextClass::refreshAll ( void )
 {
 
@@ -5858,6 +5904,10 @@ char msg[127+1];
   }
   else if ( reloadFlag == 1 ) {
     reloadAll();
+    reloadFlag = 2;
+  }
+  else if ( reloadFlag == 3 ) {
+    reloadSelected();
     reloadFlag = 2;
   }
 

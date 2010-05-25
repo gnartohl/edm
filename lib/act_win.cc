@@ -11186,6 +11186,8 @@ int i;
 
   b2NoneSelectX = b2NoneSelectY = 0;
 
+  reloadRequestFlag = 0;
+
 }
 
 void activeWindowClass::initCopy ( void ) {
@@ -21505,6 +21507,13 @@ char *sysMacros[] = {
   cur->node.storeFileName( buf );
 
   appCtx->openActivateActiveWindow( &cur->node );
+
+}
+
+void activeWindowClass::requestReload ( void ) {
+
+  reloadRequestFlag = 1;
+  appCtx->requestSelectedReload();
 
 }
 

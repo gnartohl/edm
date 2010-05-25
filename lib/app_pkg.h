@@ -743,6 +743,10 @@ int getShutdownFlag ( void );
 
 void reloadAll ( void );
 
+void requestSelectedReload ( void );
+
+void reloadSelected ( void );
+
 void refreshAll ( void );
 
 int renderImages ( void );

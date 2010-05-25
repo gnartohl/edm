@@ -1064,6 +1064,8 @@ int ctlKeyPressed;
 
 int invalidFile, invalidBgColor;
 
+int reloadRequestFlag;
+
 activeWindowClass ( void );
 
 ~activeWindowClass ( void );
@@ -1668,6 +1670,8 @@ void openExecuteSysFile (
   char *fName );
 
 void reloadSelf ( void );
+
+void requestReload ( void );
 
 int isExecuteMode ( void );
 
