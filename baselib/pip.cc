@@ -1665,7 +1665,7 @@ int stat, retStat, i;
   stat = labelPvExpStr.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
-  stat = fileNameExpStr.expand1st( numMacros, macros, expansions );
+  stat = fileNameExpStr.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
   for ( i=0; i<numDsps; i++ ) {
