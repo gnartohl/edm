@@ -248,6 +248,10 @@ int state, foundOne, i, ii, nOut, nIn, nMacro,
                 if ( execBuf[ii] == '\n' ) {
                   needSpace = 1;
 		}
+                else if ( execBuf[ii] == '\t' ) {
+                  buf[nOut] = ' ';
+                  nOut++;
+		}
 		else {
                   if ( needSpace ) {
                     needSpace = 0;

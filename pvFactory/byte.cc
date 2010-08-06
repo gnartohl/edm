@@ -392,7 +392,11 @@ int edmByteClass::createInteractive(activeWindowClass *aw_obj,
     yOrigin = 0;
     x = _x; y = _y; w = _w; h = _h;
 
-    offPixel = actWin->ci->getPixelByIndex(actWin->bgColor);
+    offPixel = actWin->ci->getPixelByIndex(actWin->defaultBgColor);
+    offColor = actWin->defaultBgColor;
+    onPixel = actWin->ci->getPixelByIndex(actWin->defaultTextFgColor);
+    onColor = actWin->defaultTextFgColor;
+    fgPixel = actWin->ci->getPixelByIndex(actWin->defaultTextFgColor);
     lineColor = actWin->fgColor;
     lineWidth = 1;
     lineStyle = 0;

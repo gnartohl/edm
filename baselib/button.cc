@@ -365,7 +365,7 @@ int st, sev;
     if ( bto->initReadBit || ( bto->readBit != bto->prevReadBit ) ) {
       bto->initReadBit = 0;
       bto->prevReadBit = bto->readBit;
-      bto->needCtlRefresh = 1;
+      bto->needReadRefresh = 1;
       bto->actWin->appCtx->proc->lock();
       bto->actWin->addDefExeNode( bto->aglPtr );
       bto->actWin->appCtx->proc->unlock();
@@ -1769,7 +1769,6 @@ int blink = 0;
 
   actWin->drawGc.saveFg();
 
-  //actWin->drawGc.setFG( onColor.pixelColor() );
   actWin->drawGc.setFG( onColor.pixelIndex(), &blink );
 
   XFillRectangle( actWin->d, XtWindow(actWin->drawWidget),
@@ -1830,7 +1829,6 @@ int blink = 0;
 
     actWin->drawGc.addNormXClipRectangle( xR );
 
-    //actWin->drawGc.setFG( fgColor.pixelColor() );
     actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
     actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
@@ -1862,7 +1860,6 @@ int blink = 0;
   if ( !init ) {
     if ( needToDrawUnconnected ) {
       actWin->executeGc.saveFg();
-      //actWin->executeGc.setFG( onColor.getDisconnected() );
       actWin->executeGc.setFG( onColor.getDisconnectedIndex(), &blink );
       actWin->executeGc.setLineWidth( 1 );
       actWin->executeGc.setLineStyle( LineSolid );
@@ -1907,29 +1904,22 @@ int blink = 0;
   if ( controlExists && readExists ) {
 
     if ( ( cV != rV ) || !controlValid || !readValid ) {
-      //actWin->executeGc.setFG( inconsistentColor.getColor() );
       actWin->executeGc.setFG( inconsistentColor.getIndex(), &blink );
     }
     else if ( cV == 0 ) {
-      //actWin->executeGc.setFG( offColor.getColor() );
       actWin->executeGc.setFG( offColor.getIndex(), &blink );
     }
     else {
-      //actWin->executeGc.setFG( onColor.getColor() );
       actWin->executeGc.setFG( onColor.getIndex(), &blink );
     }
 
   }
   else if ( readExists ) {
 
-    cV = readV;
-
-    if ( cV == 0 ) {
-      //actWin->executeGc.setFG( offColor.getColor() );
+    if ( rV == 0 ) {
       actWin->executeGc.setFG( offColor.getIndex(), &blink );
     }
     else {
-      //actWin->executeGc.setFG( onColor.getColor() );
       actWin->executeGc.setFG( onColor.getIndex(), &blink );
     }
 
@@ -1937,11 +1927,9 @@ int blink = 0;
   else if ( controlExists ) {
 
     if ( cV == 0 ) {
-      //actWin->executeGc.setFG( offColor.getColor() );
       actWin->executeGc.setFG( offColor.getIndex(), &blink );
     }
     else {
-      //actWin->executeGc.setFG( onColor.getColor() );
       actWin->executeGc.setFG( onColor.getIndex(), &blink );
     }
 
@@ -1949,22 +1937,18 @@ int blink = 0;
   else if ( anyCallbackFlag ) {
 
     if ( cV != rV ) {
-      //actWin->executeGc.setFG( inconsistentColor.getColor() );
       actWin->executeGc.setFG( inconsistentColor.getIndex(), &blink );
     }
     else if ( cV == 0 ) {
-      //actWin->executeGc.setFG( offColor.getColor() );
       actWin->executeGc.setFG( offColor.getIndex(), &blink );
     }
     else {
-      //actWin->executeGc.setFG( onColor.getColor() );
       actWin->executeGc.setFG( onColor.getIndex(), &blink );
     }
 
   }
   else {
 
-    //actWin->executeGc.setFG( inconsistentColor.getColor() );
     actWin->executeGc.setFG( inconsistentColor.getIndex(), &blink );
 
   }
@@ -2073,26 +2057,6 @@ int blink = 0;
 
     actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
 
-//     XDrawLine( actWin->d, drawable(actWin->executeWidget),
-//      actWin->executeGc.normGC(), x, y, x+w, y );
-
-//      actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
-
-//      XDrawLine( actWin->d, drawable(actWin->executeWidget),
-//       actWin->executeGc.normGC(), x+1, y+1, x+w-1, y+1 );
-
-    //left
-
-//     actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
-
-//     XDrawLine( actWin->d, drawable(actWin->executeWidget),
-//      actWin->executeGc.normGC(), x, y, x, y+h );
-
-//      actWin->executeGc.setFG( actWin->ci->pix(botShadowColor) );
-
-//      XDrawLine( actWin->d, drawable(actWin->executeWidget),
-//       actWin->executeGc.normGC(), x+1, y+1, x+1, y+h-1 );
-
     // bottom
 
     actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
@@ -2115,7 +2079,6 @@ int blink = 0;
 
     actWin->executeGc.addNormXClipRectangle( xR );
 
-    //actWin->executeGc.setFG( fgColor.getColor() );
     actWin->executeGc.setFG( fgColor.getIndex(), &blink );
     actWin->executeGc.setFontTag( fontTag, actWin->fi );
 
@@ -2193,7 +2156,6 @@ char callbackName[63+1];
       activeMode = 1;
 
       if ( !controlPvName.getExpanded() ||
-	 //( strcmp( controlPvName.getExpanded(), "" ) == 0 ) ) {
         blankOrComment( controlPvName.getExpanded() ) ) {
         controlExists = 0;
       }
@@ -2203,7 +2165,6 @@ char callbackName[63+1];
       }
 
       if ( !readPvName.getExpanded() ||
-	// ( strcmp( readPvName.getExpanded(), "" ) == 0 ) ) {
         blankOrComment( readPvName.getExpanded() ) ) {
         readExists = 0;
       }
@@ -2213,7 +2174,6 @@ char callbackName[63+1];
       }
 
       if ( !visPvExpString.getExpanded() ||
-	// ( strcmp( visPvExpString.getExpanded(), "" ) == 0 ) ) {
         blankOrComment( visPvExpString.getExpanded() ) ) {
         visExists = 0;
         visibility = 1;
@@ -2224,7 +2184,6 @@ char callbackName[63+1];
       }
 
       if ( !colorPvExpString.getExpanded() ||
-	 // ( strcmp( colorPvExpString.getExpanded(), "" ) == 0 ) ) {
          blankOrComment( colorPvExpString.getExpanded() ) ) {
         colorExists = 0;
       }
@@ -2377,8 +2336,6 @@ int activeButtonClass::deactivate (
     XtRemoveTimeOut( unconnectedTimer );
     unconnectedTimer = 0;
   }
-
-  //updateBlink( 0 );
 
   if ( deactivateCallback ) {
     (*deactivateCallback)( this );
@@ -2566,7 +2523,6 @@ unsigned int uival;
 
     if ( !controlExists ) return;
     stat = controlPvId->put( XDisplayName(actWin->appCtx->displayName), value );
-    //stat = controlPvId->put( value );
 
   }
 
