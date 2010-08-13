@@ -1923,6 +1923,8 @@ int blink = 0;
       actWin->executeGc.setFG( onColor.getIndex(), &blink );
     }
 
+    cV = rV;
+
   }
   else if ( controlExists ) {
 
