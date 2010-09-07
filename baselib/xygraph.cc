@@ -22,6 +22,47 @@
 
 void _edmDebug ( void );
 
+static void setVal (
+  int pvtype,
+  void *dest,
+  int i,
+  double src
+) {
+
+  switch ( pvtype ) {
+
+  case ProcessVariable::specificType::flt:
+    ( (float *) dest )[i] = (float) src;
+    break;
+
+  case ProcessVariable::specificType::real: 
+    ( (double *) dest )[i] = (double) src;
+    break;
+
+  case ProcessVariable::specificType::shrt:
+    ( (short *) dest )[i] = (short) src;
+    break;
+
+  case ProcessVariable::specificType::chr:
+    ( (char *) dest )[i] = (char) src;
+    break;
+
+  case ProcessVariable::specificType::integer:
+    ( (int *) dest )[i] = (int) src;
+    break;
+
+  case ProcessVariable::specificType::enumerated:
+    ( (short *) dest )[i] = (short) src;
+    break;
+
+  default:
+    ( (double *) dest )[i] = (double) src;
+    break;
+
+  }
+
+}
+
 static double dclamp (
   double val
 ) {
@@ -1720,7 +1761,6 @@ static void trigValueUpdate (
 
 xyGraphClass *xyo = (xyGraphClass *) userarg;
 int i, ii, yi;
-char *xArray, *yArray;
 double dxValue, dyValue;
 double scaledX, scaledY;
 int ctl;
@@ -1757,19 +1797,13 @@ int ctl;
 
           //if ( xyo->yArrayGotValue[i] && xyo->xArrayGotValue[i] ) {
 
+          ii = xyo->arrayTail[i];
+
           // x
-          ii = xyo->arrayTail[i] * xyo->xPvSize[i];
-          xArray = (char *) xyo->xPvData[i];
-          memcpy( (void *) &xArray[ii], (void *) &xyo->xPvCurValue[i],
-           xyo->xPvSize[i] ); // get cur value of x
+          setVal( xyo->xPvType[i], (void *) xyo->xPvData[i], ii, xyo->xPvCurValue[i] );
 
           // y
-          ii = xyo->arrayTail[i] * xyo->yPvSize[i];
-          yArray = (char *) xyo->yPvData[i];
-          memcpy( (void *) &yArray[ii], (void *) &xyo->yPvCurValue[i],
-           xyo->yPvSize[i] ); // get cur value of y
-
-          ii = xyo->arrayTail[i];
+          setVal( xyo->yPvType[i], (void *) xyo->yPvData[i], ii, xyo->yPvCurValue[i] );
 
           // There are two views of pv types, Type and specificType; this uses
           // specificType
@@ -2112,7 +2146,6 @@ objPlusIndexPtr ptr = (objPlusIndexPtr) userarg;
 xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 int i =  ptr->index;
 int ii, yi;
-char *xArray, *yArray;
 double dxValue, dyValue;
 double scaledX, scaledY;
 int ctl;
@@ -2132,8 +2165,6 @@ int ctl;
 
   case XYGC_K_TRACE_XY:
 
-
-
     if ( xyo->forceVector[i] || ( xyo->xPvCount[i] > 1 ) ) { // vector
 
       for ( ii=0; ii<xyo->xPvCount[i]; ii++ ) {
@@ -2149,7 +2180,7 @@ int ctl;
              (float) pv->get_double();
             break;
 
-          case ProcessVariable::specificType::real: 
+          case ProcessVariable::specificType::real:
             ( (double *) xyo->xPvData[i] )[ii] = pv->get_double();
             break;
 
@@ -2278,23 +2309,7 @@ int ctl;
     }
     else { // scalar
 
-      // There are two views of pv types, Type and specificType; this uses Type
-
-      // There are two views of pv types, Type and specificType; this uses
-      // specificType
-
-      // There are two views of pv types, Type and specificType; this uses
-      // Type
-      switch ( xyo->xPvType[i] ) {
-      case ProcessVariable::Type::real:
-	( (double *) xyo->xPvCurValue )[i] = pv->get_double();
-	break;
-      case ProcessVariable::specificType::integer:
-	( (int *) xyo->xPvCurValue )[i] = pv->get_int();
-	break;
-      }
-      //memcpy( (void *) &xyo->xPvCurValue[i], (void *) arg.dbr,
-      //xyo->xPvSize[i] ); // save cur value for y event
+      xyo->xPvCurValue[i] = pv->get_double();
 
       if ( ( xyo->arrayNumPoints[i] >= xyo->count ) &&
            ( xyo->plotMode == XYGC_K_PLOT_MODE_PLOT_N_STOP ) ) {
@@ -2304,29 +2319,73 @@ int ctl;
       }
 
       // x
-      ii = xyo->arrayTail[i] * xyo->xPvSize[i];
-      xArray = (char *) xyo->xPvData[i];
+      ii = xyo->arrayTail[i];
 
       // There are two views of pv types, Type and specificType; this uses
       // specificType
       switch ( xyo->xPvType[i] ) {
-      case ProcessVariable::Type::real:
-	*( (double *) &xArray[ii] ) = pv->get_double();
-	break;
+
+      case ProcessVariable::specificType::flt:
+        ( (float *) xyo->xPvData[i] )[ii] = (float) pv->get_double();
+        break;
+
+      case ProcessVariable::specificType::real: 
+        ( (double *) xyo->xPvData[i] )[ii] = pv->get_double();
+        break;
+
+      case ProcessVariable::specificType::shrt:
+        if ( xyo->xSigned[i] ) {
+          ( (short *) xyo->xPvData[i] )[ii] = (short) pv->get_int();
+        }
+        else {
+          ( (unsigned short *) xyo->xPvData[i] )[ii] =
+           (unsigned short) pv->get_int();
+        }
+        break;
+
+      case ProcessVariable::specificType::chr:
+        if ( xyo->xSigned[i] ) {
+          ( (char *) xyo->xPvData[i] )[ii] = (char) pv->get_int();
+        }
+        else {
+          ( (unsigned char *) xyo->xPvData[i] )[ii] =
+	   (unsigned char) pv->get_int();
+        }
+        break;
+
       case ProcessVariable::specificType::integer:
-	*( (int *) &xArray[ii] ) = pv->get_int();
-	break;
+        if ( xyo->xSigned[i] ) {
+          ( (long *) xyo->xPvData[i] )[ii] = pv->get_int();
+        }
+        else {
+          ( (unsigned long *) xyo->xPvData[i] )[ii] =
+           (unsigned long) pv->get_int();
+        }
+        break;
+
+      case ProcessVariable::specificType::enumerated:
+        if ( xyo->xSigned[i] ) {
+          ( (short *) xyo->xPvData[i] )[ii] = (short) pv->get_int();
+        }
+        else {
+          ( (unsigned short *) xyo->xPvData[i] )[ii] =
+           (unsigned short) pv->get_int();
+        }
+        break;
+
+      default:
+        ( (double *) xyo->xPvData[i] )[ii] = pv->get_double();
+        break;
+
       }
-      //memcpy( (void *) &xArray[ii], (void *) arg.dbr, xyo->xPvSize[i] );
 
       if ( ( xyo->plotUpdateMode[i] == XYGC_K_UPDATE_ON_X_OR_Y ) ||
            ( xyo->plotUpdateMode[i] == XYGC_K_UPDATE_ON_X ) ) {
 
         // y
-        ii = xyo->arrayTail[i] * xyo->yPvSize[i];
-        yArray = (char *) xyo->yPvData[i];
-        memcpy( (void *) &yArray[ii], (void *) &xyo->yPvCurValue[i],
-         xyo->yPvSize[i] ); // get cur value of y
+        ii = xyo->arrayTail[i];
+        setVal( xyo->yPvType[i], (void *) xyo->yPvData[i], ii, xyo->yPvCurValue[i] );
+
         xyo->yArrayGotValue[i] = 1;
 
       }
@@ -2592,7 +2651,6 @@ static void yValueUpdate (
 objPlusIndexPtr ptr = (objPlusIndexPtr) userarg;
 xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 int ii, i =  ptr->index;
-char *xArray, *yArray;
 double dxValue, dyValue;
 double scaledX, scaledY;
 int yi;
@@ -2757,18 +2815,7 @@ int ctl;
     }
     else { // scalar
 
-      // There are two views of pv types, Type and specificType; this uses
-      // Type
-      switch ( xyo->yPvType[i] ) {
-      case ProcessVariable::Type::real:
-	( (double *) xyo->yPvCurValue )[i] = pv->get_double();
-	break;
-      case ProcessVariable::specificType::integer:
-	( (int *) xyo->yPvCurValue )[i] = pv->get_int();
-	break;
-      }
-      //memcpy( (void *) &xyo->yPvCurValue[i], (void *) arg.dbr,
-      // xyo->yPvSize[i] ); // save cur value for x or trig event
+      xyo->yPvCurValue[i] = pv->get_double();
 
       if ( ( xyo->arrayNumPoints[i] >= xyo->count ) &&
            ( xyo->plotMode == XYGC_K_PLOT_MODE_PLOT_N_STOP ) ) {
@@ -2778,29 +2825,73 @@ int ctl;
       }
 
       // y
-      ii = xyo->arrayTail[i] * xyo->yPvSize[i];
-      yArray = (char *) xyo->yPvData[i];
+      ii = xyo->arrayTail[i];
 
       // There are two views of pv types, Type and specificType; this uses
-      // Type
+      // specificType
       switch ( xyo->yPvType[i] ) {
-      case ProcessVariable::Type::real:
-	*( (double *) &yArray[ii] ) = pv->get_double();
-	break;
+
+      case ProcessVariable::specificType::flt:
+        ( (float *) xyo->yPvData[i] )[ii] = (float) pv->get_double();
+        break;
+
+      case ProcessVariable::specificType::real: 
+        ( (double *) xyo->yPvData[i] )[ii] = pv->get_double();
+        break;
+
+      case ProcessVariable::specificType::shrt:
+        if ( xyo->ySigned[i] ) {
+          ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int();
+        }
+        else {
+          ( (unsigned short *) xyo->yPvData[i] )[ii] =
+           (unsigned short) pv->get_int();
+        }
+        break;
+
+      case ProcessVariable::specificType::chr:
+        if ( xyo->ySigned[i] ) {
+          ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_int();
+        }
+        else {
+          ( (unsigned char *) xyo->yPvData[i] )[ii] =
+	   (unsigned char) pv->get_int();
+        }
+        break;
+
       case ProcessVariable::specificType::integer:
-	*( (int *) &yArray[ii] ) = pv->get_int();
-	break;
+        if ( xyo->ySigned[i] ) {
+          ( (long *) xyo->yPvData[i] )[ii] = pv->get_int();
+        }
+        else {
+          ( (unsigned long *) xyo->yPvData[i] )[ii] =
+           (unsigned long) pv->get_int();
+        }
+        break;
+
+      case ProcessVariable::specificType::enumerated:
+        if ( xyo->ySigned[i] ) {
+          ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int();
+        }
+        else {
+          ( (unsigned short *) xyo->yPvData[i] )[ii] =
+           (unsigned short) pv->get_int();
+        }
+        break;
+
+      default:
+        ( (double *) xyo->yPvData[i] )[ii] = pv->get_double();
+        break;
+
       }
-      //memcpy( (void *) &yArray[ii], (void *) arg.dbr, xyo->yPvSize[i] );
 
       if ( ( xyo->plotUpdateMode[i] == XYGC_K_UPDATE_ON_X_OR_Y ) ||
            ( xyo->plotUpdateMode[i] == XYGC_K_UPDATE_ON_Y ) ) {
 
         // x
-        ii = xyo->arrayTail[i] * xyo->xPvSize[i];
-        xArray = (char *) xyo->xPvData[i];
-        memcpy( (void *) &xArray[ii], (void *) &xyo->xPvCurValue[i],
-         xyo->xPvSize[i] ); // get cur value of x
+        ii = xyo->arrayTail[i];
+        setVal( xyo->xPvType[i], (void *) xyo->xPvData[i], ii, xyo->xPvCurValue[i] );
+
         xyo->xArrayGotValue[i] = 1;
 
       }
@@ -3307,8 +3398,6 @@ int ctl;
 
       }
       else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LINEAR ) {
-
-	_edmDebug();
 
         if ( xyo->special[i] ) {
           dxValue = (double) ( xyo->totalCount[i] % xyo->count );
@@ -4145,6 +4234,8 @@ int i, ii, first;
 double dxValue;
 int ctl;
 
+  *min = *max = 0;
+
   first = 1;
   for ( i=0; i<numTraces; i++ ) {
 
@@ -4152,86 +4243,85 @@ int ctl;
 
     if ( !ctl ) {
 
-    ii = arrayHead[i];
-    while ( ii != arrayTail[i] ) {
+      ii = arrayHead[i];
+      while ( ii != arrayTail[i] ) {
 
-      if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
+        if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 
-        dxValue = ( (double *) xPvData[i] )[ii];
+          dxValue = ( (double *) xPvData[i] )[ii];
 
-      }
-      else {
+        }
+        else {
   
-        // There are two views of pv types, Type and specificType; this uses
-        // specificType
-        switch ( xPvType[i] ) {
-        case ProcessVariable::specificType::flt:
-          dxValue = (double) ( (float *) xPvData[i] )[ii];
-          break;
-        case ProcessVariable::specificType::real: 
-          dxValue = ( (double *) xPvData[i] )[ii];
-          break;
-        case ProcessVariable::specificType::shrt:
-          if ( xSigned[i] ) {
-            dxValue = (double) ( (short *) xPvData[i] )[ii];
+          // There are two views of pv types, Type and specificType; this uses
+          // specificType
+          switch ( xPvType[i] ) {
+          case ProcessVariable::specificType::flt:
+            dxValue = (double) ( (float *) xPvData[i] )[ii];
+            break;
+          case ProcessVariable::specificType::real: 
+            dxValue = ( (double *) xPvData[i] )[ii];
+            break;
+          case ProcessVariable::specificType::shrt:
+            if ( xSigned[i] ) {
+              dxValue = (double) ( (short *) xPvData[i] )[ii];
+            }
+            else {
+              dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+            }
+            break;
+          case ProcessVariable::specificType::chr:
+            if ( xSigned[i] ) {
+              dxValue = (double) ( (char *) xPvData[i] )[ii];
+            }
+            else {
+              dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
+            }
+            break;
+          case ProcessVariable::specificType::integer:
+            if ( xSigned[i] ) {
+              dxValue = (double) ( (int *) xPvData[i] )[ii];
+            }
+            else {
+              dxValue = (double) ( (int *) xPvData[i] )[ii];
+            }
+            break;
+          case ProcessVariable::specificType::enumerated:
+            if ( xSigned[i] ) {
+              dxValue = (double) ( (short *) xPvData[i] )[ii];
+            }
+            else {
+              dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
+            }
+            break;
+          default:
+            dxValue = ( (double *) xPvData[i] )[ii];
+            break;
           }
-          else {
-            dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
-          }
-          break;
-        case ProcessVariable::specificType::chr:
-          if ( xSigned[i] ) {
-            dxValue = (double) ( (char *) xPvData[i] )[ii];
-          }
-          else {
-            dxValue = (double) ( (unsigned char *) xPvData[i] )[ii];
-          }
-          break;
-        case ProcessVariable::specificType::integer:
-          if ( xSigned[i] ) {
-            dxValue = (double) ( (int *) xPvData[i] )[ii];
-          }
-          else {
-            dxValue = (double) ( (int *) xPvData[i] )[ii];
-          }
-          break;
-        case ProcessVariable::specificType::enumerated:
-          if ( xSigned[i] ) {
-            dxValue = (double) ( (short *) xPvData[i] )[ii];
-          }
-          else {
-            dxValue = (double) ( (unsigned short *) xPvData[i] )[ii];
-          }
-          break;
-        default:
-          dxValue = ( (double *) xPvData[i] )[ii];
-          break;
+
+        }
+
+        if ( first ) {
+          first = 0;
+          *min = *max = dxValue;
+        }
+        else {
+          if ( dxValue < *min ) *min = dxValue;
+          if ( dxValue > *max ) *max = dxValue;
+        }
+
+        ii++;
+        if ( ii > plotBufSize[i] ) {
+          ii = 0;
         }
 
       }
-
-      if ( first ) {
-        first = 0;
-        *min = *max = dxValue;
-      }
-      else {
-        if ( dxValue < *min ) *min = dxValue;
-        if ( dxValue > *max ) *max = dxValue;
-      }
-
-      ii++;
-      if ( ii > plotBufSize[i] ) {
-        ii = 0;
-      }
-
-    }
 
     }
 
   }
 
 }
-
 
 void xyGraphClass::getYMinMax (
   int yi,
@@ -4245,6 +4335,7 @@ int ctl;
 
   for ( i=0; i<NUM_Y_AXES; i++ ) {
     first[i] = 1;
+    min[i] = max[i] = 0;
   }
 
   for ( i=0; i<numTraces; i++ ) {
@@ -6009,7 +6100,8 @@ int ctl;
 
       addPoint( dxValue, scaledX, scaledY, i );
 
-      yArrayGotValue[i] = xArrayGotValue[i] = 0;
+      //yArrayGotValue[i] = xArrayGotValue[i] = 0;
+      //printf( "addPoint 6 - reset flags\n" );
 
       ii++;
       if ( ii > plotBufSize[i] ) {
@@ -10158,16 +10250,21 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       autoScaleX = 0;
 
       getXMinMax( &checkXMin, &checkXMax );
-      if ( kpXMinEfDouble.isNull() || kpXMaxEfDouble.isNull() ) {
-        if ( ( curXMax - curXMin ) != 0 ) {
-          diff = ( fabs( curXMax - curXMin ) - fabs( checkXMax - checkXMin ) ) /
-           fabs( curXMax - curXMin );
-          if ( diff > maxDiff ) maxDiff = diff;
-        }
-      }
 
-      if ( maxDiff > autoScaleThreshFrac ) {
-        autoScaleX = 1;
+      if ( checkXMin != checkXMax ) {
+
+        if ( kpXMinEfDouble.isNull() || kpXMaxEfDouble.isNull() ) {
+          if ( ( curXMax - curXMin ) != 0 ) {
+            diff = ( fabs( curXMax - curXMin ) - fabs( checkXMax - checkXMin ) ) /
+             fabs( curXMax - curXMin );
+            if ( diff > maxDiff ) maxDiff = diff;
+          }
+        }
+
+        if ( maxDiff > autoScaleThreshFrac ) {
+          autoScaleX = 1;
+        }
+
       }
 
     }
@@ -10181,18 +10278,22 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 
         getYMinMax( yi, checkY1Min, checkY1Max );
 
-	if ( kpY1MinEfDouble[yi].isNull() || kpY1MaxEfDouble[yi].isNull() ) {
-          if ( ( curY1Max[yi] - curY1Min[yi] ) != 0 ) {
-            diff = ( fabs( curY1Max[yi] - curY1Min[yi] ) -
-                     fabs( checkY1Max[yi] - checkY1Min[yi] ) ) /
-             fabs( curY1Max[yi] - curY1Min[yi] );
-            if ( diff > maxDiff ) maxDiff = diff;
-          }
-	}
+        if ( checkY1Min[yi] != checkY1Max[yi] ) {
 
-        if ( maxDiff > autoScaleThreshFrac ) {
-          autoScaleY[yi] = 1;
-        }
+          if ( kpY1MinEfDouble[yi].isNull() || kpY1MaxEfDouble[yi].isNull() ) {
+            if ( ( curY1Max[yi] - curY1Min[yi] ) != 0 ) {
+              diff = ( fabs( curY1Max[yi] - curY1Min[yi] ) -
+                       fabs( checkY1Max[yi] - checkY1Min[yi] ) ) /
+               fabs( curY1Max[yi] - curY1Min[yi] );
+              if ( diff > maxDiff ) maxDiff = diff;
+            }
+          }
+
+          if ( maxDiff > autoScaleThreshFrac ) {
+            autoScaleY[yi] = 1;
+          }
+
+	}
 
       }
 
