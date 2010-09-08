@@ -19,6 +19,7 @@ ifdef EPICS_HOST_ARCH
  DIRS += diamondlib
  DIRS += indicator
  DIRS += multiSegRampButton
+ DIRS += slaclib
  include $(TOP)/configure/RULES_DIRS
 
 else

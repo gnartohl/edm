@@ -1,0 +1,6 @@
+#ifndef __slacWidgets_str
+#define __slacWidgets_str 1
+
+#define reg_str1 (char *) "Freeze Button"
+
+#endif

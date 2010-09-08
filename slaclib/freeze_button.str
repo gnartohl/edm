@@ -1,0 +1,22 @@
+#ifndef __freeze_button_str
+#define __freeze_button_str 1
+
+#define activeFreezeButtonClass_str0 (char *) "Freeze"
+#define activeFreezeButtonClass_str1 (char *) "Unfreeze"
+#define activeFreezeButtonClass_str2 (char *) "Unknown object"
+#define activeFreezeButtonClass_str3 (char *) " Properties"
+#define activeFreezeButtonClass_str4 (char *) "X"
+#define activeFreezeButtonClass_str5 (char *) "Y"
+#define activeFreezeButtonClass_str6 (char *) "Width"
+#define activeFreezeButtonClass_str7 (char *) "Height"
+#define activeFreezeButtonClass_str8 (char *) "Label (normal state)"
+#define activeFreezeButtonClass_str9 (char *) "Label (frozen state)"
+#define activeFreezeButtonClass_str10 (char *) "3-D Look"
+#define activeFreezeButtonClass_str11 (char *) "Font"
+#define activeFreezeButtonClass_str12 (char *) "Fg"
+#define activeFreezeButtonClass_str13 (char *) "Bg (normal state)"
+#define activeFreezeButtonClass_str14 (char *) "Bg (frozen state)"
+#define activeFreezeButtonClass_str15 (char *) "Top Shadow"
+#define activeFreezeButtonClass_str16 (char *) "Bottom Shadow"
+
+#endif

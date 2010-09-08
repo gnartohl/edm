@@ -1066,6 +1066,8 @@ int invalidFile, invalidBgColor;
 
 int reloadRequestFlag;
 
+bool frozen;
+
 activeWindowClass ( void );
 
 ~activeWindowClass ( void );
@@ -1696,6 +1698,10 @@ int sameAncestorName (
 void reconfig ( void );
 
 void clip ( void );
+
+void freeze(bool);
+
+bool is_frozen(void);
 
 char endSignature[15+1];
 

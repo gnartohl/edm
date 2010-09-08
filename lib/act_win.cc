@@ -11188,6 +11188,8 @@ int i;
 
   reloadRequestFlag = 0;
 
+  frozen = false;
+
 }
 
 void activeWindowClass::initCopy ( void ) {
@@ -17359,6 +17361,8 @@ char *envPtr;
 
   }
 
+  frozen = false;
+
   mode = AWC_EXECUTE;
   waiting = 0; // for deferred screen close action
 
@@ -17670,6 +17674,8 @@ pvDefPtr pvDefCur;
     appCtx->postMessage( activeWindowClass_str193 );
     return 0;
   }
+
+  frozen = false;
 
   windowState = AWC_START_DEACTIVATE;
 
@@ -20372,33 +20378,37 @@ int activeWindowClass::processObjects ( void )
 activeGraphicListPtr cur, next;
 int workToDo = 0;
 
-  appCtx->proc->lock();
-  cur = defExeHead->defExeFlink;
-  appCtx->proc->unlock();
-
-  if ( !cur ) {
-    return 0;
-  }
-
-  if ( cur != defExeHead ) {
-    needCopy = 1;
-    workToDo = 1;
-  }
-
-  while ( cur != defExeHead ) {
-
-    if ( pixmapX0 > cur->node->getX0() ) pixmapX0 = cur->node->getX0();
-    if ( pixmapX1 < cur->node->getX1() ) pixmapX1 = cur->node->getX1();
-    if ( pixmapY0 > cur->node->getY0() ) pixmapY0 = cur->node->getY0();
-    if ( pixmapY1 < cur->node->getY1() ) pixmapY1 = cur->node->getY1();
+  if( !( this->frozen ) ) {
 
     appCtx->proc->lock();
-    next = cur->defExeFlink;
+    cur = defExeHead->defExeFlink;
     appCtx->proc->unlock();
 
-    cur->node->executeDeferred();
+    if ( !cur ) {
+      return 0;
+    }
 
-    cur = next;
+    if ( cur != defExeHead ) {
+      needCopy = 1;
+      workToDo = 1;
+    }
+
+    while ( cur != defExeHead ) {
+
+      if ( pixmapX0 > cur->node->getX0() ) pixmapX0 = cur->node->getX0();
+      if ( pixmapX1 < cur->node->getX1() ) pixmapX1 = cur->node->getX1();
+      if ( pixmapY0 > cur->node->getY0() ) pixmapY0 = cur->node->getY0();
+      if ( pixmapY1 < cur->node->getY1() ) pixmapY1 = cur->node->getY1();
+
+      appCtx->proc->lock();
+      next = cur->defExeFlink;
+      appCtx->proc->unlock();
+
+      cur->node->executeDeferred();
+
+      cur = next;
+
+    }
 
   }
 
@@ -21761,6 +21771,18 @@ activeWindowClass *aw;
   }
 
   return 0;
+
+}
+
+void activeWindowClass::freeze ( bool flag) {
+
+  this->frozen = flag;
+
+}
+
+bool activeWindowClass::is_frozen(void){
+
+  return this->frozen;
 
 }
 
