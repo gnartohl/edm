@@ -22,6 +22,244 @@ static const char *whitespace = " \t\n\r";
 #undef CALC_DEBUG
 //#define CALC_DEBUG 1
 
+#define DONE -1
+#define SIGN_OR_NUM 1
+#define NUM 2
+#define SIGN_OR_NUM2 3
+#define NUM1 4
+#define SIGN_OR_POINT_OR_NUM 5
+#define POINT_OR_NUM 6
+#define EXP_OR_POINT_OR_NUM 7
+#define EXP_OR_NUM 8
+#define NUM2 9
+
+static void trim (
+  char *str )
+{
+
+// trim white space
+
+int first, last, i, ii, l;
+
+  l = strlen(str);
+
+  i = ii = 0;
+
+  while ( ( i < l ) && isspace( str[i] ) ) {
+    i++;
+  }
+
+  first = i;
+
+  i = l-1;
+  while ( ( i >= first ) && isspace( str[i] ) ) {
+    i--;
+  }
+
+  last = i;
+
+  if ( first > 0 ) {
+
+    for ( i=first; i<=last; i++ ) {
+      str[ii] = str[i];
+      ii++;
+    }
+
+    str[ii] = 0;
+
+  }
+  else if ( last < l-1 ) {
+
+    str[last+1] = 0;
+
+  }
+
+}
+
+static int legalFloat (
+  const char *str )
+{
+
+char buf[127+1];
+int i, l, legal, state;
+
+  strncpy( buf, str, 127 );
+  buf[127] = 0;
+  trim( buf );
+  l = strlen(buf);
+  if ( l < 1 ) return 0;
+
+  state = SIGN_OR_POINT_OR_NUM;
+  i = 0;
+  legal = 1;
+  while ( state != DONE ) {
+
+    if ( i >= l ) state = DONE;
+
+    switch ( state ) {
+
+    case SIGN_OR_POINT_OR_NUM:
+
+      if ( buf[i] == '-' ) {
+        i++;
+        state = POINT_OR_NUM;
+        continue;
+      }
+        
+      if ( buf[i] == '+' ) {
+        i++;
+        state = POINT_OR_NUM;
+        continue;
+      }
+        
+      if ( buf[i] == '.' ) {
+        i++;
+        state = NUM1;
+        continue;
+      }
+        
+      if ( isdigit(buf[i]) ) {
+        i++;
+        state = EXP_OR_POINT_OR_NUM;
+        continue;
+      }
+
+      legal = 0;
+      state = DONE;
+
+      break;        
+
+    case NUM1:
+
+      if ( isdigit(buf[i]) ) {
+        i++;
+        state = EXP_OR_NUM;
+        continue;
+      }
+
+      legal = 0;
+      state = DONE;
+
+      break;        
+
+    case EXP_OR_POINT_OR_NUM:
+
+      if ( buf[i] == 'E' ) {
+        i++;
+        state = SIGN_OR_NUM2;
+        continue;
+      }
+        
+      if ( buf[i] == 'e' ) {
+        i++;
+        state = SIGN_OR_NUM2;
+        continue;
+      }
+        
+      if ( buf[i] == '.' ) {
+        i++;
+        state = EXP_OR_NUM;
+        continue;
+      }
+        
+      if ( isdigit(buf[i]) ) {
+        i++;
+        continue;
+      }
+
+      legal = 0;
+      state = DONE;
+
+      break;        
+
+    case POINT_OR_NUM:
+
+      if ( buf[i] == '.' ) {
+        i++;
+        state = EXP_OR_NUM;
+        continue;
+      }
+        
+      if ( isdigit(buf[i]) ) {
+        i++;
+        state = EXP_OR_POINT_OR_NUM;
+        continue;
+      }
+
+      legal = 0;
+      state = DONE;
+
+      break;        
+
+    case EXP_OR_NUM:
+
+      if ( buf[i] == 'E' ) {
+        i++;
+        state = SIGN_OR_NUM2;
+        continue;
+      }
+        
+      if ( buf[i] == 'e' ) {
+        i++;
+        state = SIGN_OR_NUM2;
+        continue;
+      }
+        
+      if ( isdigit(buf[i]) ) {
+        i++;
+        continue;
+      }
+
+      legal = 0;
+      state = DONE;
+
+      break;        
+
+    case SIGN_OR_NUM2:
+
+      if ( buf[i] == '-' ) {
+        i++;
+        state = NUM2;
+        continue;
+      }
+        
+      if ( buf[i] == '+' ) {
+        i++;
+        state = NUM2;
+        continue;
+      }
+        
+      if ( isdigit(buf[i]) ) {
+        i++;
+        state = NUM2;
+        continue;
+      }
+
+      legal = 0;
+      state = DONE;
+
+      break;        
+
+    case NUM2:
+
+      if ( isdigit(buf[i]) ) {
+        i++;
+        continue;
+      }
+
+      legal = 0;
+      state = DONE;
+
+      break;        
+
+    }
+
+  }
+
+  return legal;
+
+}
+
 // HashedExpression:
 // One formula, hashed by name, read from the config file
 // and converted into postfix notation.
@@ -574,10 +812,9 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
     for (i=0; i<arg_count; ++i)
     {
         // Is this argument a number or another PV?
-        // Poor excuse for a real "number" check:
-        if (strchr("0123456789+-.", arg_name[i][0]) &&
-            strspn(arg_name[i], "0123456789+-.eE"))
-        {   // It's a number
+
+        if ( legalFloat( arg_name[i] ) ) {
+
             arg[i] = strtod(arg_name[i], 0);
             //if (arg[i] == HUGE_VAL || arg[i] == -HUGE_VAL)
             if (arg[i] == CALC_PV_HUGE_VAL || arg[i] == -CALC_PV_HUGE_VAL)

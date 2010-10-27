@@ -103,6 +103,9 @@ void processAllEvents (
   XtAppContext app,
   Display *d );
 
+void trimWhiteSpace (
+  char *str );
+
 int isLegalInteger (
   char *str );
 

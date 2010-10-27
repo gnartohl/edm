@@ -27,6 +27,7 @@
 #define SMALL_SYM_ARRAY_SIZE 10
 #define SMALL_SYM_ARRAY_LEN 31
 
+#include "utility.h"
 #include "related_display.h"
 #include "app_pkg.h"
 #include "act_win.h"
@@ -210,6 +211,7 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
   rdo->eraseSelectBoxCorners();
   rdo->erase();
 
+  trimWhiteSpace( rdo->buf->bufDisplayFileName[0] );
   rdo->displayFileName[0].setRaw( rdo->buf->bufDisplayFileName[0] );
   if ( blank( rdo->displayFileName[0].getRaw() ) ) {
     rdo->closeAction[0] = 0;
@@ -238,6 +240,7 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
 
   for ( i=ii; i<rdo->maxDsps; i++ ) {
     if ( !blank( rdo->buf->bufDisplayFileName[i] ) ) {
+      trimWhiteSpace( rdo->buf->bufDisplayFileName[i] );
       rdo->displayFileName[ii].setRaw( rdo->buf->bufDisplayFileName[i] );
       rdo->closeAction[ii] = rdo->buf->bufCloseAction[i];
       rdo->setPostion[ii] = rdo->buf->bufSetPostion[i];

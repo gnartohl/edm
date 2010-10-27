@@ -17433,6 +17433,8 @@ char *envPtr;
 
     } while ( nTries && !( opStat & 1 ) );
 
+    pend_io( 5.0 );
+    pend_event( 0.01 );
     processAllEvents( appCtx->appContext(), d );
 
   }

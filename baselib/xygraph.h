@@ -103,7 +103,7 @@
 #define XYGC_K_PLOT_SORTED_X_MODE 1
 
 #define XYGC_MAJOR_VERSION 4
-#define XYGC_MINOR_VERSION 6
+#define XYGC_MINOR_VERSION 7
 #define XYGC_RELEASE 0
 
 #ifdef __xygraph_cc
@@ -290,11 +290,19 @@ static void yMonitorConnection (
   ProcessVariable *pv,
   void *userarg );
 
+static void nMonitorConnection (
+  ProcessVariable *pv,
+  void *userarg );
+
 static void xValueUpdate (
   ProcessVariable *pv,
   void *userarg );
 
 static void yValueUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
+static void nValueUpdate (
   ProcessVariable *pv,
   void *userarg );
 
@@ -389,6 +397,7 @@ typedef struct editBufTag {
   int bufPlotColor[XYGC_K_MAX_TRACES];
   char bufXPvName[XYGC_K_MAX_TRACES][PV_Factory::MAX_PV_NAME+1];
   char bufYPvName[XYGC_K_MAX_TRACES][PV_Factory::MAX_PV_NAME+1];
+  char bufNPvName[XYGC_K_MAX_TRACES][PV_Factory::MAX_PV_NAME+1];
   int bufXSigned[XYGC_K_MAX_TRACES];
   int bufYSigned[XYGC_K_MAX_TRACES];
   int bufLineThk[XYGC_K_MAX_TRACES];
@@ -615,11 +624,19 @@ friend void yMonitorConnection (
   ProcessVariable *pv,
   void *userarg );
 
+friend void nMonitorConnection (
+  ProcessVariable *pv,
+  void *userarg );
+
 friend void xValueUpdate (
   ProcessVariable *pv,
   void *userarg );
 
 friend void yValueUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
+friend void nValueUpdate (
   ProcessVariable *pv,
   void *userarg );
 
@@ -718,8 +735,12 @@ objPlusIndexType xcArgRec[XYGC_K_MAX_TRACES];
 objPlusIndexType xvArgRec[XYGC_K_MAX_TRACES];
 objPlusIndexType ycArgRec[XYGC_K_MAX_TRACES];
 objPlusIndexType yvArgRec[XYGC_K_MAX_TRACES];
+objPlusIndexType ncArgRec[XYGC_K_MAX_TRACES];
+objPlusIndexType nvArgRec[XYGC_K_MAX_TRACES];
 
-ProcessVariable *xPv[XYGC_K_MAX_TRACES], *yPv[XYGC_K_MAX_TRACES];
+ProcessVariable *xPv[XYGC_K_MAX_TRACES], *yPv[XYGC_K_MAX_TRACES], 
+ *nPv[XYGC_K_MAX_TRACES];
+
 int initialXConnection[XYGC_K_MAX_TRACES],
  initialYConnection[XYGC_K_MAX_TRACES];
 
@@ -731,13 +752,17 @@ int plotUpdateMode[XYGC_K_MAX_TRACES];
 int opMode[XYGC_K_MAX_TRACES];
 int y2Scale[XYGC_K_MAX_TRACES];
 
-expStringClass xPvExpStr[XYGC_K_MAX_TRACES], yPvExpStr[XYGC_K_MAX_TRACES];
+expStringClass xPvExpStr[XYGC_K_MAX_TRACES], yPvExpStr[XYGC_K_MAX_TRACES],
+ nPvExpStr[XYGC_K_MAX_TRACES];
 
 int xPvType[XYGC_K_MAX_TRACES], yPvType[XYGC_K_MAX_TRACES];
 
 int traceType[XYGC_K_MAX_TRACES]; // XYGC_K_TRACE_XY or XYGC_K_TRACE_CHRONOLOGICAL
 
 int plotState[XYGC_K_MAX_TRACES];
+
+int yPvDim[XYGC_K_MAX_TRACES], xPvDim[XYGC_K_MAX_TRACES],
+ traceSize[XYGC_K_MAX_TRACES];
 
 typedef struct plotInfoTag {
   int n;
@@ -887,12 +912,14 @@ double y2Factor[XYGC_K_MAX_TRACES], y2Offset[XYGC_K_MAX_TRACES];
 
 Widget plotWidget;
 
+int needNPvConnect[XYGC_K_MAX_TRACES];
+
 int needConnect, needInit, needRefresh, needUpdate, needErase, needDraw,
  needResetConnect, needReset, needTrigConnect, needTrig,
  needTraceCtlConnect, needTraceUpdate, needXRescale,
  needY1Rescale[NUM_Y_AXES], needY2Rescale, needBufferScroll, needVectorUpdate,
  needRealUpdate, needBoxRescale, needNewLimits, needOriginalLimits,
- needAutoScaleUpdate;
+ needAutoScaleUpdate, needNConnect, needNInit, needArraySizeChange;
 
 int numBufferScrolls;
 

@@ -276,11 +276,11 @@ edmTime base( (const unsigned long) ( xyo->curSec ),
       if ( (int) xyo->yPv[i]->get_dimension() > 1 ) {
 
         fprintf( tmp, "trace %-d (chronological) size = %-d\n",
-         i, (int) xyo->yPv[i]->get_dimension() );
+         i, (int) xyo->yPvCount[i] );
 
         fprintf( tmp, "index, %s\n", xyo->yPvExpStr[i].getExpanded() );
 
-        for ( n=0; n<(int) xyo->yPv[i]->get_dimension(); n++ ) {
+        for ( n=0; n<xyo->yPvCount[i]; n++ ) {
 
           switch ( xyo->yPvType[i] ) {
           case ProcessVariable::specificType::flt:
@@ -440,15 +440,14 @@ edmTime base( (const unsigned long) ( xyo->curSec ),
            ( (int) xyo->xPv[i]->get_dimension() > 1 ) ) {
 
         fprintf( tmp, "trace %-d (x/y) x size = %-d, y size = %-d\n",
-         i, (int) xyo->xPv[i]->get_dimension(),
-         (int) xyo->yPv[i]->get_dimension() );
+         i, xyo->xPvCount[i], xyo->yPvCount[i] );
 
         fprintf( tmp, "%s, %s\n", xyo->xPvExpStr[i].getExpanded(),
          xyo->yPvExpStr[i].getExpanded() );
 
-        size = (int) xyo->xPv[i]->get_dimension();
-        if ( size > (int) xyo->yPv[i]->get_dimension() ) {
-          size = (int) xyo->yPv[i]->get_dimension();
+        size = xyo->yPvCount[i];
+        if ( size > xyo->xPvCount[i] ) {
+          size = xyo->xPvCount[i];
         }
 
         for ( n=0; n<size; n++ ) {
@@ -2600,6 +2599,52 @@ int ctl;
 
 }
 
+static void nMonitorConnection (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+objPlusIndexPtr ptr = (objPlusIndexPtr) userarg;
+xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
+int i = ptr->index;
+
+  if ( pv->is_valid() ) {
+
+    if ( xyo->needNPvConnect[i] == 0 ) {
+
+      xyo->actWin->appCtx->proc->lock();
+      xyo->needNConnect = 1;
+      xyo->needNPvConnect[i] = 1;
+      xyo->actWin->addDefExeNode( xyo->aglPtr );
+      xyo->actWin->appCtx->proc->unlock();
+
+    }
+
+  }
+
+}
+
+static void nValueUpdate (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+objPlusIndexPtr ptr = (objPlusIndexPtr) userarg;
+xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
+int i =  ptr->index;
+
+  if ( pv->is_valid() ) {
+
+    xyo->actWin->appCtx->proc->lock();
+    xyo->traceSize[i] = (int) pv->get_int();
+    xyo->needArraySizeChange = 1;
+    xyo->actWin->addDefExeNode( xyo->aglPtr );
+    xyo->actWin->appCtx->proc->unlock();
+
+  }
+
+}
+
 static void yMonitorConnection (
   ProcessVariable *pv,
   void *userarg )
@@ -3662,6 +3707,13 @@ int i, yi;
     axygo->xSigned[i] = axygo->eBuf->bufXSigned[i];
     axygo->ySigned[i] = axygo->eBuf->bufYSigned[i];
 
+    if ( !blankOrComment( axygo->eBuf->bufNPvName[i] ) ) {
+      axygo->nPvExpStr[i].setRaw( axygo->eBuf->bufNPvName[i] );
+    }
+    else {
+      axygo->nPvExpStr[i].setRaw( "" );
+    }
+
   }
 
   axygo->xAxis = axygo->eBuf->bufXAxis;
@@ -3854,6 +3906,7 @@ time_t t1, t2;
   for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
     xPv[i] = NULL;
     yPv[i] = NULL;
+    nPv[i] = NULL;
     xPvData[i] = NULL;
     yPvData[i] = NULL;
     plotBuf[i] = NULL;
@@ -3872,6 +3925,7 @@ time_t t1, t2;
     opMode[i] = XYGC_K_SCOPE_MODE;
     y2Scale[i] = 0;
     lineStyle[i] = LineSolid;
+    needNPvConnect[i] = 0;
   }
   trigPv = NULL;
   resetPv = NULL;
@@ -3995,8 +4049,10 @@ int i, yi;
     lineStyle[i] = source->lineStyle[i];
     xPvExpStr[i].copy( source->xPvExpStr[i] );
     yPvExpStr[i].copy( source->yPvExpStr[i] );
+    nPvExpStr[i].copy( source->nPvExpStr[i] );
     xPv[i] = NULL;
     yPv[i] = NULL;
+    nPv[i] = NULL;
     xPvData[i] = NULL;
     yPvData[i] = NULL;
     plotBuf[i] = NULL;
@@ -4004,6 +4060,7 @@ int i, yi;
     plotInfo[i] = NULL;
     plotInfoSize[i] = 0;
     forceVector[i] = 0;
+    needNPvConnect[i] = 0;
   }
 
   trigPv = NULL;
@@ -4728,6 +4785,7 @@ static int resetModeEnum[2] = {
   tag.loadW( "numTraces", &numTraces );
   tag.loadW( "xPv", xPvExpStr, numTraces, emptyStr );
   tag.loadW( "yPv", yPvExpStr, numTraces, emptyStr );
+  tag.loadW( "nPv", nPvExpStr, numTraces, emptyStr );
   tag.loadW( "plotStyle", 4, plotStyleEnumStr, plotStyleEnum, plotStyle,
    numTraces, &plotStyleLine );
   tag.loadW( "lineThickness", lineThk, numTraces, &one );
@@ -5155,6 +5213,7 @@ static int resetModeEnum[2] = {
   tag.loadR( "numTraces", &numTraces, &zero );
   tag.loadR( "xPv", XYGC_K_MAX_TRACES, xPvExpStr, &n, emptyStr );
   tag.loadR( "yPv", XYGC_K_MAX_TRACES, yPvExpStr, &n, emptyStr );
+  tag.loadR( "nPv", XYGC_K_MAX_TRACES, nPvExpStr, &n, emptyStr );
   tag.loadR( "plotStyle", 4, plotStyleEnumStr, plotStyleEnum,
    XYGC_K_MAX_TRACES, plotStyle, &n, &plotStyleLine );
   tag.loadR( "lineThickness", XYGC_K_MAX_TRACES, lineThk, &n, &one );
@@ -5654,6 +5713,9 @@ int i, yi;
       strncpy( eBuf->bufYPvName[i], yPvExpStr[i].getRaw(),
        PV_Factory::MAX_PV_NAME );
       eBuf->bufYPvName[i][PV_Factory::MAX_PV_NAME] = 0;
+      strncpy( eBuf->bufNPvName[i], nPvExpStr[i].getRaw(),
+       PV_Factory::MAX_PV_NAME );
+      eBuf->bufNPvName[i][PV_Factory::MAX_PV_NAME] = 0;
       eBuf->bufPlotStyle[i] = plotStyle[i];
       eBuf->bufPlotSymbolType[i] = plotSymbolType[i];
       eBuf->bufPlotUpdateMode[i] = plotUpdateMode[i];
@@ -5673,6 +5735,7 @@ int i, yi;
     for ( i=numTraces; i<XYGC_K_MAX_TRACES; i++ ) {
       strcpy( eBuf->bufXPvName[i], "" );
       strcpy( eBuf->bufYPvName[i], "" );
+      strcpy( eBuf->bufNPvName[i], "" );
       eBuf->bufPlotStyle[i] = XYGC_K_PLOT_STYLE_LINE;
       eBuf->bufPlotSymbolType[i] = XYGC_K_SYMBOL_TYPE_NONE;
       eBuf->bufPlotUpdateMode[i] = XYGC_K_UPDATE_ON_X_AND_Y;
@@ -5696,6 +5759,9 @@ int i, yi;
      PV_Factory::MAX_PV_NAME );
     efTrace->addLabel( "  S " );
     efTrace->addToggle( " ", &eBuf->bufYSigned[i] );
+    efTrace->addLabel( "N " );
+    efTrace->addTextField( "", 15, eBuf->bufNPvName[i],
+     PV_Factory::MAX_PV_NAME );
     efTrace->addOption( "", "scope|plot", &eBuf->bufOpMode[i] );
     efTrace->addLabel( "  Y2" );
     efTrace->addToggle( " ", &eBuf->bufY2Scale[i] );
@@ -5728,6 +5794,9 @@ int i, yi;
        PV_Factory::MAX_PV_NAME );
       efTrace->addLabel( "  S " );
       efTrace->addToggle( " ", &eBuf->bufYSigned[i] );
+      efTrace->addLabel( "N " );
+      efTrace->addTextField( "", 15, eBuf->bufNPvName[i],
+       PV_Factory::MAX_PV_NAME );
       efTrace->addOption( "", "scope|plot", &eBuf->bufOpMode[i] );
       efTrace->addLabel( "  Y2" );
       efTrace->addToggle( " ", &eBuf->bufY2Scale[i] );
@@ -7381,6 +7450,10 @@ expStringClass tmpStr;
     tmpStr.expand1st( numMacros, macros, expansions );
     yPvExpStr[i].setRaw( tmpStr.getExpanded() );
 
+    tmpStr.setRaw( nPvExpStr[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    nPvExpStr[i].setRaw( tmpStr.getExpanded() );
+
   }
 
   return 1;
@@ -7419,6 +7492,8 @@ int i, stat, retStat = 1;
     stat = xPvExpStr[i].expand1st( numMacros, macros, expansions );
     if ( !( stat & 1 ) ) retStat = stat;
     stat = yPvExpStr[i].expand1st( numMacros, macros, expansions );
+    if ( !( stat & 1 ) ) retStat = stat;
+    stat = nPvExpStr[i].expand1st( numMacros, macros, expansions );
     if ( !( stat & 1 ) ) retStat = stat;
   }
 
@@ -7459,6 +7534,8 @@ int i, stat, retStat = 1;
     if ( !( stat & 1 ) ) retStat = stat;
     stat = yPvExpStr[i].expand2nd( numMacros, macros, expansions );
     if ( !( stat & 1 ) ) retStat = stat;
+    stat = nPvExpStr[i].expand2nd( numMacros, macros, expansions );
+    if ( !( stat & 1 ) ) retStat = stat;
   }
 
   return retStat;
@@ -7494,6 +7571,8 @@ int i, result;
     result = xPvExpStr[i].containsPrimaryMacros();
     if ( result ) return result;
     result = yPvExpStr[i].containsPrimaryMacros();
+    if ( result ) return result;
+    result = nPvExpStr[i].containsPrimaryMacros();
     if ( result ) return result;
   }
 
@@ -7803,7 +7882,7 @@ XmString str;
        needTrig = needTraceCtlConnect = needTraceUpdate =
        needXRescale = needBufferScroll = needVectorUpdate =
        needRealUpdate = needBoxRescale = needNewLimits =
-       needOriginalLimits = needAutoScaleUpdate = 0;
+       needOriginalLimits = needAutoScaleUpdate = needArraySizeChange = 0;
       drawGridFlag = 0;
 
       for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
@@ -7911,6 +7990,14 @@ XmString str;
         plotState[i] = XYGC_K_STATE_INITIALIZING;
         needThisbufScroll[i] = 0;
         totalCount[i] = 0;
+        needNPvConnect[i] = 0;
+        traceSize[i] = 0;
+        xPvCount[i] = 0;
+        yPvCount[i] = 0;
+        xPvSize[i] = 0;
+        yPvSize[i] = 0;
+	xPvDim[i] = 10;
+	yPvDim[i] = 10;
       }
 
       for ( i=0; i<numTraces; i++ ) {
@@ -7975,6 +8062,23 @@ XmString str;
 
         }
 
+        if ( !blankOrComment( nPvExpStr[i].getExpanded() ) ) {
+
+          ncArgRec[i].objPtr = (void *) this;
+          ncArgRec[i].index = i;
+
+          nPv[i] = the_PV_Factory->create( nPvExpStr[i].getExpanded() );
+	  if ( nPv[i] ) {
+	    nPv[i]->add_conn_state_callback( nMonitorConnection,
+             &ncArgRec[i] );
+	  }
+	  else {
+            fprintf( stderr, "pv create failed for [%s]\n",
+             nPvExpStr[i].getExpanded() );
+          }
+
+	}
+
       }
 
     }
@@ -8006,7 +8110,6 @@ XmString str;
     }
 
     break;
-
 
   case 4:
   case 5:
@@ -8112,6 +8215,17 @@ int i;
 
         xPv[i]->release();
         xPv[i] = NULL;
+
+      }
+
+      if ( nPv[i] ) {
+
+        nPv[i]->remove_conn_state_callback( nMonitorConnection, &ncArgRec[i] );
+
+        nPv[i]->remove_value_callback( nValueUpdate, &nvArgRec[i] );
+
+        nPv[i]->release();
+        nPv[i] = NULL;
 
       }
 
@@ -8265,7 +8379,6 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
     y2lInc = fontHeight + 1;
 
   plotAreaX = ly1 + bInc + ylInc;
-
   plotAreaW = w - bInc - bInc - ylInc - ly1 - ly2 - y2lInc;
 
   plotAreaY = 0 + bInc + (int) ( 1.5 * tInc );
@@ -8799,10 +8912,10 @@ int xyGraphClass::getButtonActionRequest (
 
 void xyGraphClass::executeDeferred ( void ) {
 
-int i, ii, nc, ni, nu, nvu, nru, nr, ne, nd, ntcc, ntu, nrstc, nrst, ntrgc, tmpC,
- ntrg, nxrescl, nbs, nbrescl, nnl, nol, nasu,
+int i, ii, nc, ni, nu, nvu, nru, nr, ne, nd, ntcc, ntu, nrstc, nrst, ntrgc,
+ tmpC, ntrg, nxrescl, nbs, nbrescl, nnl, nol, nasu, nnc, nni, nasc,
  eleSize, doRescale, anyRescale, size,
- ny1rescl[NUM_Y_AXES], num;
+ ny1rescl[NUM_Y_AXES], num, maxDim;
 double dyValue, dxValue, range, oneMax, oldXMin, xmin, xmax, ymin[2], ymax[2],
  scaledX, scaledY;
 char format[31+1];
@@ -8844,6 +8957,9 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
   nnl = needNewLimits; needNewLimits = 0;
   nol = needOriginalLimits; needOriginalLimits = 0;
   nasu = needAutoScaleUpdate; needAutoScaleUpdate = 0;
+  nnc = needNConnect; needNConnect = 0;
+  nni = needNInit; needNInit = 0;
+  nasc = needArraySizeChange; needArraySizeChange = 0;
   actWin->remDefExeNode( aglPtr );
 
   for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
@@ -8856,6 +8972,34 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 
   if ( !activeMode ) return;
 
+  if ( nnc ) {
+
+    for ( i=0; i<numTraces; i++ ) {
+
+      if ( needNPvConnect[i] == 1 ) {
+        needNPvConnect[i] = 2;
+        nni = 1;
+      }
+
+    }
+
+  }
+
+  if ( nni ) {
+
+    for ( i=0; i<numTraces; i++ ) {
+
+      if ( needNPvConnect[i] == 2 ) {
+        nvArgRec[i].objPtr = (void *) this;
+        nvArgRec[i].index = i;
+        nPv[i]->add_value_callback( nValueUpdate, &nvArgRec[i] );
+        needNPvConnect[i] = 3;
+      }
+
+    }
+
+  }
+
   if ( nc ) {
 
     for ( i=0; i<numTraces; i++ ) {
@@ -8866,6 +9010,16 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 
           yPvType[i] = (int) yPv[i]->get_specific_type().type;
           yPvCount[i] = (int) yPv[i]->get_dimension();
+          yPvDim[i] = (int) yPv[i]->get_dimension();
+
+          if ( traceSize[i] < 0 ) traceSize[i] = 0;
+
+          if ( traceSize[i] > yPvDim[i] ) {
+            yPvCount[i] = yPvDim[i];
+          }
+          else if ( traceSize[i] > 0 ) {
+            yPvCount[i] = traceSize[i];
+          }
 
           // There are two views of pv types, Type and specificType; this uses
           // specificType
@@ -8893,7 +9047,7 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
             break;
           }
 
-          yPvSize[i] = yPvCount[i] * eleSize;
+          yPvSize[i] = yPvDim[i] * eleSize;
           dbYMin[i] = yPv[i]->get_lower_disp_limit();
           dbYMax[i] = yPv[i]->get_upper_disp_limit();
           dbYPrec[i] = yPv[i]->get_precision();
@@ -8911,6 +9065,16 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 
           xPvType[i] = (int) xPv[i]->get_specific_type().type;
           xPvCount[i] = (int) xPv[i]->get_dimension();
+          xPvDim[i] = (int) xPv[i]->get_dimension();
+
+          if ( traceSize[i] < 0 ) traceSize[i] = 0;
+
+          if ( traceSize[i] > xPvDim[i] ) {
+            xPvCount[i] = xPvDim[i];
+          }
+          else if ( traceSize[i] > 0 ) {
+            xPvCount[i] = traceSize[i];
+          }
 
           // There are two views of pv types, Type and specificType; this uses
           // specificType
@@ -8938,7 +9102,7 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
             break;
           }
 
-          xPvSize[i] = xPvCount[i] * eleSize;
+          xPvSize[i] = xPvDim[i] * eleSize;
           dbXMin[i] = xPv[i]->get_lower_disp_limit();
           dbXMax[i] = xPv[i]->get_upper_disp_limit();
           dbXPrec[i] = xPv[i]->get_precision();
@@ -9061,16 +9225,26 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 
           if ( forceVector[i] || ( yPvCount[i] > 1 ) ) { // vector
 
+            maxDim = yPvDim[i];
+            if ( xPvDim[i] > maxDim ) maxDim = xPvDim[i];
+
             yPvData[i] = (void *) new char[yPvSize[i]+80];
 
             size = (plotAreaX+plotAreaW)*4+10;
-            if ( 3*yPvCount[i]+10 > size ) size = 3*yPvCount[i]+10;
+            if ( 3 * maxDim + 10 > size ) {
+              size = 3 * maxDim + 10;
+	    }
+
             plotBuf[i] = (XPoint *) new XPoint[size];
 
-            plotBufSize[i] = yPvCount[i]+1; // used with plotInfo in scope mode
+            plotBufSize[i] = yPvDim[i]+1; // used with plotInfo in scope mode
 
             size = plotAreaX+plotAreaW+10;
-            if ( 2*yPvCount[i]+10 > size ) size = 2*yPvCount[i]+10;
+
+            if ( 2 * maxDim + 10 > size ) {
+              size = 2 * maxDim + 10;
+	    }
+
             plotInfo[i] =
              (plotInfoPtr) new plotInfoType[size];
             plotInfoSize[i] = plotAreaX + plotAreaW;
@@ -10622,12 +10796,14 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 
     firstTimeSample = 1;
     for ( i=0; i<numTraces; i++ ) {
+
       initPlotInfo( i );
       yArrayNeedUpdate[i] = xArrayNeedUpdate[i] = 0;
       yArrayGotValue[i] = xArrayGotValue[i] =  0;
       arrayHead[i] = arrayTail[i] = arrayNumPoints[i] =
        curNpts[i] = totalCount[i] = 0;
       plotState[i] = XYGC_K_STATE_INITIALIZING;
+
     }
 
     // --------------------------
@@ -10887,6 +11063,42 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 
     regenBuffer();
     fullRefresh();
+
+  }
+
+  if ( nasc ) { // this needs to be at end
+
+    for ( i=0; i<numTraces; i++ ) {
+
+      if ( traceSize[i] < 0 ) traceSize[i] = 0;
+
+      if ( traceSize[i] > yPvDim[i] ) {
+        yPvCount[i] = yPvDim[i];
+      }
+      else if ( traceSize[i] > 0 ) {
+        yPvCount[i] = traceSize[i];
+      }
+
+      if ( traceSize[i] > xPvDim[i] ) {
+        xPvCount[i] = xPvDim[i];
+      }
+      else if ( traceSize[i] > 0 ) {
+        xPvCount[i] = traceSize[i];
+      }
+
+    }
+
+    actWin->appCtx->proc->lock();
+
+    for ( i=0; i<numTraces; i++ ) {
+      yArrayNeedUpdate[i] = 1;
+      xArrayNeedUpdate[i] = 1;
+    }
+
+    needVectorUpdate = 1;
+
+    actWin->addDefExeNode( aglPtr );
+    actWin->appCtx->proc->unlock();
 
   }
 
