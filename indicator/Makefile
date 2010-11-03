@@ -11,7 +11,7 @@ ifdef EPICS_HOST_ARCH
    USR_LIBS_Linux += Xm Xt Xp Xtst X11
    USR_SYS_LIBS_Linux += pthread dl
    
-   USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
+   USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1 -Wno-long-long
    USR_LIBS_Darwin += Xm Xt Xp Xtst X11
    USR_SYS_LIBS_Darwin += pthread dl
 

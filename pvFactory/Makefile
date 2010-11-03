@@ -8,7 +8,7 @@ ifdef EPICS_HOST_ARCH
    USR_CFLAGS_Linux = $(USR_CXXFLAGS_Linux)
 
    
-   USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
+   USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1 -Wno-long-long
    USR_CFLAGS_Darwin = $(USR_CXXFLAGS_Darwin)
    
    USR_CXXFLAGS_solaris += -DSINGLE_THREADED=1 -D__epics__=1

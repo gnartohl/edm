@@ -6,7 +6,7 @@ ifdef EPICS_HOST_ARCH
 
    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
    
-   USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
+   USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1 -Wno-long-long
 
    USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
 
