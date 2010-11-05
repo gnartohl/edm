@@ -19,6 +19,7 @@
 #define __expString_cc 1
 
 #include "expString.h"
+#include "utility.h"
 #include "environment.str"
 
 static char *g_expStrBlank = "";
@@ -72,6 +73,7 @@ static int ignoreExec = -1;
 
           fgets( execBuf, max, f );
           execBuf[max] = 0;
+          trimWhiteSpace( execBuf );
           *execBufSize = strlen( execBuf );
           fclose( f );
 
