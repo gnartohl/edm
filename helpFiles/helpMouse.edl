@@ -3,9 +3,9 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 198
-y 54
-w 482
+x 152
+y 59
+w 991
 h 933
 font "helvetica-medium-r-12.0"
 ctlFont "helvetica-medium-r-12.0"
@@ -21,6 +21,7 @@ topShadowColor rgb 61423 61423 61423
 botShadowColor rgb 24929 24929 24929
 title "Help - Mouse Operations"
 gridSize 15
+disableScroll
 endScreenProperties
 
 # (Static Text)
@@ -29,10 +30,10 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 84
-y 92
-w 277
-h 14
+x 86
+y 91
+w 271
+h 16
 font "helvetica-medium-i-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -51,8 +52,8 @@ minor 1
 release 0
 x 18
 y 213
-w 87
-h 14
+w 86
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -71,8 +72,8 @@ minor 1
 release 0
 x 17
 y 232
-w 88
-h 14
+w 87
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -91,8 +92,8 @@ minor 1
 release 0
 x 212
 y 213
-w 136
-h 14
+w 135
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -111,8 +112,8 @@ minor 1
 release 0
 x 212
 y 232
-w 162
-h 14
+w 160
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -131,8 +132,8 @@ minor 1
 release 0
 x 15
 y 193
-w 90
-h 14
+w 89
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -151,8 +152,8 @@ minor 1
 release 0
 x 44
 y 173
-w 64
-h 14
+w 63
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -171,8 +172,8 @@ minor 1
 release 0
 x 212
 y 193
-w 255
-h 14
+w 253
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -192,7 +193,7 @@ release 0
 x 212
 y 173
 w 212
-h 14
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -211,8 +212,8 @@ minor 1
 release 0
 x 13
 y 291
-w 233
-h 14
+w 226
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -231,8 +232,8 @@ minor 1
 release 0
 x 13
 y 308
-w 233
-h 14
+w 226
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -251,8 +252,8 @@ minor 1
 release 0
 x 353
 y 291
-w 107
-h 14
+w 106
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -271,8 +272,8 @@ minor 1
 release 0
 x 353
 y 308
-w 99
-h 14
+w 97
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -417,8 +418,8 @@ minor 1
 release 0
 x 272
 y 905
-w 185
-h 14
+w 183
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -437,8 +438,8 @@ minor 1
 release 0
 x 312
 y 648
-w 151
-h 14
+w 150
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -457,8 +458,8 @@ minor 1
 release 0
 x 55
 y 363
-w 131
-h 14
+w 128
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -478,7 +479,7 @@ release 0
 x 352
 y 363
 w 102
-h 14
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -498,7 +499,7 @@ release 0
 x 13
 y 626
 w 199
-h 16
+h 19
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -517,7 +518,7 @@ minor 0
 release 1
 x 13
 y 614
-w 452
+w 472
 h 1
 lineColor rgb 0 0 0
 fillColor rgb 46517 46517 46517
@@ -525,7 +526,7 @@ lineWidth 2
 numPoints 2
 xPoints {
   0 13
-  1 465
+  1 485
 }
 yPoints {
   0 614
@@ -541,8 +542,8 @@ minor 1
 release 0
 x 352
 y 382
-w 73
-h 14
+w 74
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -561,8 +562,8 @@ minor 1
 release 0
 x 13
 y 382
-w 173
-h 14
+w 172
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -654,8 +655,8 @@ minor 1
 release 0
 x 13
 y 669
-w 224
-h 14
+w 220
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -674,7 +675,7 @@ minor 0
 release 1
 x 14
 y 259
-w 452
+w 472
 h 1
 lineColor rgb 0 0 0
 fillColor rgb 46517 46517 46517
@@ -682,7 +683,7 @@ lineWidth 2
 numPoints 2
 xPoints {
   0 14
-  1 466
+  1 486
 }
 yPoints {
   0 259
@@ -698,7 +699,7 @@ minor 0
 release 1
 x 14
 y 334
-w 452
+w 472
 h 1
 lineColor rgb 0 0 0
 fillColor rgb 46517 46517 46517
@@ -706,7 +707,7 @@ lineWidth 2
 numPoints 2
 xPoints {
   0 14
-  1 466
+  1 486
 }
 yPoints {
   0 334
@@ -768,8 +769,8 @@ minor 1
 release 0
 x 13
 y 37
-w 312
-h 14
+w 313
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -788,8 +789,8 @@ minor 1
 release 0
 x 13
 y 55
-w 71
-h 14
+w 72
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -808,8 +809,8 @@ minor 1
 release 0
 x 13
 y 73
-w 68
-h 14
+w 69
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -828,8 +829,8 @@ minor 1
 release 0
 x 13
 y 91
-w 67
-h 14
+w 68
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -847,9 +848,9 @@ major 4
 minor 1
 release 0
 x 87
-y 56
-w 82
-h 14
+y 55
+w 81
+h 16
 font "helvetica-medium-i-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -868,8 +869,8 @@ minor 1
 release 0
 x 87
 y 73
-w 96
-h 14
+w 98
+h 16
 font "helvetica-medium-i-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -888,8 +889,8 @@ minor 1
 release 0
 x 13
 y 110
-w 146
-h 14
+w 147
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -906,10 +907,10 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 161
-y 111
-w 281
-h 14
+x 165
+y 110
+w 274
+h 16
 font "helvetica-medium-i-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -928,7 +929,7 @@ minor 0
 release 1
 x 14
 y 140
-w 452
+w 472
 h 1
 lineColor rgb 0 0 0
 fillColor rgb 46517 46517 46517
@@ -936,7 +937,7 @@ lineWidth 2
 numPoints 2
 xPoints {
   0 14
-  1 466
+  1 486
 }
 yPoints {
   0 140
@@ -952,8 +953,8 @@ minor 1
 release 0
 x 13
 y 12
-w 118
-h 16
+w 120
+h 19
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -972,8 +973,8 @@ minor 1
 release 0
 x 13
 y 149
-w 176
-h 16
+w 177
+h 19
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -993,7 +994,7 @@ release 0
 x 13
 y 268
 w 185
-h 16
+h 19
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -1012,8 +1013,8 @@ minor 1
 release 0
 x 13
 y 342
-w 159
-h 16
+w 161
+h 19
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -1032,8 +1033,8 @@ minor 1
 release 0
 x 352
 y 402
-w 113
-h 14
+w 112
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -1052,8 +1053,8 @@ minor 1
 release 0
 x 85
 y 402
-w 102
-h 14
+w 99
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -1072,7 +1073,7 @@ minor 0
 release 1
 x 13
 y 460
-w 452
+w 472
 h 1
 lineColor rgb 0 0 0
 fillColor rgb 46517 46517 46517
@@ -1080,7 +1081,7 @@ lineWidth 2
 numPoints 2
 xPoints {
   0 13
-  1 465
+  1 485
 }
 yPoints {
   0 460
@@ -1096,8 +1097,8 @@ minor 1
 release 0
 x 13
 y 469
-w 179
-h 16
+w 181
+h 19
 font "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -1116,8 +1117,8 @@ minor 1
 release 0
 x 352
 y 588
-w 87
-h 14
+w 83
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -1136,8 +1137,8 @@ minor 1
 release 0
 x 46
 y 541
-w 104
-h 14
+w 101
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -1156,8 +1157,8 @@ minor 1
 release 0
 x 352
 y 492
-w 113
-h 14
+w 112
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -1176,8 +1177,8 @@ minor 1
 release 0
 x 71
 y 492
-w 79
-h 14
+w 76
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -1196,8 +1197,8 @@ minor 1
 release 0
 x 352
 y 541
-w 80
-h 14
+w 82
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -1216,8 +1217,8 @@ minor 1
 release 0
 x 17
 y 588
-w 133
-h 14
+w 130
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -1236,8 +1237,8 @@ minor 1
 release 0
 x 362
 y 557
-w 112
-h 28
+w 111
+h 32
 font "helvetica-medium-i-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -1258,7 +1259,7 @@ release 0
 x 352
 y 511
 w 93
-h 28
+h 32
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -1278,8 +1279,8 @@ minor 1
 release 0
 x 41
 y 511
-w 109
-h 14
+w 106
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -1299,7 +1300,7 @@ release 0
 x 352
 y 423
 w 93
-h 28
+h 32
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -1319,8 +1320,8 @@ minor 1
 release 0
 x 78
 y 423
-w 109
-h 14
+w 106
+h 16
 font "helvetica-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 46517 46517 46517
@@ -1329,5 +1330,290 @@ value {
   "Shift-Middle B click"
 }
 autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 507
+y 12
+w 180
+h 19
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Editing Widget Properties"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 509
+y 41
+w 469
+h 64
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "The functions performed by the OK, Apply, and Cancel buttons may also be achieved"
+  "by double clicking the left, center, and right mouse buttons respectively in an"
+  "unoccupied area of the dialog box. This may, at times, eliminate then need for"
+  "excessive mouse pointer motion. "
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 507
+y 732
+w 472
+h 0
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+lineWidth 2
+numPoints 2
+xPoints {
+  0 507
+  1 979
+}
+yPoints {
+  0 732
+  1 732
+}
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 529
+y 131
+w 380
+h 568
+file "$(help)helpMouse1"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 891
+y 323
+w 76
+h 69
+font "helvetica-bold-r-18.0"
+fontAlign "center"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Dbl click"
+  "Left B"
+  "for OK"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 785
+y 362
+w 104
+h 68
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+numPoints 2
+xPoints {
+  0 889
+  1 785
+}
+yPoints {
+  0 362
+  1 430
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 891
+y 415
+w 81
+h 69
+font "helvetica-bold-r-18.0"
+fontAlign "center"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Dbl click"
+  "Middle B"
+  "for Apply"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 891
+y 506
+w 91
+h 69
+font "helvetica-bold-r-18.0"
+fontAlign "center"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Dbl click"
+  "Right B"
+  "for Cancel"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 783
+y 447
+w 104
+h 0
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+numPoints 2
+xPoints {
+  0 887
+  1 783
+}
+yPoints {
+  0 447
+  1 447
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 783
+y 465
+w 107
+h 75
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+numPoints 2
+xPoints {
+  0 890
+  1 783
+}
+yPoints {
+  0 540
+  1 465
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 507
+y 748
+w 171
+h 19
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Editing Multiple Widgets"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 509
+y 777
+w 467
+h 64
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "If multiple objects are selected, clicking on one of them opens the first property"
+  "dialog box. When the OK button is pressed, the property box for the next item is"
+  "opened, an so on, until each selected object has been processed. The edit operation"
+  "is terminated when all objects have been visited or the Cancel button is pressed. "
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 493
+y 8
+w 1
+h 919
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+lineWidth 2
+numPoints 2
+xPoints {
+  0 494
+  1 493
+}
+yPoints {
+  0 8
+  1 927
+}
 endObjectProperties
 
