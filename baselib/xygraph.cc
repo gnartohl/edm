@@ -9025,25 +9025,25 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           // specificType
           switch ( yPvType[i] ) {
           case ProcessVariable::specificType::flt:
-            eleSize = 4;
+            eleSize = sizeof(float);
             break;
           case ProcessVariable::specificType::real: 
-            eleSize = 8;
+            eleSize = sizeof(double);
             break;
           case ProcessVariable::specificType::shrt:
-            eleSize = 2;
+            eleSize = sizeof(short);
             break;
           case ProcessVariable::specificType::chr:
-            eleSize = 1;
+            eleSize = sizeof(char);
             break;
           case ProcessVariable::specificType::integer:
-            eleSize = 4;
+            eleSize = sizeof(long);
             break;
           case ProcessVariable::specificType::enumerated:
-            eleSize = 2;
+            eleSize = sizeof(short);
             break;
           default:
-            eleSize = 8;
+            eleSize = sizeof(double);
             break;
           }
 
@@ -9080,25 +9080,25 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           // specificType
           switch ( xPvType[i] ) {
           case ProcessVariable::specificType::flt:
-            eleSize = 4;
+            eleSize = sizeof(float);
             break;
           case ProcessVariable::specificType::real: 
-            eleSize = 8;
+            eleSize = sizeof(double);
             break;
           case ProcessVariable::specificType::shrt:
-            eleSize = 2;
+            eleSize = sizeof(short);
             break;
           case ProcessVariable::specificType::chr:
-            eleSize = 1;
+            eleSize = sizeof(char);
             break;
           case ProcessVariable::specificType::integer:
-            eleSize = 4;
+            eleSize = sizeof(long);
             break;
           case ProcessVariable::specificType::enumerated:
-            eleSize = 2;
+            eleSize = sizeof(short);
             break;
           default:
-            eleSize = 8;
+            eleSize = sizeof(double);
             break;
           }
 
