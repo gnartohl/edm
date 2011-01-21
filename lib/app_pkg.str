@@ -5,7 +5,7 @@
 #define appContextClass_str2 (char *) "No components were found in file %s\n"
 #define appContextClass_str3 (char *) "Component definition syntax error\n"
 #define appContextClass_str4 (char *) "Number of items does not match contents in %s\n"
-#define appContextClass_str5 (char *) "\nComponent libray name must include absolute directory path\n"
+#define appContextClass_str5 (char *) "\nComponent library name must include absolute directory path\n"
 #define appContextClass_str6 (char *) "(e.g. /usr/lib/components.so)\n"
 #define appContextClass_str8 (char *) "Library contains no edm components\n"
 #define appContextClass_str9 (char *) "Incomplete edm component library\n"
