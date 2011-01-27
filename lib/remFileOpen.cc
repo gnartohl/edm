@@ -424,9 +424,9 @@ char *first, *last;
 
   // if filename is of the form name[parm].ext,
   // use name.ext in the "is readable check".
-  first = index( (const char *) fname, (int) '[' );
+  first = index( fname, (int) '[' );
   if ( first ) {
-    last = rindex( (const char *) fname, (int) ']' );
+    last = rindex( fname, (int) ']' );
   }
   if ( first && last && ( first < last ) ) {
     len1 = (long) first - (long) fname;
@@ -446,7 +446,7 @@ char *first, *last;
 
     // else if filename is of the form name.ext?params,
     // use name.ext in the "is readable check".
-    first = index( (const char *) nameToCheck, (int) '?' );
+    first = index( nameToCheck, (int) '?' );
     if ( first ) {
       *first = (char) 0;
     }
@@ -479,9 +479,9 @@ char buf[255+1];
  if ( maxlen > 255 ) maxlen = 255;
   strcpy( buf, "" );
 
-  first = index( (const char *) name, (int) '[' );
+  first = index( name, (int) '[' );
   if ( first ) {
-    last = rindex( (const char *) name, (int) ']' );
+    last = rindex( name, (int) ']' );
   }
   if ( first && last && ( first < last ) ) {
 
@@ -503,7 +503,7 @@ char buf[255+1];
   }
   else {
 
-    first = index( (const char *) name, (int) '?' );
+    first = index( name, (int) '?' );
 
     if ( first ) {
       // filename is of the form name.ext?params
@@ -525,9 +525,9 @@ int len, i;
 
   strcpy( params, "" );
 
-  first = index( (const char *) fullNameWithParams, (int) '[' );
+  first = index( fullNameWithParams, (int) '[' );
   if ( first ) {
-    last = rindex( (const char *) fullNameWithParams, (int) ']' );
+    last = rindex( fullNameWithParams, (int) ']' );
   }
   if ( first && last && ( first < last ) ) {
 
@@ -545,7 +545,7 @@ int len, i;
   }
   else {
 
-    first = index( (const char *) fullNameWithParams, (int) '?' );
+    first = index( fullNameWithParams, (int) '?' );
 
     if ( first ) {
       // filename is of the form name.ext?params
@@ -567,7 +567,7 @@ static void reassemble (
 char *first;
 int len, i, loc=0;
 
-  first = index( (const char *) params, (int) '[' );
+  first = index( params, (int) '[' );
   if ( first ) {
 
     first = 0;
