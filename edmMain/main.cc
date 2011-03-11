@@ -165,12 +165,18 @@ static int num = 0;
     return 0;
   }
 
-  num++;
-
-  if ( err->error_code != BadAccess ) {
-    XGetErrorText( d, err->error_code, msg, 80 );
-    fprintf( stderr, main_str1, err->error_code, msg );
+  if ( badWindowErrorsDisabled() && ( err->error_code == BadWindow ) ) {
+    return 0;
   }
+
+  if ( err->error_code == BadAccess ) {
+    return 0;
+  }
+
+  XGetErrorText( d, err->error_code, msg, 80 );
+  fprintf( stderr, main_str1, err->error_code, msg );
+
+  num++;
 
   return 0;
 

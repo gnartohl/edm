@@ -221,6 +221,13 @@ activeGraphicListPtr head;
 
   voidHead = (void *) head;
 
+  relatedDisplayNodeHead = new RelatedDisplayNodeType;
+  relatedDisplayNodeHead->flink = relatedDisplayNodeHead;
+  relatedDisplayNodeHead->blink = relatedDisplayNodeHead;
+
+  curCrawlerNode = NULL;
+  curCrawlerState = GETTING_FIRST_CRAWLER_PV;
+
   btnDownActionHead = new btnActionListType;
   btnDownActionHead->flink = btnDownActionHead;
   btnDownActionHead->blink = btnDownActionHead;
@@ -266,6 +273,18 @@ btnActionListPtr curBtnAction, nextBtnAction;
   head->flink = NULL;
   head->blink = NULL;
   delete head;
+
+  RelatedDisplayNodePtr currd, nextrd;
+
+  currd = relatedDisplayNodeHead->flink;
+  while ( currd != relatedDisplayNodeHead ) {
+    nextrd = currd->flink;
+    delete currd;
+    currd = nextrd;
+  }
+  relatedDisplayNodeHead->flink = NULL;
+  relatedDisplayNodeHead->blink = NULL;
+  delete relatedDisplayNodeHead;
 
   // btn down action list
 
@@ -367,6 +386,12 @@ activeGraphicListPtr head, cur, curSource, sourceHead;
   }
 
   voidHead = (void *) head;
+  curCrawlerNode = NULL;
+  curCrawlerState = GETTING_FIRST_CRAWLER_PV;
+
+  relatedDisplayNodeHead = new RelatedDisplayNodeType;
+  relatedDisplayNodeHead->flink = relatedDisplayNodeHead;
+  relatedDisplayNodeHead->blink = relatedDisplayNodeHead;
 
   btnDownActionHead = new btnActionListType;
   btnDownActionHead->flink = btnDownActionHead;
@@ -3876,5 +3901,254 @@ int activeGroupClass::putGroupVisInfo (
   maxVisString[39] = 0;
 
   return 1; // success
+
+}
+
+char *activeGroupClass::crawlerGetFirstPv ( void ) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+char *crawlerPv = NULL;
+
+  curCrawlerState = GETTING_FIRST_CRAWLER_PV;
+
+  cur = head->flink;
+  if ( cur == head ) {
+    curCrawlerState = NO_MORE_CRAWLER_PVS;
+    goto done;
+  }
+
+  while ( ( crawlerPv == NULL ) && ( curCrawlerState != NO_MORE_CRAWLER_PVS ) ) {
+
+    if ( curCrawlerState == GETTING_FIRST_CRAWLER_PV ) {
+
+      crawlerPv = cur->node->crawlerGetFirstPv();
+      if ( crawlerPv ) {
+        if ( strcmp( crawlerPv, "" ) == 0 ) crawlerPv = NULL;
+      }
+      if ( crawlerPv ) {
+        curCrawlerState = GETTING_NEXT_CRAWLER_PV;
+      }
+      else {
+        cur = cur->flink;
+        if ( cur == head ) {
+          curCrawlerState = NO_MORE_CRAWLER_PVS;
+        }
+      }
+
+    }
+    else if ( curCrawlerState == GETTING_NEXT_CRAWLER_PV ) {
+
+      crawlerPv = cur->node->crawlerGetNextPv();
+      if ( crawlerPv ) {
+        if ( strcmp( crawlerPv, "" ) == 0 ) crawlerPv = NULL;
+      }
+      if ( !crawlerPv ) {
+        cur = cur->flink;
+        if ( cur == head ) {
+          curCrawlerState = NO_MORE_CRAWLER_PVS;
+        }
+	else {
+          curCrawlerState = GETTING_FIRST_CRAWLER_PV;
+	}
+      }
+
+    }
+
+  }
+
+done:
+  curCrawlerNode = (void *) cur;
+  return crawlerPv;
+
+}
+
+char *activeGroupClass::crawlerGetNextPv ( void ) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur = (activeGraphicListPtr) curCrawlerNode;
+char *crawlerPv = NULL;
+
+  if ( ( cur == head ) || ( curCrawlerState == NO_MORE_CRAWLER_PVS ) ) {
+    goto done;
+  }
+
+  while ( ( crawlerPv == NULL ) && ( curCrawlerState != NO_MORE_CRAWLER_PVS ) ) {
+
+    if ( curCrawlerState == GETTING_FIRST_CRAWLER_PV ) {
+
+      crawlerPv = cur->node->crawlerGetFirstPv();
+      if ( crawlerPv ) {
+        if ( strcmp( crawlerPv, "" ) == 0 ) crawlerPv = NULL;
+      }
+      if ( crawlerPv ) {
+        curCrawlerState = GETTING_NEXT_CRAWLER_PV;
+      }
+      else {
+        cur = cur->flink;
+        if ( cur == head ) {
+          curCrawlerState = NO_MORE_CRAWLER_PVS;
+        }
+      }
+
+    }
+    else if ( curCrawlerState == GETTING_NEXT_CRAWLER_PV ) {
+
+      crawlerPv = cur->node->crawlerGetNextPv();
+      if ( crawlerPv ) {
+        if ( strcmp( crawlerPv, "" ) == 0 ) crawlerPv = NULL;
+      }
+      if ( !crawlerPv ) {
+        cur = cur->flink;
+        if ( cur == head ) {
+          curCrawlerState = NO_MORE_CRAWLER_PVS;
+        }
+	else {
+          curCrawlerState = GETTING_FIRST_CRAWLER_PV;
+	}
+      }
+
+    }
+
+  }
+
+done:
+  curCrawlerNode = (void *) cur;
+  return crawlerPv;
+
+}
+
+int activeGroupClass::isRelatedDisplay ( void ) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  cur = head->flink;
+  while ( cur != head ) {
+    if ( cur->node->isRelatedDisplay() ) {
+      return 1;
+    }
+    cur = cur->flink;
+  }
+
+  return 0;
+
+}
+
+int activeGroupClass::getNumRelatedDisplays ( void ) {
+
+  // build list of related display nodes and record extent of indices
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+RelatedDisplayNodePtr currd;
+int index = 0;
+
+  cur = head->flink;
+  while ( cur != head ) {
+
+    if ( cur->node->isRelatedDisplay() ) {
+
+      currd = new RelatedDisplayNodeType;
+
+      currd->ptr = (activeGraphicListPtr) cur;
+      currd->first = index;
+      index += cur->node->getNumRelatedDisplays();
+      currd->last = index - 1;
+
+      currd->blink = relatedDisplayNodeHead->blink;
+      relatedDisplayNodeHead->blink->flink = currd;
+      relatedDisplayNodeHead->blink = currd;
+      currd->flink = relatedDisplayNodeHead;
+
+    }
+
+    cur = cur->flink;
+
+  }
+
+  return index;
+
+}
+
+int activeGroupClass::getRelatedDisplayProperty (
+  int index,
+  char *name
+) {
+
+// translate index to node and node specific index
+
+RelatedDisplayNodePtr head = relatedDisplayNodeHead;
+RelatedDisplayNodePtr cur;
+activeGraphicListPtr ptr;
+
+  cur = head->flink;
+  while ( cur != head ) {
+
+    if ( index <= cur->last ) {
+      index -= cur->first;
+      ptr = (activeGraphicListPtr) cur->ptr;
+      return ptr->node->getRelatedDisplayProperty( index, name );
+    }
+
+    cur = cur->flink;
+
+  }
+
+  return 0;
+
+}
+
+char *activeGroupClass::getRelatedDisplayName (
+  int index
+) {
+
+// translate index to node and node specific index
+
+RelatedDisplayNodePtr head = relatedDisplayNodeHead;
+RelatedDisplayNodePtr cur;
+activeGraphicListPtr ptr;
+
+  cur = head->flink;
+  while ( cur != head ) {
+
+    if ( index <= cur->last ) {
+      index -= cur->first;
+      ptr = (activeGraphicListPtr) cur->ptr;
+      return ptr->node->getRelatedDisplayName( index );
+    }
+
+    cur = cur->flink;
+
+  }
+
+  return NULL;
+
+}
+
+char *activeGroupClass::getRelatedDisplayMacros (
+  int index
+) {
+
+// translate index to node and node specific index
+
+RelatedDisplayNodePtr head = relatedDisplayNodeHead;
+RelatedDisplayNodePtr cur;
+activeGraphicListPtr ptr;
+
+  cur = head->flink;
+  while ( cur != head ) {
+
+    if ( index <= cur->last ) {
+      index -= cur->first;
+      ptr = (activeGraphicListPtr) cur->ptr;
+      return ptr->node->getRelatedDisplayMacros( index );
+    }
+
+    cur = cur->flink;
+
+  }
+
+  return NULL;
 
 }

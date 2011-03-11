@@ -209,6 +209,20 @@ mode_t curMode;
 
 }
 
+static int g_badWindowErrorsAreDisabled = 0;
+
+void disableBadWindowErrors ( int arg ) {
+
+  g_badWindowErrorsAreDisabled = arg;
+
+}
+
+int badWindowErrorsDisabled ( void ) {
+
+  return g_badWindowErrorsAreDisabled;
+
+}
+
 char *getEnvironmentVar (
   char *name
 ) {

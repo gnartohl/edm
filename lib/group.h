@@ -91,7 +91,22 @@ friend void agc_edit_cancel (
   XtPointer client,
   XtPointer call );
 
+ enum CrawlerStates { GETTING_FIRST_CRAWLER_PV, GETTING_NEXT_CRAWLER_PV,
+  NO_MORE_CRAWLER_PVS };
+
 void * voidHead; // cast to activeGraphicListPtr at runtime
+void * curCrawlerNode; // cast to activeGraphicListPtr at runtime
+int curCrawlerState;
+
+typedef struct relatedDisplayNodeList {
+  void *ptr; // cast to activeGraphicListPtr at runtime
+  int first;  // index of first related screen
+  int last;   // index of last related screen
+  struct relatedDisplayNodeList *flink;
+  struct relatedDisplayNodeList *blink;
+} RelatedDisplayNodeType, *RelatedDisplayNodePtr;
+RelatedDisplayNodePtr relatedDisplayNodeHead;
+
 btnActionListPtr btnDownActionHead;
 btnActionListPtr btnUpActionHead;
 btnActionListPtr btnMotionActionHead;
@@ -553,6 +568,27 @@ int putGroupVisInfo (
   int maxLen,
   char *minVis,
   char *maxVis
+);
+
+char *crawlerGetFirstPv ( void );
+
+char *crawlerGetNextPv ( void );
+
+int isRelatedDisplay ( void );
+
+int getNumRelatedDisplays ( void );
+
+int getRelatedDisplayProperty (
+  int index,
+  char *name
+);
+
+char *getRelatedDisplayName (
+  int index
+);
+
+char *getRelatedDisplayMacros (
+  int index
 );
 
 };

@@ -794,6 +794,8 @@ int c;
 
   if ( empty( listHead ) ) return 1;
 
+  disableBadWindowErrors( 1 );
+
   // init
   //initCrawlList( &childCrawlNodeList );
 
@@ -1130,6 +1132,8 @@ int c;
   //  fprintf( stderr, "displayCrawlerStatus: Crawler max depth (%-d) exceeded\n", maxCrawlDepth );
   //}
   //if ( depth > 0 ) depth--;
+
+  disableBadWindowErrors( 0 );
 
   return 1;
 

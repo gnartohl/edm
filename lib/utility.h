@@ -56,6 +56,10 @@ int logDiagnostic (
   char *text
 );
 
+void disableBadWindowErrors ( int arg );
+
+int badWindowErrorsDisabled ( void );
+
 char *getEnvironmentVar (
   char *name
 );
