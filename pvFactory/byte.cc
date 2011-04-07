@@ -1137,7 +1137,7 @@ void edmByteClass::pv_callback(ProcessVariable *pv, void *userarg)
 void edmByteClass::executeDeferred()
 {   // Called as a result of addDefExeNode
 
-    if (is_executing)
+    if (is_executing && valuePvId->is_valid())
     {
        lastval = value;
        value = ((valuePvId->get_int() >> shft) & dmask);
