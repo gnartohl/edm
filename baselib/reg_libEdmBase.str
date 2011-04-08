@@ -28,6 +28,7 @@
 #define reg_str28 (char *) "Ramp Button"
 #define reg_str29 (char *) "Coef Table"
 #define reg_str30 (char *) "X-Y Graph"
+#define reg_str31 (char *) "Watchdog"
 
 #define reg_str98 (char *) "Text w. Reg. Exp."
 
