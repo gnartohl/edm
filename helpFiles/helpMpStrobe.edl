@@ -1,0 +1,355 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 123
+y 32
+w 586
+h 876
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 52171 52171 52171
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 65535
+ctlBgColor1 rgb 41120 41120 41120
+ctlBgColor2 rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 0 0 0
+title "Multi-Purpose Strobe"
+disableScroll
+endScreenProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 24
+y 22
+w 233
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 61423 61423 61423
+value {
+  "Multi-Purpose Strobe"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 26
+y 67
+w 300
+h 176
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "This widget may be used in a number of ways:"
+  ""
+  "    o as a simple watchdog strobe source"
+  ""
+  "    o as a member of a ring of watchdog strobes"
+  ""
+  "    o to cycle a range of integer values"
+  ""
+  "    o as a random number generator (0 to 1)"
+  ""
+  "    o as a timestamp generator (for string PVs)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 27
+y 282
+w 436
+h 176
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Control PV is optional. If present the strobe is active when non-zero."
+  "If the button is not disabled, toggling the button on writes a one to"
+  "this PV and toggling the button off writes a zero."
+  ""
+  "Destination PV is modified with the current strobe value."
+  ""
+  "Period gives seconds per strobe."
+  ""
+  "If Auto-Ping is checked, strobe starts when screen is activated."
+  ""
+  "If Disable Button is check, clicking on button has no effect."
+}
+autoSize
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 263
+w 545
+h 6
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 471
+w 545
+h 6
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 42
+y 596
+w 177
+h 21
+font "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Update Type: Toggle"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 42
+y 518
+w 331
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Destination PV is written with date/time each period."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 42
+y 659
+w 166
+h 21
+font "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Update Type: Cycle"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 42
+y 689
+w 536
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Destination PV cycles from First Value to Second Value changing by 1 each period."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 42
+y 724
+w 185
+h 21
+font "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Update Type: Random"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 42
+y 754
+w 477
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Destination PV varies randomly from 0.0 to 1.0 changing once each period."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 42
+y 795
+w 178
+h 21
+font "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Update Type: Trigger"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 42
+y 825
+w 499
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "When Destination PV equals round(First Value) a timer of the specified period"
+  "is started. When the time expires, Second Value is written to Destination PV."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 22
+y 491
+w 130
+h 21
+font "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "PV Type: string"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 42
+y 625
+w 340
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Destination PV toggles between 0 and 1 each period."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 22
+y 560
+w 148
+h 21
+font "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "PV Type: numeric"
+}
+autoSize
+endObjectProperties
+
