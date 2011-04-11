@@ -63,7 +63,7 @@ ifdef EPICS_HOST_ARCH
    LIB_SRCS += bar.cc
    LIB_SRCS += x_text_dsp_obj.cc
    LIB_SRCS += button.cc
-   LIB_SRCS += watchDog.cc
+   LIB_SRCS += mpStrobe.cc
    LIB_SRCS += menu_button.cc
    LIB_SRCS += message_button.cc
    LIB_SRCS += exit_button.cc
