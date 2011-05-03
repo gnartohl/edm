@@ -1751,7 +1751,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) userarg;
 
     axtdo->noSval = 0;
     axtdo->bufInvalidate();
-    axtdo->needRefresh = 1;
+    //axtdo->needRefresh = 1;
+    axtdo->needUpdate = 1;
     axtdo->actWin->addDefExeNode( axtdo->aglPtr );
 
   }
@@ -1777,7 +1778,8 @@ int index;
     index = axtdo->actWin->ci->evalRule( axtdo->fgColor.pixelIndex(), val );
     axtdo->fgColor.changeIndex( index, axtdo->actWin->ci );
     axtdo->bufInvalidate();
-    axtdo->needRefresh = 1;
+    //axtdo->needRefresh = 1;
+    axtdo->needUpdate = 1;
     axtdo->actWin->addDefExeNode( axtdo->aglPtr );
 
   }
