@@ -29,7 +29,7 @@
 
 #define MPSC_MAJOR_VERSION 4
 #define MPSC_MINOR_VERSION 0
-#define MPSC_RELEASE 0
+#define MPSC_RELEASE 1
 
 #define MPSC_IDLE 1
 #define MPSC_PINGING 2
@@ -217,7 +217,8 @@ typedef struct editBufTag {
   char bufCycleTypeStr[31+1];
   double bufFirstVal;
   double bufSecondVal;
-  double bufPingRate;
+  double bufPingOnTime;
+  double bufPingOffTime;
   int bufVisInverted;
   colorButtonClass fgCb;
   colorButtonClass bgCb;
@@ -236,7 +237,9 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
-entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry;
+entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry,
+ *offTimeEntry, *firstValEntry, *secondValEntry;
+optionEntry *optEntry;
 
 int controlType, destType, destSize;
 
@@ -267,7 +270,7 @@ expStringClass controlPvExpString;
 
 expStringClass destPvExpString;
 
-double pingRate;
+double pingOnTime, pingOffTime;
 
 int controlExists, destExists, buttonPressed;
 
@@ -316,6 +319,8 @@ char *objName ( void ) {
   return name;
 
 }
+
+int getPingTimerValue ( void );
 
 int createInteractive (
   activeWindowClass *aw_obj,

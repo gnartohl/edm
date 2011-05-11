@@ -111,7 +111,76 @@ static void optionEntryDependency (
 widgetListPtr curpb;
 Widget curHistoryWidget;
 class optionEntry *opto;
- int i, n;
+int i, n;
+
+  opto = (class optionEntry *) client;
+
+  XtVaGetValues( opto->activeW,
+   XmNmenuHistory, (XtArgVal) &curHistoryWidget,
+   NULL );
+
+  if ( w != curHistoryWidget ) return;
+
+  // disable/enable all
+  n = 0;
+  curpb = opto->head->flink;
+  while ( curpb ) {
+
+    for ( i=0; i<opto->optNumDepend[n]; i++ ) {
+      if ( opto->optDependList[n][i].sense ) {
+        opto->optDependList[n][i].entry->disable();
+      }
+      else {
+        opto->optDependList[n][i].entry->enable();
+      }
+    }
+
+    curpb = curpb->flink;
+    n++;
+
+  }
+
+  // enable/disable any that satisfy condition
+  n = 0;
+  curpb = opto->head->flink;
+  while ( curpb ) {
+
+    if ( curpb->w == w ) {
+
+      for ( i=0; i<opto->optNumDepend[n]; i++ ) {
+
+        if ( opto->optDependList[n][i].entry ) {
+          if ( opto->optDependList[n][i].sense ) {
+            opto->optDependList[n][i].entry->enable();
+	  }
+	  else {
+            opto->optDependList[n][i].entry->disable();
+	  }
+	}
+
+      }
+
+    }
+
+    curpb = curpb->flink;
+    n++;
+
+  }
+
+}
+
+#if 0
+// old version
+static void optionEntryDependency (
+  Widget w,
+  XtPointer client,
+  XtPointer call
+) {
+
+widgetListPtr curpb;
+Widget curHistoryWidget;
+class optionEntry *opto;
+int i, n;
 
   opto = (class optionEntry *) client;
 
@@ -164,6 +233,7 @@ class optionEntry *opto;
   }
 
 }
+#endif
 
 static void efEventHandler (
   Widget w,
@@ -4567,6 +4637,8 @@ widgetListPtr curpb;
   tk = strtok_r( buf, "|", &ctx );
   while ( tk ) {
 
+    cur->numValues++;
+
     curpb = new widgetListType;
     curpb->destination = (void *) dest;
     curpb->entryNumber = n++;
@@ -4760,6 +4832,8 @@ widgetListPtr curpb;
   ctx = NULL;
   tk = strtok_r( buf, "|", &ctx );
   while ( tk ) {
+
+    cur->numValues++;
 
     curpb = new widgetListType;
     curpb->destination = (void *) dest;
@@ -4960,6 +5034,8 @@ widgetListPtr curpb;
   tk = strtok_r( buf, "|", &ctx );
   while ( tk ) {
 
+    cur->numValues++;
+
     curpb = new widgetListType;
     curpb->destination = (void *) dest;
     curpb->entryNumber = n++;
@@ -5101,6 +5177,8 @@ widgetListPtr curpb;
   ctx = NULL;
   tk = strtok_r( buf, "|", &ctx );
   while ( tk ) {
+
+    cur->numValues++;
 
     curpb = new widgetListType;
     curpb->destination = (void *) dest;

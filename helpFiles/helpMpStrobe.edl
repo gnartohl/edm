@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 123
-y 32
+x 517
+y 33
 w 586
-h 876
+h 915
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
@@ -80,8 +80,8 @@ minor 1
 release 0
 x 27
 y 282
-w 436
-h 176
+w 488
+h 192
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 41120 41120 41120
@@ -93,7 +93,8 @@ value {
   ""
   "Destination PV is modified with the current strobe value."
   ""
-  "Period gives seconds per strobe."
+  "In Toggle mode, Off-Time is used to control the period duty cycle. In all other"
+  "modes, Off-Time is ignored and On/Cycle-Time determines the strobe period."
   ""
   "If Auto-Ping is checked, strobe starts when screen is activated."
   ""
@@ -124,7 +125,7 @@ major 4
 minor 0
 release 0
 x 21
-y 471
+y 484
 w 545
 h 6
 lineColor rgb 0 0 0
@@ -139,7 +140,7 @@ major 4
 minor 1
 release 0
 x 42
-y 596
+y 609
 w 177
 h 21
 font "helvetica-medium-r-18.0"
@@ -159,7 +160,7 @@ major 4
 minor 1
 release 0
 x 42
-y 518
+y 535
 w 331
 h 16
 font "helvetica-medium-r-14.0"
@@ -179,7 +180,7 @@ major 4
 minor 1
 release 0
 x 42
-y 659
+y 683
 w 166
 h 21
 font "helvetica-medium-r-18.0"
@@ -199,15 +200,15 @@ major 4
 minor 1
 release 0
 x 42
-y 689
-w 536
+y 713
+w 530
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 41120 41120 41120
 useDisplayBg
 value {
-  "Destination PV cycles from First Value to Second Value changing by 1 each period."
+  "Destination PV cycles from First Value to Second Value changing by 1 each cycle."
 }
 autoSize
 endObjectProperties
@@ -219,7 +220,7 @@ major 4
 minor 1
 release 0
 x 42
-y 724
+y 748
 w 185
 h 21
 font "helvetica-medium-r-18.0"
@@ -239,15 +240,15 @@ major 4
 minor 1
 release 0
 x 42
-y 754
-w 477
+y 778
+w 471
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 41120 41120 41120
 useDisplayBg
 value {
-  "Destination PV varies randomly from 0.0 to 1.0 changing once each period."
+  "Destination PV varies randomly from 0.0 to 1.0 changing once each cycle."
 }
 autoSize
 endObjectProperties
@@ -259,7 +260,7 @@ major 4
 minor 1
 release 0
 x 42
-y 795
+y 819
 w 178
 h 21
 font "helvetica-medium-r-18.0"
@@ -279,16 +280,16 @@ major 4
 minor 1
 release 0
 x 42
-y 825
-w 499
+y 849
+w 512
 h 32
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 41120 41120 41120
 useDisplayBg
 value {
-  "When Destination PV equals round(First Value) a timer of the specified period"
-  "is started. When the time expires, Second Value is written to Destination PV."
+  "When Destination PV equals round(First Value) timer is started. When the timer"
+  "expires, Second Value is written to Destination PV."
 }
 autoSize
 endObjectProperties
@@ -300,7 +301,7 @@ major 4
 minor 1
 release 0
 x 22
-y 491
+y 508
 w 130
 h 21
 font "helvetica-medium-r-18.0"
@@ -320,15 +321,16 @@ major 4
 minor 1
 release 0
 x 42
-y 625
-w 340
-h 16
+y 638
+w 495
+h 32
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 41120 41120 41120
 useDisplayBg
 value {
-  "Destination PV toggles between 0 and 1 each period."
+  "Destination PV toggles between 0 and 1 each period. Cycle uses on-time and"
+  "off-time in this mode."
 }
 autoSize
 endObjectProperties
@@ -340,7 +342,7 @@ major 4
 minor 1
 release 0
 x 22
-y 560
+y 573
 w 148
 h 21
 font "helvetica-medium-r-18.0"

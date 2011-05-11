@@ -119,7 +119,11 @@ activeMpStrobeClass *mpso = (activeMpStrobeClass *) client;
 
   mpso->secondVal = mpso->eBuf->bufSecondVal;
 
-  mpso->pingRate = mpso->eBuf->bufPingRate;
+  mpso->pingOnTime = mpso->eBuf->bufPingOnTime;
+  if ( mpso->pingOnTime < 0.1 ) mpso->pingOnTime = 0.1;
+
+  mpso->pingOffTime = mpso->eBuf->bufPingOffTime;
+  if ( mpso->pingOffTime < 0.1 ) mpso->pingOffTime = 0.1;
 
   mpso->visPvExpString.setRaw( mpso->eBuf->bufVisPvName );
   strncpy( mpso->minVisString, mpso->eBuf->bufMinVisString, 39 );
@@ -481,21 +485,20 @@ double dval;
        XDisplayName(mpso->actWin->appCtx->displayName),
        dval );
 
+      mpso->destV = dval;
+
     }
 
   }
 
   if ( mpso->cycleType != MPSC_K_TRIG ) {
-
+    mpso->pingTimerValue = mpso->getPingTimerValue();
     mpso->pingTimer = appAddTimeOut(
      mpso->actWin->appCtx->appContext(),
      mpso->pingTimerValue, mpsc_ping, client );
-
   }
   else {
-
     mpso->pingTimerActive = 0;
-
   } 
 
 }
@@ -514,7 +517,8 @@ activeMpStrobeClass::activeMpStrobeClass ( void ) {
   cycleType = MPSC_K_TOGGLE;
   firstVal = 0;
   secondVal = 1;
-  pingRate = 1.0;
+  pingOnTime = 1.0;
+  pingOffTime = 1.0;
   curDestV = destV = 0.0;
   curControlV = controlV = 0.0;
   unconnectedTimer = 0;
@@ -574,7 +578,8 @@ activeGraphicClass *mpso = (activeGraphicClass *) this;
   cycleType = source->cycleType;
   firstVal = source->firstVal;
   secondVal = source->secondVal;
-  pingRate = source->pingRate;
+  pingOnTime = source->pingOnTime;
+  pingOffTime = source->pingOffTime;
   curDestV = 0.0;
   unconnectedTimer = 0;
 
@@ -608,6 +613,39 @@ activeMpStrobeClass::~activeMpStrobeClass ( void ) {
   }
 
   updateBlink( 0 );
+
+}
+
+int activeMpStrobeClass::getPingTimerValue ( void ) {
+
+int ptv;
+
+  if ( destExists && destPvId->is_valid() ) {
+
+    if ( cycleType == MPSC_K_TOGGLE ) {
+
+      if ( destV == 0 ) {
+        ptv = (int) ( 1000.0 * pingOffTime );
+      }
+      else {
+        ptv = (int) ( 1000.0 * pingOnTime );
+      }
+
+    }
+    else {
+
+      ptv = (int) ( 1000.0 * pingOnTime );
+
+    }
+
+  }
+  else {
+
+    ptv = (int) ( 1000.0 * pingOnTime );
+
+  }
+
+  return ptv;
 
 }
 
@@ -678,7 +716,8 @@ char *emptyStr = "";
   tag.loadW( "botShadowColor", actWin->ci, &botShadowColor );
   tag.loadW( "controlPv", &controlPvExpString, emptyStr );
   tag.loadW( "destValuePv", &destPvExpString, emptyStr );
-  tag.loadW( "pingRate", &pingRate, &dzero );
+  tag.loadW( "pingOnTime", &pingOnTime, &dzero );
+  tag.loadW( "pingOffTime", &pingOffTime, &dzero );
   tag.loadW( "onLabel", &onLabel, emptyStr );
   tag.loadW( "offLabel", &offLabel, emptyStr );
   tag.loadBoolW( "autoPing", &autoPing, &zero );
@@ -737,7 +776,8 @@ char *emptyStr = "";
   tag.loadR( "botShadowColor", actWin->ci, &botShadowColor );
   tag.loadR( "controlPv", &controlPvExpString, emptyStr );
   tag.loadR( "destValuePv", &destPvExpString, emptyStr );
-  tag.loadR( "pingRate", &pingRate, &dzero );
+  tag.loadR( "pingOnTime", &pingOnTime, &dzero );
+  tag.loadR( "pingOffTime", &pingOffTime, &dzero );
   tag.loadR( "onLabel", &onLabel, emptyStr );
   tag.loadR( "offLabel", &offLabel, emptyStr );
   tag.loadR( "autoPing", &autoPing, &zero );
@@ -757,8 +797,8 @@ char *emptyStr = "";
 
   stat = tag.readTags( f, "endObjectProperties" );
 
-  if ( pingRate < 0.1 ) pingRate = 0.1;
-  if ( pingRate > 10.0 ) pingRate = 10.0;
+  if ( pingOnTime < 0.1 ) pingOnTime = 0.1;
+  if ( pingOffTime < 0.1 ) pingOffTime = 0.1;
 
   if ( !( stat & 1 ) ) {
     actWin->appCtx->postMessage( tag.errMsg() );
@@ -827,7 +867,8 @@ char title[32], *ptr;
   else
     strcpy( eBuf->bufDestPvName, "" );
 
-  eBuf->bufPingRate = pingRate;
+  eBuf->bufPingOnTime = pingOnTime;
+  eBuf->bufPingOffTime = pingOffTime;
 
   if ( onLabel.getRaw() )
     strncpy( eBuf->bufOnLabel, onLabel.getRaw(), 39 );
@@ -899,15 +940,33 @@ char title[32], *ptr;
    PV_Factory::MAX_PV_NAME );
   ef.addTextField( activeMpStrobeClass_str9, 35, eBuf->bufDestPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addTextField( activeMpStrobeClass_str10, 35, &eBuf->bufPingRate );
   ef.addToggle( activeMpStrobeClass_str11, &eBuf->bufAutoPing );
   ef.addToggle( activeMpStrobeClass_str12, &eBuf->buf3D );
   ef.addToggle( activeMpStrobeClass_str13, &eBuf->bufInvisible );
   ef.addToggle( activeMpStrobeClass_str34, &eBuf->bufDisableBtn );
+
   ef.addOption( activeMpStrobeClass_str23, activeMpStrobeClass_str24,
    eBuf->bufCycleTypeStr, 31 );
+  optEntry = (optionEntry *) ef.getCurItem();
+
+  ef.addTextField( activeMpStrobeClass_str10, 35, &eBuf->bufPingOnTime );
+
+  ef.addTextField( activeMpStrobeClass_str38, 35, &eBuf->bufPingOffTime );
+  offTimeEntry = ef.getCurItem();
+  optEntry->addDependency( 0, offTimeEntry );
+
   ef.addTextField( activeMpStrobeClass_str36, 35, &eBuf->bufFirstVal );
+  firstValEntry = ef.getCurItem();
+  optEntry->addDependency( 1, firstValEntry );
+  optEntry->addDependency( 3, firstValEntry );
+
   ef.addTextField( activeMpStrobeClass_str37, 35, &eBuf->bufSecondVal );
+  secondValEntry = ef.getCurItem();
+  optEntry->addDependency( 1, secondValEntry );
+  optEntry->addDependency( 3, secondValEntry );
+
+  optEntry->addDependencyCallbacks();
+
   ef.addTextField( activeMpStrobeClass_str14, 35, eBuf->bufOnLabel, 39 );
   ef.addTextField( activeMpStrobeClass_str21, 35, eBuf->bufOffLabel, 39 );
   ef.addColorButton( activeMpStrobeClass_str16, actWin->ci, &eBuf->fgCb,
@@ -1149,6 +1208,7 @@ int blink = 0;
 
   actWin->executeGc.saveFg();
 
+  // set color based on even/odd state of destination
   if ( (int) destV & 1 ) {
     actWin->executeGc.setFG( bgColor.getIndex(), &blink );
   }
@@ -1272,6 +1332,7 @@ int blink = 0;
 
   if ( fs ) {
 
+  // set label based on even/odd state of destination
     if ( (int) destV & 1 ) {
 
       if ( onLabel.getExpanded() )
@@ -1353,10 +1414,8 @@ int opStat;
       active = buttonPressed = 0;
       activeMode = 1;
 
-      if ( pingRate < 0.1 ) pingRate = 0.1;
-      if ( pingRate > 10.0 ) pingRate = 10.0;
-
-      pingTimerValue = (int) ( 1000.0 * pingRate );
+      if ( pingOnTime < 0.1 ) pingOnTime = 0.1;
+      if ( pingOffTime < 0.1 ) pingOffTime = 0.1;
 
       if ( !controlPvExpString.getExpanded() ||
          blankOrComment( controlPvExpString.getExpanded() ) ) {
@@ -1650,10 +1709,8 @@ double dval;
     }
   }
 
-  if ( pingRate < 0.1 ) pingRate = 0.1;
-  if ( pingRate > 10.0 ) pingRate = 10.0;
-
   if ( !pingTimerActive && ( cycleType != MPSC_K_TRIG ) ) {
+    pingTimerValue = getPingTimerValue();
     pingTimer = appAddTimeOut( actWin->appCtx->appContext(),
      pingTimerValue, mpsc_ping, this );
     pingTimerActive = 1;
@@ -1879,6 +1936,7 @@ double dval;
     if ( connection.pvsConnected() ) {
       if ( autoPing ) {
         if ( !pingTimerActive && ( cycleType != MPSC_K_TRIG ) ) {
+          pingTimerValue = getPingTimerValue();
           pingTimer = appAddTimeOut(
            actWin->appCtx->appContext(),
            pingTimerValue, mpsc_ping, this );
@@ -1924,6 +1982,7 @@ double dval;
     if ( connection.pvsConnected() ) {
       if ( autoPing ) {
         if ( !pingTimerActive && ( cycleType != MPSC_K_TRIG ) ) {
+          pingTimerValue = getPingTimerValue();
           pingTimer = appAddTimeOut(
            actWin->appCtx->appContext(),
            pingTimerValue, mpsc_ping, this );
@@ -1982,6 +2041,7 @@ double dval;
     if ( connection.pvsConnected() ) {
       if ( autoPing ) {
         if ( !pingTimerActive && ( cycleType != MPSC_K_TRIG ) ) {
+          pingTimerValue = getPingTimerValue();
           pingTimer = appAddTimeOut(
            actWin->appCtx->appContext(),
            pingTimerValue, mpsc_ping, this );
@@ -2056,6 +2116,7 @@ double dval;
     if ( connection.pvsConnected() ) {
       if ( autoPing ) {
         if ( !pingTimerActive && ( cycleType != MPSC_K_TRIG ) ) {
+          pingTimerValue = getPingTimerValue();
           pingTimer = appAddTimeOut(
            actWin->appCtx->appContext(),
            pingTimerValue, mpsc_ping, this );
@@ -2122,6 +2183,7 @@ double dval;
 
       if ( round( destV ) == round( firstVal ) ) {
         if ( !pingTimerActive ) {
+          pingTimerValue = getPingTimerValue();
           pingTimer = appAddTimeOut(
            actWin->appCtx->appContext(),
            pingTimerValue, mpsc_ping, this );
