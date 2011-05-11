@@ -4,9 +4,9 @@ major 4
 minor 0
 release 1
 x 517
-y 33
+y 21
 w 586
-h 915
+h 989
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
@@ -80,8 +80,8 @@ minor 1
 release 0
 x 27
 y 282
-w 488
-h 192
+w 516
+h 272
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 41120 41120 41120
@@ -95,6 +95,11 @@ value {
   ""
   "In Toggle mode, Off-Time is used to control the period duty cycle. In all other"
   "modes, Off-Time is ignored and On/Cycle-Time determines the strobe period."
+  ""
+  "In Toggle mode, if Momentary is selected, the destination PV is pulsed on and off"
+  "once per half-cycle. In this case, the state of the actual device must be manually"
+  "set to off before starting the strobe (else the button state will be 180 degrees"
+  "out of phase with the device)."
   ""
   "If Auto-Ping is checked, strobe starts when screen is activated."
   ""
@@ -125,7 +130,7 @@ major 4
 minor 0
 release 0
 x 21
-y 484
+y 567
 w 545
 h 6
 lineColor rgb 0 0 0
@@ -140,7 +145,7 @@ major 4
 minor 1
 release 0
 x 42
-y 609
+y 692
 w 177
 h 21
 font "helvetica-medium-r-18.0"
@@ -160,7 +165,7 @@ major 4
 minor 1
 release 0
 x 42
-y 535
+y 618
 w 331
 h 16
 font "helvetica-medium-r-14.0"
@@ -180,7 +185,7 @@ major 4
 minor 1
 release 0
 x 42
-y 683
+y 766
 w 166
 h 21
 font "helvetica-medium-r-18.0"
@@ -200,7 +205,7 @@ major 4
 minor 1
 release 0
 x 42
-y 713
+y 796
 w 530
 h 16
 font "helvetica-medium-r-14.0"
@@ -220,7 +225,7 @@ major 4
 minor 1
 release 0
 x 42
-y 748
+y 831
 w 185
 h 21
 font "helvetica-medium-r-18.0"
@@ -240,7 +245,7 @@ major 4
 minor 1
 release 0
 x 42
-y 778
+y 861
 w 471
 h 16
 font "helvetica-medium-r-14.0"
@@ -260,7 +265,7 @@ major 4
 minor 1
 release 0
 x 42
-y 819
+y 902
 w 178
 h 21
 font "helvetica-medium-r-18.0"
@@ -280,7 +285,7 @@ major 4
 minor 1
 release 0
 x 42
-y 849
+y 932
 w 512
 h 32
 font "helvetica-medium-r-14.0"
@@ -301,7 +306,7 @@ major 4
 minor 1
 release 0
 x 22
-y 508
+y 591
 w 130
 h 21
 font "helvetica-medium-r-18.0"
@@ -321,7 +326,7 @@ major 4
 minor 1
 release 0
 x 42
-y 638
+y 721
 w 495
 h 32
 font "helvetica-medium-r-14.0"
@@ -342,7 +347,7 @@ major 4
 minor 1
 release 0
 x 22
-y 573
+y 656
 w 148
 h 21
 font "helvetica-medium-r-18.0"

@@ -125,6 +125,16 @@ activeMpStrobeClass *mpso = (activeMpStrobeClass *) client;
   mpso->pingOffTime = mpso->eBuf->bufPingOffTime;
   if ( mpso->pingOffTime < 0.1 ) mpso->pingOffTime = 0.1;
 
+  mpso->momentary = mpso->eBuf->bufMomentary;
+
+  mpso->momentaryCycleTime = mpso->pingOnTime;
+  if ( mpso->momentaryCycleTime > mpso->pingOffTime ) {
+    mpso->momentaryCycleTime = mpso->pingOffTime;
+  }
+  mpso->momentaryCycleTime /= 2.0;
+  if ( mpso->momentaryCycleTime > 1.0 ) mpso->momentaryCycleTime = 1.0;
+  mpso->momentaryTimerValue = (int) mpso->momentaryCycleTime * 1000;
+
   mpso->visPvExpString.setRaw( mpso->eBuf->bufVisPvName );
   strncpy( mpso->minVisString, mpso->eBuf->bufMinVisString, 39 );
   strncpy( mpso->maxVisString, mpso->eBuf->bufMaxVisString, 39 );
@@ -397,13 +407,30 @@ activeMpStrobeClass *mpso = (activeMpStrobeClass *) userarg;
 
 }
 
+static void mpsc_ping_clear (
+  XtPointer client,
+  XtIntervalId *id )
+{
+
+activeMpStrobeClass *mpso = (activeMpStrobeClass *) client;
+double mval;
+
+  mpso->momentaryTimerActive = 0;
+
+  mval = 0;
+  mpso->destPvId->put(
+   XDisplayName(mpso->actWin->appCtx->displayName),
+   mval );
+
+}
+
 static void mpsc_ping (
   XtPointer client,
   XtIntervalId *id )
 {
 
 activeMpStrobeClass *mpso = (activeMpStrobeClass *) client;
-double dval;
+double dval, mval;
 
   if ( !mpso->pingTimerActive ) {
     mpso->pingTimer = 0;
@@ -481,9 +508,33 @@ double dval;
 
       }
 
-      mpso->destPvId->put(
-       XDisplayName(mpso->actWin->appCtx->displayName),
-       dval );
+      if ( ( mpso->cycleType == MPSC_K_TOGGLE ) && mpso->momentary ) {
+
+        if ( mpso->momentaryV ) {
+          mpso->momentaryV = 0;
+	}
+	else {
+          mpso->momentaryV = 1;
+	}
+
+        mval = 1;
+        mpso->destPvId->put(
+         XDisplayName(mpso->actWin->appCtx->displayName),
+         mval );
+
+        mpso->momentaryTimer = appAddTimeOut(
+         mpso->actWin->appCtx->appContext(),
+         mpso->momentaryTimerValue, mpsc_ping_clear, client );
+        mpso->momentaryTimerActive = 1;
+
+      }
+      else {
+
+        mpso->destPvId->put(
+         XDisplayName(mpso->actWin->appCtx->displayName),
+         dval );
+
+      }
 
       mpso->destV = dval;
 
@@ -519,7 +570,9 @@ activeMpStrobeClass::activeMpStrobeClass ( void ) {
   secondVal = 1;
   pingOnTime = 1.0;
   pingOffTime = 1.0;
+  momentary = 0;
   curDestV = destV = 0.0;
+  momentaryV = 0;
   curControlV = controlV = 0.0;
   unconnectedTimer = 0;
   visibility = 0;
@@ -580,7 +633,9 @@ activeGraphicClass *mpso = (activeGraphicClass *) this;
   secondVal = source->secondVal;
   pingOnTime = source->pingOnTime;
   pingOffTime = source->pingOffTime;
+  momentary = source->momentary;
   curDestV = 0.0;
+  momentaryV = 0;
   unconnectedTimer = 0;
 
   visibility = 0;
@@ -620,11 +675,18 @@ int activeMpStrobeClass::getPingTimerValue ( void ) {
 
 int ptv;
 
+  if ( momentary ) {
+    effectiveDestV = momentaryV;
+  }
+  else {
+    effectiveDestV = destV;
+  }
+
   if ( destExists && destPvId->is_valid() ) {
 
     if ( cycleType == MPSC_K_TOGGLE ) {
 
-      if ( destV == 0 ) {
+      if ( effectiveDestV == 0 ) {
         ptv = (int) ( 1000.0 * pingOffTime );
       }
       else {
@@ -718,6 +780,7 @@ char *emptyStr = "";
   tag.loadW( "destValuePv", &destPvExpString, emptyStr );
   tag.loadW( "pingOnTime", &pingOnTime, &dzero );
   tag.loadW( "pingOffTime", &pingOffTime, &dzero );
+  tag.loadW( "momentary", &momentary, &zero );
   tag.loadW( "onLabel", &onLabel, emptyStr );
   tag.loadW( "offLabel", &offLabel, emptyStr );
   tag.loadBoolW( "autoPing", &autoPing, &zero );
@@ -778,6 +841,7 @@ char *emptyStr = "";
   tag.loadR( "destValuePv", &destPvExpString, emptyStr );
   tag.loadR( "pingOnTime", &pingOnTime, &dzero );
   tag.loadR( "pingOffTime", &pingOffTime, &dzero );
+  tag.loadR( "momentary", &momentary, &zero );
   tag.loadR( "onLabel", &onLabel, emptyStr );
   tag.loadR( "offLabel", &offLabel, emptyStr );
   tag.loadR( "autoPing", &autoPing, &zero );
@@ -799,6 +863,14 @@ char *emptyStr = "";
 
   if ( pingOnTime < 0.1 ) pingOnTime = 0.1;
   if ( pingOffTime < 0.1 ) pingOffTime = 0.1;
+
+  momentaryCycleTime = pingOnTime;
+  if ( momentaryCycleTime > pingOffTime ) {
+    momentaryCycleTime = pingOffTime;
+  }
+  momentaryCycleTime /= 2.0;
+  if ( momentaryCycleTime > 1.0 ) momentaryCycleTime = 1.0;
+  momentaryTimerValue = (int) momentaryCycleTime * 1000;
 
   if ( !( stat & 1 ) ) {
     actWin->appCtx->postMessage( tag.errMsg() );
@@ -869,6 +941,7 @@ char title[32], *ptr;
 
   eBuf->bufPingOnTime = pingOnTime;
   eBuf->bufPingOffTime = pingOffTime;
+  eBuf->bufMomentary = momentary;
 
   if ( onLabel.getRaw() )
     strncpy( eBuf->bufOnLabel, onLabel.getRaw(), 39 );
@@ -954,6 +1027,10 @@ char title[32], *ptr;
   ef.addTextField( activeMpStrobeClass_str38, 35, &eBuf->bufPingOffTime );
   offTimeEntry = ef.getCurItem();
   optEntry->addDependency( 0, offTimeEntry );
+
+  ef.addToggle( activeMpStrobeClass_str39, &eBuf->bufMomentary );
+  momentaryEntry = ef.getCurItem();
+  optEntry->addDependency( 0, momentaryEntry );
 
   ef.addTextField( activeMpStrobeClass_str36, 35, &eBuf->bufFirstVal );
   firstValEntry = ef.getCurItem();
@@ -1208,8 +1285,15 @@ int blink = 0;
 
   actWin->executeGc.saveFg();
 
+  if ( momentary ) {
+    effectiveDestV = momentaryV;
+  }
+  else {
+    effectiveDestV = destV;
+  }
+
   // set color based on even/odd state of destination
-  if ( (int) destV & 1 ) {
+  if ( (int) effectiveDestV & 1 ) {
     actWin->executeGc.setFG( bgColor.getIndex(), &blink );
   }
   else {
@@ -1224,7 +1308,7 @@ int blink = 0;
 
   if ( !_3D ) {
 
-    if ( (int) destV & 1 ) {
+    if ( (int) effectiveDestV & 1 ) {
       actWin->executeGc.setFG( actWin->ci->pix(topShadowColor) );
     }
     else {
@@ -1333,7 +1417,7 @@ int blink = 0;
   if ( fs ) {
 
   // set label based on even/odd state of destination
-    if ( (int) destV & 1 ) {
+    if ( (int) effectiveDestV & 1 ) {
 
       if ( onLabel.getExpanded() )
         strncpy( string, onLabel.getExpanded(), 39 );
@@ -1416,6 +1500,14 @@ int opStat;
 
       if ( pingOnTime < 0.1 ) pingOnTime = 0.1;
       if ( pingOffTime < 0.1 ) pingOffTime = 0.1;
+
+      momentaryCycleTime = pingOnTime;
+      if ( momentaryCycleTime > pingOffTime ) {
+        momentaryCycleTime = pingOffTime;
+      }
+      momentaryCycleTime /= 2.0;
+      if ( momentaryCycleTime > 1.0 ) momentaryCycleTime = 1.0;
+      momentaryTimerValue = (int) momentaryCycleTime * 1000;
 
       if ( !controlPvExpString.getExpanded() ||
          blankOrComment( controlPvExpString.getExpanded() ) ) {
@@ -1572,11 +1664,18 @@ double dval;
 
   if ( pingTimerActive ) {
     if ( pingTimer ) {
-      //actWin->appCtx->postMessage( activeMpStrobeClass_str35 );
       XtRemoveTimeOut( pingTimer );
       pingTimer = 0;
     }
     pingTimerActive = 0;
+  }
+
+  if ( momentaryTimerActive ) {
+    if ( momentaryTimer ) {
+      XtRemoveTimeOut( momentaryTimer );
+      momentaryTimer = 0;
+    }
+    momentaryTimerActive = 0;
   }
 
   if ( controlExists ) {

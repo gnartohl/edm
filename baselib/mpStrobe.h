@@ -75,6 +75,10 @@ static void mpsc_destUpdate (
   ProcessVariable *pv,
   void *userarg );
 
+static void mpsc_ping_clear (
+  XtPointer client,
+  XtIntervalId *id );
+
 static void mpsc_ping (
   XtPointer client,
   XtIntervalId *id );
@@ -157,6 +161,10 @@ friend void mpsc_destUpdate (
   ProcessVariable *pv,
   void *userarg );
 
+friend void mpsc_ping_clear (
+  XtPointer client,
+  XtIntervalId *id );
+
 friend void mpsc_ping (
   XtPointer client,
   XtIntervalId *id );
@@ -219,6 +227,7 @@ typedef struct editBufTag {
   double bufSecondVal;
   double bufPingOnTime;
   double bufPingOffTime;
+  int bufMomentary;
   int bufVisInverted;
   colorButtonClass fgCb;
   colorButtonClass bgCb;
@@ -238,7 +247,7 @@ typedef struct editBufTag {
 editBufPtr eBuf;
 
 entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry,
- *offTimeEntry, *firstValEntry, *secondValEntry;
+ *offTimeEntry, *firstValEntry, *secondValEntry, *momentaryEntry;
 optionEntry *optEntry;
 
 int controlType, destType, destSize;
@@ -271,6 +280,8 @@ expStringClass controlPvExpString;
 expStringClass destPvExpString;
 
 double pingOnTime, pingOffTime;
+int momentary;
+double momentaryCycleTime;
 
 int controlExists, destExists, buttonPressed;
 
@@ -278,7 +289,10 @@ int controlPvConnected, destPvConnected, active, activeMode, init;
 
 int pingTimerActive, pingTimerValue;
 XtIntervalId pingTimer;
-double controlV, curControlV, destV, curDestV;
+double controlV, curControlV, destV, curDestV, effectiveDestV, momentaryV;
+
+int momentaryTimerActive, momentaryTimerValue;
+XtIntervalId momentaryTimer;
 
 int needConnectInit, needDestConnectInit, needCtlInfoInit, needRefresh,
  needErase, needDraw, needToDrawUnconnected, needToEraseUnconnected, needDestUpdate;

@@ -12,6 +12,7 @@
 #define activeMpStrobeClass_str9 (char *) "Destination PV"
 #define activeMpStrobeClass_str10 (char *) "On/Cycle-Time (sec)"
 #define activeMpStrobeClass_str38 (char *) "Off-Time (sec)"
+#define activeMpStrobeClass_str39 (char *) "Momentary"
 #define activeMpStrobeClass_str11 (char *) "Auto-Ping"
 #define activeMpStrobeClass_str12 (char *) "3-D Look"
 #define activeMpStrobeClass_str13 (char *) "Invisible"
