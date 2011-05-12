@@ -1272,7 +1272,6 @@ int blink = 0;
   if ( !init ) {
     if ( needToDrawUnconnected ) {
       actWin->executeGc.saveFg();
-      //actWin->executeGc.setFG( fgColor.getDisconnected() );
       actWin->executeGc.setFG( fgColor.getDisconnectedIndex(), &blink );
       if ( strcmp( fontTag, "" ) != 0 ) {
         actWin->executeGc.setFontTag( fontTag, actWin->fi );
@@ -1288,13 +1287,16 @@ int blink = 0;
     }
   }
   else if ( needToEraseUnconnected ) {
+    actWin->executeGc.saveFg();
     needToEraseUnconnected = 0;
     if ( strcmp( fontTag, "" ) != 0 ) {
       actWin->executeGc.setFontTag( fontTag, actWin->fi );
     }
+    clipStat = actWin->executeGc.addEraseXClipRectangle( xR );
     XDrawStringsAligned( actWin->d, drawable(actWin->executeWidget),
-     actWin->executeGc.normGC(), x, stringY, w,
+     actWin->executeGc.eraseGC(), x, stringY, w,
      value.getExpanded(), stringLength, &fs, alignment );
+    if ( clipStat & 1 ) actWin->executeGc.removeEraseXClipRectangle();
     actWin->executeGc.restoreFg();
   }
 
