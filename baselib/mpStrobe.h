@@ -29,7 +29,7 @@
 
 #define MPSC_MAJOR_VERSION 4
 #define MPSC_MINOR_VERSION 0
-#define MPSC_RELEASE 1
+#define MPSC_RELEASE 2
 
 #define MPSC_IDLE 1
 #define MPSC_PINGING 2
@@ -38,6 +38,9 @@
 #define MPSC_K_CYCLE 1
 #define MPSC_K_TRIG 2
 #define MPSC_K_RANDOM 3
+
+#define MPSC_K_SHOW_CONTROL 0
+#define MPSC_K_SHOW_DEST 1
 
 #ifdef __mpStrobe_cc
 
@@ -72,6 +75,10 @@ static void mpsc_controlUpdate (
   void *userarg );
 
 static void mpsc_destUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
+static void mpsc_readbackUpdate (
   ProcessVariable *pv,
   void *userarg );
 
@@ -123,6 +130,10 @@ static void mpsc_monitor_dest_connect_state (
   ProcessVariable *pv,
   void *userarg );
 
+static void mpsc_monitor_readback_connect_state (
+  ProcessVariable *pv,
+  void *userarg );
+
 #endif
 
 class activeMpStrobeClass : public activeGraphicClass {
@@ -158,6 +169,10 @@ friend void mpsc_controlUpdate (
   void *userarg );
 
 friend void mpsc_destUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
+friend void mpsc_readbackUpdate (
   ProcessVariable *pv,
   void *userarg );
 
@@ -202,6 +217,10 @@ friend void mpsc_monitor_dest_connect_state (
   ProcessVariable *pv,
   void *userarg );
 
+friend void mpsc_monitor_readback_connect_state (
+  ProcessVariable *pv,
+  void *userarg );
+
 int opComplete;
 
 int minW;
@@ -223,6 +242,7 @@ typedef struct editBufTag {
   int bufInvisible;
   int bufDisableBtn;
   char bufCycleTypeStr[31+1];
+  char bufIndicatorTypeStr[31+1];
   double bufFirstVal;
   double bufSecondVal;
   double bufPingOnTime;
@@ -238,6 +258,7 @@ typedef struct editBufTag {
   char bufOffLabel[39+1];
   char bufControlPvName[PV_Factory::MAX_PV_NAME+1];
   char bufDestPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufReadbackPvName[PV_Factory::MAX_PV_NAME+1];
   char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
   char bufMinVisString[39+1];
   char bufMaxVisString[39+1];
@@ -250,14 +271,14 @@ entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry,
  *offTimeEntry, *firstValEntry, *secondValEntry, *momentaryEntry;
 optionEntry *optEntry;
 
-int controlType, destType, destSize;
+int controlType, destType, destSize, readbackType, readbackSize;
 
 pvColorClass fgColor, bgColor, offColor;
 int topShadowColor;
 int botShadowColor;
 expStringClass onLabel;
 expStringClass offLabel;
-int autoPing, _3D, invisible, disableBtn, cycleType;
+int autoPing, _3D, invisible, disableBtn, cycleType, indicatorType;
 unsigned int randSeed;
 double firstVal, secondVal;
 
@@ -268,37 +289,44 @@ int fontAscent, fontDescent, fontHeight;
 
 static const int controlPvConnection = 1;
 static const int destPvConnection = 2;
-static const int visPvConnection = 3;
-static const int colorPvConnection = 4;
+static const int readbackPvConnection = 3;
+static const int visPvConnection = 4;
+static const int colorPvConnection = 5;
 
 pvConnectionClass connection;
 
-ProcessVariable *controlPvId, *destPvId;
+ProcessVariable *controlPvId, *destPvId, *readbackPvId;
 
 expStringClass controlPvExpString;
-
 expStringClass destPvExpString;
+expStringClass readbackPvExpString;
 
 double pingOnTime, pingOffTime;
 int momentary;
 double momentaryCycleTime;
 
-int controlExists, destExists, buttonPressed;
+int controlExists, destExists, readbackExists, buttonPressed;
 
-int controlPvConnected, destPvConnected, active, activeMode, init;
+int controlPvConnected, destPvConnected, readbackPvConnected, active,
+ activeMode, init;
 
 int pingTimerActive, pingTimerValue;
 XtIntervalId pingTimer;
-double controlV, curControlV, destV, curDestV, effectiveDestV, momentaryV;
+double controlV, curControlV, destV, curDestV, effectiveDestV,
+ readbackV, curReadbackV, momentaryV;
 
 int momentaryTimerActive, momentaryTimerValue;
 XtIntervalId momentaryTimer;
 
-int needConnectInit, needDestConnectInit, needCtlInfoInit, needRefresh,
- needErase, needDraw, needToDrawUnconnected, needToEraseUnconnected, needDestUpdate;
+int needConnectInit, needDestConnectInit, needReadbackConnectInit,
+ needCtlInfoInit, needRefresh, needErase, needDraw, needToDrawUnconnected,
+ needToEraseUnconnected, needDestUpdate, needReadbackUpdate;
+
 XtIntervalId unconnectedTimer;
+
 int initialConnection, initialDestValueConnection,
- initialVisConnection, initialColorConnection;
+ initialReadbackValueConnection, initialVisConnection,
+ initialColorConnection;
 
 ProcessVariable *visPvId;
 expStringClass visPvExpString;

@@ -11,8 +11,6 @@
 #define activeMpStrobeClass_str8 (char *) "Control PV"
 #define activeMpStrobeClass_str9 (char *) "Destination PV"
 #define activeMpStrobeClass_str10 (char *) "On/Cycle-Time (sec)"
-#define activeMpStrobeClass_str38 (char *) "Off-Time (sec)"
-#define activeMpStrobeClass_str39 (char *) "Momentary"
 #define activeMpStrobeClass_str11 (char *) "Auto-Ping"
 #define activeMpStrobeClass_str12 (char *) "3-D Look"
 #define activeMpStrobeClass_str13 (char *) "Invisible"
@@ -40,5 +38,12 @@
 #define activeMpStrobeClass_str35 (char *) "\nWARNING: Strobe stopped on window deactivate\n"
 #define activeMpStrobeClass_str36 (char *) "First Value"
 #define activeMpStrobeClass_str37 (char *) "Second Value"
+#define activeMpStrobeClass_str38 (char *) "Off-Time (sec)"
+#define activeMpStrobeClass_str39 (char *) "Momentary"
+#define activeMpStrobeClass_str40 (char *) "Readback PV"
+#define activeMpStrobeClass_str41 (char *) "Button Indicates"
+#define activeMpStrobeClass_str42 (char *) "Control State|Destination State"
+#define activeMpStrobeClass_str43 (char *) "Control State"
+#define activeMpStrobeClass_str44 (char *) "Destination State"
 
 #endif

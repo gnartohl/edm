@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 517
-y 21
-w 586
-h 989
+x 66
+y 92
+w 1176
+h 696
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
@@ -49,7 +49,7 @@ major 4
 minor 1
 release 0
 x 26
-y 67
+y 81
 w 300
 h 176
 font "helvetica-medium-r-14.0"
@@ -79,9 +79,9 @@ major 4
 minor 1
 release 0
 x 27
-y 282
+y 289
 w 516
-h 272
+h 368
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 41120 41120 41120
@@ -92,6 +92,12 @@ value {
   "this PV and toggling the button off writes a zero."
   ""
   "Destination PV is modified with the current strobe value."
+  ""
+  "If Readback PV is given, button indicates readback PV state in place of"
+  "destination PV state."
+  ""
+  "Button may be set to indicate control PV state or destination"
+  "(or readback) PV state."
   ""
   "In Toggle mode, Off-Time is used to control the period duty cycle. In all other"
   "modes, Off-Time is ignored and On/Cycle-Time determines the strobe period."
@@ -115,22 +121,7 @@ major 4
 minor 0
 release 0
 x 21
-y 263
-w 545
-h 6
-lineColor rgb 0 0 0
-fill
-fillColor rgb 0 0 0
-endObjectProperties
-
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 21
-y 567
+y 270
 w 545
 h 6
 lineColor rgb 0 0 0
@@ -144,8 +135,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 42
-y 692
+x 615
+y 190
 w 177
 h 21
 font "helvetica-medium-r-18.0"
@@ -164,8 +155,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 42
-y 618
+x 615
+y 108
 w 331
 h 16
 font "helvetica-medium-r-14.0"
@@ -184,8 +175,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 42
-y 766
+x 615
+y 264
 w 166
 h 21
 font "helvetica-medium-r-18.0"
@@ -204,8 +195,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 42
-y 796
+x 615
+y 294
 w 530
 h 16
 font "helvetica-medium-r-14.0"
@@ -224,8 +215,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 42
-y 831
+x 615
+y 329
 w 185
 h 21
 font "helvetica-medium-r-18.0"
@@ -244,8 +235,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 42
-y 861
+x 615
+y 359
 w 471
 h 16
 font "helvetica-medium-r-14.0"
@@ -264,8 +255,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 42
-y 902
+x 615
+y 400
 w 178
 h 21
 font "helvetica-medium-r-18.0"
@@ -284,8 +275,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 42
-y 932
+x 615
+y 430
 w 512
 h 32
 font "helvetica-medium-r-14.0"
@@ -305,8 +296,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 22
-y 591
+x 595
+y 81
 w 130
 h 21
 font "helvetica-medium-r-18.0"
@@ -325,8 +316,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 42
-y 721
+x 615
+y 219
 w 495
 h 32
 font "helvetica-medium-r-14.0"
@@ -346,8 +337,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 22
-y 656
+x 595
+y 154
 w 148
 h 21
 font "helvetica-medium-r-18.0"
@@ -358,5 +349,35 @@ value {
   "PV Type: numeric"
 }
 autoSize
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 21
+y 57
+w 1131
+h 6
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 567
+y 62
+w 6
+h 612
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
 endObjectProperties
 

@@ -86,6 +86,8 @@ activeMpStrobeClass *mpso = (activeMpStrobeClass *) client;
 
   mpso->destPvExpString.setRaw( mpso->eBuf->bufDestPvName );
 
+  mpso->readbackPvExpString.setRaw( mpso->eBuf->bufReadbackPvName );
+
   mpso->onLabel.setRaw( mpso->eBuf->bufOnLabel );
 
   mpso->offLabel.setRaw( mpso->eBuf->bufOffLabel );
@@ -115,6 +117,13 @@ activeMpStrobeClass *mpso = (activeMpStrobeClass *) client;
     mpso->cycleType = MPSC_K_RANDOM;
   }
 
+  if ( strcmp( mpso->eBuf->bufIndicatorTypeStr, activeMpStrobeClass_str43 ) == 0 ) {
+    mpso->indicatorType = MPSC_K_SHOW_CONTROL;
+  }
+  else if ( strcmp( mpso->eBuf->bufIndicatorTypeStr, activeMpStrobeClass_str44 ) == 0 ) {
+    mpso->indicatorType = MPSC_K_SHOW_DEST;
+  }
+
   mpso->firstVal = mpso->eBuf->bufFirstVal;
 
   mpso->secondVal = mpso->eBuf->bufSecondVal;
@@ -133,7 +142,7 @@ activeMpStrobeClass *mpso = (activeMpStrobeClass *) client;
   }
   mpso->momentaryCycleTime /= 2.0;
   if ( mpso->momentaryCycleTime > 1.0 ) mpso->momentaryCycleTime = 1.0;
-  mpso->momentaryTimerValue = (int) mpso->momentaryCycleTime * 1000;
+  mpso->momentaryTimerValue = (int) ( mpso->momentaryCycleTime * 1000 );
 
   mpso->visPvExpString.setRaw( mpso->eBuf->bufVisPvName );
   strncpy( mpso->minVisString, mpso->eBuf->bufMinVisString, 39 );
@@ -277,6 +286,37 @@ activeMpStrobeClass *mpso = (activeMpStrobeClass *) userarg;
 
 }
 
+static void mpsc_monitor_readback_connect_state (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+activeMpStrobeClass *mpso = (activeMpStrobeClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+    mpso->needReadbackConnectInit = 1;
+    mpso->actWin->appCtx->proc->lock();
+    mpso->actWin->addDefExeNode( mpso->aglPtr );
+    mpso->actWin->appCtx->proc->unlock();
+
+  }
+  else {
+
+    mpso->connection.setPvDisconnected( (void *) mpso->readbackPvConnection );
+    mpso->active = 0;
+    mpso->bgColor.setDisconnected();
+    mpso->offColor.setDisconnected();
+    mpso->needDraw = 1;
+
+  }
+
+  mpso->actWin->appCtx->proc->lock();
+  mpso->actWin->addDefExeNode( mpso->aglPtr );
+  mpso->actWin->appCtx->proc->unlock();
+
+}
+
 static void mpsc_controlUpdate (
   ProcessVariable *pv,
   void *userarg )
@@ -313,6 +353,24 @@ activeMpStrobeClass *mpso = (activeMpStrobeClass *) userarg;
   mpso->curDestV = pv->get_double();
   mpso->destV = mpso->curDestV;
   mpso->needDestUpdate = 1;
+  mpso->actWin->addDefExeNode( mpso->aglPtr );
+
+  mpso->actWin->appCtx->proc->unlock();
+
+}
+
+static void mpsc_readbackUpdate (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+activeMpStrobeClass *mpso = (activeMpStrobeClass *) userarg;
+
+  mpso->actWin->appCtx->proc->lock();
+
+  mpso->curReadbackV = pv->get_double();
+  mpso->readbackV = mpso->curReadbackV;
+  mpso->needReadbackUpdate = 1;
   mpso->actWin->addDefExeNode( mpso->aglPtr );
 
   mpso->actWin->appCtx->proc->unlock();
@@ -566,12 +624,14 @@ activeMpStrobeClass::activeMpStrobeClass ( void ) {
   invisible = 0;
   disableBtn = 0;
   cycleType = MPSC_K_TOGGLE;
+  indicatorType = MPSC_K_SHOW_CONTROL;
   firstVal = 0;
   secondVal = 1;
   pingOnTime = 1.0;
   pingOffTime = 1.0;
   momentary = 0;
   curDestV = destV = 0.0;
+  curReadbackV = readbackV = 0.0;
   momentaryV = 0;
   curControlV = controlV = 0.0;
   unconnectedTimer = 0;
@@ -583,7 +643,7 @@ activeMpStrobeClass::activeMpStrobeClass ( void ) {
   connection.setMaxPvs( 5 );
   activeMode = 0;
   eBuf = NULL;
-  controlType = destType = destSize = 0;
+  controlType = destType = destSize = readbackType = readbackSize = 0;
   randSeed = (unsigned int) this + (unsigned int) clock();
 
   setBlinkFunction( (void *) doBlink );
@@ -616,6 +676,7 @@ activeGraphicClass *mpso = (activeGraphicClass *) this;
 
   controlPvExpString.copy( source->controlPvExpString );
   destPvExpString.copy( source->destPvExpString );
+  readbackPvExpString.copy( source->readbackPvExpString );
   visPvExpString.copy( source->visPvExpString );
   colorPvExpString.copy( source->colorPvExpString );
 
@@ -629,12 +690,14 @@ activeGraphicClass *mpso = (activeGraphicClass *) this;
   invisible = source->invisible;
   disableBtn = source->disableBtn;
   cycleType = source->cycleType;
+  indicatorType = source->indicatorType;
   firstVal = source->firstVal;
   secondVal = source->secondVal;
   pingOnTime = source->pingOnTime;
   pingOffTime = source->pingOffTime;
   momentary = source->momentary;
   curDestV = 0.0;
+  curReadbackV = 0.0;
   momentaryV = 0;
   unconnectedTimer = 0;
 
@@ -645,7 +708,7 @@ activeGraphicClass *mpso = (activeGraphicClass *) this;
   strncpy( maxVisString, source->maxVisString, 39 );
   activeMode = 0;
   eBuf = NULL;
-  controlType = destType = destSize = 0;
+  controlType = destType = destSize = readbackType = readbackSize = 0;
   randSeed = (unsigned int) this + (unsigned int) clock();
 
   connection.setMaxPvs( 5 );
@@ -675,29 +738,33 @@ int activeMpStrobeClass::getPingTimerValue ( void ) {
 
 int ptv;
 
-  if ( momentary ) {
-    effectiveDestV = momentaryV;
+  effectiveDestV = 0.0;
+
+  if ( readbackExists ) {
+
+    effectiveDestV = readbackV;
+
   }
   else {
-    effectiveDestV = destV;
-  }
 
-  if ( destExists && destPvId->is_valid() ) {
-
-    if ( cycleType == MPSC_K_TOGGLE ) {
-
-      if ( effectiveDestV == 0 ) {
-        ptv = (int) ( 1000.0 * pingOffTime );
-      }
-      else {
-        ptv = (int) ( 1000.0 * pingOnTime );
-      }
-
+    if ( ( cycleType == MPSC_K_TOGGLE ) && momentary ) {
+      effectiveDestV = momentaryV;
     }
     else {
+      if ( destExists ) {
+        effectiveDestV = destV;
+      }
+    }
 
+  }
+
+  if ( cycleType == MPSC_K_TOGGLE ) {
+
+    if ( effectiveDestV == 0 ) {
+      ptv = (int) ( 1000.0 * pingOffTime );
+    }
+    else {
       ptv = (int) ( 1000.0 * pingOnTime );
-
     }
 
   }
@@ -778,6 +845,7 @@ char *emptyStr = "";
   tag.loadW( "botShadowColor", actWin->ci, &botShadowColor );
   tag.loadW( "controlPv", &controlPvExpString, emptyStr );
   tag.loadW( "destValuePv", &destPvExpString, emptyStr );
+  tag.loadW( "readbackValuePv", &readbackPvExpString, emptyStr );
   tag.loadW( "pingOnTime", &pingOnTime, &dzero );
   tag.loadW( "pingOffTime", &pingOffTime, &dzero );
   tag.loadW( "momentary", &momentary, &zero );
@@ -788,6 +856,7 @@ char *emptyStr = "";
   tag.loadBoolW( "invisible", &invisible, &zero );
   tag.loadBoolW( "disableBtn", &disableBtn, &zero );
   tag.loadW( "cycleType", &cycleType, &zero );
+  tag.loadW( "indicatorType", &indicatorType, &zero );
   tag.loadW( "firstVal", &firstVal, &dzero );
   tag.loadW( "secondVal", &secondVal, &dzero );
   tag.loadW( "font", fontTag );
@@ -839,6 +908,7 @@ char *emptyStr = "";
   tag.loadR( "botShadowColor", actWin->ci, &botShadowColor );
   tag.loadR( "controlPv", &controlPvExpString, emptyStr );
   tag.loadR( "destValuePv", &destPvExpString, emptyStr );
+  tag.loadR( "readbackValuePv", &readbackPvExpString, emptyStr );
   tag.loadR( "pingOnTime", &pingOnTime, &dzero );
   tag.loadR( "pingOffTime", &pingOffTime, &dzero );
   tag.loadR( "momentary", &momentary, &zero );
@@ -849,6 +919,7 @@ char *emptyStr = "";
   tag.loadR( "invisible", &invisible, &zero );
   tag.loadR( "disableBtn", &disableBtn, &zero );
   tag.loadR( "cycleType", &cycleType, &zero );
+  tag.loadR( "indicatorType", &indicatorType, &zero );
   tag.loadR( "firstVal", &firstVal, &dzero );
   tag.loadR( "secondVal", &secondVal, &dzero );
   tag.loadR( "font", 63, fontTag );
@@ -870,7 +941,7 @@ char *emptyStr = "";
   }
   momentaryCycleTime /= 2.0;
   if ( momentaryCycleTime > 1.0 ) momentaryCycleTime = 1.0;
-  momentaryTimerValue = (int) momentaryCycleTime * 1000;
+  momentaryTimerValue = (int) ( momentaryCycleTime * 1000.0 );
 
   if ( !( stat & 1 ) ) {
     actWin->appCtx->postMessage( tag.errMsg() );
@@ -939,6 +1010,12 @@ char title[32], *ptr;
   else
     strcpy( eBuf->bufDestPvName, "" );
 
+  if ( readbackPvExpString.getRaw() )
+    strncpy( eBuf->bufReadbackPvName, readbackPvExpString.getRaw(),
+     PV_Factory::MAX_PV_NAME );
+  else
+    strcpy( eBuf->bufReadbackPvName, "" );
+
   eBuf->bufPingOnTime = pingOnTime;
   eBuf->bufPingOffTime = pingOffTime;
   eBuf->bufMomentary = momentary;
@@ -973,6 +1050,15 @@ char title[32], *ptr;
   else if ( cycleType == MPSC_K_RANDOM ) {
     strncpy( eBuf->bufCycleTypeStr, activeMpStrobeClass_str28, 31 );
     eBuf->bufCycleTypeStr[31] = 0;
+  }
+
+  if ( indicatorType == MPSC_K_SHOW_CONTROL ) {
+    strncpy( eBuf->bufIndicatorTypeStr, activeMpStrobeClass_str43, 31 );
+    eBuf->bufIndicatorTypeStr[31] = 0;
+  }
+  else if ( indicatorType == MPSC_K_SHOW_DEST ) {
+    strncpy( eBuf->bufIndicatorTypeStr, activeMpStrobeClass_str44, 31 );
+    eBuf->bufIndicatorTypeStr[31] = 0;
   }
 
   eBuf->bufFirstVal = firstVal;
@@ -1013,6 +1099,12 @@ char title[32], *ptr;
    PV_Factory::MAX_PV_NAME );
   ef.addTextField( activeMpStrobeClass_str9, 35, eBuf->bufDestPvName,
    PV_Factory::MAX_PV_NAME );
+  ef.addTextField( activeMpStrobeClass_str40, 35, eBuf->bufReadbackPvName,
+   PV_Factory::MAX_PV_NAME );
+
+  ef.addOption( activeMpStrobeClass_str41, activeMpStrobeClass_str42,
+   eBuf->bufIndicatorTypeStr, 31 );
+
   ef.addToggle( activeMpStrobeClass_str11, &eBuf->bufAutoPing );
   ef.addToggle( activeMpStrobeClass_str12, &eBuf->buf3D );
   ef.addToggle( activeMpStrobeClass_str13, &eBuf->bufInvisible );
@@ -1285,11 +1377,38 @@ int blink = 0;
 
   actWin->executeGc.saveFg();
 
-  if ( momentary ) {
-    effectiveDestV = momentaryV;
+  if ( indicatorType == MPSC_K_SHOW_CONTROL ) {
+
+    effectiveDestV = controlV;
+
   }
   else {
-    effectiveDestV = destV;
+
+    if ( readbackExists ) {
+
+      effectiveDestV = readbackV;
+
+    }
+    else {
+
+      if ( ( cycleType == MPSC_K_TOGGLE ) && momentary ) {
+        effectiveDestV = momentaryV;
+      }
+      else {
+        effectiveDestV = destV;
+      }
+
+    }
+
+  }
+
+  if ( cycleType == MPSC_K_TOGGLE ) {
+    if ( effectiveDestV ) {
+      effectiveDestV = 1;
+    }
+    else {
+      effectiveDestV = 0;
+    }
   }
 
   // set color based on even/odd state of destination
@@ -1479,10 +1598,10 @@ int opStat;
 
       initEnable();
 
-      needConnectInit = needDestConnectInit = needCtlInfoInit = 
-       needRefresh = needErase = needDraw = needVisConnectInit =
-       needVisInit = needVisUpdate = needColorConnectInit =
-       needColorInit = needColorUpdate = 0;
+      needConnectInit = needDestConnectInit = needReadbackConnectInit =
+       needCtlInfoInit =  needRefresh = needErase = needDraw =
+       needVisConnectInit = needVisInit = needVisUpdate =
+       needColorConnectInit = needColorInit = needColorUpdate = 0;
       needToEraseUnconnected = 0;
       needToDrawUnconnected = 0;
       unconnectedTimer = 0;
@@ -1490,10 +1609,11 @@ int opStat;
       aglPtr = ptr;
       pingTimer = 0;
       pingTimerActive = 0;
-      destV = 0;
-      controlPvId = visPvId = colorPvId = destPvId = NULL;
+      destV = readbackV = controlV = 0;
+      controlPvId = visPvId = colorPvId = destPvId = readbackPvId = NULL;
       initialConnection = initialDestValueConnection =
-       initialVisConnection = initialColorConnection = -1;
+       initialReadbackValueConnection = initialVisConnection =
+       initialColorConnection = -1;
 
       active = buttonPressed = 0;
       activeMode = 1;
@@ -1507,7 +1627,7 @@ int opStat;
       }
       momentaryCycleTime /= 2.0;
       if ( momentaryCycleTime > 1.0 ) momentaryCycleTime = 1.0;
-      momentaryTimerValue = (int) momentaryCycleTime * 1000;
+      momentaryTimerValue = (int) ( momentaryCycleTime * 1000 );
 
       if ( !controlPvExpString.getExpanded() ||
          blankOrComment( controlPvExpString.getExpanded() ) ) {
@@ -1544,6 +1664,15 @@ int opStat;
       }
       else {
         destExists = 1;
+        connection.addPv();
+      }
+
+      if ( !readbackPvExpString.getExpanded() ||
+         blankOrComment( readbackPvExpString.getExpanded() ) ) {
+        readbackExists = 0;
+      }
+      else {
+        readbackExists = 1;
         connection.addPv();
       }
 
@@ -1607,6 +1736,20 @@ int opStat;
 	destPvId = the_PV_Factory->create( destPvExpString.getExpanded() );
 	if ( destPvId ) {
 	  destPvId->add_conn_state_callback( mpsc_monitor_dest_connect_state,
+           this );
+	}
+	else {
+          fprintf( stderr, activeMpStrobeClass_str20 );
+          opStat = 0;
+        }
+
+      }
+
+      if ( readbackExists ) {
+
+	readbackPvId = the_PV_Factory->create( readbackPvExpString.getExpanded() );
+	if ( readbackPvId ) {
+	  readbackPvId->add_conn_state_callback( mpsc_monitor_readback_connect_state,
            this );
 	}
 	else {
@@ -1715,6 +1858,16 @@ double dval;
       destPvId->remove_value_callback( mpsc_destUpdate, this );
       destPvId->release();
       destPvId = NULL;
+    }
+  }
+
+  if ( readbackExists ) {
+    if ( readbackPvId ) {
+      readbackPvId->remove_conn_state_callback( mpsc_monitor_readback_connect_state,
+       this );
+      readbackPvId->remove_value_callback( mpsc_readbackUpdate, this );
+      readbackPvId->release();
+      readbackPvId = NULL;
     }
   }
 
@@ -1890,6 +2043,10 @@ expStringClass tmpStr;
   tmpStr.expand1st( numMacros, macros, expansions );
   destPvExpString.setRaw( tmpStr.getExpanded() );
 
+  tmpStr.setRaw( readbackPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readbackPvExpString.setRaw( tmpStr.getExpanded() );
+
   tmpStr.setRaw( onLabel.getRaw() );
   tmpStr.expand1st( numMacros, macros, expansions );
   onLabel.setRaw( tmpStr.getExpanded() );
@@ -1922,6 +2079,8 @@ int stat, retStat = 1;
   if ( !( stat & 1 ) ) retStat = stat;
   stat = destPvExpString.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
+  stat = readbackPvExpString.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = onLabel.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
   stat = offLabel.expand1st( numMacros, macros, expansions );
@@ -1947,6 +2106,8 @@ int stat, retStat = 1;
   if ( !( stat & 1 ) ) retStat = stat;
   stat = destPvExpString.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
+  stat = readbackPvExpString.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = onLabel.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
   stat = offLabel.expand2nd( numMacros, macros, expansions );
@@ -1966,6 +2127,8 @@ int activeMpStrobeClass::containsMacros ( void ) {
 
   if ( destPvExpString.containsPrimaryMacros() ) return 1;
 
+  if ( readbackPvExpString.containsPrimaryMacros() ) return 1;
+
   if ( onLabel.containsPrimaryMacros() ) return 1;
 
   if ( offLabel.containsPrimaryMacros() ) return 1;
@@ -1981,7 +2144,7 @@ int activeMpStrobeClass::containsMacros ( void ) {
 void activeMpStrobeClass::executeDeferred ( void ) {
 
 int nc, ndc, nci, nd, ne, nr, nvc, nvi, nvu, ncolc, ncoli, ncolu, ndu;
-int stat, index, invisColor;
+int stat, index, invisColor, nrc, nru;
 double dval;
 
   if ( actWin->isIconified ) return;
@@ -1989,6 +2152,7 @@ double dval;
   actWin->appCtx->proc->lock();
   nc = needConnectInit; needConnectInit = 0;
   ndc = needDestConnectInit; needDestConnectInit = 0;
+  nrc = needReadbackConnectInit; needReadbackConnectInit = 0;
   nci = needCtlInfoInit; needCtlInfoInit = 0;
   nd = needDraw; needDraw = 0;
   ne = needErase; needErase = 0;
@@ -2000,10 +2164,12 @@ double dval;
   ncoli = needColorInit; needColorInit = 0;
   ncolu = needColorUpdate; needColorUpdate = 0;
   ndu = needDestUpdate; needDestUpdate = 0;
+  nru = needReadbackUpdate; needReadbackUpdate = 0;
   visValue = curVisValue;
   colorValue = curColorValue;
   controlV = curControlV;
   destV = curDestV;
+  readbackV = curReadbackV;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
@@ -2075,6 +2241,52 @@ double dval;
       initialDestValueConnection = 0;
 
       destPvId->add_value_callback( mpsc_destUpdate, this );
+
+    }
+
+    if ( connection.pvsConnected() ) {
+      if ( autoPing ) {
+        if ( !pingTimerActive && ( cycleType != MPSC_K_TRIG ) ) {
+          pingTimerValue = getPingTimerValue();
+          pingTimer = appAddTimeOut(
+           actWin->appCtx->appContext(),
+           pingTimerValue, mpsc_ping, this );
+	  pingTimerActive = 1;
+	}
+        if ( controlExists ) {
+          if ( controlPvId ) {
+          dval = 1;
+          controlPvId->put(
+           XDisplayName(actWin->appCtx->displayName),
+           dval );
+	  }
+	}
+      }
+      bgColor.setConnected();
+      offColor.setConnected();
+      init = 1;
+      smartDrawAllActive();
+    }
+
+  }
+
+  if ( nrc ) {
+
+    connection.setPvConnected( (void *) readbackPvConnection );
+    readbackType = (int) readbackPvId->get_type().type;
+    readbackSize = readbackPvId->get_dimension();
+
+    if ( readbackType == ProcessVariable::specificType::chr ) {
+      if ( readbackPvId->get_dimension() > 1 ) {
+        readbackType = ProcessVariable::specificType::text;
+      }
+    }
+
+    if ( initialReadbackValueConnection ) {
+
+      initialReadbackValueConnection = 0;
+
+      readbackPvId->add_value_callback( mpsc_readbackUpdate, this );
 
     }
 
@@ -2297,6 +2509,13 @@ double dval;
 
   }
 
+  if ( nru ) {
+
+    eraseActive();
+    smartDrawAllActive();
+
+  }
+
 //----------------------------------------------------------------------------
 
   if ( nvu ) {
@@ -2390,6 +2609,9 @@ char *activeMpStrobeClass::dragValue (
       return destPvExpString.getExpanded();
     }
     else if ( i == 2 ) {
+      return readbackPvExpString.getExpanded();
+    }
+    else if ( i == 3 ) {
       return colorPvExpString.getExpanded();
     }
     else {
@@ -2406,6 +2628,9 @@ char *activeMpStrobeClass::dragValue (
       return destPvExpString.getRaw();
     }
     else if ( i == 2 ) {
+      return readbackPvExpString.getRaw();
+    }
+    else if ( i == 3 ) {
       return colorPvExpString.getRaw();
     }
     else {
@@ -2488,14 +2713,17 @@ void activeMpStrobeClass::getPvs (
   ProcessVariable *pvs[],
   int *n ) {
 
-  if ( max < 2 ) {
+  if ( max < 5 ) {
     *n = 0;
     return;
   }
 
-  *n = 2;
+  *n = 5;
   pvs[0] = controlPvId;
   pvs[1] = destPvId;
+  pvs[2] = readbackPvId;
+  pvs[3] = visPvId;
+  pvs[4] = colorPvId;
 
 }
 
@@ -2516,10 +2744,13 @@ char *activeMpStrobeClass::crawlerGetNextPv ( void ) {
   if ( crawlerPvIndex == 1 ) {
     return destPvExpString.getExpanded();
   }
-  else if ( crawlerPvIndex == 2 ) {
-    return colorPvExpString.getExpanded();
+  if ( crawlerPvIndex == 2 ) {
+    return readbackPvExpString.getExpanded();
   }
   else if ( crawlerPvIndex == 3 ) {
+    return colorPvExpString.getExpanded();
+  }
+  else if ( crawlerPvIndex == 4 ) {
     return visPvExpString.getExpanded();
   }
 
