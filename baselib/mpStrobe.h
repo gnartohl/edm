@@ -29,7 +29,7 @@
 
 #define MPSC_MAJOR_VERSION 4
 #define MPSC_MINOR_VERSION 0
-#define MPSC_RELEASE 2
+#define MPSC_RELEASE 3
 
 #define MPSC_IDLE 1
 #define MPSC_PINGING 2
@@ -93,6 +93,7 @@ static void mpsc_ping (
 static char *dragName[] = {
   activeMpStrobeClass_str8,
   activeMpStrobeClass_str9,
+  activeMpStrobeClass_str40,
   activeMpStrobeClass_str33,
   activeMpStrobeClass_str29
 };

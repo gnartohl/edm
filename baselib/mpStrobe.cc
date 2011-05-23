@@ -21,8 +21,9 @@
 #include "mpStrobe.h"
 #include "app_pkg.h"
 #include "act_win.h"
-#include "math.h"
-#include "time.h"
+#include <math.h>
+#include <time.h>
+#include <stdint.h>
 
 static void doBlink (
   void *ptr
@@ -644,7 +645,7 @@ activeMpStrobeClass::activeMpStrobeClass ( void ) {
   activeMode = 0;
   eBuf = NULL;
   controlType = destType = destSize = readbackType = readbackSize = 0;
-  randSeed = (unsigned int) this + (unsigned int) clock();
+  randSeed = (uintptr_t) this + (uintptr_t) clock();
 
   setBlinkFunction( (void *) doBlink );
 
@@ -709,7 +710,7 @@ activeGraphicClass *mpso = (activeGraphicClass *) this;
   activeMode = 0;
   eBuf = NULL;
   controlType = destType = destSize = readbackType = readbackSize = 0;
-  randSeed = (unsigned int) this + (unsigned int) clock();
+  randSeed = (uintptr_t) this + (uintptr_t) clock();
 
   connection.setMaxPvs( 5 );
 
