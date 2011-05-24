@@ -23,7 +23,6 @@
 #include "act_win.h"
 #include <math.h>
 #include <time.h>
-#include <stdint.h>
 
 static void doBlink (
   void *ptr
@@ -645,7 +644,14 @@ activeMpStrobeClass::activeMpStrobeClass ( void ) {
   activeMode = 0;
   eBuf = NULL;
   controlType = destType = destSize = readbackType = readbackSize = 0;
-  randSeed = (uintptr_t) this + (uintptr_t) clock();
+
+  {
+    clock_t clks = (unsigned int) clock();
+    unsigned int uiclks;
+    memcpy( (void *) &uiclks, (void *) &clks, sizeof(unsigned int) );
+    memcpy( (void *) &randSeed, (void *) this, sizeof(unsigned int) );
+    randSeed += uiclks;
+  }
 
   setBlinkFunction( (void *) doBlink );
 
@@ -710,7 +716,14 @@ activeGraphicClass *mpso = (activeGraphicClass *) this;
   activeMode = 0;
   eBuf = NULL;
   controlType = destType = destSize = readbackType = readbackSize = 0;
-  randSeed = (uintptr_t) this + (uintptr_t) clock();
+
+  {
+    clock_t clks = (unsigned int) clock();
+    unsigned int uiclks;
+    memcpy( (void *) &uiclks, (void *) &clks, sizeof(unsigned int) );
+    memcpy( (void *) &randSeed, (void *) this, sizeof(unsigned int) );
+    randSeed += uiclks;
+  }
 
   connection.setMaxPvs( 5 );
 
@@ -2489,9 +2502,6 @@ double dval;
   if ( ndu ) {
 
     if ( cycleType == MPSC_K_TRIG ) {
-
-      //printf( "trig - round(destV) = %-f, round(firstVal) = %-f, round(secondVal) = %-f\n",
-      // round(destV), round(firstVal), round(secondVal) );
 
       if ( round( destV ) == round( firstVal ) ) {
         if ( !pingTimerActive ) {
