@@ -22,6 +22,12 @@
 #include "postfix.h"
 #include "postfixPvt.h"
 
+#ifdef SOLARIS
+#include <ieeefp.h>
+
+int isinf(double x) { return !finite(x) && x==x; }
+#endif
+
 static double calcRandom(void);
 static int cond_search(const char **ppinst, int match);
 

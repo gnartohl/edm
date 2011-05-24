@@ -19,14 +19,35 @@ ifdef EPICS_HOST_ARCH
    edm_LIBS_Darwin += Xm Xmu Xt Xp Xtst X11
    edm_SYS_LIBS_Darwin += pthread dl
 
-   edm_LIBS_solaris += Xt Xt Xmu X11 Xext
+   edm_LIBS_solaris += Xm Xt Xmu X11 Xext
    edm_SYS_LIBS_solaris += pthread dl rt socket nsl
 
    USR_LIBS_hpux11_11_mt = Xm Xt Xmu X11 Xext
    USR_SYS_LIBS_hpux11_11_mt = pthread
 
    PROD = edm
-   
+
+#  AJF: For solaris builds
+#  OP_SYS_LDFLAGS = -z ignore -z combreloc -z lazyload
+#  This is set in "base/configure/os/CONFIG.solaris-sparc-gnu.solaris-sparc-gnu
+#  However, the presence of the "-z ignore" breaks the "edm" build and you end up
+#  with the following message when trying to run "edm": Error: No realize class procedure defined.
+#
+#  From the man page:
+#  -z ignore | record
+#
+#  Ignores, or records, dynamic dependencies that are not referenced as part of the link-edit. 
+#  Ignores, or records, unreferenced ELF sections from the relocatable objects that are read as 
+#  part of the link-edit. By default, -z record is in effect.
+#
+#  If an ELF section is ignored, the section is eliminated from the output file being generated. 
+#  A section is ignored when three conditions are true. The eliminated section must contribute to 
+#  an allocatable segment. The eliminated section must provide no global symbols. No other section 
+#  from any object that contributes to the link-edit, must reference an eliminated section. 
+#
+#  Therefore, to build for "solaris", set OP_SYS_LDFLAGS as follows:
+   OP_SYS_LDFLAGS = -z combreloc -z lazyload 
+
    PROD_LIBS += ca Com
    
    INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm

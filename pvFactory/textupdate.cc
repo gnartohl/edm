@@ -13,6 +13,10 @@
 #include "pv_factory.h"
 #include "cvtFast.h"
 
+#ifdef SOLARIS
+  #include "ieeefp.h"
+#endif
+
 static int g_transInit = 1;
 static XtTranslations g_parsedTrans;
 
