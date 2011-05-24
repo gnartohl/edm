@@ -46,6 +46,21 @@
 
 #include "mpStrobe.str"
 
+#ifdef SOLARIS
+#include <math.h>
+/* There is no "round" function in Solaris 8 */
+double round (
+  double x
+) {
+  double absx, y;
+  absx = fabs(x);
+  y = floor(absx);
+  if (absx - y >= 0.5)
+    y += 1.0;
+  return copysign(y, x);
+}
+#endif
+
 static void doBlink (
   void *ptr
 );

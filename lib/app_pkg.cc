@@ -1337,6 +1337,12 @@ SYS_PROC_ID_TYPE procId;
     pv->putText( str );
     return;
   }
+  else if ( strcmp( name, "* READONLY *" ) == 0 ) {
+    setReadOnly();
+    strcpy( str, "" );
+    pv->putText( str );
+    return;
+  }
 
   if ( name[0] == ' ' ) {
     return;
