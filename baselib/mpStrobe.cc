@@ -88,6 +88,8 @@ activeMpStrobeClass *mpso = (activeMpStrobeClass *) client;
 
   mpso->readbackPvExpString.setRaw( mpso->eBuf->bufReadbackPvName );
 
+  mpso->faultPvExpString.setRaw( mpso->eBuf->bufFaultPvName );
+
   mpso->onLabel.setRaw( mpso->eBuf->bufOnLabel );
 
   mpso->offLabel.setRaw( mpso->eBuf->bufOffLabel );
@@ -317,6 +319,37 @@ activeMpStrobeClass *mpso = (activeMpStrobeClass *) userarg;
 
 }
 
+static void mpsc_monitor_fault_connect_state (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+activeMpStrobeClass *mpso = (activeMpStrobeClass *) userarg;
+
+  if ( pv->is_valid() ) {
+
+    mpso->needFaultConnectInit = 1;
+    mpso->actWin->appCtx->proc->lock();
+    mpso->actWin->addDefExeNode( mpso->aglPtr );
+    mpso->actWin->appCtx->proc->unlock();
+
+  }
+  else {
+
+    mpso->connection.setPvDisconnected( (void *) mpso->faultPvConnection );
+    mpso->active = 0;
+    mpso->bgColor.setDisconnected();
+    mpso->offColor.setDisconnected();
+    mpso->needDraw = 1;
+
+  }
+
+  mpso->actWin->appCtx->proc->lock();
+  mpso->actWin->addDefExeNode( mpso->aglPtr );
+  mpso->actWin->appCtx->proc->unlock();
+
+}
+
 static void mpsc_controlUpdate (
   ProcessVariable *pv,
   void *userarg )
@@ -371,6 +404,24 @@ activeMpStrobeClass *mpso = (activeMpStrobeClass *) userarg;
   mpso->curReadbackV = pv->get_double();
   mpso->readbackV = mpso->curReadbackV;
   mpso->needReadbackUpdate = 1;
+  mpso->actWin->addDefExeNode( mpso->aglPtr );
+
+  mpso->actWin->appCtx->proc->unlock();
+
+}
+
+static void mpsc_faultUpdate (
+  ProcessVariable *pv,
+  void *userarg )
+{
+
+activeMpStrobeClass *mpso = (activeMpStrobeClass *) userarg;
+
+  mpso->actWin->appCtx->proc->lock();
+
+  mpso->curFaultV = pv->get_double();
+  mpso->faultV = mpso->curFaultV;
+  mpso->needFaultUpdate = 1;
   mpso->actWin->addDefExeNode( mpso->aglPtr );
 
   mpso->actWin->appCtx->proc->unlock();
@@ -475,10 +526,12 @@ double mval;
 
   mpso->momentaryTimerActive = 0;
 
-  mval = 0;
-  mpso->destPvId->put(
-   XDisplayName(mpso->actWin->appCtx->displayName),
-   mval );
+  if ( mpso->destPvId && mpso->destPvId->is_valid() ) {
+    mval = 0;
+    mpso->destPvId->put(
+     XDisplayName(mpso->actWin->appCtx->displayName),
+     mval );
+  }
 
 }
 
@@ -632,6 +685,7 @@ activeMpStrobeClass::activeMpStrobeClass ( void ) {
   momentary = 0;
   curDestV = destV = 0.0;
   curReadbackV = readbackV = 0.0;
+  curFaultV = faultV = 0.0;
   momentaryV = 0;
   curControlV = controlV = 0.0;
   unconnectedTimer = 0;
@@ -640,7 +694,7 @@ activeMpStrobeClass::activeMpStrobeClass ( void ) {
   visInverted = 0;
   strcpy( minVisString, "" );
   strcpy( maxVisString, "" );
-  connection.setMaxPvs( 5 );
+  connection.setMaxPvs( 6 );
   activeMode = 0;
   eBuf = NULL;
   controlType = destType = destSize = readbackType = readbackSize = 0;
@@ -684,6 +738,7 @@ activeGraphicClass *mpso = (activeGraphicClass *) this;
   controlPvExpString.copy( source->controlPvExpString );
   destPvExpString.copy( source->destPvExpString );
   readbackPvExpString.copy( source->readbackPvExpString );
+  faultPvExpString.copy( source->faultPvExpString );
   visPvExpString.copy( source->visPvExpString );
   colorPvExpString.copy( source->colorPvExpString );
 
@@ -705,6 +760,7 @@ activeGraphicClass *mpso = (activeGraphicClass *) this;
   momentary = source->momentary;
   curDestV = 0.0;
   curReadbackV = 0.0;
+  curFaultV = 0.0;
   momentaryV = 0;
   unconnectedTimer = 0;
 
@@ -860,6 +916,7 @@ char *emptyStr = "";
   tag.loadW( "controlPv", &controlPvExpString, emptyStr );
   tag.loadW( "destValuePv", &destPvExpString, emptyStr );
   tag.loadW( "readbackValuePv", &readbackPvExpString, emptyStr );
+  tag.loadW( "faultValuePv", &faultPvExpString, emptyStr );
   tag.loadW( "pingOnTime", &pingOnTime, &dzero );
   tag.loadW( "pingOffTime", &pingOffTime, &dzero );
   tag.loadW( "momentary", &momentary, &zero );
@@ -923,6 +980,7 @@ char *emptyStr = "";
   tag.loadR( "controlPv", &controlPvExpString, emptyStr );
   tag.loadR( "destValuePv", &destPvExpString, emptyStr );
   tag.loadR( "readbackValuePv", &readbackPvExpString, emptyStr );
+  tag.loadR( "faultValuePv", &faultPvExpString, emptyStr );
   tag.loadR( "pingOnTime", &pingOnTime, &dzero );
   tag.loadR( "pingOffTime", &pingOffTime, &dzero );
   tag.loadR( "momentary", &momentary, &zero );
@@ -1030,6 +1088,12 @@ char title[32], *ptr;
   else
     strcpy( eBuf->bufReadbackPvName, "" );
 
+  if ( faultPvExpString.getRaw() )
+    strncpy( eBuf->bufFaultPvName, faultPvExpString.getRaw(),
+     PV_Factory::MAX_PV_NAME );
+  else
+    strcpy( eBuf->bufFaultPvName, "" );
+
   eBuf->bufPingOnTime = pingOnTime;
   eBuf->bufPingOffTime = pingOffTime;
   eBuf->bufMomentary = momentary;
@@ -1114,6 +1178,8 @@ char title[32], *ptr;
   ef.addTextField( activeMpStrobeClass_str9, 35, eBuf->bufDestPvName,
    PV_Factory::MAX_PV_NAME );
   ef.addTextField( activeMpStrobeClass_str40, 35, eBuf->bufReadbackPvName,
+   PV_Factory::MAX_PV_NAME );
+  ef.addTextField( activeMpStrobeClass_str45, 35, eBuf->bufFaultPvName,
    PV_Factory::MAX_PV_NAME );
 
   ef.addOption( activeMpStrobeClass_str41, activeMpStrobeClass_str42,
@@ -1613,7 +1679,8 @@ int opStat;
       initEnable();
 
       needConnectInit = needDestConnectInit = needReadbackConnectInit =
-       needCtlInfoInit =  needRefresh = needErase = needDraw =
+       needFaultConnectInit = needCtlInfoInit =  needRefresh =
+       needErase = needDraw =
        needVisConnectInit = needVisInit = needVisUpdate =
        needColorConnectInit = needColorInit = needColorUpdate = 0;
       needToEraseUnconnected = 0;
@@ -1623,11 +1690,12 @@ int opStat;
       aglPtr = ptr;
       pingTimer = 0;
       pingTimerActive = 0;
-      destV = readbackV = controlV = 0;
-      controlPvId = visPvId = colorPvId = destPvId = readbackPvId = NULL;
+      destV = readbackV = faultV = controlV = 0;
+      controlPvId = visPvId = colorPvId = destPvId = readbackPvId =
+       faultPvId = NULL;
       initialConnection = initialDestValueConnection =
-       initialReadbackValueConnection = initialVisConnection =
-       initialColorConnection = -1;
+       initialReadbackValueConnection = initialFaultValueConnection =
+       initialVisConnection = initialColorConnection = -1;
 
       active = buttonPressed = 0;
       activeMode = 1;
@@ -1687,6 +1755,15 @@ int opStat;
       }
       else {
         readbackExists = 1;
+        connection.addPv();
+      }
+
+      if ( !faultPvExpString.getExpanded() ||
+         blankOrComment( faultPvExpString.getExpanded() ) ) {
+        faultExists = 0;
+      }
+      else {
+        faultExists = 1;
         connection.addPv();
       }
 
@@ -1764,6 +1841,20 @@ int opStat;
 	readbackPvId = the_PV_Factory->create( readbackPvExpString.getExpanded() );
 	if ( readbackPvId ) {
 	  readbackPvId->add_conn_state_callback( mpsc_monitor_readback_connect_state,
+           this );
+	}
+	else {
+          fprintf( stderr, activeMpStrobeClass_str20 );
+          opStat = 0;
+        }
+
+      }
+
+      if ( faultExists ) {
+
+	faultPvId = the_PV_Factory->create( faultPvExpString.getExpanded() );
+	if ( faultPvId ) {
+	  faultPvId->add_conn_state_callback( mpsc_monitor_fault_connect_state,
            this );
 	}
 	else {
@@ -1882,6 +1973,16 @@ double dval;
       readbackPvId->remove_value_callback( mpsc_readbackUpdate, this );
       readbackPvId->release();
       readbackPvId = NULL;
+    }
+  }
+
+  if ( faultExists ) {
+    if ( faultPvId ) {
+      faultPvId->remove_conn_state_callback( mpsc_monitor_fault_connect_state,
+       this );
+      faultPvId->remove_value_callback( mpsc_faultUpdate, this );
+      faultPvId->release();
+      faultPvId = NULL;
     }
   }
 
@@ -2061,6 +2162,10 @@ expStringClass tmpStr;
   tmpStr.expand1st( numMacros, macros, expansions );
   readbackPvExpString.setRaw( tmpStr.getExpanded() );
 
+  tmpStr.setRaw( faultPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  faultPvExpString.setRaw( tmpStr.getExpanded() );
+
   tmpStr.setRaw( onLabel.getRaw() );
   tmpStr.expand1st( numMacros, macros, expansions );
   onLabel.setRaw( tmpStr.getExpanded() );
@@ -2095,6 +2200,8 @@ int stat, retStat = 1;
   if ( !( stat & 1 ) ) retStat = stat;
   stat = readbackPvExpString.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
+  stat = faultPvExpString.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = onLabel.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
   stat = offLabel.expand1st( numMacros, macros, expansions );
@@ -2122,6 +2229,8 @@ int stat, retStat = 1;
   if ( !( stat & 1 ) ) retStat = stat;
   stat = readbackPvExpString.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
+  stat = faultPvExpString.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = onLabel.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
   stat = offLabel.expand2nd( numMacros, macros, expansions );
@@ -2143,6 +2252,8 @@ int activeMpStrobeClass::containsMacros ( void ) {
 
   if ( readbackPvExpString.containsPrimaryMacros() ) return 1;
 
+  if ( faultPvExpString.containsPrimaryMacros() ) return 1;
+
   if ( onLabel.containsPrimaryMacros() ) return 1;
 
   if ( offLabel.containsPrimaryMacros() ) return 1;
@@ -2158,7 +2269,7 @@ int activeMpStrobeClass::containsMacros ( void ) {
 void activeMpStrobeClass::executeDeferred ( void ) {
 
 int nc, ndc, nci, nd, ne, nr, nvc, nvi, nvu, ncolc, ncoli, ncolu, ndu;
-int stat, index, invisColor, nrc, nru;
+int stat, index, invisColor, nrc, nru, nfc, nfu;
 double dval;
 
   if ( actWin->isIconified ) return;
@@ -2167,6 +2278,7 @@ double dval;
   nc = needConnectInit; needConnectInit = 0;
   ndc = needDestConnectInit; needDestConnectInit = 0;
   nrc = needReadbackConnectInit; needReadbackConnectInit = 0;
+  nfc = needFaultConnectInit; needFaultConnectInit = 0;
   nci = needCtlInfoInit; needCtlInfoInit = 0;
   nd = needDraw; needDraw = 0;
   ne = needErase; needErase = 0;
@@ -2179,11 +2291,13 @@ double dval;
   ncolu = needColorUpdate; needColorUpdate = 0;
   ndu = needDestUpdate; needDestUpdate = 0;
   nru = needReadbackUpdate; needReadbackUpdate = 0;
+  nfu = needFaultUpdate; needFaultUpdate = 0;
   visValue = curVisValue;
   colorValue = curColorValue;
   controlV = curControlV;
   destV = curDestV;
   readbackV = curReadbackV;
+  faultV = curFaultV;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
@@ -2301,6 +2415,44 @@ double dval;
       initialReadbackValueConnection = 0;
 
       readbackPvId->add_value_callback( mpsc_readbackUpdate, this );
+
+    }
+
+    if ( connection.pvsConnected() ) {
+      if ( autoPing ) {
+        if ( !pingTimerActive && ( cycleType != MPSC_K_TRIG ) ) {
+          pingTimerValue = getPingTimerValue();
+          pingTimer = appAddTimeOut(
+           actWin->appCtx->appContext(),
+           pingTimerValue, mpsc_ping, this );
+	  pingTimerActive = 1;
+	}
+        if ( controlExists ) {
+          if ( controlPvId ) {
+          dval = 1;
+          controlPvId->put(
+           XDisplayName(actWin->appCtx->displayName),
+           dval );
+	  }
+	}
+      }
+      bgColor.setConnected();
+      offColor.setConnected();
+      init = 1;
+      smartDrawAllActive();
+    }
+
+  }
+
+  if ( nfc ) {
+
+    connection.setPvConnected( (void *) faultPvConnection );
+
+    if ( initialFaultValueConnection ) {
+
+      initialFaultValueConnection = 0;
+
+      faultPvId->add_value_callback( mpsc_faultUpdate, this );
 
     }
 
@@ -2527,6 +2679,25 @@ double dval;
 
   }
 
+  if ( nfu ) {
+
+    if ( (unsigned int) faultV & (unsigned int) 2 ) {
+      setReadWrite();
+      faultV = curFaultV = 0;
+      if ( faultPvId && faultPvId->is_valid() ) {
+        dval = 0;
+        faultPvId->put(
+         XDisplayName(actWin->appCtx->displayName), dval );
+      }
+    }
+    else if ( (unsigned int) faultV & (unsigned int) 1 ) {
+      setReadOnly();
+    }
+    eraseActive();
+    smartDrawAllActive();
+
+  }
+
 //----------------------------------------------------------------------------
 
   if ( nvu ) {
@@ -2623,6 +2794,9 @@ char *activeMpStrobeClass::dragValue (
       return readbackPvExpString.getExpanded();
     }
     else if ( i == 3 ) {
+      return faultPvExpString.getExpanded();
+    }
+    else if ( i == 4 ) {
       return colorPvExpString.getExpanded();
     }
     else {
@@ -2642,6 +2816,9 @@ char *activeMpStrobeClass::dragValue (
       return readbackPvExpString.getRaw();
     }
     else if ( i == 3 ) {
+      return faultPvExpString.getRaw();
+    }
+    else if ( i == 4 ) {
       return colorPvExpString.getRaw();
     }
     else {
@@ -2724,17 +2901,18 @@ void activeMpStrobeClass::getPvs (
   ProcessVariable *pvs[],
   int *n ) {
 
-  if ( max < 5 ) {
+  if ( max < 6 ) {
     *n = 0;
     return;
   }
 
-  *n = 5;
+  *n = 6;
   pvs[0] = controlPvId;
   pvs[1] = destPvId;
   pvs[2] = readbackPvId;
-  pvs[3] = visPvId;
-  pvs[4] = colorPvId;
+  pvs[3] = faultPvId;
+  pvs[4] = visPvId;
+  pvs[5] = colorPvId;
 
 }
 
@@ -2748,20 +2926,23 @@ char *activeMpStrobeClass::crawlerGetFirstPv ( void ) {
 
 char *activeMpStrobeClass::crawlerGetNextPv ( void ) {
 
-  if ( crawlerPvIndex >=4 ) return NULL;
+  if ( crawlerPvIndex > 5 ) return NULL;
 
   crawlerPvIndex++;
 
   if ( crawlerPvIndex == 1 ) {
     return destPvExpString.getExpanded();
   }
-  if ( crawlerPvIndex == 2 ) {
+  else if ( crawlerPvIndex == 2 ) {
     return readbackPvExpString.getExpanded();
   }
   else if ( crawlerPvIndex == 3 ) {
-    return colorPvExpString.getExpanded();
+    return faultPvExpString.getExpanded();
   }
   else if ( crawlerPvIndex == 4 ) {
+    return colorPvExpString.getExpanded();
+  }
+  else if ( crawlerPvIndex == 5 ) {
     return visPvExpString.getExpanded();
   }
 

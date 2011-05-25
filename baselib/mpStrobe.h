@@ -28,8 +28,8 @@
 #include "thread.h"
 
 #define MPSC_MAJOR_VERSION 4
-#define MPSC_MINOR_VERSION 0
-#define MPSC_RELEASE 3
+#define MPSC_MINOR_VERSION 1
+#define MPSC_RELEASE 0
 
 #define MPSC_IDLE 1
 #define MPSC_PINGING 2
@@ -97,6 +97,10 @@ static void mpsc_readbackUpdate (
   ProcessVariable *pv,
   void *userarg );
 
+static void mpsc_faultUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
 static void mpsc_ping_clear (
   XtPointer client,
   XtIntervalId *id );
@@ -109,6 +113,7 @@ static char *dragName[] = {
   activeMpStrobeClass_str8,
   activeMpStrobeClass_str9,
   activeMpStrobeClass_str40,
+  activeMpStrobeClass_str45,
   activeMpStrobeClass_str33,
   activeMpStrobeClass_str29
 };
@@ -147,6 +152,10 @@ static void mpsc_monitor_dest_connect_state (
   void *userarg );
 
 static void mpsc_monitor_readback_connect_state (
+  ProcessVariable *pv,
+  void *userarg );
+
+static void mpsc_monitor_fault_connect_state (
   ProcessVariable *pv,
   void *userarg );
 
@@ -189,6 +198,10 @@ friend void mpsc_destUpdate (
   void *userarg );
 
 friend void mpsc_readbackUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
+friend void mpsc_faultUpdate (
   ProcessVariable *pv,
   void *userarg );
 
@@ -237,6 +250,10 @@ friend void mpsc_monitor_readback_connect_state (
   ProcessVariable *pv,
   void *userarg );
 
+friend void mpsc_monitor_fault_connect_state (
+  ProcessVariable *pv,
+  void *userarg );
+
 int opComplete;
 
 int minW;
@@ -275,6 +292,7 @@ typedef struct editBufTag {
   char bufControlPvName[PV_Factory::MAX_PV_NAME+1];
   char bufDestPvName[PV_Factory::MAX_PV_NAME+1];
   char bufReadbackPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufFaultPvName[PV_Factory::MAX_PV_NAME+1];
   char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
   char bufMinVisString[39+1];
   char bufMaxVisString[39+1];
@@ -306,43 +324,46 @@ int fontAscent, fontDescent, fontHeight;
 static const int controlPvConnection = 1;
 static const int destPvConnection = 2;
 static const int readbackPvConnection = 3;
-static const int visPvConnection = 4;
-static const int colorPvConnection = 5;
+static const int faultPvConnection = 4;
+static const int visPvConnection = 5;
+static const int colorPvConnection = 6;
 
 pvConnectionClass connection;
 
-ProcessVariable *controlPvId, *destPvId, *readbackPvId;
+ProcessVariable *controlPvId, *destPvId, *readbackPvId, *faultPvId;
 
 expStringClass controlPvExpString;
 expStringClass destPvExpString;
 expStringClass readbackPvExpString;
+expStringClass faultPvExpString;
 
 double pingOnTime, pingOffTime;
 int momentary;
 double momentaryCycleTime;
 
-int controlExists, destExists, readbackExists, buttonPressed;
+int controlExists, destExists, readbackExists, faultExists, buttonPressed;
 
-int controlPvConnected, destPvConnected, readbackPvConnected, active,
- activeMode, init;
+int controlPvConnected, destPvConnected, readbackPvConnected,
+ faultPvConnected, active, activeMode, init;
 
 int pingTimerActive, pingTimerValue;
 XtIntervalId pingTimer;
 double controlV, curControlV, destV, curDestV, effectiveDestV,
- readbackV, curReadbackV, momentaryV;
+ readbackV, curReadbackV, momentaryV, faultV, curFaultV,;
 
 int momentaryTimerActive, momentaryTimerValue;
 XtIntervalId momentaryTimer;
 
 int needConnectInit, needDestConnectInit, needReadbackConnectInit,
- needCtlInfoInit, needRefresh, needErase, needDraw, needToDrawUnconnected,
- needToEraseUnconnected, needDestUpdate, needReadbackUpdate;
+ needFaultConnectInit, needCtlInfoInit, needRefresh, needErase, needDraw,
+ needToDrawUnconnected, needToEraseUnconnected, needDestUpdate,
+ needReadbackUpdate, needFaultUpdate;
 
 XtIntervalId unconnectedTimer;
 
 int initialConnection, initialDestValueConnection,
- initialReadbackValueConnection, initialVisConnection,
- initialColorConnection;
+ initialReadbackValueConnection, initialFaultValueConnection,
+ initialVisConnection, initialColorConnection;
 
 ProcessVariable *visPvId;
 expStringClass visPvExpString;

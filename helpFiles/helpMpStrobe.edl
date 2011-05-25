@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 66
-y 92
+x 53
+y 101
 w 1176
-h 696
+h 762
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
@@ -29,17 +29,17 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 24
-y 22
-w 233
-h 27
-font "helvetica-medium-r-24.0"
+x 21
+y 10
+w 284
+h 38
+font "helvetica-bold-r-24.0"
+fontAlign "center"
 fgColor rgb 0 0 0
 bgColor rgb 61423 61423 61423
 value {
   "Multi-Purpose Strobe"
 }
-autoSize
 endObjectProperties
 
 # (Static Text)
@@ -81,7 +81,7 @@ release 0
 x 27
 y 289
 w 516
-h 368
+h 432
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 41120 41120 41120
@@ -96,6 +96,11 @@ value {
   "If Readback PV is given, button indicates readback PV state in place of"
   "destination PV state."
   ""
+  "Fault PV may be used to alter write access to an EPICS PV at runtime."
+  "When bit 0 of this PV is set, edm is set to read-only mode. When bit 1"
+  "is set, edm returns to read-write mode and the PV is reset to zero. Access"
+  "to local pvs is unaffected."
+  ""
   "Button may be set to indicate control PV state or destination"
   "(or readback) PV state."
   ""
@@ -103,9 +108,8 @@ value {
   "modes, Off-Time is ignored and On/Cycle-Time determines the strobe period."
   ""
   "In Toggle mode, if Momentary is selected, the destination PV is pulsed on and off"
-  "once per half-cycle. In this case, the state of the actual device must be manually"
-  "set to off before starting the strobe (else the button state will be 180 degrees"
-  "out of phase with the device)."
+  "once per half-cycle. In this case, the state of the actual device is best indicated"
+  "by a read-back PV (hence the existence of Readback PV described above)."
   ""
   "If Auto-Ping is checked, strobe starts when screen is activated."
   ""
@@ -375,7 +379,7 @@ release 0
 x 567
 y 62
 w 6
-h 612
+h 676
 lineColor rgb 0 0 0
 fill
 fillColor rgb 0 0 0

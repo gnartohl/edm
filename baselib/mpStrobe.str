@@ -45,5 +45,6 @@
 #define activeMpStrobeClass_str42 (char *) "Control State|Destination State"
 #define activeMpStrobeClass_str43 (char *) "Control State"
 #define activeMpStrobeClass_str44 (char *) "Destination State"
+#define activeMpStrobeClass_str45 (char *) "Fault PV"
 
 #endif
