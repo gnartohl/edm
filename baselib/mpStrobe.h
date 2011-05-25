@@ -349,7 +349,7 @@ int controlPvConnected, destPvConnected, readbackPvConnected,
 int pingTimerActive, pingTimerValue;
 XtIntervalId pingTimer;
 double controlV, curControlV, destV, curDestV, effectiveDestV,
- readbackV, curReadbackV, momentaryV, faultV, curFaultV,;
+ readbackV, curReadbackV, momentaryV, faultV, curFaultV;
 
 int momentaryTimerActive, momentaryTimerValue;
 XtIntervalId momentaryTimer;
