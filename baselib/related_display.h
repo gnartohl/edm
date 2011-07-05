@@ -30,7 +30,7 @@
 #define RDC_PARENT_OFS_POS 2
 
 #define RDC_MAJOR_VERSION 4
-#define RDC_MINOR_VERSION 2
+#define RDC_MINOR_VERSION 3
 #define RDC_RELEASE 0
 
 typedef struct objAndIndexTag {

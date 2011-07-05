@@ -239,6 +239,7 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
   }
 
   for ( i=ii; i<rdo->maxDsps; i++ ) {
+    rdo->displayFileName[i].setRaw( rdo->buf->bufDisplayFileName[i] );
     if ( !blank( rdo->buf->bufDisplayFileName[i] ) ) {
       trimWhiteSpace( rdo->buf->bufDisplayFileName[i] );
       rdo->displayFileName[ii].setRaw( rdo->buf->bufDisplayFileName[i] );
@@ -2755,6 +2756,8 @@ int numNewMacros, max, numFound;
 
 char prefix[127+1];
 
+activeWindowClass *aw0, *aw1;
+
   focus = useFocus;
   //if ( numDsps > 1 ) {
   if ( numMenuItems > 1 ) {
@@ -3176,9 +3179,27 @@ char prefix[127+1];
 done:
 
   if ( !actWin->isEmbedded ) {
+
     if ( !focus && !button3Popup && closeAction[index] ) {
       actWin->closeDeferred( 2 );
     }
+
+  }
+  else {
+
+    aw1 = NULL;
+    aw0 = actWin->parent;
+    while ( aw0 ) {
+
+      aw1 = aw0;
+      aw0 = aw0->parent;
+
+    }
+
+    if ( aw1 && !focus && !button3Popup && closeAction[index] ) {
+      aw1->closeDeferred( 2 );
+    }
+
   }
 
 }
