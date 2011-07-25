@@ -7,6 +7,8 @@
 #include <time.h>
 #include <sys/time.h>
 #include "sys_types.h"
+#include <sys/stat.h>
+#include <unistd.h>
 #include "avl.h"
 #include "utility.h"
 #include "environment.str"
@@ -27,8 +29,6 @@ typedef struct nameListTag {
   char *cmd;
 } nameListType, *nameListPtr;
 
-static int gPipeIsOpen = 0;
-static FILE *gPipeF = NULL;
 static int gInitList = 1;
 static AVL_HANDLE gFilterH = NULL;
 static int gNumFilters = 0;
@@ -81,11 +81,11 @@ nameListPtr p1, p2;
 static void initFilters ( void ) {
 
 char *ptr, *tk, *ctx, file[255+1], line[255+1];
-int l, stat, dup;
+int l, status, dup;
 FILE *f;
 nameListPtr cur;
 
-  stat = avl_init_tree( compare_nodes,
+  status = avl_init_tree( compare_nodes,
    compare_key, copy_node, &gFilterH );
 
   ptr = getenv( environment_str12 );
@@ -125,8 +125,8 @@ nameListPtr cur;
         cur->cmd = new char[l+1];
         strcpy( cur->cmd, tk );
 
-        stat = avl_insert_node( gFilterH, (void *) cur, &dup );
-	if ( !( stat & 1 ) ) goto errRet;
+        status = avl_insert_node( gFilterH, (void *) cur, &dup );
+	if ( !( status & 1 ) ) goto errRet;
 
         if ( dup ) {
           delete[] cur->ext;
@@ -145,13 +145,13 @@ nameListPtr cur;
 
   }
 
-  stat = avl_get_first( gFilterH, (void **) &cur );
-  if ( !( stat & 1 ) ) goto errRet;
+  status = avl_get_first( gFilterH, (void **) &cur );
+  if ( !( status & 1 ) ) goto errRet;
 
   while ( cur ) {
 
-    stat = avl_get_next( gFilterH, (void **) &cur );
-    if ( !( stat & 1 ) ) goto errRet;
+    status = avl_get_next( gFilterH, (void **) &cur );
+    if ( !( status & 1 ) ) goto errRet;
 
   }
 
@@ -165,13 +165,13 @@ static char *findFilter (
   char *oneExt
 ) {
 
-int stat;
+int status;
 nameListPtr cur;
 
   if ( !gFilterH ) return NULL;
 
-  stat = avl_get_match( gFilterH, (void *) oneExt, (void **) &cur );
-  if ( !( stat & 1 ) ) return NULL;
+  status = avl_get_match( gFilterH, (void *) oneExt, (void **) &cur );
+  if ( !( status & 1 ) ) return NULL;
   if ( !cur ) return NULL;
   if ( !cur->cmd ) return NULL;
 
@@ -342,20 +342,23 @@ int fileClose (
   FILE *f
 ) {
 
-  if ( gPipeIsOpen ) {
-
-    if ( f == gPipeF ) {
-
-      gPipeF = NULL;
-      gPipeIsOpen = 0;
-      return pclose( f );
-
-    }
-
-  }
+struct stat buf;
+int status;
 
   if ( diagnosticMode() ) {
     logDiagnostic( "close file\n" );
+  }
+
+  status = fstat( fileno(f), &buf );
+  if ( status == -1 ) {
+    if ( debugMode() ) {
+      perror( "in fileClose " );
+    }
+    return status;
+  }
+
+  if ( buf.st_mode & S_IFIFO ) {
+    return pclose( f );
   }
 
   return fclose( f );
@@ -368,7 +371,7 @@ static int checkForHttp (
 ) {
 
 unsigned int i;
-int stat;
+int status;
 char buf[255+1], namePart[255+1], postPart[255+1], *tk, *context;
 
   strncpy( buf, fullName, 255 );
@@ -391,14 +394,14 @@ char buf[255+1], namePart[255+1], postPart[255+1], *tk, *context;
        ( strcmp( tk, "HTTPS" ) == 0 ) 
      ) {
 
-    stat = getFileName( namePart, fullName, 255 );
-    if ( stat & 1 ) {
+    status = getFileName( namePart, fullName, 255 );
+    if ( status & 1 ) {
 
       strncpy( name, namePart, 255 );
       name[255] = 0;
 
-      stat = getFilePostfix( postPart, fullName, 255 );
-      if ( stat & 1 ) Strncat( name, postPart, 255 );
+      status = getFilePostfix( postPart, fullName, 255 );
+      if ( status & 1 ) Strncat( name, postPart, 255 );
 
       return 1;
 
@@ -703,19 +706,11 @@ static int disableCache = 0;
           return NULL;
         }
 
-        if ( gPipeIsOpen ) {
-          fprintf( stderr, "Pipe is already open (1)\n" );
-          pclose( gPipeF );
-          //return NULL;
-        }
-
-        gPipeIsOpen = 1;
-
         if ( debugMode() ) fprintf( stderr, "1 Filter cmd is [%s]\n", cmd );
 
-        gPipeF = popen( cmd, "r" );
+        f = popen( cmd, "r" );
 
-        return gPipeF;
+        return f;
 
       }
       else {
@@ -868,19 +863,11 @@ static int disableCache = 0;
             return NULL;
           }
 
-          if ( gPipeIsOpen ) {
-            fprintf( stderr, "Pipe is already open (2)\n" );
-            pclose( gPipeF );
-            //return NULL;
-          }
-
-          gPipeIsOpen = 1;
-
           if ( debugMode() ) fprintf( stderr, "2 Filter cmd is [%s]\n", cmd );
 
-          gPipeF = popen( cmd, "r" );
+          f = popen( cmd, "r" );
 
-          return gPipeF;
+          return f;
 
         }
         else {
@@ -953,19 +940,11 @@ static int disableCache = 0;
             return NULL;
           }
 
-          if ( gPipeIsOpen ) {
-            fprintf( stderr, "Pipe is already open (3)\n" );
-            pclose( gPipeF );
-            //return NULL;
-          }
-
-          gPipeIsOpen = 1;
-
           if ( debugMode() ) fprintf( stderr, "3 Filter cmd is [%s]\n", cmd );
 
-          gPipeF = popen( cmd, "r" );
+          f = popen( cmd, "r" );
 
-          return gPipeF;
+          return f;
 
         }
         else {
@@ -1141,19 +1120,11 @@ static int disableCache = 0;
             return NULL;
           }
 
-          if ( gPipeIsOpen ) {
-            fprintf( stderr, "Pipe is already open (4)\n" );
-            pclose( gPipeF );
-            //return NULL;
-          }
-
-          gPipeIsOpen = 1;
-
           if ( debugMode() ) fprintf( stderr, "4 Filter cmd is [%s]\n", cmd );
 
-          gPipeF = popen( cmd, "r" );
+          f = popen( cmd, "r" );
 
-          return gPipeF;
+          return f;
 
         }
         else {
