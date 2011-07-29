@@ -50,6 +50,65 @@ int i;
 
 }
 
+static void mon_pv (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+}
+
+static char *getPvValSync (
+  char *name
+) {
+
+
+// get pv value synchronously
+
+char *val = NULL;
+char buf[255+1];
+int len;
+ProcessVariable *pvId = NULL;
+
+  pvId = the_PV_Factory->create( name );
+  if ( pvId ) {
+
+    pvId->add_conn_state_callback( mon_pv, NULL );
+    pend_io( 5.0 );
+    pend_event( 0.0001 );
+
+    if ( pvId->is_valid() ) {
+
+      if ( pvId->get_type().type == ProcessVariable::Type::real ) {
+        snprintf( buf, 255, "%-g", pvId->get_double() );
+        len = strlen( buf );
+      }
+      else if ( pvId->get_type().type == ProcessVariable::Type::integer ) {
+        snprintf( buf, 255, "%-d", pvId->get_int() );
+        len = strlen( buf );
+      }
+      else {
+        len = pvId->get_string( buf, 255 );
+        len = strlen( buf );
+      }
+
+      if ( len ) {
+        val = new char[len+1];
+        strncpy( val, buf, len );
+        val[len] = 0;
+      }
+
+    }
+
+    pvId->remove_conn_state_callback( mon_pv, NULL );
+    pvId->release();
+    pvId = NULL;
+
+  }
+
+  return val;
+
+}
+
 static void showObjectDimensions (
   XtPointer client,
   XtIntervalId *id
@@ -21049,8 +21108,8 @@ void activeWindowClass::substituteSpecial (
   char *bufOut )
 {
 
-char param[1023+1], tmp[1023+1], dspName[127+1], *envPtr, *ptr;
-int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar;
+char param[1023+1], tmp[1023+1], dspName[127+1], *envPtr, *ptr, *pvVal;
+int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar, isPvVal;
 
   state = 1; // copying
 
@@ -21169,6 +21228,43 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar;
           Strncat( bufOut, dspName, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
+	}
+        else if ( strncmp( param, "<val:", 5 ) == 0 ) {
+
+          isPvVal = 1;
+          strncpy( tmp, param, 1023 );
+          tmp[1023] = 0;
+
+          ptr = strstr( tmp, ">" );
+          if ( ptr ) {
+            *ptr = 0;
+            pvVal = NULL;
+            pvVal = getPvValSync( &tmp[5] );
+            if ( pvVal ) {
+              bufOut[iOut] = 0;
+              Strncat( bufOut, pvVal, max );
+              delete[] pvVal;
+              pvVal = NULL;
+              iOut = strlen( bufOut );
+              if ( iOut >= max ) iOut = max - 1;
+            }
+            else {
+              isPvVal = 0;
+            }
+          }
+          else {
+            isPvVal = 0;
+          }
+
+          if ( !isPvVal ) {
+
+            bufOut[iOut] = 0;
+            Strncat( bufOut, param, max );
+            iOut = strlen( bufOut );
+            if ( iOut >= max ) iOut = max - 1;
+
+          }
+
 	}
         else { // maybe an env var
 
