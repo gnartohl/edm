@@ -427,6 +427,20 @@ struct timeval curTime;
 
   dval -= rbto->increment * adjust;
 
+  if ( dval <= rbto->rampFinalV ) {
+    dval = rbto->rampFinalV;
+    rbto->incrementTimerActive = 0;
+    rbto->buttonPressed = 0;
+    if ( rbto->rampStateExists ) {
+      rbto->rampStatePvId->put(
+       XDisplayName(rbto->actWin->appCtx->displayName),
+       rbto->buttonPressed );
+    }
+    rbto->actWin->appCtx->proc->lock();
+    rbto->needRefresh = 1;
+    rbto->actWin->addDefExeNode( rbto->aglPtr );
+    rbto->actWin->appCtx->proc->unlock();
+  }
   if ( dval <= rbto->minDv ) {
     dval = rbto->minDv;
     rbto->incrementTimerActive = 0;
@@ -443,20 +457,6 @@ struct timeval curTime;
   }
   else if ( dval >= rbto->maxDv ) {
     dval = rbto->maxDv;
-    rbto->incrementTimerActive = 0;
-    rbto->buttonPressed = 0;
-    if ( rbto->rampStateExists ) {
-      rbto->rampStatePvId->put(
-       XDisplayName(rbto->actWin->appCtx->displayName),
-       rbto->buttonPressed );
-    }
-    rbto->actWin->appCtx->proc->lock();
-    rbto->needRefresh = 1;
-    rbto->actWin->addDefExeNode( rbto->aglPtr );
-    rbto->actWin->appCtx->proc->unlock();
-  }
-  else if ( dval <= rbto->rampFinalV ) {
-    dval = rbto->rampFinalV;
     rbto->incrementTimerActive = 0;
     rbto->buttonPressed = 0;
     if ( rbto->rampStateExists ) {
@@ -511,6 +511,20 @@ struct timeval curTime;
 
   dval += rbto->increment * adjust;
 
+  if ( dval >= rbto->rampFinalV ) {
+    dval = rbto->rampFinalV;
+    rbto->incrementTimerActive = 0;
+    rbto->buttonPressed = 0;
+    if ( rbto->rampStateExists ) {
+      rbto->rampStatePvId->put(
+       XDisplayName(rbto->actWin->appCtx->displayName),
+       rbto->buttonPressed );
+    }
+    rbto->actWin->appCtx->proc->lock();
+    rbto->needRefresh = 1;
+    rbto->actWin->addDefExeNode( rbto->aglPtr );
+    rbto->actWin->appCtx->proc->unlock();
+  }
   if ( dval <= rbto->minDv ) {
     dval = rbto->minDv;
     rbto->incrementTimerActive = 0;
@@ -527,20 +541,6 @@ struct timeval curTime;
   }
   else if ( dval >= rbto->maxDv ) {
     dval = rbto->maxDv;
-    rbto->incrementTimerActive = 0;
-    rbto->buttonPressed = 0;
-    if ( rbto->rampStateExists ) {
-      rbto->rampStatePvId->put(
-       XDisplayName(rbto->actWin->appCtx->displayName),
-       rbto->buttonPressed );
-    }
-    rbto->actWin->appCtx->proc->lock();
-    rbto->needRefresh = 1;
-    rbto->actWin->addDefExeNode( rbto->aglPtr );
-    rbto->actWin->appCtx->proc->unlock();
-  }
-  else if ( dval >= rbto->rampFinalV ) {
-    dval = rbto->rampFinalV;
     rbto->incrementTimerActive = 0;
     rbto->buttonPressed = 0;
     if ( rbto->rampStateExists ) {

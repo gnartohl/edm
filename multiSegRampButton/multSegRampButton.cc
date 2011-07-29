@@ -501,6 +501,7 @@ static void msrbtc_decrement (
 activeMultSegRampButtonClass *msrbto = (activeMultSegRampButtonClass *) client;
 double dval, seconds, adjust;
 struct timeval curTime;
+int needToAddTimeout = 1;
 
   //fprintf( stderr, "msrbtc_decrement\n" );
   //fprintf( stderr, "msrbto->rampSegment = %-d\n", msrbto->rampSegment );
@@ -529,35 +530,9 @@ struct timeval curTime;
 
   dval -= msrbto->increment[msrbto->rampSegment]; // * adjust;
 
-  if ( dval <= msrbto->minDv ) {
-    dval = msrbto->minDv;
-    msrbto->incrementTimerActive = 0;
-    msrbto->buttonPressed = 0;
-    if ( msrbto->rampStateExists ) {
-      msrbto->rampStatePvId->put(
-       XDisplayName(msrbto->actWin->appCtx->displayName),
-       msrbto->buttonPressed );
-    }
-    msrbto->actWin->appCtx->proc->lock();
-    msrbto->needRefresh = 1;
-    msrbto->actWin->addDefExeNode( msrbto->aglPtr );
-    msrbto->actWin->appCtx->proc->unlock();
-  }
-  else if ( dval >= msrbto->maxDv ) {
-    dval = msrbto->maxDv;
-    msrbto->incrementTimerActive = 0;
-    msrbto->buttonPressed = 0;
-    if ( msrbto->rampStateExists ) {
-      msrbto->rampStatePvId->put(
-       XDisplayName(msrbto->actWin->appCtx->displayName),
-       msrbto->buttonPressed );
-    }
-    msrbto->actWin->appCtx->proc->lock();
-    msrbto->needRefresh = 1;
-    msrbto->actWin->addDefExeNode( msrbto->aglPtr );
-    msrbto->actWin->appCtx->proc->unlock();
-  }
-  else if ( dval <= msrbto->rampFinalV[msrbto->rampSegment] ) {
+  if ( dval <= msrbto->rampFinalV[msrbto->rampSegment] ) {
+
+    needToAddTimeout = 0;
 
     dval = msrbto->rampFinalV[msrbto->rampSegment];
 
@@ -607,7 +582,38 @@ struct timeval curTime;
     msrbto->actWin->appCtx->proc->unlock();
 
   }
-  else {
+
+  if ( dval <= msrbto->minDv ) {
+    needToAddTimeout = 0;
+    dval = msrbto->minDv;
+    msrbto->incrementTimerActive = 0;
+    msrbto->buttonPressed = 0;
+    if ( msrbto->rampStateExists ) {
+      msrbto->rampStatePvId->put(
+       XDisplayName(msrbto->actWin->appCtx->displayName),
+       msrbto->buttonPressed );
+    }
+    msrbto->actWin->appCtx->proc->lock();
+    msrbto->needRefresh = 1;
+    msrbto->actWin->addDefExeNode( msrbto->aglPtr );
+    msrbto->actWin->appCtx->proc->unlock();
+  }
+  else if ( dval >= msrbto->maxDv ) {
+    needToAddTimeout = 0;
+    dval = msrbto->maxDv;
+    msrbto->incrementTimerActive = 0;
+    msrbto->buttonPressed = 0;
+    if ( msrbto->rampStateExists ) {
+      msrbto->rampStatePvId->put(
+       XDisplayName(msrbto->actWin->appCtx->displayName),
+       msrbto->buttonPressed );
+    }
+    msrbto->actWin->appCtx->proc->lock();
+    msrbto->needRefresh = 1;
+    msrbto->actWin->addDefExeNode( msrbto->aglPtr );
+    msrbto->actWin->appCtx->proc->unlock();
+  }
+  if ( needToAddTimeout ) {
 
     msrbto->incrementTimer = appAddTimeOut(
      msrbto->actWin->appCtx->appContext(),
@@ -631,6 +637,7 @@ static void msrbtc_increment (
 activeMultSegRampButtonClass *msrbto = (activeMultSegRampButtonClass *) client;
 double dval, seconds, adjust;
 struct timeval curTime;
+int needToAddTimeout = 1;
 
   //fprintf( stderr, "msrbtc_increment\n" );
   //fprintf( stderr, "msrbto->rampSegment = %-d\n", msrbto->rampSegment );
@@ -659,35 +666,9 @@ struct timeval curTime;
 
   dval += msrbto->increment[msrbto->rampSegment]; // * adjust;
 
-  if ( dval <= msrbto->minDv ) {
-    dval = msrbto->minDv;
-    msrbto->incrementTimerActive = 0;
-    msrbto->buttonPressed = 0;
-    if ( msrbto->rampStateExists ) {
-      msrbto->rampStatePvId->put(
-       XDisplayName(msrbto->actWin->appCtx->displayName),
-       msrbto->buttonPressed );
-    }
-    msrbto->actWin->appCtx->proc->lock();
-    msrbto->needRefresh = 1;
-    msrbto->actWin->addDefExeNode( msrbto->aglPtr );
-    msrbto->actWin->appCtx->proc->unlock();
-  }
-  else if ( dval >= msrbto->maxDv ) {
-    dval = msrbto->maxDv;
-    msrbto->incrementTimerActive = 0;
-    msrbto->buttonPressed = 0;
-    if ( msrbto->rampStateExists ) {
-      msrbto->rampStatePvId->put(
-       XDisplayName(msrbto->actWin->appCtx->displayName),
-       msrbto->buttonPressed );
-    }
-    msrbto->actWin->appCtx->proc->lock();
-    msrbto->needRefresh = 1;
-    msrbto->actWin->addDefExeNode( msrbto->aglPtr );
-    msrbto->actWin->appCtx->proc->unlock();
-  }
-  else if ( dval >= msrbto->rampFinalV[msrbto->rampSegment] ) {
+  if ( dval >= msrbto->rampFinalV[msrbto->rampSegment] ) {
+
+    needToAddTimeout = 0;
 
     dval = msrbto->rampFinalV[msrbto->rampSegment];
 
@@ -737,7 +718,39 @@ struct timeval curTime;
     msrbto->actWin->appCtx->proc->unlock();
 
   }
-  else {
+
+  if ( dval <= msrbto->minDv ) {
+    needToAddTimeout = 0;
+    dval = msrbto->minDv;
+    msrbto->incrementTimerActive = 0;
+    msrbto->buttonPressed = 0;
+    if ( msrbto->rampStateExists ) {
+      msrbto->rampStatePvId->put(
+       XDisplayName(msrbto->actWin->appCtx->displayName),
+       msrbto->buttonPressed );
+    }
+    msrbto->actWin->appCtx->proc->lock();
+    msrbto->needRefresh = 1;
+    msrbto->actWin->addDefExeNode( msrbto->aglPtr );
+    msrbto->actWin->appCtx->proc->unlock();
+  }
+  else if ( dval >= msrbto->maxDv ) {
+    needToAddTimeout = 0;
+    dval = msrbto->maxDv;
+    msrbto->incrementTimerActive = 0;
+    msrbto->buttonPressed = 0;
+    if ( msrbto->rampStateExists ) {
+      msrbto->rampStatePvId->put(
+       XDisplayName(msrbto->actWin->appCtx->displayName),
+       msrbto->buttonPressed );
+    }
+    msrbto->actWin->appCtx->proc->lock();
+    msrbto->needRefresh = 1;
+    msrbto->actWin->addDefExeNode( msrbto->aglPtr );
+    msrbto->actWin->appCtx->proc->unlock();
+  }
+
+  if ( needToAddTimeout ) {
 
     msrbto->incrementTimer = appAddTimeOut(
      msrbto->actWin->appCtx->appContext(),
