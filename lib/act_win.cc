@@ -57,6 +57,13 @@ static void mon_pv (
 
 }
 
+static void update_pv (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+}
+
 static char *getPvValSync (
   char *name
 ) {
@@ -73,6 +80,7 @@ ProcessVariable *pvId = NULL;
   if ( pvId ) {
 
     pvId->add_conn_state_callback( mon_pv, NULL );
+    pvId->add_value_callback( update_pv, NULL );
     pend_io( 5.0 );
     pend_event( 0.0001 );
 
@@ -99,6 +107,7 @@ ProcessVariable *pvId = NULL;
 
     }
 
+    pvId->remove_value_callback( mon_pv, NULL );
     pvId->remove_conn_state_callback( mon_pv, NULL );
     pvId->release();
     pvId = NULL;
