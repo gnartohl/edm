@@ -20649,15 +20649,37 @@ void activeWindowClass::storeFileName (
   char *inName )
 {
 
-  strncpy( fileName, inName, 255 );
-  getFileName( displayName, inName, 127 );
-  getFilePrefix( prefix, inName, 127 );
-  getFilePostfix( postfix, inName, 127 );
+char nameWithSubs[1024+1];
 
-  strncpy( fileNameForSym, inName, 255 );
-  getFileName( displayNameForSym, inName, 127 );
-  getFilePrefix( prefixForSym, inName, 127 );
-  getFilePostfix( postfixForSym, inName, 127 );
+  this->substituteSpecial( 1024, inName, nameWithSubs );
+
+  strncpy( fileName, nameWithSubs, 255 );
+  fileName[255] = 0;
+  getFileName( displayName, nameWithSubs, 127 );
+  displayName[127] = 0;
+  getFilePrefix( prefix, nameWithSubs, 127 );
+  prefix[127] = 0;
+  getFilePostfix( postfix, nameWithSubs, 127 );
+  postfix[127] = 0;
+
+  strncpy( fileNameForSym, nameWithSubs, 255 );
+  fileNameForSym[255] = 0;
+  getFileName( displayNameForSym, nameWithSubs, 127 );
+  displayNameForSym[127] = 0;
+  getFilePrefix( prefixForSym, nameWithSubs, 127 );
+  prefixForSym[127] = 0;
+  getFilePostfix( postfixForSym, nameWithSubs, 127 );
+  postfixForSym[127] = 0;
+  
+  //strncpy( fileName, inName, 255 );
+  //getFileName( displayName, inName, 127 );
+  //getFilePrefix( prefix, inName, 127 );
+  //getFilePostfix( postfix, inName, 127 );
+
+  //strncpy( fileNameForSym, inName, 255 );
+  //getFileName( displayNameForSym, inName, 127 );
+  //getFilePrefix( prefixForSym, inName, 127 );
+  //getFilePostfix( postfixForSym, inName, 127 );
 
 }
 
@@ -20673,10 +20695,23 @@ void activeWindowClass::storeFileNameForSymbols (
   char *inName )
 {
 
-  strncpy( fileNameForSym, inName, 255 );
-  getFileName( displayNameForSym, inName, 127 );
-  getFilePrefix( prefixForSym, inName, 127 );
-  getFilePostfix( postfixForSym, inName, 127 );
+char nameWithSubs[1024+1];
+
+  this->substituteSpecial( 1024, inName, nameWithSubs );
+
+  strncpy( fileNameForSym, nameWithSubs, 255 );
+  fileNameForSym[255] = 0;
+  getFileName( displayNameForSym, nameWithSubs, 127 );
+  displayNameForSym[127] = 0;
+  getFilePrefix( prefixForSym, nameWithSubs, 127 );
+  prefixForSym[127] = 0;
+  getFilePostfix( postfixForSym, nameWithSubs, 127 );
+  postfixForSym[127] = 0;
+
+  //strncpy( fileNameForSym, inName, 255 );
+  //getFileName( displayNameForSym, inName, 127 );
+  //getFilePrefix( prefixForSym, inName, 127 );
+  //getFilePostfix( postfixForSym, inName, 127 );
 
 }
 

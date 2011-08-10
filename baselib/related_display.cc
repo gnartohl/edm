@@ -3154,10 +3154,7 @@ activeWindowClass *aw0, *aw1;
   cur->node.realize();
   cur->node.setGraphicEnvironment( &actWin->appCtx->ci, &actWin->appCtx->fi );
 
-  //cur->node.storeFileName( displayFileName[index].getExpanded() );
-  actWin->substituteSpecial( maxSymbolLen,  displayFileName[index].getExpanded(),
-   nameWithSubs );
-  cur->node.storeFileName( nameWithSubs );
+  cur->node.storeFileName( displayFileName[index].getExpanded() );
 
   if ( setPostion[index] == RDC_BUTTON_POS ) {
     actWin->appCtx->openActivateActiveWindow( &cur->node,
