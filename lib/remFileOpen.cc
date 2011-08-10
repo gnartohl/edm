@@ -625,7 +625,6 @@ char *nonInt, *expireString;
 static int disableCache = 0;
 #endif
 
-
 #ifdef USECURL
   if ( expireSeconds == 0 ) {
     expireString = getenv( environment_str33 );

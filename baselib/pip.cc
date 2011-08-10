@@ -1872,7 +1872,7 @@ void activePipClass::openEmbeddedByIndex (
 
 activeWindowListPtr cur;
 int i, l, stat;
-char symbolsWithSubs[maxSymbolLen+1];
+char symbolsWithSubs[maxSymbolLen+1], nameWithSubs[maxSymbolLen+1];
 int useSmallArrays, symbolCount, maxSymbolLength;
 char smallNewMacros[SMALL_SYM_ARRAY_SIZE+1][SMALL_SYM_ARRAY_LEN+1+1];
 char smallNewValues[SMALL_SYM_ARRAY_SIZE+1][SMALL_SYM_ARRAY_LEN+1+1];
@@ -2111,7 +2111,10 @@ int gotSymbolsFromFile;
 
   if ( index < 0 ) index = 0;
   if ( index >= numDsps ) index = numDsps;
-  cur->node.storeFileName( displayFileName[index].getExpanded() );
+  //cur->node.storeFileName( displayFileName[index].getExpanded() );
+  actWin->substituteSpecial( maxSymbolLen, displayFileName[index].getExpanded(),
+   nameWithSubs );
+  cur->node.storeFileName( nameWithSubs );
 
   actWin->appCtx->openActivateActiveWindow( &cur->node, 0, 0 );
 
@@ -2137,6 +2140,7 @@ void activePipClass::executeDeferred ( void ) {
 
 int iv;
 char v[39+1];
+char nameWithSubs[maxSymbolLen+1];
 int i, nc, nu, nmc, nmu, nd, nfo, nimfo, ncto, nmap, nunmap, okToClose, stat;
 activeWindowListPtr cur;
 Window root, child;
@@ -2335,7 +2339,9 @@ XButtonEvent be;
           cur->node.setGraphicEnvironment( &cur->node.appCtx->ci,
            &cur->node.appCtx->fi );
 
-          cur->node.storeFileName( readV );
+          //cur->node.storeFileName( readV );
+          actWin->substituteSpecial( maxSymbolLen, readV, nameWithSubs );
+          cur->node.storeFileName( nameWithSubs );
 
           actWin->appCtx->openActivateActiveWindow( &cur->node, 0, 0 );
 
@@ -2587,7 +2593,10 @@ XButtonEvent be;
           cur->node.setGraphicEnvironment( &cur->node.appCtx->ci,
            &cur->node.appCtx->fi );
 
-          cur->node.storeFileName( fileNameExpStr.getExpanded() );
+          //cur->node.storeFileName( fileNameExpStr.getExpanded() );
+          actWin->substituteSpecial( maxSymbolLen, fileNameExpStr.getExpanded(),
+           nameWithSubs );
+          cur->node.storeFileName( nameWithSubs );
 
           actWin->appCtx->openActivateActiveWindow( &cur->node, 0, 0 );
 
@@ -2883,7 +2892,9 @@ XButtonEvent be;
               cur->node.setGraphicEnvironment( &cur->node.appCtx->ci,
                &cur->node.appCtx->fi );
 
-              cur->node.storeFileName( curFileName );
+              //cur->node.storeFileName( curFileName );
+              actWin->substituteSpecial( maxSymbolLen, curFileName, nameWithSubs );
+              cur->node.storeFileName( nameWithSubs );
 
               actWin->appCtx->openActivateActiveWindow( &cur->node, 0, 0 );
 

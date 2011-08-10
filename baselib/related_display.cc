@@ -2736,7 +2736,7 @@ void relatedDisplayClass::popupDisplay (
 
 activeWindowListPtr cur;
 int i, ii, dup, numDeleted, l, stat, newX, newY;
-char name[127+1], symbolsWithSubs[maxSymbolLen+1];
+char name[127+1], symbolsWithSubs[maxSymbolLen+1], nameWithSubs[maxSymbolLen+1];
 pvValType destV;
 unsigned int crc;
 char *tk, *context, buf[maxSymbolLen+1], *fileTk, *fileContext, fileBuf[maxSymbolLen+1],
@@ -3154,7 +3154,10 @@ activeWindowClass *aw0, *aw1;
   cur->node.realize();
   cur->node.setGraphicEnvironment( &actWin->appCtx->ci, &actWin->appCtx->fi );
 
-  cur->node.storeFileName( displayFileName[index].getExpanded() );
+  //cur->node.storeFileName( displayFileName[index].getExpanded() );
+  actWin->substituteSpecial( maxSymbolLen,  displayFileName[index].getExpanded(),
+   nameWithSubs );
+  cur->node.storeFileName( nameWithSubs );
 
   if ( setPostion[index] == RDC_BUTTON_POS ) {
     actWin->appCtx->openActivateActiveWindow( &cur->node,
