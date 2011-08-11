@@ -142,7 +142,7 @@ static int xIoErrorHandler (
   Display *d )
 {
 
-  printf( "xIoErrorHandler\n" );
+  fprintf( stderr, "xIoErrorHandler\n" );
 
   return 0;
 
@@ -1056,7 +1056,7 @@ nextHost:
 
       stat = connect( sockfd, (struct sockaddr *) &s, sizeof(s) );
       if ( stat ) {
-        //perror( "connect" );
+        if ( debugMode() ) perror( "connect" );
         close( sockfd );
         goto abortClose;
       }
@@ -1642,7 +1642,13 @@ int *portNumPtr = (int *) thread_get_app_data( h );
           stat = thread_lock_master( h );
 
 	  num = 0;
+          if ( debugMode() ) {
+            fprintf( stderr, "searching for display name:\n" );
+	  }
 	  for ( i=0; i<g_displayIndex; i++ ) {
+            if ( debugMode() ) {
+	      fprintf( stderr, "  client request: [%s]   found: [%s]\n", &msg[1], g_displayNames[i] );
+	    }
 	    if ( strcmp( &msg[1], g_displayNames[i] ) == 0 ) {
               num = 1;
 	    }
@@ -2133,6 +2139,13 @@ int shutdownTry = 200; // aprox 10 seconds
   checkParams( argc, argv, &local, &server, &appendDisplay, displayName,
    &portNum, &restart, &oneInstance, &openCmd, &convertOnly, &crawl,
    &verbose );
+
+  if ( debugMode() ) {
+    fprintf( stderr, "server = %-d\n", server );
+    fprintf( stderr, "oneInstanceFlag = %-d\n", oneInstance );
+    fprintf( stderr, "displayName = [%s]\n", displayName );
+    fprintf( stderr, "portNum = %-d\n", portNum );
+  }
 
   // if doing a restart, read in check point file
   if ( restart ) {
