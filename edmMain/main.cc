@@ -2705,7 +2705,14 @@ int shutdownTry = 200; // aprox 10 seconds
       }
       //fprintf( stderr, "\n" );
 
+      // if none found, add ":0.0"
+      addDisplayToListByName( ":0.0" );
+
       //fprintf( stderr, "Current list:\n" );
+      //for ( i=0; i<g_displayIndex; i++ ) {
+      //  fprintf( stderr, "  dsp = [%s]\n", g_displayNames[i] );
+      //}
+
       //cur = appArgsHead->flink;
       //while ( cur != appArgsHead ) {
       //  next = cur->flink;
