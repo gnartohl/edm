@@ -26,7 +26,7 @@
 #include "cvtFast.h"
 
 #define MSGBTC_MAJOR_VERSION 4
-#define MSGBTC_MINOR_VERSION 0
+#define MSGBTC_MINOR_VERSION 1
 #define MSGBTC_RELEASE 0
 
 #define MSGBTC_K_PUSH 1
@@ -212,8 +212,8 @@ typedef struct editBufTag {
   int bufLock;
   int bufUseEnumNumeric;
   char bufDestPvName[PV_Factory::MAX_PV_NAME+1];
-  char bufSourcePressPvName[39+1];
-  char bufSourceReleasePvName[39+1];
+  char bufSourcePressPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufSourceReleasePvName[PV_Factory::MAX_PV_NAME+1];
   char bufVisPvName[PV_Factory::MAX_PV_NAME+1];
   char bufColorPvName[PV_Factory::MAX_PV_NAME+1];
   char bufOnLabel[MAX_ENUM_STRING_SIZE+1];

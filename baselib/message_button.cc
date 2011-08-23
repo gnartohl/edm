@@ -383,10 +383,6 @@ activeMessageButtonClass::activeMessageButtonClass ( void ) {
   checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
   buttonPressed = 0;
 
-  // strcpy( sourcePressPvName, "" );
-  // strcpy( sourceReleasePvName, "" );
-  // strcpy( onLabel, "" );
-  // strcpy( offLabel, "" );
   toggle = 0;
   pressAction = 0;
   releaseAction = 0;
@@ -446,13 +442,8 @@ activeGraphicClass *msgbto = (activeGraphicClass *) this;
   visPvExpString.copy( source->visPvExpString );
   colorPvExpString.copy( source->colorPvExpString );
 
-  // strncpy( sourcePressPvName, source->sourcePressPvName, 39 );
-  // strncpy( sourceReleasePvName, source->sourceReleasePvName, 39 );
-
   onLabel.copy( source->onLabel );
   offLabel.copy( source->offLabel );
-  // strncpy( onLabel, source->onLabel, MAX_ENUM_STRING_SIZE );
-  // strncpy( offLabel, source->offLabel, MAX_ENUM_STRING_SIZE );
 
   toggle = source->toggle;
   pressAction = source->pressAction;
@@ -649,22 +640,15 @@ int index;
   else
     writeStringToFile( f, "" );
 
-  // writeStringToFile( f, sourcePressPvName );
-  // writeStringToFile( f, sourceReleasePvName );
-
   if ( onLabel.getRaw() )
     writeStringToFile( f, onLabel.getRaw() );
   else
     writeStringToFile( f, "" );
 
-  // writeStringToFile( f, onLabel );
-
   if ( offLabel.getRaw() )
     writeStringToFile( f, offLabel.getRaw() );
   else
     writeStringToFile( f, "" );
-
-  // writeStringToFile( f, offLabel );
 
   fprintf( f, "%-d\n", toggle );
 
@@ -916,19 +900,17 @@ char oneName[PV_Factory::MAX_PV_NAME+1];
    actWin->incLine();
   destPvExpString.setRaw( oneName );
 
-  readStringFromFile( oneName, 39+1, f ); actWin->incLine();
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f ); actWin->incLine();
   sourcePressPvExpString.setRaw( oneName );
 
-  readStringFromFile( oneName, 39+1, f ); actWin->incLine();
+  readStringFromFile( oneName, PV_Factory::MAX_PV_NAME+1, f ); actWin->incLine();
   sourceReleasePvExpString.setRaw( oneName );
 
   readStringFromFile( oneName, MAX_ENUM_STRING_SIZE+1, f ); actWin->incLine();
   onLabel.setRaw( oneName );
-  //readStringFromFile( onLabel, MAX_ENUM_STRING_SIZE+1, f ); actWin->incLine();
 
   readStringFromFile( oneName, MAX_ENUM_STRING_SIZE+1, f ); actWin->incLine();
   offLabel.setRaw( oneName );
-  //readStringFromFile( offLabel, MAX_ENUM_STRING_SIZE+1, f ); actWin->incLine();
 
   fscanf( f, "%d\n", &toggle ); actWin->incLine();
 
@@ -1016,7 +998,7 @@ int activeMessageButtonClass::importFromXchFile (
 int fgR, fgG, fgB, bgR, bgG, bgB, more, index;
 unsigned int pixel;
 char *tk, *gotData, *context, buf[255+1];
-char tmpDestPvName[PV_Factory::MAX_PV_NAME+1], tmpSourcePressPvName[39+1];
+char tmpDestPvName[PV_Factory::MAX_PV_NAME+1], tmpSourcePressPvName[PV_Factory::MAX_PV_NAME+1];
 
   fgR = 0xffff;
   fgG = 0xffff;
@@ -1224,8 +1206,8 @@ char tmpDestPvName[PV_Factory::MAX_PV_NAME+1], tmpSourcePressPvName[39+1];
 
         tk = strtok_r( NULL, "\"\n \t", &context );
         if ( tk ) {
-          strncpy( tmpSourcePressPvName, tk, 39 );
-          tmpSourcePressPvName[39] = 0;
+          strncpy( tmpSourcePressPvName, tk, PV_Factory::MAX_PV_NAME );
+          tmpSourcePressPvName[PV_Factory::MAX_PV_NAME] = 0;
           sourcePressPvExpString.setRaw( tmpSourcePressPvName );
 	}
 
@@ -1337,14 +1319,14 @@ char title[32], *ptr, *envPtr, saveLock = 0;
     strcpy( eBuf->bufDestPvName, "" );
 
   if ( sourcePressPvExpString.getRaw() )
-    strncpy( eBuf->bufSourcePressPvName, sourcePressPvExpString.getRaw(), 39 );
+    strncpy( eBuf->bufSourcePressPvName, sourcePressPvExpString.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strncpy( eBuf->bufSourcePressPvName, "", 39 );
+    strncpy( eBuf->bufSourcePressPvName, "", PV_Factory::MAX_PV_NAME );
 
   if ( sourceReleasePvExpString.getRaw() )
-    strncpy( eBuf->bufSourceReleasePvName, sourceReleasePvExpString.getRaw(), 39 );
+    strncpy( eBuf->bufSourceReleasePvName, sourceReleasePvExpString.getRaw(), PV_Factory::MAX_PV_NAME );
   else
-    strncpy( eBuf->bufSourceReleasePvName, "", 39 );
+    strncpy( eBuf->bufSourceReleasePvName, "", PV_Factory::MAX_PV_NAME );
 
   if ( onLabel.getRaw() )
     strncpy( eBuf->bufOnLabel, onLabel.getRaw(), MAX_ENUM_STRING_SIZE );
@@ -1429,11 +1411,11 @@ char title[32], *ptr, *envPtr, saveLock = 0;
 
   if ( !lock ) {
     ef.addTextField( activeMessageButtonClass_str16, 35, eBuf->bufSourcePressPvName,
-     39 );
+     PV_Factory::MAX_PV_NAME );
   }
   else {
     ef.addLockedField( activeMessageButtonClass_str16, 35,
-     eBuf->bufSourcePressPvName, 39 );
+     eBuf->bufSourcePressPvName, PV_Factory::MAX_PV_NAME );
   }
 
   ef.addTextField( activeMessageButtonClass_str15, 35, eBuf->bufOffLabel,
@@ -1442,7 +1424,7 @@ char title[32], *ptr, *envPtr, saveLock = 0;
   if ( !lock ) {
 
     ef.addTextField( activeMessageButtonClass_str17, 35,
-     eBuf->bufSourceReleasePvName, 39 );
+     eBuf->bufSourceReleasePvName, PV_Factory::MAX_PV_NAME );
 
     ef.addPasswordField( activeMessageButtonClass_str36, 35, bufPw1, 31 );
     ef.addPasswordField( activeMessageButtonClass_str37, 35, bufPw2, 31 );
@@ -1452,7 +1434,7 @@ char title[32], *ptr, *envPtr, saveLock = 0;
   else {
 
     ef.addLockedField( activeMessageButtonClass_str17, 35,
-     eBuf->bufSourceReleasePvName, 39 );
+     eBuf->bufSourceReleasePvName, PV_Factory::MAX_PV_NAME );
 
     ef.addLockedField( activeMessageButtonClass_str36, 35, bufPw1, 31 );
     ef.addLockedField( activeMessageButtonClass_str37, 35, bufPw2, 31 );
@@ -2094,6 +2076,7 @@ void activeMessageButtonClass::updateDimensions ( void )
 void activeMessageButtonClass::performBtnUpAction ( void ) {
 
 int stat;
+char tmpBuf[PV_Factory::MAX_PV_NAME+1];
 
   if ( toggle ) return;
 
@@ -2108,9 +2091,14 @@ int stat;
     }
   }
 
+  actWin->substituteSpecial( PV_Factory::MAX_PV_NAME,
+   sourceReleasePvExpString.getExpanded(),
+   tmpBuf );
+  tmpBuf[PV_Factory::MAX_PV_NAME] = 0;
+
   if ( destIsAckS ) {
 
-    destV.s = (short) atol( sourceReleasePvExpString.getExpanded() );
+    destV.s = (short) atol( tmpBuf );
     destPvId->putAck( XDisplayName(actWin->appCtx->displayName), destV.s );
 
   }
@@ -2119,28 +2107,28 @@ int stat;
     switch ( destType ) {
 
     case ProcessVariable::Type::real:
-      destV.d = atof( sourceReleasePvExpString.getExpanded() );
+      destV.d = atof( tmpBuf );
       destPvId->put( XDisplayName(actWin->appCtx->displayName), destV.d );
       break;
 
     case ProcessVariable::Type::integer:
-      destV.l = atol( sourceReleasePvExpString.getExpanded() );
+      destV.l = atol( tmpBuf );
       destPvId->put( XDisplayName(actWin->appCtx->displayName), destV.l );
       break;
 
     case ProcessVariable::Type::text:
-      strncpy( destV.str, sourceReleasePvExpString.getExpanded(), 39 );
+      strncpy( destV.str, tmpBuf, 39 );
+      destV.str[39] = 0;
       destPvId->put( XDisplayName(actWin->appCtx->displayName), destV.str );
       break;
 
     case ProcessVariable::Type::enumerated:
       if ( useEnumNumeric ) {
-        destV.l = atol( sourceReleasePvExpString.getExpanded() );
+        destV.l = atol( tmpBuf );
         destPvId->put( XDisplayName(actWin->appCtx->displayName), destV.l );
       }
       else {
-        stat = getEnumNumeric( sourceReleasePvExpString.getExpanded(),
-         &destV.l );
+        stat = getEnumNumeric( tmpBuf, &destV.l );
         if ( !( stat & 1 ) ) {
           actWin->appCtx->postMessage( activeMessageButtonClass_str40 );
         }
@@ -2195,7 +2183,7 @@ void activeMessageButtonClass::btnUp (
 void activeMessageButtonClass::performBtnDownAction ( void ) {
 
 int stat;
-char labelValue[39+1];
+char labelValue[PV_Factory::MAX_PV_NAME+1];
 
   if ( toggle ) {
     if ( buttonPressed ) {
@@ -2210,10 +2198,16 @@ char labelValue[39+1];
   }
 
   if ( buttonPressed ) {
-    strncpy( labelValue, sourcePressPvExpString.getExpanded(), 39 );
+    actWin->substituteSpecial( PV_Factory::MAX_PV_NAME,
+     sourcePressPvExpString.getExpanded(),
+     labelValue );
+    labelValue[PV_Factory::MAX_PV_NAME] = 0;
   }
   else {
-    strncpy( labelValue, sourceReleasePvExpString.getExpanded(), 39 );
+    actWin->substituteSpecial( PV_Factory::MAX_PV_NAME,
+     sourceReleasePvExpString.getExpanded(),
+     labelValue );
+    labelValue[PV_Factory::MAX_PV_NAME] = 0;
   }
 
   smartDrawAllActive();
