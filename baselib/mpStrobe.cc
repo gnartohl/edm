@@ -689,6 +689,8 @@ activeMpStrobeClass::activeMpStrobeClass ( void ) {
   momentaryV = 0;
   curControlV = controlV = 0.0;
   unconnectedTimer = 0;
+  pingTimer = 0;
+  momentaryTimer = 0;
   visibility = 0;
   prevVisibility = -1;
   visInverted = 0;
@@ -763,6 +765,8 @@ activeGraphicClass *mpso = (activeGraphicClass *) this;
   curFaultV = 0.0;
   momentaryV = 0;
   unconnectedTimer = 0;
+  pingTimer = 0;
+  momentaryTimer = 0;
 
   visibility = 0;
   prevVisibility = -1;
@@ -1654,7 +1658,7 @@ int blink = 0;
   return 1;
 
 }
-
+timer
 int activeMpStrobeClass::activate (
   int pass,
   void *ptr )
@@ -1690,6 +1694,8 @@ int opStat;
       aglPtr = ptr;
       pingTimer = 0;
       pingTimerActive = 0;
+      momentaryTimer = 0;
+      momentaryTimerActive = 0;
       destV = readbackV = faultV = controlV = 0;
       controlPvId = visPvId = colorPvId = destPvId = readbackPvId =
        faultPvId = NULL;
