@@ -4,6 +4,8 @@
 //
 // kasemir@lanl.gov
 
+// new version 8/23/2011 sinclairjw@ornl.gov
+
 #ifndef __CALC_PV_FACTORY2_H__
 #define __CALC_PV_FACTORY2_H__
 
@@ -22,9 +24,11 @@ public:
     HashedExpression();
     HashedExpression(const char *name, char *formula,
      char *rewriteString );
+    int setFormula( char *oneFormula );
     ~HashedExpression();
     
     char *name;
+    char *formula;
     
     bool calc(const double args[], double &result);
     

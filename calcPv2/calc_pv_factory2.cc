@@ -510,10 +510,14 @@ bool equals(const HashedCalcPvList *lhs, const HashedCalcPvList *rhs)
 // ------------------------------------------------------------------
 // HashedExpression -------------------------------------------------
 // ------------------------------------------------------------------
-HashedExpression::HashedExpression()
-{ name = NULL; }
+HashedExpression::HashedExpression () {
 
-HashedExpression::HashedExpression(const char *_name, char *formula,
+  name = NULL;
+  formula = NULL;
+
+}
+
+HashedExpression::HashedExpression(const char *_name, char *_formula,
  char *rewriteString=NULL )
 {
 
@@ -524,11 +528,45 @@ short error;
   if ( rewriteString ) {
     expStr.setRaw( rewriteString );
   }
-  st = edm_postfix(formula, this->compiled, &error);
+  formula = strdup(_formula);
+  st = edm_postfix(_formula, this->compiled, &error);
   if ( st != 0) {
     fprintf(stderr, "CALC '%s': error in expression '%s'\n",
-     name, formula);
+     name, _formula);
   }
+
+}
+
+int HashedExpression::setFormula (
+  char *oneFormula
+) {
+
+int st;
+short error;
+
+  if ( oneFormula ) {
+    if ( strcmp( oneFormula, this->formula ) == 0 ) {
+      return 0;
+    }
+  }
+
+  st = edm_postfix( oneFormula, this->compiled, &error );
+  if ( st != 0) {
+    fprintf(stderr, "CALC '%s': error in expression '%s'\n  Formula not updated\n",
+     this->name, oneFormula);
+    // restore previous
+    if ( this->formula ) {
+      st = edm_postfix( this->formula, this->compiled, &error );
+    }
+  }
+  else {
+    fprintf( stderr, "CALC, formula updated for %s\n  Old: [%s]\n  New: [%s]\n",
+     this->name, this->formula, oneFormula );
+    free( this->formula );
+    formula = strdup(oneFormula);
+  }
+
+  return st;
 
 }
 
@@ -539,6 +577,11 @@ HashedExpression::~HashedExpression()
     {
         free(name);
         name = NULL;
+    }
+    if (formula)
+    {
+        free(formula);
+        formula = NULL;
     }
 
 }
@@ -635,14 +678,25 @@ bool needReeval;
       }
       else {
 
-        needReeval = false;
+	// update current formula
+
+        needReeval = true;
 
         size = name1 - name0 + 1;
         pvname = new char[size+1];
         strncpy( pvname, &expression[name0], size );
         pvname[size] = 0;
 
+        size = expr1 - expr0 + 1;
+        if ( size > MAX_INFIX_SIZE ) size = MAX_INFIX_SIZE;
+        strncpy( inner, &expression[expr0], MAX_INFIX_SIZE );
+        inner[size] = 0;
+
         strcpy( expression, pvname );
+
+        HashedExpression *heToUpdate = *entry;
+
+        heToUpdate->setFormula( inner );
 
         delete pvname;
         pvname = 0;

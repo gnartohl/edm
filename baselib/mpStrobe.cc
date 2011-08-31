@@ -1658,7 +1658,7 @@ int blink = 0;
   return 1;
 
 }
-timer
+
 int activeMpStrobeClass::activate (
   int pass,
   void *ptr )
