@@ -257,6 +257,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   fastErase = source->fastErase;
   noErase = source->noErase;
 
+  doAccSubs( gifFileName, 127 );
+
   status = readGifFile();
 
 }
@@ -1495,6 +1497,50 @@ int status;
     }
     status = readGifFile();
     drawAllActive();
+  }
+
+}
+
+char *activeGifClass::getSearchString (
+  int index
+) {
+
+  if ( index == 0 ) {
+    return gifFileName;
+  }
+  else {
+    return NULL;
+  }
+
+}
+
+void activeGifClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+int status;
+int l = 127;
+
+  if ( max < l ) l = max;
+
+  if ( i == 0 ) {
+
+    strncpy( gifFileName, string, l );
+    gifFileName[l] = 0;
+
+    status = readGifFile();
+
+    initSelectBox();
+
+    if ( !( status & 1 ) ) {
+      char msg[255+1];
+      snprintf( msg, 255, activeGifClass_str1, actWin->fileName,
+       gifFileName );
+      actWin->appCtx->postMessage( msg );
+    }
+
   }
 
 }

@@ -519,6 +519,15 @@ int i;
 
   consecutiveDeactivateErrors = 0;
 
+  doAccSubs( readPvExpStr );
+  doAccSubs( labelPvExpStr );
+  doAccSubs( fileNameExpStr );
+  for ( i=0; i<numDsps; i++ ) {
+    doAccSubs( symbolsExpStr[i] );
+    doAccSubs( label[i] );
+    doAccSubs( displayFileName[i] );
+  }
+
 }
 
 activePipClass::~activePipClass ( void ) {
@@ -3019,6 +3028,72 @@ void activePipClass::unmap ( void ) {
 
   needUnmap = 1;
   actWin->addDefExeNode( aglPtr );
+
+}
+
+char *activePipClass::getSearchString (
+  int i
+) {
+
+int index, ii;
+
+  if ( i == 0 ) {
+    return readPvExpStr.getRaw();
+  }
+  else if ( i == 1 ) {
+    return labelPvExpStr.getRaw();
+  }
+  else if ( i == 2 ) {
+    return fileNameExpStr.getRaw();
+  }
+  else if ( ( i > 2 ) && ( i < numDsps * 3 + 3 ) ) {
+    ii = i % 3;
+    index = ( i - 3 ) / 3;
+    if ( ii == 0 ) {
+      return symbolsExpStr[index].getRaw();
+    }
+    else if ( ii == 1 ) {
+      return label[index].getRaw();
+    }
+    else if ( ii == 2 ) {
+      return displayFileName[index].getRaw();
+    }
+  }
+
+  return NULL;
+
+}
+
+void activePipClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+int index, ii;
+
+  if ( i == 0 ) {
+    readPvExpStr.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    labelPvExpStr.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    fileNameExpStr.setRaw( string );
+  }
+  else if ( ( i > 2 ) && ( i < numDsps * 3 + 3 ) ) {
+    ii = i % 3;
+    index = ( i - 3 ) / 3;
+    if ( ii == 0 ) {
+      symbolsExpStr[index].setRaw( string );
+    }
+    else if ( ii == 1 ) {
+      label[index].setRaw( string );
+    }
+    else if ( ii == 2 ) {
+      displayFileName[index].setRaw( string );
+    }
+  }
 
 }
 

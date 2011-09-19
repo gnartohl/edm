@@ -412,6 +412,8 @@ activeGraphicClass *rbto = (activeGraphicClass *) this;
 
   eBuf = NULL;
 
+  doAccSubs( controlPvExpStr );
+
 }
 
 int activeRadioButtonClass::createInteractive (
@@ -1574,6 +1576,30 @@ void activeRadioButtonClass::getPvs (
 
   *n = 1;
   pvs[0] = controlPvId;
+
+}
+
+char *activeRadioButtonClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return controlPvExpStr.getRaw();
+  }
+
+  return NULL;
+
+}
+
+void activeRadioButtonClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    controlPvExpStr.setRaw( string );
+  }
 
 }
 

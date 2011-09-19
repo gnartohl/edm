@@ -39,6 +39,7 @@
 #define environment_str33 (char *) "EDMEXPIRECACHE"
 #define environment_str34 (char *) "EDMAPPTOPPARENT"
 #define environment_str35 (char *) "EDMIGNOREEXEC"
+#define environment_str36 (char *) "EDMNOAUTOINC"
 
 #define global_str1 (char *) "Symbol"
 #define global_str2 (char *) "Monitors"

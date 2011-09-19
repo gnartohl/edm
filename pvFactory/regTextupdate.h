@@ -36,7 +36,17 @@ public:
     int activate(int pass, void *ptr);
     int deactivate(int pass);
     int drawActive();
+
+    char *getSearchString (
+      int i
+    );
     
+    void replaceString (
+      int i,
+      int max,
+      char *string
+    );
+
 protected:
 //    void init(const char *classname);
     void clone(const edmRegTextupdateClass *rhs, const char *classname);

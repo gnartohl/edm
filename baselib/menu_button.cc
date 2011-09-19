@@ -541,6 +541,13 @@ int i;
 
   setBlinkFunction( (void *) doBlink );
 
+  doAccSubs( controlPvExpStr );
+  doAccSubs( readPvExpStr );
+  doAccSubs( colorPvExpStr );
+  doAccSubs( visPvExpStr );
+  doAccSubs( minVisString, 39 );
+  doAccSubs( maxVisString, 39 );
+
 }
 
 int activeMenuButtonClass::createInteractive (
@@ -2431,6 +2438,66 @@ void activeMenuButtonClass::getPvs (
   pvs[1] = readPvId;
   pvs[2] = colorPvId;
   pvs[3] = visPvId;
+
+}
+
+char *activeMenuButtonClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return controlPvExpStr.getRaw();
+  }
+  else if ( i == 1 ) {
+    return readPvExpStr.getRaw();
+  }
+  else if ( i == 2 ) {
+    return colorPvExpStr.getRaw();
+  }
+  else if ( i == 3 ) {
+    return visPvExpStr.getRaw();
+  }
+  else if ( i == 4 ) {
+    return minVisString;
+  }
+  else if ( i == 5 ) {
+    return maxVisString;
+  }
+
+  return NULL;
+
+}
+
+void activeMenuButtonClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    controlPvExpStr.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    readPvExpStr.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    colorPvExpStr.setRaw( string );
+  }
+  else if ( i == 3 ) {
+    visPvExpStr.setRaw( string );
+  }
+  else if ( i == 4 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( minVisString, string, l );
+    minVisString[l] = 0;
+  }
+  else if ( i == 5 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( maxVisString, string, l );
+    maxVisString[l] = 0;
+  }
 
 }
 

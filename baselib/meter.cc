@@ -458,6 +458,10 @@ activeGraphicClass *metero = (activeGraphicClass *) this;
 
   updateDimensions();
 
+  doAccSubs( readPvExpStr );
+  doAccSubs( literalLabel, PV_Factory::MAX_PV_NAME );
+  readPvLabelExpStr.setRaw( literalLabel );
+
 }
 
 activeMeterClass::~activeMeterClass ( void ) {
@@ -2989,6 +2993,43 @@ void activeMeterClass::getPvs (
 
   *n = 1;
   pvs[0] = readPvId;
+
+}
+
+char *activeMeterClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return readPvExpStr.getRaw();
+  }
+  else if ( i == 1 ) {
+    return literalLabel;
+    // return readPvLabelExpStr.getRaw();
+  }
+
+  return NULL;
+
+}
+
+void activeMeterClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+int l;
+
+  if ( i == 0 ) {
+    readPvExpStr.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    l = max;
+    if ( l > PV_Factory::MAX_PV_NAME ) l = PV_Factory::MAX_PV_NAME;
+    strncpy( literalLabel, string, l );
+    literalLabel[PV_Factory::MAX_PV_NAME] = 0;
+    readPvLabelExpStr.setRaw( string );
+  }
 
 }
 

@@ -948,6 +948,15 @@ int i;
 
   eBuf = NULL;
 
+  doAccSubs( symbolFileName, 127 );
+  doAccSubs( colorPvExpStr );
+  doAccSubs( xPvExpStr );
+  doAccSubs( yPvExpStr );
+  doAccSubs( anglePvExpStr );
+  for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
+    doAccSubs( controlPvExpStr[i] );
+  }
+
 }
 
 int anaSymbolClass::createInteractive (
@@ -4859,6 +4868,57 @@ int i;
   pvs[i] = xPvId; i++;
   pvs[i] = yPvId; i++;
   pvs[i] = anglePvId; i++;
+
+}
+
+char *anaSymbolClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return colorPvExpStr.getRaw();
+  }
+  else if ( i == 1 ) {
+    return xPvExpStr.getRaw();
+  }
+  else if ( i == 2 ) {
+    return yPvExpStr.getRaw();
+  }
+  else if ( i == 3 ) {
+    return anglePvExpStr.getRaw();
+  }
+  else if ( ( i > 3 ) && ( i < numPvs + 4 ) ) {
+    return controlPvExpStr[i-4].getRaw();
+  }
+
+  return NULL;
+
+}
+
+void anaSymbolClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+int saveW, saveH, saveX, saveY, prevOr;
+int status, resizeStat;
+
+  if ( i == 0 ) {
+    colorPvExpStr.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    xPvExpStr.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    yPvExpStr.setRaw( string );
+  }
+  else if ( i == 3 ) {
+    anglePvExpStr.setRaw( string );
+  }
+  else if ( ( i > 3 ) && ( i < numPvs + 4 ) ) {
+    controlPvExpStr[i-4].setRaw( string );
+  }
 
 }
 

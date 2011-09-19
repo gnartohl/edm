@@ -218,5 +218,18 @@
 #define activeWindowClass_str219 (char *) "Param"
 #define activeWindowClass_str220 (char *) "Toggle View Dimensions"
 #define activeWindowClass_str221 (char *) "Record Object Dimensions (R/r)"
+#define activeWindowClass_str222 (char *) "Set Auto-Inc Value"
+#define activeWindowClass_str223 (char *) "Index Value"
+#define activeWindowClass_str224 (char *) "Search & Replace"
+#define activeWindowClass_str225 (char *) "Search"
+#define activeWindowClass_str226 (char *) "Replace"
+#define activeWindowClass_str227 (char *) "Search & Replace Results"
+#define activeWindowClass_str228 (char *) "Old"
+#define activeWindowClass_str229 (char *) "New"
+#define activeWindowClass_str230 (char *) "Not Found"
+#define activeWindowClass_str231 (char *) "Skip"
+#define activeWindowClass_str232 (char *) "All"
+#define activeWindowClass_str233 (char *) "Ignore Case"
+#define activeWindowClass_str234 (char *) "Use Reg Expr"
 
 #endif

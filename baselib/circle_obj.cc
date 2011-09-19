@@ -359,6 +359,11 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   setBlinkFunction( (void *) doBlink );
 
+  doAccSubs( alarmPvExpStr );
+  doAccSubs( visPvExpStr );
+  doAccSubs( minVisString, 39 );
+  doAccSubs( maxVisString, 39 );
+
 }
 
 activeCircleClass::~activeCircleClass ( void ) {
@@ -1848,6 +1853,55 @@ void activeCircleClass::getPvs (
   *n = 2;
   pvs[0] = alarmPvId;
   pvs[1] = visPvId;
+
+}
+
+char *activeCircleClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return alarmPvExpStr.getRaw();
+  }
+  else if ( i == 1 ) {
+    return visPvExpStr.getRaw();
+  }
+  else if ( i == 2 ) {
+    return minVisString;
+  }
+  else if ( i == 3 ) {
+    return maxVisString;
+  }
+  else {
+    return NULL;
+  }
+
+}
+
+void activeCircleClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    alarmPvExpStr.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    visPvExpStr.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( minVisString, string, l );
+    minVisString[l] = 0;
+  }
+  else if ( i == 3 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( maxVisString, string, l );
+    maxVisString[l] = 0;
+  }
 
 }
 

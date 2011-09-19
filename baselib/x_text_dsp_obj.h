@@ -846,6 +846,16 @@ void map ( void );
 
 void unmap ( void );
 
+char *getSearchString (
+  int i
+);
+
+void replaceString (
+  int i,
+  int max,
+  char *string
+);
+
 void getPvs (
   int max,
   ProcessVariable *pvs[],

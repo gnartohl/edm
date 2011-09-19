@@ -4145,6 +4145,19 @@ int i, yi;
   actWin->fi->loadFontTag( fontTag );
   actWin->drawGc.setFontTag( fontTag, actWin->fi );
 
+  doAccSubs( graphTitle );
+  doAccSubs( xLabel );
+  doAccSubs( yLabel );
+  doAccSubs( y2Label );
+  doAccSubs( traceCtlPvExpStr );
+  doAccSubs( trigPvExpStr );
+  doAccSubs( resetPvExpStr );
+  for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
+    doAccSubs( xPvExpStr[i] );
+    doAccSubs( yPvExpStr[i] );
+    doAccSubs( nPvExpStr[i] );
+  }
+
   updateDimensions();
 
 }
@@ -12131,7 +12144,7 @@ void xyGraphClass::getPvs (
 
 int i, ii, num;
 
-  num = XYGC_K_MAX_TRACES + XYGC_K_MAX_TRACES + 3;
+  num = XYGC_K_MAX_TRACES + XYGC_K_MAX_TRACES + XYGC_K_MAX_TRACES + 3;
 
   if ( max < num ) {
     *n = 0;
@@ -12143,10 +12156,105 @@ int i, ii, num;
   for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
     pvs[ii++] = xPv[i];
     pvs[ii++] = yPv[i];
+    pvs[ii++] = nPv[i];
   }
   pvs[ii++] = resetPv;
   pvs[ii++] = trigPv;
   pvs[ii++] = traceCtlPv;
+
+}
+
+char *xyGraphClass::getSearchString (
+  int i
+) {
+
+int num = XYGC_K_MAX_TRACES + XYGC_K_MAX_TRACES + XYGC_K_MAX_TRACES + 6;
+int ii, selector, index;
+
+  if ( i == 0 ) {
+    return graphTitle.getRaw();
+  }
+  else if ( i == 1 ) {
+    return xLabel.getRaw();
+  }
+  else if ( i == 2 ) {
+    return yLabel.getRaw();
+  }
+  else if ( i == 3 ) {
+    return y2Label.getRaw();
+  }
+  else if ( i == 4 ) {
+    return traceCtlPvExpStr.getRaw();
+  }
+  else if ( i == 5 ) {
+    return trigPvExpStr.getRaw();
+  }
+  else if ( i == 6 ) {
+    return resetPvExpStr.getRaw();
+  }
+  else if ( ( i > 6 ) && ( i < num ) ) {
+    ii = i - 7;
+    selector = ii % 3;
+    index = ii / 3;
+    if ( selector == 0 ) {
+      return xPvExpStr[index].getRaw();
+    }
+    else if ( selector == 1 ) {
+      return yPvExpStr[index].getRaw();
+    }
+    else if ( selector == 2 ) {
+      return nPvExpStr[index].getRaw();
+    }
+  }
+
+  return NULL;
+
+}
+
+void xyGraphClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+int num = XYGC_K_MAX_TRACES + XYGC_K_MAX_TRACES + XYGC_K_MAX_TRACES + 6;
+int ii, selector, index;
+
+  if ( i == 0 ) {
+    graphTitle.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    xLabel.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    yLabel.setRaw( string );
+  }
+  else if ( i == 3 ) {
+    y2Label.setRaw( string );
+  }
+  else if ( i == 4 ) {
+    traceCtlPvExpStr.setRaw( string );
+  }
+  else if ( i == 5 ) {
+    trigPvExpStr.setRaw( string );
+  }
+  else if ( i == 6 ) {
+    resetPvExpStr.setRaw( string );
+  }
+  else if ( ( i > 6 ) && ( i < num ) ) {
+    ii = i - 7;
+    selector = ii % 3;
+    index = ii / 3;
+    if ( selector == 0 ) {
+      xPvExpStr[index].setRaw( string );
+    }
+    else if ( selector == 1 ) {
+      yPvExpStr[index].setRaw( string );
+    }
+    else if ( selector == 2 ) {
+      nPvExpStr[index].setRaw( string );
+    }
+  }
 
 }
 

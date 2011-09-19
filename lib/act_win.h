@@ -1,3 +1,4 @@
+
 //  edm - extensible display manager
 
 //  Copyright (C) 1999 John W. Sinclair
@@ -143,6 +144,8 @@
 #define AWC_POPUP_INSERT_TEMPLATE 159
 #define AWC_POPUP_TOGGLE_VIEW_DIMS 160
 #define AWC_POPUP_RECORD_DIMS 161
+#define AWC_POPUP_SET_PASTE_INDEX 162
+#define AWC_POPUP_SAR 163
 
 #define AWC_NONE_SELECTED 1
 #define AWC_ONE_SELECTED 2
@@ -295,6 +298,55 @@ static void awc_tedit_apply (
   XtPointer call );
 
 static void awc_tedit_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static int getCurReplaceIndex (
+  activeWindowClass *awo
+);
+
+static void awc_editReplace_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void awc_editReplace_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void awc_editReplace_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void awc_editSaR_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void awc_editSaR_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void awc_editSaR_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void awc_editSetAcc_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void awc_editSetAcc_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void awc_editSetAcc_cancel (
   Widget w,
   XtPointer client,
   XtPointer call );
@@ -680,6 +732,55 @@ friend void awc_tedit_cancel (
   XtPointer client,
   XtPointer call );
 
+friend int getCurReplaceIndex (
+  activeWindowClass *awo
+);
+
+friend void awc_editReplace_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void awc_editReplace_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void awc_editReplace_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void awc_editSaR_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void awc_editSaR_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void awc_editSaR_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void awc_editSetAcc_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void awc_editSetAcc_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+friend void awc_editSetAcc_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
 friend void awc_edit_ok (
   Widget w,
   XtPointer client,
@@ -817,6 +918,18 @@ int objNameDialogCreated, objNameDialogPoppedUp;
 char id[31+1], bufId[31+1];
 char title[127+1], bufTitle[127+1], restoreTitle[127+1];
 int showName;
+
+int accVal, bufAccVal;
+
+int efSaRW, efSaRH, efSaRLargestH;
+int sarCaseInsensivite, sarUseRegExpr;
+char *sar1, *sar2;
+activeGraphicListPtr sarCurSel;
+
+int efReplaceW, efReplaceH, efReplaceLargestH;
+char *replaceOld, *replaceNew;
+int curReplaceIndex;
+int seachStatus;
 
 cursorClass cursor;
 
@@ -975,7 +1088,7 @@ int allSelectedBtnFontTagFlag;
 int allSelectedBtnAlignment;
 int allSelectedBtnAlignmentFlag;
 
-entryFormClass ef, *ef1, tef;
+entryFormClass ef, *ef1, tef, efSetAcc, efSaR, efReplace;
 confirmDialogClass confirm, confirm1;
 
 int noRefresh;

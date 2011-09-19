@@ -750,6 +750,11 @@ int i;
   colorPvExpStr.setRaw( source->colorPvExpStr.rawString );
   eBuf = NULL;
 
+  doAccSubs( dynSymbolFileName, 127 );
+  doAccSubs( colorPvExpStr );
+  doAccSubs( gateUpPvExpStr );
+  doAccSubs( gateDownPvExpStr );
+
 }
 
 int activeDynSymbolClass::createInteractive (
@@ -3192,6 +3197,7 @@ int i;
 
   if ( deleteRequest ) return 1;
 
+  colorPvExpStr.expand1st( numMacros, macros, expansions );
   gateUpPvExpStr.expand1st( numMacros, macros, expansions );
   gateDownPvExpStr.expand1st( numMacros, macros, expansions );
 
@@ -3226,6 +3232,7 @@ int i;
 
   if ( deleteRequest ) return 1;
 
+  colorPvExpStr.expand1st( numMacros, macros, expansions );
   gateUpPvExpStr.expand2nd( numMacros, macros, expansions );
   gateDownPvExpStr.expand2nd( numMacros, macros, expansions );
 
@@ -4345,6 +4352,43 @@ void activeDynSymbolClass::getPvs (
   pvs[0] = gateUpPvId;
   pvs[1] = gateDownPvId;
   pvs[2] = colorPvId;
+
+}
+
+char *activeDynSymbolClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return colorPvExpStr.getRaw();
+  }
+  else if ( i == 1 ) {
+    return gateUpPvExpStr.getRaw();
+  }
+  else if ( i == 2 ) {
+    return gateDownPvExpStr.getRaw();
+  }
+  else {
+    return NULL;
+  }
+
+}
+
+void activeDynSymbolClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    colorPvExpStr.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    gateUpPvExpStr.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    gateDownPvExpStr.setRaw( string );
+  }
 
 }
 

@@ -24,6 +24,7 @@ edmByteClass::edmByteClass() : activeGraphicClass(), init(0),
 edmByteClass::edmByteClass(edmByteClass *rhs)
 {
     clone(rhs, BYTE_CLASSNAME);
+    doAccSubs( pv_exp_str );
 }
 
 void edmByteClass::clone(const edmByteClass *rhs,
@@ -785,7 +786,30 @@ void edmByteClass::getPvs(int max,
   pvs[0] = valuePvId;
 
 }
-    
+
+char *edmByteClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return pv_exp_str.getRaw();
+  }
+
+  return NULL;
+
+}
+
+void edmByteClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    pv_exp_str.setRaw( string );
+  }
+
+}    
 // --------------------------------------------------------
 // Macro support
 // --------------------------------------------------------

@@ -584,6 +584,13 @@ int i;
 
   buf = NULL;
 
+  doAccSubs( buttonLabel );
+  doAccSubs( requiredHostName, 15 );
+  for ( i=0; i<maxCmds; i++ ) {
+    doAccSubs( shellCommand[i] );
+    doAccSubs( label[i] );
+  }
+
 }
 
 int shellCmdClass::createInteractive (
@@ -2235,6 +2242,67 @@ void shellCmdClass::executeDeferred ( void ) {
 
     actWin->appCtx->postMessage( shellCmdClass_str29 );
 
+  }
+
+}
+
+char *shellCmdClass::getSearchString (
+  int i
+) {
+
+int num = 1 + 1 + maxCmds + maxCmds;
+int ii, selector, index;
+
+  if ( i == 0 ) {
+    return buttonLabel.getRaw();
+  }
+  else if ( i == 1 ) {
+    return requiredHostName;
+  }
+  else if ( ( i > 1 ) && ( i < num ) ) {
+    ii = i - 2;
+    selector = ii % 2;
+    index = ii / 2;
+    if ( selector == 0 ) {
+      return shellCommand[index].getRaw();
+    }
+    else if ( selector == 1 ) {
+      return label[index].getRaw();
+    }
+  }
+
+  return NULL;
+
+}
+
+void shellCmdClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+int num = 1 + 1 + maxCmds + maxCmds;
+int ii, selector, index;
+
+  if ( i == 0 ) {
+    buttonLabel.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    int l = max;
+    if ( 15 < max ) l = 15;
+    strncpy( requiredHostName, string, l );
+    requiredHostName[l] = 0;
+  }
+  else if ( ( i > 1 ) && ( i < num ) ) {
+    ii = i - 2;
+    selector = ii % 2;
+    index = ii / 2;
+    if ( selector == 0 ) {
+      shellCommand[index].setRaw( string );
+    }
+    else if ( selector == 1 ) {
+      label[index].setRaw( string );
+    }
   }
 
 }

@@ -590,6 +590,15 @@ activeGraphicClass *bto = (activeGraphicClass *) this;
 
   connection.setMaxPvs( 4 );
 
+  doAccSubs( controlPvName );
+  doAccSubs( readPvName );
+  doAccSubs( colorPvExpString );
+  doAccSubs( visPvExpString );
+  doAccSubs( minVisString, 39 );
+  doAccSubs( maxVisString, 39 );
+  doAccSubs( onLabel, MAX_ENUM_STRING_SIZE );
+  doAccSubs( offLabel, MAX_ENUM_STRING_SIZE );
+
   updateDimensions();
 
   eBuf = NULL;
@@ -3174,6 +3183,86 @@ void activeButtonClass::getPvs (
   pvs[1] = readPvId;
   pvs[2] = colorPvId;
   pvs[3] = visPvId;
+
+}
+
+char *activeButtonClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return controlPvName.getRaw();
+  }
+  else if ( i == 1 ) {
+    return readPvName.getRaw();
+  }
+  else if ( i == 2 ) {
+    return colorPvExpString.getRaw();
+  }
+  else if ( i == 3 ) {
+    return visPvExpString.getRaw();
+  }
+  else if ( i == 4 ) {
+    return minVisString;
+  }
+  else if ( i == 5 ) {
+    return maxVisString;
+  }
+  else if ( i == 6 ) {
+    return onLabel;
+  }
+  else if ( i == 7 ) {
+    return offLabel;
+  }
+
+  return NULL;
+
+}
+
+void activeButtonClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    controlPvName.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    readPvName.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    colorPvExpString.setRaw( string );
+  }
+  else if ( i == 3 ) {
+    visPvExpString.setRaw( string );
+  }
+  else if ( i == 4 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( minVisString, string, l );
+    minVisString[l] = 0;
+  }
+  else if ( i == 5 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( maxVisString, string, l );
+    maxVisString[l] = 0;
+  }
+  else if ( i == 6 ) {
+    int l = max;
+    if ( MAX_ENUM_STRING_SIZE < max ) l = MAX_ENUM_STRING_SIZE;
+    strncpy( onLabel, string, l );
+    onLabel[l] = 0;
+  }
+  else if ( i == 7 ) {
+    int l = max;
+    if ( MAX_ENUM_STRING_SIZE < max ) l = MAX_ENUM_STRING_SIZE;
+    strncpy( offLabel, string, l );
+    offLabel[l] = 0;
+  }
+
+  updateDimensions();
 
 }
 

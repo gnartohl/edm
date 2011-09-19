@@ -496,6 +496,16 @@ void getPvs (
   ProcessVariable *pvs[],
   int *n );
 
+char *getSearchString (
+  int i
+);
+
+void replaceString (
+  int i,
+  int max,
+  char *string
+);
+
 char *crawlerGetFirstPv ( void );
 
 char *crawlerGetNextPv ( void );

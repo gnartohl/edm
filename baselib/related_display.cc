@@ -558,6 +558,18 @@ activeGraphicClass *rdo = (activeGraphicClass *) this;
 
   setBlinkFunction( (void *) doBlink );
 
+  doAccSubs( buttonLabel );
+  doAccSubs( helpCommandExpString );
+  doAccSubs( colorPvExpString );
+  for ( i=0; i<NUMPVS; i++ ) {
+    doAccSubs( destPvExpString[i] );
+  }
+  for ( i=0; i<maxDsps; i++ ) {
+    doAccSubs( displayFileName[i] );
+    doAccSubs( symbolsExpStr[i] );
+    doAccSubs( label[i] );
+  }
+
 }
 
 void relatedDisplayClass::setHelpItem ( void ) {
@@ -3569,19 +3581,120 @@ activeWindowListPtr cur;
 
 }
 
+void relatedDisplayClass::getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n ) {
+
+int i, num = NUMPVS + 1;
+
+  if ( max < num ) {
+    *n = 0;
+    return;
+  }
+
+  *n = num;
+
+  for ( i=0; i<NUMPVS; i++ ) {
+    pvs[i] = destPvId[i];
+  }
+  pvs[NUMPVS+1] = colorPvId;
+
+}
+
+char *relatedDisplayClass::getSearchString (
+  int i
+) {
+
+int num1 = 1 + 1 + 1 + NUMPVS;
+int num2 = 1 + 1 + 1 + NUMPVS + maxDsps + maxDsps + maxDsps;
+int ii, selector, index;
+
+  if ( i == 0 ) {
+    return buttonLabel.getRaw();
+  }
+  else if ( i == 1 ) {
+    return helpCommandExpString.getRaw();
+  }
+  else if ( i == 2 ) {
+    return colorPvExpString.getRaw();
+  }
+  else if ( ( i > 2 ) && ( i < num1 ) ) {
+    index = i - 3;
+    return destPvExpString[index].getRaw();
+  }
+  else if ( ( i >= num1 ) && ( i < num2 ) ) {
+    ii = i - num1;
+    selector = ii % 3;
+    index = ii / 3;
+    if ( selector == 0 ) {
+      return displayFileName[index].getRaw();
+    }
+    else if ( selector == 1 ) {
+      return symbolsExpStr[index].getRaw();
+    }
+    else if ( selector == 2 ) {
+      return label[index].getRaw();
+    }
+  }
+
+  return NULL;
+
+}
+
+void relatedDisplayClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+int num1 = 1 + 1 + 1 + NUMPVS;
+int num2 = 1 + 1 + 1 + NUMPVS + maxDsps + maxDsps + maxDsps;
+int ii, selector, index;
+
+  if ( i == 0 ) {
+    buttonLabel.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    helpCommandExpString.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    colorPvExpString.setRaw( string );
+  }
+  else if ( ( i > 2 ) && ( i < num1 ) ) {
+    index = i - 3;
+    destPvExpString[index].setRaw( string );
+  }
+  else if ( ( i >= num1 ) && ( i < num2 ) ) {
+    ii = i - num1;
+    selector = ii % 3;
+    index = ii / 3;
+    if ( selector == 0 ) {
+      displayFileName[index].setRaw( string );
+    }
+    else if ( selector == 1 ) {
+      symbolsExpStr[index].setRaw( string );
+    }
+    else if ( selector == 2 ) {
+      label[index].setRaw( string );
+    }
+  }
+
+}
+
 // crawler functions may return blank pv names
 char *relatedDisplayClass::crawlerGetFirstPv ( void ) {
 
   crawlerPvIndex = 0;
-  return destPvExpString[crawlerPvIndex].getExpanded();
+  return colorPvExpString.getExpanded();
 
 }
 
 char *relatedDisplayClass::crawlerGetNextPv ( void ) {
 
-  if ( crawlerPvIndex >= NUMPVS-1 ) return NULL;
+  if ( crawlerPvIndex >= NUMPVS ) return NULL;
   crawlerPvIndex++;
-  return destPvExpString[crawlerPvIndex].getExpanded();
+  return destPvExpString[crawlerPvIndex-1].getExpanded();
 
 }
 

@@ -584,6 +584,30 @@ public:
     virtual void getPvs (int max,
                          ProcessVariable *pvs[],
                          int *n ){ *n = 1; pvs[0] = dataPv;};
+
+    virtual char *getSearchString (
+      int i
+    ) {
+
+      if ( i == 0 ) {
+        return dataPvStr.getRaw();
+      }
+
+      return NULL;
+
+    }
+
+    virtual void replaceString (
+      int i,
+      int max,
+      char *string
+      ) {
+
+      if ( i == 0 ) {
+        dataPvStr.setRaw( string );
+      }
+
+    }
   
     // This is a funny interface. It seems that the idea is to have a generic
     // interface to all widgets with a "standard" set of parameters (e.g.
@@ -907,7 +931,10 @@ TwoDProfileMonitor::TwoDProfileMonitor (const TwoDProfileMonitor &s)
     heightPvStr.setRaw (s.heightPvStr.rawString);
 
     pvBasedDataSize = s.pvBasedDataSize;
-    dataWidth = s.dataWidth; 
+    dataWidth = s.dataWidth;
+
+    doAccSubs( dataPvStr );
+
 }
 
 TwoDProfileMonitor::~TwoDProfileMonitor (void) {

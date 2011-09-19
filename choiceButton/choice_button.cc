@@ -429,6 +429,8 @@ activeChoiceButtonClass::activeChoiceButtonClass ( void ) {
 
   eBuf = NULL;
 
+  crawlerPvIndex = 0;
+
   setBlinkFunction( (void *) doBlink );
 
 }
@@ -507,6 +509,15 @@ activeGraphicClass *acbo = (activeGraphicClass *) this;
   eBuf = NULL;
 
   setBlinkFunction( (void *) doBlink );
+
+  crawlerPvIndex = 0;
+
+  doAccSubs( controlPvExpStr );
+  doAccSubs( readPvExpStr );
+  doAccSubs( colorPvExpStr );
+  doAccSubs( visPvExpStr );
+  doAccSubs( minVisString, 39 );
+  doAccSubs( maxVisString, 39 );
 
 }
 
@@ -2701,6 +2712,95 @@ void activeChoiceButtonClass::getPvs (
   pvs[1] = readPvId;
   pvs[2] = visPvId;
   pvs[3] = colorPvId;
+
+}
+
+char *activeChoiceButtonClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return controlPvExpStr.getRaw();
+  }
+  else if ( i == 1 ) {
+    return readPvExpStr.getRaw();
+  }
+  else if ( i == 2 ) {
+    return colorPvExpStr.getRaw();
+  }
+  else if ( i == 3 ) {
+    return visPvExpStr.getRaw();
+  }
+  else if ( i == 4 ) {
+    return minVisString;
+  }
+  else if ( i == 5 ) {
+    return maxVisString;
+  }
+
+  return NULL;
+
+}
+
+void activeChoiceButtonClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    controlPvExpStr.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    readPvExpStr.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    colorPvExpStr.setRaw( string );
+  }
+  else if ( i == 3 ) {
+    visPvExpStr.setRaw( string );
+  }
+  else if ( i == 4 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( minVisString, string, l );
+    minVisString[l] = 0;
+  }
+  else if ( i == 5 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( maxVisString, string, l );
+    maxVisString[l] = 0;
+  }
+
+}
+
+// crawler functions may return blank pv names
+char *activeChoiceButtonClass::crawlerGetFirstPv ( void ) {
+
+  crawlerPvIndex = 0;
+  return controlPvExpStr.getExpanded();
+
+}
+
+char *activeChoiceButtonClass::crawlerGetNextPv ( void ) {
+
+  if ( crawlerPvIndex >= 3 ) return NULL;
+
+  crawlerPvIndex++;
+
+  if ( crawlerPvIndex == 1 ) {
+
+    return readPvExpStr.getExpanded();
+
+  }
+  else if ( crawlerPvIndex == 2 ) {
+
+    return visPvExpStr.getExpanded();
+
+  }
+
+  return colorPvExpStr.getExpanded();
 
 }
 

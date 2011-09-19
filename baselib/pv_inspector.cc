@@ -698,6 +698,13 @@ activeGraphicClass *pio = (activeGraphicClass *) this;
   unconnectedTimer = 0;
   rtypeUnconnectedTimer = 0;
 
+  doAccSubs( buttonLabel );
+  for ( i=0; i<maxDsps; i++ ) {
+    doAccSubs( label[i] );
+    doAccSubs( displayFileName[i] );
+    doAccSubs( displayFileExt[i] );
+  }
+
 }
 
 int pvInspectorClass::createInteractive (
@@ -2711,6 +2718,64 @@ activeWindowListPtr cur;
 
     }
 
+  }
+
+}
+
+char *pvInspectorClass::getSearchString (
+  int i
+) {
+
+int num = 3 * numDsps + 1;
+int ii, selector, index;
+
+  if ( i == 0 ) {
+    return buttonLabel.getRaw();
+  }
+  else if ( ( i > 0 ) && ( i < num ) ) {
+    ii = i - 1;
+    selector = ii % 3;
+    index = ii / 3;
+    if ( selector == 0 ) {
+      return label[index].getRaw();
+    }
+    else if ( selector == 1 ) {
+      return displayFileName[index].getRaw();
+    }
+    else if ( selector == 2 ) {
+      return displayFileExt[index].getRaw();
+    }
+  }
+
+  return NULL;
+
+}
+
+void pvInspectorClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+int num = 3 * numDsps + 1;
+int ii, selector, index;
+
+  if ( i == 0 ) {
+    buttonLabel.setRaw( string );
+  }
+  else if ( ( i > 0 ) && ( i < num ) ) {
+    ii = i - 1;
+    selector = ii % 3;
+    index = ii / 3;
+    if ( selector == 0 ) {
+      label[index].setRaw( string );
+    }
+    else if ( selector == 1 ) {
+      displayFileName[index].setRaw( string );
+    }
+    else if ( selector == 2 ) {
+      displayFileExt[index].setRaw( string );
+    }
   }
 
 }

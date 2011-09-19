@@ -22,6 +22,514 @@
 #include "environment.str"
 
 static int g_serverSocketFd = -1;
+static int g_accumulator = 0;
+static int g_useAccumulator = 0;
+
+int doReSearchReplace (
+  int caseInsensivite,
+  char *expression,
+  char *newText,
+  int max,
+  char *oldString,
+  char *newString
+) {
+
+regex_t compiled_re;
+int res, status=0;
+int flags;
+
+  strcpy( newString, "" );
+
+  //fprintf( stderr, "expression = [%s]\n", expression );
+
+  flags = REG_EXTENDED;
+  if ( caseInsensivite ) flags |= REG_ICASE;
+
+  res = regcomp( &compiled_re, expression, flags );
+  if ( res ) {
+
+    // error (consider it no match)
+    status = -1;
+
+  }
+  else {
+
+    int arrayi, l, start, size, so, eo, index,
+     i, ii, newi, oldi, newTextLen;
+    regmatch_t pmatch[10];
+    bool more, first;
+
+    newi = 0;
+    oldi = 0;
+    arrayi = 0;
+    l = strlen( oldString );
+    newTextLen = strlen( newText );
+    more = true;
+    index = 0;
+    first = true;
+    do {
+
+      //fprintf( stderr, "index = %-d\n", index );
+      //fprintf( stderr, "search string = [%s]\n", &oldString[index] );
+      res = regexec( &compiled_re, &oldString[index],
+       10, pmatch, REG_EXTENDED );
+      if ( !res ) {
+
+	//for ( i=9; i>=0; i-- ) {
+        //  fprintf( stderr, "so[%-d] = %-d, eo[%-d] = %-d\n",
+        //   i, pmatch[i].rm_so,
+        //   i, pmatch[i].rm_eo );
+        //}
+
+	// find last match
+	size = 0;
+	for ( i=9; i>=0; i-- ) {
+          //fprintf( stderr, "so[%-d] = %-d, eo[%-d] = %-d\n",
+          // i, pmatch[i].rm_so,
+          // i, pmatch[i].rm_eo );
+          if ( pmatch[i].rm_eo != pmatch[i].rm_so ) {
+            so = pmatch[i].rm_so + index;
+            eo = pmatch[i].rm_eo + index;
+	    size = eo - so;
+	    break;
+	  }
+	}
+
+        if ( size > 0 ) {
+
+          start = oldi;
+          for ( ii=start; ii<so; ii++ ) {
+            newString[newi] = oldString[oldi];
+            newi++; if ( newi >= max ) newi = max;
+            oldi++;
+          }
+          oldi = eo;
+          for ( ii=0; ii<newTextLen; ii++ ) {
+            newString[newi] = newText[ii];
+            newi++; if ( newi >= max ) newi = max;
+          }
+          newString[newi] = 0;
+	  //printf( "newString is [%s]\n", newString );
+
+        }
+	else {
+
+	  if ( first ) {
+            status = -1;
+	    more = false;
+	  }
+
+	}
+
+        if ( more ) {
+          first = false;
+          eo = pmatch[0].rm_eo + index;
+          index = eo;
+          if ( index >= l ) more = false;
+        }
+
+      }
+      else {
+
+        if ( first ) status = -1;
+
+	more = false;
+
+	// copy rest of string
+	//fprintf( stderr, "oldi = %-d\n", oldi );
+	//fprintf( stderr, "newi = %-d\n", newi );
+        for ( ii=oldi; ii<l; ii++ ) {
+          newString[newi] = oldString[ii];
+          newi++; if ( newi >= max ) newi = max;
+          //newString[newi] = 0;
+          //printf( "newString is [%s]\n", newString );
+        }
+        newString[newi] = 0;
+        //printf( "final newString is [%s]\n", newString );
+
+      }
+
+    } while ( more );
+
+  }
+
+  regfree(&compiled_re);
+
+  return status;
+
+}
+
+int doSearchReplace (
+  int caseInsensivite,
+  int useRegExpr,
+  char *expression,
+  char *newText,
+  int max,
+  char *oldString,
+  char *newString
+) {
+
+  unsigned int i, ii, newi, start,
+   lenOldString, lenExpression, lenNewText;
+  int result, lastPos;
+  bool more, anyMatch;
+
+  if ( useRegExpr ) {
+
+    return doReSearchReplace( caseInsensivite, expression, newText,
+     max, oldString, newString );
+
+  }
+
+  lenOldString = strlen( oldString );
+  lenExpression = strlen( expression );
+  lenNewText = strlen( newText );
+  lastPos = lenOldString - lenExpression;
+  if ( lastPos < 0 ) return -1; // no match
+
+  start = newi = i = 0;
+  more = true;
+  anyMatch = false;
+
+  while ( more ) {
+
+    if ( caseInsensivite ) {
+      result = strncasecmp( expression, &oldString[i], lenExpression );
+    }
+    else {
+      result = strncmp( expression, &oldString[i], lenExpression );
+    }
+
+    if ( result == 0 ) { // match
+      anyMatch = true;
+      // skip past found expression in old string
+      i += lenExpression;
+      if ( i >= lenOldString ) more = false;
+      // insert expression into newString
+      for ( ii=0; ii<lenNewText; ii++ ) {
+        if ( newi < (unsigned int) max ) newString[newi] = newText[ii];
+        newi++;
+      }
+    }
+    else {
+      // copy single char into newString
+      if ( newi < (unsigned int) max ) newString[newi] = oldString[i];
+      newi++;
+      i++;
+      if ( i >= lenOldString ) more = false;
+    }
+
+  }
+
+  if ( newi < (unsigned int) max ) newString[newi] = 0;
+  newString[max] = 0;
+
+  if ( anyMatch ) {
+    return 0;
+  }
+  else {
+    return -1;
+  }
+
+}
+
+void enableAccumulator ( void ) {
+
+static int noAccumulator = -1;
+
+  if ( noAccumulator == -1 ) {
+    char *envPtr = getenv( environment_str36 );
+    if ( envPtr ) {
+      noAccumulator = 1;
+    }
+    else {
+      noAccumulator = 0;
+    }
+  }
+
+  if ( noAccumulator == 1 ) {
+    g_useAccumulator = 0;
+  }
+  else {
+    g_useAccumulator = 1;
+  }
+
+}
+
+void disableAccumulator ( void ) {
+  g_useAccumulator = 0;
+}
+
+int useAccumulator ( void ) {
+  return g_useAccumulator;
+}
+
+void setAccumulator (
+  int v
+) {
+  g_accumulator = v;
+}
+
+int getAccumulator ( void ) {
+  return g_accumulator;
+}
+
+void incAccumulator ( void ) {
+  g_accumulator++;
+}
+
+int buildSymbols (
+  char *string,
+  int *n,
+  char symbols[10][31+1],
+  int increment[10],
+  int multiplier[10]
+) {
+
+regex_t compiled_re;
+int status=0, res, i;
+
+char *re = "\\$\\(([-]?[0-9]+\\*)*(#)(([+-])([0-9]+))*\\)";
+
+  //fprintf( stderr, "re = [%s]\n", re );
+  //fprintf( stderr, "string = [%s]\n", string );
+
+  for ( i=0; i<10; i++ ) {
+    strcpy( symbols[i], "" );
+    increment[i] = 0;
+    multiplier[i] = 1;
+  }
+  *n = 0;
+
+  res = regcomp( &compiled_re, re, REG_EXTENDED );
+  if ( res ) {
+
+    // error
+    status = -1;
+
+  }
+  else {
+
+    int arrayi, l, start, size, so, eo, index, mult, inc, sign, offset, len;
+    char text[1023+1];
+    regmatch_t pmatch[10];
+    bool more;
+
+    arrayi = 0;
+    l = strlen( string );
+    more = true;
+    index = 0;
+    do {
+
+      //fprintf( stderr, "index = %-d\n", index );
+      res = regexec( &compiled_re, &string[index], 6, pmatch, REG_EXTENDED );
+      if ( !res ) {
+
+        //for ( i=0; i<6; i++ ) {
+        //  fprintf( stderr, "so = %-d, eo = %-d\n", pmatch[i].rm_so + index,
+        //  pmatch[i].rm_eo + index );
+        //}
+
+        // copy matched substring into display string
+        // match 0 is always the full match,
+        // match 1 is the first selected substring
+        so = pmatch[0].rm_so + index;
+        eo = pmatch[0].rm_eo + index;
+        start = so;
+        size = eo - so;
+        if ( size > 1023 ) size = 1023;
+
+        if ( size <= 0 ) {
+          //fprintf( stderr, "no match\n" );
+          more = false;
+          continue;
+        }
+
+        so = pmatch[1].rm_so + index;
+        eo = pmatch[1].rm_eo + index;
+        start = so;
+        size = eo - so;
+        if ( size > 1023 ) size = 1023;
+
+        if ( size <= 0 ) {
+          mult = 1;
+        }
+        else {
+          memcpy( text, string+start, size );
+          text[size] = 0;
+          mult = strtol( text, NULL, 0 );
+        }
+
+        multiplier[arrayi] = mult;
+
+        so = pmatch[4].rm_so + index;
+        eo = pmatch[4].rm_eo + index;
+        start = so;
+        size = eo - so;
+        if ( size > 1023 ) size = 1023;
+
+        if ( size <= 0 ) {
+          sign = 1;
+        }
+        else {
+          memcpy( text, string+start, size );
+          text[size] = 0;
+          if ( strcmp( text, "-" ) == 0 ) {
+            sign = -1;
+          }
+          else {
+            sign = 1;
+          }
+        }
+
+        so = pmatch[5].rm_so + index;
+        eo = pmatch[5].rm_eo + index;
+        start = so;
+        size = eo - so;
+        if ( size > 1023 ) size = 1023;
+
+        if ( size <= 0 ) {
+          inc = 0;
+        }
+        else {
+          memcpy( text, string+start, size );
+          text[size] = 0;
+          inc = strtol( text, NULL, 0 ) * sign;
+        }
+
+        increment[arrayi] = inc;
+
+        so = pmatch[0].rm_so + index;
+        eo = pmatch[0].rm_eo + index;
+        start = so;
+        size = eo - so;
+        if ( size > 1023 ) size = 1023;
+        memcpy( text, string+start, size );
+        text[size] = 0;
+        if ( size > 3 ) {
+          offset = 2;
+          text[size-1] = 0;
+          len = size - 3;
+          //fprintf( stderr, "1 - text = [%s]\n", &text[2] );
+        }
+        else {
+          offset = 0;
+          len = size;
+          //fprintf( stderr, "2 - text = [%s]\n", text );
+        }
+
+        if ( len > 31 ) len = 31;
+        strncpy( symbols[arrayi], &text[offset], len+1 );
+        symbols[arrayi][31] = 0;
+
+        eo = pmatch[0].rm_eo + index;
+        index = eo;
+        if ( index >= l ) more = false;
+
+      }
+      else {
+
+        more = false;
+        //regerror( res, &compiled_re, buf, sizeof buf );
+        //fprintf( stderr,"2 - Error in regular expression match: %s\n", buf );
+
+      }
+
+      arrayi++;
+      if ( arrayi < 10 ) {
+        (*n)++;
+      }
+      else {
+        more = false;
+      }
+
+    } while ( more );
+
+  }
+
+  regfree(&compiled_re);
+
+  return status;
+
+}
+
+void doAccSubs (
+  expStringClass &s
+) {
+
+  if ( useAccumulator() ) {
+
+    if ( s.getRaw() && !blank(s.getRaw()) ) {
+
+      expStringClass tmp;
+      int n, inc[10], mult[10];
+      char syms[10][31+1];
+      char vals[10][31+1];
+      char *syms1[10];
+      char *vals1[10];
+
+      int i;
+      int status = buildSymbols( s.getRaw(), &n, syms, inc, mult );
+
+      if ( status ) return;
+
+      for ( i=0; i<n; i++ ) {
+        snprintf( vals[i], 31, "%-d", mult[i] * getAccumulator() + inc[i] );
+        syms1[i] = syms[i];
+        vals1[i] = vals[i];
+        //fprintf( stderr, "syms1[%-d] = %s, vals1[%-d] = %s\n",
+        // i, syms1[i], i, vals1[i] );
+      }
+
+      //fprintf( stderr, "1 - es = [%s]\n", s.getRaw() );
+      tmp.setRaw( s.getRaw() );
+      tmp.expand1st( n, (char **) syms1, (char **) vals1 );
+      s.setRaw( tmp.getExpanded() );
+      //fprintf( stderr, "2 - es = [%s]\n", s.getRaw() );
+
+    }
+
+  }
+
+}
+
+void doAccSubs (
+  char *s,
+  int maxlen
+) {
+
+  if ( useAccumulator() && ( maxlen > 0 ) ) {
+
+    if ( s && !blank(s) ) {
+      expStringClass tmp;
+      int n, inc[10], mult[10];
+      char syms[10][31+1];
+      char vals[10][31+1];
+      char *syms1[10];
+      char *vals1[10];
+
+      int i;
+      int status = buildSymbols( s, &n, syms, inc, mult );
+
+      if ( status ) return;
+
+      for ( i=0; i<n; i++ ) {
+        snprintf( vals[i], 31, "%-d", mult[i] * getAccumulator() + inc[i] );
+        syms1[i] = syms[i];
+        vals1[i] = vals[i];
+      }
+
+      tmp.setRaw( s );
+      tmp.expand1st( n, (char **) syms1, (char **) vals1 );
+
+      strncpy( s, tmp.getExpanded(), maxlen-1 );
+      s[maxlen-1] = 0;
+
+    }
+
+  }
+
+}
 
 int useAppTopParent ( void ) {
 

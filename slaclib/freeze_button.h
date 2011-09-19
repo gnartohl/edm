@@ -199,6 +199,16 @@ void changeDisplayParams (
   int topShadowColor,
   int botShadowColor );
 
+char *getSearchString (
+  int i
+);
+
+void replaceString (
+  int i,
+  int max,
+  char *string
+);
+
 };
 
 #ifdef __cplusplus

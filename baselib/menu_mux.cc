@@ -465,6 +465,17 @@ activeGraphicClass *mmuxo = (activeGraphicClass *) this;
 
   setBlinkFunction( (void *) doBlink );
 
+  doAccSubs( controlPvExpStr );
+  for ( i=0; i<MMUX_MAX_STATES; i++ ) {
+    doAccSubs( tag[i], MMUX_MAX_STRING_SIZE );
+  }
+  for ( i=0; i<MMUX_MAX_STATES; i++ ) {
+    for ( ii=0; ii<MMUX_MAX_ENTRIES; ii++ ) {
+      doAccSubs( m[i][ii], MMUX_MAX_STRING_SIZE );
+      doAccSubs( e[i][ii], MMUX_MAX_STRING_SIZE );
+    }
+  }
+
 }
 
 menuMuxClass::~menuMuxClass ( void ) {
@@ -2163,6 +2174,79 @@ void menuMuxClass::getPvs (
 
   *n = 1;
   pvs[0] = controlPvId;
+
+}
+
+char *menuMuxClass::getSearchString (
+  int i
+) {
+
+int n1 = 1 + MMUX_MAX_STATES;
+int n2 = 1 + MMUX_MAX_STATES + MMUX_MAX_STATES * MMUX_MAX_ENTRIES;
+int ii, selector, index, index1, index2;
+
+  if ( i == 0 ) {
+    return controlPvExpStr.getRaw();
+  }
+  else if ( ( i > 0 ) && ( i < n1 ) ) {
+    index = i - 1;
+    return tag[index];
+  }
+  else if ( ( i >= n1 ) && ( i < n2 ) ) {
+    ii = i - n1 - 1;
+    index2 = ( ii / 2 ) % MMUX_MAX_ENTRIES;
+    selector = ii % 2;
+    index1 = ii / MMUX_MAX_ENTRIES / 2;
+    if ( selector == 0 ) {
+      return m[index1][index2];
+    }
+    else {
+      return e[index1][index2];
+    }
+  }
+
+  return NULL;
+
+}
+
+void menuMuxClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+int n1 = 1 + MMUX_MAX_STATES;
+int n2 = 1 + MMUX_MAX_STATES + MMUX_MAX_STATES * MMUX_MAX_ENTRIES;
+int ii, selector, index, index1, index2;
+
+  if ( i == 0 ) {
+    controlPvExpStr.setRaw( string );
+  }
+  else if ( ( i > 0 ) && ( i < n1 ) ) {
+    index = i - 1;
+    int l = max;
+    if ( MMUX_MAX_STRING_SIZE < max ) l = MMUX_MAX_STRING_SIZE;
+    strncpy( tag[index], string, l );
+    tag[index][l] = 0;
+  }
+  else if ( ( i >= n1 ) && ( i < n2 ) ) {
+    ii = i - n1 - 1;
+    index2 = ( ii / 2 ) % MMUX_MAX_ENTRIES;
+    selector = ii % 2;
+    index1 = ii / MMUX_MAX_ENTRIES / 2;
+    if ( selector == 0 ) {
+      int l = max;
+      if ( MMUX_MAX_STRING_SIZE < max ) l = MMUX_MAX_STRING_SIZE;
+      strncpy( m[index1][index2], string, l );
+      m[index1][index2][l] = 0;
+    }
+    else {
+      int l = max;
+      if ( MMUX_MAX_STRING_SIZE < max ) l = MMUX_MAX_STRING_SIZE;
+      strncpy( e[index1][index2], string, l );
+      e[index1][index2][l] = 0;
+    }
+  }
 
 }
 

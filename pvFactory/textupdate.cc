@@ -137,6 +137,8 @@ void edmTextupdateClass::init(const char *classname)
 edmTextupdateClass::edmTextupdateClass(edmTextupdateClass *rhs)
 {
     clone(rhs, TEXTUPDATE_CLASSNAME);
+    doAccSubs( pv_name );
+    doAccSubs( color_pv_name );
 }
 
 void edmTextupdateClass::clone(const edmTextupdateClass *rhs,
@@ -927,7 +929,37 @@ void edmTextupdateClass::getPvs(int max,
   pvs[1] = color_pv;
 
 }
-    
+
+char *edmTextupdateClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return pv_name.getRaw();
+  }
+  else if ( i == 1 ) {
+    return color_pv_name.getRaw();
+  }
+
+  return NULL;
+
+}
+
+void edmTextupdateClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    pv_name.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    color_pv_name.setRaw( string );
+  }
+
+}
+
 // --------------------------------------------------------
 // Macro support
 // --------------------------------------------------------

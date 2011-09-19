@@ -277,6 +277,9 @@ activeGraphicClass *messageboxo = (activeGraphicClass *) this;
 
   eBuf = NULL;
 
+  doAccSubs( readPvExpStr );
+  doAccSubs( logFileName );
+
 }
 
 int activeMessageBoxClass::rotateLogFile ( void ) {
@@ -1457,6 +1460,36 @@ void activeMessageBoxClass::getPvs (
 
   *n = 1;
   pvs[0] = readPvId;
+
+}
+
+char *activeMessageBoxClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return readPvExpStr.getRaw();
+  }
+  else if ( i == 1 ) {
+    return logFileName.getRaw();
+  }
+
+  return NULL;
+
+}
+
+void activeMessageBoxClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    readPvExpStr.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    logFileName.setRaw( string );
+  }
 
 }
 

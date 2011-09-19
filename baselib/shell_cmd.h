@@ -404,6 +404,15 @@ void changeDisplayParams (
 
 void executeDeferred ( void );
 
+char *getSearchString (
+  int i
+);
+
+void replaceString (
+  int i,
+  int max,
+  char *string
+);
 
 };
 

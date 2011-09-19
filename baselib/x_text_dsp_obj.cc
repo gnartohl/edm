@@ -2398,6 +2398,14 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   setBlinkFunction( (void *) doBlink );
 
+  doAccSubs( value, XTDC_K_MAX );
+  doAccSubs( pvName, PV_Factory::MAX_PV_NAME );
+  doAccSubs( pvExpStr );
+  doAccSubs( svalPvExpStr );
+  doAccSubs( fgPvExpStr );
+  doAccSubs( defDir );
+  doAccSubs( pattern );
+
 }
 
 activeXTextDspClass::~activeXTextDspClass ( void ) {
@@ -6163,6 +6171,69 @@ void activeXTextDspClass::unmap ( void ) {
     if ( tf_widget ) {
       XtUnmapWidget( tf_widget );
     }
+  }
+
+}
+
+char *activeXTextDspClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return pvExpStr.getRaw();
+  }
+  else if ( i == 1 ) {
+    return svalPvExpStr.getRaw();
+  }
+  else if ( i == 2 ) {
+    return fgPvExpStr.getRaw();
+  }
+  else if ( i == 3 ) {
+    return defDir.getRaw();
+  }
+  else if ( i == 4 ) {
+    return pattern.getRaw();
+  }
+  else {
+    return NULL;
+  }
+
+}
+
+void activeXTextDspClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    pvExpStr.setRaw( string );
+    strncpy( pvName, pvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+    pvName[PV_Factory::MAX_PV_NAME] = 0;
+    strncpy( value, string, minStringSize() );
+    value[minStringSize()] = 0;
+    strncpy( curValue, string, minStringSize() );
+    value[minStringSize()] = 0;
+  }
+  else if ( i == 1 ) {
+    svalPvExpStr.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    fgPvExpStr.setRaw( string );
+  }
+  else if ( i == 3 ) {
+    defDir.setRaw( string );
+  }
+  else if ( i == 4 ) {
+    pattern.setRaw( string );
+  }
+
+  updateDimensions();
+
+  if ( autoHeight && fs ) {
+    h = fontHeight;
+    if ( isWidget ) h += 4;
+    sboxH = h;
   }
 
 }

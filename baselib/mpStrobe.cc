@@ -789,6 +789,17 @@ activeGraphicClass *mpso = (activeGraphicClass *) this;
 
   setBlinkFunction( (void *) doBlink );
 
+  doAccSubs( controlPvExpString );
+  doAccSubs( destPvExpString );
+  doAccSubs( readbackPvExpString );
+  doAccSubs( faultPvExpString );
+  doAccSubs( onLabel );
+  doAccSubs( offLabel );
+  doAccSubs( colorPvExpString );
+  doAccSubs( visPvExpString );
+  doAccSubs( minVisString, 39 );
+  doAccSubs( maxVisString, 39 );
+
   updateDimensions();
 
 }
@@ -2919,6 +2930,90 @@ void activeMpStrobeClass::getPvs (
   pvs[3] = faultPvId;
   pvs[4] = visPvId;
   pvs[5] = colorPvId;
+
+}
+
+char *activeMpStrobeClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return controlPvExpString.getRaw();
+  }
+  else if ( i == 1 ) {
+    return destPvExpString.getRaw();
+  }
+  else if ( i == 2 ) {
+    return readbackPvExpString.getRaw();
+  }
+  else if ( i == 3 ) {
+    return faultPvExpString.getRaw();
+  }
+  else if ( i == 4 ) {
+    return onLabel.getRaw();
+  }
+  else if ( i == 5 ) {
+    return offLabel.getRaw();
+  }
+  else if ( i == 6 ) {
+    return colorPvExpString.getRaw();
+  }
+  else if ( i == 7 ) {
+    return visPvExpString.getRaw();
+  }
+  else if ( i == 8 ) {
+    return maxVisString;
+  }
+  else if ( i == 9 ) {
+    return maxVisString;
+  }
+
+  return NULL;
+
+}
+
+void activeMpStrobeClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    controlPvExpString.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    destPvExpString.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    readbackPvExpString.setRaw( string );
+  }
+  else if ( i == 3 ) {
+    faultPvExpString.setRaw( string );
+  }
+  else if ( i == 4 ) {
+    onLabel.setRaw( string );
+  }
+  else if ( i == 5 ) {
+    offLabel.setRaw( string );
+  }
+  else if ( i == 6 ) {
+    colorPvExpString.setRaw( string );
+  }
+  else if ( i == 7 ) {
+    visPvExpString.setRaw( string );
+  }
+  else if ( i == 8 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( minVisString, string, l );
+    minVisString[l] = 0;
+  }
+  else if ( i == 9 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( maxVisString, string, l );
+    maxVisString[l] = 0;
+  }
 
 }
 

@@ -872,6 +872,18 @@ int popdownNoDestroy ( void );
 
 int formIsPoppedUp ( void );
 
+Widget getOkWidget ( void ) {
+  return pb_ok;
+}
+
+Widget getApplyWidget ( void ) {
+  return pb_apply;
+}
+
+Widget getCancelWidget ( void ) {
+  return pb_cancel;
+}
+
 };
 
 class embeddedEfEntry : public entryListBase {

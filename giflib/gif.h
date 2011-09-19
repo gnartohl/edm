@@ -219,6 +219,15 @@ int checkResizeSelectBoxAbs (
 
 void executeDeferred ( void );
 
+char *getSearchString (
+  int index );
+
+void replaceString (
+  int i,
+  int max,
+  char *string
+);
+
 };
 
 #ifdef __cplusplus

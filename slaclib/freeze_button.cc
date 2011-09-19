@@ -176,6 +176,10 @@ activeGraphicClass *fbto = (activeGraphicClass *) this;
   _3D = source->_3D;
   strncpy( label, source->label, 31 );
   strncpy( frozenLabel, source->frozenLabel, 31 );
+
+  doAccSubs( label, 31 );
+  doAccSubs( frozenLabel, 31 );
+
   updateDimensions();
     
   setBlinkFunction((void *)doBlink);
@@ -763,6 +767,42 @@ void activeFreezeButtonClass::changeDisplayParams (
 
     updateDimensions();
 
+  }
+
+}
+
+char *activeFreezeButtonClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return label;
+  }
+  else if ( i == 1 ) {
+    return frozenLabel;
+  }
+
+  return NULL;
+
+}
+
+void activeFreezeButtonClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    int l = max;
+    if ( 31 < max ) l = 31;
+    strncpy( label, string, l );
+    label[l] = 0;
+  }
+  else if ( i == 1 ) {
+    int l = max;
+    if ( 31 < max ) l = 31;
+    strncpy( frozenLabel, string, l );
+    frozenLabel[l] = 0;
   }
 
 }

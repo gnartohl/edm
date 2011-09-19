@@ -469,7 +469,23 @@ void mousePointerOut (
   int _y,
   int buttonState );
 
- void executeDeferred ( void );
+void executeDeferred ( void );
+
+void getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
+
+char *getSearchString (
+  int i
+);
+
+void replaceString (
+  int i,
+  int max,
+  char *string
+);
+
 
 char *crawlerGetFirstPv ( void );
 

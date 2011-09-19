@@ -709,6 +709,14 @@ activeGraphicClass *udbto = (activeGraphicClass *) this;
 
   setBlinkFunction( (void *) doBlink );
 
+  doAccSubs( destPvExpString );
+  doAccSubs( savePvExpString );
+  doAccSubs( colorPvExpString );
+  doAccSubs( visPvExpString );
+  doAccSubs( label );
+  doAccSubs( minVisString, 39 );
+  doAccSubs( maxVisString, 39 );
+
   updateDimensions();
 
 }
@@ -2936,6 +2944,72 @@ void activeUpdownButtonClass::getPvs (
   *n = 2;
   pvs[0] = destPvId;
   pvs[1] = savePvId;
+
+}
+
+char *activeUpdownButtonClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return destPvExpString.getRaw();
+  }
+  else if ( i == 1 ) {
+    return savePvExpString.getRaw();
+  }
+  else if ( i == 2 ) {
+    return colorPvExpString.getRaw();
+  }
+  else if ( i == 3 ) {
+    return visPvExpString.getRaw();
+  }
+  else if ( i == 4 ) {
+    return label.getRaw();
+  }
+  else if ( i == 5 ) {
+    return minVisString;
+  }
+  else if ( i == 6 ) {
+    return maxVisString;
+  }
+
+  return NULL;
+
+}
+
+void activeUpdownButtonClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    destPvExpString.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    savePvExpString.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    colorPvExpString.setRaw( string );
+  }
+  else if ( i == 3 ) {
+    visPvExpString.setRaw( string );
+  }
+  else if ( i == 4 ) {
+    label.setRaw( string );
+  }
+  else if ( i == 5 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( minVisString, string, l );
+    minVisString[l] = 0;
+  }
+  else if ( i == 6 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( maxVisString, string, l );
+    maxVisString[l] = 0;
+  }
 
 }
 

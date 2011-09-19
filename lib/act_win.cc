@@ -948,6 +948,382 @@ activeWindowClass *awo = (activeWindowClass *) client;
 
 }
 
+static int getCurReplaceIndex (
+  activeWindowClass *awo
+) {
+
+bool more = true;
+bool found = false;
+int status;
+
+  do {
+
+    if ( awo->sarCurSel != awo->selectedHead ) {
+
+      (awo->curReplaceIndex)++;
+
+      char *str = awo->sarCurSel->node->getSearchString(
+       awo->curReplaceIndex );
+
+      if ( !str ) {
+
+        awo->curReplaceIndex = -1;
+        awo->sarCurSel = awo->sarCurSel->selFlink;
+
+      }
+      else if ( !blank(str) ) {
+
+        //fprintf( stderr, "index = %-d, got [%s]\n", awo->curReplaceIndex, str );
+        if ( awo->replaceOld ) {
+          strncpy( awo->replaceOld, str, 10000 );
+          awo->replaceOld[10000] = 0;
+	}
+
+        status = doSearchReplace( awo->sarCaseInsensivite, awo->sarUseRegExpr,
+         awo->sar1, awo->sar2, 10000, awo->replaceOld, awo->replaceNew );
+
+        if ( status == 0 ) {
+	  found = true;
+          more = false;
+	}
+
+      }
+
+    }
+    else {
+
+      more = false;
+
+    }
+
+  } while ( more );
+
+  if ( found ) {
+    return 0;
+  }
+
+  return -1;
+
+}
+
+static void awc_editReplace_apply ( // this is used as a skip action
+  Widget w,
+  XtPointer client,
+  XtPointer call ) {
+
+activeWindowClass *awo = (activeWindowClass *) client;
+
+  awo->efReplace.popdown();
+
+  awo->seachStatus = getCurReplaceIndex( awo );
+
+  if ( !awo->seachStatus ) {
+
+    awo->efReplaceW = 300;
+    awo->efReplaceH = 300;
+    awo->efReplaceLargestH = 300;
+
+    awo->efReplace.create( awo->top, awo->appCtx->ci.getColorMap(),
+     &awo->appCtx->entryFormX,
+     &awo->appCtx->entryFormY, &awo->efReplaceW, &awo->efReplaceH,
+     &awo->efReplaceLargestH, activeWindowClass_str227,
+     NULL, NULL, NULL );
+
+    awo->efReplace.addTextField( (char *) activeWindowClass_str225, 45, awo->sar1, 255 );
+    //Widget curw = (awo->efReplace.getCurItem())->activeW;
+    //XtVaSetValues( curw, XmNsensitive, False, 0, NULL );
+    awo->efReplace.addTextField( (char *) activeWindowClass_str226, 45, awo->sar2, 255 );
+    //curw = (awo->efReplace.getCurItem())->activeW;
+    //XtVaSetValues( curw, XmNsensitive, False, 0, NULL );
+    awo->efReplace.addTextField( (char *) activeWindowClass_str228, 45, awo->replaceOld, 255 );
+    //curw = (awo->efReplace.getCurItem())->activeW;
+    //XtVaSetValues( curw, XmNsensitive, False, 0, NULL );
+    awo->efReplace.addTextField( (char *) activeWindowClass_str229, 45, awo->replaceNew, 255 );
+    awo->efReplace.finished( awc_editReplace_ok,
+     awc_editReplace_apply,
+     awc_editReplace_cancel, awo );
+    XmString str = XmStringCreateLocalized( activeWindowClass_str231 ); // Skip
+    Widget apply = awo->efReplace.getApplyWidget();
+    XtVaSetValues( apply, XmNlabelString, str, 0, NULL );
+    XmStringFree( str );
+
+    awo->efReplace.popup();
+
+  }
+  else {
+
+    awo->operationComplete();
+    awo->clear();
+    awo->refresh();
+
+  }
+
+}
+
+static void awc_editReplace_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call ) {
+
+activeWindowClass *awo = (activeWindowClass *) client;
+
+  awo->efReplace.popdown();
+
+  if ( awo->sarCurSel->node ) {
+    enableAccumulator();
+    doAccSubs( awo->replaceNew, 10000 );
+    incAccumulator();
+    disableAccumulator();
+    //fprintf( stderr, "set index %-d to [%s]\n", awo->curReplaceIndex, awo->replaceNew );
+    awo->sarCurSel->node->replaceString( awo->curReplaceIndex, 10000, awo->replaceNew );
+    awo->clear();
+    awo->refresh();
+    awo->setChanged();
+  }
+
+  awo->seachStatus = getCurReplaceIndex( awo );
+
+  if ( !awo->seachStatus ) {
+
+    awo->efReplaceW = 300;
+    awo->efReplaceH = 300;
+    awo->efReplaceLargestH = 300;
+
+    awo->efReplace.create( awo->top, awo->appCtx->ci.getColorMap(),
+     &awo->appCtx->entryFormX,
+     &awo->appCtx->entryFormY, &awo->efReplaceW, &awo->efReplaceH,
+     &awo->efReplaceLargestH, activeWindowClass_str227,
+     NULL, NULL, NULL );
+
+    awo->efReplace.addTextField( (char *) activeWindowClass_str225, 45, awo->sar1, 255 );
+    //Widget curw = (awo->efReplace.getCurItem())->activeW;
+    //XtVaSetValues( curw, XmNsensitive, False, 0, NULL );
+    awo->efReplace.addTextField( (char *) activeWindowClass_str226, 45, awo->sar2, 255 );
+    //curw = (awo->efReplace.getCurItem())->activeW;
+    //XtVaSetValues( curw, XmNsensitive, False, 0, NULL );
+    awo->efReplace.addTextField( (char *) activeWindowClass_str228, 45, awo->replaceOld, 255 );
+    //curw = (awo->efReplace.getCurItem())->activeW;
+    //XtVaSetValues( curw, XmNsensitive, False, 0, NULL );
+    awo->efReplace.addTextField( (char *) activeWindowClass_str229, 45, awo->replaceNew, 255 );
+    awo->efReplace.finished( awc_editReplace_ok,
+     awc_editReplace_apply,
+     awc_editReplace_cancel, awo );
+    XmString str = XmStringCreateLocalized( activeWindowClass_str231 ); // Skip
+    Widget apply = awo->efReplace.getApplyWidget();
+    XtVaSetValues( apply, XmNlabelString, str, 0, NULL );
+    XmStringFree( str );
+
+    awo->efReplace.popup();
+
+  }
+  else {
+
+    awo->operationComplete();
+    awo->clear();
+    awo->refresh();
+
+  }
+
+}
+
+static void awc_editReplace_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call ) {
+
+activeWindowClass *awo = (activeWindowClass *) client;
+
+  awo->efReplace.popdown();
+
+  awo->operationComplete();
+  awo->clear();
+  awo->refresh();
+
+}
+
+static void awc_editSaR_apply ( // used as replace all action
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeWindowClass *awo = (activeWindowClass *) client;
+
+  awo->efSaR.popdown();
+
+  awo->curReplaceIndex = -1;
+  if ( !awo->replaceOld ) {
+    awo->replaceOld = new char[10000+1];
+    strcpy( awo->replaceOld, "" );
+  }
+  if ( !awo->replaceNew ) {
+    awo->replaceNew = new char[10000+1];
+    strcpy( awo->replaceNew, "" );
+  }
+
+  awo->seachStatus = getCurReplaceIndex( awo );
+
+  if ( awo->seachStatus ) { // no match
+
+    awo->efReplaceW = 300;
+    awo->efReplaceH = 300;
+    awo->efReplaceLargestH = 300;
+
+    awo->efReplace.create( awo->top, awo->appCtx->ci.getColorMap(),
+     &awo->appCtx->entryFormX,
+     &awo->appCtx->entryFormY, &awo->efReplaceW, &awo->efReplaceH,
+     &awo->efReplaceLargestH, activeWindowClass_str227,
+     NULL, NULL, NULL );
+
+      awo->efReplace.addLabel( activeWindowClass_str230 );
+      awo->efReplace.finished( awc_editReplace_ok, awo );
+
+    awo->efReplace.popup();
+
+  }
+  else {
+
+    enableAccumulator();
+
+    do {
+
+      if ( awo->sarCurSel->node ) {
+        doAccSubs( awo->replaceNew, 10000 );
+        //fprintf( stderr, "set index %-d to [%s]\n", awo->curReplaceIndex, awo->replaceNew );
+        awo->sarCurSel->node->replaceString( awo->curReplaceIndex, 10000, awo->replaceNew );
+        awo->setChanged();
+      }
+
+      awo->seachStatus = getCurReplaceIndex( awo );
+
+      incAccumulator();
+
+    } while ( !awo->seachStatus );
+
+    disableAccumulator();
+
+    awo->clear();
+    awo->refresh();
+    awo->setChanged();
+    awo->operationComplete();
+
+  }
+
+}
+
+static void awc_editSaR_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeWindowClass *awo = (activeWindowClass *) client;
+
+  awo->efSaR.popdown();
+
+  awo->curReplaceIndex = -1;
+  if ( !awo->replaceOld ) {
+    awo->replaceOld = new char[10000+1];
+    strcpy( awo->replaceOld, "" );
+  }
+  if ( !awo->replaceNew ) {
+    awo->replaceNew = new char[10000+1];
+    strcpy( awo->replaceNew, "" );
+  }
+
+  awo->seachStatus = getCurReplaceIndex( awo );
+
+  awo->efReplaceW = 300;
+  awo->efReplaceH = 300;
+  awo->efReplaceLargestH = 300;
+
+  awo->efReplace.create( awo->top, awo->appCtx->ci.getColorMap(),
+   &awo->appCtx->entryFormX,
+   &awo->appCtx->entryFormY, &awo->efReplaceW, &awo->efReplaceH,
+   &awo->efReplaceLargestH, activeWindowClass_str227,
+   NULL, NULL, NULL );
+
+  if ( awo->seachStatus ) {
+    awo->efReplace.addLabel( activeWindowClass_str230 );
+    awo->efReplace.finished( awc_editReplace_ok, awo );
+  }
+  else {
+    awo->efReplace.addTextField( (char *) activeWindowClass_str225, 45, awo->sar1, 255 );
+    //Widget curw = (awo->efReplace.getCurItem())->activeW;
+    //XtVaSetValues( curw, XmNsensitive, False, 0, NULL );
+    awo->efReplace.addTextField( (char *) activeWindowClass_str226, 45, awo->sar2, 255 );
+    //curw = (awo->efReplace.getCurItem())->activeW;
+    //XtVaSetValues( curw, XmNsensitive, False, 0, NULL );
+    awo->efReplace.addTextField( (char *) activeWindowClass_str228, 45, awo->replaceOld, 255 );
+    //curw = (awo->efReplace.getCurItem())->activeW;
+    //XtVaSetValues( curw, XmNsensitive, False, 0, NULL );
+    awo->efReplace.addTextField( (char *) activeWindowClass_str229, 45, awo->replaceNew, 255 );
+    awo->efReplace.finished( awc_editReplace_ok,
+     awc_editReplace_apply,
+     awc_editReplace_cancel, awo );
+    XmString str = XmStringCreateLocalized( activeWindowClass_str231 );
+    Widget apply = awo->efReplace.getApplyWidget();
+    XtVaSetValues( apply, XmNlabelString, str, 0, NULL );
+    XmStringFree( str );
+  }
+
+  awo->efReplace.popup();
+
+}
+
+static void awc_editSaR_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeWindowClass *awo = (activeWindowClass *) client;
+
+  awo->efSaR.popdown();
+  awo->operationComplete();
+
+}
+
+static void awc_editSetAcc_apply (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeWindowClass *awo = (activeWindowClass *) client;
+
+  awo->accVal = awo->bufAccVal;
+  setAccumulator( awo->accVal );
+
+}
+
+static void awc_editSetAcc_ok (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeWindowClass *awo = (activeWindowClass *) client;
+
+  awc_editSetAcc_apply( w, client, call );
+  awo->efSetAcc.popdown();
+  awo->operationComplete();
+
+}
+
+static void awc_editSetAcc_cancel (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+
+activeWindowClass *awo = (activeWindowClass *) client;
+
+  awo->efSetAcc.popdown();
+  awo->operationComplete();
+
+}
+
 static void awc_edit_apply (
   Widget w,
   XtPointer client,
@@ -4333,6 +4709,8 @@ int newX, newY, locMinX, locMinY, locDeltaX, locDeltaY;
 
   }
 
+  enableAccumulator();
+
   curCut = awo->appCtx->cutHead1->blink;
   while ( curCut != awo->appCtx->cutHead1 ) {
 
@@ -4407,6 +4785,9 @@ int newX, newY, locMinX, locMinY, locDeltaX, locDeltaY;
 
   awo->refresh();
 
+  incAccumulator();
+  disableAccumulator();
+
   return;
 
 }
@@ -4442,11 +4823,36 @@ struct {
 
 Atom wm_delete_window;
 
+int efSetAccW = 300;
+int efSetAccH = 300;
+int efSetAccLargestH = 300;
+
   block = (popupBlockPtr) client;
   item = (long) block->ptr;
   awo = (activeWindowClass *) block->awo;
 
   switch ( item ) {
+
+    case AWC_POPUP_SET_PASTE_INDEX:
+
+      awo->savedState = awo->state;
+
+      awo->state = AWC_WAITING;
+      awo->currentEf = NULL;
+
+      awo->efSetAcc.create( awo->top, awo->appCtx->ci.getColorMap(),
+       &awo->appCtx->entryFormX,
+       &awo->appCtx->entryFormY, &efSetAccW, &efSetAccH,
+       &efSetAccLargestH, activeWindowClass_str222,
+       NULL, NULL, NULL );
+
+      awo->bufAccVal = getAccumulator();
+      awo->efSetAcc.addTextField( activeWindowClass_str223, 25, &awo->bufAccVal );
+      awo->efSetAcc.finished( awc_editSetAcc_ok, awo );
+
+      awo->efSetAcc.popup();
+
+      break;
 
     case AWC_POPUP_SELECT_ALL:
 
@@ -6078,12 +6484,55 @@ activeWindowClass *awo;
 popupBlockPtr block;
 int stat;
 long item;
+XmString str;
+Widget apply;
 
   block = (popupBlockPtr) client;
   item = (long) block->ptr;
   awo = (activeWindowClass *) block->awo;
 
   switch ( item ) {
+
+    case AWC_POPUP_SAR:
+
+      awo->savedState = awo->state;
+
+      awo->state = AWC_WAITING;
+      awo->currentEf = NULL;
+
+      awo->sarCurSel = awo->selectedHead->selFlink;
+
+      awo->efSaRW = 300;
+      awo->efSaRH = 300;
+      awo->efSaRLargestH = 300;
+
+      awo->efSaR.create( awo->top, awo->appCtx->ci.getColorMap(),
+       &awo->appCtx->entryFormX,
+       &awo->appCtx->entryFormY, &awo->efSaRW, &awo->efSaRH,
+       &awo->efSaRLargestH, activeWindowClass_str224,
+       NULL, NULL, NULL );
+
+      if ( !awo->sar1 ) {
+        awo->sar1 = new char[255+1];
+        strcpy( awo->sar1, "" );
+      }
+      if ( !awo->sar2 ) {
+        awo->sar2 = new char[255+1];
+        strcpy( awo->sar2, "" );
+      }
+      awo->efSaR.addTextField( (char *) activeWindowClass_str225, 45, awo->sar1, 255 );
+      awo->efSaR.addTextField( (char *) activeWindowClass_str226, 45, awo->sar2, 255 );
+      awo->efSaR.addToggle( (char *) activeWindowClass_str233, &awo->sarCaseInsensivite );
+      awo->efSaR.addToggle( (char *) activeWindowClass_str234, &awo->sarUseRegExpr );
+      awo->efSaR.finished( awc_editSaR_ok, awc_editSaR_apply, awc_editSaR_cancel, awo );
+      str = XmStringCreateLocalized( activeWindowClass_str232 ); // All
+      apply = awo->efSaR.getApplyWidget();
+      XtVaSetValues( apply, XmNlabelString, str, 0, NULL );
+      XmStringFree( str );
+
+      awo->efSaR.popup();
+
+      break;
 
     case AWC_POPUP_DESELECT:
 
@@ -11767,6 +12216,15 @@ activeWindowClass::activeWindowClass ( void ) : unknownTags() {
 char *str;
 int i;
 
+  curReplaceIndex = -1;
+  replaceOld = NULL;
+  replaceNew = NULL;
+  sar1 = NULL;
+  sar2 = NULL;
+  sarCaseInsensivite = 1;
+  sarUseRegExpr = 0;
+  accVal = bufAccVal = 0;
+
   numRefPoints = numRefRects = recordedRefRect = 0;
   showDimTimer = 0;
   dimDialog = NULL;
@@ -12272,6 +12730,26 @@ pvDefPtr pvDefCur, pvDefNext;
   //if ( !isEmbedded ) fprintf( stderr, "Destroy - [%s]\n", fileNameForSym );
 
   windowState = AWC_TERMINATED;
+
+  if ( sar1 ) {
+    delete[] sar1;
+    sar1 = NULL;
+  }
+
+  if ( sar2 ) {
+    delete[] sar2;
+    sar2 = NULL;
+  }
+
+  if ( replaceOld ) {
+    delete[] replaceOld;
+    replaceOld = NULL;
+  }
+
+  if ( replaceNew ) {
+    delete[] replaceNew;
+    replaceNew = NULL;
+  }
 
   if ( bufTemplInfo ) {
     delete[] bufTemplInfo;
@@ -13901,6 +14379,29 @@ Arg args[3];
    (XtPointer) &curBlockListNode->block );
 
 
+  str = XmStringCreateLocalized( activeWindowClass_str222 );
+
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   b2NoneSelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_SET_PASTE_INDEX;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
+
   str = XmStringCreateLocalized( activeWindowClass_str96 );
 
   pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
@@ -14461,6 +14962,29 @@ Arg args[3];
    (XtPointer) &curBlockListNode->block );
 
 
+  str = XmStringCreateLocalized( activeWindowClass_str222 );
+
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   b2OneSelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_SET_PASTE_INDEX;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
+
   str = XmStringCreateLocalized( activeWindowClass_str111 );
 
   pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
@@ -14704,6 +15228,29 @@ Arg args[3];
   curBlockListNode = new popupBlockListType;
   curBlockListNode->block.w = pb;
   curBlockListNode->block.ptr = (void *) AWC_POPUP_CHANGE_PV_NAMES;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseManySelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
+
+  str = XmStringCreateLocalized( activeWindowClass_str224 );
+
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   b2OneSelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_SAR;
   curBlockListNode->block.awo = this;
 
   curBlockListNode->blink = popupBlockHead->blink;
@@ -14991,6 +15538,29 @@ Arg args[3];
   curBlockListNode = new popupBlockListType;
   curBlockListNode->block.w = pb;
   curBlockListNode->block.ptr = (void *) AWC_POPUP_PASTE_IN_PLACE;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseNoneSelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
+
+  str = XmStringCreateLocalized( activeWindowClass_str222 );
+
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   b2ManySelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_SET_PASTE_INDEX;
   curBlockListNode->block.awo = this;
 
   curBlockListNode->blink = popupBlockHead->blink;
@@ -15609,6 +16179,29 @@ Arg args[3];
   curBlockListNode = new popupBlockListType;
   curBlockListNode->block.w = pb;
   curBlockListNode->block.ptr = (void *) AWC_POPUP_CHANGE_PV_NAMES;
+  curBlockListNode->block.awo = this;
+
+  curBlockListNode->blink = popupBlockHead->blink;
+  popupBlockHead->blink->flink = curBlockListNode;
+  popupBlockHead->blink = curBlockListNode;
+  curBlockListNode->flink = popupBlockHead;
+
+  XtAddCallback( pb, XmNactivateCallback, b2ReleaseManySelect_cb,
+   (XtPointer) &curBlockListNode->block );
+
+
+  str = XmStringCreateLocalized( activeWindowClass_str224 );
+
+  pb = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+   b2ManySelectPopup,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  curBlockListNode = new popupBlockListType;
+  curBlockListNode->block.w = pb;
+  curBlockListNode->block.ptr = (void *) AWC_POPUP_SAR;
   curBlockListNode->block.awo = this;
 
   curBlockListNode->blink = popupBlockHead->blink;

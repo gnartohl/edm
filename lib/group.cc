@@ -421,6 +421,10 @@ activeGraphicListPtr head, cur, curSource, sourceHead;
 
   eBuf = NULL;
 
+  doAccSubs( visPvExpStr );
+  doAccSubs( minVisString, 39 );
+  doAccSubs( maxVisString, 39 );
+
 }
 
 int activeGroupClass::createGroup (
@@ -3507,6 +3511,151 @@ int stat;
   if ( !( stat & 1 ) ) XBell( actWin->d, 50 );
 
   return 1;
+
+}
+
+char *activeGroupClass::getSearchString (
+  int i
+) {
+
+// this must be called such that i starts at zero and increments by one subsequently
+// i.e. evil coupling exists between this function and the code in act_win.cc from
+// which it is called
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+char *str;
+
+  if ( i == 0 ) {
+    return visPvExpStr.getRaw();
+  }
+  else if ( i == 1 ) {
+    return minVisString;
+  }
+  else if ( i == 2 ) {
+    return maxVisString;
+  }
+  else if ( i == 3 ) {
+
+    _edmDebug();
+
+    sarNeedNextNode = 0;
+    sarIndex = 0;
+    sarItemIndexOffset = i;
+    cur = head;
+    sarNode = (void *) cur;
+    if ( cur->flink == head ) {
+      // empty
+      return NULL;
+    }
+
+    do {
+
+      cur = cur->flink;
+      sarNode = (void *) cur;
+      sarNeedNextNode = 0;
+      if ( cur != head ) {
+        str = cur->node->getSearchString( sarIndex );
+        if ( !str ) {
+          sarNeedNextNode = 1;
+        }
+        else {
+          return str;
+        }
+      }
+      else {
+        // no more
+        return NULL;
+      }
+
+    } while (  sarNeedNextNode );
+
+  }
+  else {
+
+    cur = (activeGraphicListPtr) sarNode;
+    if ( cur == head ) {
+      // no more
+      return NULL;
+    }
+
+    do {
+
+      if ( sarNeedNextNode ) {
+
+        cur = cur->flink;
+        sarNode = (void *) cur;
+        sarIndex = 0;
+        sarNeedNextNode = 0;
+        sarItemIndexOffset = i;
+        if ( cur != head ) {
+          str = cur->node->getSearchString( sarIndex );
+          if ( !str ) {
+            sarNeedNextNode = 1;
+          }
+          else {
+            return str;
+          }
+        }
+        else {
+          // no more
+          return NULL;
+        }
+
+      }
+      else {
+
+        sarIndex++;
+        str = cur->node->getSearchString( sarIndex );
+        if ( !str ) {
+          sarNeedNextNode = 1;
+        }
+        else {
+          return str;
+        }
+
+      }
+
+    } while (  sarNeedNextNode );
+
+  }
+
+
+}
+
+void activeGroupClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  if ( i == 0 ) {
+    visPvExpStr.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( minVisString, string, l );
+    minVisString[l] = 0;
+  }
+  else if ( i == 2 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( maxVisString, string, l );
+    maxVisString[l] = 0;
+  }
+  else {
+    cur = (activeGraphicListPtr) sarNode;
+    if ( cur != head ) {
+      cur->node->replaceString ( i - sarItemIndexOffset,
+       max, string );
+    }
+  }
+
+  updateDimensions();
 
 }
 

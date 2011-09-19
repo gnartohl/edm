@@ -98,6 +98,9 @@ void * voidHead; // cast to activeGraphicListPtr at runtime
 void * curCrawlerNode; // cast to activeGraphicListPtr at runtime
 int curCrawlerState;
 
+void * sarNode; // cast to activeGraphicListPtr at runtime
+int sarIndex, sarNeedNextNode, sarItemIndexOffset;
+
 typedef struct relatedDisplayNodeList {
   void *ptr; // cast to activeGraphicListPtr at runtime
   int first;  // index of first related screen
@@ -589,6 +592,16 @@ char *getRelatedDisplayName (
 
 char *getRelatedDisplayMacros (
   int index
+);
+
+char *getSearchString (
+  int i
+);
+
+void replaceString (
+  int i,
+  int max,
+  char *string
 );
 
 };

@@ -48,6 +48,7 @@ activeGraphicClass::activeGraphicClass ( void ) : unknownTags() {
   currentDragIndex = 0;
   curUndoObj = NULL;
   startEdit = 0;
+  editConfirmed = 0;
   objType = activeGraphicClass::UNKNOWN;
   onBlinkList = 0;
   blinkFunc = NULL;
@@ -87,6 +88,7 @@ void activeGraphicClass::clone ( const activeGraphicClass *source ) {
   currentDragIndex = 0;
   curUndoObj = NULL;
   startEdit = 0;
+  editConfirmed = 0;
   onBlinkList = 0;
   blinkFunc = NULL;
   blinkDisable = 0;

@@ -172,6 +172,7 @@ activeWindowClass *actWin;
 void *aglPtr; // will hold the activeGraphicListPtr container
 undoClass *curUndoObj;
 int startEdit, editConfirmed;
+int startSar, sarConfirmed;
 
 int deleteRequest; // if true, then wants to be deleted
 
@@ -552,7 +553,8 @@ virtual int paste ( void );
 
 virtual int edit ( void );
 
-virtual int doEdit ( undoClass *_undoObj );
+virtual int doEdit (
+  undoClass *_undoObj );
 
 void operationComplete ( void );
 
@@ -1134,6 +1136,22 @@ virtual void getPvs (
   int max,
   ProcessVariable *pvs[],
   int *n );
+
+virtual char *getSearchString (
+  int index
+) {
+
+  return NULL;
+
+}
+
+virtual void replaceString (
+  int index,
+  int max,
+  char *string
+) {
+
+}
 
 virtual int showPvInfo (
   XButtonEvent *be,

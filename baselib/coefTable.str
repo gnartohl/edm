@@ -21,5 +21,6 @@
 #define activeCoefTableClass_str26 (char *) "Labels (l1,l2,...)"
 #define activeCoefTableClass_str27 (char *) "First Element"
 #define activeCoefTableClass_str28 (char *) "Num Elements"
+#define activeCoefTableClass_str29 (char *) "Display Format"
 
 #endif

@@ -439,6 +439,12 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   setBlinkFunction( (void *) doBlink );
 
+  doAccSubs( alarmPvExpStr );
+  doAccSubs( visPvExpStr );
+  doAccSubs( value );
+  doAccSubs( minVisString, 39 );
+  doAccSubs( maxVisString, 39 );
+
 }
 
 activeXTextClass::~activeXTextClass ( void ) {
@@ -2489,6 +2495,67 @@ void activeXTextClass::getPvs (
   *n = 2;
   pvs[0] = alarmPvId;
   pvs[1] = visPvId;
+
+}
+
+char *activeXTextClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return value.getRaw();
+  }
+  else if ( i == 1 ) {
+    return alarmPvExpStr.getRaw();
+  }
+  else if ( i == 2 ) {
+    return visPvExpStr.getRaw();
+  }
+  else if ( i == 3 ) {
+    return minVisString;
+  }
+  else if ( i == 4 ) {
+    return maxVisString;
+  }
+
+  return NULL;
+
+}
+
+void activeXTextClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    value.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    alarmPvExpStr.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    visPvExpStr.setRaw( string );
+  }
+  else if ( i == 3 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( minVisString, string, l );
+    minVisString[l] = 0;
+  }
+  else if ( i == 4 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( maxVisString, string, l );
+    maxVisString[l] = 0;
+  }
+
+  updateDimensions();
+
+  if ( autoSize && fs ) {
+    sboxW = w = stringBoxWidth;
+    sboxH = h = stringBoxHeight;
+  }
 
 }
 

@@ -26,8 +26,8 @@
 #include "pv_factory.h"
 
 #define COEFTABLEC_MAJOR_VERSION 4
-#define COEFTABLEC_MINOR_VERSION 0
-#define COEFTABLEC_RELEASE 1
+#define COEFTABLEC_MINOR_VERSION 1
+#define COEFTABLEC_RELEASE 0
 
 #ifdef __coefTable_cc
 
@@ -106,6 +106,7 @@ friend void coefTable_monitor_read_connect_state (
   void *userarg );
 
 static const int MaxLabelSize=1023;
+static const int MaxFormatSize=15;
 
 typedef struct editBufTag {
 // edit buffer
@@ -129,6 +130,7 @@ typedef struct editBufTag {
   char bufLabels[MaxLabelSize+1];
   efInt bufEfFirstEle;
   efInt bufEfNumEle;
+  char bufFormat[MaxFormatSize+1];
 } editBufType, *editBufPtr;
 
 editBufPtr eBuf;
@@ -161,6 +163,8 @@ expStringClass labelsExpStr;
 
 efInt efFirstEle, efNumEle;
 int firstEle, numEle;
+
+expStringClass formatExpStr;
 
 int readExists;
 
@@ -288,6 +292,16 @@ void getPvs (
   int max,
   ProcessVariable *pvs[],
   int *n );
+
+char *getSearchString (
+  int i
+);
+
+void replaceString (
+  int i,
+  int max,
+  char *string
+);
 
 char *crawlerGetFirstPv ( void );
 

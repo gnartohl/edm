@@ -877,6 +877,12 @@ activeGraphicClass *slo = (activeGraphicClass *) this;
 
   eBuf = NULL;
 
+  doAccSubs( controlPvName );
+  doAccSubs( readPvName );
+  doAccSubs( savedValuePvName );
+  doAccSubs( controlLabelName );
+  doAccSubs( readLabelName );
+
 }
 
 void activeSliderClass::doIncrement ( void ) {
@@ -4358,6 +4364,54 @@ void activeSliderClass::getPvs (
   pvs[0] = controlPvId;
   pvs[1] = readPvId;
   pvs[2] = savedValuePvId;
+
+}
+
+char *activeSliderClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return controlPvName.getRaw();
+  }
+  else if ( i == 1 ) {
+    return readPvName.getRaw();
+  }
+  else if ( i == 2 ) {
+    return savedValuePvName.getRaw();
+  }
+  else if ( i == 3 ) {
+    return controlLabelName.getRaw();
+  }
+  else if ( i == 4 ) {
+    return readLabelName.getRaw();
+  }
+
+  return NULL;
+
+}
+
+void activeSliderClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    controlPvName.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    readPvName.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    savedValuePvName.setRaw( string );
+  }
+  else if ( i == 3 ) {
+    controlLabelName.setRaw( string );
+  }
+  else if ( i == 4 ) {
+    readLabelName.setRaw( string );
+  }
 
 }
 

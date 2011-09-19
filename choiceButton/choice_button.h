@@ -258,6 +258,8 @@ int orientation, bufOrientation;
 
 int oldStat, oldSev;
 
+int crawlerPvIndex;
+
 public:
 
 activeChoiceButtonClass ( void );
@@ -402,6 +404,20 @@ void getPvs (
   int max,
   ProcessVariable *pvs[],
   int *n );
+
+char *getSearchString (
+  int i
+);
+
+void replaceString (
+  int i,
+  int max,
+  char *string
+);
+
+char *crawlerGetFirstPv ( void );
+
+char *crawlerGetNextPv ( void );
 
 };
 

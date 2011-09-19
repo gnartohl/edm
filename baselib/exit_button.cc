@@ -177,6 +177,8 @@ activeGraphicClass *ebto = (activeGraphicClass *) this;
   invisible = source->invisible;
   strncpy( label, source->label, 31 );
 
+  doAccSubs( label, 31 );
+
   updateDimensions();
 
 }
@@ -987,6 +989,33 @@ void activeExitButtonClass::changeDisplayParams (
 
     updateDimensions();
 
+  }
+
+}
+
+char *activeExitButtonClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return label;
+  }
+
+  return NULL;
+
+}
+
+void activeExitButtonClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    int l = max;
+    if ( 31 < max ) l = 31;
+    strncpy( label, string, l );
+    label[l] = 0;
   }
 
 }

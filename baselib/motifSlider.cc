@@ -983,6 +983,10 @@ activeGraphicClass *mslo = (activeGraphicClass *) this;
 
   eBuf = NULL;
 
+  doAccSubs( controlPvName );
+  doAccSubs( savedValuePvName );
+  doAccSubs( controlLabelName );
+
 }
 
 activeMotifSliderClass::~activeMotifSliderClass ( void ) {
@@ -3778,6 +3782,42 @@ void activeMotifSliderClass::getPvs (
   *n = 2;
   pvs[0] = controlPvId;
   pvs[1] = savedValuePvId;
+
+}
+
+char *activeMotifSliderClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return controlPvName.getRaw();
+  }
+  else if ( i == 1 ) {
+    return savedValuePvName.getRaw();
+  }
+  else if ( i == 2 ) {
+    return controlLabelName.getRaw();
+  }
+
+  return NULL;
+
+}
+
+void activeMotifSliderClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    controlPvName.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    savedValuePvName.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    controlLabelName.setRaw( string );
+  }
 
 }
 

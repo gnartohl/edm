@@ -135,6 +135,8 @@ edmmultiLineTextUpdateClass::edmmultiLineTextUpdateClass (
                                            edmmultiLineTextUpdateClass *rhs)
 {
     clone (rhs, MULTILINE_TEXTUPDATE_CLASSNAME);
+    doAccSubs( data_pv_name );
+    doAccSubs( colour_pv_name );
 }
 
 void edmmultiLineTextUpdateClass::clone (const edmmultiLineTextUpdateClass *rhs,
@@ -952,6 +954,36 @@ void edmmultiLineTextUpdateClass::getPvs (int max,
     *n = 2;
     pvs[0] = data_pv;
     pvs[1] = colour_pv;
+}
+
+char *edmmultiLineTextUpdateClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return data_pv_name.getRaw();
+  }
+  else if ( i == 1 ) {
+    return colour_pv_name.getRaw();
+  }
+
+  return NULL;
+
+}
+
+void edmmultiLineTextUpdateClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    data_pv_name.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    colour_pv_name.setRaw( string );
+  }
+
 }
     
 // --------------------------------------------------------

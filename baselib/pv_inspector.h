@@ -509,6 +509,16 @@ void mousePointerOut (
 
  void executeDeferred ( void );
 
+char *getSearchString (
+  int i
+);
+
+void replaceString (
+  int i,
+  int max,
+  char *string
+);
+
 };
 
 #ifdef __cplusplus

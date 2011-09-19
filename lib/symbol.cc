@@ -791,6 +791,12 @@ int i;
 
   eBuf = NULL;
 
+  doAccSubs( symbolFileName, 127 );
+  doAccSubs( colorPvExpStr );
+  for ( i=0; i<SYMBOL_K_MAX_PVS; i++ ) {
+    doAccSubs( controlPvExpStr[i] );
+  }
+
 }
 
 int activeSymbolClass::createInteractive (
@@ -4457,6 +4463,40 @@ int i;
     pvs[i] = controlPvId[i];
   }
   pvs[i] = colorPvId;
+
+}
+
+char *activeSymbolClass::getSearchString (
+  int i
+) {
+
+int num = 1 + numPvs;
+
+  if ( i == 0 ) {
+    return colorPvExpStr.getRaw();
+  }
+  else if ( ( i > 0 ) && ( i < num ) ) {
+    return controlPvExpStr[i-1].getRaw();
+  }
+
+  return NULL;
+
+}
+
+void activeSymbolClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+int num = 1 + numPvs;
+
+  if ( i == 0 ) {
+    colorPvExpStr.setRaw( string );
+  }
+  else if ( ( i > 0 ) && ( i < num ) ) {
+    controlPvExpStr[i-1].setRaw( string );
+  }
 
 }
 

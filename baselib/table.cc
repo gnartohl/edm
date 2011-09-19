@@ -238,6 +238,8 @@ activeGraphicClass *tableo = (activeGraphicClass *) this;
 
   eBuf = NULL;
 
+  doAccSubs( readPvExpStr );
+
 }
 
 activeTableClass::~activeTableClass ( void ) {
@@ -1223,6 +1225,30 @@ void activeTableClass::getPvs (
 
   *n = 1;
   pvs[0] = readPvId;
+
+}
+
+char *activeTableClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return readPvExpStr.getRaw();
+  }
+
+  return NULL;
+
+}
+
+void activeTableClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    readPvExpStr.setRaw( string );
+  }
 
 }
 
