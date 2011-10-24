@@ -8684,9 +8684,9 @@ void xyGraphClass::btnDown (
 {
 
 double dxValue, dyValue, dyValue2;
-char buf[63+1], xBuf[63+1], y1Buf[63+1], y2Buf[63+1];
+char buf[63+1], xBuf[63+1], xBuf2[63+1], y1Buf[63+1], y2Buf[63+1];
 int pmX, pmY, ifrac;
-int yi;
+int yi, usebuf2;
 time_t t;
 struct tm ts;
 Widget parent;
@@ -8707,6 +8707,8 @@ Widget parent;
 
   if ( ( buttonNumber == 1 ) &&
        ( buttonState & ShiftMask ) ) {
+
+    usebuf2 = 0;
 
     if ( ( pmX > plotAreaX ) && ( pmX < plotAreaX+plotAreaW ) &&
          ( pmY > plotAreaY ) && ( pmY < plotAreaY+plotAreaH ) ) {
@@ -8737,6 +8739,10 @@ Widget parent;
           sprintf( xBuf, "%02d:%02d:%02d", ts.tm_hour, ts.tm_min,
            ts.tm_sec );
         }
+
+        sprintf( xBuf2, "%02d-%02d-%04d", ts.tm_mon+1, ts.tm_mday,
+         ts.tm_year+1900 );
+        usebuf2 = 1;
 
       }
       else {
@@ -8784,7 +8790,12 @@ Widget parent;
       if ( msgDialogPopedUp ) {
         msgDialog.popdown();
       }
-      sprintf( buf, "[ %s,%s%s ]", xBuf, y1Buf, y2Buf );
+      if ( usebuf2 ) {
+        sprintf( buf, "[ %s %s,%s%s ]", xBuf2, xBuf, y1Buf, y2Buf );
+      }
+      else {
+        sprintf( buf, "[ %s,%s%s ]", xBuf, y1Buf, y2Buf );
+      }
       msgDialog.popup( buf, this->x+_x-be->x+actWin->xPos(),
        this->y+_y-be->y+actWin->yPos() );
       msgDialogPopedUp = 1;

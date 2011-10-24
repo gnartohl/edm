@@ -3726,7 +3726,7 @@ time_t theTime;
         xEraseImageText( d, win, gc, fs, x0, y1,
          XmALIGNMENT_CENTER, buf1 );
         if ( firstLabel ) {
-          firstLabel = 0;
+          firstLabel = 10; // ????????????????
           xEraseImageText( d, win, gc, fs, x0, y1+(int)(fontHeight),
            XmALIGNMENT_CENTER, buf2 );
 	}
@@ -3735,7 +3735,7 @@ time_t theTime;
         xDrawImageText( d, win, gc, fs, x0, y1,
          XmALIGNMENT_CENTER, buf1 );
         if ( firstLabel ) {
-          firstLabel = 0;
+          firstLabel = 10; // ????????????????
           xDrawImageText( d, win, gc, fs, x0, y1+(int)(fontHeight),
            XmALIGNMENT_CENTER, buf2 );
 	}
