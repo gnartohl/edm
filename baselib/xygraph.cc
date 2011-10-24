@@ -8731,6 +8731,7 @@ Widget parent;
 
         localtime_r( &t, &ts );
         ifrac = (int) rint( ( dxValue - floor( dxValue ) ) * 100.0 );
+        if ( ifrac == 100.0 ) ifrac = 99.0;
         if ( ifrac > 0.0 ) {
           sprintf( xBuf, "%02d:%02d:%02d.%02d", ts.tm_hour, ts.tm_min,
            ts.tm_sec, ifrac );
