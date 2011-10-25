@@ -3285,7 +3285,6 @@ int imin, imax, inc1, imin1, imax1,
 
   imin = (int) floor( min );
   imax = (int) ceil( max );
-  //fprintf( stderr, "imin = %-d, imax = %-d\n", imin, imax );
 
   do {
 
@@ -3312,14 +3311,23 @@ int imin, imax, inc1, imin1, imax1,
         imax1 = imax;
     }
 
+    //fprintf( stderr, "imin = %-d, imax = %-d\n", imin, imax );
+    //fprintf( stderr, "imin1 = %-d, imax1 = %-d\n", imin1, imax1 );
+    //fprintf( stderr, "div = %-d\n", div );
+    //fprintf( stderr, "imin %% div = %-d\n", imin % div );
+
     inc1 = ( imax1 - imin1 ) / div;
     if ( inc1 < 1 ) inc1 = 1;
-    if ( inc1 < 8 ) ok = 1;
+    //if ( inc1 < 8 ) ok = 1;
+    if ( inc1 <= 20 ) ok = 1;
 
     //fprintf( stderr, "1st adj min 1 = %-d, 1st adj max 1 = %-d\n", imin1, imax1 );
     //fprintf( stderr, "inc1 = %-d\n", inc1 );
 
-    if ( !ok ) div *= 10;
+    if ( !ok ) {
+      div += 10;
+      //printf( "not ok - div = %-d\n", div );
+    }
 
   } while ( !ok );
 

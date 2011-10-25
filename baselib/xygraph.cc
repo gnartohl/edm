@@ -6708,7 +6708,7 @@ int ctl;
         if ( new_min_y < curY1Min[yi] ||
              new_min_y > curY1Min[yi]+squash) {
           needRescale = 1;
-        //fprintf( stderr, "min Y rescale %g %g\n", new_min_y,curY1Min[yi] );
+          //fprintf( stderr, "min Y rescale %g %g\n", new_min_y,curY1Min[yi] );
           curY1Min[yi] = new_min_y;
         }
       }
@@ -6716,7 +6716,7 @@ int ctl;
         if ( new_max_y > curY1Max[yi] ||
              new_max_y < curY1Max[yi]-squash) {
           needRescale = 1;
-        //fprintf( stderr, "max Y rescale %g %g\n",new_max_y,curY1Max[yi] );
+          //fprintf( stderr, "max Y rescale %g %g\n",new_max_y,curY1Max[yi] );
           curY1Max[yi] = new_max_y;
         }
       }
@@ -9233,10 +9233,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
             curY1Max[yi] = dbYMax[i];
             curY1Prec[yi] = dbYPrec[i];
             if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-                    if ( curY1Min[yi] > 0 )
-                      curY1Min[yi] = log10( curY1Min[yi] );
-                    if ( curY1Max[yi] > 0 )
-                      curY1Max[yi] = log10( curY1Max[yi] );
+              if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
+              if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
+              curY1Min[yi] = log10( curY1Min[yi] );
+              curY1Max[yi] = log10( curY1Max[yi] );
             }
           }
         }
@@ -9323,10 +9323,14 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
               curXMax = dbXMax[i];
               curXPrec = dbXPrec[i];
               if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+                if ( curXMin <= 0 ) curXMin = 1e-2;
+                if ( curXMax <= 0 ) curXMax = 1e-1;
                 curXMin = log10( curXMin );
                 curXMax = log10( curXMax );
               }
               else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+                if ( curXMin <= 0 ) curXMin = 1e-2;
+                if ( curXMax <= 0 ) curXMax = 1e-1;
                 curXMin = log10( curXMin );
                 curXMax = log10( curXMax );
               }
@@ -9966,12 +9970,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       curXMin = kpXMinEfDouble.value();
       if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
            ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
-        if ( curXMin > 0 ) {
-          curXMin = log10(curXMin);
-        }
-        else {
-          curXMin = 0;
-        }
+        if ( curXMin <= 0 ) curXMin = 1e-2;
+        curXMin = log10(curXMin);
       }
     }
 
@@ -9980,12 +9980,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       curXMax = kpXMaxEfDouble.value();
       if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
            ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
-        if ( curXMax > 0 ) {
-          curXMax = log10(curXMax);
-        }
-        else {
-          curXMax = 0;
-        }
+        if ( curXMax <= 0 ) curXMax = 1e-1;
+        curXMax = log10(curXMax);
       }
     }
 
@@ -9994,10 +9990,12 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       if ( xAxisSource == XYGC_K_FROM_PV ) {
         curXMin = dbXMin[0];
         if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-          if ( curXMin > 0 ) curXMin = log10( curXMin );
+          if ( curXMin <= 0 ) curXMin = 1e-2;
+          curXMin = log10( curXMin );
         }
         else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-          if ( curXMin > 0 ) curXMin = log10( curXMin );
+          if ( curXMin <= 0 ) curXMin = 1e-2;
+          curXMin = log10( curXMin );
         }
       }
       else {
@@ -10010,10 +10008,12 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       if ( xAxisSource == XYGC_K_FROM_PV ) {
         curXMax = dbXMax[0];
         if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-          if ( curXMax > 0 ) curXMax = log10( curXMax );
+          if ( curXMax <= 0 ) curXMax = 1e-1;
+          curXMax = log10( curXMax );
         }
         else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-          if ( curXMax > 0 ) curXMax = log10( curXMax );
+          if ( curXMax <= 0 ) curXMax = 1e-1;
+          curXMax = log10( curXMax );
         }
       }
       else {
@@ -10103,24 +10103,16 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       if ( !kpY1MinEfDouble[yi].isNull() ) {
         curY1Min[yi] = kpY1MinEfDouble[yi].value();
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          if ( curY1Min[yi] > 0 ) {
-            curY1Min[yi] = log10(curY1Min[yi]);
-          }
-          else {
-            curY1Min[yi] = 0;
-          }
+          if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
+          curY1Min[yi] = log10(curY1Min[yi]);
         }
       }
 
       if ( !kpY1MaxEfDouble[yi].isNull() ) {
         curY1Max[yi] = kpY1MaxEfDouble[yi].value();
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          if ( curY1Max[yi] > 0 ) {
-            curY1Max[yi] = log10(curY1Max[yi]);
-          }
-          else {
-            curY1Max[yi] = 0;
-          }
+          if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
+          curY1Max[yi] = log10(curY1Max[yi]);
         }
       }
 
@@ -10129,7 +10121,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         if ( y1AxisSource[yi] == XYGC_K_FROM_PV ) {
           curY1Min[yi] = dbYMin[lowestYScaleIndex[yi]];
           if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-            if ( curY1Min[yi] > 0 ) curY1Min[yi] = log10( curY1Min[yi] );
+            if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
+            curY1Min[yi] = log10( curY1Min[yi] );
           }
         }
         else {
@@ -10142,7 +10135,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         if ( y1AxisSource[yi] == XYGC_K_FROM_PV ) {
           curY1Max[yi] = dbYMax[lowestYScaleIndex[yi]];
           if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-            if ( curY1Max[yi] > 0 ) curY1Max[yi] = log10( curY1Max[yi] );
+            if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
+            curY1Max[yi] = log10( curY1Max[yi] );
           }
         }
         else {
@@ -10274,10 +10268,14 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 	}
       }
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+        if ( curXMin <= 0 ) curXMin = 1e-2;
+        if ( curXMax <= 0 ) curXMax = 1e-1;
         curXMin = log10( curXMin );
         curXMax = log10( curXMax );
       }
       else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+        if ( curXMin <= 0 ) curXMin = 1e-2;
+        if ( curXMax <= 0 ) curXMax = 1e-1;
         curXMin = log10( curXMin );
         curXMax = log10( curXMax );
       }
@@ -10375,6 +10373,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           if ( ymax[yi] > curY1Max[yi] ) curY1Max[yi] = ymax[yi];
 	}
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+          if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
+          if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
           curY1Min[yi] = log10( curY1Min[yi] );
           curY1Max[yi] = log10( curY1Max[yi] );
 	}
@@ -10485,6 +10485,13 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 
         getYMinMax( yi, checkY1Min, checkY1Max );
 
+        if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+          if ( checkY1Min[yi] <= 0 ) checkY1Min[yi] = 1e-2;
+          if ( checkY1Max[yi] <= 0 ) checkY1Max[yi] = 1e-1;
+          checkY1Min[yi] = log10( checkY1Min[yi] );
+          checkY1Max[yi] = log10( checkY1Max[yi] );
+	}
+
         if ( checkY1Min[yi] != checkY1Max[yi] ) {
 
           if ( kpY1MinEfDouble[yi].isNull() || kpY1MaxEfDouble[yi].isNull() ) {
@@ -10524,8 +10531,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 	}
 
         if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-          if ( curXMin > 0 ) curXMin = log10( curXMin );
-          if ( curXMax > 0 ) curXMax = log10( curXMax );
+          if ( curXMin <= 0 ) curXMin = 1e-2;
+          if ( curXMax <= 0 ) curXMax = 1e-1;
+          curXMin = log10( curXMin );
+          curXMax = log10( curXMax );
           get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
            &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
            format );
@@ -10537,8 +10546,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           }
         }
         else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-          if ( curXMin > 0 ) curXMin = log10( curXMin );
-          if ( curXMax > 0 ) curXMax = log10( curXMax );
+          if ( curXMin <= 0 ) curXMin = 1e-2;
+          if ( curXMax <= 0 ) curXMax = 1e-1;
+          curXMin = log10( curXMin );
+          curXMax = log10( curXMax );
           get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
            &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
            format );
@@ -10595,8 +10606,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           anyRescale = 1;
 
           if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-            if ( curY1Min[yi] > 0 ) curY1Min[yi] = log10( curY1Min[yi] );
-            if ( curY1Max[yi] > 0 ) curY1Max[yi] = log10( curY1Max[yi] );
+            if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
+            if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
+            curY1Min[yi] = log10( curY1Min[yi] );
+            curY1Max[yi] = log10( curY1Max[yi] );
             get_log10_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi], &adjCurY1Max[yi],
              &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
              &curY1MinorsPerMajor[yi], format );
@@ -10665,8 +10678,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       }
 
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-        if ( curXMin > 0 ) curXMin = log10( curXMin );
-        if ( curXMax > 0 ) curXMax = log10( curXMax );
+        if ( curXMin <= 0 ) curXMin = 1e-2;
+        if ( curXMax <= 0 ) curXMax = 1e-1;
+        curXMin = log10( curXMin );
+        curXMax = log10( curXMax );
         get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
          &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
          format );
@@ -10678,8 +10693,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         }
       }
       else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-        if ( curXMin > 0 ) curXMin = log10( curXMin );
-        if ( curXMax > 0 ) curXMax = log10( curXMax );
+        if ( curXMin <= 0 ) curXMin = 1e-2;
+        if ( curXMax <= 0 ) curXMax = 1e-1;
+        curXMin = log10( curXMin );
+        curXMax = log10( curXMax );
         get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
          &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
          format );
@@ -10721,18 +10738,35 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 
         getYMinMax( yi, checkY1Min, checkY1Max );
 
-	if ( kpY1MinEfDouble[yi].isNull() ) {
-          curY1Min[yi] = checkY1Min[yi] - 0.02 * fabs( checkY1Max[yi] - checkY1Min[yi] );
+        if ( ( y1AxisStyle[yi] != XYGC_K_AXIS_STYLE_LOG10 ) &&
+             ( y1AxisStyle[yi] != XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
+
+          if ( kpY1MinEfDouble[yi].isNull() ) {
+            curY1Min[yi] = checkY1Min[yi] - 0.02 * fabs( checkY1Max[yi] - checkY1Min[yi] );
+          }
+          if ( kpY1MaxEfDouble[yi].isNull() ) {
+            curY1Max[yi] = checkY1Max[yi] + 0.02 * fabs( checkY1Max[yi] - checkY1Min[yi] );
+          }
+
 	}
-	if ( kpY1MaxEfDouble[yi].isNull() ) {
-          curY1Max[yi] = checkY1Max[yi] + 0.02 * fabs( checkY1Max[yi] - checkY1Min[yi] );
+	else {
+
+          if ( kpY1MinEfDouble[yi].isNull() ) {
+            curY1Min[yi] = checkY1Min[yi];
+          }
+          if ( kpY1MaxEfDouble[yi].isNull() ) {
+            curY1Max[yi] = checkY1Max[yi] + 0.02 * fabs( checkY1Max[yi] - checkY1Min[yi] );
+          }
+
 	}
 
         anyRescale = 1;
 
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          if ( curY1Min[yi] > 0 ) curY1Min[yi] = log10( curY1Min[yi] );
-          if ( curY1Max[yi] > 0 ) curY1Max[yi] = log10( curY1Max[yi] );
+          if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
+          if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
+          curY1Min[yi] = log10( curY1Min[yi] );
+          curY1Max[yi] = log10( curY1Max[yi] );
           get_log10_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi], &adjCurY1Max[yi],
            &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
            &curY1MinorsPerMajor[yi], format );
@@ -10887,10 +10921,14 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 	}
       }
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+        if ( curXMin <= 0 ) curXMin = 1e-2;
+        if ( curXMax <= 0 ) curXMax = 1e-1;
         curXMin = log10( curXMin );
         curXMax = log10( curXMax );
       }
       else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+        if ( curXMin <= 0 ) curXMin = 1e-2;
+        if ( curXMax <= 0 ) curXMax = 1e-1;
         curXMin = log10( curXMin );
         curXMax = log10( curXMax );
       }
@@ -10975,6 +11013,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           curY1Max[yi] = y1Max[yi].value();
 	}
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+          if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
+          if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
           curY1Min[yi] = log10( curY1Min[yi] );
           curY1Max[yi] = log10( curY1Max[yi] );
 	}
@@ -11024,10 +11064,14 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
     curXMin = xMin.value();
     curXMax = xMax.value();
     if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+      if ( curXMin <= 0 ) curXMin = 1e-2;
+      if ( curXMax <= 0 ) curXMax = 1e-1;
       curXMin = log10( curXMin );
       curXMax = log10( curXMax );
     }
     else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+      if ( curXMin <= 0 ) curXMin = 1e-2;
+      if ( curXMax <= 0 ) curXMax = 1e-1;
       curXMin = log10( curXMin );
       curXMax = log10( curXMax );
     }
@@ -11043,6 +11087,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       curY1Min[yi] = y1Min[yi].value();
       curY1Max[yi] = y1Max[yi].value();
       if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+        if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
+        if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
         curY1Min[yi] = log10( curY1Min[yi] );
         curY1Max[yi] = log10( curY1Max[yi] );
       }
