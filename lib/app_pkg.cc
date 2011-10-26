@@ -4712,7 +4712,7 @@ fileListPtr curFile;
         else if ( strcmp( argv[n], global_str21 ) == 0 ) {
           n++;
           if ( n >= argc ) return 2;
-          strncpy( displayName, argv[n], 127 );
+          strncpy( displayName, argv[n], 63 );
         }
         else if ( strcmp( argv[n], global_str73 ) == 0 ) {
           n++; // just ignore, not used here
@@ -4823,7 +4823,7 @@ int appContextClass::startApplication (
 int stat, opStat;
 activeWindowListPtr cur;
 char *name, *envPtr;
-char prefix[255+1], fname[255+1], msg[127+1];
+char dspName[63+1], prefix[255+1], fname[255+1], msg[127+1];
 fileListPtr curFile;
 expStringClass expStr;
 Atom wm_delete_window;
@@ -4836,6 +4836,15 @@ XmString xmStr1;
   primaryServer = _primaryServer;
   oneInstance = _oneInstance;
   convertOnly = _convertOnly;
+
+  envPtr = getenv("DISPLAY");
+  if ( envPtr ) {
+    strncpy( dspName, envPtr, 63 );
+    dspName[63] = 0;
+  }
+  else {
+    strcpy( dspName, ":0.0" );
+  }
 
   name = argv[0];
 
@@ -4940,10 +4949,7 @@ err_return:
       XtAppSetFallbackResources(app, fbr);
     }
 
-    int i;
-    char dspName[63+1];
-    strcpy( dspName, "" );
-    for ( i=0; i<argCount; i++ ) {
+    for ( int i=0; i<argCount; i++ ) {
       if ( strcmp( args[i], "-display" ) == 0 ) {
         if ( i+1 < argCount ) {
           strncpy( dspName, args[i+1], 63 );
@@ -4961,12 +4967,16 @@ err_return:
       return 0; // error
     }
 
-    display = XtOpenDisplay( app, NULL, NULL, "edm", NULL, 0, &argCount,
-     args );
+    display = XtOpenDisplay( app, NULL, NULL, "edm", NULL, 0,
+     &argCount, args );
     if ( !display ) {
-      fprintf( stderr, appContextClass_str146 );
-      exitFlag = 1;
-      return 0; // error
+      display = XtOpenDisplay( app, dspName, NULL, "edm", NULL, 0,
+       &argCount, args );
+      if ( !display ) {
+        fprintf( stderr, appContextClass_str146 );
+        exitFlag = 1;
+        return 0; // error
+      }
     }
 
     if ( executeOnOpen ) {

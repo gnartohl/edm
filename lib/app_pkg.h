@@ -429,7 +429,7 @@ macroListPtr macroHead;
 int numFiles;
 fileListPtr fileHead;
 
-char displayName[127+1];
+char displayName[63+1];
 
 int numSchemeSets;
 char **schemeSetList;

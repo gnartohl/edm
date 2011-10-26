@@ -128,7 +128,8 @@ static char g_restartId[31+1];
 static int g_displayIndex = 0;
 
 #define MAXDSPNAMES 255
-static char g_displayNames[MAXDSPNAMES+1][31+1];
+static char g_displayNames[MAXDSPNAMES+1][63+1];
+static char g_defaultDisplay[63+1];
 
 //#include "alloc.h"
 #ifdef DIAGNOSTIC_ALLOC
@@ -214,16 +215,17 @@ static void addDisplayToList (
 ) {
 
 int i, n, found;
-char dspName[31+1];
+char dspName[63+1];
 
-  strcpy( dspName, ":0.0" );
+  strncpy( dspName, g_defaultDisplay, 63 );
+  dspName[63] = 0;
 
   for ( i=0; i<argc; i++ ) {
     if ( strcmp( argv[i], "-display" ) == 0 ) {
       n = i+1;
       if ( n < argc ) {
-        strncpy( dspName, argv[n], 31 );
-        dspName[31] = 0;
+        strncpy( dspName, argv[n], 63 );
+        dspName[63] = 0;
       }
     }
   }
@@ -241,8 +243,8 @@ char dspName[31+1];
 
   if ( !found ) {
     if ( g_displayIndex < MAXDSPNAMES ) {
-      strncpy( g_displayNames[g_displayIndex], dspName, 31 );
-      g_displayNames[g_displayIndex][31] = 0;
+      strncpy( g_displayNames[g_displayIndex], dspName, 63 );
+      g_displayNames[g_displayIndex][63] = 0;
       g_displayIndex++;
     }
   }
@@ -257,10 +259,10 @@ static void addDisplayToListByName (
 ) {
 
 int i, found;
-char dspName[31+1];
+char dspName[63+1];
 
-  strncpy( dspName, displayName, 31 );
-  dspName[31] = 0;
+  strncpy( dspName, displayName, 63 );
+  dspName[63] = 0;
 
   found = 0;
   for ( i=0; i<g_displayIndex; i++ ) {
@@ -273,8 +275,8 @@ char dspName[31+1];
 
   if ( !found ) {
     if ( g_displayIndex < MAXDSPNAMES ) {
-      strncpy( g_displayNames[g_displayIndex], dspName, 31 );
-      g_displayNames[g_displayIndex][31] = 0;
+      strncpy( g_displayNames[g_displayIndex], dspName, 63 );
+      g_displayNames[g_displayIndex][63] = 0;
       g_displayIndex++;
     }
   }
@@ -434,7 +436,7 @@ int i, n, ii, nn, tmp, sanity;
     }
     else {
 
-      readStringFromFile( displayName, 127, f );
+      readStringFromFile( displayName, 63, f );
 
       cptr = fgets( text, 1023, f );
       text[1023] = 0;
@@ -574,7 +576,7 @@ int i, n, ii, nn, tmp, sanity;
     }
     else {
 
-      readStringFromFile( displayName, 127, f );
+      readStringFromFile( displayName, 63, f );
 
       cptr = fgets( text, 1023, f );
       text[1023] = 0;
@@ -614,7 +616,7 @@ static int getNumCheckPointScreens (
   FILE *f
 ) {
 
-char text[32], *cptr;
+char text[31+1], *cptr;
 int n;
 
   cptr = fgets( text, 31, f );
@@ -871,10 +873,6 @@ int value, n, nIn, nOut;
     return;
   }
 
-
-
-
-
   // if not doing a -open operation, do simple load balancing
   if ( !openCmd ) {
 
@@ -999,9 +997,6 @@ nextHost:
     }
 
   }
-
-
-
 
   // if we are doing a -open operation, find first server that is managing our display
   else {
@@ -1749,9 +1744,8 @@ static void checkParams (
 
 char buf[1023+1], mac[1023+1], exp[1023+1];
 int state = SWITCHES;
-int stat, l, nm = 0, n = 1;
-char *envPtr, *tk, *buf1;
-//Display *testDisplay;
+int l, nm = 0, n = 1;
+char *tk, *buf1;
 
   strcpy( displayName, "" );
   *local = 0;
@@ -1943,7 +1937,7 @@ char *envPtr, *tk, *buf1;
             *local = 1;
             return;
           }
-          strncpy( displayName, argv[n], 127 );
+          strncpy( displayName, argv[n], 63 );
         }
         else if ( strcmp( argv[n], global_str22 ) == 0 ) {
           n++;
@@ -2011,32 +2005,10 @@ char *envPtr, *tk, *buf1;
 
   if ( strcmp( displayName, "" ) == 0 ) {
 
-    envPtr = getenv("DISPLAY");
-    if ( envPtr ) strncpy( displayName, envPtr, 127 );
-
-    if ( strcmp( displayName, "" ) == 0 ) {
-
-      stat = gethostname( displayName, 127 );
-      if ( stat ) {
-        fprintf( stderr, main_str35 );
-        exit(1);
-      }
-
-      Strncat( displayName, ":0.0", 127 );
-
-    }
+    strncpy( displayName, g_defaultDisplay, 63 );
+    displayName[63] = 0;
 
   }
-
-  //fprintf( stderr, "test display [%s]\n", displayName );
-
-  //testDisplay = XOpenDisplay( displayName );
-  //if ( !testDisplay ) {
-  //  fprintf( stderr, main_str36 );
-  //  exit(1);
-  //}
-
-  //XCloseDisplay( testDisplay );
 
   return;
 
@@ -2059,7 +2031,7 @@ objBindingClass *obj;
 pvBindingClass *pvObj;
 char *tk, *buf1;
 MAIN_NODE_PTR node;
-char **argArray, displayName[255+1];
+char **argArray, displayName[63+1];
 int appendDisplay;
 float hours, seconds;
 
@@ -2087,6 +2059,15 @@ int shutdownTry = 200; // aprox 10 seconds
 
   if ( diagnosticMode() ) {
     logDiagnostic( "edm started\n" );
+  }
+
+  envPtr = getenv("DISPLAY");
+  if ( envPtr ) {
+    strncpy( g_defaultDisplay, envPtr, 63 );
+    g_defaultDisplay[63] = 0;
+  }
+  else {
+    strcpy( g_defaultDisplay, ":0.0" );
   }
 
   do {
@@ -2705,8 +2686,8 @@ int shutdownTry = 200; // aprox 10 seconds
       }
       //fprintf( stderr, "\n" );
 
-      // if none found, add ":0.0"
-      addDisplayToListByName( ":0.0" );
+      // if none found, add default display
+      addDisplayToListByName( g_defaultDisplay );
 
       //fprintf( stderr, "Current list:\n" );
       //for ( i=0; i<g_displayIndex; i++ ) {
@@ -2879,7 +2860,7 @@ int shutdownTry = 200; // aprox 10 seconds
 	      // a new instance of edm is starting
               first = appArgsHead->flink;
               while ( first != appArgsHead ) {
-		if ( ( strcmp( tk, ":0.0" ) == 0 ) ||
+		if ( ( strcmp( tk, g_defaultDisplay ) == 0 ) ||
                      ( strcmp( tk,
                         first->appArgs->appCtxPtr->displayName ) == 0 ) ) {
                   tk = strtok_r( NULL, "|", &buf1 );
@@ -2903,7 +2884,7 @@ int shutdownTry = 200; // aprox 10 seconds
 	      // a new instance of edm is starting
               first = appArgsHead->flink;
               while ( first != appArgsHead ) {
-		if ( ( strcmp( tk, ":0.0" ) == 0 ) ||
+		if ( ( strcmp( tk, g_defaultDisplay ) == 0 ) ||
                      ( strcmp( tk,
                         first->appArgs->appCtxPtr->displayName ) == 0 ) ) {
                   tk = strtok_r( NULL, "|", &buf1 );
@@ -2926,7 +2907,7 @@ int shutdownTry = 200; // aprox 10 seconds
 	      // a new instance of edm is starting
               first = appArgsHead->flink;
               while ( first != appArgsHead ) {
-		if ( ( strcmp( tk, ":0.0" ) == 0 ) ||
+		if ( ( strcmp( tk, g_defaultDisplay ) == 0 ) ||
                      ( strcmp( tk,
                         first->appArgs->appCtxPtr->displayName ) == 0 ) ) {
                   first->appArgs->appCtxPtr->openInitialFiles();
