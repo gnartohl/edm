@@ -3,6 +3,7 @@
 
 #include "math.h"
 #include "stdio.h"
+#include <bitset>
 
 class pvConnectionClass {
 
@@ -12,8 +13,8 @@ int maxPvs;
 int numPvs;
 int numConnectionsExpected;
 void **id; // dynamic array
-unsigned int *mask; // dynamic array
-unsigned int connectionMask;
+short *bit; // dynamic array
+std::bitset<1000> connectionMask;
 
 int findPv (
   void *Pv );

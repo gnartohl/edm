@@ -4012,6 +4012,8 @@ int i, yi;
   name = new char[strlen("xyGraphClass")+1];
   strcpy( name, "xyGraphClass" );
 
+  timeOffset = source->timeOffset;
+
   graphTitle.copy( source->graphTitle );
   xLabel.copy( source->xLabel );
   yLabel.copy( source->yLabel );

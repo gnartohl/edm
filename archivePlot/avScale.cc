@@ -1,9 +1,9 @@
 //  for object: 458bb765_eab9_4d65_8fda_2ce55d2baec6
 //  for lib: ?
 
-#define __scale_cc 1
+#define __avScale_cc 1
 
-#include "scale.h"
+#include "avScale.h"
 #include "app_pkg.h"
 #include "act_win.h"
 

@@ -1,8 +1,8 @@
 //  for object: 458bb765_eab9_4d65_8fda_2ce55d2baec6
 //  for lib: ?
 
-#ifndef __scale_h
-#define __scale_h 1
+#ifndef __avScale_h
+#define __avScale_h 1
 
 #include "act_grf.h"
 #include "entry_form.h"
@@ -14,9 +14,9 @@
 #define SCLC_MINOR_VERSION 0
 #define SCLC_RELEASE 0
 
-#ifdef __scale_cc
+#ifdef __avScale_cc
 
-#include "scale.str"
+#include "avScale.str"
 
 static void sclc_value_edit_apply (
   Widget w,

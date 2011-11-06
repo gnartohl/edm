@@ -8,8 +8,8 @@ pvConnectionClass::pvConnectionClass ( void )
   maxPvs = 0;
   numPvs = 0;
   id = NULL;
-  mask = NULL;
-  connectionMask = 0;
+  bit = NULL;
+  connectionMask.reset();
   numConnectionsExpected = 0;
 
 }
@@ -18,7 +18,7 @@ pvConnectionClass::~pvConnectionClass ( void )
 {
 
   if ( id ) delete[] id;
-  if ( mask ) delete[] mask;
+  if ( bit ) delete[] bit;
 
 }
 
@@ -61,16 +61,17 @@ int pvConnectionClass::setMaxPvs (
 
 int i;
 
+  if ( _maxPvs > 1000 ) return 0; // error
+
   if ( maxPvs ) return 0; // error
 
   maxPvs = _maxPvs;
   id = new void *[maxPvs];
-  mask = new unsigned int[maxPvs];
+  bit = new short[maxPvs];
 
   for ( i=0; i<maxPvs; i++ ) {
     id[i] = NULL;
-    //mask[i] = (unsigned int) pow(2,i); <-- solaris compile prob
-    mask[i] = 1 << i;
+    bit[i] = i;
   }
 
   return 1;
@@ -89,7 +90,7 @@ int i;
     if ( i == -1 ) return 0; // error
   }
 
-  connectionMask &= ~(mask[i]);
+  connectionMask.reset( bit[i] );
 
   return 1;
 
@@ -107,7 +108,7 @@ int i;
     if ( i == -1 ) return 0; // error
   }
 
-  connectionMask |= mask[i];
+  connectionMask.set( bit[i] );
 
   return 1;
 
@@ -119,7 +120,7 @@ void pvConnectionClass::init ( void )
 int i;
 
   numConnectionsExpected = 0;
-  connectionMask = 0;
+  connectionMask.reset();
   numPvs = 0;
 
   for ( i=0; i<maxPvs; i++ ) {
@@ -133,7 +134,7 @@ int pvConnectionClass::addPv ( void )
 
   if ( numConnectionsExpected >= maxPvs ) return 0; //error
 
-  connectionMask |= mask[numConnectionsExpected];
+  connectionMask.set( bit[numConnectionsExpected] );
   numConnectionsExpected++;
 
   return 1;
@@ -143,6 +144,10 @@ int pvConnectionClass::addPv ( void )
 int pvConnectionClass::pvsConnected ( void )
 {
 
-  return !connectionMask;
+  if ( connectionMask.none() ) {
+    return 1;
+  }
+
+  return 0;
 
 }

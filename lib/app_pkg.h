@@ -416,6 +416,7 @@ confirmDialogClass confirm;
 int local;
 
 msgDialogClass msgDialog;
+int msgDialogOpenCount;
 
 THREAD_LOCK_HANDLE actionsLock;
 actionsPtr actHead, actTail;

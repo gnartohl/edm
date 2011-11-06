@@ -50,7 +50,7 @@ Xlib_DIR = $(X11_LIB)
 HCLXmu_DIR = $(X11_LIB)
 
 LIBSRCS += archivePlot.cc
-LIBSRCS += scale.cc
+LIBSRCS += avScale.cc
 LIBSRCS += reg_archivePlot.cc
 
 include $(TOP)/config/RULES.Host

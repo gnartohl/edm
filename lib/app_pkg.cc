@@ -2375,6 +2375,8 @@ appContextClass::appContextClass (
   useStdErrFlag = 0;
   errMsgPrefix = NULL;
 
+  msgDialogOpenCount = 0;
+
 }
 
 appContextClass::~appContextClass (
@@ -5163,7 +5165,8 @@ err_return:
 
   opStat = fi.initFromFile( app, display, fname );
 
-  closeNote();
+  msgDialogOpenCount = 20; // close note in applicationLoop function
+  //closeNote();
 
   if ( !( opStat & 1 ) ) {
     fprintf( stderr, appContextClass_str107 );
@@ -5880,7 +5883,6 @@ activeWindowListPtr cur;
 
 void appContextClass::applicationLoop ( void ) {
 
-static int msgCount = 0;
 int stat, nodeCount, actionCount, iconNodeCount,
  iconActionCount, n;
 activeWindowListPtr cur, next;
@@ -5898,7 +5900,7 @@ char msg[127+1];
 
     if ( epc.printFinished() ) {
       postNote( appContextClass_str138 );
-      msgCount = 20;
+      msgDialogOpenCount = 20;
     }
 
     if ( epc.printFailure() ) {
@@ -5907,11 +5909,11 @@ char msg[127+1];
 
   }
 
-  if ( msgCount > 0 ) {
-    if ( msgCount == 1 ) {
+  if ( msgDialogOpenCount > 0 ) {
+    if ( msgDialogOpenCount == 1 ) {
       closeNote();
     }
-    msgCount--;
+    msgDialogOpenCount--;
   }
 
   if ( reloadFlag == 2 ) {
@@ -6467,11 +6469,15 @@ int _x, _y;
   _x = XDisplayWidth( display, DefaultScreen(display) ) / 2;
   _y = XDisplayHeight( display, DefaultScreen(display) ) / 2;
 
+  // printf( "postNote - msgDialog = %-X\n", (int) &msgDialog );
+
   msgDialog.popup( msg, _x, _y );
 
 }
 
 void appContextClass::closeNote ( void ) {
+
+  // printf( "closeNote - msgDialog = %-X\n", (int) &msgDialog );
 
   msgDialog.popdown();
 

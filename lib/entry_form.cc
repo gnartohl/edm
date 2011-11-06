@@ -1141,6 +1141,11 @@ entryFormClass::entryFormClass ( void ) {
   entryTag = NULL;
   actionTag = NULL;
 
+  callbackData.op = 0;
+  callbackData.command = 0;
+  callbackPtr = NULL;
+  clientCb = NULL;
+
   object_type = EF_K_RECTANGULAR;
 
   shell = NULL;
@@ -5678,6 +5683,165 @@ Widget *children;
   XtAddCallback( pb_ok, XmNactivateCallback, ok_cb, ptr );
 //   XtAddCallback( pb_ok, XmNactivateCallback, popdown_cb, this );
 
+
+  XtManageChild( labelForm );
+  if ( !firstItem ) XtManageChild( topForm );
+  if ( maxItems > 1 ) XtManageChild( controlForm );
+  if ( maxItems > 0 ) XtManageChild( arrayForm );
+  XtManageChild( bottomForm );
+  XtManageChild( pane );
+  XtManageChild( scrollWin );
+  XtManageChild( paneTop );
+
+  // remove pane sashes from tab traversal
+  XtVaGetValues( pane,
+   XmNchildren, &children,
+   XmNnumChildren, &num,
+   NULL );
+
+  while ( num-- > 0 ) {
+    if ( XmIsSash( children[num] ) ) {
+      XtVaSetValues( children[num],
+       XmNtraversalOn, False,
+       NULL );
+    }
+  }
+
+  return 1;
+
+}
+
+void entryFormClass::ok_callback (
+  Widget w,
+  XtPointer client,
+  XtPointer call
+) {
+
+  entryFormClass *ef = (entryFormClass *) client;
+  client = ef->callbackPtr;
+  ef->callbackData.command = entryFormClass::OK;
+  (ef->clientCb)( w, client, XtPointer (&ef->callbackData) );
+
+}
+
+void entryFormClass::apply_callback (
+  Widget w,
+  XtPointer client,
+  XtPointer call
+) {
+
+  entryFormClass *ef = (entryFormClass *) client;
+  client = ef->callbackPtr;
+  ef->callbackData.command = entryFormClass::APPLY;
+  (ef->clientCb)( w, client, XtPointer (&ef->callbackData) );
+
+}
+
+void entryFormClass::cancel_callback (
+  Widget w,
+  XtPointer client,
+  XtPointer call
+) {
+
+  entryFormClass *ef = (entryFormClass *) client;
+  client = ef->callbackPtr;
+  ef->callbackData.command = entryFormClass::CANCEL;
+  (ef->clientCb)( w, client, XtPointer (&ef->callbackData) );
+
+}
+
+int entryFormClass::finished (
+  int operationType,
+  XtCallbackProc cb,
+  XtPointer ptr )
+{
+
+XmString str;
+int num;
+Widget *children;
+XtCallbackProc ok_cb, apply_cb, cancel_cb;
+
+  callbackPtr = ptr;
+  clientCb = cb;
+  ptr = this;
+  callbackData.op = operationType;
+  ok_cb = entryFormClass::ok_callback;
+  apply_cb = entryFormClass::apply_callback;
+  cancel_cb = entryFormClass::cancel_callback;
+
+  okCb = ok_cb;
+  applyCb = apply_cb;
+  cancelCb = cancel_cb;
+  pbCallbackPtr = ptr;
+
+  if ( actionTag )
+    str = XmStringCreate( "Cancel", actionTag );
+  else
+    str = XmStringCreateLocalized( "Cancel" );
+
+  pb_cancel = XtVaCreateManagedWidget( "pb", xmPushButtonGadgetClass, bottomForm,
+   XmNtopAttachment, XmATTACH_FORM,
+   XmNbottomAttachment, XmATTACH_FORM,
+   XmNrightAttachment, XmATTACH_FORM,
+   XmNdefaultButtonShadowThickness, 1,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  this->wp.w = pb_cancel;
+  this->wp.obj = this;
+  this->wp.client = ptr;
+  XtAddCallback( pb_cancel, XmNactivateCallback, kill_cb, &this->wp );
+
+  Atom wm_delete_window = XmInternAtom( XtDisplay(shell),
+   "WM_DELETE_WINDOW", False );
+
+  XmAddWMProtocolCallback( shell, wm_delete_window, kill_cb, &this->wp );
+
+  XtVaSetValues( shell, XmNdeleteResponse, XmDO_NOTHING, NULL );
+
+  if ( actionTag )
+    str = XmStringCreate( "Apply", actionTag );
+  else
+    str = XmStringCreateLocalized( "Apply" );
+
+  pb_apply = XtVaCreateManagedWidget( "pb", xmPushButtonGadgetClass,  bottomForm,
+   XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+   XmNtopWidget, pb_cancel,
+   XmNbottomAttachment, XmATTACH_OPPOSITE_WIDGET,
+   XmNbottomWidget, pb_cancel,
+   XmNrightAttachment, XmATTACH_WIDGET,
+   XmNrightWidget, pb_cancel,
+   XmNdefaultButtonShadowThickness, 1,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  XtAddCallback( pb_apply, XmNactivateCallback, apply_cb, ptr );
+
+  if ( actionTag )
+    str = XmStringCreate( "OK", actionTag );
+  else
+    str = XmStringCreateLocalized( "OK" );
+
+  pb_ok = XtVaCreateManagedWidget( "pb", xmPushButtonGadgetClass, bottomForm,
+   XmNtopAttachment, XmATTACH_OPPOSITE_WIDGET,
+   XmNtopWidget, pb_apply,
+   XmNbottomAttachment, XmATTACH_OPPOSITE_WIDGET,
+   XmNbottomWidget, pb_apply,
+   XmNrightAttachment, XmATTACH_WIDGET,
+   XmNrightWidget, pb_apply,
+   XmNleftAttachment, XmATTACH_NONE,
+   XmNshowAsDefault, True,
+   XmNdefaultButtonShadowThickness, 1,
+   XmNlabelString, str,
+   NULL );
+
+  XmStringFree( str );
+
+  XtAddCallback( pb_ok, XmNactivateCallback, ok_cb, ptr );
 
   XtManageChild( labelForm );
   if ( !firstItem ) XtManageChild( topForm );
