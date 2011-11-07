@@ -3620,6 +3620,7 @@ char *str;
 
   }
 
+  return NULL;
 
 }
 
