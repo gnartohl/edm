@@ -4,8 +4,8 @@
 //
 // sinclair@mail.phy.ornl.gov
 
-#ifndef __LOC_PV_FACTORY2_H__
-#define __LOC_PV_FACTORY2_H__
+#ifndef __LOC_PV_FACTORY_OLD_H__
+#define __LOC_PV_FACTORY_OLD_H__
 
 #include "pv_factory.h"
 

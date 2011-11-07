@@ -24,7 +24,7 @@ ifdef EPICS_HOST_ARCH
    USR_LIBS_hpux11_11_mt = Xm Xt Xp Xtst X11
    USR_SYS_LIBS_hpux11_11_mt = pthread
 
-   LIBRARY = Loc2
+   LIBRARY = Loc
 
    USR_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
    USR_LIBS += cfcaa62e-8199-11d3-a77f-00104b8742df
@@ -53,8 +53,8 @@ ifdef EPICS_HOST_ARCH
    Xlib_DIR = $(X11_LIB)
    HCLXmu_DIR = $(X11_LIB)
 
-   LIB_SRCS += loc_pv_factory2.cc
-   LIB_SRCS += regLoc2.cc
+   LIB_SRCS += loc_pv_factory_old.cc
+   LIB_SRCS += regLocOld.cc
 
    include $(TOP)/configure/RULES
 
