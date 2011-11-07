@@ -105,6 +105,13 @@ ProcessVariable *LOC_PV_Factory::create(const char *PV_name)
     if (entry != processvariables.end()) {
         pv = (*entry)->pv;
         pv->reference();
+        if ( !pv->is_valid() ) {
+          tk = strtok_r( NULL, "=~", &ctx );
+          if ( tk ) {
+            pv->setAttributes( tk );
+	    strcpy( pv->units, "" );
+	  }
+	}
     }
     else {
         LocHashTableItem *n_item = new LocHashTableItem();
@@ -113,8 +120,10 @@ ProcessVariable *LOC_PV_Factory::create(const char *PV_name)
         n_item->pv = pv;
         processvariables.insert(n_item);
         tk = strtok_r( NULL, "=~", &ctx );
-        pv->setAttributes( tk );
-	strcpy( pv->units, "" );
+        if ( tk ) {
+          pv->setAttributes( tk );
+	  strcpy( pv->units, "" );
+	}
     }
     return pv;
 }
@@ -275,6 +284,10 @@ char tmp[PV_Factory::MAX_PV_NAME+1], *tk, *ctx;
 
   //fprintf( stderr, "LOC_ProcessVariable::setAttributes, string = [%s]\n", string );
 
+  is_connected = true;
+  have_ctrlinfo = true;
+  do_conn_state_callbacks();
+
   return 1;
 
 }
@@ -293,8 +306,8 @@ LOC_ProcessVariable::LOC_ProcessVariable(const char *_name)
     lower_warning_limit = -DBL_MAX;
     upper_ctrl_limit = 100.0;
     lower_ctrl_limit = -100.0;
-    is_connected = true;
-    have_ctrlinfo = true;
+    is_connected = false;
+    have_ctrlinfo = false;
     strcpy( buf, "" );
     bufLen = 0;
     //fprintf( stderr,"LOC_ProcessVariable %s created\n", get_name());
@@ -331,7 +344,7 @@ void LOC_ProcessVariable::value_callback (
 bool LOC_ProcessVariable::is_valid() const
 {
 
-  return true;
+  return ( is_connected && have_ctrlinfo );
 
 }
 

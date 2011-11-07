@@ -1,8 +1,10 @@
 // -*- c++ -*-
 //
-// calc_pv_factory.h
+// calc_pv_factory.cc
 //
 // kasemir@lanl.gov
+
+// new version 8/23/2011 sinclairjw@ornl.gov
 
 #include<sys/time.h>
 #include<unistd.h>   
@@ -10,11 +12,14 @@
 #include<stdlib.h>
 #include<float.h>
 #include<math.h>
-//#include"alarm.h"
 #include "epicsAlarmLike.h"
 #include"calc_pv_factory.h"
 
 static PV_Factory *calc_pv_factory = new CALC_PV_Factory();
+
+static const int NO_EXPR_FOUND = 0;
+static const int IS_EXPR = 1;
+static const int SYNTAX_ERROR = -1;
 
 static const char *whitespace = " \t\n\r";
 #define CALC_PV_HUGE_VAL 1e50
@@ -260,6 +265,190 @@ int i, l, legal, state;
 
 }
 
+static int checkFormat (
+  char *expression,
+  int *name0,
+  int *name1,
+  int *expr0,
+  int *expr1
+) {
+
+static const int NO_EXPR_FOUND = 0;
+static const int IS_EXPR = 1;
+static const int SYNTAX_ERROR = -1;
+
+static const int FINDING_FIRST_NON_WHITE = 1;
+static const int FINDING_NAME_OR_EMBEDDED_EXP = 2;
+static const int FINDING_EMBEDDED_EXP_START = 3;
+static const int FINDING_EMBEDDED_EXP_END = 4;
+static const int FINDING_NAME_END = 5;
+static const int FINDING_NAME_AND_EMBEDDED_EXP_END = 6;
+static const int ALL_DONE = -1;
+
+int l = strlen(expression);
+int i = 0;
+int state = FINDING_FIRST_NON_WHITE;
+int status = NO_EXPR_FOUND;
+
+  *name0 = 0;
+  *name1 = 0;
+  *expr0 = 0;
+  *expr1 = 0;
+
+  if ( l == 0 ) return NO_EXPR_FOUND;
+
+  while ( state != ALL_DONE ) {
+
+    //fprintf( stderr, "i=%-d c=%c s=%-d\n", i,
+    // (expression[i]?expression[i]:'?'), state );
+
+    switch ( state ) {
+
+    case FINDING_FIRST_NON_WHITE:
+
+      if ( i >= l ) {
+        status = NO_EXPR_FOUND;
+	state = ALL_DONE;
+      }
+      else if ( ( expression[i] != ' ' ) && ( expression[i] != '\t' ) ) {
+        i--;
+        state = FINDING_NAME_OR_EMBEDDED_EXP;
+      }
+
+      break;
+
+    case FINDING_NAME_OR_EMBEDDED_EXP:
+
+      if ( i >= l ) {
+        status = NO_EXPR_FOUND;
+	state = ALL_DONE;
+      }
+      else if ( expression[i] == '{' ) {
+        *name0 = i;
+        *expr0 = i + 1;
+        state = FINDING_NAME_AND_EMBEDDED_EXP_END;
+      }
+      else if (
+                ( expression[i] == '_' ) ||
+                ( ( expression[i] >= 'A' ) && ( expression[i] <= 'Z' ) ) ||
+                ( ( expression[i] >= 'a' ) && ( expression[i] <= 'z' ) )
+	      ) {
+        *name0 = i;
+        state = FINDING_NAME_END;
+      }
+
+      break;
+
+    case FINDING_EMBEDDED_EXP_START:
+
+      if ( i >= l ) {
+        status = SYNTAX_ERROR;
+	state = ALL_DONE;
+      }
+      else if ( expression[i] == '{' ) {
+        *expr0 = i + 1;
+        state = FINDING_EMBEDDED_EXP_END;
+      }
+
+      break;
+
+    case FINDING_EMBEDDED_EXP_END:
+
+      if ( i >= l ) {
+        status = SYNTAX_ERROR;
+	state = ALL_DONE;
+      }
+      else if ( expression[i] == '}' ) {
+        *expr1 = i - 1;
+        if ( expression[i-1] == '{' ) {
+          status = SYNTAX_ERROR;
+          state = ALL_DONE;
+        }
+	else {
+          status = IS_EXPR;
+          state = ALL_DONE;
+        }
+      }
+
+      break;
+
+    case FINDING_NAME_END:
+
+      if ( i >= l ) {
+        *name1 = l - 1;
+        status = NO_EXPR_FOUND;
+	state = ALL_DONE;
+      }
+      else if ( expression[i] == '=' ) {
+        *name1 = i - 1;
+        state = FINDING_EMBEDDED_EXP_START;
+      }
+      else if ( expression[i] == '}' ) {
+        status = SYNTAX_ERROR;
+	state = ALL_DONE;
+      }
+      else if ( expression[i] == '{' ) {
+        status = SYNTAX_ERROR;
+	state = ALL_DONE;
+      }
+      else if (
+                ( expression[i] != '_' ) &&
+                ( expression[i] != '-' ) &&
+                ( expression[i] != ':' ) &&
+                ( expression[i] != '(' ) &&
+                ( expression[i] != ')' ) &&
+                ( expression[i] != '[' ) &&
+                ( expression[i] != ']' ) &&
+                ( ( expression[i] < 'A' ) || ( expression[i] > 'Z' ) ) &&
+                ( ( expression[i] < 'a' ) || ( expression[i] > 'z' ) ) &&
+                ( ( expression[i] < '0' ) || ( expression[i] > '9' ) )
+	      ) {
+        status = SYNTAX_ERROR;
+	state = ALL_DONE;
+      }
+
+      break;
+
+    case FINDING_NAME_AND_EMBEDDED_EXP_END:
+
+      if ( i >= l ) {
+        status = SYNTAX_ERROR;
+	state = ALL_DONE;
+      }
+      else if ( expression[i] == '}' ) {
+        *name1 = i;
+        *expr1 = i - 1;
+        if ( expression[i-1] == '{' ) {
+          status = SYNTAX_ERROR;
+          state = ALL_DONE;
+        }
+	else {
+          status = IS_EXPR;
+          state = ALL_DONE;
+        }
+      }
+
+      break;
+    }
+
+    i++;
+
+  }
+
+  if ( *name1 < *name0 ) status = SYNTAX_ERROR;
+  if ( *expr1 < *expr0 ) status = SYNTAX_ERROR;
+
+  //fprintf( stderr, "status = %-d\n", status );
+
+  return status;
+
+}
+
+// HashedCalcPvList:
+// Used to delay connection to calc pv until corresponding formula
+// is loaded (at least one calc pv must include the formula or it
+// must have been defined in the calculation list file.
+
 // HashedExpression:
 // One formula, hashed by name, read from the config file
 // and converted into postfix notation.
@@ -280,12 +469,55 @@ int i, l, legal, state;
 // timer is used to generate value events.
 
 // ------------------------------------------------------------------
-// HashedExpression ----------------------------------------------------
+// HashedCalcPvList -------------------------------------------------
 // ------------------------------------------------------------------
-HashedExpression::HashedExpression()
-{ name = NULL; }
+HashedCalcPvList::HashedCalcPvList()
+{ pv = NULL; }
 
-HashedExpression::HashedExpression(const char *_name, char *formula,
+HashedCalcPvList::HashedCalcPvList(
+  CALC_ProcessVariable *onePv,
+  char *oneName )
+{
+  pv = onePv;
+  name = strdup( oneName );
+  needComplete = true;
+}
+
+HashedCalcPvList::~HashedCalcPvList()
+{
+  pv = NULL;
+  free( name );
+  name = NULL;
+}
+
+// Required for Hashtable<>:
+size_t hash(const HashedCalcPvList *item, size_t N)
+{
+  return generic_string_hash( (const char *) item->pv, N );
+}
+
+bool equals(const HashedCalcPvList *lhs, const HashedCalcPvList *rhs)
+{
+  if ( (unsigned int ) lhs->pv < (unsigned int ) rhs->pv ) {
+    return 1;
+  }
+  else if ( (unsigned int ) lhs->pv > (unsigned int ) rhs->pv ) {
+    return -1;
+  }
+  return 0;
+}
+
+// ------------------------------------------------------------------
+// HashedExpression -------------------------------------------------
+// ------------------------------------------------------------------
+HashedExpression::HashedExpression () {
+
+  name = NULL;
+  formula = NULL;
+
+}
+
+HashedExpression::HashedExpression(const char *_name, char *_formula,
  char *rewriteString=NULL )
 {
 
@@ -296,11 +528,45 @@ short error;
   if ( rewriteString ) {
     expStr.setRaw( rewriteString );
   }
-  st = edm_postfix(formula, this->compiled, &error);
+  formula = strdup(_formula);
+  st = edm_postfix(_formula, this->compiled, &error);
   if ( st != 0) {
     fprintf(stderr, "CALC '%s': error in expression '%s'\n",
-     name, formula);
+     name, _formula);
   }
+
+}
+
+int HashedExpression::setFormula (
+  char *oneFormula
+) {
+
+int st;
+short error;
+
+  if ( oneFormula ) {
+    if ( strcmp( oneFormula, this->formula ) == 0 ) {
+      return 0;
+    }
+  }
+
+  st = edm_postfix( oneFormula, this->compiled, &error );
+  if ( st != 0) {
+    fprintf(stderr, "CALC '%s': error in expression '%s'\n  Formula not updated\n",
+     this->name, oneFormula);
+    // restore previous
+    if ( this->formula ) {
+      st = edm_postfix( this->formula, this->compiled, &error );
+    }
+  }
+  else {
+    fprintf( stderr, "CALC, formula updated for %s\n  Old: [%s]\n  New: [%s]\n",
+     this->name, this->formula, oneFormula );
+    free( this->formula );
+    formula = strdup(oneFormula);
+  }
+
+  return st;
 
 }
 
@@ -311,6 +577,11 @@ HashedExpression::~HashedExpression()
     {
         free(name);
         name = NULL;
+    }
+    if (formula)
+    {
+        free(formula);
+        formula = NULL;
     }
 
 }
@@ -339,16 +610,23 @@ enum { HashTableSize = 503 };
 typedef Hashtable<HashedExpression,
                   offsetof(HashedExpression, node),
                   HashTableSize> ExpressionHash;
-static ExpressionHash *expressions;
+static ExpressionHash *expressions = NULL;
+typedef Hashtable<HashedCalcPvList,
+                  offsetof(HashedCalcPvList, node),
+                  HashTableSize> CalcPvListHash;
+static CalcPvListHash *calcPvList = NULL;
 
 static void checkForEmbedded (
   char *expression
 ) {
 
-int l;
-char *outer, inner[MAX_INFIX_SIZE];
+int size, l, result, name0, name1, expr0, expr1;
+char *outer, *pvname, inner[MAX_INFIX_SIZE+1];
+bool needReeval;
 
-  if ( !expression ) return;
+  if ( !expression ) {
+    return;
+  }
 
   //fprintf( stderr, "checkForEmbedded - expression = [%s]\n", expression );
 
@@ -358,20 +636,109 @@ char *outer, inner[MAX_INFIX_SIZE];
 
   if ( l > 2 ) {
 
-    if ( ( expression[0] == '{' ) && ( expression[l-1] == '}' ) ) {
+    result = checkFormat( expression, &name0, &name1, &expr0, &expr1 );
+
+    if ( result == SYNTAX_ERROR ) {
+      fprintf(stderr, "CALC: syntax error in expression '%s'\n",
+       expression );
+      return;
+    }
+
+    if ( result == IS_EXPR ) {
 
       HashedExpression he;
-      outer = strdup( expression );
-      // 'he' will delete the strdup'ed  expression
+      size = name1 - name0 + 1;
+      outer = new char[size+1];
+      strncpy( outer, &expression[name0], size );
+      outer[size] = 0;
+      // 'he' will delete the new'ed  expression
       he.name = outer;
       ExpressionHash::iterator entry = expressions->find(&he);
       if (entry == expressions->end()) {
 
-        strcpy( inner, &expression[1] );
-        l = strlen( inner );
-        inner[l-1] = 0;
+        needReeval = true;
 
-        expressions->insert( new HashedExpression( expression, inner ) );
+        size = name1 - name0 + 1;
+        pvname = new char[size+1];
+        strncpy( pvname, &expression[name0], size );
+        pvname[size] = 0;
+
+        size = expr1 - expr0 + 1;
+        if ( size > MAX_INFIX_SIZE ) size = MAX_INFIX_SIZE;
+        strncpy( inner, &expression[expr0], MAX_INFIX_SIZE );
+        inner[size] = 0;
+
+        strcpy( expression, pvname );
+
+        expressions->insert( new HashedExpression( pvname, inner ) );
+
+        delete pvname;
+        pvname = 0;
+
+      }
+      else {
+
+	// update current formula
+
+        needReeval = true;
+
+        size = name1 - name0 + 1;
+        pvname = new char[size+1];
+        strncpy( pvname, &expression[name0], size );
+        pvname[size] = 0;
+
+        size = expr1 - expr0 + 1;
+        if ( size > MAX_INFIX_SIZE ) size = MAX_INFIX_SIZE;
+        strncpy( inner, &expression[expr0], MAX_INFIX_SIZE );
+        inner[size] = 0;
+
+        strcpy( expression, pvname );
+
+        HashedExpression *heToUpdate = *entry;
+
+        heToUpdate->setFormula( inner );
+
+        delete pvname;
+        pvname = 0;
+
+      }
+
+    }
+
+    if ( needReeval ) {
+
+      CalcPvListHash::iterator ci;
+      bool remove;
+      ci=calcPvList->begin();
+      while (ci!=calcPvList->end()) {
+
+        HashedCalcPvList *ce = *ci;
+
+        remove = false;
+
+        ExpressionHash::iterator i;
+        i=expressions->begin();
+        while (i!=expressions->end())
+        {
+            HashedExpression *e = *i;
+
+            if ( strcmp( ce->name, e->name ) == 0 ) {
+              ce->pv->completeCreation( e );
+              remove = true;
+              break;
+            }
+
+            ++i;
+        }
+
+        if ( remove ) {
+          calcPvList->erase( ci );
+          delete ce;
+          ci = calcPvList->begin();
+        }
+        else {
+          ++ci;
+        }
 
       }
 
@@ -391,8 +758,16 @@ CALC_PV_Factory::CALC_PV_Factory()
         fprintf(stderr, "Error: More than one CALC_PV_Factory created!\n");
         return;
     }
-    
+
     expressions = new ExpressionHash();
+    
+    if (calcPvList)
+    {
+        fprintf(stderr, "Error: More than one CALC_PV_Factory created!\n");
+        return;
+    }
+
+    calcPvList = new CalcPvListHash();
     
     char *env = getenv(CALC_ENV);
     if (env)
@@ -448,6 +823,20 @@ CALC_PV_Factory::~CALC_PV_Factory()
         delete expressions;
         expressions = 0;
     }
+
+    if ( calcPvList ) {
+      CalcPvListHash::iterator ci;
+      ci = calcPvList->begin();
+      while ( ci !=calcPvList->end() ) {
+	HashedCalcPvList *ce = *ci;
+        calcPvList->erase( ci );
+        delete ce;
+        ci = calcPvList->begin();
+      }
+      delete calcPvList;
+      calcPvList = 0;
+    }
+
 #   ifdef CALC_DEBUG
     fprintf( stderr,"CALC_PV_Factory deleted\n");
 #   endif
@@ -606,6 +995,7 @@ ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
     int more, findingInline = 0, gettingFirst;
     CALC_ProcessVariable *pv;
     char dummy[2];
+    bool haveValidExpression = false;
 
     strcpy( dummy, "" );
     start = dummy;
@@ -662,106 +1052,128 @@ ProcessVariable *CALC_PV_Factory::create(const char *PV_name)
     ExpressionHash::iterator entry = expressions->find(&he);
     if (entry == expressions->end())
     {
-        fprintf(stderr, "Unknown CALC expression '%s'\n", expression);
-        return 0;
+      haveValidExpression = false;
+      //fprintf( stderr, "no valid expression  yet\n" );
+      //fprintf( stderr, "Unknown CALC expression '%s'\n", expression );
+      //return 0;
+    }
+    else {
+      haveValidExpression = true;
     }
 
-    if ( strcmp( (*entry)->expStr.getRaw(), "" ) ) {
-
-      char **sym = (char **) new char*[arg_count];
-      char **val = (char **) new char*[arg_count];
-      for ( i=0; i<arg_count; ++i ) {
-        sym[i] = strdup( " " );
-        sym[i][0] = (char) i+65;
-        val[i] = strdup( arg_name[i] );
-      }
-      (*entry)->expStr.expand1st( arg_count, sym, val );
-      for ( i=0; i<arg_count; ++i ) {
-        free( sym[i] );
-        free( val[i] );
-      }
-      free( sym );
-      free( val );
-
-      for ( i=0; i<CALC_ProcessVariable::MaxArgs; ++i )
-        exp_arg_name[i] = 0;
-
-      i = ii = l = 0;
-      p1 = (*entry)->expStr.getExpanded();
-      gettingFirst = 1;
-
-      while ( ii < strlen( p1 ) ) {
-
-        if ( gettingFirst ) {
-
-          if ( p1[ii] != ' ' ) {
-            start = &p1[ii];
-	    l = 1;
-            gettingFirst = 0;
-	  }
-
-	}
-	else {
-
-          if ( p1[ii] == ',' ) {
-            exp_arg_name[i] = (char *) malloc(l+1);
-            strncpy( exp_arg_name[i], start, l );
-            exp_arg_name[i][l] = 0;
-	    gettingFirst = 1;
-	    i++;
-	    l = 0;
-	  }
-	  else {
-	    l++;
-	  }
-
-	}
-
-	ii++;
-
-      }
-
-      if ( !gettingFirst ) {
-
-            exp_arg_name[i] = (char *) malloc(l+1);
-            strncpy( exp_arg_name[i], start, l );
-            exp_arg_name[i][l] = 0;
-	    i++;
-
-      }
-
-#   ifdef CALC_DEBUG
-      fprintf( stderr, "got %-d exp args\n", i );
-      for ( ii=0; ii<i; ii++ ) {
-	fprintf( stderr, "[%s]\n", exp_arg_name[ii] );
-      }
+    if ( haveValidExpression ) {
 
       if ( strcmp( (*entry)->expStr.getRaw(), "" ) ) {
-        fprintf( stderr, "raw: [%s]\n", (*entry)->expStr.getRaw() );
+
+        char **sym = (char **) new char*[arg_count];
+        char **val = (char **) new char*[arg_count];
+        val = (char **) calloc( arg_count, sizeof( char* ) );
+        for ( i=0; i<arg_count; ++i ) {
+          sym[i] = strdup( " " );
+          sym[i][0] = (char) i+65;
+          val[i] = strdup( arg_name[i] );
+        }
+        //fprintf( stderr, "1: [%s]\n", (*entry)->expStr.getExpanded() );
+        (*entry)->expStr.expand1st( arg_count, sym, val );
+        //fprintf( stderr, "2: [%s]\n", (*entry)->expStr.getExpanded() );
+        for ( i=0; i<arg_count; ++i ) {
+          free( sym[i] );
+          free( val[i] );
+        }
+        delete[] sym;
+        delete[] val;
+
+        for ( i=0; i<CALC_ProcessVariable::MaxArgs; ++i )
+          exp_arg_name[i] = 0;
+
+        i = ii = l = 0;
+        p1 = (*entry)->expStr.getExpanded();
+        gettingFirst = 1;
+
+        while ( ii < strlen( p1 ) ) {
+
+          if ( gettingFirst ) {
+
+            if ( p1[ii] != ' ' ) {
+              start = &p1[ii];
+              l = 1;
+              gettingFirst = 0;
+            }
+
+          }
+          else {
+
+            if ( p1[ii] == ',' ) {
+              exp_arg_name[i] = (char *) malloc(l+1);
+              strncpy( exp_arg_name[i], start, l );
+              exp_arg_name[i][l] = 0;
+              gettingFirst = 1;
+              i++;
+              l = 0;
+            }
+            else {
+              l++;
+            }
+
+          }
+
+          ii++;
+
+        }
+
+        if ( !gettingFirst ) {
+
+              exp_arg_name[i] = (char *) malloc(l+1);
+              strncpy( exp_arg_name[i], start, l );
+              exp_arg_name[i][l] = 0;
+              i++;
+
+        }
+
+#     ifdef CALC_DEBUG
+        fprintf( stderr, "got %-d exp args\n", i );
+        for ( ii=0; ii<i; ii++ ) {
+          fprintf( stderr, "[%s]\n", exp_arg_name[ii] );
+        }
+
+        if ( strcmp( (*entry)->expStr.getRaw(), "" ) ) {
+          fprintf( stderr, "raw: [%s]\n", (*entry)->expStr.getRaw() );
+        }
+
+        if ( strcmp( (*entry)->expStr.getExpanded(), "" ) ) {
+          fprintf( stderr, "exp: [%s]\n", (*entry)->expStr.getExpanded() );
+        }
+#     endif    
+
+        pv = new CALC_ProcessVariable(PV_name, *entry,
+         i, (const char **)exp_arg_name);
+
+        for ( ii=0; ii<i; ii++ ) {
+          free( exp_arg_name[ii] );
+          exp_arg_name[ii] = NULL;
+        }
+
+        pv->value = 0.0;
+
       }
+      else {
 
-      if ( strcmp( (*entry)->expStr.getExpanded(), "" ) ) {
-        fprintf( stderr, "exp: [%s]\n", (*entry)->expStr.getExpanded() );
+        pv = new CALC_ProcessVariable(PV_name, *entry,
+         arg_count, (const char **)arg_name);
+
+        pv->value = 0.0;
+
       }
-#   endif    
-
-      pv = new CALC_ProcessVariable(PV_name, *entry,
-       i, (const char **)exp_arg_name);
-
-      for ( ii=0; ii<i; ii++ ) {
-	free( exp_arg_name[ii] );
-        exp_arg_name[ii] = NULL;
-      }
-
-      pv->value = 0.0;
 
     }
     else {
 
-      pv = new CALC_ProcessVariable(PV_name, *entry,
+      pv = new CALC_ProcessVariable(PV_name, NULL,
        arg_count, (const char **)arg_name);
 
       pv->value = 0.0;
+
+      calcPvList->insert( new HashedCalcPvList( pv, expression ) );
 
     }
 
@@ -838,7 +1250,40 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
         }
     }
 
-    // then add callbacks
+    if ( _expression ) {
+
+      validExpression = true;
+
+      // then add callbacks
+      for (i=0; i<arg_count; ++i)
+      {
+          if (arg_pv[i])
+          {
+              arg_pv[i]->add_conn_state_callback(status_callback, this);
+              arg_pv[i]->add_value_callback(value_callback, this);
+          }
+      }
+
+    }
+    else {
+
+      validExpression = false;
+
+    }
+
+}
+
+void CALC_ProcessVariable::completeCreation (
+  HashedExpression *_expression
+) {
+
+  int i;
+
+    expression = _expression;
+
+    validExpression = true;
+
+    // add callbacks
     for (i=0; i<arg_count; ++i)
     {
         if (arg_pv[i])
@@ -969,7 +1414,7 @@ bool CALC_ProcessVariable::is_valid() const
         if (arg_pv[i]!=0 && !arg_pv[i]->is_valid())
             return false;
     }
-    return true;
+    return validExpression;
 }
 
 static ProcessVariable::Type calc_type =

@@ -16,15 +16,19 @@
 #define CALC_FILENAME "calc.list"
 #define CALC_ENV "EDMCALC"
 
+class CALC_ProcessVariable;
+
 class HashedExpression
 {
 public:
     HashedExpression();
     HashedExpression(const char *name, char *formula,
      char *rewriteString );
+    int setFormula( char *oneFormula );
     ~HashedExpression();
     
     char *name;
+    char *formula;
     
     bool calc(const double args[], double &result);
     
@@ -33,6 +37,23 @@ public:
     expStringClass expStr;
 private:
     char compiled[MAX_POSTFIX_SIZE+1];
+};
+
+class HashedCalcPvList
+{
+public:
+    HashedCalcPvList();
+    HashedCalcPvList(
+      CALC_ProcessVariable *onePv,
+      char *oneName
+    );
+    ~HashedCalcPvList();
+    
+    // Required for Hashtable<>:
+    DLNode node;
+    CALC_ProcessVariable *pv;
+    char *name;
+    bool needComplete;
 };
 
 class CALC_PV_Factory : public PV_Factory
@@ -80,6 +101,10 @@ public:
     bool putText(char *value);
     bool putArrayText(char *value);
 
+    void completeCreation (
+      HashedExpression *_expression
+    );
+
 protected:
     friend class CALC_PV_Factory;
     // hidden, use CALC_PV_Factory::create()/ProcessVariable::release()
@@ -109,6 +134,7 @@ protected:
     double upper_alarm, lower_alarm;
     double upper_warning, lower_warning;
     double upper_ctrl, lower_ctrl;
+    bool validExpression;
 
     // Registered with each used arg_pv
     static void status_callback(ProcessVariable *pv, void *userarg);
