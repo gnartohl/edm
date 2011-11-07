@@ -1,31 +1,31 @@
-4 0 0
+4 0 1
 beginScreenProperties
 major 4
 minor 0
-release 0
-x 45
-y 20
+release 1
+x 165
+y 167
 w 824
 h 575
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 51400 51400 51400
+bgColor rgb 52171 52171 52171
 textColor rgb 0 0 0
 ctlFgColor1 rgb 0 0 0
-ctlFgColor2 rgb 0 0 49344
-ctlBgColor1 rgb 48059 48059 48059
-ctlBgColor2 rgb 56026 56026 56026
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 26985 26985 26985
+ctlFgColor2 rgb 0 0 65535
+ctlBgColor1 rgb 46517 46517 46517
+ctlBgColor2 rgb 56797 56797 56797
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 endScreenProperties
 
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 21
 y 19
@@ -33,7 +33,7 @@ w 107
 h 27
 font "helvetica-medium-r-24.0"
 fgColor rgb 0 0 0
-bgColor rgb 60652 60652 60652
+bgColor rgb 61423 61423 61423
 value {
   "XY Graph"
 }
@@ -44,7 +44,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 148
 y 23
@@ -52,7 +52,7 @@ w 231
 h 21
 font "helvetica-bold-r-18.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Execute Mode Operations"
@@ -64,7 +64,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 21
 y 71
@@ -72,7 +72,7 @@ w 103
 h 21
 font "helvetica-bold-r-18.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Show Value"
@@ -84,7 +84,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 21
 y 104
@@ -92,7 +92,7 @@ w 284
 h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Shift-press the left mouse button to display"
@@ -119,7 +119,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 21
 y 424
@@ -127,7 +127,7 @@ w 273
 h 32
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "Other mouse operations include those that"
@@ -140,16 +140,16 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 0
+minor 3
 release 0
 x 392
 y 21
 w 93
 h 26
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
-topShadowColor rgb 60652 60652 60652
-botShadowColor rgb 26985 26985 26985
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
 font "helvetica-bold-r-14.0"
 noEdit
 buttonLabel "Prev Page"
@@ -184,7 +184,7 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 373
 y 242
 w 19
@@ -212,7 +212,7 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 382
 y 258
 w 12
@@ -244,13 +244,13 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 125
 y 144
 w 243
 h 103
 lineColor rgb 0 0 0
-fillColor rgb 48059 48059 48059
+fillColor rgb 46517 46517 46517
 arrows "to"
 numPoints 2
 xPoints {
@@ -268,13 +268,13 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 130
 y 143
 w 165
 h 15
 lineColor rgb 0 0 0
-fillColor rgb 48059 48059 48059
+fillColor rgb 46517 46517 46517
 arrows "to"
 numPoints 2
 xPoints {
@@ -291,7 +291,7 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 21
 y 233
@@ -299,7 +299,7 @@ w 279
 h 128
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "The x coordinate is displayed first followed"
@@ -318,23 +318,23 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
-x 37
+x 23
 y 475
-w 90
+w 118
 h 80
 font "helvetica-bold-r-14.0"
 fontAlign "right"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
-  "shift-middle -"
+  "     shift-middle -"
   ""
-  "middle -"
+  "           middle -"
   ""
-  "ctrl-middle -"
+  "shift-ctrl-middle -"
 }
 autoSize
 endObjectProperties
@@ -343,15 +343,15 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
-x 132
+x 145
 y 475
 w 278
 h 80
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 48059 48059 48059
+bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "display menu of drag source PVs"
