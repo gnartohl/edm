@@ -560,8 +560,10 @@ short error;
     }
   }
   else {
+#ifdef CALC_DEBUG
     fprintf( stderr, "CALC, formula updated for %s\n  Old: [%s]\n  New: [%s]\n",
      this->name, this->formula, oneFormula );
+#endif
     free( this->formula );
     formula = strdup(oneFormula);
   }

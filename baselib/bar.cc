@@ -3160,7 +3160,7 @@ double v;
     eraseActive();
     readV = v;
     updateDimensions();
-    drawActive();
+    smartDrawAllActive();
 
     if ( initialReadConnection ) {
 
@@ -3196,7 +3196,7 @@ double v;
 
     updateDimensions();
 
-    drawActive();
+    smartDrawAllActive();
 
   }
 
@@ -3210,7 +3210,7 @@ double v;
 
   if ( nd ) {
     readV = v;
-    drawActive();
+    smartDrawAllActive();
   }
 
 //----------------------------------------------------------------------------
@@ -3218,7 +3218,7 @@ double v;
   if ( nfd ) {
     readV = v;
     bufInvalidate();
-    drawActive();
+    smartDrawAllActive();
   }
 
 //----------------------------------------------------------------------------
@@ -3227,7 +3227,7 @@ double v;
 
       readV = v;
       updateBar();
-      drawActive();
+      smartDrawAllActive();
 
   }
 

@@ -23,7 +23,7 @@
 #include "entry_form.h"
 
 #define SHCMDC_MAJOR_VERSION 4
-#define SHCMDC_MINOR_VERSION 2
+#define SHCMDC_MINOR_VERSION 3
 #define SHCMDC_RELEASE 0
 
 #ifdef __shell_cmd_cc
@@ -209,7 +209,7 @@ typedef struct bufTag {
   int bufBgColor;
   int bufInvisible;
   int bufCloseAction;
-  char bufShellCommand[maxCmds][255+1];
+  char bufShellCommand[maxCmds][2550+1];
   char bufLabel[maxCmds][127+1];
   char bufButtonLabel[127+1];
   char bufFontTag[63+1];;

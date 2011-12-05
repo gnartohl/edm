@@ -211,7 +211,7 @@ static void shcmdc_executeCmd (
 shellCmdClass *shcmdo = (shellCmdClass *) client;
 threadParamBlockPtr threadParamBlock;
 int stat, i;
-char buffer[255+1];
+char buffer[2550+1];
 
   if ( shcmdo->numCmds != 1 ) return;
 
@@ -235,7 +235,7 @@ char buffer[255+1];
      shcmdo->timerValue, shcmdc_executeCmd, client );
   }
 
-  shcmdo->actWin->substituteSpecial( 255,
+  shcmdo->actWin->substituteSpecial( 2550,
    shcmdo->shellCommand[i].getExpanded(),
    buffer );
 
@@ -868,7 +868,7 @@ int shellCmdClass::old_createFromFile (
 int i, r, g, b, index;
 int major, minor, release;
 unsigned int pixel;
-char oneName[255+1];
+char oneName[2550+1];
 float val;
 
   this->actWin = _actWin;
@@ -947,7 +947,7 @@ float val;
 
   }
 
-  readStringFromFile( oneName, 255+1, f ); actWin->incLine();
+  readStringFromFile( oneName, 2550+1, f ); actWin->incLine();
   shellCommand[0].setRaw( oneName );
 
   readStringFromFile( oneName, 127+1, f ); actWin->incLine();
@@ -1007,7 +1007,7 @@ float val;
 
     for ( i=1; i<numCmds; i++ ) {
 
-      readStringFromFile( oneName, 255+1, f ); actWin->incLine();
+      readStringFromFile( oneName, 2550+1, f ); actWin->incLine();
       shellCommand[i].setRaw( oneName );
 
       readStringFromFile( oneName, 127+1, f ); actWin->incLine();
@@ -1055,7 +1055,7 @@ int shellCmdClass::importFromXchFile (
 
 int fgR, fgG, fgB, bgR, bgG, bgB, more, index;
 unsigned int pixel;
-char *tk, *gotData, *context, buffer[255+1];
+char *tk, *gotData, *context, buffer[2550+1];
 
   fgR = 0xffff;
   fgG = 0xffff;
@@ -1083,7 +1083,7 @@ char *tk, *gotData, *context, buffer[255+1];
 
   do {
 
-    gotData = getNextDataString( buffer, 255, f );
+    gotData = getNextDataString( buffer, 2550, f );
     if ( !gotData ) {
       actWin->appCtx->postMessage( shellCmdClass_str1 );
       return 0;
@@ -1349,16 +1349,16 @@ char title[32], *ptr, *envPtr, saveLock = 0;
 
   for ( i=0; i<maxCmds; i++ ) {
     if ( shellCommand[i].getRaw() )
-      strncpy( buf->bufShellCommand[i], shellCommand[i].getRaw(), 255 );
+      strncpy( buf->bufShellCommand[i], shellCommand[i].getRaw(), 2550 );
     else
-      strncpy( buf->bufShellCommand[i], "", 255 );
+      strncpy( buf->bufShellCommand[i], "", 2550 );
     if ( label[i].getRaw() )
       strncpy( buf->bufLabel[i], label[i].getRaw(), 127 );
     else
       strncpy( buf->bufLabel[i], "", 127 );
   }
   for ( i=numCmds; i<maxCmds; i++ ) {
-    strncpy( buf->bufShellCommand[i], "", 255 );
+    strncpy( buf->bufShellCommand[i], "", 2550 );
     strncpy( buf->bufLabel[i], "", 127 );
   }
 
@@ -1412,10 +1412,10 @@ char title[32], *ptr, *envPtr, saveLock = 0;
   ef.addTextField( shellCmdClass_str7, 35, &buf->bufH );
 
   if ( !lock ) {
-    ef.addTextField( shellCmdClass_str14, 35, buf->bufShellCommand[0], 255 );
+    ef.addTextField( shellCmdClass_str14, 35, buf->bufShellCommand[0], 2550 );
   }
   else {
-    ef.addLockedField( shellCmdClass_str14, 35, buf->bufShellCommand[0], 255 );
+    ef.addLockedField( shellCmdClass_str14, 35, buf->bufShellCommand[0], 2550 );
   }
 
   ef.addTextField( shellCmdClass_str13, 35, buf->bufLabel[0], 127 );
@@ -1434,11 +1434,11 @@ char title[32], *ptr, *envPtr, saveLock = 0;
     ef1->addLabel( shellCmdClass_str23 );
     if ( !lock ) {
       ef1->addTextField( shellCmdClass_str14, 35, buf->bufShellCommand[i],
-       255 );
+       2550 );
     }
     else {
       ef1->addLockedField( shellCmdClass_str14, 35, buf->bufShellCommand[i],
-       255 );
+       2550 );
     }
     ef1->endSubForm();
   }
@@ -1967,7 +1967,7 @@ void shellCmdClass::executeCmd ( void ) {
 
 int stat;
 threadParamBlockPtr threadParamBlock;
-char buffer[255+1];
+char buffer[2550+1];
 
   if ( !blank( requiredHostName ) && !blank( hostName ) ) {
     if ( strcmp( requiredHostName, hostName ) != 0 ) {
@@ -1977,7 +1977,7 @@ char buffer[255+1];
     }
   }
 
-  actWin->substituteSpecial( 255, shellCommand[cmdIndex].getExpanded(),
+  actWin->substituteSpecial( 2550, shellCommand[cmdIndex].getExpanded(),
    buffer );
 
   if ( multipleInstancesAllowed ) {
