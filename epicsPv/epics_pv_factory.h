@@ -34,11 +34,12 @@ public:
     double      get_double() const;
     size_t      get_string(char *strbuf, size_t buflen) const;
     size_t      get_dimension() const;
-    const char   *get_char_array() const;
-    const int    *get_int_array() const;
+    const char  *get_char_array() const;
+    const short *get_short_array() const;
+    const int   *get_int_array() const;
     const double *get_double_array() const;
     size_t      get_enum_count() const;
-    const char *get_enum(size_t i) const;
+    const char  *get_enum(size_t i) const;
 
 	time_t get_time_t() const;
 	unsigned long get_nano() const;
@@ -108,6 +109,7 @@ public:
     virtual double      get_double() const = 0;
     virtual size_t      get_string(char *strbuf, size_t buflen) const;
     virtual const char *get_char_array() const;
+    virtual const short *get_short_array() const;
     virtual const int  *get_int_array() const;
     virtual const double *get_double_array() const;
     virtual size_t      get_enum_count() const;
@@ -220,6 +222,24 @@ public:
     void read_value(const void *buf);
 private:
     char *value;
+    size_t len;
+};
+
+class PVValueShort : public PVValue
+{
+public:
+    PVValueShort(EPICS_ProcessVariable *epv);
+    ~PVValueShort();
+    const ProcessVariable::Type &get_type() const;
+    short       get_DBR() const;
+    int         get_int() const;
+    double      get_double() const;
+    const short *get_short_array() const;
+    size_t      get_string(char *strbuf, size_t buflen) const;
+    void read_ctrlinfo(const void *buf);
+    void read_value(const void *buf);
+private:
+    short *value;
     size_t len;
 };
 

@@ -453,6 +453,13 @@ const char *LOC_ProcessVariable::get_char_array() const
 
 }
 
+const short *LOC_ProcessVariable::get_short_array() const
+{
+
+  return (short *) NULL;
+
+}
+
 const int *LOC_ProcessVariable::get_int_array() const
 {
 

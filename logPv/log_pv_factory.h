@@ -34,6 +34,7 @@ public:
     size_t      get_string(char *strbuf, size_t buflen) const;
     size_t      get_dimension() const;
     const char   *get_char_array() const;
+    const short *get_short_array() const;
     const int    *get_int_array() const;
     const double *get_double_array() const;
     size_t      get_enum_count() const;
@@ -117,6 +118,7 @@ public:
     virtual double      get_double() const = 0;
     virtual size_t      get_string(char *strbuf, size_t buflen) const;
     virtual const char *get_char_array() const;
+    virtual const short *get_short_array() const;
     virtual const int  *get_int_array() const;
     virtual const double *get_double_array() const;
     virtual size_t      get_enum_count() const;
@@ -229,6 +231,24 @@ public:
     void read_value(const void *buf);
 private:
     char *value;
+    size_t len;
+};
+
+class PVValueShort : public PVValue
+{
+public:
+    PVValueShort(LOG_ProcessVariable *epv);
+    ~PVValueShort();
+    const ProcessVariable::Type &get_type() const;
+    short       get_DBR() const;
+    int         get_int() const;
+    double      get_double() const;
+    const short *get_short_array() const;
+    size_t      get_string(char *strbuf, size_t buflen) const;
+    void read_ctrlinfo(const void *buf);
+    void read_value(const void *buf);
+private:
+    short *value;
     size_t len;
 };
 

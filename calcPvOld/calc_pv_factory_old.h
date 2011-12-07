@@ -59,10 +59,11 @@ public:
     double get_double() const;
     size_t get_dimension() const;
     const char *get_char_array() const;
+    const short *get_short_array() const;
     const int *get_int_array() const;
     const double *get_double_array() const;
-	time_t get_time_t() const;
-	unsigned long get_nano() const;
+    time_t get_time_t() const;
+    unsigned long get_nano() const;
     short get_status() const;
     short get_severity() const;
     short get_precision() const;

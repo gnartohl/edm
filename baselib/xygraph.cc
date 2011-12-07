@@ -2189,7 +2189,7 @@ int ctl;
             }
             else {
               ( (unsigned short *) xyo->xPvData[i] )[ii] =
-               (unsigned short) pv->get_int_array()[ii];
+               (unsigned short) pv->get_short_array()[ii];
             }
             break;
 
@@ -2247,11 +2247,11 @@ int ctl;
 
           case ProcessVariable::specificType::shrt:
             if ( xyo->xSigned[i] ) {
-              ( (short *) xyo->xPvData[i] )[ii] = (short) pv->get_int_array()[ii];
+              ( (short *) xyo->xPvData[i] )[ii] = (short) pv->get_short_array()[ii];
             }
             else {
               ( (unsigned short *) xyo->xPvData[i] )[ii] =
-               (unsigned short) pv->get_int_array()[ii];
+               (unsigned short) pv->get_short_array()[ii];
             }
             break;
 
@@ -2741,7 +2741,7 @@ int ctl;
             }
             else {
               ( (unsigned short *) xyo->yPvData[i] )[ii] =
-               (unsigned short) pv->get_int_array()[ii];
+               (unsigned short) pv->get_short_array()[ii];
             }
             break;
 
@@ -2799,11 +2799,11 @@ int ctl;
 
           case ProcessVariable::specificType::shrt:
             if ( xyo->ySigned[i] ) {
-              ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int_array()[ii];
+              ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_short_array()[ii];
             }
             else {
               ( (unsigned short *) xyo->yPvData[i] )[ii] =
-               (unsigned short) pv->get_int_array()[ii];
+               (unsigned short) pv->get_short_array()[ii];
             }
             break;
 
@@ -3208,7 +3208,7 @@ int ctl;
             }
             else {
               ( (unsigned short *) xyo->yPvData[i] )[ii] =
-               (unsigned short) pv->get_int_array()[ii];
+               (unsigned short) pv->get_short_array()[ii];
             }
             break;
 
@@ -3266,11 +3266,11 @@ int ctl;
 
           case ProcessVariable::specificType::shrt:
             if ( xyo->ySigned[i] ) {
-              ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int_array()[ii];
+              ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_short_array()[ii];
             }
             else {
               ( (unsigned short *) xyo->yPvData[i] )[ii] =
-               (unsigned short) pv->get_int_array()[ii];
+               (unsigned short) pv->get_short_array()[ii];
             }
             break;
 

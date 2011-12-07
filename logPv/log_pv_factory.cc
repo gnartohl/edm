@@ -439,6 +439,9 @@ size_t LOG_ProcessVariable::get_dimension() const
 const char *LOG_ProcessVariable::get_char_array() const
 {   return value->get_char_array(); }
 
+const short *LOG_ProcessVariable::get_short_array() const
+{   return value->get_short_array(); }
+
 const int *LOG_ProcessVariable::get_int_array() const
 {   return value->get_int_array(); }
 
@@ -804,6 +807,9 @@ size_t PVValue::get_string(char *strbuf, size_t len) const
 }
 
 const char *PVValue::get_char_array() const
+{   return 0; }
+
+const short *PVValue::get_short_array() const
 {   return 0; }
 
 const int  *PVValue::get_int_array() const
@@ -1173,6 +1179,86 @@ void PVValueString::read_value(const void *buf)
     status = val->status;
     severity = val->severity;
     strcpy(value, val->value);
+}
+
+// ---------------------- PVValueShort ---------------------------
+
+static ProcessVariable::specificType shrt_type =
+{ ProcessVariable::specificType::shrt, 16 };
+
+PVValueShort::PVValueShort(LOG_ProcessVariable *epv)
+        : PVValue(epv)
+{
+    unsigned int i;
+    value = new short[epv->get_dimension()];
+    for ( i=0; i<epv->get_dimension(); i++ ) value[i] = 0;
+    specific_type = shrt_type;
+}
+
+PVValueShort::~PVValueShort()
+{
+    delete [] value;
+}
+
+const ProcessVariable::Type &PVValueShort::get_type() const
+{   return integer_type; }
+
+short PVValueShort::get_DBR() const
+{   return DBR_SHORT; }
+
+int PVValueShort::get_int() const
+{   return (len > 0) ? (int) value[0] : 0; }
+
+double PVValueShort::get_double() const
+{   return (len > 0) ? (double) value[0] : 0; }
+
+size_t PVValueShort::get_string(char *strbuf, size_t len) const
+{
+    // TODO: Handle arrays?
+    int printed;
+    if (units[0])
+        printed = snprintf(strbuf, len, "%d %s", (int) value[0], units);
+    else
+        printed = snprintf(strbuf, len, "%d", (int) value[0]);
+    // snprintf stops printing at len. But some versions return
+    // full string length even if that would have been > len
+    if (printed > (int)len)
+        return len;
+    if (printed < 0)
+        return 0;
+    return (size_t) printed;
+}
+
+const short * PVValueShort::get_short_array() const
+{   return value; }
+
+void PVValueShort::read_ctrlinfo(const void *buf)
+{
+    const  dbr_ctrl_short *val = (const dbr_ctrl_short *)buf;
+    status = val->status;
+    severity = val->severity;
+    precision = 0;
+    strncpy(units, val->units, MAX_UNITS_SIZE);
+    units[MAX_UNITS_SIZE] = '\0';
+    upper_disp_limit = val->upper_disp_limit;
+    lower_disp_limit = val->lower_disp_limit;
+    upper_alarm_limit = val->upper_alarm_limit; 
+    upper_warning_limit = val->upper_warning_limit;
+    lower_warning_limit = val->lower_warning_limit;
+    lower_alarm_limit = val->lower_alarm_limit;
+    upper_ctrl_limit = val->upper_ctrl_limit;
+    lower_ctrl_limit = val->lower_ctrl_limit;
+    *value = val->value;
+}
+
+void PVValueShort::read_value(const void *buf)
+{
+    const dbr_time_short *val = (const dbr_time_short *)buf;
+    time = val->stamp.secPastEpoch + epochSecPast1970;
+    nano = val->stamp.nsec;
+    status = val->status;
+    severity = val->severity;
+    memcpy(value, &val->value, sizeof(short) * epv->get_dimension());
 }
 
 // ---------------------- PVValueChar -------------------------------

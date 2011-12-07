@@ -48,8 +48,9 @@ public:
     double      get_double() const;
     size_t      get_string(char *strbuf, size_t buflen) const;
     size_t      get_dimension() const;
-    const char   *get_char_array() const;
-    const int    *get_int_array() const;
+    const char  *get_char_array() const;
+    const short *get_short_array() const;
+    const int   *get_int_array() const;
     const double *get_double_array() const;
     size_t      get_enum_count() const;
     const char *get_enum(size_t i) const;

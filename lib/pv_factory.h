@@ -225,6 +225,8 @@ public:
 
     // Use this when get_specific_type().type == chr
     virtual const char   *get_char_array() const = 0;
+    // Use this when get_specific_type().type == shrt
+    virtual const short   *get_short_array() const = 0;
     // Use this when get_type().type == integer
     virtual const int    *get_int_array() const = 0;
     // Use this when get_type().type == real

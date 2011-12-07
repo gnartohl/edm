@@ -1447,6 +1447,9 @@ size_t CALC_ProcessVariable::get_dimension() const
 const char *CALC_ProcessVariable::get_char_array() const
 {   return 0; }
 
+const short *CALC_ProcessVariable::get_short_array() const
+{   return 0; }
+
 const int *CALC_ProcessVariable::get_int_array() const
 {   return 0; }
 

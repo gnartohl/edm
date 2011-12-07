@@ -80,6 +80,7 @@ public:
     double get_double() const;
     size_t get_dimension() const;
     const char *get_char_array() const;
+    const short *get_short_array() const;
     const int *get_int_array() const;
     const double *get_double_array() const;
 	time_t get_time_t() const;
