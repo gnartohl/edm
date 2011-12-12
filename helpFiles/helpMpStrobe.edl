@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 53
-y 101
+x 444
+y 84
 w 1176
-h 762
+h 713
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
@@ -20,7 +20,6 @@ ctlBgColor2 rgb 46517 46517 46517
 topShadowColor rgb 61423 61423 61423
 botShadowColor rgb 0 0 0
 title "Multi-Purpose Strobe"
-disableScroll
 endScreenProperties
 
 # (Static Text)
@@ -79,41 +78,27 @@ major 4
 minor 1
 release 0
 x 27
-y 289
-w 516
-h 432
+y 297
+w 471
+h 208
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor rgb 41120 41120 41120
 useDisplayBg
 value {
   "Control PV is optional. If present the strobe is active when non-zero."
-  "If the button is not disabled, toggling the button on writes a one to"
-  "this PV and toggling the button off writes a zero."
+  "If the button is not disabled, activating the button writes a one to"
+  "this PV and deactivating the button writes a zero."
   ""
   "Destination PV is modified with the current strobe value."
   ""
   "If Readback PV is given, button indicates readback PV state in place of"
   "destination PV state."
   ""
-  "Fault PV may be used to alter write access to an EPICS PV at runtime."
-  "When bit 0 of this PV is set, edm is set to read-only mode. When bit 1"
-  "is set, edm returns to read-write mode and the PV is reset to zero. Access"
-  "to local pvs is unaffected."
-  ""
-  "Button may be set to indicate control PV state or destination"
-  "(or readback) PV state."
-  ""
-  "In Toggle mode, Off-Time is used to control the period duty cycle. In all other"
-  "modes, Off-Time is ignored and On/Cycle-Time determines the strobe period."
-  ""
-  "In Toggle mode, if Momentary is selected, the destination PV is pulsed on and off"
-  "once per half-cycle. In this case, the state of the actual device is best indicated"
-  "by a read-back PV (hence the existence of Readback PV described above)."
-  ""
-  "If Auto-Ping is checked, strobe starts when screen is activated."
-  ""
-  "If Disable Button is check, clicking on button has no effect."
+  "Fault PV may be used to alter write access to all EPICS PVs for this edm"
+  "session. When bit 0 of this PV is set, edm is set to read-only mode. When"
+  "bit 1 is set, edm returns to read-write mode and the PV is reset to zero."
+  "Access to local pvs is unaffected."
 }
 autoSize
 endObjectProperties
@@ -127,232 +112,10 @@ release 0
 x 21
 y 270
 w 545
-h 6
+h 2
 lineColor rgb 0 0 0
 fill
 fillColor rgb 0 0 0
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 615
-y 190
-w 177
-h 21
-font "helvetica-medium-r-18.0"
-fgColor rgb 0 0 0
-bgColor rgb 41120 41120 41120
-useDisplayBg
-value {
-  "Update Type: Toggle"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 615
-y 108
-w 331
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 41120 41120 41120
-useDisplayBg
-value {
-  "Destination PV is written with date/time each period."
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 615
-y 264
-w 166
-h 21
-font "helvetica-medium-r-18.0"
-fgColor rgb 0 0 0
-bgColor rgb 41120 41120 41120
-useDisplayBg
-value {
-  "Update Type: Cycle"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 615
-y 294
-w 530
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 41120 41120 41120
-useDisplayBg
-value {
-  "Destination PV cycles from First Value to Second Value changing by 1 each cycle."
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 615
-y 329
-w 185
-h 21
-font "helvetica-medium-r-18.0"
-fgColor rgb 0 0 0
-bgColor rgb 41120 41120 41120
-useDisplayBg
-value {
-  "Update Type: Random"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 615
-y 359
-w 471
-h 16
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 41120 41120 41120
-useDisplayBg
-value {
-  "Destination PV varies randomly from 0.0 to 1.0 changing once each cycle."
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 615
-y 400
-w 178
-h 21
-font "helvetica-medium-r-18.0"
-fgColor rgb 0 0 0
-bgColor rgb 41120 41120 41120
-useDisplayBg
-value {
-  "Update Type: Trigger"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 615
-y 430
-w 512
-h 32
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 41120 41120 41120
-useDisplayBg
-value {
-  "When Destination PV equals round(First Value) timer is started. When the timer"
-  "expires, Second Value is written to Destination PV."
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 595
-y 81
-w 130
-h 21
-font "helvetica-medium-r-18.0"
-fgColor rgb 0 0 0
-bgColor rgb 41120 41120 41120
-useDisplayBg
-value {
-  "PV Type: string"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 615
-y 219
-w 495
-h 32
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor rgb 41120 41120 41120
-useDisplayBg
-value {
-  "Destination PV toggles between 0 and 1 each period. Cycle uses on-time and"
-  "off-time in this mode."
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 595
-y 154
-w 148
-h 21
-font "helvetica-medium-r-18.0"
-fgColor rgb 0 0 0
-bgColor rgb 41120 41120 41120
-useDisplayBg
-value {
-  "PV Type: numeric"
-}
-autoSize
 endObjectProperties
 
 # (Rectangle)
@@ -378,8 +141,320 @@ minor 0
 release 0
 x 567
 y 62
-w 6
-h 676
+w 2
+h 631
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 46
+y 511
+w 469
+h 96
+font "helvetica-medium-i-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "As an example Fault PV use, consider a stand-alone application that"
+  "must verify system health before proceeding. The edm display can include"
+  "an auto-execute shell command that performs the verification (perhaps"
+  "by checking script files against a known sha1 sum). If the verification"
+  "fails, the shell command script sets the fault PV to disables operator"
+  "access."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 27
+y 616
+w 488
+h 80
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Button label may be set to indicate control PV state or destination"
+  "(or readback) PV state."
+  ""
+  "In Toggle mode, Off-Time is used to control the period duty cycle. In all other"
+  "modes, Off-Time is ignored and On/Cycle-Time determines the strobe period."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 615
+y 331
+w 177
+h 21
+font "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Update Type: Toggle"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 615
+y 249
+w 331
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Destination PV is written with date/time each period."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 615
+y 405
+w 166
+h 21
+font "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Update Type: Cycle"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 615
+y 435
+w 530
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Destination PV cycles from First Value to Second Value changing by 1 each cycle."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 615
+y 470
+w 185
+h 21
+font "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Update Type: Random"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 615
+y 500
+w 471
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Destination PV varies randomly from 0.0 to 1.0 changing once each cycle."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 615
+y 541
+w 178
+h 21
+font "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Update Type: Trigger"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 615
+y 571
+w 512
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "When Destination PV equals round(First Value) timer is started. When the timer"
+  "expires, Second Value is written to Destination PV."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 595
+y 222
+w 130
+h 21
+font "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "PV Type: string"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 615
+y 360
+w 495
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "Destination PV toggles between 0 and 1 each period. Cycle uses on-time and"
+  "off-time in this mode."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 595
+y 295
+w 148
+h 21
+font "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "PV Type: numeric"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 595
+y 81
+w 516
+h 112
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 41120 41120 41120
+useDisplayBg
+value {
+  "In Toggle mode, if Momentary is selected, the destination PV is pulsed on and off"
+  "once per half-cycle. In this case, the actual state of the device is best indicated"
+  "by a read-back PV (hence the existence of Readback PV described above)."
+  ""
+  "If Auto-Ping is checked, strobe starts when screen is activated."
+  ""
+  "If Disable Button is checked, clicking the button has no effect."
+}
+autoSize
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 568
+y 206
+w 584
+h 2
 lineColor rgb 0 0 0
 fill
 fillColor rgb 0 0 0
