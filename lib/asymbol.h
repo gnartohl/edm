@@ -47,11 +47,11 @@
 #include "asymbol.str"
 
 static char *dragName[] = {
-  anaSymbolClass_str2,
-  anaSymbolClass_str3,
-  anaSymbolClass_str4,
-  anaSymbolClass_str5,
-  anaSymbolClass_str6,
+  aniSymbolClass_str2,
+  aniSymbolClass_str3,
+  aniSymbolClass_str4,
+  aniSymbolClass_str5,
+  aniSymbolClass_str6,
 };
 
 static void asymUnconnectedTimeout (
@@ -140,11 +140,11 @@ typedef struct objPlusIndexTag1 {
   int shiftCount;
 } objPlusIndexType1, *objPlusIndexPtr1;
 
-class anaSymbolClass : public activeGraphicClass {
+class aniSymbolClass : public activeGraphicClass {
 
 private:
 
-friend class undoAnaSymbolOpClass;
+friend class undoAniSymbolOpClass;
 
 objPlusIndexType1 argRec[ASYMBOL_K_MAX_PVS];
 
@@ -321,12 +321,12 @@ friend void ansc_edit_cancel_delete (
   XtPointer client,
   XtPointer call );
 
-anaSymbolClass ( void );
+aniSymbolClass ( void );
 
-anaSymbolClass
- ( const anaSymbolClass *source );
+aniSymbolClass
+ ( const aniSymbolClass *source );
 
-~anaSymbolClass ( void );
+~aniSymbolClass ( void );
 
 int genericEdit ( void );
 
@@ -487,6 +487,8 @@ int expand2nd (
   char *expansions[] );
 
 int containsMacros ( void );
+
+void updateStates( int index );
 
 void executeDeferred ( void );
 

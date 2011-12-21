@@ -18,7 +18,7 @@
 
 #define __asymbol_cc 1
 
-class undoAnaSymbolOpClass;
+class undoAniSymbolOpClass;
 
 #include "asymbol.h"
 #include "app_pkg.h"
@@ -26,31 +26,31 @@ class undoAnaSymbolOpClass;
 
 #include "thread.h"
 
-class undoAnaSymbolOpClass : public undoOpClass {
+class undoAniSymbolOpClass : public undoOpClass {
 
 public:
 
-anaSymbolClass *anso;
+aniSymbolClass *anso;
 
-undoAnaSymbolOpClass ()
+undoAniSymbolOpClass ()
 {
 
-  fprintf( stderr, "undoAnaSymbolOpClass::undoAnaSymbolOpClass\n" );
+  fprintf( stderr, "undoAniSymbolOpClass::undoAniSymbolOpClass\n" );
   anso = NULL;
 
 }
 
-undoAnaSymbolOpClass (
-  anaSymbolClass *_anso
+undoAniSymbolOpClass (
+  aniSymbolClass *_anso
 ) {
 
 int i;
 activeGraphicListPtr head, cur, next, sourceHead, curSource;
 
-  // fprintf( stderr, "undoAnaSymbolOpClass::undoAnaSymbolOpClass\n" );
+  // fprintf( stderr, "undoAniSymbolOpClass::undoAniSymbolOpClass\n" );
 
   // copy display list and editable attributes from current symbol
-  anso = new anaSymbolClass;
+  anso = new aniSymbolClass;
 
   // copy base class info
   anso->x = _anso->x;
@@ -148,7 +148,7 @@ activeGraphicListPtr head, cur, next, sourceHead, curSource;
 
 }
 
-~undoAnaSymbolOpClass ()
+~undoAniSymbolOpClass ()
 {
 
   if ( anso ) {
@@ -165,7 +165,7 @@ static void asymUnconnectedTimeout (
   XtIntervalId *id )
 {
 
-anaSymbolClass *anso = (anaSymbolClass *) client;
+aniSymbolClass *anso = (aniSymbolClass *) client;
 
   if ( !anso->init ) {
     anso->needToDrawUnconnected = 1;
@@ -183,7 +183,7 @@ static void asymbol_monitor_control_connect_state (
 {
 
 objPlusIndexPtr1 ptr = (objPlusIndexPtr1) userarg;
-anaSymbolClass *anso = (anaSymbolClass *) ptr->objPtr;
+aniSymbolClass *anso = (aniSymbolClass *) ptr->objPtr;
 
   if ( pv->is_valid() ) {
 
@@ -213,7 +213,7 @@ static void asymbol_monitor_color_connect_state (
   void *userarg )
 {
 
-anaSymbolClass *anso = (anaSymbolClass *) userarg;
+aniSymbolClass *anso = (aniSymbolClass *) userarg;
 
   if ( pv->is_valid() ) {
 
@@ -241,7 +241,7 @@ static void asymbol_monitor_x_connect_state (
   void *userarg )
 {
 
-anaSymbolClass *anso = (anaSymbolClass *) userarg;
+aniSymbolClass *anso = (aniSymbolClass *) userarg;
 
   if ( pv->is_valid() ) {
 
@@ -269,7 +269,7 @@ static void asymbol_monitor_y_connect_state (
   void *userarg )
 {
 
-anaSymbolClass *anso = (anaSymbolClass *) userarg;
+aniSymbolClass *anso = (aniSymbolClass *) userarg;
 
   if ( pv->is_valid() ) {
 
@@ -297,7 +297,7 @@ static void asymbol_monitor_angle_connect_state (
   void *userarg )
 {
 
-anaSymbolClass *anso = (anaSymbolClass *) userarg;
+aniSymbolClass *anso = (aniSymbolClass *) userarg;
 
   if ( pv->is_valid() ) {
 
@@ -326,7 +326,7 @@ static void asymbol_controlUpdate (
 {
 
 objPlusIndexPtr1 ptr = (objPlusIndexPtr1) userarg;
-anaSymbolClass *anso = (anaSymbolClass *) ptr->objPtr;
+aniSymbolClass *anso = (aniSymbolClass *) ptr->objPtr;
 unsigned int uiVal;
 int i;
 
@@ -421,7 +421,7 @@ static void asymbol_colorUpdate (
   void *userarg )
 {
 
-anaSymbolClass *anso = (anaSymbolClass *) userarg;
+aniSymbolClass *anso = (aniSymbolClass *) userarg;
 
   if ( anso->activeMode ) {
 
@@ -441,7 +441,7 @@ static void asymbol_xUpdate (
   void *userarg )
 {
 
-anaSymbolClass *anso = (anaSymbolClass *) userarg;
+aniSymbolClass *anso = (aniSymbolClass *) userarg;
 
   if ( anso->activeMode ) {
 
@@ -461,7 +461,7 @@ static void asymbol_yUpdate (
   void *userarg )
 {
 
-anaSymbolClass *anso = (anaSymbolClass *) userarg;
+aniSymbolClass *anso = (aniSymbolClass *) userarg;
 
   if ( anso->activeMode ) {
 
@@ -481,7 +481,7 @@ static void asymbol_angleUpdate (
   void *userarg )
 {
 
-anaSymbolClass *anso = (anaSymbolClass *) userarg;
+aniSymbolClass *anso = (aniSymbolClass *) userarg;
 
   if ( anso->activeMode ) {
 
@@ -504,7 +504,7 @@ static void asymbolSetItem (
 
 efSetItemCallbackDscPtr dsc = (efSetItemCallbackDscPtr) client;
 entryFormClass *ef = (entryFormClass *) dsc->ef;
-anaSymbolClass *anso = (anaSymbolClass *) dsc->obj;
+aniSymbolClass *anso = (aniSymbolClass *) dsc->obj;
 int i;
 
   for ( i=0; i<anso->numStates; i++ ) {
@@ -520,7 +520,7 @@ static void ansc_edit_update (
   XtPointer call )
 {
 
-anaSymbolClass *anso = (anaSymbolClass *) client;
+aniSymbolClass *anso = (aniSymbolClass *) client;
 int stat, resizeStat, i, saveW, saveH, saveX, saveY;
 
   anso->actWin->setChanged();
@@ -604,7 +604,7 @@ int stat, resizeStat, i, saveW, saveH, saveX, saveY;
       }
       else {
         anso->actWin->appCtx->postMessage(
-         anaSymbolClass_str7 );
+         aniSymbolClass_str7 );
       }
     }
   }
@@ -613,7 +613,7 @@ int stat, resizeStat, i, saveW, saveH, saveX, saveY;
 
   if ( !( stat & 1 ) ) {
     char msg[255+1];
-    snprintf( msg, 255, anaSymbolClass_str8, anso->actWin->fileName,
+    snprintf( msg, 255, aniSymbolClass_str8, anso->actWin->fileName,
      anso->symbolFileName );
     anso->actWin->appCtx->postMessage( msg );
   }
@@ -664,7 +664,7 @@ static void ansc_edit_apply (
   XtPointer call )
 {
 
-anaSymbolClass *anso = (anaSymbolClass *) client;
+aniSymbolClass *anso = (aniSymbolClass *) client;
 
   ansc_edit_update ( w, client, call );
   anso->refresh( anso );
@@ -677,7 +677,7 @@ static void ansc_edit_ok (
   XtPointer call )
 {
 
-anaSymbolClass *anso = (anaSymbolClass *) client;
+aniSymbolClass *anso = (aniSymbolClass *) client;
 
   ansc_edit_update ( w, client, call );
   anso->ef.popdown();
@@ -691,7 +691,7 @@ static void ansc_edit_cancel (
   XtPointer call )
 {
 
-anaSymbolClass *anso = (anaSymbolClass *) client;
+aniSymbolClass *anso = (aniSymbolClass *) client;
 
   anso->ef.popdown();
   anso->operationCancel();
@@ -704,7 +704,7 @@ static void ansc_edit_cancel_delete (
   XtPointer call )
 {
 
-anaSymbolClass *anso = (anaSymbolClass *) client;
+aniSymbolClass *anso = (aniSymbolClass *) client;
 
   anso->ef.popdown();
   anso->operationCancel();
@@ -714,13 +714,13 @@ anaSymbolClass *anso = (anaSymbolClass *) client;
 
 }
 
-anaSymbolClass::anaSymbolClass ( void ) {
+aniSymbolClass::aniSymbolClass ( void ) {
 
 activeGraphicListPtr head;
 int i;
 
-  name = new char[strlen("anaSymbolClass")+1];
-  strcpy( name, "anaSymbolClass" );
+  name = new char[strlen("aniSymbolClass")+1];
+  strcpy( name, "aniSymbolClass" );
   checkBaseClassVersion( activeGraphicClass::MAJOR_VERSION, name );
 
   for ( i=0; i<ASYMBOL_K_NUM_STATES; i++ ) {
@@ -778,9 +778,9 @@ int i;
 
 }
 
-anaSymbolClass::~anaSymbolClass ( void ) {
+aniSymbolClass::~aniSymbolClass ( void ) {
 
-//   fprintf( stderr, "In anaSymbolClass::~anaSymbolClass\n" );
+//   fprintf( stderr, "In aniSymbolClass::~aniSymbolClass\n" );
 
 activeGraphicListPtr head;
 activeGraphicListPtr cur, next;
@@ -855,8 +855,8 @@ int i;
 }
 
 // copy constructor
-anaSymbolClass::anaSymbolClass
- ( const anaSymbolClass *source ) {
+aniSymbolClass::aniSymbolClass
+ ( const aniSymbolClass *source ) {
 
 activeGraphicClass *ago = (activeGraphicClass *) this;
 activeGraphicListPtr head, cur, curSource, sourceHead;
@@ -864,8 +864,8 @@ int i;
 
   ago->clone( (activeGraphicClass *) source );
 
-  name = new char[strlen("anaSymbolClass")+1];
-  strcpy( name, "anaSymbolClass" );
+  name = new char[strlen("aniSymbolClass")+1];
+  strcpy( name, "aniSymbolClass" );
 
   for ( i=0; i<ASYMBOL_K_NUM_STATES; i++ ) {
 
@@ -959,7 +959,7 @@ int i;
 
 }
 
-int anaSymbolClass::createInteractive (
+int aniSymbolClass::createInteractive (
   activeWindowClass *aw_obj,
   int _x,
   int _y,
@@ -986,7 +986,7 @@ int anaSymbolClass::createInteractive (
 
 }
 
-int anaSymbolClass::genericEdit ( void )
+int aniSymbolClass::genericEdit ( void )
 {
 
 int i;
@@ -996,13 +996,13 @@ char title[32], *ptr;
     eBuf = new editBufType;
   }
 
-  ptr = actWin->obj.getNameFromClass( "anaSymbolClass" );
+  ptr = actWin->obj.getNameFromClass( "aniSymbolClass" );
   if ( ptr )
     strncpy( title, ptr, 31 );
   else
-    strncpy( title, anaSymbolClass_str9, 31 );
+    strncpy( title, aniSymbolClass_str9, 31 );
 
-  Strncat( title, anaSymbolClass_str10, 31 );
+  Strncat( title, aniSymbolClass_str10, 31 );
 
   strncpy( bufId, id, 31 );
 
@@ -1069,21 +1069,21 @@ char title[32], *ptr;
    title, ASYMBOL_K_NUM_STATES, numStates,
    asymbolSetItem, (void *) this, NULL, NULL, NULL );
 
-  ef.addTextField( anaSymbolClass_str12, 32, &eBuf->bufX );
-  ef.addTextField( anaSymbolClass_str13, 32, &eBuf->bufY );
-  ef.addTextField( anaSymbolClass_str42, 32, eBuf->bufXPvName,
+  ef.addTextField( aniSymbolClass_str12, 32, &eBuf->bufX );
+  ef.addTextField( aniSymbolClass_str13, 32, &eBuf->bufY );
+  ef.addTextField( aniSymbolClass_str42, 32, eBuf->bufXPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addTextField( anaSymbolClass_str43, 32, eBuf->bufYPvName,
+  ef.addTextField( aniSymbolClass_str43, 32, eBuf->bufYPvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addTextField( anaSymbolClass_str41, 32, eBuf->bufAnglePvName,
+  ef.addTextField( aniSymbolClass_str41, 32, eBuf->bufAnglePvName,
    PV_Factory::MAX_PV_NAME );
-  ef.addTextField( anaSymbolClass_str14, 32, eBuf->bufSymbolFileName, 127 );
-  ef.addTextField( anaSymbolClass_str29, 32, eBuf->bufColorPvName,
+  ef.addTextField( aniSymbolClass_str14, 32, eBuf->bufSymbolFileName, 127 );
+  ef.addTextField( aniSymbolClass_str29, 32, eBuf->bufColorPvName,
    PV_Factory::MAX_PV_NAME );
 
   for ( i=0; i<ASYMBOL_K_MAX_PVS; i++ ) {
     if ( i == 0 ) {
-      ef.addTextField( anaSymbolClass_str17, 32, eBuf->bufControlPvName[i],
+      ef.addTextField( aniSymbolClass_str17, 32, eBuf->bufControlPvName[i],
        PV_Factory::MAX_PV_NAME );
       cntlPvEntry[i] = ef.getCurItem();
     }
@@ -1093,14 +1093,14 @@ char title[32], *ptr;
       cntlPvEntry[i] = ef.getCurItem();
     }
     ef.beginSubForm();
-    ef.addTextField( anaSymbolClass_str38, 4, eBuf->bufAndMask[i], 4 );
+    ef.addTextField( aniSymbolClass_str38, 4, eBuf->bufAndMask[i], 4 );
     andMaskEntry[i] = ef.getCurItem();
     cntlPvEntry[i]->addDependency( andMaskEntry[i] );
-    ef.addLabel( anaSymbolClass_str39 );
+    ef.addLabel( aniSymbolClass_str39 );
     ef.addTextField( "", 4, eBuf->bufXorMask[i], 4 );
     xorMaskEntry[i] = ef.getCurItem();
     cntlPvEntry[i]->addDependency( xorMaskEntry[i] );
-    ef.addLabel( anaSymbolClass_str40 );
+    ef.addLabel( aniSymbolClass_str40 );
     ef.addTextField( "", 3, &eBuf->bufShiftCount[i] );
     shiftCountEntry[i] = ef.getCurItem();
     cntlPvEntry[i]->addDependency( shiftCountEntry[i] );
@@ -1108,19 +1108,19 @@ char title[32], *ptr;
     ef.endSubForm();
   }
 
-  ef.addToggle( anaSymbolClass_str16, &eBuf->bufBinaryTruthTable );
+  ef.addToggle( aniSymbolClass_str16, &eBuf->bufBinaryTruthTable );
 
-  ef.addOption( anaSymbolClass_str33, anaSymbolClass_str34,
+  ef.addOption( aniSymbolClass_str33, aniSymbolClass_str34,
    &eBuf->bufOrientation );
 
-  ef.addToggle( anaSymbolClass_str15, &eBuf->bufUseOriginalSize );
+  ef.addToggle( aniSymbolClass_str15, &eBuf->bufUseOriginalSize );
 
-  ef.addToggle( anaSymbolClass_str30, &eBuf->bufUseOriginalColors );
+  ef.addToggle( aniSymbolClass_str30, &eBuf->bufUseOriginalColors );
   presColorEntry = ef.getCurItem();
-  ef.addColorButton(anaSymbolClass_str31, actWin->ci, &fgCb, &eBuf->bufFgColor );
+  ef.addColorButton(aniSymbolClass_str31, actWin->ci, &fgCb, &eBuf->bufFgColor );
   fgColorEntry = ef.getCurItem();
   presColorEntry->addInvDependency( fgColorEntry );
-  ef.addColorButton(anaSymbolClass_str32, actWin->ci, &bgCb, &eBuf->bufBgColor );
+  ef.addColorButton(aniSymbolClass_str32, actWin->ci, &bgCb, &eBuf->bufBgColor );
   bgColorEntry = ef.getCurItem();
   presColorEntry->addInvDependency( bgColorEntry );
   presColorEntry->addDependencyCallbacks();
@@ -1130,14 +1130,14 @@ char title[32], *ptr;
     maxPtr[i] = &eBuf->bufStateMaxValue[i];
   }
 
-  ef.addTextFieldArray( anaSymbolClass_str18, 32, eBuf->bufStateMinValue, &elsvMin );
-  ef.addTextFieldArray( anaSymbolClass_str19, 32, eBuf->bufStateMaxValue, &elsvMax );
+  ef.addTextFieldArray( aniSymbolClass_str18, 32, eBuf->bufStateMinValue, &elsvMin );
+  ef.addTextFieldArray( aniSymbolClass_str19, 32, eBuf->bufStateMaxValue, &elsvMax );
 
   return 1;
 
 }
 
-int anaSymbolClass::edit ( void )
+int aniSymbolClass::edit ( void )
 {
 
   this->genericEdit();
@@ -1149,7 +1149,7 @@ int anaSymbolClass::edit ( void )
 
 }
 
-int anaSymbolClass::editCreate ( void )
+int aniSymbolClass::editCreate ( void )
 {
 
   this->genericEdit();
@@ -1162,7 +1162,7 @@ int anaSymbolClass::editCreate ( void )
 
 }
 
-int anaSymbolClass::readSymbolFile ( void )
+int aniSymbolClass::readSymbolFile ( void )
 {
 
 int l, more, maxW, maxH, gX, gY, gW, gH, dX, dY, saveLine;
@@ -1310,7 +1310,7 @@ int visInverted;
           cur = new activeGraphicListType;
           if ( !cur ) {
             fileClose( f );
-            fprintf( stderr, anaSymbolClass_str20 );
+            fprintf( stderr, aniSymbolClass_str20 );
             // numStates = 0;
             actWin->setLine( saveLine );
             tagClass::popLevel();
@@ -1344,7 +1344,7 @@ int visInverted;
           }
           else {
             fileClose( f );
-            fprintf( stderr, anaSymbolClass_str21 );
+            fprintf( stderr, aniSymbolClass_str21 );
             // numStates = 0;
             actWin->setLine( saveLine );
             tagClass::popLevel();
@@ -1584,7 +1584,7 @@ int visInverted;
 }
 
 #if 0
-int anaSymbolClass::old_readSymbolFile ( void )
+int aniSymbolClass::old_readSymbolFile ( void )
 {
 
 int l, more, maxW, maxH, gX, gY, gW, gH, dX, dY, stat, saveLine;
@@ -1708,7 +1708,7 @@ expStringClass expStr;
         cur = new activeGraphicListType;
         if ( !cur ) {
           fileClose( f );
-          fprintf( stderr, anaSymbolClass_str20 );
+          fprintf( stderr, aniSymbolClass_str20 );
           // numStates = 0;
           actWin->setLine( saveLine );
           return 0;
@@ -1740,7 +1740,7 @@ expStringClass expStr;
         }
         else {
           fileClose( f );
-          fprintf( stderr, anaSymbolClass_str21 );
+          fprintf( stderr, aniSymbolClass_str21 );
           // numStates = 0;
           actWin->setLine( saveLine );
           return 0;
@@ -1774,7 +1774,7 @@ expStringClass expStr;
 }
 #endif
 
-int anaSymbolClass::save (
+int aniSymbolClass::save (
  FILE *f )
 {
 
@@ -1899,7 +1899,7 @@ int i, saveX, saveY, origX, origY, origW, origH;
 
 }
 
-int anaSymbolClass::old_save (
+int aniSymbolClass::old_save (
  FILE *f )
 {
 
@@ -2009,7 +2009,7 @@ int i, saveX, saveY, origX, origY, origW, origH;
 
 }
 
-int anaSymbolClass::createFromFile (
+int aniSymbolClass::createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -2112,7 +2112,7 @@ int resizeStat, readSymfileStat, i, n1, n2, saveW, saveH;
   readSymfileStat = readSymbolFile();
   if ( !( readSymfileStat & 1 ) ) {
     char msg[255+1];
-    snprintf( msg, 255, anaSymbolClass_str22, actWin->fileName,
+    snprintf( msg, 255, aniSymbolClass_str22, actWin->fileName,
      symbolFileName );
     actWin->appCtx->postMessage( msg );
   }
@@ -2126,7 +2126,7 @@ int resizeStat, readSymfileStat, i, n1, n2, saveW, saveH;
         }
         else {
           actWin->appCtx->postMessage(
-           anaSymbolClass_str23 );
+           aniSymbolClass_str23 );
         }
       }
     }
@@ -2165,7 +2165,7 @@ int resizeStat, readSymfileStat, i, n1, n2, saveW, saveH;
 
 }
 
-int anaSymbolClass::old_createFromFile (
+int aniSymbolClass::old_createFromFile (
   FILE *f,
   char *name,
   activeWindowClass *_actWin )
@@ -2292,7 +2292,7 @@ float val;
   stat = readSymbolFile();
   if ( !( stat & 1 ) ) {
     char msg[255+1];
-    snprintf( msg, 255, anaSymbolClass_str22, actWin->fileName,
+    snprintf( msg, 255, aniSymbolClass_str22, actWin->fileName,
      symbolFileName );
     actWin->appCtx->postMessage( msg );
   }
@@ -2306,7 +2306,7 @@ float val;
         }
         else {
           actWin->appCtx->postMessage(
-           anaSymbolClass_str23 );
+           aniSymbolClass_str23 );
         }
       }
     }
@@ -2345,7 +2345,7 @@ float val;
 
 }
 
-int anaSymbolClass::erase ( void ) {
+int aniSymbolClass::erase ( void ) {
 
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
@@ -2376,7 +2376,7 @@ activeGraphicListPtr cur;
 
 }
 
-int anaSymbolClass::eraseActive ( void ) {
+int aniSymbolClass::eraseActive ( void ) {
 
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
@@ -2405,7 +2405,7 @@ activeGraphicListPtr cur;
 
 }
 
-int anaSymbolClass::draw ( void ) {
+int aniSymbolClass::draw ( void ) {
 
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
@@ -2455,7 +2455,7 @@ int i;
 
 }
 
-int anaSymbolClass::drawActive ( void ) {
+int aniSymbolClass::drawActive ( void ) {
 
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
@@ -2497,7 +2497,7 @@ pvColorClass tmpColor;
 
 }
 
-void anaSymbolClass::removePrevBlink ( void ) {
+void aniSymbolClass::removePrevBlink ( void ) {
 
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
@@ -2523,7 +2523,7 @@ activeGraphicListPtr cur;
 
 }
 
-int anaSymbolClass::getButtonActionRequest (
+int aniSymbolClass::getButtonActionRequest (
   int *up,
   int *down,
   int *drag )
@@ -2537,7 +2537,7 @@ int anaSymbolClass::getButtonActionRequest (
 
 }
 
-void anaSymbolClass::btnDown (
+void aniSymbolClass::btnDown (
   int x,
   int y,
   int buttonState,
@@ -2550,7 +2550,7 @@ void anaSymbolClass::btnDown (
 
 }
 
-void anaSymbolClass::btnUp (
+void aniSymbolClass::btnUp (
   int x,
   int y,
   int buttonState,
@@ -2561,7 +2561,7 @@ void anaSymbolClass::btnUp (
 
 }
 
-int anaSymbolClass::activate (
+int aniSymbolClass::activate (
   int pass,
   void *ptr,
   int *numSubObjects ) {
@@ -2735,7 +2735,7 @@ int num;
              asymbol_monitor_control_connect_state, &argRec[i] );
 	  }
 	  else {
-            fprintf( stderr, anaSymbolClass_str24 );
+            fprintf( stderr, aniSymbolClass_str24 );
             opStat = 0;
           }
 
@@ -2758,7 +2758,7 @@ int num;
             asymbol_monitor_color_connect_state, this );
 	}
 	else {
-          fprintf( stderr, anaSymbolClass_str24 );
+          fprintf( stderr, aniSymbolClass_str24 );
           opStat = 0;
         }
 
@@ -2772,7 +2772,7 @@ int num;
             asymbol_monitor_x_connect_state, this );
 	}
 	else {
-          fprintf( stderr, anaSymbolClass_str24 );
+          fprintf( stderr, aniSymbolClass_str24 );
           opStat = 0;
         }
 
@@ -2786,7 +2786,7 @@ int num;
             asymbol_monitor_y_connect_state, this );
 	}
 	else {
-          fprintf( stderr, anaSymbolClass_str24 );
+          fprintf( stderr, aniSymbolClass_str24 );
           opStat = 0;
         }
 
@@ -2800,7 +2800,7 @@ int num;
             asymbol_monitor_angle_connect_state, this );
 	}
 	else {
-          fprintf( stderr, anaSymbolClass_str24 );
+          fprintf( stderr, aniSymbolClass_str24 );
           opStat = 0;
         }
 
@@ -2827,7 +2827,7 @@ int num;
 
 }
 
-int anaSymbolClass::deactivate (
+int aniSymbolClass::deactivate (
   int pass,
   int *numSubObjects ) {
 
@@ -2943,7 +2943,7 @@ int once = 1;
 
 }
 
-int anaSymbolClass::moveSelectBox (
+int aniSymbolClass::moveSelectBox (
   int _x,
   int _y )
 {
@@ -2975,7 +2975,7 @@ int i;
 
 }
 
-int anaSymbolClass::moveSelectBoxAbs (
+int aniSymbolClass::moveSelectBoxAbs (
   int _x,
   int _y )
 {
@@ -3011,7 +3011,7 @@ int i;
 
 }
 
-int anaSymbolClass::moveSelectBoxMidpointAbs (
+int aniSymbolClass::moveSelectBoxMidpointAbs (
   int _x,
   int _y )
 {
@@ -3047,7 +3047,7 @@ int i;
 
 }
 
-int anaSymbolClass::checkResizeSelectBox (
+int aniSymbolClass::checkResizeSelectBox (
   int _x,
   int _y,
   int _w,
@@ -3081,7 +3081,7 @@ activeGraphicListPtr cur;
 
 }
 
-int anaSymbolClass::resizeSelectBox (
+int aniSymbolClass::resizeSelectBox (
   int _x,
   int _y,
   int _w,
@@ -3145,7 +3145,7 @@ int i, savex, savey, savew, saveh, stat, ret_stat;
 
 }
 
-int anaSymbolClass::checkResizeSelectBoxAbs (
+int aniSymbolClass::checkResizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
@@ -3216,7 +3216,7 @@ double xScaleFactor, yScaleFactor, newX, newY, newW, newH;
 
 }
 
-int anaSymbolClass::resizeSelectBoxAbs (
+int aniSymbolClass::resizeSelectBoxAbs (
   int _x,
   int _y,
   int _w,
@@ -3311,7 +3311,7 @@ double xScaleFactor, yScaleFactor, newX, newY, newW, newH;
 
 }
 
-int anaSymbolClass::resizeSelectBoxAbsFromUndo (
+int aniSymbolClass::resizeSelectBoxAbsFromUndo (
   int _x,
   int _y,
   int _w,
@@ -3327,7 +3327,7 @@ int anaSymbolClass::resizeSelectBoxAbsFromUndo (
 
 }
 
-int anaSymbolClass::move (
+int aniSymbolClass::move (
   int _x,
   int _y ) {
 
@@ -3358,7 +3358,7 @@ int i;
 
 }
 
-int anaSymbolClass::moveAbs (
+int aniSymbolClass::moveAbs (
   int _x,
   int _y ) {
 
@@ -3393,7 +3393,7 @@ int i;
 
 }
 
-int anaSymbolClass::moveMidpointAbs (
+int aniSymbolClass::moveMidpointAbs (
   int _x,
   int _y ) {
 
@@ -3428,19 +3428,19 @@ int i;
 
 }
 
-int anaSymbolClass::rotate (
+int aniSymbolClass::rotate (
   int xOrigin,
   int yOrigin,
   char direction )
 {
 
-  actWin->appCtx->postMessage( anaSymbolClass_str35 );
-  actWin->appCtx->postMessage( anaSymbolClass_str37 );
+  actWin->appCtx->postMessage( aniSymbolClass_str35 );
+  actWin->appCtx->postMessage( aniSymbolClass_str37 );
   return 1;
 
 }
 
-int anaSymbolClass::rotateInternal (
+int aniSymbolClass::rotateInternal (
   int xOrigin,
   int yOrigin,
   char direction )
@@ -3478,19 +3478,19 @@ int i;
 
 }
 
-int anaSymbolClass::flip (
+int aniSymbolClass::flip (
   int xOrigin,
   int yOrigin,
   char direction )
 {
 
-  actWin->appCtx->postMessage( anaSymbolClass_str36 );
-  actWin->appCtx->postMessage( anaSymbolClass_str37 );
+  actWin->appCtx->postMessage( aniSymbolClass_str36 );
+  actWin->appCtx->postMessage( aniSymbolClass_str37 );
   return 1;
 
 }
 
-int anaSymbolClass::flipInternal (
+int aniSymbolClass::flipInternal (
   int xOrigin,
   int yOrigin,
   char direction )
@@ -3528,7 +3528,7 @@ int i;
 
 }
 
-int anaSymbolClass::resize (
+int aniSymbolClass::resize (
   int _x,
   int _y,
   int _w,
@@ -3565,7 +3565,7 @@ int i;
 
 }
 
-int anaSymbolClass::resizeAbs (
+int aniSymbolClass::resizeAbs (
   int _x,
   int _y,
   int _w,
@@ -3640,7 +3640,7 @@ int i;
 
 }
 
-int anaSymbolClass::resizeAbsFromUndo (
+int aniSymbolClass::resizeAbsFromUndo (
   int _x,
   int _y,
   int _w,
@@ -3656,7 +3656,7 @@ int anaSymbolClass::resizeAbsFromUndo (
 
 }
 
-void anaSymbolClass::updateGroup ( void ) { // for paste operation
+void aniSymbolClass::updateGroup ( void ) { // for paste operation
 
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
@@ -3681,7 +3681,7 @@ int i;
 
 }
 
-int anaSymbolClass::expandTemplate (
+int aniSymbolClass::expandTemplate (
   int numMacros,
   char *macros[],
   char *expansions[] )
@@ -3721,7 +3721,7 @@ int i;
 
 }
 
-int anaSymbolClass::expand1st (
+int aniSymbolClass::expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] )
@@ -3763,7 +3763,7 @@ int i;
 
 }
 
-int anaSymbolClass::expand2nd (
+int aniSymbolClass::expand2nd (
   int numMacros,
   char *macros[],
   char *expansions[] )
@@ -3805,7 +3805,7 @@ int i;
 
 }
 
-int anaSymbolClass::containsMacros ( void ) {
+int aniSymbolClass::containsMacros ( void ) {
 
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
@@ -3843,7 +3843,7 @@ int i;
 
 }
 
-void anaSymbolClass::executeDeferred ( void ) {
+void aniSymbolClass::executeDeferred ( void ) {
 
 double v, av;
 int stat, i, nci, nc[ASYMBOL_K_MAX_PVS], nr, ne, nd, ncolori, ncr, nxi, nyi,
@@ -4059,14 +4059,14 @@ int stat, i, nci, nc[ASYMBOL_K_MAX_PVS], nr, ne, nd, ncolori, ncr, nxi, nyi,
 
 }
 
-int anaSymbolClass::setProperty (
+int aniSymbolClass::setProperty (
   char *prop,
   int *value )
 {
 
 int i, stat;
 
-  if ( strcmp( prop, anaSymbolClass_str28 ) == 0 ) {
+  if ( strcmp( prop, aniSymbolClass_str28 ) == 0 ) {
 
     controlV = *value;
 
@@ -4094,7 +4094,7 @@ int i, stat;
 
 }
 
-char *anaSymbolClass::firstDragName ( void ) {
+char *aniSymbolClass::firstDragName ( void ) {
 
   if ( !enabled ) return NULL;
 
@@ -4104,7 +4104,7 @@ char *anaSymbolClass::firstDragName ( void ) {
 
 }
 
-char *anaSymbolClass::nextDragName ( void ) {
+char *aniSymbolClass::nextDragName ( void ) {
 
   if ( !enabled ) return NULL;
 
@@ -4118,7 +4118,7 @@ char *anaSymbolClass::nextDragName ( void ) {
 
 }
 
-char *anaSymbolClass::dragValue (
+char *aniSymbolClass::dragValue (
   int i ) {
 
   if ( !enabled ) return NULL;
@@ -4139,7 +4139,7 @@ char *anaSymbolClass::dragValue (
 
 }
 
-void anaSymbolClass::changePvNames (
+void aniSymbolClass::changePvNames (
   int flag,
   int numCtlPvs,
   char *ctlPvs[],
@@ -4161,7 +4161,7 @@ void anaSymbolClass::changePvNames (
 
 }
 
-void anaSymbolClass::flushUndo ( void ) {
+void aniSymbolClass::flushUndo ( void ) {
 
 activeGraphicListPtr head;
 activeGraphicListPtr cur;
@@ -4186,7 +4186,7 @@ int i;
 
 }
 
-int anaSymbolClass::addUndoCreateNode (
+int aniSymbolClass::addUndoCreateNode (
   undoClass *_undoObj )
 {
 
@@ -4222,7 +4222,7 @@ int i;
 
 }
 
-int anaSymbolClass::addUndoMoveNode (
+int aniSymbolClass::addUndoMoveNode (
   undoClass *_undoObj )
 {
 
@@ -4256,7 +4256,7 @@ int i;
 
 }
 
-int anaSymbolClass::addUndoResizeNode (
+int aniSymbolClass::addUndoResizeNode (
   undoClass *_undoObj )
 {
 
@@ -4290,7 +4290,7 @@ int i;
 
 }
 
-int anaSymbolClass::addUndoCopyNode (
+int aniSymbolClass::addUndoCopyNode (
   undoClass *_undoObj )
 {
 
@@ -4326,7 +4326,7 @@ int i;
 
 }
 
-int anaSymbolClass::addUndoCutNode (
+int aniSymbolClass::addUndoCutNode (
   undoClass *_undoObj )
 {
 
@@ -4362,7 +4362,7 @@ int i;
 
 }
 
-int anaSymbolClass::addUndoPasteNode (
+int aniSymbolClass::addUndoPasteNode (
   undoClass *_undoObj )
 {
 
@@ -4398,7 +4398,7 @@ int i;
 
 }
 
-int anaSymbolClass::addUndoReorderNode (
+int aniSymbolClass::addUndoReorderNode (
   undoClass *_undoObj )
 {
 
@@ -4434,23 +4434,23 @@ int i;
 
 }
 
-int anaSymbolClass::addUndoEditNode (
+int aniSymbolClass::addUndoEditNode (
   undoClass *_undoObj )
 {
 
 int stat;
-undoAnaSymbolOpClass *undoAnaSymbolOpPtr;
+undoAniSymbolOpClass *undoAniSymbolOpPtr;
 
-  undoAnaSymbolOpPtr = new undoAnaSymbolOpClass( this );
+  undoAniSymbolOpPtr = new undoAniSymbolOpClass( this );
 
-  stat = _undoObj->addEditNode( this, undoAnaSymbolOpPtr );
+  stat = _undoObj->addEditNode( this, undoAniSymbolOpPtr );
   if ( !( stat & 1 ) ) return stat;
 
   return 1;
 
 }
 
-int anaSymbolClass::addUndoGroupNode (
+int aniSymbolClass::addUndoGroupNode (
   undoClass *_undoObj )
 {
 
@@ -4486,7 +4486,7 @@ int i;
 
 }
 
-int anaSymbolClass::addUndoRotateNode (
+int aniSymbolClass::addUndoRotateNode (
   undoClass *_undoObj )
 {
 
@@ -4520,7 +4520,7 @@ int i;
 
 }
 
-int anaSymbolClass::addUndoFlipNode (
+int aniSymbolClass::addUndoFlipNode (
   undoClass *_undoObj )
 {
 
@@ -4554,7 +4554,7 @@ int i;
 
 }
 
-int anaSymbolClass::undoCreate (
+int aniSymbolClass::undoCreate (
   undoOpClass *opPtr
 ) {
 
@@ -4562,7 +4562,7 @@ int anaSymbolClass::undoCreate (
 
 }
 
-int anaSymbolClass::undoMove (
+int aniSymbolClass::undoMove (
   undoOpClass *opPtr,
   int x,
   int y )
@@ -4580,7 +4580,7 @@ int stat;
 
 }
 
-int anaSymbolClass::undoResize (
+int aniSymbolClass::undoResize (
   undoOpClass *opPtr,
   int x,
   int y,
@@ -4600,7 +4600,7 @@ int stat;
 
 }
 
-int anaSymbolClass::undoCopy (
+int aniSymbolClass::undoCopy (
   undoOpClass *opPtr
 ) {
 
@@ -4608,7 +4608,7 @@ int anaSymbolClass::undoCopy (
 
 }
 
-int anaSymbolClass::undoCut (
+int aniSymbolClass::undoCut (
   undoOpClass *opPtr
 ) {
 
@@ -4616,7 +4616,7 @@ int anaSymbolClass::undoCut (
 
 }
 
-int anaSymbolClass::undoPaste (
+int aniSymbolClass::undoPaste (
   undoOpClass *opPtr
 ) {
 
@@ -4624,7 +4624,7 @@ int anaSymbolClass::undoPaste (
 
 }
 
-int anaSymbolClass::undoReorder (
+int aniSymbolClass::undoReorder (
   undoOpClass *opPtr
 ) {
 
@@ -4632,11 +4632,11 @@ int anaSymbolClass::undoReorder (
 
 }
 
-int anaSymbolClass::undoEdit (
+int aniSymbolClass::undoEdit (
   undoOpClass *opPtr
 ) {
 
-undoAnaSymbolOpClass *ptr = (undoAnaSymbolOpClass *) opPtr;
+undoAniSymbolOpClass *ptr = (undoAniSymbolOpClass *) opPtr;
 activeGraphicListPtr head, cur, next, curSource, sourceHead;
 int i;
 
@@ -4760,7 +4760,7 @@ int i;
 
 }
 
-int anaSymbolClass::undoGroup (
+int aniSymbolClass::undoGroup (
   undoOpClass *opPtr
 ) {
 
@@ -4768,7 +4768,7 @@ int anaSymbolClass::undoGroup (
 
 }
 
-int anaSymbolClass::undoRotate (
+int aniSymbolClass::undoRotate (
   undoOpClass *opPtr,
   int x,
   int y,
@@ -4788,7 +4788,7 @@ int stat;
 
 }
 
-int anaSymbolClass::undoFlip (
+int aniSymbolClass::undoFlip (
   undoOpClass *opPtr,
   int x,
   int y,
@@ -4808,7 +4808,7 @@ int stat;
 
 }
 
-void anaSymbolClass::updateColors (
+void aniSymbolClass::updateColors (
   double colorValue
 ) {
 
@@ -4848,7 +4848,7 @@ int i;
 
 }
 
-void anaSymbolClass::getPvs (
+void aniSymbolClass::getPvs (
   int max,
   ProcessVariable *pvs[],
   int *n ) {
@@ -4871,7 +4871,7 @@ int i;
 
 }
 
-char *anaSymbolClass::getSearchString (
+char *aniSymbolClass::getSearchString (
   int i
 ) {
 
@@ -4895,7 +4895,7 @@ char *anaSymbolClass::getSearchString (
 
 }
 
-void anaSymbolClass::replaceString (
+void aniSymbolClass::replaceString (
   int i,
   int max,
   char *string
@@ -4923,14 +4923,14 @@ int status, resizeStat;
 }
 
 // crawler functions may return blank pv names
-char *anaSymbolClass::crawlerGetFirstPv ( void ) {
+char *aniSymbolClass::crawlerGetFirstPv ( void ) {
 
   crawlerPvIndex = 0;
   return controlPvExpStr[0].getExpanded();
 
 }
 
-char *anaSymbolClass::crawlerGetNextPv ( void ) {
+char *aniSymbolClass::crawlerGetNextPv ( void ) {
 
   crawlerPvIndex++;
 

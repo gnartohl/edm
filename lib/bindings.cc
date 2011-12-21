@@ -252,8 +252,8 @@ FILE *f;
     /* add text for asymbols, note that names and types have been
        allocated to contain an additional element */
 
-    classNames[num+1] = new char[strlen("anaSymbolClass")+1];
-    strcpy( classNames[num+1], "anaSymbolClass" );
+    classNames[num+1] = new char[strlen("aniSymbolClass")+1];
+    strcpy( classNames[num+1], "aniSymbolClass" );
 
     param[num+1] = new char[1];
     strcpy( param[num+1], "" );
@@ -361,9 +361,9 @@ char name[127+1], *error, buf[127+1], *tk;
     return cur;
 
   }
-  else if ( strcmp( oneClassName, "anaSymbolClass" ) == 0 ) {
+  else if ( strcmp( oneClassName, "aniSymbolClass" ) == 0 ) {
 
-    cur = new anaSymbolClass;
+    cur = new aniSymbolClass;
     return cur;
 
   }
@@ -541,9 +541,9 @@ char name[127+1], *error, buf[127+1], *tk;
     return cur;
 
   }
-  else if ( strcmp( oneClassName, "anaSymbolClass" ) == 0 ) {
+  else if ( strcmp( oneClassName, "aniSymbolClass" ) == 0 ) {
 
-    cur = new anaSymbolClass( (anaSymbolClass *) source );
+    cur = new aniSymbolClass( (aniSymbolClass *) source );
     return cur;
 
   }
