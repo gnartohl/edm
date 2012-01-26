@@ -274,7 +274,7 @@ void LOG_ProcessVariable::ca_connect_callback(
                     me->value = new PVValueChar(me);
                     break;
                 case DBF_INT:
-                    me->value = new PVValueInt(me,"short");
+                    me->value = new PVValueShort(me);
                     break;
                 case DBF_LONG:
                     me->value = new PVValueInt(me);
