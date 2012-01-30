@@ -496,12 +496,12 @@ size_t hash(const HashedCalcPvList *item, size_t N)
   return generic_string_hash( (const char *) item->pv, N );
 }
 
-bool equals(const HashedCalcPvList *lhs, const HashedCalcPvList *rhs)
+int equals(const HashedCalcPvList *lhs, const HashedCalcPvList *rhs)
 {
-  if ( (unsigned int ) lhs->pv < (unsigned int ) rhs->pv ) {
+  if ( (unsigned long ) lhs->pv < (unsigned long ) rhs->pv ) {
     return 1;
   }
-  else if ( (unsigned int ) lhs->pv > (unsigned int ) rhs->pv ) {
+  else if ( (unsigned long ) lhs->pv > (unsigned long ) rhs->pv ) {
     return -1;
   }
   return 0;
