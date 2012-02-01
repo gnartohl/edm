@@ -367,6 +367,12 @@ char name[127+1], *error, buf[127+1], *tk;
     return cur;
 
   }
+  else if ( strcmp( oneClassName, "anaSymbolClass" ) == 0 ) { // old name
+
+    cur = new aniSymbolClass;
+    return cur;
+
+  }
   else if ( strcmp( oneClassName, "activeDynSymbolClass" ) == 0 ) {
 
     cur = new activeDynSymbolClass;
@@ -542,6 +548,12 @@ char name[127+1], *error, buf[127+1], *tk;
 
   }
   else if ( strcmp( oneClassName, "aniSymbolClass" ) == 0 ) {
+
+    cur = new aniSymbolClass( (aniSymbolClass *) source );
+    return cur;
+
+  }
+  else if ( strcmp( oneClassName, "anaSymbolClass" ) == 0 ) { // old name
 
     cur = new aniSymbolClass( (aniSymbolClass *) source );
     return cur;
