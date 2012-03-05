@@ -35,7 +35,7 @@
 
 #define HTMLC_MAJOR_VERSION 4
 #define HTMLC_MINOR_VERSION 0
-#define HTMLC_RELEASE 0
+#define HTMLC_RELEASE 1
 
 #ifdef __html_cc
 

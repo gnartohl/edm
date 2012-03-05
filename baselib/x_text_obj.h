@@ -29,7 +29,7 @@
 
 #define AXTC_MAJOR_VERSION 4
 #define AXTC_MINOR_VERSION 1
-#define AXTC_RELEASE 0
+#define AXTC_RELEASE 1
 
 #ifdef __x_text_obj_cc
 
