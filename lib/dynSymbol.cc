@@ -289,7 +289,7 @@ static void dynSymbol_colorUpdate (
 
 activeDynSymbolClass *dso = (activeDynSymbolClass *) userarg;
 
-  if ( dso->active ) {
+  if ( pv->is_valid() ) {
 
     dso->curColorV = pv->get_double();
 
@@ -337,11 +337,9 @@ static void dynSymbol_gateUpUpdate (
 
 activeDynSymbolClass *dso = (activeDynSymbolClass *) userarg;
 
-  //fprintf( stderr, "dynSymbol_gateUpUpdate, value = %-d\n", pv->get_int() );
+  if ( pv->is_valid() ) {
 
-  if ( pv->get_int() == dso->gateUpValue ) {
-
-    if ( dso->active ) {
+    if ( pv->get_int() == dso->gateUpValue ) {
       dso->needGateUp = 1;
       dso->actWin->appCtx->proc->lock();
       dso->actWin->addDefExeNode( dso->aglPtr );
@@ -387,9 +385,9 @@ static void dynSymbol_gateDownUpdate (
 
 activeDynSymbolClass *dso = (activeDynSymbolClass *) userarg;
 
-  if ( pv->get_int() == dso->gateDownValue  ) {
+  if ( pv->is_valid() ) {
 
-    if ( dso->active ) {
+    if ( pv->get_int() == dso->gateDownValue  ) {
       dso->needGateDown = 1;
       dso->actWin->appCtx->proc->lock();
       dso->actWin->addDefExeNode( dso->aglPtr );
@@ -3318,11 +3316,11 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd, ncolori, ncr;
       gateUpPvId->add_value_callback( dynSymbol_gateUpUpdate,
        this );
 
-    }
+      if ( ( gateDownPvConnected || !gateDownExists ) &&
+           ( colorPvConnected || !colorExists ) ) {
+        active = 1;
+      }
 
-    if ( ( gateDownPvConnected || !gateDownExists ) &&
-         ( colorPvConnected || !colorExists ) ) {
-      active = 1;
     }
 
   }
@@ -3336,11 +3334,11 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd, ncolori, ncr;
       gateDownPvId->add_value_callback( dynSymbol_gateDownUpdate,
        this );
 
-    }
+      if ( ( gateUpPvConnected || !gateUpExists ) &&
+           ( colorPvConnected || !colorExists ) ) {
+        active = 1;
+      }
 
-    if ( ( gateUpPvConnected || !gateUpExists ) &&
-         ( colorPvConnected || !colorExists ) ) {
-      active = 1;
     }
 
   }
