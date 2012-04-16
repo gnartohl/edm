@@ -117,6 +117,8 @@ int stat;
   familyTail = familyHead;
   familyTail->flink = NULL;
 
+  fontMap = NULL;
+
   fontListEmpty = 1;
 
   requireExactMatch = 0;
@@ -202,6 +204,11 @@ sizeListPtr curSize, nextSize;
   }
 
   delete familyHead;
+
+  if ( fontMap ) {
+    fontMap->erase( fontMap->begin(), fontMap->end() );
+    delete fontMap;
+  }
 
 }
 
@@ -769,6 +776,109 @@ char spec[127+1], name[127+1], foundary[63+1], family[63+1], weight[63+1],
 
 }
 
+int fontInfoClass::resolveFont (
+  char *fontSpec,
+  char *userFontFamilyName,
+  char *useWeight,
+  char *useSlant,
+  fontNameListPtr ptr ) {
+
+int n, isize, isScalable, stat;
+float fsize;
+char **list;
+char spec[127+1], name[127+1], foundary[63+1], family[63+1], weight[63+1],
+ slant[63+1], size[63+1];
+
+  ptr->fontLoaded = 0;
+
+  list = XListFonts( this->display, fontSpec, 1, &n );
+  if ( n == 0 ) {
+    if ( requireExactMatch ) {
+      fprintf( stderr, fontInfoClass_str8, fontSpec );
+      fprintf( stderr, fontInfoClass_str9, lastNonCommentLine );
+      return FONTINFO_NO_FONT;
+    }
+    else {
+      list = findBestFont( this->display, fontSpec, &n );
+      if ( n == 0 ) {
+        fprintf( stderr, fontInfoClass_str8, fontSpec );
+        fprintf( stderr, fontInfoClass_str9, lastNonCommentLine );
+        return FONTINFO_NO_FONT;
+      }
+    }
+  }
+
+  strncpy( spec, list[0], 127 );
+
+  if ( debugMode() == 1000 ) fprintf( stderr, "Font Spec: [%s]\n", spec );
+
+  stat = parseFontSpec( spec, foundary, family, weight, slant, size );
+
+  if ( strcmp( useWeight, mediumString ) == 0 ) {
+    strcpy( weight, "medium" );
+  }
+  else if ( strcmp( useWeight, boldString ) == 0 ) {
+    strcpy( weight, "bold" );
+  }
+  else {
+    strcpy( weight, "medium" );
+  }
+
+  if ( strcmp( useSlant, regularString ) == 0 ) {
+    strcpy( slant, "r" );
+  }
+  else if ( strcmp( useSlant, italicString ) == 0 ) {
+    strcpy( slant, "i" );
+  }
+  else {
+    strcpy( slant, "r" );
+  }
+
+  if ( strcmp( size, "0" ) == 0 )
+    isScalable = 1;
+  else
+    isScalable = 0;
+
+  isize = atol( size );
+  fsize = atof( size );
+  fsize /= 10;
+  ptr->size = isize;
+  ptr->fsize = fsize;
+
+  sprintf( size, "%-.1f", fsize );
+  fixFontSize( size );
+
+  strncpy( name, userFontFamilyName, 127 );
+  Strncat( name, "-", 127 );
+  Strncat( name, weight, 127 );
+  Strncat( name, "-", 127 );
+  Strncat( name, slant, 127 );
+  Strncat( name, "-", 127 );
+  Strncat( name, size, 127 );
+
+  //fprintf( stderr, "name=[%s]\n", name );
+
+  ptr->isScalable = (char) isScalable;
+
+  ptr->fullName = new char[strlen(list[0])+1];
+  strcpy( ptr->fullName, list[0] );
+
+  ptr->name = new char[strlen(name)+1];
+  strcpy( ptr->name, name );
+
+  ptr->family = new char[strlen(userFontFamilyName)+1];
+  strcpy( ptr->family, userFontFamilyName );
+
+  ptr->weight = weight[0];
+
+  ptr->slant = slant[0];
+
+  XFreeFontNames( list );
+
+  return FONTINFO_SUCCESS;
+
+}
+
 int fontInfoClass::resolveOneFont (
   char *fontSpec,
   fontNameListPtr ptr ) {
@@ -1125,6 +1235,19 @@ char **list;
         sprintf( fontSpec, "%s%s%s%s%s%-d%s", t1, mod[i], t3, mod[ii],
          t5, pointSize[iii], t7 );
 
+        //fprintf( stderr, "checkSingleFontSpec : [%s]\n", fontSpec );
+
+        FontMapType::iterator it = fontMap->begin();
+        while ( it != fontMap->end() ) {
+	  std::string f = it->first;
+	  std::string s = it->second;
+          if ( strcmp( fontSpec, f.c_str() ) == 0 ) {
+            strcpy( fontSpec, s.c_str() );
+	    break;
+	  }
+	  it++;
+	}
+
         list = XListFonts( display, fontSpec, 1, &n );
         if ( n == 0 ) {
           if ( checkBestFont && !requireExactMatch ) {
@@ -1199,6 +1322,7 @@ int fontInfoClass::getSingleFontSpec (
 char t1[255+1], t2[255+1], t3[255+1], t4[255+1],
  t5[255+1], t6[255+1], t7[255+1], mod[4][255+1], fontSpec[255+1],
  *tk1, *tk2, *ctx1, *ctx2;
+int useSubstitution;
 int i, ii, iii, pointSize[200], numSizes;
 int stat, preload;
 int empty = 1;
@@ -1402,15 +1526,38 @@ XFontStruct *fs;
         sprintf( fontSpec, "%s%s%s%s%s%-d%s", t1, mod[i], t3, mod[ii],
          t5, pointSize[iii], t7 );
 
-        //fprintf( stderr, "[%s]\n", fontSpec );
+        //fprintf( stderr, "getSingleFontSpec : [%s]\n", fontSpec );
+
+        useSubstitution = 0;
+
+        FontMapType::iterator it = fontMap->begin();
+        while ( it != fontMap->end() ) {
+	  std::string f = it->first;
+	  std::string s = it->second;
+          if ( strcmp( fontSpec, f.c_str() ) == 0 ) {
+            strcpy( fontSpec, s.c_str() );
+            useSubstitution = 1;
+	    break;
+	  }
+	  it++;
+	}
 
         cur = new fontNameListType;
 
-        stat = this->resolveFont( fontSpec, userFontFamilyName, cur );
-        if ( !( stat & 1 ) ) {
-          delete cur;
-          return stat;
-        }
+	if ( useSubstitution ) {
+          stat = this->resolveFont( fontSpec, userFontFamilyName, mod[i], mod[ii], cur );
+          if ( !( stat & 1 ) ) {
+            delete cur;
+            return stat;
+          }
+	}
+	else {
+          stat = this->resolveFont( fontSpec, userFontFamilyName, cur );
+          if ( !( stat & 1 ) ) {
+            delete cur;
+            return stat;
+          }
+	}
 
         stat = avl_insert_node( this->fontNameListH, (void *) cur,
          &dup );
@@ -1564,6 +1711,186 @@ int foundBrace = 0;
 
 }
 
+int fontInfoClass::readSubstitutions (
+  FILE *f
+) {
+
+char line[255+1], buf[255+1], *ptr, *tk1, *tk2, *ctx1;
+
+  ptr = getStrFromFile( line, 255, f );
+  if ( !ptr ) {
+    return FONTINFO_EMPTY;
+  }
+
+  do {
+
+    ctx1 = NULL;
+    strcpy( buf, line );
+
+    tk1 = strtok_r( buf, "=\t\n", &ctx1 );
+    if ( tk1 ) {
+
+      if ( strcmp( tk1, "}" ) == 0 ) {
+        return FONTINFO_SUCCESS;
+      }
+
+      tk2 = strtok_r( NULL, "=\t\n", &ctx1 );
+      if ( tk2 ) {
+
+	if ( !fontMap ) {
+	  fontMap = new FontMapType;
+	}
+
+	std::string s1( tk1 );
+	std::string s2( tk2 );
+	fontMap->insert( FontMapEntry( s1, s2 ) );
+
+      }
+      else {
+
+        return FONTINFO_SYNTAX;
+
+      }
+
+    }
+    else {
+      return FONTINFO_SYNTAX;
+    }
+
+    ptr = getStrFromFile( line, 255, f );
+    if ( !ptr ) {
+      return FONTINFO_EMPTY;
+    }
+
+  } while ( 1 );
+
+}
+
+int fontInfoClass::initFromFileVer4 (
+  XtAppContext app,
+  Display *d,
+  FILE *f,
+  int major,
+  int minor,
+  int release )
+{
+
+char line[255+1], buf[255+1], userFontFamilyName[63+1], *ptr, *tk1, *ctx1;
+int stat;
+int empty = 1;
+
+  ptr = getStrFromFile( line, 255, f );
+  if ( !ptr ) {
+    fclose( f );
+    fprintf( stderr, fontInfoClass_str3, lastNonCommentLine );
+    return FONTINFO_EMPTY;
+  }
+
+  strncpy( defSiteFontTag, line, 127 );
+  defSiteFontTag[127] = 0;
+  defSiteFontTag[strlen(defSiteFontTag)-1] = 0; // discard \n
+
+  ptr = getStrFromFile( line, 255, f );
+  if ( !ptr ) {
+    fclose( f );
+    fprintf( stderr, fontInfoClass_str4, lastNonCommentLine );
+    return FONTINFO_EMPTY;
+  }
+
+  strncpy( defFontTag, line, 127 );
+  defFontTag[127] = 0;
+  defFontTag[strlen(defFontTag)-1] = 0; // discard \n
+
+  do {
+
+    processAllEvents( app, display );
+
+    ptr = getStrFromFile ( line, 255, f );
+    if ( ptr ) {
+
+      empty = 0;
+
+      ctx1 = NULL;
+      strcpy( buf, line );
+
+      tk1 = strtok_r( buf, "=\t\n(){", &ctx1 );
+      if ( tk1 ) {
+
+        if ( strncmp( tk1, "substitutions", 13 ) == 0 ) {
+
+          stat = readSubstitutions( f );
+          if ( stat != FONTINFO_SUCCESS ) {
+            fclose( f );
+            return stat;
+          }
+
+	}
+	else {
+
+          strncpy( userFontFamilyName, tk1, 63 );
+          userFontFamilyName[63] = 0;
+
+          tk1 = strtok_r( NULL, "\t\n()", &ctx1 );
+          if ( tk1 ) {
+
+            if ( strcmp( tk1, "{" ) == 0 ) { // font groups
+
+              stat = processFontGroup( app, d, userFontFamilyName, f,
+               major, minor, release );
+              if ( !( stat & 1 ) ) {
+                fclose( f );
+                return stat;
+              }
+
+            }
+            else {
+
+              // tk1 points to first character after "<name>="
+
+              strcpy( buf, line );
+
+              stat = getSingleFontSpec( app, d, userFontFamilyName, tk1,
+               major, minor, release );
+              if ( !( stat & 1 ) ) {
+                fclose( f );
+                return stat;
+              }
+
+            }
+
+          }
+          else {
+            fclose( f );
+            fprintf( stderr, fontInfoClass_str5, lastNonCommentLine );
+            return FONTINFO_SYNTAX;
+          }
+
+        }
+
+      }
+      else {
+
+        fclose( f );
+        fprintf( stderr, fontInfoClass_str5, lastNonCommentLine );
+        return FONTINFO_SYNTAX;
+
+      }
+
+    }
+
+  } while ( ptr );
+
+  fclose( f );
+
+  if ( empty ) {
+    fprintf( stderr, fontInfoClass_str6 );
+    return FONTINFO_EMPTY;
+  }
+
+  return FONTINFO_SUCCESS;
+
+}
+
 int fontInfoClass::initFromFileVer3 (
   XtAppContext app,
   Display *d,
@@ -1705,6 +2032,11 @@ XFontStruct *fs;
   }
 
   sscanf( line, "%d %d %d\n", &major, &minor, &release );
+
+  if ( major == 4 ) {
+    stat = initFromFileVer4( app, d, f, major, minor, release );
+    return stat;
+  }
 
   if ( major == 3 ) {
     stat = initFromFileVer3( app, d, f, major, minor, release );

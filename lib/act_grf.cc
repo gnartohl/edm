@@ -571,6 +571,8 @@ activeGraphicListPtr cur;
 
 //  actWin->appCtx->proc->lock();
 
+  //fprintf( stderr, "drawAllActive\n" );
+
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
     cur->node->bufInvalidate();
@@ -814,7 +816,7 @@ int activeGraphicClass::smartDrawAll ( void ) {
 
 activeGraphicListPtr cur;
 int normClipStat, xorClipStat, eraseClipStat, x0, x1, y0, y1;
-XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
+XRectangle xR = { this->x-10, this->y-10, this->w+20, this->h+20 };
 
 //  actWin->appCtx->proc->lock();
 
@@ -832,9 +834,9 @@ XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
-    if ( cur->node->intersects( x0, y0, x1, y1 ) ) {
+    if ( cur->node->intersects( x0-10, y0-10, x1+10, y1+10 ) ) {
       cur->node->bufInvalidate();
-      cur->node->draw( x0, y0, x1, y1 );
+      cur->node->draw( x0-10, y0-10, x1+10, y1+10 );
     }
     cur = cur->flink;
   }
@@ -916,6 +918,8 @@ activeGraphicListPtr cur;
 int x0, x1, y0, y1;
 XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
 
+  //fprintf( stderr, "activeGraphicClass::doSmartDrawAllButMeActive\n" );
+
   resetSmartDrawCount();
 
   x0 = this->getX0();
@@ -956,7 +960,7 @@ int activeGraphicClass::drawActiveIfIntersects (
   int y1 )
 {
 
-  //fprintf( stderr, "x0=%-d, y0=%-d, x1=%-d, y1=%-d\n", x0, y0, x1, y1 );
+  //fprintf( stderr, "activeGraphicClass::drawActiveIfIntersects x0=%-d, y0=%-d, x1=%-d, y1=%-d\n", x0, y0, x1, y1 );
   if ( intersects( x0, y0, x1, y1 ) ) {
     //fprintf( stderr, "%s intersects\n", objName() );
     bufInvalidate();
@@ -1008,7 +1012,9 @@ int activeGraphicClass::refresh (
 activeGraphicListPtr cur, next;
 int normClipStat, xorClipStat, eraseClipStat, x0, x1, y0, y1, x0sb, x1sb,
  y0sb, y1sb, needDelete;
-XRectangle xR = { _x, _y, _w, _h };
+XRectangle xR = { _x-10, _y-10, _w+20, _h+20 };
+
+  //fprintf( stderr, "refresh\n" );
 
   needDelete = 0;
 
@@ -1061,9 +1067,9 @@ XRectangle xR = { _x, _y, _w, _h };
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
     if ( !cur->node->deleteRequest ) {
-      if ( cur->node->intersects( x0, y0, x1, y1 ) ) {
+      if ( cur->node->intersects( x0-10, y0-10, x1+10, y1+10 ) ) {
         cur->node->bufInvalidate();
-        cur->node->draw( x0, y0, x1, y1 );
+        cur->node->draw( x0-10, y0-10, x1+10, y1+10 );
       }
     }
     cur = cur->flink;
@@ -1093,6 +1099,8 @@ int activeGraphicClass::refresh ( void ) {
 
 activeGraphicListPtr cur, next;
 int needDelete;
+
+  //fprintf( stderr, "refresh 2\n" );
 
   needDelete = 0;
 
@@ -1153,6 +1161,8 @@ int activeGraphicClass::refresh (
 
 activeGraphicListPtr cur, next;
 int needDelete;
+
+  //fprintf( stderr, "refresh 3\n" );
 
   needDelete = 0;
 
@@ -1218,6 +1228,9 @@ activeGraphicListPtr cur;
 int normClipStat, xorClipStat, eraseClipStat, x0, x1, y0, y1;
 XRectangle xR = { _x, _y, _w, _h };
 
+  //fprintf( stderr, "refreshActive 1\n" );
+  //fprintf( stderr, "x=%-d, y=%-d, w=%-d, h=%-d\n", _x, _y, _w, _h );
+
   x0 = _x;
   y0 = _y;
   x1 = _x + _w;
@@ -1246,6 +1259,8 @@ int activeGraphicClass::refreshActive ( void ) {
 activeGraphicListPtr cur;
 
 //  actWin->appCtx->proc->lock();
+
+  //fprintf( stderr, "refreshActive 2\n" );
 
   cur = actWin->head->flink;
   while ( cur != actWin->head ) {
@@ -2286,7 +2301,7 @@ int activeGraphicClass::movePointRel (
 
 int activeGraphicClass::lineEditComplete ( void ) {
 
-  fprintf( stderr, "lineEditComplete\n" );
+  //fprintf( stderr, "lineEditComplete\n" );
 
   curUndoObj = NULL;
 
@@ -2296,7 +2311,7 @@ int activeGraphicClass::lineEditComplete ( void ) {
 
 int activeGraphicClass::lineEditCancel ( void ) {
 
-  fprintf( stderr, "lineEditCancel\n" );
+  //fprintf( stderr, "lineEditCancel\n" );
 
   curUndoObj = NULL;
 
@@ -3725,7 +3740,7 @@ int activeGraphicClass::addUndoEditNode ( undoClass *undoObj ) {
 
 int stat;
 
-  fprintf( stderr, "Generic addUndoEditNode\n" );
+  //fprintf( stderr, "Generic addUndoEditNode\n" );
 
   stat = undoObj->addEditNode( this, NULL );
   return stat;

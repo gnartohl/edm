@@ -255,6 +255,12 @@ int draw ( void );
 
 int erase ( void );
 
+int drawActiveIfIntersects (
+  int x0,
+  int y0,
+  int x1,
+  int y1 );
+
 int drawActive ( void );
 
 int eraseActive ( void );

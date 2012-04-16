@@ -259,6 +259,12 @@ int editCreate ( void );
 
 int draw ( void );
 
+int drawActiveIfIntersects (
+  int x0,
+  int y0,
+  int x1,
+  int y1 );
+
 int drawActive ( void );
 
 int erase ( void );

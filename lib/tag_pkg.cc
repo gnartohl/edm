@@ -2410,10 +2410,12 @@ double smallDoubleArray[100];
 
       efI[oneIndex].setValue( strtol( tk, NULL, 0 ) );
 
-      tk = strtok_r( NULL, " \t\n", &context );
-      if ( tk ) {
-        efI[oneIndex].setNull( 0 ); // is not null
-      }
+      efI[oneIndex].setNull( 0 ); // is not null
+
+      //tk = strtok_r( NULL, " \t\n", &context );
+      //if ( tk ) {
+      //  efI[oneIndex].setNull( 0 ); // is not null
+      //}
 
       i++;
 

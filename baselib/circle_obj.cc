@@ -1061,6 +1061,23 @@ int index;
 
 }
 
+int activeCircleClass::drawActiveIfIntersects (
+  int x0,
+  int y0,
+  int x1,
+  int y1 ) {
+
+  int delta = lineWidth/2 + 1;
+
+  if ( intersects( x0-delta, y0-delta, x1+delta, y1+delta ) ) {
+    bufInvalidate();
+    drawActive();
+  }
+
+  return 1;
+
+}
+
 int activeCircleClass::drawActive ( void )
 {
 

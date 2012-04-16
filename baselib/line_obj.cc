@@ -2130,6 +2130,27 @@ int i, index;
 
 }
 
+int activeLineClass::drawActiveIfIntersects (
+  int x0,
+  int y0,
+  int x1,
+  int y1 ) {
+
+  if ( arrows != ARROW_NONE ) {
+
+    int delta = lineWidth/2 + 6;
+
+    if ( intersects( x0-delta, y0-delta, x1+delta, y1+delta ) ) {
+      bufInvalidate();
+      drawActive();
+    }
+
+  }
+
+  return 1;
+
+}
+
 int activeLineClass::drawActive ( void )
 {
 
@@ -2139,7 +2160,6 @@ XPoint arrowXPoints[8];
   if ( !init ) {
     if ( needToDrawUnconnected ) {
       actWin->executeGc.saveFg();
-      //actWin->executeGc.setFG( lineColor.getDisconnected() );
       actWin->executeGc.setFG( lineColor.getDisconnectedIndex(), &blink );
       actWin->executeGc.setLineWidth( 1 );
       actWin->executeGc.setLineStyle( LineSolid );

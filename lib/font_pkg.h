@@ -19,6 +19,9 @@
 #ifndef __font_pkg_h
 #define __font_pkg_h 1
 
+#include <map>
+#include <string>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -82,6 +85,11 @@ class fontInfoClass {
 friend class fontMenuClass;
 
 private:
+
+typedef std::map<std::string, std::string> FontMapType, *FontMapPtr;
+typedef FontMapType::value_type FontMapEntry;
+
+FontMapPtr fontMap;
 
 AVL_HANDLE fontNameListH;
 
@@ -194,6 +202,18 @@ int processFontGroup (
   int minor,
   int release );
 
+int readSubstitutions (
+  FILE *f
+);
+
+int initFromFileVer4 (
+  XtAppContext app,
+  Display *d,
+  FILE *f,
+  int major,
+  int minor,
+  int release );
+
 int initFromFileVer3 (
   XtAppContext app,
   Display *d,
@@ -213,6 +233,13 @@ int resolveFont (
 
 int resolveFont (
   char *fontSpec,
+  char *userFontFamilyName,
+  fontNameListPtr ptr );
+
+int resolveFont (
+  char *fontSpec,
+  char *useWeight,
+  char *useSlant,
   char *userFontFamilyName,
   fontNameListPtr ptr );
 
