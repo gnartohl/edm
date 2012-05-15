@@ -9053,9 +9053,9 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           dbYMax[i] = yPv[i]->get_upper_disp_limit();
           dbYPrec[i] = yPv[i]->get_precision();
 
-	  printf( "y pv ele size = %-d\n", (int) yPv[i]->get_specific_type().size / 8 );
-	  printf( "y pv dim = %-d\n", yPvDim[i] );
-	  printf( "y pv size = %-d\n\n", yPvSize[i] );
+	  //printf( "y pv ele size = %-d\n", (int) yPv[i]->get_specific_type().size / 8 );
+	  //printf( "y pv dim = %-d\n", yPvDim[i] );
+	  //printf( "y pv size = %-d\n\n", yPvSize[i] );
 
           ni = 1;
           yArrayNeedInit[i] = 1;
@@ -9086,9 +9086,9 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           dbXMax[i] = xPv[i]->get_upper_disp_limit();
           dbXPrec[i] = xPv[i]->get_precision();
 
-	  printf( "x pv ele size = %-d\n", (int) xPv[i]->get_specific_type().size / 8 );
-	  printf( "x pv dim = %-d\n", xPvDim[i] );
-	  printf( "x pv size = %-d\n\n", xPvSize[i] );
+	  //printf( "x pv ele size = %-d\n", (int) xPv[i]->get_specific_type().size / 8 );
+	  //printf( "x pv dim = %-d\n", xPvDim[i] );
+	  //printf( "x pv size = %-d\n\n", xPvSize[i] );
 
           ni = 1;
           xArrayNeedInit[i] = 1;

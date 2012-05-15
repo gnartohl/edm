@@ -67,6 +67,66 @@
 
 #include "main.str"
 
+void doCmdPut (
+  char *cmd
+) {
+
+char *ctx, *buf, *name, *typ, *val, *other;
+int l = strlen( cmd );
+
+  //fprintf( stderr, "l = %-d\n", l );
+  //fprintf( stderr, "cmd = %s\n", cmd );
+
+  if ( l > 1000 ) return;
+
+  buf = new char[l+1];
+  strcpy( buf, cmd );
+
+  //fprintf( stderr, "l = %-d, buf = %s\n", l, buf );
+
+  ctx = NULL;
+  name = strtok_r( buf, "=:", &ctx );
+  if ( !name ) {
+    delete[] buf;
+    return;
+  }
+  //fprintf( stderr, "name = [%s]\n", name );
+
+  typ = strtok_r( NULL, "=:", &ctx );
+  if ( !typ ) {
+    delete[] buf;
+    return;
+  }
+  //fprintf( stderr, "typ = [%s]\n", typ );
+
+  val = strtok_r( NULL, "=:", &ctx );
+  if ( !val ) {
+    delete[] buf;
+    return;
+  }
+  //fprintf( stderr, "val = [%s]\n", val );
+
+  ProcessVariable *pv = the_PV_Factory->create( name );
+  if ( pv->is_valid() ) {
+    //fprintf( stderr, "valid\n" );
+    if ( strcmp( typ, "s" ) == 0 ) {
+      pv->putText( val );
+    }
+    else  if ( strcmp( typ, "i" ) == 0 ) {
+      int iv = strtol( val, &other, 0 );
+      pv->put( iv );
+    }
+    else {
+      double dv = strtod( val, &other );
+      pv->put( dv );
+    }
+    pv->release();
+  }
+
+  delete[] buf;
+
+}
+
 void setServerSocketFd (
   int fd
 );
@@ -107,6 +167,7 @@ typedef struct main_que_tag { /* locked queue header */
 #define OPEN 4
 #define CONTROL 5
 #define QUERY_DISPLAY 6
+#define PUT 7
 
 typedef struct argsTag {
   int argc;
@@ -1162,6 +1223,17 @@ nextHost1:
       max = MAX_MSG_LEN - pos;
 
     }
+    else if ( openCmd == 3 ) {
+
+      msg[0] = (char) PUT;
+      pos = 1;
+      max = MAX_MSG_LEN - pos;
+
+      strncpy( &msg[pos], "*PUT*|", max );
+      pos = strlen(msg);
+      max = MAX_MSG_LEN - pos;
+
+    }
     else if ( openCmd == 2 ) {
 
       msg[0] = (char) CONTROL;
@@ -1598,6 +1670,7 @@ int *portNumPtr = (int *) thread_get_app_data( h );
           break;
 
         case CONTROL:
+	case PUT:
 
           stat = thread_lock_master( h );
 
@@ -1779,6 +1852,8 @@ char *tk, *buf1;
 
       if ( argv[n][0] == '-' ) {
 
+        //fprintf( stderr, "argv[%-d] = %s\n", n, argv[n] );
+
         if ( strcmp( argv[n], global_str9 ) == 0 ) {
           *local = 1;
         }
@@ -1849,7 +1924,13 @@ char *tk, *buf1;
           *local = 0;
           *openCmd = 2; // control named window
 	}
-	else if ( strcmp( argv[n], global_str140 ) == 0 ) { // print
+	else if ( strcmp( argv[n], global_str146 ) == 0 ) { // put
+	  *oneInstance = 1;
+          *server = 1;
+          *local = 0;
+          *openCmd = 3; // control named window
+	}
+	else if ( strcmp( argv[n], global_str140 ) == 0 ) { // xwdsnap
 	  *oneInstance = 1;
           *server = 1;
           *local = 0;
@@ -2892,6 +2973,30 @@ int shutdownTry = 200; // aprox 10 seconds
                   break;
 		}
                 first = first->flink;
+	      }
+
+	    }
+	    else if ( strcmp( tk, "*PUT*" ) == 0 ) {
+
+	      //fprintf( stderr, "PUT\n" );
+
+              needConnect = 0;
+
+	      int more = 1;
+	      while ( more ) {
+                tk = strtok_r( NULL, "|", &buf1 ); // dsp
+                //if ( tk ) fprintf( stderr, "tk = %s\n", tk );
+                if ( strcmp( tk, global_str146 ) == 0 ) break; // -put
+                if ( !tk ) more = 0;
+              }
+
+	      if ( more ) {
+                tk = strtok_r( NULL, "|,", &buf1 ); // put cmd
+		while ( tk ) {
+                  //fprintf( stderr, "cmd = %s\n", tk );
+                  doCmdPut( tk );
+                  tk = strtok_r( NULL, "|,", &buf1 ); // put cmd
+		}
 	      }
 
 	    }

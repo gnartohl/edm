@@ -2,7 +2,7 @@
 #define __environment_str 1
 
 
-// global_str145 is last
+// global_str147 is last
 
 #define environment_str1 (char *) "EDMDATAFILES"
 #define environment_str2 (char *) "EDMFILES"
@@ -84,6 +84,7 @@
 #define global_str136 (char *) "-iconify"
 #define global_str138 (char *) "-deiconify"
 #define global_str140 (char *) "-xwdsnap"
+#define global_str146 (char *) "-put"
 #define global_str96 (char *) "-eolc"
 #define global_str98 (char *) "-ro"
 #define global_str100 (char *) "-noscrl"
@@ -142,6 +143,8 @@
 #define global_str139 (char *) "  -deiconify Request edm server to deiconify specified window names\n\n"
 
 #define global_str141 (char *) "  -xwdsnap   Request edm server to raise and snapshot specified window names\n\n"
+
+#define global_str147 (char *) "  -put       Request edm server put values to list of LOC pvs\n             argument is <LOC\\\\<pvname>=<type>:<val>,...> (type=i,d,or s)\n             e.g. -put LOC\\\\pv1=i:123,LOC\\\\pv2=s:test\n             (be mindful of shell requirements: quotes for whitespace, etc.)\n\n"
 
 #define global_str97 (char *)  "  -eolc      Exit when last screen is closed\n\n"
 

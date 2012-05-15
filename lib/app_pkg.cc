@@ -3789,7 +3789,7 @@ int i, numVisible;
   fileCascade = XtVaCreateManagedWidget( "filemenu", xmCascadeButtonWidgetClass,
    menuBar,
    XmNlabelString, menuStr,
-   XmNmnemonic, 'f',
+   XmNmnemonic, XStringToKeysym("f"),
    XmNsubMenuId, filePullDown,
    NULL );
   XmStringFree( menuStr );
@@ -3886,7 +3886,7 @@ int i, numVisible;
   viewCascade = XtVaCreateManagedWidget( "viewmenu", xmCascadeButtonWidgetClass,
    menuBar,
    XmNlabelString, menuStr,
-   XmNmnemonic, 'v',
+   XmNmnemonic, XStringToKeysym("v"),
    XmNsubMenuId, viewPullDown,
    NULL );
   XmStringFree( menuStr );
@@ -3973,7 +3973,7 @@ int i, numVisible;
     pathCascade = XtVaCreateManagedWidget( "pathmenu", xmCascadeButtonWidgetClass,
      menuBar,
      XmNlabelString, menuStr,
-     XmNmnemonic, 'v',
+     XmNmnemonic, XStringToKeysym("p"),
      XmNsubMenuId, pathPullDown,
      NULL );
     XmStringFree( menuStr );
@@ -4011,7 +4011,7 @@ int i, numVisible;
     pathCascade = XtVaCreateManagedWidget( "pathmenu", xmCascadeButtonWidgetClass,
      menuBar,
      XmNlabelString, menuStr,
-     XmNmnemonic, 'v',
+     XmNmnemonic, XStringToKeysym("p"),
      XmNsubMenuId, pathPullDown,
      NULL );
     XmStringFree( menuStr );
@@ -4046,7 +4046,7 @@ int i, numVisible;
   helpCascade = XtVaCreateManagedWidget( "helpmenu", xmCascadeButtonWidgetClass,
    menuBar,
    XmNlabelString, menuStr,
-   XmNmnemonic, 'h',
+   XmNmnemonic, XStringToKeysym("h"),
    XmNsubMenuId, helpPullDown,
    NULL );
   XmStringFree( menuStr );
@@ -4417,6 +4417,8 @@ static void displayParamInfo ( void ) {
 
   fprintf( stderr, global_str141 );
 
+  fprintf( stderr, global_str147 );
+
   fprintf( stderr, global_str97 );
 
   fprintf( stderr, global_str107 );
@@ -4648,6 +4650,8 @@ fileListPtr curFile;
         else if ( strcmp( argv[n], global_str138 ) == 0 ) {
         }
         else if ( strcmp( argv[n], global_str140 ) == 0 ) {
+        }
+        else if ( strcmp( argv[n], global_str146 ) == 0 ) {
         }
         else if ( strcmp( argv[n], global_str86 ) == 0 ) {
           n++; // just ignore, not used here
@@ -5529,7 +5533,8 @@ char controlCmd[31+1];
         ( strcmp( tk, global_str134 ) == 0 ) ||
         ( strcmp( tk, global_str136 ) == 0 ) ||
         ( strcmp( tk, global_str138 ) == 0 ) ||
-        ( strcmp( tk, global_str140 ) == 0 )
+        ( strcmp( tk, global_str140 ) == 0 ) ||
+        ( strcmp( tk, global_str146 ) == 0 )
       ) {
 
         state = GETTING_FILES;
@@ -5576,7 +5581,8 @@ char controlCmd[31+1];
         ( strcmp( tk, global_str134 ) != 0 ) &&
         ( strcmp( tk, global_str136 ) != 0 ) &&
         ( strcmp( tk, global_str138 ) != 0 ) &&
-        ( strcmp( tk, global_str140 ) != 0 )
+        ( strcmp( tk, global_str140 ) != 0 ) &&
+        ( strcmp( tk, global_str146 ) != 0 )
       ) {
 
         extractPosition( tk, filePart, 255, &gotPosition, &posx, &posy );
