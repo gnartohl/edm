@@ -10,7 +10,7 @@ ifdef EPICS_HOST_ARCH
    # Add Debugging
    #USR_CXXFLAGS_Linux += -g -O0
 
-   edm_LIBS += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df 
+   edm_LIBS += cfcaa62e-8199-11d3-a77f-00104b8742df 
    edm_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
 
    edm_LIBS_Linux += Xm Xmu Xt Xp Xtst X11
