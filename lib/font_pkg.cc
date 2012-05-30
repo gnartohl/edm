@@ -1237,16 +1237,18 @@ char **list;
 
         //fprintf( stderr, "checkSingleFontSpec : [%s]\n", fontSpec );
 
-        FontMapType::iterator it = fontMap->begin();
-        while ( it != fontMap->end() ) {
-	  std::string f = it->first;
-	  std::string s = it->second;
-          if ( strcmp( fontSpec, f.c_str() ) == 0 ) {
-            strcpy( fontSpec, s.c_str() );
-	    break;
+        if ( fontMap ) {
+          FontMapType::iterator it = fontMap->begin();
+          while ( it != fontMap->end() ) {
+	    std::string f = it->first;
+	    std::string s = it->second;
+            if ( strcmp( fontSpec, f.c_str() ) == 0 ) {
+              strcpy( fontSpec, s.c_str() );
+	      break;
+	    }
+	    it++;
 	  }
-	  it++;
-	}
+        }
 
         list = XListFonts( display, fontSpec, 1, &n );
         if ( n == 0 ) {
@@ -1530,17 +1532,19 @@ XFontStruct *fs;
 
         useSubstitution = 0;
 
-        FontMapType::iterator it = fontMap->begin();
-        while ( it != fontMap->end() ) {
-	  std::string f = it->first;
-	  std::string s = it->second;
-          if ( strcmp( fontSpec, f.c_str() ) == 0 ) {
-            strcpy( fontSpec, s.c_str() );
-            useSubstitution = 1;
-	    break;
+        if ( fontMap ) {
+          FontMapType::iterator it = fontMap->begin();
+          while ( it != fontMap->end() ) {
+	    std::string f = it->first;
+	    std::string s = it->second;
+            if ( strcmp( fontSpec, f.c_str() ) == 0 ) {
+              strcpy( fontSpec, s.c_str() );
+              useSubstitution = 1;
+	      break;
+	    }
+	    it++;
 	  }
-	  it++;
-	}
+        }
 
         cur = new fontNameListType;
 

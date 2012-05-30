@@ -27,7 +27,11 @@
 #include <fcntl.h>
 #include <math.h>
 #include <sys/time.h>
+
+extern "C"
+{
 #include <regex.h>
+}
 
 #if defined(darwin) || defined(HP_UX)
 	#include <sys/wait.h>
