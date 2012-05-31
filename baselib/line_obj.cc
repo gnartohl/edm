@@ -2136,15 +2136,15 @@ int activeLineClass::drawActiveIfIntersects (
   int x1,
   int y1 ) {
 
+int delta = lineWidth/2;
+
   if ( arrows != ARROW_NONE ) {
+    delta += 6;
+  }
 
-    int delta = lineWidth/2 + 6;
-
-    if ( intersects( x0-delta, y0-delta, x1+delta, y1+delta ) ) {
-      bufInvalidate();
-      drawActive();
-    }
-
+  if ( intersects( x0-delta, y0-delta, x1+delta, y1+delta ) ) {
+    bufInvalidate();
+    drawActive();
   }
 
   return 1;
