@@ -104,7 +104,10 @@ int i;
 int pathListClass::destroy ( void ) {
 
   popdown();
-  if ( shell ) XtDestroyWidget( shell );
+  //if ( shell ) {
+  //  XtDestroyWidget( shell );
+  //  shell = NULL;
+  //}
 
   return 1;
 
