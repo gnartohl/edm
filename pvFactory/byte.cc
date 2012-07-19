@@ -293,7 +293,7 @@ static int endianEnum[2] = {
   nobt = (temp < 1)?1:((temp > 16)?16:temp);
 
   temp = shft;
-  shft = (temp < 0)?0:((temp > 15)?15:temp);
+  shft = (temp < 0)?0:((temp > 31)?31:temp);
   
   updateDimensions();
 
@@ -369,7 +369,7 @@ int edmByteClass::old_createFromFile(FILE *f, char *filename,
   fscanf( f, "%d\n", &temp ); actWin->incLine();
   nobt = (temp < 1)?1:((temp > 16)?16:temp);
   fscanf( f, "%d\n", &temp ); actWin->incLine();
-  shft = (temp < 0)?0:((temp > 15)?15:temp);
+  shft = (temp < 0)?0:((temp > 31)?31:temp);
   
   updateDimensions();
 
@@ -676,7 +676,7 @@ void edmByteClass::edit_update(Widget w, XtPointer client,XtPointer call)
 
     me->theDir = me->bufTheDir;
     me->nobt = (me->bufNobt < 1)?1:((me->bufNobt > 16)?16:me->bufNobt);
-    me->shft = (me->bufShft < 0)?0:((me->bufShft > 15)?15:me->bufShft);
+    me->shft = (me->bufShft < 0)?0:((me->bufShft > 31)?31:me->bufShft);
 
     me->x = me->bufX;
     me->sboxX = me->bufX;

@@ -2273,6 +2273,7 @@ char buf[127+1], tmp[31+1], matrix[63+1], sign[2], *tk, *context;
   stat = avl_get_match( this->fontNameListH, (void *) fontTag,
    (void **) &cur );
   if ( !(stat & 1) ) return 0;
+  if ( !cur ) return 0;
 
   if ( rotation == 0.0 ) {
     strncpy( name, cur->fullName, len );
