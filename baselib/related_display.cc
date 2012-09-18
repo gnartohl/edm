@@ -1761,25 +1761,48 @@ char title[32], *ptr;
    &actWin->appCtx->entryFormH, &actWin->appCtx->largestH,
    title, NULL, NULL, NULL );
 
+  i = 0;
+
   ef.addTextField( relatedDisplayClass_str4, 35, &buf->bufX );
   ef.addTextField( relatedDisplayClass_str5, 35, &buf->bufY );
   ef.addTextField( relatedDisplayClass_str6, 35, &buf->bufW );
   ef.addTextField( relatedDisplayClass_str7, 35, &buf->bufH );
 
-  ef.addTextField( relatedDisplayClass_str36, 35, buf->bufLabel[0], 127 );
   ef.addTextField( relatedDisplayClass_str37, 35, buf->bufDisplayFileName[0],
    127 );
+  fileEntry[i] = ef.getCurItem();
+  ef.addTextField( relatedDisplayClass_str36, 35, buf->bufLabel[0], 127 );
+  labelEntry[i] = ef.getCurItem();
   ef.addTextField( relatedDisplayClass_str26, 35, buf->bufSymbols[0],
    maxSymbolLen );
+  macrosEntry[i] = ef.getCurItem();
   ef.addOption( relatedDisplayClass_str23, relatedDisplayClass_str24,
    &buf->bufReplaceSymbols[0] );
+  modeEntry[i] = ef.getCurItem();
   ef.addToggle( relatedDisplayClass_str25, &buf->bufPropagateMacros[0] );
+  propagateEntry[i] = ef.getCurItem();
   ef.addOption( relatedDisplayClass_str30, relatedDisplayClass_str31,
    &buf->bufSetPostion[0] );
+  positionEntry[i] = ef.getCurItem();
   ef.addTextField( relatedDisplayClass_str32, 35, &buf->bufOfsX );
+  xOfsEntry[i] = ef.getCurItem();
   ef.addTextField( relatedDisplayClass_str33, 35, &buf->bufOfsY );
+  yOfsEntry[i] = ef.getCurItem();
   ef.addToggle( relatedDisplayClass_str20, &buf->bufCloseAction[0] );
+  closeCurEntry[i] = ef.getCurItem();
   ef.addToggle( relatedDisplayClass_str21, &buf->bufAllowDups[0] );
+  dupsAllowedEntry[i] = ef.getCurItem();
+
+  fileEntry[i]->addDependency( labelEntry[i] );
+  fileEntry[i]->addDependency( macrosEntry[i] );
+  fileEntry[i]->addDependency( modeEntry[i] );
+  fileEntry[i]->addDependency( propagateEntry[i] );
+  fileEntry[i]->addDependency( positionEntry[i] );
+  fileEntry[i]->addDependency( xOfsEntry[i] );
+  fileEntry[i]->addDependency( yOfsEntry[i] );
+  fileEntry[i]->addDependency( closeCurEntry[i] );
+  fileEntry[i]->addDependency( dupsAllowedEntry[i] );
+  fileEntry[i]->addDependencyCallbacks();
 
   ef.addEmbeddedEf( relatedDisplayClass_str14, "...", &ef1 );
 
@@ -1792,30 +1815,47 @@ char title[32], *ptr;
   for ( i=1; i<maxDsps; i++ ) {
 
     ef1->beginLeftSubForm();
-    ef1->addTextField( relatedDisplayClass_str38, 35, buf->bufLabel[i], 127 );
-    ef1->addLabel( relatedDisplayClass_str39 );
-    ef1->addTextField( "", 35, buf->bufDisplayFileName[i], 127 );
+    ef1->addTextField( relatedDisplayClass_str39, 35, buf->bufDisplayFileName[i], 127 );
+    fileEntry[i] = ef1->getCurItem();
+    ef1->addLabel( relatedDisplayClass_str38 );
+    ef1->addTextField( "", 35, buf->bufLabel[i], 127 );
+    labelEntry[i] = ef1->getCurItem();
     ef1->addLabel( relatedDisplayClass_str40 );
     ef1->addTextField( "", 35, buf->bufSymbols[i], maxSymbolLen );
+    macrosEntry[i] = ef1->getCurItem();
     ef1->endSubForm();
 
     ef1->beginLeftSubForm();
     ef1->addLabel( relatedDisplayClass_str41 );
     ef1->addOption( "", relatedDisplayClass_str24,
      &buf->bufReplaceSymbols[i] );
+    modeEntry[i] = ef1->getCurItem();
     ef1->addLabel( " " );
     ef1->addToggle( " ", &buf->bufPropagateMacros[i] );
+    propagateEntry[i] = ef1->getCurItem();
     ef1->addLabel( relatedDisplayClass_str42 );
     ef1->addLabel( relatedDisplayClass_str30 );
     ef1->addOption( " ", relatedDisplayClass_str31, &buf->bufSetPostion[i] );
+    positionEntry[i] = ef1->getCurItem();
     ef1->addLabel( " " );
     ef1->addToggle( " ", &buf->bufCloseAction[i] );
+    closeCurEntry[i] = ef1->getCurItem();
     ef1->addLabel( relatedDisplayClass_str35 );
     ef1->addToggle( " ", &buf->bufAllowDups[i] );
+    dupsAllowedEntry[i] = ef1->getCurItem();
     ef1->addLabel( relatedDisplayClass_str43 );
     //ef1->addToggle( " ", &buf->bufCascade[i] );
     //ef1->addLabel( relatedDisplayClass_str22 );
     ef1->endSubForm();
+
+    fileEntry[i]->addDependency( labelEntry[i] );
+    fileEntry[i]->addDependency( macrosEntry[i] );
+    fileEntry[i]->addDependency( modeEntry[i] );
+    fileEntry[i]->addDependency( propagateEntry[i] );
+    fileEntry[i]->addDependency( positionEntry[i] );
+    fileEntry[i]->addDependency( closeCurEntry[i] );
+    fileEntry[i]->addDependency( dupsAllowedEntry[i] );
+    fileEntry[i]->addDependencyCallbacks();
 
   }
 

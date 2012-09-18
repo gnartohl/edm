@@ -22,7 +22,7 @@
 #include "app_pkg.h"
 #include "act_win.h"
 
-static void doBlink (
+static void rbtc_doBlink (
   void *ptr
 ) {
 
@@ -41,7 +41,7 @@ activeRampButtonClass *rbto = (activeRampButtonClass *) ptr;
 
 }
 
-static void unconnectedTimeout (
+static void rbtc_unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id )
 {
@@ -589,7 +589,7 @@ activeRampButtonClass::activeRampButtonClass ( void ) {
   activeMode = 0;
   eBuf = NULL;
 
-  setBlinkFunction( (void *) doBlink );
+  setBlinkFunction( (void *) rbtc_doBlink );
 
 }
 
@@ -647,7 +647,7 @@ activeGraphicClass *rbto = (activeGraphicClass *) this;
 
   connection.setMaxPvs( 5 );
 
-  setBlinkFunction( (void *) doBlink );
+  setBlinkFunction( (void *) rbtc_doBlink );
 
   doAccSubs( destPvExpString );
   doAccSubs( finalPvExpString );
@@ -1441,7 +1441,7 @@ int opStat;
 
       if ( !unconnectedTimer ) {
         unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
-         2000, unconnectedTimeout, this );
+         2000, rbtc_unconnectedTimeout, this );
       }
 
       opStat = 1;

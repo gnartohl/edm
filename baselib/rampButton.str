@@ -30,6 +30,6 @@
 #define activeRampButtonClass_str32 (char *) "and <"
 #define activeRampButtonClass_str33 (char *) "Color PV"
 #define activeRampButtonClass_str34 (char *) "Ramp State PV"
-#define activeRampButtonClass_str35 (char *) "\nWARNING: Ramping stopped on window close\n"
+#define activeRampButtonClass_str35 (char *) "\nNOTE: Ramping stopped on window deactivate\n"
 
 #endif

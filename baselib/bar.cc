@@ -1253,8 +1253,8 @@ char title[32], *ptr;
   limitsFromDbEntry->addDependencyCallbacks();
 
   ef.addTextField( activeBarClass_str29, 35, bufBarOriginX, 15 );
-  scaleOriginEntry = ef.getCurItem();
-  showScaleEntry->addDependency( scaleOriginEntry );
+  //scaleOriginEntry = ef.getCurItem();
+  //showScaleEntry->addDependency( scaleOriginEntry );
   showScaleEntry->addDependencyCallbacks();
 
   ef.addOption( activeBarClass_str44, activeBarClass_str45,
