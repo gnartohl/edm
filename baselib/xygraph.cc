@@ -1762,6 +1762,7 @@ xyGraphClass *xyo = (xyGraphClass *) userarg;
 int i, ii, yi;
 double dxValue, dyValue;
 double scaledX, scaledY;
+double yZero;
 int ctl;
 
   xyo->actWin->appCtx->proc->lock();
@@ -1878,6 +1879,11 @@ int ctl;
            xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
           scaledY = dclamp( scaledY );
 
+          yZero = xyo->plotAreaH -
+           rint( ( 0.0 - xyo->curY1Min[yi] ) *
+           xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+          yZero = dclamp( yZero );
+
           // There are two views of pv types, Type and specificType; this uses
           // specificType
           switch ( xyo->xPvType[i] ) {
@@ -1954,7 +1960,7 @@ int ctl;
            xyo->xFactor[i] + xyo->xOffset[i] );
           scaledX = dclamp( scaledX );
 
-          xyo->addPoint( dxValue, scaledX, scaledY, i );
+          xyo->addPoint( dxValue, scaledX, scaledY, yZero, i );
 
           xyo->yArrayGotValue[i] = xyo->xArrayGotValue[i] = 0;
 
@@ -2049,11 +2055,16 @@ int ctl;
              xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
             scaledY = dclamp( scaledY );
 
+            yZero = xyo->plotAreaH -
+             rint( ( 0.0 - xyo->curY1Min[yi] ) *
+             xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+            yZero = dclamp( yZero );
+
             scaledX = rint( ( dxValue - xyo->curXMin ) *
              xyo->xFactor[i] + xyo->xOffset[i] );
             scaledX = dclamp( scaledX );
 
-            xyo->addPoint( dxValue, scaledX, scaledY, i );
+            xyo->addPoint( dxValue, scaledX, scaledY, yZero, i );
 
             xyo->yArrayGotValue[i] = xyo->xArrayGotValue[i] = 0;
 
@@ -2147,6 +2158,7 @@ int i =  ptr->index;
 int ii, yi;
 double dxValue, dyValue;
 double scaledX, scaledY;
+double yZero;
 int ctl;
 
   if ( !xyo->activeMode ) return;
@@ -2471,6 +2483,11 @@ int ctl;
          xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
         scaledY = dclamp( scaledY );
 
+        yZero = xyo->plotAreaH -
+         rint( ( 0.0 - xyo->curY1Min[yi] ) *
+         xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+        yZero = dclamp( yZero );
+
         // There are two views of pv types, Type and specificType; this uses
         // specificType
         switch ( xyo->xPvType[i] ) {
@@ -2550,7 +2567,7 @@ int ctl;
          xyo->xFactor[i] + xyo->xOffset[i] );
         scaledX = dclamp( scaledX );
 
-        xyo->addPoint( dxValue, scaledX, scaledY, i );
+        xyo->addPoint( dxValue, scaledX, scaledY, yZero, i );
 
         xyo->yArrayGotValue[i] = xyo->xArrayGotValue[i] = 0;
 
@@ -2698,6 +2715,7 @@ xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 int ii, i =  ptr->index;
 double dxValue, dyValue;
 double scaledX, scaledY;
+double yZero;
 int yi;
 int ctl;
 
@@ -3023,6 +3041,11 @@ int ctl;
          xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
         scaledY = dclamp( scaledY );
 
+        yZero = xyo->plotAreaH -
+         rint( ( 0.0 - xyo->curY1Min[yi] ) *
+         xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+        yZero = dclamp( yZero );
+
         // There are two views of pv types, Type and specificType; this uses
         // specificType
         switch ( xyo->xPvType[i] ) {
@@ -3101,7 +3124,7 @@ int ctl;
          xyo->xFactor[i] + xyo->xOffset[i] );
         scaledX = dclamp( scaledX );
 
-        xyo->addPoint( dxValue, scaledX, scaledY, i );
+        xyo->addPoint( dxValue, scaledX, scaledY, yZero, i );
 
         xyo->yArrayGotValue[i] = xyo->xArrayGotValue[i] = 0;
 
@@ -3161,6 +3184,7 @@ int ii, yi, i =  ptr->index;
 int sec, nsec;
 double dxValue=0., dyValue;
 double scaledX, scaledY;
+double yZero;
 int ctl;
 
   if ( !xyo->activeMode ) return;
@@ -3525,11 +3549,16 @@ int ctl;
          xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
         scaledY = dclamp( scaledY );
 
+        yZero = xyo->plotAreaH -
+         rint( ( 0.0 - xyo->curY1Min[yi] ) *
+         xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+        yZero = dclamp( yZero );
+
         scaledX = rint( ( dxValue - xyo->curXMin ) *
          xyo->xFactor[i] + xyo->xOffset[i] );
         scaledX = dclamp( scaledX );
 
-        xyo->addPoint( dxValue, scaledX, scaledY, i );
+        xyo->addPoint( dxValue, scaledX, scaledY, yZero, i );
 
         xyo->yArrayGotValue[i] = xyo->xArrayGotValue[i] = 0;
 
@@ -6035,6 +6064,7 @@ void xyGraphClass::regenBuffer ( void ) {
 int i, ii, yi, count;
 double dxValue, dyValue;
 double scaledX, scaledY;
+double yZero;
 int ctl;
 
   count = 0;
@@ -6116,6 +6146,11 @@ int ctl;
        y1Factor[yi][i] - y1Offset[yi][i] );
       scaledY = dclamp( scaledY );
 
+      yZero = plotAreaH -
+       rint( ( 0.0 - curY1Min[yi] ) *
+       y1Factor[yi][i] - y1Offset[yi][i] );
+      yZero = dclamp( yZero );
+
       if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 
         dxValue = ( (double *) xPvData[i] )[ii];
@@ -6182,7 +6217,7 @@ int ctl;
        xFactor[i] + xOffset[i] );
       scaledX = dclamp( scaledX );
 
-      addPoint( dxValue, scaledX, scaledY, i );
+      addPoint( dxValue, scaledX, scaledY, yZero, i );
 
       //yArrayGotValue[i] = xArrayGotValue[i] = 0;
       //printf( "addPoint 6 - reset flags\n" );
@@ -6208,6 +6243,7 @@ void xyGraphClass::genChronoVector (
 int ii, iii, yi, needRescale;
 double dxValue, dyValue;
 double scaledX, scaledY;
+double yZero;
 char format[31+1];
 int ctl;
 
@@ -6280,6 +6316,11 @@ int ctl;
      y1Factor[yi][i] - y1Offset[yi][i] );
     scaledY = dclamp( scaledY );
 
+    yZero = plotAreaH -
+     rint( ( 0.0 - curY1Min[yi] ) *
+     y1Factor[yi][i] - y1Offset[yi][i] );
+    yZero = dclamp( yZero );
+
 #if 0
     // There are two views of pv types, Type and specificType; this uses
     // specificType
@@ -6342,7 +6383,7 @@ int ctl;
      xFactor[i] + xOffset[i] );
     scaledX = dclamp( scaledX );
 
-    addPoint( dxValue, scaledX, scaledY, i );
+    addPoint( dxValue, scaledX, scaledY, yZero, i );
 
     if ( xAxisSource == XYGC_K_AUTOSCALE ) {
       if ( kpXMinEfDouble.isNull() ) {
@@ -6477,6 +6518,7 @@ void xyGraphClass::genXyVector (
 int ii, iii, yi, needRescale, n;
 double dxValue, dyValue;
 double scaledX, scaledY;
+double yZero;
 // Ron Chestnut changes 3/2/2007
  double squash;
 double new_min_y = -1., new_max_y = 1.;
@@ -6563,6 +6605,11 @@ int ctl;
      y1Factor[yi][i] - y1Offset[yi][i] );
     scaledY = dclamp( scaledY );
 
+    yZero = plotAreaH -
+     rint( ( 0.0 - curY1Min[yi] ) *
+     y1Factor[yi][i] - y1Offset[yi][i] );
+    yZero = dclamp( yZero );
+
     // There are two views of pv types, Type and specificType; this uses
     // specificType
     switch ( xPvType[i] ) {
@@ -6620,7 +6667,7 @@ int ctl;
      xFactor[i] + xOffset[i] );
     scaledX = dclamp( scaledX );
 
-    addPoint( dxValue, scaledX, scaledY, i );
+    addPoint( dxValue, scaledX, scaledY, yZero, i );
 
     // =================================================
     // DO NOT AUTO SCALE BOTH DIRECTIONS
@@ -8945,6 +8992,7 @@ int i, ii, nc, ni, nu, nvu, nru, nr, ne, nd, ntcc, ntu, nrstc, nrst, ntrgc,
  ny1rescl[NUM_Y_AXES], num, maxDim;
 double dyValue, dxValue, range, oneMax, oldXMin, xmin, xmax, ymin[2], ymax[2],
  scaledX, scaledY;
+double yZero;
 char format[31+1];
 int yi, yScaleIndex, allChronological;
 
@@ -9799,6 +9847,11 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
                y1Factor[yi][i] - y1Offset[yi][i] );
               scaledY = dclamp( scaledY );
 
+              yZero = plotAreaH -
+               rint( ( 0.0 - curY1Min[yi] ) *
+               y1Factor[yi][i] - y1Offset[yi][i] );
+              yZero = dclamp( yZero );
+
               if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 
                 dxValue = ( (double *) xPvData[i] )[ii];
@@ -9865,7 +9918,7 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
                xFactor[i] + xOffset[i] );
               scaledX = dclamp( scaledX );
 
-              addPoint( dxValue, scaledX, scaledY, i );
+              addPoint( dxValue, scaledX, scaledY, yZero, i );
 
               ii++;
               if ( ii > plotBufSize[i] ) {
@@ -11156,6 +11209,7 @@ void xyGraphClass::addPoint (
   double oneX,
   double dScaledX,
   double dScaledY,
+  double scaledYZero,
   int trace
 ) {
 
@@ -11178,6 +11232,7 @@ short scaledX, scaledY;
 
     plotInfo[trace][i].firstX = scaledX;
     plotInfo[trace][i].firstY = scaledY;
+    plotInfo[trace][i].yZero = scaledYZero;
 
     i++;
     if ( i >= plotBufSize[trace] ) {// use plotBufSize here
@@ -11199,6 +11254,8 @@ short scaledX, scaledY;
     if ( ( scaledX < plotAreaX ) || ( scaledX > plotInfoSize[trace] ) ) {
       return;
     }
+
+    plotInfo[trace][scaledX].yZero = scaledYZero;
 
     if ( plotInfo[trace][scaledX].n == 0 ) {
 
@@ -11295,7 +11352,8 @@ double n;
         prevY = plotInfo[trace][i].firstY;
 
         plotBuf[trace][npts].x = prevX;
-        plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
+        plotBuf[trace][npts].y = plotInfo[trace][i].yZero;
+        //plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
         npts++;
 
         plotBuf[trace][npts].x = prevX;
@@ -11303,7 +11361,8 @@ double n;
         npts++;
 
         plotBuf[trace][npts].x = prevX;
-        plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
+        plotBuf[trace][npts].y = plotInfo[trace][i].yZero;
+        //plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
         npts++;
 
       }
@@ -11329,7 +11388,8 @@ double n;
           prevY = curY;
 
           plotBuf[trace][npts].x = curX;
-          plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
+          plotBuf[trace][npts].y = plotInfo[trace][i].yZero;
+          //plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
           plotBuf[trace][npts].x = curX;
@@ -11337,7 +11397,8 @@ double n;
           npts++;
 
           plotBuf[trace][npts].x = curX;
-          plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
+          plotBuf[trace][npts].y = plotInfo[trace][i].yZero;
+          //plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
         }
@@ -11441,7 +11502,8 @@ double n;
         if ( plotInfo[trace][i].n == 1 ) {
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
-          plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
+          plotBuf[trace][npts].y = plotInfo[trace][i].yZero;
+          //plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
@@ -11449,14 +11511,16 @@ double n;
           npts++;
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
-          plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
+          plotBuf[trace][npts].y = plotInfo[trace][i].yZero;
+          //plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
         }
         else if ( plotInfo[trace][i].n == 2 ) {
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
-          plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
+          plotBuf[trace][npts].y = plotInfo[trace][i].yZero;
+          //plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
@@ -11468,14 +11532,16 @@ double n;
           npts++;
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
-          plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
+          plotBuf[trace][npts].y = plotInfo[trace][i].yZero;
+          //plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
         }
         else if ( plotInfo[trace][i].n > 2 ) {
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
-          plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
+          plotBuf[trace][npts].y = plotInfo[trace][i].yZero;
+          //plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
@@ -11483,7 +11549,8 @@ double n;
           npts++;
 
           plotBuf[trace][npts].x = plotInfo[trace][i].firstX;
-          plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
+          plotBuf[trace][npts].y = plotInfo[trace][i].yZero;
+          //plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
         }

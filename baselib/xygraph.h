@@ -103,7 +103,7 @@
 #define XYGC_K_PLOT_SORTED_X_MODE 1
 
 #define XYGC_MAJOR_VERSION 4
-#define XYGC_MINOR_VERSION 7
+#define XYGC_MINOR_VERSION 8
 #define XYGC_RELEASE 0
 
 #ifdef __xygraph_cc
@@ -774,6 +774,7 @@ typedef struct plotInfoTag {
   short lastY;
   short minY;
   short maxY;
+  short yZero;
 } plotInfoType, *plotInfoPtr;
 
 plotInfoPtr plotInfo[XYGC_K_MAX_TRACES];
@@ -1152,6 +1153,7 @@ void addPoint (
   double oneX,
   double scaledX,
   double scaledY,
+  double scaledYZero,
   int trace
 );
 
