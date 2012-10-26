@@ -30,7 +30,7 @@
 #define BTC_K_COLORMODE_ALARM 1
 
 #define BTC_MAJOR_VERSION 4
-#define BTC_MINOR_VERSION 0
+#define BTC_MINOR_VERSION 1
 #define BTC_RELEASE 0
 
 #define BTC_K_LITERAL 1
@@ -235,7 +235,8 @@ entryListBase *rdPvEntry, *rdPvBitEntry;
 
 entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry;
 
-short controlV, curControlV, readV, curReadV;
+//short controlV, curControlV, readV, curReadV;
+int controlV, curControlV, readV, curReadV;
 
 int needCtlConnectInit, needCtlInfoInit, needCtlRefresh;
 int needReadConnectInit, needReadInfoInit, needReadRefresh;

@@ -29,7 +29,9 @@ int pvConnectionClass::findPv (
   int i;
 
   for ( i=0; i<numPvs; i++ ) {
-    if ( id[i] == Pv ) return i;
+    if ( id[i] == Pv ) {
+      return i;
+    }
   }
 
   return -1;
@@ -87,7 +89,9 @@ int i;
   i = findPv( Pv );
   if ( i == -1 ) {
     i = addPvToList( Pv );
-    if ( i == -1 ) return 0; // error
+    if ( i == -1 ) {
+      return 0; // error
+    }
   }
 
   connectionMask.reset( bit[i] );
@@ -102,10 +106,12 @@ int pvConnectionClass::setPvDisconnected (
 
 int i;
 
+  // if we are disconnecting a pv not yet in the list, simply return
+  // this may happen for calc pvs
+
   i = findPv( Pv );
   if ( i == -1 ) {
-    i = addPvToList( Pv );
-    if ( i == -1 ) return 0; // error
+    return 1;
   }
 
   connectionMask.set( bit[i] );

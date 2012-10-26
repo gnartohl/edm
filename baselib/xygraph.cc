@@ -2674,8 +2674,7 @@ xyGraphClass *xyo = (xyGraphClass *) ptr->objPtr;
 
     if ( !xyo->connection.pvsConnected() ) {
 
-      xyo->connection.setPvConnected(
-       (void *) ( ptr->index + XYGC_K_MAX_TRACES ) );
+      xyo->connection.setPvConnected( (void *) ( ptr->index ) );
 
       if ( xyo->connection.pvsConnected() ) {
 
