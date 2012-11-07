@@ -19,7 +19,7 @@
 #define activeXTextDspClass_str16 (char *) "Bg Color"
 #define activeXTextDspClass_str17 (char *) "Use Display Bg"
 #define activeXTextDspClass_str18 (char *) "Display Format"
-#define activeXTextDspClass_str19 (char *) "Default|Float|Exponential|Decimal|Hex|String"
+#define activeXTextDspClass_str19 (char *) "Default|Float|GFloat|Exponential|Decimal|Hex|String"
 #define activeXTextDspClass_str20 (char *) "Precision From DB"
 #define activeXTextDspClass_str21 (char *) "Precision"
 #define activeXTextDspClass_str22 (char *) "PV"

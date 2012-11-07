@@ -2723,21 +2723,23 @@ static int nullCondEnum[3] = {
 };
 
 int formatTypeDefault = 0;
-static char *formatTypeEnumStr[6] = {
+static char *formatTypeEnumStr[7] = {
   "default",
   "float",
+  "gfloat",
   "exponential",
   "decimal",
   "hex",
   "string"
 };
-static int formatTypeEnum[6] = {
+static int formatTypeEnum[7] = {
   0,
   1,
   2,
   3,
   4,
-  5
+  5,
+  6
 };
 
 int fileCompFullPath = 0;
@@ -2780,7 +2782,7 @@ static int objTypeEnum[4] = {
   tag.loadW( "w", &w );
   tag.loadW( "h", &h );
   tag.loadW( "controlPv", &pvExpStr, emptyStr );
-  tag.loadW( "format", 6, formatTypeEnumStr, formatTypeEnum, &formatType,
+  tag.loadW( "format", 7, formatTypeEnumStr, formatTypeEnum, &formatType,
    &formatTypeDefault );
   tag.loadW( "font", fontTag );
   tag.loadW( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
@@ -2984,21 +2986,23 @@ static int nullCondEnum[3] = {
 };
 
 int formatTypeDefault = 0;
-static char *formatTypeEnumStr[6] = {
+static char *formatTypeEnumStr[7] = {
   "default",
   "float",
+  "gfloat",
   "exponential",
   "decimal",
   "hex",
   "string"
 };
-static int formatTypeEnum[6] = {
+static int formatTypeEnum[7] = {
   0,
   1,
   2,
   3,
   4,
-  5
+  5,
+  6
 };
 
 int fileCompFullPath = 0;
@@ -3040,7 +3044,7 @@ static int objTypeEnum[4] = {
   tag.loadR( "w", &w );
   tag.loadR( "h", &h );
   tag.loadR( "controlPv", &pvExpStr, emptyStr );
-  tag.loadR( "format", 6, formatTypeEnumStr, formatTypeEnum, &formatType,
+  tag.loadR( "format", 7, formatTypeEnumStr, formatTypeEnum, &formatType,
    &formatTypeDefault );
   tag.loadR( "font", 63, fontTag );
   tag.loadR( "fontAlign", 3, alignEnumStr, alignEnum, &alignment, &left );
@@ -3247,6 +3251,10 @@ int tmpFgColor, tmpSvalColor;
   }
 
   fscanf( f, "%d\n", &formatType ); actWin->incLine();
+  if ( formatType > 1 ) {
+    formatType++;
+  }
+
   fscanf( f, "%d\n", &colorMode ); actWin->incLine();
   fscanf( f, "%d\n", &editable ); actWin->incLine();
 
@@ -5463,6 +5471,9 @@ char locFieldLenInfo[7+1];
           case XTDC_K_FORMAT_EXPONENTIAL:
             sprintf( format, "%%%s.%-de", locFieldLenInfo, precision );
             break;
+          case XTDC_K_FORMAT_GFLOAT:
+            sprintf( format, "%%%s.%-dg", locFieldLenInfo, precision );
+            break;
           default:
             sprintf( format, "%%%s.%-df", locFieldLenInfo, precision );
             break;
@@ -5492,6 +5503,9 @@ char locFieldLenInfo[7+1];
             break;
           case XTDC_K_FORMAT_EXPONENTIAL:
             sprintf( format, "%%%s.%-de", locFieldLenInfo, precision );
+            break;
+          case XTDC_K_FORMAT_GFLOAT:
+            sprintf( format, "%%%s.%-dg", locFieldLenInfo, precision );
             break;
           default:
             sprintf( format, "%%%s.%-df", locFieldLenInfo, precision );
