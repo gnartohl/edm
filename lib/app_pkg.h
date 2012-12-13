@@ -520,7 +520,7 @@ appContextClass (
 
 void closeDownAppCtx ( void );
 
-void getFilePaths ( void );
+int getFilePaths ( void );
 
 void expandFileName (
   int index,
