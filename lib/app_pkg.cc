@@ -46,7 +46,7 @@ int result;
 
   result = 0; // success
 
-  envPtr = getenv( "EDMCHECKDISPLAY" );
+  envPtr = getenv( environment_str37 );
   if ( envPtr ) {
 
     if ( !dspName ) return result;
@@ -4520,6 +4520,14 @@ static void displayParamInfo ( void ) {
   fprintf( stderr, "\n" );
   fprintf( stderr, global_str145 );
   fprintf( stderr, "\n" );
+  fprintf( stderr, global_str149 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str150 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str151 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str152 );
+  fprintf( stderr, "\n" );
 
 }
 
@@ -5050,6 +5058,20 @@ err_return:
   //largestH = displayH;
 
   if (largestH <= 0) largestH += displayH;
+
+  {
+    char *envPtr = getenv( environment_str38 );
+    if ( envPtr ) {
+      char *err;
+      int maxPropDialogH = strtol( envPtr, &err, 0 );
+      if ( *err == '\0' ) {
+        if ( maxPropDialogH > 0 ) {
+          if ( maxPropDialogH < 400 ) maxPropDialogH = 400;
+          if ( largestH > maxPropDialogH ) largestH = maxPropDialogH;
+        }
+      }
+    }
+  }
 
   msgBox.create( appTop, "msgbox", 0, 0, 50000, NULL, NULL );
 
@@ -6990,6 +7012,36 @@ char *envPtr, text[255+1];
   text[255] = 0;
   postMessage( text );
 
+  envPtr = getenv( environment_str36 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str36, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str36 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str37 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str37, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str37 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str38 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str38, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str38 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
   // site specific vars
 
   snprintf( text, 255, " " );
@@ -6997,12 +7049,12 @@ char *envPtr, text[255+1];
   snprintf( text, 255, "  (Site Related)" );
   postMessage( text );
 
-  envPtr = getenv( "EDMRDDHS" );
+  envPtr = getenv( environment_str40 ); // "EDMRDDHS"
   if ( envPtr ) {
-    snprintf( text, 255, "  %s=[%s]", "EDMRDDHS", envPtr );
+    snprintf( text, 255, "  %s=[%s]", environment_str40, envPtr );
   }
   else {
-    snprintf( text, 255, "  %s=[]", "EDMRDDHS" );
+    snprintf( text, 255, "  %s=[]", environment_str40 );
   }
   text[255] = 0;
   postMessage( text );
@@ -7061,6 +7113,16 @@ char *envPtr, text[255+1];
   }
   else {
     snprintf( text, 255, "  %s=[]", environment_str31 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str35 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str35, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str35 );
   }
   text[255] = 0;
   postMessage( text );

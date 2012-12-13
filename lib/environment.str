@@ -2,7 +2,7 @@
 #define __environment_str 1
 
 
-// global_str147 is last
+// global_str152 is last
 
 #define environment_str1 (char *) "EDMDATAFILES"
 #define environment_str2 (char *) "EDMFILES"
@@ -40,6 +40,11 @@
 #define environment_str34 (char *) "EDMAPPTOPPARENT"
 #define environment_str35 (char *) "EDMIGNOREEXEC"
 #define environment_str36 (char *) "EDMNOAUTOINC"
+#define environment_str37 (char *) "EDMCHECKDISPLAY"
+#define environment_str38 (char *) "EDMMAXPROPDIALOGH"
+
+// Site Related
+#define environment_str40 (char *) "EDMRDDHS"
 
 #define global_str1 (char *) "Symbol"
 #define global_str2 (char *) "Monitors"
@@ -210,6 +215,12 @@
 #define global_str143 (char *) "EDMDEFEXT\t\tSet default file extension (normally .edl)\n"
 #define global_str144 (char *) "EDMEXPIRECACHE\t\tSet cache expiration in seconds for remote access\n"
 #define global_str145 (char *) "EDMAPPTOPPARENT\t\tSet parent of keypad widgets to app top\n"
+
+// #define global_str148 (char *) "EDMIGNOREEXEC\t\tIf set, edm ignores the iconic state of a window (diagnostic)\n"
+#define global_str149 (char *) "EDMNOAUTOINC\t\tIf set, edm does not auto-increment the $(#) macro\n"
+#define global_str150 (char *) "EDMCHECKDISPLAY\t\tPoints to absolute path of an executable which checks\n\t\t\tfor access to ssh forwarded X displays\n"
+#define global_str151 (char *) "EDMMAXPROPDIALOGH\tSets max height of the property dialog box\n"
+#define global_str152 (char *) "CALC_ENV\t\tSets name of calculation file; if unset, calc.list is used\n"
 
 #define global_str55 (char *)  " (-h displays help)\n"
 #define global_str56 (char *)  "-display|"
