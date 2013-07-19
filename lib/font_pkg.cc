@@ -577,7 +577,7 @@ char *tk, *ctx, spec[127+1], name[127+1], family[63+1], weight[31+1],
 
   strncpy( spec, list[0], 127 );
 
-  if ( debugMode() == 1000 ) fprintf( stderr, "Font Spec: [%s]\n", spec );
+  if ( ( debugMode() == 1000 ) || ( debugMode() == 1001 ) ) fprintf( stderr, "1 Font Spec: [%s]\n", spec );
 
   ctx = NULL;
   tk = strtok_r( spec, "-", &ctx );
@@ -707,7 +707,7 @@ char spec[127+1], name[127+1], foundary[63+1], family[63+1], weight[63+1],
 
   strncpy( spec, list[0], 127 );
 
-  if ( debugMode() == 1000 ) fprintf( stderr, "Font Spec: [%s]\n", spec );
+  if ( ( debugMode() == 1000 ) || ( debugMode() == 1001 ) ) fprintf( stderr, "2 Font Spec: [%s]\n", spec );
 
   stat = parseFontSpec( spec, foundary, family, weight, slant, size );
 
@@ -810,7 +810,7 @@ char spec[127+1], name[127+1], foundary[63+1], family[63+1], weight[63+1],
 
   strncpy( spec, list[0], 127 );
 
-  if ( debugMode() == 1000 ) fprintf( stderr, "Font Spec: [%s]\n", spec );
+  if ( ( debugMode() == 1000 ) || ( debugMode() == 1001 ) ) fprintf( stderr, "3 Font Spec: [%s]\n", spec );
 
   stat = parseFontSpec( spec, foundary, family, weight, slant, size );
 
@@ -898,7 +898,7 @@ char *tk, *ctx, spec[127+1], name[127+1], family[63+1], weight[31+1],
 
   strncpy( spec, list[0], 127 );
 
-//   fprintf( stderr, "Spec is [%s]\n", spec );
+  if ( ( debugMode() == 1000 ) || ( debugMode() == 1001 ) ) fprintf( stderr, "resolveOneFont - Spec: [%s]\n", spec );
 
   ctx = NULL;
   tk = strtok_r( spec, "-", &ctx );
@@ -1242,7 +1242,14 @@ char **list;
           while ( it != fontMap->end() ) {
 	    std::string f = it->first;
 	    std::string s = it->second;
+            if ( debugMode() == 1001 ) {
+              fprintf( stderr, "1 Check [%s] against potential sub [%s]\n", fontSpec, f.c_str() );
+            }
             if ( strcmp( fontSpec, f.c_str() ) == 0 ) {
+              if ( ( debugMode() == 1000 ) || ( debugMode() == 1001 ) ) {
+                fprintf( stderr, "  1 Substitution match - perform font substitution:\n" );
+                fprintf( stderr, "    [%s] will be replaced with [%s]\n", fontSpec, s.c_str() );
+              }
               strcpy( fontSpec, s.c_str() );
 	      break;
 	    }
@@ -1537,7 +1544,14 @@ XFontStruct *fs;
           while ( it != fontMap->end() ) {
 	    std::string f = it->first;
 	    std::string s = it->second;
+            if ( debugMode() == 1001 ) {
+              fprintf( stderr, "2 Check [%s] against potential sub [%s]\n", fontSpec, f.c_str() );
+            }
             if ( strcmp( fontSpec, f.c_str() ) == 0 ) {
+              if ( ( debugMode() == 1000 ) || ( debugMode() == 1001 ) ) {
+                fprintf( stderr, "  2 Substitution match - perform font substitution:\n" );
+                fprintf( stderr, "    [%s] will be replaced with [%s]\n", fontSpec, s.c_str() );
+              }
               strcpy( fontSpec, s.c_str() );
               useSubstitution = 1;
 	      break;
@@ -1673,7 +1687,7 @@ int foundBrace = 0;
          major, minor, release );
         if ( stat & 1 ) {
 
-          if ( debugMode() == 1000 ) fprintf( stderr, "Using font: %s", line );
+          if ( ( debugMode() == 1000 ) || ( debugMode() == 1001 ) ) fprintf( stderr, "Using font: %s", line );
           stat = getSingleFontSpec( app, d, userFontFamilyName, line,
            major, minor, release );
 
@@ -1683,7 +1697,7 @@ int foundBrace = 0;
 
         }
 	else {
-          if ( debugMode() == 1000 ) fprintf( stderr, "Font not found: %s", line );
+          if ( ( debugMode() == 1000 ) || ( debugMode() == 1001 ) ) fprintf( stderr, "Font not found: %s", line );
 	}
 
       }
@@ -1701,7 +1715,7 @@ int foundBrace = 0;
   stat = checkBestSingleFontSpec( app, d, userFontFamilyName, lastLine,
    major, minor, release );
   if ( stat & 1 ) {
-    if ( debugMode() == 1000 ) fprintf( stderr, "Using font (with substitutions): %s",
+    if ( ( debugMode() == 1000 ) || ( debugMode() == 1001 ) ) fprintf( stderr, "Using font (with substitutions): %s",
      lastLine );
     stat = getSingleFontSpec( app, d, userFontFamilyName, lastLine,
      major, minor, release );
