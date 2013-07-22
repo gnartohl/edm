@@ -206,6 +206,60 @@ int readSubstitutions (
   FILE *f
 );
 
+int checkSingleFontSpecGenericVer5 (
+  XtAppContext app,
+  Display *d,
+  char *userFontFamilyName,
+  char *line,
+  int checkBestFont,
+  int major,
+  int minor,
+  int release );
+
+int checkSingleFontSpecVer5 (
+  XtAppContext app,
+  Display *d,
+  char *userFontFamilyName,
+  char *buf,
+  int major,
+  int minor,
+  int release );
+
+int checkBestSingleFontSpecVer5 (
+  XtAppContext app,
+  Display *d,
+  char *userFontFamilyName,
+  char *buf,
+  int major,
+  int minor,
+  int release );
+
+int getSingleFontSpecVer5 (
+  XtAppContext app,
+  Display *d,
+  char *userFontFamilyName,
+  char *buf,
+  int major,
+  int minor,
+  int release );
+
+int processFontGroupVer5 (
+  XtAppContext app,
+  Display *d,
+  char *userFontFamilyName,
+  FILE *f,
+  int major,
+  int minor,
+  int release );
+
+int initFromFileVer5 (
+  XtAppContext app,
+  Display *d,
+  FILE *f,
+  int major,
+  int minor,
+  int release );
+
 int initFromFileVer4 (
   XtAppContext app,
   Display *d,
@@ -245,6 +299,30 @@ int resolveFont (
 
 int resolveOneFont (
   char *fontSpec,
+  fontNameListPtr ptr );
+
+int resolveFontVer5 (
+  char *fontSpec,
+  char *sizeLabel,
+  fontNameListPtr ptr );
+
+int resolveFontVer5 (
+  char *fontSpec,
+  char *sizeLabel,
+  char *userFontFamilyName,
+  fontNameListPtr ptr );
+
+int resolveFontVer5 (
+  char *fontSpec,
+  char *sizeLabel,
+  char *useWeight,
+  char *useSlant,
+  char *userFontFamilyName,
+  fontNameListPtr ptr );
+
+int resolveOneFontVer5 (
+  char *fontSpec,
+  char *sizeLabel,
   fontNameListPtr ptr );
 
 int getFontName (
