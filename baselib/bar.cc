@@ -119,7 +119,7 @@ int l;
   baro->readMinExpStr.setRaw( baro->bufReadMin );
   baro->readMaxExpStr.setRaw( baro->bufReadMax );
 
-  baro->barOriginXExpStr.setRaw( baro->bufBarOriginX );
+  baro->barOriginValExpStr.setRaw( baro->bufBarOriginX );
 
   // set edit-mode display values
   baro->precision = 0;
@@ -128,7 +128,7 @@ int l;
   baro->labelTicks = 10;
   baro->majorTicks = 2;
   baro->minorTicks = 2;
-  baro->barOriginX = 0;
+  baro->barOriginVal = 0;
   strcpy( fmt, "%-g" );
 
   sprintf( str, fmt, baro->readMin );
@@ -283,7 +283,7 @@ activeBarClass *baro = (activeBarClass *) userarg;
       baro->barColor.setDisconnected();
       baro->fgColor.setDisconnected();
       baro->bufInvalidate();
-      baro->needDraw = 1;
+      baro->needFullDraw = 1;
       baro->actWin->addDefExeNode( baro->aglPtr );
 
     }
@@ -370,7 +370,7 @@ activeBarClass::activeBarClass ( void ) {
   labelTicksExpStr.setRaw( "" );
   majorTicksExpStr.setRaw( "" );
   minorTicksExpStr.setRaw( "" );
-  barOriginXExpStr.setRaw( "" );
+  barOriginValExpStr.setRaw( "" );
   readMinExpStr.setRaw( "" );
   readMaxExpStr.setRaw( "" );
 
@@ -379,7 +379,7 @@ activeBarClass::activeBarClass ( void ) {
   labelTicks = 10;
   majorTicks = 2;
   minorTicks = 2;
-  barOriginX = 0;
+  barOriginVal = 0;
 
   limitsFromDb = 1;
   precisionExpStr.setRaw( "" );
@@ -425,7 +425,7 @@ activeGraphicClass *baro = (activeGraphicClass *) this;
   labelTicksExpStr.copy( source->labelTicksExpStr );
   majorTicksExpStr.copy( source->majorTicksExpStr );
   minorTicksExpStr.copy( source->minorTicksExpStr );
-  barOriginXExpStr.copy( source->barOriginXExpStr );
+  barOriginValExpStr.copy( source->barOriginValExpStr );
   barStrLen = source->barStrLen;
 
   minW = 50;
@@ -439,7 +439,7 @@ activeGraphicClass *baro = (activeGraphicClass *) this;
   labelTicks = source->labelTicks;
   majorTicks = source->majorTicks;
   minorTicks = source->minorTicks;
-  barOriginX = source->barOriginX;
+  barOriginVal = source->barOriginVal;
 
   limitsFromDb = source->limitsFromDb;
   readMinExpStr.copy( source->readMinExpStr );
@@ -581,7 +581,7 @@ static int orienTypeEnum[2] = {
   tag.loadW( "labelType", 2, labelTypeEnumStr, labelTypeEnum,
    &labelType, &lit );
   tag.loadBoolW( "showScale", &showScale, &zero );
-  tag.loadW( "origin", &barOriginXExpStr, emptyStr );
+  tag.loadW( "origin", &barOriginValExpStr, emptyStr );
   tag.loadW( "font", fontTag );
   tag.loadW( "labelTicks", &labelTicksExpStr, emptyStr );
   tag.loadW( "majorTicks", &majorTicksExpStr, emptyStr );
@@ -666,7 +666,7 @@ efDouble efMin, efMax;
   tag.loadR( "labelType", 2, labelTypeEnumStr, labelTypeEnum,
    &labelType, &lit );
   tag.loadR( "showScale", &showScale, &zero );
-  tag.loadR( "origin", &barOriginXExpStr, emptyStr );
+  tag.loadR( "origin", &barOriginValExpStr, emptyStr );
   tag.loadR( "font", 63, fontTag );
 
   tag.loadR( "labelTicks", &labelTicksExpStr, emptyStr );
@@ -728,7 +728,7 @@ efDouble efMin, efMax;
   labelTicks = 10;
   majorTicks = 2;
   minorTicks = 2;
-  barOriginX = 0;
+  barOriginVal = 0;
   strcpy( fmt, "%-g" );
 
   sprintf( str, fmt, readMin );
@@ -742,8 +742,8 @@ efDouble efMin, efMax;
     if ( l > barStrLen ) barStrLen = l;
   }
 
-  readV = barOriginX;
-  curReadV = barOriginX;
+  readV = barOriginVal;
+  curReadV = barOriginVal;
   curNullV = 0.0;
   updateDimensions();
 
@@ -915,14 +915,14 @@ efDouble efD;
     else {
       strcpy( oneName, "" );
     }
-    barOriginXExpStr.setRaw( oneName );
+    barOriginValExpStr.setRaw( oneName );
 
   }
   else {
 
     fscanf( f, "%g\n", &fBarOriginX ); actWin->incLine();
     snprintf( oneName, 15, "%-g", (double) fBarOriginX );
-    barOriginXExpStr.setRaw( oneName );
+    barOriginValExpStr.setRaw( oneName );
 
   }
 
@@ -1055,7 +1055,7 @@ efDouble efD;
   labelTicks = 10;
   majorTicks = 2;
   minorTicks = 2;
-  barOriginX = 0;
+  barOriginVal = 0;
   strcpy( fmt, "%-g" );
 
   sprintf( str, fmt, readMin );
@@ -1068,8 +1068,8 @@ efDouble efD;
     if ( l > barStrLen ) barStrLen = l;
   }
 
-  readV = barOriginX;
-  curReadV = barOriginX;
+  readV = barOriginVal;
+  curReadV = barOriginVal;
   curNullV = 0.0;
   updateDimensions();
 
@@ -1163,8 +1163,8 @@ char title[32], *ptr;
     strcpy( bufMinorTicks, "" );
   }
 
-  if ( barOriginXExpStr.getRaw() ) {
-    strncpy( bufBarOriginX, barOriginXExpStr.getRaw(), 15 );
+  if ( barOriginValExpStr.getRaw() ) {
+    strncpy( bufBarOriginX, barOriginValExpStr.getRaw(), 15 );
     bufBarOriginX[15] = 0;
   }
   else {
@@ -1315,11 +1315,16 @@ int activeBarClass::erase ( void ) {
 
 int activeBarClass::eraseActive ( void ) {
 
+XRectangle xR = { x, y, w, h };
+int clipStat = 0;
+
   if ( !enabled || !activeMode || !init ) return 1;
 
   actWin->executeGc.setFG( bgColor.getColor() );
 
   if ( bufInvalid ) {
+
+    clipStat = actWin->executeGc.addEraseXClipRectangle( xR );
 
     actWin->executeGc.setLineWidth( 1 );
     actWin->executeGc.setLineStyle( LineSolid );
@@ -1330,11 +1335,17 @@ int activeBarClass::eraseActive ( void ) {
     XFillRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
 
+    if ( clipStat & 1 ) actWin->executeGc.removeEraseXClipRectangle();
+
   }
   else {
 
+    clipStat = actWin->drawGc.addNormXClipRectangle( xR );
+
     XFillRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), oldBarX, barY, oldBarW, barH );
+
+    if ( clipStat & 1 ) actWin->drawGc.removeNormXClipRectangle();
 
   }
 
@@ -1468,9 +1479,12 @@ int activeBarClass::drawActive ( void ) {
 
 int tX, tY, x0, y0, x1, y1;
 char str[PV_Factory::MAX_PV_NAME+1];
+XRectangle xR = { x, y, w, h };
+int clipStat = 0;
 
   if ( !init ) {
     if ( needToDrawUnconnected ) {
+      clipStat = actWin->drawGc.addNormXClipRectangle( xR );
       actWin->executeGc.saveFg();
       actWin->executeGc.setFG( bgColor.getDisconnected() );
       actWin->executeGc.setLineWidth( 1 );
@@ -1478,213 +1492,74 @@ char str[PV_Factory::MAX_PV_NAME+1];
       XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
+      if ( clipStat & 1 ) actWin->drawGc.removeNormXClipRectangle();
       needToEraseUnconnected = 1;
     }
   }
   else if ( needToEraseUnconnected ) {
+    clipStat = actWin->executeGc.addEraseXClipRectangle( xR );
     actWin->executeGc.setLineWidth( 1 );
     actWin->executeGc.setLineStyle( LineSolid );
     XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.eraseGC(), x, y, w, h );
+    if ( clipStat & 1 ) actWin->executeGc.removeEraseXClipRectangle();
     needToEraseUnconnected = 0;
   }
 
   if ( !enabled || !activeMode || !init ) return 1;
 
+  clipStat = actWin->drawGc.addNormXClipRectangle( xR );
+
   actWin->executeGc.saveFg();
+
+  actWin->executeGc.setFG( bgColor.getColor() );
+
+  if ( bufInvalid ) {
+    XFillRectangle( actWin->d, drawable(actWin->executeWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
+     actWin->executeGc.normGC(), x, y, w, h );
+  }
+  else {
+    XFillRectangle( actWin->d, drawable(actWin->executeWidget),
+     actWin->executeGc.normGC(), oldBarX, oldBarY, oldBarW, oldBarH );
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
+     actWin->executeGc.normGC(), oldBarX, oldBarY, oldBarW, oldBarH );
+  }
+
+  actWin->executeGc.setFG( barColor.getColor() );
+
+  XFillRectangle( actWin->d, drawable(actWin->executeWidget),
+   actWin->executeGc.normGC(), barX, barY, barW, barH );
 
   if ( horizontal ) {
 
-    if ( bufInvalid ) {
-
-      actWin->executeGc.setFG( bgColor.getColor() );
-
-      XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-       actWin->executeGc.normGC(), x, y, w, h );
-
-      actWin->executeGc.setFG( barColor.getColor() );
-
-      XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-       actWin->executeGc.normGC(), barX, barY, barW, barH );
-
-    }
-    else {
-
-      if ( zeroCrossover ) {
-
-        actWin->executeGc.setFG( bgColor.getColor() );
-
-        XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-         actWin->executeGc.normGC(), oldBarX, barY, oldBarW, barH );
-
-        actWin->executeGc.setFG( barColor.getColor() );
-
-        XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-         actWin->executeGc.normGC(), barX, barY, barW, barH );
-
-      }
-      else {
-
-        if ( aboveBarOrigin ) {
-
-          if ( barW > oldBarW ) {
-
-            actWin->executeGc.setFG( barColor.getColor() );
-
-            XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-             actWin->executeGc.normGC(), oldBarX+oldBarW, barY,
-             barW-oldBarW, barH );
-
-          }
-          else {
-
-            actWin->executeGc.setFG( bgColor.getColor() );
-
-            XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-             actWin->executeGc.normGC(), barX+barW, barY,
-             oldBarW-barW, barH );
-
-          }
-
-        }
-        else {
-
-          if ( barX < oldBarX ) {
-
-            actWin->executeGc.setFG( barColor.getColor() );
-
-            XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-             actWin->executeGc.normGC(), barX, barY,
-             oldBarX-barX, barH );
-
-          }
-          else {
-
-            actWin->executeGc.setFG( bgColor.getColor() );
-
-            XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-             actWin->executeGc.normGC(), oldBarX, barY,
-             barX-oldBarX, barH );
-
-          }
-
-        }
-
-      }
-
-    }
-
-    oldBarX = barX;
-    oldBarW = barW;
+    // draw line along origin
+    if ( border || showScale )
+      y0 = barY;
+    else
+      y0 = barY;
+    y1 = y0 + barH;
+    x0 = x1 = barOriginLoc;
+    XDrawLine( actWin->d, drawable(actWin->executeWidget),
+     actWin->executeGc.normGC(), x0, y0, x1, y1 );
 
   }
   else { // vertical
 
-    if ( bufInvalid ) {
-
-      actWin->executeGc.setFG( bgColor.getColor() );
-
-      XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-       actWin->executeGc.normGC(), x, y, w, h );
-
-      actWin->executeGc.setFG( barColor.getColor() );
-
-      XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-       actWin->executeGc.normGC(), barX, barY-barH, barW, barH );
-
-      // draw line along origin
-      if ( border || showScale )
-        x0 = barAreaX - 4;
-      else
-        x0 = x;
-      x1 = x + w;
-      y1 = y0 = (int) rint( barAreaY -
-       ( barOriginX - readMin ) * barAreaH / ( readMax - readMin ) );
-      XDrawLine( actWin->d, drawable(actWin->executeWidget),
-       actWin->executeGc.normGC(), x0, y0, x1, y1 );
-
-    }
-    else {
-
-      if ( zeroCrossover ) {
-
-        actWin->executeGc.setFG( bgColor.getColor() );
-
-        XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-         actWin->executeGc.normGC(), barX, oldBarY-oldBarH, barW, oldBarH );
-
-        actWin->executeGc.setFG( barColor.getColor() );
-
-        XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-         actWin->executeGc.normGC(), barX, barY-barH, barW, barH );
-
-        // draw line along origin
-        if ( border || showScale )
-          x0 = barAreaX - 4;
-        else
-          x0 = x;
-        x1 = x + w;
-        y1 = y0 = (int) rint( barAreaY -
-         ( barOriginX - readMin ) * barAreaH / ( readMax - readMin ) );
-        XDrawLine( actWin->d, drawable(actWin->executeWidget),
-         actWin->executeGc.normGC(), x0, y0, x1, y1 );
-
-      }
-      else {
-
-        if ( aboveBarOrigin ) {
-
-          if ( barH > oldBarH ) {
-
-            actWin->executeGc.setFG( barColor.getColor() );
-
-            XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-             actWin->executeGc.normGC(), barX, barY-barH,
-             barW, barH-oldBarH );
-
-          }
-          else {
-
-            actWin->executeGc.setFG( bgColor.getColor() );
-
-            XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-             actWin->executeGc.normGC(), barX, barY-oldBarH,
-             barW, oldBarH-barH );
-
-          }
-
-        }
-        else {
-
-          if ( barY > oldBarY ) {
-
-            actWin->executeGc.setFG( barColor.getColor() );
-
-            XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-             actWin->executeGc.normGC(), barX, oldBarY,
-             barW, barY-oldBarY );
-
-          }
-          else {
-
-            actWin->executeGc.setFG( bgColor.getColor() );
-
-            XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-             actWin->executeGc.normGC(), barX, barY,
-             barW, oldBarY-barY );
-
-          }
-
-        }
-
-      }
-
-    }
-
-    oldBarY = barY;
-    oldBarH = barH;
+    // draw line along origin
+    if ( border || showScale )
+      x0 = barX;
+    else
+      x0 = barX;
+    x1 = x0 + barW;
+    y1 = y0 = barOriginLoc;
+    XDrawLine( actWin->d, drawable(actWin->executeWidget),
+     actWin->executeGc.normGC(), x0, y0, x1, y1 );
 
   }
+
+  if ( clipStat & 1 ) actWin->drawGc.removeNormXClipRectangle();
 
   if ( bufInvalid ) { // draw scale, label, etc ...
 
@@ -1736,11 +1611,16 @@ char str[PV_Factory::MAX_PV_NAME+1];
        actWin->executeGc.normGC(), x, y, w, h );
     }
 
-    bufInvalid = 0;
-
   }
 
   actWin->executeGc.restoreFg();
+
+  bufInvalid = 0;
+
+  oldBarX = barX;
+  oldBarY = barY;
+  oldBarW = barW;
+  oldBarH = barH;
 
   return 1;
 
@@ -1774,18 +1654,7 @@ char fmt[31+1];
     opComplete = 0;
     curNullV = 0.0;
 
-    if ( horizontal ) {
-      barW = 0;
-      oldBarW = 0;
-      barX = 0;
-      oldBarX = 0;
-    }
-    else {
-      barH = 0;
-      oldBarH = 0;
-      barY = 0;
-      oldBarY = 0;
-    }
+    barEdgeLoc = oldBarOriginLoc = barEdgeLoc = oldBarEdgeLoc = 0;
 
     pvNotConnectedMask = active = init = 0;
     activeMode = 1;
@@ -1839,11 +1708,11 @@ char fmt[31+1];
         minorTicks = atol( minorTicksExpStr.getExpanded() );
       }
 
-      if ( blank( barOriginXExpStr.getExpanded() ) ) {
-        barOriginX = 0;
+      if ( blank( barOriginValExpStr.getExpanded() ) ) {
+        barOriginVal = 0;
       }
       else {
-        barOriginX = atol( barOriginXExpStr.getExpanded() );
+        barOriginVal = atol( barOriginValExpStr.getExpanded() );
       }
 
       if ( blank( precisionExpStr.getExpanded() ) ) {
@@ -1871,11 +1740,11 @@ char fmt[31+1];
         readMax = readMin + 1;
       }
 
-      if ( blank( barOriginXExpStr.getExpanded() ) ) {
-        barOriginX = 0;
+      if ( blank( barOriginValExpStr.getExpanded() ) ) {
+        barOriginVal = 0;
       }
       else {
-        barOriginX = atof( barOriginXExpStr.getExpanded() );
+        barOriginVal = atof( barOriginValExpStr.getExpanded() );
       }
 
       if ( strcmp( scaleFormat, "GFloat" ) == 0 ) {
@@ -1987,7 +1856,7 @@ int l;
   labelTicks = 10;
   majorTicks = 2;
   minorTicks = 2;
-  barOriginX = 0;
+  barOriginVal = 0;
   strcpy( fmt, "%-g" );
 
   sprintf( str, fmt, readMin );
@@ -2029,38 +1898,37 @@ void activeBarClass::updateDimensions ( void )
 
     minH = 2;
     barY = y;
+    barH = h;
 
     barAreaX = x;
     barAreaW = w;
 
     if ( ( strcmp( label.getRaw(), "" ) != 0 ) ||
          ( labelType == BARC_K_PV_NAME ) ) {
-      minH += fontHeight + 5;
+      minH += (int) rint( 1.5 * fontHeight );
       barY += fontHeight + 5;
-      if ( border ) {
-        minH += 9;
-        barY += 5;
-        barAreaX = x + 5;
-        barAreaW = w - 9;
-      }
-    }
-    else {
-      if ( border && showScale ) {
-        minH += 9;
-        barY += 5;
+      barH -= fontHeight + 5;
+      barAreaX = x + 5;
+      barAreaW = w - 9;
+      if ( border && !showScale ) {
+        minH += 5;
+        barH -= 5;
       }
     }
 
     if ( showScale ) {
-      minH += fontHeight + fontHeight + 5;
+      minH += fontHeight + fontHeight + 9;
+      barY += 5;
+      barH -= ( fontHeight + fontHeight + 5 ) + 4;
       barAreaX = x + barStrLen/2 + 3;
       barAreaW = w - barStrLen - 6;
     }
 
-    if ( border && !showScale && ( ( strcmp( label.getRaw(), "" ) == 0 ) ||
+    if ( border  && !showScale && ( ( strcmp( label.getRaw(), "" ) == 0 ) ||
      ( labelType == BARC_K_PV_NAME ) ) ) {
-      minH += 9;
+      minH += 11;
       barY += 5;
+      barH -= 9;
       barAreaX = x + 5;
       barAreaW = w - 9;
     }
@@ -2072,23 +1940,6 @@ void activeBarClass::updateDimensions ( void )
 
     }
 
-    barH = h;
-
-    if ( ( strcmp( label.getRaw(), "" ) != 0 ) ||
-         ( labelType == BARC_K_PV_NAME ) ) {
-      barH -= ( fontHeight + 5 );
-      if ( border ) barH -= 9;
-    }
-
-    if ( showScale ) {
-      barH -= ( fontHeight + fontHeight + 5 );
-    }
-
-    if ( border && !showScale && ( ( strcmp( label.getRaw(), "" ) == 0 ) ||
-     ( labelType == BARC_K_PV_NAME ) ) ) {
-      barH -= 9;
-    }
-
   }
   else {  // vertical
 
@@ -2098,17 +1949,18 @@ void activeBarClass::updateDimensions ( void )
     if ( ( strcmp( label.getRaw(), "" ) != 0 ) ||
          ( labelType == BARC_K_PV_NAME ) ) {
       minVertH += fontHeight + 5;
+      minVertW += fontHeight + 5;
     }
 
     if ( showScale ) {
       minVertH += fontHeight;
       //???????????????????????
-      minVertW += 4 + barStrLen + 10 + (int) rint( 0.5 * fontHeight );
+      minVertW += barStrLen + 13 + (int) rint( 0.5 * fontHeight );
     }
     else if ( border ) {
       //???????????????????????
       minVertH += 8;
-      minVertW += 4;
+      minVertW += 10;
     }
 
     if ( w < minVertW ) {
@@ -2126,7 +1978,8 @@ void activeBarClass::updateDimensions ( void )
     }
 
     barH = barAreaH = h;
-    barY = barAreaY = y + barAreaH;
+    barY = y;
+    barAreaY = y + barAreaH;
     barX = barAreaX = x;
     barW = barAreaW = w;
 
@@ -2273,9 +2126,9 @@ expStringClass tmpStr;
   tmpStr.expand1st( numMacros, macros, expansions );
   precisionExpStr.setRaw( tmpStr.getExpanded() );
 
-  tmpStr.setRaw( barOriginXExpStr.getRaw() );
+  tmpStr.setRaw( barOriginValExpStr.getRaw() );
   tmpStr.expand1st( numMacros, macros, expansions );
-  barOriginXExpStr.setRaw( tmpStr.getExpanded() );
+  barOriginValExpStr.setRaw( tmpStr.getExpanded() );
 
   return 1;
 
@@ -2306,7 +2159,7 @@ int retStat, stat;
   if ( !( stat & 1 ) ) retStat = stat;
   stat = precisionExpStr.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
-  stat = barOriginXExpStr.expand1st( numMacros, macros, expansions );
+  stat = barOriginValExpStr.expand1st( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
   return retStat;
@@ -2338,7 +2191,7 @@ int retStat, stat;
   if ( !( stat & 1 ) ) retStat = stat;
   stat = precisionExpStr.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
-  stat = barOriginXExpStr.expand2nd( numMacros, macros, expansions );
+  stat = barOriginValExpStr.expand2nd( numMacros, macros, expansions );
   if ( !( stat & 1 ) ) retStat = stat;
 
   return retStat;
@@ -2376,7 +2229,7 @@ int result;
   result = precisionExpStr.containsPrimaryMacros();
   if ( result ) return 1;
 
-  result = barOriginXExpStr.containsPrimaryMacros();
+  result = barOriginValExpStr.containsPrimaryMacros();
   if ( result ) return 1;
 
   return 0;
@@ -2474,6 +2327,94 @@ int tmpw, tmph, ret_stat;
 
 }
 
+// true if val1 is above val2
+int activeBarClass::isAbove (
+  int posScale,
+  double val1,
+  double val2
+) {
+
+  if ( posScale ) {
+    if ( val1 > val2 ) {
+      return 1;
+    }
+  }
+  else {
+    if ( val1 < val2 ) {
+      return 1;
+    }
+  }
+
+  return 0;
+
+}
+
+// true if val1 is above or equal to val2
+int activeBarClass::isAboveOrEqual (
+  int posScale,
+  double val1,
+  double val2
+) {
+
+  if ( posScale ) {
+    if ( val1 >= val2 ) {
+      return 1;
+    }
+  }
+  else {
+    if ( val1 <= val2 ) {
+      return 1;
+    }
+  }
+
+  return 0;
+
+}
+
+// true if val1 is below val2
+int activeBarClass::isBelow (
+  int posScale,
+  double val1,
+  double val2
+) {
+
+  if ( posScale ) {
+    if ( val1 < val2 ) {
+      return 1;
+    }
+  }
+  else {
+    if ( val1 > val2 ) {
+      return 1;
+    }
+  }
+
+  return 0;
+
+}
+
+// true if val1 is below or equal to val2
+int activeBarClass::isBelowOrEqual (
+  int posScale,
+  double val1,
+  double val2
+) {
+
+  if ( posScale ) {
+    if ( val1 <= val2 ) {
+      return 1;
+    }
+  }
+  else {
+    if ( val1 >= val2 ) {
+      return 1;
+    }
+  }
+
+  return 0;
+
+}
+
 void activeBarClass::updateScaleInfo ( void ) {
 
   if ( horizontal )
@@ -2481,581 +2422,180 @@ void activeBarClass::updateScaleInfo ( void ) {
   else
     updateVertScaleInfo();
 
+  updateBar();
+
 }
 
 void activeBarClass::updateHorzScaleInfo ( void ) {
 
-int locW;
+double barOriginDif;
 
   if ( readMax == readMin ) readMax = readMin + 1.0;
 
-  if ( readMax >= readMin ) {
+  posScale = readMax - readMin;
+  if ( posScale < 0 )
+    posScale = 0;
+  else
+    posScale = 1;
 
-    mode = BARC_K_MAX_GE_MIN;
+  // compute bar origin location
+  if ( posScale ) {
 
-    if ( barOriginX < readMin )
-      barOriginX = readMin;
-    else if ( barOriginX > readMax )
-     barOriginX = readMax;
-
-    originW = (int) rint( ( barOriginX - readMin ) *
-     barAreaW / ( readMax - readMin ) );
-
-    if ( readV > readMax ) readV = readMax;
-    if ( readV < readMin ) readV = readMin;
+    barOriginDif = (int) rint( barAreaW * ( barOriginVal - readMin ) / ( readMax - readMin ) + 0.5 );
+    barOriginLoc = barAreaX + barOriginDif;
 
   }
   else {
 
-    mode = BARC_K_MAX_LT_MIN;
-
-    if ( barOriginX > readMin )
-      barOriginX = readMin;
-    else if ( barOriginX < readMax )
-     barOriginX = readMax;
-
-    originW = (int) rint( ( barOriginX - readMin ) *
-     barAreaW / ( readMax - readMin ) );
-
-    if ( readV < readMax ) readV = readMax;
-    if ( readV > readMin ) readV = readMin;
+    barOriginDif = (int) rint( barAreaW * ( barOriginVal - readMax )  / ( readMin - readMax ) + 0.5 );
+    barOriginLoc = barAreaX + barAreaW - barOriginDif;
 
   }
 
-  switch ( mode ) {
-
-  case BARC_K_MAX_GE_MIN:
-
-    if ( readV >= barOriginX ) {
-
-      barX = originW;
-
-      if ( barOriginX == readMax ) {
-
-        barW = 0;
-        factorGe = 0;
-
-      }
-      else {
-
-        barW = (int) ( ( barAreaW - originW ) *
-         ( readV - barOriginX ) /
-         ( readMax - barOriginX ) + 0.5 );
-
-        if ( barW > ( barAreaW - originW ) )
-          barW = barAreaW - originW;
-
-        factorGe = ( barAreaW - originW ) / ( readMax - barOriginX );
-
-      }
-
-    }
-    else {
-
-      if ( barOriginX == readMin ) {
-
-        locW = 0;
-        factorLt = 0;
-
-      }
-      else {
-
-        locW = (int) ( ( originW ) *
-         ( readV - barOriginX ) /
-         ( readMin - barOriginX ) + 0.5 );
-
-        factorLt = originW / ( readMin - barOriginX );
-
-      }
-
-      barX = originW - locW;
-
-      barW = abs( locW );
-
-      if ( barX < 0 ) {
-        barX = 0;
-        barW = originW;
-      }
-
-    }
-
-    break;
-
-  case BARC_K_MAX_LT_MIN:
-
-    if ( readV < barOriginX ) {
-
-      barX = originW;
-
-      if ( barOriginX == readMax ) {
-
-        barW = 0;
-        factorLt = 0;
-
-      }
-      else {
-
-        barW = (int) ( ( barAreaW - originW ) *
-         ( readV - barOriginX ) /
-         ( readMax - barOriginX ) + 0.5 );
-
-        if ( barW > ( barAreaW - originW ) )
-          barW = barAreaW - originW;
-
-        factorLt = ( barAreaW - originW ) / ( readMax - barOriginX );
-
-      }
-
-    }
-    else {
-
-      if ( barOriginX == readMin ) {
-
-        locW = 0;
-        factorGe = 0;
-
-      }
-      else {
-
-        locW = (int) ( ( originW ) *
-         ( readV - barOriginX ) /
-         ( readMin - barOriginX ) + 0.5 );
-
-        factorGe = originW / ( readMin - barOriginX );
-
-      }
-
-      barX = originW - locW;
-
-      barW = abs( locW );
-
-      if ( barX < 0 ) {
-        barX = 0;
-        barW = originW;
-      }
-
-    }
-
-    break;
-
+  // compute scale factor
+  if ( posScale ) {
+    factor = (double) barAreaW / ( readMax - readMin );
+  }
+  else {
+    factor = (double) barAreaW / ( readMin - readMax );
   }
 
-  barMaxW = barAreaW - originW;
+}
 
-  barX += barAreaX;
+void activeBarClass::updateHorzBar ( void ) {
+
+  double barEdgeDif;
+
+  // clamp cur value
+  if ( isBelow( posScale, readV, readMin ) ) {
+    readV = readMin;
+  }
+  else if ( isAbove( posScale, readV, readMax ) ) {
+    readV = readMax;
+  }
+
+  // compute cur value loc
+  if ( posScale ) {
+    barEdgeDif = rint( factor * ( readV - readMin ) + 0.5 );
+    barEdgeLoc = barAreaX + barEdgeDif;
+  }
+  else {
+    barEdgeDif = rint( factor * ( readV - readMax ) + 0.5 );
+    barEdgeLoc = barAreaX + barAreaW - barEdgeDif;
+  }
+
+  // determine if above or below origin
+  if ( isAbove( posScale, readV, barOriginVal ) ) {
+    aboveBarOrigin = 1;
+    barX = barOriginLoc;
+    barW = abs( barOriginLoc - barEdgeLoc );
+  }
+  else {
+    aboveBarOrigin = 0;
+    barX = barEdgeLoc;
+    barW = abs( barOriginLoc - barEdgeLoc );
+  }
+
+  if ( aboveBarOrigin != oldAboveBarOrigin ) {
+    oldAboveBarOrigin = aboveBarOrigin;
+    zeroCrossover = 1;
+  }
+  else {
+    zeroCrossover = 0;
+  }
 
 }
 
 void activeBarClass::updateVertScaleInfo ( void ) {
 
-int locH;
+double barOriginDif;
 
   if ( readMax == readMin ) readMax = readMin + 1.0;
 
-  if ( readMax >= readMin ) {
+  posScale = readMax - readMin;
+  if ( posScale < 0 )
+    posScale = 0;
+  else
+    posScale = 1;
 
-    mode = BARC_K_MAX_GE_MIN;
+  // compute bar origin location
+  if ( posScale ) {
 
-    if ( barOriginX < readMin )
-      barOriginX = readMin;
-    else if ( barOriginX > readMax )
-     barOriginX = readMax;
-
-    originH = (int) rint( ( barOriginX - readMin ) *
-     barAreaH / ( readMax - readMin ) );
-
-    if ( readV > readMax ) readV = readMax;
-    if ( readV < readMin ) readV = readMin;
+    barOriginDif = (int) rint( barAreaH * ( barOriginVal - readMin ) / ( readMax - readMin ) + 0.5 );
+    barOriginLoc = barAreaY - barOriginDif;
 
   }
   else {
 
-    mode = BARC_K_MAX_LT_MIN;
-
-    if ( barOriginX > readMin )
-      barOriginX = readMin;
-    else if ( barOriginX < readMax )
-     barOriginX = readMax;
-
-    originH = (int) rint( ( barOriginX - readMin ) *
-     barAreaH / ( readMax - readMin ) );
-
-    if ( readV < readMax ) readV = readMax;
-    if ( readV > readMin ) readV = readMin;
+    barOriginDif = (int) rint( barAreaH * ( barOriginVal - readMax )  / ( readMin - readMax ) + 0.5 );
+    barOriginLoc = barAreaY -barAreaH + barOriginDif;
 
   }
 
-  switch ( mode ) {
-
-  case BARC_K_MAX_GE_MIN:
-
-    if ( readV >= barOriginX ) {
-
-      barY = barAreaY - originH;
-
-      if ( barOriginX == readMax ) {
-
-        barH = 0;
-        factorGe = 0;
-
-      }
-      else {
-
-        barH = (int) ( ( barAreaH - originH ) *
-         ( readV - barOriginX ) /
-         ( readMax - barOriginX ) + 0.5 );
-
-        if ( barH > ( barAreaH - originH ) )
-          barH = barAreaH - originH;
-
-        factorGe = ( barAreaH - originH ) / ( readMax - barOriginX );
-
-      }
-
-    }
-    else {
-
-      if ( barOriginX == readMin ) {
-
-        locH = 0;
-        factorLt = 0;
-
-      }
-      else {
-
-        locH = (int) ( ( originH ) *
-         ( readV - barOriginX ) /
-         ( readMin - barOriginX ) + 0.5 );
-
-        factorLt = originH / ( readMin - barOriginX );
-
-      }
-
-      barY = barAreaY - ( originH - locH );
-
-      barH = abs( locH );
-
-      if ( barY < 0 ) {
-        barY = 0;
-        barH = originH;
-      }
-
-    }
-
-    break;
-
-  case BARC_K_MAX_LT_MIN:
-
-    if ( readV < barOriginX ) {
-
-      barY = barAreaY - originH;
-
-      if ( barOriginX == readMax ) {
-
-        barH = 0;
-        factorLt = 0;
-
-      }
-      else {
-
-        barH = (int) ( ( barAreaH - originH ) *
-         ( readV - barOriginX ) /
-         ( readMax - barOriginX ) + 0.5 );
-
-        if ( barH > ( barAreaH - originH ) )
-          barH = barAreaH - originH;
-
-        factorLt = ( barAreaH - originH ) / ( readMax - barOriginX );
-
-      }
-
-    }
-    else {
-
-      if ( barOriginX == readMin ) {
-
-        locH = 0;
-        factorGe = 0;
-
-      }
-      else {
-
-        locH = (int) ( ( originH ) *
-         ( readV - barOriginX ) /
-         ( readMin - barOriginX ) + 0.5 );
-
-        factorGe = originH / ( readMin - barOriginX );
-
-      }
-
-      barY = barAreaY - ( originH - locH );
-
-      barH = abs( locH );
-
-      if ( barY < 0 ) {
-        barY = 0;
-        barH = originH;
-      }
-
-    }
-
-    break;
-
+  // compute scale factor
+  if ( posScale ) {
+    factor = (double) barAreaH / ( readMax - readMin );
+  }
+  else {
+    factor = (double) barAreaH / ( readMin - readMax );
   }
 
-  barMaxH = barAreaH - originH;
+}
+
+void activeBarClass::updateVertBar ( void ) {
+
+ double barEdgeDif;
+
+  // clamp cur value
+  if ( isBelow( posScale, readV, readMin ) ) {
+    readV = readMin;
+  }
+  else if ( isAbove( posScale, readV, readMax ) ) {
+    readV = readMax;
+  }
+
+  // compute cur value loc
+  if ( posScale ) {
+    barEdgeDif = rint( factor * ( readV - readMin ) + 0.5 );
+    barEdgeLoc = barAreaY - barEdgeDif;
+  }
+  else {
+    barEdgeDif = rint( factor * ( readV - readMax ) + 0.5 );
+    barEdgeLoc = barAreaY - barAreaH + barEdgeDif;
+  }
+
+  // determine if above or below origin
+  if ( isAbove( posScale, readV, barOriginVal ) ) {
+    aboveBarOrigin = 1;
+    barY = barEdgeLoc;
+    barH = abs( barOriginLoc - barEdgeLoc );
+  }
+  else {
+    aboveBarOrigin = 0;
+    barY = barOriginLoc;
+    barH = abs( barOriginLoc - barEdgeLoc );
+  }
+
+  if ( aboveBarOrigin != oldAboveBarOrigin ) {
+    oldAboveBarOrigin = aboveBarOrigin;
+    zeroCrossover = 1;
+  }
+  else {
+    zeroCrossover = 0;
+  }
 
 }
 
 void activeBarClass::updateBar ( void ) {
 
-int locW, locH;
-double tempW, tempH;
-
   if ( horizontal ) {
 
-    switch ( mode ) {
-
-    case BARC_K_MAX_GE_MIN:
-
-      if ( readV >= barOriginX ) {
-
-        aboveBarOrigin = 1;
-
-      }
-      else {
-
-        aboveBarOrigin = 0;
-
-      }
-
-      break;
-
-    case BARC_K_MAX_LT_MIN:
-
-      if ( readV < barOriginX ) {
-
-        aboveBarOrigin = 1;
-
-      }
-      else {
-
-        aboveBarOrigin = 0;
-
-      }
-
-      break;
-
-    }
-
-    if ( aboveBarOrigin != oldAboveBarOrigin ) {
-      oldAboveBarOrigin = aboveBarOrigin;
-      zeroCrossover = 1;
-      updateScaleInfo();
-    }
-    else {
-      zeroCrossover = 0;
-    }
-
-    switch ( mode ) {
-
-    case BARC_K_MAX_GE_MIN:
-
-      if ( readV >= barOriginX ) {
-
-        barX = originW;
-
-        //barW = (int) ( factorGe * ( readV - barOriginX ) + 0.5 );
-
-        //if ( barW > barMaxW ) barW = barMaxW;
-
-        tempW = factorGe * ( readV - barOriginX );
-        if ( tempW > barMaxW ) {
-          barW = barMaxW;
-        }
-        else {
-          barW = (int) ( tempW + 0.5 );
-        }
-
-      }
-      else {
-
-        locW = (int) ( ( readV - barOriginX ) * factorLt + 0.5 );
-
-        barX = originW - locW;
-
-        barW = abs( locW );
-
-        if ( barX < 0 ) {
-          barX = 0;
-          barW = originW;
-        }
-
-      }
-
-      break;
-
-    case BARC_K_MAX_LT_MIN:
-
-      if ( readV < barOriginX ) {
-
-        barX = originW;
-
-        //barW = (int) ( ( readV - barOriginX ) * factorLt + 0.5 );
-
-        //if ( barW > barMaxW ) barW = barMaxW;
-
-        tempW = ( readV - barOriginX ) * factorLt;
-        if ( tempW > barMaxW ) {
-          barW = barMaxW;
-        }
-        else {
-          barW = (int) ( tempW + 0.5 );
-        }
-
-      }
-      else {
-
-        locW = (int) ( factorGe * ( readV - barOriginX ) + 0.5 );
-
-        barX = originW - locW;
-
-        barW = abs( locW );
-
-        if ( barX < 0 ) {
-          barX = 0;
-          barW = originW;
-        }
-
-      }
-
-      break;
-
-    }
-
-    barX += barAreaX;
+    updateHorzBar();
 
   }
-  else { // vertical
+  else {
 
-    switch ( mode ) {
-
-    case BARC_K_MAX_GE_MIN:
-
-      if ( readV >= barOriginX ) {
-
-        aboveBarOrigin = 1;
-
-      }
-      else {
-
-        aboveBarOrigin = 0;
-
-      }
-
-      break;
-
-    case BARC_K_MAX_LT_MIN:
-
-      if ( readV < barOriginX ) {
-
-        aboveBarOrigin = 1;
-
-      }
-      else {
-
-        aboveBarOrigin = 0;
-
-      }
-
-      break;
-
-    }
-
-    if ( aboveBarOrigin != oldAboveBarOrigin ) {
-      oldAboveBarOrigin = aboveBarOrigin;
-      zeroCrossover = 1;
-      updateScaleInfo();
-    }
-    else {
-      zeroCrossover = 0;
-    }
-
-    switch ( mode ) {
-
-    case BARC_K_MAX_GE_MIN:
-
-      if ( readV >= barOriginX ) {
-
-        barY = barAreaY - originH;
-
-        //barH = (int) ( factorGe * ( readV - barOriginX ) + 0.5 );
-
-        //if ( barH > barMaxH ) barH = barMaxH;
-
-        tempH = factorGe * ( readV - barOriginX );
-        if ( tempH > barMaxH ) {
-          barH = barMaxH;
-        }
-        else {
-          barH = (int) ( tempH + 0.5 );
-        }
-
-      }
-      else {
-
-        locH = (int) ( ( readV - barOriginX ) * factorLt + 0.5 );
-
-        barY = barAreaY - ( originH - locH );
-
-        barH = abs( locH );
-
-        if ( barY > barAreaY ) {
-          barY = barAreaY;
-          barH = originH;
-        }
-
-      }
-
-      break;
-
-    case BARC_K_MAX_LT_MIN:
-
-      if ( readV < barOriginX ) {
-
-        barY = barAreaY - originH;
-
-        //barH = (int) ( ( readV - barOriginX ) * factorLt + 0.5 );
-
-        //if ( barH > barMaxH ) barH = barMaxH;
-
-        tempH = ( readV - barOriginX ) * factorLt;
-        if ( tempH > barMaxH ) {
-          barH = barMaxH;
-        }
-        else {
-          barH = (int) ( tempH + 0.5 );
-        }
-
-      }
-      else {
-
-        locH = (int) ( factorGe * ( readV - barOriginX ) + 0.5 );
-
-        barY = barAreaY - ( originH - locH );
-
-        barH = abs( locH );
-
-        if ( barY > barAreaY ) {
-          barY = barAreaY;
-          barH = originH;
-        }
-
-      }
-
-      break;
-
-    }
+    updateVertBar();
 
   }
 
@@ -3079,6 +2619,7 @@ double v;
   ndc = needDrawCheck; needDrawCheck = 0;
   v = curReadV - curNullV;
   actWin->remDefExeNode( aglPtr );
+
   actWin->appCtx->proc->unlock();
 
   if ( !activeMode ) return;
@@ -3088,20 +2629,6 @@ double v;
   if ( nc ) {
 
     v = curReadV = readPvId->get_double();
-
-#if 0
-    if ( limitsFromDb || blank( readMinExpStr.getExpanded() ) ) {
-      readMin = readPvId->get_lower_disp_limit();
-    }
-
-    if ( limitsFromDb || blank( readMaxExpStr.getExpanded() ) ) {
-      readMax = readPvId->get_upper_disp_limit();
-    }
-
-    if ( limitsFromDb || blank( precisionExpStr.getExpanded() ) ) {
-      precision = readPvId->get_precision();
-    }
-#endif
 
     if ( limitsFromDb ) {
       readMin = readPvId->get_lower_disp_limit();
@@ -3125,8 +2652,8 @@ double v;
 
   if ( ni ) {
 
-    if ( blank( barOriginXExpStr.getExpanded() ) ) {
-      barOriginX = readMin;
+    if ( blank( barOriginValExpStr.getExpanded() ) ) {
+      barOriginVal = readMin;
     }
 
     if ( strcmp( scaleFormat, "GFloat" ) == 0 ) {
@@ -3187,17 +2714,11 @@ double v;
 //----------------------------------------------------------------------------
 
   if ( nr ) {
-
     bufInvalidate();
-
     eraseActive();
-
     readV = v;
-
     updateDimensions();
-
     smartDrawAllActive();
-
   }
 
 //----------------------------------------------------------------------------
@@ -3210,6 +2731,7 @@ double v;
 
   if ( nd ) {
     readV = v;
+    updateBar();
     smartDrawAllActive();
   }
 
@@ -3217,6 +2739,7 @@ double v;
 
   if ( nfd ) {
     readV = v;
+    updateBar();
     bufInvalidate();
     smartDrawAllActive();
   }
@@ -3224,11 +2747,9 @@ double v;
 //----------------------------------------------------------------------------
 
   if ( ndc ) {
-
-      readV = v;
-      updateBar();
-      smartDrawAllActive();
-
+    readV = v;
+    updateBar();
+    smartDrawAllActive();
   }
 
 //----------------------------------------------------------------------------

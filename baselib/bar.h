@@ -174,11 +174,21 @@ int minW, minVertW;
 int minH, minVertH;
 
 double controlV, curControlV, readV, curReadV, curNullV;
-int barY, oldBarY, barH, oldBarH, barW, oldBarW, bufInvalid, barX, oldBarX,
- originW, originH, mode, barAreaX, barAreaW, barAreaY, barAreaH, barStrLen,
- barMaxW, barMaxH, aboveBarOrigin, oldAboveBarOrigin, zeroCrossover;
-double barOriginX, barOriginY, factorLt, factorGe;
-expStringClass barOriginXExpStr;
+int originW, originH, mode, barStrLen;
+
+double barOriginVal, factorLt, factorGe;
+
+int barAreaX, barAreaW, barAreaY, barAreaH;
+int barTop, barBot, barOriginW, barOriginH;
+int barMaxW, barMaxH, aboveBarOrigin, oldAboveBarOrigin, zeroCrossover;
+int barY, oldBarY, barH, oldBarH, barW, oldBarW, barX, oldBarX;
+
+int bufInvalid;
+int posScale;
+double factor;
+int barOriginLoc, oldBarOriginLoc, barEdgeLoc, oldBarEdgeLoc;
+
+expStringClass barOriginValExpStr;
 
 fontMenuClass fm;
 char fontTag[63+1];
@@ -354,11 +364,40 @@ void drawVertScale (
   Drawable dr,
   gcClass *gc );
 
+
+int isAbove (
+  int posScale,
+  double val1,
+  double val2
+);
+
+int isAboveOrEqual (
+  int posScale,
+  double val1,
+  double val2
+);
+
+int isBelow (
+  int posScale,
+  double val1,
+  double val2
+);
+
+int isBelowOrEqual (
+  int posScale,
+  double val1,
+  double val2
+);
+
 void updateScaleInfo ( void );
 
 void updateHorzScaleInfo ( void );
 
 void updateVertScaleInfo ( void );
+
+void updateHorzBar ( void );
+
+void updateVertBar ( void );
 
 void updateBar ( void );
 
