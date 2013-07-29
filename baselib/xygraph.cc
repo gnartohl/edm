@@ -48,7 +48,7 @@ static void setVal (
     break;
 
   case ProcessVariable::specificType::integer:
-    ( (long *) dest )[i] = (long) src;
+    ( (int *) dest )[i] = (int) src;
     break;
 
   case ProcessVariable::specificType::enumerated:
@@ -307,10 +307,10 @@ edmTime base( (const unsigned long) ( xyo->curSec ),
             break;
           case ProcessVariable::specificType::integer:
             if (  xyo->ySigned[i] ) {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[n];
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
             }
             else {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[n];
+              dyValue = (double) ( (unsigned int *) xyo->yPvData[i] )[n];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -401,10 +401,10 @@ edmTime base( (const unsigned long) ( xyo->curSec ),
             break;
           case ProcessVariable::specificType::integer:
             if (  xyo->ySigned[i] ) {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[n];
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
             }
             else {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[n];
+              dyValue = (double) ( (unsigned int *) xyo->yPvData[i] )[n];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -478,10 +478,10 @@ edmTime base( (const unsigned long) ( xyo->curSec ),
             break;
           case ProcessVariable::specificType::integer:
             if (  xyo->xSigned[i] ) {
-              dxValue = (double) ( (long *) xyo->xPvData[i] )[n];
+              dxValue = (double) ( (int *) xyo->xPvData[i] )[n];
             }
             else {
-              dxValue = (double) ( (long *) xyo->xPvData[i] )[n];
+              dxValue = (double) ( (unsigned int *) xyo->xPvData[i] )[n];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -523,10 +523,10 @@ edmTime base( (const unsigned long) ( xyo->curSec ),
             break;
           case ProcessVariable::specificType::integer:
             if (  xyo->ySigned[i] ) {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[n];
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
             }
             else {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[n];
+              dyValue = (double) ( (unsigned int *) xyo->yPvData[i] )[n];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -596,10 +596,10 @@ edmTime base( (const unsigned long) ( xyo->curSec ),
             break;
           case ProcessVariable::specificType::integer:
             if (  xyo->xSigned[i] ) {
-              dxValue = (double) ( (long *) xyo->xPvData[i] )[n];
+              dxValue = (double) ( (int *) xyo->xPvData[i] )[n];
             }
             else {
-              dxValue = (double) ( (long *) xyo->xPvData[i] )[n];
+              dxValue = (double) ( (unsigned int *) xyo->xPvData[i] )[n];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -641,10 +641,10 @@ edmTime base( (const unsigned long) ( xyo->curSec ),
             break;
           case ProcessVariable::specificType::integer:
             if (  xyo->ySigned[i] ) {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[n];
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
             }
             else {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[n];
+              dyValue = (double) ( (unsigned int *) xyo->yPvData[i] )[n];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -1022,10 +1022,10 @@ int ctl;
           break;
         case ProcessVariable::specificType::integer:
           if ( xyo->xSigned[i] ) {
-            dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+            dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
           }
           else {
-            dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+            dxValue = (double) ( (unsigned int *) xyo->xPvData[i] )[ii];
           }
           break;
         case ProcessVariable::specificType::enumerated:
@@ -1168,10 +1168,10 @@ int ctl;
           break;
         case ProcessVariable::specificType::integer:
           if ( xyo->xSigned[i] ) {
-            dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+            dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
           }
           else {
-            dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+            dxValue = (double) ( (unsigned int *) xyo->xPvData[i] )[ii];
           }
           break;
         case ProcessVariable::specificType::enumerated:
@@ -1436,10 +1436,10 @@ int ctl;
             break;
           case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
-              dy1Value = (double) ( (long *) xyo->yPvData[i] )[ii];
+              dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
             }
             else {
-              dy1Value = (double) ( (long *) xyo->yPvData[i] )[ii];
+              dy1Value = (double) ( (unsigned int *) xyo->yPvData[i] )[ii];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -1606,10 +1606,10 @@ int ctl;
             break;
           case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
-              dy1Value = (double) ( (long *) xyo->yPvData[i] )[ii];
+              dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
             }
             else {
-              dy1Value = (double) ( (long *) xyo->yPvData[i] )[ii];
+              dy1Value = (double) ( (unsigned int *) xyo->yPvData[i] )[ii];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -1832,10 +1832,10 @@ int ctl;
             break;
           case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[ii];
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
             }
             else {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[ii];
+              dyValue = (double) ( (unsigned int *) xyo->yPvData[i] )[ii];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -1911,10 +1911,10 @@ int ctl;
             break;
           case ProcessVariable::specificType::integer:
             if ( xyo->xSigned[i] ) {
-              dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+              dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
             }
             else {
-              dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+              dxValue = (double) ( (unsigned int *) xyo->xPvData[i] )[ii];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -2217,11 +2217,11 @@ int ctl;
 
           case ProcessVariable::specificType::integer:
             if ( xyo->xSigned[i] ) {
-              ( (long *) xyo->xPvData[i] )[ii] = pv->get_int();
+              ( (int *) xyo->xPvData[i] )[ii] = pv->get_int();
             }
             else {
-              ( (unsigned long *) xyo->xPvData[i] )[ii] =
-               (unsigned long) pv->get_int();
+              ( (unsigned int *) xyo->xPvData[i] )[ii] =
+               (unsigned int) pv->get_int();
             }
             break;
 
@@ -2279,11 +2279,11 @@ int ctl;
 
           case ProcessVariable::specificType::integer:
             if ( xyo->xSigned[i] ) {
-              ( (long *) xyo->xPvData[i] )[ii] = pv->get_int_array()[ii];
+              ( (int *) xyo->xPvData[i] )[ii] = pv->get_int_array()[ii];
             }
             else {
-              ( (unsigned long *) xyo->xPvData[i] )[ii] =
-               (unsigned long) pv->get_int_array()[ii];
+              ( (unsigned int *) xyo->xPvData[i] )[ii] =
+               (unsigned int) pv->get_int_array()[ii];
             }
             break;
 
@@ -2366,11 +2366,11 @@ int ctl;
 
       case ProcessVariable::specificType::integer:
         if ( xyo->xSigned[i] ) {
-          ( (long *) xyo->xPvData[i] )[ii] = pv->get_int();
+          ( (int *) xyo->xPvData[i] )[ii] = pv->get_int();
         }
         else {
-          ( (unsigned long *) xyo->xPvData[i] )[ii] =
-           (unsigned long) pv->get_int();
+          ( (unsigned int *) xyo->xPvData[i] )[ii] =
+           (unsigned int) pv->get_int();
         }
         break;
 
@@ -2434,10 +2434,10 @@ int ctl;
           break;
         case ProcessVariable::specificType::integer:
           if ( xyo->ySigned[i] ) {
-            dyValue = (double) ( (long *) xyo->yPvData[i] )[ii];
+            dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
           }
           else {
-            dyValue = (double) ( (long *) xyo->yPvData[i] )[ii];
+            dyValue = (double) ( (unsigned int *) xyo->yPvData[i] )[ii];
           }
           break;
         case ProcessVariable::specificType::enumerated:
@@ -2515,10 +2515,10 @@ int ctl;
           break;
         case ProcessVariable::specificType::integer:
           if ( xyo->xSigned[i] ) {
-            dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+            dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
           }
           else {
-            dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+            dxValue = (double) ( (unsigned int *) xyo->xPvData[i] )[ii];
           }
           break;
         case ProcessVariable::specificType::enumerated:
@@ -2774,11 +2774,11 @@ int ctl;
 
           case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
-              ( (long *) xyo->yPvData[i] )[ii] = pv->get_int();
+              ( (int *) xyo->yPvData[i] )[ii] = pv->get_int();
             }
             else {
-              ( (unsigned long *) xyo->yPvData[i] )[ii] =
-               (unsigned long) pv->get_int();
+              ( (unsigned int *) xyo->yPvData[i] )[ii] =
+               (unsigned int) pv->get_int();
             }
             break;
 
@@ -2836,11 +2836,11 @@ int ctl;
 
           case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
-              ( (long *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
+              ( (int *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
             }
             else {
-              ( (unsigned long *) xyo->yPvData[i] )[ii] =
-               (unsigned long) pv->get_int_array()[ii];
+              ( (unsigned int *) xyo->yPvData[i] )[ii] =
+               (unsigned int) pv->get_int_array()[ii];
             }
             break;
 
@@ -2923,11 +2923,11 @@ int ctl;
 
       case ProcessVariable::specificType::integer:
         if ( xyo->ySigned[i] ) {
-          ( (long *) xyo->yPvData[i] )[ii] = pv->get_int();
+          ( (int *) xyo->yPvData[i] )[ii] = pv->get_int();
         }
         else {
-          ( (unsigned long *) xyo->yPvData[i] )[ii] =
-           (unsigned long) pv->get_int();
+          ( (unsigned int *) xyo->yPvData[i] )[ii] =
+           (unsigned int) pv->get_int();
         }
         break;
 
@@ -2991,10 +2991,10 @@ int ctl;
           break;
         case ProcessVariable::specificType::integer:
           if ( xyo->ySigned[i] ) {
-            dyValue = (double) ( (long *) xyo->yPvData[i] )[ii];
+            dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
 	  }
 	  else {
-            dyValue = (double) ( (long *) xyo->yPvData[i] )[ii];
+            dyValue = (double) ( (unsigned int *) xyo->yPvData[i] )[ii];
 	  }
           break;
         case ProcessVariable::specificType::enumerated:
@@ -3072,10 +3072,10 @@ int ctl;
           break;
         case ProcessVariable::specificType::integer:
           if ( xyo->xSigned[i] ) {
-            dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+            dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
 	  }
 	  else {
-            dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+            dxValue = (double) ( (unsigned int *) xyo->xPvData[i] )[ii];
 	  }
           break;
         case ProcessVariable::specificType::enumerated:
@@ -3247,11 +3247,11 @@ int ctl;
 
           case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
-              ( (long *) xyo->yPvData[i] )[ii] = pv->get_int();
+              ( (int *) xyo->yPvData[i] )[ii] = pv->get_int();
             }
             else {
-              ( (unsigned long *) xyo->yPvData[i] )[ii] =
-               (unsigned long) pv->get_int();
+              ( (unsigned int *) xyo->yPvData[i] )[ii] =
+               (unsigned int) pv->get_int();
             }
             break;
 
@@ -3309,11 +3309,11 @@ int ctl;
 
           case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
-              ( (long *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
+              ( (int *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
             }
             else {
-              ( (unsigned long *) xyo->yPvData[i] )[ii] =
-               (unsigned long) pv->get_int_array()[ii];
+              ( (unsigned int *) xyo->yPvData[i] )[ii] =
+               (unsigned int) pv->get_int_array()[ii];
             }
             break;
 
@@ -3406,13 +3406,13 @@ int ctl;
 
       case ProcessVariable::specificType::integer:
         if ( xyo->ySigned[i] ) {
-          ( (long *) xyo->yPvData[i] )[ii] = pv->get_int();
+          ( (int *) xyo->yPvData[i] )[ii] = pv->get_int();
 	  dyValue = pv->get_int();
         }
         else {
-          ( (unsigned long *) xyo->yPvData[i] )[ii] =
-           (unsigned long) pv->get_int();
-	  dyValue = (unsigned long) pv->get_int();
+          ( (unsigned int *) xyo->yPvData[i] )[ii] =
+           (unsigned int) pv->get_int();
+	  dyValue = (unsigned int) pv->get_int();
         }
         sec = pv->get_time_t();
         nsec = pv->get_nano();
@@ -4380,10 +4380,10 @@ int ctl;
             break;
           case ProcessVariable::specificType::integer:
             if ( xSigned[i] ) {
-              dxValue = (double) ( (long *) xPvData[i] )[ii];
+              dxValue = (double) ( (int *) xPvData[i] )[ii];
             }
             else {
-              dxValue = (double) ( (long *) xPvData[i] )[ii];
+              dxValue = (double) ( (unsigned int *) xPvData[i] )[ii];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -4477,10 +4477,10 @@ int ctl;
           break;
         case ProcessVariable::specificType::integer:
           if ( ySigned[i] ) {
-            dyValue[yi] = (double) ( (long *) yPvData[i] )[ii];
+            dyValue[yi] = (double) ( (int *) yPvData[i] )[ii];
           }
           else {
-            dyValue[yi] = (double) ( (long *) yPvData[i] )[ii];
+            dyValue[yi] = (double) ( (unsigned int *) yPvData[i] )[ii];
           }
           break;
         case ProcessVariable::specificType::enumerated:
@@ -6117,10 +6117,10 @@ int ctl;
         break;
       case ProcessVariable::specificType::integer:
           if ( ySigned[i] ) {
-            dyValue = (double) ( (long *) yPvData[i] )[ii];
+            dyValue = (double) ( (int *) yPvData[i] )[ii];
           }
           else {
-            dyValue = (double) ( (long *) yPvData[i] )[ii];
+            dyValue = (double) ( (unsigned int *) yPvData[i] )[ii];
           }
         break;
       case ProcessVariable::specificType::enumerated:
@@ -6184,10 +6184,10 @@ int ctl;
           break;
         case ProcessVariable::specificType::integer:
           if ( xSigned[i] ) {
-            dxValue = (double) ( (long *) xPvData[i] )[ii];
+            dxValue = (double) ( (int *) xPvData[i] )[ii];
 	  }
 	  else {
-            dxValue = (double) ( (long *) xPvData[i] )[ii];
+            dxValue = (double) ( (unsigned int *) xPvData[i] )[ii];
 	  }
           break;
         case ProcessVariable::specificType::enumerated:
@@ -6287,10 +6287,10 @@ int ctl;
       break;
     case ProcessVariable::specificType::integer:
       if ( ySigned[i] ) {
-        dyValue = (double) ( (long *) yPvData[i] )[ii];
+        dyValue = (double) ( (int *) yPvData[i] )[ii];
       }
       else {
-        dyValue = (double) ( (long *) yPvData[i] )[ii];
+        dyValue = (double) ( (unsigned int *) yPvData[i] )[ii];
       }
       break;
     case ProcessVariable::specificType::enumerated:
@@ -6348,10 +6348,10 @@ int ctl;
       break;
     case ProcessVariable::specificType::integer:
       if ( xSigned[i] ) {
-        dxValue = (double) ( (long *) xPvData[i] )[ii];
+        dxValue = (double) ( (int *) xPvData[i] )[ii];
       }
       else {
-        dxValue = (double) ( (long *) xPvData[i] )[ii];
+        dxValue = (double) ( (unsigned int *) xPvData[i] )[ii];
       }
       break;
     case ProcessVariable::specificType::enumerated:
@@ -6570,10 +6570,10 @@ int ctl;
       break;
     case ProcessVariable::specificType::integer:
       if ( ySigned[i] ) {
-        dyValue = (double) ( (long *) yPvData[i] )[ii];
+        dyValue = (double) ( (int *) yPvData[i] )[ii];
       }
       else {
-        dyValue = (double) ( (long *) yPvData[i] )[ii];
+        dyValue = (double) ( (unsigned int *) yPvData[i] )[ii];
       }
       break;
     case ProcessVariable::specificType::enumerated:
@@ -6636,10 +6636,10 @@ int ctl;
       break;
     case ProcessVariable::specificType::integer:
       if ( xSigned[i] ) {
-        dxValue = (double) ( (long *) xPvData[i] )[ii];
+        dxValue = (double) ( (int *) xPvData[i] )[ii];
       }
       else {
-        dxValue = (double) ( (long *) xPvData[i] )[ii];
+        dxValue = (double) ( (unsigned int *) xPvData[i] )[ii];
       }
       break;
     case ProcessVariable::specificType::enumerated:
@@ -9818,10 +9818,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
                 break;
               case ProcessVariable::specificType::integer:
                 if ( ySigned[i] ) {
-                  dyValue = (double) ( (long *) yPvData[i] )[ii];
+                  dyValue = (double) ( (int *) yPvData[i] )[ii];
                 }
                 else {
-                  dyValue = (double) ( (long *) yPvData[i] )[ii];
+                  dyValue = (double) ( (unsigned int *) yPvData[i] )[ii];
                 }
                 break;
               case ProcessVariable::specificType::enumerated:
@@ -9885,10 +9885,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
                   break;
                 case ProcessVariable::specificType::integer:
                   if ( xSigned[i] ) {
-                    dxValue = (double) ( (long *) xPvData[i] )[ii];
+                    dxValue = (double) ( (int *) xPvData[i] )[ii];
                   }
                   else {
-                    dxValue = (double) ( (long *) xPvData[i] )[ii];
+                    dxValue = (double) ( (unsigned int *) xPvData[i] )[ii];
                   }
                   break;
                 case ProcessVariable::specificType::enumerated:
