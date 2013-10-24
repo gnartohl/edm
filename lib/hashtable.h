@@ -22,25 +22,25 @@
 // the following was introduced to get edm
 // to compile under gcc 3.4.1
 #if (__GNUC__==3)&&(__GNUC_MINOR__==4)
-using namespace std;
+using std::cout;
 #endif
 
 // the following was introduced to get edm
 // to compile under gcc 4.0.X and higher
 #if (__GNUC__>=4)
-using namespace std;
+using std::cout;
 #endif
 
 // the following was introduced to get edm
 // to compile under gcc 4.1.X and higher
 #if (__GNUC__==4)&&(__GNUC_MINOR__==1)
-using namespace std;
+using std::cout;
 #endif
 
 // the following was introduced to get edm
 // to compile under aCC on HP_UX
 #ifdef HP_UX
-using namespace std;
+using std::cout;
 #endif
 
 template <class T, size_t o, size_t N=5>

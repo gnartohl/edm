@@ -7698,7 +7698,12 @@ activeWindowClass *awo;
 
   *continueToDispatch = True;
 
-  if ( e->type == ConfigureNotify ) {
+  if ( e->type == MapNotify ) {
+
+    awo->refresh();
+
+  }
+  else if ( e->type == ConfigureNotify ) {
 
     //if ( !(awo->isEmbedded) ) fprintf( stderr, "ConfigureNotify - [%s]\n",
     //  awo->fileNameForSym );
@@ -7856,7 +7861,12 @@ Boolean  nothingDone = False;
     }
   }
 
-  if ( e->type == ConfigureNotify ) {
+  if ( e->type == MapNotify ) {
+
+    awo->refresh();
+
+  }
+  else if ( e->type == ConfigureNotify ) {
 
     ce = (XConfigureEvent *) e;
 
@@ -11544,7 +11554,12 @@ Boolean nothingDone = False;
 
   *continueToDispatch = False;
 
-  if ( e->type == ConfigureNotify ) {
+  if ( e->type == MapNotify ) {
+
+    awo->refreshActive();
+
+  }
+  else if ( e->type == ConfigureNotify ) {
 
     ce = (XConfigureEvent *) e;
 
