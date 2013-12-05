@@ -12516,6 +12516,10 @@ int fd;
   fd = mkstemp( outStr );
   outStr[outStrMaxLen] = 0;
 
+  if ( debugMode() ) {
+    fprintf( stderr, "PV list dump file is [%s], fd = %-d\n", outStr, fd );
+  }
+
   return fd;
 
 }
@@ -12536,6 +12540,8 @@ int fileOpened = 0;
   if ( !envPtr ) return;
 
   fd = getRandFile( fname, 255 );
+  if ( !fd ) return;
+
   fileOpened = 1;
 
   snprintf( msg, 255, "edl file name: %s\n", this->fileName );
