@@ -426,6 +426,19 @@ unsigned int newColor;
 
 }
 
+int gcClass::setBG (
+  int bgIndex,
+  int *blink )
+{
+
+  *blink = *blink || ci->blinking( bgIndex );
+
+  setBG( ci->pixWblink(bgIndex) );
+
+  return 1;
+
+}
+
 unsigned int gcClass::getBaseBG ( void )
 {
 

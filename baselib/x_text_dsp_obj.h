@@ -52,7 +52,7 @@
 #define XTDC_K_FILE_NAME 2
 
 #define XTDC_MAJOR_VERSION 4
-#define XTDC_MINOR_VERSION 6
+#define XTDC_MINOR_VERSION 7
 #define XTDC_RELEASE 0
 
 #ifdef __x_text_dsp_obj_cc
@@ -182,6 +182,10 @@ static void XtextDspSvalUpdate (
   void *userarg );
 
 static void XtextDspFgUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
+static void XtextDspBgUpdate (
   ProcessVariable *pv,
   void *userarg );
 
@@ -402,6 +406,10 @@ friend void XtextDspFgUpdate (
   ProcessVariable *pv,
   void *userarg );
 
+friend void XtextDspBgUpdate (
+  ProcessVariable *pv,
+  void *userarg );
+
 friend void axtdc_value_edit_ok (
   Widget w,
   XtPointer client,
@@ -506,6 +514,7 @@ typedef struct editBufTag {
   int bufNumDecimals;
   int bufFormatType;
   int bufColorMode;
+  int bufBgColorMode;
   int bufSmartRefresh;
   char bufFontTag[63+1];
   int bufUseDisplayBg;
@@ -566,9 +575,9 @@ entryListBase *fileEntry, *returnEntry, *defDirEntry, *patEntry;
 
 entryListBase *chgCbEntry;
 
-entryListBase *useDspBgEntry, *bgColorEntry;
+ entryListBase *useDspBgEntry, *bgColorEntry, *bgColorModeEntry;
 
-int numDecimals, formatType, colorMode,
+int numDecimals, formatType, colorMode, bgColorMode,
  pvType, pvCount, svalPvType, noSval, svalPvCount;
 char format[15+1];
 int opComplete, pvExistCheck, activeMode, init, noSvalYet;
@@ -589,7 +598,7 @@ efInt efPrecision;
 char fieldLenInfo[7+1];
 int clipToDspLimits;
 double upperLim, lowerLim;
-int bgColor;
+pvColorClass bgColor;
 pvColorClass fgColor;
 colorButtonClass fgCb, bgCb, svalCb;
 XFontStruct *fs;
@@ -655,6 +664,7 @@ int needInitialValue;
 int showUnits;
 char units[MAX_UNITS_SIZE+1];
 
+// only used for alarm border
 short prevAlarmSeverity;
 
 int useAlarmBorder;

@@ -66,6 +66,8 @@ public:
     bool putArrayText(char *value);
     bool putAck(short value);
 
+    virtual bool is_epics() const { return true; }
+
 private:
     friend class EPICS_PV_Factory;
     

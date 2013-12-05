@@ -1629,7 +1629,14 @@ void relatedDisplayClass::sendMsg (
 
   if ( param ) {
     //fprintf( stderr, "  msg = [%s]\n", param );
-    popupDisplay( 0 );
+    if ( strcmp( param, "popup" ) == 0 ) {
+      noEdit = 0;
+      popupDisplay( 0 );
+    }
+    else if ( strcmp( param, "popupNoEdit" ) == 0 ) {
+      noEdit = 1;
+      popupDisplay( 0 );
+    }
   }
 
 }

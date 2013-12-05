@@ -934,7 +934,7 @@ int seachStatus;
 cursorClass cursor;
 
 Widget drawWidget, executeWidget, fileSelectBox, schemeSelectBox,
- pvlistFileSelectBox;
+ pvlistFileSelectBox, templateFileSelectBox;
 Display *d;
 int bufX, bufY, bufW, bufH;
 
@@ -1228,6 +1228,13 @@ static int init = 1;
 
 }
 
+int getRandFile (
+  char *outStr,
+  int outStrMaxLen
+);
+
+void dumpPvList ( void );
+
 int okToDeactivate ( void );
 
 void initCopy( void );
@@ -1419,6 +1426,8 @@ Display *display ( void );
 Widget topWidgetId ( void );
 
 Widget actualTopWidgetId ( void );
+
+activeWindowClass *actualTopObject ( void );
 
 Widget drawWidgetId ( void );
 

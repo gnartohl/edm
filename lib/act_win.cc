@@ -1850,13 +1850,7 @@ activeGraphicListPtr curSel;
 
 done:
 
-  XtRemoveCallback( w, XmNcancelCallback,
-   awc_fileSelectCancel_cb, (void *) awo );
-  XtRemoveCallback( w, XmNokCallback,
-   awc_templateFileSelectOk_cb, (void *) awo );
-
-  XtUnmanageChild( w ); // it's ok to unmanage a child again
-  XtDestroyWidget( w );
+  XtUnmanageChild( w ); // it's ok to unmanage a child  any number of times
 
 }
 
@@ -2728,7 +2722,13 @@ char *envPtr, text[255+1];
     case AWC_POPUP_OPEN_SELF:
 
       if ( awo->internalRelatedDisplay ) {
-        awo->internalRelatedDisplay->sendMsg( "popup" );
+        activeWindowClass *topAwo = awo->actualTopObject();
+        if ( topAwo->noEdit ) {
+          awo->internalRelatedDisplay->sendMsg( "popupNoEdit" );
+        }
+        else {
+          awo->internalRelatedDisplay->sendMsg( "popup" );
+        }
       }
       break;
 
@@ -5646,52 +5646,48 @@ int efSetAccLargestH = 300;
       awo->savedState = awo->state;
       awo->state = AWC_WAITING;
 
-      XtVaGetValues( awo->appCtx->fileSelectBoxWidgetId(),
-       XmNpattern, &xmStr1,
-       NULL );
+      if ( !awo->templateFileSelectBox ) {
 
-      xmStr2 = NULL;
+        xmStr1 = xmStr2 = NULL;
 
-      n = 0;
-      XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
+        n = 0;
+        XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
-      if ( strcmp( awo->appCtx->curPath, "" ) != 0 ) {
-        xmStr2 = XmStringCreateLocalized( awo->appCtx->curPath );
-        XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
+        if ( strcmp( awo->appCtx->curPath, "" ) != 0 ) {
+          xmStr2 = XmStringCreateLocalized( awo->appCtx->curPath );
+          XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
+        }
+
+        awo->templateFileSelectBox = XmCreateFileSelectionDialog( awo->top,
+         "templateopenfileselect", args, n );
+
+        XmStringFree( xmStr1 );
+        if ( xmStr2 ) XmStringFree( xmStr2 );
+
+        XtAddCallback( awo->templateFileSelectBox, XmNcancelCallback,
+         awc_fileSelectCancel_cb, (void *) awo );
+        XtAddCallback( awo->templateFileSelectBox, XmNokCallback,
+         awc_templateFileSelectOk_cb, (void *) awo );
+
+        wm_delete_window = XmInternAtom( XtDisplay(awo->top),
+         "WM_DELETE_WINDOW", False );
+
+        XmAddWMProtocolCallback( XtParent(awo->templateFileSelectBox),
+         wm_delete_window, awc_fileSelectKill_cb, &awo->wpFileSelect );
+
+        XtVaSetValues( XtParent(awo->templateFileSelectBox), XmNdeleteResponse,
+         XmDO_NOTHING, NULL );
+
+        XSetWindowColormap( awo->d,
+         XtWindow(XtParent(awo->templateFileSelectBox)),
+         awo->appCtx->ci.getColorMap() );
+
       }
 
-      awo->fileSelectBox = XmCreateFileSelectionDialog( awo->top,
-       "templateopenfileselect", args, n );
-
-      XmStringFree( xmStr1 );
-      if ( xmStr2 ) XmStringFree( xmStr2 );
-
-      XtAddCallback( awo->fileSelectBox, XmNcancelCallback,
-       awc_fileSelectCancel_cb, (void *) awo );
-      XtAddCallback( awo->fileSelectBox, XmNokCallback,
-       awc_templateFileSelectOk_cb, (void *) awo );
-
-      // -----------------------------------------------------
-
-      awo->wpFileSelect.w = awo->fileSelectBox;
+      awo->wpFileSelect.w = awo->templateFileSelectBox;
       awo->wpFileSelect.client = (void *) awo;
 
-      wm_delete_window = XmInternAtom( XtDisplay(awo->top),
-       "WM_DELETE_WINDOW", False );
-
-      XmAddWMProtocolCallback( XtParent(awo->fileSelectBox),
-       wm_delete_window, awc_fileSelectKill_cb, &awo->wpFileSelect );
-
-      XtVaSetValues( XtParent(awo->fileSelectBox), XmNdeleteResponse,
-       XmDO_NOTHING, NULL );
-
-      // -----------------------------------------------------
-
-      XtManageChild( awo->fileSelectBox );
-
-      XSetWindowColormap( awo->d,
-       XtWindow(XtParent(awo->fileSelectBox)),
-       awo->appCtx->ci.getColorMap() );
+      XtManageChild( awo->templateFileSelectBox );
 
       break;
 
@@ -11908,15 +11904,15 @@ Boolean nothingDone = False;
 
                 di = cur->node->getCurrentDragIndex();
 
-                if ( cur->node->dragValue(di) ) {
+                if ( cur->node->dragValue( be->x, be->y, di ) ) {
 
-                  if ( !blankOrComment( cur->node->dragValue(di) ) ) {
+                  if ( !blankOrComment( cur->node->dragValue( be->x, be->y, di ) ) ) {
 
                     if ( awo->pvAction->numActions() ) {
 
                       foundPvAction = 1;
 
-                      awo->pvAction->setInfo( cur->node->dragValue(di),
+                      awo->pvAction->setInfo( cur->node->dragValue( be->x, be->y, di ),
                        XDisplayName(awo->appCtx->displayName) );
 
                       XmMenuPosition( awo->actionPopup, be );
@@ -12231,6 +12227,8 @@ activeWindowClass::activeWindowClass ( void ) : unknownTags() {
 char *str;
 int i;
 
+  templateFileSelectBox = NULL;
+
   curReplaceIndex = -1;
   replaceOld = NULL;
   replaceNew = NULL;
@@ -12491,6 +12489,175 @@ int i;
 
 }
 
+int activeWindowClass::getRandFile (
+  char *outStr,
+  int outStrMaxLen
+) {
+
+char *envPtr, name[255+1];
+int fd;
+
+  if ( strcmp( fileName, "" ) != 0 ) {
+    extractName( fileName, name );
+  }
+  else {
+    strcpy( name, "edm_dump_pvs" );
+  }
+
+  envPtr = getenv( environment_str154 ); // EDMPVDUMP
+  if ( envPtr ) {
+    snprintf( outStr, outStrMaxLen, "%s/%s_XXXXXX", envPtr, name );
+  }
+  else {
+    snprintf( outStr, outStrMaxLen, "/tmp/%s_XXXXXX", name );
+  }
+  outStr[outStrMaxLen] = 0;
+
+  fd = mkstemp( outStr );
+  outStr[outStrMaxLen] = 0;
+
+  return fd;
+
+}
+
+void activeWindowClass::dumpPvList ( void ) {
+
+char fname[255+1], *envPtr, *ptr, msg[255+1];
+activeGraphicListPtr cur;
+ int i, n, nPvs, stat, dup, fd;
+ProcessVariable *pvs[10000];
+AVL_HANDLE pvNameTree;
+nameListPtr curNameNode;
+FILE *f;
+int avlTreeCreated = 0;
+int fileOpened = 0;
+
+  envPtr = getenv( environment_str154 ); // EDMPVDUMP
+  if ( !envPtr ) return;
+
+  fd = getRandFile( fname, 255 );
+  fileOpened = 1;
+
+  snprintf( msg, 255, "edl file name: %s\n", this->fileName );
+  msg[255] = 0;
+  write( fd, msg, strlen(msg) );
+
+  stat = avl_init_tree( compare_nodes, compare_key, copy_node,
+   &pvNameTree );
+  if ( !( stat & 1 ) ) {
+    snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+    appCtx->postMessage( msg );
+    goto done;
+  }
+
+  avlTreeCreated = 1;
+
+  cur = head->blink;
+  while ( cur != head ) {
+
+    cur->node->getPvs( 10000, pvs, &n );
+    for ( i=0; i<n; i++ ) {
+      if ( pvs[i] && pvs[i]->is_epics() ) {
+        curNameNode = (nameListPtr) calloc( sizeof(nameListType), 1 );
+        if ( !curNameNode ) {
+          snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+          appCtx->postMessage( msg );
+          goto done;
+        }
+        curNameNode->name = (char *) pvs[i]->get_name();
+        stat = avl_insert_node( pvNameTree, (void *) curNameNode, &dup );
+        if ( !( stat & 1 ) ) {
+          snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+          appCtx->postMessage( msg );
+          goto done;
+        }
+        if ( dup ) {
+          free( curNameNode );
+        }
+      }
+    }
+
+    cur = cur->blink;
+
+  }
+
+  // fprintf( stderr, "dumpPvList, file name = [%s]\n", fname );
+
+  nPvs = 0;
+  stat = avl_get_first( pvNameTree, (void **) &curNameNode );
+  if ( !( stat & 1 ) ) {
+    snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+    appCtx->postMessage( msg );
+    goto done;
+  }
+  while ( curNameNode ) {
+
+    snprintf( msg, 255, "%s\n", curNameNode->name );
+    msg[255] = 0;
+    write( fd, msg, strlen(msg) );
+
+    nPvs++;
+
+    stat = avl_get_next( pvNameTree, (void **) &curNameNode );
+    if ( !( stat & 1 ) ) {
+      snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+      appCtx->postMessage( msg );
+      goto done;
+    }
+
+  }
+
+  fileOpened = 0;
+
+  close( fd );
+
+  //fprintf( stderr, "Num PVs = %-d\n", nPvs );
+
+done:
+
+  if ( fileOpened ) {
+
+    fileOpened = 0;
+
+    close( fd );
+
+  }
+
+  if ( avlTreeCreated ) {
+
+    // delete tree
+    curNameNode = NULL;
+    stat = avl_get_first( pvNameTree, (void **) &curNameNode );
+    if ( !( stat & 1 ) ) {
+      snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+      appCtx->postMessage( msg );
+      return;
+    }
+    while ( curNameNode ) {
+
+      stat = avl_delete_node( pvNameTree, (void **) &curNameNode );
+      if ( !( stat & 1 ) ) {
+        snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+        appCtx->postMessage( msg );
+        return;
+      }
+
+      free( curNameNode );
+      curNameNode = NULL;
+
+      stat = avl_get_first( pvNameTree, (void **) &curNameNode );
+      if ( !( stat & 1 ) ) {
+        snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
+        appCtx->postMessage( msg );
+        return;
+      }
+
+    }
+
+  }
+
+}
+
 void activeWindowClass::initCopy ( void ) {
 
   pixmapX0 = w;
@@ -12745,6 +12912,20 @@ pvDefPtr pvDefCur, pvDefNext;
   //if ( !isEmbedded ) fprintf( stderr, "Destroy - [%s]\n", fileNameForSym );
 
   windowState = AWC_TERMINATED;
+
+  if ( templateFileSelectBox ) {
+
+    XtRemoveCallback( templateFileSelectBox, XmNcancelCallback,
+     awc_fileSelectCancel_cb, (void *) this );
+    XtRemoveCallback( templateFileSelectBox, XmNokCallback,
+     awc_templateFileSelectOk_cb, (void *) this );
+
+    XtUnmanageChild( templateFileSelectBox ); // it's ok to unmanage a child any number of times
+    XtDestroyWidget( templateFileSelectBox );
+
+    templateFileSelectBox = NULL;
+
+  }
 
   if ( sar1 ) {
     delete[] sar1;
@@ -16732,6 +16913,25 @@ activeWindowClass *aw, *prevAw;
 
 }
 
+activeWindowClass *activeWindowClass::actualTopObject ( void ) {
+
+activeWindowClass *aw, *prevAw;
+
+  prevAw = NULL;
+  aw = this;
+  while ( aw ) {
+    prevAw = aw;
+    aw = aw->parent;
+  }
+
+  if ( prevAw ) {
+    return prevAw;
+  }
+
+  return this;
+
+}
+
 Widget activeWindowClass::drawWidgetId ( void ) {
 
   return drawWidget;
@@ -18950,6 +19150,8 @@ char *envPtr;
 
   windowState = AWC_COMPLETE_EXECUTE;
 
+  dumpPvList();
+
   return 1;
 
 }
@@ -19089,6 +19291,8 @@ char **muxMacro, **muxExpansion;
   refreshActive();
 
   windowState = AWC_COMPLETE_EXECUTE;
+
+  dumpPvList();
 
   return 1;
 

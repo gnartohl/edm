@@ -277,6 +277,8 @@ public:
     virtual bool putAck(short value);
     virtual bool putAck(const char *dsp, short value);
 
+    virtual bool is_epics() const { return false; }
+
 protected:
     // hidden, use PV_Factory::create()/ProcessVariable::release()
     ProcessVariable(const char *_name);

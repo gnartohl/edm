@@ -129,6 +129,10 @@ void updateBlink (
 int setBG (
   unsigned int bg );
 
+int setBG (
+  int bgIndex,
+  int *blink );
+
 int setBaseBG (
   unsigned int bg );
 

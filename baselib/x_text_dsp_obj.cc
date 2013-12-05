@@ -16,6 +16,18 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+
+// ==================
+//
+// note about setting colors ( color management got way too complicated )
+//
+//Use getColor() when not using the 2nd blink param else use getIndex()
+//
+//    actWin->executeGc.setFG( bgColor.getColor() );
+//
+//    actWin->drawGc.setFG( fgColor.getIndex(), &blink );
+//
+
 #define __x_text_dsp_obj_cc 1
 
 #include "x_text_dsp_obj.h"
@@ -1350,6 +1362,7 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) userarg;
 
       axtdo->connection.setPvDisconnected( (void *) axtdo->pvConnection );
       axtdo->fgColor.setDisconnected();
+      axtdo->bgColor.setDisconnected();
       axtdo->needRefresh = 1;
       axtdo->actWin->addDefExeNode( axtdo->aglPtr );
 
@@ -1398,6 +1411,7 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) userarg;
 
       axtdo->connection.setPvDisconnected( (void *) axtdo->svalPvConnection );
       axtdo->fgColor.setDisconnected();
+      axtdo->bgColor.setDisconnected();
       axtdo->needRefresh = 1;
       axtdo->actWin->addDefExeNode( axtdo->aglPtr );
 
@@ -1434,6 +1448,7 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) userarg;
 
       axtdo->connection.setPvDisconnected( (void *) axtdo->fgPvConnection );
       axtdo->fgColor.setDisconnected();
+      axtdo->bgColor.setDisconnected();
       axtdo->needRefresh = 1;
       axtdo->actWin->addDefExeNode( axtdo->aglPtr );
 
@@ -1637,6 +1652,7 @@ unsigned short svalue;
       axtdo->oldStat = st;
       axtdo->oldSev = sev;
       axtdo->fgColor.setStatus( st, sev );
+      axtdo->bgColor.setStatus( st, sev );
       axtdo->bufInvalidate();
       axtdo->needRefresh = 1;
     }
@@ -1778,7 +1794,32 @@ int index;
     index = axtdo->actWin->ci->evalRule( axtdo->fgColor.pixelIndex(), val );
     axtdo->fgColor.changeIndex( index, axtdo->actWin->ci );
     axtdo->bufInvalidate();
-    //axtdo->needRefresh = 1;
+    axtdo->needUpdate = 1;
+    axtdo->actWin->addDefExeNode( axtdo->aglPtr );
+
+  }
+
+  axtdo->actWin->appCtx->proc->unlock();
+
+}
+
+static void XtextDspBgUpdate (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeXTextDspClass *axtdo = (activeXTextDspClass *) userarg;
+double val;
+int index;
+
+  axtdo->actWin->appCtx->proc->lock();
+
+  if ( axtdo->activeMode ) {
+
+    val = pv->get_double();
+    index = axtdo->actWin->ci->evalRule( axtdo->bgColor.pixelIndex(), val );
+    axtdo->bgColor.changeIndex( index, axtdo->actWin->ci );
+    axtdo->bufInvalidate();
     axtdo->needUpdate = 1;
     axtdo->actWin->addDefExeNode( axtdo->aglPtr );
 
@@ -2048,6 +2089,15 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   axtdo->colorMode = axtdo->eBuf->bufColorMode;
 
+  axtdo->bgColor.setConnectSensitive();
+
+  if ( axtdo->useDisplayBg ) {
+    axtdo->bgColorMode = XTDC_K_COLORMODE_STATIC;
+  }
+  else {
+    axtdo->bgColorMode = axtdo->eBuf->bufBgColorMode;
+  }
+
   axtdo->editable = axtdo->eBuf->bufEditable;
 
   axtdo->isWidget = axtdo->eBuf->bufIsWidget;
@@ -2063,9 +2113,15 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
   else
     axtdo->fgColor.setAlarmInsensitive();
 
+  if ( axtdo->bgColorMode == XTDC_K_COLORMODE_ALARM )
+    axtdo->bgColor.setAlarmSensitive();
+  else
+    axtdo->bgColor.setAlarmInsensitive();
+
   axtdo->fgColor.setColorIndex( axtdo->eBuf->bufFgColor, axtdo->actWin->ci );
   axtdo->fgColor.setNullIndex ( axtdo->eBuf->bufSvalColor, axtdo->actWin->ci );
-  axtdo->bgColor = axtdo->eBuf->bufBgColor;
+
+  axtdo->bgColor.setColorIndex( axtdo->eBuf->bufBgColor, axtdo->actWin->ci );
 
   axtdo->nullDetectMode = axtdo->eBuf->bufNullDetectMode;
 
@@ -2129,12 +2185,21 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 
   axtdo->alignment = axtdo->fm.currentFontAlignment();
 
-  if ( axtdo->alignment == XmALIGNMENT_BEGINNING )
+  if ( axtdo->alignment == XmALIGNMENT_BEGINNING ) {
     axtdo->stringX = axtdo->x;
-  else if ( axtdo->alignment == XmALIGNMENT_CENTER )
+    if ( !(axtdo->useDisplayBg) ||
+         ( axtdo->useAlarmBorder && ( axtdo->colorMode == XTDC_K_COLORMODE_ALARM ) )
+       ) (axtdo->stringX) += axtdo->fontHeight/2;
+  }
+  else if ( axtdo->alignment == XmALIGNMENT_CENTER ) {
     axtdo->stringX = axtdo->x + axtdo->w/2 - axtdo->stringWidth/2;
-  else if ( axtdo->alignment == XmALIGNMENT_END )
+  }
+  else if ( axtdo->alignment == XmALIGNMENT_END ) {
     axtdo->stringX = axtdo->x + axtdo->w - axtdo->stringWidth;
+    if ( !(axtdo->useDisplayBg) ||
+         ( axtdo->useAlarmBorder && ( axtdo->colorMode == XTDC_K_COLORMODE_ALARM ) )
+       ) (axtdo->stringX) -= axtdo->fontHeight/2;
+  }
 
 }
 
@@ -2293,6 +2358,8 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   colorMode = source->colorMode;
 
+  bgColorMode = source->bgColorMode;
+
   editable = source->editable;
 
   smartRefresh = source->smartRefresh;
@@ -2309,7 +2376,7 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   dateAsFileName = source->dateAsFileName;
 
-  bgColor = source->bgColor;
+  bgColor.copy(source->bgColor);
 
   fgColor.copy(source->fgColor);
 
@@ -2641,7 +2708,8 @@ int activeXTextDspClass::createInteractive (
 
   fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
   fgColor.setNullIndex( actWin->defaultFg2Color, actWin->ci );
-  bgColor = actWin->defaultBgColor;
+
+  bgColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
 
   useDisplayBg = 1;
 
@@ -2650,6 +2718,8 @@ int activeXTextDspClass::createInteractive (
   formatType = XTDC_K_FORMAT_NATURAL;
 
   colorMode = XTDC_K_COLORMODE_STATIC;
+
+  bgColorMode = XTDC_K_COLORMODE_STATIC;
 
   editable = 0;
   smartRefresh = 0;
@@ -2789,6 +2859,7 @@ static int objTypeEnum[4] = {
   tag.loadW( "fgColor", actWin->ci, &fgColor );
   tag.loadBoolW( "fgAlarm", &colorMode, &zero );
   tag.loadW( "bgColor", actWin->ci, &bgColor );
+  tag.loadBoolW( "bgAlarm", &bgColorMode, &zero );
   tag.loadBoolW( "useDisplayBg", &useDisplayBg, &zero );
   tag.loadBoolW( "editable", &editable, &zero );
   tag.loadBoolW( "autoHeight", &autoHeight, &zero );
@@ -2858,7 +2929,7 @@ int index, stat;
   index = fgColor.pixelIndex();
   actWin->ci->writeColorIndex( f, index );
   //fprintf( f, "%-d\n", index );
-  index = bgColor;
+  index = bgColor.pixelIndex();
   actWin->ci->writeColorIndex( f, index );
   //fprintf( f, "%-d\n", index );
   fprintf( f, "%-d\n", formatType );
@@ -3051,6 +3122,7 @@ static int objTypeEnum[4] = {
   tag.loadR( "fgColor", actWin->ci, &fgColor );
   tag.loadR( "fgAlarm", &colorMode, &zero );
   tag.loadR( "bgColor", actWin->ci, &bgColor );
+  tag.loadR( "bgAlarm", &bgColorMode, &zero );
   tag.loadR( "useDisplayBg", &useDisplayBg, &zero );
   tag.loadR( "editable", &editable, &zero );
   tag.loadR( "autoHeight", &autoHeight, &zero );
@@ -3140,6 +3212,15 @@ static int objTypeEnum[4] = {
   else
     fgColor.setAlarmInsensitive();
 
+  if ( useDisplayBg ) {
+    bgColorMode = XTDC_K_COLORMODE_STATIC;
+  }
+
+  if ( bgColorMode == XTDC_K_COLORMODE_ALARM )
+    bgColor.setAlarmSensitive();
+  else
+    bgColor.setAlarmInsensitive();
+
   strncpy( pvName, pvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
   pvName[PV_Factory::MAX_PV_NAME] = 0;
   strncpy( value, pvName, minStringSize() );
@@ -3157,12 +3238,21 @@ static int objTypeEnum[4] = {
 
   stringY = y + fontAscent + h/2 - fontHeight/2;
 
-  if ( alignment == XmALIGNMENT_BEGINNING )
+  if ( alignment == XmALIGNMENT_BEGINNING ) {
     stringX = x;
-  else if ( alignment == XmALIGNMENT_CENTER )
+    if ( !useDisplayBg ||
+         ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) )
+       ) (stringX) += fontHeight/4;
+  }
+  else if ( alignment == XmALIGNMENT_CENTER ) {
     stringX = x + w/2 - stringWidth/2;
-  else if ( alignment == XmALIGNMENT_END )
+  }
+  else if ( alignment == XmALIGNMENT_END ) {
     stringX = x + w - stringWidth;
+    if ( !useDisplayBg ||
+         ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) )
+       ) (stringX) -= fontHeight/4;
+  }
 
   return stat;
 
@@ -3214,7 +3304,8 @@ int tmpFgColor, tmpSvalColor;
 
     actWin->ci->readColorIndex( f, &index );
     actWin->incLine(); actWin->incLine();
-    bgColor = index;
+    tmpFgColor = index;
+    bgColor.setColorIndex( tmpFgColor, actWin->ci );
 
   }
   else if ( major > 1 ) {
@@ -3224,7 +3315,8 @@ int tmpFgColor, tmpSvalColor;
     fgColor.setColorIndex( tmpFgColor, actWin->ci );
 
     fscanf( f, "%d\n", &index ); actWin->incLine();
-    bgColor = index;
+    tmpFgColor = index;
+    bgColor.setColorIndex( tmpFgColor, actWin->ci );
 
   }
   else {
@@ -3246,7 +3338,8 @@ int tmpFgColor, tmpSvalColor;
       b *= 256;
     }
     actWin->ci->setRGB( r, g, b, &pixel );
-    bgColor = actWin->ci->pixIndex( pixel );
+    tmpFgColor = actWin->ci->pixIndex( pixel );
+    bgColor.setColorIndex( tmpFgColor, actWin->ci );
 
   }
 
@@ -3500,12 +3593,21 @@ int tmpFgColor, tmpSvalColor;
 
   stringY = y + fontAscent + h/2 - fontHeight/2;
 
-  if ( alignment == XmALIGNMENT_BEGINNING )
+  if ( alignment == XmALIGNMENT_BEGINNING ) {
     stringX = x;
-  else if ( alignment == XmALIGNMENT_CENTER )
+    if ( !useDisplayBg ||
+         ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) )
+       ) (stringX) += fontHeight/4;
+  }
+  else if ( alignment == XmALIGNMENT_CENTER ) {
     stringX = x + w/2 - stringWidth/2;
-  else if ( alignment == XmALIGNMENT_END )
+  }
+  else if ( alignment == XmALIGNMENT_END ) {
     stringX = x + w - stringWidth;
+    if ( !useDisplayBg ||
+         ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) )
+       ) (stringX) -= fontHeight/4;
+  }
 
   return stat;
 
@@ -3533,7 +3635,7 @@ int tmpFgColor;
   strcpy( pvName, "" );
 
   fgColor.setColorIndex( actWin->defaultTextFgColor, actWin->ci );
-  bgColor = actWin->defaultBgColor;
+  bgColor.setColorIndex( actWin->defaultBgColor, actWin->ci );
 
   useDisplayBg = 1;
 
@@ -3737,12 +3839,21 @@ int tmpFgColor;
 
   this->initSelectBox(); // call after getting x,y,w,h
 
-  if ( alignment == XmALIGNMENT_BEGINNING )
+  if ( alignment == XmALIGNMENT_BEGINNING ) {
     stringX = x;
-  else if ( alignment == XmALIGNMENT_CENTER )
+    if ( !useDisplayBg ||
+         ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) )
+       ) (stringX) += fontHeight/4;
+  }
+  else if ( alignment == XmALIGNMENT_CENTER ) {
     stringX = x + w/2 - stringWidth/2;
-  else if ( alignment == XmALIGNMENT_END )
+  }
+  else if ( alignment == XmALIGNMENT_END ) {
     stringX = x + w - stringWidth;
+    if ( !useDisplayBg ||
+         ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) )
+       ) (stringX) -= fontHeight/4;
+  }
 
   stringY = y + fontAscent + h/2 - fontHeight/2;
 
@@ -3789,13 +3900,14 @@ int noedit;
   eBuf->bufW = w;
   eBuf->bufH = h;
   eBuf->bufFgColor = fgColor.pixelIndex();
-  eBuf->bufBgColor = bgColor;
+  eBuf->bufBgColor = bgColor.pixelIndex();
   strncpy( eBuf->bufFontTag, fontTag, 63 );
   eBuf->bufFontTag[63] = 0;
   eBuf->bufUseDisplayBg = useDisplayBg;
   eBuf->bufAutoHeight = autoHeight;
   eBuf->bufFormatType = formatType;
   eBuf->bufColorMode = colorMode;
+  eBuf->bufBgColorMode = bgColorMode;
   strncpy( bfrValue, value, XTDC_K_MAX );
   bfrValue[XTDC_K_MAX] = 0;
   strncpy( eBuf->bufPvName, pvName, PV_Factory::MAX_PV_NAME );
@@ -4004,9 +4116,14 @@ int noedit;
   ef.addColorButton( activeXTextDspClass_str16, actWin->ci, &eBuf->bgCb,
    &eBuf->bufBgColor );
   bgColorEntry = ef.getCurItem();
+
+  ef.addToggle( activeXTextDspClass_str14, &eBuf->bufBgColorMode );
+  bgColorModeEntry = ef.getCurItem();
+
   ef.addToggle( activeXTextDspClass_str17, &eBuf->bufUseDisplayBg );
   useDspBgEntry = ef.getCurItem();
   useDspBgEntry->addInvDependency( bgColorEntry );
+  useDspBgEntry->addInvDependency( bgColorModeEntry );
   useDspBgEntry->addDependencyCallbacks();
 
   ef.addColorButton( activeXTextDspClass_str26, actWin->ci, &eBuf->svalCb,
@@ -4060,7 +4177,8 @@ int activeXTextDspClass::edit ( void ) {
 
 int activeXTextDspClass::erase ( void ) {
 
-XRectangle xR = { x, y, w, h };
+//XRectangle xR = { x, y, w, h };
+XRectangle xR = { x-1, y-1, w+2, h+2 };
 int clipStat = 0;
 
   if ( activeMode || deleteRequest ) return 1;
@@ -4104,8 +4222,10 @@ int clipStat = 0;
 
 int activeXTextDspClass::eraseActive ( void ) {
 
-XRectangle xR = { x, y, w, h };
+XRectangle xR = { x-1, y-1, w+2, h+2 };
+//XRectangle xR = { x, y, w, h };
 int clipStat = 0, len;
+int blink = 0;
 
   if ( !enabled || !init || !activeMode ) return 1;
 
@@ -4122,6 +4242,8 @@ int clipStat = 0, len;
   if ( strcmp( fontTag, "" ) != 0 ) {
     actWin->executeGc.setFontTag( fontTag, actWin->fi );
   }
+
+  actWin->executeGc.setLineWidth( 1 );
 
   len = strlen(bfrValue);
 
@@ -4184,28 +4306,32 @@ int clipStat = 0, len;
     actWin->executeGc.saveFg();
     actWin->executeGc.saveBg();
 
-    actWin->executeGc.setFG( actWin->ci->pix(bgColor) );
-    actWin->executeGc.setBG( actWin->ci->pix(bgColor) );
+    actWin->executeGc.setFG( bgColor.getColor() );
+    actWin->executeGc.setBG( bgColor.getColor() );
 
     if ( bufInvalid ) {
 
       XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
-      actWin->executeGc.eraseGC(), x, y, w, h );
+      actWin->executeGc.eraseGC(), x-1, y-1, w+2, h+2 );
 
       XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-      actWin->executeGc.eraseGC(), x, y, w, h );
+      actWin->executeGc.eraseGC(), x-1, y-1, w+2, h+2 );
 
     }
     else {
 
-      XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
-       actWin->executeGc.normGC(), x, y, w, h );
+      //XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
+      // actWin->executeGc.normGC(), x, y-50, w, h );
 
-      XFillRectangle( actWin->d, drawable(actWin->executeWidget),
-       actWin->executeGc.normGC(), x, y, w, h );
+      //XFillRectangle( actWin->d, drawable(actWin->executeWidget),
+      // actWin->executeGc.normGC(), x, y-100, w, h );
+
+      //XDrawImageString( actWin->d, drawable(actWin->executeWidget),
+      // actWin->executeGc.normGC(), stringX, stringY-150,
+      // bfrValue, len );
 
       XDrawImageString( actWin->d, drawable(actWin->executeWidget),
-       actWin->executeGc.normGC(), stringX, stringY,
+       actWin->executeGc.eraseGC(), stringX, stringY,
        bfrValue, len );
 
     }
@@ -4225,7 +4351,8 @@ int clipStat = 0, len;
 
 int activeXTextDspClass::draw ( void ) {
 
-XRectangle xR = { x, y, w, h };
+XRectangle xR = { x-1, y-1, w+2, h+2 };
+//XRectangle xR = { x, y, w, h };
 int clipStat = 0;
 int blink = 0;
 
@@ -4243,7 +4370,7 @@ int blink = 0;
   if ( useDisplayBg ) {
 
     actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
-    actWin->drawGc.setBG( actWin->ci->pix(bgColor) );
+    actWin->drawGc.setBG( bgColor.pixelIndex(), &blink );
 
     XDrawString( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.normGC(), stringX, stringY,
@@ -4252,7 +4379,7 @@ int blink = 0;
   }
   else {
 
-    actWin->drawGc.setFG( actWin->ci->pix(bgColor) );
+    actWin->drawGc.setFG( bgColor.pixelIndex(), &blink );
 
     XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.normGC(), x, y, w, h );
@@ -4261,7 +4388,7 @@ int blink = 0;
      actWin->drawGc.normGC(), x, y, w, h );
 
     actWin->drawGc.setFG( fgColor.pixelIndex(), &blink );
-    actWin->drawGc.setBG( actWin->ci->pix(bgColor) );
+    actWin->drawGc.setBG( bgColor.pixelIndex(), &blink );
 
     XDrawImageString( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.normGC(), stringX, stringY,
@@ -4282,18 +4409,22 @@ int blink = 0;
 
 int activeXTextDspClass::drawActive ( void ) {
 
-Arg args[10];
-int n;
+Arg args[10], args1[10];
+int n, n1;
 int blink = 0;
 unsigned int color;
-XRectangle xR = { x, y, w, h };
+XRectangle xR = { x-1, y-1, w+2, h+2 };
+//XRectangle xR = { x, y, w, h };
 int clipStat = 0;
+
+  actWin->executeGc.setLineWidth( 1 );
 
   if ( !init && !connection.pvsConnected() ) {
     if ( needToDrawUnconnected ) {
+
       actWin->executeGc.saveFg();
-      //actWin->executeGc.setFG( fgColor.getDisconnected() );
       actWin->executeGc.setFG( fgColor.getDisconnectedIndex(), &blink );
+      actWin->executeGc.setBG( bgColor.getDisconnectedIndex(), &blink );
       actWin->executeGc.setLineWidth( 2 );
       actWin->executeGc.setLineStyle( LineSolid );
       XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
@@ -4304,6 +4435,7 @@ int clipStat = 0;
     }
   }
   else if ( needToEraseUnconnected ) {
+
     actWin->executeGc.setLineWidth( 2 );
     actWin->executeGc.setLineStyle( LineSolid );
     XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
@@ -4321,25 +4453,45 @@ int clipStat = 0;
 
     if ( tf_widget ) {
 
+      // kludge to get value of blink - need something for motif widgets
+      actWin->executeGc.saveFg();
+      actWin->executeGc.setFG( fgColor.getIndex(), &blink );
+      updateBlink( blink );
+      actWin->executeGc.setFG( bgColor.getIndex(), &blink );
+      updateBlink( blink );
+      actWin->executeGc.restoreFg();
+
       if ( bufInvalid ) {
         n = 0;
         if ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) ) {
-          color = fgColor.pixelColor();
+          color = actWin->ci->getPixelByIndexWithBlink( fgColor.pixelIndex() ); //fgColor.pixelColor();
           XtSetArg( args[n], XmNforeground, (XtArgVal) color ); n++;
         }
         else {
-          color = fgColor.getColor();
+          color = actWin->ci->getPixelByIndexWithBlink( fgColor.getIndex() ); //fgColor.getColor();
           XtSetArg( args[n], XmNforeground, (XtArgVal) color ); n++;
         }
+        color = actWin->ci->getPixelByIndexWithBlink( bgColor.getIndex() ); //bgColor.getColor();
+        XtSetArg( args[n], XmNbackground, (XtArgVal) color ); n++;
         if ( colorMode == XTDC_K_COLORMODE_ALARM ) {
           if ( fgColor.getSeverity() != prevAlarmSeverity ) {
             if ( ( ( g_showTextBorderAlways && actWin->ci->shouldShowNoAlarmState() ) ||
                    fgColor.getSeverity() ) && useAlarmBorder ) {
+              //n1 = 0;
+	      //color = WhitePixel( actWin->d, DefaultScreen(actWin->d) );
+              //XtSetArg( args1[n1], XmNborderColor, (XtArgVal) color ); n1++;
+              //XtSetArg( args1[n1], XmNborderWidth, (XtArgVal) 2 ); n1++;
+              //XtSetValues( tf_widget, args1, n1 );
+              //n1 = 0;
+              //XtSetArg( args1[n1], XmNborderWidth, (XtArgVal) 0 ); n1++;
+              //XtSetValues( tf_widget, args1, n1 );
               XtSetArg( args[n], XmNborderWidth, (XtArgVal) 2 ); n++;
 	      color = fgColor.getColor();
               XtSetArg( args[n], XmNborderColor, (XtArgVal) color ); n++;
             }
             else {
+	      //color = WhitePixel( actWin->d, DefaultScreen(actWin->d) );
+              //XtSetArg( args[n], XmNborderColor, (XtArgVal) color ); n++;
               XtSetArg( args[n], XmNborderWidth, (XtArgVal) 0 ); n++;
             }
           }
@@ -4396,8 +4548,6 @@ int clipStat = 0;
       actWin->executeGc.setFG( fgColor.getIndex(), &blink );
     }
 
-    actWin->executeGc.setBG( actWin->ci->pix(bgColor) );
-
     XDrawString( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), stringX, stringY,
      value, stringLength );
@@ -4405,7 +4555,8 @@ int clipStat = 0;
   }
   else {
 
-    actWin->executeGc.setFG( actWin->ci->pix(bgColor) );
+    actWin->executeGc.setFG( bgColor.getIndex(), &blink );
+    actWin->executeGc.setBG( bgColor.getIndex(), &blink );
 
     XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), x, y, w, h );
@@ -4419,8 +4570,6 @@ int clipStat = 0;
     else {
       actWin->executeGc.setFG( fgColor.getIndex(), &blink );
     }
-
-    actWin->executeGc.setBG( actWin->ci->pix(bgColor) );
 
     XDrawImageString( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), stringX, stringY, 
@@ -4512,12 +4661,22 @@ expStringClass tmpStr;
   updateFont( value, fontTag, &fs, &fontAscent, &fontDescent, &fontHeight,
    &stringWidth );
   stringY = y + fontAscent + h/2 - fontHeight/2;
-  if ( alignment == XmALIGNMENT_BEGINNING )
+
+  if ( alignment == XmALIGNMENT_BEGINNING ) {
     stringX = x;
-  else if ( alignment == XmALIGNMENT_CENTER )
+    if ( !useDisplayBg ||
+         ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) )
+       ) (stringX) += fontHeight/4;
+  }
+  else if ( alignment == XmALIGNMENT_CENTER ) {
     stringX = x + w/2 - stringWidth/2;
-  else if ( alignment == XmALIGNMENT_END )
+  }
+  else if ( alignment == XmALIGNMENT_END ) {
     stringX = x + w - stringWidth;
+    if ( !useDisplayBg ||
+         ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) )
+       ) (stringX) -= fontHeight/4;
+  }
 
   return 1;
 
@@ -4878,6 +5037,7 @@ int activeXTextDspClass::deactivate (
       fgPvId->remove_conn_state_callback( xtdo_monitor_fg_connect_state,
        this );
       fgPvId->remove_value_callback( XtextDspFgUpdate, this );
+      fgPvId->remove_value_callback( XtextDspBgUpdate, this );
       fgPvId->release();
       fgPvId = NULL;
     }
@@ -4916,15 +5076,21 @@ void activeXTextDspClass::updateDimensions ( void )
 
   stringY = y + fontAscent + h/2 - fontHeight/2;
 
-  stringX = x;
-
   if ( alignment == XmALIGNMENT_BEGINNING ) {
-    // no change
+    stringX = x;
+    if ( !useDisplayBg ||
+         ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) )
+       ) (stringX) += fontHeight/4;
   }
-  else if ( alignment == XmALIGNMENT_CENTER )
+  else if ( alignment == XmALIGNMENT_CENTER ) {
     stringX = x + w/2 - stringWidth/2;
-  else if ( alignment == XmALIGNMENT_END )
+  }
+  else if ( alignment == XmALIGNMENT_END ) {
     stringX = x + w - stringWidth;
+    if ( !useDisplayBg ||
+         ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) )
+       ) (stringX) -= fontHeight/4;
+  }
 
 }
 
@@ -5339,6 +5505,7 @@ char locFieldLenInfo[7+1];
       }
 
       fgColor.setStatus( pvId->get_status(), pvId->get_severity() );
+      bgColor.setStatus( pvId->get_status(), pvId->get_severity() );
 
       isDate = 0;
 
@@ -5366,6 +5533,7 @@ char locFieldLenInfo[7+1];
       }
 
       fgColor.setStatus( pvId->get_status(), pvId->get_severity() );
+      bgColor.setStatus( pvId->get_status(), pvId->get_severity() );
 
       isDate = 0;
 
@@ -5396,6 +5564,7 @@ char locFieldLenInfo[7+1];
       isWidget = 0;
 
       fgColor.setStatus( pvId->get_status(), pvId->get_severity() );
+      bgColor.setStatus( pvId->get_status(), pvId->get_severity() );
 
       isDate = 0;
 
@@ -5411,6 +5580,7 @@ char locFieldLenInfo[7+1];
         strcpy( units, "" );
         showUnits = 0;
         fgColor.setStatus( pvId->get_status(), pvId->get_severity() );
+        bgColor.setStatus( pvId->get_status(), pvId->get_severity() );
 
       }
 
@@ -5432,6 +5602,7 @@ char locFieldLenInfo[7+1];
 
 	if ( fgPvId ) {
 	  fgPvId->add_value_callback( XtextDspFgUpdate, this );
+	  fgPvId->add_value_callback( XtextDspBgUpdate, this );
 	}
 
       }
@@ -5647,8 +5818,14 @@ char locFieldLenInfo[7+1];
 
       if ( useDisplayBg )
         bg = actWin->executeGc.getBaseBG();
-      else
-        bg = actWin->ci->pix(bgColor);
+      else {
+        if ( useAlarmBorder && ( bgColorMode == XTDC_K_COLORMODE_ALARM ) ) {
+          bg = bgColor.pixelColor();
+        }
+        else {
+          bg = bgColor.getColor();
+        }
+      }
 
       if ( !tf_widget ) {
 
@@ -5674,7 +5851,7 @@ char locFieldLenInfo[7+1];
            XmNx, x,
            XmNy, y,
            XmNforeground, pixel,
-           XmNbackground, bg,
+           XmNbackground, bgColor.pixelColor(), //bg,
            XmNhighlightThickness, 0,
            XmNwidth, w,
            XmNvalue, entryValue,
@@ -5695,7 +5872,7 @@ char locFieldLenInfo[7+1];
            XmNx, x,
            XmNy, y,
            XmNforeground, pixel,
-           XmNbackground, bg,
+           XmNbackground, bgColor.pixelColor(), //bg,
            XmNhighlightThickness, 0,
            XmNwidth, w,
            XmNheight, h,
@@ -5719,7 +5896,7 @@ char locFieldLenInfo[7+1];
          XmNx, x,
          XmNy, y-3,
          XmNforeground, pixel,
-         XmNbackground, bg,
+         XmNbackground, bgColor.pixelColor(), //bg,
          XmNhighlightThickness, 0,
          XmNwidth, w,
          XmNvalue, entryValue,
@@ -5860,6 +6037,7 @@ char locFieldLenInfo[7+1];
     } // end if ( isWidget )
 
     fgColor.setConnected();
+    bgColor.setConnected();
     init = 1;
 
     bufInvalidate();
@@ -6051,7 +6229,7 @@ void activeXTextDspClass::changeDisplayParams (
     fgColor.setNullIndex( _fg2Color, actWin->ci );
 
   if ( _flag & ACTGRF_BGCOLOR_MASK )
-    bgColor = _bgColor;
+    bgColor.setColorIndex( _bgColor, actWin->ci );
 
   if ( _flag & ACTGRF_ALIGNMENT_MASK )
     alignment = _alignment;
@@ -6150,12 +6328,21 @@ int changed = 0;
 
     stringY = y + fontAscent + h/2 - fontHeight/2;
 
-    if ( alignment == XmALIGNMENT_BEGINNING )
+    if ( alignment == XmALIGNMENT_BEGINNING ) {
       stringX = x;
-    else if ( alignment == XmALIGNMENT_CENTER )
+      if ( !useDisplayBg ||
+           ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) )
+         ) (stringX) += fontHeight/4;
+    }
+    else if ( alignment == XmALIGNMENT_CENTER ) {
       stringX = x + w/2 - stringWidth/2;
-    else if ( alignment == XmALIGNMENT_END )
+    }
+    else if ( alignment == XmALIGNMENT_END ) {
       stringX = x + w - stringWidth;
+      if ( !useDisplayBg ||
+           ( useAlarmBorder && ( colorMode == XTDC_K_COLORMODE_ALARM ) )
+         ) (stringX) -= fontHeight/4;
+    }
 
     updateDimensions();
 
