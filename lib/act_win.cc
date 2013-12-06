@@ -2295,7 +2295,7 @@ XmFileSelectionBoxCallbackStruct *cbs =
  (XmFileSelectionBoxCallbackStruct *) call;
 activeGraphicListPtr cur;
 int i, n, nPvs, stat, dup;
-ProcessVariable *pvs[10000];
+ProcessVariable *pvs[1000];
 AVL_HANDLE pvNameTree;
 nameListPtr curNameNode;
 FILE *f;
@@ -2328,7 +2328,8 @@ int fileOpened = 0;
   cur = awo->head->blink;
   while ( cur != awo->head ) {
 
-    cur->node->getPvs( 10000, pvs, &n );
+    for ( i=0; i<1000; i++ ) pvs[i] = 0;
+    cur->node->getPvs( 1000, pvs, &n );
     for ( i=0; i<n; i++ ) {
       if ( pvs[i] ) {
         curNameNode = (nameListPtr) calloc( sizeof(nameListType), 1 );
@@ -12528,8 +12529,8 @@ void activeWindowClass::dumpPvList ( void ) {
 
 char fname[255+1], *envPtr, *ptr, msg[255+1];
 activeGraphicListPtr cur;
- int i, n, nPvs, stat, dup, fd;
-ProcessVariable *pvs[10000];
+int i, n, nPvs, stat, dup, fd;
+ProcessVariable *pvs[1000];
 AVL_HANDLE pvNameTree;
 nameListPtr curNameNode;
 FILE *f;
@@ -12561,9 +12562,10 @@ int fileOpened = 0;
   cur = head->blink;
   while ( cur != head ) {
 
-    cur->node->getPvs( 10000, pvs, &n );
+    for( i=0; i<1000; i++ ) pvs[i] = 0;
+    cur->node->getPvs( 1000, pvs, &n );
     for ( i=0; i<n; i++ ) {
-      if ( pvs[i] && pvs[i]->is_epics() ) {
+      if ( pvs[i] && pvs[i]->is_epics() && pvs[i]->get_name() ) {
         curNameNode = (nameListPtr) calloc( sizeof(nameListType), 1 );
         if ( !curNameNode ) {
           snprintf( msg, 255, activeWindowClass_str198, __LINE__, __FILE__ );
@@ -12586,8 +12588,6 @@ int fileOpened = 0;
     cur = cur->blink;
 
   }
-
-  // fprintf( stderr, "dumpPvList, file name = [%s]\n", fname );
 
   nPvs = 0;
   stat = avl_get_first( pvNameTree, (void **) &curNameNode );
@@ -12616,8 +12616,6 @@ int fileOpened = 0;
   fileOpened = 0;
 
   close( fd );
-
-  //fprintf( stderr, "Num PVs = %-d\n", nPvs );
 
 done:
 
