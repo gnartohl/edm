@@ -76,6 +76,8 @@ public:
     bool putAck(short value);
     bool putAck(const char *dsp, short value);
 
+    virtual bool is_epics() const { return true; }
+
 private:
     friend class LOG_PV_Factory;
     
