@@ -7697,7 +7697,12 @@ activeWindowClass *awo;
 
   if ( e->type == MapNotify ) {
 
-    awo->refresh();
+    if ( awo->mode == AWC_EDIT ) {
+      awo->refresh();
+    }
+    else {
+      awo->refreshActive();
+    }
 
   }
   else if ( e->type == ConfigureNotify ) {
