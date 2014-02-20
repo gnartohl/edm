@@ -283,7 +283,7 @@ static void dropTransferProc (
   Atom *type,
   XtPointer value,
   unsigned long *length,
-  int format )
+  XtPointer format )
 {
 
 activeXTextDspClass *axtdo = (activeXTextDspClass *) clientData;
@@ -293,6 +293,11 @@ double dvalue;
 char string[XTDC_K_MAX+1], tmp[XTDC_K_MAX+1];
 
   if ( !axtdo ) return;
+
+  //fprintf( stderr, "dropTransferProc\n" );
+  //fprintf( stderr, "type = %-d\n", (int) *type );
+  //fprintf( stderr, "selType = %-d\n", (int) *selType );
+  //fprintf( stderr, "format = %-ld\n", *((int *) format) );
 
   if ( *type == XA_STRING ) {
 

@@ -3191,22 +3191,28 @@ class activeGraphicClass *ago;
 Atom MOTIF_DROP = XmInternAtom( d, "_MOTIF_DROP", false );
 int l;
 
+  //fprintf( stderr, "cvt\n" );
+
   if ( *selection != MOTIF_DROP ) {
+    //fprintf( stderr, "1\n" );
     return false;
   }
 
   if ( *target != XA_STRING ) {
+    //fprintf( stderr, "2\n" );
     return false;
   }
 
   XtVaGetValues( w, XmNclientData, &ago, NULL );
 
   if ( !ago->dragValue( ago->currentDragIndex ) ) {
+    //fprintf( stderr, "3\n" );
     return false;
   }
 
   l = strlen( ago->dragValue( ago->currentDragIndex ) );
   if ( l < 1 ) {
+    //fprintf( stderr, "4\n" );
     return false;
   }
 
@@ -3347,12 +3353,16 @@ int activeGraphicClass::startDrag (
   int x,
   int y ) {
 
-Atom expList[1];
+Atom expList[2];
 int n;
 Arg args[10];
 
+  //fprintf( stderr, "activeGraphicClass::startDrag(*be,x,y)\n" );
+
   Widget icon = mkDragIcon(actWin->executeWidget, this);
   if ( !icon ) return 0;
+
+  //fprintf( stderr, "next 1\n" );
 
   expList[0] = XA_STRING;
   n = 0;
@@ -3419,9 +3429,13 @@ Atom expList[1];
 int n;
 Arg args[10];
 
+  //fprintf( stderr, "activeGraphicClass::startDrag(w,*e)\n" );
+
   Widget icon = mkDragIcon(w, this);
   if ( !icon ) return 0;
  
+  //fprintf( stderr, "next 2\n" );
+
   expList[0] = XA_STRING;
   n = 0;
   XtSetArg( args[n], XmNexportTargets, expList ); n++;

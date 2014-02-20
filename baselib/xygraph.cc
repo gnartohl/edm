@@ -19,8 +19,16 @@
 #define __xygraph_cc 1
 
 #include "xygraph.h"
+#include "math.h"
 
 void _edmDebug ( void );
+
+static double loc_log10 ( double d ) {
+
+  if ( d == 0 ) return 0;
+  return log10( fabs( d ) );
+
+}
 
 static void setVal (
   int pvtype,
@@ -854,7 +862,7 @@ xyGraphClass *xyo = (xyGraphClass *) client;
 
     if ( xyo->kpXMin > 0 ) {
 
-      xyo->xRescaleValue = log10(xyo->kpXMin);
+      xyo->xRescaleValue = loc_log10( xyo->kpXMin );
 
     }
     else {
@@ -901,7 +909,7 @@ xyGraphClass *xyo = (xyGraphClass *) client;
 
     if ( xyo->kpXMax > 0 ) {
 
-      xyo->xRescaleValue = log10(xyo->kpXMax);
+      xyo->xRescaleValue = loc_log10( xyo->kpXMax );
 
     }
     else {
@@ -954,11 +962,11 @@ int ctl;
 
     if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( minValue <= 0 ) minValue = 1;
-      minValue = log10( minValue );
+      minValue = loc_log10(  minValue  );
     }
     else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
       if ( minValue <= 0 ) minValue = 1;
-      minValue = log10( minValue );
+      minValue = loc_log10(  minValue  );
     }
 
   }
@@ -971,11 +979,11 @@ int ctl;
 
     if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( minValue <= 0 ) minValue = 1;
-      minValue = log10( minValue );
+      minValue = loc_log10(  minValue  );
     }
     else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
       if ( minValue <= 0 ) minValue = 1;
-      minValue = log10( minValue );
+      minValue = loc_log10(  minValue  );
     }
 
   }
@@ -1062,11 +1070,11 @@ int ctl;
 
     if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( minValue <= 0 ) minValue = 1;
-      minValue = log10( minValue );
+      minValue = loc_log10(  minValue  );
     }
     else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
       if ( minValue <= 0 ) minValue = 1;
-      minValue = log10( minValue );
+      minValue = loc_log10(  minValue  );
     }
 
   }
@@ -1100,11 +1108,11 @@ int ctl;
 
     if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( maxValue <= 0 ) maxValue = 1;
-      maxValue = log10( maxValue );
+      maxValue = loc_log10(  maxValue  );
     }
     else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
       if ( maxValue <= 0 ) maxValue = 1;
-      maxValue = log10( maxValue );
+      maxValue = loc_log10(  maxValue  );
     }
 
   }
@@ -1117,11 +1125,11 @@ int ctl;
 
     if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( maxValue <= 0 ) maxValue = 1;
-      maxValue = log10( maxValue );
+      maxValue = loc_log10(  maxValue  );
     }
     else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
       if ( maxValue <= 0 ) maxValue = 1;
-      maxValue = log10( maxValue );
+      maxValue = loc_log10(  maxValue  );
     }
 
   }
@@ -1208,11 +1216,11 @@ int ctl;
 
     if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( maxValue <= 0 ) maxValue = 1;
-      maxValue = log10( maxValue );
+      maxValue = loc_log10(  maxValue  );
     }
     else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
       if ( maxValue <= 0 ) maxValue = 1;
-      maxValue = log10( maxValue );
+      maxValue = loc_log10(  maxValue  );
     }
 
   }
@@ -1259,7 +1267,7 @@ int yi = yIndex;
 
   if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
     if ( xyo->kpY1Min[yi] > 0 ) {
-      xyo->y1RescaleValue[yi] = log10(xyo->kpY1Min[yi]);
+      xyo->y1RescaleValue[yi] = loc_log10( xyo->kpY1Min[yi] );
     }
     else {
       xyo->y1RescaleValue[yi] = 0;
@@ -1307,7 +1315,7 @@ int yi = yIndex;
 
   if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
     if ( xyo->kpY1Max[yi] > 0 ) {
-      xyo->y1RescaleValue[yi] = log10(xyo->kpY1Max[yi]);
+      xyo->y1RescaleValue[yi] = loc_log10( xyo->kpY1Max[yi] );
     }
     else {
       xyo->y1RescaleValue[yi] = 0;
@@ -1364,7 +1372,7 @@ int ctl;
 
     if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( minValue <= 0 ) minValue = 1;
-      minValue = log10( minValue );
+      minValue = loc_log10(  minValue  );
     }
 
   }
@@ -1384,7 +1392,7 @@ int ctl;
 
     if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( minValue <= 0 ) minValue = 1;
-      minValue = log10( minValue );
+      minValue = loc_log10(  minValue  );
     }
 
   }
@@ -1478,7 +1486,7 @@ int ctl;
 
     if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( minValue <= 0 ) minValue = 1;
-      minValue = log10( minValue );
+      minValue = loc_log10(  minValue  );
     }
 
   }
@@ -1534,7 +1542,7 @@ int ctl;
 
     if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( maxValue <= 0 ) maxValue = 1;
-      maxValue = log10( maxValue );
+      maxValue = loc_log10( maxValue );
     }
 
   }
@@ -1554,7 +1562,7 @@ int ctl;
 
     if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( maxValue <= 0 ) maxValue = 1;
-      maxValue = log10( maxValue );
+      maxValue = loc_log10(  maxValue  );
     }
 
   }
@@ -1648,7 +1656,7 @@ int ctl;
 
     if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( maxValue <= 0 ) maxValue = 1;
-      maxValue = log10( maxValue );
+      maxValue = loc_log10(  maxValue  );
     }
 
   }
@@ -1852,7 +1860,7 @@ int ctl;
           }
 
           if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-            if ( dyValue > 0 ) dyValue = log10( dyValue );
+            dyValue = loc_log10(  dyValue  );
           }
 
           if ( !ctl ) {
@@ -1879,10 +1887,16 @@ int ctl;
            xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
           scaledY = dclamp( scaledY );
 
-          yZero = xyo->plotAreaH -
-           rint( ( 0.0 - xyo->curY1Min[yi] ) *
-           xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
-          yZero = dclamp( yZero );
+
+          if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+            yZero = xyo->plotAreaH + xyo->y1Offset[yi][i];
+          }
+          else {
+            yZero = xyo->plotAreaH -
+             rint( ( 0.0 - xyo->curY1Min[yi] ) *
+             xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+            yZero = dclamp( yZero );
+          }
 
           // There are two views of pv types, Type and specificType; this uses
           // specificType
@@ -1931,10 +1945,10 @@ int ctl;
           }
 
           if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-            if ( dxValue > 0 ) dxValue = log10( dxValue );
+            dxValue = loc_log10(  dxValue  );
           }
           else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-            if ( dxValue > 0 ) dxValue  = log10( dxValue );
+            dxValue  = loc_log10(  dxValue  );
           }
 
           if ( !ctl ) {
@@ -2009,7 +2023,7 @@ int ctl;
             dxValue = (double) xyo->xPvCurValue[i];
 
             if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-              if ( dyValue > 0 ) dyValue = log10( dyValue );
+              dyValue = loc_log10(  dyValue  );
             }
 
             if ( !ctl ) {
@@ -2055,10 +2069,15 @@ int ctl;
              xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
             scaledY = dclamp( scaledY );
 
-            yZero = xyo->plotAreaH -
-             rint( ( 0.0 - xyo->curY1Min[yi] ) *
-             xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
-            yZero = dclamp( yZero );
+            if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+              yZero = xyo->plotAreaH + xyo->y1Offset[yi][i];
+            }
+            else {
+              yZero = xyo->plotAreaH -
+               rint( ( 0.0 - xyo->curY1Min[yi] ) *
+               xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+              yZero = dclamp( yZero );
+            }
 
             scaledX = rint( ( dxValue - xyo->curXMin ) *
              xyo->xFactor[i] + xyo->xOffset[i] );
@@ -2454,7 +2473,7 @@ int ctl;
         }
 
         if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          if ( dyValue > 0 ) dyValue = log10( dyValue );
+          dyValue = loc_log10(  dyValue  );
         }
 
 	if ( !ctl ) {
@@ -2483,10 +2502,15 @@ int ctl;
          xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
         scaledY = dclamp( scaledY );
 
-        yZero = xyo->plotAreaH -
-         rint( ( 0.0 - xyo->curY1Min[yi] ) *
-         xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
-        yZero = dclamp( yZero );
+        if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+          yZero = xyo->plotAreaH + xyo->y1Offset[yi][i];
+        }
+        else {
+          yZero = xyo->plotAreaH -
+           rint( ( 0.0 - xyo->curY1Min[yi] ) *
+           xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+          yZero = dclamp( yZero );
+        }
 
         // There are two views of pv types, Type and specificType; this uses
         // specificType
@@ -2535,10 +2559,10 @@ int ctl;
         }
 
         if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-          if ( dxValue > 0 ) dxValue = log10( dxValue );
+          dxValue = loc_log10(  dxValue  );
         }
         else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-          if ( dxValue > 0 ) dxValue  = log10( dxValue );
+          dxValue  = loc_log10(  dxValue  );
         }
 
 
@@ -3011,7 +3035,7 @@ int ctl;
         }
 
         if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          if ( dyValue > 0 ) dyValue = log10( dyValue );
+          dyValue = loc_log10(  dyValue  );
         }
 
 	if ( !ctl ) {
@@ -3040,10 +3064,15 @@ int ctl;
          xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
         scaledY = dclamp( scaledY );
 
-        yZero = xyo->plotAreaH -
-         rint( ( 0.0 - xyo->curY1Min[yi] ) *
-         xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
-        yZero = dclamp( yZero );
+        if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+          yZero = xyo->plotAreaH + xyo->y1Offset[yi][i];
+        }
+        else {
+          yZero = xyo->plotAreaH -
+           rint( ( 0.0 - xyo->curY1Min[yi] ) *
+           xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+          yZero = dclamp( yZero );
+        }
 
         // There are two views of pv types, Type and specificType; this uses
         // specificType
@@ -3092,10 +3121,10 @@ int ctl;
         }
 
         if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-          if ( dxValue > 0 ) dxValue = log10( dxValue );
+          dxValue = loc_log10(  dxValue  );
         }
         else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-          if ( dxValue > 0 ) dxValue  = log10( dxValue );
+          dxValue  = loc_log10(  dxValue  );
         }
 
 	if ( !ctl ) {
@@ -3462,7 +3491,7 @@ int ctl;
 
         dxValue = (double) sec + (double) nsec * 0.000000001;
         ( (double *) xyo->xPvData[i] )[ii] = dxValue;
-        if ( dxValue > 0 ) dxValue = log10( dxValue );
+        dxValue = loc_log10(  dxValue  );
 
       }
       else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LINEAR ) {
@@ -3489,7 +3518,7 @@ int ctl;
           dxValue = (double) xyo->totalCount[i];
 	}
         ( (double *) xyo->xPvData[i] )[ii] = dxValue;
-        if ( dxValue > 0 ) dxValue = log10( dxValue );
+        dxValue = loc_log10(  dxValue  );
 
         if ( !xyo->firstTimeSample ) {
           ++(xyo->totalCount[i]);
@@ -3502,7 +3531,7 @@ int ctl;
       if ( xyo->plotUpdateMode[i] != XYGC_K_UPDATE_ON_TRIG ) {
 
         if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          if ( dyValue > 0 ) dyValue = log10( dyValue );
+          dyValue = loc_log10(  dyValue  );
         }
 
 	if ( !ctl ) {
@@ -3548,10 +3577,15 @@ int ctl;
          xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
         scaledY = dclamp( scaledY );
 
-        yZero = xyo->plotAreaH -
-         rint( ( 0.0 - xyo->curY1Min[yi] ) *
-         xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
-        yZero = dclamp( yZero );
+        if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+          yZero = xyo->plotAreaH + xyo->y1Offset[yi][i];
+        }
+        else {
+          yZero = xyo->plotAreaH -
+           rint( ( 0.0 - xyo->curY1Min[yi] ) *
+           xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+          yZero = dclamp( yZero );
+        }
 
         scaledX = rint( ( dxValue - xyo->curXMin ) *
          xyo->xFactor[i] + xyo->xOffset[i] );
@@ -4658,7 +4692,7 @@ static char *xAxisStyleEnumStr[4] = {
   "linear",
   "log10",
   "time",
-  "log10(time)"
+  "loc_log10(time)"
 };
 static int xAxisStyleEnum[4] = {
   0,
@@ -5086,7 +5120,7 @@ static char *xAxisStyleEnumStr[4] = {
   "linear",
   "log10",
   "time",
-  "log10(time)"
+  "loc_log10(time)"
 };
 static int xAxisStyleEnum[4] = {
   0,
@@ -5892,7 +5926,7 @@ int i, yi;
     efAxis->addLabel( " Show" );
     efAxis->addToggle( " ", &eBuf->bufXAxis );
     efAxis->addLabel( " Style" );
-    efAxis->addOption( "", "linear|log10|time|log10(time)", &eBuf->bufXAxisStyle );
+    efAxis->addOption( "", "linear|log10|time|loc_log10(time)", &eBuf->bufXAxisStyle );
     efAxis->addLabel( " Range" );
     efAxis->addOption( "", "from pv|user-specified|auto-scale",
      &eBuf->bufXAxisSource );
@@ -6137,7 +6171,7 @@ int ctl;
       }
 
       if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-        if ( dyValue > 0 ) dyValue = log10( dyValue );
+        dyValue = loc_log10(  dyValue  );
       }
 
       scaledY = plotAreaH -
@@ -6145,10 +6179,15 @@ int ctl;
        y1Factor[yi][i] - y1Offset[yi][i] );
       scaledY = dclamp( scaledY );
 
-      yZero = plotAreaH -
-       rint( ( 0.0 - curY1Min[yi] ) *
-       y1Factor[yi][i] - y1Offset[yi][i] );
-      yZero = dclamp( yZero );
+      if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+        yZero = plotAreaH + y1Offset[yi][i];
+      }
+      else {
+        yZero = plotAreaH -
+         rint( ( 0.0 - curY1Min[yi] ) *
+         y1Factor[yi][i] - y1Offset[yi][i] );
+        yZero = dclamp( yZero );
+      }
 
       if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 
@@ -6206,10 +6245,10 @@ int ctl;
       }
 
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-        if ( dxValue > 0 ) dxValue = log10( dxValue );
+        dxValue = loc_log10(  dxValue  );
       }
       else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-        if ( dxValue > 0 ) dxValue = log10( dxValue );
+        dxValue = loc_log10(  dxValue  );
       }
 
       scaledX = rint( ( dxValue - curXMin ) *
@@ -6307,7 +6346,7 @@ int ctl;
     }
 
     if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-      if ( dyValue > 0 ) dyValue = log10( dyValue );
+      dyValue = loc_log10(  dyValue  );
     }
 
     scaledY = plotAreaH -
@@ -6315,10 +6354,15 @@ int ctl;
      y1Factor[yi][i] - y1Offset[yi][i] );
     scaledY = dclamp( scaledY );
 
-    yZero = plotAreaH -
-     rint( ( 0.0 - curY1Min[yi] ) *
-     y1Factor[yi][i] - y1Offset[yi][i] );
-    yZero = dclamp( yZero );
+    if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+      yZero = plotAreaH + y1Offset[yi][i];
+    }
+    else {
+      yZero = plotAreaH -
+       rint( ( 0.0 - curY1Min[yi] ) *
+       y1Factor[yi][i] - y1Offset[yi][i] );
+      yZero = dclamp( yZero );
+    }
 
 #if 0
     // There are two views of pv types, Type and specificType; this uses
@@ -6372,10 +6416,10 @@ int ctl;
     dxValue = ( (double *) xPvData[i] )[ii];
 
     if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-      if ( dxValue > 0 ) dxValue = log10( dxValue );
+      dxValue = loc_log10(  dxValue  );
     }
     else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-      if ( dxValue > 0 ) dxValue = log10( dxValue );
+      dxValue = loc_log10(  dxValue  );
     }
 
     scaledX = rint( ( dxValue - curXMin ) *
@@ -6590,7 +6634,7 @@ int ctl;
     }
 
     if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-      if ( dyValue > 0 ) dyValue = log10( dyValue );
+      dyValue = loc_log10(  dyValue  );
     }
 // Ron Chestnut changes 3/2/2007
     if ( ii == 0) new_min_y = new_max_y = dyValue;
@@ -6604,10 +6648,15 @@ int ctl;
      y1Factor[yi][i] - y1Offset[yi][i] );
     scaledY = dclamp( scaledY );
 
-    yZero = plotAreaH -
-     rint( ( 0.0 - curY1Min[yi] ) *
-     y1Factor[yi][i] - y1Offset[yi][i] );
-    yZero = dclamp( yZero );
+    if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+      yZero = plotAreaH + y1Offset[yi][i];
+    }
+    else {
+      yZero = plotAreaH -
+       rint( ( 0.0 - curY1Min[yi] ) *
+       y1Factor[yi][i] - y1Offset[yi][i] );
+      yZero = dclamp( yZero );
+    }
 
     // There are two views of pv types, Type and specificType; this uses
     // specificType
@@ -6656,10 +6705,10 @@ int ctl;
     }
 
     if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-      if ( dxValue > 0 ) dxValue = log10( dxValue );
+      dxValue = loc_log10(  dxValue  );
     }
     else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-      if ( dxValue > 0 ) dxValue = log10( dxValue );
+      dxValue = loc_log10(  dxValue  );
     }
 
     scaledX = rint( ( dxValue - curXMin ) *
@@ -7895,12 +7944,12 @@ XmString str;
       curXMin = xMin.value();
       curXMax = xMax.value();
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-        curXMin = log10( curXMin );
-	curXMax = log10( curXMax );
+        curXMin = loc_log10(  curXMin  );
+	curXMax = loc_log10(  curXMax  );
       }
       else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-        curXMin = log10( curXMin );
-	curXMax = log10( curXMax );
+        curXMin = loc_log10(  curXMin  );
+	curXMax = loc_log10(  curXMax  );
       }
 
       adjCurXMin = curXMin;
@@ -7910,8 +7959,8 @@ XmString str;
         curY1Min[yi] = y1Min[yi].value();
         curY1Max[yi] = y1Max[yi].value();
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          curY1Min[yi] = log10( curY1Min[yi] );
-          curY1Max[yi] = log10( curY1Max[yi] );
+          curY1Min[yi] = loc_log10(  curY1Min[yi]  );
+          curY1Max[yi] = loc_log10(  curY1Max[yi]  );
         }
         adjCurY1Min[yi] = curY1Min[yi];
         adjCurY1Max[yi] = curY1Max[yi];
@@ -9232,8 +9281,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
             if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
               if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
               if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
-              curY1Min[yi] = log10( curY1Min[yi] );
-              curY1Max[yi] = log10( curY1Max[yi] );
+              curY1Min[yi] = loc_log10(  curY1Min[yi]  );
+              curY1Max[yi] = loc_log10(  curY1Max[yi]  );
             }
           }
         }
@@ -9322,14 +9371,14 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
               if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
                 if ( curXMin <= 0 ) curXMin = 1e-2;
                 if ( curXMax <= 0 ) curXMax = 1e-1;
-                curXMin = log10( curXMin );
-                curXMax = log10( curXMax );
+                curXMin = loc_log10(  curXMin  );
+                curXMax = loc_log10(  curXMax  );
               }
               else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
                 if ( curXMin <= 0 ) curXMin = 1e-2;
                 if ( curXMax <= 0 ) curXMax = 1e-1;
-                curXMin = log10( curXMin );
-                curXMax = log10( curXMax );
+                curXMin = loc_log10(  curXMin  );
+                curXMax = loc_log10(  curXMax  );
               }
             }
           }
@@ -9838,7 +9887,7 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
               }
 
               if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-                if ( dyValue > 0 ) dyValue = log10( dyValue );
+                dyValue = loc_log10(  dyValue  );
               }
 
               scaledY = plotAreaH -
@@ -9846,10 +9895,15 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
                y1Factor[yi][i] - y1Offset[yi][i] );
               scaledY = dclamp( scaledY );
 
-              yZero = plotAreaH -
-               rint( ( 0.0 - curY1Min[yi] ) *
-               y1Factor[yi][i] - y1Offset[yi][i] );
-              yZero = dclamp( yZero );
+              if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+                yZero = plotAreaH + y1Offset[yi][i];
+              }
+              else {
+                yZero = plotAreaH -
+                 rint( ( 0.0 - curY1Min[yi] ) *
+                 y1Factor[yi][i] - y1Offset[yi][i] );
+                yZero = dclamp( yZero );
+              }
 
               if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 
@@ -9907,10 +9961,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
               }
 
               if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-                if ( dxValue > 0 ) dxValue = log10( dxValue );
+                dxValue = loc_log10(  dxValue  );
               }
               else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-                if ( dxValue > 0 ) dxValue = log10( dxValue );
+                dxValue = loc_log10(  dxValue  );
               }
 
               scaledX = rint( ( dxValue - curXMin ) *
@@ -9973,7 +10027,7 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
            ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
         if ( curXMin <= 0 ) curXMin = 1e-2;
-        curXMin = log10(curXMin);
+        curXMin = loc_log10( curXMin );
       }
     }
 
@@ -9983,7 +10037,7 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
            ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
         if ( curXMax <= 0 ) curXMax = 1e-1;
-        curXMax = log10(curXMax);
+        curXMax = loc_log10( curXMax );
       }
     }
 
@@ -9993,11 +10047,11 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         curXMin = dbXMin[0];
         if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
           if ( curXMin <= 0 ) curXMin = 1e-2;
-          curXMin = log10( curXMin );
+          curXMin = loc_log10(  curXMin  );
         }
         else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
           if ( curXMin <= 0 ) curXMin = 1e-2;
-          curXMin = log10( curXMin );
+          curXMin = loc_log10(  curXMin  );
         }
       }
       else {
@@ -10011,11 +10065,11 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         curXMax = dbXMax[0];
         if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
           if ( curXMax <= 0 ) curXMax = 1e-1;
-          curXMax = log10( curXMax );
+          curXMax = loc_log10(  curXMax  );
         }
         else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
           if ( curXMax <= 0 ) curXMax = 1e-1;
-          curXMax = log10( curXMax );
+          curXMax = loc_log10(  curXMax  );
         }
       }
       else {
@@ -10106,7 +10160,7 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         curY1Min[yi] = kpY1MinEfDouble[yi].value();
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
-          curY1Min[yi] = log10(curY1Min[yi]);
+          curY1Min[yi] = loc_log10( curY1Min[yi] );
         }
       }
 
@@ -10114,7 +10168,7 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         curY1Max[yi] = kpY1MaxEfDouble[yi].value();
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
-          curY1Max[yi] = log10(curY1Max[yi]);
+          curY1Max[yi] = loc_log10( curY1Max[yi] );
         }
       }
 
@@ -10124,7 +10178,7 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           curY1Min[yi] = dbYMin[lowestYScaleIndex[yi]];
           if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
             if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
-            curY1Min[yi] = log10( curY1Min[yi] );
+            curY1Min[yi] = loc_log10(  curY1Min[yi]  );
           }
         }
         else {
@@ -10138,7 +10192,7 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           curY1Max[yi] = dbYMax[lowestYScaleIndex[yi]];
           if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
             if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
-            curY1Max[yi] = log10( curY1Max[yi] );
+            curY1Max[yi] = loc_log10(  curY1Max[yi]  );
           }
         }
         else {
@@ -10272,14 +10326,14 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
         if ( curXMin <= 0 ) curXMin = 1e-2;
         if ( curXMax <= 0 ) curXMax = 1e-1;
-        curXMin = log10( curXMin );
-        curXMax = log10( curXMax );
+        curXMin = loc_log10(  curXMin  );
+        curXMax = loc_log10(  curXMax  );
       }
       else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
         if ( curXMin <= 0 ) curXMin = 1e-2;
         if ( curXMax <= 0 ) curXMax = 1e-1;
-        curXMin = log10( curXMin );
-        curXMax = log10( curXMax );
+        curXMin = loc_log10(  curXMin  );
+        curXMax = loc_log10(  curXMax  );
       }
 
       if ( allChronological ) { // then autoscale X
@@ -10377,8 +10431,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
           if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
-          curY1Min[yi] = log10( curY1Min[yi] );
-          curY1Max[yi] = log10( curY1Max[yi] );
+          curY1Min[yi] = loc_log10(  curY1Min[yi]  );
+          curY1Max[yi] = loc_log10(  curY1Max[yi]  );
 	}
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           get_log10_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi], &adjCurY1Max[yi],
@@ -10490,8 +10544,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           if ( checkY1Min[yi] <= 0 ) checkY1Min[yi] = 1e-2;
           if ( checkY1Max[yi] <= 0 ) checkY1Max[yi] = 1e-1;
-          checkY1Min[yi] = log10( checkY1Min[yi] );
-          checkY1Max[yi] = log10( checkY1Max[yi] );
+          checkY1Min[yi] = loc_log10(  checkY1Min[yi]  );
+          checkY1Max[yi] = loc_log10(  checkY1Max[yi]  );
 	}
 
         if ( checkY1Min[yi] != checkY1Max[yi] ) {
@@ -10535,8 +10589,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
           if ( curXMin <= 0 ) curXMin = 1e-2;
           if ( curXMax <= 0 ) curXMax = 1e-1;
-          curXMin = log10( curXMin );
-          curXMax = log10( curXMax );
+          curXMin = loc_log10(  curXMin  );
+          curXMax = loc_log10(  curXMax  );
           get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
            &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
            format );
@@ -10550,8 +10604,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
           if ( curXMin <= 0 ) curXMin = 1e-2;
           if ( curXMax <= 0 ) curXMax = 1e-1;
-          curXMin = log10( curXMin );
-          curXMax = log10( curXMax );
+          curXMin = loc_log10(  curXMin  );
+          curXMax = loc_log10(  curXMax  );
           get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
            &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
            format );
@@ -10610,8 +10664,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
             if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
             if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
-            curY1Min[yi] = log10( curY1Min[yi] );
-            curY1Max[yi] = log10( curY1Max[yi] );
+            curY1Min[yi] = loc_log10(  curY1Min[yi]  );
+            curY1Max[yi] = loc_log10(  curY1Max[yi]  );
             get_log10_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi], &adjCurY1Max[yi],
              &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
              &curY1MinorsPerMajor[yi], format );
@@ -10682,8 +10736,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
         if ( curXMin <= 0 ) curXMin = 1e-2;
         if ( curXMax <= 0 ) curXMax = 1e-1;
-        curXMin = log10( curXMin );
-        curXMax = log10( curXMax );
+        curXMin = loc_log10(  curXMin  );
+        curXMax = loc_log10(  curXMax  );
         get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
          &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
          format );
@@ -10697,8 +10751,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
         if ( curXMin <= 0 ) curXMin = 1e-2;
         if ( curXMax <= 0 ) curXMax = 1e-1;
-        curXMin = log10( curXMin );
-        curXMax = log10( curXMax );
+        curXMin = loc_log10(  curXMin  );
+        curXMax = loc_log10(  curXMax  );
         get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
          &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
          format );
@@ -10767,8 +10821,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
           if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
-          curY1Min[yi] = log10( curY1Min[yi] );
-          curY1Max[yi] = log10( curY1Max[yi] );
+          curY1Min[yi] = loc_log10(  curY1Min[yi]  );
+          curY1Max[yi] = loc_log10(  curY1Max[yi]  );
           get_log10_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi], &adjCurY1Max[yi],
            &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
            &curY1MinorsPerMajor[yi], format );
@@ -10925,14 +10979,14 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
         if ( curXMin <= 0 ) curXMin = 1e-2;
         if ( curXMax <= 0 ) curXMax = 1e-1;
-        curXMin = log10( curXMin );
-        curXMax = log10( curXMax );
+        curXMin = loc_log10(  curXMin  );
+        curXMax = loc_log10(  curXMax  );
       }
       else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
         if ( curXMin <= 0 ) curXMin = 1e-2;
         if ( curXMax <= 0 ) curXMax = 1e-1;
-        curXMin = log10( curXMin );
-        curXMax = log10( curXMax );
+        curXMin = loc_log10(  curXMin  );
+        curXMax = loc_log10(  curXMax  );
       }
 
       if ( allChronological ) { // then autoscale X
@@ -11017,8 +11071,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
           if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
-          curY1Min[yi] = log10( curY1Min[yi] );
-          curY1Max[yi] = log10( curY1Max[yi] );
+          curY1Min[yi] = loc_log10(  curY1Min[yi]  );
+          curY1Max[yi] = loc_log10(  curY1Max[yi]  );
 	}
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           get_log10_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi], &adjCurY1Max[yi],
@@ -11068,14 +11122,14 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
     if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
       if ( curXMin <= 0 ) curXMin = 1e-2;
       if ( curXMax <= 0 ) curXMax = 1e-1;
-      curXMin = log10( curXMin );
-      curXMax = log10( curXMax );
+      curXMin = loc_log10(  curXMin  );
+      curXMax = loc_log10(  curXMax  );
     }
     else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
       if ( curXMin <= 0 ) curXMin = 1e-2;
       if ( curXMax <= 0 ) curXMax = 1e-1;
-      curXMin = log10( curXMin );
-      curXMax = log10( curXMax );
+      curXMin = loc_log10(  curXMin  );
+      curXMax = loc_log10(  curXMax  );
     }
 
     for ( i=0; i<numTraces; i++ ) {
@@ -11091,8 +11145,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
         if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
         if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
-        curY1Min[yi] = log10( curY1Min[yi] );
-        curY1Max[yi] = log10( curY1Max[yi] );
+        curY1Min[yi] = loc_log10(  curY1Min[yi]  );
+        curY1Max[yi] = loc_log10(  curY1Max[yi]  );
       }
 
       for ( i=0; i<numTraces; i++ ) {
@@ -11423,7 +11477,7 @@ double n;
           n = (double) npts;
           if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
                ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
-            if ( n > 0 ) n = log10( n );
+            n = loc_log10(  n  );
           }
           prevX = (short) rint( ( n - curXMin ) *
            xFactor[trace] + xOffset[trace] );
@@ -11454,7 +11508,7 @@ double n;
           n = (double) npts;
           if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
                ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
-            if ( n > 0 ) n = log10( n );
+            n = loc_log10(  n  );
           }
           curX = (short) rint( ( n - curXMin ) *
            xFactor[trace] + xOffset[trace] );

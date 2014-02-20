@@ -82,6 +82,7 @@ ifdef EPICS_HOST_ARCH
    LIB_SRCS += table.cc
    LIB_SRCS += coefTable.cc
    LIB_SRCS += rampButton.cc
+   LIB_SRCS += asignal.cc
 
    include $(TOP)/configure/RULES
 

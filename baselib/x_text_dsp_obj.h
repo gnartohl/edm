@@ -72,7 +72,7 @@ static void dropTransferProc (
   Atom *type,
   XtPointer value,
   unsigned long *length,
-  int format );
+  XtPointer format );
 
 static void handleDrop (
   Widget w,
@@ -298,7 +298,7 @@ friend void dropTransferProc (
   Atom *type,
   XtPointer value,
   unsigned long *length,
-  int format );
+  XtPointer format );
 
 friend void handleDrop (
   Widget w,

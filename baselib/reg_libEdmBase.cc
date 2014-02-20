@@ -57,7 +57,8 @@ static libRecType libRec[] = {
   { "pvInspectorClass", global_str2, reg_str26 },
   { "activeTableClass", global_str2, reg_str27 },
   { "activeCoefTableClass", global_str2, reg_str29 },
-  { "activeMpStrobeClass", global_str5, reg_str31 }
+  { "activeMpStrobeClass", global_str5, reg_str31 },
+  { "activeSignalClass", global_str5, reg_str32 }
 };
 
 #ifdef __cplusplus

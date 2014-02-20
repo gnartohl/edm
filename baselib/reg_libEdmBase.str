@@ -29,6 +29,7 @@
 #define reg_str29 (char *) "Coef Table"
 #define reg_str30 (char *) "X-Y Graph"
 #define reg_str31 (char *) "Multi-Purpose Strobe"
+#define reg_str32 (char *) "Signal"
 
 #define reg_str98 (char *) "Text w. Reg. Exp."
 
