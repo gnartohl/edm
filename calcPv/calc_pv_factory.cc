@@ -13,6 +13,7 @@
 #include<float.h>
 #include<math.h>
 #include "epicsAlarmLike.h"
+#include "environment.str"
 #include"calc_pv_factory.h"
 
 static PV_Factory *calc_pv_factory = new CALC_PV_Factory();
@@ -761,6 +762,9 @@ CALC_PV_Factory::CALC_PV_Factory()
         return;
     }
 
+    processInvalid = false;
+    invalidResult = 0.0;
+    
     expressions = new ExpressionHash();
     
     if (calcPvList)
@@ -771,7 +775,7 @@ CALC_PV_Factory::CALC_PV_Factory()
 
     calcPvList = new CalcPvListHash();
     
-    char *env = getenv(CALC_ENV);
+    char *env = getenv(environment_str153);
     if (env)
     {
         env = strdup(env);
@@ -791,21 +795,24 @@ CALC_PV_Factory::CALC_PV_Factory()
     }
     else
     {
-        if (! parseFile(CALC_FILENAME))
-        {
-            const char *path=getenv("EDMFILES");
-            if (path)
-            {
-                char *name = (char *) malloc(strlen(path)+
-                                            strlen(CALC_FILENAME)+2);
-                if (name)
-                {
-                    sprintf(name, "%s/%s", path, CALC_FILENAME);
-                    parseFile(name);
-                    free(name);
-                }
+      {
+        const char *path=getenv("EDMFILES");
+        if (path) {
+          char *name =
+           (char *) malloc(strlen(path)+strlen(CALC_FILENAME)+2);
+          if (name) {
+            sprintf(name, "%s/%s", path, CALC_FILENAME);
+            int result = parseFile(name);
+            free(name);
+            if ( !result ) {
+              parseFile(CALC_FILENAME);
             }
+          }
         }
+        else {
+          parseFile(CALC_FILENAME);
+        }
+      }
     }
 }
 
@@ -844,11 +851,50 @@ CALC_PV_Factory::~CALC_PV_Factory()
 #   endif
 }
 
+int CALC_PV_Factory::handleProcessInvalidOptions (
+  const char *line
+) {
+
+  char *tok, *ctx, buf[255+1];
+
+  strncpy( buf, line, 255 );
+  buf[255] = 0;
+
+  ctx = NULL;
+  tok = strtok_r( buf, "= \t\n", &ctx );
+
+  if ( tok ) {
+
+    if ( strcasecmp( tok, "processinvalid" ) == 0 ) {
+
+      processInvalid = true;
+      return 1; // yes, this was a process invalid option
+
+    }
+    else if ( strcasecmp( tok, "invalidresult" ) == 0 ) {
+
+      tok = strtok_r( NULL, "= \t\n", &ctx );
+      if ( tok ) {
+        invalidResult = strtod( tok, NULL );
+        return 1; // yes, this was a process invalid option
+      }
+
+    }
+
+  }
+
+  return 0; // no, this was not a process invalid option
+
+}
+
 bool CALC_PV_Factory::parseFile(const char *filename)
 {
     char line[1024], name[PV_Factory::MAX_PV_NAME+1],
      newArgList[PV_Factory::MAX_PV_NAME+1];
     size_t len;
+    int result;
+
+    fprintf( stderr,"CALC_PV_Factory::parseFile '%s'\n", filename);
 
 #   ifdef CALC_DEBUG
     fprintf( stderr,"CALC_PV_Factory::parseFile '%s'\n", filename);
@@ -895,13 +941,24 @@ bool CALC_PV_Factory::parseFile(const char *filename)
             ++p;
             --len;
         }
+
+        if ( *p == '#' ) { // skip comments
+          continue;
+        }
+
+        result = handleProcessInvalidOptions( p );
+        if ( result ) { // line was and process-invalid option
+          continue;
+        }
         
         if (need_name)
         {
+
             strncpy( name, p, PV_Factory::MAX_PV_NAME );
             name[PV_Factory::MAX_PV_NAME] = 0;
             strcpy( newArgList, "" );
             need_name = false;
+
         }
         else
         {
@@ -1220,7 +1277,7 @@ CALC_ProcessVariable::CALC_ProcessVariable(const char *name,
     lower_warning = -DBL_MAX;
     upper_ctrl = 10.0;
     lower_ctrl = 0.0;
-    
+
     expression = _expression;
     arg_count = _arg_count;
 
@@ -1387,9 +1444,13 @@ void CALC_ProcessVariable::recalc()
 #           endif
         }
     }
-        
-    if (severity != INVALID_ALARM)
-        expression->calc(arg, value);
+
+    if ( severity != INVALID_ALARM ) {
+      expression->calc(arg, value);
+    }
+    else if ( processInvalid ) {
+      value = invalidResult;
+    }
 
     if (time == 0)
     {

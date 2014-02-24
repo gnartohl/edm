@@ -41,7 +41,7 @@
 #define environment_str36 (char *) "EDMNOAUTOINC"
 #define environment_str37 (char *) "EDMCHECKDISPLAY"
 #define environment_str38 (char *) "EDMMAXPROPDIALOGH"
-#define environment_str153 (char *) "CALC_ENV"
+#define environment_str153 (char *) "EDMCALC"
 #define environment_str154 (char *) "EDMPVDUMP"
 
 // Site Related

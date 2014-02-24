@@ -14,7 +14,6 @@
 #include"expString.h"
 
 #define CALC_FILENAME "calc.list"
-#define CALC_ENV "EDMCALC"
 
 class CALC_ProcessVariable;
 
@@ -56,6 +55,9 @@ public:
     bool needComplete;
 };
 
+static bool processInvalid = false;
+static double invalidResult = 0.0;
+
 class CALC_PV_Factory : public PV_Factory
 {
 public:
@@ -64,10 +66,12 @@ public:
 
     // Called on initialization with default file.
     // Could be called later to add new files?
+    static int handleProcessInvalidOptions ( const char * );
     static bool parseFile(const char *filename);
     
     // Result is referenced once, release when no longer needed.
     class ProcessVariable *create(const char *PV_name);
+
 };
 
 class CALC_ProcessVariable : public ProcessVariable
