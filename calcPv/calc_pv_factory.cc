@@ -894,8 +894,6 @@ bool CALC_PV_Factory::parseFile(const char *filename)
     size_t len;
     int result;
 
-    fprintf( stderr,"CALC_PV_Factory::parseFile '%s'\n", filename);
-
 #   ifdef CALC_DEBUG
     fprintf( stderr,"CALC_PV_Factory::parseFile '%s'\n", filename);
 #   endif
