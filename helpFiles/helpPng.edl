@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 455
-y 202
-w 500
-h 475
+x 474
+y 101
+w 497
+h 577
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
@@ -40,7 +40,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 29
 y 32
 w 127
@@ -59,10 +59,10 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 31
 y 278
-w 399
+w 395
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
@@ -79,7 +79,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 31
 y 294
 w 233
@@ -99,7 +99,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 31
 y 322
 w 410
@@ -119,10 +119,10 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 31
 y 338
-w 450
+w 446
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
@@ -139,7 +139,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 31
 y 366
 w 373
@@ -159,7 +159,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 31
 y 382
 w 125
@@ -179,7 +179,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 31
 y 427
 w 421
@@ -199,7 +199,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 31
 y 411
 w 426
@@ -219,7 +219,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 31
 y 444
 w 125
@@ -239,7 +239,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 31
 y 230
 w 345
@@ -259,7 +259,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 31
 y 247
 w 167
@@ -279,7 +279,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 34
 y 199
 w 248
@@ -290,6 +290,87 @@ bgColor rgb 46517 46517 46517
 useDisplayBg
 value {
   "File specification may contain symbols."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 34
+y 480
+w 228
+h 21
+font "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "NOTE: The PNG file format "
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 31
+y 518
+w 365
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "This may be done with gimp by opening the file,  selecting"
+  "image --> mode --> indexed, and saving the file."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 263
+y 478
+w 58
+h 24
+font "helvetica-bold-r-20.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "MUST"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 329
+y 480
+w 97
+h 21
+font "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "be indexed."
 }
 autoSize
 endObjectProperties
