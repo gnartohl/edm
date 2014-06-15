@@ -915,6 +915,7 @@ void PVValueInt::read_ctrlinfo(const void *buf)
     upper_ctrl_limit = val->upper_ctrl_limit;
     lower_ctrl_limit = val->lower_ctrl_limit;
     *value = val->value;
+
 }
 
 void PVValueInt::read_value(const void *buf)
@@ -1207,10 +1208,10 @@ short PVValueShort::get_DBR() const
 {   return DBR_SHORT; }
 
 int PVValueShort::get_int() const
-{   return (len > 0) ? (int) value[0] : 0; }
+{   return (int) value[0]; }
 
 double PVValueShort::get_double() const
-{   return (len > 0) ? (double) value[0] : 0; }
+{   return (double) value[0]; }
 
 size_t PVValueShort::get_string(char *strbuf, size_t len) const
 {
