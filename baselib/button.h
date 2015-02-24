@@ -304,6 +304,7 @@ int controlBitPos, readBitPos; // 0-31
 int prevControlBit, prevReadBit;
 int controlBit, readBit;
 int initControlBit, initReadBit;
+int buttonIsDown; // boolean that indicates if we have received the buttonDown event and not yet received the corresponding buttonUp event.
 
 public:
 

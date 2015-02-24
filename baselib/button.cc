@@ -495,6 +495,7 @@ activeButtonClass::activeButtonClass ( void ) {
   strcpy( maxVisString, "" );
   connection.setMaxPvs( 4 );
   activeMode = 0;
+  buttonIsDown = 0;
 
   controlIsBit = readIsBit = 0;
   prevControlBit = prevReadBit = 0;
@@ -578,6 +579,7 @@ activeGraphicClass *bto = (activeGraphicClass *) this;
   strncpy( minVisString, source->minVisString, 39 );
   strncpy( maxVisString, source->maxVisString, 39 );
   activeMode = 0;
+  buttonIsDown = 0;
 
   prevControlBit = prevReadBit = 0;
   initControlBit = initReadBit = 0;
@@ -2436,6 +2438,8 @@ unsigned int uival;
 
   if ( !controlPvId->have_write_access() ) return;
 
+  buttonIsDown = 0;
+
   if ( toggle ) return;
 
   value = 0;
@@ -2483,6 +2487,8 @@ unsigned int uival;
   }
 
   if ( buttonNumber != 1 ) return;
+
+  buttonIsDown = 1;
 
   if ( controlExists && controlIsBit ) {
 
@@ -3037,6 +3043,10 @@ int activeButtonClass::setProperty (
 
 char *activeButtonClass::firstDragName ( void ) {
 
+  // If the button is down and we use the middle-click to drag the PV name, the toggle does not seem to reset.
+  // Ignore the drag event in case the button is down
+  if(buttonIsDown) return NULL;
+
   if ( !enabled ) return NULL;
 
   dragIndex = 0;
@@ -3045,6 +3055,10 @@ char *activeButtonClass::firstDragName ( void ) {
 }
 
 char *activeButtonClass::nextDragName ( void ) {
+
+  // If the button is down and we use the middle-click to drag the PV name, the toggle does not seem to reset.
+  // Ignore the drag event in case the button is down
+  if(buttonIsDown) return NULL;
 
   if ( !enabled ) return NULL;
 

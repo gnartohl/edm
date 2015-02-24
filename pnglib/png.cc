@@ -23,6 +23,7 @@
 #include "act_win.h"
 
 #include "thread.h"
+#include "zlib.h"
 
 #include "remFileOpen.h"
 
@@ -1635,10 +1636,10 @@ void activePngClass::readpng_version_info ( void ) {
   fprintf(stderr, "   Compiled with libpng %s; using libpng %s.\n",
    PNG_LIBPNG_VER_STRING, png_libpng_ver);
 
-  fprintf(stderr, "   Compiled with zlib %s; using zlib %s.\n",
-   ZLIB_VERSION, zlib_version);
-}
+  fprintf(stderr, "   Compiled with zlib %s\n",
+   ZLIB_VERSION );
 
+}
 
 /* return value = 1 for success, 0 for bad sig, 2 for bad IHDR, 4 for no mem */
 
