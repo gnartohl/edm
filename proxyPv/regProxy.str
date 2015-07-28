@@ -1,0 +1,6 @@
+#ifndef __regProxy_str
+#define __regProxy_str 1
+
+#define reg_str1 (char *) "PROXY PV"
+
+#endif
