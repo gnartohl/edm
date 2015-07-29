@@ -88,8 +88,11 @@ private:
     bool write_access;
 
     bool proxy_is_connected;     // currently connected to CA?
+    bool proxy_have_ctrlinfo;    // have received DBR_CTRL_XXX
     chid proxy_pv_chid;          // CAC channel ID
+    evid proxy_pv_value_evid;    // CAC event ID
     char *proxy_name;
+    class PVValue *proxy_value;  // current value, type-dependent
 
     static void ca_connect_callback(struct connection_handler_args arg);
     static void ca_ctrlinfo_callback(struct event_handler_args args);
@@ -99,6 +102,8 @@ private:
 
     const char *get_proxy_name() const;
     static void ca_proxy_connect_callback(struct connection_handler_args arg);
+    static void ca_proxy_ctrlinfo_callback(struct event_handler_args args);
+    static void ca_proxy_value_callback(struct event_handler_args args);
 
 };
 

@@ -126,12 +126,15 @@ PROXY_ProcessVariable::PROXY_ProcessVariable(const char *_name)
     is_connected = false;
     proxy_is_connected = false;
     have_ctrlinfo = false;
+    proxy_have_ctrlinfo = false;
     read_access = write_access = false;
     pv_chid = 0;
     proxy_pv_chid = 0;
     pv_value_evid = 0;
+    proxy_pv_value_evid = 0;
     proxy_name = NULL;
     value = 0;
+    proxy_value = 0;
 
     int len = strlen( get_name() ) + strlen( "_PROXY" ) + 1;
     proxy_name = new char[len];
@@ -159,6 +162,7 @@ PROXY_ProcessVariable::~PROXY_ProcessVariable()
         ca_clear_channel(proxy_pv_chid);
     //fprintf( stderr,"PROXY_ProcessVariable %s deleted\n", get_name());
     delete value;
+    delete proxy_value;
     if ( proxy_name ) {
       free(proxy_name);
       proxy_name = NULL;
@@ -253,14 +257,57 @@ void PROXY_ProcessVariable::ca_proxy_connect_callback(
     PROXY_ProcessVariable *me = (PROXY_ProcessVariable *)ca_puser(arg.chid);
     if (arg.op == CA_OP_CONN_UP)
     {
+
+        // Check type of PVValue *value
+        if (me->proxy_value && me->proxy_value->get_DBR() != ca_field_type(arg.chid))
+        {
+            delete me->proxy_value;
+            me->proxy_value = 0;
+        }
+        if (!me->proxy_value)
+        {
+            switch (ca_field_type(arg.chid))
+            {   // TODO: Implement more types?
+                case DBF_STRING:
+                    me->proxy_value = new PVValueString(me);
+                    break;
+                case DBF_ENUM:
+                    me->proxy_value = new PVValueEnum(me);
+                    break;
+                case DBF_CHAR:
+                    me->proxy_value = new PVValueChar(me);
+                    break;
+                case DBF_INT:
+                    me->proxy_value = new PVValueShort(me);
+                    break;
+                case DBF_LONG:
+                    me->proxy_value = new PVValueInt(me);
+                    break;
+                case DBF_FLOAT:
+                    me->proxy_value = new PVValueDouble(me,"float");
+                    break;
+                case DBF_DOUBLE:
+                default: // fallback: request as double
+                    me->proxy_value = new PVValueDouble(me);
+            }
+        }
+        // CA quirk: DBR_CTRL doesn't work with arrays,
+        // so get only one element:
+        int stat = ca_array_get_callback(me->proxy_value->get_DBR()+DBR_CTRL_STRING,
+                                         1u, me->proxy_pv_chid,
+                                         ca_proxy_ctrlinfo_callback, me);
+        if (stat != ECA_NORMAL)
+            fprintf(stderr, "CA get control info error('%s'): %s\n",
+                    me->get_proxy_name(), ca_message(stat));
         me->proxy_is_connected = true;
-        int stat = ca_replace_access_rights_event(me->proxy_pv_chid,
-         ca_access_security_callback);
+        // status_callback only after ctrlinfo arrives
     }
     else
     {
         me->proxy_is_connected = false;
+        me->proxy_have_ctrlinfo = false;
     }
+
 }
 
 void PROXY_ProcessVariable::ca_access_security_callback(
@@ -281,6 +328,11 @@ void PROXY_ProcessVariable::ca_access_security_callback(
     else {
       me->write_access = false;
     }
+
+    //printf( "PROXY_ProcessVariable::ca_access_security_callback\n" );
+    //printf( "me->read_access = %-d\n", (int) me->read_access );
+    //printf( "me->write_access = %-d\n", (int) me->write_access );
+    //printf( "\n" );
 
     me->do_access_security_callbacks(); // tell widgets about change
 
@@ -332,6 +384,52 @@ void PROXY_ProcessVariable::ca_ctrlinfo_callback(
     }
 }
 
+void PROXY_ProcessVariable::ca_proxy_ctrlinfo_callback(
+    struct event_handler_args args)
+{
+    PROXY_ProcessVariable *me = (PROXY_ProcessVariable *)args.usr;
+
+    // Sometimes "get callback" functions get called with
+    // args.status set to ECA_DISCONN and args.dbr set to NULL.
+    // If so, return
+    if ( !args.dbr ) return;
+
+    if (!me->proxy_pv_value_evid)
+    {
+        int stat = ca_add_masked_array_event(me->proxy_value->get_DBR()+
+                                             DBR_TIME_STRING,
+                                             me->get_dimension(),
+                                             me->proxy_pv_chid,
+                                             ca_proxy_value_callback,
+                                             (void *)me,
+                                             (float) 0.0, (float) 0.0,
+                                             (float) 0.0,
+                                             &me->proxy_pv_value_evid,
+                                             DBE_VALUE|DBE_ALARM);
+        if (stat != ECA_NORMAL)
+            fprintf(stderr, "CA add event error('%s'): %s\n",
+                    me->get_proxy_name(), ca_message(stat));
+
+        stat = ca_replace_access_rights_event(me->proxy_pv_chid,
+                         ca_access_security_callback);
+
+        if (stat != ECA_NORMAL)
+            fprintf(stderr, "CA replace access rights event error('%s'): %s\n",
+                    me->get_proxy_name(), ca_message(stat));
+
+    }
+    else
+    {
+        if ( !me->proxy_have_ctrlinfo ) {
+            me->proxy_have_ctrlinfo = true;
+
+            //printf( "\nme->do_access_security_callbacks();\n\n" );
+
+            me->do_access_security_callbacks();
+	}
+    }
+}
+
 void PROXY_ProcessVariable::ca_ctrlinfo_refresh_callback(
     struct event_handler_args args)
 {
@@ -370,6 +468,16 @@ void PROXY_ProcessVariable::ca_value_callback(struct event_handler_args args)
     else
         fprintf(stderr, "CA value callback('%s'): No data, CA status %s\n",
                 me->get_name(), ca_message(args.status));
+}
+
+void PROXY_ProcessVariable::ca_proxy_value_callback(struct event_handler_args args)
+{
+    PROXY_ProcessVariable *me = (PROXY_ProcessVariable *)args.usr;
+
+    if ( !me->proxy_have_ctrlinfo ) {
+      me->proxy_have_ctrlinfo = true;
+    }
+
 }
 
 bool PROXY_ProcessVariable::is_valid() const
