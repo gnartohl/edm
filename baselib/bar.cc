@@ -1320,6 +1320,8 @@ int clipStat = 0;
 
   if ( !enabled || !activeMode || !init ) return 1;
 
+  actWin->executeGc.saveFg();
+
   actWin->executeGc.setFG( bgColor.getColor() );
 
   if ( bufInvalid ) {
@@ -1340,14 +1342,22 @@ int clipStat = 0;
   }
   else {
 
-    clipStat = actWin->drawGc.addNormXClipRectangle( xR );
+    clipStat = actWin->executeGc.addNormXClipRectangle( xR );
+
+    actWin->executeGc.setLineWidth( 1 );
+    actWin->executeGc.setLineStyle( LineSolid );
+
+    XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
+     actWin->executeGc.normGC(), oldBarX, barY, oldBarW, barH );
 
     XFillRectangle( actWin->d, drawable(actWin->executeWidget),
      actWin->executeGc.normGC(), oldBarX, barY, oldBarW, barH );
 
-    if ( clipStat & 1 ) actWin->drawGc.removeNormXClipRectangle();
+    if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
 
   }
+
+  actWin->executeGc.restoreFg();
 
   return 1;
 
@@ -1484,7 +1494,7 @@ int clipStat = 0;
 
   if ( !init ) {
     if ( needToDrawUnconnected ) {
-      clipStat = actWin->drawGc.addNormXClipRectangle( xR );
+      clipStat = actWin->executeGc.addNormXClipRectangle( xR );
       actWin->executeGc.saveFg();
       actWin->executeGc.setFG( bgColor.getDisconnected() );
       actWin->executeGc.setLineWidth( 1 );
@@ -1492,7 +1502,7 @@ int clipStat = 0;
       XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
        actWin->executeGc.normGC(), x, y, w, h );
       actWin->executeGc.restoreFg();
-      if ( clipStat & 1 ) actWin->drawGc.removeNormXClipRectangle();
+      if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
       needToEraseUnconnected = 1;
     }
   }
@@ -1508,7 +1518,11 @@ int clipStat = 0;
 
   if ( !enabled || !activeMode || !init ) return 1;
 
-  clipStat = actWin->drawGc.addNormXClipRectangle( xR );
+  //printf( "x=%-d, y=%-d, w=%-d, h=%-d\n", x, y, w, h );
+  //printf( "oldBarX=%-d, oldBarY=%-d, oldBarW=%-d, oldBarH=%-d\n", oldBarX, oldBarY, oldBarW, oldBarH );
+  //printf( "barX=%-d, barY=%-d, barW=%-d, barH=%-d\n", barX, barY, barW, barH );
+
+  clipStat = actWin->executeGc.addNormXClipRectangle( xR );
 
   actWin->executeGc.saveFg();
 
@@ -1530,6 +1544,8 @@ int clipStat = 0;
   actWin->executeGc.setFG( barColor.getColor() );
 
   XFillRectangle( actWin->d, drawable(actWin->executeWidget),
+   actWin->executeGc.normGC(), barX, barY, barW, barH );
+  XDrawRectangle( actWin->d, drawable(actWin->executeWidget),
    actWin->executeGc.normGC(), barX, barY, barW, barH );
 
   if ( horizontal ) {
@@ -1559,7 +1575,7 @@ int clipStat = 0;
 
   }
 
-  if ( clipStat & 1 ) actWin->drawGc.removeNormXClipRectangle();
+  if ( clipStat & 1 ) actWin->executeGc.removeNormXClipRectangle();
 
   if ( bufInvalid ) { // draw scale, label, etc ...
 
@@ -1605,6 +1621,7 @@ int clipStat = 0;
     }
 
     if ( border ) {
+      actWin->executeGc.setFG( fgColor.getColor() );
       actWin->executeGc.setLineWidth( 1 );
       actWin->executeGc.setLineStyle( LineSolid );
       XDrawRectangle( actWin->d, drawable(actWin->executeWidget),

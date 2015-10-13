@@ -30,7 +30,7 @@
 
 #define BARC_MAJOR_VERSION 4
 #define BARC_MINOR_VERSION 1
-#define BARC_RELEASE 1
+#define BARC_RELEASE 2
 
 #define BARC_K_PV_NAME 0
 #define BARC_K_LITERAL 1
