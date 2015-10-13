@@ -519,7 +519,7 @@ bool LOG_ProcessVariable::put(double value)
 
 char str[1023+1];
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -542,7 +542,7 @@ bool LOG_ProcessVariable::put(const char *dsp, double value)
 
 char str[1023+1];
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -565,7 +565,7 @@ bool LOG_ProcessVariable::put(int value)
 
 char str[1023+1];
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -588,7 +588,7 @@ bool LOG_ProcessVariable::put(const char *dsp, int value)
 
 char str[1023+1];
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -611,7 +611,7 @@ bool LOG_ProcessVariable::put(const char *value)
 
 char str[1023+1], vstr[63+1];
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -635,7 +635,7 @@ bool LOG_ProcessVariable::put(const char *dsp, const char *value)
 
 char str[1023+1], vstr[63+1];
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -659,7 +659,7 @@ bool LOG_ProcessVariable::putText(char *value)
 
 char str[1023+1], vstr[63+1];
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -683,7 +683,7 @@ bool LOG_ProcessVariable::putText(const char *dsp, char *value)
 
 char str[1023+1], vstr[63+1];
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -705,7 +705,7 @@ char str[1023+1], vstr[63+1];
 bool LOG_ProcessVariable::putArrayText(char *value)
 {
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -723,7 +723,7 @@ bool LOG_ProcessVariable::putAck(short value)
 
 char str[1023+1];
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -745,7 +745,7 @@ bool LOG_ProcessVariable::putAck(const char *dsp, short value)
 
 char str[1023+1];
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 

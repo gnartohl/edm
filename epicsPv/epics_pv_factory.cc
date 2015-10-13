@@ -437,7 +437,7 @@ bool EPICS_ProcessVariable::have_write_access() const
 bool EPICS_ProcessVariable::put(double value)
 {
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -454,7 +454,7 @@ bool EPICS_ProcessVariable::put(double value)
 bool EPICS_ProcessVariable::put(int value)
 {
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -471,7 +471,7 @@ bool EPICS_ProcessVariable::put(int value)
 bool EPICS_ProcessVariable::put(const char *value)
 {
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -487,7 +487,7 @@ bool EPICS_ProcessVariable::put(const char *value)
 bool EPICS_ProcessVariable::putText(char *value)
 {
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -503,7 +503,7 @@ bool EPICS_ProcessVariable::putText(char *value)
 bool EPICS_ProcessVariable::putArrayText(char *value)
 {
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -519,7 +519,7 @@ bool EPICS_ProcessVariable::putArrayText(char *value)
 bool EPICS_ProcessVariable::putAck(short value)
 {
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 

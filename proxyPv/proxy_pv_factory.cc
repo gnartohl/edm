@@ -592,7 +592,7 @@ bool PROXY_ProcessVariable::have_write_access() const
 bool PROXY_ProcessVariable::put(double value)
 {
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -609,7 +609,7 @@ bool PROXY_ProcessVariable::put(double value)
 bool PROXY_ProcessVariable::put(int value)
 {
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -626,7 +626,7 @@ bool PROXY_ProcessVariable::put(int value)
 bool PROXY_ProcessVariable::put(const char *value)
 {
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -642,7 +642,7 @@ bool PROXY_ProcessVariable::put(const char *value)
 bool PROXY_ProcessVariable::putText(char *value)
 {
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -658,7 +658,7 @@ bool PROXY_ProcessVariable::putText(char *value)
 bool PROXY_ProcessVariable::putArrayText(char *value)
 {
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
@@ -674,7 +674,7 @@ bool PROXY_ProcessVariable::putArrayText(char *value)
 bool PROXY_ProcessVariable::putAck(short value)
 {
 
-    if ( isReadOnly() ) {
+    if ( !have_write_access() ) {
       return false;
     }
 
