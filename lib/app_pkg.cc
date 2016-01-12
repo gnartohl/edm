@@ -1,6 +1,6 @@
 //  edm - extensible display manager
 
-//  Copyright (C) 1999 John W. Sinclair
+//  Copyright (C) 1999-2016 John W. Sinclair
 
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -4353,7 +4353,7 @@ activeWindowListPtr cur;
 
 static void displayVersion ( void ) {
 
-  fprintf( stderr, "  edm version %s Copyright (C) 1999 John W. Sinclair\n", VERSION );
+  fprintf( stderr, "  edm version %s Copyright (C) 1999-2016 John W. Sinclair\n", VERSION );
   fprintf( stderr, "\n" );
 
   fprintf( stderr, "  This program is free software; you can redistribute it and/or modify\n" );
