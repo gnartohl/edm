@@ -3110,7 +3110,7 @@ term:
    False );
 
   XmAddWMProtocolCallback( shell, wm_delete_window, file_cb,
-    (int) 0 );
+    (XtPointer) 0 );
 
   XtVaSetValues( shell, XmNdeleteResponse, XmDO_NOTHING, NULL );
 
@@ -4969,7 +4969,7 @@ term:
    False );
 
   XmAddWMProtocolCallback( shell, wm_delete_window, file_cb,
-    (int) 0 );
+    (XtPointer) 0 );
 
   XtVaSetValues( shell, XmNdeleteResponse, XmDO_NOTHING, NULL );
 
@@ -5762,7 +5762,7 @@ firstTry:
    False );
 
   XmAddWMProtocolCallback( shell, wm_delete_window, file_cb,
-    (int) 0 );
+    (XtPointer) 0 );
 
   XtVaSetValues( shell, XmNdeleteResponse, XmDO_NOTHING, NULL );
 
