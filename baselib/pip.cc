@@ -1506,6 +1506,29 @@ int activePipClass::isRelatedDisplay ( void ) {
 
 }
 
+void activePipClass::augmentRelatedDisplayMacros (
+  char *buf
+) {
+
+  int i, l;
+  char *newm;
+
+  for ( i=0; i<numDsps; i++ ) {
+    l = strlen( buf ) + strlen( symbolsExpStr[i].getRaw() );
+    if ( l ) {
+      newm = new char[l+1];
+      strcpy( newm, "" );
+      Strncat( newm, symbolsExpStr[i].getRaw(), l );
+      trimWhiteSpace( newm );
+      if ( strlen(newm) ) Strncat( newm, ",", l );
+      Strncat( newm, buf, l );
+      symbolsExpStr[i].setRaw( newm );
+      delete[] newm;
+    }
+  }
+
+}
+
 int activePipClass::getNumRelatedDisplays ( void ) {
 
   if ( displaySource == displayFromPV ) {

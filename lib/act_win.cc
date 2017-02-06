@@ -2626,7 +2626,7 @@ char *envPtr, text[255+1];
           text[255] = 0;
           awo->appCtx->postMessage( text );
 
-	}
+	      }
 
       }
 
@@ -10179,9 +10179,186 @@ Boolean  nothingDone = False;
 
             case AWC_DEFINE_SELECT_REGION:
 
+//              awo->width = awo->oldx - awo->startx;
+//              awo->height = awo->oldy - awo->starty;
+//
+//              if ( ( awo->width < 0 ) && ( awo->height < 0 ) ) {
+//                selectMustEnclose = False;
+//              }
+//              else {
+//                selectMustEnclose = True;
+//              }
+//
+//              if ( awo->width < 0 ) {
+//                x0 = awo->oldx;
+//                awo->width = abs( awo->width );
+//              }
+//              else {
+//                x0 = awo->startx;
+//	      }
+//
+//              if ( awo->height < 0 ) {
+//                y0 = awo->oldy;
+//                awo->height = abs( awo->height );
+//              }
+//              else {
+//                y0 = awo->starty;
+//	      }
+//
+//              if ( ( awo->width > 0 ) && ( awo->height > 0 ) ) {
+//
+//                // erase region definition box
+//                awo->drawGc.saveFg();
+//                awo->drawGc.setFG( awo->ci->pix(awo->fgColor) );
+//                XDrawRectangle( awo->d, XtWindow(awo->drawWidget),
+//                 awo->drawGc.xorGC(), x0, y0, awo->width,
+//                 awo->height );
+//		awo->drawGc.restoreFg();
+//
+//              }
+//
+//              if ( ( awo->width < 3 ) && ( awo->height < 3 ) ) {
+//                awo->state = awo->savedState;
+//                doAgain = 1;
+//                break; // out of switch statement
+//              }
+//
+//              awo->startx = x0;
+//              awo->starty = y0;
+//
+//              awo->state = awo->savedState;  // if below fails
+//              num_selected = 0;
+//
+//              if ( ( awo->width > 0 ) && ( awo->height > 0 ) ) {
+//
+//                cur = awo->head->blink;
+//                while ( cur != awo->head ) {
+//
+//                  if ( selectMustEnclose ) {
+//
+//                    wasSelected = cur->node->isSelected();
+//                    gotSelection = cur->node->selectEnclosed( awo->startx,
+//                     awo->starty, awo->width, awo->height );
+//                    if ( !wasSelected ) {
+//                      if ( gotSelection ) {
+//                        num_selected++;
+//                        cur->node->drawSelectBoxCorners();
+//                        cur->selBlink = awo->selectedHead->selBlink;
+//                        awo->selectedHead->selBlink->selFlink = cur;
+//                        awo->selectedHead->selBlink = cur;
+//                        cur->selFlink = awo->selectedHead;
+//                      }
+//                    }
+//                    else {
+//                      if ( gotSelection ) {
+//                        cur->node->drawSelectBoxCorners(); // erase via xor gc
+//                        cur->node->deselect();
+//		        // unlink
+//                        if ( cur->selBlink ) {
+//                          cur->selBlink->selFlink = cur->selFlink;
+//		        }
+//		        else {
+//                          fprintf( stderr,
+//                           "%s at x=%-d, y=%-d : selBlink is null (9)\n",
+//		           cur->node->objName(), cur->node->getX0(),
+//		           cur->node->getY0() );
+//		        }
+//                        if ( cur->selFlink ) {
+//                          cur->selFlink->selBlink = cur->selBlink;
+//		        }
+//		        else {
+//                          fprintf( stderr,
+//                           "%s at x=%-d, y=%-d : selFlink is null (A)\n",
+//		           cur->node->objName(), cur->node->getX0(),
+//		           cur->node->getY0() );
+//		        }
+//                      }
+//		      else {
+//                        num_selected++;
+//		      }
+//                    }
+//
+//                  }
+//                  else {
+//
+//                    wasSelected = cur->node->isSelected();
+//                    gotSelection = cur->node->selectTouching( awo->startx,
+//                     awo->starty, awo->width, awo->height );
+//                    if ( !wasSelected ) {
+//                      if ( gotSelection ) {
+//                        num_selected++;
+//                        cur->node->drawSelectBoxCorners();
+//                        cur->selBlink = awo->selectedHead->selBlink;
+//                        awo->selectedHead->selBlink->selFlink = cur;
+//                        awo->selectedHead->selBlink = cur;
+//                        cur->selFlink = awo->selectedHead;
+//                      }
+//                    }
+//                    else {
+//                      if ( gotSelection ) {
+//                        cur->node->drawSelectBoxCorners(); // erase via xor gc
+//                        cur->node->deselect();
+//		        // unlink
+//                        if ( cur->selBlink ) {
+//                          cur->selBlink->selFlink = cur->selFlink;
+//		        }
+//		        else {
+//                          fprintf( stderr,
+//                           "%s at x=%-d, y=%-d : selBlink is null (B)\n",
+//		           cur->node->objName(), cur->node->getX0(),
+//		           cur->node->getY0() );
+//		        }
+//                        if ( cur->selFlink ) {
+//                          cur->selFlink->selBlink = cur->selBlink;
+//		        }
+//		        else {
+//                          fprintf( stderr,
+//                           "%s at x=%-d, y=%-d : selFlink is null (C)\n",
+//		           cur->node->objName(), cur->node->getX0(),
+//		           cur->node->getY0() );
+//		        }
+//                      }
+//		      else {
+//                        num_selected++;
+//		      }
+//                    }
+//
+//                  }
+//
+//                  cur = cur->blink;
+//
+//                }
+//
+//                if ( num_selected == 0 ) {
+//                  awo->state = AWC_NONE_SELECTED;
+//                  awo->updateMasterSelection();
+//		  // doAgain = 1;
+//		}
+//                else if ( num_selected == 1 ) {
+//                  awo->state = AWC_ONE_SELECTED;
+//                  awo->useFirstSelectedAsReference = 1;
+//                  awo->updateMasterSelection();
+//                  // if ( prev_num_selected == num_selected ) doAgain = 1;
+//		}
+//                else {
+//                  awo->state = AWC_MANY_SELECTED;
+//                  awo->updateMasterSelection();
+//                  // if ( prev_num_selected == num_selected ) doAgain = 1;
+//		}
+//
+//              }
+//
+//              break;
+//
+//          }
+//
+//	  } while ( doAgain );
+
+// new code which uses EDMELECTOR env var
+
               awo->width = awo->oldx - awo->startx;
               awo->height = awo->oldy - awo->starty;
-
+              char *selectOr = getenv( environment_str41 );      // EDMELECTOR
               if ( ( awo->width < 0 ) && ( awo->height < 0 ) ) {
                 selectMustEnclose = False;
               }
@@ -10195,7 +10372,7 @@ Boolean  nothingDone = False;
               }
               else {
                 x0 = awo->startx;
-	      }
+              }
 
               if ( awo->height < 0 ) {
                 y0 = awo->oldy;
@@ -10203,7 +10380,7 @@ Boolean  nothingDone = False;
               }
               else {
                 y0 = awo->starty;
-	      }
+              }
 
               if ( ( awo->width > 0 ) && ( awo->height > 0 ) ) {
 
@@ -10211,9 +10388,9 @@ Boolean  nothingDone = False;
                 awo->drawGc.saveFg();
                 awo->drawGc.setFG( awo->ci->pix(awo->fgColor) );
                 XDrawRectangle( awo->d, XtWindow(awo->drawWidget),
-                 awo->drawGc.xorGC(), x0, y0, awo->width,
-                 awo->height );
-		awo->drawGc.restoreFg();
+                  awo->drawGc.xorGC(), x0, y0, awo->width,
+                  awo->height );
+                awo->drawGc.restoreFg();
 
               }
 
@@ -10235,94 +10412,55 @@ Boolean  nothingDone = False;
                 while ( cur != awo->head ) {
 
                   if ( selectMustEnclose ) {
-
                     wasSelected = cur->node->isSelected();
                     gotSelection = cur->node->selectEnclosed( awo->startx,
-                     awo->starty, awo->width, awo->height );
-                    if ( !wasSelected ) {
+                      awo->starty, awo->width, awo->height );
+                    if ( !wasSelected) {
                       if ( gotSelection ) {
                         num_selected++;
-                        cur->node->drawSelectBoxCorners();
-                        cur->selBlink = awo->selectedHead->selBlink;
-                        awo->selectedHead->selBlink->selFlink = cur;
-                        awo->selectedHead->selBlink = cur;
-                        cur->selFlink = awo->selectedHead;
+                        awo->select(cur);
                       }
                     }
                     else {
                       if ( gotSelection ) {
-                        cur->node->drawSelectBoxCorners(); // erase via xor gc
-                        cur->node->deselect();
-		        // unlink
-                        if ( cur->selBlink ) {
-                          cur->selBlink->selFlink = cur->selFlink;
-		        }
-		        else {
-                          fprintf( stderr,
-                           "%s at x=%-d, y=%-d : selBlink is null (9)\n",
-		           cur->node->objName(), cur->node->getX0(),
-		           cur->node->getY0() );
-		        }
-                        if ( cur->selFlink ) {
-                          cur->selFlink->selBlink = cur->selBlink;
-		        }
-		        else {
-                          fprintf( stderr,
-                           "%s at x=%-d, y=%-d : selFlink is null (A)\n",
-		           cur->node->objName(), cur->node->getX0(),
-		           cur->node->getY0() );
-		        }
+                        if (!selectOr) {
+                          awo->unselect(cur);
+                        }
                       }
-		      else {
-                        num_selected++;
-		      }
+                      else {
+                        if (selectOr) {
+                            awo->unselect(cur);
+                        } else {
+                            num_selected++;
+                        }
+                      }
                     }
 
                   }
                   else {
-
                     wasSelected = cur->node->isSelected();
                     gotSelection = cur->node->selectTouching( awo->startx,
-                     awo->starty, awo->width, awo->height );
-                    if ( !wasSelected ) {
+                      awo->starty, awo->width, awo->height );
+                    if ( !wasSelected) {
                       if ( gotSelection ) {
                         num_selected++;
-                        cur->node->drawSelectBoxCorners();
-                        cur->selBlink = awo->selectedHead->selBlink;
-                        awo->selectedHead->selBlink->selFlink = cur;
-                        awo->selectedHead->selBlink = cur;
-                        cur->selFlink = awo->selectedHead;
+                        awo->select(cur);
                       }
                     }
                     else {
                       if ( gotSelection ) {
-                        cur->node->drawSelectBoxCorners(); // erase via xor gc
-                        cur->node->deselect();
-		        // unlink
-                        if ( cur->selBlink ) {
-                          cur->selBlink->selFlink = cur->selFlink;
-		        }
-		        else {
-                          fprintf( stderr,
-                           "%s at x=%-d, y=%-d : selBlink is null (B)\n",
-		           cur->node->objName(), cur->node->getX0(),
-		           cur->node->getY0() );
-		        }
-                        if ( cur->selFlink ) {
-                          cur->selFlink->selBlink = cur->selBlink;
-		        }
-		        else {
-                          fprintf( stderr,
-                           "%s at x=%-d, y=%-d : selFlink is null (C)\n",
-		           cur->node->objName(), cur->node->getX0(),
-		           cur->node->getY0() );
-		        }
+                        if (!selectOr) {
+                          awo->unselect(cur);
+                        }
                       }
-		      else {
-                        num_selected++;
-		      }
+                      else {
+                        if (selectOr) {
+                           awo->unselect(cur);
+                        } else {
+                            num_selected++;
+                        }
+                      }
                     }
-
                   }
 
                   cur = cur->blink;
@@ -10333,18 +10471,18 @@ Boolean  nothingDone = False;
                   awo->state = AWC_NONE_SELECTED;
                   awo->updateMasterSelection();
 		  // doAgain = 1;
-		}
+                }
                 else if ( num_selected == 1 ) {
                   awo->state = AWC_ONE_SELECTED;
                   awo->useFirstSelectedAsReference = 1;
                   awo->updateMasterSelection();
                   // if ( prev_num_selected == num_selected ) doAgain = 1;
-		}
+                }
                 else {
                   awo->state = AWC_MANY_SELECTED;
                   awo->updateMasterSelection();
                   // if ( prev_num_selected == num_selected ) doAgain = 1;
-		}
+                }
 
               }
 
@@ -11628,10 +11766,10 @@ Boolean nothingDone = False;
             if ( action ) {
               foundAction = 1;
               break; // out of while loop
-	    }
-	  }
+	          }
+	        }
 
-	}
+	      }
 
         cur = cur->blink;
 
@@ -11655,10 +11793,10 @@ Boolean nothingDone = False;
             if ( action ) {
               foundAction = 1;
               break; // out of while loop
-	    }
-	  }
+	          }
+	        }
 
-	}
+	      }
 
         cur = cur->blink;
 
@@ -11687,8 +11825,8 @@ Boolean nothingDone = False;
           if ( curBtn->pressed == 0 ) curBtn->pressed = 1;
           curBtn->node->btnDown( be, winX, winY, be->state, be->button,
            &action );
-	  awo->btnDownX = be->x;
-	  awo->btnDownY = be->y;
+	        awo->btnDownX = be->x;
+	        awo->btnDownY = be->y;
 
           if ( action == 1 ) { /* close window */
             awo->returnToEdit( 1 );
@@ -11723,7 +11861,7 @@ Boolean nothingDone = False;
 //========== Ctrl B1 Press ===================================
 
         }
-	else {
+	      else {
 
 //========== B1 Press ===================================
 
@@ -11749,7 +11887,7 @@ Boolean nothingDone = False;
 //========== Ctrl B2 Press ===================================
 
         }
-	else {
+	      else {
 
 //========== B2 Press ===================================
 
@@ -12085,7 +12223,7 @@ Boolean nothingDone = False;
             numOut++;
             foundAction = 1;
             awo->cursor.set( XtWindow(awo->executeWidget), CURSOR_K_DEFAULT );
-	    break;
+	          break;
           }
 
           curBtn = curBtn->blink;
@@ -12116,7 +12254,7 @@ Boolean nothingDone = False;
           awo->highlightedObject = ptr;
           numIn++;
           foundAction = 1;
-	  break;
+	        break;
         }
 
         curBtn = curBtn->blink;
@@ -13173,6 +13311,38 @@ pvDefPtr pvDefCur, pvDefNext;
   }
 
 }
+
+void activeWindowClass::select(activeGraphicListPtr cur) {
+    cur->node->drawSelectBoxCorners();
+    cur->selBlink = selectedHead->selBlink;
+    selectedHead->selBlink->selFlink = cur;
+    selectedHead->selBlink = cur;
+    cur->selFlink = selectedHead;
+}
+
+void activeWindowClass::unselect(activeGraphicListPtr cur) {
+    cur->node->drawSelectBoxCorners(); // erase via xor gc
+    cur->node->deselect();
+// unlink
+    if ( cur->selBlink ) {
+      cur->selBlink->selFlink = cur->selFlink;
+    }
+    else {
+      fprintf( stderr,
+       "%s at x=%-d, y=%-d : selBlink is null (B)\n",
+       cur->node->objName(), cur->node->getX0(),
+       cur->node->getY0() );
+    }
+    if ( cur->selFlink ) {
+      cur->selFlink->selBlink = cur->selBlink;
+    }
+    else {
+      fprintf( stderr,
+       "%s at x=%-d, y=%-d : selFlink is null (C)\n",
+       cur->node->objName(), cur->node->getX0(),
+       cur->node->getY0() );
+    }
+}
 
 void activeWindowClass::updateAllSelectedDisplayInfo ( void ) {
 
@@ -13994,6 +14164,7 @@ activeGraphicListPtr cur;
 
           stat = cur->node->old_createFromFile( f, objName, this );
           if ( !( stat & 1 ) ) return stat; // memory leak here
+          if (stat < 0) return stat;   // infinite recursion
 
           stat = readUntilEndOfData( f ); // for forward compatibility
           if ( !( stat & 1 ) ) return stat; // memory leak here
@@ -17468,7 +17639,7 @@ tagClass tag;
         if ( tag.genDoc() ) {
           fprintf( stderr, "# (%s)\n", description );
           fprintf( stderr, "object %s\n", cur->node->objName() );
-	}
+	      }
       }
       else {
         strncpy( fullName, cur->node->objName(), 255 );
@@ -17477,7 +17648,7 @@ tagClass tag;
         description = obj.getNameFromClass( fullName );
         if ( !description ) {
           strcpy( description, "Unknown object" );
-	}
+	      }
         fprintf( f, "# (%s)\n", description );
         fprintf( f, "object %s:%s\n", cur->node->objName(),
          cur->node->getCreateParam() );
@@ -17485,7 +17656,7 @@ tagClass tag;
           fprintf( stderr, "# (%s)\n", description );
           fprintf( stderr, "object %s:%s\n", cur->node->objName(),
            cur->node->getCreateParam() );
-	}
+	      }
         Strncat( fullName, cur->node->getCreateParam(), 255 );
       }
       cur->node->save( f );
@@ -17973,13 +18144,13 @@ tagClass tag;
           stat = cur->node->createFromFile( f, objName, this );
           if ( !( stat & 1 ) ) {
             return stat; // memory leak here
-	  }
+	        }
 
           cur->node->move( x, y );
           cur->node->moveSelectBox( x, y );
 
-	  cur->node->expandTemplate( numTemplateMacros,
-	   templateMacros, templateExpansions );
+	        cur->node->expandTemplate( numTemplateMacros,
+	        templateMacros, templateExpansions );
 
           cur->blink = head->blink;
           head->blink->flink = cur;
@@ -18617,7 +18788,11 @@ int activeWindowClass::refresh (
   int _h )
 {
 
-XRectangle xR = { _x, _y, _w, _h };
+short sx = _x;
+short sy = _y;
+short sw = _w;
+short sh = _h;
+XRectangle xR = { sx, sy, sw, sh };
 activeGraphicListPtr cur, next;
 int needDelete = 0;
 
@@ -22751,8 +22926,8 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar, isPvVal;
       }
       else if ( bufIn[iIn] == '<' ) {
         state = 2; // finding param
-	p0 = iIn;
-	break;
+	      p0 = iIn;
+	      break;
       }
       bufOut[iOut] = bufIn[iIn];
       if ( iOut < max ) iOut++;
@@ -22766,11 +22941,11 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar, isPvVal;
         break;
       }
       else if ( bufIn[iIn] == '>' ) {
-	p1 = iIn;
-	len = p1 - p0 + 1;
+	      p1 = iIn;
+	      len = p1 - p0 + 1;
         if ( len > 1023 ) len = 1023;
-	strncpy( param, &bufIn[p0], len );
-	param[len] = 0;
+	      strncpy( param, &bufIn[p0], len );
+	      param[len] = 0;
 
         if ( strcmp( param, "<WINID>" ) == 0 ) {
           winid = (int) XtWindow( this->top );
@@ -22779,53 +22954,53 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar, isPvVal;
           Strncat( bufOut, param, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
-	}
+	      }
         else if ( strcmp( param, "<FILESPEC>" ) == 0 ) {
           bufOut[iOut] = 0;
           Strncat( bufOut, fileNameForSym, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
-	}
+	      }
         else if ( strcmp( param, "<FILEPREFIX>" ) == 0 ) {
           bufOut[iOut] = 0;
           Strncat( bufOut, prefixForSym, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
-	}
+	      }
         else if ( strcmp( param, "<FILENAME>" ) == 0 ) {
           bufOut[iOut] = 0;
           Strncat( bufOut, displayNameForSym, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
-	}
+	      }
         else if ( strcmp( param, "<FILEPOSTFIX>" ) == 0 ) {
           bufOut[iOut] = 0;
           Strncat( bufOut, postfixForSym, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
-	}
+	      }
         else if ( strcmp( param, "<TITLE>" ) == 0 ) {
           bufOut[iOut] = 0;
           if ( expStrTitle.getExpanded() ) {
             if ( !blank( expStrTitle.getExpanded() ) ) {
               Strncat( bufOut, expStrTitle.getExpanded(), max );
-	    }
-	    else {
+	          }
+	          else {
               Strncat( bufOut, activeWindowClass_str83, max );
-	    }
-	  }
+	          }
+	        }
           else {
             Strncat( bufOut, activeWindowClass_str83, max );
-	  }
+	        }
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
-	}
+	      }
         else if ( strcmp( param, "<PROJDIR>" ) == 0 ) {
           bufOut[iOut] = 0;
           Strncat( bufOut, appCtx->dataFilePrefix[0], max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
-	}
+	      }
         else if ( strcmp( param, "<HELPDIR>" ) == 0 ) {
           bufOut[iOut] = 0;
           envPtr = getenv( environment_str5 );
@@ -22833,25 +23008,25 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar, isPvVal;
             Strncat( bufOut, envPtr, max );
             iOut = strlen( bufOut );
             if ( iOut >= max ) iOut = max - 1;
-	  }
-	}
+	        }
+	      }
         else if ( strcmp( param, "<DSPNAME>" ) == 0 ) {
           bufOut[iOut] = 0;
           strncpy( dspName, XDisplayName(appCtx->displayName), 127 );
           Strncat( bufOut, dspName, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
-	}
+	      }
         else if ( strcmp( param, "<DSPID>" ) == 0 ) {
           bufOut[iOut] = 0;
           strncpy( dspName, XDisplayName(appCtx->displayName), 127 );
           for ( i=0; i<(int) strlen(dspName); i++ ) {
             if ( dspName[i] == '.' ) dspName[i] = '-';
-	  }
+	        }
           Strncat( bufOut, dspName, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
-	}
+	      }
         else if ( strncmp( param, "<val:", 5 ) == 0 ) {
 
           isPvVal = 1;
@@ -22888,7 +23063,7 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar, isPvVal;
 
           }
 
-	}
+	      }
         else { // maybe an env var
 
           if ( strncmp( param, "<env:", 5 ) == 0 ) {
@@ -22906,21 +23081,21 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar, isPvVal;
                 Strncat( bufOut, envPtr, max );
                 iOut = strlen( bufOut );
                 if ( iOut >= max ) iOut = max - 1;
-	      }
+	            }
               else {
                 isEnvVar = 0;
-	      }
-	    }
-	    else {
+	            }
+	          }
+	          else {
               isEnvVar = 0;
-	    }
+	          }
 
-	  }
-	  else {
-
+	        }
+	        else {
+    
             isEnvVar = 0;
 
-	  }
+	        }
 
           if ( !isEnvVar ) {
 
@@ -22929,9 +23104,9 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar, isPvVal;
             iOut = strlen( bufOut );
             if ( iOut >= max ) iOut = max - 1;
 
-	  }
+	        }
 
-	}
+	      }
 
         state = 1; //copying
       }
@@ -23112,6 +23287,23 @@ void activeWindowClass::closeDeferred (
 
   waiting = cycles;
   doActiveClose = 1;
+  appCtx->postDeferredExecutionQueue( this );
+
+}
+
+void activeWindowClass::closeAnyDeferred (
+  int cycles )
+{
+
+  if ( mode == AWC_EDIT ) {
+    waiting = 0;
+    doClose = 1;
+  }
+  else {
+    waiting = cycles;
+    doActiveClose = 1;
+  }
+
   appCtx->postDeferredExecutionQueue( this );
 
 }

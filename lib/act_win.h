@@ -568,6 +568,8 @@ static char stdEdlFileExt[63+1] = ".edl";
 static char defEdlFileExt[63+1] = ".edl";
 static char defEdlFileSearchMask[63+1] = "*.edl";
 
+/////////////// start class declaration: activeWindowClass
+
 class activeWindowClass {
 
 unknownTagList unknownTags;
@@ -1228,7 +1230,10 @@ static int init = 1;
 
 }
 
-int getRandFile (
+void select(activeGraphicListPtr cur);
+void unselect(activeGraphicListPtr cur);
+
+ int getRandFile (
   char *outStr,
   int outStrMaxLen
 );
@@ -1784,6 +1789,9 @@ void setUndoText (
   char *string );
 
 void closeDeferred (
+  int cycles );
+
+void closeAnyDeferred (
   int cycles );
 
 int checkPoint (

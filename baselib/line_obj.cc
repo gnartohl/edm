@@ -1241,7 +1241,7 @@ pointPtr activeLineClass::selectPoint (
 {
 
 pointPtr cur, prev, next;
-int d, lw, threshold;
+int i, d, lw, baseThreshold, threshold;
 
   if ( lineWidth > 0 ) {
     lw = lineWidth;
@@ -1249,68 +1249,76 @@ int d, lw, threshold;
   else {
     lw = 1;
   }
-  threshold = (lw+2) * (lw+2) + 2;
+  baseThreshold = 3;
 
-  cur = head->flink;
-  while ( cur != head ) {
+  // try with up to 4 threshold values
+  for ( i=0; i<4; i++ ) {
 
-    d = ( cur->x - x ) * ( cur->x - x ) + ( cur->y - y ) * ( cur->y - y );
-    if ( 2*d <= threshold ) {
+    threshold = baseThreshold * baseThreshold;
+    baseThreshold += 3;
 
-      prev = cur->blink;
-      next = cur->flink;
-      if ( prev != head ) {
+    cur = head->flink;
+    while ( cur != head ) {
 
-        if ( prev->blink != head ) {
-          strcpy( actWin->refPoint[0].label, "" );
-          actWin->refPoint[0].x = prev->blink->x;
-          actWin->refPoint[0].y = prev->blink->y;
-          strcpy( actWin->refPoint[1].label, "Prev Vertex" );
-          actWin->refPoint[1].x = prev->x;
-          actWin->refPoint[1].y = prev->y;
-          actWin->numRefPoints = 2;
+      d = ( cur->x - x ) * ( cur->x - x ) + ( cur->y - y ) * ( cur->y - y );
+      if ( 2*d <= threshold ) {
+
+        prev = cur->blink;
+        next = cur->flink;
+        if ( prev != head ) {
+
+          if ( prev->blink != head ) {
+            strcpy( actWin->refPoint[0].label, "" );
+            actWin->refPoint[0].x = prev->blink->x;
+            actWin->refPoint[0].y = prev->blink->y;
+            strcpy( actWin->refPoint[1].label, "Prev Vertex" );
+            actWin->refPoint[1].x = prev->x;
+            actWin->refPoint[1].y = prev->y;
+            actWin->numRefPoints = 2;
+          }
+          else {
+            strcpy( actWin->refPoint[1].label, "Prev Vertex" );
+            actWin->refPoint[1].x = prev->x;
+            actWin->refPoint[1].y = prev->y;
+            actWin->numRefPoints = 1;
+          }
+
+        }
+        else if ( next != head ) {
+
+          if ( next->flink != head ) {
+            strcpy( actWin->refPoint[0].label, "" );
+            actWin->refPoint[0].x = next->flink->x;
+            actWin->refPoint[0].y = next->flink->y;
+            strcpy( actWin->refPoint[1].label, "Next Vertex" );
+            actWin->refPoint[1].x = next->x;
+            actWin->refPoint[1].y = next->y;
+            actWin->numRefPoints = 2;
+          }
+          else {
+            strcpy( actWin->refPoint[1].label, "Next Vertex" );
+            actWin->refPoint[1].x = next->x;
+            actWin->refPoint[1].y = next->y;
+            actWin->numRefPoints = 1;
+          }
+
         }
         else {
-          strcpy( actWin->refPoint[1].label, "Prev Vertex" );
-          actWin->refPoint[1].x = prev->x;
-          actWin->refPoint[1].y = prev->y;
-          actWin->numRefPoints = 1;
+
+          actWin->numRefPoints = 0;
+
         }
 
-      }
-      else if ( next != head ) {
-
-        if ( next->flink != head ) {
-          strcpy( actWin->refPoint[0].label, "" );
-          actWin->refPoint[0].x = next->flink->x;
-          actWin->refPoint[0].y = next->flink->y;
-          strcpy( actWin->refPoint[1].label, "Next Vertex" );
-          actWin->refPoint[1].x = next->x;
-          actWin->refPoint[1].y = next->y;
-          actWin->numRefPoints = 2;
-        }
-        else {
-          strcpy( actWin->refPoint[1].label, "Next Vertex" );
-          actWin->refPoint[1].x = next->x;
-          actWin->refPoint[1].y = next->y;
-          actWin->numRefPoints = 1;
-	}
-
-      }
-      else {
-
-        actWin->numRefPoints = 0;
+        return cur;
 
       }
 
-      return cur;
+      cur = cur->flink;
 
     }
 
-    cur = cur->flink;
-
   }
-
+  
   return (pointPtr) NULL;
 
 }

@@ -816,7 +816,12 @@ int activeGraphicClass::smartDrawAll ( void ) {
 
 activeGraphicListPtr cur;
 int normClipStat, xorClipStat, eraseClipStat, x0, x1, y0, y1;
-XRectangle xR = { this->x-10, this->y-10, this->w+20, this->h+20 };
+
+short sx = this->x-10;
+short sy = this->y-10;
+short sw = this->w+20;
+short sh = this->h+20;
+XRectangle xR = { sx, sy, sw, sh };
 
 //  actWin->appCtx->proc->lock();
 
@@ -868,7 +873,12 @@ int activeGraphicClass::doSmartDrawAllActive ( void ) {
 
 activeGraphicListPtr cur;
 int x0, x1, y0, y1;
-XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
+
+short sx = this->x-5;
+short sy = this->y-5;
+short sw = this->w+10;
+short sh = this->h+10;
+XRectangle xR = { sx, sy, sw, sh };
 
 //  actWin->appCtx->proc->lock();
 
@@ -916,7 +926,12 @@ int activeGraphicClass::doSmartDrawAllButMeActive ( void ) {
 
 activeGraphicListPtr cur;
 int x0, x1, y0, y1;
-XRectangle xR = { this->x-5, this->y-5, this->w+10, this->h+10 };
+
+short sx = this->x-5;
+short sy = this->y-5;
+short sw = this->w+10;
+short sh = this->h+10;
+XRectangle xR = { sx, sy, sw, sh };
 
   //fprintf( stderr, "activeGraphicClass::doSmartDrawAllButMeActive\n" );
 
@@ -1012,7 +1027,12 @@ int activeGraphicClass::refresh (
 activeGraphicListPtr cur, next;
 int normClipStat, xorClipStat, eraseClipStat, x0, x1, y0, y1, x0sb, x1sb,
  y0sb, y1sb, needDelete;
-XRectangle xR = { _x-10, _y-10, _w+20, _h+20 };
+ 
+short sx = _x-10;
+short sy = _y-10;
+short sw = _w+20;
+short sh = _h+20;
+XRectangle xR = { sx, sy, sw, sh };
 
   //fprintf( stderr, "refresh\n" );
 
@@ -1226,7 +1246,12 @@ int activeGraphicClass::refreshActive (
 
 activeGraphicListPtr cur;
 int normClipStat, xorClipStat, eraseClipStat, x0, x1, y0, y1;
-XRectangle xR = { _x, _y, _w, _h };
+
+short sx = _x;
+short sy = _y;
+short sw = _w;
+short sh = _h;
+XRectangle xR = { sx, sy, sw, sh };
 
   //fprintf( stderr, "refreshActive 1\n" );
   //fprintf( stderr, "x=%-d, y=%-d, w=%-d, h=%-d\n", _x, _y, _w, _h );
@@ -3357,7 +3382,7 @@ Atom expList[2];
 int n;
 Arg args[10];
 
-  //fprintf( stderr, "activeGraphicClass::startDrag(*be,x,y)\n" );
+  // fprintf( stderr, "activeGraphicClass::startDrag(*be,x,y)\n" );
 
   Widget icon = mkDragIcon(actWin->executeWidget, this);
   if ( !icon ) return 0;

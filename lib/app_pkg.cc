@@ -26,6 +26,9 @@
 #include <X11/Intrinsic.h>
 #include <sys/wait.h>
 
+#define SMALL_SYM_ARRAY_SIZE 10
+#define SMALL_SYM_ARRAY_LEN 31
+
 typedef struct libRecTag {
   struct libRecTag *flink;
   char *className;
@@ -1979,6 +1982,327 @@ appContextClass *apco = (appContextClass *) client;
 
 }
 
+void save_screen_config (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+  Widget dialog;
+  XmString t;
+  Arg args[5];
+  char filter[MAX_DIR];
+  char msg[1001];
+  void check_config_exists(Widget, XtPointer, XtPointer);
+  void destroy_callback(Widget, XtPointer, XtPointer);
+  
+  appContextClass *apco = (appContextClass *) client;
+  int err = apco->getCfgDirectory(filter, msg);
+  if (err) {
+    apco->postMessage(msg);
+    XtDestroyWidget ( XtParent (w));
+    return;
+  }
+  int n = 0;
+  t = XmStringCreateLocalized (filter);
+  XtSetArg (args[n], XmNdirMask, t); n++;
+//  XtSetArg (args[0], XmNpathMode, XmPATH_MODE_RELATIVE);
+  dialog = XmCreateFileSelectionDialog (w, "Select cfg:", args, 1);
+  XmStringFree (t); // always destroy compound strings when done
+  XtAddCallback (dialog, XmNokCallback, check_config_exists, (appContextClass *) client);
+  XtAddCallback (dialog, XmNcancelCallback, destroy_callback, NULL);
+  XtManageChild (dialog);
+}
+
+void destroy_callback(
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+  XtDestroyWidget ( XtParent (w));
+}
+
+void check_config_exists(
+  Widget w,         // the dialog widget
+  XtPointer client,
+  XtPointer call )
+
+{
+  Widget dialog;
+  void exec_config_save(Widget, XtPointer, XtPointer);
+  void destroy_callback(Widget, XtPointer, XtPointer);
+  Arg args[5];
+  char fname[MAX_FNAME];
+  char msg[1001];
+  char *xtext;
+  
+  XmSelectionBoxCallbackStruct *cbs = (XmSelectionBoxCallbackStruct *) call; 
+  xtext = (char *) XmStringUnparse (cbs->value,
+                                         XmFONTLIST_DEFAULT_TAG,
+                                         XmCHARSET_TEXT,
+                                         XmCHARSET_TEXT,
+                                         NULL, 0, XmOUTPUT_ALL);
+  appContextClass *apco = (appContextClass *) client;
+  
+  if (strlen(xtext) >= MAX_NAME) {
+      sprintf(msg, appContextClass_str100, "name");  // string too long: %s
+      apco->postMessage(msg);
+      XtFree(xtext);
+      XtDestroyWidget ( XtParent (w));
+      return;
+  }
+  int ltext = strlen(xtext);
+  if ( ltext  && ltext < MAX_FNAME) {
+    strcpy(fname, xtext);
+    XtFree(xtext);
+  } else {
+    if (ltext) {
+      sprintf(msg, appContextClass_str100, "file name");  // String too long: %s
+    } else {
+      sprintf(msg, appContextClass_str101, "file name");  // String empty: %s
+    }
+    apco->postMessage(msg);
+    return;
+  }
+  apco->checkCfgName(fname);
+//  sprintf(msg, "checking file %s\n", fname);
+//  printf(msg);
+  FILE *fp = fopen(fname, "r");
+  if (fp) {
+    fclose(fp);
+//    printf("file exists\n");
+    sprintf(msg, appContextClass_str53, fname);          // File already exists:\n%s
+    apco->setCfgName(fname);                     // remember fname for after confirm dialog
+    XmString xms = XmStringCreateLocalized (msg);
+    int n = 0;
+    XtSetArg (args[n], XmNmessageString, xms); n++;
+    dialog = XmCreateMessageDialog (w, "message", args, n);
+    XmStringFree (xms);
+    XtAddCallback (dialog, XmNokCallback, exec_config_save, (appContextClass *) client);
+    XtAddCallback (dialog, XmNcancelCallback, destroy_callback, NULL);
+    XtManageChild (dialog);
+    return;
+  } else {
+    apco->setCfgName("");                     // indicate that we did not have confirm dialog
+    XtDestroyWidget ( XtParent (w));
+    int err = apco->writeConfig(fname); 
+    if (err) {
+      sprintf(msg, appContextClass_str78, fname);   // Error writing file: %s
+      apco->postMessage(msg);
+      return;
+    }
+  } 
+}
+
+void exec_config_save(
+  Widget w,         // the dialog widget
+  XtPointer client,
+  XtPointer call )
+
+{
+  char *fname;
+  char msg[1001];
+  char *xtext;
+  
+  appContextClass *apco = (appContextClass *) client;
+  if (*apco->getCfgName()) {          // we had a confirmation dialog
+    XtDestroyWidget ( XtParent(XtParent(w)));
+  }
+  XtDestroyWidget ( XtParent (w));
+  
+  fname = apco->getCfgName();
+  int err = apco->writeConfig(fname); 
+  if (err) {
+    sprintf(msg, appContextClass_str78, fname);   // Error writing file: %s
+    apco->postMessage(msg);
+    return;
+  }
+}
+
+// This function does not touch apco->screenAdd nor apco->screenAddAll
+void load_screen_config (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+  char filter[MAX_DIR];
+  char line[MAX_LINE];
+  char *home;
+  Widget dialog;
+  XmString t;
+  void exec_config_load(Widget, XtPointer, XtPointer);
+  void destroy_callback(Widget, XtPointer, XtPointer);
+  Arg args[2];
+  
+  appContextClass *apco = (appContextClass *) client;
+  int err = apco->getCfgDirectory(filter, line);
+  if (err) {
+    apco->postMessage(line);
+    XtDestroyWidget ( XtParent (w));
+    return;
+  }
+  
+  int n = 0;
+  t = XmStringCreateLocalized (filter);
+  XtSetArg (args[n], XmNdirMask, t); n++;
+//  XtSetArg (args[0], XmNpathMode, XmPATH_MODE_RELATIVE);
+  dialog = XmCreateFileSelectionDialog (w, "Select cfg:", args, 1);
+  XmStringFree (t); // always destroy compound strings when done
+  XtAddCallback (dialog, XmNokCallback, exec_config_load, (appContextClass *) client);
+  XtAddCallback (dialog, XmNcancelCallback, destroy_callback, NULL);
+  XtManageChild (dialog);
+}
+
+// This function sets apco->screenAdd
+void add_screen_config (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+  appContextClass *apco = (appContextClass *) client;
+  apco->setScreenAdd(1);
+  load_screen_config(w, client, call);
+}
+
+// This function sets apco->screenAddAll
+void addall_screen_config (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+  appContextClass *apco = (appContextClass *) client;
+  apco->setScreenAddAll(1);
+  load_screen_config(w, client, call);
+}
+
+void switch_screen_config (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+  Widget dialog;
+  Arg arg[5];
+  XmString xms;
+  void exec_config_load(Widget, XtPointer, XtPointer);
+  void destroy_callback(Widget, XtPointer, XtPointer);
+  int  n = 0;
+
+  xms = XmStringCreateLocalized ("This will close all screeens.\nAre you sure?");
+  XtSetArg (arg[n], XmNmessageString, xms); n++;
+  dialog = XmCreateMessageDialog (w, "message", arg, n);
+  XmStringFree (xms);
+  XtAddCallback (dialog, XmNokCallback, load_screen_config, (appContextClass *) client);
+  XtAddCallback (dialog, XmNcancelCallback, destroy_callback, NULL);
+  XtManageChild (dialog);
+}
+
+// This function must reset appco->screenAdd and appco-screenAddAll
+void exec_config_load (
+  Widget w,
+  XtPointer client,
+  XtPointer call )
+{
+  char *newMacros[MAX_MACROS];
+  char *newValues[MAX_MACROS];
+
+  char *home;
+  char fname[MAX_FNAME];
+  char line[MAX_LINE];
+  char edlname[MAX_NAME];
+  char macros[MAX_LINE];
+  int nmacros = 0;
+  char **msymbols = 0;
+  char **mvalues = 0;
+  int x, y;
+  float scale = 1.0;   // to be added to display node later
+  char *xfname;
+
+  XmFileSelectionBoxCallbackStruct *cbs =
+                        (XmFileSelectionBoxCallbackStruct *) call; 
+  xfname = (char *) XmStringUnparse (cbs->value,
+                                         XmFONTLIST_DEFAULT_TAG,
+                                         XmCHARSET_TEXT,
+                                         XmCHARSET_TEXT,
+                                         NULL, 0, XmOUTPUT_ALL); 
+//  printf("calling exec_config_load - name %s\n", xfname);
+  appContextClass *apco = (appContextClass *) client;
+
+  // load the screen configuration file from the user's home directory
+  if (strlen(xfname) >= MAX_NAME) {
+    sprintf(line, appContextClass_str100, "name");  // string too long: %s
+    apco->postMessage(line);
+    XtDestroyWidget ( XtParent (w));
+    apco->setScreenAdd(0);
+    apco->setScreenAddAll(0);
+    return;
+  }
+  strcpy(fname, xfname);
+  XtFree(xfname);
+ if (diagnosticMode()) {
+    sprintf(line, "reading file %s\n", fname);
+    logDiagnostic(line);
+  }
+  FILE *fp = fopen(fname, "r");
+  if (!fp) {
+    sprintf(line, appContextClass_str108, fname);   // Error loading file: %s
+    apco->postMessage(line);
+    XtDestroyWidget ( XtParent (w));
+    apco->setScreenAdd(0);
+    apco->setScreenAddAll(0);
+    return;
+  } 
+  XtDestroyWidget ( XtParent (w));
+  
+  if (!apco->screenConfigOk(fp)) {
+    sprintf(line, appContextClass_str51, fname);   // Invalid screen configuration: %s
+    apco->postMessage(line);
+    XtDestroyWidget ( XtParent (w));
+    apco->setScreenAdd(0);
+    apco->setScreenAddAll(0);
+    return;
+  }
+  int i = 0;
+  activeWindowListPtr cur;
+  unordered_map<string, string> sigs;
+  // if we switch configurations, remove existing files except the head
+  // (in order not to get caught by eolc
+  if (!apco->getScreenAdd() && !apco->getScreenAddAll()) apco->closeAllButHead();
+  else apco->getScreenSignatures(sigs);
+  
+/*  printf("Existing screens\n");
+  for(auto iter=sigs.begin(); iter!=sigs.end(); ++iter) {
+    printf("%s --> %s\n", iter->first.c_str(), iter->second.c_str());
+  }
+*/
+  while (fgets(line, MAX_LINE, fp) != NULL) { 
+    if (*line == '#') continue;
+    int len = strlen(line);
+    *(line+len) = '\0';
+    int n = sscanf(line, "%s x=%d y=%d scale=%f %s", edlname, &x, &y, &scale, macros );
+    if (n < 4) continue;      // not enough info in file
+    parseSymbolsAndValues( macros, 100, newMacros, newValues, &nmacros );
+    if (!apco->getScreenAdd()) {
+      apco->addActWin(edlname, x, y, nmacros, newMacros, newValues );
+      cur = apco->head->blink;
+      cur->x = x;
+      cur->y = y;
+      cur->requestPosition = 1;
+    } else {
+      if (apco->getScreenAddAll() || !apco->screenAlreadyUp(sigs, edlname, newMacros, newValues, nmacros)) {
+        apco->addActWin(edlname, x, y, nmacros, newMacros, newValues );
+        cur = apco->head->blink;
+        cur->x = x;
+        cur->y = y;
+        cur->requestPosition = 1;
+      }
+    }   
+  }
+  fclose(fp);
+  apco->setScreenAdd(0);
+  apco->setScreenAddAll(0);
+}
+
+
+
 void view_pvList_cb (
   Widget w,
   XtPointer client,
@@ -2313,6 +2637,10 @@ appContextClass::appContextClass (
   atLeastOneOpen = 0;
   useScrollBars = 1;
 
+  screenAdd = 0;
+  screenAddAll = 0;
+  confOk = "# edm screen configuration";
+  confOkCount = 26;
   entryFormX = 0;
   entryFormY = 0;
   entryFormW = 0;
@@ -3805,7 +4133,7 @@ int i, numVisible;
 
   filePullDown = XmCreatePulldownMenu( menuBar, "file", NULL, 0 );
 
-  menuStr = XmStringCreateLocalized( appContextClass_str35 );
+  menuStr = XmStringCreateLocalized( appContextClass_str35 );    // File
   fileCascade = XtVaCreateManagedWidget( "filemenu", xmCascadeButtonWidgetClass,
    menuBar,
    XmNlabelString, menuStr,
@@ -3816,7 +4144,7 @@ int i, numVisible;
 
   if ( !noEdit ) {
 
-    str = XmStringCreateLocalized( appContextClass_str36 );
+    str = XmStringCreateLocalized( appContextClass_str36 );    // New
     newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      filePullDown,
      XmNlabelString, str,
@@ -3827,7 +4155,7 @@ int i, numVisible;
 
   }
 
-  str = XmStringCreateLocalized( appContextClass_str37 );
+  str = XmStringCreateLocalized( appContextClass_str37 );     // Open by Path...
   newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    filePullDown,
    XmNlabelString, str,
@@ -3836,7 +4164,7 @@ int i, numVisible;
   XtAddCallback( newB, XmNactivateCallback, open_from_path_cb,
    (XtPointer) this );
 
-  str = XmStringCreateLocalized( appContextClass_str38 );
+  str = XmStringCreateLocalized( appContextClass_str38 );     // Open ...
   newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    filePullDown,
    XmNlabelString, str,
@@ -3846,7 +4174,7 @@ int i, numVisible;
    (XtPointer) this );
 
 #if 0
-  str = XmStringCreateLocalized( appContextClass_str39 );
+  str = XmStringCreateLocalized( appContextClass_str39 );     // Import Exchange File...
   newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    filePullDown,
    XmNlabelString, str,
@@ -3856,7 +4184,7 @@ int i, numVisible;
    (XtPointer) this );
 #endif
 
-  str = XmStringCreateLocalized( appContextClass_str40 );
+  str = XmStringCreateLocalized( appContextClass_str40 );     // Refresh User Library
   newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    filePullDown,
    XmNlabelString, str,
@@ -3865,7 +4193,7 @@ int i, numVisible;
   XtAddCallback( newB, XmNactivateCallback, refreshUserLib_cb,
    (XtPointer) this );
 
-  str = XmStringCreateLocalized( "Reload All" );
+  str = XmStringCreateLocalized( appContextClass_str46 );     //Reload All
   newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    filePullDown,
    XmNlabelString, str,
@@ -3874,7 +4202,63 @@ int i, numVisible;
   XtAddCallback( newB, XmNactivateCallback, reload_cb,
    (XtPointer) this );
 
-  str = XmStringCreateLocalized( appContextClass_str41 );
+  // save sreen config
+  if ( primaryServer ) {
+    if ( primaryServer == 1 ) {
+      str = XmStringCreateLocalized( appContextClass_str47 );     // Save Screen Configuration
+      newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+        filePullDown,
+        XmNlabelString, str,
+        NULL );
+      XmStringFree( str );
+      XtAddCallback( newB, XmNactivateCallback, save_screen_config,
+        (XtPointer) this );
+    }
+  }
+
+  // switch screen config
+  if ( primaryServer ) {
+    if ( primaryServer == 1 ) {
+      str = XmStringCreateLocalized( appContextClass_str48 );     // Switch Screen Configuration
+      newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+        filePullDown,
+        XmNlabelString, str,
+        NULL );
+      XmStringFree( str );
+      XtAddCallback( newB, XmNactivateCallback, switch_screen_config,
+        (XtPointer) this );
+    }
+  }
+
+  // add to sreen config
+  if ( primaryServer ) {
+    if ( primaryServer == 1 ) {
+      str = XmStringCreateLocalized( appContextClass_str49 );     // Add to Screen Configuration
+      newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+        filePullDown,
+        XmNlabelString, str,
+        NULL );
+      XmStringFree( str );
+      XtAddCallback( newB, XmNactivateCallback, add_screen_config,
+        (XtPointer) this );
+    }
+  }
+
+  // load sreen config
+  if ( primaryServer ) {
+    if ( primaryServer == 1 ) {
+      str = XmStringCreateLocalized( appContextClass_str50 );     // Load Screen Configuration
+      newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
+        filePullDown,
+        XmNlabelString, str,
+        NULL );
+      XmStringFree( str );
+      XtAddCallback( newB, XmNactivateCallback, addall_screen_config,
+        (XtPointer) this );
+    }
+  }
+
+  str = XmStringCreateLocalized( appContextClass_str41 );     // Exit
   newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    filePullDown,
    XmNlabelString, str,
@@ -3885,10 +4269,10 @@ int i, numVisible;
 
   if ( primaryServer ) {
     if ( primaryServer == 1 ) {
-      str = XmStringCreateLocalized( appContextClass_str132 );
+      str = XmStringCreateLocalized( appContextClass_str132 );     // Shutdown
     }
     else if ( primaryServer == 2 ) {
-      str = XmStringCreateLocalized( appContextClass_str133 );
+      str = XmStringCreateLocalized( appContextClass_str133 );     // Shutdown all displays
     }
     newB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      filePullDown,
@@ -3902,7 +4286,7 @@ int i, numVisible;
 
   viewPullDown = XmCreatePulldownMenu( menuBar, "view", NULL, 0 );
 
-  menuStr = XmStringCreateLocalized( appContextClass_str42 );
+  menuStr = XmStringCreateLocalized( appContextClass_str42 );     // View ...
   viewCascade = XtVaCreateManagedWidget( "viewmenu", xmCascadeButtonWidgetClass,
    menuBar,
    XmNlabelString, menuStr,
@@ -3911,7 +4295,7 @@ int i, numVisible;
    NULL );
   XmStringFree( menuStr );
 
-  str = XmStringCreateLocalized( appContextClass_str43 );
+  str = XmStringCreateLocalized( appContextClass_str43 );     // Messages
   msgB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    viewPullDown,
    XmNlabelString, str,
@@ -3920,7 +4304,7 @@ int i, numVisible;
   XtAddCallback( msgB, XmNactivateCallback, view_msgBox_cb,
    (XtPointer) this );
 
-  str = XmStringCreateLocalized( appContextClass_str44 );
+  str = XmStringCreateLocalized( appContextClass_str44 );     // PV List
   pvB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    viewPullDown,
    XmNlabelString, str,
@@ -3929,7 +4313,7 @@ int i, numVisible;
   XtAddCallback( pvB, XmNactivateCallback, view_pvList_cb,
    (XtPointer) this );
 
-  str = XmStringCreateLocalized( appContextClass_str45 );
+  str = XmStringCreateLocalized( appContextClass_str45 );     // Screens
   pvB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    viewPullDown,
    XmNlabelString, str,
@@ -3938,7 +4322,7 @@ int i, numVisible;
   XtAddCallback( pvB, XmNactivateCallback, view_screens_cb,
    (XtPointer) this );
 
-  str = XmStringCreateLocalized( appContextClass_str112 );
+  str = XmStringCreateLocalized( appContextClass_str112 );     // Show X/Y
   viewXyB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    viewPullDown,
    XmNlabelString, str,
@@ -3947,7 +4331,7 @@ int i, numVisible;
   XtAddCallback( viewXyB, XmNactivateCallback, view_xy_cb,
    (XtPointer) this );
 
-  str = XmStringCreateLocalized( appContextClass_str135 );
+  str = XmStringCreateLocalized( appContextClass_str135 );     // Disable image rendering
   renderImagesB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    viewPullDown,
    XmNlabelString, str,
@@ -3956,7 +4340,7 @@ int i, numVisible;
   XtAddCallback( renderImagesB, XmNactivateCallback, renderImages_cb,
    (XtPointer) this );
 
-  str = XmStringCreateLocalized( appContextClass_str136 );
+  str = XmStringCreateLocalized( appContextClass_str136 );     // Checkpoint PID
   checkpointPidB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    viewPullDown,
    XmNlabelString, str,
@@ -3965,7 +4349,7 @@ int i, numVisible;
   XtAddCallback( checkpointPidB, XmNactivateCallback, checkpointPid_cb,
    (XtPointer) this );
 
-  str = XmStringCreateLocalized( appContextClass_str141 );
+  str = XmStringCreateLocalized( appContextClass_str141 );     // Font Mappings
   viewFontMappingB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    viewPullDown,
    XmNlabelString, str,
@@ -3974,7 +4358,7 @@ int i, numVisible;
   XtAddCallback( viewFontMappingB, XmNactivateCallback, viewFontMapping_cb,
    (XtPointer) this );
 
-  str = XmStringCreateLocalized( appContextClass_str144 );
+  str = XmStringCreateLocalized( appContextClass_str144 );     // Environment
   viewEnvB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    viewPullDown,
    XmNlabelString, str,
@@ -3989,7 +4373,7 @@ int i, numVisible;
 
     pathPullDown = XmCreatePulldownMenu( menuBar, "path", NULL, 0 );
 
-    menuStr = XmStringCreateLocalized( appContextClass_str121 );
+    menuStr = XmStringCreateLocalized( appContextClass_str121 );     // Path
     pathCascade = XtVaCreateManagedWidget( "pathmenu", xmCascadeButtonWidgetClass,
      menuBar,
      XmNlabelString, menuStr,
@@ -4027,7 +4411,7 @@ int i, numVisible;
     numVisible = ( numPaths > 30 ? 30 : numPaths );
     pathList.create( numPaths, mainWin, numVisible, this );
 
-    menuStr = XmStringCreateLocalized( appContextClass_str121 );
+    menuStr = XmStringCreateLocalized( appContextClass_str121 );     // Path
     pathCascade = XtVaCreateManagedWidget( "pathmenu", xmCascadeButtonWidgetClass,
      menuBar,
      XmNlabelString, menuStr,
@@ -4044,7 +4428,7 @@ int i, numVisible;
     callbackBlockTail = curBlock;
     callbackBlockTail->flink = NULL;
 
-    str = XmStringCreateLocalized( appContextClass_str143 );
+    str = XmStringCreateLocalized( appContextClass_str143 );     // Select Path...
     msgB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
      pathPullDown,
      XmNlabelString, str,
@@ -4062,7 +4446,7 @@ int i, numVisible;
 
   helpPullDown = XmCreatePulldownMenu( menuBar, "help", NULL, 0 );
 
-  menuStr = XmStringCreateLocalized( appContextClass_str114 );
+  menuStr = XmStringCreateLocalized( appContextClass_str114 );     // Help
   helpCascade = XtVaCreateManagedWidget( "helpmenu", xmCascadeButtonWidgetClass,
    menuBar,
    XmNlabelString, menuStr,
@@ -4071,7 +4455,7 @@ int i, numVisible;
    NULL );
   XmStringFree( menuStr );
 
-  str = XmStringCreateLocalized( appContextClass_str115 );
+  str = XmStringCreateLocalized( appContextClass_str115 );     // On-line
   msgB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
    helpPullDown,
    XmNlabelString, str,
@@ -4080,7 +4464,7 @@ int i, numVisible;
   XtAddCallback( msgB, XmNactivateCallback, help_cb,
    (XtPointer) this );
 
-  //str = XmStringCreateLocalized( appContextClass_str116 );
+  //str = XmStringCreateLocalized( appContextClass_str116 );     // About
   //msgB = XtVaCreateManagedWidget( "pb", xmPushButtonWidgetClass,
   // helpPullDown,
   // XmNlabelString, str,
@@ -4491,6 +4875,10 @@ static void displayParamInfo ( void ) {
   fprintf( stderr, "\n" );
   fprintf( stderr, global_str84 );
   fprintf( stderr, "\n" );
+  fprintf( stderr, global_str156 );    // EDMSCREENCFG
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str158 );    // EDMSELECTOR
+  fprintf( stderr, "\n" );
   fprintf( stderr, global_str95 );
   fprintf( stderr, "\n" );
   fprintf( stderr, global_str54 );
@@ -4701,16 +5089,16 @@ fileListPtr curFile;
             if ( tk ) {
               if ( strcmp( tk, "\"\"" ) == 0 ) {
                 strcpy( exp, "" );
-	      }
+	            }
               else if ( strcmp( tk, "\'\'" ) == 0 ) {
                 strcpy( exp, "" );
-	      }
+	            }
               else if ( strcmp( tk, "\\'\\'" ) == 0 ) {
                 strcpy( exp, "" );
-	      }
-	      else {
+	            }
+	            else {
                 strncpy( exp, tk, 1023 );
-	      }
+	            }
             }
             else {
               return 4; // macro, but no value
@@ -7158,4 +7546,155 @@ Widget appContextClass::apptop ( void ) {
 
   return appTop;
 
+}
+
+int appContextClass::screenAlreadyUp(unordered_map<string, string> &sigs, 
+  char *edlname, 
+  char **macros, 
+  char **values, 
+  int nmacros)
+{
+  char signature[MAX_LINE];
+  strcpy(signature, edlname);
+  for (int i=0; i<nmacros; i++) {
+    strcat(signature, macros[i]);
+    strcat(signature, values[i]);
+  }
+  if (sigs.count(signature)) {
+//    printf("%s is already up\n", edlname);
+    return 1;
+  } else {
+//    printf("need to start %s\n", edlname);
+    return 0;
+  }
+}
+
+void appContextClass::closeAllButHead() 
+{
+//  printf("calling closeAllButHead\n");
+    activeWindowListPtr cur = this->head->flink;
+    while ( cur != this->head ) {
+      if ( cur->node.okToDeactivate() ) {
+        cur->node.returnToEdit( 1 );
+      } else {
+        cur->node.closeAnyDeferred( 20 );
+      }
+      cur = cur->flink;
+    }
+}
+
+void appContextClass::getScreenSignatures(unordered_map<string, string> &sigs)
+{
+  char signature[MAX_LINE];
+  // move to end of node list and get signatures of existing screens
+  activeWindowListPtr cur = this->head->flink;
+  while ( cur != this->head ) {
+    if ( blank( cur->node.displayName ) ) {
+      strcpy(signature, "");
+    } else {
+      int macro_count = 0;
+      strcpy(signature, cur->node.displayName);
+      for (int i=0; i<cur->node.numMacros; i++ ) {
+        strcat(signature, cur->node.macros[i]);
+        strcat(signature, cur->node.expansions[i]);
+        macro_count++;
+      }
+      if (!cur->node.isEmbedded) {
+        if (!macro_count) sigs[signature] = "nomacros";
+        sigs[signature] = signature;
+      }
+    }
+    cur = cur->flink;
+  }
+}
+
+int appContextClass::screenConfigOk(FILE *fp) {
+  char line[MAX_LINE];
+  
+  while (fgets(line, MAX_LINE, fp) != NULL) { 
+    if (!strncmp(line, confOk, confOkCount)) return 1;
+  }  
+  return 0;
+}
+
+
+int appContextClass::getCfgDirectory(char *pfilter, char *pmsg) {
+  char *home;
+  
+  home = getenv(environment_str39);     //EDMSCREENCFG
+  if ( home ) {
+    if (strlen(home) >= MAX_DIR) {
+        sprintf(pmsg, appContextClass_str100, "EDMSCREENCFG");  // string too long: %s
+        return -1;
+    }
+    int len = strlen(home);
+    if (*(home+len) != '/') {
+      strcpy(home+len, "/");
+    }
+    sprintf(pfilter, "%s*.edmcfg", home);
+//    printf("using EDMSCREENCFG - filter %s\n", pfilter);
+  } else {
+    home = getenv("HOME");
+    if ( home ) {
+      if (strlen(home) >= MAX_DIR) {
+          sprintf(pmsg, appContextClass_str100, "HOME");  // string too long: %s
+          this->postMessage(pmsg);
+          return -1;
+      }
+      int len = strlen(home);
+      if (*(home+len) != '/') {
+        strcpy(home+len, "/");
+      }
+      sprintf(pfilter, "%s/.edm/*.edmcfg", home);
+    } else {
+      sprintf(pfilter, "/tmp/*.edmcfg");
+    }
+  }
+  return 0;
+}
+
+int appContextClass::writeConfig(char *fname) {
+  FILE *fp = fopen(fname, "w");
+  if (!fp) {
+   return -1;
+  } 
+  int i = 0;
+  float scale = 1.0;   // to be added to display node later
+  activeWindowListPtr cur;
+
+//  printf("writeConfig - %s\n", fname);
+  cur = this->head->flink;
+  fprintf(fp, "%s %s\n", this->getConfOk(), fname );
+  while ( cur != this->head ) {
+    if (!cur->node.isEmbedded) {
+      if ( blank( cur->node.displayName ) ) {
+        fprintf(fp, "%s", appContextClass_str27 );
+      } else {
+        fprintf(fp, "%s", cur->node.displayName );
+        fprintf(fp, " x=%d y=%d", cur->node.x, cur->node.y);
+        fprintf(fp, " scale=%f", scale);
+      
+        for ( i=0; i<cur->node.numMacros; i++ ) {
+          if (i == 0) fprintf(fp, "  %s=%s", cur->node.macros[i], cur->node.expansions[i] );
+          else  fprintf(fp, ",%s=%s", cur->node.macros[i], cur->node.expansions[i] );
+        }
+      }
+      fprintf(fp, "\n");
+    }
+    cur = cur->flink;
+  }
+  fclose(fp);
+}
+
+char *appContextClass::checkCfgName(char *fname) {
+  char *ps0 = strrchr(fname, '/');
+  char *ps = strrchr(ps0+1, '.');
+  int len = (ps ? ps - fname : strlen(fname));
+//  printf("check extension - len %d fname %s length %d\n", len, fname, strlen(fname));
+  if (len == strlen(fname)) {         // no . in file name
+    strcpy(fname+len, ".edmcfg");     // force extension
+  } else if (strcmp(ps, ".edmcfg")) {
+    strcpy(fname+strlen(fname), ".edmcfg");
+  }
+  return fname;
 }

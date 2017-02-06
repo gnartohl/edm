@@ -95,6 +95,8 @@ typedef struct pointTag {
   int y;
 } pointType, *pointPtr;
 
+///////////// start of class declaration: activeGraphicClass
+
 class activeGraphicClass {
 
 protected:
@@ -971,6 +973,8 @@ virtual int getMacros (
 
 virtual int isMux ( void ) { return 0; }
 
+virtual int isIncludeWidget( void ) { return 0; }
+
 
 // related display functions
 
@@ -1005,6 +1009,12 @@ virtual char *getRelatedDisplayMacros (
 ) {
 
   return NULL;
+
+}
+
+virtual void augmentRelatedDisplayMacros (
+  char *buf
+) {
 
 }
 

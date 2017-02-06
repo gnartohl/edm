@@ -4,6 +4,8 @@ ifdef EPICS_HOST_ARCH
    
    SHARED_LIBRARIES = YES
 
+   USR_CXXFLAGS += -std=c++0x -fpermissive -Wno-narrowing -Wno-write-strings -Wno-unused-but-set-variable
+
    USR_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
    USR_LIBS += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
 

@@ -190,24 +190,23 @@ char *gotOne;
         first = i;
         if ( buf[i] == '#' ) {
           break;
-	}
-	else {
-	  ignore = 0;
-	  break;
-	}
+	      }
+	      else {
+	        ignore = 0;
+	        break;
+	      }
       }
     }
 
     if ( !ignore ) { // got something significant
-
       last = first;
       for ( i=first+1; i<len; i++ ) {
         if ( !isspace( buf[i] ) ) {
           last = i;
-	}
-	else {
-	  break;
-	}
+      	}
+      	else {
+      	  break;
+      	}
       }
 
     }
@@ -2595,7 +2594,7 @@ double smallDoubleArray[100];
     while ( tk && ( i < tagDestMaxSize[index] ) ) {
 
       if ( strcmp( tk, "\'\'" ) == 0 ) {
-        expStr[oneIndex].setRaw( "" );
+        expStr[oneIndex].setRaw( (char *) "" );
       }
       else {
         expStr[oneIndex].setRaw( tk );
@@ -3826,15 +3825,14 @@ efDouble *efD=NULL;
 efInt *efI;
 
   for ( index=0; index<numTags; index++ ) {
-
+  
     switch ( tagDestType[index] ) {
-
     case tagClass::LABEL: // section header label
 
       fprintf( f, "%s\n", tagName[index] );
 
       if ( tagClass::genDoc() ) {
-	fprintf( stderr, "%s\n", tagName[index] );
+	      fprintf( stderr, "%s\n", tagName[index] );
       }
 
       break;
@@ -3854,7 +3852,7 @@ efInt *efI;
       ci->writeColorIndex( f, tagName[index], colorIndex );
 
       if ( tagClass::genDoc() ) {
-	fprintf( stderr, "%s (index <int> | rgb <int> <int> <int>)\n",
+	      fprintf( stderr, "%s (index <int> | rgb <int> <int> <int>)\n",
          tagName[index] );
       }
 
@@ -3876,7 +3874,7 @@ efInt *efI;
       ci->writeColorIndex( f, tagName[index], colorIndex );
 
       if ( tagClass::genDoc() ) {
-	fprintf( stderr, "%s (index <int> | rgb <int> <int> <int>)\n",
+	      fprintf( stderr, "%s (index <int> | rgb <int> <int> <int>)\n",
          tagName[index] );
       }
 
@@ -3900,7 +3898,7 @@ efInt *efI;
         colorIndexArray = (int *) tagDestination[index];
 
         for ( i=0; i<tagDestMaxSize[index]; i++ ) {
-	  fprintf( f, "  " );
+	        fprintf( f, "  " );
           ci->writeColorArrayIndex( f, i, colorIndexArray[i] );
 	}
 
@@ -3909,12 +3907,12 @@ efInt *efI;
       }
 
       if ( tagClass::genDoc() ) {
-	fprintf( stderr, "%s {\n", tagName[index] );
-	fprintf( stderr, "  <int element> (index <int> | rgb <int> <int> <int>)\n" );
-	fprintf( stderr, "  <int element> (index <int> | rgb <int> <int> <int>)\n" );
-	fprintf( stderr, "                .\n" );
-	fprintf( stderr, "                .\n" );
-	fprintf( stderr, "}\n" );
+	      fprintf( stderr, "%s {\n", tagName[index] );
+	      fprintf( stderr, "  <int element> (index <int> | rgb <int> <int> <int>)\n" );
+	      fprintf( stderr, "  <int element> (index <int> | rgb <int> <int> <int>)\n" );
+	      fprintf( stderr, "                .\n" );
+	      fprintf( stderr, "                .\n" );
+	      fprintf( stderr, "}\n" );
       }
 
       break;
@@ -3937,22 +3935,22 @@ efInt *efI;
         color = (pvColorClass *) tagDestination[index];
 
         for ( i=0; i<tagDestMaxSize[index]; i++ ) {
-	  fprintf( f, "  " );
+	        fprintf( f, "  " );
           colorIndex = color[i].pixelIndex();
           ci->writeColorArrayIndex( f, i, colorIndex );
-	}
+	      }
 
         fprintf( f, "}\n" );
 
       }
 
       if ( tagClass::genDoc() ) {
-	fprintf( stderr, "%s {\n", tagName[index] );
-	fprintf( stderr, "  <int element> (index <int> | rgb <int> <int> <int>)\n" );
-	fprintf( stderr, "  <int element> (index <int> | rgb <int> <int> <int>)\n" );
-	fprintf( stderr, "                .\n" );
-	fprintf( stderr, "                .\n" );
-	fprintf( stderr, "}\n" );
+	      fprintf( stderr, "%s {\n", tagName[index] );
+	      fprintf( stderr, "  <int element> (index <int> | rgb <int> <int> <int>)\n" );
+	      fprintf( stderr, "  <int element> (index <int> | rgb <int> <int> <int>)\n" );
+	      fprintf( stderr, "                .\n" );
+	      fprintf( stderr, "                .\n" );
+	      fprintf( stderr, "}\n" );
       }
 
       break;
@@ -3971,13 +3969,13 @@ efInt *efI;
 
           }
 
-	}
-	else {
+	      }
+	      else {
 
           fprintf( f, "%s %-d\n", tagName[index],
            *( (int *) tagDestination[index] ) );
 
-	}
+	      }
 
       }
       else {
@@ -3990,10 +3988,10 @@ efInt *efI;
         if ( tagDefault[index] ) {
           fprintf( stderr, "[%s <int>]   /* default = %-d */\n",
            tagName[index], *( (int *) tagDefault[index] ) );
-	}
-	else {
+	      }
+	      else {
           fprintf( stderr, "%s <int>\n", tagName[index] );
-	}
+	      }
       }
 
       break;
@@ -4009,18 +4007,18 @@ efInt *efI;
 
             if ( *( (int *) tagDestination[index] ) ) {
               fprintf( f, "%s\n", tagName[index] );
-	    }
+	          }
 
           }
 
-	}
-	else {
+	      }
+	      else {
 
           if ( *( (int *) tagDestination[index] ) ) {
             fprintf( f, "%s\n", tagName[index] );
           }
 
-	}
+	      }
 
       }
       else {
@@ -4033,11 +4031,11 @@ efInt *efI;
         if ( tagDefault[index] ) {
           fprintf( stderr, "[%s [(0|1)]]   /* present with no value = 1, absent = 0 */\n",
            tagName[index] );
-	}
-	else {
+	      }
+	      else {
           fprintf( stderr, "[%s [(0|1)]]   /* present with no value = 1, absent = 0 */\n",
            tagName[index] );
-	}
+	      }
       }
 
       break;
@@ -4051,17 +4049,17 @@ efInt *efI;
           if ( *( (int *) tagDestination[index] ) == enumIntArray[index][i] ) {
             enumString = enumStrArray[index][i];
             break;
-	  }
+	        }
         }
 
         if ( !enumString ) {
-	  fprintf( stderr, tagClass_str22, *( (int *) tagDestination[index] ) );
+	        fprintf( stderr, tagClass_str22, *( (int *) tagDestination[index] ) );
           for ( i=0; i<enumNumChoices[index]; i++ ) {
             fprintf( stderr, "  %-d : [%s]\n", enumIntArray[index][i],
              enumStrArray[index][i] );
           }
-	  enumString = enumStrArray[index][0];
-	}
+	        enumString = enumStrArray[index][0];
+	      }
 
         if ( tagDefault[index] ) {
 
@@ -4073,13 +4071,13 @@ efInt *efI;
 
           }
 
-	}
-	else {
+	      }
+	      else {
 
           fprintf( f, "%s ", tagName[index] );
           writeString( f, enumString );
 
-	}
+	      }
 
       }
       else {
@@ -4098,7 +4096,7 @@ efInt *efI;
             if ( *( (int *) tagDefault[index] ) == enumIntArray[index][i] ) {
               tagDefaultValue = i;
               break;
-	    }
+	          }
           }
 
           fprintf( stderr, "[%s (", tagName[index] );
@@ -4108,14 +4106,14 @@ efInt *efI;
           }
           if ( tagDefaultValue == -1 ) {
             fprintf( stderr, ")]   /* default = \"UNKNOWN\" */\n" );
-	  }
-	  else {
+	        }
+	        else {
             fprintf( stderr, ")]   /* default = \"%s\" */\n",
              enumStrArray[index][tagDefaultValue] );
-	  }
+	        }
 
-	}
-	else {
+	      }
+	      else {
 
           fprintf( stderr, "%s (", tagName[index] );
           fprintf( stderr, "\"%s\"", enumStrArray[index][0] );
@@ -4124,7 +4122,7 @@ efInt *efI;
           }
           fprintf( stderr, ")\n" );
 
-	}
+	      }
 
       }
 
@@ -4141,19 +4139,19 @@ efInt *efI;
 
   	  // see if anything to write
           for ( ii=0; ii<tagDestMaxSize[index]; ii++ ) {
-	    if ( iArray[ii] != *( (int *) tagDefault[index] ) ) {
+	          if ( iArray[ii] != *( (int *) tagDefault[index] ) ) {
               doWrite = 1;
-	    }
-	  }
+	          }
+	        }
 
-	}
-	else {
+	      }
+	      else {
 
           doWrite = 1;
 
-	}
+	      }
 
-	if ( doWrite ) {
+	      if ( doWrite ) {
 
           fprintf( f, "%s {\n", tagName[index] );
 
@@ -4173,23 +4171,23 @@ efInt *efI;
                 fprintf( stderr, "  %-d : [%s]\n", enumIntArray[index][i],
                  enumStrArray[index][i] );
               }
-	      enumString = enumStrArray[index][0];
+	            enumString = enumStrArray[index][0];
             }
 
             if ( tagDefault[index] ) {
 
-	      if ( iArray[ii] != *( (int *) tagDefault[index] ) ) {
+	            if ( iArray[ii] != *( (int *) tagDefault[index] ) ) {
                 fprintf( f, "  %-d ", ii );
                 writeString( f, enumString );
-	      }
+	            }
 
-	    }
-	    else {
+	          }
+	          else {
 
               fprintf( f, "  %-d ", ii );
               writeString( f, enumString );
 
-	    }
+	          }
 
           }
 
@@ -4214,7 +4212,7 @@ efInt *efI;
             if ( *( (int *) tagDefault[index] ) == enumIntArray[index][i] ) {
               tagDefaultValue = i;
               break;
-	    }
+	          }
           }
 
           fprintf( stderr, "[%s {\n", tagName[index] );
@@ -4226,11 +4224,11 @@ efInt *efI;
           }
           if ( tagDefaultValue == -1 ) {
             fprintf( stderr, ")]   /* default = \"UNKNOWN\" */\n" );
-	  }
-	  else {
+	        }
+	        else {
             fprintf( stderr, ")]   /* default = \"%s\" */\n",
              enumStrArray[index][tagDefaultValue] );
-	  }
+	        }
 
           fprintf( stderr, "  [<int element> (" );
           fprintf( stderr, "\"%s\"", enumStrArray[index][0] );
@@ -4239,19 +4237,19 @@ efInt *efI;
           }
           if ( tagDefaultValue == -1 ) {
             fprintf( stderr, ")]   /* default = \"UNKNOWN\" */\n" );
-	  }
-	  else {
+	        }
+	        else {
             fprintf( stderr, ")]   /* default = \"%s\" */\n",
              enumStrArray[index][tagDefaultValue] );
-	  }
+	        }
 
-	  fprintf( stderr, "                .\n" );
-	  fprintf( stderr, "                .\n" );
+	        fprintf( stderr, "                .\n" );
+	        fprintf( stderr, "                .\n" );
 
-	  fprintf( stderr, "}]\n" );
+	        fprintf( stderr, "}]\n" );
 
-	}
-	else {
+	      }
+	      else {
 
           fprintf( stderr, "%s {\n", tagName[index] );
 
@@ -4269,12 +4267,12 @@ efInt *efI;
           }
           fprintf( stderr, ")\n" );
 
-	  fprintf( stderr, "                .\n" );
-	  fprintf( stderr, "                .\n" );
+	        fprintf( stderr, "                .\n" );
+	        fprintf( stderr, "                .\n" );
 
-	  fprintf( stderr, "}\n" );
+	        fprintf( stderr, "}\n" );
 
-	}
+	      }
 
       }
 
@@ -4294,13 +4292,13 @@ efInt *efI;
 
           }
 
-	}
-	else {
+	      }
+	      else {
 
           fprintf( f, "%s %-g\n", tagName[index],
            *( (double *) tagDestination[index] ) );
 
-	}
+	      }
 
       }
       else {
@@ -4314,10 +4312,10 @@ efInt *efI;
         if ( tagDefault[index] ) {
           fprintf( stderr, "[%s <real>]   /* default = %-g */\n",
            tagName[index], *( (double *) tagDefault[index] ) );
-	}
-	else {
+	      }
+	      else {
           fprintf( stderr, "%s <real>\n", tagName[index] );
-	}
+	      }
       }
 
       break;
@@ -4359,10 +4357,10 @@ efInt *efI;
         for ( ii=0; ii<tagDestMaxSize[index]; ii++ ) {
           if ( !efD[ii].isNull() ) {
             doWrite = 1;
-	  }
-	}
+	        }
+	      }
 
-	if ( doWrite ) {
+	      if ( doWrite ) {
 
           fprintf( f, "%s {\n", tagName[index] );
 
@@ -4372,11 +4370,11 @@ efInt *efI;
               fprintf( f, "  %-d %-g 0\n", i, efD[i].value() ); // !null
             }
 
-	  }
+	        }
 
           fprintf( f, "}\n" );
 
-	}
+	      }
 
       }
       else {
@@ -4387,12 +4385,12 @@ efInt *efI;
       }
 
       if ( tagClass::genDoc() ) {
-	fprintf( stderr, "[%s {\n", tagName[index] );
+	      fprintf( stderr, "[%s {\n", tagName[index] );
         fprintf( stderr, "[<int element> <real>]   /* default = 0.0 */\n" );
         fprintf( stderr, "[<int element> <real>]   /* default = 0.0 */\n" );
-	fprintf( stderr, "                .\n" );
-	fprintf( stderr, "                .\n" );
-	fprintf( stderr, "}]\n" );
+	      fprintf( stderr, "                .\n" );
+	      fprintf( stderr, "                .\n" );
+	      fprintf( stderr, "}]\n" );
       }
 
       break;
@@ -4434,10 +4432,10 @@ efInt *efI;
         for ( ii=0; ii<tagDestMaxSize[index]; ii++ ) {
           if ( !efD[ii].isNull() ) {
             doWrite = 1;
-	  }
-	}
+	        }
+	      }
 
-	if ( doWrite ) {
+	      if ( doWrite ) {
 
           fprintf( f, "%s {\n", tagName[index] );
 
@@ -4447,11 +4445,11 @@ efInt *efI;
               fprintf( f, "  %-d %-d\n", i, efI[i].value() ); // !null
             }
 
-	  }
+	        }
 
           fprintf( f, "}\n" );
 
-	}
+	      }
 
       }
       else {
@@ -4462,12 +4460,12 @@ efInt *efI;
       }
 
       if ( tagClass::genDoc() ) {
-	fprintf( stderr, "[%s {\n", tagName[index] );
+	      fprintf( stderr, "[%s {\n", tagName[index] );
         fprintf( stderr, "[<int element> <int>]   /* default = 0 */\n" );
         fprintf( stderr, "[<int element> <int>]   /* default = 0 */\n" );
-	fprintf( stderr, "                .\n" );
-	fprintf( stderr, "                .\n" );
-	fprintf( stderr, "}]\n" );
+	      fprintf( stderr, "                .\n" );
+	      fprintf( stderr, "                .\n" );
+	      fprintf( stderr, "}]\n" );
       }
 
       break;
@@ -4485,21 +4483,21 @@ efInt *efI;
           if ( strcmp( s, sDef ) != 0 ) {
 
             fprintf( f, "%s {\n", tagName[index] );
-	    writeMultiLineString( f, s );
+	          writeMultiLineString( f, s );
             //fprintf( f, "%s\n", s );
             fprintf( f, "}\n" );
 
-	  }
+	        }
 
-	}
-	else {
+	      }
+	      else {
 
           fprintf( f, "%s {\n", tagName[index] );
-	  writeMultiLineString( f, s );
+	        writeMultiLineString( f, s );
           //fprintf( f, "%s\n", s );
           fprintf( f, "}\n" );
 
-	}
+	      }
 
       }
       else {
@@ -4510,22 +4508,22 @@ efInt *efI;
       }
 
       if ( tagClass::genDoc() ) {
-	if ( sDef ) {
+	      if ( sDef ) {
           fprintf( stderr, "[%s {\n", tagName[index] );
           fprintf( stderr, "  <string> /* line 1 of n */\n" );
           fprintf( stderr, "  <string> /* line 2 of n */\n" );
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "}]   /* default = \"%s\" */\n", sDef );
-	}
-	else {
+	      }
+	      else {
           fprintf( stderr, "%s {\n", tagName[index] );
           fprintf( stderr, "  <string> /* line 1 of n */\n" );
           fprintf( stderr, "  <string> /* line 2 of n */\n" );
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "}\n" );
-	}
+	      }
       }
 
       break;
@@ -4544,15 +4542,15 @@ efInt *efI;
             fprintf( f, "%s ", tagName[index] );
             writeString( f, s );
 
-	  }
+	        }
 
-	}
-	else {
+	      }
+	      else {
 
           fprintf( f, "%s ", tagName[index] );
           writeString( f, s );
 
-	}
+	      }
 
       }
       else {
@@ -4563,13 +4561,13 @@ efInt *efI;
       }
 
       if ( tagClass::genDoc() ) {
-	if ( sDef ) {
-	  fprintf( stderr, "[%s <string>] /* default = \"%s\" */\n",
+	      if ( sDef ) {
+	        fprintf( stderr, "[%s <string>] /* default = \"%s\" */\n",
            tagName[index], sDef );
-	}
-	else {
-	  fprintf( stderr, "%s <string>\n", tagName[index] );
-	}
+	      }
+	      else {
+	        fprintf( stderr, "%s <string>\n", tagName[index] );
+	      }
       }
 
       break;
@@ -4590,17 +4588,17 @@ efInt *efI;
             if ( strcmp( s, (char *) tagDefault[index] ) != 0 ) {
               s += enumNumChoices[index];
               doWrite = 1;
-	    }
-	  }
+	          }
+	        }
 
-	}
-	else {
+	      }
+	      else {
 
           doWrite = 1;
 
-	}
+	      }
 
-	if ( doWrite ) {
+	      if ( doWrite ) {
 
           s = (char *) tagDestination[index];
 
@@ -4614,30 +4612,23 @@ efInt *efI;
                 if ( blank(s) ) strcpy( s, "\'\'" );
                 fprintf( f, "  %-d ", i );
                 writeString( f, s );
-	      }
+	            }
 
-	    }
-	    else {
-
+	          }
+	          else {
               if ( blank(s) ) strcpy( s, "\'\'" );
               fprintf( f, "  %-d ", i );
               writeString( f, s );
 
-	    }
-
+	          }
             s += enumNumChoices[index];
 
-	  }
-
+	        }
           fprintf( f, "}\n" );
-
-	}
-
+	      }
       }
       else {
-
-        fprintf( stderr, tagClass_str23, tagName[index] );
-        return 0;
+        fprintf( stderr, tagClass_str23, tagName[index] );        return 0;
 
       }
 
@@ -4654,8 +4645,8 @@ efInt *efI;
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "}]\n" );
 
-	}
-	else {
+	      }
+	      else {
 
           fprintf( stderr, "%s {\n", tagName[index] );
           fprintf( stderr, "  <int element> <string>\n" );
@@ -4664,7 +4655,7 @@ efInt *efI;
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "}\n" );
 
-	}
+	      }
 
       }
 
@@ -4686,13 +4677,13 @@ efInt *efI;
 
           }
 
-	}
-	else {
+	      }
+	      else {
 
           fprintf( f, "%s ", tagName[index] );
           writeString( f, expStr->getRaw() );
 
-	}
+	      }
 
       }
       else {
@@ -4703,13 +4694,13 @@ efInt *efI;
       }
 
       if ( tagClass::genDoc() ) {
-	if ( sDef ) {
-	  fprintf( stderr, "[%s <expandable string>] /* default = \"%s\" */\n",
+	      if ( sDef ) {
+	        fprintf( stderr, "[%s <expandable string>] /* default = \"%s\" */\n",
            tagName[index], sDef );
-	}
-	else {
-	  fprintf( stderr, "%s <expandable string>\n", tagName[index] );
-	}
+	      }
+	      else {
+	        fprintf( stderr, "%s <expandable string>\n", tagName[index] );
+	      }
       }
 
       break;
@@ -4732,17 +4723,17 @@ efInt *efI;
             //fprintf( f, "%s\n", expStr->getRaw() );
             fprintf( f, "}\n" );
 
-	  }
+	        }
 
-	}
-	else {
+	      }
+	      else {
 
           fprintf( f, "%s {\n", tagName[index] );
-	  writeMultiLineString( f, expStr->getRaw() );
+	        writeMultiLineString( f, expStr->getRaw() );
           //fprintf( f, "%s\n", expStr->getRaw() );
           fprintf( f, "}\n" );
 
-	}
+	      }
 
       }
       else {
@@ -4753,22 +4744,22 @@ efInt *efI;
       }
 
       if ( tagClass::genDoc() ) {
-	if ( sDef ) {
+	      if ( sDef ) {
           fprintf( stderr, "[%s {\n", tagName[index] );
           fprintf( stderr, "  <expandable string> /* line 1 of n */\n" );
           fprintf( stderr, "  <expandable string> /* line 2 of n */\n" );
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "}]   /* default = \"%s\" */\n", sDef );
-	}
-	else {
+	      }
+	      else {
           fprintf( stderr, "%s {\n", tagName[index] );
           fprintf( stderr, "  <expandable string> /* line 1 of n */\n" );
           fprintf( stderr, "  <expandable string> /* line 2 of n */\n" );
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "}\n" );
-	}
+	      }
       }
 
       break;
@@ -4789,17 +4780,17 @@ efInt *efI;
             if ( strcmp( expStr[ii].getRaw(), (char *) tagDefault[index] )
                                                                    != 0 ) {
               doWrite = 1;
-	    }
-	  }
+	          }
+	        }
 
-	}
-	else {
+	      }
+	      else {
 
           doWrite = 1;
 
-	}
+	      }
 
-	if ( doWrite ) {
+	      if ( doWrite ) {
 
           fprintf( f, "%s {\n", tagName[index] );
 
@@ -4812,32 +4803,32 @@ efInt *efI;
 
                 if ( blank( expStr[i].getRaw() ) ) {
                   fprintf( f, "  %-d \'\'\n", i );
-	        }
-	        else {
+	              }
+	              else {
                   fprintf( f, "  %-d ", i );
                   writeString( f, expStr[i].getRaw() );
-	        }
+	              }
 
-	      }
+	            }
 
-	    }
-	    else {
+	          }
+	          else {
 
               if ( blank( expStr[i].getRaw() ) ) {
                 fprintf( f, "  %-d \'\'\n", i );
-	      }
-	      else {
+	            }
+	            else {
                 fprintf( f, "  %-d ", i );
-                 writeString( f, expStr[i].getRaw() );
-	      }
+                writeString( f, expStr[i].getRaw() );
+	            }
 
-	    }
+	          }
 
-	  }
+	        }
 
           fprintf( f, "}\n" );
 
-	}
+	      }
 
       }
       else {
@@ -4860,8 +4851,8 @@ efInt *efI;
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "}]\n" );
 
-	}
-	else {
+	      }
+	      else {
 
           fprintf( stderr, "%s {\n", tagName[index] );
           fprintf( stderr, "  <int element> <expandable string>\n" );
@@ -4870,7 +4861,7 @@ efInt *efI;
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "}\n" );
 
-	}
+	      }
 
       }
 
@@ -4889,17 +4880,17 @@ efInt *efI;
           for ( ii=0; ii<tagDestMaxSize[index]; ii++ ) {
             if ( iArray[ii] != *( (int *) tagDefault[index] ) ) {
               doWrite = 1;
-	    }
-	  }
+	          }
+	        }
 
-	}
-	else {
+	      }
+	      else {
 
           doWrite = 1;
 
-	}
+	      }
 
-	if ( doWrite ) {
+	      if ( doWrite ) {
 
           fprintf( f, "%s {\n", tagName[index] );
 
@@ -4907,22 +4898,22 @@ efInt *efI;
 
             if ( tagDefault[index] ) {
 
-	      if ( iArray[i] != *( (int *) tagDefault[index] ) ) {
+	            if ( iArray[i] != *( (int *) tagDefault[index] ) ) {
                 fprintf( f, "  %-d %-d\n", i, iArray[i] );
-	      }
+	            }
 
-	    }
-	    else {
+	          }
+	          else {
 
               fprintf( f, "  %-d %-d\n", i, iArray[i] );
 
-	    }
+	          }
 
-	  }
+	        }
 
           fprintf( f, "}\n" );
 
-	}
+	      }
 
       }
       else {
@@ -4935,23 +4926,23 @@ efInt *efI;
       if ( tagClass::genDoc() ) {
 
         if ( tagDefault[index] ) {
-	  fprintf( stderr, "[%s {\n", tagName[index] );
+	        fprintf( stderr, "[%s {\n", tagName[index] );
           fprintf( stderr, "  [<int element> <int>]   /* default = %-d */\n",
            *( (int *) tagDefault[index] ) );
           fprintf( stderr, "  [<int element> <int>]   /* default = %-d */\n",
            *( (int *) tagDefault[index] ) );
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "      .\n" );
-	  fprintf( stderr, "}]\n" );
-	}
-	else {
-	  fprintf( stderr, "%s {\n", tagName[index] );
+	        fprintf( stderr, "}]\n" );
+	      }
+	      else {
+	        fprintf( stderr, "%s {\n", tagName[index] );
           fprintf( stderr, "  <int element> <int>\n" );
           fprintf( stderr, "  <int element> <int>\n" );
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "      .\n" );
-	  fprintf( stderr, "}\n" );
-	}
+	        fprintf( stderr, "}\n" );
+	      }
 
       }
 
@@ -4970,17 +4961,17 @@ efInt *efI;
           for ( ii=0; ii<tagDestMaxSize[index]; ii++ ) {
             if ( uiArray[ii] != *( (unsigned int *) tagDefault[index] ) ) {
               doWrite = 1;
-	    }
-	  }
+	          }
+	        }
 
-	}
-	else {
+	      }
+	      else {
 
           doWrite = 1;
 
-	}
+	      }
 
-	if ( doWrite ) {
+	      if ( doWrite ) {
 
           fprintf( f, "%s {\n", tagName[index] );
 
@@ -4988,22 +4979,22 @@ efInt *efI;
 
             if ( tagDefault[index] ) {
 
-	      if ( uiArray[i] != *( (unsigned int *) tagDefault[index] ) ) {
+	            if ( uiArray[i] != *( (unsigned int *) tagDefault[index] ) ) {
                 fprintf( f, " %-d %-u\n", i, uiArray[i] );
-	      }
+	            }
 
-	    }
-	    else {
+	          }
+	          else {
 
               fprintf( f, "  %-d %-u\n", i, uiArray[i] );
 
-	    }
+	          }
 
-	  }
+	        }
 
           fprintf( f, "}\n" );
 
-	}
+	      }
 
       }
       else {
@@ -5016,23 +5007,23 @@ efInt *efI;
       if ( tagClass::genDoc() ) {
 
         if ( tagDefault[index] ) {
-	  fprintf( stderr, "[%s {\n", tagName[index] );
+	        fprintf( stderr, "[%s {\n", tagName[index] );
           fprintf( stderr, "  [<int element> <unsigned int>]   /* default = %-d */\n",
            *( (int *) tagDefault[index] ) );
           fprintf( stderr, "  [<int element> <unsigned int>]   /* default = %-d */\n",
            *( (int *) tagDefault[index] ) );
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "      .\n" );
-	  fprintf( stderr, "}]\n" );
-	}
-	else {
-	  fprintf( stderr, "%s {\n", tagName[index] );
+	        fprintf( stderr, "}]\n" );
+	      }
+	    else {
+	        fprintf( stderr, "%s {\n", tagName[index] );
           fprintf( stderr, "  <int element> <unsigned int>\n" );
           fprintf( stderr, "  <int element> <unsigned int>\n" );
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "      .\n" );
-	  fprintf( stderr, "}\n" );
-	}
+	        fprintf( stderr, "}\n" );
+	      }
 
       }
 
@@ -5051,17 +5042,17 @@ efInt *efI;
           for ( ii=0; ii<tagDestMaxSize[index]; ii++ ) {
             if ( iArray[ii] != *( (int *) tagDefault[index] ) ) {
               doWrite = 1;
-	    }
-	  }
+	          }
+	        }
 
-	}
-	else {
+	      }
+	      else {
 
           doWrite = 1;
 
-	}
+	      }
 
-	if ( doWrite ) {
+	      if ( doWrite ) {
 
           fprintf( f, "%s {\n", tagName[index] );
 
@@ -5069,22 +5060,22 @@ efInt *efI;
 
             if ( tagDefault[index] ) {
 
-	      if ( iArray[i] != *( (int *) tagDefault[index] ) ) {
+	            if ( iArray[i] != *( (int *) tagDefault[index] ) ) {
                 fprintf( f, "  %-d 0x%-x\n", i, iArray[i] );
-	      }
+	            }
 
-	    }
-	    else {
+	          }
+	          else {
 
               fprintf( f, "  %-d 0x%-x\n", i, iArray[i] );
 
-	    }
+	          }
 
-	  }
+	        }
 
           fprintf( f, "}\n" );
 
-	}
+	      }
 
       }
       else {
@@ -5097,23 +5088,23 @@ efInt *efI;
       if ( tagClass::genDoc() ) {
 
         if ( tagDefault[index] ) {
-	  fprintf( stderr, "[%s {\n", tagName[index] );
+	        fprintf( stderr, "[%s {\n", tagName[index] );
           fprintf( stderr, "  [<int element> <hex int>]   /* default = %-d */\n",
            *( (int *) tagDefault[index] ) );
           fprintf( stderr, "  [<int element> <hex int>]   /* default = %-d */\n",
            *( (int *) tagDefault[index] ) );
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "      .\n" );
-	  fprintf( stderr, "}]\n" );
-	}
-	else {
-	  fprintf( stderr, "%s {\n", tagName[index] );
+	        fprintf( stderr, "}]\n" );
+	      }
+	      else {
+	        fprintf( stderr, "%s {\n", tagName[index] );
           fprintf( stderr, "  <int element> <hex int>\n" );
           fprintf( stderr, "  <int element> <hex int>\n" );
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "      .\n" );
-	  fprintf( stderr, "}\n" );
-	}
+	        fprintf( stderr, "}\n" );
+	      }
 
       }
 
@@ -5132,17 +5123,17 @@ efInt *efI;
           for ( ii=0; ii<tagDestMaxSize[index]; ii++ ) {
             if ( dArray[ii] != *( (double *) tagDefault[index] ) ) {
               doWrite = 1;
-	    }
-	  }
+	          }
+	        }
 
-	}
-	else {
+	      }
+	      else {
 
           doWrite = 1;
 
-	}
+	      }
 
-	if ( doWrite ) {
+	      if ( doWrite ) {
 
           fprintf( f, "%s {\n", tagName[index] );
 
@@ -5150,22 +5141,22 @@ efInt *efI;
 
             if ( tagDefault[index] ) {
 
-	      if ( dArray[i] != *( (double *) tagDefault[index] ) ) {
+	            if ( dArray[i] != *( (double *) tagDefault[index] ) ) {
                 fprintf( f, "  %-d %-g\n", i, dArray[i] );
-	      }
+	            }
 
-	    }
-	    else {
+	          }
+	          else {
 
               fprintf( f, "  %-d %-g\n", i, dArray[i] );
 
-	    }
+	          }
 
-	  }
+	        }
 
           fprintf( f, "}\n" );
 
-	}
+	      }
 
       }
       else {
@@ -5178,23 +5169,23 @@ efInt *efI;
       if ( tagClass::genDoc() ) {
 
         if ( tagDefault[index] ) {
-	  fprintf( stderr, "[%s {\n", tagName[index] );
+	        fprintf( stderr, "[%s {\n", tagName[index] );
           fprintf( stderr, "  [<int element> <real>]   /* default = %-d */\n",
            *( (int *) tagDefault[index] ) );
           fprintf( stderr, "  [<int element> <real>]   /* default = %-d */\n",
            *( (int *) tagDefault[index] ) );
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "      .\n" );
-	  fprintf( stderr, "}]\n" );
-	}
-	else {
-	  fprintf( stderr, "%s {\n", tagName[index] );
+	        fprintf( stderr, "}]\n" );
+	      }
+	      else {
+	        fprintf( stderr, "%s {\n", tagName[index] );
           fprintf( stderr, "  <int element> <real>\n" );
           fprintf( stderr, "  <int element> <real>\n" );
           fprintf( stderr, "      .\n" );
           fprintf( stderr, "      .\n" );
-	  fprintf( stderr, "}\n" );
-	}
+	        fprintf( stderr, "}\n" );
+	      }
 
       }
 

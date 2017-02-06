@@ -372,6 +372,10 @@ void updateDimensions ( void );
 
 int isRelatedDisplay ( void );
 
+void augmentRelatedDisplayMacros (
+  char *buf
+);
+ 
 int getNumRelatedDisplays ( void );
 
 int getRelatedDisplayProperty (

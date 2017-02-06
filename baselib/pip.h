@@ -363,6 +363,10 @@ int deactivate ( int pass );
 
 int isRelatedDisplay ( void );
 
+void augmentRelatedDisplayMacros (
+  char *buf
+);
+
 int getNumRelatedDisplays ( void );
 
 int getRelatedDisplayProperty (

@@ -2588,6 +2588,29 @@ int relatedDisplayClass::isRelatedDisplay ( void ) {
 
 }
 
+void relatedDisplayClass::augmentRelatedDisplayMacros (
+  char *buf
+) {
+
+  int i, l;
+  char *newm;
+  
+  for ( i=0; i<numDsps; i++ ) {
+    l = strlen( buf ) + strlen( symbolsExpStr[i].getRaw() );
+    if ( l ) {
+      newm = new char[l+1];
+      strcpy( newm, "" );
+      Strncat( newm, symbolsExpStr[i].getRaw(), l );
+      trimWhiteSpace( newm );
+      if ( strlen(newm) ) Strncat( newm, ",", l );
+      Strncat( newm, buf, l );
+      symbolsExpStr[i].setRaw( newm );
+      delete[] newm;
+    }
+  }
+
+}
+
 int relatedDisplayClass::getNumRelatedDisplays ( void ) {
 
   return numDsps;
@@ -2834,40 +2857,40 @@ activeWindowClass *aw0, *aw1;
     if ( tk[0] == '@' ) {
       if ( tk[1] ) {
         f = actWin->openAnyGenericFile( &tk[1], "r", name, 127 );
-	if ( !f ) {
+	      if ( !f ) {
           snprintf( msg, 79, relatedDisplayClass_str44, &tk[1] );
-	  msg[79] = 0;
+	        msg[79] = 0;
           actWin->appCtx->postMessage( msg );
           symbolsFromFile.setRaw( "" );
-	}
-	else {
-	  result = fgets( fileBuf, maxSymbolLen, f );
-	  if ( result ) {
+	      }
+	      else {
+	        result = fgets( fileBuf, maxSymbolLen, f );
+	        if ( result ) {
             fileContext = NULL;
             fileTk = strtok_r( fileBuf, "\n", &fileContext );
             if ( fileTk ) {
               symbolsFromFile.setRaw( fileTk );
-	    }
-	    else {
+	          }
+	          else {
               snprintf( msg, 79, relatedDisplayClass_str45, name );
               msg[79] = 0;
               actWin->appCtx->postMessage( msg );
               symbolsFromFile.setRaw( "" );
-	    }
-	  }
-	  else {
+	          }
+	        }
+	        else {
             if ( errno ) {
               snprintf( msg, 79, relatedDisplayClass_str46, name );
-	    }
-	    else {
+	          }
+	          else {
               snprintf( msg, 79, relatedDisplayClass_str45, name );
-	    }
+	          }
             msg[79] = 0;
             actWin->appCtx->postMessage( msg );
             symbolsFromFile.setRaw( "" );
-	  }
-	  fclose( f );
-	}
+	        }
+	        fclose( f );
+	      }
       }
       // append inline list to file contents
       tk = strtok_r( NULL, "\n", &context );
@@ -2876,11 +2899,11 @@ activeWindowClass *aw0, *aw1;
         fileBuf[maxSymbolLen] = 0;
         if ( blank(fileBuf) ) {
           strcpy( fileBuf, "" );
-	}
+	      }
         else {
           Strncat( fileBuf, ",", maxSymbolLen );
-	}
-	Strncat( fileBuf, tk, maxSymbolLen );
+	      }
+	      Strncat( fileBuf, tk, maxSymbolLen );
         symbolsFromFile.setRaw( fileBuf );
       }
       // do special substitutions
@@ -3098,7 +3121,7 @@ activeWindowClass *aw0, *aw1;
 
       if ( strcmp( newMacros[ii], newMacros[i] ) == 0 ) {
         dup = 1;
-	break;
+	      break;
       }
 
       ii++;

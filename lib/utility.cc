@@ -2917,7 +2917,7 @@ char *context, *tk, buf[10000+1];
   context = NULL;
   tk = strtok_r( buf, ",=", &context );
 
-  while ( tk ) {
+  while ( tk && ( *numFound < max ) ) {
 
     l = strlen(tk) + 1;
     symbols[*numFound] = new char[l];
@@ -2987,7 +2987,7 @@ char *context, *tk, buf[10000+1];
   context = NULL;
   tk = strtok_r( buf, ",=", &context );
 
-  while ( tk ) {
+  while ( tk && ( *numFound < max ) ) {
 
     l = strlen(tk) + 1;
     strncpy( symbols[*numFound], tk, maxLen );

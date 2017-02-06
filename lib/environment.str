@@ -41,11 +41,13 @@
 #define environment_str36 (char *) "EDMNOAUTOINC"
 #define environment_str37 (char *) "EDMCHECKDISPLAY"
 #define environment_str38 (char *) "EDMMAXPROPDIALOGH"
+#define environment_str39 (char *) "EDMSCREENCFG"
 #define environment_str153 (char *) "EDMCALC"
 #define environment_str154 (char *) "EDMPVDUMP"
 
 // Site Related
 #define environment_str40 (char *) "EDMRDDHS"
+#define environment_str41 (char *) "EDMSELECTOR"
 
 #define global_str1 (char *) "Symbol"
 #define global_str2 (char *) "Monitors"
@@ -223,6 +225,8 @@
 #define global_str151 (char *) "EDMMAXPROPDIALOGH\tSets max height of the property dialog box\n"
 #define global_str152 (char *) "CALC_ENV\t\tSets name of calculation file; if unset, calc.list is used\n"
 #define global_str155 (char *) "EDMPVDUMP\t\tLocation of directory for auto pv list dump\n"
+#define global_str156 (char *) "EDMSCREENCFG\t\tLocation of saved screen configuration files (default: /<userhome>/.edm)\n"
+#define global_str158 (char *) "EDMSELECTOR\t\tDo not toggle selection in selection rectangle\n"
 
 #define global_str55 (char *)  " (-h displays help)\n"
 #define global_str56 (char *)  "-display|"

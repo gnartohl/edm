@@ -22,6 +22,9 @@
 #include <Xm/Xm.h>
 #include <Xm/MainW.h>
 #include <Xm/FileSB.h>
+#include <Xm/SelectioB.h>
+#include <Xm/MessageB.h>
+#include <unordered_map>
 
 #include "color_pkg.h"
 #include "color_button.h"
@@ -53,6 +56,12 @@ class pathListClass;
 
 #include "app_pkg.str"
 #include "environment.str"
+
+#define MAX_LINE 1001
+#define MAX_MACROS 101
+#define MAX_NAME 101
+#define MAX_DIR 206
+#define MAX_FNAME 311
 
 typedef struct callbackBlockTag {
   struct callbackBlockTag *flink;
@@ -94,6 +103,8 @@ typedef struct appDefExe_que_tag { /* locked queue header */
 #define WINNAME_MAX 63
 
 static const char *dummyWinName = "";
+
+//////////////////////    start of class declaration: activeWindowListType
 
 class activeWindowListType {
 
@@ -228,6 +239,8 @@ public:
 
 };
 
+/////////// end of class declaration: activeWindowListType
+
 typedef activeWindowListType *activeWindowListPtr;
 
 typedef struct macroListTag {
@@ -248,6 +261,8 @@ typedef struct actionsTag {
   void *key; // any unique address
   struct actionsTag *flink;
 } actionsType, *actionsPtr;
+
+//////////////////////    start of class declaration: appContextClass
 
 class appContextClass {
 
@@ -391,6 +406,14 @@ Display *display;
 char colormode[7+1]; // index (default) or rgb
 int privColorMap;
 int exitOnLastClose, atLeastOneOpen;
+
+// for screen configuration save/load
+int screenAdd;
+int screenAddAll;
+char *confOk;
+int confOkCount;
+char cfgName[MAX_FNAME];
+
 XEvent event;
 
 pathListClass pathList;
@@ -777,6 +800,25 @@ void showEnv ( void );
 
 Widget apptop ( void );
 
+int screenAlreadyUp(unordered_map<string, string>& sigs, 
+  char *edlname, 
+  char **macros, 
+  char **values, 
+  int nmacros);
+  
+void closeAllButHead();
+int screenConfigOk(FILE *fp);
+void getScreenSignatures(unordered_map<string, string> &sigs);
+void setScreenAdd(int add) { screenAdd = add; }
+int getScreenAdd(void) { return screenAdd; }
+void setScreenAddAll(int add) { screenAddAll = add; }
+int getScreenAddAll(void) { return screenAddAll; }
+char *getConfOk(void) { return confOk; }
+int getCfgDirectory(char *pfilter, char *pmsg);
+void setCfgName(char *fname) { strcpy(cfgName, fname); }
+char *getCfgName(void) { return cfgName; }
+int writeConfig(char *fname);
+char *checkCfgName(char *fname);
 };
-
+/////////////////// end of class declaration: appContextClass
 #endif

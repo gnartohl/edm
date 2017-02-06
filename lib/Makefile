@@ -7,10 +7,12 @@ ifdef EPICS_HOST_ARCH
   USE_CURL=NO
 
   ifeq ($(USE_CURL), YES)
+        USR_CXXFLAGS += -std=c++0x -fpermissive -Wno-narrowing -Wno-write-strings -Wno-unused-but-set-variable
         USR_CXXFLAGS_Darwin += -DUSECURL -DSINGLE_THREADED=1 -D__epics__=1 -pedantic -Wno-long-long
         USR_CXXFLAGS_Linux += -DUSECURL -DSINGLE_THREADED=1 -D__epics__=1 -pedantic
 	USR_CXXFLAGS_solaris += -D__solaris__ -DUSECURL -DSINGLE_THREADED=1 -D__epics__=1 -pedantic
   else
+        USR_CXXFLAGS += -std=c++0x -fpermissive -Wno-narrowing -Wno-write-strings -Wno-unused-but-set-variable
         USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1 -pedantic -Wno-long-long
         USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
         USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
