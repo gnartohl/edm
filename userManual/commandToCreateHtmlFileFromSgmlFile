@@ -1,0 +1,2 @@
+rm index.html
+xsltproc /usr/share/sgml/docbook/xsl-stylesheets/xhtml/docbook.xsl edm.sgml > index.html

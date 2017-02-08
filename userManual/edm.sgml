@@ -1,0 +1,4954 @@
+<book>
+
+
+  <bookinfo>
+    <date>07-12-2009</date>
+    <title>EDM</title>
+    <subtitle>Extensible Display Manager</subtitle>
+    <releaseinfo>1-12</releaseinfo>
+    <authorgroup>
+      <author>
+	<firstname>John</firstname>
+	<othername></othername>
+	<surname>Sinclair</surname>
+      </author>
+    </authorgroup>
+    <address>
+      <email>sinclairjs@ornl.gov</email>
+    </address>
+    <copyright>
+      <year>2007</year>
+      <holder>John Sinclair</holder>
+    </copyright>
+    <legalnotice>
+      <para>
+	This document may be freely redistributed according to the
+	terms of the GNU General Public License.
+      </para>
+    </legalnotice>
+  </bookinfo>
+  
+  <toc></toc>
+
+
+<chapter id="overview">
+<title>Overview</title>
+
+<sect1>
+<title>
+Introduction
+</title>
+
+<para>
+With the introduction of tools like EPICS and VSystem, the task of building complex
+distributed control systems has been greatly simplified. Furthermore, extending both the
+content and functionality of these systems is a trivial task. This is generally not the case
+for applications that have been built on top of these core components and in most cases
+this is acceptable. There is one class of applications, namely interactive graphical display
+tools, where the lack of user extensibility is a severe liability. This deficiency arrests the
+growth of the suite of common display elements and prevents the development and
+customization of site specific elements for special requirements. Just as EPICS record
+and device support is easily extended without in-depth knowledge of the core software,
+so also should the elements of a display tool be extensible, again without in-depth
+knowledge of either the core behavior of the display tool or the more esoteric details of
+window-based graphical user interface systems.
+</para>
+
+<para>
+Edm, one example of an EPICS display manager, is an attempt to fulfill this objective. A
+display manager is a tool that manages a collection of active displays. It provides the
+ability to create and edit display content (like graphics, text, meters, sliders,
+buttons, plots, etc.) and uses some facility (.e.g EPICS channel access) to execute the
+same content resulting in the dynamic presentation of live data.
+</para>
+
+</sect1>
+
+<sect1>
+<title>Other EPICS Display Managers</title>
+
+<para>
+Additional examples of display managers for EPICS include the following:
+</para>
+
+<itemizedlist>
+
+<listitem><para>
+medm
+</para></listitem>
+
+<listitem><para>
+dm2k
+</para></listitem>
+
+<listitem><para>
+edd/dm
+</para></listitem>
+
+</itemizedlist>
+
+</sect1>
+    
+<sect1>
+<title>Display Widgets</title>
+
+<para>
+The following is a list of some of the more common edm widgets. 
+</para>
+
+<para>
+See edm online help topic <emphasis>Objects</emphasis> for more
+information.
+</para>
+
+<itemizedlist>
+
+<listitem>
+<para>Graphics</para>
+
+  <itemizedlist>
+
+    <listitem><para>
+    Lines
+    </para></listitem>
+
+    <listitem><para>
+    Rectangle
+    </para></listitem>
+
+    <listitem><para>
+    Circle
+    </para></listitem>
+
+    <listitem><para>
+    Arc
+    </para></listitem>
+
+    <listitem><para>
+    Static Text
+    </para></listitem>
+
+    <listitem><para>
+    GIF Image
+    </para></listitem>
+
+    <listitem><para>
+    PNG Image
+    </para></listitem>
+
+    <listitem><para>
+    HTML
+    </para></listitem>
+
+    <listitem><para>
+    Dynamic Symbols (built from graphic elements)
+    </para></listitem>
+
+  </itemizedlist>
+
+</listitem>
+
+
+<listitem>
+<para>Monitors</para>
+
+  <itemizedlist>
+
+    <listitem><para>
+    Meter
+    </para></listitem>
+
+    <listitem><para>
+    Bar
+    </para></listitem>
+
+    <listitem><para>
+    Message Box
+    </para></listitem>
+
+    <listitem><para>
+    Text
+    </para></listitem>
+
+    <listitem><para>
+    Byte
+    </para></listitem>
+
+    <listitem><para>
+    X-Y Graph
+    </para></listitem>
+
+    <listitem><para>
+    Symbols (built from graphic elements)
+    </para></listitem>
+
+  </itemizedlist>
+
+</listitem>
+
+
+<listitem>
+<para>Controls</para>
+
+  <itemizedlist>
+
+    <listitem><para>
+    Text
+    </para></listitem>
+
+    <listitem><para>
+    Slider
+    </para></listitem>
+
+    <listitem><para>
+    Motif Slider (medm-like)
+    </para></listitem>
+
+    <listitem><para>
+    Button
+    </para></listitem>
+
+    <listitem><para>
+    Menu Button
+    </para></listitem>
+
+    <listitem><para>
+    Choice Button
+    </para></listitem>
+
+    <listitem><para>
+    Radio Box
+    </para></listitem>
+
+    <listitem><para>
+    Message Button
+    </para></listitem>
+
+    <listitem><para>
+    Up/Down Button
+    </para></listitem>
+
+    <listitem><para>
+    Exit Button
+    </para></listitem>
+
+    <listitem><para>
+    Related Display
+    </para></listitem>
+
+    <listitem><para>
+    Shell Command
+    </para></listitem>
+
+    <listitem><para>
+    Menu Mux (multiplexor)
+    </para></listitem>
+
+  <listitem>
+  <para>Shell Command</para>
+  </listitem>
+
+  <listitem>
+  <para>Multiplexor</para>
+  </listitem>
+
+  </itemizedlist>
+
+</listitem>
+
+</itemizedlist>
+
+<para>
+<xref linkend="exampleWidgetsFigure" /> is a screenshot showing several display elements provided by the base widject library.
+</para>
+
+<figure id="exampleWidgetsFigure">
+<title>Example edm Widgets</title>
+<graphic fileref="fig1.jpg"></graphic>
+</figure>
+
+</sect1>
+
+<sect1>
+<title>Editing Features</title>
+
+<para>
+Editing functions include the following:
+</para>
+
+<itemizedlist>
+
+<listitem>
+<para>Display grid/Snap to grid</para>
+</listitem>
+
+<listitem>
+<para>Orthogonal line draw/Orthogonal move</para>
+</listitem>
+
+<listitem>
+<para>Copy/Cut/Paste (across different displays)</para>
+</listitem>
+
+<listitem>
+<para>Raise/Lower</para>
+</listitem>
+
+<listitem>
+<para>Group/Ungroup</para>
+</listitem>
+
+<listitem>
+<para>Rotate 90/Flip</para>
+</listitem>
+
+<listitem>
+<para>Select group PV name edit</para>
+</listitem>
+
+<listitem>
+<para>Select group display info edit (colors/fonts)</para>
+</listitem>
+
+<listitem>
+<para>Align select group</para>
+</listitem>
+
+<listitem>
+<para>Center select group</para>
+</listitem>
+
+<listitem>
+<para>Uniformly size select group</para>
+</listitem>
+
+<listitem>
+<para>Distribute select group</para>
+</listitem>
+
+</itemizedlist>
+      
+<para>
+<userinput></userinput>
+</para>
+
+<para><computeroutput></computeroutput></para>
+<para><computeroutput></computeroutput></para>
+
+</sect1>
+
+</chapter>
+
+<chapter id="Software-Installation">
+<title>Software Installation</title>
+
+<sect1>
+<title>System Requirements</title>
+
+<para>
+Motif is required to build edm. OpenMotif has been used on Linux platforms successfully.
+LessTif is not currently recommended.
+</para>
+
+<para>
+Image widgets require the following external libraries:
+</para>
+
+<itemizedlist>
+
+<listitem><para>
+GIF Support: libgif
+</para></listitem>
+
+<listitem><para>
+PNG Support: libpng
+</para></listitem>
+
+</itemizedlist>
+
+<para>
+Both libraries are publically available and can be readily found from most
+web search engines sites.
+</para>
+
+</sect1>
+
+<sect1>
+<title>Installation Procedure</title>
+
+<para>
+The edm distribution is packaged in a tar file with a name like edm-1-12-8.tgz. In this
+case the name corresponds to major version 1, minor version 12, and release 8.
+</para>
+
+<para>
+Place the tar file in the src directory under the EPICS extensions directory. Use gunzip
+to uncompress the file and then use tar to unpack the archive. Edm should then build like
+any other EPICS extension.
+</para>
+
+<para>
+Unlike most other EPICS extensions, edm requires additional configuration
+after installation. See chapter 3 before attempting to execute edm.
+</para>
+
+<para>
+Example:
+</para>
+
+<procedure>
+
+<step><para>If you have not done so, cd into ...extensions/configure,
+edit RELEASE to set the value of EPICS_BASE, and then execute make</para></step>
+
+<step><para>cd into ...extensions/include/edm and recursively remove all .h files
+<programlisting>for example:</programlisting><programlisting>cd yourEpicsTopDir/extensions/include/edm</programlisting><programlisting>find . -name "*.h" -exec rm {} \;</programlisting></para></step>
+
+<step><para>cd into ...extensions/src</para></step>
+
+<step><para>gunzip edm-1-12-8.tgz</para></step>
+
+<step><para>tar -xvf edm-1-12-8.tar</para></step>
+
+<step><para>cd edm</para></step>
+
+<step><para>make</para></step>
+
+</procedure>
+
+</sect1>
+
+</chapter>
+
+
+
+
+<chapter id="System-Configuration">
+<title>System Configuration</title>
+
+<para>
+The following items need to be configured after installation.
+</para>
+
+<itemizedlist>
+
+<listitem><para>
+Contents and location of component files
+</para></listitem>
+
+<listitem><para>
+Content and location of color file
+</para></listitem>
+
+<listitem><para>
+Content and location of font file
+</para></listitem>
+
+<listitem><para>
+Contents of print definition file
+</para></listitem>
+
+</itemizedlist>
+
+<sect1>
+<title>Location and contents of component files</title>
+
+<sect2>
+<title>edmObjects</title>
+
+<para>
+Edm uses a registry that maps widgets to a class name and shareable
+library path. The registry is contained in a file named edmObjects
+which resides in /etc/edm or the directory pointed to by the environment
+variable EDMOBJECTS.
+</para>
+
+<para>
+When edm is installed, an example edmObjects file is included as part of the
+installation but this file should not be used in
+the production edm environment. Instead, a new file should be created
+by edm itself. This is accomplished as follows:
+</para>
+
+<itemizedlist>
+
+<listitem><para>
+Choose a location for the edmObjects file, make EDMOBJECTS point to
+this location, and make sure you have write access.
+</para></listitem>
+
+<listitem><para>
+Locate each edm component library. After the build, these reside in
+.../extensions/lib/(ARCH DEPENDENT)/.
+</para>
+
+<para>
+Example names:
+</para>
+
+<para>libEdmBase.so</para>
+<para>lib57d79238-2924-420b-ba67-dfbecdf03fcd.so</para>
+<para>lib7e1b4e6f-239d-4650-95e6-a040d41ba633.so</para>
+<para>libcf322683-513e-4570-a44b-7cdd7cae0de5.so</para>
+<para>libEdmDiamond.so</para>
+<para>libEdmTriumf.so</para>
+<para>libIndicator.so</para>
+<para>libMultSegRamp.so</para>
+<para>libPV.so</para>
+<para>libTwoDProfileMonitor.so</para>
+
+<para>
+You may verify that a library is an edm component file as the following
+example illustrates:
+</para>
+
+<para>
+edm -show /usr/local/src/epics/supTop/R3.13.6/extensions/lib/Linux/libEdmBase.so
+</para>
+
+</listitem>
+
+</itemizedlist>
+
+<itemizedlist>
+
+<listitem><para>
+For each component library file, execute edm with the -add option
+as follows:
+</para>
+
+<para>
+edm -add (full absolute path to library)/(library name)
+</para>
+
+<para>
+e.g. edm -add /usr/local/src/epics/supTop/R3.13.6/extensions/lib/Linux/libEdmBase.so
+</para>
+
+</listitem>
+
+</itemizedlist>
+
+<para>
+After populating edmObjects in this manner, you may wish to manually manage
+it with a text editor. If so, the number of objects at the top
+must match the number of registry entries. The directory location
+references may be replaced with the environment variable EDMLIBS. The
+following shows two equivalent entries (assuming, of course, that EDMLIBS
+has been set to /epics/extensions/lib/linux-x86).
+
+</para>
+
+<itemizedlist>
+
+<listitem><para>
+activeLineClass /epics/extensions/lib/linux-x86/libEdmBase.so Graphics Lines
+</para></listitem>
+
+<listitem>
+
+<para>
+activeLineClass $(EDMLIBS)/libEdmBase.so Graphics Lines
+</para>
+
+</listitem>
+
+</itemizedlist>
+
+<para>
+The use of the EDMLIBS variable allows different versions of edm to
+reference the appropriate version of component files.
+</para>
+
+</sect2>
+
+<sect2>
+<title>edmPvObjects</title>
+
+<para>
+A similar exercise needs to be performed for a PV component registry file.
+In this case the environment variable is EDMPVOBJECTS and the file is
+edmPvObjects.
+</para>
+
+<para>
+<emphasis>IMPORTANT: besides libLoc.so and libCalc.so, the name which appears first in the edmPvObjects file determines the default PV type.</emphasis>
+</para>
+
+<para>
+Do the following:
+</para>
+
+<itemizedlist>
+
+<listitem><para>
+Choose a location for the edmPvObjects file, make EDMPVOBJECTS point to
+this location, and make sure you have write access.
+</para></listitem>
+
+<listitem><para>
+Locate the edm pv component library. After the build, these files reside in
+.../extensions/lib/(ARCH DEPENDENT)/.
+</para>
+
+<para>
+Example names:
+</para>
+
+<para>libEpics.so</para>
+<para>libLog.so</para>
+<para>libCalc.so</para>
+<para>libLoc.so</para>
+
+<para>
+You may verify that a library is an edm pv component file as the following
+example illustrates:
+</para>
+
+<para>
+edm -showpv /usr/local/src/epics/supTop/R3.13.6/extensions/lib/Linux/libEpics.so
+</para>
+
+</listitem>
+
+</itemizedlist>
+
+<itemizedlist>
+
+<listitem><para>
+Add the pv component library to the registry file as follows:
+</para>
+
+<para>
+edm -addpv (full absolute path to library)/(library name)
+</para>
+
+<para>
+e.g. edm -addpv /usr/local/src/epics/supTop/R3.13.6/extensions/lib/Linux/libEpics.so
+</para>
+
+</listitem>
+
+</itemizedlist>
+
+<para>
+All sites will probably want to load the three libraries as shown in the following example
+(the location of files will be site dependent).
+</para>
+
+<itemizedlist>
+<listitem><para>
+edm -addpv /usr/local/src/epics/supTop/R3.13.6/extensions/lib/Linux/libEpics.so
+</para></listitem>
+<listitem><para>
+edm -addpv /usr/local/src/epics/supTop/R3.13.6/extensions/lib/Linux/libLoc.so
+</para></listitem>
+<listitem><para>
+edm -addpv /usr/local/src/epics/supTop/R3.13.6/extensions/lib/Linux/libCalc.so
+</para></listitem>
+</itemizedlist>
+
+<para>
+Note that, besides libLoc.so and libCalc.so, the name which appears first in the edmPvObjects file
+determines the default PV type.
+</para>
+
+</sect2>
+
+
+
+</sect1>
+
+
+
+<sect1>
+<title>Color File Configuration</title>
+
+<para>
+The edm color file must be manually created using a text editor. The file
+name is normally <emphasis>colors.list</emphasis> and the default location is
+<emphasis>/etc/edm</emphasis>. The location may be overridden
+on a site-by-site or project-by-project basis with the environment
+variable <emphasis>EDMFILES</emphasis>. The name and location may be
+overridden on a site-by-site or project-by-project basis with the environment
+variable <emphasis>EDMCOLORFILE</emphasis>.
+</para>
+
+<para>
+The first line of the color file must contain the color file format
+version id as three numbers corresponding to major, minor, and release.
+This should currently be
+</para>
+
+<programlisting>
+4 0 0
+</programlisting>
+
+<para>
+The next three items in the color file are described as follows:
+</para>
+
+<itemizedlist>
+
+<listitem>
+<para>The blink period given in milliseconds, e.g.</para>
+<programlisting>
+blinkms=750
+</programlisting>
+</listitem>
+
+<listitem>
+<para>The number of columns in the color palette, e.g.</para>
+<programlisting>
+columns=5
+</programlisting>
+</listitem>
+
+<listitem>
+<para>The maximum number of RGB component values (256 or 65536), e.g.</para>
+<programlisting>
+max=0x10000
+</programlisting>
+<para>This is one more than the largest value that may be specified for any RGB
+component.</para>
+</listitem>
+
+</itemizedlist>
+
+<para>
+So, the first few lines of the colors.list file might look like this
+</para>
+
+<programlisting>
+4 0 0
+
+blinkms=750
+max=0x10000
+columns=5
+</programlisting>
+
+<sect2>
+<title>Static Colors</title>
+
+<para>
+Edm stores and references colors as indices rather than RGB values. Colors
+can be selected visually or functionally, i.e. from a palette of colors or
+from a menu of color names.
+The edm color file establishes this mapping of index to RGB and functional
+name. In this manner, a list of static colors are specified.
+</para>
+
+<para>
+An example static color declaration is shown below:
+</para>
+
+<programlisting>
+static 25  Controller    { 0 0 65535 }    # blue
+
+# blinking is specified by 2 RGB values
+static 26  "blinking red"  { 65535 0 0 41120 0 0 }
+</programlisting>
+
+<para>
+In this example, note the following:
+</para>
+
+<itemizedlist>
+
+<listitem>
+<para>The first color's index is 25 and functional name is
+<emphasis>Controller</emphasis>.</para>
+</listitem>
+
+<listitem>
+<para>The second color's index is 26 and functional name is
+<emphasis>blinking red</emphasis>.</para>
+</listitem>
+
+<listitem>
+<para>The name <emphasis>Controller</emphasis> could have been enclosed
+in quotes but this is not necessary.</para>
+</listitem>
+
+<listitem>
+<para>The name <emphasis>blinking red</emphasis> must be enclosed
+in quotes and, in general, this is true for any color name containing
+white space.</para>
+</listitem>
+
+<listitem>
+<para>Comments are introduced by the <emphasis>#</emphasis> character and
+may be placed anywhere but on the very first line of the color file.</para>
+</listitem>
+
+</itemizedlist>
+
+</sect2>
+
+<sect2>
+<title>Dyanmic Colors</title>
+
+<para>
+In addition,
+another list of dynamic colors may be included where the mapping is index
+to color rule and name. A color rule is an expression that maps a color
+name to a set of RGB values depending on the range of an associated color
+PV. A color rule might look like the following:</para>
+
+<programlisting>
+rule 100 exampleRule {
+ =100 || =200 : strange
+ &gt;=20         : invisible
+ &gt;0 &amp;&amp; &lt;10    : red
+ &gt;=10 &amp;&amp; &lt;20  : "blinking red"
+ default      : green
+}
+</programlisting>
+
+<para>In this example, note the following:</para>
+
+<itemizedlist>
+
+<listitem>
+<para>The color index is 100 and the functional name is exampleRule.</para>
+</listitem>
+
+<listitem>
+<para><emphasis>invisible</emphasis> is a color name with special behavior
+that causes some widgets to disappear (the widget must support invisibility
+by color). Even though the color name <emphasis>invisible</emphasis> is
+special, it must nevertheless be defined as a static color. The specified
+RGB value is utilized by widgets that do not support invisibility by color.
+</para>
+</listitem>
+
+<listitem>
+<para>The names <emphasis>strange</emphasis>, <emphasis>invisible</emphasis>,
+<emphasis>red</emphasis>, <emphasis>blinking red</emphasis>,
+and <emphasis>green</emphasis> must be valid color names defined elsewhere
+in the color file</para>
+</listitem>
+
+<listitem>
+<para>Rule evaluation goes from top to bottom, stopping at the first true
+condition. The default clause must therefore come last.</para>
+</listitem>
+
+<listitem>
+<para>Symbols</para>
+
+  <itemizedlist>
+
+  <listitem>
+  <programlisting>=   equal to</programlisting>
+  </listitem>
+
+  <listitem>
+  <programlisting>&gt;   greater than</programlisting>
+  </listitem>
+
+  <listitem>
+  <programlisting>&gt;=  greater than or equal to</programlisting>
+  </listitem>
+
+  <listitem>
+  <programlisting>&lt;   less than</programlisting>
+  </listitem>
+
+  <listitem>
+  <programlisting>&lt;=  less than or equal to</programlisting>
+  </listitem>
+
+  <listitem>
+  <programlisting>||  logical or</programlisting>
+  </listitem>
+
+  <listitem>
+  <programlisting>&amp;&amp;  logical and</programlisting>
+  </listitem>
+
+  </itemizedlist>
+
+</listitem>
+
+</itemizedlist>
+
+</sect2>
+
+<sect2>
+<title>The Color Palette and Functional Name Menu</title>
+
+<para>
+The color palette shown in <xref linkend="colorPaletteFigure" /> and color name menu in
+<xref linkend="colorMenuFigure" /> corresponds to the following color file
+information:
+</para>
+
+<programlisting>
+4 0 0
+
+blinkms=750
+max=0x10000
+columns=5
+
+static 6   white        { 0xffff 0xffff 0xffff }
+static 7   black        { 0 0 0 }
+static 8   grey1        { 50000 50000 50000 }
+static 9   grey2        { 40000 40000 40000 }
+static 3   "dark red"   { 0xffff 0 0 }
+static 4   "dark green" { 0 0xffff 0 }
+static 5   "dark blue"  { 0 0 0xffff }
+static 0   red          { 0xffff 0 0 }
+static 1   green        { 0 0xffff 0 }
+static 2   blue         { 0 0 0xffff }
+
+menumap { 
+red
+green
+blue
+"dark red"
+"dark green"
+"dark blue"
+}
+</programlisting>
+
+<para>
+Note that there are 5 columns as given by
+<programlisting>columns=5</programlisting> and that the palette is
+populated from top-left to bottom-right, row by row, according to the
+entry order of color indices in the color file. So,
+<emphasis>white</emphasis> is the first specified color in the file
+and also the first color in the palette. Likewise, <emphasis>blue</emphasis>
+is last in both places.
+</para>
+
+<figure id="colorPaletteFigure">
+<title>Example edm Color Palette</title>
+<graphic fileref="colorPalette.png"></graphic>
+</figure>
+
+<para>
+The listing order in the color name menu is explicitly given in the
+<emphasis>menumap</emphasis> section of the color file. This is clear by
+comparing the menumap content to the menu shown in
+<xref linkend="colorMenuFigure" />.
+Note that some colors have been intentionally omitted from the menu.
+</para>
+
+<figure id="colorMenuFigure">
+<title>Example edm Color Name Menu</title>
+<graphic fileref="colorMenu.png"></graphic>
+</figure>
+
+</sect2>
+
+<sect2>
+<title>Color Aliases</title>
+
+<para>
+Some widgets, like the X-Y plot, require many default colors. Instead
+of referencing color names or indices (which may not exist at a given site),
+they instead reference color aliases. The X-Y plot uses the following color
+alias names: <emphasis>trace0</emphasis>, <emphasis>trace1</emphasis>, ...
+<emphasis>trace13</emphasis>.
+</para>
+
+<para>
+These color alias names are included in the color file to establish
+this mapping for a given configuration. An example is shown below.
+</para>
+
+<programlisting>
+alias trace0 red
+alias trace1 green
+alias trace2 blue
+alias trace3 "dark red"
+alias trace4 "dark green"
+alias trace5 "dark blue"
+alias trace6 black
+alias trace7 white
+alias trace8 grey1
+alias trace9 grey2
+alias trace10 wheat
+alias trace11 cornflower
+alias trace12 coral
+alias trace13 "med orchid"
+</programlisting>
+
+</sect2>
+
+<sect2>
+<title>Alarm Colors</title>
+
+<para>
+The <emphasis>alarm</emphasis> section of the color file maps color names
+into EPICS alarm states. An example is given below.
+</para>
+
+<programlisting>
+alarm { 
+  disconnected : grey1
+  invalid      : grey2
+  minor        : blue
+  major        : red
+  noalarm      : green
+}
+</programlisting>
+
+<para>
+In this case, all alarm sensitive content in the <emphasis>noalarm</emphasis>
+state is shown as green.
+</para>
+
+<para>
+The following causes alarm sensitive content in the
+<emphasis>noalarm</emphasis> state to be rendered with user specified colors:
+</para>
+
+<programlisting>
+alarm { 
+  disconnected : grey1
+  invalid      : grey2
+  minor        : blue
+  major        : red
+  noalarm      : *
+}
+</programlisting>
+
+</sect2>
+
+<sect2>
+<title>Example Color File</title>
+
+<para>
+The following is an example of an entire edm color file.
+</para>
+
+<programlisting>
+4 0 0
+
+blinkms=750
+max=0x10000
+columns=5
+
+alias trace0 red
+alias trace1 green
+alias trace2 blue
+alias trace3 "dark red"
+alias trace4 "dark green"
+alias trace5 "dark blue"
+alias trace6 black
+alias trace7 white
+alias trace8 grey1
+alias trace9 grey2
+alias trace10 wheat
+alias trace11 cornflower
+alias trace12 coral
+alias trace13 "med orchid"
+
+static 6   white        { 0xffff 0xffff 0xffff }
+static 7   black        { 0 0 0 }
+static 8   grey1        { 50000 50000 50000 }
+static 9   grey2        { 40000 40000 40000 }
+static 3   "dark red"   { 0xafff 0 0 }
+static 4   "dark green" { 0 0xafff 0 }
+static 5   "dark blue"  { 0 0 0xafff }
+static 0   red          { 0xffff 0 0 }
+static 1   green        { 0 0xffff 0 }
+static 2   blue         { 0 0 0xffff }
+static 10  "wheat"      { 55512 55512 49087 }
+static 11  "cornflower" { 16962 16962 28527 }
+static 12  "coral"      { 65535 46003 13107 }
+static 13  "med orchid" { 37779 28784 56283 }
+static 14  "blink red"  { 0xffff 0 0 0x3fff 0 0 }
+static 15  invisible    { 0 0 0 }
+
+rule 16 rule1 {
+ =100 || =200 : grey1
+ &gt;=20         : invisible
+ &gt;0 &amp;&amp; &lt;10    : red
+ &gt;=10 &amp;&amp; &lt;20  : "blink red"
+ default      : green
+}
+
+menumap { 
+red
+green
+blue
+"dark red"
+"dark green"
+"dark blue"
+rule1
+}
+
+alarm { 
+  disconnected : grey1
+  invalid      : grey2
+  minor        : blue
+  major        : red
+  noalarm      : *
+}
+</programlisting>
+
+</sect2>
+
+</sect1>
+
+<sect1>
+<title>Font File Configuration</title>
+
+<para>
+The edm font file must be manually created using a text editor. The file
+name is always <emphasis>fonts.list</emphasis> and the default location is
+<emphasis>/etc/edm</emphasis>. The location may be overridden
+on a site-by-site or project-by-project basis with the environment
+variable <emphasis>EDMFILES</emphasis>. The name and location may be
+overridden on a site-by-site or project-by-project basis with the environment
+variable <emphasis>EDMFONTFILE</emphasis>.
+</para>
+
+<para>
+All edm fonts must be explicitly specified in the font file.
+</para>
+
+<sect2>
+<title>Version 5 Font File Format</title>
+
+<para>
+The version 5 font file format adds the ability to modify a single font instance.
+</para>
+
+<programlisting>
+Example:
+
+5 0 0
+helvetica-medium-r-12.0
+helvetica-medium-r-18.0
+
+helvetica=-adobe-helvetica-(medium,bold)-(r,o)-normal--*-(80,100=105,120,140,160=150,180,200,240)-75-75-p-*-*-*
+</programlisting>
+
+<para>
+In this example, helvetica-medium-r-100 would correspond to the font request
+</para>
+
+<programlisting>
+  helvetica-medium-r-normal--*-105-75-75-p-*-*-*
+</programlisting>
+
+<para>
+helvetica-medium-r-160 would correspond to the font request
+</para>
+
+<programlisting>
+  helvetica-medium-r-normal--*-150-75-75-p-*-*-*
+</programlisting>
+
+<para>
+The same would be true for the bold and oblique variants. 
+</para>
+
+</sect2>
+
+<sect2>
+<title>Version 4 Font File Format</title>
+
+<para>
+The version 4 font file format adds a font substitution mechanism.
+</para>
+
+<programlisting>
+Example:
+
+4 0 0
+helvetica-medium-r-12.0
+helvetica-medium-r-18.0
+
+substitutions {
+-adobe-helvetica-medium-r-normal--*-160-75-75-p-*-*-*=-adobe-utopia-medium-r-normal--*-160-75-75-p-0-*-*
+-adobe-helvetica-medium-o-normal--*-160-75-75-p-*-*-*=-adobe-utopia-medium-i-normal--*-160-75-75-p-0-*-*
+-adobe-helvetica-bold-r-normal--*-160-75-75-p-*-*-*=-adobe-utopia-bold-r-normal--*-160-75-75-p-0-*-*
+-adobe-helvetica-bold-o-normal--*-160-75-75-p-*-*-*=-adobe-utopia-bold-i-normal--*-160-75-75-p-0-*-*
+}
+
+helvetica=-adobe-helvetica-(medium,bold)-(r,o)-normal--*-(80,100,120,140,160,180,240)-75-75-p-*-*-* exact
+</programlisting>
+
+<para>
+Note: extra spaces are not allowed; the keyword "exact" is preceeded by a tab.
+</para>
+
+<para>
+In this example, the utopia font spec will be used in place of the 16 point helvetica font spec when the font search is initiated.
+</para>
+
+</sect2>
+
+<sect2>
+<title>Version 3 Font File Format</title>
+
+<para>
+The version 3 font file format accommodates blank lines and comment lines.
+Comment lines must contain '#' as the first non white-space character.
+</para>
+
+<para>
+The first line of the font file must
+contain the file version id as three numbers corresponding to
+major, minor, and release. Currently, this should be
+</para>
+
+<programlisting>
+3 0 0
+</programlisting>
+
+<para>
+The next two lines in the font file are default font tags that are used
+to resolve unknown font references. The lines look something like the
+following:
+</para>
+
+<programlisting>
+helvetica-medium-r-10.0
+helvetica-medium-r-12.0
+</programlisting>
+
+<para>
+The first tag, in this example helvetica-medium-r-10.0, is used as a substitute
+for an invalid font referenced in a display file.
+</para>
+
+<para>
+The second tag, in this example helvetica-medium-r-18.0, is used as a default
+font for creating new text when no default has been specified. Specifying a
+default font is described elsewhere.
+</para>
+
+<para>
+The remaining lines specify available fonts. The information is the same as for
+previous file versions but the form is highly condensed and the font
+name may now be arbitrarily assigned (previously, the font family mapped
+directly to the font name).
+</para>
+
+<para>
+Note that for all font file versions, blanks in font specification lines
+are significant and may not be used as separators.
+</para>
+
+<para>
+Using the previous file formats, the following lines would specify 8, 10,
+and 12 point courier fonts. Notice the four groups of three sizes.
+</para>
+
+<programlisting>
+-*-courier-bold-o-normal--8-80-75-75-m-50-*-*
+-*-courier-bold-o-normal--10-100-75-75-m-60-*-*
+-*-courier-bold-o-normal--12-120-75-75-m-70-*-*
+-*-courier-bold-r-normal--8-80-75-75-m-50-*-*
+-*-courier-bold-r-normal--10-100-75-75-m-60-*-*
+-*-courier-bold-r-normal--12-120-75-75-m-70-*-*
+-*-courier-medium-o-normal--8-80-75-75-m-50-*-*
+-*-courier-medium-o-normal--10-100-75-75-m-60-*-*
+-*-courier-medium-o-normal--12-120-75-75-m-70-*-*
+-*-courier-medium-r-normal--8-80-75-75-m-50-*-*
+-*-courier-medium-r-normal--10-100-75-75-m-60-*-*
+-*-courier-medium-r-normal--12-120-75-75-m-70-*-*
+</programlisting>
+
+<para>
+The version 3 file format specifies all this information on one line
+and the font name is independent of the font specification. The
+equivalent version 3 content is shown below.
+</para>
+
+<programlisting>
+courier=-*-courier-(medium,bold)-(r,o)-normal--*-(80,100,120)-75-75-m-*-*-*
+</programlisting>
+
+<para>
+Note that the <emphasis>weight</emphasis> option must be listed in the
+order (&lt;non-bold&gt;,&lt;bold&gt;). Likewise the <emphasis>slant</emphasis> option
+must be ordered as (&lt;non-italicized&gt;,&lt;italicized&gt;).
+</para>
+
+<para>
+For example, the <emphasis>gothic</emphasis> font would be specified as
+follows:
+</para>
+
+<programlisting>
+gothic=-urw-gothic l-(book,demi bold)-(r,o)-normal--0-(80,100,120)-75-75-p-0-*-*
+</programlisting>
+
+<para>
+In this case, the weight modifiers are book (non-bold) and demi bold (bold). The
+slant modifiers are r (non-italicized) and o (oblique, i.e. italicized).
+</para>
+
+<para>
+Appending at least one tab and the keyword <emphasis>preload</emphasis> to
+the font spec line instructs edm to preload the font during initialization.
+</para>
+
+<programlisting>
+courier=-*-courier-(medium,bold)-(r,o)-normal--*-(80,100,120)-75-75-m-*-*-*      preload
+</programlisting>
+
+<para>
+Another keyword that may be specified is <emphasis>exact</emphasis>. This
+option requires that all fonts match the font specification exactly.
+The default policy is to allow another font to be used if the desired font
+cannot be resolved. As before, use a tab character as whitespace to separate
+keywords from one another and from the font spec.
+</para>
+
+<programlisting>
+courier=-*-courier-(medium,bold)-(r,o)-normal--*-(80,100,120)-75-75-m-*-*-*      preload      exact
+</programlisting>
+
+<para>
+The above example, where the font name is the same as the family name,
+makes the content compatable with previous file versions. The same font could
+be renamed as given below.
+</para>
+
+<programlisting>
+edm courier font=-*-courier-(medium,bold)-(r,o)-normal--*-(80,100,120)-75-75-m-*-*-*
+</programlisting>
+
+<para>
+Of course, the actual intent is to change the font spec and keep the name
+unchanged. For example, suppose the free Microsoft
+<emphasis>courier new</emphasis> scalable font is installed. An existing font given as
+</para>
+
+<programlisting>
+courier=-*-courier-(medium,bold)-(r,o)-normal--*-(80,100,120)-75-75-m-*-*-*
+</programlisting>
+
+<para>
+could be changed to
+</para>
+
+<programlisting>
+courier=-microsoft-courier new-(medium,bold)-(r,o)-normal--0-(80,100,120)-75-75-m-0-*-*
+</programlisting>
+
+<para>
+All existing edm screens would now use the new font.
+</para>
+
+<sect3>
+<title>Font Groups</title>
+
+<para>
+Version 3 files support the notion of font groups where each group
+contains one font name and multiple fonts specs. An example is shown
+below.
+</para>
+
+<programlisting>
+helvetica={
+-urw-helvetica-(medium,bold)-(r,o)-normal--0-(80,100,120)-75-75-m-0-*-*      preload
+-adobe-helvetica-(medium,bold)-(r,o)-normal--*-(80,100,120)-75-75-m-*-*-*    preload
+-*-helvetica-(medium,bold)-(r,o)-normal--*-(80,100,120)-75-75-m-*-*-*        preload
+}
+</programlisting>
+
+<para>
+In this example, edm will first try to use the scalable urw font
+found in most Linux distributions. If an exact match cannot be made,
+the adobe font will be tried next. Finally any helvetica font will
+be tried.
+</para>
+
+<para>
+If all font resolution attempts fail, and if the last font spec of the group
+does not include the <emphasis>exact</emphasis> option, it will be used to generate a
+fallback set of fonts, some of which may be members of a different
+font family. If even this strategy fails, edm will abort.
+</para>
+
+</sect3>
+
+</sect2>
+
+<sect2>
+<title>Version 2 Font File Format</title>
+
+<para>
+Version 2 is equivalent to version 1 with the following exceptions:
+</para>
+
+<itemizedlist>
+
+<listitem><para>
+The first line is 2 0 0.
+</para></listitem>
+
+<listitem><para>
+One or more tabs and the keyword <emphasis>preload</emphasis> may be
+appended to a font specification. This instructs edm to preload the
+font during initialization.
+</para></listitem>
+
+</itemizedlist>
+
+</sect2>
+
+<sect2>
+<title>Version 1 Font File Format</title>
+
+<para>
+The version 1 font file format is somewhat inflexible. Neither blank lines
+nor comments of any kind are allowed. The first line of the font file must
+contain the file version id as three numbers corresponding to
+major, minor, and release. Currently, this should be
+</para>
+
+<programlisting>
+1 1 0
+</programlisting>
+
+<para>
+The next two lines in the font file are default font tags that are used
+in case a font referenced in a display file has not been specified in
+the font file. This might be the case if a file has been obtained from
+some external site. The lines look something like the following:
+</para>
+
+<programlisting>
+helvetica-medium-r-10.0
+helvetica-medium-r-12.0
+</programlisting>
+
+<para>
+The first tag, in this example helvetica-medium-r-10.0, is used as a substitute
+for an invalid font referenced in a display file.
+</para>
+
+<para>
+The second tag, in this example helvetica-medium-r-18.0, is used as a default
+font for creating new text when no default has been specified. Specifying a
+default font is described elsewhere.
+</para>
+
+<para>
+The remaining lines specify fonts, family by family, four groups of font
+specifications on separate lines, in repeated blocks for each of the equivalent
+of bold-italic, bold-normal, medium-italic, and medium-normal.
+</para>
+
+<para>
+So, for example, the following lines would specify 8, 10, and 12 point
+courier fonts. Notice the four groups of three sizes.
+</para>
+
+<programlisting>
+-*-courier-bold-o-normal--8-80-75-75-m-50-*-*
+-*-courier-bold-o-normal--10-100-75-75-m-60-*-*
+-*-courier-bold-o-normal--12-120-75-75-m-70-*-*
+-*-courier-bold-r-normal--8-80-75-75-m-50-*-*
+-*-courier-bold-r-normal--10-100-75-75-m-60-*-*
+-*-courier-bold-r-normal--12-120-75-75-m-70-*-*
+-*-courier-medium-o-normal--8-80-75-75-m-50-*-*
+-*-courier-medium-o-normal--10-100-75-75-m-60-*-*
+-*-courier-medium-o-normal--12-120-75-75-m-70-*-*
+-*-courier-medium-r-normal--8-80-75-75-m-50-*-*
+-*-courier-medium-r-normal--10-100-75-75-m-60-*-*
+-*-courier-medium-r-normal--12-120-75-75-m-70-*-*
+</programlisting>
+
+<para>
+If desired, scalable fonts may be specified as follows.
+</para>
+
+<programlisting>
+-*-courier-bold-r-normal--0-90-75-75-m-0-*-*
+</programlisting>
+
+</sect2>
+
+<sect2>
+<title>Scalable Fonts</title>
+
+<para>
+In general, it is not possible to guarantee that high quality scalable fonts
+will be used when appropriate. But if the actual family name of
+the desired scalable font is used in the spec, it obviously will be.
+<xref linkend="badFontFigure" /> shows the rendering on a linux system of
+a 72 point New Century Schoolbook font specified as
+</para>
+
+<programlisting>
+-*-new century schoolbook-bold-r-normal--0-720-75-75-p-0-*-*
+</programlisting>
+
+<para>
+Clearly, the font renders, but the quality is poor.
+</para>
+
+<figure id="badFontFigure">
+<title>Poor Quality Font</title>
+<graphic fileref="badFont.png"></graphic>
+</figure>
+
+<para>
+In <xref linkend="goodFontFigure" />, when the font is specified as
+</para>
+
+<programlisting>
+-urw-new century schoolbook-bold-r-normal--0-720-75-75-p-0-*-*
+</programlisting>
+
+<para>
+The nice scalable font is used and the results are much more pleasing.
+</para>
+
+<figure id="goodFontFigure">
+<title>High Quality Font</title>
+<graphic fileref="goodFont.png"></graphic>
+</figure>
+
+</sect2>
+
+<sect2>
+<title>Example Font File</title>
+
+<para>
+The following is an example of an entire edm font file. This would
+make 8, 10, 12 and 72 point courier and helvetica fonts available.
+</para>
+
+<programlisting>
+1 1 0
+helvetica-medium-r-10.0
+helvetica-medium-r-12.0
+-*-courier-bold-o-normal--8-80-75-75-m-50-*-*
+-*-courier-bold-o-normal--10-100-75-75-m-60-*-*
+-*-courier-bold-o-normal--12-120-75-75-m-70-*-*
+-*-courier-bold-o-normal--0-720-75-75-m-0-*-*
+-*-courier-bold-r-normal--8-80-75-75-m-50-*-*
+-*-courier-bold-r-normal--10-100-75-75-m-60-*-*
+-*-courier-bold-r-normal--12-120-75-75-m-70-*-*
+-*-courier-bold-r-normal--0-720-75-75-m-0-*-*
+-*-courier-medium-o-normal--8-80-75-75-m-50-*-*
+-*-courier-medium-o-normal--10-100-75-75-m-60-*-*
+-*-courier-medium-o-normal--12-120-75-75-m-70-*-*
+-*-courier-medium-o-normal--0-720-75-75-m-0-*-*
+-*-courier-medium-r-normal--8-80-75-75-m-50-*-*
+-*-courier-medium-r-normal--10-100-75-75-m-60-*-*
+-*-courier-medium-r-normal--12-120-75-75-m-70-*-*
+-*-courier-medium-r-normal--0-720-75-75-m-0-*-*
+-*-helvetica-bold-o-normal--8-80-75-75-p-50-*-*
+-*-helvetica-bold-o-normal--10-100-75-75-p-60-*-*
+-*-helvetica-bold-o-normal--12-120-75-75-p-69-*-*
+-*-helvetica-bold-o-normal--0-720-75-75-p-0-*-*
+-*-helvetica-bold-r-normal--10-100-75-75-p-60-*-*
+-*-helvetica-bold-r-normal--12-120-75-75-p-70-*-*
+-*-helvetica-bold-r-normal--0-720-75-75-p-0-*-*
+-*-helvetica-bold-r-normal--8-80-75-75-p-50-*-*
+-*-helvetica-medium-o-normal--10-100-75-75-p-57-*-*
+-*-helvetica-medium-o-normal--12-120-75-75-p-67-*-*
+-*-helvetica-medium-o-normal--0-720-75-75-p-0-*-*
+-*-helvetica-medium-o-normal--8-80-75-75-p-47-*-*
+-*-helvetica-medium-r-normal--10-100-75-75-p-56-*-*
+-*-helvetica-medium-r-normal--12-120-75-75-p-67-*-*
+-*-helvetica-medium-r-normal--0-720-75-75-p-0-*-*
+-*-helvetica-medium-r-normal--8-80-75-75-p-46-*-*
+</programlisting>
+
+<para>
+Note that the fonts do not have to specified in size order (see
+...helvetica-bold-r-normal--8... above) but all variants must be
+included for each size (bold-italic, bold-normal, medium-italic,
+medium-normal).
+</para>
+
+<para>
+For font file versions 3 and above, the following is equivalent to the previous version 1 content:
+</para>
+
+<programlisting>
+3 0 0
+helvetica-medium-r-10.0
+helvetica-medium-r-12.0
+courier=-*-courier-(medium,bold)-(r,o)-normal--*-(80,100,120,720)-75-75-m-*-*-*
+courier=-*-helvetica-(medium,bold)-(r,o)-normal--*-(80,100,120,720)-75-75-p-*-*-*
+</programlisting>
+
+<para>
+For version 4 the first line would read 4 0 0 and so on for other version numbers.
+</para>
+
+</sect2>
+
+</sect1>
+
+<sect1>
+<title>Printing</title>
+
+<para>
+Printing in edm depends on external utilities like those found in the
+netpbm distribution (formerly libgr-progs). A print definition file
+is used to specify template print commands and to relate print
+options to print dialog box fields.
+</para>
+
+<para>
+The following command might be used from a Linux shell to print a window:
+</para>
+
+<itemizedlist><listitem><para>
+xwd | xwdtopnm | pnmdepth 255 | pnmtops -center | lpr -P lp
+</para></listitem></itemizedlist>
+
+<para>
+The above command could be used in the edm print definition file verbatim. The
+corresponding directive follows.
+</para>
+
+<itemizedlist><listitem><para>
+  printCommand = "xwd | xwdtopnm | pnmdepth 255 | pnmtops -center | lpr -P lp"
+</para></listitem></itemizedlist>
+
+<para>
+The problem with the above example is the lack of options like
+page size, portrait/landscape, a list of print queues, and so on. Furthermore,
+the xwd command shown above requires user interaction to select the
+window to be dumped. The edm print definition file allows options to be
+specified and related to fields in a print dialog box.
+</para>
+
+<sect2>
+<title>The Print Definition File</title>
+
+<para>
+The following rules are used to locate the edm print defintion file:
+</para>
+
+<itemizedlist>
+
+<listitem><para>
+If the environment variable EDMPRINTDEF is defined, its value is taken
+as the full name, including path, of the print defintion file.
+</para></listitem>
+
+<listitem><para>
+If EDMPRINTDEF is unset and EDMFILES is defined, then the file edmPrintDef
+in the directory given by EDMFILES is used.
+</para></listitem>
+
+<listitem><para>
+If EDMPRINTDEF and EDMFILES are both unset, the file /etc/edm/edmPrintDef
+is used.
+</para></listitem>
+
+</itemizedlist>
+
+<para>
+If the print defintion file does not exist or is invalid, printing is
+disabled and the print menu item is inactive.
+</para>
+
+</sect2>
+
+<sect2>
+<title>Directives</title>
+
+<para>
+The following directives may appear in any order. Blank lines and
+comment lines starting with # are ignored.
+</para>
+
+<itemizedlist>
+
+<listitem><para>
+printDialog (optional) - gives the maximum width and height of the dialog box
+</para></listitem>
+
+<listitem><para>
+printCommand (required) - gives command used to print to a printer
+</para></listitem>
+
+<listitem><para>
+printToFileCommand (required) - gives command used to print to a file
+</para></listitem>
+
+<listitem><para>
+optionDefaults (optional) - specifies print command option defaults
+</para></listitem>
+
+<listitem><para>
+option &lt;number&gt; (optional) - specifies a print dialog field and command option
+modifier
+</para></listitem>
+
+</itemizedlist>
+
+</sect2>
+
+<sect2>
+<title>printDialog</title>
+
+<para>
+The printDialog directive has a simple form as shown below:
+</para>
+
+<itemizedlist><listitem><para>
+printDialog {
+  w = 400
+  h = 500
+}
+</para></listitem></itemizedlist>
+
+<para>
+The line "w = 400" sets the maximum dialog box width to 400 pixels and
+"h = 500" sets the maximum height to 500 pixels.
+</para>
+
+</sect2>
+
+
+<sect2>
+<title>printCommand</title>
+
+<para>
+The printCommand directive includes legal shell commands and parameters. It
+is used when <emphasis>Print To File</emphasis> is not selected. An example
+follows.
+</para>
+
+<itemizedlist><listitem>
+<para>
+  printCommand = "xwd -display &lt;DSPNAME&gt; -id &lt;WINID&gt; | xwdtopnm | pnmdepth 255 | pnmtops &lt;opt1&gt; | lpr &lt;opt2&gt;"
+</para>
+
+<para>
+&lt;WINID&gt; translates to the XWindow ID of the window
+from which the print menu item was selected.
+</para>
+
+<para>
+&lt;DSPNAME&gt; translates to the current X Window display name
+</para>
+
+<para>
+&lt;optN&gt; translates to the value of the Nth option
+where N ranges from 1 to 10.
+</para>
+</listitem></itemizedlist>
+
+</sect2>
+
+
+<sect2>
+<title>printToFileCommand</title>
+
+<para>
+The printToFileCommand directive includes legal shell commands and parameters.
+It is used when <emphasis>Print To File</emphasis> is selected. An example
+follows.
+</para>
+
+<itemizedlist><listitem>
+
+<para>
+printToFileCommand = "xwd -display &lt;DSPNAME&gt; -id &lt;WINID&gt; | xwdtopnm | pnmdepth 255 | pnmtops &lt;opt1&gt; &gt; &lt;file&gt;"
+</para>
+
+<para>
+&lt;WINID&gt; translates to the XWindow ID of the window
+from which the print menu item was selected.
+</para>
+
+<para>
+&lt;DSPNAME&gt; translates to the current X Window display name
+</para>
+
+<para>
+&lt;optN&gt; translates to the value of the Nth option
+where N ranges from 1 to 10.
+</para>
+
+<para>
+&lt;file&gt; translates to the filename specified in
+the print dialog box by the user.
+</para>
+
+</listitem></itemizedlist>
+
+</sect2>
+
+
+<sect2>
+<title>optionDefaults</title>
+
+<para>
+Options are stored as strings. The directive optionDefaults gives the initial
+value of the option strings.
+</para>
+
+<itemizedlist><listitem><para>
+optionDefaults {
+
+  opt1 = ""
+  opt2 = ""
+
+}
+</para></listitem></itemizedlist>
+
+</sect2>
+
+
+<sect2>
+<title>option</title>
+
+<para>
+The option directive has the following general form:
+</para>
+
+<programlisting>
+option <emphasis>N</emphasis> = <emphasis>&lt;DIALOG FIELD TYPE&gt;</emphasis> {
+  label = "<emphasis>&lt;LABEL STRING&gt;</emphasis>"
+
+  default = <emphasis>&lt;DEFAULT DIALOG FIELD VALUE&gt;</emphasis>
+
+  <emphasis>&lt;OPTION STRING MODIFIERS&gt;</emphasis>
+
+}
+</programlisting>
+
+<para>
+The option attributs (label, default, modifiers) must be given in
+the order shown in the above example.
+</para>
+
+<para>
+If <emphasis>&lt;DIALOG FIELD TYPE&gt;</emphasis> is menu, a string of
+menu items follow as shown below:
+</para>
+
+<programlisting>
+option <emphasis>N</emphasis> = menu "item1|item2|item3..." {
+  .
+  .
+  .
+</programlisting>
+
+
+<sect3>
+<title>Dialog Field Type = menu</title>
+
+<para>
+For the <emphasis>menu</emphasis> type, default is given as a number
+from 0 to n-1, where n is the number of items in the menu string.
+</para>
+
+<para>
+Option string modifiers have the following form:
+</para>
+
+<programlisting>
+  <emphasis>N</emphasis> option [ = | += ] "&lt;OPTION STRING VALUE&gt;"
+
+  e.g. to replace current option with "-noturn"
+  0 option = "-noturn"
+
+  to append "-noturn" to the current option
+  0 option += "-noturn"
+</programlisting>
+
+<para>
+A complete example follows.
+</para>
+
+<programlisting>
+option 2 orientation = menu "Default|Portrait|Landscape" {
+
+  label = "Orientation"
+
+  default = 0
+
+  0 option += ""
+
+  1 option += "-noturn"
+
+  2 option += "-turn"
+
+}
+</programlisting>
+
+</sect3>
+
+
+<sect3>
+<title>Dialog Field Type = toggle</title>
+
+<para>
+The <emphasis>toggle</emphasis> type is much like the <emphasis>menu</emphasis>
+type. As before, default is given as a number, but for
+the <emphasis>toggle</emphasis> type, the number must be 0 or 1.
+</para>
+
+<para>
+Option string modifiers have the following form:
+</para>
+
+<programlisting>
+  [ 0 | 1 ] option [ = | += ] "&lt;OPTION STRING VALUE&gt;"
+
+  e.g. to replace current option with "-center"
+  0 option = "-center"
+
+  to append "-center" to the current option
+  0 option += "-center"
+</programlisting>
+
+<para>
+A complete example follows.
+</para>
+
+<programlisting>
+option 2 center = toggle {
+
+  label = "Center"
+
+  default = 1
+
+  0 option += "-nocenter"
+
+  1 option += "-center"
+
+}
+</programlisting>
+
+</sect3>
+
+
+<sect3>
+<title>Dialog Field Type = text</title>
+
+<para>
+For the <emphasis>text</emphasis> type, default is given as a string.
+</para>
+
+<para>
+In this case the option is modified by the
+<emphasis>option string modifier</emphasis> concatenated
+with the text entry value specified by the user. If a space
+should separated the two, it must be included at the end of
+the <emphasis>option string modifier</emphasis>.
+</para>
+
+<para>
+The single option string modifier has the following form:
+</para>
+
+<programlisting>
+  option [ = | += ] "&lt;OPTION STRING VALUE&gt;"
+
+  e.g. to replace current option with "-width " (and the user input)
+  option = "-width "
+
+  to append "-width " (and the user input) to the current option
+  option += "-width "
+</programlisting>
+
+<para>
+A complete example follows.
+</para>
+
+<programlisting>
+option 2 pagewidth = text {
+
+  label = "Page Width"
+
+  default = "8.5"
+
+  option += "-width "
+
+}
+</programlisting>
+
+</sect3>
+
+</sect2>
+
+<sect2>
+<title>Example Print Definition File</title>
+
+<programlisting>
+Note:
+
+  If the environment variable EDMDEBUGMODE is set to 1,
+  the print command will be displayed when a print
+  operation is performed.
+</programlisting>
+
+<para>
+A complete example edm print definition file is shown below. Figure
+<xref linkend="printDialogFigure" /> shows the corresponding print
+dialog box.
+</para>
+
+<programlisting>
+printDialog {
+  w = 400
+  h = 600
+}
+
+printCommand = "xwd &lt;opt1&gt; | xwdtopnm | pnmdepth 255 &lt;opt4&gt; | pnmtops &lt;opt2&gt; &lt;opt3&gt; | lpr &lt;opt5&gt;"
+
+printToFileCommand = "xwd &lt;opt1&gt; | xwdtopnm | pnmdepth 255 &lt;opt4&gt; | pnmtops &lt;opt2&gt; &lt;opt3&gt; &gt; &lt;file&gt;"
+
+optionDefaults {
+  opt1 = "-display &lt;DSPNAME&gt; "
+  opt2 = ""
+  opt3 = ""
+  opt4 = ""
+  opt5 = ""
+}
+
+option 2 orientation = menu "Default|Portrait|Landscape" {
+  label = "Orientation"
+  default = 0
+  0 option += ""
+  1 option += "-noturn"
+  2 option += "-turn"
+}
+
+option 2 pagewidth = text {
+  label = "Page Width"
+  default = "8.5"
+  option += "-width "
+}
+
+option 2 pageheight = text {
+  label = "Page Height"
+  default = "11"
+  option += "-height "
+}
+
+option 3 scale = text {
+  label = "Scale Factor"
+  default = "1"
+  option += "-scale "
+}
+
+option 3 center = toggle {
+  label = "Center"
+  default = 1
+  0 option += "-nocenter"
+  1 option += "-center"
+}
+
+option 3 fit = toggle {
+  label = "Fit To Page"
+  default = 0
+  0 option += ""
+  1 option = "-center -scale 1000"
+}
+
+option 4 invert = toggle {
+  label = "Invert"
+  default = 0
+  0 option += ""
+  1 option += "| pnminvert"
+}
+
+option 1 select = menu "Window|Desktop|Interactive" {
+  label = "Select"
+  default = 0
+  0 option += "-silent -id &lt;WINID&gt;"
+  1 option += "-silent -root"
+  2 option += "-frame"
+}
+
+option 5 printer = menu "lp|lp0" {
+  label = "Printer"
+  default = 0
+  0 option = "-P lp"
+  1 option = "-P lp0"
+}
+</programlisting>
+
+<figure id="printDialogFigure">
+<title>Example Print Dialog Box</title>
+<graphic fileref="printDialog.png"></graphic>
+</figure>
+
+</sect2>
+
+
+</sect1>
+
+</chapter>
+
+
+
+
+<chapter id="Program-Execution">
+<title>Program Execution, Command Line Options, and Environment</title>
+
+<sect1>
+<title>Execution</title>
+
+<programlisting>
+edm [-x] [-noedit] [-ro] [-noscrl] [-m &lt;"m1=string1,m2=string2,..."&gt;]
+    [-display &lt;display name&gt;] [-ctl &lt;control PV name&gt;]
+    [-color rgb or index] [-cmap] [-restart] [-server] [-one] [-open]
+    [-port &lt;port #&gt;] [-local] [-eolc] [-(v|V|version)] [-(h|help)]
+    [&lt;display-file1 display-file2 ...&gt;]
+
+    -x         Open all displays in execute rather than edit mode
+
+    -noedit    Remove capability to put display in edit mode, used
+               with -x to produce execute only operation
+
+    -ro        Read-only mode (when the -server option is in use,
+               this option affects the primary server only;
+               clients inherit this attribute from the server)
+
+    -noscrl    Disable scroll bars
+
+    -m         Introduces list of macros/expansions
+
+                 e.g. -m "facility=beamline-5,section=z,name=`caget -t pvname`"
+
+                 (note that using a script or executable to assign a macro value is
+                  an EXPENSIVE synchronous operation and should therefore be used
+                  with caution)
+
+    -display   Takes name of X Display
+
+    -ctl       Takes name of string process variable, writing
+               a display file name to this string causes edm
+               to open the display in execute mode
+
+               Writing "* SHUTDOWN *" to the pv invokes a remote
+               shutdown; edm writes its pid back into the same pv
+
+    -color     Set Colormode - index (default) or rgb
+
+    -cmap      Use private colormap if necessary
+
+    -restart   Takes pid number, restart from last shutdown
+
+    -server    Communicate with or become a
+               display file server which can
+               manage multiple displays
+
+    -one       Like -server but allows only one instance of edm
+               per display; all instances must be launched with
+               this option and all other options except -display
+               should be identical
+
+    -open      Request server to open specified files; macros may
+               be set (must come before -open); a server must exist and
+               must already be managing the corresponding display otherwise
+               the request will be ignored and edm will return an exit
+               status of 100.
+
+               Examples:
+
+                 edm -m "sym1=val1,sym2=val2" -open one.edl
+
+                 edm -open one.edl?300?400 two.edl (open one.edl at X=300, Y=400
+                 and two.edl at default position)
+
+                 edm -open win1=one.edl win2=two.edl?10?10    (open named windows)
+
+    -close     Request server to close specified window names (as determine by -open)
+
+    -move      Request server to move specified window names (as determine by -open)
+
+    -raise     Request server to raise specified window names (as determine by -open)
+
+    -lower     Request server to lower specified window names (as determine by -open)
+
+    -iconify   Request server to iconify specified window names (as determine by -open)
+
+    -deiconify Request server to deiconify specified window names (as determine by -open)
+
+               All commands to manipulate named windows (except close) may cause a move
+               operation to be performed by including X,Y position information in the
+               window name.
+
+               Example:
+
+                 edm -raise win1?100?200
+
+    -port #    Use specified TCP/IP port number (default=19000);
+               may be used with -server and -one options
+
+    -local     Do not communicate with the display
+               file server (default)
+
+    -eolc      Exit on last close; edm exits when last screen is closed
+
+    -version   Displays edm version information and exits
+    -v
+    -V
+
+    -help      Displays this text and exits
+    -h
+    -?
+
+COMPONENT MANAGEMENT
+
+edm (-add|-remove|-show) &lt;component library file pathname&gt;
+
+    -add     Add all library components to edmObjects
+
+    -remove  Remove all library components from edmObjects
+
+    -show    Show all components in specified library
+
+               e.g. edm -add /usr/lib/someEdmComponents.so
+
+PV COMPONENT MANAGEMENT
+
+edm (-addpv|-removepv|-showpv) &lt;PV component library file pathname&gt;
+
+    -addpv     Add all library components to edmPvObjects
+
+    -removepv  Remove all library components from edmPvObjects
+
+    -showpv    Show all components in specified library
+
+               e.g. edm -addpv /usr/lib/someEdmPvComponents.so
+</programlisting>
+
+</sect1>
+
+<sect1>
+<title>Environment</title>
+
+<programlisting>
+ENVIRONMENT VARIABLES
+
+EDMFILES                Location of fonts.list and colors.list
+                        (if unset then /etc/edm) if EDMCOLORFILE
+                        and EDMFONTFILE are unset
+
+EDMCOLORFILE            Name and location of color file
+
+EDMFONTFILE             Name and location of font file
+
+EDMHELPFILES            Location of edm help displays
+                        (if unset then /etc/edm)
+
+EDMOBJECTS              Location of edmObjects, the edm component
+                        object file (if unset then /etc/edm)
+
+EDMPVOBJECTS            Location of edmPvObjects, the edm PV component
+                        object file
+                        (if unset then /etc/edm)
+
+EDMDATAFILES            Location of display files given as
+
+                          &lt;path 1&gt;:&lt;path 2&gt;:...:&lt;path n&gt;
+                          e.g. /usr/displays:/usr/more:/usr/yetMore
+
+                          If EDMDATAFILES is not set then default
+                          path is ./
+
+EDMSERVERS              Comma separated list of server names
+
+                        &lt;server1&gt;[:merit],&lt;server2&gt;[:merit]...
+                        e.g. node1:2,node2:1.5,node3
+                        (node1 is preffered 2/1.5, 2/1 over nodes 2 &amp; 3)
+
+EDMTMPFILES             Location of autosave files (default: /tmp)
+
+EDMPRINTDEF             Name of print defintion file; if unset the file
+                        edmPrintDef in the directory given by EDMFILES
+                        is used. If EDMFILES is unset, the file
+                        /etc/edm/edmPrintDef is used.
+
+EDMUSERLIB              Location of user shared library file (future)
+
+EDMCOMMENTS             Path to comment file (see chapter on EDM and CVS).
+
+EDMHTTPDOCROOT          URL list separated by "|".
+
+CALC_ENV                Colon delimited list of CALC pv definition files
+
+EDMPRINTER              Default printer
+
+EDMDUMPFILES            Location for xygraph widget plot file dumps
+
+EDMACTIONS              Location of edmActions file
+
+EDMTEXTBORDERALWAYS     If set, and noalarm is not "*", then always display text alarm borders
+
+EDMMAXVERSIONS          If unset or set to one, edm saves backup version as name.edl~. If set
+                        to a value greater than one, edm saves that number of backup versions
+                        as name.edl-#. If set to the string "unlimited" number of versions is
+                        the maximum value of a 32 bit integer.
+
+EDMUSEPIXMAP            If set, default XWindows output is double buffered (may be overridden via
+                        display properties).
+
+</programlisting>
+
+<para>
+If EDMHTTPDOCROOT is set, file access is performed using libcurl
+and edm must be compiled with the -DUSECURL=1 option. This results in a
+list of document root locations, each of which are searched to resolve
+a file reference. All directories given in EDMFILES and EDMUSERFILES are
+relative to the document root locations.
+</para>
+
+<para>
+This gives a locally executed instance of edm read-only access to display files
+served from a web server. Color files, font files, and png images are also obtained from
+the server. Gif image files may not be accessed remotely.
+</para>
+
+</sect1>
+
+<sect1>
+<title>Special Purpose Environment Variables</title>
+
+<para>
+The following environment variables are not intended for use during
+normal operation of edm.
+</para>
+
+<programlisting>
+EDMCOLORMODE            Set to rgb or RGB to enable rgb color mode
+</programlisting>
+
+<para>
+Help files employ rgb color mode to make display file colors somewhat site
+independent. When an edl file is written in rbg mode, colors are stored
+as raw R-G-B values instead of as the usual color indices. When a file written
+in this mode is opened, colors are chosen from the palette that best match
+the stored R-G-B values.
+</para>
+
+<programlisting>
+EDMSUPERVISORMODE       Set to TRUE to enable supervisor mode
+</programlisting>
+
+<para>
+Several widgets employ an optional password protected confirmation
+mechanism as a prerequisite to performing some operation. This is
+not secure and serves primarily to remind the user that some operation
+is not without significant consequences. These widgets also provide a
+<emphasis>LOCK</emphasis> option that disables all functional widget
+properties (e.g. what PV will be written, what value will be written)
+and inhibits further password modification. Once the <emphasis>LOCK</emphasis>
+option is selected and the file saved, the widget remains locked
+permanently (of course, one could simply edit the ascii edl file).
+Setting EDMSUPERVISORMODE to TRUE unconditionally unlocks all such
+widgets.
+</para>
+
+<programlisting>
+EDMIGNOREICONIC         If set, edm ignore the iconic state of a window.
+</programlisting>
+
+<para>
+Normally, if a window is iconified, edm updates internal values but does not
+update the visual contents of a window. There have been several reports of
+edm windows failing to update until the window is iconified and then maximized
+again. This variable has been added as a diagnostic aid.
+</para>
+
+<programlisting>
+EDMDEBUGMODE            Set to any integer value to enable debug mode
+EDMDIAGNOSTICMODE       Set to any integer value to enable diagnostic
+                        output to files of the form /tmp/edmDiag_??????
+                        and /tmp/edmStdErr_?????? (or, if EDMTMPFILES is
+                        defined, $EDMTMPFILES/edmDiag_?????? and
+                        $EDMTMPFILES/edmStdErr_??????).
+</programlisting>
+
+<para>
+For developer use.
+</para>
+
+<programlisting>
+EDMXSYNC                Puts X in sync mode
+</programlisting>
+
+<para>
+This is intended for use when testing or debugging edm. X I/O
+throughput is significantly degraded in this mode.
+</para>
+
+<programlisting>
+EDMGENDOC               Generates widget file format information
+                        on save
+</programlisting>
+
+<para>
+Setting this environment variable makes edm generate widget file format
+information when a display file is saved. The output is sent to stdout.
+This gives up-to-date information to those writing display generating
+scripts and such.
+</para>
+
+<para>
+Example output for rectangle widget:
+</para>
+
+<programlisting>
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major &lt;int&gt;
+minor &lt;int&gt;
+release &lt;int&gt;
+x &lt;int&gt;
+y &lt;int&gt;
+w &lt;int&gt;
+h &lt;int&gt;
+lineColor (index &lt;int&gt; | rgb &lt;int&gt; &lt;int&gt; &lt;int&gt;)
+[lineAlarm [(0|1)]]   /* present with no value = 1, absent = 0 */
+[fill [(0|1)]]   /* present with no value = 1, absent = 0 */
+fillColor (index &lt;int&gt; | rgb &lt;int&gt; &lt;int&gt; &lt;int&gt;)
+[fillAlarm [(0|1)]]   /* present with no value = 1, absent = 0 */
+[lineWidth &lt;int&gt;]   /* default = 1 */
+[lineStyle ("solid"|"dash")]   /* default = "solid" */
+[invisible [(0|1)]]   /* present with no value = 1, absent = 0 */
+[alarmPv &lt;expandable string&gt;] /* default = "" */
+[visPv &lt;expandable string&gt;] /* default = "" */
+[visInvert [(0|1)]]   /* present with no value = 1, absent = 0 */
+[visMin &lt;string&gt;] /* default = "" */
+[visMax &lt;string&gt;] /* default = "" */
+endObjectProperties
+</programlisting>
+
+<para>
+Conventions:
+</para>
+
+<programlisting>
+\a translates to a
+\\ translates to \
+
+So, for example, to specify a local pv, use LOC\\somepv
+
+[a] means a is optional
+
+(a | b) means either "a" or "b"
+
+Arrays are specified as follows:
+
+  a {
+    0 1
+    1 100
+  }
+
+In this case, a is an array of 2 elements, element 0 = 1,
+element 1 = 100.
+
+Primitive types are enclosed by "&lt;" and "&gt;". The following means
+a takes an integer value.
+
+  a &lt;int&gt;
+
+Primitive types include
+
+  &lt;int&gt;
+  &lt;real&gt;
+  &lt;string&gt;
+  &lt;expandable string&gt; (i.e. macros are allowed)
+
+Strings and expandable strings should be enclosed in double quotes
+</programlisting>
+
+</sect1>
+
+<sect1>
+<title>Site Specific Environment Variables</title>
+
+<para>
+The following environment variables are site related.
+</para>
+
+<programlisting>
+EDMWEBBROWSER           name of executable that invokes web browser
+</programlisting>
+
+<programlisting>
+EDMRDDHS                Used by TRIUMF for site-specific initialization
+                        in the related display widget
+</programlisting>
+
+</sect1>
+
+</chapter>
+
+
+
+
+<chapter id="The-Project-Environment">
+<title>The Project Environment</title>
+
+<para>
+The environment for a given project is determined by a group of files
+and environment variables. The following considerations are addressed:
+</para>
+
+<itemizedlist>
+
+<listitem><para>
+Definition of the project colors, fonts, calculations, and display schemes
+</para></listitem>
+
+<listitem><para>
+Location of edm component and PV component files
+</para></listitem>
+
+<listitem><para>
+Component management
+</para></listitem>
+
+<listitem><para>
+Location of edm help files
+</para></listitem>
+
+<listitem><para>
+Display file search path
+</para></listitem>
+
+<listitem><para>
+Location of edm tmp files (.e.g for autosave)
+</para></listitem>
+
+</itemizedlist>
+
+<sect1>
+<title>Colors, Fonts, and Display Schemes</title>
+
+<para>
+The environment variable EDMFILES determines the location of all related
+files. If EDMFILES is not set, /etc/edm is used. Color and font configuration
+and content specifics have been given elsewhere in this document so this
+section will only discuss display schemes in detail.
+</para>
+
+<sect2>
+<title>Display Schemes</title>
+
+<para>
+Display schemes determine the default colors and fonts used when creating
+widgets in a given display. The display scheme consists of the cosmetic
+properties shown in the display property dialog box which may be obtained
+by middle-clicking on a edm display (while in edit mode) and selecting
+<emphasis>Display Properties</emphasis> from the menu.
+<xref linkend="DisplaySchemeFigure" /> shows this property box and correlates
+the various color names with their respective uses in a slider widget.
+</para>
+
+<figure id="DisplaySchemeFigure">
+<title>Display Schemes</title>
+<graphic fileref="displayScheme.png"></graphic>
+</figure>
+
+<para>
+When a new edm display file is created, the display scheme information
+is populated from the file named <emphasis>default.scheme</emphasis>
+located in $EDMFILES.
+One task in configuring the project environment is therefore creating this
+file. This is done as follows:
+</para>
+
+<itemizedlist>
+
+<listitem><para>
+Execute edm and create a new display
+</para></listitem>
+
+<listitem><para>
+Middle-click on the display background and select
+<emphasis>Display Properties</emphasis> from the menu
+</para></listitem>
+
+<listitem><para>
+Set the various display scheme properties as desired (Text Fg, 1st Control Fg,
+2nd Control Fg, 1st Control Bg, 2nd Control Bg, Top Shadow, Bottom Shadow,
+Default Text Font, Default Control Font, Default Button Font)
+</para></listitem>
+
+<listitem><para>
+Press the OK button to close the dialog box
+</para></listitem>
+
+<listitem><para>
+Middle-click on the display background and select
+<emphasis>Save Display Scheme...</emphasis> from the menu
+</para></listitem>
+
+<listitem><para>
+Save the file <emphasis>default.scheme</emphasis> in the appropriate
+directory (as given by $EDMFILES)
+</para></listitem>
+
+<listitem><para>
+Exit edm now, don't save the display; when you next start edm the display
+scheme will be properly set.
+</para></listitem>
+
+</itemizedlist>
+
+</sect2>
+
+<sect2>
+<title>Display Scheme Sets</title>
+
+<para>
+A single display scheme is sometimes not adequate. It may be useful to have
+a separate scheme for each widget or multiple schemes, one per group of
+widgets per sub-system. This is possible but requires manual configuration.
+</para>
+
+<para>
+The file <emphasis>schemes.list</emphasis> in $EDMFILES associates
+a scheme set name with each edm widget over some number of scheme sets.
+For example, suppose you have three sub-systems named
+<emphasis>front</emphasis>, <emphasis>middle</emphasis>, and
+<emphasis>back</emphasis>. Furthermore, suppose you only care about
+rectangles, sliders, and text entry widgets. Configuration consists of
+two steps
+</para>
+
+<sect3>
+<title>Step 1</title>
+
+<para>
+Manually create (tediously) one scheme file per widget per sub-system.
+These could be named front-rec.scheme, middle-rec.scheme, back-rec.scheme,
+front-sli.scheme, middle-sli.scheme, back-sli.scheme,
+front-te.scheme, middle-te.scheme, and back-te.scheme.
+</para>
+
+</sect3>
+
+<sect3>
+<title>Step 2</title>
+
+<para>
+Create the file (with a text editor) <emphasis>schemes.list</emphasis> in
+$EDMFILES with the following contents:
+</para>
+
+<programlisting>
+front {
+  Graphics-activeRectangleClass front-rec
+  Controls-activeSliderClass    front-sli
+  Controls-activeXTextDspClass  front-te
+}
+middle {
+  Graphics-activeRectangleClass middle-rec
+  Controls-activeSliderClass    middle-sli
+  Controls-activeXTextDspClass  middle-te
+}
+back {
+  Graphics-activeRectangleClass back-rec
+  Controls-activeSliderClass    back-sli
+  Controls-activeXTextDspClass  back-te
+}
+</programlisting>
+
+<para>
+The component type-name (e.g. Graphics-activeRectangleClass) may be discovered
+by examining the file <emphasis>edmObjects</emphasis>, the location of
+which is given by the environment variable $EDMOBJECTS (or /etc/edm if
+$EDMOBJECTS is not set).
+</para>
+
+<para>
+Once this file is created, a scheme set may be selected by
+Middle-clicking on the display background and selecting
+<emphasis>Select Scheme Set</emphasis> from the menu and then
+selecting the scheme set name from the sub-menu.
+</para>
+
+</sect3>
+
+</sect2>
+
+</sect1>
+
+<sect1>
+<title>Location of edm component and PV component files</title>
+
+<para>
+The edm widget component file, <emphasis>edmObjects</emphasis>, resides
+in the directory given by $EDMOBJECTS or in /etc/edm if the environment
+variable is not set.
+</para>
+
+<para>
+The edm PV component file, <emphasis>edmPvObjects</emphasis>, resides
+in the directory given by $EDMPVOBJECTS or in /etc/edm if the environment
+variable is not set. This file supports an obsolete class of generic
+PV objects and will not be further discussed. A future version of edm
+will use this file to manage the generic PV objects currently in use.
+</para>
+
+</sect1>
+
+<sect1>
+<title>Component Management</title>
+
+<para>
+Edm widgets are distributed as independent component packages. This serves
+as a quality control device and prevents a new, but perhaps unstable, component
+from affecting the stability of a previous configuration. The new component
+may be installed, tested, and subsequently, if a problem arises, uninstalled
+without any code modification.
+</para>
+
+<para>
+As an example, consider the following html component which happens to
+be packaged separately. The library file name is libHtml.so.
+</para>
+
+<para>
+The package contents may be viewed as follows:
+</para>
+
+<para><userinput>
+edm -show /myPath/libHtml.so 
+</userinput></para>
+
+<programlisting>
+Edm component file is ./edmObjects
+
+Component                                 Menu Type    Menu Text
+
+html                                      Graphics     html
+</programlisting>
+
+<para>
+The package may be installed as follows:
+</para>
+
+<para><userinput>
+edm -add /myPath/libHtml.so 
+</userinput></para>
+
+<programlisting>
+
+
+Edm component file is ./edmObjects
+
+Adding component: html, menu type: Graphics, menu text: html
+
+Moving current edm component file to ./edmObjects~
+
+The new component has been successfully added
+</programlisting>
+
+<para>
+The package may be uninstalled as follows:
+</para>
+
+<para><userinput>
+edm -remove /myPath/libHtml.so 
+</userinput></para>
+
+<programlisting>
+
+
+Edm component file is ./edmObjects
+
+Removing component: html
+
+Moving current edm component file to ./edmObjects~
+Component was successfully removed
+</programlisting>
+
+<para>
+Notice than in each command, the library file reference includes an
+absolute path. This is a strict requirement.
+</para>
+
+</sect1>
+
+<sect1>
+<title>Location of edm help files</title>
+
+<para>
+Edm help files reside in the directory given by $EDMHELPFILES or in
+/etc/edm if the environment variable is not set.
+</para>
+
+</sect1>
+
+<sect1>
+<title>Display file search path</title>
+
+<para>
+The environment variable EDMDATAFILES is a colon separated list of
+directories. This list is searched in the given order whenever an edm
+display file is referenced in a related display widget and also whenever
+a symbol or graphical image file is refenced in some associated widget.
+</para>
+
+<para>
+If the environment variable is not set, the current directory is
+used as the search path.
+</para>
+
+</sect1>
+
+<sect1>
+<title>Location of edm tmp files</title>
+
+<para>
+Edm tmp files reside in the directory given by $EDMTMPFILES or in
+/tmp if the environment variable is not set.
+</para>
+
+</sect1>
+
+</chapter>
+
+
+
+
+<chapter id="PV-Types">
+<title>PV Types</title>
+
+<sect1>
+<title>Introduction</title>
+
+<para>
+Several different PV types are supported by edm widgets. Currently, supported
+types include EPICS, LOG, CALC, and LOC.
+</para>
+
+<para>
+Support for each pv type is specified in the file named edmPvObjects. The
+default pv type is the one which appears in the file first (not including LOC
+and CALC).
+</para>
+
+<sect2>
+<title>EPICS - Prefix = EPICS\</title>
+
+<para>
+The default PV type is usually EPICS and even when this is the case, a PV
+reference may include the prefix <emphasis>EPICS\</emphasis>. So, when
+referring to a default PV type, assumed to be EPICS in this case, the names
+<emphasis>EPICS\somePv</emphasis> and <emphasis>somePv</emphasis> are
+equivalent.
+</para>
+
+</sect2>
+
+<sect2>
+<title>EPICS with put logging - Prefix = LOG\</title>
+
+<para>
+This pv type is identical to EPICS with added support for put logging. See
+the chapter on PV put logging for more information.
+</para>
+
+</sect2>
+
+<sect2>
+<title>Calculation - Prefix = CALC\</title>
+
+<para>
+A CALC PV must include the <emphasis>CALC\</emphasis> prefix. For example,
+a legal CALC PV name is CALC\somePv and this is distinctly different from
+the simple name somePv (an EPICS PV).
+</para>
+
+<para>
+CALC PVs may work in conjunction with a global configuration file which
+must be named calc.list and, for a production system, must reside in the
+location pointed to by $EDMFILES. If calc.list resides in the current
+directory it will be utilized in place of the one in $EDMFILES. This
+behavior facilitates development but obviously introduces a deployment
+inconvenience.
+</para>
+
+<para>
+Calculation PVs were implemented using code from the EPICS calc record. The
+length of the calculation expression is currently 255 characters, the
+maximum number of arguments is 12, and the total length of the CALC PV
+definition string is 300 (which therefore may impose constraints on the
+aforementioned limits).
+</para>
+
+<para>
+A couple of simple CALC PV references could look like these that follow:
+</para>
+
+<programlisting>
+   CALC\sum(pv1, pv2)
+
+   CALC\diff(pv1, 10.5)
+</programlisting>
+
+<para>
+The above definitions will produce new PVs containing the values pv1+pv2
+and pv1-pv2 respectively. For example, if value1 and value2 are the names
+of two EPICS PVs, and an edm widget references the name CALC\sum(value1,value2), then a new PV will be created containing the value value1+value2.
+</para>
+
+<para>
+The file calc.list would look like this:
+</para>
+
+<programlisting>
+CALC1
+
+# Example definition file for the CALC ProcessVariable
+#
+# First line "CALC1 ..." is magic and provides version number
+# as well as EMACS mode with is not necessary
+# but makes for - by definition - cool coloring
+# when this file is edited in emacs.
+#
+# Empty lines and comments like these,
+# beginning with '#', are ignored.
+#
+#
+# Next two lines are optional and may appear anywhere in the file
+processInvalid
+invalidResult=0
+#
+# The argument to invalidResult may be any numeric value
+# e.g. invalidResult=-1
+#
+# processInvalid is case insensitive, if present a calc pv returns the
+# value of invalidResult if any of its arguments are invalid
+#
+# invalidResult is case insensitive and defaults to 0.0, i.e. if processInvalid
+# is present but invalidResult is not then invalidResult is taken to be 0.0
+#
+# Syntax for the rest of the file:
+#
+# &lt;name&gt;
+# &lt;implementation&gt;
+#
+# The name is used to refer to a CALC PV as "CALC\name"
+# or "CALC\name(argA, argB, argC, ...).
+#
+# Implementation is in EPICS CALC record syntax,
+# with A, B, C, ... being variable names for the arguments.
+#
+#
+# Note: arguments are not checked!
+# If e.g. CALC\sum(a,b) requires two arguments,
+# nonone cares if you provide 0, 2 or 5 arguments instead of 2.
+
+# Example: CALC\sum(x, y) adds the arguments
+sum
+# Implementation:
+A+B
+
+# Example: CALC\diff(x, y) subtracts the arguments
+diff
+# Implementation:
+A-B
+
+</programlisting>
+
+<para>
+One serious shortcoming of this strategy is the requirement to restart
+edm whenever the calculation file is modified.
+</para>
+
+<para>
+Calculation PVs may be created on-the-fly,
+independent of a calc.list file. The syntax extension uses curly braces
+to enclose the expression.
+</para>
+
+<para>
+The above CALC PVs could be equivalently declared as
+</para>
+
+<programlisting>
+   CALC\{A+B}(pv1, pv2)
+
+   CALC\{A-B}(pv1, 10.5)
+</programlisting>
+
+<para>
+In this case, no calculation file is necessary and new calculations may
+be declared on-the-fly, with no need to restart edm.
+</para>
+
+<para>
+The calc.list file may contain an additional
+line per calculation that specifies how the argument list is to be
+rewritten. This can simplify usage for certain cases. For example,
+suppose a calculation always involves the value of a PV and its alarm
+severity as follows:
+</para>
+
+<programlisting>
+  # CALC\valid(x, y) returns value if valid else -1
+  valid
+  # Implementation:
+  B==0?A:-1
+</programlisting>
+
+<para>
+The previous method for defining a pv for this calculation requires
+two arguments as the following example illustrates:
+</para>
+
+<programlisting>
+  CALC\valid(pv1,pv1.SEVR)
+</programlisting>
+
+<para>
+The new feature permits the calculation to be specified thus:
+</para>
+
+<programlisting>
+  # CALC\valid(x) returns value if valid else -1
+  valid
+  # The next line generates two arguments from one
+  @$(A),$(A).SEVR
+  # Implementation:
+  B==0?A:-1
+</programlisting>
+
+<para>
+The implementaion is the same, but the pv is declared as
+</para>
+
+<programlisting>
+  CALC\valid(pv1)
+</programlisting>
+
+<para>
+In this case, A is rewritten as A and B as A.SEVR giving
+CALC\valid(pv1,pv1.SEVR).
+</para>
+
+<para>
+This may also be useful when a naming convention is used to describe a group
+of pvs associated with a device. For example, if two instances of a device
+are associated with the following groups of PVs
+</para>
+
+<programlisting>
+  dev1:vReading
+  dev1:iReading
+  dev1:tempReading
+
+  dev2:vReading
+  dev2:iReading
+  dev2:tempReading
+</programlisting>
+
+<para>
+and a color rule is used to indicate the state of the device, then the
+following old style calc PV definition, given as
+</para>
+
+<programlisting>
+  CALC\deviceState(dev1:vReading,dev1:iReading,dev1:tempReading)
+
+  CALC\deviceState(dev2:vReading,dev2:iReading,dev2:tempReading)
+</programlisting>
+
+<para>
+might be replaceable by
+</para>
+
+<programlisting>
+  CALC\deviceState(dev1)
+
+  CALC\deviceState(dev2)
+</programlisting>
+
+</sect2>
+
+<sect2>
+<title>Local - Prefix = LOC\</title>
+
+<para>
+Local PVs are internal to edm and must include the <emphasis>LOC\</emphasis> prefix. For example,
+a legal LOC PV name is LOC\somePv=&lt;type&gt;:&lt;value&gt; (e.g. LOC\somePv=d:1.234).
+</para>
+
+<sect3>
+<title>Specifying local PVs</title>
+
+<para>
+Local PV types are double (d), integer (i), enumerated (e), and string (s). Example
+declarations are shown below.
+</para>
+
+<itemizedlist>
+
+<listitem>
+<para>
+LOC\realPv=d:1.234
+</para>
+</listitem>
+
+<listitem>
+<para>
+LOC\intPv=i:55
+</para>
+</listitem>
+
+<listitem>
+<para>
+LOC\stringPv=s:this is a string
+</para>
+</listitem>
+
+<listitem>
+<para>
+LOC\enumPv=e:0,zero,one,two (initial value is "zero")
+</para>
+</listitem>
+
+<listitem>
+<para>
+LOC\enumPv=e:1,zero,one,two (initial value is "one")
+</para>
+</listitem>
+
+<listitem>
+<para>
+LOC\enumPv=e:2,zero,one,two (initial value is "two")
+</para>
+</listitem>
+
+</itemizedlist>
+
+<para>
+Edm creates a local PV the first time it is encountered. If types or values differ
+between two declarations, the first one wins. To ensure predictable beavior, the declarations
+must be identical.
+</para>
+
+</sect3>
+
+<sect3>
+<title>Scope</title>
+
+<para>
+The default scope of a local PV is global. By default, the PV is visible from all windows on
+all X displays managed by a given instance of edm. The scope may be limited to a single
+X display (application context) or to a single window. The following examples show how
+this may be accomplished.
+</para>
+
+<itemizedlist>
+
+<listitem>
+<para>
+LOC\$(!A)realPvDisplayScope=d:1.234
+</para>
+</listitem>
+
+<listitem>
+<para>
+LOC\$(!W)realPvWindowScope=d:1.234
+</para>
+</listitem>
+
+</itemizedlist>
+
+</sect3>
+
+<sect3>
+<title>Special Functions</title>
+
+<para>
+The following special functions are available.
+</para>
+
+<itemizedlist>
+
+<listitem>
+<para>
+RAND() - returns random value between [0.0,1.0) for a double type ( e.g. LOC\randPv=d:RAND() )
+</para>
+</listitem>
+
+</itemizedlist>
+
+</sect3>
+
+</sect2>
+
+</sect1>
+
+</chapter>
+
+
+
+
+<chapter id="Creating-and-Editing-Display-Windows">
+<title>Creating and Editing Display Windows</title>
+
+<sect1>
+<title>File Operations</title>
+
+<para>
+See edm online help topic <emphasis>File Operations</emphasis> for more
+information.
+</para>
+
+<sect2>
+<title>Setting the Default Working Directory</title>
+
+<para>
+When edl files are opened or saved, the operation is usually performed
+in one of the directories listed in the EDMDATAFILES environment variable.
+Initially, the default file selection dialog directory is set to the first
+directory given in EDMDATAFILES. This default may be changed by making
+a selection from the <emphasis>Path</emphasis> menu (on the main window).
+The menu contains each directory in EDMDATAFILES.
+</para>
+
+</sect2>
+
+<sect2>
+<title>Creating a New Display File</title>
+
+<para>
+Creating a new edl file is simple. In the main window, select
+<emphasis>New</emphasis> from the <emphasis>File</emphasis> menu.
+A new window is created which may be resized as desired.
+</para>
+
+</sect2>
+
+<sect2>
+<title>Opening an Existing Display File</title>
+
+<para>
+In the main window, select
+<emphasis>Open...</emphasis> or <emphasis>Open by Path...</emphasis> from the <emphasis>File</emphasis> menu.
+A file selection dialog pops up from which an edl file may be selected.
+As mentioned previously, the default file selection directory may be set
+using the <emphasis>Path</emphasis> menu before the <emphasis>Open by Path</emphasis> operation is
+performed. Once selected, the display window is opened and positioned at
+the previously saved origin.
+</para>
+
+</sect2>
+
+</sect1>
+
+<sect1>
+<title>Using the Mouse</title>
+
+<para>
+See edm online help topic <emphasis>Mouse Operations</emphasis> for more
+information.
+</para>
+
+<sect2>
+<title>Some Definitions</title>
+
+<itemizedlist>
+
+<listitem>
+<para>Left B means left button, Right B means right button, etc.</para>
+</listitem>
+
+<listitem>
+<para>Press means <emphasis>press and hold</emphasis></para>
+</listitem>
+
+<listitem>
+<para>Click means <emphasis>press and release</emphasis></para>
+</listitem>
+
+<listitem>
+<para>Drag means <emphasis>press and hold the button while moving the cursor</emphasis></para>
+</listitem>
+
+<listitem>
+<para>Shift middle B click means <emphasis>hold down the shift key and click the middle button</emphasis></para>
+</listitem>
+
+</itemizedlist>
+
+</sect2>
+
+<sect2>
+<title>Simple Select Operations</title>
+
+<para>Left B click</para>
+
+<itemizedlist><listitem>
+<para>Select single object (deselect current)</para>
+</listitem></itemizedlist>
+
+<para>Shft Left B click</para>
+
+<itemizedlist><listitem>
+<para>Toggle selection (add to current select group)</para>
+</listitem></itemizedlist>
+
+<para>Control Left B click</para>
+
+<itemizedlist><listitem>
+<para>Cycle single object selection</para>
+<para><emphasis>This is especially useful for finding one object among
+several stacked objects. Note that this only works when one
+and only one object is selected.</emphasis></para>
+</listitem></itemizedlist>
+
+</sect2>
+
+
+
+<sect2>
+<title>Multiple Select Operations</title>
+
+<para>Middle B drag select box from Top-L to Bot-R</para>
+
+<itemizedlist><listitem>
+<para>Select all enclosed</para>
+</listitem></itemizedlist>
+
+<para>Middle B drag select box from Bot-R to Top-L</para>
+
+<itemizedlist><listitem>
+<para>Select by corners</para>
+</listitem></itemizedlist>
+
+</sect2>
+
+
+
+
+<sect2>
+<title>Create/Edit Operations</title>
+
+<para>Left B drag and release</para>
+
+<itemizedlist><listitem>
+<para>Create new object</para>
+</listitem></itemizedlist>
+
+<para>Left click on selected object(s)</para>
+
+<itemizedlist><listitem>
+<para>Edit object(s)</para>
+</listitem></itemizedlist>
+
+<para>Control Middle B drag over object</para>
+
+<itemizedlist><listitem>
+<para>Drag-and-Drop PV name</para>
+</listitem></itemizedlist>
+
+</sect2>
+
+
+
+
+<sect2>
+<title>Move and Resize Operations</title>
+
+<para>Left B drag interior</para>
+
+<itemizedlist><listitem>
+<para>Move object</para>
+</listitem></itemizedlist>
+
+<para>Left B drag control point</para>
+
+<itemizedlist><listitem>
+<para>Resize object</para>
+</listitem></itemizedlist>
+
+<para>Control Left B drag interior or control point</para>
+
+<itemizedlist><listitem>
+<para>Move object (prevent unintentional resize)</para>
+<para><emphasis>This operation makes it possible to move very small objects.</emphasis></para>
+</listitem></itemizedlist>
+
+</sect2>
+
+
+
+
+<sect2>
+<title>Execute Mode Operations</title>
+
+<para>Middle B drag over object</para>
+
+<itemizedlist><listitem>
+<para>Drag-and-Drop PV name</para>
+</listitem></itemizedlist>
+
+<para>Shift-Control Middle B click over object</para>
+
+<itemizedlist><listitem>
+<para>Display object properties</para>
+</listitem></itemizedlist>
+
+<para>Control Middle B click over object</para>
+
+<itemizedlist><listitem>
+<para>Open PV action menu</para>
+</listitem></itemizedlist>
+
+</sect2>
+
+
+
+
+</sect1>
+
+
+
+
+<sect1>
+<title>Display Window Attributes</title>
+
+<para>
+Various operations may be performed on edm displays and widgets
+from menus that are called up by middle-clicking on the display background.
+Three different menus are available depending on whether one, many, or
+no widgets are currently selected.
+</para>
+
+<para>
+To set display attributes, make sure no widgets are selected and then
+middle-click on an edm display background. Select the <emphasis>Display
+Properties</emphasis> menu item.
+</para>
+
+<para>
+Attributes include size and position, window title,
+the display scheme (colors and fonts),
+and several edit mode parameters (grip,snap...).
+</para>
+
+<para>
+Note that some edit mode parameters are listed with a pair of
+shortcut key labels in parentheses [e.g. Show Grid (G/g)]. The shortcut
+keys set (uppercase) and clear (lowercase) the corresponding attribute
+when the attributes dialog is not open.
+</para>
+
+<para>
+The <emphasis>ID</emphasis>, <emphasis>Activate Callback</emphasis>, and
+<emphasis>Deactivate Callback</emphasis> attributes are not currently used.
+</para>
+
+</sect1>
+
+
+
+<sect1>
+<title>Creating Objects (except lines)</title>
+
+<para>
+See edm online help topic <emphasis>Creating Objects</emphasis> for more
+information.
+</para>
+
+<para>
+Objects (rectangles, meters, buttons, etc.) are created by left-dragging
+a box on an edm display window background. The initial size of the object
+is determined by the size of the box and when the left button is released,
+a menu pops up listing available object types (graphics, monitors, controls).
+Selecting a type calls up a sub-menu enumerating all available objects for
+the selected type. Selecting an object closes the menu and calls up an
+object property dialog box. After the object attributes are specified and the
+OK button pressed, the dialog is closed and the object is created.
+</para>
+
+</sect1>
+
+
+
+<sect1>
+<title>Editing Objects (except lines)</title>
+
+<para>
+See edm online help topic <emphasis>Editing Objects</emphasis> for more
+information.
+</para>
+
+<para>
+Left-clicking on a selected object calls up the object property dialog box.
+New users often associate this operation with a double-click. Avoid this
+temptation. Although it is true that two successive left clicks will result
+in an edit operation, the clicks must be separated by some amount of delay.
+Object properties may be modified as desired. Pressing the Apply button applies
+all modifications without closing the dialog box. Pressing OK applies
+modifications and closes the dialog. Pressing Cancel closes the dialog
+without applying modifications.
+</para>
+
+<para>
+The functions performed by the OK, Apply, and Cancel buttons may also be
+achieved by double clicking the left, center, and right mouse buttons
+respectively. This may, at times, eliminate excessive mouse pointer movement.
+</para>
+
+<para>
+If multiple objects are selected, clicking on one of them
+opens the first property dialog box. When the OK button
+is pressed, the property box for the next item is opened,
+an so on, until each selected object has been processed.
+The edit operation is terminated when all objects have been
+visited or the Cancel button is pressed.
+</para>
+
+</sect1>
+
+
+
+<sect1>
+<title>Creating Line Objects</title>
+
+<para>
+See edm online help topic <emphasis>Line Objects</emphasis> for more
+information.
+</para>
+
+<para>
+Lines are created by left-dragging a box on an edm display window background
+and choosing Lines from the Graphics sub-menu. Doing this calls up the
+line object property dialog box. After the object attributes are specified
+and the OK button pressed, the dialog is closed and the cursor changes
+slightly. At this point, the following operations may be performed.
+</para>
+
+<itemizedlist>
+
+<listitem>
+<para>Left B click appends a new line segment end-point</para>
+</listitem>
+
+<listitem>
+<para>Right B click inserts a line segment end-point after a reference end-point (mouse pointer must be on reference end-point)</para>
+</listitem>
+
+<listitem>
+<para>Middle B drag moves segment end-points</para>
+</listitem>
+
+<listitem>
+<para>Control Right B click deletes a line segment end-point (mouse pointer must be on the end-point to be deleted)</para>
+</listitem>
+
+<listitem>
+<para>Control middle B click deletes the last line segment end-point</para>
+</listitem>
+
+<listitem>
+<para>Shift Left B click or Left B double-click completes the create operation</para>
+</listitem>
+
+</itemizedlist>
+
+</sect1>
+
+
+
+<sect1>
+<title>Editing Line Objects</title>
+
+<para>
+See edm online help topic <emphasis>Line Objects</emphasis> for more
+information.
+</para>
+
+<para>
+Clicking on a lone selected line object calls up a menu which provides
+the option to edit line properties or line segments. If the properties
+option is selected, editing proceeds in the same manner as that for any edm
+object.
+If the segments option is selected, the object property dialog is not called
+up, instead, the line is redrawn with control points around each segment
+end-point and all line create operations may be performed. The edit operation
+is terminated in a manner similar to the create operation, i.e. with
+a Shift Left B click or a Left B double-click. In addition, a Shift Right B
+click aborts all modifications and terminates the edit.
+</para>
+
+</sect1>
+
+
+
+<sect1>
+<title>Aligning Objects</title>
+
+<para>
+See edm online help topic <emphasis>Aligning Objects</emphasis> for more
+information.
+</para>
+
+<para>
+When two or more objects are selected, various object alignment operations
+may be performed by middle-clicking on the display window background and
+selecting the desired operation from a menu.
+The following operations are possible:
+</para>
+
+
+<para>Align Left, Right, Top, Bottom</para>
+
+<itemizedlist><listitem>
+<para>Aligns the specified edge of all objects with the most extreme
+instance (leftmost, topmost, etc.)</para>
+</listitem></itemizedlist>
+
+
+<para>Center Vertical, Horizontal, Both</para>
+
+<itemizedlist><listitem>
+<para>
+This operation uses the location of the first object selected as a reference
+location. The operation is then performed in the context of this reference.
+<emphasis>Center Vertical</emphasis> centers all objects on an imaginary
+vertical line passing through the center of the reference object.
+<emphasis>Center Horizontal</emphasis> centers all objects on an imaginary
+horizontal line passing through the center of the reference object.
+<emphasis>Center Both</emphasis> centers all objects on an imaginary
+point at the center of the reference object.
+</para>
+</listitem></itemizedlist>
+
+
+<para>Size Height, Width, Height &amp; Width</para>
+
+<itemizedlist><listitem>
+<para>
+This operation uses the dimensions of the first object selected as reference
+dimensions. The operation is then performed in the context of this reference.
+<emphasis>Size Height</emphasis> sets the height of all selected objects
+the same as the reference height. The remaining operations work in a
+similar manner.
+</para>
+</listitem></itemizedlist>
+
+
+<para>Distribute Vertical, Horizontal, Midpoint Vertical, Midpoint Horizontal, 2D</para>
+
+<itemizedlist><listitem>
+<para>
+This operation uses the location of the first object selected as a reference
+location. The operation is then performed in the context of this reference.
+<emphasis>Distribute Vertical</emphasis> distributes all selected objects
+along an imaginary vertical line passing through the center of the
+reference object with equal space between the edges of successive objects.
+<emphasis>Distribute Midpoint Vertical</emphasis> distributes all selected
+objects along an imaginary vertical line passing through the center of the
+reference object with equal space between the midpoints of successive objects.
+<emphasis>Distribute Horizontal</emphasis> and
+<emphasis>Distribute Midpoint Horizontal</emphasis> work in a similar fashion.
+<emphasis>Distribute 2D</emphasis> does not use a reference location. Instead,
+all selected objects are distributed in a row/column format using the smallest
+imaginary box that would contain all selected objects. The objects are
+distributed with equal space between the edges of successive objects.
+</para>
+</listitem></itemizedlist>
+
+
+
+</sect1>
+
+
+
+
+<sect1>
+<title>Miscellaneous Operations</title>
+
+<para>
+Other operations that may be performed from the display window menus are
+listed below.
+</para>
+
+
+
+
+
+<para>Execute</para>
+
+<itemizedlist><listitem>
+<para>
+Put display in execute mode. This is discussed at greater length in a
+later section of this document.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Save</para>
+
+<itemizedlist><listitem>
+<para>
+Save current display using existing file name.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Save As...</para>
+
+<itemizedlist><listitem>
+<para>
+Save current display using specified file name (file might not yet exist).
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Save To Current Path</para>
+
+<itemizedlist><listitem>
+<para>
+Save current display to last directory specified by
+<emphasis>path</emphasis> menu item. This enables a
+read-only display to be saved into a directory in which
+write access is permitted.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Select All</para>
+
+<itemizedlist><listitem>
+<para>
+Select all objects on the display.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Copy</para>
+
+<itemizedlist><listitem>
+<para>
+Copy all selected objects to the clipboard.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Cut</para>
+
+<itemizedlist><listitem>
+<para>
+Cut all selected objects to the clipboard.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Paste</para>
+
+<itemizedlist><listitem>
+<para>
+Paste objects in the clipboard to the current display using the current
+mouse location. Objects may be copied from one display window and pasted
+into another that is managed by the same edm process.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Paste in Place</para>
+
+<itemizedlist><listitem>
+<para>
+Paste in the clipboard to the current display using the exact location
+of the original copied objects. This is usually used in conjunction
+with the <emphasis>Orthogonal Move</emphasis> mode to create arrays
+of objects that are being manually aligned.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Close</para>
+
+<itemizedlist><listitem>
+<para>
+Close the current display window.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Open...</para>
+
+<itemizedlist><listitem>
+<para>
+Open a new display file and create a new window.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Load Display Scheme...</para>
+
+<itemizedlist><listitem>
+<para>
+Load a new display scheme file (which changes the display attribute
+colors and fonts).
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Save Display Scheme...</para>
+
+<itemizedlist><listitem>
+<para>
+Save current display colors and fonts as a display scheme file.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Edit Outliers</para>
+
+<itemizedlist><listitem>
+<para>
+Find widgets located outside the dimensions of the curreny display
+window and edit the first one found.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Find Main Window</para>
+
+<itemizedlist><listitem>
+<para>
+Find, deiconify if necessary, and raise the edm main window. Some window
+managers iconify the window if it is currently on the desktop so this
+operation may have to be performed twice.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Refresh</para>
+
+<itemizedlist><listitem>
+<para>
+Redraw entire contents of display window.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Help</para>
+
+<itemizedlist><listitem>
+<para>
+Launch online help.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Raise</para>
+
+<itemizedlist><listitem>
+<para>
+Raise stacking order of object(s) above all other objects.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Lower</para>
+
+<itemizedlist><listitem>
+<para>
+Lower stacking order of object(s) below all other objects.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Group</para>
+
+<itemizedlist><listitem>
+<para>
+Group all selected objects into a single composite object.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Ungroup</para>
+
+<itemizedlist><listitem>
+<para>
+Ungroup a composite object.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Rotate Clockwise</para>
+
+<itemizedlist><listitem>
+<programlisting>
+*******             *************
+*                          *    *
+*                          *    *
+*****    becomes           *    *
+*                               *
+*
+*
+</programlisting>
+<para>
+Not all objects may be rotated.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Rotate Counterclockwise</para>
+
+<itemizedlist><listitem>
+<programlisting>
+*******
+*
+*                   *
+*****    becomes    *    *
+*                   *    *
+*                   *    *
+*                   *************
+</programlisting>
+<para>
+Not all objects may be rotated.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Flip Horizontally</para>
+
+<itemizedlist><listitem>
+<programlisting>
+*******             *******
+*                         *
+*                         *
+******    becomes    ******
+*                         *
+*                         *
+*******             *******
+</programlisting>
+<para>
+Not all objects may be flipped.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Flip Vertically</para>
+
+<itemizedlist><listitem>
+<programlisting>
+*     *             *******
+*     *             *     *
+*     *             *     *
+*     *    becomes  *     *
+*     *             *     *
+*     *             *     *
+*******             *     *
+</programlisting>
+<para>
+Not all objects may be flipped.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Edit Display Info</para>
+
+<itemizedlist><listitem>
+<para>
+Calls up a dialog box in which color and font information
+may be modified for all selected objects.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Edit PV Names</para>
+
+<itemizedlist><listitem>
+<para>
+Calls up a dialog box in which PV names
+may be modified for all selected objects.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+<para>Deselect</para>
+
+<itemizedlist><listitem>
+<para>
+Deselects all selected objects.
+</para>
+</listitem></itemizedlist>
+
+
+
+
+</sect1>
+
+
+
+
+<sect1>
+<title>Creating and Using Displays as Templates</title>
+
+<para>
+For version 1-12-9 and above, any display file may be used as a template that
+can be inserted into another display being edited. During the insert operation,
+the user is prompted to enter the value of various template paramters if any
+have been defined.
+</para>
+
+<para>
+To create a template, create a display as you would normally. Widget attributes
+that allow macro substitution are candidates for becoming template parameters.
+Say, for example, that you create a template display with one analog control,
+one analog readback, one binary control, and one binary readback. These might
+be named $(devicePv):Control, $(devicePv):Readback, $(devicePv):OnOffControl,
+and $(devicePv):OnOffReadback. Obviously, in this example, devicePv is a
+reasonable choice for a template parameter. To make it so, open the display
+properties dialog and click on the Template Params button at the bottom.
+This opens another dialog into which you
+may enter a number of template parameters. For this example, one parameter
+would be entered using the value <emphasis>devicePv</emphasis>. After entering
+the parameter values, the display may be saved in some appropriate template
+directory.
+</para>
+
+<para>
+To use the template during an edit session, choose "Insert File As Template..."
+from the context menu of the display window (no widgets may be selected). A
+file select dialog opens (using the current path value) from which the template
+display file may be selected. After selection, if template parameters have
+been defined, a dialog opens into which template parameter values are entered.
+When the dialog is closed by clicking OK, the template display file contents
+are inserted into the current display window with the corresponding
+substitution of parameter values.
+</para>
+
+</sect1>
+
+
+
+</chapter>
+
+
+
+
+<chapter id="Display-Execution">
+<title>Display Execution</title>
+
+<para>
+To execute a newly created edm display window or one that has been opened
+in edit mode, make sure no widgets are selected and then
+middle-click on an edm display background. Select the
+<emphasis>Execute</emphasis> menu item.
+</para>
+
+<para>
+In execute mode, edm connects to all PVs, creates and renders display widgets,
+and presents a live update of all text and graphics content, changing displayed
+values, colors, and images as the values of associated PVs change.
+</para>
+
+<para>
+If edm is executed with the <emphasis>-x</emphasis> option, all display
+windows are opened in execute mode by default. Furthermore, if the
+<emphasis>-noedit</emphasis> option is specified, windows may not be
+deactivated and placed in edit mode and new display windows may not be created.
+</para>
+
+</chapter>
+
+
+
+
+<chapter id="Macro-Symbols-and-Values">
+<title>Macro Symbols and Values</title>
+
+<para>
+When edm is executed, a list of <emphasis>symbol=value</emphasis> pairs may
+be entered from the command line as follows:
+</para>
+
+<programlisting>
+  edm -m "sym1=val1,sym2=val2,sym3=val3..."
+</programlisting>
+
+<para>
+The following is also possible:
+</para>
+
+<programlisting>
+  edm -m "sym1=`caget -t pvname`,sym2=`ls *.tst`,sym3=val3..."
+</programlisting>
+
+<para>
+Note the following when a script or executable is used to assign a value to a symbol:
+</para>
+
+<itemizedlist>
+
+<listitem><para>
+Only the first line of output is read from the script and the trailing newline is stripped.
+</para></listitem>
+
+<listitem><para>
+This is an EXPENSIVE synchronous operation and should therefore be used with care. Input filters should be used where many external objects are being evaluated to generate dynamic content.
+</para></listitem>
+
+</itemizedlist>
+
+<para>
+These symbols may be referenced in the specification of certain object
+properties by embedding a reference like
+</para>
+
+<programlisting>
+  $(symbol)
+</programlisting>
+
+<para>
+into the property value string. A simple example will illustrate this.
+</para>
+
+<para>
+Suppose edm was started as
+</para>
+
+<programlisting>
+   edm -m "1=one"
+</programlisting>
+
+<para>
+This associates the value <emphasis>one</emphasis> with symbol
+<emphasis>1</emphasis>. Now if an object property is specified as
+</para>
+
+<programlisting>
+   $(1)_two_three
+</programlisting>
+
+<para>
+then, in execute mode, the property value would be expanded to
+<emphasis>one_two_three</emphasis>. Multiplexor objects can also affect the
+value of symbols in execute mode and related display objects can pass
+new symbols to child display windows.
+</para>
+
+<para>
+Symbols are used to parameterize PV names and widget labels to build
+a single template display window, multiple instances of which may be used in
+systems containing arrays of similar subsystems.
+</para>
+
+</chapter>
+
+
+
+<chapter id="Internal-Symbols">
+<title>Internal Symbols</title>
+
+<para>
+A set of internal symbols may be used by the related display widget and
+the shell command widget. The related display widget may assign internal
+symbol values to child macro arguments. The shell command widget may
+likewise include internal symbols references in the shell command contents.
+</para>
+
+<para>
+For example, one internal symbol is &lt;DSPNAME&gt; which translates to the
+X Window display name.
+</para>
+
+<para>
+The related display widget might include the following in the contents
+of the <emphasis>macros</emphasis> field:
+
+<programlisting>
+  Dsp=&lt;DSPNAME&gt;
+</programlisting>
+
+</para>
+
+<para>
+The shell command widget might include the following in the contents
+of the <emphasis>shell command</emphasis> field:
+
+<programlisting>
+  xterm -display &lt;DSPNAME&gt;
+</programlisting>
+
+</para>
+
+<para>
+The list of internal symbols are given below.
+</para>
+
+
+<para>&lt;WINID&gt;</para>
+
+    <para>
+    The X Window ID - this is something you might use as shown below:
+    <programlisting>
+xwd -id &lt;WINID&gt;
+    </programlisting>
+    </para>
+
+
+  <para>&lt;TITLE&gt;</para>
+
+    <para>
+    Title of the edm display
+    </para>
+
+
+  <para>&lt;HELPDIR&gt;</para>
+
+    <para>
+    edm help file directory
+    </para>
+
+
+  <para>&lt;DSPNAME&gt;</para>
+
+    <para>
+    X Window display name
+    </para>
+
+
+  <para>&lt;DSPID&gt;</para>
+
+    <para>
+    X Window display name with each "." translated to a "-" (host:0.1 becomes host:0-1)
+    </para>
+
+
+  <para>&lt;env:<emphasis>environment-variable-name&gt;</emphasis></para>
+
+    <para>
+    The contents of the associated environment variable
+    <programlisting>
+for example, &lt;env:OSTYPE&gt; might translate to Linux
+    </programlisting>
+    </para>
+
+  <para>&lt;val:<emphasis>pv-name&gt;</emphasis></para>
+
+    <para>
+    The value of the associated pv
+    <programlisting>
+for example, &lt;val:LOC\s1=d:2&gt; would translate to the current
+value of LOC\s1
+
+Note that, for EPICS pvs, this will only work if an active connection
+to the pv already exists
+    </programlisting>
+    </para>
+
+
+</chapter>
+
+
+<chapter id="EDM-and-CVS">
+<title>EDM and CVS</title>
+
+<para>
+EDM will display an embedded CVS revision in the title bar after the
+file name. The CVS revision is contained in the file comment area and
+is specified as shown in the following example:
+</para>
+
+<programlisting>
+# $Revision$
+</programlisting>
+
+<para>
+This may initially be given as
+</para>
+
+<programlisting>
+# $Revision$
+</programlisting>
+
+<para>
+CVS will expand this form to the one above it after a commit operation
+is performed.
+</para>
+
+<para>
+An edm comment template file may be utilized to insert comments into an
+edl file when the file is saved by setting the environment variable
+EDMCOMMENTS to the path of the template file. This provides a method
+for automatically inserting the CVS <emphasis>Revision</emphasis> symbol
+into edl files when they are created. So that the template file comments
+are inserted only once, edm prepends the following line to the comment
+block:
+</para>
+
+<programlisting>
+# &lt;&lt;&lt;edm-generated-comments&gt;&gt;&gt;
+</programlisting>
+
+</chapter>
+
+
+<chapter id="remote-file-access">
+<title>Remote File Access</title>
+
+<sect1>
+<title>
+Introduction
+</title>
+
+<para>
+It is possible to run edm on a local cpu (e.g. from home) and access edl
+files and some configuration files remotely (e.g. at work) from a web server.
+If the associated EPICS PVs are
+accessible through a channel access gateway, edm may be employed to
+monitor/troubleshoot a live production system from a remote location.
+</para>
+
+<para>
+This has been implemented in rather simple-minded manner to accommodate
+a single user running edm from home in a technical support activity. If
+more than one user is using the same local cpu to run edm in this manner,
+each must set the environment variable EDMTMPFILES to a unique value.
+</para>
+
+<para>
+When edm access a file remotely, it merely writes a file with the same name
+in the current temporary-file directory. For version 1-12-26 and greater,
+these temporary files are used as remote access cache. Cache expiration
+defaults to 5 seconds and may be altered by setting the environment variable
+EDMEXPIRECACHE.
+</para>
+
+<para>
+For the bash shell:
+</para>
+
+
+<programlisting>
+  export EDMEXPIRECACHE=1
+</programlisting>
+
+<para>
+sets the cache expiration to 1 second.
+</para>
+
+<programlisting>
+  export EDMEXPIRECACHE=DISABLE
+</programlisting>
+
+<para>
+disables the cache which may be necessary if a screen references files
+with the same name from different directories.
+</para>
+
+<para>
+You may control the permissions of temporary files using the environment
+variable EDMTMPUMASK.
+</para>
+
+<para>
+==========================================================
+</para>
+
+<para>
+BY DEFAULT EDM DOES NOT HAVE REMOTE FILE ACCESS CAPABILITY.
+</para>
+
+<para>
+==========================================================
+</para>
+
+<para>
+To verify the capability of a particular build instance, set the environment
+variable EDMDEBUGMODE to 1 and run edm. If remote file access is turned on
+the following will be displayed on stdout
+</para>
+
+<programlisting>
+Using curl for URL-based access
+</programlisting>
+
+<para>
+If not, you will see
+</para>
+
+<programlisting>
+Using local access only
+</programlisting>
+
+<para>
+To turn on remote file access, you must edit Makefile.Host in
+$EPICS_EXTENSIONS/src/edm/lib. In addition, curl must be installed
+on the build host and libcurl.so must be accessible.
+</para>
+
+<programlisting>
+For a linux build, add "-DUSECURL" to the line starting with
+
+  USR_CXXFLAGS_Linux +=
+
+and add "curl" to the line starting with
+
+  USR_LIBS_Linux =
+
+for example, change
+
+  USR_CXXFLAGS_Linux += -Wall -D__linux__ -D_BSD_SOURCE \
+  -DSINGLE_THREADED=1 -D__epics__=1
+
+  USR_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl
+
+to
+
+  USR_CXXFLAGS_Linux += -Wall -DUSECURL -D__linux__ -D_BSD_SOURCE \
+  -DSINGLE_THREADED=1 -D__epics__=1
+
+  USR_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl curl
+
+</programlisting>
+
+<para>
+After making this change, cd back to $EPICS_EXTENSIONS/src/edm and do
+</para>
+
+<programlisting>
+make clean
+
+make
+</programlisting>
+
+</sect1>
+
+<sect1>
+<title>
+Example Configurations
+</title>
+
+<para>
+There are two ways to access remote files. The first is the most simple and
+makes it possible to add a remote location to the normal search paths. The
+second replaces the entire file access environment and facilitates the case
+where edm is being run from home, for example, to perform remote diagnostic
+activities.
+</para>
+
+<sect2>
+<title>
+Example 1 - Simple Remote Access
+</title>
+
+<para>
+One way of accessing edl files on a remote http server is simply by adding
+a URL to the environment EDMDATAFILES. This works for EDMFILES too, but EDMFILES
+points to a single location.
+</para>
+
+<para>
+For example, setting EDMDATAFILES as show below
+</para>
+
+<para>
+export EDMDATAFILES=/top/one:/top/two:http://remoteNode/remoteTop/one
+</para>
+
+<para>
+results in the following locations being searched when a file open is attempted:
+</para>
+
+<programlisting>
+  /top/one
+
+  /top/two
+
+  http://remoteNode/remoteTop/one
+</programlisting>
+
+</sect2>
+
+<sect2>
+<title>
+Example 2 - Remote File Access Only
+</title>
+
+<para>
+In this example, file access is exclusively remote and local access
+is possible only by including the "file://" prefix in some URL.
+</para>
+
+<para>
+Given:
+</para>
+
+<programlisting>
+The files colors.list and fonts.list accessible via web server from
+http://www.webserver.com/files/
+
+Several edl files accessible via web server from
+http://www.webserver.com/edlFiles/
+
+Help files accessible via web server from
+http://www.webserver.com/helpFiles/
+
+Local edm print definition file is /edm/edmPrintDef
+
+Local collection of .edl files in /edm/localEdlFiles
+</programlisting>
+
+<para>
+Define the following environment variables as shown below (bash syntax shown).
+</para>
+
+<programlisting>
+export EDMHTTPDOCROOT="http://www.webserver.com|file:///"
+
+export EDMFILES=/files
+
+export EDMDATAFILES=/edlFiles:/edm/localEdlFiles
+
+export EDMHELPFILES=/helpFiles
+
+export EDMPRINTDEF=/edm/edmPrintDef
+</programlisting>
+
+<para>
+When edm is executed, locations are searched for .edl files in the following
+order:
+</para>
+
+<programlisting>
+1) http://www.webserver.com/edlFiles
+
+2) /edlFiles
+
+3) http://www.webserver.com/edm/localEdlFiles
+
+4) /edm/localEdlFiles
+</programlisting>
+
+<para>
+If you have trouble, set the environment variable EDMDEBUGMODE to 1 and
+run edm once again. You may thus observe server, directory, and file names
+as edm searches for valid data sources.
+</para>
+
+<para>
+When edm is run in this manner, performing interactive file open
+operations will result in some directories being invalid. The file
+selection box does not support remote access.
+</para>
+
+<para>
+Note that local access also requires a URL-based name, hence the second
+document root specification
+</para>
+
+<programlisting>
+  file:///
+</programlisting>
+
+<para>
+Many web servers may be employed in this scheme. The
+environment variable EDMHTTPDOCROOT is a list of locations separated
+by the "|" character. The following example is legal:
+</para>
+
+<programlisting>
+export EDMHTTPDOCROOT="http://web1.com|http://web2.com|http://web3.com"
+</programlisting>
+
+</sect2>
+
+</sect1>
+
+</chapter>
+
+
+<chapter id="input-filters">
+<title>Input Filters</title>
+
+<sect1>
+<title>
+Introduction
+</title>
+
+<para>
+In version 1-10-0p of edm, an input file filter mechanism was added which
+enables edm to read foreign display files. Configuration
+of this facility involves the following steps:
+</para>
+
+<itemizedlist>
+
+<listitem><para>
+Create and populate the file named edmFilters
+</para></listitem>
+
+<listitem><para>
+Define the environment variable EDMFILTERS to point to the directory
+in which edmFilters resides
+</para></listitem>
+
+<listitem><para>
+Create or obtain an executable that performs the conversion from
+the foreign file to an edm compatible file
+</para></listitem>
+
+</itemizedlist>
+
+</sect1>
+
+<sect1>
+<title>
+File Format for edmFilters
+</title>
+
+<para>
+The edmFilters file may contain multiple entries, one per line for each
+file extension type. Comment and blank lines are not currently allowed.
+</para>
+
+<para>
+One entry in edmFilters contains the foreign file extension and the conversion
+command with its arguments. The input file name is given as the symbol %f
+which is replaced by the actual name at run-time.
+</para>
+
+<programlisting>
+Example:
+
+.adl adl2edl -rgb %f
+.xml xml2edl %f
+</programlisting>
+
+<para>
+In the preceeding, both adl2edl and xml2edl are assumed to reside within
+the execution path.
+</para>
+
+</sect1>
+
+<sect1>
+<title>
+Executable Requirements
+</title>
+
+<para>
+The executable must accept the input file name on the command line and must
+send its output to stdout. Error messages should be written to stderr or
+to a file.
+</para>
+
+</sect1>
+
+</chapter>
+
+
+
+
+
+
+
+<chapter id="pv-actions">
+<title>PV Actions</title>
+
+<sect1>
+<title>
+Introduction
+</title>
+
+<para>
+Actions are related processes that are executed from edm. Parameters such as
+the pv name and display name may be passed to the process as command line
+arguments.
+</para>
+
+<para>
+Moving the mouse over an edm widget and clicking the ctrl-middle button
+brings up an action menu. Selecting a menu item causes that action to be
+performed.
+</para>
+
+<para>
+To enable this facility, do the following:
+</para>
+
+<itemizedlist>
+
+<listitem><para>
+Create and populate the file named edmActions
+</para></listitem>
+
+<listitem><para>
+Define the environment variable EDMACTIONS to point to the directory in which edmActions resides
+</para></listitem>
+
+</itemizedlist>
+
+</sect1>
+
+<sect1>
+<title>
+pvActions File Format
+</title>
+
+<para>
+Actions are specified one per line in the form action-name action-command.
+</para>
+
+<para>
+White space is not allowed in action-name; action-command may contain any
+amount of whitespace.
+</para>
+
+<programlisting>
+Example contents:
+
+Probe probe -display $(display) $(pv)
+StripTool /scripts/runStripTool $(pv) $(display)
+</programlisting>
+
+<para>
+-------------------------------------------------
+</para>
+
+<programlisting>
+runStripTool script:
+
+#!/bin/bash
+
+uuid="`uuidgen`"
+f="/tmp/$uuid"
+echo "StripConfig 1.2" &gt; $f
+echo "Strip.Time.Timespan 300" &gt;&gt; $f
+echo "Strip.Time.NumSamples 7200" &gt;&gt; $f
+echo "Strip.Time.SampleInterval 1.000000" &gt;&gt; $f
+echo "Strip.Time.RefreshInterval 1.000000" &gt;&gt; $f
+echo "Strip.Color.Background 65535 65535 65535 " &gt;&gt; $f
+echo "Strip.Color.Foreground 0 0 0 " &gt;&gt; $f
+echo "Strip.Color.Grid 49087 49087 49087 " &gt;&gt; $f
+echo "Strip.Color.Color1 0 0 65535 " &gt;&gt; $f
+echo "Strip.Color.Color2 27499 36494 8995 " &gt;&gt; $f
+echo "Strip.Color.Color3 42405 10794 10794 " &gt;&gt; $f
+echo "Strip.Color.Color4 24415 40606 41120 " &gt;&gt; $f
+echo "Strip.Color.Color5 65535 42405 0 " &gt;&gt; $f
+echo "Strip.Color.Color6 41120 8224 61680 " &gt;&gt; $f
+echo "Strip.Color.Color7 65535 0 0 " &gt;&gt; $f
+echo "Strip.Color.Color8 65535 55255 0 " &gt;&gt; $f
+echo "Strip.Color.Color9 48316 36751 36751 " &gt;&gt; $f
+echo "Strip.Color.Color10 39578 52685 12850 " &gt;&gt; $f
+echo "Strip.Option.GridXon 1" &gt;&gt; $f
+echo "Strip.Option.GridYon 1" &gt;&gt; $f
+echo "Strip.Option.AxisYcolorStat 1" &gt;&gt; $f
+echo "Strip.Option.GraphLineWidth 2" &gt;&gt; $f
+echo "Strip.Curve.0.Name ${1}" &gt;&gt; $f
+echo "Strip.Curve.0.Min `caget -t ${1}.LOPR`" &gt;&gt; $f
+echo "Strip.Curve.0.Max `caget -t ${1}.HOPR`" &gt;&gt; $f
+echo "Strip.Curve.0.Scale 0" &gt;&gt; $f
+echo "Strip.Curve.0.PlotStatus 1" &gt;&gt; $f
+
+StripTool $f
+
+rm $f
+</programlisting>
+
+</sect1>
+
+</chapter>
+
+
+<chapter id="pv-put-logging">
+<title>PV Put Logging</title>
+
+<sect1>
+<title>
+Introduction
+</title>
+
+<para>
+The ability to log EPICS PV writes from edm widgets is avalaible in
+version 1-11-1o and above. Two procedures are given below to illustrate
+how logging may be enabled. When enabled, edm writes information to a
+pipe on each EPICS put. For a local connection, this produces something
+like
+</para>
+
+<programlisting>
+user="sinclair" host="edmhost" dsp=":0.0" name="sinclairHost:ao0"...
+... old="0.000000" new="1.000000"
+</programlisting>
+
+<para>
+For a remote ssh connection (remote host 192.168.1.1, local host is 192.168.1.2)
+</para>
+
+<programlisting>
+user="sinclair" host="edmhost" ssh="::ffff:192.168.1.1 39719 ::ffff:192.168.1.2 22"...
+... dsp=":10.0" name="sinclairHost:ao0" old="0.000000" new="1.000000"
+</programlisting>
+
+<para>
+You must write an application that reads stdin, parses the above information, and writes
+to your log (file, db, etc.). During development/debugging, you may use cat or tee.
+</para>
+
+</sect1>
+
+<sect1>
+<title>
+Logging all PVs by default
+</title>
+
+<itemizedlist>
+
+<listitem>
+<para>Set environment variable EDMCLEAREPICSDEFAULT to 1 (this
+accommodates potentially incompatible content in old screen files)</para>
+</listitem>
+
+<listitem>
+<para>Set environment variable EDMPUTLOGGER to the location of your logger application
+(cat will write the raw information to stdout, tee will write to a file and stdout)</para>
+<programlisting>For example:
+export EDMPUTLOGGER=cat
+  or
+export EDMPUTLOGGER="tee log.out"
+</programlisting>
+</listitem>
+
+<listitem>
+<para>Make the default pv type "LOG" in the file edmPvObjects</para>
+<para>For example, for the following edmPvobjects file contents,
+change</para>
+<programlisting>3
+EPICS /someLocation/libEpics.so EPICS PV
+LOC /someLocation/libLoc.so Local PV
+CALC /someLocation/libCalc.so Calculation PV</programlisting>
+to
+<programlisting>4
+LOG /someLocation/libLog.so LOG PV
+EPICS /someLocation/libEpics.so EPICS PV
+LOC /someLocation/libLoc.so Local PV
+CALC /someLocation/libCalc.so Calculation PV</programlisting>
+</listitem>
+
+<listitem>
+<para>All EPICS PVs with names containing no explicit type will be logged with this configuration.
+EPICS PVs named EPICS\pvname will not be logged.</para>
+</listitem>
+
+</itemizedlist>
+
+</sect1>
+
+
+<sect1>
+<title>
+Logging specified PVs
+</title>
+
+<itemizedlist>
+
+<listitem>
+<para>Set environment variable EDMPUTLOGGER to the location of your logger application
+(cat will write the raw information to stdout, tee will write to a file and stdout)</para>
+<programlisting>For example:
+export EDMPUTLOGGER=cat
+  or
+export EDMPUTLOGGER="tee log.out"
+</programlisting>
+</listitem>
+
+<listitem>
+<para>Add the "LOG" pv type to the file edmPvObjects but retain "EPICS"
+as the default type</para>
+<para>For example, for the following edmPvobjects file contents,
+change</para>
+<programlisting>3
+EPICS /someLocation/libEpics.so EPICS PV
+LOC /someLocation/libLoc.so Local PV
+CALC /someLocation/libCalc.so Calculation PV</programlisting>
+to
+<programlisting>4
+EPICS /someLocation/libEpics.so EPICS PV
+LOG /someLocation/libLog.so LOG PV
+LOC /someLocation/libLoc.so Local PV
+CALC /someLocation/libCalc.so Calculation PV</programlisting>
+</listitem>
+
+<listitem>
+<para>EPICS PVs with names containing no explicit type will not be logged with this configuration.
+PVs named LOG\pvname will be logged.</para>
+</listitem>
+
+</itemizedlist>
+
+<para>
+
+</para>
+
+</sect1>
+
+
+</chapter>
+
+
+</book>
