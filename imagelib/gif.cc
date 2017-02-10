@@ -16,6 +16,14 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+#if GIFLIB_MAJOR > 5 || GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1
+  #define GIF_CLOSE_FILE(gif) DGifCloseFile(gif, NULL)
+  #define GIF_OPEN_FILE(gif) DGifOpenFileName(gif, NULL)
+#else
+  #define GIF_CLOSE_FILE(gif) DGifCloseFile(gif)
+  #define GIF_OPEN_FILE(gif) DGifOpenFileName(gif)
+#endif
+
 void printErrMsg (
   const char *fileName,
   int lineNum,
@@ -431,7 +439,7 @@ struct sigaction sa, oldsa, dummysa;
   do {
     this->actWin->appCtx->expandFileName( i, name, expStr.getExpanded(),
      ".gif", 127 );
-    gif = DGifOpenFileName( name );
+    gif = GIF_OPEN_FILE( name );
     i++;
   } while ( ( i < actWin->appCtx->numPaths ) && !gif );
   if ( !gif ) {
@@ -887,7 +895,7 @@ struct sigaction sa, oldsa, dummysa;
 
   }
 
-  status = DGifCloseFile( gif );
+  status = GIF_CLOSE_FILE( gif );
 
   noFile = 0;
 
@@ -899,7 +907,7 @@ struct sigaction sa, oldsa, dummysa;
 
 error_return:
 
-  if ( fileOpened ) status = DGifCloseFile( gif );
+  if ( fileOpened ) status = GIF_CLOSE_FILE( gif );
 
 sig_error_return:
 
