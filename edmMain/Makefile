@@ -8,6 +8,8 @@ ifdef EPICS_HOST_ARCH
    USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
    USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
 
+   USR_LDFLAGS_Linux += -Wl,--no-as-needed
+
    # Add Debugging
    #USR_CXXFLAGS_Linux += -g -O0
 
