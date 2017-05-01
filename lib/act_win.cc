@@ -4498,6 +4498,60 @@ activeGraphicListPtr curSel;
 
 }
 
+static void delete_items (
+  activeWindowClass *awo
+) {
+
+activeGraphicListPtr curSel, nextSel;
+
+  // remove nodes and put on cut list; if cur list is not
+  // empty then delete all nodes
+
+  // fprintf(stderr, "delete_items\n");
+  curSel = awo->selectedHead->selFlink;
+  if ( curSel == awo->selectedHead ) return;
+
+  awo->undoObj.flush();
+
+  awo->setChanged();
+
+  // remove nodes off select list
+  curSel = awo->selectedHead->selFlink;
+  while ( curSel != awo->selectedHead ) {
+    nextSel = curSel->selFlink;
+    // if on the blink list, remove
+    if ( curSel->node->blink() ) {
+      awo->ci->removeFromBlinkList( (void *) curSel->node,
+       curSel->node->blinkFunction() );
+      curSel->node->setNotBlink();
+    }
+
+    curSel->node->eraseSelectBoxCorners();
+    curSel->node->erase();
+
+    // deselect
+    curSel->node->deselect();
+
+    // remove from list
+    curSel->blink->flink = curSel->flink;
+    curSel->flink->blink = curSel->blink;
+    // delete
+    delete curSel->node;
+    delete curSel;
+
+    curSel = nextSel;
+
+  }
+
+  // make selected list empty
+  awo->selectedHead->selFlink = awo->selectedHead;
+  awo->selectedHead->selBlink = awo->selectedHead;
+
+  awo->state = AWC_NONE_SELECTED;
+  awo->updateMasterSelection();
+
+}
+
 static void cut (
   activeWindowClass *awo )
 {
@@ -8012,6 +8066,10 @@ Boolean  nothingDone = False;
     }
     else if ( key == XK_x ) {
       cut( awo );
+      awo->refresh();
+    }
+    else if ( key == XK_Delete) {
+      delete_items ( awo );
       awo->refresh();
     }
     else if ( key == XK_c ) {

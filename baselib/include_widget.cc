@@ -923,8 +923,7 @@ char title[32], *ptr;
   fileEntry->addDependency( drawFrameEntry );
   fileEntry->addDependencyCallbacks();
 
-
-  ef.addTextField( includeWidgetClass_str49, 35, buf->bufHelpCommand, 255 );
+  //ef.addTextField( includeWidgetClass_str49, 35, buf->bufHelpCommand, 255 );
 
   return 1;
 

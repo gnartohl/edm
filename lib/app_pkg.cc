@@ -2277,7 +2277,8 @@ void exec_config_load (
     if (*line == '#') continue;
     int len = strlen(line);
     *(line+len) = '\0';
-    int n = sscanf(line, "%s x=%d y=%d scale=%f %s", edlname, &x, &y, &scale, macros );
+    //int n = sscanf(line, "%s x=%d y=%d scale=%f %s", edlname, &x, &y, &scale, macros );
+    int n = sscanf(line, "%s x=%d y=%d scale=%f %[^\n]", edlname, &x, &y, &scale, macros );
     if (n < 4) continue;      // not enough info in file
     parseSymbolsAndValues( macros, 100, newMacros, newValues, &nmacros );
     if (!apco->getScreenAdd()) {
