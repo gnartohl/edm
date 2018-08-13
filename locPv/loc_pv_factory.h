@@ -47,7 +47,6 @@ public:
     int         get_int() const;
     double      get_double() const;
     size_t      get_string(char *strbuf, size_t buflen) const;
-    size_t      get_dimension() const;
     const char   *get_char_array() const;
     const short *get_short_array() const;
     const int    *get_int_array() const;

@@ -245,6 +245,8 @@ ProcessVariable::ProcessVariable(const char *_name)
     refcount = 1;
     numTimesConnected = numTimesDisconnected = numValueChangeEvents = 0;
     nodeName = NULL;
+    curEleCount = 1;
+    
 }
 
 ProcessVariable::~ProcessVariable()

@@ -221,8 +221,10 @@ public:
     // For scalars, get_dimension() returns 1
     // (In the future, something like get_dimension(int i) might be support
     //  multi-dim. arrays.)
-    virtual size_t      get_dimension() const = 0;
-
+    virtual size_t      get_dimension() const { return 1; }
+    virtual size_t      get_count() const { return curEleCount; }
+    virtual void        put_count( size_t curCount ) { curEleCount = curCount; }
+  
     // Use this when get_specific_type().type == chr
     virtual const char   *get_char_array() const = 0;
     // Use this when get_specific_type().type == shrt
@@ -301,6 +303,7 @@ private:
     int numTimesDisconnected;
     int numValueChangeEvents;
     char *nodeName;
+    size_t curEleCount;
 };
 
 // ------------- Inlines -----------------------------------------------

@@ -82,7 +82,6 @@ public:
     const Type &get_type() const;
     const specificType &get_specific_type() const;
     double get_double() const;
-    size_t get_dimension() const;
     const char *get_char_array() const;
     const short *get_short_array() const;
     const int *get_int_array() const;

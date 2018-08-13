@@ -453,6 +453,7 @@ void PROXY_ProcessVariable::ca_value_callback(struct event_handler_args args)
 
     if (args.status == ECA_NORMAL  &&  args.dbr)
     {
+        me->put_count( (size_t) args.count );
         me->value->read_value(args.dbr);
     }
 

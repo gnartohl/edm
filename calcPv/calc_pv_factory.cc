@@ -1500,9 +1500,6 @@ const ProcessVariable::specificType &CALC_ProcessVariable::get_specific_type() c
 double CALC_ProcessVariable::get_double() const
 {   return value; }
 
-size_t CALC_ProcessVariable::get_dimension() const
-{   return 1; }
-
 const char *CALC_ProcessVariable::get_char_array() const
 {   return 0; }
 

@@ -284,11 +284,11 @@ edmTime base( (const unsigned long) ( xyo->curSec ),
       if ( (int) xyo->yPv[i]->get_dimension() > 1 ) {
 
         fprintf( tmp, "trace %-d (chronological) size = %-d\n",
-         i, (int) xyo->yPvCount[i] );
+                 i, (int) xyo->yPvEffCount(i) );
 
         fprintf( tmp, "index, %s\n", xyo->yPvExpStr[i].getExpanded() );
 
-        for ( n=0; n<xyo->yPvCount[i]; n++ ) {
+        for ( n=0; n<xyo->yPvEffCount(i); n++ ) {
 
           switch ( xyo->yPvType[i] ) {
           case ProcessVariable::specificType::flt:
@@ -448,14 +448,14 @@ edmTime base( (const unsigned long) ( xyo->curSec ),
            ( (int) xyo->xPv[i]->get_dimension() > 1 ) ) {
 
         fprintf( tmp, "trace %-d (x/y) x size = %-d, y size = %-d\n",
-         i, xyo->xPvCount[i], xyo->yPvCount[i] );
+                 i, xyo->xPvEffCount(i), xyo->yPvEffCount(i) );
 
         fprintf( tmp, "%s, %s\n", xyo->xPvExpStr[i].getExpanded(),
          xyo->yPvExpStr[i].getExpanded() );
 
-        size = xyo->yPvCount[i];
-        if ( size > xyo->xPvCount[i] ) {
-          size = xyo->xPvCount[i];
+        size = xyo->yPvEffCount(i);
+        if ( size > xyo->xPvEffCount(i) ) {
+          size = xyo->xPvEffCount(i);
         }
 
         for ( n=0; n<size; n++ ) {
@@ -1794,7 +1794,7 @@ int ctl;
 
       case XYGC_K_TRACE_XY:
 
-        if ( xyo->forceVector[i] || ( xyo->xPvCount[i] > 1 ) ) { // vector
+        if ( xyo->forceVector[i] || ( xyo->xPv[i]->get_dimension() > 1 ) ) { // vector
 
           xyo->yArrayNeedUpdate[i] = xyo->xArrayNeedUpdate[i] = 1;
           xyo->needVectorUpdate = 1;
@@ -2008,7 +2008,7 @@ int ctl;
 
       case XYGC_K_TRACE_CHRONOLOGICAL:
 
-        if ( xyo->forceVector[i] || ( xyo->yPvCount[i] > 1 ) ) { // vector
+        if ( xyo->forceVector[i] || ( xyo->yPv[i]->get_dimension() > 1 ) ) { // vector
 
           xyo->yArrayNeedUpdate[i] = xyo->xArrayNeedUpdate[i] = 1;
           xyo->needVectorUpdate = 1;
@@ -2195,11 +2195,11 @@ int ctl;
 
   case XYGC_K_TRACE_XY:
 
-    if ( xyo->forceVector[i] || ( xyo->xPvCount[i] > 1 ) ) { // vector
+    if ( xyo->forceVector[i] || ( xyo->xPv[i]->get_dimension() > 1 ) ) { // vector
 
-      for ( ii=0; ii<xyo->xPvCount[i]; ii++ ) {
+      for ( ii=0; ii<xyo->xPvEffCount( i ); ii++ ) {
 
-        if ( xyo->xPvCount[i] == 1 ) {
+        if ( xyo->xPv[i]->get_dimension() == 1 ) {
 
           // There are two views of pv types, Type and specificType; this uses
           // specificType
@@ -2757,11 +2757,11 @@ int ctl;
 
   case XYGC_K_TRACE_XY:
 
-    if ( xyo->forceVector[i] || ( xyo->yPvCount[i] > 1 ) ) { // vector
+    if ( xyo->forceVector[i] || ( xyo->yPv[i]->get_dimension() > 1 ) ) { // vector
 
-      for ( ii=0; ii<xyo->yPvCount[i]; ii++ ) {
+      for ( ii=0; ii<xyo->yPvEffCount( i ); ii++ ) {
 
-        if ( xyo->yPvCount[i] == 1 ) {
+        if ( xyo->yPv[i]->get_dimension() == 1 ) {
 
           // There are two views of pv types, Type and specificType; this uses
           // specificType
@@ -3235,11 +3235,11 @@ int ctl;
 
   case XYGC_K_TRACE_CHRONOLOGICAL:
 
-    if ( xyo->forceVector[i] || ( xyo->yPvCount[i] > 1 ) ) { // vector
+    if ( xyo->forceVector[i] || ( xyo->yPv[i]->get_dimension() > 1 ) ) { // vector
 
-      for ( ii=0; ii<xyo->yPvCount[i]; ii++ ) {
+      for ( ii=0; ii<xyo->yPvEffCount( i ); ii++ ) {
 
-        if ( xyo->yPvCount[i] == 1 ) {
+        if ( xyo->yPv[i]->get_dimension() == 1 ) {
 
           // There are two views of pv types, Type and specificType; this uses
           // specificType
@@ -4231,6 +4231,46 @@ xyGraphClass::~xyGraphClass ( void ) {
   if ( name ) delete[] name;
   if ( eBuf ) delete eBuf;
 
+}
+
+int xyGraphClass::yPvEffCount (
+ int i
+) {
+
+size_t cnt;
+  
+  cnt = yPv[i]->get_count();
+  
+  if ( nPv[i] ) {
+    if ( nPv[i]->is_valid() ) {
+      cnt = traceSize[i];
+      if ( cnt <= 0 ) cnt = yPv[i]->get_count();
+      if ( cnt > yPv[i]->get_count() ) cnt = yPv[i]->get_count();
+    }
+  }
+
+  return (int) cnt;
+  
+}
+
+int xyGraphClass::xPvEffCount (
+ int i
+) {
+
+size_t cnt;
+
+  cnt = xPv[i]->get_count();
+  
+  if ( nPv[i] ) {
+    if ( nPv[i]->is_valid() ) {
+      cnt = traceSize[i];
+      if ( cnt <= 0 ) cnt = xPv[i]->get_count();
+      if ( cnt > xPv[i]->get_count() ) cnt = xPv[i]->get_count();
+    }
+  }
+
+  return (int) cnt;
+  
 }
 
 int xyGraphClass::getDbXMinXMax (
@@ -6297,7 +6337,7 @@ int ctl;
   initPlotInfo( i );
   arrayNumPoints[i] = 0;
 
-  for ( ii=0; ii<yPvCount[i]; ii++ ) {
+  for ( ii=0; ii<yPvEffCount( i ); ii++ ) {
 
     // There are two views of pv types, Type and specificType; this uses
     // specificType
@@ -6548,7 +6588,7 @@ int ctl;
   }
 
   arrayHead[i] = 0;
-  arrayTail[i] = yPvCount[i];
+  arrayTail[i] = yPvEffCount( i );
   yArrayGotValue[i] = xArrayGotValue[i] = 0;
 
 }
@@ -6582,8 +6622,8 @@ int ctl;
   initPlotInfo( i );
   arrayNumPoints[i] = 0;
 
-  n = yPvCount[i];
-  if ( xPvCount[i] < n ) n = xPvCount[i];
+  n = yPvEffCount( i );
+  if ( xPvEffCount( i ) < n ) n = xPvEffCount( i );
 
   for ( ii=0; ii<n; ii++ ) {
 
@@ -7294,7 +7334,7 @@ int ctl;
 
     yArrayNeedUpdate[i] = xArrayNeedUpdate[i] = 0;
 
-    if ( forceVector[i] || ( yPvCount[i] > 1 ) ) { // vector
+    if ( forceVector[i] || ( yPv[i]->get_dimension() > 1 ) ) { // vector
 
       npts = fillVectorPlotArray( i );
 
@@ -9132,7 +9172,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         if ( yPv[i]->is_valid() ) {
 
           yPvType[i] = (int) yPv[i]->get_specific_type().type;
-          yPvCount[i] = (int) yPv[i]->get_dimension();
+          //yPvCount[i] = (int) yPv[i]->get_dimension();
+          yPvCount[i] = (int) yPv[i]->get_count();
           yPvDim[i] = (int) yPv[i]->get_dimension();
 
           if ( traceSize[i] < 0 ) traceSize[i] = 0;
@@ -9165,7 +9206,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         if ( xPv[i]->is_valid() ) {
 
           xPvType[i] = (int) xPv[i]->get_specific_type().type;
-          xPvCount[i] = (int) xPv[i]->get_dimension();
+          //xPvCount[i] = (int) xPv[i]->get_dimension();
+          xPvCount[i] = (int) xPv[i]->get_count();
           xPvDim[i] = (int) xPv[i]->get_dimension();
 
           if ( traceSize[i] < 0 ) traceSize[i] = 0;
@@ -9249,7 +9291,7 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
            ( ( plotStyle[i] == XYGC_K_PLOT_STYLE_LINE ) ||
              ( plotStyle[i] == XYGC_K_PLOT_STYLE_POINT ) ) &&
            ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) &&
-           ( !forceVector[i] && ( yPvCount[i] == 1 ) ) && // must be scalar; use y here,
+           ( !forceVector[i] && ( yPv[i]->get_dimension() == 1 ) ) && // must be scalar; use y here,
                                    // x is not used for chonological
            ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LINEAR ) ||
              ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) )
@@ -9302,12 +9344,13 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 
         if ( !yPvData[i] ) {
 
-          if ( forceVector[i] || ( yPvCount[i] > 1 ) ) { // vector
+          if ( forceVector[i] || ( yPv[i]->get_dimension() > 1 ) ) { // vector
 
             maxDim = yPvDim[i];
             if ( xPvDim[i] > maxDim ) maxDim = xPvDim[i];
 
             yPvData[i] = (void *) new char[yPvSize[i]+80];
+            for ( ii=0; ii<yPvSize[i]; ii++ ) ( (char *) yPvData[i] )[ii] = 0;
 
             size = (plotAreaX+plotAreaW)*4+10;
             if ( 3 * maxDim + 10 > size ) {
@@ -9342,6 +9385,7 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
             if ( bufferScrollSize < 1 ) bufferScrollSize = 1;
 
             yPvData[i] = (void *) new char[yPvSize[i]*(tmpC+10)];
+            for ( ii=0; ii<yPvSize[i]*(tmpC+10); ii++ ) ( (char *) yPvData[i] )[ii] = 0;
 
             size = (plotAreaX+plotAreaW)*4+10;
             if ( 2*tmpC+10 > size ) size = 2*tmpC+10;
@@ -9408,7 +9452,7 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
             }
           }
 
-          //if ( forceVector[i] || ( yPvCount[i] > 1 ) ) { // vector
+          //if ( forceVector[i] || ( yPv[i]->get_dimension() > 1 ) ) { // vector
 
           //  if ( initialYConnection[i] ) {
 
@@ -9446,7 +9490,7 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 
         if ( !xPvData[i] ) {
 
-          if ( forceVector[i] || ( xPvCount[i] > 1 ) ) { // vector
+          if ( forceVector[i] || ( xPv[i]->get_dimension() > 1 ) ) { // vector
 
             xPvData[i] = (void *) new char[xPvSize[i]+80];
 
@@ -9499,7 +9543,7 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         }
         else if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 
-          if ( forceVector[i] || ( yPvCount[i] > 1 ) ) { // vector
+          if ( forceVector[i] || ( yPv[i]->get_dimension() > 1 ) ) { // vector
 
             if ( initialYConnection[i] ) {
 
@@ -9588,7 +9632,7 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         xArrayNeedUpdate[i] = 1;
       }
 
-      if ( forceVector[i] || ( yPvCount[i] > 1 ) ) {
+      if ( forceVector[i] || ( yPv[i]->get_dimension() > 1 ) ) {
 
         if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 

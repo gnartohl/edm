@@ -439,13 +439,6 @@ size_t l = bufLen;
 
 }
 
-size_t LOC_ProcessVariable::get_dimension() const
-{
-
-  return 1;
-
-}
-
 const char *LOC_ProcessVariable::get_char_array() const
 {
 

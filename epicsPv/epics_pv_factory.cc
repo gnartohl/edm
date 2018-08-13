@@ -264,7 +264,7 @@ void EPICS_ProcessVariable::ca_ctrlinfo_callback(
     {
         int stat = ca_add_masked_array_event(me->value->get_DBR()+
                                              DBR_TIME_STRING,
-                                             me->get_dimension(),
+                                             0, //me->get_dimension(),
                                              me->pv_chid,
                                              ca_value_callback,
                                              (void *)me,
@@ -318,6 +318,7 @@ void EPICS_ProcessVariable::ca_value_callback(struct event_handler_args args)
 
     if (args.status == ECA_NORMAL  &&  args.dbr)
     {
+        me->put_count( (size_t) args.count );
         me->value->read_value(args.dbr);
     }
 

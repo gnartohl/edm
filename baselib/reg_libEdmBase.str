@@ -3,7 +3,7 @@
 
 #define reg_str2 (char *) "Lines"
 #define reg_str3 (char *) "Rectangle"
-#define reg_str4 (char *) "Circle"
+#define reg_str4 (char *) "Ellipse"
 #define reg_str5 (char *) "Arc"
 #define reg_str6 (char *) "Static Text"
 #define reg_str8 (char *) "Meter"
