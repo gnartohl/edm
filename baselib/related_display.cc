@@ -2332,7 +2332,7 @@ int relatedDisplayClass::activate (
   void *ptr )
 {
 
-int i, ii, opStat, n;
+int i, ii, n;
 Arg args[5];
 XmString str;
 
@@ -2393,8 +2393,6 @@ XmString str;
 
   case 3:
 
-    opStat = 1;
-
     if ( !singleOpComplete ) {
 
       if ( atLeastOneExists ) {
@@ -2420,14 +2418,14 @@ XmString str;
 	if ( colorPvId ) {
 	  colorPvId->add_conn_state_callback(
            relDsp_monitor_color_connect_state, (void *) this );
-          singleOpComplete = 1;
 	}
 	else {
           fprintf( stderr, relatedDisplayClass_str27 );
-          opStat = 0;
         }
 
       }
+
+      singleOpComplete = 1;
 
     }
 
@@ -2489,20 +2487,18 @@ XmString str;
 	  if ( destPvId[i] ) {
 	    destPvId[i]->add_conn_state_callback(
              relDsp_monitor_dest_connect_state, (void *) &objAndIndex[i] );
-            opComplete[i] = 1;
 	  }
 	  else {
             fprintf( stderr, relatedDisplayClass_str27 );
-            opStat = 0;
           }
 
         }
 
+        opComplete[i] = 1;
+
       }
 
     }
-
-    return opStat;
 
     break;
 
@@ -3579,6 +3575,41 @@ activeWindowListPtr cur;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
+  if ( nc ) {
+
+    if ( aw ) {
+
+      okToClose = 0;
+      // make sure the window was successfully opened
+      cur = actWin->appCtx->head->flink;
+      while ( cur != actWin->appCtx->head ) {
+        if ( &cur->node == aw ) {
+          okToClose = 1;
+          break;
+        }
+        cur = cur->flink;
+      }
+
+      if ( okToClose ) {
+        if ( aw->okToDeactivate() ) {
+          aw->returnToEdit( 1 );
+          aw = NULL;
+	}
+        else {
+          aw->closeDeferred( 20 );
+          aw = NULL;
+	}
+      }
+      else {
+        aw = NULL;
+      }
+
+    }
+
+  }
+
+  if ( !activeMode ) return;
+
   if ( ncon ) {
 
     init = 1;
@@ -3613,39 +3644,6 @@ activeWindowListPtr cur;
   if ( nr ) {
 
     smartDrawAllActive();
-
-  }
-
-  if ( nc ) {
-
-    if ( aw ) {
-
-      okToClose = 0;
-      // make sure the window was successfully opened
-      cur = actWin->appCtx->head->flink;
-      while ( cur != actWin->appCtx->head ) {
-        if ( &cur->node == aw ) {
-          okToClose = 1;
-          break;
-        }
-        cur = cur->flink;
-      }
-
-      if ( okToClose ) {
-        if ( aw->okToDeactivate() ) {
-          aw->returnToEdit( 1 );
-          aw = NULL;
-	}
-        else {
-          aw->closeDeferred( 20 );
-          aw = NULL;
-	}
-      }
-      else {
-        aw = NULL;
-      }
-
-    }
 
   }
 
