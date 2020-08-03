@@ -1,17 +1,88 @@
-3 0 0
-helvetica-medium-r-12.0
-helvetica-medium-r-18.0
+5 0 0
+courier-bold-r-12.0
+helvetica-bold-r-12.0
 
-helvetica={
--*-helvetica-(medium,bold)-(r,o)-normal--0-(80,100,120,140,180,240,320,480,720)-75-75-p-0-*-*
--*-helvetica-(medium,bold)-(r,o)-normal--*-(80,100,120,140,180,240,320,480,720)-75-75-p-*-*-*
+substitutions {
+
+-misc-liberation sans-bold-r-normal--0-80-75-75-p-0-*-*=-adobe-helvetica-bold-r-normal--*-80-75-75-p-*-*-*
+-misc-liberation sans-bold-i-normal--0-80-75-75-p-0-*-*=-adobe-helvetica-bold-o-normal--*-80-75-75-p-*-*-*
+-misc-liberation sans-medium-r-normal--0-80-75-75-p-0-*-*=-adobe-helvetica-medium-r-normal--*-80-75-75-p-*-*-*
+-misc-liberation sans-medium-i-normal--0-80-75-75-p-0-*-*=-adobe-helvetica-medium-o-normal--*-80-75-75-p-*-*-*
+
+-misc-liberation sans-bold-r-normal--0-100-75-75-p-0-*-*=-adobe-helvetica-bold-r-normal--*-100-75-75-p-*-*-*
+-misc-liberation sans-bold-i-normal--0-100-75-75-p-0-*-*=-adobe-helvetica-bold-o-normal--*-100-75-75-p-*-*-*
+-misc-liberation sans-medium-r-normal--0-100-75-75-p-0-*-*=-adobe-helvetica-medium-r-normal--*-100-75-75-p-*-*-*
+-misc-liberation sans-medium-i-normal--0-100-75-75-p-0-*-*=-adobe-helvetica-medium-o-normal--*-100-75-75-p-*-*-*
+
+-misc-liberation sans-bold-r-normal--0-120-75-75-p-0-*-*=-adobe-helvetica-bold-r-normal--*-120-75-75-p-*-*-*
+-misc-liberation sans-bold-i-normal--0-120-75-75-p-0-*-*=-adobe-helvetica-bold-o-normal--*-120-75-75-p-*-*-*
+-misc-liberation sans-medium-r-normal--0-120-75-75-p-0-*-*=-adobe-helvetica-medium-r-normal--*-120-75-75-p-*-*-*
+-misc-liberation sans-medium-i-normal--0-120-75-75-p-0-*-*=-adobe-helvetica-medium-o-normal--*-120-75-75-p-*-*-*
+
+-misc-liberation sans-bold-r-normal--0-140-75-75-p-0-*-*=-adobe-helvetica-bold-r-normal--*-140-75-75-p-*-*-*
+-misc-liberation sans-bold-i-normal--0-140-75-75-p-0-*-*=-adobe-helvetica-bold-o-normal--*-140-75-75-p-*-*-*
+-misc-liberation sans-medium-r-normal--0-140-75-75-p-0-*-*=-adobe-helvetica-medium-r-normal--*-140-75-75-p-*-*-*
+-misc-liberation sans-medium-i-normal--0-140-75-75-p-0-*-*=-adobe-helvetica-medium-o-normal--*-140-75-75-p-*-*-*
+
+-misc-liberation sans-bold-r-normal--0-180-75-75-p-0-*-*=-adobe-helvetica-bold-r-normal--*-180-75-75-p-*-*-*
+-misc-liberation sans-bold-i-normal--0-180-75-75-p-0-*-*=-adobe-helvetica-bold-o-normal--*-180-75-75-p-*-*-*
+-misc-liberation sans-medium-r-normal--0-180-75-75-p-0-*-*=-adobe-helvetica-medium-r-normal--*-180-75-75-p-*-*-*
+-misc-liberation sans-medium-i-normal--0-180-75-75-p-0-*-*=-adobe-helvetica-medium-o-normal--*-180-75-75-p-*-*-*
+
+-misc-liberation sans-bold-r-normal--0-240-75-75-p-0-*-*=-adobe-helvetica-bold-r-normal--*-240-75-75-p-*-*-*
+-misc-liberation sans-bold-i-normal--0-240-75-75-p-0-*-*=-adobe-helvetica-bold-o-normal--*-240-75-75-p-*-*-*
+-misc-liberation sans-medium-r-normal--0-240-75-75-p-0-*-*=-adobe-helvetica-medium-r-normal--*-240-75-75-p-*-*-*
+-misc-liberation sans-medium-i-normal--0-240-75-75-p-0-*-*=-adobe-helvetica-medium-o-normal--*-240-75-75-p-*-*-*
+
+
+-misc-liberation mono-bold-r-normal--0-80-75-75-m-0-*-*=-adobe-courier-bold-r-normal--*-80-75-75-m-*-*-*
+-misc-liberation mono-bold-i-normal--0-80-75-75-m-0-*-*=-adobe-courier-bold-o-normal--*-80-75-75-m-*-*-*
+-misc-liberation mono-medium-r-normal--0-80-75-75-m-0-*-*=-adobe-courier-medium-r-normal--*-80-75-75-m-*-*-*
+-misc-liberation mono-medium-i-normal--0-80-75-75-m-0-*-*=-adobe-courier-medium-o-normal--*-80-75-75-m-*-*-*
+
+-misc-liberation mono-bold-r-normal--0-100-75-75-m-0-*-*=-adobe-courier-bold-r-normal--*-100-75-75-m-*-*-*
+-misc-liberation mono-bold-i-normal--0-100-75-75-m-0-*-*=-adobe-courier-bold-o-normal--*-100-75-75-m-*-*-*
+-misc-liberation mono-medium-r-normal--0-100-75-75-m-0-*-*=-adobe-courier-medium-r-normal--*-100-75-75-m-*-*-*
+-misc-liberation mono-medium-i-normal--0-100-75-75-m-0-*-*=-adobe-courier-medium-o-normal--*-100-75-75-m-*-*-*
+
+-misc-liberation mono-bold-r-normal--0-120-75-75-m-0-*-*=-adobe-courier-bold-r-normal--*-120-75-75-m-*-*-*
+-misc-liberation mono-bold-i-normal--0-120-75-75-m-0-*-*=-adobe-courier-bold-o-normal--*-120-75-75-m-*-*-*
+-misc-liberation mono-medium-r-normal--0-120-75-75-m-0-*-*=-adobe-courier-medium-r-normal--*-120-75-75-m-*-*-*
+-misc-liberation mono-medium-i-normal--0-120-75-75-m-0-*-*=-adobe-courier-medium-o-normal--*-120-75-75-m-*-*-*
+
+-misc-liberation mono-bold-r-normal--0-140-75-75-m-0-*-*=-adobe-courier-bold-r-normal--*-140-75-75-m-*-*-*
+-misc-liberation mono-bold-i-normal--0-140-75-75-m-0-*-*=-adobe-courier-bold-o-normal--*-140-75-75-m-*-*-*
+-misc-liberation mono-medium-r-normal--0-140-75-75-m-0-*-*=-adobe-courier-medium-r-normal--*-140-75-75-m-*-*-*
+-misc-liberation mono-medium-i-normal--0-140-75-75-m-0-*-*=-adobe-courier-medium-o-normal--*-140-75-75-m-*-*-*
+
+-misc-liberation mono-bold-r-normal--0-180-75-75-m-0-*-*=-adobe-courier-bold-r-normal--*-180-75-75-m-*-*-*
+-misc-liberation mono-bold-i-normal--0-180-75-75-m-0-*-*=-adobe-courier-bold-o-normal--*-180-75-75-m-*-*-*
+-misc-liberation mono-medium-r-normal--0-180-75-75-m-0-*-*=-adobe-courier-medium-r-normal--*-180-75-75-m-*-*-*
+-misc-liberation mono-medium-i-normal--0-180-75-75-m-0-*-*=-adobe-courier-medium-o-normal--*-180-75-75-m-*-*-*
+
+-misc-liberation mono-bold-r-normal--0-240-75-75-m-0-*-*=-adobe-courier-bold-r-normal--*-240-75-75-m-*-*-*
+-misc-liberation mono-bold-i-normal--0-240-75-75-m-0-*-*=-adobe-courier-bold-o-normal--*-240-75-75-m-*-*-*
+-misc-liberation mono-medium-r-normal--0-240-75-75-m-0-*-*=-adobe-courier-medium-r-normal--*-240-75-75-m-*-*-*
+-misc-liberation mono-medium-i-normal--0-240-75-75-m-0-*-*=-adobe-courier-medium-o-normal--*-240-75-75-m-*-*-*
+
 }
 
-utopia=-*-utopia-(medium,bold)-(r,i)-normal--0-(80,90,100,110,120,140,180,240,320,480,720)-75-75-p-0-*-*
+# note that a tab separates the font spec and the word "exact"
+courier=-misc-liberation mono-(medium,bold)-(r,i)-normal--0-(80=90,100,120,140,160,180,200,240,280,320,360,420,480,600,720)-75-75-m-0-*-*	exact
 
-new century schoolbook=-*-century schoolbook l-(medium,bold)-(r,i)-normal--0-(80,90,100,110,120,140,180,240,320,480,720)-75-75-p-0-*-*
+helvetica=-misc-liberation sans-(medium,bold)-(r,i)-normal--0-(80,100,120,140,160=150,180,200,240,280,320,360,420,480,600,720)-75-75-p-0-*-*	exact
 
-times=-*-times-(medium,bold)-(r,i)-normal--0-(80,90,100,110,120,140,180,240,320,480,720)-75-75-p-0-*-*
+# note that lists of candidate fonts may be specified as follows:
 
-courier=-*-courier-(medium,bold)-(r,o)-normal--0-(80,90,100,110,120,140,180,240,320,480,720)-75-75-*-0-*-*
+#courier={
+#-misc-liberation mono-(medium,bold)-(r,i)-normal--0-(80=90,100,120,140,160,180,200,240,280,320,360,420,480,600,720)-75-75-m-0-*-*	exact
+#-adobe-courier-(medium,bold)-(r,o)-normal--0-(80,100,120,140,160,180,200,240,280,320,360,420,480,600,720)-75-75-*-0-*-1
+#-monotype-arial-(medium,bold)-(r,i)-normal--*-(80,100,120,140,160,180,200,240,280,320,360,420,480,600,720)-75-75-p-*-*-*
+#}
 
+#helvetica={
+#-misc-liberation sans-(medium,bold)-(r,i)-normal--0-(80,100,120,140,160=150,180,200,240,280,320,360,420,480,600,720)-75-75-p-0-*-*	exact
+#-urw-nimbus sans l-(medium,bold)-(r,i)-normal--0-(80,100,120,140,160,180,200,240,280,320,360,420,480,600,720)-75-75-p-0-*-*	exact
+#-adobe-helvetica-(medium,bold)-(r,o)-normal--0-(80,100,120,140,160,180,200,240,280,320,360,420,480,600,720)-75-75-p-0-8859-1
+#-adobe-helvetica-(medium,bold)-(r,o)-normal--*-(80,100,120,140,160,180,200,240,280,320,360,420,480,600,720)-75-75-p-*-*-*
+#}

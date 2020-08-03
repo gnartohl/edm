@@ -1,0 +1,129 @@
+# Example edm print definition file
+
+printDialog {
+
+  w = 400
+
+  h = 600
+
+}
+
+printCommand = "xwd <opt1> | xwdtopnm | pnmdepth 255 <opt4> | pnmtops <opt2> <opt3> | lpr <opt5>"
+
+printToFileCommand = "xwd <opt1> | xwdtopnm | pnmdepth 255 <opt4> | pnmtops <opt2> <opt3> > <file>"
+
+optionDefaults {
+
+  opt1 = "-display <DSPNAME> "
+  opt2 = ""
+  opt3 = ""
+  opt4 = ""
+  opt5 = ""
+
+}
+
+option 2 orientation = menu "Default|Portrait|Landscape" {
+
+  label = "Orientation"
+
+  default = 0
+
+  0 option += ""
+
+  1 option += "-noturn"
+
+  2 option += "-turn"
+
+}
+
+option 2 pagewidth = text {
+
+  label = "Page Width"
+
+  default = "8.5"
+
+  option += "-width "
+
+}
+
+option 2 pageheight = text {
+
+  label = "Page Height"
+
+  default = "11"
+
+  option += "-height "
+
+}
+
+option 3 scale = text {
+
+  label = "Scale Factor"
+
+  default = "1"
+
+  option += "-scale "
+
+}
+
+option 3 center = toggle {
+
+  label = "Center"
+
+  default = 1
+
+  0 option += "-nocenter"
+
+  1 option += "-center"
+
+}
+
+option 3 fit = toggle {
+
+  label = "Fit To Page"
+
+  default = 0
+
+  0 option += ""
+
+  1 option = "-center -scale 1000"
+
+}
+
+option 4 invert = toggle {
+
+  label = "Invert"
+
+  default = 0
+
+  0 option += ""
+
+  1 option += "| pnminvert"
+
+}
+
+option 1 select = menu "Window|Desktop|Interactive" {
+
+  label = "Select"
+
+  default = 0
+
+  0 option += "-silent -id <WINID>"
+
+  1 option += "-silent -root"
+
+  2 option += "-frame"
+
+}
+
+option 5 printer = menu "lp|lp0" {
+
+  label = "Printer"
+
+  default = 0
+
+  0 option = "-P lp"
+
+  1 option = "-P lp0"
+
+}

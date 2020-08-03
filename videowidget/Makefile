@@ -44,7 +44,6 @@ ifdef EPICS_HOST_ARCH
 
   # ELW added following two lines for
   # Red Hat 7.0 LINUX
-  Xp_DIR =   $(X11_LIB)
   Xext_DIR = $(X11_LIB)
   #
   XlibGUI_DIR = $(X11_LIB)

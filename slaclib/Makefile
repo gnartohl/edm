@@ -15,10 +15,10 @@ ifdef EPICS_HOST_ARCH
    EdmSlac_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
    EdmSlac_LIBS += Com
 
-   EdmSlac_LIBS_Linux += Xm Xt Xp Xtst X11
+   EdmSlac_LIBS_Linux += Xm Xt Xtst X11
    EdmSlac_SYS_LIBS_Linux += pthread dl
 
-   EdmSlac_LIBS_Darwin += Xm Xt Xp Xtst X11
+   EdmSlac_LIBS_Darwin += Xm Xt Xtst X11
    EdmSlac_SYS_LIBS_Darwin += pthread dl
 
    EdmSlac_LIBS_solaris +=  Xm Xt Xmu X11 Xext
@@ -43,7 +43,6 @@ ifdef EPICS_HOST_ARCH
 
    # ELW added following two lines for
    # Red Hat 7.0 LINUX
-   Xp_DIR =   $(X11_LIB)
    Xext_DIR = $(X11_LIB)
    #
    XlibGUI_DIR = $(X11_LIB)
