@@ -1,4 +1,4 @@
-34
+35
 activeLineClass $(EDMLIBS)/libEdmBase.so Graphics Lines
 activeRectangleClass $(EDMLIBS)/libEdmBase.so Graphics Rectangle
 activeCircleClass $(EDMLIBS)/libEdmBase.so Graphics Circle
@@ -27,7 +27,7 @@ relatedDisplayClass $(EDMLIBS)/libEdmBase.so Controls Related Display
 shellCmdClass $(EDMLIBS)/libEdmBase.so Controls Shell Command
 activeTableClass $(EDMLIBS)/libEdmBase.so Monitors Table
 activeCoefTableClass $(EDMLIBS)/libEdmBase.so Monitors Coef Table
-#activePngClass $(EDMLIBS)/lib57d79238-2924-420b-ba67-dfbecdf03fcd.so Graphics PNG Image
+activePngClass $(EDMLIBS)/lib57d79238-2924-420b-ba67-dfbecdf03fcd.so Graphics PNG Image
 #activeGifClass $(EDMLIBS)/libcf322683-513e-4570-a44b-7cdd7cae0de5.so Graphics GIF Image
 #newShellCmdClass $(EDMLIBS)/libNewShellCmd.so Controls New Shell Cmd
 activeXRegTextClass $(EDMLIBS)/libEdmBase.so Graphics Text w. Reg. Exp.
