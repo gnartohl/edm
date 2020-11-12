@@ -35,6 +35,9 @@ static int cond_search(const char **ppinst, int match);
 #define PI 3.14159265358979323
 #endif
 
+typedef unsigned int epicsUInt32;
+typedef int epicsInt32;
+
 /* calcPerform
  *
  * Evalutate the postfix expression
@@ -45,6 +48,7 @@ long edm_calcPerform(double *parg, double *presult, const char *pinst)
     double *ptop;			/* stack pointer */
     double top; 			/* value from top of stack */
     int itop;				/* integer from top of stack */
+    epicsUInt32 utop;			/* unsigned integer from top of stack */
 
     /* initialize */
     ptop = stack;
@@ -254,34 +258,45 @@ long edm_calcPerform(double *parg, double *presult, const char *pinst)
 	    *ptop = ! *ptop;
 	    break;
 
+        /* For bitwise operations on values with bit 31 set, double values
+         * must first be cast to unsigned to correctly set that bit; the
+         * double value must be negative in that case. The result must be
+         * cast to a signed integer before converting to the double result.
+         */
+
 	case BIT_OR:
-	    itop = (int) *ptop--;
-	    *ptop = (int) *ptop | itop;
+	    utop = *ptop--;
+	    *ptop = (epicsInt32) ((epicsUInt32) *ptop | utop);
 	    break;
 
 	case BIT_AND:
-	    itop = (int) *ptop--;
-	    *ptop = (int) *ptop & itop;
+	    utop = *ptop--;
+	    *ptop = (epicsInt32) ((epicsUInt32) *ptop & utop);
 	    break;
 
 	case BIT_EXCL_OR:
-	    itop = (int) *ptop--;
-	    *ptop = (int) *ptop ^ itop;
+	    utop = *ptop--;
+	    *ptop = (epicsInt32) ((epicsUInt32) *ptop ^ utop);
 	    break;
 
 	case BIT_NOT:
-	    itop = (int) *ptop;
-	    *ptop = ~itop;
+	    utop = *ptop;
+	    *ptop = (epicsInt32) ~utop;
 	    break;
 
+        /* The shift operators use signed integers, so a right-shift will
+         * extend the sign bit into the left-hand end of the value. The
+         * double-casting through unsigned here is important, see above.
+         */
+
 	case RIGHT_SHIFT:
-	    itop = (int) *ptop--;
-	    *ptop = (int) *ptop >> itop;
+	    utop = *ptop--;
+	    *ptop = ((epicsInt32) (epicsUInt32) *ptop) >> (utop & 31);
 	    break;
 
 	case LEFT_SHIFT:
-	    itop = (int) *ptop--;
-	    *ptop = (int) *ptop << itop;
+	    utop = *ptop--;
+	    *ptop = ((epicsInt32) (epicsUInt32) *ptop) << (utop & 31);
 	    break;
 
 	case NOT_EQ:
