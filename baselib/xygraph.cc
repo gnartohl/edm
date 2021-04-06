@@ -11320,6 +11320,8 @@ short scaledX, scaledY;
        ( dScaledY > 32767 ) ||
        ( dScaledY < -32767 ) ) return;
 
+  if ( isnan(oneX) || isnan(dScaledX) || isnan(dScaledY) ) return;
+
   scaledX = (short) dScaledX;
   scaledY = (short) dScaledY;
 
