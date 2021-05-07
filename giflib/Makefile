@@ -31,7 +31,7 @@ GIF_INC ?= /usr/include
    USR_SYS_LIBS_solaris += pthread dl rt ungif gif
 
    USR_LIBS_hpux11_11_mt = Xm Xt X11 Xext
-   USR_SYS_LIBS_hpux11_11_mt = pthread gif
+   USR_SYS_LIBS_hpux11_11_mt = pthread ungif gif
 
    LIBRARY = cf322683-513e-4570-a44b-7cdd7cae0de5
 
