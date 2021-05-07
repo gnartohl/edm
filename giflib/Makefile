@@ -25,10 +25,10 @@ GIF_INC ?= /usr/include
    USR_SYS_LIBS_Linux += pthread dl gif
 
    USR_LIBS_Darwin += Xm Xt Xtst X11
-   USR_SYS_LIBS_Darwin += pthread dl gif
+   USR_SYS_LIBS_Darwin += pthread dl ungif gif
 
    USR_LIBS_solaris += Xm Xt Xmu X11 Xext
-   USR_SYS_LIBS_solaris += pthread dl rt gif
+   USR_SYS_LIBS_solaris += pthread dl rt ungif gif
 
    USR_LIBS_hpux11_11_mt = Xm Xt X11 Xext
    USR_SYS_LIBS_hpux11_11_mt = pthread gif
