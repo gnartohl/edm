@@ -545,6 +545,12 @@ void closeDownAppCtx ( void );
 
 int getFilePaths ( void );
 
+ void expandRelativeFileName (
+  char *expandedName,
+  char *inName,
+  char *ext,
+  int maxSize );
+
 void expandFileName (
   int index,
   char *expandedName,

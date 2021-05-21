@@ -3268,6 +3268,37 @@ char buf[255+1], *tk, *context;
 
 }
 
+void appContextClass::expandRelativeFileName (
+  char *expandedName,
+  char *inName,
+  char *ext,
+  int maxSize )
+{
+
+int i, l, first, more;
+int state, noPrefix;
+
+  strncpy( expandedName, inName, maxSize );
+
+  // if no extension specified, add ext from argument
+
+  l = strlen(expandedName);
+  more = 1;
+  first = 0;
+  for ( i=l-1; (i>=0) && more; i-- ) {
+    if ( expandedName[i] == '/' ) {
+      more = 0;
+      first = i;
+    }
+  }
+  if ( !strstr( &expandedName[first], "." ) ) {
+    Strncat( expandedName, ext, maxSize );
+  }
+
+  return;
+
+}
+
 void appContextClass::expandFileName (
   int index,
   char *expandedName,
@@ -3276,7 +3307,7 @@ void appContextClass::expandFileName (
   int maxSize )
 {
 
-unsigned int i, l, first, more;
+int i, l, first, more;
 int state, noPrefix;
 
   if ( index >= numPaths ) {
@@ -4868,6 +4899,8 @@ static void displayParamInfo ( void ) {
   fprintf( stderr, global_str52 );
   fprintf( stderr, "\n" );
   fprintf( stderr, global_str53 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str160 );
   fprintf( stderr, "\n" );
   fprintf( stderr, global_str80 );
   fprintf( stderr, global_str81 );

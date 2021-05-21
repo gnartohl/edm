@@ -2231,7 +2231,12 @@ char prefix[127+1];
    Strncat( nameWithParams, pvSpecificTypeName(pvSpecificType), 127 );
   if ( useDim[index] ) Strncat( nameWithParams, vectorId(isVector), 127 );
 
-  stat = getFileName( name, nameWithParams, 127 );
+  // this discards dir part - comment out
+  //stat = getFileName( name, nameWithParams, 127 );
+
+  // do this instead to allow relative paths when enabled
+  strncpy( name, nameWithParams, 127 );
+  name[127] = 0;
 
   strcpy( nameAndExt, name );
 
@@ -2310,7 +2315,7 @@ char prefix[127+1];
   cur->node.realize();
   cur->node.setGraphicEnvironment( &actWin->appCtx->ci, &actWin->appCtx->fi );
 
-  cur->node.storeFileName( nameAndExt );
+  cur->node.storeFileName( actWin->filePath, nameAndExt );
 
   if ( setPostion[index] == PIC_BUTTON_POS ) {
     actWin->appCtx->openActivateActiveWindow( &cur->node,

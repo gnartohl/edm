@@ -421,6 +421,38 @@ void printErrMsg (
 
 }
 
+static void extractPath(
+  char *fileName,
+  int nameMax,
+  char *filePath,
+  int pathMax ) {
+
+  int i, l;
+
+  //fprintf( stderr, "extractPath, fileName = [%s]\n", fileName );
+
+  int max = nameMax;
+  if ( max > pathMax ) max = pathMax;
+
+  l = strnlen( fileName, max );
+
+  strncpy( filePath, fileName, l );
+  filePath[l] = 0;
+
+  //fprintf( stderr, "extractPath, l = %-d, starting filePath = [%s]\n", l, filePath );
+
+  for ( i=l-1; i>=0; i-- ) {
+    if ( filePath[i] == '/' ) {
+      filePath[i+1] = 0;
+      return;
+    }
+  }
+
+  strncpy( filePath, "./", l );
+  filePath[l] = 0;
+
+}
+
 static void extractName(
   char *fileName, 
   char *name ) {
@@ -1883,7 +1915,7 @@ activeWindowListPtr cur;
   cur->node.realize();
   cur->node.setGraphicEnvironment( &awo->appCtx->ci, &awo->appCtx->fi );
 
-  cur->node.storeFileName( fName );
+  cur->node.storeFileName( awo->filePath, fName );
 
   XtFree( fName );
 
@@ -12672,6 +12704,8 @@ int i;
   loadFailure = 0;
 
   haveComments = 0;
+  strcpy( fileName, "" );
+  strcpy( filePath, "" );
   strcpy( fileNameAndRev, "" );
   strcpy( fileRev, "" );
 
@@ -12688,6 +12722,14 @@ int i;
   reloadRequestFlag = 0;
 
   frozen = false;
+
+  relativePathSupport = false;
+  char *envPtr = getenv( environment_str159 );
+  if ( envPtr ) {
+    if ( strcasecmp( envPtr, "yes" ) == 0 ) {
+      relativePathSupport = true;
+    }
+  }
 
 }
 
@@ -22495,6 +22537,50 @@ char nameWithSubs[1024+1];
 
 }
 
+
+
+void activeWindowClass::storeFileName (
+  char *inPath,
+  char *inName )
+{
+
+char nameWithSubs[1024+1];
+
+  strncpy( filePath, inPath, 255 );
+  filePath[255] = 0;
+
+  this->substituteSpecial( 1024, inName, nameWithSubs );
+
+  strncpy( fileName, nameWithSubs, 255 );
+  fileName[255] = 0;
+  getFileName( displayName, nameWithSubs, 127 );
+  displayName[127] = 0;
+  getFilePrefix( prefix, nameWithSubs, 127 );
+  prefix[127] = 0;
+  getFilePostfix( postfix, nameWithSubs, 127 );
+  postfix[127] = 0;
+
+  strncpy( fileNameForSym, nameWithSubs, 255 );
+  fileNameForSym[255] = 0;
+  getFileName( displayNameForSym, nameWithSubs, 127 );
+  displayNameForSym[127] = 0;
+  getFilePrefix( prefixForSym, nameWithSubs, 127 );
+  prefixForSym[127] = 0;
+  getFilePostfix( postfixForSym, nameWithSubs, 127 );
+  postfixForSym[127] = 0;
+  
+  //strncpy( fileName, inName, 255 );
+  //getFileName( displayName, inName, 127 );
+  //getFilePrefix( prefix, inName, 127 );
+  //getFilePostfix( postfix, inName, 127 );
+
+  //strncpy( fileNameForSym, inName, 255 );
+  //getFileName( displayNameForSym, inName, 127 );
+  //getFilePrefix( prefixForSym, inName, 127 );
+  //getFilePostfix( postfixForSym, inName, 127 );
+
+}
+
 // The following function is necessary because of rules associated with
 // opening related displays. For related displays, info like prefix is
 // implicit and thus omitted so related display may be specified without
@@ -22526,7 +22612,89 @@ char nameWithSubs[1024+1];
   //getFilePostfix( postfixForSym, inName, 127 );
 
 }
+
+FILE *activeWindowClass::openRelativeNoUpdate (
+  char *name,
+  char *path,
+  char *mode )
+{
 
+char buf[255+1];
+FILE *f;
+char tryPath[255+1], tryName[255+1];
+
+ //fprintf( stderr, "1 activeWindowClass::openRelativeNoUpdate\n" );
+ if ( !relativePathSupport ) return NULL;
+ //fprintf( stderr, "2 activeWindowClass::openRelativeNoUpdate\n" );
+ //fprintf( stderr, "name = [%s], path = [%s]\n", name, path );
+
+  // try relative name first
+  strncpy( tryName, name, 255 );
+  trimWhiteSpace( tryName );
+  if ( ( tryName[0] != '/' ) && ( tryName[0] != '^' ) ) {
+
+    strncpy( tryPath, path, 255 );
+    trimWhiteSpace( tryPath );
+
+    Strncat( tryPath, tryName, 255 );
+
+    appCtx->expandRelativeFileName( buf, tryPath, activeWindowClass::defExt(), 255 );
+
+    if ( strcmp( buf, "" ) != 0 ) {
+      f = fileOpen( buf, mode );
+      if ( f ) {
+        return f;
+      }
+    }
+
+  }
+
+  return NULL;
+
+}
+
+FILE *activeWindowClass::openRelative (
+  char *name,
+  char *path,
+  char *mode )
+{
+
+char buf[255+1];
+FILE *f;
+char tryPath[255+1], tryName[255+1];
+
+  //fprintf( stderr, "1 activeWindowClass::openRelative\n" );
+ if ( !relativePathSupport ) return NULL;
+ //fprintf( stderr, "2 activeWindowClass::openRelative\n" );
+ //fprintf( stderr, "name = [%s], path = [%s]\n", name, path );
+
+  // try relative name first
+  strncpy( tryName, name, 255 );
+  trimWhiteSpace( tryName );
+  if ( ( tryName[0] != '/' ) && ( tryName[0] != '^' ) ) {
+
+    strncpy( tryPath, path, 255 );
+    trimWhiteSpace( tryPath );
+
+    Strncat( tryPath, tryName, 255 );
+
+    appCtx->expandRelativeFileName( buf, tryPath, activeWindowClass::defExt(), 255 );
+
+    if ( strcmp( buf, "" ) != 0 ) {
+      f = fileOpen( buf, mode );
+      if ( f ) {
+        strncpy( fileName, buf, 255 ); // update fileName
+        storeFileNameForSymbols( buf ); // update int sym file name components
+        extractPath( fileName, 255, filePath, 255 ); // update filePath
+        return f;
+      }
+    }
+
+  }
+
+  return NULL;
+
+}
 
 FILE *activeWindowClass::openAny (
   char *name,
@@ -22541,6 +22709,10 @@ int i;
   //printf( "default ext is [%s]\n", activeWindowClass::defExt() );
   //printf( "default search mask is [%s]\n", activeWindowClass::defMask() );
 
+  // try relative name first
+  f = openRelative ( name, filePath, mode );
+  if ( f ) return f;
+
   for ( i=0; i<appCtx->numPaths; i++ ) {
 
     //appCtx->expandFileName( i, buf, name, ".edl", 255 );
@@ -22552,12 +22724,14 @@ int i;
       if ( f ) {
         strncpy( fileName, buf, 255 ); // update fileName
         storeFileNameForSymbols( buf ); // update int sym file name components
+        extractPath( fileName, 255, filePath, 255 ); // update filePath
         return f;
       }
     }
 
   }
 
+  strcpy( filePath, "" );
   return NULL;
 
 }
@@ -22570,6 +22744,10 @@ FILE *activeWindowClass::openAnyTemplate (
 char buf[255+1];
 FILE *f;
 int i;
+
+  // try relative name first
+  f = openRelativeNoUpdate ( name, filePath, mode );
+  if ( f ) return f;
 
   for ( i=0; i<appCtx->numPaths; i++ ) {
 
@@ -22598,6 +22776,10 @@ char buf[255+1];
 FILE *f;
 int i;
 
+  // try relative name first
+  f = openRelativeNoUpdate ( name, filePath, mode );
+  if ( f ) return f;
+
   for ( i=0; i<appCtx->numPaths; i++ ) {
 
     appCtx->expandFileName( i, buf, name, ".tmpl", 255 );
@@ -22623,6 +22805,10 @@ FILE *activeWindowClass::openAnySymFile (
 char buf[255+1];
 FILE *f;
 int i;
+
+  // try relative name first
+  f = openRelativeNoUpdate ( name, filePath, mode );
+  if ( f ) return f;
 
   for ( i=0; i<appCtx->numPaths; i++ ) {
 
@@ -22652,6 +22838,10 @@ char buf[255+1];
 FILE *f;
 int i;
 
+  // try relative name first
+  f = openRelative ( name, filePath, mode );
+  if ( f ) return f;
+
   for ( i=0; i<appCtx->numPaths; i++ ) {
 
     appCtx->expandFileName( i, buf, name, ".xch", 255 );
@@ -22661,6 +22851,7 @@ int i;
       if ( f ) {
         strncpy( fileName, buf, 255 ); // update fileName
         storeFileNameForSymbols( buf ); // update int sym file name components
+        extractPath( fileName, 255, filePath, 255 ); // update filePath
         return f;
       }
     }
@@ -22680,6 +22871,10 @@ FILE *activeWindowClass::openAnyGenericFile (
 
 FILE *f;
 int i;
+
+  // try relative name first
+  f = openRelativeNoUpdate ( name, filePath, mode );
+  if ( f ) return f;
 
   for ( i=0; i<appCtx->numPaths; i++ ) {
 
@@ -23485,7 +23680,7 @@ char *sysMacros[] = {
   cur->node.realize();
   cur->node.setGraphicEnvironment( &appCtx->ci, &appCtx->fi );
 
-  cur->node.storeFileName( buf );
+  cur->node.storeFileName( this->filePath, buf );
 
   appCtx->openActivateActiveWindow( &cur->node );
 

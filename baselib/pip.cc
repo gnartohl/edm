@@ -2143,7 +2143,7 @@ int gotSymbolsFromFile;
 
   if ( index < 0 ) index = 0;
   if ( index >= numDsps ) index = numDsps;
-  cur->node.storeFileName( displayFileName[index].getExpanded() );
+  cur->node.storeFileName( actWin->filePath, displayFileName[index].getExpanded() );
 
   actWin->appCtx->openActivateActiveWindow( &cur->node, 0, 0 );
 
@@ -2368,7 +2368,7 @@ XButtonEvent be;
           cur->node.setGraphicEnvironment( &cur->node.appCtx->ci,
            &cur->node.appCtx->fi );
 
-          cur->node.storeFileName( readV );
+          cur->node.storeFileName( actWin->filePath, readV );
 
           actWin->appCtx->openActivateActiveWindow( &cur->node, 0, 0 );
 
@@ -2620,7 +2620,7 @@ XButtonEvent be;
           cur->node.setGraphicEnvironment( &cur->node.appCtx->ci,
            &cur->node.appCtx->fi );
 
-          cur->node.storeFileName( fileNameExpStr.getExpanded() );
+          cur->node.storeFileName( actWin->filePath, fileNameExpStr.getExpanded() );
 
           actWin->appCtx->openActivateActiveWindow( &cur->node, 0, 0 );
 
@@ -2916,7 +2916,7 @@ XButtonEvent be;
               cur->node.setGraphicEnvironment( &cur->node.appCtx->ci,
                &cur->node.appCtx->fi );
 
-              cur->node.storeFileName( curFileName );
+              cur->node.storeFileName( actWin->filePath, curFileName );
 
               actWin->appCtx->openActivateActiveWindow( &cur->node, 0, 0 );
 

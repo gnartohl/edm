@@ -1122,7 +1122,7 @@ char **templateMacros;
 char **templateExpansions;
 
 int haveComments;
-char fileName[255+1], fileRev[31+1], fileNameAndRev[287+1], newPath[255+1];
+ char fileName[255+1], filePath[255+1], fileRev[31+1], fileNameAndRev[287+1], newPath[255+1];
 char prefix[127+1], displayName[127+1], postfix[127+1];
 char fileNameForSym[255+1], prefixForSym[127+1], displayNameForSym[127+1],
  postfixForSym[127+1];
@@ -1182,6 +1182,8 @@ int invalidFile, invalidBgColor;
 int reloadRequestFlag;
 
 bool frozen;
+
+ bool relativePathSupport;
 
 activeWindowClass ( void );
 
@@ -1713,8 +1715,22 @@ int processObjects ( void );
 void storeFileName (
   char *inName );
 
+void storeFileName (
+  char *inPath,
+  char *inName );
+
 void storeFileNameForSymbols (
   char *inName );
+
+FILE *openRelativeNoUpdate (
+  char *name,
+  char *path,
+  char *mode );
+
+FILE *openRelative (
+  char *name,
+  char *path,
+  char *mode );
 
 FILE *openAny (
   char *name,

@@ -1,7 +1,7 @@
 #ifndef __environment_str
 #define __environment_str 1
 
-// global_str155 is last
+// global_str160 is last
 
 #define environment_str1 (char *) "EDMDATAFILES"
 #define environment_str2 (char *) "EDMFILES"
@@ -44,6 +44,7 @@
 #define environment_str39 (char *) "EDMSCREENCFG"
 #define environment_str153 (char *) "EDMCALC"
 #define environment_str154 (char *) "EDMPVDUMP"
+#define environment_str159 (char *) "EDMRELATIVEPATHS"
 
 // Site Related
 #define environment_str40 (char *) "EDMRDDHS"
@@ -227,6 +228,8 @@
 #define global_str155 (char *) "EDMPVDUMP\t\tLocation of directory for auto pv list dump\n"
 #define global_str156 (char *) "EDMSCREENCFG\t\tLocation of saved screen configuration files (default: /<userhome>/.edm)\n"
 #define global_str158 (char *) "EDMSELECTOR\t\tDo not toggle selection in selection rectangle\n"
+
+#define global_str160 (char *) "EDMRELATIVEPATHS\tIf set to \"yes\", process relative paths in file search navigation\n"
 
 #define global_str55 (char *)  " (-h displays help)\n"
 #define global_str56 (char *)  "-display|"
