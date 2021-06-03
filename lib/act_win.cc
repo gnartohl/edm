@@ -22613,6 +22613,53 @@ char nameWithSubs[1024+1];
 
 }
 
+int activeWindowClass::findRelative ( // return 0 (ok) or -1 (error)
+  char *name,
+  char *path,
+  char *fullName,
+  int max )
+{
+
+char buf[255+1];
+char tryPath[255+1], tryName[255+1];
+int status;
+struct stat statBuf;
+
+  strcpy( fullName, "" );
+
+ //fprintf( stderr, "1 activeWindowClass::findRelative\n" );
+ if ( !relativePathSupport ) return -1;
+ //fprintf( stderr, "2 activeWindowClass::findRelative\n" );
+ //fprintf( stderr, "name = [%s], path = [%s]\n", name, path );
+
+  // try relative name first
+  strncpy( tryName, name, 255 );
+  trimWhiteSpace( tryName );
+  if ( ( tryName[0] != '/' ) && ( tryName[0] != '^' ) ) {
+
+    strncpy( tryPath, path, 255 );
+    trimWhiteSpace( tryPath );
+
+    Strncat( tryPath, tryName, 255 );
+
+    appCtx->expandRelativeFileName( buf, tryPath, activeWindowClass::defExt(), 255 );
+
+    //printf( "1 activeWindowClass::findRelative try [%s]\n", buf );
+    if ( strcmp( buf, "" ) != 0 ) {
+      status = stat( buf, &statBuf );
+      if ( !status ) {
+        strncpy( fullName, buf, max );
+        fullName[max] = 0;
+        return 0;
+      }
+    }
+
+  }
+
+  return -1;
+
+}
+
 FILE *activeWindowClass::openRelativeNoUpdate (
   char *name,
   char *path,
@@ -22640,6 +22687,7 @@ char tryPath[255+1], tryName[255+1];
 
     appCtx->expandRelativeFileName( buf, tryPath, activeWindowClass::defExt(), 255 );
 
+    //printf( "1 activeWindowClass::openRelativeNoUpdate try [%s]\n", buf );
     if ( strcmp( buf, "" ) != 0 ) {
       f = fileOpen( buf, mode );
       if ( f ) {
@@ -22862,6 +22910,47 @@ int i;
 
 }
 
+int activeWindowClass::findAnyGenericFile ( // return 0 (ok) or -1 (error)
+  char *name,
+  char *fullName,
+  int max )
+{
+
+int i, status;
+struct stat statBuf;
+
+  //printf( "activeWindowClass::findAnyGenericFile, name=[%s], fullName=[%s]\n", name, fullName );
+
+  strcpy( fullName, "" );
+
+  // try relative name first
+  //printf( "activeWindowClass::findAnyGenericFile - try rela, name=[%s], filePath=[%s]\n", name, filePath );
+  status = findRelative ( name, filePath, fullName, max );
+  if ( !status ) {
+    return 0;
+  }
+
+  //printf( "rela failed\n" );
+
+  for ( i=0; i<appCtx->numPaths; i++ ) {
+
+    appCtx->expandFileName( i, fullName, name, max );
+
+    if ( strcmp( fullName, "" ) != 0 ) {
+      status = stat( name, &statBuf );
+      if ( !status ) {
+        strncpy( fullName, name, max );
+        fullName[max] = 0;
+        return 0;
+      }
+    }
+
+  }
+
+  return -1;
+
+}
+
 FILE *activeWindowClass::openAnyGenericFile (
   char *name,
   char *mode,
@@ -22872,9 +22961,18 @@ FILE *activeWindowClass::openAnyGenericFile (
 FILE *f;
 int i;
 
+  //printf( "activeWindowClass::openAnyGenericFile, name=[%s], fullName=[%s]\n", name, fullName );
+
   // try relative name first
+  //printf( "activeWindowClass::openAnyGenericFile - try rela, name=[%s], filePath=[%s]\n", name, filePath );
   f = openRelativeNoUpdate ( name, filePath, mode );
-  if ( f ) return f;
+  if ( f ) {
+    strncpy( fullName, name, max );
+    fullName[max] = 0;
+    return f;
+  }
+
+  //printf( "rela failed\n" );
 
   for ( i=0; i<appCtx->numPaths; i++ ) {
 
@@ -23232,6 +23330,12 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar, isPvVal;
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
 	      }
+        else if ( strcmp( param, "<FILEPATH>" ) == 0 ) {
+          bufOut[iOut] = 0;
+          Strncat( bufOut, filePath, max );
+          iOut = strlen( bufOut );
+          if ( iOut >= max ) iOut = max - 1;
+        }
         else if ( strcmp( param, "<TITLE>" ) == 0 ) {
           bufOut[iOut] = 0;
           if ( expStrTitle.getExpanded() ) {

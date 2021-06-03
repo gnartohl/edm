@@ -473,7 +473,10 @@ int stat, resizeStat, saveW, saveH;
   }
 
   if ( !( stat & 1 ) ) {
-    dso->actWin->appCtx->postMessage( activeDynSymbolClass_str4 );
+    char msgbuf[255+1];
+    snprintf( msgbuf, 255, activeDynSymbolClass_str4, dso->dynSymbolFileName );
+    msgbuf[255] = 0;
+    dso->actWin->appCtx->postMessage( msgbuf );
   }
 
 }
@@ -1768,7 +1771,10 @@ char *emptyStr = "";
 
   readSymfileStat = readDynSymbolFile();
   if ( !( readSymfileStat & 1 ) ) {
-    actWin->appCtx->postMessage( activeDynSymbolClass_str23 );
+    char msgbuf[255+1];
+    snprintf( msgbuf, 255, activeDynSymbolClass_str23, dynSymbolFileName );
+    msgbuf[255] = 0;
+    actWin->appCtx->postMessage( msgbuf );
   }
   else {
     if ( !useOriginalSize ) {
@@ -1892,7 +1898,10 @@ char string[PV_Factory::MAX_PV_NAME+1];
 
   stat = readDynSymbolFile();
   if ( !( stat & 1 ) ) {
-    actWin->appCtx->postMessage( activeDynSymbolClass_str23 );
+    char msgbuf[255+1];
+    snprintf( msgbuf, 255, activeDynSymbolClass_str23, dynSymbolFileName );
+    msgbuf[255] = 0;
+    actWin->appCtx->postMessage( msgbuf );
   }
   else {
     if ( !useOriginalSize ) {

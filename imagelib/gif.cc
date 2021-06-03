@@ -16,14 +16,6 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#if GIFLIB_MAJOR > 5 || GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1
-  #define GIF_CLOSE_FILE(gif) DGifCloseFile(gif, NULL)
-  #define GIF_OPEN_FILE(gif) DGifOpenFileName(gif, NULL)
-#else
-  #define GIF_CLOSE_FILE(gif) DGifCloseFile(gif)
-  #define GIF_OPEN_FILE(gif) DGifOpenFileName(gif)
-#endif
-
 void printErrMsg (
   const char *fileName,
   int lineNum,
@@ -41,6 +33,14 @@ void printErrMsg (
 #include "act_win.h"
 
 #include "thread.h"
+
+#if GIFLIB_MAJOR > 5 || GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1
+  #define GIF_CLOSE_FILE(gif) DGifCloseFile(gif, NULL)
+  #define GIF_OPEN_FILE(gif) DGifOpenFileName(gif, NULL)
+#else
+  #define GIF_CLOSE_FILE(gif) DGifCloseFile(gif)
+  #define GIF_OPEN_FILE(gif) DGifOpenFileName(gif)
+#endif
 
 static jmp_buf g_jump_h;
 
@@ -435,16 +435,32 @@ struct sigaction sa, oldsa, dummysa;
   expStr.setRaw( name );
   expStr.expand1st( actWin->numMacros, actWin->macros, actWin->expansions );
 
-  i = 0;
-  do {
-    this->actWin->appCtx->expandFileName( i, name, expStr.getExpanded(),
-     ".gif", 127 );
-    gif = GIF_OPEN_FILE( name );
-    i++;
-  } while ( ( i < actWin->appCtx->numPaths ) && !gif );
-  if ( !gif ) {
+  char fullname[255+1];
+  strcpy( fullname, "" );
+  status = actWin->findAnyGenericFile( name, fullname, 255 );
+  //printf( "read gif - after actWin->findAnyGenericFile, name=[%s], fullname=[%s]\n", name, fullname );
+
+  if ( !status ) {
+    gif = GIF_OPEN_FILE( fullname );
+    if ( !gif ) {
+      goto error_return;
+    }
+  }
+  else {
     goto error_return;
   }
+
+  //i = 0;
+  //do {
+  //  this->actWin->appCtx->expandFileName( i, name, expStr.getExpanded(),
+  //   ".gif", 127 );
+  //  gif = GIF_OPEN_FILE( name );
+  //  i++;
+  //} while ( ( i < actWin->appCtx->numPaths ) && !gif );
+  //if ( !gif ) {
+  //  goto error_return;
+  //}
+
   fileOpened = 1;
 
   status = stat( name, &statBuf );

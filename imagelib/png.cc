@@ -738,7 +738,7 @@ unsigned char r, g, b;
 int i, iw, extra, status, useBaseBG;
 int screen_num, row, col, depth;
 Visual *visual;
-char name[127+1];
+ char name[127+1], fullname[255+1];
 uch *imageData, *src, *dest, a;
 unsigned long pixel;
 int numTrans;
@@ -763,17 +763,22 @@ expStringClass expStr;
   default_display_exponent = LUT_exponent * CRT_exponent;
   display_exponent = default_display_exponent;
 
-  i = 0;
-  do {
-    this->actWin->appCtx->expandFileName( i, name, expStr.getExpanded(),
-     ".png", 127 );
-    //fp = fopen( name, "rb" );
-    fp = fileOpen( name, "rb" );
-    i++;
-  } while ( ( i < actWin->appCtx->numPaths ) && !fp );
-  if ( !fp ) {
-    return 0;
-  }
+  //i = 0;
+  //do {
+  //  this->actWin->appCtx->expandFileName( i, name, expStr.getExpanded(),
+  //   ".png", 127 );
+  //  //fp = fopen( name, "rb" );
+  //  //fp = fileOpen( name, "rb" );
+  //  i++;
+  //} while ( ( i < actWin->appCtx->numPaths ) && !fp );
+  //if ( !fp ) {
+  //  return 0;
+  //}
+
+  strcpy( fullname, "" );
+  fp = actWin->openAnyGenericFile( name, "rb", fullname, 127 );
+  if ( !fp ) return 0;
+
   fileOpened = 1;
 
   status = stat( name, &statBuf );

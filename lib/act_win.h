@@ -1722,6 +1722,12 @@ void storeFileName (
 void storeFileNameForSymbols (
   char *inName );
 
+int findRelative (
+  char *name,
+  char *path,
+  char *fullName,
+  int max );
+
 FILE *openRelativeNoUpdate (
   char *name,
   char *path,
@@ -1753,6 +1759,11 @@ FILE *openAnySymFile (
 FILE *openExchangeFile (
   char *name,
   char *mode );
+
+int findAnyGenericFile (
+  char *name,
+  char *fullName,
+  int max );
 
 FILE *openAnyGenericFile (
   char *name,

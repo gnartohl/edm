@@ -435,16 +435,32 @@ struct sigaction sa, oldsa, dummysa;
   expStr.setRaw( name );
   expStr.expand1st( actWin->numMacros, actWin->macros, actWin->expansions );
 
-  i = 0;
-  do {
-    this->actWin->appCtx->expandFileName( i, name, expStr.getExpanded(),
-     ".gif", 127 );
-    gif = GIF_OPEN_FILE( name );
-    i++;
-  } while ( ( i < actWin->appCtx->numPaths ) && !gif );
-  if ( !gif ) {
+  char fullname[255+1];
+  strcpy( fullname, "" );
+  status = actWin->findAnyGenericFile( name, fullname, 255 );
+  //printf( "read gif - after actWin->findAnyGenericFile, name=[%s], fullname=[%s]\n", name, fullname );
+
+  if ( !status ) {
+    gif = GIF_OPEN_FILE( fullname );
+    if ( !gif ) {
+      goto error_return;
+    }
+  }
+  else {
     goto error_return;
   }
+
+  //i = 0;
+  //do {
+  //  this->actWin->appCtx->expandFileName( i, name, expStr.getExpanded(),
+  //   ".gif", 127 );
+  //  gif = GIF_OPEN_FILE( name );
+  //  i++;
+  //} while ( ( i < actWin->appCtx->numPaths ) && !gif );
+  //if ( !gif ) {
+  //  goto error_return;
+  //}
+
   fileOpened = 1;
 
   status = stat( name, &statBuf );
