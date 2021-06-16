@@ -437,8 +437,8 @@ struct sigaction sa, oldsa, dummysa;
 
   char fullname[255+1];
   strcpy( fullname, "" );
-  status = actWin->findAnyGenericFile( name, fullname, 255 );
-  //printf( "read gif - after actWin->findAnyGenericFile, name=[%s], fullname=[%s]\n", name, fullname );
+  status = actWin->findAnyContentFile( name, fullname, 255 );
+  //printf( "read gif - after actWin->findAnyContentFile, name=[%s], fullname=[%s]\n", name, fullname );
 
   if ( !status ) {
     gif = GIF_OPEN_FILE( fullname );

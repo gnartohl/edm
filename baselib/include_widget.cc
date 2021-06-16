@@ -1071,7 +1071,7 @@ int includeWidgetClass::readIncludeFile ( std::list<string> parentList )
 
     gotOne = tag.getName( tagName, 255, f );
     if ( !gotOne ) {
-      fileClose( f );
+      actWin->closeInternal(); fileClose( f );
       tag.setLine( saveLine );
       tagClass::popLevel();
       free( sbuf );
@@ -1092,9 +1092,9 @@ int includeWidgetClass::readIncludeFile ( std::list<string> parentList )
 
         cur = new activeGraphicListType;
         if ( !cur ) {
-          fileClose( f );
+          actWin->closeInternal(); fileClose( f );
           fprintf( stderr, "Insufficient virtual memory - abort\n" );
-          fileClose( f );
+          actWin->closeInternal(); fileClose( f );
           tag.setLine( saveLine );
           tagClass::popLevel();
           free( sbuf );
@@ -1130,7 +1130,7 @@ int includeWidgetClass::readIncludeFile ( std::list<string> parentList )
         }
         else {
 
-          fileClose( f );
+          actWin->closeInternal(); fileClose( f );
           fprintf( stderr, "Insufficient virtual memory - abort\n" );
           //numStates = 0;
           tag.setLine( saveLine );
@@ -1143,7 +1143,7 @@ int includeWidgetClass::readIncludeFile ( std::list<string> parentList )
       }
       else {
         //numStates = 0;
-        fileClose( f );
+        actWin->closeInternal(); fileClose( f );
         tag.setLine( saveLine );
 	tagClass::popLevel();
         free( sbuf );
@@ -1155,7 +1155,7 @@ int includeWidgetClass::readIncludeFile ( std::list<string> parentList )
   } while ( more );
 
 
-  fileClose( f );
+  actWin->closeInternal(); fileClose( f );
 
   w = maxW;
   sboxW = w;

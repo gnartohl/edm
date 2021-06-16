@@ -1122,7 +1122,7 @@ char **templateMacros;
 char **templateExpansions;
 
 int haveComments;
- char fileName[255+1], filePath[255+1], fileRev[31+1], fileNameAndRev[287+1], newPath[255+1];
+ char fileName[255+1], filePath[255+1], internalPath[255+1], fileRev[31+1], fileNameAndRev[287+1], newPath[255+1];
 char prefix[127+1], displayName[127+1], postfix[127+1];
 char fileNameForSym[255+1], prefixForSym[127+1], displayNameForSym[127+1],
  postfixForSym[127+1];
@@ -1728,6 +1728,11 @@ int findRelative (
   char *fullName,
   int max );
 
+FILE *openRelativeContent (
+  char *name,
+  char *path,
+  char *mode );
+
 FILE *openRelativeNoUpdate (
   char *name,
   char *path,
@@ -1770,6 +1775,26 @@ FILE *openAnyGenericFile (
   char *mode,
   char *fullName,
   int max );
+
+// =================
+// for png, gif
+
+int findAnyContentFile (
+  char *name,
+  char *fullName,
+  int max );
+
+FILE *openAnyContentFile (
+  char *name,
+  char *mode,
+  char *fullName,
+  int max );
+
+// =================
+
+void closeInternal ( void ) {
+  strcpy( internalPath, filePath );
+}
 
 void executeFromDeferredQueue( void );
 

@@ -12706,6 +12706,7 @@ int i;
   haveComments = 0;
   strcpy( fileName, "" );
   strcpy( filePath, "" );
+  strcpy( internalPath, "" );
   strcpy( fileNameAndRev, "" );
   strcpy( fileRev, "" );
 
@@ -22660,6 +22661,47 @@ struct stat statBuf;
 
 }
 
+FILE *activeWindowClass::openRelativeContent (
+  char *name,
+  char *path,
+  char *mode )
+{
+
+char buf[255+1];
+FILE *f;
+char tryPath[255+1], tryName[255+1];
+
+ //fprintf( stderr, "1 activeWindowClass::openRelativeNoUpdate\n" );
+ if ( !relativePathSupport ) return NULL;
+ //fprintf( stderr, "2 activeWindowClass::openRelativeNoUpdate\n" );
+ //fprintf( stderr, "name = [%s], path = [%s]\n", name, path );
+
+  // try relative name first
+  strncpy( tryName, name, 255 );
+  trimWhiteSpace( tryName );
+  if ( ( tryName[0] != '/' ) && ( tryName[0] != '^' ) ) {
+
+    strncpy( tryPath, path, 255 );
+    trimWhiteSpace( tryPath );
+
+    Strncat( tryPath, tryName, 255 );
+
+    appCtx->expandRelativeFileName( buf, tryPath, activeWindowClass::defExt(), 255 );
+
+    //printf( "1 activeWindowClass::openRelativeNoUpdate try [%s]\n", buf );
+    if ( strcmp( buf, "" ) != 0 ) {
+      f = fileOpen( buf, mode );
+      if ( f ) {
+        return f;
+      }
+    }
+
+  }
+
+  return NULL;
+
+}
+
 FILE *activeWindowClass::openRelativeNoUpdate (
   char *name,
   char *path,
@@ -22691,6 +22733,7 @@ char tryPath[255+1], tryName[255+1];
     if ( strcmp( buf, "" ) != 0 ) {
       f = fileOpen( buf, mode );
       if ( f ) {
+        extractPath( buf, 255, internalPath, 255 ); // update internalPath
         return f;
       }
     }
@@ -22734,6 +22777,7 @@ char tryPath[255+1], tryName[255+1];
         strncpy( fileName, buf, 255 ); // update fileName
         storeFileNameForSymbols( buf ); // update int sym file name components
         extractPath( fileName, 255, filePath, 255 ); // update filePath
+        strcpy( internalPath, filePath );
         return f;
       }
     }
@@ -22773,13 +22817,13 @@ int i;
         strncpy( fileName, buf, 255 ); // update fileName
         storeFileNameForSymbols( buf ); // update int sym file name components
         extractPath( fileName, 255, filePath, 255 ); // update filePath
+        strcpy( internalPath, filePath );
         return f;
       }
     }
 
   }
 
-  strcpy( filePath, "" );
   return NULL;
 
 }
@@ -22805,6 +22849,8 @@ int i;
     if ( strcmp( buf, "" ) != 0 ) {
       f = fileOpen( buf, mode );
       if ( f ) {
+        extractPath( buf, 255, internalPath, 255 ); // update internalPath
+        strcpy( internalPath, filePath );
         return f;
       }
     }
@@ -22835,6 +22881,8 @@ int i;
     if ( strcmp( buf, "" ) != 0 ) {
       f = fileOpen( buf, mode );
       if ( f ) {
+        extractPath( buf, 255, internalPath, 255 ); // update internalPath
+        strcpy( internalPath, filePath );
         return f;
       }
     }
@@ -22856,6 +22904,9 @@ int i;
 
   // try relative name first
   f = openRelativeNoUpdate ( name, filePath, mode );
+  //printf( "activeWindowClass::openAnySymFile - try rela, name=[%s], filePath=[%s]\n", name, filePath );
+  //printf( "activeWindowClass::openAnySymFile - try rela, name=[%s], internalPath=[%s]\n", name, internalPath );
+
   if ( f ) return f;
 
   for ( i=0; i<appCtx->numPaths; i++ ) {
@@ -22867,6 +22918,8 @@ int i;
       //f = fopen( buf, mode );
       f = fileOpen( buf, mode );
       if ( f ) {
+        extractPath( buf, 255, internalPath, 255 ); // update internalPath
+        strcpy( internalPath, filePath );
         return f;
       }
     }
@@ -22966,6 +23019,90 @@ int i;
   // try relative name first
   //printf( "activeWindowClass::openAnyGenericFile - try rela, name=[%s], filePath=[%s]\n", name, filePath );
   f = openRelativeNoUpdate ( name, filePath, mode );
+  if ( f ) {
+    strncpy( fullName, name, max );
+    fullName[max] = 0;
+    return f;
+  }
+
+  //printf( "rela failed\n" );
+
+  for ( i=0; i<appCtx->numPaths; i++ ) {
+
+    appCtx->expandFileName( i, fullName, name, max );
+
+    if ( strcmp( fullName, "" ) != 0 ) {
+      //f = fopen( fullName, mode );
+      f = fileOpen( fullName, mode );
+      if ( f ) {
+        return f;
+      }
+    }
+
+  }
+
+  return NULL;
+
+}
+
+int activeWindowClass::findAnyContentFile ( // return 0 (ok) or -1 (error)
+  char *name,
+  char *fullName,
+  int max )
+{
+
+int i, status;
+struct stat statBuf;
+
+  //printf( "activeWindowClass::findAnyContentFile, name=[%s], fullName=[%s]\n", name, fullName );
+
+  strcpy( fullName, "" );
+
+  // try relative name first
+  //printf( "activeWindowClass::findAnyContentFile - try rela, name=[%s], filePath=[%s]\n", name, filePath );
+  //printf( "activeWindowClass::findAnyContentFile - try rela, name=[%s], internalPath=[%s]\n", name, internalPath );
+  status = findRelative ( name, internalPath, fullName, max );
+  if ( !status ) {
+    return 0;
+  }
+
+  //printf( "rela failed\n" );
+
+  for ( i=0; i<appCtx->numPaths; i++ ) {
+
+    appCtx->expandFileName( i, fullName, name, max );
+
+    if ( strcmp( fullName, "" ) != 0 ) {
+      status = stat( name, &statBuf );
+      if ( !status ) {
+        strncpy( fullName, name, max );
+        fullName[max] = 0;
+        return 0;
+      }
+    }
+
+  }
+
+  return -1;
+
+}
+
+FILE *activeWindowClass::openAnyContentFile (
+  char *name,
+  char *mode,
+  char *fullName,
+  int max )
+{
+
+FILE *f;
+int i;
+
+  //printf( "activeWindowClass::openAnyContentFile, name=[%s], fullName=[%s]\n", name, fullName );
+
+  // try relative name first
+  //printf( "activeWindowClass::openAnyContentFile - try rela, name=[%s], filePath=[%s]\n", name, filePath );
+  //printf( "activeWindowClass::openAnyContentFile - try rela, name=[%s], internalPath=[%s]\n", name, internalPath );
+  f = openRelativeContent ( name, internalPath, mode );
   if ( f ) {
     strncpy( fullName, name, max );
     fullName[max] = 0;

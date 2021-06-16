@@ -1034,7 +1034,7 @@ int visInverted;
     // for forward compatibility
     stat = actWin->readUntilEndOfData( f, winMajor, winMinor, winRelease );
     if ( !( stat & 1 ) ) {
-      fileClose( f );
+      actWin->closeInternal(); fileClose( f );
       actWin->setLine( saveLine );
       tagClass::popLevel();
       return stat;
@@ -1052,7 +1052,7 @@ int visInverted;
       if ( !gotOne ) {
         if ( i == 0 ) {
           numStates = 0;
-          fileClose( f );
+          actWin->closeInternal(); fileClose( f );
           actWin->setLine( saveLine );
 	  tagClass::popLevel();
           return 0;
@@ -1065,7 +1065,7 @@ int visInverted;
       tk = strtok( itemName, " \t\n" );
       if ( strcmp( tk, "activeGroupClass" ) != 0 ) {
         numStates = 0;
-        fileClose( f );
+        actWin->closeInternal(); fileClose( f );
         actWin->setLine( saveLine );
 	tagClass::popLevel();
         return 0;
@@ -1091,7 +1091,7 @@ int visInverted;
         gotOne = fgets( itemName, 127, f );
         if ( !gotOne ) {
           numStates = 0;
-          fileClose( f );
+          actWin->closeInternal(); fileClose( f );
           actWin->setLine( saveLine );
 	  tagClass::popLevel();
           return 0;
@@ -1110,10 +1110,10 @@ int visInverted;
 
           cur = new activeGraphicListType;
           if ( !cur ) {
-            fileClose( f );
+            actWin->closeInternal(); fileClose( f );
             fprintf( stderr, "Insufficient virtual memory - abort\n" );
             numStates = 0;
-            fileClose( f );
+            actWin->closeInternal(); fileClose( f );
             actWin->setLine( saveLine );
 	    tagClass::popLevel();
             return 0;
@@ -1129,7 +1129,7 @@ int visInverted;
             stat = actWin->readUntilEndOfData( f, winMajor, winMinor,
              winRelease );
             if ( !( stat & 1 ) ) {
-              fileClose( f );
+              actWin->closeInternal(); fileClose( f );
               actWin->setLine( saveLine );
 	      tagClass::popLevel();
               return stat;
@@ -1145,7 +1145,7 @@ int visInverted;
 
           }
           else {
-            fileClose( f );
+            actWin->closeInternal(); fileClose( f );
             fprintf( stderr, "Insufficient virtual memory - abort\n" );
             numStates = 0;
             actWin->setLine( saveLine );
@@ -1160,7 +1160,7 @@ int visInverted;
       // for forward compatibility
       stat = actWin->readUntilEndOfData( f, winMajor, winMinor, winRelease );
       if ( !( stat & 1 ) ) {
-        fileClose( f );
+        actWin->closeInternal(); fileClose( f );
         actWin->setLine( saveLine );
 	tagClass::popLevel();
         return stat;
@@ -1195,7 +1195,7 @@ int visInverted;
 
           if ( strcmp( itemName, "activeGroupClass" ) != 0 ) {
             numStates = 0;
-            fileClose( f );
+            actWin->closeInternal(); fileClose( f );
             tag.setLine( saveLine );
 	    tagClass::popLevel();
             return 0;
@@ -1205,7 +1205,7 @@ int visInverted;
         }
         else {
           numStates = 0;
-          fileClose( f );
+          actWin->closeInternal(); fileClose( f );
           tag.setLine( saveLine );
 	  tagClass::popLevel();
           return 0;
@@ -1217,7 +1217,7 @@ int visInverted;
 
         if ( i == 0 ) {
           numStates = 0;
-          fileClose( f );
+          actWin->closeInternal(); fileClose( f );
           tag.setLine( saveLine );
 	  tagClass::popLevel();
           return 0;
@@ -1275,7 +1275,7 @@ int visInverted;
         gotOne = tag.getName( tagName, 255, f );
         if ( !gotOne ) {
           numStates = 0;
-          fileClose( f );
+          actWin->closeInternal(); fileClose( f );
           tag.setLine( saveLine );
 	  tagClass::popLevel();
           return 0;
@@ -1299,10 +1299,10 @@ int visInverted;
 
             cur = new activeGraphicListType;
             if ( !cur ) {
-              fileClose( f );
+              actWin->closeInternal(); fileClose( f );
               fprintf( stderr, "Insufficient virtual memory - abort\n" );
               numStates = 0;
-              fileClose( f );
+              actWin->closeInternal(); fileClose( f );
               tag.setLine( saveLine );
 	      tagClass::popLevel();
               return 0;
@@ -1325,7 +1325,7 @@ int visInverted;
             }
             else {
 
-              fileClose( f );
+              actWin->closeInternal(); fileClose( f );
               fprintf( stderr, "Insufficient virtual memory - abort\n" );
               numStates = 0;
               tag.setLine( saveLine );
@@ -1342,7 +1342,7 @@ int visInverted;
           }
           else {
             numStates = 0;
-            fileClose( f );
+            actWin->closeInternal(); fileClose( f );
             tag.setLine( saveLine );
 	    tagClass::popLevel();
             return 0;
@@ -1371,7 +1371,7 @@ int visInverted;
 
   }
 
-  fileClose( f );
+  actWin->closeInternal(); fileClose( f );
 
   w = maxW;
   sboxW = w;
@@ -1439,7 +1439,7 @@ expStringClass expStr;
   // for forward compatibility
   stat = actWin->readUntilEndOfData( f, winMajor, winMinor, winRelease );
   if ( !( stat & 1 ) ) {
-    fileClose( f );
+    actWin->closeInternal(); fileClose( f );
     actWin->setLine( saveLine );
     return stat;
   }
@@ -1456,7 +1456,7 @@ expStringClass expStr;
     if ( !gotOne ) {
       if ( i == 0 ) {
         numStates = 0;
-        fileClose( f );
+        actWin->closeInternal(); fileClose( f );
         actWin->setLine( saveLine );
         return 0;
       }
@@ -1468,7 +1468,7 @@ expStringClass expStr;
     tk = strtok( itemName, " \t\n" );
     if ( strcmp( tk, "activeGroupClass" ) != 0 ) {
       numStates = 0;
-      fileClose( f );
+      actWin->closeInternal(); fileClose( f );
       actWin->setLine( saveLine );
       return 0;
     }
@@ -1493,7 +1493,7 @@ expStringClass expStr;
       gotOne = fgets( itemName, 127, f );
       if ( !gotOne ) {
         numStates = 0;
-        fileClose( f );
+        actWin->closeInternal(); fileClose( f );
         actWin->setLine( saveLine );
         return 0;
       }
@@ -1511,10 +1511,10 @@ expStringClass expStr;
 
         cur = new activeGraphicListType;
         if ( !cur ) {
-          fileClose( f );
+          actWin->closeInternal(); fileClose( f );
           fprintf( stderr, "Insufficient virtual memory - abort\n" );
           numStates = 0;
-          fileClose( f );
+          actWin->closeInternal(); fileClose( f );
           actWin->setLine( saveLine );
           return 0;
         }
@@ -1529,7 +1529,7 @@ expStringClass expStr;
           stat = actWin->readUntilEndOfData( f, winMajor, winMinor,
            winRelease );
           if ( !( stat & 1 ) ) {
-            fileClose( f );
+            actWin->closeInternal(); fileClose( f );
             actWin->setLine( saveLine );
             return stat;
           }
@@ -1544,7 +1544,7 @@ expStringClass expStr;
 
         }
         else {
-          fileClose( f );
+          actWin->closeInternal(); fileClose( f );
           fprintf( stderr, "Insufficient virtual memory - abort\n" );
           numStates = 0;
           actWin->setLine( saveLine );
@@ -1558,14 +1558,14 @@ expStringClass expStr;
     // for forward compatibility
     stat = actWin->readUntilEndOfData( f, winMajor, winMinor, winRelease );
     if ( !( stat & 1 ) ) {
-      fileClose( f );
+      actWin->closeInternal(); fileClose( f );
       actWin->setLine( saveLine );
       return stat;
     }
 
   }
 
-  fileClose( f );
+  actWin->closeInternal(); fileClose( f );
 
   w = maxW;
   sboxW = w;
