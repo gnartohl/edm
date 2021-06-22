@@ -437,7 +437,7 @@ struct sigaction sa, oldsa, dummysa;
 
   char fullname[255+1];
   strcpy( fullname, "" );
-  status = actWin->findAnyContentFile( name, fullname, 255 );
+  status = actWin->findAnyContentFile( expStr.getExpanded(), fullname, 255 );
   //printf( "read gif - after actWin->findAnyContentFile, name=[%s], fullname=[%s]\n", name, fullname );
 
   if ( !status ) {

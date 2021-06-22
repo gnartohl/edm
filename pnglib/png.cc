@@ -776,7 +776,7 @@ expStringClass expStr;
   //}
 
   strcpy( fullname, "" );
-  fp = actWin->openAnyContentFile( name, "rb", fullname, 127 );
+  fp = actWin->openAnyContentFile( expStr.getExpanded(), "rb", fullname, 127 );
   if ( !fp ) return 0;
 
   fileOpened = 1;
