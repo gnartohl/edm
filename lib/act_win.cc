@@ -5598,8 +5598,14 @@ int efSetAccLargestH = 300;
       XtSetArg( args[n], XmNpattern, xmStr1 ); n++;
 
       xmStr2 = NULL;
+      // change for relative paths
       if ( strcmp( awo->appCtx->curPath, "" ) != 0 ) {
-        xmStr2 = XmStringCreateLocalized( awo->appCtx->curPath );
+        if ( awo->relativePathSupport ) {
+          xmStr2 = XmStringCreateLocalized( awo->filePath );
+        }
+        else {
+          xmStr2 = XmStringCreateLocalized( awo->appCtx->curPath );
+        }
         XtSetArg( args[n], XmNdirectory, xmStr2 ); n++;
       }
 
@@ -17682,7 +17688,8 @@ tagClass tag;
 
   gotOne = strstr( fName, "/" );
 
-  if ( gotOne ) {
+  // change for relative paths
+  if ( gotOne || relativePathSupport ) {
     strncpy( oneFileName, fName, 255 );
   }
   else {
