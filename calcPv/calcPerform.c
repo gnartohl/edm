@@ -21,6 +21,7 @@
 
 #include "postfix.h"
 #include "postfixPvt.h"
+#include "errlog.h"
 
 #ifdef SOLARIS
 #include <ieeefp.h>
