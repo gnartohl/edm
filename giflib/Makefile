@@ -22,7 +22,7 @@ GIF_INC ?= /usr/include
    USR_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
 
    USR_LIBS_Linux += Xm Xt Xtst X11
-   USR_SYS_LIBS_Linux += pthread dl ungif gif
+   USR_SYS_LIBS_Linux += pthread dl gif
 
    USR_LIBS_Darwin += Xm Xt Xtst X11
    USR_SYS_LIBS_Darwin += pthread dl ungif gif
