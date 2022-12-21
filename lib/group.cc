@@ -798,7 +798,7 @@ char *emptyStr = "";
 
     while ( gotOne ) {
 
-      //fprintf( stderr, "name = [%s]\n", tagName );
+      // fprintf( stderr, "name = [%s]\n", tagName );
 
       if ( strcmp( tagName, "object" ) == 0 ) {
 
@@ -808,7 +808,7 @@ char *emptyStr = "";
         // ==============================================================
         // Create sub-object
 
-        //fprintf( stderr, "objName = [%s]\n", itemName );
+        // fprintf( stderr, "objName = [%s]\n", itemName );
 
         cur = new activeGraphicListType;
         if ( !cur ) {
@@ -832,10 +832,20 @@ char *emptyStr = "";
         }
         else {
 
-          fclose( f );
-          fprintf( stderr, activeGroupClass_str1 );
-          return 0;
+          //fclose( f );
+          char msg[255+1];
+          sprintf( msg, activeGroupClass_str3, tag.line(), itemName );
+          actWin->appCtx->postMessage( msg );
 
+          tag.init();
+          tag.loadR( "endObjectProperties", 63, itemName );
+          tag.readTags( f, "endObjectProperties" );
+
+	  // Start looking for leading keywords again
+          tag.init();
+          tag.loadR( "object", 63, itemName );
+          tag.loadR( "endGroup" );
+          
         }
 
         gotOne = tag.getName( tagName, 255, f );
@@ -897,7 +907,7 @@ char *emptyStr = "";
     this->deleteRequest = 1;
   }
 
-  return stat;
+  return retStat;
 
 }
 
