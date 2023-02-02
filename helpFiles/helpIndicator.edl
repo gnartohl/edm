@@ -3,22 +3,22 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 410
-y 86
+x 415
+y 115
 w 700
 h 798
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 52171 52171 52171
+bgColor rgb 51400 51400 51400
 textColor rgb 0 0 0
 ctlFgColor1 rgb 0 0 0
 ctlFgColor2 rgb 0 0 65535
-ctlBgColor1 rgb 46517 46517 46517
-ctlBgColor2 rgb 56797 56797 56797
-topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 24929 24929 24929
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
 title "Bar"
 disableScroll
 endScreenProperties
@@ -33,7 +33,7 @@ x 14
 y 105
 w 351
 h 351
-file "$(help)helpIndicator"
+file "$(help)helpIndicator.png"
 endObjectProperties
 
 # (Static Text)
@@ -41,14 +41,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 24
 y 25
 w 97
 h 27
 font "helvetica-medium-r-24.0"
 fgColor rgb 0 0 0
-bgColor rgb 61423 61423 61423
+bgColor rgb 60652 60652 60652
 value {
   "Indicator"
 }
@@ -60,14 +60,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 135
 y 70
 w 55
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Fg Color"
@@ -86,7 +86,7 @@ y 80
 w 93
 h 36
 lineColor rgb 0 0 0
-fillColor rgb 46517 46517 46517
+fillColor rgb 48059 48059 48059
 numPoints 2
 xPoints {
   0 130
@@ -109,7 +109,7 @@ y 80
 w 68
 h 72
 lineColor rgb 0 0 0
-fillColor rgb 46517 46517 46517
+fillColor rgb 48059 48059 48059
 numPoints 2
 xPoints {
   0 128
@@ -126,14 +126,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 221
 y 70
 w 55
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Bg Color"
@@ -152,7 +152,7 @@ y 85
 w 37
 h 40
 lineColor rgb 0 0 0
-fillColor rgb 46517 46517 46517
+fillColor rgb 48059 48059 48059
 numPoints 2
 xPoints {
   0 218
@@ -169,14 +169,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 309
 y 70
 w 95
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Indicator Color"
@@ -195,7 +195,7 @@ y 82
 w 37
 h 50
 lineColor rgb 0 0 0
-fillColor rgb 46517 46517 46517
+fillColor rgb 48059 48059 48059
 numPoints 2
 xPoints {
   0 302
@@ -212,14 +212,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 453
 y 70
 w 43
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Border"
@@ -238,7 +238,7 @@ y 79
 w 94
 h 30
 lineColor rgb 0 0 0
-fillColor rgb 46517 46517 46517
+fillColor rgb 48059 48059 48059
 numPoints 2
 xPoints {
   0 445
@@ -255,14 +255,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 17
 y 520
 w 139
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Scale Format Options"
@@ -275,14 +275,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 50
 y 542
 w 327
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "GFloat - precision gives number of significant digits"
@@ -295,14 +295,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 50
 y 560
 w 319
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "FFloat - precision gives number of decimal places"
@@ -315,14 +315,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 50
 y 578
 w 355
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Exponential - precision gives number of decimal places,"
@@ -335,14 +335,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 17
 y 631
 w 437
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "If Scale Info From DB is checked, then scale precision, min, and max"
@@ -355,14 +355,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 17
 y 647
 w 308
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "are taken from HOPR & LOPR fields in database."
@@ -375,14 +375,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 133
 y 596
 w 258
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "number is displayed in scientific notation"
@@ -395,14 +395,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 16
 y 683
 w 406
 h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Readback PV, Null PV, Label Tick Intervals, Majors per Label,"
@@ -417,14 +417,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 369
 y 124
 w 117
 h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Border: Yes"
@@ -439,14 +439,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 369
 y 222
 w 139
 h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Border: Yes"
@@ -461,14 +461,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 369
 y 312
 w 191
 h 64
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Border: Yes"
@@ -484,14 +484,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 369
 y 418
 w 153
 h 48
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Border: No"
@@ -511,7 +511,7 @@ x 600
 y 97
 w 73
 h 272
-file "$(help)helpIndicatorVert"
+file "$(help)helpIndicatorVert.png"
 endObjectProperties
 
 # (Static Text)
@@ -519,14 +519,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 612
 y 380
 w 50
 h 16
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Vertical"
@@ -539,14 +539,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 17
 y 747
 w 405
 h 32
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "If Pointer Reversed is check, the pointer direction is reversed."

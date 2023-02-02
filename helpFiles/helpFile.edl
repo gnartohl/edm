@@ -32,7 +32,7 @@ x 35
 y 64
 w 178
 h 191
-file "$(help)helpFile-MainWin"
+file "$(help)helpFile-MainWin.png"
 endObjectProperties
 
 # (Rectangle)
@@ -200,7 +200,7 @@ x 46
 y 109
 w 132
 h 151
-file "$(help)helpFile-New"
+file "$(help)helpFile-New.png"
 endObjectProperties
 
 # (PNG Image)
@@ -213,7 +213,7 @@ x 225
 y 64
 w 178
 h 191
-file "$(help)helpFile-MainWin"
+file "$(help)helpFile-MainWin.png"
 endObjectProperties
 
 # (PNG Image)
@@ -226,7 +226,7 @@ x 236
 y 109
 w 132
 h 151
-file "$(help)helpFile-Open"
+file "$(help)helpFile-Open.png"
 endObjectProperties
 
 # (PNG Image)
@@ -239,6 +239,6 @@ x 456
 y 39
 w 286
 h 401
-file "$(help)helpFile-FileSelect"
+file "$(help)helpFile-FileSelect.png"
 endObjectProperties
 

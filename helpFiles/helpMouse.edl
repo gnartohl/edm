@@ -1409,7 +1409,7 @@ x 529
 y 131
 w 380
 h 568
-file "$(help)helpMouse1"
+file "$(help)helpMouse1.png"
 endObjectProperties
 
 # (Static Text)

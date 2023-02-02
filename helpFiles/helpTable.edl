@@ -1,10 +1,10 @@
-4 0 0
+4 0 1
 beginScreenProperties
 major 4
 minor 0
-release 0
-x 78
-y 160
+release 1
+x 83
+y 189
 w 1123
 h 715
 font "helvetica-medium-r-18.0"
@@ -25,8 +25,8 @@ endScreenProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
+minor 1
+release 1
 x 18
 y 19
 w 62
@@ -44,8 +44,8 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
+minor 1
+release 1
 x 21
 y 75
 w 510
@@ -65,12 +65,12 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
+minor 1
+release 1
 x 21
 y 139
 w 341
-h 252
+h 216
 font "courier-medium-r-18.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
@@ -96,8 +96,8 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
+minor 1
+release 1
 x 21
 y 596
 w 500
@@ -121,7 +121,7 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 551
 y 12
 w 0
@@ -143,8 +143,8 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
+minor 1
+release 1
 x 573
 y 16
 w 528
@@ -163,12 +163,12 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
+minor 1
+release 1
 x 578
 y 52
-w 296
-h 285
+w 259
+h 247
 font "courier-medium-r-12.0"
 fgColor rgb 0 0 0
 bgColor rgb 48059 48059 48059
@@ -215,8 +215,8 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
+minor 1
+release 1
 x 573
 y 356
 w 310
@@ -241,15 +241,15 @@ x 577
 y 381
 w 508
 h 220
-file "$(help)helpTable"
+file "$(help)helpTable.png"
 endObjectProperties
 
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
+minor 1
+release 1
 x 573
 y 612
 w 55
@@ -268,8 +268,8 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
+minor 1
+release 1
 x 573
 y 634
 w 55
@@ -288,8 +288,8 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
+minor 1
+release 1
 x 573
 y 656
 w 117
@@ -308,8 +308,8 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
+minor 1
+release 1
 x 573
 y 679
 w 123
@@ -329,7 +329,7 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 636
 y 399
 w 63
@@ -353,7 +353,7 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 636
 y 569
 w 405
@@ -379,7 +379,7 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 693
 y 500
 w 181
@@ -405,7 +405,7 @@ object activeLineClass
 beginObjectProperties
 major 4
 minor 0
-release 0
+release 1
 x 696
 y 526
 w 201
@@ -430,8 +430,8 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
+minor 1
+release 1
 x 21
 y 434
 w 487
@@ -452,8 +452,8 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
+minor 1
+release 1
 x 48
 y 502
 w 26
@@ -474,8 +474,8 @@ endObjectProperties
 object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
+minor 1
+release 1
 x 21
 y 559
 w 348

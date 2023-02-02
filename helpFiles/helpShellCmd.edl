@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 269
-y 21
+x 274
+y 56
 w 490
 h 971
 font "helvetica-medium-r-18.0"
@@ -27,7 +27,7 @@ endScreenProperties
 object shellCmdClass
 beginObjectProperties
 major 4
-minor 2
+minor 3
 release 0
 x 164
 y 94
@@ -57,7 +57,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 28
 y 28
 w 172
@@ -81,7 +81,7 @@ x 220
 y 124
 w 42
 h 67
-file "$(help)helpShellCommandParamsGif"
+file "$(help)helpShellCommandParamsGif.gif"
 endObjectProperties
 
 # (Static Text)
@@ -89,7 +89,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 29
 y 249
 w 302
@@ -109,7 +109,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 29
 y 835
 w 420
@@ -129,7 +129,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 29
 y 852
 w 406
@@ -149,7 +149,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 29
 y 867
 w 418
@@ -169,7 +169,7 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 1
+minor 4
 release 0
 x 29
 y 916
@@ -195,7 +195,7 @@ endObjectProperties
 object shellCmdClass
 beginObjectProperties
 major 4
-minor 2
+minor 3
 release 0
 x 29
 y 94
@@ -218,7 +218,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 29
 y 222
 w 346
@@ -238,7 +238,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 28
 y 320
 w 319
@@ -260,7 +260,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 27
 y 379
 w 430
@@ -280,7 +280,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 28
 y 687
 w 356
@@ -307,7 +307,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 30
 y 406
 w 331
@@ -330,7 +330,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 29
 y 482
 w 354
@@ -352,7 +352,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 29
 y 541
 w 356
@@ -374,7 +374,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 29
 y 277
 w 409
@@ -394,7 +394,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 29
 y 292
 w 249
@@ -414,7 +414,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 29
 y 601
 w 431
@@ -434,7 +434,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 29
 y 629
 w 424

@@ -1,50 +1,37 @@
-3 1 0
-731
-146
-500
-575
-helvetica-medium-r-18.0
-0
-helvetica-medium-r-12.0
-0
-rgb
-0,0,0
-rgb
-50971,52011,50971
-rgb
-0,0,0
-rgb
-0,0,0
-rgb
-0,0,48891
-rgb
-46810,47850,46810
-rgb
-61374,61374,61374
-rgb
-27046,27046,27046
-rgb
-55132,56172,55132
-Message Box
-0
-0
-10
-0
-<<<empty>>>
-<<<empty>>>
-0
-0
-helvetica-bold-r-14.0
-0
-<<<E~O~D>>>
-cfcf6c8a_dbeb_11d2_8a97_00104b8742df
-1 2 0
--4
--3
-508
-582
-$(help)helpMessageBoxGif
-0
-0
-0
-<<<E~O~D>>>
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 736
+y 175
+w 500
+h 575
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 51400 51400 51400
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 49344
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 26985 26985 26985
+title "Message Box"
+endScreenProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x -4
+y -3
+w 508
+h 582
+file "$(help)helpMessageBoxGif.gif"
+endObjectProperties
+

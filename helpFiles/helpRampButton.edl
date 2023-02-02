@@ -3,22 +3,22 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 229
-y 85
+x 234
+y 114
 w 458
 h 501
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 52171 52171 52171
+bgColor rgb 51400 51400 51400
 textColor rgb 0 0 0
 ctlFgColor1 rgb 0 0 0
 ctlFgColor2 rgb 0 0 65535
-ctlBgColor1 rgb 46517 46517 46517
-ctlBgColor2 rgb 56797 56797 56797
-topShadowColor rgb 61423 61423 61423
-botShadowColor rgb 24929 24929 24929
+ctlBgColor1 rgb 48059 48059 48059
+ctlBgColor2 rgb 56026 56026 56026
+topShadowColor rgb 60652 60652 60652
+botShadowColor rgb 23130 23130 23130
 title "Ramp Button"
 endScreenProperties
 
@@ -27,14 +27,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 27
 y 31
 w 144
 h 27
 font "helvetica-medium-r-24.0"
 fgColor rgb 0 0 0
-bgColor rgb 61423 61423 61423
+bgColor rgb 60652 60652 60652
 value {
   "Ramp Button"
 }
@@ -46,14 +46,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 29
 y 93
 w 409
 h 224
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "The ramp button ramps the Control PV from its current value"
@@ -84,7 +84,7 @@ x 31
 y 354
 w 111
 h 125
-file "$(help)helpRampButton"
+file "$(help)helpRampButton.png"
 endObjectProperties
 
 # (Static Text)
@@ -92,14 +92,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 152
 y 376
 w 125
 h 21
 font "helvetica-medium-r-18.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Ramping active"
@@ -112,14 +112,14 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 152
 y 435
 w 139
 h 21
 font "helvetica-medium-r-18.0"
 fgColor rgb 0 0 0
-bgColor rgb 46517 46517 46517
+bgColor rgb 48059 48059 48059
 useDisplayBg
 value {
   "Ramping inactive"

@@ -32,7 +32,7 @@ x 360
 y 166
 w 304
 h 592
-file "$(help)helpCreate-Props"
+file "$(help)helpCreate-Props.gif"
 endObjectProperties
 
 # (GIF Image)
@@ -45,7 +45,7 @@ x 87
 y 233
 w 76
 h 67
-file "$(help)helpCreate-Types"
+file "$(help)helpCreate-Types.gif"
 endObjectProperties
 
 # (GIF Image)
@@ -58,7 +58,7 @@ x 156
 y 241
 w 108
 h 214
-file "$(help)helpCreate-Items"
+file "$(help)helpCreate-Items.gif"
 endObjectProperties
 
 # (Rectangle)

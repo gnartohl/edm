@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 130
-y 163
+x 140
+y 221
 w 1032
 h 718
 font "helvetica-medium-r-18.0"
@@ -27,7 +27,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 20
 y 30
 w 115
@@ -46,7 +46,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 20
 y 77
 w 463
@@ -87,7 +87,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 28
 y 230
 w 75
@@ -121,7 +121,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 54
 y 305
 w 179
@@ -156,7 +156,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 228
 y 245
 w 29
@@ -176,7 +176,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 20
 y 368
 w 407
@@ -202,7 +202,7 @@ x 20
 y 414
 w 277
 h 137
-file "$(help)helpMenuMuxPng1"
+file "$(help)helpMenuMuxPng1.png"
 endObjectProperties
 
 # (PNG Image)
@@ -215,7 +215,7 @@ x 262
 y 444
 w 30
 h 46
-file "$(help)helpMenuMuxPng2"
+file "$(help)helpMenuMuxPng2.png"
 endObjectProperties
 
 # (PNG Image)
@@ -228,7 +228,7 @@ x 20
 y 564
 w 277
 h 137
-file "$(help)helpMenuMuxPng3"
+file "$(help)helpMenuMuxPng3.png"
 endObjectProperties
 
 # (Static Text)
@@ -236,7 +236,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 310
 y 432
 w 188
@@ -256,7 +256,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 336
 y 473
 w 130
@@ -312,7 +312,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 535
 y 77
 w 452
@@ -336,7 +336,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 535
 y 173
 w 430

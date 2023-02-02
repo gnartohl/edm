@@ -558,7 +558,7 @@ x 480
 y 15
 w 304
 h 617
-file "$(help)helpEdit-Props"
+file "$(help)helpEdit-Props.gif"
 endObjectProperties
 
 # (Static Text)
